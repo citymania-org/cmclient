@@ -52,7 +52,10 @@
 #include "network/network.h"
 #include "network/network_gui.h"
 #include "network/network_func.h"
-
+#include "cargo_table_gui.h"
+#include "object_type.h"
+#include "zoning.h"
+#include "watch_gui.h"
 
 RailType _last_built_railtype;
 RoadType _last_built_roadtype;
@@ -71,11 +74,12 @@ enum CallBackFunction {
 	CBF_NONE,
 	CBF_PLACE_SIGN,
 	CBF_PLACE_LANDINFO,
+	CBF_BUILD_HQ,
 };
 
 /**
  * Drop down list entry for showing a checked/unchecked toggle item.
- */
+ */ /*
 class DropDownListCheckedItem : public DropDownListStringItem {
 	uint checkmark_width;
 public:
@@ -101,18 +105,20 @@ public:
 		}
 		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : this->checkmark_width), right - WD_FRAMERECT_RIGHT - (rtl ? this->checkmark_width : 0), top, this->String(), sel ? TC_WHITE : TC_BLACK);
 	}
-};
+};*/
 
 /**
  * Drop down list entry for showing a company entry, with companies 'blob'.
  */
 class DropDownListCompanyItem : public DropDownListItem {
 	Dimension icon_size;
+	uint lockwidth;
 public:
 	bool greyed;
 
 	DropDownListCompanyItem(int result, bool masked, bool greyed) : DropDownListItem(result, masked), greyed(greyed)
 	{
+		this->lockwidth = _networking ? GetSpriteSize(SPR_LOCK).width + 3 : 0;
 		this->icon_size = GetSpriteSize(SPR_COMPANY_ICON);
 	}
 
@@ -148,6 +154,9 @@ public:
 		int text_offset = (bottom - top - FONT_HEIGHT_NORMAL) / 2;
 
 		DrawCompanyIcon(company, rtl ? right - this->icon_size.width - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT, top + icon_offset);
+		if (_networking && NetworkCompanyIsPassworded(company)){
+			DrawSprite(SPR_LOCK, PAL_NONE, left + WD_FRAMERECT_LEFT + 3 + this->icon_size.width, top + text_offset);
+		}
 
 		SetDParam(0, company);
 		SetDParam(1, company);
@@ -157,7 +166,7 @@ public:
 		} else {
 			col = sel ? TC_WHITE : TC_BLACK;
 		}
-		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : 3 + this->icon_size.width), right - WD_FRAMERECT_RIGHT - (rtl ? 3 + this->icon_size.width : 0), top + text_offset, STR_COMPANY_NAME_COMPANY_NUM, col);
+		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : 3 + this->icon_size.width + this->lockwidth), right - WD_FRAMERECT_RIGHT - (rtl ? 3 + this->icon_size.width : 0), top + text_offset, STR_COMPANY_NAME_COMPANY_NUM, col);
 	}
 };
 
@@ -250,6 +259,18 @@ static CallBackFunction SelectSignTool()
 	}
 }
 
+/* hq hotkey */
+static CallBackFunction BuildCompanyHQ(){
+	if (_cursor.sprite == SPR_CURSOR_HQ) {
+		ResetObjectToPlace();
+		return CBF_NONE;
+	} else {
+		SetObjectToPlace(SPR_CURSOR_HQ, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetTileSelectSize(2, 2);
+		return CBF_BUILD_HQ;
+	}
+}
+
 /* --- Pausing --- */
 
 static CallBackFunction ToolbarPauseClick(Window *w)
@@ -283,6 +304,7 @@ enum OptionMenuEntries {
 	OME_SETTINGS,
 	OME_SCRIPT_SETTINGS,
 	OME_NEWGRFSETTINGS,
+	OME_ZONING,
 	OME_TRANSPARENCIES,
 	OME_SHOW_TOWNNAMES,
 	OME_SHOW_STATIONNAMES,
@@ -311,6 +333,7 @@ static CallBackFunction ToolbarOptionsClick(Window *w)
 	 * to network clients. */
 	if (!_networking || _network_server) *list->Append() = new DropDownListStringItem(STR_SETTINGS_MENU_SCRIPT_SETTINGS, OME_SCRIPT_SETTINGS, false);
 	*list->Append() = new DropDownListStringItem(STR_SETTINGS_MENU_NEWGRF_SETTINGS,          OME_NEWGRFSETTINGS, false);
+	*list->Append() = new DropDownListStringItem(STR_SETTINGS_MENU_ZONING,                   OME_ZONING, false);
 	*list->Append() = new DropDownListStringItem(STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS,     OME_TRANSPARENCIES, false);
 	*list->Append() = new DropDownListItem(-1, false);
 	*list->Append() = new DropDownListCheckedItem(STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED,    OME_SHOW_TOWNNAMES, false, HasBit(_display_opt, DO_SHOW_TOWN_NAMES));
@@ -341,6 +364,7 @@ static CallBackFunction MenuClickSettings(int index)
 		case OME_SETTINGS:             ShowGameSettings();                              return CBF_NONE;
 		case OME_SCRIPT_SETTINGS:      ShowAIConfigWindow();                            return CBF_NONE;
 		case OME_NEWGRFSETTINGS:       ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, &_grfconfig); return CBF_NONE;
+		case OME_ZONING:               ShowZoningToolbar();                             break;
 		case OME_TRANSPARENCIES:       ShowTransparencyToolbar();                       break;
 
 		case OME_SHOW_TOWNNAMES:       ToggleBit(_display_opt, DO_SHOW_TOWN_NAMES);     break;
@@ -573,6 +597,37 @@ static CallBackFunction ToolbarFinancesClick(Window *w)
 static CallBackFunction MenuClickFinances(int index)
 {
 	ShowCompanyFinances((CompanyID)index);
+	return CBF_NONE;
+}
+
+/* --- CARGOS button menu --- */
+
+static CallBackFunction ToolbarCargosClick(Window *w)
+{
+	PopupMainCompanyToolbMenu(w, WID_TN_CARGOS);
+	return CBF_NONE;
+}
+
+static CallBackFunction MenuClickCargos(int index)
+{
+	ShowCompanyCargos((CompanyID)index);
+	return CBF_NONE;
+}
+
+/* --- WATCH button menu --- */
+
+static CallBackFunction ToolbarWatchClick(Window *w)
+{
+	PopupMainCompanyToolbMenu(w, WID_TN_WATCH);
+	return CBF_NONE;
+}
+
+static CallBackFunction MenuClickWatch(int index)
+{
+	if(Company::IsValidID((CompanyID)index)){
+		ShowWatchWindow((CompanyID)index);
+	}
+	else ShowWatchWindow(INVALID_COMPANY);
 	return CBF_NONE;
 }
 
@@ -1036,7 +1091,7 @@ static CallBackFunction PlaceLandBlockInfo()
 
 static CallBackFunction ToolbarHelpClick(Window *w)
 {
-	PopupMainToolbMenu(w, WID_TN_HELP, STR_ABOUT_MENU_LAND_BLOCK_INFO, _settings_client.gui.newgrf_developer_tools ? 12 : 9);
+	PopupMainToolbMenu(w, WID_TN_HELP, STR_ABOUT_MENU_LAND_BLOCK_INFO, _settings_client.gui.newgrf_developer_tools ? 13 : 9);
 	return CBF_NONE;
 }
 
@@ -1131,7 +1186,13 @@ void SetStartingYear(Year year)
 static CallBackFunction MenuClickHelp(int index)
 {
 	switch (index) {
-		case  0: return PlaceLandBlockInfo();
+		case 0: return PlaceLandBlockInfo();
+		case 1:
+			extern bool _novahost;
+			if (_networking && _novahost){
+				ShowCommandsToolbar();
+			}
+			break;
 		case  2: IConsoleSwitch();                 break;
 		case  3: ShowAIDebugWindow();              break;
 		case  4: MenuClickSmallScreenshot();       break;
@@ -1141,7 +1202,7 @@ static CallBackFunction MenuClickHelp(int index)
 		case  8: ShowAboutWindow();                break;
 		case  9: ShowSpriteAlignerWindow();        break;
 		case 10: ToggleBoundingBoxes();            break;
-		case 11: ToggleDirtyBlocks();              break;
+		case 11: ToggleDirtyBlocks();              break;		
 	}
 	return CBF_NONE;
 }
@@ -1275,9 +1336,11 @@ static MenuClickedProc * const _menu_clicked_procs[] = {
 	MenuClickSubsidies,   // 6
 	MenuClickStations,    // 7
 	MenuClickFinances,    // 8
+	MenuClickCargos,      // 8.5
 	MenuClickCompany,     // 9
 	MenuClickStory,       // 10
 	MenuClickGoal,        // 11
+	MenuClickWatch,       // 11.5
 	MenuClickGraphs,      // 12
 	MenuClickLeague,      // 13
 	MenuClickIndustry,    // 14
@@ -1489,7 +1552,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			0,  1,  3,  4,  7,  8,  9, 12, 14, 27, 21, 22, 23, 24, 25, 10, 28, 19, 20, 29,
 		};
 		static const byte arrange_all[] = {
-			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28
+			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
 		};
 
 		/* If at least BIGGEST_ARRANGEMENT fit, just spread all the buttons nicely */
@@ -1531,14 +1594,14 @@ class NWidgetScenarioToolbarContainer : public NWidgetToolbarContainer {
 	/* virtual */ const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const
 	{
 		static const byte arrange_all[] = {
-			0, 1, 2, 3, 4, 18, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 26, 28,
+			0, 1, 2, 3, 4, 18, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 28, 30,
 		};
 		static const byte arrange_nopanel[] = {
-			0, 1, 2, 3, 18, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 26, 28,
+			0, 1, 2, 3, 18, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 28, 30,
 		};
 		static const byte arrange_switch[] = {
-			18,  8, 11, 12, 13, 14, 15, 16, 17, 29,
-			 0,  1,  2,  3, 18,  9, 10, 26, 28, 29,
+			18,  8, 11, 12, 13, 14, 15, 16, 17, 31,
+			 0,  1,  2,  3, 18,  9, 10, 28, 30, 31,
 		};
 
 		/* If we can place all buttons *and* the panels, show them. */
@@ -1584,9 +1647,11 @@ static ToolbarButtonProc * const _toolbar_button_procs[] = {
 	ToolbarSubsidiesClick,
 	ToolbarStationsClick,
 	ToolbarFinancesClick,
+	ToolbarCargosClick,
 	ToolbarCompaniesClick,
 	ToolbarStoryClick,
 	ToolbarGoalClick,
+	ToolbarWatchClick,
 	ToolbarGraphsClick,
 	ToolbarLeagueClick,
 	ToolbarIndustryClick,
@@ -1646,6 +1711,10 @@ enum MainToolbarHotkeys {
 	MTHK_EXTRA_VIEWPORT,
 	MTHK_CLIENT_LIST,
 	MTHK_SIGN_LIST,
+	MTHK_BUILD_HQ,
+	MTHK_COMMANDS_GUI,
+	MTHK_CARGOTABLE,
+	MTHK_TREES,
 };
 
 /** Main toolbar. */
@@ -1671,7 +1740,7 @@ struct MainToolbarWindow : Window {
 		 * Since enabled state is the default, just disable when needed */
 		this->SetWidgetsDisabledState(_local_company == COMPANY_SPECTATOR, WID_TN_RAILS, WID_TN_ROADS, WID_TN_WATER, WID_TN_AIR, WID_TN_LANDSCAPE, WIDGET_LIST_END);
 		/* disable company list drop downs, if there are no companies */
-		this->SetWidgetsDisabledState(Company::GetNumItems() == 0, WID_TN_STATIONS, WID_TN_FINANCES, WID_TN_TRAINS, WID_TN_ROADVEHS, WID_TN_SHIPS, WID_TN_AIRCRAFTS, WIDGET_LIST_END);
+		this->SetWidgetsDisabledState(Company::GetNumItems() == 0, WID_TN_STATIONS, WID_TN_FINANCES, WID_TN_CARGOS, WID_TN_WATCH, WID_TN_TRAINS, WID_TN_ROADVEHS, WID_TN_SHIPS, WID_TN_AIRCRAFTS, WIDGET_LIST_END);
 
 		this->SetWidgetDisabledState(WID_TN_GOAL, Goal::GetNumItems() == 0);
 		this->SetWidgetDisabledState(WID_TN_STORY, StoryPage::GetNumItems() == 0);
@@ -1734,11 +1803,21 @@ struct MainToolbarWindow : Window {
 			case MTHK_EXTRA_VIEWPORT: ShowExtraViewPortWindowForTileUnderCursor(); break;
 #ifdef ENABLE_NETWORK
 			case MTHK_CLIENT_LIST: if (_networking) ShowClientList(); break;
+			case MTHK_COMMANDS_GUI: if (_networking && strcmp(_settings_client.network.last_host, "37.157.196.78") == 0 || strcmp(_settings_client.network.last_host, "89.111.65.225") == 0) { ShowCommandsToolbar(); } break;
 #endif
+			case MTHK_BUILD_HQ: if(_current_company != COMPANY_SPECTATOR){ this->last_started_action = CBF_BUILD_HQ; BuildCompanyHQ(); } break;			
+			case MTHK_CARGOTABLE: if(_current_company != COMPANY_SPECTATOR){ ShowCompanyCargos(_current_company); } break;
+			case MTHK_TREES: if(_current_company != COMPANY_SPECTATOR){ BuildTreesWindow(); } break;
 			case MTHK_SIGN_LIST: ShowSignList(); break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
+	}
+
+	virtual void BuildTreesWindow(){
+		ShowBuildTreesToolbar();
+		Window *w = FindWindowById(WC_BUILD_TREES, 0);
+		return w->OnClick(Point(), WID_BT_TYPE_RANDOM, 1);
 	}
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
@@ -1750,6 +1829,13 @@ struct MainToolbarWindow : Window {
 
 			case CBF_PLACE_LANDINFO:
 				ShowLandInfo(tile);
+				break;
+
+			case CBF_BUILD_HQ:
+				if(DoCommandP(tile, OBJECT_HQ, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS))){
+					ResetObjectToPlace();
+					this->RaiseButtons();
+				}
 				break;
 
 			default: NOT_REACHED();
@@ -1839,7 +1925,11 @@ static Hotkey maintoolbar_hotkeys[] = {
 	Hotkey('V', "extra_viewport", MTHK_EXTRA_VIEWPORT),
 #ifdef ENABLE_NETWORK
 	Hotkey((uint16)0, "client_list", MTHK_CLIENT_LIST),
+	Hotkey('N', "nova_commands", MTHK_COMMANDS_GUI),
+	Hotkey(WKC_CTRL | WKC_F2, "cargo_table", MTHK_CARGOTABLE),
 #endif
+	Hotkey(WKC_CTRL  | 'H', "build_hq", MTHK_BUILD_HQ),
+	Hotkey('I', "trees", MTHK_TREES),
 	Hotkey((uint16)0, "sign_list", MTHK_SIGN_LIST),
 	HOTKEY_LIST_END
 };
@@ -1858,9 +1948,11 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 		SPR_IMG_SUBSIDIES,       // WID_TN_SUBSIDIES
 		SPR_IMG_COMPANY_LIST,    // WID_TN_STATIONS
 		SPR_IMG_COMPANY_FINANCE, // WID_TN_FINANCES
+		SPR_IMG_COMPANY_CARGO,   // WID_TN_CARGOS
 		SPR_IMG_COMPANY_GENERAL, // WID_TN_COMPANIES
 		SPR_IMG_STORY_BOOK,      // WID_TN_STORY
 		SPR_IMG_GOAL,            // WID_TN_GOAL
+		SPR_CENTRE_VIEW_VEHICLE, // WID_TN_WATCH
 		SPR_IMG_GRAPHS,          // WID_TN_GRAPHS
 		SPR_IMG_COMPANY_LEAGUE,  // WID_TN_LEAGUE
 		SPR_IMG_INDUSTRY,        // WID_TN_INDUSTRIES
@@ -1884,7 +1976,7 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 	NWidgetMainToolbarContainer *hor = new NWidgetMainToolbarContainer();
 	for (uint i = 0; i < WID_TN_END; i++) {
 		switch (i) {
-			case 4: case 8: case 15: case 19: case 21: case 26: hor->Add(new NWidgetSpacer(0, 0)); break;
+			case 4: case 8: case 17: case 21: case 23: case 28: hor->Add(new NWidgetSpacer(0, 0)); break;
 		}
 		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}

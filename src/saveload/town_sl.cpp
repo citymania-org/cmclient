@@ -109,6 +109,7 @@ void UpdateHousesAndTowns()
 	}
 
 	RebuildTownCaches();
+	ResetTownsGrowthTiles();
 }
 
 /** Save and load of towns. */

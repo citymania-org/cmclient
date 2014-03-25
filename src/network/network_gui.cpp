@@ -232,6 +232,7 @@ protected:
 	Scrollbar *vscroll;           ///< vertical scrollbar of the list of servers
 	QueryString name_editbox;     ///< Client name editbox.
 	QueryString filter_editbox;   ///< Editbox for filter on servers
+	bool UDP_CC_queried;
 
 	/**
 	 * (Re)build the GUI network game list (a.k.a. this->servers) as some
@@ -463,6 +464,7 @@ public:
 
 		this->querystrings[WID_NG_FILTER] = &this->filter_editbox;
 		this->filter_editbox.cancel_button = QueryString::ACTION_CLEAR;
+		this->UDP_CC_queried = false;
 		this->SetFocusedWidget(WID_NG_FILTER);
 
 		this->last_joined = NetworkGameListAddItem(NetworkAddress(_settings_client.network.last_host, _settings_client.network.last_port));
@@ -771,6 +773,17 @@ public:
 			case WID_NG_NEWGRF_MISSING: // Find missing content online
 				if (this->server != NULL) ShowMissingContentWindow(this->server->info.grfconfig);
 				break;
+			case WID_NG_NOVA:
+				if(!UDP_CC_queried){ 
+					NetworkUDPQueryMasterServer();
+					UDP_CC_queried = true;
+				}
+				this->filter_editbox.text.Assign("Novapolis");
+				this->servers.ForceRebuild();
+				this->BuildGUINetworkGameList();
+				this->ScrollToSelectedServer();
+				this->SetDirty();
+				break;
 		}
 	}
 
@@ -898,7 +911,7 @@ public:
 	}
 };
 
-Listing NetworkGameWindow::last_sorting = {false, 5};
+Listing NetworkGameWindow::last_sorting = {false, 0};
 GUIGameServerList::SortFunction * const NetworkGameWindow::sorter_funcs[] = {
 	&NGameNameSorter,
 	&NGameClientSorter,
@@ -935,6 +948,7 @@ static const NWidgetPart _nested_network_game_widgets[] = {
 						NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NG_CONN_BTN),
 											SetDataTip(STR_BLACK_STRING, STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP),
 						NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_NOVA), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_NOVA, STR_NETWORK_SELECT_NOVA_TOOLTIP),
 					EndContainer(),
 					NWidget(NWID_HORIZONTAL), SetPIP(0, 7, 0),
 						NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NG_FILTER_LABEL), SetDataTip(STR_LIST_FILTER_TITLE, STR_NULL),

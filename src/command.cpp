@@ -26,6 +26,10 @@
 #include "signal_func.h"
 #include "core/backup_type.hpp"
 #include "object_base.h"
+#include "window_func.h"
+#include "watch_gui.h"
+
+#include "window_func.h"
 
 #include "table/strings.h"
 
@@ -543,14 +547,19 @@ bool DoCommandP(const CommandContainer *container, bool my_cmd)
 bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback *callback, const char *text, bool my_cmd)
 {
 	/* Cost estimation is generally only done when the
-	 * local user presses shift while doing somthing.
-	 * However, in case of incoming network commands,
-	 * map generation or the pause button we do want
-	 * to execute. */
-	bool estimate_only = _shift_pressed && IsLocalCompany() &&
-			!_generating_world &&
-			!(cmd & CMD_NETWORK_COMMAND) &&
-			(cmd & CMD_ID_MASK) != CMD_PAUSE;
+	 * local user presses shift while constructing somthing.
+	 * However, in case of incoming network commands or
+	 * map generation we do want to execute. */
+	bool estimate_only = false;
+	switch (_command_proc_table[cmd & CMD_ID_MASK].type) {
+		case CMDT_LANDSCAPE_CONSTRUCTION:
+		case CMDT_VEHICLE_CONSTRUCTION:
+			estimate_only = _shift_pressed && IsLocalCompany() &&
+					!_generating_world && !(cmd & CMD_NETWORK_COMMAND);
+			break;
+		default:
+			break; // just to silence warnings
+	}
 
 	/* We're only sending the command, so don't do
 	 * fancy things for 'success'. */
@@ -750,6 +759,16 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 	if (tile != 0) {
 		Company *c = Company::GetIfValid(_current_company);
 		if (c != NULL) c->last_build_coordinate = tile;
+	}
+
+	/* Send Tile Number to Watching Company Windows */
+	int watching_window = 0;
+	WatchCompany *wc;
+	wc = dynamic_cast<WatchCompany*>(FindWindowById(WC_WATCH_COMPANY, watching_window));
+	while (wc!=NULL) {
+		wc->OnDoCommand( _current_company, tile );
+		watching_window++;
+		wc = dynamic_cast<WatchCompany*>(FindWindowById(WC_WATCH_COMPANY, watching_window));
 	}
 
 	SubtractMoneyFromCompany(res2);

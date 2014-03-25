@@ -29,6 +29,10 @@ enum CompanyValueWidgets {
 	WID_CV_BACKGROUND, ///< Background of the window.
 	WID_CV_GRAPH,      ///< Graph itself.
 	WID_CV_RESIZE,     ///< Resize button.
+	WID_CPR2_FOOTER,          ///< Footer.
+	WID_CPR2_ENABLE_CARGOES,  ///< Enable cargoes button.
+	WID_CPR2_DISABLE_CARGOES, ///< Disable cargoes button.
+	WID_CPR2_CARGO_FIRST,     ///< First cargo in the list.
 };
 
 /** Widget of the #PerformanceHistoryGraphWindow class. */

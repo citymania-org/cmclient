@@ -52,6 +52,7 @@
 
 #include "table/strings.h"
 #include "table/pricebase.h"
+#include "cargo_table_gui.h"
 
 
 /* Initialize the cargo payment-pool */
@@ -1078,6 +1079,15 @@ static Money DeliverGoods(int num_pieces, CargoID cargo_type, StationID dest, Ti
 	const CargoSpec *cs = CargoSpec::Get(cargo_type);
 	st->town->received[cs->town_effect].new_act += accepted;
 
+	/* Increase town's counter for all goods types only if delivered near town*/
+	if(CB_Enabled()){
+		Town *tdest = CalcClosestTownFromTile(st->xy);
+		if (_settings_client.gui.cb_distance_check == 0 || (tdest->xy == st->town->xy && (DistanceManhattan(st->town->xy, st->xy) <= _settings_client.gui.cb_distance_check))) {
+			st->town->new_act_cargo[cargo_type] += accepted;
+			InvalidateWindowData(WC_CB_TOWN, st->town->index);
+		}
+	}
+
 	/* Determine profit */
 	Money profit = GetTransportedGoodsIncome(accepted, DistanceManhattan(source_tile, st->xy), days_in_transit, cargo_type);
 
@@ -1093,6 +1103,16 @@ static Money DeliverGoods(int num_pieces, CargoID cargo_type, StationID dest, Ti
 			default: profit *= 4; break;
 		}
 	}
+
+	company->cargo_income[cargo_type] += profit;
+	company->cargo_units[cargo_type] += num_pieces;
+
+	company->cargo_income_period[0][cargo_type] += profit;
+	company->cargo_units_period[0][cargo_type] += num_pieces;
+
+	company->cur_economy.cargo_income[cargo_type] += profit;
+
+	InvalidateCargosWindows(company->index);
 
 	return profit;
 }
@@ -1801,6 +1821,11 @@ void CompaniesMonthlyLoop()
 	}
 	CompaniesPayInterest();
 	HandleEconomyFluctuations();
+	
+	Company *c;
+	FOR_ALL_COMPANIES(c){
+		cargo_iam_free(c);
+	}
 }
 
 static void DoAcquireCompany(Company *c)

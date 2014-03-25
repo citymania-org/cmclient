@@ -104,6 +104,16 @@ enum WindowKeyCodes {
 	WKC_COMMA       = 151, ///< , Comma
 	WKC_PERIOD      = 152, ///< . Period
 	WKC_MINUS       = 153, ///< - Minus
+
+	WKC_L_BRACE     = 154, ///< { Left brace
+	WKC_R_BRACE     = 155, ///< } Right brace
+	
+	WKC_L_PAREN     = 157, ///< ( Left parentheses
+	WKC_R_PAREN     = 158, ///< ) Right parentheses
+	WKC_PLUS        = 159, ///< + Plus
+	WKC_EXCLAIM     = 160, ///< ! Exclamation mark
+	WKC_ASTERISK    = 161, ///< * Asterisk
+	WKC_DOLLAR      = 162, ///< $ Dollar sign
 };
 
 /** A single sprite of a list of animated cursors */

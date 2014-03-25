@@ -54,6 +54,7 @@ extern byte _dirkeys;        ///< 1 = left, 2 = up, 4 = right, 8 = down
 extern bool _fullscreen;
 extern CursorVars _cursor;
 extern bool _ctrl_pressed;   ///< Is Ctrl pressed?
+extern bool _alt_pressed;    ///< Is Alt pressed?
 extern bool _shift_pressed;  ///< Is Shift pressed?
 extern byte _fast_forward;
 

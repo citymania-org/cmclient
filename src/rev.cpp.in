@@ -37,7 +37,7 @@ bool IsReleasedVersion()
  * norev000 is for non-releases that are made on systems without
  * subversion or sources that are not a checkout of subversion.
  */
-const char _openttd_revision[] = "!!VERSION!!";
+const char _openttd_revision[] = "1.4.0-beta5";
 
 /**
  * The text version of OpenTTD's build date.
@@ -55,7 +55,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
  * (compiling from sources without any version control software)
  * and 2 is for modified revision.
  */
-const byte _openttd_revision_modified = !!MODIFIED!!;
+const byte _openttd_revision_modified = 0;
 
 /**
  * The NewGRF revision of OTTD:

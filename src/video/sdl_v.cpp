@@ -492,7 +492,15 @@ static const VkMapping _vk_mapping[] = {
 	AS(SDLK_QUOTE,   WKC_SINGLEQUOTE),
 	AS(SDLK_COMMA,   WKC_COMMA),
 	AS(SDLK_MINUS,   WKC_MINUS),
-	AS(SDLK_PERIOD,  WKC_PERIOD)
+	AS(SDLK_PERIOD,  WKC_PERIOD),
+
+	AS(0x7b,            WKC_L_BRACE),
+	AS(0x7d,            WKC_R_BRACE),
+	AS(SDLK_LEFTPAREN,  WKC_L_PAREN),
+	AS(SDLK_RIGHTPAREN, WKC_R_PAREN),
+	AS(SDLK_PLUS,       WKC_PLUS),
+	AS(SDLK_EXCLAIM,    WKC_EXCLAIM),
+	AS(SDLK_ASTERISK,   WKC_ASTERISK),
 };
 
 static uint ConvertSdlKeyIntoMy(SDL_keysym *sym, WChar *character)
@@ -750,8 +758,10 @@ void VideoDriver_SDL::MainLoop()
 			next_tick = cur_ticks + MILLISECONDS_PER_TICK;
 
 			bool old_ctrl_pressed = _ctrl_pressed;
+			bool old_alt_pressed = _alt_pressed;
 
 			_ctrl_pressed  = !!(mod & KMOD_CTRL);
+			_alt_pressed = !!(mod & KMOD_ALT);
 			_shift_pressed = !!(mod & KMOD_SHIFT);
 
 			/* determine which directional keys are down */

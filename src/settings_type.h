@@ -79,6 +79,15 @@ struct GUISettings {
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
 	bool   show_finances;                    ///< show finances at end of year
 	bool   sg_new_nonstop;                   ///< ttdpatch compatible nonstop handling read from pre v93 savegames
+	bool   enable_ctrl_click_start_stop;     ///< allow ctrl+click to start or stop vehicles
+	uint8  goto_shortcuts_ctrl_lclick;       ///< goto action shortcut CTRL+LEFT-CLICK
+	uint8  goto_shortcuts_shift_lclick;      ///< goto action shortcut SHIFT+LEFT-CLICK
+	uint8  goto_shortcuts_ctrlshift_lclick;  ///< goto action shortcut CTRL+SHIFT+LEFT-CLICK
+	uint8  goto_shortcuts_alt_lclick;        ///< goto action shortcut ALT+LEFT-CLICK
+	uint8  goto_shortcuts_altshift_lclick;   ///< goto action shortcut ALT+SHIFT+LEFT-CLICK
+	uint8  goto_shortcuts_altctrl_lclick;    ///< goto action shortcut ALT+CTRL+LEFT-CLICK
+	bool   auto_noload_on_transfer;          ///< automatically set no-loading when ordering to transfer all cargo
+	bool   auto_noload_on_unloadall;         ///< automatically set no-loading when ordering to unload all cargo
 	bool   new_nonstop;                      ///< ttdpatch compatible nonstop handling
 	uint8  stop_location;                    ///< what is the default stop location of trains?
 	uint8  auto_scrolling;                   ///< scroll when moving mouse to the edge (see #ViewportAutoscrolling)
@@ -132,6 +141,8 @@ struct GUISettings {
 	bool   station_show_coverage;            ///< whether to highlight coverage area
 	bool   persistent_buildingtools;         ///< keep the building tools active after usage
 	bool   expenses_layout;                  ///< layout of expenses window
+	bool   old_depot_train_length_calc;
+	uint8  cb_distance_check;                ///< zoning cb distance
 	uint32 last_newgrf_count;                ///< the numbers of NewGRFs we found during the last scan
 	byte   missing_strings_threshold;        ///< the number of missing strings before showing the warning
 	uint8  graph_line_thickness;             ///< the thickness of the lines in the various graph guis
@@ -266,6 +277,9 @@ struct NetworkSettings {
 	char   last_host[NETWORK_HOSTNAME_LENGTH];            ///< IP address of the last joined server
 	uint16 last_port;                                     ///< port of the last joined server
 	bool   no_http_content_downloads;                     ///< do not do content downloads over HTTP
+	
+	char   username[NETWORK_NAME_LENGTH];                 ///< user name
+	char   userpw[NETWORK_PASSWORD_LENGTH];               ///< user password
 #else /* ENABLE_NETWORK */
 #endif
 };

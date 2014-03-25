@@ -952,7 +952,7 @@ static bool SetScriptButtonColour(NWidgetCore &button, bool dead, bool paused)
 {
 	/* Dead scripts are indicated with red background and
 	 * paused scripts are indicated with yellow background. */
-	Colours colour = dead ? COLOUR_RED :
+	Colours colour = dead ? COLOUR_WHITE :
 			(paused ? COLOUR_YELLOW : COLOUR_GREY);
 	if (button.colour != colour) {
 		button.colour = colour;
@@ -1195,10 +1195,10 @@ struct AIDebugWindow : public Window {
 					TextColour colour;
 					switch (log->type[pos]) {
 						case ScriptLog::LOG_SQ_INFO:  colour = TC_BLACK;  break;
-						case ScriptLog::LOG_SQ_ERROR: colour = TC_RED;    break;
+						case ScriptLog::LOG_SQ_ERROR: colour = TC_WHITE;  break;
 						case ScriptLog::LOG_INFO:     colour = TC_BLACK;  break;
 						case ScriptLog::LOG_WARNING:  colour = TC_YELLOW; break;
-						case ScriptLog::LOG_ERROR:    colour = TC_RED;    break;
+						case ScriptLog::LOG_ERROR:    colour = TC_WHITE;  break;
 						default:                  colour = TC_BLACK;  break;
 					}
 

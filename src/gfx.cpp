@@ -30,6 +30,7 @@ byte _dirkeys;        ///< 1 = left, 2 = up, 4 = right, 8 = down
 bool _fullscreen;
 CursorVars _cursor;
 bool _ctrl_pressed;   ///< Is Ctrl pressed?
+bool _alt_pressed;    ///< Is Alt pressed?
 bool _shift_pressed;  ///< Is Shift pressed?
 byte _fast_forward;
 bool _left_button_down;     ///< Is left mouse button pressed?

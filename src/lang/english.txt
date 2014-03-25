@@ -232,6 +232,9 @@ STR_TOOLTIP_GROUP_ORDER                                         :{BLACK}Select g
 STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Select sorting order (descending/ascending)
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Select sorting criteria
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Select filtering criteria
+STR_BUTTON_FILTER                                               :{BLACK}Filter
+STR_BUTTON_FILTER_SELECT_ALL                                    :Select All
+STR_BUTTON_FILTER_SELECT_NONE                                   :Select None
 STR_BUTTON_SORT_BY                                              :{BLACK}Sort by
 STR_BUTTON_LOCATION                                             :{BLACK}Location
 STR_BUTTON_RENAME                                               :{BLACK}Rename
@@ -311,9 +314,11 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Display 
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Display subsidies
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Display list of company's stations
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Display company finances information
+STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_CARGOS                      :{BLACK}Display company cargos information
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Display general company information
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Display story book
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Display goal list
+STR_TOOLBAR_TOOLTIP_DISPLAY_WATCH                               :{BLACK}Watch company's actions
 STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Display graphs
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Display company league table
 STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Fund construction of new industry or list all industries
@@ -365,6 +370,7 @@ STR_SETTINGS_MENU_CONFIG_SETTINGS                               :Advanced settin
 STR_SETTINGS_MENU_SCRIPT_SETTINGS                               :AI/Game script settings
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF settings
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Transparency options
+STR_SETTINGS_MENU_ZONING                                        :Zoning
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Town names displayed
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Station names displayed
 STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Waypoint names displayed
@@ -389,6 +395,7 @@ STR_MAP_MENU_MAP_OF_WORLD                                       :Map of world
 STR_MAP_MENU_EXTRA_VIEW_PORT                                    :Extra viewport
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Cargo Flow Legend
 STR_MAP_MENU_SIGN_LIST                                          :Sign list
+STR_MAP_MENU_WATCH_COMPANY                                      :Watch Company
 
 ############ range for town menu starts
 STR_TOWN_MENU_TOWN_DIRECTORY                                    :Town directory
@@ -457,7 +464,7 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Message history
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Land area information
-STR_ABOUT_MENU_SEPARATOR                                        :
+STR_ABOUT_MENU_SEPARATOR                                        :Novapolis
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot
@@ -1668,6 +1675,26 @@ STR_CONFIG_SETTING_REVERSE_AT_SIGNALS_HELPTEXT                  :Allow trains to
 
 STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}Change setting value
 
+STR_CONFIG_SETTING_VEHICLES_CTRL                                :{ORANGE}Controls & Orders
+STR_CONFIG_SETTING_ORDER_SHORTCUTS                              :{ORANGE}Order's Shortcuts
+STR_CONFIG_SETTING_CTRL_ENABLE_CTRLCLICK_STARTSTOP              :Allow ctrl+left-click vehicles to start or stop them: {STRING2}
+STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                   :"Transfer" orders are "No Loading" by default: {STRING2}
+STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                     :"Unload all" orders are "No Loading" by default: {STRING2}
+
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLLCLICK                 :ctrl+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLSHIFTLCLICK            :ctrl+shift+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_SHIFTLCLICK                :shift+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_ALTLCLICK                  :alt+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_ALTSHIFTCLICK              :alt+shift+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLALTLCLICK              :ctrl+alt+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_NONE                      :do nothing
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FULL_LOAD_ANY             :Full load any cargo
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_TRANSFER_CARGO            :Transfer cargo
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_UNLOAD_ALL                :Force unload of all cargo
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FEEDERLOAD                :Feeder Load (replace first order)
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FEEDERDROP                :Feeder Unload (replace last order)
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_NO_LOAD                   :Do not load any cargo
+
 # Config errors
 STR_CONFIG_ERROR                                                :{WHITE}Error with the configuration file...
 STR_CONFIG_ERROR_ARRAY                                          :{WHITE}... error in array '{RAW_STRING}'
@@ -2274,6 +2301,7 @@ STR_RAIL_TOOLBAR_MAGLEV_CONSTRUCTION_CAPTION                    :Maglev Construc
 
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}Build railway track. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Build railway track using the Autorail mode. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_POLYRAIL                         :{BLACK}Build railway track using the Polyline mode. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}Build train depot (for buying and servicing trains). Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}Convert rail to waypoint. Ctrl enables joining waypoints. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}Build railway station. Ctrl enables joining stations. Shift toggles building/showing cost estimate
@@ -4793,10 +4821,18 @@ STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STR
 STR_SAVEGAME_NAME_SPECTATOR                                     :Spectator, {1:STRING1}
 
 # Viewport strings
+STR_VIEWPORT_TOWN_POP_VERY_POOR_RATING                          :{WHITE}{TOWN} {RED}({COMMA})
+STR_VIEWPORT_TOWN_POP_MEDIOCRE_RATING                           :{WHITE}{TOWN} {ORANGE}({COMMA})
+STR_VIEWPORT_TOWN_POP_GOOD_RATING                               :{WHITE}{TOWN} {YELLOW}({COMMA})
 STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
+STR_VIEWPORT_TOWN_POP_EXCELLENT_RATING                          :{WHITE}{TOWN} {GREEN}({COMMA})
 STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
 STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
+STR_VIEWPORT_TOWN_TINY_VERY_POOR_RATING                         :{TINY_FONT}{RED}{TOWN}
+STR_VIEWPORT_TOWN_TINY_MEDIOCRE_RATING                          :{TINY_FONT}{ORANGE}{TOWN}
+STR_VIEWPORT_TOWN_TINY_GOOD_RATING                              :{TINY_FONT}{YELLOW}{TOWN}
 STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
+STR_VIEWPORT_TOWN_TINY_EXCELLENT_RATING                         :{TINY_FONT}{GREEN}{TOWN}
 
 STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
 STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
@@ -4884,4 +4920,180 @@ STR_LORRY                                                       :{BLACK}{LORRY}
 STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
+STR_WATCH_WINDOW_TITLE                                          :{WHITE}Watching {RAW_STRING}.
+STR_WATCH_CLICK_TO_WATCH_COMPANY                                :{BLACK}Click here to watch company building
+STR_WATCH_CLICK_NEW_WINDOW                                      :{BLACK}Click here to open new watching window
+
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+
+STR_TOWN_VIEW_GROWTH                                            :{BLACK}GR: {ORANGE}{COMMA}{BLACK}  next: {ORANGE}{COMMA} {BLACK} RH: {ORANGE}{COMMA}  {BLACK}flag {ORANGE}{COMMA}
+STR_TOWN_VIEW_GROWTH_TILES                                            :{BLACK}HS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}CS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}HR: {ORANGE}{COMMA}(+{COMMA})
+
+
+STR_CB_DISTANCE_CHECK                                           :CB town acceptance: {STRING2}
+
+######## Zoning toolbar
+
+STR_ZONING_TOOLBAR                                              :{WHITE}Zoning toolbar
+STR_ZONING_OUTER                                                :{BLACK}Outer tile borders:
+STR_ZONING_INNER                                                :{BLACK}Inner tile borders:
+STR_ZONING_OUTER_INFO                                           :{BLACK}Select which type of zoning you want on the outer border of a tile.
+STR_ZONING_INNER_INFO                                           :{BLACK}Select which type of zoning you want on the inner border of a tile.
+
+STR_ZONING_NO_ZONING                                            :Nothing
+STR_ZONING_AUTHORITY                                            :Authority
+STR_ZONING_CAN_BUILD                                            :Where I can't build
+STR_ZONING_STA_CATCH                                            :Station catchment
+STR_ZONING_IND_CATCH                                            :Industry catchment
+STR_ZONING_BUL_CATCH                                            :City catchment
+STR_ZONING_BUL_UNSER                                            :Unserved buildings
+STR_ZONING_IND_UNSER                                            :Unserved industries
+STR_ZONING_TOWN_ZONES                                         :Town zones
+STR_ZONING_CB_TOWN_BORDERS                                         :CB town borders
+STR_ZONING_CB_BORDERS                                           :CB borders
+STR_ZONING_ADVERTISEMENT_ZONES                                 :Advertisement zones
+STR_ZONING_TOWN_GROWTH_TILES                                 :Town growth tiles
+
+# Commands toolbar
+STR_TOOLBAR_COMMANDS_CAPTION                                    :{WHITE}Commands
+STR_TOOLBAR_COMMANDS_GOAL_CAPTION                               :{BLACK}Goal
+STR_TOOLBAR_COMMANDS_GOAL_TOOLTIP                               :{BLACK}Send !goal command to server.
+STR_TOOLBAR_COMMANDS_QUEST_CAPTION                              :{BLACK}Quest list
+STR_TOOLBAR_COMMANDS_QUEST_TOOLTIP                              :{BLACK}Send !quest command to server.
+STR_TOOLBAR_COMMANDS_SCORE_CAPTION                              :{BLACK}Score
+STR_TOOLBAR_COMMANDS_SCORE_TOOLTIP                              :{BLACK}Send !score command to server.
+STR_TOOLBAR_COMMANDS_TOWN_CAPTION                               :{BLACK}Town
+STR_TOOLBAR_COMMANDS_TOWN_TOOLTIP                               :{BLACK}Send !town command to server.
+STR_TOOLBAR_COMMANDS_TOWN_ID_CAPTION                            :{BLACK}Town ID
+STR_TOOLBAR_COMMANDS_TOWN_ID_TOOLTIP                            :{BLACK}Send !town c-id command to server.
+STR_TOOLBAR_COMMANDS_HINT_CAPTION                               :{BLACK}CB Hint
+STR_TOOLBAR_COMMANDS_HINT_TOOLTIP                               :{BLACK}Send !hint command to server(Shows town demand in CB mode).
+STR_TOOLBAR_COMMANDS_LOGIN_CAPTION                              :{BLACK}Login
+STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP                              :{BLACK}Send !login command to server.
+STR_TOOLBAR_COMMANDS_AUTOLOGIN_CAPTION                          :{BLACK}Autologin
+STR_TOOLBAR_COMMANDS_AUTOLOGIN_TOOLTIP                          :{BLACK}Autologin. Requires credentials
+STR_TOOLBAR_COMMANDS_CREDENTIALS_CAPTION                        :{BLACK}Enter login
+STR_TOOLBAR_COMMANDS_CREDENTIALS_TOOLTIP                        :{BLACK}Enter account name and password
+STR_TOOLBAR_COMMANDS_TIMELEFT_CAPTION                           :{BLACK}Timeleft
+STR_TOOLBAR_COMMANDS_TIMELEFT_TOOLTIP                           :{BLACK}Send !timeleft command to server.
+STR_TOOLBAR_COMMANDS_NS_CAPTION                                 :{BLACK}NS{NUM}
+STR_TOOLBAR_COMMANDS_NS_TOOLTIP                                 :{BLACK}Join NS{NUM}
+STR_TOOLBAR_COMMANDS_RESETME_CAPTION                            :{BLACK}ResetMe
+STR_TOOLBAR_COMMANDS_RESETME_TOOLTIP                            :{BLACK}Send !resetme command to server.
+STR_TOOLBAR_COMMANDS_SAVEME_CAPTION                             :{BLACK}SaveMe
+STR_TOOLBAR_COMMANDS_SAVEME_TOOLTIP                             :{BLACK}Send !saveme command to server.
+STR_TOOLBAR_COMMANDS_NAME_CAPTION                               :{BLACK}New name
+STR_TOOLBAR_COMMANDS_NAME_TOOLTIP                               :{BLACK}Send !name command to server.
+STR_TOOLBAR_COMMANDS_INFO_CAPTION                               :{BLACK}Info
+STR_TOOLBAR_COMMANDS_INFO_TOOLTIP                               :{BLACK}Send !info command to server.
+
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_I_CAPTION                     :{BLACK}Income
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_A_CAPTION                     :{BLACK}Amount
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_A_TOOLTIP                     :{BLACK}Switch cargo buttons to amount
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_I_TOOLTIP                     :{BLACK}Switch cargo buttons to income
+
+
+STR_TOOLBAR_COMMANDS_TOWN_QUERY                                 :{WHITE}Company ID:
+STR_TOOLBAR_COMMANDS_LOGIN_NAME_QUERY                           :{WHITE}<Name> <password>
+STR_TOOLBAR_COMMANDS_LOGIN_PASSWORD_QUERY                       :{WHITE}Password:
+STR_TOOLBAR_COMMANDS_NAME_NEWNAME_QUERY                         :{WHITE}New name:
+
+STR_TOOLBAR_COMMANDS_TOPICS_CAPTION                             :{BLACK}Topics
+STR_TOOLBAR_COMMANDS_TOPICS_TOOLTIP                             :{BLACK}Display help topics
+STR_TOOLBAR_COMMANDS_TOPIC1_CAPTION                             :{BLACK}HELP Login
+STR_TOOLBAR_COMMANDS_TOPIC1_TOOLTIP                             :{BLACK}How to use login
+STR_TOOLBAR_COMMANDS_TOPIC2_CAPTION                             :{BLACK}HELP Coal Accept
+STR_TOOLBAR_COMMANDS_TOPIC2_TOOLTIP                             :{BLACK}What to do when town does not accept Coal
+STR_TOOLBAR_COMMANDS_TOPIC3_CAPTION                             :{BLACK}HELP Food accept
+STR_TOOLBAR_COMMANDS_TOPIC3_TOOLTIP                             :{BLACK}What to do when town does not accept Food
+STR_TOOLBAR_COMMANDS_TOPIC4_CAPTION                             :{BLACK}HELP energy
+STR_TOOLBAR_COMMANDS_TOPIC4_TOOLTIP                             :{BLACK}What are tourists, business mail or energy?
+STR_TOOLBAR_COMMANDS_TOPIC5_CAPTION                             :{BLACK}HELP admin
+STR_TOOLBAR_COMMANDS_TOPIC5_TOOLTIP                             :{BLACK}How to use admin command?
+STR_TOOLBAR_COMMANDS_TOPIC6_CAPTION                             :{BLACK}HELP New Comp.
+STR_TOOLBAR_COMMANDS_TOPIC6_TOOLTIP                             :{BLACK}Why new company can not be starter?
+
+STR_TOOLBAR_COMMANDS_HELP_CAPTION                               :{BLACK}Help
+STR_TOOLBAR_COMMANDS_HELP_TOOLTIP                               :{BLACK}Display Help
+STR_TOOLBAR_COMMANDS_RULES_CAPTION                              :{BLACK}RULES
+STR_TOOLBAR_COMMANDS_RULES_TOOLTIP                              :{BLACK}Show Rules
+STR_TOOLBAR_COMMANDS_CBHINT_CAPTION                             :{BLACK}CB Hint
+STR_TOOLBAR_COMMANDS_CBHINT_TOOLTIP                             :{BLACK}Display help for City builder
+STR_TOOLBAR_COMMANDS_BEST_CAPTION                               :{BLACK}Best
+STR_TOOLBAR_COMMANDS_BEST_TOOLTIP                               :{BLACK}Show 5 best games
+STR_TOOLBAR_COMMANDS_RANK_CAPTION                               :{BLACK}Rank
+STR_TOOLBAR_COMMANDS_RANK_TOOLTIP                               :{BLACK}Show top 10 players
+STR_TOOLBAR_COMMANDS_ME_CAPTION                                 :{BLACK}My Rank
+STR_TOOLBAR_COMMANDS_ME_TOOLTIP                                 :{BLACK}Show your ranking position
+
+#cargo table
+STR_TOOLBAR_CARGOS_HEADER_CARGO                                 :{BLACK}Cargo Name
+STR_TOOLBAR_CARGOS_HEADER_AMOUNT                                :{BLACK}Amount
+STR_TOOLBAR_CARGOS_HEADER_INCOME                                :{BLACK}Income
+STR_TOOLBAR_CARGOS_HEADER_TOTAL                                 :{BLACK}Total
+STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH                           :{BLACK}Total this Month
+
+STR_TOOLBAR_CARGOS_UNITS                                        :{BLACK}{COMMA}
+STR_TOOLBAR_CARGOS_UNITS_TOTAL                                  :{BLACK}{COMMA}
+STR_TOOLBAR_CARGOS_CAPTION                                      :{WHITE}{COMPANY} Cargo Transported {BLACK}{COMPANY_NUM}
+STR_TOOLBAR_CARGOS_NAME                                         :{BLACK}{STRING}
+
+#towns
+STR_TOWN_DIRECTORY_TOWN_COLOUR                                  :{TOWN}{BLACK} ({COMMA})
+STR_OLD_DEPOT_TRAINT_LENGTH                                     :Old depot length format: {STRING2}
+STR_TOWN_DIRECTORY_CAPTION_EXTRA                                :{WHITE}Towns ({YELLOW}{COMMA}{WHITE} / {ORANGE}{COMMA}{WHITE})
+STR_SMALLMAP_TOWN_LARGE                                         :{TINY_FONT}{YELLOW}{TOWN}
+STR_TOWN_VIEW_TOWN_CAPTION_EXTRA                                :{WHITE}{TOWN} [{COMMA}]
+STR_TOWN_VIEW_CITY_CAPTION_EXTRA                                :{WHITE}{TOWN} (City) [{COMMA}]
+
+STR_ORDER_DIST                                                  :{NUM}, {NUM}
+
+#server list
+STR_NETWORK_SELECT_NOVA                                         :{BLACK}Novapolis
+STR_NETWORK_SELECT_NOVA_TOOLTIP                                 :{BLACK}Filter Novapolis
+
+### Town CB gui
+STR_BUTTON_CB                                                   :{STRING}
+STR_BUTTON_CB_YES                                               :{BLACK}CB
+STR_TOWN_VIEW_CB_CAPTION                                        :{WHITE}{TOWN} ({COMMA})
+
+STR_CB_LARGE_ADVERTISING_CAMPAIGN                               :{BLACK}Large Advertising
+STR_CB_NEW_BUILDINGS                                            :{BLACK}Fund Buildings
+
+STR_TOWN_CB_FUNDING                                             :{ORANGE}Funded for {YELLOW}{COMMA}{ORANGE} month{P "" s}
+STR_TOWN_CB_GROWING                                             :{GREEN}Town is growing!
+STR_TOWN_CB_NOT_GROWING                                         :{WHITE}Town is not growing
+STR_TOWN_CB_GROWING_DETAIL                                      :{ORANGE}1 house in {YELLOW}{COMMA} {ORANGE}days ({YELLOW}{COMMA}%{ORANGE}). Next House in {YELLOW}{COMMA} {ORANGE}days
+
+STR_TOWN_GROWTH_HEADER_CARGO                                    :{BLACK}Cargo
+STR_TOWN_GROWTH_HEADER_AMOUNT                                   :{BLACK}Delivered
+STR_TOWN_GROWTH_HEADER_REQ                                      :{BLACK}Required
+STR_TOWN_GROWTH_HEADER_LAST                                     :{BLACK}Last Month
+STR_TOWN_GROWTH_HEADER_STORE                                    :{BLACK}Stored
+STR_TOWN_GROWTH_HEADER_STORE_PCT                                    :{BLACK}Use%
+STR_TOWN_GROWTH_HEADER_FROM                                     :{BLACK}From
+
+STR_TOWN_CB_CARGO_NAME                                          :{BLACK}{STRING}:
+
+STR_TOWN_CB_CARGO_AMOUNT_GOOD                                   :{GREEN}{COMMA}
+STR_TOWN_CB_CARGO_AMOUNT_BAD                                    :{YELLOW}{COMMA}
+STR_TOWN_CB_CARGO_AMOUNT_NOT                                    :{SILVER}{COMMA}
+
+STR_TOWN_CB_CARGO_REQ_YES                                       :{ORANGE}{COMMA}
+STR_TOWN_CB_CARGO_REQ_NOT                                       :{SILVER}{COMMA}
+
+STR_TOWN_CB_CARGO_STORE_YES                                     :{LTBLUE}{COMMA}
+STR_TOWN_CB_CARGO_STORE_NOT                                     :{SILVER}{COMMA}
+STR_TOWN_CB_CARGO_STORE_DECAY                                   :{BLACK}-
+
+STR_TOWN_CB_CARGO_STORE_PCT_YES                                     :{LTBLUE}{COMMA}%
+STR_TOWN_CB_CARGO_STORE_PCT_NOT                                     :{SILVER}{COMMA}%
+
+STR_TOWN_CB_CARGO_PREVIOUS_YES                                  :{GREEN}{COMMA}
+STR_TOWN_CB_CARGO_PREVIOUS_EDGE                                 :{YELLOW}{COMMA}
+STR_TOWN_CB_CARGO_PREVIOUS_BAD                                  :{RED}{COMMA}
+STR_TOWN_CB_CARGO_PREVIOUS_NOT                                  :{SILVER}{COMMA}
+
+STR_TOWN_CB_CARGO_FROM_YES                                      :{YELLOW}{COMMA}
+STR_TOWN_CB_CARGO_FROM_NOT                                      :{SILVER}{COMMA}
+

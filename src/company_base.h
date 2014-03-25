@@ -17,6 +17,7 @@
 #include "autoreplace_type.h"
 #include "tile_type.h"
 #include "settings_type.h"
+#include "cargo_type.h"
 #include "group.h"
 
 /** Statistics about the economy. */
@@ -26,6 +27,7 @@ struct CompanyEconomyEntry {
 	CargoArray delivered_cargo; ///< The amount of delivered cargo.
 	int32 performance_history;  ///< Company score (scale 0-1000)
 	Money company_value;        ///< The value of the company.
+	Money cargo_income[NUM_CARGO]; ///< Cargo income from each cargo type	
 };
 
 struct CompanyInfrastructure {
@@ -123,6 +125,12 @@ struct Company : CompanyPool::PoolItem<&_company_pool>, CompanyProperties {
 	GroupStatistics group_default[VEH_COMPANY_END];  ///< NOSAVE: Statistics for the DEFAULT_GROUP group.
 
 	CompanyInfrastructure infrastructure; ///< NOSAVE: Counts of company owned infrastructure.
+
+	uint32 cargo_units[NUM_CARGO];   ///< Total amount of transported cargo for each cargo ID
+	Money cargo_income[NUM_CARGO];   ///< Total income from transported cargo for each cargo ID
+
+	uint32 cargo_units_period[2][NUM_CARGO];   ///< Monthly amount of transported cargo for each cargo ID 
+	Money cargo_income_period[2][NUM_CARGO];   ///< Monthly income from transported cargo for each cargo ID
 
 	/**
 	 * Is this company a valid company, controlled by the computer (a NoAI program)?

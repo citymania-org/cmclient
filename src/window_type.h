@@ -369,6 +369,7 @@ enum WindowClass {
 	 *   - 0 = #BuildObjectWidgets
 	 */
 	WC_BUILD_OBJECT,
+	WC_WATCH_COMPANY,
 
 	/**
 	 * Build vehicle; %Window numbers:
@@ -516,6 +517,7 @@ enum WindowClass {
 	 *   - #CompanyID = #CompanyWidgets
 	 */
 	WC_FINANCES,
+	WC_CARGOS,
 
 	/**
 	 * Income graph; %Window numbers:
@@ -674,6 +676,10 @@ enum WindowClass {
 	 *   - 0 = #LinkGraphWidgets
 	 */
 	WC_LINKGRAPH_LEGEND,
+
+	WC_ZONING_TOOLBAR,
+	WC_COMMAND_TOOLBAR,
+	WC_CB_TOWN,
 
 	WC_INVALID = 0xFFFF, ///< Invalid window.
 };

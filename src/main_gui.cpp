@@ -105,7 +105,7 @@ bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyl
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	w->SetDirty();
 
-	if (w->IsWidgetLowered(widget)) {
+	if (w->IsWidgetLowered(widget) && mode == _thd.place_mode) {
 		ResetObjectToPlace();
 		return false;
 	}

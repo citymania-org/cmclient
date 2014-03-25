@@ -1500,6 +1500,7 @@ static SettingEntry _settings_ui[] = {
 	SettingEntry("gui.default_rail_type"),
 	SettingEntry("gui.disable_unsuitable_building"),
 	SettingEntry("gui.persistent_buildingtools"),
+	SettingEntry("gui.cb_distance_check"),
 };
 /** Interface subpage */
 static SettingsPage _settings_ui_page = {_settings_ui, lengthof(_settings_ui)};
@@ -1660,6 +1661,7 @@ static SettingEntry _settings_vehicles_servicing[] = {
 	SettingEntry("difficulty.vehicle_breakdowns"),
 	SettingEntry("order.no_servicing_if_no_breakdowns"),
 	SettingEntry("order.serviceathelipad"),
+	SettingEntry("gui.old_depot_train_length_calc"),
 };
 /** Servicing sub-page */
 static SettingsPage _settings_vehicles_servicing_page = {_settings_vehicles_servicing, lengthof(_settings_vehicles_servicing)};
@@ -1678,12 +1680,33 @@ static SettingEntry _settings_vehicles_trains[] = {
 /** Trains sub-page */
 static SettingsPage _settings_vehicles_trains_page = {_settings_vehicles_trains, lengthof(_settings_vehicles_trains)};
 
+static SettingEntry _settings_order_shortcuts[] = {
+	SettingEntry("gui.goto_shortcuts_ctrl_lclick"),
+	SettingEntry("gui.goto_shortcuts_shift_lclick"),
+	SettingEntry("gui.goto_shortcuts_ctrlshift_lclick"),
+	SettingEntry("gui.goto_shortcuts_alt_lclick"),
+	SettingEntry("gui.goto_shortcuts_altshift_lclick"),
+	SettingEntry("gui.goto_shortcuts_altctrl_lclick")
+};
+/** Order Shorcuts page */
+static SettingsPage _settings_order_shortcuts_page = {_settings_order_shortcuts, lengthof(_settings_order_shortcuts)};
+
+static SettingEntry _settings_vehicles_controls[] = {
+	SettingEntry(&_settings_order_shortcuts_page, STR_CONFIG_SETTING_ORDER_SHORTCUTS),
+	SettingEntry("gui.enable_ctrl_click_start_stop"),
+	SettingEntry("gui.new_nonstop"),
+	SettingEntry("gui.auto_noload_on_transfer"),
+	SettingEntry("gui.auto_noload_on_unloadall")
+};
+/** Vehicle control page */
+static SettingsPage _settings_vehicles_controls_page = {_settings_vehicles_controls,lengthof(_settings_vehicles_controls)};
+
 static SettingEntry _settings_vehicles[] = {
 	SettingEntry(&_settings_vehicles_routing_page, STR_CONFIG_SETTING_VEHICLES_ROUTING),
 	SettingEntry(&_settings_vehicles_autorenew_page, STR_CONFIG_SETTING_VEHICLES_AUTORENEW),
 	SettingEntry(&_settings_vehicles_servicing_page, STR_CONFIG_SETTING_VEHICLES_SERVICING),
 	SettingEntry(&_settings_vehicles_trains_page, STR_CONFIG_SETTING_VEHICLES_TRAINS),
-	SettingEntry("gui.new_nonstop"),
+	SettingEntry(&_settings_vehicles_controls_page, STR_CONFIG_SETTING_VEHICLES_CTRL),
 	SettingEntry("gui.order_review_system"),
 	SettingEntry("gui.vehicle_income_warn"),
 	SettingEntry("gui.lost_vehicle_warn"),

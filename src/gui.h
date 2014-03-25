@@ -39,6 +39,9 @@ Window *ShowBuildDocksScenToolbar();
 /* airport_gui.cpp */
 Window *ShowBuildAirToolbar();
 
+/* commands_gui.cpp */
+Window *ShowCommandsToolbar();
+
 /* tgp_gui.cpp */
 void ShowGenerateLandscape();
 void ShowHeightmapLoad();

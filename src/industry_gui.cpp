@@ -29,6 +29,7 @@
 #include "tilehighlight_func.h"
 #include "string_func.h"
 #include "sortlist_type.h"
+#include "widgets/dropdown_type.h"
 #include "widgets/dropdown_func.h"
 #include "company_base.h"
 #include "core/geometry_func.hpp"
@@ -1057,6 +1058,7 @@ static const NWidgetPart _nested_industry_directory_widgets[] = {
 			NWidget(NWID_HORIZONTAL),
 				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_DROPDOWN_CRITERIA), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
+				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_DROPDOWN_FILTER), SetDataTip(STR_BUTTON_FILTER, STR_TOOLTIP_FILTER_CRITERIA),
 				NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0), EndContainer(),
 			EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_BROWN, WID_ID_INDUSTRY_LIST), SetDataTip(0x0, STR_INDUSTRY_DIRECTORY_LIST_CAPTION), SetResize(1, 1), SetScrollbar(WID_ID_SCROLLBAR), EndContainer(),
@@ -1084,6 +1086,10 @@ protected:
 	static const StringID sorter_names[];
 	static GUIIndustryList::SortFunction * const sorter_funcs[];
 
+	/* type_filter[industry_type] is set to true if player wishes that type to by displayed */
+	static bool type_filter[NUM_INDUSTRYTYPES];
+	static bool initialized;
+
 	GUIIndustryList industries;
 	Scrollbar *vscroll;
 
@@ -1095,7 +1101,8 @@ protected:
 
 			const Industry *i;
 			FOR_ALL_INDUSTRIES(i) {
-				*this->industries.Append() = i;
+				if (this->type_filter[i->type])
+					*this->industries.Append() = i;
 			}
 
 			this->industries.Compact();
@@ -1227,9 +1234,17 @@ protected:
 		}
 	}
 
+	void initIndustryTypeFilter()
+	{
+		for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt)
+			this->type_filter[indt] = true;
+			IndustryDirectoryWindow::initialized = true;
+	}
+
 public:
 	IndustryDirectoryWindow(WindowDesc *desc, WindowNumber number) : Window(desc)
 	{
+		if (IndustryDirectoryWindow::initialized == false) this->initIndustryTypeFilter();
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_ID_SCROLLBAR);
 
@@ -1298,6 +1313,11 @@ public:
 				break;
 			}
 
+			case WID_ID_DROPDOWN_FILTER: {
+				size->width = 65;
+				break;
+			}
+
 			case WID_ID_INDUSTRY_LIST: {
 				Dimension d = GetStringBoundingBox(STR_INDUSTRY_DIRECTORY_NONE);
 				for (uint i = 0; i < this->industries.Length(); i++) {
@@ -1326,6 +1346,22 @@ public:
 				ShowDropDownMenu(this, IndustryDirectoryWindow::sorter_names, this->industries.SortType(), WID_ID_DROPDOWN_CRITERIA, 0, 0);
 				break;
 
+			case WID_ID_DROPDOWN_FILTER: {
+				DropDownList *list = new DropDownList();
+				*list->Append() = new DropDownListStringItem(STR_BUTTON_FILTER_SELECT_ALL,     -2, false);
+				*list->Append() = new DropDownListStringItem(STR_BUTTON_FILTER_SELECT_NONE,    -1, false);
+				*list->Append() = new DropDownListItem(-3, false);
+
+				for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt) {
+					const IndustrySpec *inds = GetIndustrySpec(indt);
+					if (inds->enabled)
+						*list->Append() = new DropDownListCheckedItem(inds->name, indt, false, IndustryDirectoryWindow::type_filter[indt]);
+				}
+
+				ShowDropDownList(this, list, -2, WID_ID_DROPDOWN_FILTER, 0, true, false);
+				break;
+			}
+
 			case WID_ID_INDUSTRY_LIST: {
 				uint p = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_ID_INDUSTRY_LIST, WD_FRAMERECT_TOP);
 				if (p < this->industries.Length()) {
@@ -1342,10 +1378,27 @@ public:
 
 	virtual void OnDropdownSelect(int widget, int index)
 	{
-		if (this->industries.SortType() != index) {
-			this->industries.SetSortType(index);
-			this->BuildSortIndustriesList();
+		if (widget == WID_ID_DROPDOWN_CRITERIA) {
+			if (this->industries.SortType() != index) {
+				this->industries.SetSortType(index);
+			}
 		}
+		else if (widget == WID_ID_DROPDOWN_FILTER) {
+			if ( index == -1 ) { // aka SELECT NONE
+				for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt)
+					IndustryDirectoryWindow::type_filter[indt] = false;
+				// must SetDurty to force redraw of the listing widget
+				this->SetDirty();
+			}
+			else if ( index == -2 ) { // aka SELECT ALL
+				for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt)
+					IndustryDirectoryWindow::type_filter[indt] = true;
+			}
+			else
+				IndustryDirectoryWindow::type_filter[index] = IndustryDirectoryWindow::type_filter[index] ? false: true;
+			this->industries.ForceRebuild();
+		}
+		this->BuildSortIndustriesList();
 	}
 
 	virtual void OnResize()
@@ -1383,6 +1436,8 @@ public:
 
 Listing IndustryDirectoryWindow::last_sorting = {false, 0};
 const Industry *IndustryDirectoryWindow::last_industry = NULL;
+bool IndustryDirectoryWindow::initialized = false;
+bool IndustryDirectoryWindow::type_filter[NUM_INDUSTRYTYPES];
 
 /* Available station sorting functions. */
 GUIIndustryList::SortFunction * const IndustryDirectoryWindow::sorter_funcs[] = {

@@ -898,13 +898,13 @@ void SmallMapWindow::DrawTowns(const DrawPixelInfo *dpi) const
 		if (x + t->cache.sign.width_small > dpi->left &&
 				x < dpi->left + dpi->width &&
 				y + FONT_HEIGHT_SMALL > dpi->top &&
-				y < dpi->top + dpi->height) {
-			/* And draw it. */
-			SetDParam(0, t->index);
-			DrawString(x, x + t->cache.sign.width_small, y, STR_SMALLMAP_TOWN);
+					y < dpi->top + dpi->height) {
+				/* And draw it. */
+				SetDParam(0, t->index);
+				DrawString(x, x + t->cache.sign.width_small, y, t->larger_town ? STR_SMALLMAP_TOWN_LARGE : STR_SMALLMAP_TOWN);
+			}
 		}
 	}
-}
 
 /**
  * Adds map indicators to the smallmap.

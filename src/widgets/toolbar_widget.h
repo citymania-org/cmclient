@@ -23,9 +23,11 @@ enum ToolbarNormalWidgets {
 	WID_TN_SUBSIDIES,     ///< Subsidy menu.
 	WID_TN_STATIONS,      ///< Station menu.
 	WID_TN_FINANCES,      ///< Finance menu.
+	WID_TN_CARGOS,        ///< Transported cargo menu
 	WID_TN_COMPANIES,     ///< Company menu.
 	WID_TN_STORY,         ///< Story menu.
 	WID_TN_GOAL,          ///< Goal menu.
+	WID_TN_WATCH,         ///< Watch gui menu
 	WID_TN_GRAPHS,        ///< Graph menu.
 	WID_TN_LEAGUE,        ///< Company league menu.
 	WID_TN_INDUSTRIES,    ///< Industry menu.

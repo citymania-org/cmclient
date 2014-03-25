@@ -34,6 +34,7 @@ enum IndustryViewWidgets {
 enum IndustryDirectoryWidgets {
 	WID_ID_DROPDOWN_ORDER,    ///< Dropdown for the order of the sort.
 	WID_ID_DROPDOWN_CRITERIA, ///< Dropdown for the criteria of the sort.
+	WID_ID_DROPDOWN_FILTER,   ///< Industry filter
 	WID_ID_INDUSTRY_LIST,     ///< Industry list.
 	WID_ID_SCROLLBAR,         ///< Scrollbar of the list.
 };
