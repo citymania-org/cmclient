@@ -1,0 +1,6 @@
+syntax: glob
+objs
+bin
+Makefile*
+config.*
+media/openttd.desktop
