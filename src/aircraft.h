@@ -1,0 +1,127 @@
+/* $Id: aircraft.h 24839 2012-12-23 01:00:25Z michi_cc $ */
+
+/*
+ * This file is part of OpenTTD.
+ * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
+ * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/** @file aircraft.h Base for aircraft. */
+
+#ifndef AIRCRAFT_H
+#define AIRCRAFT_H
+
+#include "station_map.h"
+#include "vehicle_base.h"
+
+struct Aircraft;
+
+/** An aircraft can be one of those types. */
+enum AircraftSubType {
+	AIR_HELICOPTER = 0, ///< an helicopter
+	AIR_AIRCRAFT   = 2, ///< an airplane
+	AIR_SHADOW     = 4, ///< shadow of the aircraft
+	AIR_ROTOR      = 6, ///< rotor of an helicopter
+};
+
+/** Aircraft flags. */
+enum VehicleAirFlags {
+	VAF_DEST_TOO_FAR = 0, ///< Next destination is too far away.
+};
+
+
+void HandleAircraftEnterHangar(Aircraft *v);
+void GetAircraftSpriteSize(EngineID engine, uint &width, uint &height, int &xoffs, int &yoffs, EngineImageType image_type);
+void UpdateAirplanesOnNewStation(const Station *st);
+void UpdateAircraftCache(Aircraft *v, bool update_range = false);
+
+void AircraftLeaveHangar(Aircraft *v, Direction exit_dir);
+void AircraftNextAirportPos_and_Order(Aircraft *v);
+void SetAircraftPosition(Aircraft *v, int x, int y, int z);
+int GetAircraftFlyingAltitude(const Aircraft *v);
+
+/** Variables that are cached to improve performance and such. */
+struct AircraftCache {
+	uint32 cached_max_range_sqr;   ///< Cached squared maximum range.
+	uint16 cached_max_range;       ///< Cached maximum range.
+};
+
+/**
+ * Aircraft, helicopters, rotors and their shadows belong to this class.
+ */
+struct Aircraft FINAL : public SpecializedVehicle<Aircraft, VEH_AIRCRAFT> {
+	uint16 crashed_counter;        ///< Timer for handling crash animations.
+	byte pos;                      ///< Next desired position of the aircraft.
+	byte previous_pos;             ///< Previous desired position of the aircraft.
+	StationID targetairport;       ///< Airport to go to next.
+	byte state;                    ///< State of the airport. @see AirportMovementStates
+	DirectionByte last_direction;
+	byte number_consecutive_turns; ///< Protection to prevent the aircraft of making a lot of turns in order to reach a specific point.
+	byte turn_counter;             ///< Ticks between each turn to prevent > 45 degree turns.
+	byte flags;                    ///< Aircraft flags. @see VehicleAirFlags
+
+	AircraftCache acache;
+
+	/** We don't want GCC to zero our struct! It already is zeroed and has an index! */
+	Aircraft() : SpecializedVehicleBase() {}
+	/** We want to 'destruct' the right class. */
+	virtual ~Aircraft() { this->PreDestructor(); }
+
+	void MarkDirty();
+	void UpdateDeltaXY(Direction direction);
+	ExpensesType GetExpenseType(bool income) const { return income ? EXPENSES_AIRCRAFT_INC : EXPENSES_AIRCRAFT_RUN; }
+	bool IsPrimaryVehicle() const                  { return this->IsNormalAircraft(); }
+	SpriteID GetImage(Direction direction, EngineImageType image_type) const;
+	int GetDisplaySpeed() const    { return this->cur_speed; }
+	int GetDisplayMaxSpeed() const { return this->vcache.cached_max_speed; }
+	int GetSpeedOldUnits() const   { return this->vcache.cached_max_speed * 10 / 128; }
+	int GetCurrentMaxSpeed() const { return this->GetSpeedOldUnits(); }
+	Money GetRunningCost() const;
+
+	bool IsInDepot() const
+	{
+		assert(this->IsPrimaryVehicle());
+		return (this->vehstatus & VS_HIDDEN) != 0 && IsHangarTile(this->tile);
+	}
+
+	bool Tick();
+	void OnNewDay();
+	uint Crash(bool flooded = false);
+	TileIndex GetOrderStationLocation(StationID station);
+	bool FindClosestDepot(TileIndex *location, DestinationID *destination, bool *reverse);
+
+	/**
+	 * Check if the aircraft type is a normal flying device; eg
+	 * not a rotor or a shadow
+	 * @return Returns true if the aircraft is a helicopter/airplane and
+	 * false if it is a shadow or a rotor
+	 */
+	inline bool IsNormalAircraft() const
+	{
+		/* To be fully correct the commented out functionality is the proper one,
+		 * but since value can only be 0 or 2, it is sufficient to only check <= 2
+		 * return (this->subtype == AIR_HELICOPTER) || (this->subtype == AIR_AIRCRAFT); */
+		return this->subtype <= AIR_AIRCRAFT;
+	}
+
+	/**
+	 * Get the range of this aircraft.
+	 * @return Range in tiles or 0 if unlimited range.
+	 */
+	uint16 GetRange() const
+	{
+		return this->acache.cached_max_range;
+	}
+};
+
+/**
+ * Macro for iterating over all aircrafts.
+ */
+#define FOR_ALL_AIRCRAFT(var) FOR_ALL_VEHICLES_OF_TYPE(Aircraft, var)
+
+SpriteID GetRotorImage(const Aircraft *v, EngineImageType image_type);
+
+Station *GetTargetAirportIfValid(const Aircraft *v);
+
+#endif /* AIRCRAFT_H */

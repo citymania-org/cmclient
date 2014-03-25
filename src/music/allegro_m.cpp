@@ -1,0 +1,81 @@
+/* $Id: allegro_m.cpp 20286 2010-08-01 19:44:49Z frosch $ */
+
+/*
+ * This file is part of OpenTTD.
+ * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
+ * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/** @file allegro_m.cpp Playing music via allegro. */
+
+#ifdef WITH_ALLEGRO
+
+#include "../stdafx.h"
+#include "../debug.h"
+#include "allegro_m.h"
+#include <allegro.h>
+
+static FMusicDriver_Allegro iFMusicDriver_Allegro;
+static MIDI *_midi = NULL;
+
+/**
+ * There are multiple modules that might be using Allegro and
+ * Allegro can only be initiated once.
+ */
+extern int _allegro_instance_count;
+
+const char *MusicDriver_Allegro::Start(const char * const *param)
+{
+	if (_allegro_instance_count == 0 && install_allegro(SYSTEM_AUTODETECT, &errno, NULL)) {
+		DEBUG(driver, 0, "allegro: install_allegro failed '%s'", allegro_error);
+		return "Failed to set up Allegro";
+	}
+	_allegro_instance_count++;
+
+	/* Initialise the sound */
+	if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0) {
+		DEBUG(driver, 0, "allegro: install_sound failed '%s'", allegro_error);
+		return "Failed to set up Allegro sound";
+	}
+
+	/* Okay, there's no soundcard */
+	if (midi_card == MIDI_NONE) {
+		DEBUG(driver, 0, "allegro: no midi card found");
+		return "No sound card found";
+	}
+
+	return NULL;
+}
+
+void MusicDriver_Allegro::Stop()
+{
+	if (_midi != NULL) destroy_midi(_midi);
+	_midi = NULL;
+
+	if (--_allegro_instance_count == 0) allegro_exit();
+}
+
+void MusicDriver_Allegro::PlaySong(const char *filename)
+{
+	if (_midi != NULL) destroy_midi(_midi);
+	_midi = load_midi(filename);
+	play_midi(_midi, false);
+}
+
+void MusicDriver_Allegro::StopSong()
+{
+	stop_midi();
+}
+
+bool MusicDriver_Allegro::IsSongPlaying()
+{
+	return midi_pos >= 0;
+}
+
+void MusicDriver_Allegro::SetVolume(byte vol)
+{
+	set_volume(-1, vol);
+}
+
+#endif /* WITH_ALLEGRO */
