@@ -210,7 +210,7 @@ enum {
 	GHK_QUIT,
 	GHK_ABANDON,
 	GHK_CONSOLE,
-	GHK_BOUNDING_BOXES,
+	GHK_BOUNDING_BOXES,	
 	GHK_DIRTY_BLOCKS,
 	GHK_CENTER,
 	GHK_CENTER_ZOOM,
@@ -225,6 +225,7 @@ enum {
 	GHK_TOGGLE_INVISIBILITY = GHK_TOGGLE_TRANSPARENCY + 9,
 	GHK_TRANSPARENCY_TOOLBAR = GHK_TOGGLE_INVISIBILITY + 8,
 	GHK_TRANSPARANCY,
+	GHK_BORROW_ALL,
 	GHK_CHAT,
 	GHK_CHAT_ALL,
 	GHK_CHAT_COMPANY,
@@ -391,6 +392,10 @@ struct MainWindow : Window
 				ResetRestoreAllTransparency();
 				break;
 
+			case GHK_BORROW_ALL:
+				DoCommandP(0, 0, 1, CMD_INCREASE_LOAN | CMD_MSG(STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY));
+				break;
+
 #ifdef ENABLE_NETWORK
 			case GHK_CHAT: // smart chat; send to team if any, otherwise to all
 				if (_networking) {
@@ -509,6 +514,7 @@ static Hotkey global_hotkeys[] = {
 	Hotkey('8' | WKC_CTRL | WKC_SHIFT, "invisibility_catenary", GHK_TOGGLE_INVISIBILITY + 7),
 	Hotkey('X' | WKC_CTRL, "transparency_toolbar", GHK_TRANSPARENCY_TOOLBAR),
 	Hotkey('X', "toggle_transparency", GHK_TRANSPARANCY),
+	Hotkey(WKC_NONE, "borrow_all", GHK_BORROW_ALL),
 #ifdef ENABLE_NETWORK
 	Hotkey(_ghk_chat_keys, "chat", GHK_CHAT),
 	Hotkey(_ghk_chat_all_keys, "chat_all", GHK_CHAT_ALL),
