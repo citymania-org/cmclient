@@ -92,13 +92,9 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\objs\$(Platform)\$(Configuration)\</OutDir>
     <LocalDebuggerWorkingDirectory>$(ProjectDir)..\bin</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>\\VBOXSVR\Projects\novasvn\dev\release\openttd-useful-5.1-win\OpenTTD essentials\shared\include;$(IncludePath)</IncludePath>
-    <LibraryPath>\\VBOXSVR\Projects\novasvn\dev\release\openttd-useful-5.1-win\OpenTTD essentials\win32\library;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>\\VBOXSVR\Projects\novasvn\dev\release\openttd-useful-5.1-win\OpenTTD essentials\shared\include;$(IncludePath)</IncludePath>
-    <LibraryPath>\\VBOXSVR\Projects\novasvn\dev\release\openttd-useful-5.1-win\OpenTTD essentials\win64\library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\user\Downloads\OpenTTD essentials\shared\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\user\Downloads\OpenTTD essentials\win64\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -156,7 +152,6 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -217,7 +212,7 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <AdditionalIncludeDirectories>..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";_SQ64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";_SQ64;_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -256,7 +251,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <TargetMachine>MachineX64</TargetMachine>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -314,10 +308,8 @@
     <ClCompile Include="..\src\cargomonitor.cpp" />
     <ClCompile Include="..\src\cargopacket.cpp" />
     <ClCompile Include="..\src\cargotype.cpp" />
-    <ClCompile Include="..\src\cargo_table_gui.cpp" />
     <ClCompile Include="..\src\cheat.cpp" />
     <ClCompile Include="..\src\command.cpp" />
-    <ClCompile Include="..\src\commands_gui.cpp" />
     <ClCompile Include="..\src\console.cpp" />
     <ClCompile Include="..\src\console_cmds.cpp" />
     <ClCompile Include="..\src\cpu.cpp" />
@@ -419,6 +411,7 @@
     <ClInclude Include="..\src\base_station_base.h" />
     <ClInclude Include="..\src\bmp.h" />
     <ClInclude Include="..\src\bridge.h" />
+    <ClInclude Include="..\src\cargo_table_gui.h" />
     <ClInclude Include="..\src\cargo_type.h" />
     <ClInclude Include="..\src\cargoaction.h" />
     <ClInclude Include="..\src\cargomonitor.h" />
@@ -660,6 +653,7 @@
     <ClInclude Include="..\src\viewport_func.h" />
     <ClInclude Include="..\src\viewport_sprite_sorter.h" />
     <ClInclude Include="..\src\viewport_type.h" />
+    <ClInclude Include="..\src\watch_gui.h" />
     <ClInclude Include="..\src\water.h" />
     <ClInclude Include="..\src\waypoint_base.h" />
     <ClInclude Include="..\src\waypoint_func.h" />
@@ -708,7 +702,9 @@
     <ClCompile Include="..\src\bootstrap_gui.cpp" />
     <ClCompile Include="..\src\bridge_gui.cpp" />
     <ClCompile Include="..\src\build_vehicle_gui.cpp" />
+    <ClCompile Include="..\src\cargo_table_gui.cpp" />
     <ClCompile Include="..\src\cheat_gui.cpp" />
+    <ClCompile Include="..\src\commands_gui.cpp" />
     <ClCompile Include="..\src\company_gui.cpp" />
     <ClCompile Include="..\src\console_gui.cpp" />
     <ClCompile Include="..\src\date_gui.cpp" />
@@ -757,14 +753,17 @@
     <ClCompile Include="..\src\transparency_gui.cpp" />
     <ClCompile Include="..\src\tree_gui.cpp" />
     <ClCompile Include="..\src\vehicle_gui.cpp" />
+    <ClCompile Include="..\src\watch_gui.cpp" />
     <ClCompile Include="..\src\viewport_gui.cpp" />
     <ClCompile Include="..\src\waypoint_gui.cpp" />
+    <ClCompile Include="..\src\zoning_gui.cpp" />
     <ClInclude Include="..\src\widgets\airport_widget.h" />
     <ClInclude Include="..\src\widgets\ai_widget.h" />
     <ClInclude Include="..\src\widgets\autoreplace_widget.h" />
     <ClInclude Include="..\src\widgets\bootstrap_widget.h" />
     <ClInclude Include="..\src\widgets\bridge_widget.h" />
     <ClInclude Include="..\src\widgets\build_vehicle_widget.h" />
+    <ClInclude Include="..\src\widgets\cargo_table_widget.h" />
     <ClInclude Include="..\src\widgets\cheat_widget.h" />
     <ClInclude Include="..\src\widgets\company_widget.h" />
     <ClInclude Include="..\src\widgets\console_widget.h" />
@@ -843,6 +842,7 @@
     <ClCompile Include="..\src\void_cmd.cpp" />
     <ClCompile Include="..\src\water_cmd.cpp" />
     <ClCompile Include="..\src\waypoint_cmd.cpp" />
+    <ClCompile Include="..\src\zoning_cmd.cpp" />
     <ClCompile Include="..\src\saveload\afterload.cpp" />
     <ClCompile Include="..\src\saveload\ai_sl.cpp" />
     <ClCompile Include="..\src\saveload\airport_sl.cpp" />
