@@ -1,4 +1,4 @@
-/* $Id: ai_changelog.hpp 26396 2014-03-10 22:18:53Z zuu $ */
+/* $Id: ai_changelog.hpp 26439 2014-04-01 18:29:34Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,8 +16,6 @@
  * in GetAPIVersion() in info.nut.
  *
  * \b 1.4.0
- *
- * 1.4.0 is not yet released. The following changes are not set in stone yet.
  *
  * API additions:
  * \li AICargo::GetDistributionType
