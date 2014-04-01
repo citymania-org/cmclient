@@ -354,7 +354,8 @@ public:
 	{
 		if (widget == WID_TV_CAPTION){ 
 			SetDParam(0, this->town->index);
-			SetDParam(1, this->town->ratings[_current_company]);
+			SetDParam(1, this->town->cache.potential_pop);
+			SetDParam(2, this->town->ratings[_current_company]);
 		}
 		if (widget == WID_TV_CB){
 			extern bool _novahost;
