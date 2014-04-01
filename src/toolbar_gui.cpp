@@ -1803,7 +1803,7 @@ struct MainToolbarWindow : Window {
 			case MTHK_EXTRA_VIEWPORT: ShowExtraViewPortWindowForTileUnderCursor(); break;
 #ifdef ENABLE_NETWORK
 			case MTHK_CLIENT_LIST: if (_networking) ShowClientList(); break;
-			case MTHK_COMMANDS_GUI: if (_networking && strcmp(_settings_client.network.last_host, "37.157.196.78") == 0 || strcmp(_settings_client.network.last_host, "89.111.65.225") == 0) { ShowCommandsToolbar(); } break;
+			case MTHK_COMMANDS_GUI: if (_networking && (strcmp(_settings_client.network.last_host, "37.157.196.78") == 0 || strcmp(_settings_client.network.last_host, "89.111.65.225") == 0)) { ShowCommandsToolbar(); } break;
 #endif
 			case MTHK_BUILD_HQ: if(_current_company != COMPANY_SPECTATOR){ this->last_started_action = CBF_BUILD_HQ; BuildCompanyHQ(); } break;			
 			case MTHK_CARGOTABLE: if(_current_company != COMPANY_SPECTATOR){ ShowCompanyCargos(_current_company); } break;

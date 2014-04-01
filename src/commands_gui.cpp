@@ -267,13 +267,13 @@ struct CommandsToolbarWindow : Window {
 				sprintf(msg, "!login %s", str);
 				NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, msg);				
 				break;			
-			case CTQ_LOGIN_CREDENTIALS_NAME:{
+			case CTQ_LOGIN_CREDENTIALS_NAME: {
 				char name[32];
 				char pass[32];
 				char buf[64];
 				bool space = false;
 				//separate name and apss
-				for(int i = 0; pass[i] != '\0'; i++){
+				for(int i = 0; str[i] != '\0'; i++){
 					if(str[i] == ' '){ 
 						space = true;
 						continue;
@@ -496,4 +496,4 @@ Window *ShowCommandsToolbar()
 	return AllocateWindowDescFront<CommandsToolbarWindow>(&_commands_toolbar_desc, 0);
 }
 
-#endif ENABLE_NETWORK
+#endif  /* ENABLE_NETWORK */
