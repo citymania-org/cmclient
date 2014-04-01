@@ -887,10 +887,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\cargo_table_gui.h"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\cargo_type.h"
 				>
 			</File>
@@ -1855,10 +1851,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\watch_gui.h"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\water.h"
 				>
 			</File>
@@ -1900,10 +1892,6 @@
 			</File>
 			<File
 				RelativePath=".\..\src\window_type.h"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\zoning.h"
 				>
 			</File>
 			<File
@@ -2059,15 +2047,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\cargo_table_gui.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\cheat_gui.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\commands_gui.cpp"
 				>
 			</File>
 			<File
@@ -2263,19 +2243,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\watch_gui.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\viewport_gui.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\..\src\waypoint_gui.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\zoning_gui.cpp"
 				>
 			</File>
 		</Filter>
@@ -2304,10 +2276,6 @@
 			</File>
 			<File
 				RelativePath=".\..\src\widgets\build_vehicle_widget.h"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\widgets\cargo_table_widget.h"
 				>
 			</File>
 			<File
@@ -2624,10 +2592,6 @@
 			</File>
 			<File
 				RelativePath=".\..\src\waypoint_cmd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\zoning_cmd.cpp"
 				>
 			</File>
 		</Filter>
