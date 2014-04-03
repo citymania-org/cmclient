@@ -2382,6 +2382,7 @@ STR_ROAD_TOOLBAR_TRAM_CONSTRUCTION_CAPTION                      :{WHITE}Tramway 
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION                     :{BLACK}Build road section. Ctrl toggles build/remove for road construction. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION                  :{BLACK}Build tramway section. Ctrl toggles build/remove for tramway construction. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD                         :{BLACK}Build road section using the Autoroad mode. Ctrl toggles build/remove for road construction. Shift toggles building/showing cost estimate
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_FULLROAD                         :{BLACK}Build road section using the Autoroad mode with only full tile roads. Ctrl toggles build/remove for road construction. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM                         :{BLACK}Build tramway section using the Autotram mode. Ctrl toggles build/remove for tramway construction. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_VEHICLE_DEPOT               :{BLACK}Build road vehicle depot (for buying and servicing vehicles). Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}Build tram vehicle depot (for buying and servicing vehicles). Shift toggles building/showing cost estimate
@@ -5043,8 +5044,8 @@ STR_TOWN_DIRECTORY_TOWN_COLOUR                                  :{TOWN}{BLACK} (
 STR_OLD_DEPOT_TRAINT_LENGTH                                     :Old depot length format: {STRING2}
 STR_TOWN_DIRECTORY_CAPTION_EXTRA                                :{WHITE}Towns ({YELLOW}{COMMA}{WHITE} / {ORANGE}{COMMA}{WHITE})
 STR_SMALLMAP_TOWN_LARGE                                         :{TINY_FONT}{YELLOW}{TOWN}
-STR_TOWN_VIEW_TOWN_CAPTION_EXTRA                                :{WHITE}{TOWN} [{COMMA}]
-STR_TOWN_VIEW_CITY_CAPTION_EXTRA                                :{WHITE}{TOWN} (City) [{COMMA}]
+STR_TOWN_VIEW_TOWN_CAPTION_EXTRA                                :{WHITE}{TOWN} {COMMA} [{COMMA}]
+STR_TOWN_VIEW_CITY_CAPTION_EXTRA                                :{WHITE}{TOWN} (City) {COMMA} [{COMMA}]
 
 STR_ORDER_DIST                                                  :{NUM}, {NUM}
 

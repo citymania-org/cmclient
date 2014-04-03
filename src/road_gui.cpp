@@ -294,7 +294,7 @@ static bool RoadToolbar_CtrlChanged(Window *w)
 	if (w->IsWidgetDisabled(WID_ROT_REMOVE)) return false;
 
 	/* allow ctrl to switch remove mode only for these widgets */
-	for (uint i = WID_ROT_ROAD_X; i <= WID_ROT_AUTOROAD; i++) {
+	for (uint i = WID_ROT_ROAD_X; i <= WID_ROT_FULLROAD; i++) {
 		if (w->IsWidgetLowered(i)) {
 			ToggleRoadButton_Remove(w);
 			return true;
@@ -372,6 +372,7 @@ struct BuildRoadToolbarWindow : Window {
 			case WID_ROT_ROAD_X:
 			case WID_ROT_ROAD_Y:
 			case WID_ROT_AUTOROAD:
+			case WID_ROT_FULLROAD:
 				this->SetWidgetsDisabledState(!this->IsWidgetLowered(clicked_widget),
 						WID_ROT_REMOVE,
 						WID_ROT_ONE_WAY,
@@ -393,6 +394,16 @@ struct BuildRoadToolbarWindow : Window {
 		}
 	}
 
+	virtual void DrawWidget(const Rect &r, int widget) const
+	{
+		if (widget == WID_ROT_FULLROAD) {
+			Dimension d = GetSpriteSize(SPR_BLOT);
+			uint offset = this->IsWidgetLowered(WID_ROT_FULLROAD) ? 1 : 0;
+			DrawSprite(SPR_BLOT, PALETTE_TO_GREY, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset);
+		}
+	}
+
+
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		_remove_button_clicked = false;
@@ -410,6 +421,11 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_AUTOROAD:
 				HandlePlacePushButton(this, WID_ROT_AUTOROAD, _road_type_infos[_cur_roadtype].cursor_autoroad, HT_RECT);
+				this->last_started_action = widget;
+				break;
+
+			case WID_ROT_FULLROAD:
+				HandlePlacePushButton(this, WID_ROT_FULLROAD, _road_type_infos[_cur_roadtype].cursor_autoroad, HT_RECT);
 				this->last_started_action = widget;
 				break;
 
@@ -503,6 +519,11 @@ struct BuildRoadToolbarWindow : Window {
 				VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_PLACE_AUTOROAD);
 				break;
 
+			case WID_ROT_FULLROAD:
+				_place_road_flag = RF_NONE;
+				VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_PLACE_FULLROAD);
+				break;
+
 			case WID_ROT_DEMOLISH:
 				PlaceProc_DemolishArea(tile);
 				break;
@@ -586,6 +607,21 @@ struct BuildRoadToolbarWindow : Window {
 
 				break;
 
+			case DDSP_PLACE_FULLROAD:
+				/* For autoroad we need to update the
+				 * direction of the road */
+				if (_thd.size.x > _thd.size.y || (_thd.size.x == _thd.size.y &&
+						( (_tile_fract_coords.x < _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) < 16) ||
+						(_tile_fract_coords.x > _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) > 16) ))) {
+					/* Set dir = X */
+					_place_road_flag &= ~RF_DIR_Y;
+				} else {
+					/* Set dir = Y */
+					_place_road_flag |= RF_DIR_Y;
+				}
+
+				break;
+
 			default:
 				break;
 		}
@@ -617,6 +653,16 @@ struct BuildRoadToolbarWindow : Window {
 					_place_road_flag = (RoadFlags)((_place_road_flag & RF_DIR_Y) ? (_place_road_flag & 0x07) : (_place_road_flag >> 3));
 
 					DoCommandP(start_tile, end_tile, _place_road_flag | (_cur_roadtype << 3) | (_one_way_button_clicked << 5),
+							_remove_button_clicked ?
+							CMD_REMOVE_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_road) :
+							CMD_BUILD_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_build_road), CcPlaySound1D);
+					break;
+
+				case DDSP_PLACE_FULLROAD:
+					DoCommandP(start_tile, end_tile,
+							_place_road_flag | (_cur_roadtype << 3) |
+								(_one_way_button_clicked << 5) | (1 << 6) |
+								(start_tile > end_tile ? 1 : 2),  // always build full roads
 							_remove_button_clicked ?
 							CMD_REMOVE_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_road) :
 							CMD_BUILD_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_build_road), CcPlaySound1D);
@@ -691,11 +737,12 @@ static Hotkey roadtoolbar_hotkeys[] = {
 	Hotkey('1', "build_x", WID_ROT_ROAD_X),
 	Hotkey('2', "build_y", WID_ROT_ROAD_Y),
 	Hotkey('3', "autoroad", WID_ROT_AUTOROAD),
-	Hotkey('4', "demolish", WID_ROT_DEMOLISH),
-	Hotkey('5', "depot", WID_ROT_DEPOT),
-	Hotkey('6', "bus_station", WID_ROT_BUS_STATION),
-	Hotkey('7', "truck_station", WID_ROT_TRUCK_STATION),
-	Hotkey('8', "oneway", WID_ROT_ONE_WAY),
+	Hotkey('4', "fullroad", WID_ROT_FULLROAD),
+	Hotkey('5', "demolish", WID_ROT_DEMOLISH),
+	Hotkey('6', "depot", WID_ROT_DEPOT),
+	Hotkey('7', "bus_station", WID_ROT_BUS_STATION),
+	Hotkey('8', "truck_station", WID_ROT_TRUCK_STATION),
+	Hotkey('9', "oneway", WID_ROT_ONE_WAY),
 	Hotkey('B', "bridge", WID_ROT_BUILD_BRIDGE),
 	Hotkey('T', "tunnel", WID_ROT_BUILD_TUNNEL),
 	Hotkey('R', "remove", WID_ROT_REMOVE),
@@ -717,6 +764,8 @@ static const NWidgetPart _nested_build_road_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_ROAD_Y_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_AUTOROAD),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOROAD, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_FULLROAD),
+						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOROAD, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_FULLROAD),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_DEMOLISH),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_DEPOT),

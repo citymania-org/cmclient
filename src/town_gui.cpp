@@ -45,7 +45,7 @@ struct CargoX {
 };
 void ShowCBTownWindow(uint town);
 
-void TownExecuteHotkeyAction(TileIndex tile, int townid, uint action){
+void TownExecuteHotkeyAction(TileIndex tile, int townid, uint action) {
 	DoCommandP(tile, townid, action, CMD_DO_TOWN_ACTION | CMD_MSG(STR_ERROR_CAN_T_DO_THIS));
 }
 
@@ -295,7 +295,7 @@ public:
 	virtual EventState OnHotkey(int hotkey)
 	{
 		TownExecuteHotkeyAction(this->town->xy, this->window_number, hotkey);
-		return ES_NOT_HANDLED;
+		return ES_HANDLED;
 	}
 
 	static HotkeyList hotkeys;
@@ -354,7 +354,8 @@ public:
 	{
 		if (widget == WID_TV_CAPTION){ 
 			SetDParam(0, this->town->index);
-			SetDParam(1, this->town->ratings[_current_company]);
+			SetDParam(1, this->town->cache.potential_pop);
+			SetDParam(2, this->town->ratings[_current_company]);
 		}
 		if (widget == WID_TV_CB){
 			extern bool _novahost;
@@ -594,7 +595,7 @@ public:
 	virtual EventState OnHotkey(int hotkey)
 	{
 		TownExecuteHotkeyAction(this->town->xy, this->window_number, hotkey);
-		return ES_NOT_HANDLED;
+		return ES_HANDLED;
 	}
 
 	static HotkeyList hotkeys;
@@ -1506,7 +1507,7 @@ public:
 	virtual EventState OnHotkey(int hotkey)
 	{
 		TownExecuteHotkeyAction(this->town->xy, this->window_number, hotkey);
-		return ES_NOT_HANDLED;
+		return ES_HANDLED;
 	}
 
 	static HotkeyList hotkeys;

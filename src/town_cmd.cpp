@@ -2487,6 +2487,7 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 
 		/* build the house */
 		t->cache.num_houses++;
+		t->cache.potential_pop += hs->population;
 
 		/* Special houses that there can be only one of. */
 		t->flags |= oneof;
@@ -2578,6 +2579,7 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	}
 
 	t->cache.num_houses--;
+	t->cache.potential_pop -= hs->population;
 
 	/* Clear flags for houses that only may exist once/town. */
 	if (hs->building_flags & BUILDING_IS_CHURCH) {
