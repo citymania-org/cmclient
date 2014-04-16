@@ -32,27 +32,30 @@ enum RoadToolbarWidgets {
 /** Widgets of the #BuildRoadDepotWindow class. */
 enum BuildRoadDepotWidgets {
 	/* Name starts with BRO instead of BR, because of collision with BuildRailDepotWidgets */
-	WID_BROD_CAPTION,   ///< Caption of the window.
-	WID_BROD_DEPOT_NE,  ///< Depot with NE entry.
-	WID_BROD_DEPOT_SE,  ///< Depot with SE entry.
-	WID_BROD_DEPOT_SW,  ///< Depot with SW entry.
-	WID_BROD_DEPOT_NW,  ///< Depot with NW entry.
+	WID_BROD_CAPTION,    ///< Caption of the window.
+	WID_BROD_DEPOT_NE,   ///< Depot with NE entry.
+	WID_BROD_DEPOT_SE,   ///< Depot with SE entry.
+	WID_BROD_DEPOT_SW,   ///< Depot with SW entry.
+	WID_BROD_DEPOT_NW,   ///< Depot with NW entry.
+	WID_BROD_DEPOT_AUTO, ///< Depot with automatically selected entry.
 };
 
 /** Widgets of the #BuildRoadStationWindow class. */
 enum BuildRoadStationWidgets {
 	/* Name starts with BRO instead of BR, because of collision with BuildRailStationWidgets */
-	WID_BROS_CAPTION,       ///< Caption of the window.
-	WID_BROS_BACKGROUND,    ///< Background of the window.
-	WID_BROS_STATION_NE,    ///< Terminal station with NE entry.
-	WID_BROS_STATION_SE,    ///< Terminal station with SE entry.
-	WID_BROS_STATION_SW,    ///< Terminal station with SW entry.
-	WID_BROS_STATION_NW,    ///< Terminal station with NW entry.
-	WID_BROS_STATION_X,     ///< Drive-through station in x-direction.
-	WID_BROS_STATION_Y,     ///< Drive-through station in y-direction.
-	WID_BROS_LT_OFF,        ///< Turn off area highlight.
-	WID_BROS_LT_ON,         ///< Turn on area highlight.
-	WID_BROS_INFO,          ///< Station acceptance info.
+	WID_BROS_CAPTION,          ///< Caption of the window.
+	WID_BROS_BACKGROUND,       ///< Background of the window.
+	WID_BROS_STATION_NE,       ///< Terminal station with NE entry.
+	WID_BROS_STATION_SE,       ///< Terminal station with SE entry.
+	WID_BROS_STATION_SW,       ///< Terminal station with SW entry.
+	WID_BROS_STATION_NW,       ///< Terminal station with NW entry.
+	WID_BROS_STATION_X,        ///< Drive-through station in x-direction.
+	WID_BROS_STATION_Y,        ///< Drive-through station in y-direction.
+	WID_BROS_STATION_AUTO,     ///< Terminal station, autodetect direction.
+	WID_BROS_STATION_XY_AUTO,  ///< Drive-through station, autodetect direction.
+	WID_BROS_LT_OFF,           ///< Turn off area highlight.
+	WID_BROS_LT_ON,            ///< Turn on area highlight.
+	WID_BROS_INFO,             ///< Station acceptance info.
 };
 
 #endif /* WIDGETS_ROAD_WIDGET_H */
