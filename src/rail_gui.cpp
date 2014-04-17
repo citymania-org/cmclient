@@ -415,6 +415,68 @@ static void HandleAutoSignalPlacement()
 }
 
 
+// FIXME duplicate from road_gui.cpp
+static DiagDirection TileFractCoordsToDiagDir() {
+	bool diag = (_tile_fract_coords.x + _tile_fract_coords.y) < 16;
+	if (_tile_fract_coords.x < _tile_fract_coords.y) {
+		return diag ? DIAGDIR_NE : DIAGDIR_SE;
+	}
+	return diag ? DIAGDIR_NW : DIAGDIR_SW;
+}
+
+// FIXME duplicate from road_gui.cpp
+static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
+	if (bits < ROAD_SE) {
+		return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
+	}
+	return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
+}
+
+
+RoadBits FindRailsToConnect(TileIndex tile) {
+	RoadBits directed = ROAD_NONE;
+	RoadBits passing = ROAD_NONE;
+	DiagDirection ddir;
+	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
+		if (!IsTileType(cur_tile, MP_RAILWAY)) continue;
+		if (!IsPlainRail(cur_tile)) continue;
+		passing |= DiagDirToRoadBits(ddir);
+		if (GetTrackBits(cur_tile) & DiagdirReachesTracks(ddir)) {
+			directed |= DiagDirToRoadBits(ddir);
+		}
+	}
+	// Prioritize track bits that head in this direction
+	if (directed != ROAD_NONE) {
+		return directed;
+	}
+	return passing;
+}
+
+/*
+ * Selects orientation for rail object (depot)
+ */
+static DiagDirection AutodetectRailObjectDirection(TileIndex tile) {
+	RoadBits bits = FindRailsToConnect(tile);
+	// FIXME after this point repeats road autodetection
+	if (HasExactlyOneBit(bits))
+		return RoadBitsToDiagDir(bits);
+	if (bits == ROAD_NONE)
+		bits = ROAD_ALL;
+	RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir());
+	if (HasExactlyOneBit(frac_bits & bits))
+		return RoadBitsToDiagDir(frac_bits & bits);
+	frac_bits |= MirrorRoadBits(frac_bits);
+	if (HasExactlyOneBit(frac_bits & bits))
+		return RoadBitsToDiagDir(frac_bits & bits);
+	for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+		if (DiagDirToRoadBits(ddir) & bits)
+			return ddir;
+	}
+	NOT_REACHED();
+}
+
+
 /** Rail toolbar management class. */
 struct BuildRailToolbarWindow : Window {
 	RailType railtype;    ///< Rail type to build.
@@ -625,6 +687,7 @@ struct BuildRailToolbarWindow : Window {
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		DiagDirection ddir;
 		switch (this->last_user_action) {
 			case WID_RAT_BUILD_NS:
 				VpStartPlaceSizing(tile, VPM_FIX_VERTICAL | VPM_RAILDIRS, DDSP_PLACE_RAIL);
@@ -652,7 +715,11 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_BUILD_DEPOT:
-				DoCommandP(tile, _cur_railtype, _build_depot_direction,
+				ddir = _build_depot_direction;
+				if (ddir == DIAGDIR_NW + 1) {
+					ddir = AutodetectRailObjectDirection(tile);
+				}
+				DoCommandP(tile, _cur_railtype, ddir,
 						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
 						CcRailDepot);
 				break;
@@ -1713,6 +1780,7 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 			case WID_BRAD_DEPOT_SE:
 			case WID_BRAD_DEPOT_SW:
 			case WID_BRAD_DEPOT_NW:
+			case WID_BRAD_DEPOT_AUTO:
 				this->RaiseWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
 				_build_depot_direction = (DiagDirection)(widget - WID_BRAD_DEPOT_NE);
 				this->LowerWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
@@ -1731,23 +1799,24 @@ static const NWidgetPart _nested_build_depot_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
-		NWidget(NWID_HORIZONTAL_LTR),
+		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
-			NWidget(NWID_VERTICAL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAD_DEPOT_NW), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP),
-				EndContainer(),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAD_DEPOT_SW), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP),
-				EndContainer(),
-			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-			NWidget(NWID_VERTICAL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAD_DEPOT_NE), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP),
-				EndContainer(),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAD_DEPOT_SE), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP),
-				EndContainer(),
-			EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAD_DEPOT_NW), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAD_DEPOT_SW), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP), EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAD_DEPOT_NE), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAD_DEPOT_SE), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP), EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+		NWidget(NWID_HORIZONTAL),
+			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BRAD_DEPOT_AUTO), SetMinimalSize(134, 12),
+					SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
@@ -1865,7 +1934,7 @@ static void ShowBuildWaypointPicker(Window *parent)
  */
 void InitializeRailGui()
 {
-	_build_depot_direction = DIAGDIR_NW;
+	_build_depot_direction = (DiagDirection)(DIAGDIR_NW + 1);
 }
 
 /**
