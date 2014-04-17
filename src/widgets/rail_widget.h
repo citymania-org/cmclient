@@ -100,11 +100,10 @@ enum BuildSignalWidgets {
 /** Widgets of the #BuildRailDepotWindow class. */
 enum BuildRailDepotWidgets {
 	/* Name starts with BRA instead of BR, because of collision with BuildRoadDepotWidgets */
-	WID_BRAD_DEPOT_NE,   ///< Build a depot with the entrance in the north east.
-	WID_BRAD_DEPOT_SE,   ///< Build a depot with the entrance in the south east.
-	WID_BRAD_DEPOT_SW,   ///< Build a depot with the entrance in the south west.
-	WID_BRAD_DEPOT_NW,   ///< Build a depot with the entrance in the north west.
-	WID_BRAD_DEPOT_AUTO, ///< Build a depot, autoselect entrance.
+	WID_BRAD_DEPOT_NE, ///< Build a depot with the entrance in the north east.
+	WID_BRAD_DEPOT_SE, ///< Build a depot with the entrance in the south east.
+	WID_BRAD_DEPOT_SW, ///< Build a depot with the entrance in the south west.
+	WID_BRAD_DEPOT_NW, ///< Build a depot with the entrance in the north west.
 };
 
 /** Widgets of the #BuildRailWaypointWindow class. */

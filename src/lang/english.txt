@@ -2413,8 +2413,6 @@ STR_STATION_BUILD_PASSENGER_TRAM_ORIENTATION                    :{WHITE}Passenge
 STR_STATION_BUILD_PASSENGER_TRAM_ORIENTATION_TOOLTIP            :{BLACK}Select passenger tram station orientation
 STR_STATION_BUILD_CARGO_TRAM_ORIENTATION                        :{WHITE}Freight Tram Station Orientation
 STR_STATION_BUILD_CARGO_TRAM_ORIENTATION_TOOLTIP                :{BLACK}Select freight tram station orientation
-STR_STATION_BUILD_ORIENTATION_AUTO                              :{BLACK}Auto
-STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP                      :{BLACK}Automatically select suitable station orientation
 
 # Waterways toolbar (last two for SE only)
 STR_WATERWAYS_TOOLBAR_CAPTION                                   :{WHITE}Waterways Construction
@@ -2968,7 +2966,6 @@ STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} delivered
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (still required)
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN} (delivered)
-STR_TOWN_VIEW_POP_HOUSES_RATIO                                  :{BLACK}P/h ratio: {ORANGE}{NUM} {NUM}
 STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}Town grows every {ORANGE}{COMMA}{BLACK} day{P "" s}
 STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}Town grows every {ORANGE}{COMMA}{BLACK} day{P "" s} (funded)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}Town is {RED}not{BLACK} growing

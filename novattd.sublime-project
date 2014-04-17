@@ -3,8 +3,7 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": ".",
-			"file_exclude_patterns": ["*.cod"]
+			"path": "."
 		}
 	]
 }

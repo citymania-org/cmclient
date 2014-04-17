@@ -304,14 +304,6 @@ static DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
 	if (area.w < area.h) return DIAGDIR_SE;
 
 	return AutodetectRoadObjectDirection(area.tile);
-	// Check tile fractional coords
-	// if (((_tile_fract_coords.x < _tile_fract_coords.y &&
-	//  		(_tile_fract_coords.x + _tile_fract_coords.y) < 16) ||
-	//     (_tile_fract_coords.x > _tile_fract_coords.y &&
-	//  		(_tile_fract_coords.x + _tile_fract_coords.y) > 16) )) {
-	// 	return DIAGDIR_NE;
-	// }
-	// return DIAGDIR_SE;
 }
 
 
@@ -1280,6 +1272,6 @@ static void ShowRVStationPicker(Window *parent, RoadStopType rs)
 
 void InitializeRoadGui()
 {
-	_road_depot_orientation = DIAGDIR_NW;
-	_road_station_picker_orientation = DIAGDIR_NW;
+	_road_depot_orientation = (DiagDirection)(DIAGDIR_NW + 1);
+	_road_station_picker_orientation = (DiagDirection)(DIAGDIR_END + 3);
 }

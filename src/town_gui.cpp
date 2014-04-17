@@ -400,10 +400,6 @@ public:
 		SetDParam(5, this->town->cb_houses_removed_last_month);
 		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_GROWTH_TILES);
 
-		SetDParam(0, 10 * this->town->cache.population / this->town->cache.num_houses);
-		SetDParam(1, 10 * this->town->cache.potential_pop / this->town->cache.num_houses);
-		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_POP_HOUSES_RATIO);
-
 		bool first = true;
 		for (int i = TE_BEGIN; i < TE_END; i++) {
 			if (this->town->goal[i] == 0) continue;
