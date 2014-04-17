@@ -155,7 +155,7 @@ public:
 
 		DrawCompanyIcon(company, rtl ? right - this->icon_size.width - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT, top + icon_offset);
 		if (_networking && NetworkCompanyIsPassworded(company)){
-			DrawSprite(SPR_LOCK, PAL_NONE, left + WD_FRAMERECT_LEFT + 3 + this->icon_size.width, top + text_offset);
+			DrawSprite(SPR_LOCK, PAL_NONE, rtl ? right - this->icon_size.width - this->lockwidth - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT + 3 + this->icon_size.width, top + text_offset);
 		}
 
 		SetDParam(0, company);
@@ -166,7 +166,8 @@ public:
 		} else {
 			col = sel ? TC_WHITE : TC_BLACK;
 		}
-		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : 3 + this->icon_size.width + this->lockwidth), right - WD_FRAMERECT_RIGHT - (rtl ? 3 + this->icon_size.width : 0), top + text_offset, STR_COMPANY_NAME_COMPANY_NUM, col);
+		int text_x_ofs = 3 + this->icon_size.width + this->lockwidth;
+		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : text_x_ofs), right - WD_FRAMERECT_RIGHT - (rtl ? text_x_ofs : 0), top + text_offset, STR_COMPANY_NAME_COMPANY_NUM, col);
 	}
 };
 

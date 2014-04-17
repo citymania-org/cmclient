@@ -2327,6 +2327,8 @@ STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Select w
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}Rail Station Selection
 STR_STATION_BUILD_ORIENTATION                                   :{BLACK}Orientation
+STR_STATION_BUILD_ORIENTATION_AUTO                              :{BLACK}Auto
+STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP                      :{BLACK}Automatically select station orientation based on environment
 STR_STATION_BUILD_RAILROAD_ORIENTATION_TOOLTIP                  :{BLACK}Select railway station orientation
 STR_STATION_BUILD_NUMBER_OF_TRACKS                              :{BLACK}Number of tracks
 STR_STATION_BUILD_NUMBER_OF_TRACKS_TOOLTIP                      :{BLACK}Select number of platforms for railway station
