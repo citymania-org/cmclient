@@ -1818,7 +1818,8 @@ struct MainToolbarWindow : Window {
 	virtual void BuildTreesWindow(){
 		ShowBuildTreesToolbar();
 		Window *w = FindWindowById(WC_BUILD_TREES, 0);
-		return w->OnClick(Point(), WID_BT_TYPE_RANDOM, 1);
+		if (!w->IsWidgetLowered(WID_BT_TYPE_RANDOM))
+			w->OnClick(Point(), WID_BT_TYPE_RANDOM, 1);
 	}
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
