@@ -265,8 +265,8 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 				_network_first_time = false;
 				SendAck();
 				extern bool novahost();
-				if(novahost()){ 
-					NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, "!check 1400");//check version
+				if(novahost()){
+					NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, "!check 1401");//check version
 					NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, "!synccb"); //CB cargo data
 					CB_SetCB(false);
 				}
