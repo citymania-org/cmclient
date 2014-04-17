@@ -439,6 +439,12 @@ RoadBits FindRailsToConnect(TileIndex tile) {
 	DiagDirection ddir;
 	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
 		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
+		if (HasStationTileRail(cur_tile)) {
+			if (GetRailStationTrackBits(cur_tile) & DiagdirReachesTracks(ddir)) {
+				directed |= DiagDirToRoadBits(ddir);
+			}
+			continue;
+		}
 		if (!IsTileType(cur_tile, MP_RAILWAY)) continue;
 		if (!IsPlainRail(cur_tile)) continue;
 		passing |= DiagDirToRoadBits(ddir);
