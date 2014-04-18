@@ -403,6 +403,7 @@
     <ClInclude Include="..\src\base_station_base.h" />
     <ClInclude Include="..\src\bmp.h" />
     <ClInclude Include="..\src\bridge.h" />
+    <ClInclude Include="..\src\cargo_table_gui.h" />
     <ClInclude Include="..\src\cargo_type.h" />
     <ClInclude Include="..\src\cargoaction.h" />
     <ClInclude Include="..\src\cargomonitor.h" />
@@ -644,6 +645,7 @@
     <ClInclude Include="..\src\viewport_func.h" />
     <ClInclude Include="..\src\viewport_sprite_sorter.h" />
     <ClInclude Include="..\src\viewport_type.h" />
+    <ClInclude Include="..\src\watch_gui.h" />
     <ClInclude Include="..\src\water.h" />
     <ClInclude Include="..\src\waypoint_base.h" />
     <ClInclude Include="..\src\waypoint_func.h" />
@@ -655,6 +657,7 @@
     <ClInclude Include="..\src\window_func.h" />
     <ClInclude Include="..\src\window_gui.h" />
     <ClInclude Include="..\src\window_type.h" />
+    <ClInclude Include="..\src\zoning.h" />
     <ClInclude Include="..\src\zoom_func.h" />
     <ClInclude Include="..\src\zoom_type.h" />
     <ClCompile Include="..\src\core\alloc_func.cpp" />
@@ -691,7 +694,9 @@
     <ClCompile Include="..\src\bootstrap_gui.cpp" />
     <ClCompile Include="..\src\bridge_gui.cpp" />
     <ClCompile Include="..\src\build_vehicle_gui.cpp" />
+    <ClCompile Include="..\src\cargo_table_gui.cpp" />
     <ClCompile Include="..\src\cheat_gui.cpp" />
+    <ClCompile Include="..\src\commands_gui.cpp" />
     <ClCompile Include="..\src\company_gui.cpp" />
     <ClCompile Include="..\src\console_gui.cpp" />
     <ClCompile Include="..\src\date_gui.cpp" />
@@ -740,14 +745,17 @@
     <ClCompile Include="..\src\transparency_gui.cpp" />
     <ClCompile Include="..\src\tree_gui.cpp" />
     <ClCompile Include="..\src\vehicle_gui.cpp" />
+    <ClCompile Include="..\src\watch_gui.cpp" />
     <ClCompile Include="..\src\viewport_gui.cpp" />
     <ClCompile Include="..\src\waypoint_gui.cpp" />
+    <ClCompile Include="..\src\zoning_gui.cpp" />
     <ClInclude Include="..\src\widgets\airport_widget.h" />
     <ClInclude Include="..\src\widgets\ai_widget.h" />
     <ClInclude Include="..\src\widgets\autoreplace_widget.h" />
     <ClInclude Include="..\src\widgets\bootstrap_widget.h" />
     <ClInclude Include="..\src\widgets\bridge_widget.h" />
     <ClInclude Include="..\src\widgets\build_vehicle_widget.h" />
+    <ClInclude Include="..\src\widgets\cargo_table_widget.h" />
     <ClInclude Include="..\src\widgets\cheat_widget.h" />
     <ClInclude Include="..\src\widgets\company_widget.h" />
     <ClInclude Include="..\src\widgets\console_widget.h" />
@@ -826,6 +834,7 @@
     <ClCompile Include="..\src\void_cmd.cpp" />
     <ClCompile Include="..\src\water_cmd.cpp" />
     <ClCompile Include="..\src\waypoint_cmd.cpp" />
+    <ClCompile Include="..\src\zoning_cmd.cpp" />
     <ClCompile Include="..\src\saveload\afterload.cpp" />
     <ClCompile Include="..\src\saveload\ai_sl.cpp" />
     <ClCompile Include="..\src\saveload\airport_sl.cpp" />
