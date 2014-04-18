@@ -1084,7 +1084,7 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 		NWidget(NWID_HORIZONTAL),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12),
-					SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+					SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),

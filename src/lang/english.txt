@@ -2319,6 +2319,7 @@ STR_RAIL_NAME_MAGLEV                                            :Maglev
 # Rail depot construction window
 STR_BUILD_DEPOT_TRAIN_ORIENTATION_CAPTION                       :{WHITE}Train Depot Orientation
 STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Select railway depot orientation
+STR_BUILD_DEPOT_TRAIN_ORIENTATION_AUTO_TOOLTIP                      :{BLACK}Automatically select railway depot orientation based on environment
 
 # Rail waypoint construction window
 STR_WAYPOINT_CAPTION                                            :{WHITE}Waypoint
@@ -2405,6 +2406,7 @@ STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Road Dep
 STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Select road vehicle depot orientation
 STR_BUILD_DEPOT_TRAM_ORIENTATION_CAPTION                        :{WHITE}Tram Depot Orientation
 STR_BUILD_DEPOT_TRAM_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Select tram vehicle depot orientation
+STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP                      :{BLACK}Automatically select road depot orientation based on environment
 
 # Road vehicle station construction window
 STR_STATION_BUILD_BUS_ORIENTATION                               :{WHITE}Bus Station Orientation
