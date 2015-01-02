@@ -1,4 +1,4 @@
-/* $Id: timetable_gui.cpp 25617 2013-07-17 18:37:13Z rubidium $ */
+/* $Id: timetable_gui.cpp 26653 2014-06-17 19:14:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -51,18 +51,6 @@ void SetTimetableParams(int param1, int param2, Ticks ticks)
 		SetDParam(param1, STR_TIMETABLE_DAYS);
 		SetDParam(param2, ticks / DAY_TICKS);
 	}
-}
-
-/**
- * Sets the arrival or departure string and parameters.
- * @param param1 the first DParam to fill
- * @param param2 the second DParam to fill
- * @param ticks  the number of ticks to 'draw'
- */
-static void SetArrivalDepartParams(int param1, int param2, Ticks ticks)
-{
-	SetDParam(param1, STR_JUST_DATE_TINY);
-	SetDParam(param2, _date + (ticks / DAY_TICKS));
 }
 
 /**
@@ -447,18 +435,20 @@ struct TimetableWindow : Window {
 						if (arr_dep[i / 2].arrival != INVALID_TICKS) {
 							DrawString(abbr_left, abbr_right, y, STR_TIMETABLE_ARRIVAL_ABBREVIATION, i == selected ? TC_WHITE : TC_BLACK);
 							if (this->show_expected && i / 2 == earlyID) {
-								SetArrivalDepartParams(0, 1, arr_dep[i / 2].arrival);
-								DrawString(time_left, time_right, y, STR_GREEN_STRING, i == selected ? TC_WHITE : TC_BLACK);
+								SetDParam(0, _date + arr_dep[i / 2].arrival / DAY_TICKS);
+								DrawString(time_left, time_right, y, STR_JUST_DATE_TINY, TC_GREEN);
 							} else {
-								SetArrivalDepartParams(0, 1, arr_dep[i / 2].arrival + offset);
-								DrawString(time_left, time_right, y, show_late ? STR_RED_STRING : STR_JUST_STRING, i == selected ? TC_WHITE : TC_BLACK);
+								SetDParam(0, _date + (arr_dep[i / 2].arrival + offset) / DAY_TICKS);
+								DrawString(time_left, time_right, y, STR_JUST_DATE_TINY,
+										show_late ? TC_RED : i == selected ? TC_WHITE : TC_BLACK);
 							}
 						}
 					} else {
 						if (arr_dep[i / 2].departure != INVALID_TICKS) {
 							DrawString(abbr_left, abbr_right, y, STR_TIMETABLE_DEPARTURE_ABBREVIATION, i == selected ? TC_WHITE : TC_BLACK);
-							SetArrivalDepartParams(0, 1, arr_dep[i/2].departure + offset);
-							DrawString(time_left, time_right, y, show_late ? STR_RED_STRING : STR_JUST_STRING, i == selected ? TC_WHITE : TC_BLACK);
+							SetDParam(0, _date + (arr_dep[i/2].departure + offset) / DAY_TICKS);
+							DrawString(time_left, time_right, y, STR_JUST_DATE_TINY,
+									show_late ? TC_RED : i == selected ? TC_WHITE : TC_BLACK);
 						}
 					}
 					y += FONT_HEIGHT_NORMAL;

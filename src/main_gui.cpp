@@ -210,7 +210,7 @@ enum {
 	GHK_QUIT,
 	GHK_ABANDON,
 	GHK_CONSOLE,
-	GHK_BOUNDING_BOXES,	
+	GHK_BOUNDING_BOXES,
 	GHK_DIRTY_BLOCKS,
 	GHK_CENTER,
 	GHK_CENTER_ZOOM,
@@ -466,6 +466,11 @@ struct MainWindow : Window
 		if (!gui_scope) return;
 		/* Forward the message to the appropriate toolbar (ingame or scenario editor) */
 		InvalidateWindowData(WC_MAIN_TOOLBAR, 0, data, true);
+	}
+
+	virtual void OnMouseOver(Point pt, int widget)
+	{
+		if (_game_mode != GM_MENU && _settings_client.gui.enable_extra_tooltips && pt.x != -1) GuiPrepareTooltipsExtra(this);
 	}
 
 	static HotkeyList hotkeys;

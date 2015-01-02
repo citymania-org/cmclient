@@ -203,7 +203,7 @@ static const NWidgetPart _nested_cargos_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _cargos_desc(	
+static WindowDesc _cargos_desc(
 	WDP_AUTO, NULL, 0, 0,
 	WC_CARGOS, WC_NONE,
 	WDF_CONSTRUCTION,
@@ -215,3 +215,4 @@ void ShowCompanyCargos(CompanyID company)
 	if (!Company::IsValidID(company)) return;
 	AllocateWindowDescFront<CargosWindow>(&_cargos_desc, company);
 }
+

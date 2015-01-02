@@ -1,4 +1,4 @@
-/* $Id: script_list.cpp 26072 2013-11-23 18:13:30Z rubidium $ */
+/* $Id: script_list.cpp 26790 2014-09-07 15:09:05Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -354,7 +354,12 @@ public:
 			this->has_no_more_items = true;
 			return;
 		}
-		this->item_iter--;
+		if (this->item_iter == this->list->items.begin()) {
+			/* Use 'end' as marker for 'beyond begin' */
+			this->item_iter = this->list->items.end();
+		} else {
+			this->item_iter--;
+		}
 		if (this->item_iter != this->list->items.end()) item_next = (*this->item_iter).first;
 	}
 

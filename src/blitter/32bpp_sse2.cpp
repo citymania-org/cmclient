@@ -1,4 +1,4 @@
-/* $Id: 32bpp_sse2.cpp 26259 2014-01-13 18:17:17Z rubidium $ */
+/* $Id: 32bpp_sse2.cpp 26541 2014-04-29 18:18:52Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -36,6 +36,7 @@ Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::Sprite *sprite, Alloca
 
 	/* Calculate sizes and allocate. */
 	SpriteData sd;
+	memset(&sd, 0, sizeof(sd));
 	uint all_sprites_size = 0;
 	for (ZoomLevel z = zoom_min; z <= zoom_max; z++) {
 		const SpriteLoader::Sprite *src_sprite = &sprite[z];

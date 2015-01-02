@@ -141,8 +141,6 @@ struct GUISettings {
 	bool   station_show_coverage;            ///< whether to highlight coverage area
 	bool   persistent_buildingtools;         ///< keep the building tools active after usage
 	bool   expenses_layout;                  ///< layout of expenses window
-	bool   old_depot_train_length_calc;
-	uint8  cb_distance_check;                ///< zoning cb distance
 	uint32 last_newgrf_count;                ///< the numbers of NewGRFs we found during the last scan
 	byte   missing_strings_threshold;        ///< the number of missing strings before showing the warning
 	uint8  graph_line_thickness;             ///< the thickness of the lines in the various graph guis
@@ -168,6 +166,11 @@ struct GUISettings {
 	uint8  settings_restriction_mode;        ///< selected restriction mode in adv. settings GUI. @see RestrictionMode
 	bool   newgrf_show_old_versions;         ///< whether to show old versions in the NewGRF list
 	uint8  newgrf_default_palette;           ///< default palette to use for NewGRFs without action 14 palette information
+
+	bool   old_depot_train_length_calc;      ///< display vehicle length in whole numbers - old style
+	uint8  cb_distance_check;                ///< zoning cb distance
+	bool   enable_extra_tooltips;            ///< enable extra tooltips when hovering over various elements
+	bool   polyrail_double_click;            ///< finish polyrail with mouse double click
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
@@ -277,9 +280,6 @@ struct NetworkSettings {
 	char   last_host[NETWORK_HOSTNAME_LENGTH];            ///< IP address of the last joined server
 	uint16 last_port;                                     ///< port of the last joined server
 	bool   no_http_content_downloads;                     ///< do not do content downloads over HTTP
-	
-	char   username[NETWORK_NAME_LENGTH];                 ///< user name
-	char   userpw[NETWORK_PASSWORD_LENGTH];               ///< user password
 #else /* ENABLE_NETWORK */
 #endif
 };

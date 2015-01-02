@@ -1,4 +1,4 @@
-/* $Id: order_sl.cpp 25041 2013-02-24 16:41:51Z frosch $ */
+/* $Id: order_sl.cpp 26820 2014-09-14 15:24:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,7 @@
 #include "../order_backup.h"
 #include "../settings_type.h"
 #include "../network/network.h"
+#include "../network/network_server.h"
 
 #include "saveload_internal.h"
 
@@ -247,9 +248,9 @@ const SaveLoad *GetOrderBackupDescription()
 		     SLE_VAR(OrderBackup, user,                     SLE_UINT32),
 		     SLE_VAR(OrderBackup, tile,                     SLE_UINT32),
 		     SLE_VAR(OrderBackup, group,                    SLE_UINT16),
-		     SLE_VAR(OrderBackup, service_interval,         SLE_UINT32),
+		     SLE_VAR(OrderBackup, service_interval,         SLE_FILE_U32 | SLE_VAR_U16),
 		     SLE_STR(OrderBackup, name,                     SLE_STR, 0),
-		     SLE_VAR(OrderBackup, clone,                    SLE_UINT16),
+		    SLE_NULL(2), // clone (2 bytes of pointer, i.e. garbage)
 		     SLE_VAR(OrderBackup, cur_real_order_index,     SLE_UINT8),
 		 SLE_CONDVAR(OrderBackup, cur_implicit_order_index, SLE_UINT8,                 176, SL_MAX_VERSION),
 		 SLE_CONDVAR(OrderBackup, current_order_time,       SLE_UINT32,                176, SL_MAX_VERSION),
@@ -286,14 +287,6 @@ void Load_BKOR()
 		/* set num_orders to 0 so it's a valid OrderList */
 		OrderBackup *ob = new (index) OrderBackup();
 		SlObject(ob, GetOrderBackupDescription());
-	}
-
-	/* Only load order-backups for network clients.
-	 * If we are a network server or not networking, then we just loaded
-	 * a previously saved-by-server savegame. There are
-	 * no clients with a backup anymore, so clear it. */
-	if (!_networking || _network_server) {
-		_order_backup_pool.CleanPool();
 	}
 }
 

@@ -1,4 +1,4 @@
-/* $Id: dock_gui.cpp 25414 2013-06-15 15:31:22Z frosch $ */
+/* $Id: dock_gui.cpp 26460 2014-04-13 10:47:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -41,13 +41,13 @@ void CcBuildDocks(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p
 {
 	if (result.Failed()) return;
 
-	if (_settings_client.sound.confirm) SndPlayTileFx(SND_02_SPLAT, tile);
+	if (_settings_client.sound.confirm) SndPlayTileFx(SND_02_SPLAT_WATER, tile);
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 }
 
 void CcBuildCanal(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 {
-	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_02_SPLAT, tile);
+	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_02_SPLAT_WATER, tile);
 }
 
 

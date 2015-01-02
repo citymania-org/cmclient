@@ -1,4 +1,4 @@
-/* $Id: crashlog_win.cpp 25677 2013-08-05 20:36:58Z michi_cc $ */
+/* $Id: crashlog_win.cpp 26544 2014-04-29 18:41:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -521,7 +521,7 @@ static LONG WINAPI ExceptionHandler(EXCEPTION_POINTERS *ep)
 	/* Close any possible log files */
 	CloseConsoleLogIfActive();
 
-	if ((_video_driver == NULL || _video_driver->HasGUI()) && _safe_esp != NULL) {
+	if ((VideoDriver::GetInstance() == NULL || VideoDriver::GetInstance()->HasGUI()) && _safe_esp != NULL) {
 #ifdef _M_AMD64
 		ep->ContextRecord->Rip = (DWORD64)ShowCrashlogWindow;
 		ep->ContextRecord->Rsp = (DWORD64)_safe_esp;

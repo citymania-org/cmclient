@@ -1,4 +1,4 @@
-/* $Id: build_vehicle_gui.cpp 26241 2014-01-12 18:00:39Z frosch $ */
+/* $Id: build_vehicle_gui.cpp 26972 2014-10-06 20:10:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -526,21 +526,20 @@ static GUIEngineList::FilterFunction * const _filter_funcs[] = {
 	&CargoFilter,
 };
 
-static int DrawCargoCapacityInfo(int left, int right, int y, EngineID engine, bool refittable)
+static int DrawCargoCapacityInfo(int left, int right, int y, EngineID engine)
 {
-	CargoArray cap = GetCapacityOfArticulatedParts(engine);
+	CargoArray cap;
+	uint32 refits;
+	GetArticulatedVehicleCargoesAndRefits(engine, &cap, &refits);
 
 	for (CargoID c = 0; c < NUM_CARGO; c++) {
 		if (cap[c] == 0) continue;
 
 		SetDParam(0, c);
 		SetDParam(1, cap[c]);
-		SetDParam(2, refittable ? STR_PURCHASE_INFO_REFITTABLE : STR_EMPTY);
+		SetDParam(2, HasBit(refits, c) ? STR_PURCHASE_INFO_REFITTABLE : STR_EMPTY);
 		DrawString(left, right, y, STR_PURCHASE_INFO_CAPACITY);
 		y += FONT_HEIGHT_NORMAL;
-
-		/* Only show as refittable once */
-		refittable = false;
 	}
 
 	return y;
@@ -825,7 +824,7 @@ int DrawVehiclePurchaseInfo(int left, int right, int y, EngineID engine_number)
 
 	if (articulated_cargo) {
 		/* Cargo type + capacity, or N/A */
-		int new_y = DrawCargoCapacityInfo(left, right, y, engine_number, refittable);
+		int new_y = DrawCargoCapacityInfo(left, right, y, engine_number);
 
 		if (new_y == y) {
 			SetDParam(0, CT_INVALID);
@@ -1444,4 +1443,4 @@ void ShowBuildVehicleWindow(TileIndex tile, VehicleType type)
 	DeleteWindowById(WC_BUILD_VEHICLE, num);
 
 	new BuildVehicleWindow(&_build_vehicle_desc, tile, type);
-}
+}

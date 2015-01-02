@@ -1,4 +1,4 @@
-/* $Id: newgrf_gui.cpp 26086 2013-11-24 14:46:26Z rubidium $ */
+/* $Id: newgrf_gui.cpp 26653 2014-06-17 19:14:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -134,9 +134,8 @@ static void ShowNewGRFInfo(const GRFConfig *c, uint x, uint y, uint right, uint 
 
 	/* Draw GRF info if it exists */
 	if (!StrEmpty(c->GetDescription())) {
-		SetDParam(0, STR_JUST_RAW_STRING);
-		SetDParamStr(1, c->GetDescription());
-		y = DrawStringMultiLine(x, right, y, bottom, STR_BLACK_STRING);
+		SetDParamStr(0, c->GetDescription());
+		y = DrawStringMultiLine(x, right, y, bottom, STR_BLACK_RAW_STRING);
 	} else {
 		y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_NO_INFO);
 	}

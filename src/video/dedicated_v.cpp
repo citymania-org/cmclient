@@ -1,4 +1,4 @@
-/* $Id: dedicated_v.cpp 26209 2014-01-02 22:41:58Z rubidium $ */
+/* $Id: dedicated_v.cpp 26543 2014-04-29 18:35:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -99,6 +99,9 @@ static void WINAPI CheckForConsoleInput()
 	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
 	for (;;) {
 		ReadFile(hStdin, _win_console_thread_buffer, lengthof(_win_console_thread_buffer), &nb, NULL);
+		if (nb >= lengthof(_win_console_thread_buffer)) nb = lengthof(_win_console_thread_buffer) - 1;
+		_win_console_thread_buffer[nb] = '\0';
+
 		/* Signal input waiting that input is read and wait for it being handled
 		 * SignalObjectAndWait() should be used here, but it's unsupported in Win98< */
 		SetEvent(_hInputReady);
@@ -243,9 +246,7 @@ static void DedicatedHandleKeyInput()
 	SetEvent(_hWaitForInputHandling);
 #endif
 
-	/* strtok() does not 'forget' \r\n if the string starts with it,
-	 * so we have to manually remove that! */
-	strtok(input_line, "\r\n");
+	/* Remove trailing \r or \n */
 	for (char *c = input_line; *c != '\0'; c++) {
 		if (*c == '\n' || *c == '\r' || c == lastof(input_line)) {
 			*c = '\0';

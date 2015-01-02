@@ -1,4 +1,4 @@
-/* $Id: afterload.cpp 26317 2014-02-07 23:48:56Z frosch $ */
+/* $Id: afterload.cpp 26820 2014-09-14 15:24:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -51,6 +51,7 @@
 #include "../core/backup_type.hpp"
 #include "../smallmap_gui.h"
 #include "../news_func.h"
+#include "../order_backup.h"
 #include "../error.h"
 
 
@@ -1597,7 +1598,7 @@ bool AfterLoadGame()
 		FOR_ALL_STATIONS(st) {
 			for (CargoID c = 0; c < NUM_CARGO; c++) {
 				st->goods[c].last_speed = 0;
-				if (st->goods[c].cargo.AvailableCount() != 0) SetBit(st->goods[c].acceptance_pickup, GoodsEntry::GES_PICKUP);
+				if (st->goods[c].cargo.AvailableCount() != 0) SetBit(st->goods[c].status, GoodsEntry::GES_RATING);
 			}
 		}
 	}
@@ -2911,6 +2912,21 @@ bool AfterLoadGame()
 				}
 				cur_skip--;
 			}
+		}
+	}
+
+	/*
+	 * Only keep order-backups for network clients.
+	 * If we are a network server or not networking, then we just loaded a previously
+	 * saved-by-server savegame. There are no clients with a backup, so clear it.
+	 * Furthermore before savegame version 192 the actual content was always corrupt.
+	 */
+	if (!_networking || _network_server || IsSavegameVersionBefore(192)) {
+		/* Note: We cannot use CleanPool since that skips part of the destructor
+		 * and then leaks un-reachable Orders in the order pool. */
+		OrderBackup *ob;
+		FOR_ALL_ORDER_BACKUPS(ob) {
+			delete ob;
 		}
 	}
 

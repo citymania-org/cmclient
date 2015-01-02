@@ -1,4 +1,4 @@
-/* $Id: win32.cpp 25676 2013-08-05 20:36:55Z michi_cc $ */
+/* $Id: win32.cpp 26625 2014-06-02 18:18:35Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,7 +19,7 @@
 #include <fcntl.h>
 #include <regstr.h>
 #include <shlobj.h> /* SHGetFolderPath */
-#include <Shellapi.h>
+#include <shellapi.h>
 #include "win32.h"
 #include "../../core/alloc_func.hpp"
 #include "../../openttd.h"

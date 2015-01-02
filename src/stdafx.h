@@ -1,4 +1,4 @@
-/* $Id: stdafx.h 26226 2014-01-05 10:15:57Z zuu $ */
+/* $Id: stdafx.h 26973 2014-10-06 20:14:44Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,7 @@
 	#include <unistd.h>
 	#define _GNU_SOURCE
 	#define TROUBLED_INTS
+	#include <strings.h>
 #elif defined(__NDS__)
 	#include <nds/jtypes.h>
 	#define TROUBLED_INTS

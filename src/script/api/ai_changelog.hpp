@@ -1,4 +1,4 @@
-/* $Id: ai_changelog.hpp 26439 2014-04-01 18:29:34Z frosch $ */
+/* $Id: ai_changelog.hpp 26980 2014-10-08 18:29:27Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,22 @@
  * bug fixes can be found in the normal changelog. Note that removed API
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
+ *
+ * \b 1.4.4
+ *
+ * No changes
+ *
+ * \b 1.4.3
+ *
+ * No changes
+ *
+ * \b 1.4.2
+ *
+ * No changes
+ *
+ * \b 1.4.1
+ *
+ * No changes
  *
  * \b 1.4.0
  *

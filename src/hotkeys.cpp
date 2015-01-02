@@ -74,7 +74,7 @@ static const KeycodeNames _keycode_to_name[] = {
 	{"L_PAREN", WKC_L_PAREN},
 	{"R_PAREN", WKC_R_PAREN},
 	{"EXCLAIM", WKC_EXCLAIM},
-	{"ASTERISK", WKC_ASTERISK},	
+	{"ASTERISK", WKC_ASTERISK},
 };
 
 /**

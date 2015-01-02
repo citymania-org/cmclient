@@ -1,4 +1,4 @@
-/* $Id: network.cpp 25997 2013-11-14 19:31:10Z rubidium $ */
+/* $Id: network.cpp 26595 2014-05-18 11:21:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -81,7 +81,7 @@ bool _network_udp_server;             ///< Is the UDP server started?
 uint16 _network_udp_broadcast;        ///< Timeout for the UDP broadcasts.
 uint8 _network_advertise_retries;     ///< The number of advertisement retries we did.
 CompanyMask _network_company_passworded; ///< Bitmask of the password status of all companies.
-
+bool _novarole = false;
 /* Check whether NETWORK_NUM_LANDSCAPES is still in sync with NUM_LANDSCAPE */
 assert_compile((int)NETWORK_NUM_LANDSCAPES == (int)NUM_LANDSCAPE);
 assert_compile((int)NETWORK_COMPANY_NAME_LENGTH == MAX_LENGTH_COMPANY_NAME_CHARS * MAX_CHAR_LENGTH);
@@ -103,6 +103,7 @@ NetworkClientInfo::~NetworkClientInfo()
 {
 	/* Delete the chat window, if you were chatting with this client. */
 	InvalidateWindowData(WC_SEND_NETWORK_MSG, DESTTYPE_CLIENT, this->client_id);
+	InvalidateWindowData(WC_WATCH_COMPANYA, this->client_id, 2);
 }
 
 /**
@@ -698,7 +699,7 @@ static void NetworkInitGameInfo()
 	/* There should be always space for the server. */
 	assert(NetworkClientInfo::CanAllocateItem());
 	NetworkClientInfo *ci = new NetworkClientInfo(CLIENT_ID_SERVER);
-	ci->client_playas = _network_dedicated ? COMPANY_SPECTATOR : _local_company;
+	ci->client_playas = _network_dedicated ? COMPANY_SPECTATOR : COMPANY_FIRST;
 
 	strecpy(ci->client_name, _settings_client.network.client_name, lastof(ci->client_name));
 }

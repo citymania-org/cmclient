@@ -1,4 +1,4 @@
-/* $Id: linkgraph_sl.cpp 25898 2013-10-22 16:13:28Z fonsinchen $ */
+/* $Id: linkgraph_sl.cpp 26596 2014-05-18 11:26:09Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,7 +21,7 @@ typedef LinkGraph::BaseEdge Edge;
 
 const SettingDesc *GetSettingDescription(uint index);
 
-static uint _num_nodes;
+static uint16 _num_nodes;
 
 /**
  * Get a SaveLoad array for a link graph.

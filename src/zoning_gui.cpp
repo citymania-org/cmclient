@@ -1,104 +1,167 @@
-
 /** @file zoning_gui.cpp */
-
 #include "stdafx.h"
-#include "openttd.h"
 #include "widgets/dropdown_func.h"
-#include "widget_type.h"
-//#include "functions.h"
-#include "window_func.h"
-#include "gui.h"
-#include "viewport_func.h"
-#include "sound_func.h"
-//#include "variables.h"
-#include "table/sprites.h"
 #include "table/strings.h"
 #include "strings_func.h"
 #include "gfx_func.h"
 #include "core/geometry_func.hpp"
-#include "core/random_func.hpp"
 #include "zoning.h"
+#include "hotkeys.h"
 
-enum ZoningToolbarWidgets {
-	ZTW_OUTER = 4,
-	ZTW_OUTER_DROPDOWN,	
-	ZTW_INNER,
-	ZTW_INNER_DROPDOWN,
-	ZTW_CAPTION
-};
-
-const StringID _zone_types[] = { 
-	STR_ZONING_NO_ZONING, 
-	STR_ZONING_AUTHORITY, 
-	STR_ZONING_CAN_BUILD, 
-	STR_ZONING_STA_CATCH, 	
-	STR_ZONING_BUL_UNSER, 
-	STR_ZONING_IND_UNSER, 
-	STR_ZONING_TOWN_ZONES, 
-	STR_ZONING_CB_BORDERS, 
+const StringID _zone_types[] = {
+	//STR_ZONING_NO_ZONING,
+	STR_ZONING_AUTHORITY,
+	STR_ZONING_CAN_BUILD,
+	STR_ZONING_STA_CATCH,
+	STR_ZONING_BUL_UNSER,
+	STR_ZONING_IND_UNSER,
+	STR_ZONING_TOWN_ZONES,
+	STR_ZONING_CB_BORDERS,
 	STR_ZONING_CB_TOWN_BORDERS,
 	STR_ZONING_ADVERTISEMENT_ZONES,
 	STR_ZONING_TOWN_GROWTH_TILES,
-	INVALID_STRING_ID 
+};
+
+enum ZoningToolbarWidgets {
+	ZTW_CAPTION,
+	ZTW_OUTER_FIRST,
+	ZTW_INNER_FIRST = ZTW_OUTER_FIRST + 10,
+	ZTW_INNER_END = ZTW_INNER_FIRST + 10,
 };
 
 struct ZoningWindow : public Window {
-	
+	uint maxwidth;
+	uint maxheight;
+
 	ZoningWindow(WindowDesc *desc, int window_number) : Window(desc) {
-		this->InitNested(window_number);	
-		this->InvalidateData();	
+		int zone_types_size = lengthof(_zone_types);
+		Dimension dim;
+		this->maxwidth = 0;
+		this->maxheight = 0;
+		for (int i = 0; i < zone_types_size; i++) {
+			dim = GetStringBoundingBox(_zone_types[i]);
+			this->maxwidth = max(this->maxwidth, dim.width);
+			this->maxheight = max(this->maxheight, dim.height);
+		}
+
+		this->InitNested(window_number);
+		this->InvalidateData();
+		if(_zoning.outer != CHECKNOTHING) this->LowerWidget(ZTW_OUTER_FIRST + _zoning.outer - 1); //-1:skip CHECKNOTHING
+		if(_zoning.inner != CHECKNOTHING) this->LowerWidget(ZTW_INNER_FIRST + _zoning.inner - 1);
 	}
-	
+
 	virtual void OnPaint() {
 		this->DrawWidgets();
 	}
-	
+
 	virtual void OnClick(Point pt, int widget, int click_count) {
-		switch ( widget ) {
-			case ZTW_OUTER_DROPDOWN:
-				ShowDropDownMenu(this, _zone_types, _zoning.outer, ZTW_OUTER_DROPDOWN, 0, 0);
-				break;
-			case ZTW_INNER_DROPDOWN:
-				ShowDropDownMenu(this, _zone_types, _zoning.inner, ZTW_INNER_DROPDOWN, 0, 0);
-				break;
-		}				
-	}
-	
-	virtual void OnDropdownSelect(int widget, int index) {
-		switch(widget) {
-			case ZTW_OUTER_DROPDOWN:				
-				_zoning.outer = (EvaluationMode)index;
-				break;
-			case ZTW_INNER_DROPDOWN:				
-				_zoning.inner = (EvaluationMode)index;
-				break;
+		bool outer = true;
+		bool deselect = false;
+		EvaluationMode clicked;
+		if (widget >= ZTW_OUTER_FIRST && widget < ZTW_INNER_FIRST){
+			clicked = (EvaluationMode)(widget - ZTW_OUTER_FIRST + 1); //+1:skip CHECKNOTHING
+			deselect = _zoning.outer == clicked;
+			_zoning.outer = deselect ? CHECKNOTHING : clicked;
 		}
+		else if (widget >= ZTW_INNER_FIRST && widget < ZTW_INNER_END){
+			clicked = (EvaluationMode)(widget - ZTW_INNER_FIRST + 1);
+			deselect = _zoning.inner == clicked;
+			_zoning.inner = deselect ? CHECKNOTHING : clicked;
+			outer = false;
+		}
+		else return;
+
+		this->RaiseAllWidgets(outer);
+		if(!deselect) this->ToggleWidgetLoweredState(widget);
 		this->InvalidateData();
 		MarkWholeScreenDirty();
 	}
-	
-	virtual void SetStringParameters(int widget) const {
-		switch ( widget ) {
-			case ZTW_OUTER_DROPDOWN: SetDParam(0, _zone_types[_zoning.outer]); break;
-			case ZTW_INNER_DROPDOWN: SetDParam(0, _zone_types[_zoning.inner]); break;
+
+	void DrawWidget(const Rect &r, int widget) const
+	{
+		StringID strid = NULL;
+		if (widget >= ZTW_OUTER_FIRST && widget < ZTW_INNER_FIRST){
+			strid = _zone_types[widget - ZTW_OUTER_FIRST];
+		}
+		else if (widget >= ZTW_INNER_FIRST && widget < ZTW_INNER_END){
+			strid = _zone_types[widget - ZTW_INNER_FIRST];
+		}
+		else return;
+
+		bool rtl = _current_text_dir == TD_RTL;
+		byte clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
+		int x = r.left + WD_FRAMERECT_LEFT;
+		int y = r.top;
+
+		DrawString(rtl ? r.left : x + clk_dif + 1, (rtl ? r.right + clk_dif : r.right), y + 1 + clk_dif, strid, TC_FROMSTRING, SA_LEFT);
+	}
+
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) {
+		if (widget >= ZTW_OUTER_FIRST && widget < ZTW_INNER_END){
+			size->width = this->maxwidth + padding.width + 8;
+			size->height = this->maxheight + 2;
 		}
 	}
-	
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) {
-		const StringID *strs = NULL;
-		switch ( widget ) {
-			case ZTW_OUTER_DROPDOWN: strs = _zone_types; break;
-			case ZTW_INNER_DROPDOWN: strs = _zone_types; break;
-		}
-		if ( strs != NULL ) {
-			while ( *strs != INVALID_STRING_ID ) {
-				*size = maxdim(*size, GetStringBoundingBox(*strs++));
+
+	void RaiseAllWidgets(bool outer){
+		byte start = outer ? ZTW_OUTER_FIRST : ZTW_INNER_FIRST;
+		byte end = outer ? ZTW_INNER_FIRST : ZTW_INNER_END;
+		for(byte i = start; i < end; i++){
+			if(this->IsWidgetLowered(i)){
+				this->ToggleWidgetLoweredState(i);
+				break;
 			}
 		}
-		size->width += padding.width;
-		size->height = FONT_HEIGHT_NORMAL + WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM;
 	}
+
+	virtual EventState OnHotkey(int hotkey)
+	{
+		return Window::OnHotkey(hotkey);
+	}
+
+	static HotkeyList hotkeys;
 };
+
+static Hotkey zoning_hotkeys[] = {
+	Hotkey(WKC_SHIFT | '1', "authority", ZTW_OUTER_FIRST),
+	Hotkey(WKC_SHIFT | '2', "build_status", ZTW_OUTER_FIRST + 1),
+	Hotkey(WKC_SHIFT | '3', "station_catchment", ZTW_OUTER_FIRST + 2),
+	Hotkey(WKC_SHIFT | '4', "unserved_buildings", ZTW_OUTER_FIRST + 3),
+	Hotkey(WKC_SHIFT | '5', "unserved_industries", ZTW_OUTER_FIRST + 4),
+	Hotkey(WKC_SHIFT | '6', "town_zone", ZTW_OUTER_FIRST + 5),
+	Hotkey(WKC_SHIFT | '7', "CB_acceptance", ZTW_OUTER_FIRST + 6),
+	Hotkey(WKC_SHIFT | '8', "CB_build_borders", ZTW_OUTER_FIRST + 7),
+	Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + 8),
+	Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + 9),
+	HOTKEY_LIST_END
+};
+
+HotkeyList ZoningWindow::hotkeys("zoning_gui", zoning_hotkeys);
+
+
+/** Construct the row containing the digit keys. */
+static NWidgetBase *MakeZoningButtons(int *biggest_index)
+{
+	NWidgetHorizontal *hor = new NWidgetHorizontal(NC_EQUALSIZE);
+	int zone_types_size = lengthof(_zone_types);
+	hor->SetPadding(1, 1, 1, 1);
+
+	for(int i = 0; i < 2; i++){
+		NWidgetVertical *ver = new NWidgetVertical;
+
+		int offset = (i == 0) ? ZTW_OUTER_FIRST : ZTW_INNER_FIRST;
+
+		for (int j = 0; j < zone_types_size; j++) {
+			NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, i==0 ? COLOUR_ORANGE : COLOUR_YELLOW, offset + j, NULL);
+			leaf->SetFill(1, 0);
+			leaf->SetPadding(0, 0, 0, 0);
+			ver->Add(leaf);
+		}
+		hor->Add(ver);
+	}
+	*biggest_index = ZTW_INNER_END - 1;
+	return hor;
+}
 
 static const NWidgetPart _nested_zoning_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -107,32 +170,20 @@ static const NWidgetPart _nested_zoning_widgets[] = {
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
-	
 	NWidget(WWT_PANEL, COLOUR_GREY),
-		NWidget(NWID_HORIZONTAL, COLOUR_GREY), SetPIP(10, 3, 10),	
-			NWidget(NWID_VERTICAL, COLOUR_GREY), SetPadding(5, 0, 5, 0),
-				NWidget(WWT_TEXT, COLOUR_GREY), SetDataTip(STR_ZONING_OUTER, STR_NULL), SetResize(1, 0), SetPadding(1, 6, 1, 6),
-				NWidget(WWT_TEXT, COLOUR_GREY, ZTW_OUTER),
-				NWidget(WWT_TEXT, COLOUR_GREY), SetDataTip(STR_ZONING_INNER, STR_NULL), SetResize(1, 0), SetPadding(1, 6, 1, 6),
-				NWidget(WWT_TEXT, COLOUR_GREY, ZTW_INNER),
-			EndContainer(),
-			NWidget(NWID_VERTICAL, COLOUR_GREY), SetPadding(5, 0, 5, 0),
-				NWidget(WWT_DROPDOWN, COLOUR_GREY, ZTW_OUTER_DROPDOWN), SetDataTip(STR_JUST_STRING, STR_NULL), SetFill(1, 0),
-				NWidget(WWT_TEXT, COLOUR_GREY),
-				NWidget(WWT_DROPDOWN, COLOUR_GREY, ZTW_INNER_DROPDOWN), SetDataTip(STR_JUST_STRING, STR_NULL), SetFill(1, 0),
-				NWidget(WWT_TEXT, COLOUR_GREY),
-			EndContainer(),
-		EndContainer(),
+		NWidgetFunction(MakeZoningButtons),
 	EndContainer()
 };
 
 static WindowDesc _zoning_desc (
-	WDP_CENTER, NULL, 0, 0,
+	WDP_AUTO, NULL, 0, 0,
 	WC_ZONING_TOOLBAR, WC_NONE,
 	0,
-	_nested_zoning_widgets, lengthof(_nested_zoning_widgets)
+	_nested_zoning_widgets, lengthof(_nested_zoning_widgets),
+	&ZoningWindow::hotkeys
 );
 
 void ShowZoningToolbar() {
 	AllocateWindowDescFront<ZoningWindow>(&_zoning_desc, 0);
 }
+

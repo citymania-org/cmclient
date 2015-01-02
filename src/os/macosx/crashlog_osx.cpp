@@ -1,4 +1,4 @@
-/* $Id: crashlog_osx.cpp 20266 2010-07-31 21:02:56Z alberth $ */
+/* $Id: crashlog_osx.cpp 26715 2014-08-03 14:06:04Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -31,7 +31,7 @@
 #endif
 
 /* printf format specification for 32/64-bit addresses. */
-#if __LP64__
+#ifdef __LP64__
 #define PRINTF_PTR "0x%016lx"
 #else
 #define PRINTF_PTR "0x%08lx"

@@ -870,6 +870,7 @@ enum TooltipCloseCondition {
 };
 
 void GuiShowTooltips(Window *parent, StringID str, uint paramcount = 0, const uint64 params[] = NULL, TooltipCloseCondition close_tooltip = TCC_HOVER);
+void GuiPrepareTooltipsExtra(Window *parent);
 
 /* widget.cpp */
 int GetWidgetFromPos(const Window *w, int x, int y);
@@ -920,7 +921,7 @@ enum WindowPopupType {
 struct WindowPopup: public Window {
 public:
 	WindowPopup(WindowDesc *desc, WindowPopupType t = WPUT_ORIGIN);
-	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number);	
+	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number);
 protected:
 	uint wpu_widget; ///< The widget to which the computation would be made from when type is #WPUT_WIDGET_RELATIVE.
 	int wpu_mod_x;   ///< The X axis modifier. A negative value would bring the window closer to the left edge of the screen. Default value is -5.

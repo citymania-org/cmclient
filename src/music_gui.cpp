@@ -1,4 +1,4 @@
-/* $Id: music_gui.cpp 25776 2013-09-15 15:56:46Z planetmaker $ */
+/* $Id: music_gui.cpp 26820 2014-09-14 15:24:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -174,7 +174,7 @@ static void SkipToNextSong()
 
 static void MusicVolumeChanged(byte new_vol)
 {
-	_music_driver->SetVolume(new_vol);
+	MusicDriver::GetInstance()->SetVolume(new_vol);
 }
 
 static void DoPlaySong()
@@ -183,13 +183,13 @@ static void DoPlaySong()
 	if (FioFindFullPath(filename, lengthof(filename), BASESET_DIR, BaseMusic::GetUsedSet()->files[_music_wnd_cursong - 1].filename) == NULL) {
 		FioFindFullPath(filename, lengthof(filename), OLD_GM_DIR, BaseMusic::GetUsedSet()->files[_music_wnd_cursong - 1].filename);
 	}
-	_music_driver->PlaySong(filename);
+	MusicDriver::GetInstance()->PlaySong(filename);
 	SetWindowDirty(WC_MUSIC_WINDOW, 0);
 }
 
 static void DoStopMusic()
 {
-	_music_driver->StopSong();
+	MusicDriver::GetInstance()->StopSong();
 	SetWindowDirty(WC_MUSIC_WINDOW, 0);
 }
 
@@ -200,12 +200,17 @@ static void SelectSongToPlay()
 
 	memset(_cur_playlist, 0, sizeof(_cur_playlist));
 	do {
-		const char *filename = BaseMusic::GetUsedSet()->files[_playlists[_settings_client.music.playlist][i] - 1].filename;
-		/* We are now checking for the existence of that file prior
-		 * to add it to the list of available songs */
-		if (!StrEmpty(filename) && FioCheckFileExists(filename, BASESET_DIR)) {
-			_cur_playlist[j] = _playlists[_settings_client.music.playlist][i];
-			j++;
+		/* File is the index into the file table of the music set. The play list uses 0 as 'no entry',
+		 * so we need to subtract 1. In case of 'no entry' (file = -1), just skip adding it outright. */
+		int file = _playlists[_settings_client.music.playlist][i] - 1;
+		if (file >= 0) {
+			const char *filename = BaseMusic::GetUsedSet()->files[file].filename;
+			/* We are now checking for the existence of that file prior
+			* to add it to the list of available songs */
+			if (!StrEmpty(filename) && FioCheckFileExists(filename, BASESET_DIR)) {
+				_cur_playlist[j] = _playlists[_settings_client.music.playlist][i];
+				j++;
+			}
 		}
 	} while (_playlists[_settings_client.music.playlist][++i] != 0 && j < lengthof(_cur_playlist) - 1);
 
@@ -271,7 +276,7 @@ void MusicLoop()
 
 	if (!_song_is_active) return;
 
-	if (!_music_driver->IsSongPlaying()) {
+	if (!MusicDriver::GetInstance()->IsSongPlaying()) {
 		if (_game_mode != GM_MENU) {
 			StopMusic();
 			SkipToNextSong();

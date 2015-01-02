@@ -1,4 +1,4 @@
-/* $Id: extmidi.cpp 22410 2011-05-02 16:14:23Z rubidium $ */
+/* $Id: extmidi.cpp 26544 2014-04-29 18:41:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -35,8 +35,8 @@ static FMusicDriver_ExtMidi iFMusicDriver_ExtMidi;
 
 const char *MusicDriver_ExtMidi::Start(const char * const * parm)
 {
-	if (strcmp(_video_driver->GetName(), "allegro") == 0 ||
-			strcmp(_sound_driver->GetName(), "allegro") == 0) {
+	if (strcmp(VideoDriver::GetInstance()->GetName(), "allegro") == 0 ||
+			strcmp(SoundDriver::GetInstance()->GetName(), "allegro") == 0) {
 		return "the extmidi driver does not work when Allegro is loaded.";
 	}
 

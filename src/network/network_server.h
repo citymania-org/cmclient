@@ -1,4 +1,4 @@
-/* $Id: network_server.h 26005 2013-11-15 22:22:01Z rubidium $ */
+/* $Id: network_server.h 26595 2014-05-18 11:21:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -123,6 +123,7 @@ public:
 
 void NetworkServer_Tick(bool send_frame);
 void NetworkServerSetCompanyPassword(CompanyID company_id, const char *password, bool already_hashed = true);
+void NetworkServerUpdateCompanyPassworded(CompanyID company_id, bool passworded);
 
 /**
  * Iterate over all the sockets from a given starting point.

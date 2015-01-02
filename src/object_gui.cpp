@@ -1,4 +1,4 @@
-/* $Id: object_gui.cpp 26241 2014-01-12 18:00:39Z frosch $ */
+/* $Id: object_gui.cpp 26653 2014-06-17 19:14:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -209,8 +209,7 @@ public:
 					ObjectClass *objclass = ObjectClass::Get((ObjectClassID)i);
 					if (objclass->GetUISpecCount() == 0) continue;
 					if (!this->vscroll->IsVisible(pos++)) continue;
-					SetDParam(0, objclass->name);
-					DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_RIGHT, y + WD_MATRIX_TOP, STR_JUST_STRING,
+					DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_RIGHT, y + WD_MATRIX_TOP, objclass->name,
 							((int)i == _selected_object_class) ? TC_WHITE : TC_BLACK);
 					y += this->line_height;
 				}

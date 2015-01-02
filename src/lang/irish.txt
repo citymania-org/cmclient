@@ -10,7 +10,7 @@
 ##grflangid 0x08
 
 
-# $Id: irish.txt 26192 2013-12-31 23:08:55Z rubidium $
+# $Id: irish.txt 26822 2014-09-14 15:33:52Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -238,6 +238,9 @@ STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scrollbh
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scrollbharraí - déantar liosta a scrollú ar dheis/ar chlé
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Leag foirgnimh msh. ar chearnóg talún
 
+# Show engines button
+
+
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}Réamhshocrú
 STR_BUTTON_CANCEL                                               :{BLACK}Cealaigh
@@ -452,7 +455,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Scoránaigh bos
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Scor anaigh dath na mbloc salacha
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1ú
 STR_ORDINAL_NUMBER_2ND                                          :2ú
 STR_ORDINAL_NUMBER_3RD                                          :3ú
@@ -468,22 +471,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12ú
 STR_ORDINAL_NUMBER_13TH                                         :13ú
 STR_ORDINAL_NUMBER_14TH                                         :14ú
 STR_ORDINAL_NUMBER_15TH                                         :15ú
-STR_ORDINAL_NUMBER_16TH                                         :16ú
-STR_ORDINAL_NUMBER_17TH                                         :17ú
-STR_ORDINAL_NUMBER_18TH                                         :18ú
-STR_ORDINAL_NUMBER_19TH                                         :19ú
-STR_ORDINAL_NUMBER_20TH                                         :20ú
-STR_ORDINAL_NUMBER_21ST                                         :21ú
-STR_ORDINAL_NUMBER_22ND                                         :22ú
-STR_ORDINAL_NUMBER_23RD                                         :23ú
-STR_ORDINAL_NUMBER_24TH                                         :24ú
-STR_ORDINAL_NUMBER_25TH                                         :25ú
-STR_ORDINAL_NUMBER_26TH                                         :26ú
-STR_ORDINAL_NUMBER_27TH                                         :27ú
-STR_ORDINAL_NUMBER_28TH                                         :28ú
-STR_ORDINAL_NUMBER_29TH                                         :29ú
-STR_ORDINAL_NUMBER_30TH                                         :30ú
-STR_ORDINAL_NUMBER_31ST                                         :31ú
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1ú
+STR_DAY_NUMBER_2ND                                              :2ú
+STR_DAY_NUMBER_3RD                                              :3ú
+STR_DAY_NUMBER_4TH                                              :4ú
+STR_DAY_NUMBER_5TH                                              :5ú
+STR_DAY_NUMBER_6TH                                              :6ú
+STR_DAY_NUMBER_7TH                                              :7ú
+STR_DAY_NUMBER_8TH                                              :8ú
+STR_DAY_NUMBER_9TH                                              :9ú
+STR_DAY_NUMBER_10TH                                             :10ú
+STR_DAY_NUMBER_11TH                                             :11ú
+STR_DAY_NUMBER_12TH                                             :12ú
+STR_DAY_NUMBER_13TH                                             :13ú
+STR_DAY_NUMBER_14TH                                             :14ú
+STR_DAY_NUMBER_15TH                                             :15ú
+STR_DAY_NUMBER_16TH                                             :16ú
+STR_DAY_NUMBER_17TH                                             :17ú
+STR_DAY_NUMBER_18TH                                             :18ú
+STR_DAY_NUMBER_19TH                                             :19ú
+STR_DAY_NUMBER_20TH                                             :20ú
+STR_DAY_NUMBER_21ST                                             :21ú
+STR_DAY_NUMBER_22ND                                             :22ú
+STR_DAY_NUMBER_23RD                                             :23ú
+STR_DAY_NUMBER_24TH                                             :24ú
+STR_DAY_NUMBER_25TH                                             :25ú
+STR_DAY_NUMBER_26TH                                             :26ú
+STR_DAY_NUMBER_27TH                                             :27ú
+STR_DAY_NUMBER_28TH                                             :28ú
+STR_DAY_NUMBER_29TH                                             :29ú
+STR_DAY_NUMBER_30TH                                             :30ú
+STR_DAY_NUMBER_31ST                                             :31ú
 ############ range for days ends
 
 ############ range for months starts
@@ -784,13 +805,11 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}Tá feit
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}Tá {VEHICLE} ag fanacht san iosta
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}Tá {VEHICLE} ag fanacht san haingear
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}Níl a ndóthain orduithe ag {VEHICLE} sa sceideal
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}Tá ordú folamh ag {VEHICLE}
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}Tá orduithe dúbailte ag {VEHICLE}
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}Tá stáisiún neamhbhailí ag {VEHICLE} ina chuid orduithe
-# end of order system
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}Tá {VEHICLE} ag fáil sean
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}Tá {VEHICLE} ag fáil an-sean
@@ -904,11 +923,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :Catalónach
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Uathshábháil
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Roghnaigh eatramh idir uathshábhálacha an chluiche
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :As
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Gach mí
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Gach 3 mí
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Gach 6 mí
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Gach 12 mí
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Teanga
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Roghnaigh an teanga comhéadain le húsáid
@@ -1025,6 +1046,8 @@ STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Níl aon
 # Advanced settings window
 STR_CONFIG_SETTING_CAPTION                                      :{WHITE}Ardsocruithe
 
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Catagóir:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Cineál:
 
 STR_CONFIG_SETTING_TYPE_DROPDOWN_HELPTEXT                       :{BLACK}Srian ar an liosta thíos le cineálacha áirithe a leagan síos
 STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL                            :Ulig na Suímh
@@ -1033,6 +1056,7 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Suímh Cliche(s
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Suímh Cliche(stóráil i Sábhálann; ni tionchar ach an cliche faoi láthair)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Suímh Cuideachta (stóráil i Sábhálann; ni tionchar ach an cuideachta faoi láthair)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Suímh Cuideachta (stóráil i saibhail; ni tionchar ach chuideachta reatha)
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Ceann ar bith -
 
 STR_CONFIG_SETTING_OFF                                          :As
 STR_CONFIG_SETTING_ON                                           :Air
@@ -1428,6 +1452,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Tram Lastais
 STR_FACE_CAPTION                                                :{WHITE}Aghaidh a Roghnú
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Cealaigh roghnúchán aghaidhe nua
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Glac leis an aghaidh nua
+STR_MAPGEN_RANDOM                                               :{BLACK}Déan randamú
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Fear
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Roghnaigh aghaidheanna fir
@@ -1661,6 +1686,7 @@ STR_NETWORK_CLIENT                                              :Cliant
 STR_NETWORK_SPECTATORS                                          :Féachadóirí
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Iontráil an méid airgid is mian leat a thabhairt
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Féachadóir
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Ná sábháil an pasfhocal a iontráladh
@@ -2128,6 +2154,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Lastas a ghlactar leis: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Teorainn luais iarnróid: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Teorainn luais na mbóithre: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Carraigeacha
@@ -2219,6 +2246,7 @@ STR_SAVELOAD_SAVE_BUTTON                                        :{BLACK}Sábhái
 STR_SAVELOAD_SAVE_TOOLTIP                                       :{BLACK}Sábháil an cluiche reatha, ag úsáid an t-ainm roghnaithe
 STR_SAVELOAD_LOAD_BUTTON                                        :{BLACK}Lódáil
 STR_SAVELOAD_LOAD_TOOLTIP                                       :{BLACK}Lódáil an cluiche roghnaithe
+STR_SAVELOAD_LOAD_HEIGHTMAP_TOOLTIP                             :{BLACK}Lódáil an mapa airde roghnaithe
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Sonraí an Chluiche
 STR_SAVELOAD_DETAIL_NOT_AVAILABLE                               :{BLACK}Níl aon fhaisnéis le fáil.
 STR_SAVELOAD_DETAIL_COMPANY_INDEX                               :{SILVER}{COMMA}: {WHITE}{STRING}
@@ -2239,7 +2267,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Bog aird
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Bog airde na líne sneachta síos ceann amháin
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Síol randamach:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Cliceáil chun síol randamach a iontráil
-STR_MAPGEN_RANDOM                                               :{BLACK}Déan randamú
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Athraigh an síol randamach a úsáidtear chun an Tír-Raon a chruthú
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Talamh a chruthú:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Algartam na gcrann:
@@ -2342,6 +2369,8 @@ STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}Níor aims
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Díchumasaithe
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Neamhchomhoiriúnach leis an leagan seo de OpenTTD
 
+# NewGRF save preset window
+
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Athraigh na paraiméadair NewGRF
 STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Dún
@@ -2434,6 +2463,7 @@ STR_NEWGRF_INVALID_ENGINE                                       :<samhail feithi
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<tionscal neamhbhailí>
 
 # Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<feithicil neamhbhailí>
 
 # NewGRF scanning window
 
@@ -2526,6 +2556,7 @@ STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}{STRING
 STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Cliceáil ar sheirbhís chun an t-amharc a lárú ar thionscal/bhaile. Déantar amharc nua a oscailt ar shuíomh an tionscail/bhaile le Ctrl+Cliceáil
 
 # Story book window
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Tagairt neamhbhailí spriocanna
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Ainmneacha na stáisiún - cliceáil ar ainm chun an t-amharc a lárú ar stáisiún. Osclaítear amharc nua ar shuíomh an stáisiúin le Ctrl+Cliceáil
@@ -3225,7 +3256,7 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Amchlár
 STR_TIMETABLE_NO_TRAVEL                                         :Ná taisteal
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Taisteal (uathoibríoch; curtha ar an gclár ama ag an chéad ordú de láimh eile)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Taisteal (gan amchlár)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Taisteal le {2:VELOCITY} ar a mhéad (gan amchlár)
+STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Taisteal (gan amchlár) ag {2:VELOCITY} ar a mhéad
 STR_TIMETABLE_TRAVEL_FOR                                        :Taisteal ar feadh {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Taisteal ar feadh {STRING} le {VELOCITY} ar a mhéad
 STR_TIMETABLE_STAY_FOR                                          :agus fan ar feadh {STRING}
@@ -3338,6 +3369,8 @@ STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORAN
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} léigh mé de {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} loga athruithe de {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} ceadúnas de {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Timthriall téacs
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Timthriall téacs na fuinneoige sa chaoi go mbeidh sé ar fad ann gan gá duit scrollú
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Amharc ar léigh mé
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Loga na n-athruithe
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Ceadúnas
@@ -3700,6 +3733,7 @@ STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Ní féi
 
 STR_ERROR_VEHICLE_IS_DESTROYED                                  :{WHITE}... tá an fheithicil scriosta
 
+STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Athraigh do chumraíocht NewGRF
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Ní féidir iallach a chur ar thraein dul thar comhartha agus contúirt ann...

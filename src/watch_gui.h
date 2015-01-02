@@ -24,38 +24,68 @@ enum WatchCompanyWidgets {
 	EWW_ZOOMIN,
 	EWW_ZOOMOUT,
 	EWW_CENTER,
-	EWW_NEW_WINDOW
+	EWW_NEW_WINDOW,
+
+	EWW_KICK,
+	EWW_BAN,
+	EWW_BAN1,
+	EWW_LOCK,
+	EWW_UNLOCK,
+	EWW_JOIN,
+	EWW_KICKC,
+	EWW_RESET,
+	EWW_COMPANYW,
+	EWW_COMPANYHQ,
+	EWW_PRIVATEP_MESSAGE,
+	EWW_PRIVATEC_MESSAGE,
+	EWW_CLIENTS,
+	EWW_ENABLE_SELECT,
+};
+
+enum WatchCompanyQuery {
+	EWQ_BAN = 0,
+	EWQ_BAN1,
+};
+
+enum WatchCompanyType {
+	EWT_COMPANY = 0,
+	EWT_CLIENT,
 };
 
 class WatchCompany : public Window
 {
-
 protected:
 	CompanyID watched_company;                            // Company ID beeing watched.
 	int company_activity[MAX_COMPANIES];                  // int array for activity blot.
 	int company_count_client[MAX_COMPANIES];              // company client count.
 	char company_name[MAX_LENGTH_COMPANY_NAME_CHARS];     // company name for title display
+	char client_name[NETWORK_CLIENT_NAME_LENGTH];
+
+	int watched_client;
+	WatchCompanyQuery query_widget;
+	int Wtype;
 
 	void SetWatchWindowTitle( );
 	void ScrollToTile( TileIndex tile );
 
-
 public:
-	WatchCompany(WindowDesc *desc, int window_number, CompanyID company_to_watch );
+	WatchCompany(WindowDesc *desc, int window_number, CompanyID company_to_watch, int Wtype);
 
-	virtual void SetStringParameters(int widget) const;
-	//virtual void OnPaint( );
 	virtual void DrawWidget(const Rect &r, int widget) const;
 	virtual void OnClick(Point pt, int widget, int click_count);
-	virtual void OnResize( );
+	virtual void OnResize();
 	virtual void OnScroll(Point delta);
 	virtual void OnMouseWheel(int wheel);
-	virtual void OnInvalidateData(int data, bool gui_scope );
-	virtual void OnTick( );
-	
-	void OnDoCommand( CompanyByte company, TileIndex tile );
+	virtual void OnInvalidateData(int data, bool gui_scope);
+	virtual void SetStringParameters(int widget) const;
+	virtual void OnTick();
+	virtual void OnPaint();
+	virtual void OnQueryTextFinished(char *str);
+
+	void OnDoCommand(CompanyByte company, TileIndex tile);
 };
 
-void ShowWatchWindow( CompanyID company_to_watch );
+void ShowWatchWindow(CompanyID company_to_watch, int type);
 
-#endif // COMPANY_GUI_H 
+#endif // COMPANY_GUI_H
+

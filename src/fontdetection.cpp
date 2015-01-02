@@ -1,4 +1,4 @@
-/* $Id: fontdetection.cpp 25676 2013-08-05 20:36:55Z michi_cc $ */
+/* $Id: fontdetection.cpp 26715 2014-08-03 14:06:04Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -392,7 +392,7 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 	} else
 #endif
 	{
-#if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5) && !__LP64__
+#if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5) && !defined(__LP64__)
 		/* This type was introduced with the 10.5 SDK. */
 #if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
 	#define ATSFSSpec FSSpec

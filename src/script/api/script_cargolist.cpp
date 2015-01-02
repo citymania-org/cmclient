@@ -1,4 +1,4 @@
-/* $Id: script_cargolist.cpp 23355 2011-11-29 23:15:35Z truebrain $ */
+/* $Id: script_cargolist.cpp 26595 2014-05-18 11:21:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -57,6 +57,6 @@ ScriptCargoList_StationAccepting::ScriptCargoList_StationAccepting(StationID sta
 
 	Station *st = ::Station::Get(station_id);
 	for (CargoID i = 0; i < NUM_CARGO; i++) {
-		if (HasBit(st->goods[i].acceptance_pickup, GoodsEntry::GES_ACCEPTANCE)) this->AddItem(i);
+		if (HasBit(st->goods[i].status, GoodsEntry::GES_ACCEPTANCE)) this->AddItem(i);
 	}
 }

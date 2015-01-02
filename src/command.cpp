@@ -1,4 +1,4 @@
-/* $Id: command.cpp 26371 2014-02-23 22:03:08Z frosch $ */
+/* $Id: command.cpp 26717 2014-08-03 15:04:09Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,7 +28,7 @@
 #include "object_base.h"
 #include "window_func.h"
 #include "watch_gui.h"
-
+#include "network/network_base.h"
 #include "window_func.h"
 
 #include "table/strings.h"
@@ -250,7 +250,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdForceTrainProceed,                              0, CMDT_VEHICLE_MANAGEMENT    ), // CMD_FORCE_TRAIN_PROCEED
 	DEF_CMD(CmdReverseTrainDirection,                          0, CMDT_VEHICLE_MANAGEMENT    ), // CMD_REVERSE_TRAIN_DIRECTION
 
-	DEF_CMD(CmdClearOrderBackup,                   CMD_CLIENT_ID, CMDT_ROUTE_MANAGEMENT      ), // CMD_CLEAR_ORDER_BACKUP
+	DEF_CMD(CmdClearOrderBackup,                   CMD_CLIENT_ID, CMDT_SERVER_SETTING        ), // CMD_CLEAR_ORDER_BACKUP
 	DEF_CMD(CmdModifyOrder,                                    0, CMDT_ROUTE_MANAGEMENT      ), // CMD_MODIFY_ORDER
 	DEF_CMD(CmdSkipToOrder,                                    0, CMDT_ROUTE_MANAGEMENT      ), // CMD_SKIP_TO_ORDER
 	DEF_CMD(CmdDeleteOrder,                                    0, CMDT_ROUTE_MANAGEMENT      ), // CMD_DELETE_ORDER
@@ -762,13 +762,20 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 	}
 
 	/* Send Tile Number to Watching Company Windows */
-	int watching_window = 0;
 	WatchCompany *wc;
-	wc = dynamic_cast<WatchCompany*>(FindWindowById(WC_WATCH_COMPANY, watching_window));
-	while (wc!=NULL) {
-		wc->OnDoCommand( _current_company, tile );
-		watching_window++;
+	for(int watching_window = 0; ; watching_window++){
 		wc = dynamic_cast<WatchCompany*>(FindWindowById(WC_WATCH_COMPANY, watching_window));
+		if(wc != NULL) wc->OnDoCommand(_current_company, tile);
+		else break;
+	}
+
+	NetworkClientInfo *ci;
+	FOR_ALL_CLIENT_INFOS(ci) {
+		if (ci->client_playas == _current_company) {
+			wc = dynamic_cast<WatchCompany*>(FindWindowById(WC_WATCH_COMPANYA, ci->client_id));
+			if (wc != NULL) wc->OnDoCommand(_current_company, tile);
+			break;
+		}
 	}
 
 	SubtractMoneyFromCompany(res2);

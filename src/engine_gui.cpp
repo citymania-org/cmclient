@@ -1,4 +1,4 @@
-/* $Id: engine_gui.cpp 25290 2013-05-26 19:25:01Z frosch $ */
+/* $Id: engine_gui.cpp 26972 2014-10-06 20:10:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -140,14 +140,8 @@ void ShowEnginePreviewWindow(EngineID engine)
  */
 uint GetTotalCapacityOfArticulatedParts(EngineID engine)
 {
-	uint total = 0;
-
 	CargoArray cap = GetCapacityOfArticulatedParts(engine);
-	for (CargoID c = 0; c < NUM_CARGO; c++) {
-		total += cap[c];
-	}
-
-	return total;
+	return cap.GetSum<uint>();
 }
 
 static StringID GetTrainEngineInfoString(const Engine *e)

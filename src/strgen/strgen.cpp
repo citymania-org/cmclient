@@ -1,4 +1,4 @@
-/* $Id: strgen.cpp 26058 2013-11-23 13:15:07Z rubidium $ */
+/* $Id: strgen.cpp 26544 2014-04-29 18:41:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -122,7 +122,7 @@ struct FileStringReader : StringReader {
 
 	/* virtual */ char *ReadLine(char *buffer, size_t size)
 	{
-		return fgets(buffer, size, this->fh);
+		return fgets(buffer, ClampToU16(size), this->fh);
 	}
 
 	/* virtual */ void HandlePragma(char *str);
@@ -437,7 +437,7 @@ int CDECL main(int argc, char *argv[])
 
 		switch (i) {
 			case 'v':
-				puts("$Revision: 26058 $");
+				puts("$Revision: 26544 $");
 				return 0;
 
 			case 'C':
@@ -482,7 +482,7 @@ int CDECL main(int argc, char *argv[])
 
 			case 'h':
 				puts(
-					"strgen - $Revision: 26058 $\n"
+					"strgen - $Revision: 26544 $\n"
 					" -v | --version    print version information and exit\n"
 					" -t | --todo       replace any untranslated strings with '<TODO>'\n"
 					" -w | --warning    print a warning for any untranslated strings\n"
@@ -561,7 +561,7 @@ int CDECL main(int argc, char *argv[])
 				/* rename the .txt (input-extension) to .lng */
 				r = strrchr(pathbuf, '.');
 				if (r == NULL || strcmp(r, ".txt") != 0) r = strchr(pathbuf, '\0');
-				ttd_strlcpy(r, ".lng", (size_t)(r - pathbuf));
+				strecpy(r, ".lng", lastof(pathbuf));
 
 				LanguageFileWriter writer(pathbuf);
 				writer.WriteLang(data);

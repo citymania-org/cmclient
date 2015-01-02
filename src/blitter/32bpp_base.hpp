@@ -1,4 +1,4 @@
-/* $Id: 32bpp_base.hpp 24610 2012-10-17 20:21:43Z frosch $ */
+/* $Id: 32bpp_base.hpp 26541 2014-04-29 18:18:52Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -110,6 +110,19 @@ public:
 		uint b = colour.b;
 
 		return Colour(r * nom / denom, g * nom / denom, b * nom / denom);
+	}
+
+	/**
+	 * Make a colour dark grey, for specialized 32bpp remapping.
+	 * @param r red component
+	 * @param g green component
+	 * @param b blue component
+	 * @return the brightness value of the new colour, now dark grey.
+	 */
+	static inline uint8 MakeDark(uint8 r, uint8 g, uint8 b)
+	{
+		/* Magic-numbers are ~66% of those used in MakeGrey() */
+		return ((r * 13063) + (g * 25647) + (b * 4981)) / 65536;
 	}
 
 	/**

@@ -10,7 +10,7 @@
 ##grflangid 0x62
 
 
-# $Id: persian.txt 26404 2014-03-17 18:45:11Z translators $
+# $Id: persian.txt 26977 2014-10-07 17:47:35Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -65,8 +65,8 @@ STR_CARGO_SINGULAR_PASSENGER                                    :مسافر
 STR_CARGO_SINGULAR_COAL                                         :ذغال
 STR_CARGO_SINGULAR_MAIL                                         :نامه
 STR_CARGO_SINGULAR_OIL                                          :نفت
-STR_CARGO_SINGULAR_LIVESTOCK                                    :چارپایان
-STR_CARGO_SINGULAR_GOODS                                        :محصولات مصرفی
+STR_CARGO_SINGULAR_LIVESTOCK                                    :دام
+STR_CARGO_SINGULAR_GOODS                                        :کالا
 STR_CARGO_SINGULAR_GRAIN                                        :غله
 STR_CARGO_SINGULAR_WOOD                                         :چوب
 STR_CARGO_SINGULAR_IRON_ORE                                     :سنگ آهن
@@ -97,28 +97,28 @@ STR_CARGO_SINGULAR_FIZZY_DRINK                                  :نوشابه گ
 STR_QUANTITY_NOTHING                                            :
 STR_QUANTITY_PASSENGERS                                         :{COMMA} مسافر{P "" ان}
 STR_QUANTITY_COAL                                               :{WEIGHT_LONG} از زغال سنگ
-STR_QUANTITY_MAIL                                               :{COMMA}بسته نامه
+STR_QUANTITY_MAIL                                               :{COMMA}بسته پستی
 STR_QUANTITY_OIL                                                :{VOLUME_LONG} نفت
-STR_QUANTITY_LIVESTOCK                                          :{COMMA} فقره از جارپایان
-STR_QUANTITY_GOODS                                              :{COMMA} جعبه{P ی های} محموله تجاری
-STR_QUANTITY_GRAIN                                              :{WEIGHT_LONG}حبوبات
+STR_QUANTITY_LIVESTOCK                                          :{COMMA}{NBSP}راس دام
+STR_QUANTITY_GOODS                                              :{COMMA}{NBSP}صندوق کالا
+STR_QUANTITY_GRAIN                                              :{WEIGHT_LONG} غله
 STR_QUANTITY_WOOD                                               :{WEIGHT_LONG} چوب
 STR_QUANTITY_IRON_ORE                                           :{WEIGHT_LONG} سنگ آهن
 STR_QUANTITY_STEEL                                              :{WEIGHT_LONG} فولاد
-STR_QUANTITY_VALUABLES                                          :{COMMA} بسته{P "" های} اشیای قیمتی
+STR_QUANTITY_VALUABLES                                          :{COMMA}{NBSP}کیسه ارقام گرانبها
 STR_QUANTITY_COPPER_ORE                                         :{WEIGHT_LONG} سنگ مس
 STR_QUANTITY_MAIZE                                              :{WEIGHT_LONG} ذرت
 STR_QUANTITY_FRUIT                                              :{WEIGHT_LONG} میوه
-STR_QUANTITY_DIAMONDS                                           :{COMMA} بسته{P "" های} الماس
+STR_QUANTITY_DIAMONDS                                           :{COMMA}{NBSP}کیسه الماس
 STR_QUANTITY_FOOD                                               :{WEIGHT_LONG} غذا
-STR_QUANTITY_PAPER                                              :{WEIGHT_LONG}از کاغذ
-STR_QUANTITY_GOLD                                               :{COMMA} بسته‌ی طلا
+STR_QUANTITY_PAPER                                              :{WEIGHT_LONG} کاغذ
+STR_QUANTITY_GOLD                                               :{COMMA}{NBSP}کیسه طلا
 STR_QUANTITY_WATER                                              :{VOLUME_LONG}از آب
 STR_QUANTITY_WHEAT                                              :{WEIGHT_LONG} گندم
 STR_QUANTITY_RUBBER                                             :{VOLUME_LONG} کائوچو
 STR_QUANTITY_SUGAR                                              :{WEIGHT_LONG} شکر
-STR_QUANTITY_TOYS                                               :{COMMA} اسباب بازی
-STR_QUANTITY_SWEETS                                             :{COMMA} {P "" s}بسته شیرینی
+STR_QUANTITY_TOYS                                               :{COMMA}{NBSP}اسباب بازی
+STR_QUANTITY_SWEETS                                             :{COMMA}{NBSP}کیسه شیرینی
 STR_QUANTITY_COLA                                               :{VOLUME_LONG} نوشابه
 STR_QUANTITY_CANDYFLOSS                                         :{WEIGHT_LONG} پشمک
 STR_QUANTITY_BUBBLES                                            :{COMMA} حباب
@@ -165,12 +165,12 @@ STR_ABBREV_NONE                                                 :{TINY_FONT}NO
 STR_ABBREV_ALL                                                  :{TINY_FONT}همه
 
 # 'Mode' of transport for cargoes
-STR_PASSENGERS                                                  :{COMMA} مسافر
-STR_BAGS                                                        :{COMMA} کیف
-STR_TONS                                                        :{COMMA} تن
-STR_LITERS                                                      :{COMMA} لیتر
-STR_ITEMS                                                       :{COMMA} فقره
-STR_CRATES                                                      :{COMMA} جعبه
+STR_PASSENGERS                                                  :{COMMA}{NBSP}مسافر{P "" s}
+STR_BAGS                                                        :{COMMA}{NBSP}کیسه
+STR_TONS                                                        :{COMMA}{NBSP}تن
+STR_LITERS                                                      :{COMMA}{NBSP}لیتر
+STR_ITEMS                                                       :{COMMA}{NBSP}عدد{P "" s}
+STR_CRATES                                                      :{COMMA}{NBSP}صندوق}
 
 # Colours, do not shuffle
 STR_COLOUR_DARK_BLUE                                            :آبی تیره
@@ -191,30 +191,30 @@ STR_COLOUR_GREY                                                 :خاکستری
 STR_COLOUR_WHITE                                                :سفید
 
 # Units used in OpenTTD
-STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA} مایل در ساعت
-STR_UNITS_VELOCITY_METRIC                                       :{COMMA} کیلومتر/ساعت
-STR_UNITS_VELOCITY_SI                                           :{COMMA} متر/ثانیه
+STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA}{NBSP}مایل بر ساعت
+STR_UNITS_VELOCITY_METRIC                                       :{COMMA}{NBSP}کیلومتر بر ساعت
+STR_UNITS_VELOCITY_SI                                           :{COMMA}{NBSP}متر بر ثانیه
 
-STR_UNITS_POWER_IMPERIAL                                        :{COMMA}اسب بخار
-STR_UNITS_POWER_METRIC                                          :{COMMA}اسب بخار
-STR_UNITS_POWER_SI                                              :{COMMA}کیلو وات
+STR_UNITS_POWER_IMPERIAL                                        :{COMMA}{NBSP}اسب بخار
+STR_UNITS_POWER_METRIC                                          :{COMMA}{NBSP}اسب بخار
+STR_UNITS_POWER_SI                                              :{COMMA}{NBSP}کیلووات
 
-STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA}تن
-STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA}کیلوگرم
+STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA}{NBSP}تن
+STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA}{NBSP}کیلوگرم
 
-STR_UNITS_WEIGHT_LONG_METRIC                                    :{COMMA} تن
-STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA} کیلو گرم
+STR_UNITS_WEIGHT_LONG_METRIC                                    :{COMMA}{NBSP}تن
+STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA}{NBSP}کیلوگرم
 
-STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA}لیتر
-STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA}متر مکعب
+STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA}{NBSP}لیتر
+STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA}{NBSP}متر مکعب
 
-STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA} لیتر
-STR_UNITS_VOLUME_LONG_SI                                        :{COMMA} متر مکعب
+STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA}{NBSP}لیتر{P "" s}
+STR_UNITS_VOLUME_LONG_SI                                        :{COMMA}{NBSP}متر مکعب
 
-STR_UNITS_FORCE_SI                                              :{COMMA} کیلو نیوتن
+STR_UNITS_FORCE_SI                                              :{COMMA}{NBSP}کیلو نیوتن
 
-STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA} پا
-STR_UNITS_HEIGHT_SI                                             :{COMMA} متر
+STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA}{NBSP}پا
+STR_UNITS_HEIGHT_SI                                             :{COMMA}{NBSP}متر
 
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}متن فیلتر:
@@ -239,6 +239,9 @@ STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}تغیی
 STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}نوار اسکرول - لیست را بالا و پایین می کند
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}نوار اسکرول - لیست را چپ و راست می کند
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}تخریب ساختمان و ... در بخشی از زمین.با فشردن همزمان دکمه Ctrl به طور مورب می توانید تخریب کنید.فشردن همزمان دکمه Shift برآورد هزینه را نمایش می دهد.
+
+# Show engines button
+
 
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}حالت قراردادی
@@ -292,7 +295,7 @@ STR_SORT_BY_POPULATION                                          :جمعیت
 STR_SORT_BY_RATING                                              :نرخ
 
 # Tooltips for the main toolbar
-STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}متوقف کردن بازی
+STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}وقفه موقت بازی
 STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}بالا بردن سرعت بازی
 STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}تنضیمات
 STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}ذخیره بازی، ترک بازی، خروج از بازی
@@ -304,7 +307,7 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}اطلا
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}توضیحات کلی راجع به شرکت را نشان می دهد
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}نمایش کتابچه راهنما
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}نمایش لیست اهداف
-STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}نمودار ها را نشان می دهد
+STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}نمایش نمودارها
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}جدول رده بندی شرکت ها را نشان می دهد
 STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}ساخت صنایع جدید یا لیست همه صنایع موجود
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}نمایش لیست قطار های شرکت، Ctrl+Click نمابش را بین گروه ها و قطار ها تغییر می دهد
@@ -460,7 +463,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :باز/بسته
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :نمایش/حذف بلوکهای کثیف
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1
 STR_ORDINAL_NUMBER_2ND                                          :2
 STR_ORDINAL_NUMBER_3RD                                          :3
@@ -476,22 +479,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12
 STR_ORDINAL_NUMBER_13TH                                         :13
 STR_ORDINAL_NUMBER_14TH                                         :14
 STR_ORDINAL_NUMBER_15TH                                         :15
-STR_ORDINAL_NUMBER_16TH                                         :16
-STR_ORDINAL_NUMBER_17TH                                         :17
-STR_ORDINAL_NUMBER_18TH                                         :18
-STR_ORDINAL_NUMBER_19TH                                         :19
-STR_ORDINAL_NUMBER_20TH                                         :20
-STR_ORDINAL_NUMBER_21ST                                         :21
-STR_ORDINAL_NUMBER_22ND                                         :22
-STR_ORDINAL_NUMBER_23RD                                         :23
-STR_ORDINAL_NUMBER_24TH                                         :24
-STR_ORDINAL_NUMBER_25TH                                         :25
-STR_ORDINAL_NUMBER_26TH                                         :26
-STR_ORDINAL_NUMBER_27TH                                         :27
-STR_ORDINAL_NUMBER_28TH                                         :28
-STR_ORDINAL_NUMBER_29TH                                         :29
-STR_ORDINAL_NUMBER_30TH                                         :30
-STR_ORDINAL_NUMBER_31ST                                         :31
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1
+STR_DAY_NUMBER_2ND                                              :2
+STR_DAY_NUMBER_3RD                                              :3
+STR_DAY_NUMBER_4TH                                              :4
+STR_DAY_NUMBER_5TH                                              :5
+STR_DAY_NUMBER_6TH                                              :6
+STR_DAY_NUMBER_7TH                                              :7
+STR_DAY_NUMBER_8TH                                              :8
+STR_DAY_NUMBER_9TH                                              :9
+STR_DAY_NUMBER_10TH                                             :10
+STR_DAY_NUMBER_11TH                                             :11
+STR_DAY_NUMBER_12TH                                             :12
+STR_DAY_NUMBER_13TH                                             :13
+STR_DAY_NUMBER_14TH                                             :14
+STR_DAY_NUMBER_15TH                                             :15
+STR_DAY_NUMBER_16TH                                             :16
+STR_DAY_NUMBER_17TH                                             :17
+STR_DAY_NUMBER_18TH                                             :18
+STR_DAY_NUMBER_19TH                                             :19
+STR_DAY_NUMBER_20TH                                             :20
+STR_DAY_NUMBER_21ST                                             :21
+STR_DAY_NUMBER_22ND                                             :22
+STR_DAY_NUMBER_23RD                                             :23
+STR_DAY_NUMBER_24TH                                             :24
+STR_DAY_NUMBER_25TH                                             :25
+STR_DAY_NUMBER_26TH                                             :26
+STR_DAY_NUMBER_27TH                                             :27
+STR_DAY_NUMBER_28TH                                             :28
+STR_DAY_NUMBER_29TH                                             :29
+STR_DAY_NUMBER_30TH                                             :30
+STR_DAY_NUMBER_31ST                                             :31
 ############ range for days ends
 
 ############ range for months starts
@@ -524,7 +545,7 @@ STR_MONTH_DEC                                                   :دسامبر
 
 # Graph window
 STR_GRAPH_KEY_BUTTON                                            :{BLACK}کلید
-STR_GRAPH_KEY_TOOLTIP                                           :{BLACK}نمایش کلید نمودار
+STR_GRAPH_KEY_TOOLTIP                                           :{BLACK}نمایش راهنمای نمودار
 STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}{} {STRING}
 STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{} {STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
@@ -800,13 +821,11 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} در گاراژ منتظر است
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE}در آشیانه در حال انتظار است
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :تعداد دستورهای نسبت داده ی {WHITE}{VEHICLE} کم تر از حد می باشد
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :برنامه حرکت {WHITE}{VEHICLE} باطل شده است
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :برنامه جابجایی {WHITE}{VEHICLE} دستور تکراری دارد
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} یک ایستگاه نا معتبر در برنامه جابجایی خود دارد
-# end of order system
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} قدیمی شده است
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} بسیار قدیمی شده است
@@ -928,11 +947,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :کاتالان�
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK} ذخیره اتوماتیک
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK} انتخاب فاصله زمانی بین ذخیره کردن های اتوماتیک
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :خاموش
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :هر ماه
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :هر ۳ ماه
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :هر ۶ ماه
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :هر ۱۲ ماه
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}زبان
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}زبان واسط کاربری را برای استفاده انتخاب کنید
@@ -961,6 +982,7 @@ STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}بسته
 STR_GAME_OPTIONS_BASE_MUSIC_STATUS                              :{RED}{NUM} فایل خراب است
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}اطلاعات اضافه درباره بسته ی موسیقی پایه
 
+STR_ERROR_RESOLUTION_LIST_FAILED                                :{WHITE}ناتوان در گرفتن تنظیمات نمایش
 STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}حالت تمام صفحه با شکست مواجه شد
 
 # Custom currency window
@@ -1171,7 +1193,7 @@ STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :اصلی
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :پیدایش زمین
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :تمام پالایشگاه ها در لبه های تقشه ساخته می شوند که ساحل جزیره است
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :ارتفاع خط برف: {STRING}
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :پستی و بلندی های شدید (فقط در حالت «پیدایش زمین») : {STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :پستی و بلندی های زمین: {STRING}
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :بسیار هموار
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :هموار
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :ناهموار
@@ -1198,11 +1220,12 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :بنفش
 STR_CONFIG_SETTING_REVERSE_SCROLLING                            :برعکس کردن جهت حرکت کردن صفحه: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :تصویر صاف در نمای اضافه: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :نمایش متن کمکی وقتی از چندین ابزار استفاده می شود: {STRING}
-STR_CONFIG_SETTING_LIVERIES                                     :نمایش دخل و خرج شرکت: {STRING}
+STR_CONFIG_SETTING_LIVERIES                                     :نمایش طراحی مخصوص وسیله نقلیه : {STRING}
+STR_CONFIG_SETTING_LIVERIES_HELPTEXT                            :کنترل موارد قابل استفاده برای طراحی مخصوص ماشین‌های جاده‌ای (در مقابل طراحی شرکت)
 STR_CONFIG_SETTING_LIVERIES_NONE                                :هیچکدام
 STR_CONFIG_SETTING_LIVERIES_OWN                                 :شرکت خود
 STR_CONFIG_SETTING_LIVERIES_ALL                                 :همه شرکت‌ها
-STR_CONFIG_SETTING_PREFER_TEAMCHAT                              :چت با تیم با دکمه «Enter»: {STRING}
+STR_CONFIG_SETTING_PREFER_TEAMCHAT                              :ترجیح برای چت با تیمِ «Enter»: {STRING}
 STR_CONFIG_SETTING_SCROLLWHEEL_SCROLLING                        :عمل غلطک ماوس: {STRING}
 STR_CONFIG_SETTING_SCROLLWHEEL_ZOOM                             :بزرگنمایی نقشه
 STR_CONFIG_SETTING_SCROLLWHEEL_SCROLL                           :جابجا کردن نقشه
@@ -1227,11 +1250,12 @@ STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :پالت وین
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :توقف خودکار هنگام آغاز بازی جدید: {STRING}
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL                          :قابلیت ها در زمان متوقف بودن بازی: {STRING}
+STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_HELPTEXT                 :انتخاب کارکرد مورد نظر در هنگام متوقف کردن بازی
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_NO_ACTIONS               :هیچ کار
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_CONSTRUCTION     :همه کارها غیر از ساخت و ساز
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_LANDSCAPING      :همه کارها به جز تغییر پستی/بلندی زمین
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_ACTIONS              :همه کارها
-STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :اسنفاده از لیست پیشرفته خودرو: {STRING}
+STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :اسنفاده گروهی از لیست خودرو: {STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS                           :استفاده از نشانه‌های بارگیری/بارگذاری: {STRING}
 STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :استفاده از تیک(هزارم ثانیه) به جای روز در برنامه ساعتی: {STRING}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :نشان دادن ورود و خروج در جدول زمانی: {STRING}
@@ -1421,7 +1445,7 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... قا
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}بازی جدید
-STR_INTRO_LOAD_GAME                                             :{BLACK}ادامه بازی های قبلی
+STR_INTRO_LOAD_GAME                                             :{BLACK}بارگذاری بازی های ذخیره شده
 STR_INTRO_PLAY_SCENARIO                                         :{BLACK}بازی سناریو
 STR_INTRO_PLAY_HEIGHTMAP                                        :{BLACK}بازی نقشه پستی/بلندی
 STR_INTRO_SCENARIO_EDITOR                                       :{BLACK}ساخت سناریو
@@ -1629,7 +1653,7 @@ STR_NETWORK_SERVER_LIST_SERVER_FULL                             :{SILVER}سرو�
 STR_NETWORK_SERVER_LIST_VERSION_MISMATCH                        :{SILVER}عدم مطابقت ویرایش
 STR_NETWORK_SERVER_LIST_GRF_MISMATCH                            :{SILVER}عدم مطابقت NewGRF
 
-STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}ورود به بازی
+STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}الحاق به بازی
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}تازه سازی سرویس دهنده
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}تازه سازی اطلاعات سرویس دهنده
 
@@ -1977,8 +2001,8 @@ STR_STATION_BUILD_COVERAGE_OFF                                  :{BLACK}خامو
 STR_STATION_BUILD_COVERAGE_ON                                   :{BLACK}روشن
 STR_STATION_BUILD_COVERAGE_AREA_OFF_TOOLTIP                     :{BLACK}منطقه تحت پوشش از سایت پیشنهادی را نشان نده
 STR_STATION_BUILD_COVERAGE_AREA_ON_TOOLTIP                      :{BLACK}منطقه تحت پوشش از سایت پیشنهادی را نشان بده
-STR_STATION_BUILD_ACCEPTS_CARGO                                 :{GOLD}{CARGO_LIST}{BLACK}قبول می کند:
-STR_STATION_BUILD_SUPPLIES_CARGO                                :{GOLD}{CARGO_LIST}{BLACK}تدارکات:
+STR_STATION_BUILD_ACCEPTS_CARGO                                 :{BLACK}قبول میکند: {GOLD}{CARGO_LIST}
+STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}تدارکات: {GOLD}{CARGO_LIST}
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}پیوستن ایستگاه
@@ -2393,7 +2417,7 @@ STR_SAVELOAD_DETAIL_GRFSTATUS                                   :{SILVER}NewGRF:
 STR_SAVELOAD_OSKTITLE                                           :{BLACK}نام فایل ذخیره بازی را وارد کنید
 
 # World generation
-STR_MAPGEN_WORLD_GENERATION_CAPTION                             :{WHITE}سازنده دنیا
+STR_MAPGEN_WORLD_GENERATION_CAPTION                             :{WHITE}ساخت دنیا
 STR_MAPGEN_MAPSIZE                                              :{BLACK}اندازه نقشه:
 STR_MAPGEN_BY                                                   :{BLACK}*
 STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}تعداد شهرها:
@@ -2404,7 +2428,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}اضاف
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}کم کردن یک واحد از ارتفاع خط برف
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}شماره ساخت تصادفی:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}برای وارد کردن شماره تصادفی کلیک کنید
-STR_MAPGEN_RANDOM                                               :{BLACK}انتخاب تصادفی
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}شماره ساخت تصادفی برای ساخت زمین و پستی و بلندی ها به کار می رود
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}سازنده زمین:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}الگوریتم درخت ها:
@@ -2454,7 +2477,7 @@ STR_GENERATION_ABORT_CAPTION                                    :{WHITE}لغو �
 STR_GENERATION_ABORT_MESSAGE                                    :{YELLOW}آیا مطمئنید که می خواهید روند ساخت را متوقف کنید؟
 STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% کامل شده
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
-STR_GENERATION_WORLD_GENERATION                                 :{BLACK}ساختن دنیا
+STR_GENERATION_WORLD_GENERATION                                 :{BLACK}ساخت دنیا
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}ساخت رودخانه
 STR_GENERATION_TREE_GENERATION                                  :{BLACK}ساختن درخت
 STR_GENERATION_OBJECT_GENERATION                                :{BLACK}ساختن اشیاء
@@ -2511,6 +2534,8 @@ STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}فایل �
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}غیرفعال
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}با این ورژن از OpenTTD همخوانی ندارد
 
+# NewGRF save preset window
+
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}تغییر پارامترهای NewGRF
 STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}بسته
@@ -2538,7 +2563,7 @@ STR_SPRITE_ALIGNER_NEXT_TOOLTIP                                 :{BLACK}نمای
 STR_SPRITE_ALIGNER_GOTO_BUTTON                                  :{BLACK}رفتن به تصویر
 STR_SPRITE_ALIGNER_GOTO_TOOLTIP                                 :{BLACK}رفتن به تصویر بعد. اگر تصویر معمولی نیست به تصویر معمولی بعدی می رود
 STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}تصویر قبلی
-STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}نمایش تصویر عادی قبلی، بدون انجام دادن هر گونه تغییرات بر آخر
+STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}نمایش تصویر عادی قبلی، بدون انجام دادن هر گونه تغییرات
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}نمایش تصویر انتخاب شده. تغییر مکان تصویر در زمان بارگزاری اعمال نمی شود
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}تغییر مکان تصویر، تغییر مقدار اضافه شونده به X و Y
 STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}مقدار اضافه شونده به X: {NUM}, مقدار اضافه شونده به Y: {NUM}
@@ -2644,7 +2669,7 @@ STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (هنوز نیاز است)
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN} (دریافت گردیده)
 STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}رشد شهر هر {ORANGE}{COMMA}{BLACK} روز
-STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}رشد شهر هر {ORANGE}{COMMA}{BLACK} روز (ساخته شده)
+STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}رشد شهر هر {ORANGE}{COMMA}{BLACK} روز (بنیان شده)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}شهر رشد {RED}نمی {BLACK} کند
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}حد سروصدا در شهر: {ORANGE}{COMMA}{BLACK}  بیشینه: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}نمایش شهر در وسط صفحه نمایش. کنترل+کلیک یک نمای اضافه از شهر باز می کند
@@ -3080,7 +3105,7 @@ STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}بیشی
 STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}ظرفیت: {LTBLUE}{CARGO_LONG}, {CARGO_LONG}{STRING}
 
 
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}فاصله ی زمانی بین تعمیرات دوره ای: {LTBLUE}{COMMA}روز {BLACK}   آخیرین تعمسرات: {LTBLUE}{DATE_LONG}
+STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}فاصله ی زمانی بین تعمیرات دوره ای: {LTBLUE}{COMMA}روز {BLACK}   آخیرین تعمیرات: {LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}افزایش مدت سرویس به مقدار 10. برای افزایش به مقدار 5 باید Ctrl+Click کنید
 STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}کاهش مدت سرویس به مقدار 10، برای کاهش به مقدار 5 باید Ctrl+Click کنید
 
@@ -3711,8 +3736,8 @@ STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PASSENGER_CAR                 :واگن مسا
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_MAIL_VAN                      :واگن نامه
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COAL_CAR                      :واگن ذغال
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_OIL_TANKER                    :تانکر نفت
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_LIVESTOCK_VAN                 :واگن فرآورده های حیوانی
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GOODS_VAN                     :واگن محصولات
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_LIVESTOCK_VAN                 :کامیون حمل دام
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GOODS_VAN                     :کامیون حمل کالا
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GRAIN_HOPPER                  :واگن حمل حبوبات
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WOOD_TRUCK                    :واگن چوب بری
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_IRON_ORE_HOPPER               :واگن سنگ آهن
@@ -3815,7 +3840,7 @@ STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_MAIL_TRUCK               :کامیون ح
 STR_VEHICLE_NAME_ROAD_VEHICLE_WITCOMBE_OIL_TANKER               :تانکر نفت Witcombe
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_OIL_TANKER                 :تانکر نفت Foster
 STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_OIL_TANKER                  :تانکر نفت Perry
-STR_VEHICLE_NAME_ROAD_VEHICLE_TALBOTT_LIVESTOCK_VAN             :واگن حمل فرآورده های حیوانی Talbott
+STR_VEHICLE_NAME_ROAD_VEHICLE_TALBOTT_LIVESTOCK_VAN             :واگن حمل دام تالبوت
 STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_LIVESTOCK_VAN                 :واگن حمل فرآورده های حیوانی Uhl
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_LIVESTOCK_VAN              :واگن حمل فرآورده های حیوانی Foster
 STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_GOODS_TRUCK                :کامیون محصولات Balogh

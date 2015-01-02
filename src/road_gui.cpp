@@ -1,4 +1,4 @@
-/* $Id: road_gui.cpp 25854 2013-10-12 22:45:19Z zuu $ */
+/* $Id: road_gui.cpp 26460 2014-04-13 10:47:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -65,7 +65,7 @@ static DiagDirection _road_station_picker_orientation;
 
 void CcPlaySound1D(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 {
-	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT, tile);
+	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
 }
 
 /**
@@ -95,7 +95,7 @@ static void PlaceRoad_Bridge(TileIndex tile, Window *w)
 void CcBuildRoadTunnel(const CommandCost &result, TileIndex start_tile, uint32 p1, uint32 p2)
 {
 	if (result.Succeeded()) {
-		if (_settings_client.sound.confirm) SndPlayTileFx(SND_20_SPLAT_2, start_tile);
+		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, start_tile);
 		if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 
 		DiagDirection start_direction = ReverseDiagDir(GetTunnelBridgeDirection(start_tile));
@@ -176,7 +176,7 @@ void CcRoadDepot(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2
 	if (result.Failed()) return;
 
 	DiagDirection dir = (DiagDirection)GB(p1, 0, 2);
-	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT, tile);
+	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 	ConnectRoadToStructure(tile, dir);
 }
@@ -200,7 +200,7 @@ void CcRoadStop(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 	if (result.Failed()) return;
 
 	DiagDirection dir = (DiagDirection)GB(p2, 6, 2);
-	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT, tile);
+	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 	TileArea roadstop_area(tile, GB(p1, 0, 8), GB(p1, 8, 8));
 	TILE_AREA_LOOP(cur_tile, roadstop_area) {
@@ -218,7 +218,8 @@ static RoadBits FindRoadsToConnect(TileIndex tile) {
 	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
 		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
 		if (GetAnyRoadBits(cur_tile, ROADTYPE_ROAD, true) &
-		    	DiagDirToRoadBits(ReverseDiagDir(ddir))) {
+			DiagDirToRoadBits(ReverseDiagDir(ddir)))
+		{
 			bits |= DiagDirToRoadBits(ddir);
 		}
 	}
@@ -255,23 +256,27 @@ static DiagDirection TileFractCoordsToDiagDir() {
  */
 static DiagDirection AutodetectRoadObjectDirection(TileIndex tile) {
 	RoadBits bits = FindRoadsToConnect(tile);
-	if (HasExactlyOneBit(bits))
+	if (HasExactlyOneBit(bits)) {
 		return RoadBitsToDiagDir(bits);
-	if (bits == ROAD_NONE)
+	}
+	if (bits == ROAD_NONE){
 		bits = ROAD_ALL;
+	}
 	RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir());
-	if (HasExactlyOneBit(frac_bits & bits))
+	if (HasExactlyOneBit(frac_bits & bits)) {
 		return RoadBitsToDiagDir(frac_bits & bits);
+	}
 	frac_bits |= MirrorRoadBits(frac_bits);
-	if (HasExactlyOneBit(frac_bits & bits))
+	if (HasExactlyOneBit(frac_bits & bits)) {
 		return RoadBitsToDiagDir(frac_bits & bits);
+	}
 	for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
-		if (DiagDirToRoadBits(ddir) & bits)
+		if (DiagDirToRoadBits(ddir) & bits) {
 			return ddir;
+		}
 	}
 	NOT_REACHED();
 }
-
 
 static bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
 	TILE_AREA_LOOP(tile, area) {
@@ -306,7 +311,6 @@ static DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
 	return AutodetectRoadObjectDirection(area.tile);
 }
 
-
 /**
  * Place a new road stop.
  * @param start_tile First tile of the area.
@@ -327,9 +331,11 @@ static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, u
 		if (ddir < DIAGDIR_END + 2) {
 			SetBit(p2, 1); // It's a drive-through stop.
 			ddir -= DIAGDIR_END; // Adjust picker result to actual direction.
-		} else if (ddir == DIAGDIR_END + 2) {
+		}
+		else if (ddir == DIAGDIR_END + 2) {
 			ddir = AutodetectRoadObjectDirection(start_tile);
-		} else if (ddir == DIAGDIR_END + 3) {
+		}
+		else if (ddir == DIAGDIR_END + 3) {
 			SetBit(p2, 1); // It's a drive-through stop.
 			ddir = AutodetectDriveThroughRoadStopDirection(ta);
 		}
@@ -726,11 +732,11 @@ struct BuildRoadToolbarWindow : Window {
 						(_tile_fract_coords.x > _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) > 16) ))) {
 					/* Set dir = X */
 					_place_road_flag &= ~RF_DIR_Y;
-				} else {
+				}
+				else {
 					/* Set dir = Y */
 					_place_road_flag |= RF_DIR_Y;
 				}
-
 				break;
 
 			default:
@@ -848,12 +854,12 @@ static Hotkey roadtoolbar_hotkeys[] = {
 	Hotkey('1', "build_x", WID_ROT_ROAD_X),
 	Hotkey('2', "build_y", WID_ROT_ROAD_Y),
 	Hotkey('3', "autoroad", WID_ROT_AUTOROAD),
-	Hotkey('4', "fullroad", WID_ROT_FULLROAD),
-	Hotkey('5', "demolish", WID_ROT_DEMOLISH),
-	Hotkey('6', "depot", WID_ROT_DEPOT),
-	Hotkey('7', "bus_station", WID_ROT_BUS_STATION),
-	Hotkey('8', "truck_station", WID_ROT_TRUCK_STATION),
-	Hotkey('9', "oneway", WID_ROT_ONE_WAY),
+	Hotkey('4', "demolish", WID_ROT_DEMOLISH),
+	Hotkey('5', "depot", WID_ROT_DEPOT),
+	Hotkey('6', "bus_station", WID_ROT_BUS_STATION),
+	Hotkey('7', "truck_station", WID_ROT_TRUCK_STATION),
+	Hotkey('8', "oneway", WID_ROT_ONE_WAY),
+	Hotkey('9', "fullroad", WID_ROT_FULLROAD),
 	Hotkey('B', "bridge", WID_ROT_BUILD_BRIDGE),
 	Hotkey('T', "tunnel", WID_ROT_BUILD_TUNNEL),
 	Hotkey('R', "remove", WID_ROT_REMOVE),
@@ -875,8 +881,6 @@ static const NWidgetPart _nested_build_road_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_ROAD_Y_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_AUTOROAD),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOROAD, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_FULLROAD),
-						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOROAD, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_FULLROAD),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_DEMOLISH),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_DEPOT),
@@ -888,6 +892,8 @@ static const NWidgetPart _nested_build_road_widgets[] = {
 		NWidget(WWT_PANEL, COLOUR_DARK_GREEN, -1), SetMinimalSize(0, 22), SetFill(1, 1), EndContainer(),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_ONE_WAY),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_ROAD_ONE_WAY, STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_ONE_WAY_ROAD),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_FULLROAD),
+						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOROAD, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_FULLROAD),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_BUILD_BRIDGE),
 						SetFill(0, 1), SetMinimalSize(43, 22), SetDataTip(SPR_IMG_BRIDGE, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_BRIDGE),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_BUILD_TUNNEL),
@@ -1055,37 +1061,27 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
-		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0), SetFill(0, 0),
+		NWidget(NWID_HORIZONTAL_LTR),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NW), SetMinimalSize(66, 50),
-				SetFill(0, 0),
-				SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+			NWidget(NWID_VERTICAL),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NW), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				EndContainer(),
+				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SW), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				EndContainer(),
 			EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NE), SetMinimalSize(66, 50),
-				SetFill(0, 0),
-				SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
-			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0), SetFill(0, 0),
-			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SW), SetMinimalSize(66, 50),
-				SetFill(0, 0),
-				SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
-			EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SE), SetMinimalSize(66, 50),
-				SetFill(0, 0),
-				SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+			NWidget(NWID_SPACER), SetMinimalSize(2, 0),
+			NWidget(NWID_VERTICAL),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NE), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				EndContainer(),
+				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SE), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-		NWidget(NWID_HORIZONTAL),
-			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12),
-					SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
-			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),
@@ -1235,10 +1231,8 @@ static const NWidgetPart _nested_rv_station_picker_widgets[] = {
 		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
 			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_AUTO), SetMinimalSize(134, 12),
-											SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12),
-											SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 1),

@@ -1,4 +1,4 @@
-/* $Id: osk_gui.cpp 25678 2013-08-05 20:37:02Z michi_cc $ */
+/* $Id: osk_gui.cpp 26544 2014-04-29 18:41:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -206,7 +206,7 @@ struct OskWindow : public Window {
 
 	virtual void OnFocusLost()
 	{
-		_video_driver->EditBoxLostFocus();
+		VideoDriver::GetInstance()->EditBoxLostFocus();
 		delete this;
 	}
 };

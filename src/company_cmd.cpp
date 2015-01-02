@@ -1,4 +1,4 @@
-/* $Id: company_cmd.cpp 25761 2013-09-13 12:45:25Z zuu $ */
+/* $Id: company_cmd.cpp 26595 2014-05-18 11:21:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -66,7 +66,8 @@ Company::Company(uint16 name_1, bool is_ai)
 
 	for (uint j = 0; j < 4; j++) this->share_owners[j] = COMPANY_SPECTATOR;
 	InvalidateWindowData(WC_PERFORMANCE_DETAIL, 0, INVALID_COMPANY);
-	InvalidateWindowClassesData( WC_WATCH_COMPANY, 0 );
+	InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
+	InvalidateWindowClassesData(WC_WATCH_COMPANYA, 1);
 }
 
 /** Destructor. */
@@ -89,7 +90,8 @@ void Company::PostDestructor(size_t index)
 	InvalidateWindowData(WC_LINKGRAPH_LEGEND, 0);
 	/* If the currently shown error message has this company in it, then close it. */
 	InvalidateWindowData(WC_ERRMSG, 0);
-	InvalidateWindowClassesData( WC_WATCH_COMPANY, 0 );
+	InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
+	InvalidateWindowClassesData(WC_WATCH_COMPANYA, 1);
 }
 
 /**
@@ -580,18 +582,16 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 		c->cargo_income[j] = 0;
 		c->cargo_units[j] = 0;
 	}
-	cargo_iam_free(c);
+	CargoResetPeriods(c);
 
 	return c;
 }
 
-void cargo_iam_free(Company *c){
-	for (uint j = 0; j < NUM_CARGO; j++) {
-		c->cargo_units_period[0][j] = 0;
-		c->cargo_units_period[1][j] = 0;
-		c->cargo_income_period[0][j] = 0;
-		c->cargo_income_period[1][j] = 0;
-	}
+void CargoResetPeriods(Company *c){
+	memmove(&c->cargo_income_period[1], &c->cargo_income_period[0], sizeof(c->cargo_income_period[0]));
+	memset(&c->cargo_income_period, 0, sizeof(c->cargo_income_period[0]));
+	memmove(&c->cargo_units_period[1], &c->cargo_units_period[0], sizeof(c->cargo_units_period[0]));
+	memset(&c->cargo_units_period, 0, sizeof(c->cargo_units_period[0]));
 }
 /** Start the next competitor now. */
 void StartupCompanies()
@@ -872,59 +872,21 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 				MarkWholeScreenDirty();
 			}
 
-			if (_network_server) {
-				if (ci != NULL) {
-					/* ci is only NULL when replaying.
-					 * When replaying no client is actually in need of an update. */
-					ci->client_playas = c->index;
-					NetworkUpdateClientInfo(ci->client_id);
-				}
-
-				if (Company::IsValidID(c->index)) {
-					_network_company_states[c->index].months_empty = 0;
-					_network_company_states[c->index].password[0] = '\0';
-					NetworkServerUpdateCompanyPassworded(c->index, false);
-
-					/* XXX - When a client joins, we automatically set its name to the
-					 * client's name (for some reason). As it stands now only the server
-					 * knows the client's name, so it needs to send out a "broadcast" to
-					 * do this. To achieve this we send a network command. However, it
-					 * uses _local_company to execute the command as.  To prevent abuse
-					 * (eg. only yourself can change your name/company), we 'cheat' by
-					 * impersonation _local_company as the server. Not the best solution;
-					 * but it works.
-					 * TODO: Perhaps this could be improved by when the client is ready
-					 * with joining to let it send itself the command, and not the server?
-					 * For example in network_client.c:534? */
-					if (ci != NULL) {
-						/* ci is only NULL when replaying.
-						 * When replaying, the command to rename the president will
-						 * automatically be ran, so this is not even needed to get
-						 * the exact same state. */
-						NetworkSendCommand(0, 0, 0, CMD_RENAME_PRESIDENT, NULL, ci->client_name, c->index);
-					}
-				}
-
-				/* Announce new company on network. */
-				NetworkAdminCompanyInfo(c, true);
-
-				if (ci != NULL) {
-					/* ci is only NULL when replaying.
-					 * When replaying, the message that someone started a new company
-					 * is not interesting at all. */
-					NetworkServerSendChat(NETWORK_ACTION_COMPANY_NEW, DESTTYPE_BROADCAST, 0, "", ci->client_id, c->index + 1);
-				}
-			}
+			NetworkServerNewCompany(c, ci);
 #endif /* ENABLE_NETWORK */
 			break;
 		}
 
-		case 1: // Make a new AI company
+		case 1: { // Make a new AI company
 			if (!(flags & DC_EXEC)) return CommandCost();
 
 			if (company_id != INVALID_COMPANY && (company_id >= MAX_COMPANIES || Company::IsValidID(company_id))) return CMD_ERROR;
-			DoStartupNewCompany(true, company_id);
+			Company *c = DoStartupNewCompany(true, company_id);
+#ifdef ENABLE_NETWORK
+			if (c != NULL) NetworkServerNewCompany(c, NULL);
+#endif /* ENABLE_NETWORK */
 			break;
+		}
 
 		case 2: { // Delete a company
 			CompanyRemoveReason reason = (CompanyRemoveReason)GB(p2, 0, 2);
@@ -1133,7 +1095,7 @@ CommandCost CmdRenameCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 		free(c->name);
 		c->name = reset ? NULL : strdup(text);
 		MarkWholeScreenDirty();
-		InvalidateWindowClassesData( WC_WATCH_COMPANY, 0 );
+		InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
 		CompanyAdminUpdate(c);
 	}
 

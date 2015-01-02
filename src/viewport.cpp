@@ -1981,11 +1981,11 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y, bool double_click)
 	}
 
 	/* Double-clicking finishes current polyline and starts new one. */
-	/* if (double_click && (_thd.place_mode & HT_POLY)) {
+	if (double_click && _settings_client.gui.polyrail_double_click && (_thd.place_mode & HT_POLY)) {
 		ClearRailPlacementEndpoints();
 		SetTileSelectSize(1, 1);
 		return true;
-	} */
+	}
 
 	/* Vehicle placement mode already handled above. */
 	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {

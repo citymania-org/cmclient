@@ -1,4 +1,4 @@
-/* $Id: newgrf_house.cpp 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_house.cpp 26595 2014-05-18 11:21:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -378,10 +378,10 @@ static uint32 GetDistanceFromNearbyHouse(uint8 parameter, TileIndex tile, HouseI
 			uint32 res = 0;
 			for (Station * const * st_iter = sl->Begin(); st_iter != sl->End(); st_iter++) {
 				const Station *st = *st_iter;
-				if (HasBit(st->goods[cid].acceptance_pickup, GoodsEntry::GES_EVER_ACCEPTED))    SetBit(res, 0);
-				if (HasBit(st->goods[cid].acceptance_pickup, GoodsEntry::GES_LAST_MONTH))       SetBit(res, 1);
-				if (HasBit(st->goods[cid].acceptance_pickup, GoodsEntry::GES_CURRENT_MONTH))    SetBit(res, 2);
-				if (HasBit(st->goods[cid].acceptance_pickup, GoodsEntry::GES_ACCEPTED_BIGTICK)) SetBit(res, 3);
+				if (HasBit(st->goods[cid].status, GoodsEntry::GES_EVER_ACCEPTED))    SetBit(res, 0);
+				if (HasBit(st->goods[cid].status, GoodsEntry::GES_LAST_MONTH))       SetBit(res, 1);
+				if (HasBit(st->goods[cid].status, GoodsEntry::GES_CURRENT_MONTH))    SetBit(res, 2);
+				if (HasBit(st->goods[cid].status, GoodsEntry::GES_ACCEPTED_BIGTICK)) SetBit(res, 3);
 			}
 
 			/* Cargo triggered CB 148? */

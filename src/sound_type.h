@@ -1,4 +1,4 @@
-/* $Id: sound_type.h 23887 2012-02-04 13:29:04Z michi_cc $ */
+/* $Id: sound_type.h 26460 2014-04-13 10:47:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,7 +26,7 @@ struct SoundEntry {
 
 enum SoundFx {
 	SND_BEGIN = 0,
-	SND_02_SPLAT = 0,                          //  0 == 0x00 !
+	SND_02_SPLAT_WATER = 0,                ///< Water construction.
 	SND_03_FACTORY_WHISTLE,
 	SND_04_TRAIN,
 	SND_05_TRAIN_THROUGH_TUNNEL,
@@ -55,8 +55,8 @@ enum SoundFx {
 	SND_1C_TRUCK_START_2,
 	SND_1D_APPLAUSE,
 	SND_1E_OOOOH,
-	SND_1F_SPLAT,                          // 29 == 0x1D
-	SND_20_SPLAT_2,                        // 30 == 0x1E
+	SND_1F_SPLAT_OTHER,                    ///< Non-water non-rail construction.
+	SND_20_SPLAT_RAIL,                     ///< Rail construction.
 	SND_21_JACKHAMMER,
 	SND_22_CAR_HORN,
 	SND_23_CAR_HORN_2,

@@ -1,4 +1,4 @@
-/* $Id: misc_gui.cpp 26412 2014-03-18 18:13:33Z planetmaker $ */
+/* $Id: misc_gui.cpp 26715 2014-08-03 14:06:04Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -29,6 +29,14 @@
 #include "widgets/misc_widget.h"
 
 #include "table/strings.h"
+
+#include "house.h"
+#include "town_map.h"
+#include "station_base.h"
+#include "viewport_func.h"
+#include "industry.h"
+
+void GuiShowTooltipsExtra(Window *parent, uint param, TooltipCloseCondition close_tooltip);
 
 /** Method to open the OSK. */
 enum OskActivation {
@@ -160,6 +168,7 @@ public:
 		td.airport_tile_name = STR_NULL;
 		td.rail_speed = 0;
 		td.road_speed = 0;
+		td.population = 0;
 
 		td.grf = NULL;
 
@@ -289,6 +298,13 @@ public:
 			line_nr++;
 		}
 
+		/* House pop */
+		if (td.population != 0) {
+			SetDParam(0, td.population);
+			GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_POP, lastof(this->landinfo_data[line_nr]));
+			line_nr++;
+		}
+
 		assert(line_nr < LAND_INFO_CENTERED_LINES);
 
 		/* Mark last line empty */
@@ -385,46 +401,47 @@ static const char * const _credits[] = {
 	"Original graphics by Simon Foster",
 	"",
 	"The OpenTTD team (in alphabetical order):",
-	"  Albert Hofkamp (Alberth) - GUI expert",
-	"  Jean-Fran\xC3\xA7ois Claeys (Belugas) - GUI, newindustries and more",
-	"  Matthijs Kooijman (blathijs) - Pathfinder-guru, pool rework",
-	"  Christoph Elsenhans (frosch) - General coding",
-	"  Ulf Hermann (fonsinchen) - Cargo Distribution",
-	"  Lo\xC3\xAF""c Guilloux (glx) - Windows Expert",
-	"  Michael Lutz (michi_cc) - Path based signals",
-	"  Owen Rudge (orudge) - Forum host, OS/2 port",
-	"  Peter Nelson (peter1138) - Spiritual descendant from NewGRF gods",
-	"  Ingo von Borstel (planetmaker) - Support",
-	"  Remko Bijker (Rubidium) - Lead coder and way more",
-	"  Zden\xC4\x9Bk Sojka (SmatZ) - Bug finder and fixer",
-	"  Jos\xC3\xA9 Soler (Terkhen) - General coding",
-	"  Thijs Marinussen (Yexo) - AI Framework",
-	"  Leif Linse (Zuu) - AI/Game Script",
+	"  Albert Hofkamp (Alberth) - GUI expert (since 0.7)",
+	"  Matthijs Kooijman (blathijs) - Pathfinder-guru, Debian port (since 0.3)",
+	"  Ulf Hermann (fonsinchen) - Cargo Distribution (since 1.3)",
+	"  Christoph Elsenhans (frosch) - General coding (since 0.6)",
+	"  Lo\xC3\xAF""c Guilloux (glx) - General / Windows Expert (since 0.4.5)",
+	"  Michael Lutz (michi_cc) - Path based signals (since 0.7)",
+	"  Owen Rudge (orudge) - Forum host, OS/2 port (since 0.1)",
+	"  Peter Nelson (peter1138) - Spiritual descendant from NewGRF gods (since 0.4.5)",
+	"  Ingo von Borstel (planetmaker) - General, Support (since 1.1)",
+	"  Remko Bijker (Rubidium) - Lead coder and way more (since 0.4.5)",
+	"  Jos\xC3\xA9 Soler (Terkhen) - General coding (since 1.0)",
+	"  Leif Linse (Zuu) - AI/Game Script (since 1.2)",
 	"",
 	"Inactive Developers:",
-	"  Bjarni Corfitzen (Bjarni) - MacOSX port, coder and vehicles",
-	"  Victor Fischer (Celestar) - Programming everywhere you need him to",
-	"  Tam\xC3\xA1s Farag\xC3\xB3 (Darkvater) - Ex-Lead coder",
-	"  Jaroslav Mazanec (KUDr) - YAPG (Yet Another Pathfinder God) ;)",
-	"  Jonathan Coome (Maedhros) - High priest of the NewGRF Temple",
-	"  Attila B\xC3\xA1n (MiHaMiX) - Developer WebTranslator 1 and 2",
-	"  Christoph Mallon (Tron) - Programmer, code correctness police",
+	"  Jean-Fran\xC3\xA7ois Claeys (Belugas) - GUI, NewGRF and more (0.4.5 - 1.0)",
+	"  Bjarni Corfitzen (Bjarni) - MacOSX port, coder and vehicles (0.3 - 0.7)",
+	"  Victor Fischer (Celestar) - Programming everywhere you need him to (0.3 - 0.6)",
+	"  Jaroslav Mazanec (KUDr) - YAPG (Yet Another Pathfinder God) ;) (0.4.5 - 0.6)",
+	"  Jonathan Coome (Maedhros) - High priest of the NewGRF Temple (0.5 - 0.6)",
+	"  Attila B\xC3\xA1n (MiHaMiX) - Developer WebTranslator 1 and 2 (0.3 - 0.5)",
+	"  Zden\xC4\x9Bk Sojka (SmatZ) - Bug finder and fixer (0.6 - 1.3)",
+	"  Christoph Mallon (Tron) - Programmer, code correctness police (0.3 - 0.5)",
+	"  Patric Stout (TrueBrain) - NoAI, NoGo, Network (0.3 - 1.2), sys op (active)",
+	"  Thijs Marinussen (Yexo) - AI Framework, General (0.6 - 1.3)",
 	"",
 	"Retired Developers:",
-	"  Ludvig Strigeus (ludde) - OpenTTD author, main coder (0.1 - 0.3.3)",
-	"  Serge Paquet (vurlix) - Assistant project manager, coder (0.1 - 0.3.3)",
-	"  Dominik Scherer (dominik81) - Lead programmer, GUI expert (0.3.0 - 0.3.6)",
-	"  Benedikt Br\xC3\xBCggemeier (skidd13) - Bug fixer and code reworker",
-	"  Patric Stout (TrueBrain) - NoProgrammer (0.3 - 1.2), sys op (active)",
+	"  Tam\xC3\xA1s Farag\xC3\xB3 (Darkvater) - Ex-Lead coder (0.3 - 0.5)",
+	"  Dominik Scherer (dominik81) - Lead programmer, GUI expert (0.3 - 0.3)",
+	"  Emil Djupfeld (egladil) - MacOSX (0.4.5 - 0.6)",
+	"  Simon Sasburg (HackyKid) - Many bugfixes (0.4 - 0.4.5)",
+	"  Ludvig Strigeus (ludde) - Original author of OpenTTD, main coder (0.1 - 0.3)",
+	"  Cian Duffy (MYOB) - BeOS port / manual writing (0.1 - 0.3)",
+	"  Petr Baudi\xC5\xA1 (pasky) - Many patches, NewGRF support (0.3 - 0.3)",
+	"  Benedikt Br\xC3\xBCggemeier (skidd13) - Bug fixer and code reworker (0.6 - 0.7)",
+	"  Serge Paquet (vurlix) - 2nd contributor after ludde (0.1 - 0.3)",
 	"",
 	"Special thanks go out to:",
 	"  Josef Drexler - For his great work on TTDPatch",
 	"  Marcin Grzegorczyk - Track foundations and for describing TTD internals",
-	"  Petr Baudi\xC5\xA1 (pasky) - Many patches, newGRF support",
-	"  Simon Sasburg (HackyKid) - Many bugfixes he has blessed us with",
 	"  Stefan Mei\xC3\x9Fner (sign_de) - For his work on the console",
 	"  Mike Ragsdale - OpenTTD installer",
-	"  Cian Duffy (MYOB) - BeOS port / manual writing",
 	"  Christian Rosentreter (tokai) - MorphOS / AmigaOS port",
 	"  Richard Kempton (richK) - additional airports, initial TGP implementation",
 	"  Fleashosio - titlegame",
@@ -1203,4 +1220,228 @@ void ShowQuery(StringID caption, StringID message, Window *parent, QueryCallback
 	}
 
 	new QueryWindow(&_query_desc, caption, message, parent, callback);
+}
+
+/** Window for displaying a tooltip. */
+void GuiPrepareTooltipsExtra(Window *parent){
+	const Point p = GetTileBelowCursor();
+	const TileIndex tile = TileVirtXY(p.x, p.y);
+
+	if (tile >= MapSize()) return;
+	uint param = 0;
+	switch (GetTileType(tile)) {
+		/*case MP_HOUSE: {
+			const HouseID house = GetHouseType(tile);
+			param = ((house & 0xFFFF) << 16) | MP_HOUSE;
+			break;
+		}*/
+		case MP_INDUSTRY: {
+			const Industry *ind = Industry::GetByTile(tile);
+			if(ind->produced_cargo[0] == CT_INVALID && ind->produced_cargo[1] == CT_INVALID) return;
+			param = ((ind->index & 0xFFFF) << 16) | MP_INDUSTRY;
+			break;
+		}
+		case MP_STATION: {
+			if (IsRailWaypoint(tile) || HasTileWaterGround(tile)) break;
+			const Station *st = Station::GetByTile(tile);
+			param |= ((st->index & 0xFFFF) << 16) | MP_STATION;
+			break;
+		}
+		default:
+			return;
+	}
+	if(param != 0) GuiShowTooltipsExtra(parent, param, TCC_HOVER);
+}
+
+static const NWidgetPart _nested_tooltips_extra_widgets[] = {
+	NWidget(WWT_PANEL, COLOUR_GREY, WID_TT_BACKGROUND), SetMinimalSize(64, 32),	EndContainer(),
+};
+
+static WindowDesc _tool_tips_extra_desc(
+	WDP_MANUAL, NULL, 0, 0,
+	WC_TOOLTIPS_EXTRA, WC_NONE,
+	0,
+	_nested_tooltips_extra_widgets, lengthof(_nested_tooltips_extra_widgets)
+);
+
+struct TooltipsExtraWindow : public Window
+{
+	TileType tiletype;
+	uint16 objIndex;
+	TooltipCloseCondition close_cond;
+
+	TooltipsExtraWindow(Window *parent, uint param, TooltipCloseCondition close_tooltip) : Window(&_tool_tips_extra_desc)
+	{
+		this->parent = parent;
+		this->tiletype = (TileType)(param & 0xFFFF);
+		this->objIndex = (uint16)((param >> 16) & 0xFFFF);
+		this->close_cond = close_tooltip;
+		this->InitNested();
+		CLRBITS(this->flags, WF_WHITE_BORDER);
+	}
+
+	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	{
+		int scr_top = GetMainViewTop() + 2;
+		int scr_bot = GetMainViewBottom() - 2;
+		Point pt;
+		pt.y = Clamp(_cursor.pos.y + _cursor.size.y + _cursor.offs.y + 5, scr_top, scr_bot);
+		if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.offs.y - 5, scr_bot) - sm_height;
+		pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
+		return pt;
+	}
+
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		static const uint LINE_HEIGHT = FONT_HEIGHT_NORMAL + 2;
+		size->width = 200;
+		size->height = LINE_HEIGHT + 4;
+		switch(this->tiletype) {
+			/*case MP_HOUSE: {
+				size->height += LINE_HEIGHT;
+				SetDParam(0, 1000);
+				size->width = GetStringBoundingBox(STR_TTE_HOUSE).width;
+				break;
+			}*/
+			case MP_INDUSTRY: {
+				const Industry *ind = Industry::GetIfValid((IndustryID)this->objIndex);
+				if(ind == NULL) break;
+
+				for (CargoID i = 0; i < lengthof(ind->produced_cargo); i++) {
+					if (ind->produced_cargo[i] == CT_INVALID) continue;
+					const CargoSpec *cs = CargoSpec::Get(ind->produced_cargo[i]);
+					if(cs == NULL) continue;
+					size->height += LINE_HEIGHT;
+					SetDParam(0, cs->name);
+					SetDParam(1, cs->Index());
+					SetDParam(2, ind->last_month_production[i]);
+					SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
+					size->width = max(GetStringBoundingBox(STR_TTE_INDUSTRY).width + 50, size->width);
+				}
+				break;
+			}
+			case MP_STATION: {
+				const Station *st = Station::GetIfValid((StationID)this->objIndex);
+				if(st == NULL) break;
+
+				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
+					if (HasBit(st->goods[i].status, GoodsEntry::GES_RATING)) {
+						const CargoSpec *cs = CargoSpec::Get(i);
+						if(cs == NULL) continue;
+						size->height += LINE_HEIGHT;
+						SetDParam(0, cs->name);
+						SetDParam(1, cs->Index());
+						SetDParam(2, st->goods[i].cargo.TotalCount());
+						SetDParam(3, ToPercent8(st->goods[i].rating));
+						size->width = max(GetStringBoundingBox(STR_TTE_STATION).width + 50, size->width);
+					}
+				}
+				break;
+			}
+		}
+		size->width  += 2 + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
+		size->height += 2 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+	}
+
+	virtual void DrawWidget(const Rect &r, int widget) const
+	{
+		static const uint LINE_HEIGHT = FONT_HEIGHT_NORMAL + 2;
+		GfxDrawLine(r.left,  r.top,    r.right, r.top,    PC_BLACK);
+		GfxDrawLine(r.left,  r.bottom, r.right, r.bottom, PC_BLACK);
+		GfxDrawLine(r.left,  r.top,    r.left,  r.bottom, PC_BLACK);
+		GfxDrawLine(r.right, r.top,    r.right, r.bottom, PC_BLACK);
+
+		int y = r.top + WD_FRAMERECT_TOP + 4;
+		int left = r.left + WD_FRAMERECT_LEFT + 4;
+
+		switch(this->tiletype) {
+			/*case MP_HOUSE: {
+				const HouseID house = (HouseID)this->objIndex;
+				const HouseSpec *hs = HouseSpec::Get(house);
+				if(hs == NULL) break;
+
+				SetDParam(0, hs->building_name);
+				DrawString(left, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_HOUSE_NAME, TC_BLACK, SA_CENTER);
+				y += LINE_HEIGHT;
+				SetDParam(0, hs->population);
+				DrawString(left, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_HOUSE);
+				break;
+			}*/
+			case MP_INDUSTRY: {
+				const Industry *ind = Industry::GetIfValid((IndustryID)this->objIndex);
+				if(ind == NULL) break;
+
+				SetDParam(0, ind->index);
+				DrawString(left, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_INDUSTRY_NAME, TC_BLACK, SA_CENTER);
+				y += LINE_HEIGHT;
+
+				for (CargoID i = 0; i < lengthof(ind->produced_cargo); i++) {
+					if (ind->produced_cargo[i] == CT_INVALID) continue;
+					const CargoSpec *cs = CargoSpec::Get(ind->produced_cargo[i]);
+					if(cs == NULL) continue;
+					SetDParam(0, cs->name);
+					SetDParam(1, cs->Index());
+					SetDParam(2, ind->last_month_production[i]);
+					SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
+
+					this->DrawSpriteIcons(cs->GetCargoIcon(), left, y);
+					DrawString(left + 40, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_INDUSTRY);
+					y += LINE_HEIGHT;
+				}
+				break;
+			}
+			case MP_STATION: {
+				uint pars = 0;
+				const Station *st = Station::GetIfValid((StationID)this->objIndex);
+				if(st == NULL) break;
+
+				SetDParam(0, st->index);
+				DrawString(left, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_STATION_NAME, TC_BLACK, SA_CENTER);
+				y += LINE_HEIGHT;
+
+				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
+					if (HasBit(st->goods[i].status, GoodsEntry::GES_RATING)) {
+						const CargoSpec *cs = CargoSpec::Get(i);
+						if(cs == NULL) continue;
+						SetDParam(0, cs->name);
+						SetDParam(1, cs->Index());
+						SetDParam(2, st->goods[i].cargo.TotalCount());
+						SetDParam(3, ToPercent8(st->goods[i].rating));
+
+						this->DrawSpriteIcons(cs->GetCargoIcon(), left, y);
+						DrawString(left + 40, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_STATION);
+						y += LINE_HEIGHT;
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	virtual void OnMouseLoop()
+	{
+		if (!_cursor.in_window) {
+			delete this;
+			return;
+		}
+
+		switch (this->close_cond) {
+			case TCC_RIGHT_CLICK: if (!_right_button_down) delete this; break;
+			case TCC_LEFT_CLICK: if (!_left_button_down) delete this; break;
+			case TCC_HOVER: if (!_mouse_hovering) delete this; break;
+		}
+	}
+
+	void DrawSpriteIcons(SpriteID sprite, int left, int top) const
+	{
+		for(int i = 0; i < 30; i += 10) {
+			DrawSprite(sprite, PAL_NONE, left + i, top);
+		}
+	}
+};
+
+void GuiShowTooltipsExtra(Window *parent, uint param, TooltipCloseCondition close_tooltip)
+{
+	DeleteWindowById(WC_TOOLTIPS_EXTRA, 0);
+	new TooltipsExtraWindow(parent, param, close_tooltip);
 }

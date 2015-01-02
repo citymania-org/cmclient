@@ -1,4 +1,4 @@
-/* $Id: gfxinit.cpp 26217 2014-01-03 08:51:49Z rubidium $ */
+/* $Id: gfxinit.cpp 26973 2014-10-06 20:14:44Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,7 @@
 #include "transparency.h"
 #include "blitter/factory.hpp"
 #include "video/video_driver.hpp"
+#include "window_func.h"
 
 /* The type of set we're replacing */
 #define SET_TYPE "graphics"
@@ -283,9 +284,9 @@ static bool SwitchNewGRFBlitter()
 		break;
 	}
 
-	if (!_video_driver->AfterBlitterChange()) {
+	if (!VideoDriver::GetInstance()->AfterBlitterChange()) {
 		/* Failed to switch blitter, let's hope we can return to the old one. */
-		if (BlitterFactory::SelectBlitter(cur_blitter) == NULL || !_video_driver->AfterBlitterChange()) usererror("Failed to reinitialize video driver. Specify a fixed blitter in the config");
+		if (BlitterFactory::SelectBlitter(cur_blitter) == NULL || !VideoDriver::GetInstance()->AfterBlitterChange()) usererror("Failed to reinitialize video driver. Specify a fixed blitter in the config");
 	}
 
 	return true;
@@ -298,6 +299,7 @@ void CheckBlitter()
 
 	ClearFontCache();
 	GfxClearSpriteCache();
+	ReInitAllWindows();
 }
 
 /** Initialise and load all the sprites. */

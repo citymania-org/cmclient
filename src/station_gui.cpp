@@ -1,4 +1,4 @@
-/* $Id: station_gui.cpp 26083 2013-11-24 14:29:32Z rubidium $ */
+/* $Id: station_gui.cpp 26595 2014-05-18 11:21:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1796,7 +1796,7 @@ struct StationViewWindow : public Window {
 
 		uint32 cargo_mask = 0;
 		for (CargoID i = 0; i < NUM_CARGO; i++) {
-			if (HasBit(st->goods[i].acceptance_pickup, GoodsEntry::GES_ACCEPTANCE)) SetBit(cargo_mask, i);
+			if (HasBit(st->goods[i].status, GoodsEntry::GES_ACCEPTANCE)) SetBit(cargo_mask, i);
 		}
 		SetDParam(0, cargo_mask);
 		int bottom = DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, INT32_MAX, STR_STATION_VIEW_ACCEPTS_CARGO);
@@ -2234,7 +2234,7 @@ struct SelectStationWindow : WindowPopup {
 	TileArea area; ///< Location of new station
 	Scrollbar *vscroll;
 
-	SelectStationWindow(WindowDesc *desc, const CommandContainer &cmd, TileArea ta) :		
+	SelectStationWindow(WindowDesc *desc, const CommandContainer &cmd, TileArea ta) :
 		WindowPopup(desc, WPUT_WIDGET_RELATIVE),
 		select_station_cmd(cmd),
 		area(ta)

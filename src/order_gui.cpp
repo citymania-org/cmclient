@@ -31,7 +31,7 @@
 #include "engine_func.h"
 
 #include "widgets/order_widget.h"
-#include <math.h>
+
 
 /** Order load types that could be given to station orders. */
 static const StringID _station_load_types[][5][5] = {
@@ -416,14 +416,14 @@ void DrawOrderString(const Vehicle *v, const Order *order, int order_index, int 
 	}
 
 	DrawString(rtl ? left : middle, rtl ? middle : right, y, STR_ORDER_TEXT, colour);
-	
+
 	uint order_dist_sq = 0;
 	uint order_dist_mh = 0;
 	const Order *next2 = order->next != NULL ? order->next : v->GetFirstOrder();
 	TileIndex prev_tile = order->GetLocation(v, true);
 	TileIndex cur_tile = next2->GetLocation(v, true);
 	if (prev_tile != INVALID_TILE && cur_tile != INVALID_TILE){
-		order_dist_sq = (uint)sqrt((double)(DistanceSquare(prev_tile, cur_tile)));
+		order_dist_sq = IntSqrt(DistanceSquare(prev_tile, cur_tile));
 		order_dist_mh = DistanceManhattan(prev_tile, cur_tile);
 	}
 	SetDParam(0, order_dist_sq);
@@ -563,6 +563,7 @@ enum {
 	OHK_TRANSFER,
 	OHK_NO_UNLOAD,
 	OHK_NO_LOAD,
+	OHK_CLOSE,
 };
 
 /**
@@ -772,11 +773,12 @@ private:
 		DoCommandP(this->vehicle->tile, this->vehicle->index + (sel_ord << 20), MOF_UNLOAD | (unload_type << 4), CMD_MODIFY_ORDER | CMD_MSG(STR_ERROR_CAN_T_MODIFY_THIS_ORDER));
 
 		bool set_no_load = false;
-		if (unload_type == OUFB_TRANSFER)
+		if (unload_type == OUFB_TRANSFER){
 			set_no_load = _settings_client.gui.auto_noload_on_transfer;
-		else if (unload_type == OUFB_UNLOAD)
+		}
+		else if (unload_type == OUFB_UNLOAD){
 			set_no_load = _settings_client.gui.auto_noload_on_unloadall;
-
+		}
 		/* Transfer orders with leave empty as default */
 		if (set_no_load) {
 			DoCommandP(this->vehicle->tile, this->vehicle->index + (sel_ord << 20), MOF_LOAD | (OLFB_NO_LOAD << 4), CMD_MODIFY_ORDER);
@@ -1565,6 +1567,11 @@ public:
 	virtual EventState OnHotkey(int hotkey)
 	{
 		if (this->vehicle->owner != _local_company) return ES_NOT_HANDLED;
+		if(hotkey == OHK_GOTO && this->goto_type != OPOS_NONE){
+			this->RaiseWidget(WID_O_GOTO);
+			ResetObjectToPlace();
+			return ES_NOT_HANDLED;
+		}
 
 		switch (hotkey) {
 			case OHK_SKIP:           this->OrderClick_Skip();          break;
@@ -1578,6 +1585,7 @@ public:
 			case OHK_TRANSFER:       this->OrderHotkey_Transfer();     break;
 			case OHK_NO_UNLOAD:      this->OrderHotkey_NoUnload();     break;
 			case OHK_NO_LOAD:        this->OrderHotkey_NoLoad();       break;
+			case OHK_CLOSE:          delete this; break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
@@ -1681,6 +1689,7 @@ static Hotkey order_hotkeys[] = {
 	Hotkey((uint16)0, "transfer", OHK_TRANSFER),
 	Hotkey((uint16)0, "no_unload", OHK_NO_UNLOAD),
 	Hotkey((uint16)0, "no_load", OHK_NO_LOAD),
+	Hotkey('Q', "close", OHK_CLOSE),
 	HOTKEY_LIST_END
 };
 HotkeyList OrdersWindow::hotkeys("order", order_hotkeys);

@@ -1,4 +1,4 @@
-/* $Id: console_gui.cpp 26001 2013-11-14 23:03:54Z michi_cc $ */
+/* $Id: console_gui.cpp 26544 2014-04-29 18:41:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -185,7 +185,7 @@ struct IConsoleWindow : Window
 	~IConsoleWindow()
 	{
 		_iconsole_mode = ICONSOLE_CLOSED;
-		_video_driver->EditBoxLostFocus();
+		VideoDriver::GetInstance()->EditBoxLostFocus();
 	}
 
 	/**
@@ -374,7 +374,7 @@ struct IConsoleWindow : Window
 
 	virtual void OnFocusLost()
 	{
-		_video_driver->EditBoxLostFocus();
+		VideoDriver::GetInstance()->EditBoxLostFocus();
 	}
 };
 

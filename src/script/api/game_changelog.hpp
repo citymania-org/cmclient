@@ -1,4 +1,4 @@
-/* $Id: game_changelog.hpp 26439 2014-04-01 18:29:34Z frosch $ */
+/* $Id: game_changelog.hpp 26980 2014-10-08 18:29:27Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,24 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 1.4.4
+ *
+ * No changes
+ *
+ * \b 1.4.3
+ *
+ * No changes
+ *
+ * \b 1.4.2
+ *
+ * Other changes:
+ * \li GSCargoMonitor delivery and pickup monitor functions have improved boundary checking for
+ *     their parameters, and return \c -1 if they are found out of bounds.
+ *
+ * \b 1.4.1
+ *
+ * No changes
+ *
  * \b 1.4.0
  *
  * API additions:
@@ -28,8 +46,8 @@
  * \li GSGoal::SetProgress
  * \li GSGoal::SetText
  * \li GSStation::HasCargoRating
- * \li AIStation::GetCargoWaitingFrom
- * \li AIStation::GetCargoWaitingVia
+ * \li GSStation::GetCargoWaitingFrom
+ * \li GSStation::GetCargoWaitingVia
  * \li GSStoryPage
  * \li GSStoryPageList
  * \li GSStoryPageElementList

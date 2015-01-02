@@ -1,4 +1,4 @@
-/* $Id: goal_gui.cpp 26012 2013-11-16 17:41:57Z zuu $ */
+/* $Id: goal_gui.cpp 26460 2014-04-13 10:47:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -280,6 +280,8 @@ struct GoalListWindow : public Window {
 	/* virtual */ void OnPaint()
 	{
 		this->DrawWidgets();
+
+		if (this->IsShaded()) return; // Don't draw anything when the window is shaded.
 
 		/* Calculate progress column width. */
 		uint max_width = 0;

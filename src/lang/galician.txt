@@ -11,7 +11,7 @@
 ##gender m f n
 
 
-# $Id: galician.txt 26325 2014-02-09 19:17:21Z frosch $
+# $Id: galician.txt 26822 2014-09-14 15:33:52Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -249,6 +249,9 @@ STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Barra de
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Barra de desprazamento - despraza a lista a esquerda/dereita
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Demoler edificios, etc. nun cadrado de terreo. Ctrl selecciona a área en diagonal. Shift alterna construir/amosar custo estimado
 
+# Show engines button
+
+
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}Por defecto
 STR_BUTTON_CANCEL                                               :{BLACK}Cancelar
@@ -471,7 +474,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Activa/desactiv
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Activa/desactiva o coloreado de bloques modificados
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1º
 STR_ORDINAL_NUMBER_2ND                                          :2º
 STR_ORDINAL_NUMBER_3RD                                          :3º
@@ -487,22 +490,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12º
 STR_ORDINAL_NUMBER_13TH                                         :13º
 STR_ORDINAL_NUMBER_14TH                                         :14º
 STR_ORDINAL_NUMBER_15TH                                         :15º
-STR_ORDINAL_NUMBER_16TH                                         :16º
-STR_ORDINAL_NUMBER_17TH                                         :17º
-STR_ORDINAL_NUMBER_18TH                                         :18º
-STR_ORDINAL_NUMBER_19TH                                         :19º
-STR_ORDINAL_NUMBER_20TH                                         :20º
-STR_ORDINAL_NUMBER_21ST                                         :21º
-STR_ORDINAL_NUMBER_22ND                                         :22º
-STR_ORDINAL_NUMBER_23RD                                         :23º
-STR_ORDINAL_NUMBER_24TH                                         :24º
-STR_ORDINAL_NUMBER_25TH                                         :25º
-STR_ORDINAL_NUMBER_26TH                                         :26º
-STR_ORDINAL_NUMBER_27TH                                         :27º
-STR_ORDINAL_NUMBER_28TH                                         :28º
-STR_ORDINAL_NUMBER_29TH                                         :29º
-STR_ORDINAL_NUMBER_30TH                                         :30º
-STR_ORDINAL_NUMBER_31ST                                         :31º
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1º
+STR_DAY_NUMBER_2ND                                              :2º
+STR_DAY_NUMBER_3RD                                              :3º
+STR_DAY_NUMBER_4TH                                              :4º
+STR_DAY_NUMBER_5TH                                              :5º
+STR_DAY_NUMBER_6TH                                              :6º
+STR_DAY_NUMBER_7TH                                              :7º
+STR_DAY_NUMBER_8TH                                              :8º
+STR_DAY_NUMBER_9TH                                              :9º
+STR_DAY_NUMBER_10TH                                             :10º
+STR_DAY_NUMBER_11TH                                             :11º
+STR_DAY_NUMBER_12TH                                             :12º
+STR_DAY_NUMBER_13TH                                             :13º
+STR_DAY_NUMBER_14TH                                             :14º
+STR_DAY_NUMBER_15TH                                             :15º
+STR_DAY_NUMBER_16TH                                             :16º
+STR_DAY_NUMBER_17TH                                             :17º
+STR_DAY_NUMBER_18TH                                             :18º
+STR_DAY_NUMBER_19TH                                             :19º
+STR_DAY_NUMBER_20TH                                             :20º
+STR_DAY_NUMBER_21ST                                             :21º
+STR_DAY_NUMBER_22ND                                             :22º
+STR_DAY_NUMBER_23RD                                             :23º
+STR_DAY_NUMBER_24TH                                             :24º
+STR_DAY_NUMBER_25TH                                             :25º
+STR_DAY_NUMBER_26TH                                             :26º
+STR_DAY_NUMBER_27TH                                             :27º
+STR_DAY_NUMBER_28TH                                             :28º
+STR_DAY_NUMBER_29TH                                             :29º
+STR_DAY_NUMBER_30TH                                             :30º
+STR_DAY_NUMBER_31ST                                             :31º
 ############ range for days ends
 
 ############ range for months starts
@@ -811,13 +832,11 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} está a esperar no depósito
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} está a esperar no hangar
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} ten moi poucas ordes no programa
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} ten unha orde nula
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} ten ordes duplicadas
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} ten unha estación inválida nas súas ordes
-# end of order system
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} está a volverse vello
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} está a volverse moi vello
@@ -939,11 +958,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :Catalán
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Autogravado
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Selecciona o intervalo entre autogravados
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Apagado
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Cada mes
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Cada 3 meses
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Cada 6 meses
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Cada 12 meses
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Lingua
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Selecciona a lingua para a interface
@@ -1789,6 +1810,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Tranvía de car
 STR_FACE_CAPTION                                                :{WHITE}Selección de cara
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Cancela-la selección dunha nova cara
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Acepta-la selección da nova cara
+STR_MAPGEN_RANDOM                                               :{BLACK}Aleatorio
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Home
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Seleccionar caras masculinas
@@ -2667,7 +2689,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Subir a 
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Baixar a cota de neve unha altura
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Semente aleatoria:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Pincha para introducir unha semente aleatoria
-STR_MAPGEN_RANDOM                                               :{BLACK}Aleatorio
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Cambia-la semente aleatoria usada para a xeración de terreo
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Xerador de terreo:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Algoritmo para árbores:
@@ -2773,6 +2794,8 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}Non hai 
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}Arquivo correspondente non atopado
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Desactivado
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Incompatible con esta versión de OpenTTD
+
+# NewGRF save preset window
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Cambiar os parámetros de NewGRF

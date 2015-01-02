@@ -1,4 +1,4 @@
-/* $Id: fios.cpp 24804 2012-12-09 16:52:43Z frosch $ */
+/* $Id: fios.cpp 26460 2014-04-13 10:47:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -400,6 +400,10 @@ FiosType FiosGetSavegameListCallback(SaveLoadDialogMode mode, const char *file, 
 	 * .SS1 Transport Tycoon Deluxe preset game
 	 * .SV1 Transport Tycoon Deluxe (Patch) saved game
 	 * .SV2 Transport Tycoon Deluxe (Patch) saved 2-player game */
+
+	/* Don't crash if we supply no extension */
+	if (ext == NULL) return FIOS_TYPE_INVALID;
+
 	if (strcasecmp(ext, ".sav") == 0) {
 		GetFileTitle(file, title, last, SAVE_DIR);
 		return FIOS_TYPE_FILE;

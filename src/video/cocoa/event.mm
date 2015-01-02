@@ -1,4 +1,4 @@
-/* $Id: event.mm 26209 2014-01-02 22:41:58Z rubidium $ */
+/* $Id: event.mm 26544 2014-04-29 18:41:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -287,7 +287,7 @@ static bool QZ_KeyEvent(unsigned short keycode, unsigned short unicode, BOOL dow
 		case QZ_RETURN:
 		case QZ_f:
 			if (down && (_current_mods & NSCommandKeyMask)) {
-				_video_driver->ToggleFullscreen(!_fullscreen);
+				VideoDriver::GetInstance()->ToggleFullscreen(!_fullscreen);
 			}
 			break;
 	}

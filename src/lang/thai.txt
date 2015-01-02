@@ -10,7 +10,7 @@
 ##grflangid 0x42
 
 
-# $Id: thai.txt 26325 2014-02-09 19:17:21Z frosch $
+# $Id: thai.txt 26822 2014-09-14 15:33:52Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -248,6 +248,9 @@ STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}แถ�
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}แถบเลื่อน - ใช้เลื่อนรายการ ซ้าย/ขวา
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}ทำลายสิ่งก่อสร้าง และสิ่งต่างๆ ในพื้นที่ช่องหนึ่ง. กด Ctrl เพื่อเลือกพื้นที่แบบทะแยง. กด Shift เพื่อสลับระหว่างสิ่งปลูกสร้างและแสดงมูลค่า
 
+# Show engines button
+
+
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}ค่าปกติ
 STR_BUTTON_CANCEL                                               :{BLACK}ยกเลิก
@@ -470,7 +473,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :เปิด/�
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :เปิด/เปิด สีของ dirty blocks
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :วันที่ 1
 STR_ORDINAL_NUMBER_2ND                                          :วันที่ 2
 STR_ORDINAL_NUMBER_3RD                                          :วันที่ 3
@@ -486,22 +489,40 @@ STR_ORDINAL_NUMBER_12TH                                         :วันที
 STR_ORDINAL_NUMBER_13TH                                         :วันที่ 13
 STR_ORDINAL_NUMBER_14TH                                         :วันที่ 14
 STR_ORDINAL_NUMBER_15TH                                         :วันที่ 15
-STR_ORDINAL_NUMBER_16TH                                         :วันที่ 16
-STR_ORDINAL_NUMBER_17TH                                         :วันที่ 17
-STR_ORDINAL_NUMBER_18TH                                         :วันที่ 18
-STR_ORDINAL_NUMBER_19TH                                         :วันที่ 19
-STR_ORDINAL_NUMBER_20TH                                         :วันที่ 20
-STR_ORDINAL_NUMBER_21ST                                         :วันที่ 21
-STR_ORDINAL_NUMBER_22ND                                         :วันที่ 22
-STR_ORDINAL_NUMBER_23RD                                         :วันที่ 23
-STR_ORDINAL_NUMBER_24TH                                         :วันที่ 24
-STR_ORDINAL_NUMBER_25TH                                         :วันที่ 25
-STR_ORDINAL_NUMBER_26TH                                         :วันที่ 26
-STR_ORDINAL_NUMBER_27TH                                         :วันที่ 27
-STR_ORDINAL_NUMBER_28TH                                         :วันที่ 28
-STR_ORDINAL_NUMBER_29TH                                         :วันที่ 29
-STR_ORDINAL_NUMBER_30TH                                         :วันที่ 30
-STR_ORDINAL_NUMBER_31ST                                         :วันที่ 31
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :วันที่ 1
+STR_DAY_NUMBER_2ND                                              :วันที่ 2
+STR_DAY_NUMBER_3RD                                              :วันที่ 3
+STR_DAY_NUMBER_4TH                                              :วันที่ 4
+STR_DAY_NUMBER_5TH                                              :วันที่ 5
+STR_DAY_NUMBER_6TH                                              :วันที่ 6
+STR_DAY_NUMBER_7TH                                              :วันที่ 7
+STR_DAY_NUMBER_8TH                                              :วันที่ 8
+STR_DAY_NUMBER_9TH                                              :วันที่ 9
+STR_DAY_NUMBER_10TH                                             :วันที่ 10
+STR_DAY_NUMBER_11TH                                             :วันที่ 11
+STR_DAY_NUMBER_12TH                                             :วันที่ 12
+STR_DAY_NUMBER_13TH                                             :วันที่ 13
+STR_DAY_NUMBER_14TH                                             :วันที่ 14
+STR_DAY_NUMBER_15TH                                             :วันที่ 15
+STR_DAY_NUMBER_16TH                                             :วันที่ 16
+STR_DAY_NUMBER_17TH                                             :วันที่ 17
+STR_DAY_NUMBER_18TH                                             :วันที่ 18
+STR_DAY_NUMBER_19TH                                             :วันที่ 19
+STR_DAY_NUMBER_20TH                                             :วันที่ 20
+STR_DAY_NUMBER_21ST                                             :วันที่ 21
+STR_DAY_NUMBER_22ND                                             :วันที่ 22
+STR_DAY_NUMBER_23RD                                             :วันที่ 23
+STR_DAY_NUMBER_24TH                                             :วันที่ 24
+STR_DAY_NUMBER_25TH                                             :วันที่ 25
+STR_DAY_NUMBER_26TH                                             :วันที่ 26
+STR_DAY_NUMBER_27TH                                             :วันที่ 27
+STR_DAY_NUMBER_28TH                                             :วันที่ 28
+STR_DAY_NUMBER_29TH                                             :วันที่ 29
+STR_DAY_NUMBER_30TH                                             :วันที่ 30
+STR_DAY_NUMBER_31ST                                             :วันที่ 31
 ############ range for days ends
 
 ############ range for months starts
@@ -810,13 +831,11 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} กำลังรออยู่ในอู่
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} กำลังรออยู่ในโรงจอด
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} มีคำสั่งน้อยเกินไปในกำหนดการเดินทาง
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} มีคำสั่งว่าง
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} มีคำสั่งซ้ำซ้อน
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} มีสถานีที่ใช้ไม่ได้ในคำสั่ง
-# end of order system
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} เริ่มเก่าแล้ว
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} เก่ามากแล้ว
@@ -938,11 +957,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :คาตาล
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}บันทึกเกมอัตโนมัติ
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}เลือกระยะห่างระหว่างการบันทึกเกมอัตโนมัติแต่ละครั้ง
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :ปิด
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :ทุกๆเดือน
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :ทุก 3 เดือน
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :ทุก 6 เดือน
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :ทุก 12 เดือน
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}ภาษา
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}เลือกภาษาที่จะใช้
@@ -1802,6 +1823,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :รถราง
 STR_FACE_CAPTION                                                :{WHITE}เลือกใบหน้า
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}ยกเลิการเลือกใบหน้าใหม่
 STR_FACE_OK_TOOLTIP                                             :{BLACK}ยอมรับการเลือกใบหน้าใหม่
+STR_MAPGEN_RANDOM                                               :{BLACK}สุ่ม
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}ผู้ชาย
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}เลือกใบหน้าผู้ชาย
@@ -2681,7 +2703,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}ปร�
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}ปรับเปลี่ยนความสูงของหิมะลงมา 1 ระดับ
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Random seed:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}คลิ๊กเมาส์เพื่อ random seed
-STR_MAPGEN_RANDOM                                               :{BLACK}สุ่ม
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}เปลี่ยนการ random seed สำหรับการสร้างพื้นดิน
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}เครื่องมือสร้างสภาพพื้นดิน:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Tอัลกอริธึมต้นไม้:
@@ -2787,6 +2808,8 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}ไม�
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}หาไฟล์ที่เข้ากันได้ไม่พบ
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}ไม่ใช้งาน
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}ไม่รองรับกับ OpenTTD เวอร์ชั่นนี้
+
+# NewGRF save preset window
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}เปลี่ยนแปลง NewGRF parameters

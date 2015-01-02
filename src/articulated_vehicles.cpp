@@ -1,4 +1,4 @@
-/* $Id: articulated_vehicles.cpp 25259 2013-05-19 14:22:04Z rubidium $ */
+/* $Id: articulated_vehicles.cpp 26972 2014-10-06 20:10:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -158,6 +158,41 @@ CargoArray GetCapacityOfArticulatedParts(EngineID engine)
 	}
 
 	return capacity;
+}
+
+/**
+ * Get the default cargoes and refits of an articulated vehicle.
+ * The refits are linked to a cargo rather than an articulated part to prevent a long list of parts.
+ * @param engine Model to investigate.
+ * @param[out] cargoes Total amount of units that can be transported, summed by cargo.
+ * @param[out] refits Whether a (possibly partial) refit for each cargo is possible.
+ */
+void GetArticulatedVehicleCargoesAndRefits(EngineID engine, CargoArray *cargoes, uint32 *refits)
+{
+	cargoes->Clear();
+	*refits = 0;
+
+	const Engine *e = Engine::Get(engine);
+
+	CargoID cargo_type;
+	uint16 cargo_capacity = GetVehicleDefaultCapacity(engine, &cargo_type);
+	if (cargo_type < NUM_CARGO && cargo_capacity > 0) {
+		(*cargoes)[cargo_type] += cargo_capacity;
+		if (IsEngineRefittable(engine)) SetBit(*refits, cargo_type);
+	}
+
+	if (!e->IsGroundVehicle() || !HasBit(e->info.callback_mask, CBM_VEHICLE_ARTIC_ENGINE)) return;
+
+	for (uint i = 1; i < MAX_ARTICULATED_PARTS; i++) {
+		EngineID artic_engine = GetNextArticulatedPart(i, engine);
+		if (artic_engine == INVALID_ENGINE) break;
+
+		cargo_capacity = GetVehicleDefaultCapacity(artic_engine, &cargo_type);
+		if (cargo_type < NUM_CARGO && cargo_capacity > 0) {
+			(*cargoes)[cargo_type] += cargo_capacity;
+			if (IsEngineRefittable(artic_engine)) SetBit(*refits, cargo_type);
+		}
+	}
 }
 
 /**

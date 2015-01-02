@@ -2281,6 +2281,7 @@ static const NWidgetPart _nested_vehicle_view_widgets[] = {
 
 
 
+
 /* Just to make sure, nobody has changed the vehicle type constants, as we are
 	 using them for array indexing in a number of places here. */
 assert_compile(VEH_TRAIN == 0);
@@ -2738,7 +2739,7 @@ public:
 		::ShowNewGRFInspectWindow(GetGrfSpecFeature(Vehicle::Get(this->window_number)->type), this->window_number);
 	}
 
-	virtual EventState OnHotkey(int hotkey)	
+	virtual EventState OnHotkey(int hotkey)
 	{
 		if (this->owner != _local_company) return ES_NOT_HANDLED;
 		return Window::OnHotkey(hotkey);
@@ -2750,6 +2751,8 @@ public:
 static Hotkey vehiclegui_hotkeys[] = {
 	Hotkey('G', "vehicle_orders", WID_VV_SHOW_ORDERS),
 	Hotkey('F', "vehicle_go", WID_VV_START_STOP),
+	Hotkey((uint16)0, "vehicle_refit", WID_VV_REFIT),
+	Hotkey((uint16)0, "vehicle_clone", WID_VV_CLONE),
 	HOTKEY_LIST_END
 };
 HotkeyList VehicleViewWindow::hotkeys("vehiclegui", vehiclegui_hotkeys);

@@ -109,6 +109,7 @@ enum WindowClass {
 	 *   - 0 = #ToolTipsWidgets
 	 */
 	WC_TOOLTIPS,
+	WC_TOOLTIPS_EXTRA,
 
 	/**
 	 * Query string window; %Window numbers:
@@ -369,7 +370,12 @@ enum WindowClass {
 	 *   - 0 = #BuildObjectWidgets
 	 */
 	WC_BUILD_OBJECT,
+
+	//watch company
 	WC_WATCH_COMPANY,
+
+	//watch company admin version
+	WC_WATCH_COMPANYA,
 
 	/**
 	 * Build vehicle; %Window numbers:
@@ -679,6 +685,7 @@ enum WindowClass {
 
 	WC_ZONING_TOOLBAR,
 	WC_COMMAND_TOOLBAR,
+	WC_LOGIN_WINDOW,
 	WC_CB_TOWN,
 
 	WC_INVALID = 0xFFFF, ///< Invalid window.

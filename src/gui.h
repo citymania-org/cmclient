@@ -40,7 +40,8 @@ Window *ShowBuildDocksScenToolbar();
 Window *ShowBuildAirToolbar();
 
 /* commands_gui.cpp */
-Window *ShowCommandsToolbar();
+void ShowCommandsToolbar();
+void ShowLoginWindow();
 
 /* tgp_gui.cpp */
 void ShowGenerateLandscape();

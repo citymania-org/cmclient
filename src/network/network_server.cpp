@@ -1,4 +1,4 @@
-/* $Id: network_server.cpp 26043 2013-11-21 18:35:31Z rubidium $ */
+/* $Id: network_server.cpp 26717 2014-08-03 15:04:09Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -595,6 +595,20 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendMap()
 		this->last_frame_server = _frame_counter;
 
 		sent_packets = 4; // We start with trying 4 packets
+
+		/* The order backups are broken in 1.4, so that joining clients cannot
+		 * restore orders backupped before they joined.
+		 *
+		 * When loading the game on the new client, we have to drop all order backups.
+		 * As such this client will desync, in case an order backup is actually restored.
+		 *
+		 * To lower the desync chance, the server resets all order backups when a client
+		 * joins, so a desync is only possible when the restore command is queued at the server
+		 * while the saving is executed. */
+		NetworkClientSocket *cs;
+		FOR_ALL_CLIENT_SOCKETS(cs) {
+			OrderBackup::ResetUser(cs->client_id);
+		}
 
 		/* Make a dump of the current game */
 		if (SaveWithFilter(this->savegame, true) != SL_OK) usererror("network savedump failed");
@@ -2168,6 +2182,39 @@ void NetworkPrintClients()
 					ci->client_name,
 					ci->client_playas + (Company::IsValidID(ci->client_playas) ? 1 : 0));
 		}
+	}
+}
+
+/**
+ * Perform all the server specific administration of a new company.
+ * @param c  The newly created company; can't be NULL.
+ * @param ci The client information of the client that made the company; can be NULL.
+ */
+void NetworkServerNewCompany(const Company *c, NetworkClientInfo *ci)
+{
+	assert(c != NULL);
+
+	if (!_network_server) return;
+
+	_network_company_states[c->index].months_empty = 0;
+	_network_company_states[c->index].password[0] = '\0';
+	NetworkServerUpdateCompanyPassworded(c->index, false);
+
+	if (ci != NULL) {
+		/* ci is NULL when replaying, or for AIs. In neither case there is a client. */
+		ci->client_playas = c->index;
+		NetworkUpdateClientInfo(ci->client_id);
+		NetworkSendCommand(0, 0, 0, CMD_RENAME_PRESIDENT, NULL, ci->client_name, c->index);
+	}
+
+	/* Announce new company on network. */
+	NetworkAdminCompanyInfo(c, true);
+
+	if (ci != NULL) {
+		/* ci is NULL when replaying, or for AIs. In neither case there is a client.
+		   We need to send Admin port update here so that they first know about the new company
+		   and then learn about a possibly joining client (see FS#6025) */
+		NetworkServerSendChat(NETWORK_ACTION_COMPANY_NEW, DESTTYPE_BROADCAST, 0, "", ci->client_id, c->index + 1);
 	}
 }
 

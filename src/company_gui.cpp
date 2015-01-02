@@ -1,4 +1,4 @@
-/* $Id: company_gui.cpp 26086 2013-11-24 14:46:26Z rubidium $ */
+/* $Id: company_gui.cpp 26460 2014-04-13 10:47:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1900,6 +1900,9 @@ static const NWidgetPart _nested_company_widgets[] = {
 							NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_C_RELOCATE_HQ), SetFill(1, 0), SetDataTip(STR_COMPANY_VIEW_RELOCATE_HQ, STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS),
 							NWidget(NWID_SPACER), SetMinimalSize(90, 0),
 						EndContainer(),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, CW_WIDGET_COMPANY_RESET), SetFill(1, 0), SetDataTip(STR_XI_RESET2, STR_XI_RESET),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, CW_WIDGET_COMPANY_SUSPEND), SetFill(1, 0), SetDataTip(STR_XI_SUSPEND2, STR_XI_SUSPEND),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, CW_WIDGET_COMPANY_RESUME), SetFill(1, 0), SetDataTip(STR_XI_RESUME2, STR_XI_RESUME),
 						NWidget(NWID_SPACER), SetFill(0, 1),
 					EndContainer(),
 				EndContainer(),
@@ -1933,6 +1936,7 @@ static const NWidgetPart _nested_company_widgets[] = {
 								NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_PASSWORD), SetFill(1, 0), SetDataTip(STR_COMPANY_VIEW_PASSWORD, STR_COMPANY_VIEW_PASSWORD_TOOLTIP),
 								NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_JOIN), SetFill(1, 0), SetDataTip(STR_COMPANY_VIEW_JOIN, STR_COMPANY_VIEW_JOIN_TOOLTIP),
 							EndContainer(),
+							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, CW_WIDGET_COMPANY_JOIN2), SetFill(1, 0), SetDataTip(STR_COMPANY_VIEW_JOIN, STR_COMPANY_VIEW_JOIN_TOOLTIP),
 						EndContainer(),
 					EndContainer(),
 				EndContainer(),
@@ -1970,6 +1974,16 @@ static const StringID _company_view_vehicle_count_strings[] = {
 /**
  * Window with general information about a company
  */
+static void ResetCallback(Window *w, bool confirmed)
+{
+	if (confirmed) {
+		CompanyID company2 = (CompanyID)w->window_number;
+		char msg[128];
+		seprintf(msg, lastof(msg), "!reset %i", company2 + 1);
+		NetworkClientSendChatToServer(msg);
+	}
+}
+
 struct CompanyWindow : Window
 {
 	CompanyWidgets query_widget;
@@ -2013,7 +2027,7 @@ struct CompanyWindow : Window
 			NWidgetStacked *wi = this->GetWidget<NWidgetStacked>(WID_C_SELECT_BUTTONS);
 			if (plane != wi->shown_plane) {
 				wi->SetDisplayedPlane(plane);
-				this->SetDirty();
+				this->InvalidateData();
 				return;
 			}
 
@@ -2066,6 +2080,13 @@ struct CompanyWindow : Window
 			}
 		}
 
+		if(!_networking){
+			this->SetWidgetDisabledState(CW_WIDGET_COMPANY_RESUME, true);
+			this->SetWidgetDisabledState(CW_WIDGET_COMPANY_SUSPEND, true);
+			this->SetWidgetDisabledState(CW_WIDGET_COMPANY_RESET, true);
+			this->SetWidgetDisabledState(CW_WIDGET_COMPANY_JOIN2, true);
+		}
+
 		this->DrawWidgets();
 	}
 
@@ -2115,6 +2136,15 @@ struct CompanyWindow : Window
 				break;
 			}
 
+			case CW_WIDGET_COMPANY_RESUME:
+			case CW_WIDGET_COMPANY_SUSPEND:
+			case CW_WIDGET_COMPANY_RESET:
+			case CW_WIDGET_COMPANY_JOIN2:
+				if(!_networking || !_novarole){
+					size->width = 0;
+					size->height = 0;
+				}
+				break;
 #ifdef ENABLE_NETWORK
 			case WID_C_HAS_PASSWORD:
 				*size = maxdim(*size, GetSpriteSize(SPR_LOCK));
@@ -2341,6 +2371,44 @@ struct CompanyWindow : Window
 					/* just send the join command */
 					NetworkClientRequestMove(company);
 				}
+				MarkWholeScreenDirty();
+				break;
+			}
+
+			case CW_WIDGET_COMPANY_JOIN2:{
+				CompanyID company2 = (CompanyID)this->window_number;
+				this->query_widget = CW_WIDGET_COMPANY_JOIN2;
+				char msg[128];
+				seprintf(msg, lastof(msg), "!move %i", company2 + 1);
+				NetworkClientSendChatToServer(msg);
+				MarkWholeScreenDirty();
+				break;
+			}
+			case CW_WIDGET_COMPANY_RESET:{
+				if (!_networking) return;
+				this->query_widget = CW_WIDGET_COMPANY_RESET;
+				ShowQuery(STR_XI_RESET_CAPTION, STR_XI_REALY_RESET, this, ResetCallback);
+				MarkWholeScreenDirty();
+				break;
+			}
+			case CW_WIDGET_COMPANY_SUSPEND:{
+				if (!_networking) return;
+				this->query_widget = CW_WIDGET_COMPANY_SUSPEND;
+				CompanyID company2 = (CompanyID)this->window_number;
+				char msg[128];
+				seprintf(msg, lastof(msg), "!lockp %i", company2 + 1);
+				NetworkClientSendChatToServer(msg);
+				MarkWholeScreenDirty();
+				break;
+			}
+			case CW_WIDGET_COMPANY_RESUME:{
+				if (!_networking) return;
+				this->query_widget = CW_WIDGET_COMPANY_RESUME;
+				CompanyID company2 = (CompanyID)this->window_number;
+				char msg[128];
+				seprintf(msg, lastof(msg), "!lockp %i", company2 + 1);
+				NetworkClientSendChatToServer(msg);
+				MarkWholeScreenDirty();
 				break;
 			}
 #endif /* ENABLE_NETWORK */

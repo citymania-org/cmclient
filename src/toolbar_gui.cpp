@@ -57,6 +57,7 @@
 #include "zoning.h"
 #include "watch_gui.h"
 
+
 RailType _last_built_railtype;
 RoadType _last_built_roadtype;
 
@@ -156,6 +157,7 @@ public:
 		DrawCompanyIcon(company, rtl ? right - this->icon_size.width - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT, top + icon_offset);
 		if (_networking && NetworkCompanyIsPassworded(company)){
 			DrawSprite(SPR_LOCK, PAL_NONE, rtl ? right - this->icon_size.width - this->lockwidth - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT + 3 + this->icon_size.width, top + text_offset);
+			//DrawSprite(SPR_LOCK, PAL_NONE, left + WD_FRAMERECT_LEFT + 3 + this->icon_size.width, top + text_offset);
 		}
 
 		SetDParam(0, company);
@@ -168,6 +170,7 @@ public:
 		}
 		int text_x_ofs = 3 + this->icon_size.width + this->lockwidth;
 		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : text_x_ofs), right - WD_FRAMERECT_RIGHT - (rtl ? text_x_ofs : 0), top + text_offset, STR_COMPANY_NAME_COMPANY_NUM, col);
+		//DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : 3 + this->icon_size.width + this->lockwidth), right - WD_FRAMERECT_RIGHT - (rtl ? 3 + this->icon_size.width : 0), top + text_offset, STR_COMPANY_NAME_COMPANY_NUM, col);
 	}
 };
 
@@ -626,9 +629,9 @@ static CallBackFunction ToolbarWatchClick(Window *w)
 static CallBackFunction MenuClickWatch(int index)
 {
 	if(Company::IsValidID((CompanyID)index)){
-		ShowWatchWindow((CompanyID)index);
+		ShowWatchWindow((CompanyID)index, 0);
 	}
-	else ShowWatchWindow(INVALID_COMPANY);
+	else ShowWatchWindow(INVALID_COMPANY, 0);
 	return CBF_NONE;
 }
 
@@ -1203,7 +1206,8 @@ static CallBackFunction MenuClickHelp(int index)
 		case  8: ShowAboutWindow();                break;
 		case  9: ShowSpriteAlignerWindow();        break;
 		case 10: ToggleBoundingBoxes();            break;
-		case 11: ToggleDirtyBlocks();              break;		
+		case 11: ToggleDirtyBlocks();              break;
+		case 12: ShowLoginWindow();                break;
 	}
 	return CBF_NONE;
 }
@@ -1716,6 +1720,10 @@ enum MainToolbarHotkeys {
 	MTHK_COMMANDS_GUI,
 	MTHK_CARGOTABLE,
 	MTHK_TREES,
+	MTHK_ZONING,
+	MTHK_LOGINWINDOW,
+	MTHK_SETTINGS_ADV,
+	MTHK_NEWGRF,
 };
 
 /** Main toolbar. */
@@ -1804,12 +1812,16 @@ struct MainToolbarWindow : Window {
 			case MTHK_EXTRA_VIEWPORT: ShowExtraViewPortWindowForTileUnderCursor(); break;
 #ifdef ENABLE_NETWORK
 			case MTHK_CLIENT_LIST: if (_networking) ShowClientList(); break;
-			case MTHK_COMMANDS_GUI: if (_networking && (strcmp(_settings_client.network.last_host, "37.157.196.78") == 0 || strcmp(_settings_client.network.last_host, "89.111.65.225") == 0)) { ShowCommandsToolbar(); } break;
+			case MTHK_COMMANDS_GUI: extern bool _novahost; if (_networking && _novahost){ ShowCommandsToolbar(); } break;
 #endif
-			case MTHK_BUILD_HQ: if(_current_company != COMPANY_SPECTATOR){ this->last_started_action = CBF_BUILD_HQ; BuildCompanyHQ(); } break;			
+			case MTHK_BUILD_HQ: if(_current_company != COMPANY_SPECTATOR){ this->last_started_action = CBF_BUILD_HQ; BuildCompanyHQ(); } break;
 			case MTHK_CARGOTABLE: if(_current_company != COMPANY_SPECTATOR){ ShowCompanyCargos(_current_company); } break;
 			case MTHK_TREES: if(_current_company != COMPANY_SPECTATOR){ BuildTreesWindow(); } break;
 			case MTHK_SIGN_LIST: ShowSignList(); break;
+			case MTHK_ZONING: ShowZoningToolbar(); break;
+			case MTHK_LOGINWINDOW: ShowLoginWindow(); break;
+			case MTHK_SETTINGS_ADV: ShowGameSettings(); break;
+			case MTHK_NEWGRF: ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, &_grfconfig); break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
@@ -1818,8 +1830,19 @@ struct MainToolbarWindow : Window {
 	virtual void BuildTreesWindow(){
 		ShowBuildTreesToolbar();
 		Window *w = FindWindowById(WC_BUILD_TREES, 0);
+		if(w != NULL){
+			if(w->IsWidgetLowered(WID_BT_TYPE_RANDOM)){
+				w->RaiseWidget(WID_BT_TYPE_RANDOM);
+				ResetObjectToPlace();
+			}
+			else{
+				w->OnHotkey(WID_BT_TYPE_RANDOM);
+			}
+
+		}
+		/*
 		if (!w->IsWidgetLowered(WID_BT_TYPE_RANDOM))
-			w->OnClick(Point(), WID_BT_TYPE_RANDOM, 1);
+			w->OnClick(Point(), WID_BT_TYPE_RANDOM, 1);*/
 	}
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
@@ -1932,6 +1955,10 @@ static Hotkey maintoolbar_hotkeys[] = {
 #endif
 	Hotkey(WKC_CTRL  | 'H', "build_hq", MTHK_BUILD_HQ),
 	Hotkey('I', "trees", MTHK_TREES),
+	Hotkey((uint16)0, "zoning", MTHK_ZONING),
+	Hotkey((uint16)0, "login_window", MTHK_LOGINWINDOW),
+	Hotkey((uint16)0, "settings_advanced", MTHK_SETTINGS_ADV),
+	Hotkey((uint16)0, "newgrf_window", MTHK_NEWGRF),
 	Hotkey((uint16)0, "sign_list", MTHK_SIGN_LIST),
 	HOTKEY_LIST_END
 };

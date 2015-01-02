@@ -33,7 +33,7 @@
 #include "../core/backup_type.hpp"
 #include "../town.h"
 #include "table/strings.h"
-
+#include "network_func.h"
 /* This file handles all the client-commands */
 void SyncCBClient(byte * msg);
 
@@ -266,8 +266,7 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 				SendAck();
 				extern bool novahost();
 				if(novahost()){
-					NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, "!check 1401");//check version
-					NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, "!synccb"); //CB cargo data
+					NetworkClientSendChatToServer("!check 1443"); //check version
 					CB_SetCB(false);
 				}
 			}
@@ -619,8 +618,10 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CLIENT_INFO(Pac
 		strecpy(ci->client_name, name, lastof(ci->client_name));
 
 		SetWindowDirty(WC_CLIENT_LIST, 0);
-		InvalidateWindowClassesData( WC_WATCH_COMPANY, 0 );
-		SetWindowClassesDirty( WC_WATCH_COMPANY );
+		InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
+		SetWindowClassesDirty(WC_WATCH_COMPANY);
+		InvalidateWindowData(WC_WATCH_COMPANYA, ci->client_id, 1);
+		SetWindowClassesDirty(WC_WATCH_COMPANYA);
 
 		return NETWORK_RECV_STATUS_OKAY;
 	}
@@ -640,8 +641,10 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CLIENT_INFO(Pac
 	strecpy(ci->client_name, name, lastof(ci->client_name));
 
 	SetWindowDirty(WC_CLIENT_LIST, 0);
-	InvalidateWindowClassesData( WC_WATCH_COMPANY, 0 );
-	SetWindowClassesDirty( WC_WATCH_COMPANY );
+	InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
+	SetWindowClassesDirty(WC_WATCH_COMPANY);
+	InvalidateWindowData(WC_WATCH_COMPANYA, ci->client_id, 1);
+	SetWindowClassesDirty(WC_WATCH_COMPANYA);
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -1031,8 +1034,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_QUIT(Packet *p)
 	}
 
 	SetWindowDirty(WC_CLIENT_LIST, 0);
-	InvalidateWindowClassesData( WC_WATCH_COMPANY, 0 );
-	SetWindowClassesDirty( WC_WATCH_COMPANY );
+	InvalidateWindowClassesData( WC_WATCH_COMPANYA, 0 );
+	SetWindowClassesDirty( WC_WATCH_COMPANYA );
 
 	/* If we come here it means we could not locate the client.. strange :s */
 	return NETWORK_RECV_STATUS_OKAY;
@@ -1119,8 +1122,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MOVE(Packet *p)
 	if (client_id == _network_own_client_id) {
 		SetLocalCompany(company_id);
 	}
-	InvalidateWindowClassesData( WC_WATCH_COMPANY, 0 );
-	SetWindowClassesDirty( WC_WATCH_COMPANY );
+	InvalidateWindowClassesData( WC_WATCH_COMPANYA, 0 );
+	SetWindowClassesDirty( WC_WATCH_COMPANYA );
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -1267,6 +1270,10 @@ void NetworkClientSendChat(NetworkAction action, DestType type, int dest, const 
 	MyClient::SendChat(action, type, dest, msg, data);
 }
 
+void NetworkClientSendChatToServer(const char * msg)
+{
+	NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, msg);
+}
 /**
  * Set/Reset company password on the client side.
  * @param password Password to be set.
@@ -1312,18 +1319,26 @@ bool NetworkMaxSpectatorsReached()
 	return NetworkSpectatorCount() >= (_network_server ? _settings_client.network.max_spectators : _network_server_max_spectators);
 }
 
-void SyncCBClient(byte *msg){ //len = 3 + 6 + 12 + 2 + 6*cargo
+void SyncCBClient(byte *msg){ //len = 3 + 6 + 12 +    3 + 6*cargo
 	size_t pos = 21;
 	size_t length = pos;
 	byte tmp;
 
 	while(msg[length] != '\0'){ length++; }
+
+	_novarole = msg[pos++] == 'A';
+	if(length == pos) return;
+
 	CB_SetCB(true);
 
 	tmp = msg[pos++];
 	_settings_client.gui.cb_distance_check = (tmp == 0xFF) ? 0 : tmp;
-	tmp = msg[pos++];	
+	tmp = msg[pos++];
 	CB_SetStorage((tmp == 0xFF) ? 0 : (uint)tmp);
+
+	for(int i = 0; i < NUM_CARGO; i++){
+		CB_SetRequirements(i, 0, 0, 0);
+	}
 
 	//IConsolePrintF(CC_INFO, "cb check %i, storage %i", _settings_client.gui.cb_distance_check, tmp);
 	uint8 cargo;

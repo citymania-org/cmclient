@@ -571,7 +571,7 @@ public:
 	{
 		switch (widget) {
 		/* Clicked on legend? */
-			case WID_CV_KEY_BUTTON: 
+			case WID_CV_KEY_BUTTON:
 				ShowGraphLegend();
 				break;
 			case WID_CPR_ENABLE_CARGOES:
@@ -743,7 +743,7 @@ struct IncomeGraphWindow : BaseGraphWindow {
 
 	virtual OverflowSafeInt64 GetGraphData(const Company *c, int j)
 	{
-		if(_legend_excluded_cargo == 0){ 
+		if(_legend_excluded_cargo == 0){
 		return c->old_economy[j].income;
 	}
 		uint total_income = 0;
@@ -796,7 +796,7 @@ struct IncomeGraphWindow : BaseGraphWindow {
 		GfxFillRect(rect_x + 1, y + 1 + clk_dif, rect_x + 7, y + 4 + clk_dif, cs->legend_colour);
 		SetDParam(0, cs->name);
 		DrawString(rtl ? r.left : x + 14 + clk_dif, (rtl ? r.right - 14 + clk_dif : r.right), y + clk_dif, STR_GRAPH_CARGO_PAYMENT_CARGO);
-	}	
+	}
 };
 
 static const NWidgetPart _nested_income_graph_widgets[] = {
@@ -852,7 +852,7 @@ struct DeliveredCargoGraphWindow : BaseGraphWindow {
 
 	virtual OverflowSafeInt64 GetGraphData(const Company *c, int j)
 	{
-		if(_legend_excluded_cargo == 0){ 
+		if(_legend_excluded_cargo == 0){
 		return c->old_economy[j].delivered_cargo.GetSum<OverflowSafeInt64>();
 	}
 		uint total_delivered = 0;
@@ -905,7 +905,7 @@ struct DeliveredCargoGraphWindow : BaseGraphWindow {
 		GfxFillRect(rect_x + 1, y + 1 + clk_dif, rect_x + 7, y + 4 + clk_dif, cs->legend_colour);
 		SetDParam(0, cs->name);
 		DrawString(rtl ? r.left : x + 14 + clk_dif, (rtl ? r.right - 14 + clk_dif : r.right), y + clk_dif, STR_GRAPH_CARGO_PAYMENT_CARGO);
-	}	
+	}
 };
 
 static const NWidgetPart _nested_delivered_cargo_graph_widgets[] = {
@@ -1755,3 +1755,4 @@ void ShowPerformanceRatingDetail()
 {
 	AllocateWindowDescFront<PerformanceRatingDetailWindow>(&_performance_rating_detail_desc, 0);
 }
+

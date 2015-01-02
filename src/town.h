@@ -80,29 +80,32 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	CompanyByte exclusivity;       ///< which company has exclusivity
 	uint8 exclusive_counter;       ///< months till the exclusivity expires
 	int16 ratings[MAX_COMPANIES];  ///< ratings of each company for this town
-	StringID town_label;           ///< Label dependent on _local_company rating.
 
 	TransportedCargoStat<uint32> supplied[NUM_CARGO]; ///< Cargo statistics about supplied cargo.
 	TransportedCargoStat<uint16> received[NUM_TE];    ///< Cargo statistics about received cargotypes.
 	uint32 goal[NUM_TE];                              ///< Amount of cargo required for the town to grow.
 
-	bool growing;  //CB	
+	StringID town_label;                ///< Label dependent on _local_company rating.
+	bool growing;                       //CB
 	/* amounts in storage */
-	int storage[NUM_CARGO];  //CB stored cargo
-	uint act_cargo[NUM_CARGO];  //CB delivered last month
-	uint new_act_cargo[NUM_CARGO];  //CB  delivered current month
-	bool delivered_enough[NUM_CARGO];  //CB
-	bool growing_by_chance;        ///< town growing due to 1/12 chance?
-	uint16 houses_skipped;    ///< number of failed house buildings with next counter reset
-	uint16 houses_skipped_prev; ///< house_failures on start of previous month
-	uint16 houses_skipped_last_month;  ///< house_failures during last month
-	uint16 cycles_skipped;   ///< number of house building cycles skipped due to placement failure
+	int storage[NUM_CARGO];             //CB stored cargo
+	uint act_cargo[NUM_CARGO];          //CB delivered last month
+	uint new_act_cargo[NUM_CARGO];      //CB  delivered current month
+	bool delivered_enough[NUM_CARGO];   //CB
+	bool growing_by_chance;             ///< town growing due to 1/12 chance?
+	uint16 houses_skipped;              ///< number of failed house buildings with next counter reset
+	uint16 houses_skipped_prev;         ///< house_failures on start of previous month
+	uint16 houses_skipped_last_month;   ///< house_failures during last month
+	uint16 cycles_skipped;              ///< number of house building cycles skipped due to placement failure
 	uint16 cycles_skipped_prev;
 	uint16 cycles_skipped_last_month;
-	uint16 cb_houses_removed; ///< houses removed by cb server (excluding ones when town is not growing)
-	uint16 cb_houses_removed_prev; ///< houses removed by cb server on start of previous month
+	uint16 cb_houses_removed;            ///< houses removed by cb server (excluding ones when town is not growing)
+	uint16 cb_houses_removed_prev;       ///< houses removed by cb server on start of previous month
 	uint16 cb_houses_removed_last_month; ///< houses removed by cb server during last month
-
+	uint houses_construction;            ///< number of houses currently being built
+	uint houses_reconstruction;          ///< number of houses currently being rebuilt
+	uint houses_demolished;              ///< number of houses demolished this month
+	bool fund_regularly;                 ///< funds buildings regularly when previous fund ends
 
 	char *text; ///< General text with additional information.
 
@@ -139,12 +142,12 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 
 	void UpdateLabel();
 
- 	/* Returns the correct town label, based on rating. */
+	/* Returns the correct town label, based on rating. */
 	//FORCEINLINE StringID Label() const{
 	StringID Label() const{
 		if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
 			return STR_VIEWPORT_TOWN_POP_VERY_POOR_RATING + this->town_label;
-		} 
+		}
 		else {
 			return _settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN;
 		}
@@ -155,7 +158,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	StringID SmallLabel() const{
 		if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
 			return STR_VIEWPORT_TOWN_TINY_VERY_POOR_RATING + this->town_label;
-		} 
+		}
 		else {
 			return STR_VIEWPORT_TOWN_TINY_WHITE;
 		}

@@ -1,4 +1,4 @@
-/* $Id: win32_v.cpp 26367 2014-02-23 16:08:50Z michi_cc $ */
+/* $Id: win32_v.cpp 26544 2014-04-29 18:41:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1003,7 +1003,7 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 				if (active && minimized) {
 					/* Restore the game window */
 					ShowWindow(hwnd, SW_RESTORE);
-					static_cast<VideoDriver_Win32 *>(_video_driver)->MakeWindow(true);
+					static_cast<VideoDriver_Win32 *>(VideoDriver::GetInstance())->MakeWindow(true);
 				} else if (!active && !minimized) {
 					/* Minimise the window and restore desktop */
 					ShowWindow(hwnd, SW_MINIMIZE);

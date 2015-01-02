@@ -1,4 +1,4 @@
-/* $Id: dropdown.cpp 26128 2013-11-26 15:12:54Z rubidium $ */
+/* $Id: dropdown.cpp 26652 2014-06-17 19:08:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -119,6 +119,8 @@ struct DropdownWindow : Window {
 	DropdownWindow(Window *parent, const DropDownList *list, int selected, int button, bool instant_close, const Point &position, const Dimension &size, Colours wi_colour, bool scroll)
 			: Window(&_dropdown_desc)
 	{
+		assert(list->Length() > 0);
+
 		this->position = position;
 
 		this->CreateNestedTree();

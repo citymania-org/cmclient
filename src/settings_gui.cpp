@@ -1,4 +1,4 @@
-/* $Id: settings_gui.cpp 26322 2014-02-09 13:06:35Z alberth $ */
+/* $Id: settings_gui.cpp 26652 2014-06-17 19:08:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -265,6 +265,8 @@ struct GameOptionsWindow : Window {
 			}
 
 			case WID_GO_RESOLUTION_DROPDOWN: // Setup resolution dropdown
+				if (_num_resolutions == 0) break;
+
 				list = new DropDownList();
 				*selected_index = GetCurRes();
 				for (int i = 0; i < _num_resolutions; i++) {
@@ -440,6 +442,8 @@ struct GameOptionsWindow : Window {
 				DropDownList *list = this->BuildDropDownList(widget, &selected);
 				if (list != NULL) {
 					ShowDropDownList(this, list, selected, widget);
+				} else {
+					if (widget == WID_GO_RESOLUTION_DROPDOWN) ShowErrorMessage(STR_ERROR_RESOLUTION_LIST_FAILED, INVALID_STRING_ID, WL_ERROR);
 				}
 				break;
 			}
@@ -1500,7 +1504,10 @@ static SettingEntry _settings_ui[] = {
 	SettingEntry("gui.default_rail_type"),
 	SettingEntry("gui.disable_unsuitable_building"),
 	SettingEntry("gui.persistent_buildingtools"),
+	SettingEntry("gui.old_depot_train_length_calc"),
 	SettingEntry("gui.cb_distance_check"),
+	SettingEntry("gui.enable_extra_tooltips"),
+	SettingEntry("gui.polyrail_double_click"),
 };
 /** Interface subpage */
 static SettingsPage _settings_ui_page = {_settings_ui, lengthof(_settings_ui)};
@@ -1661,7 +1668,6 @@ static SettingEntry _settings_vehicles_servicing[] = {
 	SettingEntry("difficulty.vehicle_breakdowns"),
 	SettingEntry("order.no_servicing_if_no_breakdowns"),
 	SettingEntry("order.serviceathelipad"),
-	SettingEntry("gui.old_depot_train_length_calc"),
 };
 /** Servicing sub-page */
 static SettingsPage _settings_vehicles_servicing_page = {_settings_vehicles_servicing, lengthof(_settings_vehicles_servicing)};

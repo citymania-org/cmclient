@@ -38,6 +38,7 @@
 #include "../table/sprites.h"
 
 #include "../stringfilter_type.h"
+#include "../watch_gui.h"
 
 
 static void ShowNetworkStartServerWindow();
@@ -774,7 +775,7 @@ public:
 				if (this->server != NULL) ShowMissingContentWindow(this->server->info.grfconfig);
 				break;
 			case WID_NG_NOVA:
-				if(!UDP_CC_queried){ 
+				if(!UDP_CC_queried){
 					NetworkUDPQueryMasterServer();
 					UDP_CC_queried = true;
 				}
@@ -1694,6 +1695,14 @@ static void ClientList_Ban(const NetworkClientInfo *ci)
 	NetworkServerKickOrBanIP(ci->client_id, true);
 }
 
+static void ClientList_Watch(const NetworkClientInfo *ci)
+{
+	if (ci != NULL){
+		CompanyID cid = (CompanyID)ci->client_id;
+		ShowWatchWindow(cid, 1);
+	}
+}
+
 static void ClientList_GiveMoney(const NetworkClientInfo *ci)
 {
 	ShowNetworkGiveMoneyWindow(ci->client_playas);
@@ -1770,6 +1779,9 @@ struct NetworkClientListPopupWindow : Window {
 			this->AddAction(STR_NETWORK_CLIENTLIST_BAN, &ClientList_Ban);
 		}
 
+		if (_network_own_client_id != ci->client_id && ci->client_id != CLIENT_ID_SERVER && _novarole) {
+			this->AddAction(STR_XI_WATCH, &ClientList_Watch);
+		}
 		this->InitNested(client_id);
 		CLRBITS(this->flags, WF_WHITE_BORDER);
 	}
@@ -1911,8 +1923,11 @@ struct NetworkClientListWindow : Window {
 		FOR_ALL_CLIENT_INFOS(ci) {
 			width = max(width, GetStringBoundingBox(ci->client_name).width);
 		}
-
-		size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->company_icon_width + width + WD_FRAMERECT_RIGHT;
+		SetDParam(0, 0xFFFF);
+		SetDParam(1, INVALID_COMPANY);
+		uint width2 = GetStringBoundingBox(STR_NETWORK_CLIENT_EXTRA).width;
+		size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->company_icon_width + width + WD_FRAMERECT_RIGHT + width2;
+		//size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->company_icon_width + width + WD_FRAMERECT_RIGHT;
 	}
 
 	virtual void OnPaint()
@@ -1962,6 +1977,11 @@ struct NetworkClientListWindow : Window {
 			if (Company::IsValidID(ci->client_playas)) DrawCompanyIcon(ci->client_playas, icon_left, y + icon_y_offset);
 
 			DrawString(name_left, name_right, y, ci->client_name, colour);
+
+			uint extra = GetStringBoundingBox(ci->client_name).width + 15;
+			SetDParam(0, ci->client_id);
+			SetDParam(1, ci->client_playas == INVALID_COMPANY ? ci->client_playas : ci->client_playas + 1);
+			DrawString(name_left + extra, right, y, STR_NETWORK_CLIENT_EXTRA, TC_FROMSTRING, SA_RIGHT);
 
 			y += FONT_HEIGHT_NORMAL;
 		}

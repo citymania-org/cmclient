@@ -1,4 +1,4 @@
-/* $Id: linkgraph.cpp 26393 2014-03-06 21:19:41Z fonsinchen $ */
+/* $Id: linkgraph.cpp 26595 2014-05-18 11:21:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -155,7 +155,7 @@ void LinkGraph::UpdateDistances(NodeID id, TileIndex xy)
 	for (NodeID other = 0; other < this->Size(); ++other) {
 		if (other == id) continue;
 		this->edges[id][other].distance = this->edges[other][id].distance =
-				DistanceManhattan(xy, Station::Get(this->nodes[other].station)->xy);
+				DistanceMaxPlusManhattan(xy, Station::Get(this->nodes[other].station)->xy);
 	}
 }
 
@@ -179,7 +179,7 @@ NodeID LinkGraph::AddNode(const Station *st)
 			max(new_node + 1U, this->edges.Height()));
 
 	this->nodes[new_node].Init(st->index,
-			HasBit(good.acceptance_pickup, GoodsEntry::GES_ACCEPTANCE));
+			HasBit(good.status, GoodsEntry::GES_ACCEPTANCE));
 
 	BaseEdge *new_edges = this->edges[new_node];
 
@@ -187,7 +187,7 @@ NodeID LinkGraph::AddNode(const Station *st)
 	new_edges[new_node].next_edge = INVALID_NODE;
 
 	for (NodeID i = 0; i <= new_node; ++i) {
-		uint distance = DistanceManhattan(st->xy, Station::Get(this->nodes[i].station)->xy);
+		uint distance = DistanceMaxPlusManhattan(st->xy, Station::Get(this->nodes[i].station)->xy);
 		new_edges[i].Init(distance);
 		this->edges[i][new_node].Init(distance);
 	}

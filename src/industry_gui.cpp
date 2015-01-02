@@ -1,4 +1,4 @@
-/* $Id: industry_gui.cpp 26241 2014-01-12 18:00:39Z frosch $ */
+/* $Id: industry_gui.cpp 26789 2014-09-07 15:07:22Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -24,6 +24,7 @@
 #include "newgrf_industries.h"
 #include "newgrf_text.h"
 #include "newgrf_debug.h"
+#include "network/network.h"
 #include "strings_func.h"
 #include "company_func.h"
 #include "tilehighlight_func.h"
@@ -41,6 +42,7 @@
 #include "widgets/industry_widget.h"
 
 #include "table/strings.h"
+#include "hotkeys.h"
 
 bool _ignore_restrictions;
 uint64 _displayed_industries; ///< Communication from the industry chain window to the smallmap window about what industries to display.
@@ -118,12 +120,10 @@ static int CDECL IndustryTypeNameSorter(const IndustryType *a, const IndustryTyp
 	static char industry_name[2][64];
 
 	const IndustrySpec *indsp1 = GetIndustrySpec(*a);
-	SetDParam(0, indsp1->name);
-	GetString(industry_name[0], STR_JUST_STRING, lastof(industry_name[0]));
+	GetString(industry_name[0], indsp1->name, lastof(industry_name[0]));
 
 	const IndustrySpec *indsp2 = GetIndustrySpec(*b);
-	SetDParam(0, indsp2->name);
-	GetString(industry_name[1], STR_JUST_STRING, lastof(industry_name[1]));
+	GetString(industry_name[1], indsp2->name, lastof(industry_name[1]));
 
 	int r = strnatcmp(industry_name[0], industry_name[1]); // Sort by name (natural sorting).
 
@@ -187,14 +187,6 @@ static const NWidgetPart _nested_build_industry_widgets[] = {
 		NWidget(WWT_RESIZEBOX, COLOUR_DARK_GREEN),
 	EndContainer(),
 };
-
-/** Window definition of the dynamic place industries gui */
-static WindowDesc _build_industry_desc(
-	WDP_AUTO, "build_industry", 170, 212,
-	WC_BUILD_INDUSTRY, WC_NONE,
-	WDF_CONSTRUCTION,
-	_nested_build_industry_widgets, lengthof(_nested_build_industry_widgets)
-);
 
 /** Build (fund or prospect) a new industry, */
 class BuildIndustryWindow : public Window {
@@ -267,7 +259,7 @@ class BuildIndustryWindow : public Window {
 	}
 
 public:
-	BuildIndustryWindow() : Window(&_build_industry_desc)
+	BuildIndustryWindow(WindowDesc *desc) : Window(desc)
 	{
 		this->timer_enabled = _loaded_newgrf_features.has_newindustries;
 
@@ -625,13 +617,38 @@ public:
 		if (indsp == NULL) this->enabled[this->selected_index] = _settings_game.difficulty.industry_density != ID_FUND_ONLY;
 		this->SetButtons();
 	}
+
+	virtual EventState OnHotkey(int hotkey)
+	{
+		return Window::OnHotkey(hotkey);
+	}
+
+	static HotkeyList hotkeys;
 };
+
+static Hotkey build_industry_hotkeys[] = {
+	Hotkey((uint16)0, "display_chain", WID_DPI_DISPLAY_WIDGET),
+	Hotkey((uint16)0, "build_button", WID_DPI_FUND_WIDGET),
+	HOTKEY_LIST_END
+};
+
+HotkeyList BuildIndustryWindow::hotkeys("industry_fund_gui", build_industry_hotkeys);
+
+/** Window definition of the dynamic place industries gui */
+static WindowDesc _build_industry_desc(
+	WDP_AUTO, "build_industry", 170, 212,
+	WC_BUILD_INDUSTRY, WC_NONE,
+	WDF_CONSTRUCTION,
+	_nested_build_industry_widgets, lengthof(_nested_build_industry_widgets),
+	&BuildIndustryWindow::hotkeys
+);
+
 
 void ShowBuildIndustryWindow()
 {
 	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
 	if (BringWindowToFrontById(WC_BUILD_INDUSTRY, 0)) return;
-	new BuildIndustryWindow();
+	new BuildIndustryWindow(&_build_industry_desc);
 }
 
 static void UpdateIndustryProduction(Industry *i);
@@ -640,7 +657,8 @@ static inline bool IsProductionAlterable(const Industry *i)
 {
 	const IndustrySpec *is = GetIndustrySpec(i->type);
 	return ((_game_mode == GM_EDITOR || _cheats.setup_prod.value) &&
-			(is->production_rate[0] != 0 || is->production_rate[1] != 0 || is->IsRawIndustry()));
+			(is->production_rate[0] != 0 || is->production_rate[1] != 0 || is->IsRawIndustry()) &&
+			!_networking);
 }
 
 class IndustryViewWindow : public Window
@@ -1101,8 +1119,9 @@ protected:
 
 			const Industry *i;
 			FOR_ALL_INDUSTRIES(i) {
-				if (this->type_filter[i->type])
+				if (this->type_filter[i->type]){
 					*this->industries.Append() = i;
+				}
 			}
 
 			this->industries.Compact();
@@ -1724,8 +1743,7 @@ struct CargoesField {
 				ypos += (normal_height - FONT_HEIGHT_NORMAL) / 2;
 				if (this->u.industry.ind_type < NUM_INDUSTRYTYPES) {
 					const IndustrySpec *indsp = GetIndustrySpec(this->u.industry.ind_type);
-					SetDParam(0, indsp->name);
-					DrawString(xpos, xpos2, ypos, STR_JUST_STRING, TC_WHITE, SA_HOR_CENTER);
+					DrawString(xpos, xpos2, ypos, indsp->name, TC_WHITE, SA_HOR_CENTER);
 
 					/* Draw the industry legend. */
 					int blob_left, blob_right;
@@ -2056,7 +2074,7 @@ struct CargoesRow {
 					if (!hs->enabled) continue;
 
 					for (uint j = 0; j < lengthof(hs->accepts_cargo); j++) {
-						if (cargo_fld->u.cargo.vertical_cargoes[i] == hs->accepts_cargo[j]) {
+						if (hs->cargo_acceptance[j] > 0 && cargo_fld->u.cargo.vertical_cargoes[i] == hs->accepts_cargo[j]) {
 							cargo_fld->ConnectCargo(cargo_fld->u.cargo.vertical_cargoes[i], false);
 							goto next_cargo;
 						}
@@ -2248,7 +2266,7 @@ struct IndustryCargoesWindow : public Window {
 				if (!hs->enabled || !(hs->building_availability & climate_mask)) continue;
 
 				for (uint j = 0; j < lengthof(hs->accepts_cargo); j++) {
-					if (cargoes[i] == hs->accepts_cargo[j]) return true;
+					if (hs->cargo_acceptance[j] > 0 && cargoes[i] == hs->accepts_cargo[j]) return true;
 				}
 			}
 		}

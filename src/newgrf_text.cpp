@@ -1,4 +1,4 @@
-/* $Id: newgrf_text.cpp 26244 2014-01-12 18:01:33Z frosch $ */
+/* $Id: newgrf_text.cpp 26715 2014-08-03 14:06:04Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1056,6 +1056,16 @@ uint RemapNewGRFStringControlCode(uint scc, char *buf_start, char **buff, const 
 
 			case SCC_NEWGRF_PRINT_WORD_STRING_ID:
 				*argv = MapGRFStringID(_newgrf_textrefstack.grffile->grfid, _newgrf_textrefstack.PopUnsignedWord());
+				break;
+		}
+	} else {
+		/* Consume additional parameter characters */
+		switch (scc) {
+			default: break;
+
+			case SCC_NEWGRF_PUSH_WORD:
+			case SCC_NEWGRF_UNPRINT:
+				Utf8Consume(str);
 				break;
 		}
 	}

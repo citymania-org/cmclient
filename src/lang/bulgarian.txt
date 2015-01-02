@@ -12,7 +12,7 @@
 ##case m f n p
 
 
-# $Id: bulgarian.txt 26381 2014-02-27 18:46:10Z translators $
+# $Id: bulgarian.txt 26977 2014-10-07 17:47:35Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -211,19 +211,19 @@ STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA} кг
 
 STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{COMMA}гал
 STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA} л.
-STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA} м³
+STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA}{NBSP}м³
 
-STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{COMMA} галон{P "" и}
-STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA} лит{P ър ри}
-STR_UNITS_VOLUME_LONG_SI                                        :{COMMA} куб. м.
+STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{COMMA}{NBSP}галон{P "" и}
+STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA}{NBSP}лит{P ър ри}
+STR_UNITS_VOLUME_LONG_SI                                        :{COMMA}{NBSP}куб. м.
 
-STR_UNITS_FORCE_IMPERIAL                                        :{COMMA} lbf
-STR_UNITS_FORCE_METRIC                                          :{COMMA} kgf
-STR_UNITS_FORCE_SI                                              :{COMMA} kN
+STR_UNITS_FORCE_IMPERIAL                                        :{COMMA}{NBSP}lbf
+STR_UNITS_FORCE_METRIC                                          :{COMMA}{NBSP}kgf
+STR_UNITS_FORCE_SI                                              :{COMMA}{NBSP}kN
 
-STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA} фут
-STR_UNITS_HEIGHT_METRIC                                         :{COMMA} м
-STR_UNITS_HEIGHT_SI                                             :{COMMA} м
+STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA}{NBSP}фут
+STR_UNITS_HEIGHT_METRIC                                         :{COMMA}{NBSP}м
+STR_UNITS_HEIGHT_SI                                             :{COMMA}{NBSP}м
 
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Филтриращ низ:
@@ -247,6 +247,9 @@ STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Акти
 STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Лента за позициониране - превърта списъка нагоре/надолу
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Превъртаща ивица - превърта списъка на ляво/дясно
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Разруши постройки и др. върху квадрат от картата. Ctrl маркира по диагонал. Shift показва евентуалната цена на разрушението.
+
+# Show engines button
+
 
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}По подразбиране
@@ -468,7 +471,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Превклю�
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Превключва оцветяване на замърсените блокове
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1-ви
 STR_ORDINAL_NUMBER_2ND                                          :2-ри
 STR_ORDINAL_NUMBER_3RD                                          :3-ти
@@ -484,22 +487,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12-ти
 STR_ORDINAL_NUMBER_13TH                                         :13-ти
 STR_ORDINAL_NUMBER_14TH                                         :14-ти
 STR_ORDINAL_NUMBER_15TH                                         :15-ти
-STR_ORDINAL_NUMBER_16TH                                         :16-ти
-STR_ORDINAL_NUMBER_17TH                                         :17-ти
-STR_ORDINAL_NUMBER_18TH                                         :18-ти
-STR_ORDINAL_NUMBER_19TH                                         :19-ти
-STR_ORDINAL_NUMBER_20TH                                         :20-ти
-STR_ORDINAL_NUMBER_21ST                                         :21-ви
-STR_ORDINAL_NUMBER_22ND                                         :22-ри
-STR_ORDINAL_NUMBER_23RD                                         :23-ти
-STR_ORDINAL_NUMBER_24TH                                         :24-ти
-STR_ORDINAL_NUMBER_25TH                                         :25-ти
-STR_ORDINAL_NUMBER_26TH                                         :26-ти
-STR_ORDINAL_NUMBER_27TH                                         :27-ми
-STR_ORDINAL_NUMBER_28TH                                         :28-и
-STR_ORDINAL_NUMBER_29TH                                         :29-и
-STR_ORDINAL_NUMBER_30TH                                         :30-ти
-STR_ORDINAL_NUMBER_31ST                                         :31-ви
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1-ви
+STR_DAY_NUMBER_2ND                                              :2-ри
+STR_DAY_NUMBER_3RD                                              :3-ти
+STR_DAY_NUMBER_4TH                                              :4-ти
+STR_DAY_NUMBER_5TH                                              :5-и
+STR_DAY_NUMBER_6TH                                              :6-и
+STR_DAY_NUMBER_7TH                                              :7-и
+STR_DAY_NUMBER_8TH                                              :8-и
+STR_DAY_NUMBER_9TH                                              :9-ти
+STR_DAY_NUMBER_10TH                                             :10-ти
+STR_DAY_NUMBER_11TH                                             :11-ти
+STR_DAY_NUMBER_12TH                                             :12-ти
+STR_DAY_NUMBER_13TH                                             :13-ти
+STR_DAY_NUMBER_14TH                                             :14-ти
+STR_DAY_NUMBER_15TH                                             :15-ти
+STR_DAY_NUMBER_16TH                                             :16-ти
+STR_DAY_NUMBER_17TH                                             :17-ти
+STR_DAY_NUMBER_18TH                                             :18-ти
+STR_DAY_NUMBER_19TH                                             :19-ти
+STR_DAY_NUMBER_20TH                                             :20-ти
+STR_DAY_NUMBER_21ST                                             :21-ви
+STR_DAY_NUMBER_22ND                                             :22-ри
+STR_DAY_NUMBER_23RD                                             :23-ти
+STR_DAY_NUMBER_24TH                                             :24-ти
+STR_DAY_NUMBER_25TH                                             :25-ти
+STR_DAY_NUMBER_26TH                                             :26-ти
+STR_DAY_NUMBER_27TH                                             :27-ми
+STR_DAY_NUMBER_28TH                                             :28-и
+STR_DAY_NUMBER_29TH                                             :29-и
+STR_DAY_NUMBER_30TH                                             :30-ти
+STR_DAY_NUMBER_31ST                                             :31-ви
 ############ range for days ends
 
 ############ range for months starts
@@ -802,13 +823,11 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} чака в депото
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} чака в хангара
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} има прекалено малко задачи
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} има празна задача
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} има дублирани задачи
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} има невалидна спирка в задачите
-# end of order system
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} започва да остарява
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} е много остаряло
@@ -930,11 +949,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :каталон�
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Автозаписване
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Интервала между две автозаписваня
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :изключено
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :всеки месец
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :всеки 3 месеца
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :всеки 6 месеца
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :всеки 12 месеца
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Език
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Избор на език
@@ -963,6 +984,7 @@ STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Избе
 STR_GAME_OPTIONS_BASE_MUSIC_STATUS                              :{RED}{NUM} повреден файл{P "" s}
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Допълнителна информация за пакетът базовата музика
 
+STR_ERROR_RESOLUTION_LIST_FAILED                                :{WHITE}Неуспешно извличане на списък с поддържаните резолюции
 STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}Проблем при включване на режим "цял екран"
 
 # Custom currency window
@@ -1252,7 +1274,7 @@ STR_CONFIG_SETTING_ERRMSG_DURATION                              :Продълж�
 STR_CONFIG_SETTING_ERRMSG_DURATION_HELPTEXT                     :Време през което съобщенията за грешки се показват в червен прозорец. Някой (критичните) съобщения за грешки не се затварят автоматично след това време, а трябва да бъдат затворени ръчно.
 STR_CONFIG_SETTING_ERRMSG_DURATION_VALUE                        :{COMMA} секунд{P 0 а и}
 STR_CONFIG_SETTING_HOVER_DELAY                                  :Покажи съвети: {STRING}
-STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :Изкачване преди съветът да се покаже, когато мишката е върху елемент от интерфейса. Алтернативно съветите могат да бъдат активирани с десния бутон на мишката
+STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :Изкачване преди съветът да се покаже, когато мишката е върху елемент от интерфейса. Алтернативно съветите могат да бъдат активирани с десния бутон на мишката ако стойността е 0
 STR_CONFIG_SETTING_HOVER_DELAY_VALUE                            :Изчакай за {COMMA} секунд{P 0 а и}
 STR_CONFIG_SETTING_HOVER_DELAY_DISABLED                         :Десен бутон
 STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Население в табелата на града: {STRING.n}
@@ -1423,7 +1445,7 @@ STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Интерва�
 STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Изберете дали обслужването на превозните средства е предизвикано от времето изминало от последното им обслужване, или от падането на надеждността им под даден процент от максималната им надеждност
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :Интервал на обслужване за влакове: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :Задайте интервала за обслужване на новите влакове по подразбиране, ако такъв интервал не е зададен за превозното средство
-STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA} д{P 0 ен ни}/%
+STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA}{NBSP}д{P 0 ен ни}/%
 STR_CONFIG_SETTING_SERVINT_DISABLED                             :Изключен
 STR_CONFIG_SETTING_SERVINT_ROAD_VEHICLES                        :Интервал на обслужване за автомобили: {STRING}
 STR_CONFIG_SETTING_SERVINT_ROAD_VEHICLES_HELPTEXT               :Задайте интервала за обслужване на новите пътни превозни средства по подразбиране, ако такъв интервал не е зададен за превозното средство
@@ -1777,6 +1799,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Товарен 
 STR_FACE_CAPTION                                                :{WHITE}Избор на лице
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Прекъсване избора на ново лице
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Признавам избора на ново лице
+STR_MAPGEN_RANDOM                                               :{BLACK}Произволно
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Мъж
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Избери мъжки лица
@@ -2207,8 +2230,14 @@ STR_TRANSPARENT_LOADING_TOOLTIP                                 :{BLACK}Вклу
 STR_TRANSPARENT_INVISIBLE_TOOLTIP                               :{BLACK}Направи обектите невидими вместо прозрачни
 
 # Linkgraph legend window
+STR_LINKGRAPH_LEGEND_ALL                                        :{BLACK}Всички
+STR_LINKGRAPH_LEGEND_NONE                                       :{BLACK}Николко
+STR_LINKGRAPH_LEGEND_SELECT_COMPANIES                           :{BLACK}Изберете компании, който да се показват
 
 # Linkgraph legend window and linkgraph legend in smallmap
+STR_LINKGRAPH_LEGEND_UNUSED                                     :{TINY_FONT}{BLACK}неизползван
+STR_LINKGRAPH_LEGEND_SATURATED                                  :{TINY_FONT}{BLACK}наситен
+STR_LINKGRAPH_LEGEND_OVERLOADED                                 :{TINY_FONT}{BLACK}претоварен
 
 # Base for station construction window(s)
 STR_STATION_BUILD_COVERAGE_AREA_TITLE                           :{BLACK}Маркиране на Отбелязаната зона
@@ -2647,7 +2676,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Прем
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Преместване снежната линия надолу
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Случайност:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Натиснете за въвеждане семе на случайност
-STR_MAPGEN_RANDOM                                               :{BLACK}Произволно
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Промяна на случайността използване за генериране на терен
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Земегенератор:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Дърворазсад:
@@ -2753,6 +2781,8 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}Няма
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}Не е намерен отговарящ файл
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Изключен
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{G=n}{RED}Несъвместимо с тази версия на OpenTTD
+
+# NewGRF save preset window
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Промени параметрите на новите графики (NewGRF)
@@ -2895,8 +2925,8 @@ STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} доставено
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (все още трява)
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN} (доставено)
-STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}Града нараства всеги {ORANGE}{COMMA}{BLACK} д{P ен ни}
-STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}Града нараства всеки {ORANGE}{COMMA}{BLACK} д{P ен ни} (субсидиран)
+STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}Града нараства всеги {ORANGE}{COMMA}{BLACK}{NBSP}д{P ен ни}
+STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}Града нараства всеки {ORANGE}{COMMA}{BLACK}{NBSP}д{P ен ни} (субсидиран)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}Града {RED}не{BLACK} расте
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}Лимит на шумът в градът: {ORANGE}{COMMA}{BLACK}  най-много: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Фиксиране на главния изглед върху града. Ctrl+Click отваря прозорец на нов изглед върху града.
@@ -2939,11 +2969,13 @@ STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT          :{YELLOW}Пок�
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{YELLOW} Подкупването на местната власт за да увеличи рейтинга носи огромен риск ако бъдете хванати.{} Цена: {CURRENCY_LONG}
 
 # Goal window
+STR_GOALS_CAPTION                                               :{WHITE}{COMPANY} Цели
 STR_GOALS_SPECTATOR_CAPTION                                     :{WHITE}Глобални цели
 STR_GOALS_GLOBAL_TITLE                                          :{BLACK}Основни цели:
 STR_GOALS_TEXT                                                  :{ORANGE}{STRING}
 STR_GOALS_NONE                                                  :{ORANGE}- Никакви -
 STR_GOALS_SPECTATOR_NONE                                        :{ORANGE}- Неприложимо-
+STR_GOALS_PROGRESS                                              :{ORANGE}напредък{STRING}
 STR_GOALS_COMPANY_TITLE                                         :{BLACK}Цели на компанията:
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Кликни на задачата за да центрирате камерата на фабрика/град/плочка. Ctrl+Click отваря нов прозорец центриран на фабрика/град/плочка
 
@@ -2954,7 +2986,7 @@ STR_GOAL_QUESTION_CAPTION_WARNING                               :Внимани�
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Грешка
 
 ### Start of Goal Question button list
-STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Недобре
+STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Откажи
 STR_GOAL_QUESTION_BUTTON_OK                                     :Добре
 STR_GOAL_QUESTION_BUTTON_NO                                     :Не
 STR_GOAL_QUESTION_BUTTON_YES                                    :Да
@@ -2983,6 +3015,8 @@ STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}{STRING
 STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Натисни върху услугата за да се фокусира върху индустрията/града. Ctrl отваря нов изглед към индустрията/града
 
 # Story book window
+STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Следваща
+STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Отиди на следващата страница
 STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Невалидна цел
 
 # Station list window
@@ -3012,8 +3046,29 @@ STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPAN
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Рейтинги
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Покажи нивото на обслужване
+STR_STATION_VIEW_SUPPLY_RATINGS_TITLE                           :{BLACK}Месечни доставки и местен рейтинг:
 
+STR_STATION_VIEW_GROUP                                          :{BLACK}По група
+STR_STATION_VIEW_WAITING_STATION                                :Станция: Изчакване
+STR_STATION_VIEW_WAITING_AMOUNT                                 :Сума: Изчакване
+STR_STATION_VIEW_PLANNED_STATION                                :Станция: Планирано
+STR_STATION_VIEW_PLANNED_AMOUNT                                 :Количество: Планирано
+STR_STATION_VIEW_FROM                                           :{YELLOW}{CARGO_SHORT} от {STATION}
+STR_STATION_VIEW_VIA                                            :{YELLOW}{CARGO_SHORT} посредством {STATION}
+STR_STATION_VIEW_TO                                             :{YELLOW}{CARGO_SHORT} до {STATION}
+STR_STATION_VIEW_FROM_ANY                                       :{RED}{CARGO_SHORT} от неизвестна станция
+STR_STATION_VIEW_TO_ANY                                         :{RED}{CARGO_SHORT} за която и да е гара
+STR_STATION_VIEW_VIA_ANY                                        :{RED}{CARGO_SHORT} посредством която и да е гара
+STR_STATION_VIEW_FROM_HERE                                      :{GREEN}{CARGO_SHORT} от тази гара
+STR_STATION_VIEW_VIA_HERE                                       :{GREEN}{CARGO_SHORT} спиране на тази гара
+STR_STATION_VIEW_TO_HERE                                        :{GREEN}{CARGO_SHORT} до тази станция
+STR_STATION_VIEW_NONSTOP                                        :{YELLOW}{CARGO_SHORT} без прекъсване
 
+STR_STATION_VIEW_GROUP_S_V_D                                    :Източник-Чрез-Дестинация
+STR_STATION_VIEW_GROUP_S_D_V                                    :Източник-Дестинация-Посредством
+STR_STATION_VIEW_GROUP_V_S_D                                    :Посредством-Източник-Дестинация
+STR_STATION_VIEW_GROUP_V_D_S                                    :Посредством-Дестинация-Източник
+STR_STATION_VIEW_GROUP_D_S_V                                    :Дестинация-Източник-Посредством
 STR_STATION_VIEW_GROUP_D_V_S                                    :Посока-през-Източника
 
 ############ range for rating starts
@@ -3516,7 +3571,7 @@ STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Капа
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Сума за преместване: {LTBLUE}{CURRENCY_LONG}
 
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Дни на обслужване: {LTBLUE}{COMMA}дни{BLACK}   Последно облужване: {LTBLUE}{DATE_LONG}
+STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Дни на обслужване: {LTBLUE}{COMMA}{NBSP}дни{BLACK}   Последно облужване: {LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}Интервал на сервиз: {LTBLUE}{COMMA}%{BLACK}   Последен сервиз: {LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Удължава периода за сервиз с 10. Ctrl-click удължава периода за сервиз с 5
 STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Намалява периода за сервиз с 10. Ctrl-click намалява периода за сервиз с 5
@@ -3748,8 +3803,8 @@ STR_TIMETABLE_TRAVEL_FOR                                        :Пътувай 
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Пътувай за {STRING} с не повече от {VELOCITY}
 STR_TIMETABLE_STAY_FOR                                          :и остани за {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :и отпътувай към {STRING}
-STR_TIMETABLE_DAYS                                              :{COMMA} ден{P "" а}
-STR_TIMETABLE_TICKS                                             :{COMMA} щракане{P "" та}
+STR_TIMETABLE_DAYS                                              :{COMMA}{NBSP}ден{P "" а}
+STR_TIMETABLE_TICKS                                             :{COMMA}{NBSP}щракане{P "" та}
 
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}Ще трябва {STRING} за това разписание да бъде приключено
 STR_TIMETABLE_TOTAL_TIME_INCOMPLETE                             :{BLACK}Това разписание ще вземе най-малко {STRING} за да приклучи (не всичко е планирано)

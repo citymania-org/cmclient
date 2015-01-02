@@ -1,4 +1,4 @@
-/* $Id: game_text.cpp 26090 2013-11-24 15:25:41Z rubidium $ */
+/* $Id: game_text.cpp 26543 2014-04-29 18:35:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -377,7 +377,7 @@ void ReconsiderGameScriptLanguage()
 	if (_current_data == NULL) return;
 
 	char temp[MAX_PATH];
-	strecpy(temp, _current_language->file, temp + sizeof(temp));
+	strecpy(temp, _current_language->file, lastof(temp));
 
 	/* Remove the extension */
 	char *l = strrchr(temp, '.');

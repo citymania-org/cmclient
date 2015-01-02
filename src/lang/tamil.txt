@@ -10,7 +10,7 @@
 ##grflangid 0x0A
 
 
-# $Id: tamil.txt 26359 2014-02-21 18:45:17Z translators $
+# $Id: tamil.txt 26977 2014-10-07 17:47:35Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -95,7 +95,7 @@ STR_CARGO_SINGULAR_FIZZY_DRINK                                  :குளிர
 
 # Quantity of cargo
 STR_QUANTITY_NOTHING                                            :
-STR_QUANTITY_PASSENGERS                                         :{COMMA} பயணி{P "" கள்}
+STR_QUANTITY_PASSENGERS                                         :{COMMA}{NBSP} பயணி{P "" கள்}
 STR_QUANTITY_COAL                                               :{WEIGHT_LONG} நிலக்கரி
 STR_QUANTITY_MAIL                                               :{COMMA} அஞ்சல் பை{P "" கள்}
 STR_QUANTITY_OIL                                                :{VOLUME_LONG} எண்ணெய்
@@ -246,6 +246,9 @@ STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Toggle l
 STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scroll bar - scrolls list up/down
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scroll bar - scrolls list left/right
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}சதுர நிலப்பகுதியில் கட்டிடம் போன்றவற்றை இடிக்க. Ctrl தேர்வுசெய்திட. Shift உத்தேச செலவை/கட்டிடத்தை காட்டிட
+
+# Show engines button
+
 
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}Default
@@ -468,7 +471,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :எல்லை
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :அழுக்கான கட்டங்களின் நிறத்தை மாற்று
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1st
 STR_ORDINAL_NUMBER_2ND                                          :2nd
 STR_ORDINAL_NUMBER_3RD                                          :3rd
@@ -484,22 +487,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12வது
 STR_ORDINAL_NUMBER_13TH                                         :13வது
 STR_ORDINAL_NUMBER_14TH                                         :14வது
 STR_ORDINAL_NUMBER_15TH                                         :15வது
-STR_ORDINAL_NUMBER_16TH                                         :16வது
-STR_ORDINAL_NUMBER_17TH                                         :17வது
-STR_ORDINAL_NUMBER_18TH                                         :18வது
-STR_ORDINAL_NUMBER_19TH                                         :19வது
-STR_ORDINAL_NUMBER_20TH                                         :20வது
-STR_ORDINAL_NUMBER_21ST                                         :21வது
-STR_ORDINAL_NUMBER_22ND                                         :22வது
-STR_ORDINAL_NUMBER_23RD                                         :23வது
-STR_ORDINAL_NUMBER_24TH                                         :24வது
-STR_ORDINAL_NUMBER_25TH                                         :25வது
-STR_ORDINAL_NUMBER_26TH                                         :26வது
-STR_ORDINAL_NUMBER_27TH                                         :27வது
-STR_ORDINAL_NUMBER_28TH                                         :28வது
-STR_ORDINAL_NUMBER_29TH                                         :29வது
-STR_ORDINAL_NUMBER_30TH                                         :30வது
-STR_ORDINAL_NUMBER_31ST                                         :31வது
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1st
+STR_DAY_NUMBER_2ND                                              :2nd
+STR_DAY_NUMBER_3RD                                              :3rd
+STR_DAY_NUMBER_4TH                                              :4th
+STR_DAY_NUMBER_5TH                                              :5வது
+STR_DAY_NUMBER_6TH                                              :6வது
+STR_DAY_NUMBER_7TH                                              :7வது
+STR_DAY_NUMBER_8TH                                              :8வது
+STR_DAY_NUMBER_9TH                                              :9வது
+STR_DAY_NUMBER_10TH                                             :10வது
+STR_DAY_NUMBER_11TH                                             :11வது
+STR_DAY_NUMBER_12TH                                             :12வது
+STR_DAY_NUMBER_13TH                                             :13வது
+STR_DAY_NUMBER_14TH                                             :14வது
+STR_DAY_NUMBER_15TH                                             :15வது
+STR_DAY_NUMBER_16TH                                             :16வது
+STR_DAY_NUMBER_17TH                                             :17வது
+STR_DAY_NUMBER_18TH                                             :18வது
+STR_DAY_NUMBER_19TH                                             :19வது
+STR_DAY_NUMBER_20TH                                             :20வது
+STR_DAY_NUMBER_21ST                                             :21வது
+STR_DAY_NUMBER_22ND                                             :22வது
+STR_DAY_NUMBER_23RD                                             :23வது
+STR_DAY_NUMBER_24TH                                             :24வது
+STR_DAY_NUMBER_25TH                                             :25வது
+STR_DAY_NUMBER_26TH                                             :26வது
+STR_DAY_NUMBER_27TH                                             :27வது
+STR_DAY_NUMBER_28TH                                             :28வது
+STR_DAY_NUMBER_29TH                                             :29வது
+STR_DAY_NUMBER_30TH                                             :30வது
+STR_DAY_NUMBER_31ST                                             :31வது
 ############ range for days ends
 
 ############ range for months starts
@@ -791,13 +812,11 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} பணிமனையில் காத்துக்கொண்டிருக்கிறது
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} பணிமனையில் காத்துக்கொண்டிருக்கிறது
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} அட்டவனையில் மிக குறைவாக கட்டளைகளைக் கொண்டுள்ளது
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} பிழையான கட்டளையைக் கொண்டுள்ளது
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} இரட்டடிப்பு கட்டளைகளைக் கொண்டுள்ளது
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} பிழையான நிலையத்தினை கட்டளைகளில் கொண்டுள்ளது
-# end of order system
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} பழையதாகிறது
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} பழையதாகிறது
@@ -907,11 +926,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :கடலன்
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}தானாக சேமி
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Off
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :ஒவ்வொரு மாதமும்
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :மூன்று மாதங்களுக்கு ஒரு முறை
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :ஆறு மாதங்களுக்கு ஒரு முறை
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :ஒவ்வொரு வருடமும்
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}மொழி
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}பயன்படுத்தப்போகும் மொழியினை தேர்ந்தெடு
@@ -1583,6 +1604,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :சரக்க
 STR_FACE_CAPTION                                                :{WHITE}முகம் தேர்ந்தெடுத்தல்
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}புதிய முக தேர்ந்தெடுத்தலை இரத்து செய்
 STR_FACE_OK_TOOLTIP                                             :{BLACK}புதிய முக தேந்தெடுத்தலை ஏற்றுக்கொள்
+STR_MAPGEN_RANDOM                                               :{BLACK}ஏதோவொன்று
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}ஆண்
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}ஆண் முகங்களை தேர்ந்தெடு
@@ -2387,7 +2409,6 @@ STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}பன�
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}பனி கோடின் உயரத்தை ஒரு அடி உயர்த்து
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}பனி கோடின் உயரத்தை ஒரு அடி இறக்கு
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}ஏதோவொன்று:
-STR_MAPGEN_RANDOM                                               :{BLACK}ஏதோவொன்று
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}பூமி உருவாக்குனர்:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}மரம் நடுதல்:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}நிலவகை:
@@ -2488,6 +2509,8 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}எந�
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}பொருத்தமான கோப்பு கிடைக்கவில்லை
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}செயலிழக்க செய்யப்பட்டது
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}இந்த OpenTTD பதிப்புடன் பயன்படுத்த இயலாது
+
+# NewGRF save preset window
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}NewGRF குணாதிசயங்களை மாற்று

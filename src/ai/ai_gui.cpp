@@ -1,4 +1,4 @@
-/* $Id: ai_gui.cpp 26086 2013-11-24 14:46:26Z rubidium $ */
+/* $Id: ai_gui.cpp 26596 2014-05-18 11:26:09Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -853,7 +853,7 @@ struct AIConfigWindow : public Window {
 			case WID_AIC_GAMELIST: {
 				this->selected_slot = OWNER_DEITY;
 				this->InvalidateData();
-				if (click_count > 1 && this->selected_slot != INVALID_COMPANY) ShowAIListWindow((CompanyID)this->selected_slot);
+				if (click_count > 1 && this->selected_slot != INVALID_COMPANY && _game_mode != GM_NORMAL) ShowAIListWindow((CompanyID)this->selected_slot);
 				break;
 			}
 
@@ -952,7 +952,7 @@ static bool SetScriptButtonColour(NWidgetCore &button, bool dead, bool paused)
 {
 	/* Dead scripts are indicated with red background and
 	 * paused scripts are indicated with yellow background. */
-	Colours colour = dead ? COLOUR_WHITE :
+	Colours colour = dead ? COLOUR_RED :
 			(paused ? COLOUR_YELLOW : COLOUR_GREY);
 	if (button.colour != colour) {
 		button.colour = colour;
@@ -1195,10 +1195,10 @@ struct AIDebugWindow : public Window {
 					TextColour colour;
 					switch (log->type[pos]) {
 						case ScriptLog::LOG_SQ_INFO:  colour = TC_BLACK;  break;
-						case ScriptLog::LOG_SQ_ERROR: colour = TC_WHITE;  break;
+						case ScriptLog::LOG_SQ_ERROR: colour = TC_RED;    break;
 						case ScriptLog::LOG_INFO:     colour = TC_BLACK;  break;
 						case ScriptLog::LOG_WARNING:  colour = TC_YELLOW; break;
-						case ScriptLog::LOG_ERROR:    colour = TC_WHITE;  break;
+						case ScriptLog::LOG_ERROR:    colour = TC_RED;    break;
 						default:                  colour = TC_BLACK;  break;
 					}
 

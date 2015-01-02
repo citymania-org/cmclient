@@ -1,4 +1,4 @@
-/* $Id: 8bpp_optimized.cpp 25820 2013-10-06 19:38:36Z frosch $ */
+/* $Id: 8bpp_optimized.cpp 26541 2014-04-29 18:18:52Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -83,7 +83,8 @@ void Blitter_8bppOptimized::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Z
 			width -= pixels;
 
 			switch (mode) {
-				case BM_COLOUR_REMAP: {
+				case BM_COLOUR_REMAP:
+				case BM_CRASH_REMAP: {
 					const uint8 *remap = bp->remap;
 					do {
 						uint m = remap[*src];

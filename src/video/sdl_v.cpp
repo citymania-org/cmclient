@@ -1,4 +1,4 @@
-/* $Id: sdl_v.cpp 26351 2014-02-16 21:57:22Z frosch $ */
+/* $Id: sdl_v.cpp 26544 2014-04-29 18:41:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -409,7 +409,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 			break;
 
 		case Blitter::PALETTE_ANIMATION_BLITTER:
-			if (_video_driver != NULL) blitter->PaletteAnimate(_local_palette);
+			if (VideoDriver::GetInstance() != NULL) blitter->PaletteAnimate(_local_palette);
 			break;
 
 		default:
@@ -494,8 +494,8 @@ static const VkMapping _vk_mapping[] = {
 	AS(SDLK_MINUS,   WKC_MINUS),
 	AS(SDLK_PERIOD,  WKC_PERIOD),
 
-	AS(0x7b,            WKC_L_BRACE),
-	AS(0x7d,            WKC_R_BRACE),
+	AS(0x7B,            WKC_L_BRACE),
+	AS(0x7D,            WKC_R_BRACE),
 	AS(SDLK_LEFTPAREN,  WKC_L_PAREN),
 	AS(SDLK_RIGHTPAREN, WKC_R_PAREN),
 	AS(SDLK_PLUS,       WKC_PLUS),

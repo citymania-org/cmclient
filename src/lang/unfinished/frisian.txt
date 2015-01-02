@@ -10,7 +10,7 @@
 ##grflangid 0x32
 
 
-# $Id: frisian.txt 26354 2014-02-18 18:45:08Z translators $
+# $Id: frisian.txt 26822 2014-09-14 15:33:52Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -248,6 +248,9 @@ STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Skowbalk
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Skowbalke - skow list links/rjochts
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Brek gebouen ensafierder ôf op in stikje lân. Ctrl selektearet it gebiet diagonaal. Shift skeakelt tusken bouwe/taksearje fan de kosten
 
+# Show engines button
+
+
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}Standert
 STR_BUTTON_CANCEL                                               :{BLACK}Annulearje
@@ -470,7 +473,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Skeakel seleksj
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Kleurjen smoarge tegels oan/út
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1st
 STR_ORDINAL_NUMBER_2ND                                          :2e
 STR_ORDINAL_NUMBER_3RD                                          :3e
@@ -486,22 +489,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12e
 STR_ORDINAL_NUMBER_13TH                                         :13e
 STR_ORDINAL_NUMBER_14TH                                         :14e
 STR_ORDINAL_NUMBER_15TH                                         :15e
-STR_ORDINAL_NUMBER_16TH                                         :16e
-STR_ORDINAL_NUMBER_17TH                                         :17e
-STR_ORDINAL_NUMBER_18TH                                         :18e
-STR_ORDINAL_NUMBER_19TH                                         :19e
-STR_ORDINAL_NUMBER_20TH                                         :20e
-STR_ORDINAL_NUMBER_21ST                                         :21e
-STR_ORDINAL_NUMBER_22ND                                         :22e
-STR_ORDINAL_NUMBER_23RD                                         :23e
-STR_ORDINAL_NUMBER_24TH                                         :24e
-STR_ORDINAL_NUMBER_25TH                                         :25e
-STR_ORDINAL_NUMBER_26TH                                         :26e
-STR_ORDINAL_NUMBER_27TH                                         :27e
-STR_ORDINAL_NUMBER_28TH                                         :28e
-STR_ORDINAL_NUMBER_29TH                                         :29e
-STR_ORDINAL_NUMBER_30TH                                         :30e
-STR_ORDINAL_NUMBER_31ST                                         :31e
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1st
+STR_DAY_NUMBER_2ND                                              :2e
+STR_DAY_NUMBER_3RD                                              :3e
+STR_DAY_NUMBER_4TH                                              :4e
+STR_DAY_NUMBER_5TH                                              :5e
+STR_DAY_NUMBER_6TH                                              :6e
+STR_DAY_NUMBER_7TH                                              :7e
+STR_DAY_NUMBER_8TH                                              :8e
+STR_DAY_NUMBER_9TH                                              :9e
+STR_DAY_NUMBER_10TH                                             :10e
+STR_DAY_NUMBER_11TH                                             :11e
+STR_DAY_NUMBER_12TH                                             :12e
+STR_DAY_NUMBER_13TH                                             :13e
+STR_DAY_NUMBER_14TH                                             :14e
+STR_DAY_NUMBER_15TH                                             :15e
+STR_DAY_NUMBER_16TH                                             :16e
+STR_DAY_NUMBER_17TH                                             :17e
+STR_DAY_NUMBER_18TH                                             :18e
+STR_DAY_NUMBER_19TH                                             :19e
+STR_DAY_NUMBER_20TH                                             :20e
+STR_DAY_NUMBER_21ST                                             :21e
+STR_DAY_NUMBER_22ND                                             :22e
+STR_DAY_NUMBER_23RD                                             :23e
+STR_DAY_NUMBER_24TH                                             :24e
+STR_DAY_NUMBER_25TH                                             :25e
+STR_DAY_NUMBER_26TH                                             :26e
+STR_DAY_NUMBER_27TH                                             :27e
+STR_DAY_NUMBER_28TH                                             :28e
+STR_DAY_NUMBER_29TH                                             :29e
+STR_DAY_NUMBER_30TH                                             :30e
+STR_DAY_NUMBER_31ST                                             :31e
 ############ range for days ends
 
 ############ range for months starts
@@ -810,13 +831,11 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} stiet opsteld yn depot
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} stiet opsteld yn hangar
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} hat te min opdrachten yn it skema stean
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} hat in leeche opdracht
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} hat dûbele opdrachten
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} hat in in ûnjildich stasjon yn syn opdrachten
-# end of order system
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} begjint âld te wurden
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} begjint tige âld te wurden
@@ -938,11 +957,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :Katalaansk
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Automatysk opslaan
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Selektearje de interval foar automatysk opslaan
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Ut
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Eltse moanne
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Eltse 3 moannen
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Eltse 6 moannen
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Eltse 12 moannen
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Taal
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Selektearje de interfacetaal
@@ -2274,7 +2295,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Sniegrin
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Sniegrins ien nei beneden ferpleatsje:
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Samar in getal:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Klik om sels in getal yn te fieren
-STR_MAPGEN_RANDOM                                               :{BLACK}Meitsje eigenwillich
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Feroarje it getal hokker brûkt wurdt foar de terreingeneraasje
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Lângenerator:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Boskalgoritme:
@@ -2380,6 +2400,8 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}gjin ynf
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}Keppelt bestând koe net fûn wurde
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Útskeakele
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Dat strykt net mei dizze ferzje fan OpenTTD
+
+# NewGRF save preset window
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Feroarje NewGRF-parameters

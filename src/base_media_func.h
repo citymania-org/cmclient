@@ -1,4 +1,4 @@
-/* $Id: base_media_func.h 26073 2013-11-23 18:13:46Z rubidium $ */
+/* $Id: base_media_func.h 26652 2014-06-17 19:08:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -100,7 +100,7 @@ bool BaseSet<T, Tnum_files, Tsearch_in_tars>::FillSetDetails(IniFile *ini, const
 
 		/* Then find the MD5 checksum */
 		item = md5s->GetItem(filename, false);
-		if (item == NULL) {
+		if (item == NULL || item->value == NULL) {
 			DEBUG(grf, 0, "No MD5 checksum specified for: %s (in %s)", filename, full_filename);
 			return false;
 		}
