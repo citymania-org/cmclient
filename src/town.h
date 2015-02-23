@@ -106,6 +106,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	uint houses_reconstruction;          ///< number of houses currently being rebuilt
 	uint houses_demolished;              ///< number of houses demolished this month
 	bool fund_regularly;                 ///< funds buildings regularly when previous fund ends
+	bool do_massfund;                    ///< funds buildings when grow counter is maximal (results in fastest funding possible)
 
 	char *text; ///< General text with additional information.
 

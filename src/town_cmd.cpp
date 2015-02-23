@@ -820,6 +820,35 @@ void UpdateTownCargoBitmap()
 
 static bool GrowTown(Town *t);
 
+static void DoRegularFunding(Town *t)
+{
+	if (!t->fund_regularly && !t->do_massfund)
+		return;
+
+    if (!t->do_massfund && t->fund_buildings_months > 0)
+        return;
+
+    if (_local_company == COMPANY_SPECTATOR)
+        return;
+
+    if (CB_Enabled() && !t->growing)
+        return;
+
+    if (t->grow_counter == 0)
+        return;
+
+	// do massfund only if grow_counter is max, but do regular even if it is not
+	// (that requires town not to be funded already)
+	if (t->grow_counter < t->growth_rate & (~TOWN_GROW_RATE_CUSTOM) &&
+		(!t->fund_regularly || t->fund_buildings_months > 0))
+		return;
+
+    CompanyByte old = _current_company;
+    _current_company = _local_company;
+    DoCommandP(t->xy, t->index, 5, CMD_DO_TOWN_ACTION);
+    _current_company = old;
+}
+
 static void TownTickHandler(Town *t)
 {
 	if (HasBit(t->flags, TOWN_IS_GROWING)) {
@@ -840,6 +869,7 @@ static void TownTickHandler(Town *t)
 		}
 		t->grow_counter = i;
 	}
+	DoRegularFunding(t);
 }
 
 void OnTick_Town()
@@ -3568,12 +3598,8 @@ void TownsMonthlyLoop()
 		UpdateTownUnwanted(t);
 		UpdateTownCargoes(t);
 
-		if(t->fund_buildings_months == 0 && t->fund_regularly && _local_company != COMPANY_SPECTATOR){
-			CompanyByte old = _current_company;
-			_current_company = _local_company;
-			DoCommandP(t->xy, t->index, 5, CMD_DO_TOWN_ACTION);
-			_current_company = old;
-		}
+		DoRegularFunding(t);
+
 		t->houses_skipped_last_month = t->houses_skipped - t->houses_skipped_prev;
 		t->houses_skipped_prev = t->houses_skipped;
 		t->cycles_skipped_last_month = t->cycles_skipped - t->cycles_skipped_prev;

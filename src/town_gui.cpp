@@ -1339,6 +1339,7 @@ public:
 		this->town = Town::Get(window_number);
 		this->InitNested(window_number);
 		if(this->town->fund_regularly) this->LowerWidget(WID_CB_FUND_REGULAR);
+		if(this->town->do_massfund) this->LowerWidget(WID_CB_MASSFUND);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1360,10 +1361,14 @@ public:
 				break;
 			case WID_CB_FUND_REGULAR:
 				this->town->fund_regularly = !this->town->fund_regularly;
-				if(this->town->fund_regularly) this->town->fund_regularly = TownExecuteAction(this->town, HK_FUND);
+				// if(this->town->fund_regularly) this->town->fund_regularly = TownExecuteAction(this->town, HK_FUND);
 				this->SetWidgetLoweredState(widget, this->town->fund_regularly);
 				this->SetWidgetDirty(widget);
 				break;
+			case WID_CB_MASSFUND:
+				this->town->do_massfund = !this->town->do_massfund;
+				this->SetWidgetLoweredState(widget, this->town->do_massfund);
+				this->SetWidgetDirty(widget);
 		}
 	}
 
@@ -1581,6 +1586,12 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
 						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
+						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
+					EndContainer(),
+					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
+ 						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_MASSFUND),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 				EndContainer(),
