@@ -843,10 +843,27 @@ static void DoRegularFunding(Town *t)
 		(!t->fund_regularly || t->fund_buildings_months > 0))
 		return;
 
-    CompanyByte old = _current_company;
-    _current_company = _local_company;
-    DoCommandP(t->xy, t->index, 5, CMD_DO_TOWN_ACTION);
-    _current_company = old;
+    // CompanyByte old = _current_company;
+    // _current_company = _local_company;
+    DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION);
+    // _current_company = old;
+}
+
+static void DoRegularAdvertising(Town *t) {
+	if (!t->advertise_regularly)
+		return;
+
+	if (t->ad_ref_goods_entry == NULL) {
+		// Pick as ref station and cargo with min rating
+
+		if (t->ad_ref_goods_entry == NULL)
+			return;
+	}
+
+	if (t->ad_ref_goods_entry->rating >= t->ad_rating_goal)
+		return;
+
+    DoCommandP(t->xy, t->index, HK_LADVERT, CMD_DO_TOWN_ACTION);
 }
 
 static void TownTickHandler(Town *t)
@@ -870,6 +887,7 @@ static void TownTickHandler(Town *t)
 		t->grow_counter = i;
 	}
 	DoRegularFunding(t);
+	DoRegularAdvertising(t);
 }
 
 void OnTick_Town()
@@ -1745,6 +1763,10 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 	t->houses_reconstruction = 0;
 	t->houses_demolished = 0;
 	t->fund_regularly = false;
+	t->do_massfund = false;
+	t->advertise_regularly = false;
+	t->ad_rating_goal = 95;
+	t->ad_ref_goods_entry = NULL;
 	//CB
 
 	for (uint i = 0; i != MAX_COMPANIES; i++) t->ratings[i] = RATING_INITIAL;

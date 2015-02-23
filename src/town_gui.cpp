@@ -353,8 +353,8 @@ public:
 
 		/* disable renaming town in network games if you are not the server */
 		this->SetWidgetDisabledState(WID_TV_CHANGE_NAME, _networking && !_network_server);
-		extern bool _novahost;
-		this->SetWidgetDisabledState(WID_TV_CB, !_networking || !_novahost || this->town->larger_town);
+		// extern bool _novahost;
+		// this->SetWidgetDisabledState(WID_TV_CB, !_networking || !_novahost || this->town->larger_town);
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -363,9 +363,10 @@ public:
 			SetDParam(0, this->town->index);
 		}
 		if (widget == WID_TV_CB){
-			extern bool _novahost;
-			if(!_networking || !_novahost || this->town->larger_town) SetDParam(0, STR_EMPTY);
-			else SetDParam(0, STR_BUTTON_CB_YES);
+			// extern bool _novahost;
+			// if(!_networking || !_novahost || this->town->larger_town) SetDParam(0, STR_EMPTY);
+			// else
+			SetDParam(0, STR_BUTTON_CB_YES);
 		}
 	}
 
@@ -493,7 +494,8 @@ public:
 			}
 
 			case WID_TV_CB:
-				if(_networking) ShowCBTownWindow(this->window_number);
+				// if(_networking)
+				ShowCBTownWindow(this->window_number);
 				break;
 
 			case WID_TV_DELETE: // delete town - only available on Scenario editor
@@ -508,9 +510,9 @@ public:
 			case WID_TV_INFO:
 				size->height = GetDesiredInfoHeight(size->width);
 				break;
-			case WID_TV_CB:
-				if(!_networking || !CB_Enabled()) size->width = 0;
-				break;
+			// case WID_TV_CB:
+			// 	if(!_networking || !CB_Enabled()) size->width = 0;
+			// 	break;
 		}
 	}
 
@@ -1340,6 +1342,7 @@ public:
 		this->InitNested(window_number);
 		if(this->town->fund_regularly) this->LowerWidget(WID_CB_FUND_REGULAR);
 		if(this->town->do_massfund) this->LowerWidget(WID_CB_MASSFUND);
+		if(this->town->advertise_regularly) this->LowerWidget(WID_CB_ADVERT_REGULAR);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1369,6 +1372,13 @@ public:
 				this->town->do_massfund = !this->town->do_massfund;
 				this->SetWidgetLoweredState(widget, this->town->do_massfund);
 				this->SetWidgetDirty(widget);
+				break;
+			case WID_CB_ADVERT_REGULAR:
+				this->town->advertise_regularly = !this->town->advertise_regularly;
+				this->town->ad_ref_goods_entry = NULL;
+				this->SetWidgetLoweredState(widget, this->town->advertise_regularly);
+				this->SetWidgetDirty(widget);
+				break;
 		}
 	}
 
