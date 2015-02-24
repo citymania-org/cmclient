@@ -839,14 +839,14 @@ static void DoRegularFunding(Town *t)
 
 	// do massfund only if grow_counter is max, but do regular even if it is not
 	// (that requires town not to be funded already)
-	if (t->grow_counter < t->growth_rate & (~TOWN_GROW_RATE_CUSTOM) &&
+	if (t->grow_counter < (t->growth_rate & (~TOWN_GROW_RATE_CUSTOM)) &&
 		(!t->fund_regularly || t->fund_buildings_months > 0))
 		return;
 
-    // CompanyByte old = _current_company;
-    // _current_company = _local_company;
+    CompanyByte old = _current_company;
+    _current_company = _local_company;
     DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION);
-    // _current_company = old;
+    _current_company = old;
 }
 
 static void DoRegularAdvertising(Town *t) {
@@ -855,6 +855,17 @@ static void DoRegularAdvertising(Town *t) {
 
 	if (t->ad_ref_goods_entry == NULL) {
 		// Pick as ref station and cargo with min rating
+		const Station *st;
+		fprintf(stderr, "searching ref %d %d\n", (int)_current_company, (int)_local_company);
+		FOR_ALL_STATIONS(st) {
+			if (st->town == t && st->owner == _local_company) {
+				for (CargoID i = 0; i < NUM_CARGO; i++)
+					if (st->goods[i].HasRating() && (t->ad_ref_goods_entry == NULL ||
+					    	t->ad_ref_goods_entry->rating < st->goods[i].rating)) {
+						t->ad_ref_goods_entry = &st->goods[i];
+					}
+			}
+		}
 
 		if (t->ad_ref_goods_entry == NULL)
 			return;
@@ -863,7 +874,10 @@ static void DoRegularAdvertising(Town *t) {
 	if (t->ad_ref_goods_entry->rating >= t->ad_rating_goal)
 		return;
 
+    CompanyByte old = _current_company;
+    _current_company = _local_company;
     DoCommandP(t->xy, t->index, HK_LADVERT, CMD_DO_TOWN_ACTION);
+    _current_company = old;
 }
 
 static void TownTickHandler(Town *t)

@@ -1374,12 +1374,26 @@ public:
 				this->SetWidgetDirty(widget);
 				break;
 			case WID_CB_ADVERT_REGULAR:
-				this->town->advertise_regularly = !this->town->advertise_regularly;
-				this->town->ad_ref_goods_entry = NULL;
-				this->SetWidgetLoweredState(widget, this->town->advertise_regularly);
-				this->SetWidgetDirty(widget);
+				if (!this->town->advertise_regularly) {
+					SetDParam(0, ToPercent8(this->town->ad_rating_goal));
+					ShowQueryString(STR_JUST_INT, STR_FOUND_TOWN_CAPTION,
+					                4, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
+				} else this->OnQueryTextFinished(NULL);
 				break;
 		}
+	}
+
+	virtual void OnQueryTextFinished(char *str)
+	{
+		this->town->advertise_regularly = (str != NULL);
+		this->town->ad_ref_goods_entry = NULL;
+		this->SetWidgetLoweredState(WID_CB_ADVERT_REGULAR, this->town->advertise_regularly);
+		this->SetWidgetDirty(WID_CB_ADVERT_REGULAR);
+
+		if (str == NULL)
+			return;
+		uint val = Clamp(StrEmpty(str) ? 0 : strtol(str, NULL, 10), 1, 100);
+		this->town->ad_rating_goal = ((val << 8) + 255) / 101;
 	}
 
 	virtual void SetStringParameters(int widget) const

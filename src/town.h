@@ -110,7 +110,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	bool do_massfund;                    ///< funds buildings when grow counter is maximal (results in fastest funding possible)
 	bool advertise_regularly;            ///< advertised regularly to keep stations rating on desired value
 	uint8 ad_rating_goal;                ///< value to keep rating at (for regular advertisement) (0..255)
-	GoodsEntry *ad_ref_goods_entry;      ///< poiter to goods entry of some station, used to check rating for regular advertisement
+	const GoodsEntry *ad_ref_goods_entry;      ///< poiter to goods entry of some station, used to check rating for regular advertisement
 
 	char *text; ///< General text with additional information.
 
