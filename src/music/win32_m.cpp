@@ -1,4 +1,4 @@
-/* $Id: win32_m.cpp 20104 2010-07-09 20:50:28Z michi_cc $ */
+/* $Id: win32_m.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "win32_m.h"
 #include <windows.h>
 #include <mmsystem.h>
+
+#include "../safeguards.h"
 
 static struct {
 	bool stop_song;

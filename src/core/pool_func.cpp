@@ -1,4 +1,4 @@
-/* $Id: pool_func.cpp 22136 2011-02-24 06:57:55Z planetmaker $ */
+/* $Id: pool_func.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "../stdafx.h"
 #include "pool_type.hpp"
+
+#include "../safeguards.h"
 
 /**
  * Destructor removes this object from the pool vector and

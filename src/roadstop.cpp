@@ -1,4 +1,4 @@
-/* $Id: roadstop.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: roadstop.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "roadstop_base.h"
 #include "station_base.h"
 #include "vehicle_func.h"
+
+#include "safeguards.h"
 
 /** The pool of roadstops. */
 RoadStopPool _roadstop_pool("RoadStop");

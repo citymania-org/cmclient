@@ -1,4 +1,4 @@
-/* $Id: airport.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: airport.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "table/strings.h"
 #include "table/airport_movement.h"
 #include "table/airporttile_ids.h"
+
+#include "safeguards.h"
 
 
 /**

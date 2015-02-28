@@ -1,4 +1,4 @@
-/* $Id: cargopacket.cpp 26333 2014-02-11 20:34:48Z frosch $ */
+/* $Id: cargopacket.cpp 26575 2014-05-11 12:49:51Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "economy_base.h"
 #include "cargoaction.h"
 #include "order_type.h"
+
+#include "safeguards.h"
 
 /* Initialize the cargopacket-pool */
 CargoPacketPool _cargopacket_pool("CargoPacket");
@@ -357,6 +359,7 @@ void VehicleCargoList::AddToCache(const CargoPacket *cp)
  */
 void VehicleCargoList::RemoveFromMeta(const CargoPacket *cp, MoveToAction action, uint count)
 {
+	assert(count <= this->action_counts[action]);
 	this->AssertCountConsistency();
 	this->RemoveFromCache(cp, count);
 	this->action_counts[action] -= count;

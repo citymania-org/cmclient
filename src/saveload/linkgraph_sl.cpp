@@ -1,4 +1,4 @@
-/* $Id: linkgraph_sl.cpp 25898 2013-10-22 16:13:28Z fonsinchen $ */
+/* $Id: linkgraph_sl.cpp 26646 2014-06-14 13:35:39Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,12 +16,14 @@
 #include "../settings_internal.h"
 #include "saveload.h"
 
+#include "../safeguards.h"
+
 typedef LinkGraph::BaseNode Node;
 typedef LinkGraph::BaseEdge Edge;
 
 const SettingDesc *GetSettingDescription(uint index);
 
-static uint _num_nodes;
+static uint16 _num_nodes;
 
 /**
  * Get a SaveLoad array for a link graph.
@@ -107,24 +109,25 @@ const SaveLoad *GetLinkGraphScheduleDesc()
  * SaveLoad desc for a link graph node.
  */
 static const SaveLoad _node_desc[] = {
-	SLE_VAR(Node, supply,      SLE_UINT32),
-	SLE_VAR(Node, demand,      SLE_UINT32),
-	SLE_VAR(Node, station,     SLE_UINT16),
-	SLE_VAR(Node, last_update, SLE_INT32),
-	SLE_END()
+	SLE_CONDVAR(Node, xy,          SLE_UINT32, 191, SL_MAX_VERSION),
+	    SLE_VAR(Node, supply,      SLE_UINT32),
+	    SLE_VAR(Node, demand,      SLE_UINT32),
+	    SLE_VAR(Node, station,     SLE_UINT16),
+	    SLE_VAR(Node, last_update, SLE_INT32),
+	    SLE_END()
 };
 
 /**
  * SaveLoad desc for a link graph edge.
  */
 static const SaveLoad _edge_desc[] = {
-	    SLE_VAR(Edge, distance,                 SLE_UINT32),
-	    SLE_VAR(Edge, capacity,                 SLE_UINT32),
-	    SLE_VAR(Edge, usage,                    SLE_UINT32),
-	    SLE_VAR(Edge, last_unrestricted_update, SLE_INT32),
-	SLE_CONDVAR(Edge, last_restricted_update,   SLE_INT32, 187, SL_MAX_VERSION),
-	    SLE_VAR(Edge, next_edge,                SLE_UINT16),
-	    SLE_END()
+	SLE_CONDNULL(4, 0, 190), // distance
+	     SLE_VAR(Edge, capacity,                 SLE_UINT32),
+	     SLE_VAR(Edge, usage,                    SLE_UINT32),
+	     SLE_VAR(Edge, last_unrestricted_update, SLE_INT32),
+	 SLE_CONDVAR(Edge, last_restricted_update,   SLE_INT32, 187, SL_MAX_VERSION),
+	     SLE_VAR(Edge, next_edge,                SLE_UINT16),
+	     SLE_END()
 };
 
 /**
@@ -137,8 +140,16 @@ void SaveLoad_LinkGraph(LinkGraph &lg)
 	for (NodeID from = 0; from < size; ++from) {
 		Node *node = &lg.nodes[from];
 		SlObject(node, _node_desc);
-		for (NodeID to = 0; to < size; ++to) {
-			SlObject(&lg.edges[from][to], _edge_desc);
+		if (IsSavegameVersionBefore(191)) {
+			/* We used to save the full matrix ... */
+			for (NodeID to = 0; to < size; ++to) {
+				SlObject(&lg.edges[from][to], _edge_desc);
+			}
+		} else {
+			/* ... but as that wasted a lot of space we save a sparse matrix now. */
+			for (NodeID to = from; to != INVALID_NODE; to = lg.edges[from][to].next_edge) {
+				SlObject(&lg.edges[from][to], _edge_desc);
+			}
 		}
 	}
 }
@@ -218,6 +229,23 @@ static void Load_LGRS()
  */
 void AfterLoadLinkGraphs()
 {
+	if (IsSavegameVersionBefore(191)) {
+		LinkGraph *lg;
+		FOR_ALL_LINK_GRAPHS(lg) {
+			for (NodeID node_id = 0; node_id < lg->Size(); ++node_id) {
+				(*lg)[node_id].UpdateLocation(Station::Get((*lg)[node_id].Station())->xy);
+			}
+		}
+
+		LinkGraphJob *lgj;
+		FOR_ALL_LINK_GRAPH_JOBS(lgj) {
+			lg = &(const_cast<LinkGraph &>(lgj->Graph()));
+			for (NodeID node_id = 0; node_id < lg->Size(); ++node_id) {
+				(*lg)[node_id].UpdateLocation(Station::Get((*lg)[node_id].Station())->xy);
+			}
+		}
+	}
+
 	LinkGraphSchedule::Instance()->SpawnAll();
 }
 

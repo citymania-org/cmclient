@@ -1,4 +1,4 @@
-/* $Id: script_enginelist.cpp 23740 2012-01-03 21:32:51Z rubidium $ */
+/* $Id: script_enginelist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../../stdafx.h"
 #include "script_enginelist.hpp"
 #include "../../engine_base.h"
+
+#include "../../safeguards.h"
 
 ScriptEngineList::ScriptEngineList(ScriptVehicle::VehicleType vehicle_type)
 {

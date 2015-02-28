@@ -1,4 +1,4 @@
-/* $Id: ai_core.cpp 25592 2013-07-12 18:54:27Z rubidium $ */
+/* $Id: ai_core.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include "ai_config.hpp"
 #include "ai_info.hpp"
 #include "ai.hpp"
+
+#include "../safeguards.h"
 
 /* static */ uint AI::frame_counter = 0;
 /* static */ AIScannerInfo *AI::scanner_info = NULL;

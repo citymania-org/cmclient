@@ -1,4 +1,4 @@
-/* $Id: yapf_road.cpp 23640 2011-12-20 17:57:56Z truebrain $ */
+/* $Id: yapf_road.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "yapf.hpp"
 #include "yapf_node_road.hpp"
 #include "../../roadstop_base.h"
+
+#include "../../safeguards.h"
 
 
 template <class Types>

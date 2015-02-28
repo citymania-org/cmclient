@@ -1,4 +1,4 @@
-/* $Id: linkgraphjob.cpp 26347 2014-02-16 18:42:59Z fonsinchen $ */
+/* $Id: linkgraphjob.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../window_func.h"
 #include "linkgraphjob.h"
 #include "linkgraphschedule.h"
+
+#include "../safeguards.h"
 
 /* Initialize the link-graph-job-pool */
 LinkGraphJobPool _link_graph_job_pool("LinkGraphJob");

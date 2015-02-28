@@ -1,4 +1,4 @@
-/* $Id: autoreplace.cpp 24950 2013-01-31 10:21:04Z peter1138 $ */
+/* $Id: autoreplace.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "autoreplace_base.h"
 #include "core/pool_func.hpp"
 
+#include "safeguards.h"
+
 /** The pool of autoreplace "orders". */
 EngineRenewPool _enginerenew_pool("EngineRenew");
 INSTANTIATE_POOL_METHODS(EngineRenew)
@@ -28,7 +30,7 @@ static EngineRenew *GetEngineReplacement(EngineRenewList erl, EngineID engine, G
 	EngineRenew *er = (EngineRenew *)erl;
 
 	while (er != NULL) {
-		if (er->from == engine && er->group_id == group) return er;
+		if (er->from == engine && GroupIsInGroup(group, er->group_id)) return er;
 		er = er->next;
 	}
 	return NULL;

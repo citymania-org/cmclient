@@ -1,4 +1,4 @@
-/* $Id: newgrf_cargo.cpp 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_cargo.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "debug.h"
 #include "newgrf_spritegroup.h"
+
+#include "safeguards.h"
 
 /** Resolver of cargo. */
 struct CargoResolverObject : public ResolverObject {

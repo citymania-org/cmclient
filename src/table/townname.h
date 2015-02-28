@@ -1,4 +1,4 @@
-/* $Id: townname.h 25775 2013-09-15 15:48:38Z planetmaker $ */
+/* $Id: townname.h 27002 2014-10-12 18:26:54Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -2612,7 +2612,7 @@ static const char * const _name_swiss_real[] = {
 	"Sursee",
 	"Schwyz",
 	"Thalwil",
-	"Thônex",
+	"Th\xC3\xB4nex",
 	"Thun",
 	"Uster",
 	"Uzwil",

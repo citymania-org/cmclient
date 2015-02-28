@@ -1,4 +1,4 @@
-/* $Id: sdl.cpp 22406 2011-05-01 19:51:52Z rubidium $ */
+/* $Id: sdl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -78,6 +78,8 @@ static const char *LoadSdlDLL()
 }
 
 #endif /* DYNAMICALLY_LOADED_SDL */
+
+#include "safeguards.h"
 
 /**
  * Open the SDL library.

@@ -1,4 +1,4 @@
-/* $Id: script_map.cpp 23355 2011-11-29 23:15:35Z truebrain $ */
+/* $Id: script_map.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../../stdafx.h"
 #include "script_map.hpp"
 #include "../../tile_map.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptMap::IsValidTile(TileIndex t)
 {

@@ -1,4 +1,4 @@
-/* $Id: fontcache.h 26170 2013-12-22 17:46:27Z rubidium $ */
+/* $Id: fontcache.h 27004 2014-10-12 20:43:25Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -44,7 +44,7 @@ public:
 	 * Get the height of the font.
 	 * @return The height of the font.
 	 */
-	inline int GetHeight() const { return this->height; }
+	virtual int GetHeight() const { return this->height; }
 
 	/**
 	 * Get the ascender value of the font.

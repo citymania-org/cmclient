@@ -1,4 +1,4 @@
-/* $Id: udp.cpp 26046 2013-11-22 21:41:19Z rubidium $ */
+/* $Id: udp.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../../date_func.h"
 #include "../../debug.h"
 #include "udp.h"
+
+#include "../../safeguards.h"
 
 /**
  * Create an UDP socket but don't listen yet.

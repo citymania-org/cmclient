@@ -1,4 +1,4 @@
-/* $Id: town_cmd.cpp 26346 2014-02-16 17:45:24Z frosch $ */
+/* $Id: town_cmd.cpp 27105 2015-01-01 21:25:42Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -49,6 +49,8 @@
 
 #include "table/strings.h"
 #include "table/town_land.h"
+
+#include "safeguards.h"
 
 TownID _new_town_id;
 uint32 _town_cargoes_accepted; ///< Bitmap of all cargoes accepted by houses.
@@ -169,7 +171,7 @@ Money HouseSpec::GetRemovalCost() const
 	return (_price[PR_CLEAR_HOUSE] * this->removal_cost) >> 8;
 }
 
-// Local
+/* Local */
 static int _grow_town_result;
 
 /* Describe the possible states */
@@ -866,7 +868,7 @@ static bool IsRoadAllowedHere(Town *t, TileIndex tile, DiagDirection dir)
 	if (DistanceFromEdge(tile) == 0) return false;
 
 	/* Prevent towns from building roads under bridges along the bridge. Looks silly. */
-	if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile) && GetBridgeAxis(tile) == DiagDirToAxis(dir)) return false;
+	if (IsBridgeAbove(tile) && GetBridgeAxis(tile) == DiagDirToAxis(dir)) return false;
 
 	/* Check if there already is a road at this point? */
 	if (GetTownRoadBits(tile) == ROAD_NONE) {
@@ -1703,7 +1705,7 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 		old_generating_world.Restore();
 
 		if (t != NULL && !StrEmpty(text)) {
-			t->name = strdup(text);
+			t->name = stredup(text);
 			t->UpdateVirtCoord();
 		}
 
@@ -1714,7 +1716,7 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 			SetDParam(0, _current_company);
 			GetString(company_name, STR_COMPANY_NAME, lastof(company_name));
 
-			char *cn = strdup(company_name);
+			char *cn = stredup(company_name);
 			SetDParamStr(0, cn);
 			SetDParam(1, t->index);
 
@@ -2016,7 +2018,7 @@ static inline bool CanBuildHouseHere(TileIndex tile, TownID town, bool noslope)
 	if ((noslope && slope != SLOPE_FLAT) || IsSteepSlope(slope)) return false;
 
 	/* building under a bridge? */
-	if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile)) return false;
+	if (IsBridgeAbove(tile)) return false;
 
 	/* do not try to build over house owned by another town */
 	if (IsTileType(tile, MP_HOUSE) && GetTownIndex(tile) != town) return false;
@@ -2446,7 +2448,7 @@ CommandCost CmdRenameTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 
 	if (flags & DC_EXEC) {
 		free(t->name);
-		t->name = reset ? NULL : strdup(text);
+		t->name = reset ? NULL : stredup(text);
 
 		t->UpdateVirtCoord();
 		InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 1);
@@ -2523,7 +2525,7 @@ CommandCost CmdTownSetText(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 
 	if (flags & DC_EXEC) {
 		free(t->text);
-		t->text = StrEmpty(text) ? NULL : strdup(text);
+		t->text = StrEmpty(text) ? NULL : stredup(text);
 		InvalidateWindowData(WC_TOWN_VIEW, p1);
 	}
 
@@ -2740,7 +2742,7 @@ static CommandCost TownActionRoadRebuild(Town *t, DoCommandFlag flags)
 		SetDParam(0, _current_company);
 		GetString(company_name, STR_COMPANY_NAME, lastof(company_name));
 
-		char *cn = strdup(company_name);
+		char *cn = stredup(company_name);
 		SetDParam(0, t->index);
 		SetDParamStr(1, cn);
 
@@ -2788,7 +2790,7 @@ static bool SearchTileForStatue(TileIndex tile, void *user_data)
 	/* Statues can be build on slopes, just like houses. Only the steep slopes is a no go. */
 	if (IsSteepSlope(GetTileSlope(tile))) return false;
 	/* Don't build statues under bridges. */
-	if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile)) return false;
+	if (IsBridgeAbove(tile)) return false;
 
 	/* A clear-able open space is always preferred. */
 	if ((IsTileType(tile, MP_CLEAR) || IsTileType(tile, MP_TREES)) && TryClearTile(tile)) {
@@ -3113,9 +3115,7 @@ static void UpdateTownGrowRate(Town *t)
 	if (t->larger_town) m /= 2;
 
 	t->growth_rate = m / (t->cache.num_houses / 50 + 1);
-	if (m <= t->grow_counter) {
-		t->grow_counter = m;
-	}
+	t->grow_counter = min(t->growth_rate, t->grow_counter);
 
 	SetBit(t->flags, TOWN_IS_GROWING);
 	SetWindowDirty(WC_TOWN_VIEW, t->index);

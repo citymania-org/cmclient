@@ -1,4 +1,4 @@
-/* $Id: bitmath_func.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: bitmath_func.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "../stdafx.h"
 #include "bitmath_func.hpp"
+
+#include "../safeguards.h"
 
 const uint8 _ffb_64[64] = {
 	0,  0,  1,  0,  2,  0,  1,  0,

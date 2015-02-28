@@ -1,4 +1,4 @@
-/* $Id: mixer.cpp 20211 2010-07-24 10:14:39Z alberth $ */
+/* $Id: mixer.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include <math.h>
 #include "core/math_func.hpp"
+
+#include "safeguards.h"
 
 struct MixerChannel {
 	bool active;

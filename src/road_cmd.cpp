@@ -1,4 +1,4 @@
-/* $Id: road_cmd.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: road_cmd.cpp 27157 2015-02-22 14:01:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -37,6 +37,8 @@
 #include "company_gui.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /**
  * Verify whether a road vehicle is available.
@@ -244,12 +246,11 @@ static CommandCost RemoveRoad(TileIndex tile, DoCommandFlag flags, RoadBits piec
 				}
 
 				/* Mark tiles dirty that have been repaved */
-				MarkTileDirtyByTile(tile);
-				MarkTileDirtyByTile(other_end);
 				if (IsBridge(tile)) {
-					TileIndexDiff delta = TileOffsByDiagDir(GetTunnelBridgeDirection(tile));
-
-					for (TileIndex t = tile + delta; t != other_end; t += delta) MarkTileDirtyByTile(t);
+					MarkBridgeDirty(tile);
+				} else {
+					MarkTileDirtyByTile(tile);
+					MarkTileDirtyByTile(other_end);
 				}
 			}
 		} else {
@@ -745,12 +746,11 @@ do_clear:;
 				SetRoadOwner(tile, rt, company);
 
 				/* Mark tiles dirty that have been repaved */
-				MarkTileDirtyByTile(other_end);
-				MarkTileDirtyByTile(tile);
 				if (IsBridge(tile)) {
-					TileIndexDiff delta = TileOffsByDiagDir(GetTunnelBridgeDirection(tile));
-
-					for (TileIndex t = tile + delta; t != other_end; t += delta) MarkTileDirtyByTile(t);
+					MarkBridgeDirty(tile);
+				} else {
+					MarkTileDirtyByTile(other_end);
+					MarkTileDirtyByTile(tile);
 				}
 				break;
 			}
@@ -1013,7 +1013,7 @@ CommandCost CmdBuildRoadDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 	CommandCost cost = DoCommand(tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
 	if (cost.Failed()) return cost;
 
-	if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile)) return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
+	if (IsBridgeAbove(tile)) return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
 
 	if (!Depot::CanAllocateItem()) return CMD_ERROR;
 
@@ -1183,7 +1183,7 @@ void DrawTramCatenary(const TileInfo *ti, RoadBits tram)
 	if (IsInvisibilitySet(TO_CATENARY)) return;
 
 	/* Don't draw the catenary under a low bridge */
-	if (MayHaveBridgeAbove(ti->tile) && IsBridgeAbove(ti->tile) && !IsTransparencySet(TO_CATENARY)) {
+	if (IsBridgeAbove(ti->tile) && !IsTransparencySet(TO_CATENARY)) {
 		int height = GetBridgeHeight(GetNorthernBridgeEnd(ti->tile));
 
 		if (height <= GetTileMaxZ(ti->tile) + 1) return;
@@ -1290,7 +1290,7 @@ static void DrawRoadBits(TileInfo *ti)
 	if (!HasBit(_display_opt, DO_FULL_DETAIL) || _cur_dpi->zoom > ZOOM_LVL_DETAIL) return;
 
 	/* Do not draw details (street lights, trees) under low bridge */
-	if (MayHaveBridgeAbove(ti->tile) && IsBridgeAbove(ti->tile) && (roadside == ROADSIDE_TREES || roadside == ROADSIDE_STREET_LIGHTS)) {
+	if (IsBridgeAbove(ti->tile) && (roadside == ROADSIDE_TREES || roadside == ROADSIDE_STREET_LIGHTS)) {
 		int height = GetBridgeHeight(GetNorthernBridgeEnd(ti->tile));
 		int minz = GetTileMaxZ(ti->tile) + 2;
 
@@ -1412,9 +1412,6 @@ void DrawRoadDepotSprite(int x, int y, DiagDirection dir, RoadType rt)
 {
 	PaletteID palette = COMPANY_SPRITE_COLOUR(_local_company);
 	const DrawTileSprites *dts = (rt == ROADTYPE_TRAM) ? &_tram_depot[dir] : &_road_depot[dir];
-
-	x += 33;
-	y += 17;
 
 	DrawSprite(dts->ground.sprite, PAL_NONE, x, y);
 	DrawOrigTileSeqInGUI(x, y, dts, palette);
@@ -1763,6 +1760,11 @@ static void ChangeTileOwner_Road(TileIndex tile, Owner old_owner, Owner new_owne
 				Company::Get(new_owner)->infrastructure.road[rt] += 2;
 
 				SetTileOwner(tile, new_owner);
+				for (RoadType rt = ROADTYPE_ROAD; rt < ROADTYPE_END; rt++) {
+					if (GetRoadOwner(tile, rt) == old_owner) {
+						SetRoadOwner(tile, rt, new_owner);
+					}
+				}
 			}
 		}
 		return;

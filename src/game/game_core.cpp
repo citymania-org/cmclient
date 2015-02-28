@@ -1,4 +1,4 @@
-/* $Id: game_core.cpp 25592 2013-07-12 18:54:27Z rubidium $ */
+/* $Id: game_core.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "game_config.hpp"
 #include "game_instance.hpp"
 #include "game_info.hpp"
+
+#include "../safeguards.h"
 
 /* static */ uint Game::frame_counter = 0;
 /* static */ GameInfo *Game::info = NULL;

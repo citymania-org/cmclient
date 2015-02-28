@@ -1,4 +1,4 @@
-/* $Id: compat_1.1.nut 24006 2012-03-04 16:40:06Z rubidium $ */
+/* $Id: compat_1.1.nut 26407 2014-03-17 20:05:38Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -7,7 +7,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-AILog.Info("1.1 API compatability in effect.");
+AILog.Info("1.1 API compatibility in effect.");
 
 AICompany.GetCompanyValue <- function(company)
 {

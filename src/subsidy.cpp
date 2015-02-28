@@ -1,4 +1,4 @@
-/* $Id: subsidy.cpp 25882 2013-10-19 11:17:29Z fonsinchen $ */
+/* $Id: subsidy.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -24,8 +24,11 @@
 #include "core/random_func.hpp"
 #include "game/game.hpp"
 #include "command_func.h"
+#include "string_func.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 SubsidyPool _subsidy_pool("Subsidy"); ///< Pool for the subsidies.
 INSTANTIATE_POOL_METHODS(Subsidy)
@@ -45,7 +48,7 @@ void Subsidy::AwardTo(CompanyID company)
 	SetDParam(0, company);
 	GetString(company_name, STR_COMPANY_NAME, lastof(company_name));
 
-	char *cn = strdup(company_name);
+	char *cn = stredup(company_name);
 
 	/* Add a news item */
 	Pair reftype = SetupSubsidyDecodeParam(this, false);

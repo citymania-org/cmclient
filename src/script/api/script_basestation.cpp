@@ -1,4 +1,4 @@
-/* $Id: script_basestation.cpp 26307 2014-02-06 19:50:34Z zuu $ */
+/* $Id: script_basestation.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "../../string_func.h"
 #include "../../strings_func.h"
 #include "table/strings.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptBaseStation::IsValidBaseStation(StationID station_id)
 {

@@ -1,4 +1,4 @@
-/* $Id: 32bpp_sse2.cpp 26259 2014-01-13 18:17:17Z rubidium $ */
+/* $Id: 32bpp_sse2.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "../settings_type.h"
 #include "32bpp_sse2.hpp"
 #include "32bpp_sse_func.hpp"
+
+#include "../safeguards.h"
 
 /** Instantiation of the SSE2 32bpp blitter factory. */
 static FBlitter_32bppSSE2 iFBlitter_32bppSSE2;
@@ -36,6 +38,7 @@ Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::Sprite *sprite, Alloca
 
 	/* Calculate sizes and allocate. */
 	SpriteData sd;
+	memset(&sd, 0, sizeof(sd));
 	uint all_sprites_size = 0;
 	for (ZoomLevel z = zoom_min; z <= zoom_max; z++) {
 		const SpriteLoader::Sprite *src_sprite = &sprite[z];

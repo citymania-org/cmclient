@@ -1,4 +1,4 @@
-/* $Id: waypoint_gui.cpp 25294 2013-05-26 19:30:07Z frosch $ */
+/* $Id: waypoint_gui.cpp 27030 2014-10-21 19:16:47Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,6 +26,8 @@
 #include "widgets/waypoint_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /** GUI for accessing waypoints and buoys. */
 struct WaypointWindow : Window {
@@ -65,7 +67,7 @@ public:
 		}
 		this->FinishInitNested(window_number);
 
-		if (this->wp->owner != OWNER_NONE) this->owner = this->wp->owner;
+		this->owner = this->wp->owner;
 		this->flags |= WF_DISABLE_VP_SCROLL;
 
 		NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_W_VIEWPORT);
@@ -76,13 +78,7 @@ public:
 
 	~WaypointWindow()
 	{
-		Owner owner = this->owner;
-
-		/* Buoys have no owner and can be used by everyone. Show only 'our' vehicles */
-		if (!Company::IsValidID(owner)) owner = _local_company;
-
-		/* Well, spectators otoh */
-		if (Company::IsValidID(owner)) DeleteWindowById(GetWindowClassForVehicleType(this->vt), VehicleListIdentifier(VL_STATION_LIST, this->vt, owner, this->window_number).Pack(), false);
+		DeleteWindowById(GetWindowClassForVehicleType(this->vt), VehicleListIdentifier(VL_STATION_LIST, this->vt, this->owner, this->window_number).Pack(), false);
 	}
 
 	virtual void SetStringParameters(int widget) const

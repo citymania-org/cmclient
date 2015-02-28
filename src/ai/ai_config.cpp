@@ -1,4 +1,4 @@
-/* $Id: ai_config.cpp 24789 2012-12-05 19:36:04Z frosch $ */
+/* $Id: ai_config.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,9 +11,12 @@
 
 #include "../stdafx.h"
 #include "../settings_type.h"
+#include "../string_func.h"
 #include "ai.hpp"
 #include "ai_config.hpp"
 #include "ai_info.hpp"
+
+#include "../safeguards.h"
 
 /** Configuration for AI start date, every AI has this setting. */
 ScriptConfigItem _start_date_config = {
@@ -107,7 +110,7 @@ void AIConfig::SetSetting(const char *name, int value)
 		if (it != this->settings.end()) {
 			(*it).second = value;
 		} else {
-			this->settings[strdup(name)] = value;
+			this->settings[stredup(name)] = value;
 		}
 
 		return;

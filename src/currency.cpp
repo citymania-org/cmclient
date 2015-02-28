@@ -1,4 +1,4 @@
-/* $Id: currency.cpp 26262 2014-01-15 21:52:22Z frosch $ */
+/* $Id: currency.cpp 26989 2014-10-10 23:07:59Z planetmaker $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "string_type.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 	/*   exchange rate    prefix                         symbol_pos
 	 *   |  separator        |           postfix             |
@@ -54,7 +56,7 @@ static const CurrencySpec origin_currency_specs[CURRENCY_END] = {
 	{   60, "", 2009,      "",             NBSP "Sk",        1, STR_GAME_OPTIONS_CURRENCY_SKK    }, ///< slovak koruna
 	{    4, "", CF_NOEURO, "R$" NBSP,      "",               0, STR_GAME_OPTIONS_CURRENCY_BRL    }, ///< brazil real
 	{   31, "", 2011,      "",             NBSP "EEK",       1, STR_GAME_OPTIONS_CURRENCY_EEK    }, ///< estonian krooni
-	{    4, "", 2014,      "",             NBSP "Lt",        1, STR_GAME_OPTIONS_CURRENCY_LTL    }, ///< lithuanian litas
+	{    4, "", 2015,      "",             NBSP "Lt",        1, STR_GAME_OPTIONS_CURRENCY_LTL    }, ///< lithuanian litas
 	{ 1850, "", CF_NOEURO, "\xE2\x82\xA9", "",               0, STR_GAME_OPTIONS_CURRENCY_KRW    }, ///< south korean won
 	{   13, "", CF_NOEURO, "R" NBSP,       "",               0, STR_GAME_OPTIONS_CURRENCY_ZAR    }, ///< south african rand
 	{    1, "", CF_NOEURO, "",             "",               2, STR_GAME_OPTIONS_CURRENCY_CUSTOM }, ///< custom currency (add further languages below)

@@ -1,4 +1,4 @@
-/* $Id: error_gui.cpp 26241 2014-01-12 18:00:39Z frosch $ */
+/* $Id: error_gui.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,6 +28,8 @@
 
 #include "table/strings.h"
 #include <list>
+
+#include "safeguards.h"
 
 static const NWidgetPart _nested_errmsg_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -75,7 +77,7 @@ ErrorMessageData::ErrorMessageData(const ErrorMessageData &data)
 	*this = data;
 	for (size_t i = 0; i < lengthof(this->strings); i++) {
 		if (this->strings[i] != NULL) {
-			this->strings[i] = strdup(this->strings[i]);
+			this->strings[i] = stredup(this->strings[i]);
 			this->decode_params[i] = (size_t)this->strings[i];
 		}
 	}
@@ -156,7 +158,7 @@ void ErrorMessageData::SetDParam(uint n, uint64 v)
 void ErrorMessageData::SetDParamStr(uint n, const char *str)
 {
 	free(this->strings[n]);
-	this->strings[n] = strdup(str);
+	this->strings[n] = stredup(str);
 }
 
 /** Define a queue with errors. */

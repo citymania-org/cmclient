@@ -1,4 +1,4 @@
-/* $Id: object_gui.cpp 26241 2014-01-12 18:00:39Z frosch $ */
+/* $Id: object_gui.cpp 27134 2015-02-01 20:54:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,10 +18,13 @@
 #include "viewport_func.h"
 #include "window_gui.h"
 #include "window_func.h"
+#include "zoom_func.h"
 
 #include "widgets/object_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 static ObjectClassID _selected_object_class; ///< the currently visible object class
 static int _selected_object_index;           ///< the index of the selected object in the current class or -1
@@ -162,8 +165,8 @@ public:
 
 				/* Determine the pixel heights. */
 				for (size_t i = 0; i < lengthof(height); i++) {
-					height[i] *= TILE_HEIGHT;
-					height[i] += TILE_PIXELS + 2 * OBJECT_MARGIN;
+					height[i] *= ScaleGUITrad(TILE_HEIGHT);
+					height[i] += ScaleGUITrad(TILE_PIXELS) + 2 * OBJECT_MARGIN;
 				}
 
 				/* Now determine the size of the minimum widgets. When there are two columns, then
@@ -172,9 +175,9 @@ public:
 				 * of widgets, or just the twice the widget height of the two row ones. */
 				size->height = max(height[0], height[1] * 2 + 2);
 				if (two_wide) {
-					size->width  = (3 * TILE_PIXELS + 2 * OBJECT_MARGIN) * 2 + 2;
+					size->width  = (3 * ScaleGUITrad(TILE_PIXELS) + 2 * OBJECT_MARGIN) * 2 + 2;
 				} else {
-					size->width  = 4 * TILE_PIXELS + 2 * OBJECT_MARGIN;
+					size->width  = 4 * ScaleGUITrad(TILE_PIXELS) + 2 * OBJECT_MARGIN;
 				}
 
 				/* Get the right size for the single widget based on the current spec. */
@@ -195,6 +198,11 @@ public:
 				resize->height = 1;
 				break;
 
+			case WID_BO_SELECT_IMAGE:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(58) + 2;
+				break;
+
 			default: break;
 		}
 	}
@@ -209,8 +217,7 @@ public:
 					ObjectClass *objclass = ObjectClass::Get((ObjectClassID)i);
 					if (objclass->GetUISpecCount() == 0) continue;
 					if (!this->vscroll->IsVisible(pos++)) continue;
-					SetDParam(0, objclass->name);
-					DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_RIGHT, y + WD_MATRIX_TOP, STR_JUST_STRING,
+					DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_RIGHT, y + WD_MATRIX_TOP, objclass->name,
 							((int)i == _selected_object_class) ? TC_WHITE : TC_BLACK);
 					y += this->line_height;
 				}
@@ -236,9 +243,9 @@ public:
 					if (spec->grf_prop.grffile == NULL) {
 						extern const DrawTileSprites _objects[];
 						const DrawTileSprites *dts = &_objects[spec->grf_prop.local_id];
-						DrawOrigTileSeqInGUI((r.right - r.left) / 2 - 1, (r.bottom - r.top + matrix_height / 2) / 2 - OBJECT_MARGIN - TILE_PIXELS, dts, PAL_NONE);
+						DrawOrigTileSeqInGUI((r.right - r.left) / 2 - 1, (r.bottom - r.top + matrix_height / 2) / 2 - OBJECT_MARGIN - ScaleGUITrad(TILE_PIXELS), dts, PAL_NONE);
 					} else {
-						DrawNewObjectTileInGUI((r.right - r.left) / 2 - 1, (r.bottom - r.top + matrix_height / 2) / 2 - OBJECT_MARGIN - TILE_PIXELS, spec, GB(widget, 16, 16));
+						DrawNewObjectTileInGUI((r.right - r.left) / 2 - 1, (r.bottom - r.top + matrix_height / 2) / 2 - OBJECT_MARGIN - ScaleGUITrad(TILE_PIXELS), spec, GB(widget, 16, 16));
 					}
 					_cur_dpi = old_dpi;
 				}
@@ -263,9 +270,9 @@ public:
 					if (spec->grf_prop.grffile == NULL) {
 						extern const DrawTileSprites _objects[];
 						const DrawTileSprites *dts = &_objects[spec->grf_prop.local_id];
-						DrawOrigTileSeqInGUI((r.right - r.left) / 2 - 1, r.bottom - r.top - OBJECT_MARGIN - TILE_PIXELS, dts, PAL_NONE);
+						DrawOrigTileSeqInGUI((r.right - r.left) / 2 - 1, r.bottom - r.top - OBJECT_MARGIN - ScaleGUITrad(TILE_PIXELS), dts, PAL_NONE);
 					} else {
-						DrawNewObjectTileInGUI((r.right - r.left) / 2 - 1, r.bottom - r.top - OBJECT_MARGIN - TILE_PIXELS, spec,
+						DrawNewObjectTileInGUI((r.right - r.left) / 2 - 1, r.bottom - r.top - OBJECT_MARGIN - ScaleGUITrad(TILE_PIXELS), spec,
 								min(_selected_object_view, spec->views - 1));
 					}
 					_cur_dpi = old_dpi;

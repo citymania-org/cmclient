@@ -1,4 +1,4 @@
-/* $Id: game_config.cpp 23740 2012-01-03 21:32:51Z rubidium $ */
+/* $Id: game_config.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "game.hpp"
 #include "game_config.hpp"
 #include "game_info.hpp"
+
+#include "../safeguards.h"
 
 /* static */ GameConfig *GameConfig::GetConfig(ScriptSettingSource source)
 {

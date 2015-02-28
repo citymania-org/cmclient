@@ -1,4 +1,4 @@
-/* $Id: autoreplace_widget.h 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: autoreplace_widget.h 26811 2014-09-11 17:10:38Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,11 @@
 /** Widgets of the #ReplaceVehicleWindow class. */
 enum ReplaceVehicleWidgets {
 	WID_RV_CAPTION,                  ///< Caption of the window.
+
+	/* Sort dropdown at the right. */
+	WID_RV_SORT_ASCENDING_DESCENDING, ///< Ascending/descending sort order button.
+	WID_RV_SHOW_HIDDEN_ENGINES,       ///< Toggle whether to display the hidden vehicles.
+	WID_RV_SORT_DROPDOWN,             ///< Dropdown for the sort criteria.
 
 	/* Left and right matrix + details. */
 	WID_RV_LEFT_MATRIX,              ///< The matrix on the left.

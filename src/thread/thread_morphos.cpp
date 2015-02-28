@@ -1,4 +1,4 @@
-/* $Id: thread_morphos.cpp 17339 2009-09-01 10:07:22Z rubidium $ */
+/* $Id: thread_morphos.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,6 +22,8 @@
 
 #include <proto/dos.h>
 #include <proto/exec.h>
+
+#include "../safeguards.h"
 
 /**
  *  avoid name clashes with MorphOS API functions

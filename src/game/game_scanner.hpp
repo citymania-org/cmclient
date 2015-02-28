@@ -1,4 +1,4 @@
-/* $Id: game_scanner.hpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: game_scanner.hpp 26487 2014-04-23 21:16:58Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,7 +28,7 @@ public:
 	class GameInfo *FindInfo(const char *nameParam, int versionParam, bool force_exact_match);
 
 protected:
-	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, int len);
+	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, const char *last);
 	/* virtual */ const char *GetFileName() const { return PATHSEP "info.nut"; }
 	/* virtual */ Subdirectory GetDirectory() const { return GAME_DIR; }
 	/* virtual */ const char *GetScannerName() const { return "Game Scripts"; }
@@ -49,7 +49,7 @@ public:
 	class GameLibrary *FindLibrary(const char *library, int version);
 
 protected:
-	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, int len);
+	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, const char *last);
 	/* virtual */ const char *GetFileName() const { return PATHSEP "library.nut"; }
 	/* virtual */ Subdirectory GetDirectory() const { return GAME_LIBRARY_DIR; }
 	/* virtual */ const char *GetScannerName() const { return "GS Libraries"; }

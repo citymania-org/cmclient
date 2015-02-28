@@ -1,4 +1,4 @@
-/* $Id: script_event_types.hpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: script_event_types.hpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -839,15 +839,8 @@ public:
 	/**
 	 * @param json The JSON string which got sent.
 	 */
-	ScriptEventAdminPort(const char *json) :
-		ScriptEvent(ET_ADMIN_PORT),
-		json(strdup(json))
-	{}
-
-	~ScriptEventAdminPort()
-	{
-		free(this->json);
-	}
+	ScriptEventAdminPort(const char *json);
+	~ScriptEventAdminPort();
 
 	/**
 	 * Convert an ScriptEvent to the real instance.

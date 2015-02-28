@@ -1,4 +1,4 @@
-/* $Id: signs.cpp 23319 2011-11-24 17:37:20Z peter1138 $ */
+/* $Id: signs.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "core/pool_func.hpp"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /** Initialize the sign-pool */
 SignPool _sign_pool("Sign");

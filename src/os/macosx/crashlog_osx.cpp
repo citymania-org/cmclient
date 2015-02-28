@@ -1,4 +1,4 @@
-/* $Id: crashlog_osx.cpp 20266 2010-07-31 21:02:56Z alberth $ */
+/* $Id: crashlog_osx.cpp 26709 2014-07-30 20:19:29Z planetmaker $ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,6 +22,8 @@
 #include <dlfcn.h>
 #include <cxxabi.h>
 
+#include "../../safeguards.h"
+
 
 /* Macro testing a stack address for valid alignment. */
 #if defined(__i386__)
@@ -31,7 +33,7 @@
 #endif
 
 /* printf format specification for 32/64-bit addresses. */
-#if __LP64__
+#ifdef __LP64__
 #define PRINTF_PTR "0x%016lx"
 #else
 #define PRINTF_PTR "0x%08lx"

@@ -1,4 +1,4 @@
-/* $Id: fullscreen.mm 26108 2013-11-25 14:30:22Z rubidium $ */
+/* $Id: fullscreen.mm 26709 2014-07-30 20:19:29Z planetmaker $ */
 
 /*
  * This file is part of OpenTTD.
@@ -70,7 +70,7 @@ struct OTTD_QuartzGammaTable {
 - (void) setFrame:(NSRect)frame
 {
 /* The 64 bits libraries don't seem to know about _frame, so this hack won't work. */
-#if !__LP64__
+#ifndef __LP64__
 	_frame = frame;
 #endif
 }

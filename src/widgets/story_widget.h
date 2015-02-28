@@ -1,5 +1,5 @@
 
-/* $Id: story_widget.h 25387 2013-06-09 18:58:36Z rubidium $ */
+/* $Id: story_widget.h 26442 2014-04-03 10:54:37Z planetmaker $ */
 
 /*
  * This file is part of OpenTTD.

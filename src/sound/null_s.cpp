@@ -1,4 +1,4 @@
-/* $Id: null_s.cpp 22406 2011-05-01 19:51:52Z rubidium $ */
+/* $Id: null_s.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "../stdafx.h"
 #include "null_s.h"
+
+#include "../safeguards.h"
 
 /** The factory for the null sound driver. */
 static FSoundDriver_Null iFSoundDriver_Null;

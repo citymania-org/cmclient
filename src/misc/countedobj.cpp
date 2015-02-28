@@ -1,4 +1,4 @@
-/* $Id: countedobj.cpp 17248 2009-08-21 20:21:05Z rubidium $ */
+/* $Id: countedobj.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../stdafx.h"
 
 #include "countedptr.hpp"
+
+#include "../safeguards.h"
 
 int32 SimpleCountedObject::AddRef()
 {

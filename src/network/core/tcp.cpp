@@ -1,4 +1,4 @@
-/* $Id: tcp.cpp 26046 2013-11-22 21:41:19Z rubidium $ */
+/* $Id: tcp.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../../debug.h"
 
 #include "tcp.h"
+
+#include "../../safeguards.h"
 
 /**
  * Construct a socket handler for a TCP connection.

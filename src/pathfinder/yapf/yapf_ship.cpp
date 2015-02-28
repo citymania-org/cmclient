@@ -1,4 +1,4 @@
-/* $Id: yapf_ship.cpp 26117 2013-11-26 10:00:15Z rubidium $ */
+/* $Id: yapf_ship.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 
 #include "yapf.hpp"
 #include "yapf_node_ship.hpp"
+
+#include "../../safeguards.h"
 
 /** Node Follower module of YAPF for ships */
 template <class Types>

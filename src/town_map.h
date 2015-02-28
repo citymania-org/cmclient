@@ -1,4 +1,4 @@
-/* $Id: town_map.h 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: town_map.h 26878 2014-09-21 11:23:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -126,7 +126,7 @@ static inline void HaltLift(TileIndex t)
  */
 static inline byte GetLiftPosition(TileIndex t)
 {
-	return GB(_m[t].m6, 2, 6);
+	return GB(_me[t].m6, 2, 6);
 }
 
 /**
@@ -136,7 +136,7 @@ static inline byte GetLiftPosition(TileIndex t)
  */
 static inline void SetLiftPosition(TileIndex t, byte pos)
 {
-	SB(_m[t].m6, 2, 6, pos);
+	SB(_me[t].m6, 2, 6, pos);
 }
 
 /**
@@ -315,7 +315,7 @@ static inline byte GetHouseTriggers(TileIndex t)
 static inline byte GetHouseProcessingTime(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return GB(_m[t].m6, 2, 6);
+	return GB(_me[t].m6, 2, 6);
 }
 
 /**
@@ -327,7 +327,7 @@ static inline byte GetHouseProcessingTime(TileIndex t)
 static inline void SetHouseProcessingTime(TileIndex t, byte time)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	SB(_m[t].m6, 2, 6, time);
+	SB(_me[t].m6, 2, 6, time);
 }
 
 /**
@@ -338,7 +338,7 @@ static inline void SetHouseProcessingTime(TileIndex t, byte time)
 static inline void DecHouseProcessingTime(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	_m[t].m6 -= 1 << 2;
+	_me[t].m6 -= 1 << 2;
 }
 
 /**

@@ -1,4 +1,4 @@
-/* $Id: script_airport.cpp 23633 2011-12-19 21:05:36Z truebrain $ */
+/* $Id: script_airport.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "script_station.hpp"
 #include "../../station_base.h"
 #include "../../town.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptAirport::IsValidAirportType(AirportType type)
 {

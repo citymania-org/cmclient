@@ -1,4 +1,4 @@
-/* $Id: sound.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: sound.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 /* The type of set we're replacing */
 #define SET_TYPE "sounds"
 #include "base_media_func.h"
+
+#include "safeguards.h"
 
 static SoundEntry _original_sounds[ORIGINAL_SAMPLE_COUNT];
 

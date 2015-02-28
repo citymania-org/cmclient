@@ -1,4 +1,4 @@
-/* $Id: progress.cpp 23740 2012-01-03 21:32:51Z rubidium $ */
+/* $Id: progress.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "stdafx.h"
 #include "thread/thread.h"
+
+#include "safeguards.h"
 
 /** Are we in a modal progress or not? */
 bool _in_modal_progress = false;

@@ -1,4 +1,4 @@
-/* $Id: signs_gui.cpp 25918 2013-10-28 10:05:00Z frosch $ */
+/* $Id: signs_gui.cpp 26827 2014-09-15 19:26:03Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,6 +32,8 @@
 
 #include "table/strings.h"
 #include "table/sprites.h"
+
+#include "safeguards.h"
 
 struct SignList {
 	/**
@@ -158,7 +160,6 @@ struct SignListWindow : Window, SignList {
 
 		/* Initialize the text edit widget */
 		this->querystrings[WID_SIL_FILTER_TEXT] = &this->filter_editbox;
-		this->filter_editbox.ok_button = WID_SIL_FILTER_ENTER_BTN;
 		this->filter_editbox.cancel_button = QueryString::ACTION_CLEAR;
 
 		/* Initialize the filtering variables */

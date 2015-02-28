@@ -1,4 +1,4 @@
-/* $Id: core.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: core.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../../debug.h"
 #include "os_abstraction.h"
 #include "packet.h"
+
+#include "../../safeguards.h"
 
 
 #ifdef __MORPHOS__

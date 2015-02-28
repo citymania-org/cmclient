@@ -1,4 +1,4 @@
-/* $Id: str.hpp 23640 2011-12-20 17:57:56Z truebrain $ */
+/* $Id: str.hpp 26506 2014-04-24 19:51:45Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -100,7 +100,7 @@ struct CStrA : public CBlobT<char>
 		int err = 0;
 		for (;;) {
 			char *buf = MakeFreeSpace(addSize);
-			ret = vsnprintf(buf, base::GetReserve(), format, args);
+			ret = vseprintf(buf, buf + base::GetReserve() - 1, format, args);
 			if (ret >= (int)base::GetReserve()) {
 				/* Greater return than given count means needed buffer size. */
 				addSize = ret + 1;

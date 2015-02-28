@@ -1,4 +1,4 @@
-/* $Id: newgrf_storage.cpp 26371 2014-02-23 22:03:08Z frosch $ */
+/* $Id: newgrf_storage.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "core/endian_func.hpp"
 #include "debug.h"
 #include <set>
+
+#include "safeguards.h"
 
 PersistentStoragePool _persistent_storage_pool("PersistentStorage");
 INSTANTIATE_POOL_METHODS(PersistentStorage)

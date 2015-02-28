@@ -1,4 +1,4 @@
-/* $Id: strings_type.h 22957 2011-09-23 19:27:15Z rubidium $ */
+/* $Id: strings_type.h 26525 2014-04-27 15:13:46Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -69,10 +69,6 @@ enum SpecialStrings {
 	/* reserve 32 strings for various screen resolutions */
 	SPECSTR_RESOLUTION_START   = SPECSTR_LANGUAGE_END + 1,
 	SPECSTR_RESOLUTION_END     = SPECSTR_RESOLUTION_START + 0x1F,
-
-	/* reserve 32 strings for screenshot formats */
-	SPECSTR_SCREENSHOT_START   = SPECSTR_RESOLUTION_END + 1,
-	SPECSTR_SCREENSHOT_END     = SPECSTR_SCREENSHOT_START + 0x1F,
 };
 
 #endif /* STRINGS_TYPE_H */

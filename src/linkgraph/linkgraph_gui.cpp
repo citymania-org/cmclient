@@ -1,4 +1,4 @@
-/* $Id: linkgraph_gui.cpp 25912 2013-10-23 19:42:17Z fonsinchen $ */
+/* $Id: linkgraph_gui.cpp 26891 2014-09-21 16:19:52Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include "../widgets/link_graph_legend_widget.h"
 
 #include "table/strings.h"
+
+#include "../safeguards.h"
 
 /**
  * Colours for the various "load" states of links. Ordered from "unused" to
@@ -150,7 +152,7 @@ void LinkGraphOverlay::AddLinks(const Station *from, const Station *to)
 		ConstEdge edge = lg[ge.node][to->goods[c].node];
 		if (edge.Capacity() > 0) {
 			this->AddStats(lg.Monthly(edge.Capacity()), lg.Monthly(edge.Usage()),
-					ge.GetSumFlowVia(to->index), from->owner == OWNER_NONE || to->owner == OWNER_NONE,
+					ge.flows.GetFlowVia(to->index), from->owner == OWNER_NONE || to->owner == OWNER_NONE,
 					this->cached_links[from->index][to->index]);
 		}
 	}
@@ -220,11 +222,12 @@ void LinkGraphOverlay::DrawContent(Point pta, Point ptb, const LinkProperties &c
 
 	/* Move line a bit 90° against its dominant direction to prevent it from
 	 * being hidden below the grey line. */
+	int side = _settings_game.vehicle.road_side ? 1 : -1;
 	if (abs(pta.x - ptb.x) < abs(pta.y - ptb.y)) {
-		int offset_x = (pta.y > ptb.y ? 1 : -1) * this->scale;
+		int offset_x = (pta.y > ptb.y ? 1 : -1) * side * this->scale;
 		GfxDrawLine(pta.x + offset_x, pta.y, ptb.x + offset_x, ptb.y, colour, this->scale, dash);
 	} else {
-		int offset_y = (pta.x < ptb.x ? 1 : -1) * this->scale;
+		int offset_y = (pta.x < ptb.x ? 1 : -1) * side * this->scale;
 		GfxDrawLine(pta.x, pta.y + offset_y, ptb.x, ptb.y + offset_y, colour, this->scale, dash);
 	}
 

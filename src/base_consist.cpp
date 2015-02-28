@@ -1,4 +1,4 @@
-/* $Id: base_consist.cpp 24446 2012-07-29 16:48:00Z frosch $ */
+/* $Id: base_consist.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,9 @@
 #include "stdafx.h"
 #include "base_consist.h"
 #include "vehicle_base.h"
+#include "string_func.h"
+
+#include "safeguards.h"
 
 BaseConsist::~BaseConsist()
 {
@@ -27,7 +30,7 @@ void BaseConsist::CopyConsistPropertiesFrom(const BaseConsist *src)
 	if (this == src) return;
 
 	free(this->name);
-	this->name = src->name != NULL ? strdup(src->name) : NULL;
+	this->name = src->name != NULL ? stredup(src->name) : NULL;
 
 	this->current_order_time = src->current_order_time;
 	this->lateness_counter = src->lateness_counter;

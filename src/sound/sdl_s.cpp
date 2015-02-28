@@ -1,4 +1,4 @@
-/* $Id: sdl_s.cpp 22406 2011-05-01 19:51:52Z rubidium $ */
+/* $Id: sdl_s.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../sdl.h"
 #include "sdl_s.h"
 #include <SDL.h>
+
+#include "../safeguards.h"
 
 /** Factory for the SDL sound driver. */
 static FSoundDriver_SDL iFSoundDriver_SDL;

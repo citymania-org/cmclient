@@ -1,4 +1,4 @@
-/* $Id: script_waypointlist.cpp 23632 2011-12-19 21:05:25Z truebrain $ */
+/* $Id: script_waypointlist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "script_vehicle.hpp"
 #include "../../vehicle_base.h"
 #include "../../waypoint_base.h"
+
+#include "../../safeguards.h"
 
 ScriptWaypointList::ScriptWaypointList(ScriptWaypoint::WaypointType waypoint_type)
 {

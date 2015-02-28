@@ -1,4 +1,4 @@
-# $Id: config.lib 26440 2014-04-01 18:33:16Z frosch $
+# $Id: config.lib 27059 2014-11-09 16:37:07Z planetmaker $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -57,8 +57,8 @@ set_default() {
 	enable_translator="0"
 	enable_unicode="1"
 	enable_console="1";
-	enable_assert="0"
-	enable_strip="1"
+	enable_assert="1"
+	enable_strip="0"
 	enable_universal="0"
 	enable_osx_g5="0"
 	enable_cocoa_quartz="1"
@@ -862,7 +862,7 @@ check_params() {
 		endian="PREPROCESSOR"
 	fi
 
-	log 1 "checking endianess... $endian"
+	log 1 "checking endianness... $endian"
 
 	# Suppress language errors when there is a version defined, indicating a release
 	#  It just isn't pretty if any release produces warnings in the languages.
@@ -1037,7 +1037,7 @@ check_params() {
 		log 1 "checking revision... svn detection (tag)"
 	elif [ -d "$ROOT_DIR/.git" ] && [ -n "`git help 2>/dev/null`" ]; then
 		log 1 "checking revision... git detection"
-	elif [ -d "$ROOT_DIR/.hg" ] && [ -n "`hg help 2>/dev/null`" ]; then
+	elif [ -d "$ROOT_DIR/.hg" ] && [ -n "`HGPLAIN= hg help 2>/dev/null`" ]; then
 		log 1 "checking revision... hg detection"
 	elif [ -f "$ROOT_DIR/.ottdrev" ]; then
 		log 1 "checking revision... source tarball"
@@ -1441,6 +1441,7 @@ make_cflags_and_ldflags() {
 	make_compiler_cflags "$cc_host" "CFLAGS" "CXXFLAGS" "LDFLAGS" "FEATURES"
 
 	CFLAGS="$CFLAGS -D$os"
+	CFLAGS_BUILD="$CFLAGS_BUILD -D$os"
 
 	if [ "$enable_debug" = "0" ]; then
 		# No debug, add default stuff
@@ -1450,7 +1451,11 @@ make_cflags_and_ldflags() {
 			LDFLAGS="$LDFLAGS -noixemul"
 		fi
 
-		CFLAGS="-O2 -fomit-frame-pointer $CFLAGS"
+		if [ "$enable_profiling" = "0" ]; then
+			# -fomit-frame-pointer and -pg do not go well together (gcc errors they are incompatible)
+			CFLAGS="-fomit-frame-pointer $CFLAGS"
+		fi
+		CFLAGS="-O2 $CFLAGS"
 	else
 		OBJS_SUBDIR="debug"
 
@@ -1494,7 +1499,7 @@ make_cflags_and_ldflags() {
 	fi
 
 	if [ "$enable_profiling" != "0" ]; then
-		CFLAGS="$CFLAGS -p"
+		CFLAGS="$CFLAGS -pg"
 		LDFLAGS="$LDFLAGS -pg"
 	fi
 
@@ -1700,17 +1705,18 @@ make_cflags_and_ldflags() {
 
 	if [ -n "$png_config" ]; then
 		CFLAGS="$CFLAGS -DWITH_PNG"
-		CFLAGS="$CFLAGS `$png_config --cppflags --I_opts | tr '\n\r' '  '`"
+		CFLAGS="$CFLAGS `$png_config --cflags | tr '\n\r' '  '`"
 
-		# The extra flags are unneeded for latest libpng-config, but some versions are so broken...
 		if [ "$enable_static" != "0" ]; then
 			if [ "$os" = "OSX" ]; then
-				LIBS="$LIBS `$png_config --prefix`/lib/libpng.a"
+				# fontconfig_config goes via pkg-config on all systems, which doesn't know --prefix
+				# Also, despite the reason we link to the .a file ourself (because we can't use -static), we do need to ask pkg-config about possible other deps
+				LIBS="$LIBS `$png_config --variable=prefix`/lib/libpng.a `$png_config --libs --static | sed s@-lpng[0-9]*@@`"
 			else
-				LIBS="$LIBS `$png_config --static --ldflags | tr '\n\r' '  '`"
+				LIBS="$LIBS `$png_config --libs --static | tr '\n\r' '  '`"
 			fi
 		else
-			LIBS="$LIBS `$png_config --ldflags | tr '\n\r' '  '`"
+			LIBS="$LIBS `$png_config --libs | tr '\n\r' '  '`"
 		fi
 	fi
 
@@ -2715,80 +2721,64 @@ detect_libtimidity() {
 	detect_library "$with_libtimidity" "libtimidity" "libtimidity.a" "" "timidity.h"
 }
 
-detect_lzma() {
-	# 0 means no, 1 is auto-detect, 2 is force
-	if [ "$with_lzma" = "0" ]; then
-		log 1 "checking liblzma... disabled"
+detect_pkg_config() {
+	# $1 - config-param ($with_lzma value)
+	# $2 - package name ('liblzma')
+	# $3 - config name ('lzma_config', sets $lzma_config)
+	# $4 - minimum module version ('2.3')
 
-		lzma_config=""
+	# 0 means no, 1 is auto-detect, 2 is force
+	if [ "$1" = "0" ]; then
+		log 1 "checking $2... disabled"
+
+		eval "$3=\"\""
 		return 0
 	fi
 
-	if [ "$with_lzma" = "1" ] || [ "$with_lzma" = "" ] || [ "$with_lzma" = "2" ]; then
-		lzma_config="pkg-config liblzma"
+	log 2 "detecting $2"
+
+	if [ "$1" = "1" ] || [ "$1" = "" ] || [ "$1" = "2" ]; then
+		pkg_config_call="pkg-config $2"
 	else
-		lzma_config="$with_lzma"
+		pkg_config_call="$1"
 	fi
 
-	version=`$lzma_config --modversion 2>/dev/null`
+	version=`$pkg_config_call --modversion 2>/dev/null`
 	ret=$?
-	log 2 "executing $lzma_config --modversion"
+	check_version "$4" "$version"
+	version_ok=$?
+	log 2 "executing $pkg_config_call --modversion"
 	log 2 "  returned $version"
 	log 2 "  exit code $ret"
 
-	if [ -z "$version" ] || [ "$ret" != "0" ]; then
-		log 1 "checking liblzma... not found"
+	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version_ok" != "1" ]; then
+		if [ -n "$version" ] && [ "$version_ok" != "1" ]; then
+			log 1 "checking $2... needs at least version $4, $2 NOT enabled"
+		else
+			log 1 "checking $2... not found"
+		fi
 
 		# It was forced, so it should be found.
-		if [ "$with_lzma" != "1" ]; then
-			log 1 "configure: error: pkg-config liblzma couldn't be found"
-			log 1 "configure: error: you supplied '$with_lzma', but it seems invalid"
+		if [ "$1" != "1" ]; then
+			log 1 "configure: error: pkg-config $2 couldn't be found"
+			log 1 "configure: error: you supplied '$1', but it seems invalid"
 			exit 1
 		fi
 
-		lzma_config=""
+		eval "$3=\"\""
 		return 0
 	fi
 
-	log 1 "checking liblzma... found"
+	eval "$3=\"$pkg_config_call\""
+	log 1 "checking $2... found"
+}
+
+detect_lzma() {
+	detect_pkg_config "$with_lzma" "liblzma" "lzma_config" "5.0"
 }
 
 detect_xdg_basedir() {
-	# 0 means no, 1 is auto-detect, 2 is force
-	if [ "$with_xdg_basedir" = "0" ]; then
-		log 1 "checking libxdg_basedir... disabled"
-
-		xdg_basedir_config=""
-		return 0
-	fi
-
-	if [ "$with_xdg_basedir" = "1" ] || [ "$with_xdg_basedir" = "" ] || [ "$with_xdg_basedir" = "2" ]; then
-		xdg_basedir_config="pkg-config libxdg-basedir"
-	else
-		xdg_basedir_config="$with_xdg_basedir"
-	fi
-
-	version=`$xdg_basedir_config --modversion 2>/dev/null`
-	ret=$?
-	log 2 "executing $xdg_basedir_config --modversion"
-	log 2 "  returned $version"
-	log 2 "  exit code $ret"
-
-	if [ -z "$version" ] || [ "$ret" != "0" ]; then
-		log 1 "checking libxdg_basedir... not found"
-
-		# It was forced, so it should be found.
-		if [ "$with_xdg_basedir" != "1" ]; then
-			log 1 "configure: error: pkg-config libxdg_basedir couldn't be found"
-			log 1 "configure: error: you supplied '$with_xdg_basedir', but it seems invalid"
-			exit 1
-		fi
-
-		xdg_basedir_config=""
-		return 0
-	fi
-
-	log 1 "checking libxdg_basedir... found"
+	detect_pkg_config "$with_xdg_basedir" "libxdg-basedir" "xdg_basedir_config" "1.2"
 }
 
 detect_png() {
@@ -2815,33 +2805,7 @@ detect_png() {
 		return 0
 	fi
 
-	if [ "$with_png" = "1" ] || [ "$with_png" = "" ] || [ "$with_png" = "2" ]; then
-		png_config="libpng-config"
-	else
-		png_config="$with_png"
-	fi
-
-	version=`$png_config --version 2>/dev/null`
-	ret=$?
-	log 2 "executing $png_config --version"
-	log 2 "  returned $version"
-	log 2 "  exit code $ret"
-
-	if [ -z "$version" ] || [ "$ret" != "0" ]; then
-		log 1 "checking libpng... not found"
-
-		# It was forced, so it should be found.
-		if [ "$with_png" != "1" ]; then
-			log 1 "configure: error: libpng-config couldn't be found"
-			log 1 "configure: error: you supplied '$with_png', but it seems invalid"
-			exit 1
-		fi
-
-		png_config=""
-		return 0
-	fi
-
-	log 1 "checking libpng... found"
+	detect_pkg_config "$with_png" "libpng" "png_config" "1.2"
 }
 
 detect_freetype() {
@@ -2936,39 +2900,7 @@ detect_fontconfig() {
 		return 0
 	fi
 
-	if [ "$with_fontconfig" = "1" ] || [ "$with_fontconfig" = "" ] || [ "$with_fontconfig" = "2" ]; then
-		fontconfig_config="pkg-config fontconfig"
-	else
-		fontconfig_config="$with_fontconfig"
-	fi
-
-	version=`$fontconfig_config --modversion 2>/dev/null`
-	ret=$?
-	check_version '2.3' "$version"
-	version_ok=$?
-	log 2 "executing $fontconfig_config --modversion"
-	log 2 "  returned $version"
-	log 2 "  exit code $ret"
-
-	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version_ok" != "1" ]; then
-		if [ -n "$version" ] && [ "$version_ok" != "1" ]; then
-			log 1 "checking libfontconfig... needs at least version 2.3.0, fontconfig NOT enabled"
-		else
-			log 1 "checking libfontconfig... not found"
-		fi
-
-		# It was forced, so it should be found.
-		if [ "$with_fontconfig" != "1" ]; then
-			log 1 "configure: error: fontconfig-config couldn't be found"
-			log 1 "configure: error: you supplied '$with_fontconfig', but it seems invalid"
-			exit 1
-		fi
-
-		fontconfig_config=""
-		return 0
-	fi
-
-	log 1 "checking libfontconfig... found"
+	detect_pkg_config "$with_fontconfig" "fontconfig" "fontconfig_config" "2.3"
 }
 
 detect_icu() {
@@ -3251,9 +3183,9 @@ detect_grfcodec() {
 	log 2 "  returned $version"
 	log 2 "  exit code $ret"
 
-	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version" -lt "949" ]; then
-		if [ -n "$version" ] && [ "$version" -lt "949" ]; then
-			log 1 "checking grfcodec... needs at least version 6.0.2 (r949), disabled"
+	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version" -lt "985" ]; then
+		if [ -n "$version" ] && [ "$version" -lt "985" ]; then
+			log 1 "checking grfcodec... needs at least version 6.0.5 (r985), disabled"
 		else
 			log 1 "checking grfcodec... not found"
 		fi
@@ -3293,9 +3225,9 @@ detect_nforenum() {
 	log 2 "  returned $version"
 	log 2 "  exit code $ret"
 
-	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version" -lt "949" ]; then
-		if [ -n "$version" ] && [ "$version" -lt "949" ]; then
-			log 1 "checking nforenum... needs at least version 6.0.2 (r949), disabled"
+	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version" -lt "985" ]; then
+		if [ -n "$version" ] && [ "$version" -lt "985" ]; then
+			log 1 "checking nforenum... needs at least version 6.0.5 (r985), disabled"
 		else
 			log 1 "checking nforenum... not found"
 		fi

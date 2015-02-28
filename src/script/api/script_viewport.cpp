@@ -1,4 +1,4 @@
-/* $Id: script_viewport.cpp 23737 2012-01-03 20:37:56Z truebrain $ */
+/* $Id: script_viewport.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "script_game.hpp"
 #include "script_map.hpp"
 #include "../../viewport_func.h"
+
+#include "../../safeguards.h"
 
 /* static */ void ScriptViewport::ScrollTo(TileIndex tile)
 {

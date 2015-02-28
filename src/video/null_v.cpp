@@ -1,4 +1,4 @@
-/* $Id: null_v.cpp 26209 2014-01-02 22:41:58Z rubidium $ */
+/* $Id: null_v.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "../gfx_func.h"
 #include "../blitter/factory.hpp"
 #include "null_v.h"
+
+#include "../safeguards.h"
 
 /** Factory for the null video driver. */
 static FVideoDriver_Null iFVideoDriver_Null;

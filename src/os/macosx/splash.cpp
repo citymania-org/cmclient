@@ -1,4 +1,4 @@
-/* $Id: splash.cpp 26209 2014-01-02 22:41:58Z rubidium $ */
+/* $Id: splash.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,6 +22,8 @@
 #ifdef WITH_PNG
 
 #include <png.h>
+
+#include "../../safeguards.h"
 
 /**
  * Handle pnglib error.

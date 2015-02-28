@@ -1,4 +1,4 @@
-/* $Id: newgrf_commons.cpp 26241 2014-01-12 18:00:39Z frosch $ */
+/* $Id: newgrf_commons.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -31,6 +31,8 @@
 #include "strings_func.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /**
  * Constructor of generic class

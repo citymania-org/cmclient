@@ -1,4 +1,4 @@
-/* $Id: compat_1.2.nut 23969 2012-02-19 19:14:17Z rubidium $ */
+/* $Id: compat_1.2.nut 26407 2014-03-17 20:05:38Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -7,4 +7,4 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-AILog.Info("1.2 API compatability in effect.");
+AILog.Info("1.2 API compatibility in effect.");

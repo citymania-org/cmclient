@@ -1,4 +1,4 @@
-/* $Id: cargotype.cpp 24848 2012-12-23 22:12:52Z frosch $ */
+/* $Id: cargotype.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "table/sprites.h"
 #include "table/strings.h"
 #include "table/cargo_const.h"
+
+#include "safeguards.h"
 
 CargoSpec CargoSpec::array[NUM_CARGO];
 

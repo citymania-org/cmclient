@@ -1,4 +1,4 @@
-/* $Id: newgrf_callbacks.h 24186 2012-04-28 16:44:01Z frosch $ */
+/* $Id: newgrf_callbacks.h 26747 2014-08-17 14:53:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -278,6 +278,9 @@ enum CallbackID {
 
 	/** Called when industry is built to set initial production level. */
 	CBID_INDUSTRY_PROD_CHANGE_BUILD      = 0x15F, // 15 bit callback
+
+	/** Called to spawn visual effects for vehicles. */
+	CBID_VEHICLE_SPAWN_VISUAL_EFFECT     = 0x160, // 15 bit callback
 };
 
 /**

@@ -1,4 +1,4 @@
-/* $Id: script_tilelist.cpp 23355 2011-11-29 23:15:35Z truebrain $ */
+/* $Id: script_tilelist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "script_industry.hpp"
 #include "../../industry.h"
 #include "../../station_base.h"
+
+#include "../../safeguards.h"
 
 void ScriptTileList::AddRectangle(TileIndex t1, TileIndex t2)
 {

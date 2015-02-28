@@ -1,4 +1,4 @@
-/* $Id: station.cpp 26343 2014-02-16 16:25:18Z fonsinchen $ */
+/* $Id: station.cpp 27030 2014-10-21 19:16:47Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -29,6 +29,8 @@
 
 #include "table/strings.h"
 
+#include "safeguards.h"
+
 /** The pool of stations. */
 StationPool _station_pool("Station");
 INSTANTIATE_POOL_METHODS(Station)
@@ -43,13 +45,10 @@ BaseStation::~BaseStation()
 
 	if (CleaningPool()) return;
 
-	Owner owner = this->owner;
-	if (!Company::IsValidID(owner)) owner = _local_company;
-	if (!Company::IsValidID(owner)) return; // Spectators
-	DeleteWindowById(WC_TRAINS_LIST,   VehicleListIdentifier(VL_STATION_LIST, VEH_TRAIN,    owner, this->index).Pack());
-	DeleteWindowById(WC_ROADVEH_LIST,  VehicleListIdentifier(VL_STATION_LIST, VEH_ROAD,     owner, this->index).Pack());
-	DeleteWindowById(WC_SHIPS_LIST,    VehicleListIdentifier(VL_STATION_LIST, VEH_SHIP,     owner, this->index).Pack());
-	DeleteWindowById(WC_AIRCRAFT_LIST, VehicleListIdentifier(VL_STATION_LIST, VEH_AIRCRAFT, owner, this->index).Pack());
+	DeleteWindowById(WC_TRAINS_LIST,   VehicleListIdentifier(VL_STATION_LIST, VEH_TRAIN,    this->owner, this->index).Pack());
+	DeleteWindowById(WC_ROADVEH_LIST,  VehicleListIdentifier(VL_STATION_LIST, VEH_ROAD,     this->owner, this->index).Pack());
+	DeleteWindowById(WC_SHIPS_LIST,    VehicleListIdentifier(VL_STATION_LIST, VEH_SHIP,     this->owner, this->index).Pack());
+	DeleteWindowById(WC_AIRCRAFT_LIST, VehicleListIdentifier(VL_STATION_LIST, VEH_AIRCRAFT, this->owner, this->index).Pack());
 
 	this->sign.MarkDirty();
 }

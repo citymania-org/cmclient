@@ -1,4 +1,4 @@
-/* $Id: tcp_connect.cpp 21886 2011-01-22 09:53:15Z rubidium $ */
+/* $Id: tcp_connect.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../../thread/thread.h"
 
 #include "tcp.h"
+
+#include "../../safeguards.h"
 
 /** List of connections that are currently being created */
 static SmallVector<TCPConnecter *,  1> _tcp_connecters;

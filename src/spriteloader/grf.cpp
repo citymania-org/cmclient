@@ -1,4 +1,4 @@
-/* $Id: grf.cpp 26132 2013-11-26 22:03:56Z rubidium $ */
+/* $Id: grf.cpp 27004 2014-10-12 20:43:25Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "../core/alloc_type.hpp"
 #include "../core/bitmath_func.hpp"
 #include "grf.hpp"
+
+#include "../safeguards.h"
 
 extern const byte _palmap_w2d[];
 
@@ -228,7 +230,7 @@ uint8 LoadSpriteV1(SpriteLoader::Sprite *sprite, uint8 file_slot, size_t file_po
 	/* Type 0xFF indicates either a colourmap or some other non-sprite info; we do not handle them here */
 	if (type == 0xFF) return 0;
 
-	ZoomLevel zoom_lvl = (sprite_type == ST_NORMAL) ? ZOOM_LVL_OUT_4X : ZOOM_LVL_NORMAL;
+	ZoomLevel zoom_lvl = (sprite_type != ST_MAPGEN) ? ZOOM_LVL_OUT_4X : ZOOM_LVL_NORMAL;
 
 	sprite[zoom_lvl].height = FioReadByte();
 	sprite[zoom_lvl].width  = FioReadWord();
@@ -273,8 +275,8 @@ uint8 LoadSpriteV2(SpriteLoader::Sprite *sprite, uint8 file_slot, size_t file_po
 		byte colour = type & SCC_MASK;
 		byte zoom = FioReadByte();
 
-		if (colour != 0 && (load_32bpp ? colour != SCC_PAL : colour == SCC_PAL) && (sprite_type == ST_NORMAL ? zoom < lengthof(zoom_lvl_map) : zoom == 0)) {
-			ZoomLevel zoom_lvl = (sprite_type == ST_NORMAL) ? zoom_lvl_map[zoom] : ZOOM_LVL_NORMAL;
+		if (colour != 0 && (load_32bpp ? colour != SCC_PAL : colour == SCC_PAL) && (sprite_type != ST_MAPGEN ? zoom < lengthof(zoom_lvl_map) : zoom == 0)) {
+			ZoomLevel zoom_lvl = (sprite_type != ST_MAPGEN) ? zoom_lvl_map[zoom] : ZOOM_LVL_NORMAL;
 
 			if (HasBit(loaded_sprites, zoom_lvl)) {
 				/* We already have this zoom level, skip sprite. */

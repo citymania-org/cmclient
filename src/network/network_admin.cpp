@@ -1,4 +1,4 @@
-/* $Id: network_admin.cpp 25845 2013-10-12 17:03:15Z planetmaker $ */
+/* $Id: network_admin.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -24,6 +24,8 @@
 #include "../map_func.h"
 #include "../rev.h"
 #include "../game/game.hpp"
+
+#include "../safeguards.h"
 
 
 /* This file handles all the admin network commands. */

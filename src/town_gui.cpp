@@ -1,4 +1,4 @@
-/* $Id: town_gui.cpp 25922 2013-10-28 10:55:34Z frosch $ */
+/* $Id: town_gui.cpp 26960 2014-10-05 11:20:02Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -36,6 +36,8 @@
 #include "widgets/town_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 typedef GUIList<const Town*> GUITownList;
 
@@ -404,7 +406,7 @@ public:
 
 		if (this->town->text != NULL) {
 			SetDParamStr(0, this->town->text);
-			DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, UINT16_MAX, STR_JUST_RAW_STRING, TC_BLACK);
+			DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y += FONT_HEIGHT_NORMAL, UINT16_MAX, STR_JUST_RAW_STRING, TC_BLACK);
 		}
 	}
 
@@ -482,7 +484,7 @@ public:
 
 		if (this->town->text != NULL) {
 			SetDParamStr(0, this->town->text);
-			aimed_height += GetStringHeight(STR_JUST_RAW_STRING, width);
+			aimed_height += GetStringHeight(STR_JUST_RAW_STRING, width - WD_FRAMERECT_LEFT - WD_FRAMERECT_RIGHT);
 		}
 
 		return aimed_height;
@@ -795,7 +797,7 @@ public:
 		switch (widget) {
 			case WID_TD_SORT_ORDER: {
 				Dimension d = GetStringBoundingBox(this->GetWidget<NWidgetCore>(widget)->widget_data);
-				d.width += padding.width + WD_SORTBUTTON_ARROW_WIDTH * 2; // Doubled since the string is centred and it also looks better.
+				d.width += padding.width + Window::SortButtonWidth() * 2; // Doubled since the string is centred and it also looks better.
 				d.height += padding.height;
 				*size = maxdim(*size, d);
 				break;
@@ -958,7 +960,7 @@ void CcFoundTown(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2
 {
 	if (result.Failed()) return;
 
-	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT, tile);
+	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 }
 

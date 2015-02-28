@@ -1,4 +1,4 @@
-/* $Id: stringfilter.cpp 24632 2012-10-27 15:26:17Z frosch $ */
+/* $Id: stringfilter.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "strings_func.h"
 #include "stringfilter_type.h"
 #include "gfx_func.h"
+
+#include "safeguards.h"
 
 static const WChar STATE_WHITESPACE = ' ';
 static const WChar STATE_WORD = 'w';
@@ -32,7 +34,7 @@ void StringFilter::SetFilterTerm(const char *str)
 
 	assert(str != NULL);
 
-	char *dest = (char *)malloc(strlen(str) + 1);
+	char *dest = MallocT<char>(strlen(str) + 1);
 	this->filter_buffer = dest;
 
 	WChar state = STATE_WHITESPACE;

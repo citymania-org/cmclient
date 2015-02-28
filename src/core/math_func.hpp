@@ -1,4 +1,4 @@
-/* $Id: math_func.hpp 25347 2013-06-09 12:50:33Z fonsinchen $ */
+/* $Id: math_func.hpp 26651 2014-06-17 19:01:45Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,18 +11,6 @@
 
 #ifndef MATH_FUNC_HPP
 #define MATH_FUNC_HPP
-
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
-
-#ifdef abs
-#undef abs
-#endif
 
 /**
  * Returns the maximum of two values.

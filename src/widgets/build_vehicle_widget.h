@@ -1,4 +1,4 @@
-/* $Id: build_vehicle_widget.h 23600 2011-12-19 20:46:17Z truebrain $ */
+/* $Id: build_vehicle_widget.h 26811 2014-09-11 17:10:38Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,13 +15,15 @@
 /** Widgets of the #BuildVehicleWindow class. */
 enum BuildVehicleWidgets {
 	WID_BV_CAPTION,                   ///< Caption of window.
-	WID_BV_SORT_ASSENDING_DESCENDING, ///< Sort direction.
+	WID_BV_SORT_ASCENDING_DESCENDING, ///< Sort direction.
 	WID_BV_SORT_DROPDOWN,             ///< Criteria of sorting dropdown.
 	WID_BV_CARGO_FILTER_DROPDOWN,     ///< Cargo filter dropdown.
+	WID_BV_SHOW_HIDDEN_ENGINES,       ///< Toggle whether to display the hidden vehicles.
 	WID_BV_LIST,                      ///< List of vehicles.
 	WID_BV_SCROLLBAR,                 ///< Scrollbar of list.
 	WID_BV_PANEL,                     ///< Button panel.
 	WID_BV_BUILD,                     ///< Build panel.
+	WID_BV_SHOW_HIDE,                 ///< Button to hide or show the selected engine.
 	WID_BV_BUILD_SEL,                 ///< Build button.
 	WID_BV_RENAME,                    ///< Rename button.
 };

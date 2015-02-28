@@ -1,4 +1,4 @@
-/* $Id: command_type.h 26306 2014-02-06 19:48:19Z zuu $ */
+/* $Id: command_type.h 26802 2014-09-07 16:12:58Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -216,6 +216,7 @@ enum Commands {
 	CMD_SELL_VEHICLE,                 ///< sell a vehicle
 	CMD_REFIT_VEHICLE,                ///< refit the cargo space of a vehicle
 	CMD_SEND_VEHICLE_TO_DEPOT,        ///< send a vehicle to a depot
+	CMD_SET_VEHICLE_VISIBILITY,       ///< hide or unhide a vehicle in the build vehicle and autoreplace GUIs
 
 	CMD_MOVE_RAIL_VEHICLE,            ///< move a rail vehicle (in the depot)
 	CMD_FORCE_TRAIN_PROCEED,          ///< proceed a train to pass a red signal
@@ -314,7 +315,7 @@ enum Commands {
 
 	CMD_CREATE_GROUP,                 ///< create a new group
 	CMD_DELETE_GROUP,                 ///< delete a group
-	CMD_RENAME_GROUP,                 ///< rename a group
+	CMD_ALTER_GROUP,                  ///< alter a group
 	CMD_ADD_VEHICLE_GROUP,            ///< add a vehicle to a group
 	CMD_ADD_SHARED_VEHICLE_GROUP,     ///< add all other shared vehicles to a group which are missing
 	CMD_REMOVE_ALL_VEHICLES_GROUP,    ///< remove all vehicles from a group

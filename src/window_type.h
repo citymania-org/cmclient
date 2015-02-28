@@ -1,4 +1,4 @@
-/* $Id: window_type.h 25414 2013-06-15 15:31:22Z frosch $ */
+/* $Id: window_type.h 26610 2014-05-24 19:11:20Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -670,10 +670,16 @@ enum WindowClass {
 	WC_SPRITE_ALIGNER,
 
 	/**
-	 * Linkgraph legend; Window numbers:
+	 * Linkgraph legend; %Window numbers:
 	 *   - 0 = #LinkGraphWidgets
 	 */
 	WC_LINKGRAPH_LEGEND,
+
+	/**
+	 * Save preset; %Window numbers:
+	 *   - 0 = #SavePresetWidgets
+	 */
+	WC_SAVE_PRESET,
 
 	WC_INVALID = 0xFFFF, ///< Invalid window.
 };

@@ -1,4 +1,4 @@
-/* $Id: script_goal.cpp 26012 2013-11-16 17:41:57Z zuu $ */
+/* $Id: script_goal.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "../script_instance.hpp"
 #include "../../goal_base.h"
 #include "../../string_func.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptGoal::IsValidGoal(GoalID goal_id)
 {

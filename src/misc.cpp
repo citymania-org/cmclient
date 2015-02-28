@@ -1,4 +1,4 @@
-/* $Id: misc.cpp 25354 2013-06-09 12:58:37Z fonsinchen $ */
+/* $Id: misc.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,6 +28,8 @@
 #include "core/pool_type.hpp"
 #include "game/game.hpp"
 #include "linkgraph/linkgraphschedule.h"
+
+#include "safeguards.h"
 
 
 extern TileIndex _cur_tileloop_tile;

@@ -1,4 +1,4 @@
-/* $Id: script_gamesettings.cpp 23735 2012-01-03 20:26:05Z rubidium $ */
+/* $Id: script_gamesettings.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../../settings_internal.h"
 #include "../../settings_type.h"
 #include "../../command_type.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptGameSettings::IsValid(const char *setting)
 {

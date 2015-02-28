@@ -1,4 +1,4 @@
-/* $Id: terraform_gui.cpp 25414 2013-06-15 15:31:22Z frosch $ */
+/* $Id: terraform_gui.cpp 27134 2015-02-01 20:54:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,15 +32,18 @@
 #include "hotkeys.h"
 #include "engine_base.h"
 #include "terraform_gui.h"
+#include "zoom_func.h"
 
 #include "widgets/terraform_widget.h"
 
 #include "table/strings.h"
 
+#include "safeguards.h"
+
 void CcTerraform(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 {
 	if (result.Succeeded()) {
-		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT, tile);
+		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
 	} else {
 		extern TileIndex _terraform_err_tile;
 		SetRedErrorSquare(_terraform_err_tile);
@@ -88,7 +91,7 @@ static void GenerateRockyArea(TileIndex end, TileIndex start)
 		success = true;
 	}
 
-	if (success && _settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT, end);
+	if (success && _settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, end);
 }
 
 /**
@@ -358,7 +361,7 @@ static WindowDesc _terraform_desc(
 /**
  * Show the toolbar for terraforming in the game.
  * @param link The toolbar we might want to link to.
- * @return The allocated toolbar.
+ * @return The allocated toolbar if the window was newly opened, else \c NULL.
  */
 Window *ShowTerraformToolbar(Window *link)
 {
@@ -409,7 +412,7 @@ static void CommonRaiseLowerBigLand(TileIndex tile, int mode)
 
 		if (ta.w == 0 || ta.h == 0) return;
 
-		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT, tile);
+		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
 
 		uint h;
 		if (mode != 0) {
@@ -552,6 +555,14 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		}
 	}
 
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		if (widget != WID_ETT_DOTS) return;
+
+		size->width  = max<uint>(size->width,  ScaleGUITrad(59));
+		size->height = max<uint>(size->height, ScaleGUITrad(31));
+	}
+
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		if (widget != WID_ETT_DOTS) return;
@@ -564,7 +575,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 
 		assert(n != 0);
 		do {
-			DrawSprite(SPR_WHITE_POINT, PAL_NONE, center_x + coords[0], center_y + coords[1]);
+			DrawSprite(SPR_WHITE_POINT, PAL_NONE, center_x + ScaleGUITrad(coords[0]), center_y + ScaleGUITrad(coords[1]));
 			coords += 2;
 		} while (--n);
 	}
@@ -752,7 +763,7 @@ static WindowDesc _scen_edit_land_gen_desc(
 
 /**
  * Show the toolbar for terraforming in the scenario editor.
- * @return The allocated toolbar.
+ * @return The allocated toolbar if the window was newly opened, else \c NULL.
  */
 Window *ShowEditorTerraformToolbar()
 {

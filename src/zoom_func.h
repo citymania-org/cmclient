@@ -1,4 +1,4 @@
-/* $Id: zoom_func.h 26202 2014-01-02 11:05:42Z rubidium $ */
+/* $Id: zoom_func.h 27134 2015-02-01 20:54:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -62,6 +62,26 @@ static inline int UnScaleByZoomLower(int value, ZoomLevel zoom)
 {
 	assert(zoom >= 0);
 	return value >> zoom;
+}
+
+/**
+ * Short-hand to apply GUI zoom level.
+ * @param value Pixel amount at #ZOOM_LVL_BEGIN (full zoom in).
+ * @return value Pixel amount at #ZOOM_LVL_GUI.
+ */
+static inline int UnScaleGUI(int value)
+{
+	return UnScaleByZoom(value, ZOOM_LVL_GUI);
+}
+
+/**
+ * Scale traditional pixel dimensions to GUI zoom level.
+ * @param value Pixel amount at 1x zoom level.
+ * @return value Pixel amount at #ZOOM_LVL_GUI.
+ */
+static inline int ScaleGUITrad(int value)
+{
+	return UnScaleGUI(value * ZOOM_LVL_BASE);
 }
 
 #endif /* ZOOM_FUNC_H */

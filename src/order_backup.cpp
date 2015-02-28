@@ -1,4 +1,4 @@
-/* $Id: order_backup.cpp 24446 2012-07-29 16:48:00Z frosch $ */
+/* $Id: order_backup.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,8 @@
 #include "vehicle_base.h"
 #include "window_func.h"
 #include "station_map.h"
+
+#include "safeguards.h"
 
 OrderBackupPool _order_backup_pool("BackupOrder");
 INSTANTIATE_POOL_METHODS(OrderBackup)

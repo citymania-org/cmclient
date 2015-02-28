@@ -1,4 +1,4 @@
-/* $Id: yapf_rail.cpp 24905 2013-01-11 07:39:25Z peter1138 $ */
+/* $Id: yapf_rail.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,8 @@
 #include "yapf_destrail.hpp"
 #include "../../viewport_func.h"
 #include "../../newgrf_station.h"
+
+#include "../../safeguards.h"
 
 #define DEBUG_YAPF_CACHE 0
 

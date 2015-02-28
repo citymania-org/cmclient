@@ -1,4 +1,4 @@
-/* $Id: dmusic.cpp 25269 2013-05-20 13:35:41Z michi_cc $ */
+/* $Id: dmusic.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,6 +26,8 @@
 #include <dmusici.h>
 #include <dmusicc.h>
 #include <dmusicf.h>
+
+#include "../safeguards.h"
 
 static FMusicDriver_DMusic iFMusicDriver_DMusic;
 

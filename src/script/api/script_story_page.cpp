@@ -1,4 +1,4 @@
-/* $Id: script_story_page.cpp 26307 2014-02-06 19:50:34Z zuu $ */
+/* $Id: script_story_page.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include "../../goal_base.h"
 #include "../../string_func.h"
 #include "../../tile_map.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptStoryPage::IsValidStoryPage(StoryPageID story_page_id)
 {

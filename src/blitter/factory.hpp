@@ -1,4 +1,4 @@
-/* $Id: factory.hpp 26215 2014-01-03 08:29:07Z rubidium $ */
+/* $Id: factory.hpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -63,7 +63,7 @@ protected:
 	 * @pre There is no blitter registered with this name.
 	 */
 	BlitterFactory(const char *name, const char *description, bool usable = true) :
-			name(strdup(name)), description(strdup(description))
+			name(stredup(name)), description(stredup(description))
 	{
 		if (usable) {
 			/*

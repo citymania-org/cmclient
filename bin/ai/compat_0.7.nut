@@ -1,4 +1,4 @@
-/* $Id: compat_0.7.nut 24006 2012-03-04 16:40:06Z rubidium $ */
+/* $Id: compat_0.7.nut 26407 2014-03-17 20:05:38Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -7,7 +7,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-AILog.Info("0.7 API compatability in effect:");
+AILog.Info("0.7 API compatibility in effect:");
 AILog.Info(" - AITown::GetLastMonthProduction's behaviour has slightly changed.");
 AILog.Info(" - AISubsidy::GetDestination returns STATION_INVALID for awarded subsidies.");
 AILog.Info(" - AISubsidy::GetSource returns STATION_INVALID for awarded subsidies.");

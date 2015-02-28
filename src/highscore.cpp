@@ -1,4 +1,4 @@
-/* $Id: highscore.cpp 26062 2013-11-23 13:18:29Z rubidium $ */
+/* $Id: highscore.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "table/strings.h"
 #include "core/sort_func.hpp"
 #include "debug.h"
+
+#include "safeguards.h"
 
 HighScore _highscore_table[SP_HIGHSCORE_END][5]; ///< various difficulty-settings; top 5
 char *_highscore_file; ///< The file to store the highscore data in.

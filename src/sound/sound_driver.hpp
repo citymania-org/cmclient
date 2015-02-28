@@ -1,4 +1,4 @@
-/* $Id: sound_driver.hpp 26108 2013-11-25 14:30:22Z rubidium $ */
+/* $Id: sound_driver.hpp 26538 2014-04-28 21:06:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,9 +19,15 @@ class SoundDriver : public Driver {
 public:
 	/** Called once every tick */
 	virtual void MainLoop() {}
+
+	/**
+	 * Get the currently active instance of the sound driver.
+	 */
+	static SoundDriver *GetInstance() {
+		return static_cast<SoundDriver*>(*DriverFactoryBase::GetActiveDriver(Driver::DT_SOUND));
+	}
 };
 
-extern SoundDriver *_sound_driver;
 extern char *_ini_sounddriver;
 
 #endif /* SOUND_SOUND_DRIVER_HPP */

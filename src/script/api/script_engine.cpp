@@ -1,4 +1,4 @@
-/* $Id: script_engine.cpp 26307 2014-02-06 19:50:34Z zuu $ */
+/* $Id: script_engine.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "../../engine_func.h"
 #include "../../articulated_vehicles.h"
 #include "table/strings.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptEngine::IsValidEngine(EngineID engine_id)
 {

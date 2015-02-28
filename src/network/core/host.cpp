@@ -1,4 +1,4 @@
-/* $Id: host.cpp 17693 2009-10-04 17:16:41Z rubidium $ */
+/* $Id: host.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../../stdafx.h"
 #include "../../debug.h"
 #include "address.h"
+
+#include "../../safeguards.h"
 
 /**
  * Internal implementation for finding the broadcast IPs.

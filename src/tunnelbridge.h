@@ -1,4 +1,4 @@
-/* $Id: tunnelbridge.h 22405 2011-05-01 19:14:12Z rubidium $ */
+/* $Id: tunnelbridge.h 27157 2015-02-22 14:01:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,9 @@
 #define TUNNELBRIDGE_H
 
 #include "map_func.h"
+
+void MarkBridgeDirty(TileIndex begin, TileIndex end, DiagDirection direction, uint bridge_height);
+void MarkBridgeDirty(TileIndex tile);
 
 /**
  * Calculates the length of a tunnel or a bridge (without end tiles)

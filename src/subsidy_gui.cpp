@@ -1,4 +1,4 @@
-/* $Id: subsidy_gui.cpp 25294 2013-05-26 19:30:07Z frosch $ */
+/* $Id: subsidy_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -24,6 +24,8 @@
 #include "widgets/subsidy_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 struct SubsidyListWindow : Window {
 	Scrollbar *vscroll;

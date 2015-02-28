@@ -1,4 +1,4 @@
-/* $Id: os2.cpp 25506 2013-06-28 21:11:35Z rubidium $ */
+/* $Id: os2.cpp 27092 2014-12-24 17:17:18Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -29,6 +29,8 @@
 #ifndef __INNOTEK_LIBC__
 	#include <dos.h>
 #endif
+
+#include "../../safeguards.h"
 
 #define INCL_WIN
 #define INCL_WINCLIPBOARD
@@ -175,7 +177,7 @@ int CDECL main(int argc, char *argv[])
 	return openttd_main(argc, argv);
 }
 
-bool GetClipboardContents(char *buffer, size_t buff_len)
+bool GetClipboardContents(char *buffer, const char *last)
 {
 /* XXX -- Currently no clipboard support implemented with GCC */
 #ifndef __INNOTEK_LIBC__
@@ -187,7 +189,7 @@ bool GetClipboardContents(char *buffer, size_t buff_len)
 
 		if (text != NULL)
 		{
-			ttd_strlcpy(buffer, text, buff_len);
+			strecpy(buffer, text, last);
 			WinCloseClipbrd(hab);
 			return true;
 		}
@@ -214,4 +216,10 @@ const char *OTTD2FS(const char *name) {return name;}
 uint GetCPUCoreCount()
 {
 	return 1;
+}
+
+void OSOpenBrowser(const char *url)
+{
+	// stub only
+	DEBUG(misc, 0, "Failed to open url: %s", url);
 }

@@ -1,4 +1,4 @@
-/* $Id: aystar.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: aystar.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,6 +26,8 @@
 #include "../../stdafx.h"
 #include "../../core/alloc_func.hpp"
 #include "aystar.h"
+
+#include "../../safeguards.h"
 
 /**
  * This looks in the hash whether a node exists in the closed list.

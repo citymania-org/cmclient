@@ -1,4 +1,4 @@
-/* $Id: newgrf_debug_data.h 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_debug_data.h 27048 2014-10-28 00:51:51Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -61,7 +61,7 @@ static const NIVariable _niv_vehicles[] = {
 	NIV(0x4A, "current rail type info"),
 	NIV(0x4B, "long date of last service"),
 	NIV(0x4C, "current max speed"),
-	NIV(0x4A, "position in articulated vehicle"),
+	NIV(0x4D, "position in articulated vehicle"),
 	NIV(0x60, "count vehicle id occurrences"),
 	// 0x61 not useful, since it requires register 0x10F
 	NIV(0x62, "Curvature/position difference to other vehicle"),

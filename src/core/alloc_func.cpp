@@ -1,4 +1,4 @@
-/* $Id: alloc_func.cpp 17693 2009-10-04 17:16:41Z rubidium $ */
+/* $Id: alloc_func.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -10,6 +10,8 @@
 /** @file alloc_func.cpp Functions to 'handle' memory allocation errors */
 
 #include "../stdafx.h"
+
+#include "../safeguards.h"
 
 /**
  * Function to exit with an error message after malloc() or calloc() have failed

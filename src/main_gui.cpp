@@ -1,4 +1,4 @@
-/* $Id: main_gui.cpp 26338 2014-02-15 12:19:46Z fonsinchen $ */
+/* $Id: main_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -44,6 +44,8 @@
 
 #include "table/sprites.h"
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 static int _rename_id = 1;
 static int _rename_what = -1;

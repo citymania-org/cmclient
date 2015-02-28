@@ -1,4 +1,4 @@
-/* $Id: townname.cpp 26346 2014-02-16 17:45:24Z frosch $ */
+/* $Id: townname.cpp 26510 2014-04-25 17:35:29Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "gfx_layout.h"
 
 #include "table/townname.h"
+
+#include "safeguards.h"
 
 
 /**
@@ -200,7 +202,8 @@ static inline int32 SeedChanceBias(byte shift_by, int max, uint32 seed, int bias
  */
 static void ReplaceWords(const char *org, const char *rep, char *buf)
 {
-	if (strncmp(buf, org, 4) == 0) strncpy(buf, rep, 4); // Safe as the string in buf is always more than 4 characters long.
+	assert(strlen(org) == 4 && strlen(rep) == 4 && strlen(buf) >= 4);
+	if (strncmp(buf, org, 4) == 0) memcpy(buf, rep, 4); // Safe as the string in buf is always more than 4 characters long.
 }
 
 

@@ -1,4 +1,4 @@
-/* $Id: crashlog_unix.cpp 20266 2010-07-31 21:02:56Z alberth $ */
+/* $Id: crashlog_unix.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -30,6 +30,8 @@
 #if defined(__NetBSD__)
 #include <unistd.h>
 #endif
+
+#include "../../safeguards.h"
 
 /**
  * Unix implementation for the crash logger.

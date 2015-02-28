@@ -1,4 +1,4 @@
-/* $Id: date.cpp 25333 2013-06-08 13:22:06Z frosch $ */
+/* $Id: date.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "rail_gui.h"
 #include "linkgraph/linkgraph.h"
 #include "saveload/saveload.h"
+
+#include "safeguards.h"
 
 Year      _cur_year;   ///< Current year, starting at 0
 Month     _cur_month;  ///< Current month (0..11)

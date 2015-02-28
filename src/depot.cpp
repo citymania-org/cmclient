@@ -1,4 +1,4 @@
-/* $Id: depot.cpp 25865 2013-10-13 20:11:05Z zuu $ */
+/* $Id: depot.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "core/pool_func.hpp"
 #include "vehicle_gui.h"
 #include "vehiclelist.h"
+
+#include "safeguards.h"
 
 /** All our depots tucked away in a pool. */
 DepotPool _depot_pool("Depot");

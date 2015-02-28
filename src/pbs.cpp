@@ -1,4 +1,4 @@
-/* $Id: pbs.cpp 24906 2013-01-11 11:54:12Z peter1138 $ */
+/* $Id: pbs.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "vehicle_func.h"
 #include "newgrf_station.h"
 #include "pathfinder/follow_track.hpp"
+
+#include "safeguards.h"
 
 /**
  * Get the reserved trackbits for any tile, regardless of type.

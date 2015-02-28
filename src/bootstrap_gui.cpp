@@ -1,4 +1,4 @@
-/* $Id: bootstrap_gui.cpp 26209 2014-01-02 22:41:58Z rubidium $ */
+/* $Id: bootstrap_gui.cpp 26538 2014-04-28 21:06:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,6 +28,8 @@
 #include "widgets/bootstrap_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /** Widgets for the background window to prevent smearing. */
 static const struct NWidgetPart _background_widgets[] = {
@@ -244,7 +246,7 @@ bool HandleBootstrap()
 	new BootstrapAskForDownloadWindow();
 
 	/* Process the user events. */
-	_video_driver->MainLoop();
+	VideoDriver::GetInstance()->MainLoop();
 
 	/* _exit_game is used to get out of the video driver's main loop.
 	 * In case GM_BOOTSTRAP is still set we did not exit it via the

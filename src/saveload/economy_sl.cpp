@@ -1,4 +1,4 @@
-/* $Id: economy_sl.cpp 25011 2013-02-17 14:50:54Z rubidium $ */
+/* $Id: economy_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../economy_base.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 /** Prices in pre 126 savegames */
 static void Load_PRIC()

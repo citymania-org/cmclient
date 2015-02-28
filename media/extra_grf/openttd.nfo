@@ -2,7 +2,7 @@
 // (Info version 32)
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 //
-// $Id: openttd.nfo 23993 2012-02-26 08:23:32Z rubidium $
+// $Id: openttd.nfo 26869 2014-09-21 07:57:45Z rubidium $
 //
 // This file is part of OpenTTD.
 // OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -104,3 +104,4 @@
 #include "rivers/tropic.nfo"
 #include "rivers/toyland.nfo"
 #include "tunnel_portals.nfo"
+#include "palette.nfo"

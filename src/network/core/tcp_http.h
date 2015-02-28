@@ -1,4 +1,4 @@
-/* $Id: tcp_http.h 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: tcp_http.h 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -96,7 +96,7 @@ public:
 			const char *data = NULL, int depth = 0) :
 		TCPConnecter(address),
 		callback(callback),
-		url(strdup(url)),
+		url(stredup(url)),
 		data(data),
 		depth(depth)
 	{

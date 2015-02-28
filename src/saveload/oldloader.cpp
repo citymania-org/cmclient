@@ -1,4 +1,4 @@
-/* $Id: oldloader.cpp 26064 2013-11-23 18:06:00Z rubidium $ */
+/* $Id: oldloader.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,6 +22,8 @@
 #include "oldloader.h"
 
 #include <exception>
+
+#include "../safeguards.h"
 
 static const int TTO_HEADER_SIZE = 41;
 static const int TTD_HEADER_SIZE = 49;

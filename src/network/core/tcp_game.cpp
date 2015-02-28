@@ -1,4 +1,4 @@
-/* $Id: tcp_game.cpp 26057 2013-11-23 13:12:19Z rubidium $ */
+/* $Id: tcp_game.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include "../../error.h"
 
 #include "table/strings.h"
+
+#include "../../safeguards.h"
 
 /**
  * Create a new socket for the game connection.

@@ -1,4 +1,4 @@
-/* $Id: cargomonitor_sl.cpp 24405 2012-07-15 17:07:06Z alberth $ */
+/* $Id: cargomonitor_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "../cargomonitor.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 /** Temporary storage of cargo monitoring data for loading or saving it. */
 struct TempStorage {

@@ -1,4 +1,4 @@
-/* $Id: vehiclelist.cpp 25959 2013-11-09 06:52:08Z rubidium $ */
+/* $Id: vehiclelist.cpp 26679 2014-07-08 20:07:21Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,12 +12,15 @@
 #include "stdafx.h"
 #include "train.h"
 #include "vehiclelist.h"
+#include "group.h"
+
+#include "safeguards.h"
 
 /**
  * Pack a VehicleListIdentifier in a single uint32.
  * @return The packed identifier.
  */
-uint32 VehicleListIdentifier::Pack()
+uint32 VehicleListIdentifier::Pack() const
 {
 	byte c = this->company == OWNER_NONE ? 0xF : (byte)this->company;
 	assert(c             < (1 <<  4));
@@ -145,7 +148,7 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 			if (vli.index != ALL_GROUP) {
 				FOR_ALL_VEHICLES(v) {
 					if (v->type == vli.vtype && v->IsPrimaryVehicle() &&
-							v->owner == vli.company && v->group_id == vli.index) {
+							v->owner == vli.company && GroupIsInGroup(v->group_id, vli.index)) {
 						*list->Append() = v;
 					}
 				}

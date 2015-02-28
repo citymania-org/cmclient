@@ -1,4 +1,4 @@
-/* $Id: tunnelbridge_cmd.cpp 26277 2014-01-26 13:50:10Z frosch $ */
+/* $Id: tunnelbridge_cmd.cpp 27157 2015-02-22 14:01:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -44,11 +44,40 @@
 #include "table/strings.h"
 #include "table/bridge_land.h"
 
+#include "safeguards.h"
+
 BridgeSpec _bridge[MAX_BRIDGES]; ///< The specification of all bridges.
 TileIndex _build_tunnel_endtile; ///< The end of a tunnel; as hidden return from the tunnel build command for GUI purposes.
 
 /** Z position of the bridge sprites relative to bridge height (downwards) */
 static const int BRIDGE_Z_START = 3;
+
+
+/**
+ * Mark bridge tiles dirty.
+ * Note: The bridge does not need to exist, everything is passed via parameters.
+ * @param begin Start tile.
+ * @param end End tile.
+ * @param direction Direction from \a begin to \a end.
+ * @param bridge_height Bridge height level.
+ */
+void MarkBridgeDirty(TileIndex begin, TileIndex end, DiagDirection direction, uint bridge_height)
+{
+	TileIndexDiff delta = TileOffsByDiagDir(direction);
+	for (TileIndex t = begin; t != end; t += delta) {
+		MarkTileDirtyByTile(t, bridge_height - TileHeight(t));
+	}
+	MarkTileDirtyByTile(end);
+}
+
+/**
+ * Mark bridge tiles dirty.
+ * @param tile Bridge head.
+ */
+void MarkBridgeDirty(TileIndex tile)
+{
+	MarkBridgeDirty(tile, GetOtherTunnelBridgeEnd(tile), GetTunnelBridgeDirection(tile), GetBridgeHeight(tile));
+}
 
 /** Reset the data been eventually changed by the grf loaded. */
 void ResetBridges()
@@ -374,15 +403,13 @@ CommandCost CmdBuildBridge(TileIndex end_tile, DoCommandFlag flags, uint32 p1, u
 
 		const TileIndex heads[] = {tile_start, tile_end};
 		for (int i = 0; i < 2; i++) {
-			if (MayHaveBridgeAbove(heads[i])) {
-				if (IsBridgeAbove(heads[i])) {
-					TileIndex north_head = GetNorthernBridgeEnd(heads[i]);
+			if (IsBridgeAbove(heads[i])) {
+				TileIndex north_head = GetNorthernBridgeEnd(heads[i]);
 
-					if (direction == GetBridgeAxis(heads[i])) return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
+				if (direction == GetBridgeAxis(heads[i])) return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
 
-					if (z_start + 1 == GetBridgeHeight(north_head)) {
-						return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
-					}
+				if (z_start + 1 == GetBridgeHeight(north_head)) {
+					return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
 				}
 			}
 		}
@@ -391,7 +418,17 @@ CommandCost CmdBuildBridge(TileIndex end_tile, DoCommandFlag flags, uint32 p1, u
 		for (TileIndex tile = tile_start + delta; tile != tile_end; tile += delta) {
 			if (GetTileMaxZ(tile) > z_start) return_cmd_error(STR_ERROR_BRIDGE_TOO_LOW_FOR_TERRAIN);
 
-			if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile)) {
+			if (z_start >= (GetTileZ(tile) + _settings_game.construction.max_bridge_height)) {
+				/*
+				 * Disallow too high bridges.
+				 * Properly rendering a map where very high bridges (might) exist is expensive.
+				 * See http://www.tt-forums.net/viewtopic.php?f=33&t=40844&start=980#p1131762
+				 * for a detailed discussion. z_start here is one heightlevel below the bridge level.
+				 */
+				return_cmd_error(STR_ERROR_BRIDGE_TOO_HIGH_FOR_TERRAIN);
+			}
+
+			if (IsBridgeAbove(tile)) {
 				/* Disallow crossing bridges for the time being */
 				return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
 			}
@@ -496,10 +533,7 @@ CommandCost CmdBuildBridge(TileIndex end_tile, DoCommandFlag flags, uint32 p1, u
 		}
 
 		/* Mark all tiles dirty */
-		TileIndexDiff delta = (direction == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
-		for (TileIndex tile = tile_start; tile <= tile_end; tile += delta) {
-			MarkTileDirtyByTile(tile);
-		}
+		MarkBridgeDirty(tile_start, tile_end, AxisToDiagDir(direction), z_start);
 		DirtyCompanyInfrastructureWindows(owner);
 	}
 
@@ -916,7 +950,7 @@ static CommandCost DoClearBridge(TileIndex tile, DoCommandFlag flags)
 				if (height < minz) SetRoadside(c, ROADSIDE_PAVED);
 			}
 			ClearBridgeMiddle(c);
-			MarkTileDirtyByTile(c);
+			MarkTileDirtyByTile(c, height - TileHeight(c));
 		}
 
 		if (rail) {

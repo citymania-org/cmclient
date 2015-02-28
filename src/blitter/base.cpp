@@ -1,4 +1,4 @@
-/* $Id: base.cpp 25911 2013-10-23 19:41:20Z fonsinchen $ */
+/* $Id: base.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../stdafx.h"
 #include "base.hpp"
 #include "../core/math_func.hpp"
+
+#include "../safeguards.h"
 
 void Blitter::DrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width, int dash)
 {

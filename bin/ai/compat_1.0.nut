@@ -1,4 +1,4 @@
-/* $Id: compat_1.0.nut 24006 2012-03-04 16:40:06Z rubidium $ */
+/* $Id: compat_1.0.nut 26407 2014-03-17 20:05:38Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -7,7 +7,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-AILog.Info("1.0 API compatability in effect.");
+AILog.Info("1.0 API compatibility in effect.");
 
 AIRoad._BuildRoadStation <- AIRoad.BuildRoadStation;
 AIRoad.BuildRoadStation <- function(tile, front, road_veh_type, station_id)

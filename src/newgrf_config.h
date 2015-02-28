@@ -1,4 +1,4 @@
-/* $Id: newgrf_config.h 26317 2014-02-07 23:48:56Z frosch $ */
+/* $Id: newgrf_config.h 26612 2014-05-24 19:13:34Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -176,6 +176,8 @@ struct GRFConfig : ZeroedMemoryAllocator {
 	bool has_param_defaults;                       ///< NOSAVE: did this newgrf specify any defaults for it's parameters
 
 	struct GRFConfig *next;                        ///< NOSAVE: Next item in the linked list
+
+	void CopyParams(const GRFConfig &src);
 
 	bool IsOpenTTDBaseGRF() const;
 

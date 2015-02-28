@@ -1,4 +1,4 @@
-/* $Id: script_vehiclelist.cpp 23941 2012-02-12 21:17:32Z smatz $ */
+/* $Id: script_vehiclelist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "script_station.hpp"
 #include "../../depot_map.h"
 #include "../../vehicle_base.h"
+
+#include "../../safeguards.h"
 
 ScriptVehicleList::ScriptVehicleList()
 {

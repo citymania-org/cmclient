@@ -1,4 +1,4 @@
-/* $Id: script_subsidy.cpp 26307 2014-02-06 19:50:34Z zuu $ */
+/* $Id: script_subsidy.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "script_error.hpp"
 #include "../../subsidy_base.h"
 #include "../../station_base.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptSubsidy::IsValidSubsidy(SubsidyID subsidy_id)
 {

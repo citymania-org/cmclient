@@ -1,4 +1,4 @@
-/* $Id: intro_gui.cpp 25290 2013-05-26 19:25:01Z frosch $ */
+/* $Id: intro_gui.cpp 26986 2014-10-09 21:16:29Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,6 +32,8 @@
 
 #include "table/strings.h"
 #include "table/sprites.h"
+
+#include "safeguards.h"
 
 struct SelectGameWindow : public Window {
 
@@ -208,7 +210,7 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_OPTIONS), SetMinimalSize(158, 12),
 							SetDataTip(STR_INTRO_GAME_OPTIONS, STR_INTRO_TOOLTIP_GAME_OPTIONS), SetPadding(0, 0, 0, 10), SetFill(1, 0),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_SETTINGS_OPTIONS), SetMinimalSize(158, 12),
-							SetDataTip(STR_INTRO_ADVANCED_SETTINGS, STR_INTRO_TOOLTIP_ADVANCED_SETTINGS), SetPadding(0, 10, 0, 0), SetFill(1, 0),
+							SetDataTip(STR_INTRO_CONFIG_SETTINGS_TREE, STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE), SetPadding(0, 10, 0, 0), SetFill(1, 0),
 	EndContainer(),
 
 	NWidget(NWID_SPACER), SetMinimalSize(0, 6),

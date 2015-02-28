@@ -1,4 +1,4 @@
-/* $Id: thread_win32.cpp 26353 2014-02-18 17:58:46Z frosch $ */
+/* $Id: thread_win32.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <process.h>
+
+#include "../safeguards.h"
 
 /**
  * Win32 thread version for ThreadObject.

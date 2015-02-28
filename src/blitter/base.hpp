@@ -1,4 +1,4 @@
-/* $Id: base.hpp 25911 2013-10-23 19:41:20Z fonsinchen $ */
+/* $Id: base.hpp 26969 2014-10-06 18:45:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@ enum BlitterMode {
 	BM_NORMAL,       ///< Perform the simple blitting.
 	BM_COLOUR_REMAP, ///< Perform a colour remapping.
 	BM_TRANSPARENT,  ///< Perform transparency colour remapping.
+	BM_CRASH_REMAP,  ///< Perform a crash remapping.
+	BM_BLACK_REMAP,  ///< Perform remapping to a completely blackened sprite
 };
 
 /**

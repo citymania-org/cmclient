@@ -1,4 +1,4 @@
-/* $Id: industry_sl.cpp 26175 2013-12-23 18:09:29Z frosch $ */
+/* $Id: industry_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 
 #include "saveload.h"
 #include "newgrf_sl.h"
+
+#include "../safeguards.h"
 
 static OldPersistentStorage _old_ind_persistent_storage;
 

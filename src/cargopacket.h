@@ -1,4 +1,4 @@
-/* $Id: cargopacket.h 26327 2014-02-09 21:10:25Z fonsinchen $ */
+/* $Id: cargopacket.h 26660 2014-06-21 19:52:52Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -157,7 +157,7 @@ public:
 	 * Gets the ID of the station where the cargo was loaded for the first time.
 	 * @return StationID.
 	 */
-	inline SourceID SourceStation() const
+	inline StationID SourceStation() const
 	{
 		return this->source;
 	}

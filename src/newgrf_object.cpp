@@ -1,4 +1,4 @@
-/* $Id: newgrf_object.cpp 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_object.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,8 @@
 #include "town.h"
 #include "water.h"
 #include "newgrf_animation_base.h"
+
+#include "safeguards.h"
 
 /** The override manager for our objects. */
 ObjectOverrideManager _object_mngr(NEW_OBJECT_OFFSET, NUM_OBJECTS, INVALID_OBJECT_TYPE);

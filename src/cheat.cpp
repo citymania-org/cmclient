@@ -1,4 +1,4 @@
-/* $Id: cheat.cpp 22413 2011-05-02 20:59:54Z rubidium $ */
+/* $Id: cheat.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "stdafx.h"
 #include "cheat_type.h"
+
+#include "safeguards.h"
 
 /** All the cheats. */
 Cheats _cheats;

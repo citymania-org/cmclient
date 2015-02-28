@@ -1,4 +1,4 @@
-/* $Id: hotkeys.cpp 25973 2013-11-13 15:54:44Z rubidium $ */
+/* $Id: hotkeys.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "ini_type.h"
 #include "string_func.h"
 #include "window_gui.h"
+
+#include "safeguards.h"
 
 char *_hotkeys_file;
 
@@ -139,7 +141,7 @@ static void ParseHotkeys(Hotkey *hotkey, const char *value)
  * by a '+'.
  * @param keycode The keycode to convert to a string.
  * @return A string representation of this keycode.
- * @note The return value is a static buffer, strdup the result before calling
+ * @note The return value is a static buffer, stredup the result before calling
  *  this function again.
  */
 static const char *KeycodeToString(uint16 keycode)
@@ -193,7 +195,7 @@ static const char *KeycodeToString(uint16 keycode)
  * keycodes are attached to the hotkey they are split by a comma.
  * @param hotkey The keycodes of this hotkey need to be converted to a string.
  * @return A string representation of all keycodes.
- * @note The return value is a static buffer, strdup the result before calling
+ * @note The return value is a static buffer, stredup the result before calling
  *  this function again.
  */
 const char *SaveKeycodes(const Hotkey *hotkey)

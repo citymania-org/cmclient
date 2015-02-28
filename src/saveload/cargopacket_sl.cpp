@@ -1,4 +1,4 @@
-/* $Id: cargopacket_sl.cpp 25361 2013-06-09 13:03:48Z fonsinchen $ */
+/* $Id: cargopacket_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../station_base.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 /**
  * Savegame conversion for cargopackets.

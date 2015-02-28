@@ -1,4 +1,4 @@
-/* $Id: newgrf_debug_gui.cpp 25946 2013-11-07 18:17:21Z frosch $ */
+/* $Id: newgrf_debug_gui.cpp 27134 2015-02-01 20:54:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,7 @@
 #include "strings_func.h"
 #include "textbuf_gui.h"
 #include "vehicle_gui.h"
+#include "zoom_func.h"
 
 #include "engine_base.h"
 #include "industry.h"
@@ -42,6 +43,8 @@
 #include "widgets/newgrf_debug_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /** The sprite picker. */
 NewGrfDebugSpritePicker _newgrf_debug_sprite_picker = { SPM_NONE, NULL, 0, SmallVector<SpriteID, 256>() };
@@ -398,7 +401,7 @@ struct NewGRFInspectWindow : Window {
 
 		va_list va;
 		va_start(va, format);
-		vsnprintf(buf, lengthof(buf), format, va);
+		vseprintf(buf, lastof(buf), format, va);
 		va_end(va);
 
 		offset -= this->vscroll->GetPosition();
@@ -699,8 +702,8 @@ void ShowNewGRFInspectWindow(GrfSpecFeature feature, uint index, const uint32 gr
 	if (!IsNewGRFInspectable(feature, index)) return;
 
 	WindowNumber wno = GetInspectWindowNumber(feature, index);
-	NewGRFInspectWindow *w = AllocateWindowDescFront<NewGRFInspectWindow>(feature == GSF_TRAINS || feature == GSF_ROADVEHICLES ? &_newgrf_inspect_chain_desc : &_newgrf_inspect_desc, wno);
-	if (w == NULL) w = (NewGRFInspectWindow *)FindWindowById(WC_NEWGRF_INSPECT, wno);
+	WindowDesc *desc = (feature == GSF_TRAINS || feature == GSF_ROADVEHICLES) ? &_newgrf_inspect_chain_desc : &_newgrf_inspect_desc;
+	NewGRFInspectWindow *w = AllocateWindowDescFront<NewGRFInspectWindow>(desc, wno, true);
 	w->SetCallerGRFID(grfid);
 }
 
@@ -826,8 +829,8 @@ struct SpriteAlignerWindow : Window {
 
 			case WID_SA_OFFSETS: {
 				const Sprite *spr = GetSprite(this->current_sprite, ST_NORMAL);
-				SetDParam(0, spr->x_offs / ZOOM_LVL_BASE);
-				SetDParam(1, spr->y_offs / ZOOM_LVL_BASE);
+				SetDParam(0, spr->x_offs);
+				SetDParam(1, spr->y_offs);
 				break;
 			}
 
@@ -855,15 +858,15 @@ struct SpriteAlignerWindow : Window {
 				const Sprite *spr = GetSprite(this->current_sprite, ST_NORMAL);
 				int width  = r.right  - r.left + 1;
 				int height = r.bottom - r.top  + 1;
-				int x = r.left - spr->x_offs / ZOOM_LVL_BASE + (width  - spr->width / ZOOM_LVL_BASE) / 2;
-				int y = r.top  - spr->y_offs / ZOOM_LVL_BASE + (height - spr->height / ZOOM_LVL_BASE) / 2;
+				int x = r.left - UnScaleGUI(spr->x_offs) + (width  - UnScaleGUI(spr->width) ) / 2;
+				int y = r.top  - UnScaleGUI(spr->y_offs) + (height - UnScaleGUI(spr->height)) / 2;
 
 				/* And draw only the part within the sprite area */
 				SubSprite subspr = {
-					spr->x_offs + (spr->width  - width  * ZOOM_LVL_BASE) / 2 + 1,
-					spr->y_offs + (spr->height - height * ZOOM_LVL_BASE) / 2 + 1,
-					spr->x_offs + (spr->width  + width  * ZOOM_LVL_BASE) / 2 - 1,
-					spr->y_offs + (spr->height + height * ZOOM_LVL_BASE) / 2 - 1,
+					spr->x_offs + (spr->width  - UnScaleGUI(width) ) / 2 + 1,
+					spr->y_offs + (spr->height - UnScaleGUI(height)) / 2 + 1,
+					spr->x_offs + (spr->width  + UnScaleGUI(width) ) / 2 - 1,
+					spr->y_offs + (spr->height + UnScaleGUI(height)) / 2 - 1,
 				};
 
 				DrawSprite(this->current_sprite, PAL_NONE, x, y, &subspr, ZOOM_LVL_GUI);
@@ -947,10 +950,10 @@ struct SpriteAlignerWindow : Window {
 				 */
 				Sprite *spr = const_cast<Sprite *>(GetSprite(this->current_sprite, ST_NORMAL));
 				switch (widget) {
-					case WID_SA_UP:    spr->y_offs -= ZOOM_LVL_BASE; break;
-					case WID_SA_DOWN:  spr->y_offs += ZOOM_LVL_BASE; break;
-					case WID_SA_LEFT:  spr->x_offs -= ZOOM_LVL_BASE; break;
-					case WID_SA_RIGHT: spr->x_offs += ZOOM_LVL_BASE; break;
+					case WID_SA_UP:    spr->y_offs--; break;
+					case WID_SA_DOWN:  spr->y_offs++; break;
+					case WID_SA_LEFT:  spr->x_offs--; break;
+					case WID_SA_RIGHT: spr->x_offs++; break;
 				}
 				/* Of course, we need to redraw the sprite, but where is it used?
 				 * Everywhere is a safe bet. */

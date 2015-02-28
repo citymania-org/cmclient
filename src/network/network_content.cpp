@@ -1,4 +1,4 @@
-/* $Id: network_content.cpp 26056 2013-11-22 21:50:43Z rubidium $ */
+/* $Id: network_content.cpp 26489 2014-04-23 21:23:21Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,6 +26,8 @@
 #if defined(WITH_ZLIB)
 #include <zlib.h>
 #endif
+
+#include "../safeguards.h"
 
 extern bool HasScenario(const ContentInfo *ci, bool md5sum);
 
@@ -388,7 +390,7 @@ static char *GetFullFilename(const ContentInfo *ci, bool compressed)
 	if (dir == NO_DIRECTORY) return NULL;
 
 	static char buf[MAX_PATH];
-	FioGetFullPath(buf, lengthof(buf), SP_AUTODOWNLOAD_DIR, dir, ci->filename);
+	FioGetFullPath(buf, lastof(buf), SP_AUTODOWNLOAD_DIR, dir, ci->filename);
 	strecat(buf, compressed ? ".tar.gz" : ".tar", lastof(buf));
 
 	return buf;

@@ -1,4 +1,4 @@
-/* $Id: 32bpp_sse_func.hpp 26334 2014-02-11 21:17:43Z frosch $ */
+/* $Id: 32bpp_sse_func.hpp 27020 2014-10-15 18:31:37Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -159,7 +159,7 @@ static inline __m128i AdjustBrightnessOfTwoPixels(__m128i from, uint32 brightnes
 	__m128i briAB = _mm_cvtsi32_si128(brightness);
 	briAB = _mm_shuffle_epi8(briAB, BRIGHTNESS_LOW_CONTROL_MASK); // DEFAULT_BRIGHTNESS in 0, 0x00 in 2.
 	colAB = _mm_mullo_epi16(colAB, briAB);
-	__m128i colAB_ob = _mm_srli_epi16(colAB, 8+7);
+	__m128i colAB_ob = _mm_srli_epi16(colAB, 8 + 7);
 	colAB = _mm_srli_epi16(colAB, 7);
 
 	/* Sum overbright.
@@ -238,13 +238,13 @@ inline void Blitter_32bppSSE4::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 	for (int y = bp->height; y != 0; y--) {
 		Colour *dst = dst_line;
 		const Colour *src = src_rgba_line + META_LENGTH;
-		if (mode == BM_COLOUR_REMAP) src_mv = src_mv_line;
+		if (mode == BM_COLOUR_REMAP || mode == BM_CRASH_REMAP) src_mv = src_mv_line;
 
 		if (read_mode == RM_WITH_MARGIN) {
 			assert(bt_last == BT_NONE); // or you must ensure block type is preserved
 			src += src_rgba_line[0].data;
 			dst += src_rgba_line[0].data;
-			if (mode == BM_COLOUR_REMAP) src_mv += src_rgba_line[0].data;
+			if (mode == BM_COLOUR_REMAP || mode == BM_CRASH_REMAP) src_mv += src_rgba_line[0].data;
 			const int width_diff = si->sprite_width - bp->width;
 			effective_width = bp->width - (int) src_rgba_line[0].data;
 			const int delta_diff = (int) src_rgba_line[1].data - width_diff;
@@ -377,10 +377,38 @@ bmcr_alpha_blend_single:
 					dst->data = _mm_cvtsi128_si32(DarkenTwoPixels(srcABCD, dstABCD, DARKEN_PARAM_1, DARKEN_PARAM_2));
 				}
 				break;
+
+			case BM_CRASH_REMAP:
+				for (uint x = (uint) bp->width; x > 0; x--) {
+					if (src_mv->m == 0) {
+						if (src->a != 0) {
+							uint8 g = MakeDark(src->r, src->g, src->b);
+							*dst = ComposeColourRGBA(g, g, g, src->a, *dst);
+						}
+					} else {
+						uint r = remap[src_mv->m];
+						if (r != 0) *dst = ComposeColourPANoCheck(this->AdjustBrightness(this->LookupColourInPalette(r), src_mv->v), src->a, *dst);
+					}
+					src_mv++;
+					dst++;
+					src++;
+				}
+				break;
+
+			case BM_BLACK_REMAP:
+				for (uint x = (uint) bp->width; x > 0; x--) {
+					if (src->a != 0) {
+						*dst = Colour(0, 0, 0);
+					}
+					src_mv++;
+					dst++;
+					src++;
+				}
+				break;
 		}
 
 next_line:
-		if (mode == BM_COLOUR_REMAP) src_mv_line += si->sprite_width;
+		if (mode == BM_COLOUR_REMAP || mode == BM_CRASH_REMAP) src_mv_line += si->sprite_width;
 		src_rgba_line = (const Colour*) ((const byte*) src_rgba_line + si->sprite_line_size);
 		dst_line += bp->pitch;
 	}
@@ -429,6 +457,8 @@ bm_normal:
 				Draw<BM_COLOUR_REMAP, RM_WITH_MARGIN, BT_NONE, true>(bp, zoom); return;
 			}
 		case BM_TRANSPARENT:  Draw<BM_TRANSPARENT, RM_NONE, BT_NONE, true>(bp, zoom); return;
+		case BM_CRASH_REMAP:  Draw<BM_CRASH_REMAP, RM_NONE, BT_NONE, true>(bp, zoom); return;
+		case BM_BLACK_REMAP:  Draw<BM_BLACK_REMAP, RM_NONE, BT_NONE, true>(bp, zoom); return;
 	}
 }
 #endif /* FULL_ANIMATION */

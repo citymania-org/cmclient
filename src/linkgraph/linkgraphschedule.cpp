@@ -1,4 +1,4 @@
-/* $Id: linkgraphschedule.cpp 26347 2014-02-16 18:42:59Z fonsinchen $ */
+/* $Id: linkgraphschedule.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "demands.h"
 #include "mcf.h"
 #include "flowmapper.h"
+
+#include "../safeguards.h"
 
 /**
  * Start the next job in the schedule.

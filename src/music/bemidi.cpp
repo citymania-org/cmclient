@@ -1,4 +1,4 @@
-/* $Id: bemidi.cpp 22410 2011-05-02 16:14:23Z rubidium $ */
+/* $Id: bemidi.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 
 /* BeOS System Includes */
 #include <MidiSynthFile.h>
+
+#include "../safeguards.h"
 
 /** The file we're playing. */
 static BMidiSynthFile midiSynthFile;

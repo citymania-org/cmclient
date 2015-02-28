@@ -1,4 +1,4 @@
-/* $Id: rail.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: rail.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "company_func.h"
 #include "company_base.h"
 #include "engine_base.h"
+
+#include "safeguards.h"
 
 /* XXX: Below 3 tables store duplicate data. Maybe remove some? */
 /* Maps a trackdir to the bit that stores its status in the map arrays, in the

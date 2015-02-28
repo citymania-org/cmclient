@@ -1,4 +1,4 @@
-/* $Id: math_func.cpp 25347 2013-06-09 12:50:33Z fonsinchen $ */
+/* $Id: math_func.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "../stdafx.h"
 #include "math_func.hpp"
+
+#include "../safeguards.h"
 
 /**
  * Compute least common multiple (lcm) of arguments \a a and \a b, the smallest

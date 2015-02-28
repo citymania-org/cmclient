@@ -1,4 +1,4 @@
-/* $Id: npf.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: npf.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,8 @@
 #include "../pathfinder_type.h"
 #include "../follow_track.hpp"
 #include "aystar.h"
+
+#include "../../safeguards.h"
 
 static const uint NPF_HASH_BITS = 12; ///< The size of the hash used in pathfinding. Just changing this value should be sufficient to change the hash size. Should be an even value.
 /* Do no change below values */

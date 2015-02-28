@@ -1,4 +1,4 @@
-/* $Id: rail_map.h 24367 2012-07-01 23:12:50Z michi_cc $ */
+/* $Id: rail_map.h 26878 2014-09-21 11:23:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -525,7 +525,7 @@ static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 	_m[t].m3 = r;
 	_m[t].m4 = 0;
 	_m[t].m5 = RAIL_TILE_NORMAL << 6 | b;
-	SB(_m[t].m6, 2, 4, 0);
+	SB(_me[t].m6, 2, 4, 0);
 	_me[t].m7 = 0;
 }
 
@@ -538,7 +538,7 @@ static inline void MakeRailDepot(TileIndex t, Owner o, DepotID did, DiagDirectio
 	_m[t].m3 = r;
 	_m[t].m4 = 0;
 	_m[t].m5 = RAIL_TILE_DEPOT << 6 | d;
-	SB(_m[t].m6, 2, 4, 0);
+	SB(_me[t].m6, 2, 4, 0);
 	_me[t].m7 = 0;
 }
 
