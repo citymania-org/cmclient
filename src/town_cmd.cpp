@@ -1341,7 +1341,7 @@ static bool CanGrowTownInDirection(TileIndex tile, DiagDirection dir) {
  * Returns "growth" if a house was built, or no if the build failed.
  * @param t town to inquiry
  * @param tile to inquiry
- * @return something other than zero(0) if town expansion was possible
+ * @return something other than zero(0)if town expansion was possible
  */
 static int GrowTownAtRoad(Town *t, TileIndex tile)
 {
@@ -1380,7 +1380,7 @@ static int GrowTownAtRoad(Town *t, TileIndex tile)
 		 * and return if no more road blocks available */
 		if (IsValidDiagDirection(target_dir)) cur_rb &= ~DiagDirToRoadBits(ReverseDiagDir(target_dir));
 		if (cur_rb == ROAD_NONE) {
-			return (_grow_town_result == GROWTH_SUCCEED);
+			return _grow_town_result;
 		}
 
 		if (IsTileType(tile, MP_TUNNELBRIDGE)) {
@@ -1408,7 +1408,7 @@ static int GrowTownAtRoad(Town *t, TileIndex tile)
 		if (IsTileType(tile, MP_ROAD) && !IsRoadDepot(tile) && HasTileRoadType(tile, ROADTYPE_ROAD)) {
 			/* Don't allow building over roads of other cities */
 			if (IsRoadOwner(tile, ROADTYPE_ROAD, OWNER_TOWN) && Town::GetByTile(tile) != t) {
-				_grow_town_result = GROWTH_SEARCH_STOPPED;
+				_grow_town_result = GROWTH_SUCCEED;
 			} else if (IsRoadOwner(tile, ROADTYPE_ROAD, OWNER_NONE) && _game_mode == GM_EDITOR) {
 				/* If we are in the SE, and this road-piece has no town owner yet, it just found an
 				 * owner :) (happy happy happy road now) */
@@ -1442,7 +1442,7 @@ static RoadBits GenRandomRoadBits()
 /**
  * Grow the town
  * @param t town to grow
- * @return true iff something was built (house, road or bridge)
+ * @return true iff a house was built
  */
 static bool GrowTown(Town *t)
 {
