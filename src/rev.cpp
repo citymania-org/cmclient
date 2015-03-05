@@ -1,4 +1,4 @@
-/* $Id: rev.cpp.in 26440 2014-04-01 18:33:16Z frosch $ */
+/* $Id: rev.cpp.in 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "core/bitmath_func.hpp"
 #include "rev.h"
+
+#include "safeguards.h"
 
 /**
  * Is this version of OpenTTD a release version?
@@ -37,7 +39,7 @@ bool IsReleasedVersion()
  * norev000 is for non-releases that are made on systems without
  * subversion or sources that are not a checkout of subversion.
  */
-const char _openttd_revision[] = "1.4.0";
+const char _openttd_revision[] = "h318731efM-openttd";
 
 /**
  * The text version of OpenTTD's build date.
@@ -55,7 +57,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
  * (compiling from sources without any version control software)
  * and 2 is for modified revision.
  */
-const byte _openttd_revision_modified = 0;
+const byte _openttd_revision_modified = 2;
 
 /**
  * The NewGRF revision of OTTD:
@@ -70,11 +72,11 @@ const byte _openttd_revision_modified = 0;
  * final release will always have a lower version number than the released
  * version, thus making comparisons on specific revisions easy.
  */
-const uint32 _openttd_newgrf_version = 1 << 28 | 4 << 24 | 0 << 20 | 1 << 19 | (26440 & ((1 << 19) - 1));
+const uint32 _openttd_newgrf_version = 1 << 28 | 5 << 24 | 0 << 20 | 0 << 19 | (0 & ((1 << 19) - 1));
 
 #ifdef __MORPHOS__
 /**
  * Variable used by MorphOS to show the version.
  */
-extern const char morphos_versions_tag[] = "$VER: OpenTTD 1.4.0 (02.04.14) OpenTTD Team [MorphOS, PowerPC]";
+extern const char morphos_versions_tag[] = "$VER: OpenTTD h318731efM-openttd (05.03.15) OpenTTD Team [MorphOS, PowerPC]";
 #endif
