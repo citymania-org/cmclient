@@ -3115,8 +3115,8 @@ calc_heightdiff_single_direction:;
 		case VPM_A_B_LINE: { // drag an A to B line
 			TileIndex t0 = TileVirtXY(sx, sy);
 			TileIndex t1 = TileVirtXY(x, y);
-			uint dx = Delta(TileX(t0), TileX(t1)) + 1;
-			uint dy = Delta(TileY(t0), TileY(t1)) + 1;
+			uint dx = Delta(TileX(t0), TileX(t1));
+			uint dy = Delta(TileY(t0), TileY(t1));
 			byte index = 0;
 			uint64 params[5];
 			memset( params, 0, sizeof( params ) );
@@ -3125,24 +3125,24 @@ calc_heightdiff_single_direction:;
 			 * row/column, change the type to 'line' to get proper calculation for height */
 			style = (HighLightStyle)_thd.next_drawstyle;
 			if (style & HT_RECT) {
-				if (dx == 1) {
+				if (dx == 0) {
 					style = HT_LINE | HT_DIR_Y;
-				} else if (dy == 1) {
+				} else if (dy == 0) {
 					style = HT_LINE | HT_DIR_X;
 				}
 			}
 
 			int heightdiff = 0;
 
-			if (dx != 1 || dy != 1) {
+			if (dx != 0 || dy != 0) {
 				heightdiff = CalcHeightdiff(style, 0, t0, t1);
 				params[index++] = DistanceManhattan(t0, t1);
 				params[index++] = sqrtl(dx * dx + dy * dy); //DistanceSquare does not like big numbers
-				
 			} else {
-				index += 2;
+				params[index++] = 0;
+				params[index++] = 0;
 			}
-			
+
 			params[index++] = DistanceFromEdge(t1);
 			params[index++] = GetTileMaxZ(t1) / TILE_HEIGHT * TILE_HEIGHT_STEP;
 			params[index++] = heightdiff;
@@ -3150,7 +3150,7 @@ calc_heightdiff_single_direction:;
 			GuiShowTooltips(_thd.GetCallbackWnd(),STR_MEASURE_DIST_HEIGHTDIFF, index, params, TCC_LEFT_CLICK);
 			break;
 		}
-		
+
 		case VPM_X_AND_Y_LIMITED: // Drag an X by Y constrained rect area.
 			limit = (_thd.sizelimit - 1) * TILE_SIZE;
 			x = sx + Clamp(x - sx, -limit, limit);
