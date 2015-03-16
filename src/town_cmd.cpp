@@ -825,30 +825,28 @@ static void DoRegularFunding(Town *t)
 	if (!t->fund_regularly && !t->do_massfund)
 		return;
 
-	if (_local_company == COMPANY_SPECTATOR)
+    if (!t->do_massfund && t->fund_buildings_months > 0)
+        return;
+
+    if (_local_company == COMPANY_SPECTATOR)
+        return;
+
+    if (CB_Enabled() && !t->growing)
+        return;
+
+    if (t->grow_counter == 0)
+        return;
+
+	// do massfund only if grow_counter is max, but do regular even if it is not
+	// (that requires town not to be funded already)
+	if (t->grow_counter < (t->growth_rate & (~TOWN_GROW_RATE_CUSTOM)) &&
+		(!t->fund_regularly || t->fund_buildings_months > 0))
 		return;
 
-	if (CB_Enabled() && !t->growing)
-		return;
-
-	uint16 gr = (t->growth_rate & ~TOWN_GROW_RATE_CUSTOM);
-
-	// Funding with grow_counter == 1 doesn't speed up next house building,
-	// so trying to avoid it. This means no powerfunding with gr <= 1, and no
-	// regular funding with grow_counter == 1 unless gr is also 1
-	// (we need to fund anyway even if it doesn't speed up next house)
-	// And in case town is not growing ignore grow_counter and growth_rate
-	// completely (it will start growing once we fund it)
-	bool not_growing = !HasBit(t->flags, TOWN_IS_GROWING);
-	if ((t->fund_regularly && t->fund_buildings_months == 0 &&
-	    	((t->grow_counter > 0 && (t->grow_counter > 1 || gr == 1)) || not_growing)) ||
-		(t->do_massfund && gr > 1 && (t->grow_counter == gr || not_growing))) {
-
-		CompanyByte old = _current_company;
-		_current_company = _local_company;
-		DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION);
-		_current_company = old;
-	}
+    CompanyByte old = _current_company;
+    _current_company = _local_company;
+    DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION);
+    _current_company = old;
 }
 
 static void DoRegularAdvertising(Town *t) {
@@ -858,8 +856,9 @@ static void DoRegularAdvertising(Town *t) {
 	if (t->ad_ref_goods_entry == NULL) {
 		// Pick as ref station and cargo with min rating
 		const Station *st;
+		fprintf(stderr, "searching ref %d %d\n", (int)_current_company, (int)_local_company);
 		FOR_ALL_STATIONS(st) {
-			if (st->owner == _local_company && DistanceManhattan(t->xy, st->xy) <= 20) {
+			if (st->town == t && st->owner == _local_company) {
 				for (CargoID i = 0; i < NUM_CARGO; i++)
 					if (st->goods[i].HasRating() && (t->ad_ref_goods_entry == NULL ||
 					    	t->ad_ref_goods_entry->rating < st->goods[i].rating)) {

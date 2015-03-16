@@ -329,9 +329,6 @@ static void ShowTownAuthorityWindow(uint town)
 	AllocateWindowDescFront<TownAuthorityWindow>(&_town_authority_desc, town);
 }
 
-static int TownTicksToDays(int ticks) {
- 	return (ticks * TOWN_GROWTH_TICKS + DAY_TICKS / 2) / DAY_TICKS;
-}
 
 /* Town view window. */
 struct TownViewWindow : Window {
@@ -444,7 +441,7 @@ public:
 		}
 
 		if (HasBit(this->town->flags, TOWN_IS_GROWING)) {
-			SetDParam(0, TownTicksToDays((this->town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1));
+			SetDParam(0, ((this->town->growth_rate & (~TOWN_GROW_RATE_CUSTOM)) * TOWN_GROWTH_TICKS + DAY_TICKS) / DAY_TICKS);
 			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, this->town->fund_buildings_months == 0 ? STR_TOWN_VIEW_TOWN_GROWS_EVERY : STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED);
 		} else {
 			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_TOWN_GROW_STOPPED);
@@ -1288,9 +1285,8 @@ void ShowFoundTownWindow()
 	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
 	AllocateWindowDescFront<FoundTownWindow>(&_found_town_desc, 0);
 }
-
 //CB
-void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line) {
+void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line){
 	//real pop and rating
 	SetDParam(0, town->cache.potential_pop);
 	SetDParam(1, town->ratings[_current_company]);
@@ -1298,10 +1294,10 @@ void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line) {
 	//town stats
 	int grow_rate = 0;
 	if(town->growth_rate == TOWN_GROW_RATE_CUSTOM_NONE) grow_rate = 0;
-	else grow_rate = TownTicksToDays((town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1);
+	else grow_rate = ((town->growth_rate & (~TOWN_GROW_RATE_CUSTOM)) * TOWN_GROWTH_TICKS + DAY_TICKS) / DAY_TICKS;
 
 	SetDParam(0, grow_rate);
-	SetDParam(1, !(town->growth_rate & TOWN_GROW_RATE_CUSTOM) ? TownTicksToDays(town->grow_counter + 1) : -1);
+	SetDParam(1, ((town->growth_rate & (TOWN_GROW_RATE_CUSTOM)) == 0) ? ((town->grow_counter & (~TOWN_GROW_RATE_CUSTOM)) * TOWN_GROWTH_TICKS + DAY_TICKS) / DAY_TICKS : -1);
 	SetDParam(2, town->time_until_rebuild);
 	SetDParam(3, HasBit(town->flags, TOWN_IS_GROWING) ? 1 : 0);
 	SetDParam(4, town->fund_buildings_months);
@@ -1345,7 +1341,7 @@ public:
 		this->town = Town::Get(window_number);
 		this->InitNested(window_number);
 		if(this->town->fund_regularly) this->LowerWidget(WID_CB_FUND_REGULAR);
-		if(this->town->do_massfund) this->LowerWidget(WID_CB_POWERFUND);
+		if(this->town->do_massfund) this->LowerWidget(WID_CB_MASSFUND);
 		if(this->town->advertise_regularly) this->LowerWidget(WID_CB_ADVERT_REGULAR);
 	}
 
@@ -1368,10 +1364,11 @@ public:
 				break;
 			case WID_CB_FUND_REGULAR:
 				this->town->fund_regularly = !this->town->fund_regularly;
+				// if(this->town->fund_regularly) this->town->fund_regularly = TownExecuteAction(this->town, HK_FUND);
 				this->SetWidgetLoweredState(widget, this->town->fund_regularly);
 				this->SetWidgetDirty(widget);
 				break;
-			case WID_CB_POWERFUND:
+			case WID_CB_MASSFUND:
 				this->town->do_massfund = !this->town->do_massfund;
 				this->SetWidgetLoweredState(widget, this->town->do_massfund);
 				this->SetWidgetDirty(widget);
@@ -1616,9 +1613,9 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_ADVERT_REGULAR, STR_CB_ADVERT_REGULAR_TT),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_MASSFUND),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_POWERFUND, STR_CB_POWERFUND_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_MASSFUND),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 				EndContainer(),
