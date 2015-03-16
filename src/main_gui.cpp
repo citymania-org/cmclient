@@ -107,7 +107,7 @@ bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyl
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	w->SetDirty();
 
-	if (w->IsWidgetLowered(widget)) {
+	if (w->IsWidgetLowered(widget) && mode == _thd.place_mode) {
 		ResetObjectToPlace();
 		return false;
 	}
@@ -227,6 +227,7 @@ enum {
 	GHK_TOGGLE_INVISIBILITY = GHK_TOGGLE_TRANSPARENCY + 9,
 	GHK_TRANSPARENCY_TOOLBAR = GHK_TOGGLE_INVISIBILITY + 8,
 	GHK_TRANSPARANCY,
+	GHK_BORROW_ALL,
 	GHK_CHAT,
 	GHK_CHAT_ALL,
 	GHK_CHAT_COMPANY,
@@ -393,6 +394,10 @@ struct MainWindow : Window
 				ResetRestoreAllTransparency();
 				break;
 
+			case GHK_BORROW_ALL:
+				DoCommandP(0, 0, 1, CMD_INCREASE_LOAN | CMD_MSG(STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY));
+				break;
+
 #ifdef ENABLE_NETWORK
 			case GHK_CHAT: // smart chat; send to team if any, otherwise to all
 				if (_networking) {
@@ -465,6 +470,11 @@ struct MainWindow : Window
 		InvalidateWindowData(WC_MAIN_TOOLBAR, 0, data, true);
 	}
 
+	virtual void OnMouseOver(Point pt, int widget)
+	{
+		if (_game_mode != GM_MENU && _settings_client.gui.enable_extra_tooltips && pt.x != -1) GuiPrepareTooltipsExtra(this);
+	}
+
 	static HotkeyList hotkeys;
 };
 
@@ -511,6 +521,7 @@ static Hotkey global_hotkeys[] = {
 	Hotkey('8' | WKC_CTRL | WKC_SHIFT, "invisibility_catenary", GHK_TOGGLE_INVISIBILITY + 7),
 	Hotkey('X' | WKC_CTRL, "transparency_toolbar", GHK_TRANSPARENCY_TOOLBAR),
 	Hotkey('X', "toggle_transparency", GHK_TRANSPARANCY),
+	Hotkey(WKC_NONE, "borrow_all", GHK_BORROW_ALL),
 #ifdef ENABLE_NETWORK
 	Hotkey(_ghk_chat_keys, "chat", GHK_CHAT),
 	Hotkey(_ghk_chat_all_keys, "chat_all", GHK_CHAT_ALL),

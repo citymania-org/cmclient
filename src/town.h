@@ -15,10 +15,14 @@
 #include "viewport_type.h"
 #include "town_map.h"
 #include "subsidy_type.h"
+#include "openttd.h"
+#include "table/strings.h"
+#include "company_func.h"
 #include "newgrf_storage.h"
 #include "cargotype.h"
 #include "tilematrix_type.hpp"
 #include <list>
+#include <map>
 
 template <typename T>
 struct BuildingCounts {
@@ -45,6 +49,7 @@ extern TownPool _town_pool;
 struct TownCache {
 	uint32 num_houses;                        ///< Amount of houses
 	uint32 population;                        ///< Current population of people
+	uint32 potential_pop;                     ///< Potential population (if all houses are finished)
 	ViewportSign sign;                        ///< Location of name sign, UpdateVirtCoord updates this
 	PartOfSubsidyByte part_of_subsidy;        ///< Is this town a source/destination of a subsidy?
 	uint32 squared_town_zone_radius[HZB_END]; ///< UpdateTownRadius updates this given the house count
@@ -80,6 +85,28 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	TransportedCargoStat<uint16> received[NUM_TE];    ///< Cargo statistics about received cargotypes.
 	uint32 goal[NUM_TE];                              ///< Amount of cargo required for the town to grow.
 
+	StringID town_label;                ///< Label dependent on _local_company rating.
+	bool growing;                       //CB
+	/* amounts in storage */
+	int storage[NUM_CARGO];             //CB stored cargo
+	uint act_cargo[NUM_CARGO];          //CB delivered last month
+	uint new_act_cargo[NUM_CARGO];      //CB  delivered current month
+	bool delivered_enough[NUM_CARGO];   //CB
+	bool growing_by_chance;             ///< town growing due to 1/12 chance?
+	uint16 houses_skipped;              ///< number of failed house buildings with next counter reset
+	uint16 houses_skipped_prev;         ///< house_failures on start of previous month
+	uint16 houses_skipped_last_month;   ///< house_failures during last month
+	uint16 cycles_skipped;              ///< number of house building cycles skipped due to placement failure
+	uint16 cycles_skipped_prev;
+	uint16 cycles_skipped_last_month;
+	uint16 cb_houses_removed;            ///< houses removed by cb server (excluding ones when town is not growing)
+	uint16 cb_houses_removed_prev;       ///< houses removed by cb server on start of previous month
+	uint16 cb_houses_removed_last_month; ///< houses removed by cb server during last month
+	uint houses_construction;            ///< number of houses currently being built
+	uint houses_reconstruction;          ///< number of houses currently being rebuilt
+	uint houses_demolished;              ///< number of houses demolished this month
+	CompanyMask fund_regularly;          ///< funds buildings regularly when previous fund ends
+
 	char *text; ///< General text with additional information.
 
 	inline byte GetPercentTransported(CargoID cid) const { return this->supplied[cid].old_act * 256 / (this->supplied[cid].old_max + 1); }
@@ -112,6 +139,30 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	~Town();
 
 	void InitializeLayout(TownLayout layout);
+
+	void UpdateLabel();
+
+	/* Returns the correct town label, based on rating. */
+	//FORCEINLINE StringID Label() const{
+	StringID Label() const{
+		if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
+			return STR_VIEWPORT_TOWN_POP_VERY_POOR_RATING + this->town_label;
+		}
+		else {
+			return _settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN;
+		}
+	}
+
+	/* Returns the correct town small label, based on rating. */
+	//FORCEINLINE StringID SmallLabel() const{
+	StringID SmallLabel() const{
+		if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
+			return STR_VIEWPORT_TOWN_TINY_VERY_POOR_RATING + this->town_label;
+		}
+		else {
+			return STR_VIEWPORT_TOWN_TINY_WHITE;
+		}
+	}
 
 	/**
 	 * Calculate the max town noise.
@@ -194,6 +245,33 @@ uint GetMaskOfTownActions(int *nump, CompanyID cid, const Town *t);
 bool GenerateTowns(TownLayout layout);
 const CargoSpec *FindFirstCargoWithTownEffect(TownEffect effect);
 
+bool CB_Enabled();
+void CB_SetCB(bool cb);
+void CB_SetStorage(uint storage);
+void CB_SetRequirements(CargoID cargo, uint req, uint from, uint decay);
+uint CB_GetReq(CargoID cargo);
+uint CB_GetFrom(CargoID cargo);
+uint CB_GetDecay(CargoID cargo);
+int CB_GetTownReq(uint population, uint req, uint from, bool from_non_important, bool prev_month = false);
+uint CB_GetMaxTownStorage(Town *town, uint cargo);
+bool TownExecuteAction(const Town *town, uint action);
+
+enum TownGrowthTileState {
+	TGTS_NONE = 0,
+	TGTS_RH_REMOVED,
+	TGTS_NEW_HOUSE,
+	TGTS_RH_REBUILT,               // rebuilt and removed houses are also
+	TGTS_CB_HOUSE_REMOVED_NOGROW,  // new, so larger priority
+	TGTS_CYCLE_SKIPPED,
+	TGTS_HOUSE_SKIPPED,
+	TGTS_CB_HOUSE_REMOVED
+};
+
+extern std::map<TileIndex, TownGrowthTileState> _towns_growth_tiles_last_month;
+extern std::map<TileIndex, TownGrowthTileState> _towns_growth_tiles;
+
+void UpdateTownGrowthTile(TileIndex tile, TownGrowthTileState state);
+void ResetTownsGrowthTiles();
 
 /** Town actions of a company. */
 enum TownActions {

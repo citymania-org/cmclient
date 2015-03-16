@@ -2234,16 +2234,17 @@ static const NWidgetPart _nested_select_station_widgets[] = {
  * @tparam T The type of station to join with
  */
 template <class T>
-struct SelectStationWindow : Window {
+struct SelectStationWindow : WindowPopup {
 	CommandContainer select_station_cmd; ///< Command to build new station
 	TileArea area; ///< Location of new station
 	Scrollbar *vscroll;
 
 	SelectStationWindow(WindowDesc *desc, const CommandContainer &cmd, TileArea ta) :
-		Window(desc),
+		WindowPopup(desc, WPUT_WIDGET_RELATIVE),
 		select_station_cmd(cmd),
 		area(ta)
 	{
+		this->wpu_widget = WID_JS_PANEL;
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_JS_SCROLLBAR);
 		this->GetWidget<NWidgetCore>(WID_JS_CAPTION)->widget_data = T::EXPECTED_FACIL == FACIL_WAYPOINT ? STR_JOIN_WAYPOINT_CAPTION : STR_JOIN_STATION_CAPTION;

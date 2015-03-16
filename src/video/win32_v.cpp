@@ -1249,8 +1249,10 @@ void VideoDriver_Win32::MainLoop()
 			next_tick = cur_ticks + MILLISECONDS_PER_TICK;
 
 			bool old_ctrl_pressed = _ctrl_pressed;
+			bool old_alt_pressed = _alt_pressed;
 
 			_ctrl_pressed = _wnd.has_focus && GetAsyncKeyState(VK_CONTROL)<0;
+			_alt_pressed = _wnd.has_focus && GetAsyncKeyState(VK_MENU)<0;
 			_shift_pressed = _wnd.has_focus && GetAsyncKeyState(VK_SHIFT)<0;
 
 			/* determine which directional keys are down */

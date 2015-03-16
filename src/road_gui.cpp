@@ -11,7 +11,9 @@
 
 #include "stdafx.h"
 #include "gui.h"
+#include "cmd_helper.h"
 #include "window_gui.h"
+#include "station_func.h"
 #include "station_gui.h"
 #include "terraform_gui.h"
 #include "viewport_func.h"
@@ -211,6 +213,107 @@ void CcRoadStop(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 	}
 }
 
+
+static RoadBits FindRoadsToConnect(TileIndex tile) {
+	RoadBits bits = ROAD_NONE;
+	DiagDirection ddir;
+	// Prioritize roadbits that head in this direction
+	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
+		if (GetAnyRoadBits(cur_tile, ROADTYPE_ROAD, true) &
+			DiagDirToRoadBits(ReverseDiagDir(ddir)))
+		{
+			bits |= DiagDirToRoadBits(ddir);
+		}
+	}
+	if (bits != ROAD_NONE) {
+		return bits;
+	}
+	// Try to connect to any road passing by
+	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
+		if (HasTileRoadType(cur_tile, ROADTYPE_ROAD) && (GetTileType(cur_tile) == MP_ROAD) &&
+				(GetRoadTileType(cur_tile) == ROAD_TILE_NORMAL)) {
+			bits |= DiagDirToRoadBits(ddir);
+		}
+	}
+	return bits;
+}
+
+static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
+	if (bits < ROAD_SE) {
+		return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
+	}
+	return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
+}
+
+static DiagDirection TileFractCoordsToDiagDir() {
+	bool diag = (_tile_fract_coords.x + _tile_fract_coords.y) < 16;
+	if (_tile_fract_coords.x < _tile_fract_coords.y) {
+		return diag ? DIAGDIR_NE : DIAGDIR_SE;
+	}
+	return diag ? DIAGDIR_NW : DIAGDIR_SW;
+}
+/*
+ * Selects orientation for road object (depot, terminal station)
+ */
+static DiagDirection AutodetectRoadObjectDirection(TileIndex tile) {
+	RoadBits bits = FindRoadsToConnect(tile);
+	if (HasExactlyOneBit(bits)) {
+		return RoadBitsToDiagDir(bits);
+	}
+	if (bits == ROAD_NONE){
+		bits = ROAD_ALL;
+	}
+	RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir());
+	if (HasExactlyOneBit(frac_bits & bits)) {
+		return RoadBitsToDiagDir(frac_bits & bits);
+	}
+	frac_bits |= MirrorRoadBits(frac_bits);
+	if (HasExactlyOneBit(frac_bits & bits)) {
+		return RoadBitsToDiagDir(frac_bits & bits);
+	}
+	for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+		if (DiagDirToRoadBits(ddir) & bits) {
+			return ddir;
+		}
+	}
+	NOT_REACHED();
+}
+
+static bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
+	TILE_AREA_LOOP(tile, area) {
+		if (!HasTileRoadType(tile, ROADTYPE_ROAD)) continue;
+		if (GetTileType(tile) != MP_ROAD) continue;
+		if (GetRoadTileType(tile) != ROAD_TILE_NORMAL) continue;
+		if (GetRoadBits(tile, ROADTYPE_ROAD) & ~r) return false;
+	}
+	return true;
+}
+
+
+/*
+ * Automaticaly selects direction to use for road stop.
+ * @param area road stop area
+ * @return selected direction
+ */
+static DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
+	bool se_suits, ne_suits;
+
+	// Check which direction is available
+	// If both are not use SE, building will fail anyway
+	se_suits = CheckDriveThroughRoadStopDirection(area, ROAD_Y);
+	ne_suits = CheckDriveThroughRoadStopDirection(area, ROAD_X);
+	if (!ne_suits) return DIAGDIR_SE;
+	if (!se_suits) return DIAGDIR_NE;
+
+	// Build station along the longer direction
+	if (area.w > area.h) return DIAGDIR_NE;
+	if (area.w < area.h) return DIAGDIR_SE;
+
+	return AutodetectRoadObjectDirection(area.tile);
+}
+
 /**
  * Place a new road stop.
  * @param start_tile First tile of the area.
@@ -225,14 +328,23 @@ static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, u
 {
 	uint8 ddir = _road_station_picker_orientation;
 	SB(p2, 16, 16, INVALID_STATION); // no station to join
+	TileArea ta(start_tile, end_tile);
 
 	if (ddir >= DIAGDIR_END) {
-		SetBit(p2, 1); // It's a drive-through stop.
-		ddir -= DIAGDIR_END; // Adjust picker result to actual direction.
+		if (ddir < DIAGDIR_END + 2) {
+			SetBit(p2, 1); // It's a drive-through stop.
+			ddir -= DIAGDIR_END; // Adjust picker result to actual direction.
+		}
+		else if (ddir == DIAGDIR_END + 2) {
+			ddir = AutodetectRoadObjectDirection(start_tile);
+		}
+		else if (ddir == DIAGDIR_END + 3) {
+			SetBit(p2, 1); // It's a drive-through stop.
+			ddir = AutodetectDriveThroughRoadStopDirection(ta);
+		}
 	}
 	p2 |= ddir << 6; // Set the DiagDirecion into p2 bits 6 and 7.
 
-	TileArea ta(start_tile, end_tile);
 	CommandContainer cmdcont = { ta.tile, ta.w | ta.h << 8, p2, cmd, CcRoadStop, "" };
 	ShowSelectStationIfNeeded(cmdcont, ta);
 }
@@ -297,7 +409,7 @@ static bool RoadToolbar_CtrlChanged(Window *w)
 	if (w->IsWidgetDisabled(WID_ROT_REMOVE)) return false;
 
 	/* allow ctrl to switch remove mode only for these widgets */
-	for (uint i = WID_ROT_ROAD_X; i <= WID_ROT_AUTOROAD; i++) {
+	for (uint i = WID_ROT_ROAD_X; i <= WID_ROT_FULLROAD; i++) {
 		if (w->IsWidgetLowered(i)) {
 			ToggleRoadButton_Remove(w);
 			return true;
@@ -382,6 +494,7 @@ struct BuildRoadToolbarWindow : Window {
 			case WID_ROT_ROAD_X:
 			case WID_ROT_ROAD_Y:
 			case WID_ROT_AUTOROAD:
+			case WID_ROT_FULLROAD:
 				this->SetWidgetsDisabledState(!this->IsWidgetLowered(clicked_widget),
 						WID_ROT_REMOVE,
 						WID_ROT_ONE_WAY,
@@ -403,6 +516,16 @@ struct BuildRoadToolbarWindow : Window {
 		}
 	}
 
+	virtual void DrawWidget(const Rect &r, int widget) const
+	{
+		if (widget == WID_ROT_FULLROAD) {
+			Dimension d = GetSpriteSize(SPR_BLOT);
+			uint offset = this->IsWidgetLowered(WID_ROT_FULLROAD) ? 1 : 0;
+			DrawSprite(SPR_BLOT, PALETTE_TO_GREY, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset);
+		}
+	}
+
+
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		_remove_button_clicked = false;
@@ -420,6 +543,11 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_AUTOROAD:
 				HandlePlacePushButton(this, WID_ROT_AUTOROAD, _road_type_infos[_cur_roadtype].cursor_autoroad, HT_RECT);
+				this->last_started_action = widget;
+				break;
+
+			case WID_ROT_FULLROAD:
+				HandlePlacePushButton(this, WID_ROT_FULLROAD, _road_type_infos[_cur_roadtype].cursor_autoroad, HT_RECT);
 				this->last_started_action = widget;
 				break;
 
@@ -491,6 +619,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		DiagDirection ddir;
 		_remove_button_clicked = this->IsWidgetLowered(WID_ROT_REMOVE);
 		_one_way_button_clicked = this->IsWidgetLowered(WID_ROT_ONE_WAY);
 		switch (this->last_started_action) {
@@ -513,12 +642,21 @@ struct BuildRoadToolbarWindow : Window {
 				VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_PLACE_AUTOROAD);
 				break;
 
+			case WID_ROT_FULLROAD:
+				_place_road_flag = RF_NONE;
+				VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_PLACE_FULLROAD);
+				break;
+
 			case WID_ROT_DEMOLISH:
 				PlaceProc_DemolishArea(tile);
 				break;
 
 			case WID_ROT_DEPOT:
-				DoCommandP(tile, _cur_roadtype << 2 | _road_depot_orientation, 0,
+				ddir = _road_depot_orientation;
+				if (ddir == DIAGDIR_NW + 1) {
+					ddir = AutodetectRoadObjectDirection(tile);
+				}
+				DoCommandP(tile, _cur_roadtype << 2 | ddir, 0,
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(_road_type_infos[_cur_roadtype].err_depot), CcRoadDepot);
 				break;
 
@@ -596,6 +734,21 @@ struct BuildRoadToolbarWindow : Window {
 
 				break;
 
+			case DDSP_PLACE_FULLROAD:
+				/* For autoroad we need to update the
+				 * direction of the road */
+				if (_thd.size.x > _thd.size.y || (_thd.size.x == _thd.size.y &&
+						( (_tile_fract_coords.x < _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) < 16) ||
+						(_tile_fract_coords.x > _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) > 16) ))) {
+					/* Set dir = X */
+					_place_road_flag &= ~RF_DIR_Y;
+				}
+				else {
+					/* Set dir = Y */
+					_place_road_flag |= RF_DIR_Y;
+				}
+				break;
+
 			default:
 				break;
 		}
@@ -627,6 +780,16 @@ struct BuildRoadToolbarWindow : Window {
 					_place_road_flag = (RoadFlags)((_place_road_flag & RF_DIR_Y) ? (_place_road_flag & 0x07) : (_place_road_flag >> 3));
 
 					DoCommandP(start_tile, end_tile, _place_road_flag | (_cur_roadtype << 3) | (_one_way_button_clicked << 5),
+							_remove_button_clicked ?
+							CMD_REMOVE_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_road) :
+							CMD_BUILD_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_build_road), CcPlaySound1D);
+					break;
+
+				case DDSP_PLACE_FULLROAD:
+					DoCommandP(start_tile, end_tile,
+							_place_road_flag | (_cur_roadtype << 3) |
+								(_one_way_button_clicked << 5) | (1 << 6) |
+								(start_tile > end_tile ? 1 : 2),  // always build full roads
 							_remove_button_clicked ?
 							CMD_REMOVE_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_road) :
 							CMD_BUILD_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_build_road), CcPlaySound1D);
@@ -706,6 +869,7 @@ static Hotkey roadtoolbar_hotkeys[] = {
 	Hotkey('6', "bus_station", WID_ROT_BUS_STATION),
 	Hotkey('7', "truck_station", WID_ROT_TRUCK_STATION),
 	Hotkey('8', "oneway", WID_ROT_ONE_WAY),
+	Hotkey('9', "fullroad", WID_ROT_FULLROAD),
 	Hotkey('B', "bridge", WID_ROT_BUILD_BRIDGE),
 	Hotkey('T', "tunnel", WID_ROT_BUILD_TUNNEL),
 	Hotkey('R', "remove", WID_ROT_REMOVE),
@@ -738,6 +902,8 @@ static const NWidgetPart _nested_build_road_widgets[] = {
 		NWidget(WWT_PANEL, COLOUR_DARK_GREEN, -1), SetMinimalSize(0, 22), SetFill(1, 1), EndContainer(),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_ONE_WAY),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_ROAD_ONE_WAY, STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_ONE_WAY_ROAD),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_FULLROAD),
+						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOROAD, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_FULLROAD),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_BUILD_BRIDGE),
 						SetFill(0, 1), SetMinimalSize(43, 22), SetDataTip(SPR_IMG_BRIDGE, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_BRIDGE),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_BUILD_TUNNEL),
@@ -864,7 +1030,7 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 		this->LowerWidget(_road_depot_orientation + WID_BROD_DEPOT_NE);
 		if ( _cur_roadtype == ROADTYPE_TRAM) {
 			this->GetWidget<NWidgetCore>(WID_BROD_CAPTION)->widget_data = STR_BUILD_DEPOT_TRAM_ORIENTATION_CAPTION;
-			for (int i = WID_BROD_DEPOT_NE; i <= WID_BROD_DEPOT_NW; i++) this->GetWidget<NWidgetCore>(i)->tool_tip = STR_BUILD_DEPOT_TRAM_ORIENTATION_SELECT_TOOLTIP;
+			for (int i = WID_BROD_DEPOT_NE; i <= WID_BROD_DEPOT_AUTO; i++) this->GetWidget<NWidgetCore>(i)->tool_tip = STR_BUILD_DEPOT_TRAM_ORIENTATION_SELECT_TOOLTIP;
 		}
 
 		this->FinishInitNested(TRANSPORT_ROAD);
@@ -892,6 +1058,7 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 			case WID_BROD_DEPOT_NE:
 			case WID_BROD_DEPOT_SW:
 			case WID_BROD_DEPOT_SE:
+			case WID_BROD_DEPOT_AUTO:
 				this->RaiseWidget(_road_depot_orientation + WID_BROD_DEPOT_NE);
 				_road_depot_orientation = (DiagDirection)(widget - WID_BROD_DEPOT_NE);
 				this->LowerWidget(_road_depot_orientation + WID_BROD_DEPOT_NE);
@@ -930,6 +1097,9 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		EndContainer(),
+		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),
@@ -1031,6 +1201,8 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 			case WID_BROS_STATION_NW:
 			case WID_BROS_STATION_X:
 			case WID_BROS_STATION_Y:
+			case WID_BROS_STATION_AUTO:
+			case WID_BROS_STATION_XY_AUTO:
 				this->RaiseWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
 				_road_station_picker_orientation = (DiagDirection)(widget - WID_BROS_STATION_NE);
 				this->LowerWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
@@ -1082,6 +1254,13 @@ static const NWidgetPart _nested_rv_station_picker_widgets[] = {
 			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+			NWidget(NWID_SPACER), SetFill(1, 0),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(NWID_SPACER), SetFill(1, 0),
+		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 1),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
 			NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetMinimalSize(140, 14), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL),
@@ -1113,6 +1292,6 @@ static void ShowRVStationPicker(Window *parent, RoadStopType rs)
 
 void InitializeRoadGui()
 {
-	_road_depot_orientation = DIAGDIR_NW;
-	_road_station_picker_orientation = DIAGDIR_NW;
+	_road_depot_orientation = (DiagDirection)(DIAGDIR_NW + 1);
+	_road_station_picker_orientation = (DiagDirection)(DIAGDIR_END + 3);
 }

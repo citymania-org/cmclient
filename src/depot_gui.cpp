@@ -28,7 +28,7 @@
 #include "vehiclelist.h"
 #include "order_backup.h"
 #include "zoom_func.h"
-
+#include "hotkeys.h"
 #include "widgets/depot_widget.h"
 
 #include "table/strings.h"
@@ -80,34 +80,6 @@ static const NWidgetPart _nested_train_depot_widgets[] = {
 		NWidget(WWT_RESIZEBOX, COLOUR_GREY),
 	EndContainer(),
 };
-
-static WindowDesc _train_depot_desc(
-	WDP_AUTO, "depot_train", 362, 123,
-	WC_VEHICLE_DEPOT, WC_NONE,
-	0,
-	_nested_train_depot_widgets, lengthof(_nested_train_depot_widgets)
-);
-
-static WindowDesc _road_depot_desc(
-	WDP_AUTO, "depot_roadveh", 316, 97,
-	WC_VEHICLE_DEPOT, WC_NONE,
-	0,
-	_nested_train_depot_widgets, lengthof(_nested_train_depot_widgets)
-);
-
-static WindowDesc _ship_depot_desc(
-	WDP_AUTO, "depot_ship", 306, 99,
-	WC_VEHICLE_DEPOT, WC_NONE,
-	0,
-	_nested_train_depot_widgets, lengthof(_nested_train_depot_widgets)
-);
-
-static WindowDesc _aircraft_depot_desc(
-	WDP_AUTO, "depot_aircraft", 332, 99,
-	WC_VEHICLE_DEPOT, WC_NONE,
-	0,
-	_nested_train_depot_widgets, lengthof(_nested_train_depot_widgets)
-);
 
 extern void DepotSortList(VehicleList *list);
 
@@ -295,9 +267,16 @@ struct DepotWindow : Window {
 						this->sel, EIT_IN_DEPOT, free_wagon ? 0 : this->hscroll->GetPosition(), this->vehicle_over);
 
 				/* Length of consist in tiles with 1 fractional digit (rounded up) */
-				SetDParam(0, CeilDiv(u->gcache.cached_total_length * 10, TILE_SIZE));
-				SetDParam(1, 1);
-				DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, y + (this->resize.step_height - FONT_HEIGHT_SMALL) / 2, STR_TINY_BLACK_DECIMAL, TC_FROMSTRING, SA_RIGHT); // Draw the counter
+				if (_settings_client.gui.old_depot_train_length_calc) {
+					SetDParam(0, CeilDiv(u->gcache.cached_total_length, 8));
+					SetDParam(1, 1);
+					DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, y + (this->resize.step_height - FONT_HEIGHT_SMALL) / 2, STR_TINY_BLACK_COMA, TC_FROMSTRING, SA_RIGHT); // Draw the counter
+				}
+				else {
+					SetDParam(0, CeilDiv(u->gcache.cached_total_length * 10, TILE_SIZE));
+					SetDParam(1, 1);
+					DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, y + (this->resize.step_height - FONT_HEIGHT_SMALL) / 2, STR_TINY_BLACK_DECIMAL, TC_FROMSTRING, SA_RIGHT); // Draw the counter
+				}
 				break;
 			}
 
@@ -995,7 +974,23 @@ struct DepotWindow : Window {
 
 		return ES_NOT_HANDLED;
 	}
+
+	virtual EventState OnHotkey(int hotkey)
+	{
+		if (this->owner != _local_company) return ES_NOT_HANDLED;
+		return Window::OnHotkey(hotkey);
+	}
+
+	static HotkeyList hotkeys;
 };
+
+static Hotkey depot_hotkeys[] = {
+	Hotkey(WKC_CTRL | 'F', "depot_go_all", WID_D_START_ALL),
+	Hotkey('R', "depot_build_vehicle", WID_D_BUILD),
+	Hotkey(WKC_NONE, "depot_clone_vehicle", WID_D_CLONE),
+	HOTKEY_LIST_END
+};
+HotkeyList DepotWindow::hotkeys("depot_gui", depot_hotkeys);
 
 static void DepotSellAllConfirmationCallback(Window *win, bool confirmed)
 {
@@ -1006,6 +1001,38 @@ static void DepotSellAllConfirmationCallback(Window *win, bool confirmed)
 		DoCommandP(tile, vehtype, 0, CMD_DEPOT_SELL_ALL_VEHICLES);
 	}
 }
+
+static WindowDesc _train_depot_desc(
+	WDP_AUTO, "depot_train", 362, 123,
+	WC_VEHICLE_DEPOT, WC_NONE,
+	0,
+	_nested_train_depot_widgets, lengthof(_nested_train_depot_widgets),
+	&DepotWindow::hotkeys
+);
+
+static WindowDesc _road_depot_desc(
+	WDP_AUTO, "depot_roadveh", 316, 97,
+	WC_VEHICLE_DEPOT, WC_NONE,
+	0,
+	_nested_train_depot_widgets, lengthof(_nested_train_depot_widgets),
+	&DepotWindow::hotkeys
+);
+
+static WindowDesc _ship_depot_desc(
+	WDP_AUTO, "depot_ship", 306, 99,
+	WC_VEHICLE_DEPOT, WC_NONE,
+	0,
+	_nested_train_depot_widgets, lengthof(_nested_train_depot_widgets),
+	&DepotWindow::hotkeys
+);
+
+static WindowDesc _aircraft_depot_desc(
+	WDP_AUTO, "depot_aircraft", 332, 99,
+	WC_VEHICLE_DEPOT, WC_NONE,
+	0,
+	_nested_train_depot_widgets, lengthof(_nested_train_depot_widgets),
+	&DepotWindow::hotkeys
+);
 
 /**
  * Opens a depot window

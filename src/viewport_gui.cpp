@@ -154,6 +154,11 @@ public:
 		/* Only handle zoom message if intended for us (msg ZOOM_IN/ZOOM_OUT) */
 		HandleZoomMessage(this, this->viewport, WID_EV_ZOOM_IN, WID_EV_ZOOM_OUT);
 	}
+
+	virtual void OnMouseOver(Point pt, int widget)
+	{
+		if (_settings_client.gui.enable_extra_tooltips && pt.x != -1) GuiPrepareTooltipsExtra(this);
+	}
 };
 
 static WindowDesc _extra_view_port_desc(

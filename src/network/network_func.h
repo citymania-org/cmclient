@@ -39,7 +39,7 @@ extern uint8 _network_reconnect;
 extern StringList _network_bind_list;
 extern StringList _network_host_list;
 extern StringList _network_ban_list;
-
+extern bool _novarole;
 byte NetworkSpectatorCount();
 void NetworkUpdateClientName();
 bool NetworkCompanyHasClients(CompanyID company);
@@ -58,6 +58,7 @@ void NetworkClientConnectGame(NetworkAddress address, CompanyID join_as, const c
 void NetworkClientRequestMove(CompanyID company, const char *pass = "");
 void NetworkClientSendRcon(const char *password, const char *command);
 void NetworkClientSendChat(NetworkAction action, DestType type, int dest, const char *msg, int64 data = 0);
+void NetworkClientSendChatToServer(const char * msg);
 bool NetworkClientPreferTeamChat(const NetworkClientInfo *cio);
 bool NetworkCompanyIsPassworded(CompanyID company_id);
 bool NetworkMaxCompaniesReached();

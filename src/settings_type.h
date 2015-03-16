@@ -79,6 +79,15 @@ struct GUISettings {
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
 	bool   show_finances;                    ///< show finances at end of year
 	bool   sg_new_nonstop;                   ///< ttdpatch compatible nonstop handling read from pre v93 savegames
+	bool   enable_ctrl_click_start_stop;     ///< allow ctrl+click to start or stop vehicles
+	uint8  goto_shortcuts_ctrl_lclick;       ///< goto action shortcut CTRL+LEFT-CLICK
+	uint8  goto_shortcuts_shift_lclick;      ///< goto action shortcut SHIFT+LEFT-CLICK
+	uint8  goto_shortcuts_ctrlshift_lclick;  ///< goto action shortcut CTRL+SHIFT+LEFT-CLICK
+	uint8  goto_shortcuts_alt_lclick;        ///< goto action shortcut ALT+LEFT-CLICK
+	uint8  goto_shortcuts_altshift_lclick;   ///< goto action shortcut ALT+SHIFT+LEFT-CLICK
+	uint8  goto_shortcuts_altctrl_lclick;    ///< goto action shortcut ALT+CTRL+LEFT-CLICK
+	bool   auto_noload_on_transfer;          ///< automatically set no-loading when ordering to transfer all cargo
+	bool   auto_noload_on_unloadall;         ///< automatically set no-loading when ordering to unload all cargo
 	bool   new_nonstop;                      ///< ttdpatch compatible nonstop handling
 	uint8  stop_location;                    ///< what is the default stop location of trains?
 	uint8  auto_scrolling;                   ///< scroll when moving mouse to the edge (see #ViewportAutoscrolling)
@@ -157,6 +166,11 @@ struct GUISettings {
 	uint8  settings_restriction_mode;        ///< selected restriction mode in adv. settings GUI. @see RestrictionMode
 	bool   newgrf_show_old_versions;         ///< whether to show old versions in the NewGRF list
 	uint8  newgrf_default_palette;           ///< default palette to use for NewGRFs without action 14 palette information
+
+	bool   old_depot_train_length_calc;      ///< display vehicle length in whole numbers - old style
+	uint8  cb_distance_check;                ///< zoning cb distance
+	bool   enable_extra_tooltips;            ///< enable extra tooltips when hovering over various elements
+	bool   polyrail_double_click;            ///< finish polyrail with mouse double click
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game

@@ -171,6 +171,78 @@ static const StringID _order_conditional_condition[] = {
 	INVALID_STRING_ID,
 };
 
+struct OrdersFromSettings
+{
+	enum OrderUnloadFlags unload;
+	enum OrderLoadFlags   load;
+};
+
+typedef enum {
+	GOFS_NONE = 0,
+	GOFS_FULL,
+	GOFS_XFER,
+	GOFS_UNLOAD,
+	GOFS_FEEDLOAD,
+	GOFS_FEEDUNLOAD,
+	GOFS_NOLOAD
+} GetOrderFromSettingsTypes;
+
+static enum {
+	GOFS_FEEDER_NULL,
+	GOFS_FEEDER_LOAD,
+	GOFS_FEEDER_UNLOAD
+} gofsfeeder_ordermod = GOFS_FEEDER_NULL;
+
+#define GOFSFEEDER_ORDERMOD_RESET gofsfeeder_ordermod = GOFS_FEEDER_NULL
+
+
+/* fetch and compute orders set from settings */
+
+static void GetOrdersFromSettings(const Vehicle *v, uint8 setting, struct OrdersFromSettings *rv)
+{
+	rv->load = (enum OrderLoadFlags)-1;
+	rv->unload = (enum OrderUnloadFlags)-1;
+
+	switch(setting) {
+
+	case GOFS_FEEDLOAD:
+		if (v->GetNumOrders()) gofsfeeder_ordermod = GOFS_FEEDER_LOAD;
+		rv->unload = OUFB_NO_UNLOAD;
+		rv->load = OLF_FULL_LOAD_ANY;
+		break;
+	case GOFS_FULL:
+		rv->load = OLF_FULL_LOAD_ANY;
+		break;
+
+	case GOFS_UNLOAD:
+		rv->unload = OUFB_UNLOAD;
+		if (_settings_client.gui.auto_noload_on_unloadall)
+			rv->load = OLFB_NO_LOAD;
+		break;
+
+	case GOFS_FEEDUNLOAD:
+		if (v->GetNumOrders()) gofsfeeder_ordermod = GOFS_FEEDER_UNLOAD;
+		rv->unload = OUFB_TRANSFER;
+		rv->load = OLFB_NO_LOAD;
+		break;
+
+	case GOFS_XFER:
+		rv->unload = OUFB_TRANSFER;
+		if (_settings_client.gui.auto_noload_on_transfer)
+			rv->load = OLFB_NO_LOAD;
+		break;
+
+	case GOFS_NOLOAD:
+		rv->load = OLFB_NO_LOAD;
+		break;
+
+	case GOFS_NONE:
+		break;
+
+	default: NOT_REACHED();
+	}
+}
+
 extern uint ConvertSpeedToDisplaySpeed(uint speed);
 extern uint ConvertDisplaySpeedToSpeed(uint speed);
 
@@ -346,6 +418,19 @@ void DrawOrderString(const Vehicle *v, const Order *order, int order_index, int 
 	}
 
 	DrawString(rtl ? left : middle, rtl ? middle : right, y, STR_ORDER_TEXT, colour);
+
+	uint order_dist_sq = 0;
+	uint order_dist_mh = 0;
+	const Order *next2 = order->next != NULL ? order->next : v->GetFirstOrder();
+	TileIndex prev_tile = order->GetLocation(v, true);
+	TileIndex cur_tile = next2->GetLocation(v, true);
+	if (prev_tile != INVALID_TILE && cur_tile != INVALID_TILE){
+		order_dist_sq = IntSqrt(DistanceSquare(prev_tile, cur_tile));
+		order_dist_mh = DistanceManhattan(prev_tile, cur_tile);
+	}
+	SetDParam(0, order_dist_sq);
+	SetDParam(1, order_dist_mh);
+	DrawString(middle, right, y, STR_ORDER_DIST, TC_WHITE, SA_RIGHT);
 }
 
 /**
@@ -400,8 +485,34 @@ static Order GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
 			(facil = FACIL_BUS_STOP, v->type == VEH_ROAD && RoadVehicle::From(v)->IsBus()) ||
 			(facil = FACIL_TRUCK_STOP, 1);
 			if (st->facilities & facil) {
+			uint8 os = 0xff;
 				order.MakeGoToStation(st_index);
-				if (_ctrl_pressed) order.SetLoadType(OLF_FULL_LOAD_ANY);
+				if (_ctrl_pressed) {
+					if (_shift_pressed)
+						os = _settings_client.gui.goto_shortcuts_ctrlshift_lclick;
+					else if (_alt_pressed)
+						os = _settings_client.gui.goto_shortcuts_altctrl_lclick;
+					else
+						os = _settings_client.gui.goto_shortcuts_ctrl_lclick;
+				}
+				else if (_shift_pressed) {
+					if (_alt_pressed)
+						os = _settings_client.gui.goto_shortcuts_altshift_lclick;
+					else
+						os = _settings_client.gui.goto_shortcuts_shift_lclick;
+				}
+				else if (_alt_pressed)
+					os = _settings_client.gui.goto_shortcuts_alt_lclick;
+
+				if (os != 0xff) {
+					struct OrdersFromSettings ofs;
+					GetOrdersFromSettings(v, os, &ofs);
+					if (ofs.load != (enum OrderLoadFlags)-1)
+						order.SetLoadType(ofs.load);
+					if (ofs.unload != (enum OrderUnloadFlags)-1)
+					order.SetUnloadType(ofs.unload);
+				}
+
 				if (_settings_client.gui.new_nonstop && v->IsGroundVehicle()) order.SetNonStopType(ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS);
 				order.SetStopLocation(v->type == VEH_TRAIN ? (OrderStopLocation)(_settings_client.gui.stop_location) : OSL_PLATFORM_FAR_END);
 				return order;
@@ -427,6 +538,7 @@ enum {
 	OHK_TRANSFER,
 	OHK_NO_UNLOAD,
 	OHK_NO_LOAD,
+	OHK_CLOSE,
 };
 
 /**
@@ -635,8 +747,15 @@ private:
 
 		DoCommandP(this->vehicle->tile, this->vehicle->index + (sel_ord << 20), MOF_UNLOAD | (unload_type << 4), CMD_MODIFY_ORDER | CMD_MSG(STR_ERROR_CAN_T_MODIFY_THIS_ORDER));
 
+		bool set_no_load = false;
+		if (unload_type == OUFB_TRANSFER){
+			set_no_load = _settings_client.gui.auto_noload_on_transfer;
+		}
+		else if (unload_type == OUFB_UNLOAD){
+			set_no_load = _settings_client.gui.auto_noload_on_unloadall;
+		}
 		/* Transfer orders with leave empty as default */
-		if (unload_type == OUFB_TRANSFER) {
+		if (set_no_load) {
 			DoCommandP(this->vehicle->tile, this->vehicle->index + (sel_ord << 20), MOF_LOAD | (OLFB_NO_LOAD << 4), CMD_MODIFY_ORDER);
 			this->SetWidgetDirty(WID_O_FULL_LOAD);
 		}
@@ -1423,6 +1542,11 @@ public:
 	virtual EventState OnHotkey(int hotkey)
 	{
 		if (this->vehicle->owner != _local_company) return ES_NOT_HANDLED;
+		if(hotkey == OHK_GOTO && this->goto_type != OPOS_NONE){
+			this->RaiseWidget(WID_O_GOTO);
+			ResetObjectToPlace();
+			return ES_NOT_HANDLED;
+		}
 
 		switch (hotkey) {
 			case OHK_SKIP:           this->OrderClick_Skip();          break;
@@ -1436,6 +1560,7 @@ public:
 			case OHK_TRANSFER:       this->OrderHotkey_Transfer();     break;
 			case OHK_NO_UNLOAD:      this->OrderHotkey_NoUnload();     break;
 			case OHK_NO_LOAD:        this->OrderHotkey_NoLoad();       break;
+			case OHK_CLOSE:          delete this; break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
@@ -1447,7 +1572,21 @@ public:
 			const Order cmd = GetOrderCmdFromTile(this->vehicle, tile);
 			if (cmd.IsType(OT_NOTHING)) return;
 
-			if (DoCommandP(this->vehicle->tile, this->vehicle->index + (this->OrderGetSel() << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
+			if (gofsfeeder_ordermod != GOFS_FEEDER_NULL) {
+				if (gofsfeeder_ordermod == GOFS_FEEDER_LOAD) {
+					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((1) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
+						DoCommandP(this->vehicle->tile, this->vehicle->index,  0, CMD_DELETE_ORDER | CMD_MSG(STR_ERROR_CAN_T_DELETE_THIS_ORDER));
+					}
+
+				}
+				else if (gofsfeeder_ordermod == GOFS_FEEDER_UNLOAD) { // still flushes the whole order table
+					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((this->vehicle->GetNumOrders()) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
+						DoCommandP(this->vehicle->tile, this->vehicle->index, (this->vehicle->GetNumOrders()-2+(int)_networking) , CMD_DELETE_ORDER | CMD_MSG(STR_ERROR_CAN_T_DELETE_THIS_ORDER));
+					}
+				}
+				gofsfeeder_ordermod = GOFS_FEEDER_NULL;
+			}
+			else if (DoCommandP(this->vehicle->tile, this->vehicle->index + (this->OrderGetSel() << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
 				/* With quick goto the Go To button stays active */
 				if (!_settings_client.gui.quick_goto) ResetObjectToPlace();
 			}
@@ -1525,6 +1664,7 @@ static Hotkey order_hotkeys[] = {
 	Hotkey((uint16)0, "transfer", OHK_TRANSFER),
 	Hotkey((uint16)0, "no_unload", OHK_NO_UNLOAD),
 	Hotkey((uint16)0, "no_load", OHK_NO_LOAD),
+	Hotkey('Q', "close", OHK_CLOSE),
 	HOTKEY_LIST_END
 };
 HotkeyList OrdersWindow::hotkeys("order", order_hotkeys);

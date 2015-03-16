@@ -33,6 +33,7 @@ bool _fullscreen;
 byte _support8bpp;
 CursorVars _cursor;
 bool _ctrl_pressed;   ///< Is Ctrl pressed?
+bool _alt_pressed;    ///< Is Alt pressed?
 bool _shift_pressed;  ///< Is Shift pressed?
 byte _fast_forward;
 bool _left_button_down;     ///< Is left mouse button pressed?

@@ -64,6 +64,7 @@ struct TileDesc {
 	uint64 dparam[2];           ///< Parameters of the \a str string
 	uint16 rail_speed;          ///< Speed limit of rail (bridges and track)
 	uint16 road_speed;          ///< Speed limit of road (bridges)
+	uint16 population;
 };
 
 /**

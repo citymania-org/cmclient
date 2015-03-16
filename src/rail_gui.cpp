@@ -52,6 +52,8 @@ static bool _convert_signal_button;          ///< convert signal button in the s
 static SignalVariant _cur_signal_variant;    ///< set the signal variant (for signal GUI)
 static SignalType _cur_signal_type;          ///< set the signal type (for signal GUI)
 
+extern TileIndex _rail_track_endtile; // rail_cmd.cpp
+
 /* Map the setting: default_signal_type to the corresponding signal type */
 static const SignalType _default_signal_type[] = {SIGTYPE_NORMAL, SIGTYPE_PBS, SIGTYPE_PBS_ONEWAY};
 
@@ -91,9 +93,9 @@ void CcPlaySound1E(const CommandCost &result, TileIndex tile, uint32 p1, uint32 
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_20_SPLAT_RAIL, tile);
 }
 
-static void GenericPlaceRail(TileIndex tile, int cmd)
+static bool GenericPlaceRail(TileIndex tile, Track track)
 {
-	DoCommandP(tile, _cur_railtype, cmd,
+	return DoCommandP(tile, _cur_railtype, track,
 			_remove_button_clicked ?
 			CMD_REMOVE_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
 			CMD_BUILD_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK),
@@ -276,6 +278,7 @@ void CcBuildRailTunnel(const CommandCost &result, TileIndex tile, uint32 p1, uin
 	if (result.Succeeded()) {
 		if (_settings_client.sound.confirm) SndPlayTileFx(SND_20_SPLAT_RAIL, tile);
 		if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
+		StoreRailPlacementEndpoints(tile, _build_tunnel_endtile, TileX(tile) == TileX(_build_tunnel_endtile) ? TRACK_Y : TRACK_X, false);
 	} else {
 		SetRedErrorSquare(_build_tunnel_endtile);
 	}
@@ -305,7 +308,7 @@ static bool RailToolbar_CtrlChanged(Window *w)
 
 	/* allow ctrl to switch remove mode only for these widgets */
 	for (uint i = WID_RAT_BUILD_NS; i <= WID_RAT_BUILD_STATION; i++) {
-		if ((i <= WID_RAT_AUTORAIL || i >= WID_RAT_BUILD_WAYPOINT) && w->IsWidgetLowered(i)) {
+		if ((i <= WID_RAT_POLYRAIL || i >= WID_RAT_BUILD_WAYPOINT) && w->IsWidgetLowered(i)) {
 			ToggleRailButton_Remove(w);
 			return true;
 		}
@@ -349,9 +352,9 @@ static void BuildRailClick_Remove(Window *w)
 	}
 }
 
-static void DoRailroadTrack(int mode)
+static bool DoRailroadTrack(TileIndex start_tile, TileIndex end_tile, Track track)
 {
-	DoCommandP(TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y), _cur_railtype | (mode << 4),
+	return DoCommandP(start_tile, end_tile, _cur_railtype | (track << 4),
 			_remove_button_clicked ?
 			CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
 			CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK),
@@ -360,14 +363,14 @@ static void DoRailroadTrack(int mode)
 
 static void HandleAutodirPlacement()
 {
-	int trackstat = _thd.drawstyle & HT_DIR_MASK; // 0..5
+	Track track = (Track)(_thd.drawstyle & HT_DIR_MASK); // 0..5
+	TileIndex start_tile = TileVirtXY(_thd.selstart.x, _thd.selstart.y);
+	TileIndex end_tile = TileVirtXY(_thd.selend.x, _thd.selend.y);
 
-	if (_thd.drawstyle & HT_RAIL) { // one tile case
-		GenericPlaceRail(TileVirtXY(_thd.selend.x, _thd.selend.y), trackstat);
-		return;
+	if ((_thd.drawstyle & HT_RAIL ? GenericPlaceRail(end_tile, track) : DoRailroadTrack(start_tile, end_tile, track))
+			&& !_shift_pressed) {
+		StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
 	}
-
-	DoRailroadTrack(trackstat);
 }
 
 /**
@@ -413,6 +416,73 @@ static void HandleAutoSignalPlacement()
 			CcPlaySound1E);
 }
 
+
+// FIXME duplicate from road_gui.cpp
+static DiagDirection TileFractCoordsToDiagDir() {
+	bool diag = (_tile_fract_coords.x + _tile_fract_coords.y) < 16;
+	if (_tile_fract_coords.x < _tile_fract_coords.y) {
+		return diag ? DIAGDIR_NE : DIAGDIR_SE;
+	}
+	return diag ? DIAGDIR_NW : DIAGDIR_SW;
+}
+
+// FIXME duplicate from road_gui.cpp
+static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
+	if (bits < ROAD_SE) {
+		return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
+	}
+	return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
+}
+
+RoadBits FindRailsToConnect(TileIndex tile) {
+	RoadBits directed = ROAD_NONE;
+	RoadBits passing = ROAD_NONE;
+	DiagDirection ddir;
+	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
+		if (HasStationTileRail(cur_tile)) {
+			if (GetRailStationTrackBits(cur_tile) & DiagdirReachesTracks(ddir)) {
+				directed |= DiagDirToRoadBits(ddir);
+			}
+			continue;
+		}
+		if (!IsTileType(cur_tile, MP_RAILWAY)) continue;
+		if (!IsPlainRail(cur_tile)) continue;
+		passing |= DiagDirToRoadBits(ddir);
+		if (GetTrackBits(cur_tile) & DiagdirReachesTracks(ddir)) {
+			directed |= DiagDirToRoadBits(ddir);
+		}
+	}
+	// Prioritize track bits that head in this direction
+	if (directed != ROAD_NONE) {
+		return directed;
+	}
+	return passing;
+}
+
+/*
+ * Selects orientation for rail object (depot)
+ */
+static DiagDirection AutodetectRailObjectDirection(TileIndex tile) {
+	RoadBits bits = FindRailsToConnect(tile);
+	// FIXME after this point repeats road autodetection
+	if (HasExactlyOneBit(bits)) return RoadBitsToDiagDir(bits);
+	if (bits == ROAD_NONE) bits = ROAD_ALL;
+	RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir());
+	if (HasExactlyOneBit(frac_bits & bits)) {
+		return RoadBitsToDiagDir(frac_bits & bits);
+	}
+	frac_bits |= MirrorRoadBits(frac_bits);
+	if (HasExactlyOneBit(frac_bits & bits)) {
+		return RoadBitsToDiagDir(frac_bits & bits);
+	}
+	for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+		if (DiagDirToRoadBits(ddir) & bits) {
+			return ddir;
+		}
+	}
+	NOT_REACHED();
+}
 
 /** Rail toolbar management class. */
 struct BuildRailToolbarWindow : Window {
@@ -461,6 +531,7 @@ struct BuildRailToolbarWindow : Window {
 		this->GetWidget<NWidgetCore>(WID_RAT_BUILD_EW)->widget_data     = rti->gui_sprites.build_ew_rail;
 		this->GetWidget<NWidgetCore>(WID_RAT_BUILD_Y)->widget_data      = rti->gui_sprites.build_y_rail;
 		this->GetWidget<NWidgetCore>(WID_RAT_AUTORAIL)->widget_data     = rti->gui_sprites.auto_rail;
+		this->GetWidget<NWidgetCore>(WID_RAT_POLYRAIL)->widget_data     = rti->gui_sprites.auto_rail;
 		this->GetWidget<NWidgetCore>(WID_RAT_BUILD_DEPOT)->widget_data  = rti->gui_sprites.build_depot;
 		this->GetWidget<NWidgetCore>(WID_RAT_CONVERT_RAIL)->widget_data = rti->gui_sprites.convert_rail;
 		this->GetWidget<NWidgetCore>(WID_RAT_BUILD_TUNNEL)->widget_data = rti->gui_sprites.build_tunnel;
@@ -489,6 +560,7 @@ struct BuildRailToolbarWindow : Window {
 			case WID_RAT_BUILD_EW:
 			case WID_RAT_BUILD_Y:
 			case WID_RAT_AUTORAIL:
+			case WID_RAT_POLYRAIL:
 			case WID_RAT_BUILD_WAYPOINT:
 			case WID_RAT_BUILD_STATION:
 			case WID_RAT_BUILD_SIGNALS:
@@ -520,6 +592,15 @@ struct BuildRailToolbarWindow : Window {
 		}
 	}
 
+	virtual void DrawWidget(const Rect &r, int widget) const
+	{
+		if (widget == WID_RAT_POLYRAIL) {
+			Dimension d = GetSpriteSize(SPR_BLOT);
+			uint offset = this->IsWidgetLowered(WID_RAT_POLYRAIL) ? 1 : 0;
+			DrawSprite(SPR_BLOT, PALETTE_TO_GREY, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset);
+		}
+	}
+
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		if (widget < WID_RAT_BUILD_NS) return;
@@ -548,6 +629,11 @@ struct BuildRailToolbarWindow : Window {
 
 			case WID_RAT_AUTORAIL:
 				HandlePlacePushButton(this, WID_RAT_AUTORAIL, GetRailTypeInfo(_cur_railtype)->cursor.autorail, HT_RAIL);
+				this->last_user_action = widget;
+				break;
+
+			case WID_RAT_POLYRAIL:
+				HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, HT_RAIL | HT_POLY);
 				this->last_user_action = widget;
 				break;
 
@@ -620,6 +706,7 @@ struct BuildRailToolbarWindow : Window {
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		DiagDirection ddir;
 		switch (this->last_user_action) {
 			case WID_RAT_BUILD_NS:
 				VpStartPlaceSizing(tile, VPM_FIX_VERTICAL | VPM_RAILDIRS, DDSP_PLACE_RAIL);
@@ -638,6 +725,7 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_AUTORAIL:
+			case WID_RAT_POLYRAIL:
 				VpStartPlaceSizing(tile, VPM_RAILDIRS, DDSP_PLACE_RAIL);
 				break;
 
@@ -646,7 +734,11 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_BUILD_DEPOT:
-				DoCommandP(tile, _cur_railtype, _build_depot_direction,
+				ddir = _build_depot_direction;
+				if (ddir == DIAGDIR_NW + 1) {
+					ddir = AutodetectRailObjectDirection(tile);
+				}
+				DoCommandP(tile, _cur_railtype, ddir,
 						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
 						CcRailDepot);
 				break;
@@ -785,6 +877,7 @@ static EventState RailToolbarGlobalHotkeys(int hotkey)
 }
 
 const uint16 _railtoolbar_autorail_keys[] = {'5', 'A' | WKC_GLOBAL_HOTKEY, 0};
+const uint16 _railtoolbar_polyrail_keys[] = {'5' | WKC_CTRL, 'A' | WKC_GLOBAL_HOTKEY | WKC_CTRL, 0};
 
 static Hotkey railtoolbar_hotkeys[] = {
 	Hotkey('1', "build_ns", WID_RAT_BUILD_NS),
@@ -792,6 +885,7 @@ static Hotkey railtoolbar_hotkeys[] = {
 	Hotkey('3', "build_ew", WID_RAT_BUILD_EW),
 	Hotkey('4', "build_y", WID_RAT_BUILD_Y),
 	Hotkey(_railtoolbar_autorail_keys, "autorail", WID_RAT_AUTORAIL),
+	Hotkey(_railtoolbar_polyrail_keys, "polyrail", WID_RAT_POLYRAIL),
 	Hotkey('6', "demolish", WID_RAT_DEMOLISH),
 	Hotkey('7', "depot", WID_RAT_BUILD_DEPOT),
 	Hotkey('8', "waypoint", WID_RAT_BUILD_WAYPOINT),
@@ -822,6 +916,8 @@ static const NWidgetPart _nested_build_rail_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_RAIL_NW, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_AUTORAIL),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTORAIL, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_POLYRAIL),
+						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTORAIL, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_POLYRAIL),
 
 		NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetMinimalSize(4, 22), SetDataTip(0x0, STR_NULL), EndContainer(),
 
@@ -1723,6 +1819,7 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 			case WID_BRAD_DEPOT_SE:
 			case WID_BRAD_DEPOT_SW:
 			case WID_BRAD_DEPOT_NW:
+			case WID_BRAD_DEPOT_AUTO:
 				this->RaiseWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
 				_build_depot_direction = (DiagDirection)(widget - WID_BRAD_DEPOT_NE);
 				this->LowerWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
@@ -1759,6 +1856,9 @@ static const NWidgetPart _nested_build_depot_widgets[] = {
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		EndContainer(),
+		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BRAD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_TRAIN_ORIENTATION_AUTO_TOOLTIP),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),
@@ -1880,7 +1980,7 @@ static void ShowBuildWaypointPicker(Window *parent)
  */
 void InitializeRailGui()
 {
-	_build_depot_direction = DIAGDIR_NW;
+	_build_depot_direction = (DiagDirection)(DIAGDIR_NW + 1);
 }
 
 /**

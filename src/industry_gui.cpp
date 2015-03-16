@@ -30,6 +30,7 @@
 #include "tilehighlight_func.h"
 #include "string_func.h"
 #include "sortlist_type.h"
+#include "widgets/dropdown_type.h"
 #include "widgets/dropdown_func.h"
 #include "company_base.h"
 #include "core/geometry_func.hpp"
@@ -41,6 +42,7 @@
 #include "widgets/industry_widget.h"
 
 #include "table/strings.h"
+#include "hotkeys.h"
 
 #include "safeguards.h"
 
@@ -188,14 +190,6 @@ static const NWidgetPart _nested_build_industry_widgets[] = {
 	EndContainer(),
 };
 
-/** Window definition of the dynamic place industries gui */
-static WindowDesc _build_industry_desc(
-	WDP_AUTO, "build_industry", 170, 212,
-	WC_BUILD_INDUSTRY, WC_NONE,
-	WDF_CONSTRUCTION,
-	_nested_build_industry_widgets, lengthof(_nested_build_industry_widgets)
-);
-
 /** Build (fund or prospect) a new industry, */
 class BuildIndustryWindow : public Window {
 	int selected_index;                         ///< index of the element in the matrix
@@ -267,7 +261,7 @@ class BuildIndustryWindow : public Window {
 	}
 
 public:
-	BuildIndustryWindow() : Window(&_build_industry_desc)
+	BuildIndustryWindow(WindowDesc *desc) : Window(desc)
 	{
 		this->timer_enabled = _loaded_newgrf_features.has_newindustries;
 
@@ -625,13 +619,38 @@ public:
 		if (indsp == NULL) this->enabled[this->selected_index] = _settings_game.difficulty.industry_density != ID_FUND_ONLY;
 		this->SetButtons();
 	}
+
+	virtual EventState OnHotkey(int hotkey)
+	{
+		return Window::OnHotkey(hotkey);
+	}
+
+	static HotkeyList hotkeys;
 };
+
+static Hotkey build_industry_hotkeys[] = {
+	Hotkey((uint16)0, "display_chain", WID_DPI_DISPLAY_WIDGET),
+	Hotkey((uint16)0, "build_button", WID_DPI_FUND_WIDGET),
+	HOTKEY_LIST_END
+};
+
+HotkeyList BuildIndustryWindow::hotkeys("industry_fund_gui", build_industry_hotkeys);
+
+/** Window definition of the dynamic place industries gui */
+static WindowDesc _build_industry_desc(
+	WDP_AUTO, "build_industry", 170, 212,
+	WC_BUILD_INDUSTRY, WC_NONE,
+	WDF_CONSTRUCTION,
+	_nested_build_industry_widgets, lengthof(_nested_build_industry_widgets),
+	&BuildIndustryWindow::hotkeys
+);
+
 
 void ShowBuildIndustryWindow()
 {
 	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
 	if (BringWindowToFrontById(WC_BUILD_INDUSTRY, 0)) return;
-	new BuildIndustryWindow();
+	new BuildIndustryWindow(&_build_industry_desc);
 }
 
 static void UpdateIndustryProduction(Industry *i);
@@ -1059,6 +1078,7 @@ static const NWidgetPart _nested_industry_directory_widgets[] = {
 			NWidget(NWID_HORIZONTAL),
 				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_DROPDOWN_CRITERIA), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
+				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_DROPDOWN_FILTER), SetDataTip(STR_BUTTON_FILTER, STR_TOOLTIP_FILTER_CRITERIA),
 				NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0), EndContainer(),
 			EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_BROWN, WID_ID_INDUSTRY_LIST), SetDataTip(0x0, STR_INDUSTRY_DIRECTORY_LIST_CAPTION), SetResize(1, 1), SetScrollbar(WID_ID_SCROLLBAR), EndContainer(),
@@ -1086,6 +1106,10 @@ protected:
 	static const StringID sorter_names[];
 	static GUIIndustryList::SortFunction * const sorter_funcs[];
 
+	/* type_filter[industry_type] is set to true if player wishes that type to by displayed */
+	static bool type_filter[NUM_INDUSTRYTYPES];
+	static bool initialized;
+
 	GUIIndustryList industries;
 	Scrollbar *vscroll;
 
@@ -1097,7 +1121,9 @@ protected:
 
 			const Industry *i;
 			FOR_ALL_INDUSTRIES(i) {
-				*this->industries.Append() = i;
+				if (this->type_filter[i->type]){
+					*this->industries.Append() = i;
+				}
 			}
 
 			this->industries.Compact();
@@ -1229,9 +1255,17 @@ protected:
 		}
 	}
 
+	void initIndustryTypeFilter()
+	{
+		for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt)
+			this->type_filter[indt] = true;
+			IndustryDirectoryWindow::initialized = true;
+	}
+
 public:
 	IndustryDirectoryWindow(WindowDesc *desc, WindowNumber number) : Window(desc)
 	{
+		if (IndustryDirectoryWindow::initialized == false) this->initIndustryTypeFilter();
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_ID_SCROLLBAR);
 
@@ -1300,6 +1334,11 @@ public:
 				break;
 			}
 
+			case WID_ID_DROPDOWN_FILTER: {
+				size->width = 65;
+				break;
+			}
+
 			case WID_ID_INDUSTRY_LIST: {
 				Dimension d = GetStringBoundingBox(STR_INDUSTRY_DIRECTORY_NONE);
 				for (uint i = 0; i < this->industries.Length(); i++) {
@@ -1328,6 +1367,22 @@ public:
 				ShowDropDownMenu(this, IndustryDirectoryWindow::sorter_names, this->industries.SortType(), WID_ID_DROPDOWN_CRITERIA, 0, 0);
 				break;
 
+			case WID_ID_DROPDOWN_FILTER: {
+				DropDownList *list = new DropDownList();
+				*list->Append() = new DropDownListStringItem(STR_BUTTON_FILTER_SELECT_ALL,     -2, false);
+				*list->Append() = new DropDownListStringItem(STR_BUTTON_FILTER_SELECT_NONE,    -1, false);
+				*list->Append() = new DropDownListItem(-3, false);
+
+				for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt) {
+					const IndustrySpec *inds = GetIndustrySpec(indt);
+					if (inds->enabled)
+						*list->Append() = new DropDownListCheckedItem(inds->name, indt, false, IndustryDirectoryWindow::type_filter[indt]);
+				}
+
+				ShowDropDownList(this, list, -2, WID_ID_DROPDOWN_FILTER, 0, true, false);
+				break;
+			}
+
 			case WID_ID_INDUSTRY_LIST: {
 				uint p = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_ID_INDUSTRY_LIST, WD_FRAMERECT_TOP);
 				if (p < this->industries.Length()) {
@@ -1344,10 +1399,27 @@ public:
 
 	virtual void OnDropdownSelect(int widget, int index)
 	{
-		if (this->industries.SortType() != index) {
-			this->industries.SetSortType(index);
-			this->BuildSortIndustriesList();
+		if (widget == WID_ID_DROPDOWN_CRITERIA) {
+			if (this->industries.SortType() != index) {
+				this->industries.SetSortType(index);
+			}
 		}
+		else if (widget == WID_ID_DROPDOWN_FILTER) {
+			if ( index == -1 ) { // aka SELECT NONE
+				for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt)
+					IndustryDirectoryWindow::type_filter[indt] = false;
+				// must SetDurty to force redraw of the listing widget
+				this->SetDirty();
+			}
+			else if ( index == -2 ) { // aka SELECT ALL
+				for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt)
+					IndustryDirectoryWindow::type_filter[indt] = true;
+			}
+			else
+				IndustryDirectoryWindow::type_filter[index] = IndustryDirectoryWindow::type_filter[index] ? false: true;
+			this->industries.ForceRebuild();
+		}
+		this->BuildSortIndustriesList();
 	}
 
 	virtual void OnResize()
@@ -1385,6 +1457,8 @@ public:
 
 Listing IndustryDirectoryWindow::last_sorting = {false, 0};
 const Industry *IndustryDirectoryWindow::last_industry = NULL;
+bool IndustryDirectoryWindow::initialized = false;
+bool IndustryDirectoryWindow::type_filter[NUM_INDUSTRYTYPES];
 
 /* Available station sorting functions. */
 GUIIndustryList::SortFunction * const IndustryDirectoryWindow::sorter_funcs[] = {

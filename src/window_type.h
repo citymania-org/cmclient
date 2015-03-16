@@ -109,6 +109,7 @@ enum WindowClass {
 	 *   - 0 = #ToolTipsWidgets
 	 */
 	WC_TOOLTIPS,
+	WC_TOOLTIPS_EXTRA,
 
 	/**
 	 * Query string window; %Window numbers:
@@ -370,6 +371,12 @@ enum WindowClass {
 	 */
 	WC_BUILD_OBJECT,
 
+	//watch company
+	WC_WATCH_COMPANY,
+
+	//watch company admin version
+	WC_WATCH_COMPANYA,
+
 	/**
 	 * Build vehicle; %Window numbers:
 	 *   - #VehicleType = #BuildVehicleWidgets
@@ -516,6 +523,7 @@ enum WindowClass {
 	 *   - #CompanyID = #CompanyWidgets
 	 */
 	WC_FINANCES,
+	WC_CARGOS,
 
 	/**
 	 * Income graph; %Window numbers:
@@ -680,6 +688,11 @@ enum WindowClass {
 	 *   - 0 = #SavePresetWidgets
 	 */
 	WC_SAVE_PRESET,
+
+	WC_ZONING_TOOLBAR,
+	WC_COMMAND_TOOLBAR,
+	WC_LOGIN_WINDOW,
+	WC_CB_TOWN,
 
 	WC_INVALID = 0xFFFF, ///< Invalid window.
 };

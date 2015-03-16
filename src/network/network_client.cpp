@@ -34,10 +34,13 @@
 
 #include "table/strings.h"
 
-#include "../safeguards.h"
+#include "../town.h"
+#include "network_func.h"
 
+#include "../safeguards.h"
 /* This file handles all the client-commands */
 
+void SyncCBClient(byte * msg);
 
 /** Read some packets, and when do use that data as initial load filter. */
 struct PacketReader : LoadFilter {
@@ -265,6 +268,11 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 			if (_network_first_time) {
 				_network_first_time = false;
 				SendAck();
+				extern bool novahost();
+				if(novahost()){
+					NetworkClientSendChatToServer("!check 1444"); //check version
+					CB_SetCB(false);
+				}
 			}
 
 			_sync_frame = 0;
@@ -614,6 +622,10 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CLIENT_INFO(Pac
 		strecpy(ci->client_name, name, lastof(ci->client_name));
 
 		SetWindowDirty(WC_CLIENT_LIST, 0);
+		InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
+		SetWindowClassesDirty(WC_WATCH_COMPANY);
+		InvalidateWindowData(WC_WATCH_COMPANYA, ci->client_id, 1);
+		SetWindowClassesDirty(WC_WATCH_COMPANYA);
 
 		return NETWORK_RECV_STATUS_OKAY;
 	}
@@ -633,6 +645,10 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CLIENT_INFO(Pac
 	strecpy(ci->client_name, name, lastof(ci->client_name));
 
 	SetWindowDirty(WC_CLIENT_LIST, 0);
+	InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
+	SetWindowClassesDirty(WC_WATCH_COMPANY);
+	InvalidateWindowData(WC_WATCH_COMPANYA, ci->client_id, 1);
+	SetWindowClassesDirty(WC_WATCH_COMPANYA);
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -984,7 +1000,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHAT(Packet *p)
 	}
 
 	if (ci != NULL) {
-		NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), self_send, name, msg, data);
+		if (strncmp(msg, "synccbclient", 12) == 0) SyncCBClient(p->buffer);
+		else NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), self_send, name, msg, data);
 	}
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -1021,6 +1038,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_QUIT(Packet *p)
 	}
 
 	SetWindowDirty(WC_CLIENT_LIST, 0);
+	InvalidateWindowClassesData( WC_WATCH_COMPANYA, 0 );
+	SetWindowClassesDirty( WC_WATCH_COMPANYA );
 
 	/* If we come here it means we could not locate the client.. strange :s */
 	return NETWORK_RECV_STATUS_OKAY;
@@ -1107,6 +1126,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MOVE(Packet *p)
 	if (client_id == _network_own_client_id) {
 		SetLocalCompany(company_id);
 	}
+	InvalidateWindowClassesData( WC_WATCH_COMPANYA, 0 );
+	SetWindowClassesDirty( WC_WATCH_COMPANYA );
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -1253,6 +1274,10 @@ void NetworkClientSendChat(NetworkAction action, DestType type, int dest, const 
 	MyClient::SendChat(action, type, dest, msg, data);
 }
 
+void NetworkClientSendChatToServer(const char * msg)
+{
+	NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, msg);
+}
 /**
  * Set/Reset company password on the client side.
  * @param password Password to be set.
@@ -1298,4 +1323,49 @@ bool NetworkMaxSpectatorsReached()
 	return NetworkSpectatorCount() >= (_network_server ? _settings_client.network.max_spectators : _network_server_max_spectators);
 }
 
+void SyncCBClient(byte *msg){ //len = 3 + 6 + 12 +    3 + 6*cargo
+	size_t pos = 21;
+	size_t length = pos;
+	byte tmp;
+
+	while(msg[length] != '\0'){ length++; }
+
+	_novarole = msg[pos++] == 'A';
+	if(length == pos) return;
+
+	CB_SetCB(true);
+
+	tmp = msg[pos++];
+	_settings_client.gui.cb_distance_check = (tmp == 0xFF) ? 0 : tmp;
+	tmp = msg[pos++];
+	CB_SetStorage((tmp == 0xFF) ? 0 : (uint)tmp);
+
+	for(int i = 0; i < NUM_CARGO; i++){
+		CB_SetRequirements(i, 0, 0, 0);
+	}
+
+	//IConsolePrintF(CC_INFO, "cb check %i, storage %i", _settings_client.gui.cb_distance_check, tmp);
+	uint8 cargo;
+	uint req, from, decay;
+	while(pos < length){ //CargoID NUM_CARGO
+		cargo = msg[pos++];
+		if(cargo == 0xFF) cargo = 0;
+
+		tmp = msg[pos++];
+		req = (tmp == 0xFF) ? 0 : tmp;
+		tmp = msg[pos++];
+		req += (tmp == 0xFF) ? 0 : (tmp << 8);
+
+		tmp = msg[pos++];
+		from = (tmp == 0xFF) ? 0 : tmp;
+		tmp = msg[pos++];
+		from += (tmp == 0xFF) ? 0 : (tmp << 8);
+
+		tmp = msg[pos++];
+		decay = (tmp == 0xFF) ? 0 : tmp;
+
+		CB_SetRequirements(cargo, req, from, decay);
+		//IConsolePrintF(CC_INFO, "cargo#%i %i/%i/%i", cargo, req, from, decay);
+	}
+}
 #endif /* ENABLE_NETWORK */

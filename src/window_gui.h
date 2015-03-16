@@ -873,6 +873,7 @@ enum TooltipCloseCondition {
 };
 
 void GuiShowTooltips(Window *parent, StringID str, uint paramcount = 0, const uint64 params[] = NULL, TooltipCloseCondition close_tooltip = TCC_HOVER);
+void GuiPrepareTooltipsExtra(Window *parent);
 
 /* widget.cpp */
 int GetWidgetFromPos(const Window *w, int x, int y);
@@ -904,5 +905,32 @@ extern SpecialMouseMode _special_mouse_mode;
 void SetFocusedWindow(Window *w);
 
 void ScrollbarClickHandler(Window *w, NWidgetCore *nw, int x, int y);
+
+
+/**
+ * #WindowPopup positioning types
+ */
+enum WindowPopupType {
+	WPUT_ORIGIN = 1,      ///< Align with the top-left corner of the window.
+	WPUT_WIDGET_RELATIVE, ///< Align from a nested widget.
+	WPUT_CENTERED,        ///< Center the widget under the cursor. Ignore modifiers.
+};
+
+/**
+ * Specialized Window bound to open around the cursor's position.
+ * Its sole purpose is to provide the OnInitialPosition() method
+ * and an simple interface to control its behaviour.
+ */
+struct WindowPopup: public Window {
+public:
+	WindowPopup(WindowDesc *desc, WindowPopupType t = WPUT_ORIGIN);
+	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number);
+protected:
+	uint wpu_widget; ///< The widget to which the computation would be made from when type is #WPUT_WIDGET_RELATIVE.
+	int wpu_mod_x;   ///< The X axis modifier. A negative value would bring the window closer to the left edge of the screen. Default value is -5.
+	int wpu_mod_y;   ///< The Y axis modifier. A negative value would bring the window closer to the top edge of the screen. Default value is -5.
+private:
+	WindowPopupType type;
+};
 
 #endif /* WINDOW_GUI_H */

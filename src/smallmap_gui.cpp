@@ -894,7 +894,7 @@ void SmallMapWindow::DrawTowns(const DrawPixelInfo *dpi) const
 				y < dpi->top + dpi->height) {
 			/* And draw it. */
 			SetDParam(0, t->index);
-			DrawString(x, x + t->cache.sign.width_small, y, STR_SMALLMAP_TOWN);
+			DrawString(x, x + t->cache.sign.width_small, y, t->larger_town ? STR_SMALLMAP_TOWN_LARGE : STR_SMALLMAP_TOWN);
 		}
 	}
 }

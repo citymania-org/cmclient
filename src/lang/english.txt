@@ -232,6 +232,9 @@ STR_TOOLTIP_GROUP_ORDER                                         :{BLACK}Select g
 STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Select sorting order (descending/ascending)
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Select sorting criteria
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Select filtering criteria
+STR_BUTTON_FILTER                                               :{BLACK}Filter
+STR_BUTTON_FILTER_SELECT_ALL                                    :Select All
+STR_BUTTON_FILTER_SELECT_NONE                                   :Select None
 STR_BUTTON_SORT_BY                                              :{BLACK}Sort by
 STR_BUTTON_LOCATION                                             :{BLACK}Location
 STR_BUTTON_RENAME                                               :{BLACK}Rename
@@ -322,9 +325,11 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Display 
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Display subsidies
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Display list of company's stations
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Display company finances information
+STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_CARGOS                      :{BLACK}Display company cargos information
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Display general company information
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Display story book
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Display goal list
+STR_TOOLBAR_TOOLTIP_DISPLAY_WATCH                               :{BLACK}Watch company's actions
 STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Display graphs
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Display company league table
 STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Fund construction of new industry or list all industries
@@ -376,6 +381,7 @@ STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Settings
 STR_SETTINGS_MENU_SCRIPT_SETTINGS                               :AI/Game script settings
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF settings
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Transparency options
+STR_SETTINGS_MENU_ZONING                                        :Zoning
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Town names displayed
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Station names displayed
 STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Waypoint names displayed
@@ -400,6 +406,7 @@ STR_MAP_MENU_MAP_OF_WORLD                                       :Map of world
 STR_MAP_MENU_EXTRA_VIEW_PORT                                    :Extra viewport
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Cargo Flow Legend
 STR_MAP_MENU_SIGN_LIST                                          :Sign list
+STR_MAP_MENU_WATCH_COMPANY                                      :Watch Company
 
 ############ range for town menu starts
 STR_TOWN_MENU_TOWN_DIRECTORY                                    :Town directory
@@ -468,7 +475,7 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Message history
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Land area information
-STR_ABOUT_MENU_SEPARATOR                                        :
+STR_ABOUT_MENU_SEPARATOR                                        :Novapolis
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot
@@ -479,6 +486,7 @@ STR_ABOUT_MENU_ABOUT_OPENTTD                                    :About 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Sprite aligner
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Toggle bounding boxes
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Toggle colouring of dirty blocks
+STR_ABOUT_MENU_LOGIN_WINDOW                                     :Login Window
 ############ range ends here
 
 ############ range for ordinal numbers used for the place in the highscore window
@@ -1707,6 +1715,26 @@ STR_CONFIG_SETTING_REVERSE_AT_SIGNALS_HELPTEXT                  :Allow trains to
 
 STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}Change setting value
 
+STR_CONFIG_SETTING_VEHICLES_CTRL                                :{ORANGE}Controls & Orders
+STR_CONFIG_SETTING_ORDER_SHORTCUTS                              :{ORANGE}Order's Shortcuts
+STR_CONFIG_SETTING_CTRL_ENABLE_CTRLCLICK_STARTSTOP              :Allow ctrl+left-click vehicles to start or stop them: {STRING2}
+STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                   :"Transfer" orders are "No Loading" by default: {STRING2}
+STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                     :"Unload all" orders are "No Loading" by default: {STRING2}
+
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLLCLICK                 :ctrl+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLSHIFTLCLICK            :ctrl+shift+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_SHIFTLCLICK                :shift+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_ALTLCLICK                  :alt+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_ALTSHIFTCLICK              :alt+shift+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLALTLCLICK              :ctrl+alt+left-click: {STRING2}
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_NONE                      :do nothing
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FULL_LOAD_ANY             :Full load any cargo
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_TRANSFER_CARGO            :Transfer cargo
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_UNLOAD_ALL                :Force unload of all cargo
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FEEDERLOAD                :Feeder Load (replace first order)
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FEEDERDROP                :Feeder Unload (replace last order)
+STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_NO_LOAD                   :Do not load any cargo
+
 # Config errors
 STR_CONFIG_ERROR                                                :{WHITE}Error with the configuration file...
 STR_CONFIG_ERROR_ARRAY                                          :{WHITE}... error in array '{RAW_STRING}'
@@ -2316,6 +2344,7 @@ STR_RAIL_TOOLBAR_MAGLEV_CONSTRUCTION_CAPTION                    :Maglev Construc
 
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}Build railway track. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Build railway track using the Autorail mode. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_POLYRAIL                         :{BLACK}Build railway track using the Polyline mode. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}Build train depot (for buying and servicing trains). Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}Convert rail to waypoint. Ctrl enables joining waypoints. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}Build railway station. Ctrl enables joining stations. Shift toggles building/showing cost estimate
@@ -2333,6 +2362,7 @@ STR_RAIL_NAME_MAGLEV                                            :Maglev
 # Rail depot construction window
 STR_BUILD_DEPOT_TRAIN_ORIENTATION_CAPTION                       :{WHITE}Train Depot Orientation
 STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Select railway depot orientation
+STR_BUILD_DEPOT_TRAIN_ORIENTATION_AUTO_TOOLTIP                  :{BLACK}Automatically select railway depot orientation based on environment
 
 # Rail waypoint construction window
 STR_WAYPOINT_CAPTION                                            :{WHITE}Waypoint
@@ -2341,6 +2371,8 @@ STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Select w
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}Rail Station Selection
 STR_STATION_BUILD_ORIENTATION                                   :{BLACK}Orientation
+STR_STATION_BUILD_ORIENTATION_AUTO                              :{BLACK}Auto
+STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP                      :{BLACK}Automatically select station orientation based on environment
 STR_STATION_BUILD_RAILROAD_ORIENTATION_TOOLTIP                  :{BLACK}Select railway station orientation
 STR_STATION_BUILD_NUMBER_OF_TRACKS                              :{BLACK}Number of tracks
 STR_STATION_BUILD_NUMBER_OF_TRACKS_TOOLTIP                      :{BLACK}Select number of platforms for railway station
@@ -2396,6 +2428,7 @@ STR_ROAD_TOOLBAR_TRAM_CONSTRUCTION_CAPTION                      :{WHITE}Tramway 
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION                     :{BLACK}Build road section. Ctrl toggles build/remove for road construction. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION                  :{BLACK}Build tramway section. Ctrl toggles build/remove for tramway construction. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD                         :{BLACK}Build road section using the Autoroad mode. Ctrl toggles build/remove for road construction. Shift toggles building/showing cost estimate
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_FULLROAD                         :{BLACK}Build road section using the Autoroad mode with only full tile roads. Ctrl toggles build/remove for road construction. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM                         :{BLACK}Build tramway section using the Autotram mode. Ctrl toggles build/remove for tramway construction. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_VEHICLE_DEPOT               :{BLACK}Build road vehicle depot (for buying and servicing vehicles). Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}Build tram vehicle depot (for buying and servicing vehicles). Shift toggles building/showing cost estimate
@@ -2416,6 +2449,7 @@ STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Road Dep
 STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Select road vehicle depot orientation
 STR_BUILD_DEPOT_TRAM_ORIENTATION_CAPTION                        :{WHITE}Tram Depot Orientation
 STR_BUILD_DEPOT_TRAM_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Select tram vehicle depot orientation
+STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP                   :{BLACK}Automatically select road depot orientation based on environment
 
 # Road vehicle station construction window
 STR_STATION_BUILD_BUS_ORIENTATION                               :{WHITE}Bus Station Orientation
@@ -4879,10 +4913,18 @@ STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STR
 STR_SAVEGAME_NAME_SPECTATOR                                     :Spectator, {1:STRING1}
 
 # Viewport strings
+STR_VIEWPORT_TOWN_POP_VERY_POOR_RATING                          :{WHITE}{TOWN} {RED}({COMMA})
+STR_VIEWPORT_TOWN_POP_MEDIOCRE_RATING                           :{WHITE}{TOWN} {ORANGE}({COMMA})
+STR_VIEWPORT_TOWN_POP_GOOD_RATING                               :{WHITE}{TOWN} {YELLOW}({COMMA})
 STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
+STR_VIEWPORT_TOWN_POP_EXCELLENT_RATING                          :{WHITE}{TOWN} {GREEN}({COMMA})
 STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
 STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
+STR_VIEWPORT_TOWN_TINY_VERY_POOR_RATING                         :{TINY_FONT}{RED}{TOWN}
+STR_VIEWPORT_TOWN_TINY_MEDIOCRE_RATING                          :{TINY_FONT}{ORANGE}{TOWN}
+STR_VIEWPORT_TOWN_TINY_GOOD_RATING                              :{TINY_FONT}{YELLOW}{TOWN}
 STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
+STR_VIEWPORT_TOWN_TINY_EXCELLENT_RATING                         :{TINY_FONT}{GREEN}{TOWN}
 
 STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
 STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
@@ -4968,3 +5010,247 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+
+### PATCH
+STR_TOWN_DIRECTORY_CAPTION_EXTRA                                :{WHITE}Towns ({YELLOW}{COMMA}{WHITE} / {ORANGE}{COMMA}{WHITE})
+STR_LOCAL_AUTHORITY_COMPANY_RATING_NUM                          :{YELLOW}{COMPANY} {COMPANY_NUM}: {ORANGE}{STRING} {BLACK}({COMMA})
+STR_TOWN_VIEW_GROWTH                                            :{BLACK}GR: {ORANGE}{COMMA}  {BLACK}Next: {ORANGE}{COMMA}  {BLACK}RH: {ORANGE}{COMMA}  {BLACK}Flag {ORANGE}{NUM}  {BLACK}FB: {ORANGE}{NUM} {BLACK}month{P "" s}
+STR_TOWN_VIEW_GROWTH_TILES                                      :{BLACK}HS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}CS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}HR: {ORANGE}{COMMA}(+{COMMA})
+STR_TOWN_VIEW_REALPOP_RATE                                      :{BLACK}Real Population: {YELLOW}{COMMA}  {BLACK}Rating: {YELLOW}{COMMA}
+STR_TOWN_VIEW_HOUSE_STATE                                       :{BLACK}Houses: UC {ORANGE}{COMMA}  {BLACK}UR: {ORANGE}{COMMA}  {BLACK}DTM: {ORANGE}{COMMA}
+STR_CB_DISTANCE_CHECK                                           :CB town acceptance: {STRING2}
+
+###ADMIN
+STR_WATCH_WINDOW_TITLE                                          :{WHITE}Watching {RAW_STRING}.
+STR_WATCH_CLICK_TO_WATCH_COMPANY                                :{BLACK}Click here to watch company building
+STR_WATCH_CLICK_NEW_WINDOW                                      :{BLACK}Click here to open new watching window
+
+STR_WATCH_WINDOW_TITLE_CLIENT                                   :{WHITE}{RAW_STRING} in {RAW_STRING}({NUM}).
+STR_XI_KICK                                                     :{BLACK}Kick
+STR_XI_KICKC                                                    :{BLACK}Kick from cp
+STR_XI_BAN                                                      :{BLACK}Ban
+STR_XI_BAN1                                                     :{BLACK}Ban (1 day)
+STR_XI_LOCK                                                     :{BLACK}Lock
+STR_XI_UNLOCK                                                   :{BLACK}UNLock
+STR_XI_JOIN                                                     :{BLACK}Join company
+STR_XI_RESET                                                    :{BLACK}Reset company
+STR_XI_RESET2                                                   :{BLACK}Reset
+STR_XI_WATCH                                                    :Watch
+STR_XI_SUSPEND                                                  :{BLACK}Suspend
+STR_XI_SUSPEND2                                                 :{BLACK}Suspend
+STR_XI_RESUME                                                   :{BLACK}Resume
+STR_XI_RESUME2                                                  :{BLACK}Resume
+STR_XI_ENABLE                                                   :{BLACK}En/Dis
+STR_XI_SIGN_TOOLTIP                                             :{BLACK}Put a sign to attract player
+STR_XI_PLAYERS_TOOLTIP                                          :{BLACK}Show clients
+STR_XI_COMPANYW_TOOLTIP                                         :{BLACK}Open Company window
+STR_XI_COMPANYHQ                                                :{BLACK}HQ
+STR_XI_COMPANYHQ_TOOLTIP                                        :{BLACK}Go to company's HQ
+STR_XI_PRIVATE_PLAYER_MESSAGE                                   :{BLACK}.{GREEN}P{BLACK}.
+STR_XI_PRIVATE_PLAYER_MESSAGE_TOOLTIP                           :{BLACK}Send a Custom private message to this player
+STR_XI_PRIVATE_COMPANY_MESSAGE                                  :{BLACK}.{GREEN}C{BLACK}.
+STR_XI_PRIVATE_COMPANY_MESSAGE_TOOLTIP                          :{BLACK}Send a Custom private message to this company
+
+STR_XI_BAN_QUERY                                                :{WHITE}<days> <reason>
+STR_XI_BAN_DAYSDEFAULT                                          :1
+STR_XI_REALY_RESET                                              :{WHITE}Are you sure?.
+STR_XI_RESET_CAPTION                                            :{WHITE}Reset
+
+STR_NETWORK_CLIENT_EXTRA                                        :{WHITE}  (#{NUM} in c#{NUM})
+
+######## Zoning toolbar
+
+STR_ZONING_TOOLBAR                                              :{WHITE}Zoning toolbar
+STR_ZONING_OUTER                                                :{BLACK}Outer tile borders:
+STR_ZONING_INNER                                                :{BLACK}Inner tile borders:
+STR_ZONING_OUTER_INFO                                           :{BLACK}Select which type of zoning you want on the outer border of a tile.
+STR_ZONING_INNER_INFO                                           :{BLACK}Select which type of zoning you want on the inner border of a tile.
+
+STR_ZONING_NO_ZONING                                            :{BLACK}Nothing
+STR_ZONING_AUTHORITY                                            :{BLACK}Authority
+STR_ZONING_CAN_BUILD                                            :{BLACK}Where I can't build
+STR_ZONING_STA_CATCH                                            :{BLACK}Station catchment
+STR_ZONING_IND_CATCH                                            :{BLACK}Industry catchment
+STR_ZONING_BUL_CATCH                                            :{BLACK}City catchment
+STR_ZONING_BUL_UNSER                                            :{BLACK}Unserved buildings
+STR_ZONING_IND_UNSER                                            :{BLACK}Unserved industries
+STR_ZONING_TOWN_ZONES                                           :{BLACK}Town zones
+STR_ZONING_CB_TOWN_BORDERS                                      :{BLACK}CB town borders
+STR_ZONING_CB_BORDERS                                           :{BLACK}CB borders
+STR_ZONING_ADVERTISEMENT_ZONES                                  :{BLACK}Advertisement
+STR_ZONING_TOWN_GROWTH_TILES                                    :{BLACK}Town growth tiles
+
+# Commands toolbar
+STR_TOOLBAR_COMMANDS_CAPTION                                    :{WHITE}Commands
+STR_TOOLBAR_COMMANDS_GOAL_CAPTION                               :{BLACK}Goal
+STR_TOOLBAR_COMMANDS_GOAL_TOOLTIP                               :{BLACK}Send !goal command to server.
+STR_TOOLBAR_COMMANDS_QUEST_CAPTION                              :{BLACK}Quest list
+STR_TOOLBAR_COMMANDS_QUEST_TOOLTIP                              :{BLACK}Send !quest command to server.
+STR_TOOLBAR_COMMANDS_SCORE_CAPTION                              :{BLACK}Score
+STR_TOOLBAR_COMMANDS_SCORE_TOOLTIP                              :{BLACK}Send !score command to server.
+STR_TOOLBAR_COMMANDS_TOWN_CAPTION                               :{BLACK}Town
+STR_TOOLBAR_COMMANDS_TOWN_TOOLTIP                               :{BLACK}Send !town command to server.
+STR_TOOLBAR_COMMANDS_TOWN_ID_CAPTION                            :{BLACK}Town ID
+STR_TOOLBAR_COMMANDS_TOWN_ID_TOOLTIP                            :{BLACK}Send !town c-id command to server.
+STR_TOOLBAR_COMMANDS_HINT_CAPTION                               :{BLACK}CB Hint
+STR_TOOLBAR_COMMANDS_HINT_TOOLTIP                               :{BLACK}Send !hint command to server(Shows town demand in CB mode).
+STR_TOOLBAR_COMMANDS_LOGIN_CAPTION                              :{BLACK}Login
+STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP                              :{BLACK}Send !login command to server.
+STR_TOOLBAR_COMMANDS_TIMELEFT_CAPTION                           :{BLACK}Timeleft
+STR_TOOLBAR_COMMANDS_TIMELEFT_TOOLTIP                           :{BLACK}Send !timeleft command to server.
+STR_TOOLBAR_COMMANDS_NS_CAPTION                                 :{BLACK}NS{NUM}
+STR_TOOLBAR_COMMANDS_NS_TOOLTIP                                 :{BLACK}Join NS{NUM}
+STR_TOOLBAR_COMMANDS_RESETME_CAPTION                            :{BLACK}ResetMe
+STR_TOOLBAR_COMMANDS_RESETME_TOOLTIP                            :{BLACK}Send !resetme command to server.
+STR_TOOLBAR_COMMANDS_SAVEME_CAPTION                             :{BLACK}SaveMe
+STR_TOOLBAR_COMMANDS_SAVEME_TOOLTIP                             :{BLACK}Send !saveme command to server.
+STR_TOOLBAR_COMMANDS_NAME_CAPTION                               :{BLACK}New name
+STR_TOOLBAR_COMMANDS_NAME_TOOLTIP                               :{BLACK}Send !name command to server.
+STR_TOOLBAR_COMMANDS_INFO_CAPTION                               :{BLACK}Info
+STR_TOOLBAR_COMMANDS_INFO_TOOLTIP                               :{BLACK}Send !info command to server.
+
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_CAPTION                       :{BLACK}Both
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_TOOLTIP                       :{BLACK}Switch cargo buttons to both amount and income
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_I_CAPTION                     :{BLACK}Income
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_A_CAPTION                     :{BLACK}Amount
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_A_TOOLTIP                     :{BLACK}Switch cargo buttons to amount
+STR_TOOLBAR_COMMANDS_OPTION_CARGO_I_TOOLTIP                     :{BLACK}Switch cargo buttons to income
+
+
+STR_TOOLBAR_COMMANDS_TOWN_QUERY                                 :{WHITE}Company ID:
+STR_TOOLBAR_COMMANDS_LOGIN_NAME_QUERY                           :{WHITE}<Name> <password>
+STR_TOOLBAR_COMMANDS_LOGIN_PASSWORD_QUERY                       :{WHITE}Password:
+STR_TOOLBAR_COMMANDS_NAME_NEWNAME_QUERY                         :{WHITE}New name:
+
+STR_TOOLBAR_COMMANDS_TOPICS_CAPTION                             :{BLACK}Topics
+STR_TOOLBAR_COMMANDS_TOPICS_TOOLTIP                             :{BLACK}Display help topics
+STR_TOOLBAR_COMMANDS_TOPIC1_CAPTION                             :{BLACK}HELP Login
+STR_TOOLBAR_COMMANDS_TOPIC1_TOOLTIP                             :{BLACK}How to use login
+STR_TOOLBAR_COMMANDS_TOPIC2_CAPTION                             :{BLACK}HELP Coal Accept
+STR_TOOLBAR_COMMANDS_TOPIC2_TOOLTIP                             :{BLACK}What to do when town does not accept Coal
+STR_TOOLBAR_COMMANDS_TOPIC3_CAPTION                             :{BLACK}HELP Food accept
+STR_TOOLBAR_COMMANDS_TOPIC3_TOOLTIP                             :{BLACK}What to do when town does not accept Food
+STR_TOOLBAR_COMMANDS_TOPIC4_CAPTION                             :{BLACK}HELP energy
+STR_TOOLBAR_COMMANDS_TOPIC4_TOOLTIP                             :{BLACK}What are tourists, business mail or energy?
+STR_TOOLBAR_COMMANDS_TOPIC5_CAPTION                             :{BLACK}HELP admin
+STR_TOOLBAR_COMMANDS_TOPIC5_TOOLTIP                             :{BLACK}How to use admin command?
+STR_TOOLBAR_COMMANDS_TOPIC6_CAPTION                             :{BLACK}HELP New Comp.
+STR_TOOLBAR_COMMANDS_TOPIC6_TOOLTIP                             :{BLACK}Why new company can not be starter?
+
+STR_TOOLBAR_COMMANDS_HELP_CAPTION                               :{BLACK}Help
+STR_TOOLBAR_COMMANDS_HELP_TOOLTIP                               :{BLACK}Display Help
+STR_TOOLBAR_COMMANDS_RULES_CAPTION                              :{BLACK}RULES
+STR_TOOLBAR_COMMANDS_RULES_TOOLTIP                              :{BLACK}Show Rules
+STR_TOOLBAR_COMMANDS_CBHINT_CAPTION                             :{BLACK}CB Hint
+STR_TOOLBAR_COMMANDS_CBHINT_TOOLTIP                             :{BLACK}Display help for City builder
+STR_TOOLBAR_COMMANDS_BEST_CAPTION                               :{BLACK}Best
+STR_TOOLBAR_COMMANDS_BEST_TOOLTIP                               :{BLACK}Show 5 best games
+STR_TOOLBAR_COMMANDS_RANK_CAPTION                               :{BLACK}Rank
+STR_TOOLBAR_COMMANDS_RANK_TOOLTIP                               :{BLACK}Show top 10 players
+STR_TOOLBAR_COMMANDS_ME_CAPTION                                 :{BLACK}My Rank
+STR_TOOLBAR_COMMANDS_ME_TOOLTIP                                 :{BLACK}Show your ranking position
+
+#login window
+STR_LOGINWINDOW_CAPTION                                         :{WHITE}Login Window
+STR_LOGINWINDOW_NOVAPOLIS                                       :{BLACK}Novapolis
+STR_LOGINWINDOW_NICE                                            :{BLACK}N-ice
+STR_LOGINWINDOW_BTPRO                                           :{BLACK}BTPro
+STR_LOGINERROR_NOCONNECT                                        :{WHITE}Failed to connect
+STR_LOGINERROR_BADINPUT                                         :{WHITE}Bad username or password
+STR_LOGIN_USERNAME                                              :{WHITE}Username
+STR_LOGIN_PASSWORD                                              :{WHITE}Password
+STR_LOGIN_SET                                                   :{WHITE}Set
+STR_LOGIN_NOTSET                                                :{WHITE}Not Set
+STR_LOGIN_CHANGE_USERNAME                                       :{WHITE}Change username
+STR_LOGIN_CHANGE_PASSWORD                                       :{WHITE}Change password
+STR_LOGIN_SEND_LOGIN_TT                                         :{WHITE}Send Login - you must but on the correct community server
+STR_LOGIN_USERNAME_DISPLAY                                      :{WHITE}{RAW_STRING}
+STR_LOGIN_PASSWORD_DISPLAY                                      :{WHITE}{STRING}
+
+#cargo table
+STR_TOOLBAR_CARGOS_HEADER_CARGO                                 :{BLACK}Cargo Name
+STR_TOOLBAR_CARGOS_HEADER_AMOUNT                                :{BLACK}Amount
+STR_TOOLBAR_CARGOS_HEADER_INCOME                                :{BLACK}Income
+STR_TOOLBAR_CARGOS_HEADER_TOTAL                                 :{BLACK}Total
+STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH                           :{BLACK}Total this Month
+
+STR_TOOLBAR_CARGOS_UNITS                                        :{BLACK}{COMMA}
+STR_TOOLBAR_CARGOS_UNITS_TOTAL                                  :{BLACK}{COMMA}
+STR_TOOLBAR_CARGOS_CAPTION                                      :{WHITE}{COMPANY} Cargo Transported {BLACK}{COMPANY_NUM}
+STR_TOOLBAR_CARGOS_NAME                                         :{BLACK}{STRING}
+
+#towns
+STR_TOWN_DIRECTORY_TOWN_COLOUR                                  :{ORANGE}{TOWN}{BLACK} ({COMMA})
+STR_TOWN_DIRECTORY_CITY_COLOUR                                  :{YELLOW}{TOWN}{BLACK} ({COMMA})
+STR_OLD_DEPOT_TRAINT_LENGTH                                     :Old depot length format: {STRING2}
+STR_SMALLMAP_TOWN_LARGE                                         :{TINY_FONT}{YELLOW}{TOWN}
+
+STR_ORDER_DIST                                                  :{NUM}, {NUM}
+
+#server list
+STR_NETWORK_SELECT_NOVA                                         :{BLACK}Novapolis
+STR_NETWORK_SELECT_NICE                                         :{BLACK}N-ice
+STR_NETWORK_SELECT_BTPRO                                        :{BLACK}BTPro
+STR_NETWORK_SELECT_REDDIT                                       :{BLACK}reddit
+STR_NETWORK_SELECT_SERVER_TOOLTIP                               :{BLACK}Filter this one
+
+### Town CB gui
+STR_BUTTON_CB                                                   :{STRING}
+STR_BUTTON_CB_YES                                               :{BLACK}CB
+STR_TOWN_VIEW_CB_CAPTION                                        :{WHITE}{TOWN}
+
+STR_CB_LARGE_ADVERTISING_CAMPAIGN                               :{BLACK}Large Advertising
+STR_CB_NEW_BUILDINGS                                            :{BLACK}Fund Buildings
+STR_CB_FUND_REGULAR                                             :{BLACK}Fund Regularly
+STR_CB_FUND_REGULAR_TT                                          :{BLACK}Every time fund buildings is zero and company has enough money, buildings will be funded automatically
+STR_CB_FUNDED_REGULARLY                                         :{GREEN}Town is funded regularly
+
+STR_TOWN_CB_FUNDING                                             :{ORANGE}Funded for {YELLOW}{COMMA}{ORANGE} month{P "" s}
+STR_TOWN_CB_GROWING                                             :{GREEN}Town is growing!
+STR_TOWN_CB_NOT_GROWING                                         :{WHITE}Town is not growing
+STR_TOWN_CB_GROWING_DETAIL                                      :{ORANGE}1 house in {YELLOW}{COMMA} {ORANGE}days ({YELLOW}{COMMA}%{ORANGE}). Next House in {YELLOW}{COMMA} {ORANGE}days
+
+STR_TOWN_GROWTH_HEADER_CARGO                                    :{BLACK}Cargo
+STR_TOWN_GROWTH_HEADER_AMOUNT                                   :{BLACK}Delivered
+STR_TOWN_GROWTH_HEADER_REQ                                      :{BLACK}Required
+STR_TOWN_GROWTH_HEADER_LAST                                     :{BLACK}Last Month
+STR_TOWN_GROWTH_HEADER_STORE                                    :{BLACK}Stored
+STR_TOWN_GROWTH_HEADER_STORE_PCT                                :{BLACK}Use%
+STR_TOWN_GROWTH_HEADER_FROM                                     :{BLACK}From
+
+STR_TOWN_CB_CARGO_NAME                                          :{BLACK}{STRING}:
+
+STR_TOWN_CB_CARGO_AMOUNT_GOOD                                   :{GREEN}{COMMA}
+STR_TOWN_CB_CARGO_AMOUNT_BAD                                    :{YELLOW}{COMMA}
+STR_TOWN_CB_CARGO_AMOUNT_NOT                                    :{SILVER}{COMMA}
+
+STR_TOWN_CB_CARGO_REQ_YES                                       :{ORANGE}{COMMA}
+STR_TOWN_CB_CARGO_REQ_NOT                                       :{SILVER}{COMMA}
+
+STR_TOWN_CB_CARGO_STORE_YES                                     :{LTBLUE}{COMMA}
+STR_TOWN_CB_CARGO_STORE_NOT                                     :{SILVER}{COMMA}
+STR_TOWN_CB_CARGO_STORE_DECAY                                   :{BLACK}-
+
+STR_TOWN_CB_CARGO_STORE_PCT_YES                                 :{LTBLUE}{COMMA}%
+STR_TOWN_CB_CARGO_STORE_PCT_NOT                                 :{SILVER}{COMMA}%
+
+STR_TOWN_CB_CARGO_PREVIOUS_YES                                  :{GREEN}{COMMA}
+STR_TOWN_CB_CARGO_PREVIOUS_EDGE                                 :{YELLOW}{COMMA}
+STR_TOWN_CB_CARGO_PREVIOUS_BAD                                  :{RED}{COMMA}
+STR_TOWN_CB_CARGO_PREVIOUS_NOT                                  :{SILVER}{COMMA}
+
+STR_TOWN_CB_CARGO_FROM_YES                                      :{YELLOW}{COMMA}
+STR_TOWN_CB_CARGO_FROM_NOT                                      :{SILVER}{COMMA}
+
+#polyrail double click option
+STR_CONFIG_SETTING_POLYRAIL_DOUBLECLICK_TOOLTIPS                :Enable finishing polyrail with mouse double click{STRING2}
+
+#tooltips extra
+STR_CONFIG_SETTING_ENABLE_EXTRA_TOOLTIPS                        :Enable extra tooltips{STRING2}
+STR_TTE_HOUSE_NAME                                              :{LTBLUE}{STRING}
+STR_TTE_HOUSE                                                   :{BLACK}Population: {NUM}
+STR_TTE_INDUSTRY_NAME                                           :{LTBLUE}{INDUSTRY}
+STR_TTE_INDUSTRY                                                :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
+STR_TTE_STATION_NAME                                            :{LTBLUE}{STATION}
+STR_TTE_STATION                                                 :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
+STR_LAND_AREA_INFORMATION_POP                                   :{BLACK}Population: {LTBLUE}{NUM}

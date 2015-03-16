@@ -143,6 +143,7 @@ base_media_func.h
 base_station_base.h
 bmp.h
 bridge.h
+cargo_table_gui.h
 cargo_type.h
 cargoaction.h
 cargomonitor.h
@@ -386,6 +387,7 @@ vehiclelist.h
 viewport_func.h
 viewport_sprite_sorter.h
 viewport_type.h
+watch_gui.h
 water.h
 waypoint_base.h
 waypoint_func.h
@@ -397,6 +399,7 @@ video/win32_v.h
 window_func.h
 window_gui.h
 window_type.h
+zoning.h
 zoom_func.h
 zoom_type.h
 #if WIN32
@@ -452,7 +455,9 @@ autoreplace_gui.cpp
 bootstrap_gui.cpp
 bridge_gui.cpp
 build_vehicle_gui.cpp
+cargo_table_gui.cpp
 cheat_gui.cpp
+commands_gui.cpp
 company_gui.cpp
 console_gui.cpp
 date_gui.cpp
@@ -501,8 +506,10 @@ train_gui.cpp
 transparency_gui.cpp
 tree_gui.cpp
 vehicle_gui.cpp
+watch_gui.cpp
 viewport_gui.cpp
 waypoint_gui.cpp
+zoning_gui.cpp
 
 # Widgets
 widgets/airport_widget.h
@@ -511,6 +518,7 @@ widgets/autoreplace_widget.h
 widgets/bootstrap_widget.h
 widgets/bridge_widget.h
 widgets/build_vehicle_widget.h
+widgets/cargo_table_widget.h
 widgets/cheat_widget.h
 widgets/company_widget.h
 widgets/console_widget.h
@@ -590,6 +598,7 @@ vehicle_cmd.cpp
 void_cmd.cpp
 water_cmd.cpp
 waypoint_cmd.cpp
+zoning_cmd.cpp
 
 # Save/Load handlers
 saveload/afterload.cpp

@@ -34,7 +34,7 @@
 #include "autoreplace_func.h"
 
 #include "widgets/build_vehicle_widget.h"
-
+#include "hotkeys.h"
 #include "table/strings.h"
 
 #include "safeguards.h"
@@ -1481,13 +1481,28 @@ struct BuildVehicleWindow : Window {
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_BV_LIST);
 	}
+
+	virtual EventState OnHotkey(int hotkey)
+	{
+		if (this->owner != _local_company) return ES_NOT_HANDLED;
+		return Window::OnHotkey(hotkey);
+	}
+
+	static HotkeyList hotkeys;
 };
+
+static Hotkey build_vehicle_hotkeys[] = {
+	Hotkey('R', "build_vehicle", WID_BV_BUILD),
+	HOTKEY_LIST_END
+};
+HotkeyList BuildVehicleWindow::hotkeys("build_vehicle", build_vehicle_hotkeys);
 
 static WindowDesc _build_vehicle_desc(
 	WDP_AUTO, "build_vehicle", 240, 268,
 	WC_BUILD_VEHICLE, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_build_vehicle_widgets, lengthof(_nested_build_vehicle_widgets)
+	_nested_build_vehicle_widgets, lengthof(_nested_build_vehicle_widgets),
+	&BuildVehicleWindow::hotkeys
 );
 
 void ShowBuildVehicleWindow(TileIndex tile, VehicleType type)

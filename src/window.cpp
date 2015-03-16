@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include <stdarg.h>
+#include <limits>
 #include "company_func.h"
 #include "gfx_func.h"
 #include "console_func.h"
@@ -21,6 +22,7 @@
 #include "zoom_func.h"
 #include "vehicle_base.h"
 #include "window_func.h"
+#include "window_gui.h"
 #include "tilehighlight_func.h"
 #include "network/network.h"
 #include "querystring_gui.h"
@@ -1190,6 +1192,7 @@ void ChangeWindowOwner(Owner old_owner, Owner new_owner)
 		switch (w->window_class) {
 			case WC_COMPANY_COLOUR:
 			case WC_FINANCES:
+			case WC_CARGOS:
 			case WC_STATION_LIST:
 			case WC_TRAINS_LIST:
 			case WC_ROADVEH_LIST:
@@ -2816,7 +2819,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 			case MC_DOUBLE_LEFT:
 			case MC_LEFT:
 				DEBUG(misc, 2, "Cursor: 0x%X (%d)", _cursor.sprite, _cursor.sprite);
-				if (!HandleViewportClicked(vp, x, y) &&
+				if (!HandleViewportClicked(vp, x, y, click == MC_DOUBLE_LEFT) &&
 						!(w->flags & WF_DISABLE_VP_SCROLL) &&
 						_settings_client.gui.left_mouse_btn_scrolling) {
 					_scrolling_viewport = true;
@@ -3468,3 +3471,55 @@ PickerWindowBase::~PickerWindowBase()
 	this->window_class = WC_INVALID; // stop the ancestor from freeing the already (to be) child
 	ResetObjectToPlace();
 }
+
+
+/**
+ * Sets safe-initial values.
+ * @param t The type of positioning desired.
+ */
+WindowPopup::WindowPopup(WindowDesc *desc, WindowPopupType t): Window(desc)
+{
+	this->type = t;
+	this->wpu_mod_x = -5;
+	this->wpu_mod_y = -5;
+	this->wpu_widget = std::numeric_limits<uint>::max();
+}
+
+/**
+ * Compute #WindowPopup origin Point.
+ *
+ * @param desc The window's #WindowDesc object
+ * @param sm_width Window's smallest_x.
+ * @param sm_height Window's smallest_y. Unused.
+ * @param window_number Unused.
+ * @return The origin coordinate of the window.
+ */
+/*virtual*/ Point WindowPopup::OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+{
+	int x, y;
+
+	switch (this->type) {
+		case WPUT_CENTERED:
+			x = _cursor.pos.x - sm_width / 2;
+			y = _cursor.pos.y - this->window_desc->GetDefaultHeight() / 2;
+			break;
+		case WPUT_WIDGET_RELATIVE:
+			if (this->wpu_widget != std::numeric_limits<uint>::max()) {
+				NWidgetBase *wid = this->GetWidget<NWidgetBase>(this->wpu_widget);
+				x = _cursor.pos.x - wid->pos_x + this->wpu_mod_x;
+				y = _cursor.pos.y - wid->pos_y + this->wpu_mod_y;
+				break;
+			}
+		case WPUT_ORIGIN:
+		default:
+			x = _cursor.pos.x + this->wpu_mod_x;
+			y = _cursor.pos.y + this->wpu_mod_y;
+			break;
+	}
+
+	Point rv;
+	rv.x = Clamp(x, 0, _screen.width - sm_width);
+	rv.y = Clamp(y, GetMainViewTop(), GetMainViewBottom() - this->window_desc->GetDefaultHeight());
+	return rv;
+}
+

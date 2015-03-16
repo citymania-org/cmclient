@@ -38,6 +38,7 @@
 #include "../table/sprites.h"
 
 #include "../stringfilter_type.h"
+#include "../watch_gui.h"
 
 #include "../safeguards.h"
 
@@ -234,6 +235,7 @@ protected:
 	Scrollbar *vscroll;           ///< vertical scrollbar of the list of servers
 	QueryString name_editbox;     ///< Client name editbox.
 	QueryString filter_editbox;   ///< Editbox for filter on servers
+	bool UDP_CC_queried;
 
 	int lock_offset; ///< Left offset for lock icon.
 	int blot_offset; ///< Left offset for green/yellow/red compatibility icon.
@@ -474,6 +476,7 @@ public:
 
 		this->querystrings[WID_NG_FILTER] = &this->filter_editbox;
 		this->filter_editbox.cancel_button = QueryString::ACTION_CLEAR;
+		this->UDP_CC_queried = false;
 		this->SetFocusedWidget(WID_NG_FILTER);
 
 		this->last_joined = NetworkGameListAddItem(NetworkAddress(_settings_client.network.last_host, _settings_client.network.last_port));
@@ -782,6 +785,23 @@ public:
 			case WID_NG_NEWGRF_MISSING: // Find missing content online
 				if (this->server != NULL) ShowMissingContentWindow(this->server->info.grfconfig);
 				break;
+			case WID_NG_NICE:
+			case WID_NG_BTPRO:
+			case WID_NG_REDDIT:
+			case WID_NG_NOVA:
+				if(!UDP_CC_queried){
+					NetworkUDPQueryMasterServer();
+					UDP_CC_queried = true;
+				}
+				if(widget == WID_NG_NICE) this->filter_editbox.text.Assign("n-ice");
+				else if(widget == WID_NG_BTPRO) this->filter_editbox.text.Assign("BTPro");
+				else if(widget == WID_NG_NOVA) this->filter_editbox.text.Assign("Novapolis");
+				else if(widget == WID_NG_REDDIT) this->filter_editbox.text.Assign("reddit");
+				this->servers.ForceRebuild();
+				this->BuildGUINetworkGameList();
+				this->ScrollToSelectedServer();
+				this->SetDirty();
+				break;
 		}
 	}
 
@@ -909,7 +929,7 @@ public:
 	}
 };
 
-Listing NetworkGameWindow::last_sorting = {false, 5};
+Listing NetworkGameWindow::last_sorting = {false, 0};
 GUIGameServerList::SortFunction * const NetworkGameWindow::sorter_funcs[] = {
 	&NGameNameSorter,
 	&NGameClientSorter,
@@ -946,6 +966,10 @@ static const NWidgetPart _nested_network_game_widgets[] = {
 						NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NG_CONN_BTN),
 											SetDataTip(STR_BLACK_STRING, STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP),
 						NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_REDDIT), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_REDDIT, STR_NETWORK_SELECT_SERVER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_NICE), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_NICE, STR_NETWORK_SELECT_SERVER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_BTPRO), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_BTPRO, STR_NETWORK_SELECT_SERVER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_NOVA), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_NOVA, STR_NETWORK_SELECT_SERVER_TOOLTIP),
 					EndContainer(),
 					NWidget(NWID_HORIZONTAL), SetPIP(0, 7, 0),
 						NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NG_FILTER_LABEL), SetDataTip(STR_LIST_FILTER_TITLE, STR_NULL),
@@ -1691,6 +1715,14 @@ static void ClientList_Ban(const NetworkClientInfo *ci)
 	NetworkServerKickOrBanIP(ci->client_id, true);
 }
 
+static void ClientList_Watch(const NetworkClientInfo *ci)
+{
+	if (ci != NULL){
+		CompanyID cid = (CompanyID)ci->client_id;
+		ShowWatchWindow(cid, 1);
+	}
+}
+
 static void ClientList_GiveMoney(const NetworkClientInfo *ci)
 {
 	ShowNetworkGiveMoneyWindow(ci->client_playas);
@@ -1767,6 +1799,9 @@ struct NetworkClientListPopupWindow : Window {
 			this->AddAction(STR_NETWORK_CLIENTLIST_BAN, &ClientList_Ban);
 		}
 
+		if (_network_own_client_id != ci->client_id && ci->client_id != CLIENT_ID_SERVER && _novarole) {
+			this->AddAction(STR_XI_WATCH, &ClientList_Watch);
+		}
 		this->InitNested(client_id);
 		CLRBITS(this->flags, WF_WHITE_BORDER);
 	}
@@ -1908,8 +1943,11 @@ struct NetworkClientListWindow : Window {
 		FOR_ALL_CLIENT_INFOS(ci) {
 			width = max(width, GetStringBoundingBox(ci->client_name).width);
 		}
-
-		size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->company_icon_width + width + WD_FRAMERECT_RIGHT;
+		SetDParam(0, 0xFFFF);
+		SetDParam(1, INVALID_COMPANY);
+		uint width2 = GetStringBoundingBox(STR_NETWORK_CLIENT_EXTRA).width;
+		size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->company_icon_width + width + WD_FRAMERECT_RIGHT + width2;
+		//size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->company_icon_width + width + WD_FRAMERECT_RIGHT;
 	}
 
 	virtual void OnPaint()
@@ -1959,6 +1997,11 @@ struct NetworkClientListWindow : Window {
 			if (Company::IsValidID(ci->client_playas)) DrawCompanyIcon(ci->client_playas, icon_left, y + icon_y_offset);
 
 			DrawString(name_left, name_right, y, ci->client_name, colour);
+
+			uint extra = GetStringBoundingBox(ci->client_name).width + 15;
+			SetDParam(0, ci->client_id);
+			SetDParam(1, ci->client_playas == INVALID_COMPANY ? ci->client_playas : ci->client_playas + 1);
+			DrawString(name_left + extra, right, y, STR_NETWORK_CLIENT_EXTRA, TC_FROMSTRING, SA_RIGHT);
 
 			y += FONT_HEIGHT_NORMAL;
 		}

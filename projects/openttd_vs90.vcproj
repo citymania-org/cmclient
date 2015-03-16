@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="openttd"
 	ProjectGUID="{668328A0-B40E-4CDB-BD72-D0064424414A}"
 	RootNamespace="openttd"
@@ -15,6 +15,8 @@
 			Name="x64"
 		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
@@ -53,7 +55,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;WITH_ASSERT"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;WITH_ASSERT"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -88,7 +90,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib imm32.lib libpng.lib zlibstat.lib lzo2.lib liblzma.lib libfreetype2.lib icuuc.lib icuin.lib icudt.lib icule.lib iculx.lib"
+				AdditionalOptions="/IGNORE:4099"
+				AdditionalDependencies="winmm.lib ws2_32.lib imm32.lib libpng.lib zlibstat.lib lzo2.lib liblzma.lib libfreetype2.lib"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames=""
@@ -97,100 +100,6 @@
 				StackReserveSize="1048576"
 				StackCommitSize="1048576"
 				OptimizeReferences="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="..\objs\$(PlatformName)\$(ConfigurationName)\"
-			IntermediateDirectory="..\objs\$(PlatformName)\$(ConfigurationName)\"
-			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/openttd.tlb"
-				HeaderFileName=""
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
-				Optimization="0"
-				AdditionalIncludeDirectories="..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				UsePrecompiledHeader="0"
-				AssemblerListingLocation="$(IntDir)/"
-				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)/$(TargetName).pdb"
-				WarningLevel="3"
-				WarnAsError="false"
-				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-				CallingConvention="1"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="2057"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib imm32.lib libpng.lib zlibstat.lib lzo2.lib liblzma.lib libfreetype2.lib icuuc.lib icuin.lib icudt.lib icule.lib iculx.lib"
-				LinkIncremental="0"
-				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="LIBCMT.lib"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				StackReserveSize="1048576"
-				StackCommitSize="1048576"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -255,7 +164,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;_SQ64;WITH_ASSERT"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;_SQ64;WITH_ASSERT"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -290,7 +199,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib imm32.lib libpng.lib zlibstat.lib lzo2.lib liblzma.lib libfreetype2.lib icuuc.lib icuin.lib icudt.lib icule.lib iculx.lib"
+				AdditionalOptions="/IGNORE:4099"
+				AdditionalDependencies="winmm.lib ws2_32.lib imm32.lib libpng.lib zlibstat.lib lzo2.lib liblzma.lib libfreetype2.lib"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames=""
@@ -320,7 +230,98 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="..\objs\$(PlatformName)\$(ConfigurationName)\"
+			IntermediateDirectory="..\objs\$(PlatformName)\$(ConfigurationName)\"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\Debug/openttd.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				UsePrecompiledHeader="0"
+				AssemblerListingLocation="$(IntDir)/"
+				ObjectFile="$(IntDir)/"
+				ProgramDataBaseFileName="$(IntDir)/$(TargetName).pdb"
+				WarningLevel="3"
+				WarnAsError="false"
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="4"
+				CallingConvention="1"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="2057"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="winmm.lib ws2_32.lib imm32.lib libpng.lib zlibstat.lib lzo2.lib liblzma.lib libfreetype2.lib"
+				LinkIncremental="0"
+				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames="LIBCMT.lib"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				StackReserveSize="1048576"
+				StackCommitSize="1048576"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -359,7 +360,7 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;_SQ64"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;_SQ64"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -389,7 +390,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib imm32.lib libpng.lib zlibstat.lib lzo2.lib liblzma.lib libfreetype2.lib icuuc.lib icuin.lib icudt.lib icule.lib iculx.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib imm32.lib libpng.lib zlibstat.lib lzo2.lib liblzma.lib libfreetype2.lib"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames="LIBCMT.lib"
@@ -418,9 +419,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -445,6 +443,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\autoreplace.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\base_consist.cpp"
 				>
 			</File>
 			<File
@@ -508,6 +510,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\linkgraph\demands.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\depot.cpp"
 				>
 			</File>
@@ -544,15 +550,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\linkgraph\flowmapper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\fontcache.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\..\src\fontdetection.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\base_consist.cpp"
 				>
 			</File>
 			<File
@@ -568,11 +574,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\gfxinit.cpp"
+				RelativePath=".\..\src\gfx_layout.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\gfx_layout.cpp"
+				RelativePath=".\..\src\gfxinit.cpp"
 				>
 			</File>
 			<File
@@ -608,14 +614,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\linkgraph\demands.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\linkgraph\flowmapper.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\linkgraph\linkgraph.cpp"
 				>
 			</File>
@@ -628,15 +626,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\linkgraph\mcf.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\linkgraph\refresh.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\map.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\linkgraph\mcf.cpp"
 				>
 			</File>
 			<File
@@ -704,6 +698,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\linkgraph\refresh.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\rev.cpp"
 				>
 			</File>
@@ -752,6 +750,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\story.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\strgen\strgen_base.cpp"
 				>
 			</File>
@@ -765,10 +767,6 @@
 			</File>
 			<File
 				RelativePath=".\..\src\strings.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\story.cpp"
 				>
 			</File>
 			<File
@@ -868,6 +866,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\base_consist.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\base_media_base.h"
 				>
 			</File>
@@ -885,6 +887,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\bridge.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\cargo_table_gui.h"
 				>
 			</File>
 			<File
@@ -1000,6 +1006,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\linkgraph\demands.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\depot_base.h"
 				>
 			</File>
@@ -1092,15 +1102,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\linkgraph\flowmapper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\fontcache.h"
 				>
 			</File>
 			<File
 				RelativePath=".\..\src\fontdetection.h"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\base_consist.h"
 				>
 			</File>
 			<File
@@ -1200,6 +1210,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\linkgraph\init.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\landscape.h"
 				>
 			</File>
@@ -1209,18 +1223,6 @@
 			</File>
 			<File
 				RelativePath=".\..\src\language.h"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\linkgraph\demands.h"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\linkgraph\flowmapper.h"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\linkgraph\init.h"
 				>
 			</File>
 			<File
@@ -1252,14 +1254,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\linkgraph\mcf.h"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\linkgraph\refresh.h"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\livery.h"
 				>
 			</File>
@@ -1269,6 +1263,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\map_type.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\linkgraph\mcf.h"
 				>
 			</File>
 			<File
@@ -1517,6 +1515,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\rail_type.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\linkgraph\refresh.h"
 				>
 			</File>
 			<File
@@ -1860,6 +1862,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\watch_gui.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\water.h"
 				>
 			</File>
@@ -1901,6 +1907,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\window_type.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\zoning.h"
 				>
 			</File>
 			<File
@@ -2056,7 +2066,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\cargo_table_gui.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\cheat_gui.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\commands_gui.cpp"
 				>
 			</File>
 			<File
@@ -2256,7 +2274,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\watch_gui.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\waypoint_gui.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\zoning_gui.cpp"
 				>
 			</File>
 		</Filter>
@@ -2264,11 +2290,11 @@
 			Name="Widgets"
 			>
 			<File
-				RelativePath=".\..\src\widgets\airport_widget.h"
+				RelativePath=".\..\src\widgets\ai_widget.h"
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\widgets\ai_widget.h"
+				RelativePath=".\..\src\widgets\airport_widget.h"
 				>
 			</File>
 			<File
@@ -2285,6 +2311,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\widgets\build_vehicle_widget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\widgets\cargo_table_widget.h"
 				>
 			</File>
 			<File
@@ -2599,6 +2629,10 @@
 				RelativePath=".\..\src\waypoint_cmd.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\src\zoning_cmd.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Save/Load handlers"
@@ -2744,11 +2778,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\saveload\strings_sl.cpp"
+				RelativePath=".\..\src\saveload\story_sl.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\saveload\story_sl.cpp"
+				RelativePath=".\..\src\saveload\strings_sl.cpp"
 				>
 			</File>
 			<File
@@ -3468,11 +3502,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\script\api\script_storypagelist.hpp"
+				RelativePath=".\..\src\script\api\script_storypageelementlist.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\script\api\script_storypageelementlist.hpp"
+				RelativePath=".\..\src\script\api\script_storypagelist.hpp"
 				>
 			</File>
 			<File
@@ -3728,11 +3762,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\script\api\script_storypagelist.cpp"
+				RelativePath=".\..\src\script\api\script_storypageelementlist.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\script\api\script_storypageelementlist.cpp"
+				RelativePath=".\..\src\script\api\script_storypagelist.cpp"
 				>
 			</File>
 			<File
@@ -3840,14 +3874,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\blitter\32bpp_sse_func.hpp"
-				>
-			</File>
-			<File
-				RelativePath=".\..\src\blitter\32bpp_sse_type.h"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\blitter\32bpp_sse2.cpp"
 				>
 			</File>
@@ -3861,6 +3887,14 @@
 			</File>
 			<File
 				RelativePath=".\..\src\blitter\32bpp_sse4.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\blitter\32bpp_sse_func.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\blitter\32bpp_sse_type.h"
 				>
 			</File>
 			<File

@@ -38,6 +38,7 @@
 #include "station_base.h"
 #include "tilehighlight_func.h"
 #include "zoom_func.h"
+#include "hotkeys.h"
 
 #include "safeguards.h"
 
@@ -2295,24 +2296,7 @@ static const NWidgetPart _nested_vehicle_view_widgets[] = {
 	EndContainer(),
 };
 
-/** Vehicle view window descriptor for all vehicles but trains. */
-static WindowDesc _vehicle_view_desc(
-	WDP_AUTO, "view_vehicle", 250, 116,
-	WC_VEHICLE_VIEW, WC_NONE,
-	0,
-	_nested_vehicle_view_widgets, lengthof(_nested_vehicle_view_widgets)
-);
 
-/**
- * Vehicle view window descriptor for trains. Only minimum_height and
- *  default_height are different for train view.
- */
-static WindowDesc _train_view_desc(
-	WDP_AUTO, "view_vehicle_train", 250, 134,
-	WC_VEHICLE_VIEW, WC_NONE,
-	0,
-	_nested_vehicle_view_widgets, lengthof(_nested_vehicle_view_widgets)
-);
 
 
 /* Just to make sure, nobody has changed the vehicle type constants, as we are
@@ -2771,8 +2755,45 @@ public:
 	{
 		::ShowNewGRFInspectWindow(GetGrfSpecFeature(Vehicle::Get(this->window_number)->type), this->window_number);
 	}
+
+	virtual EventState OnHotkey(int hotkey)
+	{
+		if (this->owner != _local_company) return ES_NOT_HANDLED;
+		return Window::OnHotkey(hotkey);
+	}
+
+	static HotkeyList hotkeys;
 };
 
+static Hotkey vehiclegui_hotkeys[] = {
+	Hotkey('G', "vehicle_orders", WID_VV_SHOW_ORDERS),
+	Hotkey('F', "vehicle_go", WID_VV_START_STOP),
+	Hotkey((uint16)0, "vehicle_refit", WID_VV_REFIT),
+	Hotkey((uint16)0, "vehicle_clone", WID_VV_CLONE),
+	HOTKEY_LIST_END
+};
+HotkeyList VehicleViewWindow::hotkeys("vehiclegui", vehiclegui_hotkeys);
+
+/** Vehicle view window descriptor for all vehicles but trains. */
+static WindowDesc _vehicle_view_desc(
+	WDP_AUTO, "view_vehicle", 250, 116,
+	WC_VEHICLE_VIEW, WC_NONE,
+	0,
+	_nested_vehicle_view_widgets, lengthof(_nested_vehicle_view_widgets),
+	&VehicleViewWindow::hotkeys
+);
+
+/**
+ * Vehicle view window descriptor for trains. Only minimum_height and
+ *  default_height are different for train view.
+ */
+static WindowDesc _train_view_desc(
+	WDP_AUTO, "view_vehicle_train", 250, 134,
+	WC_VEHICLE_VIEW, WC_NONE,
+	0,
+	_nested_vehicle_view_widgets, lengthof(_nested_vehicle_view_widgets),
+	&VehicleViewWindow::hotkeys
+);
 
 /** Shows the vehicle view window of the given vehicle. */
 void ShowVehicleViewWindow(const Vehicle *v)
