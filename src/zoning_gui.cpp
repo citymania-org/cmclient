@@ -122,6 +122,15 @@ struct ZoningWindow : public Window {
 	static HotkeyList hotkeys;
 };
 
+
+static EventState ZoningWindowGlobalHotkeys(int hotkey) {
+	EvaluationMode zoning = (EvaluationMode)(hotkey - ZTW_OUTER_FIRST + 1); // +1:skip CHECKNOTHING
+	bool deselect = (_zoning.outer == zoning);
+	_zoning.outer = deselect ? CHECKNOTHING : zoning;
+	MarkWholeScreenDirty();
+	return ES_HANDLED;
+}
+
 static Hotkey zoning_hotkeys[] = {
 	Hotkey(WKC_SHIFT | '1', "authority", ZTW_OUTER_FIRST),
 	Hotkey(WKC_SHIFT | '2', "build_status", ZTW_OUTER_FIRST + 1),
@@ -136,7 +145,7 @@ static Hotkey zoning_hotkeys[] = {
 	HOTKEY_LIST_END
 };
 
-HotkeyList ZoningWindow::hotkeys("zoning_gui", zoning_hotkeys);
+HotkeyList ZoningWindow::hotkeys("zoning_gui", zoning_hotkeys, ZoningWindowGlobalHotkeys);
 
 
 /** Construct the row containing the digit keys. */

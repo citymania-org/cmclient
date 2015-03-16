@@ -227,7 +227,7 @@ SpriteID TileZoneCheckCBTownBorders(TileIndex tile) {
 
 //Check which advertisement zone(small, medium, large) tile belongs to
 SpriteID TileZoneCheckTownAdvertisementZones(TileIndex tile) {
-	Town *town = CalcClosestTownFromTile(tile, max((uint)_settings_game.economy.dist_local_authority, 20U));
+	Town *town = CalcClosestTownFromTile(tile, 21U);
 	if (town == NULL) return INVALID_SPRITE_ID; //nothing
 
 	uint dist = DistanceManhattan(town->xy, tile);

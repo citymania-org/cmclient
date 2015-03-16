@@ -759,6 +759,7 @@ struct BuildRailToolbarWindow : Window {
 
 	virtual EventState OnHotkey(int hotkey)
 	{
+		EventState es;
 		MarkTileDirtyByTile(TileVirtXY(_thd.pos.x, _thd.pos.y)); // redraw tile selection
 
 		if (hotkey == HOTKEY_POLYRAIL || hotkey == HOTKEY_NEW_POLYRAIL) {
@@ -766,9 +767,32 @@ struct BuildRailToolbarWindow : Window {
 			 * then from a click and that the CTRL state should be ignored. */
 			this->last_user_action = hotkey;
 			hotkey = WID_RAT_POLYRAIL;
+			return this->Window::OnHotkey(hotkey);
 		}
 
-		return this->Window::OnHotkey(hotkey);
+		if (hotkey == WID_RAT_BUILD_STATION_SIZED || hotkey == WID_RAT_BUILD_STATION_DRAGDROP) {
+			bool dragdrop = (hotkey == WID_RAT_BUILD_STATION_DRAGDROP);
+			Window *w = FindWindowById(WC_BUILD_STATION, 0);
+			if (w != NULL) {
+				// Already bulding station, either cancel it or change dragdrop mode
+				if (_settings_client.gui.station_dragdrop == dragdrop) {
+					es = Window::OnHotkey(WID_RAT_BUILD_STATION);
+				} else {
+					es = w->OnHotkey(WID_BRAS_PLATFORM_DRAG_N_DROP);
+				}
+			} else {
+				_settings_client.gui.station_dragdrop = dragdrop;
+				es = Window::OnHotkey(WID_RAT_BUILD_STATION);
+			}
+		} else {
+			es = Window::OnHotkey(hotkey);
+		}
+		if ((hotkey == WID_RAT_BUILD_STATION || hotkey == WID_RAT_BUILD_STATION_SIZED ||
+				hotkey == WID_RAT_BUILD_STATION_DRAGDROP) && es == ES_HANDLED &&
+				_remove_button_clicked) {
+			ToggleRailButton_Remove(this);
+		}
+		return es;
 	}
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
@@ -958,6 +982,8 @@ static Hotkey railtoolbar_hotkeys[] = {
 	Hotkey('6', "demolish", WID_RAT_DEMOLISH),
 	Hotkey('7', "depot", WID_RAT_BUILD_DEPOT),
 	Hotkey('8', "waypoint", WID_RAT_BUILD_WAYPOINT),
+	Hotkey((uint16)0, "station_sized", WID_RAT_BUILD_STATION_SIZED),
+	Hotkey((uint16)0, "station_dragdrop", WID_RAT_BUILD_STATION_DRAGDROP),
 	Hotkey('9', "station", WID_RAT_BUILD_STATION),
 	Hotkey('S', "signal", WID_RAT_BUILD_SIGNALS),
 	Hotkey('B', "bridge", WID_RAT_BUILD_BRIDGE),

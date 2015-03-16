@@ -822,6 +822,69 @@ void UpdateTownCargoBitmap()
 
 static bool GrowTown(Town *t);
 
+static void DoRegularFunding(Town *t)
+{
+	bool fund_regularly = HasBit(t->fund_regularly, _local_company);
+	bool do_powerfund = HasBit(t->do_powerfund, _local_company);
+	if (!fund_regularly && !do_powerfund)
+		return;
+
+	if (_local_company == COMPANY_SPECTATOR)
+		return;
+
+	if (CB_Enabled() && !t->growing)
+		return;
+
+	uint16 gr = (t->growth_rate & ~TOWN_GROW_RATE_CUSTOM);
+
+	// Funding with grow_counter == 1 doesn't speed up next house building,
+	// so trying to avoid it. This means no powerfunding with gr <= 1, and no
+	// regular funding with grow_counter == 1 unless gr is also 1
+	// (we need to fund anyway even if it doesn't speed up next house)
+	// And in case town is not growing ignore grow_counter and growth_rate
+	// completely (it will start growing once we fund it)
+	bool not_growing = !HasBit(t->flags, TOWN_IS_GROWING);
+	if ((fund_regularly && t->fund_buildings_months == 0 &&
+	    	((t->grow_counter > 0 && (t->grow_counter > 1 || gr == 1)) || not_growing)) ||
+		(do_powerfund && gr > 1 && (t->grow_counter == gr || not_growing))) {
+
+		CompanyByte old = _current_company;
+		_current_company = _local_company;
+		DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION);
+		_current_company = old;
+	}
+}
+
+static void DoRegularAdvertising(Town *t) {
+	if (!HasBit(t->advertise_regularly, _local_company))
+		return;
+
+	if (t->ad_ref_goods_entry == NULL) {
+		// Pick as ref station and cargo with min rating
+		const Station *st;
+		FOR_ALL_STATIONS(st) {
+			if (st->owner == _local_company && DistanceManhattan(t->xy, st->xy) <= 20) {
+				for (CargoID i = 0; i < NUM_CARGO; i++)
+					if (st->goods[i].HasRating() && (t->ad_ref_goods_entry == NULL ||
+					    	t->ad_ref_goods_entry->rating < st->goods[i].rating)) {
+						t->ad_ref_goods_entry = &st->goods[i];
+					}
+			}
+		}
+
+		if (t->ad_ref_goods_entry == NULL)
+			return;
+	}
+
+	if (t->ad_ref_goods_entry->rating >= t->ad_rating_goal)
+		return;
+
+    CompanyByte old = _current_company;
+    _current_company = _local_company;
+    DoCommandP(t->xy, t->index, HK_LADVERT, CMD_DO_TOWN_ACTION);
+    _current_company = old;
+}
+
 static void TownTickHandler(Town *t)
 {
 	if (HasBit(t->flags, TOWN_IS_GROWING)) {
@@ -842,6 +905,8 @@ static void TownTickHandler(Town *t)
 		}
 		t->grow_counter = i;
 	}
+	DoRegularFunding(t);
+	DoRegularAdvertising(t);
 }
 
 void OnTick_Town()
@@ -1717,6 +1782,10 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 	t->houses_reconstruction = 0;
 	t->houses_demolished = 0;
 	t->fund_regularly = 0;
+	t->do_powerfund = 0;
+	t->advertise_regularly = 0;
+	t->ad_rating_goal = 95;
+	t->ad_ref_goods_entry = NULL;
 	//CB
 
 	for (uint i = 0; i != MAX_COMPANIES; i++) t->ratings[i] = RATING_INITIAL;
@@ -3568,12 +3637,8 @@ void TownsMonthlyLoop()
 		UpdateTownUnwanted(t);
 		UpdateTownCargoes(t);
 
-		if(t->fund_buildings_months == 0 && HasBit(t->fund_regularly, _local_company)){
-			CompanyByte old = _current_company;
-			_current_company = _local_company;
-			DoCommandP(t->xy, t->index, 5, CMD_DO_TOWN_ACTION);
-			_current_company = old;
-		}
+		DoRegularFunding(t);
+
 		t->houses_skipped_last_month = t->houses_skipped - t->houses_skipped_prev;
 		t->houses_skipped_prev = t->houses_skipped;
 		t->cycles_skipped_last_month = t->cycles_skipped - t->cycles_skipped_prev;

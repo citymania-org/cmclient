@@ -333,6 +333,9 @@ static void ShowTownAuthorityWindow(uint town)
 	AllocateWindowDescFront<TownAuthorityWindow>(&_town_authority_desc, town);
 }
 
+static int TownTicksToDays(int ticks) {
+ 	return (ticks * TOWN_GROWTH_TICKS + DAY_TICKS / 2) / DAY_TICKS;
+}
 
 /* Town view window. */
 struct TownViewWindow : Window {
@@ -358,9 +361,9 @@ public:
 
 		/* disable renaming town in network games if you are not the server */
 		this->SetWidgetDisabledState(WID_TV_CHANGE_NAME, _networking && !_network_server);
-		extern bool _novahost;
-		this->wcb_disable = !_networking || !_novahost || this->town->larger_town || _game_mode == GM_EDITOR;
-		this->SetWidgetDisabledState(WID_TV_CB, this->wcb_disable);
+		// extern bool _novahost;
+		// this->wcb_disable = !_networking || !_novahost || this->town->larger_town || _game_mode == GM_EDITOR;
+		// this->SetWidgetDisabledState(WID_TV_CB, this->wcb_disable);
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -369,8 +372,9 @@ public:
 			SetDParam(0, this->town->index);
 		}
 		if (widget == WID_TV_CB){
-			if(this->wcb_disable) SetDParam(0, STR_EMPTY);
-			else SetDParam(0, STR_BUTTON_CB_YES);
+			// if(this->wcb_disable) SetDParam(0, STR_EMPTY);
+			// else
+			SetDParam(0, STR_BUTTON_CB_YES);
 		}
 	}
 
@@ -445,7 +449,7 @@ public:
 		}
 
 		if (HasBit(this->town->flags, TOWN_IS_GROWING)) {
-			SetDParam(0, ((this->town->growth_rate & (~TOWN_GROW_RATE_CUSTOM)) * TOWN_GROWTH_TICKS + DAY_TICKS) / DAY_TICKS);
+			SetDParam(0, TownTicksToDays((this->town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1));
 			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, this->town->fund_buildings_months == 0 ? STR_TOWN_VIEW_TOWN_GROWS_EVERY : STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED);
 		} else {
 			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_TOWN_GROW_STOPPED);
@@ -498,7 +502,8 @@ public:
 			}
 
 			case WID_TV_CB:
-				if(_networking) ShowCBTownWindow(this->window_number);
+				// if(_networking)
+				ShowCBTownWindow(this->window_number);
 				break;
 
 			case WID_TV_DELETE: // delete town - only available on Scenario editor
@@ -513,9 +518,9 @@ public:
 			case WID_TV_INFO:
 				size->height = GetDesiredInfoHeight(size->width);
 				break;
-			case WID_TV_CB:
-				if(this->wcb_disable || !CB_Enabled()) size->width = 0;
-				break;
+			// case WID_TV_CB:
+				// if(this->wcb_disable || !CB_Enabled()) size->width = 0;
+				// break;
 		}
 	}
 
@@ -1294,8 +1299,9 @@ void ShowFoundTownWindow()
 	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
 	AllocateWindowDescFront<FoundTownWindow>(&_found_town_desc, 0);
 }
+
 //CB
-void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line){
+void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line) {
 	//real pop and rating
 	SetDParam(0, town->cache.potential_pop);
 	SetDParam(1, town->ratings[_current_company]);
@@ -1303,10 +1309,10 @@ void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line){
 	//town stats
 	int grow_rate = 0;
 	if(town->growth_rate == TOWN_GROW_RATE_CUSTOM_NONE) grow_rate = 0;
-	else grow_rate = ((town->growth_rate & (~TOWN_GROW_RATE_CUSTOM)) * TOWN_GROWTH_TICKS + DAY_TICKS) / DAY_TICKS;
+	else grow_rate = TownTicksToDays((town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1);
 
 	SetDParam(0, grow_rate);
-	SetDParam(1, ((town->growth_rate & (TOWN_GROW_RATE_CUSTOM)) == 0) ? ((town->grow_counter & (~TOWN_GROW_RATE_CUSTOM)) * TOWN_GROWTH_TICKS + DAY_TICKS) / DAY_TICKS : -1);
+	SetDParam(1, !(town->growth_rate & TOWN_GROW_RATE_CUSTOM) ? TownTicksToDays(town->grow_counter + 1) : -1);
 	SetDParam(2, town->time_until_rebuild);
 	SetDParam(3, HasBit(town->flags, TOWN_IS_GROWING) ? 1 : 0);
 	SetDParam(4, town->fund_buildings_months);
@@ -1350,6 +1356,8 @@ public:
 		this->town = Town::Get(window_number);
 		this->InitNested(window_number);
 		if(HasBit(this->town->fund_regularly, _local_company)) this->LowerWidget(WID_CB_FUND_REGULAR);
+		if(HasBit(this->town->do_powerfund, _local_company)) this->LowerWidget(WID_CB_POWERFUND);
+		if(HasBit(this->town->advertise_regularly, _local_company)) this->LowerWidget(WID_CB_ADVERT_REGULAR);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1370,14 +1378,37 @@ public:
 				TownExecuteAction(this->town, HK_FUND);
 				break;
 			case WID_CB_FUND_REGULAR:
-				if(!HasBit(this->town->fund_regularly, _local_company) && TownExecuteAction(this->town, HK_FUND)){
-					SetBit(this->town->fund_regularly, _local_company);
-				}
-				else this->town->fund_regularly = 0;
+				ToggleBit(this->town->fund_regularly, _local_company);
 				this->SetWidgetLoweredState(widget, HasBit(this->town->fund_regularly, _local_company));
 				this->SetWidgetDirty(widget);
 				break;
+			case WID_CB_POWERFUND:
+				ToggleBit(this->town->do_powerfund, _local_company);
+				this->SetWidgetLoweredState(widget, HasBit(this->town->do_powerfund, _local_company));
+				this->SetWidgetDirty(widget);
+				break;
+			case WID_CB_ADVERT_REGULAR:
+				if (!this->town->advertise_regularly) {
+					SetDParam(0, ToPercent8(this->town->ad_rating_goal));
+					ShowQueryString(STR_JUST_INT, STR_FOUND_TOWN_CAPTION,
+					                4, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
+				} else this->OnQueryTextFinished(NULL);
+				break;
 		}
+	}
+
+	virtual void OnQueryTextFinished(char *str)
+	{
+		if (str != NULL) SetBit(this->town->advertise_regularly, _local_company);
+		else ClrBit(this->town->advertise_regularly, _local_company);
+		this->town->ad_ref_goods_entry = NULL;
+		this->SetWidgetLoweredState(WID_CB_ADVERT_REGULAR, HasBit(this->town->advertise_regularly, _local_company));
+		this->SetWidgetDirty(WID_CB_ADVERT_REGULAR);
+
+		if (str == NULL)
+			return;
+		uint val = Clamp(StrEmpty(str) ? 0 : strtol(str, NULL, 10), 1, 100);
+		this->town->ad_rating_goal = ((val << 8) + 255) / 101;
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -1594,6 +1625,13 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
 						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
+						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
+					EndContainer(),
+					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_ADVERT_REGULAR, STR_CB_ADVERT_REGULAR_TT),
+  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_POWERFUND),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_POWERFUND, STR_CB_POWERFUND_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 				EndContainer(),

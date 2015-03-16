@@ -276,6 +276,7 @@ STR_MEASURE_LENGTH                                              :{BLACK}Length: 
 STR_MEASURE_AREA                                                :{BLACK}Area: {NUM} x {NUM}
 STR_MEASURE_LENGTH_HEIGHTDIFF                                   :{BLACK}Length: {NUM}{}Height difference: {HEIGHT}
 STR_MEASURE_AREA_HEIGHTDIFF                                     :{BLACK}Area: {NUM} x {NUM}{}Height difference: {HEIGHT}
+STR_MEASURE_DIST_HEIGHTDIFF                                     :{BLACK}Manhattan Distance: {NUM}{}Bird Fly Distance: {NUM}{}Distance from the nearest edge: {NUM}{}Height from sea level: {HEIGHT}{}Height difference: {HEIGHT}
 
 
 # These are used in buttons
@@ -2513,6 +2514,7 @@ STR_LANDSCAPING_TOOLTIP_LOWER_A_CORNER_OF_LAND                  :{BLACK}Lower a 
 STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND                  :{BLACK}Raise a corner of land. Dragging raises the first selected corner and levels the selected area to the new corner height. Ctrl selects the area diagonally. Shift toggles building/showing cost estimate
 STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Level an area of land to the height of the first selected corner. Ctrl selects the area diagonally. Shift toggles building/showing cost estimate
 STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Purchase land for future use. Shift toggles building/showing cost estimate
+STR_LANDSCAPING_TOOLTIP_RULER_TOOL                              :{BLACK}Use a virtual ruler to measure distance and height
 
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Object Selection
@@ -5204,6 +5206,11 @@ STR_CB_NEW_BUILDINGS                                            :{BLACK}Fund Bui
 STR_CB_FUND_REGULAR                                             :{BLACK}Fund Regularly
 STR_CB_FUND_REGULAR_TT                                          :{BLACK}Every time fund buildings is zero and company has enough money, buildings will be funded automatically
 STR_CB_FUNDED_REGULARLY                                         :{GREEN}Town is funded regularly
+STR_CB_ADVERT_REGULAR                                           :{BLACK}Adv. Regularly
+STR_CB_ADVERT_REGULAR_TT                                        :{BLACK}Automatically advertise town whenever stations rating drops below a certain point
+STR_CB_POWERFUND                                                :{BLACK}Powerfund
+STR_CB_ADVERT_REGULAR_RATING_TO_KEEP                            :{BLACK}Station rating to keep
+STR_CB_POWERFUND_TT                                             :{BLACK}Continiously funds town with maximum speed possible
 
 STR_TOWN_CB_FUNDING                                             :{ORANGE}Funded for {YELLOW}{COMMA}{ORANGE} month{P "" s}
 STR_TOWN_CB_GROWING                                             :{GREEN}Town is growing!

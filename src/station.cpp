@@ -19,6 +19,7 @@
 #include "news_func.h"
 #include "aircraft.h"
 #include "vehiclelist.h"
+#include "town.h"
 #include "core/pool_func.hpp"
 #include "station_base.h"
 #include "roadstop_base.h"
@@ -75,6 +76,15 @@ Station::Station(TileIndex tile) :
  */
 Station::~Station()
 {
+	Town *t;
+	FOR_ALL_TOWNS(t) {
+		// Using poiter comparison instead of cycling cargos
+		if (t->ad_ref_goods_entry >= this->goods &&
+		 	   t->ad_ref_goods_entry < this->goods + NUM_CARGO) {
+		    t->ad_ref_goods_entry = NULL;
+		}
+	}
+
 	if (CleaningPool()) {
 		for (CargoID c = 0; c < NUM_CARGO; c++) {
 			this->goods[c].cargo.OnCleanPool();

@@ -31,6 +31,8 @@ enum RailToolbarWidgets {
 	WID_RAT_BUILD_TUNNEL,   ///< Build a tunnel.
 	WID_RAT_REMOVE,         ///< Bulldozer to remove rail.
 	WID_RAT_CONVERT_RAIL,   ///< Convert other rail to this type.
+	WID_RAT_BUILD_STATION_SIZED,     ///< Build a station in fixed size mode.
+	WID_RAT_BUILD_STATION_DRAGDROP,  ///< Build a station in dragdrop mode.
 };
 
 /** Widgets of the #BuildRailStationWindow class. */
