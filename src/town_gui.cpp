@@ -353,8 +353,8 @@ public:
 
 		/* disable renaming town in network games if you are not the server */
 		this->SetWidgetDisabledState(WID_TV_CHANGE_NAME, _networking && !_network_server);
-		extern bool _novahost;
-		this->SetWidgetDisabledState(WID_TV_CB, !_networking || !_novahost || this->town->larger_town);
+		// extern bool _novahost;
+		// this->SetWidgetDisabledState(WID_TV_CB, !_networking || !_novahost || this->town->larger_town);
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -363,9 +363,10 @@ public:
 			SetDParam(0, this->town->index);
 		}
 		if (widget == WID_TV_CB){
-			extern bool _novahost;
-			if(!_networking || !_novahost || this->town->larger_town) SetDParam(0, STR_EMPTY);
-			else SetDParam(0, STR_BUTTON_CB_YES);
+			// extern bool _novahost;
+			// if(!_networking || !_novahost || this->town->larger_town) SetDParam(0, STR_EMPTY);
+			// else
+			SetDParam(0, STR_BUTTON_CB_YES);
 		}
 	}
 
@@ -493,7 +494,8 @@ public:
 			}
 
 			case WID_TV_CB:
-				if(_networking) ShowCBTownWindow(this->window_number);
+				// if(_networking)
+				ShowCBTownWindow(this->window_number);
 				break;
 
 			case WID_TV_DELETE: // delete town - only available on Scenario editor
@@ -508,9 +510,9 @@ public:
 			case WID_TV_INFO:
 				size->height = GetDesiredInfoHeight(size->width);
 				break;
-			case WID_TV_CB:
-				if(!_networking || !CB_Enabled()) size->width = 0;
-				break;
+			// case WID_TV_CB:
+			// 	if(!_networking || !CB_Enabled()) size->width = 0;
+			// 	break;
 		}
 	}
 
@@ -1339,6 +1341,8 @@ public:
 		this->town = Town::Get(window_number);
 		this->InitNested(window_number);
 		if(this->town->fund_regularly) this->LowerWidget(WID_CB_FUND_REGULAR);
+		if(this->town->do_massfund) this->LowerWidget(WID_CB_MASSFUND);
+		if(this->town->advertise_regularly) this->LowerWidget(WID_CB_ADVERT_REGULAR);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1360,11 +1364,36 @@ public:
 				break;
 			case WID_CB_FUND_REGULAR:
 				this->town->fund_regularly = !this->town->fund_regularly;
-				if(this->town->fund_regularly) this->town->fund_regularly = TownExecuteAction(this->town, HK_FUND);
+				// if(this->town->fund_regularly) this->town->fund_regularly = TownExecuteAction(this->town, HK_FUND);
 				this->SetWidgetLoweredState(widget, this->town->fund_regularly);
 				this->SetWidgetDirty(widget);
 				break;
+			case WID_CB_MASSFUND:
+				this->town->do_massfund = !this->town->do_massfund;
+				this->SetWidgetLoweredState(widget, this->town->do_massfund);
+				this->SetWidgetDirty(widget);
+				break;
+			case WID_CB_ADVERT_REGULAR:
+				if (!this->town->advertise_regularly) {
+					SetDParam(0, ToPercent8(this->town->ad_rating_goal));
+					ShowQueryString(STR_JUST_INT, STR_FOUND_TOWN_CAPTION,
+					                4, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
+				} else this->OnQueryTextFinished(NULL);
+				break;
 		}
+	}
+
+	virtual void OnQueryTextFinished(char *str)
+	{
+		this->town->advertise_regularly = (str != NULL);
+		this->town->ad_ref_goods_entry = NULL;
+		this->SetWidgetLoweredState(WID_CB_ADVERT_REGULAR, this->town->advertise_regularly);
+		this->SetWidgetDirty(WID_CB_ADVERT_REGULAR);
+
+		if (str == NULL)
+			return;
+		uint val = Clamp(StrEmpty(str) ? 0 : strtol(str, NULL, 10), 1, 100);
+		this->town->ad_rating_goal = ((val << 8) + 255) / 101;
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -1581,6 +1610,12 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
 						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
+						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
+					EndContainer(),
+					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
+ 						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_MASSFUND),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 				EndContainer(),
