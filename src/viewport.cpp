@@ -152,6 +152,12 @@ typedef SmallVector<StringSpriteToDraw, 4> StringSpriteToDrawVector;
 typedef SmallVector<ParentSpriteToDraw, 64> ParentSpriteToDrawVector;
 typedef SmallVector<ChildScreenSpriteToDraw, 16> ChildScreenSpriteToDrawVector;
 
+enum RailSnapMode {
+	RSM_NO_SNAP,
+	RSM_SNAP_TO_TILE,
+	RSM_SNAP_TO_RAIL,
+};
+
 /**
  * Snapping point for a track.
  *
@@ -199,13 +205,21 @@ static void MarkViewportDirty(const ViewPort *vp, int left, int top, int right, 
 static ViewportDrawer _vd;
 
 TileHighlightData _thd;
-static LineSnapPoints _rail_snap_points; ///< Set of points where a rail track will be snapped to (polyline tool).
-static LineSnapPoint _current_snap_lock; ///< Start point and direction at which selected track is locked on currently (while dragging in polyline mode).
 static TileInfo *_cur_ti;
 bool _draw_bounding_boxes = false;
 bool _draw_dirty_blocks = false;
 uint _dirty_block_colour = 0;
 static VpSpriteSorter _vp_sprite_sorter = NULL;
+
+static RailSnapMode _rail_snap_mode = RSM_NO_SNAP; ///< Type of rail track snapping (polyline tool).
+static LineSnapPoints _tile_snap_points; ///< Tile to which a rail track will be snapped to (polyline tool).
+static LineSnapPoints _rail_snap_points; ///< Set of points where a rail track will be snapped to (polyline tool).
+static LineSnapPoint _current_snap_lock; ///< Start point and direction at which selected track is locked on currently (while dragging in polyline mode).
+
+static RailSnapMode GetRailSnapMode();
+static void SetRailSnapMode(RailSnapMode mode);
+static TileIndex GetRailSnapTile();
+static void SetRailSnapTile(TileIndex tile);
 
 static Point MapXYZToViewport(const ViewPort *vp, int x, int y, int z)
 {
@@ -1052,27 +1066,27 @@ static void DrawTileSelection(const TileInfo *ti)
 					/* Draw a blue rect. */
 					DrawTileSelectionRect(ti, PALETTE_SEL_TILE_BLUE);
 				}
-	}
+			}
 			break;
 
 		case HT_POINT:
 			if (IsInsideSelectedRectangle(ti->x, ti->y)) {
-			/* Figure out the Z coordinate for the single dot. */
-			int z = 0;
-			FoundationPart foundation_part = FOUNDATION_PART_NORMAL;
-			if (ti->tileh & SLOPE_N) {
-				z += TILE_HEIGHT;
-				if (RemoveHalftileSlope(ti->tileh) == SLOPE_STEEP_N) z += TILE_HEIGHT;
-			}
-			if (IsHalftileSlope(ti->tileh)) {
-				Corner halftile_corner = GetHalftileSlopeCorner(ti->tileh);
-				if ((halftile_corner == CORNER_W) || (halftile_corner == CORNER_E)) z += TILE_HEIGHT;
-				if (halftile_corner != CORNER_S) {
-					foundation_part = FOUNDATION_PART_HALFTILE;
-					if (IsSteepSlope(ti->tileh)) z -= TILE_HEIGHT;
+				/* Figure out the Z coordinate for the single dot. */
+				int z = 0;
+				FoundationPart foundation_part = FOUNDATION_PART_NORMAL;
+				if (ti->tileh & SLOPE_N) {
+					z += TILE_HEIGHT;
+					if (RemoveHalftileSlope(ti->tileh) == SLOPE_STEEP_N) z += TILE_HEIGHT;
 				}
-			}
-			DrawSelectionSprite(_cur_dpi->zoom <= ZOOM_LVL_DETAIL ? SPR_DOT : SPR_DOT_SMALL, PAL_NONE, ti, z, foundation_part);
+				if (IsHalftileSlope(ti->tileh)) {
+					Corner halftile_corner = GetHalftileSlopeCorner(ti->tileh);
+					if ((halftile_corner == CORNER_W) || (halftile_corner == CORNER_E)) z += TILE_HEIGHT;
+					if (halftile_corner != CORNER_S) {
+						foundation_part = FOUNDATION_PART_HALFTILE;
+						if (IsSteepSlope(ti->tileh)) z -= TILE_HEIGHT;
+					}
+				}
+				DrawSelectionSprite(_cur_dpi->zoom <= ZOOM_LVL_DETAIL ? SPR_DOT : SPR_DOT_SMALL, PAL_NONE, ti, z, foundation_part);
 			}
 			break;
 
@@ -1087,12 +1101,13 @@ static void DrawTileSelection(const TileInfo *ti)
 			HighLightStyle type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart, _thd.selend, _thd.drawstyle & HT_DIR_MASK);
 			if (type < HT_DIR_END) {
 				DrawAutorailSelection(ti, type);
-			} else if ((_thd.drawstyle & HT_POLY) && _thd.dir2 < HT_DIR_END) {
+			} else if (_thd.dir2 < HT_DIR_END) {  
+				/* FIXME mb missing condition (_thd.drawstyle & HT_POLY) */
 				type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart2, _thd.selend2, _thd.dir2);
 				if (type < HT_DIR_END) DrawAutorailSelection(ti, type, PALETTE_SEL_TILE_BLUE);
-		}
+			}
 			break;
-	}
+		}
 	}
 }
 
@@ -1277,9 +1292,8 @@ static void ViewportAddTownNames(DrawPixelInfo *dpi)
 	const Town *t;
 	FOR_ALL_TOWNS(t) {
 		ViewportAddString(dpi, ZOOM_LVL_OUT_16X, &t->cache.sign,
-				//_settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN,
-				//STR_VIEWPORT_TOWN_TINY_WHITE, STR_VIEWPORT_TOWN_TINY_BLACK,
-				t->Label(), t->SmallLabel(), STR_VIEWPORT_TOWN_TINY_BLACK,
+				_settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN,
+				STR_VIEWPORT_TOWN_TINY_WHITE, STR_VIEWPORT_TOWN_TINY_BLACK,
 				t->index, t->cache.population);
 	}
 }
@@ -2098,8 +2112,7 @@ static bool CheckClickOnTown(const ViewPort *vp, int x, int y)
 	const Town *t;
 	FOR_ALL_TOWNS(t) {
 		if (CheckClickOnViewportSign(vp, x, y, &t->cache.sign)) {
-			if(_ctrl_pressed) TownExecuteAction(t, 4); //build statue
-			else ShowTownViewWindow(t->index);
+			ShowTownViewWindow(t->index);
 			return true;
 		}
 	}
@@ -2194,15 +2207,21 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y, bool double_click)
 		if (v != NULL && VehicleClicked(v)) return true;
 	}
 
-	/* Double-clicking finishes current polyline and starts new one. */
-	if (double_click && _settings_client.gui.polyrail_double_click && (_thd.place_mode & HT_POLY)) {
-		ClearRailPlacementEndpoints();
-		SetTileSelectSize(1, 1);
-		return true;
-	}
-
 	/* Vehicle placement mode already handled above. */
 	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
+		if (_thd.place_mode & HT_POLY) {
+			/* In polyline mode double-clicking on a single white line, finishes current polyline.
+			 * If however the user double-clicks on a line that has a white and a blue section,
+			 * both lines (white and blue) will be constructed consecutively. */
+			static bool stop_snap_on_double_click = false;
+			/* FIXME _settings_client.gui.polyrail_double_click */
+			if (double_click && stop_snap_on_double_click) {
+				SetRailSnapMode(RSM_NO_SNAP);
+				return true;
+			}
+			stop_snap_on_double_click = !(_thd.drawstyle & HT_LINE) || (_thd.dir2 == HT_DIR_END);
+		}
+
 		PlaceObject();
 		return true;
 	}
@@ -2218,7 +2237,7 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y, bool double_click)
 			v = v->First();
 			if (_ctrl_pressed && v->owner == _local_company) {
 				if (_settings_client.gui.enable_ctrl_click_start_stop)
-				StartStopVehicle(v, true);
+					StartStopVehicle(v, true);
 			} else {
 				ShowVehicleViewWindow(v);
 			}
@@ -2440,9 +2459,6 @@ void UpdateTileSelection()
 				_thd.new_size.x += TILE_SIZE;
 				_thd.new_size.y += TILE_SIZE;
 			}
-			if (_thd.place_mode & HT_POLY) {
-				CalcNewPolylineOutersize();
-			}
 			new_drawstyle = _thd.next_drawstyle;
 		}
 	} else if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
@@ -2463,7 +2479,16 @@ void UpdateTileSelection()
 				case HT_LINE:
 					/* HT_POLY */
 					if (_thd.place_mode & HT_POLY) {
-						if (_rail_snap_points.Length() > 0) {
+						RailSnapMode snap_mode = GetRailSnapMode();
+						if (snap_mode == RSM_NO_SNAP ||
+								(snap_mode == RSM_SNAP_TO_TILE && GetRailSnapTile() == TileVirtXY(pt.x, pt.y))) {
+							new_drawstyle = GetAutorailHT(pt.x, pt.y);
+							_thd.new_offs.x = 0;
+							_thd.new_offs.y = 0;
+							_thd.new_outersize.x = 0;
+							_thd.new_outersize.y = 0;
+							_thd.dir2 = HT_DIR_END;
+						} else {
 							new_drawstyle = CalcPolyrailDrawstyle(pt, false);
 							if (new_drawstyle != HT_NONE) {
 								x1 = _thd.selstart.x & ~TILE_UNIT_MASK;
@@ -2476,21 +2501,15 @@ void UpdateTileSelection()
 								_thd.new_pos.y = y1;
 								_thd.new_size.x = x2 - x1 + TILE_SIZE;
 								_thd.new_size.y = y2 - y1 + TILE_SIZE;
-								CalcNewPolylineOutersize();
 							}
-							break;
 						}
-						_thd.new_offs.x = 0;
-						_thd.new_offs.y = 0;
-						_thd.new_outersize.x = 0;
-						_thd.new_outersize.y = 0;
-						_thd.dir2 = HT_DIR_END;
+						break;
 					}
 					/* HT_RAIL */
 					if (_thd.place_mode & HT_RAIL) {
-					/* Draw one highlighted tile in any direction */
-					new_drawstyle = GetAutorailHT(pt.x, pt.y);
-					break;
+						/* Draw one highlighted tile in any direction */
+						new_drawstyle = GetAutorailHT(pt.x, pt.y);
+						break;
 					}
 					/* HT_LINE */
 					switch (_thd.place_mode & HT_DIR_MASK) {
@@ -2522,6 +2541,8 @@ void UpdateTileSelection()
 			_thd.new_pos.y = y1 & ~TILE_UNIT_MASK;
 		}
 	}
+
+	if (new_drawstyle & HT_LINE) CalcNewPolylineOutersize();
 
 	/* redraw selection */
 	if (_thd.drawstyle != new_drawstyle ||
@@ -2588,6 +2609,10 @@ void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDrag
 		_thd.place_mode = HT_SPECIAL | others;
 		_thd.next_drawstyle = _thd.drawstyle | others;
 		_current_snap_lock.x = -1;
+		if ((_thd.place_mode & HT_POLY) != 0 && GetRailSnapMode() == RSM_NO_SNAP) {
+			SetRailSnapMode(RSM_SNAP_TO_TILE);
+			SetRailSnapTile(tile);
+		}
 	} else {
 		_thd.place_mode = HT_SPECIAL | others;
 		_thd.next_drawstyle = HT_POINT | others;
@@ -2968,26 +2993,34 @@ static inline uint SqrDist(const Point &a, const Point &b)
 
 static LineSnapPoint *FindBestPolyline(const Point &pt, LineSnapPoint *snap_points, uint num_points, Polyline *ret)
 {
-	while (num_points > 0) {
-		/* run a single bubble sort loop to find the closest snap point (push it to the and of the array) */
-		uint prev_dist = SqrDist(snap_points[0], pt);
-		for (uint i = 1; i < num_points; i++) {
-			uint next_dist = SqrDist(snap_points[i], pt);
-			if (prev_dist < next_dist) {
-				Swap(snap_points[i], snap_points[i - 1]);
-			} else {
-				prev_dist = next_dist;
-			}
+	/* Find the best polyline (a pair of two lines - the white one and the blue
+	 * one) led from any of saved snap points to the mouse cursor. */
+
+	LineSnapPoint *best_snap_point = NULL; // the best polyline we found so far is led from this snap point
+
+	for (int i = 0; i < (int)num_points; i++) {
+		/* try to fit a polyline */
+		Polyline polyline;
+		if (!FindPolyline(pt, snap_points[i], &polyline)) continue; // skip non-matching snap points
+		/* check whether we've found a better polyline */
+		if (best_snap_point != NULL) {
+			/* firstly choose shorter polyline (the one with smaller amount of
+			 * track pieces composing booth the white and the blue line) */
+			uint cur_len = polyline.first_len + polyline.second_len;
+			uint best_len = ret->first_len + ret->second_len;
+			if (cur_len > best_len) continue;
+			/* secondly choose that polyline which has longer first (white) line */
+			if (cur_len == best_len && polyline.first_len < ret->first_len) continue;
+			/* finally check euclidean distance to snap points and choose the
+			 * one which is closer */
+			if (cur_len == best_len && polyline.first_len == ret->first_len && SqrDist(pt, snap_points[i]) >= SqrDist(pt, *best_snap_point)) continue;
 		}
-
-		/* try to fit a line */
-		if (FindPolyline(pt, snap_points[num_points - 1], ret)) return &snap_points[num_points - 1];
-
-		/* repeat procedure for the rest of snap points */
-		--num_points;
+		/* save the found polyline */
+		*ret = polyline;
+		best_snap_point = &snap_points[i];
 	}
 
-	return NULL;
+	return best_snap_point;
 }
 
 /** while dragging */
@@ -3178,6 +3211,7 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 
 	_thd.selend.x = x;
 	_thd.selend.y = y;
+	_thd.dir2 = HT_DIR_END;
 	_thd.next_drawstyle = b;
 
 	ShowLengthMeasurement(b, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
@@ -3185,33 +3219,37 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 
 static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 {
+	RailSnapMode snap_mode = GetRailSnapMode();
+
+	/* are we only within one tile? */
+	if (snap_mode == RSM_SNAP_TO_TILE && GetRailSnapTile() == TileVirtXY(pt.x, pt.y)) {
+		_thd.selend.x = pt.x;
+		_thd.selend.y = pt.y;
+		return GetAutorailHT(pt.x, pt.y);
+	}
+
 	/* find the best track */
 	Polyline line;
 
-	HighLightStyle ret = HT_LINE | HT_POLY;
+	bool lock_snapping = dragging && snap_mode == RSM_SNAP_TO_RAIL;
+	if (!lock_snapping) _current_snap_lock.x = -1;
 
-	if (!dragging) {
-		_current_snap_lock.x = -1;
-		if (FindBestPolyline(pt, _rail_snap_points.Begin(), _rail_snap_points.Length(), &line) == NULL) ret = HT_NONE; // no match
-	} else if (_current_snap_lock.x != -1) {
-		if (FindBestPolyline(pt, &_current_snap_lock, 1, &line) == NULL) ret = HT_NONE; // no match
+	const LineSnapPoint *snap_point;
+	if (_current_snap_lock.x != -1) {
+		snap_point = FindBestPolyline(pt, &_current_snap_lock, 1, &line);
+	} else if (snap_mode == RSM_SNAP_TO_TILE) {
+		snap_point = FindBestPolyline(pt, _tile_snap_points.Begin(), _tile_snap_points.Length(), &line);
 	} else {
-		const LineSnapPoint *snap_point = FindBestPolyline(pt, _rail_snap_points.Begin(), _rail_snap_points.Length(), &line);
-		if (snap_point == NULL) {
-			ret = HT_NONE; // no match
-		} else  {
-			_current_snap_lock = *snap_point;
-			_current_snap_lock.dirs &= (1 << line.first_dir) | (1 << ReverseDir(line.first_dir)); // lock direction
-		}
-		}
+		assert(snap_mode == RSM_SNAP_TO_RAIL);
+		snap_point = FindBestPolyline(pt, _rail_snap_points.Begin(), _rail_snap_points.Length(), &line);
+	}
 
-	if (ret == HT_NONE) {
-		_thd.selstart.x = -1;
-		_thd.selend.x = -1;
-		_thd.selstart2.x = -1;
-		_thd.selend2.x = -1;
-		_thd.dir2 = HT_DIR_END;
-		return ret;
+	if (snap_point == NULL) return HT_NONE; // no match
+
+	if (lock_snapping && _current_snap_lock.x == -1) {
+		/* lock down the snap point */
+		_current_snap_lock = *snap_point;
+		_current_snap_lock.dirs &= (1 << line.first_dir) | (1 << ReverseDir(line.first_dir));
 	}
 
 	TileIndexDiffC first_dir = TileIndexDiffCByDir(line.first_dir);
@@ -3228,7 +3266,6 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 	Trackdir seldir = PointDirToTrackdir(_thd.selstart, line.first_dir);
 	_thd.selstart.x  &= ~TILE_UNIT_MASK;
 	_thd.selstart.y  &= ~TILE_UNIT_MASK;
-	ret |= (HighLightStyle)TrackdirToTrack(seldir);
 
 	if (line.second_len != 0) {
 		TileIndexDiffC second_dir = TileIndexDiffCByDir(line.second_dir);
@@ -3246,6 +3283,7 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 		_thd.dir2 = HT_DIR_END;
 	}
 
+	HighLightStyle ret = HT_LINE | (HighLightStyle)TrackdirToTrack(seldir);
 	ShowLengthMeasurement(ret, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y), TCC_HOVER, true);
 	return ret;
 }
@@ -3267,7 +3305,7 @@ void VpSelectTilesWithMethod(int x, int y, ViewportPlaceMethod method)
 		return;
 	}
 
-	if ((_thd.place_mode & HT_POLY) && _rail_snap_points.Length() > 0) {
+	if ((_thd.place_mode & HT_POLY) && GetRailSnapMode() != RSM_NO_SNAP) {
 		Point pt = { x, y };
 		_thd.next_drawstyle = CalcPolyrailDrawstyle(pt, true);
 		return;
@@ -3325,11 +3363,11 @@ calc_heightdiff_single_direction:;
 				x = sx + Clamp(x - sx, -limit, limit);
 				y = sy + Clamp(y - sy, -limit, limit);
 			}
-					/* With current code passing a HT_LINE style to calculate the height
-					 * difference is enough. However if/when a point-tool is created
-					 * with this method, function should be called with new_style (below)
-					 * instead of HT_LINE | style case HT_POINT is handled specially
-					 * new_style := (_thd.next_drawstyle & HT_RECT) ? HT_LINE | style : _thd.next_drawstyle; */
+			/* With current code passing a HT_LINE style to calculate the height
+			 * difference is enough. However if/when a point-tool is created
+			 * with this method, function should be called with new_style (below)
+			 * instead of HT_LINE | style case HT_POINT is handled specially
+			 * new_style := (_thd.next_drawstyle & HT_RECT) ? HT_LINE | style : _thd.next_drawstyle; */
 			ShowLengthMeasurement(HT_LINE | style, TileVirtXY(sx, sy), TileVirtXY(x, y));
 			break;
 
@@ -3409,6 +3447,7 @@ calc_heightdiff_single_direction:;
 
 	_thd.selend.x = x;
 	_thd.selend.y = y;
+	_thd.dir2 = HT_DIR_END;
 }
 
 /**
@@ -3426,11 +3465,10 @@ EventState VpHandlePlaceSizingDrag()
 		return ES_HANDLED;
 	}
 
-	/* while dragging execute the drag procedure of the corresponding window (mostly VpSelectTilesWithMethod() ) */
-	if (_left_button_down) {
-		w->OnPlaceDrag(_thd.select_method, _thd.select_proc, GetTileBelowCursor());
-		return ES_HANDLED;
-	}
+	/* While dragging execute the drag procedure of the corresponding window (mostly VpSelectTilesWithMethod() ).
+	 * Do it even if the button is no longer pressed to make sure that OnPlaceDrag was called at least once. */
+	w->OnPlaceDrag(_thd.select_method, _thd.select_proc, GetTileBelowCursor());
+	if (_left_button_down) return ES_HANDLED;
 
 	/* mouse button released..
 	 * keep the selected tool, but reset it to the original mode. */
@@ -3447,8 +3485,12 @@ EventState VpHandlePlaceSizingDrag()
 	}
 	SetTileSelectSize(1, 1);
 
-	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
+	if (_thd.place_mode & HT_POLY) {
+		if (GetRailSnapMode() == RSM_SNAP_TO_TILE) SetRailSnapMode(RSM_NO_SNAP);
+		if (_thd.drawstyle == HT_NONE) return ES_HANDLED;
+	}
 
+	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 	return ES_HANDLED;
 }
 
@@ -3495,6 +3537,10 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 		VpStartPreSizing();
 	}
 
+	if (mode & HT_POLY) {
+		SetRailSnapMode((mode & HT_NEW_POLY) == HT_NEW_POLY ? RSM_NO_SNAP : RSM_SNAP_TO_RAIL);
+	}
+
 	if ((icon & ANIMCURSOR_FLAG) != 0) {
 		SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
 	} else {
@@ -3506,6 +3552,44 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 void ResetObjectToPlace()
 {
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+}
+
+Point GetViewportStationMiddle(const ViewPort *vp, const Station *st)
+{
+	int x = TileX(st->xy) * TILE_SIZE;
+	int y = TileY(st->xy) * TILE_SIZE;
+	int z = GetSlopePixelZ(Clamp(x, 0, MapSizeX() * TILE_SIZE - 1), Clamp(y, 0, MapSizeY() * TILE_SIZE - 1));
+
+	Point p = RemapCoords(x, y, z);
+	p.x = UnScaleByZoom(p.x - vp->virtual_left, vp->zoom) + vp->left;
+	p.y = UnScaleByZoom(p.y - vp->virtual_top, vp->zoom) + vp->top;
+	return p;
+}
+
+/** Helper class for getting the best sprite sorter. */
+struct ViewportSSCSS {
+	VpSorterChecker fct_checker; ///< The check function.
+	VpSpriteSorter fct_sorter;   ///< The sorting function.
+};
+
+/** List of sorters ordered from best to worst. */
+static ViewportSSCSS _vp_sprite_sorters[] = {
+#ifdef WITH_SSE
+	{ &ViewportSortParentSpritesSSE41Checker, &ViewportSortParentSpritesSSE41 },
+#endif
+	{ &ViewportSortParentSpritesChecker, &ViewportSortParentSprites }
+};
+
+/** Choose the "best" sprite sorter and set _vp_sprite_sorter. */
+void InitializeSpriteSorter()
+{
+	for (uint i = 0; i < lengthof(_vp_sprite_sorters); i++) {
+		if (_vp_sprite_sorters[i].fct_checker()) {
+			_vp_sprite_sorter = _vp_sprite_sorters[i].fct_sorter;
+			break;
+		}
+	}
+	assert(_vp_sprite_sorter != NULL);
 }
 
 static LineSnapPoint LineSnapPointAtRailTrackEndpoint(TileIndex tile, DiagDirection exit_dir, bool bidirectional)
@@ -3554,57 +3638,69 @@ void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track
 		LineSnapPoint snap_end = LineSnapPointAtRailTrackEndpoint(end_tile, TrackdirToExitdir(exit_trackdir_at_end), bidirectional_exit);
 		/* Find if we already had these coordinates before. */
 		LineSnapPoint *snap;
+		bool had_start = false;
+		bool had_end = false;
 		for (snap = _rail_snap_points.Begin(); snap != _rail_snap_points.End(); snap++) {
-			/* Coordinates found - remove the snap point as it was already used. */
-			if (snap->x == snap_start.x && snap->y == snap_start.y) snap_start.dirs = 0;
-			if (snap->x == snap_end.x && snap->y == snap_end.y) snap_end.dirs = 0;
+			had_start |= (snap->x == snap_start.x && snap->y == snap_start.y);
+			had_end |= (snap->x == snap_end.x && snap->y == snap_end.y);
 		}
 		/* Create new snap point set. */
-		_rail_snap_points.Clear();
-		if (snap_start.dirs != 0) *_rail_snap_points.Append() = snap_start;
-		if (snap_end.dirs != 0) *_rail_snap_points.Append() = snap_end;
-	}
-}
-
-void ClearRailPlacementEndpoints()
-{
-	_rail_snap_points.Clear();
-}
-
-Point GetViewportStationMiddle(const ViewPort *vp, const Station *st)
-{
-	int x = TileX(st->xy) * TILE_SIZE;
-	int y = TileY(st->xy) * TILE_SIZE;
-	int z = GetSlopePixelZ(Clamp(x, 0, MapSizeX() * TILE_SIZE - 1), Clamp(y, 0, MapSizeY() * TILE_SIZE - 1));
-
-	Point p = RemapCoords(x, y, z);
-	p.x = UnScaleByZoom(p.x - vp->virtual_left, vp->zoom) + vp->left;
-	p.y = UnScaleByZoom(p.y - vp->virtual_top, vp->zoom) + vp->top;
-	return p;
-}
-
-/** Helper class for getting the best sprite sorter. */
-struct ViewportSSCSS {
-	VpSorterChecker fct_checker; ///< The check function.
-	VpSpriteSorter fct_sorter;   ///< The sorting function.
-};
-
-/** List of sorters ordered from best to worst. */
-static ViewportSSCSS _vp_sprite_sorters[] = {
-#ifdef WITH_SSE
-	{ &ViewportSortParentSpritesSSE41Checker, &ViewportSortParentSpritesSSE41 },
-#endif
-	{ &ViewportSortParentSpritesChecker, &ViewportSortParentSprites }
-};
-
-/** Choose the "best" sprite sorter and set _vp_sprite_sorter. */
-void InitializeSpriteSorter()
-{
-	for (uint i = 0; i < lengthof(_vp_sprite_sorters); i++) {
-		if (_vp_sprite_sorters[i].fct_checker()) {
-			_vp_sprite_sorter = _vp_sprite_sorters[i].fct_sorter;
-			break;
+		if (had_start && had_end) {
+			/* just stop snaping, don't forget snap points */
+			SetRailSnapMode(RSM_NO_SNAP);
+		} else {
+			/* include only new points */
+			_rail_snap_points.Clear();
+			if (!had_start) *_rail_snap_points.Append() = snap_start;
+			if (!had_end) *_rail_snap_points.Append() = snap_end;
+			SetRailSnapMode(RSM_SNAP_TO_RAIL);
 		}
 	}
-	assert(_vp_sprite_sorter != NULL);
+}
+
+bool CurrentlySnappingRailPlacement()
+{
+	return (_thd.place_mode & HT_POLY) && GetRailSnapMode() == RSM_SNAP_TO_RAIL;
+}
+
+static RailSnapMode GetRailSnapMode()
+{
+	if (_rail_snap_mode == RSM_SNAP_TO_TILE && _tile_snap_points.Length() == 0) return RSM_NO_SNAP;
+	if (_rail_snap_mode == RSM_SNAP_TO_RAIL && _rail_snap_points.Length() == 0) return RSM_NO_SNAP;
+	return _rail_snap_mode;
+}
+
+static void SetRailSnapMode(RailSnapMode mode)
+{
+	_rail_snap_mode = mode;
+
+	if ((_thd.place_mode & HT_POLY) && (GetRailSnapMode() == RSM_NO_SNAP)) {
+		SetTileSelectSize(1, 1);
+	}
+}
+
+static TileIndex GetRailSnapTile()
+{
+	if (_tile_snap_points.Length() == 0) return INVALID_TILE;
+	return TileVirtXY(_tile_snap_points[DIAGDIR_NE].x, _tile_snap_points[DIAGDIR_NE].y);
+}
+
+static void SetRailSnapTile(TileIndex tile)
+{
+	_tile_snap_points.Clear();
+	if (tile == INVALID_TILE) return;
+
+	for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
+		LineSnapPoint *point = _tile_snap_points.Append();
+		*point = LineSnapPointAtRailTrackEndpoint(tile, dir, false);
+		point->dirs = ROR<uint8>(point->dirs, DIRDIFF_REVERSE);
+	}
+}
+
+void ResetRailPlacementSnapping()
+{
+	_rail_snap_mode = RSM_NO_SNAP;
+	_tile_snap_points.Clear();
+	_rail_snap_points.Clear();
+	_current_snap_lock.x = -1;
 }

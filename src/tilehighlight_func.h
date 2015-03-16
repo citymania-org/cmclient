@@ -32,7 +32,8 @@ void VpSetPlaceSizingLimit(int limit);
 void UpdateTileSelection();
 
 void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track start_track, bool bidirectional = true);
-void ClearRailPlacementEndpoints();
+void ResetRailPlacementSnapping();
+bool CurrentlySnappingRailPlacement();
 
 extern TileHighlightData _thd;
 
