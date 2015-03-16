@@ -70,11 +70,11 @@ const byte _openttd_revision_modified = 0;
  * final release will always have a lower version number than the released
  * version, thus making comparisons on specific revisions easy.
  */
-const uint32 _openttd_newgrf_version = 1 << 28 | 4 << 24 | 4 << 20 | 1 << 19 | (0 & ((1 << 19) - 1));
+const uint32 _openttd_newgrf_version = 1 << 28 | 4 << 24 | 4 << 20 | 1 << 19 | (27029 & ((1 << 19) - 1));
 
 #ifdef __MORPHOS__
 /**
  * Variable used by MorphOS to show the version.
  */
-extern const char morphos_versions_tag[] = "$VER: OpenTTD h45a96dc5M (16.03.15) OpenTTD Team [MorphOS, PowerPC]";
+extern const char morphos_versions_tag[] = "$VER: OpenTTD 1.4.4 (17.11.14) OpenTTD Team [MorphOS, PowerPC]";
 #endif
