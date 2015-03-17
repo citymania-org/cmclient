@@ -1894,10 +1894,19 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
-		if (!IsInsideMM(widget, WID_BRAD_DEPOT_NE, WID_BRAD_DEPOT_NW + 1)) return;
+		switch (widget) {
+			case WID_BRAD_DEPOT_NE:
+			case WID_BRAD_DEPOT_SE:
+			case WID_BRAD_DEPOT_SW:
+			case WID_BRAD_DEPOT_NW:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(48) + 2;
+				break;
 
-		size->width  = ScaleGUITrad(64) + 2;
-		size->height = ScaleGUITrad(48) + 2;
+			case WID_BRAD_DEPOT_AUTO:
+				size->width  = ScaleGUITrad(128) + 6;
+				break;
+		}
 	}
 
 	virtual void DrawWidget(const Rect &r, int widget) const
@@ -1952,8 +1961,11 @@ static const NWidgetPart _nested_build_depot_widgets[] = {
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BRAD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_TRAIN_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),

@@ -1054,10 +1054,20 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
-		if (!IsInsideMM(widget, WID_BROD_DEPOT_NE, WID_BROD_DEPOT_NW + 1)) return;
-
-		size->width  = ScaleGUITrad(64) + 2;
-		size->height = ScaleGUITrad(48) + 2;
+		switch (widget) {
+			case WID_BROD_DEPOT_NW:
+			case WID_BROD_DEPOT_NE:
+			case WID_BROD_DEPOT_SW:
+			case WID_BROD_DEPOT_SE:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(48) + 2;
+				break;
+			case WID_BROD_DEPOT_AUTO:
+				size->width = ScaleGUITrad(128) + 6;
+				break;
+			default:
+				break;
+		}
 	}
 
 	virtual void DrawWidget(const Rect &r, int widget) const
@@ -1114,8 +1124,11 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),
@@ -1194,10 +1207,25 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
-		if (!IsInsideMM(widget, WID_BROS_STATION_NE, WID_BROS_STATION_Y + 1)) return;
-
-		size->width  = ScaleGUITrad(64) + 2;
-		size->height = ScaleGUITrad(48) + 2;
+		switch (widget) {
+			case WID_BROS_STATION_NE:
+			case WID_BROS_STATION_SE:
+			case WID_BROS_STATION_SW:
+			case WID_BROS_STATION_NW:
+			case WID_BROS_STATION_X:
+			case WID_BROS_STATION_Y:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(48) + 2;
+				break;
+			case WID_BROS_STATION_AUTO:
+				size->width  = ScaleGUITrad(128) + 6;
+				break;
+			case WID_BROS_STATION_XY_AUTO:
+				size->width  = ScaleGUITrad(64) + 2;
+				break;
+			default:
+				break;
+		}
 	}
 
 	virtual void DrawWidget(const Rect &r, int widget) const
