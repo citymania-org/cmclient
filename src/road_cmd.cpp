@@ -792,7 +792,7 @@ do_clear:;
  * @param dir Direction that the road is following.
  * @return True if the next tile at dir direction is suitable for being connected directly by a second roadbit at the end of the road being built.
  */
-static bool CanConnectToRoad(TileIndex tile, RoadType rt, DiagDirection dir)
+bool CanConnectToRoad(TileIndex tile, RoadType rt, DiagDirection dir)
 {
 	RoadBits bits = GetAnyRoadBits(tile + TileOffsByDiagDir(dir), rt, false);
 	return (bits & DiagDirToRoadBits(ReverseDiagDir(dir))) != 0;

@@ -1101,7 +1101,7 @@ static void DrawTileSelection(const TileInfo *ti)
 			HighLightStyle type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart, _thd.selend, _thd.drawstyle & HT_DIR_MASK);
 			if (type < HT_DIR_END) {
 				DrawAutorailSelection(ti, type);
-			} else if (_thd.dir2 < HT_DIR_END) {  
+			} else if (_thd.dir2 < HT_DIR_END) {
 				/* FIXME mb missing condition (_thd.drawstyle & HT_POLY) */
 				type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart2, _thd.selend2, _thd.dir2);
 				if (type < HT_DIR_END) DrawAutorailSelection(ti, type, PALETTE_SEL_TILE_BLUE);

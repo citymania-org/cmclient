@@ -181,4 +181,6 @@ RoadTypes GetCompanyRoadtypes(const CompanyID company);
 
 void UpdateLevelCrossing(TileIndex tile, bool sound = true);
 
+bool CanConnectToRoad(TileIndex tile, RoadType rt, DiagDirection dir);
+
 #endif /* ROAD_FUNC_H */
