@@ -1,4 +1,4 @@
-/* $Id: road_gui.cpp 26460 2014-04-13 10:47:39Z frosch $ */
+/* $Id: road_gui.cpp 27163 2015-02-22 15:26:27Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -30,10 +30,13 @@
 #include "company_base.h"
 #include "hotkeys.h"
 #include "road_gui.h"
+#include "zoom_func.h"
 
 #include "widgets/road_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 static void ShowRVStationPicker(Window *parent, RoadStopType rs);
 static void ShowRoadDepotPicker(Window *parent);
@@ -447,11 +450,18 @@ struct BuildRoadToolbarWindow : Window {
 	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
 	{
 		if (!gui_scope) return;
-		this->SetWidgetsDisabledState(!CanBuildVehicleInfrastructure(VEH_ROAD),
+
+		bool can_build = CanBuildVehicleInfrastructure(VEH_ROAD);
+		this->SetWidgetsDisabledState(!can_build,
 				WID_ROT_DEPOT,
 				WID_ROT_BUS_STATION,
 				WID_ROT_TRUCK_STATION,
 				WIDGET_LIST_END);
+		if (!can_build) {
+			DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
+			DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
+			DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
+		}
 	}
 
 	/**
@@ -1020,7 +1030,7 @@ static WindowDesc _build_road_scen_desc(
 
 /**
  * Show the road building toolbar in the scenario editor.
- * @return The just opened toolbar.
+ * @return The just opened toolbar, or \c NULL if the toolbar was already open.
  */
 Window *ShowBuildRoadScenToolbar()
 {
@@ -1042,11 +1052,19 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 		this->FinishInitNested(TRANSPORT_ROAD);
 	}
 
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		if (!IsInsideMM(widget, WID_BROD_DEPOT_NE, WID_BROD_DEPOT_NW + 1)) return;
+
+		size->width  = ScaleGUITrad(64) + 2;
+		size->height = ScaleGUITrad(48) + 2;
+	}
+
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		if (!IsInsideMM(widget, WID_BROD_DEPOT_NE, WID_BROD_DEPOT_NW + 1)) return;
 
-		DrawRoadDepotSprite(r.left - 1, r.top, (DiagDirection)(widget - WID_BROD_DEPOT_NE + DIAGDIR_NE), _cur_roadtype);
+		DrawRoadDepotSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), (DiagDirection)(widget - WID_BROD_DEPOT_NE + DIAGDIR_NE), _cur_roadtype);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1174,12 +1192,20 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		}
 	}
 
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		if (!IsInsideMM(widget, WID_BROS_STATION_NE, WID_BROS_STATION_Y + 1)) return;
+
+		size->width  = ScaleGUITrad(64) + 2;
+		size->height = ScaleGUITrad(48) + 2;
+	}
+
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		if (!IsInsideMM(widget, WID_BROS_STATION_NE, WID_BROS_STATION_Y + 1)) return;
 
 		StationType st = (this->window_class == WC_BUS_STATION) ? STATION_BUS : STATION_TRUCK;
-		StationPickerDrawSprite(r.left + TILE_PIXELS, r.bottom - TILE_PIXELS, st, INVALID_RAILTYPE, widget < WID_BROS_STATION_X ? ROADTYPE_ROAD : _cur_roadtype, widget - WID_BROS_STATION_NE);
+		StationPickerDrawSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), st, INVALID_RAILTYPE, widget < WID_BROS_STATION_X ? ROADTYPE_ROAD : _cur_roadtype, widget - WID_BROS_STATION_NE);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
