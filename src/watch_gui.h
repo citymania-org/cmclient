@@ -77,7 +77,7 @@ public:
 	virtual void OnScroll(Point delta);
 	virtual void OnMouseWheel(int wheel);
 	virtual void OnInvalidateData(int data, bool gui_scope);
-	virtual void SetStringParameters(int widget);
+	virtual void SetStringParameters(int widget) const;
 	virtual void OnTick();
 	virtual void OnPaint();
 	virtual void OnQueryTextFinished(char *str);

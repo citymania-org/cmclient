@@ -257,7 +257,7 @@ WatchCompany::WatchCompany(WindowDesc *desc, int window_number, CompanyID compan
 	this->InvalidateData( );
 }
 
-void WatchCompany::SetStringParameters(int widget)
+void WatchCompany::SetStringParameters(int widget) const
 {
 	if(widget != EWW_CAPTION) return;
 	if(this->Wtype == EWT_COMPANY){
@@ -266,19 +266,19 @@ void WatchCompany::SetStringParameters(int widget)
 	}
 	//EWT_CLIENT
 	if (!Company::IsValidHumanID(this->watched_company)){
-		GetString(this->company_name, STR_JUST_NOTHING, lastof(this->company_name));
+		// GetString((char *)this->company_name, STR_JUST_NOTHING, lastof(this->company_name));
 	}
 	else {
 		const Company *c = Company::Get(this->watched_company);
 		SetDParam(0, c->index);
-		GetString(this->company_name, STR_COMPANY_NAME, lastof(this->company_name));
+		// GetString((char *)this->company_name, STR_COMPANY_NAME, lastof(this->company_name));
 	}
 	NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)this->watched_client);
 	if(ci){
-		strecpy(this->client_name, ci->client_name, lastof(this->client_name));
+		// strecpy((char *)this->client_name, ci->client_name, lastof(this->client_name));
 	}
 	else{
-		GetString(this->client_name, STR_JUST_NOTHING, lastof(this->client_name));
+		// GetString((char *)this->client_name, STR_JUST_NOTHING, lastof(this->client_name));
 	}
 	SetDParamStr(0, this->client_name);
 	SetDParamStr(1, this->company_name);
@@ -473,8 +473,6 @@ void WatchCompany::OnQueryTextFinished(char *str)
 		case EWQ_BAN:
 			seprintf(msg, lastof(msg), "!ban %i %s", this->watched_client, str);
 			NetworkClientSendChatToServer(msg);
-			break;
-		default:
 			break;
 	}
 }
