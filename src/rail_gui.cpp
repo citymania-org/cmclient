@@ -1914,6 +1914,7 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 			case WID_BRAD_DEPOT_SE:
 			case WID_BRAD_DEPOT_SW:
 			case WID_BRAD_DEPOT_NW:
+			case WID_BRAD_DEPOT_AUTO:
 				this->RaiseWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
 				_build_depot_direction = (DiagDirection)(widget - WID_BRAD_DEPOT_NE);
 				this->LowerWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
@@ -1950,6 +1951,9 @@ static const NWidgetPart _nested_build_depot_widgets[] = {
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		EndContainer(),
+		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BRAD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_TRAIN_ORIENTATION_AUTO_TOOLTIP),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),
