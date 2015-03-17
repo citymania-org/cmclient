@@ -293,7 +293,7 @@ $(ENDIAN_CHECK): $(SRC_DIR)/endian_check.cpp
 # Revision files
 
 $(SRC_DIR)/rev.cpp: $(CONFIG_CACHE_VERSION) $(SRC_DIR)/rev.cpp.in
-	$(Q)cat $(SRC_DIR)/rev.cpp.in      | sed "s@\!\!REVISION\!\!@$(REV_NR)@g;s@!!VERSION!!@$(REV)@g;s@!!MODIFIED!!@$(MODIFIED)@g;s@!!DATE!!@`date +%d.%m.%y`@g" > $(SRC_DIR)/rev.cpp
+#	$(Q)cat $(SRC_DIR)/rev.cpp.in      | sed "s@\!\!REVISION\!\!@$(REV_NR)@g;s@!!VERSION!!@$(REV)@g;s@!!MODIFIED!!@$(MODIFIED)@g;s@!!DATE!!@`date +%d.%m.%y`@g" > $(SRC_DIR)/rev.cpp
 
 $(SRC_DIR)/os/windows/ottdres.rc: $(CONFIG_CACHE_VERSION) $(SRC_DIR)/os/windows/ottdres.rc.in
 	$(Q)cat $(SRC_DIR)/os/windows/ottdres.rc.in | sed "s@\!\!REVISION\!\!@$(REV_NR)@g;s@!!VERSION!!@$(REV)@g;s@!!DATE!!@`date +%d.%m.%y`@g" > $(SRC_DIR)/os/windows/ottdres.rc
