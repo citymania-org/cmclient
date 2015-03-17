@@ -1527,7 +1527,7 @@ static SettingsContainer &GetSettingsTree()
 				viewports->Add(new SettingEntry("gui.cb_distance_check"));
 				viewports->Add(new SettingEntry("gui.old_depot_train_length_calc"));
 				viewports->Add(new SettingEntry("gui.enable_extra_tooltips"));
-				viewports->Add(new SettingEntry("gui.polyrail_double_click"));
+				// viewports->Add(new SettingEntry("gui.polyrail_double_click"));
 			}
 
 			SettingsPage *construction = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION));

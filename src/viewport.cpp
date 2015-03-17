@@ -1102,7 +1102,6 @@ static void DrawTileSelection(const TileInfo *ti)
 			if (type < HT_DIR_END) {
 				DrawAutorailSelection(ti, type);
 			} else if (_thd.dir2 < HT_DIR_END) {
-				/* FIXME mb missing condition (_thd.drawstyle & HT_POLY) */
 				type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart2, _thd.selend2, _thd.dir2);
 				if (type < HT_DIR_END) DrawAutorailSelection(ti, type, PALETTE_SEL_TILE_BLUE);
 			}
@@ -2214,7 +2213,6 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y, bool double_click)
 			 * If however the user double-clicks on a line that has a white and a blue section,
 			 * both lines (white and blue) will be constructed consecutively. */
 			static bool stop_snap_on_double_click = false;
-			/* FIXME _settings_client.gui.polyrail_double_click */
 			if (double_click && stop_snap_on_double_click) {
 				SetRailSnapMode(RSM_NO_SNAP);
 				return true;
