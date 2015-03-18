@@ -150,11 +150,13 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	/* Returns the correct town label, based on rating. */
 	//FORCEINLINE StringID Label() const{
 	StringID Label() const{
+		if (!_settings_client.gui.population_in_label)
+			return STR_VIEWPORT_TOWN;
 		if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
 			return STR_VIEWPORT_TOWN_POP_VERY_POOR_RATING + this->town_label;
 		}
 		else {
-			return _settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN;
+			return STR_VIEWPORT_TOWN_POP;
 		}
 	}
 

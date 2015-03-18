@@ -1291,8 +1291,7 @@ static void ViewportAddTownNames(DrawPixelInfo *dpi)
 	const Town *t;
 	FOR_ALL_TOWNS(t) {
 		ViewportAddString(dpi, ZOOM_LVL_OUT_16X, &t->cache.sign,
-				_settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN,
-				STR_VIEWPORT_TOWN_TINY_WHITE, STR_VIEWPORT_TOWN_TINY_BLACK,
+				t->Label(), t->SmallLabel(), STR_VIEWPORT_TOWN_TINY_BLACK,
 				t->index, t->cache.population);
 	}
 }
@@ -2111,7 +2110,8 @@ static bool CheckClickOnTown(const ViewPort *vp, int x, int y)
 	const Town *t;
 	FOR_ALL_TOWNS(t) {
 		if (CheckClickOnViewportSign(vp, x, y, &t->cache.sign)) {
-			ShowTownViewWindow(t->index);
+ 			if (_ctrl_pressed) TownExecuteAction(t, 4); //build statue
+ 			else ShowTownViewWindow(t->index);
 			return true;
 		}
 	}
