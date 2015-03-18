@@ -1844,6 +1844,40 @@ static CommandCost CreateNewIndustryHelper(TileIndex tile, IndustryType type, Do
 }
 
 /**
+  * Return whether industry can be built on tile or not
+  * regardless of terrain
+  */
+bool CanBuildIndustryOnTile(IndustryType type, TileIndex tile) {
+	const IndustrySpec *indspec = GetIndustrySpec(type);
+    CommandCost ret;
+
+	if (HasBit(indspec->callback_mask, CBM_IND_LOCATION)) {
+		ret = CheckIfCallBackAllowsCreation(
+			tile, type, 0, 0, 0, _current_company,
+			_current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_USERCREATION);
+	} else {
+		ret = _check_new_industry_procs[GetIndustrySpec(type)->check_proc](tile);
+	}
+	if (ret.Failed())
+		return false;
+
+	ret = CheckIfFarEnoughFromConflictingIndustry(tile, type);
+	if (ret.Failed())
+		return false;
+
+	Town *t = NULL;
+	ret = FindTownForIndustry(tile, type, &t);
+	if (ret.Failed())
+		return false;
+
+	ret = CheckIfIndustryIsAllowed(tile, type, t);
+	if (ret.Failed())
+		return false;
+
+	return true;
+}
+
+/**
  * Build/Fund an industry
  * @param tile tile where industry is built
  * @param flags of operations to conduct

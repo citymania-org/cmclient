@@ -12,6 +12,8 @@
 #ifndef INDUSTRY_TYPE_H
 #define INDUSTRY_TYPE_H
 
+#include "tile_type.h"
+
 typedef uint16 IndustryID;
 typedef uint16 IndustryGfx;
 typedef uint8 IndustryType;
@@ -38,5 +40,6 @@ static const IndustryGfx  INVALID_INDUSTRYTILE   = NUM_INDUSTRYTILES; ///< one a
 static const int INDUSTRY_COMPLETED = 3; ///< final stage of industry construction.
 
 void CheckIndustries();
+bool CanBuildIndustryOnTile(IndustryType type, TileIndex tile);
 
 #endif /* INDUSTRY_TYPE_H */
