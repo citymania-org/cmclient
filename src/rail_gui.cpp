@@ -2087,7 +2087,7 @@ static void ShowBuildWaypointPicker(Window *parent)
  */
 void InitializeRailGui()
 {
-	_build_depot_direction =(DiagDirection)(DIAGDIR_NW + 1);
+	_build_depot_direction = (DiagDirection)(DIAGDIR_NW + 1);
 }
 
 /**
