@@ -387,7 +387,8 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 		/* Reset the ratings for the old owner */
 		t->ratings[old_owner] = RATING_INITIAL;
 		ClrBit(t->have_ratings, old_owner);
-		ClrBit(t->fund_regularly, old_owner);
+		ClrBit(t->advertise_regularly, old_owner);
+		ClrBit(t->do_powerfund, old_owner);
 
 		/* Transfer exclusive rights */
 		if (t->exclusive_counter > 0 && t->exclusivity == old_owner) {
