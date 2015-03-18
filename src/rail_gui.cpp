@@ -59,6 +59,8 @@ static const SignalType _default_signal_type[] = {SIGTYPE_NORMAL, SIGTYPE_PBS, S
 
 static const int HOTKEY_POLYRAIL     = 0x1000;
 static const int HOTKEY_NEW_POLYRAIL = 0x1001;
+static const int HOTKEY_BUILD_STATION_SIZED = 0x1010;     ///< Build a station in fixed size mode.
+static const int HOTKEY_BUILD_STATION_DRAGDROP = 0x1011;  ///< Build a station in dragdrop mode.
 
 struct RailStationGUISettings {
 	Axis orientation;                 ///< Currently selected rail station orientation
@@ -634,6 +636,7 @@ struct BuildRailToolbarWindow : Window {
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		if (widget < WID_RAT_BUILD_NS) return;
+		bool remove_on_ctrl = true;  /* do not check ctrl for hotkeys */
 
 		_remove_button_clicked = false;
 		switch (widget) {
@@ -716,12 +719,28 @@ struct BuildRailToolbarWindow : Window {
 				}
 				break;
 
-			case WID_RAT_BUILD_STATION:
-				if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT)) {
-					ShowStationBuilder(this);
-					this->last_user_action = widget;
+			case WID_RAT_BUILD_STATION: {
+				bool dragdrop = (this->last_user_action == HOTKEY_BUILD_STATION_DRAGDROP);
+
+				if (dragdrop || this->last_user_action == HOTKEY_BUILD_STATION_SIZED) { /* hotkey */
+					bool was_open = this->IsWidgetLowered(WID_RAT_BUILD_STATION);
+					/* close the tool explicitly so it can be re-opened in different snapping mode */
+					if (was_open) ResetObjectToPlace();
+					if (!was_open || dragdrop != _settings_client.gui.station_dragdrop) {
+						_settings_client.gui.station_dragdrop = dragdrop;
+						if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT))
+							ShowStationBuilder(this);
+					}
+					this->last_user_action = WID_RAT_BUILD_STATION;
+					remove_on_ctrl = false;
+				} else { /* button */
+					if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT)) {
+						ShowStationBuilder(this);
+						this->last_user_action = WID_RAT_BUILD_STATION;
+					}
 				}
 				break;
+			}
 
 			case WID_RAT_BUILD_SIGNALS: {
 				this->last_user_action = widget;
@@ -754,45 +773,29 @@ struct BuildRailToolbarWindow : Window {
 			default: NOT_REACHED();
 		}
 		this->UpdateRemoveWidgetStatus(widget);
-		if (_ctrl_pressed) RailToolbar_CtrlChanged(this);
+		if (_ctrl_pressed && remove_on_ctrl) RailToolbar_CtrlChanged(this);
 	}
 
 	virtual EventState OnHotkey(int hotkey)
 	{
-		EventState es;
+		// EventState es;
 		MarkTileDirtyByTile(TileVirtXY(_thd.pos.x, _thd.pos.y)); // redraw tile selection
 
-		if (hotkey == HOTKEY_POLYRAIL || hotkey == HOTKEY_NEW_POLYRAIL) {
+		switch (hotkey) {
 			/* Indicate to the OnClick that the action comes from a hotkey rather
 			 * then from a click and that the CTRL state should be ignored. */
-			this->last_user_action = hotkey;
-			hotkey = WID_RAT_POLYRAIL;
-			return this->Window::OnHotkey(hotkey);
+			case HOTKEY_POLYRAIL:
+			case HOTKEY_NEW_POLYRAIL:
+				this->last_user_action = hotkey;
+				return this->Window::OnHotkey(WID_RAT_POLYRAIL);
+
+			case HOTKEY_BUILD_STATION_SIZED:
+			case HOTKEY_BUILD_STATION_DRAGDROP:
+				this->last_user_action = hotkey;
+				return this->Window::OnHotkey(WID_RAT_BUILD_STATION);
 		}
 
-		if (hotkey == WID_RAT_BUILD_STATION_SIZED || hotkey == WID_RAT_BUILD_STATION_DRAGDROP) {
-			bool dragdrop = (hotkey == WID_RAT_BUILD_STATION_DRAGDROP);
-			Window *w = FindWindowById(WC_BUILD_STATION, 0);
-			if (w != NULL) {
-				// Already bulding station, either cancel it or change dragdrop mode
-				if (_settings_client.gui.station_dragdrop == dragdrop) {
-					es = Window::OnHotkey(WID_RAT_BUILD_STATION);
-				} else {
-					es = w->OnHotkey(WID_BRAS_PLATFORM_DRAG_N_DROP);
-				}
-			} else {
-				_settings_client.gui.station_dragdrop = dragdrop;
-				es = Window::OnHotkey(WID_RAT_BUILD_STATION);
-			}
-		} else {
-			es = Window::OnHotkey(hotkey);
-		}
-		if ((hotkey == WID_RAT_BUILD_STATION || hotkey == WID_RAT_BUILD_STATION_SIZED ||
-				hotkey == WID_RAT_BUILD_STATION_DRAGDROP) && es == ES_HANDLED &&
-				_remove_button_clicked) {
-			ToggleRailButton_Remove(this);
-		}
-		return es;
+		return Window::OnHotkey(hotkey);
 	}
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
@@ -982,8 +985,8 @@ static Hotkey railtoolbar_hotkeys[] = {
 	Hotkey('6', "demolish", WID_RAT_DEMOLISH),
 	Hotkey('7', "depot", WID_RAT_BUILD_DEPOT),
 	Hotkey('8', "waypoint", WID_RAT_BUILD_WAYPOINT),
-	Hotkey((uint16)0, "station_sized", WID_RAT_BUILD_STATION_SIZED),
-	Hotkey((uint16)0, "station_dragdrop", WID_RAT_BUILD_STATION_DRAGDROP),
+	Hotkey((uint16)0, "station_sized", HOTKEY_BUILD_STATION_SIZED),  // has to go before station hotkey to override it
+	Hotkey((uint16)0, "station_dragdrop", HOTKEY_BUILD_STATION_DRAGDROP),
 	Hotkey('9', "station", WID_RAT_BUILD_STATION),
 	Hotkey('S', "signal", WID_RAT_BUILD_SIGNALS),
 	Hotkey('B', "bridge", WID_RAT_BUILD_BRIDGE),
