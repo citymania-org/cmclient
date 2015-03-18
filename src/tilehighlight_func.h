@@ -15,6 +15,7 @@
 #include "gfx_type.h"
 #include "tilehighlight_type.h"
 #include "track_type.h"
+#include "industry_type.h"
 
 void PlaceProc_DemolishArea(TileIndex tile);
 bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_tile, TileIndex end_tile);
@@ -34,6 +35,8 @@ void UpdateTileSelection();
 void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track start_track, bool bidirectional = true);
 void ResetRailPlacementSnapping();
 bool CurrentlySnappingRailPlacement();
+
+void SetIndustryForbiddenTilesHighlight(IndustryType type);
 
 extern TileHighlightData _thd;
 

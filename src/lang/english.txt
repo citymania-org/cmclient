@@ -5261,3 +5261,10 @@ STR_TTE_INDUSTRY                                                :{WHITE}{STRING}
 STR_TTE_STATION_NAME                                            :{LTBLUE}{STATION}
 STR_TTE_STATION                                                 :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
 STR_LAND_AREA_INFORMATION_POP                                   :{BLACK}Population: {LTBLUE}{NUM}
+
+# Industry funding forbidden tiles
+STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE                         :{BLACK}Forbidden areas highlight
+STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF                           :{BLACK}Off
+STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON                            :{BLACK}On
+STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF_TOOLTIP                   :{BLACK}Don't highlight areas where particular industry can not be funded
+STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON_TOOLTIP                    :{BLACK}Highlight areas where particular industry can not be funded

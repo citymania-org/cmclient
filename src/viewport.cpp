@@ -92,6 +92,7 @@
 #include "table/strings.h"
 #include "table/palettes.h"
 #include "zoning.h"
+#include "industry_type.h"
 
 #include "safeguards.h"
 
@@ -215,6 +216,8 @@ static RailSnapMode _rail_snap_mode = RSM_NO_SNAP; ///< Type of rail track snapp
 static LineSnapPoints _tile_snap_points; ///< Tile to which a rail track will be snapped to (polyline tool).
 static LineSnapPoints _rail_snap_points; ///< Set of points where a rail track will be snapped to (polyline tool).
 static LineSnapPoint _current_snap_lock; ///< Start point and direction at which selected track is locked on currently (while dragging in polyline mode).
+
+static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
 
 static RailSnapMode GetRailSnapMode();
 static void SetRailSnapMode(RailSnapMode mode);
@@ -1110,6 +1113,22 @@ static void DrawTileSelection(const TileInfo *ti)
 	}
 }
 
+void SetIndustryForbiddenTilesHighlight(IndustryType type) {
+	if (_settings_client.gui.show_industry_forbidden_tiles &&
+	    	_industry_forbidden_tiles != type) {
+		MarkWholeScreenDirty();
+	}
+	_industry_forbidden_tiles = type;
+}
+
+static void DrawIndustryForbiddenTiles(const TileInfo *ti) {
+	if (_settings_client.gui.show_industry_forbidden_tiles &&
+			_industry_forbidden_tiles != INVALID_INDUSTRYTYPE &&
+			!CanBuildIndustryOnTile(_industry_forbidden_tiles, ti->tile)) {
+		DrawTileSelectionRect(ti, PALETTE_SEL_TILE_RED);
+	}
+}
+
 /**
  * Returns the y coordinate in the viewport coordinate system where the given
  * tile is painted.
@@ -1235,6 +1254,7 @@ static void ViewportAddLandscape()
 				_tile_type_procs[tile_type]->draw_tile_proc(&tile_info);
 				if (tile_info.tile != INVALID_TILE){
 					DrawTileZoning(&tile_info);
+					DrawIndustryForbiddenTiles(&tile_info);
 					DrawTileSelection(&tile_info);
 				}
 			}
