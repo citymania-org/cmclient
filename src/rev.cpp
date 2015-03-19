@@ -39,7 +39,7 @@ bool IsReleasedVersion()
  * norev000 is for non-releases that are made on systems without
  * subversion or sources that are not a checkout of subversion.
  */
-const char _openttd_revision[] = "1.5.0-rc1";
+const char _openttd_revision[] = "1.5.0-RC1";
 
 /**
  * The text version of OpenTTD's build date.
@@ -57,7 +57,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
  * (compiling from sources without any version control software)
  * and 2 is for modified revision.
  */
-const byte _openttd_revision_modified = 2;
+const byte _openttd_revision_modified = 0;
 
 /**
  * The NewGRF revision of OTTD:
@@ -78,5 +78,5 @@ const uint32 _openttd_newgrf_version = 1 << 28 | 5 << 24 | 0 << 20 | 0 << 19 | (
 /**
  * Variable used by MorphOS to show the version.
  */
-extern const char morphos_versions_tag[] = "$VER: OpenTTD h9213ee54M-openttd (19.03.15) OpenTTD Team [MorphOS, PowerPC]";
+extern const char morphos_versions_tag[] = "$VER: OpenTTD 1.5.0-RC1 (19.03.15) OpenTTD Team [MorphOS, PowerPC]";
 #endif
