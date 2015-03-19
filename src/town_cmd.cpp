@@ -431,7 +431,7 @@ void UpdateAllTownVirtCoords()
  */
 static void ChangePopulation(Town *t, int mod)
 {
-	if(mod > 0 && t->houses_construction > 0) t->houses_construction--;
+	// if(mod > 0 && t->houses_construction > 0) t->houses_construction--;
 
 	t->cache.population += mod;
 	InvalidateWindowData(WC_TOWN_VIEW, t->index); // Cargo requirements may appear/vanish for small populations
@@ -471,8 +471,13 @@ static void MakeSingleHouseBigger(TileIndex tile)
 	if (IsHouseCompleted(tile)) {
 		/* Now that construction is complete, we can add the population of the
 		 * building to the town. */
-		ChangePopulation(Town::GetByTile(tile), HouseSpec::Get(GetHouseType(tile))->population);
+		HouseID house_id = GetHouseType(tile);
+		Town *town = Town::GetByTile(tile);
+		const HouseSpec *hs = HouseSpec::Get(house_id);
+		ChangePopulation(town, hs->population);
 		ResetHouseAge(tile);
+		if (hs->building_flags & BUILDING_HAS_1_TILE)
+			town->houses_construction--;
 	}
 	MarkTileDirtyByTile(tile);
 }
@@ -571,13 +576,13 @@ static void TileLoop_Town(TileIndex tile)
 		t->time_until_rebuild = GB(r, 16, 8) + 192;
 
 		ClearTownHouse(t, tile);
-		t->houses_demolished++;
 
 		/* Rebuild with another house? */
-		if (GB(r, 24, 8) >= 12) {
-			if(BuildTownHouse(t, tile)) t->houses_reconstruction++;
+		if (GB(r, 24, 8) >= 12 && BuildTownHouse(t, tile)) {
+			t->houses_reconstruction++;
 			UpdateTownGrowthTile(tile, TGTS_RH_REBUILT);
 		} else {
+			t->houses_demolished++;
 			UpdateTownGrowthTile(tile, TGTS_RH_REMOVED);
 		}
 	}
@@ -2589,6 +2594,7 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 
 			if (construction_stage == TOWN_HOUSE_COMPLETED) {
 				ChangePopulation(t, hs->population);
+				t->houses_construction--;
 			} else {
 				construction_counter = GB(r, 2, 2);
 			}
@@ -2662,14 +2668,12 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	/* Remove population from the town if the house is finished. */
 	if (IsHouseCompleted(tile)) {
 		ChangePopulation(t, -hs->population);
-	}
-	else{
-		if(t->houses_construction > 0) t->houses_construction--;
+	} else {
+		t->houses_construction--;
 	}
 
 	t->cache.num_houses--;
 	t->cache.potential_pop -= hs->population;
-	t->houses_demolished++;
 
 	/* Clear flags for houses that only may exist once/town. */
 	if (hs->building_flags & BUILDING_IS_CHURCH) {

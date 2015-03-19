@@ -45,9 +45,7 @@ void RebuildTownCaches()
 		town = Town::GetByTile(t);
 		IncreaseBuildingCount(town, house_id);
 		if (IsHouseCompleted(t)) town->cache.population += HouseSpec::Get(house_id)->population;
-		else{
-			town->houses_construction++;
-		}
+		else town->houses_construction++;
 		town->cache.potential_pop += HouseSpec::Get(house_id)->population;
 
 		/* Increase the number of houses for every house, but only once. */

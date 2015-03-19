@@ -5019,7 +5019,7 @@ STR_LOCAL_AUTHORITY_COMPANY_RATING_NUM                          :{YELLOW}{COMPAN
 STR_TOWN_VIEW_GROWTH                                            :{BLACK}GR: {ORANGE}{COMMA}  {BLACK}Next: {ORANGE}{COMMA}  {BLACK}RH: {ORANGE}{COMMA}  {BLACK}Flag {ORANGE}{NUM}  {BLACK}FB: {ORANGE}{NUM} {BLACK}month{P "" s}
 STR_TOWN_VIEW_GROWTH_TILES                                      :{BLACK}HS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}CS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}HR: {ORANGE}{COMMA}(+{COMMA})
 STR_TOWN_VIEW_REALPOP_RATE                                      :{BLACK}Real Population: {YELLOW}{COMMA}  {BLACK}Rating: {YELLOW}{COMMA}
-STR_TOWN_VIEW_HOUSE_STATE                                       :{BLACK}Houses: UC {ORANGE}{COMMA}  {BLACK}UR: {ORANGE}{COMMA}  {BLACK}DTM: {ORANGE}{COMMA}
+STR_TOWN_VIEW_HOUSE_STATE                                       :{BLACK}Houses: UC {ORANGE}{COMMA}  {BLACK}RTM: {ORANGE}{COMMA}  {BLACK}DTM: {ORANGE}{COMMA}
 STR_CB_DISTANCE_CHECK                                           :CB town acceptance: {STRING2}
 
 ###ADMIN
