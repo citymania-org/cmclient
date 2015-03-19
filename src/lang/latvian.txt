@@ -12,7 +12,7 @@
 ##case kas
 
 
-# $Id: latvian.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: latvian.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2799,7 +2799,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Iepriek�
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Iet pie iepriekšējā parastā gariņa, izlaižot visus pseido/pārkrāsotos/fonta gariņus
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Atlasītā gariņa attēlojums. To attēlojot, izkārtojums netiek ievērots
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Pārvietot gariņu, lai mainītu X un Y vērtības
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X garums: {NUM}, Y garums: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Paņemt gariņu
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Paņemt gariņu no jebkuras vietas ekrānā
 

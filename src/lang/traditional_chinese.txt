@@ -10,7 +10,7 @@
 ##grflangid 0x0c
 
 
-# $Id: traditional_chinese.txt 27156 2015-02-20 17:45:21Z translators $
+# $Id: traditional_chinese.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2879,7 +2879,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}上一�
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}繼續處理上一個正常的子畫面，略過任何虛位／重新著色／文字字型相關的子畫面，並在到達第一個子畫面後，返回最後的子畫面繼續進行處理。
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}顯示目前選取的 sprite。當 sprite 正在描繪時會忽略其定位
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}移動 sprite 到指定的 X 及 Y 座標位移
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X 座標位移：{NUM}, Y 座標位移：{NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}選取 Sprite
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}請從畫面中任意選取一個 sprite
 

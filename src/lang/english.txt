@@ -10,7 +10,7 @@
 ##grflangid 0x01
 
 
-# $Id: english.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: english.txt 27174 2015-03-01 08:17:14Z alberth $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2316,7 +2316,6 @@ STR_RAIL_TOOLBAR_MAGLEV_CONSTRUCTION_CAPTION                    :Maglev Construc
 
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}Build railway track. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Build railway track using the Autorail mode. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_POLYRAIL                         :{BLACK}Build railway track using the Polyline mode. Ctrl toggles build/remove for railway construction. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}Build train depot (for buying and servicing trains). Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}Convert rail to waypoint. Ctrl enables joining waypoints. Shift toggles building/showing cost estimate
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}Build railway station. Ctrl enables joining stations. Shift toggles building/showing cost estimate
@@ -2880,7 +2879,10 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Previous
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Proceed to the previous normal sprite, skipping any pseudo/recolour/font sprites and wrapping around from the first sprite to the last
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Representation of the currently selected sprite. The alignment is ignored when drawing this sprite
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Move the sprite around, changing the X and Y offsets
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X offset: {NUM}, Y offset: {NUM}
+STR_SPRITE_ALIGNER_RESET_BUTTON                                 :{BLACK}Reset relative
+STR_SPRITE_ALIGNER_RESET_TOOLTIP                                :{BLACK}Reset the current relative offsets
+STR_SPRITE_ALIGNER_OFFSETS_ABS                                  :{BLACK}X offset: {NUM}, Y offset: {NUM} (Absolute)
+STR_SPRITE_ALIGNER_OFFSETS_REL                                  :{BLACK}X offset: {NUM}, Y offset: {NUM} (Relative)
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Pick sprite
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Pick a sprite from anywhere on the screen
 

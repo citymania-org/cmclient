@@ -1,4 +1,4 @@
-/* $Id: object_land.h 25876 2013-10-17 21:41:17Z planetmaker $ */
+/* $Id: object_land.h 27183 2015-03-13 19:42:49Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -123,7 +123,7 @@ static const DrawTileSprites _object_hq[] = {
 
 #undef TILE_SPRITE_LINE
 
-#define M(name, size, build_cost_multiplier, clear_cost_multiplier, height, climate, gen_amount, flags) { GRFFilePropsBase<2>(), INVALID_OBJECT_CLASS, name, climate, size, build_cost_multiplier, clear_cost_multiplier, 0, 0xFFFFFFFF, flags, {0, 0, 0, 0}, 0, height, 1, gen_amount, true }
+#define M(name, size, build_cost_multiplier, clear_cost_multiplier, height, climate, gen_amount, flags) { GRFFilePropsBase<2>(), INVALID_OBJECT_CLASS, name, climate, size, build_cost_multiplier, clear_cost_multiplier, 0, MAX_DAY + 1, flags, {0, 0, 0, 0}, 0, height, 1, gen_amount, true }
 
 /* Climates
  * T = Temperate

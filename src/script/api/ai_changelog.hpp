@@ -1,4 +1,4 @@
-/* $Id: ai_changelog.hpp 27032 2014-10-23 09:47:15Z rubidium $ */
+/* $Id: ai_changelog.hpp 27195 2015-03-18 19:33:34Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,8 +16,6 @@
  * in GetAPIVersion() in info.nut.
  *
  * \b 1.5.0
- *
- * 1.5.0 is not yet released. The following changes are not set in stone yet.
  *
  * API additions:
  * \li AIList::SwapList

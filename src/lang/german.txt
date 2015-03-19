@@ -11,7 +11,7 @@
 ##gender m w n p
 
 
-# $Id: german.txt 27153 2015-02-15 17:45:47Z translators $
+# $Id: german.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2880,7 +2880,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Vorherig
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Gehe zum vorherigen normalen Sprite und überspringe alle Pseudo-, Recolour- und Schriftsprites (springt ggf. vom letzten bis zum ersten Sprite)
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Darstellung des aktuellen Sprites. Die Ausrichtung wird beim Zeichnen des Sprites ignoriert
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Bewege die Sprites und ändere dadurch die X- und Y-Offsets
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X-Offset: {NUM}, Y-Offset: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Sprite auswählen
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Wähle ein Sprite vom Bildschirm aus
 

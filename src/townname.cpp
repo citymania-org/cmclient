@@ -1,4 +1,4 @@
-/* $Id: townname.cpp 26510 2014-04-25 17:35:29Z rubidium $ */
+/* $Id: townname.cpp 27187 2015-03-15 12:19:58Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -635,7 +635,7 @@ static char *MakeCzechTownName(char *buf, const char *last, uint32 seed)
 		choose = _name_czech_subst_full[stem].choose;
 		allow = _name_czech_subst_full[stem].allow;
 	} else {
-		unsigned int map[lengthof(_name_czech_subst_ending)];
+		uint map[lengthof(_name_czech_subst_ending)];
 		int ending_start = -1, ending_stop = -1;
 
 		/* Load the substantive */

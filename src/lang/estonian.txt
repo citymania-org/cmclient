@@ -11,7 +11,7 @@
 ##case g in sü
 
 
-# $Id: estonian.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: estonian.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2874,7 +2874,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Eelmine 
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Proceed to the previous normal sprite, skipping any pseudo/recolour/font sprites and wrapping around at the begin
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Representation of the currently selected sprite. The alignment is ignored when drawing this sprite
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Liiguta spraiti , muutes X ja Y tasakaalu
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X tasakaal: {NUM}, Y tasakaal: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Korja sprite
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Korja sprite ükskõik kust ekraanil
 

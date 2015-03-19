@@ -1,4 +1,4 @@
-/* $Id: script_window.hpp 27152 2015-02-15 14:56:21Z frosch $ */
+/* $Id: script_window.hpp 27174 2015-03-01 08:17:14Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1800,10 +1800,12 @@ public:
 		WID_SA_RIGHT                                 = ::WID_SA_RIGHT,                                 ///< Move the sprite to the right.
 		WID_SA_DOWN                                  = ::WID_SA_DOWN,                                  ///< Move the sprite down.
 		WID_SA_SPRITE                                = ::WID_SA_SPRITE,                                ///< The actual sprite.
-		WID_SA_OFFSETS                               = ::WID_SA_OFFSETS,                               ///< The sprite offsets.
+		WID_SA_OFFSETS_ABS                           = ::WID_SA_OFFSETS_ABS,                           ///< The sprite offsets (absolute).
+		WID_SA_OFFSETS_REL                           = ::WID_SA_OFFSETS_REL,                           ///< The sprite offsets (relative).
 		WID_SA_PICKER                                = ::WID_SA_PICKER,                                ///< Sprite picker.
 		WID_SA_LIST                                  = ::WID_SA_LIST,                                  ///< Queried sprite list.
 		WID_SA_SCROLLBAR                             = ::WID_SA_SCROLLBAR,                             ///< Scrollbar for sprite list.
+		WID_SA_RESET_REL                             = ::WID_SA_RESET_REL,                             ///< Reset relative sprite offset
 	};
 
 	/* automatically generated from ../../widgets/newgrf_widget.h */
@@ -1982,7 +1984,6 @@ public:
 		WID_RAT_BUILD_EW                             = ::WID_RAT_BUILD_EW,                             ///< Build rail along the game view X axis.
 		WID_RAT_BUILD_Y                              = ::WID_RAT_BUILD_Y,                              ///< Build rail along the game grid Y axis.
 		WID_RAT_AUTORAIL                             = ::WID_RAT_AUTORAIL,                             ///< Autorail tool.
-		WID_RAT_POLYRAIL                             = ::WID_RAT_POLYRAIL,                             ///< Polyline rail tool.
 		WID_RAT_DEMOLISH                             = ::WID_RAT_DEMOLISH,                             ///< Destroy something with dynamite!
 		WID_RAT_BUILD_DEPOT                          = ::WID_RAT_BUILD_DEPOT,                          ///< Build a depot.
 		WID_RAT_BUILD_WAYPOINT                       = ::WID_RAT_BUILD_WAYPOINT,                       ///< Build a waypoint.

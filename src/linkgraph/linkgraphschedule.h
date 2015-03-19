@@ -1,4 +1,4 @@
-/* $Id: linkgraphschedule.h 26347 2014-02-16 18:42:59Z fonsinchen $ */
+/* $Id: linkgraphschedule.h 27178 2015-03-07 18:27:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -51,8 +51,8 @@ protected:
 public:
 	/* This is a tick where not much else is happening, so a small lag might go unnoticed. */
 	static const uint SPAWN_JOIN_TICK = 21; ///< Tick when jobs are spawned or joined every day.
+	static LinkGraphSchedule instance;
 
-	static LinkGraphSchedule *Instance();
 	static void Run(void *j);
 	static void Clear();
 

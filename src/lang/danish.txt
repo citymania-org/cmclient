@@ -10,7 +10,7 @@
 ##grflangid 0x2d
 
 
-# $Id: danish.txt 27114 2015-01-06 17:45:49Z translators $
+# $Id: danish.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2879,7 +2879,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Tidliger
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Fortsæt til den forrige normal sprite, springe over nogen pseudo / recolour / FONT sprites og indpakning rundt fra den første sprite til det sidste
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Repræsentation af den markerede sprite. Justeringen ignoreres når denne sprite tegnes.
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Flyt spriten rundt for at ændre X- og Y-forskydningen
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X-forskydning: {NUM}, Y-forskydning: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Vælg grafikelement
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Vælg en sprite fra et vilkårligt sted på skærmen
 

@@ -10,7 +10,7 @@
 ##grflangid 0x1f
 
 
-# $Id: dutch.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: dutch.txt 27177 2015-03-02 17:46:37Z translators $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2879,7 +2879,10 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Vorige a
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Ga naar vorige normale afbeelding, sla alle pseudo/herkleur/lettertype afbeeldingen over en ga naar het einde bij het begin
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Voorbeeld van de huidige afbeelding. De uitlijning wordt genegeerd bij het weergeven van de afbeelding
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Afbeelding verplaatsen, dit verandert X en Y offsets
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X offset: {NUM}, Y offset: {NUM}
+STR_SPRITE_ALIGNER_RESET_BUTTON                                 :{BLACK}Herstel relatief
+STR_SPRITE_ALIGNER_RESET_TOOLTIP                                :{BLACK}Herstel de huidige relative offsets
+STR_SPRITE_ALIGNER_OFFSETS_ABS                                  :{BLACK}X offset: {NUM}, Y offset: {NUM} (Absoluut)
+STR_SPRITE_ALIGNER_OFFSETS_REL                                  :{BLACK}X offset: {NUM}, Y offset: {NUM} (Relatief)
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Kies afbeelding
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Kies een afbeelding van een willekeurige plaats op het scherm
 

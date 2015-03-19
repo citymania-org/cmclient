@@ -10,7 +10,7 @@
 ##grflangid 0x5a
 
 
-# $Id: indonesian.txt 27154 2015-02-18 17:45:30Z translators $
+# $Id: indonesian.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2879,7 +2879,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Sprite s
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Lanjutkan ke sprite normal sebelumnya, lewati sembarang sprite bayangan/warna ulang/huruf dan pembungkus saat mulai
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Mewakili sprite yang sedang dipilih. Penjajaran diabaikan ketika sprite ini digambar
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Pindahkan sprite, mengubah offset X dan Y
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X offset: {NUM}, Y offset: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Pilih sprite
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Pilih sebuah sprite di manapun pada layar
 

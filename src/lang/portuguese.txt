@@ -11,7 +11,7 @@
 ##gender n m f mp fp
 
 
-# $Id: portuguese.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: portuguese.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2863,7 +2863,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Gráfico
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Proceder ao gráfico normal anterior, ignorando quaisquer gráficos pseudo/recolorir/tipo-de-letra e dando a volta no início
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Representação do gráfico seleccionado actualmente. O alinhamento é ignorado a desenhar este gráfico
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Mover o gráfico, mudando os desvios X e Y
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}Desvio X: {NUM}, Desvio Y: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Escolher gráfico
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Escolha um gráfico de qualquer lado no ecrã
 

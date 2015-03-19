@@ -12,7 +12,7 @@
 ##case m f n p
 
 
-# $Id: bulgarian.txt 27122 2015-01-19 17:45:27Z translators $
+# $Id: bulgarian.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2815,7 +2815,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Пред
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Продължи към предишен нормален sprite, Пропускайки всички псевдо/прерисувани/текстови sprite и ги облечи в края
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Показване на избрания sprite. Подредбата се пренебрегва при рисуването му.
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Преместване на sprite, променяйки X и Y координатите
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X координата: {NUM}, Y координата: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Избери sprite
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Избери sprite от целия екран
 

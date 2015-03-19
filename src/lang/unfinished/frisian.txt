@@ -10,7 +10,7 @@
 ##grflangid 0x32
 
 
-# $Id: frisian.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: frisian.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2392,7 +2392,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Foarig f
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Gean tebek nei de foarige ôfbylding, sla pseudo/werkleure/lettertype ôfbyldings oer en begjin wer oernei at it begjin berikke is
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Represintaasje fan de no selektearre ôfbylding. Dizze wurdt net rjochte by it tekenjen
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Ferweech de ôfbylding, feroarje de X en Y útslach
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}Utslach X: {NUM}, Utslach Y: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Kies ôfbylding
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Pak in ôfbylding fan alle lokaasjes op it skerm ôf
 
