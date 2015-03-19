@@ -1355,6 +1355,7 @@ public:
 		cargoes.sort(CB_sortCargoesByFrom);
 		this->town = Town::Get(window_number);
 		this->InitNested(window_number);
+
 		if(HasBit(this->town->fund_regularly, _local_company)) this->LowerWidget(WID_CB_FUND_REGULAR);
 		if(HasBit(this->town->do_powerfund, _local_company)) this->LowerWidget(WID_CB_POWERFUND);
 		if(HasBit(this->town->advertise_regularly, _local_company)) this->LowerWidget(WID_CB_ADVERT_REGULAR);
@@ -1652,7 +1653,7 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 static WindowDesc _cb_town_desc(
 	WDP_AUTO, NULL, 0, 0,
 	WC_CB_TOWN, WC_NONE,
-	WDF_CONSTRUCTION,
+	0,
 	_nested_cb_town_widgets, lengthof(_nested_cb_town_widgets),
 	&CBTownWindow::hotkeys
 );
