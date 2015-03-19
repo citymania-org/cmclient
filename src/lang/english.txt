@@ -5268,3 +5268,6 @@ STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF                           :{BLACK}Off
 STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON                            :{BLACK}On
 STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF_TOOLTIP                   :{BLACK}Don't highlight areas where particular industry can not be funded
 STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON_TOOLTIP                    :{BLACK}Highlight areas where particular industry can not be funded
+
+STR_CB_GUI_TOWN_VIEW_BUTTON                                     :{BLACK}Town view
+STR_CB_GUI_TOWN_VIEW_TOOLTIP                                    :{BLACK}Show information on town
