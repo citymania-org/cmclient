@@ -7,7 +7,7 @@ Unless you encouter the same bug on unpatched OpenTTD client do not report it to
 
 
 == INSTALL ==
-If you have shared OpenTTD folder, you can just unzip anywhere and launch 
+If you have shared OpenTTD folder, you can just unzip anywhere and launch
 If you dont use shared folder, unzip into your OpenTTD folder
 innerhighlight.grf in data folder is required, copy it to data or content_download/data folder
 
@@ -69,6 +69,21 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+*** v26-150rc1 ***
+Update to 1.5.0-RC1
+- Regular advertisement and powerfunding (in CB window)
+- Regular funding is now smarter
+- Full tile autoroad is replaced with CB autoroad which is more like regular autoroad, but also tries to avoid half-tile dead ends and redundant roadbits
+- station_sized and station_dragdrop hotkeys to start building station directly in fixed size or drag&drop mode
+- toggle_fullscreen hotkey
+- zoning hotkeys can be global
+- Industry funding window has option to highlight tiles where industry can't be build regardless of terrain. Note that it works quite slow and can cause lags so use with caution
+- GR and next displays once again show proper values
+- Polyrail tool updated to version 10b, noticable changes:
+--- Ending line with double click no longer interferes with building quickly so setting for disabling it was removed
+--- Tool can now be started in non-snapping mode (new line) with new_polyline hotkey (CTRL+SHIFT+A)
+--- No longer shows error if no new tracks were built, only changes snap point
+
 *** v25-150b2 ***
 Update to 1.5.0-beta2
 
@@ -89,11 +104,11 @@ Fixing bugs in login window
 - cb window updated more often
 - Fund regularly button in CB window is toggled when clicked
 - Cargo commands gui in commands window are changed and one is added
-- Town window 
+- Town window
 	-Houses under construction are hopefully diplayed properly and houses under reconstruction are showed only per month
 
 *** v21-144 ***
-Zoning tool 
+Zoning tool
  - window made smaller - removed unnecessary lines, clicking on selected button will deselect it
  - hotkeys for all buttons, default is SHIFT+{number}
 Town window
@@ -107,7 +122,7 @@ Fund regularly feature
  - Can be de/activated in CB window only
  - Will fund buildings whenever fund buildings goes down to 0 months. Company needs money to use it
  - any number of towns can have this activated, but it is costly
- - !!! Use with caution as it drains money away 
+ - !!! Use with caution as it drains money away
 
 *** v20-144 ***
 Update to 1.4.4
@@ -158,7 +173,7 @@ Fixed login query. Input is now both '<name> <password>'
 *** v12-133 ***
 New town growth counters and zones (for zoning GUI) Unfinished wiki article
 Replaced "from" column in CB GUI with storage usage %
-Vehicle cloning hotkey in depot(no default), advertise hotkeys for town authority and town info windows (CTRL+V for large advertisemetn), funding hotkey for town info window(CTRL+F). Also SPACE can now be used as hotkey.
+Vehicle cloning hotkey in depot(no default), advertise hotkeys for town authority and town info windows (CTRL+V for large advertisemetn), funding hotkey for town info window(CTRL+F).
 Zoning GUI changes: new advertisement range and CB town borders zones, "town borders" renamed to "town zones" and now shows more zones.
 CB GUI fixed
 
