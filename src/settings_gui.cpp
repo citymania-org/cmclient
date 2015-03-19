@@ -36,6 +36,7 @@
 #include "textfile_gui.h"
 #include "stringfilter_type.h"
 #include "querystring_gui.h"
+#include "hotkeys.h"
 
 #include <vector>
 
@@ -570,6 +571,8 @@ struct GameOptionsWindow : Window {
 		missing_files = BaseMusic::GetUsedSet()->GetNumInvalid() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_MUSIC_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_MUSIC_STATUS, STR_NULL);
 	}
+
+	static HotkeyList hotkeys;
 };
 
 static const NWidgetPart _nested_game_options_widgets[] = {
@@ -653,11 +656,25 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 	EndContainer(),
 };
 
+static EventState GameOptionsWindowGlobalHotkeys(int hotkey) {
+	if (!ToggleFullScreen(!_fullscreen)) {
+		ShowErrorMessage(STR_ERROR_FULLSCREEN_FAILED, INVALID_STRING_ID, WL_ERROR);
+	}
+	return ES_HANDLED;
+}
+
+static Hotkey game_options_hotkeys[] = {
+	Hotkey((uint16)0, "toggle_fullscreen", WID_GO_FULLSCREEN_BUTTON),
+	HOTKEY_LIST_END
+};
+HotkeyList GameOptionsWindow::hotkeys("game_options", game_options_hotkeys, GameOptionsWindowGlobalHotkeys);
+
 static WindowDesc _game_options_desc(
 	WDP_CENTER, "settings_game", 0, 0,
 	WC_GAME_OPTIONS, WC_NONE,
 	0,
-	_nested_game_options_widgets, lengthof(_nested_game_options_widgets)
+	_nested_game_options_widgets, lengthof(_nested_game_options_widgets),
+	&GameOptionsWindow::hotkeys
 );
 
 /** Open the game options window. */
