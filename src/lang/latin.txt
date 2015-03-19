@@ -12,7 +12,7 @@
 ##case gen acc abl dat
 
 
-# $Id: latin.txt 27168 2015-02-23 17:45:46Z translators $
+# $Id: latin.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -852,8 +852,8 @@ STR_MUSIC_TOOLTIP_SELECT_ALL_TRACKS_PROGRAM                     :{BLACK}Eligere 
 STR_MUSIC_TOOLTIP_SELECT_OLD_STYLE_MUSIC                        :{BLACK}Eligere compositionem 'musicam veterem'
 STR_MUSIC_TOOLTIP_SELECT_NEW_STYLE_MUSIC                        :{BLACK}Eligere compositionem 'musicam novitatis'
 STR_MUSIC_TOOLTIP_SELECT_EZY_STREET_STYLE                       :{BLACK}Eligere compositionem 'viam facilem'
-STR_MUSIC_TOOLTIP_SELECT_CUSTOM_1_USER_DEFINED                  :{BLACK}Eligere compositionem 'Propriam I' (ab lusore electam)
-STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}Eligere compositionem 'Propriam II' (ab lusore electam)
+STR_MUSIC_TOOLTIP_SELECT_CUSTOM_1_USER_DEFINED                  :{BLACK}Eligere compositionem 'Propriam I' (a lusore electam)
+STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}Eligere compositionem 'Propriam II' (a lusore electam)
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}Incipere desinereve admixtionem carminum
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}Monstrare fenestram electionis carminum
 
@@ -3081,7 +3081,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Spiritum
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Ire ad spiritum naturalem priorem et, termino contacto, ad ultimum revertere
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Imago spiritus electi. Directio neglegitur cum hic spiritus pingitur
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Movere spiritum mutatione X et Y incrementa
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X incrementum: {NUM}, Y incrementum: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Eligere spiritum
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Eligere spiritum e scrinio
 

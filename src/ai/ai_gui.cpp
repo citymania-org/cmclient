@@ -1,4 +1,4 @@
-/* $Id: ai_gui.cpp 26954 2014-10-04 18:19:22Z peter1138 $ */
+/* $Id: ai_gui.cpp 27187 2015-03-15 12:19:58Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -970,7 +970,7 @@ struct AIDebugWindow : public Window {
 	static const int top_offset;    ///< Offset of the text at the top of the WID_AID_LOG_PANEL.
 	static const int bottom_offset; ///< Offset of the text at the bottom of the WID_AID_LOG_PANEL.
 
-	static const unsigned int MAX_BREAK_STR_STRING_LENGTH = 256; ///< Maximum length of the break string.
+	static const uint MAX_BREAK_STR_STRING_LENGTH = 256;   ///< Maximum length of the break string.
 
 	static CompanyID ai_debug_company;                     ///< The AI that is (was last) being debugged.
 	int redraw_timer;                                      ///< Timer for redrawing the window, otherwise it'll happen every tick.

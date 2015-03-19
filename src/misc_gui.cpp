@@ -1,4 +1,4 @@
-/* $Id: misc_gui.cpp 27134 2015-02-01 20:54:24Z frosch $ */
+/* $Id: misc_gui.cpp 27194 2015-03-17 22:08:48Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -448,6 +448,7 @@ static const char * const _credits[] = {
 	"  Mike Ragsdale - OpenTTD installer",
 	"  Christian Rosentreter (tokai) - MorphOS / AmigaOS port",
 	"  Richard Kempton (richK) - additional airports, initial TGP implementation",
+	"  Emperor Jake - titlegame",
 	"",
 	"  Alberto Demichelis - Squirrel scripting language \xC2\xA9 2003-2008",
 	"  L. Peter Deutsch - MD5 implementation \xC2\xA9 1999, 2000, 2002",

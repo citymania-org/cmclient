@@ -1,4 +1,4 @@
-/* $Id: window.cpp 27147 2015-02-13 21:25:48Z frosch $ */
+/* $Id: window.cpp 27185 2015-03-13 20:54:35Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1081,7 +1081,16 @@ Window::~Window()
 	free(this->nested_array); // Contents is released through deletion of #nested_root.
 	delete this->nested_root;
 
-	this->window_class = WC_INVALID;
+	/*
+	 * Make fairly sure that this is written, and not "optimized" away.
+	 * The delete operator is overwritten to not delete it; the deletion
+	 * happens at a later moment in time after the window has been
+	 * removed from the list of windows to prevent issues with items
+	 * being removed during the iteration as not one but more windows
+	 * may be removed by a single call to ~Window by means of the
+	 * DeleteChildWindows function.
+	 */
+	const_cast<volatile WindowClass &>(this->window_class) = WC_INVALID;
 }
 
 /**

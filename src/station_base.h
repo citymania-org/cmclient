@@ -1,4 +1,4 @@
-/* $Id: station_base.h 26891 2014-09-21 16:19:52Z fonsinchen $ */
+/* $Id: station_base.h 27178 2015-03-07 18:27:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -36,6 +36,8 @@ static const byte INITIAL_STATION_RATING = 175;
 class FlowStat {
 public:
 	typedef std::map<uint32, StationID> SharesMap;
+
+	static const SharesMap empty_sharesmap;
 
 	/**
 	 * Invalid constructor. This can't be called as a FlowStat must not be

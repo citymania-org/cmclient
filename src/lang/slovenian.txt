@@ -11,7 +11,7 @@
 ##case r d t
 
 
-# $Id: slovenian.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: slovenian.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2976,7 +2976,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Prejšnj
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Nadaljuj k prejšnji navadni sličici, zanemari vse navidezne/pobarvane/besedilne sličice in okvir na koncu
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Predstavitev trenutno izbrane sličice. Zamik je zanemarjen pri risanju te sličice
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Premakni sličico s spreminjanjem X in Y osi
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X zamik: {NUM}, Y zamik: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Izberi sličico
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Izberi sličico kjerkoli na zaslonu
 

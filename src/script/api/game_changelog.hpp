@@ -1,4 +1,4 @@
-/* $Id: game_changelog.hpp 27164 2015-02-22 17:25:29Z alberth $ */
+/* $Id: game_changelog.hpp 27195 2015-03-18 19:33:34Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,8 +16,6 @@
  * in GetAPIVersion() in info.nut.
  *
  * \b 1.5.0
- *
- * 1.5.0 is not yet released. The following changes are not set in stone yet.
  *
  * API additions:
  * \li GSList::SwapList

@@ -1,4 +1,4 @@
-/* $Id: win32.h 25676 2013-08-05 20:36:55Z michi_cc $ */
+/* $Id: win32.h 27176 2015-03-02 09:10:16Z planetmaker $ */
 
 /*
  * This file is part of OpenTTD.
@@ -35,7 +35,7 @@ TCHAR *convert_to_fs(const char *name, TCHAR *utf16_buf, size_t buflen, bool con
 
 HRESULT OTTDSHGetFolderPath(HWND, int, HANDLE, DWORD, LPTSTR);
 
-#if defined(__MINGW32__)
+#if defined(__MINGW32__) && !defined(__MINGW64__)
 #define SHGFP_TYPE_CURRENT 0
 #endif /* __MINGW32__ */
 

@@ -11,7 +11,7 @@
 ##case tamlanan
 
 
-# $Id: turkish.txt 27142 2015-02-10 17:45:15Z translators $
+# $Id: turkish.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2809,7 +2809,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Önceki 
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Tüm sahte/yeniden renklendirme/yazı tipi nesnelerini ve baştaki sargıyı atlayarak bir önceki normal nesneye geç
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Seçili nesnenin mevcut gösterimi. Bu nesneyi çizerken hizalama ihmal edilir
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Nesneyi X ve Y ofsetlerini değiştirerek gezdir
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X ofseti: {NUM}, Y ofseti: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Nesne seç
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Ekrandaki herhangi bir yerden bir nesne seçin
 

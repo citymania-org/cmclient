@@ -10,7 +10,7 @@
 ##grflangid 0x0f
 
 
-# $Id: welsh.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: welsh.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2879,7 +2879,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Corlun b
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Mynd i'r corlun cyffredin blaenorol, gan hepgor unrhyw gorluniau ailliwio/ffont/llidgorluniau, ac amlapio o'r corlun cyntaf i'r olaf
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Cynrychioliad o'r corlun a ddewiswyd. Fe anwybyddir yr aliniad wrth lunio'r corlun
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Symud y corlun, gan newid yr atredau X ac Y
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}Atred X: {NUM}, Atred Y: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Dewis corlun
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Dewis corlun o ynrhyw fan ar y sgrïn
 

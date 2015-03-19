@@ -1,4 +1,4 @@
-/* $Id: roadveh_cmd.cpp 27134 2015-02-01 20:54:24Z frosch $ */
+/* $Id: roadveh_cmd.cpp 27190 2015-03-16 20:01:14Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -824,8 +824,9 @@ static void RoadVehCheckOvertake(RoadVehicle *v, RoadVehicle *u)
 	if (v->state >= RVSB_IN_ROAD_STOP || !IsStraightRoadTrackdir((Trackdir)(v->state & RVSB_TRACKDIR_MASK))) return;
 
 	/* Can't overtake a vehicle that is moving faster than us. If the vehicle in front is
-	 * accelerating, take the maximum speed for the comparison, else the current speed. */
-	int u_speed = u->GetAcceleration() > 0 ? u->GetCurrentMaxSpeed() : u->cur_speed;
+	 * accelerating, take the maximum speed for the comparison, else the current speed.
+	 * Original acceleration always accelerates, so always use the maximum speed. */
+	int u_speed = (_settings_game.vehicle.roadveh_acceleration_model == AM_ORIGINAL || u->GetAcceleration() > 0) ? u->GetCurrentMaxSpeed() : u->cur_speed;
 	if (u_speed >= v->GetCurrentMaxSpeed() &&
 			!(u->vehstatus & VS_STOPPED) &&
 			u->cur_speed != 0) {

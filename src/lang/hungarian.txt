@@ -11,7 +11,7 @@
 ##case t ba
 
 
-# $Id: hungarian.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: hungarian.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2943,7 +2943,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Előző 
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Továbbhaladás az előző normál spritera, kihagyva bármilyen ál/átszínező/betű spriteokat, az elején folytatva az utolsóval
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}A jelenleg kiválasztott sprite ábrázolása. Az elhelyezkedés kikapcsolt sprite-rajzolás közben
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Sprite elmozdítása, módosítva az X és Y offszeteket
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X offszet: {NUM}, Y offszet: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Sprite felszedése
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Szedj fel egy spriteot akárhonnan a képernyőről
 

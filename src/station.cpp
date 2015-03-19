@@ -1,4 +1,4 @@
-/* $Id: station.cpp 27030 2014-10-21 19:16:47Z rubidium $ */
+/* $Id: station.cpp 27178 2015-03-07 18:27:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -116,7 +116,7 @@ Station::~Station()
 		}
 		lg->RemoveNode(this->goods[c].node);
 		if (lg->Size() == 0) {
-			LinkGraphSchedule::Instance()->Unqueue(lg);
+			LinkGraphSchedule::instance.Unqueue(lg);
 			delete lg;
 		}
 	}

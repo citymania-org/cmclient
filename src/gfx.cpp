@@ -1,4 +1,4 @@
-/* $Id: gfx.cpp 27167 2015-02-22 23:06:45Z frosch $ */
+/* $Id: gfx.cpp 27172 2015-02-28 17:13:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1637,8 +1637,11 @@ bool CursorVars::UpdateCursorPosition(int x, int y, bool queued_warp)
 
 	bool need_warp = false;
 	if (this->fix_at) {
-		if (!this->queued_warp && (this->delta.x != 0 || this->delta.y != 0)) {
-			/* Trigger warp. */
+		if (this->delta.x != 0 || this->delta.y != 0) {
+			/* Trigger warp.
+			 * Note: We also trigger warping again, if there is already a pending warp.
+			 *       This makes it more tolerant about the OS or other software inbetween
+			 *       botchering the warp. */
 			this->queued_warp = queued_warp;
 			need_warp = true;
 		}

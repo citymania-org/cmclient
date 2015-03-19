@@ -12,7 +12,7 @@
 ##case m f n p nom gen dat acc abl pre
 
 
-# $Id: belarusian.txt 27103 2015-01-01 20:51:18Z rubidium $
+# $Id: belarusian.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -3212,7 +3212,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Папя
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Перайсьці да папярэдняга звычайнага спрайта, прапускаючы змяняючыя колер, шрыфтавыя, псэўдаспрайты. Пераход з пачатку сьпісу да апошняга спрайта.
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Прадстаўленьне выбранага спрайта. Выраўноўваньне не ўлічваецца пры прарысоўцы гэтага спрайта.
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Рухайце спрайт, зьмяняючы зрушэньне па X і па Y
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}Зрушэньне па X: {NUM}, зрушэньне па Y: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Выбраць спрайт
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Абярыце любы спрайт на экране
 
