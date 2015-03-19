@@ -1,0 +1,18 @@
+﻿Build started 18.04.2014 19:09:33.
+     1>Project "\\VBOXSVR\Projects\novattd\projects\generate_vs100.vcxproj" on node 2 (Build target(s)).
+     1>CustomBuild:
+         "\\VBOXSVR\Projects\novattd\projects"
+         Указанный путь был использован при запуске CMD.EXE в качестве текущей папки.
+         CMD.EXE не поддерживает пути UNC. По умолчанию выбрана системная папка Windows.
+         Running 'generate.vbs' ...
+         Сервер сценариев Windows (Microsoft R) версия 5.8
+         c Корпорация Майкрософт (Microsoft Corp.), 1996-2001. Все права защищены.
+         
+         Can't find source.list, needed in order to make this run.
+         Please go to either the project dir, or the root dir of a clean SVN checkout.
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppCommon.targets(172,5): error MSB6006: "cmd.exe" exited with code 1.
+     1>Done Building Project "\\VBOXSVR\Projects\novattd\projects\generate_vs100.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.40
