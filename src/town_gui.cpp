@@ -1393,7 +1393,7 @@ public:
 			case WID_CB_ADVERT_REGULAR:
 				if (!this->town->advertise_regularly) {
 					SetDParam(0, ToPercent8(this->town->ad_rating_goal));
-					ShowQueryString(STR_JUST_INT, STR_FOUND_TOWN_CAPTION,
+					ShowQueryString(STR_JUST_INT, STR_CB_ADVERT_REGULAR_RATING_TO_KEEP,
 					                4, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
 				} else this->OnQueryTextFinished(NULL);
 				break;

@@ -5212,7 +5212,7 @@ STR_CB_FUNDED_REGULARLY                                         :{GREEN}Town is 
 STR_CB_ADVERT_REGULAR                                           :{BLACK}Adv. Regularly
 STR_CB_ADVERT_REGULAR_TT                                        :{BLACK}Automatically advertise town whenever stations rating drops below a certain point
 STR_CB_POWERFUND                                                :{BLACK}Powerfund
-STR_CB_ADVERT_REGULAR_RATING_TO_KEEP                            :{BLACK}Station rating to keep
+STR_CB_ADVERT_REGULAR_RATING_TO_KEEP                            :{BLACK}Keep station rating at
 STR_CB_POWERFUND_TT                                             :{BLACK}Continiously funds town with maximum speed possible
 
 STR_TOWN_CB_FUNDING                                             :{ORANGE}Funded for {YELLOW}{COMMA}{ORANGE} month{P "" s}
