@@ -48,7 +48,7 @@ struct CargoX {
 	int from;
 };
 void ShowCBTownWindow(uint town);
-void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line);
+static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bool show_house_states_info=false);
 
 bool TownExecuteAction(const Town *town, uint action){
 	if(!(action == HK_STATUE && HasBit(town->statues, _current_company))){ //don't built statue when there is one
@@ -400,7 +400,7 @@ public:
 		SetDParam(1, this->town->supplied[CT_MAIL].old_max);
 		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX);
 
-		DrawExtraTownInfo(r, y, this->town, FONT_HEIGHT_NORMAL); //CB
+		DrawExtraTownInfo(r, y, this->town, FONT_HEIGHT_NORMAL, true); //CB
 
 		bool first = true;
 		for (int i = TE_BEGIN; i < TE_END; i++) {
@@ -530,7 +530,7 @@ public:
 	 */
 	uint GetDesiredInfoHeight(int width) const
 	{
-		uint aimed_height = 7 * FONT_HEIGHT_NORMAL + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+		uint aimed_height = 8 * FONT_HEIGHT_NORMAL + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 
 		bool first = true;
 		for (int i = TE_BEGIN; i < TE_END; i++) {
@@ -1301,7 +1301,7 @@ void ShowFoundTownWindow()
 }
 
 //CB
-void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line) {
+static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bool show_house_states_info) {
 	//real pop and rating
 	SetDParam(0, town->cache.potential_pop);
 	SetDParam(1, town->ratings[_current_company]);
@@ -1318,11 +1318,12 @@ void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line) {
 	SetDParam(4, town->fund_buildings_months);
 	DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_GROWTH);
 
-	//house states
-	/*SetDParam(0, town->houses_construction);
-	SetDParam(1, town->houses_reconstruction);
-	SetDParam(2, town->houses_demolished);
-	DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_HOUSE_STATE);*/
+	if (show_house_states_info) {
+		SetDParam(0, town->houses_construction);
+		SetDParam(1, town->houses_reconstruction);
+		SetDParam(2, town->houses_demolished);
+		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_HOUSE_STATE);
+	}
 
 	///houses stats
 	SetDParam(0, town->houses_skipped);
@@ -1465,7 +1466,7 @@ public:
 				SetDParam(1, this->town->cache.num_houses);
 				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += EXP_LINESPACE, STR_TOWN_VIEW_POPULATION_HOUSES);
 
-				DrawExtraTownInfo(r, y, this->town, EXP_LINESPACE);
+				DrawExtraTownInfo(r, y, this->town, EXP_LINESPACE, false);
 				//regular funding
 				if(this->town->fund_regularly != 0){
 					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += EXP_LINESPACE, STR_CB_FUNDED_REGULARLY);
