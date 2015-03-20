@@ -409,7 +409,7 @@ void Town::UpdateVirtCoord()
 	Point pt = RemapCoords2(TileX(this->xy) * TILE_SIZE, TileY(this->xy) * TILE_SIZE);
 	SetDParam(0, this->index);
 	SetDParam(1, this->cache.population);
-	this->cache.sign.UpdatePosition(pt.x, pt.y - 24 * ZOOM_LVL_BASE, this->Label());
+	this->cache.sign.UpdatePosition(pt.x, pt.y - 24 * ZOOM_LVL_BASE, this->Label(), this->SmallLabel());
 	SetWindowDirty(WC_TOWN_VIEW, this->index);
 	SetWindowDirty(WC_CB_TOWN, this->index);
 }
