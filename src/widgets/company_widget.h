@@ -52,10 +52,12 @@ enum CompanyWidgets {
 	WID_C_SELECT_MULTIPLAYER,         ///< Multiplayer selection panel.
 	WID_C_COMPANY_PASSWORD,           ///< Button to set company password.
 	WID_C_COMPANY_JOIN,               ///< Button to join company.
-	CW_WIDGET_COMPANY_JOIN2,
-	CW_WIDGET_COMPANY_RESET,
-	CW_WIDGET_COMPANY_SUSPEND,
-	CW_WIDGET_COMPANY_RESUME,
+
+	WID_C_SELECT_MOD,
+	WID_C_SELECT_MOD_JOIN,
+	WID_C_MOD_COMPANY_JOIN,
+	WID_C_MOD_COMPANY_RESET,
+	WID_C_MOD_COMPANY_TOGGLE_LOCK,
 };
 
 /** Widgets of the #CompanyFinancesWindow class. */

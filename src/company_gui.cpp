@@ -1917,10 +1917,14 @@ static const NWidgetPart _nested_company_widgets[] = {
 							NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_C_RELOCATE_HQ), SetFill(1, 0), SetDataTip(STR_COMPANY_VIEW_RELOCATE_HQ, STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS),
 							NWidget(NWID_SPACER), SetMinimalSize(90, 0),
 						EndContainer(),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, CW_WIDGET_COMPANY_RESET), SetFill(1, 0), SetDataTip(STR_XI_RESET2, STR_XI_RESET),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, CW_WIDGET_COMPANY_SUSPEND), SetFill(1, 0), SetDataTip(STR_XI_SUSPEND2, STR_XI_SUSPEND),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, CW_WIDGET_COMPANY_RESUME), SetFill(1, 0), SetDataTip(STR_XI_RESUME2, STR_XI_RESUME),
-						NWidget(NWID_SPACER), SetFill(0, 1),
+						NWidget(NWID_SELECTION, INVALID_COLOUR, WID_C_SELECT_MOD),
+							NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetFill(0, 1),
+							NWidget(NWID_VERTICAL), SetPIP(4, 2, 4),
+								NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_MOD_COMPANY_JOIN), SetFill(1, 0), SetDataTip(STR_MOD_COMPANY_JOIN_BUTTON, STR_NULL),
+								NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_C_MOD_COMPANY_TOGGLE_LOCK), SetFill(1, 0), SetDataTip(STR_MOD_TOGGLE_LOCK_BUTTON, STR_NULL),
+								NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_C_MOD_COMPANY_RESET), SetFill(1, 0), SetDataTip(STR_MOD_COMPANY_RESET_BUTTON, STR_NULL),
+							EndContainer(),
+						EndContainer(),
 					EndContainer(),
 				EndContainer(),
 				NWidget(WWT_TEXT, COLOUR_GREY, WID_C_DESC_COMPANY_VALUE), SetDataTip(STR_COMPANY_VIEW_COMPANY_VALUE, STR_NULL), SetFill(1, 0),
@@ -1953,7 +1957,6 @@ static const NWidgetPart _nested_company_widgets[] = {
 								NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_PASSWORD), SetFill(1, 0), SetDataTip(STR_COMPANY_VIEW_PASSWORD, STR_COMPANY_VIEW_PASSWORD_TOOLTIP),
 								NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_JOIN), SetFill(1, 0), SetDataTip(STR_COMPANY_VIEW_JOIN, STR_COMPANY_VIEW_JOIN_TOOLTIP),
 							EndContainer(),
-							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, CW_WIDGET_COMPANY_JOIN2), SetFill(1, 0), SetDataTip(STR_COMPANY_VIEW_JOIN, STR_COMPANY_VIEW_JOIN_TOOLTIP),
 						EndContainer(),
 					EndContainer(),
 				EndContainer(),
@@ -2022,6 +2025,9 @@ struct CompanyWindow : Window
 		/* Display planes of the #WID_C_SELECT_BUTTONS selection widget. */
 		CWP_BUTTONS_LOCAL = 0, ///< Buttons of the local company.
 		CWP_BUTTONS_OTHER,     ///< Buttons of the other companies.
+
+		CWP_BUTTONS_PLAYER = 0,
+		CWP_BUTTONS_MOD,
 	};
 
 	CompanyWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
@@ -2091,18 +2097,25 @@ struct CompanyWindow : Window
 			}
 			this->SetWidgetDisabledState(WID_C_COMPANY_JOIN,   c->is_ai);
 
+			plane = (int)(_networking && _novarole ? CWP_BUTTONS_MOD: CWP_BUTTONS_PLAYER);
+			wi = this->GetWidget<NWidgetStacked>(WID_C_SELECT_MOD);
+			if (plane != wi->shown_plane) {
+				wi->SetDisplayedPlane(plane);
+				reinit = true;
+			}
+
 			if (reinit) {
 				this->ReInit();
 				return;
 			}
 		}
 
-		if(!_networking){
-			this->SetWidgetDisabledState(CW_WIDGET_COMPANY_RESUME, true);
-			this->SetWidgetDisabledState(CW_WIDGET_COMPANY_SUSPEND, true);
-			this->SetWidgetDisabledState(CW_WIDGET_COMPANY_RESET, true);
-			this->SetWidgetDisabledState(CW_WIDGET_COMPANY_JOIN2, true);
-		}
+		// if(!_networking) {
+		// 	this->SetWidgetDisabledState(CW_WIDGET_COMPANY_RESUME, true);
+		// 	this->SetWidgetDisabledState(CW_WIDGET_COMPANY_SUSPEND, true);
+		// 	this->SetWidgetDisabledState(CW_WIDGET_COMPANY_RESET, true);
+		// 	this->SetWidgetDisabledState(CW_WIDGET_COMPANY_JOIN2, true);
+		// }
 
 		this->DrawWidgets();
 	}
@@ -2160,15 +2173,15 @@ struct CompanyWindow : Window
 				break;
 			}
 
-			case CW_WIDGET_COMPANY_RESUME:
-			case CW_WIDGET_COMPANY_SUSPEND:
-			case CW_WIDGET_COMPANY_RESET:
-			case CW_WIDGET_COMPANY_JOIN2:
-				if(!_networking || !_novarole){
-					size->width = 0;
-					size->height = 0;
-				}
-				break;
+			// case CW_WIDGET_COMPANY_RESUME:
+			// case CW_WIDGET_COMPANY_SUSPEND:
+			// case CW_WIDGET_COMPANY_RESET:
+			// case CW_WIDGET_COMPANY_JOIN2:
+			// 	if(!_novarole){
+			// 		size->width = 0;
+			// 		size->height = 0;
+			// 	}
+			// 	break;
 #ifdef ENABLE_NETWORK
 			case WID_C_HAS_PASSWORD:
 				*size = maxdim(*size, GetSpriteSize(SPR_LOCK));
@@ -2399,35 +2412,25 @@ struct CompanyWindow : Window
 				break;
 			}
 
-			case CW_WIDGET_COMPANY_JOIN2:{
+			case WID_C_MOD_COMPANY_JOIN: {
+				if (!_novarole) return;
 				CompanyID company2 = (CompanyID)this->window_number;
-				this->query_widget = CW_WIDGET_COMPANY_JOIN2;
+				// this->query_widget = WID_C_MOD_COMPANY_JOIN;
 				char msg[128];
 				seprintf(msg, lastof(msg), "!move %i", company2 + 1);
 				NetworkClientSendChatToServer(msg);
 				MarkWholeScreenDirty();
 				break;
 			}
-			case CW_WIDGET_COMPANY_RESET:{
+			case WID_C_MOD_COMPANY_RESET: {
 				if (!_networking) return;
-				this->query_widget = CW_WIDGET_COMPANY_RESET;
+				this->query_widget = WID_C_MOD_COMPANY_RESET;
 				ShowQuery(STR_XI_RESET_CAPTION, STR_XI_REALY_RESET, this, ResetCallback);
 				MarkWholeScreenDirty();
 				break;
 			}
-			case CW_WIDGET_COMPANY_SUSPEND:{
-				if (!_networking) return;
-				this->query_widget = CW_WIDGET_COMPANY_SUSPEND;
-				CompanyID company2 = (CompanyID)this->window_number;
-				char msg[128];
-				seprintf(msg, lastof(msg), "!lockp %i", company2 + 1);
-				NetworkClientSendChatToServer(msg);
-				MarkWholeScreenDirty();
-				break;
-			}
-			case CW_WIDGET_COMPANY_RESUME:{
-				if (!_networking) return;
-				this->query_widget = CW_WIDGET_COMPANY_RESUME;
+			case WID_C_MOD_COMPANY_TOGGLE_LOCK: {
+				if (!_novarole) return;
 				CompanyID company2 = (CompanyID)this->window_number;
 				char msg[128];
 				seprintf(msg, lastof(msg), "!lockp %i", company2 + 1);

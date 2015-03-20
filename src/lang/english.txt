@@ -5039,12 +5039,10 @@ STR_XI_LOCK                                                     :{BLACK}Lock
 STR_XI_UNLOCK                                                   :{BLACK}UNLock
 STR_XI_JOIN                                                     :{BLACK}Join company
 STR_XI_RESET                                                    :{BLACK}Reset company
-STR_XI_RESET2                                                   :{BLACK}Reset
 STR_XI_WATCH                                                    :Watch
-STR_XI_SUSPEND                                                  :{BLACK}Suspend
-STR_XI_SUSPEND2                                                 :{BLACK}Suspend
-STR_XI_RESUME                                                   :{BLACK}Resume
-STR_XI_RESUME2                                                  :{BLACK}Resume
+STR_MOD_COMPANY_RESET_BUTTON                                    :{BLACK}Reset
+STR_MOD_COMPANY_JOIN_BUTTON                                     :{BLACK}Join as mod
+STR_MOD_TOGGLE_LOCK_BUTTON                                      :{BLACK}Lock/unlock
 STR_XI_ENABLE                                                   :{BLACK}En/Dis
 STR_XI_SIGN_TOOLTIP                                             :{BLACK}Put a sign to attract player
 STR_XI_PLAYERS_TOOLTIP                                          :{BLACK}Show clients
