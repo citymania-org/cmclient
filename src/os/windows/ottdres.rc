@@ -1,0 +1,121 @@
+//Microsoft Developer Studio generated resource script.
+// $Id: ottdres.rc.in 27103 2015-01-01 20:51:18Z rubidium $
+//
+// This file is part of OpenTTD.
+// OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
+// OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+//
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_READONLY_SYMBOLS
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#ifdef MSVC
+#include "winres.h"
+#else
+#define IDC_STATIC              (-1)     // all static controls
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral (Default) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+100                     ICON    DISCARDABLE     "../../../media/openttd.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+100 DIALOG DISCARDABLE  0, 0, 305, 99
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Fatal Application Failure"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "&Close",12,7,80,50,14
+    PUSHBUTTON      "&Emergency save",13,155,80,68,14
+    PUSHBUTTON      "",15,243,80,55,14
+    EDITTEXT        11,7,101,291,118,ES_MULTILINE | ES_READONLY | WS_VSCROLL |
+                    WS_HSCROLL | NOT WS_TABSTOP
+    LTEXT           "",10,36,7,262,65
+    ICON            100,IDC_STATIC,9,9,20,20
+END
+
+
+101 DIALOG DISCARDABLE  0, 0, 600, 400
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "OpenTTD command line help"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&OK",12,274,378,50,14,BS_CENTER
+    EDITTEXT        11,7,6,583,365,ES_MULTILINE | ES_READONLY | WS_VSCROLL | WS_HSCROLL
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,5,0,0
+ PRODUCTVERSION 1,5,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "Comments", "This program is licensed under the GNU General Public License version 2.\0"
+            VALUE "CompanyName", "OpenTTD Development Team\0"
+            VALUE "FileDescription", "OpenTTD\0"
+            VALUE "FileVersion", "norev000\0"
+            VALUE "InternalName", "openttd\0"
+            VALUE "LegalCopyright", "Copyright \xA9 OpenTTD Developers 2002-2015. All Rights Reserved.\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "openttd.exe\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "OpenTTD\0"
+            VALUE "ProductVersion", "norev000\0"
+            VALUE "SpecialBuild", "-\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+
+#endif    // !_MAC
+
+#endif    // Neutral (Default) resources
+/////////////////////////////////////////////////////////////////////////////
