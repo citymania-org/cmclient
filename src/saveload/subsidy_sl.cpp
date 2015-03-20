@@ -1,4 +1,4 @@
-/* $Id: subsidy_sl.cpp 19973 2010-06-13 14:11:59Z frosch $ */
+/* $Id: subsidy_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "../subsidy_base.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 static const SaveLoad _subsidies_desc[] = {
 	    SLE_VAR(Subsidy, cargo_type, SLE_UINT8),

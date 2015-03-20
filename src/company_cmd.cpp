@@ -1,4 +1,4 @@
-/* $Id: company_cmd.cpp 26595 2014-05-18 11:21:59Z frosch $ */
+/* $Id: company_cmd.cpp 26802 2014-09-07 16:12:58Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -39,6 +39,10 @@
 
 #include "table/strings.h"
 #include "cargo_type.h"
+
+#include "safeguards.h"
+
+void ClearEnginesHiddenFlagOfCompany(CompanyID cid);
 
 CompanyByte _local_company;   ///< Company controlled by the human player at this client. Can also be #COMPANY_SPECTATOR.
 CompanyByte _current_company; ///< Company currently doing an action.
@@ -561,6 +565,7 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 	RandomCompanyManagerFaceBits(c->face, (GenderEthnicity)Random(), false, false); // create a random company manager face
 
 	SetDefaultCompanySettings(c->index);
+	ClearEnginesHiddenFlagOfCompany(c->index);
 
 	GeneratePresidentName(c);
 
@@ -1093,7 +1098,7 @@ CommandCost CmdRenameCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 	if (flags & DC_EXEC) {
 		Company *c = Company::Get(_current_company);
 		free(c->name);
-		c->name = reset ? NULL : strdup(text);
+		c->name = reset ? NULL : stredup(text);
 		MarkWholeScreenDirty();
 		InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
 		CompanyAdminUpdate(c);
@@ -1143,12 +1148,12 @@ CommandCost CmdRenamePresident(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		if (reset) {
 			c->president_name = NULL;
 		} else {
-			c->president_name = strdup(text);
+			c->president_name = stredup(text);
 
 			if (c->name_1 == STR_SV_UNNAMED && c->name == NULL) {
 				char buf[80];
 
-				snprintf(buf, lengthof(buf), "%s Transport", text);
+				seprintf(buf, lastof(buf), "%s Transport", text);
 				DoCommand(0, 0, 0, DC_EXEC, CMD_RENAME_COMPANY, buf);
 			}
 		}

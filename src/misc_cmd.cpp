@@ -1,4 +1,4 @@
-/* $Id: misc_cmd.cpp 25788 2013-09-21 13:07:42Z zuu $ */
+/* $Id: misc_cmd.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -24,6 +24,8 @@
 #include "core/backup_type.hpp"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /**
  * Increase the loan of your company.

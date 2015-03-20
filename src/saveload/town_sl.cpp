@@ -1,4 +1,4 @@
-/* $Id: town_sl.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: town_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 
 #include "saveload.h"
 #include "newgrf_sl.h"
+
+#include "../safeguards.h"
 
 /**
  * Rebuild all the cached variables of towns.
@@ -43,9 +45,7 @@ void RebuildTownCaches()
 		town = Town::GetByTile(t);
 		IncreaseBuildingCount(town, house_id);
 		if (IsHouseCompleted(t)) town->cache.population += HouseSpec::Get(house_id)->population;
-		else{
-			town->houses_construction++;
-		}
+		else town->houses_construction++;
 		town->cache.potential_pop += HouseSpec::Get(house_id)->population;
 
 		/* Increase the number of houses for every house, but only once. */

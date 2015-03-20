@@ -1,4 +1,4 @@
-/* $Id: ini.cpp 26058 2013-11-23 13:15:07Z rubidium $ */
+/* $Id: ini.cpp 26517 2014-04-26 07:30:15Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -25,6 +25,8 @@
 # include <shellapi.h>
 # include "core/mem_func.hpp"
 #endif
+
+#include "safeguards.h"
 
 /**
  * Create a new ini file with given group names.
@@ -87,6 +89,8 @@ bool IniFile::SaveToDisk(const char *filename)
 #endif
 
 #if defined(WIN32) || defined(WIN64)
+	/* _tcsncpy = strcpy is TCHAR is char, but isn't when TCHAR is wchar. */
+	#undef strncpy
 	/* Allocate space for one more \0 character. */
 	TCHAR tfilename[MAX_PATH + 1], tfile_new[MAX_PATH + 1];
 	_tcsncpy(tfilename, OTTD2FS(filename), MAX_PATH);

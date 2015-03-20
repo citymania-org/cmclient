@@ -1,4 +1,4 @@
-/* $Id: tree_cmd.cpp 24846 2012-12-23 21:09:09Z frosch $ */
+/* $Id: tree_cmd.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,6 +28,8 @@
 #include "table/strings.h"
 #include "table/tree_land.h"
 #include "table/clear_land.h"
+
+#include "safeguards.h"
 
 /**
  * List of tree placer algorithm.

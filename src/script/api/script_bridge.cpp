@@ -1,4 +1,4 @@
-/* $Id: script_bridge.cpp 26149 2013-12-08 15:44:09Z frosch $ */
+/* $Id: script_bridge.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "../../bridge_map.h"
 #include "../../strings_func.h"
 #include "../../date_func.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptBridge::IsValidBridge(BridgeID bridge_id)
 {

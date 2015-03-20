@@ -1,4 +1,4 @@
-/* $Id: crashlog_osx.cpp 26715 2014-08-03 14:06:04Z frosch $ */
+/* $Id: crashlog_osx.cpp 26709 2014-07-30 20:19:29Z planetmaker $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include <mach-o/arch.h>
 #include <dlfcn.h>
 #include <cxxabi.h>
+
+#include "../../safeguards.h"
 
 
 /* Macro testing a stack address for valid alignment. */

@@ -1,4 +1,4 @@
-/* $Id: waypoint_sl.cpp 24166 2012-04-22 16:28:14Z frosch $ */
+/* $Id: waypoint_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "table/strings.h"
 
 #include "saveload_internal.h"
+
+#include "../safeguards.h"
 
 /** Helper structure to convert from the old waypoint system. */
 struct OldWaypoint {

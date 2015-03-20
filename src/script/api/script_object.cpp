@@ -1,4 +1,4 @@
-/* $Id: script_object.cpp 26093 2013-11-24 19:53:35Z rubidium $ */
+/* $Id: script_object.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,8 @@
 #include "../script_instance.hpp"
 #include "../script_fatalerror.hpp"
 #include "script_error.hpp"
+
+#include "../../safeguards.h"
 
 /**
  * Get the storage associated with the current ScriptInstance.
@@ -262,7 +264,7 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 	char buffer[64];
 	::GetString(buffer, string, lastof(buffer));
 	::str_validate(buffer, lastof(buffer), SVS_NONE);
-	return ::strdup(buffer);
+	return ::stredup(buffer);
 }
 
 /* static */ void ScriptObject::SetCallbackVariable(int index, int value)

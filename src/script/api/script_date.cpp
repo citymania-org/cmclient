@@ -1,4 +1,4 @@
-/* $Id: script_date.cpp 26307 2014-02-06 19:50:34Z zuu $ */
+/* $Id: script_date.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "../../stdafx.h"
 #include "script_date.hpp"
 #include "../../date_func.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptDate::IsValidDate(Date date)
 {

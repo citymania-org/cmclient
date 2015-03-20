@@ -19,6 +19,8 @@ enum DynamicPlaceIndustriesWidgets {
 	WID_DPI_INFOPANEL,      ///< Info panel about the industry.
 	WID_DPI_DISPLAY_WIDGET, ///< Display chain button.
 	WID_DPI_FUND_WIDGET,    ///< Fund button.
+	WID_DPI_FT_OFF,         ///< Forbidden tiles highlight off button.
+	WID_DPI_FT_ON,          ///< Forbidden tiles highlight on button.
 };
 
 /** Widgets of the #IndustryViewWindow class. */

@@ -1,4 +1,4 @@
-/* $Id: thread_none.cpp 26349 2014-02-16 21:37:05Z frosch $ */
+/* $Id: thread_none.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "../stdafx.h"
 #include "thread.h"
+
+#include "../safeguards.h"
 
 /* static */ bool ThreadObject::New(OTTDThreadFunc proc, void *param, ThreadObject **thread)
 {

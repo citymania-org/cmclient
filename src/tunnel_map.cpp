@@ -1,4 +1,4 @@
-/* $Id: tunnel_map.cpp 23167 2011-11-08 19:44:41Z rubidium $ */
+/* $Id: tunnel_map.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "stdafx.h"
 #include "tunnelbridge_map.h"
+
+#include "safeguards.h"
 
 
 /**

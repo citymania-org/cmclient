@@ -1,4 +1,4 @@
-/* $Id: newgrf_industrytiles.cpp 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_industrytiles.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include "newgrf_animation_base.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /**
  * Based on newhouses equivalent, but adapted for newindustries

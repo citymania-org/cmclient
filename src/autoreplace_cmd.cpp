@@ -1,4 +1,4 @@
-/* $Id: autoreplace_cmd.cpp 26317 2014-02-07 23:48:56Z frosch $ */
+/* $Id: autoreplace_cmd.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include "core/random_func.hpp"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 extern void ChangeVehicleViewports(VehicleID from_index, VehicleID to_index);
 extern void ChangeVehicleNews(VehicleID from_index, VehicleID to_index);

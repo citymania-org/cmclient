@@ -1,4 +1,4 @@
-/* $Id: cheat_sl.cpp 22737 2011-08-12 18:36:47Z rubidium $ */
+/* $Id: cheat_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "../cheat_type.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 /**
  * Save the cheat values.

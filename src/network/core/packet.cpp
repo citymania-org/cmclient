@@ -1,4 +1,4 @@
-/* $Id: packet.cpp 23590 2011-12-18 18:37:54Z rubidium $ */
+/* $Id: packet.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../../string_func.h"
 
 #include "packet.h"
+
+#include "../../safeguards.h"
 
 /**
  * Create a packet that is used to read from a network socket

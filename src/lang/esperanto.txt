@@ -11,7 +11,7 @@
 ##case n
 
 
-# $Id: esperanto.txt 26822 2014-09-14 15:33:52Z rubidium $
+# $Id: esperanto.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -248,6 +248,10 @@ STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Skrolbre
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Detruu konstruaĵojn ktp. sur landkvadrato. Stir elektas diagonale la areon. Shift aktivas/malaktivas la konstruaĵon/montraĵon estiman koston
 
 # Show engines button
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Montru kaŝita
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Montru kaŝita
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Montru kaŝita
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Montru kaŝita
 
 
 # Query window
@@ -362,7 +366,8 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Forlasi
 
 ############ range for settings menu starts
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Ludaj opcioj
-STR_SETTINGS_MENU_CONFIG_SETTINGS                               :Avancitaj agordoj
+STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Agordoj
+STR_SETTINGS_MENU_SCRIPT_SETTINGS                               :AI/Ludo skripto agordoj
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Agordoj de NewGRF
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Ebloj por travidebleco
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Urbonomoj montriĝas
@@ -736,6 +741,7 @@ STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLA
 STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}Vidu aŭ ne vidu urbonomojn sur la mapo
 STR_SMALLMAP_CENTER                                             :{BLACK}Centrigi la mapeton al la nuna loko
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING} ({NUM})
+STR_SMALLMAP_LINKSTATS                                          :{TINY_FONT}{STRING}
 STR_SMALLMAP_COMPANY                                            :{TINY_FONT}{COMPANY}
 STR_SMALLMAP_TOWN                                               :{TINY_FONT}{WHITE}{TOWN}
 STR_SMALLMAP_DISABLE_ALL                                        :{BLACK}Malaktivigu ĉiujn
@@ -961,8 +967,11 @@ STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Ekrana m
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Elektu uzotan ekranan montrograndon
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :alia
 
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT                              :{BLACK}Ekranfota formato
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT_TOOLTIP                      :{BLACK}Elektu uzotan ekranfotan formaton
+STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Interfacgrandeco
+
+STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Normala
+STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Duobla grandeco
+STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Kvaroble grandeco
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Baza grafikaro
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Selektu la uzendan bazgrafikaron
@@ -1060,13 +1069,16 @@ STR_CITY_APPROVAL_HOSTILE                                       :Gastige
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Neniu taŭga AI estas disponebla...{}Kelkaj AI-oj estas elŝuteblaj per la sistemo 'Enreta Enhavo'.
 
-# Advanced settings window
-STR_CONFIG_SETTING_CAPTION                                      :{WHITE}Avancitaj agordoj
+# Settings tree window
+STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Agordoj
+STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtroteksto:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Etendu ĉio
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(neniu ekspliko disponeble)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Defaŭlta valoro: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Tipo de agordo: {ORANGE}{STRING}
 
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorio:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipo:
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Bazniveloj agordoj
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Altnivelaj agordoj
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Altnivelaj agordoj / ĉiu agordoj
@@ -1078,6 +1090,7 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Ludo agordojn (
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Ludo agordojn (stokite en savo; tuŝas nur kuranta ludo)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Kompanio agordojn (stokite en savoj; nur tuŝas novajn ludojn)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Kompanio agordojn (stokita en savu; tuŝas nur kuranta kompanio)
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Neniu -
 
 STR_CONFIG_SETTING_OFF                                          :Malaktiva
 STR_CONFIG_SETTING_ON                                           :Aktiva
@@ -1106,7 +1119,6 @@ STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Ŝanĝu nivelon
 STR_CONFIG_SETTING_RECESSIONS                                   :Recesioj: {STRING}
 STR_CONFIG_SETTING_DISASTERS                                    :Katastrofoj: {STRING}
 
-STR_CONFIG_SETTING_BUILDONSLOPES                                :Permesu konstrui sur kliniĝoj kaj bordoj: {STRING}
 STR_CONFIG_SETTING_AUTOSLOPE                                    :Permesu terecigon sub konstruaĵoj, trakoj, ktp.: {STRING}
 STR_CONFIG_SETTING_CATCHMENT                                    :Permesu pli realgrandaj kaptoregionoj: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :Permesu forigon de pli da urbaj stratoj, pontoj ktp: {STRING}
@@ -1117,10 +1129,7 @@ STR_CONFIG_SETTING_ROAD_VEHICLE_ACCELERATION_MODEL              :Modelo de strat
 STR_CONFIG_SETTING_PERCENTAGE                                   :{COMMA}%
 STR_CONFIG_SETTING_FORBID_90_DEG                                :Vagonaroj kaj ŝipoj ne ort-turniĝu: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Permesu ligi staciojn ne rekte najbarajn: {STRING}
-STR_CONFIG_SETTING_IMPROVEDLOAD                                 :Uzu plibonigitan ŝarĝalgoritmon: {STRING}
-STR_CONFIG_SETTING_GRADUAL_LOADING                              :Laŭgrade ŝarĝu veturilojn: {STRING}
 STR_CONFIG_SETTING_INFLATION                                    :Inflacio: {STRING}
-STR_CONFIG_SETTING_SELECTGOODS                                  :Nur liveru ŝarĝon al stacio se estas peto: {STRING}
 STR_CONFIG_SETTING_RAW_INDUSTRY_CONSTRUCTION_METHOD             :Permana ĉefa industri-konstrumaniero: {STRING}
 STR_CONFIG_SETTING_RAW_INDUSTRY_CONSTRUCTION_METHOD_NONE        :neniu
 STR_CONFIG_SETTING_RAW_INDUSTRY_CONSTRUCTION_METHOD_NORMAL      :kiel aliaj industrioj
@@ -1135,9 +1144,10 @@ STR_CONFIG_SETTING_STOP_LOCATION                                :Novaj trajnordo
 STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :proksima fino
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :meza
 STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :fora fino
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING                        :Stratveturila vicigo (kun kvantum-efektoj): {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL                                   :Ŝovu fenestron se la muso estas ĉe la rando: {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL_DISABLED                          :Malaktiva
+STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT                     :Ĉefa vidujo
+STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :Ĉiu vidujo
 STR_CONFIG_SETTING_BRIBE                                        :Permesu subaĉeti la lokajn estrojn: {STRING}
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :Permesu aĉeti ekskluzivajn transportrajtojn: {STRING}
 STR_CONFIG_SETTING_ALLOW_FUND_ROAD                              :Permesi fondusante lokan stratan rekonstruo: {STRING}
@@ -1150,8 +1160,6 @@ STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :reduktita
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :normala
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Permesu trairajn bushaltejojn sur urboposedataj stratoj: {STRING}
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :Permesu trairajn strathaltejojn sur stratoj posedataj de konkurantoj: {STRING}
-STR_CONFIG_SETTING_ADJACENT_STATIONS                            :Permesu konstrui staciojn apude: {STRING}
-STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :Ebligu multoblajn NewGRF-motorarojn: {STRING}
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Ne eblas ŝanĝi ĉi tiujn agordon dum veturiloj ĉeestas
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Flughavenoj neniam antikviĝas: {STRING}
@@ -1164,6 +1172,8 @@ STR_CONFIG_SETTING_ORDER_REVIEW_ON                              :de ĉiuj veturi
 STR_CONFIG_SETTING_WARN_INCOME_LESS                             :Avertu se gajno de veturilo negativas: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Veturiloj neniam eluziĝas: {STRING}
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :Aŭtomate anstataŭu veturilon se malnoviĝas: {STRING}
+STR_CONFIG_SETTING_AUTORENEW_MONTHS_VALUE_BEFORE                :{COMMA} monato{P 0 "" j} antaŭe
+STR_CONFIG_SETTING_AUTORENEW_MONTHS_VALUE_AFTER                 :{COMMA} monato{P 0 "" j} post
 STR_CONFIG_SETTING_AUTORENEW_MONEY                              :Minimuma mono por anstataŭado: {STRING}
 STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Montru enloĝantaron en urbnomindikilo: {STRING}
 
@@ -1184,7 +1194,6 @@ STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Altecmapa turni
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :Maldekstrume
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :Dekstrume
 STR_CONFIG_SETTING_SE_FLAT_WORLD_HEIGHT                         :Kiom alta fariĝos scenara mapo: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES                        :Ebligu terecigon de la kaheloj ĉe la eĝoj de la mapo: {STRING}
 STR_CONFIG_SETTING_EDGES_NOT_EMPTY                              :{WHITE}Unu ay pli da xeloj en norda parto ne malplenas
 STR_CONFIG_SETTING_EDGES_NOT_WATER                              :{WHITE}Almenaŭ unu kahelo ĉe unu de la eĝoj ne estas akvo
 
@@ -1219,12 +1228,11 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Ne
 
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Maldekstr-klak-rulumado: {STRING}
 
+
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Uzu la {STRING} datformon por nomoj de konservludoj.
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_LONG               :longa (31st Dec 2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :mallonga (31-12-2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31)
-
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Norma paletro supozi por NewGRFs ne specifanta paletron: {STRING}
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Aŭtomate paŭzu startante novan ludon: {STRING}
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL                          :Permesu dum paŭza: {STRING}
@@ -1342,7 +1350,6 @@ STR_CONFIG_SETTING_TOWN_GROWTH_NORMAL                           :Normale
 STR_CONFIG_SETTING_TOWN_GROWTH_FAST                             :Rapide
 STR_CONFIG_SETTING_TOWN_GROWTH_VERY_FAST                        :Tre rapide
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Komenca urbgrandeca multobligo: {STRING}
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :Forigu sensensajn straterojn dum stratkonstruado: {STRING}
 
 
 
@@ -1351,25 +1358,18 @@ STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :Forigu sensensa
 
 
 
-STR_CONFIG_SETTING_GUI                                          :{ORANGE}Interfaco
-STR_CONFIG_SETTING_CONSTRUCTION                                 :{ORANGE}Konstruado
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Veturiloj
-STR_CONFIG_SETTING_STATIONS                                     :{ORANGE}Stacioj
-STR_CONFIG_SETTING_ECONOMY                                      :{ORANGE}Ekonomio
-STR_CONFIG_SETTING_AI                                           :{ORANGE}Konkurantoj
-STR_CONFIG_SETTING_DISPLAY_OPTIONS                              :{ORANGE}Montru opciojn
-STR_CONFIG_SETTING_INTERACTION                                  :{ORANGE}Interago
 STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Sonefektoj
-STR_CONFIG_SETTING_NEWS                                         :{ORANGE}Novaĵo kaj mesaĝoj
-STR_CONFIG_SETTING_CONSTRUCTION_SIGNALS                         :{ORANGE}Signaloj
-STR_CONFIG_SETTING_STATIONS_CARGOHANDLING                       :{ORANGE}Kargotraktado
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Komputil-ludantoj
-STR_CONFIG_SETTING_VEHICLES_AUTORENEW                           :{ORANGE}Aŭtorenovigo
-STR_CONFIG_SETTING_VEHICLES_SERVICING                           :{ORANGE}Prizorgado
+STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Interfaco
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Konstruado
+STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Veturiloj
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Navigado
-STR_CONFIG_SETTING_VEHICLES_TRAINS                              :{ORANGE}Trajnoj
-STR_CONFIG_SETTING_ECONOMY_TOWNS                                :{ORANGE}Urboj
-STR_CONFIG_SETTING_ECONOMY_INDUSTRIES                           :{ORANGE}Industrioj
+STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Katastrofoj / akcidentoj
+STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Mondgenerado
+STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Medio
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Urboj
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Industrioj
+STR_CONFIG_SETTING_AI                                           :{ORANGE}Konkurantoj
+STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Komputil-ludantoj
 
 STR_CONFIG_SETTING_PATHFINDER_OPF                               :Originale
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
@@ -1396,7 +1396,7 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Pluraj L
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Ludaj Opcioj
 STR_INTRO_HIGHSCORE                                             :{BLACK}Altpoentara tabelo
-STR_INTRO_ADVANCED_SETTINGS                                     :{BLACK}Avancitaj agordoj
+STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Agordoj
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Agordoj de NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Provu Enretan Enhavon
 STR_INTRO_QUIT                                                  :{BLACK}Forlasi
@@ -1415,7 +1415,7 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Elektu '
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Montru ludajn opciojn
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Montru altpoentara tabelo
-STR_INTRO_TOOLTIP_ADVANCED_SETTINGS                             :{BLACK}Montru avancitajn agordojn
+STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Montru agordojn
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Montri NewGRF-agordojn
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Serĉi pri nova kaj ĝisdatigita enhavo por elŝuti
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Fermu 'OpenTTD'
@@ -1502,7 +1502,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Frajttramo
 STR_FACE_CAPTION                                                :{WHITE}Elekto de Vizaĝo
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Nuligu elekton de nova vizaĝo
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Akceptu elekton de nova vizaĝo
-STR_MAPGEN_RANDOM                                               :{BLACK}Hazardigu
+STR_FACE_RANDOM                                                 :{BLACK}Hazardigu
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Vira
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Elektu virajn vizaĝojn
@@ -2266,7 +2266,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Kompanie poseda
 STR_ABOUT_OPENTTD                                               :{WHITE}Pri OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Origina kopirajto {COPYRIGHT} 1995 Chris Sawyer, Ĉiuj rajtoj rezervitaj
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD-versio {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 La teamo de OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2015 La teamo de OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Konservu Ludon
@@ -2303,9 +2303,6 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Kiom da 
 STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Neĝlinia alteco:
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Altigu la neĝlinion per unu
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Malaltigu la neĝlinion per unu
-STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Hazarda Enigo:
-STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Klaku por enigi hazardan enigon
-STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Ŝanĝu la hazardan enigon uzatan de la terengenerilo
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Landgenerilo:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Arba algoritmo:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Terentipo:
@@ -2332,7 +2329,6 @@ STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Mapa nom
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}Grandeco:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
-STR_MAPGEN_RANDOM_SEED_OSKTITLE                                 :{BLACK}Enigu hazardan semon
 STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}Ŝanĝu altecon de la neĝlinio
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}Ŝanĝu komencjaron
 
@@ -2409,6 +2405,8 @@ STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Malaktiva
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Malkongrua ĉe ĉi tio versio de OpenTTD
 
 # NewGRF save preset window
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}Nuligu
+STR_SAVE_PRESET_SAVE                                            :{BLACK}Konservu
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Ŝanĝu parametroj de la NewGRF
@@ -2433,7 +2431,6 @@ STR_SPRITE_ALIGNER_NEXT_BUTTON                                  :{BLACK}Sekvanta
 STR_SPRITE_ALIGNER_GOTO_BUTTON                                  :{BLACK}Iru al bildeto
 STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Antaŭa bildeto
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Movu ĉirkaŭ la bildeton, ŝanĝante la X kaj Y distancojn
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X distanco: {NUM}, Y distanco: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Elektu bildeto
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Elektu bildeton ie el la ekrano
 
@@ -2595,7 +2592,6 @@ STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}Nenia ŝ
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
-STR_STATION_VIEW_WAITING_TITLE                                  :{BLACK}Atendas: {WHITE}{STRING}
 STR_STATION_VIEW_WAITING_CARGO                                  :{WHITE}{CARGO_LONG}
 STR_STATION_VIEW_EN_ROUTE_FROM                                  :{YELLOW}({CARGO_SHORT} survoje de {STATION})
 STR_STATION_VIEW_RESERVED                                       :{YELLOW}({CARGO_SHORT} rezervita por ŝarĝu)
@@ -2789,10 +2785,11 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Sengrupaj strat
 STR_GROUP_DEFAULT_SHIPS                                         :Sengrupaj ŝipoj
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Sengrupaj aviadiloj
 
-STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupoj - klaku grupon por listigi ĉiujn veturilojn de tiu ĉi grupo
+STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupoj - klaku grupon por listigi ĉiujn veturilojn de tiu ĉi grupo. Trenu/faligu grupojn por ordigi ĝin
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klaku por krei grupon
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Viŝu la selektitan grupon
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}Alinomi la elektitan grupon
+
 
 STR_GROUP_ADD_SHARED_VEHICLE                                    :Aldonu kunhavajn veturilojn
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :Forigi ĉiujn veturilojn
@@ -2854,6 +2851,16 @@ STR_BUY_VEHICLE_TRAIN_RENAME_TOOLTIP                            :{BLACK}Alinomi 
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_TOOLTIP                     :{BLACK}Alinomi stratveturilan tipon
 STR_BUY_VEHICLE_SHIP_RENAME_TOOLTIP                             :{BLACK}Alinomi ŝiptipon
 STR_BUY_VEHICLE_AIRCRAFT_RENAME_TOOLTIP                         :{BLACK}Alinomi aviadiltipon
+
+STR_BUY_VEHICLE_TRAIN_HIDE_TOGGLE_BUTTON                        :{BLACK}Kaŝu
+STR_BUY_VEHICLE_ROAD_VEHICLE_HIDE_TOGGLE_BUTTON                 :{BLACK}Kaŝu
+STR_BUY_VEHICLE_SHIP_HIDE_TOGGLE_BUTTON                         :{BLACK}Kaŝu
+
+STR_BUY_VEHICLE_TRAIN_SHOW_TOGGLE_BUTTON                        :{BLACK}Montru
+STR_BUY_VEHICLE_ROAD_VEHICLE_SHOW_TOGGLE_BUTTON                 :{BLACK}Montru
+STR_BUY_VEHICLE_SHIP_SHOW_TOGGLE_BUTTON                         :{BLACK}Montru
+STR_BUY_VEHICLE_AIRCRAFT_SHOW_TOGGLE_BUTTON                     :{BLACK}Montru
+
 
 STR_QUERY_RENAME_TRAIN_TYPE_CAPTION                             :{WHITE}Alinomi trajnan veturiltipon
 STR_QUERY_RENAME_ROAD_VEHICLE_TYPE_CAPTION                      :{WHITE}Alinomi stratveturilan tipon
@@ -2956,6 +2963,7 @@ STR_REPLACE_VEHICLE_TRAIN                                       :Trajno
 STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :Stratveturilo
 STR_REPLACE_VEHICLE_SHIP                                        :Ŝipo
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :Aviadilo
+
 
 STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK}Elektu maŝinon por anstataŭi
 STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK}Elektu novan maŝinon por uzi anstataŭ la maldekstre elektitan
@@ -3530,7 +3538,7 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... tro 
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... tro proksime al alia urbo
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... tro da urboj
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... spaco mankas sur la mapo
-STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}La urbo ne konstruos stratojn. Vi povas ebligi stratkonstruadon per Avancitaj Agordoj->Ekonomio->Urboj.
+STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}La urbo ne konstruos stratojn. Vi povas ebligi stratkonstruadon per Avancitaj Agordoj->Ekonomio->Urboj
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Aktivas vojprilaborado
 STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Ne povas forviŝi ĉi tiun urbon...{}Stacidomo aŭ tenejo rilatas al la urbon aŭ urban kahelon ne povas forviŝigi
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... ne jen estas konvenan lokon por statuo en la centro de ĉi tiu urbo
@@ -3553,6 +3561,7 @@ STR_ERROR_CAN_ONLY_BE_POSITIONED                                :{WHITE}... loke
 STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :{WHITE}... arbaro nur planteblas super neĝa limlinio
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :{WHITE}... nur konstruebla super la neĝlinio
 STR_ERROR_CAN_ONLY_BE_BUILT_BELOW_SNOW_LINE                     :{WHITE}... nur konstruebla sub la neĝlinio
+
 
 # Station construction related errors
 STR_ERROR_CAN_T_BUILD_RAILROAD_STATION                          :{WHITE}Ne povas konstrui stacidomon ĉi tie...
@@ -4276,8 +4285,6 @@ STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
 STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
 STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
 STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_BLACK_CROSS                                                 :{BLACK}{CROSS}
-STR_SILVER_CROSS                                                :{SILVER}{CROSS}
 STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
 STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
 STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
@@ -4288,9 +4295,7 @@ STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
 STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
 STR_BLACK_STRING                                                :{BLACK}{STRING}
 STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_GREEN_STRING                                                :{GREEN}{STRING}
 STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_RED_STRING                                                  :{RED}{STRING}
 STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
 STR_WHITE_STRING                                                :{WHITE}{STRING}
 STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}

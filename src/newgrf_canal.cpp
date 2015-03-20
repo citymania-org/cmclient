@@ -1,4 +1,4 @@
-/* $Id: newgrf_canal.cpp 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_canal.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "newgrf_canal.h"
 #include "water.h"
 #include "water_map.h"
+
+#include "safeguards.h"
 
 /** Table of canal 'feature' sprite groups */
 WaterFeature _water_feature[CF_END];

@@ -1,4 +1,4 @@
-/* $Id: rail_gui.cpp 26653 2014-06-17 19:14:59Z frosch $ */
+/* $Id: rail_gui.cpp 27163 2015-02-22 15:26:27Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -40,6 +40,8 @@
 
 #include "widgets/rail_widget.h"
 
+#include "safeguards.h"
+
 
 static RailType _cur_railtype;               ///< Rail type of the current build-rail toolbar.
 static bool _remove_button_clicked;          ///< Flag whether 'remove' toggle-button is currently enabled
@@ -54,6 +56,11 @@ extern TileIndex _rail_track_endtile; // rail_cmd.cpp
 
 /* Map the setting: default_signal_type to the corresponding signal type */
 static const SignalType _default_signal_type[] = {SIGTYPE_NORMAL, SIGTYPE_PBS, SIGTYPE_PBS_ONEWAY};
+
+static const int HOTKEY_POLYRAIL     = 0x1000;
+static const int HOTKEY_NEW_POLYRAIL = 0x1001;
+static const int HOTKEY_BUILD_STATION_SIZED = 0x1010;     ///< Build a station in fixed size mode.
+static const int HOTKEY_BUILD_STATION_DRAGDROP = 0x1011;  ///< Build a station in dragdrop mode.
 
 struct RailStationGUISettings {
 	Axis orientation;                 ///< Currently selected rail station orientation
@@ -91,13 +98,20 @@ void CcPlaySound1E(const CommandCost &result, TileIndex tile, uint32 p1, uint32 
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_20_SPLAT_RAIL, tile);
 }
 
-static bool GenericPlaceRail(TileIndex tile, Track track)
+static CommandContainer GenericPlaceRailCmd(TileIndex tile, Track track)
 {
-	return DoCommandP(tile, _cur_railtype, track,
-			_remove_button_clicked ?
-			CMD_REMOVE_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
-			CMD_BUILD_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK),
-			CcPlaySound1E);
+	CommandContainer ret = {
+		tile,          // tile
+		_cur_railtype, // p1
+		track,         // p2
+		_remove_button_clicked ?
+				CMD_REMOVE_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
+				CMD_BUILD_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK), // cmd
+		CcPlaySound1E, // callback
+		""             // text
+	};
+
+	return ret;
 }
 
 /**
@@ -350,13 +364,20 @@ static void BuildRailClick_Remove(Window *w)
 	}
 }
 
-static bool DoRailroadTrack(TileIndex start_tile, TileIndex end_tile, Track track)
+static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_tile, Track track)
 {
-	return DoCommandP(start_tile, end_tile, _cur_railtype | (track << 4),
-			_remove_button_clicked ?
-			CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
-			CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK),
-			CcPlaySound1E);
+	CommandContainer ret = {
+		start_tile,                   // tile
+		end_tile,                     // p1
+		_cur_railtype | (track << 4), // p2
+		_remove_button_clicked ?
+				CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
+				CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK), // cmd
+		CcPlaySound1E,                // callback
+		""                            // text
+	};
+
+	return ret;
 }
 
 static void HandleAutodirPlacement()
@@ -365,8 +386,21 @@ static void HandleAutodirPlacement()
 	TileIndex start_tile = TileVirtXY(_thd.selstart.x, _thd.selstart.y);
 	TileIndex end_tile = TileVirtXY(_thd.selend.x, _thd.selend.y);
 
-	if ((_thd.drawstyle & HT_RAIL ? GenericPlaceRail(end_tile, track) : DoRailroadTrack(start_tile, end_tile, track))
-			&& !_shift_pressed) {
+	CommandContainer cmd = (_thd.drawstyle & HT_RAIL) ?
+			GenericPlaceRailCmd(end_tile, track) : // one tile case
+			DoRailroadTrackCmd(start_tile, end_tile, track); // multitile selection
+
+	/* When overbuilding existing tracks in polyline mode we just want to move the
+	 * snap point without altering the user with the "already built" error. Don't
+	 * execute the command right away, firstly check if tracks are being overbuilt. */
+	if (!(_thd.place_mode & HT_POLY) || _shift_pressed ||
+			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT) {
+		/* place tracks */
+		if (!DoCommandP(&cmd)) return;
+	}
+
+	/* save new snap points for the polyline tool */
+	if (!_shift_pressed && _rail_track_endtile != INVALID_TILE) {
 		StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
 	}
 }
@@ -503,6 +537,18 @@ struct BuildRailToolbarWindow : Window {
 	}
 
 	/**
+	 * Some data on this window has become invalid.
+	 * @param data Information about the changed data.
+	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
+	 */
+	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	{
+		if (!gui_scope) return;
+
+		if (!CanBuildVehicleInfrastructure(VEH_TRAIN)) delete this;
+	}
+
+	/**
 	 * Configures the rail toolbar for railtype given
 	 * @param railtype the railtype to display
 	 */
@@ -590,6 +636,7 @@ struct BuildRailToolbarWindow : Window {
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		if (widget < WID_RAT_BUILD_NS) return;
+		bool remove_on_ctrl = true;  /* do not check ctrl for hotkeys */
 
 		_remove_button_clicked = false;
 		switch (widget) {
@@ -618,10 +665,39 @@ struct BuildRailToolbarWindow : Window {
 				this->last_user_action = widget;
 				break;
 
-			case WID_RAT_POLYRAIL:
-				HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, HT_RAIL | HT_POLY);
-				this->last_user_action = widget;
+			case WID_RAT_POLYRAIL: {
+				bool was_snap = CurrentlySnappingRailPlacement();
+				bool was_open = this->IsWidgetLowered(WID_RAT_POLYRAIL);
+				bool do_snap;
+				bool do_open;
+				/* "polyrail" hotkey     - activate polyline tool in snapping mode, close the tool if snapping mode is already active
+				 * "new_polyrail" hotkey - activate polyline tool in non-snapping (new line) mode, close the tool if non-snapping mode is already active
+				 * button ctrl-clicking  - switch between snapping and non-snapping modes, open the tool in non-snapping mode if it is closed
+				 * button clicking       - open the tool in non-snapping mode, close the tool if it is opened */
+				if (this->last_user_action == HOTKEY_POLYRAIL) {
+					do_snap = true;
+					do_open = !was_open || !was_snap;
+				} else if (this->last_user_action == HOTKEY_NEW_POLYRAIL) {
+					do_snap = false;
+					do_open = !was_open || was_snap;
+				} else if (_ctrl_pressed) {
+					do_snap = !was_open || !was_snap;
+					do_open = true;
+				} else {
+					do_snap = false;
+					do_open = !was_open;
+				}
+				/* close the tool explicitly so it can be re-opened in different snapping mode */
+				if (was_open) ResetObjectToPlace();
+				/* open the tool in desired mode */
+				if (do_open && HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, do_snap ? (HT_RAIL | HT_POLY) : (HT_RAIL | HT_NEW_POLY))) {
+					/* if we are re-opening the tool but we couldn't switch the snapping
+					 * then close the tool instead of appearing to be doing nothing */
+					if (was_open && do_snap != CurrentlySnappingRailPlacement()) ResetObjectToPlace();
+				}
+				this->last_user_action = WID_RAT_POLYRAIL;
 				break;
+			}
 
 			case WID_RAT_DEMOLISH:
 				HandlePlacePushButton(this, WID_RAT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
@@ -643,12 +719,28 @@ struct BuildRailToolbarWindow : Window {
 				}
 				break;
 
-			case WID_RAT_BUILD_STATION:
-				if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT)) {
-					ShowStationBuilder(this);
-					this->last_user_action = widget;
+			case WID_RAT_BUILD_STATION: {
+				bool dragdrop = (this->last_user_action == HOTKEY_BUILD_STATION_DRAGDROP);
+
+				if (dragdrop || this->last_user_action == HOTKEY_BUILD_STATION_SIZED) { /* hotkey */
+					bool was_open = this->IsWidgetLowered(WID_RAT_BUILD_STATION);
+					/* close the tool explicitly so it can be re-opened in different snapping mode */
+					if (was_open) ResetObjectToPlace();
+					if (!was_open || dragdrop != _settings_client.gui.station_dragdrop) {
+						_settings_client.gui.station_dragdrop = dragdrop;
+						if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT))
+							ShowStationBuilder(this);
+					}
+					this->last_user_action = WID_RAT_BUILD_STATION;
+					remove_on_ctrl = false;
+				} else { /* button */
+					if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT)) {
+						ShowStationBuilder(this);
+						this->last_user_action = WID_RAT_BUILD_STATION;
+					}
 				}
 				break;
+			}
 
 			case WID_RAT_BUILD_SIGNALS: {
 				this->last_user_action = widget;
@@ -681,37 +773,29 @@ struct BuildRailToolbarWindow : Window {
 			default: NOT_REACHED();
 		}
 		this->UpdateRemoveWidgetStatus(widget);
-		if (_ctrl_pressed) RailToolbar_CtrlChanged(this);
+		if (_ctrl_pressed && remove_on_ctrl) RailToolbar_CtrlChanged(this);
 	}
 
 	virtual EventState OnHotkey(int hotkey)
 	{
-		EventState es;
+		// EventState es;
 		MarkTileDirtyByTile(TileVirtXY(_thd.pos.x, _thd.pos.y)); // redraw tile selection
 
-		if (hotkey == WID_RAT_BUILD_STATION_SIZED || hotkey == WID_RAT_BUILD_STATION_DRAGDROP) {
-			bool dragdrop = (hotkey == WID_RAT_BUILD_STATION_DRAGDROP);
-			Window *w = FindWindowById(WC_BUILD_STATION, 0);
-			if (w != NULL) {
-				// Already bulding station, either cancel it or change dragdrop mode
-				if (_settings_client.gui.station_dragdrop == dragdrop) {
-					es = Window::OnHotkey(WID_RAT_BUILD_STATION);
-				} else {
-					es = w->OnHotkey(WID_BRAS_PLATFORM_DRAG_N_DROP);
-				}
-			} else {
-				_settings_client.gui.station_dragdrop = dragdrop;
-				es = Window::OnHotkey(WID_RAT_BUILD_STATION);
-			}
-		} else {
-			es = Window::OnHotkey(hotkey);
+		switch (hotkey) {
+			/* Indicate to the OnClick that the action comes from a hotkey rather
+			 * then from a click and that the CTRL state should be ignored. */
+			case HOTKEY_POLYRAIL:
+			case HOTKEY_NEW_POLYRAIL:
+				this->last_user_action = hotkey;
+				return this->Window::OnHotkey(WID_RAT_POLYRAIL);
+
+			case HOTKEY_BUILD_STATION_SIZED:
+			case HOTKEY_BUILD_STATION_DRAGDROP:
+				this->last_user_action = hotkey;
+				return this->Window::OnHotkey(WID_RAT_BUILD_STATION);
 		}
-		if ((hotkey == WID_RAT_BUILD_STATION || hotkey == WID_RAT_BUILD_STATION_SIZED ||
-				hotkey == WID_RAT_BUILD_STATION_DRAGDROP) && es == ES_HANDLED &&
-				_remove_button_clicked) {
-			ToggleRailButton_Remove(this);
-		}
-		return es;
+
+		return Window::OnHotkey(hotkey);
 	}
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
@@ -887,7 +971,8 @@ static EventState RailToolbarGlobalHotkeys(int hotkey)
 }
 
 const uint16 _railtoolbar_autorail_keys[] = {'5', 'A' | WKC_GLOBAL_HOTKEY, 0};
-const uint16 _railtoolbar_polyrail_keys[] = {'5' | WKC_CTRL, 'A' | WKC_GLOBAL_HOTKEY | WKC_CTRL, 0};
+const uint16 _railtoolbar_polyrail_keys[] = {'5' | WKC_CTRL, 'A' | WKC_CTRL | WKC_GLOBAL_HOTKEY, 0};
+const uint16 _railtoolbar_new_poly_keys[] = {'5' | WKC_CTRL | WKC_SHIFT, 'A' | WKC_CTRL | WKC_SHIFT | WKC_GLOBAL_HOTKEY, 0};
 
 static Hotkey railtoolbar_hotkeys[] = {
 	Hotkey('1', "build_ns", WID_RAT_BUILD_NS),
@@ -895,12 +980,13 @@ static Hotkey railtoolbar_hotkeys[] = {
 	Hotkey('3', "build_ew", WID_RAT_BUILD_EW),
 	Hotkey('4', "build_y", WID_RAT_BUILD_Y),
 	Hotkey(_railtoolbar_autorail_keys, "autorail", WID_RAT_AUTORAIL),
-	Hotkey(_railtoolbar_polyrail_keys, "polyrail", WID_RAT_POLYRAIL),
+	Hotkey(_railtoolbar_polyrail_keys, "polyrail", HOTKEY_POLYRAIL),
+	Hotkey(_railtoolbar_new_poly_keys, "new_polyrail", HOTKEY_NEW_POLYRAIL),
 	Hotkey('6', "demolish", WID_RAT_DEMOLISH),
 	Hotkey('7', "depot", WID_RAT_BUILD_DEPOT),
 	Hotkey('8', "waypoint", WID_RAT_BUILD_WAYPOINT),
-	Hotkey((uint16)0, "station_sized", WID_RAT_BUILD_STATION_SIZED),
-	Hotkey((uint16)0, "station_dragdrop", WID_RAT_BUILD_STATION_DRAGDROP),
+	Hotkey((uint16)0, "station_sized", HOTKEY_BUILD_STATION_SIZED),  // has to go before station hotkey to override it
+	Hotkey((uint16)0, "station_dragdrop", HOTKEY_BUILD_STATION_DRAGDROP),
 	Hotkey('9', "station", WID_RAT_BUILD_STATION),
 	Hotkey('S', "signal", WID_RAT_BUILD_SIGNALS),
 	Hotkey('B', "bridge", WID_RAT_BUILD_BRIDGE),
@@ -1192,6 +1278,13 @@ public:
 				break;
 			}
 
+			case WID_BRAS_PLATFORM_DIR_X:
+			case WID_BRAS_PLATFORM_DIR_Y:
+			case WID_BRAS_IMAGE:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(58) + 2;
+				break;
+
 			case WID_BRAS_COVERAGE_TEXTS:
 				size->height = this->coverage_height;
 				break;
@@ -1213,8 +1306,10 @@ public:
 				if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.right - r.left + 1, r.bottom - r.top + 1)) {
 					DrawPixelInfo *old_dpi = _cur_dpi;
 					_cur_dpi = &tmp_dpi;
-					if (!DrawStationTile(32, 28, _cur_railtype, AXIS_X, _railstation.station_class, _railstation.station_type)) {
-						StationPickerDrawSprite(32, 28, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 2);
+					int x = ScaleGUITrad(31) + 1;
+					int y = r.bottom - r.top - ScaleGUITrad(31);
+					if (!DrawStationTile(x, y, _cur_railtype, AXIS_X, _railstation.station_class, _railstation.station_type)) {
+						StationPickerDrawSprite(x, y, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 2);
 					}
 					_cur_dpi = old_dpi;
 				}
@@ -1225,8 +1320,10 @@ public:
 				if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.right - r.left + 1, r.bottom - r.top + 1)) {
 					DrawPixelInfo *old_dpi = _cur_dpi;
 					_cur_dpi = &tmp_dpi;
-					if (!DrawStationTile(32, 28, _cur_railtype, AXIS_Y, _railstation.station_class, _railstation.station_type)) {
-						StationPickerDrawSprite(32, 28, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 3);
+					int x = ScaleGUITrad(31) + 1;
+					int y = r.bottom - r.top - ScaleGUITrad(31);
+					if (!DrawStationTile(x, y, _cur_railtype, AXIS_Y, _railstation.station_class, _railstation.station_type)) {
+						StationPickerDrawSprite(x, y, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 3);
 					}
 					_cur_dpi = old_dpi;
 				}
@@ -1261,8 +1358,10 @@ public:
 				if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.right - r.left + 1, r.bottom - r.top + 1)) {
 					DrawPixelInfo *old_dpi = _cur_dpi;
 					_cur_dpi = &tmp_dpi;
-					if (!DrawStationTile(32, 28, _cur_railtype, _railstation.orientation, _railstation.station_class, type)) {
-						StationPickerDrawSprite(32, 28, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 2 + _railstation.orientation);
+					int x = ScaleGUITrad(31) + 1;
+					int y = r.bottom - r.top - ScaleGUITrad(31);
+					if (!DrawStationTile(x, y, _cur_railtype, _railstation.orientation, _railstation.station_class, type)) {
+						StationPickerDrawSprite(x, y, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 2 + _railstation.orientation);
 					}
 					_cur_dpi = old_dpi;
 				}
@@ -1796,11 +1895,28 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 		this->LowerWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
 	}
 
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		switch (widget) {
+			case WID_BRAD_DEPOT_NE:
+			case WID_BRAD_DEPOT_SE:
+			case WID_BRAD_DEPOT_SW:
+			case WID_BRAD_DEPOT_NW:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(48) + 2;
+				break;
+
+			case WID_BRAD_DEPOT_AUTO:
+				size->width  = ScaleGUITrad(128) + 6;
+				break;
+		}
+	}
+
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		if (!IsInsideMM(widget, WID_BRAD_DEPOT_NE, WID_BRAD_DEPOT_NW + 1)) return;
 
-		DrawTrainDepotSprite(r.left - 1, r.top, widget - WID_BRAD_DEPOT_NE + DIAGDIR_NE, _cur_railtype);
+		DrawTrainDepotSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), widget - WID_BRAD_DEPOT_NE + DIAGDIR_NE, _cur_railtype);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1848,8 +1964,11 @@ static const NWidgetPart _nested_build_depot_widgets[] = {
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BRAD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_TRAIN_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),
@@ -1892,6 +2011,11 @@ struct BuildRailWaypointWindow : PickerWindowBase {
 				/* Resizing in X direction only at blob size, but at pixel level in Y. */
 				resize->height = 1;
 				break;
+
+			case WID_BRW_WAYPOINT:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(58) + 2;
+				break;
 		}
 	}
 
@@ -1901,7 +2025,7 @@ struct BuildRailWaypointWindow : PickerWindowBase {
 			case WID_BRW_WAYPOINT: {
 				byte type = GB(widget, 16, 16);
 				const StationSpec *statspec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(type);
-				DrawWaypointSprite(r.left + TILE_PIXELS, r.bottom - TILE_PIXELS, type, _cur_railtype);
+				DrawWaypointSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), type, _cur_railtype);
 
 				if (!IsStationAvailable(statspec)) {
 					GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK, FILLRECT_CHECKER);

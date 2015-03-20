@@ -1,4 +1,4 @@
-/* $Id: storage_sl.cpp 26371 2014-02-23 22:03:08Z frosch $ */
+/* $Id: storage_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../stdafx.h"
 #include "../newgrf_storage.h"
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 /** Description of the data to save and load in #PersistentStorage. */
 static const SaveLoad _storage_desc[] = {

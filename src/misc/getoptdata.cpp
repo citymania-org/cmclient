@@ -1,4 +1,4 @@
-/* $Id: getoptdata.cpp 23245 2011-11-17 21:18:24Z rubidium $ */
+/* $Id: getoptdata.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "../stdafx.h"
 #include "getoptdata.h"
+
+#include "../safeguards.h"
 
 /**
  * Find the next option.

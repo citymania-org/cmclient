@@ -1,4 +1,4 @@
-/* $Id: newgrf_sl.cpp 23740 2012-01-03 21:32:51Z rubidium $ */
+/* $Id: newgrf_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 
 #include "saveload.h"
 #include "newgrf_sl.h"
+
+#include "../safeguards.h"
 
 /** Save and load the mapping between a spec and the NewGRF it came from. */
 static const SaveLoad _newgrf_mapping_desc[] = {

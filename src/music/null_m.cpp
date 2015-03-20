@@ -1,4 +1,4 @@
-/* $Id: null_m.cpp 22410 2011-05-02 16:14:23Z rubidium $ */
+/* $Id: null_m.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "../stdafx.h"
 #include "null_m.h"
+
+#include "../safeguards.h"
 
 /** The factory for the music player that does nothing. */
 static FMusicDriver_Null iFMusicDriver_Null;

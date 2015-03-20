@@ -1,4 +1,4 @@
-/* $Id: industry_gui.cpp 26789 2014-09-07 15:07:22Z frosch $ */
+/* $Id: industry_gui.cpp 26960 2014-10-05 11:20:02Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -43,6 +43,8 @@
 
 #include "table/strings.h"
 #include "hotkeys.h"
+
+#include "safeguards.h"
 
 bool _ignore_restrictions;
 uint64 _displayed_industries; ///< Communication from the industry chain window to the smallmap window about what industries to display.
@@ -180,6 +182,21 @@ static const NWidgetPart _nested_build_industry_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_DPI_INFOPANEL), SetResize(1, 0),
 	EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetResize(1, 0),
+		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
+			NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(140, 14), SetDataTip(STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE, STR_NULL),
+			NWidget(NWID_SPACER), SetFill(1, 0),
+		EndContainer(),
+		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
+			NWidget(NWID_SPACER), SetFill(1, 0),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_DPI_FT_OFF), SetMinimalSize(60, 12),
+											SetDataTip(STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF, STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF_TOOLTIP),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_DPI_FT_ON), SetMinimalSize(60, 12),
+											SetDataTip(STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON, STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON_TOOLTIP),
+			NWidget(NWID_SPACER), SetFill(1, 0),
+		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_TEXTBTN, COLOUR_DARK_GREEN, WID_DPI_DISPLAY_WIDGET), SetFill(1, 0), SetResize(1, 0),
 				SetDataTip(STR_INDUSTRY_DISPLAY_CHAIN, STR_INDUSTRY_DISPLAY_CHAIN_TOOLTIP),
@@ -246,6 +263,7 @@ class BuildIndustryWindow : public Window {
 		if (this->selected_index == -1) {
 			this->selected_index = 0;
 			this->selected_type = this->index[0];
+			SetIndustryForbiddenTilesHighlight(this->selected_type);
 		}
 
 		this->vscroll->SetCount(this->count);
@@ -270,9 +288,15 @@ public:
 
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_DPI_SCROLLBAR);
+		this->LowerWidget(_settings_client.gui.show_industry_forbidden_tiles + WID_DPI_FT_OFF);
 		this->FinishInitNested(0);
 
 		this->SetButtons();
+	}
+
+	~BuildIndustryWindow()
+	{
+		SetIndustryForbiddenTilesHighlight(INVALID_INDUSTRYTYPE);
 	}
 
 	virtual void OnInit()
@@ -484,6 +508,7 @@ public:
 				if (y < this->count) { // Is it within the boundaries of available data?
 					this->selected_index = y;
 					this->selected_type = this->index[y];
+					SetIndustryForbiddenTilesHighlight(this->selected_type);
 					const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? NULL : GetIndustrySpec(this->selected_type);
 
 					this->SetDirty();
@@ -527,6 +552,16 @@ public:
 				}
 				break;
 			}
+
+			case WID_DPI_FT_OFF:
+			case WID_DPI_FT_ON:
+				this->RaiseWidget(_settings_client.gui.show_industry_forbidden_tiles + WID_DPI_FT_OFF);
+				_settings_client.gui.show_industry_forbidden_tiles = (widget != WID_DPI_FT_OFF);
+				this->LowerWidget(_settings_client.gui.show_industry_forbidden_tiles + WID_DPI_FT_OFF);
+				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+				this->SetDirty();
+				MarkWholeScreenDirty();
+				break;
 		}
 	}
 
@@ -1315,7 +1350,7 @@ public:
 		switch (widget) {
 			case WID_ID_DROPDOWN_ORDER: {
 				Dimension d = GetStringBoundingBox(this->GetWidget<NWidgetCore>(widget)->widget_data);
-				d.width += padding.width + WD_SORTBUTTON_ARROW_WIDTH * 2; // Doubled since the string is centred and it also looks better.
+				d.width += padding.width + Window::SortButtonWidth() * 2; // Doubled since the string is centred and it also looks better.
 				d.height += padding.height;
 				*size = maxdim(*size, d);
 				break;

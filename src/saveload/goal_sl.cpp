@@ -1,4 +1,4 @@
-/* $Id: goal_sl.cpp 26596 2014-05-18 11:26:09Z frosch $ */
+/* $Id: goal_sl.cpp 26593 2014-05-17 17:18:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "../goal_base.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 static const SaveLoad _goals_desc[] = {
 	    SLE_VAR(Goal, company,   SLE_FILE_U16 | SLE_VAR_U8),

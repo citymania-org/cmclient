@@ -1,4 +1,4 @@
-/* $Id: script_town.cpp 26270 2014-01-20 22:34:22Z frosch $ */
+/* $Id: script_town.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "../../station_base.h"
 #include "../../landscape.h"
 #include "table/strings.h"
+
+#include "../../safeguards.h"
 
 /* static */ int32 ScriptTown::GetTownCount()
 {

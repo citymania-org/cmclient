@@ -1,4 +1,4 @@
-/* $Id: misc_gui.cpp 26715 2014-08-03 14:06:04Z frosch $ */
+/* $Id: misc_gui.cpp 27194 2015-03-17 22:08:48Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -25,10 +25,13 @@
 #include "querystring_gui.h"
 #include "core/geometry_func.hpp"
 #include "newgrf_debug.h"
+#include "zoom_func.h"
 
 #include "widgets/misc_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 #include "house.h"
 #include "town_map.h"
@@ -128,14 +131,15 @@ public:
 #	define LANDINFOD_LEVEL 1
 #endif
 		DEBUG(misc, LANDINFOD_LEVEL, "TILE: %#x (%i,%i)", tile, TileX(tile), TileY(tile));
-		DEBUG(misc, LANDINFOD_LEVEL, "type_height  = %#x", _m[tile].type_height);
-		DEBUG(misc, LANDINFOD_LEVEL, "m1           = %#x", _m[tile].m1);
-		DEBUG(misc, LANDINFOD_LEVEL, "m2           = %#x", _m[tile].m2);
-		DEBUG(misc, LANDINFOD_LEVEL, "m3           = %#x", _m[tile].m3);
-		DEBUG(misc, LANDINFOD_LEVEL, "m4           = %#x", _m[tile].m4);
-		DEBUG(misc, LANDINFOD_LEVEL, "m5           = %#x", _m[tile].m5);
-		DEBUG(misc, LANDINFOD_LEVEL, "m6           = %#x", _m[tile].m6);
-		DEBUG(misc, LANDINFOD_LEVEL, "m7           = %#x", _me[tile].m7);
+		DEBUG(misc, LANDINFOD_LEVEL, "type   = %#x", _m[tile].type);
+		DEBUG(misc, LANDINFOD_LEVEL, "height = %#x", _m[tile].height);
+		DEBUG(misc, LANDINFOD_LEVEL, "m1     = %#x", _m[tile].m1);
+		DEBUG(misc, LANDINFOD_LEVEL, "m2     = %#x", _m[tile].m2);
+		DEBUG(misc, LANDINFOD_LEVEL, "m3     = %#x", _m[tile].m3);
+		DEBUG(misc, LANDINFOD_LEVEL, "m4     = %#x", _m[tile].m4);
+		DEBUG(misc, LANDINFOD_LEVEL, "m5     = %#x", _m[tile].m5);
+		DEBUG(misc, LANDINFOD_LEVEL, "m6     = %#x", _me[tile].m6);
+		DEBUG(misc, LANDINFOD_LEVEL, "m7     = %#x", _me[tile].m7);
 #undef LANDINFOD_LEVEL
 	}
 
@@ -218,7 +222,7 @@ public:
 
 		/* Location */
 		char tmp[16];
-		snprintf(tmp, lengthof(tmp), "0x%.4X", tile);
+		seprintf(tmp, lastof(tmp), "0x%.4X", tile);
 		SetDParam(0, TileX(tile));
 		SetDParam(1, TileY(tile));
 		SetDParam(2, GetTileZ(tile));
@@ -444,7 +448,7 @@ static const char * const _credits[] = {
 	"  Mike Ragsdale - OpenTTD installer",
 	"  Christian Rosentreter (tokai) - MorphOS / AmigaOS port",
 	"  Richard Kempton (richK) - additional airports, initial TGP implementation",
-	"  Fleashosio - titlegame",
+	"  Emperor Jake - titlegame",
 	"",
 	"  Alberto Demichelis - Squirrel scripting language \xC2\xA9 2003-2008",
 	"  L. Peter Deutsch - MD5 implementation \xC2\xA9 1999, 2000, 2002",
@@ -645,7 +649,7 @@ static const NWidgetPart _nested_tooltips_widgets[] = {
 static WindowDesc _tool_tips_desc(
 	WDP_MANUAL, NULL, 0, 0, // Coordinates and sizes are not used,
 	WC_TOOLTIPS, WC_NONE,
-	0,
+	WDF_NO_FOCUS,
 	_nested_tooltips_widgets, lengthof(_nested_tooltips_widgets)
 );
 
@@ -697,7 +701,7 @@ struct TooltipsWindow : public Window
 		/* There is only one widget. */
 		for (uint i = 0; i != this->paramcount; i++) SetDParam(i, this->params[i]);
 
-		size->width  = min(GetStringBoundingBox(this->string_id).width, 194);
+		size->width  = min(GetStringBoundingBox(this->string_id).width, ScaleGUITrad(194));
 		size->height = GetStringHeight(this->string_id, size->width);
 
 		/* Increase slightly to have some space around the box. */
@@ -962,7 +966,7 @@ struct QueryStringWindow : public Window
 
 		this->editbox.text.UpdateSize();
 
-		if ((flags & QSF_ACCEPT_UNCHANGED) == 0) this->editbox.orig = strdup(this->editbox.text.buf);
+		if ((flags & QSF_ACCEPT_UNCHANGED) == 0) this->editbox.orig = stredup(this->editbox.text.buf);
 
 		this->querystrings[WID_QS_TEXT] = &this->editbox;
 		this->editbox.caption = caption;
@@ -1182,8 +1186,8 @@ static const NWidgetPart _nested_query_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_RED), SetPIP(8, 15, 8),
 		NWidget(WWT_TEXT, COLOUR_RED, WID_Q_TEXT), SetMinimalSize(200, 12),
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(20, 29, 20),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_Q_NO), SetMinimalSize(71, 12), SetDataTip(STR_QUIT_NO, STR_NULL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_Q_YES), SetMinimalSize(71, 12), SetDataTip(STR_QUIT_YES, STR_NULL),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_Q_NO), SetMinimalSize(71, 12), SetFill(1, 1), SetDataTip(STR_QUIT_NO, STR_NULL),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_Q_YES), SetMinimalSize(71, 12), SetFill(1, 1), SetDataTip(STR_QUIT_YES, STR_NULL),
 		EndContainer(),
 	EndContainer(),
 };
@@ -1325,14 +1329,15 @@ struct TooltipsExtraWindow : public Window
 				if(st == NULL) break;
 
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-					if (HasBit(st->goods[i].status, GoodsEntry::GES_RATING)) {
-						const CargoSpec *cs = CargoSpec::Get(i);
-						if(cs == NULL) continue;
+					const CargoSpec *cs = _sorted_cargo_specs[i];
+					if(cs == NULL) continue;
+					int cargoid = cs->Index();
+					if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
 						size->height += LINE_HEIGHT;
 						SetDParam(0, cs->name);
-						SetDParam(1, cs->Index());
-						SetDParam(2, st->goods[i].cargo.TotalCount());
-						SetDParam(3, ToPercent8(st->goods[i].rating));
+						SetDParam(1, cargoid);
+						SetDParam(2, st->goods[cargoid].cargo.TotalCount());
+						SetDParam(3, ToPercent8(st->goods[cargoid].rating));
 						size->width = max(GetStringBoundingBox(STR_TTE_STATION).width + 50, size->width);
 					}
 				}
@@ -1400,13 +1405,14 @@ struct TooltipsExtraWindow : public Window
 				y += LINE_HEIGHT;
 
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-					if (HasBit(st->goods[i].status, GoodsEntry::GES_RATING)) {
-						const CargoSpec *cs = CargoSpec::Get(i);
-						if(cs == NULL) continue;
+					const CargoSpec *cs = _sorted_cargo_specs[i];
+					if(cs == NULL) continue;
+					int cargoid = cs->Index();
+					if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
 						SetDParam(0, cs->name);
-						SetDParam(1, cs->Index());
-						SetDParam(2, st->goods[i].cargo.TotalCount());
-						SetDParam(3, ToPercent8(st->goods[i].rating));
+						SetDParam(1, cargoid);
+						SetDParam(2, st->goods[cargoid].cargo.TotalCount());
+						SetDParam(3, ToPercent8(st->goods[cargoid].rating));
 
 						this->DrawSpriteIcons(cs->GetCargoIcon(), left, y);
 						DrawString(left + 40, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_STATION);

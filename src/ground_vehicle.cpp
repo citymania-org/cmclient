@@ -1,4 +1,4 @@
-/* $Id: ground_vehicle.cpp 26714 2014-08-03 14:03:07Z frosch $ */
+/* $Id: ground_vehicle.cpp 26702 2014-07-22 19:46:10Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "train.h"
 #include "roadveh.h"
 #include "depot_map.h"
+
+#include "safeguards.h"
 
 /**
  * Recalculates the cached total power of a vehicle. Should be called when the consist is changed.

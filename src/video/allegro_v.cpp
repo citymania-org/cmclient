@@ -1,4 +1,4 @@
-/* $Id: allegro_v.cpp 26209 2014-01-02 22:41:58Z rubidium $ */
+/* $Id: allegro_v.cpp 27167 2015-02-22 23:06:45Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,6 +26,8 @@
 #include "../core/math_func.hpp"
 #include "allegro_v.h"
 #include <allegro.h>
+
+#include "../safeguards.h"
 
 #ifdef _DEBUG
 /* Allegro replaces SEGV/ABRT signals meaning that the debugger will never
@@ -222,7 +224,7 @@ static bool CreateMainSurface(uint w, uint h)
 	InitPalette();
 
 	char caption[32];
-	snprintf(caption, sizeof(caption), "OpenTTD %s", _openttd_revision);
+	seprintf(caption, lastof(caption), "OpenTTD %s", _openttd_revision);
 	set_window_title(caption);
 
 	enable_hardware_cursor();
@@ -386,22 +388,10 @@ static void PollEvent()
 	}
 
 	/* Mouse movement */
-	int dx = mouse_x - _cursor.pos.x;
-	int dy = mouse_y - _cursor.pos.y;
-	if (dx != 0 || dy != 0) {
-		if (_cursor.fix_at) {
-			_cursor.delta.x = dx;
-			_cursor.delta.y = dy;
-			position_mouse(_cursor.pos.x, _cursor.pos.y);
-		} else {
-			_cursor.delta.x = dx;
-			_cursor.delta.y = dy;
-			_cursor.pos.x = mouse_x;
-			_cursor.pos.y = mouse_y;
-			_cursor.dirty = true;
-		}
-		mouse_action = true;
+	if (_cursor.UpdateCursorPosition(mouse_x, mouse_y, false)) {
+		position_mouse(_cursor.pos.x, _cursor.pos.y);
 	}
+	if (_cursor.delta.x != 0 || _cursor.delta.y) mouse_action = true;
 
 	static int prev_mouse_z = 0;
 	if (prev_mouse_z != mouse_z) {

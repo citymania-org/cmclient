@@ -37,12 +37,12 @@ static NWidgetBase *MakeCompanyButtons(int *biggest_index)
 	NWidgetHorizontal *widget_container_horiz = NULL;         // Storage for all cols.
 	NWidgetVertical *widget_container_company = NULL;         // Storage for company Col.
 	NWidgetVertical *widget_container_hasclient = NULL;       // Storage for Has Client Blot.
-	NWidgetVertical *widget_container_activity = NULL;        // Storage for Activity Blot.
+	// NWidgetVertical *widget_container_activity = NULL;        // Storage for Activity Blot.
 
 	widget_container_horiz = new NWidgetHorizontal( );
 	widget_container_company = new NWidgetVertical( );
 	widget_container_hasclient  = new NWidgetVertical( );
-	widget_container_activity = new NWidgetVertical( );
+	// widget_container_activity = new NWidgetVertical( );
 
 	Dimension company_sprite_size = GetSpriteSize( SPR_COMPANY_ICON );
 	company_sprite_size.width  += WD_MATRIX_LEFT + WD_MATRIX_RIGHT;
@@ -266,19 +266,19 @@ void WatchCompany::SetStringParameters(int widget) const
 	}
 	//EWT_CLIENT
 	if (!Company::IsValidHumanID(this->watched_company)){
-		GetString((char *)this->company_name, STR_JUST_NOTHING, lastof(this->company_name));
+		// GetString((char *)this->company_name, STR_JUST_NOTHING, lastof(this->company_name));
 	}
 	else {
 		const Company *c = Company::Get(this->watched_company);
 		SetDParam(0, c->index);
-		GetString((char *)this->company_name, STR_COMPANY_NAME, lastof(this->company_name));
+		// GetString((char *)this->company_name, STR_COMPANY_NAME, lastof(this->company_name));
 	}
 	NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)this->watched_client);
 	if(ci){
-		strecpy((char *)this->client_name, ci->client_name, lastof(this->client_name));
+		// strecpy((char *)this->client_name, ci->client_name, lastof(this->client_name));
 	}
 	else{
-		GetString((char *)this->client_name, STR_JUST_NOTHING, lastof(this->client_name));
+		// GetString((char *)this->client_name, STR_JUST_NOTHING, lastof(this->client_name));
 	}
 	SetDParamStr(0, this->client_name);
 	SetDParamStr(1, this->company_name);

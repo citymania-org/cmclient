@@ -1,4 +1,4 @@
-/* $Id: road_map.cpp 21846 2011-01-18 23:09:43Z rubidium $ */
+/* $Id: road_map.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "station_map.h"
 #include "tunnelbridge_map.h"
+
+#include "safeguards.h"
 
 
 /**

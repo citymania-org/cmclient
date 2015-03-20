@@ -1,4 +1,4 @@
-/* $Id: script_cargomonitor.cpp 26714 2014-08-03 14:03:07Z frosch $ */
+/* $Id: script_cargomonitor.cpp 26685 2014-07-12 17:04:14Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "script_cargomonitor.hpp"
 #include "../../town.h"
 #include "../../industry.h"
+
+#include "../../safeguards.h"
 
 /* static */ int32 ScriptCargoMonitor::GetTownDeliveryAmount(ScriptCompany::CompanyID company, CargoID cargo, TownID town_id, bool keep_monitoring)
 {

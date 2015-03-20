@@ -1,4 +1,4 @@
-/* $Id: viewport_gui.cpp 25294 2013-05-26 19:30:07Z frosch $ */
+/* $Id: viewport_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 
 #include "table/strings.h"
 #include "table/sprites.h"
+
+#include "safeguards.h"
 
 /* Extra ViewPort Window Stuff */
 static const NWidgetPart _nested_extra_view_port_widgets[] = {

@@ -10,7 +10,7 @@
 ##grflangid 0x06
 
 
-# $Id: ido.txt 26822 2014-09-14 15:33:52Z rubidium $
+# $Id: ido.txt 27103 2015-01-01 20:51:18Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -484,7 +484,6 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :altra
 
 
 
-
 # Custom currency window
 
 
@@ -779,7 +778,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_HEADQUARTERS                 :Stabeyo di komp
 
 # About OpenTTD window
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versiono {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 La kruo OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2015 La kruo OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Ludo Detali
@@ -880,7 +879,6 @@ STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOI
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
-STR_STATION_VIEW_WAITING_TITLE                                  :{BLACK}Vartabas: {WHITE}{STRING}
 STR_STATION_VIEW_WAITING_CARGO                                  :{WHITE}{CARGO_LONG}
 
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}Aceptas: {WHITE}{CARGO_LIST}
@@ -968,7 +966,11 @@ STR_GROUP_DEFAULT_AIRCRAFTS                                     :Negrupigita aer
 
 
 
+
 # Build vehicle window
+
+
+
 
 
 
@@ -1010,6 +1012,7 @@ STR_REPLACE_VEHICLE_TRAIN                                       :Treno
 STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :Voy-vehilo
 STR_REPLACE_VEHICLE_SHIP                                        :Navo
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :Aeronavo
+
 
 
 
@@ -1187,6 +1190,7 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... tro 
 # Industry related errors
 STR_ERROR_TOO_MANY_INDUSTRIES                                   :{WHITE}... tro multa industrii
 
+
 # Station construction related errors
 
 
@@ -1350,8 +1354,6 @@ STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
 STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
 STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
 STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_BLACK_CROSS                                                 :{BLACK}{CROSS}
-STR_SILVER_CROSS                                                :{SILVER}{CROSS}
 STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
 STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
 STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
@@ -1362,9 +1364,7 @@ STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
 STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
 STR_BLACK_STRING                                                :{BLACK}{STRING}
 STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_GREEN_STRING                                                :{GREEN}{STRING}
 STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_RED_STRING                                                  :{RED}{STRING}
 STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
 STR_WHITE_STRING                                                :{WHITE}{STRING}
 STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}

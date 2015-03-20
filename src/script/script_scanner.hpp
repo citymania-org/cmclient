@@ -1,4 +1,4 @@
-/* $Id: script_scanner.hpp 24487 2012-08-20 21:01:40Z yexo $ */
+/* $Id: script_scanner.hpp 26617 2014-05-25 19:53:46Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -101,7 +101,7 @@ protected:
 	/**
 	 * Get the script name how to store the script in memory.
 	 */
-	virtual void GetScriptName(ScriptInfo *info, char *name, int len) = 0;
+	virtual void GetScriptName(ScriptInfo *info, char *name, const char *last) = 0;
 
 	/**
 	 * Get the filename to scan for this type of script.
@@ -128,6 +128,10 @@ protected:
 	 */
 	void Reset();
 
+	/**
+	 * Reset the engine to ensure a clean environment for further steps.
+	 */
+	void ResetEngine();
 };
 
 #endif /* SCRIPT_SCANNER_HPP */

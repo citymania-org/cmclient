@@ -1,4 +1,4 @@
-/* $Id: opf_ship.cpp 24481 2012-08-18 11:37:47Z frosch $ */
+/* $Id: opf_ship.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../../tunnelbridge.h"
 #include "../../ship.h"
 #include "../../core/random_func.hpp"
+
+#include "../../safeguards.h"
 
 struct RememberData {
 	uint16 cur_length;

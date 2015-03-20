@@ -1,4 +1,4 @@
-/* $Id: articulated_vehicles.cpp 26972 2014-10-06 20:10:07Z frosch $ */
+/* $Id: articulated_vehicles.cpp 26863 2014-09-20 15:31:26Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,8 @@
 #include "newgrf.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 static const uint MAX_ARTICULATED_PARTS = 100; ///< Maximum of articulated parts per vehicle, i.e. when to abort calling the articulated vehicle callback.
 
@@ -443,6 +445,6 @@ void AddArticulatedParts(Vehicle *first)
 
 		if (flip_image) v->spritenum++;
 
-		VehicleUpdatePosition(v);
+		v->UpdatePosition();
 	}
 }

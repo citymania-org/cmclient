@@ -1,4 +1,4 @@
-/* $Id: tunnel_map.h 23167 2011-11-08 19:44:41Z rubidium $ */
+/* $Id: tunnel_map.h 26878 2014-09-21 11:23:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -56,7 +56,7 @@ static inline void MakeRoadTunnel(TileIndex t, Owner o, DiagDirection d, RoadTyp
 	_m[t].m3 = 0;
 	_m[t].m4 = 0;
 	_m[t].m5 = TRANSPORT_ROAD << 2 | d;
-	SB(_m[t].m6, 2, 4, 0);
+	SB(_me[t].m6, 2, 4, 0);
 	_me[t].m7 = 0;
 	SetRoadOwner(t, ROADTYPE_ROAD, o);
 	if (o != OWNER_TOWN) SetRoadOwner(t, ROADTYPE_TRAM, o);
@@ -78,7 +78,7 @@ static inline void MakeRailTunnel(TileIndex t, Owner o, DiagDirection d, RailTyp
 	_m[t].m3 = r;
 	_m[t].m4 = 0;
 	_m[t].m5 = TRANSPORT_RAIL << 2 | d;
-	SB(_m[t].m6, 2, 4, 0);
+	SB(_me[t].m6, 2, 4, 0);
 	_me[t].m7 = 0;
 }
 

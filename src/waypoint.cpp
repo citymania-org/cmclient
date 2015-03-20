@@ -1,4 +1,4 @@
-/* $Id: waypoint.cpp 19958 2010-06-11 00:20:24Z smatz $ */
+/* $Id: waypoint.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "window_func.h"
 #include "newgrf_station.h"
 #include "waypoint_base.h"
+
+#include "safeguards.h"
 
 /**
  * Draw a waypoint

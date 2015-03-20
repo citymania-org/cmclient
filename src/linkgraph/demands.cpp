@@ -4,6 +4,8 @@
 #include "demands.h"
 #include <list>
 
+#include "../safeguards.h"
+
 typedef std::list<NodeID> NodeList;
 
 /**
@@ -123,7 +125,7 @@ public:
  * this sets demands in both directions.
  * @param job The link graph job.
  * @param from_id The supplying node.
- * @þaram to_id The receiving node.
+ * @param to_id The receiving node.
  * @param demand_forw Demand calculated for the "forward" direction.
  */
 void SymmetricScaler::SetDemands(LinkGraphJob &job, NodeID from_id, NodeID to_id, uint demand_forw)
@@ -146,7 +148,7 @@ void SymmetricScaler::SetDemands(LinkGraphJob &job, NodeID from_id, NodeID to_id
  * this only sets demand in the "forward" direction.
  * @param job The link graph job.
  * @param from_id The supplying node.
- * @þaram to_id The receiving node.
+ * @param to_id The receiving node.
  * @param demand_forw Demand calculated for the "forward" direction.
  */
 inline void Scaler::SetDemands(LinkGraphJob &job, NodeID from_id, NodeID to_id, uint demand_forw)
@@ -208,7 +210,8 @@ void DemandCalculator::CalcDemand(LinkGraphJob &job, Tscaler scaler)
 
 			/* Scale the distance by mod_dist around max_distance */
 			int32 distance = this->max_distance - (this->max_distance -
-					(int32)job[from_id][to_id].Distance()) * this->mod_dist / 100;
+					(int32)DistanceMaxPlusManhattan(job[from_id].XY(), job[to_id].XY())) *
+					this->mod_dist / 100;
 
 			/* Scale the accuracy by distance around accuracy / 2 */
 			int32 divisor = this->accuracy * (this->mod_dist - 50) / 100 +

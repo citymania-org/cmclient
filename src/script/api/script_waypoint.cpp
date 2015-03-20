@@ -1,4 +1,4 @@
-/* $Id: script_waypoint.cpp 23632 2011-12-19 21:05:25Z truebrain $ */
+/* $Id: script_waypoint.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "script_rail.hpp"
 #include "script_marine.hpp"
 #include "../../waypoint_base.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptWaypoint::IsValidWaypoint(StationID waypoint_id)
 {

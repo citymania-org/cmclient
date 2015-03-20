@@ -1,4 +1,4 @@
-/* $Id: tilearea.cpp 26289 2014-02-02 14:53:26Z fonsinchen $ */
+/* $Id: tilearea.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "stdafx.h"
 
 #include "tilearea_type.h"
+
+#include "safeguards.h"
 
 /**
  * Construct this tile area based on two points.

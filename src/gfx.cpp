@@ -1,4 +1,4 @@
-/* $Id: gfx.cpp 26793 2014-09-07 15:41:03Z frosch $ */
+/* $Id: gfx.cpp 27172 2015-02-28 17:13:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,8 +26,11 @@
 #include "table/sprites.h"
 #include "table/control_codes.h"
 
+#include "safeguards.h"
+
 byte _dirkeys;        ///< 1 = left, 2 = up, 4 = right, 8 = down
 bool _fullscreen;
+byte _support8bpp;
 CursorVars _cursor;
 bool _ctrl_pressed;   ///< Is Ctrl pressed?
 bool _alt_pressed;    ///< Is Alt pressed?
@@ -53,6 +56,8 @@ static void GfxMainBlitterViewport(const Sprite *sprite, int x, int y, BlitterMo
 static void GfxMainBlitter(const Sprite *sprite, int x, int y, BlitterMode mode, const SubSprite *sub = NULL, SpriteID sprite_id = SPR_CURSOR_MOUSE, ZoomLevel zoom = ZOOM_LVL_NORMAL);
 
 static ReusableBuffer<uint8> _cursor_backup;
+
+ZoomLevelByte _gui_zoom; ///< GUI Zoom level
 
 /**
  * The rect for repaint.
@@ -781,6 +786,21 @@ Dimension GetSpriteSize(SpriteID sprid, Point *offset, ZoomLevel zoom)
 }
 
 /**
+ * Helper function to get the blitter mode for different types of palettes.
+ * @param pal The palette to get the blitter mode for.
+ * @return The blitter mode associated with the palette.
+ */
+static BlitterMode GetBlitterMode(PaletteID pal)
+{
+	switch (pal) {
+		case PAL_NONE:          return BM_NORMAL;
+		case PALETTE_CRASH:     return BM_CRASH_REMAP;
+		case PALETTE_ALL_BLACK: return BM_BLACK_REMAP;
+		default:                return BM_COLOUR_REMAP;
+	}
+}
+
+/**
  * Draw a sprite in a viewport.
  * @param img  Image number to draw
  * @param pal  Palette to use.
@@ -795,8 +815,12 @@ void DrawSpriteViewport(SpriteID img, PaletteID pal, int x, int y, const SubSpri
 		_colour_remap_ptr = GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
 		GfxMainBlitterViewport(GetSprite(real_sprite, ST_NORMAL), x, y, BM_TRANSPARENT, sub, real_sprite);
 	} else if (pal != PAL_NONE) {
-		_colour_remap_ptr = GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
-		GfxMainBlitterViewport(GetSprite(real_sprite, ST_NORMAL), x, y, pal == PALETTE_CRASH ? BM_CRASH_REMAP : BM_COLOUR_REMAP, sub, real_sprite);
+		if (HasBit(pal, PALETTE_TEXT_RECOLOUR)) {
+			SetColourRemap((TextColour)GB(pal, 0, PALETTE_WIDTH));
+		} else {
+			_colour_remap_ptr = GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
+		}
+		GfxMainBlitterViewport(GetSprite(real_sprite, ST_NORMAL), x, y, GetBlitterMode(pal), sub, real_sprite);
 	} else {
 		GfxMainBlitterViewport(GetSprite(real_sprite, ST_NORMAL), x, y, BM_NORMAL, sub, real_sprite);
 	}
@@ -818,8 +842,12 @@ void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub,
 		_colour_remap_ptr = GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
 		GfxMainBlitter(GetSprite(real_sprite, ST_NORMAL), x, y, BM_TRANSPARENT, sub, real_sprite, zoom);
 	} else if (pal != PAL_NONE) {
-		_colour_remap_ptr = GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
-		GfxMainBlitter(GetSprite(real_sprite, ST_NORMAL), x, y, pal == PALETTE_CRASH ? BM_CRASH_REMAP : BM_COLOUR_REMAP, sub, real_sprite, zoom);
+		if (HasBit(pal, PALETTE_TEXT_RECOLOUR)) {
+			SetColourRemap((TextColour)GB(pal, 0, PALETTE_WIDTH));
+		} else {
+			_colour_remap_ptr = GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
+		}
+		GfxMainBlitter(GetSprite(real_sprite, ST_NORMAL), x, y, GetBlitterMode(pal), sub, real_sprite, zoom);
 	} else {
 		GfxMainBlitter(GetSprite(real_sprite, ST_NORMAL), x, y, BM_NORMAL, sub, real_sprite, zoom);
 	}
@@ -1112,6 +1140,7 @@ void LoadStringWidthTable(bool monospace)
 		}
 	}
 
+	ClearFontCache();
 	ReInitAllWindows();
 }
 
@@ -1504,10 +1533,10 @@ void UpdateCursorSize()
 	CursorVars *cv = &_cursor;
 	const Sprite *p = GetSprite(GB(cv->sprite, 0, SPRITE_WIDTH), ST_NORMAL);
 
-	cv->size.y = UnScaleByZoom(p->height, ZOOM_LVL_GUI);
-	cv->size.x = UnScaleByZoom(p->width, ZOOM_LVL_GUI);
-	cv->offs.x = UnScaleByZoom(p->x_offs, ZOOM_LVL_GUI);
-	cv->offs.y = UnScaleByZoom(p->y_offs, ZOOM_LVL_GUI);
+	cv->size.y = UnScaleGUI(p->height);
+	cv->size.x = UnScaleGUI(p->width);
+	cv->offs.x = UnScaleGUI(p->x_offs);
+	cv->offs.y = UnScaleGUI(p->y_offs);
 
 	cv->dirty = true;
 }
@@ -1573,6 +1602,56 @@ void SetAnimatedMouseCursor(const AnimCursor *table)
 	_cursor.animate_cur = NULL;
 	_cursor.pal = PAL_NONE;
 	SwitchAnimatedCursor();
+}
+
+/**
+ * Update cursor position on mouse movement.
+ * @param x New X position.
+ * @param y New Y position.
+ * @param queued True, if the OS queues mouse warps after pending mouse movement events.
+ *               False, if the warp applies instantaneous.
+ * @return true, if the OS cursor position should be warped back to this->pos.
+ */
+bool CursorVars::UpdateCursorPosition(int x, int y, bool queued_warp)
+{
+	/* Detecting relative mouse movement is somewhat tricky.
+	 *  - There may be multiple mouse move events in the video driver queue (esp. when OpenTTD lags a bit).
+	 *  - When we request warping the mouse position (return true), a mouse move event is appended at the end of the queue.
+	 *
+	 * So, when this->fix_at is active, we use the following strategy:
+	 *  - The first movement triggers the warp to reset the mouse position.
+	 *  - Subsequent events have to compute movement relative to the previous event.
+	 *  - The relative movement is finished, when we receive the event matching the warp.
+	 */
+
+	if (x == this->pos.x && y == this->pos.y) {
+		/* Warp finished. */
+		this->queued_warp = false;
+	}
+
+	this->delta.x = x - (this->queued_warp ? this->last_position.x : this->pos.x);
+	this->delta.y = y - (this->queued_warp ? this->last_position.y : this->pos.y);
+
+	this->last_position.x = x;
+	this->last_position.y = y;
+
+	bool need_warp = false;
+	if (this->fix_at) {
+		if (this->delta.x != 0 || this->delta.y != 0) {
+			/* Trigger warp.
+			 * Note: We also trigger warping again, if there is already a pending warp.
+			 *       This makes it more tolerant about the OS or other software inbetween
+			 *       botchering the warp. */
+			this->queued_warp = queued_warp;
+			need_warp = true;
+		}
+	} else if (this->pos.x != x || this->pos.y != y) {
+		this->queued_warp = false; // Cancel warping, we are no longer confining the position.
+		this->dirty = true;
+		this->pos.x = x;
+		this->pos.y = y;
+	}
+	return need_warp;
 }
 
 bool ChangeResInGame(int width, int height)

@@ -1,4 +1,4 @@
-/* $Id: autoreplace_sl.cpp 24136 2012-04-17 19:44:02Z michi_cc $ */
+/* $Id: autoreplace_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "../autoreplace_base.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 static const SaveLoad _engine_renew_desc[] = {
 	    SLE_VAR(EngineRenew, from,     SLE_UINT16),

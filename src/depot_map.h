@@ -1,4 +1,4 @@
-/* $Id: depot_map.h 25865 2013-10-13 20:11:05Z zuu $ */
+/* $Id: depot_map.h 26692 2014-07-16 20:56:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -29,6 +29,9 @@ static inline bool IsDepotTypeTile(TileIndex tile, TransportType type)
 
 		case TRANSPORT_WATER:
 			return IsShipDepotTile(tile);
+
+		case TRANSPORT_AIR:
+			return IsHangarTile(tile);
 	}
 }
 
@@ -58,7 +61,7 @@ static inline DepotID GetDepotIndex(TileIndex t)
 /**
  * Get the type of vehicles that can use a depot
  * @param t The tile
- * @pre IsRailDepotTile(t) || IsRoadDepotTile(t) || IsShipDepotTile(t) || IsTileType(t, MP_STATION)
+ * @pre IsDepotTile(t)
  * @return the type of vehicles that can use the depot
  */
 static inline VehicleType GetDepotVehicleType(TileIndex t)

@@ -1,4 +1,4 @@
-/* $Id: 32bpp_sse2.cpp 26541 2014-04-29 18:18:52Z frosch $ */
+/* $Id: 32bpp_sse2.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "../settings_type.h"
 #include "32bpp_sse2.hpp"
 #include "32bpp_sse_func.hpp"
+
+#include "../safeguards.h"
 
 /** Instantiation of the SSE2 32bpp blitter factory. */
 static FBlitter_32bppSSE2 iFBlitter_32bppSSE2;

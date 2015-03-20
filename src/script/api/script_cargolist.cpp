@@ -1,4 +1,4 @@
-/* $Id: script_cargolist.cpp 26595 2014-05-18 11:21:59Z frosch $ */
+/* $Id: script_cargolist.cpp 26580 2014-05-11 18:02:11Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "../../cargotype.h"
 #include "../../industry.h"
 #include "../../station_base.h"
+
+#include "../../safeguards.h"
 
 ScriptCargoList::ScriptCargoList()
 {

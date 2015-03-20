@@ -1,4 +1,4 @@
-/* $Id: group.h 24541 2012-09-21 20:31:42Z yexo $ */
+/* $Id: group.h 26450 2014-04-08 21:09:06Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -71,6 +71,8 @@ struct Group : GroupPool::PoolItem<&_group_pool> {
 	bool replace_protection;                ///< If set to true, the global autoreplace have no effect on the group
 	GroupStatistics statistics;             ///< NOSAVE: Statistics and caches on the vehicles in the group.
 
+	GroupID parent;                         ///< Parent group
+
 	Group(CompanyID owner = INVALID_COMPANY);
 	~Group();
 };
@@ -101,6 +103,7 @@ void SetTrainGroupID(Train *v, GroupID grp);
 void UpdateTrainGroupID(Train *v);
 void RemoveVehicleFromGroup(const Vehicle *v);
 void RemoveAllGroupsForCompany(const CompanyID company);
+bool GroupIsInGroup(GroupID search, GroupID group);
 
 extern GroupID _new_group_id;
 

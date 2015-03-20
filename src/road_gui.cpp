@@ -1,4 +1,4 @@
-/* $Id: road_gui.cpp 26460 2014-04-13 10:47:39Z frosch $ */
+/* $Id: road_gui.cpp 27163 2015-02-22 15:26:27Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -30,10 +30,13 @@
 #include "company_base.h"
 #include "hotkeys.h"
 #include "road_gui.h"
+#include "zoom_func.h"
 
 #include "widgets/road_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 static void ShowRVStationPicker(Window *parent, RoadStopType rs);
 static void ShowRoadDepotPicker(Window *parent);
@@ -447,11 +450,18 @@ struct BuildRoadToolbarWindow : Window {
 	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
 	{
 		if (!gui_scope) return;
-		this->SetWidgetsDisabledState(!CanBuildVehicleInfrastructure(VEH_ROAD),
+
+		bool can_build = CanBuildVehicleInfrastructure(VEH_ROAD);
+		this->SetWidgetsDisabledState(!can_build,
 				WID_ROT_DEPOT,
 				WID_ROT_BUS_STATION,
 				WID_ROT_TRUCK_STATION,
 				WIDGET_LIST_END);
+		if (!can_build) {
+			DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
+			DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
+			DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
+		}
 	}
 
 	/**
@@ -634,6 +644,8 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_FULLROAD:
 				_place_road_flag = RF_NONE;
+				if (_tile_fract_coords.x >= 8) _place_road_flag |= RF_START_HALFROAD_X;
+				if (_tile_fract_coords.y >= 8) _place_road_flag |= RF_START_HALFROAD_Y;
 				VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_PLACE_FULLROAD);
 				break;
 
@@ -706,6 +718,7 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case DDSP_PLACE_AUTOROAD:
+			case DDSP_PLACE_FULLROAD:
 				_place_road_flag &= ~(RF_END_HALFROAD_Y | RF_END_HALFROAD_X);
 				if (pt.y & 8) _place_road_flag |= RF_END_HALFROAD_Y;
 				if (pt.x & 8) _place_road_flag |= RF_END_HALFROAD_X;
@@ -724,26 +737,25 @@ struct BuildRoadToolbarWindow : Window {
 
 				break;
 
-			case DDSP_PLACE_FULLROAD:
-				/* For autoroad we need to update the
-				 * direction of the road */
-				if (_thd.size.x > _thd.size.y || (_thd.size.x == _thd.size.y &&
-						( (_tile_fract_coords.x < _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) < 16) ||
-						(_tile_fract_coords.x > _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) > 16) ))) {
-					/* Set dir = X */
-					_place_road_flag &= ~RF_DIR_Y;
-				}
-				else {
-					/* Set dir = Y */
-					_place_road_flag |= RF_DIR_Y;
-				}
-				break;
-
 			default:
 				break;
 		}
 
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
+	}
+
+	void TryToRemoveExtraRoadBits(TileIndex tile, RoadBits &rb) {
+		for (DiagDirection dir = DIAGDIR_BEGIN; dir != DIAGDIR_END; dir++) {
+			RoadBits dir_rb = DiagDirToRoadBits(dir);
+			if (!(rb & dir_rb)) continue;
+			if (CanConnectToRoad(tile, _cur_roadtype, dir)) continue;
+			DoCommandP(tile, tile,
+			    (dir_rb == ROAD_NW || dir_rb == ROAD_NE ? 0 : 3) |
+			    (dir_rb & ROAD_X ? 0 : 4) |
+			    (_cur_roadtype << 3),
+			    CMD_REMOVE_LONG_ROAD);
+			rb &= ~dir_rb;
+		}
 	}
 
 	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
@@ -776,13 +788,27 @@ struct BuildRoadToolbarWindow : Window {
 					break;
 
 				case DDSP_PLACE_FULLROAD:
-					DoCommandP(start_tile, end_tile,
-							_place_road_flag | (_cur_roadtype << 3) |
-								(_one_way_button_clicked << 5) | (1 << 6) |
-								(start_tile > end_tile ? 1 : 2),  // always build full roads
+					if (start_tile == end_tile || _remove_button_clicked) {
+						_place_road_flag = (RoadFlags)((_place_road_flag & RF_DIR_Y) ? (_place_road_flag & 0x07) : (_place_road_flag >> 3));
+						DoCommandP(start_tile, end_tile, _place_road_flag | (_cur_roadtype << 3) | (_one_way_button_clicked << 5),
 							_remove_button_clicked ?
 							CMD_REMOVE_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_road) :
 							CMD_BUILD_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_build_road), CcPlaySound1D);
+					} else {
+						_place_road_flag &= RF_DIR_Y;
+						RoadBits road_dir = _place_road_flag ? ROAD_Y : ROAD_X;
+						// if (start_tile > end_tile) Swap(start_tile, end_tile);
+						RoadBits start_extra_rb = GetAnyRoadBits(start_tile, _cur_roadtype, false) & ~road_dir;
+						RoadBits end_extra_rb = GetAnyRoadBits(end_tile, _cur_roadtype, false) & ~road_dir;
+						this->TryToRemoveExtraRoadBits(start_tile, start_extra_rb);
+						this->TryToRemoveExtraRoadBits(end_tile, end_extra_rb);
+						if ((bool)start_extra_rb != (start_tile > end_tile)) _place_road_flag |= RF_START_HALFROAD_Y;
+						if (!end_extra_rb != (start_tile > end_tile)) _place_road_flag |= RF_END_HALFROAD_Y;
+						DoCommandP(start_tile, end_tile,
+							_place_road_flag | (_cur_roadtype << 3) |
+							(_one_way_button_clicked << 5) | (1 << 6),
+							CMD_BUILD_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_build_road), CcPlaySound1D);
+					}
 					break;
 
 				case DDSP_BUILD_BUSSTOP:
@@ -1004,7 +1030,7 @@ static WindowDesc _build_road_scen_desc(
 
 /**
  * Show the road building toolbar in the scenario editor.
- * @return The just opened toolbar.
+ * @return The just opened toolbar, or \c NULL if the toolbar was already open.
  */
 Window *ShowBuildRoadScenToolbar()
 {
@@ -1026,11 +1052,29 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 		this->FinishInitNested(TRANSPORT_ROAD);
 	}
 
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		switch (widget) {
+			case WID_BROD_DEPOT_NW:
+			case WID_BROD_DEPOT_NE:
+			case WID_BROD_DEPOT_SW:
+			case WID_BROD_DEPOT_SE:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(48) + 2;
+				break;
+			case WID_BROD_DEPOT_AUTO:
+				size->width = ScaleGUITrad(128) + 6;
+				break;
+			default:
+				break;
+		}
+	}
+
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		if (!IsInsideMM(widget, WID_BROD_DEPOT_NE, WID_BROD_DEPOT_NW + 1)) return;
 
-		DrawRoadDepotSprite(r.left - 1, r.top, (DiagDirection)(widget - WID_BROD_DEPOT_NE + DIAGDIR_NE), _cur_roadtype);
+		DrawRoadDepotSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), (DiagDirection)(widget - WID_BROD_DEPOT_NE + DIAGDIR_NE), _cur_roadtype);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1080,8 +1124,11 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),
@@ -1158,12 +1205,35 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		}
 	}
 
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		switch (widget) {
+			case WID_BROS_STATION_NE:
+			case WID_BROS_STATION_SE:
+			case WID_BROS_STATION_SW:
+			case WID_BROS_STATION_NW:
+			case WID_BROS_STATION_X:
+			case WID_BROS_STATION_Y:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(48) + 2;
+				break;
+			case WID_BROS_STATION_AUTO:
+				size->width  = ScaleGUITrad(128) + 6;
+				break;
+			case WID_BROS_STATION_XY_AUTO:
+				size->width  = ScaleGUITrad(64) + 2;
+				break;
+			default:
+				break;
+		}
+	}
+
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		if (!IsInsideMM(widget, WID_BROS_STATION_NE, WID_BROS_STATION_Y + 1)) return;
 
 		StationType st = (this->window_class == WC_BUS_STATION) ? STATION_BUS : STATION_TRUCK;
-		StationPickerDrawSprite(r.left + TILE_PIXELS, r.bottom - TILE_PIXELS, st, INVALID_RAILTYPE, widget < WID_BROS_STATION_X ? ROADTYPE_ROAD : _cur_roadtype, widget - WID_BROS_STATION_NE);
+		StationPickerDrawSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), st, INVALID_RAILTYPE, widget < WID_BROS_STATION_X ? ROADTYPE_ROAD : _cur_roadtype, widget - WID_BROS_STATION_NE);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)

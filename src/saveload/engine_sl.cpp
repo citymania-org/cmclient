@@ -1,4 +1,4 @@
-/* $Id: engine_sl.cpp 24810 2012-12-09 16:55:03Z frosch $ */
+/* $Id: engine_sl.cpp 26816 2014-09-13 14:46:03Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,7 +12,10 @@
 #include "../stdafx.h"
 #include "saveload_internal.h"
 #include "../engine_base.h"
-#include <map>
+#include "../string_func.h"
+#include <vector>
+
+#include "../safeguards.h"
 
 static const SaveLoad _engine_desc[] = {
 	 SLE_CONDVAR(Engine, intro_date,          SLE_FILE_U16 | SLE_VAR_I32,  0,  30),
@@ -37,6 +40,7 @@ static const SaveLoad _engine_desc[] = {
 	SLE_CONDNULL(1,                                                        0,  44),
 	 SLE_CONDVAR(Engine, company_avail,       SLE_FILE_U8  | SLE_VAR_U16,  0, 103),
 	 SLE_CONDVAR(Engine, company_avail,       SLE_UINT16,                104, SL_MAX_VERSION),
+	 SLE_CONDVAR(Engine, company_hidden,      SLE_UINT16,                193, SL_MAX_VERSION),
 	 SLE_CONDSTR(Engine, name,                SLE_STR, 0,                 84, SL_MAX_VERSION),
 
 	SLE_CONDNULL(16,                                                       2, 143), // old reserved space
@@ -44,11 +48,24 @@ static const SaveLoad _engine_desc[] = {
 	SLE_END()
 };
 
-static std::map<EngineID, Engine> _temp_engine;
+static std::vector<Engine> _temp_engine;
 
 Engine *GetTempDataEngine(EngineID index)
 {
-	return &_temp_engine[index];
+	if (index < _temp_engine.size()) {
+		return &_temp_engine[index];
+	} else if (index == _temp_engine.size()) {
+		uint8 zero[sizeof(Engine)];
+		memset(zero, 0, sizeof(zero));
+		Engine *engine = new (zero) Engine();
+
+		/* Adding 'engine' to the vector makes a shallow copy, so we do not want to destruct 'engine' */
+		_temp_engine.push_back(*engine);
+
+		return &_temp_engine[index];
+	} else {
+		NOT_REACHED();
+	}
 }
 
 static void Save_ENGN()
@@ -105,7 +122,8 @@ void CopyTempEngineData()
 		e->preview_company     = se->preview_company;
 		e->preview_wait        = se->preview_wait;
 		e->company_avail       = se->company_avail;
-		if (se->name != NULL) e->name = strdup(se->name);
+		e->company_hidden      = se->company_hidden;
+		if (se->name != NULL) e->name = stredup(se->name);
 	}
 
 	/* Get rid of temporary data */

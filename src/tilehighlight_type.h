@@ -29,6 +29,7 @@ enum HighLightStyle {
 	HT_VEHICLE   = 0x100, ///< vehicle is accepted as target as well (bitmask)
 	HT_DIAGONAL  = 0x200, ///< Also allow 'diagonal rectangles'. Only usable in combination with #HT_RECT or #HT_POINT.
 	HT_POLY      = 0x400, ///< polyline mode; connect highlighted track with previous one
+	HT_NEW_POLY  = 0xC00, ///< start completly new polyline; implies #HT_POLY
 	HT_DRAG_MASK = 0x0F8, ///< Mask for the tile drag-type modes.
 
 	/* lower bits (used with HT_LINE and HT_RAIL):
@@ -63,7 +64,7 @@ struct TileHighlightData {
 	Point selend;        ///< The location where the drag currently ends.
 	Point selstart2;     ///< The location where the second segment of a polyline track starts.
 	Point selend2;       ///< The location where the second segment of a polyline track ends.
-	HighLightStyle dir2; ///< Direction of the second segment of a polyline track, HT_DIR_END if second segment is not selected.
+	HighLightStyle dir2; ///< Direction of the second segment of a polyline track, HT_DIR_END if second segment is not selected. HT_LINE drawstyle.
 	byte sizelimit;      ///< Whether the selection is limited in length, and what the maximum length is.
 
 	HighLightStyle drawstyle;      ///< Lower bits 0-3 are reserved for detailed highlight information.

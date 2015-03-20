@@ -1,5 +1,5 @@
 //Microsoft Developer Studio generated resource script.
-// $Id: ottdres.rc.in 27029 2014-10-21 18:33:24Z frosch $
+// $Id: ottdres.rc.in 27103 2015-01-01 20:51:18Z rubidium $
 //
 // This file is part of OpenTTD.
 // OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -79,8 +79,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,4,4,!!REVISION!!
- PRODUCTVERSION 1,4,4,!!REVISION!!
+ FILEVERSION 1,5,0,!!REVISION!!
+ PRODUCTVERSION 1,5,0,!!REVISION!!
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -100,7 +100,7 @@ BEGIN
             VALUE "FileDescription", "OpenTTD\0"
             VALUE "FileVersion", "!!VERSION!!\0"
             VALUE "InternalName", "openttd\0"
-            VALUE "LegalCopyright", "Copyright \xA9 OpenTTD Developers 2002-2014. All Rights Reserved.\0"
+            VALUE "LegalCopyright", "Copyright \xA9 OpenTTD Developers 2002-2015. All Rights Reserved.\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "openttd.exe\0"
             VALUE "PrivateBuild", "\0"

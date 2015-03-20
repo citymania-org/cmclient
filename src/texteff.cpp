@@ -1,4 +1,4 @@
-/* $Id: texteff.cpp 25011 2013-02-17 14:50:54Z rubidium $ */
+/* $Id: texteff.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "core/smallvec_type.hpp"
 #include "viewport_func.h"
 #include "settings_type.h"
+
+#include "safeguards.h"
 
 /** Container for all information about a text effect */
 struct TextEffect : public ViewportSign {

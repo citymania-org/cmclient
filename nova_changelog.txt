@@ -1,0 +1,264 @@
+Prepared by Novapolis Team http://www.novapolis.net
+
+== ATTENTION ==
+The client circumvents the OpenTTD version checks to be able to join unpatched multiplayer games.
+Because of this, if you encounter any bug, report it to Novapolis team as it may be connected to patches included.
+Unless you encouter the same bug on unpatched OpenTTD client do not report it to OpenTTD development team.
+
+
+== INSTALL ==
+If you have shared OpenTTD folder, you can just unzip anywhere and launch
+If you dont use shared folder, unzip into your OpenTTD folder
+innerhighlight.grf in data folder is required, copy it to data or content_download/data folder
+
+== PRO INSTALL ==
+WINDOWS
+Possible situations:
+1) Installing stable release from openttd.org, install also with graphics and sound sets (only graphic are required)
+	Install the package. It will create game files in %Program Files%/OpenTTD and user files in %USER_PROFILE%/Documents/OpenTTD
+	To gain advantage of shared folder, copy all files except LANG folder and OPENTTD.EXE from %Program Files%/OpenTTD to %USER_PROFILE%/Documents/OpenTTD
+	Now if you can unzip this client anywhere and if openttd.exe stays with its lang/folder, you can launch it from any place
+	This will also you enable you to use any number or openttd versions/clients
+2) Installing stable release from zip
+	Download zip and also graphics set zip.
+	Unzip both into the same folder. Graphics set belong to BASESET or DATA folder
+	Launch the openttd.exe (if there is openttd.cfg already, delete it)
+	Quit OpenTTD. Now it created user files in your User profile
+	Copy all files except LANG folder and OPENTTD.EXE into User profile folder called OpenTTD
+	This will enable you to use any number or openttd versions/clients under condition you keep openttd.exe and its lang files in one folder (every client comes with binary and lang folder at least)
+LINUX
+Novapolis does not ship linux client. Your only chance is to compile it by yourself.
+Process is easy and simple guide is at http://wiki.openttd.org/Compiling_on_(GNU/)Linux_and_*BSD
+If you can use Linux, you can compile OpenTTD too
+
+== LOGIN SYSTEM ==
+Community Login system - login window
+- Please read carefully about new login system if you intend to use it
+- new login system for Novapolis and also for n-ice and BTPro, login date are stored in new config file novapolis.cfg
+	- login window can be opened via landinfo dropdown mene or a hotkey can be associated with it, for example CTRL+L
+
+	- login is saved by entering text via OpenTTD forms. Remember that OpenTTD shows real letters when entering any text
+	- novapolis password is stored encrypted and login string is sent via ingame chat privately to server
+		so no one can see it
+	- n-ice and BTPro uses token system. In order to retrieve the token, client has to log to their websites
+		obtain the token here and enter it in ingame chat
+		Alternatively both communities implemented a system, that one can open a dedicated webpage
+		and enter username and password there to obtain the token, which is used in n-ice and BTPro
+		patched OpenTTD client and Novapolis client uses it too.
+		Once token is retrieved, it is sent via ingame chat privately to server
+		so no one can see it
+
+		!!! Be aware, that the token login webpage needs decrypted password, so this decrypted password
+		is stored in novapolis.cfg file and send decrypted via OpenTTD to their website
+		Thus do not provide novapolis.cfg file to any one!
+		N-ice and BTPro are 3rd side and Novapolis cannot guarantee safety of the login to their community
+		and should they change the login system, Novapolis client login will not work for both of them
+
+== SCRIPTS ==
+autoexec.scr contains some predefined aliases for connecting on Novapolis server
+In game press ~ (above tab key) and write "nova+<number>", e.g. "nova1". This will connect you to desired server
+This is usable for any OpenTTD servers
+
+If you want to use login alias, you will have to rewrite "nick" and "password" to your actual Novapolis account.
+However bear in mind, if you accidentally launch this alias on another server, you will uncover your password
+
+
+== OPENTTD.CFG ==
+In openttd.cfg.example are lines you can add to your openttd.cfg to have Novapolis servers available in multiplayer menu all the time without searching for games
+This is usable for any OpenTTD servers
+
+
+== CHANGELOG ==
+*** v26-150rc1 ***
+Update to 1.5.0-RC1
+- Regular advertisement and powerfunding (in CB window)
+- Regular funding is now smarter
+- Full tile autoroad is replaced with CB autoroad which is more like regular autoroad, but also tries to avoid half-tile dead ends and redundant roadbits
+- station_sized and station_dragdrop hotkeys to start building station directly in fixed size or drag&drop mode
+- toggle_fullscreen hotkey
+- zoning hotkeys can be global
+- Industry funding window has option to highlight tiles where industry can't be build regardless of terrain. Note that it works quite slow and can cause lags so use with caution
+- GR and next displays once again show proper values
+- Polyrail tool updated to version 10b, noticable changes:
+--- Ending line with double click no longer interferes with building quickly so setting for disabling it was removed
+--- Tool can now be started in non-snapping mode (new line) with new_polyline hotkey (CTRL+SHIFT+A)
+--- No longer shows error if no new tracks were built, only changes snap point
+
+*** v25-150b2 ***
+Update to 1.5.0-beta2
+
+*** v24-150b1 ***
+Update to 1.5.0-beta1
+
+*** v23-144 ***
+Town gui - hotkey for building statue
+Statue will be also built when doing Ctrl + click on town name
+Fixing bugs in login window
+- no crash on doubleclick
+- now working with non asci characters in login entries
+
+*** v22-144 ***
+- Community login system - read above
+- hotkeys for industry funding, adv. settings window, newgrf window and login window, by default not assigned
+- added setting to choose finishing polyrail by double click
+- cb window updated more often
+- Fund regularly button in CB window is toggled when clicked
+- Cargo commands gui in commands window are changed and one is added
+- Town window
+	-Houses under construction are hopefully diplayed properly and houses under reconstruction are showed only per month
+
+*** v21-144 ***
+Zoning tool
+ - window made smaller - removed unnecessary lines, clicking on selected button will deselect it
+ - hotkeys for all buttons, default is SHIFT+{number}
+Town window
+ - new line: Houses: UC - under construction, UR - under reconstruction (being rebuilt), DTM - demolished this month
+ - hotkeys for buttons. No default key is set. Hotkey for CB button will open CB window for any town even in single player
+CB window
+ - added more lines (from Town window)
+ - added hotkeys for small and medium advertisement (not set by default)
+ - added Fund regularly button
+Fund regularly feature
+ - Can be de/activated in CB window only
+ - Will fund buildings whenever fund buildings goes down to 0 months. Company needs money to use it
+ - any number of towns can have this activated, but it is costly
+ - !!! Use with caution as it drains money away
+
+*** v20-144 ***
+Update to 1.4.4
+Zoning gui revised. Zoning tiles are more colourful.
+Zoning hotkey (default none, recommended CTRL+Z)
+New innerhighlight.grf
+
+*** v19-143 ***
+Update to 1.4.3
+
+*** v18-142 ***
+Extended tooltips inspired by MJP's patch (http://www.tt-forums.net/viewtopic.php?f=33&t=53394)
+ - hover over industry or station to see cargos and its ratings
+ - can be disabled in gui setting
+More hotkeys
+ - close vehicle order window
+ - refit and clone vehicle from vehicle window while in depot
+ - tree hotkey switches tree window between active/inactive
+Changes
+ - local authority detail for all companies in town authority window
+ - potential population and authority detail number moved from header to town details part ot town window
+
+*** v17-141 ***
+Hotkeys for town management removed from town view window
+
+
+*** v16-140 ***
+Option for depots and road stations to automatically choose direction
+Fixed width of companies dropdown in toolbar
+Fixed client version in diff
+
+*** v15-140 ***
+Update to 1.4.0
+New autoroad tool that builds only full tile roads
+Show potential town population (including unfinished buildings) in town view window toolbar
+Hotkey for borrowing all money (no default binding)
+Double click in polyrail mode no longer finishes current line
+
+*** v14-140b5 ***
+1.4.0-beta5 client
+
+*** v13-133 ***
+Fixed 32bit binary (problem in WinXP)
+Fix crash when pressed trees hotkey in spectating mode
+Fixed gui problem with extra sprites, when too many new sprites were loaded
+Fixed login query. Input is now both '<name> <password>'
+
+*** v12-133 ***
+New town growth counters and zones (for zoning GUI) Unfinished wiki article
+Replaced "from" column in CB GUI with storage usage %
+Vehicle cloning hotkey in depot(no default), advertise hotkeys for town authority and town info windows (CTRL+V for large advertisemetn), funding hotkey for town info window(CTRL+F).
+Zoning GUI changes: new advertisement range and CB town borders zones, "town borders" renamed to "town zones" and now shows more zones.
+CB GUI fixed
+
+*** v11-133 ***
+Fix nova client extra hotkeys
+
+*** v10-133 ***
+Update to 1.3.3
+Added quick button for NS16
+Town gui new GR/next/flag calculation
+
+*** v9-132 ***
+New innerhighlight.grf file !!!
+Added goal gui button to toolbar. You can now easily access it and also see other companies goal progress (partially backported from official trunk)
+Moved watch gui to toolbar
+Added teamchat option to watch gui - when clicked on dot next to company colour, you will teamchat with that company
+Goal gui height is adjusted according to current number of goals (lines)
+Zoning gui fixes and unused parts reduction (thanks to dp for fixes)
+
+*** v8-132 ***
+Added:
+Watchgui patch by Muxy
+
+*** v7-132 ***
+New Client Version check - upon joining Novapolis server, a message will pop up if there is update available
+CB gui - When you join Novapolis City builder server, there will be a new button in town window with cargos delivered (merged from city builder client)
+       - this works only on Novapolis City builder servers
+New button in Novapolis commands gui (HELP topic 6)
+
+*** v6-132 ***
+New hotkeys, changes to hotkeys (can be altered in hotkeys.cfg)
+'R' Build new vehicle, when vehicle purchase list is active
+CTRL+'F' START/STOP all vehicles in active depot
+'B' Open Vehicle purchase list from Depot window
+'G' Open orders window when a vehicle window is active
+'Z' START/STOP vehicle when a vehicle window is active
+CTRL+'S' Build statue in active town
+CTRL+'F' Fund buildings in active town
+
+*** v5-132 ***
+64bit version package
+New hotkeys:
+'G' Open orders window when a vehicle window is active
+'X' START/STOP vehicle when a vehicle window is active
+'CTRL+X' Start all vehicles in depot
+NS8 quick connect button added
+
+*** v4-132 ***
+Update to 1.3.2
+New buttons: quick connect to NSX3, login data input, autologin (requires login data input first)
+Due to new support of Brahmic languages, some language libraries are required and binary is a little bigger.
+
+*** v3-131 ***
+new buttons to commands gui
+filter for Novapolis servers in server list
+polyline patch fix (fixes missing coverage area for dock)
+
+*** v2-131 ***
+Hotkeys for several events: defaults: N:Commands windows, CTRL+H:build HQ, CTRL+F4:goal gui, CTRL+F2:cargo table
+Updated direct server connect buttons to new IP
+
+*** v1-130 ***
+Client created
+
+Patch
+Watch Company Gui - by Muxy http://www.openttd.fr/
+Polyline patch - by adf88 http://www.tt-forums.net/viewtopic.php?f=33&t=57080&hilit=polyline
+Zoning patch - by Svip http://www.tt-forums.net/viewtopic.php?f=33&t=33701&start=40
+Orders control with alt/ctrl/shift and setting gui - by blup
+Transported cargo table - by Honza_ http://www.tt-forums.net/viewtopic.php?f=33&t=62339
+City names in different colour - by Honza_ http://www.tt-forums.net/viewtopic.php?f=33&t=63844
+Novapolis commands gui - by xi (found under question mark menu, only available when connected on Novapolis servers)
+
+Option to select old depot train length display - by The Dude
+Income and delivery graph can display data of individual cargos - by The Dude
+Industry directory filter - author unknown
+Rating in town label - by Terkhen http://www.tt-forums.net/viewtopic.php?f=33&t=42598&hilit=rating+label
+Manhatten and square distance of vehicle route in orders gui - by The Dude
+Count of cities/towns - by The Dude
+Hotkey for Goal Gui and HQ placement - by The Dude
+
+Script
+Aliases for connecting to Novapolis servers
+Aliases for login on Novapolis servers
+
+
+
+Special thanks to authors of the patched included and to OpenTTD development team for developing the game further.

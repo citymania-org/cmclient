@@ -1,4 +1,4 @@
-/* $Id: thread_os2.cpp 26353 2014-02-18 17:58:46Z frosch $ */
+/* $Id: thread_os2.cpp 27092 2014-12-24 17:17:18Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #define INCL_DOS
 #include <os2.h>
 #include <process.h>
+
+#include "../safeguards.h"
 
 /**
  * OS/2 version for ThreadObject.
@@ -36,7 +38,7 @@ public:
 		param(param),
 		self_destruct(self_destruct)
 	{
-		thread = _beginthread(stThreadProc, NULL, 32768, this);
+		thread = _beginthread(stThreadProc, NULL, 1048576, this);
 	}
 
 	/* virtual */ bool Exit()

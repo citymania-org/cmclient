@@ -79,7 +79,7 @@ struct ZoningWindow : public Window {
 
 	void DrawWidget(const Rect &r, int widget) const
 	{
-		StringID strid = NULL;
+		StringID strid = STR_EMPTY;
 		if (widget >= ZTW_OUTER_FIRST && widget < ZTW_INNER_FIRST){
 			strid = _zone_types[widget - ZTW_OUTER_FIRST];
 		}

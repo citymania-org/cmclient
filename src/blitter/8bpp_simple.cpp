@@ -1,4 +1,4 @@
-/* $Id: 8bpp_simple.cpp 26541 2014-04-29 18:18:52Z frosch $ */
+/* $Id: 8bpp_simple.cpp 26969 2014-10-06 18:45:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../stdafx.h"
 #include "../zoom_func.h"
 #include "8bpp_simple.hpp"
+
+#include "../safeguards.h"
 
 /** Instantiation of the simple 8bpp blitter factory. */
 static FBlitter_8bppSimple iFBlitter_8bppSimple;
@@ -43,6 +45,10 @@ void Blitter_8bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoom
 
 				case BM_TRANSPARENT:
 					if (*src != 0) colour = bp->remap[*dst];
+					break;
+
+				case BM_BLACK_REMAP:
+					colour = 0;
 					break;
 
 				default:

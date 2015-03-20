@@ -1,4 +1,4 @@
-/* $Id: object_cmd.cpp 26240 2014-01-12 18:00:19Z frosch $ */
+/* $Id: object_cmd.cpp 26879 2014-09-21 11:24:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -37,6 +37,8 @@
 
 #include "table/strings.h"
 #include "table/object_land.h"
+
+#include "safeguards.h"
 
 ObjectPool _object_pool("Object");
 INSTANTIATE_POOL_METHODS(Object)
@@ -293,7 +295,7 @@ CommandCost CmdBuildObject(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 
 	/* Finally do a check for bridges. */
 	TILE_AREA_LOOP(t, ta) {
-		if (MayHaveBridgeAbove(t) && IsBridgeAbove(t) && (
+		if (IsBridgeAbove(t) && (
 				!(spec->flags & OBJECT_FLAG_ALLOW_UNDER_BRIDGE) ||
 				(GetTileMaxZ(t) + spec->height >= GetBridgeHeight(GetSouthernBridgeEnd(t))))) {
 			return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);

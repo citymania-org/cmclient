@@ -1,4 +1,4 @@
-/* $Id: newgrf_generic.cpp 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_generic.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "newgrf_sound.h"
 #include "water_map.h"
 #include <list>
+
+#include "safeguards.h"
 
 /** Scope resolver for generic objects and properties. */
 struct GenericScopeResolver : public ScopeResolver {

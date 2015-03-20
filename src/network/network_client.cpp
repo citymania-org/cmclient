@@ -1,4 +1,4 @@
-/* $Id: network_client.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: network_client.cpp 27020 2014-10-15 18:31:37Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -31,12 +31,16 @@
 #include "network_base.h"
 #include "network_client.h"
 #include "../core/backup_type.hpp"
-#include "../town.h"
-#include "table/strings.h"
-#include "network_func.h"
-/* This file handles all the client-commands */
-void SyncCBClient(byte * msg);
 
+#include "table/strings.h"
+
+#include "../town.h"
+#include "network_func.h"
+
+#include "../safeguards.h"
+/* This file handles all the client-commands */
+
+void SyncCBClient(byte * msg);
 
 /** Read some packets, and when do use that data as initial load filter. */
 struct PacketReader : LoadFilter {
@@ -209,7 +213,7 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
  * when that's the case handle it appropriately.
  * @return true when everything went okay.
  */
-/*static */ bool ClientNetworkGameSocketHandler::Receive()
+/* static */ bool ClientNetworkGameSocketHandler::Receive()
 {
 	if (my_client->CanSendReceive()) {
 		NetworkRecvStatus res = my_client->ReceivePackets();
@@ -224,7 +228,7 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 }
 
 /** Send the packets of this socket handler. */
-/*static */ void ClientNetworkGameSocketHandler::Send()
+/* static */ void ClientNetworkGameSocketHandler::Send()
 {
 	my_client->SendPackets();
 	my_client->CheckConnection();
@@ -266,7 +270,7 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 				SendAck();
 				extern bool novahost();
 				if(novahost()){
-					NetworkClientSendChatToServer("!check 1443"); //check version
+					NetworkClientSendChatToServer("!check 1444"); //check version
 					CB_SetCB(false);
 				}
 			}
@@ -970,7 +974,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHAT(Packet *p)
 		switch (action) {
 			case NETWORK_ACTION_CHAT_CLIENT:
 				/* For speaking to client we need the client-name */
-				snprintf(name, sizeof(name), "%s", ci_to->client_name);
+				seprintf(name, lastof(name), "%s", ci_to->client_name);
 				ci = NetworkClientInfo::GetByClientID(_network_own_client_id);
 				break;
 
@@ -991,7 +995,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHAT(Packet *p)
 		}
 	} else {
 		/* Display message from somebody else */
-		snprintf(name, sizeof(name), "%s", ci_to->client_name);
+		seprintf(name, lastof(name), "%s", ci_to->client_name);
 		ci = ci_to;
 	}
 
@@ -1248,7 +1252,7 @@ void NetworkUpdateClientName()
 		if (!_network_server) {
 			MyClient::SendSetName(_settings_client.network.client_name);
 		} else {
-			if (NetworkFindName(_settings_client.network.client_name)) {
+			if (NetworkFindName(_settings_client.network.client_name, lastof(_settings_client.network.client_name))) {
 				NetworkTextMessage(NETWORK_ACTION_NAME_CHANGE, CC_DEFAULT, false, ci->client_name, _settings_client.network.client_name);
 				strecpy(ci->client_name, _settings_client.network.client_name, lastof(ci->client_name));
 				NetworkUpdateClientInfo(CLIENT_ID_SERVER);

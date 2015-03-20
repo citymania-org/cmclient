@@ -1,4 +1,4 @@
-/* $Id: gfx_func.h 26217 2014-01-03 08:51:49Z rubidium $ */
+/* $Id: gfx_func.h 27134 2015-02-01 20:54:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -52,6 +52,7 @@ void CreateConsole();
 
 extern byte _dirkeys;        ///< 1 = left, 2 = up, 4 = right, 8 = down
 extern bool _fullscreen;
+extern byte _support8bpp;
 extern CursorVars _cursor;
 extern bool _ctrl_pressed;   ///< Is Ctrl pressed?
 extern bool _alt_pressed;    ///< Is Alt pressed?

@@ -1,4 +1,4 @@
-/* $Id: 8bpp_optimized.cpp 26541 2014-04-29 18:18:52Z frosch $ */
+/* $Id: 8bpp_optimized.cpp 26969 2014-10-06 18:45:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,7 +13,10 @@
 #include "../zoom_func.h"
 #include "../settings_type.h"
 #include "../core/math_func.hpp"
+#include "../core/mem_func.hpp"
 #include "8bpp_optimized.hpp"
+
+#include "../safeguards.h"
 
 /** Instantiation of the 8bpp optimised blitter factory. */
 static FBlitter_8bppOptimized iFBlitter_8bppOptimized;
@@ -94,6 +97,11 @@ void Blitter_8bppOptimized::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Z
 					break;
 				}
 
+				case BM_BLACK_REMAP:
+					MemSetT(dst, 0, pixels);
+					dst += pixels;
+					break;
+
 				case BM_TRANSPARENT: {
 					const uint8 *remap = bp->remap;
 					src += pixels;
@@ -105,7 +113,7 @@ void Blitter_8bppOptimized::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Z
 				}
 
 				default:
-					memcpy(dst, src, pixels);
+					MemCpyT(dst, src, pixels);
 					dst += pixels; src += pixels;
 					break;
 			}

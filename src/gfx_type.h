@@ -1,4 +1,4 @@
-/* $Id: gfx_type.h 24111 2012-04-10 20:16:51Z rubidium $ */
+/* $Id: gfx_type.h 27167 2015-02-22 23:06:45Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -148,6 +148,12 @@ struct CursorVars {
 	bool in_window;  ///< mouse inside this window, determines drawing logic
 
 	bool vehchain;   ///< vehicle chain is dragged
+
+	bool UpdateCursorPosition(int x, int y, bool queued_warp);
+
+private:
+	bool queued_warp;
+	Point last_position;
 };
 
 /** Data about how and where to blit pixels. */
@@ -308,6 +314,13 @@ struct Palette {
 	Colour palette[256]; ///< Current palette. Entry 0 has to be always fully transparent!
 	int first_dirty;     ///< The first dirty element.
 	int count_dirty;     ///< The number of dirty elements.
+};
+
+/** Modes for 8bpp support */
+enum Support8bpp {
+	S8BPP_NONE = 0, ///< No support for 8bpp by OS or hardware, force 32bpp blitters.
+	S8BPP_SYSTEM,   ///< No 8bpp support by hardware, do not try to use 8bpp video modes or hardware palettes.
+	S8BPP_HARDWARE, ///< Full 8bpp support by OS and hardware.
 };
 
 #endif /* GFX_TYPE_H */

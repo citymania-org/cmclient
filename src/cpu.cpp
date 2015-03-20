@@ -1,4 +1,4 @@
-/* $Id: cpu.cpp 26225 2014-01-04 19:46:24Z rubidium $ */
+/* $Id: cpu.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "stdafx.h"
 #include "core/bitmath_func.hpp"
+
+#include "safeguards.h"
 
 #undef RDTSC_AVAILABLE
 

@@ -1,4 +1,4 @@
-/* $Id: network_command.cpp 25770 2013-09-14 11:34:09Z rubidium $ */
+/* $Id: network_command.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,8 @@
 #include "../command_func.h"
 #include "../company_func.h"
 #include "../settings_type.h"
+
+#include "../safeguards.h"
 
 /** Table with all the callbacks we'll use for conversion*/
 static CommandCallback * const _callback_table[] = {

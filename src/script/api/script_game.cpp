@@ -1,4 +1,4 @@
-/* $Id: script_game.cpp 23740 2012-01-03 21:32:51Z rubidium $ */
+/* $Id: script_game.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../../command_type.h"
 #include "../../settings_type.h"
 #include "../../network/network.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptGame::Pause()
 {

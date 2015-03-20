@@ -1,4 +1,4 @@
-/* $Id: script_rail.cpp 26279 2014-01-26 14:54:34Z frosch $ */
+/* $Id: script_rail.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "../../newgrf_generic.h"
 #include "../../newgrf_station.h"
 #include "../../strings_func.h"
+
+#include "../../safeguards.h"
 
 /* static */ char *ScriptRail::GetName(RailType rail_type)
 {

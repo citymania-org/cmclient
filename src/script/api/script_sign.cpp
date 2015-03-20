@@ -1,4 +1,4 @@
-/* $Id: script_sign.cpp 25488 2013-06-27 19:57:41Z rubidium $ */
+/* $Id: script_sign.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../../string_func.h"
 #include "../../strings_func.h"
 #include "../../tile_map.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptSign::IsValidSign(SignID sign_id)
 {

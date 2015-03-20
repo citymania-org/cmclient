@@ -1,4 +1,4 @@
-/* $Id: terraform_gui.cpp 26460 2014-04-13 10:47:39Z frosch $ */
+/* $Id: terraform_gui.cpp 27134 2015-02-01 20:54:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,10 +32,13 @@
 #include "hotkeys.h"
 #include "engine_base.h"
 #include "terraform_gui.h"
+#include "zoom_func.h"
 
 #include "widgets/terraform_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 void CcTerraform(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 {
@@ -327,7 +330,6 @@ static Hotkey terraform_hotkeys[] = {
 	Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_TT_DEMOLISH),
 	Hotkey('U', "buyland", WID_TT_BUY_LAND),
 	Hotkey('I', "trees", WID_TT_PLANT_TREES),
-	Hotkey('R', "ruler", WID_TT_MEASUREMENT_TOOL),	
 	Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
 	Hotkey('P', "placeobject", WID_TT_PLACE_OBJECT),
 	HOTKEY_LIST_END
@@ -356,8 +358,8 @@ static const NWidgetPart _nested_terraform_widgets[] = {
 								SetFill(0, 1), SetDataTip(SPR_IMG_BUY_LAND, STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_DARK_GREEN, WID_TT_PLANT_TREES), SetMinimalSize(22, 22),
 								SetFill(0, 1), SetDataTip(SPR_IMG_PLANTTREES, STR_SCENEDIT_TOOLBAR_PLANT_TREES),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_MEASUREMENT_TOOL), SetMinimalSize(22,22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_QUERY, STR_LANDSCAPING_TOOLTIP_RULER_TOOL),
+		// NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_MEASUREMENT_TOOL), SetMinimalSize(22,22),
+		// 						SetFill(0, 1), SetDataTip(SPR_IMG_QUERY, STR_LANDSCAPING_TOOLTIP_RULER_TOOL),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_PLACE_SIGN), SetMinimalSize(22, 22),
 								SetFill(0, 1), SetDataTip(SPR_IMG_SIGN, STR_SCENEDIT_TOOLBAR_PLACE_SIGN),
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_TT_SHOW_PLACE_OBJECT),
@@ -378,7 +380,7 @@ static WindowDesc _terraform_desc(
 /**
  * Show the toolbar for terraforming in the game.
  * @param link The toolbar we might want to link to.
- * @return The allocated toolbar.
+ * @return The allocated toolbar if the window was newly opened, else \c NULL.
  */
 Window *ShowTerraformToolbar(Window *link)
 {
@@ -572,6 +574,14 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		}
 	}
 
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		if (widget != WID_ETT_DOTS) return;
+
+		size->width  = max<uint>(size->width,  ScaleGUITrad(59));
+		size->height = max<uint>(size->height, ScaleGUITrad(31));
+	}
+
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		if (widget != WID_ETT_DOTS) return;
@@ -584,7 +594,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 
 		assert(n != 0);
 		do {
-			DrawSprite(SPR_WHITE_POINT, PAL_NONE, center_x + coords[0], center_y + coords[1]);
+			DrawSprite(SPR_WHITE_POINT, PAL_NONE, center_x + ScaleGUITrad(coords[0]), center_y + ScaleGUITrad(coords[1]));
 			coords += 2;
 		} while (--n);
 	}
@@ -772,7 +782,7 @@ static WindowDesc _scen_edit_land_gen_desc(
 
 /**
  * Show the toolbar for terraforming in the scenario editor.
- * @return The allocated toolbar.
+ * @return The allocated toolbar if the window was newly opened, else \c NULL.
  */
 Window *ShowEditorTerraformToolbar()
 {

@@ -1,4 +1,4 @@
-/* $Id: gfx_layout.cpp 26037 2013-11-18 19:47:43Z rubidium $ */
+/* $Id: gfx_layout.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #ifdef WITH_ICU
 #include <unicode/ustring.h>
 #endif /* WITH_ICU */
+
+#include "safeguards.h"
 
 
 /** Cache of ParagraphLayout lines. */

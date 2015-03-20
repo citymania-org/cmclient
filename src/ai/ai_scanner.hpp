@@ -1,4 +1,4 @@
-/* $Id: ai_scanner.hpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: ai_scanner.hpp 26487 2014-04-23 21:16:58Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -42,7 +42,7 @@ public:
 	void SetDummyAI(class AIInfo *info);
 
 protected:
-	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, int len);
+	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, const char *last);
 	/* virtual */ const char *GetFileName() const { return PATHSEP "info.nut"; }
 	/* virtual */ Subdirectory GetDirectory() const { return AI_DIR; }
 	/* virtual */ const char *GetScannerName() const { return "AIs"; }
@@ -65,7 +65,7 @@ public:
 	class AILibrary *FindLibrary(const char *library, int version);
 
 protected:
-	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, int len);
+	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, const char *last);
 	/* virtual */ const char *GetFileName() const { return PATHSEP "library.nut"; }
 	/* virtual */ Subdirectory GetDirectory() const { return AI_LIBRARY_DIR; }
 	/* virtual */ const char *GetScannerName() const { return "AI Libraries"; }

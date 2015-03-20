@@ -1,4 +1,4 @@
-/* $Id: station_sl.cpp 26790 2014-09-07 15:09:05Z frosch $ */
+/* $Id: station_sl.cpp 26878 2014-09-21 11:23:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,8 @@
 
 #include "saveload.h"
 #include "table/strings.h"
+
+#include "../safeguards.h"
 
 /**
  * Update the buoy orders to be waypoint orders.
@@ -93,7 +95,7 @@ void MoveBuoysToWaypoints()
 			TILE_AREA_LOOP(t, train_st) {
 				if (!IsTileType(t, MP_STATION) || GetStationIndex(t) != index) continue;
 
-				SB(_m[t].m6, 3, 3, STATION_WAYPOINT);
+				SB(_me[t].m6, 3, 3, STATION_WAYPOINT);
 				wp->rect.BeforeAddTile(t, StationRect::ADD_FORCE);
 			}
 

@@ -1,4 +1,4 @@
-/* $Id: unix.cpp 26789 2014-09-07 15:07:22Z frosch $ */
+/* $Id: unix.cpp 26724 2014-08-09 19:39:14Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,7 @@
 #include "../../crashlog.h"
 #include "../../core/random_func.hpp"
 #include "../../debug.h"
+#include "../../string_func.h"
 
 
 #include <dirent.h>
@@ -63,6 +64,8 @@ ULONG __stack = (1024*1024)*2; // maybe not that much is needed actually ;)
 	#endif
 #endif
 
+#include "../../safeguards.h"
+
 bool FiosIsRoot(const char *path)
 {
 #if !defined(__MORPHOS__) && !defined(__AMIGAOS__)
@@ -105,13 +108,13 @@ bool FiosIsValidFile(const char *path, const struct dirent *ent, struct stat *sb
 #if defined(__MORPHOS__) || defined(__AMIGAOS__)
 	/* On MorphOS or AmigaOS paths look like: "Volume:directory/subdirectory" */
 	if (FiosIsRoot(path)) {
-		res = snprintf(filename, lengthof(filename), "%s:%s", path, ent->d_name);
+		res = seprintf(filename, lastof(filename), "%s:%s", path, ent->d_name);
 	} else // XXX - only next line!
 #else
 	assert(path[strlen(path) - 1] == PATHSEPCHAR);
 	if (strlen(path) > 2) assert(path[strlen(path) - 2] != PATHSEPCHAR);
 #endif
-	res = snprintf(filename, lengthof(filename), "%s%s", path, ent->d_name);
+	res = seprintf(filename, lastof(filename), "%s%s", path, ent->d_name);
 
 	/* Could we fully concatenate the path and filename? */
 	if (res >= (int)lengthof(filename) || res < 0) return false;
@@ -282,7 +285,7 @@ int CDECL main(int argc, char *argv[])
 }
 
 #ifndef WITH_COCOA
-bool GetClipboardContents(char *buffer, size_t buff_len)
+bool GetClipboardContents(char *buffer, const char *last)
 {
 	return false;
 }

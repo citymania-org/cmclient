@@ -283,7 +283,8 @@ SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode 
  *        the tile to draw on.
  */
 void DrawTileZoning(const TileInfo *ti) {
-	if (IsTileType(ti->tile, MP_VOID) || _game_mode != GM_NORMAL) return;
+	if(_zoning.outer == CHECKNOTHING && _zoning.inner == CHECKNOTHING) return; //nothing to do
+	if (_game_mode != GM_NORMAL || ti->tile >= MapSize() || IsTileType(ti->tile, MP_VOID)) return; //check invalid
 	if (_zoning.outer != CHECKNOTHING){
 		DrawZoningSprites(SPR_SELECT_TILE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.outer), ti);
 	}

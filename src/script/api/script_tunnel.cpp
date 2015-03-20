@@ -1,4 +1,4 @@
-/* $Id: script_tunnel.cpp 26149 2013-12-08 15:44:09Z frosch $ */
+/* $Id: script_tunnel.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "script_rail.hpp"
 #include "../script_instance.hpp"
 #include "../../tunnel_map.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptTunnel::IsTunnelTile(TileIndex tile)
 {

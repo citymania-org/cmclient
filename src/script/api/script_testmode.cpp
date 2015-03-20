@@ -1,4 +1,4 @@
-/* $Id: script_testmode.cpp 24008 2012-03-04 16:54:12Z rubidium $ */
+/* $Id: script_testmode.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "script_testmode.hpp"
 #include "../script_instance.hpp"
 #include "../script_fatalerror.hpp"
+
+#include "../../safeguards.h"
 
 bool ScriptTestMode::ModeProc()
 {

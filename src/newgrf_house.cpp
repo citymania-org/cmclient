@@ -1,4 +1,4 @@
-/* $Id: newgrf_house.cpp 26595 2014-05-18 11:21:59Z frosch $ */
+/* $Id: newgrf_house.cpp 26580 2014-05-11 18:02:11Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,8 @@
 #include "newgrf_animation_base.h"
 #include "newgrf_cargo.h"
 #include "station_base.h"
+
+#include "safeguards.h"
 
 static BuildingCounts<uint32> _building_counts;
 static HouseClassMapping _class_mapping[HOUSE_CLASS_MAX];

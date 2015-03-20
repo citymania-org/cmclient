@@ -1,4 +1,4 @@
-/* $Id: object_sl.cpp 25833 2013-10-12 16:30:42Z frosch $ */
+/* $Id: object_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 
 #include "saveload.h"
 #include "newgrf_sl.h"
+
+#include "../safeguards.h"
 
 static const SaveLoad _object_desc[] = {
 	    SLE_VAR(Object, location.tile,              SLE_UINT32),

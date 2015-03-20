@@ -1,4 +1,4 @@
-/* $Id: cargoaction.cpp 26330 2014-02-10 18:55:03Z fonsinchen $ */
+/* $Id: cargoaction.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "economy_base.h"
 #include "cargoaction.h"
 #include "station_base.h"
+
+#include "safeguards.h"
 
 /**
  * Decides if a packet needs to be split.

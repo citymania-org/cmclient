@@ -1,4 +1,4 @@
-/* $Id: driver.cpp 26544 2014-04-29 18:41:19Z frosch $ */
+/* $Id: driver.cpp 26539 2014-04-28 21:09:19Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "music/music_driver.hpp"
 #include "video/video_driver.hpp"
 #include "string_func.h"
+
+#include "safeguards.h"
 
 char *_ini_videodriver;     ///< The video driver a stored in the configuration file.
 int _num_resolutions;       ///< The number of resolutions.
@@ -222,7 +224,7 @@ DriverFactoryBase::DriverFactoryBase(Driver::Type type, int priority, const char
 	strecpy(buf, GetDriverTypeName(type), lastof(buf));
 	strecpy(buf + 5, name, lastof(buf));
 
-	const char *longname = strdup(buf);
+	const char *longname = stredup(buf);
 
 	std::pair<Drivers::iterator, bool> P = GetDrivers().insert(Drivers::value_type(longname, this));
 	assert(P.second);

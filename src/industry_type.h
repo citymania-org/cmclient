@@ -1,4 +1,4 @@
-/* $Id: industry_type.h 25837 2013-10-12 16:32:59Z frosch $ */
+/* $Id: industry_type.h 26729 2014-08-13 19:31:45Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #ifndef INDUSTRY_TYPE_H
 #define INDUSTRY_TYPE_H
+
+#include "tile_type.h"
 
 typedef uint16 IndustryID;
 typedef uint16 IndustryGfx;
@@ -36,5 +38,8 @@ static const IndustryGfx  NUM_INDUSTRYTILES      = 512;               ///< total
 static const IndustryGfx  INVALID_INDUSTRYTILE   = NUM_INDUSTRYTILES; ///< one above amount is considered invalid
 
 static const int INDUSTRY_COMPLETED = 3; ///< final stage of industry construction.
+
+void CheckIndustries();
+bool CanBuildIndustryOnTile(IndustryType type, TileIndex tile);
 
 #endif /* INDUSTRY_TYPE_H */

@@ -52,7 +52,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;WITH_ASSERT"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -257,7 +257,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;_SQ64"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;LZMA_API_STATIC;WITH_PNG;WITH_FREETYPE;WITH_ICU;U_STATIC_IMPLEMENTATION;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR=\&quot;OpenTTD\&quot;;_SQ64;WITH_ASSERT"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -512,6 +512,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\depot.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\disaster_vehicle.cpp"
 				>
 			</File>
 			<File
@@ -887,6 +891,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\cargo_table_gui.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\cargo_type.h"
 				>
 			</File>
@@ -1020,6 +1028,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\direction_type.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\disaster_vehicle.h"
 				>
 			</File>
 			<File
@@ -1547,6 +1559,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\safeguards.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\screenshot.h"
 				>
 			</File>
@@ -1851,6 +1867,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\watch_gui.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\water.h"
 				>
 			</File>
@@ -1892,6 +1912,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\window_type.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\zoning.h"
 				>
 			</File>
 			<File
@@ -2047,7 +2071,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\cargo_table_gui.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\cheat_gui.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\commands_gui.cpp"
 				>
 			</File>
 			<File
@@ -2243,11 +2275,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\watch_gui.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\viewport_gui.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\..\src\waypoint_gui.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\zoning_gui.cpp"
 				>
 			</File>
 		</Filter>
@@ -2276,6 +2316,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\widgets\build_vehicle_widget.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\widgets\cargo_table_widget.h"
 				>
 			</File>
 			<File
@@ -2507,10 +2551,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\..\src\disaster_cmd.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\..\src\group_cmd.cpp"
 				>
 			</File>
@@ -2592,6 +2632,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\waypoint_cmd.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\zoning_cmd.cpp"
 				>
 			</File>
 		</Filter>
@@ -2820,6 +2864,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\table\genland.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\table\heightmap_colours.h"
 				>
 			</File>
 			<File
@@ -3116,6 +3164,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\3rdparty\squirrel\include\sqstdmath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\3rdparty\squirrel\include\sqstdstring.h"
 				>
 			</File>
 			<File

@@ -1,4 +1,4 @@
-/* $Id: ai_list.hpp.sq 23379 2011-11-30 14:11:02Z truebrain $ */
+/* $Id: ai_list.hpp.sq 26894 2014-09-21 16:25:15Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -40,6 +40,7 @@ void SQAIList_Register(Squirrel *engine)
 	SQAIList.DefSQMethod(engine, &ScriptList::SetValue,           "SetValue",           3, "xii");
 	SQAIList.DefSQMethod(engine, &ScriptList::Sort,               "Sort",               3, "xib");
 	SQAIList.DefSQMethod(engine, &ScriptList::AddList,            "AddList",            2, "xx");
+	SQAIList.DefSQMethod(engine, &ScriptList::SwapList,           "SwapList",           2, "xx");
 	SQAIList.DefSQMethod(engine, &ScriptList::RemoveAboveValue,   "RemoveAboveValue",   2, "xi");
 	SQAIList.DefSQMethod(engine, &ScriptList::RemoveBelowValue,   "RemoveBelowValue",   2, "xi");
 	SQAIList.DefSQMethod(engine, &ScriptList::RemoveBetweenValue, "RemoveBetweenValue", 3, "xii");

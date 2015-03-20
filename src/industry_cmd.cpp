@@ -1,4 +1,4 @@
-/* $Id: industry_cmd.cpp 26328 2014-02-10 17:13:54Z frosch $ */
+/* $Id: industry_cmd.cpp 26879 2014-09-21 11:24:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -40,10 +40,13 @@
 #include "core/backup_type.hpp"
 #include "object_base.h"
 #include "game/game.hpp"
+#include "error.h"
 
 #include "table/strings.h"
 #include "table/industry_land.h"
 #include "table/build_industry.h"
+
+#include "safeguards.h"
 
 IndustryPool _industry_pool("Industry");
 INSTANTIATE_POOL_METHODS(Industry)
@@ -518,7 +521,7 @@ static void TransportIndustryGoods(TileIndex tile)
 
 		if (newgfx != INDUSTRYTILE_NOANIM) {
 			ResetIndustryConstructionStage(tile);
-			SetIndustryCompleted(tile, true);
+			SetIndustryCompleted(tile);
 			SetIndustryGfx(tile, newgfx);
 			MarkTileDirtyByTile(tile);
 		}
@@ -718,7 +721,7 @@ static void MakeIndustryTileBigger(TileIndex tile)
 	SetIndustryConstructionCounter(tile, 0);
 	SetIndustryConstructionStage(tile, stage);
 	StartStopIndustryTileAnimation(tile, IAT_CONSTRUCTION_STATE_CHANGE);
-	if (stage == INDUSTRY_COMPLETED) SetIndustryCompleted(tile, true);
+	if (stage == INDUSTRY_COMPLETED) SetIndustryCompleted(tile);
 
 	MarkTileDirtyByTile(tile);
 
@@ -854,7 +857,7 @@ static void TileLoop_Industry(TileIndex tile)
 				case GFX_GOLD_MINE_TOWER_ANIMATED:   gfx = GFX_GOLD_MINE_TOWER_NOT_ANIMATED;   break;
 			}
 			SetIndustryGfx(tile, gfx);
-			SetIndustryCompleted(tile, true);
+			SetIndustryCompleted(tile);
 			SetIndustryConstructionStage(tile, 3);
 			DeleteAnimatedTile(tile);
 		}
@@ -1387,7 +1390,7 @@ static CommandCost CheckIfIndustryTilesAreFree(TileIndex tile, const IndustryTil
 		} else {
 			CommandCost ret = EnsureNoVehicleOnGround(cur_tile);
 			if (ret.Failed()) return ret;
-			if (MayHaveBridgeAbove(cur_tile) && IsBridgeAbove(cur_tile)) return_cmd_error(STR_ERROR_SITE_UNSUITABLE);
+			if (IsBridgeAbove(cur_tile)) return_cmd_error(STR_ERROR_SITE_UNSUITABLE);
 
 			const IndustryTileSpec *its = GetIndustryTileSpec(gfx);
 
@@ -1838,6 +1841,40 @@ static CommandCost CreateNewIndustryHelper(TileIndex tile, IndustryType type, Do
 	}
 
 	return CommandCost();
+}
+
+/**
+  * Return whether industry can be built on tile or not
+  * regardless of terrain
+  */
+bool CanBuildIndustryOnTile(IndustryType type, TileIndex tile) {
+	const IndustrySpec *indspec = GetIndustrySpec(type);
+    CommandCost ret;
+
+	if (HasBit(indspec->callback_mask, CBM_IND_LOCATION)) {
+		ret = CheckIfCallBackAllowsCreation(
+			tile, type, 0, 0, 0, _current_company,
+			_current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_USERCREATION);
+	} else {
+		ret = _check_new_industry_procs[GetIndustrySpec(type)->check_proc](tile);
+	}
+	if (ret.Failed())
+		return false;
+
+	ret = CheckIfFarEnoughFromConflictingIndustry(tile, type);
+	if (ret.Failed())
+		return false;
+
+	Town *t = NULL;
+	ret = FindTownForIndustry(tile, type, &t);
+	if (ret.Failed())
+		return false;
+
+	ret = CheckIfIndustryIsAllowed(tile, type, t);
+	if (ret.Failed())
+		return false;
+
+	return true;
 }
 
 /**
@@ -2737,6 +2774,26 @@ void InitializeIndustries()
 	_industry_sound_tile = 0;
 
 	_industry_builder.Reset();
+}
+
+/** Verify whether the generated industries are complete, and warn the user if not. */
+void CheckIndustries()
+{
+	int count = 0;
+	for (IndustryType it = 0; it < NUM_INDUSTRYTYPES; it++) {
+		if (Industry::GetIndustryTypeCount(it) > 0) continue; // Types of existing industries can be skipped.
+
+		bool force_at_least_one;
+		uint32 chance = GetScaledIndustryGenerationProbability(it, &force_at_least_one);
+		if (chance == 0 || !force_at_least_one) continue; // Types that are not available can be skipped.
+
+		const IndustrySpec *is = GetIndustrySpec(it);
+		SetDParam(0, is->name);
+		ShowErrorMessage(STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES, STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION, WL_WARNING);
+
+		count++;
+		if (count >= 3) break; // Don't swamp the user with errors.
+	}
 }
 
 /**

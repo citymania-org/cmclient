@@ -1,4 +1,4 @@
-/* $Id: genworld_widget.h 23600 2011-12-19 20:46:17Z truebrain $ */
+/* $Id: genworld_widget.h 26885 2014-09-21 12:25:04Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -25,10 +25,11 @@ enum GenerateLandscapeWidgets {
 	WID_GL_TOWN_PULLDOWN,               ///< Dropdown 'No. of towns'.
 	WID_GL_INDUSTRY_PULLDOWN,           ///< Dropdown 'No. of industries'.
 
-	WID_GL_RANDOM_EDITBOX,              ///< 'Random seed' editbox.
-	WID_GL_RANDOM_BUTTON,               ///< 'Randomise' button.
-
 	WID_GL_GENERATE_BUTTON,             ///< 'Generate' button.
+
+	WID_GL_MAX_HEIGHTLEVEL_DOWN,        ///< Decrease max. heightlevel
+	WID_GL_MAX_HEIGHTLEVEL_TEXT,        ///< Max. heightlevel
+	WID_GL_MAX_HEIGHTLEVEL_UP,          ///< Increase max. heightlevel
 
 	WID_GL_START_DATE_DOWN,             ///< Decrease start year.
 	WID_GL_START_DATE_TEXT,             ///< Start year.

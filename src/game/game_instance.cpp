@@ -1,4 +1,4 @@
-/* $Id: game_instance.cpp 26305 2014-02-06 19:41:56Z zuu $ */
+/* $Id: game_instance.cpp 26893 2014-09-21 16:20:48Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -84,6 +84,8 @@
 #include "../script/api/game/game_waypoint.hpp.sq"
 #include "../script/api/game/game_waypointlist.hpp.sq"
 #include "../script/api/game/game_window.hpp.sq"
+
+#include "../safeguards.h"
 
 
 GameInstance::GameInstance() :
@@ -171,6 +173,17 @@ void GameInstance::RegisterAPI()
 	SQGSSignList_Register(this->engine);
 	SQGSStation_Register(this->engine);
 	SQGSStationList_Register(this->engine);
+	SQGSStationList_Cargo_Register(this->engine);
+	SQGSStationList_CargoPlanned_Register(this->engine);
+	SQGSStationList_CargoPlannedByFrom_Register(this->engine);
+	SQGSStationList_CargoPlannedByVia_Register(this->engine);
+	SQGSStationList_CargoPlannedFromByVia_Register(this->engine);
+	SQGSStationList_CargoPlannedViaByFrom_Register(this->engine);
+	SQGSStationList_CargoWaiting_Register(this->engine);
+	SQGSStationList_CargoWaitingByFrom_Register(this->engine);
+	SQGSStationList_CargoWaitingByVia_Register(this->engine);
+	SQGSStationList_CargoWaitingFromByVia_Register(this->engine);
+	SQGSStationList_CargoWaitingViaByFrom_Register(this->engine);
 	SQGSStationList_Vehicle_Register(this->engine);
 	SQGSStoryPage_Register(this->engine);
 	SQGSStoryPageElementList_Register(this->engine);

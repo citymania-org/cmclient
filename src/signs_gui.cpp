@@ -1,4 +1,4 @@
-/* $Id: signs_gui.cpp 26972 2014-10-06 20:10:07Z frosch $ */
+/* $Id: signs_gui.cpp 26827 2014-09-15 19:26:03Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,6 +32,8 @@
 
 #include "table/strings.h"
 #include "table/sprites.h"
+
+#include "safeguards.h"
 
 struct SignList {
 	/**

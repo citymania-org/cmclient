@@ -1,4 +1,4 @@
-/* $Id: newgrf_text.cpp 26715 2014-08-03 14:06:04Z frosch $ */
+/* $Id: newgrf_text.cpp 26713 2014-08-03 11:59:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,6 +32,8 @@
 
 #include "table/strings.h"
 #include "table/control_codes.h"
+
+#include "safeguards.h"
 
 #define GRFTAB  28
 #define TABSIZE 11
@@ -229,7 +231,7 @@ struct UnmappedChoiceList : ZeroedMemoryAllocator {
 			/* In case of a (broken) NewGRF without a default,
 			 * assume an empty string. */
 			grfmsg(1, "choice list misses default value");
-			this->strings[0] = strdup("");
+			this->strings[0] = stredup("");
 		}
 
 		char *d = old_d;

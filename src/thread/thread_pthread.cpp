@@ -1,4 +1,4 @@
-/* $Id: thread_pthread.cpp 26349 2014-02-16 21:37:05Z frosch $ */
+/* $Id: thread_pthread.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "thread.h"
 #include <pthread.h>
 #include <errno.h>
+
+#include "../safeguards.h"
 
 /**
  * POSIX pthread version for ThreadObject.

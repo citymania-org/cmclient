@@ -1,4 +1,4 @@
-/* $Id: viewport.cpp 26338 2014-02-15 12:19:46Z fonsinchen $ */
+/* $Id: viewport.cpp 27162 2015-02-22 15:05:48Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,6 +26,42 @@
  * \endverbatim
  */
 
+/**
+ * @defgroup vp_column_row Rows and columns in the viewport
+ *
+ * Columns are vertical sections of the viewport that are half a tile wide.
+ * The origin, i.e. column 0, is through the northern and southern most tile.
+ * This means that the column of e.g. Tile(0, 0) and Tile(100, 100) are in
+ * column number 0. The negative columns are towards the left of the screen,
+ * or towards the west, whereas the positive ones are towards respectively
+ * the right and east.
+ * With half a tile wide is meant that the next column of tiles directly west
+ * or east of the centre line are respectively column -1 and 1. Their tile
+ * centers are only half a tile from the center of their adjoining tile when
+ * looking only at the X-coordinate.
+ *
+ * \verbatim
+ *        ╳        *
+ *       ╱ ╲       *
+ *      ╳ 0 ╳      *
+ *     ╱ ╲ ╱ ╲     *
+ *    ╳-1 ╳ 1 ╳    *
+ *   ╱ ╲ ╱ ╲ ╱ ╲   *
+ *  ╳-2 ╳ 0 ╳ 2 ╳  *
+ *   ╲ ╱ ╲ ╱ ╲ ╱   *
+ *    ╳-1 ╳ 1 ╳    *
+ *     ╲ ╱ ╲ ╱     *
+ *      ╳ 0 ╳      *
+ *       ╲ ╱       *
+ *        ╳        *
+ * \endverbatim
+ *
+ *
+ * Rows are horizontal sections of the viewport, also half a tile wide.
+ * This time the nothern most tile on the map defines 0 and
+ * everything south of that has a positive number.
+ */
+
 #include "stdafx.h"
 #include "core/math_func.hpp"
 #include "core/smallvec_type.hpp"
@@ -49,12 +85,24 @@
 #include "window_gui.h"
 #include "linkgraph/linkgraph_gui.h"
 #include "viewport_sprite_sorter.h"
+#include "bridge_map.h"
+
+#include <map>
 
 #include "table/strings.h"
 #include "table/palettes.h"
 #include "zoning.h"
+#include "industry_type.h"
+
+#include "safeguards.h"
 
 Point _tile_fract_coords;
+
+
+static const int MAX_TILE_EXTENT_LEFT   = ZOOM_LVL_BASE * TILE_PIXELS;                     ///< Maximum left   extent of tile relative to north corner.
+static const int MAX_TILE_EXTENT_RIGHT  = ZOOM_LVL_BASE * TILE_PIXELS;                     ///< Maximum right  extent of tile relative to north corner.
+static const int MAX_TILE_EXTENT_TOP    = ZOOM_LVL_BASE * MAX_BUILDING_PIXELS;             ///< Maximum top    extent of tile relative to north corner (not considering bridges).
+static const int MAX_TILE_EXTENT_BOTTOM = ZOOM_LVL_BASE * (TILE_PIXELS + 2 * TILE_HEIGHT); ///< Maximum bottom extent of tile relative to north corner (worst case: #SLOPE_STEEP_N).
 
 struct StringSpriteToDraw {
 	StringID string;
@@ -105,6 +153,12 @@ typedef SmallVector<StringSpriteToDraw, 4> StringSpriteToDrawVector;
 typedef SmallVector<ParentSpriteToDraw, 64> ParentSpriteToDrawVector;
 typedef SmallVector<ChildScreenSpriteToDraw, 16> ChildScreenSpriteToDrawVector;
 
+enum RailSnapMode {
+	RSM_NO_SNAP,
+	RSM_SNAP_TO_TILE,
+	RSM_SNAP_TO_RAIL,
+};
+
 /**
  * Snapping point for a track.
  *
@@ -152,13 +206,23 @@ static void MarkViewportDirty(const ViewPort *vp, int left, int top, int right, 
 static ViewportDrawer _vd;
 
 TileHighlightData _thd;
-static LineSnapPoints _rail_snap_points; ///< Set of points where a rail track will be snapped to (polyline tool).
-static LineSnapPoint _current_snap_lock; ///< Start point and direction at which selected track is locked on currently (while dragging in polyline mode).
 static TileInfo *_cur_ti;
 bool _draw_bounding_boxes = false;
 bool _draw_dirty_blocks = false;
 uint _dirty_block_colour = 0;
 static VpSpriteSorter _vp_sprite_sorter = NULL;
+
+static RailSnapMode _rail_snap_mode = RSM_NO_SNAP; ///< Type of rail track snapping (polyline tool).
+static LineSnapPoints _tile_snap_points; ///< Tile to which a rail track will be snapped to (polyline tool).
+static LineSnapPoints _rail_snap_points; ///< Set of points where a rail track will be snapped to (polyline tool).
+static LineSnapPoint _current_snap_lock; ///< Start point and direction at which selected track is locked on currently (while dragging in polyline mode).
+
+static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
+
+static RailSnapMode GetRailSnapMode();
+static void SetRailSnapMode(RailSnapMode mode);
+static TileIndex GetRailSnapTile();
+static void SetRailSnapTile(TileIndex tile);
 
 static Point MapXYZToViewport(const ViewPort *vp, int x, int y, int z)
 {
@@ -230,8 +294,8 @@ void InitializeWindowViewport(Window *w, int x, int y,
 	vp->overlay = NULL;
 
 	w->viewport = vp;
-	vp->virtual_left = 0;//pt.x;
-	vp->virtual_top = 0;//pt.y;
+	vp->virtual_left = 0; // pt.x;
+	vp->virtual_top = 0;  // pt.y;
 }
 
 static Point _vp_move_offs;
@@ -379,9 +443,10 @@ ViewPort *IsPtInWindowViewport(const Window *w, int x, int y)
  * @param vp  Viewport that contains the (\a x, \a y) screen coordinate
  * @param x   Screen x coordinate
  * @param y   Screen y coordinate
+ * @param clamp_to_map Clamp the coordinate outside of the map to the closest tile within the map.
  * @return Tile coordinate
  */
-static Point TranslateXYToTileCoord(const ViewPort *vp, int x, int y)
+Point TranslateXYToTileCoord(const ViewPort *vp, int x, int y, bool clamp_to_map)
 {
 	Point pt;
 	int a, b;
@@ -399,11 +464,15 @@ static Point TranslateXYToTileCoord(const ViewPort *vp, int x, int y)
 	a = y - x;
 	b = y + x;
 
-	/* we need to move variables in to the valid range, as the
-	 * GetTileZoomCenterWindow() function can call here with invalid x and/or y,
-	 * when the user tries to zoom out along the sides of the map */
-	a = Clamp(a, -4 * (int)TILE_SIZE, (int)(MapMaxX() * TILE_SIZE) - 1);
-	b = Clamp(b, -4 * (int)TILE_SIZE, (int)(MapMaxY() * TILE_SIZE) - 1);
+	if (clamp_to_map) {
+		/* Bring the coordinates near to a valid range. This is mostly due to the
+		 * tiles on the north side of the map possibly being drawn too high due to
+		 * the extra height levels. So at the top we allow a number of extra tiles.
+		 * This number is based on the tile height and pixels. */
+		int extra_tiles = CeilDiv(_settings_game.construction.max_heightlevel * TILE_HEIGHT, TILE_PIXELS);
+		a = Clamp(a, -extra_tiles * TILE_SIZE, MapMaxX() * TILE_SIZE - 1);
+		b = Clamp(b, -extra_tiles * TILE_SIZE, MapMaxY() * TILE_SIZE - 1);
+	}
 
 	/* (a, b) is the X/Y-world coordinate that belongs to (x,y) if the landscape would be completely flat on height 0.
 	 * Now find the Z-world coordinate by fix point iteration.
@@ -420,8 +489,13 @@ static Point TranslateXYToTileCoord(const ViewPort *vp, int x, int y)
 	for (int malus = 3; malus > 0; malus--) z = GetSlopePixelZ(Clamp(a + max(z, malus) - malus, min_coord, MapMaxX() * TILE_SIZE - 1), Clamp(b + max(z, malus) - malus, min_coord, MapMaxY() * TILE_SIZE - 1)) / 2;
 	for (int i = 0; i < 5; i++) z = GetSlopePixelZ(Clamp(a + z, min_coord, MapMaxX() * TILE_SIZE - 1), Clamp(b + z, min_coord, MapMaxY() * TILE_SIZE - 1)) / 2;
 
-	pt.x = Clamp(a + z, min_coord, MapMaxX() * TILE_SIZE - 1);
-	pt.y = Clamp(b + z, min_coord, MapMaxY() * TILE_SIZE - 1);
+	if (clamp_to_map) {
+		pt.x = Clamp(a + z, min_coord, MapMaxX() * TILE_SIZE - 1);
+		pt.y = Clamp(b + z, min_coord, MapMaxY() * TILE_SIZE - 1);
+	} else {
+		pt.x = a + z;
+		pt.y = b + z;
+	}
 
 	return pt;
 }
@@ -995,27 +1069,27 @@ static void DrawTileSelection(const TileInfo *ti)
 					/* Draw a blue rect. */
 					DrawTileSelectionRect(ti, PALETTE_SEL_TILE_BLUE);
 				}
-	}
+			}
 			break;
 
 		case HT_POINT:
 			if (IsInsideSelectedRectangle(ti->x, ti->y)) {
-			/* Figure out the Z coordinate for the single dot. */
-			int z = 0;
-			FoundationPart foundation_part = FOUNDATION_PART_NORMAL;
-			if (ti->tileh & SLOPE_N) {
-				z += TILE_HEIGHT;
-				if (RemoveHalftileSlope(ti->tileh) == SLOPE_STEEP_N) z += TILE_HEIGHT;
-			}
-			if (IsHalftileSlope(ti->tileh)) {
-				Corner halftile_corner = GetHalftileSlopeCorner(ti->tileh);
-				if ((halftile_corner == CORNER_W) || (halftile_corner == CORNER_E)) z += TILE_HEIGHT;
-				if (halftile_corner != CORNER_S) {
-					foundation_part = FOUNDATION_PART_HALFTILE;
-					if (IsSteepSlope(ti->tileh)) z -= TILE_HEIGHT;
+				/* Figure out the Z coordinate for the single dot. */
+				int z = 0;
+				FoundationPart foundation_part = FOUNDATION_PART_NORMAL;
+				if (ti->tileh & SLOPE_N) {
+					z += TILE_HEIGHT;
+					if (RemoveHalftileSlope(ti->tileh) == SLOPE_STEEP_N) z += TILE_HEIGHT;
 				}
-			}
-			DrawSelectionSprite(_cur_dpi->zoom <= ZOOM_LVL_DETAIL ? SPR_DOT : SPR_DOT_SMALL, PAL_NONE, ti, z, foundation_part);
+				if (IsHalftileSlope(ti->tileh)) {
+					Corner halftile_corner = GetHalftileSlopeCorner(ti->tileh);
+					if ((halftile_corner == CORNER_W) || (halftile_corner == CORNER_E)) z += TILE_HEIGHT;
+					if (halftile_corner != CORNER_S) {
+						foundation_part = FOUNDATION_PART_HALFTILE;
+						if (IsSteepSlope(ti->tileh)) z -= TILE_HEIGHT;
+					}
+				}
+				DrawSelectionSprite(_cur_dpi->zoom <= ZOOM_LVL_DETAIL ? SPR_DOT : SPR_DOT_SMALL, PAL_NONE, ti, z, foundation_part);
 			}
 			break;
 
@@ -1030,103 +1104,162 @@ static void DrawTileSelection(const TileInfo *ti)
 			HighLightStyle type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart, _thd.selend, _thd.drawstyle & HT_DIR_MASK);
 			if (type < HT_DIR_END) {
 				DrawAutorailSelection(ti, type);
-			} else if ((_thd.drawstyle & HT_POLY) && _thd.dir2 < HT_DIR_END) {
+			} else if (_thd.dir2 < HT_DIR_END) {
 				type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart2, _thd.selend2, _thd.dir2);
 				if (type < HT_DIR_END) DrawAutorailSelection(ti, type, PALETTE_SEL_TILE_BLUE);
-		}
+			}
 			break;
-	}
+		}
 	}
 }
 
+void SetIndustryForbiddenTilesHighlight(IndustryType type) {
+	if (_settings_client.gui.show_industry_forbidden_tiles &&
+	    	_industry_forbidden_tiles != type) {
+		MarkWholeScreenDirty();
+	}
+	_industry_forbidden_tiles = type;
+}
+
+static void DrawIndustryForbiddenTiles(const TileInfo *ti) {
+	if (_settings_client.gui.show_industry_forbidden_tiles &&
+			_industry_forbidden_tiles != INVALID_INDUSTRYTYPE &&
+			!CanBuildIndustryOnTile(_industry_forbidden_tiles, ti->tile)) {
+		DrawTileSelectionRect(ti, PALETTE_SEL_TILE_RED);
+	}
+}
+
+/**
+ * Returns the y coordinate in the viewport coordinate system where the given
+ * tile is painted.
+ * @param tile Any tile.
+ * @return The viewport y coordinate where the tile is painted.
+ */
+static int GetViewportY(Point tile)
+{
+	/* Each increment in X or Y direction moves down by half a tile, i.e. TILE_PIXELS / 2. */
+	return (tile.y * (int)(TILE_PIXELS / 2) + tile.x * (int)(TILE_PIXELS / 2) - TilePixelHeightOutsideMap(tile.x, tile.y)) << ZOOM_LVL_SHIFT;
+}
+
+/**
+ * Add the landscape to the viewport, i.e. all ground tiles and buildings.
+ */
 static void ViewportAddLandscape()
 {
-	int x, y, width, height;
-	TileInfo ti;
-	bool direction;
+	assert(_vd.dpi.top <= _vd.dpi.top + _vd.dpi.height);
+	assert(_vd.dpi.left <= _vd.dpi.left + _vd.dpi.width);
 
-	_cur_ti = &ti;
+	Point upper_left = InverseRemapCoords(_vd.dpi.left, _vd.dpi.top);
+	Point upper_right = InverseRemapCoords(_vd.dpi.left + _vd.dpi.width, _vd.dpi.top);
 
-	/* Transform into tile coordinates and round to closest full tile */
-	x = ((_vd.dpi.top >> (1 + ZOOM_LVL_SHIFT)) - (_vd.dpi.left >> (2 + ZOOM_LVL_SHIFT))) & ~TILE_UNIT_MASK;
-	y = ((_vd.dpi.top >> (1 + ZOOM_LVL_SHIFT)) + (_vd.dpi.left >> (2 + ZOOM_LVL_SHIFT)) - TILE_SIZE) & ~TILE_UNIT_MASK;
+	/* Transformations between tile coordinates and viewport rows/columns: See vp_column_row
+	 *   column = y - x
+	 *   row    = x + y
+	 *   x      = (row - column) / 2
+	 *   y      = (row + column) / 2
+	 * Note: (row, columns) pairs are only valid, if they are both even or both odd.
+	 */
 
-	/* determine size of area */
-	{
-		Point pt = RemapCoords(x, y, 241);
-		width = (_vd.dpi.left + _vd.dpi.width - pt.x + 96 * ZOOM_LVL_BASE - 1) >> (6 + ZOOM_LVL_SHIFT);
-		height = (_vd.dpi.top + _vd.dpi.height - pt.y) >> (5 + ZOOM_LVL_SHIFT) << 1;
-	}
+	/* Columns overlap with neighbouring columns by a half tile.
+	 *  - Left column is column of upper_left (rounded down) and one column to the left.
+	 *  - Right column is column of upper_right (rounded up) and one column to the right.
+	 * Note: Integer-division does not round down for negative numbers, so ensure rounding with another increment/decrement.
+	 */
+	int left_column = (upper_left.y - upper_left.x) / (int)TILE_SIZE - 2;
+	int right_column = (upper_right.y - upper_right.x) / (int)TILE_SIZE + 2;
 
-	assert(width > 0);
-	assert(height > 0);
+	int potential_bridge_height = ZOOM_LVL_BASE * TILE_HEIGHT * _settings_game.construction.max_bridge_height;
 
-	direction = false;
+	/* Rows overlap with neighbouring rows by a half tile.
+	 * The first row that could possibly be visible is the row above upper_left (if it is at height 0).
+	 * Due to integer-division not rounding down for negative numbers, we need another decrement.
+	 */
+	int row = (upper_left.x + upper_left.y) / (int)TILE_SIZE - 2;
+	bool last_row = false;
+	for (; !last_row; row++) {
+		last_row = true;
+		for (int column = left_column; column <= right_column; column++) {
+			/* Valid row/column? */
+			if ((row + column) % 2 != 0) continue;
 
-	do {
-		int width_cur = width;
-		uint x_cur = x;
-		uint y_cur = y;
+			Point tilecoord;
+			tilecoord.x = (row - column) / 2;
+			tilecoord.y = (row + column) / 2;
+			assert(column == tilecoord.y - tilecoord.x);
+			assert(row == tilecoord.y + tilecoord.x);
 
-		do {
-			TileType tt = MP_VOID;
+			TileType tile_type;
+			TileInfo tile_info;
+			_cur_ti = &tile_info;
+			tile_info.x = tilecoord.x * TILE_SIZE; // FIXME tile_info should use signed integers
+			tile_info.y = tilecoord.y * TILE_SIZE;
 
-			ti.x = x_cur;
-			ti.y = y_cur;
+			if (IsInsideBS(tilecoord.x, 0, MapSizeX()) && IsInsideBS(tilecoord.y, 0, MapSizeY())) {
+				/* This includes the south border at MapMaxX / MapMaxY. When terraforming we still draw tile selections there. */
+				tile_info.tile = TileXY(tilecoord.x, tilecoord.y);
+				tile_type = GetTileType(tile_info.tile);
+			} else {
+				tile_info.tile = INVALID_TILE;
+				tile_type = MP_VOID;
+			}
 
-			ti.z = 0;
+			if (tile_type != MP_VOID) {
+				/* We are inside the map => paint landscape. */
+				tile_info.tileh = GetTilePixelSlope(tile_info.tile, &tile_info.z);
+			} else {
+				/* We are outside the map => paint black. */
+				tile_info.tileh = GetTilePixelSlopeOutsideMap(tilecoord.x, tilecoord.y, &tile_info.z);
+			}
 
-			ti.tileh = SLOPE_FLAT;
-			ti.tile = INVALID_TILE;
+			int viewport_y = GetViewportY(tilecoord);
 
-			if (x_cur < MapMaxX() * TILE_SIZE &&
-					y_cur < MapMaxY() * TILE_SIZE) {
-				TileIndex tile = TileVirtXY(x_cur, y_cur);
+			if (viewport_y + MAX_TILE_EXTENT_BOTTOM < _vd.dpi.top) {
+				/* The tile in this column is not visible yet.
+				 * Tiles in other columns may be visible, but we need more rows in any case. */
+				last_row = false;
+				continue;
+			}
 
-				if (!_settings_game.construction.freeform_edges || (TileX(tile) != 0 && TileY(tile) != 0)) {
-					if (x_cur == ((int)MapMaxX() - 1) * TILE_SIZE || y_cur == ((int)MapMaxY() - 1) * TILE_SIZE) {
-						uint maxh = max<uint>(TileHeight(tile), 1);
-						for (uint h = 0; h < maxh; h++) {
-							AddTileSpriteToDraw(SPR_SHADOW_CELL, PAL_NONE, ti.x, ti.y, h * TILE_HEIGHT);
-						}
-					}
+			int min_visible_height = viewport_y - (_vd.dpi.top + _vd.dpi.height);
+			bool tile_visible = min_visible_height <= 0;
 
-					ti.tile = tile;
-					ti.tileh = GetTilePixelSlope(tile, &ti.z);
-					tt = GetTileType(tile);
+			if (tile_type != MP_VOID) {
+				/* Is tile with buildings visible? */
+				if (min_visible_height < MAX_TILE_EXTENT_TOP) tile_visible = true;
+
+				if (IsBridgeAbove(tile_info.tile)) {
+					/* Is the bridge visible? */
+					TileIndex bridge_tile = GetNorthernBridgeEnd(tile_info.tile);
+					int bridge_height = ZOOM_LVL_BASE * (GetBridgePixelHeight(bridge_tile) - TilePixelHeight(tile_info.tile));
+					if (min_visible_height < bridge_height + MAX_TILE_EXTENT_TOP) tile_visible = true;
+				}
+
+				/* Would a higher bridge on a more southern tile be visible?
+				 * If yes, we need to loop over more rows to possibly find one. */
+				if (min_visible_height < potential_bridge_height + MAX_TILE_EXTENT_TOP) last_row = false;
+			} else {
+				/* Outside of map. If we are on the north border of the map, there may still be a bridge visible,
+				 * so we need to loop over more rows to possibly find one. */
+				if ((tilecoord.x <= 0 || tilecoord.y <= 0) && min_visible_height < potential_bridge_height + MAX_TILE_EXTENT_TOP) last_row = false;
+			}
+
+			if (tile_visible) {
+				last_row = false;
+				_vd.foundation_part = FOUNDATION_PART_NONE;
+				_vd.foundation[0] = -1;
+				_vd.foundation[1] = -1;
+				_vd.last_foundation_child[0] = NULL;
+				_vd.last_foundation_child[1] = NULL;
+
+				_tile_type_procs[tile_type]->draw_tile_proc(&tile_info);
+				if (tile_info.tile != INVALID_TILE){
+					DrawTileZoning(&tile_info);
+					DrawIndustryForbiddenTiles(&tile_info);
+					DrawTileSelection(&tile_info);
 				}
 			}
-
-			_vd.foundation_part = FOUNDATION_PART_NONE;
-			_vd.foundation[0] = -1;
-			_vd.foundation[1] = -1;
-			_vd.last_foundation_child[0] = NULL;
-			_vd.last_foundation_child[1] = NULL;
-
-			_tile_type_procs[tt]->draw_tile_proc(&ti);
-
-			if ((x_cur == (int)MapMaxX() * TILE_SIZE && IsInsideMM(y_cur, 0, MapMaxY() * TILE_SIZE + 1)) ||
-					(y_cur == (int)MapMaxY() * TILE_SIZE && IsInsideMM(x_cur, 0, MapMaxX() * TILE_SIZE + 1))) {
-				TileIndex tile = TileVirtXY(x_cur, y_cur);
-				ti.tile = tile;
-				ti.tileh = GetTilePixelSlope(tile, &ti.z);
-				tt = GetTileType(tile);
-			}
-			if (ti.tile != INVALID_TILE) {
-				DrawTileZoning(&ti);
-				DrawTileSelection(&ti);
-			}
-
-			y_cur += 0x10;
-			x_cur -= 0x10;
-		} while (--width_cur);
-
-		if ((direction ^= 1) != 0) {
-			y += 0x10;
-		} else {
-			x += 0x10;
 		}
-	} while (--height);
+	}
 }
 
 /**
@@ -1178,8 +1311,6 @@ static void ViewportAddTownNames(DrawPixelInfo *dpi)
 	const Town *t;
 	FOR_ALL_TOWNS(t) {
 		ViewportAddString(dpi, ZOOM_LVL_OUT_16X, &t->cache.sign,
-				//_settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN,
-				//STR_VIEWPORT_TOWN_TINY_WHITE, STR_VIEWPORT_TOWN_TINY_BLACK,
 				t->Label(), t->SmallLabel(), STR_VIEWPORT_TOWN_TINY_BLACK,
 				t->index, t->cache.population);
 	}
@@ -1582,8 +1713,97 @@ void Window::DrawViewport() const
 	dpi->top -= this->top;
 }
 
+/**
+ * Continue criteria for the SearchMapEdge function.
+ * @param iter       Value to check.
+ * @param iter_limit Maximum value for the iter
+ * @param sy         Screen y coordinate calculated for the tile at hand
+ * @param sy_limit   Limit to the screen y coordinate
+ * @return True when we should continue searching.
+ */
+typedef bool ContinueMapEdgeSearch(int iter, int iter_limit, int sy, int sy_limit);
+
+/** Continue criteria for searching a no-longer-visible tile in negative direction, starting at some tile. */
+static inline bool ContinueLowerMapEdgeSearch(int iter, int iter_limit, int sy, int sy_limit) { return iter > 0          && sy > sy_limit; }
+/** Continue criteria for searching a no-longer-visible tile in positive direction, starting at some tile. */
+static inline bool ContinueUpperMapEdgeSearch(int iter, int iter_limit, int sy, int sy_limit) { return iter < iter_limit && sy < sy_limit; }
+
+/**
+ * Searches, starting at the given tile, by applying the given offset to iter, for a no longer visible tile.
+ * The whole sense of this function is keeping the to-be-written code small, thus it is a little bit abstracted
+ * so the same function can be used for both the X and Y locations. As such a reference to one of the elements
+ * in curr_tile was needed.
+ * @param curr_tile  A tile
+ * @param iter       Reference to either the X or Y of curr_tile.
+ * @param iter_limit Upper search limit for the iter value.
+ * @param offset     Search in steps of this size
+ * @param sy_limit   Search limit to be passed to the criteria
+ * @param continue_criteria Search as long as this criteria is true
+ * @return The final value of iter.
+ */
+static int SearchMapEdge(Point &curr_tile, int &iter, int iter_limit, int offset, int sy_limit, ContinueMapEdgeSearch continue_criteria)
+{
+	int sy;
+	do {
+		iter = Clamp(iter + offset, 0, iter_limit);
+		sy = GetViewportY(curr_tile);
+	} while (continue_criteria(iter, iter_limit, sy, sy_limit));
+
+	return iter;
+}
+
+/**
+ * Determine the clamping of either the X or Y coordinate to the map.
+ * @param curr_tile   A tile
+ * @param iter        Reference to either the X or Y of curr_tile.
+ * @param iter_limit  Upper search limit for the iter value.
+ * @param start       Start value for the iteration.
+ * @param other_ref   Reference to the opposite axis in curr_tile than of iter.
+ * @param other_value Start value for of the opposite axis
+ * @param vp_value    Value of the viewport location in the opposite axis as for iter.
+ * @param other_limit Limit for the other value, so if iter is X, then other_limit is for Y.
+ * @param vp_top      Top of the viewport.
+ * @param vp_bottom   Bottom of the viewport.
+ * @return Clamped version of vp_value.
+ */
+static inline int ClampXYToMap(Point &curr_tile, int &iter, int iter_limit, int start, int &other_ref, int other_value, int vp_value, int other_limit, int vp_top, int vp_bottom)
+{
+	bool upper_edge = other_value < _settings_game.construction.max_heightlevel / 4;
+
+	/*
+	 * First get an estimate of the tiles relevant for us at that edge.  Relevant in the sense
+	 * "at least close to the visible area". Thus, we don't look at exactly each tile, inspecting
+	 * e.g. every tenth should be enough. After all, the desired screen limit is set such that
+	 * the bordermost tiles are painted in the middle of the screen when one hits the limit,
+	 * i.e. it is no harm if there is some small error in that calculation
+	 */
+
+	other_ref = upper_edge ? 0 : other_limit;
+	iter = start;
+	int min_iter = SearchMapEdge(curr_tile, iter, iter_limit, upper_edge ? -10 : +10, vp_top,    upper_edge ? ContinueLowerMapEdgeSearch : ContinueUpperMapEdgeSearch);
+	iter = start;
+	int max_iter = SearchMapEdge(curr_tile, iter, iter_limit, upper_edge ? +10 : -10, vp_bottom, upper_edge ? ContinueUpperMapEdgeSearch : ContinueLowerMapEdgeSearch);
+
+	max_iter = min(max_iter + _settings_game.construction.max_heightlevel / 4, iter_limit);
+	min_iter = min(min_iter, max_iter);
+
+	/* Now, calculate the highest heightlevel of these tiles. Again just as an estimate. */
+	int max_heightlevel_at_edge = 0;
+	for (iter = min_iter; iter <= max_iter; iter += 10) {
+		max_heightlevel_at_edge = max(max_heightlevel_at_edge, (int)TileHeight(TileXY(curr_tile.x, curr_tile.y)));
+	}
+
+	/* Based on that heightlevel, calculate the limit. For the upper edge a tile with height zero would
+	 * get a limit of zero, on the other side it depends on the number of tiles along the axis. */
+	return upper_edge ?
+			max(vp_value, -max_heightlevel_at_edge * (int)(TILE_HEIGHT * 2 * ZOOM_LVL_BASE)) :
+			min(vp_value, (other_limit * TILE_SIZE * 4 - max_heightlevel_at_edge * TILE_HEIGHT * 2) * ZOOM_LVL_BASE);
+}
+
 static inline void ClampViewportToMap(const ViewPort *vp, int &x, int &y)
 {
+	int original_y = y;
+
 	/* Centre of the viewport is hot spot */
 	x += vp->virtual_width / 2;
 	y += vp->virtual_height / 2;
@@ -1593,9 +1813,14 @@ static inline void ClampViewportToMap(const ViewPort *vp, int &x, int &y)
 	int vx = -x + y * 2;
 	int vy =  x + y * 2;
 
-	/* clamp to size of map */
-	vx = Clamp(vx, 0, MapMaxX() * TILE_SIZE * 4 * ZOOM_LVL_BASE);
-	vy = Clamp(vy, 0, MapMaxY() * TILE_SIZE * 4 * ZOOM_LVL_BASE);
+	/* Find out which tile corresponds to (vx,vy) if one assumes height zero.  The cast is necessary to prevent C++ from
+	 * converting the result to an uint, which gives an overflow instead of a negative result... */
+	int tx = vx / (int)(TILE_SIZE * 4 * ZOOM_LVL_BASE);
+	int ty = vy / (int)(TILE_SIZE * 4 * ZOOM_LVL_BASE);
+
+	Point curr_tile;
+	vx = ClampXYToMap(curr_tile, curr_tile.y, MapMaxY(), ty, curr_tile.x, tx, vx, MapMaxX(), original_y, original_y + vp->virtual_height);
+	vy = ClampXYToMap(curr_tile, curr_tile.x, MapMaxX(), tx, curr_tile.y, ty, vy, MapMaxY(), original_y, original_y + vp->virtual_height);
 
 	/* Convert map coordinates to viewport coordinates */
 	x = (-vx + vy) / 2;
@@ -1661,6 +1886,10 @@ void UpdateViewportPosition(Window *w)
  */
 static void MarkViewportDirty(const ViewPort *vp, int left, int top, int right, int bottom)
 {
+	/* Rounding wrt. zoom-out level */
+	right  += (1 << vp->zoom) - 1;
+	bottom += (1 << vp->zoom) - 1;
+
 	right -= vp->virtual_left;
 	if (right <= 0) return;
 
@@ -1685,10 +1914,10 @@ static void MarkViewportDirty(const ViewPort *vp, int left, int top, int right, 
 
 /**
  * Mark all viewports that display an area as dirty (in need of repaint).
- * @param left   Left edge of area to repaint
- * @param top    Top edge of area to repaint
- * @param right  Right edge of area to repaint
- * @param bottom Bottom edge of area to repaint
+ * @param left   Left   edge of area to repaint. (viewport coordinates, that is wrt. #ZOOM_LVL_NORMAL)
+ * @param top    Top    edge of area to repaint. (viewport coordinates, that is wrt. #ZOOM_LVL_NORMAL)
+ * @param right  Right  edge of area to repaint. (viewport coordinates, that is wrt. #ZOOM_LVL_NORMAL)
+ * @param bottom Bottom edge of area to repaint. (viewport coordinates, that is wrt. #ZOOM_LVL_NORMAL)
  * @ingroup dirty
  */
 void MarkAllViewportsDirty(int left, int top, int right, int bottom)
@@ -1720,17 +1949,33 @@ void ConstrainAllViewportsZoom()
 /**
  * Mark a tile given by its index dirty for repaint.
  * @param tile The tile to mark dirty.
+ * @param bridge_level_offset Height of bridge on tile to also mark dirty. (Height level relative to north corner.)
  * @ingroup dirty
  */
-void MarkTileDirtyByTile(TileIndex tile)
+void MarkTileDirtyByTile(TileIndex tile, int bridge_level_offset)
 {
-	Point pt = RemapCoords(TileX(tile) * TILE_SIZE, TileY(tile) * TILE_SIZE, GetTilePixelZ(tile));
+	Point pt = RemapCoords(TileX(tile) * TILE_SIZE, TileY(tile) * TILE_SIZE, TilePixelHeight(tile));
 	MarkAllViewportsDirty(
-		pt.x - 31  * ZOOM_LVL_BASE,
-		pt.y - 122 * ZOOM_LVL_BASE,
-		pt.x - 31  * ZOOM_LVL_BASE + 67  * ZOOM_LVL_BASE,
-		pt.y - 122 * ZOOM_LVL_BASE + 154 * ZOOM_LVL_BASE
-	);
+			pt.x - MAX_TILE_EXTENT_LEFT,
+			pt.y - MAX_TILE_EXTENT_TOP - ZOOM_LVL_BASE * TILE_HEIGHT * bridge_level_offset,
+			pt.x + MAX_TILE_EXTENT_RIGHT,
+			pt.y + MAX_TILE_EXTENT_BOTTOM);
+}
+
+/**
+ * Mark a (virtual) tile outside the map dirty for repaint.
+ * @param x Tile X position.
+ * @param y Tile Y position.
+ * @ingroup dirty
+ */
+void MarkTileDirtyByTileOutsideMap(int x, int y)
+{
+	Point pt = RemapCoords(x * TILE_SIZE, y * TILE_SIZE, TilePixelHeightOutsideMap(x, y));
+	MarkAllViewportsDirty(
+			pt.x - MAX_TILE_EXTENT_LEFT,
+			pt.y, // no buildings outside of map
+			pt.x + MAX_TILE_EXTENT_RIGHT,
+			pt.y + MAX_TILE_EXTENT_BOTTOM);
 }
 
 /**
@@ -1806,15 +2051,15 @@ static void SetSelectionTilesDirty()
 			/* the 'x' coordinate of 'top' and 'bot' is the same (and always in the same distance from tile middle),
 			 * tile height/slope affects only the 'y' on-screen coordinate! */
 
-			int l = top.x - (TILE_PIXELS - 2) * ZOOM_LVL_BASE; // 'x' coordinate of left side of dirty rectangle
-			int t = top.y;                     // 'y' coordinate of top side -//-
-			int r = top.x + (TILE_PIXELS - 2) * ZOOM_LVL_BASE; // right side of dirty rectangle
-			int b = bot.y;                     // bottom -//-
+			int l = top.x - TILE_PIXELS * ZOOM_LVL_BASE; // 'x' coordinate of left   side of the dirty rectangle
+			int t = top.y;                               // 'y' coordinate of top    side of the dirty rectangle
+			int r = top.x + TILE_PIXELS * ZOOM_LVL_BASE; // 'x' coordinate of right  side of the dirty rectangle
+			int b = bot.y;                               // 'y' coordinate of bottom side of the dirty rectangle
 
-			static const int OVERLAY_WIDTH = 4 * ZOOM_LVL_BASE; // part of selection sprites is drawn outside the selected area
+			static const int OVERLAY_WIDTH = 4 * ZOOM_LVL_BASE; // part of selection sprites is drawn outside the selected area (in particular: terraforming)
 
 			/* For halftile foundations on SLOPE_STEEP_S the sprite extents some more towards the top */
-			MarkAllViewportsDirty(l - OVERLAY_WIDTH, t - OVERLAY_WIDTH - TILE_HEIGHT * ZOOM_LVL_BASE, r + OVERLAY_WIDTH, b + OVERLAY_WIDTH * ZOOM_LVL_BASE);
+			MarkAllViewportsDirty(l - OVERLAY_WIDTH, t - OVERLAY_WIDTH - TILE_HEIGHT * ZOOM_LVL_BASE, r + OVERLAY_WIDTH, b + OVERLAY_WIDTH);
 
 			/* haven't we reached the topmost tile yet? */
 			if (top_x != x_start) {
@@ -1885,7 +2130,8 @@ static bool CheckClickOnTown(const ViewPort *vp, int x, int y)
 	const Town *t;
 	FOR_ALL_TOWNS(t) {
 		if (CheckClickOnViewportSign(vp, x, y, &t->cache.sign)) {
-			ShowTownViewWindow(t->index);
+ 			if (_ctrl_pressed) TownExecuteAction(t, 4); //build statue
+ 			else ShowTownViewWindow(t->index);
 			return true;
 		}
 	}
@@ -1980,15 +2226,20 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y, bool double_click)
 		if (v != NULL && VehicleClicked(v)) return true;
 	}
 
-	/* Double-clicking finishes current polyline and starts new one. */
-	if (double_click && _settings_client.gui.polyrail_double_click && (_thd.place_mode & HT_POLY)) {
-		ClearRailPlacementEndpoints();
-		SetTileSelectSize(1, 1);
-		return true;
-	}
-
 	/* Vehicle placement mode already handled above. */
 	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
+		if (_thd.place_mode & HT_POLY) {
+			/* In polyline mode double-clicking on a single white line, finishes current polyline.
+			 * If however the user double-clicks on a line that has a white and a blue section,
+			 * both lines (white and blue) will be constructed consecutively. */
+			static bool stop_snap_on_double_click = false;
+			if (double_click && stop_snap_on_double_click) {
+				SetRailSnapMode(RSM_NO_SNAP);
+				return true;
+			}
+			stop_snap_on_double_click = !(_thd.drawstyle & HT_LINE) || (_thd.dir2 == HT_DIR_END);
+		}
+
 		PlaceObject();
 		return true;
 	}
@@ -2004,7 +2255,7 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y, bool double_click)
 			v = v->First();
 			if (_ctrl_pressed && v->owner == _local_company) {
 				if (_settings_client.gui.enable_ctrl_click_start_stop)
-				StartStopVehicle(v, true);
+					StartStopVehicle(v, true);
 			} else {
 				ShowVehicleViewWindow(v);
 			}
@@ -2036,7 +2287,14 @@ void RebuildViewportOverlay(Window *w)
 bool ScrollWindowTo(int x, int y, int z, Window *w, bool instant)
 {
 	/* The slope cannot be acquired outside of the map, so make sure we are always within the map. */
-	if (z == -1) z = GetSlopePixelZ(Clamp(x, 0, MapSizeX() * TILE_SIZE - 1), Clamp(y, 0, MapSizeY() * TILE_SIZE - 1));
+	if (z == -1) {
+		if ( x >= 0 && x <= (int)MapSizeX() * (int)TILE_SIZE - 1
+				&& y >= 0 && y <= (int)MapSizeY() * (int)TILE_SIZE - 1) {
+			z = GetSlopePixelZ(x, y);
+		} else {
+			z = TileHeightOutsideMap(x / (int)TILE_SIZE, y / (int)TILE_SIZE);
+		}
+	}
 
 	Point pt = MapXYZToViewport(w->viewport, x, y, z);
 	w->viewport->follow_vehicle = INVALID_VEHICLE;
@@ -2219,9 +2477,6 @@ void UpdateTileSelection()
 				_thd.new_size.x += TILE_SIZE;
 				_thd.new_size.y += TILE_SIZE;
 			}
-			if (_thd.place_mode & HT_POLY) {
-				CalcNewPolylineOutersize();
-			}
 			new_drawstyle = _thd.next_drawstyle;
 		}
 	} else if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
@@ -2242,7 +2497,16 @@ void UpdateTileSelection()
 				case HT_LINE:
 					/* HT_POLY */
 					if (_thd.place_mode & HT_POLY) {
-						if (_rail_snap_points.Length() > 0) {
+						RailSnapMode snap_mode = GetRailSnapMode();
+						if (snap_mode == RSM_NO_SNAP ||
+								(snap_mode == RSM_SNAP_TO_TILE && GetRailSnapTile() == TileVirtXY(pt.x, pt.y))) {
+							new_drawstyle = GetAutorailHT(pt.x, pt.y);
+							_thd.new_offs.x = 0;
+							_thd.new_offs.y = 0;
+							_thd.new_outersize.x = 0;
+							_thd.new_outersize.y = 0;
+							_thd.dir2 = HT_DIR_END;
+						} else {
 							new_drawstyle = CalcPolyrailDrawstyle(pt, false);
 							if (new_drawstyle != HT_NONE) {
 								x1 = _thd.selstart.x & ~TILE_UNIT_MASK;
@@ -2255,21 +2519,15 @@ void UpdateTileSelection()
 								_thd.new_pos.y = y1;
 								_thd.new_size.x = x2 - x1 + TILE_SIZE;
 								_thd.new_size.y = y2 - y1 + TILE_SIZE;
-								CalcNewPolylineOutersize();
 							}
-							break;
 						}
-						_thd.new_offs.x = 0;
-						_thd.new_offs.y = 0;
-						_thd.new_outersize.x = 0;
-						_thd.new_outersize.y = 0;
-						_thd.dir2 = HT_DIR_END;
+						break;
 					}
 					/* HT_RAIL */
 					if (_thd.place_mode & HT_RAIL) {
-					/* Draw one highlighted tile in any direction */
-					new_drawstyle = GetAutorailHT(pt.x, pt.y);
-					break;
+						/* Draw one highlighted tile in any direction */
+						new_drawstyle = GetAutorailHT(pt.x, pt.y);
+						break;
 					}
 					/* HT_LINE */
 					switch (_thd.place_mode & HT_DIR_MASK) {
@@ -2301,6 +2559,8 @@ void UpdateTileSelection()
 			_thd.new_pos.y = y1 & ~TILE_UNIT_MASK;
 		}
 	}
+
+	if (new_drawstyle & HT_LINE) CalcNewPolylineOutersize();
 
 	/* redraw selection */
 	if (_thd.drawstyle != new_drawstyle ||
@@ -2367,6 +2627,10 @@ void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDrag
 		_thd.place_mode = HT_SPECIAL | others;
 		_thd.next_drawstyle = _thd.drawstyle | others;
 		_current_snap_lock.x = -1;
+		if ((_thd.place_mode & HT_POLY) != 0 && GetRailSnapMode() == RSM_NO_SNAP) {
+			SetRailSnapMode(RSM_SNAP_TO_TILE);
+			SetRailSnapTile(tile);
+		}
 	} else {
 		_thd.place_mode = HT_SPECIAL | others;
 		_thd.next_drawstyle = HT_POINT | others;
@@ -2747,26 +3011,34 @@ static inline uint SqrDist(const Point &a, const Point &b)
 
 static LineSnapPoint *FindBestPolyline(const Point &pt, LineSnapPoint *snap_points, uint num_points, Polyline *ret)
 {
-	while (num_points > 0) {
-		/* run a single bubble sort loop to find the closest snap point (push it to the and of the array) */
-		uint prev_dist = SqrDist(snap_points[0], pt);
-		for (uint i = 1; i < num_points; i++) {
-			uint next_dist = SqrDist(snap_points[i], pt);
-			if (prev_dist < next_dist) {
-				Swap(snap_points[i], snap_points[i - 1]);
-			} else {
-				prev_dist = next_dist;
-			}
+	/* Find the best polyline (a pair of two lines - the white one and the blue
+	 * one) led from any of saved snap points to the mouse cursor. */
+
+	LineSnapPoint *best_snap_point = NULL; // the best polyline we found so far is led from this snap point
+
+	for (int i = 0; i < (int)num_points; i++) {
+		/* try to fit a polyline */
+		Polyline polyline;
+		if (!FindPolyline(pt, snap_points[i], &polyline)) continue; // skip non-matching snap points
+		/* check whether we've found a better polyline */
+		if (best_snap_point != NULL) {
+			/* firstly choose shorter polyline (the one with smaller amount of
+			 * track pieces composing booth the white and the blue line) */
+			uint cur_len = polyline.first_len + polyline.second_len;
+			uint best_len = ret->first_len + ret->second_len;
+			if (cur_len > best_len) continue;
+			/* secondly choose that polyline which has longer first (white) line */
+			if (cur_len == best_len && polyline.first_len < ret->first_len) continue;
+			/* finally check euclidean distance to snap points and choose the
+			 * one which is closer */
+			if (cur_len == best_len && polyline.first_len == ret->first_len && SqrDist(pt, snap_points[i]) >= SqrDist(pt, *best_snap_point)) continue;
 		}
-
-		/* try to fit a line */
-		if (FindPolyline(pt, snap_points[num_points - 1], ret)) return &snap_points[num_points - 1];
-
-		/* repeat procedure for the rest of snap points */
-		--num_points;
+		/* save the found polyline */
+		*ret = polyline;
+		best_snap_point = &snap_points[i];
 	}
 
-	return NULL;
+	return best_snap_point;
 }
 
 /** while dragging */
@@ -2957,6 +3229,7 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 
 	_thd.selend.x = x;
 	_thd.selend.y = y;
+	_thd.dir2 = HT_DIR_END;
 	_thd.next_drawstyle = b;
 
 	ShowLengthMeasurement(b, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
@@ -2964,33 +3237,37 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 
 static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 {
+	RailSnapMode snap_mode = GetRailSnapMode();
+
+	/* are we only within one tile? */
+	if (snap_mode == RSM_SNAP_TO_TILE && GetRailSnapTile() == TileVirtXY(pt.x, pt.y)) {
+		_thd.selend.x = pt.x;
+		_thd.selend.y = pt.y;
+		return GetAutorailHT(pt.x, pt.y);
+	}
+
 	/* find the best track */
 	Polyline line;
 
-	HighLightStyle ret = HT_LINE | HT_POLY;
+	bool lock_snapping = dragging && snap_mode == RSM_SNAP_TO_RAIL;
+	if (!lock_snapping) _current_snap_lock.x = -1;
 
-	if (!dragging) {
-		_current_snap_lock.x = -1;
-		if (FindBestPolyline(pt, _rail_snap_points.Begin(), _rail_snap_points.Length(), &line) == NULL) ret = HT_NONE; // no match
-	} else if (_current_snap_lock.x != -1) {
-		if (FindBestPolyline(pt, &_current_snap_lock, 1, &line) == NULL) ret = HT_NONE; // no match
+	const LineSnapPoint *snap_point;
+	if (_current_snap_lock.x != -1) {
+		snap_point = FindBestPolyline(pt, &_current_snap_lock, 1, &line);
+	} else if (snap_mode == RSM_SNAP_TO_TILE) {
+		snap_point = FindBestPolyline(pt, _tile_snap_points.Begin(), _tile_snap_points.Length(), &line);
 	} else {
-		const LineSnapPoint *snap_point = FindBestPolyline(pt, _rail_snap_points.Begin(), _rail_snap_points.Length(), &line);
-		if (snap_point == NULL) {
-			ret = HT_NONE; // no match
-		} else  {
-			_current_snap_lock = *snap_point;
-			_current_snap_lock.dirs &= (1 << line.first_dir) | (1 << ReverseDir(line.first_dir)); // lock direction
-		}
-		}
+		assert(snap_mode == RSM_SNAP_TO_RAIL);
+		snap_point = FindBestPolyline(pt, _rail_snap_points.Begin(), _rail_snap_points.Length(), &line);
+	}
 
-	if (ret == HT_NONE) {
-		_thd.selstart.x = -1;
-		_thd.selend.x = -1;
-		_thd.selstart2.x = -1;
-		_thd.selend2.x = -1;
-		_thd.dir2 = HT_DIR_END;
-		return ret;
+	if (snap_point == NULL) return HT_NONE; // no match
+
+	if (lock_snapping && _current_snap_lock.x == -1) {
+		/* lock down the snap point */
+		_current_snap_lock = *snap_point;
+		_current_snap_lock.dirs &= (1 << line.first_dir) | (1 << ReverseDir(line.first_dir));
 	}
 
 	TileIndexDiffC first_dir = TileIndexDiffCByDir(line.first_dir);
@@ -3007,7 +3284,6 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 	Trackdir seldir = PointDirToTrackdir(_thd.selstart, line.first_dir);
 	_thd.selstart.x  &= ~TILE_UNIT_MASK;
 	_thd.selstart.y  &= ~TILE_UNIT_MASK;
-	ret |= (HighLightStyle)TrackdirToTrack(seldir);
 
 	if (line.second_len != 0) {
 		TileIndexDiffC second_dir = TileIndexDiffCByDir(line.second_dir);
@@ -3025,6 +3301,7 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 		_thd.dir2 = HT_DIR_END;
 	}
 
+	HighLightStyle ret = HT_LINE | (HighLightStyle)TrackdirToTrack(seldir);
 	ShowLengthMeasurement(ret, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y), TCC_HOVER, true);
 	return ret;
 }
@@ -3046,7 +3323,7 @@ void VpSelectTilesWithMethod(int x, int y, ViewportPlaceMethod method)
 		return;
 	}
 
-	if ((_thd.place_mode & HT_POLY) && _rail_snap_points.Length() > 0) {
+	if ((_thd.place_mode & HT_POLY) && GetRailSnapMode() != RSM_NO_SNAP) {
 		Point pt = { x, y };
 		_thd.next_drawstyle = CalcPolyrailDrawstyle(pt, true);
 		return;
@@ -3104,11 +3381,11 @@ calc_heightdiff_single_direction:;
 				x = sx + Clamp(x - sx, -limit, limit);
 				y = sy + Clamp(y - sy, -limit, limit);
 			}
-					/* With current code passing a HT_LINE style to calculate the height
-					 * difference is enough. However if/when a point-tool is created
-					 * with this method, function should be called with new_style (below)
-					 * instead of HT_LINE | style case HT_POINT is handled specially
-					 * new_style := (_thd.next_drawstyle & HT_RECT) ? HT_LINE | style : _thd.next_drawstyle; */
+			/* With current code passing a HT_LINE style to calculate the height
+			 * difference is enough. However if/when a point-tool is created
+			 * with this method, function should be called with new_style (below)
+			 * instead of HT_LINE | style case HT_POINT is handled specially
+			 * new_style := (_thd.next_drawstyle & HT_RECT) ? HT_LINE | style : _thd.next_drawstyle; */
 			ShowLengthMeasurement(HT_LINE | style, TileVirtXY(sx, sy), TileVirtXY(x, y));
 			break;
 
@@ -3227,6 +3504,7 @@ calc_heightdiff_single_direction:;
 
 	_thd.selend.x = x;
 	_thd.selend.y = y;
+	_thd.dir2 = HT_DIR_END;
 }
 
 /**
@@ -3244,11 +3522,10 @@ EventState VpHandlePlaceSizingDrag()
 		return ES_HANDLED;
 	}
 
-	/* while dragging execute the drag procedure of the corresponding window (mostly VpSelectTilesWithMethod() ) */
-	if (_left_button_down) {
-		w->OnPlaceDrag(_thd.select_method, _thd.select_proc, GetTileBelowCursor());
-		return ES_HANDLED;
-	}
+	/* While dragging execute the drag procedure of the corresponding window (mostly VpSelectTilesWithMethod() ).
+	 * Do it even if the button is no longer pressed to make sure that OnPlaceDrag was called at least once. */
+	w->OnPlaceDrag(_thd.select_method, _thd.select_proc, GetTileBelowCursor());
+	if (_left_button_down) return ES_HANDLED;
 
 	/* mouse button released..
 	 * keep the selected tool, but reset it to the original mode. */
@@ -3265,8 +3542,12 @@ EventState VpHandlePlaceSizingDrag()
 	}
 	SetTileSelectSize(1, 1);
 
-	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
+	if (_thd.place_mode & HT_POLY) {
+		if (GetRailSnapMode() == RSM_SNAP_TO_TILE) SetRailSnapMode(RSM_NO_SNAP);
+		if (_thd.drawstyle == HT_NONE) return ES_HANDLED;
+	}
 
+	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 	return ES_HANDLED;
 }
 
@@ -3313,6 +3594,10 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 		VpStartPreSizing();
 	}
 
+	if (mode & HT_POLY) {
+		SetRailSnapMode((mode & HT_NEW_POLY) == HT_NEW_POLY ? RSM_NO_SNAP : RSM_SNAP_TO_RAIL);
+	}
+
 	if ((icon & ANIMCURSOR_FLAG) != 0) {
 		SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
 	} else {
@@ -3324,6 +3609,44 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 void ResetObjectToPlace()
 {
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+}
+
+Point GetViewportStationMiddle(const ViewPort *vp, const Station *st)
+{
+	int x = TileX(st->xy) * TILE_SIZE;
+	int y = TileY(st->xy) * TILE_SIZE;
+	int z = GetSlopePixelZ(Clamp(x, 0, MapSizeX() * TILE_SIZE - 1), Clamp(y, 0, MapSizeY() * TILE_SIZE - 1));
+
+	Point p = RemapCoords(x, y, z);
+	p.x = UnScaleByZoom(p.x - vp->virtual_left, vp->zoom) + vp->left;
+	p.y = UnScaleByZoom(p.y - vp->virtual_top, vp->zoom) + vp->top;
+	return p;
+}
+
+/** Helper class for getting the best sprite sorter. */
+struct ViewportSSCSS {
+	VpSorterChecker fct_checker; ///< The check function.
+	VpSpriteSorter fct_sorter;   ///< The sorting function.
+};
+
+/** List of sorters ordered from best to worst. */
+static ViewportSSCSS _vp_sprite_sorters[] = {
+#ifdef WITH_SSE
+	{ &ViewportSortParentSpritesSSE41Checker, &ViewportSortParentSpritesSSE41 },
+#endif
+	{ &ViewportSortParentSpritesChecker, &ViewportSortParentSprites }
+};
+
+/** Choose the "best" sprite sorter and set _vp_sprite_sorter. */
+void InitializeSpriteSorter()
+{
+	for (uint i = 0; i < lengthof(_vp_sprite_sorters); i++) {
+		if (_vp_sprite_sorters[i].fct_checker()) {
+			_vp_sprite_sorter = _vp_sprite_sorters[i].fct_sorter;
+			break;
+		}
+	}
+	assert(_vp_sprite_sorter != NULL);
 }
 
 static LineSnapPoint LineSnapPointAtRailTrackEndpoint(TileIndex tile, DiagDirection exit_dir, bool bidirectional)
@@ -3372,57 +3695,69 @@ void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track
 		LineSnapPoint snap_end = LineSnapPointAtRailTrackEndpoint(end_tile, TrackdirToExitdir(exit_trackdir_at_end), bidirectional_exit);
 		/* Find if we already had these coordinates before. */
 		LineSnapPoint *snap;
+		bool had_start = false;
+		bool had_end = false;
 		for (snap = _rail_snap_points.Begin(); snap != _rail_snap_points.End(); snap++) {
-			/* Coordinates found - remove the snap point as it was already used. */
-			if (snap->x == snap_start.x && snap->y == snap_start.y) snap_start.dirs = 0;
-			if (snap->x == snap_end.x && snap->y == snap_end.y) snap_end.dirs = 0;
+			had_start |= (snap->x == snap_start.x && snap->y == snap_start.y);
+			had_end |= (snap->x == snap_end.x && snap->y == snap_end.y);
 		}
 		/* Create new snap point set. */
-		_rail_snap_points.Clear();
-		if (snap_start.dirs != 0) *_rail_snap_points.Append() = snap_start;
-		if (snap_end.dirs != 0) *_rail_snap_points.Append() = snap_end;
-	}
-}
-
-void ClearRailPlacementEndpoints()
-{
-	_rail_snap_points.Clear();
-}
-
-Point GetViewportStationMiddle(const ViewPort *vp, const Station *st)
-{
-	int x = TileX(st->xy) * TILE_SIZE;
-	int y = TileY(st->xy) * TILE_SIZE;
-	int z = GetSlopePixelZ(Clamp(x, 0, MapSizeX() * TILE_SIZE - 1), Clamp(y, 0, MapSizeY() * TILE_SIZE - 1));
-
-	Point p = RemapCoords(x, y, z);
-	p.x = UnScaleByZoom(p.x - vp->virtual_left, vp->zoom) + vp->left;
-	p.y = UnScaleByZoom(p.y - vp->virtual_top, vp->zoom) + vp->top;
-	return p;
-}
-
-/** Helper class for getting the best sprite sorter. */
-struct ViewportSSCSS {
-	VpSorterChecker fct_checker; ///< The check function.
-	VpSpriteSorter fct_sorter;   ///< The sorting function.
-};
-
-/** List of sorters ordered from best to worst. */
-static ViewportSSCSS _vp_sprite_sorters[] = {
-#ifdef WITH_SSE
-	{ &ViewportSortParentSpritesSSE41Checker, &ViewportSortParentSpritesSSE41 },
-#endif
-	{ &ViewportSortParentSpritesChecker, &ViewportSortParentSprites }
-};
-
-/** Choose the "best" sprite sorter and set _vp_sprite_sorter. */
-void InitializeSpriteSorter()
-{
-	for (uint i = 0; i < lengthof(_vp_sprite_sorters); i++) {
-		if (_vp_sprite_sorters[i].fct_checker()) {
-			_vp_sprite_sorter = _vp_sprite_sorters[i].fct_sorter;
-			break;
+		if (had_start && had_end) {
+			/* just stop snaping, don't forget snap points */
+			SetRailSnapMode(RSM_NO_SNAP);
+		} else {
+			/* include only new points */
+			_rail_snap_points.Clear();
+			if (!had_start) *_rail_snap_points.Append() = snap_start;
+			if (!had_end) *_rail_snap_points.Append() = snap_end;
+			SetRailSnapMode(RSM_SNAP_TO_RAIL);
 		}
 	}
-	assert(_vp_sprite_sorter != NULL);
+}
+
+bool CurrentlySnappingRailPlacement()
+{
+	return (_thd.place_mode & HT_POLY) && GetRailSnapMode() == RSM_SNAP_TO_RAIL;
+}
+
+static RailSnapMode GetRailSnapMode()
+{
+	if (_rail_snap_mode == RSM_SNAP_TO_TILE && _tile_snap_points.Length() == 0) return RSM_NO_SNAP;
+	if (_rail_snap_mode == RSM_SNAP_TO_RAIL && _rail_snap_points.Length() == 0) return RSM_NO_SNAP;
+	return _rail_snap_mode;
+}
+
+static void SetRailSnapMode(RailSnapMode mode)
+{
+	_rail_snap_mode = mode;
+
+	if ((_thd.place_mode & HT_POLY) && (GetRailSnapMode() == RSM_NO_SNAP)) {
+		SetTileSelectSize(1, 1);
+	}
+}
+
+static TileIndex GetRailSnapTile()
+{
+	if (_tile_snap_points.Length() == 0) return INVALID_TILE;
+	return TileVirtXY(_tile_snap_points[DIAGDIR_NE].x, _tile_snap_points[DIAGDIR_NE].y);
+}
+
+static void SetRailSnapTile(TileIndex tile)
+{
+	_tile_snap_points.Clear();
+	if (tile == INVALID_TILE) return;
+
+	for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
+		LineSnapPoint *point = _tile_snap_points.Append();
+		*point = LineSnapPointAtRailTrackEndpoint(tile, dir, false);
+		point->dirs = ROR<uint8>(point->dirs, DIRDIFF_REVERSE);
+	}
+}
+
+void ResetRailPlacementSnapping()
+{
+	_rail_snap_mode = RSM_NO_SNAP;
+	_tile_snap_points.Clear();
+	_rail_snap_points.Clear();
+	_current_snap_lock.x = -1;
 }

@@ -1,4 +1,4 @@
-/* $Id: script_cargo.cpp 26396 2014-03-10 22:18:53Z zuu $ */
+/* $Id: script_cargo.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../../economy_func.h"
 #include "../../core/bitmath_func.hpp"
 #include "../../settings_type.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptCargo::IsValidCargo(CargoID cargo_type)
 {

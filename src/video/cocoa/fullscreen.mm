@@ -1,4 +1,4 @@
-/* $Id: fullscreen.mm 26715 2014-08-03 14:06:04Z frosch $ */
+/* $Id: fullscreen.mm 26709 2014-07-30 20:19:29Z planetmaker $ */
 
 /*
  * This file is part of OpenTTD.

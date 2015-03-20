@@ -1,4 +1,4 @@
-/* $Id: geometry_func.cpp 17248 2009-08-21 20:21:05Z rubidium $ */
+/* $Id: geometry_func.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../stdafx.h"
 #include "geometry_func.hpp"
 #include "math_func.hpp"
+
+#include "../safeguards.h"
 
 /**
  * Compute bounding box of both dimensions.

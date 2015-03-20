@@ -1,4 +1,4 @@
-/* $Id: network_udp.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: network_udp.cpp 26486 2014-04-23 21:12:09Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -33,6 +33,8 @@
 #include "table/strings.h"
 
 #include "core/udp.h"
+
+#include "../safeguards.h"
 
 /** Mutex for all out threaded udp resolution and such. */
 static ThreadMutex *_network_udp_mutex = ThreadMutex::New();
@@ -382,7 +384,7 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_RESPONSE(Packet *p, NetworkAd
 	}
 
 	if (item->info.hostname[0] == '\0') {
-		snprintf(item->info.hostname, sizeof(item->info.hostname), "%s", client_addr->GetHostname());
+		seprintf(item->info.hostname, lastof(item->info.hostname), "%s", client_addr->GetHostname());
 	}
 
 	if (client_addr->GetAddress()->ss_family == AF_INET6) {

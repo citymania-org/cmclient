@@ -1,4 +1,4 @@
-/* $Id: script_order.cpp 26148 2013-12-08 15:13:06Z frosch $ */
+/* $Id: script_order.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "../../depot_base.h"
 #include "../../station_base.h"
 #include "../../waypoint_base.h"
+
+#include "../../safeguards.h"
 
 /**
  * Gets the order type given a tile

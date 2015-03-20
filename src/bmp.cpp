@@ -1,4 +1,4 @@
-/* $Id: bmp.cpp 26058 2013-11-23 13:15:07Z rubidium $ */
+/* $Id: bmp.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "core/bitmath_func.hpp"
 #include "core/alloc_func.hpp"
 #include "core/mem_func.hpp"
+
+#include "safeguards.h"
 
 void BmpInitializeBuffer(BmpBuffer *buffer, FILE *file)
 {

@@ -1,4 +1,4 @@
-/* $Id: rail_cmd.cpp 26317 2014-02-07 23:48:56Z frosch $ */
+/* $Id: rail_cmd.cpp 27157 2015-02-22 14:01:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -37,6 +37,8 @@
 #include "table/strings.h"
 #include "table/railtypes.h"
 #include "table/track_land.h"
+
+#include "safeguards.h"
 
 /** Helper type for lists/vectors of trains */
 typedef SmallVector<Train *, 16> TrainList;
@@ -415,6 +417,8 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	Track track = Extract<Track, 0, 3>(p2);
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 
+	_rail_track_endtile = INVALID_TILE;
+
 	if (!ValParamRailtype(railtype) || !ValParamTrackOrientation(track)) return CMD_ERROR;
 
 	Slope tileh = GetTileSlope(tile);
@@ -431,7 +435,10 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 
 			ret = CheckTrackCombination(tile, trackbit, flags);
 			if (ret.Succeeded()) ret = EnsureNoTrainOnTrack(tile, track);
-			if (ret.Failed()) return ret;
+			if (ret.Failed()) {
+				if (ret.GetErrorMessage() == STR_ERROR_ALREADY_BUILT) _rail_track_endtile = tile;
+				return ret;
+			}
 
 			ret = CheckRailSlope(tileh, trackbit, GetTrackBits(tile), tile);
 			if (ret.Failed()) return ret;
@@ -520,6 +527,7 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 			}
 
 			if (IsLevelCrossing(tile) && GetCrossingRailBits(tile) == trackbit) {
+				_rail_track_endtile = tile;
 				return_cmd_error(STR_ERROR_ALREADY_BUILT);
 			}
 			/* FALL THROUGH */
@@ -577,6 +585,8 @@ CommandCost CmdRemoveSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, 
 	Track track = Extract<Track, 0, 3>(p2);
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 	bool crossing = false;
+
+	_rail_track_endtile = INVALID_TILE;
 
 	if (!ValParamTrackOrientation(track)) return CMD_ERROR;
 	TrackBits trackbit = TrackToTrackBits(track);
@@ -838,6 +848,8 @@ static CommandCost CmdRailTrackHelper(TileIndex tile, DoCommandFlag flags, uint3
 	bool remove = HasBit(p2, 7);
 	RailType railtype = Extract<RailType, 0, 4>(p2);
 
+	_rail_track_endtile = INVALID_TILE;
+
 	if ((!remove && !ValParamRailtype(railtype)) || !ValParamTrackOrientation(track)) return CMD_ERROR;
 	if (p1 >= MapSize()) return CMD_ERROR;
 	TileIndex end_tile = p1;
@@ -849,10 +861,12 @@ static CommandCost CmdRailTrackHelper(TileIndex tile, DoCommandFlag flags, uint3
 	bool had_success = false;
 	CommandCost last_error = CMD_ERROR;
 	for (;;) {
+		TileIndex last_endtile = _rail_track_endtile;
 		CommandCost ret = DoCommand(tile, remove ? 0 : railtype, TrackdirToTrack(trackdir), flags, remove ? CMD_REMOVE_SINGLE_RAIL : CMD_BUILD_SINGLE_RAIL);
 
 		if (ret.Failed()) {
 			last_error = ret;
+			if (_rail_track_endtile == INVALID_TILE) _rail_track_endtile = last_endtile;
 			if (last_error.GetErrorMessage() != STR_ERROR_ALREADY_BUILT && !remove) {
 				if (HasBit(p2, 8)) return last_error;
 				break;
@@ -954,7 +968,7 @@ CommandCost CmdBuildTrainDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	CommandCost cost = DoCommand(tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
 	if (cost.Failed()) return cost;
 
-	if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile)) return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
+	if (IsBridgeAbove(tile)) return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
 
 	if (!Depot::CanAllocateItem()) return CMD_ERROR;
 
@@ -1689,13 +1703,11 @@ CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 					YapfNotifyTrackLayoutChange(tile, track);
 					YapfNotifyTrackLayoutChange(endtile, track);
 
-					MarkTileDirtyByTile(tile);
-					MarkTileDirtyByTile(endtile);
-
 					if (IsBridge(tile)) {
-						TileIndexDiff delta = TileOffsByDiagDir(GetTunnelBridgeDirection(tile));
-						TileIndex t = tile + delta;
-						for (; t != endtile; t += delta) MarkTileDirtyByTile(t); // TODO encapsulate this into a function
+						MarkBridgeDirty(tile);
+					} else {
+						MarkTileDirtyByTile(tile);
+						MarkTileDirtyByTile(endtile);
 					}
 				}
 
@@ -2443,9 +2455,6 @@ void DrawTrainDepotSprite(int x, int y, int dir, RailType railtype)
 	const RailtypeInfo *rti = GetRailTypeInfo(railtype);
 	SpriteID image = rti->UsesOverlay() ? SPR_FLAT_GRASS_TILE : dts->ground.sprite;
 	uint32 offset = rti->GetRailtypeSpriteOffset();
-
-	x += 33;
-	y += 17;
 
 	if (image != SPR_FLAT_GRASS_TILE) image += offset;
 	PaletteID palette = COMPANY_SPRITE_COLOUR(_local_company);

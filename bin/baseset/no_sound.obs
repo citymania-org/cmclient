@@ -1,4 +1,4 @@
-; $Id: no_sound.obs 25205 2013-04-24 20:30:02Z frosch $
+; $Id: no_sound.obs 27103 2015-01-01 20:51:18Z rubidium $
 ;
 ; This represents more or less nothingness
 ;
@@ -25,6 +25,7 @@ description.et_EE = Helikogu ilma helideta.
 description.eu_ES = Soinurik gabeko soinu pakete bat
 description.fi_FI = Äänipaketti, jossa ei ole ääniä.
 description.fr_FR = Un pack de sons sans sons.
+description.ga_IE = Pacáiste fuaimeanna gan aon fhuaimeanna ann.
 description.gd_GB = Pacaid fhuaimean anns nach eil fuaim sam bith.
 description.gl_ES = Un conxunto de sons sen ningún son
 description.hr_HR = Zvučni paket bez ikakvih zvukova.
@@ -35,7 +36,7 @@ description.it_IT = Un pacchetto sonoro non contenente alcun suono.
 description.ja_JP = 空の効果音パック
 description.ko_KR = 아무런 효과음도 없는 효과음 팩입니다.
 description.la_VA = Sarcina sonorum sine ullis sonis.
-description.lb_LU = En Soundpack mat all den Sounds.
+description.lb_LU = E Soundpack ouni iergendee Sound.
 description.lt_LT = Garsų pakas be jokių garsų.
 description.nb_NO = En lydpakke uten noen lyder.
 description.nl_NL = Een geluidset zonder geluid.

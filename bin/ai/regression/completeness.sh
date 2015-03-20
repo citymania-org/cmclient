@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# $Id: completeness.sh 15062 2009-01-13 16:30:24Z smatz $
+# $Id: completeness.sh 26895 2014-09-21 16:41:03Z fonsinchen $
 
-if ! [ -f ai/regression/regression.nut ]; then
+if ! [ -f ai/regression/completeness.sh ]; then
 	echo "Make sure you are in the root of OpenTTD before starting this script."
 	exit 1
 fi
 
-cat ai/regression/regression.nut | tr ';' '\n' | awk '
+cat ai/regression/tst_*/main.nut | tr ';' '\n' | awk '
 /^function/ {
 	for (local in locals) {
 		delete locals[local]
@@ -61,7 +61,7 @@ cat ai/regression/regression.nut | tr ';' '\n' | awk '
 }
 ' | sed 's/	//g' | sort | uniq > tmp.in_regression
 
-grep 'DefSQ.*Method' ../src/ai/api/*.hpp.sq | grep -v 'AIError::' | grep -v 'AIAbstractList::Valuate' | grep -v '::GetClassName' | sed 's/^[^,]*, &//g;s/,[^,]*//g' | sort > tmp.in_api
+grep 'DefSQ.*Method' ../src/script/api/ai/*.hpp.sq | grep -v 'AIError::' | grep -v 'AIAbstractList::Valuate' | grep -v '::GetClassName' | sed 's/^[^,]*, &//g;s/,[^,]*//g' | sort > tmp.in_api
 
 diff -u tmp.in_regression tmp.in_api | grep -v '^+++' | grep '^+' | sed 's/^+//'
 

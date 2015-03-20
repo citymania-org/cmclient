@@ -1,4 +1,4 @@
-/* $Id: script_signlist.cpp 23355 2011-11-29 23:15:35Z truebrain $ */
+/* $Id: script_signlist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "script_signlist.hpp"
 #include "script_sign.hpp"
 #include "../../signs_base.h"
+
+#include "../../safeguards.h"
 
 ScriptSignList::ScriptSignList()
 {

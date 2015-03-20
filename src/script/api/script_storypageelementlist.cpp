@@ -1,4 +1,4 @@
-/* $Id: script_storypageelementlist.cpp 26305 2014-02-06 19:41:56Z zuu $ */
+/* $Id: script_storypageelementlist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../../stdafx.h"
 #include "script_storypageelementlist.hpp"
 #include "../../story_base.h"
+
+#include "../../safeguards.h"
 
 ScriptStoryPageElementList::ScriptStoryPageElementList(ScriptStoryPage::StoryPageID story_page_id)
 {

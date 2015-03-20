@@ -1,4 +1,4 @@
-/* $Id: linkgraphjob.cpp 26347 2014-02-16 18:42:59Z fonsinchen $ */
+/* $Id: linkgraphjob.cpp 27178 2015-03-07 18:27:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,9 +15,18 @@
 #include "linkgraphjob.h"
 #include "linkgraphschedule.h"
 
+#include "../safeguards.h"
+
 /* Initialize the link-graph-job-pool */
 LinkGraphJobPool _link_graph_job_pool("LinkGraphJob");
 INSTANTIATE_POOL_METHODS(LinkGraphJob)
+
+/**
+ * Static instance of an invalid path.
+ * Note: This instance is created on task start.
+ *       Lazy creation on first usage results in a data race between the CDist threads.
+ */
+/* static */ Path *Path::invalid_path = new Path(INVALID_NODE, true);
 
 /**
  * Create a link graph job from a link graph. The link graph will be copied so

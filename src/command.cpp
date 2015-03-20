@@ -1,4 +1,4 @@
-/* $Id: command.cpp 26717 2014-08-03 15:04:09Z frosch $ */
+/* $Id: command.cpp 26802 2014-09-07 16:12:58Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,6 +32,8 @@
 #include "window_func.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 CommandProc CmdBuildRailroadTrack;
 CommandProc CmdRemoveRailroadTrack;
@@ -86,6 +88,7 @@ CommandProc CmdBuildVehicle;
 CommandProc CmdSellVehicle;
 CommandProc CmdRefitVehicle;
 CommandProc CmdSendVehicleToDepot;
+CommandProc CmdSetVehicleVisibility;
 
 CommandProc CmdForceTrainProceed;
 CommandProc CmdReverseTrainDirection;
@@ -184,7 +187,7 @@ CommandProc CmdDepotSellAllVehicles;
 CommandProc CmdDepotMassAutoReplace;
 
 CommandProc CmdCreateGroup;
-CommandProc CmdRenameGroup;
+CommandProc CmdAlterGroup;
 CommandProc CmdDeleteGroup;
 CommandProc CmdAddVehicleGroup;
 CommandProc CmdAddSharedVehicleGroup;
@@ -245,6 +248,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdSellVehicle,                        CMD_CLIENT_ID, CMDT_VEHICLE_CONSTRUCTION  ), // CMD_SELL_VEHICLE
 	DEF_CMD(CmdRefitVehicle,                                   0, CMDT_VEHICLE_CONSTRUCTION  ), // CMD_REFIT_VEHICLE
 	DEF_CMD(CmdSendVehicleToDepot,                             0, CMDT_VEHICLE_MANAGEMENT    ), // CMD_SEND_VEHICLE_TO_DEPOT
+	DEF_CMD(CmdSetVehicleVisibility,                           0, CMDT_COMPANY_SETTING       ), // CMD_SET_VEHICLE_VISIBILITY
 
 	DEF_CMD(CmdMoveRailVehicle,                                0, CMDT_VEHICLE_CONSTRUCTION  ), // CMD_MOVE_RAIL_VEHICLE
 	DEF_CMD(CmdForceTrainProceed,                              0, CMDT_VEHICLE_MANAGEMENT    ), // CMD_FORCE_TRAIN_PROCEED
@@ -342,7 +346,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdDepotMassAutoReplace,                           0, CMDT_VEHICLE_CONSTRUCTION  ), // CMD_DEPOT_MASS_AUTOREPLACE
 	DEF_CMD(CmdCreateGroup,                                    0, CMDT_ROUTE_MANAGEMENT      ), // CMD_CREATE_GROUP
 	DEF_CMD(CmdDeleteGroup,                                    0, CMDT_ROUTE_MANAGEMENT      ), // CMD_DELETE_GROUP
-	DEF_CMD(CmdRenameGroup,                                    0, CMDT_OTHER_MANAGEMENT      ), // CMD_RENAME_GROUP
+	DEF_CMD(CmdAlterGroup,                                     0, CMDT_OTHER_MANAGEMENT      ), // CMD_ALTER_GROUP
 	DEF_CMD(CmdAddVehicleGroup,                                0, CMDT_ROUTE_MANAGEMENT      ), // CMD_ADD_VEHICLE_GROUP
 	DEF_CMD(CmdAddSharedVehicleGroup,                          0, CMDT_ROUTE_MANAGEMENT      ), // CMD_ADD_SHARE_VEHICLE_GROUP
 	DEF_CMD(CmdRemoveAllVehiclesGroup,                         0, CMDT_ROUTE_MANAGEMENT      ), // CMD_REMOVE_ALL_VEHICLES_GROUP

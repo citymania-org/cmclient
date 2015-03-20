@@ -1,4 +1,4 @@
-/* $Id: newgrf_town.cpp 26175 2013-12-23 18:09:29Z frosch $ */
+/* $Id: newgrf_town.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "debug.h"
 #include "town.h"
 #include "newgrf_town.h"
+
+#include "safeguards.h"
 
 /**
  * Resolver of a town scope.

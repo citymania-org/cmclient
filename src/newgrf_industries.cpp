@@ -1,4 +1,4 @@
-/* $Id: newgrf_industries.cpp 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_industries.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,8 @@
 #include "core/random_func.hpp"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /* Since the industry IDs defined by the GRF file don't necessarily correlate
  * to those used by the game, the IDs used for overriding old industries must be

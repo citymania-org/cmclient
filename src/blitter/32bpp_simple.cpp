@@ -1,4 +1,4 @@
-/* $Id: 32bpp_simple.cpp 26541 2014-04-29 18:18:52Z frosch $ */
+/* $Id: 32bpp_simple.cpp 26969 2014-10-06 18:45:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "32bpp_simple.hpp"
 
 #include "../table/sprites.h"
+
+#include "../safeguards.h"
 
 /** Instantiation of the simple 32bpp blitter factory. */
 static FBlitter_32bppSimple iFBlitter_32bppSimple;
@@ -53,6 +55,12 @@ void Blitter_32bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 						}
 					} else {
 						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(this->AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
+					}
+					break;
+
+				case BM_BLACK_REMAP:
+					if (src->a != 0) {
+						*dst = Colour(0, 0, 0);
 					}
 					break;
 

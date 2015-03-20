@@ -1,4 +1,4 @@
-/* $Id: os2_m.cpp 22410 2011-05-02 16:14:23Z rubidium $ */
+/* $Id: os2_m.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include <stdarg.h>
 #include <os2.h>
 #include <os2me.h>
+
+#include "../safeguards.h"
 
 /**********************
  * OS/2 MIDI PLAYER

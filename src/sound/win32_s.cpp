@@ -1,4 +1,4 @@
-/* $Id: win32_s.cpp 22877 2011-09-03 10:31:28Z terkhen $ */
+/* $Id: win32_s.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "win32_s.h"
 #include <windows.h>
 #include <mmsystem.h>
+
+#include "../safeguards.h"
 
 static FSoundDriver_Win32 iFSoundDriver_Win32;
 

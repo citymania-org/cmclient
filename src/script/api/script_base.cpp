@@ -1,4 +1,4 @@
-/* $Id: script_base.cpp 25148 2013-04-06 11:59:27Z rubidium $ */
+/* $Id: script_base.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "script_error.hpp"
 #include "../../network/network.h"
 #include "../../core/random_func.hpp"
+
+#include "../../safeguards.h"
 
 /* static */ uint32 ScriptBase::Rand()
 {

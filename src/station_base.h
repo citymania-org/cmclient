@@ -1,4 +1,4 @@
-/* $Id: station_base.h 26790 2014-09-07 15:09:05Z frosch $ */
+/* $Id: station_base.h 27178 2015-03-07 18:27:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -36,6 +36,8 @@ static const byte INITIAL_STATION_RATING = 175;
 class FlowStat {
 public:
 	typedef std::map<uint32, StationID> SharesMap;
+
+	static const SharesMap empty_sharesmap;
 
 	/**
 	 * Invalid constructor. This can't be called as a FlowStat must not be
@@ -149,6 +151,11 @@ private:
 /** Flow descriptions by origin stations. */
 class FlowStatMap : public std::map<StationID, FlowStat> {
 public:
+	uint GetFlow() const;
+	uint GetFlowVia(StationID via) const;
+	uint GetFlowFrom(StationID from) const;
+	uint GetFlowFromVia(StationID from, StationID via) const;
+
 	void AddFlow(StationID origin, StationID via, uint amount);
 	void PassOnFlow(StationID origin, StationID via, uint amount);
 	StationIDStack DeleteFlows(StationID via);
@@ -170,11 +177,12 @@ struct GoodsEntry {
 		GES_ACCEPTANCE,
 
 		/**
-		 * Set when the cargo was ever waiting at the station.
+		 * This indicates whether a cargo has a rating at the station.
+		 * Set when cargo was ever waiting at the station.
 		 * It is set when cargo supplied by surrounding tiles is moved to the station, or when
 		 * arriving vehicles unload/transfer cargo without it being a final delivery.
-		 * This also indicates, whether a cargo has a rating at the station.
-		 * This flag is never cleared.
+		 *
+		 * This flag is cleared after 255 * STATION_RATING_TICKS of not having seen a pickup.
 		 */
 		GES_RATING,
 
@@ -266,8 +274,6 @@ struct GoodsEntry {
 	{
 		return HasBit(this->status, GES_RATING);
 	}
-
-	uint GetSumFlowVia(StationID via) const;
 
 	/**
 	 * Get the best next hop for a cargo packet from station source.

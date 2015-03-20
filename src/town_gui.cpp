@@ -1,4 +1,4 @@
-/* $Id: town_gui.cpp 26973 2014-10-06 20:14:44Z frosch $ */
+/* $Id: town_gui.cpp 26960 2014-10-05 11:20:02Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -34,8 +34,12 @@
 #include "widgets/dropdown_func.h"
 
 #include "widgets/town_widget.h"
-#include "hotkeys.h"
+
 #include "table/strings.h"
+
+#include "safeguards.h"
+
+#include "hotkeys.h"
 #include <list>
 #include "console_func.h"
 
@@ -44,9 +48,9 @@ struct CargoX {
 	int from;
 };
 void ShowCBTownWindow(uint town);
-void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line);
+static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bool show_house_states_info=false);
 
-bool TownExecuteAction(Town *town, uint action){
+bool TownExecuteAction(const Town *town, uint action){
 	if(!(action == HK_STATUE && HasBit(town->statues, _current_company))){ //don't built statue when there is one
 		return DoCommandP(town->xy, town->index, action, CMD_DO_TOWN_ACTION | CMD_MSG(STR_ERROR_CAN_T_DO_THIS));
 	}
@@ -340,6 +344,7 @@ private:
 
 public:
 	static const int WID_TV_HEIGHT_NORMAL = 150;
+	bool wcb_disable;
 
 	TownViewWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
 	{
@@ -357,7 +362,8 @@ public:
 		/* disable renaming town in network games if you are not the server */
 		this->SetWidgetDisabledState(WID_TV_CHANGE_NAME, _networking && !_network_server);
 		// extern bool _novahost;
-		// this->SetWidgetDisabledState(WID_TV_CB, !_networking || !_novahost || this->town->larger_town);
+		// this->wcb_disable = !_networking || !_novahost || this->town->larger_town || _game_mode == GM_EDITOR;
+		// this->SetWidgetDisabledState(WID_TV_CB, this->wcb_disable);
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -366,8 +372,7 @@ public:
 			SetDParam(0, this->town->index);
 		}
 		if (widget == WID_TV_CB){
-			// extern bool _novahost;
-			// if(!_networking || !_novahost || this->town->larger_town) SetDParam(0, STR_EMPTY);
+			// if(this->wcb_disable) SetDParam(0, STR_EMPTY);
 			// else
 			SetDParam(0, STR_BUTTON_CB_YES);
 		}
@@ -395,7 +400,7 @@ public:
 		SetDParam(1, this->town->supplied[CT_MAIL].old_max);
 		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX);
 
-		DrawExtraTownInfo(r, y, this->town, FONT_HEIGHT_NORMAL); //CB
+		DrawExtraTownInfo(r, y, this->town, FONT_HEIGHT_NORMAL, true); //CB
 
 		bool first = true;
 		for (int i = TE_BEGIN; i < TE_END; i++) {
@@ -514,8 +519,8 @@ public:
 				size->height = GetDesiredInfoHeight(size->width);
 				break;
 			// case WID_TV_CB:
-			// 	if(!_networking || !CB_Enabled()) size->width = 0;
-			// 	break;
+				// if(this->wcb_disable || !CB_Enabled()) size->width = 0;
+				// break;
 		}
 	}
 
@@ -525,7 +530,7 @@ public:
 	 */
 	uint GetDesiredInfoHeight(int width) const
 	{
-		uint aimed_height = 7 * FONT_HEIGHT_NORMAL + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+		uint aimed_height = 8 * FONT_HEIGHT_NORMAL + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 
 		bool first = true;
 		for (int i = TE_BEGIN; i < TE_END; i++) {
@@ -593,6 +598,10 @@ public:
 	virtual EventState OnHotkey(int hotkey)
 	{
 		if(hotkey == WID_TV_CB) ShowCBTownWindow(this->window_number);
+		else if (hotkey == HK_STATUE + 0x80){
+			TownExecuteAction(this->town, HK_STATUE);
+			return ES_NOT_HANDLED;
+		}
 		return Window::OnHotkey(hotkey);
 	}
 
@@ -603,6 +612,7 @@ static Hotkey town_window_hotkeys[] = {
 	Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
 	Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
 	Hotkey((uint16)0, "cb_window", WID_TV_CB),
+	Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),
 	HOTKEY_LIST_END
 };
 HotkeyList TownViewWindow::hotkeys("town_window", town_window_hotkeys);
@@ -660,6 +670,7 @@ static const NWidgetPart _nested_town_editor_view_widgets[] = {
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CENTER_VIEW), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_LOCATION, STR_TOWN_VIEW_CENTER_TOOLTIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_EXPAND), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_EXPAND_BUTTON, STR_TOWN_VIEW_EXPAND_TOOLTIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_DELETE), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_DELETE_BUTTON, STR_TOWN_VIEW_DELETE_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CB), SetMinimalSize(20, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_CB, 0),
 		EndContainer(),
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
@@ -889,7 +900,7 @@ public:
 		switch (widget) {
 			case WID_TD_SORT_ORDER: {
 				Dimension d = GetStringBoundingBox(this->GetWidget<NWidgetCore>(widget)->widget_data);
-				d.width += padding.width + WD_SORTBUTTON_ARROW_WIDTH * 2; // Doubled since the string is centred and it also looks better.
+				d.width += padding.width + Window::SortButtonWidth() * 2; // Doubled since the string is centred and it also looks better.
 				d.height += padding.height;
 				*size = maxdim(*size, d);
 				break;
@@ -1290,7 +1301,7 @@ void ShowFoundTownWindow()
 }
 
 //CB
-void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line) {
+static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bool show_house_states_info) {
 	//real pop and rating
 	SetDParam(0, town->cache.potential_pop);
 	SetDParam(1, town->ratings[_current_company]);
@@ -1307,11 +1318,12 @@ void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line) {
 	SetDParam(4, town->fund_buildings_months);
 	DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_GROWTH);
 
-	//house states
-	SetDParam(0, town->houses_construction);
-	SetDParam(1, town->houses_reconstruction);
-	SetDParam(2, town->houses_demolished);
-	DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_HOUSE_STATE);
+	if (show_house_states_info) {
+		SetDParam(0, town->houses_construction);
+		SetDParam(1, town->houses_reconstruction);
+		SetDParam(2, town->houses_demolished);
+		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_HOUSE_STATE);
+	}
 
 	///houses stats
 	SetDParam(0, town->houses_skipped);
@@ -1344,15 +1356,17 @@ public:
 		cargoes.sort(CB_sortCargoesByFrom);
 		this->town = Town::Get(window_number);
 		this->InitNested(window_number);
-		if(this->town->fund_regularly) this->LowerWidget(WID_CB_FUND_REGULAR);
-		if(this->town->do_massfund) this->LowerWidget(WID_CB_POWERFUND);
-		if(this->town->advertise_regularly) this->LowerWidget(WID_CB_ADVERT_REGULAR);
+
+		if(HasBit(this->town->fund_regularly, _local_company)) this->LowerWidget(WID_CB_FUND_REGULAR);
+		if(HasBit(this->town->do_powerfund, _local_company)) this->LowerWidget(WID_CB_POWERFUND);
+		if(HasBit(this->town->advertise_regularly, _local_company)) this->LowerWidget(WID_CB_ADVERT_REGULAR);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		switch (widget) {
 			case WID_CB_LOCATION:
+			case WID_CB_CENTER_VIEW: // scroll to location
 				if (_ctrl_pressed) {
 					ShowExtraViewPortWindow(this->town->xy);
 				}
@@ -1367,30 +1381,37 @@ public:
 				TownExecuteAction(this->town, HK_FUND);
 				break;
 			case WID_CB_FUND_REGULAR:
-				this->town->fund_regularly = !this->town->fund_regularly;
-				this->SetWidgetLoweredState(widget, this->town->fund_regularly);
+				ToggleBit(this->town->fund_regularly, _local_company);
+				this->SetWidgetLoweredState(widget, HasBit(this->town->fund_regularly, _local_company));
 				this->SetWidgetDirty(widget);
 				break;
 			case WID_CB_POWERFUND:
-				this->town->do_massfund = !this->town->do_massfund;
-				this->SetWidgetLoweredState(widget, this->town->do_massfund);
+				ToggleBit(this->town->do_powerfund, _local_company);
+				this->SetWidgetLoweredState(widget, HasBit(this->town->do_powerfund, _local_company));
 				this->SetWidgetDirty(widget);
 				break;
 			case WID_CB_ADVERT_REGULAR:
 				if (!this->town->advertise_regularly) {
 					SetDParam(0, ToPercent8(this->town->ad_rating_goal));
-					ShowQueryString(STR_JUST_INT, STR_FOUND_TOWN_CAPTION,
+					ShowQueryString(STR_JUST_INT, STR_CB_ADVERT_REGULAR_RATING_TO_KEEP,
 					                4, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
 				} else this->OnQueryTextFinished(NULL);
+				break;
+			case WID_CB_TOWN_VIEW: // Town view window
+				ShowTownViewWindow(this->window_number);
+				break;
+			case WID_CB_SHOW_AUTHORITY: // town authority
+				ShowTownAuthorityWindow(this->window_number);
 				break;
 		}
 	}
 
 	virtual void OnQueryTextFinished(char *str)
 	{
-		this->town->advertise_regularly = (str != NULL);
+		if (str != NULL) SetBit(this->town->advertise_regularly, _local_company);
+		else ClrBit(this->town->advertise_regularly, _local_company);
 		this->town->ad_ref_goods_entry = NULL;
-		this->SetWidgetLoweredState(WID_CB_ADVERT_REGULAR, this->town->advertise_regularly);
+		this->SetWidgetLoweredState(WID_CB_ADVERT_REGULAR, HasBit(this->town->advertise_regularly, _local_company));
 		this->SetWidgetDirty(WID_CB_ADVERT_REGULAR);
 
 		if (str == NULL)
@@ -1445,9 +1466,9 @@ public:
 				SetDParam(1, this->town->cache.num_houses);
 				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += EXP_LINESPACE, STR_TOWN_VIEW_POPULATION_HOUSES);
 
-				DrawExtraTownInfo(r, y, this->town, EXP_LINESPACE);
+				DrawExtraTownInfo(r, y, this->town, EXP_LINESPACE, false);
 				//regular funding
-				if(this->town->fund_regularly){
+				if(this->town->fund_regularly != 0){
 					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += EXP_LINESPACE, STR_CB_FUNDED_REGULARLY);
 				}
 				break;
@@ -1593,54 +1614,64 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_TV_CAPTION), SetDataTip(STR_TOWN_VIEW_CB_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_SHADEBOX, COLOUR_BROWN),
+		NWidget(WWT_DEFSIZEBOX, COLOUR_BROWN),
 		NWidget(WWT_STICKYBOX, COLOUR_BROWN),
 	EndContainer(),
-	NWidget(NWID_HORIZONTAL),
-	NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0),
+	NWidget(WWT_PANEL, COLOUR_BROWN),
 		NWidget(NWID_VERTICAL),
-			NWidget(NWID_SPACER), SetMinimalSize(0, 5),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 5),  SetResize(1, 0), SetFill(1, 0),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_DETAILS),SetMinimalSize(250, 0), SetResize(0, 0), SetFill(0, 0),
+				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_DETAILS), SetMinimalSize(250, 0), SetResize(1, 0), SetFill(1, 0),
 				NWidget(NWID_VERTICAL),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_LOCATION),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_BUTTON_LOCATION, 0),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
 						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_FUND),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_NEW_BUILDINGS, 0),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_FUND),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_NEW_BUILDINGS, 0),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_ADVERT_REGULAR, STR_CB_ADVERT_REGULAR_TT),
  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_ADVERT_REGULAR, STR_CB_ADVERT_REGULAR_TT),
+  						NWidget(NWID_SPACER), SetMinimalSize(132, 0),
   						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_POWERFUND),SetMinimalSize(60, 20),SetFill(1, 0), SetDataTip(STR_CB_POWERFUND, STR_CB_POWERFUND_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_POWERFUND),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_POWERFUND, STR_CB_POWERFUND_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 				EndContainer(),
 			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(0, 5),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 5),  SetResize(1, 0), SetFill(1, 0),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_NAME),SetMinimalSize(100, 0), SetResize(0, 0), SetFill(0, 0),
+				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_NAME),SetMinimalSize(100, 0), SetResize(0, 0), SetFill(1, 0),
 				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_AMOUNT),SetMinimalSize(70, 0), SetResize(1, 0), SetFill(0, 0),
 				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_REQ),SetMinimalSize(70, 0), SetResize(1, 0), SetFill(0, 0),
 				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_PREVIOUS),SetMinimalSize(80, 0),  SetResize(1, 0), SetFill(0, 0),
 				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_STORE),SetMinimalSize(70, 0), SetResize(1, 0), SetFill(0, 0),
 				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_STORE_PCT),SetMinimalSize(60, 0), SetResize(1, 0), SetFill(0, 0),
 			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetResize(1, 1), SetFill(1, 1),
 		EndContainer(),
+	EndContainer(),
+	NWidget(NWID_HORIZONTAL),
+		NWidget(NWID_HORIZONTAL),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_CENTER_VIEW), SetMinimalSize(60, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_LOCATION, STR_TOWN_VIEW_CENTER_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_TOWN_VIEW), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_CB_GUI_TOWN_VIEW_BUTTON, STR_CB_GUI_TOWN_VIEW_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_SHOW_AUTHORITY), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON, STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP),
+		EndContainer(),
+		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
 
 static WindowDesc _cb_town_desc(
-	WDP_AUTO, NULL, 0, 0,
+	WDP_AUTO, "cb_town", 320, 80,
 	WC_CB_TOWN, WC_NONE,
-	WDF_CONSTRUCTION,
+	0,
 	_nested_cb_town_widgets, lengthof(_nested_cb_town_widgets),
 	&CBTownWindow::hotkeys
 );

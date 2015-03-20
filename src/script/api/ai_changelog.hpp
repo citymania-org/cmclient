@@ -1,4 +1,4 @@
-/* $Id: ai_changelog.hpp 26980 2014-10-08 18:29:27Z frosch $ */
+/* $Id: ai_changelog.hpp 27195 2015-03-18 19:33:34Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,24 @@
  * bug fixes can be found in the normal changelog. Note that removed API
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
+ *
+ * \b 1.5.0
+ *
+ * API additions:
+ * \li AIList::SwapList
+ * \li AIStation::GetCargoPlanned
+ * \li AIStation::GetCargoPlannedFrom
+ * \li AIStation::GetCargoPlannedFromVia
+ * \li AIStation::GetCargoPlannedVia
+ * \li AIStation::GetCargoWaitingFromVia
+ * \li AIStationList_CargoPlannedByFrom
+ * \li AIStationList_CargoPlannedByVia
+ * \li AIStationList_CargoPlannedFromByVia
+ * \li AIStationList_CargoPlannedViaByFrom
+ * \li AIStationList_CargoWaitingByFrom
+ * \li AIStationList_CargoWaitingByVia
+ * \li AIStationList_CargoWaitingFromByVia
+ * \li AIStationList_CargoWaitingViaByFrom
  *
  * \b 1.4.4
  *

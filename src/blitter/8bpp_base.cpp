@@ -1,4 +1,4 @@
-/* $Id: 8bpp_base.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: 8bpp_base.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../stdafx.h"
 #include "../gfx_func.h"
 #include "8bpp_base.hpp"
+
+#include "../safeguards.h"
 
 void Blitter_8bppBase::DrawColourMappingRect(void *dst, int width, int height, PaletteID pal)
 {

@@ -1,4 +1,4 @@
-/* $Id: script_industrytype.cpp 24623 2012-10-22 18:56:21Z zuu $ */
+/* $Id: script_industrytype.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../../industry.h"
 #include "../../newgrf_industries.h"
 #include "../../core/random_func.hpp"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptIndustryType::IsValidIndustryType(IndustryType industry_type)
 {

@@ -1,4 +1,4 @@
-/* $Id: labelmaps_sl.cpp 20860 2010-10-01 16:42:28Z smatz $ */
+/* $Id: labelmaps_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../tunnelbridge_map.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 static SmallVector<RailTypeLabel, RAILTYPE_END> _railtype_list;
 

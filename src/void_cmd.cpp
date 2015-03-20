@@ -1,4 +1,4 @@
-/* $Id: void_cmd.cpp 23160 2011-11-08 17:37:32Z yexo $ */
+/* $Id: void_cmd.cpp 26870 2014-09-21 08:19:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,13 +13,16 @@
 #include "tile_cmd.h"
 #include "command_func.h"
 #include "viewport_func.h"
+#include "slope_func.h"
 
 #include "table/strings.h"
 #include "table/sprites.h"
 
+#include "safeguards.h"
+
 static void DrawTile_Void(TileInfo *ti)
 {
-	DrawGroundSprite(SPR_SHADOW_CELL, PAL_NONE);
+	DrawGroundSprite(SPR_FLAT_BARE_LAND + SlopeToSpriteOffset(ti->tileh), PALETTE_ALL_BLACK);
 }
 
 

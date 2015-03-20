@@ -1,4 +1,4 @@
-/* $Id: fios.h 26057 2013-11-23 13:12:19Z rubidium $ */
+/* $Id: fios.h 26489 2014-04-23 21:23:21Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -170,8 +170,8 @@ const char *FiosBrowseTo(const FiosItem *item);
 
 StringID FiosGetDescText(const char **path, uint64 *total_free);
 bool FiosDelete(const char *name);
-void FiosMakeHeightmapName(char *buf, const char *name, size_t size);
-void FiosMakeSavegameName(char *buf, const char *name, size_t size);
+void FiosMakeHeightmapName(char *buf, const char *name, const char *last);
+void FiosMakeSavegameName(char *buf, const char *name, const char *last);
 
 FiosType FiosGetSavegameListCallback(SaveLoadDialogMode mode, const char *file, const char *ext, char *title, const char *last);
 

@@ -10,7 +10,7 @@
 ##grflangid 0x11
 
 
-# $Id: marathi.txt 26822 2014-09-14 15:33:52Z rubidium $
+# $Id: marathi.txt 26986 2014-10-09 21:16:29Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -344,7 +344,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :बंद क�
 
 ############ range for settings menu starts
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :खेळाचे पर्याय
-STR_SETTINGS_MENU_CONFIG_SETTINGS                               :प्रगत सेटिंग
 STR_SETTINGS_MENU_SCRIPT_SETTINGS                               :ए.आय. / गेम स्क्रिप्ट सेटिंग्ज
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF पर्याय
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :पारदर्शकता पर्याय
@@ -760,7 +759,6 @@ STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}भा�
 
 
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :अन्य
-
 
 
 
@@ -1309,6 +1307,7 @@ STR_GROUP_ALL_AIRCRAFTS                                         :सर्व �
 
 
 
+
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :सगळे वाहने काढा
 
 
@@ -1324,6 +1323,9 @@ STR_PURCHASE_INFO_SPEED                                         :{BLACK}गत�
 STR_PURCHASE_INFO_COST                                          :{BLACK}किंमत: {GOLD}{CURRENCY_LONG}
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}वजन: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}किंमत: {GOLD}{CURRENCY_LONG}{BLACK} गती: {GOLD}{VELOCITY}
+
+
+
 
 
 
@@ -1361,6 +1363,7 @@ STR_ENGINE_PREVIEW_SHIP                                         :जहाज
 # Autoreplace window
 STR_REPLACE_VEHICLE_SHIP                                        :जहाज
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :विमान
+
 
 
 
@@ -1531,6 +1534,7 @@ STR_ERROR_NOT_ALLOWED_WHILE_PAUSED                              :{WHITE} स्�
 # Town related errors
 
 # Industry related errors
+
 
 # Station construction related errors
 
@@ -1814,8 +1818,6 @@ STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
 STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
 STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
 STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_BLACK_CROSS                                                 :{BLACK}{CROSS}
-STR_SILVER_CROSS                                                :{SILVER}{CROSS}
 STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
 STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
 STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
@@ -1826,9 +1828,7 @@ STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
 STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
 STR_BLACK_STRING                                                :{BLACK}{STRING}
 STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_GREEN_STRING                                                :{GREEN}{STRING}
 STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_RED_STRING                                                  :{RED}{STRING}
 STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
 STR_WHITE_STRING                                                :{WHITE}{STRING}
 STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}

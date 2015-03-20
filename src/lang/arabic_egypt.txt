@@ -10,7 +10,7 @@
 ##grflangid 0x14
 
 
-# $Id: arabic_egypt.txt 26822 2014-09-14 15:33:52Z rubidium $
+# $Id: arabic_egypt.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -351,7 +351,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :انهاء
 
 ############ range for settings menu starts
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :إعدادات اللعبه
-STR_SETTINGS_MENU_CONFIG_SETTINGS                               :اعدادات متقدمة
 STR_SETTINGS_MENU_SCRIPT_SETTINGS                               :الذكاء الصناعي/ اعدادات اللعبة
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :إعدادات اﻹضافات
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :خيارات الشفافية
@@ -813,6 +812,7 @@ STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} لديها امر غير صالح
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} لديها امر مكرر
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} لديها محطة غير صالحة في القائمة
+STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE} لدبها ضمن الطلبات مطارا قصير المدرج
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} اصبحت قديمة
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} اصبحت قديمة جدا
@@ -945,8 +945,7 @@ STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}دقة �
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}اختر دقة الشاشة
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :اخرى
 
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT                              :{BLACK}صيغة حفظ الشاشة
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT_TOOLTIP                      :{BLACK}اختر صيغة حفظ الشاشة
+
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK} الواجهة الرسومية الاساسية
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK} اختر مجموعة الواجهة الرسومية
@@ -1048,8 +1047,7 @@ STR_CITY_APPROVAL_HOSTILE                                       :معاد
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}لايوجد ذكاء اصطناعي متاح ...{}تستطيع تجميل العديد من الذكاء الاصطناعي عن طريق اللانترنت
 
-# Advanced settings window
-STR_CONFIG_SETTING_CAPTION                                      :{WHITE}إعدادات متقدمه
+# Settings tree window
 STR_CONFIG_SETTING_EXPAND_ALL                                   :مدد الكل
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :إسحب الكل
 
@@ -1084,7 +1082,6 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_CENTER                        :متوسط
 STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :يمين
 
 
-STR_CONFIG_SETTING_BUILDONSLOPES                                :السماح بالبناء على المنحدرات و السواحل: {STRING}
 STR_CONFIG_SETTING_AUTOSLOPE                                    :السماح باعادة بناء التلال تحت المباني, الطرق, الخ .-الانحدار الذاتي- {STRING}
 STR_CONFIG_SETTING_CATCHMENT                                    :السماح بحدود اكثر واقعية للمحطات بحسب الحجم: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :السماح بحذف اكثر من الطرق المملوكة للمدينة و الجسور و غيرها: {STRING}
@@ -1093,10 +1090,7 @@ STR_CONFIG_SETTING_TRAIN_ACCELERATION_MODEL                     :موديل تس
 STR_CONFIG_SETTING_ROAD_VEHICLE_ACCELERATION_MODEL              :نمط تسارع عربات الطريق: {STRING}
 STR_CONFIG_SETTING_FORBID_90_DEG                                :منع القطارات والسفن من الدوران بزاوية تسعين درجة : {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :السماح بربط محطتين غير متجاورتين : {STRING}
-STR_CONFIG_SETTING_IMPROVEDLOAD                                 :أستخدام خوارزمية التحميل المحسنه: {STRING}
-STR_CONFIG_SETTING_GRADUAL_LOADING                              :تحميل القطارات بالتدريج: {STRING}
 STR_CONFIG_SETTING_INFLATION                                    :التضخم: {STRING}
-STR_CONFIG_SETTING_SELECTGOODS                                  :أوصل الحموله للمحطه إذا كان هناك حاجة فقط: {STRING}
 STR_CONFIG_SETTING_RAW_INDUSTRY_CONSTRUCTION_METHOD             :طريقة بناء المصانع الأولية يدوية : {STRING}
 STR_CONFIG_SETTING_RAW_INDUSTRY_CONSTRUCTION_METHOD_NONE        :بدون
 STR_CONFIG_SETTING_RAW_INDUSTRY_CONSTRUCTION_METHOD_NORMAL      :ككل المصانع الأخرى
@@ -1108,7 +1102,6 @@ STR_CONFIG_SETTING_STOP_LOCATION                                :اوامر ال
 STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :قرب النهاية
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :وسط
 STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :النهاية القصوى
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING                        :تسلسل عربات الطريق - بالتأثير الكمي : {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL                                   :حرك الشاشة عندما تكون المؤشر على الحافة: {STRING}
 STR_CONFIG_SETTING_BRIBE                                        :السماح برشوة السلطات االمحليه: {STRING}
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :السماح بشراء حقوق النقل الحصري: {STRING}
@@ -1122,8 +1115,6 @@ STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :منخفض
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :طبيعي
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :السماح للعربات بالعبور خلال المواقف المملوكة داخل المدن: {STRING}
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :السماح بمرور العربات خلال المحطات المملوكة للمنافسين: {STRING}
-STR_CONFIG_SETTING_ADJACENT_STATIONS                            :السماح ببناء محطات متلاصقة{STRING}
-STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :السماح بتعدد محركات NewGFR {STRING}
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}تغير هذا الخيار غير متاح عندما يكون هناك عربات
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :صيانة البنية التحتية: {STRING}
 
@@ -1141,24 +1132,38 @@ STR_CONFIG_SETTING_AUTORENEW_MONEY                              :التجديد 
 STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :أعرض عدد السكان مع الاسم على العلامة: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :سمك الخطوط في العرض: {STRING}
 
+STR_CONFIG_SETTING_LANDSCAPE                                    :الارض: {STRING}
 STR_CONFIG_SETTING_LAND_GENERATOR                               :مولد الأرض: {STRING}
+STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :المكون الاصلي يعتمد على قواعد الجرفكس,ويشكل اراض ثابته,مكوون تيراجنسس يعتمد على المكون الأساسي مع متحكمات اسلس
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :الأصلي
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :مرتفعات منزلقة
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :نوع الارض: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(TerraGenesis only) مستوى الهضبات في الارض
+STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :الكثافة الصناعية: {STRING}
+STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :إختر مقدار الصناعات التي يجب تكوينها وعلى اي مستوى يجب ان تكون خلال اللعبة
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :ارتفاع خط الثلج: {STRING}
+STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :تحكم على اي ارتفاع يبدأ نزول الثلج في المناطق القطبية,تؤثر الثلوج على مستوى تطور القطاع الصناعي ونمو المدن
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :خشونة التضاريس (صفر التكوين فقط ) :({STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(TerraGenesis only)إختر تكرار الهضبات: الاراض المستويه تحتوي على البضع منها,هضبات موزعه عرضيا اكثر,الاراض الوعرة تحتوي الكثير من الهضاب,التي من الممكن ان تكون متكررة
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :ناعم جدا
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :ناعم
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :خشن
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :خشن جدا
+STR_CONFIG_SETTING_VARIETY                                      :توزيع منوع: {STRING}
+STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :(TerraGenesis only)التحكم بالخريطة هل تحتوي علىجبال ومناطق مسطحه, لأن هذا الإعداد يجعل الخارطة مستوية, هنالك إعدادات أخرى يجب ان تغير إلى الجبال
+STR_CONFIG_SETTING_RIVER_AMOUNT                                 :حجم النهر: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :اختر عدد الأنهر لتكوينها
 STR_CONFIG_SETTING_TREE_PLACER                                  :طريقة وضع الاشجار: {STRING}
+STR_CONFIG_SETTING_TREE_PLACER_HELPTEXT                         :إختر توزيع الشجر على الخريطة: 'Original' تبعثر الشجر عشوائيا. 'Improved' زرعهم في مجموعات
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :بدون
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :الأصلي
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :المحسن
+STR_CONFIG_SETTING_ROAD_SIDE                                    :السيارات: {STRING}
+STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :إختر جهة القيادة
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :اتجاة خريطة المرتفعات: {STRING}
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :عكس عقارب الساعة
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :مع عقارب الساعة
 STR_CONFIG_SETTING_SE_FLAT_WORLD_HEIGHT                         :الأرتفاع الأعلى في محرر الخريطة لسطح المستوي: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES                        :السماح بتعديل الحدود الحرة للخريطة: {STRING}
 STR_CONFIG_SETTING_EDGES_NOT_EMPTY                              :{WHITE}مربع او اكثر غير فارغ في الحدود الشمالية
 STR_CONFIG_SETTING_EDGES_NOT_WATER                              :{WHITE}مربع او اكثر من حدود الخريطة لا يكون بحر
 
@@ -1189,12 +1194,13 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :عدم استخ
 
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :تصفح بالزر الايسر: {STRING}
 
+STR_CONFIG_SETTING_AUTOSAVE                                     :حفظ تلقائي : {STRING}
+STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :اختر الوقت بين كل عملية حفظ اتوماتيكية
+
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :استخدم {STRING} نمط التاريخ لاسم اللعبة المحفوظة
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_LONG               :طويل - 31 ديسمبر 2008
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :قصير - 31 - 12 - 2008
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ايزو 31-12-2008
-
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :النوافذ القياسية للاضافة غير محددة: {STRING}
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :إيقاف اللعبة تلقائيا عند بدأ لعبة جديدة: {STRING}
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL                          :عندمل توقف أسمح: {STRING}
@@ -1330,7 +1336,6 @@ STR_CONFIG_SETTING_TOWN_GROWTH_NORMAL                           :عادي
 STR_CONFIG_SETTING_TOWN_GROWTH_FAST                             :سريع
 STR_CONFIG_SETTING_TOWN_GROWTH_VERY_FAST                        :سريع جدا
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :مضاعف المدن المبدئي: {STRING}
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :ازالة العوالق اثناء ترميم الطرق: {STRING}
 
 
 
@@ -1339,25 +1344,28 @@ STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :ازالة ال
 
 
 
-STR_CONFIG_SETTING_GUI                                          :{ORANGE}النظام البيني
-STR_CONFIG_SETTING_CONSTRUCTION                                 :{ORANGE}البناء
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}المركبات
-STR_CONFIG_SETTING_STATIONS                                     :{ORANGE}المحطات
-STR_CONFIG_SETTING_ECONOMY                                      :{ORANGE}الأقتصاد
-STR_CONFIG_SETTING_AI                                           :{ORANGE}المتنافسين
-STR_CONFIG_SETTING_DISPLAY_OPTIONS                              :{ORANGE}عرض الخيارات
-STR_CONFIG_SETTING_INTERACTION                                  :{ORANGE} التفاعل
+STR_CONFIG_SETTING_GRAPHICS                                     :رسوميات {ORANGE}
 STR_CONFIG_SETTING_SOUND                                        :{ORANGE}الصوت
-STR_CONFIG_SETTING_NEWS                                         :{ORANGE}الاخبار و الرسائل
-STR_CONFIG_SETTING_CONSTRUCTION_SIGNALS                         :{ORANGE}الإشارات
-STR_CONFIG_SETTING_STATIONS_CARGOHANDLING                       :{ORANGE} طريقة التحميل
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE} لاعبين الحاسوب
-STR_CONFIG_SETTING_VEHICLES_AUTORENEW                           :{ORANGE} التجديد التلقائي
-STR_CONFIG_SETTING_VEHICLES_SERVICING                           :{ORANGE} الصيانة
+STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}النظام البيني
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :عموم{ORANGE}
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :مجالات رؤية {ORANGE}
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}البناء
+STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}أخبار\ مستشارون
+STR_CONFIG_SETTING_COMPANY                                      :شركة{ORANGE}
+STR_CONFIG_SETTING_ACCOUNTING                                   :حسابات{ORANGE}
+STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}المركبات
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :فيزياء{ORANGE}
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE} المسارات
-STR_CONFIG_SETTING_VEHICLES_TRAINS                              :{ORANGE} قطارات
-STR_CONFIG_SETTING_ECONOMY_TOWNS                                :{ORANGE} مدن
-STR_CONFIG_SETTING_ECONOMY_INDUSTRIES                           :{ORANGE} مصانع
+STR_CONFIG_SETTING_LIMITATIONS                                  :حدود {ORANGE}
+STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE} كوارث\حوادث
+STR_CONFIG_SETTING_GENWORLD                                     :تكوين عالم {ORANGE}
+STR_CONFIG_SETTING_ENVIRONMENT                                  :بيئة {ORANGE}
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :سلطات {ORANGE}
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE} مدن
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE} مصانع
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :توزيع البضائع{ORANGE}
+STR_CONFIG_SETTING_AI                                           :{ORANGE}المتنافسين
+STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE} لاعبين الحاسوب
 
 STR_CONFIG_SETTING_PATHFINDER_OPF                               :اصلي
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
@@ -1396,7 +1404,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}لعب �
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}إعدادات اللعبه
 STR_INTRO_HIGHSCORE                                             :{BLACK}قائمه المتفوقين
-STR_INTRO_ADVANCED_SETTINGS                                     :{BLACK}الاعدادات المتقدمة
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK} اعدادات NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK} إبحث عن المحتوى عبر الشبكه العنكبوتيه
 STR_INTRO_SCRIPT_SETTINGS                                       :{BLACK}إعدادات الذكاء الصناعى
@@ -1415,7 +1422,6 @@ STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE                        :{BLACK}اختي
 STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}اختيار نمط الألعاب
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}عرض خيارات اللعبة
-STR_INTRO_TOOLTIP_ADVANCED_SETTINGS                             :{BLACK}عرض الاعدادات المتقدمة
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}عرض إعدادات اﻹضافات
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK} ابحث عن محتوى جديد او تحديث
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}اغلاق'OpenTTD'
@@ -1502,7 +1508,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :عربة ترا
 STR_FACE_CAPTION                                                :{WHITE}اختيار الوجة
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}الغاء اختيار الوجة الجديد
 STR_FACE_OK_TOOLTIP                                             :{BLACK}اقبل الوجة الجديد
-STR_MAPGEN_RANDOM                                               :{BLACK}عشوائي
+STR_FACE_RANDOM                                                 :{BLACK}عشوائي
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}رجل
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}اختر وجة رجل
@@ -2308,7 +2314,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :ارض مملو
 STR_ABOUT_OPENTTD                                               :{WHITE}حول النسخة المفتوحة
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}الحقوق الاصلية {COPYRIGHT} كريس سوير 1995 , جميع الحقوق محفوظة
 STR_ABOUT_VERSION                                               :{BLACK}النسخة المفتوحة رقم {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}النسخة المفتوحة {COPYRIGHT}2002-2014 فريق النسخة المفتوحة
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}النسخة المفتوحة {COPYRIGHT}2002-2015 فريق النسخة المفتوحة
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}حفظ اللعبة
@@ -2345,9 +2351,6 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}عدد �
 STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK} ارتفاع خط الثلج
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}ارفع خط الثلج مستوى واحد
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}خفض خط الثلج مستوى واحد
-STR_MAPGEN_RANDOM_SEED                                          :{BLACK}مرجع عشوائي
-STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}اضغط لادخال مرجع عشوائي
-STR_MAPGEN_RANDOM_HELP                                          :{BLACK}غير المرجع العشوائي لتوليد تضاريس الخريطة
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}مولد الخريطة:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK} لوغاريثم الشجر:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK} نوع التضاريس
@@ -2374,7 +2377,6 @@ STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}اسم �
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}الحجم:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} * {NUM}
 
-STR_MAPGEN_RANDOM_SEED_OSKTITLE                                 :{BLACK}ادخل مرجع عشوائي
 STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}غير مستوى خط الثلج
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}غير سنة البداية
 
@@ -2428,6 +2430,8 @@ STR_NEWGRF_SETTINGS_MOVEUP                                      :{BLACK}تحري
 STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}حرك الملف المختار الى الأعلى
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}تحريك للأسفل
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}حرك الملف المختار الى الاسفل في القائمة
+STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}ترقية
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK} ترقية ملفات NewGRF التي لديك نسخه جديده منها
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}قائمة ملفات NewGRF المركبة. اضغط على الملف لتغييرة.
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}اضبط الاعدادات
@@ -2452,6 +2456,14 @@ STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}معطل
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}متعارض مع هذا اللإصدار من Openttd
 
 # NewGRF save preset window
+STR_SAVE_PRESET_CAPTION                                         :{BLACK}حفظ الإعداد المسبق
+STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}لائحة الإعدادات المسبقة. اختر واحدة لنسخها للإسم المحفوظ بالإسفل
+STR_SAVE_PRESET_TITLE                                           :{BLACK}أدخل اسم للإعداد المسبق
+STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}الإسم المختار لحفظ الإعداد المسبق
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}إلغاء
+STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}لا تغير الإعداد المسبق
+STR_SAVE_PRESET_SAVE                                            :{BLACK}إحفظ
+STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK} احفظ الإعدادات للإسم المختار حاليا
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}غير خصائص الاضافات الجديدة
@@ -2483,7 +2495,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}العف
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}نابع للعفريتة الطبيعية التالية، تجاوز اي عفريتة موقوفة/ مصبوغة/مخطوطة و انهي في البداية.
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}عرض العفريتة المختارة حاليا. يتم تجاهل الموائمة عند رسم هذا العفريت.
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}حرك العفريتة في الجوار، غير الاحداثيات س ، ص.
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}احداث س: {NUM}، احداث ص: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}اختر عفريتة
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}اختر عفريتة من اي مكان في الشاشة.
 
@@ -2663,7 +2674,6 @@ STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}لا ي�
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
-STR_STATION_VIEW_WAITING_TITLE                                  :{BLACK}انتظار: {WHITE}{STRING}
 STR_STATION_VIEW_WAITING_CARGO                                  :{WHITE}{CARGO_LONG}
 STR_STATION_VIEW_EN_ROUTE_FROM                                  :{YELLOW}({CARGO_SHORT} نهاية الطريق في {STATION})
 
@@ -2862,6 +2872,9 @@ STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}أحذف
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}أعد تسمية المجموعة المختارة
 STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}اضغط لحماية المجموعة من التغيير الكلي للعربات
 
+STR_QUERY_GROUP_DELETE_CAPTION                                  :حذف المجموعه{WHITE}
+STR_GROUP_DELETE_QUERY_TEXT                                     :{WHITE}هل انت واثق من حذف هذه المجموعه مع كل أحفادها
+
 STR_GROUP_ADD_SHARED_VEHICLE                                    :اضافة عربات مشتركة
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :أزل جميع المركبات
 
@@ -2922,6 +2935,9 @@ STR_BUY_VEHICLE_TRAIN_RENAME_TOOLTIP                            :{BLACK}اعاد
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_TOOLTIP                     :{BLACK} اعادة تسمية العربة
 STR_BUY_VEHICLE_SHIP_RENAME_TOOLTIP                             :{BLACK}اعادة تسمية نوع السفينة
 STR_BUY_VEHICLE_AIRCRAFT_RENAME_TOOLTIP                         :{BLACK}اعادة تسمية نوع الطائرة
+
+
+
 
 STR_QUERY_RENAME_TRAIN_TYPE_CAPTION                             :{WHITE}اعادة تسمية عربات القطار
 STR_QUERY_RENAME_ROAD_VEHICLE_TYPE_CAPTION                      :{WHITE}اعادة تسمية العربة
@@ -3024,6 +3040,7 @@ STR_REPLACE_VEHICLE_TRAIN                                       :قطار
 STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :مركبات
 STR_REPLACE_VEHICLE_SHIP                                        :سفن
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :طائرات
+
 
 STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK} اختر نوع المحرك لاستبدالة
 STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK} اختر نوع المحرك المراد إحلاله محل المحرك المختار في القائمة اليسرى
@@ -3367,6 +3384,8 @@ STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :مسافر (غ�
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :سافر(بدون جدول زمني) مع تقريبا {2:VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR                                        :مسافر لـ {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :سافر لي {STRING} بمعدل {VELOCITY}
+STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :سافر(إلى {STRING}, بدون جدول زمني)
+STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :سافر (إلى {STRING}, بدون الجدول الزمني) مع تقريبا {VELOCITY}
 STR_TIMETABLE_STAY_FOR                                          :ويبقى لـ {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :ويسافر لـ {STRING}
 STR_TIMETABLE_DAYS                                              :{COMMA}يوم
@@ -3627,6 +3646,7 @@ STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :{WHITE}... يم
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :{WHITE}يمكن بنائة فوق خط الثلج فقط
 STR_ERROR_CAN_ONLY_BE_BUILT_BELOW_SNOW_LINE                     :{WHITE}يمكن بنائة تحت خط الثلج فقط
 
+
 # Station construction related errors
 STR_ERROR_CAN_T_BUILD_RAILROAD_STATION                          :{WHITE}لا يمكن بناء محطة سكة حديد هنا ...
 STR_ERROR_CAN_T_BUILD_BUS_STATION                               :{WHITE}تعذر بناء محطه الحافلات...
@@ -3789,6 +3809,7 @@ STR_ERROR_YOU_ALREADY_OWN_IT                                    :{WHITE}هذه �
 STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}لايمكن إنشاء مجموعة
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}لايمكن حذف المجموعة
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}لايمكن إعادة تسمية المجموعة
+STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}تعذر ربط المجموعه الرئيسية
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}لايمكن إزالة جميع المركبات من هذه المجموعة
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}لا يمكن اضافة المركبة للمجموعة ...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}لا يمكن اضافة مركبات مشتركة للمجموعة ...
@@ -4230,7 +4251,7 @@ STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :شيفرشيك 
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :ناقلة ياتي
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :ناقلة باكويل
 STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :ناقلة مايتي
-STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :ناقلة بور
+STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut سفينة شحن
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :سامسون 52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :كولمان كونت
 STR_VEHICLE_NAME_AIRCRAFT_FFP_DART                              :سهم اف اف بي
@@ -4358,8 +4379,6 @@ STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
 STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
 STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
 STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_BLACK_CROSS                                                 :{BLACK}{CROSS}
-STR_SILVER_CROSS                                                :{SILVER}{CROSS}
 STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
 STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
 STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
@@ -4370,9 +4389,7 @@ STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
 STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
 STR_BLACK_STRING                                                :{BLACK}{STRING}
 STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_GREEN_STRING                                                :{GREEN}{STRING}
 STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_RED_STRING                                                  :{RED}{STRING}
 STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
 STR_WHITE_STRING                                                :{WHITE}{STRING}
 STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}

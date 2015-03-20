@@ -1,4 +1,4 @@
-/* $Id: music_gui.cpp 26820 2014-09-14 15:24:39Z frosch $ */
+/* $Id: music_gui.cpp 27003 2014-10-12 18:41:53Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,6 +28,8 @@
 
 #include "table/strings.h"
 #include "table/sprites.h"
+
+#include "safeguards.h"
 
 /**
  * Get the name of the song.
@@ -180,8 +182,8 @@ static void MusicVolumeChanged(byte new_vol)
 static void DoPlaySong()
 {
 	char filename[MAX_PATH];
-	if (FioFindFullPath(filename, lengthof(filename), BASESET_DIR, BaseMusic::GetUsedSet()->files[_music_wnd_cursong - 1].filename) == NULL) {
-		FioFindFullPath(filename, lengthof(filename), OLD_GM_DIR, BaseMusic::GetUsedSet()->files[_music_wnd_cursong - 1].filename);
+	if (FioFindFullPath(filename, lastof(filename), BASESET_DIR, BaseMusic::GetUsedSet()->files[_music_wnd_cursong - 1].filename) == NULL) {
+		FioFindFullPath(filename, lastof(filename), OLD_GM_DIR, BaseMusic::GetUsedSet()->files[_music_wnd_cursong - 1].filename);
 	}
 	MusicDriver::GetInstance()->PlaySong(filename);
 	SetWindowDirty(WC_MUSIC_WINDOW, 0);
@@ -206,7 +208,7 @@ static void SelectSongToPlay()
 		if (file >= 0) {
 			const char *filename = BaseMusic::GetUsedSet()->files[file].filename;
 			/* We are now checking for the existence of that file prior
-			* to add it to the list of available songs */
+			 * to add it to the list of available songs */
 			if (!StrEmpty(filename) && FioCheckFileExists(filename, BASESET_DIR)) {
 				_cur_playlist[j] = _playlists[_settings_client.music.playlist][i];
 				j++;

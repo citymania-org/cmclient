@@ -1,4 +1,4 @@
-/* $Id: console_cmds.cpp 26000 2013-11-14 22:50:16Z zuu $ */
+/* $Id: console_cmds.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -39,6 +39,8 @@
 #include "engine_base.h"
 #include "game/game.hpp"
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /* scriptfile handling */
 static bool _script_running; ///< Script is running (used to abort execution when #ConReturn is encountered).
@@ -1342,7 +1344,7 @@ DEF_CONSOLE_CMD(ConAlias)
 		IConsoleAliasRegister(argv[1], argv[2]);
 	} else {
 		free(alias->cmdline);
-		alias->cmdline = strdup(argv[2]);
+		alias->cmdline = stredup(argv[2]);
 	}
 	return true;
 }

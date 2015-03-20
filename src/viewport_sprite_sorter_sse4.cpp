@@ -1,4 +1,4 @@
-/* $Id: viewport_sprite_sorter_sse4.cpp 26207 2014-01-02 18:52:54Z rubidium $ */
+/* $Id: viewport_sprite_sorter_sse4.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "cpu.h"
 #include "smmintrin.h"
 #include "viewport_sprite_sorter.h"
+
+#include "safeguards.h"
 
 #ifdef _SQ64
 	assert_compile((sizeof(ParentSpriteToDraw) % 16) == 0);

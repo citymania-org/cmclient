@@ -1,4 +1,4 @@
-/* $Id: music_driver.hpp 26544 2014-04-29 18:41:19Z frosch $ */
+/* $Id: music_driver.hpp 26538 2014-04-28 21:06:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.

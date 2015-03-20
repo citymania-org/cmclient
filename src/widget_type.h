@@ -1,4 +1,4 @@
-/* $Id: widget_type.h 26973 2014-10-06 20:14:44Z frosch $ */
+/* $Id: widget_type.h 26971 2014-10-06 19:16:29Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.

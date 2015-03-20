@@ -1,4 +1,4 @@
-/* $Id: void_map.h 17248 2009-08-21 20:21:05Z rubidium $ */
+/* $Id: void_map.h 26878 2014-09-21 11:23:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -27,7 +27,7 @@ static inline void MakeVoid(TileIndex t)
 	_m[t].m3 = 0;
 	_m[t].m4 = 0;
 	_m[t].m5 = 0;
-	_m[t].m6 = 0;
+	_me[t].m6 = 0;
 	_me[t].m7 = 0;
 }
 

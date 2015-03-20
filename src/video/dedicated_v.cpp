@@ -1,4 +1,4 @@
-/* $Id: dedicated_v.cpp 26543 2014-04-29 18:35:01Z frosch $ */
+/* $Id: dedicated_v.cpp 26496 2014-04-24 17:49:31Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -133,6 +133,8 @@ static void CloseWindowsConsoleThread()
 }
 
 #endif
+
+#include "../safeguards.h"
 
 
 static void *_dedicated_video_mem;
@@ -317,7 +319,15 @@ void VideoDriver_Dedicated::MainLoop()
 		}
 
 		/* Don't sleep when fast forwarding (for desync debugging) */
-		if (!_ddc_fastforward) CSleep(1);
+		if (!_ddc_fastforward) {
+			/* Sleep longer on a dedicated server, if the game is paused and no clients connected.
+			 * That can allow the CPU to better use deep sleep states. */
+			if (_pause_mode != 0 && !HasClients()) {
+				CSleep(100);
+			} else {
+				CSleep(1);
+			}
+		}
 	}
 }
 

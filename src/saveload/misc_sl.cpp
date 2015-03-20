@@ -1,4 +1,4 @@
-/* $Id: misc_sl.cpp 23740 2012-01-03 21:32:51Z rubidium $ */
+/* $Id: misc_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "../fios.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 extern TileIndex _cur_tileloop_tile;
 extern uint16 _disaster_delay;

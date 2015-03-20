@@ -1,4 +1,4 @@
-/* $Id: newgrf_spritegroup.cpp 26541 2014-04-29 18:18:52Z frosch $ */
+/* $Id: newgrf_spritegroup.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "debug.h"
 #include "newgrf_spritegroup.h"
 #include "core/pool_func.hpp"
+
+#include "safeguards.h"
 
 SpriteGroupPool _spritegroup_pool("SpriteGroup");
 INSTANTIATE_POOL_METHODS(SpriteGroup)

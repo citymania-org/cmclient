@@ -10,7 +10,7 @@
 ##grflangid 0x3D
 
 
-# $Id: english_AU.txt 26822 2014-09-14 15:33:52Z rubidium $
+# $Id: english_AU.txt 27184 2015-03-13 20:53:29Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -364,7 +364,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Exit
 
 ############ range for settings menu starts
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Game options
-STR_SETTINGS_MENU_CONFIG_SETTINGS                               :Advanced settings
 STR_SETTINGS_MENU_SCRIPT_SETTINGS                               :AI/Game script settings
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF settings
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Transparency options
@@ -836,6 +835,7 @@ STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} has a void order
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} has duplicate orders
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} has an invalid station in its orders
+STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE} has in its orders an airport whose runway is too short
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} is getting old
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} is getting very old
@@ -975,9 +975,6 @@ STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Screen r
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Select the screen resolution to use
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :other
 
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT                              :{BLACK}Screenshot format
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT_TOOLTIP                      :{BLACK}Select the screenshot format to use
-
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Base graphics set
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Select the base graphics set to use
 STR_GAME_OPTIONS_BASE_GRF_STATUS                                :{RED}{NUM} missing/corrupted file{P "" s}
@@ -1079,7 +1076,6 @@ STR_CITY_APPROVAL_HOSTILE                                       :Hostile
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}No suitable AIs available...{}You can download several AIs via the 'Online Content' system
 
 # Advanced settings window
-STR_CONFIG_SETTING_CAPTION                                      :{WHITE}Advanced Settings
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filter string:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Expand all
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Collapse all
@@ -1152,8 +1148,6 @@ STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Toggle disaster
 STR_CONFIG_SETTING_CITY_APPROVAL                                :Town council's attitude towards area restructuring: {STRING}
 STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :Choose how much noise and environmental damage by companies affect their town rating and further construction actions in their area
 
-STR_CONFIG_SETTING_BUILDONSLOPES                                :Allow building on slopes and coasts: {STRING}
-STR_CONFIG_SETTING_BUILDONSLOPES_HELPTEXT                       :If enabled, tracks and stations can be built on most slopes. If disabled, they are only allowed on slopes which match the direction of the track and thus require no foundations
 STR_CONFIG_SETTING_AUTOSLOPE                                    :Allow landscaping under buildings, tracks, etc.: {STRING}
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Allow landscaping under buildings and tracks without removing them
 STR_CONFIG_SETTING_CATCHMENT                                    :Allow more realistically sized catchment areas: {STRING}
@@ -1178,14 +1172,8 @@ STR_CONFIG_SETTING_FORBID_90_DEG                                :Forbid trains a
 STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90 degree turns occur when a horizontal track is directly followed by a vertical track piece on the adjacent tile, thus making the train turn by 90 degree when traversing the tile edge instead of the usual 45 degrees for other track combinations. This also applies to the turning radius of ships
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Allow to join stations not directly adjacent: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Allow adding parts to a station without directly touching the existing parts. Needs Ctrl+Click while placing the new parts
-STR_CONFIG_SETTING_IMPROVEDLOAD                                 :Use improved loading algorithm: {STRING}
-STR_CONFIG_SETTING_IMPROVEDLOAD_HELPTEXT                        :If enabled, multiple vehicles waiting at a station are loaded sequentially. Loading of the next vehicle only starts when there is enough cargo waiting to completely fill the first vehicle
-STR_CONFIG_SETTING_GRADUAL_LOADING                              :Load vehicles gradually: {STRING}
-STR_CONFIG_SETTING_GRADUAL_LOADING_HELPTEXT                     :Gradually load vehicles using vehicle specific loading durations, instead of loading everything at once with a fixed time depending only on the amount of cargo loaded
 STR_CONFIG_SETTING_INFLATION                                    :Inflation: {STRING}
 STR_CONFIG_SETTING_INFLATION_HELPTEXT                           :Enable inflation in the economy, where costs are rising slightly faster than payments
-STR_CONFIG_SETTING_SELECTGOODS                                  :Deliver cargo to a station only when there is a demand: {STRING}
-STR_CONFIG_SETTING_SELECTGOODS_HELPTEXT                         :Only deliver cargo to a station that was requested from a loading vehicle. This prevents bad ratings for cargoes that are not serviced at a station
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH                            :Maximum bridge length: {STRING}
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH_HELPTEXT                   :Maximum length for building bridges
 STR_CONFIG_SETTING_MAX_TUNNEL_LENGTH                            :Maximum tunnel length: {STRING}
@@ -1213,8 +1201,6 @@ STR_CONFIG_SETTING_STOP_LOCATION_HELPTEXT                       :Place where a t
 STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :near end
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :middle
 STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :far end
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING                        :Road vehicle queueing (with quantum effects): {STRING}
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING_HELPTEXT               :Make road vehicle wait in front of occupied road stops until they are cleared
 STR_CONFIG_SETTING_AUTOSCROLL                                   :Pan window when mouse is at the edge: {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL_HELPTEXT                          :When enabled, viewports will start to scroll when the mouse is near the edge of the window
 STR_CONFIG_SETTING_AUTOSCROLL_DISABLED                          :Disabled
@@ -1245,10 +1231,6 @@ STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Allow drive-thr
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :Allow construction of drive-through road stops on town-owned roads
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :Allow drive-through road stops on roads owned by competitors: {STRING}
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD_HELPTEXT             :Allow construction of drive-through road stops on roads owned by other companies
-STR_CONFIG_SETTING_ADJACENT_STATIONS                            :Allow building adjacent stations: {STRING}
-STR_CONFIG_SETTING_ADJACENT_STATIONS_HELPTEXT                   :Allow different stations to touch each other
-STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :Enable multiple NewGRF engine sets: {STRING}
-STR_CONFIG_SETTING_DYNAMIC_ENGINES_HELPTEXT                     :Compatibility option for old NewGRFs. Do not disable this, unless you know exactly what you are doing!
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Changing this setting is not possible when there are vehicles
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Infrastructure maintenance: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :When enabled, infrastructure causes maintenance costs. The cost grows in proportion to the network size, thus affecting larger companies more than smaller ones
@@ -1287,27 +1269,41 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Display the pop
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Thickness of lines in graphs: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Width of the line in the graphs. A thin line is more precisely readable, a thicker line is easier to see and colours are easier to distinguish
 
+STR_CONFIG_SETTING_LANDSCAPE                                    :Landscape: {STRING}
+STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Landscapes define basic gameplay scenarios with different cargos and town growth requirements. NewGRF and Game Scripts allow finer control though
 STR_CONFIG_SETTING_LAND_GENERATOR                               :Land generator: {STRING}
+STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :The original generator depends on the base graphics set, and composes fixed landscape shapes. TerraGenesis is a Perlin noise based generator with finer control settings
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Original
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :TerraGenesis
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Terrain type: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(TerraGenesis only) Hilliness of the landscape
+STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Industry density: {STRING}
+STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :Set how many industries should be generated and what level should be maintained during the game
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Maximum distance from edge for Oil refineries: {STRING}
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Oil refineries are only constructed near the map border, that is at the coast for island maps
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Snow line height: {STRING}
+STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Control at what height snow starts in sub-arctic landscape. Snow also affects industry generation and town growth requirements
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Roughness of terrain: {STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(TerraGenesis only) Choose the frequency of hills: Smooth landscapes have fewer, more wide-spread hills. Rough landscapes have many hills, which may look repetitive
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Very Smooth
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Smooth
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Rough
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Very Rough
+STR_CONFIG_SETTING_VARIETY                                      :Variety distribution: {STRING}
+STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :(TerraGenesis only) Control whether the map contains both mountainous and flat areas. Since this only makes the map flatter, other settings should be set to mountainous
+STR_CONFIG_SETTING_RIVER_AMOUNT                                 :River amount: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :Choose how many rivers to generate
 STR_CONFIG_SETTING_TREE_PLACER                                  :Tree placer algorithm: {STRING}
+STR_CONFIG_SETTING_TREE_PLACER_HELPTEXT                         :Choose the distribution of trees on the map: 'Original' plants trees uniformly scattered, 'Improved' plants them in groups
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :None
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :Original
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :Improved
+STR_CONFIG_SETTING_ROAD_SIDE                                    :Road vehicles: {STRING}
+STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :Choose the driving side
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Heightmap rotation: {STRING}
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :Counter clockwise
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :Clockwise
 STR_CONFIG_SETTING_SE_FLAT_WORLD_HEIGHT                         :The height level a flat scenario map gets: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES                        :Enable landscaping the tiles at the map borders: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES_HELPTEXT               :If disabled, the map borders will always be ocean
 STR_CONFIG_SETTING_EDGES_NOT_EMPTY                              :{WHITE}One or more tiles at the northern edge are not empty
 STR_CONFIG_SETTING_EDGES_NOT_WATER                              :{WHITE}One or more tiles at one of the edges is not water
 
@@ -1358,16 +1354,14 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Off
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Left-click scrolling: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Enable scrolling the map by dragging it with the left mouse button. This is especially useful when using a touch-screen for scrolling
 
+STR_CONFIG_SETTING_AUTOSAVE                                     :Autosave: {STRING}
+STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Select interval between automatic game saves
+
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Use the {STRING} date format for savegame names
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Format of the date in save game filenames
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_LONG               :long (31st Dec 2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :short (31-12-2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31)
-
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Default palette to assume for NewGRFs not specifying a palette: {STRING}
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Default palette to use for NewGRFs that do not specify which one they need
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Default (D) palette
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Legacy (W) palette
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Automatically pause when starting a new game: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :When enabled, the game will automatically pause when starting a new game, allowing for closer study of the map
@@ -1590,8 +1584,6 @@ STR_CONFIG_SETTING_LARGER_TOWNS_VALUE                           :1 in {COMMA}
 STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :None
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Initial city size multiplier: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Average size of cities relative to normal towns at start of the game
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :Remove absurd road-elements during the road construction: {STRING}
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD_HELPTEXT               :Remove dead road ends during funded road reconstruction
 
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Update distribution graph every {STRING}{NBSP}day{P 0:2 "" s}
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :Time between subsequent recalculations of the link graph. Each recalculation calculates the plans for one component of the graph. That means that a value X for this setting does not mean the whole graph will be updated every X days. Only some component will. The shorter you set it the more CPU time will be necessary to calculate it. The longer you set it the longer it will take until the cargo distribution starts on new routes.
@@ -1653,27 +1645,29 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Imperial (ft)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Metric (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
 
-STR_CONFIG_SETTING_GUI                                          :{ORANGE}Interface
 STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}Localisation
-STR_CONFIG_SETTING_CONSTRUCTION                                 :{ORANGE}Construction
+STR_CONFIG_SETTING_GRAPHICS                                     :{ORANGE}Graphics
+STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Sound
+STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Interface
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}General
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}Viewports
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Construction
+STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}News / Advisors
+STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Company
+STR_CONFIG_SETTING_ACCOUNTING                                   :{ORANGE}Accounting
 STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Vehicles
-STR_CONFIG_SETTING_STATIONS                                     :{ORANGE}Stations
-STR_CONFIG_SETTING_ECONOMY                                      :{ORANGE}Economy
-STR_CONFIG_SETTING_LINKGRAPH                                    :{ORANGE}Cargo Distribution
-STR_CONFIG_SETTING_AI                                           :{ORANGE}Competitors
-STR_CONFIG_SETTING_DISPLAY_OPTIONS                              :{ORANGE}Display options
-STR_CONFIG_SETTING_INTERACTION                                  :{ORANGE}Interaction
-STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Sound effects
-STR_CONFIG_SETTING_NEWS                                         :{ORANGE}News and messages
-STR_CONFIG_SETTING_CONSTRUCTION_SIGNALS                         :{ORANGE}Signals
-STR_CONFIG_SETTING_STATIONS_CARGOHANDLING                       :{ORANGE}Cargo handling
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Computer players
-STR_CONFIG_SETTING_VEHICLES_AUTORENEW                           :{ORANGE}Autorenew
-STR_CONFIG_SETTING_VEHICLES_SERVICING                           :{ORANGE}Servicing
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}Physics
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Routing
-STR_CONFIG_SETTING_VEHICLES_TRAINS                              :{ORANGE}Trains
-STR_CONFIG_SETTING_ECONOMY_TOWNS                                :{ORANGE}Towns
-STR_CONFIG_SETTING_ECONOMY_INDUSTRIES                           :{ORANGE}Industries
+STR_CONFIG_SETTING_LIMITATIONS                                  :{ORANGE}Limitations
+STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Disasters / Accidents
+STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}World generation
+STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Environment
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Authorities
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Towns
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Industries
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Cargo distribution
+STR_CONFIG_SETTING_AI                                           :{ORANGE}Competitors
+STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Computer players
 
 STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
@@ -1722,7 +1716,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Multipla
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Game Options
 STR_INTRO_HIGHSCORE                                             :{BLACK}Highscore Table
-STR_INTRO_ADVANCED_SETTINGS                                     :{BLACK}Advanced Settings
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF Settings
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Check Online Content
 STR_INTRO_SCRIPT_SETTINGS                                       :{BLACK}AI/Game Script Settings
@@ -1742,7 +1735,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Select '
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Display game options
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Display highscore table
-STR_INTRO_TOOLTIP_ADVANCED_SETTINGS                             :{BLACK}Display advanced settings
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Display NewGRF settings
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Check for new and updated content to download
 STR_INTRO_TOOLTIP_SCRIPT_SETTINGS                               :{BLACK}Display AI/Game script settings
@@ -1830,7 +1822,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Freight Tram
 STR_FACE_CAPTION                                                :{WHITE}Face Selection
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Cancel new face selection
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Accept new face selection
-STR_MAPGEN_RANDOM                                               :{BLACK}Randomise
+STR_FACE_RANDOM                                                 :{BLACK}Randomise
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Male
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Select male faces
@@ -2672,7 +2664,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Company-owned l
 STR_ABOUT_OPENTTD                                               :{WHITE}About OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original copyright {COPYRIGHT} 1995 Chris Sawyer, All rights reserved
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD version {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2014 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2015 The OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Save Game
@@ -2710,9 +2702,6 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}No. of i
 STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Snow line height:
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Move the snow line height one up
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Move the snow line height one down
-STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Random seed:
-STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Click to enter a random seed
-STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Change the random seed used for Terrain Generation
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Land generator:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Tree algorithm:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Terrain type:
@@ -2739,7 +2728,6 @@ STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Heightma
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}Size:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
-STR_MAPGEN_RANDOM_SEED_OSKTITLE                                 :{BLACK}Enter a random seed
 STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}Change snow line height
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}Change starting year
 
@@ -2794,6 +2782,8 @@ STR_NEWGRF_SETTINGS_MOVEUP                                      :{BLACK}Move Up
 STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}Move the selected NewGRF file up the list
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}Move Down
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}Move the selected NewGRF file down the list
+STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}Upgrade
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}Upgrade NewGRF files for which you have a newer version installed
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}A list of the NewGRF files that are installed
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Set parameters
@@ -2819,6 +2809,14 @@ STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Disabled
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Incompatible with this version of OpenTTD
 
 # NewGRF save preset window
+STR_SAVE_PRESET_CAPTION                                         :{WHITE}Save preset
+STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}List of available presets, select one to copy it to the save name below
+STR_SAVE_PRESET_TITLE                                           :{BLACK}Enter a name for the preset
+STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Currently selected name for the preset to save
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}Cancel
+STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Don't change the preset
+STR_SAVE_PRESET_SAVE                                            :{BLACK}Save
+STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Save the preset to the current selected name
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Change NewGRF parameters
@@ -2850,7 +2848,6 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Previous
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Proceed to the previous normal sprite, skipping any pseudo/recolour/font sprites and wrapping around at the begin
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Representation of the currently selected sprite. The alignment is ignored when drawing this sprite
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Move the sprite around, changing the X and Y offsets
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}X offset: {NUM}, Y offset: {NUM}
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Pick sprite
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Pick a sprite from anywhere on the screen
 
@@ -3077,7 +3074,6 @@ STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}No cargo
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
-STR_STATION_VIEW_WAITING_TITLE                                  :{BLACK}Waiting: {WHITE}{STRING}
 STR_STATION_VIEW_WAITING_CARGO                                  :{WHITE}{CARGO_LONG}
 STR_STATION_VIEW_EN_ROUTE_FROM                                  :{YELLOW}({CARGO_SHORT} from {STATION})
 STR_STATION_VIEW_RESERVED                                       :{YELLOW}({CARGO_SHORT} reserved for loading)
@@ -3321,11 +3317,14 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Ungrouped road 
 STR_GROUP_DEFAULT_SHIPS                                         :Ungrouped ships
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Ungrouped aircraft
 
-STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Groups - click on a group to list all vehicles of this group
+STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Groups - click on a group to list all vehicles of this group. Drag and drop groups to arrange hierarchy.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Click to create a group
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Delete the selected group
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}Rename the selected group
 STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}Click to protect this group from global autoreplace
+
+STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}Delete Group
+STR_GROUP_DELETE_QUERY_TEXT                                     :{WHITE}Are you sure you want to delete this group and any descendants?
 
 STR_GROUP_ADD_SHARED_VEHICLE                                    :Add shared vehicles
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :Remove all vehicles
@@ -3388,6 +3387,9 @@ STR_BUY_VEHICLE_TRAIN_RENAME_TOOLTIP                            :{BLACK}Rename t
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_TOOLTIP                     :{BLACK}Rename road vehicle type
 STR_BUY_VEHICLE_SHIP_RENAME_TOOLTIP                             :{BLACK}Rename ship type
 STR_BUY_VEHICLE_AIRCRAFT_RENAME_TOOLTIP                         :{BLACK}Rename aircraft type
+
+
+
 
 STR_QUERY_RENAME_TRAIN_TYPE_CAPTION                             :{WHITE}Rename train vehicle type
 STR_QUERY_RENAME_ROAD_VEHICLE_TYPE_CAPTION                      :{WHITE}Rename road vehicle type
@@ -3492,6 +3494,7 @@ STR_REPLACE_VEHICLE_TRAIN                                       :Train
 STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :Road Vehicle
 STR_REPLACE_VEHICLE_SHIP                                        :Ship
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :Aircraft
+
 
 STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK}Select the engine type to replace
 STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK}Select the new engine type you would like to use in place of the left selected engine type
@@ -3847,6 +3850,10 @@ STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Travel (not tim
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Travel (not timetabled) with at most {2:VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR                                        :Travel for {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Travel for {STRING} with at most {VELOCITY}
+STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Travel (for {STRING}, not timetabled)
+STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :Travel (for {STRING}, not timetabled) with at most {VELOCITY}
+STR_TIMETABLE_STAY_FOR_ESTIMATED                                :(stay for {STRING}, not timetabled)
+STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(travel for {STRING}, not timetabled)
 STR_TIMETABLE_STAY_FOR                                          :and stay for {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :and travel for {STRING}
 STR_TIMETABLE_DAYS                                              :{COMMA}{NBSP}day{P "" s}
@@ -4114,7 +4121,7 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... too 
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... too close to another town
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... too many towns
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... there is no more space on the map
-STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}The town will not build roads. You can enable building of roads via Advanced Settings->Economy->Towns
+STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}The town will not build roads. You can enable building of roads via Advanced Settings->Environment->Towns
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Road works in progress
 STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Can't delete this town...{}A station or depot is referring to the town or a town owned tile can't be removed
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... there is no suitable place for a statue in the centre of this town
@@ -4137,6 +4144,9 @@ STR_ERROR_CAN_ONLY_BE_POSITIONED                                :{WHITE}... can 
 STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :{WHITE}... forest can only be planted above snow-line
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :{WHITE}... can only be built above the snow-line
 STR_ERROR_CAN_ONLY_BE_BUILT_BELOW_SNOW_LINE                     :{WHITE}... can only be built below the snow-line
+
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES                     :{WHITE}There were no suitable places for '{STRING}' industries
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION         :{WHITE}Change the map generation parameters to get a better map
 
 # Station construction related errors
 STR_ERROR_CAN_T_BUILD_RAILROAD_STATION                          :{WHITE}Can't build railway station here...
@@ -4300,6 +4310,7 @@ STR_ERROR_YOU_ALREADY_OWN_IT                                    :{WHITE}... you 
 STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}Can't create group...
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}Can't delete this group...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}Can't rename group...
+STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}Can't set parent group...
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}Can't remove all vehicles from this group...
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}Can't add the vehicle to this group...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}Can't add shared vehicles to group...
@@ -4872,8 +4883,6 @@ STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
 STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
 STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
 STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_BLACK_CROSS                                                 :{BLACK}{CROSS}
-STR_SILVER_CROSS                                                :{SILVER}{CROSS}
 STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
 STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
 STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
@@ -4884,9 +4893,7 @@ STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
 STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
 STR_BLACK_STRING                                                :{BLACK}{STRING}
 STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_GREEN_STRING                                                :{GREEN}{STRING}
 STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_RED_STRING                                                  :{RED}{STRING}
 STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
 STR_WHITE_STRING                                                :{WHITE}{STRING}
 STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}

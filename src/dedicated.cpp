@@ -1,4 +1,4 @@
-/* $Id: dedicated.cpp 26098 2013-11-25 09:20:35Z rubidium $ */
+/* $Id: dedicated.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@ FILE *_log_fd   = NULL; ///< File to reroute output of a forked OpenTTD to
 #if defined(UNIX) && !defined(__MORPHOS__)
 
 #include <unistd.h>
+
+#include "safeguards.h"
 
 #if (defined(SUNOS) && !defined(_LP64) && !defined(_I32LPx)) || defined(__HAIKU__)
 /* Solaris has, in certain situation, pid_t defined as long, while in other

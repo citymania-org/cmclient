@@ -1,4 +1,4 @@
-/* $Id: company_sl.cpp 26596 2014-05-18 11:26:09Z frosch $ */
+/* $Id: company_sl.cpp 26590 2014-05-16 17:39:35Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "saveload.h"
 
 #include "table/strings.h"
+
+#include "../safeguards.h"
 
 /**
  * Converts an old company manager's face format to the new company manager's face format

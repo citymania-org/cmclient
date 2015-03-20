@@ -1,4 +1,4 @@
-/* $Id: transparency_gui.cpp 25290 2013-05-26 19:25:01Z frosch $ */
+/* $Id: transparency_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 
 #include "table/sprites.h"
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 TransparencyOptionBits _transparency_opt;  ///< The bits that should be transparent.
 TransparencyOptionBits _transparency_lock; ///< Prevent these bits from flipping with X.

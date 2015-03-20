@@ -1,4 +1,4 @@
-/* $Id: graph_gui.cpp 26116 2013-11-25 22:32:32Z rubidium $ */
+/* $Id: graph_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -29,6 +29,8 @@
 #include "table/strings.h"
 #include "table/sprites.h"
 #include <math.h>
+
+#include "safeguards.h"
 
 /* Bitmasks of company and cargo indices that shouldn't be drawn. */
 static uint _legend_excluded_companies;

@@ -10,7 +10,7 @@
 ##grflangid 0x09
 
 
-# $Id: maltese.txt 26822 2014-09-14 15:33:52Z rubidium $
+# $Id: maltese.txt 26966 2014-10-05 21:21:24Z peter1138 $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -412,7 +412,6 @@ STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE
 
 
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :oħrajn
-
 
 
 
@@ -839,7 +838,11 @@ STR_FINANCES_POSITIVE_INCOME                                    :{BLACK}+{CURREN
 
 
 
+
 # Build vehicle window
+
+
+
 
 
 
@@ -877,6 +880,7 @@ STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} 
 
 
 # Autoreplace window
+
 
 
 
@@ -1046,6 +1050,7 @@ STR_WARNING_SCREENSHOT_SIZE_MESSAGE                             :{YELLOW}L-istam
 # Town related errors
 
 # Industry related errors
+
 
 # Station construction related errors
 
@@ -1391,8 +1396,6 @@ STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
 STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
 STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
 STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_BLACK_CROSS                                                 :{BLACK}{CROSS}
-STR_SILVER_CROSS                                                :{SILVER}{CROSS}
 STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
 STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
 STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
@@ -1403,9 +1406,7 @@ STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
 STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
 STR_BLACK_STRING                                                :{BLACK}{STRING}
 STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_GREEN_STRING                                                :{GREEN}{STRING}
 STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_RED_STRING                                                  :{RED}{STRING}
 STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
 STR_WHITE_STRING                                                :{WHITE}{STRING}
 STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}

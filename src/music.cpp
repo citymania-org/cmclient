@@ -1,4 +1,4 @@
-/* $Id: music.cpp 23214 2011-11-14 19:24:22Z rubidium $ */
+/* $Id: music.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 /** The type of set we're replacing */
 #define SET_TYPE "music"
 #include "base_media_func.h"
+
+#include "safeguards.h"
 
 INSTANTIATE_BASE_MEDIA_METHODS(BaseMedia<MusicSet>, MusicSet)
 

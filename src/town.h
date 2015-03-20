@@ -1,4 +1,4 @@
-/* $Id: town.h 25968 2013-11-12 17:57:12Z frosch $ */
+/* $Id: town.h 27105 2015-01-01 21:25:42Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -106,9 +106,9 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	uint houses_construction;            ///< number of houses currently being built
 	uint houses_reconstruction;          ///< number of houses currently being rebuilt
 	uint houses_demolished;              ///< number of houses demolished this month
-	bool fund_regularly;                 ///< funds buildings regularly when previous fund ends
-	bool do_massfund;                    ///< funds buildings when grow counter is maximal (results in fastest funding possible)
-	bool advertise_regularly;            ///< advertised regularly to keep stations rating on desired value
+	CompanyMask fund_regularly;          ///< funds buildings regularly when previous fund ends
+	CompanyMask do_powerfund;            ///< funds buildings when grow counter is maximal (results in fastest funding possible)
+	CompanyMask advertise_regularly;     ///< advertised regularly to keep stations rating on desired value
 	uint8 ad_rating_goal;                ///< value to keep rating at (for regular advertisement) (0..255)
 	const GoodsEntry *ad_ref_goods_entry;      ///< poiter to goods entry of some station, used to check rating for regular advertisement
 
@@ -123,7 +123,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 
 	uint16 time_until_rebuild;     ///< time until we rebuild a house
 
-	uint16 grow_counter;           ///< counter to count when to grow
+	uint16 grow_counter;           ///< counter to count when to grow, value is smaller than or equal to growth_rate
 	uint16 growth_rate;            ///< town growth rate
 
 	byte fund_buildings_months;    ///< fund buildings program in action?
@@ -150,11 +150,13 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	/* Returns the correct town label, based on rating. */
 	//FORCEINLINE StringID Label() const{
 	StringID Label() const{
+		if (!_settings_client.gui.population_in_label)
+			return STR_VIEWPORT_TOWN;
 		if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
 			return STR_VIEWPORT_TOWN_POP_VERY_POOR_RATING + this->town_label;
 		}
 		else {
-			return _settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN;
+			return STR_VIEWPORT_TOWN_POP;
 		}
 	}
 
@@ -259,6 +261,7 @@ uint CB_GetFrom(CargoID cargo);
 uint CB_GetDecay(CargoID cargo);
 int CB_GetTownReq(uint population, uint req, uint from, bool from_non_important, bool prev_month = false);
 uint CB_GetMaxTownStorage(Town *town, uint cargo);
+bool TownExecuteAction(const Town *town, uint action);
 
 enum TownGrowthTileState {
 	TGTS_NONE = 0,

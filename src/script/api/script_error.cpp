@@ -1,4 +1,4 @@
-/* $Id: script_error.cpp 23355 2011-11-29 23:15:35Z truebrain $ */
+/* $Id: script_error.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,9 @@
 #include "../../stdafx.h"
 #include "script_error.hpp"
 #include "../../core/bitmath_func.hpp"
+#include "../../string_func.h"
+
+#include "../../safeguards.h"
 
 ScriptError::ScriptErrorMap ScriptError::error_map = ScriptError::ScriptErrorMap();
 ScriptError::ScriptErrorMapString ScriptError::error_map_string = ScriptError::ScriptErrorMapString();
@@ -23,7 +26,7 @@ ScriptError::ScriptErrorMapString ScriptError::error_map_string = ScriptError::S
 
 /* static */ char *ScriptError::GetLastErrorString()
 {
-	return strdup((*error_map_string.find(ScriptError::GetLastError())).second);
+	return stredup((*error_map_string.find(ScriptError::GetLastError())).second);
 }
 
 /* static */ ScriptErrorType ScriptError::StringToError(StringID internal_string_id)

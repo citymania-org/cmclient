@@ -1,4 +1,4 @@
-/* $Id: cocoa_m.cpp 17710 2009-10-04 21:24:09Z michi_cc $ */
+/* $Id: cocoa_m.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -27,6 +27,8 @@
 #include <AudioToolbox/AudioToolbox.h>
 #undef Rect
 #undef Point
+
+#include "../safeguards.h"
 
 static FMusicDriver_Cocoa iFMusicDriver_Cocoa;
 

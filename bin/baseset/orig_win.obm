@@ -1,4 +1,4 @@
-; $Id: orig_win.obm 25205 2013-04-24 20:30:02Z frosch $
+; $Id: orig_win.obm 27041 2014-10-25 12:35:48Z rubidium $
 ;
 ; This represents the original music as on the Transport
 ; Tycoon Deluxe for Windows CD.
@@ -24,6 +24,7 @@ description.es_ES = Música original de Transport Tycoon Deluxe versión Windows
 description.et_EE = Algse Transport Tycoon Deluxe Windowsi versiooni muusika.
 description.fi_FI = Alkuperäinen Transport Tycoon Deluxen Windows-version musiikki.
 description.fr_FR = Musiques originales de Transport Tycoon Deluxe (version Windows).
+description.ga_IE = Ceol bunaidh Transport Tycoon Deluxe, eagrán Windows.
 description.gd_GB = Ceòl aig an deasachadh Windows tùsail aig Transport Tycoon Deluxe.
 description.gl_ES = Música da edición orixinal de Transport Tycoon Deluxe para Windows.
 description.hr_HR = Originalna muzika za Transport Tycoon Deluxe Windows izdanje.

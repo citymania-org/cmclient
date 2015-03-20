@@ -1,4 +1,4 @@
-/* $Id: script_road.cpp 26149 2013-12-08 15:44:09Z frosch $ */
+/* $Id: script_road.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "script_cargo.hpp"
 #include "../../station_base.h"
 #include "../../script/squirrel_helper_type.hpp"
+
+#include "../../safeguards.h"
 
 /* static */ ScriptRoad::RoadVehicleType ScriptRoad::GetRoadVehicleTypeForCargo(CargoID cargo_type)
 {

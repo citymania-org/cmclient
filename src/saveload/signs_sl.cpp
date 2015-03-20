@@ -1,4 +1,4 @@
-/* $Id: signs_sl.cpp 23835 2012-01-22 13:54:02Z frosch $ */
+/* $Id: signs_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../fios.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 /** Description of a sign within the savegame. */
 static const SaveLoad _sign_desc[] = {

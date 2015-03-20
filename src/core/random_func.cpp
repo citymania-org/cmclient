@@ -1,4 +1,4 @@
-/* $Id: random_func.cpp 25893 2013-10-20 14:48:08Z fonsinchen $ */
+/* $Id: random_func.cpp 27049 2014-10-28 11:32:19Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,17 @@
 #include "../stdafx.h"
 #include "random_func.hpp"
 #include "bitmath_func.hpp"
+
+#ifdef RANDOM_DEBUG
+#include "../network/network.h"
+#include "../network/network_server.h"
+#include "../network/network_internal.h"
+#include "../company_func.h"
+#include "../fileio_func.h"
+#include "../date_func.h"
+#endif /* RANDOM_DEBUG */
+
+#include "../safeguards.h"
 
 Randomizer _random, _interactive_random;
 
@@ -60,13 +71,6 @@ void SetRandomSeed(uint32 seed)
 }
 
 #ifdef RANDOM_DEBUG
-#include "../network/network.h"
-#include "../network/network_server.h"
-#include "../network/network_internal.h"
-#include "../company_func.h"
-#include "../fileio_func.h"
-#include "../date_func.h"
-
 uint32 DoRandom(int line, const char *file)
 {
 	if (_networking && (!_network_server || (NetworkClientSocket::IsValidID(0) && NetworkClientSocket::Get(0)->status != NetworkClientSocket::STATUS_INACTIVE))) {

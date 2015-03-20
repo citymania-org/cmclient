@@ -1,4 +1,4 @@
-/* $Id: queue.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: queue.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../../stdafx.h"
 #include "../../core/alloc_func.hpp"
 #include "queue.h"
+
+#include "../../safeguards.h"
 
 
 /*

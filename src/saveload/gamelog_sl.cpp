@@ -1,4 +1,4 @@
-/* $Id: gamelog_sl.cpp 23065 2011-10-30 13:47:45Z yexo $ */
+/* $Id: gamelog_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../fios.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 static const SaveLoad _glog_action_desc[] = {
 	SLE_VAR(LoggedAction, tick,              SLE_UINT16),

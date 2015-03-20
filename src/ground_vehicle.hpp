@@ -1,4 +1,4 @@
-/* $Id: ground_vehicle.hpp 26714 2014-08-03 14:03:07Z frosch $ */
+/* $Id: ground_vehicle.hpp 26888 2014-09-21 12:44:38Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -231,9 +231,9 @@ struct GroundVehicle : public SpecializedVehicle<T, Type> {
 	 * @param update_delta Indicates to also update the delta.
 	 * @return Old height of the vehicle.
 	 */
-	inline byte UpdateInclination(bool new_tile, bool update_delta)
+	inline int UpdateInclination(bool new_tile, bool update_delta)
 	{
-		byte old_z = this->z_pos;
+		int old_z = this->z_pos;
 
 		if (new_tile) {
 			this->UpdateZPositionAndInclination();

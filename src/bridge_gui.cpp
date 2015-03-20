@@ -1,4 +1,4 @@
-/* $Id: bridge_gui.cpp 25668 2013-08-05 20:36:24Z michi_cc $ */
+/* $Id: bridge_gui.cpp 26960 2014-10-05 11:20:02Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -24,11 +24,12 @@
 #include "cmd_helper.h"
 #include "tunnelbridge_map.h"
 #include "road_gui.h"
-#include "tilehighlight_func.h"
 
 #include "widgets/bridge_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /** The type of the last built rail bridge */
 static BridgeType _last_railbridge_type = 0;
@@ -71,8 +72,6 @@ void CcBuildBridge(const CommandCost &result, TileIndex end_tile, uint32 p1, uin
 		DiagDirection start_direction = ReverseDiagDir(GetTunnelBridgeDirection(p1));
 		ConnectRoadToStructure(p1, start_direction);
 	}
-
-	StoreRailPlacementEndpoints(p1, end_tile, (TileX(p1) == TileX(end_tile)) ? TRACK_Y : TRACK_X, false);
 }
 
 /** Window class for handling the bridge-build GUI. */
@@ -169,7 +168,7 @@ public:
 		switch (widget) {
 			case WID_BBS_DROPDOWN_ORDER: {
 				Dimension d = GetStringBoundingBox(this->GetWidget<NWidgetCore>(widget)->widget_data);
-				d.width += padding.width + WD_SORTBUTTON_ARROW_WIDTH * 2; // Doubled since the string is centred and it also looks better.
+				d.width += padding.width + Window::SortButtonWidth() * 2; // Doubled since the string is centred and it also looks better.
 				d.height += padding.height;
 				*size = maxdim(*size, d);
 				break;

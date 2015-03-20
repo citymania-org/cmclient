@@ -1,4 +1,4 @@
-/* $Id: cocoa_s.cpp 25714 2013-08-10 12:47:24Z fonsinchen $ */
+/* $Id: cocoa_s.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -29,6 +29,8 @@
 #include <AudioUnit/AudioUnit.h>
 #undef Rect
 #undef Point
+
+#include "../safeguards.h"
 
 static FSoundDriver_Cocoa iFSoundDriver_Cocoa;
 

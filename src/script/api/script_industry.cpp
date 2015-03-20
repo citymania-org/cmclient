@@ -1,4 +1,4 @@
-/* $Id: script_industry.cpp 23777 2012-01-08 21:48:05Z rubidium $ */
+/* $Id: script_industry.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,8 @@
 #include "../../station_base.h"
 #include "../../newgrf_industries.h"
 #include "table/strings.h"
+
+#include "../../safeguards.h"
 
 /* static */ int32 ScriptIndustry::GetIndustryCount()
 {

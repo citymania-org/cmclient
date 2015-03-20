@@ -1,4 +1,4 @@
-/* $Id: network_server.h 26595 2014-05-18 11:21:59Z frosch $ */
+/* $Id: network_server.h 26576 2014-05-11 12:52:21Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -83,7 +83,7 @@ public:
 
 	virtual Packet *ReceivePacket();
 	NetworkRecvStatus CloseConnection(NetworkRecvStatus status);
-	void GetClientName(char *client_name, size_t size) const;
+	void GetClientName(char *client_name, const char *last) const;
 
 	NetworkRecvStatus SendMap();
 	NetworkRecvStatus SendErrorQuit(ClientID client_id, NetworkErrorCode errorno);

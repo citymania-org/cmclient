@@ -1,4 +1,4 @@
-/* $Id: console_gui.cpp 26544 2014-04-29 18:41:19Z frosch $ */
+/* $Id: console_gui.cpp 26538 2014-04-28 21:06:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,6 +26,8 @@
 #include "widgets/console_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 static const uint ICON_HISTORY_SIZE       = 20;
 static const uint ICON_LINE_SPACING       =  2;
@@ -463,7 +465,7 @@ static const char *IConsoleHistoryAdd(const char *cmd)
 	if (_iconsole_history[0] == NULL || strcmp(_iconsole_history[0], cmd) != 0) {
 		free(_iconsole_history[ICON_HISTORY_SIZE - 1]);
 		memmove(&_iconsole_history[1], &_iconsole_history[0], sizeof(_iconsole_history[0]) * (ICON_HISTORY_SIZE - 1));
-		_iconsole_history[0] = strdup(cmd);
+		_iconsole_history[0] = stredup(cmd);
 	}
 
 	/* Reset the history position */

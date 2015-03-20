@@ -1,4 +1,4 @@
-/* $Id: date_gui.cpp 26668 2014-06-29 17:58:58Z rubidium $ */
+/* $Id: date_gui.cpp 26657 2014-06-20 20:57:32Z planetmaker $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 
 #include "widgets/dropdown_type.h"
 #include "widgets/date_widget.h"
+
+#include "safeguards.h"
 
 
 /** Window to select a date graphically by using dropdowns */

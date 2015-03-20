@@ -1,4 +1,4 @@
-/* $Id: follow_track.hpp 26109 2013-11-25 14:34:09Z rubidium $ */
+/* $Id: follow_track.hpp 27107 2015-01-02 12:11:20Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -130,9 +130,8 @@ struct CFollowTrackT
 		if (!CanExitOldTile()) return false;
 		FollowTileExit();
 		if (!QueryNewTileTrackStatus()) return TryReverse();
-		if (!CanEnterNewTile()) return false;
 		m_new_td_bits &= DiagdirReachesTrackdirs(m_exitdir);
-		if (m_new_td_bits == TRACKDIR_BIT_NONE) {
+		if (m_new_td_bits == TRACKDIR_BIT_NONE || !CanEnterNewTile()) {
 			/* In case we can't enter the next tile, but are
 			 * a normal road vehicle, then we can actually
 			 * try to reverse as this is the end of the road.

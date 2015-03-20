@@ -1,4 +1,4 @@
-/* $Id: 32bpp_base.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: 32bpp_base.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -11,6 +11,8 @@
 
 #include "../stdafx.h"
 #include "32bpp_base.hpp"
+
+#include "../safeguards.h"
 
 void *Blitter_32bppBase::MoveTo(void *video, int x, int y)
 {

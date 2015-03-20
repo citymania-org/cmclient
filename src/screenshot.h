@@ -1,4 +1,4 @@
-/* $Id: screenshot.h 24805 2012-12-09 16:53:01Z frosch $ */
+/* $Id: screenshot.h 26525 2014-04-27 15:13:46Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,9 +14,6 @@
 
 void InitializeScreenshotFormats();
 
-const char *GetScreenshotFormatDesc(int i);
-bool GetScreenshotFormatSupports_32bpp(int i);
-void SetScreenshotFormat(uint i);
 const char *GetCurrentScreenshotExtension();
 
 /** Type of requested screenshot */

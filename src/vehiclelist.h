@@ -1,4 +1,4 @@
-/* $Id: vehiclelist.h 26112 2013-11-25 16:36:11Z rubidium $ */
+/* $Id: vehiclelist.h 27013 2014-10-14 11:23:41Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -34,7 +34,7 @@ struct VehicleListIdentifier {
 	CompanyID company;    ///< The company associated with this list.
 	uint32 index;         ///< A vehicle list type specific index.
 
-	uint32 Pack();
+	uint32 Pack() const;
 	bool Unpack(uint32 data);
 
 	/**
@@ -55,5 +55,6 @@ typedef SmallVector<const Vehicle *, 32> VehicleList;
 
 bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &identifier);
 void BuildDepotVehicleList(VehicleType type, TileIndex tile, VehicleList *engine_list, VehicleList *wagon_list, bool individual_wagons = false);
+uint GetUnitNumberDigits(VehicleList &vehicles);
 
 #endif /* VEHICLELIST_H */

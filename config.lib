@@ -1,4 +1,4 @@
-# $Id: config.lib 27029 2014-10-21 18:33:24Z frosch $
+# $Id: config.lib 27059 2014-11-09 16:37:07Z planetmaker $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -57,8 +57,8 @@ set_default() {
 	enable_translator="0"
 	enable_unicode="1"
 	enable_console="1";
-	enable_assert="0"
-	enable_strip="1"
+	enable_assert="1"
+	enable_strip="0"
 	enable_universal="0"
 	enable_osx_g5="0"
 	enable_cocoa_quartz="1"
@@ -862,7 +862,7 @@ check_params() {
 		endian="PREPROCESSOR"
 	fi
 
-	log 1 "checking endianess... $endian"
+	log 1 "checking endianness... $endian"
 
 	# Suppress language errors when there is a version defined, indicating a release
 	#  It just isn't pretty if any release produces warnings in the languages.
@@ -1037,7 +1037,7 @@ check_params() {
 		log 1 "checking revision... svn detection (tag)"
 	elif [ -d "$ROOT_DIR/.git" ] && [ -n "`git help 2>/dev/null`" ]; then
 		log 1 "checking revision... git detection"
-	elif [ -d "$ROOT_DIR/.hg" ] && [ -n "`hg help 2>/dev/null`" ]; then
+	elif [ -d "$ROOT_DIR/.hg" ] && [ -n "`HGPLAIN= hg help 2>/dev/null`" ]; then
 		log 1 "checking revision... hg detection"
 	elif [ -f "$ROOT_DIR/.ottdrev" ]; then
 		log 1 "checking revision... source tarball"
@@ -3183,9 +3183,9 @@ detect_grfcodec() {
 	log 2 "  returned $version"
 	log 2 "  exit code $ret"
 
-	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version" -lt "949" ]; then
-		if [ -n "$version" ] && [ "$version" -lt "949" ]; then
-			log 1 "checking grfcodec... needs at least version 6.0.2 (r949), disabled"
+	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version" -lt "985" ]; then
+		if [ -n "$version" ] && [ "$version" -lt "985" ]; then
+			log 1 "checking grfcodec... needs at least version 6.0.5 (r985), disabled"
 		else
 			log 1 "checking grfcodec... not found"
 		fi
@@ -3225,9 +3225,9 @@ detect_nforenum() {
 	log 2 "  returned $version"
 	log 2 "  exit code $ret"
 
-	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version" -lt "949" ]; then
-		if [ -n "$version" ] && [ "$version" -lt "949" ]; then
-			log 1 "checking nforenum... needs at least version 6.0.2 (r949), disabled"
+	if [ -z "$version" ] || [ "$ret" != "0" ] || [ "$version" -lt "985" ]; then
+		if [ -n "$version" ] && [ "$version" -lt "985" ]; then
+			log 1 "checking nforenum... needs at least version 6.0.5 (r985), disabled"
 		else
 			log 1 "checking nforenum... not found"
 		fi

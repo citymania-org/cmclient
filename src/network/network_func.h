@@ -1,4 +1,4 @@
-/* $Id: network_func.h 26595 2014-05-18 11:21:59Z frosch $ */
+/* $Id: network_func.h 26788 2014-09-07 14:21:16Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,7 @@
  * See docs/desync.txt for details.
  */
 // #define DEBUG_DUMP_COMMANDS
+// #define DEBUG_FAILED_DUMP_COMMANDS
 
 #include "core/address.h"
 #include "network_type.h"

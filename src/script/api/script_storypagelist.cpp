@@ -1,4 +1,4 @@
-/* $Id: script_storypagelist.cpp 26304 2014-02-06 19:36:19Z zuu $ */
+/* $Id: script_storypagelist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "script_storypagelist.hpp"
 #include "script_story_page.hpp"
 #include "../../story_base.h"
+
+#include "../../safeguards.h"
 
 ScriptStoryPageList::ScriptStoryPageList(ScriptCompany::CompanyID company)
 {

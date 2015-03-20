@@ -1,4 +1,4 @@
-/* $Id: md5.cpp 17883 2009-10-26 23:03:03Z smatz $ */
+/* $Id: md5.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /** @file md5.cpp Creating MD5 checksums of files. */
 
@@ -59,6 +59,8 @@
 #include "../../stdafx.h"
 #include "../../core/endian_func.hpp"
 #include "md5.h"
+
+#include "../../safeguards.h"
 
 #define T_MASK ((uint32)~0)
 #define T1 /* 0xd76aa478 */ (T_MASK ^ 0x28955b87)

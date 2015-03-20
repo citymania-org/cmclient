@@ -1,4 +1,4 @@
-/* $Id: goal_gui.cpp 26460 2014-04-13 10:47:39Z frosch $ */
+/* $Id: goal_gui.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,10 +23,13 @@
 #include "company_base.h"
 #include "story_base.h"
 #include "command_func.h"
+#include "string_func.h"
 
 #include "widgets/goal_widget.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /** Goal list columns. */
 enum GoalColumn {
@@ -370,7 +373,7 @@ struct GoalQuestionWindow : public Window {
 	GoalQuestionWindow(WindowDesc *desc, WindowNumber window_number, byte type, uint32 button_mask, const char *question) : Window(desc), type(type)
 	{
 		assert(type < GOAL_QUESTION_TYPE_COUNT);
-		this->question = strdup(question);
+		this->question = stredup(question);
 
 		/* Figure out which buttons we have to enable. */
 		uint bit;

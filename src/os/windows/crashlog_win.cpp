@@ -1,4 +1,4 @@
-/* $Id: crashlog_win.cpp 26544 2014-04-29 18:41:19Z frosch $ */
+/* $Id: crashlog_win.cpp 26538 2014-04-28 21:06:51Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,8 @@
 
 #include <windows.h>
 #include <signal.h>
+
+#include "../../safeguards.h"
 
 static const uint MAX_SYMBOL_LEN = 512;
 static const uint MAX_FRAMES     = 64;
@@ -610,6 +612,10 @@ static void SetWndSize(HWND wnd, int mode)
 			0, 0, SWP_NOSIZE);
 	}
 }
+
+/* When TCHAR is char, then _sntprintf becomes snprintf. When TCHAR is wchar it doesn't. Likewise for strcat. */
+#undef snprintf
+#undef strcat
 
 static INT_PTR CALLBACK CrashDialogFunc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

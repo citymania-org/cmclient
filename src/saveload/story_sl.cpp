@@ -1,4 +1,4 @@
-/* $Id: story_sl.cpp 25620 2013-07-21 13:18:45Z zuu $ */
+/* $Id: story_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "../story_base.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 /** Called after load to trash broken pages. */
 void AfterLoadStoryBook()

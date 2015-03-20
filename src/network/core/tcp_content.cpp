@@ -1,4 +1,4 @@
-/* $Id: tcp_content.cpp 25597 2013-07-13 09:26:11Z rubidium $ */
+/* $Id: tcp_content.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,8 @@
 #include "../../fios.h"
 #endif /* OPENTTD_MSU */
 #include "tcp_content.h"
+
+#include "../../safeguards.h"
 
 /** Clear everything in the struct */
 ContentInfo::ContentInfo()

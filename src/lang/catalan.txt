@@ -11,7 +11,7 @@
 ##gender Masculin Femenin
 
 
-# $Id: catalan.txt 26977 2014-10-07 17:47:35Z rubidium $
+# $Id: catalan.txt 27180 2015-03-10 17:47:16Z translators $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -250,7 +250,15 @@ STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Barra de
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Enderroca edificis, etc. en un quadre de terreny. Ctrl selecciona l'àrea en diagonal. Shift commuta construir/mostrar el cost estimat
 
 # Show engines button
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Mostra ocultats
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Mostra ocultats
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Mostra ocultats
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Mostra ocultats
 
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP                   :{BLACK}Activant aquest botó, també es mostraran els vehicles ferroviaris ocultats
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE_TOOLTIP            :{BLACK}Activant aquest botó, també es mostraran els vehicles de carretera ocultats
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP_TOOLTIP                    :{BLACK}Activant aquest botó, també es mostraran els vaixells ocultats
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Activant aquest botó, també es mostraran les aeronaus ocultades
 
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}Predeterminat
@@ -316,7 +324,7 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Mostra l
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Mostra la llista d'estacions de la companyia
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Mostra informació financera de la companyia
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Mostra informació general de la companyia
-STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Mostra llibre
+STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Mostra llibre de partida
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Mostra llista d'objectius
 STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Mostra gràfics
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Mostra la taula de la lliga d'empreses
@@ -365,7 +373,7 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Surt
 
 ############ range for settings menu starts
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Opcions de la Partida
-STR_SETTINGS_MENU_CONFIG_SETTINGS                               :Paràmetres avançats
+STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Configuració
 STR_SETTINGS_MENU_SCRIPT_SETTINGS                               :Paràmetres de les IA/Script de la partida
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Extensions NewGRF
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Opcions de transparència
@@ -675,7 +683,7 @@ STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK                         :{BLACK}Clica a 
 STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}Clica a la pista de música per treure-la del programa actual (només Personalitzat 1 o Personalitzat 2)
 
 # Highscore window
-STR_HIGHSCORE_TOP_COMPANIES_WHO_REACHED                         :{BIG_FONT}{BLACK}Principals empreses en aconseguir el Nivell {NUM}
+STR_HIGHSCORE_TOP_COMPANIES_WHO_REACHED                         :{BIG_FONT}{BLACK}Principals empreses en arribar al {NUM}
 STR_HIGHSCORE_TOP_COMPANIES_NETWORK_GAME                        :{BIG_FONT}{BLACK}Taula de Lliga d'Empreses a {NUM}
 STR_HIGHSCORE_POSITION                                          :{BIG_FONT}{BLACK}{COMMA}.
 STR_HIGHSCORE_PERFORMANCE_TITLE_BUSINESSMAN                     :Empresari
@@ -808,7 +816,7 @@ STR_PRESIDENT_NAME_MANAGER                                      :{BLACK}{PRESIDE
 STR_NEWS_NEW_TOWN                                               :{BLACK}{BIG_FONT}{STRING} ha patrocinat la construcció d'una nova població, anomenada {TOWN}!
 
 STR_NEWS_INDUSTRY_CONSTRUCTION                                  :{BIG_FONT}{BLACK}No{G u va} {STRING} en construcció prop de {TOWN}!
-STR_NEWS_INDUSTRY_PLANTED                                       :{BIG_FONT}{BLACK}S'està implantant {G un una} {G nou nova} {STRING} prop de {TOWN}!
+STR_NEWS_INDUSTRY_PLANTED                                       :{BIG_FONT}{BLACK}S'està plantant {G un una} {G nou nova} {STRING} prop de {TOWN}!
 
 STR_NEWS_INDUSTRY_CLOSURE_GENERAL                               :{BIG_FONT}{BLACK}{STRING} anuncia el seu imminent tancament!
 STR_NEWS_INDUSTRY_CLOSURE_SUPPLY_PROBLEMS                       :{BIG_FONT}{BLACK}Problemes de subministrament fan que {STRING} anunciï el seu imminent tancament!
@@ -837,6 +845,7 @@ STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} té una ordre buida
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} té ordres duplicades
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} té una estació invàlida en les seves ordres
+STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE} té en les seves ordres un aeroport amb pista d'aterratge massa curta
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} s'està fent vell
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} s'està fent molt vell
@@ -976,8 +985,12 @@ STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Resoluci
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Selecciona la resolució de pantalla
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :altres
 
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT                              :{BLACK}Format de les captures de pantalla
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT_TOOLTIP                      :{BLACK}Selecciona el format a utilitzar en les captures de pantalla
+STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Mida de la interfície
+STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Escull la mida dels elements de la interfície
+
+STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Mida normal
+STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Mida doble
+STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Mida quàdruple
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Conjunt de gràfics base
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Selecciona el conjunt de gràfics base a utilitzar
@@ -1072,6 +1085,7 @@ STR_TERRAIN_TYPE_VERY_FLAT                                      :Molt Pla
 STR_TERRAIN_TYPE_FLAT                                           :Pla
 STR_TERRAIN_TYPE_HILLY                                          :Accidentat
 STR_TERRAIN_TYPE_MOUNTAINOUS                                    :Muntanyós
+STR_TERRAIN_TYPE_ALPINIST                                       :Escarpat
 
 STR_CITY_APPROVAL_PERMISSIVE                                    :Permissiu
 STR_CITY_APPROVAL_TOLERANT                                      :Tolerant
@@ -1079,8 +1093,8 @@ STR_CITY_APPROVAL_HOSTILE                                       :Hostil
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}No hi ha cap IA disponible...{}Podeu descarregar-ne a través del 'Contingut en línia'
 
-# Advanced settings window
-STR_CONFIG_SETTING_CAPTION                                      :{WHITE}Paràmetres avançats
+# Settings tree window
+STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Configuració
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{G=Femenin}{BLACK}Cadena filtrant:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Desplega-ho tot
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Plega-ho tot
@@ -1096,9 +1110,9 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Paràmetre de l
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Categoria:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipus:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Restringeix la llista de sota usant els filtres predefinits
-STR_CONFIG_SETTING_RESTRICT_BASIC                               :Paràmetres bàsics
-STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Paràmetres avançats
-STR_CONFIG_SETTING_RESTRICT_ALL                                 :Paràmetres per experts / tots els paràmetres
+STR_CONFIG_SETTING_RESTRICT_BASIC                               :Paràmetres bàsics (mostra només els paràmetres importants)
+STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Paràmetres avançats (mostra la majoria dels paràmetres)
+STR_CONFIG_SETTING_RESTRICT_ALL                                 :Paràmetres per experts (mostra tots els paràmetres, fins i tot els rars)
 STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_DEFAULT             :Paràmetres amb un valor diferent del predeterminat
 STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_NEW                 :Paràmetres amb un valor diferent dels paràmetres de partida nova
 
@@ -1153,8 +1167,9 @@ STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Commuta els des
 STR_CONFIG_SETTING_CITY_APPROVAL                                :Actitud de l'alcaldia de la població davant de reestructuracions a la zona: {STRING}
 STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :Escull quin nivell de soroll i de danys ambientals fets per les companyies afecten al seu prestigi a la població i a futures accions de construcció a la zona
 
-STR_CONFIG_SETTING_BUILDONSLOPES                                :Permet construir en desnivells i costes: {STRING}
-STR_CONFIG_SETTING_BUILDONSLOPES_HELPTEXT                       :Si està activat, les vies i les estacions poden ser construïdes en la majoria de pendents. Si està desactivat, només està permès en aquells pendents que coincideixin amb la direcció de la via i no necessitin fonaments
+STR_CONFIG_SETTING_MAX_HEIGHTLEVEL                              :Alçada màxima del mapa: {STRING}
+STR_CONFIG_SETTING_MAX_HEIGHTLEVEL_HELPTEXT                     :Estableix l'alçada màxima permesa del terreny en el mapa
+STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN                            :{WHITE}No pots escollir aquesta alçada màxima del mapa. Hi ha alguna zona del mapa actual que és més alta
 STR_CONFIG_SETTING_AUTOSLOPE                                    :Permet modificar el terreny sota edificis, rails, etc.: {STRING}
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Permetre modelar el terreny sota edificis i rails, sense eliminar-los
 STR_CONFIG_SETTING_CATCHMENT                                    :Permet una mida més real de l'àrea d'influència: {STRING}
@@ -1179,16 +1194,12 @@ STR_CONFIG_SETTING_FORBID_90_DEG                                :Prohibeix fer g
 STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :Els girs de 90 graus succeeixen quan una via horitzontal està seguida d'una vertical a la cel·la annexa, provocant que el tren giri 90 graus quan travessi la vora de la cel·la en lloc dels 45 graus usuals en les altres combinacions. Això també s'aplica al radi de gir dels vaixells
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Permet ajuntar estacions no annexes: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Permetre afegir parts a una estació sense contacte directe amb les parts existents. Fa falta Ctrl + Clic, mentre és col·loquen les peces noves
-STR_CONFIG_SETTING_IMPROVEDLOAD                                 :Utilitza algorisme millorat de càrrega: {STRING}
-STR_CONFIG_SETTING_IMPROVEDLOAD_HELPTEXT                        :Si està activat, múltiples vehicles esperant a una estació es carreguen de forma seqüencial.
-STR_CONFIG_SETTING_GRADUAL_LOADING                              :Carrega els vehicles gradualment: {STRING}
-STR_CONFIG_SETTING_GRADUAL_LOADING_HELPTEXT                     :De mica en mica, carregar els vehícles que utilitzen duracions específiques de vehícles, en comptes de carregar-los tots alhora en un temps fix que només depén de la quantitat de càrrega carregada
 STR_CONFIG_SETTING_INFLATION                                    :Inflació: {STRING}
 STR_CONFIG_SETTING_INFLATION_HELPTEXT                           :Habilita la inflació a l'economia, on l'augment dels costos són una mica més ràpids que els dels pagaments
-STR_CONFIG_SETTING_SELECTGOODS                                  :Entrega càrregues en una estació només quan hi ha demananda: {STRING}
-STR_CONFIG_SETTING_SELECTGOODS_HELPTEXT                         :Només entregar la càrrega en una estació que ha demanat el vehícle de càrrega. Això evita ratis erronis per les càrregues que no han estat demanades per l'estació
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH                            :Màxima longitud dels ponts: {STRING}
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH_HELPTEXT                   :Longitud màxima per a la construcció de ponts
+STR_CONFIG_SETTING_MAX_BRIDGE_HEIGHT                            :Alçada màxima dels ponts: {STRING}
+STR_CONFIG_SETTING_MAX_BRIDGE_HEIGHT_HELPTEXT                   :Alçada màxima de construcció dels ponts
 STR_CONFIG_SETTING_MAX_TUNNEL_LENGTH                            :Màxima longitud dels túnels: {STRING}
 STR_CONFIG_SETTING_MAX_TUNNEL_LENGTH_HELPTEXT                   :Longitud màxima per a la construcció de túnels
 STR_CONFIG_SETTING_RAW_INDUSTRY_CONSTRUCTION_METHOD             :Mètode de construcció de la indústria primària manual: {STRING}
@@ -1209,13 +1220,11 @@ STR_CONFIG_SETTING_SHOWFINANCES                                 :Mostra la fines
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :Si està activat, la finestra de finances apareix al final de cada any per permetre una inspecció fàcil de l'estat financer de la companyia
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :Les noves ordres predeterminades són 'sense parada': {STRING}
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT_HELPTEXT                  :Normalment, un vehicle pararà a cada estació que passi. Activant aquest paràmetre no pararà a cap estació fins arribar a la seu destí. Nota, aquest paràmetre només defineix el valor predeterminat per les noves ordres. De totes maneres les ordres individuals poden establir explícitament qualsevol dels comportaments
-STR_CONFIG_SETTING_STOP_LOCATION                                :Noves ordres del tren parar per defecte a {STRING} de la plataforma
+STR_CONFIG_SETTING_STOP_LOCATION                                :Noves ordres del tren: parar per defecte {STRING} de la plataforma
 STR_CONFIG_SETTING_STOP_LOCATION_HELPTEXT                       :Situa en quin lloc de la plataforma el tren pararà per defecte. 'Extrem més proper' significa a prop del punt d'entrada, 'al mig' significa al mig de la plataforma, i 'extrem més llunyà' significa lluny del punt d'entrada. Nota, aquest paràmetre només defineix el valor predeterminat per les noves ordres. De totes maneres les ordres individuals poden establir explícitament qualsevol dels comportaments
 STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :a l'extrem més proper
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :a la meitat
 STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :a l'extrem més llunyà
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING                        :Cues d'automòbils (amb efectes quàntics): {STRING}
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING_HELPTEXT               :Fes que un vehicle esperi davant d'una parada plena fins que estigui lliure
 STR_CONFIG_SETTING_AUTOSCROLL                                   :Finestra d'avís quan el ratolí és al marc del programa: {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL_HELPTEXT                          :Quan està activat, les vistes començaran a desplaçar-se quan el ratolí sigui a prop la vora de la finestra
 STR_CONFIG_SETTING_AUTOSCROLL_DISABLED                          :Desactivat
@@ -1246,26 +1255,22 @@ STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Permet situar p
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :Permet la construcció de passos a nivell en els carrers propietat de les poblacions
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :Permet circular a través de les parades en carreteres propietat de competidors: {STRING}
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD_HELPTEXT             :Permet la construcció de passos a nivell en els carrers propietat d'altres companyies
-STR_CONFIG_SETTING_ADJACENT_STATIONS                            :Permet construir estacions annexes: {STRING}
-STR_CONFIG_SETTING_ADJACENT_STATIONS_HELPTEXT                   :Permet que diferents estacions es toquin l'una a l'altra
-STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :Activa diversos paquets de motors NewGRF: {STRING}
-STR_CONFIG_SETTING_DYNAMIC_ENGINES_HELPTEXT                     :Opció de compatibilitat per NewGRFs vells. No desactivis això, a menys que sàpigues exactament el que estàs fent!
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}No es pot canviar aquest ajustament quan hi ha vehicles
-STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Manteniment d'infrastructures: {STRING}
-STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Quan està activat, la infrastructura provoca costos de manteniment. El cost creix proporcionalment al tamany de la xarxa de transport, afectant en conseqüència més a les companyies grosses que a les petites
+STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Manteniment de la infraestructura: {STRING}
+STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Quan està activat, la infraestructura provoca costos de manteniment. El cost creix proporcionalment al tamany de la xarxa de transport, afectant en conseqüència més a les companyies grosses que a les petites
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Els aeroports mai caduquen: {STRING}
-STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Activant aquesta opció fa que cada tipus aeroport estigui disponible per sempre després de la seva introducció
+STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Activant aquesta opció fa que cada tipus d'aeroport estigui disponible per sempre després de la seva introducció
 
 STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            :Avisa si el vehicle es perd: {STRING}
 STR_CONFIG_SETTING_WARN_LOST_VEHICLE_HELPTEXT                   :Alerta amb missatges quan els vehicles no siguin capaços de trobar el camí al seu destí indicat
 STR_CONFIG_SETTING_ORDER_REVIEW                                 :Revisa ordres dels vehicles: {STRING}
-STR_CONFIG_SETTING_ORDER_REVIEW_HELPTEXT                        :Quan està activat, les ordres dels vehicles són verificades periòdicament, i alguns problemes evidents seran informats amb missatges de noticia quan siguin detectats
+STR_CONFIG_SETTING_ORDER_REVIEW_HELPTEXT                        :Quan està activat, les ordres dels vehicles són verificades periòdicament, i alguns problemes evidents seran informats amb missatges de notícia quan siguin detectats
 STR_CONFIG_SETTING_ORDER_REVIEW_OFF                             :No
 STR_CONFIG_SETTING_ORDER_REVIEW_EXDEPOT                         :Sí, excepte vehicles parats
 STR_CONFIG_SETTING_ORDER_REVIEW_ON                              :De tots els vehicles
 STR_CONFIG_SETTING_WARN_INCOME_LESS                             :Avisa si el benefici del vehicle és negatiu: {STRING}
-STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :Quan està activat, un missatge de noticia és enviat quan un vehicle no ha tingut beneficis durant l'any
+STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :Quan està activat, un missatge de notícia és enviat quan un vehicle no ha tingut beneficis durant l'any
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Els vehicles mai caduquen: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :Quan està activat, tots els models de vehicles continuen disponibles per sempre després de la seva introducció
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :Autorenova el vehicle quan sigui vell: {STRING}
@@ -1280,35 +1285,49 @@ STR_CONFIG_SETTING_ERRMSG_DURATION                              :Duració del mi
 STR_CONFIG_SETTING_ERRMSG_DURATION_HELPTEXT                     :Duració dels missatges d'error mostrats en finestres vermelles. Alguns missatges d'error (crítics) no es tanquen automàticament i s'han de tancar manualment
 STR_CONFIG_SETTING_ERRMSG_DURATION_VALUE                        :{COMMA} segon{P 0 "" s}
 STR_CONFIG_SETTING_HOVER_DELAY                                  :Mostra descripcions emergents: {STRING}
-STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :Retard abans que les descripcions emergents siguin mostrades quan el ratolí sigui sobre algun element de l'interfície. Alternativament les descripcions emergents poden ser vinculades al botó dret del ratolí si aquest paràmetre s'estableix en 0.
-STR_CONFIG_SETTING_HOVER_DELAY_VALUE                            :Manté durant {COMMA} segon{P 0 "" s}
+STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :Retard abans que les descripcions emergents siguin mostrades quan el ratolí sigui sobre algun element de la interfície. Alternativament, les descripcions emergents poden ser vinculades al botó dret del ratolí si aquest paràmetre s'estableix en 0.
+STR_CONFIG_SETTING_HOVER_DELAY_VALUE                            :Manté durant {COMMA} milisegon{P 0 "" s}
 STR_CONFIG_SETTING_HOVER_DELAY_DISABLED                         :Botó dret
 STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Mostra els habitants a l'etiqueta del nom de la població: {STRING}
 STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Mostra els habitants a les etiquetes dels noms de les poblacions al mapa
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Gruix de les línies dels gràfics: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Gruix de la línia als gràfics. Una línia més fina és més llegible, una línia més gruixuda és més fàcil de veure i els colors són més fàcils de distingir
 
+STR_CONFIG_SETTING_LANDSCAPE                                    :Paisatge: {STRING}
+STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :El tipus de paisatge defineix escenaris amb diferents tipus de càrrega i requisits per al creixement de les poblacions. Els NewGRF i l'script de la partida poden modificar-ne l'aparença i el comportament
 STR_CONFIG_SETTING_LAND_GENERATOR                               :Generador de terrenys: {STRING}
+STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :L'algorisme generador original depèn del tipus de gràfics base i crea formes de terreny predefinides. TerraGenesis és un generador basat en el soroll Perlin que permet una configuració més precisa
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Original
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :TerraGenesis
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Tipus de terreny: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(Només TerraGenesis) Escollir el tipus de terreny: des de molt pla fins a escarpat
+STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Densitat d'indústries: {STRING}
+STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :Fixa el nombre d'indústries que s'haurien de generar i mantenir durant la partida
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Distància màxima des de la vora a les refineries de petroli: {STRING}
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Les refineries de petroli només es construeixen a prop de les vores del mapa, això és a la costa en els mapes d'illes
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Alçada dels estatges amb neu: {STRING}
+STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Controla a quina alçada la neu comença en el paisatge subàrtic. La neu també afecta la generació d'indústries i els requisits per al creixement de les poblacions
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Geografia del terreny: {STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(Només TerraGenesis) Escollir la suavitat del paisatge: els terrenys suaus tenen menys turons i són regulars; els terrenys més rugosos són irregulars i tenen molts turons
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Molt suau
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Suau
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Escarpat
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Molt escarpat
+STR_CONFIG_SETTING_VARIETY                                      :Varietat: {STRING}
+STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :(Només TerraGenesis) Controla la varietat en la distribució de les zones muntanyoses i planes. Aquesta opció controla la distribució d'aquestes zones; si es vol modificar si el terreny és més o menys muntanyós s'han de modificar altres opcions
+STR_CONFIG_SETTING_RIVER_AMOUNT                                 :Quantitat de rius: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :Escollir la quantitat de rius a generar
 STR_CONFIG_SETTING_TREE_PLACER                                  :Algorisme per situar arbres: {STRING}
+STR_CONFIG_SETTING_TREE_PLACER_HELPTEXT                         :Permet escollir la distribució d'arbres al mapa. 'Original' distribueix els arbres uniformement. 'Millorat' els planta en grups
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :Cap
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :Original
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :Millorat
+STR_CONFIG_SETTING_ROAD_SIDE                                    :Automòbils: {STRING}
+STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :Escollir el costat de conducció
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Rotació del mapa d'alçades: {STRING}
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :Antihorari
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :Horari
 STR_CONFIG_SETTING_SE_FLAT_WORLD_HEIGHT                         :Alçada que pren un escenari pla: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES                        :Activa modelar el terreny de les cel·les a les vores del mapa: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES_HELPTEXT               :Si està desactivat, les vores del mapa sempre seran oceans
 STR_CONFIG_SETTING_EDGES_NOT_EMPTY                              :{WHITE}Una o més cel·les al vèrtex nord no està buit
 STR_CONFIG_SETTING_EDGES_NOT_WATER                              :{WHITE}Una o més cel·les en una de les vores no és aigua
 
@@ -1326,7 +1345,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violat
 STR_CONFIG_SETTING_REVERSE_SCROLLING                            :En desplaçar la pantalla amb el ratolí mou la vista en la direcció contrària: {STRING}
 STR_CONFIG_SETTING_REVERSE_SCROLLING_HELPTEXT                   :Comportament quan es desplaci el mapa amb el botó dret del ratolí. Quan està desactivat, el ratolí mou la càmera. Quan està activat, el ratolí mou el mapa
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Desplaçament suau de la vista: {STRING}
-STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Controla com la vista principal es desplaça a una posició específica quan es clica al mapa petit o quan s'envia una ordre de desplaçar-se a un objecte específic al mapa. Si està activat, la vista es desplaça suaument, si està desactivat salta directament al punt assenyalat
+STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Controla com la vista principal es desplaça a una posició específica quan es clica al mapa petit o quan s'envia una ordre de desplaçar-se a un objecte específic al mapa. Si està activat, la vista es desplaça suaument; si està desactivat, salta directament al punt assenyalat
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Mostra un cartell de mesura quan estiguis utilitzant vàries eines de construcció: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Mostra les distàncies-cel·la i les diferències d'alçada quan s'arrossegui durant la construcció
 STR_CONFIG_SETTING_LIVERIES                                     :Mostra la decoració específica del tipus de vehicle: {STRING}
@@ -1359,17 +1378,14 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Desactivat
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Desplaçament amb el botó esquerre: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Activa el desplaçament del mapa arrossegant-lo amb el botó esquerre del ratolí. Això és especialment útil quan s'utilitzen pantalles tàctils
 
+STR_CONFIG_SETTING_AUTOSAVE                                     :Desada automàtica: {STRING}
+STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Selecciona l'interval entre desades automàtiques de les partides
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Utilitza el format de data {STRING} per a guardar partides
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Format de la data en els noms dels arxius de les partides que es guardin
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_LONG               :llarga (31 Des 2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :curta (31-12-2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31)
-
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Paleta predeterminada pels NewGRFs que no n'especifiquin una: {STRING}
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Paleta predeterminada a utilitzar als NewGRFs que no especifiquen quina necessiten
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Paleta predeterminada (D)
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Paleta preexistent (W)
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Pausa automàticament en començar una nova partida: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Quan està activat, el joc es pausarà automàticament quan es comenci una partida nova, permetent a l'usuari estudiar el mapa més detalladament
@@ -1388,7 +1404,7 @@ STR_CONFIG_SETTING_TIMETABLE_IN_TICKS_HELPTEXT                  :Mostra els temp
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :Mostra l'arribada i la sortida als horaris: {STRING}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :Mostra als horaris l'arribada anticipadament i les hores de sortida
 STR_CONFIG_SETTING_QUICKGOTO                                    :Creació ràpida d'ordres per a vehicles: {STRING}
-STR_CONFIG_SETTING_QUICKGOTO_HELPTEXT                           :Pre-selecciona el botó 'Vés-hi' quan s'obri la finestra d'ordres
+STR_CONFIG_SETTING_QUICKGOTO_HELPTEXT                           :Preselecciona el botó 'Vés a' quan s'obri la finestra d'ordres
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE                            :Tipus predeterminat de via (en nova partida/càrrega de partida): {STRING}
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_HELPTEXT                   :Tipus de via a seleccionar després de començar o carregar una partida. 'El més antic disponible' selecciona el tipus de vies més antic disponible, 'El més modern disponible' selecciona el tipus de vies més modern, i 'El més utilitzat disponible' selecciona el tipus de vies que s'utilitzi més actualment
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_FIRST                      :El més antic disponible
@@ -1418,8 +1434,8 @@ STR_CONFIG_SETTING_SOUND_VEHICLE_HELPTEXT                       :Reprodueix els 
 STR_CONFIG_SETTING_SOUND_AMBIENT                                :Ambient: {STRING}
 STR_CONFIG_SETTING_SOUND_AMBIENT_HELPTEXT                       :Reprodueix efectes de so ambient del paisatge, les indústries i les poblacions
 
-STR_CONFIG_SETTING_DISABLE_UNSUITABLE_BUILDING                  :Desactiva la construcció d'infrastructures quan no hi hagi disponibles vehicles adequats: {STRING}
-STR_CONFIG_SETTING_DISABLE_UNSUITABLE_BUILDING_HELPTEXT         :Quan està activat, la infrastructura només està disponible si hi ha també vehicles disponibles, prevenint perdre temps i diners en infraestructures no utilitzables
+STR_CONFIG_SETTING_DISABLE_UNSUITABLE_BUILDING                  :Desactiva la construcció d'infraestructures quan no hi hagi disponibles vehicles adequats: {STRING}
+STR_CONFIG_SETTING_DISABLE_UNSUITABLE_BUILDING_HELPTEXT         :Quan està activat, la infraestructura només està disponible si hi ha també vehicles disponibles, prevenint perdre temps i diners en infraestructures no utilitzables
 STR_CONFIG_SETTING_MAX_TRAINS                                   :Màxim nombre de trens per companyia: {STRING}
 STR_CONFIG_SETTING_MAX_TRAINS_HELPTEXT                          :Màxim nombre de trens que pot tenir una companyia
 STR_CONFIG_SETTING_MAX_ROAD_VEHICLES                            :Màxim nombre d'automòbils per companyia: {STRING}
@@ -1592,8 +1608,6 @@ STR_CONFIG_SETTING_LARGER_TOWNS_VALUE                           :1 de cada {COMM
 STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :Cap
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Multiplicador de mida inicial de ciutats: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :La grandària mitjana de les ciutats en relació als pobles a l'inici de la partida
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :Treu els elements de carretera absurds durant la reconstrucció de carretera: {STRING}
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD_HELPTEXT               :Elimina les carreteres sense sortida durant les reconstruccions de carreteres finançades
 
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Actualitza el graf de distribució cada {STRING}{NBSP}di{P 0 a es}
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :Temps entre recàlculs successius del graf de distribució. Cada recàlcul calcula els plans per un component del graf. Això significa que un valor X per aquest paràmetre no implica que tot el graf serà actualitzat cada X dies. Només alguns components ho seran. Com més curt el valor, més temps de processador es requerirà per calcular-ho. Com més llarg, més temps passarà fins que la distribució de càrregues comenci en noves rutes.
@@ -1607,7 +1621,7 @@ STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :"simètric" vol
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL                            :Mode de distribució pel correu: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :"simètric" vol dir que aproximadament la mateixa quantitat de correu serà enviada des de l'estació A a la B que de B a A. "asimètric" significa que una quantitat arbitrària de correu pot ser enviada en qualsevol dels dos sentits. "manual" vol dir que no s'aplicarà una distribució automàtica pel correu.
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :Mode de distribució per la classe de càrrega BLINDADA: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :La classe de càrrega BLINDADA conté objectes de valor a la zona temperada, diamants a la subtropical o or al clima subàrtic. Els NewGRF poden canviar això. "simètric" significa que aproximadament la mateixa quantitat d'aquesta càrrega s'enviarà de l'estació A a la B que de B a A. "asimètric" vol dir que quantitats arbitràries d'aquesta càrrega poden ser enviades en qualsevol sentit. "manual" significa que no s'aplicarà cap distribució automàtica a aquesta càrrega. Es recomana indicar asimètric o manual en clima subàrtic, doncs els bancs no enviaran or de tornada a les mines. Pels climes temperat i subtropical podeu també seleccionar simètric, doncs els bancs enviaran objectes de valor de tornada al banc d'origen de certa quantitat d'aquests.
+STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :La classe de càrrega BLINDADA conté objectes de valor a la zona temperada, diamants a la subtropical o or al clima subàrtic. Els NewGRF poden canviar això. "simètric" significa que aproximadament la mateixa quantitat d'aquesta càrrega s'enviarà de l'estació A a la B que de B a A. "asimètric" vol dir que quantitats arbitràries d'aquesta càrrega poden ser enviades en qualsevol sentit. "manual" significa que no s'aplicarà cap distribució automàtica a aquesta càrrega. Es recomana indicar asimètric o manual en clima subàrtic, doncs els bancs no enviaran or de tornada a les mines. Pels climes temperat i subtropical podeu també seleccionar simètric, doncs els bancs enviaran objectes de valor de tornada al banc d'origen.
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :Mode de distribució per altres classes de càrrega: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"asimètric" vol dir que quantitats arbitràries de càrrega poden ser enviades en qualsevol sentit. "manual" significa que no s'aplicarà cap distribució automàtica a aquestes càrregues.
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :Precisió de la distribució: {STRING}
@@ -1655,27 +1669,29 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Imperial (peu)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Mètric (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
 
-STR_CONFIG_SETTING_GUI                                          :{ORANGE}Interfície
 STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}Localització
-STR_CONFIG_SETTING_CONSTRUCTION                                 :{ORANGE}Construcció
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Vehicles
-STR_CONFIG_SETTING_STATIONS                                     :{ORANGE}Estacions
-STR_CONFIG_SETTING_ECONOMY                                      :{ORANGE}Economia
-STR_CONFIG_SETTING_LINKGRAPH                                    :{ORANGE}Distribució de la Càrrega
-STR_CONFIG_SETTING_AI                                           :{ORANGE}Competidors
-STR_CONFIG_SETTING_DISPLAY_OPTIONS                              :{ORANGE}Opcions de pantalla
-STR_CONFIG_SETTING_INTERACTION                                  :{ORANGE}Interacció
+STR_CONFIG_SETTING_GRAPHICS                                     :{ORANGE}Gràfics
 STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Efectes de so
-STR_CONFIG_SETTING_NEWS                                         :{ORANGE}Notícies i missatges
-STR_CONFIG_SETTING_CONSTRUCTION_SIGNALS                         :{ORANGE}Senyals
-STR_CONFIG_SETTING_STATIONS_CARGOHANDLING                       :{ORANGE}Manipulació de la càrrega
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Jugadors de l'ordinador (IA)
-STR_CONFIG_SETTING_VEHICLES_AUTORENEW                           :{ORANGE}Autorenovació
-STR_CONFIG_SETTING_VEHICLES_SERVICING                           :{ORANGE}Revisions
+STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Interfície
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}General
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}Finestres de visualització
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Construcció
+STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}Notícies / Consells
+STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Companyia
+STR_CONFIG_SETTING_ACCOUNTING                                   :{ORANGE}Comptabilitat
+STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Vehicles
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}Lleis físiques
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Recorreguts
-STR_CONFIG_SETTING_VEHICLES_TRAINS                              :{ORANGE}Trens
-STR_CONFIG_SETTING_ECONOMY_TOWNS                                :{ORANGE}Poblacions
-STR_CONFIG_SETTING_ECONOMY_INDUSTRIES                           :{ORANGE}Indústries
+STR_CONFIG_SETTING_LIMITATIONS                                  :{ORANGE}Limitacions
+STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Desastres / Accidents
+STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Generació del món
+STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Interacció amb l'entorn
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Autoritats
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Poblacions
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Indústries
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distribució de la càrrega
+STR_CONFIG_SETTING_AI                                           :{ORANGE}Competidors
+STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Jugadors de l'ordinador (IA)
 
 STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
@@ -1724,7 +1740,7 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Multijug
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Opcions del Joc
 STR_INTRO_HIGHSCORE                                             :{BLACK}Taula de rècords
-STR_INTRO_ADVANCED_SETTINGS                                     :{BLACK}Paràmetres Avançats
+STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Configuració
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Extensions NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Contingut en Línia
 STR_INTRO_SCRIPT_SETTINGS                                       :{BLACK}Paràmetres de les IA/Script de la Partida
@@ -1744,7 +1760,7 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Seleccio
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Mostra les opcions del joc
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Mostra la taula de rècords
-STR_INTRO_TOOLTIP_ADVANCED_SETTINGS                             :{BLACK}Mostra paràmetres avançats
+STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Mostra la finestra de configuració
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Mostra la configuració de les extensions NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Comprova si hi ha continguts nous i actualitzats per a descarregar
 STR_INTRO_TOOLTIP_SCRIPT_SETTINGS                               :{BLACK}Mostra els paràmetres de les IA/Script de la partida
@@ -1784,6 +1800,8 @@ STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Jugant 
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Eruga màgica (treu indústries, objectes inamovibles): {ORANGE}{STRING}
 STR_CHEAT_CROSSINGTUNNELS                                       :{LTBLUE}Els túnels es poden creuar: {ORANGE}{STRING}
 STR_CHEAT_NO_JETCRASH                                           :{LTBLUE}Els avions a reacció no tindran accidents (freqüents) en els aeroports petits: {ORANGE}{STRING}
+STR_CHEAT_EDIT_MAX_HL                                           :{LTBLUE}Edita l'alçada màxima del mapa: {ORANGE}{NUM}
+STR_CHEAT_EDIT_MAX_HL_QUERY_CAPT                                :{WHITE}Edita l'alçada màxima del terreny en el mapa
 STR_CHEAT_SWITCH_CLIMATE_TEMPERATE_LANDSCAPE                    :Paisatge temperat
 STR_CHEAT_SWITCH_CLIMATE_SUB_ARCTIC_LANDSCAPE                   :Paisatge subàrtic
 STR_CHEAT_SWITCH_CLIMATE_SUB_TROPICAL_LANDSCAPE                 :Paisatge subtropical
@@ -1832,7 +1850,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Tramvia de càr
 STR_FACE_CAPTION                                                :{WHITE}Selecció de cares
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Cancel·la la selecció de nova cara
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Accepta la selecció de nova cara
-STR_MAPGEN_RANDOM                                               :{BLACK}Aleatoritza
+STR_FACE_RANDOM                                                 :{BLACK}Aleatoritza
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Home
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Selecciona cares d'home
@@ -1847,7 +1865,7 @@ STR_FACE_SIMPLE_TOOLTIP                                         :{BLACK}Selecci�
 STR_FACE_LOAD                                                   :{BLACK}Carrega
 STR_FACE_LOAD_TOOLTIP                                           :{BLACK}Carrega la cara preferida
 STR_FACE_LOAD_DONE                                              :{WHITE}La teva cara preferida ha estat carregada des de l'arxiu de configuració d'OpenTTD
-STR_FACE_FACECODE                                               :{BLACK}Cara jugador nu.
+STR_FACE_FACECODE                                               :{BLACK}Número de la cara
 STR_FACE_FACECODE_TOOLTIP                                       :{BLACK}Veure i/o assigna el número de la cara del president
 STR_FACE_FACECODE_CAPTION                                       :{WHITE}Veure i/o assigna el número de la cara del president
 STR_FACE_FACECODE_SET                                           :{WHITE}El número de la nova cara ha estat assignat
@@ -1864,7 +1882,7 @@ STR_FACE_NO                                                     :No
 STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Activa el bigoti o les arracades
 STR_FACE_HAIR                                                   :Cabell:
 STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Canvia el cabell
-STR_FACE_EYEBROWS                                               :Celles
+STR_FACE_EYEBROWS                                               :Celles:
 STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Canvia les celles
 STR_FACE_EYECOLOUR                                              :Color dels ulls:
 STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Canvia el color dels ulls
@@ -2235,9 +2253,9 @@ STR_CONTENT_TYPE_GS_LIBRARY                                     :Llibreria GS
 # Content downloading progress window
 STR_CONTENT_DOWNLOAD_TITLE                                      :{WHITE}Descarregant contingut...
 STR_CONTENT_DOWNLOAD_INITIALISE                                 :{WHITE}Demanant arxius...
-STR_CONTENT_DOWNLOAD_FILE                                       :{WHITE}Actualment descarregant {STRING} ({NUM} de {NUM})
+STR_CONTENT_DOWNLOAD_FILE                                       :{WHITE}Actualment descarregant {STRING} ({NUM}{NBSP}de{NBSP}{NUM})
 STR_CONTENT_DOWNLOAD_COMPLETE                                   :{WHITE}Descàrrega completa
-STR_CONTENT_DOWNLOAD_PROGRESS_SIZE                              :{WHITE}{BYTES} de {BYTES} descarregats ({NUM} %)
+STR_CONTENT_DOWNLOAD_PROGRESS_SIZE                              :{WHITE}{BYTES}{NBSP}de{NBSP}{BYTES}{NBSP}descarregats ({NUM}{NBSP}%)
 
 # Content downloading error messages
 STR_CONTENT_ERROR_COULD_NOT_CONNECT                             :{WHITE}No s'ha pogut connectar amb el servidor de continguts...
@@ -2492,7 +2510,7 @@ STR_TERRAFORM_SE_NEW_WORLD                                      :{BLACK}Crear no
 STR_TERRAFORM_RESET_LANDSCAPE                                   :{BLACK}Restableix paisatge
 STR_TERRAFORM_RESET_LANDSCAPE_TOOLTIP                           :{BLACK}Treure totes les propietats pertanyents a companyies del mapa
 
-STR_QUERY_RESET_LANDSCAPE_CAPTION                               :{WHITE}Restablir Paisatge
+STR_QUERY_RESET_LANDSCAPE_CAPTION                               :{WHITE}Restableix Paisatge
 STR_RESET_LANDSCAPE_CONFIRMATION_TEXT                           :{WHITE}Estàs segur que vols treure totes les propietats pertanyents a companyies?
 
 # Town generation window (SE)
@@ -2674,7 +2692,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :terreny propiet
 STR_ABOUT_OPENTTD                                               :{WHITE}Quant a OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright original {COPYRIGHT} 1995 Chris Sawyer, Tots els drets reservats
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versió {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2014 L'equip d'OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2015 L'equip d'OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Desa la Partida
@@ -2709,12 +2727,12 @@ STR_MAPGEN_BY                                                   :{BLACK}*
 STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}Nombre de poblacions:
 STR_MAPGEN_DATE                                                 :{BLACK}Data:
 STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Nombre d'indústries:
+STR_MAPGEN_MAX_HEIGHTLEVEL                                      :{BLACK}Alçada màxima del mapa:
+STR_MAPGEN_MAX_HEIGHTLEVEL_UP                                   :{BLACK}Augmenta l'alçada màxima del terreny en el mapa en una unitat
+STR_MAPGEN_MAX_HEIGHTLEVEL_DOWN                                 :{BLACK}Disminueix l'alçada màxima del mapa en una unitat
 STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Alçada dels estatges amb neu:
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Mou els estatges amb neu un pas amunt
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Mou els estatges amb neu un pas avall
-STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Nombre aleatori:
-STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Clica per introduir un nombre aleatori
-STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Canvia el nombre aleatori utilitzat pel Generador de Terrenys
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Generació de terrenys:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Algoritme d'arbres:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Tipus de terreny:
@@ -2741,7 +2759,7 @@ STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Nom del 
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}Mida:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
-STR_MAPGEN_RANDOM_SEED_OSKTITLE                                 :{BLACK}Posa un valor aleatori
+STR_MAPGEN_MAX_HEIGHTLEVEL_QUERY_CAPT                           :{WHITE}Canvia l'alçada màxima del mapa
 STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}Canvia l'alçada d'inici d'estatges amb neu
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}Canviar l'any inicial
 
@@ -2796,6 +2814,8 @@ STR_NEWGRF_SETTINGS_MOVEUP                                      :{BLACK}Mou amun
 STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}Mou amunt l'arxiu NewGRF seleccionat de la llista
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}Mou avall
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}Mou avall l'arxiu NewGRF seleccionat de la llista
+STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}Actualitza
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}Utiliza les versions més noves dels NewGRF que disposin de diverses versions instal·lades
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}Una llista de fitxers NewGRF que estan instal·lats
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Establir paràmetres
@@ -2821,6 +2841,14 @@ STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Desactivat
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Versió incompatible amb aquesta versió de OpenTTD
 
 # NewGRF save preset window
+STR_SAVE_PRESET_CAPTION                                         :{WHITE}Guardar configuració NewGRF
+STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Llista de totes les configuracions NewGRF preestablertes; seleccioneu-ne una per a copiar el nom
+STR_SAVE_PRESET_TITLE                                           :{BLACK}Introduïu un nom per a l'actual configuració NewGRF
+STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Nom amb què guardar la nova configuració preestablerta de NewGRF
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}Cancel·la
+STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}No guardar els canvies en la configuració NewGRF preestablerta
+STR_SAVE_PRESET_SAVE                                            :{BLACK}Guarda
+STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Guarda la configuració NewGRF preestablerta amb el nom seleccionat
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Canvia els paràmetres NewGRF
@@ -2846,24 +2874,27 @@ STR_NEWGRF_INSPECT_QUERY_CAPTION                                :{WHITE}Paràmet
 STR_SPRITE_ALIGNER_CAPTION                                      :{WHITE}Alineant sprite {COMMA} ({STRING})
 STR_SPRITE_ALIGNER_NEXT_BUTTON                                  :{BLACK}Sprite següent
 STR_SPRITE_ALIGNER_NEXT_TOOLTIP                                 :{BLACK}Procedeix cap al següent sprite normal, saltant qualsevol sprite pseudo/recolor/font i passant de l'últim sprite al primer
-STR_SPRITE_ALIGNER_GOTO_BUTTON                                  :{BLACK}Anar a l'sprite
-STR_SPRITE_ALIGNER_GOTO_TOOLTIP                                 :{BLACK}Anar cap a l'sprite donat. Si l'sprite no és un sprite normal, procedir cap al següent sprite normal
+STR_SPRITE_ALIGNER_GOTO_BUTTON                                  :{BLACK}Vés a l'sprite
+STR_SPRITE_ALIGNER_GOTO_TOOLTIP                                 :{BLACK}Va cap a l'sprite donat. Si l'sprite no és un sprite normal, procedir cap al següent sprite normal
 STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Sprite anterior
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Procedeix cap a l'sprite normal anterior, saltant qualsevol sprite pseudo/recolor/font i passant del primer sprite a l'últim
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Representació de l'sprite seleccionat actualment. L'alineació s'ignora quan es dibuixa aquest sprite
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Mou l'sprite al voltant, canviant els desplaçaments en X i Y
-STR_SPRITE_ALIGNER_OFFSETS                                      :{BLACK}Desplaçament X: {NUM}, Desplaçament Y: {NUM}
+STR_SPRITE_ALIGNER_RESET_BUTTON                                 :{BLACK}Restableix relatius
+STR_SPRITE_ALIGNER_RESET_TOOLTIP                                :{BLACK}Restableix els desplaçaments relatius actuals
+STR_SPRITE_ALIGNER_OFFSETS_ABS                                  :{BLACK}Desplaçament X: {NUM}, Desplaçament Y: {NUM} (Absolut)
+STR_SPRITE_ALIGNER_OFFSETS_REL                                  :{BLACK}Desplaçament X: {NUM}, Desplaçament Y: {NUM} (Relatiu)
 STR_SPRITE_ALIGNER_PICKER_BUTTON                                :{BLACK}Agafa un sprite
 STR_SPRITE_ALIGNER_PICKER_TOOLTIP                               :{BLACK}Agafa un sprite de qualsevol lloc de la pantalla
 
-STR_SPRITE_ALIGNER_GOTO_CAPTION                                 :{WHITE}Anar a l'sprite
+STR_SPRITE_ALIGNER_GOTO_CAPTION                                 :{WHITE}Vés a l'sprite
 
 # NewGRF (self) generated warnings/errors
 STR_NEWGRF_ERROR_MSG_INFO                                       :{SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}Alerta: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}Error: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Fatal: {SILVER}{STRING}
-STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}Ha passat un error fatal de NewGRF: {}{STRING}
+STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}S'ha produït un error fatal de NewGRF: {}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} no funcionarà amb la versió de TTDPatch informada per OpenTTD
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} és per la versió {STRING} de TTD
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} està dissenyat per ser utilitzat amb {STRING}
@@ -2929,7 +2960,7 @@ STR_INVALID_VEHICLE                                             :<vehicle invàl
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Escanejant fitxers NewGRF
-STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}Escanejant NewGRF. Depenent de la quantitat pot trigar una estona...
+STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}Escanejant NewGRF. Depenent de la quantitat, pot trigar una estona...
 STR_NEWGRF_SCAN_STATUS                                          :{BLACK}{NUM} NewGRF{P "" s} escanejats de {NUM} NewGRF{P "" s} estimats
 STR_NEWGRF_SCAN_ARCHIVES                                        :Escanejant arxius
 
@@ -3055,8 +3086,8 @@ STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}{STRING
 STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Clica al servei per centrar la vista a la indústria/població. Ctrl+Clic obre una nova vista al lloc de la indústria/població
 
 # Story book window
-STR_STORY_BOOK_CAPTION                                          :{WHITE}{COMPANY} Llibre
-STR_STORY_BOOK_SPECTATOR_CAPTION                                :{WHITE}Llibre Global
+STR_STORY_BOOK_CAPTION                                          :{WHITE}Llibre de Partida de {COMPANY}
+STR_STORY_BOOK_SPECTATOR_CAPTION                                :{WHITE}Llibre Global de Partida
 STR_STORY_BOOK_TITLE                                            :{YELLOW}{STRING}
 STR_STORY_BOOK_GENERIC_PAGE_ITEM                                :Pàgina {NUM}
 STR_STORY_BOOK_SEL_PAGE_TOOLTIP                                 :{BLACK}Salteu a una pàgina seleccionant-la en aquesta llista desplegable.
@@ -3079,7 +3110,6 @@ STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}No hi ha
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
-STR_STATION_VIEW_WAITING_TITLE                                  :{BLACK}Esperant: {WHITE}{STRING}
 STR_STATION_VIEW_WAITING_CARGO                                  :{WHITE}{CARGO_LONG}
 STR_STATION_VIEW_EN_ROUTE_FROM                                  :{YELLOW}({CARGO_SHORT} des de {STATION})
 STR_STATION_VIEW_RESERVED                                       :{YELLOW}({CARGO_SHORT} reservat per carregar)
@@ -3153,7 +3183,7 @@ STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}Canvia e
 STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Edita nom del punt de pas
 
 # Finances window
-STR_FINANCES_CAPTION                                            :{WHITE}{COMPANY} Economia {BLACK}{COMPANY_NUM}
+STR_FINANCES_CAPTION                                            :{WHITE}Finances de {COMPANY} {BLACK}{COMPANY_NUM}
 STR_FINANCES_EXPENDITURE_INCOME_TITLE                           :{WHITE}Despeses/Ingressos
 STR_FINANCES_YEAR                                               :{WHITE}{NUM}
 STR_FINANCES_SECTION_CONSTRUCTION                               :{GOLD}Construcció
@@ -3180,7 +3210,7 @@ STR_FINANCES_BORROW_BUTTON                                      :{BLACK}Demana {
 STR_FINANCES_BORROW_TOOLTIP                                     :{BLACK}Augmenta l'import del préstec Ctrl+Clic per demanar tants diners com sigui possible
 STR_FINANCES_REPAY_BUTTON                                       :{BLACK}Amortitza {CURRENCY_LONG}
 STR_FINANCES_REPAY_TOOLTIP                                      :{BLACK}Amortitza part del préstec. Ctrl+Clic per tornar tants diners com sigui possible
-STR_FINANCES_INFRASTRUCTURE_BUTTON                              :{BLACK}Infrastructura
+STR_FINANCES_INFRASTRUCTURE_BUTTON                              :{BLACK}Infraestructura
 
 # Company view
 STR_COMPANY_VIEW_CAPTION                                        :{WHITE}{COMPANY} {BLACK}{COMPANY_NUM}
@@ -3196,7 +3226,7 @@ STR_COMPANY_VIEW_SHIPS                                          :{WHITE}{COMMA} 
 STR_COMPANY_VIEW_VEHICLES_NONE                                  :{WHITE}Cap
 STR_COMPANY_VIEW_COMPANY_VALUE                                  :{GOLD}Valor de l'Empresa: {WHITE}{CURRENCY_LONG}
 STR_COMPANY_VIEW_SHARES_OWNED_BY                                :{WHITE}({COMMA}% propietat de {COMPANY})
-STR_COMPANY_VIEW_INFRASTRUCTURE                                 :{GOLD}Infrastructura:
+STR_COMPANY_VIEW_INFRASTRUCTURE                                 :{GOLD}Infraestructura:
 STR_COMPANY_VIEW_INFRASTRUCTURE_RAIL                            :{WHITE}{COMMA} tros{P "" sos} de via
 STR_COMPANY_VIEW_INFRASTRUCTURE_ROAD                            :{WHITE}{COMMA} tros{P "" sos} de carretera
 STR_COMPANY_VIEW_INFRASTRUCTURE_WATER                           :{WHITE}{COMMA} cel·l{P a es} d'aigua
@@ -3211,7 +3241,7 @@ STR_COMPANY_VIEW_VIEW_HQ_TOOLTIP                                :{BLACK}Veure se
 STR_COMPANY_VIEW_RELOCATE_HQ                                    :{BLACK}Trasllada la Seu
 STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS                  :{BLACK}Trasllada la seu de la companyia a un altre lloc amb el cost d'un 1% del seu valor. Shift+Clic mostra el cost estimat sense traslladar la seu
 STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}Detalls
-STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}Veure detalls del càlculs de l'infrastructura
+STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}Veure detalls del càlculs de la infraestructura
 
 STR_COMPANY_VIEW_NEW_FACE_BUTTON                                :{BLACK}Nova Cara
 STR_COMPANY_VIEW_NEW_FACE_TOOLTIP                               :{BLACK}Selecciona una nova cara pel president
@@ -3233,7 +3263,7 @@ STR_COMPANY_VIEW_PRESIDENT_S_NAME_QUERY_CAPTION                 :Nom President
 STR_BUY_COMPANY_MESSAGE                                         :{WHITE}Busquem empresa de transports per absorbir la nostra companyia{}{}Vols comprar a {COMPANY} per {CURRENCY_LONG}?
 
 # Company infrastructure window
-STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastructura de {COMPANY}
+STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infraestructura de {COMPANY}
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Trossos de via:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Senyals
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Trossos de carretera:
@@ -3323,11 +3353,14 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Vehicles desagr
 STR_GROUP_DEFAULT_SHIPS                                         :Vaixells desagrupats
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Avions desagrupats
 
-STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grups - Clica en un grup per llistar tots els vehicles d'aquest grup
+STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grups - Clica en un grup per llistar tots els vehicles d'aquest grup. Arrossega i solta per a canviar-ne la jerarquia.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Clica per crear un grup
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Elimina el grup seleccionat
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}Canvia el nom del grup seleccionat
 STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}Clica per protegir aquest grup de l'autosubstitueix global
+
+STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}Esborrar grup
+STR_GROUP_DELETE_QUERY_TEXT                                     :{WHITE}Estàs segur que vols esborrar aquest grup i tots els seus subgrups?
 
 STR_GROUP_ADD_SHARED_VEHICLE                                    :Afegeix vehicles compartits
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :Treu tots els vehicles
@@ -3366,10 +3399,10 @@ STR_PURCHASE_INFO_ALL_BUT                                       :Tots menys {CAR
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Màx. Esforç de Tracció: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Abast: {GOLD}{COMMA} cel·les
 
-STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Llista de selecció de vehicles ferroviaris - clica al vehicle per més informació
-STR_BUY_VEHICLE_ROAD_VEHICLE_LIST_TOOLTIP                       :{BLACK}Llista de selecció de Vehicles - clica en un vehicle per més informació
-STR_BUY_VEHICLE_SHIP_LIST_TOOLTIP                               :{BLACK}Llista de selecció de Vaixells - clica en un vaixell per més informació
-STR_BUY_VEHICLE_AIRCRAFT_LIST_TOOLTIP                           :{BLACK}Llista de selecció d'Avions - clica sobre l'avió per més informació
+STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Llista de selecció de vehicles ferroviaris. Clica al vehicle per més informació. Ctrl+Click per a alternar entre mostrar/ocultar el vehicle ferroviari
+STR_BUY_VEHICLE_ROAD_VEHICLE_LIST_TOOLTIP                       :{BLACK}Llista de selecció de vehicles de carretera. Clica en un vehicle per més informació. Ctrl+Click per a alternar entre mostrar/ocultar el vehicle de carretera
+STR_BUY_VEHICLE_SHIP_LIST_TOOLTIP                               :{BLACK}Llista de selecció de vaixells. Clica en un vaixell per més informació. Ctrl+Click per a alternar entre mostrar/ocultar el vaixell
+STR_BUY_VEHICLE_AIRCRAFT_LIST_TOOLTIP                           :{BLACK}Llista de selecció d'aeronaus. Clica sobre l'aeronau per més informació. Ctrl+Click per a alternar entre mostrar/ocultar l'aeronau
 
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_BUTTON                        :{BLACK}Compra Vehicle
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Compra Vehicle
@@ -3390,6 +3423,21 @@ STR_BUY_VEHICLE_TRAIN_RENAME_TOOLTIP                            :{BLACK}Canvia e
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_TOOLTIP                     :{BLACK}Canvia el nom del model d'automòbil
 STR_BUY_VEHICLE_SHIP_RENAME_TOOLTIP                             :{BLACK}Canvia el nom del model de vaixell
 STR_BUY_VEHICLE_AIRCRAFT_RENAME_TOOLTIP                         :{BLACK}Canvia el nom del model d'avió
+
+STR_BUY_VEHICLE_TRAIN_HIDE_TOGGLE_BUTTON                        :{BLACK}Oculta
+STR_BUY_VEHICLE_ROAD_VEHICLE_HIDE_TOGGLE_BUTTON                 :{BLACK}Oculta
+STR_BUY_VEHICLE_SHIP_HIDE_TOGGLE_BUTTON                         :{BLACK}Oculta
+STR_BUY_VEHICLE_AIRCRAFT_HIDE_TOGGLE_BUTTON                     :{BLACK}Oculta
+
+STR_BUY_VEHICLE_TRAIN_SHOW_TOGGLE_BUTTON                        :{BLACK}Mostra
+STR_BUY_VEHICLE_ROAD_VEHICLE_SHOW_TOGGLE_BUTTON                 :{BLACK}Mostra
+STR_BUY_VEHICLE_SHIP_SHOW_TOGGLE_BUTTON                         :{BLACK}Mostra
+STR_BUY_VEHICLE_AIRCRAFT_SHOW_TOGGLE_BUTTON                     :{BLACK}Mostra
+
+STR_BUY_VEHICLE_TRAIN_HIDE_SHOW_TOGGLE_TOOLTIP                  :{BLACK}Alterna mostrar/ocultar el vehicle ferroviari
+STR_BUY_VEHICLE_ROAD_VEHICLE_HIDE_SHOW_TOGGLE_TOOLTIP           :{BLACK}Alterna mostrar/ocultar l'automòbil
+STR_BUY_VEHICLE_SHIP_HIDE_SHOW_TOGGLE_TOOLTIP                   :{BLACK}Alterna mostrar/ocultar el vaixell
+STR_BUY_VEHICLE_AIRCRAFT_HIDE_SHOW_TOGGLE_TOOLTIP               :{BLACK}Alterna mostrar/ocultar l'aeronau
 
 STR_QUERY_RENAME_TRAIN_TYPE_CAPTION                             :{WHITE}Canvia el nom del model de vehicle ferroviari
 STR_QUERY_RENAME_ROAD_VEHICLE_TYPE_CAPTION                      :{WHITE}Canvia el nom del model d'automòbil
@@ -3494,6 +3542,11 @@ STR_REPLACE_VEHICLE_TRAIN                                       :Tren
 STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :Vehicle
 STR_REPLACE_VEHICLE_SHIP                                        :Vaixell
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :Avió
+
+STR_REPLACE_VEHICLE_VEHICLES_IN_USE                             :{YELLOW}Vehicles en ús
+STR_REPLACE_VEHICLE_VEHICLES_IN_USE_TOOLTIP                     :{BLACK}Columna amb vehicles que estàs emprant
+STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES                          :{YELLOW}Vehicles disponibles
+STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES_TOOLTIP                  :{BLACK}Columna amb els vehicles disponibles per a substitucions
 
 STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK}Selecciona el model a substituir
 STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK}Selecciona el nou model que vols fer servir en lloc del seleccionat
@@ -3849,6 +3902,10 @@ STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Viatge (fora d'
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Viatja (sense horari) com a molt a {2:VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR                                        :Viatge a {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Viatja durant {STRING} com a molt a {VELOCITY}
+STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Viatja (durant {STRING}, sense horari)
+STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :Viatja (durant {STRING}, sense horari) com a molt a {VELOCITY}
+STR_TIMETABLE_STAY_FOR_ESTIMATED                                :(quedar-s'hi durant {STRING}, sense horari)
+STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(viatja durant {STRING}, sense horari)
 STR_TIMETABLE_STAY_FOR                                          :i estigues {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :i viatge per {STRING}
 STR_TIMETABLE_DAYS                                              :{COMMA}{NBSP}di{P a es}
@@ -4090,6 +4147,7 @@ STR_ERROR_EXCAVATION_WOULD_DAMAGE                               :{WHITE}L'excava
 STR_ERROR_ALREADY_AT_SEA_LEVEL                                  :{WHITE}Ja ets a nivell del mar
 STR_ERROR_TOO_HIGH                                              :{WHITE}Massa alt
 STR_ERROR_ALREADY_LEVELLED                                      :{WHITE}... ja és pla
+STR_ERROR_BRIDGE_TOO_HIGH_AFTER_LOWER_LAND                      :{WHITE}Després del canvi, el pont que el travessa seria massa alt.
 
 # Company related errors
 STR_ERROR_CAN_T_CHANGE_COMPANY_NAME                             :{WHITE}No es pot canviar el nom de la companyia...
@@ -4116,7 +4174,7 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... mass
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... massa prop d'una altra població
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... massa poblacions
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... no queda espai al mapa
-STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}La població no construirà carrers. Pots activar la construcció de carrers via Paràmetres avançats->Economia->Poblacions
+STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}La població no construirà carrers. Pots activar la construcció de carrers via Configuració->Interacció amb l'entorn->Poblacions
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Obres en progrés
 STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}No es pot eliminar aquesta població...{}Hi ha una estació, un dipòsit o una cel·la pertanyent a la població que no pot ser eliminada
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... no hi ha un lloc adequat per situar l'estàtua al centre d'aquesta població
@@ -4140,6 +4198,8 @@ STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :{WHITE}... el b
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :{WHITE}... només es pot construir en estatges amb neu
 STR_ERROR_CAN_ONLY_BE_BUILT_BELOW_SNOW_LINE                     :{WHITE}... només es pot construir en estatges sense neu
 
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES                     :{WHITE}No hi havia llocs adequats per a indústries '{STRING}'
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION         :{WHITE}Canvia els paràmetres de generació de mapa per a obtenir-ne un de millor
 
 # Station construction related errors
 STR_ERROR_CAN_T_BUILD_RAILROAD_STATION                          :{WHITE}Aquí no es pot construir una estació de tren...
@@ -4277,6 +4337,7 @@ STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST                            :{WHITE}Primer h
 STR_ERROR_CAN_T_START_AND_END_ON                                :{WHITE}No es pot començar i acabar a la mateixa posició
 STR_ERROR_BRIDGEHEADS_NOT_SAME_HEIGHT                           :{WHITE}Les capçaleres del pont no són al mateix nivell
 STR_ERROR_BRIDGE_TOO_LOW_FOR_TERRAIN                            :{WHITE}El pont és massa baix pel terreny
+STR_ERROR_BRIDGE_TOO_HIGH_FOR_TERRAIN                           :{WHITE}El pont és massa alt per a aquest terreny.
 STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}Inici i final han d'estar en línia recta
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}... els extrems del pont han d'estar tots dos a terra
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}... el pont és massa llarg
@@ -4303,6 +4364,7 @@ STR_ERROR_YOU_ALREADY_OWN_IT                                    :{WHITE}... ja �
 STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}No es pot crear el grup...
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}No puc eliminar aquest grup...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}No puc canviar el nom del grup...
+STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}No es pot establir la jerarquia de grups...
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}No puc eliminar tots els vehicles d'aquest grup...
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}No puc afegir el vehicle a aquest grup...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}No puc afegir vehicles compartits al grup...
@@ -4590,7 +4652,7 @@ STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PLASTIC_TRUCK                 :{G=Masculin}Vag
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_X2001_ELECTRIC           :'X2001' (Elèctrica)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_MILLENNIUM_Z1_ELECTRIC   :'Millennium Z1' (Elèctrica)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_WIZZOWOW_Z99             :Wizzowow Z99
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :{G=Masculin}Vagó per Passatgers
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :{G=Masculin}Vagó de Passatgers
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_MAIL_VAN                  :{G=Masculin}Vagó per Correu
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COAL_CAR                  :{G=Masculin}Vagó per Carbó
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_OIL_TANKER                :{G=Masculin}Tanc de Petroli
@@ -4622,7 +4684,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV2_CYCLOPS_ELECTRIC      :Lev2 'Cíclope'
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV3_PEGASUS_ELECTRIC      :Lev3 'Pegasus' (Elèctrica)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV4_CHIMAERA_ELECTRIC     :Lev4 'Quimera' (Elèctrica)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_WIZZOWOW_ROCKETEER         :Wizzowow Rocketeer
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :{G=Masculin}Vagó per Passatgers
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :{G=Masculin}Vagó de Passatgers
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_MAIL_VAN                    :{G=Masculin}Vagó per Correu
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COAL_CAR                    :{G=Masculin}Vagó per Carbó
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_OIL_TANKER                  :{G=Masculin}Tanc de Petroli
@@ -4710,9 +4772,9 @@ STR_VEHICLE_NAME_ROAD_VEHICLE_RMT_RUBBER_TRUCK                  :{G=Masculin}Cam
 STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_SUGAR_TRUCK           :{G=Masculin}Camió per Sucre MightyMover
 STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_SUGAR_TRUCK           :{G=Masculin}Camió per Sucre Powernaught
 STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_SUGAR_TRUCK              :{G=Masculin}Camió per Sucre Wizzowow
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_COLA_TRUCK            :{G=Masculin}Camió per Refresc MightyMover
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_COLA_TRUCK            :{G=Masculin}Camió per Refresc Powernaught
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_COLA_TRUCK               :{G=Masculin}Camió per Refresc Wizzowow
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_COLA_TRUCK            :{G=Masculin}Camió per Refrescs MightyMover
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_COLA_TRUCK            :{G=Masculin}Camió per Refrescs Powernaught
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_COLA_TRUCK               :{G=Masculin}Camió per Refrescs Wizzowow
 STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_COTTON_CANDY          :{G=Masculin}Camió per Cotó de Sucre MightyMover
 STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_COTTON_CANDY          :{G=Masculin}Camió per Cotó de Sucre Powernaught
 STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_COTTON_CANDY_TRUCK       :{G=Masculin}Camió per Cotó de Sucre Wizzowow
@@ -4840,6 +4902,7 @@ STR_COMPANY_NAME                                                :{COMPANY}
 STR_COMPANY_NAME_COMPANY_NUM                                    :{COMPANY} {COMPANY_NUM}
 STR_DEPOT_NAME                                                  :{DEPOT}
 STR_ENGINE_NAME                                                 :{ENGINE}
+STR_HIDDEN_ENGINE_NAME                                          :{ENGINE} (ocultat)
 STR_GROUP_NAME                                                  :{GROUP}
 STR_INDUSTRY_NAME                                               :{INDUSTRY}
 STR_PRESIDENT_NAME                                              :{PRESIDENT_NAME}
@@ -4875,8 +4938,6 @@ STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
 STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
 STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
 STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_BLACK_CROSS                                                 :{BLACK}{CROSS}
-STR_SILVER_CROSS                                                :{SILVER}{CROSS}
 STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
 STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
 STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
@@ -4887,9 +4948,7 @@ STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
 STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
 STR_BLACK_STRING                                                :{BLACK}{STRING}
 STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_GREEN_STRING                                                :{GREEN}{STRING}
 STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_RED_STRING                                                  :{RED}{STRING}
 STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
 STR_WHITE_STRING                                                :{WHITE}{STRING}
 STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}

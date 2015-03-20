@@ -1,4 +1,4 @@
-/* $Id: animated_tile_sl.cpp 21284 2010-11-21 12:47:04Z alberth $ */
+/* $Id: animated_tile_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../core/alloc_func.hpp"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 extern TileIndex *_animated_tile_list;
 extern uint _animated_tile_count;

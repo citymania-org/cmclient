@@ -1,4 +1,4 @@
-/* $Id: tcp_http.cpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: tcp_http.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,8 @@
 #include "../network_func.h"
 
 #include "tcp_http.h"
+
+#include "../../safeguards.h"
 
 /** List of open HTTP connections. */
 static SmallVector<NetworkHTTPSocketHandler *, 1> _http_connections;

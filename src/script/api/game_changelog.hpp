@@ -1,4 +1,4 @@
-/* $Id: game_changelog.hpp 26980 2014-10-08 18:29:27Z frosch $ */
+/* $Id: game_changelog.hpp 27195 2015-03-18 19:33:34Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,29 @@
  * bug fixes can be found in the normal changelog. Note that removed API
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
+ *
+ * \b 1.5.0
+ *
+ * API additions:
+ * \li GSList::SwapList
+ * \li GSStation::GetCargoPlanned
+ * \li GSStation::GetCargoPlannedFrom
+ * \li GSStation::GetCargoPlannedFromVia
+ * \li GSStation::GetCargoPlannedVia
+ * \li GSStation::GetCargoWaitingFromVia
+ * \li GSStationList_CargoPlannedByFrom
+ * \li GSStationList_CargoPlannedByVia
+ * \li GSStationList_CargoPlannedFromByVia
+ * \li GSStationList_CargoPlannedViaByFrom
+ * \li GSStationList_CargoWaitingByFrom
+ * \li GSStationList_CargoWaitingByVia
+ * \li GSStationList_CargoWaitingFromByVia
+ * \li GSStationList_CargoWaitingViaByFrom
+ *
+ * Other changes:
+ * \li GSNews::Create takes two extra parameters to refer to a location, station,
+ *     industry, or town. The user can click at the news message to jump to the
+ *     referred location.
  *
  * \b 1.4.4
  *

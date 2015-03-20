@@ -1,4 +1,4 @@
-/* $Id: depot_sl.cpp 21284 2010-11-21 12:47:04Z alberth $ */
+/* $Id: depot_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,8 @@
 #include "../town.h"
 
 #include "saveload.h"
+
+#include "../safeguards.h"
 
 static TownID _town_index;
 

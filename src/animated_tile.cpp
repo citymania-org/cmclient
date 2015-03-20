@@ -1,4 +1,4 @@
-/* $Id: animated_tile.cpp 22017 2011-02-07 22:29:47Z rubidium $ */
+/* $Id: animated_tile.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "core/alloc_func.hpp"
 #include "tile_cmd.h"
 #include "viewport_func.h"
+
+#include "safeguards.h"
 
 /** The table/list with animated tiles. */
 TileIndex *_animated_tile_list = NULL;

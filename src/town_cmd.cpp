@@ -1,4 +1,4 @@
-/* $Id: town_cmd.cpp 26346 2014-02-16 17:45:24Z frosch $ */
+/* $Id: town_cmd.cpp 27105 2015-01-01 21:25:42Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -49,6 +49,8 @@
 
 #include "table/strings.h"
 #include "table/town_land.h"
+
+#include "safeguards.h"
 
 bool _cb_enabled = false;
 uint _cb_storage = 0;
@@ -201,7 +203,7 @@ Money HouseSpec::GetRemovalCost() const
 	return (_price[PR_CLEAR_HOUSE] * this->removal_cost) >> 8;
 }
 
-// Local
+/* Local */
 static int _grow_town_result;
 
 /* Describe the possible states */
@@ -429,7 +431,7 @@ void UpdateAllTownVirtCoords()
  */
 static void ChangePopulation(Town *t, int mod)
 {
-	if(mod > 0 && t->houses_construction > 0) t->houses_construction--;
+	// if(mod > 0 && t->houses_construction > 0) t->houses_construction--;
 
 	t->cache.population += mod;
 	InvalidateWindowData(WC_TOWN_VIEW, t->index); // Cargo requirements may appear/vanish for small populations
@@ -469,8 +471,13 @@ static void MakeSingleHouseBigger(TileIndex tile)
 	if (IsHouseCompleted(tile)) {
 		/* Now that construction is complete, we can add the population of the
 		 * building to the town. */
-		ChangePopulation(Town::GetByTile(tile), HouseSpec::Get(GetHouseType(tile))->population);
+		HouseID house_id = GetHouseType(tile);
+		Town *town = Town::GetByTile(tile);
+		const HouseSpec *hs = HouseSpec::Get(house_id);
+		ChangePopulation(town, hs->population);
 		ResetHouseAge(tile);
+		if (hs->building_flags & BUILDING_HAS_1_TILE)
+			town->houses_construction--;
 	}
 	MarkTileDirtyByTile(tile);
 }
@@ -569,13 +576,13 @@ static void TileLoop_Town(TileIndex tile)
 		t->time_until_rebuild = GB(r, 16, 8) + 192;
 
 		ClearTownHouse(t, tile);
-		t->houses_demolished++;
 
 		/* Rebuild with another house? */
-		if (GB(r, 24, 8) >= 12) {
-			if(BuildTownHouse(t, tile)) t->houses_reconstruction++;
+		if (GB(r, 24, 8) >= 12 && BuildTownHouse(t, tile)) {
+			t->houses_reconstruction++;
 			UpdateTownGrowthTile(tile, TGTS_RH_REBUILT);
 		} else {
+			t->houses_demolished++;
 			UpdateTownGrowthTile(tile, TGTS_RH_REMOVED);
 		}
 	}
@@ -822,7 +829,9 @@ static bool GrowTown(Town *t);
 
 static void DoRegularFunding(Town *t)
 {
-	if (!t->fund_regularly && !t->do_massfund)
+	bool fund_regularly = HasBit(t->fund_regularly, _local_company);
+	bool do_powerfund = HasBit(t->do_powerfund, _local_company);
+	if (!fund_regularly && !do_powerfund)
 		return;
 
 	if (_local_company == COMPANY_SPECTATOR)
@@ -840,9 +849,9 @@ static void DoRegularFunding(Town *t)
 	// And in case town is not growing ignore grow_counter and growth_rate
 	// completely (it will start growing once we fund it)
 	bool not_growing = !HasBit(t->flags, TOWN_IS_GROWING);
-	if ((t->fund_regularly && t->fund_buildings_months == 0 &&
+	if ((fund_regularly && t->fund_buildings_months == 0 &&
 	    	((t->grow_counter > 0 && (t->grow_counter > 1 || gr == 1)) || not_growing)) ||
-		(t->do_massfund && gr > 1 && (t->grow_counter == gr || not_growing))) {
+		(do_powerfund && gr > 1 && (t->grow_counter == gr || not_growing))) {
 
 		CompanyByte old = _current_company;
 		_current_company = _local_company;
@@ -852,7 +861,7 @@ static void DoRegularFunding(Town *t)
 }
 
 static void DoRegularAdvertising(Town *t) {
-	if (!t->advertise_regularly)
+	if (!HasBit(t->advertise_regularly, _local_company))
 		return;
 
 	if (t->ad_ref_goods_entry == NULL) {
@@ -982,7 +991,7 @@ static bool IsRoadAllowedHere(Town *t, TileIndex tile, DiagDirection dir)
 	if (DistanceFromEdge(tile) == 0) return false;
 
 	/* Prevent towns from building roads under bridges along the bridge. Looks silly. */
-	if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile) && GetBridgeAxis(tile) == DiagDirToAxis(dir)) return false;
+	if (IsBridgeAbove(tile) && GetBridgeAxis(tile) == DiagDirToAxis(dir)) return false;
 
 	/* Check if there already is a road at this point? */
 	if (GetTownRoadBits(tile) == ROAD_NONE) {
@@ -1777,9 +1786,9 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 	t->houses_construction = 0;
 	t->houses_reconstruction = 0;
 	t->houses_demolished = 0;
-	t->fund_regularly = false;
-	t->do_massfund = false;
-	t->advertise_regularly = false;
+	t->fund_regularly = 0;
+	t->do_powerfund = 0;
+	t->advertise_regularly = 0;
 	t->ad_rating_goal = 95;
 	t->ad_ref_goods_entry = NULL;
 	//CB
@@ -1959,7 +1968,7 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 		old_generating_world.Restore();
 
 		if (t != NULL && !StrEmpty(text)) {
-			t->name = strdup(text);
+			t->name = stredup(text);
 			t->UpdateVirtCoord();
 		}
 
@@ -1970,7 +1979,7 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 			SetDParam(0, _current_company);
 			GetString(company_name, STR_COMPANY_NAME, lastof(company_name));
 
-			char *cn = strdup(company_name);
+			char *cn = stredup(company_name);
 			SetDParamStr(0, cn);
 			SetDParam(1, t->index);
 
@@ -2272,7 +2281,7 @@ static inline bool CanBuildHouseHere(TileIndex tile, TownID town, bool noslope)
 	if ((noslope && slope != SLOPE_FLAT) || IsSteepSlope(slope)) return false;
 
 	/* building under a bridge? */
-	if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile)) return false;
+	if (IsBridgeAbove(tile)) return false;
 
 	/* do not try to build over house owned by another town */
 	if (IsTileType(tile, MP_HOUSE) && GetTownIndex(tile) != town) return false;
@@ -2585,6 +2594,7 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 
 			if (construction_stage == TOWN_HOUSE_COMPLETED) {
 				ChangePopulation(t, hs->population);
+				t->houses_construction--;
 			} else {
 				construction_counter = GB(r, 2, 2);
 			}
@@ -2658,14 +2668,12 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	/* Remove population from the town if the house is finished. */
 	if (IsHouseCompleted(tile)) {
 		ChangePopulation(t, -hs->population);
-	}
-	else{
-		if(t->houses_construction > 0) t->houses_construction--;
+	} else {
+		t->houses_construction--;
 	}
 
 	t->cache.num_houses--;
 	t->cache.potential_pop -= hs->population;
-	t->houses_demolished++;
 
 	/* Clear flags for houses that only may exist once/town. */
 	if (hs->building_flags & BUILDING_IS_CHURCH) {
@@ -2710,7 +2718,7 @@ CommandCost CmdRenameTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 
 	if (flags & DC_EXEC) {
 		free(t->name);
-		t->name = reset ? NULL : strdup(text);
+		t->name = reset ? NULL : stredup(text);
 
 		t->UpdateVirtCoord();
 		InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 1);
@@ -2787,7 +2795,7 @@ CommandCost CmdTownSetText(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 
 	if (flags & DC_EXEC) {
 		free(t->text);
-		t->text = StrEmpty(text) ? NULL : strdup(text);
+		t->text = StrEmpty(text) ? NULL : stredup(text);
 		InvalidateWindowData(WC_TOWN_VIEW, p1);
 	}
 
@@ -3005,7 +3013,7 @@ static CommandCost TownActionRoadRebuild(Town *t, DoCommandFlag flags)
 		SetDParam(0, _current_company);
 		GetString(company_name, STR_COMPANY_NAME, lastof(company_name));
 
-		char *cn = strdup(company_name);
+		char *cn = stredup(company_name);
 		SetDParam(0, t->index);
 		SetDParamStr(1, cn);
 
@@ -3053,7 +3061,7 @@ static bool SearchTileForStatue(TileIndex tile, void *user_data)
 	/* Statues can be build on slopes, just like houses. Only the steep slopes is a no go. */
 	if (IsSteepSlope(GetTileSlope(tile))) return false;
 	/* Don't build statues under bridges. */
-	if (MayHaveBridgeAbove(tile) && IsBridgeAbove(tile)) return false;
+	if (IsBridgeAbove(tile)) return false;
 
 	/* A clear-able open space is always preferred. */
 	if ((IsTileType(tile, MP_CLEAR) || IsTileType(tile, MP_TREES)) && TryClearTile(tile)) {
@@ -3384,9 +3392,7 @@ static void UpdateTownGrowRate(Town *t)
 	if (t->larger_town) m /= 2;
 
 	t->growth_rate = m / (t->cache.num_houses / 50 + 1);
-	if (m <= t->grow_counter) {
-		t->grow_counter = m;
-	}
+	t->grow_counter = min(t->growth_rate, t->grow_counter);
 
 	SetBit(t->flags, TOWN_IS_GROWING);
 	SetWindowDirty(WC_TOWN_VIEW, t->index);

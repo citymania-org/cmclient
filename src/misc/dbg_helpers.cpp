@@ -1,4 +1,4 @@
-/* $Id: dbg_helpers.cpp 20283 2010-08-01 19:22:34Z frosch $ */
+/* $Id: dbg_helpers.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../stdafx.h"
 #include "../rail_map.h"
 #include "dbg_helpers.h"
+
+#include "../safeguards.h"
 
 /** Trackdir & TrackdirBits short names. */
 static const char * const trackdir_names[] = {

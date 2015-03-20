@@ -1,4 +1,4 @@
-/* $Id: newgrf_railtype.cpp 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_railtype.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "date_func.h"
 #include "depot_base.h"
 #include "town.h"
+
+#include "safeguards.h"
 
 /* virtual */ uint32 RailTypeScopeResolver::GetRandomBits() const
 {

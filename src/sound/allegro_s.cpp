@@ -1,4 +1,4 @@
-/* $Id: allegro_s.cpp 20286 2010-08-01 19:44:49Z frosch $ */
+/* $Id: allegro_s.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "../debug.h"
 #include "allegro_s.h"
 #include <allegro.h>
+
+#include "../safeguards.h"
 
 static FSoundDriver_Allegro iFSoundDriver_Allegro;
 /** The stream we are writing too */

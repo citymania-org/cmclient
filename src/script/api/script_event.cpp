@@ -1,4 +1,4 @@
-/* $Id: script_event.cpp 24008 2012-03-04 16:54:12Z rubidium $ */
+/* $Id: script_event.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 #include "script_event_types.hpp"
 
 #include <queue>
+
+#include "../../safeguards.h"
 
 /** The queue of events for a script. */
 struct ScriptEventData {

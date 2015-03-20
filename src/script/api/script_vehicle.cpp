@@ -1,4 +1,4 @@
-/* $Id: script_vehicle.cpp 25488 2013-06-27 19:57:41Z rubidium $ */
+/* $Id: script_vehicle.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,8 @@
 #include "../../vehicle_func.h"
 #include "../../aircraft.h"
 #include "table/strings.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptVehicle::IsValidVehicle(VehicleID vehicle_id)
 {

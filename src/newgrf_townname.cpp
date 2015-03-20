@@ -1,4 +1,4 @@
-/* $Id: newgrf_townname.cpp 20283 2010-08-01 19:22:34Z frosch $ */
+/* $Id: newgrf_townname.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,6 +18,8 @@
 #include "newgrf_townname.h"
 #include "core/alloc_func.hpp"
 #include "string_func.h"
+
+#include "safeguards.h"
 
 static GRFTownName *_grf_townnames = NULL;
 

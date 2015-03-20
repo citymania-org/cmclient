@@ -1,4 +1,4 @@
-/* $Id: allegro_m.cpp 20286 2010-08-01 19:44:49Z frosch $ */
+/* $Id: allegro_m.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,6 +15,8 @@
 #include "../debug.h"
 #include "allegro_m.h"
 #include <allegro.h>
+
+#include "../safeguards.h"
 
 static FMusicDriver_Allegro iFMusicDriver_Allegro;
 static MIDI *_midi = NULL;

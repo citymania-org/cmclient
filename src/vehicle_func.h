@@ -1,4 +1,4 @@
-/* $Id: vehicle_func.h 26130 2013-11-26 16:08:58Z rubidium $ */
+/* $Id: vehicle_func.h 26863 2014-09-20 15:31:26Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -66,11 +66,6 @@ void DecreaseVehicleValue(Vehicle *v);
 void CheckVehicleBreakdown(Vehicle *v);
 void AgeVehicle(Vehicle *v);
 void VehicleEnteredDepotThisTick(Vehicle *v);
-
-void VehicleUpdatePosition(Vehicle *v);
-void VehicleUpdateViewport(Vehicle *v, bool dirty);
-void VehicleUpdatePositionAndViewport(Vehicle *v);
-void MarkSingleVehicleDirty(const Vehicle *v);
 
 UnitID GetFreeUnitNumber(VehicleType type);
 

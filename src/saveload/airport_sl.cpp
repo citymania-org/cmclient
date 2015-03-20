@@ -1,4 +1,4 @@
-/* $Id: airport_sl.cpp 20450 2010-08-11 19:09:26Z rubidium $ */
+/* $Id: airport_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,8 @@
 
 #include "saveload.h"
 #include "newgrf_sl.h"
+
+#include "../safeguards.h"
 
 static void Save_APID()
 {

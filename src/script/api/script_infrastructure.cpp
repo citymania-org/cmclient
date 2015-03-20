@@ -1,4 +1,4 @@
-/* $Id: script_infrastructure.cpp 23931 2012-02-11 22:43:39Z michi_cc $ */
+/* $Id: script_infrastructure.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "../../road_func.h"
 #include "../../water.h"
 #include "../../station_func.h"
+
+#include "../../safeguards.h"
 
 
 /* static */ uint32 ScriptInfrastructure::GetRailPieceCount(ScriptCompany::CompanyID company, ScriptRail::RailType railtype)

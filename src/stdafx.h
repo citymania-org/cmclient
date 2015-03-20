@@ -1,4 +1,4 @@
-/* $Id: stdafx.h 26973 2014-10-06 20:14:44Z frosch $ */
+/* $Id: stdafx.h 27109 2015-01-02 19:50:43Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -233,7 +233,6 @@
 	#define WARN_FORMAT(string, args)
 	#define FINAL sealed
 
-	int CDECL snprintf(char *str, size_t size, const char *format, ...) WARN_FORMAT(3, 4);
 	#if defined(WINCE)
 		int CDECL vsnprintf(char *str, size_t size, const char *format, va_list ap);
 	#endif
@@ -267,6 +266,8 @@
 		#define strncasecmp strnicmp
 	#endif
 
+	#define strtoull _strtoui64
+
 	/* MSVC doesn't have these :( */
 	#define S_ISDIR(mode) (mode & S_IFDIR)
 	#define S_ISREG(mode) (mode & S_IFREG)
@@ -283,7 +284,7 @@
 #endif
 
 #if defined(WINCE)
-	#define strdup _strdup
+	#define stredup _stredup
 #endif /* WINCE */
 
 /* NOTE: the string returned by these functions is only valid until the next
@@ -303,14 +304,10 @@
 
 		const char *FS2OTTD(const TCHAR *name);
 		const TCHAR *OTTD2FS(const char *name, bool console_cp = false);
-		#define SQ2OTTD(name) FS2OTTD(name)
-		#define OTTD2SQ(name) OTTD2FS(name)
 	#else
 		#define fopen(file, mode) fopen(OTTD2FS(file), mode)
 		const char *FS2OTTD(const char *name);
 		const char *OTTD2FS(const char *name);
-		#define SQ2OTTD(name) (name)
-		#define OTTD2SQ(name) (name)
 	#endif /* WIN32 */
 #endif /* STRGEN || SETTINGSGEN */
 
@@ -503,12 +500,16 @@ static inline void free(const void *ptr)
 	#define HELPER0(x) #x
 	#define HELPER1(x) HELPER0(GCC diagnostic ignored x)
 	#define HELPER2(y) HELPER1(#y)
+#if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 	#define IGNORE_UNINITIALIZED_WARNING_START \
 		_Pragma("GCC diagnostic push") \
 		_Pragma(HELPER2(-Wuninitialized)) \
 		_Pragma(HELPER2(-Wmaybe-uninitialized))
 	#define IGNORE_UNINITIALIZED_WARNING_STOP _Pragma("GCC diagnostic pop")
-#else
+#endif
+#endif
+
+#ifndef IGNORE_UNINITIALIZED_WARNING_START
 	#define IGNORE_UNINITIALIZED_WARNING_START
 	#define IGNORE_UNINITIALIZED_WARNING_STOP
 #endif

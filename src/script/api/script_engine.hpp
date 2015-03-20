@@ -1,4 +1,4 @@
-/* $Id: script_engine.hpp 26307 2014-02-06 19:50:34Z zuu $ */
+/* $Id: script_engine.hpp 27123 2015-01-20 19:11:31Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -108,7 +108,6 @@ public:
 	 * Get the maximum speed of an engine.
 	 * @param engine_id The engine to get the maximum speed of.
 	 * @pre IsValidEngine(engine_id).
-	 * @pre GetVehicleType(engine_id) != ScriptVehicle::VT_TRAIN || !IsWagon(engine_id).
 	 * @return The maximum speed the engine has.
 	 * @note The speed is in OpenTTD's internal speed unit.
 	 *       This is mph / 1.6, which is roughly km/h.

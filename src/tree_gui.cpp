@@ -1,4 +1,4 @@
-/* $Id: tree_gui.cpp 25290 2013-05-26 19:25:01Z frosch $ */
+/* $Id: tree_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -24,6 +24,8 @@
 #include "table/sprites.h"
 #include "table/strings.h"
 #include "table/tree_land.h"
+
+#include "safeguards.h"
 
 void PlaceTreesRandomly();
 
@@ -98,11 +100,6 @@ public:
 			size->width = 0;
 			size->height = 0;
 		}
-	}
-
-	virtual void OnPaint()
-	{
-		this->DrawWidgets();
 	}
 
 	virtual void DrawWidget(const Rect &r, int widget) const

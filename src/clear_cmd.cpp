@@ -1,4 +1,4 @@
-/* $Id: clear_cmd.cpp 25852 2013-10-12 22:23:43Z zuu $ */
+/* $Id: clear_cmd.cpp 27117 2015-01-10 20:10:51Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,6 +22,8 @@
 #include "table/strings.h"
 #include "table/sprites.h"
 #include "table/clear_land.h"
+
+#include "safeguards.h"
 
 static CommandCost ClearTile_Clear(TileIndex tile, DoCommandFlag flags)
 {
@@ -110,7 +112,7 @@ static void DrawTile_Clear(TileInfo *ti)
 			break;
 
 		case CLEAR_ROCKS:
-			DrawGroundSprite(SPR_FLAT_ROCKY_LAND_1 + SlopeToSpriteOffset(ti->tileh), PAL_NONE);
+			DrawGroundSprite((TileHash(ti->x, ti->y) & 1 ? SPR_FLAT_ROCKY_LAND_2 : SPR_FLAT_ROCKY_LAND_1) + SlopeToSpriteOffset(ti->tileh), PAL_NONE);
 			break;
 
 		case CLEAR_FIELDS:

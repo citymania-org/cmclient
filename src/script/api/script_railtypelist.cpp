@@ -1,4 +1,4 @@
-/* $Id: script_railtypelist.cpp 23632 2011-12-19 21:05:25Z truebrain $ */
+/* $Id: script_railtypelist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,8 @@
 #include "../../stdafx.h"
 #include "script_railtypelist.hpp"
 #include "../../rail.h"
+
+#include "../../safeguards.h"
 
 ScriptRailTypeList::ScriptRailTypeList()
 {

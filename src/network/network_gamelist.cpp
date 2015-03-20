@@ -1,4 +1,4 @@
-/* $Id: network_gamelist.cpp 24776 2012-12-01 13:12:39Z alberth $ */
+/* $Id: network_gamelist.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include "network_internal.h"
 #include "network_udp.h"
 #include "network_gamelist.h"
+
+#include "../safeguards.h"
 
 NetworkGameList *_network_game_list = NULL;
 

@@ -1,4 +1,4 @@
-/* $Id: 32bpp_ssse3.cpp 26258 2014-01-13 18:12:33Z rubidium $ */
+/* $Id: 32bpp_ssse3.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 #include "../settings_type.h"
 #include "32bpp_ssse3.hpp"
 #include "32bpp_sse_func.hpp"
+
+#include "../safeguards.h"
 
 /** Instantiation of the SSSE3 32bpp blitter factory. */
 static FBlitter_32bppSSSE3 iFBlitter_32bppSSSE3;

@@ -1,4 +1,4 @@
-/* $Id: ini_type.h 22824 2011-08-24 13:38:26Z rubidium $ */
+/* $Id: ini_type.h 26499 2014-04-24 18:37:39Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,7 +28,7 @@ struct IniItem {
 	char *value;   ///< The value of this item
 	char *comment; ///< The comment associated with this item
 
-	IniItem(struct IniGroup *parent, const char *name, size_t len = 0);
+	IniItem(struct IniGroup *parent, const char *name, const char *last = NULL);
 	~IniItem();
 
 	void SetValue(const char *value);
@@ -43,7 +43,7 @@ struct IniGroup {
 	char *name;          ///< name of group
 	char *comment;       ///< comment for group
 
-	IniGroup(struct IniLoadFile *parent, const char *name, size_t len = 0);
+	IniGroup(struct IniLoadFile *parent, const char *name, const char *last = NULL);
 	~IniGroup();
 
 	IniItem *GetItem(const char *name, bool create);

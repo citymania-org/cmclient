@@ -1,4 +1,4 @@
-/* $Id: signal.cpp 26110 2013-11-25 16:22:29Z rubidium $ */
+/* $Id: signal.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,8 @@
 #include "viewport_func.h"
 #include "train.h"
 #include "company_base.h"
+
+#include "safeguards.h"
 
 
 /** these are the maximums used for updating signal blocks */

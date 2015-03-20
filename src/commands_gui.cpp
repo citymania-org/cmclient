@@ -192,6 +192,21 @@ void strtomd5(char * buf, char * bufend, int length){
 	md5sumToString(buf, bufend, digest);
 	strtolower(buf);
 }
+
+void UrlEncode(char * buf, const char * buflast, const char * url){
+	while(*url != '\0' && buf < buflast){
+		if((*url >= '0' && *url <= '9') || (*url >= 'A' && *url <= 'Z') || (*url >= 'a' && *url <= 'z')
+			|| *url == '-' || *url == '_' || *url == '.' || *url == '~'
+		){
+			*buf++ = *url++;
+		}
+		else{
+			buf += seprintf(buf, buflast, "%%%02X", *url++);
+		}
+	}
+	*buf = '\0';
+}
+
 /** Commands toolbar window handler. */
 struct CommandsToolbarWindow : Window {
 
@@ -526,9 +541,14 @@ void ShowCommandsToolbar()
 // login window
 class GetHTTPContent: public HTTPCallback {
 public:
-	GetHTTPContent(char * uri): uri(uri) {}
+	GetHTTPContent(char * uri): uri(uri) {
+		this->proccessing = false;
+	}
+	bool proccessing;
 
 	void InitiateLoginSequence() {
+		if(this->proccessing) return;
+		this->proccessing = true;
 		this->cursor = this->buf;
 		NetworkHTTPSocketHandler::Connect(this->uri, this);
 	}
@@ -564,6 +584,7 @@ public:
 		else{
 			ShowErrorMessage(STR_LOGINERROR_BADINPUT, INVALID_STRING_ID, WL_ERROR);
 		}
+		this->proccessing = false;
 	}
 
 	virtual ~GetHTTPContent() {
@@ -708,6 +729,7 @@ struct LoginWindow : Window {
 	void OnQueryTextFinished(char * str)
 	{
 		if (str == NULL) return;
+		char item[128];
 		switch(this->query_widget){
 			case LQW_NOVAPOLIS_LOGIN: {
 				SetLoginItem(NOVAPOLIS_LOGIN, str);
@@ -720,22 +742,13 @@ struct LoginWindow : Window {
 				SetLoginItem(NOVAPOLIS_PW, msg);
 				break;
 			}
-			case LQW_NICE_LOGIN: {
-				SetLoginItem(NICE_LOGIN, str);
+			case LQW_NICE_LOGIN:
+			case LQW_NICE_PW:
+			case LQW_BTPRO_LOGIN:
+			case LQW_BTPRO_PW:
+				UrlEncode(item, lastof(item), str);
+				SetLoginItem(INI_LOGIN_KEYS[this->query_widget - 3], item); // - LWW_NICE_LOGIN + NICE_LOGIN
 				break;
-			}
-			case LQW_NICE_PW: {
-				SetLoginItem(NICE_PW, str);
-				break;
-			}
-			case LQW_BTPRO_LOGIN: {
-				SetLoginItem(BTPRO_LOGIN, str);
-				break;
-			}
-			case LQW_BTPRO_PW: {
-				SetLoginItem(BTPRO_PW, str);
-				break;
-			}
 			default: return;
 		}
 		this->SetDirty();

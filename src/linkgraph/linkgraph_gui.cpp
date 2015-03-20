@@ -1,4 +1,4 @@
-/* $Id: linkgraph_gui.cpp 26461 2014-04-13 10:52:19Z frosch $ */
+/* $Id: linkgraph_gui.cpp 26891 2014-09-21 16:19:52Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,6 +21,8 @@
 #include "../widgets/link_graph_legend_widget.h"
 
 #include "table/strings.h"
+
+#include "../safeguards.h"
 
 /**
  * Colours for the various "load" states of links. Ordered from "unused" to
@@ -150,7 +152,7 @@ void LinkGraphOverlay::AddLinks(const Station *from, const Station *to)
 		ConstEdge edge = lg[ge.node][to->goods[c].node];
 		if (edge.Capacity() > 0) {
 			this->AddStats(lg.Monthly(edge.Capacity()), lg.Monthly(edge.Usage()),
-					ge.GetSumFlowVia(to->index), from->owner == OWNER_NONE || to->owner == OWNER_NONE,
+					ge.flows.GetFlowVia(to->index), from->owner == OWNER_NONE || to->owner == OWNER_NONE,
 					this->cached_links[from->index][to->index]);
 		}
 	}

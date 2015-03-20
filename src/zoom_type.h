@@ -1,4 +1,4 @@
-/* $Id: zoom_type.h 23316 2011-11-24 12:38:48Z peter1138 $ */
+/* $Id: zoom_type.h 27134 2015-02-01 20:54:24Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -33,7 +33,6 @@ enum ZoomLevel {
 
 	/* Here we define in which zoom viewports are */
 	ZOOM_LVL_VIEWPORT = ZOOM_LVL_OUT_4X, ///< Default zoom level for viewports.
-	ZOOM_LVL_GUI      = ZOOM_LVL_OUT_4X, ///< Default zoom level for GUI sprites.
 	ZOOM_LVL_NEWS     = ZOOM_LVL_OUT_4X, ///< Default zoom level for the news messages.
 	ZOOM_LVL_INDUSTRY = ZOOM_LVL_OUT_8X, ///< Default zoom level for the industry view.
 	ZOOM_LVL_TOWN     = ZOOM_LVL_OUT_8X, ///< Default zoom level for the town view.
@@ -52,5 +51,8 @@ DECLARE_POSTFIX_INCREMENT(ZoomLevel)
 
 /** Type for storing the zoom level in a byte. */
 typedef SimpleTinyEnumT<ZoomLevel, byte> ZoomLevelByte;
+
+extern ZoomLevelByte _gui_zoom;
+#define ZOOM_LVL_GUI (_gui_zoom)
 
 #endif /* ZOOM_TYPE_H */

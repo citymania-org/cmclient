@@ -1,4 +1,4 @@
-/* $Id: engine_func.h 26972 2014-10-06 20:10:07Z frosch $ */
+/* $Id: engine_func.h 26849 2014-09-18 19:53:22Z alberth $ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: libtimidity.cpp 22410 2011-05-02 16:14:23Z rubidium $ */
+/* $Id: libtimidity.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -25,6 +25,8 @@
 #if defined(PSP)
 #include <pspaudiolib.h>
 #endif /* PSP */
+
+#include "../safeguards.h"
 
 /** The state of playing. */
 enum MidiState {

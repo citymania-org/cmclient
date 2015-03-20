@@ -1,4 +1,4 @@
-/* $Id: network_internal.h 26370 2014-02-23 19:32:32Z frosch $ */
+/* $Id: network_internal.h 26488 2014-04-23 21:19:54Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -168,7 +168,7 @@ void NetworkError(StringID error_string);
 void NetworkTextMessage(NetworkAction action, TextColour colour, bool self_send, const char *name, const char *str = "", int64 data = 0);
 uint NetworkCalculateLag(const NetworkClientSocket *cs);
 StringID GetNetworkErrorMsg(NetworkErrorCode err);
-bool NetworkFindName(char new_name[NETWORK_CLIENT_NAME_LENGTH]);
+bool NetworkFindName(char *new_name, const char *last);
 const char *GenerateCompanyPasswordHash(const char *password, const char *password_server_id, uint32 password_game_seed);
 
 #endif /* ENABLE_NETWORK */

@@ -1,4 +1,4 @@
-/* $Id: depot_cmd.cpp 25865 2013-10-13 20:11:05Z zuu $ */
+/* $Id: depot_cmd.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,6 +20,8 @@
 #include "window_func.h"
 
 #include "table/strings.h"
+
+#include "safeguards.h"
 
 /**
  * Check whether the given name is globally unique amongst depots.
@@ -68,7 +70,7 @@ CommandCost CmdRenameDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			d->name = NULL;
 			MakeDefaultName(d);
 		} else {
-			d->name = strdup(text);
+			d->name = stredup(text);
 		}
 
 		/* Update the orders and depot */
