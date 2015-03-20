@@ -1664,7 +1664,7 @@ uint CB_GetDecay(CargoID cargo){
 }
 int CB_GetTownReq(uint population, uint req, uint from, bool from_non_important, bool prev_month)
 {
-	if (req > 0 && (population > from || from_non_important)) {
+	if (req > 0 && (population >= from || from_non_important)) {
 		uint leap = 0;
 		Month month = _cur_month;
 		if (!prev_month) month++;
