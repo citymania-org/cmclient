@@ -270,7 +270,6 @@ class BuildIndustryWindow : public Window {
 		this->vscroll->SetCount(this->count);
 
 		this->funding_enabled = (_game_mode == GM_EDITOR || Company::IsValidID(_local_company));
-		fprintf(stderr, "%d\n", (int)Company::IsValidID(_local_company));
 	}
 
 	/** Update status of the fund and display-chain widgets. */
