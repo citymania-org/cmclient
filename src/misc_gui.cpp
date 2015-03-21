@@ -1297,9 +1297,11 @@ struct TooltipsExtraWindow : public Window
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
-		static const uint LINE_HEIGHT = FONT_HEIGHT_NORMAL + 2;
+		uint icon_size = ScaleGUITrad(10);
+		uint line_height = max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
+		uint icons_width = icon_size * 3 + 20;
 		size->width = 200;
-		size->height = LINE_HEIGHT + 4;
+		size->height = FONT_HEIGHT_NORMAL + 6;
 		switch(this->tiletype) {
 			/*case MP_HOUSE: {
 				size->height += LINE_HEIGHT;
@@ -1315,12 +1317,12 @@ struct TooltipsExtraWindow : public Window
 					if (ind->produced_cargo[i] == CT_INVALID) continue;
 					const CargoSpec *cs = CargoSpec::Get(ind->produced_cargo[i]);
 					if(cs == NULL) continue;
-					size->height += LINE_HEIGHT;
+					size->height += line_height;
 					SetDParam(0, cs->name);
 					SetDParam(1, cs->Index());
 					SetDParam(2, ind->last_month_production[i]);
 					SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
-					size->width = max(GetStringBoundingBox(STR_TTE_INDUSTRY).width + 50, size->width);
+					size->width = max(GetStringBoundingBox(STR_TTE_INDUSTRY).width + icons_width, size->width);
 				}
 				break;
 			}
@@ -1333,16 +1335,18 @@ struct TooltipsExtraWindow : public Window
 					if(cs == NULL) continue;
 					int cargoid = cs->Index();
 					if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
-						size->height += LINE_HEIGHT;
+						size->height += line_height;
 						SetDParam(0, cs->name);
 						SetDParam(1, cargoid);
 						SetDParam(2, st->goods[cargoid].cargo.TotalCount());
 						SetDParam(3, ToPercent8(st->goods[cargoid].rating));
-						size->width = max(GetStringBoundingBox(STR_TTE_STATION).width + 50, size->width);
+						size->width = max(GetStringBoundingBox(STR_TTE_STATION).width + icons_width, size->width);
 					}
 				}
 				break;
 			}
+			default:
+				break;
 		}
 		size->width  += 2 + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 		size->height += 2 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
@@ -1350,7 +1354,12 @@ struct TooltipsExtraWindow : public Window
 
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
-		static const uint LINE_HEIGHT = FONT_HEIGHT_NORMAL + 2;
+		uint icon_size = ScaleGUITrad(10);
+		uint line_height = max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
+		uint icons_width = icon_size * 3 + 10;
+		uint text_ofs = (line_height - FONT_HEIGHT_NORMAL) >> 1;
+		uint icon_ofs = (line_height - icon_size) >> 1;
+
 		GfxDrawLine(r.left,  r.top,    r.right, r.top,    PC_BLACK);
 		GfxDrawLine(r.left,  r.bottom, r.right, r.bottom, PC_BLACK);
 		GfxDrawLine(r.left,  r.top,    r.left,  r.bottom, PC_BLACK);
@@ -1378,7 +1387,7 @@ struct TooltipsExtraWindow : public Window
 
 				SetDParam(0, ind->index);
 				DrawString(left, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_INDUSTRY_NAME, TC_BLACK, SA_CENTER);
-				y += LINE_HEIGHT;
+				y += FONT_HEIGHT_NORMAL + 2;
 
 				for (CargoID i = 0; i < lengthof(ind->produced_cargo); i++) {
 					if (ind->produced_cargo[i] == CT_INVALID) continue;
@@ -1389,20 +1398,19 @@ struct TooltipsExtraWindow : public Window
 					SetDParam(2, ind->last_month_production[i]);
 					SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
 
-					this->DrawSpriteIcons(cs->GetCargoIcon(), left, y);
-					DrawString(left + 40, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_INDUSTRY);
-					y += LINE_HEIGHT;
+					this->DrawSpriteIcons(cs->GetCargoIcon(), left, y + icon_ofs);
+					DrawString(left + icons_width, r.right - WD_FRAMERECT_RIGHT, y + text_ofs, STR_TTE_INDUSTRY);
+					y += line_height;
 				}
 				break;
 			}
 			case MP_STATION: {
-				uint pars = 0;
 				const Station *st = Station::GetIfValid((StationID)this->objIndex);
 				if(st == NULL) break;
 
 				SetDParam(0, st->index);
 				DrawString(left, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_STATION_NAME, TC_BLACK, SA_CENTER);
-				y += LINE_HEIGHT;
+				y += FONT_HEIGHT_NORMAL + 2;
 
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
 					const CargoSpec *cs = _sorted_cargo_specs[i];
@@ -1414,13 +1422,15 @@ struct TooltipsExtraWindow : public Window
 						SetDParam(2, st->goods[cargoid].cargo.TotalCount());
 						SetDParam(3, ToPercent8(st->goods[cargoid].rating));
 
-						this->DrawSpriteIcons(cs->GetCargoIcon(), left, y);
-						DrawString(left + 40, r.right - WD_FRAMERECT_RIGHT, y, STR_TTE_STATION);
-						y += LINE_HEIGHT;
+						this->DrawSpriteIcons(cs->GetCargoIcon(), left, y + icon_ofs);
+						DrawString(left + icons_width, r.right - WD_FRAMERECT_RIGHT, y + text_ofs, STR_TTE_STATION);
+						y += line_height;
 					}
 				}
 				break;
 			}
+			default:
+				break;
 		}
 	}
 
@@ -1440,8 +1450,9 @@ struct TooltipsExtraWindow : public Window
 
 	void DrawSpriteIcons(SpriteID sprite, int left, int top) const
 	{
-		for(int i = 0; i < 30; i += 10) {
-			DrawSprite(sprite, PAL_NONE, left + i, top);
+		uint step = ScaleGUITrad(10);
+		for(int i = 0; i < 3; i++) {
+			DrawSprite(sprite, PAL_NONE, left + i * step, top);
 		}
 	}
 };
