@@ -215,6 +215,7 @@ class BuildIndustryWindow : public Window {
 	IndustryType index[NUM_INDUSTRYTYPES + 1];  ///< Type of industry, in the order it was loaded
 	bool enabled[NUM_INDUSTRYTYPES + 1];        ///< availability state, coming from CBID_INDUSTRY_PROBABILITY (if ever)
 	Scrollbar *vscroll;
+	bool funding_enabled;
 
 	/** The offset for the text in the matrix. */
 	static const int MATRIX_TEXT_OFFSET = 17;
@@ -267,13 +268,17 @@ class BuildIndustryWindow : public Window {
 		}
 
 		this->vscroll->SetCount(this->count);
+
+		this->funding_enabled = (_game_mode == GM_EDITOR || Company::IsValidID(_local_company));
+		fprintf(stderr, "%d\n", (int)Company::IsValidID(_local_company));
 	}
 
 	/** Update status of the fund and display-chain widgets. */
 	void SetButtons()
 	{
-		this->SetWidgetDisabledState(WID_DPI_FUND_WIDGET, this->selected_type != INVALID_INDUSTRYTYPE && !this->enabled[this->selected_index]);
+		this->SetWidgetDisabledState(WID_DPI_FUND_WIDGET,  !this->funding_enabled || (this->selected_type != INVALID_INDUSTRYTYPE && !this->enabled[this->selected_index]));
 		this->SetWidgetDisabledState(WID_DPI_DISPLAY_WIDGET, this->selected_type == INVALID_INDUSTRYTYPE && this->enabled[this->selected_index]);
+		this->LowerWidget(_settings_client.gui.show_industry_forbidden_tiles + WID_DPI_FT_OFF);
 	}
 
 public:
@@ -285,10 +290,10 @@ public:
 		this->selected_type = INVALID_INDUSTRYTYPE;
 
 		this->callback_timer = DAY_TICKS;
+		this->funding_enabled = false;
 
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_DPI_SCROLLBAR);
-		this->LowerWidget(_settings_client.gui.show_industry_forbidden_tiles + WID_DPI_FT_OFF);
 		this->FinishInitNested(0);
 
 		this->SetButtons();
@@ -681,7 +686,6 @@ static WindowDesc _build_industry_desc(
 
 void ShowBuildIndustryWindow()
 {
-	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
 	if (BringWindowToFrontById(WC_BUILD_INDUSTRY, 0)) return;
 	new BuildIndustryWindow(&_build_industry_desc);
 }
