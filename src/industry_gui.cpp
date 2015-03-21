@@ -634,12 +634,12 @@ public:
 
 	virtual void OnTimeout()
 	{
-		this->RaiseButtons();
+		this->RaiseWidget(WID_DPI_FUND_WIDGET);
 	}
 
 	virtual void OnPlaceObjectAbort()
 	{
-		this->RaiseButtons();
+		this->RaiseWidget(WID_DPI_FUND_WIDGET);
 	}
 
 	/**
