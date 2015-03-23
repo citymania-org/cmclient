@@ -1262,6 +1262,9 @@ void GuiPrepareTooltipsExtra(Window *parent){
 		return;
 	}
 
+	if (!_settings_client.gui.enable_extra_tooltips)
+		return;
+
 	if (tile >= MapSize()) return;
 	uint param = 0;
 	switch (GetTileType(tile)) {

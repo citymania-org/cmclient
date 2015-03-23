@@ -157,7 +157,7 @@ public:
 
 	virtual void OnMouseOver(Point pt, int widget)
 	{
-		if (_settings_client.gui.enable_extra_tooltips && pt.x != -1) GuiPrepareTooltipsExtra(this);
+		if (pt.x != -1) GuiPrepareTooltipsExtra(this);
 	}
 };
 
