@@ -2598,7 +2598,6 @@ void UpdateTileSelection()
  */
 static inline void ShowMeasurementTooltips(StringID str, uint paramcount, const uint64 params[], TooltipCloseCondition close_cond = TCC_LEFT_CLICK)
 {
-	if (!_settings_client.gui.measure_tooltip) return;
 	GuiShowTooltips(_thd.GetCallbackWnd(), str, paramcount, params, close_cond);
 }
 
@@ -2662,7 +2661,8 @@ void VpSetPresizeRange(TileIndex from, TileIndex to)
 	_thd.next_drawstyle = HT_RECT;
 
 	/* show measurement only if there is any length to speak of */
-	if (distance > 1) ShowMeasurementTooltips(STR_MEASURE_LENGTH, 1, &distance, TCC_HOVER);
+	if (distance > 1 && _settings_client.gui.measure_tooltip)
+		ShowMeasurementTooltips(STR_MEASURE_LENGTH, 1, &distance, TCC_HOVER);
 }
 
 static void VpStartPreSizing()
@@ -3392,45 +3392,6 @@ calc_heightdiff_single_direction:;
 			ShowLengthMeasurement(HT_LINE | style, TileVirtXY(sx, sy), TileVirtXY(x, y));
 			break;
 
-		case VPM_A_B_LINE: { // drag an A to B line
-			TileIndex t0 = TileVirtXY(sx, sy);
-			TileIndex t1 = TileVirtXY(x, y);
-			uint dx = Delta(TileX(t0), TileX(t1));
-			uint dy = Delta(TileY(t0), TileY(t1));
-			byte index = 0;
-			uint64 params[5];
-			memset( params, 0, sizeof( params ) );
-
-			/* If dragging an area (eg dynamite tool) and it is actually a single
-			 * row/column, change the type to 'line' to get proper calculation for height */
-			style = (HighLightStyle)_thd.next_drawstyle;
-			if (style & HT_RECT) {
-				if (dx == 0) {
-					style = HT_LINE | HT_DIR_Y;
-				} else if (dy == 0) {
-					style = HT_LINE | HT_DIR_X;
-				}
-			}
-
-			int heightdiff = 0;
-
-			if (dx != 0 || dy != 0) {
-				heightdiff = CalcHeightdiff(style, 0, t0, t1);
-				params[index++] = DistanceManhattan(t0, t1);
-				params[index++] = sqrtl(dx * dx + dy * dy); //DistanceSquare does not like big numbers
-			} else {
-				params[index++] = 0;
-				params[index++] = 0;
-			}
-
-			params[index++] = DistanceFromEdge(t1);
-			params[index++] = GetTileMaxZ(t1) / TILE_HEIGHT * TILE_HEIGHT_STEP;
-			params[index++] = heightdiff;
-			//Show always the measurement tooltip
-			GuiShowTooltips(_thd.GetCallbackWnd(),STR_MEASURE_DIST_HEIGHTDIFF, index, params, TCC_LEFT_CLICK);
-			break;
-		}
-
 		case VPM_X_AND_Y_LIMITED: // Drag an X by Y constrained rect area.
 			limit = (_thd.sizelimit - 1) * TILE_SIZE;
 			x = sx + Clamp(x - sx, -limit, limit);
@@ -3438,9 +3399,10 @@ calc_heightdiff_single_direction:;
 			/* FALL THROUGH */
 
 		case VPM_X_AND_Y: // drag an X by Y area
-			if (_settings_client.gui.measure_tooltip) {
+			if (_settings_client.gui.measure_tooltip || _thd.select_proc == DDSP_MEASURE) {
 				static const StringID measure_strings_area[] = {
-					STR_NULL, STR_NULL, STR_MEASURE_AREA, STR_MEASURE_AREA_HEIGHTDIFF
+					STR_NULL, STR_NULL, STR_MEASURE_AREA, STR_MEASURE_AREA_HEIGHTDIFF,
+					STR_MEASURE_DIST_HEIGHTDIFF,
 				};
 
 				TileIndex t0 = TileVirtXY(sx, sy);
@@ -3448,7 +3410,7 @@ calc_heightdiff_single_direction:;
 				uint dx = Delta(TileX(t0), TileX(t1)) + 1;
 				uint dy = Delta(TileY(t0), TileY(t1)) + 1;
 				byte index = 0;
-				uint64 params[3];
+				uint64 params[4];
 
 				/* If dragging an area (eg dynamite tool) and it is actually a single
 				 * row/column, change the type to 'line' to get proper calculation for height */
@@ -3495,7 +3457,13 @@ calc_heightdiff_single_direction:;
 
 					params[index++] = dx - (style & HT_POINT ? 1 : 0);
 					params[index++] = dy - (style & HT_POINT ? 1 : 0);
-					if (heightdiff != 0) params[index++] = heightdiff;
+
+					if (_thd.select_proc == DDSP_MEASURE) {
+						params[index++] = sqrtl(dx * dx + dy * dy);
+					}
+
+					if (heightdiff != 0 || index == 3)
+						params[index++] = heightdiff;
 				}
 
 				ShowMeasurementTooltips(measure_strings_area[index], index, params);

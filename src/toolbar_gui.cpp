@@ -1864,6 +1864,7 @@ struct MainToolbarWindow : Window {
 				break;
 
 			case CBF_PLACE_LANDINFO:
+				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_MEASURE);
 				break;
 
 			case CBF_BUILD_HQ:
@@ -1875,6 +1876,11 @@ struct MainToolbarWindow : Window {
 
 			default: NOT_REACHED();
 		}
+	}
+
+	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
+	{
+		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
 	virtual void OnTick()
@@ -2216,6 +2222,7 @@ struct ScenarioEditorToolbarWindow : Window {
 				break;
 
 			case CBF_PLACE_LANDINFO:
+				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_MEASURE);
 				break;
 
 			default: NOT_REACHED();

@@ -73,6 +73,7 @@ class LandInfoWindow : public Window {
 public:
 	char landinfo_data[LAND_INFO_LINE_END][LAND_INFO_LINE_BUFF_SIZE];
 	TileIndex tile;
+	TileIndex end_tile;  ///< For use in ruler(dragdrop) mode
 
 	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
 	{
@@ -127,7 +128,8 @@ public:
 		}
 	}
 
-	LandInfoWindow(TileIndex tile) : Window(&_land_info_desc), tile(tile)
+	LandInfoWindow(TileIndex tile, TileIndex end_tile=INVALID_TILE) :
+		Window(&_land_info_desc), tile(tile), end_tile(end_tile)
 	{
 		this->InitNested();
 		CLRBITS(this->flags, WF_WHITE_BORDER);
@@ -396,10 +398,10 @@ public:
  * Show land information window.
  * @param tile The tile to show information about.
  */
-void ShowLandInfo(TileIndex tile)
+void ShowLandInfo(TileIndex tile, TileIndex end_tile)
 {
 	DeleteWindowById(WC_LAND_INFO, 0);
-	new LandInfoWindow(tile);
+	new LandInfoWindow(tile, end_tile);
 }
 
 static const NWidgetPart _nested_about_widgets[] = {

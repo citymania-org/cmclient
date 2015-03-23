@@ -147,11 +147,6 @@ void PlaceProc_DemolishArea(TileIndex tile)
 	VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_DEMOLISH_AREA);
 }
 
-static void PlaceProc_Measure(TileIndex tile)
-{
-	VpStartPlaceSizing(tile, VPM_A_B_LINE, DDSP_MEASURE);
-}
-
 /** Terra form toolbar managing class. */
 struct TerraformToolbarWindow : Window {
 	int last_user_action; ///< Last started user action.
@@ -209,11 +204,6 @@ struct TerraformToolbarWindow : Window {
 				ShowBuildTreesToolbar();
 				break;
 
-			case WID_TT_MEASUREMENT_TOOL:
-				HandlePlacePushButton(this, WID_TT_MEASUREMENT_TOOL, SPR_CURSOR_QUERY, HT_RECT);
-				this->last_user_action = widget;
-				break;
-
 			case WID_TT_PLACE_SIGN: // Place sign button
 				HandlePlacePushButton(this, WID_TT_PLACE_SIGN, SPR_CURSOR_SIGN, HT_RECT);
 				this->last_user_action = widget;
@@ -255,10 +245,6 @@ struct TerraformToolbarWindow : Window {
 				DoCommandP(tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound1E);
 				break;
 
-			case WID_TT_MEASUREMENT_TOOL:
-				PlaceProc_Measure(tile);
-				break;
-
 			case WID_TT_PLACE_SIGN: // Place sign button
 				PlaceProc_Sign(tile);
 				break;
@@ -293,9 +279,6 @@ struct TerraformToolbarWindow : Window {
 				case DDSP_LOWER_AND_LEVEL_AREA:
 				case DDSP_LEVEL_AREA:
 					GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
-					break;
-				case DDSP_MEASURE:
-					//nothing to do, just draw a tooltip
 					break;
 			}
 		}
@@ -358,8 +341,6 @@ static const NWidgetPart _nested_terraform_widgets[] = {
 								SetFill(0, 1), SetDataTip(SPR_IMG_BUY_LAND, STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_DARK_GREEN, WID_TT_PLANT_TREES), SetMinimalSize(22, 22),
 								SetFill(0, 1), SetDataTip(SPR_IMG_PLANTTREES, STR_SCENEDIT_TOOLBAR_PLANT_TREES),
-		// NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_MEASUREMENT_TOOL), SetMinimalSize(22,22),
-		// 						SetFill(0, 1), SetDataTip(SPR_IMG_QUERY, STR_LANDSCAPING_TOOLTIP_RULER_TOOL),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_PLACE_SIGN), SetMinimalSize(22, 22),
 								SetFill(0, 1), SetDataTip(SPR_IMG_SIGN, STR_SCENEDIT_TOOLBAR_PLACE_SIGN),
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_TT_SHOW_PLACE_OBJECT),
