@@ -51,16 +51,11 @@ enum OskActivation {
 
 
 static const NWidgetPart _nested_land_info_widgets[] = {
-	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_LAND_AREA_INFORMATION_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_DEBUGBOX, COLOUR_GREY),
-	EndContainer(),
-	NWidget(WWT_PANEL, COLOUR_GREY, WID_LI_BACKGROUND), EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_GREY, WID_LI_BACKGROUND), SetMinimalSize(64, 32),	EndContainer(),
 };
 
 static WindowDesc _land_info_desc(
-	WDP_AUTO, "land_info", 0, 0,
+	WDP_MANUAL, "land_info", 0, 0,
 	WC_LAND_INFO, WC_NONE,
 	0,
 	_nested_land_info_widgets, lengthof(_nested_land_info_widgets)
@@ -78,6 +73,17 @@ class LandInfoWindow : public Window {
 public:
 	char landinfo_data[LAND_INFO_LINE_END][LAND_INFO_LINE_BUFF_SIZE];
 	TileIndex tile;
+
+	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	{
+		int scr_top = GetMainViewTop() + 2;
+		int scr_bot = GetMainViewBottom() - 2;
+		Point pt;
+		pt.y = Clamp(_cursor.pos.y + _cursor.size.y + _cursor.offs.y + 5, scr_top, scr_bot);
+		if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.offs.y - 5, scr_bot) - sm_height;
+		pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
+		return pt;
+	}
 
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
@@ -124,6 +130,7 @@ public:
 	LandInfoWindow(TileIndex tile) : Window(&_land_info_desc), tile(tile)
 	{
 		this->InitNested();
+		CLRBITS(this->flags, WF_WHITE_BORDER);
 
 #if defined(_DEBUG)
 #	define LANDINFOD_LEVEL 0
@@ -364,6 +371,24 @@ public:
 				this->ReInit();
 				break;
 		}
+	}
+
+	virtual void OnMouseLoop()
+	{
+		/* Always close tooltips when the cursor is not in our window. */
+		if (!_cursor.in_window) {
+			delete this;
+			return;
+		}
+		if (!_mouse_hovering) delete this;
+
+		/* We can show tooltips while dragging tools. These are shown as long as
+		 * we are dragging the tool. Normal tooltips work with hover or rmb. */
+		// switch (this->close_cond) {
+		// 	case TCC_RIGHT_CLICK: if (!_right_button_down) delete this; break;
+		// 	case TCC_LEFT_CLICK: if (!_left_button_down) delete this; break;
+		// 	case TCC_HOVER: if (!_mouse_hovering) delete this; break;
+		// }
 	}
 };
 
@@ -1230,6 +1255,12 @@ void ShowQuery(StringID caption, StringID message, Window *parent, QueryCallback
 void GuiPrepareTooltipsExtra(Window *parent){
 	const Point p = GetTileBelowCursor();
 	const TileIndex tile = TileVirtXY(p.x, p.y);
+
+	if (_cursor.sprite == SPR_CURSOR_QUERY) {
+		// Land info tool active
+		ShowLandInfo(tile);
+		return;
+	}
 
 	if (tile >= MapSize()) return;
 	uint param = 0;

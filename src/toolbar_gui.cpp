@@ -1864,7 +1864,6 @@ struct MainToolbarWindow : Window {
 				break;
 
 			case CBF_PLACE_LANDINFO:
-				ShowLandInfo(tile);
 				break;
 
 			case CBF_BUILD_HQ:
@@ -2217,7 +2216,6 @@ struct ScenarioEditorToolbarWindow : Window {
 				break;
 
 			case CBF_PLACE_LANDINFO:
-				ShowLandInfo(tile);
 				break;
 
 			default: NOT_REACHED();
