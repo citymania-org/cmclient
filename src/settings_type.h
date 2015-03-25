@@ -172,6 +172,7 @@ struct GUISettings {
 	bool   enable_extra_tooltips;            ///< enable extra tooltips when hovering over various elements
 	bool   polyrail_double_click;            ///< finish polyrail with mouse double click
 	bool   show_industry_forbidden_tiles;    ///< higlight areas where industry placement is forbidden regardless of terrain
+	bool   runway_too_short_warn;            ///< warn about aircrafts using too short runways
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
