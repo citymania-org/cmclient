@@ -5057,7 +5057,7 @@ STR_XI_BAN_DAYSDEFAULT                                          :1
 STR_XI_REALY_RESET                                              :{WHITE}Are you sure?.
 STR_XI_RESET_CAPTION                                            :{WHITE}Reset
 
-STR_NETWORK_CLIENT_EXTRA                                        :{WHITE}  (#{NUM} in c#{NUM})
+STR_NETWORK_CLIENT_EXTRA                                        :{WHITE}(#{NUM} in c#{NUM})
 
 ######## Zoning toolbar
 

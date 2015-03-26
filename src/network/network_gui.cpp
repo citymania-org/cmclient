@@ -2006,7 +2006,7 @@ struct NetworkClientListWindow : Window {
 			uint extra = GetStringBoundingBox(ci->client_name).width + 15;
 			SetDParam(0, ci->client_id);
 			SetDParam(1, ci->client_playas == INVALID_COMPANY ? ci->client_playas : ci->client_playas + 1);
-			DrawString(name_left + extra, right, y + text_offset, STR_NETWORK_CLIENT_EXTRA, TC_FROMSTRING, SA_RIGHT);
+			DrawString(rtl ? left : name_left + extra, rtl ? name_right - extra : right, y + text_offset, STR_NETWORK_CLIENT_EXTRA, TC_FROMSTRING, SA_RIGHT);
 
 			y += this->line_height;
 		}
