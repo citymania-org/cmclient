@@ -119,14 +119,21 @@ public:
  */
 class DropDownListCompanyItem : public DropDownListItem {
 	Dimension icon_size;
-	uint lockwidth;
+	Dimension lock_icon_size;
+	uint line_height;
 public:
 	bool greyed;
 
 	DropDownListCompanyItem(int result, bool masked, bool greyed) : DropDownListItem(result, masked), greyed(greyed)
 	{
-		this->lockwidth = _networking ? GetSpriteSize(SPR_LOCK).width + 3 : 0;
 		this->icon_size = GetSpriteSize(SPR_COMPANY_ICON);
+		if (_networking) {
+			this->lock_icon_size = GetSpriteSize(SPR_LOCK);
+			this->line_height = max(this->lock_icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
+		} else {
+			this->lock_icon_size.width = 0;
+			this->line_height = max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
+		}
 	}
 
 	virtual ~DropDownListCompanyItem() {}
@@ -141,12 +148,12 @@ public:
 		CompanyID company = (CompanyID)this->result;
 		SetDParam(0, company);
 		SetDParam(1, company);
-		return GetStringBoundingBox(STR_COMPANY_NAME_COMPANY_NUM).width + this->icon_size.width + this->lockwidth + 3;
+		return GetStringBoundingBox(STR_COMPANY_NAME_COMPANY_NUM).width + this->icon_size.width + this->lock_icon_size.width + 3;
 	}
 
 	uint Height(uint width) const
 	{
-		return max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
+		return this->line_height;
 	}
 
 	void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const
@@ -159,11 +166,12 @@ public:
 
 		int icon_offset = (bottom - top - icon_size.height) / 2;
 		int text_offset = (bottom - top - FONT_HEIGHT_NORMAL) / 2;
+		int lock_icon_offset = (bottom - top - this->lock_icon_size.height) / 2;
 
 		DrawCompanyIcon(company, rtl ? right - this->icon_size.width - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT, top + icon_offset);
+		int text_x_ofs = WD_FRAMERECT_LEFT + this->icon_size.width + this->lock_icon_size.width;
 		if (_networking && NetworkCompanyIsPassworded(company)){
-			DrawSprite(SPR_LOCK, PAL_NONE, rtl ? right - this->icon_size.width - this->lockwidth - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT + 3 + this->icon_size.width, top + text_offset);
-			//DrawSprite(SPR_LOCK, PAL_NONE, left + WD_FRAMERECT_LEFT + 3 + this->icon_size.width, top + text_offset);
+			DrawSprite(SPR_LOCK, PAL_NONE, rtl ? right - this->icon_size.width - this->lock_icon_size.width - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT + this->icon_size.width + WD_FRAMERECT_LEFT, top + lock_icon_offset);
 		}
 
 		SetDParam(0, company);
@@ -174,9 +182,7 @@ public:
 		} else {
 			col = sel ? TC_WHITE : TC_BLACK;
 		}
-		int text_x_ofs = 3 + this->icon_size.width + this->lockwidth;
 		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : text_x_ofs), right - WD_FRAMERECT_RIGHT - (rtl ? text_x_ofs : 0), top + text_offset, STR_COMPANY_NAME_COMPANY_NUM, col);
-		//DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : 3 + this->icon_size.width + this->lockwidth), right - WD_FRAMERECT_RIGHT - (rtl ? 3 + this->icon_size.width : 0), top + text_offset, STR_COMPANY_NAME_COMPANY_NUM, col);
 	}
 };
 
