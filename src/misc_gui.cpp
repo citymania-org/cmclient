@@ -1256,6 +1256,7 @@ void ShowQuery(StringID caption, StringID message, Window *parent, QueryCallback
 /** Window for displaying a tooltip. */
 void GuiPrepareTooltipsExtra(Window *parent){
 	const Point p = GetTileBelowCursor();
+	if (p.x == -1) return;
 	const TileIndex tile = TileVirtXY(p.x, p.y);
 
 	if (_cursor.sprite == SPR_CURSOR_QUERY) {
