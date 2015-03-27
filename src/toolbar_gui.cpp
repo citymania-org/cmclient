@@ -1736,6 +1736,7 @@ enum MainToolbarHotkeys {
 	MTHK_LOGINWINDOW,
 	MTHK_SETTINGS_ADV,
 	MTHK_NEWGRF,
+	MTHK_LANDINFO,
 };
 
 /** Main toolbar. */
@@ -1839,6 +1840,7 @@ struct MainToolbarWindow : Window {
 			case MTHK_LOGINWINDOW: ShowLoginWindow(); break;
 			case MTHK_SETTINGS_ADV: ShowGameSettings(); break;
 			case MTHK_NEWGRF: ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, &_grfconfig); break;
+			case MTHK_LANDINFO: PlaceLandBlockInfo(); break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
@@ -1982,6 +1984,7 @@ static Hotkey maintoolbar_hotkeys[] = {
 	Hotkey((uint16)0, "settings_advanced", MTHK_SETTINGS_ADV),
 	Hotkey((uint16)0, "newgrf_window", MTHK_NEWGRF),
 	Hotkey((uint16)0, "sign_list", MTHK_SIGN_LIST),
+	Hotkey((uint16)0, "land_info", MTHK_LANDINFO),
 	HOTKEY_LIST_END
 };
 HotkeyList MainToolbarWindow::hotkeys("maintoolbar", maintoolbar_hotkeys);
