@@ -831,6 +831,12 @@ static void DoRegularFunding(Town *t)
 {
 	bool fund_regularly = HasBit(t->fund_regularly, _local_company);
 	bool do_powerfund = HasBit(t->do_powerfund, _local_company);
+
+	if (do_powerfund && (_settings_client.gui.powerfund_money > Company::Get(_local_company)->money ||
+		    _settings_client.gui.powerfund_houses < t->cache.num_houses)) {
+	    do_powerfund = false;
+	}
+
 	if (!fund_regularly && !do_powerfund)
 		return;
 

@@ -174,6 +174,9 @@ struct GUISettings {
 	bool   show_industry_forbidden_tiles;    ///< higlight areas where industry placement is forbidden regardless of terrain
 	bool   runway_too_short_warn;            ///< warn about aircrafts using too short runways
 
+	uint32 powerfund_money;                  ///< minimum amount of money for powerfund to work
+	uint16 powerfund_houses;                 ///< powerfunding maximum houses limit
+
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
 	 * @return whether the user has sufficient privileges to edit newgrfs in an existing game
