@@ -69,7 +69,16 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+*** v27-150 ***
+- Land info tool works as tooltip, can also be used to mesure distances by dragging
+- land_info hotkey (no default)
+- Money and houses settings for powerfunding
+- Setting to disable "runway too short" warning
+- Some visual improvements for double/quad interface sizes and rtl languages
+
 *** v26-150rc1 ***
+Prepared by dp
+
 Update to 1.5.0-RC1
 - Regular advertisement and powerfunding (in CB window)
 - Regular funding is now smarter
