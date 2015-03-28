@@ -2045,7 +2045,7 @@ struct NetworkClientListWindow : Window {
 		pt.y -= this->GetWidget<NWidgetBase>(WID_CL_PANEL)->pos_y;
 		int item = -1;
 		if (IsInsideMM(pt.y, WD_FRAMERECT_TOP, this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y - WD_FRAMERECT_BOTTOM)) {
-			item = (pt.y - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
+			item = (pt.y - WD_FRAMERECT_TOP) / this->line_height;
 		}
 
 		/* It did not change.. no update! */
