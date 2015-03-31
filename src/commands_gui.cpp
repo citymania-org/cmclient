@@ -359,6 +359,8 @@ struct CommandsToolbarWindow : Window {
 				seprintf(msg, lastof(msg), "!name %s", str);
 				NetworkClientSendChatToServer(msg);
 				break;
+			default:
+				NOT_REACHED();
 		}
 	}
 
@@ -542,8 +544,9 @@ void ShowCommandsToolbar()
 // login window
 class GetHTTPContent: public HTTPCallback {
 public:
-	GetHTTPContent(char * uri): uri(uri) {
+	GetHTTPContent(char *uri): uri(uri) {
 		this->proccessing = false;
+		this->buf_last = lastof(buf);
 	}
 	bool proccessing;
 
@@ -554,21 +557,16 @@ public:
 		NetworkHTTPSocketHandler::Connect(this->uri, this);
 	}
 
-	virtual void OnReceiveData(const char * data, size_t length) {
-		size_t i = length;
+	virtual void OnReceiveData(const char *data, size_t length) {
 		if (data == NULL) {
 			this->cursor = NULL;
 			this->LoginAlready();
 		}
 		else {
-			while(i) {
-				*this->cursor = *data;
-				data++;
-				this->cursor++;
-				i--;
+			for(size_t i=0; i<length && this->cursor < this->buf_last; i++, data++, this->cursor++) {
+				*(this->cursor) = *data;
 			}
-			if (this->cursor - this->buf >= HTTPBUFLEN) this->buf[HTTPBUFLEN] = NULL;
-			else *this->cursor = NULL;
+			*(this->cursor) = '\0';
 		}
 	}
 
@@ -589,14 +587,13 @@ public:
 	}
 
 	virtual ~GetHTTPContent() {
-		free(this->cursor);
-		free(this->buf);
 	}
 private:
 	NetworkHTTPContentConnecter *conn;
 	char buf[HTTPBUFLEN];
-	char * cursor;
-	char * uri;
+	char *buf_last;
+	char *cursor;
+	char *uri;
 };
 //send login
 void AccountLogin(CommunityName community){

@@ -1840,7 +1840,7 @@ struct MainToolbarWindow : Window {
 			case MTHK_LOGINWINDOW: ShowLoginWindow(); break;
 			case MTHK_SETTINGS_ADV: ShowGameSettings(); break;
 			case MTHK_NEWGRF: ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, &_grfconfig); break;
-			case MTHK_LANDINFO: PlaceLandBlockInfo(); break;
+			case MTHK_LANDINFO: this->last_started_action = PlaceLandBlockInfo(); break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
