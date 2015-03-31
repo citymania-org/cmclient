@@ -319,8 +319,9 @@ struct CommandsToolbarWindow : Window {
 			default:
 				if(widget >= CTW_NS0 && widget < CTW_NSEND){
 					char ip[16];
-					if(widget < CTW_NSX4) strecpy(ip, NOVAPOLIS_IPV4_PRIMARY, lastof(ip));
-					else strecpy(ip, NOVAPOLIS_IPV4_SECONDARY, lastof(ip));
+					// if(widget < CTW_NSX4)
+					strecpy(ip, NOVAPOLIS_IPV4_PRIMARY, lastof(ip));
+					// else strecpy(ip, NOVAPOLIS_IPV4_SECONDARY, lastof(ip));
 
 					NetworkClientConnectGame(NetworkAddress(ip, (3980 + widget - CTW_NS0)), COMPANY_SPECTATOR);
 				}
