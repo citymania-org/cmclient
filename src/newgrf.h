@@ -1,4 +1,4 @@
-/* $Id: newgrf.h 26364 2014-02-22 21:12:28Z rubidium $ */
+/* $Id: newgrf.h 27214 2015-03-31 18:45:30Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -61,6 +61,7 @@ enum GrfMiscBit {
 	GMB_TRAIN_WIDTH_32_PIXELS  = 3, ///< Use 32 pixels per train vehicle in depot gui and vehicle details. Never set in the global variable; @see GRFFile::traininfo_vehicle_width
 	GMB_AMBIENT_SOUND_CALLBACK = 4,
 	GMB_CATENARY_ON_3RD_TRACK  = 5, // Unsupported.
+	GMB_SECOND_ROCKY_TILE_SET  = 6,
 };
 
 enum GrfSpecFeature {

@@ -1,4 +1,4 @@
-/* $Id: clear_cmd.cpp 27117 2015-01-10 20:10:51Z frosch $ */
+/* $Id: clear_cmd.cpp 27214 2015-03-31 18:45:30Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -112,7 +112,7 @@ static void DrawTile_Clear(TileInfo *ti)
 			break;
 
 		case CLEAR_ROCKS:
-			DrawGroundSprite((TileHash(ti->x, ti->y) & 1 ? SPR_FLAT_ROCKY_LAND_2 : SPR_FLAT_ROCKY_LAND_1) + SlopeToSpriteOffset(ti->tileh), PAL_NONE);
+			DrawGroundSprite((HasGrfMiscBit(GMB_SECOND_ROCKY_TILE_SET) && (TileHash(ti->x, ti->y) & 1) ? SPR_FLAT_ROCKY_LAND_2 : SPR_FLAT_ROCKY_LAND_1) + SlopeToSpriteOffset(ti->tileh), PAL_NONE);
 			break;
 
 		case CLEAR_FIELDS:
