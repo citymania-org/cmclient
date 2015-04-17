@@ -861,7 +861,7 @@ static void DoRegularFunding(Town *t)
 
 		CompanyByte old = _current_company;
 		_current_company = _local_company;
-		DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION);
+		DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION | CMD_NO_ESTIMATE);
 		_current_company = old;
 	}
 }
@@ -892,7 +892,7 @@ static void DoRegularAdvertising(Town *t) {
 
     CompanyByte old = _current_company;
     _current_company = _local_company;
-    DoCommandP(t->xy, t->index, HK_LADVERT, CMD_DO_TOWN_ACTION);
+    DoCommandP(t->xy, t->index, HK_LADVERT, CMD_DO_TOWN_ACTION | CMD_NO_ESTIMATE);
     _current_company = old;
 }
 

@@ -555,15 +555,18 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 	 * However, in case of incoming network commands or
 	 * map generation we do want to execute. */
 	bool estimate_only = false;
-	switch (_command_proc_table[cmd & CMD_ID_MASK].type) {
-		case CMDT_LANDSCAPE_CONSTRUCTION:
-		case CMDT_VEHICLE_CONSTRUCTION:
-			estimate_only = _shift_pressed && IsLocalCompany() &&
-					!_generating_world && !(cmd & CMD_NETWORK_COMMAND);
-			break;
-		default:
-			break; // just to silence warnings
+	if (!(cmd & CMD_NO_ESTIMATE)) {
+		switch (_command_proc_table[cmd & CMD_ID_MASK].type) {
+			case CMDT_LANDSCAPE_CONSTRUCTION:
+			case CMDT_VEHICLE_CONSTRUCTION:
+				estimate_only = _shift_pressed && IsLocalCompany() &&
+						!_generating_world && !(cmd & CMD_NETWORK_COMMAND);
+				break;
+			default:
+				break; // just to silence warnings
+		}
 	}
+	cmd &= ~CMD_NO_ESTIMATE;
 
 	/* We're only sending the command, so don't do
 	 * fancy things for 'success'. */
