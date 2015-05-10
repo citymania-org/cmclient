@@ -1,4 +1,4 @@
-/* $Id: viewport.cpp 27162 2015-02-22 15:05:48Z frosch $ */
+/* $Id: viewport.cpp 27271 2015-05-08 17:30:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1309,8 +1309,9 @@ static void ViewportAddSigns(DrawPixelInfo *dpi)
  * @param center the (preferred) center of the viewport sign
  * @param top    the new top of the sign
  * @param str    the string to show in the sign
+ * @param str_small the string to show when zoomed out. STR_NULL means same as \a str
  */
-void ViewportSign::UpdatePosition(int center, int top, StringID str, StringID small_str)
+void ViewportSign::UpdatePosition(int center, int top, StringID str, StringID str_small)
 {
 	if (this->width_normal != 0) this->MarkDirty();
 
@@ -1323,8 +1324,8 @@ void ViewportSign::UpdatePosition(int center, int top, StringID str, StringID sm
 	this->center = center;
 
 	/* zoomed out version */
-	if (small_str != STR_NULL) {
-		GetString(buffer, small_str, lastof(buffer));
+	if (str_small != STR_NULL) {
+		GetString(buffer, str_small, lastof(buffer));
 	}
 	this->width_small = VPSM_LEFT + Align(GetStringBoundingBox(buffer, FS_SMALL).width, 2) + VPSM_RIGHT;
 

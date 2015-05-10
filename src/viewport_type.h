@@ -1,4 +1,4 @@
-/* $Id: viewport_type.h 25264 2013-05-19 14:49:25Z rubidium $ */
+/* $Id: viewport_type.h 27271 2015-05-08 17:30:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -51,7 +51,7 @@ struct ViewportSign {
 	uint16 width_normal; ///< The width when not zoomed out (normal font)
 	uint16 width_small;  ///< The width when zoomed out (small font)
 
-	void UpdatePosition(int center, int top, StringID str, StringID small_str=STR_NULL);
+	void UpdatePosition(int center, int top, StringID str, StringID str_small = STR_NULL);
 	void MarkDirty(ZoomLevel maxzoom = ZOOM_LVL_MAX) const;
 };
 

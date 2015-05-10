@@ -1,4 +1,4 @@
-/* $Id: widget.cpp 27030 2014-10-21 19:16:47Z rubidium $ */
+/* $Id: widget.cpp 27272 2015-05-08 17:32:57Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -2524,10 +2524,10 @@ void NWidgetLeaf::Draw(const Window *w)
 bool NWidgetLeaf::ButtonHit(const Point &pt)
 {
 	if (_current_text_dir == TD_LTR) {
-		int button_width = this->pos_x + this->current_x - 12;
+		int button_width = this->pos_x + this->current_x - NWidgetLeaf::dropdown_dimension.width;
 		return pt.x < button_width;
 	} else {
-		int button_left = this->pos_x + 12;
+		int button_left = this->pos_x + NWidgetLeaf::dropdown_dimension.width;
 		return pt.x >= button_left;
 	}
 }

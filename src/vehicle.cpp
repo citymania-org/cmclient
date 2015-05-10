@@ -1,4 +1,4 @@
-/* $Id: vehicle.cpp 27148 2015-02-14 12:53:07Z frosch $ */
+/* $Id: vehicle.cpp 27270 2015-05-08 17:23:55Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -2414,7 +2414,9 @@ void Vehicle::ShowVisualEffect() const
 		return;
 	}
 
-	uint max_speed = this->vcache.cached_max_speed;
+	/* Use the speed as limited by underground and orders. */
+	uint max_speed = this->GetCurrentMaxSpeed();
+
 	if (this->type == VEH_TRAIN) {
 		const Train *t = Train::From(this);
 		/* For trains, do not show any smoke when:
@@ -2423,14 +2425,10 @@ void Vehicle::ShowVisualEffect() const
 		 */
 		if (HasBit(t->flags, VRF_REVERSING) ||
 				(IsRailStationTile(t->tile) && t->IsFrontEngine() && t->current_order.ShouldStopAtStation(t, GetStationIndex(t->tile)) &&
-				t->cur_speed >= t->Train::GetCurrentMaxSpeed())) {
+				t->cur_speed >= max_speed)) {
 			return;
 		}
-
-		max_speed = min(max_speed, t->gcache.cached_max_track_speed);
-		max_speed = min(max_speed, this->current_order.GetMaxSpeed());
 	}
-	if (this->type == VEH_ROAD || this->type == VEH_SHIP) max_speed = min(max_speed, this->current_order.GetMaxSpeed() * 2);
 
 	const Vehicle *v = this;
 
