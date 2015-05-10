@@ -1298,6 +1298,47 @@ static void GrowTownInTile(TileIndex *tile_ptr, RoadBits cur_rb, DiagDirection t
 }
 
 /**
+ * Checks whether it makes sense to go in particular direction for town expansion.
+ * Does a simple test for most obvious and common things only.
+ * @param  tile search is currently at
+ * @param  dir  direction in which it indends to go
+ * @return true if is worth going in that direction
+ */
+static bool CanGrowTownInDirection(TileIndex tile, DiagDirection dir) {
+	TileIndex target_tile = tile + TileOffsByDiagDir(dir);
+	if (HasTileWaterGround(target_tile)) return false;
+	if (!IsValidTile(target_tile)) return false;
+	RoadBits target_rb = GetTownRoadBits(target_tile);
+
+	if (_settings_game.economy.allow_town_roads) {
+		switch (GetTileType(target_tile)) {
+			case MP_ROAD: {
+				if (target_rb == ROAD_NONE) {
+					/* can't build extra roads here (depot, standard station, etc) */
+					return false;
+				}
+				break;
+			}
+			case MP_HOUSE:
+			case MP_STATION:
+			case MP_INDUSTRY:
+			case MP_OBJECT:
+				/* checked for void and water earlier */
+				return false;
+
+			default:;
+		}
+	} else {
+		/* we can't build roads so bailing out if there is no way
+		 * back or it ends with half-road (i.e. back is the only way) */
+		RoadBits back_rb = DiagDirToRoadBits(ReverseDiagDir(dir));
+		if (!(target_rb & back_rb) || !(target_rb & ~back_rb))
+			return false;
+	}
+	return true;
+}
+
+/**
  * Returns "growth" if a house was built, or no if the build failed.
  * @param t town to inquiry
  * @param tile to inquiry
@@ -1347,9 +1388,21 @@ static int GrowTownAtRoad(Town *t, TileIndex tile)
 			/* Only build in the direction away from the tunnel or bridge. */
 			target_dir = ReverseDiagDir(GetTunnelBridgeDirection(tile));
 		} else {
-			/* Select a random bit from the blockmask, walk a step
-			 * and continue the search from there. */
-			do target_dir = RandomDiagDir(); while (!(cur_rb & DiagDirToRoadBits(target_dir)));
+			/* Select a random bit from the blockmask, and check whether
+			 * we can grow in that direction. */
+			RoadBits dir_rb = ROAD_NONE;
+			do {
+				// excluding direction that failed check
+				cur_rb &= ~dir_rb;
+				if (cur_rb == ROAD_NONE) {
+					return GROWTH_SEARCH_STOPPED;
+				}
+				// selecting random direction
+				do {
+					target_dir = RandomDiagDir();
+					dir_rb = DiagDirToRoadBits(target_dir);
+				} while (!(cur_rb & dir_rb));
+			} while (!CanGrowTownInDirection(tile, target_dir));
 		}
 		tile = TileAddByDiagDir(tile, target_dir);
 
