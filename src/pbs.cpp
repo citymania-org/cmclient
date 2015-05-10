@@ -1,4 +1,4 @@
-/* $Id: pbs.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: pbs.cpp 27270 2015-05-08 17:23:55Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -85,7 +85,11 @@ bool TryReserveRailTrack(TileIndex tile, Track t, bool trigger_stations)
 
 	if (_settings_client.gui.show_track_reservation) {
 		/* show the reserved rail if needed */
-		MarkTileDirtyByTile(tile);
+		if (IsBridgeTile(tile)) {
+			MarkBridgeDirty(tile);
+		} else {
+			MarkTileDirtyByTile(tile);
+		}
 	}
 
 	switch (GetTileType(tile)) {
@@ -141,7 +145,11 @@ void UnreserveRailTrack(TileIndex tile, Track t)
 	assert((GetTileTrackStatus(tile, TRANSPORT_RAIL, 0) & TrackToTrackBits(t)) != 0);
 
 	if (_settings_client.gui.show_track_reservation) {
-		MarkTileDirtyByTile(tile);
+		if (IsBridgeTile(tile)) {
+			MarkBridgeDirty(tile);
+		} else {
+			MarkTileDirtyByTile(tile);
+		}
 	}
 
 	switch (GetTileType(tile)) {

@@ -1,4 +1,4 @@
-/* $Id: train_cmd.cpp 27134 2015-02-01 20:54:24Z frosch $ */
+/* $Id: train_cmd.cpp 27270 2015-05-08 17:23:55Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -2216,8 +2216,12 @@ static void ClearPathReservation(const Train *v, TileIndex tile, Trackdir track_
 				SetTunnelBridgeReservation(end, false);
 
 				if (_settings_client.gui.show_track_reservation) {
-					MarkTileDirtyByTile(tile);
-					MarkTileDirtyByTile(end);
+					if (IsBridge(tile)) {
+						MarkBridgeDirty(tile);
+					} else {
+						MarkTileDirtyByTile(tile);
+						MarkTileDirtyByTile(end);
+					}
 				}
 			}
 		}

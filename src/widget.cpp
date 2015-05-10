@@ -1,4 +1,4 @@
-/* $Id: widget.cpp 27030 2014-10-21 19:16:47Z rubidium $ */
+/* $Id: widget.cpp 27272 2015-05-08 17:32:57Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

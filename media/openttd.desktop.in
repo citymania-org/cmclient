@@ -1,4 +1,4 @@
-# $Id: openttd.desktop.in 25783 2013-09-19 07:42:19Z matthijs $
+# $Id: openttd.desktop.in 27270 2015-05-08 17:23:55Z frosch $
 # http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-1.0.html
 [Desktop Entry]
 Type=Application
@@ -9,4 +9,4 @@ Exec=!!TTD!!
 Terminal=false
 Categories=!!MENU_GROUP!!
 Comment=A clone of Transport Tycoon Deluxe
-Keywords=game;simulation;transport;tycoon;deluxe;economics;multiplayer;money;train;ship;bus;truck;aircraft;cargo
+Keywords=game;simulation;transport;tycoon;deluxe;economics;multiplayer;money;train;ship;bus;truck;aircraft;cargo;
