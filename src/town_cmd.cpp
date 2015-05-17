@@ -1472,11 +1472,12 @@ static bool CanFollowRoad(TileIndex tile, DiagDirection dir)
  * @param tile to inquiry
  * @return true if town expansion was possible
  */
-static bool GrowTownAtRoad(Town *t, TileIndex tile)
+static bool GrowTownAtRoad(Town *t, TileIndex start_tile, TileIndex &tile)
 {
 	/* Special case.
 	 * @see GrowTownInTile Check the else if
 	 */
+	tile = start_tile;
 	DiagDirection target_dir = DIAGDIR_END; // The direction in which we want to extend the town
 
 	assert(tile < MapSize());
@@ -1499,7 +1500,6 @@ static bool GrowTownAtRoad(Town *t, TileIndex tile)
 			break;
 	}
 
-	uint16 houses_prev = t->cache.num_houses;
 	do {
 		RoadBits cur_rb = GetTownRoadBits(tile); // The RoadBits of the current tile
 
@@ -1510,12 +1510,6 @@ static bool GrowTownAtRoad(Town *t, TileIndex tile)
 		 * and return if no more road blocks available */
 		if (IsValidDiagDirection(target_dir)) cur_rb &= ~DiagDirToRoadBits(ReverseDiagDir(target_dir));
 		if (cur_rb == ROAD_NONE) {
-			if (_grow_town_result != GROWTH_SUCCEED){
-				UpdateTownGrowthTile(tile, TGTS_CYCLE_SKIPPED);
-			}
-			else if (t->cache.num_houses <= houses_prev){
-				UpdateTownGrowthTile(tile, TGTS_HOUSE_SKIPPED);
-			}
 			return _grow_town_result == GROWTH_SUCCEED;
 		}
 
@@ -1552,12 +1546,6 @@ static bool GrowTownAtRoad(Town *t, TileIndex tile)
 		/* Max number of times is checked. */
 	} while (--_grow_town_result >= 0);
 
-	if (_grow_town_result != GROWTH_SUCCEED - 1){
-		UpdateTownGrowthTile(tile, TGTS_CYCLE_SKIPPED);
-	}
-	else if (t->cache.num_houses <= houses_prev){
-		UpdateTownGrowthTile(tile, TGTS_HOUSE_SKIPPED);
-	}
 	return _grow_town_result == GROWTH_SUCCEED - 1;
 }
 
@@ -1609,8 +1597,14 @@ static bool GrowTown(Town *t)
 	const TileIndexDiffC *ptr;
 	for (ptr = _town_coord_mod; ptr != endof(_town_coord_mod); ++ptr) {
 		if (GetTownRoadBits(tile) != ROAD_NONE) {
-			bool success = GrowTownAtRoad(t, tile);
+			uint16 houses_prev = t->cache.num_houses;
+			TileIndex end_tile;
+			bool success = GrowTownAtRoad(t, tile, end_tile);
 			cur_company.Restore();
+			if (!success)
+				UpdateTownGrowthTile(end_tile, TGTS_CYCLE_SKIPPED);
+			else if (t->cache.num_houses <= houses_prev)
+				UpdateTownGrowthTile(end_tile, TGTS_HOUSE_SKIPPED);
 			return success;
 		}
 		tile = TILE_ADD(tile, ToTileIndexDiff(*ptr));
