@@ -475,7 +475,7 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Message history
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Land area information
-STR_ABOUT_MENU_SEPARATOR                                        :Novapolis
+STR_ABOUT_MENU_SEPARATOR                                        :CityMania
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot
@@ -5153,7 +5153,7 @@ STR_TOOLBAR_COMMANDS_ME_TOOLTIP                                 :{BLACK}Show you
 
 #login window
 STR_LOGINWINDOW_CAPTION                                         :{WHITE}Login Window
-STR_LOGINWINDOW_NOVAPOLIS                                       :{BLACK}Novapolis
+STR_LOGINWINDOW_CITYMANIA                                       :{BLACK}CityMania
 STR_LOGINWINDOW_NICE                                            :{BLACK}N-ice
 STR_LOGINWINDOW_BTPRO                                           :{BLACK}BTPro
 STR_LOGINERROR_NOCONNECT                                        :{WHITE}Failed to connect
@@ -5190,7 +5190,7 @@ STR_SORT_BY_HOUSES                                              :Houses
 STR_ORDER_DIST                                                  :{NUM}, {NUM}
 
 #server list
-STR_NETWORK_SELECT_NOVA                                         :{BLACK}Novapolis
+STR_NETWORK_SELECT_CITYMANIA                                    :{BLACK}CityMania
 STR_NETWORK_SELECT_NICE                                         :{BLACK}N-ice
 STR_NETWORK_SELECT_BTPRO                                        :{BLACK}BTPro
 STR_NETWORK_SELECT_REDDIT                                       :{BLACK}reddit

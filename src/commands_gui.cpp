@@ -149,7 +149,7 @@ enum LoginWindowQueryWidgets {
 };
 
 enum CommunityName {
-	NOVAPOLIS,
+	CITYMANIA,
 	NICE,
 	BTPRO,
 };
@@ -599,7 +599,7 @@ private:
 void AccountLogin(CommunityName community){
 	char uri[128];
 	switch(community){
-		case NOVAPOLIS:
+		case CITYMANIA:
 			seprintf(uri, lastof(uri), "!login %s %s", _inilogindata[NOVAPOLISUSER], _inilogindata[NOVAPOLISPW]);
 			NetworkClientSendChatToServer(uri);
 			return;
@@ -704,7 +704,7 @@ struct LoginWindow : Window {
 	{
 		switch (widget) {
 			case LWW_NOVAPOLIS:
-				if(_novahost && _networking) AccountLogin(NOVAPOLIS);
+				if(_novahost && _networking) AccountLogin(CITYMANIA);
 				break;
 			case LWW_NICE:
 				if(_networking) AccountLogin(NICE);
@@ -774,7 +774,7 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, LWW_NOVAPOLIS_PW), SetMinimalSize(30, 20), SetFill(1, 0), SetDataTip(STR_LOGIN_PASSWORD_DISPLAY, STR_LOGIN_CHANGE_PASSWORD),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 10),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_PURPLE, LWW_NOVAPOLIS), SetMinimalSize(100, 30), SetFill(1, 0), SetDataTip(STR_LOGINWINDOW_NOVAPOLIS, STR_LOGIN_SEND_LOGIN_TT),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_PURPLE, LWW_NOVAPOLIS), SetMinimalSize(100, 30), SetFill(1, 0), SetDataTip(STR_LOGINWINDOW_CITYMANIA, STR_LOGIN_SEND_LOGIN_TT),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 10),
 			//n-ice
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),

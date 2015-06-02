@@ -790,14 +790,14 @@ public:
 			case WID_NG_NICE:
 			case WID_NG_BTPRO:
 			case WID_NG_REDDIT:
-			case WID_NG_NOVA:
+			case WID_NG_CITYMANIA:
 				if(!UDP_CC_queried){
 					NetworkUDPQueryMasterServer();
 					UDP_CC_queried = true;
 				}
 				if(widget == WID_NG_NICE) this->filter_editbox.text.Assign("n-ice");
 				else if(widget == WID_NG_BTPRO) this->filter_editbox.text.Assign("BTPro");
-				else if(widget == WID_NG_NOVA) this->filter_editbox.text.Assign("Novapolis");
+				else if(widget == WID_NG_CITYMANIA) this->filter_editbox.text.Assign("citymania");
 				else if(widget == WID_NG_REDDIT) this->filter_editbox.text.Assign("reddit");
 				this->servers.ForceRebuild();
 				this->BuildGUINetworkGameList();
@@ -968,7 +968,7 @@ static const NWidgetPart _nested_network_game_widgets[] = {
 						NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NG_CONN_BTN),
 											SetDataTip(STR_BLACK_STRING, STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP),
 						NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_NOVA), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_NOVA, STR_NETWORK_SELECT_SERVER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_CITYMANIA), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_CITYMANIA, STR_NETWORK_SELECT_SERVER_TOOLTIP),
 						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_BTPRO), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_BTPRO, STR_NETWORK_SELECT_SERVER_TOOLTIP),
 						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_NICE), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_NICE, STR_NETWORK_SELECT_SERVER_TOOLTIP),
 						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_REDDIT), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_REDDIT, STR_NETWORK_SELECT_SERVER_TOOLTIP),
