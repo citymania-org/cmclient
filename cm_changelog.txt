@@ -5,6 +5,10 @@ Unless you encouter the same bug on unpatched OpenTTD client do not report it to
 
 
 == INSTALL ==
+Unlike Novapolis client Citymania one is shipped as a complete package, not
+just a patch, so it no longer needs vanila OpenTTD installation to work.
+But it can also be installed in the same old way described below.
+
 If you have shared OpenTTD folder, you can just unzip anywhere and launch
 If you dont use shared folder, unzip into your OpenTTD folder
 innerhighlight.grf in data folder is required, copy it to data or content_download/data folder
@@ -26,7 +30,7 @@ Possible situations:
 	Copy all files except LANG folder and OPENTTD.EXE into User profile folder called OpenTTD
 	This will enable you to use any number or openttd versions/clients under condition you keep openttd.exe and its lang files in one folder (every client comes with binary and lang folder at least)
 LINUX
-CityMania does not ship linux client. Your only chance is to compile it by yourself.
+CityMania does not ship linux client. Your only chance is to download source package and compile it by yourself.
 Process is easy and simple guide is at http://wiki.openttd.org/Compiling_on_(GNU/)Linux_and_*BSD
 
 
@@ -69,12 +73,12 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
-*** v28-151 TODO date***
-- Renamed to CityMania client as successor of Novapolis, all community-related things changed accordingly.
-- TODO Ship full openttd version, not just patch that requires original ttd
+*** v28-151 (3 Jun 2015)***
+- Renamed to CityMania client as successor of Novapolis, community-related things changed accordingly.
+- Now is shipped in a complete package, similar to vanila OpenTTD, so no longer require it to be installed first.
 - Providing complete source pack instead of just diff
-- Show houses count in town gui, town can be sorted by it too.
-- TODO 1.5.1 cb changes
+- Also note that town growth mechanics is changed a bit in 1.5.1. It's now safe (no CS) to keep depots and extra roadbits in town. And previously HS cases become CS. Now HS can only happen when town is allowed to build roads and decides to build one instead of house.
+- Show houses count in towns list, towns can be sorted by it too.
 
 *** v27-150 ***
 - Land info tool works as tooltip, can also be used to mesure distances by dragging
