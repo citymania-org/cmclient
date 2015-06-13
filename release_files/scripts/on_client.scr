@@ -1,0 +1,2 @@
+alias login "say_client 1 '!login nick password'; "
+alias lp "say_client 1 '!login %A'"
