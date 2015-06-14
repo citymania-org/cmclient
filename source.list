@@ -3,6 +3,7 @@ airport.cpp
 animated_tile.cpp
 articulated_vehicles.cpp
 autoreplace.cpp
+bitstream.cpp
 bmp.cpp
 cargoaction.cpp
 cargomonitor.cpp
@@ -141,6 +142,7 @@ autoslope.h
 base_media_base.h
 base_media_func.h
 base_station_base.h
+bitstream.h
 bmp.h
 bridge.h
 cargo_table_gui.h
@@ -608,6 +610,8 @@ saveload/animated_tile_sl.cpp
 saveload/autoreplace_sl.cpp
 saveload/cargomonitor_sl.cpp
 saveload/cargopacket_sl.cpp
+saveload/citymania_sl.cpp
+saveload/citymania_sl.h
 saveload/cheat_sl.cpp
 saveload/company_sl.cpp
 saveload/depot_sl.cpp

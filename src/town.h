@@ -256,6 +256,7 @@ bool CB_Enabled();
 void CB_SetCB(bool cb);
 void CB_SetStorage(uint storage);
 void CB_SetRequirements(CargoID cargo, uint req, uint from, uint decay);
+void CB_ResetRequirements();
 uint CB_GetReq(CargoID cargo);
 uint CB_GetFrom(CargoID cargo);
 uint CB_GetDecay(CargoID cargo);
@@ -274,8 +275,9 @@ enum TownGrowthTileState {
 	TGTS_CB_HOUSE_REMOVED
 };
 
-extern std::map<TileIndex, TownGrowthTileState> _towns_growth_tiles_last_month;
-extern std::map<TileIndex, TownGrowthTileState> _towns_growth_tiles;
+typedef std::map<TileIndex, TownGrowthTileState> TownsGrowthTilesIndex;
+extern TownsGrowthTilesIndex _towns_growth_tiles_last_month;
+extern TownsGrowthTilesIndex _towns_growth_tiles;
 
 void UpdateTownGrowthTile(TileIndex tile, TownGrowthTileState state);
 void ResetTownsGrowthTiles();

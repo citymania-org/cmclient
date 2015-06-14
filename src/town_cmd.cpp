@@ -61,8 +61,8 @@ uint days_in_month[] = {31, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};//CB
 void CB_UpdateTownStorage(Town *t); //CB
 
 const Money NOVAPOLIS_COMPANY_MONEY_THRESHOLD = INT64_MAX >> 4;
-std::map<TileIndex, TownGrowthTileState> _towns_growth_tiles_last_month;
-std::map<TileIndex, TownGrowthTileState> _towns_growth_tiles;
+TownsGrowthTilesIndex _towns_growth_tiles_last_month;
+TownsGrowthTilesIndex _towns_growth_tiles;
 
 TownID _new_town_id;
 uint32 _town_cargoes_accepted; ///< Bitmap of all cargoes accepted by houses.
@@ -1683,15 +1683,14 @@ void UpdateTownMaxPass(Town *t)
 }
 
 //CB
+
 bool CB_Enabled(){
 	return _cb_enabled;
 }
 void CB_SetCB(bool cb){
 	_cb_enabled = cb;
 	if(!_cb_enabled){
-		for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++){
-			CB_SetRequirements(cargo, 0, 0, 0);
-		}
+		CB_ResetRequirements();
 	}
 }
 void CB_SetStorage(uint storage){
@@ -1701,6 +1700,11 @@ void CB_SetRequirements(CargoID cargo, uint req, uint from, uint decay){
 	CBREQ[cargo] = req;
 	CBFROM[cargo] = from;
 	CBDECAY[cargo] = decay;
+}
+void CB_ResetRequirements() {
+	for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++){
+		CB_SetRequirements(cargo, 0, 0, 0);
+	}
 }
 uint CB_GetReq(CargoID cargo){
 	return CBREQ[cargo];

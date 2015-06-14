@@ -11,9 +11,13 @@
 
 #include "../stdafx.h"
 #include "../newgrf_storage.h"
+#include "citymania_sl.h"
 #include "saveload.h"
 
 #include "../safeguards.h"
+
+// Luukland_Citybuilder grf id actually
+#define CITYMANIA_GRFID 0x534B0501U
 
 /** Description of the data to save and load in #PersistentStorage. */
 static const SaveLoad _storage_desc[] = {
@@ -22,15 +26,62 @@ static const SaveLoad _storage_desc[] = {
 	 SLE_END()
 };
 
+// static void hexdump(uint8 *data) {
+// 	uint i;
+// 	for (i = 0; i < 20; i++) {
+// 		if (i) fprintf(stderr, " : ");
+// 		fprintf(stderr, "%02x", data[i]);
+// 	}
+// 	fprintf(stderr, i >= 20 ? " ...\n" : "\n");
+// }
+
 /** Load persistent storage data. */
 static void Load_PSAC()
 {
 	int index;
 
+	/*
+		CITYMANIA_GRFID is used to hide extra data in persitant storages.
+		To save a bit of memory we only keep at most one PS with this
+		grfid and it is later discarded on save.
+	*/
+	PersistentStorage *ps = NULL;
+	u8vector cmdata;
+
 	while ((index = SlIterateArray()) != -1) {
-		assert(PersistentStorage::CanAllocateItem());
-		PersistentStorage *ps = new (index) PersistentStorage(0, 0, 0);
+		if (ps == NULL) {
+			assert(PersistentStorage::CanAllocateItem());
+			ps = new (index) PersistentStorage(0, 0, 0);
+		}
 		SlObject(ps, _storage_desc);
+
+		if (ps->grfid == CITYMANIA_GRFID) {
+			uint8 *data = (uint8 *)(ps->storage);
+			cmdata.insert(cmdata.end(), data, data + 64);
+		} else {
+			ps = NULL;
+		}
+	}
+
+	CM_DecodeData(cmdata);
+}
+
+static void Save_CMDataAsPSAC() {
+	uint32 grfid = CITYMANIA_GRFID;
+	u8vector data = CM_EncodeData();
+	uint8 *ptr = &data[0];
+	SaveLoadGlobVarList _desc[] = {
+		SLEG_CONDVAR(grfid, SLE_UINT32,       6, SL_MAX_VERSION),
+		SLEG_CONDARR(*ptr, SLE_UINT32, 16, 161, SL_MAX_VERSION),
+		SLEG_END()
+	};
+	uint index = PersistentStorage::GetNumItems();
+
+	int n_chunks = data.size() / 64;
+	for (int i = 0; i < n_chunks; i++, ptr += 64) {
+		_desc[1].address = (void *)ptr;
+		SlSetArrayIndex(index + i);
+		SlGlobList(_desc);
 	}
 }
 
@@ -38,13 +89,17 @@ static void Load_PSAC()
 static void Save_PSAC()
 {
 	PersistentStorage *ps;
-
 	/* Write the industries */
 	FOR_ALL_STORAGES(ps) {
+		if (ps->grfid == CITYMANIA_GRFID) {
+			continue;
+		}
 		ps->ClearChanges();
 		SlSetArrayIndex(ps->index);
 		SlObject(ps, _storage_desc);
 	}
+
+	Save_CMDataAsPSAC();
 }
 
 /** Chunk handler for persistent storages. */
