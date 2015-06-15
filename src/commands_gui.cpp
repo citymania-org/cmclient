@@ -21,11 +21,12 @@ IniFile *_inilogin = NULL;
 
 static const int HTTPBUFLEN = 128;
 
+// nova* stuff probabaly obsolete
 static const char * const NOVAPOLIS_IPV4_PRIMARY   = "37.157.196.78";
 static const char * const NOVAPOLIS_IPV6_PRIMARY   = "2a02:2b88:2:1::1d73:1";
 static const char * const NOVAPOLIS_IPV4_SECONDARY = "89.111.65.225";
 static const char * const NOVAPOLIS_IPV6_SECONDARY = "fe80::20e:7fff:fe23:bee0";
-static const char * const NOVAPOLIS_STRING         = "novapolis";
+static const char * const NOVAPOLIS_STRING         = "CityMania";
 static const char * const NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken.php?user=%s&password=%s";
 static const char * const BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken.php?user=%s&password=%s";
 
@@ -170,17 +171,7 @@ void AccountLogin(CommunityName community);
 void IniReloadLogin();
 char * GetLoginItem(const char * item);
 
-bool novahost(){
-	_novahost = false;
-	for(int i = 0, len = lengthof(NOVA_IP_ADDRESSES); i < len; i++){
-		if(strcmp(_settings_client.network.last_host, NOVA_IP_ADDRESSES[i]) == 0){
-			_novahost = true;
-			break;
-		}
-	}
-	if(_novahost == false && strstr(_settings_client.network.last_host, NOVAPOLIS_STRING) != NULL){
-		_novahost = true;
-	}
+bool novahost() {
 	return _novahost;
 }
 

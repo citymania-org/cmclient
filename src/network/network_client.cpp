@@ -40,7 +40,7 @@
 #include "../safeguards.h"
 /* This file handles all the client-commands */
 
-void SyncCBClient(byte * msg);
+void SyncCMUser(const char *msg);
 
 /** Read some packets, and when do use that data as initial load filter. */
 struct PacketReader : LoadFilter {
@@ -269,9 +269,8 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 				_network_first_time = false;
 				SendAck();
 				extern bool novahost();
-				if(novahost()){
-					NetworkClientSendChatToServer("!check 1444"); //check version
-					CB_SetCB(false);
+				if(novahost()) {
+					NetworkClientSendChatToServer("!check 1512"); //check version
 				}
 			}
 
@@ -1000,7 +999,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHAT(Packet *p)
 	}
 
 	if (ci != NULL) {
-		if (strncmp(msg, "synccbclient", 12) == 0) SyncCBClient(p->buffer);
+		if (strncmp(msg, "synccmuser", 10) == 0) SyncCMUser(msg);
 		else NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), self_send, name, msg, data);
 	}
 	return NETWORK_RECV_STATUS_OKAY;
@@ -1323,49 +1322,11 @@ bool NetworkMaxSpectatorsReached()
 	return NetworkSpectatorCount() >= (_network_server ? _settings_client.network.max_spectators : _network_server_max_spectators);
 }
 
-void SyncCBClient(byte *msg){ //len = 3 + 6 + 12 +    3 + 6*cargo
-	size_t pos = 21;
-	size_t length = pos;
-	byte tmp;
-
-	while(msg[length] != '\0'){ length++; }
-
-	_novarole = msg[pos++] == 'A';
-	if(length == pos) return;
-
-	CB_SetCB(true);
-
-	tmp = msg[pos++];
-	_settings_client.gui.cb_distance_check = (tmp == 0xFF) ? 0 : tmp;
-	tmp = msg[pos++];
-	CB_SetStorage((tmp == 0xFF) ? 0 : (uint)tmp);
-
-	for(int i = 0; i < NUM_CARGO; i++){
-		CB_SetRequirements(i, 0, 0, 0);
-	}
-
-	//IConsolePrintF(CC_INFO, "cb check %i, storage %i", _settings_client.gui.cb_distance_check, tmp);
-	uint8 cargo;
-	uint req, from, decay;
-	while(pos < length){ //CargoID NUM_CARGO
-		cargo = msg[pos++];
-		if(cargo == 0xFF) cargo = 0;
-
-		tmp = msg[pos++];
-		req = (tmp == 0xFF) ? 0 : tmp;
-		tmp = msg[pos++];
-		req += (tmp == 0xFF) ? 0 : (tmp << 8);
-
-		tmp = msg[pos++];
-		from = (tmp == 0xFF) ? 0 : tmp;
-		tmp = msg[pos++];
-		from += (tmp == 0xFF) ? 0 : (tmp << 8);
-
-		tmp = msg[pos++];
-		decay = (tmp == 0xFF) ? 0 : tmp;
-
-		CB_SetRequirements(cargo, req, from, decay);
-		//IConsolePrintF(CC_INFO, "cargo#%i %i/%i/%i", cargo, req, from, decay);
-	}
+void SyncCMUser(const char *msg) {
+	uint user_id, role;
+	fprintf(stderr, "oaeu [%s]\n", msg);
+	sscanf(msg + 10, "%u %u", &user_id, &role);
+	_novarole = (role >= 50);
+	DEBUG(net, 1, "CityMania user synchronized: %u %u", user_id, role);
 }
 #endif /* ENABLE_NETWORK */

@@ -1693,9 +1693,15 @@ void CB_SetCB(bool cb){
 		CB_ResetRequirements();
 	}
 }
+
+uint CB_GetStorage() {
+	return _cb_storage;
+}
+
 void CB_SetStorage(uint storage){
 	_cb_storage = storage;
 }
+
 void CB_SetRequirements(CargoID cargo, uint req, uint from, uint decay){
 	CBREQ[cargo] = req;
 	CBFROM[cargo] = from;
@@ -3686,8 +3692,6 @@ void TownsMonthlyLoop()
 		}
 
 		if (CB_Enabled() && !t->larger_town) CB_UpdateTownStorage(t); //CB
-		t->houses_demolished = 0;
-		t->houses_reconstruction = 0;
 
 		UpdateTownAmounts(t);
 		UpdateTownRating(t);
@@ -3697,6 +3701,8 @@ void TownsMonthlyLoop()
 
 		DoRegularFunding(t);
 
+		t->houses_demolished = 0;
+		t->houses_reconstruction = 0;
 		t->houses_skipped_last_month = t->houses_skipped - t->houses_skipped_prev;
 		t->houses_skipped_prev = t->houses_skipped;
 		t->cycles_skipped_last_month = t->cycles_skipped - t->cycles_skipped_prev;

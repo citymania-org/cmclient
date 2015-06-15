@@ -254,6 +254,7 @@ const CargoSpec *FindFirstCargoWithTownEffect(TownEffect effect);
 
 bool CB_Enabled();
 void CB_SetCB(bool cb);
+uint CB_GetStorage();
 void CB_SetStorage(uint storage);
 void CB_SetRequirements(CargoID cargo, uint req, uint from, uint decay);
 void CB_ResetRequirements();

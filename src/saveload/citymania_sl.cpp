@@ -15,13 +15,13 @@ static void CM_EncodeTownsExtraInfo(BitOStream &bs)
 	uint n_affected_towns = 0;
 	FOR_ALL_TOWNS(t) {
 		if (t->growing_by_chance || t->houses_reconstruction ||
-				t->houses_construction || t->houses_demolished)
+				t->houses_demolished)
 			n_affected_towns++;
 	}
 	bs.WriteBytes(n_affected_towns, 2);
 	FOR_ALL_TOWNS(t) {
 		if (t->growing_by_chance || t->houses_reconstruction ||
-				t->houses_construction || t->houses_demolished) {
+				t->houses_demolished) {
 			bs.WriteBytes(t->index, 2);
 			bs.WriteBytes(t->growing_by_chance, 1);
 			bs.WriteBytes(t->houses_reconstruction, 2);
@@ -76,6 +76,8 @@ static void CM_EncodeTownsCargo(BitOStream &bs)
 			cb_cargos[n_cb_cargos++] = cargo;
 	}
 
+	bs.WriteBytes(CB_GetStorage(), 1);
+	bs.WriteBytes(_settings_client.gui.cb_distance_check, 1);
 	bs.WriteBytes(n_cb_cargos, 1);
 	for (uint i = 0; i < n_cb_cargos; i++) {
 		CargoID cargo = cb_cargos[i];
@@ -153,6 +155,8 @@ static void CM_DecodeTownsLayoutErrors(BitIStream &bs)
 
 static void CM_DecodeTownsCargo(BitIStream &bs)
 {
+	CB_SetStorage(bs.ReadBytes(1));
+	_settings_client.gui.cb_distance_check = bs.ReadBytes(1);
 	uint n_cb_cargos = bs.ReadBytes(1);
 	CB_ResetRequirements();
 	CargoID cb_cargos[NUM_CARGO];
@@ -192,6 +196,8 @@ u8vector CM_EncodeData()
 	BitOStream bs;
 	bs.Reserve(1000);
 	bs.WriteBytes(CM_DATA_FORMAT_VERSION, 2);
+	bs.WriteBytes(1512, 2);  // TODO client version
+	bs.WriteBytes(CB_Enabled(), 1);
 	bs.WriteBytes(_date, 4);  // Just in case we'll need to detect that game
 	bs.WriteBytes(_date_fract, 1);  // was saved by unmodified client
 	bs.WriteBytes(0, 4);  // Reserved
@@ -214,13 +220,15 @@ u8vector CM_EncodeData()
 void CM_DecodeData(u8vector &data)
 {
 	ResetTownsGrowthTiles();
+	extern bool _novahost;
 	if (data.size() == 0) {
+		_novahost = false;
 		CB_SetCB(false);
 		DEBUG(sl, 2, "No citybuilder data");
 		return;
 	}
 	DEBUG(sl, 2, "Citybuilder data takes %lu bytes", data.size());
-	CB_SetCB(true);
+	_novahost = true;
 	BitIStream bs(data);
 	try {
 		uint version = bs.ReadBytes(2);
@@ -228,11 +236,20 @@ void CM_DecodeData(u8vector &data)
 			DEBUG(sl, 0, "Savegame was made with different version of client, extra citybuilder data was not loaded");
 			return;
 		}
-		bs.ReadBytes(4);  // _date
-		bs.ReadBytes(1);  // _date_fract
+		bs.ReadBytes(2);  // client version
+		bool is_cb = bs.ReadBytes(1);
+		CB_SetCB(is_cb);
+		int32 date = bs.ReadBytes(4);  // date
+		uint32 date_fract = bs.ReadBytes(1);  // date_fract
+		if (date != _date || date_fract != _date_fract) {
+			DEBUG(sl, 0, "Savegame was run in unmodified client, extra cb data "
+			      "preserved, but may not be accurate");
+		}
 		bs.ReadBytes(4);  // reserved
 		bs.ReadBytes(4);  // reserved
-		CM_DecodeTownsCargo(bs);
+		if (is_cb) {
+			CM_DecodeTownsCargo(bs);
+		}
 		CM_DecodeTownsExtraInfo(bs);
 		CM_DecodeTownsLayoutErrors(bs);
 	}
