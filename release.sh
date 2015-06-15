@@ -12,7 +12,7 @@ rm $RELEASE_FNAME
 rm $RELEASE64_FNAME
 rm -rf $TMP
 mkdir $TMP
-hg diff -r openttd -B --nodates -X release_files -X make_diff.sh -X release.sh -X check_diff.sh -X novattd.sublime-project -X src/rev.cpp -X .hgignore -X src/rev.cpp.in -X Makefile.src.in -X build-number.txt > $TMP/cmclient.diff
+hg diff -r openttd -B --nodates -X release_files -X make_diff.sh -X release.sh -X check_diff.sh -X novattd.sublime-project -X .hgignore -X src/rev.cpp.in -X Makefile.src.in -X build-number.txt > $TMP/cmclient.diff
 tar xf ~/Downloads/openttd-$VER-source.tar.* -C $TMP
 patch -p1 -d $TMP_SRC < $TMP/cmclient.diff
 pushd $TMP_SRC
