@@ -1324,7 +1324,6 @@ bool NetworkMaxSpectatorsReached()
 
 void SyncCMUser(const char *msg) {
 	uint user_id, role;
-	fprintf(stderr, "oaeu [%s]\n", msg);
 	sscanf(msg + 10, "%u %u", &user_id, &role);
 	_novarole = (role >= 50);
 	DEBUG(net, 1, "CityMania user synchronized: %u %u", user_id, role);
