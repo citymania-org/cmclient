@@ -73,6 +73,12 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+*** 1.5.1-2/29 (16 Jun 2015) ***
+- Stores most of CityMania client extra data in savegame
+	- Includes CB requirements, CB deliveries, CS/HS/HR, RTM/DTM and town growth zoning.
+	- It also means that all of these are now synchronized when you join CityMania servers.
+	- Savegame is compatible with unmodified clients (they obviously don't understand extra data, but preserve it intact).
+
 *** v28-151 (3 Jun 2015)***
 - Renamed to CityMania client as successor of Novapolis, community-related things changed accordingly.
 - Now is shipped in a complete package, similar to vanila OpenTTD, so no longer require it to be installed first.
