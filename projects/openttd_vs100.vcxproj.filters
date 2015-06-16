@@ -114,6 +114,9 @@
     <ClCompile Include="..\src\autoreplace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\bitstream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\bmp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -433,6 +436,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\base_station_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bitstream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\bmp.h">
@@ -1761,6 +1767,12 @@
     <ClCompile Include="..\src\saveload\cargopacket_sl.cpp">
       <Filter>Save/Load handlers</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\saveload\citymania_sl.cpp">
+      <Filter>Save/Load handlers</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\saveload\citymania_sl.h">
+      <Filter>Save/Load handlers</Filter>
+    </ClInclude>
     <ClCompile Include="..\src\saveload\cheat_sl.cpp">
       <Filter>Save/Load handlers</Filter>
     </ClCompile>

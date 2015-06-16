@@ -448,6 +448,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\bitstream.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\bmp.cpp"
 				>
 			</File>
@@ -877,6 +881,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\base_station_base.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\bitstream.h"
 				>
 			</File>
 			<File
@@ -2665,6 +2673,14 @@
 			</File>
 			<File
 				RelativePath=".\..\src\saveload\cargopacket_sl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\saveload\citymania_sl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\saveload\citymania_sl.h"
 				>
 			</File>
 			<File
