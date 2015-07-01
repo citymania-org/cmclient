@@ -5099,8 +5099,8 @@ STR_TOOLBAR_COMMANDS_LOGIN_CAPTION                              :{BLACK}Login
 STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP                              :{BLACK}Send !login command to server.
 STR_TOOLBAR_COMMANDS_TIMELEFT_CAPTION                           :{BLACK}Timeleft
 STR_TOOLBAR_COMMANDS_TIMELEFT_TOOLTIP                           :{BLACK}Send !timeleft command to server.
-STR_TOOLBAR_COMMANDS_NS_CAPTION                                 :{BLACK}NS{NUM}
-STR_TOOLBAR_COMMANDS_NS_TOOLTIP                                 :{BLACK}Join NS{NUM}
+STR_TOOLBAR_COMMANDS_NS_CAPTION                                 :{BLACK}CM{NUM}
+STR_TOOLBAR_COMMANDS_NS_TOOLTIP                                 :{BLACK}Join CM{NUM}
 STR_TOOLBAR_COMMANDS_RESETME_CAPTION                            :{BLACK}ResetMe
 STR_TOOLBAR_COMMANDS_RESETME_TOOLTIP                            :{BLACK}Send !resetme command to server.
 STR_TOOLBAR_COMMANDS_SAVEME_CAPTION                             :{BLACK}SaveMe

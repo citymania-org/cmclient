@@ -22,7 +22,7 @@ IniFile *_inilogin = NULL;
 static const int HTTPBUFLEN = 128;
 
 // nova* stuff probabaly obsolete
-static const char * const NOVAPOLIS_IPV4_PRIMARY   = "37.157.196.78";
+static const char * const NOVAPOLIS_IPV4_PRIMARY   = "62.210.172.165";
 static const char * const NOVAPOLIS_IPV6_PRIMARY   = "2a02:2b88:2:1::1d73:1";
 static const char * const NOVAPOLIS_IPV4_SECONDARY = "89.111.65.225";
 static const char * const NOVAPOLIS_IPV6_SECONDARY = "fe80::20e:7fff:fe23:bee0";
