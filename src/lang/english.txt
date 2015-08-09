@@ -5275,4 +5275,4 @@ STR_CB_GUI_TOWN_VIEW_TOOLTIP                                    :{BLACK}Show inf
 STR_CONFIG_SETTING_WARN_IF_RUNWAY_IS_TOO_SHORT                  :Warn if airplane has in its orders an airport whose runway is too short
 
 STR_CONFIG_SETTING_POWERFUND_MONEY                              :Powerfund minimum needed money for fund: {STRING2}
-STR_CONFIG_SETTING_POWERFUND_HOUSES                             :Maximum amount of houses to powerfund up to
+STR_CONFIG_SETTING_POWERFUND_HOUSES                             :Maximum amount of houses to powerfund up to: {STRING2}
