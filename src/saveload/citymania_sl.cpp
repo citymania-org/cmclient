@@ -108,6 +108,7 @@ static void CM_DecodeTownsExtraInfo(BitIStream &bs)
 	for (uint i = 0; i < n_affected_towns; i++) {
 		uint town_id = bs.ReadBytes(2);
 		t = Town::Get(town_id);
+		// TODO is it even supposed to return null? or just invalid pointer
 		if (!t) {
 			DEBUG(sl, 0, "Invalid TownID in CM extra towns info (%u)", town_id);
 			continue;
@@ -203,7 +204,7 @@ u8vector CM_EncodeData()
 	bs.WriteBytes(0, 4);  // Reserved
 	bs.WriteBytes(0, 4);  // Reserved
 
-	CM_EncodeTownsCargo(bs);
+	if (CB_Enabled()) CM_EncodeTownsCargo(bs);
 	CM_EncodeTownsExtraInfo(bs);
 	CM_EncodeTownsLayoutErrors(bs);
 
