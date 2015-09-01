@@ -1,4 +1,4 @@
-/* $Id: network_gui.cpp 26960 2014-10-05 11:20:02Z peter1138 $ */
+/* $Id: network_gui.cpp 27348 2015-07-30 18:45:29Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -2200,7 +2200,7 @@ static const NWidgetPart _nested_network_company_password_window_widgets[] = {
 		NWidget(NWID_VERTICAL), SetPIP(5, 5, 5),
 			NWidget(NWID_HORIZONTAL), SetPIP(5, 5, 5),
 				NWidget(WWT_TEXT, COLOUR_GREY, WID_NCP_LABEL), SetDataTip(STR_COMPANY_VIEW_PASSWORD, STR_NULL),
-				NWidget(WWT_EDITBOX, COLOUR_GREY, WID_NCP_PASSWORD), SetMinimalSize(194, 12), SetDataTip(STR_COMPANY_VIEW_SET_PASSWORD, STR_NULL),
+				NWidget(WWT_EDITBOX, COLOUR_GREY, WID_NCP_PASSWORD), SetFill(1, 0), SetMinimalSize(194, 12), SetDataTip(STR_COMPANY_VIEW_SET_PASSWORD, STR_NULL),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL), SetPIP(5, 0, 5),
 				NWidget(NWID_SPACER), SetFill(1, 0),

@@ -10,7 +10,7 @@
 ##grflangid 0x08
 
 
-# $Id: irish.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: irish.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -926,10 +926,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Saincheaptha...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari na Seoirsia (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Rial na hIaráine (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Feithiclí Bóithre
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Roghnaigh an taobh den bhóthair ar a mbeidh feithiclí ag tiomáint
@@ -3016,7 +3012,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Faisnéis
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Rabhadh
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Earráid
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Cuir ar ceal
 STR_GOAL_QUESTION_BUTTON_OK                                     :OK
 STR_GOAL_QUESTION_BUTTON_NO                                     :Níl
@@ -3035,6 +3031,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Atosaigh
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Cuir siar
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Géill
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Dún
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Fóirdheontais

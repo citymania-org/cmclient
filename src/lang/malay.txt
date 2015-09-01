@@ -10,7 +10,7 @@
 ##grflangid 0x3c
 
 
-# $Id: malay.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: malay.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -894,10 +894,6 @@ STR_GAME_OPTIONS_CURRENCY_KRW                                   :South Korean Wo
 STR_GAME_OPTIONS_CURRENCY_ZAR                                   :South African Rand (ZAR)
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Sesuaikan...
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Kenderaan Jalanraya
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Pilih laluan memandu kenderaan sebelah kiri atau kanan
@@ -2737,7 +2733,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Maklumat
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Amaran
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Kesilapan
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Batal
 STR_GOAL_QUESTION_BUTTON_OK                                     :OK
 STR_GOAL_QUESTION_BUTTON_NO                                     :Tidak
@@ -2756,6 +2752,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Mula semula
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Tangguh
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Menyerah
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Tutup
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subsidi

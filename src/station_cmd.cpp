@@ -1,4 +1,4 @@
-/* $Id: station_cmd.cpp 27271 2015-05-08 17:30:07Z frosch $ */
+/* $Id: station_cmd.cpp 27350 2015-07-30 18:50:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -963,7 +963,11 @@ static CommandCost CheckFlatLandRoadStop(TileArea tile_area, DoCommandFlag flags
 				/* There is a tram, check if we can build road+tram stop over it. */
 				if (HasBit(cur_rts, ROADTYPE_TRAM)) {
 					Owner tram_owner = GetRoadOwner(cur_tile, ROADTYPE_TRAM);
-					if (!_settings_game.construction.road_stop_on_competitor_road && tram_owner != OWNER_NONE) {
+					if (Company::IsValidID(tram_owner) &&
+							(!_settings_game.construction.road_stop_on_competitor_road ||
+							/* Disallow breaking end-of-line of someone else
+							 * so trams can still reverse on this tile. */
+							HasExactlyOneBit(GetRoadBits(cur_tile, ROADTYPE_TRAM)))) {
 						CommandCost ret = CheckOwnership(tram_owner);
 						if (ret.Failed()) return ret;
 					}
@@ -1988,6 +1992,7 @@ static CommandCost RemoveRoadStop(TileIndex tile, DoCommandFlag flags)
 			}
 		}
 		Company::Get(st->owner)->infrastructure.station--;
+		DirtyCompanyInfrastructureWindows(st->owner);
 
 		if (IsDriveThroughStopTile(tile)) {
 			/* Clears the tile for us */

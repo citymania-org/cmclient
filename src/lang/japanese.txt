@@ -10,7 +10,7 @@
 ##grflangid 0x39
 
 
-# $Id: japanese.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: japanese.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -926,10 +926,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :カスタム…
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :グルジア ラリー(GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :イラン リアル(IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}自動車
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}車両の通行方向(右側/左側)を選択します
@@ -3051,7 +3047,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :情報
 STR_GOAL_QUESTION_CAPTION_WARNING                               :警告
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :エラー
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :キャンセル
 STR_GOAL_QUESTION_BUTTON_OK                                     :OK
 STR_GOAL_QUESTION_BUTTON_NO                                     :いいえ
@@ -3070,6 +3066,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :再起動
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :延期
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :あきらめる
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :閉じる
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}助成金

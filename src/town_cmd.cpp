@@ -1,4 +1,4 @@
-/* $Id: town_cmd.cpp 27273 2015-05-08 17:37:48Z frosch $ */
+/* $Id: town_cmd.cpp 27349 2015-07-30 18:48:25Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1317,8 +1317,13 @@ static bool CanFollowRoad(TileIndex tile, DiagDirection dir)
 			case MP_ROAD:
 				return target_rb != ROAD_NONE;
 
-			case MP_HOUSE:
 			case MP_STATION:
+				return IsDriveThroughStopTile(target_tile);
+
+			case MP_TUNNELBRIDGE:
+				return GetTunnelBridgeTransportType(target_tile) == TRANSPORT_ROAD;
+
+			case MP_HOUSE:
 			case MP_INDUSTRY:
 			case MP_OBJECT:
 				return false;

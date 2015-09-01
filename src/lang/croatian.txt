@@ -12,7 +12,7 @@
 ##case nom gen dat aku vok lok ins
 
 
-# $Id: croatian.txt 27274 2015-05-08 17:45:13Z rubidium $
+# $Id: croatian.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1022,10 +1022,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Proizvoljno...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Gruzijski Lari (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iranski Rial (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Cestovna vozila
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Odaberi na kojoj će strani ceste vozila prometovati
@@ -3151,7 +3147,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Informacija
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Upozorenje
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Greška
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Poništi
 STR_GOAL_QUESTION_BUTTON_OK                                     :OK
 STR_GOAL_QUESTION_BUTTON_NO                                     :Ne
@@ -3170,6 +3166,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Ponovi od poče
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Odgodi
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Odustani
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Zatvori
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subvencije

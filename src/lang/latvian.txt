@@ -12,7 +12,7 @@
 ##case kas
 
 
-# $Id: latvian.txt 27274 2015-05-08 17:45:13Z rubidium $
+# $Id: latvian.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -922,10 +922,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Cita...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Gruzijas lari (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Irānas riāli (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Autotransporta līdzekļi
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Ceļa braucamās puses izvēle
@@ -2978,7 +2974,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Informācija
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Brīdinājums
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Kļūda
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Atcelt
 STR_GOAL_QUESTION_BUTTON_OK                                     :Labi
 STR_GOAL_QUESTION_BUTTON_NO                                     :Nē
@@ -2999,6 +2995,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Pārstartēt
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Atlikt
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Padoties
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Aizvērt
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subsīdijas

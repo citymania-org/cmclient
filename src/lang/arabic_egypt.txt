@@ -10,7 +10,7 @@
 ##grflangid 0x14
 
 
-# $Id: arabic_egypt.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: arabic_egypt.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -887,10 +887,6 @@ STR_GAME_OPTIONS_CURRENCY_BRL                                   :ريال برا
 STR_GAME_OPTIONS_CURRENCY_EEK                                   :كرونا استونية (EEK)
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :مخصص ...
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}العربات البرية
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}اختار الجانب الذي تسير فيه المركبات
@@ -2648,7 +2644,8 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :معلومات
 STR_GOAL_QUESTION_CAPTION_WARNING                               :تحذير
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :خطا
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}العروض

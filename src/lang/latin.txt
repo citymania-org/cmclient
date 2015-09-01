@@ -12,7 +12,7 @@
 ##case gen acc abl dat
 
 
-# $Id: latin.txt 27274 2015-05-08 17:45:13Z rubidium $
+# $Id: latin.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1114,10 +1114,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Propria...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari Georgiana (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Regalis Iranica (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Vehicula Viaria
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Eligere latus viae gubernandi
@@ -3126,7 +3122,7 @@ STR_NEWGRF_DUPLICATE_GRFID                                      :{WHITE}Addere f
 STR_NEWGRF_COMPATIBLE_LOADED                                    :{ORANGE}Fasciculus congruus lectus (nam fasciculus idem non inventum fuit)
 STR_NEWGRF_TOO_MANY_NEWGRFS                                     :{WHITE}Addere fasciculum non licet; nimis NewGRF adsunt
 
-STR_NEWGRF_COMPATIBLE_LOAD_WARNING                              :{WHITE}Fasciculi congrui lecti in loco fasciculis absentibus
+STR_NEWGRF_COMPATIBLE_LOAD_WARNING                              :{WHITE}Fasciculi congrui lecti in loco fasciculorum absentorum
 STR_NEWGRF_DISABLED_WARNING                                     :{WHITE}Fasciculi absentes remoti sunt
 STR_NEWGRF_UNPAUSE_WARNING_TITLE                                :{YELLOW}Fasciculi GRF absunt
 STR_NEWGRF_UNPAUSE_WARNING                                      :{WHITE}OpenTTD forsitan corruatur resumendo. Noli queri de ruinis sequentibus.{}Esne valde certus te ludum resumere velle?
@@ -3257,7 +3253,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Indicia
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Cautio
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Error
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Cancellare
 STR_GOAL_QUESTION_BUTTON_OK                                     :Ita
 STR_GOAL_QUESTION_BUTTON_NO                                     :Non
@@ -3276,6 +3272,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Incipere denuo
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Procrastinare
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Dedere
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Claudere
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subsidia
