@@ -1,4 +1,4 @@
-/* $Id: town_gui.cpp 26960 2014-10-05 11:20:02Z peter1138 $ */
+/* $Id: town_gui.cpp 27351 2015-07-30 18:53:31Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1229,7 +1229,8 @@ public:
 		bool success = DoCommandP(tile, this->town_size | this->city << 2 | this->town_layout << 3 | random << 6,
 				townnameparts, CMD_FOUND_TOWN | CMD_MSG(errstr), cc, name);
 
-		if (success) this->RandomTownName();
+		/* Rerandomise name, if success and no cost-estimation. */
+		if (success && !_shift_pressed) this->RandomTownName();
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)

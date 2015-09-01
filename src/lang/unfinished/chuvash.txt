@@ -10,7 +10,7 @@
 ##grflangid 0x0B
 
 
-# $Id: chuvash.txt 26966 2014-10-05 21:21:24Z peter1138 $
+# $Id: chuvash.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -478,10 +478,6 @@ STR_GAME_OPTIONS_CURRENCY_RUR                                   :Вырӑсла 
 ############ end of currency region
 
 
-############ start of measuring units region
-############ end of measuring units region
-
-
 
 ############ start of townname region
 STR_GAME_OPTIONS_TOWN_NAME_ORIGINAL_ENGLISH                     :Акӑлчан
@@ -554,7 +550,7 @@ STR_SUBSIDY_X4                                                  :x4
 
 
 
-# Advanced settings window
+# Settings tree window
 
 
 
@@ -1057,7 +1053,8 @@ STR_GOALS_TEXT                                                  :{ORANGE}{STRING
 
 # Goal question window
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_NONE                                              :{ORANGE}- Ҫук -

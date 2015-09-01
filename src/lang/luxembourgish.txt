@@ -10,7 +10,7 @@
 ##grflangid 0x23
 
 
-# $Id: luxembourgish.txt 27274 2015-05-08 17:45:13Z rubidium $
+# $Id: luxembourgish.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -926,10 +926,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Eegen...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgesche Lari (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iranësche Rial (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Stroossegefierer
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Wéi eng Stroossesäit sollen d'Gefierer fueren
@@ -3055,7 +3051,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Informatioun
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Warnung
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Fehler
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Ofbriechen
 STR_GOAL_QUESTION_BUTTON_OK                                     :OK
 STR_GOAL_QUESTION_BUTTON_NO                                     :Nee
@@ -3074,6 +3070,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Nei man
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Ofwaarden
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Opginn
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Zouman
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subventiounen

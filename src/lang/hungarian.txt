@@ -11,7 +11,7 @@
 ##case t ba
 
 
-# $Id: hungarian.txt 27274 2015-05-08 17:45:13Z rubidium $
+# $Id: hungarian.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -990,10 +990,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Saját...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Grúz Lari (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iráni Riál (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Közúti járművek
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}A közúti közlekedés oldalának kiválasztása
@@ -3119,7 +3115,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Információ
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Figyelmeztetés
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Hiba
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Mégse
 STR_GOAL_QUESTION_BUTTON_OK                                     :OK
 STR_GOAL_QUESTION_BUTTON_NO                                     :Nem
@@ -3138,6 +3134,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Újrakezd
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Elhalaszt
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Felad
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Bezár
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Támogatások

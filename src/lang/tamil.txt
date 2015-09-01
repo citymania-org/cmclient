@@ -10,7 +10,7 @@
 ##grflangid 0x0A
 
 
-# $Id: tamil.txt 27177 2015-03-02 17:46:37Z translators $
+# $Id: tamil.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -892,10 +892,6 @@ STR_GAME_OPTIONS_CURRENCY_KRW                                   :தென்க
 STR_GAME_OPTIONS_CURRENCY_ZAR                                   :தென் ஆப்பிரிக்க ரான்ட் (ZAR)
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :புதிதாக...
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}சாலை வாகனங்கள்
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}வாகனங்கள் சாலையின் எந்தப்பக்கத்தில் செல்ல வேண்டும்
@@ -2678,7 +2674,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :தகவல்
 STR_GOAL_QUESTION_CAPTION_WARNING                               :எச்சரிக்கை
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :பிழை
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :இரத்து செய்
 STR_GOAL_QUESTION_BUTTON_OK                                     :சரி
 STR_GOAL_QUESTION_BUTTON_NO                                     :இல்லை
@@ -2697,6 +2693,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :மீண்ட
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :தள்ளிவை
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :சரணடை
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :மூடு
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}மானியங்கள்

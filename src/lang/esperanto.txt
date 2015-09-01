@@ -11,7 +11,7 @@
 ##case n
 
 
-# $Id: esperanto.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: esperanto.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -909,10 +909,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Alia...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Kartvela Lario (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Irana Rialo (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Stratveturiloj
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Elektu stratflankon kie veturu veturiloj
@@ -2566,7 +2562,8 @@ STR_GOALS_TEXT                                                  :{ORANGE}{STRING
 
 # Goal question window
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subvencioj

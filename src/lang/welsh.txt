@@ -10,7 +10,7 @@
 ##grflangid 0x0f
 
 
-# $Id: welsh.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: welsh.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -926,10 +926,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Addasedig...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari Georgia (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Rial Iran (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Cerbydau Ffordd
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Dewiswch ar ba ochr i'r ffordd y dylai cerbydau yrru
@@ -3051,7 +3047,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Gwybodaeth
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Rhybudd
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Gwall
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Canslo
 STR_GOAL_QUESTION_BUTTON_OK                                     :Iawn
 STR_GOAL_QUESTION_BUTTON_NO                                     :Na
@@ -3070,6 +3066,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Ailddechrau
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Gohirio
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Ildio
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Cau
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Cymorthdaliadau

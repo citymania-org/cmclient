@@ -11,7 +11,7 @@
 ##case tamlanan
 
 
-# $Id: turkish.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: turkish.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -917,10 +917,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Özel...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Gürcistan Larisi (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :İran Riyali (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Karayolu taşıtları
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Trafik akış yönünü seçin
@@ -2981,7 +2977,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Bilgi
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Uyarı
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Hata
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :İptal
 STR_GOAL_QUESTION_BUTTON_OK                                     :Tamam
 STR_GOAL_QUESTION_BUTTON_NO                                     :Hayır
@@ -3000,6 +2996,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Yeniden başlat
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Ertele
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Yenilgiyi kabul et
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Kapat
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Teşvikler

@@ -11,7 +11,7 @@
 ##gender m f n
 
 
-# $Id: galician.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: galician.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -926,10 +926,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Persoal...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari xeorxiano (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Real iraniano (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Vehículos de estrada
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Selecciona o lado da estrada polo que circularán os vehículos
@@ -2941,7 +2937,7 @@ STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Poboaci�
 STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Pasaxeiros último mes: {ORANGE}{COMMA}{BLACK}  máx: {ORANGE}{COMMA}
 STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Correo último mes: {ORANGE}{COMMA}{BLACK}  máx: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Carga necesaria para o crecemento da cidade:
-STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} necesario{P "" s}
+STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} necesario
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} necesarios en inverno
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} entregados
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (todavía requeridos)
@@ -3007,7 +3003,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Información
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Aviso
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Erro
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Cancelar
 STR_GOAL_QUESTION_BUTTON_OK                                     :OK
 STR_GOAL_QUESTION_BUTTON_NO                                     :Non
@@ -3026,6 +3022,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Reiniciar
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Pospoñer
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Renderse
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Pechar
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subvencións

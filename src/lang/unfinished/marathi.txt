@@ -10,7 +10,7 @@
 ##grflangid 0x11
 
 
-# $Id: marathi.txt 26986 2014-10-09 21:16:29Z frosch $
+# $Id: marathi.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -723,10 +723,6 @@ STR_GAME_OPTIONS_CURRENCY_SKK                                   :स्लोव
 ############ end of currency region
 
 
-############ start of measuring units region
-############ end of measuring units region
-
-
 
 ############ start of townname region
 STR_GAME_OPTIONS_TOWN_NAME_FRENCH                               :फ्रेंच
@@ -786,7 +782,7 @@ STR_SUBSIDY_X4                                                  :x४
 
 
 
-# Advanced settings window
+# Settings tree window
 
 
 
@@ -1198,7 +1194,8 @@ STR_GOALS_TEXT                                                  :{ORANGE}{STRING
 
 # Goal question window
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
+############ End of Goal Question button list
 
 # Subsidies window
 

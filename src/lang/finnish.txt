@@ -10,7 +10,7 @@
 ##grflangid 0x35
 
 
-# $Id: finnish.txt 27179 2015-03-09 18:15:33Z translators $
+# $Id: finnish.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -926,10 +926,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Oma...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgian lari (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iranin rial (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Ajoneuvot
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Valitse kummalla puolella tietä ajetaan.
@@ -3055,7 +3051,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Tietoa
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Varoitus
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Virhe
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Peruuta
 STR_GOAL_QUESTION_BUTTON_OK                                     :OK
 STR_GOAL_QUESTION_BUTTON_NO                                     :Ei
@@ -3074,6 +3070,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Aloita uudellee
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Lykkää myöhemmäksi
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Luovuta
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Sulje
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Tuet

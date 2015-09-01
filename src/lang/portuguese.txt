@@ -11,7 +11,7 @@
 ##gender n m f mp fp
 
 
-# $Id: portuguese.txt 27184 2015-03-13 20:53:29Z rubidium $
+# $Id: portuguese.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -926,10 +926,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Personalizado..
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari Georgiano (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Rial Iraniano (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Veículos rodoviários
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Seleccione o lado da estrada por onde os veículos circulam
@@ -3035,7 +3031,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Informação
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Aviso
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Erro
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Cancelar
 STR_GOAL_QUESTION_BUTTON_OK                                     :Confirmar
 STR_GOAL_QUESTION_BUTTON_NO                                     :Não
@@ -3054,6 +3050,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Reiniciar
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Adiar
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Render-se
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Fechar
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subsídios

@@ -12,7 +12,7 @@
 ##case kas ko kam ka kuo kur kreip
 
 
-# $Id: lithuanian.txt 27274 2015-05-08 17:45:13Z rubidium $
+# $Id: lithuanian.txt 27353 2015-07-31 17:46:09Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1131,10 +1131,6 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Kita...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Gruzijos Laris (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Irano Rialas (IRR)
 ############ end of currency region
-
-
-############ start of measuring units region
-############ end of measuring units region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Automobilių eismas
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Pasirinkite, kuria kelio puse važiuoja automobiliai
@@ -3274,7 +3270,7 @@ STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Informacija
 STR_GOAL_QUESTION_CAPTION_WARNING                               :Perspėjimas
 STR_GOAL_QUESTION_CAPTION_ERROR                                 :Klaida
 
-### Start of Goal Question button list
+############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Atšaukti
 STR_GOAL_QUESTION_BUTTON_OK                                     :Gerai
 STR_GOAL_QUESTION_BUTTON_NO                                     :Ne
@@ -3293,6 +3289,7 @@ STR_GOAL_QUESTION_BUTTON_RESTART                                :Pradėti iš na
 STR_GOAL_QUESTION_BUTTON_POSTPONE                               :Atidėti
 STR_GOAL_QUESTION_BUTTON_SURRENDER                              :Pasiduoti
 STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Uždaryti
+############ End of Goal Question button list
 
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subsidijos
