@@ -1,7 +1,7 @@
 TMP="/tmp/cmclient"
 WIN="/var/run/media/pavels/F8040EC2040E843A/novattd"
-VER="1.5.1"
-CMVER="1.5.1-2"
+VER="1.5.2"
+CMVER="1.5.2"
 TMP_SRC="$TMP/openttd-$VER"
 DIR=`pwd`
 SRC_RELEASE_FNAME="$DIR/citymania-client-$CMVER-source.zip"
