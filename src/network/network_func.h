@@ -1,4 +1,4 @@
-/* $Id: network_func.h 26788 2014-09-07 14:21:16Z frosch $ */
+/* $Id: network_func.h 27431 2015-11-01 11:59:17Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -34,7 +34,6 @@ extern NetworkCompanyState *_network_company_states;
 extern ClientID _network_own_client_id;
 extern ClientID _redirect_console_to_client;
 extern bool _network_need_advertise;
-extern uint32 _network_last_advertise_frame;
 extern uint8 _network_reconnect;
 extern StringList _network_bind_list;
 extern StringList _network_host_list;

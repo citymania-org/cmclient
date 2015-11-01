@@ -1,4 +1,4 @@
-# $Id: Makefile.bundle.in 25780 2013-09-19 07:42:13Z matthijs $
+# $Id: Makefile.bundle.in 27430 2015-11-01 11:55:45Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -172,6 +172,7 @@ install: bundle
 	$(Q)install -d "$(INSTALL_BINARY_DIR)"
 	$(Q)install -d "$(INSTALL_ICON_DIR)"
 	$(Q)install -d "$(INSTALL_DATA_DIR)/ai"
+	$(Q)install -d "$(INSTALL_DATA_DIR)/game"
 	$(Q)install -d "$(INSTALL_DATA_DIR)/baseset"
 	$(Q)install -d "$(INSTALL_DATA_DIR)/lang"
 	$(Q)install -d "$(INSTALL_DATA_DIR)/scripts"
@@ -182,6 +183,7 @@ else
 endif
 	$(Q)install -m 644 "$(BUNDLE_DIR)/lang/"* "$(INSTALL_DATA_DIR)/lang"
 	$(Q)install -m 644 "$(BUNDLE_DIR)/ai/"* "$(INSTALL_DATA_DIR)/ai"
+	$(Q)install -m 644 "$(BUNDLE_DIR)/game/"* "$(INSTALL_DATA_DIR)/game"
 	$(Q)install -m 644 "$(BUNDLE_DIR)/baseset/"* "$(INSTALL_DATA_DIR)/baseset"
 	$(Q)install -m 644 "$(BUNDLE_DIR)/scripts/"* "$(INSTALL_DATA_DIR)/scripts"
 ifndef DO_NOT_INSTALL_DOCS

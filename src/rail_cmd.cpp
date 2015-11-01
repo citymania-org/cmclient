@@ -1,4 +1,4 @@
-/* $Id: rail_cmd.cpp 27350 2015-07-30 18:50:39Z frosch $ */
+/* $Id: rail_cmd.cpp 27432 2015-11-01 12:03:13Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -44,6 +44,8 @@
 typedef SmallVector<Train *, 16> TrainList;
 
 RailtypeInfo _railtypes[RAILTYPE_END];
+RailType _sorted_railtypes[RAILTYPE_END];
+uint8 _sorted_railtypes_size;
 
 assert_compile(sizeof(_original_railtypes) <= sizeof(_railtypes));
 
@@ -110,6 +112,17 @@ void ResolveRailTypeGUISprites(RailtypeInfo *rti)
 }
 
 /**
+ * Compare railtypes based on their sorting order.
+ * @param first  The railtype to compare to.
+ * @param second The railtype to compare.
+ * @return True iff the first should be sorted before the second.
+ */
+static int CDECL CompareRailTypes(const RailType *first, const RailType *second)
+{
+	return GetRailTypeInfo(*first)->sorting_order - GetRailTypeInfo(*second)->sorting_order;
+}
+
+/**
  * Resolve sprites of custom rail types
  */
 void InitRailTypes()
@@ -118,6 +131,14 @@ void InitRailTypes()
 		RailtypeInfo *rti = &_railtypes[rt];
 		ResolveRailTypeGUISprites(rti);
 	}
+
+	_sorted_railtypes_size = 0;
+	for (RailType rt = RAILTYPE_BEGIN; rt != RAILTYPE_END; rt++) {
+		if (_railtypes[rt].label != 0) {
+			_sorted_railtypes[_sorted_railtypes_size++] = rt;
+		}
+	}
+	QSortT(_sorted_railtypes, _sorted_railtypes_size, CompareRailTypes);
 }
 
 /**

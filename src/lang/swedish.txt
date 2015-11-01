@@ -10,7 +10,7 @@
 ##grflangid 0x2e
 
 
-# $Id: swedish.txt 27353 2015-07-31 17:46:09Z rubidium $
+# $Id: swedish.txt 27429 2015-10-31 17:45:32Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -3848,7 +3848,7 @@ STR_ORDER_NO_LOAD                                               :(Ingen lastning
 STR_ORDER_UNLOAD                                                :(Lasta av och lasta gods)
 STR_ORDER_UNLOAD_FULL_LOAD                                      :(Lasta av och vänta på full last)
 STR_ORDER_UNLOAD_FULL_LOAD_ANY                                  :(Lasta av och vänta på någon full last)
-STR_ORDER_UNLOAD_NO_LOAD                                        :(Ladda av och lämna tom)
+STR_ORDER_UNLOAD_NO_LOAD                                        :(Lasta av och lämna tom)
 STR_ORDER_TRANSFER                                              :(Överför och lasta gods)
 STR_ORDER_TRANSFER_FULL_LOAD                                    :(Överför och vänta på full last)
 STR_ORDER_TRANSFER_FULL_LOAD_ANY                                :(Överför och vänta på full last av någon godstyp)

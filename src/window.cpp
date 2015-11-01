@@ -1,4 +1,4 @@
-/* $Id: window.cpp 27185 2015-03-13 20:54:35Z rubidium $ */
+/* $Id: window.cpp 27432 2015-11-01 12:03:13Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1207,6 +1207,7 @@ void ChangeWindowOwner(Owner old_owner, Owner new_owner)
 			case WC_BUY_COMPANY:
 			case WC_COMPANY:
 			case WC_COMPANY_INFRASTRUCTURE:
+			case WC_VEHICLE_ORDERS: // Changing owner would also require changing WindowDesc, which is not possible; however keeping the old one crashes because of missing widgets etc.. See ShowOrdersWindow().
 				continue;
 
 			default:

@@ -1,4 +1,4 @@
-/* $Id: win32_s.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: win32_s.cpp 27430 2015-11-01 11:55:45Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -81,7 +81,7 @@ const char *SoundDriver_Win32::Start(const char * const *parm)
 		PrepareHeader(&_wave_hdr[1]);
 
 		if (NULL == (_thread = CreateThread(NULL, 8192, SoundThread, 0, 0, &_threadId))) throw "Failed to create thread";
-	} catch (char *error) {
+	} catch (const char *error) {
 		this->Stop();
 		return error;
 	}

@@ -10,7 +10,7 @@
 ##grflangid 0x00
 
 
-# $Id: english_US.txt 27353 2015-07-31 17:46:09Z rubidium $
+# $Id: english_US.txt 27429 2015-10-31 17:45:32Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1901,8 +1901,8 @@ STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Change t
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multiplayer
-STR_NETWORK_SERVER_LIST_ADVERTISED                              :{BLACK}Advertized
-STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP                      :{BLACK}Choose between an advertized (internet) and a not advertized (Local Area Network, LAN) game
+STR_NETWORK_SERVER_LIST_ADVERTISED                              :{BLACK}Advertised
+STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP                      :{BLACK}Choose between an advertised (internet) and a not advertised (Local Area Network, LAN) game
 STR_NETWORK_SERVER_LIST_ADVERTISED_NO                           :No
 STR_NETWORK_SERVER_LIST_ADVERTISED_YES                          :Yes
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Player name:

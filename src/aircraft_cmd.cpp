@@ -1,4 +1,4 @@
-/* $Id: aircraft_cmd.cpp 27134 2015-02-01 20:54:24Z frosch $ */
+/* $Id: aircraft_cmd.cpp 27432 2015-11-01 12:03:13Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -809,7 +809,7 @@ static byte AircraftGetEntryPoint(const Aircraft *v, const AirportFTAClass *apc,
 		/* We are northwest or southeast of the airport */
 		dir = delta_y < 0 ? DIAGDIR_NW : DIAGDIR_SE;
 	}
-	dir = ChangeDiagDir(dir, (DiagDirDiff)ReverseDiagDir(DirToDiagDir(rotation)));
+	dir = ChangeDiagDir(dir, DiagDirDifference(DIAGDIR_NE, DirToDiagDir(rotation)));
 	return apc->entry_points[dir];
 }
 
