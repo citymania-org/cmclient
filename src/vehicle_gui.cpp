@@ -1,4 +1,4 @@
-/* $Id: vehicle_gui.cpp 27134 2015-02-01 20:54:24Z frosch $ */
+/* $Id: vehicle_gui.cpp 27432 2015-11-01 12:03:13Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -702,7 +702,10 @@ struct RefitWindow : public Window {
 		if (_returned_mail_refit_capacity > 0) {
 			SetDParam(2, CT_MAIL);
 			SetDParam(3, _returned_mail_refit_capacity);
-			if (money <= 0) {
+			if (this->order != INVALID_VEH_ORDER_ID) {
+				/* No predictable cost */
+				return STR_PURCHASE_INFO_AIRCRAFT_CAPACITY;
+			} else if (money <= 0) {
 				SetDParam(4, -money);
 				return STR_REFIT_NEW_CAPACITY_INCOME_FROM_AIRCRAFT_REFIT;
 			} else {
@@ -710,7 +713,11 @@ struct RefitWindow : public Window {
 				return STR_REFIT_NEW_CAPACITY_COST_OF_AIRCRAFT_REFIT;
 			}
 		} else {
-			if (money <= 0) {
+			if (this->order != INVALID_VEH_ORDER_ID) {
+				/* No predictable cost */
+				SetDParam(2, STR_EMPTY);
+				return STR_PURCHASE_INFO_CAPACITY;
+			} else if (money <= 0) {
 				SetDParam(2, -money);
 				return STR_REFIT_NEW_CAPACITY_INCOME_FROM_REFIT;
 			} else {

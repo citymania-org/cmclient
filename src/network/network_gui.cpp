@@ -1954,7 +1954,6 @@ struct NetworkClientListWindow : Window {
 		SetDParam(1, INVALID_COMPANY);
 		uint width2 = GetStringBoundingBox(STR_NETWORK_CLIENT_EXTRA).width;
 		size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->icon_size.width + WD_FRAMERECT_LEFT + width + WD_FRAMERECT_RIGHT + width2;
-		//size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->company_icon_width + width + WD_FRAMERECT_RIGHT;
 	}
 
 	virtual void OnPaint()
@@ -2012,7 +2011,7 @@ struct NetworkClientListWindow : Window {
 			SetDParam(1, ci->client_playas == INVALID_COMPANY ? ci->client_playas : ci->client_playas + 1);
 			DrawString(rtl ? left : name_left + extra, rtl ? name_right - extra : right, y + text_offset, STR_NETWORK_CLIENT_EXTRA, TC_FROMSTRING, SA_RIGHT);
 
-			y += this->line_height;
+			y += line_height;
 		}
 	}
 

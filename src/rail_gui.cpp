@@ -1,4 +1,4 @@
-/* $Id: rail_gui.cpp 27163 2015-02-22 15:26:27Z frosch $ */
+/* $Id: rail_gui.cpp 27432 2015-11-01 12:03:13Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -2189,17 +2189,6 @@ void InitializeRailGUI()
 }
 
 /**
- * Compare railtypes based on their sorting order.
- * @param first  The railtype to compare to.
- * @param second The railtype to compare.
- * @return True iff the first should be sorted before the second.
- */
-static int CDECL CompareRailTypes(const DropDownListItem * const *first, const DropDownListItem * const *second)
-{
-	return GetRailTypeInfo((RailType)(*first)->result)->sorting_order - GetRailTypeInfo((RailType)(*second)->result)->sorting_order;
-}
-
-/**
  * Create a drop down list for all the rail types of the local company.
  * @param for_replacement Whether this list is for the replacement window.
  * @return The populated and sorted #DropDownList.
@@ -2221,13 +2210,12 @@ DropDownList *GetRailTypeDropDownList(bool for_replacement)
 
 	const Company *c = Company::Get(_local_company);
 	DropDownList *list = new DropDownList();
-	for (RailType rt = RAILTYPE_BEGIN; rt != RAILTYPE_END; rt++) {
+	RailType rt;
+	FOR_ALL_SORTED_RAILTYPES(rt) {
 		/* If it's not used ever, don't show it to the user. */
 		if (!HasBit(used_railtypes, rt)) continue;
 
 		const RailtypeInfo *rti = GetRailTypeInfo(rt);
-		/* Skip rail type if it has no label */
-		if (rti->label == 0) continue;
 
 		StringID str = for_replacement ? rti->strings.replace_text : (rti->max_speed > 0 ? STR_TOOLBAR_RAILTYPE_VELOCITY : STR_JUST_STRING);
 		DropDownListParamStringItem *item = new DropDownListParamStringItem(str, rt, !HasBit(c->avail_railtypes, rt));
@@ -2235,6 +2223,5 @@ DropDownList *GetRailTypeDropDownList(bool for_replacement)
 		item->SetParam(1, rti->max_speed);
 		*list->Append() = item;
 	}
-	QSortT(list->Begin(), list->Length(), CompareRailTypes);
 	return list;
 }

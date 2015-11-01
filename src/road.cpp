@@ -63,7 +63,7 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
 					case MP_CLEAR: case MP_TREES:
 						connective = true;
 						break;
-	
+
 					/* The conditionally connective ones */
 					case MP_TUNNELBRIDGE:
 					case MP_STATION:
@@ -73,21 +73,21 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
 							connective = true;
 						} else {
 							const RoadBits neighbor_rb = GetAnyRoadBits(neighbor_tile, ROADTYPE_ROAD) | GetAnyRoadBits(neighbor_tile, ROADTYPE_TRAM);
-	
+
 							/* Accept only connective tiles */
 							connective = (neighbor_rb & mirrored_rb) != ROAD_NONE;
 						}
 						break;
-	
+
 					case MP_RAILWAY:
 						connective = IsPossibleCrossing(neighbor_tile, DiagDirToAxis(dir));
 						break;
-	
+
 					case MP_WATER:
 						/* Check for real water tile */
 						connective = !IsWater(neighbor_tile);
 						break;
-	
+
 					/* The definitely not connective ones */
 					default: break;
 				}

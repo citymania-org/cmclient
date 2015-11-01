@@ -1,4 +1,4 @@
-/* $Id: rail.h 26803 2014-09-07 16:13:29Z alberth $ */
+/* $Id: rail.h 27432 2015-11-01 12:03:13Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -422,5 +422,14 @@ RailType GetRailTypeByLabel(RailTypeLabel label, bool allow_alternate_labels = t
 void ResetRailTypes();
 void InitRailTypes();
 RailType AllocateRailType(RailTypeLabel label);
+
+extern RailType _sorted_railtypes[RAILTYPE_END];
+extern uint8 _sorted_railtypes_size;
+
+/**
+ * Loop header for iterating over railtypes, sorted by sortorder.
+ * @param var Railtype.
+ */
+#define FOR_ALL_SORTED_RAILTYPES(var) for (uint8 index = 0; index < _sorted_railtypes_size && (var = _sorted_railtypes[index], true) ; index++)
 
 #endif /* RAIL_H */

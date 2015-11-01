@@ -1,4 +1,4 @@
-/* $Id: train_cmd.cpp 27270 2015-05-08 17:23:55Z frosch $ */
+/* $Id: train_cmd.cpp 27431 2015-11-01 11:59:17Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1386,12 +1386,14 @@ CommandCost CmdSellRailWagon(DoCommandFlag flags, Vehicle *t, uint16 data, uint3
 		return ret;
 	}
 
-	CommandCost cost(EXPENSES_NEW_VEHICLES);
-	for (Train *t = sell_head; t != NULL; t = t->Next()) cost.AddCost(-t->value);
-
 	if (first->orders.list == NULL && !OrderList::CanAllocateItem()) {
+		/* Restore the train we had. */
+		RestoreTrainBackup(original);
 		return_cmd_error(STR_ERROR_NO_MORE_SPACE_FOR_ORDERS);
 	}
+
+	CommandCost cost(EXPENSES_NEW_VEHICLES);
+	for (Train *t = sell_head; t != NULL; t = t->Next()) cost.AddCost(-t->value);
 
 	/* do it? */
 	if (flags & DC_EXEC) {

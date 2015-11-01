@@ -1,4 +1,4 @@
-/* $Id: order_gui.cpp 26693 2014-07-16 21:06:45Z frosch $ */
+/* $Id: order_gui.cpp 27432 2015-11-01 12:03:13Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1853,6 +1853,12 @@ void ShowOrdersWindow(const Vehicle *v)
 	DeleteWindowById(WC_VEHICLE_TIMETABLE, v->index, false);
 	if (BringWindowToFrontById(WC_VEHICLE_ORDERS, v->index) != NULL) return;
 
+	/* Using a different WindowDescs for _local_company causes problems.
+	 * Due to this we have to close order windows in ChangeWindowOwner/DeleteCompanyWindows,
+	 * because we cannot change switch the WindowDescs and keeping the old WindowDesc results
+	 * in crashed due to missing widges.
+	 * TODO Rewrite the order GUI to not use different WindowDescs.
+	 */
 	if (v->owner != _local_company) {
 		new OrdersWindow(&_other_orders_desc, v);
 	} else {
