@@ -73,6 +73,9 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+*** 1.5.3-RC1 (3 Nov 2015) ***
+- Update to OpenTTD 1.5.3-RC1
+
 *** 1.5.2/30 (2 Sep 2015) ***
 - Fixed fast server change buttons
 - Fixed extra data saving (crashed when opening saves).
