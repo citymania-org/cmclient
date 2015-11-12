@@ -410,7 +410,7 @@ static bool RoadToolbar_CtrlChanged(Window *w)
 
 	/* allow ctrl to switch remove mode only for these widgets */
 	for (uint i = WID_ROT_ROAD_X; i <= WID_ROT_FULLROAD; i++) {
-		if (w->IsWidgetLowered(i)) {
+		if (w->GetWidget<NWidgetCore>(i) && w->IsWidgetLowered(i)) {
 			ToggleRoadButton_Remove(w);
 			return true;
 		}
