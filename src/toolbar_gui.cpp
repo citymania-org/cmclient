@@ -1778,6 +1778,14 @@ struct MainToolbarWindow : Window {
 		this->DrawWidgets();
 	}
 
+	virtual void DrawWidget(const Rect &r, int widget) const {
+		if (widget == WID_TN_WATCH) {
+			Dimension d = GetSpriteSize(SPR_CENTRE_VIEW_VEHICLE);
+			uint offset = this->IsWidgetLowered(WID_TN_WATCH) ? 1 : 0;
+			DrawSprite(SPR_CENTRE_VIEW_VEHICLE, PAL_NONE, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset);
+		}
+	}
+
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		if (_game_mode != GM_MENU && !this->IsWidgetDisabled(widget)) _toolbar_button_procs[widget](this);
@@ -2006,7 +2014,7 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 		SPR_IMG_COMPANY_GENERAL, // WID_TN_COMPANIES
 		SPR_IMG_STORY_BOOK,      // WID_TN_STORY
 		SPR_IMG_GOAL,            // WID_TN_GOAL
-		SPR_CENTRE_VIEW_VEHICLE, // WID_TN_WATCH
+		0,                       // WID_TN_WATCH
 		SPR_IMG_GRAPHS,          // WID_TN_GRAPHS
 		SPR_IMG_COMPANY_LEAGUE,  // WID_TN_LEAGUE
 		SPR_IMG_INDUSTRY,        // WID_TN_INDUSTRIES

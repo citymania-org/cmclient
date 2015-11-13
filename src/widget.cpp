@@ -217,8 +217,9 @@ void DrawFrameRect(int left, int top, int right, int bottom, Colours colour, Fra
  */
 static inline void DrawImageButtons(const Rect &r, WidgetType type, Colours colour, bool clicked, SpriteID img)
 {
-	assert(img != 0);
+
 	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
+	if (img == 0) return;
 
 	if ((type & WWT_MASK) == WWT_IMGBTN_2 && clicked) img++; // Show different image when clicked for #WWT_IMGBTN_2.
 	DrawSprite(img, PAL_NONE, r.left + WD_IMGBTN_LEFT + clicked, r.top + WD_IMGBTN_TOP + clicked);

@@ -548,6 +548,7 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_FULLROAD:
 				HandlePlacePushButton(this, WID_ROT_FULLROAD, _road_type_infos[_cur_roadtype].cursor_autoroad, HT_RECT);
+				// IConsolePrintF(CC_WARNING, "WARNING! Full-tile autoroad tool is deprecated and will be removed in next release.");
 				this->last_started_action = widget;
 				break;
 
