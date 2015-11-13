@@ -528,6 +528,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
+		static bool fullroad_warned = false;
 		_remove_button_clicked = false;
 		_one_way_button_clicked = false;
 		switch (widget) {
@@ -548,7 +549,10 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_FULLROAD:
 				HandlePlacePushButton(this, WID_ROT_FULLROAD, _road_type_infos[_cur_roadtype].cursor_autoroad, HT_RECT);
-				// IConsolePrintF(CC_WARNING, "WARNING! Full-tile autoroad tool is deprecated and will be removed in next release.");
+				if (!fullroad_warned) {
+					ShowGoalQuestion(0, 2 /* INFO */, 2 /* OK */, "Full-tile autoroad tool is deprecated and will be removed in next release.\n Use regular autoroad tool instead.");
+					fullroad_warned = true;
+				}
 				this->last_started_action = widget;
 				break;
 
