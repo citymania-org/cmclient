@@ -73,6 +73,11 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+
+*** 1.5.3 (3 Dec 2015) ***
+- Update to OpenTTD 1.5.3
+- Fixed crash when pressing Ctrl while building tramways.
+
 *** 1.5.3-RC1 (3 Nov 2015) ***
 - Update to OpenTTD 1.5.3-RC1
 
