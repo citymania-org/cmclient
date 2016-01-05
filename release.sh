@@ -14,6 +14,9 @@ rm $SRC_RELEASE_FNAME
 rm $RELEASE_FNAME
 rm $RELEASE64_FNAME
 rm -rf $TMP
+
+set -e
+
 cp $EXE32 $DIR/openttd.exe
 cp $EXE64 $DIR/openttd64.exe
 mkdir $TMP
