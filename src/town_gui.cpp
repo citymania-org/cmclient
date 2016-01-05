@@ -1326,7 +1326,7 @@ static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bo
 	else grow_rate = TownTicksToDays((town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1);
 
 	SetDParam(0, grow_rate);
-	SetDParam(1, !(town->growth_rate & TOWN_GROW_RATE_CUSTOM) ? TownTicksToDays(town->grow_counter + 1) : -1);
+	SetDParam(1, town->grow_counter < 16000 ? TownTicksToDays(town->grow_counter + 1) : -1);
 	SetDParam(2, town->time_until_rebuild);
 	SetDParam(3, HasBit(town->flags, TOWN_IS_GROWING) ? 1 : 0);
 	SetDParam(4, town->fund_buildings_months);
