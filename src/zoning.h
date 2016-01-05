@@ -7,16 +7,17 @@
 
 enum EvaluationMode {
 	CHECKNOTHING = 0,
-	CHECKOPINION = 1,  ///< Check the local authority's opinion.
-	CHECKBUILD = 2,    ///< Check wither or not the player can build.
-	CHECKSTACATCH = 3, ///< Check catchment area for stations
-	CHECKBULUNSER = 4, ///< Check for unserved buildings
-	CHECKINDUNSER = 5, ///< Check for unserved industries
-	CHECKTOWNZONES = 6,  ///< Town zones (Tz*)
-	CHECKCBBORDERS = 7,  ///< Citybuilder cargo acceptment zone
-	CHECKCBTOWNBORDERS = 8,  ///< Citybuilder server town borders
-	CHECKTOWNADZONES = 9,  ///< Town advertisement zone
-	CHECKTOWNGROWTHTILES = 10 ///< Town growth tiles (new house, skipped/removed house)
+	CHECKOPINION,  ///< Check the local authority's opinion.
+	CHECKBUILD,    ///< Check wither or not the player can build.
+	CHECKSTACATCH, ///< Check catchment area for stations
+	CHECKACTIVESTATIONS,  ///< Active/inactive stations (serviced in 50 days)
+	CHECKBULUNSER, ///< Check for unserved buildings
+	CHECKINDUNSER, ///< Check for unserved industries
+	CHECKTOWNZONES,  ///< Town zones (Tz*)
+	CHECKCBBORDERS,  ///< Citybuilder cargo acceptment zone
+	CHECKCBTOWNBORDERS,  ///< Citybuilder server town borders
+	CHECKTOWNADZONES,  ///< Town advertisement zone
+	CHECKTOWNGROWTHTILES, ///< Town growth tiles (new house, skipped/removed house)
 };
 
 struct Zoning {

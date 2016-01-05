@@ -13,6 +13,7 @@ const StringID _zone_types[] = {
 	STR_ZONING_AUTHORITY,
 	STR_ZONING_CAN_BUILD,
 	STR_ZONING_STA_CATCH,
+	STR_ZONING_ACTIVE_STATIONS,
 	STR_ZONING_BUL_UNSER,
 	STR_ZONING_IND_UNSER,
 	STR_ZONING_TOWN_ZONES,
@@ -25,8 +26,8 @@ const StringID _zone_types[] = {
 enum ZoningToolbarWidgets {
 	ZTW_CAPTION,
 	ZTW_OUTER_FIRST,
-	ZTW_INNER_FIRST = ZTW_OUTER_FIRST + 10,
-	ZTW_INNER_END = ZTW_INNER_FIRST + 10,
+	ZTW_INNER_FIRST = ZTW_OUTER_FIRST + 11,
+	ZTW_INNER_END = ZTW_INNER_FIRST + 11,
 };
 
 struct ZoningWindow : public Window {
@@ -142,6 +143,7 @@ static Hotkey zoning_hotkeys[] = {
 	Hotkey(WKC_SHIFT | '8', "CB_build_borders", ZTW_OUTER_FIRST + 7),
 	Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + 8),
 	Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + 9),
+	Hotkey((uint16)0, "active_stations", ZTW_OUTER_FIRST + 10),
 	HOTKEY_LIST_END
 };
 

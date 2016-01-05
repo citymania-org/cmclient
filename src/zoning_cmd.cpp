@@ -252,6 +252,26 @@ SpriteID TileZoneCheckTownsGrowthTiles(TileIndex tile) {
 	}
 }
 
+// For station shows whether it is active
+SpriteID TileZoneCheckActiveStations(TileIndex tile) {
+	// Never on a station.
+	if (!IsTileType(tile, MP_STATION)){
+		return INVALID_SPRITE_ID;
+	}
+
+	Station *st = Station::GetByTile(tile);
+	if (st == NULL) {
+		return INVALID_SPRITE_ID;
+	}
+
+	if (st->time_since_load <= 20 || st->time_since_unload <= 20) {
+		return SPR_PALETTE_ZONING_GREEN;
+	}
+
+	return SPR_PALETTE_ZONING_RED;
+}
+
+
 /**
  * General evaluation function; calls all the other functions depending on
  * evaluation mode.
@@ -273,6 +293,7 @@ SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode 
 		case CHECKCBTOWNBORDERS: return TileZoneCheckCBTownBorders(tile);
 		case CHECKTOWNADZONES: return TileZoneCheckTownAdvertisementZones(tile);
 		case CHECKTOWNGROWTHTILES: return TileZoneCheckTownsGrowthTiles(tile);
+		case CHECKACTIVESTATIONS: return TileZoneCheckActiveStations(tile);
 		default:               return INVALID_SPRITE_ID;
 	}
 }
