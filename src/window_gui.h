@@ -17,6 +17,7 @@
 #include "company_type.h"
 #include "tile_type.h"
 #include "widget_type.h"
+#include "station_base.h"
 #include "core/smallvec_type.hpp"
 #include "core/smallmap_type.hpp"
 #include "string_type.h"
@@ -874,6 +875,7 @@ enum TooltipCloseCondition {
 
 void GuiShowTooltips(Window *parent, StringID str, uint paramcount = 0, const uint64 params[] = NULL, TooltipCloseCondition close_tooltip = TCC_HOVER);
 void GuiPrepareTooltipsExtra(Window *parent);
+void GuiShowStationRatingTooltip(Window *parent, const Station *st, const CargoSpec *cs);
 
 /* widget.cpp */
 int GetWidgetFromPos(const Window *w, int x, int y);

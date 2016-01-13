@@ -110,6 +110,7 @@ enum WindowClass {
 	 */
 	WC_TOOLTIPS,
 	WC_TOOLTIPS_EXTRA,
+	WC_STATION_RATING_TOOLTIP,
 
 	/**
 	 * Query string window; %Window numbers:

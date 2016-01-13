@@ -5274,3 +5274,46 @@ STR_CONFIG_SETTING_WARN_IF_RUNWAY_IS_TOO_SHORT                  :Warn if airplan
 
 STR_CONFIG_SETTING_POWERFUND_MONEY                              :Powerfund minimum needed money for fund: {STRING2}
 STR_CONFIG_SETTING_POWERFUND_HOUSES                             :Maximum amount of houses to powerfund up to: {STRING2}
+
+STR_STATION_RATING_TOOLTIP_RATING_DETAILS                       :{STRING} Rating Details
+STR_STATION_RATING_TOOLTIP_TOTAL_RATING                         :Total target rating: {LTBLUE}{NUM}%
+STR_STATION_RATING_TOOLTIP_NEWGRF_RATING                        :NewGRF station rating: {STRING1} {BLACK}based on
+STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_0                      :{GOLD}{NUM}%
+STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_1                      :{LTBLUE}+{NUM}%
+STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED                         :Max speed of last vehicle: {LTBLUE}{VELOCITY}
+STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS                     :Units of cargo waiting: {LTBLUE}{NUM}
+STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME                      :Time since last pickup: {LTBLUE}{NUM} days
+
+STR_STATION_RATING_TOOLTIP_SPEED                                :Max speed of last vehicle (max 17%): {STRING2}
+STR_STATION_RATING_TOOLTIP_SPEED_MAX                            :{GREEN}{VELOCITY} or more, +{NUM}%
+STR_STATION_RATING_TOOLTIP_SPEED_ZERO                           :{RED}{VELOCITY}, {NUM}%
+STR_STATION_RATING_TOOLTIP_SPEED_0                              :{ORANGE}{VELOCITY}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_SPEED_1                              :{GOLD}{VELOCITY}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_SPEED_2                              :{YELLOW}{VELOCITY}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_SPEED_3                              :{GREEN}{VELOCITY}, +{NUM}%
+
+STR_STATION_RATING_TOOLTIP_AGE                                  :Age of last vehicle (max 13%): {STRING2}
+STR_STATION_RATING_TOOLTIP_AGE_0                                :{ORANGE}{NUM} years, {NUM}%
+STR_STATION_RATING_TOOLTIP_AGE_1                                :{GOLD}{NUM} years, +{NUM}%
+STR_STATION_RATING_TOOLTIP_AGE_2                                :{YELLOW}{NUM} year, +{NUM}%
+STR_STATION_RATING_TOOLTIP_AGE_3                                :{GREEN}{NUM} years, +{NUM}%
+
+STR_STATION_RATING_TOOLTIP_WAITTIME                             :Time since last pickup (max 51%): {STRING2}
+STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP                        :Time since last pickup (max 51%): {STRING2} (by ship)
+STR_STATION_RATING_TOOLTIP_WAITTIME_0                           :{RED}{NUM} days, {NUM}%
+STR_STATION_RATING_TOOLTIP_WAITTIME_1                           :{ORANGE}{NUM} days, +{NUM}%
+STR_STATION_RATING_TOOLTIP_WAITTIME_2                           :{GOLD}{NUM} days, +{NUM}%
+STR_STATION_RATING_TOOLTIP_WAITTIME_3                           :{YELLOW}{NUM} days, +{NUM}%
+STR_STATION_RATING_TOOLTIP_WAITTIME_4                           :{GREEN}{NUM} day{P "" s}, +{NUM}%
+
+STR_STATION_RATING_TOOLTIP_WAITUNITS                            :Units of cargo waiting (max 16%): {STRING2}
+STR_STATION_RATING_TOOLTIP_WAITUNITS_0                          :{RED}{NUM}, {NUM}%
+STR_STATION_RATING_TOOLTIP_WAITUNITS_1                          :{ORANGE}{NUM}, {NUM}%
+STR_STATION_RATING_TOOLTIP_WAITUNITS_2                          :{GOLD}{NUM}, {NUM}%
+STR_STATION_RATING_TOOLTIP_WAITUNITS_3                          :{YELLOW}{NUM}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_WAITUNITS_4                          :{YELLOW}{NUM}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_WAITUNITS_5                          :{GREEN}{NUM}, +{NUM}%
+
+STR_STATION_RATING_TOOLTIP_STATUE                               :Statue in town (max 10%): {STRING}
+STR_STATION_RATING_TOOLTIP_STATUE_NO                            :{GOLD}no, 0%
+STR_STATION_RATING_TOOLTIP_STATUE_YES                           :{GREEN}yes, +10%

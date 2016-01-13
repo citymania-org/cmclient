@@ -1282,6 +1282,7 @@ struct StationViewWindow : public Window {
 
 	int scroll_to_row;                  ///< If set, scroll the main viewport to the station pointed to by this row.
 	int grouping_index;                 ///< Currently selected entry in the grouping drop down.
+	int ratings_list_y = 0;             ///< Y coordinate of first line in station ratings panel.
 	Mode current_mode;                  ///< Currently selected display mode of cargo view.
 	Grouping groupings[NUM_COLUMNS];    ///< Grouping modes for the different columns.
 
@@ -1813,7 +1814,7 @@ struct StationViewWindow : public Window {
 	 * @param r Rectangle of the widget.
 	 * @return Number of lines needed for drawing the cargo ratings.
 	 */
-	int DrawCargoRatings(const Rect &r) const
+	int DrawCargoRatings(const Rect &r)
 	{
 		const Station *st = Station::Get(this->window_number);
 		int y = r.top + WD_FRAMERECT_TOP;
@@ -1827,6 +1828,7 @@ struct StationViewWindow : public Window {
 		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_STATION_VIEW_SUPPLY_RATINGS_TITLE);
 		y += FONT_HEIGHT_NORMAL;
 
+		this->ratings_list_y = y;
 		const CargoSpec *cs;
 		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
 			const GoodsEntry *ge = &st->goods[cs->Index()];
@@ -2058,6 +2060,28 @@ struct StationViewWindow : public Window {
 	virtual void OnResize()
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_SV_WAITING, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
+	}
+
+	virtual void OnHover(Point pt, int widget)
+	{
+		if (widget != WID_SV_ACCEPT_RATING_LIST ||
+		    	this->GetWidget<NWidgetCore>(WID_SV_ACCEPTS_RATINGS)->widget_data == STR_STATION_VIEW_RATINGS_BUTTON)
+			Window::OnHover(pt, widget);
+
+		int ofs_y = pt.y - this->ratings_list_y;
+		if (ofs_y < 0) return;
+
+		const Station *st = Station::Get(this->window_number);
+		const CargoSpec *cs;
+		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+			const GoodsEntry *ge = &st->goods[cs->Index()];
+			if (!ge->HasRating()) continue;
+			ofs_y -= FONT_HEIGHT_NORMAL;
+			if (ofs_y < 0) {
+				GuiShowStationRatingTooltip(this, st, cs);
+				break;
+			}
+		}
 	}
 
 	/**
