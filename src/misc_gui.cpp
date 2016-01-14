@@ -1591,19 +1591,19 @@ public:
 				SetDParam(0, STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_0 + (newgrf_rating <= 0 ? 0 : 1));
 				SetDParam(1, newgrf_rating);
 				GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_RATING, lastof(this->data[line_nr]));
-	            line_nr++;
+				line_nr++;
 
-	            SetDParam(0, min(last_speed, 0xFF));
+				SetDParam(0, min(last_speed, 0xFF));
 				GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED, lastof(this->data[line_nr]));
-	            line_nr++;
+				line_nr++;
 
-	            SetDParam(0, min(ge->max_waiting_cargo, 0xFFFF));
+				SetDParam(0, min(ge->max_waiting_cargo, 0xFFFF));
 				GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS, lastof(this->data[line_nr]));
-	            line_nr++;
+				line_nr++;
 
-	            SetDParam(0, (min(ge->time_since_pickup, 0xFF) * 5 + 1) / 2);
+				SetDParam(0, (min(ge->time_since_pickup, 0xFF) * 5 + 1) / 2);
 				GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME, lastof(this->data[line_nr]));
-	            line_nr++;
+				line_nr++;
 			}
 		}
 
