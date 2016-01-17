@@ -9,13 +9,13 @@
 #include "table/strings.h"
 #include "textbuf_gui.h"
 #include "cargotype.h"
+#include "zoom_func.h"
 #include "widgets/dropdown_type.h"
 
 #include "widgets/cargo_table_widget.h"
 
-static const uint EXP_TOPPADDING = 5;
-static const uint EXP_LINESPACE  = 2;      ///< Amount of vertical space for a horizontal (sub-)total line.
-static const uint EXP_BLOCKSPACE = 10;     ///< Amount of vertical space between two blocks of numbers.
+static const uint CT_LINESPACE  = 3;      ///< Amount of vertical space for a horizontal (sub-)total line.
+static const uint CT_ICON_MARGIN = 2;     ///< Amount of space between cargo icon and text
 
 enum CargoOption {
 	WID_CT_OPTION_CARGO_TOTAL = 0,
@@ -61,116 +61,136 @@ struct CargosWindow : Window {
 
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
-		uint extra_width = 0;
-		switch(widget){
+		Dimension icon_size = this->GetMaxIconSize();
+		int line_height = max(FONT_HEIGHT_NORMAL, (int)icon_size.height);
+		int icon_space = icon_size.width + ScaleGUITrad(CT_ICON_MARGIN);
+		switch(widget) {
 			case WID_CT_HEADER_AMOUNT:
 			case WID_CT_HEADER_INCOME:
-				extra_width += 16;
-			case WID_CT_HEADER_CARGO:
-				size->width = 96 + extra_width;
-				size->height = EXP_BLOCKSPACE + EXP_LINESPACE;
+			case WID_CT_AMOUNT:
+			case WID_CT_INCOME: {
 				break;
-
+			}
+			case WID_CT_HEADER_CARGO:
+			case WID_CT_LIST: {
+				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
+					const CargoSpec *cs = _sorted_cargo_specs[i];
+					size->width = max(GetStringBoundingBox(cs->name).width + icon_space, size->width);
+				}
+				size->width = max(GetStringBoundingBox(STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH).width, size->width);
+				break;
+			}
+		}
+		switch(widget) {
+			case WID_CT_HEADER_AMOUNT:
+			case WID_CT_HEADER_INCOME:
+				size->height = FONT_HEIGHT_NORMAL;
+				break;
+			case WID_CT_HEADER_CARGO:
+				break;
 			case WID_CT_AMOUNT:
 			case WID_CT_INCOME:
-				extra_width += 16;
-			case WID_CT_LIST:
-				size->width = 96 + extra_width;
-				size->height = (_sorted_standard_cargo_specs_size + 3) * (EXP_BLOCKSPACE + EXP_LINESPACE);
+			case WID_CT_LIST: {
+				size->height = _sorted_standard_cargo_specs_size * line_height + CT_LINESPACE + FONT_HEIGHT_NORMAL;
 				break;
+			}
 		}
+	}
+
+	Dimension GetMaxIconSize() const {
+		const CargoSpec *cs;
+		Dimension size = {0, 0};
+		FOR_ALL_CARGOSPECS(cs) {
+			Dimension icon_size = GetSpriteSize(cs->GetCargoIcon());
+			size.width = max(size.width, icon_size.width);
+			size.height = max(size.height, icon_size.height);
+		}
+		return size;
 	}
 
 	void DrawWidget(const Rect &r, int widget) const
 	{
-		int rect_x = (r.left + WD_FRAMERECT_LEFT);
-		int y = r.top;
 		const Company *c = Company::Get((CompanyID)this->window_number);
 		uint32 sum_cargo_amount = 0;
 		Money sum_cargo_income = 0;
+		int y = r.top;
+		Dimension max_icon_size = this->GetMaxIconSize();
+		int line_height = max(FONT_HEIGHT_NORMAL, (int)(max_icon_size.height));
+		int icon_space = max_icon_size.width + ScaleGUITrad(CT_ICON_MARGIN);
+		int text_y_ofs = (line_height - FONT_HEIGHT_NORMAL);
 
 		switch(widget){
 			case WID_CT_HEADER_CARGO:
-				//DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_HEADER_CARGO, TC_FROMSTRING, SA_LEFT);
-				y += EXP_BLOCKSPACE + EXP_LINESPACE;
 				break;
 			case WID_CT_HEADER_AMOUNT:
-				DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_HEADER_AMOUNT, TC_FROMSTRING, SA_CENTER);
-				y += EXP_BLOCKSPACE + EXP_LINESPACE;
+				DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_HEADER_AMOUNT, TC_FROMSTRING, SA_RIGHT);
 				break;
 			case WID_CT_HEADER_INCOME:
 				DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_HEADER_INCOME, TC_FROMSTRING, SA_RIGHT);
-				y += EXP_BLOCKSPACE + EXP_LINESPACE;
 				break;
 
-			case WID_CT_LIST:{
-				y += EXP_TOPPADDING; //top padding
+			case WID_CT_LIST: {
+				int rect_x = r.left + WD_FRAMERECT_LEFT;
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
 					const CargoSpec *cs = _sorted_cargo_specs[i];
-
-					GfxFillRect(rect_x, y, rect_x + 8, y + 5, 0);
-					GfxFillRect(rect_x + 1, y + 1, rect_x + 7, y + 4, cs->legend_colour); //coloured cargo rectangles
+					Dimension icon_size = GetSpriteSize(cs->GetCargoIcon());
+					DrawSprite(cs->GetCargoIcon(), PAL_NONE,
+					           r.left + max_icon_size.width - icon_size.width,
+					           y + (line_height - (int)icon_size.height) / 2);
 
 					SetDParam(0, cs->name);
-					DrawString(r.left + 14, r.right, y, STR_TOOLBAR_CARGOS_NAME); //cargo name
+					DrawString(r.left + icon_space, r.right, y + text_y_ofs, STR_TOOLBAR_CARGOS_NAME);
 
-					y += EXP_BLOCKSPACE + EXP_LINESPACE;	//padding
+					y += line_height;
 				}
 
-				//total
-				GfxFillRect(rect_x, y, rect_x + 96, y, 0);
-				y += EXP_BLOCKSPACE + EXP_LINESPACE;
+				GfxFillRect(r.left, y + 1, r.right, y + 1, PC_BLACK);
+				y += CT_LINESPACE;
 
 				StringID string_to_draw = STR_TOOLBAR_CARGOS_HEADER_TOTAL;
-				if(this->cargoPeriod != WID_CT_OPTION_CARGO_TOTAL) string_to_draw++;
+				if (this->cargoPeriod != WID_CT_OPTION_CARGO_TOTAL) string_to_draw++;
 				DrawString(r.left, r.right, y, string_to_draw);
 				break;
 			}
 			case WID_CT_AMOUNT:
-				y += EXP_TOPPADDING;
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
 					const CargoSpec *cs = _sorted_cargo_specs[i];
 
-					if(this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH){
+					if (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH) {
 						sum_cargo_amount += c->cargo_units_period[0][cs->Index()];
 						SetDParam(0,  c->cargo_units_period[0][cs->Index()]);
-					}
-					else{
+					} else {
 						sum_cargo_amount += c->cargo_units[cs->Index()];
 						SetDParam(0,  c->cargo_units[cs->Index()]);
 					}
 
-					DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_UNITS, TC_FROMSTRING, SA_RIGHT); //cargo amount in pcs
-					y += EXP_BLOCKSPACE + EXP_LINESPACE;
+					DrawString(r.left, r.right, y + text_y_ofs, STR_TOOLBAR_CARGOS_UNITS, TC_FROMSTRING, SA_RIGHT); //cargo amount in pcs
+					y += line_height;
 				}
 
-				//total
-				GfxFillRect(rect_x, y, rect_x + 108, y, 0);
-				y += EXP_BLOCKSPACE + EXP_LINESPACE;
+				GfxFillRect(r.left, y + 1, r.right, y + 1, PC_BLACK);
+				y += CT_LINESPACE;
 				SetDParam(0, sum_cargo_amount);
 				DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_UNITS_TOTAL, TC_FROMSTRING, SA_RIGHT);
 				break;
 
 			case WID_CT_INCOME:
-				y += EXP_TOPPADDING;
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
 					const CargoSpec *cs = _sorted_cargo_specs[i];
 
-					if(this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH){
+					if (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH) {
 						sum_cargo_income += c->cargo_income_period[0][cs->Index()];
-						DrawPrice(c->cargo_income_period[0][cs->Index()], r.left, r.right, y); //cargo income in money
-					}
-					else{
+						DrawPrice(c->cargo_income_period[0][cs->Index()], r.left, r.right, y + text_y_ofs);
+					} else {
 						sum_cargo_income += c->cargo_income[cs->Index()];
-						DrawPrice(c->cargo_income[cs->Index()], r.left, r.right, y); //cargo income in money
+						DrawPrice(c->cargo_income[cs->Index()], r.left, r.right, y + text_y_ofs);
 					}
 
-					y += EXP_BLOCKSPACE + EXP_LINESPACE;
+					y += line_height;
 				}
 
-				//total
-				GfxFillRect(rect_x, y, rect_x + 108, y, 0);
-				y += EXP_BLOCKSPACE + EXP_LINESPACE;
+				GfxFillRect(r.left, y + 1, r.right, y + 1, PC_BLACK);
+				y += CT_LINESPACE;
 				DrawPrice(sum_cargo_income, r.left, r.right, y);
 				break;
 		}
@@ -186,19 +206,22 @@ static const NWidgetPart _nested_cargos_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 1),
 		NWidget(NWID_HORIZONTAL), SetPadding(WD_FRAMERECT_TOP, WD_FRAMERECT_RIGHT, WD_FRAMERECT_BOTTOM, WD_FRAMERECT_LEFT), SetPIP(0, 9, 0),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_CT_HEADER_CARGO), SetMinimalSize(96, 16),SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_TOOLBAR_CARGOS_HEADER_CARGO, STR_TOOLBAR_CARGOS_HEADER_CARGO),
-			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_HEADER_AMOUNT), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_TOOLBAR_CARGOS_HEADER_AMOUNT, STR_TOOLBAR_CARGOS_HEADER_AMOUNT),
-			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_HEADER_INCOME), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_TOOLBAR_CARGOS_HEADER_INCOME, STR_TOOLBAR_CARGOS_HEADER_INCOME),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_CT_HEADER_CARGO), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_TOOLBAR_CARGOS_HEADER_CARGO, STR_TOOLBAR_CARGOS_HEADER_CARGO),
+			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_AMOUNT), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_NULL, STR_NULL),
+			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_INCOME), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_NULL, STR_NULL),
+			// NWidget(NWID_VERTICAL),
+			// 	NWidget(NWID_SPACER), SetFill(0, 1), SetResize(0, 1),
+			// EndContainer(),
 		EndContainer(),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 1),
 		NWidget(NWID_HORIZONTAL), SetPadding(WD_FRAMERECT_TOP, WD_FRAMERECT_RIGHT, WD_FRAMERECT_BOTTOM, WD_FRAMERECT_LEFT), SetPIP(0, 9, 0),
-			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_LIST),SetMinimalSize(96, 0),SetFill(1, 0), SetPadding(2,2,2,2), SetResize(1, 1),
+			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_LIST),SetFill(1, 0), SetPadding(2,2,2,2), SetResize(1, 1),
 			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_AMOUNT),SetMinimalSize(108, 0),SetFill(1, 0), SetPadding(2,2,2,2), SetResize(1, 1),
 			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_INCOME),SetMinimalSize(108, 0),SetFill(1, 0), SetPadding(2,2,2,2), SetResize(1, 1),
-			NWidget(NWID_VERTICAL),
-				NWidget(NWID_SPACER), SetFill(0, 1), SetResize(0, 1),
-			EndContainer(),
+			// NWidget(NWID_VERTICAL),
+			// 	NWidget(NWID_SPACER), SetFill(0, 1), SetResize(0, 1),
+			// EndContainer(),
 		EndContainer(),
 	EndContainer(),
 };
