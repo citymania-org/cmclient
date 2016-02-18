@@ -31,7 +31,7 @@
 #include "hotkeys.h"
 #include "road_gui.h"
 #include "zoom_func.h"
-
+#include "industry.h"
 #include "widgets/road_widget.h"
 
 #include "table/strings.h"
@@ -550,9 +550,10 @@ struct BuildRoadToolbarWindow : Window {
 			case WID_ROT_FULLROAD:
 				HandlePlacePushButton(this, WID_ROT_FULLROAD, _road_type_infos[_cur_roadtype].cursor_autoroad, HT_RECT);
 				if (!fullroad_warned) {
-					ShowGoalQuestion(0, 2 /* INFO */, 2 /* OK */, "Full-tile autoroad tool is deprecated and will be removed in next release.\n Use regular autoroad tool instead.");
+					ShowGoalQuestion(0, 2 /* WARNING */, 2 /* OK */, "Full-tile autoroad tool is deprecated and will be removed in next release.\n Use regular autoroad tool instead.");
 					fullroad_warned = true;
 				}
+
 				this->last_started_action = widget;
 				break;
 
