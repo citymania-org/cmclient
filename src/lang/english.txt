@@ -5014,7 +5014,8 @@ STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELO
 ### PATCH
 STR_TOWN_DIRECTORY_CAPTION_EXTRA                                :{WHITE}Towns ({YELLOW}{COMMA}{WHITE} / {ORANGE}{COMMA}{WHITE})
 STR_LOCAL_AUTHORITY_COMPANY_RATING_NUM                          :{YELLOW}{COMPANY} {COMPANY_NUM}: {ORANGE}{STRING} {BLACK}({COMMA})
-STR_TOWN_VIEW_GROWTH                                            :{BLACK}GR: {ORANGE}{COMMA}  {BLACK}Next: {ORANGE}{COMMA}  {BLACK}RH: {ORANGE}{COMMA}  {BLACK}Flag {ORANGE}{NUM}  {BLACK}FB: {ORANGE}{NUM} {BLACK}month{P "" s}
+STR_TOWN_VIEW_GROWTH                                            :{BLACK}GR: {ORANGE}{COMMA}{STRING}  {BLACK}Next: {ORANGE}{COMMA}  {BLACK}RH: {ORANGE}{COMMA}  {BLACK}Flag {ORANGE}{NUM}  {BLACK}FB: {ORANGE}{NUM} {BLACK}month{P "" s}
+STR_TOWN_VIEW_GROWTH_RATE_CUSTOM                                :*
 STR_TOWN_VIEW_GROWTH_TILES                                      :{BLACK}HS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}CS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}HR: {ORANGE}{COMMA}(+{COMMA})
 STR_TOWN_VIEW_REALPOP_RATE                                      :{BLACK}Real Population: {YELLOW}{COMMA}  {BLACK}Rating: {YELLOW}{COMMA}
 STR_TOWN_VIEW_HOUSE_STATE                                       :{BLACK}Houses: UC {ORANGE}{COMMA}  {BLACK}RTM: {ORANGE}{COMMA}  {BLACK}DTM: {ORANGE}{COMMA}
