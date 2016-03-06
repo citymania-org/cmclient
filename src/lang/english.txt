@@ -5180,12 +5180,13 @@ STR_TOOLBAR_CARGOS_CAPTION                                      :{WHITE}{COMPANY
 STR_TOOLBAR_CARGOS_NAME                                         :{BLACK}{STRING}
 
 #towns
-STR_TOWN_DIRECTORY_TOWN_COLOUR                                  :{ORANGE}{TOWN}{BLACK} ({COMMA}) {YELLOW}{COMMA} {P "house" "houses"}
-STR_TOWN_DIRECTORY_CITY_COLOUR                                  :{YELLOW}{TOWN}{BLACK} ({COMMA}) {YELLOW}{COMMA} {P "house" "houses"}
+STR_TOWN_DIRECTORY_TOWN_COLOUR                                  :{ORANGE}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} {P "house" "houses"}
+STR_TOWN_DIRECTORY_CITY_COLOUR                                  :{YELLOW}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} {P "house" "houses"}
 STR_OLD_DEPOT_TRAINT_LENGTH                                     :Old depot length format: {STRING2}
 STR_SMALLMAP_TOWN_LARGE                                         :{TINY_FONT}{YELLOW}{TOWN}
 
 STR_SORT_BY_HOUSES                                              :Houses
+STR_SORT_BY_REAL_POPULATION                                     :Real population
 STR_ORDER_DIST                                                  :{NUM}, {NUM}
 
 #server list

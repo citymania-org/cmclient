@@ -787,6 +787,15 @@ private:
 		return (a_population < b_population) ? -1 : 1;
 	}
 
+	/** Sort by real population (default descending, as big towns are of the most interest). */
+	static int CDECL TownRealPopulationSorter(const Town * const *a, const Town * const *b)
+	{
+		uint32 a_population = (*a)->cache.potential_pop;
+		uint32 b_population = (*b)->cache.potential_pop;
+		if (a_population == b_population) return TownDirectoryWindow::TownNameSorter(a, b);
+		return (a_population < b_population) ? -1 : 1;
+	}
+
 	/** Sort by number of houses (default descending, as big towns are of the most interest). */
 	static int CDECL TownHousesSorter(const Town * const *a, const Town * const *b)
 	{
@@ -893,7 +902,8 @@ public:
 
 					SetDParam(0, t->index);
 					SetDParam(1, t->cache.population);
-					SetDParam(2, t->cache.num_houses);
+					SetDParam(2, t->cache.potential_pop);
+					SetDParam(3, t->cache.num_houses);
 					/* CITIES DIFFERENT COLOUR*/
 					DrawString(text_left, text_right, y + (this->resize.step_height - FONT_HEIGHT_NORMAL) / 2, t->larger_town ? STR_TOWN_DIRECTORY_CITY_COLOUR : STR_TOWN_DIRECTORY_TOWN_COLOUR);
 
@@ -1046,6 +1056,7 @@ const Town *TownDirectoryWindow::last_town = NULL;
 const StringID TownDirectoryWindow::sorter_names[] = {
 	STR_SORT_BY_NAME,
 	STR_SORT_BY_POPULATION,
+	STR_SORT_BY_REAL_POPULATION,
 	STR_SORT_BY_HOUSES,
 	STR_SORT_BY_RATING,
 	INVALID_STRING_ID
@@ -1055,6 +1066,7 @@ const StringID TownDirectoryWindow::sorter_names[] = {
 GUITownList::SortFunction * const TownDirectoryWindow::sorter_funcs[] = {
 	&TownNameSorter,
 	&TownPopulationSorter,
+	&TownRealPopulationSorter,
 	&TownHousesSorter,
 	&TownRatingSorter,
 };
