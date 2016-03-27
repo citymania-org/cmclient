@@ -22,7 +22,7 @@ IniFile *_inilogin = NULL;
 static const int HTTPBUFLEN = 128;
 
 // nova* stuff probabaly obsolete
-static const char * const NOVAPOLIS_IPV4_PRIMARY   = "62.210.172.165";
+static const char * const NOVAPOLIS_IPV4_PRIMARY   = "188.165.194.77";
 static const char * const NOVAPOLIS_IPV6_PRIMARY   = "2a02:2b88:2:1::1d73:1";
 static const char * const NOVAPOLIS_IPV4_SECONDARY = "89.111.65.225";
 static const char * const NOVAPOLIS_IPV6_SECONDARY = "fe80::20e:7fff:fe23:bee0";
@@ -37,10 +37,10 @@ static const char * const NOVA_IP_ADDRESSES[] = {
 	NOVAPOLIS_IPV6_SECONDARY,
 };
 
-static const char * const CFG_LOGIN_FILE  = "novapolis.cfg";
+static const char * const CFG_LOGIN_FILE  = "citymania.cfg";
 static const char * const CFG_LOGIN_KEY   = "login";
-static const char * const NOVAPOLIS_LOGIN = "novapolis_login";
-static const char * const NOVAPOLIS_PW    = "novapolis_pw";
+static const char * const NOVAPOLIS_LOGIN = "citymania_login";
+static const char * const NOVAPOLIS_PW    = "citymania_pw";
 static const char * const NICE_LOGIN      = "nice_login";
 static const char * const NICE_PW         = "nice_pw";
 static const char * const BTPRO_LOGIN     = "btpro_login";
