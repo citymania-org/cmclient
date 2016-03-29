@@ -202,6 +202,16 @@ SpriteID TileZoneCheckTownZones(TileIndex tile) {
 }
 
 //Check CB town acceptance area
+SpriteID TileZoneCheckNewCBBorders(TileIndex tile) {
+	Town *town;
+	FOR_ALL_TOWNS(town) {
+		if (DistanceSquare(tile, town->xy) <= town->cache.squared_town_zone_radius[0] + 30)
+			return SPR_PALETTE_ZONING_BLACK;
+	}
+	return INVALID_SPRITE_ID;
+}
+
+//Check CB town acceptance area
 SpriteID TileZoneCheckCBBorders(TileIndex tile) {
 	Town *town = CalcClosestTownFromTile(tile);
 
@@ -290,6 +300,7 @@ SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode 
 		case CHECKINDUNSER:    return TileZoneCheckUnservedIndustriesEvaluation(tile);
 		case CHECKTOWNZONES:   return TileZoneCheckTownZones(tile);
 		case CHECKCBBORDERS:   return TileZoneCheckCBBorders(tile);
+		case CHECKNEWCBBORDERS:   return TileZoneCheckNewCBBorders(tile);
 		case CHECKCBTOWNBORDERS: return TileZoneCheckCBTownBorders(tile);
 		case CHECKTOWNADZONES: return TileZoneCheckTownAdvertisementZones(tile);
 		case CHECKTOWNGROWTHTILES: return TileZoneCheckTownsGrowthTiles(tile);
@@ -313,4 +324,3 @@ void DrawTileZoning(const TileInfo *ti) {
 		DrawZoningSprites(SPR_INNER_HIGHLIGHT_BASE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.inner), ti);
 	}
 }
-

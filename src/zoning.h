@@ -15,6 +15,7 @@ enum EvaluationMode {
 	CHECKINDUNSER, ///< Check for unserved industries
 	CHECKTOWNZONES,  ///< Town zones (Tz*)
 	CHECKCBBORDERS,  ///< Citybuilder cargo acceptment zone
+	CHECKNEWCBBORDERS,  ///< Citybuilder cargo acceptment zone
 	CHECKCBTOWNBORDERS,  ///< Citybuilder server town borders
 	CHECKTOWNADZONES,  ///< Town advertisement zone
 	CHECKTOWNGROWTHTILES, ///< Town growth tiles (new house, skipped/removed house)

@@ -18,16 +18,19 @@ const StringID _zone_types[] = {
 	STR_ZONING_IND_UNSER,
 	STR_ZONING_TOWN_ZONES,
 	STR_ZONING_CB_BORDERS,
+	STR_ZONING_NEW_CB_BORDERS,
 	STR_ZONING_CB_TOWN_BORDERS,
 	STR_ZONING_ADVERTISEMENT_ZONES,
 	STR_ZONING_TOWN_GROWTH_TILES,
 };
 
+const int ZONES_COUNT = 12;
+
 enum ZoningToolbarWidgets {
 	ZTW_CAPTION,
 	ZTW_OUTER_FIRST,
-	ZTW_INNER_FIRST = ZTW_OUTER_FIRST + 11,
-	ZTW_INNER_END = ZTW_INNER_FIRST + 11,
+	ZTW_INNER_FIRST = ZTW_OUTER_FIRST + ZONES_COUNT,
+	ZTW_INNER_END = ZTW_INNER_FIRST + ZONES_COUNT,
 };
 
 struct ZoningWindow : public Window {
@@ -35,11 +38,10 @@ struct ZoningWindow : public Window {
 	uint maxheight;
 
 	ZoningWindow(WindowDesc *desc, int window_number) : Window(desc) {
-		int zone_types_size = lengthof(_zone_types);
 		Dimension dim;
 		this->maxwidth = 0;
 		this->maxheight = 0;
-		for (int i = 0; i < zone_types_size; i++) {
+		for (int i = 0; i < ZONES_COUNT; i++) {
 			dim = GetStringBoundingBox(_zone_types[i]);
 			this->maxwidth = max(this->maxwidth, dim.width);
 			this->maxheight = max(this->maxheight, dim.height);
@@ -197,4 +199,3 @@ static WindowDesc _zoning_desc (
 void ShowZoningToolbar() {
 	AllocateWindowDescFront<ZoningWindow>(&_zoning_desc, 0);
 }
-
