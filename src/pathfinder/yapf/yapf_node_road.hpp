@@ -1,4 +1,4 @@
-/* $Id: yapf_node_road.hpp 22350 2011-04-19 18:12:47Z smatz $ */
+/* $Id: yapf_node_road.hpp 27363 2015-08-08 13:19:38Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,13 +14,11 @@
 
 /** Yapf Node for road YAPF */
 template <class Tkey_>
-struct CYapfRoadNodeT
-	: CYapfNodeT<Tkey_, CYapfRoadNodeT<Tkey_> >
-{
+struct CYapfRoadNodeT : CYapfNodeT<Tkey_, CYapfRoadNodeT<Tkey_> > {
 	typedef CYapfNodeT<Tkey_, CYapfRoadNodeT<Tkey_> > base;
 
-	TileIndex       m_segment_last_tile;
-	Trackdir        m_segment_last_td;
+	TileIndex m_segment_last_tile;
+	Trackdir  m_segment_last_td;
 
 	void Set(CYapfRoadNodeT *parent, TileIndex tile, Trackdir td, bool is_choice)
 	{

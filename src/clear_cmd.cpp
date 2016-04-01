@@ -1,4 +1,4 @@
-/* $Id: clear_cmd.cpp 27214 2015-03-31 18:45:30Z frosch $ */
+/* $Id: clear_cmd.cpp 27200 2015-03-20 19:27:15Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

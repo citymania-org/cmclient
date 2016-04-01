@@ -1,4 +1,4 @@
-/* $Id: script_execmode.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: script_execmode.cpp 27379 2015-08-10 20:04:31Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -30,7 +30,7 @@ ScriptExecMode::ScriptExecMode()
 	this->SetDoCommandMode(&ScriptExecMode::ModeProc, this);
 }
 
-ScriptExecMode::~ScriptExecMode()
+void ScriptExecMode::FinalRelease()
 {
 	if (this->GetDoCommandModeInstance() != this) {
 		/* Ignore this error if the script already died. */
@@ -38,5 +38,9 @@ ScriptExecMode::~ScriptExecMode()
 			throw Script_FatalError("ScriptExecMode object was removed while it was not the latest *Mode object created.");
 		}
 	}
+}
+
+ScriptExecMode::~ScriptExecMode()
+{
 	this->SetDoCommandMode(this->last_mode, this->last_instance);
 }

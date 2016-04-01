@@ -1,4 +1,4 @@
-/* $Id: object.h 21846 2011-01-18 23:09:43Z rubidium $ */
+/* $Id: object.h 27346 2015-07-28 18:20:54Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,7 +20,6 @@ void UpdateCompanyHQ(TileIndex tile, uint score);
 
 void BuildObject(ObjectType type, TileIndex tile, CompanyID owner = OWNER_NONE, struct Town *town = NULL, uint8 view = 0);
 
-void PlaceProc_Object(TileIndex tile);
-void ShowBuildObjectPicker(struct Window *w);
+void ShowBuildObjectPicker();
 
 #endif /* OBJECT_H */

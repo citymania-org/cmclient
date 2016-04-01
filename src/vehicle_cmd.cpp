@@ -1,4 +1,4 @@
-/* $Id: vehicle_cmd.cpp 27432 2015-11-01 12:03:13Z frosch $ */
+/* $Id: vehicle_cmd.cpp 27428 2015-10-30 17:27:21Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

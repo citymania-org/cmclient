@@ -1,4 +1,4 @@
-/* $Id: stdafx.h 27109 2015-01-02 19:50:43Z rubidium $ */
+/* $Id: stdafx.h 27380 2015-08-10 20:21:29Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -223,7 +223,9 @@
 
 	#include <malloc.h> // alloca()
 	#define NORETURN __declspec(noreturn)
-	#define inline __forceinline
+	#if (_MSC_VER < 1900)
+		#define inline __forceinline
+	#endif
 
 	#if !defined(WINCE)
 		#define CDECL _cdecl

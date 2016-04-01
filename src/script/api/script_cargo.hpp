@@ -1,4 +1,4 @@
-/* $Id: script_cargo.hpp 26396 2014-03-10 22:18:53Z zuu $ */
+/* $Id: script_cargo.hpp 27316 2015-06-21 18:53:23Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -90,8 +90,15 @@ public:
 	 * @param cargo_type The cargo to get the string representation of.
 	 * @pre ScriptCargo::IsValidCargo(cargo_type).
 	 * @return The cargo label.
-	 * @note Never use this to check if it is a certain cargo. NewGRF can
-	 *  redefine all of the names.
+	 * @note
+	 *  - The label uniquely identifies a specific cargo. Use this if you want to
+	 *    detect special cargos from specific industry set (like production booster cargos, supplies, ...).
+	 *  - For more generic cargo support, rather check cargo properties though. For example:
+	 *     - Use ScriptCargo::HasCargoClass(..., CC_PASSENGER) to decide bus vs. truck requirements.
+	 *     - Use ScriptCargo::GetTownEffect(...) paired with ScriptTown::GetCargoGoal(...) to determine
+	 *       town growth requirements.
+	 *  - In other words: Only use the cargo label, if you know more about the behaviour
+	 *    of a specific cargo from a specific industry set, than the API methods can tell you.
 	 */
 	static char *GetCargoLabel(CargoID cargo_type);
 

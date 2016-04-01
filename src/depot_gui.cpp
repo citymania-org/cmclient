@@ -1,4 +1,4 @@
-/* $Id: depot_gui.cpp 27134 2015-02-01 20:54:24Z frosch $ */
+/* $Id: depot_gui.cpp 27450 2015-11-20 09:25:27Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -201,6 +201,7 @@ struct DepotWindow : Window {
 	VehicleID vehicle_over; ///< Rail vehicle over which another one is dragged, \c INVALID_VEHICLE if none.
 	VehicleType type;
 	bool generate_list;
+	int hovered_widget; ///< Index of the widget being hovered during drag/drop. -1 if no drag is in progress.
 	VehicleList vehicle_list;
 	VehicleList wagon_list;
 	uint unitnumber_digits;
@@ -215,6 +216,7 @@ struct DepotWindow : Window {
 		this->sel = INVALID_VEHICLE;
 		this->vehicle_over = INVALID_VEHICLE;
 		this->generate_list = true;
+		this->hovered_widget = -1;
 		this->type = type;
 		this->num_columns = 1; // for non-trains this gets set in FinishInitNested()
 		this->unitnumber_digits = 2;
@@ -846,11 +848,29 @@ struct DepotWindow : Window {
 		this->sel = INVALID_VEHICLE;
 		this->vehicle_over = INVALID_VEHICLE;
 		this->SetWidgetDirty(WID_D_MATRIX);
+
+		if (this->hovered_widget != -1) {
+			this->SetWidgetLoweredState(this->hovered_widget, false);
+			this->SetWidgetDirty(this->hovered_widget);
+			this->hovered_widget = -1;
+		}
 	}
 
 	virtual void OnMouseDrag(Point pt, int widget)
 	{
-		if (this->type != VEH_TRAIN || this->sel == INVALID_VEHICLE) return;
+		if (this->sel == INVALID_VEHICLE) return;
+		if (widget != this->hovered_widget) {
+			if (this->hovered_widget == WID_D_SELL || this->hovered_widget == WID_D_SELL_CHAIN) {
+				this->SetWidgetLoweredState(this->hovered_widget, false);
+				this->SetWidgetDirty(this->hovered_widget);
+			}
+			this->hovered_widget = widget;
+			if (this->hovered_widget == WID_D_SELL || this->hovered_widget == WID_D_SELL_CHAIN) {
+				this->SetWidgetLoweredState(this->hovered_widget, true);
+				this->SetWidgetDirty(this->hovered_widget);
+			}
+		}
+		if (this->type != VEH_TRAIN) return;
 
 		/* A rail vehicle is dragged.. */
 		if (widget != WID_D_MATRIX) { // ..outside of the depot matrix.
@@ -937,7 +957,9 @@ struct DepotWindow : Window {
 			default:
 				this->sel = INVALID_VEHICLE;
 				this->SetDirty();
+				break;
 		}
+		this->hovered_widget = -1;
 		_cursor.vehchain = false;
 	}
 

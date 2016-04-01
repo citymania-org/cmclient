@@ -10,7 +10,7 @@
 ##grflangid 0x11
 
 
-# $Id: marathi.txt 27353 2015-07-31 17:46:09Z rubidium $
+# $Id: marathi.txt 27293 2015-05-27 17:53:35Z translators $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -755,6 +755,8 @@ STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}भा�
 
 
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :अन्य
+
+
 
 
 

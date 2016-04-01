@@ -1,4 +1,4 @@
-/* $Id: viewport.cpp 27162 2015-02-22 15:05:48Z frosch $ */
+/* $Id: viewport.cpp 27344 2015-07-28 08:16:52Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -63,6 +63,7 @@
  */
 
 #include "stdafx.h"
+#include "math.h"
 #include "core/math_func.hpp"
 #include "core/smallvec_type.hpp"
 #include "landscape.h"
@@ -90,7 +91,7 @@
 #include <map>
 
 #include "table/strings.h"
-#include "table/palettes.h"
+#include "table/string_colours.h"
 #include "zoning.h"
 #include "industry_type.h"
 

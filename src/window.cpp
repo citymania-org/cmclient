@@ -1,4 +1,4 @@
-/* $Id: window.cpp 27432 2015-11-01 12:03:13Z frosch $ */
+/* $Id: window.cpp 27425 2015-10-30 17:23:16Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

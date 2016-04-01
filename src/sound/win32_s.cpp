@@ -1,4 +1,4 @@
-/* $Id: win32_s.cpp 27430 2015-11-01 11:55:45Z frosch $ */
+/* $Id: win32_s.cpp 27383 2015-08-12 20:50:10Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.

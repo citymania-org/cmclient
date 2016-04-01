@@ -7,10 +7,10 @@
 ##digitsepcur {NBSP}
 ##decimalsep ,
 ##winlangid 0x0419
-##grflangid 0x0B
+##grflangid 0x0b
 
 
-# $Id: chuvash.txt 27353 2015-07-31 17:46:09Z rubidium $
+# $Id: chuvash.txt 27478 2015-12-27 11:40:23Z translators $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -513,6 +513,8 @@ STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Тулл
 
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Экрана сӑнарлама пултарни
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :расна
+
+
 
 
 

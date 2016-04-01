@@ -1,4 +1,4 @@
-/* $Id: company_gui.cpp 27432 2015-11-01 12:03:13Z frosch $ */
+/* $Id: company_gui.cpp 27427 2015-10-30 17:24:30Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: newgrf_debug_data.h 27048 2014-10-28 00:51:51Z peter1138 $ */
+/* $Id: newgrf_debug_data.h 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,7 +13,7 @@
 #include "../newgrf_engine.h"
 
 /* Helper for filling property tables */
-#define NIP(prop, base, variable, type, name) { name, cpp_offsetof(base, variable), cpp_sizeof(base, variable), prop, type }
+#define NIP(prop, base, variable, type, name) { name, (ptrdiff_t)cpp_offsetof(base, variable), cpp_sizeof(base, variable), prop, type }
 #define NIP_END() { NULL, 0, 0, 0, 0 }
 
 /* Helper for filling callback tables */

@@ -1,4 +1,4 @@
-/* $Id: palettes.h 24111 2012-04-10 20:16:51Z rubidium $ */
+/* $Id: palettes.h 27340 2015-07-26 09:47:17Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -147,24 +147,3 @@ static const ExtraPaletteValues _extra_palette_values = {
 	  M(116, 180, 196), M(148, 200, 216), M(180, 220, 232) }
 };
 #undef M
-
-/** Colour mapping for the TextColours. */
-static const byte _string_colourmap[17] = {
-		150, // TC_BLUE
-		 12, // TC_SILVER
-		189, // TC_GOLD
-		184, // TC_RED
-		174, // TC_PURPLE
-		 30, // TC_LIGHT_BROWN
-		195, // TC_ORANGE
-		209, // TC_GREEN
-		 68, // TC_YELLOW
-		 95, // TC_DARK_GREEN
-		 79, // TC_CREAM
-		116, // TC_BROWN
-		 15, // TC_WHITE
-		152, // TC_LIGHT_BLUE
-		  6, // TC_GREY
-		133, // TC_DARK_BLUE
-		  1, // TC_BLACK
-};

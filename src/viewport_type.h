@@ -1,4 +1,4 @@
-/* $Id: viewport_type.h 25264 2013-05-19 14:49:25Z rubidium $ */
+/* $Id: viewport_type.h 27248 2015-04-25 11:58:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,7 +14,6 @@
 
 #include "zoom_type.h"
 #include "strings_type.h"
-#include "math.h"
 #include "table/strings.h"
 
 class LinkGraphOverlay;

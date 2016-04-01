@@ -1,4 +1,4 @@
-/* $Id: countedobj.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: countedobj.cpp 27379 2015-08-10 20:04:31Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -25,7 +25,12 @@ int32 SimpleCountedObject::Release()
 	int32 res = --m_ref_cnt;
 	assert(res >= 0);
 	if (res == 0) {
-		FinalRelease();
+		try {
+			FinalRelease(); // may throw, for example ScriptTest/ExecMode
+		} catch (...) {
+			delete this;
+			throw;
+		}
 		delete this;
 	}
 	return res;

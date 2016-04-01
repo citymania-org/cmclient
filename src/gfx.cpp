@@ -1,4 +1,4 @@
-/* $Id: gfx.cpp 27351 2015-07-30 18:53:31Z frosch $ */
+/* $Id: gfx.cpp 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,7 @@
 #include "newgrf_debug.h"
 
 #include "table/palettes.h"
+#include "table/string_colours.h"
 #include "table/sprites.h"
 #include "table/control_codes.h"
 
@@ -186,7 +187,7 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 	int grade_x = x2 - x;
 
 	/* Clipping rectangle. Slightly extended so we can ignore the width of the line. */
-	uint extra = CeilDiv(3 * width, 4); // not less then "width * sqrt(2) / 2"
+	int extra = (int)CeilDiv(3 * width, 4); // not less then "width * sqrt(2) / 2"
 	Rect clip = { -extra, -extra, screen_width - 1 + extra, screen_height - 1 + extra };
 
 	/* prevent integer overflows. */
@@ -586,7 +587,7 @@ int GetStringLineCount(StringID str, int maxw)
  */
 Dimension GetStringMultiLineBoundingBox(StringID str, const Dimension &suggestion)
 {
-	Dimension box = {suggestion.width, GetStringHeight(str, suggestion.width)};
+	Dimension box = {suggestion.width, (uint)GetStringHeight(str, suggestion.width)};
 	return box;
 }
 
@@ -598,7 +599,7 @@ Dimension GetStringMultiLineBoundingBox(StringID str, const Dimension &suggestio
  */
 Dimension GetStringMultiLineBoundingBox(const char *str, const Dimension &suggestion)
 {
-	Dimension box = {suggestion.width, GetStringHeight(str, suggestion.width)};
+	Dimension box = {suggestion.width, (uint)GetStringHeight(str, suggestion.width)};
 	return box;
 }
 

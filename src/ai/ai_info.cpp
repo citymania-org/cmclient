@@ -1,4 +1,4 @@
-/* $Id: ai_info.cpp 26774 2014-09-06 17:46:56Z rubidium $ */
+/* $Id: ai_info.cpp 27193 2015-03-17 20:45:57Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,7 +28,7 @@ static bool CheckAPIVersion(const char *api_version)
 {
 	return strcmp(api_version, "0.7") == 0 || strcmp(api_version, "1.0") == 0 || strcmp(api_version, "1.1") == 0 ||
 			strcmp(api_version, "1.2") == 0 || strcmp(api_version, "1.3") == 0 || strcmp(api_version, "1.4") == 0 ||
-			strcmp(api_version, "1.5") == 0;
+			strcmp(api_version, "1.5") == 0 || strcmp(api_version, "1.6") == 0;
 }
 
 #if defined(WIN32)

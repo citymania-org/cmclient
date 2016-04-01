@@ -1,4 +1,4 @@
-/* $Id: genworld.h 23611 2011-12-19 20:56:50Z truebrain $ */
+/* $Id: genworld.h 27231 2015-04-11 18:45:18Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -30,6 +30,17 @@ enum GenWorldMode {
 	GWM_EMPTY     = 1, ///< Generate an empty map (sea-level)
 	GWM_RANDOM    = 2, ///< Generate a random map for SE
 	GWM_HEIGHTMAP = 3, ///< Generate a newgame from a heightmap
+};
+
+/** Smoothness presets. */
+enum TgenSmoothness {
+	TGEN_SMOOTHNESS_BEGIN,      ///< First smoothness value.
+	TGEN_SMOOTHNESS_VERY_SMOOTH = TGEN_SMOOTHNESS_BEGIN, ///< Smoothness preset 'very smooth'.
+	TGEN_SMOOTHNESS_SMOOTH,     ///< Smoothness preset 'smooth'.
+	TGEN_SMOOTHNESS_ROUGH,      ///< Smoothness preset 'rough'.
+	TGEN_SMOOTHNESS_VERY_ROUGH, ///< Smoothness preset 'very rough'.
+
+	TGEN_SMOOTHNESS_END,        ///< Used to iterate.
 };
 
 static const uint CUSTOM_SEA_LEVEL_NUMBER_DIFFICULTY = 4; ///< Value for custom sea level in difficulty settings.

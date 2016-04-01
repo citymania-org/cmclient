@@ -1,4 +1,4 @@
-/* $Id: pool_func.hpp 26057 2013-11-23 13:12:19Z rubidium $ */
+/* $Id: pool_func.hpp 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -121,7 +121,7 @@ DEFINE_POOL_METHOD(inline void *)::AllocateItem(size_t size, size_t index)
 		item = (Titem *)MallocT<byte>(size);
 	}
 	this->data[index] = item;
-	item->index = (uint)index;
+	item->index = (Tindex)(uint)index;
 	return item;
 }
 

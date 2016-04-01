@@ -1,4 +1,4 @@
-/* $Id: newgrf_railtype.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: newgrf_railtype.cpp 27342 2015-07-26 12:25:37Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -100,9 +100,10 @@ RailTypeResolverObject::RailTypeResolverObject(const RailtypeInfo *rti, TileInde
  * @param tile The tile to get the sprite for.
  * @param rtsg The type of sprite to draw.
  * @param content Where are we drawing the tile?
+ * @param [out] num_results If not NULL, return the number of sprites in the spriteset.
  * @return The sprite to draw.
  */
-SpriteID GetCustomRailSprite(const RailtypeInfo *rti, TileIndex tile, RailTypeSpriteGroup rtsg, TileContext context)
+SpriteID GetCustomRailSprite(const RailtypeInfo *rti, TileIndex tile, RailTypeSpriteGroup rtsg, TileContext context, uint *num_results)
 {
 	assert(rtsg < RTSG_END);
 
@@ -111,6 +112,8 @@ SpriteID GetCustomRailSprite(const RailtypeInfo *rti, TileIndex tile, RailTypeSp
 	RailTypeResolverObject object(rti, tile, context, rtsg);
 	const SpriteGroup *group = object.Resolve();
 	if (group == NULL || group->GetNumResults() == 0) return 0;
+
+	if (num_results) *num_results = group->GetNumResults();
 
 	return group->GetResult();
 }

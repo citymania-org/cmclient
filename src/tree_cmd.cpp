@@ -1,4 +1,4 @@
-/* $Id: tree_cmd.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: tree_cmd.cpp 27406 2015-09-30 17:28:58Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -325,10 +325,10 @@ void GenerateTrees()
 
 /**
  * Plant a tree.
- * @param tile start tile of area-drag of tree plantation
+ * @param tile end tile of area-drag
  * @param flags type of operation
  * @param p1 tree type, TREE_INVALID means random.
- * @param p2 end tile of area-drag
+ * @param p2 start tile of area-drag of tree plantation
  * @param text unused
  * @return the cost of this operation or an error
  */

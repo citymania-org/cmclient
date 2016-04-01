@@ -1,4 +1,4 @@
-/* $Id: network_content_gui.h 25287 2013-05-26 19:23:42Z frosch $ */
+/* $Id: network_content_gui.h 27288 2015-05-17 19:49:35Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -42,5 +42,7 @@ public:
 	virtual void DrawWidget(const Rect &r, int widget) const;
 	virtual void OnDownloadProgress(const ContentInfo *ci, int bytes);
 };
+
+void BuildContentTypeStringList();
 
 #endif /* NETWORK_CONTENT_GUI_H */

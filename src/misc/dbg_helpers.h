@@ -1,4 +1,4 @@
-/* $Id: dbg_helpers.h 20603 2010-08-23 22:03:36Z rubidium $ */
+/* $Id: dbg_helpers.h 27362 2015-08-08 10:06:24Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -111,7 +111,7 @@ struct DumpTarget {
 			m_ptr = src.m_ptr;
 		}
 
-		bool operator < (const KnownStructKey &other) const
+		bool operator<(const KnownStructKey &other) const
 		{
 			if ((size_t)m_ptr < (size_t)other.m_ptr) return true;
 			if ((size_t)m_ptr > (size_t)other.m_ptr) return false;
