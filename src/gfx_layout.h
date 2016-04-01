@@ -1,4 +1,4 @@
-/* $Id: gfx_layout.h 26029 2013-11-17 17:08:20Z michi_cc $ */
+/* $Id: gfx_layout.h 27367 2015-08-09 12:33:27Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,12 +19,12 @@
 #include <map>
 #include <string>
 
-#ifdef WITH_ICU
+#ifdef WITH_ICU_LAYOUT
 #include "layout/ParagraphLayout.h"
 #define ICU_FONTINSTANCE : public LEFontInstance
-#else /* WITH_ICU */
+#else /* WITH_ICU_LAYOUT */
 #define ICU_FONTINSTANCE
-#endif /* WITH_ICU */
+#endif /* WITH_ICU_LAYOUT */
 
 /**
  * Text drawing parameters, which can change while drawing a line, but are kept between multiple parts
@@ -75,7 +75,7 @@ public:
 
 	Font(FontSize size, TextColour colour);
 
-#ifdef WITH_ICU
+#ifdef WITH_ICU_LAYOUT
 	/* Implementation details of LEFontInstance */
 
 	le_int32 getUnitsPerEM() const;
@@ -91,7 +91,7 @@ public:
 	LEGlyphID mapCharToGlyph(LEUnicode32 ch) const;
 	void getGlyphAdvance(LEGlyphID glyph, LEPoint &advance) const;
 	le_bool getGlyphPoint(LEGlyphID glyph, le_int32 pointNumber, LEPoint &point) const;
-#endif /* WITH_ICU */
+#endif /* WITH_ICU_LAYOUT */
 };
 
 /** Mapping from index to font. */

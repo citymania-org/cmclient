@@ -1,4 +1,4 @@
-/* $Id: script_road.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: script_road.cpp 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -371,8 +371,8 @@ static bool NormaliseTileOffset(int32 *tile)
 	if (!::IsValidTile(tile) || !::IsValidTile(start) || !::IsValidTile(end)) return -1;
 	if (::DistanceManhattan(tile, start) != 1 || ::DistanceManhattan(tile, end) != 1) return -1;
 
-	/*                                       ROAD_NW              ROAD_SW             ROAD_SE             ROAD_NE */
-	static const TileIndex neighbours[] = {::TileDiffXY(0, -1), ::TileDiffXY(1, 0), ::TileDiffXY(0, 1), ::TileDiffXY(-1, 0)};
+	/*                                           ROAD_NW              ROAD_SW             ROAD_SE             ROAD_NE */
+	static const TileIndexDiff neighbours[] = {::TileDiffXY(0, -1), ::TileDiffXY(1, 0), ::TileDiffXY(0, 1), ::TileDiffXY(-1, 0)};
 	Array *existing = (Array*)alloca(sizeof(Array) + lengthof(neighbours) * sizeof(int32));
 	existing->size = 0;
 

@@ -1,4 +1,4 @@
-/* $Id: script_execmode.hpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: script_execmode.hpp 27379 2015-08-10 20:04:31Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -46,6 +46,8 @@ public:
 	 *   in when the instance was created.
 	 */
 	~ScriptExecMode();
+
+	virtual void FinalRelease();
 };
 
 #endif /* SCRIPT_EXECMODE_HPP */

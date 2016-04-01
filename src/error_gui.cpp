@@ -1,4 +1,4 @@
-/* $Id: error_gui.cpp 27349 2015-07-30 18:48:25Z frosch $ */
+/* $Id: error_gui.cpp 27307 2015-06-20 12:57:34Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: ai_gui.cpp 27187 2015-03-15 12:19:58Z frosch $ */
+/* $Id: ai_gui.cpp 27468 2015-12-10 18:28:01Z zuu $ */
 
 /*
  * This file is part of OpenTTD.
@@ -901,8 +901,7 @@ struct AIConfigWindow : public Window {
 					ShowErrorMessage(STR_NETWORK_ERROR_NOTAVAILABLE, INVALID_STRING_ID, WL_ERROR);
 				} else {
 #if defined(ENABLE_NETWORK)
-					ShowNetworkContentListWindow(NULL, CONTENT_TYPE_AI);
-					_network_content_client.RequestContentList(CONTENT_TYPE_GAME);
+					ShowNetworkContentListWindow(NULL, CONTENT_TYPE_AI, CONTENT_TYPE_GAME);
 #endif
 				}
 				break;

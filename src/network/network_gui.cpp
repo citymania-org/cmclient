@@ -1,4 +1,4 @@
-/* $Id: network_gui.cpp 27431 2015-11-01 11:59:17Z frosch $ */
+/* $Id: network_gui.cpp 27421 2015-10-30 16:19:33Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

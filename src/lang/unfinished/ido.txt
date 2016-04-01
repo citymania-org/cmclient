@@ -10,7 +10,7 @@
 ##grflangid 0x06
 
 
-# $Id: ido.txt 27353 2015-07-31 17:46:09Z rubidium $
+# $Id: ido.txt 27516 2016-03-01 19:41:31Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -480,6 +480,8 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :altra
 
 
 
+
+
 # Custom currency window
 
 
@@ -774,7 +776,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_HEADQUARTERS                 :Stabeyo di komp
 
 # About OpenTTD window
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versiono {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2015 La kruo OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2016 La kruo OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Ludo Detali

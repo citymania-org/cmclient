@@ -10,7 +10,7 @@
 ##grflangid 0x26
 
 
-# $Id: macedonian.txt 27353 2015-07-31 17:46:09Z rubidium $
+# $Id: macedonian.txt 27516 2016-03-01 19:41:31Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -806,6 +806,8 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Секој ме
 
 
 
+
+
 # Custom currency window
 
 
@@ -1200,7 +1202,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Компани�
 STR_ABOUT_OPENTTD                                               :{WHITE}За OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Оригинален copyright {COPYRIGHT} 1995 Chris Sawyer, Сите права се задржани
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD верзија {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2015 OpenTTD тимот
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2016 OpenTTD тимот
 
 # Save/load game/scenario
 STR_SAVELOAD_LOAD_BUTTON                                        :{BLACK}Оптоварување

@@ -1,4 +1,4 @@
-/* $Id: crashlog_win.cpp 26538 2014-04-28 21:06:51Z rubidium $ */
+/* $Id: crashlog_win.cpp 27380 2015-08-10 20:21:29Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -322,7 +322,9 @@ static char *PrintModuleInfo(char *output, const char *last, HMODULE mod)
 }
 
 #if defined(_MSC_VER)
+#pragma warning(disable:4091)
 #include <dbghelp.h>
+#pragma warning(default:4091)
 
 char *CrashLogWindows::AppendDecodedStacktrace(char *buffer, const char *last) const
 {

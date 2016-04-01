@@ -1,4 +1,4 @@
-/* $Id: follow_track.hpp 27431 2015-11-01 11:59:17Z frosch $ */
+/* $Id: follow_track.hpp 27418 2015-10-30 16:18:03Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

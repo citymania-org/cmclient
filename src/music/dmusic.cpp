@@ -1,4 +1,4 @@
-/* $Id: dmusic.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: dmusic.cpp 27380 2015-08-10 20:21:29Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,6 +22,7 @@
 #include "dmusic.h"
 
 #include <windows.h>
+#undef FACILITY_DIRECTMUSIC // Needed for newer Windows SDK version.
 #include <dmksctrl.h>
 #include <dmusici.h>
 #include <dmusicc.h>

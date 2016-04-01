@@ -1,4 +1,4 @@
-/* $Id: terraform_cmd.cpp 26902 2014-09-21 17:37:30Z rubidium $ */
+/* $Id: terraform_cmd.cpp 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -403,7 +403,7 @@ CommandCost CmdTerraformLand(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 			}
 		}
 
-		if (c != NULL) c->terraform_limit -= ts.tile_to_new_height.size() << 16;
+		if (c != NULL) c->terraform_limit -= (uint32)ts.tile_to_new_height.size() << 16;
 	}
 	return total_cost;
 }

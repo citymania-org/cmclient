@@ -1,4 +1,4 @@
-/* $Id: script_testmode.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: script_testmode.cpp 27379 2015-08-10 20:04:31Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -30,7 +30,7 @@ ScriptTestMode::ScriptTestMode()
 	this->SetDoCommandMode(&ScriptTestMode::ModeProc, this);
 }
 
-ScriptTestMode::~ScriptTestMode()
+void ScriptTestMode::FinalRelease()
 {
 	if (this->GetDoCommandModeInstance() != this) {
 		/* Ignore this error if the script already died. */
@@ -38,5 +38,9 @@ ScriptTestMode::~ScriptTestMode()
 			throw Script_FatalError("Testmode object was removed while it was not the latest *Mode object created.");
 		}
 	}
+}
+
+ScriptTestMode::~ScriptTestMode()
+{
 	this->SetDoCommandMode(this->last_mode, this->last_instance);
 }

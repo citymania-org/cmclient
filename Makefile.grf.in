@@ -1,20 +1,17 @@
-# $Id: Makefile.grf.in 26708 2014-07-30 17:21:42Z rubidium $
+# $Id: Makefile.grf.in 27263 2015-05-02 09:59:55Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
 #
-# Building requires GRFCodec and NFORenum. Older versions of GRFCodec are
-#  known to miscompile the graphics.
+# Building requires GRFCodec.
 #
-# Recent nightlies (including sources) of both can be found at:
+# Recent versions (including sources) can be found at:
 #  http://www.openttd.org/download-grfcodec
-#  http://www.openttd.org/download-nforenum
 #
-# The mercurial repository of both can be found at:
+# The mercurial repository can be found at:
 #  http://hg.openttdcoop.org/grfcodec
-#  http://hg.openttdcoop.org/nforenum
 #
 
 

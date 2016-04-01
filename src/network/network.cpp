@@ -1,4 +1,4 @@
-/* $Id: network.cpp 27431 2015-11-01 11:59:17Z frosch $ */
+/* $Id: network.cpp 27400 2015-09-19 16:49:46Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.

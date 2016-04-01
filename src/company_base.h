@@ -1,4 +1,4 @@
-/* $Id: company_base.h 26081 2013-11-24 09:52:35Z rubidium $ */
+/* $Id: company_base.h 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -45,7 +45,7 @@ struct CompanyInfrastructure {
 	}
 };
 
-typedef Pool<Company, CompanyByte, 1, MAX_COMPANIES> CompanyPool;
+typedef Pool<Company, CompanyID, 1, MAX_COMPANIES> CompanyPool;
 extern CompanyPool _company_pool;
 
 

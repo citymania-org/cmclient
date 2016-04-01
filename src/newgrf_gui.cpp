@@ -1,4 +1,4 @@
-/* $Id: newgrf_gui.cpp 26954 2014-10-04 18:19:22Z peter1138 $ */
+/* $Id: newgrf_gui.cpp 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -223,7 +223,7 @@ struct NewGRFParametersWindow : public Window {
 
 			case WID_NP_DESCRIPTION:
 				/* Minimum size of 4 lines. The 500 is the default size of the window. */
-				Dimension suggestion = {500 - WD_FRAMERECT_LEFT - WD_FRAMERECT_RIGHT, FONT_HEIGHT_NORMAL * 4 + WD_TEXTPANEL_TOP + WD_TEXTPANEL_BOTTOM};
+				Dimension suggestion = {500 - WD_FRAMERECT_LEFT - WD_FRAMERECT_RIGHT, (uint)FONT_HEIGHT_NORMAL * 4 + WD_TEXTPANEL_TOP + WD_TEXTPANEL_BOTTOM};
 				for (uint i = 0; i < this->grf_config->param_info.Length(); i++) {
 					const GRFParameterInfo *par_info = this->grf_config->param_info[i];
 					if (par_info == NULL) continue;

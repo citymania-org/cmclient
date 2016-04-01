@@ -1,4 +1,4 @@
-/* $Id: sound_type.h 26425 2014-03-23 21:56:48Z frosch $ */
+/* $Id: sound_type.h 27507 2016-02-08 21:05:57Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -118,5 +118,7 @@ enum SoundFx {
 static const uint ORIGINAL_SAMPLE_COUNT = 73;
 
 typedef uint16 SoundID;
+
+static const SoundID INVALID_SOUND = 0xFFFF;
 
 #endif /* SOUND_TYPE_H */

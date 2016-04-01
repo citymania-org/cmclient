@@ -1,4 +1,4 @@
-/* $Id: network_content.h 23465 2011-12-09 21:49:52Z yexo $ */
+/* $Id: network_content.h 27468 2015-12-10 18:28:01Z zuu $ */
 
 /*
  * This file is part of OpenTTD.
@@ -149,7 +149,7 @@ public:
 
 extern ClientNetworkContentSocketHandler _network_content_client;
 
-void ShowNetworkContentListWindow(ContentVector *cv = NULL, ContentType type = CONTENT_TYPE_END);
+void ShowNetworkContentListWindow(ContentVector *cv = NULL, ContentType type1 = CONTENT_TYPE_END, ContentType type2 = CONTENT_TYPE_END);
 
 void ShowMissingContentWindow(const struct GRFConfig *list);
 

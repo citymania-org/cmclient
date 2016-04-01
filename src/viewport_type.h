@@ -1,4 +1,4 @@
-/* $Id: viewport_type.h 27271 2015-05-08 17:30:07Z frosch $ */
+/* $Id: viewport_type.h 27248 2015-04-25 11:58:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

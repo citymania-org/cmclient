@@ -11,7 +11,7 @@
 ##gender m f n
 
 
-# $Id: faroese.txt 27353 2015-07-31 17:46:09Z rubidium $
+# $Id: faroese.txt 27516 2016-03-01 19:41:31Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -950,6 +950,8 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Marka he
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Skerm upploysn
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Vel hvørja skermupploysn tú vil brúka
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :annað
+
+
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Base grafikk sett
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Vel ta base grafikk setti tú vil brúka
@@ -2425,7 +2427,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Ogn hjá fyrit�
 STR_ABOUT_OPENTTD                                               :{WHITE}Um OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Upprunalig upphavsrættindi {COPYRIGHT} 1995 Chris Sawyer, Øll rættindi umbiðin
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD útgáva {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2015 OpenTTD toymi
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2016 OpenTTD toymi
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Goym spæl

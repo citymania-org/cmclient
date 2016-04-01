@@ -1,4 +1,4 @@
-/* $Id: widget.cpp 27348 2015-07-30 18:45:29Z frosch $ */
+/* $Id: widget.cpp 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,7 +22,7 @@
 
 #include "table/sprites.h"
 #include "table/strings.h"
-#include "table/palettes.h"
+#include "table/string_colours.h"
 
 #include "safeguards.h"
 
@@ -1545,7 +1545,7 @@ void NWidgetMatrix::SetupSmallestSize(Window *w, bool init_array)
 	SB(nw->index, 16, 16, 0);
 	this->head->SetupSmallestSize(w, init_array);
 
-	Dimension padding = {this->pip_pre + this->pip_post, this->pip_pre + this->pip_post};
+	Dimension padding = { (uint)this->pip_pre + this->pip_post, (uint)this->pip_pre + this->pip_post};
 	Dimension size    = {this->head->smallest_x + padding.width, this->head->smallest_y + padding.height};
 	Dimension fill    = {0, 0};
 	Dimension resize  = {this->pip_inter + this->head->smallest_x, this->pip_inter + this->head->smallest_y};

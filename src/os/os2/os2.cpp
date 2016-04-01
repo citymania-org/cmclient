@@ -1,4 +1,4 @@
-/* $Id: os2.cpp 27092 2014-12-24 17:17:18Z frosch $ */
+/* $Id: os2.cpp 27290 2015-05-20 18:18:26Z rubidium $ */
 
 /*
  * This file is part of OpenTTD.
@@ -173,6 +173,9 @@ void ShowOSErrorBox(const char *buf, bool system)
 int CDECL main(int argc, char *argv[])
 {
 	SetRandomSeed(time(NULL));
+
+	/* Make sure our arguments contain only valid UTF-8 characters. */
+	for (int i = 0; i < argc; i++) ValidateString(argv[i]);
 
 	return openttd_main(argc, argv);
 }

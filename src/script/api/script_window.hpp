@@ -1,4 +1,4 @@
-/* $Id: script_window.hpp 27174 2015-03-01 08:17:14Z alberth $ */
+/* $Id: script_window.hpp 27286 2015-05-16 12:08:06Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -529,7 +529,7 @@ public:
 		/**
 		 * Generate landscape (newgame); %Window numbers:
 		 *   - GLWM_SCENARIO = #CreateScenarioWidgets
-		 *   - #GenenerateLandscapeWindowMode = #GenerateLandscapeWidgets
+		 *   - #GenerateLandscapeWindowMode = #GenerateLandscapeWidgets
 		 */
 		WC_GENERATE_LANDSCAPE                        = ::WC_GENERATE_LANDSCAPE,
 

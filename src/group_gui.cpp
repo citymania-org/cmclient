@@ -1,4 +1,4 @@
-/* $Id: group_gui.cpp 26960 2014-10-05 11:20:02Z peter1138 $ */
+/* $Id: group_gui.cpp 27300 2015-06-20 11:05:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -669,7 +669,7 @@ public:
 			case WID_GL_REPLACE_PROTECTION: {
 				const Group *g = Group::GetIfValid(this->vli.index);
 				if (g != NULL) {
-					DoCommandP(0, this->vli.index, !g->replace_protection | (_ctrl_pressed << 1), CMD_SET_GROUP_REPLACE_PROTECTION);
+					DoCommandP(0, this->vli.index, (g->replace_protection ? 0 : 1) | (_ctrl_pressed << 1), CMD_SET_GROUP_REPLACE_PROTECTION);
 				}
 				break;
 			}

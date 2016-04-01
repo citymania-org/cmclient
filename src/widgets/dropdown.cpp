@@ -1,4 +1,4 @@
-/* $Id: dropdown.cpp 27131 2015-02-01 12:23:39Z frosch $ */
+/* $Id: dropdown.cpp 27381 2015-08-10 20:24:13Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -380,8 +380,8 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 
 	if (auto_width) width = max(width, max_item_width);
 
-	Point dw_pos = { w->left + (_current_text_dir == TD_RTL ? wi_rect.right + 1 - width : wi_rect.left), top};
-	Dimension dw_size = {width, height};
+	Point dw_pos = { w->left + (_current_text_dir == TD_RTL ? wi_rect.right + 1 - (int)width : wi_rect.left), top};
+	Dimension dw_size = {width, (uint)height};
 	new DropdownWindow(w, list, selected, button, instant_close, dw_pos, dw_size, wi_colour, scroll);
 }
 

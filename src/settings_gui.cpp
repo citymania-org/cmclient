@@ -1,4 +1,4 @@
-/* $Id: settings_gui.cpp 27430 2015-11-01 11:55:45Z frosch $ */
+/* $Id: settings_gui.cpp 27366 2015-08-09 10:22:51Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: newgrf_railtype.h 26388 2014-03-03 20:02:31Z frosch $ */
+/* $Id: newgrf_railtype.h 27342 2015-07-26 12:25:37Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -44,7 +44,7 @@ struct RailTypeResolverObject : public ResolverObject {
 	/* virtual */ const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
 };
 
-SpriteID GetCustomRailSprite(const RailtypeInfo *rti, TileIndex tile, RailTypeSpriteGroup rtsg, TileContext context = TCX_NORMAL);
+SpriteID GetCustomRailSprite(const RailtypeInfo *rti, TileIndex tile, RailTypeSpriteGroup rtsg, TileContext context = TCX_NORMAL, uint *num_results = NULL);
 SpriteID GetCustomSignalSprite(const RailtypeInfo *rti, TileIndex tile, SignalType type, SignalVariant var, SignalState state, bool gui = false);
 
 uint8 GetReverseRailTypeTranslation(RailType railtype, const GRFFile *grffile);

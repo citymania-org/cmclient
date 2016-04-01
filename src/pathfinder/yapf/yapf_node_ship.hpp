@@ -1,4 +1,4 @@
-/* $Id: yapf_node_ship.hpp 22350 2011-04-19 18:12:47Z smatz $ */
+/* $Id: yapf_node_ship.hpp 27363 2015-08-08 13:19:38Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,11 +14,7 @@
 
 /** Yapf Node for ships */
 template <class Tkey_>
-struct CYapfShipNodeT
-	: CYapfNodeT<Tkey_, CYapfShipNodeT<Tkey_> >
-{
-
-};
+struct CYapfShipNodeT : CYapfNodeT<Tkey_, CYapfShipNodeT<Tkey_> > { };
 
 /* now define two major node types (that differ by key type) */
 typedef CYapfShipNodeT<CYapfNodeKeyExitDir>  CYapfShipNodeExitDir;
@@ -27,6 +23,5 @@ typedef CYapfShipNodeT<CYapfNodeKeyTrackDir> CYapfShipNodeTrackDir;
 /* Default NodeList types */
 typedef CNodeList_HashTableT<CYapfShipNodeExitDir , 10, 12> CShipNodeListExitDir;
 typedef CNodeList_HashTableT<CYapfShipNodeTrackDir, 10, 12> CShipNodeListTrackDir;
-
 
 #endif /* YAPF_NODE_SHIP_HPP */

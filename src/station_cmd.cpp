@@ -1,4 +1,4 @@
-/* $Id: station_cmd.cpp 27350 2015-07-30 18:50:39Z frosch $ */
+/* $Id: station_cmd.cpp 27311 2015-06-21 09:19:27Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1649,47 +1649,12 @@ CommandCost RemoveRailStation(T *st, DoCommandFlag flags, Money removal_cost)
 	/* clear all areas of the station */
 	TILE_AREA_LOOP(tile, ta) {
 		/* only remove tiles that are actually train station tiles */
-		if (!st->TileBelongsToRailStation(tile)) continue;
-
-		CommandCost ret = EnsureNoVehicleOnGround(tile);
-		if (ret.Failed()) return ret;
-
-		cost.AddCost(removal_cost);
-		if (flags & DC_EXEC) {
-			/* read variables before the station tile is removed */
-			Track track = GetRailStationTrack(tile);
-			Owner owner = GetTileOwner(tile); // _current_company can be OWNER_WATER
-			Train *v = NULL;
-			if (HasStationReservation(tile)) {
-				v = GetTrainForReservation(tile, track);
-				if (v != NULL) FreeTrainTrackReservation(v);
-			}
-			if (!IsStationTileBlocked(tile)) Company::Get(owner)->infrastructure.rail[GetRailType(tile)]--;
-			Company::Get(owner)->infrastructure.station--;
-			DoClearSquare(tile);
-			DeleteNewGRFInspectWindow(GSF_STATIONS, tile);
-			AddTrackToSignalBuffer(tile, track, owner);
-			YapfNotifyTrackLayoutChange(tile, track);
-			if (v != NULL) TryPathReserve(v, true);
+		if (st->TileBelongsToRailStation(tile)) {
+			SmallVector<T*, 4> affected_stations; // dummy
+			CommandCost ret = RemoveFromRailBaseStation(TileArea(tile, 1, 1), affected_stations, flags, removal_cost, false);
+			if (ret.Failed()) return ret;
+			cost.AddCost(ret);
 		}
-	}
-
-	if (flags & DC_EXEC) {
-		st->rect.AfterRemoveRect(st, st->train_station);
-
-		st->train_station.Clear();
-
-		st->facilities &= ~FACIL_TRAIN;
-
-		free(st->speclist);
-		st->num_specs = 0;
-		st->speclist  = NULL;
-		st->cached_anim_triggers = 0;
-
-		DirtyCompanyInfrastructureWindows(st->owner);
-		SetWindowWidgetDirty(WC_STATION_VIEW, st->index, WID_SV_TRAINS);
-		st->UpdateVirtCoord();
-		DeleteStationIfEmpty(st);
 	}
 
 	return cost;
@@ -2039,6 +2004,7 @@ static CommandCost RemoveRoadStop(TileIndex tile, DoCommandFlag flags)
  * @param p1 bit 0..7: Width of the removal area.
  *           bit 8..15: Height of the removal area.
  * @param p2 bit 0: 0 For bus stops, 1 for truck stops.
+ * @param p2 bit 1: 0 to keep roads of all drive-through stops, 1 to remove them.
  * @param text Unused.
  * @return The cost of this operation or an error.
  */
@@ -2046,38 +2012,52 @@ CommandCost CmdRemoveRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 {
 	uint8 width = (uint8)GB(p1, 0, 8);
 	uint8 height = (uint8)GB(p1, 8, 8);
+	bool keep_drive_through_roads = !HasBit(p2, 1);
 
 	/* Check for incorrect width / height. */
 	if (width == 0 || height == 0) return CMD_ERROR;
 	/* Check if the first tile and the last tile are valid */
 	if (!IsValidTile(tile) || TileAddWrap(tile, width - 1, height - 1) == INVALID_TILE) return CMD_ERROR;
+	/* Bankrupting company is not supposed to remove roads, there may be road vehicles. */
+	if (!keep_drive_through_roads && (flags & DC_BANKRUPT)) return CMD_ERROR;
 
 	TileArea roadstop_area(tile, width, height);
 
-	int quantity = 0;
 	CommandCost cost(EXPENSES_CONSTRUCTION);
+	CommandCost last_error(STR_ERROR_THERE_IS_NO_STATION);
+	bool had_success = false;
+
 	TILE_AREA_LOOP(cur_tile, roadstop_area) {
 		/* Make sure the specified tile is a road stop of the correct type */
 		if (!IsTileType(cur_tile, MP_STATION) || !IsRoadStop(cur_tile) || (uint32)GetRoadStopType(cur_tile) != GB(p2, 0, 1)) continue;
 
-		/* Save the stop info before it is removed */
-		bool is_drive_through = IsDriveThroughStopTile(cur_tile);
-		RoadTypes rts = GetRoadTypes(cur_tile);
-		RoadBits road_bits = IsDriveThroughStopTile(cur_tile) ?
-				((GetRoadStopDir(cur_tile) == DIAGDIR_NE) ? ROAD_X : ROAD_Y) :
-				DiagDirToRoadBits(GetRoadStopDir(cur_tile));
+		/* Save information on to-be-restored roads before the stop is removed. */
+		RoadTypes rts = ROADTYPES_NONE;
+		RoadBits road_bits = ROAD_NONE;
+		Owner road_owner[] = { OWNER_NONE, OWNER_NONE };
+		assert_compile(lengthof(road_owner) == ROADTYPE_END);
+		if (IsDriveThroughStopTile(cur_tile)) {
+			RoadType rt;
+			FOR_EACH_SET_ROADTYPE(rt, GetRoadTypes(cur_tile)) {
+				road_owner[rt] = GetRoadOwner(cur_tile, rt);
+				/* If we don't want to preserve our roads then restore only roads of others. */
+				if (keep_drive_through_roads || road_owner[rt] != _current_company) SetBit(rts, rt);
+			}
+			road_bits = AxisToRoadBits(DiagDirToAxis(GetRoadStopDir(cur_tile)));
+		}
 
-		Owner road_owner = GetRoadOwner(cur_tile, ROADTYPE_ROAD);
-		Owner tram_owner = GetRoadOwner(cur_tile, ROADTYPE_TRAM);
 		CommandCost ret = RemoveRoadStop(cur_tile, flags);
-		if (ret.Failed()) return ret;
+		if (ret.Failed()) {
+			last_error = ret;
+			continue;
+		}
 		cost.AddCost(ret);
+		had_success = true;
 
-		quantity++;
-		/* If the stop was a drive-through stop replace the road */
-		if ((flags & DC_EXEC) && is_drive_through) {
+		/* Restore roads. */
+		if ((flags & DC_EXEC) && rts != ROADTYPES_NONE) {
 			MakeRoadNormal(cur_tile, road_bits, rts, ClosestTownFromTile(cur_tile, UINT_MAX)->index,
-					road_owner, tram_owner);
+					road_owner[ROADTYPE_ROAD], road_owner[ROADTYPE_TRAM]);
 
 			/* Update company infrastructure counts. */
 			RoadType rt;
@@ -2091,9 +2071,7 @@ CommandCost CmdRemoveRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 		}
 	}
 
-	if (quantity == 0) return_cmd_error(STR_ERROR_THERE_IS_NO_STATION);
-
-	return cost;
+	return had_success ? cost : last_error;
 }
 
 /**
@@ -3305,7 +3283,7 @@ static void UpdateStationRating(Station *st)
 
 			bool skip = false;
 			int rating = 0;
-			uint waiting = ge->cargo.TotalCount();
+			uint waiting = ge->cargo.AvailableCount();
 
 			/* num_dests is at least 1 if there is any cargo as
 			 * INVALID_STATION is also a destination.

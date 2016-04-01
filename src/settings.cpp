@@ -1,4 +1,4 @@
-/* $Id: settings.cpp 27163 2015-02-22 15:26:27Z frosch $ */
+/* $Id: settings.cpp 27285 2015-05-16 12:01:19Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1147,7 +1147,7 @@ static bool InvalidateCompanyWindow(int32 p1)
 static void ValidateSettings()
 {
 	/* Do not allow a custom sea level with the original land generator. */
-	if (_settings_newgame.game_creation.land_generator == 0 &&
+	if (_settings_newgame.game_creation.land_generator == LG_ORIGINAL &&
 			_settings_newgame.difficulty.quantity_sea_lakes == CUSTOM_SEA_LEVEL_NUMBER_DIFFICULTY) {
 		_settings_newgame.difficulty.quantity_sea_lakes = CUSTOM_SEA_LEVEL_MIN_PERCENTAGE;
 	}

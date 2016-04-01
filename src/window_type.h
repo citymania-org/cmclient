@@ -1,4 +1,4 @@
-/* $Id: window_type.h 26610 2014-05-24 19:11:20Z alberth $ */
+/* $Id: window_type.h 27286 2015-05-16 12:08:06Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -446,7 +446,7 @@ enum WindowClass {
 	/**
 	 * Generate landscape (newgame); %Window numbers:
 	 *   - GLWM_SCENARIO = #CreateScenarioWidgets
-	 *   - #GenenerateLandscapeWindowMode = #GenerateLandscapeWidgets
+	 *   - #GenerateLandscapeWindowMode = #GenerateLandscapeWidgets
 	 */
 	WC_GENERATE_LANDSCAPE,
 

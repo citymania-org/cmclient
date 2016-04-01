@@ -7,10 +7,10 @@
 ##digitsepcur ,
 ##decimalsep .
 ##winlangid 0x0c09
-##grflangid 0x3D
+##grflangid 0x3d
 
 
-# $Id: english_AU.txt 27353 2015-07-31 17:46:09Z rubidium $
+# $Id: english_AU.txt 27516 2016-03-01 19:41:31Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -970,6 +970,8 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Check th
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Screen resolution
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Select the screen resolution to use
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :other
+
+
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Base graphics set
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Select the base graphics set to use
@@ -2660,7 +2662,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Company-owned l
 STR_ABOUT_OPENTTD                                               :{WHITE}About OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original copyright {COPYRIGHT} 1995 Chris Sawyer, All rights reserved
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD version {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2015 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2016 The OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Save Game
@@ -2854,7 +2856,7 @@ STR_NEWGRF_ERROR_MSG_INFO                                       :{SILVER}{STRING
 STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}Warning: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}Error: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Fatal: {SILVER}{STRING}
-STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}A fatal NewGRF error has occurred: {}{STRING}
+STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}A fatal NewGRF error has occurred:{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} will not work with the TTDPatch version reported by OpenTTD
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} is for the {STRING} version of TTD
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} is designed to be used with {STRING}
