@@ -1,7 +1,7 @@
 TMP="/tmp/cmclient"
-WIN="/var/run/media/pavels/F8040EC2040E843A/novattd"
-VER="1.5.3"
-CMVER="1.5.3"
+WIN="/var/run/media/pavels/F8040EC2040E843A/cmclient"
+VER="1.6.0"
+CMVER="1.6.0"
 TMP_SRC="$TMP/openttd-$VER"
 DIR=`pwd`
 SRC_RELEASE_FNAME="$DIR/citymania-client-$CMVER-source.zip"
@@ -10,9 +10,9 @@ RELEASE64_FNAME="$DIR/citymania-client-$CMVER-win64.zip"
 RELEASE_DIFF="$DIR/citymania-client-$CMVER.diff"
 EXE32="$WIN/objs/Win32/Release/openttd.exe"
 EXE64="$WIN/objs/x64/Release/openttd.exe"
-rm $SRC_RELEASE_FNAME
-rm $RELEASE_FNAME
-rm $RELEASE64_FNAME
+rm -f $SRC_RELEASE_FNAME
+rm -f $RELEASE_FNAME
+rm -f $RELEASE64_FNAME
 rm -rf $TMP
 
 set -e
