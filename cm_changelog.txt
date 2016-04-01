@@ -76,7 +76,7 @@ This is usable for any OpenTTD servers
 
 *** 1.6.0 (3 Apr 2016) ***
 - Added active stations highlight to town zoning. Outlines stations that have been serviced in last ~50 days (as in checks for authority rating and town growth rate).
-- Fixed next counter in town window (was always showing -1 in case of custom growth rate). Also show * after GR value for a custom rate (one set by GameScript or server patch).
+- Fixed next counter in town window (was always showing -1 in case of custom growth rate). Also show * after GR value for a custom rate (set by GameScript or server patch).
 - Detailed station ratings tooltip (hover over rating in station window).
 - Make cargo window look better, especially in double/quad interface size.
 - Added real population to town directory, towns can be sorted by it too.
