@@ -135,17 +135,17 @@ static EventState ZoningWindowGlobalHotkeys(int hotkey) {
 }
 
 static Hotkey zoning_hotkeys[] = {
-	Hotkey(WKC_SHIFT | '1', "authority", ZTW_OUTER_FIRST),
-	Hotkey(WKC_SHIFT | '2', "build_status", ZTW_OUTER_FIRST + 1),
-	Hotkey(WKC_SHIFT | '3', "station_catchment", ZTW_OUTER_FIRST + 2),
-	Hotkey(WKC_SHIFT | '4', "unserved_buildings", ZTW_OUTER_FIRST + 3),
-	Hotkey(WKC_SHIFT | '5', "unserved_industries", ZTW_OUTER_FIRST + 4),
-	Hotkey(WKC_SHIFT | '6', "town_zone", ZTW_OUTER_FIRST + 5),
-	Hotkey(WKC_SHIFT | '7', "CB_acceptance", ZTW_OUTER_FIRST + 6),
-	Hotkey(WKC_SHIFT | '8', "CB_build_borders", ZTW_OUTER_FIRST + 7),
-	Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + 8),
-	Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + 9),
-	Hotkey((uint16)0, "active_stations", ZTW_OUTER_FIRST + 10),
+	Hotkey(WKC_SHIFT | '1', "authority", ZTW_OUTER_FIRST + CHECKOPINION),
+	Hotkey(WKC_SHIFT | '2', "build_status", ZTW_OUTER_FIRST + CHECKBUILD),
+	Hotkey(WKC_SHIFT | '3', "station_catchment", ZTW_OUTER_FIRST + CHECKSTACATCH),
+	Hotkey(WKC_SHIFT | '4', "unserved_buildings", ZTW_OUTER_FIRST + CHECKBULUNSER),
+	Hotkey(WKC_SHIFT | '5', "unserved_industries", ZTW_OUTER_FIRST + CHECKINDUNSER),
+	Hotkey(WKC_SHIFT | '6', "town_zone", ZTW_OUTER_FIRST + CHECKTOWNZONES),
+	Hotkey(WKC_SHIFT | '7', "CB_acceptance", ZTW_OUTER_FIRST + CHECKCBBORDERS),
+	Hotkey(WKC_SHIFT | '8', "CB_build_borders", ZTW_OUTER_FIRST + CHECKCBTOWNBORDERS),
+	Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + CHECKTOWNADZONES),
+	Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + CHECKTOWNGROWTHTILES),
+	Hotkey((uint16)0, "active_stations", ZTW_OUTER_FIRST + CHECKACTIVESTATIONS),
 	HOTKEY_LIST_END
 };
 
