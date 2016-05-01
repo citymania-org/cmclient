@@ -56,6 +56,9 @@
 #include "../error.h"
 #include "../disaster_vehicle.h"
 
+#include "../story_base.h"
+#include "../game/game_text.hpp"
+#include "../table/control_codes.h"
 
 #include "saveload_internal.h"
 
@@ -516,6 +519,49 @@ static inline bool MayHaveBridgeAbove(TileIndex t)
 {
 	return IsTileType(t, MP_CLEAR) || IsTileType(t, MP_RAILWAY) || IsTileType(t, MP_ROAD) ||
 			IsTileType(t, MP_WATER) || IsTileType(t, MP_TUNNELBRIDGE) || IsTileType(t, MP_OBJECT);
+}
+
+extern GameStrings *_current_data;
+
+void AfterLoadFindBTProCBInfo() {
+	if (_current_data == NULL) return;
+	StoryPageElement *se;
+
+	char buf[15];
+	char *p = buf;
+	int pn;
+	p += Utf8Encode(p, SCC_ENCODED);
+	for (uint i = 0; i < _current_data->raw_strings.Length(); i++) {
+		auto ls = _current_data->raw_strings[i];
+		if (!ls) continue;
+		int string_id = 0;
+		for (uint j = 0; j < ls->lines.Length(); j++) {
+			auto s = ls->lines[j];
+			if (!s || *s == ';' || *s == '#' || *s == ' ' || *s == '\0') continue;
+			if (strncmp(s, "STR_TOWN_CLAIMED_CARGOS", strlen("STR_TOWN_CLAIMED_CARGOS")) == 0 ||
+					strncmp(s, "STR_TOWN_CARGOS_NEEDED_CB", strlen("STR_TOWN_CARGOS_NEEDED_CB")) == 0) {
+				pn = p - buf + seprintf(p, lastof(buf), "%X:", string_id);
+				bool with_decay = (strncmp(s, "STR_TOWN_CLAIMED_CARGOS_DECAY",
+					strlen("STR_TOWN_CLAIMED_CARGOS_DECAY")) == 0);
+				FOR_ALL_STORY_PAGE_ELEMENTS(se) {
+					// DEBUG(misc, 0, "SE: %s", se->text);
+					if (!se->text || strncmp(se->text, buf, pn) != 0) continue;
+					uint req, cargomask, from, decay=0;
+					// DEBUG(misc, 0, "BINGO %s", se->text);
+					if (with_decay) {
+						sscanf(se->text + pn, "%X:%X:%X:%X", &req, &cargomask, &from, &decay);
+				 	} else {
+						sscanf(se->text + pn, "%X:%X:%X", &req, &cargomask, &from);
+					}
+					uint cargo_id = FindFirstBit(cargomask);
+					// DEBUG(misc, 0, "PARSED %u %u %u %u", req, cargo_id, from, decay);
+					if (!CB_Enabled()) CB_SetCB(true);
+					CB_SetRequirements(cargo_id, req, from, decay);
+				}
+			}
+			string_id++;
+		}
+	}
 }
 
 /**
@@ -2988,6 +3034,7 @@ bool AfterLoadGame()
 	ResetSignalHandlers();
 
 	AfterLoadLinkGraphs();
+	AfterLoadFindBTProCBInfo();
 	return true;
 }
 

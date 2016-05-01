@@ -361,4 +361,3 @@ CommandCost CmdRemoveStoryPageElement(TileIndex tile, DoCommandFlag flags, uint3
 
 	return CommandCost();
 }
-
