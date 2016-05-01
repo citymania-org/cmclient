@@ -87,7 +87,7 @@ char *CrashLog::LogCompiler(char *buffer, const char *last) const
 char *CrashLog::LogOpenTTDVersion(char *buffer, const char *last) const
 {
 	return buffer + seprintf(buffer, last,
-			"OpenTTD version: Novapolis patched client  http://www.novapolis.net\n\n\n"
+			"OpenTTD version: CityMania patched client  http://citymania.org\n\n\n"
 			" Version:    %s (%d)\n"
 			" NewGRF ver: %08x\n"
 			" Bits:       %d\n"
@@ -318,7 +318,7 @@ char *CrashLog::LogGamelog(char *buffer, const char *last) const
 char *CrashLog::FillCrashLog(char *buffer, const char *last) const
 {
 	time_t cur_time = time(NULL);
-	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\nNovapolis patched client  http://www.novapolis.net\nPlease, unless you encounter this bug with unpatched OpenTTD version, report bug to Novapolis team\n\n");
+	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\nCityMania patched client  http://citymania.org\nPlease, unless you encounter this bug with unpatched OpenTTD version, report bug to CityMania team\n\n");
 	buffer += seprintf(buffer, last, "Crash at: %s", asctime(gmtime(&cur_time)));
 
 	YearMonthDay ymd;
