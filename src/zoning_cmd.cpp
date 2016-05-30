@@ -181,9 +181,10 @@ SpriteID TileZoneCheckTownZones(TileIndex tile) {
 
 	Town *town;
 	FOR_ALL_TOWNS(town) {
+		// town code uses <= for checking town borders (tz0) but < for other zones
 		while (next_zone < HZB_END
 			&& (town->cache.squared_town_zone_radius[next_zone] == 0
-				|| DistanceSquare(tile, town->xy) <= town->cache.squared_town_zone_radius[next_zone])
+				|| DistanceSquare(tile, town->xy) <= town->cache.squared_town_zone_radius[next_zone] + (next_zone == HZB_BEGIN ? 0 : 1))
 		){
 			if(town->cache.squared_town_zone_radius[next_zone] != 0)  tz = next_zone;
 			next_zone++;
