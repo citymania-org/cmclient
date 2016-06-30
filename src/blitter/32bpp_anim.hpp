@@ -1,4 +1,4 @@
-/* $Id: 32bpp_anim.hpp 26214 2014-01-02 23:52:13Z rubidium $ */
+/* $Id: 32bpp_anim.hpp 27590 2016-05-29 19:01:50Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,6 +28,8 @@ public:
 		anim_buf_width(0),
 		anim_buf_height(0)
 	{}
+
+	~Blitter_32bppAnim();
 
 	/* virtual */ void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom);
 	/* virtual */ void DrawColourMappingRect(void *dst, int width, int height, PaletteID pal);

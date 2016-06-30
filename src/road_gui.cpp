@@ -1,4 +1,4 @@
-/* $Id: road_gui.cpp 27381 2015-08-10 20:24:13Z michi_cc $ */
+/* $Id: road_gui.cpp 27591 2016-05-29 19:05:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1002,7 +1002,7 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		 * Never make the window smaller to avoid oscillating if the size change affects the acceptance.
 		 * (This is the case, if making the window bigger moves the mouse into the window.) */
 		if (top > bottom) {
-			ResizeWindow(this, 0, top - bottom);
+			ResizeWindow(this, 0, top - bottom, false);
 		}
 	}
 

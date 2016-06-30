@@ -1,4 +1,4 @@
-/* $Id: depot_gui.cpp 27450 2015-11-20 09:25:27Z alberth $ */
+/* $Id: depot_gui.cpp 27592 2016-05-29 19:08:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -663,7 +663,8 @@ struct DepotWindow : Window {
 			DepotSortList(&this->vehicle_list);
 
 			uint new_unitnumber_digits = GetUnitNumberDigits(this->vehicle_list);
-			if (this->unitnumber_digits != new_unitnumber_digits) {
+			/* Only increase the size; do not decrease to prevent constant changes */
+			if (this->unitnumber_digits < new_unitnumber_digits) {
 				this->unitnumber_digits = new_unitnumber_digits;
 				this->ReInit();
 			}

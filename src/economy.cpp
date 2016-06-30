@@ -1,4 +1,4 @@
-/* $Id: economy.cpp 27282 2015-05-11 16:58:09Z frosch $ */
+/* $Id: economy.cpp 27592 2016-05-29 19:08:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1317,7 +1317,8 @@ static uint GetLoadAmount(Vehicle *v)
 	/* Scale load amount the same as capacity */
 	if (HasBit(e->info.misc_flags, EF_NO_DEFAULT_CARGO_MULTIPLIER) && !air_mail) load_amount = CeilDiv(load_amount * CargoSpec::Get(v->cargo_type)->multiplier, 0x100);
 
-	return load_amount;
+	/* Zero load amount breaks a lot of things. */
+	return max(1u, load_amount);
 }
 
 /**
@@ -1651,6 +1652,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 			uint amount_unloaded = _settings_game.order.gradual_loading ? min(cargo_count, load_amount) : cargo_count;
 			bool remaining = false; // Are there cargo entities in this vehicle that can still be unloaded here?
 
+			assert(payment != NULL);
 			payment->SetCargo(v->cargo_type);
 
 			if (!HasBit(ge->status, GoodsEntry::GES_ACCEPTANCE) && v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER) > 0) {

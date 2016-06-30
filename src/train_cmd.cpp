@@ -1,4 +1,4 @@
-/* $Id: train_cmd.cpp 27419 2015-10-30 16:18:39Z frosch $ */
+/* $Id: train_cmd.cpp 27592 2016-05-29 19:08:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -636,6 +636,7 @@ static CommandCost CmdBuildRailWagon(TileIndex tile, DoCommandFlag flags, const 
 
 		v->railtype = rvi->railtype;
 
+		v->date_of_last_service = _date;
 		v->build_year = _cur_year;
 		v->cur_image = SPR_IMG_QUERY;
 		v->random_bits = VehicleRandomBits();
@@ -703,6 +704,7 @@ static void AddRearEngineToMultiheadedTrain(Train *v)
 	u->refit_cap = v->refit_cap;
 	u->railtype = v->railtype;
 	u->engine_type = v->engine_type;
+	u->date_of_last_service = v->date_of_last_service;
 	u->build_year = v->build_year;
 	u->cur_image = SPR_IMG_QUERY;
 	u->random_bits = VehicleRandomBits();

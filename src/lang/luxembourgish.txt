@@ -10,7 +10,7 @@
 ##grflangid 0x23
 
 
-# $Id: luxembourgish.txt 27516 2016-03-01 19:41:31Z frosch $
+# $Id: luxembourgish.txt 27593 2016-05-29 19:11:48Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2874,7 +2874,7 @@ STR_SPRITE_ALIGNER_GOTO_TOOLTIP                                 :{BLACK}Géi op 
 STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Viregt Sprite
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Géi weider op déi nächst normal Sprite, iwwersprang all pseudo/recolour/font Sprite an sprang zréck op den Ufank no der leschter.
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Representatioun vun der grad gewielter Sprite. Den Alignement gëtt ignoréiert wann d'Sprite gezun gëtt
-STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Beweg Sprite, X an Y offsets enneren sech
+STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Beweg Sprite, X an Y offsets enneren sech. Ctrl+Klick fir de Sprite8 Eenheete matenen ze bewegen.
 STR_SPRITE_ALIGNER_RESET_BUTTON                                 :{BLACK}Relativ zerécksetzen
 STR_SPRITE_ALIGNER_RESET_TOOLTIP                                :{BLACK}Momentan relativ Offsets zerécksetzen
 STR_SPRITE_ALIGNER_OFFSETS_ABS                                  :{BLACK}X-Offset: {NUM}, Y-Offset: {NUM} (Absolut)

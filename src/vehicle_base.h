@@ -1,4 +1,4 @@
-/* $Id: vehicle_base.h 26864 2014-09-20 15:46:44Z rubidium $ */
+/* $Id: vehicle_base.h 27591 2016-05-29 19:05:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,6 +23,7 @@
 #include "transport_type.h"
 #include "group_type.h"
 #include "base_consist.h"
+#include "network/network.h"
 #include <list>
 #include <map>
 
@@ -1072,6 +1073,9 @@ struct SpecializedVehicle : public Vehicle {
 	 */
 	inline void UpdateViewport(bool force_update, bool update_delta)
 	{
+		/* Skip updating sprites on dedicated servers without screen */
+		if (_network_dedicated) return;
+
 		/* Explicitly choose method to call to prevent vtable dereference -
 		 * it gives ~3% runtime improvements in games with many vehicles */
 		if (update_delta) ((T *)this)->T::UpdateDeltaXY(this->direction);

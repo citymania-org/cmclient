@@ -1,4 +1,4 @@
-/* $Id: newgrf_spritegroup.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: newgrf_spritegroup.cpp 27607 2016-06-30 18:36:01Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -204,8 +204,8 @@ static U EvalAdjustT(const DeterministicSpriteGroupAdjust *adjust, ScopeResolver
 	if (adjust->type != DSGA_TYPE_NONE) value += (S)adjust->add_val;
 
 	switch (adjust->type) {
-		case DSGA_TYPE_DIV:  value /= (S)adjust->divmod_val; break;
-		case DSGA_TYPE_MOD:  value %= (U)adjust->divmod_val; break;
+		case DSGA_TYPE_DIV:  value = (S)value / (S)adjust->divmod_val; break;
+		case DSGA_TYPE_MOD:  value = (S)value % (S)adjust->divmod_val; break;
 		case DSGA_TYPE_NONE: break;
 	}
 

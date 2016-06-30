@@ -1,4 +1,4 @@
-/* $Id: story.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
+/* $Id: story.cpp 27588 2016-05-29 18:56:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -101,7 +101,7 @@ static void UpdateElement(StoryPageElement &pe, TileIndex tile, uint32 reference
  * @param p1 various bitstuffed elements
  * - p1 = (bit  0 -  7) - Company for which this story page belongs to.
  * @param p2 unused.
- * @param text Title of the story page. Null is allowed in wich case a generic page title is provided by OpenTTD.
+ * @param text Title of the story page. Null is allowed in which case a generic page title is provided by OpenTTD.
  * @return the cost of this operation or an error
  */
 CommandCost CmdCreateStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)

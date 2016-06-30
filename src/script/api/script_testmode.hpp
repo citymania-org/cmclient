@@ -1,4 +1,4 @@
-/* $Id: script_testmode.hpp 27379 2015-08-10 20:04:31Z frosch $ */
+/* $Id: script_testmode.hpp 27587 2016-05-29 18:52:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -49,6 +49,9 @@ public:
 	 */
 	~ScriptTestMode();
 
+	/**
+	 * @api -all
+	 */
 	virtual void FinalRelease();
 };
 

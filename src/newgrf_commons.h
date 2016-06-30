@@ -1,4 +1,4 @@
-/* $Id: newgrf_commons.h 26241 2014-01-12 18:00:39Z frosch $ */
+/* $Id: newgrf_commons.h 27587 2016-05-29 18:52:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -49,7 +49,7 @@ enum TileLayoutFlags {
 	TLF_SPRITE_VAR10      = 0x40,   ///< Resolve sprite with a specific value in variable 10.
 	TLF_PALETTE_VAR10     = 0x80,   ///< Resolve palette with a specific value in variable 10.
 
-	TLF_KNOWN_FLAGS       = 0x7F,   ///< Known flags. Any unknown set flag will disable the GRF.
+	TLF_KNOWN_FLAGS       = 0xFF,   ///< Known flags. Any unknown set flag will disable the GRF.
 
 	/** Flags which are still required after loading the GRF. */
 	TLF_DRAWING_FLAGS     = ~TLF_CUSTOM_PALETTE,
