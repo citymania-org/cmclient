@@ -1,4 +1,4 @@
-/* $Id: script_text.hpp 27102 2015-01-01 20:50:43Z rubidium $ */
+/* $Id: script_text.hpp 27587 2016-05-29 18:52:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -124,7 +124,10 @@ public:
 	ScriptText *AddParam(Object value);
 #endif /* DOXYGEN_API */
 
-	/* virtual */ const char *GetEncodedText();
+	/**
+	 * @api -all
+	 */
+	virtual const char *GetEncodedText();
 
 private:
 	StringID string;

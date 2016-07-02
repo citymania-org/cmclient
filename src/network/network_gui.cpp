@@ -1,4 +1,4 @@
-/* $Id: network_gui.cpp 27421 2015-10-30 16:19:33Z frosch $ */
+/* $Id: network_gui.cpp 27591 2016-05-29 19:05:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1931,7 +1931,7 @@ struct NetworkClientListWindow : Window {
 		int diff = (num + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y);
 		/* If height is changed */
 		if (diff != 0) {
-			ResizeWindow(this, 0, diff);
+			ResizeWindow(this, 0, diff, false);
 			return false;
 		}
 		return true;

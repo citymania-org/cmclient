@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: configure 26194 2014-01-02 08:35:45Z rubidium $
+# $Id: configure 27588 2016-05-29 18:56:42Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -149,7 +149,7 @@ AWKCOMMAND='
 
 # Read the source.list and process it
 # Please escape ALL " within ` because e.g. "" terminates the string in some sh implementations
-SRCS="`< $ROOT_DIR/source.list tr '\r' '\n' | $awk \"$AWKCOMMAND\" | $PIPE_SORT`"
+SRCS="`< $ROOT_DIR/source.list tr '\r' '\n' | $awk \"$AWKCOMMAND\" | LC_ALL=C $PIPE_SORT`"
 
 OBJS_C="`  echo \"$SRCS\" | $awk ' { ORS = \" \" } /\.c$/   { gsub(\".c$\",   \".o\", $0); print $0; }'`"
 OBJS_CPP="`echo \"$SRCS\" | $awk ' { ORS = \" \" } /\.cpp$/ { gsub(\".cpp$\", \".o\", $0); print $0; }'`"

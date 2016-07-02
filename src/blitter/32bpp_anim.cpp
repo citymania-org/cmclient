@@ -1,4 +1,4 @@
-/* $Id: 32bpp_anim.cpp 26970 2014-10-06 19:15:00Z rubidium $ */
+/* $Id: 32bpp_anim.cpp 27590 2016-05-29 19:01:50Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,11 @@
 
 /** Instantiation of the 32bpp with animation blitter factory. */
 static FBlitter_32bppAnim iFBlitter_32bppAnim;
+
+Blitter_32bppAnim::~Blitter_32bppAnim()
+{
+	free(this->anim_buf);
+}
 
 template <BlitterMode mode>
 inline void Blitter_32bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel zoom)

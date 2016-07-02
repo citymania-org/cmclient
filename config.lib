@@ -1,4 +1,4 @@
-# $Id: config.lib 27532 2016-04-01 18:32:32Z frosch $
+# $Id: config.lib 27609 2016-06-30 21:15:30Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1380,7 +1380,7 @@ make_compiler_cflags() {
 			flags="$flags -Wnon-virtual-dtor"
 		fi
 
-		if [ $cc_version -ge 43 ]; then
+		if [ $cc_version -ge 43 ] && [ $cc_version -lt 60 ]; then
 			# Use gnu++0x mode so static_assert() is available.
 			# Don't use c++0x, it breaks mingw (with gcc 4.4.0).
 			cxxflags="$cxxflags -std=gnu++0x"
@@ -1399,6 +1399,12 @@ make_compiler_cflags() {
 			cxxflags="$cxxflags -Wno-narrowing"
 			# Disable bogus 'attempt to free a non-heap object' warning
 			flags="$flags -Wno-free-nonheap-object"
+		fi
+
+		if [ $cc_version -ge 60 ]; then
+			# -flifetime-dse=2 (default since GCC 6) doesn't play
+			# well with our custom pool item allocator
+			cxxflags="$cxxflags -flifetime-dse=1 -std=gnu++14"
 		fi
 
 		if [ "$enable_lto" != "0" ]; then
@@ -1490,7 +1496,7 @@ make_cflags_and_ldflags() {
 	fi
 
 	if [ $enable_debug -le 2 ]; then
-		cc_host_is_gcc=`basename "$cc_host" | grep "gcc" &>/dev/null`
+		cc_host_is_gcc=`basename "$cc_host" | grep "gcc" 2>/dev/null`
 		if [ -n "$cc_host_is_gcc" ]; then
 			# Define only when compiling with GCC. Some GLIBC versions use GNU
 			# extensions in a way that breaks build with at least ICC.
@@ -1498,7 +1504,7 @@ make_cflags_and_ldflags() {
 			CFLAGS="$CFLAGS -D_FORTIFY_SOURCE=2"
 		fi
 
-		cc_build_is_gcc=`basename "$cc_build" | grep "gcc" &>/dev/null`
+		cc_build_is_gcc=`basename "$cc_build" | grep "gcc" 2>/dev/null`
 		if [ -n "$cc_build_is_gcc" ]; then
 			# Just add -O1 to the tools needed for building.
 			CFLAGS_BUILD="$CFLAGS_BUILD -D_FORTIFY_SOURCE=2 -O1"

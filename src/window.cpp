@@ -1,4 +1,4 @@
-/* $Id: window.cpp 27425 2015-10-30 17:23:16Z frosch $ */
+/* $Id: window.cpp 27591 2016-05-29 19:05:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -3033,6 +3033,10 @@ void UpdateWindows()
 		w->ProcessScheduledInvalidations();
 		w->ProcessHighlightedInvalidations();
 	}
+
+	/* Skip the actual drawing on dedicated servers without screen.
+	 * But still empty the invalidation queues above. */
+	if (_network_dedicated) return;
 
 	static int we4_timer = 0;
 	int t = we4_timer + 1;

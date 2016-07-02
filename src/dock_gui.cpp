@@ -1,4 +1,4 @@
-/* $Id: dock_gui.cpp 27163 2015-02-22 15:26:27Z frosch $ */
+/* $Id: dock_gui.cpp 27591 2016-05-29 19:05:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -433,7 +433,7 @@ public:
 		 * Never make the window smaller to avoid oscillating if the size change affects the acceptance.
 		 * (This is the case, if making the window bigger moves the mouse into the window.) */
 		if (top > bottom) {
-			ResizeWindow(this, 0, top - bottom);
+			ResizeWindow(this, 0, top - bottom, false);
 		}
 	}
 

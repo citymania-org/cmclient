@@ -1,4 +1,4 @@
-/* $Id: road_gui.cpp 27163 2015-02-22 15:26:27Z frosch $ */
+/* $Id: road_gui.cpp 27591 2016-05-29 19:05:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -827,13 +827,13 @@ struct BuildRoadToolbarWindow : Window {
 
 				case DDSP_REMOVE_BUSSTOP: {
 					TileArea ta(start_tile, end_tile);
-					DoCommandP(ta.tile, ta.w | ta.h << 8, ROADSTOP_BUS, CMD_REMOVE_ROAD_STOP | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_station[ROADSTOP_BUS]), CcPlaySound1D);
+					DoCommandP(ta.tile, ta.w | ta.h << 8, (_ctrl_pressed << 1) | ROADSTOP_BUS, CMD_REMOVE_ROAD_STOP | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_station[ROADSTOP_BUS]), CcPlaySound1D);
 					break;
 				}
 
 				case DDSP_REMOVE_TRUCKSTOP: {
 					TileArea ta(start_tile, end_tile);
-					DoCommandP(ta.tile, ta.w | ta.h << 8, ROADSTOP_TRUCK, CMD_REMOVE_ROAD_STOP | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_station[ROADSTOP_TRUCK]), CcPlaySound1D);
+					DoCommandP(ta.tile, ta.w | ta.h << 8, (_ctrl_pressed << 1) | ROADSTOP_TRUCK, CMD_REMOVE_ROAD_STOP | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_station[ROADSTOP_TRUCK]), CcPlaySound1D);
 					break;
 				}
 			}
@@ -1207,7 +1207,7 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		 * Never make the window smaller to avoid oscillating if the size change affects the acceptance.
 		 * (This is the case, if making the window bigger moves the mouse into the window.) */
 		if (top > bottom) {
-			ResizeWindow(this, 0, top - bottom);
+			ResizeWindow(this, 0, top - bottom, false);
 		}
 	}
 

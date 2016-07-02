@@ -1,4 +1,4 @@
-/* $Id: town_gui.cpp 27341 2015-07-26 09:56:43Z frosch $ */
+/* $Id: town_gui.cpp 27591 2016-05-29 19:05:11Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -196,7 +196,7 @@ public:
 		y = y + WD_FRAMERECT_BOTTOM - nwid->pos_y; // Compute needed size of the widget.
 		if (y > nwid->current_y) {
 			/* If the company list is too big to fit, mark ourself dirty and draw again. */
-			ResizeWindow(this, 0, y - nwid->current_y);
+			ResizeWindow(this, 0, y - nwid->current_y, false);
 		}
 	}
 

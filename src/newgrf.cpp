@@ -1,4 +1,4 @@
-/* $Id: newgrf.cpp 27507 2016-02-08 21:05:57Z frosch $ */
+/* $Id: newgrf.cpp 27588 2016-05-29 18:56:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -3010,7 +3010,7 @@ static ChangeInfoResult SoundEffectChangeInfo(uint sid, int numinfo, int prop, B
 	}
 
 	if (sid + numinfo - ORIGINAL_SAMPLE_COUNT > _cur.grffile->num_sounds) {
-		grfmsg(1, "SoundEffectChangeInfo: Attemting to change undefined sound effect (%u), max (%u). Ignoring.", sid + numinfo, ORIGINAL_SAMPLE_COUNT + _cur.grffile->num_sounds);
+		grfmsg(1, "SoundEffectChangeInfo: Attempting to change undefined sound effect (%u), max (%u). Ignoring.", sid + numinfo, ORIGINAL_SAMPLE_COUNT + _cur.grffile->num_sounds);
 		return CIR_INVALID_ID;
 	}
 

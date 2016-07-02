@@ -1,4 +1,4 @@
-/* $Id: rail_gui.cpp 27427 2015-10-30 17:24:30Z frosch $ */
+/* $Id: rail_gui.cpp 27587 2016-05-29 18:52:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -896,7 +896,7 @@ struct BuildRailToolbarWindow : Window {
 					break;
 
 				case DDSP_CONVERT_RAIL:
-					DoCommandP(end_tile, start_tile, _cur_railtype | (_ctrl_pressed ? 0x10 : 0), CMD_CONVERT_RAIL | CMD_MSG(STR_ERROR_CAN_T_CONVERT_RAIL), CcPlaySound10);
+					DoCommandP(end_tile, start_tile, _cur_railtype | (_ctrl_pressed ? 0x10 : 0), CMD_CONVERT_RAIL | CMD_MSG(STR_ERROR_CAN_T_CONVERT_RAIL), CcPlaySound1E);
 					break;
 
 				case DDSP_REMOVE_STATION:
