@@ -1,13 +1,4 @@
 {
-	"build_systems":
-	[
-		{
-			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-			"name": "Anaconda Python Builder",
-			"selector": "source.python",
-			"shell_cmd": "python -u \"$file\""
-		}
-	],
 	"folders":
 	[
 		{
@@ -18,5 +9,12 @@
 			"follow_symlinks": true,
 			"path": "."
 		}
-	]
+	],
+	"settings":
+    {
+		"ClangFormat": {
+			"style": "File",
+			// "format_on_save": true,
+		}
+    }
 }
