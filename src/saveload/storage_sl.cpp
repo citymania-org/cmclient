@@ -75,7 +75,13 @@ static void Save_CMDataAsPSAC() {
 		SLEG_CONDARR(*ptr, SLE_UINT32, 16, 161, SL_MAX_VERSION),
 		SLEG_END()
 	};
-	uint index = PersistentStorage::GetNumItems();
+
+    uint index = 0;
+    PersistentStorage *ps;
+    FOR_ALL_STORAGES(ps) {
+        if (ps->grfid != CITYMANIA_GRFID)
+            index = max(index, ps->index + 1);
+    }
 
 	int n_chunks = data.size() / 64;
 	for (int i = 0; i < n_chunks; i++, ptr += 64) {
