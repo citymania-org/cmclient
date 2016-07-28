@@ -216,10 +216,11 @@ static U EvalAdjustT(const DeterministicSpriteGroupAdjust *adjust, ScopeResolver
 		case DSGA_OP_SMAX: return max((S)last_value, (S)value);
 		case DSGA_OP_UMIN: return min((U)last_value, (U)value);
 		case DSGA_OP_UMAX: return max((U)last_value, (U)value);
-		case DSGA_OP_SDIV: return value == 0 ? (S)last_value : (S)last_value / (S)value;
-		case DSGA_OP_SMOD: return value == 0 ? (S)last_value : (S)last_value % (S)value;
-		case DSGA_OP_UDIV: return value == 0 ? (U)last_value : (U)last_value / (U)value;
-		case DSGA_OP_UMOD: return value == 0 ? (U)last_value : (U)last_value % (U)value;
+		// replaced ?: with if to avoid VS2015U3 optimizator bug
+		case DSGA_OP_SDIV: if (value == 0) return (S)last_value; else return (S)last_value / (S)value;
+		case DSGA_OP_SMOD: if (value == 0) return (S)last_value; else return (S)last_value % (S)value;
+		case DSGA_OP_UDIV: if (value == 0) return (U)last_value; else return (U)last_value / (U)value;
+		case DSGA_OP_UMOD: if (value == 0) return (U)last_value; else return (U)last_value % (U)value;
 		case DSGA_OP_MUL:  return last_value * value;
 		case DSGA_OP_AND:  return last_value & value;
 		case DSGA_OP_OR:   return last_value | value;
