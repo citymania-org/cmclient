@@ -74,6 +74,9 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 1.6.1-2 (29 Jul 2016) ***
+- Fixed crash when joining ECS servers on windows
+
 *** 1.6.1 (24 Jul 2016) ***
 - Minor bugfixes
 

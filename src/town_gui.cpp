@@ -363,7 +363,8 @@ public:
 		this->SetWidgetDisabledState(WID_TV_CHANGE_NAME, _networking && !_network_server);
 		// extern bool _novahost;
 		// this->wcb_disable = !_networking || !_novahost || this->town->larger_town || _game_mode == GM_EDITOR;
-		// this->SetWidgetDisabledState(WID_TV_CB, this->wcb_disable);
+		// this->wcb_disable = (_game_mode == GM_EDITOR);
+		this->SetWidgetDisabledState(WID_TV_CB, _game_mode == GM_EDITOR);
 	}
 
 	virtual void SetStringParameters(int widget) const
