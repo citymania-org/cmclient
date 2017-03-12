@@ -1,4 +1,4 @@
-/* $Id: road_internal.h 21846 2011-01-18 23:09:43Z rubidium $ */
+/* $Id: road_internal.h 27676 2016-11-05 11:53:03Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,6 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb);
 
 CommandCost CheckAllowRemoveRoad(TileIndex tile, RoadBits remove, Owner owner, RoadType rt, DoCommandFlag flags, bool town_check = true);
 
-void DrawTramCatenary(const TileInfo *ti, RoadBits tram);
+void DrawRoadCatenary(const TileInfo *ti, RoadBits tram);
 
 #endif /* ROAD_INTERNAL_H */

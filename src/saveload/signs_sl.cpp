@@ -1,4 +1,4 @@
-/* $Id: signs_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: signs_sl.cpp 27650 2016-09-04 12:57:43Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -60,7 +60,7 @@ static void Load_SIGN()
 		}
 
 		/* Signs placed in scenario editor shall now be OWNER_DEITY */
-		if (IsSavegameVersionBefore(171) && si->owner == OWNER_NONE && _saveload_mode == SLD_LOAD_SCENARIO) {
+		if (IsSavegameVersionBefore(171) && si->owner == OWNER_NONE && _file_to_saveload.abstract_ftype == FT_SCENARIO) {
 			si->owner = OWNER_DEITY;
 		}
 	}

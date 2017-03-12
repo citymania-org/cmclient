@@ -1,4 +1,4 @@
-/* $Id: 32bpp_anim.hpp 27590 2016-05-29 19:01:50Z frosch $ */
+/* $Id: 32bpp_anim.hpp 27774 2017-03-11 12:52:26Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -27,7 +27,9 @@ public:
 		anim_buf(NULL),
 		anim_buf_width(0),
 		anim_buf_height(0)
-	{}
+	{
+		this->palette = _cur_palette;
+	}
 
 	~Blitter_32bppAnim();
 

@@ -1,4 +1,4 @@
-/* $Id: main_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: main_gui.cpp 27571 2016-05-22 10:07:48Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -118,7 +118,7 @@ bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyl
 }
 
 
-void CcPlaySound10(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
+void CcPlaySound_EXPLOSION(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 {
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_12_EXPLOSION, tile);
 }

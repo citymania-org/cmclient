@@ -1,4 +1,4 @@
-/* $Id: strings_type.h 26525 2014-04-27 15:13:46Z frosch $ */
+/* $Id: strings_type.h 27758 2017-02-26 19:41:30Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,8 +15,8 @@
 /**
  * Numeric value that represents a string, independent of the selected language.
  */
-typedef uint16 StringID;
-static const StringID INVALID_STRING_ID = 0xFFFF; ///< Constant representing an invalid string
+typedef uint32 StringID;
+static const StringID INVALID_STRING_ID = 0xFFFF; ///< Constant representing an invalid string (16bit in case it is used in savegames)
 static const int MAX_CHAR_LENGTH        = 4;      ///< Max. length of UTF-8 encoded unicode character
 static const uint MAX_LANG              = 0x7F;   ///< Maximum number of languages supported by the game, and the NewGRF specs
 
@@ -25,6 +25,33 @@ enum TextDirection {
 	TD_LTR, ///< Text is written left-to-right by default
 	TD_RTL, ///< Text is written right-to-left by default
 };
+
+/** StringTabs to group StringIDs */
+enum StringTab {
+	/* Tabs 0..1 for regular strings */
+	TEXT_TAB_TOWN             =  4,
+	TEXT_TAB_INDUSTRY         =  9,
+	TEXT_TAB_STATION          = 12,
+	TEXT_TAB_SPECIAL          = 14,
+	TEXT_TAB_OLD_CUSTOM       = 15,
+	TEXT_TAB_VEHICLE          = 16,
+	/* Tab 17 for regular strings */
+	TEXT_TAB_OLD_NEWGRF       = 26,
+	TEXT_TAB_END              = 32, ///< End of language files.
+	TEXT_TAB_GAMESCRIPT_START = 32, ///< Start of GameScript supplied strings.
+	TEXT_TAB_NEWGRF_START     = 64, ///< Start of NewGRF supplied strings.
+};
+
+/** Number of bits for the StringIndex within a StringTab */
+static const uint TAB_SIZE_BITS       = 11;
+/** Number of strings per StringTab */
+static const uint TAB_SIZE            = 1 << TAB_SIZE_BITS;
+
+/** Number of strings for GameScripts */
+static const uint TAB_SIZE_GAMESCRIPT = TAB_SIZE * 32;
+
+/** Number of strings for NewGRFs */
+static const uint TAB_SIZE_NEWGRF     = TAB_SIZE * 256;
 
 /** Special string constants */
 enum SpecialStrings {

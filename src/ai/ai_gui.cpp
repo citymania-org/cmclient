@@ -1,4 +1,4 @@
-/* $Id: ai_gui.cpp 27592 2016-05-29 19:08:01Z frosch $ */
+/* $Id: ai_gui.cpp 27581 2016-05-22 12:00:36Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

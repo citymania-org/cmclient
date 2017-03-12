@@ -1,4 +1,4 @@
-/* $Id: rail_gui.h 21867 2011-01-20 12:40:04Z rubidium $ */
+/* $Id: rail_gui.h 27683 2016-12-08 20:21:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,6 @@ struct Window *ShowBuildRailToolbar(RailType railtype);
 void ReinitGuiAfterToggleElrail(bool disable);
 bool ResetSignalVariant(int32 = 0);
 void InitializeRailGUI();
-DropDownList *GetRailTypeDropDownList(bool for_replacement = false);
+DropDownList *GetRailTypeDropDownList(bool for_replacement = false, bool all_option = false);
 
 #endif /* RAIL_GUI_H */

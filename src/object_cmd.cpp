@@ -1,4 +1,4 @@
-/* $Id: object_cmd.cpp 26879 2014-09-21 11:24:51Z rubidium $ */
+/* $Id: object_cmd.cpp 27656 2016-09-18 14:07:52Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -770,6 +770,8 @@ static void ChangeTileOwner_Object(TileIndex tile, Owner old_owner, Owner new_ow
 {
 	if (!IsTileOwner(tile, old_owner)) return;
 
+	bool do_clear = false;
+
 	if (IsObjectType(tile, OBJECT_OWNED_LAND) && new_owner != INVALID_OWNER) {
 		SetTileOwner(tile, new_owner);
 	} else if (IsObjectType(tile, OBJECT_STATUE)) {
@@ -780,12 +782,18 @@ static void ChangeTileOwner_Object(TileIndex tile, Owner old_owner, Owner new_ow
 			SetBit(t->statues, new_owner);
 			SetTileOwner(tile, new_owner);
 		} else {
-			ReallyClearObjectTile(Object::GetByTile(tile));
+			do_clear = true;
 		}
 
 		SetWindowDirty(WC_TOWN_AUTHORITY, t->index);
 	} else {
+		do_clear = true;
+	}
+
+	if (do_clear) {
 		ReallyClearObjectTile(Object::GetByTile(tile));
+		/* When clearing objects, they may turn into canal, which may require transfering ownership. */
+		ChangeTileOwner(tile, old_owner, new_owner);
 	}
 }
 

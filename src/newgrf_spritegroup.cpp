@@ -1,4 +1,4 @@
-/* $Id: newgrf_spritegroup.cpp 27607 2016-06-30 18:36:01Z frosch $ */
+/* $Id: newgrf_spritegroup.cpp 27600 2016-06-13 17:34:18Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

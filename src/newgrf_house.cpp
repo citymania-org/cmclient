@@ -1,4 +1,4 @@
-/* $Id: newgrf_house.cpp 27590 2016-05-29 19:01:50Z frosch $ */
+/* $Id: newgrf_house.cpp 27574 2016-05-22 10:23:22Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

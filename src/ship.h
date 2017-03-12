@@ -1,4 +1,4 @@
-/* $Id: ship.h 26546 2014-05-01 14:48:44Z fonsinchen $ */
+/* $Id: ship.h 27666 2016-10-16 14:57:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -34,7 +34,7 @@ struct Ship FINAL : public SpecializedVehicle<Ship, VEH_SHIP> {
 	ExpensesType GetExpenseType(bool income) const { return income ? EXPENSES_SHIP_INC : EXPENSES_SHIP_RUN; }
 	void PlayLeaveStationSound() const;
 	bool IsPrimaryVehicle() const { return true; }
-	SpriteID GetImage(Direction direction, EngineImageType image_type) const;
+	void GetImage(Direction direction, EngineImageType image_type, VehicleSpriteSeq *result) const;
 	int GetDisplaySpeed() const { return this->cur_speed / 2; }
 	int GetDisplayMaxSpeed() const { return this->vcache.cached_max_speed / 2; }
 	int GetCurrentMaxSpeed() const { return min(this->vcache.cached_max_speed, this->current_order.GetMaxSpeed() * 2); }

@@ -1,4 +1,4 @@
-/* $Id: roadveh_gui.cpp 27134 2015-02-01 20:54:24Z frosch $ */
+/* $Id: roadveh_gui.cpp 27689 2016-12-10 14:33:58Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -149,7 +149,9 @@ void DrawRoadVehImage(const Vehicle *v, int left, int right, int y, VehicleID se
 
 		if (rtl ? px + width > 0 : px - width < max_width) {
 			PaletteID pal = (u->vehstatus & VS_CRASHED) ? PALETTE_CRASH : GetVehiclePalette(u);
-			DrawSprite(u->GetImage(dir, image_type), pal, px + (rtl ? -offset.x : offset.x), ScaleGUITrad(6) + offset.y);
+			VehicleSpriteSeq seq;
+			u->GetImage(dir, image_type, &seq);
+			seq.Draw(px + (rtl ? -offset.x : offset.x), ScaleGUITrad(6) + offset.y, pal, (u->vehstatus & VS_CRASHED) != 0);
 		}
 
 		px += rtl ? -width : width;

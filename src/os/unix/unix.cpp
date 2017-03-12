@@ -1,4 +1,4 @@
-/* $Id: unix.cpp 27290 2015-05-20 18:18:26Z rubidium $ */
+/* $Id: unix.cpp 27643 2016-09-04 12:54:30Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,7 @@
 #include "../../core/random_func.hpp"
 #include "../../debug.h"
 #include "../../string_func.h"
+#include "../../fios.h"
 
 
 #include <dirent.h>
@@ -77,7 +78,7 @@ bool FiosIsRoot(const char *path)
 #endif
 }
 
-void FiosGetDrives()
+void FiosGetDrives(FileList &file_list)
 {
 	return;
 }

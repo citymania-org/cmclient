@@ -1,4 +1,4 @@
-/* $Id: group_gui.cpp 27300 2015-06-20 11:05:11Z frosch $ */
+/* $Id: group_gui.cpp 27630 2016-08-15 18:33:52Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -627,8 +627,8 @@ public:
 
 				this->vehicle_sel = v->index;
 
-				int image = v->GetImage(_current_text_dir == TD_RTL ? DIR_E : DIR_W, EIT_IN_LIST);
-				SetObjectToPlaceWnd(image, GetVehiclePalette(v), HT_DRAG, this);
+				SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+				SetMouseCursorVehicle(v, EIT_IN_LIST);
 				_cursor.vehchain = true;
 
 				this->SetDirty();

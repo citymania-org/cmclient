@@ -1,4 +1,4 @@
-/* $Id: rail.h 27427 2015-10-30 17:24:30Z frosch $ */
+/* $Id: rail.h 27687 2016-12-10 13:26:29Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -113,7 +113,8 @@ typedef SmallVector<RailTypeLabel, 4> RailTypeLabelList;
 /**
  * This struct contains all the info that is needed to draw and construct tracks.
  */
-struct RailtypeInfo {
+class RailtypeInfo {
+public:
 	/**
 	 * Struct containing the main sprites. @note not all sprites are listed, but only
 	 *  the ones used directly in the code

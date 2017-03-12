@@ -1,4 +1,4 @@
-/* $Id: vehiclelist.h 27013 2014-10-14 11:23:41Z rubidium $ */
+/* $Id: vehiclelist.h 27677 2016-11-05 19:16:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -35,7 +35,8 @@ struct VehicleListIdentifier {
 	uint32 index;         ///< A vehicle list type specific index.
 
 	uint32 Pack() const;
-	bool Unpack(uint32 data);
+	bool UnpackIfValid(uint32 data);
+	static VehicleListIdentifier UnPack(uint32 data);
 
 	/**
 	 * Create a simple vehicle list.
@@ -47,7 +48,7 @@ struct VehicleListIdentifier {
 	VehicleListIdentifier(VehicleListType type, VehicleType vtype, CompanyID company, uint index = 0) :
 		type(type), vtype(vtype), company(company), index(index) {}
 
-	VehicleListIdentifier(uint32 data = 0);
+	VehicleListIdentifier() : type(), vtype(), company(), index() {}
 };
 
 /** A list of vehicles. */

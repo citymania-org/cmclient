@@ -1,4 +1,4 @@
-/* $Id: roadveh.h 25185 2013-04-13 13:42:08Z frosch $ */
+/* $Id: roadveh.h 27666 2016-10-16 14:57:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -108,7 +108,7 @@ struct RoadVehicle FINAL : public GroundVehicle<RoadVehicle, VEH_ROAD> {
 	void UpdateDeltaXY(Direction direction);
 	ExpensesType GetExpenseType(bool income) const { return income ? EXPENSES_ROADVEH_INC : EXPENSES_ROADVEH_RUN; }
 	bool IsPrimaryVehicle() const { return this->IsFrontEngine(); }
-	SpriteID GetImage(Direction direction, EngineImageType image_type) const;
+	void GetImage(Direction direction, EngineImageType image_type, VehicleSpriteSeq *result) const;
 	int GetDisplaySpeed() const { return this->gcache.last_speed / 2; }
 	int GetDisplayMaxSpeed() const { return this->vcache.cached_max_speed / 2; }
 	Money GetRunningCost() const;

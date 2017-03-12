@@ -1,9 +1,9 @@
 # Version numbers to update
 !define APPV_MAJOR 1
-!define APPV_MINOR 6
-!define APPV_MAINT 1
-!define APPV_BUILD 1
-!define APPV_EXTRA ""
+!define APPV_MINOR 7
+!define APPV_MAINT 0
+!define APPV_BUILD 0
+!define APPV_EXTRA "-RC1"
 
 !define APPNAME "OpenTTD"   ; Define application name
 !define APPVERSION "${APPV_MAJOR}.${APPV_MINOR}.${APPV_MAINT}${APPV_EXTRA}"  ; Define application version
@@ -408,6 +408,7 @@ Section "Uninstall"
 	; Baseset files
 	Delete "$INSTDIR\baseset\opntitle.dat"
 	Delete "$INSTDIR\baseset\openttd.grf"
+	Delete "$INSTDIR\baseset\orig_extra.grf"
 	Delete "$INSTDIR\baseset\orig_win.obg"
 	Delete "$INSTDIR\baseset\orig_dos.obg"
 	Delete "$INSTDIR\baseset\orig_dos_de.obg"

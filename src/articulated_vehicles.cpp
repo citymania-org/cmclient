@@ -1,4 +1,4 @@
-/* $Id: articulated_vehicles.cpp 27592 2016-05-29 19:08:01Z frosch $ */
+/* $Id: articulated_vehicles.cpp 27666 2016-10-16 14:57:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -441,7 +441,7 @@ void AddArticulatedParts(Vehicle *first)
 		v->max_age = 0;
 		v->engine_type = engine_type;
 		v->value = 0;
-		v->cur_image = SPR_IMG_QUERY;
+		v->sprite_seq.Set(SPR_IMG_QUERY);
 		v->random_bits = VehicleRandomBits();
 
 		if (flip_image) v->spritenum++;

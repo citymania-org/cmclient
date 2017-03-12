@@ -11,7 +11,7 @@
 ##gender m f
 
 
-# $Id: spanish_MX.txt 27593 2016-05-29 19:11:48Z frosch $
+# $Id: spanish_MX.txt 27777 2017-03-11 16:49:51Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -301,7 +301,7 @@ STR_SORT_BY_WAITING_TOTAL                                       :Cargamento tota
 STR_SORT_BY_WAITING_AVAILABLE                                   :Cargamento disponible en espera
 STR_SORT_BY_RATING_MAX                                          :Valoración más alta de cargamento
 STR_SORT_BY_RATING_MIN                                          :Valoración más baja de cargamento
-STR_SORT_BY_ENGINE_ID                                           :Id. de locomotora (orden clásico)
+STR_SORT_BY_ENGINE_ID                                           :EngineID (classic sort)Id. locomotora (orden clásico)
 STR_SORT_BY_COST                                                :Costo
 STR_SORT_BY_POWER                                               :Potencia
 STR_SORT_BY_TRACTIVE_EFFORT                                     :Fuerza de tracción
@@ -379,7 +379,7 @@ STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Configuración 
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Opciones de transparencia
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Mostrar nombres de pueblos
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Mostrar nombres de estaciones
-STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Mostrar puestos guías
+STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Mostrar puntos guías
 STR_SETTINGS_MENU_SIGNS_DISPLAYED                               :Mostrar carteles propios
 STR_SETTINGS_MENU_SHOW_COMPETITOR_SIGNS                         :Mostrar carteles y nombres del competidor
 STR_SETTINGS_MENU_FULL_ANIMATION                                :Animación completa
@@ -893,7 +893,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Selecci�
 
 ############ start of currency region
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Libra británica (GBP)
-STR_GAME_OPTIONS_CURRENCY_USD                                   :Dólar americano (USD)
+STR_GAME_OPTIONS_CURRENCY_USD                                   :Dólar estadounidense (USD)
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro (EUR)
 STR_GAME_OPTIONS_CURRENCY_JPY                                   :Yen japonés (¥)
 STR_GAME_OPTIONS_CURRENCY_ATS                                   :Chelín austríaco (ATS)
@@ -1008,7 +1008,7 @@ STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}El modo 
 # Custom currency window
 
 STR_CURRENCY_WINDOW                                             :{WHITE}Moneda personalizada
-STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Tasa de cambio: {ORANGE}{CURRENCY_LONG} = £ {COMMA}
+STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Tasa de cambio: {ORANGE} {CURRENCY_LONG} = £ {COMMA}
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Reducir el valor de la moneda por una libra (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Incrementar el valor de la moneda por una libra (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Ajustar el valor de cambio de la moneda por una Libra (£)
@@ -1027,7 +1027,7 @@ STR_CURRENCY_SET_CUSTOM_CURRENCY_TO_EURO_TOOLTIP                :{BLACK}Establec
 STR_CURRENCY_DECREASE_CUSTOM_CURRENCY_TO_EURO_TOOLTIP           :{BLACK}Cambiar a euro antes
 STR_CURRENCY_INCREASE_CUSTOM_CURRENCY_TO_EURO_TOOLTIP           :{BLACK}Cambiar a euro después
 
-STR_CURRENCY_PREVIEW                                            :{LTBLUE}Vista previa: {ORANGE}{CURRENCY_LONG}
+STR_CURRENCY_PREVIEW                                            :{LTBLUE}Vista previa: {ORANGE} {CURRENCY_LONG}
 STR_CURRENCY_CUSTOM_CURRENCY_PREVIEW_TOOLTIP                    :{BLACK}10000 libras (£) en la moneda
 STR_CURRENCY_CHANGE_PARAMETER                                   :{BLACK}Cambiar parámetro de moneda personalizada
 
@@ -1148,7 +1148,7 @@ STR_CONFIG_SETTING_RUNNING_COSTS                                :Costos de opera
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Nivel de los costos de mantenimiento y operación de vehículos e infraestructura
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Velocidad de construcción: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Restringir la velocidad de las acciones de construcción de jugadores no humanos
-STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS                           :Descomposturas de vehículos: {STRING}
+STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS                           :Averías de vehículos: {STRING}
 STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS_HELPTEXT                  :Controlar cada cuánto los vehículos con poco mantenimiento sufren fallas
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER                           :Multiplicador de subsidio: {STRING}
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Establecer cuánto se paga por subsidios conectados
@@ -1473,8 +1473,8 @@ STR_CONFIG_SETTING_SERVINT_AIRCRAFT                             :Intervalo de ma
 STR_CONFIG_SETTING_SERVINT_AIRCRAFT_HELPTEXT                    :Intervalo de mantenimiento predeterminado para nuevas aeronaves, en caso de no definirse otro explícitamente
 STR_CONFIG_SETTING_SERVINT_SHIPS                                :Intervalo de mantenimiento predeterminado para barcos: {STRING}
 STR_CONFIG_SETTING_SERVINT_SHIPS_HELPTEXT                       :Intervalo de mantenimiento predeterminado para nuevos barcos, en caso de no definirse otro explícitamente
-STR_CONFIG_SETTING_NOSERVICE                                    :Desactivar mantenimiento si las descomposturas están desactivadas: {STRING}
-STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Al activarse, los vehículos no recibirán mantenimiento si no pueden descomponerse
+STR_CONFIG_SETTING_NOSERVICE                                    :Desactivar mantenimiento si las averías están desactivadas: {STRING}
+STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Al activarse, los vehículos no recibirán mantenimiento si no pueden averiarse
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Activar límites de velocidad para vagones: {STRING}
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :Al activarse, se tienen en cuenta los límites de velocidad de los vagones para decidir la máxima velocidad de un tren
 STR_CONFIG_SETTING_DISABLE_ELRAILS                              :Desactivar ferrocarriles eléctricos: {STRING}
@@ -1762,6 +1762,7 @@ STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Revisar 
 STR_INTRO_TOOLTIP_SCRIPT_SETTINGS                               :{BLACK}Mostrar configuración de scripts
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Salir de 'OpenTTD'
 
+STR_INTRO_BASESET                                               :{BLACK}A los gráficos base elegidos les hace falta {NUM} spirte{P "" s}. Necesitan actualizarse.
 STR_INTRO_TRANSLATION                                           :{BLACK}A esta traducción le falta{P 0 "" n} {NUM} cadena{P "" s}. Considera ayudar a mejorar OpenTTD convirtiéndote en traductor. Consulta el archivo readme.txt para más detalles.
 
 # Quit window
@@ -2271,7 +2272,7 @@ STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Activar 
 STR_TRANSPARENT_TREES_TOOLTIP                                   :{BLACK}Activar o desactivar transparencia para árboles. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_HOUSES_TOOLTIP                                  :{BLACK}Activar o desactivar transparencia para casas. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_INDUSTRIES_TOOLTIP                              :{BLACK}Activar o desactivar transparencia para industrias. Ctrl+Clic para excluir de tecla rápida 'X'
-STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Activar o desactivar transparencia para edificios como estaciones, depósitos o puestos guías. Ctrl+Clic para excluir de tecla rápida 'X'
+STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Activar o desactivar transparencia para edificios como estaciones, depósitos o puntos guías. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_BRIDGES_TOOLTIP                                 :{BLACK}Activar o desactivar transparencia para puentes. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_STRUCTURES_TOOLTIP                              :{BLACK}Activar o desactivar transparencia para estructuras como faros o antenas. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_CATENARY_TOOLTIP                                :{BLACK}Activar o desactivar transparencia para catenaria. Ctrl+Clic para excluir de tecla rápida 'X'
@@ -2302,7 +2303,7 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Provee: 
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Ampliar estación
 STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Construir aparte
 
-STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Unir puestos guías
+STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Unir puntos guías
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Construir aparte
 
 # Rail construction toolbar
@@ -2332,8 +2333,8 @@ STR_BUILD_DEPOT_TRAIN_ORIENTATION_CAPTION                       :{WHITE}Orientac
 STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Elegir la orientación del depósito de trenes
 
 # Rail waypoint construction window
-STR_WAYPOINT_CAPTION                                            :{WHITE}Puesto guía
-STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Elegir el tipo de puesto guía
+STR_WAYPOINT_CAPTION                                            :{WHITE}Punto guía
+STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Elegir el tipo de punto guía
 
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}Selección de estación
@@ -2350,7 +2351,7 @@ STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Mostrar 
 STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Construir el tipo de estación elegida
 
 STR_STATION_CLASS_DFLT                                          :Estación predeterminada
-STR_STATION_CLASS_WAYP                                          :Puestos guías
+STR_STATION_CLASS_WAYP                                          :Puntos guías
 
 # Signal window
 STR_BUILD_SIGNAL_CAPTION                                        :{WHITE}Selección de señales
@@ -2431,7 +2432,7 @@ STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}Construi
 STR_WATERWAYS_TOOLBAR_BUILD_LOCKS_TOOLTIP                       :{BLACK}Construir esclusa. Mayús muestra una estimación del precio
 STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}Construir astillero (para comprar y dar mantenimiento a barcos). Mayús muestra una estimación del precio
 STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Construir muelles. Ctrl activa la ampliación de estaciones. Mayús muestra una estimación del precio
-STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Colocar boya para utilizar como puesto guía marítimo. Mayús muestra una estimación del precio
+STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Colocar boya para utilizar como punto guía marítimo. Mayús muestra una estimación del precio
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Construir acueducto. Mayús muestra una estimación del precio
 STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Definir cuerpo de agua.{}Crea un canal, a menos que se pulse Ctrl en un área al nivel del mar, en cuyo caso se inundarán los alrededores
 STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Colocar ríos
@@ -2590,6 +2591,7 @@ STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME                      :{BLACK}Nombre d
 STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Cargamento recibido: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
+STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}Tipo de vía: {LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Límite de velocidad de ferrocarril: {LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Límite de velocidad de carretera: {LTBLUE}{VELOCITY}
 
@@ -2602,29 +2604,29 @@ STR_LAI_CLEAR_DESCRIPTION_FIELDS                                :Campos
 STR_LAI_CLEAR_DESCRIPTION_SNOW_COVERED_LAND                     :Terreno nevado
 STR_LAI_CLEAR_DESCRIPTION_DESERT                                :Desierto
 
-STR_LAI_RAIL_DESCRIPTION_TRACK                                  :Vía de {STRING}
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_SIGNALS              :Vía de {STRING} con señales de bloqueo
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRESIGNALS                  :Vía de {STRING} con señales de entrada
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXITSIGNALS                 :Vía de {STRING} con señales de salida
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBOSIGNALS                :Vía de {STRING} con señales de combo
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBSSIGNALS                  :Vía de {STRING} con señales de ruta
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NOENTRYSIGNALS              :Vía de {STRING} con señales de ruta de un solo sentido
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PRESIGNALS           :Vía de {STRING} con señales de bloqueo y señales de entrada
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_EXITSIGNALS          :Vía de {STRING} con señales de bloqueo y señales de salida
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_COMBOSIGNALS         :Vía de {STRING} con señales de bloqueo y señales combo
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PBSSIGNALS           :Vía de {STRING} con señales de bloqueo y señales de ruta
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_NOENTRYSIGNALS       :Vía de {STRING} con señales de bloqueo y señales de ruta de un solo sentido
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_EXITSIGNALS             :Vía de {STRING} con señales de entrada y señales de salida
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_COMBOSIGNALS            :Vía de {STRING} con señales de entrada y señales combo
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_PBSSIGNALS              :Vía de {STRING} con señales de entrada y señales de ruta
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_NOENTRYSIGNALS          :Vía de {STRING} con señales de entrada y señales de ruta de un solo sentido
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_COMBOSIGNALS           :Vía de {STRING} con señales de salida y señales de combo
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_PBSSIGNALS             :Vía de {STRING} con señales de salida y señales de ruta
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_NOENTRYSIGNALS         :Vía de {STRING} con señales de salida y señales de ruta de un solo sentido
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_PBSSIGNALS            :Vía de {STRING} con señales de combo y señales de ruta
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_NOENTRYSIGNALS        :Vía de {STRING} con señales de combo y señales de ruta de un solo sentido
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_NOENTRYSIGNALS          :Vía de {STRING} con señales de ruta y señales de ruta de un solo sentido
-STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :Depósito ({STRING})
+STR_LAI_RAIL_DESCRIPTION_TRACK                                  :Vías férreas
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_SIGNALS              :Vías férreas con señales de bloqueo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRESIGNALS                  :Vías férreas con señales de entrada
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXITSIGNALS                 :Vías férreas con señales de salida
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBOSIGNALS                :Vías férreas con señales combo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBSSIGNALS                  :Vías férreas con señales de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NOENTRYSIGNALS              :Vías férreas con señales de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PRESIGNALS           :Vías férreas con señales de bloqueo y de entrada
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_EXITSIGNALS          :Vías férreas con señales de bloqueo y de salida
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_COMBOSIGNALS         :Vías férreas con señales de bloqueo y combo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PBSSIGNALS           :Vías férreas con señales de bloqueo y de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_NOENTRYSIGNALS       :Vías férreas con señales de bloqueo y de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_EXITSIGNALS             :Vías férreas con señales de entrada y de salida
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_COMBOSIGNALS            :Vías férreas con señales de entrada y combo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_PBSSIGNALS              :Vías férreas con señales de entrada y de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_NOENTRYSIGNALS          :Vías férreas con señales de entrada y de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_COMBOSIGNALS           :Vías férreas con señales de salida y combo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_PBSSIGNALS             :Vías férreas con señales de salida y de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_NOENTRYSIGNALS         :Vías férreas con señales de salida y de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_PBSSIGNALS            :Vías férreas con señales combo y de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_NOENTRYSIGNALS        :Vías férreas con señales combo y de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_NOENTRYSIGNALS          :Vías férreas con señales de ruta y de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :Depósito (trenes)
 
 STR_LAI_ROAD_DESCRIPTION_ROAD                                   :Carretera
 STR_LAI_ROAD_DESCRIPTION_ROAD_WITH_STREETLIGHTS                 :Carretera con alumbrado
@@ -2647,7 +2649,7 @@ STR_LAI_STATION_DESCRIPTION_TRUCK_LOADING_AREA                  :Estación de ca
 STR_LAI_STATION_DESCRIPTION_BUS_STATION                         :Parada de autobús
 STR_LAI_STATION_DESCRIPTION_SHIP_DOCK                           :Muelle
 STR_LAI_STATION_DESCRIPTION_BUOY                                :Boya
-STR_LAI_STATION_DESCRIPTION_WAYPOINT                            :puesto guía
+STR_LAI_STATION_DESCRIPTION_WAYPOINT                            :Punto guía
 
 STR_LAI_WATER_DESCRIPTION_WATER                                 :Agua
 STR_LAI_WATER_DESCRIPTION_CANAL                                 :Canal
@@ -2688,7 +2690,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Terreno propied
 STR_ABOUT_OPENTTD                                               :{WHITE}Acerca de OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright original {COPYRIGHT} 1995 Chris Sawyer, Todos los derechos reservados
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versión {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2016, el equipo de OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2017, el equipo de OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Guardar partida
@@ -2907,8 +2909,6 @@ STR_NEWGRF_ERROR_INVALID_ID                                     :Intento de usar
 STR_NEWGRF_ERROR_CORRUPT_SPRITE                                 :{YELLOW}{STRING} contiene un sprite con errores. Todos los sprites con errores se muestran como un símbolo de interrogación rojo (?)
 STR_NEWGRF_ERROR_MULTIPLE_ACTION_8                              :Contiene múltiples entradas de Acción 8 (sprite {3:NUM})
 STR_NEWGRF_ERROR_READ_BOUNDS                                    :La lectura excedió el límite de pseudo-sprite (sprite {3:NUM})
-STR_NEWGRF_ERROR_MISSING_SPRITES                                :{WHITE}A los gráficos base actualmente en uso les faltan algunos sprites.{}Los gráficos base deben ser actualizados
-STR_NEWGRF_ERROR_MISSING_SPRITES_UNSTABLE                       :{WHITE}A los gráficos base actualmente en uso les faltan algunos sprites.{}Los gráficos base deben ser actualizados.{}Dado que esta es una {YELLOW}versión de desarrollo de OpenTTD{WHITE}, es posible que también se requiera una {YELLOW}versión de desarrollo de los gráficos base{WHITE}
 STR_NEWGRF_ERROR_GRM_FAILED                                     :Recursos GRF solicitados no disponibles (sprite {3:NUM})
 STR_NEWGRF_ERROR_FORCEFULLY_DISABLED                            :{1:STRING} fue desactivado por {STRING}
 STR_NEWGRF_ERROR_INVALID_SPRITE_LAYOUT                          :Formato de colocación de sprites no válido o desconocido (sprite {3:NUM})
@@ -3172,12 +3172,12 @@ STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}No permi
 
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
-STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Centrar vista en ubicación del puesto guía. Ctrl+Clic abre una ventana de vista en dicha ubicación
-STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Cambiar nombre de puesto guía
+STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Centrar vista en ubicación del punto guía. Ctrl+Clic abre una ventana de vista en dicha ubicación
+STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Cambiar nombre de punto guía
 STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}Centrar la vista en la ubicación de la boya. Ctrl+Clic abre una ventana de vista en dicha ubicación
 STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}Cambiar nombre de boya
 
-STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Cambiar nombre de puesto guía
+STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Cambiar nombre de punto guía
 
 # Finances window
 STR_FINANCES_CAPTION                                            :{WHITE}Finanzas de {COMPANY} {BLACK}{COMPANY_NUM}
@@ -3295,9 +3295,8 @@ STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Requiere
 STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Requiere: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
 ############ range for requires ends
 
+
 ############ range for produces starts
-STR_INDUSTRY_VIEW_WAITING_FOR_PROCESSING                        :{BLACK}Cargamento esperando a ser procesado:
-STR_INDUSTRY_VIEW_WAITING_STOCKPILE_CARGO                       :{YELLOW}{CARGO_LONG}{STRING}{BLACK}
 STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Produce: {YELLOW}{STRING}{STRING}
 STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Produce: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
 ############ range for produces ends
@@ -3558,10 +3557,10 @@ STR_REPLACE_REPLACING_WHEN_OLD                                  :{ENGINE} cuando
 STR_REPLACE_VEHICLES_STOP                                       :{BLACK}Dejar de reemplazar vehículos
 STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}Presionar este botón para detener el reemplazo del vehículo situado a la izquierda
 
-STR_REPLACE_ENGINE_WAGON_SELECT                                 :{BLACK}Reemplazando: {ORANGE}{STRING}
 STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Cambiar entre reemplazo de vagón y locomotora
 STR_REPLACE_ENGINES                                             :Locomotoras
 STR_REPLACE_WAGONS                                              :Vagones
+STR_REPLACE_ALL_RAILTYPE                                        :Todos los vehículos ferroviarios
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Elegir el tipo de vías férreas para las que se desea reemplazar locomotoras
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Mostrar el vehículo que reemplazará al otro de la izquierda
@@ -3620,7 +3619,7 @@ STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Activida
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Cargando/Descargando
 STR_VEHICLE_STATUS_LEAVING                                      :{LTBLUE}Partiendo
 STR_VEHICLE_STATUS_CRASHED                                      :{RED}¡Accidentado!
-STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}Descompuesto
+STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}Averiado
 STR_VEHICLE_STATUS_STOPPED                                      :{RED}Detenido
 STR_VEHICLE_STATUS_TRAIN_STOPPING_VEL                           :{RED}Deteniéndose, {VELOCITY}
 STR_VEHICLE_STATUS_TRAIN_NO_POWER                               :{RED}Sin potencia
@@ -3659,7 +3658,7 @@ STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Peso: {L
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Peso: {LTBLUE}{WEIGHT_SHORT} {BLACK}Potencia: {LTBLUE}{POWER}{BLACK} Velocidad máx.: {LTBLUE}{VELOCITY} {BLACK}F.T. máx.: {LTBLUE}{FORCE}
 
 STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR                     :{BLACK}Utilidad este año: {LTBLUE}{CURRENCY_LONG} (año pasado: {CURRENCY_LONG})
-STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Fiabilidad: {LTBLUE}{COMMA}%  {BLACK}Descomposturas desde el último mantenimiento: {LTBLUE}{COMMA}
+STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Fiabilidad: {LTBLUE}{COMMA}%  {BLACK}Averías desde el último mantenimiento: {LTBLUE}{COMMA}
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}Construido: {LTBLUE}{NUM}{BLACK} Valor: {LTBLUE}{CURRENCY_LONG}
 STR_VEHICLE_INFO_NO_CAPACITY                                    :{BLACK}Capacidad: {LTBLUE}Ninguna{STRING}
@@ -3816,7 +3815,7 @@ STR_ORDER_GO_TO_NEAREST_DEPOT                                   :Ir al depósito
 STR_ORDER_GO_TO_NEAREST_HANGAR                                  :Ir al hangar más cercano
 STR_ORDER_CONDITIONAL                                           :Salto de orden condicional
 STR_ORDER_SHARE                                                 :Compartir órdenes
-STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Añadir nueva orden antes de la orden marcada o añadirla al final de la lista. Ctrl+Clic sobre una estación para establecer la orden a 'Cargar máx. cualquier carga', sobre un puesto guía para 'Sin paradas' y sobre un depósito para 'Mantenimiento' (esta última desactivará el mantenimiento automático). Ctrl+Clic sobre otro vehículo para hacer que ambos compartan siempre las mismas órdenes. Clic sobre un vehículo para copiar sus órdenes (sin compartirlas).
+STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Añadir nueva orden antes de la orden marcada o añadirla al final de la lista. Ctrl+Clic sobre una estación para establecer la orden a 'Cargar máx. cualquier carga', sobre un punto guía para 'Sin paradas' y sobre un depósito para 'Mantenimiento' (esta última desactivará el mantenimiento automático). Ctrl+Clic sobre otro vehículo para hacer que ambos compartan siempre las mismas órdenes. Clic sobre un vehículo para copiar sus órdenes (sin compartirlas).
 
 STR_ORDERS_VEH_WITH_SHARED_ORDERS_LIST_TOOLTIP                  :{BLACK}Ver todos los vehículos que comparten el mismo itinerario
 
@@ -4241,15 +4240,15 @@ STR_ERROR_MUST_DEMOLISH_DOCK_FIRST                              :{WHITE}Primero 
 STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Primero se debe demoler el aeropuerto
 
 # Waypoint related errors
-STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Se amplía más de un puesto guía existente
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Demasiado cerca de otro puesto guía
+STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Se amplía más de un punto guía existente
+STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Demasiado cerca de otro punto guía
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}No se puede construir el puesto guía aquí...
+STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}No se puede construir el punto guía aquí...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}No se puede colocar la boya aquí...
-STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}No se puede cambiar nombre del puesto guía...
+STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}No se puede cambiar nombre del punto guía...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}No se puede quitar el puesto guía de aquí...
-STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Primero se debe retirar el puesto guía
+STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}No se puede quitar el punto guía de aquí...
+STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Primero se debe retirar el punto guía
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... una boya obstaculiza
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... ¡boya en uso por otra empresa!
 
@@ -4861,7 +4860,7 @@ STR_FORMAT_BUOY_NAME_SERIAL                                     :Boya {TOWN} #{C
 STR_FORMAT_COMPANY_NUM                                          :(Empresa {COMMA})
 STR_FORMAT_GROUP_NAME                                           :Grupo {COMMA}
 STR_FORMAT_INDUSTRY_NAME                                        :{1:STRING}, {0:TOWN}
-STR_FORMAT_WAYPOINT_NAME                                        :Puesto guía {TOWN}
+STR_FORMAT_WAYPOINT_NAME                                        :Punto guía, {TOWN}
 STR_FORMAT_WAYPOINT_NAME_SERIAL                                 :Puesto guía #{1:COMMA}, {0:TOWN}
 
 STR_FORMAT_DEPOT_NAME_TRAIN                                     :Depósito de trenes, {TOWN}

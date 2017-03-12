@@ -1,4 +1,4 @@
-/* $Id: newgrf_commons.h 27587 2016-05-29 18:52:56Z frosch $ */
+/* $Id: newgrf_commons.h 27534 2016-04-02 16:02:22Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

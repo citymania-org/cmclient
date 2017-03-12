@@ -1,4 +1,4 @@
-/* $Id: spritecache.cpp 27016 2014-10-14 16:09:21Z peter1138 $ */
+/* $Id: spritecache.cpp 27732 2017-01-14 18:30:26Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -147,6 +147,25 @@ uint GetOriginFileSlot(SpriteID sprite)
 {
 	if (!SpriteExists(sprite)) return 0;
 	return GetSpriteCache(sprite)->file_slot;
+}
+
+/**
+ * Count the sprites which originate from a specific file slot in a range of SpriteIDs.
+ * @param file_slot FIOS file slot.
+ * @param begin First sprite in range.
+ * @param end First sprite not in range.
+ * @return Number of sprites.
+ */
+uint GetSpriteCountForSlot(uint file_slot, SpriteID begin, SpriteID end)
+{
+	uint count = 0;
+	for (SpriteID i = begin; i != end; i++) {
+		if (SpriteExists(i)) {
+			SpriteCache *sc = GetSpriteCache(i);
+			if (sc->file_slot == file_slot) count++;
+		}
+	}
+	return count;
 }
 
 /**

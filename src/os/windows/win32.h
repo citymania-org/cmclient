@@ -1,4 +1,4 @@
-/* $Id: win32.h 27176 2015-03-02 09:10:16Z planetmaker $ */
+/* $Id: win32.h 27674 2016-10-30 19:27:07Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -38,5 +38,11 @@ HRESULT OTTDSHGetFolderPath(HWND, int, HANDLE, DWORD, LPTSTR);
 #if defined(__MINGW32__) && !defined(__MINGW64__)
 #define SHGFP_TYPE_CURRENT 0
 #endif /* __MINGW32__ */
+
+#ifdef _MSC_VER
+void SetWin32ThreadName(DWORD dwThreadID, const char* threadName);
+#else
+static inline void SetWin32ThreadName(DWORD dwThreadID, const char* threadName) {}
+#endif
 
 #endif /* WIN32_H */

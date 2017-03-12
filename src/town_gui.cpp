@@ -1,4 +1,4 @@
-/* $Id: town_gui.cpp 27591 2016-05-29 19:05:11Z frosch $ */
+/* $Id: town_gui.cpp 27577 2016-05-22 10:52:02Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

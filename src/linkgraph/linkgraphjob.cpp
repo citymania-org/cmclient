@@ -1,4 +1,4 @@
-/* $Id: linkgraphjob.cpp 27178 2015-03-07 18:27:01Z frosch $ */
+/* $Id: linkgraphjob.cpp 27670 2016-10-30 17:29:33Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -61,7 +61,7 @@ void LinkGraphJob::EraseFlows(NodeID from)
  */
 void LinkGraphJob::SpawnThread()
 {
-	if (!ThreadObject::New(&(LinkGraphSchedule::Run), this, &this->thread)) {
+	if (!ThreadObject::New(&(LinkGraphSchedule::Run), this, &this->thread, "ottd:linkgraph")) {
 		this->thread = NULL;
 		/* Of course this will hang a bit.
 		 * On the other hand, if you want to play games which make this hang noticably

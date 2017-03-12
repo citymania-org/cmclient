@@ -1,4 +1,4 @@
-/* $Id: aystar.h 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: aystar.h 27733 2017-01-15 13:59:46Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -133,7 +133,7 @@ struct AyStar {
 	 * everything */
 	void *user_path;
 	void *user_target;
-	uint user_data[10];
+	void *user_data;
 
 	byte loops_per_tick;   ///< How many loops are there called before Main() gives control back to the caller. 0 = until done.
 	uint max_path_cost;    ///< If the g-value goes over this number, it stops searching, 0 = infinite.

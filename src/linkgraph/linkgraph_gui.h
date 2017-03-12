@@ -1,4 +1,4 @@
-/* $Id: linkgraph_gui.h 26266 2014-01-19 09:26:56Z fonsinchen $ */
+/* $Id: linkgraph_gui.h 27612 2016-07-10 11:57:16Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,7 +17,7 @@
 #include "../widget_type.h"
 #include "linkgraph_base.h"
 #include <map>
-#include <list>
+#include <vector>
 
 /**
  * Properties of a link between two stations.
@@ -39,7 +39,7 @@ class LinkGraphOverlay {
 public:
 	typedef std::map<StationID, LinkProperties> StationLinkMap;
 	typedef std::map<StationID, StationLinkMap> LinkMap;
-	typedef std::list<std::pair<StationID, uint> > StationSupplyList;
+	typedef std::vector<std::pair<StationID, uint> > StationSupplyList;
 
 	static const uint8 LINK_COLOURS[];
 

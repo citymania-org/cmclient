@@ -1,4 +1,4 @@
-/* $Id: wnd_quartz.mm 26108 2013-11-25 14:30:22Z rubidium $ */
+/* $Id: wnd_quartz.mm 27675 2016-10-31 19:29:01Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -110,14 +110,22 @@ static CGColorSpaceRef QZ_GetCorrectColorSpace()
 	static CGColorSpaceRef colorSpace = NULL;
 
 	if (colorSpace == NULL) {
-		CMProfileRef sysProfile;
-
-		if (CMGetSystemProfile(&sysProfile) == noErr) {
-			colorSpace = CGColorSpaceCreateWithPlatformColorSpace(sysProfile);
-			CMCloseProfile(sysProfile);
-		} else {
-			colorSpace = CGColorSpaceCreateDeviceRGB();
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+		if (MacOSVersionIsAtLeast(10, 5, 0)) {
+			colorSpace = CGDisplayCopyColorSpace(CGMainDisplayID());
+		} else
+#endif
+		{
+#if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5) && !defined(HAVE_OSX_1011_SDK)
+			CMProfileRef sysProfile;
+			if (CMGetSystemProfile(&sysProfile) == noErr) {
+				colorSpace = CGColorSpaceCreateWithPlatformColorSpace(sysProfile);
+				CMCloseProfile(sysProfile);
+			}
+#endif
 		}
+
+		if (colorSpace == NULL) colorSpace = CGColorSpaceCreateDeviceRGB();
 
 		if (colorSpace == NULL) error("Could not get system colour space. You might need to recalibrate your monitor.");
 	}
