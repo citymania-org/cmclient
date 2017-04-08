@@ -7,3 +7,9 @@ media/openttd.desktop
 recordings/
 stats*/*
 OpenTTD\ essentials
+
+syntax: regexp
+^save
+^release
+^local
+^export
