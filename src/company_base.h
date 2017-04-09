@@ -1,4 +1,4 @@
-/* $Id: company_base.h 27381 2015-08-10 20:24:13Z michi_cc $ */
+/* $Id: company_base.h 27757 2017-02-26 19:41:14Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -54,10 +54,10 @@ extern CompanyPool _company_pool;
 /** Statically loadable part of Company pool item */
 struct CompanyProperties {
 	uint32 name_2;                   ///< Parameter of #name_1.
-	uint16 name_1;                   ///< Name of the company if the user did not change it.
+	StringID name_1;                 ///< Name of the company if the user did not change it.
 	char *name;                      ///< Name of the company if the user changed it.
 
-	uint16 president_name_1;         ///< Name of the president if the user did not change it.
+	StringID president_name_1;       ///< Name of the president if the user did not change it.
 	uint32 president_name_2;         ///< Parameter of #president_name_1
 	char *president_name;            ///< Name of the president if the user changed it.
 

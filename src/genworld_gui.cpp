@@ -1,4 +1,4 @@
-/* $Id: genworld_gui.cpp 27285 2015-05-16 12:01:19Z alberth $ */
+/* $Id: genworld_gui.cpp 27650 2016-09-04 12:57:43Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,6 +26,7 @@
 #include "town.h"
 #include "core/geometry_func.hpp"
 #include "core/random_func.hpp"
+#include "saveload/saveload.h"
 #include "progress.h"
 #include "error.h"
 
@@ -832,7 +833,7 @@ static void _ShowGenerateLandscape(GenerateLandscapeWindowMode mode)
 
 	if (mode == GLWM_HEIGHTMAP) {
 		/* If the function returns negative, it means there was a problem loading the heightmap */
-		if (!GetHeightmapDimensions(_file_to_saveload.name, &x, &y)) return;
+		if (!GetHeightmapDimensions(_file_to_saveload.detail_ftype, _file_to_saveload.name, &x, &y)) return;
 	}
 
 	WindowDesc *desc = (mode == GLWM_HEIGHTMAP) ? &_heightmap_load_desc : &_generate_landscape_desc;
@@ -1190,7 +1191,7 @@ struct GenerateProgressWindow : public Window {
 	{
 		switch (widget) {
 			case WID_GP_ABORT:
-				if (_cursor.sprite == SPR_CURSOR_ZZZ) SetMouseCursor(SPR_CURSOR_MOUSE, PAL_NONE);
+				SetMouseCursorBusy(false);
 				ShowQuery(
 					STR_GENERATION_ABORT_CAPTION,
 					STR_GENERATION_ABORT_MESSAGE,

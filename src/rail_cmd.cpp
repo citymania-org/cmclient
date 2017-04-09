@@ -1,4 +1,4 @@
-/* $Id: rail_cmd.cpp 27427 2015-10-30 17:24:30Z frosch $ */
+/* $Id: rail_cmd.cpp 27726 2017-01-08 11:45:08Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -48,8 +48,6 @@ RailType _sorted_railtypes[RAILTYPE_END];
 uint8 _sorted_railtypes_size;
 TileIndex _rail_track_endtile; ///< The end of a rail track; as hidden return from the rail build/remove command for GUI purposes.
 
-assert_compile(sizeof(_original_railtypes) <= sizeof(_railtypes));
-
 /** Enum holding the signal offset in the sprite sheet according to the side it is representing. */
 enum SignalOffsets {
 	SIGNAL_TO_SOUTHWEST,
@@ -67,8 +65,20 @@ enum SignalOffsets {
  */
 void ResetRailTypes()
 {
-	memset(_railtypes, 0, sizeof(_railtypes));
-	memcpy(_railtypes, _original_railtypes, sizeof(_original_railtypes));
+	assert_compile(lengthof(_original_railtypes) <= lengthof(_railtypes));
+
+	uint i = 0;
+	for (; i < lengthof(_original_railtypes); i++) _railtypes[i] = _original_railtypes[i];
+
+	static const RailtypeInfo empty_railtype = {
+		{0,0,0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,{}},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0},
+		0, RAILTYPES_NONE, RAILTYPES_NONE, 0, 0, 0, RTFB_NONE, 0, 0, 0, 0, 0,
+		RailTypeLabelList(), 0, 0, RAILTYPES_NONE, RAILTYPES_NONE, 0,
+		{}, {} };
+	for (; i < lengthof(_railtypes);          i++) _railtypes[i] = empty_railtype;
 }
 
 void ResolveRailTypeGUISprites(RailtypeInfo *rti)
@@ -152,11 +162,9 @@ RailType AllocateRailType(RailTypeLabel label)
 
 		if (rti->label == 0) {
 			/* Set up new rail type */
-			memcpy(rti, &_railtypes[RAILTYPE_RAIL], sizeof(*rti));
+			*rti = _original_railtypes[RAILTYPE_RAIL];
 			rti->label = label;
-			/* Clear alternate label list. Can't use Reset() here as that would free
-			 * the data pointer of RAILTYPE_RAIL and not our new rail type. */
-			new (&rti->alternate_labels) RailTypeLabelList;
+			rti->alternate_labels.Clear();
 
 			/* Make us compatible with ourself. */
 			rti->powered_railtypes    = (RailTypes)(1 << rt);
@@ -450,7 +458,7 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 			CommandCost ret = CheckTileOwnership(tile);
 			if (ret.Failed()) return ret;
 
-			if (!IsPlainRail(tile)) return CMD_ERROR;
+			if (!IsPlainRail(tile)) return DoCommand(tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR); // just get appropriate error message
 
 			if (!IsCompatibleRail(GetRailType(tile), railtype)) return_cmd_error(STR_ERROR_IMPOSSIBLE_TRACK_COMBINATION);
 
@@ -2735,8 +2743,8 @@ static void GetTileDesc_Track(TileIndex tile, TileDesc *td)
 {
 	const RailtypeInfo *rti = GetRailTypeInfo(GetRailType(tile));
 	td->rail_speed = rti->max_speed;
+	td->railtype = rti->strings.name;
 	td->owner[0] = GetTileOwner(tile);
-	SetDParamX(td->dparam, 0, rti->strings.name);
 	switch (GetRailTileType(tile)) {
 		case RAIL_TILE_NORMAL:
 			td->str = STR_LAI_RAIL_DESCRIPTION_TRACK;

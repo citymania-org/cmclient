@@ -1,4 +1,4 @@
-/* $Id: road_internal.h 21846 2011-01-18 23:09:43Z rubidium $ */
+/* $Id: road_internal.h 27676 2016-11-05 11:53:03Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

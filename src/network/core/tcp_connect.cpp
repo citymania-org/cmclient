@@ -1,4 +1,4 @@
-/* $Id: tcp_connect.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: tcp_connect.cpp 27670 2016-10-30 17:29:33Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -35,7 +35,7 @@ TCPConnecter::TCPConnecter(const NetworkAddress &address) :
 	address(address)
 {
 	*_tcp_connecters.Append() = this;
-	if (!ThreadObject::New(TCPConnecter::ThreadEntry, this, &this->thread)) {
+	if (!ThreadObject::New(TCPConnecter::ThreadEntry, this, &this->thread, "ottd:tcp")) {
 		this->Connect();
 	}
 }

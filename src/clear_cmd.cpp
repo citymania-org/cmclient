@@ -1,4 +1,4 @@
-/* $Id: clear_cmd.cpp 27200 2015-03-20 19:27:15Z frosch $ */
+/* $Id: clear_cmd.cpp 27657 2016-10-02 13:41:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -56,7 +56,7 @@ void DrawHillyLandTile(const TileInfo *ti)
 	if (ti->tileh != SLOPE_FLAT) {
 		DrawGroundSprite(SPR_FLAT_ROUGH_LAND + SlopeToSpriteOffset(ti->tileh), PAL_NONE);
 	} else {
-		DrawGroundSprite(_landscape_clear_sprites_rough[GB(ti->x ^ ti->y, 4, 3)], PAL_NONE);
+		DrawGroundSprite(_landscape_clear_sprites_rough[GB(TileHash(ti->x, ti->y), 0, 3)], PAL_NONE);
 	}
 }
 

@@ -1,4 +1,4 @@
-/* $Id: osx_stdafx.h 26709 2014-07-30 20:19:29Z planetmaker $ */
+/* $Id: osx_stdafx.h 27675 2016-10-31 19:29:01Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,6 +12,17 @@
 #ifndef MACOS_STDAFX_H
 #define MACOS_STDAFX_H
 
+
+#include <AvailabilityMacros.h>
+
+/* We assume if these macros are defined, the SDK is also at least this version or later. */
+#ifdef MAC_OS_X_VERSION_10_7
+#define HAVE_OSX_107_SDK
+#endif
+
+#ifdef MAC_OS_X_VERSION_10_11
+#define HAVE_OSX_1011_SDK
+#endif
 
 /* It would seem that to ensure backward compability we have to ensure that we have defined MAC_OS_X_VERSION_10_x everywhere */
 #ifndef MAC_OS_X_VERSION_10_3
@@ -56,8 +67,6 @@
 #if !defined(STRGEN) && !defined(SETTINGSGEN) && ((defined(__LP64__) && !defined(_SQ64)) || (!defined(__LP64__) && defined(_SQ64)))
 #	error "Compiling 64 bits without _SQ64 set! (or vice versa)"
 #endif
-
-#include <AvailabilityMacros.h>
 
 /* Name conflict */
 #define Rect        OTTDRect

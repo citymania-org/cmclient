@@ -1,4 +1,4 @@
-/* $Id: game_text.hpp 25818 2013-10-06 12:13:20Z frosch $ */
+/* $Id: game_text.hpp 27756 2017-02-26 19:40:53Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,9 +13,6 @@
 #define GAME_TEXT_HPP
 
 #include "../core/smallvec_type.hpp"
-
-/** The tab we place our strings in. */
-static const uint GAME_TEXT_TAB = 18;
 
 const char *GetGameStringPtr(uint id);
 void RegisterGameTranslation(class Squirrel *engine);

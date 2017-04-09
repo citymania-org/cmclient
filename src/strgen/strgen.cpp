@@ -1,4 +1,4 @@
-/* $Id: strgen.cpp 26521 2014-04-26 20:55:08Z rubidium $ */
+/* $Id: strgen.cpp 27759 2017-02-26 20:10:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -439,7 +439,7 @@ int CDECL main(int argc, char *argv[])
 
 		switch (i) {
 			case 'v':
-				puts("$Revision: 26521 $");
+				puts("$Revision: 27759 $");
 				return 0;
 
 			case 'C':
@@ -484,7 +484,7 @@ int CDECL main(int argc, char *argv[])
 
 			case 'h':
 				puts(
-					"strgen - $Revision: 26521 $\n"
+					"strgen - $Revision: 27759 $\n"
 					" -v | --version    print version information and exit\n"
 					" -t | --todo       replace any untranslated strings with '<TODO>'\n"
 					" -w | --warning    print a warning for any untranslated strings\n"
@@ -525,7 +525,7 @@ int CDECL main(int argc, char *argv[])
 			mkpath(pathbuf, lastof(pathbuf), src_dir, "english.txt");
 
 			/* parse master file */
-			StringData data(TAB_COUNT);
+			StringData data(TEXT_TAB_END);
 			FileStringReader master_reader(data, pathbuf, true, false);
 			master_reader.ParseFile();
 			if (_errors != 0) return 1;
@@ -542,7 +542,7 @@ int CDECL main(int argc, char *argv[])
 
 			mkpath(pathbuf, lastof(pathbuf), src_dir, "english.txt");
 
-			StringData data(TAB_COUNT);
+			StringData data(TEXT_TAB_END);
 			/* parse master file and check if target file is correct */
 			FileStringReader master_reader(data, pathbuf, true, false);
 			master_reader.ParseFile();

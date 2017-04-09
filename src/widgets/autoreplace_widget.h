@@ -1,4 +1,4 @@
-/* $Id: autoreplace_widget.h 26811 2014-09-11 17:10:38Z alberth $ */
+/* $Id: autoreplace_widget.h 27683 2016-12-08 20:21:39Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -35,10 +35,8 @@ enum ReplaceVehicleWidgets {
 	WID_RV_STOP_REPLACE,             ///< Stop Replacing button.
 
 	/* Train only widgets. */
-	WID_RV_TRAIN_ENGINEWAGON_TOGGLE, ///< Button to toggle engines and/or wagons.
-	WID_RV_TRAIN_FLUFF_LEFT,         ///< The fluff on the left.
+	WID_RV_TRAIN_ENGINEWAGON_DROPDOWN, ///< Dropdown to select engines and/or wagons.
 	WID_RV_TRAIN_RAILTYPE_DROPDOWN,  ///< Dropdown menu about the railtype.
-	WID_RV_TRAIN_FLUFF_RIGHT,        ///< The fluff on the right.
 	WID_RV_TRAIN_WAGONREMOVE_TOGGLE, ///< Button to toggle removing wagons.
 };
 

@@ -1,4 +1,4 @@
-/* $Id: os2.cpp 27290 2015-05-20 18:18:26Z rubidium $ */
+/* $Id: os2.cpp 27643 2016-09-04 12:54:30Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -45,7 +45,7 @@ bool FiosIsRoot(const char *file)
 	return file[3] == '\0';
 }
 
-void FiosGetDrives()
+void FiosGetDrives(FileList &file_list)
 {
 	uint disk, disk2, save, total;
 
@@ -75,7 +75,7 @@ void FiosGetDrives()
 #endif
 
 		if (disk == disk2) {
-			FiosItem *fios = _fios_items.Append();
+			FiosItem *fios = file_list.Append();
 			fios->type = FIOS_TYPE_DRIVE;
 			fios->mtime = 0;
 #ifndef __INNOTEK_LIBC__

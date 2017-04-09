@@ -1,4 +1,4 @@
-/* $Id: elrail.cpp 26879 2014-09-21 11:24:51Z rubidium $ */
+/* $Id: elrail.cpp 27676 2016-11-05 11:53:03Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: road_cmd.cpp 27312 2015-06-21 09:31:50Z frosch $ */
+/* $Id: road_cmd.cpp 27746 2017-02-12 12:03:07Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -224,7 +224,7 @@ static CommandCost RemoveRoad(TileIndex tile, DoCommandFlag flags, RoadBits piec
 			TileIndex other_end = GetOtherTunnelBridgeEnd(tile);
 			/* Pay for *every* tile of the bridge or tunnel */
 			uint len = GetTunnelBridgeLength(other_end, tile) + 2;
-			cost.AddCost(len * _price[PR_CLEAR_ROAD]);
+			cost.AddCost(len * 2 * _price[PR_CLEAR_ROAD]);
 			if (flags & DC_EXEC) {
 				Company *c = Company::GetIfValid(GetRoadOwner(tile, rt));
 				if (c != NULL) {
@@ -1684,6 +1684,7 @@ static void GetTileDesc_Road(TileIndex tile, TileDesc *td)
 			if (HasBit(rts, ROADTYPE_TRAM)) tram_owner = GetRoadOwner(tile, ROADTYPE_TRAM);
 
 			const RailtypeInfo *rti = GetRailTypeInfo(GetRailType(tile));
+			td->railtype = rti->strings.name;
 			td->rail_speed = rti->max_speed;
 
 			break;

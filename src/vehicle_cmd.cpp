@@ -1,4 +1,4 @@
-/* $Id: vehicle_cmd.cpp 27428 2015-10-30 17:27:21Z frosch $ */
+/* $Id: vehicle_cmd.cpp 27677 2016-11-05 19:16:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -606,7 +606,7 @@ CommandCost CmdMassStartStopVehicle(TileIndex tile, DoCommandFlag flags, uint32 
 	bool vehicle_list_window = HasBit(p1, 1);
 
 	VehicleListIdentifier vli;
-	if (!vli.Unpack(p2)) return CMD_ERROR;
+	if (!vli.UnpackIfValid(p2)) return CMD_ERROR;
 	if (!IsCompanyBuildableVehicleType(vli.vtype)) return CMD_ERROR;
 
 	if (vehicle_list_window) {
@@ -1001,7 +1001,7 @@ CommandCost CmdSendVehicleToDepot(TileIndex tile, DoCommandFlag flags, uint32 p1
 	if (p1 & DEPOT_MASS_SEND) {
 		/* Mass goto depot requested */
 		VehicleListIdentifier vli;
-		if (!vli.Unpack(p2)) return CMD_ERROR;
+		if (!vli.UnpackIfValid(p2)) return CMD_ERROR;
 		return SendAllVehiclesToDepot(flags, (p1 & DEPOT_SERVICE) != 0, vli);
 	}
 

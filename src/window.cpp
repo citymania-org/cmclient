@@ -1,4 +1,4 @@
-/* $Id: window.cpp 27591 2016-05-29 19:05:11Z frosch $ */
+/* $Id: window.cpp 27712 2016-12-25 17:56:57Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,7 +22,6 @@
 #include "zoom_func.h"
 #include "vehicle_base.h"
 #include "window_func.h"
-#include "window_gui.h"
 #include "tilehighlight_func.h"
 #include "network/network.h"
 #include "querystring_gui.h"
@@ -35,6 +34,7 @@
 #include "hotkeys.h"
 #include "toolbar_gui.h"
 #include "statusbar_gui.h"
+#include "window_gui.h"
 #include "error.h"
 #include "game/game.hpp"
 #include "video/video_driver.hpp"
@@ -944,7 +944,7 @@ void DrawOverlappedWindowForAll(int left, int top, int right, int bottom)
 				left < w->left + w->width &&
 				top < w->top + w->height) {
 			/* Window w intersects with the rectangle => needs repaint */
-			DrawOverlappedWindow(w, left, top, right, bottom);
+			DrawOverlappedWindow(w, max(left, w->left), max(top, w->top), min(right, w->left + w->width), min(bottom, w->top + w->height));
 		}
 	}
 }
@@ -2828,7 +2828,6 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		switch (click) {
 			case MC_DOUBLE_LEFT:
 			case MC_LEFT:
-				DEBUG(misc, 2, "Cursor: 0x%X (%d)", _cursor.sprite, _cursor.sprite);
 				if (!HandleViewportClicked(vp, x, y, click == MC_DOUBLE_LEFT) &&
 						!(w->flags & WF_DISABLE_VP_SCROLL) &&
 						_settings_client.gui.left_mouse_btn_scrolling) {
@@ -3486,7 +3485,6 @@ PickerWindowBase::~PickerWindowBase()
 	ResetObjectToPlace();
 }
 
-
 /**
  * Sets safe-initial values.
  * @param t The type of positioning desired.
@@ -3536,4 +3534,3 @@ WindowPopup::WindowPopup(WindowDesc *desc, WindowPopupType t): Window(desc)
 	rv.y = Clamp(y, GetMainViewTop(), GetMainViewBottom() - this->window_desc->GetDefaultHeight());
 	return rv;
 }
-

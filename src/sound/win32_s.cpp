@@ -1,4 +1,4 @@
-/* $Id: win32_s.cpp 27383 2015-08-12 20:50:10Z rubidium $ */
+/* $Id: win32_s.cpp 27673 2016-10-30 18:22:55Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -19,6 +19,7 @@
 #include "win32_s.h"
 #include <windows.h>
 #include <mmsystem.h>
+#include "../os/windows/win32.h"
 
 #include "../safeguards.h"
 
@@ -41,6 +42,8 @@ static void PrepareHeader(WAVEHDR *hdr)
 
 static DWORD WINAPI SoundThread(LPVOID arg)
 {
+	SetWin32ThreadName(-1, "ottd:win-sound");
+
 	do {
 		for (WAVEHDR *hdr = _wave_hdr; hdr != endof(_wave_hdr); hdr++) {
 			if ((hdr->dwFlags & WHDR_INQUEUE) != 0) continue;

@@ -1,4 +1,4 @@
-/* $Id: config.h 25590 2013-07-12 17:15:13Z planetmaker $ */
+/* $Id: config.h 27729 2017-01-14 13:12:49Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -55,8 +55,7 @@ static const uint NETWORK_GRF_NAME_LENGTH         =   80;         ///< Maximum l
 
 /**
  * Maximum number of GRFs that can be sent.
- * This value is related to number of handles (files) OpenTTD can open.
- * This is currently 64. Two are used for configuration and sound.
+ * This limit is reached when PACKET_UDP_SERVER_RESPONSE reaches the maximum size of SEND_MTU bytes.
  */
 static const uint NETWORK_MAX_GRF_COUNT           =   62;
 

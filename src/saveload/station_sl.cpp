@@ -1,4 +1,4 @@
-/* $Id: station_sl.cpp 26878 2014-09-21 11:23:33Z rubidium $ */
+/* $Id: station_sl.cpp 27770 2017-03-05 17:06:14Z fonsinchen $ */
 
 /*
  * This file is part of OpenTTD.
@@ -325,6 +325,10 @@ static void SwapPackets(GoodsEntry *ge)
 
 static void Load_STNS()
 {
+	_cargo_source_xy = 0;
+	_cargo_days = 0;
+	_cargo_feeder_share = 0;
+
 	int index;
 	while ((index = SlIterateArray()) != -1) {
 		Station *st = new (index) Station();
@@ -514,8 +518,9 @@ static void Save_STNN()
 
 static void Load_STNN()
 {
-	int index;
+	_num_flows = 0;
 
+	int index;
 	while ((index = SlIterateArray()) != -1) {
 		bool waypoint = (SlReadByte() & FACIL_WAYPOINT) != 0;
 

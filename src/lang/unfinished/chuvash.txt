@@ -10,7 +10,7 @@
 ##grflangid 0x0b
 
 
-# $Id: chuvash.txt 27478 2015-12-27 11:40:23Z translators $
+# $Id: chuvash.txt 27753 2017-02-26 18:45:43Z translators $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1111,6 +1111,7 @@ STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ҫу�
 
 ############ range for requires starts
 ############ range for requires ends
+
 
 ############ range for produces starts
 ############ range for produces ends

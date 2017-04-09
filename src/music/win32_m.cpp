@@ -1,4 +1,4 @@
-/* $Id: win32_m.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: win32_m.cpp 27673 2016-10-30 18:22:55Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,7 @@
 #include "win32_m.h"
 #include <windows.h>
 #include <mmsystem.h>
+#include "../os/windows/win32.h"
 
 #include "../safeguards.h"
 
@@ -105,6 +106,8 @@ static bool MidiIntIsSongPlaying()
 
 static DWORD WINAPI MidiThread(LPVOID arg)
 {
+	SetWin32ThreadName(-1, "ottd:win-midi");
+
 	do {
 		char *s;
 		int vol;

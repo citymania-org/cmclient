@@ -1,4 +1,4 @@
-/* $Id: town_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: town_sl.cpp 27756 2017-02-26 19:40:53Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,7 @@
 #include "../town.h"
 #include "../landscape.h"
 #include "../subsidy_func.h"
+#include "../strings_func.h"
 
 #include "saveload.h"
 #include "newgrf_sl.h"
@@ -288,7 +289,7 @@ static void Load_TOWN()
 			SlObject(&t->received[i], _town_received_desc);
 		}
 
-		if (t->townnamegrfid == 0 && !IsInsideMM(t->townnametype, SPECSTR_TOWNNAME_START, SPECSTR_TOWNNAME_LAST + 1) && GB(t->townnametype, 11, 5) != 15) {
+		if (t->townnamegrfid == 0 && !IsInsideMM(t->townnametype, SPECSTR_TOWNNAME_START, SPECSTR_TOWNNAME_LAST + 1) && GetStringTab(t->townnametype) != TEXT_TAB_OLD_CUSTOM) {
 			SlErrorCorrupt("Invalid town name generator");
 		}
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: configure 27588 2016-05-29 18:56:42Z frosch $
+# $Id: configure 27562 2016-05-12 17:24:06Z rubidium $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.

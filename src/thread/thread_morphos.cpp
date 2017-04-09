@@ -1,4 +1,4 @@
-/* $Id: thread_morphos.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: thread_morphos.cpp 27670 2016-10-30 17:29:33Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -193,7 +193,7 @@ private:
 	}
 };
 
-/* static */ bool ThreadObject::New(OTTDThreadFunc proc, void *param, ThreadObject **thread)
+/* static */ bool ThreadObject::New(OTTDThreadFunc proc, void *param, ThreadObject **thread, const char *name)
 {
 	ThreadObject *to = new ThreadObject_MorphOS(proc, param, thread == NULL);
 	if (thread != NULL) *thread = to;

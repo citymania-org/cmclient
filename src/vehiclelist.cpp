@@ -1,4 +1,4 @@
-/* $Id: vehiclelist.cpp 26679 2014-07-08 20:07:21Z frosch $ */
+/* $Id: vehiclelist.cpp 27677 2016-11-05 19:16:59Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -37,7 +37,7 @@ uint32 VehicleListIdentifier::Pack() const
  * @param data The data to unpack.
  * @return true iff the data was valid (enough).
  */
-bool VehicleListIdentifier::Unpack(uint32 data)
+bool VehicleListIdentifier::UnpackIfValid(uint32 data)
 {
 	byte c        = GB(data, 28, 4);
 	this->company = c == 0xF ? OWNER_NONE : (CompanyID)c;
@@ -52,10 +52,12 @@ bool VehicleListIdentifier::Unpack(uint32 data)
  * Decode a packed vehicle list identifier into a new one.
  * @param data The data to unpack.
  */
-VehicleListIdentifier::VehicleListIdentifier(uint32 data)
+/* static */ VehicleListIdentifier VehicleListIdentifier::UnPack(uint32 data)
 {
-	bool ret = this->Unpack(data);
+	VehicleListIdentifier result;
+	bool ret = result.UnpackIfValid(data);
 	assert(ret);
+	return result;
 }
 
 /**

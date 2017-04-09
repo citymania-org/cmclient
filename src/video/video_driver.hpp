@@ -1,4 +1,4 @@
-/* $Id: video_driver.hpp 26538 2014-04-28 21:06:51Z rubidium $ */
+/* $Id: video_driver.hpp 27775 2017-03-11 13:05:54Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -49,12 +49,25 @@ public:
 
 	/**
 	 * Callback invoked after the blitter was changed.
+	 * This may only be called between AcquireBlitterLock and ReleaseBlitterLock.
 	 * @return True if no error.
 	 */
 	virtual bool AfterBlitterChange()
 	{
 		return true;
 	}
+
+	/**
+	 * Acquire any lock(s) required to be held when changing blitters.
+	 * These lock(s) may not be acquired recursively.
+	 */
+	virtual void AcquireBlitterLock() { }
+
+	/**
+	 * Release any lock(s) required to be held when changing blitters.
+	 * These lock(s) may not be acquired recursively.
+	 */
+	virtual void ReleaseBlitterLock() { }
 
 	virtual bool ClaimMousePointer()
 	{

@@ -1,4 +1,4 @@
-# $Id: squirrel_export.awk 27587 2016-05-29 18:52:56Z frosch $
+# $Id: squirrel_export.awk 27545 2016-04-17 19:51:42Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.

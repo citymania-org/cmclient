@@ -1,4 +1,4 @@
-/* $Id: viewport_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: viewport_gui.cpp 27743 2017-02-05 17:54:46Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -71,7 +71,7 @@ public:
 			pt.x = w->viewport->scrollpos_x + w->viewport->virtual_width / 2;
 			pt.y = w->viewport->scrollpos_y + w->viewport->virtual_height / 2;
 		} else {
-			pt = RemapCoords(TileX(tile) * TILE_SIZE + TILE_SIZE / 2, TileY(tile) * TILE_SIZE + TILE_SIZE / 2, TileHeight(tile));
+			pt = RemapCoords(TileX(tile) * TILE_SIZE + TILE_SIZE / 2, TileY(tile) * TILE_SIZE + TILE_SIZE / 2, TilePixelHeight(tile));
 		}
 
 		this->viewport->scrollpos_x = pt.x - this->viewport->virtual_width / 2;

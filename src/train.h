@@ -1,4 +1,4 @@
-/* $Id: train.h 26317 2014-02-07 23:48:56Z frosch $ */
+/* $Id: train.h 27666 2016-10-16 14:57:56Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -114,7 +114,7 @@ struct Train FINAL : public GroundVehicle<Train, VEH_TRAIN> {
 	ExpensesType GetExpenseType(bool income) const { return income ? EXPENSES_TRAIN_INC : EXPENSES_TRAIN_RUN; }
 	void PlayLeaveStationSound() const;
 	bool IsPrimaryVehicle() const { return this->IsFrontEngine(); }
-	SpriteID GetImage(Direction direction, EngineImageType image_type) const;
+	void GetImage(Direction direction, EngineImageType image_type, VehicleSpriteSeq *result) const;
 	int GetDisplaySpeed() const { return this->gcache.last_speed; }
 	int GetDisplayMaxSpeed() const { return this->vcache.cached_max_speed; }
 	Money GetRunningCost() const;

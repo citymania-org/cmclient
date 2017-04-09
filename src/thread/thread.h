@@ -1,4 +1,4 @@
-/* $Id: thread.h 26349 2014-02-16 21:37:05Z frosch $ */
+/* $Id: thread.h 27670 2016-10-30 17:29:33Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -44,9 +44,10 @@ public:
 	 * @param proc The procedure to call inside the thread.
 	 * @param param The params to give with 'proc'.
 	 * @param thread Place to store a pointer to the thread in. May be NULL.
+	 * @param name A name for the thread. May be NULL.
 	 * @return True if the thread was started correctly.
 	 */
-	static bool New(OTTDThreadFunc proc, void *param, ThreadObject **thread = NULL);
+	static bool New(OTTDThreadFunc proc, void *param, ThreadObject **thread = NULL, const char *name = NULL);
 };
 
 /**

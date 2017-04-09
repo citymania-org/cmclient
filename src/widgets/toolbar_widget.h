@@ -1,4 +1,4 @@
-/* $Id: toolbar_widget.h 25376 2013-06-09 13:37:04Z zuu $ */
+/* $Id: toolbar_widget.h 27671 2016-10-30 17:36:57Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
