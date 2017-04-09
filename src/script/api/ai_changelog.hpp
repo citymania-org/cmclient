@@ -1,4 +1,4 @@
-/* $Id: ai_changelog.hpp 27776 2017-03-11 13:34:01Z frosch $ */
+/* $Id: ai_changelog.hpp 27839 2017-04-01 16:27:23Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,7 +17,7 @@
  *
  * \b 1.7.0
  *
- * 1.7.0 is not yet released. The following changes are not set in stone yet.
+ * No changes
  *
  * \b 1.6.1 - 1.6.0
  *
