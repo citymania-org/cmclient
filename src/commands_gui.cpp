@@ -633,7 +633,6 @@ void AccountLogin(CommunityName community){
 			seprintf(uri, lastof(uri), BTPRO_HTTP_LOGIN,
 			         btpro_encode(GetLoginItem(BTPRO_LOGIN)).c_str(),
 			         btpro_encode(GetLoginItem(BTPRO_PW)).c_str());
-			fprintf(stderr, "%s\n", uri);
 			break;
 		}
 		default:
