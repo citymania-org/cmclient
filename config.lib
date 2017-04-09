@@ -1,4 +1,4 @@
-# $Id: config.lib 27727 2017-01-08 17:00:18Z michi_cc $
+# $Id: config.lib 27840 2017-04-01 16:29:31Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -58,8 +58,8 @@ set_default() {
 	enable_translator="0"
 	enable_unicode="1"
 	enable_console="1";
-	enable_assert="1"
-	enable_strip="0"
+	enable_assert="0"
+	enable_strip="1"
 	enable_universal="0"
 	enable_osx_g5="0"
 	enable_cocoa_quartz="1"

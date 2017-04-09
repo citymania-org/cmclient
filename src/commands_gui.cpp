@@ -2,6 +2,7 @@
 
 #ifdef ENABLE_NETWORK
 #include "stdafx.h"
+#include <sstream>
 #include "widgets/dropdown_type.h" //fillrect
 #include "core/geometry_func.hpp" //maxdim
 #include "settings_type.h"
@@ -15,6 +16,8 @@
 #include "fileio_func.h" //personal dir
 #include "error.h" //error message
 #include "debug.h"
+#include "citymania/base64.h"
+
 
 bool _novahost = false;
 IniFile *_inilogin = NULL;
@@ -28,7 +31,7 @@ static const char * const NOVAPOLIS_IPV4_SECONDARY = "89.111.65.225";
 static const char * const NOVAPOLIS_IPV6_SECONDARY = "fe80::20e:7fff:fe23:bee0";
 static const char * const NOVAPOLIS_STRING         = "CityMania";
 static const char * const NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken.php?user=%s&password=%s";
-static const char * const BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken.php?user=%s&password=%s";
+static const char * const BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken-enc.php?user=%s&password=%s";
 
 static const char * const NOVA_IP_ADDRESSES[] = {
 	NOVAPOLIS_IPV4_PRIMARY,
@@ -586,6 +589,35 @@ private:
 	char *cursor;
 	char *uri;
 };
+
+std::string urlencode(const std::string &s) {
+    static const char lookup[]= "0123456789abcdef";
+    std::stringstream e;
+    for(int i=0, ix=s.length(); i<ix; i++)
+    {
+        const char& c = s[i];
+        if ( (48 <= c && c <= 57) ||//0-9
+             (65 <= c && c <= 90) ||//abc...xyz
+             (97 <= c && c <= 122) || //ABC...XYZ
+             (c=='-' || c=='_' || c=='.' || c=='~')
+        )
+        {
+            e << c;
+        }
+        else
+        {
+            e << '%';
+            e << lookup[ (c&0xF0)>>4 ];
+            e << lookup[ (c&0x0F) ];
+        }
+    }
+    return e.str();
+}
+
+std::string btpro_encode(const char *value) {
+	return urlencode(base64_encode((const unsigned char *)value, strlen(value)));
+}
+
 //send login
 void AccountLogin(CommunityName community){
 	char uri[128];
@@ -597,9 +629,13 @@ void AccountLogin(CommunityName community){
 		case NICE:
 			seprintf(uri, lastof(uri), NICE_HTTP_LOGIN, GetLoginItem(NICE_LOGIN), GetLoginItem(NICE_PW));
 			break;
-		case BTPRO:
-			seprintf(uri, lastof(uri), BTPRO_HTTP_LOGIN, GetLoginItem(BTPRO_LOGIN), GetLoginItem(BTPRO_PW));
+		case BTPRO: {
+			seprintf(uri, lastof(uri), BTPRO_HTTP_LOGIN,
+			         btpro_encode(GetLoginItem(BTPRO_LOGIN)).c_str(),
+			         btpro_encode(GetLoginItem(BTPRO_PW)).c_str());
+			fprintf(stderr, "%s\n", uri);
 			break;
+		}
 		default:
 			return;
 	}
