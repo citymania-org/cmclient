@@ -2645,6 +2645,18 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="CityMania files"
+			>
+			<File
+				RelativePath=".\..\src\citymania\base64.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\citymania\base64.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="Save/Load handlers"
 			>
 			<File

@@ -868,6 +868,8 @@
     <ClCompile Include="..\src\water_cmd.cpp" />
     <ClCompile Include="..\src\waypoint_cmd.cpp" />
     <ClCompile Include="..\src\zoning_cmd.cpp" />
+    <ClInclude Include="..\src\citymania\base64.h" />
+    <ClCompile Include="..\src\citymania\base64.cpp" />
     <ClCompile Include="..\src\saveload\afterload.cpp" />
     <ClCompile Include="..\src\saveload\ai_sl.cpp" />
     <ClCompile Include="..\src\saveload\airport_sl.cpp" />
