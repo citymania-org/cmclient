@@ -220,7 +220,7 @@ static RoadBits FindRoadsToConnect(TileIndex tile) {
 	// Prioritize roadbits that head in this direction
 	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
 		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
-		if (GetAnyRoadBits(cur_tile, ROADTYPE_ROAD, true) &
+		if (GetAnyRoadBits(cur_tile, _cur_roadtype, true) &
 			DiagDirToRoadBits(ReverseDiagDir(ddir)))
 		{
 			bits |= DiagDirToRoadBits(ddir);
@@ -232,7 +232,7 @@ static RoadBits FindRoadsToConnect(TileIndex tile) {
 	// Try to connect to any road passing by
 	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
 		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
-		if (HasTileRoadType(cur_tile, ROADTYPE_ROAD) && (GetTileType(cur_tile) == MP_ROAD) &&
+		if (HasTileRoadType(cur_tile, _cur_roadtype) && (GetTileType(cur_tile) == MP_ROAD) &&
 				(GetRoadTileType(cur_tile) == ROAD_TILE_NORMAL)) {
 			bits |= DiagDirToRoadBits(ddir);
 		}
@@ -283,10 +283,10 @@ static DiagDirection AutodetectRoadObjectDirection(TileIndex tile) {
 
 static bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
 	TILE_AREA_LOOP(tile, area) {
-		if (!HasTileRoadType(tile, ROADTYPE_ROAD)) continue;
+		if (!HasTileRoadType(tile, _cur_roadtype)) continue;
 		if (GetTileType(tile) != MP_ROAD) continue;
 		if (GetRoadTileType(tile) != ROAD_TILE_NORMAL) continue;
-		if (GetRoadBits(tile, ROADTYPE_ROAD) & ~r) return false;
+		if (GetRoadBits(tile, _cur_roadtype) & ~r) return false;
 	}
 	return true;
 }
@@ -1161,9 +1161,13 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		if (_cur_roadtype == ROADTYPE_TRAM && _road_station_picker_orientation < DIAGDIR_END) {
 			_road_station_picker_orientation = DIAGDIR_END;
 		}
+		if (_cur_roadtype == ROADTYPE_TRAM && _road_station_picker_orientation == (DiagDirection)(DIAGDIR_END + 2)) {
+			_road_station_picker_orientation = (DiagDirection)(DIAGDIR_END + 3);
+		}
 
 		this->GetWidget<NWidgetCore>(WID_BROS_CAPTION)->widget_data = _road_type_infos[_cur_roadtype].picker_title[rs];
 		for (uint i = (_cur_roadtype == ROADTYPE_TRAM ? WID_BROS_STATION_X : WID_BROS_STATION_NE); i < WID_BROS_LT_OFF; i++) {
+			if (_cur_roadtype == ROADTYPE_TRAM && i == WID_BROS_STATION_AUTO) continue;
 			this->GetWidget<NWidgetCore>(i)->tool_tip = _road_type_infos[_cur_roadtype].picker_tooltip[rs];
 		}
 
@@ -1223,7 +1227,10 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 				size->width  = ScaleGUITrad(128) + 6;
 				break;
 			case WID_BROS_STATION_XY_AUTO:
-				size->width  = ScaleGUITrad(64) + 2;
+				if (_cur_roadtype == ROADTYPE_TRAM)
+					size->width  = ScaleGUITrad(128) + 6;
+				else
+					size->width  = ScaleGUITrad(64) + 2;
 				break;
 			default:
 				break;
@@ -1345,9 +1352,15 @@ static const NWidgetPart _nested_tram_station_picker_widgets[] = {
 			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+			NWidget(NWID_SPACER), SetFill(1, 0),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_XY_AUTO), SetMinimalSize(274, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(NWID_SPACER), SetFill(1, 0),
+		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 1),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
-			NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetMinimalSize(140, 14), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL),
+			NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetMinimalSize(134, 14), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
