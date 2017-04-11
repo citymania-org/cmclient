@@ -2825,7 +2825,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		switch (click) {
 			case MC_DOUBLE_LEFT:
 			case MC_LEFT:
-				if (!HandleViewportClicked(vp, x, y) &&
+				if (!HandleViewportClicked(vp, x, y, click == MC_DOUBLE_LEFT) &&
 						!(w->flags & WF_DISABLE_VP_SCROLL) &&
 						_settings_client.gui.left_mouse_btn_scrolling) {
 					_scrolling_viewport = true;

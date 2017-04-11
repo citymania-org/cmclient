@@ -363,7 +363,7 @@ DECLARE_ENUM_AS_BIT_SET(DoCommandFlag)
  *
  * @param x The StringID to combine with a command-id
  */
-#define CMD_MSG(x) ((x) << 16)
+#define CMD_MSG(x) ((uint32)((x) << 16))
 
 /**
  * Defines some flags.

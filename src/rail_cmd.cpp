@@ -46,6 +46,7 @@ typedef SmallVector<Train *, 16> TrainList;
 RailtypeInfo _railtypes[RAILTYPE_END];
 RailType _sorted_railtypes[RAILTYPE_END];
 uint8 _sorted_railtypes_size;
+TileIndex _rail_track_endtile; ///< The end of a rail track; as hidden return from the rail build/remove command for GUI purposes.
 
 /** Enum holding the signal offset in the sprite sheet according to the side it is representing. */
 enum SignalOffsets {
@@ -445,6 +446,8 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	Track track = Extract<Track, 0, 3>(p2);
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 
+	_rail_track_endtile = INVALID_TILE;
+
 	if (!ValParamRailtype(railtype) || !ValParamTrackOrientation(track)) return CMD_ERROR;
 
 	Slope tileh = GetTileSlope(tile);
@@ -461,7 +464,10 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 
 			ret = CheckTrackCombination(tile, trackbit, flags);
 			if (ret.Succeeded()) ret = EnsureNoTrainOnTrack(tile, track);
-			if (ret.Failed()) return ret;
+			if (ret.Failed()) {
+				if (ret.GetErrorMessage() == STR_ERROR_ALREADY_BUILT) _rail_track_endtile = tile;
+				return ret;
+			}
 
 			ret = CheckRailSlope(tileh, trackbit, GetTrackBits(tile), tile);
 			if (ret.Failed()) return ret;
@@ -552,6 +558,7 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 			}
 
 			if (IsLevelCrossing(tile) && GetCrossingRailBits(tile) == trackbit) {
+				_rail_track_endtile = tile;
 				return_cmd_error(STR_ERROR_ALREADY_BUILT);
 			}
 			/* FALL THROUGH */
@@ -591,6 +598,7 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	}
 
 	cost.AddCost(RailBuildCost(railtype));
+	_rail_track_endtile = tile;
 	return cost;
 }
 
@@ -608,6 +616,8 @@ CommandCost CmdRemoveSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, 
 	Track track = Extract<Track, 0, 3>(p2);
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 	bool crossing = false;
+
+	_rail_track_endtile = INVALID_TILE;
 
 	if (!ValParamTrackOrientation(track)) return CMD_ERROR;
 	TrackBits trackbit = TrackToTrackBits(track);
@@ -735,6 +745,7 @@ CommandCost CmdRemoveSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, 
 		if (v != NULL) TryPathReserve(v, true);
 	}
 
+	_rail_track_endtile = tile;
 	return cost;
 }
 
@@ -868,6 +879,8 @@ static CommandCost CmdRailTrackHelper(TileIndex tile, DoCommandFlag flags, uint3
 	bool remove = HasBit(p2, 7);
 	RailType railtype = Extract<RailType, 0, 4>(p2);
 
+	_rail_track_endtile = INVALID_TILE;
+
 	if ((!remove && !ValParamRailtype(railtype)) || !ValParamTrackOrientation(track)) return CMD_ERROR;
 	if (p1 >= MapSize()) return CMD_ERROR;
 	TileIndex end_tile = p1;
@@ -879,10 +892,12 @@ static CommandCost CmdRailTrackHelper(TileIndex tile, DoCommandFlag flags, uint3
 	bool had_success = false;
 	CommandCost last_error = CMD_ERROR;
 	for (;;) {
+		TileIndex last_endtile = _rail_track_endtile;
 		CommandCost ret = DoCommand(tile, remove ? 0 : railtype, TrackdirToTrack(trackdir), flags, remove ? CMD_REMOVE_SINGLE_RAIL : CMD_BUILD_SINGLE_RAIL);
 
 		if (ret.Failed()) {
 			last_error = ret;
+			if (_rail_track_endtile == INVALID_TILE) _rail_track_endtile = last_endtile;
 			if (last_error.GetErrorMessage() != STR_ERROR_ALREADY_BUILT && !remove) {
 				if (HasBit(p2, 8)) return last_error;
 				break;
