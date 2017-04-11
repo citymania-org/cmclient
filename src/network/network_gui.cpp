@@ -14,6 +14,7 @@
 #include "../strings_func.h"
 #include "../date_func.h"
 #include "../fios.h"
+#include "../error.h"
 #include "network_client.h"
 #include "network_gui.h"
 #include "network_gamelist.h"
@@ -613,7 +614,7 @@ public:
 		this->SetWidgetDisabledState(WID_NG_JOIN, sel == NULL || // no Selected Server
 				!sel->online || // Server offline
 				sel->info.clients_on >= sel->info.clients_max || // Server full
-				!sel->info.compatible); // Revision mismatch
+				(!sel->info.compatible && !_ctrl_pressed)); // Revision mismatch
 
 		/* 'NewGRF Settings' button invisible if no NewGRF is used */
 		this->GetWidget<NWidgetStacked>(WID_NG_NEWGRF_SEL)->SetDisplayedPlane(sel == NULL || !sel->online || sel->info.grfconfig == NULL);
@@ -772,6 +773,17 @@ public:
 				if (this->server != NULL) {
 					seprintf(_settings_client.network.last_host, lastof(_settings_client.network.last_host), "%s", this->server->address.GetHostname());
 					_settings_client.network.last_port = this->server->address.GetPort();
+					if (this->server->info.compatible) {
+						_network_join_server_revision = NULL;
+					} else {
+						_network_join_server_revision = this->server->info.server_revision;
+						ShowErrorMessage(STR_IGNORE_VERSION_CHECK_WARNING,
+						                 STR_IGNORE_VERSION_CHECK_WARNING_DETAILS,
+						                 WL_WARNING,
+						                 0, 0,
+						                 NULL, 0, NULL);
+						// ShowGoalQuestion(0, 2 /* WARNING */, 2 /* OK */, "Full-tile autoroad tool is deprecated and will be removed in next release.\n Use regular autoroad tool instead.");
+					}
 					ShowNetworkLobbyWindow(this->server);
 				}
 				break;

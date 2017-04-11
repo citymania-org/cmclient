@@ -5324,3 +5324,6 @@ STR_STATION_RATING_TOOLTIP_WAITUNITS_5                          :{GREEN}{NUM}, +
 STR_STATION_RATING_TOOLTIP_STATUE                               :Statue in town (max 10%): {STRING}
 STR_STATION_RATING_TOOLTIP_STATUE_NO                            :{GOLD}no, 0%
 STR_STATION_RATING_TOOLTIP_STATUE_YES                           :{GREEN}yes, +10%
+
+STR_IGNORE_VERSION_CHECK_WARNING : WARNING! You're about to join server running a different version of the game!
+STR_IGNORE_VERSION_CHECK_WARNING_DETAILS : OpenTTD was never indended to work in such way. If you're lucky you may be able to play it but most likely something is going to break sooner or later. Desyncs or crashes are to be expected. So proceed at your own risk and don't report any errors you encounter there.

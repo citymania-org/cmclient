@@ -117,6 +117,7 @@ extern CompanyID _network_join_as;
 
 extern const char *_network_join_server_password;
 extern const char *_network_join_company_password;
+extern const char *_network_join_server_revision;
 
 #endif /* ENABLE_NETWORK */
 

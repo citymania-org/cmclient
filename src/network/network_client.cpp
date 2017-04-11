@@ -41,6 +41,12 @@
 /* This file handles all the client-commands */
 
 void SyncCMUser(const char *msg);
+static const std::map<std::string, uint32> OPENTTD_NEWGRF_VERSIONS = {
+	{"1.7.0", 386428096},
+	{"1.7.0-RC1", 385903751},
+	{"1.6.1", 370699225},
+	{"1.6.0", 369650572},
+};
 
 /** Read some packets, and when do use that data as initial load filter. */
 struct PacketReader : LoadFilter {
@@ -308,6 +314,8 @@ CompanyID _network_join_as;
 const char *_network_join_server_password = NULL;
 /** Company password from -P argument */
 const char *_network_join_company_password = NULL;
+/** Server revision to use when fooling revision check */
+const char *_network_join_server_revision = NULL;
 
 /** Make sure the server ID length is the same as a md5 hash. */
 assert_compile(NETWORK_SERVER_ID_LENGTH == 16 * 2 + 1);
@@ -337,8 +345,23 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendJoin()
 	SetWindowDirty(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
 
 	Packet *p = new Packet(PACKET_CLIENT_JOIN);
-	p->Send_string(_openttd_revision);
-	p->Send_uint32(_openttd_newgrf_version);
+	if (_network_join_server_revision) {
+		auto r = _network_join_server_revision;
+		p->Send_string(r);
+		auto nr = OPENTTD_NEWGRF_VERSIONS.find(r);
+		int rev;
+		if (nr != OPENTTD_NEWGRF_VERSIONS.end()) {
+			p->Send_uint32(nr->second);
+		} else if (r[0] == 'r' && r[6] == 0 && (rev = atoi(r + 1)) > 0) {
+			// assume it's nightly
+			p->Send_uint32((rev >= 27840 ? 402653184u : 385875968u) | rev);
+		} else {
+			p->Send_uint32(_openttd_newgrf_version);
+		}
+	} else {
+		p->Send_string(_openttd_revision);
+		p->Send_uint32(_openttd_newgrf_version);
+	}
 	p->Send_string(_settings_client.network.client_name); // Client name
 	p->Send_uint8 (_network_join_as);     // PlayAs
 	p->Send_uint8 (NETLANG_ANY);          // Language
