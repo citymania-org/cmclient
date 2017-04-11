@@ -283,10 +283,9 @@ static DiagDirection AutodetectRoadObjectDirection(TileIndex tile) {
 
 static bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
 	TILE_AREA_LOOP(tile, area) {
-		if (!HasTileRoadType(tile, _cur_roadtype)) continue;
 		if (GetTileType(tile) != MP_ROAD) continue;
 		if (GetRoadTileType(tile) != ROAD_TILE_NORMAL) continue;
-		if (GetRoadBits(tile, _cur_roadtype) & ~r) return false;
+		if (GetAllRoadBits(tile) & ~r) return false;
 	}
 	return true;
 }
@@ -334,6 +333,14 @@ static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, u
 		if (ddir < DIAGDIR_END + 2) {
 			SetBit(p2, 1); // It's a drive-through stop.
 			ddir -= DIAGDIR_END; // Adjust picker result to actual direction.
+			// When placed on road autorotate anyway
+			if (ddir == DIAGDIR_SE) {
+				if (!CheckDriveThroughRoadStopDirection(ta, ROAD_Y))
+					ddir = DIAGDIR_NE;
+			} else {
+				if (!CheckDriveThroughRoadStopDirection(ta, ROAD_X))
+					ddir = DIAGDIR_SE;
+			}
 		}
 		else if (ddir == DIAGDIR_END + 2) {
 			ddir = AutodetectRoadObjectDirection(start_tile);
@@ -1166,8 +1173,7 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		}
 
 		this->GetWidget<NWidgetCore>(WID_BROS_CAPTION)->widget_data = _road_type_infos[_cur_roadtype].picker_title[rs];
-		for (uint i = (_cur_roadtype == ROADTYPE_TRAM ? WID_BROS_STATION_X : WID_BROS_STATION_NE); i < WID_BROS_LT_OFF; i++) {
-			if (_cur_roadtype == ROADTYPE_TRAM && i == WID_BROS_STATION_AUTO) continue;
+		for (uint i = (_cur_roadtype == ROADTYPE_TRAM ? WID_BROS_STATION_X : WID_BROS_STATION_NE); i < WID_BROS_STATION_AUTO; i++) {
 			this->GetWidget<NWidgetCore>(i)->tool_tip = _road_type_infos[_cur_roadtype].picker_tooltip[rs];
 		}
 
