@@ -13,6 +13,7 @@
 #define TILEHIGHLIGHT_FUNC_H
 
 #include "gfx_type.h"
+#include "tilearea_type.h"
 #include "tilehighlight_type.h"
 #include "track_type.h"
 #include "industry_type.h"
@@ -32,11 +33,14 @@ void VpSetPlaceSizingLimit(int limit);
 
 void UpdateTileSelection();
 
-void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track start_track, bool bidirectional = true);
-void ResetRailPlacementSnapping();
-bool CurrentlySnappingRailPlacement();
-
 void SetIndustryForbiddenTilesHighlight(IndustryType type);
+
+RailSnapMode GetRailSnapMode();
+void SetRailSnapMode(RailSnapMode mode);
+
+void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track start_track, bool bidirectional = true);
+void StoreRailStationPlacementEndpoints(const TileArea &ta, Axis station_axis);
+void ResetRailPlacementEndpoints();
 
 extern TileHighlightData _thd;
 

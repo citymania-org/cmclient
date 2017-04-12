@@ -73,6 +73,7 @@ void CcBuildBridge(const CommandCost &result, TileIndex end_tile, uint32 p1, uin
 		DiagDirection start_direction = ReverseDiagDir(GetTunnelBridgeDirection(p1));
 		ConnectRoadToStructure(p1, start_direction);
 	}
+
 	StoreRailPlacementEndpoints(p1, end_tile, (TileX(p1) == TileX(end_tile)) ? TRACK_Y : TRACK_X, false);
 }
 

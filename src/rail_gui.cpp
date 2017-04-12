@@ -368,14 +368,14 @@ static void BuildRailClick_Remove(Window *w)
 static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_tile, Track track)
 {
 	CommandContainer ret = {
-		start_tile,                   // tile
-		end_tile,                     // p1
-		_cur_railtype | (track << 4), // p2
+		start_tile,                             // tile
+		end_tile,                               // p1
+		(uint32)(_cur_railtype | (track << 4)), // p2
 		_remove_button_clicked ?
 				CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
 				CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK), // cmd
-		CcPlaySound_SPLAT_RAIL,                // callback
-		""                            // text
+		CcPlaySound_SPLAT_RAIL,                 // callback
+		""                                      // text
 	};
 
 	return ret;
@@ -391,16 +391,19 @@ static void HandleAutodirPlacement()
 			GenericPlaceRailCmd(end_tile, track) : // one tile case
 			DoRailroadTrackCmd(start_tile, end_tile, track); // multitile selection
 
-	/* When overbuilding existing tracks in polyline mode we just want to move the
-	 * snap point without altering the user with the "already built" error. Don't
-	 * execute the command right away, firstly check if tracks are being overbuilt. */
-	if (!(_thd.place_mode & HT_POLY) || _shift_pressed ||
-			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT) {
-		/* place tracks */
+	/* When overbuilding existing tracks in polyline mode we want to move the
+	 * snap point over the last overbuilt track piece. In such case we don't
+	 * wan't to show any errors to the user. Don't execute the command right
+	 * away, first check if overbuilding. */
+	if (_shift_pressed || !(_thd.place_mode & HT_POLY) ||
+			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
+			_rail_track_endtile == INVALID_TILE) {
+		/* Execute. */
 		if (!DoCommandP(&cmd)) return;
 	}
 
-	/* save new snap points for the polyline tool */
+	/* Save new snap points for the polyline tool, no matter if the command
+	 * succeeded, the snapping will be extended over overbuilt track pieces. */
 	if (!_shift_pressed && _rail_track_endtile != INVALID_TILE) {
 		StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
 	}
@@ -667,7 +670,7 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_POLYRAIL: {
-				bool was_snap = CurrentlySnappingRailPlacement();
+				bool was_snap = GetRailSnapMode() == RSM_SNAP_TO_RAIL;
 				bool was_open = this->IsWidgetLowered(WID_RAT_POLYRAIL);
 				bool do_snap;
 				bool do_open;
@@ -688,15 +691,13 @@ struct BuildRailToolbarWindow : Window {
 					do_snap = false;
 					do_open = !was_open;
 				}
-				/* close the tool explicitly so it can be re-opened in different snapping mode */
-				if (was_open) ResetObjectToPlace();
-				/* open the tool in desired mode */
-				if (do_open && HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, do_snap ? (HT_RAIL | HT_POLY) : (HT_RAIL | HT_NEW_POLY))) {
-					/* if we are re-opening the tool but we couldn't switch the snapping
-					 * then close the tool instead of appearing to be doing nothing */
-					if (was_open && do_snap != CurrentlySnappingRailPlacement()) ResetObjectToPlace();
-				}
+				/* close/open the tool */
+				if (was_open != do_open) HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, HT_RAIL | HT_POLY);
+				/* set snapping mode */
+				if (do_open) SetRailSnapMode(do_snap ? RSM_SNAP_TO_RAIL : RSM_NO_SNAP);
+
 				this->last_user_action = WID_RAT_POLYRAIL;
+				if (was_open == do_open) return; // prevent switching the "remove" button state
 				break;
 			}
 

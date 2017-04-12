@@ -86,7 +86,7 @@
 #include "window_gui.h"
 #include "linkgraph/linkgraph_gui.h"
 #include "viewport_sprite_sorter.h"
-#include "bridge_map.h"
+#include "tunnelbridge_map.h"
 
 #include <map>
 
@@ -154,12 +154,6 @@ typedef SmallVector<StringSpriteToDraw, 4> StringSpriteToDrawVector;
 typedef SmallVector<ParentSpriteToDraw, 64> ParentSpriteToDrawVector;
 typedef SmallVector<ChildScreenSpriteToDraw, 16> ChildScreenSpriteToDrawVector;
 
-enum RailSnapMode {
-	RSM_NO_SNAP,
-	RSM_SNAP_TO_TILE,
-	RSM_SNAP_TO_RAIL,
-};
-
 /**
  * Snapping point for a track.
  *
@@ -213,15 +207,13 @@ bool _draw_dirty_blocks = false;
 uint _dirty_block_colour = 0;
 static VpSpriteSorter _vp_sprite_sorter = NULL;
 
+static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
+
 static RailSnapMode _rail_snap_mode = RSM_NO_SNAP; ///< Type of rail track snapping (polyline tool).
 static LineSnapPoints _tile_snap_points; ///< Tile to which a rail track will be snapped to (polyline tool).
 static LineSnapPoints _rail_snap_points; ///< Set of points where a rail track will be snapped to (polyline tool).
 static LineSnapPoint _current_snap_lock; ///< Start point and direction at which selected track is locked on currently (while dragging in polyline mode).
 
-static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
-
-static RailSnapMode GetRailSnapMode();
-static void SetRailSnapMode(RailSnapMode mode);
 static TileIndex GetRailSnapTile();
 static void SetRailSnapTile(TileIndex tile);
 
@@ -2415,6 +2407,7 @@ Window *TileHighlightData::GetCallbackWnd()
 
 static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging);
 
+/** Update size of the area occupied by the blue part of rail track highlight (polyline mode). */
 static inline void CalcNewPolylineOutersize()
 {
 	/* use the 'outersize' to mark the second (blue) part of a polyline selection */
@@ -2555,6 +2548,7 @@ void UpdateTileSelection()
 					_thd.selstart.y = y1 & ~TILE_UNIT_MASK;
 					_thd.selend.x = x1;
 					_thd.selend.y = y1;
+					_thd.dir2 = HT_DIR_END;
 					break;
 				default:
 					NOT_REACHED();
@@ -2827,6 +2821,14 @@ static int CalcHeightdiff(HighLightStyle style, uint distance, TileIndex start_t
 	return (int)(h1 - h0) * TILE_HEIGHT_STEP;
 }
 
+/**
+ * Show a tooltip indicating the length of highlighted rail track.
+ * @param style                   Style of the highlight.
+ * @param start_tile              Tile where selection starts.
+ * @param end_tile                Tile where selection ends.
+ * @param close_cond              Close condition of the tooltip.
+ * @param show_single_tile_length Show a tooltip also when the length is 1 tile.
+ */
 static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, TileIndex end_tile, TooltipCloseCondition close_cond = TCC_LEFT_CLICK, bool show_single_tile_length = false)
 {
 	static const StringID measure_strings_length[] = {STR_NULL, STR_MEASURE_LENGTH, STR_MEASURE_LENGTH_HEIGHTDIFF};
@@ -2887,6 +2889,16 @@ static const uint Y_DIRS = (1 << DIR_SE) | (1 << DIR_NW);
 static const uint HORZ_DIRS = (1 << DIR_W) | (1 << DIR_E);
 static const uint VERT_DIRS = (1 << DIR_N) | (1 << DIR_S);
 
+/**
+ * Convert a given point and a given #Direction to best matching #Trackdir.
+ *
+ * For example, #DIR_N will be converted to #TRACKDIR_LEFT_N if the point
+ * is on left tile half or #TRACKDIR_RIGHT_N if the point is on right half.
+ *
+ * @param pt  The point expressed in inner-tile world "units".
+ * @param dir The direction.
+ * @return The matching #Trackdir.
+ */
 Trackdir PointDirToTrackdir(const Point &pt, Direction dir)
 {
 	Trackdir ret;
@@ -2908,9 +2920,18 @@ Trackdir PointDirToTrackdir(const Point &pt, Direction dir)
 	return ret;
 }
 
+/**
+ * Try to fit a pair of rail track lines (polyline) based on a given end point
+ * (mouse cursor position) and a given snap point (begin point).
+ *
+ * @param pt       The end point expressed in inner-tile world "units".
+ * @param start    The snap point, begin of the lines.
+ * @param[out] ret Coordinates of the lines (if found).
+ * @return Whether the lines were found.
+ */
 static bool FindPolyline(const Point &pt, const LineSnapPoint &start, Polyline *ret)
 {
-	/* relative coordinats of the mouse point (offset against the snap point) */
+	/* relative coordinates of the mouse point (offset against the snap point) */
 	int x = pt.x - start.x;
 	int y = pt.y - start.y;
 	int we = y - x;
@@ -2927,7 +2948,7 @@ static bool FindPolyline(const Point &pt, const LineSnapPoint &start, Polyline *
 	uint d_ns = abs(RoundDivSU(ns, TILE_SIZE));
 	uint d_we = abs(RoundDivSU(we, TILE_SIZE));
 
-	/* Find on which quadrant is the mouse point (reltively to the snap point).
+	/* Find on which quadrant is the mouse point (relatively to the snap point).
 	 * Numeration (clockwise like in Direction):
 	 * ortho            diag
 	 *   \   2   /       2 | 3
@@ -2972,7 +2993,7 @@ static bool FindPolyline(const Point &pt, const LineSnapPoint &start, Polyline *
 		/* in the first place, choose this line whose first segment ends up closer
 		 * to the mouse point (thus the second segment is shorter) */
 		int cmp = ortho_len2 - diag_len2;
-		/* if equeal, choose the shorter line */
+		/* if equal, choose the shorter line */
 		if (cmp == 0) cmp = ortho_len - diag_len;
 		/* finally look at small "units" and choose the line which is closer to the mouse point */
 		if (cmp == 0) cmp = min(abs(we), abs(ns)) - min(abs(x), abs(y));
@@ -3014,6 +3035,15 @@ static inline uint SqrDist(const Point &a, const Point &b)
 	return (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
 }
 
+/**
+ * Find best matching pair of lines (polyline).
+ *
+ * @param pt          The end point (mouse cursor position) expressed in inner-tile world "units".
+ * @param snap_points Array of snapping points, the best one will be chosen.
+ * @param num_points  Length of the array.
+ * @param[out] ret    Coordinates of the polyline (if found).
+ * @return The chosen snapping point or NULL if no matching line was found.
+ */
 static LineSnapPoint *FindBestPolyline(const Point &pt, LineSnapPoint *snap_points, uint num_points, Polyline *ret)
 {
 	/* Find the best polyline (a pair of two lines - the white one and the blue
@@ -3240,6 +3270,12 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 	ShowLengthMeasurement(b, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 }
 
+/**
+ * Calculate how tiles should be highlighted (polyline mode).
+ * @param pt       Current mouse cursor position expressed in inner-tile world "units".
+ * @param dragging Whether currently drag-dropping, in this case direction of rail track line is locked.
+ * @return New highlight style.
+ */
 static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 {
 	RailSnapMode snap_mode = GetRailSnapMode();
@@ -3524,6 +3560,13 @@ EventState VpHandlePlaceSizingDrag()
 	return ES_HANDLED;
 }
 
+/**
+ * Change the cursor and mouse click/drag handling to a mode for performing special operations like tile area selection, object placement, etc.
+ * @param icon New shape of the mouse cursor.
+ * @param pal Palette to use.
+ * @param mode Mode to perform.
+ * @param w %Window requesting the mode change.
+ */
 void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Window *w)
 {
 	SetObjectToPlace(icon, pal, mode, w->window_class, w->window_number);
@@ -3531,6 +3574,14 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
 
 #include "table/animcursors.h"
 
+/**
+ * Change the cursor and mouse click/drag handling to a mode for performing special operations like tile area selection, object placement, etc.
+ * @param icon New shape of the mouse cursor.
+ * @param pal Palette to use.
+ * @param mode Mode to perform.
+ * @param window_class %Window class of the window requesting the mode change.
+ * @param window_num Number of the window in its class requesting the mode change.
+ */
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num)
 {
 	if (_thd.window_class != WC_INVALID) {
@@ -3567,10 +3618,6 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 		VpStartPreSizing();
 	}
 
-	if (mode & HT_POLY) {
-		SetRailSnapMode((mode & HT_NEW_POLY) == HT_NEW_POLY ? RSM_NO_SNAP : RSM_SNAP_TO_RAIL);
-	}
-
 	if ((icon & ANIMCURSOR_FLAG) != 0) {
 		SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
 	} else {
@@ -3579,6 +3626,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 
 }
 
+/** Reset the cursor and mouse mode handling back to default (normal cursor, only clicking in windows). */
 void ResetObjectToPlace()
 {
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
@@ -3622,18 +3670,56 @@ void InitializeSpriteSorter()
 	assert(_vp_sprite_sorter != NULL);
 }
 
-static LineSnapPoint LineSnapPointAtRailTrackEndpoint(TileIndex tile, DiagDirection exit_dir, bool bidirectional)
+/**
+ * Construct a rail snapping point based on a spot where a rail tracks segment
+ * has been placed.
+ *
+ * The snapping point will allow to stick new segment of tracks to the line that
+ * was placed before.
+ *
+ * @param tile Tile where the placed segment ended.
+ * @param exit_dir Tile side at which the segment ended.
+ * @param bidirectional Whether to allow to reverse at this point
+ *        (e.g. reversing after a bridges/tunnels is undesired).
+ * @param extended If not \c NULL, the snapping point will be extended over
+ *        a bridge/tunnel/station etc. if the last placed segment touches such
+ *        an object. Additional snapping point may be stored under \a extended
+ *        if needed, otherwise it will be set to { -1, -1, 0 }.
+ * @return New rail snapping point.
+ */
+static LineSnapPoint LineSnapPointAtRailTrackEndpoint(TileIndex tile, DiagDirection exit_dir, bool bidirectional, LineSnapPoint *extended)
 {
 	LineSnapPoint ret;
 	ret.x = (TILE_SIZE / 2) * (uint)(2 * TileX(tile) + TileIndexDiffCByDiagDir(exit_dir).x + 1);
 	ret.y = (TILE_SIZE / 2) * (uint)(2 * TileY(tile) + TileIndexDiffCByDiagDir(exit_dir).y + 1);
-
 	ret.dirs = 0;
-	SetBit(ret.dirs, DiagDirToDir(exit_dir));
-	SetBit(ret.dirs, ChangeDir(DiagDirToDir(exit_dir), DIRDIFF_45LEFT));
-	SetBit(ret.dirs, ChangeDir(DiagDirToDir(exit_dir), DIRDIFF_45RIGHT));
-	if (bidirectional) ret.dirs |= ROR<uint8>(ret.dirs, DIRDIFF_REVERSE);
+	if (extended != NULL) {
+		extended->x = -1;
+		extended->y = -1;
+		extended->dirs = 0;
+	}
 
+	/* Check whether to extend the snap point over a tunnel/bridge/station etc. */
+	tile = TileAddByDiagDir(tile, exit_dir);
+	if (extended != NULL && !IsTileType(tile, MP_RAILWAY) && !IsTileType(tile, MP_ROAD) &&
+			TrackStatusToTrackBits(GetTileTrackStatus(tile, TRANSPORT_RAIL, INVALID_DIAGDIR)) == AxisToTrackBits(DiagDirToAxis(exit_dir)) &&
+			IsTileOwner(tile, _local_company)) {
+		/* Check if this is a tunnel/bridge and move the tile to the other end if so. */
+		if (IsTileType(tile, MP_TUNNELBRIDGE)) tile = GetOtherTunnelBridgeEnd(tile);
+		LineSnapPoint ex = LineSnapPointAtRailTrackEndpoint(tile, exit_dir, false, extended);
+		if (!bidirectional) return ex; // if we are interested in forward direction only then return just the extended point
+		*extended = ex; // otherwise return two points, extended with forward direction and base with reverse direction
+	} else {
+		/* Add forward direction. */
+		SetBit(ret.dirs, DiagDirToDir(exit_dir));
+	}
+
+	/* Add reverse direction. */
+	if (bidirectional) SetBit(ret.dirs, ReverseDir(DiagDirToDir(exit_dir)));
+
+	/* Add 45 degree rotated directions. */
+	ret.dirs |= ROR<uint8>(ret.dirs, DIRDIFF_45LEFT);
+	ret.dirs |= ROR<uint8>(ret.dirs, DIRDIFF_45RIGHT);
 	return ret;
 }
 
@@ -3664,8 +3750,9 @@ void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track
 			if (distance % 2 != 0) exit_trackdir_at_end = NextTrackdir(exit_trackdir_at_end);
 		}
 
-		LineSnapPoint snap_start = LineSnapPointAtRailTrackEndpoint(start_tile, TrackdirToExitdir(exit_trackdir_at_start), bidirectional_exit);
-		LineSnapPoint snap_end = LineSnapPointAtRailTrackEndpoint(end_tile, TrackdirToExitdir(exit_trackdir_at_end), bidirectional_exit);
+		LineSnapPoint snap_start, snap_start_ex, snap_end, snap_end_ex;
+		snap_start = LineSnapPointAtRailTrackEndpoint(start_tile, TrackdirToExitdir(exit_trackdir_at_start), bidirectional_exit, &snap_start_ex);
+		snap_end = LineSnapPointAtRailTrackEndpoint(end_tile, TrackdirToExitdir(exit_trackdir_at_end), bidirectional_exit, &snap_end_ex);
 		/* Find if we already had these coordinates before. */
 		LineSnapPoint *snap;
 		bool had_start = false;
@@ -3676,31 +3763,72 @@ void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track
 		}
 		/* Create new snap point set. */
 		if (had_start && had_end) {
-			/* just stop snaping, don't forget snap points */
+			/* just stop snapping, don't forget snap points */
 			SetRailSnapMode(RSM_NO_SNAP);
 		} else {
 			/* include only new points */
 			_rail_snap_points.Clear();
-			if (!had_start) *_rail_snap_points.Append() = snap_start;
-			if (!had_end) *_rail_snap_points.Append() = snap_end;
+			if (!had_start) {
+				*_rail_snap_points.Append() = snap_start;
+				if (snap_start_ex.dirs != 0) *_rail_snap_points.Append() = snap_start_ex;
+			}
+			if (!had_end) {
+				*_rail_snap_points.Append() = snap_end;
+				if (snap_end_ex.dirs != 0) *_rail_snap_points.Append() = snap_end_ex;
+			}
 			SetRailSnapMode(RSM_SNAP_TO_RAIL);
 		}
 	}
 }
 
-bool CurrentlySnappingRailPlacement()
+/**
+ * Store the position of lastly built rail station; for highlighting purposes.
+ *
+ * In "polyline" highlighting mode, the stored end points will be used as snapping points for new tracks.
+ *
+ * @param ta           Station area.
+ * @param station_axis Station axis.
+ */
+void StoreRailStationPlacementEndpoints(const TileArea &ta, Axis station_axis)
 {
-	return (_thd.place_mode & HT_POLY) && GetRailSnapMode() == RSM_SNAP_TO_RAIL;
+	uint start_x = TileX(ta.tile);
+	uint start_y = TileY(ta.tile);
+	uint end_x = start_x + ta.w - 1;
+	uint end_y = start_y + ta.h - 1;
+
+	_rail_snap_points.Clear();
+	if (station_axis == AXIS_X) {
+		for (uint y = start_y; y <= end_y; y++) {
+			*_rail_snap_points.Append() = LineSnapPointAtRailTrackEndpoint(TileXY(start_x, y), DIAGDIR_NE, false, NULL);
+			*_rail_snap_points.Append() = LineSnapPointAtRailTrackEndpoint(TileXY(end_x, y), DIAGDIR_SW, false, NULL);
+		}
+	} else {
+		for (uint x = start_x; x <= end_x; x++) {
+			*_rail_snap_points.Append() = LineSnapPointAtRailTrackEndpoint(TileXY(x, start_y), DIAGDIR_NW, false, NULL);
+			*_rail_snap_points.Append() = LineSnapPointAtRailTrackEndpoint(TileXY(x, end_y), DIAGDIR_SE, false, NULL);
+		}
+	}
 }
 
-static RailSnapMode GetRailSnapMode()
+/**
+ * Get current rail track snapping mode.
+ * @return Current snapping mode.
+ *
+ * @note This function will return #RSM_NO_SNAP if there are no snapping points
+ *       set (yet), even thought the snapping was set to some different mode.
+ */
+RailSnapMode GetRailSnapMode()
 {
 	if (_rail_snap_mode == RSM_SNAP_TO_TILE && _tile_snap_points.Length() == 0) return RSM_NO_SNAP;
 	if (_rail_snap_mode == RSM_SNAP_TO_RAIL && _rail_snap_points.Length() == 0) return RSM_NO_SNAP;
 	return _rail_snap_mode;
 }
 
-static void SetRailSnapMode(RailSnapMode mode)
+/**
+ * Set current current rail track snapping mode.
+ * @param mode New snapping mode.
+ */
+void SetRailSnapMode(RailSnapMode mode)
 {
 	_rail_snap_mode = mode;
 
@@ -3709,12 +3837,24 @@ static void SetRailSnapMode(RailSnapMode mode)
 	}
 }
 
+/**
+ * Get the tile that is set to be a snapping point for rail tracks (used when
+ * #RSM_SNAP_TO_TILE mode is active).
+ *
+ * @return The tile.
+ */
 static TileIndex GetRailSnapTile()
 {
 	if (_tile_snap_points.Length() == 0) return INVALID_TILE;
 	return TileVirtXY(_tile_snap_points[DIAGDIR_NE].x, _tile_snap_points[DIAGDIR_NE].y);
 }
 
+/**
+ * Set the tile that is meant to be a snapping point for rail tracks (used when
+ * #RSM_SNAP_TO_TILE mode is active).
+ *
+ * @param tile The tile.
+ */
 static void SetRailSnapTile(TileIndex tile)
 {
 	_tile_snap_points.Clear();
@@ -3722,12 +3862,13 @@ static void SetRailSnapTile(TileIndex tile)
 
 	for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
 		LineSnapPoint *point = _tile_snap_points.Append();
-		*point = LineSnapPointAtRailTrackEndpoint(tile, dir, false);
+		*point = LineSnapPointAtRailTrackEndpoint(tile, dir, false, NULL);
 		point->dirs = ROR<uint8>(point->dirs, DIRDIFF_REVERSE);
 	}
 }
 
-void ResetRailPlacementSnapping()
+/** Clear all stored rail snapping points and reset the snapping mode. */
+void ResetRailPlacementEndpoints()
 {
 	_rail_snap_mode = RSM_NO_SNAP;
 	_tile_snap_points.Clear();
