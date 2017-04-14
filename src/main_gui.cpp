@@ -395,7 +395,6 @@ struct MainWindow : Window
 				break;
 
 			case GHK_BORROW_ALL:
-				fprintf(stderr, "Borow all!\n");
 				DoCommandP(0, 0, 1, CMD_INCREASE_LOAN | CMD_MSG(STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY));
 				break;
 
