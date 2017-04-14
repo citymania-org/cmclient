@@ -74,6 +74,12 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 1.7.0 (12 Apr 2017) ***
+- Polyline patch updated to version 11a
+- Always autorotate drive-through road/tram stops when placed on roads.
+- Added industry type id to newgrf debug window (may be useful for newgrf developers)
+- Added a trick to join servers that have diffirent game version. Hold Ctrl while clicking greyed-out join button and it will work. But still may fail version check later as not all versions are supported. And even if you do manage to join the game keep in mind that it's not supposed to work like that and is highly likely to desync or crash at some point.
+
 *** 1.6.1-2 (29 Jul 2016) ***
 - Fixed crash when joining ECS servers on windows
 

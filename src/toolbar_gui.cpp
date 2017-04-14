@@ -2160,7 +2160,7 @@ struct MainToolbarWindow : Window {
 			case MTHK_CLIENT_LIST: if (_networking) ShowClientList(); break;
 			case MTHK_COMMANDS_GUI: extern bool _novahost; if (_networking && _novahost){ ShowCommandsToolbar(); } break;
 #endif
-			case MTHK_BUILD_HQ: if(_current_company != COMPANY_SPECTATOR){ _last_started_action = CBF_BUILD_HQ; BuildCompanyHQ(); } break;
+			case MTHK_BUILD_HQ: if(_current_company != COMPANY_SPECTATOR){ _last_started_action = BuildCompanyHQ(); } break;
 			case MTHK_CARGOTABLE: if(_current_company != COMPANY_SPECTATOR){ ShowCompanyCargos(_current_company); } break;
 			case MTHK_TREES: if(_current_company != COMPANY_SPECTATOR){ BuildTreesWindow(); } break;
 			case MTHK_SIGN_LIST: ShowSignList(); break;
