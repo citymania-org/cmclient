@@ -74,7 +74,7 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
-*** 1.7.0 (12 Apr 2017) ***
+*** 1.7.0 (15 Apr 2017) ***
 - Polyline patch updated to version 11a
 - Always autorotate drive-through road/tram stops when placed on roads.
 - Added industry type id to newgrf debug window (may be useful for newgrf developers)
