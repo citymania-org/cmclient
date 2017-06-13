@@ -1,4 +1,4 @@
-/* $Id: rail_cmd.cpp 27726 2017-01-08 11:45:08Z frosch $ */
+/* $Id: rail_cmd.cpp 27862 2017-05-03 20:05:52Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1618,7 +1618,7 @@ CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 		 * Tunnels and bridges have special check later */
 		if (tt != MP_TUNNELBRIDGE) {
 			if (!IsCompatibleRail(type, totype)) {
-				CommandCost ret = EnsureNoVehicleOnGround(tile);
+				CommandCost ret = IsPlainRailTile(tile) ? EnsureNoTrainOnTrackBits(tile, GetTrackBits(tile)) : EnsureNoVehicleOnGround(tile);
 				if (ret.Failed()) {
 					error = ret;
 					continue;

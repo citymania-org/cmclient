@@ -1,4 +1,4 @@
-/* $Id: game_changelog.hpp 27839 2017-04-01 16:27:23Z frosch $ */
+/* $Id: game_changelog.hpp 27866 2017-05-04 18:43:13Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,7 +15,7 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
- * \b 1.7.0
+ * \b 1.7.0 - 1.7.1
  *
  * No changes
  *

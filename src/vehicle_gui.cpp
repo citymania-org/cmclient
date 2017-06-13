@@ -1,4 +1,4 @@
-/* $Id: vehicle_gui.cpp 27677 2016-11-05 19:16:59Z frosch $ */
+/* $Id: vehicle_gui.cpp 27863 2017-05-03 20:09:51Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -2435,6 +2435,7 @@ private:
 public:
 	VehicleViewWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
 	{
+		this->flags |= WF_DISABLE_VP_SCROLL;
 		this->CreateNestedTree();
 
 		/* Sprites for the 'send to depot' button indexed by vehicle type. */

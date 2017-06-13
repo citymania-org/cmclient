@@ -1,4 +1,4 @@
-/* $Id: ship_cmd.cpp 27667 2016-10-16 14:58:38Z frosch $ */
+/* $Id: ship_cmd.cpp 27864 2017-05-03 20:13:05Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,6 +28,7 @@
 #include "vehicle_func.h"
 #include "sound_func.h"
 #include "ai/ai.hpp"
+#include "game/game.hpp"
 #include "pathfinder/opf/opf_ship.h"
 #include "engine_base.h"
 #include "company_base.h"
@@ -426,6 +427,7 @@ static void ShipArrivesAt(const Vehicle *v, Station *st)
 			st->index
 		);
 		AI::NewEvent(v->owner, new ScriptEventStationFirstVehicle(st->index, v->index));
+		Game::NewEvent(new ScriptEventStationFirstVehicle(st->index, v->index));
 	}
 }
 

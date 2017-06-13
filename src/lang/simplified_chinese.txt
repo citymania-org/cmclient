@@ -10,7 +10,7 @@
 ##grflangid 0x56
 
 
-# $Id: simplified_chinese.txt 27777 2017-03-11 16:49:51Z frosch $
+# $Id: simplified_chinese.txt 27865 2017-05-03 20:43:22Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -3120,7 +3120,7 @@ STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}显示�
 STR_STATION_VIEW_SUPPLY_RATINGS_TITLE                           :{BLACK}按月供应量与本地评比：
 STR_STATION_VIEW_CARGO_SUPPLY_RATING                            :{WHITE}{STRING}: {YELLOW}{COMMA} / {STRING} ({COMMA}%)
 
-STR_STATION_VIEW_GROUP                                          :群组方式
+STR_STATION_VIEW_GROUP                                          :{BLACK}群组方式
 STR_STATION_VIEW_WAITING_STATION                                :车站名：等候中
 STR_STATION_VIEW_WAITING_AMOUNT                                 :货物总量：等候中
 STR_STATION_VIEW_PLANNED_STATION                                :车站名：计划中

@@ -1,7 +1,7 @@
 # Version numbers to update
 !define APPV_MAJOR 1
 !define APPV_MINOR 7
-!define APPV_MAINT 0
+!define APPV_MAINT 1
 !define APPV_BUILD 1
 !define APPV_EXTRA ""
 

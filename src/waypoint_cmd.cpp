@@ -1,4 +1,4 @@
-/* $Id: waypoint_cmd.cpp 26879 2014-09-21 11:24:51Z rubidium $ */
+/* $Id: waypoint_cmd.cpp 27862 2017-05-03 20:05:52Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -324,6 +324,7 @@ CommandCost CmdBuildBuoy(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 		if (wp->town == NULL) MakeDefaultName(wp);
 
 		MakeBuoy(tile, wp->index, GetWaterClass(tile));
+		MarkTileDirtyByTile(tile);
 
 		wp->UpdateVirtCoord();
 		InvalidateWindowData(WC_WAYPOINT_VIEW, wp->index);

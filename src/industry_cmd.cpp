@@ -1,4 +1,4 @@
-/* $Id: industry_cmd.cpp 26879 2014-09-21 11:24:51Z rubidium $ */
+/* $Id: industry_cmd.cpp 27864 2017-05-03 20:13:05Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1383,7 +1383,7 @@ static CommandCost CheckIfIndustryTilesAreFree(TileIndex tile, const IndustryTil
 		}
 
 		if (gfx == GFX_WATERTILE_SPECIALCHECK) {
-			if (!IsTileType(cur_tile, MP_WATER) ||
+			if (!IsWaterTile(cur_tile) ||
 					!IsTileFlat(cur_tile)) {
 				return_cmd_error(STR_ERROR_SITE_UNSUITABLE);
 			}

@@ -1,4 +1,4 @@
-/* $Id: 32bpp_anim.hpp 27774 2017-03-11 12:52:26Z frosch $ */
+/* $Id: 32bpp_anim.hpp 27863 2017-05-03 20:09:51Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -20,13 +20,15 @@ protected:
 	uint16 *anim_buf;    ///< In this buffer we keep track of the 8bpp indexes so we can do palette animation
 	int anim_buf_width;  ///< The width of the animation buffer.
 	int anim_buf_height; ///< The height of the animation buffer.
+	int anim_buf_pitch;  ///< The pitch of the animation buffer.
 	Palette palette;     ///< The current palette.
 
 public:
 	Blitter_32bppAnim() :
 		anim_buf(NULL),
 		anim_buf_width(0),
-		anim_buf_height(0)
+		anim_buf_height(0),
+		anim_buf_pitch(0)
 	{
 		this->palette = _cur_palette;
 	}
