@@ -12,7 +12,7 @@
 ##case kas ko kam ka kuo kur kreip
 
 
-# $Id: lithuanian.txt 27777 2017-03-11 16:49:51Z frosch $
+# $Id: lithuanian.txt 27865 2017-05-03 20:43:22Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -3794,7 +3794,7 @@ STR_REPLACE_VEHICLE_SHIP                                        :Laivas
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :Lėktuvas
 
 STR_REPLACE_VEHICLE_VEHICLES_IN_USE                             :{YELLOW}Naudojamos transporto priemonės
-STR_REPLACE_VEHICLE_VEHICLES_IN_USE_TOOLTIP                     :BLACK}Stulpelis su informacija apie transporto priemones, kurias šiuo metu naudojate
+STR_REPLACE_VEHICLE_VEHICLES_IN_USE_TOOLTIP                     :{BLACK}Stulpelis su informacija apie transporto priemones, kurias šiuo metu naudojate
 STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES                          :{YELLOW}Galimos transporto priemonės
 STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES_TOOLTIP                  :{BLACK}Stulpelis su informacija apie transporto priemones, kuriomis galite pakeisti jau turimas
 

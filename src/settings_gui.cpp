@@ -1,4 +1,4 @@
-/* $Id: settings_gui.cpp 27366 2015-08-09 10:22:51Z frosch $ */
+/* $Id: settings_gui.cpp 27863 2017-05-03 20:09:51Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -532,6 +532,7 @@ struct GameOptionsWindow : Window {
 				_gui_zoom = (ZoomLevel)(ZOOM_LVL_OUT_4X - index);
 				UpdateCursorSize();
 				LoadStringWidthTable();
+				UpdateAllVirtCoords();
 				break;
 
 			case WID_GO_BASE_GRF_DROPDOWN:

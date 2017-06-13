@@ -1,4 +1,4 @@
-/* $Id: 8bpp_simple.cpp 26969 2014-10-06 18:45:51Z rubidium $ */
+/* $Id: 8bpp_simple.cpp 27863 2017-05-03 20:09:51Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -48,7 +48,7 @@ void Blitter_8bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoom
 					break;
 
 				case BM_BLACK_REMAP:
-					colour = 0;
+					if (*src != 0) *dst = 0;
 					break;
 
 				default:

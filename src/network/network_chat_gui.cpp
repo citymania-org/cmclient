@@ -1,4 +1,4 @@
-/* $Id: network_chat_gui.cpp 27146 2015-02-13 21:13:45Z frosch $ */
+/* $Id: network_chat_gui.cpp 27863 2017-05-03 20:09:51Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -110,7 +110,7 @@ void CDECL NetworkAddChatMessage(TextColour colour, uint duration, const char *m
 void NetworkReInitChatBoxSize()
 {
 	_chatmsg_box.y       = 3 * FONT_HEIGHT_NORMAL;
-	_chatmsg_box.height  = MAX_CHAT_MESSAGES * (FONT_HEIGHT_NORMAL + NETWORK_CHAT_LINE_SPACING) + 2;
+	_chatmsg_box.height  = MAX_CHAT_MESSAGES * (FONT_HEIGHT_NORMAL + NETWORK_CHAT_LINE_SPACING) + 4;
 	_chatmessage_backup  = ReallocT(_chatmessage_backup, _chatmsg_box.width * _chatmsg_box.height * BlitterFactory::GetCurrentBlitter()->GetBytesPerPixel());
 }
 
