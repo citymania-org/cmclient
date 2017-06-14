@@ -31,6 +31,7 @@
 #include "network_base.h"
 #include "network_client.h"
 #include "../core/backup_type.hpp"
+#include "../newgrf_revisions.hpp"
 
 #include "table/strings.h"
 
@@ -41,12 +42,9 @@
 /* This file handles all the client-commands */
 
 void SyncCMUser(const char *msg);
-static const std::map<std::string, uint32> OPENTTD_NEWGRF_VERSIONS = {
-	{"1.7.0", 386428096},
-	{"1.7.0-RC1", 385903751},
-	{"1.6.1", 370699225},
-	{"1.6.0", 369650572},
-};
+// extern const std::map<std::string, uint32> OPENTTD_NEWGRF_VERSIONS;
+// extern const std::map<uint32, uint32> OPENTTD_RELEASE_REVISIONS;
+static const uint32 OPENTTD_NEWGRF_REVISION_MASK = (1 << 19) - 1;
 
 /** Read some packets, and when do use that data as initial load filter. */
 struct PacketReader : LoadFilter {
@@ -349,12 +347,19 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendJoin()
 		auto r = _network_join_server_revision;
 		p->Send_string(r);
 		auto nr = OPENTTD_NEWGRF_VERSIONS.find(r);
-		int rev;
+		uint32 rev;
 		if (nr != OPENTTD_NEWGRF_VERSIONS.end()) {
 			p->Send_uint32(nr->second);
-		} else if (r[0] == 'r' && r[6] == 0 && (rev = atoi(r + 1)) > 0) {
+		} else if (r[0] == 'r' && r[6] == 0 && (rev = strtoul(r + 1, nullptr, 10)) > 0) {
 			// assume it's nightly
-			p->Send_uint32((rev >= 27840 ? 402653184u : 385875968u) | rev);
+			uint32 max_rev = 0;
+			// find release closest to the nightly
+			for (auto &kv: OPENTTD_RELEASE_REVISIONS) {
+				if (kv.first > max_rev && kv.first <= rev)
+					max_rev = kv.first;
+			}
+			p->Send_uint32(OPENTTD_RELEASE_REVISIONS.at(max_rev) |
+			               (rev & OPENTTD_NEWGRF_REVISION_MASK));
 		} else {
 			p->Send_uint32(_openttd_newgrf_version);
 		}
