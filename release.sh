@@ -1,7 +1,7 @@
 TMP="/tmp/cmclient"
-WIN="/var/run/media/pavels/F8040EC2040E843A/cmclient"
-VER="1.7.0"
-CMVER="1.7.0"
+WIN="/media/pavels/F8040EC2040E843A/cmclient"
+VER="1.7.1"
+CMVER="1.7.1"
 TMP_SRC="$TMP/openttd-$VER"
 DIR=`pwd`
 SRC_RELEASE_FNAME="$DIR/citymania-client-$CMVER-source.zip"
