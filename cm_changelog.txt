@@ -74,6 +74,9 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 1.7.1 (15 Jun 2017) ***
+- OpenTTD update
+
 *** 1.7.0 (15 Apr 2017) ***
 - Polyline patch updated to version 11a
 - Always autorotate drive-through road/tram stops when placed on roads.
