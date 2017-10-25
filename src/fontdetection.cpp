@@ -611,7 +611,7 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 		free(font_family);
 		FcPatternDestroy(pat);
 		FcFontSetDestroy(fs);
-		FcFini();
+		// FcFini();
 	}
 
 	return err;
