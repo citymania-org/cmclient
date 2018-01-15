@@ -1,4 +1,4 @@
-/* $Id: ai_changelog.hpp 27866 2017-05-04 18:43:13Z frosch $ */
+/* $Id: ai_changelog.hpp 27942 2017-12-11 20:14:55Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,7 +15,7 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
- * \b 1.7.0 - 1.7.1
+ * \b 1.7.0 - 1.7.2
  *
  * No changes
  *

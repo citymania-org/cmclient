@@ -1,4 +1,4 @@
-/* $Id: smallmap_gui.h 27158 2015-02-22 14:10:44Z frosch $ */
+/* $Id: smallmap_gui.h 27939 2017-12-11 19:20:44Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -82,6 +82,7 @@ protected:
 	uint8 refresh;   ///< Refresh counter, zeroed every FORCE_REFRESH_PERIOD ticks.
 	LinkGraphOverlay *overlay;
 
+	static void BreakIndustryChainLink();
 	Point SmallmapRemapCoords(int x, int y) const;
 
 	/**
@@ -173,7 +174,7 @@ public:
 	friend class NWidgetSmallmapDisplay;
 
 	SmallMapWindow(WindowDesc *desc, int window_number);
-	virtual ~SmallMapWindow() { delete this->overlay; }
+	virtual ~SmallMapWindow();
 
 	void SmallMapCenterOnCurrentPos();
 	Point GetStationMiddle(const Station *st) const;
