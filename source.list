@@ -606,6 +606,7 @@ zoning_cmd.cpp
 citymania/base64.h
 citymania/base64.cpp
 newgrf_revisions.hpp
+newgrf_revisions.cpp
 
 # Save/Load handlers
 saveload/afterload.cpp

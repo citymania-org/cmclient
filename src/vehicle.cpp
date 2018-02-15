@@ -1,4 +1,4 @@
-/* $Id: vehicle.cpp 27668 2016-10-16 14:59:44Z frosch $ */
+/* $Id: vehicle.cpp 27939 2017-12-11 19:20:44Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -2676,7 +2676,7 @@ void Vehicle::RemoveFromShared()
 	if (this->orders.list->GetNumVehicles() == 1) {
 		/* When there is only one vehicle, remove the shared order list window. */
 		DeleteWindowById(GetWindowClassForVehicleType(this->type), vli.Pack());
-		InvalidateVehicleOrder(this->FirstShared(), 0);
+		InvalidateVehicleOrder(this->FirstShared(), VIWD_MODIFY_ORDERS);
 	} else if (were_first) {
 		/* If we were the first one, update to the new first one.
 		 * Note: FirstShared() is already the new first */
