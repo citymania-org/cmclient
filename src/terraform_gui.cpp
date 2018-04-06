@@ -1,4 +1,4 @@
-/* $Id: terraform_gui.cpp 27571 2016-05-22 10:07:48Z frosch $ */
+/* $Id: terraform_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -80,12 +80,14 @@ static void GenerateRockyArea(TileIndex end, TileIndex start)
 		switch (GetTileType(tile)) {
 			case MP_TREES:
 				if (GetTreeGround(tile) == TREE_GROUND_SHORE) continue;
-				/* FALL THROUGH */
+				FALLTHROUGH;
+
 			case MP_CLEAR:
 				MakeClear(tile, CLEAR_ROCKS, 3);
 				break;
 
-			default: continue;
+			default:
+				continue;
 		}
 		MarkTileDirtyByTile(tile);
 		success = true;

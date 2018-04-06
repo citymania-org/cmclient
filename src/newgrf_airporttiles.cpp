@@ -1,4 +1,4 @@
-/* $Id: newgrf_airporttiles.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: newgrf_airporttiles.cpp 27984 2018-03-11 13:19:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -220,21 +220,6 @@ AirportTileResolverObject::AirportTileResolverObject(const AirportTileSpec *ats,
 	: ResolverObject(ats->grf_prop.grffile, callback, callback_param1, callback_param2), tiles_scope(*this, ats, tile, st)
 {
 	this->root_spritegroup = ats->grf_prop.spritegroup[0];
-}
-
-/**
- * Constructor of the scope resolver specific for airport tiles.
- * @param ats Specification of the airport tiles.
- * @param tile %Tile for the callback, only valid for airporttile callbacks.
- * @param st Station of the airport for which the callback is run, or \c NULL for build gui.
- */
-AirportTileScopeResolver::AirportTileScopeResolver(ResolverObject &ro, const AirportTileSpec *ats, TileIndex tile, Station *st) : ScopeResolver(ro)
-{
-	assert(st != NULL);
-
-	this->st = st;
-	this->airport_id = st->airport.type;
-	this->tile = tile;
 }
 
 uint16 GetAirportTileCallback(CallbackID callback, uint32 param1, uint32 param2, const AirportTileSpec *ats, Station *st, TileIndex tile, int extra_data = 0)

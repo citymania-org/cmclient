@@ -1,4 +1,4 @@
-/* $Id: linkgraph_gui.h 27612 2016-07-10 11:57:16Z fonsinchen $ */
+/* $Id: linkgraph_gui.h 27887 2017-07-11 19:34:21Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -77,7 +77,6 @@ protected:
 
 	Point GetStationMiddle(const Station *st) const;
 
-	void DrawForwBackLinks(Point pta, StationID sta, Point ptb, StationID stb) const;
 	void AddLinks(const Station *sta, const Station *stb);
 	void DrawLinks(const DrawPixelInfo *dpi) const;
 	void DrawStationDots(const DrawPixelInfo *dpi) const;

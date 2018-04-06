@@ -1,4 +1,4 @@
-/* $Id: gfx_func.h 27711 2016-12-25 17:55:10Z frosch $ */
+/* $Id: gfx_func.h 27829 2017-03-25 23:19:41Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -142,6 +142,18 @@ void GfxInitPalettes();
 void CheckBlitter();
 
 bool FillDrawPixelInfo(DrawPixelInfo *n, int left, int top, int width, int height);
+
+/**
+ * Determine where to draw a centred object inside a widget.
+ * @param min The top or left coordinate.
+ * @param max The bottom or right coordinate.
+ * @param size The height or width of the object to draw.
+ * @return Offset of where to start drawing the object.
+ */
+static inline int CenterBounds(int min, int max, int size)
+{
+	return min + (max - min - size + 1) / 2;
+}
 
 /* window.cpp */
 void DrawOverlappedWindowForAll(int left, int top, int right, int bottom);

@@ -1,4 +1,4 @@
-/* $Id: newgrf_object.h 26085 2013-11-24 14:41:19Z frosch $ */
+/* $Id: newgrf_object.h 27984 2018-03-11 13:19:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -104,7 +104,17 @@ struct ObjectScopeResolver : public ScopeResolver {
 	TileIndex tile;     ///< The tile related to the object.
 	uint8 view;         ///< The view of the object.
 
-	ObjectScopeResolver(ResolverObject &ro, Object *obj, TileIndex tile, uint8 view = 0);
+	/**
+	 * Constructor of an object scope resolver.
+	 * @param ro Surrounding resolver.
+	 * @param obj Object being resolved.
+	 * @param tile %Tile of the object.
+	 * @param view View of the object.
+	 */
+	ObjectScopeResolver(ResolverObject &ro, Object *obj, TileIndex tile, uint8 view = 0)
+		: ScopeResolver(ro), obj(obj), tile(tile), view(view)
+	{
+	}
 
 	/* virtual */ uint32 GetRandomBits() const;
 	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
@@ -128,10 +138,11 @@ struct ObjectResolverObject : public ResolverObject {
 			case VSG_SCOPE_PARENT: {
 				TownScopeResolver *tsr = this->GetTown();
 				if (tsr != NULL) return tsr;
-				/* FALL-THROUGH */
 			}
+			FALLTHROUGH;
 
-			default: return ResolverObject::GetScope(scope, relative);
+			default:
+				return ResolverObject::GetScope(scope, relative);
 		}
 	}
 

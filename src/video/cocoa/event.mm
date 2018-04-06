@@ -1,4 +1,4 @@
-/* $Id: event.mm 27167 2015-02-22 23:06:45Z frosch $ */
+/* $Id: event.mm 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -610,7 +610,7 @@ static bool QZ_PollEvent()
 			 * the mouse position programmatically, which would trigger OS X to show
 			 * the default arrow cursor if the events are propagated. */
 			if (_cursor.fix_at) break;
-			/* FALL THROUGH */
+			FALLTHROUGH;
 
 		default:
 			[ NSApp sendEvent:event ];

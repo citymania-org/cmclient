@@ -1,4 +1,4 @@
-/* $Id: settings.cpp 27285 2015-05-16 12:01:19Z alberth $ */
+/* $Id: settings.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -178,7 +178,8 @@ static int ParseIntList(const char *p, int *items, int maxitems)
 				/* Do not accept multiple commas between numbers */
 				if (!comma) return -1;
 				comma = false;
-				/* FALL THROUGH */
+				FALLTHROUGH;
+
 			case ' ':
 				p++;
 				break;
@@ -1688,7 +1689,7 @@ static void HandleSettingDescs(IniFile *ini, SettingDescProc *proc, SettingDescP
 static IniFile *IniLoadConfig()
 {
 	IniFile *ini = new IniFile(_list_group_names);
-	ini->LoadFromDisk(_config_file, BASE_DIR);
+	ini->LoadFromDisk(_config_file, NO_DIRECTORY);
 	return ini;
 }
 

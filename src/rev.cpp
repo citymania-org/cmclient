@@ -1,4 +1,4 @@
-/* $Id: rev.cpp.in 27881 2017-06-13 18:32:06Z frosch $ */
+/* $Id: rev.cpp.in 27949 2017-12-24 12:09:20Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -39,7 +39,7 @@ bool IsReleasedVersion()
  * norev000 is for non-releases that are made on systems without
  * subversion or sources that are not a checkout of subversion.
  */
-const char _openttd_revision[] = "1.7.2";
+const char _openttd_revision[] = "1.8.0";
 
 /**
  * The text version of OpenTTD's build date.
@@ -72,11 +72,11 @@ const byte _openttd_revision_modified = 0;
  * final release will always have a lower version number than the released
  * version, thus making comparisons on specific revisions easy.
  */
-const uint32 _openttd_newgrf_version = 1 << 28 | 7 << 24 | 2 << 20 | 1 << 19 | (27949 & ((1 << 19) - 1));
+const uint32 _openttd_newgrf_version = 1 << 28 | 8 << 24 | 0 << 20 | 1 << 19 | (28002 & ((1 << 19) - 1));
 
 #ifdef __MORPHOS__
 /**
  * Variable used by MorphOS to show the version.
  */
-extern const char morphos_versions_tag[] = "$VER: OpenTTD 1.7.2 (15.01.18) OpenTTD Team [MorphOS, PowerPC]";
+extern const char morphos_versions_tag[] = "$VER: OpenTTD 1.8.0 (06.04.18) OpenTTD Team [MorphOS, PowerPC]";
 #endif

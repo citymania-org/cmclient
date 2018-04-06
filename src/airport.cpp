@@ -1,4 +1,4 @@
-/* $Id: airport.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: airport.cpp 27908 2017-08-31 06:55:38Z adf88 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -27,7 +27,7 @@
  * @param delta_z Height of the airport above the land.
  */
 #define AIRPORT_GENERIC(name, terminals, num_helipads, flags, delta_z) \
-	static AirportFTAClass _airportfta_ ## name(_airport_moving_data_ ## name, terminals, \
+	static const AirportFTAClass _airportfta_ ## name(_airport_moving_data_ ## name, terminals, \
 			num_helipads, _airport_entries_ ## name, flags, _airport_fta_ ## name, delta_z);
 
 /**

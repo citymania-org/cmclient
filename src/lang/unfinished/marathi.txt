@@ -10,7 +10,7 @@
 ##grflangid 0x11
 
 
-# $Id: marathi.txt 27753 2017-02-26 18:45:43Z translators $
+# $Id: marathi.txt 27824 2017-03-24 18:45:45Z translators $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1308,6 +1308,7 @@ STR_GROUP_ALL_AIRCRAFTS                                         :सर्व �
 
 
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :सगळे वाहने काढा
+
 
 
 # Build vehicle window

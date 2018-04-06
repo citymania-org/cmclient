@@ -1,4 +1,4 @@
-/* $Id: rail.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: rail.cpp 27808 2017-03-19 22:30:47Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -56,7 +56,7 @@ extern const Trackdir _next_trackdir[TRACKDIR_END] = {
 };
 
 /* Maps a trackdir to all trackdirs that make 90 deg turns with it. */
-extern const TrackdirBits _track_crosses_trackdirs[TRACKDIR_END] = {
+extern const TrackdirBits _track_crosses_trackdirs[TRACK_END] = {
 	TRACKDIR_BIT_Y_SE     | TRACKDIR_BIT_Y_NW,                                                   // TRACK_X
 	TRACKDIR_BIT_X_NE     | TRACKDIR_BIT_X_SW,                                                   // TRACK_Y
 	TRACKDIR_BIT_RIGHT_N  | TRACKDIR_BIT_RIGHT_S  | TRACKDIR_BIT_LEFT_N  | TRACKDIR_BIT_LEFT_S,  // TRACK_UPPER

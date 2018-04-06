@@ -1,4 +1,4 @@
-/* $Id: regression_info.nut 27518 2016-03-01 20:00:22Z frosch $ */
+/* $Id: regression_info.nut 27780 2017-03-11 20:50:26Z frosch $ */
 
 class Regression extends AIInfo {
 	function GetAuthor()      { return "OpenTTD NoAI Developers Team"; }
@@ -6,7 +6,7 @@ class Regression extends AIInfo {
 	function GetShortName()   { return "REGR"; }
 	function GetDescription() { return "This runs regression-tests on some commands. On the same map the result should always be the same."; }
 	function GetVersion()     { return 1; }
-	function GetAPIVersion()  { return "1.7"; }
+	function GetAPIVersion()  { return "1.8"; }
 	function GetDate()        { return "2007-03-18"; }
 	function CreateInstance() { return "Regression"; }
 }

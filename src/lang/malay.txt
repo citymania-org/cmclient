@@ -10,7 +10,7 @@
 ##grflangid 0x3c
 
 
-# $Id: malay.txt 27941 2017-12-11 19:50:30Z frosch $
+# $Id: malay.txt 27980 2018-03-11 12:24:32Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2406,7 +2406,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Tanah dimiliki 
 STR_ABOUT_OPENTTD                                               :{WHITE}Tentang OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Hakcipta Asal {COPYRIGHT} 1995 Chris Sawyer, Hakcipta terpelihara
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versi {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2017 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2018 The OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Simpankan Permainan
@@ -2957,7 +2957,7 @@ STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Memerluk
 STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Memerlukan: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
 ############ range for requires ends
 
-STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Diperlukan
+STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Diperlukan:
 
 ############ range for produces starts
 STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Mengeluarkan: {YELLOW}{STRING}{STRING}
@@ -3023,6 +3023,7 @@ STR_GROUP_ADD_SHARED_VEHICLE                                    :Tambah kenderaa
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :Buang semua kenderaan
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Namakan semula kenderaan
+
 
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Keretapi Baru
@@ -3188,10 +3189,7 @@ STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :keretapi maglev
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kos: {CURRENCY_LONG} Berat: {WEIGHT_SHORT}{}Kelajuan: {VELOCITY}  Kuasa: {POWER}{}Kos Pengendalian: {CURRENCY_LONG}/thn{}Kapasiti: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Kos: {CURRENCY_LONG} Berat: {WEIGHT_SHORT}{}Kelajuan: {VELOCITY}  Kuasa: {POWER}  Maks. E.K.: {6:FORCE}{}Kos Pengendalian: {4:CURRENCY_LONG}/thn{}Kapasiti: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}Kos: {CURRENCY_LONG} Kelajuan Maks.: {VELOCITY}{}Kapasiti: {CARGO_LONG}, {CARGO_LONG}{}Kos Pengendalian: {CURRENCY_LONG}/thn
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}Kos: {CURRENCY_LONG} Kelajuan Maks.: {VELOCITY}{}Kapasiti: {CARGO_LONG}{}Kos Pengendalian: {CURRENCY_LONG}/thn
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Kos: {CURRENCY_LONG}Kelajuan Maks.: {VELOCITY} Jarak: {COMMA} petak{}Kapasiti: {CARGO_LONG}, {CARGO_LONG}{}Kos berjalan: {CURRENCY_LONG}/thn
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Kos: {CURRENCY_LONG} Kelajuan Maks.: {VELOCITY} Jarak: {COMMA} petak{}Kapasiti: {CARGO_LONG}{}Kos berjalan: {CURRENCY_LONG}/thn
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Kos: {CURRENCY_LONG} Kelajuan Maks.: {VELOCITY}{}Kapasiti: {CARGO_LONG}{}Kos Pengendalian: {CURRENCY_LONG}/thn
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Gantikan {STRING} - {STRING}
@@ -3306,7 +3304,6 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} tahun (
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} tahun ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Kelajuan Maks.: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Kelajuan Maks.: {LTBLUE}{VELOCITY} {BLACK}Jarak: {LTBLUE}{COMMA} petak
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Berat: {LTBLUE}{WEIGHT_SHORT} {BLACK}Kuasa: {LTBLUE}{POWER}{BLACK} Kelajuan Maks.: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Berat: {LTBLUE}{WEIGHT_SHORT} {BLACK}Kuasa: {LTBLUE}{POWER}{BLACK} Max. speed: {LTBLUE}{VELOCITY} {BLACK}T.E. Maks.: {LTBLUE}{FORCE}
 

@@ -1,4 +1,4 @@
-/* $Id: tree_cmd.cpp 27406 2015-09-30 17:28:58Z frosch $ */
+/* $Id: tree_cmd.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -375,7 +375,8 @@ CommandCost CmdPlantTree(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 					msg = STR_ERROR_CAN_T_BUILD_ON_WATER;
 					continue;
 				}
-				/* FALL THROUGH */
+				FALLTHROUGH;
+
 			case MP_CLEAR: {
 				if (IsBridgeAbove(tile)) {
 					msg = STR_ERROR_SITE_UNSUITABLE;
@@ -680,7 +681,7 @@ static void TileLoop_Trees(TileIndex tile)
 							SetTreeGrowth(tile, 0);
 							break;
 						}
-						/* FALL THROUGH */
+						FALLTHROUGH;
 
 					case 2: { // add a neighbouring tree
 						/* Don't plant extra trees if that's not allowed. */

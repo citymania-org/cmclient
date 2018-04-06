@@ -1,4 +1,4 @@
-/* $Id: company_sl.cpp 27757 2017-02-26 19:41:14Z frosch $ */
+/* $Id: company_sl.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -185,7 +185,7 @@ void AfterLoadCompanyStats()
 						}
 					}
 				}
-				/* FALL THROUGH */
+				FALLTHROUGH;
 
 			case MP_OBJECT:
 				if (GetWaterClass(tile) == WATER_CLASS_CANAL) {

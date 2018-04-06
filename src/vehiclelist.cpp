@@ -1,4 +1,4 @@
-/* $Id: vehiclelist.cpp 27677 2016-11-05 19:16:59Z frosch $ */
+/* $Id: vehiclelist.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -156,7 +156,7 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 				}
 				break;
 			}
-			/* FALL THROUGH */
+			FALLTHROUGH;
 
 		case VL_STANDARD:
 			FOR_ALL_VEHICLES(v) {

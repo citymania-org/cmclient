@@ -1,4 +1,4 @@
-/* $Id: engine_base.h 26802 2014-09-07 16:12:58Z alberth $ */
+/* $Id: engine_base.h 27797 2017-03-18 20:43:43Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -111,6 +111,7 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 	uint GetDisplayMaxTractiveEffort() const;
 	Date GetLifeLengthInDays() const;
 	uint16 GetRange() const;
+	StringID GetAircraftTypeText() const;
 
 	/**
 	 * Check whether the engine is hidden in the GUI for the given company.

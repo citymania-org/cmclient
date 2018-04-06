@@ -1,4 +1,4 @@
-/* $Id: script_error.cpp 27758 2017-02-26 19:41:30Z frosch $ */
+/* $Id: script_error.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -40,7 +40,8 @@ ScriptError::ScriptErrorMapString ScriptError::error_map_string = ScriptError::S
 
 		case TEXT_TAB_SPECIAL:
 			if (index < 0xE4) break; // Player name
-			/* FALL THROUGH */
+			FALLTHROUGH;
+
 		case TEXT_TAB_TOWN:
 			if (index < 0xC0) break; // Town name
 			/* These strings are 'random' and have no meaning.

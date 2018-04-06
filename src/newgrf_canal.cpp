@@ -1,4 +1,4 @@
-/* $Id: newgrf_canal.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: newgrf_canal.cpp 27984 2018-03-11 13:19:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -25,7 +25,10 @@ WaterFeature _water_feature[CF_END];
 struct CanalScopeResolver : public ScopeResolver {
 	TileIndex tile; ///< Tile containing the canal.
 
-	CanalScopeResolver(ResolverObject &ro, TileIndex tile);
+	CanalScopeResolver(ResolverObject &ro, TileIndex tile)
+		: ScopeResolver(ro), tile(tile)
+	{
+	}
 
 	/* virtual */ uint32 GetRandomBits() const;
 	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
@@ -108,11 +111,6 @@ struct CanalResolverObject : public ResolverObject {
 	if (group->num_loaded == 0) return NULL;
 
 	return group->loaded[0];
-}
-
-CanalScopeResolver::CanalScopeResolver(ResolverObject &ro, TileIndex tile) : ScopeResolver(ro)
-{
-	this->tile = tile;
 }
 
 /**

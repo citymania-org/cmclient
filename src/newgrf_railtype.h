@@ -1,4 +1,4 @@
-/* $Id: newgrf_railtype.h 27342 2015-07-26 12:25:37Z frosch $ */
+/* $Id: newgrf_railtype.h 27984 2018-03-11 13:19:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,7 +21,16 @@ struct RailTypeScopeResolver : public ScopeResolver {
 	TileIndex tile;      ///< Tracktile. For track on a bridge this is the southern bridgehead.
 	TileContext context; ///< Are we resolving sprites for the upper halftile, or on a bridge?
 
-	RailTypeScopeResolver(ResolverObject &ro, TileIndex tile, TileContext context);
+	/**
+	 * Constructor of the railtype scope resolvers.
+	 * @param ro Surrounding resolver.
+	 * @param tile %Tile containing the track. For track on a bridge this is the southern bridgehead.
+	 * @param context Are we resolving sprites for the upper halftile, or on a bridge?
+	 */
+	RailTypeScopeResolver(ResolverObject &ro, TileIndex tile, TileContext context)
+		: ScopeResolver(ro), tile(tile), context(context)
+	{
+	}
 
 	/* virtual */ uint32 GetRandomBits() const;
 	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;

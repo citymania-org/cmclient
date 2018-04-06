@@ -7,8 +7,8 @@ verstr = verstr.decode('utf-8')
 verdata = verstr.strip().split()
 
 releases = []
-f = open("src/newgrf_revisions.cpp", "w")
-f.write('#include "stdafx.h"\n\n')
+f = open("src/newgrf_revisions.hpp", "w")
+# f.write('#include "stdafx.h"\n\n')
 f.write('#include <map>\n')
 
 f.write('const std::map<std::string, uint32> OPENTTD_NEWGRF_VERSIONS = {\n')

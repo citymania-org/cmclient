@@ -10,7 +10,7 @@
 ##grflangid 0x35
 
 
-# $Id: finnish.txt 27941 2017-12-11 19:50:30Z frosch $
+# $Id: finnish.txt 27980 2018-03-11 12:24:32Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1372,6 +1372,8 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Pois
 
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Vasemmalla hiiren painikkeella liikkuminen: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Salli näkymän siirtäminen vetämällä hiiren vasemmalla näppäimellä. Hyödyllinen erityisesti kosketusnäyttöä käytettäessä
+STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Sulje ikkuna hiiren oikealla painikkeella napsauttamalla: {STRING}
+STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :Ikkunat sulkeutuvat, kun niitä napsautetaan hiiren oikealla painikkeella. Tämä korvaa tavallisesti näkyvän työkaluvihjeen!
 
 STR_CONFIG_SETTING_AUTOSAVE                                     :Automaattitallennus: {STRING}
 STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Valitse aikaväli automaattisille pelitallennuksille
@@ -2689,7 +2691,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Yhtiön omistam
 STR_ABOUT_OPENTTD                                               :{WHITE}Tietoja OpenTTD:stä
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Alkuperäiset oikeudet {COPYRIGHT} 1995 Chris Sawyer, kaikki oikeudet pidätetään
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD-versio {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2017 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2018 The OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Tallenna peli
@@ -3114,8 +3116,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}Ottaa va
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}Näytä luettelo vastaanotettavasta rahdista.
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}Vastaanottaa: {WHITE}{CARGO_LIST}
 
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Tällä asemalla on kuljetusyksinoikeus tässä kaupungissa.
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} osti tämän kaupungin kuljetusyksinoikeuden.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Tällä asemalla on kuljetusyksinoikeus tässä kaupungissa.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} osti tämän kaupungin kuljetusyksinoikeuden.
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Arviot
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Näytä aseman arviot.
@@ -3294,9 +3296,9 @@ STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Tarvitse
 STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Tarvitsee: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
 ############ range for requires ends
 
-STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Tarvitsee
-STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{STRING}
-STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{CARGO_LONG} {BLACK}odottamassa
+STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Tarvitsee:
+STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{STRING}{BLACK}{3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} odottamassa{STRING}
 
 ############ range for produces starts
 STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Tuottaa: {YELLOW}{STRING}{STRING}
@@ -3365,6 +3367,10 @@ STR_GROUP_REMOVE_ALL_VEHICLES                                   :Poista kaikki a
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Nimeä ryhmä
 
+STR_GROUP_PROFIT_THIS_YEAR                                      :Tuotto tänä vuonna:
+STR_GROUP_PROFIT_LAST_YEAR                                      :Tuotto viime vuonna:
+STR_GROUP_OCCUPANCY_VALUE                                       :{NUM} %
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Uusi juna
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Uusi sähköjuna
@@ -3396,6 +3402,7 @@ STR_PURCHASE_INFO_ALL_TYPES                                     :Kaikki rahtityy
 STR_PURCHASE_INFO_ALL_BUT                                       :Kaikki paitsi {CARGO_LIST}
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Suurin vetovoima: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Toimintasäde: {GOLD}{COMMA} ruutua
+STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}Lentokonetyyppi: {GOLD}{STRING}
 
 STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Junien valintaluettelo. Lisää tietoja junaa napsauttamalla. Ctrl+Klik näyttää tai piilottaa kulkuneuvon tyypin
 STR_BUY_VEHICLE_ROAD_VEHICLE_LIST_TOOLTIP                       :{BLACK}Ajoneuvojen valintaluettelo. Napsauta ajoneuvoa saadaksesi lisää tietoja. Ctrl+Klik näyttää tai piilottaa ajoneuvon tyypin
@@ -3529,10 +3536,11 @@ STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :maglev-veturin
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Hinta: {CURRENCY_LONG} Paino: {WEIGHT_SHORT}{}Nopeus: {VELOCITY}  Teho: {POWER}{}Käyttökustannukset: {CURRENCY_LONG}/vuosi{}Kapasiteetti: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Hinta: {CURRENCY_LONG} Paino: {WEIGHT_SHORT}{}Nopeus: {VELOCITY}  Teho: {POWER}  Maks. vetovoima: {6:FORCE}{}Käyttökustannukset: {4:CURRENCY_LONG}/v{}Kapasiteetti: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}Hinta: {CURRENCY_LONG} Maks. Nopeus: {VELOCITY}{}Kapasiteetti: {CARGO_LONG}, {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/yr
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}Hinta: {CURRENCY_LONG} Maks. Nopeus: {VELOCITY}{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/yr
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Hinta: {CURRENCY_LONG} Suurin nopeus: {VELOCITY} Toimintasäde: {COMMA} ruutua{}Kapasiteetti: {CARGO_LONG}, {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/vuosi
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Hinta: {CURRENCY_LONG} Suurin nopeus: {VELOCITY} Toimintasäde: {COMMA} ruutua{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/vuosi
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Lentokonetyyppi: {STRING}{}Kapasiteetti: {CARGO_LONG}, {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Lentokonetyyppi: {STRING}{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST    :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Lentokonetyyppi: {STRING} Toimintamatka: {COMMA} ruutua{}Kapasiteetti: {CARGO_LONG}, {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST        :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Lentokonetyyppi: {STRING} Toimintamatka: {COMMA} ruutua{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Korvaa {STRING} - {STRING}
@@ -3655,7 +3663,8 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} vuo{P s
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} vuo{P si tta} ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Huippunopeus: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Suurin nopeus: {LTBLUE}{VELOCITY} {BLACK}Toimintasäde: {LTBLUE}{COMMA} ruutua
+STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Maks. nopeus: {LTBLUE}{VELOCITY} {BLACK}Lentokonetyyppi: {LTBLUE}{STRING}
+STR_VEHICLE_INFO_MAX_SPEED_TYPE_RANGE                           :{BLACK}Maks. nopeus: {LTBLUE}{VELOCITY} {BLACK}Lentokonetyyppi: {LTBLUE}{STRING} {BLACK}Toimintamatka: {LTBLUE}{COMMA} ruutua
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Paino: {LTBLUE}{WEIGHT_SHORT} {BLACK}Teho: {LTBLUE}{POWER}{BLACK} Maks. nopeus: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Paino: {LTBLUE}{WEIGHT_SHORT} {BLACK}Teho: {LTBLUE}{POWER}{BLACK} Maks. nopeus: {LTBLUE}{VELOCITY} {BLACK}Maks. T.E.: {LTBLUE}{FORCE}
 

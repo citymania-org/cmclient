@@ -1,4 +1,4 @@
-/* $Id: industry_sl.cpp 27291 2015-05-21 18:59:11Z frosch $ */
+/* $Id: industry_sl.cpp 27929 2017-10-25 15:38:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -57,7 +57,7 @@ static const SaveLoad _industry_desc[] = {
 	SLEG_CONDARR(_old_ind_persistent_storage.storage, SLE_UINT32, 16,            76, 160),
 	SLE_CONDREF(Industry, psa,                        REF_STORAGE,              161, SL_MAX_VERSION),
 
-	SLE_CONDVAR(Industry, random_triggers,            SLE_UINT8,                 82, SL_MAX_VERSION),
+	SLE_CONDNULL(1, 82, 196), // random_triggers
 	SLE_CONDVAR(Industry, random,                     SLE_UINT16,                82, SL_MAX_VERSION),
 
 	SLE_CONDNULL(32, 2, 143), // old reserved space

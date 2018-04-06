@@ -1,4 +1,4 @@
-/* $Id: 32bpp_anim_sse4.cpp 27863 2017-05-03 20:09:51Z frosch $ */
+/* $Id: 32bpp_anim_sse4.cpp 27796 2017-03-18 17:14:53Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: waypoint_cmd.cpp 27862 2017-05-03 20:05:52Z frosch $ */
+/* $Id: waypoint_cmd.cpp 27785 2017-03-12 15:32:40Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.

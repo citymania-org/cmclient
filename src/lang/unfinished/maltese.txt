@@ -10,7 +10,7 @@
 ##grflangid 0x09
 
 
-# $Id: maltese.txt 27753 2017-02-26 18:45:43Z translators $
+# $Id: maltese.txt 27824 2017-03-24 18:45:45Z translators $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -833,6 +833,7 @@ STR_FINANCES_POSITIVE_INCOME                                    :{BLACK}+{CURREN
 
 
 # Group window
+
 
 
 

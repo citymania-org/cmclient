@@ -1,4 +1,4 @@
-/* $Id: game_scanner.cpp 26487 2014-04-23 21:16:58Z rubidium $ */
+/* $Id: game_scanner.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -55,7 +55,7 @@ GameInfo *GameScannerInfo::FindInfo(const char *nameParam, int versionParam, boo
 		*e = '\0';
 		e++;
 		versionParam = atoi(e);
-		/* FALL THROUGH, like we were calling this function with a version. */
+		/* Continue like we were calling this function with a version. */
 	}
 
 	if (force_exact_match) {

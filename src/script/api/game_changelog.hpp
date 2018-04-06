@@ -1,4 +1,4 @@
-/* $Id: game_changelog.hpp 27942 2017-12-11 20:14:55Z frosch $ */
+/* $Id: game_changelog.hpp 27996 2018-03-21 19:39:49Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,10 @@
  * bug fixes can be found in the normal changelog. Note that removed API
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
+ *
+ * \b 1.8.0
+ *
+ * No changes
  *
  * \b 1.7.0 - 1.7.2
  *

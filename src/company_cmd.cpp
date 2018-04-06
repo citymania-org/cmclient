@@ -1,4 +1,4 @@
-/* $Id: company_cmd.cpp 26802 2014-09-07 16:12:58Z alberth $ */
+/* $Id: company_cmd.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -167,7 +167,7 @@ static bool IsValidCompanyManagerFace(CompanyManagerFace cmf)
 	for (CompanyManagerFaceVariable cmfv = CMFV_CHEEKS; cmfv < CMFV_END; cmfv++) {
 		switch (cmfv) {
 			case CMFV_MOUSTACHE:   if (!has_moustache)   continue; break;
-			case CMFV_LIPS:        // FALL THROUGH
+			case CMFV_LIPS:
 			case CMFV_NOSE:        if (has_moustache)    continue; break;
 			case CMFV_TIE_EARRING: if (!has_tie_earring) continue; break;
 			case CMFV_GLASSES:     if (!has_glasses)     continue; break;

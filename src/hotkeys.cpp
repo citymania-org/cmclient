@@ -1,4 +1,4 @@
-/* $Id: hotkeys.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
+/* $Id: hotkeys.cpp 27816 2017-03-20 19:30:49Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -327,7 +327,7 @@ int HotkeyList::CheckMatch(uint16 keycode, bool global_only) const
 static void SaveLoadHotkeys(bool save)
 {
 	IniFile *ini = new IniFile();
-	ini->LoadFromDisk(_hotkeys_file, BASE_DIR);
+	ini->LoadFromDisk(_hotkeys_file, NO_DIRECTORY);
 
 	for (HotkeyList **list = _hotkey_lists->Begin(); list != _hotkey_lists->End(); ++list) {
 		if (save) {

@@ -10,7 +10,7 @@
 ##grflangid 0x42
 
 
-# $Id: thai.txt 27865 2017-05-03 20:43:22Z frosch $
+# $Id: thai.txt 27980 2018-03-11 12:24:32Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -2635,7 +2635,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :บริษั
 STR_ABOUT_OPENTTD                                               :{WHITE}เกี่ยวกับ OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}ลิขสิทธิ์เดิม {COPYRIGHT} ค.ศ.1995 ของ Chris Sawyer, สงวนลิขสิทธิ์
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD รุ่นที่ {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}ลิขสิทธิ์ OpenTTD {COPYRIGHT}2002-2017 ของ The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}ลิขสิทธิ์ OpenTTD {COPYRIGHT}2002-2018 ของ The OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}บันทึกเกม
@@ -3044,8 +3044,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}ปิ�
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}ปิดหน้าต่างความนิยมลงและแสดงเฉพาะรายการสินค้าที่สถานีรองรับและรอการขนส่ง
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}กำลังต้องการ: {WHITE}{CARGO_LIST}
 
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}สถานนีนี้มีสัมปทานขนส่งจากเมืองนี้
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} ซื้อสัมปทานขนส่งที่เมืองนี้
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}สถานนีนี้มีสัมปทานขนส่งจากเมืองนี้
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} ซื้อสัมปทานขนส่งที่เมืองนี้
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}ความพึงพอใจ
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}แสดงความพึงพอใจของสถานี
@@ -3290,6 +3290,7 @@ STR_GROUP_REMOVE_ALL_VEHICLES                                   :ลบยาน
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}เปลี่ยนชื่อกลุ่ม
 
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :รถไฟใหม่
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :รถไฟฟ้าใหม่
@@ -3446,10 +3447,7 @@ STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :รถไฟร
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}มูลค่า: {CURRENCY_LONG} น้ำหนัก: {WEIGHT_SHORT}{}ความเร็ว: {VELOCITY}พลังขับเคลื่อน: {POWER}{}ค่าปฏิบัติการ: {CURRENCY_LONG}/ปี{}ความจุ: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}มูลค่า: {CURRENCY_LONG} น้ำหนัก: {WEIGHT_SHORT}{}ความเร็ว: {VELOCITY}พลังขับเคลื่อน: {POWER}  กำัลังลากจูงสูงสุด: {6:FORCE}{}ค่าปฎิบัติการ: {4:CURRENCY_LONG}/ปี{}ความจุ: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}มูลค่า: {CURRENCY_LONG} ความเร็วสูงสุด: {VELOCITY}{}ความจุ: {CARGO_LONG}, {CARGO_LONG}{}ค่าปฎิบัติการ: {CURRENCY_LONG}/ปี
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}มูลค่า: {CURRENCY_LONG} ความเร็วสูงสุด: {VELOCITY}{}ความจุ: {CARGO_LONG}{}ค่าปฏิบัติการ: {CURRENCY_LONG}/ปี
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}มูลค่า: {CURRENCY_LONG} ความเร็วสูงสุด: {VELOCITY} พิสัย: {COMMA} ช่อง{}ความจุ: {CARGO_LONG}, {CARGO_LONG}{}ค่าปฏิบัติการ: {CURRENCY_LONG}/ปี
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}มูลค่า: {CURRENCY_LONG} ความเร็วสูงสุด: {VELOCITY} พิสัย: {COMMA} tiles{}ความจุ: {CARGO_LONG}{}ค่าปฏิบัติการ: {CURRENCY_LONG}/ปี
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}มูลค่า: {CURRENCY_LONG} ความเร็วสูงสุด: {VELOCITY}{}ความจุ: {CARGO_LONG}{}ค่าปฏิบัติการ: {CURRENCY_LONG}/ปี
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}เปลี่ยน {STRING} - {STRING}
@@ -3568,7 +3566,6 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} ปี 
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} ปี ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}ความเร็วสูงสุด: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}ความเร็วสูงสุด: {LTBLUE}{VELOCITY} {BLACK}พิสัย: {LTBLUE}{COMMA} ช่อง
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}น้ำหนัก: {LTBLUE}{WEIGHT_SHORT} {BLACK}พลังขับเคลื่อน: {LTBLUE}{POWER}{BLACK} ความเร็วสูงสุด: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}น้ำหนัก: {LTBLUE}{WEIGHT_SHORT} {BLACK}พลังขับเคลื่อน: {LTBLUE}{POWER}{BLACK} ความเร็วสูงสุด: {LTBLUE}{VELOCITY} {BLACK}กำลังลากจูงสูงสุด: {LTBLUE}{FORCE}
 

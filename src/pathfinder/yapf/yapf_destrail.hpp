@@ -1,4 +1,4 @@
-/* $Id: yapf_destrail.hpp 27363 2015-08-08 13:19:38Z alberth $ */
+/* $Id: yapf_destrail.hpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -140,7 +140,8 @@ public:
 					 * waypoint. */
 					Yapf().DisableCache(true);
 				}
-				/* FALL THROUGH */
+				FALLTHROUGH;
+
 			case OT_GOTO_STATION:
 				m_destTile = CalcClosestStationTile(v->current_order.GetDestination(), v->tile, v->current_order.IsType(OT_GOTO_STATION) ? STATION_RAIL : STATION_WAYPOINT);
 				m_dest_station_id = v->current_order.GetDestination();

@@ -1,4 +1,4 @@
-/* $Id: elrail.cpp 27676 2016-11-05 11:53:03Z frosch $ */
+/* $Id: elrail.cpp 27812 2017-03-20 17:57:24Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -99,6 +99,7 @@ static TrackBits GetRailTrackBitsUniversal(TileIndex t, byte *override)
 			break;
 
 		case MP_TUNNELBRIDGE:
+			if (GetTunnelBridgeTransportType(t) != TRANSPORT_RAIL) return TRACK_BIT_NONE;
 			if (!HasRailCatenary(GetRailType(t))) return TRACK_BIT_NONE;
 			if (override != NULL && (IsTunnel(t) || GetTunnelBridgeLength(t, GetOtherBridgeEnd(t)) > 0)) {
 				*override = 1 << GetTunnelBridgeDirection(t);

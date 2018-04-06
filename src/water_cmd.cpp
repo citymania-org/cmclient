@@ -1,4 +1,4 @@
-/* $Id: water_cmd.cpp 27254 2015-04-26 10:50:36Z frosch $ */
+/* $Id: water_cmd.cpp 27973 2018-03-05 22:57:49Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -73,7 +73,7 @@ static const uint8 _flood_from_dirs[] = {
  */
 static inline void MarkTileDirtyIfCanalOrRiver(TileIndex tile)
 {
-	if (IsTileType(tile, MP_WATER) && (IsCanal(tile) || IsRiver(tile))) MarkTileDirtyByTile(tile);
+	if (IsValidTile(tile) && IsTileType(tile, MP_WATER) && (IsCanal(tile) || IsRiver(tile))) MarkTileDirtyByTile(tile);
 }
 
 /**
@@ -437,7 +437,7 @@ CommandCost CmdBuildCanal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 						MakeSea(tile);
 						break;
 					}
-					/* FALL THROUGH */
+					FALLTHROUGH;
 
 				default:
 					MakeCanal(tile, _current_company, Random());
@@ -1015,7 +1015,7 @@ FloodingBehaviour GetFloodingBehaviour(TileIndex tile)
 				Slope tileh = GetTileSlope(tile);
 				return (IsSlopeWithOneCornerRaised(tileh) ? FLOOD_ACTIVE : FLOOD_DRYUP);
 			}
-			/* FALL THROUGH */
+			FALLTHROUGH;
 		case MP_STATION:
 		case MP_INDUSTRY:
 		case MP_OBJECT:
@@ -1064,7 +1064,7 @@ void DoFloodTile(TileIndex target)
 					flooded = true;
 					break;
 				}
-				/* FALL THROUGH */
+				FALLTHROUGH;
 
 			case MP_CLEAR:
 				if (DoCommand(target, 0, 0, DC_EXEC, CMD_LANDSCAPE_CLEAR).Succeeded()) {

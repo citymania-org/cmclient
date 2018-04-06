@@ -11,7 +11,7 @@
 ##gender m f n
 
 
-# $Id: galician.txt 27941 2017-12-11 19:50:30Z frosch $
+# $Id: galician.txt 27980 2018-03-11 12:24:32Z frosch $
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1373,6 +1373,8 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Apagado
 
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Desprazamento con click esquerdo: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Habilitar o desprazamento do mapa arrastrándoo co botón esquerdo do rato. Isto é especialmente útil se se emprega unha pantalla táctil para desprazarse
+STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Pechar a fiestra con click dereito: {STRING}
+STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :Pecha a fiestra facendo botón dereito dentro de ela. Deshabilita a axuda contextual facendo click-dereito!
 
 STR_CONFIG_SETTING_AUTOSAVE                                     :Autogravado: {STRING}
 STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Selecciona o intervalo entre gravados automáticos das partidas
@@ -2690,7 +2692,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Terreo propieda
 STR_ABOUT_OPENTTD                                               :{WHITE}Acerca de OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright orixinal {COPYRIGHT} 1995 Chris Sawyer, Tódolos dereitos reservados
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versión {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2017 O equipo de OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2018 O equipo de OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Gravar partida
@@ -3115,8 +3117,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}Acepta
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}Mostrar a lista da carga aceptada
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}Acepta: {WHITE}{CARGO_LIST}
 
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Esta estación ten dereitos de transporte exclusivos nesta cidade.
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} comprou a exclusiva de dereitos de transporte nesta cidade.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Esta estación ten dereitos de transporte exclusivos nesta cidade.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} comprou a exclusiva de dereitos de transporte nesta cidade.
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Puntuacións:
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Mostra-las puntuacións da estación
@@ -3295,11 +3297,9 @@ STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Require:
 STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Require: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
 ############ range for requires ends
 
-STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Require
-STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{STRING}
-STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{CARGO_LONG} {BLACK}agardando
-STR_INDUSTRY_VIEW_ACCEPT_CARGO_TEXT                             :{YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT_TEXT                      :{YELLOW}{CARGO_LONG}{STRING}
+STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Require:
+STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{STRING}{BLACK}{3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} agardando{STRING}
 
 ############ range for produces starts
 STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Produce: {YELLOW}{STRING}{STRING}
@@ -3368,6 +3368,11 @@ STR_GROUP_REMOVE_ALL_VEHICLES                                   :Borrar tódolos
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Renomear un grupo
 
+STR_GROUP_PROFIT_THIS_YEAR                                      :Beneficio este ano:
+STR_GROUP_PROFIT_LAST_YEAR                                      :Beneficio do último ano:
+STR_GROUP_OCCUPANCY                                             :Uso actual:
+STR_GROUP_OCCUPANCY_VALUE                                       :{NUM}%
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Novos vehículos ferroviarios
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Novos vehículos ferroviarios eléctricos
@@ -3399,6 +3404,7 @@ STR_PURCHASE_INFO_ALL_TYPES                                     :Tódolos tipos 
 STR_PURCHASE_INFO_ALL_BUT                                       :Todos excepto {CARGO_LIST}
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Esforzo máximo de tracción: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Autonomía: {GOLD}{COMMA} cadros
+STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}Tipo de aeronave: {GOLD}{STRING}
 
 STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Lista de selección de vehículos ferroviarios - pincha nun vehículo para obter información
 STR_BUY_VEHICLE_ROAD_VEHICLE_LIST_TOOLTIP                       :{BLACK}Lista de selección de vehículos de estrada - pincha nun vehículo para obter información
@@ -3532,10 +3538,11 @@ STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :locomotora de m
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Custo: {CURRENCY_LONG} Peso: {WEIGHT_SHORT}{}Velocidade: {VELOCITY}  Potencia: {POWER}{}Custo operativo: {CURRENCY_LONG}/ano{}Capacidade: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Custo: {CURRENCY_LONG} Peso: {WEIGHT_SHORT}{}Velocidade: {VELOCITY}  Potencia: {POWER}  Esforzo tractor máximo: {6:FORCE}{}Custo operativo: {4:CURRENCY_LONG}/ano{}Capacidade: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}Custo: {CURRENCY_LONG} Velocidade máxima: {VELOCITY}{}Capacidade: {CARGO_LONG}, {CARGO_LONG}{}Custo operativo: {CURRENCY_LONG}/ano
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}Custo: {CURRENCY_LONG} Velocidade máxima: {VELOCITY}{}Capacidade: {CARGO_LONG}{}Custo operativo: {CURRENCY_LONG}/ano
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Custo: {CURRENCY_LONG} Velocidade máxima: {VELOCITY} Autonomía: {COMMA} cadros{}Capacidade: {CARGO_LONG}, {CARGO_LONG}{}Custo operativo: {CURRENCY_LONG}/ano
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Custo: {CURRENCY_LONG} Velocidade máxima: {VELOCITY} Autonomía: {COMMA} cadros{}Capacidade: {CARGO_LONG}{}Custo operativo: {CURRENCY_LONG}/ano
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Custo: {CURRENCY_LONG} Velocidade máxima: {VELOCITY}{}Capacidade: {CARGO_LONG}{}Custo operativo: {CURRENCY_LONG}/ano
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Custo: {CURRENCY_LONG} Vel. Máxima: {VELOCITY}{}Tipo aeronave: {STRING}{}Capacidade: {CARGO_LONG}, {CARGO_LONG}{}Custo operativo: {CURRENCY_LONG}/ano
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Custo: {CURRENCY_LONG} Vel. Máxima: {VELOCITY}{}Tipo aeronave: {STRING}{}Capacidade: {CARGO_LONG}{}Custo operativo: {CURRENCY_LONG}/ano
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST    :{BLACK}Custo: {CURRENCY_LONG} Vel. Máxima: {VELOCITY}{}Tipo aeronave: {STRING} Distancia: {COMMA} tiles{}Capacidade: {CARGO_LONG}, {CARGO_LONG}{}Custo operativo: {CURRENCY_LONG}/ano
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST        :{BLACK}Custo: {CURRENCY_LONG} Vel. Máxima: {VELOCITY}{}Tipo Aeronave: {STRING} Autonomía: {COMMA} tiles{}Capacidade: {CARGO_LONG}{}Custo Operativo: {CURRENCY_LONG}/ano
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Substituír {STRING} - {STRING}
@@ -3658,7 +3665,8 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} ano{P "
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} ano{P "" s} ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Velocidade máxima: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Velocidade máxima: {LTBLUE}{VELOCITY} {BLACK}Autonomía: {LTBLUE}{COMMA} cadros
+STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Vel. máxima: {LTBLUE}{VELOCITY} {BLACK}Tipo de aeronave: {LTBLUE}{STRING}
+STR_VEHICLE_INFO_MAX_SPEED_TYPE_RANGE                           :{BLACK}Vel. máxima: {LTBLUE}{VELOCITY} {BLACK}Tipo de aeronave: {LTBLUE}{STRING} {BLACK}Alcance: {LTBLUE}{COMMA} cadros
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Peso: {LTBLUE}{WEIGHT_SHORT} {BLACK}Potencia: {LTBLUE}{POWER}{BLACK} Velocidade máxima: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Peso: {LTBLUE}{WEIGHT_SHORT} {BLACK}Potencia: {LTBLUE}{POWER}{BLACK} Velocidade máxima: {LTBLUE}{VELOCITY} {BLACK}T.E. máx.: {LTBLUE}{FORCE}
 
