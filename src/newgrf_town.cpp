@@ -1,4 +1,4 @@
-/* $Id: newgrf_town.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id: newgrf_town.cpp 27984 2018-03-11 13:19:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,18 +15,6 @@
 #include "newgrf_town.h"
 
 #include "safeguards.h"
-
-/**
- * Resolver of a town scope.
- * @param ro Surrounding resolver.
- * @param t %Town of the scope.
- * @param readonly Scope may change persistent storage of the town.
- */
-TownScopeResolver::TownScopeResolver(ResolverObject &ro, Town *t, bool readonly) : ScopeResolver(ro)
-{
-	this->t = t;
-	this->readonly = readonly;
-}
 
 /* virtual */ uint32 TownScopeResolver::GetVariable(byte variable, uint32 parameter, bool *available) const
 {

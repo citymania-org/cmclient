@@ -1,4 +1,4 @@
-/* $Id: vehicle_base.h 27668 2016-10-16 14:59:44Z frosch $ */
+/* $Id: vehicle_base.h 27822 2017-03-24 07:33:31Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -308,6 +308,7 @@ public:
 	uint16 refit_cap;                   ///< Capacity left over from before last refit.
 	VehicleCargoList cargo;             ///< The cargo this vehicle is carrying
 	uint16 cargo_age_counter;           ///< Ticks till cargo is aged next.
+	int8 trip_occupancy;                ///< NOSAVE: Occupancy of vehicle of the current trip (updated after leaving a station).
 
 	byte day_counter;                   ///< Increased by one for each day
 	byte tick_counter;                  ///< Increased by one for each tick

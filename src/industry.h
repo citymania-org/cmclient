@@ -1,4 +1,4 @@
-/* $Id: industry.h 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id: industry.h 27929 2017-10-25 15:38:19Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -66,7 +66,6 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	Date last_cargo_accepted_at;        ///< Last day cargo was accepted by this industry
 	byte selected_layout;               ///< Which tile layout was used when creating the industry
 
-	byte random_triggers;               ///< Triggers for the random
 	uint16 random;                      ///< Random value used for randomisation of all kinds of things
 
 	PersistentStorage *psa;             ///< Persistent storage for NewGRF industries.

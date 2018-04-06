@@ -1,4 +1,4 @@
-/* $Id: industry_cmd.cpp 27940 2017-12-11 19:24:46Z frosch $ */
+/* $Id: industry_cmd.cpp 27932 2017-11-25 16:50:28Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: vehicle_sl.cpp 27668 2016-10-16 14:59:44Z frosch $ */
+/* $Id: vehicle_sl.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -375,6 +375,8 @@ void AfterLoadVehicles(bool part_of_load)
 	FOR_ALL_VEHICLES(v) {
 		assert(v->first != NULL);
 
+		v->trip_occupancy = CalcPercentVehicleFilled(v, NULL);
+
 		switch (v->type) {
 			case VEH_TRAIN: {
 				Train *t = Train::From(v);
@@ -431,8 +433,8 @@ void AfterLoadVehicles(bool part_of_load)
 				RoadVehicle *rv = RoadVehicle::From(v);
 				rv->roadtype = HasBit(EngInfo(v->First()->engine_type)->misc_flags, EF_ROAD_TRAM) ? ROADTYPE_TRAM : ROADTYPE_ROAD;
 				rv->compatible_roadtypes = RoadTypeToRoadTypes(rv->roadtype);
-				/* FALL THROUGH */
 			}
+			FALLTHROUGH;
 
 			case VEH_TRAIN:
 			case VEH_SHIP:

@@ -1,4 +1,4 @@
-/* $Id: fios_gui.cpp 27653 2016-09-04 16:06:50Z alberth $ */
+/* $Id: fios_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -702,7 +702,8 @@ public:
 				this->vscroll->SetCount(this->fios_items.Length());
 				this->selected = NULL;
 				_load_check_data.Clear();
-				/* FALL THROUGH */
+				FALLTHROUGH;
+
 			case 1:
 				/* Selection changes */
 				if (!gui_scope) break;

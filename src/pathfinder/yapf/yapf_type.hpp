@@ -1,4 +1,4 @@
-/* $Id: yapf_type.hpp 25608 2013-07-14 09:20:34Z rubidium $ */
+/* $Id: yapf_type.hpp 27885 2017-06-22 16:57:06Z frosch $ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: newgrf_industrytiles.h 26085 2013-11-24 14:41:19Z frosch $ */
+/* $Id: newgrf_industrytiles.h 27984 2018-03-11 13:19:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,12 +21,20 @@ struct IndustryTileScopeResolver : public ScopeResolver {
 	Industry *industry; ///< Industry owning the tiles.
 	TileIndex tile;     ///< %Tile being resolved.
 
-	IndustryTileScopeResolver(ResolverObject &ro, Industry *industry, TileIndex tile);
+	/**
+	 * Constructor of the scope resolver for the industry tile.
+	 * @param ro Surrounding resolver.
+	 * @param industry %Industry owning the tile.
+	 * @param tile %Tile of the industry.
+	 */
+	IndustryTileScopeResolver(ResolverObject &ro, Industry *industry, TileIndex tile)
+		: ScopeResolver(ro), industry(industry), tile(tile)
+	{
+	}
 
 	/* virtual */ uint32 GetRandomBits() const;
 	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
 	/* virtual */ uint32 GetTriggers() const;
-	/* virtual */ void SetTriggers(int triggers) const;
 };
 
 /** Resolver for industry tiles. */

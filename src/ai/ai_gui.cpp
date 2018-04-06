@@ -1,4 +1,4 @@
-/* $Id: ai_gui.cpp 27862 2017-05-03 20:05:52Z frosch $ */
+/* $Id: ai_gui.cpp 27787 2017-03-12 18:19:01Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.

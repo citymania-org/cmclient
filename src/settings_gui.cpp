@@ -1,4 +1,4 @@
-/* $Id: settings_gui.cpp 27863 2017-05-03 20:09:51Z frosch $ */
+/* $Id: settings_gui.cpp 27827 2017-03-25 12:21:17Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -1502,6 +1502,7 @@ static SettingsContainer &GetSettingsTree()
 				general->Add(new SettingEntry("gui.errmsg_duration"));
 				general->Add(new SettingEntry("gui.window_snap_radius"));
 				general->Add(new SettingEntry("gui.window_soft_limit"));
+				general->Add(new SettingEntry("gui.right_mouse_wnd_close"));
 			}
 
 			SettingsPage *viewports = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_VIEWPORTS));

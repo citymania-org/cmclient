@@ -1,4 +1,4 @@
-/* $Id: spritecache.cpp 27732 2017-01-14 18:30:26Z frosch $ */
+/* $Id: spritecache.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -818,7 +818,7 @@ static void *HandleInvalidSpriteRequest(SpriteID sprite, SpriteType requested, S
 	switch (requested) {
 		case ST_NORMAL:
 			if (sprite == SPR_IMG_QUERY) usererror("Uhm, would you be so kind not to load a NewGRF that makes the 'query' sprite a non-normal sprite?");
-			/* FALL THROUGH */
+			FALLTHROUGH;
 		case ST_FONT:
 			return GetRawSprite(SPR_IMG_QUERY, ST_NORMAL, allocator);
 		case ST_RECOLOUR:

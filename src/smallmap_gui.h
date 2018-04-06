@@ -1,4 +1,4 @@
-/* $Id: smallmap_gui.h 27939 2017-12-11 19:20:44Z frosch $ */
+/* $Id: smallmap_gui.h 27905 2017-08-31 06:48:55Z adf88 $ */
 
 /*
  * This file is part of OpenTTD.

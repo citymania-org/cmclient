@@ -1,4 +1,4 @@
-/* $Id: win32_v.cpp 27940 2017-12-11 19:24:46Z frosch $ */
+/* $Id: win32_v.cpp 27935 2017-12-09 19:21:45Z michi_cc $ */
 
 /*
  * This file is part of OpenTTD.
@@ -684,7 +684,7 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
 		case WM_PALETTECHANGED:
 			if ((HWND)wParam == hwnd) return 0;
-			/* FALL THROUGH */
+			FALLTHROUGH;
 
 		case WM_QUERYNEWPALETTE: {
 			HDC hDC = GetWindowDC(hwnd);

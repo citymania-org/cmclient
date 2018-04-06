@@ -1,4 +1,4 @@
-/* $Id: network_content_gui.cpp 27469 2015-12-10 19:58:33Z zuu $ */
+/* $Id: network_content_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -908,7 +908,8 @@ public:
 					}
 					return ES_HANDLED;
 				}
-				/* FALL THROUGH, space is pressed and filter is focused. */
+				/* space is pressed and filter is focused. */
+				FALLTHROUGH;
 
 			default:
 				return ES_NOT_HANDLED;

@@ -1,4 +1,4 @@
-/* $Id: newgrf_engine.h 27666 2016-10-16 14:57:56Z frosch $ */
+/* $Id: newgrf_engine.h 27984 2018-03-11 13:19:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,14 +26,23 @@ struct VehicleScopeResolver : public ScopeResolver {
 	EngineID self_type;      ///< Type of the vehicle.
 	bool info_view;          ///< Indicates if the item is being drawn in an info window.
 
-	VehicleScopeResolver(ResolverObject &ro, EngineID engine_type, const Vehicle *v, bool info_view);
+	/**
+	 * Scope resolver of a single vehicle.
+	 * @param ro Surrounding resolver.
+	 * @param engine_type Engine type
+	 * @param v %Vehicle being resolved.
+	 * @param info_view Indicates if the item is being drawn in an info window.
+	 */
+	VehicleScopeResolver(ResolverObject &ro, EngineID engine_type, const Vehicle *v, bool info_view)
+		: ScopeResolver(ro), v(v), self_type(engine_type), info_view(info_view)
+	{
+	}
 
 	void SetVehicle(const Vehicle *v) { this->v = v; }
 
 	/* virtual */ uint32 GetRandomBits() const;
 	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
 	/* virtual */ uint32 GetTriggers() const;
-	/* virtual */ void SetTriggers(int triggers) const;
 };
 
 /** Resolver for a vehicle (chain) */

@@ -1,4 +1,4 @@
-/* $Id: newgrf_railtype.cpp 27342 2015-07-26 12:25:37Z frosch $ */
+/* $Id: newgrf_railtype.cpp 27984 2018-03-11 13:19:41Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -65,18 +65,6 @@
 	if (group->num_loading > 0) return group->loading[0];
 	if (group->num_loaded  > 0) return group->loaded[0];
 	return NULL;
-}
-
-/**
- * Constructor of the railtype scope resolvers.
- * @param ro Surrounding resolver.
- * @param tile %Tile containing the track. For track on a bridge this is the southern bridgehead.
- * @param context Are we resolving sprites for the upper halftile, or on a bridge?
- */
-RailTypeScopeResolver::RailTypeScopeResolver(ResolverObject &ro, TileIndex tile, TileContext context) : ScopeResolver(ro)
-{
-	this->tile = tile;
-	this->context = context;
 }
 
 /**

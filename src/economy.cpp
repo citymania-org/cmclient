@@ -1,4 +1,4 @@
-/* $Id: economy.cpp 27862 2017-05-03 20:05:52Z frosch $ */
+/* $Id: economy.cpp 27981 2018-03-11 12:46:05Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -654,12 +654,16 @@ static void CompanyCheckBankrupt(Company *c)
  */
 static void CompaniesGenStatistics()
 {
-	Station *st;
+	/* Check for bankruptcy each month */
+	Company *c;
+	FOR_ALL_COMPANIES(c) {
+		CompanyCheckBankrupt(c);
+	}
 
 	Backup<CompanyByte> cur_company(_current_company, FILE_LINE);
-	Company *c;
 
 	if (!_settings_game.economy.infrastructure_maintenance) {
+		Station *st;
 		FOR_ALL_STATIONS(st) {
 			cur_company.Change(st->owner);
 			CommandCost cost(EXPENSES_PROPERTY, _price[PR_STATION_VALUE] >> 1);
@@ -687,11 +691,6 @@ static void CompaniesGenStatistics()
 		}
 	}
 	cur_company.Restore();
-
-	/* Check for bankruptcy each month */
-	FOR_ALL_COMPANIES(c) {
-		CompanyCheckBankrupt(c);
-	}
 
 	/* Only run the economic statics and update company stats every 3rd month (1st of quarter). */
 	if (!HasBit(1 << 0 | 1 << 3 | 1 << 6 | 1 << 9, _cur_month)) return;
@@ -1726,7 +1725,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 		/* update stats */
 		int t;
 		switch (front->type) {
-			case VEH_TRAIN: /* FALL THROUGH */
+			case VEH_TRAIN:
 			case VEH_SHIP:
 				t = front->vcache.cached_max_speed;
 				break;

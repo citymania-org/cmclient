@@ -1,4 +1,4 @@
-/* $Id: misc_gui.cpp 27781 2017-03-11 21:02:32Z frosch $ */
+/* $Id: misc_gui.cpp 27995 2018-03-21 19:34:17Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -397,6 +397,7 @@ static const char * const _credits[] = {
 	"Original graphics by Simon Foster",
 	"",
 	"The OpenTTD team (in alphabetical order):",
+	"  Grzegorz Duczy\xC5\x84ski (adf88) - General coding (since 1.7.2)",
 	"  Albert Hofkamp (Alberth) - GUI expert (since 0.7)",
 	"  Matthijs Kooijman (blathijs) - Pathfinder-guru, Debian port (since 0.3)",
 	"  Ulf Hermann (fonsinchen) - Cargo Distribution (since 1.3)",
@@ -440,7 +441,7 @@ static const char * const _credits[] = {
 	"  Mike Ragsdale - OpenTTD installer",
 	"  Christian Rosentreter (tokai) - MorphOS / AmigaOS port",
 	"  Richard Kempton (richK) - additional airports, initial TGP implementation",
-	"  HvS - titlegame",
+	"  Emperor Jake - titlegame",
 	"",
 	"  Alberto Demichelis - Squirrel scripting language \xC2\xA9 2003-2008",
 	"  L. Peter Deutsch - MD5 implementation \xC2\xA9 1999, 2000, 2002",
@@ -1008,10 +1009,12 @@ struct QueryStringWindow : public Window
 		switch (widget) {
 			case WID_QS_DEFAULT:
 				this->editbox.text.DeleteAll();
-				/* FALL THROUGH */
+				FALLTHROUGH;
+
 			case WID_QS_OK:
 				this->OnOk();
-				/* FALL THROUGH */
+				FALLTHROUGH;
+
 			case WID_QS_CANCEL:
 				delete this;
 				break;
@@ -1161,7 +1164,8 @@ struct QueryWindow : public Window {
 					this->proc(this->parent, true);
 					this->proc = NULL;
 				}
-				/* FALL THROUGH */
+				FALLTHROUGH;
+
 			case WKC_ESC:
 				delete this;
 				return ES_HANDLED;

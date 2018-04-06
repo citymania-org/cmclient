@@ -1,4 +1,4 @@
-/* $Id: console.cpp 27939 2017-12-11 19:20:44Z frosch $ */
+/* $Id: console.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -468,7 +468,7 @@ void IConsoleCmdExec(const char *cmdstr)
 				tokenstream[tstream_i++] = *++cmdptr;
 				break;
 			}
-			/* FALL THROUGH */
+			FALLTHROUGH;
 		default: // Normal character
 			tokenstream[tstream_i++] = *cmdptr;
 

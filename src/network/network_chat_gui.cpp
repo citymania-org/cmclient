@@ -1,4 +1,4 @@
-/* $Id: network_chat_gui.cpp 27863 2017-05-03 20:09:51Z frosch $ */
+/* $Id: network_chat_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -492,10 +492,13 @@ struct NetworkChatWindow : public Window {
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		switch (widget) {
-			/* Send */
-			case WID_NC_SENDBUTTON: SendChat(this->message_editbox.text.buf, this->dtype, this->dest);
-				/* FALL THROUGH */
-			case WID_NC_CLOSE: /* Cancel */ delete this; break;
+			case WID_NC_SENDBUTTON: /* Send */
+				SendChat(this->message_editbox.text.buf, this->dtype, this->dest);
+				FALLTHROUGH;
+
+			case WID_NC_CLOSE: /* Cancel */
+				delete this;
+				break;
 		}
 	}
 

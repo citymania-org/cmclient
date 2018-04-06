@@ -1,4 +1,4 @@
-/* $Id: ai_scanner.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
+/* $Id: ai_scanner.cpp 27893 2017-08-13 18:38:42Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -114,7 +114,7 @@ AIInfo *AIScannerInfo::FindInfo(const char *nameParam, int versionParam, bool fo
 		*e = '\0';
 		e++;
 		versionParam = atoi(e);
-		/* FALL THROUGH, like we were calling this function with a version. */
+		/* Continue, like we were calling this function with a version. */
 	}
 
 	if (force_exact_match) {

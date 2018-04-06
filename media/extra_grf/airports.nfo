@@ -1,5 +1,5 @@
 //
-// $Id: airports.nfo 23982 2012-02-24 22:29:44Z rubidium $
+// $Id: airports.nfo 27976 2018-03-11 11:43:32Z frosch $
 //
 // This file is part of OpenTTD.
 // OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -23,3 +23,16 @@
    -1 sprites/airports.png 8bpp  82   88  64  31 -31   0 normal
    -1 sprites/airports.png 8bpp 162   88  64  31 -31   0 normal
    -1 sprites/airports.png 8bpp 242   88  64  31 -31   0 normal
+   -1 * 0	 0C "Climate specific sprites by PaulC"
+   -1 * 0	 07 83 01 \7! 01 03
+   -1 * 0	 05 90 02 0D
+   -1 sprites/airports.png 8bpp 320   88  64  31 -31   0 normal
+   -1 sprites/airports.png 8bpp 400   88  64  31 -31   0 normal
+   -1 * 0	 07 83 01 \7! 02 03
+   -1 * 0	 05 90 02 0D
+   -1 sprites/airports.png 8bpp 480   88  64  31 -31   0 normal
+   -1 sprites/airports.png 8bpp 560   88  64  31 -31   0 normal
+   -1 * 0	 07 83 01 \7! 03 03
+   -1 * 0	 05 90 02 0D
+   -1 sprites/airports.png 8bpp 640   88  64  31 -31   0 normal
+   -1 sprites/airports.png 8bpp 720   88  64  31 -31   0 normal

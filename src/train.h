@@ -1,4 +1,4 @@
-/* $Id: train.h 27666 2016-10-16 14:57:56Z frosch $ */
+/* $Id: train.h 27811 2017-03-20 17:49:44Z peter1138 $ */
 
 /*
  * This file is part of OpenTTD.
@@ -61,7 +61,7 @@ byte FreightWagonMult(CargoID cargo);
 
 void CheckTrainsLengths();
 
-void FreeTrainTrackReservation(const Train *v, TileIndex origin = INVALID_TILE, Trackdir orig_td = INVALID_TRACKDIR);
+void FreeTrainTrackReservation(const Train *v);
 bool TryPathReserve(Train *v, bool mark_as_stuck = false, bool first_tile_okay = false);
 
 int GetTrainStopLocation(StationID station_id, TileIndex tile, const Train *v, int *station_ahead, int *station_length);

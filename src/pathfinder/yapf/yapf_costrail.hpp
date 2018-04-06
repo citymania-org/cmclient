@@ -1,4 +1,4 @@
-/* $Id: yapf_costrail.hpp 27864 2017-05-03 20:13:05Z frosch $ */
+/* $Id: yapf_costrail.hpp 27885 2017-06-22 16:57:06Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -561,6 +561,9 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 			cur = next;
 
 		} // for (;;)
+
+		/* Don't consider path any further it if exceeded max_cost. */
+		if (end_segment_reason & ESRB_PATH_TOO_LONG) return false;
 
 		bool target_seen = false;
 		if ((end_segment_reason & ESRB_POSSIBLE_TARGET) != ESRB_NONE) {

@@ -1,4 +1,4 @@
-/* $Id: engine.cpp 27700 2016-12-20 12:35:36Z frosch $ */
+/* $Id: engine.cpp 27797 2017-03-18 20:43:43Z alberth $ */
 
 /*
  * This file is part of OpenTTD.
@@ -464,7 +464,26 @@ uint16 Engine::GetRange() const
 }
 
 /**
- * Initializes the EngineOverrideManager with the default engines.
+ * Get the name of the aircraft type for display purposes.
+ * @return Aircraft type string.
+ */
+StringID Engine::GetAircraftTypeText() const
+{
+	switch (this->type) {
+		case VEH_AIRCRAFT:
+			switch (this->u.air.subtype) {
+				case AIR_HELI: return STR_LIVERY_HELICOPTER;
+				case AIR_CTOL: return STR_LIVERY_SMALL_PLANE;
+				case AIR_CTOL | AIR_FAST: return STR_LIVERY_LARGE_PLANE;
+				default: NOT_REACHED();
+			}
+
+		default: NOT_REACHED();
+	}
+}
+
+/**
+ * Initializes the #EngineOverrideManager with the default engines.
  */
 void EngineOverrideManager::ResetToDefaultMapping()
 {
