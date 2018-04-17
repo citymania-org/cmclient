@@ -1,7 +1,7 @@
 TMP="/tmp/cmclient"
 WIN="/media/pavels/F8040EC2040E843A/cmclient"
-VER="1.7.1"
-CMVER="1.7.1"
+VER="1.8.0"
+CMVER="1.8.0"
 TMP_SRC="$TMP/openttd-$VER"
 DIR=`pwd`
 SRC_RELEASE_FNAME="$DIR/citymania-client-$CMVER-source.zip"
@@ -34,8 +34,8 @@ cp -r $TMP_SRC/bin/lang $TMP/release/
 cp -r $DIR/release_files/* $TMP/release/
 cp $DIR/cm_changelog.txt $TMP/release/citymania_changelog.txt
 pushd $TMP/release
-cp $EXE32 openttd.exe
-zip -9 -r $RELEASE_FNAME .
+# cp $EXE32 openttd.exe
+# zip -9 -r $RELEASE_FNAME .
 cp $EXE64 openttd.exe
 zip -9 -r $RELEASE64_FNAME .
 popd
