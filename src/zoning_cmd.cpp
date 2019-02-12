@@ -5,10 +5,98 @@
 #include "viewport_func.h"
 #include "town.h"
 #include "zoning.h"
+#include "genworld.h"
+#include <algorithm>
+#include <vector>
 
 Zoning _zoning = {CHECKNOTHING, CHECKNOTHING};
 static const SpriteID INVALID_SPRITE_ID = UINT_MAX;
 //RED GREEN BLACK LIGHT_BLUE ORANGE WHITE YELLOW PURPLE
+
+TileIndex _closest_cache_ref = INVALID_TILE;
+const uint CLOSEST_CACHE_THRESHOLD = 128;
+std::vector<std::pair<uint, Town*>> _closest_cache;
+
+
+void RebuildClosestHash(TileIndex tile) {
+	_closest_cache_ref = INVALID_TILE;
+	_closest_cache.clear();
+	Town *t;
+	FOR_ALL_TOWNS(t) {
+		_closest_cache.push_back(std::make_pair(
+		    DistanceManhattan(t->xy, tile), t));
+	}
+	std::sort(
+	    _closest_cache.begin(), _closest_cache.end(),
+		[](auto &a, auto &b) -> bool {
+	    	return a.first < b.first;
+		}
+	);
+
+	_closest_cache_ref = tile;
+}
+
+
+Town *CMCalcClosestTownFromTile(TileIndex tile, uint threshold = INT_MAX)
+{
+	if (_closest_cache_ref == INVALID_TILE
+	    	|| DistanceManhattan(_closest_cache_ref, tile) > CLOSEST_CACHE_THRESHOLD) {
+		RebuildClosestHash(tile);
+		// RebuildClosestHash(TileXY(
+		//     TileX(tile) + CLOSEST_CACHE_THRESHOLD / 2,
+		//     TileY(tile) + CLOSEST_CACHE_THRESHOLD / 2));
+	}
+	int ref_dist = DistanceManhattan(_closest_cache_ref, tile);
+
+	uint best = threshold;
+	Town *best_town = NULL;
+
+	for (auto p: _closest_cache) {
+		if (p.first > best + ref_dist)
+			break;
+		uint dist = DistanceManhattan(tile, p.second->xy);
+		if (dist < best) {
+			best = dist;
+			best_town = p.second;
+		}
+	}
+
+	return best_town;
+}
+
+// Copy ClosestTownFromTile but uses CMCalcClosestTownFromTile
+Town *CMClosestTownFromTile(TileIndex tile, uint threshold)
+{
+	switch (GetTileType(tile)) {
+		case MP_ROAD:
+			if (IsRoadDepot(tile)) return CalcClosestTownFromTile(tile, threshold);
+
+			if (!HasTownOwnedRoad(tile)) {
+				TownID tid = GetTownIndex(tile);
+
+				if (tid == (TownID)INVALID_TOWN) {
+					/* in the case we are generating "many random towns", this value may be INVALID_TOWN */
+					if (_generating_world) return CalcClosestTownFromTile(tile, threshold);
+					assert(Town::GetNumItems() == 0);
+					return NULL;
+				}
+
+				assert(Town::IsValidID(tid));
+				Town *town = Town::Get(tid);
+
+				if (DistanceManhattan(tile, town->xy) >= threshold) town = NULL;
+
+				return town;
+			}
+			FALLTHROUGH;
+
+		case MP_HOUSE:
+			return Town::GetByTile(tile);
+
+		default:
+			return CMCalcClosestTownFromTile(tile, threshold);
+	}
+}
 
 /**
  * Draw the zoning sprites.
@@ -76,7 +164,7 @@ bool IsTileWithinAcceptanceZoneOfStation(TileIndex tile) {
 
 //Check the opinion of the local authority in the tile.
 SpriteID TileZoneCheckOpinionEvaluation(TileIndex tile, Owner owner) {
-	Town *town = ClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
+	Town *town = CMClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
 
 	if (town == NULL) return INVALID_SPRITE_ID; // no town
 	else if (HasBit(town->have_ratings, owner)) {  // good : bad
@@ -214,7 +302,7 @@ SpriteID TileZoneCheckNewCBBorders(TileIndex tile) {
 
 //Check CB town acceptance area
 SpriteID TileZoneCheckCBBorders(TileIndex tile) {
-	Town *town = CalcClosestTownFromTile(tile);
+	Town *town = CMCalcClosestTownFromTile(tile);
 
 	if (town != NULL) {
 		if (DistanceManhattan(town->xy, tile) <= _settings_client.gui.cb_distance_check) {
@@ -238,7 +326,7 @@ SpriteID TileZoneCheckCBTownBorders(TileIndex tile) {
 
 //Check which advertisement zone(small, medium, large) tile belongs to
 SpriteID TileZoneCheckTownAdvertisementZones(TileIndex tile) {
-	Town *town = CalcClosestTownFromTile(tile, 21U);
+	Town *town = CMCalcClosestTownFromTile(tile, 21U);
 	if (town == NULL) return INVALID_SPRITE_ID; //nothing
 
 	uint dist = DistanceManhattan(town->xy, tile);

@@ -1803,6 +1803,9 @@ void ResetTownsGrowthTiles() {
 	_towns_growth_tiles.clear();
 }
 
+
+extern TileIndex _closest_cache_ref;
+
 /**
  * Does the actual town creation.
  *
@@ -1897,6 +1900,7 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 	} while (--i);
 
 	t->cache.num_houses -= x;
+	_closest_cache_ref = INVALID_TILE;
 	UpdateTownRadius(t);
 	UpdateTownMaxPass(t);
 	UpdateAirportsNoise();
