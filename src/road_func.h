@@ -1,4 +1,4 @@
-/* $Id: road_func.h 26105 2013-11-25 13:16:06Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -39,7 +39,7 @@ static inline bool IsValidRoadType(RoadType rt)
 
 /**
  * Whether the given roadtype is valid.
- * @param rt the roadtype to check for validness
+ * @param r the roadtype to check for validness
  * @return true if and only if valid
  */
 static inline bool IsValidRoadBits(RoadBits r)

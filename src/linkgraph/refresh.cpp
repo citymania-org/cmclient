@@ -1,4 +1,4 @@
-/* $Id: refresh.cpp 27614 2016-07-10 12:17:00Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

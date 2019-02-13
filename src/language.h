@@ -1,4 +1,4 @@
-/* $Id: language.h 27756 2017-02-26 19:40:53Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -105,7 +105,7 @@ extern LanguageList _languages;
 extern const LanguageMetadata *_current_language;
 
 #ifdef WITH_ICU_SORT
-extern Collator *_current_collator;
+extern icu::Collator *_current_collator;
 #endif /* WITH_ICU_SORT */
 
 bool ReadLanguagePack(const LanguageMetadata *lang);

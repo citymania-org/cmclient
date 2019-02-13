@@ -1,4 +1,4 @@
-/* $Id: script_scanner.cpp 26617 2014-05-25 19:53:46Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -134,7 +134,7 @@ void ScriptScanner::RegisterScript(ScriptInfo *info)
 
 	if (this->info_list.find(script_name) != this->info_list.end()) {
 		/* This script was already registered */
-#ifdef WIN32
+#ifdef _WIN32
 		/* Windows doesn't care about the case */
 		if (strcasecmp(this->info_list[script_name]->GetMainScript(), info->GetMainScript()) == 0) {
 #else

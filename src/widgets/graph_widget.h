@@ -1,4 +1,4 @@
-/* $Id: graph_widget.h 23735 2012-01-03 20:26:05Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

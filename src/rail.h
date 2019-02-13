@@ -1,4 +1,4 @@
-/* $Id: rail.h 27687 2016-12-10 13:26:29Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,10 +26,12 @@
 enum RailTypeFlags {
 	RTF_CATENARY          = 0,                           ///< Bit number for drawing a catenary.
 	RTF_NO_LEVEL_CROSSING = 1,                           ///< Bit number for disallowing level crossings.
+	RTF_HIDDEN            = 2,                           ///< Bit number for hiding from selection.
 
 	RTFB_NONE              = 0,                          ///< All flags cleared.
 	RTFB_CATENARY          = 1 << RTF_CATENARY,          ///< Value for drawing a catenary.
 	RTFB_NO_LEVEL_CROSSING = 1 << RTF_NO_LEVEL_CROSSING, ///< Value for disallowing level crossings.
+	RTFB_HIDDEN            = 1 << RTF_HIDDEN,            ///< Value for hiding from selection.
 };
 DECLARE_ENUM_AS_BIT_SET(RailTypeFlags)
 
@@ -239,7 +241,7 @@ public:
 	 * When #INVALID_DATE or a vehicle using this railtype gets introduced earlier,
 	 * the vehicle's introduction date will be used instead for this railtype.
 	 * The introduction at this date is furthermore limited by the
-	 * #introduction_required_types.
+	 * #introduction_required_railtypes.
 	 */
 	Date introduction_date;
 
@@ -419,6 +421,7 @@ Foundation GetRailFoundation(Slope tileh, TrackBits bits);
 
 
 bool HasRailtypeAvail(const CompanyID company, const RailType railtype);
+bool HasAnyRailtypesAvail(const CompanyID company);
 bool ValParamRailtype(const RailType rail);
 
 RailTypes AddDateIntroducedRailTypes(RailTypes current, Date date);
@@ -434,6 +437,7 @@ RailType AllocateRailType(RailTypeLabel label);
 
 extern RailType _sorted_railtypes[RAILTYPE_END];
 extern uint8 _sorted_railtypes_size;
+extern RailTypes _railtypes_hidden_mask;
 
 /**
  * Loop header for iterating over railtypes, sorted by sortorder.

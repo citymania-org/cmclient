@@ -1,4 +1,4 @@
-/* $Id: script_controller.cpp 26774 2014-09-06 17:46:56Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

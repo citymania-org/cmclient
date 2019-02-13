@@ -1,4 +1,4 @@
-/* $Id: engine_type.h 27668 2016-10-16 14:59:44Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -137,7 +137,7 @@ struct EngineInfo {
 	byte load_amount;
 	byte climates;      ///< Climates supported by the engine.
 	CargoID cargo_type;
-	uint32 refit_mask;
+	CargoTypes refit_mask;
 	byte refit_cost;
 	byte misc_flags;    ///< Miscellaneous flags. @see EngineMiscFlags
 	byte callback_mask; ///< Bitmask of vehicle callbacks that have to be called

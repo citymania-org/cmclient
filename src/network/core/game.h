@@ -1,4 +1,4 @@
-/* $Id: game.h 17699 2009-10-04 20:00:56Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -55,6 +55,8 @@ struct NetworkGameInfo : NetworkServerGameInfo {
 	byte spectators_max;                            ///< Max spectators allowed on server
 	byte map_set;                                   ///< Graphical set
 };
+
+const char * GetNetworkRevisionString();
 
 #endif /* ENABLE_NETWORK */
 

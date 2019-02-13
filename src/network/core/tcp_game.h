@@ -1,4 +1,4 @@
-/* $Id: tcp_game.h 26056 2013-11-22 21:50:43Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: bitmath_func.hpp 25685 2013-08-05 20:37:29Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -302,6 +302,7 @@ static inline bool HasAtMostOneBit(T value)
 template <typename T>
 static inline T ROL(const T x, const uint8 n)
 {
+	if (n == 0) return x;
 	return (T)(x << n | x >> (sizeof(x) * 8 - n));
 }
 
@@ -317,6 +318,7 @@ static inline T ROL(const T x, const uint8 n)
 template <typename T>
 static inline T ROR(const T x, const uint8 n)
 {
+	if (n == 0) return x;
 	return (T)(x >> n | x << (sizeof(x) * 8 - n));
 }
 

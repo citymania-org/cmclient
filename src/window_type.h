@@ -1,4 +1,4 @@
-/* $Id: window_type.h 27286 2015-05-16 12:08:06Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -680,6 +680,18 @@ enum WindowClass {
 	 *   - 0 = #SavePresetWidgets
 	 */
 	WC_SAVE_PRESET,
+
+	/**
+	 * Framerate display; %Window numbers:
+	 *   - 0 = #FramerateDisplayWidgets
+	 */
+	WC_FRAMERATE_DISPLAY,
+
+	/**
+	 * Frame time graph; %Window numbers:
+	 *   - 0 = #FrametimeGraphWindowWidgets
+	 */
+	WC_FRAMETIME_GRAPH,
 
 	WC_INVALID = 0xFFFF, ///< Invalid window.
 };

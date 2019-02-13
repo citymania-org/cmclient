@@ -1,4 +1,4 @@
-/* $Id: story_base.h 25621 2013-07-21 15:21:55Z zuu $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

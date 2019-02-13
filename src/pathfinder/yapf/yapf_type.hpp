@@ -1,4 +1,4 @@
-/* $Id: yapf_type.hpp 27885 2017-06-22 16:57:06Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

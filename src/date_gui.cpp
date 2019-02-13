@@ -1,4 +1,4 @@
-/* $Id: date_gui.cpp 26657 2014-06-20 20:57:32Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

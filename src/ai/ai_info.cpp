@@ -1,4 +1,4 @@
-/* $Id: ai_info.cpp 27780 2017-03-11 20:50:26Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -29,12 +29,12 @@ static bool CheckAPIVersion(const char *api_version)
 	return strcmp(api_version, "0.7") == 0 || strcmp(api_version, "1.0") == 0 || strcmp(api_version, "1.1") == 0 ||
 			strcmp(api_version, "1.2") == 0 || strcmp(api_version, "1.3") == 0 || strcmp(api_version, "1.4") == 0 ||
 			strcmp(api_version, "1.5") == 0 || strcmp(api_version, "1.6") == 0 || strcmp(api_version, "1.7") == 0 ||
-			strcmp(api_version, "1.8") == 0;
+			strcmp(api_version, "1.8") == 0 || strcmp(api_version, "1.9") == 0;
 }
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #undef GetClassName
-#endif /* WIN32 */
+#endif /* _WIN32 */
 template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 
 /* static */ void AIInfo::RegisterAPI(Squirrel *engine)

@@ -1,4 +1,4 @@
-/* $Id: dropdown_type.h 26088 2013-11-24 15:17:53Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

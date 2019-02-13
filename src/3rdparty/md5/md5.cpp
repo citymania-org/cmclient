@@ -1,4 +1,4 @@
-/* $Id: md5.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /** @file md5.cpp Creating MD5 checksums of files. */
 

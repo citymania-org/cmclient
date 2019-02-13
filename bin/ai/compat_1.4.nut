@@ -1,4 +1,4 @@
-/* $Id: compat_1.4.nut 26410 2014-03-17 20:28:48Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -8,3 +8,10 @@
  */
 
 AILog.Info("1.4 API compatibility in effect.");
+
+/* 1.9 adds a vehicle type parameter. */
+AIBridge._GetName <- AIBridge.GetName;
+AIBridge.GetName <- function(bridge_id)
+{
+	return AIBridge._GetName(bridge_id, AIVehicle.VT_RAIL);
+}

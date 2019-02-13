@@ -1,4 +1,4 @@
-/* $Id: math_func.hpp 26651 2014-06-17 19:01:45Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -343,6 +343,23 @@ static inline int RoundDivSU(int a, uint b)
 	} else {
 		/* -0.5 is rounded to 0 */
 		return (a - ((int)b - 1) / 2) / (int)b;
+	}
+}
+
+/**
+ * Computes (a / b) rounded away from zero.
+ * @param a Numerator
+ * @param b Denominator
+ * @return Quotient, rounded away from zero
+ */
+static inline int DivAwayFromZero(int a, uint b)
+{
+	const int _b = static_cast<int>(b);
+	if (a > 0) {
+		return (a + _b - 1) / _b;
+	} else {
+		/* Note: Behaviour of negative numerator division is truncation toward zero. */
+		return (a - _b + 1) / _b;
 	}
 }
 

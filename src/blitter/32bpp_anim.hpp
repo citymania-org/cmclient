@@ -1,4 +1,4 @@
-/* $Id: 32bpp_anim.hpp 27796 2017-03-18 17:14:53Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,14 +18,16 @@
 class Blitter_32bppAnim : public Blitter_32bppOptimized {
 protected:
 	uint16 *anim_buf;    ///< In this buffer we keep track of the 8bpp indexes so we can do palette animation
+	void *anim_alloc;    ///< The raw allocated buffer, not necessarily aligned correctly
 	int anim_buf_width;  ///< The width of the animation buffer.
 	int anim_buf_height; ///< The height of the animation buffer.
-	int anim_buf_pitch;  ///< The pitch of the animation buffer.
+	int anim_buf_pitch;  ///< The pitch of the animation buffer (width rounded up to 16 byte boundary).
 	Palette palette;     ///< The current palette.
 
 public:
 	Blitter_32bppAnim() :
 		anim_buf(NULL),
+		anim_alloc(NULL),
 		anim_buf_width(0),
 		anim_buf_height(0),
 		anim_buf_pitch(0)
@@ -38,6 +40,7 @@ public:
 	/* virtual */ void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom);
 	/* virtual */ void DrawColourMappingRect(void *dst, int width, int height, PaletteID pal);
 	/* virtual */ void SetPixel(void *video, int x, int y, uint8 colour);
+	/* virtual */ void DrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width, int dash);
 	/* virtual */ void DrawRect(void *video, int width, int height, uint8 colour);
 	/* virtual */ void CopyFromBuffer(void *video, const void *src, int width, int height);
 	/* virtual */ void CopyToBuffer(const void *video, void *dst, int width, int height);
@@ -56,6 +59,15 @@ public:
 	inline Colour LookupColourInPalette(uint index)
 	{
 		return this->palette.palette[index];
+	}
+
+	inline int ScreenToAnimOffset(const uint32 *video)
+	{
+		int raw_offset = video - (const uint32 *)_screen.dst_ptr;
+		if (_screen.pitch == this->anim_buf_pitch) return raw_offset;
+		int lines = raw_offset / _screen.pitch;
+		int across = raw_offset % _screen.pitch;
+		return across + (lines * this->anim_buf_pitch);
 	}
 
 	template <BlitterMode mode> void Draw(const Blitter::BlitterParams *bp, ZoomLevel zoom);

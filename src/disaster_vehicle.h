@@ -1,4 +1,4 @@
-/* $Id: disaster_vehicle.h 26872 2014-09-21 11:12:42Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -48,7 +48,7 @@ struct DisasterVehicle FINAL : public SpecializedVehicle<DisasterVehicle, VEH_DI
 	virtual ~DisasterVehicle() {}
 
 	void UpdatePosition(int x, int y, int z);
-	void UpdateDeltaXY(Direction direction);
+	void UpdateDeltaXY();
 	void UpdateImage();
 	bool Tick();
 };

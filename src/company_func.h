@@ -1,4 +1,4 @@
-/* $Id: company_func.h 24996 2013-02-14 17:08:56Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

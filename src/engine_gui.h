@@ -1,4 +1,4 @@
-/* $Id: engine_gui.h 26804 2014-09-07 16:14:06Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

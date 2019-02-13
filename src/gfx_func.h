@@ -1,4 +1,4 @@
-/* $Id: gfx_func.h 27829 2017-03-25 23:19:41Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -187,7 +187,7 @@ int GetCharacterHeight(FontSize size);
 
 extern DrawPixelInfo *_cur_dpi;
 
-TextColour GetContrastColour(uint8 background);
+TextColour GetContrastColour(uint8 background, uint8 threshold = 128);
 
 /**
  * All 16 colour gradients

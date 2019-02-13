@@ -1,4 +1,4 @@
-/* $Id: dropdown_widget.h 23600 2011-12-19 20:46:17Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

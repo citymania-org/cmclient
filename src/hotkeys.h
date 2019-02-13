@@ -1,4 +1,4 @@
-/* $Id: hotkeys.h 25669 2013-08-05 20:36:28Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

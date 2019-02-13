@@ -12,7 +12,7 @@
 ##case small
 
 
-# $Id: norwegian_bokmal.txt 27980 2018-03-11 12:24:32Z frosch $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -671,10 +671,7 @@ STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}Velg pro
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}Skru av/på tilfeldig program
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}Vis musikkspormeny
 
-STR_ERROR_NO_SONGS                                              :{WHITE}Et musikksett uten sanger er valgt. Ingen sanger vil bli avspilt
-
 # Playlist window
-STR_PLAYLIST_MUSIC_PROGRAM_SELECTION                            :{WHITE}Musikkprogram
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM} "{STRING}"
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}Sporliste
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}Program - '{STRING}'
@@ -1257,6 +1254,7 @@ STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Det er i
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Vedlikehold av infrastruktur: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Når aktivert, medfører infrastruktur vedlikeholdskostnader. Kostnadene vokser over-proporsjonalt med nettverkets størrelse, og påvirker dermed større selskaper mer enn de små
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Flyplasser utgår aldri: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Aktivering av denne innstillingen gjør at hver type flyplass forblir tilgjengelig for alltid etter at sin introduksjon
 
@@ -1340,8 +1338,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Farge på terre
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Grønn
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Mørkegrønn
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Fiolett
-STR_CONFIG_SETTING_REVERSE_SCROLLING                            :Snu rulleretningen: {STRING}
-STR_CONFIG_SETTING_REVERSE_SCROLLING_HELPTEXT                   :Opptreden ved rulling av kartet med høyre museknapp. Når deaktivert, beveger musen kameraet. Når aktivert, beveger musen kartet
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Myk rulling: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Velge hvordan synsfeltet ruller til en bestemt posisjon når du klikker på det lille kartet, eller ved utstedelse av en kommando for å gå til et bestemt objekt på kartet. Hvis aktivert, ruller synsfeltet jevnt, og hvis deaktivert hopper det direkte til det valgte punktet
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Vis målingsverktøy ved bruk av byggingsverktøy: {STRING}
@@ -1373,8 +1369,6 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Kommando+klikk
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Ctrl+klikk
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Av
 
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Venstre-klikk rulling: {STRING}
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Tillat rulling av kartet ved å dra det med den venstre museknappen. Dette er spesielt nyttig når du bruker en berøringsskjerm
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Lukk vinduet med høyreklikk: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :Lukker et vindu ved å høyreklikke i det. Deaktiverer verktøytipset med høyreklikk!
 
@@ -1812,7 +1806,6 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Endre n�
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Tillat endring av produksjonsmengder: {ORANGE}{STRING}
 
 # Livery window
-STR_LIVERY_CAPTION                                              :{WHITE}Ny firmafarge
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Vis generelle fargetemaer
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Vis togfargetemaer
@@ -2695,7 +2688,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Firma-eid lando
 STR_ABOUT_OPENTTD                                               :{WHITE}Om OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Opprinnelig opphavsbeskyttet {COPYRIGHT} 1995 Chris Sawyer, Alle rettigheter reservert
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versjon {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2018 OpenTTD-teamet
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 OpenTTD-teamet
+
+# Framerate display window
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Lagre spill
@@ -2988,8 +2988,6 @@ STR_TOWN_POPULATION                                             :{BLACK}Verdensb
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} (By)
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Innbyggertall: {ORANGE}{COMMA}{BLACK}  Antall hus: {ORANGE}{COMMA}
-STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Passasjerer forrige måned: {ORANGE}{COMMA}{BLACK}  maks: {ORANGE}{COMMA}
-STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Post forrige måned: {ORANGE}{COMMA}{BLACK}  maks: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Varebehov for byvekst:
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} påkrevd
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} nødvendig om vinteren
@@ -3294,20 +3292,10 @@ STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Gå til 
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Produksjonsnivå: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Næringen har annonsert snarlig nedleggelse!
 
-############ range for requires starts
-STR_INDUSTRY_VIEW_REQUIRES_CARGO                                :{BLACK}Trenger: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Trenger: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Trenger: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
-############ range for requires ends
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Krever:
 STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{STRING}{BLACK}{3:STRING}
 STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} venter{STRING}
-
-############ range for produces starts
-STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Produserer: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Produserer: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-############ range for produces ends
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Endre produksjon (multiplum av 8, opptil 2040)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Endre produksjonsnivå (prosentsats, opptil 800{NBSP}%)
@@ -4229,7 +4217,6 @@ STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}For mang
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}For mange enkeltdeler på jernbanestasjonen
 STR_ERROR_TOO_MANY_BUS_STOPS                                    :{WHITE}For mange bussholdeplasser
 STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}For mange lasteterminaler
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_STATION                          :{WHITE}For nærme en annen stasjon/lasteterminal
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}For nærme enn annen havn
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}For nærme en annen flyplass
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}Kan ikke endre stasjonens navn...

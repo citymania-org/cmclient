@@ -1,4 +1,4 @@
-/* $Id: story_type.h 25371 2013-06-09 13:18:37Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: train_gui.cpp 27936 2017-12-10 13:45:53Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

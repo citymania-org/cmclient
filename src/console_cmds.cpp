@@ -1,4 +1,4 @@
-/* $Id: console_cmds.cpp 27914 2017-09-10 14:03:29Z adf88 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -62,7 +62,7 @@ public:
 
 	/**
 	 * (Re-)validate the file storage cache. Only makes a change if the storage was invalid, or if \a force_reload.
-	 * @param Always reload the file storage cache.
+	 * @param force_reload Always reload the file storage cache.
 	 */
 	void ValidateFileList(bool force_reload = false)
 	{
@@ -256,8 +256,8 @@ DEF_CONSOLE_CMD(ConResetTile)
 
 /**
  * Scroll to a tile on the map.
- * @param arg1 tile tile number or tile x coordinate.
- * @param arg2 optionally tile y coordinate.
+ * param x tile number or tile x coordinate.
+ * param y optional y coordinate.
  * @note When only one argument is given it is intepreted as the tile number.
  *       When two arguments are given, they are interpreted as the tile's x
  *       and y coordinates.
@@ -304,7 +304,7 @@ DEF_CONSOLE_CMD(ConScrollToTile)
 
 /**
  * Save the map to a file.
- * @param filename the filename to save the map to.
+ * param filename the filename to save the map to.
  * @return True when help was displayed or the file attempted to be saved.
  */
 DEF_CONSOLE_CMD(ConSave)
@@ -836,7 +836,7 @@ DEF_CONSOLE_CMD(ConResetCompany)
 	}
 
 	/* It is safe to remove this company */
-	DoCommandP(0, 2 | index << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_DELETE | index << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
 	IConsolePrint(CC_DEFAULT, "Company deleted.");
 
 	return true;
@@ -1178,7 +1178,7 @@ DEF_CONSOLE_CMD(ConStartAI)
 	}
 
 	/* Start a new AI company */
-	DoCommandP(0, 1 | INVALID_COMPANY << 16, 0, CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_NEW_AI | INVALID_COMPANY << 16, 0, CMD_COMPANY_CTRL);
 
 	return true;
 }
@@ -1213,8 +1213,8 @@ DEF_CONSOLE_CMD(ConReloadAI)
 	}
 
 	/* First kill the company of the AI, then start a new one. This should start the current AI again */
-	DoCommandP(0, 2 | company_id << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
-	DoCommandP(0, 1 | company_id << 16, 0, CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_DELETE | company_id << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_NEW_AI | company_id << 16, 0, CMD_COMPANY_CTRL);
 	IConsolePrint(CC_DEFAULT, "AI reloaded.");
 
 	return true;
@@ -1250,7 +1250,7 @@ DEF_CONSOLE_CMD(ConStopAI)
 	}
 
 	/* Now kill the company of the AI. */
-	DoCommandP(0, 2 | company_id << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_DELETE | company_id << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
 	IConsolePrint(CC_DEFAULT, "AI stopped, company deleted.");
 
 	return true;
@@ -1895,6 +1895,37 @@ static void IConsoleDebugLibRegister()
 }
 #endif
 
+DEF_CONSOLE_CMD(ConFramerate)
+{
+	extern void ConPrintFramerate(); // framerate_gui.cpp
+
+	if (argc == 0) {
+		IConsoleHelp("Show frame rate and game speed information");
+		return true;
+	}
+
+	ConPrintFramerate();
+	return true;
+}
+
+DEF_CONSOLE_CMD(ConFramerateWindow)
+{
+	extern void ShowFramerateWindow();
+
+	if (argc == 0) {
+		IConsoleHelp("Open the frame rate window");
+		return true;
+	}
+
+	if (_network_dedicated) {
+		IConsoleError("Can not open frame rate window on a dedicated server");
+		return false;
+	}
+
+	ShowFramerateWindow();
+	return true;
+}
+
 /*******************************
  * console command registration
  *******************************/
@@ -2025,6 +2056,8 @@ void IConsoleStdLibRegister()
 #ifdef _DEBUG
 	IConsoleDebugLibRegister();
 #endif
+	IConsoleCmdRegister("fps",     ConFramerate);
+	IConsoleCmdRegister("fps_wnd", ConFramerateWindow);
 
 	/* NewGRF development stuff */
 	IConsoleCmdRegister("reload_newgrfs",  ConNewGRFReload, ConHookNewGRFDeveloperTool);

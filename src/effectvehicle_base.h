@@ -1,4 +1,4 @@
-/* $Id: effectvehicle_base.h 23735 2012-01-03 20:26:05Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,7 +32,7 @@ struct EffectVehicle FINAL : public SpecializedVehicle<EffectVehicle, VEH_EFFECT
 	/** We want to 'destruct' the right class. */
 	virtual ~EffectVehicle() {}
 
-	void UpdateDeltaXY(Direction direction);
+	void UpdateDeltaXY();
 	bool Tick();
 	TransparencyOption GetTransparencyOption() const;
 };

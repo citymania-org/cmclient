@@ -1,4 +1,4 @@
-/* $Id: object_map.h 26878 2014-09-21 11:23:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

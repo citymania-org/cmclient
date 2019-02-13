@@ -1,4 +1,4 @@
-/* $Id: graph_gui.h 21610 2010-12-23 16:54:41Z smatz $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

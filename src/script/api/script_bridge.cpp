@@ -1,4 +1,4 @@
-/* $Id: script_bridge.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,7 @@
 #include "../../bridge_map.h"
 #include "../../strings_func.h"
 #include "../../date_func.h"
+#include "table/strings.h"
 
 #include "../../safeguards.h"
 
@@ -135,11 +136,12 @@ static void _DoCommandReturnBuildBridge1(class ScriptInstance *instance)
 	return ScriptObject::DoCommand(tile, 0, 0, CMD_LANDSCAPE_CLEAR);
 }
 
-/* static */ char *ScriptBridge::GetName(BridgeID bridge_id)
+/* static */ char *ScriptBridge::GetName(BridgeID bridge_id, ScriptVehicle::VehicleType vehicle_type)
 {
+	EnforcePrecondition(NULL, vehicle_type == ScriptVehicle::VT_ROAD || vehicle_type == ScriptVehicle::VT_RAIL || vehicle_type == ScriptVehicle::VT_WATER);
 	if (!IsValidBridge(bridge_id)) return NULL;
 
-	return GetString(::GetBridgeSpec(bridge_id)->transport_name[0]);
+	return GetString(vehicle_type == ScriptVehicle::VT_WATER ? STR_LAI_BRIDGE_DESCRIPTION_AQUEDUCT : ::GetBridgeSpec(bridge_id)->transport_name[vehicle_type]);
 }
 
 /* static */ int32 ScriptBridge::GetMaxSpeed(BridgeID bridge_id)

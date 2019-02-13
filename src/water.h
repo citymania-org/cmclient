@@ -1,4 +1,4 @@
-/* $Id: water.h 25229 2013-05-06 20:48:18Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

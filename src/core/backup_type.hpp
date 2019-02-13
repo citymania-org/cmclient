@@ -1,4 +1,4 @@
-/* $Id: backup_type.hpp 19931 2010-06-05 12:16:12Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -53,7 +53,7 @@ struct Backup {
 		{
 			/* We cannot assert here, as missing restoration is 'normal' when exceptions are thrown.
 			 * Exceptions are especially used to abort world generation. */
-			DEBUG(misc, 0, "%s:%d: Backupped value was not restored!", this->file, this->line);
+			DEBUG(misc, 0, "%s:%d: Backed-up value was not restored!", this->file, this->line);
 			this->Restore();
 		}
 	}

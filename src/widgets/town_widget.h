@@ -1,4 +1,4 @@
-/* $Id: town_widget.h 25094 2013-03-17 15:41:40Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

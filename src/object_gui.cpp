@@ -1,4 +1,4 @@
-/* $Id: object_gui.cpp 27438 2015-11-07 15:07:18Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -520,10 +520,7 @@ static WindowDesc _build_object_desc(
 	_nested_build_object_widgets, lengthof(_nested_build_object_widgets)
 );
 
-/**
- * Show our object picker.
- * @param w The toolbar window we're associated with.
- */
+/** Show our object picker.  */
 void ShowBuildObjectPicker()
 {
 	/* Don't show the place object button when there are no objects to place. */

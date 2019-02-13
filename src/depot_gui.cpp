@@ -1,4 +1,4 @@
-/* $Id: depot_gui.cpp 27938 2017-12-10 13:48:49Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -908,9 +908,16 @@ struct DepotWindow : Window {
 	 */
 	virtual bool OnVehicleSelect(const Vehicle *v)
 	{
-		if (DoCommandP(this->window_number, v->index, _ctrl_pressed ? 1 : 0, CMD_CLONE_VEHICLE | CMD_MSG(STR_ERROR_CAN_T_BUY_TRAIN + v->type), CcCloneVehicle)) {
-			ResetObjectToPlace();
+		if (_ctrl_pressed) {
+			/* Share-clone, do not open new viewport, and keep tool active */
+			DoCommandP(this->window_number, v->index, 1, CMD_CLONE_VEHICLE | CMD_MSG(STR_ERROR_CAN_T_BUY_TRAIN + v->type), NULL);
+		} else {
+			/* Copy-clone, open viewport for new vehicle, and deselect the tool (assume player wants to changs things on new vehicle) */
+			if (DoCommandP(this->window_number, v->index, 0, CMD_CLONE_VEHICLE | CMD_MSG(STR_ERROR_CAN_T_BUY_TRAIN + v->type), CcCloneVehicle)) {
+				ResetObjectToPlace();
+			}
 		}
+
 		return true;
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: toolbar_widget.h 27671 2016-10-30 17:36:57Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -33,7 +33,7 @@ enum ToolbarNormalWidgets {
 	WID_TN_TRAINS        = WID_TN_VEHICLE_START, ///< Train menu.
 	WID_TN_ROADVEHS,      ///< Road vehicle menu.
 	WID_TN_SHIPS,         ///< Ship menu.
-	WID_TN_AIRCRAFTS,     ///< Aircraft menu.
+	WID_TN_AIRCRAFT,     ///< Aircraft menu.
 	WID_TN_ZOOM_IN,       ///< Zoom in the main viewport.
 	WID_TN_ZOOM_OUT,      ///< Zoom out the main viewport.
 	WID_TN_BUILDING_TOOLS_START, ///< Helper for the offset of the building tools

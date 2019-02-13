@@ -1,4 +1,4 @@
-/* $Id: cpu.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -18,7 +18,7 @@
 
 /* rdtsc for MSC_VER, uses simple inline assembly, or _rdtsc
  * from external win64.asm because VS2005 does not support inline assembly */
-#if defined(_MSC_VER) && !defined(RDTSC_AVAILABLE) && !defined(WINCE)
+#if defined(_MSC_VER) && !defined(RDTSC_AVAILABLE)
 #include <intrin.h>
 uint64 ottd_rdtsc()
 {
@@ -71,10 +71,7 @@ uint64 ottd_rdtsc()
 /* In all other cases we have no support for rdtsc. No major issue,
  * you just won't be able to profile your code with TIC()/TOC() */
 #if !defined(RDTSC_AVAILABLE)
-/* MSVC (in case of WinCE) can't handle #warning */
-# if !defined(_MSC_VER)
 #warning "(non-fatal) No support for rdtsc(), you won't be able to profile with TIC/TOC"
-# endif
 uint64 ottd_rdtsc() {return 0;}
 #endif
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make_dos_binary_selfcontained.sh 25780 2013-09-19 07:42:13Z matthijs $
+# $Id$
 
 cd `dirname $0`
 cc -o exe2coff/exe2coff exe2coff/exe2coff.c || exit

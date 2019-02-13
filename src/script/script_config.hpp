@@ -1,4 +1,4 @@
-/* $Id: script_config.hpp 26493 2014-04-24 04:41:54Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -139,7 +139,7 @@ public:
 	/**
 	 * Randomize all settings the Script requested to be randomized.
 	 */
-	void AddRandomDeviation();
+	virtual void AddRandomDeviation();
 
 	/**
 	 * Is this config attached to an Script? In other words, is there a Script

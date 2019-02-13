@@ -1,4 +1,4 @@
-/* $Id: station_type.h 25890 2013-10-20 13:47:11Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

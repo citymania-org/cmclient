@@ -1,4 +1,4 @@
-/* $Id: newgrf_animation_base.h 24846 2012-12-23 21:09:09Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -31,7 +31,6 @@ template <typename Tbase, typename Tspec, typename Tobj, typename Textra, uint16
 struct AnimationBase {
 	/**
 	 * Animate a single tile.
-	 * @param cb          The callback to actually call.
 	 * @param spec        Specification related to the tile.
 	 * @param obj         Object related to the tile.
 	 * @param tile        Tile to animate changes for.

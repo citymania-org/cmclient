@@ -1,4 +1,4 @@
-/* $Id: cargoaction.h 26108 2013-11-25 14:30:22Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

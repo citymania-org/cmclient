@@ -1,4 +1,4 @@
-/* $Id: tile_map.h 27148 2015-02-14 12:53:07Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -34,7 +34,17 @@ static inline uint TileHeight(TileIndex tile)
 	return _m[tile].height;
 }
 
-uint TileHeightOutsideMap(int x, int y);
+/**
+ * Returns the height of a tile, also for tiles outside the map (virtual "black" tiles).
+ *
+ * @param x X coordinate of the tile, may be ouside the map.
+ * @param y Y coordinate of the tile, may be ouside the map.
+ * @return The height in the same unit as TileHeight.
+ */
+static inline uint TileHeightOutsideMap(int x, int y)
+{
+	return TileHeight(TileXY(Clamp(x, 0, MapMaxX()), Clamp(y, 0, MapMaxY())));
+}
 
 /**
  * Sets the height of a tile.
@@ -44,7 +54,7 @@ uint TileHeightOutsideMap(int x, int y);
  * @param tile The tile to change the height
  * @param height The new height value of the tile
  * @pre tile < MapSize()
- * @pre heigth <= MAX_TILE_HEIGHT
+ * @pre height <= MAX_TILE_HEIGHT
  */
 static inline void SetTileHeight(TileIndex tile, uint height)
 {
@@ -67,11 +77,10 @@ static inline uint TilePixelHeight(TileIndex tile)
 }
 
 /**
- * Returns the tile height for a coordinate outside map.  Such a height is
- * needed for painting the area outside map using completely black tiles.
- * The idea is descending to heightlevel 0 as fast as possible.
- * @param x The X-coordinate (same unit as TileX).
- * @param y The Y-coordinate (same unit as TileY).
+ * Returns the height of a tile in pixels, also for tiles outside the map (virtual "black" tiles).
+ *
+ * @param x X coordinate of the tile, may be ouside the map.
+ * @param y Y coordinate of the tile, may be ouside the map.
  * @return The height in pixels in the same unit as TilePixelHeight.
  */
 static inline uint TilePixelHeightOutsideMap(int x, int y)
@@ -132,9 +141,9 @@ static inline void SetTileType(TileIndex tile, TileType type)
 }
 
 /**
- * Checks if a tile is a give tiletype.
+ * Checks if a tile is a given tiletype.
  *
- * This function checks if a tile got the given tiletype.
+ * This function checks if a tile has the given tiletype.
  *
  * @param tile The tile to check
  * @param type The type to check against
@@ -289,20 +298,15 @@ static inline int GetTilePixelZ(TileIndex tile)
 	return GetTileZ(tile) * TILE_HEIGHT;
 }
 
-int GetTilePixelZOutsideMap(int x, int y);
-
 /**
  * Get top height of the tile
- * @param t Tile to compute height of
+ * @param tile Tile to compute height of
  * @return Maximum height of the tile
  */
 static inline int GetTileMaxPixelZ(TileIndex tile)
 {
 	return GetTileMaxZ(tile) * TILE_HEIGHT;
 }
-
-int GetTileMaxPixelZOutsideMap(int x, int y);
-
 
 /**
  * Calculate a hash value from a tile position

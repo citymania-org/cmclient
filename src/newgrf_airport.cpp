@@ -1,4 +1,4 @@
-/* $Id: newgrf_airport.cpp 27984 2018-03-11 13:19:41Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -216,7 +216,6 @@ void AirportOverrideManager::SetEntitySpec(AirportSpec *as)
 
 /**
  * Store a value into the object's persistent storage.
- * @param object Object that we want to query.
  * @param pos Position in the persistent storage to use.
  * @param value Value to store.
  */

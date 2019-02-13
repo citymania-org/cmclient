@@ -1,4 +1,4 @@
-/* $Id: timetable_widget.h 23947 2012-02-14 17:04:06Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

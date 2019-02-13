@@ -1,4 +1,4 @@
-/* $Id: script_waypoint.hpp 23770 2012-01-07 18:37:22Z smatz $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

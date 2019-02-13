@@ -1,4 +1,4 @@
-/* $Id: station_widget.h 25365 2013-06-09 13:08:52Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

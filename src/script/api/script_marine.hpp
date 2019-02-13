@@ -1,4 +1,4 @@
-/* $Id: script_marine.hpp 23633 2011-12-19 21:05:36Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

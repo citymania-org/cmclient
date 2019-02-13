@@ -1,4 +1,4 @@
-/* $Id: ship_gui.cpp 27667 2016-10-16 14:58:38Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

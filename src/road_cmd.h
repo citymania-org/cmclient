@@ -1,4 +1,4 @@
-/* $Id: road_cmd.h 18809 2010-01-15 16:41:15Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: fontcache.h 27004 2014-10-12 20:43:25Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -63,6 +63,12 @@ public:
 	 * @return The units per EM value of the font.
 	 */
 	inline int GetUnitsPerEM() const { return this->units_per_em; }
+
+	/**
+	 * Get the nominal font size of the font.
+	 * @return The nominal font size.
+	 */
+	virtual int GetFontSize() const { return this->height; }
 
 	/**
 	 * Get the SpriteID mapped to the given key
@@ -143,6 +149,11 @@ public:
 	{
 		return this->parent != NULL;
 	}
+
+	/**
+	 * Is this a built-in sprite font?
+	 */
+	virtual bool IsBuiltInFont() = 0;
 };
 
 /** Get the SpriteID mapped to the given font size and key */

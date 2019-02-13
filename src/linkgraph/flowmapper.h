@@ -1,4 +1,4 @@
-/* $Id: flowmapper.h 26166 2013-12-20 14:57:44Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

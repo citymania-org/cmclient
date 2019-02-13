@@ -1,4 +1,4 @@
-/* $Id: random_func.hpp 25893 2013-10-20 14:48:08Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -29,7 +29,7 @@ struct Randomizer {
 	void SetSeed(uint32 seed);
 };
 extern Randomizer _random; ///< Random used in the game state calculations
-extern Randomizer _interactive_random; ///< Random used every else where is does not (directly) influence the game state
+extern Randomizer _interactive_random; ///< Random used everywhere else, where it does not (directly) influence the game state
 
 /** Stores the state of all random number generators */
 struct SavedRandomSeeds {

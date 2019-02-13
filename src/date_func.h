@@ -1,4 +1,4 @@
-/* $Id: date_func.h 22411 2011-05-02 17:42:12Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: pricebase.h 23931 2012-02-11 22:43:39Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

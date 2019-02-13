@@ -1,4 +1,4 @@
-/* $Id: heightmap.h 27650 2016-09-04 12:57:43Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

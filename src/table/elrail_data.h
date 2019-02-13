@@ -1,4 +1,4 @@
-/* $Id: elrail_data.h 27972 2018-03-05 21:24:48Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

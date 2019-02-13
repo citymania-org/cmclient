@@ -1,4 +1,4 @@
-/* $Id: script_event_types.hpp 26509 2014-04-25 15:40:32Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -363,7 +363,7 @@ private:
 class ScriptEventCompanyAskMerger : public ScriptEvent {
 public:
 	/**
-	 * @param owner The company that can be bough.
+	 * @param owner The company that can be bought.
 	 * @param value The value/costs of buying the company.
 	 */
 	ScriptEventCompanyAskMerger(Owner owner, int32 value) :

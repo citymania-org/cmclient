@@ -1,4 +1,4 @@
-/* $Id: rev.cpp.in 28002 2018-04-01 11:14:34Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,20 +26,18 @@ bool IsReleasedVersion()
 
 /**
  * The text version of OpenTTD's revision.
- * This will be either "<major>.<minor>.<build>[-RC<rc>]",
- * "r<revision number>[M][-<branch>]" or "norev000".
+ * This will be either
+ * - "<tag>", like "<major>.<minor>.<build>[-RC<rc>]",
+ * - "<commitdate>-g<shorthash><modified>" in "master",
+ * - "<commitdate>-<branch>-g<shorthash><modified>" in other branches, or
+ * - "norev000", if the version is unknown.
  *
  * The major, minor and build are the numbers that describe releases of
  * OpenTTD (like 0.5.3). "-RC" is used to flag release candidates.
  *
- * The revision number is fairly straight forward. The M is to show that
- * the binary is made from modified source code. The branch shows the
- * branch the revision is of and will not be there when it is trunk.
- *
- * norev000 is for non-releases that are made on systems without
- * subversion or sources that are not a checkout of subversion.
+ * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "h24491fc8M-openttd";
+const char _openttd_revision[] = "1.9.0-beta2";
 
 /**
  * The text version of OpenTTD's build date.
@@ -50,6 +48,11 @@ const char _openttd_revision[] = "h24491fc8M-openttd";
 const char _openttd_build_date[] = __DATE__ " " __TIME__;
 
 /**
+ * The git revision hash of this version.
+ */
+const char _openttd_revision_hash[] = "6e211908588ab5272336d0d2db3bbb4020f7004f";
+
+/**
  * Let us know if current build was modified. This detection
  * works even in the case when revision string is overridden by
  * --revision argument.
@@ -57,7 +60,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
  * (compiling from sources without any version control software)
  * and 2 is for modified revision.
  */
-const byte _openttd_revision_modified = 2;
+const byte _openttd_revision_modified = 0;
 
 /**
  * The NewGRF revision of OTTD:
@@ -66,17 +69,17 @@ const byte _openttd_revision_modified = 2;
  * 24-27 minor version
  * 20-23 build
  *    19 1 if it is a release, 0 if it is not.
- *  0-18 revision number; 0 for releases and when the revision is unknown.
+ *  0-18 used to be the SVN revision, now just last revision before switch to git
  *
  * The 19th bit is there so the development/betas/alpha, etc. leading to a
  * final release will always have a lower version number than the released
  * version, thus making comparisons on specific revisions easy.
  */
-const uint32 _openttd_newgrf_version = 1 << 28 | 8 << 24 | 0 << 20 | 1 << 19 | (0 & ((1 << 19) - 1));
+const uint32 _openttd_newgrf_version = 1 << 28 | 9 << 24 | 0 << 20 | 0 << 19 | 28004;
 
 #ifdef __MORPHOS__
 /**
  * Variable used by MorphOS to show the version.
  */
-extern const char morphos_versions_tag[] = "$VER: OpenTTD h24491fc8M-openttd (06.04.18) OpenTTD Team [MorphOS, PowerPC]";
+extern const char morphos_versions_tag[] = "$VER: OpenTTD 1.9.0-beta2 (13.02.19) OpenTTD Team [MorphOS, PowerPC]";
 #endif

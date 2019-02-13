@@ -1,4 +1,4 @@
-/* $Id: script_stationlist.hpp 27003 2014-10-12 18:41:53Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

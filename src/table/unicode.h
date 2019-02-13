@@ -1,4 +1,4 @@
-/* $Id: unicode.h 23582 2011-12-17 21:42:11Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

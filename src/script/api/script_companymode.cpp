@@ -1,4 +1,4 @@
-/* $Id: script_companymode.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -10,6 +10,7 @@
 /** @file script_companymode.cpp Implementation of ScriptCompanyMode. */
 
 #include "../../stdafx.h"
+#include "../../company_base.h"
 #include "script_companymode.hpp"
 
 #include "../../safeguards.h"
@@ -17,6 +18,7 @@
 ScriptCompanyMode::ScriptCompanyMode(int company)
 {
 	if (company < OWNER_BEGIN || company >= MAX_COMPANIES) company = INVALID_COMPANY;
+	if (!::Company::IsValidID(company)) company = INVALID_COMPANY;
 
 	this->last_company = ScriptObject::GetCompany();
 	ScriptObject::SetCompany((CompanyID)company);

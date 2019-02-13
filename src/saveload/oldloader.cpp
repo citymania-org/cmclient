@@ -1,4 +1,4 @@
-/* $Id: oldloader.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -265,7 +265,7 @@ static SavegameType DetermineOldSavegameType(FILE *f, char *title, const char *l
 			case SGT_TTD: title = strecpy(title, "(TTD) ", last);    break;
 			default:      title = strecpy(title, "(broken) ", last); break;
 		}
-		title = strecpy(title, temp, last);
+		strecpy(title, temp, last);
 	}
 
 	return type;

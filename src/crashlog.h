@@ -1,4 +1,4 @@
-/* $Id: crashlog.h 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -85,6 +85,7 @@ protected:
 	char *LogConfiguration(char *buffer, const char *last) const;
 	char *LogLibraries(char *buffer, const char *last) const;
 	char *LogGamelog(char *buffer, const char *last) const;
+	char *LogRecentNews(char *buffer, const char *list) const;
 
 public:
 	/** Stub destructor to silence some compilers. */

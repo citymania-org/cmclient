@@ -1,4 +1,4 @@
-/* $Id: script_scanner.hpp 26617 2014-05-25 19:53:46Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

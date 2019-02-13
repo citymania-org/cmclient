@@ -1,4 +1,4 @@
-/* $Id: querystring_gui.h 25691 2013-08-05 20:37:53Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

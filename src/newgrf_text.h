@@ -1,4 +1,4 @@
-/* $Id: newgrf_text.h 27851 2017-04-09 21:58:07Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

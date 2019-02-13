@@ -1,4 +1,4 @@
-/* $Id: bridge.h 22413 2011-05-02 20:59:54Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

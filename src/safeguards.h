@@ -1,4 +1,4 @@
-/* $Id: safeguards.h 26651 2014-06-17 19:01:45Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

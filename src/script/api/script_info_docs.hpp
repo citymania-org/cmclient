@@ -1,4 +1,4 @@
-/* $Id: script_info_docs.hpp 26038 2013-11-18 20:09:09Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

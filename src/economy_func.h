@@ -1,4 +1,4 @@
-/* $Id: economy_func.h 24565 2012-10-01 19:31:55Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,7 +22,7 @@ void ResetPriceBaseMultipliers();
 void SetPriceBaseMultiplier(Price price, int factor);
 
 extern const ScoreInfo _score_info[];
-extern int _score_part[MAX_COMPANIES][SCORE_END];
+extern int64 _score_part[MAX_COMPANIES][SCORE_END];
 extern Economy _economy;
 /* Prices and also the fractional part. */
 extern Prices _price;

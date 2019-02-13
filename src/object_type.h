@@ -1,4 +1,4 @@
-/* $Id: object_type.h 25844 2013-10-12 16:35:50Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

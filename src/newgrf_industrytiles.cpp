@@ -1,4 +1,4 @@
-/* $Id: newgrf_industrytiles.cpp 27984 2018-03-11 13:19:41Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -296,7 +296,7 @@ bool StartStopIndustryTileAnimation(const Industry *ind, IndustryAnimationTrigge
  * @param tile Industry tile to trigger.
  * @param trigger Trigger to trigger.
  * @param ind Industry of the tile.
- * @param [in,out] reseed_industry Collects bits to reseed for the industry.
+ * @param[in,out] reseed_industry Collects bits to reseed for the industry.
  */
 static void DoTriggerIndustryTile(TileIndex tile, IndustryTileTrigger trigger, Industry *ind, uint32 &reseed_industry)
 {

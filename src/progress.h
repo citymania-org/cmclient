@@ -1,4 +1,4 @@
-/* $Id: progress.h 22820 2011-08-24 12:18:53Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

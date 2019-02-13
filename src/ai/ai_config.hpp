@@ -1,4 +1,4 @@
-/* $Id: ai_config.hpp 23735 2012-01-03 20:26:05Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -34,6 +34,7 @@ public:
 
 	/* virtual */ int GetSetting(const char *name) const;
 	/* virtual */ void SetSetting(const char *name, int value);
+	/* virtual */ void AddRandomDeviation();
 
 	/**
 	 * When ever the AI Scanner is reloaded, all infos become invalid. This

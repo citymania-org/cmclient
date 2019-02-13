@@ -1,4 +1,4 @@
-/* $Id: sound_func.h 22202 2011-03-05 18:00:48Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

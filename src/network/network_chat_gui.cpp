@@ -1,4 +1,4 @@
-/* $Id: network_chat_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

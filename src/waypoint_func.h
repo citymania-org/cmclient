@@ -1,4 +1,4 @@
-/* $Id: waypoint_func.h 21890 2011-01-22 14:52:20Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

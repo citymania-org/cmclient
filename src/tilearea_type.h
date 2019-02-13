@@ -1,4 +1,4 @@
-/* $Id: tilearea_type.h 26289 2014-02-02 14:53:26Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

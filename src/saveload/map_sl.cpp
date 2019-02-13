@@ -1,4 +1,4 @@
-/* $Id: map_sl.cpp 26878 2014-09-21 11:23:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,8 +22,8 @@ static uint32 _map_dim_x;
 static uint32 _map_dim_y;
 
 static const SaveLoadGlobVarList _map_dimensions[] = {
-	SLEG_CONDVAR(_map_dim_x, SLE_UINT32, 6, SL_MAX_VERSION),
-	SLEG_CONDVAR(_map_dim_y, SLE_UINT32, 6, SL_MAX_VERSION),
+	SLEG_CONDVAR(_map_dim_x, SLE_UINT32, SLV_6, SL_MAX_VERSION),
+	SLEG_CONDVAR(_map_dim_y, SLE_UINT32, SLV_6, SL_MAX_VERSION),
 	    SLEG_END()
 };
 
@@ -126,7 +126,7 @@ static void Load_MAP2()
 	for (TileIndex i = 0; i != size;) {
 		SlArray(buf, MAP_SL_BUF_SIZE,
 			/* In those versions the m2 was 8 bits */
-			IsSavegameVersionBefore(5) ? SLE_FILE_U8 | SLE_VAR_U16 : SLE_UINT16
+			IsSavegameVersionBefore(SLV_5) ? SLE_FILE_U8 | SLE_VAR_U16 : SLE_UINT16
 		);
 		for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) _m[i++].m2 = buf[j];
 	}
@@ -218,7 +218,7 @@ static void Load_MAP6()
 	SmallStackSafeStackAlloc<byte, MAP_SL_BUF_SIZE> buf;
 	TileIndex size = MapSize();
 
-	if (IsSavegameVersionBefore(42)) {
+	if (IsSavegameVersionBefore(SLV_42)) {
 		for (TileIndex i = 0; i != size;) {
 			/* 1024, otherwise we overflow on 64x64 maps! */
 			SlArray(buf, 1024, SLE_UINT8);
@@ -272,6 +272,30 @@ static void Save_MAP7()
 	}
 }
 
+static void Load_MAP8()
+{
+	SmallStackSafeStackAlloc<uint16, MAP_SL_BUF_SIZE> buf;
+	TileIndex size = MapSize();
+
+	for (TileIndex i = 0; i != size;) {
+		SlArray(buf, MAP_SL_BUF_SIZE, SLE_UINT16);
+		for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) _me[i++].m8 = buf[j];
+	}
+}
+
+static void Save_MAP8()
+{
+	SmallStackSafeStackAlloc<uint16, MAP_SL_BUF_SIZE> buf;
+	TileIndex size = MapSize();
+
+	SlSetLength(size * sizeof(uint16));
+	for (TileIndex i = 0; i != size;) {
+		for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) buf[j] = _me[i++].m8;
+		SlArray(buf, MAP_SL_BUF_SIZE, SLE_UINT16);
+	}
+}
+
+
 extern const ChunkHandler _map_chunk_handlers[] = {
 	{ 'MAPS', Save_MAPS, Load_MAPS, NULL, Check_MAPS, CH_RIFF },
 	{ 'MAPT', Save_MAPT, Load_MAPT, NULL, NULL,       CH_RIFF },
@@ -282,5 +306,6 @@ extern const ChunkHandler _map_chunk_handlers[] = {
 	{ 'M3HI', Save_MAP4, Load_MAP4, NULL, NULL,       CH_RIFF },
 	{ 'MAP5', Save_MAP5, Load_MAP5, NULL, NULL,       CH_RIFF },
 	{ 'MAPE', Save_MAP6, Load_MAP6, NULL, NULL,       CH_RIFF },
-	{ 'MAP7', Save_MAP7, Load_MAP7, NULL, NULL,       CH_RIFF | CH_LAST },
+	{ 'MAP7', Save_MAP7, Load_MAP7, NULL, NULL,       CH_RIFF },
+	{ 'MAP8', Save_MAP8, Load_MAP8, NULL, NULL,       CH_RIFF | CH_LAST },
 };

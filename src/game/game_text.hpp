@@ -1,4 +1,4 @@
-/* $Id: game_text.hpp 27756 2017-02-26 19:40:53Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

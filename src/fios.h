@@ -1,4 +1,4 @@
-/* $Id: fios.h 27729 2017-01-14 13:12:49Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,13 @@
 #include "newgrf_config.h"
 #include "network/core/tcp_content.h"
 
+
+/** Special values for save-load window for the data parameter of #InvalidateWindowData. */
+enum SaveLoadInvalidateWindowData {
+	SLIWD_RESCAN_FILES,          ///< Rescan all files (when changed directory, ...)
+	SLIWD_SELECTION_CHANGES,     ///< File selection has changed (user click, ...)
+	SLIWD_FILTER_CHANGES,        ///< The filename filter has changed (via the editbox)
+};
 
 typedef SmallMap<uint, CompanyProperties *> CompanyPropertiesMap;
 

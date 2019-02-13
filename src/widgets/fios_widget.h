@@ -1,4 +1,4 @@
-/* $Id: fios_widget.h 23600 2011-12-19 20:46:17Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -17,6 +17,7 @@ enum SaveLoadWidgets {
 	WID_SL_CAPTION,                 ///< Caption of the window.
 	WID_SL_SORT_BYNAME,             ///< Sort by name button.
 	WID_SL_SORT_BYDATE,             ///< Sort by date button.
+	WID_SL_FILTER,                  ///< Filter list of files
 	WID_SL_BACKGROUND,              ///< Background of window.
 	WID_SL_FILE_BACKGROUND,         ///< Background of file selection.
 	WID_SL_HOME_BUTTON,             ///< Home button.

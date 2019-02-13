@@ -1,4 +1,4 @@
-/* $Id: script_road.hpp 26149 2013-12-08 15:44:09Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

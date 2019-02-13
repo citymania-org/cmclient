@@ -1,4 +1,4 @@
-/* $Id: autoreplace_widget.h 27683 2016-12-08 20:21:39Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

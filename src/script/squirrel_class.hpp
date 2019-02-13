@@ -1,4 +1,4 @@
-/* $Id: squirrel_class.hpp 23651 2011-12-21 14:55:28Z yexo $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

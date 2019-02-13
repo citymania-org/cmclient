@@ -1,4 +1,4 @@
-/* $Id: string_colours.h 27378 2015-08-10 10:04:14Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

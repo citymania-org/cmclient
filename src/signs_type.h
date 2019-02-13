@@ -1,4 +1,4 @@
-/* $Id: signs_type.h 22406 2011-05-01 19:51:52Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

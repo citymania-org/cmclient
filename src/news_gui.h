@@ -1,4 +1,4 @@
-/* $Id: news_gui.h 24842 2012-12-23 21:06:37Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -12,7 +12,11 @@
 #ifndef NEWS_GUI_H
 #define NEWS_GUI_H
 
+#include "news_type.h"
+
 void ShowLastNewsMessage();
 void ShowMessageHistory();
+
+extern NewsItem *_oldest_news;
 
 #endif /* NEWS_GUI_H */

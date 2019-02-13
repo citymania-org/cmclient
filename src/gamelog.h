@@ -1,4 +1,4 @@
-/* $Id: gamelog.h 23901 2012-02-05 15:51:13Z smatz $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -38,7 +38,7 @@ void GamelogReset();
  * @param s The string to print.
  */
 typedef void GamelogPrintProc(const char *s);
-void GamelogPrint(GamelogPrintProc *proc); // needed for WIN32 / WINCE crash.log
+void GamelogPrint(GamelogPrintProc *proc); // needed for WIN32 crash.log
 
 void GamelogPrintDebug(int level);
 void GamelogPrintConsole();

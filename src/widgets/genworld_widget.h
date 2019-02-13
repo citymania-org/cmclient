@@ -1,4 +1,4 @@
-/* $Id: genworld_widget.h 26885 2014-09-21 12:25:04Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: script_group.hpp 24776 2012-12-01 13:12:39Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

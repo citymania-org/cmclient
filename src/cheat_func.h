@@ -1,4 +1,4 @@
-/* $Id: cheat_func.h 21844 2011-01-18 22:17:15Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

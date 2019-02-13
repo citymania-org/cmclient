@@ -1,4 +1,4 @@
-/* $Id: script_info_dummy.cpp 26782 2014-09-06 20:22:59Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -92,7 +92,7 @@ void Script_CreateDummy(HSQUIRRELVM vm, StringID string, const char *type)
 		p = newline + 1;
 	} while (newline != NULL);
 
-	dp = strecpy(dp, "  }\n}\n", lastof(dummy_script));
+	strecpy(dp, "  }\n}\n", lastof(dummy_script));
 
 	/* 3) We translate the error message in the character format that Squirrel wants.
 	 *    We can use the fact that the wchar string printing also uses %s to print

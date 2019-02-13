@@ -1,4 +1,4 @@
-/* $Id: game_text.cpp 26774 2014-09-06 17:46:56Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -142,7 +142,7 @@ struct StringListReader : StringReader {
 	/**
 	 * Create the reader.
 	 * @param data        The data to fill during reading.
-	 * @param file        The file we are reading.
+	 * @param strings     The language strings we are reading.
 	 * @param master      Are we reading the master file?
 	 * @param translation Are we reading a translation?
 	 */

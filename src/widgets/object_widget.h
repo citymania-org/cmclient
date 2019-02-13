@@ -1,4 +1,4 @@
-/* $Id: object_widget.h 24178 2012-04-24 20:01:34Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

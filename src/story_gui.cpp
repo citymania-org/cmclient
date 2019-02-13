@@ -1,4 +1,4 @@
-/* $Id: story_gui.cpp 27086 2014-12-18 18:22:23Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: transparency.h 22506 2011-05-28 09:46:37Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: script_company.cpp 27026 2014-10-21 16:58:15Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

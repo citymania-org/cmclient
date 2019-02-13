@@ -1,4 +1,4 @@
-/* $Id: script_error.hpp 24982 2013-02-08 20:34:27Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

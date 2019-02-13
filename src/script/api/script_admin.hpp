@@ -1,4 +1,4 @@
-/* $Id: script_admin.hpp 25594 2013-07-13 06:38:54Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

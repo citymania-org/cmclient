@@ -1,4 +1,4 @@
-/* $Id: currency.h 25076 2013-03-09 16:31:56Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -58,6 +58,8 @@ enum Currencies {
 	CURRENCY_CUSTOM,    ///< Custom currency
 	CURRENCY_GEL,       ///< Georgian Lari
 	CURRENCY_IRR,       ///< Iranian Rial
+	CURRENCY_RUB,       ///< New Russian Ruble
+	CURRENCY_MXN,       ///< Mexican Peso
 	CURRENCY_END,       ///< always the last item
 };
 

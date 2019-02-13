@@ -1,4 +1,4 @@
-/* $Id: macos.h 25663 2013-08-05 20:36:06Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -37,5 +37,7 @@ static inline bool MacOSVersionIsAtLeast(long major, long minor, long bugfix)
 }
 
 bool IsMonospaceFont(CFStringRef name);
+
+void MacOSSetThreadName(const char *name);
 
 #endif /* MACOS_H */

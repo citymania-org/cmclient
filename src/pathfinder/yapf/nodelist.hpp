@@ -1,4 +1,4 @@
-/* $Id: nodelist.hpp 27363 2015-08-08 13:19:38Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -25,7 +25,7 @@ template <class Titem_, int Thash_bits_open_, int Thash_bits_closed_>
 class CNodeList_HashTableT {
 public:
 	typedef Titem_ Titem;                                        ///< Make #Titem_ visible from outside of class.
-	typedef typename Titem_::Key Key;                            ///< Make Titem_::Key a property of #HashTable.
+	typedef typename Titem_::Key Key;                            ///< Make Titem_::Key a property of this class.
 	typedef SmallArray<Titem_, 65536, 256> CItemArray;           ///< Type that we will use as item container.
 	typedef CHashTableT<Titem_, Thash_bits_open_  > COpenList;   ///< How pointers to open nodes will be stored.
 	typedef CHashTableT<Titem_, Thash_bits_closed_> CClosedList; ///< How pointers to closed nodes will be stored.

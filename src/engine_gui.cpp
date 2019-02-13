@@ -1,4 +1,4 @@
-/* $Id: engine_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -108,7 +108,7 @@ struct EnginePreviewWindow : Window {
 
 		EngineID engine = this->window_number;
 		SetDParam(0, GetEngineCategoryName(engine));
-		int y = r.top + GetStringHeight(STR_ENGINE_PREVIEW_MESSAGE, r.right - r.top + 1);
+		int y = r.top + GetStringHeight(STR_ENGINE_PREVIEW_MESSAGE, r.right - r.left + 1);
 		y = DrawStringMultiLine(r.left, r.right, r.top, y, STR_ENGINE_PREVIEW_MESSAGE, TC_FROMSTRING, SA_CENTER) + WD_PAR_VSEP_WIDE;
 
 		SetDParam(0, engine);

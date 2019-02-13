@@ -1,4 +1,4 @@
-/* $Id: script_airport.hpp 25705 2013-08-09 18:43:44Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -201,6 +201,14 @@ public:
 	 * @return Maintenance cost factor of the airport type.
 	 */
 	static uint16 GetMaintenanceCostFactor(AirportType type);
+
+	/**
+	 * Get the monthly maintenance cost of an airport type.
+	 * @param type The airport type to get the monthly maintenance cost of.
+	 * @pre IsAirportInformationAvailable(type)
+	 * @return Monthly maintenance cost of the airport type.
+	 */
+	static Money GetMonthlyMaintenanceCost(AirportType type);
 };
 
 #endif /* SCRIPT_AIRPORT_HPP */

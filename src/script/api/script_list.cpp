@@ -1,4 +1,4 @@
-/* $Id: script_list.cpp 27594 2016-05-30 21:03:11Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

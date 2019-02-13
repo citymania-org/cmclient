@@ -1,4 +1,4 @@
-/* $Id: base_consist.cpp 27280 2015-05-11 16:40:06Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

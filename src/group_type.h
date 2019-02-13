@@ -1,4 +1,4 @@
-/* $Id: group_type.h 24139 2012-04-17 19:44:16Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: openttd.h 25506 2013-06-28 21:11:35Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

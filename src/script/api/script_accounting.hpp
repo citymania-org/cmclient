@@ -1,4 +1,4 @@
-/* $Id: script_accounting.hpp 24008 2012-03-04 16:54:12Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

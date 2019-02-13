@@ -1,4 +1,4 @@
-/* $Id: viewport_gui.cpp 27743 2017-02-05 17:54:46Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -138,7 +138,7 @@ public:
 
 	virtual void OnMouseWheel(int wheel)
 	{
-		if (_settings_client.gui.scrollwheel_scrolling == 0) {
+		if (_settings_client.gui.scrollwheel_scrolling != 2) {
 			ZoomInOrOutToCursorWindow(wheel < 0, this);
 		}
 	}

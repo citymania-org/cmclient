@@ -1,4 +1,4 @@
-/* $Id: os2.cpp 27643 2016-09-04 12:54:30Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

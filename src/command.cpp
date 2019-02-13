@@ -1,4 +1,4 @@
-/* $Id: command.cpp 26802 2014-09-07 16:12:58Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -167,6 +167,7 @@ CommandProc CmdSetStoryPageDate;
 CommandProc CmdShowStoryPage;
 CommandProc CmdRemoveStoryPage;
 CommandProc CmdRemoveStoryPageElement;
+CommandProc CmdScrollViewport;
 
 CommandProc CmdLevelLand;
 
@@ -189,6 +190,7 @@ CommandProc CmdAddVehicleGroup;
 CommandProc CmdAddSharedVehicleGroup;
 CommandProc CmdRemoveAllVehiclesGroup;
 CommandProc CmdSetGroupReplaceProtection;
+CommandProc CmdSetGroupLivery;
 
 CommandProc CmdMoveOrder;
 CommandProc CmdChangeTimetable;
@@ -281,7 +283,7 @@ static const Command _command_proc_table[] = {
 
 	DEF_CMD(CmdTurnRoadVeh,                                    0, CMDT_VEHICLE_MANAGEMENT    ), // CMD_TURN_ROADVEH
 
-	DEF_CMD(CmdPause,                                 CMD_SERVER, CMDT_SERVER_SETTING        ), // CMD_PAUSE
+	DEF_CMD(CmdPause,                    CMD_SERVER | CMD_NO_EST, CMDT_SERVER_SETTING        ), // CMD_PAUSE
 
 	DEF_CMD(CmdBuyShareInCompany,                              0, CMDT_MONEY_MANAGEMENT      ), // CMD_BUY_SHARE_IN_COMPANY
 	DEF_CMD(CmdSellShareInCompany,                             0, CMDT_MONEY_MANAGEMENT      ), // CMD_SELL_SHARE_IN_COMPANY
@@ -305,7 +307,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdChangeBankBalance,                      CMD_DEITY, CMDT_MONEY_MANAGEMENT      ), // CMD_CHANGE_BANK_BALANCE
 	DEF_CMD(CmdBuildCanal,                              CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_CANAL
 	DEF_CMD(CmdCreateSubsidy,                          CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_CREATE_SUBSIDY
-	DEF_CMD(CmdCompanyCtrl,        CMD_SPECTATOR | CMD_CLIENT_ID, CMDT_SERVER_SETTING        ), // CMD_COMPANY_CTRL
+	DEF_CMD(CmdCompanyCtrl, CMD_SPECTATOR | CMD_CLIENT_ID | CMD_NO_EST, CMDT_SERVER_SETTING  ), // CMD_COMPANY_CTRL
 	DEF_CMD(CmdCustomNewsItem,          CMD_STR_CTRL | CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_CUSTOM_NEWS_ITEM
 	DEF_CMD(CmdCreateGoal,              CMD_STR_CTRL | CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_CREATE_GOAL
 	DEF_CMD(CmdRemoveGoal,                             CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_REMOVE_GOAL
@@ -322,6 +324,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdShowStoryPage,                          CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_SHOW_STORY_PAGE
 	DEF_CMD(CmdRemoveStoryPage,                        CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_REMOVE_STORY_PAGE
 	DEF_CMD(CmdRemoveStoryPageElement,                 CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_REMOVE_STORY_ELEMENT_PAGE
+	DEF_CMD(CmdScrollViewport,                         CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_SCROLL_VIEWPORT
 
 	DEF_CMD(CmdLevelLand, CMD_ALL_TILES | CMD_NO_TEST | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_LEVEL_LAND; test run might clear tiles multiple times, in execution that only happens once
 
@@ -347,6 +350,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdAddSharedVehicleGroup,                          0, CMDT_ROUTE_MANAGEMENT      ), // CMD_ADD_SHARE_VEHICLE_GROUP
 	DEF_CMD(CmdRemoveAllVehiclesGroup,                         0, CMDT_ROUTE_MANAGEMENT      ), // CMD_REMOVE_ALL_VEHICLES_GROUP
 	DEF_CMD(CmdSetGroupReplaceProtection,                      0, CMDT_ROUTE_MANAGEMENT      ), // CMD_SET_GROUP_REPLACE_PROTECTION
+	DEF_CMD(CmdSetGroupLivery,                                 0, CMDT_ROUTE_MANAGEMENT      ), // CMD_SET_GROUP_LIVERY
 	DEF_CMD(CmdMoveOrder,                                      0, CMDT_ROUTE_MANAGEMENT      ), // CMD_MOVE_ORDER
 	DEF_CMD(CmdChangeTimetable,                                0, CMDT_ROUTE_MANAGEMENT      ), // CMD_CHANGE_TIMETABLE
 	DEF_CMD(CmdSetVehicleOnTime,                               0, CMDT_ROUTE_MANAGEMENT      ), // CMD_SET_VEHICLE_ON_TIME
@@ -554,7 +558,7 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 	bool estimate_only = _shift_pressed && IsLocalCompany() &&
 			!_generating_world &&
 			!(cmd & CMD_NETWORK_COMMAND) &&
-			(cmd & CMD_ID_MASK) != CMD_PAUSE;
+			!(GetCommandFlags(cmd) & CMD_NO_EST);
 
 	/* We're only sending the command, so don't do
 	 * fancy things for 'success'. */
@@ -603,7 +607,6 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 /**
  * Helper to deduplicate the code for returning.
  * @param cmd   the command cost to return.
- * @param clear whether to keep the storage changes or not.
  */
 #define return_dcpi(cmd) { _docommand_recursive = 0; return cmd; }
 

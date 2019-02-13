@@ -1,4 +1,4 @@
-/* $Id: script_types.hpp 27757 2017-02-26 19:41:14Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: udp.cpp 27893 2017-08-13 18:38:42Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -252,8 +252,8 @@ void NetworkUDPSocketHandler::ReceiveNetworkGameInfo(Packet *p, NetworkGameInfo 
 				*dst = c;
 				dst = &c->next;
 			}
+			FALLTHROUGH;
 		}
-		FALLTHROUGH;
 
 		case 3:
 			info->game_date      = Clamp(p->Recv_uint32(), 0, MAX_DATE);

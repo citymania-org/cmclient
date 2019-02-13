@@ -1,4 +1,4 @@
-/* $Id: network_func.h 27400 2015-09-19 16:49:46Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: address.cpp 27092 2014-12-24 17:17:18Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

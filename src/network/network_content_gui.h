@@ -1,4 +1,4 @@
-/* $Id: network_content_gui.h 27288 2015-05-17 19:49:35Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

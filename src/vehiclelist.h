@@ -1,4 +1,4 @@
-/* $Id: vehiclelist.h 27677 2016-11-05 19:16:59Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

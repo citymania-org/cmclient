@@ -1,4 +1,4 @@
-/* $Id: network_content_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -76,7 +76,7 @@ struct ContentTextfileWindow : public TextfileWindow {
 
 void ShowContentTextfileWindow(TextfileType file_type, const ContentInfo *ci)
 {
-	DeleteWindowByClass(WC_TEXTFILE);
+	DeleteWindowById(WC_TEXTFILE, file_type);
 	new ContentTextfileWindow(file_type, ci);
 }
 
@@ -519,7 +519,7 @@ public:
 	 * Create the content list window.
 	 * @param desc the window description to pass to Window's constructor.
 	 * @param select_all Whether the select all button is allowed or not.
-	 * @param type the main type of content to display or #CONTENT_TYPE_END.
+	 * @param types the main type of content to display or #CONTENT_TYPE_END.
 	 *   When a type other than #CONTENT_TYPE_END is given, dependencies of
 	 *   other types are only shown when content that depend on them are
 	 *   selected.

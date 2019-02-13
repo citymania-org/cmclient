@@ -1,4 +1,4 @@
-/* $Id: order_backup.h 24444 2012-07-29 16:45:34Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

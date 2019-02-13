@@ -1,4 +1,4 @@
-/* $Id: address.h 22695 2011-07-30 10:28:52Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

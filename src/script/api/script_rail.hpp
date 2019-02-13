@@ -1,4 +1,4 @@
-/* $Id: script_rail.hpp 25614 2013-07-15 18:19:26Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

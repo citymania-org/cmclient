@@ -1,4 +1,4 @@
-/* $Id: grf.hpp 23897 2012-02-04 22:18:57Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

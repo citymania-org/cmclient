@@ -1,4 +1,4 @@
-/* $Id: script_controller.hpp 27111 2015-01-04 15:14:13Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

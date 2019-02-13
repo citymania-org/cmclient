@@ -1,4 +1,4 @@
-/* $Id: grf.cpp 27004 2014-10-12 20:43:25Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

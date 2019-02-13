@@ -11,7 +11,7 @@
 ##gender m f n
 
 
-# $Id: faroese.txt 27980 2018-03-11 12:24:32Z frosch $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -647,10 +647,7 @@ STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}Vel 'Sj�
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}Tendra/sløkk bland av skránni
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}Vís tónleika spor úrvals glugga
 
-STR_ERROR_NO_SONGS                                              :{WHITE}Eitt tónleika sett uttan sangir er valt. Engir sangir vera spældir
-
 # Playlist window
-STR_PLAYLIST_MUSIC_PROGRAM_SELECTION                            :{WHITE}Úrval av tónleika skráðum
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM} "{STRING}"
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}Spor yvirlit
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}Skrá - '{STRING}'
@@ -1206,6 +1203,7 @@ STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Ikki mø
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Innakervis viðlílkahald: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Um gilda, innankervi elvir til viðlíkahalds kostnað. Kostnaðurin vaksur yvir-lutfalsliga við støddina á kervinum, og ávirkar harvið størri fyritøkur meira enn smærri fyritøkur
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Floghavnir ganga ongantíð út: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Gildan av hesi áseting ger at hvørt floghavna slag altíð er tøkt eftir tað er komi í nýtslu
 
@@ -1273,8 +1271,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Liturin av lend
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Grønt
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Myrka grønt
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Blákollulitur
-STR_CONFIG_SETTING_REVERSE_SCROLLING                            :Umvend skrull ætt: {STRING}
-STR_CONFIG_SETTING_REVERSE_SCROLLING_HELPTEXT                   :Atburður tá tú skrullar korti við høgra músa knøtti. Um ógilda flytir músin kamerai. Um gilda flytir músin korti.
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Mjúka sýnisglugga skrulling: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Stýr hvussu høvuðs sýni skrullar til eitt ávíst stað tá tú trýstir á lítlakorti ella tú tú gevur eini boð um at skrulla til ein ávísan lut á kortinum. Um gilda, skrullar sýni mjúgdliga, um ógilda leypur sýni beint til staði
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Vís eina mátingar vegleiðing tá tú brúkar ymisku byggji amboðini: {STRING}
@@ -1306,8 +1302,6 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Command+trýst
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Ctrl+trýst
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Sløkt
 
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Vinstra-trýst skrulling: {STRING}
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Gilda skrulling av kortinum við at toga ta við vinstra músa knøtti. Hetta er serstakliga hent um tú nýtur ein fingraskugga at skrulla vi
 
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Nýt {STRING} dato sniði til nøvnini á goymdum spølum
@@ -1627,7 +1621,6 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Broyt n�
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Gilda broytingar av framleiðslu virðum: {ORANGE}{STRING}
 
 # Livery window
-STR_LIVERY_CAPTION                                              :{WHITE}Nýggja lit samanseting
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Vís vanligu lit samansetingarnar
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Vís tok lit samansetingarnar
@@ -2427,7 +2420,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Ogn hjá fyrit�
 STR_ABOUT_OPENTTD                                               :{WHITE}Um OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Upprunalig upphavsrættindi {COPYRIGHT} 1995 Chris Sawyer, Øll rættindi umbiðin
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD útgáva {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2018 OpenTTD toymi
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 OpenTTD toymi
+
+# Framerate display window
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Goym spæl
@@ -2650,8 +2650,6 @@ STR_TOWN_POPULATION                                             :{BLACK}Heims f�
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} (Býur)
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Fólkatal: {ORANGE}{COMMA}{BLACK}  Hús: {ORANGE}{COMMA}
-STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Ferðafólk síðsta mánað: {ORANGE}{COMMA}{BLACK}  maks: {ORANGE}{COMMA}
-STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Postur síðsta mánað: {ORANGE}{COMMA}{BLACK}  maks: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Farmur ið tørvast fyri bygda menning:
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} krevst
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} krevst um veturin
@@ -2917,17 +2915,7 @@ STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_
 STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Savna høvuðs sýni á ídnaðin. Ctrl+trýst letur nýggjan sýnisglugga upp við sýni á ídnaðin
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Framleiðslu støði: {YELLOW}{COMMA}%
 
-############ range for requires starts
-STR_INDUSTRY_VIEW_REQUIRES_CARGO                                :{BLACK}Tørvar: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Tørvar: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Tørvar: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
-############ range for requires ends
 
-
-############ range for produces starts
-STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Framleiður: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Framleiður: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-############ range for produces ends
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Broyt framleiðslu (fald av 8, upp til 2040)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Broyt framleiðslu støði (prosent, upp til 800%)
@@ -3725,7 +3713,6 @@ STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}Ov nógv
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}Ov nógvir tok støð deilir
 STR_ERROR_TOO_MANY_BUS_STOPS                                    :{WHITE}Ov nógvir buss steðgir
 STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}Ov nógvar lastbila støðir
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_STATION                          :{WHITE}Ov tætt við eina aðra støð/lessi øki
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}Ov tætt við eina aðra havn
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}Ov tætt við eina aðra floghavn
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}Kann ikki navngeva støð...

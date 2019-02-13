@@ -1,4 +1,4 @@
-/* $Id: airport.cpp 27908 2017-08-31 06:55:38Z adf88 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
