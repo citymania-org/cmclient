@@ -1,4 +1,4 @@
-/* $Id: music_widget.h 23600 2011-12-19 20:46:17Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,9 +14,11 @@
 
 /** Widgets of the #MusicTrackSelectionWindow class. */
 enum MusicTrackSelectionWidgets {
+	WID_MTS_CAPTION,    ///< Window caption.
 	WID_MTS_LIST_LEFT,  ///< Left button.
 	WID_MTS_PLAYLIST,   ///< Playlist.
 	WID_MTS_LIST_RIGHT, ///< Right button.
+	WID_MTS_MUSICSET,   ///< Music set selection.
 	WID_MTS_ALL,        ///< All button.
 	WID_MTS_OLD,        ///< Old button.
 	WID_MTS_NEW,        ///< New button.

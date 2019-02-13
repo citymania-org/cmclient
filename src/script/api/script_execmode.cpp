@@ -1,4 +1,4 @@
-/* $Id: script_execmode.cpp 27379 2015-08-10 20:04:31Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

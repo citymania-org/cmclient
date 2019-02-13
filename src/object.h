@@ -1,4 +1,4 @@
-/* $Id: object.h 27346 2015-07-28 18:20:54Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

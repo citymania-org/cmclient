@@ -1,4 +1,4 @@
-/* $Id: sdl.h 24993 2013-02-14 11:06:12Z matthijs $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -15,7 +15,7 @@
 const char *SdlOpen(uint32 x);
 void SdlClose(uint32 x);
 
-#ifdef WIN32
+#ifdef _WIN32
 	#define DYNAMICALLY_LOADED_SDL
 #endif
 

@@ -1,4 +1,4 @@
-/* $Id: network_command.cpp 27571 2016-05-22 10:07:48Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

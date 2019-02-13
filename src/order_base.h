@@ -1,4 +1,4 @@
-/* $Id: order_base.h 26547 2014-05-01 14:49:16Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -11,7 +11,7 @@
 ##case tamlanan
 
 
-# $Id: turkish.txt 27980 2018-03-11 12:24:32Z frosch $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -670,10 +670,7 @@ STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}'Özel 2
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}Rastgele programı aç/kapa
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}Şarkı seçim penceresini göster
 
-STR_ERROR_NO_SONGS                                              :{WHITE}Şarkısız bir müzik kümesi seçildi. Hiçbir şarkı çalınmayacak
-
 # Playlist window
-STR_PLAYLIST_MUSIC_PROGRAM_SELECTION                            :{WHITE}Müzik Program Seçimi
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM} "{STRING}"
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}Parça Listesi
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}Program - '{STRING}'
@@ -1255,6 +1252,7 @@ STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Araçlar
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Altyapı bakımları: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Etkinleştirildiğinde; altyapı, bakım giderine neden olur. Maliyet ağ büyüklüğüne göre daha hızlı yükselir, dolayısıyla büyük şirketleri küçüklere göre daha çok etkiler
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Havalimanlarının süresi asla dolmasın: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Bu ayarı etkinleştirmek her havaalanı türünün, tanıtımından sonra sürekli olarak kullanılabilir kalmasını sağlar.
 
@@ -1338,8 +1336,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Küçük harita
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Yeşil
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Koyu yeşil
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Mor
-STR_CONFIG_SETTING_REVERSE_SCROLLING                            :Fareyle kaydırma hareketini ters çevir: {STRING}
-STR_CONFIG_SETTING_REVERSE_SCROLLING_HELPTEXT                   :Haritayı sağ fare tuşuyla kaydırırken davranış biçimi. Etkisiz kılındığında, fare kamerayı hareket ettirir. Etkinleştirildiğinde ise fare haritayı hareket ettirir.
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Düzgün viewport kaydırması: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Küçük haritaya tıklandığında veya harita üzerindeki belli bir nesneye gidilmesi için komut verildiğinde ana görüntünün nasıl kaydırılacağını kontrol eder. Etkinleştirildiğinde harita kayarak ilerler, kapatıldığında ise doğrudan hedeflenen noktaya atlama yapar.
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :İnşa araçları kullanılırken ölçüm ipucu göster: {STRING}
@@ -1371,8 +1367,6 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Komut-tıklama
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Kontrol-tıklama
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Kapalı
 
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Sol tık ile ekran kaydır: {STRING}
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Sol fare tuşuyla sürükleyerek harita kaydırma özelliğini etkinleştir. Özellikle dokunmatik-ekran kullanırken kaydırma yapmak için kullanılabilir.
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Sağ tıklama ile pencereyi kapat: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :İçerisinde sağ tıklandığında pencereyi kapatır. Sağ tıklandığında ipuçları gösterimini devre dışı bırakır!
 
@@ -1810,7 +1804,6 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Yılı d
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Üretim değerlerini değiştir: {ORANGE}{STRING}
 
 # Livery window
-STR_LIVERY_CAPTION                                              :{WHITE}Yeni Renk
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Genel renk şemalarını göster
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Tren renk düzenlerini göster
@@ -2692,7 +2685,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Satın alınmı
 STR_ABOUT_OPENTTD                                               :{WHITE}OpenTTD Hakkında
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Telif hakkı {COPYRIGHT} 1995 Chris Sawyer, Her hakkı saklıdır
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD sürüm {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2018 OpenTTD ekibi
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 OpenTTD ekibi
+
+# Framerate display window
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Oyunu Kaydet
@@ -2985,8 +2985,6 @@ STR_TOWN_POPULATION                                             :{BLACK}Dünya n
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} (Şehir)
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Nüfus: {ORANGE}{COMMA}{BLACK}  Ev: {ORANGE}{COMMA}
-STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Geçen ayki yolcu: {ORANGE}{COMMA}{BLACK} azami: {ORANGE}{COMMA}
-STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Geçen ayki posta: {ORANGE}{COMMA}{BLACK}  azami: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Kasaba büyümesi için gerekli kargo:
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} gerekli
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} kışın gerekir
@@ -3291,20 +3289,10 @@ STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Görünt
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Üretim seviyesi: %{YELLOW}{COMMA}
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Fabrika çok yakında kapanacağını duyurdu!
 
-############ range for requires starts
-STR_INDUSTRY_VIEW_REQUIRES_CARGO                                :{BLACK}İstenen: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}İstenenler: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}İstenenler: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
-############ range for requires ends
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Gereken:
 STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{STRING}{BLACK}{3:STRING}
 STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} bekliyor{STRING}
-
-############ range for produces starts
-STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Üretir: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Üretir: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-############ range for produces ends
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Üretimi değiştir (8'in katı, 2040'a kadar)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Üretim seviyesini değiştir (yüzde olarak, %800'e kadar)
@@ -4225,7 +4213,6 @@ STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}Haritada
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}Çok fazla demiryolu istasyon parçası var
 STR_ERROR_TOO_MANY_BUS_STOPS                                    :{WHITE}Çok fazla durak var
 STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}Çok fazla kamyon yükleme yeri var
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_STATION                          :{WHITE}Başka bir istasyona çok yakın
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}Başka bir limana çok yakın
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}Başka bir havalimanına çok yakın
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}İsim değiştirilemiyor...

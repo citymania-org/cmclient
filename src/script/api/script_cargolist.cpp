@@ -1,4 +1,4 @@
-/* $Id: script_cargolist.cpp 26580 2014-05-11 18:02:11Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

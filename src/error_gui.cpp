@@ -1,4 +1,4 @@
-/* $Id: error_gui.cpp 27307 2015-06-20 12:57:34Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -425,7 +425,7 @@ void ShowErrorMessage(StringID summary_msg, StringID detailed_msg, WarningLevel 
 /**
  * Schedule a list of errors.
  * Note: This does not try to display the error now. This is useful if the window system is not yet running.
- * @param data Error message datas; cleared afterwards
+ * @param datas Error message datas; cleared afterwards
  */
 void ScheduleErrorMessage(ErrorList &datas)
 {

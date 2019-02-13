@@ -1,4 +1,4 @@
-/* $Id: packet.h 23590 2011-12-18 18:37:54Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: script_sign.hpp 23636 2011-12-19 21:06:06Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -12,7 +12,7 @@
 ##case small
 
 
-# $Id: norwegian_nynorsk.txt 27980 2018-03-11 12:24:32Z frosch $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -671,10 +671,7 @@ STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}Vel 'Eig
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}Skru tilfeldig program av/på
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}Syne musikkspormeny
 
-STR_ERROR_NO_SONGS                                              :{WHITE}Eit musikksett utan songar har blitt valt. Ingen songar vil bli spelt
-
 # Playlist window
-STR_PLAYLIST_MUSIC_PROGRAM_SELECTION                            :{WHITE}Musikkprogram
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM} "{STRING}"
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}Sporregister
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}Program - '{STRING}'
@@ -1243,6 +1240,7 @@ STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD_HELPTEXT             :Tillatt bygging
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Endring av denne instillinga er ikkje mogleg når det finst køyretøy
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Vedlikehald av infrastruktur: {STRING}
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Flyplassar utgår aldri: {STRING}
 
 STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            :Advarsel om køyretøyet køyrer seg vill: {STRING}
@@ -1311,7 +1309,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Farge på terre
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Grøn
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Mørkegrøn
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Fiolett
-STR_CONFIG_SETTING_REVERSE_SCROLLING                            :Snu rulleretninga: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Jamn rulling i tilleggsvindauge: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Syne eit målingverktøytips når ymse byggjeverktøy brukast: {STRING}
 STR_CONFIG_SETTING_LIVERIES                                     :Syne firmaovertakingar: {STRING}
@@ -1338,7 +1335,6 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Kommando+klikk
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :CTRL+klikk
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Av
 
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Venstreknapps-rulling: {STRING}
 
 STR_CONFIG_SETTING_AUTOSAVE                                     :Autolaging: {STRING}
 STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Vel intervall for automatisk lagring av spel
@@ -1727,7 +1723,6 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Byt nove
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Tillet endring av produksjonsmengder: {ORANGE}{STRING}
 
 # Livery window
-STR_LIVERY_CAPTION                                              :{WHITE}Ny firmafarge
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Syne generelle fargetema
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Syne togfargetema
@@ -2608,7 +2603,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Feltet eigast a
 STR_ABOUT_OPENTTD                                               :{WHITE}Om OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Opphaveleg opphavsbeskytta av {COPYRIGHT} 1995 Chris Sawyer, Alle rettigheiter reservert
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versjon {REV}. Oversett til nynorsk av Thor Morten Skogrand med fleire.
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2018 OpenTTD-teamet
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 OpenTTD-teamet
+
+# Framerate display window
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Lagre spel
@@ -2897,8 +2899,6 @@ STR_TOWN_POPULATION                                             :{BLACK}Verdsinn
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} (By)
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Innbyggjartal: {ORANGE}{COMMA}{BLACK}  Antal hus: {ORANGE}{COMMA}
-STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Passasjerar førre månad: {ORANGE}{COMMA}{BLACK}  maks.: {ORANGE}{COMMA}
-STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Post førre månad: {ORANGE}{COMMA}{BLACK}  maks.: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Varer naudsynt for folketalsauke:
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} naudsynt
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} naudsynt om vinteren
@@ -3203,17 +3203,7 @@ STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Midtstil
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Produksjonsnivå: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Verksemda legg snarleg ned drifta!
 
-############ range for requires starts
-STR_INDUSTRY_VIEW_REQUIRES_CARGO                                :{BLACK}Treng: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Treng: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Treng: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
-############ range for requires ends
 
-
-############ range for produces starts
-STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Lagar: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Lagar: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-############ range for produces ends
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Byt produksjon (8-gongen, opptil 2040)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Endre produksjonsnivå (prosent, opp til 800%)
@@ -4119,7 +4109,6 @@ STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}For mang
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}For mange togstasjon-delar
 STR_ERROR_TOO_MANY_BUS_STOPS                                    :{WHITE}For mange busshaldeplassar
 STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}For mange lasteterminalar
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_STATION                          :{WHITE}For nær ein annan jernbanestasjon/lasteterminal
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}For nær ei anna hamn
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}For nær ein annan flyplass
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}Kan ikkje endre namnet på stasjonen...

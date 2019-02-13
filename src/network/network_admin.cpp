@@ -1,4 +1,4 @@
-/* $Id: network_admin.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -172,7 +172,7 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::SendWelcome()
 	Packet *p = new Packet(ADMIN_PACKET_SERVER_WELCOME);
 
 	p->Send_string(_settings_client.network.server_name);
-	p->Send_string(_openttd_revision);
+	p->Send_string(GetNetworkRevisionString());
 	p->Send_bool  (_network_dedicated);
 
 	p->Send_string(_network_game_info.map_name);

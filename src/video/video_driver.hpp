@@ -1,4 +1,4 @@
-/* $Id: video_driver.hpp 27775 2017-03-11 13:05:54Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

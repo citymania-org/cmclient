@@ -1,4 +1,4 @@
-/* $Id: sprite.h 23706 2012-01-01 17:36:19Z smatz $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

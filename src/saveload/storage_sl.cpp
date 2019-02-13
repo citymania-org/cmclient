@@ -1,4 +1,4 @@
-/* $Id: storage_sl.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,8 +21,9 @@
 
 /** Description of the data to save and load in #PersistentStorage. */
 static const SaveLoad _storage_desc[] = {
-	 SLE_CONDVAR(PersistentStorage, grfid,    SLE_UINT32,                  6, SL_MAX_VERSION),
-	 SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32, 16,            161, SL_MAX_VERSION),
+	 SLE_CONDVAR(PersistentStorage, grfid,    SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
+	 SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32,  16,           SLV_161, SLV_EXTEND_PERSISTENT_STORAGE),
+	 SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32, 256,           SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
 	 SLE_END()
 };
 
@@ -47,7 +48,8 @@ static void Load_PSAC()
 	*/
 	PersistentStorage *ps = NULL;
 	u8vector cmdata;
-
+	uint chunk_size = IsSavegameVersionBefore(SLV_EXTEND_PERSISTENT_STORAGE) ? 64 : 1024;
+	fprintf(stderr, "CHUNK SIZE %u\n", chunk_size);
 	while ((index = SlIterateArray()) != -1) {
 		if (ps == NULL) {
 			assert(PersistentStorage::CanAllocateItem());
@@ -57,7 +59,7 @@ static void Load_PSAC()
 
 		if (ps->grfid == CITYMANIA_GRFID) {
 			uint8 *data = (uint8 *)(ps->storage);
-			cmdata.insert(cmdata.end(), data, data + 64);
+			cmdata.insert(cmdata.end(), data, data + chunk_size);
 		} else {
 			ps = NULL;
 		}
@@ -71,8 +73,8 @@ static void Save_CMDataAsPSAC() {
 	u8vector data = CM_EncodeData();
 	uint8 *ptr = &data[0];
 	SaveLoadGlobVarList _desc[] = {
-		SLEG_CONDVAR(grfid, SLE_UINT32,       6, SL_MAX_VERSION),
-		SLEG_CONDARR(*ptr, SLE_UINT32, 16, 161, SL_MAX_VERSION),
+		SLEG_CONDVAR(grfid, SLE_UINT32, SLV_6, SL_MAX_VERSION),
+		SLEG_CONDARR(*ptr,  SLE_UINT32, 256, SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
 		SLEG_END()
 	};
 
@@ -83,8 +85,8 @@ static void Save_CMDataAsPSAC() {
             index = max(index, ps->index + 1);
     }
 
-	int n_chunks = data.size() / 64;
-	for (int i = 0; i < n_chunks; i++, ptr += 64) {
+	int n_chunks = data.size() / 1024;
+	for (int i = 0; i < n_chunks; i++, ptr += 1024) {
 		_desc[1].address = (void *)ptr;
 		SlSetArrayIndex(index + i);
 		SlGlobList(_desc);

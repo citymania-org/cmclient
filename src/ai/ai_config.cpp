@@ -1,4 +1,4 @@
-/* $Id: ai_config.cpp 26509 2014-04-25 15:40:32Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -117,4 +117,15 @@ void AIConfig::SetSetting(const char *name, int value)
 	}
 
 	ScriptConfig::SetSetting(name, value);
+}
+
+void AIConfig::AddRandomDeviation()
+{
+	int start_date = this->GetSetting("start_date");
+
+	ScriptConfig::AddRandomDeviation();
+
+	/* start_date = 0 is a special case, where random deviation does not occur.
+	 * If start_date was not already 0, then a minimum value of 1 must apply. */
+	this->SetSetting("start_date", start_date != 0 ? max(1, this->GetSetting("start_date")) : 0);
 }

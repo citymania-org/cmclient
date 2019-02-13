@@ -1,4 +1,4 @@
-/* $Id: airporttiles.h 20623 2010-08-26 15:31:40Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

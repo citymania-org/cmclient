@@ -1,4 +1,4 @@
-/* $Id: water_cmd.cpp 27973 2018-03-05 22:57:49Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -895,7 +895,7 @@ static void GetTileDesc_Water(TileIndex tile, TileDesc *td)
 				case WATER_CLASS_SEA:   td->str = STR_LAI_WATER_DESCRIPTION_WATER; break;
 				case WATER_CLASS_CANAL: td->str = STR_LAI_WATER_DESCRIPTION_CANAL; break;
 				case WATER_CLASS_RIVER: td->str = STR_LAI_WATER_DESCRIPTION_RIVER; break;
-				default: NOT_REACHED(); break;
+				default: NOT_REACHED();
 			}
 			break;
 		case WATER_TILE_COAST: td->str = STR_LAI_WATER_DESCRIPTION_COAST_OR_RIVERBANK; break;
@@ -904,7 +904,7 @@ static void GetTileDesc_Water(TileIndex tile, TileDesc *td)
 			td->str = STR_LAI_WATER_DESCRIPTION_SHIP_DEPOT;
 			td->build_date = Depot::GetByTile(tile)->build_date;
 			break;
-		default: NOT_REACHED(); break;
+		default: NOT_REACHED();
 	}
 
 	td->owner[0] = GetTileOwner(tile);
@@ -1218,7 +1218,7 @@ void ConvertGroundTilesIntoWaterTiles()
 				default:
 					uint dir;
 					FOR_EACH_SET_BIT(dir, _flood_from_dirs[slope & ~SLOPE_STEEP]) {
-						TileIndex dest = TILE_ADD(tile, TileOffsByDir((Direction)dir));
+						TileIndex dest = TileAddByDir(tile, (Direction)dir);
 						Slope slope_dest = GetTileSlope(dest) & ~SLOPE_STEEP;
 						if (slope_dest == SLOPE_FLAT || IsSlopeWithOneCornerRaised(slope_dest)) {
 							MakeShore(tile);
@@ -1233,7 +1233,8 @@ void ConvertGroundTilesIntoWaterTiles()
 
 static TrackStatus GetTileTrackStatus_Water(TileIndex tile, TransportType mode, uint sub_mode, DiagDirection side)
 {
-	static const byte coast_tracks[] = {0, 32, 4, 0, 16, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0};
+	static const TrackBits coast_tracks[] = {TRACK_BIT_NONE, TRACK_BIT_RIGHT, TRACK_BIT_UPPER, TRACK_BIT_NONE, TRACK_BIT_LEFT, TRACK_BIT_NONE, TRACK_BIT_NONE,
+		TRACK_BIT_NONE, TRACK_BIT_LOWER, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE};
 
 	TrackBits ts;
 
@@ -1241,7 +1242,7 @@ static TrackStatus GetTileTrackStatus_Water(TileIndex tile, TransportType mode, 
 
 	switch (GetWaterTileType(tile)) {
 		case WATER_TILE_CLEAR: ts = IsTileFlat(tile) ? TRACK_BIT_ALL : TRACK_BIT_NONE; break;
-		case WATER_TILE_COAST: ts = (TrackBits)coast_tracks[GetTileSlope(tile) & 0xF]; break;
+		case WATER_TILE_COAST: ts = coast_tracks[GetTileSlope(tile) & 0xF]; break;
 		case WATER_TILE_LOCK:  ts = DiagDirToDiagTrackBits(GetLockDirection(tile)); break;
 		case WATER_TILE_DEPOT: ts = AxisToTrackBits(GetShipDepotAxis(tile)); break;
 		default: return 0;

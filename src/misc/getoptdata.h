@@ -1,4 +1,4 @@
-/* $Id: getoptdata.h 23245 2011-11-17 21:18:24Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -34,7 +34,7 @@ struct GetOptData {
 	int numleft;               ///< Number of arguments left in #argv.
 	char **argv;               ///< Remaining command line arguments.
 	const OptionData *options; ///< Command line option descriptions.
-	char *cont;                ///< Next call to #MyGetOpt should start here (in the middle of an argument).
+	char *cont;                ///< Next call to #GetOpt should start here (in the middle of an argument).
 
 	/**
 	 * Constructor of the data store.

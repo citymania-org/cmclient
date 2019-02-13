@@ -1,4 +1,4 @@
-/* $Id: game_instance.cpp 26893 2014-09-21 16:20:48Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -34,6 +34,8 @@
 #include "../script/api/game/game_cargo.hpp.sq"
 #include "../script/api/game/game_cargolist.hpp.sq"
 #include "../script/api/game/game_cargomonitor.hpp.sq"
+#include "../script/api/game/game_client.hpp.sq"
+#include "../script/api/game/game_clientlist.hpp.sq"
 #include "../script/api/game/game_company.hpp.sq"
 #include "../script/api/game/game_companymode.hpp.sq"
 #include "../script/api/game/game_controller.hpp.sq"
@@ -122,6 +124,9 @@ void GameInstance::RegisterAPI()
 	SQGSCargoList_IndustryProducing_Register(this->engine);
 	SQGSCargoList_StationAccepting_Register(this->engine);
 	SQGSCargoMonitor_Register(this->engine);
+	SQGSClient_Register(this->engine);
+	SQGSClientList_Register(this->engine);
+	SQGSClientList_Company_Register(this->engine);
 	SQGSCompany_Register(this->engine);
 	SQGSCompanyMode_Register(this->engine);
 	SQGSDate_Register(this->engine);

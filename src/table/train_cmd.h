@@ -1,4 +1,4 @@
-/* $Id: train_cmd.h 26130 2013-11-26 16:08:58Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

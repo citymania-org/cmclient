@@ -1,4 +1,4 @@
-/* $Id: viewport_type.h 27248 2015-04-25 11:58:19Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -123,6 +123,16 @@ enum ViewportDragDropSelectionProcess {
 	DDSP_BUILD_TRUCKSTOP,      ///< Road stop placement (trucks)
 	DDSP_REMOVE_BUSSTOP,       ///< Road stop removal (buses)
 	DDSP_REMOVE_TRUCKSTOP,     ///< Road stop removal (trucks)
+};
+
+
+/**
+ * Target of the viewport scrolling GS method
+ */
+enum ViewportScrollTarget {
+	VST_EVERYONE, ///< All players
+	VST_COMPANY,  ///< All players in specific company
+	VST_CLIENT,   ///< Single player
 };
 
 #endif /* VIEWPORT_TYPE_H */

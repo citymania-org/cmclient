@@ -1,4 +1,4 @@
-/* $Id: yapf_base.hpp 27362 2015-08-08 10:06:24Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -122,10 +122,8 @@ public:
 	{
 		m_veh = v;
 
-#ifndef NO_DEBUG_MESSAGES
 		CPerformanceTimer perf;
 		perf.Start();
-#endif /* !NO_DEBUG_MESSAGES */
 
 		Yapf().PfSetStartupNodes();
 		bool bDestFound = true;
@@ -154,7 +152,6 @@ public:
 
 		bDestFound &= (m_pBestDestNode != NULL);
 
-#ifndef NO_DEBUG_MESSAGES
 		perf.Stop();
 		if (_debug_yapf_level >= 2) {
 			int t = perf.Get(1000000);
@@ -174,7 +171,6 @@ public:
 				);
 			}
 		}
-#endif /* !NO_DEBUG_MESSAGES */
 		return bDestFound;
 	}
 

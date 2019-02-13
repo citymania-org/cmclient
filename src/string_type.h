@@ -1,4 +1,4 @@
-/* $Id: string_type.h 23940 2012-02-12 19:46:40Z smatz $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

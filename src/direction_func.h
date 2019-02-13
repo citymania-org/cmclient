@@ -1,4 +1,4 @@
-/* $Id: direction_func.h 27422 2015-10-30 16:20:00Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

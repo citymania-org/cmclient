@@ -1,4 +1,4 @@
-/* $Id: intro_widget.h 27732 2017-01-14 18:30:26Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

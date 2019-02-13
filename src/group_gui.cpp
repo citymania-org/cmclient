@@ -1,4 +1,4 @@
-/* $Id: group_gui.cpp 27822 2017-03-24 07:33:31Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -25,6 +25,7 @@
 #include "vehicle_gui_base.h"
 #include "core/geometry_func.hpp"
 #include "company_base.h"
+#include "company_gui.h"
 
 #include "widgets/group_widget.h"
 
@@ -63,6 +64,8 @@ static const NWidgetPart _nested_group_widgets[] = {
 						SetDataTip(SPR_GROUP_DELETE_TRAIN, STR_GROUP_DELETE_TOOLTIP),
 				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_GL_RENAME_GROUP), SetFill(0, 1),
 						SetDataTip(SPR_GROUP_RENAME_TRAIN, STR_GROUP_RENAME_TOOLTIP),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_GL_LIVERY_GROUP), SetFill(0, 1),
+						SetDataTip(SPR_GROUP_LIVERY_TRAIN, STR_GROUP_LIVERY_TOOLTIP),
 				NWidget(WWT_PANEL, COLOUR_GREY), SetFill(1, 1), EndContainer(),
 				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_GL_REPLACE_PROTECTION), SetFill(0, 1),
 						SetDataTip(SPR_GROUP_REPLACE_OFF_TRAIN, STR_GROUP_REPLACE_PROTECTION_TOOLTIP),
@@ -122,14 +125,13 @@ private:
 
 	Dimension column_size[VGC_END]; ///< Size of the columns in the group list.
 
-	void AddParents(GUIGroupList *source, GroupID parent, int indent)
+	void AddChildren(GUIGroupList *source, GroupID parent, int indent)
 	{
 		for (const Group **g = source->Begin(); g != source->End(); g++) {
-			if ((*g)->parent == parent) {
-				*this->groups.Append() = *g;
-				*this->indents.Append() = indent;
-				AddParents(source, (*g)->index, indent + 1);
-			}
+			if ((*g)->parent != parent) continue;
+			*this->groups.Append() = *g;
+			*this->indents.Append() = indent;
+			AddChildren(source, (*g)->index, indent + 1);
 		}
 	}
 
@@ -180,7 +182,7 @@ private:
 		list.ForceResort();
 		list.Sort(&GroupNameSorter);
 
-		AddParents(&list, INVALID_GROUP, 0);
+		AddChildren(&list, INVALID_GROUP, 0);
 
 		this->groups.Compact();
 		this->groups.RebuildDone();
@@ -260,7 +262,7 @@ private:
 			str = STR_GROUP_NAME;
 		}
 		int x = rtl ? right - WD_FRAMERECT_RIGHT - 8 - this->column_size[VGC_NAME].width + 1 : left + WD_FRAMERECT_LEFT + 8;
-		DrawString(x + indent * LEVEL_WIDTH, x + this->column_size[VGC_NAME].width - 1, y + (this->tiny_step_height - this->column_size[VGC_NAME].height) / 2, str, colour);
+		DrawString(x + (rtl ? 0 : indent), x + this->column_size[VGC_NAME].width - 1 - (rtl ? indent : 0), y + (this->tiny_step_height - this->column_size[VGC_NAME].height) / 2, str, colour);
 
 		/* draw autoreplace protection */
 		x = rtl ? x - 8 - this->column_size[VGC_PROTECT].width : x + 8 + this->column_size[VGC_NAME].width;
@@ -345,6 +347,7 @@ public:
 		this->GetWidget<NWidgetCore>(WID_GL_CREATE_GROUP)->widget_data += this->vli.vtype;
 		this->GetWidget<NWidgetCore>(WID_GL_RENAME_GROUP)->widget_data += this->vli.vtype;
 		this->GetWidget<NWidgetCore>(WID_GL_DELETE_GROUP)->widget_data += this->vli.vtype;
+		this->GetWidget<NWidgetCore>(WID_GL_LIVERY_GROUP)->widget_data += this->vli.vtype;
 		this->GetWidget<NWidgetCore>(WID_GL_REPLACE_PROTECTION)->widget_data += this->vli.vtype;
 
 		this->FinishInitNested(window_number);
@@ -500,6 +503,7 @@ public:
 		this->SetWidgetsDisabledState(IsDefaultGroupID(this->vli.index) || IsAllGroupID(this->vli.index) || _local_company != this->vli.company,
 				WID_GL_DELETE_GROUP,
 				WID_GL_RENAME_GROUP,
+				WID_GL_LIVERY_GROUP,
 				WID_GL_REPLACE_PROTECTION,
 				WIDGET_LIST_END);
 
@@ -582,7 +586,7 @@ public:
 
 					assert(g->owner == this->owner);
 
-					DrawGroupInfo(y1, r.left, r.right, g->index, this->indents[i], g->replace_protection);
+					DrawGroupInfo(y1, r.left, r.right, g->index, this->indents[i] * LEVEL_WIDTH, g->replace_protection);
 
 					y1 += this->tiny_step_height;
 				}
@@ -695,6 +699,10 @@ public:
 
 			case WID_GL_RENAME_GROUP: // Rename the selected roup
 				this->ShowRenameGroupWindow(this->vli.index, false);
+				break;
+
+			case WID_GL_LIVERY_GROUP: // Set group livery
+				ShowCompanyLiveryWindow(this->owner, this->vli.index);
 				break;
 
 			case WID_GL_AVAILABLE_VEHICLES:
@@ -858,9 +866,8 @@ public:
 		this->SetDirty();
 	}
 
-	virtual void OnTick()
+	virtual void OnGameTick()
 	{
-		if (_pause_mode != PM_UNPAUSED) return;
 		if (this->groups.NeedResort() || this->vehicles.NeedResort()) {
 			this->SetDirty();
 		}
@@ -977,11 +984,11 @@ static inline VehicleGroupWindow *FindVehicleGroupWindow(VehicleType vt, Owner o
 }
 
 /**
- * Opens a 'Rename group' window for newly created group
- * @param success did command succeed?
- * @param tile unused
- * @param p1 vehicle type
- * @param p2 unused
+ * Opens a 'Rename group' window for newly created group.
+ * @param result Did command succeed?
+ * @param tile Unused.
+ * @param p1 Vehicle type.
+ * @param p2 Unused.
  * @see CmdCreateGroup
  */
 void CcCreateGroup(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
@@ -995,7 +1002,7 @@ void CcCreateGroup(const CommandCost &result, TileIndex tile, uint32 p1, uint32 
 
 /**
  * Open rename window after adding a vehicle to a new group via drag and drop.
- * @param success Did command succeed?
+ * @param result Did command succeed?
  * @param tile Unused.
  * @param p1 Unused.
  * @param p2 Bit 0-19: Vehicle ID.

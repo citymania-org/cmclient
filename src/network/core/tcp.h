@@ -1,4 +1,4 @@
-/* $Id: tcp.h 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

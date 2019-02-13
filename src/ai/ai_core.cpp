@@ -1,4 +1,4 @@
-/* $Id: ai_core.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

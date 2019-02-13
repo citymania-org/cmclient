@@ -1,4 +1,4 @@
-/* $Id: script_airport.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -162,4 +162,11 @@
 	if (!IsAirportInformationAvailable(type)) return INVALID_TOWN;
 
 	return AirportSpec::Get(type)->maintenance_cost;
+}
+
+/* static */ Money ScriptAirport::GetMonthlyMaintenanceCost(AirportType type)
+{
+	if (!IsAirportInformationAvailable(type)) return -1;
+
+	return (int64)GetMaintenanceCostFactor(type) * _price[PR_INFRASTRUCTURE_AIRPORT] >> 3;
 }

@@ -1,4 +1,4 @@
-/* $Id: tree_land.h 17455 2009-09-07 13:38:57Z yexo $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

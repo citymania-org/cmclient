@@ -1,4 +1,4 @@
-/* $Id: tcp_listen.h 26046 2013-11-22 21:41:19Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

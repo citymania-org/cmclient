@@ -1,4 +1,4 @@
-/* $Id: network_type.h 23780 2012-01-09 21:22:48Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

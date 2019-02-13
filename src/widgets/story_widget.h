@@ -1,5 +1,5 @@
 
-/* $Id: story_widget.h 26442 2014-04-03 10:54:37Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

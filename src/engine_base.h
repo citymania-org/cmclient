@@ -1,4 +1,4 @@
-/* $Id: engine_base.h 27797 2017-03-18 20:43:43Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

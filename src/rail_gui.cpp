@@ -1,4 +1,4 @@
-/* $Id: rail_gui.cpp 27710 2016-12-25 14:59:53Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -206,7 +206,7 @@ static void PlaceRail_Station(TileIndex tile)
 		VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_STATION);
 		VpSetPlaceSizingLimit(_settings_game.station.station_spread);
 	} else {
-		uint32 p1 = _cur_railtype | _railstation.orientation << 4 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | _ctrl_pressed << 24;
+		uint32 p1 = _cur_railtype | _railstation.orientation << 6 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | _ctrl_pressed << 24;
 		uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 
 		int w = _settings_client.gui.station_numtracks;
@@ -370,7 +370,7 @@ static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_t
 	CommandContainer ret = {
 		start_tile,                             // tile
 		end_tile,                               // p1
-		(uint32)(_cur_railtype | (track << 4)), // p2
+		(uint32)(_cur_railtype | (track << 6)), // p2
 		_remove_button_clicked ?
 				CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
 				CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK), // cmd
@@ -898,7 +898,7 @@ struct BuildRailToolbarWindow : Window {
 					break;
 
 				case DDSP_CONVERT_RAIL:
-					DoCommandP(end_tile, start_tile, _cur_railtype | (_ctrl_pressed ? 0x10 : 0), CMD_CONVERT_RAIL | CMD_MSG(STR_ERROR_CAN_T_CONVERT_RAIL), CcPlaySound_SPLAT_RAIL);
+					DoCommandP(end_tile, start_tile, _cur_railtype | (_ctrl_pressed ? 1 << 6 : 0), CMD_CONVERT_RAIL | CMD_MSG(STR_ERROR_CAN_T_CONVERT_RAIL), CcPlaySound_SPLAT_RAIL);
 					break;
 
 				case DDSP_REMOVE_STATION:
@@ -916,7 +916,7 @@ struct BuildRailToolbarWindow : Window {
 							DoCommandP(end_tile, start_tile, _ctrl_pressed ? 0 : 1, CMD_REMOVE_FROM_RAIL_WAYPOINT | CMD_MSG(STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT), CcPlaySound_SPLAT_RAIL);
 						} else {
 							TileArea ta(start_tile, end_tile);
-							uint32 p1 = _cur_railtype | (select_method == VPM_X_LIMITED ? AXIS_X : AXIS_Y) << 4 | ta.w << 8 | ta.h << 16 | _ctrl_pressed << 24;
+							uint32 p1 = _cur_railtype | (select_method == VPM_X_LIMITED ? AXIS_X : AXIS_Y) << 6 | ta.w << 8 | ta.h << 16 | _ctrl_pressed << 24;
 							uint32 p2 = STAT_CLASS_WAYP | _cur_waypoint_type << 8 | INVALID_STATION << 16;
 
 							CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_WAYPOINT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT), CcPlaySound_SPLAT_RAIL, "" };
@@ -1081,7 +1081,7 @@ static void HandleStationPlacement(TileIndex start, TileIndex end)
 
 	if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
 
-	uint32 p1 = _cur_railtype | _railstation.orientation << 4 | numtracks << 8 | platlength << 16 | _ctrl_pressed << 24;
+	uint32 p1 = _cur_railtype | _railstation.orientation << 6 | numtracks << 8 | platlength << 16 | _ctrl_pressed << 24;
 	uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 
 	CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
@@ -1563,7 +1563,7 @@ public:
 		}
 	}
 
-	virtual void OnTick()
+	virtual void OnRealtimeTick(uint delta_ms)
 	{
 		CheckRedrawStationCoverage(this);
 	}
@@ -2119,7 +2119,7 @@ static void SetDefaultRailGui()
 	RailType rt = (RailType)(_settings_client.gui.default_rail_type + RAILTYPE_END);
 	if (rt == DEF_RAILTYPE_MOST_USED) {
 		/* Find the most used rail type */
-		RailType count[RAILTYPE_END];
+		uint count[RAILTYPE_END];
 		memset(count, 0, sizeof(count));
 		for (TileIndex t = 0; t < MapSize(); t++) {
 			if (IsTileType(t, MP_RAILWAY) || IsLevelCrossingTile(t) || HasStationTileRail(t) ||

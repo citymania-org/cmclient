@@ -1,4 +1,4 @@
-/* $Id: airport_movement.h 22741 2011-08-13 12:43:05Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

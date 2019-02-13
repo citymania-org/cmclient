@@ -15,7 +15,8 @@ static const SpriteID INVALID_SPRITE_ID = UINT_MAX;
 
 TileIndex _closest_cache_ref = INVALID_TILE;
 const uint CLOSEST_CACHE_THRESHOLD = 128;
-std::vector<std::pair<uint, Town*>> _closest_cache;
+typedef std::pair<uint, Town*>ClosestTownRecord;
+std::vector<ClosestTownRecord> _closest_cache;
 
 
 void RebuildClosestHash(TileIndex tile) {
@@ -28,7 +29,7 @@ void RebuildClosestHash(TileIndex tile) {
 	}
 	std::sort(
 	    _closest_cache.begin(), _closest_cache.end(),
-		[](auto &a, auto &b) -> bool {
+		[](ClosestTownRecord &a, ClosestTownRecord &b) -> bool {
 	    	return a.first < b.first;
 		}
 	);

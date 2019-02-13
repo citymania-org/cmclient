@@ -1,4 +1,4 @@
-/* $Id: roadstop_base.h 23704 2012-01-01 17:22:32Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

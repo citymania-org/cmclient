@@ -1,4 +1,4 @@
-/* $Id: textfile_gui.cpp 27381 2015-08-10 20:24:13Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -65,7 +65,7 @@ TextfileWindow::TextfileWindow(TextfileType file_type) : Window(&_textfile_desc)
 	this->CreateNestedTree();
 	this->vscroll = this->GetScrollbar(WID_TF_VSCROLLBAR);
 	this->hscroll = this->GetScrollbar(WID_TF_HSCROLLBAR);
-	this->FinishInitNested();
+	this->FinishInitNested(file_type);
 	this->GetWidget<NWidgetCore>(WID_TF_CAPTION)->SetDataTip(STR_TEXTFILE_README_CAPTION + file_type, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS);
 
 	this->hscroll->SetStepSize(10); // Speed up horizontal scrollbar

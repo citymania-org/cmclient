@@ -1,4 +1,4 @@
-/* $Id: game_scanner.hpp 26487 2014-04-23 21:16:58Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

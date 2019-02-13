@@ -1,4 +1,4 @@
-/* $Id: network_client.cpp 27893 2017-08-13 18:38:42Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -124,6 +124,19 @@ struct PacketReader : LoadFilter {
 		this->bufe  = this->buf + CHUNK;
 	}
 };
+
+
+/**
+ * Create an emergency savegame when the network connection is lost.
+ */
+void ClientNetworkEmergencySave()
+{
+	if (!_settings_client.gui.autosave_on_network_disconnect) return;
+
+	const char *filename = "netsave.sav";
+	DEBUG(net, 0, "Client: Performing emergency save (%s)", filename);
+	SaveOrLoad(filename, SLO_SAVE, DFT_GAME_FILE, AUTOSAVE_DIR, false);
+}
 
 
 /**
@@ -272,10 +285,6 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 			if (_network_first_time) {
 				_network_first_time = false;
 				SendAck();
-				extern bool novahost();
-				if(novahost()) {
-					NetworkClientSendChatToServer("!check 1512"); //check version
-				}
 			}
 
 			_sync_frame = 0;
@@ -364,7 +373,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendJoin()
 			p->Send_uint32(_openttd_newgrf_version);
 		}
 	} else {
-		p->Send_string(_openttd_revision);
+		p->Send_string(GetNetworkRevisionString());
 		p->Send_uint32(_openttd_newgrf_version);
 	}
 	p->Send_string(_settings_client.network.client_name); // Client name
@@ -713,6 +722,9 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_ERROR(Packet *p
 
 	ShowErrorMessage(err, INVALID_STRING_ID, WL_CRITICAL);
 
+	/* Perform an emergency save if we had already entered the game */
+	if (this->status == STATUS_ACTIVE) ClientNetworkEmergencySave();
+
 	DeleteWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
 
 	return NETWORK_RECV_STATUS_SERVER_ERROR;
@@ -905,7 +917,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 			 * the server will give us a client-id and let us in */
 			_network_join_status = NETWORK_JOIN_STATUS_REGISTERING;
 			ShowJoinStatusWindow();
-			NetworkSendCommand(0, 0, 0, CMD_COMPANY_CTRL, NULL, NULL, _local_company);
+			NetworkSendCommand(0, CCA_NEW, 0, CMD_COMPANY_CTRL, NULL, NULL, _local_company);
 		}
 	} else {
 		/* take control over an existing company */
@@ -1097,6 +1109,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_SHUTDOWN(Packet
 		ShowErrorMessage(STR_NETWORK_MESSAGE_SERVER_SHUTDOWN, INVALID_STRING_ID, WL_CRITICAL);
 	}
 
+	if (this->status == STATUS_ACTIVE) ClientNetworkEmergencySave();
+
 	return NETWORK_RECV_STATUS_SERVER_ERROR;
 }
 
@@ -1111,6 +1125,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_NEWGAME(Packet 
 		_network_reconnect = _network_own_client_id % 16;
 		ShowErrorMessage(STR_NETWORK_MESSAGE_SERVER_REBOOT, INVALID_STRING_ID, WL_CRITICAL);
 	}
+
+	if (this->status == STATUS_ACTIVE) ClientNetworkEmergencySave();
 
 	return NETWORK_RECV_STATUS_SERVER_ERROR;
 }
@@ -1201,6 +1217,7 @@ void ClientNetworkGameSocketHandler::CheckConnection()
 	if (lag > 20) {
 		this->NetworkGameSocketHandler::CloseConnection();
 		ShowErrorMessage(STR_NETWORK_ERROR_LOSTCONNECTION, INVALID_STRING_ID, WL_CRITICAL);
+		ClientNetworkEmergencySave();
 		return;
 	}
 

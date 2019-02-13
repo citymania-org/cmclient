@@ -1,4 +1,4 @@
-/* $Id: 32bpp_sse_func.hpp 27020 2014-10-15 18:31:37Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: geometry_func.hpp 17248 2009-08-21 20:21:05Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

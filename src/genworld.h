@@ -1,4 +1,4 @@
-/* $Id: genworld.h 27231 2015-04-11 18:45:18Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -22,7 +22,7 @@ enum LandscapeGenerator {
 	LG_TERRAGENESIS = 1,  ///< TerraGenesis Perlin landscape generator
 };
 
-static const uint GENERATE_NEW_SEED = UINT_MAX; ///< Create a new random seed
+static const uint32 GENERATE_NEW_SEED = UINT32_MAX; ///< Create a new random seed
 
 /** Modes for GenerateWorld */
 enum GenWorldMode {
@@ -97,7 +97,7 @@ void SetGeneratingWorldProgress(GenWorldProgress cls, uint total);
 void IncreaseGeneratingWorldProgress(GenWorldProgress cls);
 void PrepareGenerateWorldProgress();
 void ShowGenerateWorldProgress();
-void StartNewGameWithoutGUI(uint seed);
+void StartNewGameWithoutGUI(uint32 seed);
 void ShowCreateScenario();
 void StartScenarioEditor();
 

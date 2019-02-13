@@ -1,4 +1,4 @@
-/* $Id: script_suspend.hpp 23378 2011-11-30 14:02:15Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

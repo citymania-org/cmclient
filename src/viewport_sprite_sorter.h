@@ -1,4 +1,4 @@
-/* $Id: viewport_sprite_sorter.h 27916 2017-09-24 13:35:27Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

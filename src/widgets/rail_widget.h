@@ -1,4 +1,4 @@
-/* $Id: rail_widget.h 25464 2013-06-25 20:22:08Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

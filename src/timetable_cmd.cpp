@@ -1,4 +1,4 @@
-/* $Id: timetable_cmd.cpp 27302 2015-06-20 12:04:30Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

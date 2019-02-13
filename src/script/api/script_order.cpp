@@ -1,4 +1,4 @@
-/* $Id: script_order.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -214,6 +214,7 @@ static int ScriptOrderPositionToRealOrderPosition(VehicleID vehicle_id, ScriptOr
 	switch (condition) {
 		case OC_LOAD_PERCENTAGE:
 		case OC_RELIABILITY:
+		case OC_MAX_RELIABILITY:
 		case OC_MAX_SPEED:
 		case OC_AGE:
 		case OC_REMAINING_LIFETIME:

@@ -1,4 +1,4 @@
-/* $Id: extmidi.h 27834 2017-03-29 17:36:46Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -28,7 +28,7 @@ public:
 
 	/* virtual */ void Stop();
 
-	/* virtual */ void PlaySong(const char *filename);
+	/* virtual */ void PlaySong(const MusicSongInfo &song);
 
 	/* virtual */ void StopSong();
 

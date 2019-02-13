@@ -1,4 +1,4 @@
-/* $Id: tcp_content.h 25597 2013-07-13 09:26:11Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

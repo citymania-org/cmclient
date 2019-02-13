@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: plistgen.sh 15062 2009-01-13 16:30:24Z smatz $
+# $Id$
 
 # sets VERSION to the value if RELEASE if there are any,
 # otherwise it sets VERSION to revision number

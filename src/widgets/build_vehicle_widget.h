@@ -1,4 +1,4 @@
-/* $Id: build_vehicle_widget.h 26811 2014-09-11 17:10:38Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

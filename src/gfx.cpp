@@ -1,4 +1,4 @@
-/* $Id: gfx.cpp 27628 2016-08-15 18:33:08Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -704,8 +704,8 @@ Dimension GetStringBoundingBox(const char *str, FontSize start_fontsize)
 }
 
 /**
- * Get bounding box of a string. Uses parameters set by #DParam if needed.
- * Has the same restrictions as #GetStringBoundingBox(const char *str).
+ * Get bounding box of a string. Uses parameters set by #SetDParam if needed.
+ * Has the same restrictions as #GetStringBoundingBox(const char *str, FontSize start_fontsize).
  * @param strid String to examine.
  * @return Width and height of the bounding box for the string in pixels.
  */
@@ -762,7 +762,7 @@ void DrawCharCentered(WChar c, int x, int y, TextColour colour)
 /**
  * Get the size of a sprite.
  * @param sprid Sprite to examine.
- * @param [out] offset Optionally returns the sprite position offset.
+ * @param[out] offset Optionally returns the sprite position offset.
  * @return Sprite size in pixels.
  * @note The size assumes (0, 0) as top-left coordinate and ignores any part of the sprite drawn at the left or above that position.
  */
@@ -1112,16 +1112,17 @@ void DoPaletteAnimations()
 /**
  * Determine a contrasty text colour for a coloured background.
  * @param background Background colour.
+ * @param threshold Background colour brightness threshold below which the background is considered dark and TC_WHITE is returned, range: 0 - 255, default 128.
  * @return TC_BLACK or TC_WHITE depending on what gives a better contrast.
  */
-TextColour GetContrastColour(uint8 background)
+TextColour GetContrastColour(uint8 background, uint8 threshold)
 {
 	Colour c = _cur_palette.palette[background];
 	/* Compute brightness according to http://www.w3.org/TR/AERT#color-contrast.
 	 * The following formula computes 1000 * brightness^2, with brightness being in range 0 to 255. */
 	uint sq1000_brightness = c.r * c.r * 299 + c.g * c.g * 587 + c.b * c.b * 114;
-	/* Compare with threshold brightness 128 (50%) */
-	return sq1000_brightness < 128 * 128 * 1000 ? TC_WHITE : TC_BLACK;
+	/* Compare with threshold brightness which defaults to 128 (50%) */
+	return sq1000_brightness < ((uint) threshold) * ((uint) threshold) * 1000 ? TC_WHITE : TC_BLACK;
 }
 
 /**
@@ -1170,8 +1171,8 @@ byte GetDigitWidth(FontSize size)
 
 /**
  * Determine the broadest digits for guessing the maximum width of a n-digit number.
- * @param [out] front Broadest digit, which is not 0. (Use this digit as first digit for numbers with more than one digit.)
- * @param [out] next Broadest digit, including 0. (Use this digit for all digits, except the first one; or for numbers with only one digit.)
+ * @param[out] front Broadest digit, which is not 0. (Use this digit as first digit for numbers with more than one digit.)
+ * @param[out] next Broadest digit, including 0. (Use this digit for all digits, except the first one; or for numbers with only one digit.)
  * @param size  Font of the digit
  */
 void GetBroadestDigit(uint *front, uint *next, FontSize size)
@@ -1215,11 +1216,6 @@ void UndrawMouseCursor()
 
 void DrawMouseCursor()
 {
-#if defined(WINCE)
-	/* Don't ever draw the mouse for WinCE, as we work with a stylus */
-	return;
-#endif
-
 	/* Don't draw the mouse cursor if the screen is not ready */
 	if (_screen.dst_ptr == NULL) return;
 
@@ -1322,7 +1318,11 @@ void DrawDirtyBlocks()
 		/* Wait a while and update _realtime_tick so we are given the rights */
 		if (!IsFirstModalProgressLoop()) CSleep(MODAL_PROGRESS_REDRAW_TIMEOUT);
 		_realtime_tick += MODAL_PROGRESS_REDRAW_TIMEOUT;
+
+		/* Modal progress thread may need blitter access while we are waiting for it. */
+		VideoDriver::GetInstance()->ReleaseBlitterLock();
 		_modal_progress_paint_mutex->BeginCritical();
+		VideoDriver::GetInstance()->AcquireBlitterLock();
 		_modal_progress_work_mutex->BeginCritical();
 
 		/* When we ended with the modal progress, do not draw the blocks.
@@ -1640,8 +1640,8 @@ void SetAnimatedMouseCursor(const AnimCursor *table)
  * Update cursor position on mouse movement.
  * @param x New X position.
  * @param y New Y position.
- * @param queued True, if the OS queues mouse warps after pending mouse movement events.
- *               False, if the warp applies instantaneous.
+ * @param queued_warp True, if the OS queues mouse warps after pending mouse movement events.
+ *                    False, if the warp applies instantaneous.
  * @return true, if the OS cursor position should be warped back to this->pos.
  */
 bool CursorVars::UpdateCursorPosition(int x, int y, bool queued_warp)

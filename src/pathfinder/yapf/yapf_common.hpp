@@ -1,4 +1,4 @@
-/* $Id: yapf_common.hpp 27362 2015-08-08 10:06:24Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -142,8 +142,7 @@ public:
 	/** Called by YAPF to detect if node ends in the desired destination */
 	inline bool PfDetectDestination(Node &n)
 	{
-		bool bDest = (n.m_key.m_tile == m_destTile) && ((m_destTrackdirs & TrackdirToTrackdirBits(n.GetTrackdir())) != TRACKDIR_BIT_NONE);
-		return bDest;
+		return (n.m_key.m_tile == m_destTile) && HasTrackdir(m_destTrackdirs, n.GetTrackdir());
 	}
 
 	/**

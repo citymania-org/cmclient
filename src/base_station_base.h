@@ -1,4 +1,4 @@
-/* $Id: base_station_base.h 26085 2013-11-24 14:41:19Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -71,7 +71,7 @@ struct BaseStation : StationPool::PoolItem<&_station_pool> {
 	uint16 random_bits;             ///< Random bits assigned to this station
 	byte waiting_triggers;          ///< Waiting triggers (NewGRF) for this station
 	uint8 cached_anim_triggers;     ///< NOSAVE: Combined animation trigger bitmask, used to determine if trigger processing should happen.
-	uint32 cached_cargo_triggers;   ///< NOSAVE: Combined cargo trigger bitmask
+	CargoTypes cached_cargo_triggers; ///< NOSAVE: Combined cargo trigger bitmask
 
 	TileArea train_station;         ///< Tile area the train 'station' part covers
 	StationRect rect;               ///< NOSAVE: Station spread out rectangle maintained by StationRect::xxx() functions

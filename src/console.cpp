@@ -1,4 +1,4 @@
-/* $Id: console.cpp 27893 2017-08-13 18:38:42Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -235,8 +235,8 @@ void IConsoleAddSorted(T **base, T *item_new)
 
 /**
  * Remove underscores from a string; the string will be modified!
- * @param name The string to remove the underscores from.
- * @return #name.
+ * @param[in,out] name String to remove the underscores from.
+ * @return \a name, with its contents modified.
  */
 char *RemoveUnderscores(char *name)
 {

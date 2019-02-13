@@ -1,4 +1,4 @@
-/* $Id: 32bpp_simple.cpp 26969 2014-10-06 18:45:51Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: cargomonitor.cpp 26685 2014-07-12 17:04:14Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

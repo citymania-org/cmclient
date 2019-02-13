@@ -1,4 +1,4 @@
-/* $Id: endian_func.hpp 23640 2011-12-20 17:57:56Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

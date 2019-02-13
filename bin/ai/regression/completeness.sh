@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: completeness.sh 26895 2014-09-21 16:41:03Z fonsinchen $
+# $Id$
 
 if ! [ -f ai/regression/completeness.sh ]; then
 	echo "Make sure you are in the root of OpenTTD before starting this script."

@@ -1,4 +1,4 @@
-/* $Id: autoreplace_base.h 24136 2012-04-17 19:44:02Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

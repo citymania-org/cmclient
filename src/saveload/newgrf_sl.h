@@ -1,4 +1,4 @@
-/* $Id: newgrf_sl.h 21886 2011-01-22 09:53:15Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

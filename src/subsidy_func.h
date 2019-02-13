@@ -1,4 +1,4 @@
-/* $Id: subsidy_func.h 20674 2010-08-28 20:15:45Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

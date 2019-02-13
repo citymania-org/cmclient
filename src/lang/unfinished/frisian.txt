@@ -10,7 +10,7 @@
 ##grflangid 0x32
 
 
-# $Id: frisian.txt 27980 2018-03-11 12:24:32Z frosch $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -669,10 +669,7 @@ STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}Selektea
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}Set musyk mjokselje oan/út
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}Lit musykseleksjeskerm sjen.
 
-STR_ERROR_NO_SONGS                                              :{WHITE}In musykset sûnder nûmers is selektearre. Gjin nûmers sille spile wurden
-
 # Playlist window
-STR_PLAYLIST_MUSIC_PROGRAM_SELECTION                            :{WHITE}Musykprogramseleksje
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM} "{STRING}"
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}Nûmeryndeks
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}Program - '{STRING}'
@@ -1252,6 +1249,7 @@ STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}At der f
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Ynfrastruktuerûnderhâld: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :By ynskeakeljen binne der koster ferbûn oan it ûnderhâld fan ynfrastruktuer. De kosten wurde heger by gruttere netwurken wêrtoch gruttere bedriuwen hjir mear lêst fan hawwe
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Fleanfjilden ferrinne nea: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :By ynskeakeljen bliuwe alle fleanfjildtypes foar ivich beskikber
 
@@ -1329,8 +1327,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Kleur fan it l�
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Grien
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Donker grien
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Fiolet
-STR_CONFIG_SETTING_REVERSE_SCROLLING                            :Draai scrollrjochtig om: {STRING}
-STR_CONFIG_SETTING_REVERSE_SCROLLING_HELPTEXT                   :By útskeakeljen beweecht de mûs de kamera. By ynskeakeljen beweecht de mûs de kaart
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Loaitsfinster floeiend scrolle : {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Bepaalt hoe it haadfinster scrollt. By ynskeakeljen sil dit floeiend wêze. By útskeakeljen ljept it byld direktst nei de selektearre lokaasje
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Under it gebrûk fan de ferskate bou-arken diminsjes sjen litte: {STRING}
@@ -1362,8 +1358,6 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Kommando+Klik
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Ctrl+Klik
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Ut
 
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Scrolle mei lofter mûsknop: {STRING}
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Skeakel scrollen mei de lofter mûsknop oan. Dit is brûksum foar scollen op oanreitsskermen
 
 STR_CONFIG_SETTING_AUTOSAVE                                     :Automatysk bewarje: {STRING}
 STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Selektearje de tiid tusken automatysk bewarje fan it spul
@@ -1738,7 +1732,6 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Wizigje 
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Stea oanpassen fan produksje ta: {ORANGE}{STRING}
 
 # Livery window
-STR_LIVERY_CAPTION                                              :{WHITE}Nei Kleurenskema
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Lit gewoane kleurskemas sjen
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Lit kleurskema sjen fan treinen
@@ -2475,7 +2468,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Lân fan bedriu
 STR_ABOUT_OPENTTD                                               :{WHITE}Oer OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Orizjineel copyright {COPYRIGHT} 1995 Chris Sawyer, All rights reserved
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD-ferzje {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2018 It OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2019 It OpenTTD team
+
+# Framerate display window
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Spul Opslaan
@@ -2754,8 +2754,6 @@ STR_TOWN_POPULATION                                             :{BLACK}Wrâldpo
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} (City)
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Ynwenners: {ORANGE}{COMMA}{BLACK}  Hûzen: {ORANGE}{COMMA}
-STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Passazjiers lêste moanne: {ORANGE}{COMMA}{BLACK}  maks: {ORANGE}{COMMA}
-STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Post lêste moanne: {ORANGE}{COMMA}{BLACK}  maks: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Guod nedich foar stêdsgroei:
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} ferplichte
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} ferplichte yn de winter
@@ -3037,17 +3035,7 @@ STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Sintrear
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Produksje nivo: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Yndustry kundicht drigend sluten oan!
 
-############ range for requires starts
-STR_INDUSTRY_VIEW_REQUIRES_CARGO                                :{BLACK}Nedich: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Nedich: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Nedich: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
-############ range for requires ends
 
-
-############ range for produces starts
-STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Produseart: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Produseart: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-############ range for produces ends
 
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Feroaring produksje nivo (percentage, up to 800%)
 
@@ -3758,7 +3746,6 @@ STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}Te folle
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}Te folle stasjonsdielen
 STR_ERROR_TOO_MANY_BUS_STOPS                                    :{WHITE}Te folle bushaltes
 STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}Te folle frachtstasjons
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_STATION                          :{WHITE}Te ticht by in oar stasjon
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}Te ticht by in oare haven
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}Te ticht by in oar fleanfjild
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}Kin namme fan stasjon net feroarje

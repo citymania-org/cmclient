@@ -1,4 +1,4 @@
-/* $Id: oldloader.h 23595 2011-12-19 17:48:04Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

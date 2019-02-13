@@ -1,4 +1,4 @@
-/* $Id: pool_type.hpp 26333 2014-02-11 20:34:48Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

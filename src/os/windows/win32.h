@@ -1,4 +1,4 @@
-/* $Id: win32.h 27674 2016-10-30 19:27:07Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -44,5 +44,8 @@ void SetWin32ThreadName(DWORD dwThreadID, const char* threadName);
 #else
 static inline void SetWin32ThreadName(DWORD dwThreadID, const char* threadName) {}
 #endif
+
+void Win32SetCurrentLocaleName(const char *iso_code);
+int OTTDStringCompare(const char *s1, const char *s2);
 
 #endif /* WIN32_H */

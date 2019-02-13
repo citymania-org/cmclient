@@ -1,4 +1,4 @@
-/* $Id: array.hpp 27363 2015-08-08 13:19:38Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

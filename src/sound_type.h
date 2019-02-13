@@ -1,4 +1,4 @@
-/* $Id: sound_type.h 27507 2016-02-08 21:05:57Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

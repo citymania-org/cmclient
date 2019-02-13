@@ -1,4 +1,4 @@
-/* $Id: newgrf_cargo.h 24273 2012-05-25 17:23:19Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

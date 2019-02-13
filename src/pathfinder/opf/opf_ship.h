@@ -1,4 +1,4 @@
-/* $Id: opf_ship.h 21511 2010-12-13 21:56:40Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

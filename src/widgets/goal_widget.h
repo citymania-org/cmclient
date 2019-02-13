@@ -1,5 +1,5 @@
 
-/* $Id: goal_widget.h 25623 2013-07-21 15:59:07Z zuu $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

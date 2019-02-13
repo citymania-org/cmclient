@@ -1,4 +1,4 @@
-/* $Id: station_gui.h 26083 2013-11-24 14:29:32Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

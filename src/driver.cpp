@@ -1,4 +1,4 @@
-/* $Id: driver.cpp 26539 2014-04-28 21:09:19Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

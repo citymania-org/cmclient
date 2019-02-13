@@ -1,4 +1,4 @@
-/* $Id: network_widget.h 24769 2012-11-27 21:35:52Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: vehicle.cpp 27986 2018-03-11 13:23:26Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -52,6 +52,7 @@
 #include "gamelog.h"
 #include "linkgraph/linkgraph.h"
 #include "linkgraph/refresh.h"
+#include "framerate_type.h"
 
 #include "table/strings.h"
 
@@ -94,7 +95,7 @@ INSTANTIATE_POOL_METHODS(Vehicle)
 
 /**
  * Determine shared bounds of all sprites.
- * @param [out] bounds Shared bounds.
+ * @param[out] bounds Shared bounds.
  */
 void VehicleSpriteSeq::GetBounds(Rect *bounds) const
 {
@@ -219,7 +220,7 @@ bool Vehicle::NeedsServicing() const
 		if (replace_when_old && !v->NeedsAutorenewing(c, false)) continue;
 
 		/* Check refittability */
-		uint32 available_cargo_types, union_mask;
+		CargoTypes available_cargo_types, union_mask;
 		GetArticulatedRefitMasks(new_engine, true, &union_mask, &available_cargo_types);
 		/* Is there anything to refit? */
 		if (union_mask != 0) {
@@ -722,7 +723,7 @@ bool Vehicle::IsEngineCountable() const
 
 /**
  * Check whether Vehicle::engine_type has any meaning.
- * @return true if the vehicle has a useable engine type.
+ * @return true if the vehicle has a usable engine type.
  */
 bool Vehicle::HasEngineType() const
 {
@@ -945,8 +946,15 @@ void CallVehicleTicks()
 
 	RunVehicleDayProc();
 
-	Station *st;
-	FOR_ALL_STATIONS(st) LoadUnloadStation(st);
+	{
+		PerformanceMeasurer framerate(PFE_GL_ECONOMY);
+		Station *st;
+		FOR_ALL_STATIONS(st) LoadUnloadStation(st);
+	}
+	PerformanceAccumulator::Reset(PFE_GL_TRAINS);
+	PerformanceAccumulator::Reset(PFE_GL_ROADVEHS);
+	PerformanceAccumulator::Reset(PFE_GL_SHIPS);
+	PerformanceAccumulator::Reset(PFE_GL_AIRCRAFT);
 
 	Vehicle *v;
 	FOR_ALL_VEHICLES(v) {
@@ -1749,7 +1757,10 @@ bool CanBuildVehicleInfrastructure(VehicleType type)
 
 	UnitID max;
 	switch (type) {
-		case VEH_TRAIN:    max = _settings_game.vehicle.max_trains; break;
+		case VEH_TRAIN:
+			if (!HasAnyRailtypesAvail(_local_company)) return false;
+			max = _settings_game.vehicle.max_trains;
+			break;
 		case VEH_ROAD:     max = _settings_game.vehicle.max_roadveh; break;
 		case VEH_SHIP:     max = _settings_game.vehicle.max_ships; break;
 		case VEH_AIRCRAFT: max = _settings_game.vehicle.max_aircraft; break;
@@ -1805,11 +1816,12 @@ LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_
 					if (parent_engine_type == INVALID_ENGINE) {
 						return LS_PASSENGER_WAGON_STEAM;
 					} else {
+						bool is_mu = HasBit(EngInfo(parent_engine_type)->misc_flags, EF_RAIL_IS_MU);
 						switch (RailVehInfo(parent_engine_type)->engclass) {
 							default: NOT_REACHED();
 							case EC_STEAM:    return LS_PASSENGER_WAGON_STEAM;
-							case EC_DIESEL:   return LS_PASSENGER_WAGON_DIESEL;
-							case EC_ELECTRIC: return LS_PASSENGER_WAGON_ELECTRIC;
+							case EC_DIESEL:   return is_mu ? LS_DMU : LS_PASSENGER_WAGON_DIESEL;
+							case EC_ELECTRIC: return is_mu ? LS_EMU : LS_PASSENGER_WAGON_ELECTRIC;
 							case EC_MONORAIL: return LS_PASSENGER_WAGON_MONORAIL;
 							case EC_MAGLEV:   return LS_PASSENGER_WAGON_MAGLEV;
 						}
@@ -1878,14 +1890,24 @@ const Livery *GetEngineLivery(EngineID engine_type, CompanyID company, EngineID 
 	const Company *c = Company::Get(company);
 	LiveryScheme scheme = LS_DEFAULT;
 
-	/* The default livery is always available for use, but its in_use flag determines
-	 * whether any _other_ liveries are in use. */
-	if (c->livery[LS_DEFAULT].in_use && (livery_setting == LIT_ALL || (livery_setting == LIT_COMPANY && company == _local_company))) {
-		/* Determine the livery scheme to use */
-		scheme = GetEngineLiveryScheme(engine_type, parent_engine_type, v);
+	if (livery_setting == LIT_ALL || (livery_setting == LIT_COMPANY && company == _local_company)) {
+		if (v != NULL) {
+			const Group *g = Group::GetIfValid(v->First()->group_id);
+			if (g != NULL) {
+				/* Traverse parents until we find a livery or reach the top */
+				while (g->livery.in_use == 0 && g->parent != INVALID_GROUP) {
+					g = Group::Get(g->parent);
+				}
+				if (g->livery.in_use != 0) return &g->livery;
+			}
+		}
 
-		/* Switch back to the default scheme if the resolved scheme is not in use */
-		if (!c->livery[scheme].in_use) scheme = LS_DEFAULT;
+		/* The default livery is always available for use, but its in_use flag determines
+		 * whether any _other_ liveries are in use. */
+		if (c->livery[LS_DEFAULT].in_use != 0) {
+			/* Determine the livery scheme to use */
+			scheme = GetEngineLiveryScheme(engine_type, parent_engine_type, v);
+		}
 	}
 
 	return &c->livery[scheme];
@@ -2329,13 +2351,15 @@ CommandCost Vehicle::SendToDepot(DoCommandFlag flags, DepotCommand command)
 			SetBit(gv_flags, GVF_SUPPRESS_IMPLICIT_ORDERS);
 		}
 
-		this->dest_tile = location;
+		this->SetDestTile(location);
 		this->current_order.MakeGoToDepot(destination, ODTF_MANUAL);
 		if (!(command & DEPOT_SERVICE)) this->current_order.SetDepotActionType(ODATFB_HALT);
 		SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
 
-		/* If there is no depot in front, reverse automatically (trains only) */
-		if (this->type == VEH_TRAIN && reverse) DoCommand(this->tile, this->index, 0, DC_EXEC, CMD_REVERSE_TRAIN_DIRECTION);
+		/* If there is no depot in front and the train is not already reversing, reverse automatically (trains only) */
+		if (this->type == VEH_TRAIN && (reverse ^ HasBit(Train::From(this)->flags, VRF_REVERSING))) {
+			DoCommand(this->tile, this->index, 0, DC_EXEC, CMD_REVERSE_TRAIN_DIRECTION);
+		}
 
 		if (this->type == VEH_AIRCRAFT) {
 			Aircraft *a = Aircraft::From(this);
@@ -2851,7 +2875,7 @@ const uint16 &Vehicle::GetGroundVehicleFlags() const
 
 /**
  * Calculates the set of vehicles that will be affected by a given selection.
- * @param set [inout] Set of affected vehicles.
+ * @param[in,out] set Set of affected vehicles.
  * @param v First vehicle of the selection.
  * @param num_vehicles Number of vehicles in the selection (not counting articulated parts).
  * @pre \a set must be empty.

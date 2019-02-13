@@ -11,7 +11,7 @@
 ##gender karlkyn kvenkyn hvorugkyn
 
 
-# $Id: icelandic.txt 27980 2018-03-11 12:24:32Z frosch $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -647,10 +647,7 @@ STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}Velja 'S
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}Kveikja/slökkva á stokkun
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}Sýna lagalista
 
-STR_ERROR_NO_SONGS                                              :{WHITE}Tómur lagalisti hefur verið valinn. Engin lög verða spiluð
-
 # Playlist window
-STR_PLAYLIST_MUSIC_PROGRAM_SELECTION                            :{WHITE}Lagalistar
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM} "{STRING}"
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}Laganúmer
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}Listi - '{STRING}'
@@ -1206,6 +1203,7 @@ STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Ekki er 
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Viðhald á innviðum: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Ef þessi stilling er virk kostar að reka innviði fyrirtækisins. Kostnaður eykst í auknu hlutfalli við stærð fyrirtækisins, því eru áhrifin meiri á stór fyrirtæki en lítil
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Alltaf hægt að byggja allar gerðir flugvalla: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Ef þessi stilling er virk þá er hver tegund flugvallar alltaf aðgengileg eftir að hann verður fyrst aðgengilegur
 
@@ -1273,8 +1271,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Litur á landsl
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Grænn
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Dökkgrænn
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Fjólublátt
-STR_CONFIG_SETTING_REVERSE_SCROLLING                            :Færa sjónarhorn í öfuga átt miðað við mús: {STRING}
-STR_CONFIG_SETTING_REVERSE_SCROLLING_HELPTEXT                   :Hegðun þegar sjónarhornið er fært með hægri músartakkanum. Þegar stillingin er óvirk færir músin myndavélina. Þegar stillingin er virk færir músin sjónarhornið
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Mjúkt skrun í skjágluggum: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Stýrir hvernig aðalsjónarhornið færist á ákveðna staði þegar smellt er á þá á litla kortinu eða þegar ákveðinn hlutur er valin á kortinu. Ef stillingin er virk færist aðalsjónarhornið rólega, ef stillingin er óvirk fer aðalsjónarhornið beint á ákveðna staðinn
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Sýna mælingar þegar verið er að byggja og breyta landslagi: {STRING}
@@ -1306,8 +1302,6 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Command+smella
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Ctrl+smella
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Af
 
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Skrun með hægri músarhnappi: {STRING}
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Virkja að hægt sé að færa sjónarhornið með því að færa það með vinstri músar takkanum. Þetta er sérstaklega gott þegar notast er við snerti-skjá til að færa sjónarhornið
 
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Nota dagsetningar á {STRING} formi fyrir vistaða leiki.
@@ -1669,7 +1663,6 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Breyta u
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Leyfa breytingar á verðmæti framleiðslu: {ORANGE}{STRING}
 
 # Livery window
-STR_LIVERY_CAPTION                                              :{WHITE}Nýtt Litaskema
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Grunnlitur fyrirtækis
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Litaskema lesta
@@ -2536,7 +2529,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Land í eigu fy
 STR_ABOUT_OPENTTD                                               :{WHITE}Um OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Upphaflegur höfundarréttur {COPYRIGHT} 1995 Chris Sawyer, Öll réttindi áskilin
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD útgáfa {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2018 OpenTTD hópurinn
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2019 OpenTTD hópurinn
+
+# Framerate display window
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Vista leik
@@ -2808,8 +2808,6 @@ STR_TOWN_POPULATION                                             :{BLACK}Heildar�
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} (Borg)
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Íbúafjöldi: {ORANGE}{COMMA}{BLACK}  Hús: {ORANGE}{COMMA}
-STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Farþegar síðasta mánaðar: {ORANGE}{COMMA}{BLACK}  max: {ORANGE}{COMMA}
-STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Póstur síðasta mánaðar: {ORANGE}{COMMA}{BLACK}  max: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Nauðsynlegur farmur fyrir stækkun bæjarins:
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} nauðsynlegt
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} nauðsynlegt á veturnar
@@ -3077,17 +3075,7 @@ STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Miðja a
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Framleiðsla: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Iðnaðurinn hefur tilkynnt yfirvofandi lokun.
 
-############ range for requires starts
-STR_INDUSTRY_VIEW_REQUIRES_CARGO                                :{BLACK}Þarf: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Þarf: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Þarf: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
-############ range for requires ends
 
-
-############ range for produces starts
-STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Framleiðir: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Framleiðir: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-############ range for produces ends
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Breyta framleiðslu (margfeldi af 8, allt að 2040)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Breyta framleiðslumagni (prósentu hámark er 800%)
@@ -3968,7 +3956,6 @@ STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}Of marga
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}Of margir hlutar af lestarstöðvum
 STR_ERROR_TOO_MANY_BUS_STOPS                                    :{WHITE}Of margar strætisvagnastöðvar
 STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}Of margar vörubílastöðvar
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_STATION                          :{WHITE}Of nálægt annarri stöð/lestunarsvæði
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}Of nálægt annarri bryggju
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}Of nálægt öðrum flugvelli
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}Get ekki endurnefnt stöð...

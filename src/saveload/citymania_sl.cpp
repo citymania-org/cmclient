@@ -6,7 +6,7 @@
 
 #define CM_DATA_FORMAT_VERSION 1
 
-assert_compile(NUM_CARGO == 32);
+assert_compile(NUM_CARGO < 256);
 
 
 static void CM_EncodeTownsExtraInfo(BitOStream &bs)

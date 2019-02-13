@@ -1,4 +1,4 @@
-/* $Id: clear_func.h 23168 2011-11-08 19:48:47Z yexo $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

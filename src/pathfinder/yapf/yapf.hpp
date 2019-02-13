@@ -1,4 +1,4 @@
-/* $Id: yapf.hpp 25608 2013-07-14 09:20:34Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

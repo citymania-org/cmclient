@@ -1,4 +1,4 @@
-/* $Id: strgen_base.cpp 27380 2015-08-10 20:21:29Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -85,7 +85,7 @@ void LangString::FreeTranslation()
 
 /**
  * Create a new string data container.
- * @param max_strings The maximum number of strings.
+ * @param tabs The maximum number of strings.
  */
 StringData::StringData(size_t tabs) : tabs(tabs), max_strings(tabs * TAB_SIZE)
 {

@@ -1,4 +1,4 @@
-/* $Id: hotkeys.cpp 27816 2017-03-20 19:30:49Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -41,6 +41,7 @@ static const KeycodeNames _keycode_to_name[] = {
 	{"GLOBAL", WKC_GLOBAL_HOTKEY},
 	{"ESC", WKC_ESC},
 	{"DEL", WKC_DELETE},
+	{"BACKSPACE", WKC_BACKSPACE},
 	{"RETURN", WKC_RETURN},
 	{"BACKQUOTE", WKC_BACKQUOTE},
 	{"F1", WKC_F1},

@@ -1,4 +1,4 @@
-/* $Id: settings_gui.cpp 27827 2017-03-25 12:21:17Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -115,17 +115,22 @@ static int GetCurRes()
 static void ShowCustCurrency();
 
 template <class T>
-static DropDownList *BuiltSetDropDownList(int *selected_index)
+static DropDownList *BuildSetDropDownList(int *selected_index, bool allow_selection)
 {
 	int n = T::GetNumSets();
 	*selected_index = T::GetIndexOfUsedSet();
 
 	DropDownList *list = new DropDownList();
 	for (int i = 0; i < n; i++) {
-		*list->Append() = new DropDownListCharStringItem(T::GetSet(i)->name, i, (_game_mode == GM_MENU) ? false : (*selected_index != i));
+		*list->Append() = new DropDownListCharStringItem(T::GetSet(i)->name, i, !allow_selection && (*selected_index != i));
 	}
 
 	return list;
+}
+
+DropDownList *BuildMusicSetDropDownList(int *selected_index)
+{
+	return BuildSetDropDownList<BaseMusic>(selected_index, true);
 }
 
 /** Window for displaying the textfile of a BaseSet. */
@@ -158,7 +163,7 @@ struct BaseSetTextfileWindow : public TextfileWindow {
 template <class TBaseSet>
 void ShowBaseSetTextfileWindow(TextfileType file_type, const TBaseSet* baseset, StringID content_type)
 {
-	DeleteWindowByClass(WC_TEXTFILE);
+	DeleteWindowById(WC_TEXTFILE, file_type);
 	new BaseSetTextfileWindow<TBaseSet>(file_type, baseset, content_type);
 }
 
@@ -178,6 +183,7 @@ struct GameOptionsWindow : Window {
 	~GameOptionsWindow()
 	{
 		DeleteWindowById(WC_CUSTOM_CURRENCY, 0);
+		DeleteWindowByClass(WC_TEXTFILE);
 		if (this->reload) _switch_mode = SM_MENU;
 	}
 
@@ -298,15 +304,15 @@ struct GameOptionsWindow : Window {
 			}
 
 			case WID_GO_BASE_GRF_DROPDOWN:
-				list = BuiltSetDropDownList<BaseGraphics>(selected_index);
+				list = BuildSetDropDownList<BaseGraphics>(selected_index, (_game_mode == GM_MENU));
 				break;
 
 			case WID_GO_BASE_SFX_DROPDOWN:
-				list = BuiltSetDropDownList<BaseSounds>(selected_index);
+				list = BuildSetDropDownList<BaseSounds>(selected_index, (_game_mode == GM_MENU));
 				break;
 
 			case WID_GO_BASE_MUSIC_DROPDOWN:
-				list = BuiltSetDropDownList<BaseMusic>(selected_index);
+				list = BuildMusicSetDropDownList(selected_index);
 				break;
 
 			default:
@@ -545,7 +551,7 @@ struct GameOptionsWindow : Window {
 				break;
 
 			case WID_GO_BASE_MUSIC_DROPDOWN:
-				this->SetMediaSet<BaseMusic>(index);
+				ChangeMusicSet(index);
 				break;
 		}
 	}
@@ -1525,9 +1531,8 @@ static SettingsContainer &GetSettingsTree()
 			SettingsPage *viewports = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_VIEWPORTS));
 			{
 				viewports->Add(new SettingEntry("gui.auto_scrolling"));
-				viewports->Add(new SettingEntry("gui.reverse_scroll"));
+				viewports->Add(new SettingEntry("gui.scroll_mode"));
 				viewports->Add(new SettingEntry("gui.smooth_scroll"));
-				viewports->Add(new SettingEntry("gui.left_mouse_btn_scrolling"));
 				/* While the horizontal scrollwheel scrolling is written as general code, only
 				 *  the cocoa (OSX) driver generates input for it.
 				 *  Since it's also able to completely disable the scrollwheel will we display it on all platforms anyway */
@@ -1604,6 +1609,7 @@ static SettingsContainer &GetSettingsTree()
 			company->Add(new SettingEntry("gui.drag_signals_fixed_distance"));
 			company->Add(new SettingEntry("gui.new_nonstop"));
 			company->Add(new SettingEntry("gui.stop_location"));
+			company->Add(new SettingEntry("gui.starting_colour"));
 			company->Add(new SettingEntry("company.engine_renew"));
 			company->Add(new SettingEntry("company.engine_renew_months"));
 			company->Add(new SettingEntry("company.engine_renew_money"));

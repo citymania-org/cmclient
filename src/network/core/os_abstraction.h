@@ -1,4 +1,4 @@
-/* $Id: os_abstraction.h 27092 2014-12-24 17:17:18Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -21,7 +21,7 @@
 #ifdef ENABLE_NETWORK
 
 /* Windows stuff */
-#if defined(WIN32) || defined(WIN64)
+#if defined(_WIN32)
 #include <errno.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -38,94 +38,8 @@ typedef unsigned long in_addr_t;
 	typedef SSIZE_T ssize_t;
 	typedef int socklen_t;
 #	define IPPROTO_IPV6 41
-#else
-#include "../../os/windows/win32.h"
-#include "../../core/alloc_func.hpp"
-
-#define AI_ADDRCONFIG   0x00000400  /* Resolution only if global address configured */
-#define IPV6_V6ONLY 27
-
-static inline int OTTDgetnameinfo(const struct sockaddr *sa, socklen_t salen, char *host, DWORD hostlen, char *serv, DWORD servlen, int flags)
-{
-	static int (WINAPI *getnameinfo)(const struct sockaddr *, socklen_t, char *, DWORD, char *, DWORD, int) = NULL;
-	static bool first_time = true;
-
-	if (first_time) {
-		LoadLibraryList((Function*)&getnameinfo, "ws2_32.dll\0getnameinfo\0\0");
-		first_time = false;
-	}
-
-	if (getnameinfo != NULL) return getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
-
-	strncpy(host, inet_ntoa(((const struct sockaddr_in *)sa)->sin_addr), hostlen);
-	return 0;
-}
-#define getnameinfo OTTDgetnameinfo
-
-static inline int OTTDgetaddrinfo(const char *nodename, const char *servname, const struct addrinfo *hints, struct addrinfo **res)
-{
-	static int (WINAPI *getaddrinfo)(const char *, const char *, const struct addrinfo *, struct addrinfo **) = NULL;
-	static bool first_time = true;
-
-	if (first_time) {
-		LoadLibraryList((Function*)&getaddrinfo, "ws2_32.dll\0getaddrinfo\0\0");
-		first_time = false;
-	}
-
-	if (getaddrinfo != NULL) return getaddrinfo(nodename, servname, hints, res);
-
-	*res = NULL;
-
-	in_addr_t ip = inet_addr(nodename);
-	if (ip == INADDR_NONE) {
-		struct hostent *he = gethostbyname(nodename);
-		if (he == NULL) return EAI_NONAME;
-		ip = (*(struct in_addr *)he->h_addr).s_addr;
-	}
-
-	struct sockaddr_in *sin = CallocT<struct sockaddr_in>(1);
-	sin->sin_family = AF_INET;
-	sin->sin_port = htons(strtoul(servname, NULL, 10));
-	sin->sin_addr.s_addr = ip;
-
-	struct addrinfo *ai = CallocT<struct addrinfo>(1);
-	ai->ai_family = PF_INET;
-	ai->ai_addr = (struct sockaddr*)sin;
-	ai->ai_addrlen = sizeof(*sin);
-	ai->ai_socktype = hints->ai_socktype;
-
-	*res = ai;
-	return 0;
-}
-#define getaddrinfo OTTDgetaddrinfo
-
-static inline void OTTDfreeaddrinfo(struct addrinfo *ai)
-{
-	static int (WINAPI *freeaddrinfo)(struct addrinfo *) = NULL;
-	static bool first_time = true;
-
-	if (ai == NULL) return;
-
-	if (first_time) {
-		LoadLibraryList((Function*)&freeaddrinfo, "ws2_32.dll\0freeaddrinfo\0\0");
-		first_time = false;
-	}
-
-	if (freeaddrinfo != NULL) {
-		freeaddrinfo(ai);
-		return;
-	}
-
-	do {
-		struct addrinfo *next = ai->ai_next;
-		free(ai->ai_addr);
-		free(ai);
-		ai = next;
-	} while (ai != NULL);
-}
-#define freeaddrinfo OTTDfreeaddrinfo
-#endif /* __MINGW32__ && __CYGWIN__ */
-#endif /* WIN32 */
+#endif /* !(__MINGW32__ && __CYGWIN__) */
+#endif /* _WIN32 */
 
 /* UNIX stuff */
 #if defined(UNIX) && !defined(__OS2__)
@@ -193,29 +107,6 @@ static inline void OTTDfreeaddrinfo(struct addrinfo *ai)
 #ifdef __HAIKU__
 	#define IPV6_V6ONLY 27
 #endif
-
-#if defined(PSP)
-#	include <sys/socket.h>
-#	include <netinet/in.h>
-#	include <arpa/inet.h>
-#	include <pspnet.h>
-#	include <pspnet_inet.h>
-#	include <pspnet_apctl.h>
-#	include <pspnet_resolver.h>
-#	include <errno.h>
-#	include <unistd.h>
-#	include <sys/select.h>
-#	include <sys/time.h>
-#	include <sys/fd_set.h>
-
-#	define TCP_NODELAY 1
-#	define SO_NONBLOCK 0x1009
-#	define SOCKET int
-#	define INVALID_SOCKET -1
-#	define INADDR_NONE 0xffffffff
-#	define closesocket close
-#	define GET_LAST_ERROR() sceNetInetGetErrno()
-#endif /* PSP */
 
 /* OS/2 stuff */
 #if defined(__OS2__)
@@ -313,12 +204,12 @@ typedef unsigned long in_addr_t;
  */
 static inline bool SetNonBlocking(SOCKET d)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	u_long nonblocking = 1;
 #else
 	int nonblocking = 1;
 #endif
-#if (defined(__BEOS__) && defined(BEOS_NET_SERVER)) || defined(PSP)
+#if (defined(__BEOS__) && defined(BEOS_NET_SERVER))
 	return setsockopt(d, SOL_SOCKET, SO_NONBLOCK, &nonblocking, sizeof(nonblocking)) == 0;
 #else
 	return ioctlsocket(d, FIONBIO, &nonblocking) == 0;

@@ -1,4 +1,4 @@
-/* $Id: error.h 26241 2014-01-12 18:00:39Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

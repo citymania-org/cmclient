@@ -1,4 +1,4 @@
-/* $Id: ai.hpp 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -32,7 +32,7 @@ public:
 		START_NEXT_EASY   = DAYS_IN_YEAR * 2,
 		START_NEXT_MEDIUM = DAYS_IN_YEAR,
 		START_NEXT_HARD   = DAYS_IN_YEAR / 2,
-		START_NEXT_MIN    = 1,
+		START_NEXT_MIN    = 0,
 		START_NEXT_MAX    = 3600,
 		START_NEXT_DEVIATION = 60,
 	};

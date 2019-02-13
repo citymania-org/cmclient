@@ -1,4 +1,4 @@
-/* $Id: tilehighlight_func.h 21627 2010-12-24 15:08:19Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

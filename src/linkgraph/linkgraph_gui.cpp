@@ -1,4 +1,4 @@
-/* $Id: linkgraph_gui.cpp 26891 2014-09-21 16:19:52Z fonsinchen $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -125,12 +125,67 @@ inline bool LinkGraphOverlay::IsPointVisible(Point pt, const DrawPixelInfo *dpi,
  */
 inline bool LinkGraphOverlay::IsLinkVisible(Point pta, Point ptb, const DrawPixelInfo *dpi, int padding) const
 {
-	return !((pta.x < dpi->left - padding && ptb.x < dpi->left - padding) ||
-			(pta.y < dpi->top - padding && ptb.y < dpi->top - padding) ||
-			(pta.x > dpi->left + dpi->width + padding &&
-					ptb.x > dpi->left + dpi->width + padding) ||
-			(pta.y > dpi->top + dpi->height + padding &&
-					ptb.y > dpi->top + dpi->height + padding));
+	const int left = dpi->left - padding;
+	const int right = dpi->left + dpi->width + padding;
+	const int top = dpi->top - padding;
+	const int bottom = dpi->top + dpi->height + padding;
+
+	/*
+	 * This method is an implementation of the Cohen-Sutherland line-clipping algorithm.
+	 * See: https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
+	 */
+
+	const uint8 INSIDE = 0; // 0000
+	const uint8 LEFT   = 1; // 0001
+	const uint8 RIGHT  = 2; // 0010
+	const uint8 BOTTOM = 4; // 0100
+	const uint8 TOP    = 8; // 1000
+
+	int x0 = pta.x;
+	int y0 = pta.y;
+	int x1 = ptb.x;
+	int y1 = ptb.y;
+
+	auto out_code = [&](int x, int y) -> uint8 {
+		uint8 out = INSIDE;
+		if (x < left) {
+			out |= LEFT;
+		} else if (x > right) {
+			out |= RIGHT;
+		}
+		if (y < top) {
+			out |= TOP;
+		} else if (y > bottom) {
+			out |= BOTTOM;
+		}
+		return out;
+	};
+
+	uint8 c0 = out_code(x0, y0);
+	uint8 c1 = out_code(x1, y1);
+
+	while (true) {
+		if (c0 == 0 || c1 == 0) return true;
+		if ((c0 & c1) != 0) return false;
+
+		if (c0 & TOP) {           // point 0 is above the clip window
+			x0 = x0 + (int)(((int64) (x1 - x0)) * ((int64) (top - y0)) / ((int64) (y1 - y0)));
+			y0 = top;
+		} else if (c0 & BOTTOM) { // point 0 is below the clip window
+			x0 = x0 + (int)(((int64) (x1 - x0)) * ((int64) (bottom - y0)) / ((int64) (y1 - y0)));
+			y0 = bottom;
+		} else if (c0 & RIGHT) {  // point 0 is to the right of clip window
+			y0 = y0 + (int)(((int64) (y1 - y0)) * ((int64) (right - x0)) / ((int64) (x1 - x0)));
+			x0 = right;
+		} else if (c0 & LEFT) {   // point 0 is to the left of clip window
+			y0 = y0 + (int)(((int64) (y1 - y0)) * ((int64) (left - x0)) / ((int64) (x1 - x0)));
+			x0 = left;
+		}
+
+		c0 = out_code(x0, y0);
+	}
+
+	NOT_REACHED();
 }
 
 /**
@@ -298,7 +353,7 @@ Point LinkGraphOverlay::GetStationMiddle(const Station *st) const
  * Set a new cargo mask and rebuild the cache.
  * @param cargo_mask New cargo mask.
  */
-void LinkGraphOverlay::SetCargoMask(uint32 cargo_mask)
+void LinkGraphOverlay::SetCargoMask(CargoTypes cargo_mask)
 {
 	this->cargo_mask = cargo_mask;
 	this->RebuildCache();
@@ -319,7 +374,7 @@ void LinkGraphOverlay::SetCompanyMask(uint32 company_mask)
 /** Make a number of rows with buttons for each company for the linkgraph legend window. */
 NWidgetBase *MakeCompanyButtonRowsLinkGraphGUI(int *biggest_index)
 {
-	return MakeCompanyButtonRows(biggest_index, WID_LGL_COMPANY_FIRST, WID_LGL_COMPANY_LAST, 3, STR_LINKGRAPH_LEGEND_SELECT_COMPANIES);
+	return MakeCompanyButtonRows(biggest_index, WID_LGL_COMPANY_FIRST, WID_LGL_COMPANY_LAST, 3, STR_NULL);
 }
 
 NWidgetBase *MakeSaturationLegendLinkGraphGUI(int *biggest_index)
@@ -425,7 +480,7 @@ LinkGraphLegendWindow::LinkGraphLegendWindow(WindowDesc *desc, int window_number
 
 /**
  * Set the overlay belonging to this menu and import its company/cargo settings.
- * @params overlay New overlay for this menu.
+ * @param overlay New overlay for this menu.
  */
 void LinkGraphLegendWindow::SetOverlay(LinkGraphOverlay *overlay) {
 	this->overlay = overlay;
@@ -435,7 +490,7 @@ void LinkGraphLegendWindow::SetOverlay(LinkGraphOverlay *overlay) {
 			this->SetWidgetLoweredState(WID_LGL_COMPANY_FIRST + c, HasBit(companies, c));
 		}
 	}
-	uint32 cargoes = this->overlay->GetCargoMask();
+	CargoTypes cargoes = this->overlay->GetCargoMask();
 	for (uint c = 0; c < NUM_CARGO; c++) {
 		if (!this->IsWidgetDisabled(WID_LGL_CARGO_FIRST + c)) {
 			this->SetWidgetLoweredState(WID_LGL_CARGO_FIRST + c, HasBit(cargoes, c));
@@ -496,8 +551,46 @@ void LinkGraphLegendWindow::DrawWidget(const Rect &r, int widget) const
 		if (this->IsWidgetDisabled(widget)) return;
 		CargoSpec *cargo = CargoSpec::Get(widget - WID_LGL_CARGO_FIRST);
 		GfxFillRect(r.left + 2, r.top + 2, r.right - 2, r.bottom - 2, cargo->legend_colour);
-		DrawString(r.left, r.right, (r.top + r.bottom + 1 - FONT_HEIGHT_SMALL) / 2, cargo->abbrev, TC_BLACK, SA_HOR_CENTER);
+		DrawString(r.left, r.right, (r.top + r.bottom + 1 - FONT_HEIGHT_SMALL) / 2, cargo->abbrev, GetContrastColour(cargo->legend_colour, 73), SA_HOR_CENTER);
 	}
+}
+
+bool LinkGraphLegendWindow::OnHoverCommon(Point pt, int widget, TooltipCloseCondition close_cond)
+{
+	if (IsInsideMM(widget, WID_LGL_COMPANY_FIRST, WID_LGL_COMPANY_LAST + 1)) {
+		if (this->IsWidgetDisabled(widget)) {
+			GuiShowTooltips(this, STR_LINKGRAPH_LEGEND_SELECT_COMPANIES, 0, NULL, close_cond);
+		} else {
+			uint64 params[2];
+			CompanyID cid = (CompanyID)(widget - WID_LGL_COMPANY_FIRST);
+			params[0] = STR_LINKGRAPH_LEGEND_SELECT_COMPANIES;
+			params[1] = cid;
+			GuiShowTooltips(this, STR_LINKGRAPH_LEGEND_COMPANY_TOOLTIP, 2, params, close_cond);
+		}
+		return true;
+	}
+	if (IsInsideMM(widget, WID_LGL_CARGO_FIRST, WID_LGL_CARGO_LAST + 1)) {
+		if (this->IsWidgetDisabled(widget)) return false;
+		CargoSpec *cargo = CargoSpec::Get(widget - WID_LGL_CARGO_FIRST);
+		uint64 params[1];
+		params[0] = cargo->name;
+		GuiShowTooltips(this, STR_BLACK_STRING, 1, params, close_cond);
+		return true;
+	}
+	return false;
+}
+
+void LinkGraphLegendWindow::OnHover(Point pt, int widget)
+{
+	this->OnHoverCommon(pt, widget, TCC_HOVER);
+}
+
+bool LinkGraphLegendWindow::OnRightClick(Point pt, int widget)
+{
+	if (_settings_client.gui.hover_delay_ms == 0) {
+		return this->OnHoverCommon(pt, widget, TCC_RIGHT_CLICK);
+	}
+	return false;
 }
 
 /**
@@ -519,7 +612,7 @@ void LinkGraphLegendWindow::UpdateOverlayCompanies()
  */
 void LinkGraphLegendWindow::UpdateOverlayCargoes()
 {
-	uint32 mask = 0;
+	CargoTypes mask = 0;
 	for (uint c = 0; c < NUM_CARGO; c++) {
 		if (this->IsWidgetDisabled(c + WID_LGL_CARGO_FIRST)) continue;
 		if (!this->IsWidgetLowered(c + WID_LGL_CARGO_FIRST)) continue;

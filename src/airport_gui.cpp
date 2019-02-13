@@ -1,4 +1,4 @@
-/* $Id: airport_gui.cpp 27163 2015-02-22 15:26:27Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -543,7 +543,7 @@ public:
 		this->SelectFirstAvailableAirport(false);
 	}
 
-	virtual void OnTick()
+	virtual void OnRealtimeTick(uint delta_ms)
 	{
 		CheckRedrawStationCoverage(this);
 	}

@@ -10,7 +10,7 @@
 ##grflangid 0x08
 
 
-# $Id: irish.txt 27980 2018-03-11 12:24:32Z frosch $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -669,10 +669,7 @@ STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}Roghnaig
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}Scoránaigh ord randamach clár air/as
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}Taispeáin an fhuinneogh chun rianta ceoil a roghnú
 
-STR_ERROR_NO_SONGS                                              :{WHITE}Roghnaíodh sraith ceoil gan aon amhrán ann. Ní sheinnfear aon amhrán
-
 # Playlist window
-STR_PLAYLIST_MUSIC_PROGRAM_SELECTION                            :{WHITE}Clár Ceoil a Roghnú
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM} "{STRING}"
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}Innéacs na Rianta
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}Clár - '{STRING}'
@@ -1254,6 +1251,7 @@ STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Ní féi
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Cothabháil bonneagair: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Má tá sé cumasaithe, bíonn costais chothabhála ar bhonneagar. Méadaíonn an costas níos tapúla ná méid an líonra, rad a fhágann go mbíonn tionchar níos mó aige ar chuideachtaí móra ná ar chuideachtaí beaga
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Ní imíonn aerfoirt as dáta riamh: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Má dhéantar an socrú seo a chumasú beidh gach cineál aerfoirt ar fáil go deo tar éis é a thabhairt isteach
 
@@ -1337,8 +1335,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Dath an tír-ra
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Uaine
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Ciaruaine
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Corcairghorm
-STR_CONFIG_SETTING_REVERSE_SCROLLING                            :Aisiompaigh an treo scrollaithe: {STRING}
-STR_CONFIG_SETTING_REVERSE_SCROLLING_HELPTEXT                   :An méid a tharlaíonn agus an léarscáil á scrollú leis an gcnaipe luchóige deas. Má bhíonn sé díchumasaithe, bogann an luchóg leis an gceamara. Má bhíonn sé cumasaithe, bogann an luchóg an léarscáil
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Scrollú mín do na fuinneoga amhairc: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Roghnaigh an chaoi a scrollóidh an príomhamharc chuig suíomh ar leith má chliceálann tú ar an léarscáil bheag nó má thugann tú ordú scrollú chuig oibiacht ar leith ar an léarscáil. Má tá sé cumasaithe, scrollóidh an fhuinneog amhairc go mín, má tá sé díchumasaithe léimfidh sé go díreach chuig an suíomh sin.
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Taispeáin leid uirlise tomhais agu uirlisí tógála áirithe in úsáid: {STRING}
@@ -1370,8 +1366,6 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Ordú+Cliceáil
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Ctrl+Cliceáil
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :As
 
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Scrollú le cléchliceáil: {STRING}
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Cumasaigh scrollú an léarscáil trí bheith ag tarraingt le cnaipe clé na luiche. Tá sé seo thar a bheith úsáideach don scrollú nuair atá scáileán tadhaill á úsáid
 
 STR_CONFIG_SETTING_AUTOSAVE                                     :Uathshábháil: {STRING}
 STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Roghnaigh an t-eatramh idir uathshábhálacha cluichí
@@ -1806,7 +1800,6 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Athraigh
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Cumasaigh luachanna táirgeachta a athrú: {ORANGE}{STRING}
 
 # Livery window
-STR_LIVERY_CAPTION                                              :{WHITE}Scéim Dathanna Nua
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Taispeáin scéimeanna dathanna ginearálta
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Taispeáin scéimeanna dathanna na dtraenacha
@@ -2687,7 +2680,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Talamh faoi úi
 STR_ABOUT_OPENTTD                                               :{WHITE}Maidir le OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Cóipcheart bunaidh {COPYRIGHT} 1995 Chris Sawyer, Gach ceart ar cosaint
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD leagan {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2018 An fhoireann OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 An fhoireann OpenTTD
+
+# Framerate display window
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Sábháil an Cluiche
@@ -2980,8 +2980,6 @@ STR_TOWN_POPULATION                                             :{BLACK}Daonra d
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} (Cathair)
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Daonra: {ORANGE}{COMMA}{BLACK}  Tithe: {ORANGE}{COMMA}
-STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Paisinéirí an mhí seo caite: {ORANGE}{COMMA}{BLACK}  Uasmhéid: {ORANGE}{COMMA}
-STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Post an mhí seo caite: {ORANGE}{COMMA}{BLACK}  uasmhéid: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Lastas atá ag teastáil le go bhfásfaidh an baile:
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} ag teastáil
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} ag teastáil sa Gheimhreadh
@@ -3286,17 +3284,7 @@ STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Láraigh
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Leibhéal táirgeachta: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}D'fhógair an tionscal go ndúnfaidh sé gan mhoill!
 
-############ range for requires starts
-STR_INDUSTRY_VIEW_REQUIRES_CARGO                                :{BLACK}Teastaíonn: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Teastaíonn: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Teastaíonn: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
-############ range for requires ends
 
-
-############ range for produces starts
-STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Táirgtear: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Táirgtear: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
-############ range for produces ends
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Athraigh táirgeacht (iolra de 8, suas go 2040)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Athraigh an ráta táirgeachta (céatadán, suas go 800%)
@@ -4205,7 +4193,6 @@ STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}An iomar
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}An iomarca codanna stáisiún iarnróid
 STR_ERROR_TOO_MANY_BUS_STOPS                                    :{WHITE}An iomarca stadanna bus
 STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}An iomarca stáisiúin leoraithe
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_STATION                          :{WHITE}Roghearr do stáisiún/limistéar lódála eile
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}Roghearr do dug eile
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}Roghearr d'aerfort eile
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}Ní féidir an stáisiún a athainmniú...

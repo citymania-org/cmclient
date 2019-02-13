@@ -1,4 +1,4 @@
-/* $Id: vehicle_gui.h 27631 2016-08-15 18:34:09Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

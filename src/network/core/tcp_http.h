@@ -1,4 +1,4 @@
-/* $Id: tcp_http.h 26509 2014-04-25 15:40:32Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -10,7 +10,7 @@
 ##grflangid 0x14
 
 
-# $Id: arabic_egypt.txt 27980 2018-03-11 12:24:32Z frosch $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -644,10 +644,7 @@ STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}اختي
 STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}تشغيل / ايقاف العشوائي
 STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}اظهار اطار اختيار الموسيقى
 
-STR_ERROR_NO_SONGS                                              :{WHITE}لا تحتوى قاعده الموسيقى المُختاره على اى اغانى. لن تُعزَف اى اغانى
-
 # Playlist window
-STR_PLAYLIST_MUSIC_PROGRAM_SELECTION                            :{WHITE}برنامج اختيار الموسيقى
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM} "{STRING}"
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}قائمة المعزوفات
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}برنامج - '{STRING}'
@@ -1122,6 +1119,7 @@ STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :السماح ب
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}تغير هذا الخيار غير متاح عندما يكون هناك عربات
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :صيانة البنية التحتية: {STRING}
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :المطارات لا تنتهي صلاحيتها {STRING}
 
 STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            :حذر إذا فقدت المركبة {STRING}
@@ -1177,7 +1175,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR                         :لون الار
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :اخضر
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :اخضر غامق
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :بنفسجي
-STR_CONFIG_SETTING_REVERSE_SCROLLING                            :عكس تحريك الشاشة : {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :تحريك سلس في نوافذ المشاهدة: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :عرض المقاسات عند استخدام ادوات البناء المختلفة: {STRING}
 STR_CONFIG_SETTING_LIVERIES                                     :عرض لون و شعار الشركة: {STRING}
@@ -1196,7 +1193,6 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :الأوامر
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :للتحكم
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :عدم استخدام
 
-STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :تصفح بالزر الايسر: {STRING}
 
 STR_CONFIG_SETTING_AUTOSAVE                                     :حفظ تلقائي : {STRING}
 STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :اختر الوقت بين كل عملية حفظ اتوماتيكية
@@ -1475,7 +1471,6 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}غير �
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}تفعيل تغيير قيمة الانتاج: {ORANGE}{STRING}
 
 # Livery window
-STR_LIVERY_CAPTION                                              :{WHITE}الوان جديدة
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}اظهر اللون العام
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}اظهر لون القطائرات
@@ -2320,7 +2315,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :ارض مملو
 STR_ABOUT_OPENTTD                                               :{WHITE}حول النسخة المفتوحة
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}الحقوق الاصلية {COPYRIGHT} كريس سوير 1995 , جميع الحقوق محفوظة
 STR_ABOUT_VERSION                                               :{BLACK}النسخة المفتوحة رقم {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}النسخة المفتوحة {COPYRIGHT}2002-2018 فريق النسخة المفتوحة
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}النسخة المفتوحة {COPYRIGHT}2002-2019 فريق النسخة المفتوحة
+
+# Framerate display window
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+############ Leave those lines in this order!!
+############ End of leave-in-this-order
+
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}حفظ اللعبة
@@ -2594,8 +2596,6 @@ STR_TOWN_POPULATION                                             :{BLACK}سكان
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} - مدينة -
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}السكان:  {ORANGE}{COMMA}{BLACK}   المنازل:     {ORANGE}{COMMA}
-STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}الركاب الشهر الماضي: {ORANGE}{COMMA}{BLACK}  الأقصى: {ORANGE}{COMMA}
-STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}طرود البريد الشهر الماضي: {ORANGE}{COMMA}{BLACK}  الأقصى: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK} نمو المدينة يتطلب بضائع
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{ORANGE}{STRING}{RED} مطلوب
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK}مطلوب في الشتاء
@@ -2812,17 +2812,7 @@ STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_
 STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}وسط الشاشة على المصنع
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}نسبة الانتاج: {YELLOW}{COMMA}%
 
-############ range for requires starts
-STR_INDUSTRY_VIEW_REQUIRES_CARGO                                :{BLACK}يحتاج: {YELLOW}{STRING} {STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}يحتاج: {YELLOW}{STRING}{STRING}، {STRING}{STRING}
-STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}يحتاج: {YELLOW}{STRING}{STRING}, {STRING}{STRING} , {STRING}{STRING}
-############ range for requires ends
 
-
-############ range for produces starts
-STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}ينتج: {YELLOW}{STRING} {STRING}
-STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}ينتج: {YELLOW}{STRING} {STRING}, {STRING} {STRING}
-############ range for produces ends
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}تغيير الانتاج مضاعف من 8 الى 2040
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}غير مستوى الانتاج{}نسبة مئوية حتى 800%.
@@ -3667,7 +3657,6 @@ STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}يوجد
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}يوجد الكثير من قطاعات محطه السكه الحديديه
 STR_ERROR_TOO_MANY_BUS_STOPS                                    :{WHITE}يوجد الكثير من محطات الحافلات
 STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}يوجد الكثير من محطات الشاحنات
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_STATION                          :{WHITE}قريب للغايه من محطه اخرى
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}قريب للغايه من مَرسَى اخر
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}قريب للغايه من مطار اخر
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}تعذر إعاده تسميه المحطه...

@@ -1,4 +1,4 @@
-/* $Id: timetable_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -139,7 +139,7 @@ static void FillTimetableArrivalDepartureTable(const Vehicle *v, VehicleOrderID 
 
 /**
  * Callback for when a time has been chosen to start the time table
- * @param window the window related to the setting of the date
+ * @param w the window related to the setting of the date
  * @param date the actually chosen date
  */
 static void ChangeTimetableStartCallback(const Window *w, Date date)

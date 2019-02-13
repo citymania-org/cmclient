@@ -1,4 +1,4 @@
-/* $Id: engine_func.h 26849 2014-09-18 19:53:22Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -26,7 +26,7 @@ extern const uint8 _engine_offsets[4];
 
 bool IsEngineBuildable(EngineID engine, VehicleType type, CompanyID company);
 bool IsEngineRefittable(EngineID engine);
-void GetArticulatedVehicleCargoesAndRefits(EngineID engine, CargoArray *cargoes, uint32 *refits);
+void GetArticulatedVehicleCargoesAndRefits(EngineID engine, CargoArray *cargoes, CargoTypes *refits);
 void SetYearEngineAgingStops();
 void StartupOneEngine(Engine *e, Date aging_date);
 

@@ -1,4 +1,4 @@
-/* $Id: script_info.cpp 26771 2014-09-06 17:30:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: string_base.h 25653 2013-08-05 20:35:31Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -41,9 +41,9 @@ public:
 
 	/**
 	 * Change the current string cursor.
-	 * @param p New cursor position.
+	 * @param pos New cursor position.
 	 * @return Actual new cursor position at the next valid character boundary.
-	 * @pre p has to be inside the current string.
+	 * @pre pos has to be inside the current string.
 	 */
 	virtual size_t SetCurPosition(size_t pos) = 0;
 

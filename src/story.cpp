@@ -1,4 +1,4 @@
-/* $Id: story.cpp 27560 2016-05-11 20:48:46Z matthijs $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

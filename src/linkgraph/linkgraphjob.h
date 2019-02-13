@@ -1,4 +1,4 @@
-/* $Id: linkgraphjob.h 27178 2015-03-07 18:27:01Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

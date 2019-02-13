@@ -1,4 +1,4 @@
-/* $Id: script_news.cpp 27164 2015-02-22 17:25:29Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

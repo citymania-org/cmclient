@@ -1,4 +1,4 @@
-/* $Id: airport.h 25841 2013-10-12 16:34:59Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

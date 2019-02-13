@@ -1,4 +1,4 @@
-/* $Id: settings_func.h 25291 2013-05-26 19:27:22Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

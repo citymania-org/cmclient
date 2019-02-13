@@ -1,4 +1,4 @@
-/* $Id: dock_gui.cpp 27577 2016-05-22 10:52:02Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -56,8 +56,8 @@ void CcPlaySound_SPLAT_WATER(const CommandCost &result, TileIndex tile, uint32 p
 
 /**
  * Gets the other end of the aqueduct, if possible.
- * @param tile_from     The begin tile for the aqueduct.
- * @param [out] tile_to The tile till where to show a selection for the aqueduct.
+ * @param      tile_from The begin tile for the aqueduct.
+ * @param[out] tile_to   The tile till where to show a selection for the aqueduct.
  * @return The other end of the aqueduct, or otherwise a tile in line with the aqueduct to cause the right error message.
  */
 static TileIndex GetOtherAqueductEnd(TileIndex tile_from, TileIndex *tile_to = NULL)
@@ -451,7 +451,7 @@ public:
 		}
 	}
 
-	virtual void OnTick()
+	virtual void OnRealtimeTick(uint delta_ms)
 	{
 		CheckRedrawStationCoverage(this);
 	}

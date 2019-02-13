@@ -1,4 +1,4 @@
-/* $Id: settings_gui.h 26959 2014-10-04 20:34:43Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -13,6 +13,7 @@
 #define SETTING_GUI_H
 
 #include "gfx_type.h"
+#include "widgets/dropdown_type.h"
 
 /** Width of setting buttons */
 #define SETTING_BUTTON_WIDTH  ((int)NWidgetScrollbar::GetHorizontalDimension().width * 2)
@@ -22,6 +23,11 @@
 void DrawArrowButtons(int x, int y, Colours button_colour, byte state, bool clickable_left, bool clickable_right);
 void DrawDropDownButton(int x, int y, Colours button_colour, bool state, bool clickable);
 void DrawBoolButton(int x, int y, bool state, bool clickable);
+
+DropDownList *BuildMusicSetDropDownList(int *selected_index);
+
+/* Actually implemented in music_gui.cpp */
+void ChangeMusicSet(int index);
 
 #endif /* SETTING_GUI_H */
 

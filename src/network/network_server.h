@@ -1,4 +1,4 @@
-/* $Id: network_server.h 26576 2014-05-11 12:52:21Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

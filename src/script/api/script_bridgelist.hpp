@@ -1,4 +1,4 @@
-/* $Id: script_bridgelist.hpp 23615 2011-12-19 20:57:34Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: music_driver.hpp 26538 2014-04-28 21:06:51Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,14 +14,16 @@
 
 #include "../driver.h"
 
+struct MusicSongInfo;
+
 /** Driver for all music playback. */
 class MusicDriver : public Driver {
 public:
 	/**
 	 * Play a particular song.
-	 * @param filename The name of file with the song to play.
+	 * @param song The information for the song to play.
 	 */
-	virtual void PlaySong(const char *filename) = 0;
+	virtual void PlaySong(const MusicSongInfo &song) = 0;
 
 	/**
 	 * Stop playing the current song.

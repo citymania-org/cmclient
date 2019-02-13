@@ -1,4 +1,4 @@
-/* $Id: saveload_filter.h 21395 2010-12-05 14:41:34Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

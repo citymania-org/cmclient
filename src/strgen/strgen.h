@@ -1,4 +1,4 @@
-/* $Id: strgen.h 26511 2014-04-25 17:43:09Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

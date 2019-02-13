@@ -2,7 +2,7 @@
 // (Info version 32)
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 //
-// $Id: openttd.nfo 27730 2017-01-14 15:48:19Z frosch $
+// $Id$
 //
 // This file is part of OpenTTD.
 // OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -13,6 +13,8 @@
 // Checks whether the correct version of OpenTTD is used before
 // allowing it to be used.
 //
+
+//@@WARNING DISABLE 60
 
 //
 // Number of sprites, it is wrong, but GRFcodec automagically gets it right.

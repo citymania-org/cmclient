@@ -1,4 +1,4 @@
-/* $Id: news_type.h 24843 2012-12-23 21:07:12Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,19 +16,6 @@
 #include "date_type.h"
 #include "strings_type.h"
 #include "sound_type.h"
-
-/** Constants in the message options window. */
-enum MessageOptionsSpace {
-	MOS_WIDG_PER_SETTING      = 4,  ///< Number of widgets needed for each news category, starting at widget #WID_MO_START_OPTION.
-
-	MOS_LEFT_EDGE             = 6,  ///< Number of pixels between left edge of the window and the options buttons column.
-	MOS_COLUMN_SPACING        = 4,  ///< Number of pixels between the buttons and the description columns.
-	MOS_RIGHT_EDGE            = 6,  ///< Number of pixels between right edge of the window and the options descriptions column.
-	MOS_BUTTON_SPACE          = 10, ///< Additional space in the button with the option value (for better looks).
-
-	MOS_ABOVE_GLOBAL_SETTINGS = 6,  ///< Number of vertical pixels between the categories and the global options.
-	MOS_BOTTOM_EDGE           = 6,  ///< Number of pixels between bottom edge of the window and bottom of the global options.
-};
 
 /**
  * Type of news.

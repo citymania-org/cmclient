@@ -1,4 +1,4 @@
-/* $Id: crashlog_win.cpp 27380 2015-08-10 20:21:29Z michi_cc $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

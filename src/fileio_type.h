@@ -1,4 +1,4 @@
-/* $Id: fileio_type.h 27653 2016-09-04 16:06:50Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

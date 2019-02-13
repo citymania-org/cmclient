@@ -1,4 +1,4 @@
-/* $Id: console_func.h 21707 2011-01-03 20:54:20Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

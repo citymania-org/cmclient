@@ -1,4 +1,4 @@
-/* $Id: graph_gui.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -33,8 +33,8 @@
 #include "safeguards.h"
 
 /* Bitmasks of company and cargo indices that shouldn't be drawn. */
-static uint _legend_excluded_companies;
-static uint _legend_excluded_cargo;
+static CompanyMask _legend_excluded_companies;
+static CargoTypes _legend_excluded_cargo;
 
 /* Apparently these don't play well with enums. */
 static const OverflowSafeInt64 INVALID_DATAPOINT(INT64_MAX); // Value used for a datapoint that shouldn't be drawn.
@@ -103,23 +103,6 @@ struct GraphLegendWindow : Window {
 	}
 };
 
-
-/** Construct the row containing the digit keys. */
-static NWidgetBase *MakeCargoButtons(int *biggest_index)
-{
-	NWidgetVertical *ver = new NWidgetVertical;
-
-	for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_ORANGE, WID_CPR_CARGO_FIRST + i, NULL);
-		leaf->tool_tip = STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO;
-		leaf->SetFill(1, 0);
-		leaf->SetLowered(true);
-		ver->Add(leaf);
-	}
-	*biggest_index = WID_CPR_CARGO_FIRST + _sorted_standard_cargo_specs_size - 1;
-	return ver;
-}
-
 /**
  * Construct a vertical list of buttons, one for each company.
  * @param biggest_index Storage for collecting the biggest index used in the returned tree.
@@ -183,14 +166,14 @@ struct ValuesInterval {
 
 struct BaseGraphWindow : Window {
 protected:
-	static const int GRAPH_MAX_DATASETS     =  32;
+	static const int GRAPH_MAX_DATASETS     =  64;
 	static const int GRAPH_AXIS_LINE_COLOUR = PC_BLACK;
 	static const int GRAPH_NUM_MONTHS       =  24; ///< Number of months displayed in the graph.
 
 	static const int MIN_GRAPH_NUM_LINES_Y  =   9; ///< Minimal number of horizontal lines to draw.
 	static const int MIN_GRID_PIXEL_SIZE    =  20; ///< Minimum distance between graph lines.
 
-	uint excluded_data; ///< bitmask of the datasets that shouldn't be displayed.
+	uint64 excluded_data; ///< bitmask of the datasets that shouldn't be displayed.
 	byte num_dataset;
 	byte num_on_x_axis;
 	byte num_vert_lines;
@@ -610,7 +593,7 @@ public:
 		}
 	}
 
-	virtual void OnTick()
+	virtual void OnGameTick()
 	{
 		this->UpdateStatistics(false);
 	}
@@ -632,7 +615,7 @@ public:
 	 */
 	void UpdateStatistics(bool initialize)
 	{
-		uint excluded_companies = _legend_excluded_companies;
+		CompanyMask excluded_companies = _legend_excluded_companies;
 
 		/* Exclude the companies which aren't valid */
 		for (CompanyID c = COMPANY_FIRST; c < MAX_COMPANIES; c++) {
@@ -800,6 +783,8 @@ struct IncomeGraphWindow : BaseGraphWindow {
 		DrawString(rtl ? r.left : x + 14 + clk_dif, (rtl ? r.right - 14 + clk_dif : r.right), y + clk_dif, STR_GRAPH_CARGO_PAYMENT_CARGO);
 	}
 };
+
+static NWidgetBase *MakeCargoButtons(int *biggest_index);
 
 static const NWidgetPart _nested_income_graph_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -1190,9 +1175,9 @@ struct PaymentRatesGraphWindow : BaseGraphWindow {
 		}
 	}
 */
-	virtual void OnTick()
+	virtual void OnGameTick()
 	{
-		/* Override default OnTick */
+		/* Override default OnGameTick */
 	}
 
 	/**
@@ -1222,6 +1207,23 @@ struct PaymentRatesGraphWindow : BaseGraphWindow {
 		this->num_dataset = i;
 	}
 };
+
+/** Construct the row containing the digit keys. */
+static NWidgetBase *MakeCargoButtons(int *biggest_index)
+{
+	NWidgetVertical *ver = new NWidgetVertical;
+
+	for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
+		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_ORANGE, WID_CPR_CARGO_FIRST + i, NULL);
+		leaf->tool_tip = STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO;
+		leaf->SetFill(1, 0);
+		leaf->SetLowered(true);
+		ver->Add(leaf);
+	}
+	*biggest_index = WID_CPR_CARGO_FIRST + _sorted_standard_cargo_specs_size - 1;
+	return ver;
+}
+
 
 static const NWidgetPart _nested_cargo_payment_rates_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -1414,7 +1416,7 @@ public:
 	}
 
 
-	virtual void OnTick()
+	virtual void OnGameTick()
 	{
 		if (this->companies.NeedResort()) {
 			this->SetDirty();
@@ -1577,9 +1579,9 @@ struct PerformanceRatingDetailWindow : Window {
 		int colour_notdone = _colour_gradient[COLOUR_RED][4];
 
 		/* Draw all the score parts */
-		int val    = _score_part[company][score_type];
-		int needed = _score_info[score_type].needed;
-		int score  = _score_info[score_type].score;
+		int64 val    = _score_part[company][score_type];
+		int64 needed = _score_info[score_type].needed;
+		int   score  = _score_info[score_type].score;
 
 		/* SCORE_TOTAL has his own rules ;) */
 		if (score_type == SCORE_TOTAL) {
@@ -1597,7 +1599,7 @@ struct PerformanceRatingDetailWindow : Window {
 		DrawString(this->score_info_left, this->score_info_right, text_top, STR_BLACK_COMMA, TC_FROMSTRING, SA_RIGHT);
 
 		/* Calculate the %-bar */
-		uint x = Clamp(val, 0, needed) * this->bar_width / needed;
+		uint x = Clamp<int64>(val, 0, needed) * this->bar_width / needed;
 		bool rtl = _current_text_dir == TD_RTL;
 		if (rtl) {
 			x = this->bar_right - x;
@@ -1610,7 +1612,7 @@ struct PerformanceRatingDetailWindow : Window {
 		if (x != this->bar_right) GfxFillRect(x, bar_top, this->bar_right, bar_top + this->bar_height, rtl ? colour_done : colour_notdone);
 
 		/* Draw it */
-		SetDParam(0, Clamp(val, 0, needed) * 100 / needed);
+		SetDParam(0, Clamp<int64>(val, 0, needed) * 100 / needed);
 		DrawString(this->bar_left, this->bar_right, text_top, STR_PERFORMANCE_DETAIL_PERCENT, TC_FROMSTRING, SA_HOR_CENTER);
 
 		/* SCORE_LOAN is inversed */
@@ -1647,10 +1649,8 @@ struct PerformanceRatingDetailWindow : Window {
 		}
 	}
 
-	virtual void OnTick()
+	virtual void OnGameTick()
 	{
-		if (_pause_mode != PM_UNPAUSED) return;
-
 		/* Update the company score every 5 days */
 		if (--this->timeout == 0) {
 			this->UpdateCompanyStats();
@@ -1756,5 +1756,11 @@ static WindowDesc _performance_rating_detail_desc(
 void ShowPerformanceRatingDetail()
 {
 	AllocateWindowDescFront<PerformanceRatingDetailWindow>(&_performance_rating_detail_desc, 0);
+}
+
+void InitializeGraphGui()
+{
+	_legend_excluded_companies = 0;
+	_legend_excluded_cargo = 0;
 }
 

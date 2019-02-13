@@ -1,4 +1,4 @@
-/* $Id: aircraft_gui.cpp 27689 2016-12-10 14:33:58Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

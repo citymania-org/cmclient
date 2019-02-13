@@ -1,4 +1,4 @@
-# $Id: Makefile.bundle.in 27558 2016-05-11 18:39:18Z rubidium $
+# $Id$
 
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,15 +12,15 @@
 # The revision is needed for the bundle name and creating an OSX application bundle.
 # Detect the revision
 VERSIONS := $(shell AWK="$(AWK)" "$(ROOT_DIR)/findversion.sh")
-REV      := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
+VERSION  := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
 
-# Make sure we have something in REV
-ifeq ($(REV),)
-REV := norev000
+# Make sure we have something in VERSION
+ifeq ($(VERSION),)
+VERSION := norev000
 endif
 
 ifndef BUNDLE_NAME
-BUNDLE_NAME = openttd-custom-$(REV)-$(OS)
+BUNDLE_NAME = openttd-custom-$(VERSION)-$(OS)
 endif
 
 # An OSX application bundle needs the data files, lang files and openttd executable in a different location.
@@ -54,7 +54,7 @@ ifdef OSXAPP
 	$(Q)mkdir -p "$(BUNDLE_DIR)/$(OSXAPP)/Contents/Resources"
 	$(Q)echo "APPL????" >                                          "$(BUNDLE_DIR)/$(OSXAPP)/Contents/PkgInfo"
 	$(Q)cp    "$(ROOT_DIR)/os/macosx/openttd.icns"                 "$(BUNDLE_DIR)/$(OSXAPP)/Contents/Resources/openttd.icns"
-	$(Q)$(ROOT_DIR)/os/macosx/plistgen.sh                          "$(BUNDLE_DIR)/$(OSXAPP)" "$(REV)"
+	$(Q)$(ROOT_DIR)/os/macosx/plistgen.sh                          "$(BUNDLE_DIR)/$(OSXAPP)" "$(VERSION)"
 	$(Q)cp    "$(ROOT_DIR)/os/macosx/splash.png"                   "$(BASESET_DIR)"
 endif
 ifeq ($(OS),UNIX)
@@ -69,7 +69,7 @@ endif
 	$(Q)cp "$(BIN_DIR)/baseset/opntitle.dat"  "$(BASESET_DIR)/"
 	$(Q)cp "$(BIN_DIR)/baseset/"*.obm         "$(BASESET_DIR)/"
 	$(Q)cp "$(BIN_DIR)/lang/"*.lng            "$(LANG_DIR)/"
-	$(Q)cp "$(ROOT_DIR)/readme.txt"           "$(BUNDLE_DIR)/"
+	$(Q)cp "$(ROOT_DIR)/README.md"           "$(BUNDLE_DIR)/"
 	$(Q)cp "$(ROOT_DIR)/COPYING"              "$(BUNDLE_DIR)/"
 	$(Q)cp "$(ROOT_DIR)/known-bugs.txt"       "$(BUNDLE_DIR)/"
 	$(Q)cp "$(ROOT_DIR)/docs/multiplayer.txt" "$(BUNDLE_DIR)/docs/"
@@ -88,7 +88,7 @@ ifdef MENU_DIR
 	$(Q)sed s/=openttd/=$(BINARY_NAME)/g "$(BUNDLE_DIR)/media/openttd.desktop" > "$(ROOT_DIR)/media/openttd.desktop.install"
 endif
 ifeq ($(TTD), openttd.exe)
-	$(Q)unix2dos "$(BUNDLE_DIR)/docs/"* "$(BUNDLE_DIR)/readme.txt" "$(BUNDLE_DIR)/COPYING" "$(BUNDLE_DIR)/changelog.txt" "$(BUNDLE_DIR)/known-bugs.txt"
+	$(Q)unix2dos "$(BUNDLE_DIR)/docs/"* "$(BUNDLE_DIR)/README.md" "$(BUNDLE_DIR)/COPYING" "$(BUNDLE_DIR)/changelog.txt" "$(BUNDLE_DIR)/known-bugs.txt"
 ifeq ($(OS), DOS)
 	$(Q)cp "$(ROOT_DIR)/os/dos/cwsdpmi/cwsdpmi.txt"   "$(BUNDLE_DIR)/docs/"
 ifndef STRIP
@@ -151,15 +151,15 @@ bundle_lha: bundle
 
 bundle_dmg: bundle
 	@echo '[BUNDLE] Creating $(BUNDLE_NAME).dmg'
-	$(Q)mkdir -p "$(BUNDLES_DIR)/OpenTTD $(REV)"
-	$(Q)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/OpenTTD $(REV)"
-	$(Q)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/OpenTTD $(REV)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
-	$(Q)rm -fr "$(BUNDLES_DIR)/OpenTTD $(REV)"
+	$(Q)mkdir -p "$(BUNDLES_DIR)/OpenTTD $(VERSION)"
+	$(Q)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/OpenTTD $(VERSION)"
+	$(Q)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/OpenTTD $(VERSION)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
+	$(Q)rm -fr "$(BUNDLES_DIR)/OpenTTD $(VERSION)"
 
 bundle_exe: all
 	@echo '[BUNDLE] Creating $(BUNDLE_NAME).exe'
 	$(Q)mkdir -p "$(BUNDLES_DIR)"
-	$(Q)unix2dos "$(ROOT_DIR)/docs/"*.txt "$(ROOT_DIR)/readme.txt" "$(ROOT_DIR)/COPYING" "$(ROOT_DIR)/changelog.txt" "$(ROOT_DIR)/known-bugs.txt"
+	$(Q)unix2dos "$(ROOT_DIR)/docs/"*.txt "$(ROOT_DIR)/README.md" "$(ROOT_DIR)/COPYING" "$(ROOT_DIR)/changelog.txt" "$(ROOT_DIR)/known-bugs.txt"
 	$(Q)cd $(ROOT_DIR)/os/windows/installer && makensis.exe //DVERSION_INCLUDE=version_$(PLATFORM).txt install.nsi
 	$(Q)mv $(ROOT_DIR)/os/windows/installer/*$(PLATFORM).exe "$(BUNDLES_DIR)/$(BUNDLE_NAME).exe"
 
@@ -188,7 +188,7 @@ endif
 	$(Q)install -m 644 "$(BUNDLE_DIR)/scripts/"* "$(INSTALL_DATA_DIR)/scripts"
 ifndef DO_NOT_INSTALL_DOCS
 	$(Q)install -d "$(INSTALL_DOC_DIR)"
-	$(Q)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(BUNDLE_DIR)/readme.txt" "$(BUNDLE_DIR)/known-bugs.txt" "$(INSTALL_DOC_DIR)"
+	$(Q)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(BUNDLE_DIR)/README.md" "$(BUNDLE_DIR)/known-bugs.txt" "$(INSTALL_DOC_DIR)"
 endif
 ifndef DO_NOT_INSTALL_CHANGELOG
 	$(Q)install -d "$(INSTALL_DOC_DIR)"

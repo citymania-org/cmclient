@@ -1,4 +1,4 @@
-/* $Id: vehicle_func.h 26863 2014-09-20 15:31:26Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -31,7 +31,7 @@ static const Money VEHICLE_PROFIT_THRESHOLD = 10000;        ///< Threshold for a
 
 /**
  * Helper to check whether an image index is valid for a particular vehicle.
- * @param <T> The type of vehicle.
+ * @tparam T The type of vehicle.
  * @param image_index The image index to check.
  * @return True iff the image index is valid.
  */

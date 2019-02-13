@@ -1,4 +1,4 @@
-/* $Id: company_manager_face.h 27975 2018-03-11 07:16:58Z peter1138 $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

@@ -1,4 +1,4 @@
-/* $Id: palette_convert.h 23433 2011-12-04 19:07:24Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

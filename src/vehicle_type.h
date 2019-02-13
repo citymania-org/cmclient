@@ -1,4 +1,4 @@
-/* $Id: vehicle_type.h 23080 2011-11-01 16:51:47Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -16,6 +16,8 @@
 
 /** The type all our vehicle IDs have. */
 typedef uint32 VehicleID;
+
+static const int GROUND_ACCELERATION = 9800; ///< Acceleration due to gravity, 9.8 m/s^2
 
 /** Available vehicle types. */
 enum VehicleType {

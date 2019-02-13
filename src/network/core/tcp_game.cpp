@@ -1,4 +1,4 @@
-/* $Id: tcp_game.cpp 26482 2014-04-23 20:13:33Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -45,6 +45,8 @@ NetworkRecvStatus NetworkGameSocketHandler::CloseConnection(bool error)
 {
 	/* Clients drop back to the main menu */
 	if (!_network_server && _networking) {
+		extern void ClientNetworkEmergencySave(); // from network_client.cpp
+		ClientNetworkEmergencySave();
 		_switch_mode = SM_MENU;
 		_networking = false;
 		ShowErrorMessage(STR_NETWORK_ERROR_LOSTCONNECTION, INVALID_STRING_ID, WL_CRITICAL);

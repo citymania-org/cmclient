@@ -1,4 +1,4 @@
-/* $Id: script_storypagelist.hpp 26304 2014-02-06 19:36:19Z zuu $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

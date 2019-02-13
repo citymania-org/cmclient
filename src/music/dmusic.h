@@ -1,4 +1,4 @@
-/* $Id: dmusic.h 26108 2013-11-25 14:30:22Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -23,7 +23,7 @@ public:
 
 	/* virtual */ void Stop();
 
-	/* virtual */ void PlaySong(const char *filename);
+	/* virtual */ void PlaySong(const MusicSongInfo &song);
 
 	/* virtual */ void StopSong();
 

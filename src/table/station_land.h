@@ -1,4 +1,4 @@
-/* $Id: station_land.h 23010 2011-10-07 07:56:30Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

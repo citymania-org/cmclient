@@ -1,4 +1,4 @@
-/* $Id: company_type.h 23602 2011-12-19 20:50:36Z truebrain $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -62,6 +62,15 @@ enum CompanyRemoveReason {
 	CRR_BANKRUPT,  ///< The company went belly-up.
 
 	CRR_END,       ///< Sentinel for end.
+};
+
+/** The action to do with CMD_COMPANY_CTRL. */
+enum CompanyCtrlAction {
+	CCA_NEW,    ///< Create a new company.
+	CCA_NEW_AI, ///< Create a new AI company.
+	CCA_DELETE, ///< Delete a company.
+
+	CCA_END,    ///< Sentinel for end.
 };
 
 #endif /* COMPANY_TYPE_H */

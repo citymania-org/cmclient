@@ -1,4 +1,4 @@
-/* $Id: md5.h 17883 2009-10-26 23:03:03Z smatz $ */
+/* $Id$ */
 
 /** @file md5.h Functions to create MD5 checksums. */
 

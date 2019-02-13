@@ -1,4 +1,4 @@
-/* $Id: rev.h 24900 2013-01-08 22:46:42Z planetmaker $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -14,6 +14,7 @@
 
 extern const char _openttd_revision[];
 extern const char _openttd_build_date[];
+extern const char _openttd_revision_hash[];
 extern const byte _openttd_revision_modified;
 extern const uint32 _openttd_newgrf_version;
 

@@ -1,4 +1,4 @@
-/* $Id: newgrf_debug_widget.h 27174 2015-03-01 08:17:14Z alberth $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

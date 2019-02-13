@@ -1,4 +1,4 @@
-/* $Id: 32bpp_sse4.hpp 26260 2014-01-13 18:20:23Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

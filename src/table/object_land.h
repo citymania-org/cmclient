@@ -1,4 +1,4 @@
-/* $Id: object_land.h 27183 2015-03-13 19:42:49Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.

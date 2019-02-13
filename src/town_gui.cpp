@@ -1,4 +1,4 @@
-/* $Id: town_gui.cpp 27893 2017-08-13 18:38:42Z frosch $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
@@ -288,8 +288,8 @@ public:
 				}
 				/* When double-clicking, continue */
 				if (click_count == 1 || y < 0) break;
+				FALLTHROUGH;
 			}
-			FALLTHROUGH;
 
 			case WID_TA_EXECUTE:
 				DoCommandP(this->town->xy, this->window_number, this->sel_index, CMD_DO_TOWN_ACTION | CMD_MSG(STR_ERROR_CAN_T_DO_THIS));
@@ -334,9 +334,9 @@ static void ShowTownAuthorityWindow(uint town)
 	AllocateWindowDescFront<TownAuthorityWindow>(&_town_authority_desc, town);
 }
 
-static int TownTicksToDays(int ticks) {
- 	return (ticks * TOWN_GROWTH_TICKS + DAY_TICKS / 2) / DAY_TICKS;
-}
+// static int TownTicksToDays(int ticks) {
+//  	return (ticks * TOWN_GROWTH_TICKS + DAY_TICKS / 2) / DAY_TICKS;
+// }
 
 /* Town view window. */
 struct TownViewWindow : Window {
@@ -394,13 +394,15 @@ public:
 		SetDParam(1, this->town->cache.num_houses);
 		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y, STR_TOWN_VIEW_POPULATION_HOUSES);
 
-		SetDParam(0, this->town->supplied[CT_PASSENGERS].old_act);
-		SetDParam(1, this->town->supplied[CT_PASSENGERS].old_max);
-		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX);
+		SetDParam(0, 1 << CT_PASSENGERS);
+		SetDParam(1, this->town->supplied[CT_PASSENGERS].old_act);
+		SetDParam(2, this->town->supplied[CT_PASSENGERS].old_max);
+		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_CARGO_LAST_MONTH_MAX);
 
-		SetDParam(0, this->town->supplied[CT_MAIL].old_act);
-		SetDParam(1, this->town->supplied[CT_MAIL].old_max);
-		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX);
+		SetDParam(0, 1 << CT_MAIL);
+		SetDParam(1, this->town->supplied[CT_MAIL].old_act);
+		SetDParam(2, this->town->supplied[CT_MAIL].old_max);
+		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_CARGO_LAST_MONTH_MAX);
 
 		DrawExtraTownInfo(r, y, this->town, FONT_HEIGHT_NORMAL, true); //CB
 
@@ -451,7 +453,7 @@ public:
 		}
 
 		if (HasBit(this->town->flags, TOWN_IS_GROWING)) {
-			SetDParam(0, TownTicksToDays((this->town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1));
+			SetDParam(0, RoundDivSU(this->town->growth_rate + 1, DAY_TICKS));
 			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, this->town->fund_buildings_months == 0 ? STR_TOWN_VIEW_TOWN_GROWS_EVERY : STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED);
 		} else {
 			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_TOWN_GROW_STOPPED);
@@ -864,6 +866,16 @@ public:
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Get the string to draw the town name.
+	 * @param t Town to draw.
+	 * @return The string to use.
+	 */
+	static StringID GetTownString(const Town *t)
+	{
+		return t->larger_town ? STR_TOWN_DIRECTORY_CITY : STR_TOWN_DIRECTORY_TOWN;
 	}
 
 	virtual void DrawWidget(const Rect &r, int widget) const
@@ -1335,14 +1347,14 @@ static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bo
 	SetDParam(1, town->ratings[_current_company]);
 	DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_REALPOP_RATE);
 	//town stats
-	int grow_rate = 0;
-	if(town->growth_rate == TOWN_GROW_RATE_CUSTOM_NONE) grow_rate = 0;
-	else grow_rate = TownTicksToDays((town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1);
+	// int grow_rate = 0;
+	// if(town->growth_rate == TOWN_GROW_RATE_CUSTOM_NONE) grow_rate = 0;
+	// else grow_rate = TownTicksToDays((town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1);
 
-	SetDParam(0, grow_rate);
-	SetDParam(1, town->growth_rate & TOWN_GROW_RATE_CUSTOM ? STR_TOWN_VIEW_GROWTH_RATE_CUSTOM : STR_EMPTY);
+	SetDParam(0, town->growth_rate);
+	SetDParam(1, HasBit(town->flags, TOWN_CUSTOM_GROWTH) ? STR_TOWN_VIEW_GROWTH_RATE_CUSTOM : STR_EMPTY);
 	// SetDParam(2, town->grow_counter < 16000 ? TownTicksToDays(town->grow_counter + 1) : -1);
-	SetDParam(2, TownTicksToDays(town->grow_counter + 1));
+	SetDParam(2, town->grow_counter);
 	SetDParam(3, town->time_until_rebuild);
 	SetDParam(4, HasBit(town->flags, TOWN_IS_GROWING) ? 1 : 0);
 	SetDParam(5, town->fund_buildings_months);

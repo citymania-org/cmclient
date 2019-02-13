@@ -1,4 +1,4 @@
-/* $Id: 8bpp_optimized.cpp 26969 2014-10-06 18:45:51Z rubidium $ */
+/* $Id$ */
 
 /*
  * This file is part of OpenTTD.
