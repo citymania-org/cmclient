@@ -172,7 +172,7 @@ struct LineSnapPoint : Point {
 typedef SmallVector<LineSnapPoint, 4> LineSnapPoints; ///< Set of snapping points
 
 /** Coordinates of a polyline track made of 2 connected line segments. */
-struct Polyline {
+struct RailPolyline {
 	Point start;           ///< The point where the first segment starts (as given in LineSnapPoint).
 	Direction first_dir;   ///< Direction of the first line segment.
 	uint first_len;        ///< Length of the first segment - number of track pieces.
@@ -2793,8 +2793,8 @@ Trackdir PointDirToTrackdir(const Point &pt, Direction dir)
  * @param[out] ret Coordinates of the lines (if found).
  * @return Whether the lines were found.
  */
-static bool FindPolyline(const Point &pt, const LineSnapPoint &start, Polyline *ret)
-{
+
+static bool FindPolyline(const Point &pt, const LineSnapPoint &start, RailPolyline *ret) {
 	/* relative coordinates of the mouse point (offset against the snap point) */
 	int x = pt.x - start.x;
 	int y = pt.y - start.y;
@@ -2908,7 +2908,7 @@ static inline uint SqrDist(const Point &a, const Point &b)
  * @param[out] ret    Coordinates of the polyline (if found).
  * @return The chosen snapping point or NULL if no matching line was found.
  */
-static LineSnapPoint *FindBestPolyline(const Point &pt, LineSnapPoint *snap_points, uint num_points, Polyline *ret)
+static LineSnapPoint *FindBestPolyline(const Point &pt, LineSnapPoint *snap_points, uint num_points, RailPolyline *ret)
 {
 	/* Find the best polyline (a pair of two lines - the white one and the blue
 	 * one) led from any of saved snap points to the mouse cursor. */
@@ -2917,7 +2917,7 @@ static LineSnapPoint *FindBestPolyline(const Point &pt, LineSnapPoint *snap_poin
 
 	for (int i = 0; i < (int)num_points; i++) {
 		/* try to fit a polyline */
-		Polyline polyline;
+		RailPolyline polyline;
 		if (!FindPolyline(pt, snap_points[i], &polyline)) continue; // skip non-matching snap points
 		/* check whether we've found a better polyline */
 		if (best_snap_point != NULL) {
@@ -3152,7 +3152,7 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 	}
 
 	/* find the best track */
-	Polyline line;
+	RailPolyline line;
 
 	bool lock_snapping = dragging && snap_mode == RSM_SNAP_TO_RAIL;
 	if (!lock_snapping) _current_snap_lock.x = -1;
