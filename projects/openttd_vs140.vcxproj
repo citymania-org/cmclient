@@ -893,6 +893,7 @@
     <ClCompile Include="..\src\water_cmd.cpp" />
     <ClCompile Include="..\src\waypoint_cmd.cpp" />
     <ClCompile Include="..\src\zoning_cmd.cpp" />
+    <ClCompile Include="..\src\bitstream.cpp" />
     <ClInclude Include="..\src\citymania\base64.h" />
     <ClCompile Include="..\src\citymania\base64.cpp" />
     <ClInclude Include="..\src\newgrf_revisions.hpp" />

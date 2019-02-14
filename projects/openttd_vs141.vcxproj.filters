@@ -1770,6 +1770,9 @@
     <ClCompile Include="..\src\zoning_cmd.cpp">
       <Filter>Command handlers</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\bitstream.cpp">
+      <Filter>CityMania files</Filter>
+    </ClCompile>
     <ClInclude Include="..\src\citymania\base64.h">
       <Filter>CityMania files</Filter>
     </ClInclude>
