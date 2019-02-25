@@ -969,6 +969,8 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :دیگر
 
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :دو برابر
 
+
+
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}بسته گرافیک پایه
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}بسته گرافیک پایه را انتخاب کنید
 STR_GAME_OPTIONS_BASE_GRF_STATUS                                :{RED}{NUM} فایل وجود ندارد یا خراب است
@@ -1791,7 +1793,6 @@ STR_NETWORK_CLIENT                                              :سرویس گی
 STR_NETWORK_SPECTATORS                                          :تماشاگران
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}مقدار پولی که می خواهید دریافت نمایید را وارد کنید
-STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}تماشگر
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}رمز وارد شده را به خاطر نسپار

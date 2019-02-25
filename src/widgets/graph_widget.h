@@ -46,6 +46,7 @@ enum PerformanceHistoryGraphWidgets {
 
 /** Widget of the #PaymentRatesGraphWindow class. */
 enum CargoPaymentRatesWidgets {
+	WID_CPR_KEY_BUTTON,      ///< Key button.
 	WID_CPR_BACKGROUND,      ///< Background of the window.
 	WID_CPR_HEADER,          ///< Header.
 	WID_CPR_GRAPH,           ///< Graph itself.
@@ -53,7 +54,8 @@ enum CargoPaymentRatesWidgets {
 	WID_CPR_FOOTER,          ///< Footer.
 	WID_CPR_ENABLE_CARGOES,  ///< Enable cargoes button.
 	WID_CPR_DISABLE_CARGOES, ///< Disable cargoes button.
-	WID_CPR_CARGO_FIRST,     ///< First cargo in the list.
+	WID_CPR_MATRIX,          ///< Cargo list.
+	WID_CPR_MATRIX_SCROLLBAR,///< Cargo list scrollbar.
 };
 
 /** Widget of the #CompanyLeagueWindow class. */

@@ -37,6 +37,7 @@
 #include "stringfilter_type.h"
 #include "querystring_gui.h"
 #include "hotkeys.h"
+#include "fontcache.h"
 
 #include <vector>
 
@@ -62,6 +63,13 @@ static const StringID _gui_zoom_dropdown[] = {
 	STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL,
 	STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM,
 	STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM,
+	INVALID_STRING_ID,
+};
+
+static const StringID _font_zoom_dropdown[] = {
+	STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_NORMAL,
+	STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_2X_ZOOM,
+	STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_4X_ZOOM,
 	INVALID_STRING_ID,
 };
 
@@ -303,6 +311,16 @@ struct GameOptionsWindow : Window {
 				break;
 			}
 
+			case WID_GO_FONT_ZOOM_DROPDOWN: {
+				list = new DropDownList();
+				*selected_index = ZOOM_LVL_OUT_4X - _font_zoom;
+				const StringID *items = _font_zoom_dropdown;
+				for (int i = 0; *items != INVALID_STRING_ID; items++, i++) {
+					*list->Append() = new DropDownListStringItem(*items, i, false);
+				}
+				break;
+			}
+
 			case WID_GO_BASE_GRF_DROPDOWN:
 				list = BuildSetDropDownList<BaseGraphics>(selected_index, (_game_mode == GM_MENU));
 				break;
@@ -332,6 +350,7 @@ struct GameOptionsWindow : Window {
 			case WID_GO_LANG_DROPDOWN:       SetDParamStr(0, _current_language->own_name); break;
 			case WID_GO_RESOLUTION_DROPDOWN: SetDParam(0, GetCurRes() == _num_resolutions ? STR_GAME_OPTIONS_RESOLUTION_OTHER : SPECSTR_RESOLUTION_START + GetCurRes()); break;
 			case WID_GO_GUI_ZOOM_DROPDOWN:   SetDParam(0, _gui_zoom_dropdown[ZOOM_LVL_OUT_4X - _gui_zoom]); break;
+			case WID_GO_FONT_ZOOM_DROPDOWN:  SetDParam(0, _font_zoom_dropdown[ZOOM_LVL_OUT_4X - _font_zoom]); break;
 			case WID_GO_BASE_GRF_DROPDOWN:   SetDParamStr(0, BaseGraphics::GetUsedSet()->name); break;
 			case WID_GO_BASE_GRF_STATUS:     SetDParam(0, BaseGraphics::GetUsedSet()->GetNumInvalid()); break;
 			case WID_GO_BASE_SFX_DROPDOWN:   SetDParamStr(0, BaseSounds::GetUsedSet()->name); break;
@@ -538,6 +557,13 @@ struct GameOptionsWindow : Window {
 				GfxClearSpriteCache();
 				_gui_zoom = (ZoomLevel)(ZOOM_LVL_OUT_4X - index);
 				UpdateCursorSize();
+				UpdateAllVirtCoords();
+				ReInitAllWindows();
+				break;
+
+			case WID_GO_FONT_ZOOM_DROPDOWN:
+				_font_zoom = (ZoomLevel)(ZOOM_LVL_OUT_4X - index);
+				ClearFontCache();
 				LoadStringWidthTable();
 				UpdateAllVirtCoords();
 				break;
@@ -619,6 +645,9 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_CURRENCY_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetFill(0, 1),
+				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_FONT_ZOOM, STR_NULL),
+					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_FONT_ZOOM_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_TOOLTIP), SetFill(1, 0),
+				EndContainer(),
 			EndContainer(),
 		EndContainer(),
 
