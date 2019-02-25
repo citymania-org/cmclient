@@ -592,6 +592,7 @@ STR_TOOLBAR_SOUND_MUSIC                                         :Звук/муз
 ############ range for message menu starts
 STR_NEWS_MENU_LAST_MESSAGE_NEWS_REPORT                          :Последняя новость
 STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :История сообщений
+STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Удалить все сообщения
 ############ range ends here
 
 ############ range for about menu starts
@@ -1139,6 +1140,13 @@ STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Обычный
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Удвоенный
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Учетверённый
 
+STR_GAME_OPTIONS_FONT_ZOOM                                      :{BLACK}Размер шрифта
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_TOOLTIP                     :{BLACK}Выберите размер шрифта, используемого в игре
+
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_NORMAL                      :Нормальный
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_2X_ZOOM                     :Двукратный
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_4X_ZOOM                     :Четырёхкратный
+
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Базовый набор графики
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Выбрать базовый набор графики
 STR_GAME_OPTIONS_BASE_GRF_STATUS                                :{RED}{NUM} отсутствующи{P й х х}/повреждённы{P й х х} файл{P "" а ов}
@@ -1539,7 +1547,7 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Выкл.
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Закрывать окна щелчком ПКМ: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :Закрывать окно щелчком правой кнопкой мыши в его пределах. При этом отключается появление подсказок по правой кнопке.
 
-STR_CONFIG_SETTING_AUTOSAVE                                     :Автосохранения: {STRING}
+STR_CONFIG_SETTING_AUTOSAVE                                     :Автосохранение: {STRING}
 STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Укажите интервал между автоматическими сохранениями
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Использовать {STRING} формат даты для имён сохранений
@@ -1651,7 +1659,7 @@ STR_CONFIG_SETTING_NEWS_ARRIVAL_FIRST_VEHICLE_OTHER             :Первое т
 STR_CONFIG_SETTING_NEWS_ARRIVAL_FIRST_VEHICLE_OTHER_HELPTEXT    :Показывать новости о первом транспортном средстве, прибывающем на станцию конкурента
 STR_CONFIG_SETTING_NEWS_ACCIDENTS_DISASTERS                     :Аварии и катастрофы: {STRING}
 STR_CONFIG_SETTING_NEWS_ACCIDENTS_DISASTERS_HELPTEXT            :Показывать новости об авариях и катастрофах
-STR_CONFIG_SETTING_NEWS_COMPANY_INFORMATION                     :Информация о Компании: {STRING}
+STR_CONFIG_SETTING_NEWS_COMPANY_INFORMATION                     :Информация о компании: {STRING}
 STR_CONFIG_SETTING_NEWS_COMPANY_INFORMATION_HELPTEXT            :Показывать новости об основании и риске банкротства транспортных компаний
 STR_CONFIG_SETTING_NEWS_INDUSTRY_OPEN                           :Открытие предприятий: {STRING}
 STR_CONFIG_SETTING_NEWS_INDUSTRY_OPEN_HELPTEXT                  :Показывать новости об открывающихся предприятиях
@@ -2233,11 +2241,12 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Откл
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Сервер защищён. Введите пароль.
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Компания защищена. Введите пароль.
+STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Список клиентов
 
 # Network company list added strings
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :{WHITE}Список клиентов
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :{WHITE}Наблюдать
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :{WHITE}Новая компания
+STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Список клиентов
+STR_NETWORK_COMPANY_LIST_SPECTATE                               :Наблюдать
+STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Новая компания
 
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Отключить
@@ -2252,7 +2261,6 @@ STR_NETWORK_CLIENT                                              :Клиент
 STR_NETWORK_SPECTATORS                                          :Наблюдатели
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Введите сумму денег, которую вы хотите передать
-STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Наблюдатель
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Не сохранять пароль
@@ -2367,7 +2375,7 @@ STR_CONTENT_NAME_CAPTION_TOOLTIP                                :{BLACK}Наим
 STR_CONTENT_MATRIX_TOOLTIP                                      :{BLACK}Нажмите на строке для просмотра подробностей{}Отметьте чекбокс для загрузки
 STR_CONTENT_SELECT_ALL_CAPTION                                  :{BLACK}Выбрать всё
 STR_CONTENT_SELECT_ALL_CAPTION_TOOLTIP                          :{BLACK}Пометить весь контент для загрузки
-STR_CONTENT_SELECT_UPDATES_CAPTION                              :{BLACK}Выбрать обновл.
+STR_CONTENT_SELECT_UPDATES_CAPTION                              :{BLACK}Выбрать обновления
 STR_CONTENT_SELECT_UPDATES_CAPTION_TOOLTIP                      :{BLACK}Отметить для загрузки обновления для имеющегося контента
 STR_CONTENT_UNSELECT_ALL_CAPTION                                :{BLACK}Снять выделение
 STR_CONTENT_UNSELECT_ALL_CAPTION_TOOLTIP                        :{BLACK}Ничего не загружать
@@ -2919,6 +2927,9 @@ STR_FRAMERATE_DRAWING                                           :{BLACK}Отри
 STR_FRAMERATE_DRAWING_VIEWPORTS                                 :{BLACK} Дополнительные окна:
 STR_FRAMERATE_VIDEO                                             :{BLACK}Вывод на экран:
 STR_FRAMERATE_SOUND                                             :{BLACK}Обработка звука:
+STR_FRAMERATE_ALLSCRIPTS                                        :{BLACK}  Выполнение скриптов:
+STR_FRAMERATE_GAMESCRIPT                                        :{BLACK}   Игровой скрипт:
+STR_FRAMERATE_AI                                                :{BLACK}   ИИ {NUM} {STRING}
 ############ End of leave-in-this-order
 ############ Leave those lines in this order!!
 STR_FRAMETIME_CAPTION_GAMELOOP                                  :Расчёт игрового цикла
@@ -2933,6 +2944,9 @@ STR_FRAMETIME_CAPTION_DRAWING                                   :Отрисов�
 STR_FRAMETIME_CAPTION_DRAWING_VIEWPORTS                         :Отрисовка изображения в доп. окнах
 STR_FRAMETIME_CAPTION_VIDEO                                     :Вывод на экран
 STR_FRAMETIME_CAPTION_SOUND                                     :Обработка звука
+STR_FRAMETIME_CAPTION_ALLSCRIPTS                                :Общее время выполнения скриптов
+STR_FRAMETIME_CAPTION_GAMESCRIPT                                :Время выполнения игрового скрипта
+STR_FRAMETIME_CAPTION_AI                                        :ИИ {NUM} {STRING}
 ############ End of leave-in-this-order
 
 
@@ -3291,6 +3305,7 @@ STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{YELLOW}Дат�
 # Goal window
 STR_GOALS_CAPTION                                               :{WHITE}Задачи компании «{COMPANY}»
 STR_GOALS_SPECTATOR_CAPTION                                     :{WHITE}Глобальные задачи
+STR_GOALS_SPECTATOR                                             :Общие задачи
 STR_GOALS_GLOBAL_TITLE                                          :{BLACK}Общие задачи:
 STR_GOALS_TEXT                                                  :{ORANGE}{STRING}
 STR_GOALS_NONE                                                  :{ORANGE}- Нет -
@@ -3339,6 +3354,7 @@ STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Нажм
 # Story book window
 STR_STORY_BOOK_CAPTION                                          :{WHITE}История компании «{COMPANY}»
 STR_STORY_BOOK_SPECTATOR_CAPTION                                :{WHITE}Мировая история
+STR_STORY_BOOK_SPECTATOR                                        :Мировая история
 STR_STORY_BOOK_TITLE                                            :{YELLOW}{STRING}
 STR_STORY_BOOK_GENERIC_PAGE_ITEM                                :Стр. {NUM}
 STR_STORY_BOOK_SEL_PAGE_TOOLTIP                                 :{BLACK}Перейти на нужную страницу, выбрав её в выпадающем списке.

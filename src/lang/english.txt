@@ -466,6 +466,7 @@ STR_TOOLBAR_SOUND_MUSIC                                         :Sound/music
 ############ range for message menu starts
 STR_NEWS_MENU_LAST_MESSAGE_NEWS_REPORT                          :Last message/news report
 STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Message history
+STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Delete all messages
 ############ range ends here
 
 ############ range for about menu starts
@@ -993,6 +994,13 @@ STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Select t
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Normal
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Double size
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Quad size
+
+STR_GAME_OPTIONS_FONT_ZOOM                                      :{BLACK}Font size
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_TOOLTIP                     :{BLACK}Select the interface font size to use
+
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_NORMAL                      :Normal
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_2X_ZOOM                     :Double size
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_4X_ZOOM                     :Quad size
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Base graphics set
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Select the base graphics set to use
@@ -2081,11 +2089,12 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Disconne
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Server is protected. Enter password
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Company is protected. Enter password
+STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Client list
 
 # Network company list added strings
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :{WHITE}Client list
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :{WHITE}Spectate
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :{WHITE}New company
+STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Client list
+STR_NETWORK_COMPANY_LIST_SPECTATE                               :Spectate
+STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :New company
 
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Kick
@@ -2100,7 +2109,6 @@ STR_NETWORK_CLIENT                                              :Client
 STR_NETWORK_SPECTATORS                                          :Spectators
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Enter the amount of money you want to give
-STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Spectator
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Do not save the entered password
@@ -2739,6 +2747,9 @@ STR_FRAMERATE_DRAWING                                           :{BLACK}Graphics
 STR_FRAMERATE_DRAWING_VIEWPORTS                                 :{BLACK}  World viewports:
 STR_FRAMERATE_VIDEO                                             :{BLACK}Video output:
 STR_FRAMERATE_SOUND                                             :{BLACK}Sound mixing:
+STR_FRAMERATE_ALLSCRIPTS                                        :{BLACK}  GS/AI total:
+STR_FRAMERATE_GAMESCRIPT                                        :{BLACK}   Game script:
+STR_FRAMERATE_AI                                                :{BLACK}   AI {NUM} {RAW_STRING}
 ############ End of leave-in-this-order
 ############ Leave those lines in this order!!
 STR_FRAMETIME_CAPTION_GAMELOOP                                  :Game loop
@@ -2753,6 +2764,9 @@ STR_FRAMETIME_CAPTION_DRAWING                                   :Graphics render
 STR_FRAMETIME_CAPTION_DRAWING_VIEWPORTS                         :World viewport rendering
 STR_FRAMETIME_CAPTION_VIDEO                                     :Video output
 STR_FRAMETIME_CAPTION_SOUND                                     :Sound mixing
+STR_FRAMETIME_CAPTION_ALLSCRIPTS                                :GS/AI scripts total
+STR_FRAMETIME_CAPTION_GAMESCRIPT                                :Game script
+STR_FRAMETIME_CAPTION_AI                                        :AI {NUM} {RAW_STRING}
 ############ End of leave-in-this-order
 
 
@@ -3111,6 +3125,7 @@ STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{YELLOW}Bribe t
 # Goal window
 STR_GOALS_CAPTION                                               :{WHITE}{COMPANY} Goals
 STR_GOALS_SPECTATOR_CAPTION                                     :{WHITE}Global Goals
+STR_GOALS_SPECTATOR                                             :Global Goals
 STR_GOALS_GLOBAL_TITLE                                          :{BLACK}Global goals:
 STR_GOALS_TEXT                                                  :{ORANGE}{RAW_STRING}
 STR_GOALS_NONE                                                  :{ORANGE}- None -
@@ -3159,6 +3174,7 @@ STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Click on
 # Story book window
 STR_STORY_BOOK_CAPTION                                          :{WHITE}{COMPANY} Story Book
 STR_STORY_BOOK_SPECTATOR_CAPTION                                :{WHITE}Global Story Book
+STR_STORY_BOOK_SPECTATOR                                        :Global Story Book
 STR_STORY_BOOK_TITLE                                            :{YELLOW}{RAW_STRING}
 STR_STORY_BOOK_GENERIC_PAGE_ITEM                                :Page {NUM}
 STR_STORY_BOOK_SEL_PAGE_TOOLTIP                                 :{BLACK}Jump to a specific page by selecting it in this drop down list.

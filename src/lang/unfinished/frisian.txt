@@ -983,6 +983,8 @@ STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Normaal
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Dûbele grutte
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Fjouwerdûbele grutte
 
+
+
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Basisset for ôfbyldings
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Selektearje de basis ôfbyldingsset om te brûken
 STR_GAME_OPTIONS_BASE_GRF_STATUS                                :{RED}{NUM} ûntbrekke{P "" nde}/korrupt{P "" e} bestân
@@ -1976,7 +1978,6 @@ STR_NETWORK_SERVER                                              :Tsjinner
 STR_NETWORK_CLIENT                                              :Kliïnt
 STR_NETWORK_SPECTATORS                                          :Taskôgers
 
-STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Taskôger
 
 # Network set password
 STR_COMPANY_PASSWORD_OK                                         :{BLACK}Jou it bedriuw it nije wachtwurd
