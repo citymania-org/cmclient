@@ -893,47 +893,6 @@ struct IncomeGraphWindow : ExcludingCargoBaseGraphWindow {
 			y += this->line_height;
 		}
 	}
-	// virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
-	// {
-	// 	if (widget != WID_CPR_MATRIX) {
-	// 		BaseGraphWindow::UpdateWidgetSize(widget, size, padding, fill, resize);
-	// 		return;
-	// 	}
-
-	// 	const CargoSpec *cs = _sorted_cargo_specs[widget - WID_CPR_CARGO_FIRST];
-	// 	SetDParam(0, cs->name);
-	// 	Dimension d = GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO);
-	// 	d.width += 14; // colour field
-	// 	d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-	// 	d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
-	// 	*size = maxdim(d, *size);
-	// }
-
-	// virtual void DrawWidget(const Rect &r, int widget) const
-	// {
-	// 	if (widget < WID_CPR_CARGO_FIRST) {
-	// 		BaseGraphWindow::DrawWidget(r, widget);
-	// 		return;
-	// 	}
-
-	// 	const CargoSpec *cs = _sorted_cargo_specs[widget - WID_CPR_CARGO_FIRST];
-	// 	bool rtl = _current_text_dir == TD_RTL;
-
-	// 	/* Since the buttons have no text, no images,
-	// 	 * both the text and the coloured box have to be manually painted.
-	// 	 * clk_dif will move one pixel down and one pixel to the right
-	// 	 * when the button is clicked */
-	// 	byte clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
-	// 	int x = r.left + WD_FRAMERECT_LEFT;
-	// 	int y = r.top;
-
-	// 	int rect_x = clk_dif + (rtl ? r.right - 12 : r.left + WD_FRAMERECT_LEFT);
-
-	// 	GfxFillRect(rect_x, y + clk_dif, rect_x + 8, y + 5 + clk_dif, PC_BLACK);
-	// 	GfxFillRect(rect_x + 1, y + 1 + clk_dif, rect_x + 7, y + 4 + clk_dif, cs->legend_colour);
-	// 	SetDParam(0, cs->name);
-	// 	DrawString(rtl ? r.left : x + 14 + clk_dif, (rtl ? r.right - 14 + clk_dif : r.right), y + clk_dif, STR_GRAPH_CARGO_PAYMENT_CARGO);
-	// }
 };
 
 static const NWidgetPart _nested_income_graph_widgets[] = {
@@ -1011,48 +970,6 @@ struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 		}
 		return total_delivered;
 	}
-
-	// virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
-	// {
-	// 	if (widget < WID_CPR_CARGO_FIRST) {
-	// 		BaseGraphWindow::UpdateWidgetSize(widget, size, padding, fill, resize);
-	// 		return;
-	// 	}
-
-	// 	const CargoSpec *cs = _sorted_cargo_specs[widget - WID_CPR_CARGO_FIRST];
-	// 	SetDParam(0, cs->name);
-	// 	Dimension d = GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO);
-	// 	d.width += 14; // colour field
-	// 	d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-	// 	d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
-	// 	*size = maxdim(d, *size);
-	// }
-
-	// virtual void DrawWidget(const Rect &r, int widget) const
-	// {
-	// 	if (widget < WID_CPR_CARGO_FIRST) {
-	// 		BaseGraphWindow::DrawWidget(r, widget);
-	// 		return;
-	// 	}
-
-	// 	const CargoSpec *cs = _sorted_cargo_specs[widget - WID_CPR_CARGO_FIRST];
-	// 	bool rtl = _current_text_dir == TD_RTL;
-
-	// 	/* Since the buttons have no text, no images,
-	// 	 * both the text and the coloured box have to be manually painted.
-	// 	 * clk_dif will move one pixel down and one pixel to the right
-	// 	 * when the button is clicked */
-	// 	byte clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
-	// 	int x = r.left + WD_FRAMERECT_LEFT;
-	// 	int y = r.top;
-
-	// 	int rect_x = clk_dif + (rtl ? r.right - 12 : r.left + WD_FRAMERECT_LEFT);
-
-	// 	GfxFillRect(rect_x, y + clk_dif, rect_x + 8, y + 5 + clk_dif, PC_BLACK);
-	// 	GfxFillRect(rect_x + 1, y + 1 + clk_dif, rect_x + 7, y + 4 + clk_dif, cs->legend_colour);
-	// 	SetDParam(0, cs->name);
-	// 	DrawString(rtl ? r.left : x + 14 + clk_dif, (rtl ? r.right - 14 + clk_dif : r.right), y + clk_dif, STR_GRAPH_CARGO_PAYMENT_CARGO);
-	// }
 };
 
 static const NWidgetPart _nested_delivered_cargo_graph_widgets[] = {
@@ -1229,66 +1146,6 @@ struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 
 		this->FinishInitNested(window_number);
 	}
-
-	// virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
-	// {
-	// 	if (widget != WID_CPR_MATRIX) {
-	// 		BaseGraphWindow::UpdateWidgetSize(widget, size, padding, fill, resize);
-	// 		return;
-	// 	}
-
-	// 	const CargoSpec *cs;
-	// 	FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
-	// 		SetDParam(0, cs->name);
-	// 		Dimension d = GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO);
-	// 		d.width += 14; // colour field
-	// 		d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-	// 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
-	// 		*size = maxdim(d, *size);
-	// 	}
-
-	// 	this->line_height = size->height;
-	// 	size->height = this->line_height * 11; /* Default number of cargo types in most climates. */
-	// 	resize->width = 0;
-	// 	resize->height = this->line_height;
-	// }
-
-	// virtual void DrawWidget(const Rect &r, int widget) const
-	// {
-	// 	if (widget != WID_CPR_MATRIX) {
-	// 		BaseGraphWindow::DrawWidget(r, widget);
-	// 		return;
-	// 	}
-
-	// 	bool rtl = _current_text_dir == TD_RTL;
-
-	// 	int x = r.left + WD_FRAMERECT_LEFT;
-	// 	int y = r.top;
-
-	// 	int pos = this->vscroll->GetPosition();
-	// 	int max = pos + this->vscroll->GetCapacity();
-
-	// 	const CargoSpec *cs;
-	// 	FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
-	// 		if (pos-- > 0) continue;
-	// 		if (--max < 0) break;
-
-	// 		bool lowered = !HasBit(_legend_excluded_cargo, cs->Index());
-
-	// 		/* Redraw box if lowered */
-	// 		if (lowered) DrawFrameRect(r.left, y, r.right, y + this->line_height - 1, COLOUR_ORANGE, lowered ? FR_LOWERED : FR_NONE);
-
-	// 		byte clk_dif = lowered ? 1 : 0;
-	// 		int rect_x = clk_dif + (rtl ? r.right - 12 : r.left + WD_FRAMERECT_LEFT);
-
-	// 		GfxFillRect(rect_x, y + clk_dif, rect_x + 8, y + 5 + clk_dif, PC_BLACK);
-	// 		GfxFillRect(rect_x + 1, y + 1 + clk_dif, rect_x + 7, y + 4 + clk_dif, cs->legend_colour);
-	// 		SetDParam(0, cs->name);
-	// 		DrawString(rtl ? r.left : x + 14 + clk_dif, (rtl ? r.right - 14 + clk_dif : r.right), y + clk_dif, STR_GRAPH_CARGO_PAYMENT_CARGO);
-
-	// 		y += this->line_height;
-	// 	}
-	// }
 
 	virtual void OnGameTick()
 	{
