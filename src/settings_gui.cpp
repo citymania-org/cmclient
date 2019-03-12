@@ -562,6 +562,7 @@ struct GameOptionsWindow : Window {
 				break;
 
 			case WID_GO_FONT_ZOOM_DROPDOWN:
+				GfxClearSpriteCache();
 				_font_zoom = (ZoomLevel)(ZOOM_LVL_OUT_4X - index);
 				ClearFontCache();
 				LoadStringWidthTable();

@@ -132,6 +132,7 @@ struct PacketReader : LoadFilter {
 void ClientNetworkEmergencySave()
 {
 	if (!_settings_client.gui.autosave_on_network_disconnect) return;
+	if (!_networking) return;
 
 	const char *filename = "netsave.sav";
 	DEBUG(net, 0, "Client: Performing emergency save (%s)", filename);
@@ -218,6 +219,8 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 			res != NETWORK_RECV_STATUS_SERVER_BANNED) {
 		SendError(errorno);
 	}
+
+	ClientNetworkEmergencySave();
 
 	_switch_mode = SM_MENU;
 	this->CloseConnection(res);
@@ -1217,7 +1220,6 @@ void ClientNetworkGameSocketHandler::CheckConnection()
 	if (lag > 20) {
 		this->NetworkGameSocketHandler::CloseConnection();
 		ShowErrorMessage(STR_NETWORK_ERROR_LOSTCONNECTION, INVALID_STRING_ID, WL_CRITICAL);
-		ClientNetworkEmergencySave();
 		return;
 	}
 
