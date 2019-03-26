@@ -2325,10 +2325,15 @@ void UpdateTileSelection()
  * @param params (optional) up to 5 pieces of additional information that may be added to a tooltip
  * @param close_cond Condition for closing this tooltip.
  */
-static inline void ShowMeasurementTooltips(StringID str, uint paramcount, const uint64 params[], TooltipCloseCondition close_cond = TCC_LEFT_CLICK)
+static inline void ShowMeasurementTooltips(StringID str, uint paramcount, const uint64 params[], TooltipCloseCondition close_cond = TCC_NONE)
 {
 	if (!_settings_client.gui.measure_tooltip) return;
 	GuiShowTooltips(_thd.GetCallbackWnd(), str, paramcount, params, close_cond);
+}
+
+static void HideMeasurementTooltips()
+{
+	DeleteWindowById(WC_TOOLTIPS, 0);
 }
 
 /** highlighting tiles while only going over them with the mouse */
@@ -2386,7 +2391,11 @@ void VpSetPresizeRange(TileIndex from, TileIndex to)
 	_thd.next_drawstyle = HT_RECT;
 
 	/* show measurement only if there is any length to speak of */
-	if (distance > 1) ShowMeasurementTooltips(STR_MEASURE_LENGTH, 1, &distance, TCC_HOVER);
+	if (distance > 1) {
+		ShowMeasurementTooltips(STR_MEASURE_LENGTH, 1, &distance);
+	} else {
+		HideMeasurementTooltips();
+	}
 }
 
 static void VpStartPreSizing()
@@ -3000,6 +3009,7 @@ EventState VpHandlePlaceSizingDrag()
 	}
 	SetTileSelectSize(1, 1);
 
+	HideMeasurementTooltips();
 	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 
 	return ES_HANDLED;
@@ -3038,7 +3048,10 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 		 * this function might in some cases reset the newly set object to
 		 * place or not properly reset the original selection. */
 		_thd.window_class = WC_INVALID;
-		if (w != NULL) w->OnPlaceObjectAbort();
+		if (w != NULL) {
+			w->OnPlaceObjectAbort();
+			HideMeasurementTooltips();
+		}
 	}
 
 	/* Mark the old selection dirty, in case the selection shape or colour changes */
