@@ -121,37 +121,34 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
         case DDSP_DEMOLISH_TREES:
 			// loop through every tile and send a demolish command for each tree
 			// orthogonal area
-			TileIndex tree_start_tile, prev_tile;
-			tree_start_tile = prev_tile = 0;
+			TileIndex tree_start_tile, tree_recent_tile, prev_tile;
+			tree_start_tile = tree_recent_tile = prev_tile = 0;
 			if (!_ctrl_pressed) {
 				OrthogonalTileArea square_area = OrthogonalTileArea(start_tile, end_tile);
 				TILE_AREA_LOOP(curr_tile, square_area)
 				{
-					// if we're on a consecutive tile
-					if (curr_tile == prev_tile + 1) {
-						if (GetTileType(prev_tile) != MP_TREES && GetTileType(curr_tile) == MP_TREES) {
-							tree_start_tile = curr_tile;
-						} else if (GetTileType(prev_tile) == MP_TREES && GetTileType(curr_tile) != MP_TREES) {
-							DoCommandP(tree_start_tile, prev_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
-						}
-						// remaining cases include: both prev and curr are trees, or both prev and curr are not trees
-					/**
-					 * first tile of the search, or we've just jumped to a new row
-					 * (so prev_tile is last tile of previous row and curr_tile is first tile of new row)
-					 */
-					} else {
-						if (GetTileType(prev_tile) == MP_TREES) {
-							DoCommandP(tree_start_tile, prev_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
-						}
-						if (GetTileType(curr_tile) == MP_TREES) {
+					// if we're on a non-consecutive tile or we've hit a black-marked tile
+					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
+					if (tree_start_tile != 0 &&
+							(curr_tile != prev_tile + 1 ||
+							(!IsTileType(curr_tile, MP_TREES) && (!IsTileType(curr_tile, MP_CLEAR) || IsClearGround(curr_tile, CLEAR_FIELDS))))) {
+						DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+						tree_start_tile = tree_recent_tile = 0;
+					}
+					// if current tile is a tree
+					if (IsTileType(curr_tile, MP_TREES)) {
+						if (tree_start_tile == 0) {
 							tree_start_tile = curr_tile;
 						}
+						tree_recent_tile = curr_tile;
 					}
 					prev_tile = curr_tile;
 				}
-				// at this point prev_tile is the last tile of the selection
-
-			// diagonal area (not working optimally yet)
+				// one last ride to flavortown
+				if (tree_start_tile != 0) {
+					DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+				}
+			// diagonal area
 			}
             //*/
             else {
@@ -160,21 +157,26 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 				{
 					// same as above but with a different criteria for consecutive tiles
                     TileIndexDiffC tile_diff = TileIndexToTileIndexDiffC(curr_tile, prev_tile);
-                    if ((tile_diff.x == 1 && tile_diff.y == 1) || (tile_diff.x == -1 && tile_diff.y == -1)){
-						if (GetTileType(prev_tile) != MP_TREES && GetTileType(curr_tile) == MP_TREES) {
+					// if we're on a non-consecutive tile or we've hit a black-marked tile
+					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
+					if (tree_start_tile != 0 &&
+							(!((tile_diff.x == 1 && tile_diff.y == 1) || (tile_diff.x == -1 && tile_diff.y == -1)) ||
+							(!IsTileType(curr_tile, MP_TREES) && (!IsTileType(curr_tile, MP_CLEAR) || IsClearGround(curr_tile, CLEAR_FIELDS))))) {
+						DoCommandP(tree_start_tile, tree_recent_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+						tree_start_tile = tree_recent_tile = 0;
+					}
+					// if current tile is a tree
+					if (IsTileType(curr_tile, MP_TREES)) {
+						if (tree_start_tile == 0) {
 							tree_start_tile = curr_tile;
-						} else if (GetTileType(prev_tile) == MP_TREES && GetTileType(curr_tile) != MP_TREES) {
-							DoCommandP(tree_start_tile, prev_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 						}
-					} else {
-						if (GetTileType(prev_tile) == MP_TREES) {
-							DoCommandP(tree_start_tile, prev_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
-						}
-						if (GetTileType(curr_tile) == MP_TREES) {
-							tree_start_tile = curr_tile;
-						}
+						tree_recent_tile = curr_tile;
 					}
 					prev_tile = curr_tile;
+				}
+				// one last ride to flavortown
+				if (tree_start_tile != 0) {
+					DoCommandP(tree_start_tile, tree_recent_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 				}
 			}
             //*/
@@ -224,6 +226,27 @@ struct TerraformToolbarWindow : Window {
 
 	~TerraformToolbarWindow()
 	{
+	}
+
+	virtual void DrawWidget(const Rect &r, int widget) const
+	{
+		if (widget == WID_TT_DEMOLISH_TREES) {
+			uint offset = this->IsWidgetLowered(WID_TT_DEMOLISH_TREES) ? 1 : 0;
+			ZoomLevelByte temp_zoom;
+			switch (_gui_zoom) {
+			case ZOOM_LVL_NORMAL:
+				temp_zoom = ZOOM_LVL_OUT_2X;
+				break;
+			case ZOOM_LVL_OUT_2X:
+				temp_zoom = ZOOM_LVL_OUT_4X;
+				break;
+			case ZOOM_LVL_OUT_4X:
+				temp_zoom = ZOOM_LVL_OUT_8X;
+				break;
+			}
+			Dimension d = GetSpriteSize(SPR_IMG_PLANTTREES, (Point *)0, temp_zoom);
+			DrawSprite(SPR_IMG_PLANTTREES, PAL_NONE, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset, (const SubSprite *)0, temp_zoom);
+		}
 	}
 
 	virtual void OnInit()
