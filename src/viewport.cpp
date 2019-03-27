@@ -2456,9 +2456,14 @@ void UpdateTileSelection()
  * @param params (optional) up to 5 pieces of additional information that may be added to a tooltip
  * @param close_cond Condition for closing this tooltip.
  */
-static inline void ShowMeasurementTooltips(StringID str, uint paramcount, const uint64 params[], TooltipCloseCondition close_cond = TCC_LEFT_CLICK)
+static inline void ShowMeasurementTooltips(StringID str, uint paramcount, const uint64 params[], TooltipCloseCondition close_cond = TCC_NONE)
 {
 	GuiShowTooltips(_thd.GetCallbackWnd(), str, paramcount, params, close_cond);
+}
+
+static void HideMeasurementTooltips()
+{
+	DeleteWindowById(WC_TOOLTIPS, 0);
 }
 
 /** highlighting tiles while only going over them with the mouse */
@@ -2521,8 +2526,11 @@ void VpSetPresizeRange(TileIndex from, TileIndex to)
 	_thd.next_drawstyle = HT_RECT;
 
 	/* show measurement only if there is any length to speak of */
-	if (distance > 1 && _settings_client.gui.measure_tooltip)
-		ShowMeasurementTooltips(STR_MEASURE_LENGTH, 1, &distance, TCC_HOVER);
+	if (distance > 1  && _settings_client.gui.measure_tooltip) {
+		ShowMeasurementTooltips(STR_MEASURE_LENGTH, 1, &distance);
+	} else {
+		HideMeasurementTooltips();
+	}
 }
 
 static void VpStartPreSizing()
@@ -2693,7 +2701,7 @@ static int CalcHeightdiff(HighLightStyle style, uint distance, TileIndex start_t
  * @param close_cond              Close condition of the tooltip.
  * @param show_single_tile_length Show a tooltip also when the length is 1 tile.
  */
-static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, TileIndex end_tile, TooltipCloseCondition close_cond = TCC_LEFT_CLICK, bool show_single_tile_length = false)
+static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, TileIndex end_tile, TooltipCloseCondition close_cond = TCC_NONE, bool show_single_tile_length = false)
 {
 	static const StringID measure_strings_length[] = {STR_NULL, STR_MEASURE_LENGTH, STR_MEASURE_LENGTH_HEIGHTDIFF};
 
@@ -3414,11 +3422,6 @@ EventState VpHandlePlaceSizingDrag()
 		_thd.place_mode = HT_POINT | others;
 	}
 	SetTileSelectSize(1, 1);
-
-	if (_thd.place_mode & HT_POLY) {
-		if (GetRailSnapMode() == RSM_SNAP_TO_TILE) SetRailSnapMode(RSM_NO_SNAP);
-		if (_thd.drawstyle == HT_NONE) return ES_HANDLED;
-	}
 
 	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 	return ES_HANDLED;

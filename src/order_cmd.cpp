@@ -1799,7 +1799,6 @@ void CheckOrders(const Vehicle *v)
 							(AircraftVehInfo(v->engine_type)->subtype & AIR_FAST) &&
 							(st->airport.GetFTA()->flags & AirportFTAClass::SHORT_STRIP) &&
 							_settings_client.gui.runway_too_short_warn &&
-							_settings_game.vehicle.plane_crashes != 0 &&
 							!_cheats.no_jetcrash.value &&
 							message == INVALID_STRING_ID) {
 					message = STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY;
@@ -1853,7 +1852,7 @@ void RemoveOrderFromAllVehicles(OrderType type, DestinationID destination, bool 
 
 		order = &v->current_order;
 		if ((v->type == VEH_AIRCRAFT && order->IsType(OT_GOTO_DEPOT) && !hangar ? OT_GOTO_STATION : order->GetType()) == type &&
-				v->current_order.GetDestination() == destination) {
+				(!hangar || v->type == VEH_AIRCRAFT) && v->current_order.GetDestination() == destination) {
 			order->MakeDummy();
 			SetWindowDirty(WC_VEHICLE_VIEW, v->index);
 		}
@@ -1866,6 +1865,7 @@ restart:
 
 			OrderType ot = order->GetType();
 			if (ot == OT_GOTO_DEPOT && (order->GetDepotActionType() & ODATFB_NEAREST_DEPOT) != 0) continue;
+			if (ot == OT_GOTO_DEPOT && hangar && v->type != VEH_AIRCRAFT) continue; // Not an aircraft? Can't have a hangar order.
 			if (ot == OT_IMPLICIT || (v->type == VEH_AIRCRAFT && ot == OT_GOTO_DEPOT && !hangar)) ot = OT_GOTO_STATION;
 			if (ot == type && order->GetDestination() == destination) {
 				/* We want to clear implicit orders, but we don't want to make them

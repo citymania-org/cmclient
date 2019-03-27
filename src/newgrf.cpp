@@ -2103,7 +2103,7 @@ static ChangeInfoResult CanalChangeInfo(uint id, int numinfo, int prop, ByteRead
 	ChangeInfoResult ret = CIR_SUCCESS;
 
 	if (id + numinfo > CF_END) {
-		grfmsg(1, "CanalChangeInfo: Canal feature %u is invalid, max %u, ignoring", id + numinfo, CF_END);
+		grfmsg(1, "CanalChangeInfo: Canal feature 0x%02X is invalid, max %u, ignoring", id + numinfo, CF_END);
 		return CIR_INVALID_ID;
 	}
 
@@ -4530,11 +4530,16 @@ static void FeatureChangeInfo(ByteReader *buf)
 	uint numinfo  = buf->ReadByte();
 	uint engine   = buf->ReadExtendedByte();
 
-	grfmsg(6, "FeatureChangeInfo: feature %d, %d properties, to apply to %d+%d",
+	if (feature >= GSF_END) {
+		grfmsg(1, "FeatureChangeInfo: Unsupported feature 0x%02X, skipping", feature);
+		return;
+	}
+
+	grfmsg(6, "FeatureChangeInfo: Feature 0x%02X, %d properties, to apply to %d+%d",
 	               feature, numprops, engine, numinfo);
 
 	if (feature >= lengthof(handler) || handler[feature] == NULL) {
-		if (feature != GSF_CARGOES) grfmsg(1, "FeatureChangeInfo: Unsupported feature %d, skipping", feature);
+		if (feature != GSF_CARGOES) grfmsg(1, "FeatureChangeInfo: Unsupported feature 0x%02X, skipping", feature);
 		return;
 	}
 
@@ -4649,9 +4654,15 @@ static void NewSpriteSet(ByteReader *buf)
 	}
 	uint16 num_ents = buf->ReadExtendedByte();
 
+	if (feature >= GSF_END) {
+		_cur.skip_sprites = num_sets * num_ents;
+		grfmsg(1, "NewSpriteSet: Unsupported feature 0x%02X, skipping %d sprites", feature, _cur.skip_sprites);
+		return;
+	}
+
 	_cur.AddSpriteSets(feature, _cur.spriteid, first_set, num_sets, num_ents);
 
-	grfmsg(7, "New sprite set at %d of type %d, consisting of %d sets with %d views each (total %d)",
+	grfmsg(7, "New sprite set at %d of feature 0x%02X, consisting of %d sets with %d views each (total %d)",
 		_cur.spriteid, feature, num_sets, num_ents, num_sets * num_ents
 	);
 
@@ -4743,6 +4754,11 @@ static void NewSpriteGroup(ByteReader *buf)
 	SpriteGroup *act_group = NULL;
 
 	uint8 feature = buf->ReadByte();
+	if (feature >= GSF_END) {
+		grfmsg(1, "NewSpriteGroup: Unsupported feature 0x%02X, skipping", feature);
+		return;
+	}
+
 	uint8 setid   = buf->ReadByte();
 	uint8 type    = buf->ReadByte();
 
@@ -5005,7 +5021,12 @@ static void NewSpriteGroup(ByteReader *buf)
 						for (uint i = 0; i < group->num_input; i++) {
 							byte rawcargo = buf->ReadByte();
 							CargoID cargo = GetCargoTranslation(rawcargo, _cur.grffile);
-							if (std::find(group->cargo_input, group->cargo_input + i, cargo) != group->cargo_input + i) {
+							if (cargo == CT_INVALID) {
+								/* The mapped cargo is invalid. This is permitted at this point,
+								 * as long as the result is not used. Mark it invalid so this
+								 * can be tested later. */
+								group->version = 0xFF;
+							} else if (std::find(group->cargo_input, group->cargo_input + i, cargo) != group->cargo_input + i) {
 								GRFError *error = DisableGrf(STR_NEWGRF_ERROR_INDPROD_CALLBACK);
 								error->data = stredup("duplicate input cargo");
 								return;
@@ -5022,7 +5043,10 @@ static void NewSpriteGroup(ByteReader *buf)
 						for (uint i = 0; i < group->num_output; i++) {
 							byte rawcargo = buf->ReadByte();
 							CargoID cargo = GetCargoTranslation(rawcargo, _cur.grffile);
-							if (std::find(group->cargo_output, group->cargo_output + i, cargo) != group->cargo_output + i) {
+							if (cargo == CT_INVALID) {
+								/* Mark this result as invalid to use */
+								group->version = 0xFF;
+							} else if (std::find(group->cargo_output, group->cargo_output + i, cargo) != group->cargo_output + i) {
 								GRFError *error = DisableGrf(STR_NEWGRF_ERROR_INDPROD_CALLBACK);
 								error->data = stredup("duplicate output cargo");
 								return;
@@ -5038,7 +5062,7 @@ static void NewSpriteGroup(ByteReader *buf)
 				}
 
 				/* Loading of Tile Layout and Production Callback groups would happen here */
-				default: grfmsg(1, "NewSpriteGroup: Unsupported feature %d, skipping", feature);
+				default: grfmsg(1, "NewSpriteGroup: Unsupported feature 0x%02X, skipping", feature);
 			}
 		}
 	}
@@ -5565,6 +5589,11 @@ static void FeatureMapSpriteGroup(ByteReader *buf)
 	uint8 feature = buf->ReadByte();
 	uint8 idcount = buf->ReadByte();
 
+	if (feature >= GSF_END) {
+		grfmsg(1, "FeatureMapSpriteGroup: Unsupported feature 0x%02X, skipping", feature);
+		return;
+	}
+
 	/* If idcount is zero, this is a feature callback */
 	if (idcount == 0) {
 		/* Skip number of cargo ids? */
@@ -5572,7 +5601,7 @@ static void FeatureMapSpriteGroup(ByteReader *buf)
 		uint16 groupid = buf->ReadWord();
 		if (!IsValidGroupID(groupid, "FeatureMapSpriteGroup")) return;
 
-		grfmsg(6, "FeatureMapSpriteGroup: Adding generic feature callback for feature %d", feature);
+		grfmsg(6, "FeatureMapSpriteGroup: Adding generic feature callback for feature 0x%02X", feature);
 
 		AddGenericCallback(feature, _cur.grffile, _cur.spritegroups[groupid]);
 		return;
@@ -5581,7 +5610,7 @@ static void FeatureMapSpriteGroup(ByteReader *buf)
 	/* Mark the feature as used by the grf (generic callbacks do not count) */
 	SetBit(_cur.grffile->grf_features, feature);
 
-	grfmsg(6, "FeatureMapSpriteGroup: Feature %d, %d ids", feature, idcount);
+	grfmsg(6, "FeatureMapSpriteGroup: Feature 0x%02X, %d ids", feature, idcount);
 
 	switch (feature) {
 		case GSF_TRAINS:
@@ -5632,7 +5661,7 @@ static void FeatureMapSpriteGroup(ByteReader *buf)
 			return;
 
 		default:
-			grfmsg(1, "FeatureMapSpriteGroup: Unsupported feature %d, skipping", feature);
+			grfmsg(1, "FeatureMapSpriteGroup: Unsupported feature 0x%02X, skipping", feature);
 			return;
 	}
 }
@@ -5659,6 +5688,11 @@ static void FeatureNewName(ByteReader *buf)
 	bool new_scheme = _cur.grffile->grf_version >= 7;
 
 	uint8 feature  = buf->ReadByte();
+	if (feature >= GSF_END) {
+		grfmsg(1, "FeatureNewName: Unsupported feature 0x%02X, skipping", feature);
+		return;
+	}
+
 	uint8 lang     = buf->ReadByte();
 	uint8 num      = buf->ReadByte();
 	bool generic   = HasBit(lang, 7);
@@ -5675,7 +5709,7 @@ static void FeatureNewName(ByteReader *buf)
 
 	uint16 endid = id + num;
 
-	grfmsg(6, "FeatureNewName: About to rename engines %d..%d (feature %d) in language 0x%02X",
+	grfmsg(6, "FeatureNewName: About to rename engines %d..%d (feature 0x%02X) in language 0x%02X",
 	               id, endid, feature, lang);
 
 	for (; id < endid && buf->HasData(); id++) {
