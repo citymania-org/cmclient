@@ -88,5 +88,5 @@ const uint32 _openttd_newgrf_version = 1 << 28 | 9 << 24 | 0 << 20 | 0 << 19 | 2
 /**
  * Variable used by MorphOS to show the version.
  */
-extern const char morphos_versions_tag[] = "$VER: OpenTTD 1.9.0-RC2 (26.03.19) OpenTTD Team [MorphOS, PowerPC]";
+extern const char morphos_versions_tag[] = "$VER: OpenTTD --g (30.03.19) OpenTTD Team [MorphOS, PowerPC]";
 #endif
