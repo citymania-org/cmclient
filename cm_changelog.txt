@@ -37,11 +37,11 @@ Process is easy and simple guide is at http://wiki.openttd.org/Compiling_on_(GNU
 == LOGIN SYSTEM ==
 Community Login system - login window. Atm accessible only by defining hotkey for it.
 - Please read carefully about new login system if you intend to use it
-- new login system for CityMania and also for n-ice and BTPro, login date are stored in new config file novapolis.cfg
+- new login system for CityMania and also for n-ice and BTPro, login date are stored in new config file citymania.cfg
 	- login window can be opened via landinfo dropdown mene or a hotkey can be associated with it, for example CTRL+L
 
 	- login is saved by entering text via OpenTTD forms. Remember that OpenTTD shows real letters when entering any text
-	- TODO novapolis password is stored encrypted and login string is sent via ingame chat privately to server
+	- TODO citymania password is stored encrypted and login string is sent via ingame chat privately to server
 		so no one can see it
 	- n-ice and BTPro uses token system. In order to retrieve the token, client has to log to their websites
 		obtain the token here and enter it in ingame chat
@@ -52,9 +52,9 @@ Community Login system - login window. Atm accessible only by defining hotkey fo
 		so no one can see it
 
 		!!! Be aware, that the token login webpage needs decrypted password, so this decrypted password
-		is stored in novapolis.cfg file and send decrypted via OpenTTD to their website
-		Thus do not provide novapolis.cfg file to any one!
-		N-ice and BTPro are 3rd side and Novapolis cannot guarantee safety of the login to their community
+		is stored in citymania.cfg file and send decrypted via OpenTTD to their website
+		Thus do not provide citymaina.cfg file to any one!
+		N-ice and BTPro are 3rd side and CityMania cannot guarantee safety of the login to their community
 		and should they change the login system, CityMania client login will not work for both of them
 
 
@@ -74,11 +74,16 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
-*** 1.8.0 (17 Apr 2018) ***
-- OpenTTD update
+*** 1.9.0 (1 Apr 2019) ***
+- OpenTTD update.
+- Improved cargo legend looks in charts.
+- Improved performance of up authority and advertisement zoning.
+
+*** 1.8.0 (17 Apr 2018)
+- OpenTTD update.
 
 *** 1.7.1 (15 Jun 2017) ***
-- OpenTTD update
+- OpenTTD update.
 
 *** 1.7.0 (15 Apr 2017) ***
 - Polyline patch updated to version 11a
