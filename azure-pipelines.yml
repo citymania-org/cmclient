@@ -57,7 +57,7 @@ jobs:
     displayName: 'Extract sources'
   - bash: |
       set -ex
-      mkdir bundles
+      mkdir -p bundles
       diff -r vanilla cmclient -B -X .diff-exclude  > bundles/citymania-client-$(Build.BuildNumber).diff || EXIT_CODE=$? && true
       if ((EXIT_CODE != 1)); then exit $EXIT_CODE; fi;
     displayName: 'Make diff'
@@ -70,6 +70,9 @@ jobs:
 - job: linux
   displayName: 'Linux'
   dependsOn: source
+  strategy:
+    matrix:
+      linux-ubuntu-xenial-amd64-gcc: {}
   steps:
   - template: azure-pipelines/templates/release-fetch-source.yml
   - template: azure-pipelines/templates/linux-build.yml
@@ -102,7 +105,7 @@ jobs:
       BuildPlatform: $(BuildPlatform)
   - bash: |
       set -ex
-      mkdir bundle
+      mkdir -p bundle
       cp -r release_files/* bundle/
       make -f Makefile.msvc bundle_pdb bundle_zip PLATFORM=$(BundlePlatform) BUNDLE_NAME=citymania-client-$(Build.BuildNumber)-$(BundlePlatform)
     displayName: 'Create bundles'
