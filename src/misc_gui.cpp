@@ -33,13 +33,13 @@
 
 #include "table/strings.h"
 
-#include "safeguards.h"
-
 #include "house.h"
 #include "town_map.h"
 #include "station_base.h"
 #include "viewport_func.h"
 #include "industry.h"
+
+#include "safeguards.h"
 
 void GuiShowTooltipsExtra(Window *parent, uint param, TooltipCloseCondition close_tooltip);
 
