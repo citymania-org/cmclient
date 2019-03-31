@@ -21,7 +21,7 @@ jobs:
       # Rename the folder to openttd-NNN-source
       mkdir openttd-$(Build.BuildNumber)
       find . -maxdepth 1 -not -name release_files -not -name . -not -name openttd-$(Build.BuildNumber) -exec mv {} openttd-$(Build.BuildNumber)/ \;
-      cp release_files/* openttd-$(Build.BuildNumber)/
+      cp -r release_files/* openttd-$(Build.BuildNumber)/
 
       mkdir bundles
       tar --xz -cf bundles/openttd-$(Build.BuildNumber)-source.tar.xz openttd-$(Build.BuildNumber)
