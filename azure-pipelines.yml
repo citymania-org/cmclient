@@ -10,12 +10,14 @@ jobs:
     vmImage: 'ubuntu-16.04'
 
   steps:
-  - script: |
-      set -ex
+  - bash: |
+      set -e
 
       VERSION=$(cat .version)
       echo "${VERSION}"
       echo "##vso[build.updatebuildnumber]${VERSION}"
+  - script: |
+      set -ex
 
       # Rename the folder to openttd-NNN-source
       mkdir openttd-$(Build.BuildNumber)
