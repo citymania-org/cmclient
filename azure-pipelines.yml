@@ -64,7 +64,9 @@ jobs:
 - job: publish
   dependsOn:
   - windows
-  displayName: 'Publish bundles'
+  steps:
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish bundles'
     inputs:
-    PathtoPublish: bundles/
-    ArtifactName: bundles
+      PathtoPublish: bundles/
+      ArtifactName: bundles
