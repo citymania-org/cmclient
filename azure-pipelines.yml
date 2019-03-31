@@ -20,9 +20,8 @@ jobs:
 
       # Rename the folder to openttd-NNN-source
       mkdir openttd-$(Build.BuildNumber)
-      find . -maxdepth 1 -not -name . -not -name openttd-$(Build.BuildNumber) -exec mv {} openttd-$(Build.BuildNumber)/ \;
-      # Copy back release_date, as it is needed for the template 'release-bundles'
-      cp openttd-$(Build.BuildNumber)/.release_date .release_date
+      find . -maxdepth 1 -not name release_files -not -name . -not -name openttd-$(Build.BuildNumber) -exec mv {} openttd-$(Build.BuildNumber)/ \;
+      cp release_files/* openttd-$(Build.BuildNumber)/
 
       mkdir bundles
       tar --xz -cf bundles/openttd-$(Build.BuildNumber)-source.tar.xz openttd-$(Build.BuildNumber)
@@ -92,6 +91,8 @@ jobs:
       BuildPlatform: $(BuildPlatform)
   - bash: |
       set -ex
+      mkdir bundle
+      cp -r release_files/* bundle/
       make -f Makefile.msvc bundle_pdb bundle_zip PLATFORM=$(BundlePlatform) BUNDLE_NAME=citymania-client-$(Build.BuildNumber)-$(BundlePlatform)
     displayName: 'Create bundles'
   - task: PublishBuildArtifacts@1
