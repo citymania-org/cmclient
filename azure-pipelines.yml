@@ -24,10 +24,10 @@ jobs:
       zip -9 -r -q bundles/citymania-client-$(Build.BuildNumber)-source.zip openttd-$(Build.BuildNumber)
     displayName: 'Create bundle'
   - task: PublishBuildArtifacts@1
-      displayName: 'Publish bundles'
-      inputs:
-        PathtoPublish: bundles/
-        ArtifactName: bundles
+    displayName: 'Publish bundles'
+    inputs:
+      PathtoPublish: bundles/
+      ArtifactName: bundles
 
 - job: windows
   displayName: 'Windows'
