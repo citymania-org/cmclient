@@ -12,7 +12,6 @@ jobs:
   steps:
   - bash: |
       set -e
-
       VERSION=$(cat .version)
       echo "${VERSION}"
       echo "##vso[build.updatebuildnumber]${VERSION}"
@@ -29,6 +28,39 @@ jobs:
       tar --xz -cf bundles/openttd-$(Build.BuildNumber)-source.tar.xz openttd-$(Build.BuildNumber)
       zip -9 -r -q bundles/citymania-client-$(Build.BuildNumber)-source.zip openttd-$(Build.BuildNumber)
     displayName: 'Create bundle'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish bundles'
+    inputs:
+      PathtoPublish: bundles/
+      ArtifactName: bundles
+
+- job: diff
+  dependsOn: source
+  steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download source'
+    inputs:
+      downloadType: specific
+      itemPattern: 'bundles/openttd-*-source.tar.xz'
+      downloadPath: '$(Build.ArtifactStagingDirectory)'
+  displayName: 'Download vanilla'
+  - bash: |
+      set -ex
+      VERSION=$(cat .version)
+      wget
+      curl -L https://proxy.binaries.openttd.org/openttd-releases/${VERSION}/openttd-${VERSION}-source.tar.xz > vanilla-source.tar.xz
+  displayName: 'Extract sources'
+  - bash: |
+      set -ex
+      mkdir vanilla
+      tar --xz -xf vanilla-source.tar.xz --strip-components=1 -C vanilla
+      mkdir cmclient
+      tar --xz -xf ../a/bundles/openttd-*-source.tar.xz --strip-components=1 -C cmclient
+  displayName: 'Make diff'
+  - bash: |
+      set -ex
+      mkdir bundles
+      diff -r vanilla cmclient -B -X .diff-exclude  > bundles/citymania-client-$(Build.BuildNumber).diff
   - task: PublishBuildArtifacts@1
     displayName: 'Publish bundles'
     inputs:
