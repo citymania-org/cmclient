@@ -49,7 +49,7 @@ jobs:
     displayName: 'Change BuildNumber to version'
   - bash: |
       set -ex
-      curl -L https://proxy.binaries.openttd.org/openttd-releases/${VERSION}/openttd-${VERSION}-source.tar.xz > vanilla-source.tar.xz
+      curl -L https://proxy.binaries.openttd.org/openttd-releases/$(Build.BuildNumber)/openttd-$(Build.BuildNumber)-source.tar.xz > vanilla-source.tar.xz
     displayName: 'Download vanilla'
   - bash: |
       set -ex
