@@ -1,0 +1,11 @@
+.hgignore
+azure-pipelines.yml
+src/rev.cpp
+src/rev.cpp.in
+Makefile.src.in
+build-number.txt
+release_files
+make_diff.sh
+release.sh
+check_diff.sh
+novattd.sublime-project
