@@ -43,20 +43,20 @@ jobs:
       downloadType: specific
       itemPattern: 'bundles/openttd-*-source.tar.xz'
       downloadPath: '$(Build.ArtifactStagingDirectory)'
-  displayName: 'Download vanilla'
+    displayName: 'Download vanilla'
   - bash: |
       set -ex
       VERSION=$(cat .version)
       wget
       curl -L https://proxy.binaries.openttd.org/openttd-releases/${VERSION}/openttd-${VERSION}-source.tar.xz > vanilla-source.tar.xz
-  displayName: 'Extract sources'
+    displayName: 'Extract sources'
   - bash: |
       set -ex
       mkdir vanilla
       tar --xz -xf vanilla-source.tar.xz --strip-components=1 -C vanilla
       mkdir cmclient
       tar --xz -xf ../a/bundles/openttd-*-source.tar.xz --strip-components=1 -C cmclient
-  displayName: 'Make diff'
+    displayName: 'Make diff'
   - bash: |
       set -ex
       mkdir bundles
