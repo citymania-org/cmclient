@@ -72,7 +72,7 @@ jobs:
   dependsOn: source
   steps:
   - template: azure-pipelines/templates/release-fetch-source.yml
-  - template: linux-build.yml
+  - template: azure-pipelines/templates/linux-build.yml
     parameters:
       Image: compile-farm
       ContainerCommand: '$(Build.BuildNumber)'
