@@ -36,6 +36,7 @@ jobs:
 - job: diff
   dependsOn: source
   steps:
+  - checkout: none
   - task: DownloadBuildArtifacts@0
     displayName: 'Download source'
     inputs:
