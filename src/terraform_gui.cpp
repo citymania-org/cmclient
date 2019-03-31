@@ -397,6 +397,7 @@ static Hotkey terraform_hotkeys[] = {
 	Hotkey('W' | WKC_GLOBAL_HOTKEY, "raise", WID_TT_RAISE_LAND),
 	Hotkey('E' | WKC_GLOBAL_HOTKEY, "level", WID_TT_LEVEL_LAND),
 	Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_TT_DEMOLISH),
+	Hotkey('D' | WKC_CTRL | WKC_GLOBAL_HOTKEY, "treedozer", WID_TT_DEMOLISH_TREES),
 	Hotkey('U', "buyland", WID_TT_BUY_LAND),
 	Hotkey('I', "trees", WID_TT_PLANT_TREES),
 	Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
