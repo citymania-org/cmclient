@@ -46,6 +46,7 @@ jobs:
   - bash: |
       set -ex
       VERSION=$(cat .version)
+      echo "##vso[build.updatebuildnumber]${VERSION}"
       curl -L https://proxy.binaries.openttd.org/openttd-releases/${VERSION}/openttd-${VERSION}-source.tar.xz > vanilla-source.tar.xz
     displayName: 'Download vanilla'
   - bash: |
