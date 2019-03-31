@@ -105,9 +105,8 @@ jobs:
       BuildPlatform: $(BuildPlatform)
   - bash: |
       set -ex
-      mkdir -p bundle
-      cp -r release_files/* bundle/
       make -f Makefile.msvc bundle_pdb bundle_zip PLATFORM=$(BundlePlatform) BUNDLE_NAME=citymania-client-$(Build.BuildNumber)-$(BundlePlatform)
+      cp -r bin/data bundle/bin/
     displayName: 'Create bundles'
   - task: PublishBuildArtifacts@1
     displayName: 'Publish bundles'
