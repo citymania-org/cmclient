@@ -61,9 +61,9 @@ jobs:
       displayName: 'Create installer bundle'
   - template: release-bundles.yml
 
--job: publish
+- job: publish
   dependsOn:
-  - linux
+  - windows
   displayName: 'Publish bundles'
     inputs:
     PathtoPublish: bundles/
