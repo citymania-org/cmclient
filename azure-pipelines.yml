@@ -58,7 +58,8 @@ jobs:
   - bash: |
       set -ex
       mkdir bundles
-      diff -r vanilla cmclient -B -X .diff-exclude  > bundles/citymania-client-$(Build.BuildNumber).diff
+      diff -r vanilla cmclient -B -X .diff-exclude  > bundles/citymania-client-$(Build.BuildNumber).diff || EXIT_CODE=$? && true
+      if ((EXIT_CODE != 1)); then exit $EXIT_CODE; fi;
     displayName: 'Make diff'
   - task: PublishBuildArtifacts@1
     displayName: 'Publish bundles'
