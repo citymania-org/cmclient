@@ -73,7 +73,7 @@ jobs:
   dependsOn: source
   strategy:
     matrix:
-      linux-ubuntu-xenial-amd64-gcc: {}
+      linux-ubuntu-bionic-amd64-gcc: {}
   steps:
   - template: azure-pipelines/templates/release-fetch-source.yml
   - template: azure-pipelines/templates/linux-build.yml
