@@ -40,10 +40,10 @@ jobs:
         BundlePlatform: 'win64'
 
   steps:
-  - template: templates/release-fetch-source.yml
-  - template: templates/windows-dependencies.yml
-  - template: templates/windows-dependency-zip.yml
-  - template: templates/windows-build.yml
+  - template: azure-pipelines/templates/release-fetch-source.yml
+  - template: azure-pipelines/templates/windows-dependencies.yml
+  - template: azure-pipelines/templates/windows-dependency-zip.yml
+  - template: azure-pipelines/templates/windows-build.yml
     parameters:
       BuildPlatform: $(BuildPlatform)
   - bash: |
