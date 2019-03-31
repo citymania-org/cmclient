@@ -23,6 +23,11 @@ jobs:
       tar --xz -cf bundles/openttd-$(Build.BuildNumber)-source.tar.xz openttd-$(Build.BuildNumber)
       zip -9 -r -q bundles/citymania-client-$(Build.BuildNumber)-source.zip openttd-$(Build.BuildNumber)
     displayName: 'Create bundle'
+  - task: PublishBuildArtifacts@1
+      displayName: 'Publish bundles'
+      inputs:
+        PathtoPublish: bundles/
+        ArtifactName: bundles
 
 - job: windows
   displayName: 'Windows'
@@ -50,13 +55,18 @@ jobs:
       set -ex
       make -f Makefile.msvc bundle_pdb bundle_zip PLATFORM=$(BundlePlatform) BUNDLE_NAME=citymania-client-$(Build.BuildNumber)-$(BundlePlatform)
     displayName: 'Create bundles'
-
-- job: publish
-  dependsOn:
-  - windows
-  steps:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish bundles'
     inputs:
       PathtoPublish: bundles/
       ArtifactName: bundles
+
+# - job: publish
+#   dependsOn:
+#   - windows
+#   steps:
+#   - task: PublishBuildArtifacts@1
+#     displayName: 'Publish bundles'
+#     inputs:
+#       PathtoPublish: bundles/
+#       ArtifactName: bundles
