@@ -78,6 +78,8 @@ This is usable for any OpenTTD servers
 - OpenTTD update.
 - Improved cargo legend looks in charts.
 - Improved performance of up authority and advertisement zoning.
+- Removed vehicle measurements from framerate counter (massive performance improvement).
+- Added treedozer tool (Ctrl+D) that destroys trees in an area - by Corns McGowan.
 
 *** 1.8.0 (17 Apr 2018)
 - OpenTTD update.
