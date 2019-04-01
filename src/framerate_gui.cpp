@@ -305,13 +305,13 @@ void PerformanceAccumulator::Reset(PerformanceElement elem)
 void ShowFrametimeGraphWindow(PerformanceElement elem);
 
 
-static const PerformanceElement DISPLAY_ORDER_PFE[PFE_MAX] = {
+static const PerformanceElement DISPLAY_ORDER_PFE[PFE_MAX - 4] = {
 	PFE_GAMELOOP,
 	PFE_GL_ECONOMY,
-	PFE_GL_TRAINS,
-	PFE_GL_ROADVEHS,
-	PFE_GL_SHIPS,
-	PFE_GL_AIRCRAFT,
+	// PFE_GL_TRAINS,
+	// PFE_GL_ROADVEHS,
+	// PFE_GL_SHIPS,
+	// PFE_GL_AIRCRAFT,
 	PFE_GL_LANDSCAPE,
 	PFE_ALLSCRIPTS,
 	PFE_GAMESCRIPT,
