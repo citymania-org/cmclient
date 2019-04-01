@@ -76,10 +76,11 @@ This is usable for any OpenTTD servers
 
 *** 1.9.0 (1 Apr 2019) ***
 - OpenTTD update.
-- Improved cargo legend looks in charts.
-- Improved performance of up authority and advertisement zoning.
-- Removed vehicle measurements from framerate counter (massive performance improvement).
 - Added treedozer tool (Ctrl+D) that destroys trees in an area - by Corns McGowan.
+- Depot building tools now close after placement (hold Ctrl to keep them). Enable "" to revert to original behaviour.
+- Removed vehicle measurements from framerate counter (massive performance improvement in some cases compared to vanilla).
+- Improved performance of up authority and advertisement zoning.
+- Improved cargo legend looks in charts.
 
 *** 1.8.0 (17 Apr 2018)
 - OpenTTD update.

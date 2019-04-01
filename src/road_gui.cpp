@@ -673,6 +673,8 @@ struct BuildRoadToolbarWindow : Window {
 				}
 				DoCommandP(tile, _cur_roadtype << 2 | ddir, 0,
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(_road_type_infos[_cur_roadtype].err_depot), CcRoadDepot);
+				if (_ctrl_pressed == _settings_client.gui.persistent_depottools)
+					ResetObjectToPlace();
 				break;
 
 			case WID_ROT_BUS_STATION:

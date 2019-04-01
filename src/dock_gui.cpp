@@ -190,6 +190,8 @@ struct BuildDocksToolbarWindow : Window {
 
 			case WID_DT_DEPOT: // Build depot button
 				DoCommandP(tile, _ship_depot_direction, 0, CMD_BUILD_SHIP_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_SHIP_DEPOT), CcBuildDocks);
+				if (_ctrl_pressed == _settings_client.gui.persistent_depottools)
+					ResetObjectToPlace();
 				break;
 
 			case WID_DT_STATION: { // Build station button

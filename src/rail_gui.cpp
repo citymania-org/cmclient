@@ -837,6 +837,8 @@ struct BuildRailToolbarWindow : Window {
 				DoCommandP(tile, _cur_railtype, ddir,
 						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
 						CcRailDepot);
+				if (_ctrl_pressed == _settings_client.gui.persistent_depottools)
+					ResetObjectToPlace();
 				break;
 
 			case WID_RAT_BUILD_WAYPOINT:

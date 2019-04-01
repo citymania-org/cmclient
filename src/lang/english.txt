@@ -1440,6 +1440,8 @@ STR_CONFIG_SETTING_SHOW_TRACK_RESERVATION                       :Show path reser
 STR_CONFIG_SETTING_SHOW_TRACK_RESERVATION_HELPTEXT              :Give reserved tracks a different colour to assist in problems with trains refusing to enter path-based blocks
 STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS                     :Keep building tools active after usage: {STRING2}
 STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS_HELPTEXT            :Keep the building tools for bridges, tunnels, etc. open after use
+STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS                        :Keep depot building tools active after usage: {STRING2}
+STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS_HELPTEXT               :Keep the building tools for road, train and ship depots (reversible by placing with Ctrl).
 STR_CONFIG_SETTING_EXPENSES_LAYOUT                              :Group expenses in company finance window: {STRING2}
 STR_CONFIG_SETTING_EXPENSES_LAYOUT_HELPTEXT                     :Define the layout for the company expenses window
 

@@ -10,6 +10,7 @@
 /** @file storage_sl.cpp Code handling saving and loading of persistent storages. */
 
 #include "../stdafx.h"
+#include "../debug.h"
 #include "../newgrf_storage.h"
 #include "citymania_sl.h"
 #include "saveload.h"
@@ -49,7 +50,7 @@ static void Load_PSAC()
 	PersistentStorage *ps = NULL;
 	u8vector cmdata;
 	uint chunk_size = IsSavegameVersionBefore(SLV_EXTEND_PERSISTENT_STORAGE) ? 64 : 1024;
-	fprintf(stderr, "CHUNK SIZE %u\n", chunk_size);
+	DEBUG(sl, 2, "CityMania savegame data chunk size: %u", chunk_size);
 	while ((index = SlIterateArray()) != -1) {
 		if (ps == NULL) {
 			assert(PersistentStorage::CanAllocateItem());
