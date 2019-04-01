@@ -85,7 +85,7 @@ static void Save_CMDataAsPSAC() {
             index = max(index, ps->index + 1);
     }
 
-	int n_chunks = data.size() / 1024;
+	int n_chunks = (data.size() + 1023) / 1024;
 	for (int i = 0; i < n_chunks; i++, ptr += 1024) {
 		_desc[1].address = (void *)ptr;
 		SlSetArrayIndex(index + i);
