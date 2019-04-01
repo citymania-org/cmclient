@@ -252,6 +252,7 @@ STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Toggle l
 STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scroll bar - scrolls list up/down
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scroll bar - scrolls list left/right
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Demolish buildings etc. on a square of land. Ctrl selects the area diagonally. Shift toggles building/showing cost estimate
+STR_TOOLTIP_DEMOLISH_TREES                                      :{BLACK}Demolish only trees on a square of land. Ctrl selects the area diagonally.
 
 # Show engines button
 STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Show hidden

@@ -118,6 +118,69 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 		case DDSP_DEMOLISH_AREA:
 			DoCommandP(end_tile, start_tile, _ctrl_pressed ? 1 : 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 			break;
+        case DDSP_DEMOLISH_TREES:
+			// loop through every tile and send a demolish command for each tree
+			// orthogonal area
+			TileIndex tree_start_tile, tree_recent_tile, prev_tile;
+			tree_start_tile = tree_recent_tile = prev_tile = 0;
+			if (!_ctrl_pressed) {
+				OrthogonalTileArea square_area = OrthogonalTileArea(start_tile, end_tile);
+				TILE_AREA_LOOP(curr_tile, square_area)
+				{
+					// if we're on a non-consecutive tile or we've hit a black-marked tile
+					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
+					if (tree_start_tile != 0 &&
+							(curr_tile != prev_tile + 1 ||
+							(!IsTileType(curr_tile, MP_TREES) && (!IsTileType(curr_tile, MP_CLEAR) || IsClearGround(curr_tile, CLEAR_FIELDS))))) {
+						DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+						tree_start_tile = tree_recent_tile = 0;
+					}
+					// if current tile is a tree
+					if (IsTileType(curr_tile, MP_TREES)) {
+						if (tree_start_tile == 0) {
+							tree_start_tile = curr_tile;
+						}
+						tree_recent_tile = curr_tile;
+					}
+					prev_tile = curr_tile;
+				}
+				// one last ride to flavortown
+				if (tree_start_tile != 0) {
+					DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+				}
+			// diagonal area
+			}
+            //*/
+            else {
+				DiagonalTileArea diagonal_area = DiagonalTileArea(start_tile, end_tile);
+				DIAGONAL_TILE_AREA_LOOP(curr_tile, diagonal_area)
+				{
+					// same as above but with a different criteria for consecutive tiles
+                    TileIndexDiffC tile_diff = TileIndexToTileIndexDiffC(curr_tile, prev_tile);
+					// if we're on a non-consecutive tile or we've hit a black-marked tile
+					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
+					if (tree_start_tile != 0 &&
+							(!((tile_diff.x == 1 && tile_diff.y == 1) || (tile_diff.x == -1 && tile_diff.y == -1)) ||
+							(!IsTileType(curr_tile, MP_TREES) && (!IsTileType(curr_tile, MP_CLEAR) || IsClearGround(curr_tile, CLEAR_FIELDS))))) {
+						DoCommandP(tree_start_tile, tree_recent_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+						tree_start_tile = tree_recent_tile = 0;
+					}
+					// if current tile is a tree
+					if (IsTileType(curr_tile, MP_TREES)) {
+						if (tree_start_tile == 0) {
+							tree_start_tile = curr_tile;
+						}
+						tree_recent_tile = curr_tile;
+					}
+					prev_tile = curr_tile;
+				}
+				// one last ride to flavortown
+				if (tree_start_tile != 0) {
+					DoCommandP(tree_start_tile, tree_recent_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+				}
+			}
+            //*/
+			break;
 		case DDSP_RAISE_AND_LEVEL_AREA:
 			DoCommandP(end_tile, start_tile, LM_RAISE << 1 | (_ctrl_pressed ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_RAISE_LAND_HERE), CcTerraform);
 			break;
@@ -165,6 +228,27 @@ struct TerraformToolbarWindow : Window {
 	{
 	}
 
+	virtual void DrawWidget(const Rect &r, int widget) const
+	{
+		if (widget == WID_TT_DEMOLISH_TREES) {
+			uint offset = this->IsWidgetLowered(WID_TT_DEMOLISH_TREES) ? 1 : 0;
+			ZoomLevelByte temp_zoom;
+			switch (_gui_zoom) {
+			case ZOOM_LVL_NORMAL:
+				temp_zoom = ZOOM_LVL_OUT_2X;
+				break;
+			case ZOOM_LVL_OUT_2X:
+				temp_zoom = ZOOM_LVL_OUT_4X;
+				break;
+			case ZOOM_LVL_OUT_4X:
+				temp_zoom = ZOOM_LVL_OUT_8X;
+				break;
+			}
+			Dimension d = GetSpriteSize(SPR_IMG_PLANTTREES, (Point *)0, temp_zoom);
+			DrawSprite(SPR_IMG_PLANTTREES, PAL_NONE, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset, (const SubSprite *)0, temp_zoom);
+		}
+	}
+
 	virtual void OnInit()
 	{
 		/* Don't show the place object button when there are no objects to place. */
@@ -194,6 +278,11 @@ struct TerraformToolbarWindow : Window {
 
 			case WID_TT_DEMOLISH: // Demolish aka dynamite button
 				HandlePlacePushButton(this, WID_TT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				this->last_user_action = widget;
+				break;
+
+            case WID_TT_DEMOLISH_TREES: // Demolish aka dynamite button
+				HandlePlacePushButton(this, WID_TT_DEMOLISH_TREES, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
 				this->last_user_action = widget;
 				break;
 
@@ -238,6 +327,10 @@ struct TerraformToolbarWindow : Window {
 				PlaceProc_DemolishArea(tile);
 				break;
 
+            case WID_TT_DEMOLISH_TREES: // Demolish trees only
+				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_DEMOLISH_TREES);
+				break;
+
 			case WID_TT_BUY_LAND: // Buy land button
 				DoCommandP(tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound_SPLAT_RAIL);
 				break;
@@ -268,6 +361,7 @@ struct TerraformToolbarWindow : Window {
 			switch (select_proc) {
 				default: NOT_REACHED();
 				case DDSP_DEMOLISH_AREA:
+				case DDSP_DEMOLISH_TREES:
 				case DDSP_RAISE_AND_LEVEL_AREA:
 				case DDSP_LOWER_AND_LEVEL_AREA:
 				case DDSP_LEVEL_AREA:
@@ -303,6 +397,7 @@ static Hotkey terraform_hotkeys[] = {
 	Hotkey('W' | WKC_GLOBAL_HOTKEY, "raise", WID_TT_RAISE_LAND),
 	Hotkey('E' | WKC_GLOBAL_HOTKEY, "level", WID_TT_LEVEL_LAND),
 	Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_TT_DEMOLISH),
+	Hotkey('D' | WKC_CTRL | WKC_GLOBAL_HOTKEY, "treedozer", WID_TT_DEMOLISH_TREES),
 	Hotkey('U', "buyland", WID_TT_BUY_LAND),
 	Hotkey('I', "trees", WID_TT_PLANT_TREES),
 	Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
@@ -329,6 +424,8 @@ static const NWidgetPart _nested_terraform_widgets[] = {
 
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_DEMOLISH), SetMinimalSize(22, 22),
 								SetFill(0, 1), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
+        NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_DEMOLISH_TREES), SetMinimalSize(22, 22),
+								SetFill(0, 1), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_TREES),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_BUY_LAND), SetMinimalSize(22, 22),
 								SetFill(0, 1), SetDataTip(SPR_IMG_BUY_LAND, STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_DARK_GREEN, WID_TT_PLANT_TREES), SetMinimalSize(22, 22),
