@@ -77,7 +77,7 @@ This is usable for any OpenTTD servers
 *** 1.9.0 (1 Apr 2019) ***
 - OpenTTD update.
 - Added treedozer tool (Ctrl+D) that destroys trees in an area - by Corns McGowan.
-- Depot building tools now close after placement (hold Ctrl to keep them). Enable "" to revert to original behaviour.
+- Depot building tools now close after placement (hold Ctrl to keep them). Enable "Interface->Construction->Keep depot building tools active after usage" to revert to original behaviour.
 - Removed vehicle measurements from framerate counter (massive performance improvement in some cases compared to vanilla).
 - Improved performance of up authority and advertisement zoning.
 - Improved cargo legend looks in charts.
