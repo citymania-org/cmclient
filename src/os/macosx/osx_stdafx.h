@@ -85,6 +85,7 @@
 
 #include <CoreServices/CoreServices.h>
 #include <ApplicationServices/ApplicationServices.h>
+#include <string>
 
 #undef Rect
 #undef Point
