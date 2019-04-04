@@ -134,7 +134,7 @@ jobs:
   - template: azure-pipelines/templates/osx-build.yml
   - bash: |
       set -ex
-      mkdir -p bundle
+      mkdir -p bundle/OpenTTD.app/Contents/Resources
       cp -r bin/data bundle/OpenTTD.app/Contents/Resources/
       make bundle_zip bundle_dmg BUNDLE_NAME=citymania-client-$(Build.BuildNumber)-macosx
     displayName: 'Create bundles'
