@@ -73,6 +73,8 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+*** 1.9.1 (8 Apr 2019) ***
+- OpenTTD update.
 
 *** 1.9.0 (1 Apr 2019) ***
 - OpenTTD update.
