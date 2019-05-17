@@ -486,7 +486,7 @@ static Order GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
 			(facil = FACIL_BUS_STOP, v->type == VEH_ROAD && RoadVehicle::From(v)->IsBus()) ||
 			(facil = FACIL_TRUCK_STOP, 1);
 			if (st->facilities & facil) {
-			uint8 os = 0xff;
+				uint8 os = 0xff;
 				order.MakeGoToStation(st_index);
 				if (_ctrl_pressed) {
 					if (_shift_pressed)
@@ -1575,19 +1575,19 @@ public:
 
 			if (gofsfeeder_ordermod != GOFS_FEEDER_NULL) {
 				if (gofsfeeder_ordermod == GOFS_FEEDER_LOAD) {
-					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((1) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
-						DoCommandP(this->vehicle->tile, this->vehicle->index,  0, CMD_DELETE_ORDER | CMD_MSG(STR_ERROR_CAN_T_DELETE_THIS_ORDER));
+					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((1) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
+						DoCommandP(this->vehicle->tile, this->vehicle->index,  0, CMD_DELETE_ORDER |  CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_DELETE_THIS_ORDER));
 					}
 
 				}
 				else if (gofsfeeder_ordermod == GOFS_FEEDER_UNLOAD) { // still flushes the whole order table
-					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((this->vehicle->GetNumOrders()) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
-						DoCommandP(this->vehicle->tile, this->vehicle->index, (this->vehicle->GetNumOrders()-2+(int)_networking) , CMD_DELETE_ORDER | CMD_MSG(STR_ERROR_CAN_T_DELETE_THIS_ORDER));
+					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((this->vehicle->GetNumOrders()) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
+						DoCommandP(this->vehicle->tile, this->vehicle->index, (this->vehicle->GetNumOrders()-2+(int)_networking) , CMD_DELETE_ORDER | CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_DELETE_THIS_ORDER));
 					}
 				}
 				gofsfeeder_ordermod = GOFS_FEEDER_NULL;
 			}
-			else if (DoCommandP(this->vehicle->tile, this->vehicle->index + (this->OrderGetSel() << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
+			else if (DoCommandP(this->vehicle->tile, this->vehicle->index + (this->OrderGetSel() << 20), cmd.Pack(), CMD_INSERT_ORDER |  CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
 				/* With quick goto the Go To button stays active */
 				if (!_settings_client.gui.quick_goto) ResetObjectToPlace();
 			}
