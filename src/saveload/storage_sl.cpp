@@ -72,6 +72,8 @@ static void Load_PSAC()
 static void Save_CMDataAsPSAC() {
 	uint32 grfid = CITYMANIA_GRFID;
 	u8vector data = CM_EncodeData();
+	int n_chunks = (data.size() + 1023) / 1024;
+	data.resize(n_chunks * 1024);
 	uint8 *ptr = &data[0];
 	SaveLoadGlobVarList _desc[] = {
 		SLEG_CONDVAR(grfid, SLE_UINT32, SLV_6, SL_MAX_VERSION),
@@ -86,7 +88,6 @@ static void Save_CMDataAsPSAC() {
             index = max(index, ps->index + 1);
     }
 
-	int n_chunks = (data.size() + 1023) / 1024;
 	for (int i = 0; i < n_chunks; i++, ptr += 1024) {
 		_desc[1].address = (void *)ptr;
 		SlSetArrayIndex(index + i);
