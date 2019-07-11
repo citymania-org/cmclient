@@ -38,6 +38,7 @@
 #include "querystring_gui.h"
 #include "hotkeys.h"
 #include "fontcache.h"
+#include "zoom_func.h"
 
 #include <vector>
 
@@ -558,6 +559,7 @@ struct GameOptionsWindow : Window {
 				_gui_zoom = (ZoomLevel)(ZOOM_LVL_OUT_4X - index);
 				UpdateCursorSize();
 				UpdateAllVirtCoords();
+				FixTitleGameZoom();
 				ReInitAllWindows();
 				break;
 

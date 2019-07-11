@@ -1580,6 +1580,7 @@ CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 	CommandCost error = CommandCost(STR_ERROR_NO_SUITABLE_RAILROAD_TRACK); // by default, there is no track to convert.
+	bool found_convertible_track = false; // whether we actually did convert some track (see bug #7633)
 
 	TileIterator *iter = diagonal ? (TileIterator *)new DiagonalTileIterator(area_start, area_end) : new OrthogonalTileIterator(area_start, area_end);
 	for (; (tile = *iter) != INVALID_TILE; ++(*iter)) {
@@ -1675,6 +1676,7 @@ CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 							InvalidateWindowData(WC_VEHICLE_DEPOT, tile);
 							InvalidateWindowData(WC_BUILD_VEHICLE, tile);
 						}
+						found_convertible_track = true;
 						cost.AddCost(RailConvertCost(type, totype));
 						break;
 
@@ -1686,6 +1688,7 @@ CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 								YapfNotifyTrackLayoutChange(tile, RemoveFirstTrack(&tracks));
 							}
 						}
+						found_convertible_track = true;
 						cost.AddCost(RailConvertCost(type, totype) * CountBits(GetTrackBits(tile)));
 						break;
 				}
@@ -1748,6 +1751,7 @@ CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 					}
 				}
 
+				found_convertible_track = true;
 				cost.AddCost((GetTunnelBridgeLength(tile, endtile) + 2) * RailConvertCost(type, totype));
 				break;
 			}
@@ -1758,6 +1762,7 @@ CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 					YapfNotifyTrackLayoutChange(tile, track);
 				}
 
+				found_convertible_track = true;
 				cost.AddCost(RailConvertCost(type, totype));
 				break;
 		}
@@ -1775,7 +1780,7 @@ CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 	}
 
 	delete iter;
-	return (cost.GetCost() == 0) ? error : cost;
+	return found_convertible_track ? cost : error;
 }
 
 static CommandCost RemoveTrainDepot(TileIndex tile, DoCommandFlag flags)
