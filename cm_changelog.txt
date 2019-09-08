@@ -73,6 +73,9 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+*** 1.9.3-RC1 (8 Sep 2019) ***
+- OpenTTD update.
+
 *** 1.9.2 (12 Jul 2019) ***
 - OpenTTD update.
 - Fixed order hotkeys with Shift key.
