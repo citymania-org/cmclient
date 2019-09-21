@@ -18,6 +18,7 @@
 #include "company_func.h"
 #include "company_base.h"
 #include "company_gui.h"
+#include "goal_base.h"
 #include "network/network.h"
 #include "string_func.h"
 #include "strings_func.h"
@@ -1386,6 +1387,11 @@ private:
 	Town *town;
 	std::list<CargoX> cargoes;
 
+	enum CBTownWindowPlanes {
+		CBTWP_MP_GOALS = 0,
+		CBTWP_MP_CB,
+	};
+
 public:
 	CBTownWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
 	{
@@ -1469,6 +1475,16 @@ public:
 		}
 	}
 
+	const Company *GetCompany() const {
+		Company *c;
+		FOR_ALL_COMPANIES(c) {
+			if (c->location_of_HQ != INVALID_TILE
+			    	&& DistanceMax(c->location_of_HQ, this->town->xy) < 11)
+				return c;
+		}
+		return nullptr;
+	}
+
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
 		static const uint EXP_TOPPADDING = 5;
@@ -1476,21 +1492,38 @@ public:
 
 		switch(widget){
 			case WID_CB_DETAILS:
-				size->height = (FONT_HEIGHT_NORMAL + EXP_LINESPACE) * 7;
+				size->height = (FONT_HEIGHT_NORMAL + EXP_LINESPACE) * 5;
 				break;
+			case WID_CB_GOALS: {
+				uint desired_height = 0;
+				auto company = GetCompany();
+				if (company) {
+					const Goal *g;
+					FOR_ALL_GOALS(g) {
+						if (g->company == company->index) {
+							desired_height++;
+						}
+					}
+				}
+				if (desired_height > 0)
+					size->height = desired_height * (FONT_HEIGHT_NORMAL + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
+				break;
+			}
 			case WID_CB_CARGO_NAME:
 			case WID_CB_CARGO_AMOUNT:
 			case WID_CB_CARGO_REQ:
 			case WID_CB_CARGO_STORE:
 			case WID_CB_CARGO_STORE_PCT:
 			case WID_CB_CARGO_FROM:
-			case WID_CB_CARGO_PREVIOUS:
-				uint desired_height = 1;
+			case WID_CB_CARGO_PREVIOUS: {
+				uint desired_height = 0;
 				for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++){
 					if(CB_GetReq(cargo) > 0) desired_height++;
 				}
-				size->height = desired_height * (FONT_HEIGHT_NORMAL + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
+				if (desired_height > 0)
+					size->height = desired_height * (FONT_HEIGHT_NORMAL + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
 				break;
+			}
 		}
 	}
 
@@ -1515,6 +1548,21 @@ public:
 				}
 				break;
 			}
+			case WID_CB_GOALS: {
+				auto company = GetCompany();
+				if (!company) break;
+				const Goal *g;
+				FOR_ALL_GOALS(g) {
+					if (g->company != company->index)
+						continue;
+					SetDParamStr(0, g->text);
+					DrawString(r.left + WD_FRAMERECT_LEFT,
+					           r.right - WD_FRAMERECT_RIGHT,
+					           y, STR_GOALS_TEXT);
+					y += EXP_LINESPACE;
+				}
+				break;
+			}
 			/* Citybuilder things*/
 			case WID_CB_CARGO_NAME:
 			case WID_CB_CARGO_AMOUNT:
@@ -1523,8 +1571,7 @@ public:
 			case WID_CB_CARGO_STORE_PCT:
 			case WID_CB_CARGO_FROM:
 			case WID_CB_CARGO_PREVIOUS: {
-				if (!CB_Enabled() || this->town->larger_town) break;
-
+				if (this->town->larger_town) break;
 				uint delivered;
 				uint requirements;
 				uint from;
@@ -1625,7 +1672,7 @@ public:
 							SetDParam(0, from);
 							string_to_draw = (this->town->cache.population >= from) ? STR_TOWN_CB_CARGO_FROM_YES : STR_TOWN_CB_CARGO_FROM_NOT; //when required
 
-							DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y, string_to_draw, TC_FROMSTRING, SA_RIGHT);
+							DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, string_to_draw, TC_FROMSTRING, SA_RIGHT);
 							break;
 						}
 						//last case
@@ -1640,6 +1687,20 @@ public:
 		}
 		/* Citybuilder things enabled*/
 	}
+
+	virtual void OnPaint() {
+		if (!this->IsShaded()) {
+			int plane = CB_Enabled() ? CBTWP_MP_CB : CBTWP_MP_GOALS;
+			NWidgetStacked *wi = this->GetWidget<NWidgetStacked>(WID_CB_SELECT_REQUIREMENTS);
+			if (plane != wi->shown_plane) {
+				wi->SetDisplayedPlane(plane);
+				this->InvalidateData();
+				return;
+			}
+		}
+		this->DrawWidgets();
+	}
+
 
 	virtual EventState OnHotkey(int hotkey)
 	{
@@ -1664,54 +1725,57 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 		NWidget(NWID_VERTICAL),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 5),  SetResize(1, 0), SetFill(1, 0),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_DETAILS), SetMinimalSize(250, 0), SetResize(1, 0), SetFill(1, 0),
+				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_DETAILS), SetMinimalSize(66, 0), SetResize(1, 0), SetFill(1, 0),
 				NWidget(NWID_VERTICAL),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
 						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_FUND),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_NEW_BUILDINGS, 0),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_FUND),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_NEW_BUILDINGS, 0),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_ADVERT_REGULAR, STR_CB_ADVERT_REGULAR_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_ADVERT_REGULAR, STR_CB_ADVERT_REGULAR_TT),
  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-  						NWidget(NWID_SPACER), SetMinimalSize(132, 0),
+  						NWidget(NWID_SPACER), SetMinimalSize(33, 0), SetFill(1, 0),
   						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_POWERFUND),SetMinimalSize(66, 20),SetFill(1, 0), SetDataTip(STR_CB_POWERFUND, STR_CB_POWERFUND_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_POWERFUND),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_POWERFUND, STR_CB_POWERFUND_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 5),  SetResize(1, 0), SetFill(1, 0),
-			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_NAME),SetMinimalSize(100, 0), SetResize(0, 0), SetFill(1, 0),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_AMOUNT),SetMinimalSize(70, 0), SetResize(1, 0), SetFill(0, 0),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_REQ),SetMinimalSize(70, 0), SetResize(1, 0), SetFill(0, 0),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_PREVIOUS),SetMinimalSize(80, 0),  SetResize(1, 0), SetFill(0, 0),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_STORE),SetMinimalSize(70, 0), SetResize(1, 0), SetFill(0, 0),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_STORE_PCT),SetMinimalSize(60, 0), SetResize(1, 0), SetFill(0, 0),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_CB_SELECT_REQUIREMENTS),
+				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_GOALS),SetMinimalSize(50 + 35 + 35 + 40 + 35 + 30, 0), SetResize(1, 0), SetFill(1, 0),
+				NWidget(NWID_HORIZONTAL),
+					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_NAME),SetMinimalSize(50, 0), SetResize(0, 0), SetFill(1, 0),
+					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_AMOUNT),SetMinimalSize(35, 0), SetResize(1, 0), SetFill(0, 0),
+					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_REQ),SetMinimalSize(35, 0), SetResize(1, 0), SetFill(0, 0),
+					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_PREVIOUS),SetMinimalSize(40, 0),  SetResize(1, 0), SetFill(0, 0),
+					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_STORE),SetMinimalSize(35, 0), SetResize(1, 0), SetFill(0, 0),
+					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_STORE_PCT),SetMinimalSize(30, 0), SetResize(1, 0), SetFill(0, 0),
+				EndContainer(),
 			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetResize(1, 1), SetFill(1, 1),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetResize(1, 0), SetFill(1, 1),
 		EndContainer(),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_CENTER_VIEW), SetMinimalSize(60, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_LOCATION, STR_TOWN_VIEW_CENTER_TOOLTIP),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_TOWN_VIEW), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_CB_GUI_TOWN_VIEW_BUTTON, STR_CB_GUI_TOWN_VIEW_TOOLTIP),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_SHOW_AUTHORITY), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON, STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_CENTER_VIEW), SetMinimalSize(30, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_LOCATION, STR_TOWN_VIEW_CENTER_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_TOWN_VIEW), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_CB_GUI_TOWN_VIEW_BUTTON, STR_CB_GUI_TOWN_VIEW_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_SHOW_AUTHORITY), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON, STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP),
 		EndContainer(),
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
 
 static WindowDesc _cb_town_desc(
-	WDP_AUTO, "cb_town", 320, 80,
+	WDP_AUTO, "cb_town", 160, 30,
 	WC_CB_TOWN, WC_NONE,
 	0,
 	_nested_cb_town_widgets, lengthof(_nested_cb_town_widgets),
