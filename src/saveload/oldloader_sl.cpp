@@ -31,6 +31,7 @@
 #include "../core/smallvec_type.hpp"
 #include "saveload_internal.h"
 #include "oldloader.h"
+#include <array>
 
 #include "table/strings.h"
 #include "../table/engines.h"
@@ -178,7 +179,7 @@ void FixOldVehicles()
 
 	FOR_ALL_VEHICLES(v) {
 		if ((size_t)v->next == 0xFFFF) {
-			v->next = NULL;
+			v->next = nullptr;
 		} else {
 			v->next = Vehicle::GetIfValid((size_t)v->next);
 		}
@@ -452,7 +453,7 @@ static bool FixTTOEngines()
 		e->preview_company = INVALID_COMPANY;
 		e->preview_asked = (CompanyMask)-1;
 		e->preview_wait = 0;
-		e->name = NULL;
+		e->name = nullptr;
 	}
 
 	return true;
@@ -491,7 +492,7 @@ static inline uint RemapOrderIndex(uint x)
 	return _savegame_type == SGT_TTO ? (x - 0x1AC4) / 2 : (x - 0x1C18) / 2;
 }
 
-extern SmallVector<TileIndex, 256> _animated_tiles;
+extern std::vector<TileIndex> _animated_tiles;
 extern char *_old_name_array;
 
 static uint32 _old_town_index;
@@ -621,7 +622,7 @@ static const OldChunks order_chunk[] = {
 
 static bool LoadOldOrder(LoadgameState *ls, int num)
 {
-	if (!LoadChunk(ls, NULL, order_chunk)) return false;
+	if (!LoadChunk(ls, nullptr, order_chunk)) return false;
 
 	Order *o = new (num) Order();
 	o->AssignOrder(UnpackOldOrder(_old_order));
@@ -632,7 +633,7 @@ static bool LoadOldOrder(LoadgameState *ls, int num)
 		/* Relink the orders to each other (in the orders for one vehicle are behind each other,
 		 * with an invalid order (OT_NOTHING) as indication that it is the last order */
 		Order *prev = Order::GetIfValid(num - 1);
-		if (prev != NULL) prev->next = o;
+		if (prev != nullptr) prev->next = o;
 	}
 
 	return true;
@@ -646,12 +647,12 @@ static bool LoadOldAnimTileList(LoadgameState *ls, int num)
 		OCL_END ()
 	};
 
-	if (!LoadChunk(ls, NULL, anim_chunk)) return false;
+	if (!LoadChunk(ls, nullptr, anim_chunk)) return false;
 
 	/* The first zero in the loaded array indicates the end of the list. */
 	for (int i = 0; i < 256; i++) {
 		if (anim_list[i] == 0) break;
-		*_animated_tiles.Append() = anim_list[i];
+		_animated_tiles.push_back(anim_list[i]);
 	}
 
 	return true;
@@ -671,7 +672,7 @@ static bool LoadOldDepot(LoadgameState *ls, int num)
 	if (d->xy != 0) {
 		/* In some cases, there could be depots referencing invalid town. */
 		Town *t = Town::GetIfValid(RemapTownIndex(_old_town_index));
-		if (t == NULL) t = Town::GetRandom();
+		if (t == nullptr) t = Town::GetRandom();
 		d->town = t;
 	} else {
 		delete d;
@@ -724,7 +725,7 @@ static const OldChunks station_chunk[] = {
 	OCL_NULL( 4 ), ///< bus/lorry tile
 	OCL_SVAR(   OC_TILE, Station, train_station.tile ),
 	OCL_SVAR(   OC_TILE, Station, airport.tile ),
-	OCL_SVAR(   OC_TILE, Station, dock_tile ),
+	OCL_NULL( 4 ), ///< dock tile
 	OCL_SVAR( OC_FILE_U8 | OC_VAR_U16, Station, train_station.w ),
 
 	OCL_NULL( 1 ),         ///< sort-index, no longer in use
@@ -876,7 +877,7 @@ static bool LoadOldCompanyYearly(LoadgameState *ls, int num)
 		if (_savegame_type == SGT_TTO && i == 6) {
 			_old_yearly = 0; // property maintenance
 		} else {
-			if (!LoadChunk(ls, NULL, _company_yearly_chunk)) return false;
+			if (!LoadChunk(ls, nullptr, _company_yearly_chunk)) return false;
 		}
 
 		c->yearly_expenses[num][i] = _old_yearly;
@@ -1106,8 +1107,8 @@ static bool LoadOldVehicleUnion(LoadgameState *ls, int num)
 	uint temp = ls->total_read;
 	bool res;
 
-	if (v == NULL) {
-		res = LoadChunk(ls, NULL, vehicle_empty_chunk);
+	if (v == nullptr) {
+		res = LoadChunk(ls, nullptr, vehicle_empty_chunk);
 	} else {
 		switch (v->type) {
 			default: SlErrorCorrupt("Invalid vehicle type");
@@ -1240,7 +1241,7 @@ bool LoadOldVehicle(LoadgameState *ls, int num)
 			uint type = ReadByte(ls);
 			switch (type) {
 				default: return false;
-				case 0x00 /* VEH_INVALID  */: v = NULL;                                        break;
+				case 0x00 /* VEH_INVALID  */: v = nullptr;                                        break;
 				case 0x25 /* MONORAIL     */:
 				case 0x20 /* VEH_TRAIN    */: v = new (_current_vehicle_id) Train();           break;
 				case 0x21 /* VEH_ROAD     */: v = new (_current_vehicle_id) RoadVehicle();     break;
@@ -1251,7 +1252,7 @@ bool LoadOldVehicle(LoadgameState *ls, int num)
 			}
 
 			if (!LoadChunk(ls, v, vehicle_chunk)) return false;
-			if (v == NULL) continue;
+			if (v == nullptr) continue;
 			v->refit_cap = v->cargo_cap;
 
 			SpriteID sprite = v->sprite_seq.seq[0].sprite;
@@ -1276,7 +1277,8 @@ bool LoadOldVehicle(LoadgameState *ls, int num)
 					};
 					if (v->spritenum / 2 >= lengthof(spriteset_rail)) return false;
 					v->spritenum = spriteset_rail[v->spritenum / 2]; // adjust railway sprite set offset
-					Train::From(v)->railtype = type == 0x25 ? 1 : 0; // monorail / rail
+					/* Should be the original values for monorail / rail, can't use RailType constants */
+					Train::From(v)->railtype = static_cast<RailType>(type == 0x25 ? 1 : 0);
 					break;
 				}
 
@@ -1318,7 +1320,7 @@ bool LoadOldVehicle(LoadgameState *ls, int num)
 			/* Read the vehicle type and allocate the right vehicle */
 			switch (ReadByte(ls)) {
 				default: SlErrorCorrupt("Invalid vehicle type");
-				case 0x00 /* VEH_INVALID */: v = NULL;                                        break;
+				case 0x00 /* VEH_INVALID */: v = nullptr;                                        break;
 				case 0x10 /* VEH_TRAIN   */: v = new (_current_vehicle_id) Train();           break;
 				case 0x11 /* VEH_ROAD    */: v = new (_current_vehicle_id) RoadVehicle();     break;
 				case 0x12 /* VEH_SHIP    */: v = new (_current_vehicle_id) Ship();            break;
@@ -1328,7 +1330,7 @@ bool LoadOldVehicle(LoadgameState *ls, int num)
 			}
 
 			if (!LoadChunk(ls, v, vehicle_chunk)) return false;
-			if (v == NULL) continue;
+			if (v == nullptr) continue;
 
 			_old_vehicle_names[_current_vehicle_id] = RemapOldStringID(_old_string_id);
 
@@ -1754,11 +1756,11 @@ bool LoadTTDMain(LoadgameState *ls)
 	_read_ttdpatch_flags = false;
 
 	/* Load the biggest chunk */
-	SmallStackSafeStackAlloc<byte, OLD_MAP_SIZE * 2> map3;
-	_old_map3 = map3.data;
-	_old_vehicle_names = NULL;
+	std::array<byte, OLD_MAP_SIZE * 2> map3;
+	_old_map3 = map3.data();
+	_old_vehicle_names = nullptr;
 	try {
-		if (!LoadChunk(ls, NULL, main_chunk)) {
+		if (!LoadChunk(ls, nullptr, main_chunk)) {
 			DEBUG(oldloader, 0, "Loading failed");
 			free(_old_vehicle_names);
 			return false;
@@ -1797,13 +1799,13 @@ bool LoadTTOMain(LoadgameState *ls)
 
 	_read_ttdpatch_flags = false;
 
-	SmallStackSafeStackAlloc<byte, 103 * sizeof(Engine)> engines; // we don't want to call Engine constructor here
-	_old_engines = (Engine *)engines.data;
-	SmallStackSafeStackAlloc<StringID, 800> vehnames;
-	_old_vehicle_names = vehnames.data;
+	std::array<byte, 103 * sizeof(Engine)> engines; // we don't want to call Engine constructor here
+	_old_engines = (Engine *)engines.data();
+	std::array<StringID, 800> vehnames;
+	_old_vehicle_names = vehnames.data();
 
 	/* Load the biggest chunk */
-	if (!LoadChunk(ls, NULL, main_chunk)) {
+	if (!LoadChunk(ls, nullptr, main_chunk)) {
 		DEBUG(oldloader, 0, "Loading failed");
 		return false;
 	}

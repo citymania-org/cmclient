@@ -7,7 +7,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @file pool_type.hpp Defintion of Pool, structure used to access PoolItems, and PoolItem, base structure for Vehicle, Town, and other indexed items. */
+/** @file pool_type.hpp Definition of Pool, structure used to access PoolItems, and PoolItem, base structure for Vehicle, Town, and other indexed items. */
 
 #ifndef POOL_TYPE_HPP
 #define POOL_TYPE_HPP
@@ -26,7 +26,7 @@ enum PoolType {
 };
 DECLARE_ENUM_AS_BIT_SET(PoolType)
 
-typedef SmallVector<struct PoolBase *, 4> PoolVector; ///< Vector of pointers to PoolBase
+typedef std::vector<struct PoolBase *> PoolVector; ///< Vector of pointers to PoolBase
 
 /** Base class for base of all pools. */
 struct PoolBase {
@@ -50,7 +50,7 @@ struct PoolBase {
 	 */
 	PoolBase(PoolType pt) : type(pt)
 	{
-		*PoolBase::GetPools()->Append() = this;
+		PoolBase::GetPools()->push_back(this);
 	}
 
 	virtual ~PoolBase();
@@ -91,7 +91,7 @@ struct Pool : PoolBase {
 	size_t size;         ///< Current allocated size
 	size_t first_free;   ///< No item with index lower than this is free (doesn't say anything about this one!)
 	size_t first_unused; ///< This and all higher indexes are free (doesn't say anything about first_unused-1 !)
-	size_t items;        ///< Number of used indexes (non-NULL)
+	size_t items;        ///< Number of used indexes (non-nullptr)
 #ifdef OTTD_ASSERT
 	size_t checked;      ///< Number of items we checked for
 #endif /* OTTD_ASSERT */
@@ -115,13 +115,13 @@ struct Pool : PoolBase {
 	}
 
 	/**
-	 * Tests whether given index can be used to get valid (non-NULL) Titem
+	 * Tests whether given index can be used to get valid (non-nullptr) Titem
 	 * @param index index to examine
-	 * @return true if PoolItem::Get(index) will return non-NULL pointer
+	 * @return true if PoolItem::Get(index) will return non-nullptr pointer
 	 */
 	inline bool IsValidID(size_t index)
 	{
-		return index < this->first_unused && this->Get(index) != NULL;
+		return index < this->first_unused && this->Get(index) != nullptr;
 	}
 
 	/**
@@ -150,7 +150,7 @@ struct Pool : PoolBase {
 		 * Allocates space for new Titem
 		 * @param size size of Titem
 		 * @return pointer to allocated memory
-		 * @note can never fail (return NULL), use CanAllocate() to check first!
+		 * @note can never fail (return nullptr), use CanAllocate() to check first!
 		 */
 		inline void *operator new(size_t size)
 		{
@@ -164,7 +164,7 @@ struct Pool : PoolBase {
 		 */
 		inline void operator delete(void *p)
 		{
-			if (p == NULL) return;
+			if (p == nullptr) return;
 			Titem *pn = (Titem *)p;
 			assert(pn == Tpool->Get(pn->index));
 			Tpool->FreeItem(pn->index);
@@ -175,7 +175,7 @@ struct Pool : PoolBase {
 		 * @param size size of Titem
 		 * @param index index of item
 		 * @return pointer to allocated memory
-		 * @note can never fail (return NULL), use CanAllocate() to check first!
+		 * @note can never fail (return nullptr), use CanAllocate() to check first!
 		 * @pre index has to be unused! Else it will crash
 		 */
 		inline void *operator new(size_t size, size_t index)
@@ -228,9 +228,9 @@ struct Pool : PoolBase {
 		}
 
 		/**
-		 * Tests whether given index can be used to get valid (non-NULL) Titem
+		 * Tests whether given index can be used to get valid (non-nullptr) Titem
 		 * @param index index to examine
-		 * @return true if PoolItem::Get(index) will return non-NULL pointer
+		 * @return true if PoolItem::Get(index) will return non-nullptr pointer
 		 */
 		static inline bool IsValidID(size_t index)
 		{
@@ -252,11 +252,11 @@ struct Pool : PoolBase {
 		 * Returns Titem with given index
 		 * @param index of item to get
 		 * @return pointer to Titem
-		 * @note returns NULL for invalid index
+		 * @note returns nullptr for invalid index
 		 */
 		static inline Titem *GetIfValid(size_t index)
 		{
-			return index < Tpool->first_unused ? Tpool->Get(index) : NULL;
+			return index < Tpool->first_unused ? Tpool->Get(index) : nullptr;
 		}
 
 		/**
@@ -282,7 +282,7 @@ struct Pool : PoolBase {
 		 * Dummy function called after destructor of each member.
 		 * If you want to use it, override it in PoolItem's subclass.
 		 * @param index index of deleted item
-		 * @note when this function is called, PoolItem::Get(index) == NULL.
+		 * @note when this function is called, PoolItem::Get(index) == nullptr.
 		 * @note it's called only when !CleaningPool()
 		 */
 		static inline void PostDestructor(size_t index) { }
@@ -314,8 +314,8 @@ private:
 };
 
 #define FOR_ALL_ITEMS_FROM(type, iter, var, start) \
-	for (size_t iter = start; var = NULL, iter < type::GetPoolSize(); iter++) \
-		if ((var = type::Get(iter)) != NULL)
+	for (size_t iter = start; var = nullptr, iter < type::GetPoolSize(); iter++) \
+		if ((var = type::Get(iter)) != nullptr)
 
 #define FOR_ALL_ITEMS(type, iter, var) FOR_ALL_ITEMS_FROM(type, iter, var, 0)
 

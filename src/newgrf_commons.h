@@ -132,7 +132,7 @@ struct NewGRFSpriteLayout : ZeroedMemoryAllocator, DrawTileSprites {
 	 */
 	void Clone(const DrawTileSprites *source)
 	{
-		assert(source != NULL && this != source);
+		assert(source != nullptr && this != source);
 		this->ground = source->ground;
 		this->Clone(source->seq);
 	}
@@ -151,7 +151,7 @@ struct NewGRFSpriteLayout : ZeroedMemoryAllocator, DrawTileSprites {
 	 */
 	bool NeedsPreprocessing() const
 	{
-		return this->registers != NULL;
+		return this->registers != nullptr;
 	}
 
 	uint32 PrepareLayout(uint32 orig_offset, uint32 newgrf_ground_offset, uint32 newgrf_offset, uint constr_stage, bool separate_ground) const;
@@ -164,13 +164,13 @@ struct NewGRFSpriteLayout : ZeroedMemoryAllocator, DrawTileSprites {
 	 */
 	const DrawTileSeqStruct *GetLayout(PalSpriteID *ground) const
 	{
-		DrawTileSeqStruct *front = result_seq.Begin();
+		DrawTileSeqStruct *front = result_seq.data();
 		*ground = front->image;
 		return front + 1;
 	}
 
 private:
-	static SmallVector<DrawTileSeqStruct, 8> result_seq; ///< Temporary storage when preprocessing spritelayouts.
+	static std::vector<DrawTileSeqStruct> result_seq; ///< Temporary storage when preprocessing spritelayouts.
 };
 
 /**
@@ -228,6 +228,7 @@ class HouseOverrideManager : public OverrideManagerBase {
 public:
 	HouseOverrideManager(uint16 offset, uint16 maximum, uint16 invalid) :
 			OverrideManagerBase(offset, maximum, invalid) {}
+
 	void SetEntitySpec(const HouseSpec *hs);
 };
 
@@ -238,8 +239,9 @@ public:
 	IndustryOverrideManager(uint16 offset, uint16 maximum, uint16 invalid) :
 			OverrideManagerBase(offset, maximum, invalid) {}
 
-	virtual uint16 AddEntityID(byte grf_local_id, uint32 grfid, byte substitute_id);
-	virtual uint16 GetID(uint8 grf_local_id, uint32 grfid) const;
+	uint16 AddEntityID(byte grf_local_id, uint32 grfid, byte substitute_id) override;
+	uint16 GetID(uint8 grf_local_id, uint32 grfid) const override;
+
 	void SetEntitySpec(IndustrySpec *inds);
 };
 
@@ -296,7 +298,7 @@ extern ObjectOverrideManager _object_mngr;
 uint32 GetTerrainType(TileIndex tile, TileContext context = TCX_NORMAL);
 TileIndex GetNearbyTile(byte parameter, TileIndex tile, bool signed_offsets = true, Axis axis = INVALID_AXIS);
 uint32 GetNearbyTileInformation(TileIndex tile, bool grf_version8);
-uint32 GetCompanyInfo(CompanyID owner, const struct Livery *l = NULL);
+uint32 GetCompanyInfo(CompanyID owner, const struct Livery *l = nullptr);
 CommandCost GetErrorMessageFromLocationCallbackResult(uint16 cb_res, const GRFFile *grffile, StringID default_error);
 
 void ErrorUnknownCallbackResult(uint32 grfid, uint16 cbid, uint16 cb_res);

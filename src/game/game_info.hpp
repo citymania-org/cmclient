@@ -40,7 +40,7 @@ public:
 	 */
 	const char *GetAPIVersion() const { return this->api_version; }
 
-	/* virtual */ bool IsDeveloperOnly() const { return this->is_developer_only; }
+	bool IsDeveloperOnly() const override { return this->is_developer_only; }
 
 private:
 	int min_loadable_version; ///< The Game can load savegame data if the version is equal or greater than this.
@@ -51,7 +51,7 @@ private:
 /** All static information from an Game library like name, version, etc. */
 class GameLibrary : public ScriptInfo {
 public:
-	GameLibrary() : ScriptInfo(), category(NULL) {};
+	GameLibrary() : ScriptInfo(), category(nullptr) {};
 	~GameLibrary();
 
 	/**

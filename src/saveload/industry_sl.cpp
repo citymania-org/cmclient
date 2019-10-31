@@ -25,6 +25,7 @@ static const SaveLoad _industry_desc[] = {
 	    SLE_VAR(Industry, location.w,                 SLE_FILE_U8 | SLE_VAR_U16),
 	    SLE_VAR(Industry, location.h,                 SLE_FILE_U8 | SLE_VAR_U16),
 	    SLE_REF(Industry, town,                       REF_TOWN),
+	SLE_CONDREF(Industry, neutral_station,            REF_STATION,                SLV_SERVE_NEUTRAL_INDUSTRIES, SL_MAX_VERSION),
 	SLE_CONDNULL( 2, SL_MIN_VERSION, SLV_61),       ///< used to be industry's produced_cargo
 	SLE_CONDARR(Industry, produced_cargo,             SLE_UINT8,   2,              SLV_78, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
 	SLE_CONDARR(Industry, produced_cargo,             SLE_UINT8,  16,             SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SL_MAX_VERSION),
@@ -182,9 +183,9 @@ static void Load_ITBL()
 }
 
 extern const ChunkHandler _industry_chunk_handlers[] = {
-	{ 'INDY', Save_INDY,     Load_INDY,     Ptrs_INDY, NULL, CH_ARRAY},
-	{ 'IIDS', Save_IIDS,     Load_IIDS,     NULL,      NULL, CH_ARRAY},
-	{ 'TIDS', Save_TIDS,     Load_TIDS,     NULL,      NULL, CH_ARRAY},
-	{ 'IBLD', LoadSave_IBLD, LoadSave_IBLD, NULL,      NULL, CH_RIFF},
-	{ 'ITBL', Save_ITBL,     Load_ITBL,     NULL,      NULL, CH_ARRAY | CH_LAST},
+	{ 'INDY', Save_INDY,     Load_INDY,     Ptrs_INDY, nullptr, CH_ARRAY},
+	{ 'IIDS', Save_IIDS,     Load_IIDS,     nullptr,   nullptr, CH_ARRAY},
+	{ 'TIDS', Save_TIDS,     Load_TIDS,     nullptr,   nullptr, CH_ARRAY},
+	{ 'IBLD', LoadSave_IBLD, LoadSave_IBLD, nullptr,   nullptr, CH_RIFF},
+	{ 'ITBL', Save_ITBL,     Load_ITBL,     nullptr,   nullptr, CH_ARRAY | CH_LAST},
 };

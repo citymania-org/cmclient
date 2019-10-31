@@ -45,7 +45,7 @@ INSTANTIATE_POOL_METHODS(StoryPage)
  * @param tile The tile parameter of the DoCommand proc
  * @param reference The reference parameter of the DoCommand proc (p2)
  * @param text The text parameter of the DoCommand proc
- * @return true, if and only if the given parameters are valid for the given page elment type and page id.
+ * @return true, if and only if the given parameters are valid for the given page element type and page id.
  */
 static bool VerifyElementContentParameters(StoryPageID page_id, StoryPageElementType type, TileIndex tile, uint32 reference, const char *text)
 {
@@ -124,7 +124,7 @@ CommandCost CmdCreateStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		s->date = _date;
 		s->company = company;
 		if (StrEmpty(text)) {
-			s->title = NULL;
+			s->title = nullptr;
 		} else {
 			s->title = stredup(text);
 		}
@@ -241,7 +241,7 @@ CommandCost CmdSetStoryPageTitle(TileIndex tile, DoCommandFlag flags, uint32 p1,
 		StoryPage *p = StoryPage::Get(page_id);
 		free(p->title);
 		if (StrEmpty(text)) {
-			p->title = NULL;
+			p->title = nullptr;
 		} else {
 			p->title = stredup(text);
 		}

@@ -1705,7 +1705,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Warenve
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Mitbewerber
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Computerspieler
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(empfohlen)
 
@@ -1789,13 +1788,9 @@ STR_QUIT_NO                                                     :{BLACK}Nein
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2424,6 +2419,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Straßen
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Straßenbahntunnel bauen. Shift schaltet zwischen Bauen und Kostenvoranschlag um
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Zwischen Bau und Abriss der Straße umschalten
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Zwischen Bau und Abriss von Straßenbahngleisen umschalten
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Ausrichtung Depot
@@ -3340,8 +3336,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastr
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Schienenfelder:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Signale
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Straßenfelder:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Straße
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Straßenbahnfelder
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Wasserfelder:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanäle
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stationen:
@@ -3421,6 +3415,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Ungruppierte St
 STR_GROUP_DEFAULT_SHIPS                                         :Ungruppierte Schiffe
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Ungruppierte Flugzeuge
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Gruppen - Klick auf eine Gruppe zeigt Liste aller Fahrzeuge der Gruppe an
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Neue Gruppe erstellen
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Ausgewählte Gruppe löschen
@@ -3447,10 +3442,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Neue elektrisch
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Neue Einschienenbahnfahrzeuge
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Neue Magnetbahnfahrzeuge
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Neue Schienenfahrzeuge
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Neue Fahrzeuge
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Neue Schienenfahrzeuge
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Neue Schiffe
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Neue Flugzeuge
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Kosten: {GOLD}{CURRENCY_LONG}{BLACK} Gewicht: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Geschw.: {GOLD}{VELOCITY}{BLACK} Leistung: {GOLD}{POWER}
@@ -3485,10 +3483,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Fahrzeug
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Schiff kaufen
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Flugzeug kaufen
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Angewähltes Fahrzeug kaufen. Shift+Klick zeigt einen Kostenvoranschlag
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Ausgewähltes Fahrzeug kaufen. Shift+Klick zeigt einen Kostenvoranschlag
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Ausgewähltes Schiff kaufen. Shift+Klick zeigt einen Kostenvoranschlag
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Augewähltes Flugzeug kaufen. Shift schaltet zwischen Bauen und Kostenvoranschlag um
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Umbenennen
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Umbenennen
@@ -3598,12 +3598,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Sollen 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Nachricht vom Fahrzeughersteller
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Wir haben {G "einen" "eine" "ein" ""} neue{G n "" s ""} {0:STRING} entwickelt.{}Besteht Interesse, {G 0 den die das die} {0:STRING} ein Jahr lang exklusiv zu nutzen, so dass wir die Funktionen testen können, bevor {G 0 er sie es sie} allgemein zur Verfügung gestellt {G 0 wird wird wird werden}?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=w}Lokomotive
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=n}Straßenfahrzeug
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=n}Flugzeug
-STR_ENGINE_PREVIEW_SHIP                                         :{G=n}Schiff
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :{G=w}Einschienenbahn
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :{G=w}Magnetschwebebahn
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=n}Straßenfahrzeug
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=n}Flugzeug
+STR_ENGINE_PREVIEW_SHIP                                         :{G=n}Schiff
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kosten: {CURRENCY_LONG}   Gewicht: {WEIGHT_SHORT}{}Geschwindigk.: {VELOCITY} Leistung: {POWER}{}Betriebskosten: {CURRENCY_LONG} pro Jahr{}Kapazität: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Preis: {CURRENCY_LONG} Gewicht: {WEIGHT_SHORT}{}Max. Geschwindigkeit: {VELOCITY}  Leistung: {POWER}  Max. Zugkraft: {6:FORCE}{}Betriebskosten: {4:CURRENCY_LONG}/yr{}Kapazität: {5:CARGO_LONG}
@@ -3649,6 +3652,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Schienenfahrzeu
 STR_REPLACE_ELRAIL_VEHICLES                                     :elektrische Schienenfahrzeuge
 STR_REPLACE_MONORAIL_VEHICLES                                   :Einschienenbahn
 STR_REPLACE_MAGLEV_VEHICLES                                     :Magnetschwebebahn
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Waggon-Entfernung: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Ursprüngliche Länge des Zugs beibehalten, indem (vorne beginnend) Waggons entfernt werden, falls das Ersetzen der Lokomotive den Zug verlängern würde
@@ -4371,7 +4375,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Signal m
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Keine geeigneten Gleise
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Gleise müssen erst abgerissen werden
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Einbahnstraße oder blockierter Weg
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Bahnübergänge sind für diesen Schienentyp nicht erlaubt
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Bahnübergänge sind für diesen Schienentyp nicht erlaubt
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Signal kann hier nicht aufgestellt werden...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Gleise können hier nicht verlegt werden...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Gleise können nicht abgerissen werden...

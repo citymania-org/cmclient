@@ -26,8 +26,6 @@
 #include "../openttd.h"
 #include "../company_type.h"
 
-#ifdef ENABLE_NETWORK
-
 extern NetworkServerGameInfo _network_game_info;
 extern NetworkCompanyState *_network_company_states;
 
@@ -53,7 +51,7 @@ void NetworkPopulateCompanyStats(NetworkCompanyStats *stats);
 
 void NetworkUpdateClientInfo(ClientID client_id);
 void NetworkClientsToSpectators(CompanyID cid);
-void NetworkClientConnectGame(NetworkAddress address, CompanyID join_as, const char *join_server_password = NULL, const char *join_company_password = NULL);
+void NetworkClientConnectGame(NetworkAddress address, CompanyID join_as, const char *join_server_password = nullptr, const char *join_company_password = nullptr);
 void NetworkClientRequestMove(CompanyID company, const char *pass = "");
 void NetworkClientSendRcon(const char *password, const char *command);
 void NetworkClientSendChat(NetworkAction action, DestType type, int dest, const char *msg, int64 data = 0);
@@ -90,5 +88,4 @@ void NetworkChatMessageLoop();
 
 void NetworkAfterNewGRFScan();
 
-#endif /* ENABLE_NETWORK */
 #endif /* NETWORK_FUNC_H */

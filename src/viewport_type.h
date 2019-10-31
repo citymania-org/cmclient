@@ -22,7 +22,7 @@ class LinkGraphOverlay;
  * Data structure for viewport, display of a part of the world
  */
 struct ViewPort {
-	int left;    ///< Screen coordinate left egde of the viewport
+	int left;    ///< Screen coordinate left edge of the viewport
 	int top;     ///< Screen coordinate top edge of the viewport
 	int width;   ///< Screen width of the viewport
 	int height;  ///< Screen height of the viewport
@@ -121,6 +121,7 @@ enum ViewportDragDropSelectionProcess {
 	DDSP_BUILD_TRUCKSTOP,      ///< Road stop placement (trucks)
 	DDSP_REMOVE_BUSSTOP,       ///< Road stop removal (buses)
 	DDSP_REMOVE_TRUCKSTOP,     ///< Road stop removal (trucks)
+	DDSP_CONVERT_ROAD,         ///< Road conversion
 };
 
 

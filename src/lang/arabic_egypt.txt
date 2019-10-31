@@ -1369,7 +1369,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :توزيع ال
 STR_CONFIG_SETTING_AI                                           :{ORANGE}المتنافسين
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE} لاعبين الحاسوب
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :اصلي
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(مفضل)
 
@@ -1440,13 +1439,9 @@ STR_QUIT_NO                                                     :{BLACK}لا
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :ويندوز
-STR_OSNAME_DOS                                                  :دوس
 STR_OSNAME_UNIX                                                 :يونكس
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :بي او اس
 STR_OSNAME_HAIKU                                                :هايكو
-STR_OSNAME_MORPHOS                                              :مورف او اس
-STR_OSNAME_AMIGAOS                                              :اميقا
 STR_OSNAME_OS2                                                  :او اس/2
 STR_OSNAME_SUNOS                                                :صن
 
@@ -2040,6 +2035,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}بناء
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}بناء نفق ترام
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}بدل بناء/إزالة الطرق
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}بدل بناء / ازالة طرق الترام
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}اتجاه ورشة الصيانة
@@ -2865,6 +2861,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :لاتنتمي 
 STR_GROUP_DEFAULT_SHIPS                                         :مركبة لاتنتمي لأي مجموعة
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :طائرة لاتنتمي لأي مجموعة
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}المجموعات: اضغط على اي مجموعة لعرض مركباتها . اسحب للترتيب .
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}أضغط لإنشاء مجموعة
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}أحذف المجموعة المختارة
@@ -2886,10 +2883,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :عربات قط
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :عربات قطار احادي جديدة
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :عربات قطار ممغنط جديدة
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :عربات قطار
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :عربات جديدة
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :عربات قطار
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :سفن جديدة
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :طائرة جديدة
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK} التكلفة: {GOLD}{CURRENCY_LONG}{BLACK} الوزن: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}السرعة: {GOLD}{VELOCITY}{BLACK} الطاقة: {GOLD}{POWER}
@@ -2921,10 +2921,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}شراء
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}شراء سفينة
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}شراء طائرة
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}شراء العربة الموضحة
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}شراء العربة
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}شراء السفينة المختارة
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}اشتر الطائرة المختارة
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}اعادة تسمية
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}أعد التسمية
@@ -3022,12 +3024,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}أنت 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}رسالة من المصنعين
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}قد صممنا موديل جديد من {STRING} - هل ترغب في استخدام سنة حصري لهذه المركبة, لنستطيع تقييمها للأستخدام العام
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :قاطرة سكة حديد
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :مركبة
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :طائرة
-STR_ENGINE_PREVIEW_SHIP                                         :سفينة
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :قاطرة سكة قطار احادية
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :قاطرة سكة قطار ممغنطة
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :مركبة
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :طائرة
+STR_ENGINE_PREVIEW_SHIP                                         :سفينة
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK} التكلفة: {CURRENCY_LONG} الوزن: {WEIGHT_SHORT}{} السرعة: {VELOCITY}  الطاقة: {POWER}{} كلفة التشغيل: {CURRENCY_LONG} / سنة{} السعة: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}التكلفة {CURRENCY_LONG} الوزن {WEIGHT_SHORT}{}السرعة {VELOCITY}  Power: {POWER}قوة السحب  {6:FORCE}{}التكلفة التشغيلية {4:CURRENCY_LONG}/سنة{}السعة: {5:CARGO_LONG}
@@ -3061,6 +3066,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :عربات ال
 STR_REPLACE_ELRAIL_VEHICLES                                     :سكة حديد كهربائية
 STR_REPLACE_MONORAIL_VEHICLES                                   :عربات احادية السكة
 STR_REPLACE_MAGLEV_VEHICLES                                     :مركبات ممغنطة
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK} إزالة العربات: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK} المحافظة على طول القطار بازالة عربات ابتداء من المقدمة عند التبديل - عندما يكون التبدل ينتج قطارا اطول.
@@ -3736,7 +3742,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}يجب �
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}... مسار السكة الحديدية غير مناسب
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}يجب إزاله السكه الحديديه اولاً
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}الطريق باتجاه واحد او ربما يكون مسدوداً
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}التقاطع المتعدد غير متاح لهذا النوع من السكك
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}التقاطع المتعدد غير متاح لهذا النوع من السكك
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}تعذر بناء اﻹشارات هنا...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}تعذر بناء السكه الحديديه هنا...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}تعذر إزاله السكه الحديديه من هنا...

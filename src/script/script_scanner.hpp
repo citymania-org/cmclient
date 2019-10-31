@@ -73,11 +73,11 @@ public:
 	 * Find a script of a #ContentInfo
 	 * @param ci The information to compare to.
 	 * @param md5sum Whether to check the MD5 checksum.
-	 * @return A filename of a file of the content, else \c NULL.
+	 * @return A filename of a file of the content, else \c nullptr.
 	 */
 	const char *FindMainScript(const ContentInfo *ci, bool md5sum);
 
-	/* virtual */ bool AddFile(const char *filename, size_t basepath_length, const char *tar_filename);
+	bool AddFile(const char *filename, size_t basepath_length, const char *tar_filename) override;
 
 	/**
 	 * Rescan the script dir.

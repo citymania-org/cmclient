@@ -238,6 +238,8 @@ STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}검색 �
 STR_BUTTON_SORT_BY                                              :{BLACK}정렬
 STR_BUTTON_LOCATION                                             :{BLACK}위치
 STR_BUTTON_RENAME                                               :{BLACK}이름 바꾸기
+STR_BUTTON_CATCHMENT                                            :{BLACK}역세권
+STR_TOOLTIP_CATCHMENT                                           :{BLACK}이 역의 역세권을 표시하거나 끕니다.
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}창을 닫습니다.
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}창 제목 - 창을 움직이려면 여기를 드래그하세요.
@@ -266,6 +268,7 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}이 버�
 STR_BUTTON_DEFAULT                                              :{BLACK}기본값
 STR_BUTTON_CANCEL                                               :{BLACK}취소
 STR_BUTTON_OK                                                   :{BLACK}확인
+STR_WARNING_PASSWORD_SECURITY                                   :{YELLOW}경고: 서버 관리자가 여기에 입력되는 모든 텍스트를 읽을 수 있습니다.
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :`1234567890-=\ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ[]ㅁㄴㅇㄹㅎㅗㅓㅏㅣ;'  ㅋㅌㅊㅍㅠㅜㅡ,./ .
@@ -339,6 +342,7 @@ STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN                            :{BLACK}화면�
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT                           :{BLACK}화면을 축소합니다.
 STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}철도 시설을 건설합니다.
 STR_TOOLBAR_TOOLTIP_BUILD_ROADS                                 :{BLACK}도로 시설을 건설합니다.
+STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}전찻길 건설
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}항만 시설을 건설합니다.
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}항공 시설을 건설합니다.
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}땅 올리기/내리기, 나무 심기 등의 일를 하기 위한 지형편집창을 엽니다.
@@ -359,6 +363,7 @@ STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}지형�
 STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}도시를 생성합니다.
 STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}산업시설을 건설합니다.
 STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}도로를 건설합니다.
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}전찻길 건설
 STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}나무를 심습니다. SHIFT 키를 누른 채로 사용하면 예상 비용을 볼 수 있습니다
 STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}팻말을 답니다.
 STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}오브젝트를 설치합니다. SHIFT 키를 누른 채로 사용하면 예상 비용을 볼 수 있습니다
@@ -934,6 +939,9 @@ STR_GAME_OPTIONS_CURRENCY_GEL                                   :그루지야 �
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :이란 리알 (IRR)
 STR_GAME_OPTIONS_CURRENCY_RUB                                   :신 러시아 루블 (RUB)
 STR_GAME_OPTIONS_CURRENCY_MXN                                   :멕시코 페소 (MXN)
+STR_GAME_OPTIONS_CURRENCY_NTD                                   :신 타이완 달러 (NTD)
+STR_GAME_OPTIONS_CURRENCY_CNY                                   :중국 위안 (CNY)
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :홍콩 달러 (HKD)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}차량 통행 방식
@@ -1024,26 +1032,26 @@ STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}전체�
 
 STR_CURRENCY_WINDOW                                             :{WHITE}사용자 화폐 단위
 STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}환율: {ORANGE}{CURRENCY_LONG} = {COMMA}파운드
-STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}(1 파운드(£)에 대한) 사용자 화폐 단위양을 감소시킵니다.
-STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}(1 파운드(£)에 대한) 사용자 화폐 단위양을 증가시킵니다.
-STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}1 파운드(£)에 해당하는 사용자 화폐 단위의 환율을 설정하십시오.
+STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}(1 파운드(£)에 대한) 사용자 화폐 단위 양을 감소시킵니다
+STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}(1 파운드(£)에 대한) 사용자 화폐 단위 양을 증가시킵니다
+STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}1 파운드(£)에 해당하는 사용자 화폐 단위의 환율을 설정하십시오
 
 STR_CURRENCY_SEPARATOR                                          :{LTBLUE}단위 구분: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}사용자 화폐 단위의 단위 구분자를 설정하십시오.
+STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}사용자 화폐 단위의 단위 구분자를 설정하십시오
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}접두어: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}사용자 화폐 단위 앞에 붙는 문구를 설정하십시오.
+STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}사용자 화폐 단위 앞에 붙는 문구를 설정하십시오
 STR_CURRENCY_SUFFIX                                             :{LTBLUE}접미어: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SUFFIX_TOOLTIP                 :{BLACK}사용자 화폐 단위 뒤에 붙는 문구를 설정하십시오.
+STR_CURRENCY_SET_CUSTOM_CURRENCY_SUFFIX_TOOLTIP                 :{BLACK}사용자 화폐 단위 뒤에 붙는 문구를 설정하십시오
 
 STR_CURRENCY_SWITCH_TO_EURO                                     :{LTBLUE}유로화로 전환: {ORANGE}{NUM}
 STR_CURRENCY_SWITCH_TO_EURO_NEVER                               :{LTBLUE}유로화로 전환: {ORANGE}전환하지 않음
-STR_CURRENCY_SET_CUSTOM_CURRENCY_TO_EURO_TOOLTIP                :{BLACK}유로화(€) 전환 연도를 설정하십시오.
+STR_CURRENCY_SET_CUSTOM_CURRENCY_TO_EURO_TOOLTIP                :{BLACK}유로화(€) 전환 연도를 설정하십시오
 STR_CURRENCY_DECREASE_CUSTOM_CURRENCY_TO_EURO_TOOLTIP           :{BLACK}유로화(€) 전환 연도를 앞으로 당깁니다.
-STR_CURRENCY_INCREASE_CUSTOM_CURRENCY_TO_EURO_TOOLTIP           :{BLACK}유로화(€) 전환 연도를 늦춥니다.
+STR_CURRENCY_INCREASE_CUSTOM_CURRENCY_TO_EURO_TOOLTIP           :{BLACK}유로화(€) 전환 연도를 늦춥니다
 
 STR_CURRENCY_PREVIEW                                            :{LTBLUE}미리보기: {ORANGE}{CURRENCY_LONG}
-STR_CURRENCY_CUSTOM_CURRENCY_PREVIEW_TOOLTIP                    :{BLACK}10000 파운드(£)에 해당하는 사용자 화폐 단위입니다.
+STR_CURRENCY_CUSTOM_CURRENCY_PREVIEW_TOOLTIP                    :{BLACK}10000 파운드(£)에 해당하는 사용자 화폐 단위입니다
 STR_CURRENCY_CHANGE_PARAMETER                                   :{BLACK}사용자 화폐 변수 변경
 
 STR_DIFFICULTY_LEVEL_SETTING_MAXIMUM_NO_COMPETITORS             :{LTBLUE}최대 경쟁자수: {ORANGE}{COMMA}
@@ -1160,7 +1168,7 @@ STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :한 회사가 �
 STR_CONFIG_SETTING_INTEREST_RATE                                :대출 금리: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :대출 금리입니다. 인플레이션 설정이 켜져있는 경우 인플레이션의 영향을 받습니다.
 STR_CONFIG_SETTING_RUNNING_COSTS                                :유지비: {STRING}
-STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :차량과 기반시설의 유지비 수준을 설정하십시오.
+STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :차량과 기반시설의 유지비 수준을 설정하십시오
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :건설 속도: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :인공지능의 건설 행동량을 제한하여 건설 속도를 조절할 수 있습니다.
 STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS                           :차량 고장 빈도수: {STRING}
@@ -1185,6 +1193,8 @@ STR_CONFIG_SETTING_AUTOSLOPE                                    :건물, 트랙 
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :건물이나 도로/선로 등을 제거하지 않고도 하부의 지형을 편집할 수 있게 허용합니다.
 STR_CONFIG_SETTING_CATCHMENT                                    :더 현실적인 역세권 지정: {STRING}
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :역과 공항의 종류에 따라 다른 크기의 역세권을 가지도록 만듭니다.
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES                     :역이 붙어 있는 산업 시설의 화물을 회사의 역이 취급 가능: {STRING}
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES_HELPTEXT            :이 설정을 켜면, (유전과 같이) 역이 붙어 있는 산업시설이 근처에 지은 회사 소유의 역에서도 화물을 취급할 수 있습니다. 이 설정을 끄면, 반드시 산업시설에 붙어 있는 역에서만 화물을 취급할 수 있습니다. 인근에 있는 모든 회사 소유의 역은 화물을 취급할 수 없게 되며, 산업시설에 붙어 있는 역도 그 산업시설 이외의 화물을 취급할 수 없게 됩니다.
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :도시 소유의 도로, 다리 등의 제거 허용: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :도시 소유의 기반시설이나 건물을 제거할 수 있게 합니다.
 STR_CONFIG_SETTING_TRAIN_LENGTH                                 :열차의 최대 길이: {STRING}
@@ -1201,7 +1211,7 @@ STR_CONFIG_SETTING_TRAIN_SLOPE_STEEPNESS_HELPTEXT               :열차에 적�
 STR_CONFIG_SETTING_PERCENTAGE                                   :{COMMA}%
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS                 :경사도 설정 (자동차/전차용): {STRING}
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS_HELPTEXT        :자동차/전차에 적용시킬 경사도를 설정합니다. 값이 높을수록 차량이 언덕을 오를 때 더 힘이 듭니다.
-STR_CONFIG_SETTING_FORBID_90_DEG                                :열차/선박의 90도 회전을 금지함: {STRING}
+STR_CONFIG_SETTING_FORBID_90_DEG                                :열차의 90도 회전을 금지함: {STRING}
 STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :─ 모양의 수평 선로와 │ 모양의 수직 선로가 바로 이어져 만날 때 90도 회전이 발생합니다. 이 설정을 켜면, 열차가 칸 가장자리를 통과할 때 90도로 회전할 수 있도록 허용합니다. 이 설정은 선박의 회전 반경에도 적용됩니다.
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :역이 같은 방향으로 붙어있지 않아도 같은 이름의 역 짓기 허용: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :이미 존재하는 역을 직접 건드리지 않고도 역의 일부분을 새로 추가/확장하는 것을 허용합니다. 인접한 칸에 기존과 다른 새로운 역을 놓을 때에는 CTRL+클릭해야 합니다.
@@ -1258,8 +1268,8 @@ STR_CONFIG_SETTING_PLANE_SPEED                                  :항공기 속�
 STR_CONFIG_SETTING_PLANE_SPEED_HELPTEXT                         :항공 수송에 대한 수입을 제한하기 위해, 다른 운송 수단의 속력을 1로 보았을 때의 항공기의 속력 비율을 설정합니다.
 STR_CONFIG_SETTING_PLANE_SPEED_VALUE                            :(실제 속력) x {COMMA}분의 1
 STR_CONFIG_SETTING_PLANE_CRASHES                                :항공기 추락 빈도수: {STRING}
-STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :항공기 충돌 사고가 일어날 수 있는지 여부를 설정합니다.
-STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :없음
+STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :항공기 충돌 사고가 일어날 수 있는지 여부를 설정합니다.{}* 대형 항공기는 소형 공항에 착륙할 때 항상 충돌 사고를 일으킬 가능성이 있습니다.
+STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :없음*
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :적음
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :보통
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :도시 소유의 도로 위에 버스 정류장 건설 허용: {STRING}
@@ -1317,8 +1327,8 @@ STR_CONFIG_SETTING_TERRAIN_TYPE                                 :지형 종류: 
 STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(천지창조 전용) 지형의 언덕 모양을 결정합니다.
 STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :산업시설 수: {STRING}
 STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :게임을 플레이하는 동안 얼마나 많은 산업시설이 생성되고 유지되어야 할 지를 설정합니다.
-STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :정유 공장의 최대 건설 범위: 지도 맨 끝에서부터 {STRING} 이내
-STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :정유 공장은 지도의 동서남북 끝 경계 근처에만 건설할 수 있습니다.
+STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :석유 관련 산업 시설의 최대 건설 범위: 지도 맨 끝에서부터 {STRING} 이내
+STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :정유 공장과 유전이 맵 가장자리에서 얼마나 멀리 떨어진 곳까지 건설될 수 있는지를 나타냅니다. 섬 맵에서는 이 설정을 이용해서 해당 산업 시설이 해안에 가까이 있도록 조정할 수 있습니다. 256칸보다 큰 맵의 경우에는 이 값은 더 크게 조정됩니다.
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :설선 고도: {STRING}
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :아한대 기후의 설선 고도를 조절합니다. 눈은 산업시설의 생성과 도시 성장에 영향을 미칩니다.
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :지형의 거친 정도: {STRING}
@@ -1365,7 +1375,7 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :마우스 왼�
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :게임 화면을 이동시킬 때 부드럽게 이동: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :소형 지도를 클릭하여 특정 지역으로 스크롤되거나 지도 상의 특정 장소로 이동하는 경우에 주 화면이 어떻게 스크롤 되는지를 설정합니다. 이 설정을 켜면, 화면이 목표 지점까지 부드럽게 이동하고, 설정을 끄면 목표 지점으로 곧바로 넘어가게 됩니다.
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :건설도구 사용시 거리 도움말 표시: {STRING}
-STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :철도/도로 등의 기반시설을 건설할 때 거리와 높이 차이 등을 표시합니다.
+STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :철도/도로 등의 기반시설을 건설할 때 거리와 높이 차이 등을 표시합니다
 STR_CONFIG_SETTING_LIVERIES                                     :차량 종류에 따라 회사의 색상을 구분하여 표시: {STRING}
 STR_CONFIG_SETTING_LIVERIES_HELPTEXT                            :회사 고유 색상을 따르지 않고 차량 종류에 따라 다른 차량 색상을 사용하는 것을 허용합니다.
 STR_CONFIG_SETTING_LIVERIES_NONE                                :없음
@@ -1482,6 +1492,9 @@ STR_CONFIG_SETTING_AI_IN_MULTIPLAYER                            :멀티플레이
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :멀티 플레이 게임에서 인공지능 컴퓨터 플레이어가 참여하는 것을 허용합니다.
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES                           :게임 스크립트가 중지되기 직전에 계산할 수 있는 최대 횟수: {STRING}
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES_HELPTEXT                  :게임 스크립트가 한 단계에서 계산할 수 있는 최대 계산 횟수를 설정합니다.
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY                            :스크립트당 최대 메모리 사용량: {STRING}
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :강제로 종료되기 전에 단일 스크립트가 사용할 수 있는 메모리의 양입니다. 크기가 큰 맵에서는 값을 크게 설정해야할 수도 있습니다.
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :신뢰도에 따른 정비 설정: {STRING}
 STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :차량 점검 방식을 "마지막 점검 이후 지난 시간 (또는) 최대 신뢰도에 대한 차량 신뢰도의 일정 퍼센트 하락 여부" 중에 하나로 선택합니다.
@@ -1544,6 +1557,8 @@ STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :부드러운 �
 STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :이 설정을 켜면, 1차 산업시설의 생산량이 소량으로 자주 변하게 됩니다. NewGRF로 추가한 산업시설에는 적용되지 않습니다.
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :다른 회사의 지분을 사는 것을 허용: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :이 설정을 켜면, 회사의 지분을 거래할 수 있게 됩니다. 회사의 지분을 거래하려면 해당 회사가 어느 정도 오래되어야 합니다.
+STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :지분 거래를 허용할 최소 회사 나이: {STRING}
+STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES_HELPTEXT                :지분을 사고 팔기 위해 필요한 회사의 최소 나이를 설정합니다.
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :환승시 벌어들이는 중간 수익의 비율: {STRING}
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :더 많은 수익을 내기 위해, 수송 관계상 중간 구간에게 주어진 수익의 비율을 설정합니다.
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY                         :신호기를 드래그로 설치하는 경우: {STRING}
@@ -1584,6 +1599,10 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :플레이어가
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :금지
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :허용
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :허용, 도시 구조 선택 가능
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :도시 화물 생성: {STRING}
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :도시의 전반적인 인구에 따라, 도시가 얼마나 많은 화물을 생산하는 지를 설정합니다.{}제곱 성장: 도시의 규모가 2배 커지면 승객을 4배 더 생산합니다.{}선형 성장: 도시의 규모가 2배 커지면 승객을 2배 더 생산합니다.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_ORIGINAL                   :제곱 (기본)
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :선형
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :게임 진행 중에 나무가 자동적으로 번식: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :게임 중에 나무가 자동적으로 번식하는지 여부를 조절합니다. 이 설정을 조정하면, 아열대 기후의 벌목소처럼 나무의 성장에 의존하는 산업시설에 영향을 끼칠 수 있습니다.
@@ -1711,7 +1730,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}화물 
 STR_CONFIG_SETTING_AI                                           :{ORANGE}경쟁자
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}컴퓨터 플레이어
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :오리지널
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(권장)
 
@@ -1795,13 +1813,9 @@ STR_QUIT_NO                                                     :{BLACK}아니�
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :{G=f}Windows
-STR_OSNAME_DOS                                                  :{G=f}DOS
 STR_OSNAME_UNIX                                                 :{G=f}Unix
 STR_OSNAME_OSX                                                  :{G=f}OS{NBSP}X
-STR_OSNAME_BEOS                                                 :{G=f}BeOS
 STR_OSNAME_HAIKU                                                :{G=f}Haiku
-STR_OSNAME_MORPHOS                                              :{G=f}MorphOS
-STR_OSNAME_AMIGAOS                                              :{G=f}AmigaOS
 STR_OSNAME_OS2                                                  :{G=f}OS/2
 STR_OSNAME_SUNOS                                                :{G=f}SunOS
 
@@ -2139,7 +2153,7 @@ STR_NETWORK_CHAT_ALL                                            :[모두] {STRIN
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}채팅 메시지를 입력하세요
 
 # Network messages
-STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}네트워크 장치를 찾을수 없거나 게임 자체가 네트워크를 사용할 수 없는 버전으로 컴파일되었습니다.
+STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}사용할 수 있는 네트워크 장치가 없습니다.
 STR_NETWORK_ERROR_NOSERVER                                      :{WHITE}네트워크 게임이 존재하지 않습니다
 STR_NETWORK_ERROR_NOCONNECTION                                  :{WHITE}서버가 요청을 받지 않습니다
 STR_NETWORK_ERROR_NEWGRF_MISMATCH                               :{WHITE}NewGRF가 맞지 않아서 연결할 수 없습니다
@@ -2218,18 +2232,18 @@ STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}서버�
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}콘텐츠 다운로드
 STR_CONTENT_TYPE_CAPTION                                        :{BLACK}종류
-STR_CONTENT_TYPE_CAPTION_TOOLTIP                                :{BLACK}콘텐츠의 종류
+STR_CONTENT_TYPE_CAPTION_TOOLTIP                                :{BLACK}콘텐츠의 종류입니다
 STR_CONTENT_NAME_CAPTION                                        :{BLACK}이름
 STR_CONTENT_NAME_CAPTION_TOOLTIP                                :{BLACK}콘텐츠의 이름
 STR_CONTENT_MATRIX_TOOLTIP                                      :{BLACK}항목을 클릭하면 자세히 볼 수 있습니다{}다운로드할 항목을 누르세요
 STR_CONTENT_SELECT_ALL_CAPTION                                  :{BLACK}모두 선택
 STR_CONTENT_SELECT_ALL_CAPTION_TOOLTIP                          :{BLACK}모든 콘텐츠를 선택합니다
 STR_CONTENT_SELECT_UPDATES_CAPTION                              :{BLACK}업데이트 선택
-STR_CONTENT_SELECT_UPDATES_CAPTION_TOOLTIP                      :{BLACK}업데이트 항목이 있는 컨텐츠를 선택합니다.
+STR_CONTENT_SELECT_UPDATES_CAPTION_TOOLTIP                      :{BLACK}업데이트 항목이 있는 컨텐츠를 선택합니다
 STR_CONTENT_UNSELECT_ALL_CAPTION                                :{BLACK}모두 선택 해제
 STR_CONTENT_UNSELECT_ALL_CAPTION_TOOLTIP                        :{BLACK}모든 콘텐츠의 선택을 해제합니다.
 STR_CONTENT_SEARCH_EXTERNAL                                     :{BLACK}외부 사이트에서 검색
-STR_CONTENT_SEARCH_EXTERNAL_TOOLTIP                             :{BLACK}OpenTTD의 온라인 콘텐츠 서비스에서 다운로드할 수 없는 콘텐츠를 OpenTTD와 관련이 없는 외부 사이트에서 검색합니다.
+STR_CONTENT_SEARCH_EXTERNAL_TOOLTIP                             :{BLACK}OpenTTD의 온라인 콘텐츠 서비스에서 다운로드할 수 없는 콘텐츠를 OpenTTD와 관련이 없는 외부 사이트에서 검색합니다
 STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER_CAPTION                  :{WHITE}OpenTTD를 종료하는 중입니다!
 STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER                          :{WHITE}외부 웹사이트에서 콘텐츠를 다운로드할 때에는 그에 대한 약관과 조건이 다양합니다.{}이 콘텐츠를 OpenTTD에 설치하는 방법은 외부 사이트에서 찾아보아야 합니다.{}계속하시겠습니까?
 STR_CONTENT_FILTER_TITLE                                        :{BLACK}태그/이름 검색:
@@ -2378,22 +2392,22 @@ STR_STATION_CLASS_WAYP                                          :경유지
 
 # Signal window
 STR_BUILD_SIGNAL_CAPTION                                        :{WHITE}신호기 선택
-STR_BUILD_SIGNAL_SEMAPHORE_NORM_TOOLTIP                         :{BLACK}폐색 신호기 (구식){}가장 기본적인 신호기 형식입니다. 단 한 대의 열차만이 이 폐색 구간을 통과할 수 있습니다.
-STR_BUILD_SIGNAL_SEMAPHORE_ENTRY_TOOLTIP                        :{BLACK}입구 신호기 (구식){}다음 폐색 구간에 있는 출구 신호기가 하나라도 파란불이면 파란불이 되며, 그렇지 않은 경우에는 빨간불이 됩니다.
-STR_BUILD_SIGNAL_SEMAPHORE_EXIT_TOOLTIP                         :{BLACK}출구 신호기 (구식){}일반 신호기와 기능이 똑같지만, 입구 & 복합 신호기와 올바르게 연계되어야 합니다.
-STR_BUILD_SIGNAL_SEMAPHORE_COMBO_TOOLTIP                        :{BLACK}복합 신호기 (구식){}복합 신호기는 입구 신호기와 출구 신호기의 역할을 동시에 합니다. 이 신호기는 사전 신호기의 거대한 "나뭇가지 구조"를 건설할 수 있도록 도와줍니다.
-STR_BUILD_SIGNAL_SEMAPHORE_PBS_TOOLTIP                          :{BLACK}경로 신호기 (구식){}경로 신호기는 경로가 겹치지 않는 경우에 한 대 이상의 열차가 한 폐색 구간에 동시에 들어갈 수 있게 해줍니다. 경로 신호기는 반대편에서 통과가 가능합니다.
-STR_BUILD_SIGNAL_SEMAPHORE_PBS_OWAY_TOOLTIP                     :{BLACK}단방향 경로 신호기 (구식){}경로 신호기는 경로가 겹치지 않는 경우에 한 대 이상의 열차가 한 폐색 구간에 동시에 들어갈 수 있게 해줍니다. 단방향 경로 신호기는 반대편에서 통과가 불가능합니다.
-STR_BUILD_SIGNAL_ELECTRIC_NORM_TOOLTIP                          :{BLACK}폐색 신호기 (전자식){}가장 기본적인 신호기 형식입니다. 단 한 대의 열차만이 이 폐색 구간을 통과할 수 있습니다.
-STR_BUILD_SIGNAL_ELECTRIC_ENTRY_TOOLTIP                         :{BLACK}입구 신호기 (전자식){}다음 폐색 구간에 있는 출구 신호기가 하나라도 파란불이면 파란불이 되며, 그렇지 않은 경우에는 빨간불이 됩니다.
-STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP                          :{BLACK}출구 신호기 (전자식){}일반 신호기와 기능이 똑같지만, 입구 & 복합 신호기와 올바르게 연계되어야 합니다.
-STR_BUILD_SIGNAL_ELECTRIC_COMBO_TOOLTIP                         :{BLACK}복합 신호기 (전자식){}복합 신호기는 입구 신호기와 출구 신호기의 역할을 동시에 합니다. 이 신호기는 사전 신호기의 거대한 "나뭇가지식 구조"를 건설할 수 있도록 도와줍니다.
-STR_BUILD_SIGNAL_ELECTRIC_PBS_TOOLTIP                           :{BLACK}경로 신호기 (전자식){}경로 신호기는 경로가 겹치지 않는 경우에 한 대 이상의 열차가 한 폐색 구간에 동시에 들어갈 수 있게 해줍니다. 경로 신호기는 반대편에서 통과가 가능합니다.
-STR_BUILD_SIGNAL_ELECTRIC_PBS_OWAY_TOOLTIP                      :{BLACK}단방향 경로 신호기 (전자식){}경로 신호기는 경로가 겹치지 않는 경우에 한 대 이상의 열차가 한 폐색 구간에 동시에 들어갈 수 있게 해줍니다. 단방향 경로 신호기는 반대편에서 통과가 불가능합니다.
+STR_BUILD_SIGNAL_SEMAPHORE_NORM_TOOLTIP                         :{BLACK}폐색 신호기 (구식){}가장 기본적인 신호기 형식입니다. 단 한 대의 열차만이 이 폐색 구간을 통과할 수 있습니다
+STR_BUILD_SIGNAL_SEMAPHORE_ENTRY_TOOLTIP                        :{BLACK}입구 신호기 (구식){}다음 폐색 구간에 있는 출구 신호기가 하나라도 파란불이면 파란불이 되며, 그렇지 않은 경우에는 빨간불이 됩니다
+STR_BUILD_SIGNAL_SEMAPHORE_EXIT_TOOLTIP                         :{BLACK}출구 신호기 (구식){}일반 신호기와 기능이 똑같지만, 입구 & 복합 신호기와 올바르게 연계되어야 합니다
+STR_BUILD_SIGNAL_SEMAPHORE_COMBO_TOOLTIP                        :{BLACK}복합 신호기 (구식){}복합 신호기는 입구 신호기와 출구 신호기의 역할을 동시에 합니다. 이 신호기는 사전 신호기의 거대한 "나뭇가지 구조"를 건설할 수 있도록 도와줍니다
+STR_BUILD_SIGNAL_SEMAPHORE_PBS_TOOLTIP                          :{BLACK}경로 신호기 (구식){}경로 신호기는 경로가 겹치지 않는 경우에 한 대 이상의 열차가 한 폐색 구간에 동시에 들어갈 수 있게 해줍니다. 경로 신호기는 반대편에서 통과가 가능합니다
+STR_BUILD_SIGNAL_SEMAPHORE_PBS_OWAY_TOOLTIP                     :{BLACK}단방향 경로 신호기 (구식){}경로 신호기는 경로가 겹치지 않는 경우에 한 대 이상의 열차가 한 폐색 구간에 동시에 들어갈 수 있게 해줍니다. 단방향 경로 신호기는 반대편에서 통과가 불가능합니다
+STR_BUILD_SIGNAL_ELECTRIC_NORM_TOOLTIP                          :{BLACK}폐색 신호기 (전자식){}가장 기본적인 신호기 형식입니다. 단 한 대의 열차만이 이 폐색 구간을 통과할 수 있습니다
+STR_BUILD_SIGNAL_ELECTRIC_ENTRY_TOOLTIP                         :{BLACK}입구 신호기 (전자식){}다음 폐색 구간에 있는 출구 신호기가 하나라도 파란불이면 파란불이 되며, 그렇지 않은 경우에는 빨간불이 됩니다
+STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP                          :{BLACK}출구 신호기 (전자식){}일반 신호기와 기능이 똑같지만, 입구 & 복합 신호기와 올바르게 연계되어야 합니다
+STR_BUILD_SIGNAL_ELECTRIC_COMBO_TOOLTIP                         :{BLACK}복합 신호기 (전자식){}복합 신호기는 입구 신호기와 출구 신호기의 역할을 동시에 합니다. 이 신호기는 사전 신호기의 거대한 "나뭇가지식 구조"를 건설할 수 있도록 도와줍니다
+STR_BUILD_SIGNAL_ELECTRIC_PBS_TOOLTIP                           :{BLACK}경로 신호기 (전자식){}경로 신호기는 경로가 겹치지 않는 경우에 한 대 이상의 열차가 한 폐색 구간에 동시에 들어갈 수 있게 해줍니다. 경로 신호기는 반대편에서 통과가 가능합니다
+STR_BUILD_SIGNAL_ELECTRIC_PBS_OWAY_TOOLTIP                      :{BLACK}단방향 경로 신호기 (전자식){}경로 신호기는 경로가 겹치지 않는 경우에 한 대 이상의 열차가 한 폐색 구간에 동시에 들어갈 수 있게 해줍니다. 단방향 경로 신호기는 반대편에서 통과가 불가능합니다
 STR_BUILD_SIGNAL_CONVERT_TOOLTIP                                :{BLACK}신호기 변환{}이 버튼을 선택한 뒤 이미 설치된 신호기를 클릭하면, 신호기의 종류(일반/입구/출구/복합/경로)와 형식(구식↔전자식)을 변경하고, CTRL+클릭하면 신호기의 형식을 변경합니다. SHIFT+클릭을 사용하면 예상 비용을 볼 수 있습니다
-STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP                   :{BLACK}드래그로 신호기를 설치하는 간격
-STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP          :{BLACK}드래그로 신호기를 설치하는 간격 감소
-STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}드래그로 신호기를 설치하는 간격 증가
+STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP                   :{BLACK}드래그로 설치할 때 신호기 사이의 간격입니다
+STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP          :{BLACK}드래그로 설치할 신호기 간격을 줄입니다
+STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}드래그로 설치할 신호기 간격을 늘입니다
 
 # Bridge selection window
 STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}철교 선택
@@ -2431,6 +2445,11 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}터널�
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}전차 터널을 짓습니다. SHIFT 키를 누른 채로 사용하면 예상 비용을 볼 수 있습니다
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}도로 제거 툴을 켜거나 끕니다
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}전찻길 제거 툴을 켜거나 끕니다
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_ROAD                           :{BLACK}도로 종류를 변경하거나 업그레이드 합니다. SHIFT 키를 누른 채로 사용하면 예상 비용을 볼 수 있습니다
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_TRAM                           :{BLACK}전차 선로 종류를 변경하거나 업그레이드 합니다. SHIFT 키를 누른 채로 사용하면 예상 비용을 볼 수 있습니다
+
+STR_ROAD_NAME_ROAD                                              :도로
+STR_ROAD_NAME_TRAM                                              :전찻길
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}차고지 방향 선택
@@ -2615,8 +2634,11 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}받을 수 있는 화물: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}철도 종류: {LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}도로 종류: {LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_TRAM_TYPE                             :{BLACK}전차 종류: {LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}선로 제한 속력: {LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}도로 제한 속력: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT                      :{BLACK}전차 제한 속력: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :암석
@@ -2726,6 +2748,7 @@ STR_FRAMERATE_SPEED_FACTOR                                      :{BLACK}현재 �
 STR_FRAMERATE_SPEED_FACTOR_TOOLTIP                              :{BLACK}현재 게임이 일반적인 시뮬레이션 비율 속도에 비해 얼마나 빠르게 구동되고 있는지를 보여줍니다.
 STR_FRAMERATE_CURRENT                                           :{WHITE}현재
 STR_FRAMERATE_AVERAGE                                           :{WHITE}평균
+STR_FRAMERATE_MEMORYUSE                                         :{WHITE}메모리
 STR_FRAMERATE_DATA_POINTS                                       :{BLACK}{COMMA}개의 값을 기반으로 측정한 데이터
 STR_FRAMERATE_MS_GOOD                                           :{LTBLUE}{DECIMAL}{BLACK} ms
 STR_FRAMERATE_MS_WARN                                           :{YELLOW}{DECIMAL} ms
@@ -2733,6 +2756,9 @@ STR_FRAMERATE_MS_BAD                                            :{RED}{DECIMAL} 
 STR_FRAMERATE_FPS_GOOD                                          :{LTBLUE}{DECIMAL} 프레임/초
 STR_FRAMERATE_FPS_WARN                                          :{YELLOW}{DECIMAL} 프레임/초
 STR_FRAMERATE_FPS_BAD                                           :{RED}{DECIMAL} 프레임/초
+STR_FRAMERATE_BYTES_GOOD                                        :{LTBLUE}{BYTES}
+STR_FRAMERATE_BYTES_WARN                                        :{YELLOW}{BYTES}
+STR_FRAMERATE_BYTES_BAD                                         :{RED}{BYTES}
 STR_FRAMERATE_GRAPH_MILLISECONDS                                :{TINY_FONT}{COMMA} ms
 STR_FRAMERATE_GRAPH_SECONDS                                     :{TINY_FONT}{COMMA}초
 ############ Leave those lines in this order!!
@@ -3099,6 +3125,8 @@ STR_TOWN_VIEW_RENAME_TOWN_BUTTON                                :도시 이름 �
 
 # Town local authority window
 STR_LOCAL_AUTHORITY_CAPTION                                     :{WHITE}{TOWN} 지역 당국
+STR_LOCAL_AUTHORITY_ZONE                                        :{BLACK}구역
+STR_LOCAL_AUTHORITY_ZONE_TOOLTIP                                :{BLACK}지역 당국의 범위 안에 있는 구역을 보여줍니다
 STR_LOCAL_AUTHORITY_COMPANY_RATINGS                             :{BLACK}회사에 대한 이 도시의 평판:
 STR_LOCAL_AUTHORITY_COMPANY_RATING                              :{YELLOW}{COMPANY} {COMPANY_NUM}: {ORANGE}{STRING}
 STR_LOCAL_AUTHORITY_ACTIONS_TITLE                               :{BLACK}가능한 행동:
@@ -3356,8 +3384,7 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}철도 기반시설:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}신호기
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}도로 기반시설:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}도로
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}전찻길
+STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}전찻길:
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}해운 기반시설:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}운하
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}정거장 시설:
@@ -3437,6 +3464,8 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :그룹에 속�
 STR_GROUP_DEFAULT_SHIPS                                         :그룹에 속하지 않은 선박
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :그룹에 속하지 않은 항공기
 
+STR_GROUP_COUNT_WITH_SUBGROUP                                   :{TINY_FONT}{COMMA} (+{COMMA})
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}그룹 - 클릭해서 그룹에 속한 차량을 모두 나열합니다. 상하위 그룹을 바꾸려면 드래그 앤 드롭하십시오
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}클릭해서 그룹을 만듭니다
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}선택한 그룹을 삭제합니다
@@ -3463,12 +3492,18 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :새 전기 열�
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :새 모노레일 열차
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :새 자기부상열차
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :새 열차
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :새 자동차
+STR_BUY_VEHICLE_TRAM_VEHICLE_CAPTION                            :새 전차 차량
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :새 열차
+STR_BUY_VEHICLE_ROAD_VEHICLE_ALL_CAPTION                        :새 차량
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :새 선박
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :새 항공기
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}가격: {GOLD}{CURRENCY_LONG}{BLACK} 중량: {GOLD}{WEIGHT_SHORT}
+STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}가격: {GOLD}{CURRENCY_LONG}{BLACK} (개조 가격: {GOLD}{CURRENCY_LONG}{BLACK}) 무게: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}속력: {GOLD}{VELOCITY}{BLACK} 힘: {GOLD}{POWER}
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}속력: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}바다에서 속력: {GOLD}{VELOCITY}
@@ -3479,8 +3514,10 @@ STR_PURCHASE_INFO_REFITTABLE                                    :(개조 가능)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}개발: {GOLD}{NUM}{BLACK} 수명: {GOLD}{COMMA}년
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}최고 신뢰도: {GOLD}{COMMA}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}가격: {GOLD}{CURRENCY_LONG}
+STR_PURCHASE_INFO_COST_REFIT                                    :{BLACK}가격: {GOLD}{CURRENCY_LONG}{BLACK} (개조 가격: {GOLD}{CURRENCY_LONG}{BLACK})
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}중량: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}가격: {GOLD}{CURRENCY_LONG}{BLACK} 속력: {GOLD}{VELOCITY}
+STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}가격: {GOLD}{CURRENCY_LONG}{BLACK} (개조 비용: {GOLD}{CURRENCY_LONG}{BLACK}) 속력: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}수용량: {GOLD}{CARGO_LONG}, {CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}전원 화물차: {GOLD}+{POWER}{BLACK} 중량: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}개조가능 화물: {GOLD}{STRING}
@@ -3501,10 +3538,20 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}차량 �
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}선박 구입
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}항공기 구입
 
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_BUTTON                  :{BLACK}차량 구입 및 개조
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_BUTTON           :{BLACK}차량 구입 및 개조
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_BUTTON                   :{BLACK}선박 구입 및 개조
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}항공기 구입 및 개조
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}선택된 차량을 구입합니다. SHIFT+클릭으로 예상 구입 비용을 볼 수 있습니다.
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}선택한 차량을 구입합니다. SHIFT+클릭하면 예상 구입 비용을 볼 수 있습니다
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}선택한 선박을 구입합니다. SHIFT+클릭으로 예상 구입 비용을 볼 수 있습니다
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}선택한 항공기를 구입합니다. SHIFT+클릭으로 예상 구입 비용을 볼 수 있습니다
+
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}선택한 차량을 구입하고 개조합니다. SHIFT+클릭하면 예상 비용을 볼 수 있습니다
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_TOOLTIP          :{BLACK}선택한 자동차를 구입하고 개조합니다. SHIFT+클릭하면 예상 비용을 볼 수 있습니다
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_TOOLTIP                  :{BLACK}선택한 선박을 구입하고 개조합니다. SHIFT+클릭하면 예상 비용을 볼 수 있습니다
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_TOOLTIP              :{BLACK}선택한 항공기를 구입하고 개조합니다. SHIFT+클릭하면 예상 비용을 볼 수 있습니다
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}이름 지정
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}이름 지정
@@ -3614,12 +3661,17 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}이 안
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}차량 개발자로부터의 메시지
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}저희는 이제 막 새로운 {STRING}{G 0 "을" "를"} 개발했습니다. 1년 먼저 이 차량을 사용하셔서 모두에게 공개되기 전에 잘 작동하는지 확인해주시겠습니까?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=f}철도 기관차
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=f}자동차
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=f}항공기
-STR_ENGINE_PREVIEW_SHIP                                         :{G=m}선박
+STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :{G=f}전기선로 기관차
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :{G=f}모노레일 기관차
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :{G=f}자기부상열차
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=f}자동차
+STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :{G=f}전차
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=f}항공기
+STR_ENGINE_PREVIEW_SHIP                                         :{G=m}선박
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}가격: {CURRENCY_LONG} 무게: {WEIGHT_SHORT}{}속력: {VELOCITY}  힘: {POWER}{}유지비: {CURRENCY_LONG}/년{}수송량: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}가격: {CURRENCY_LONG} 무게: {WEIGHT_SHORT}{}속력: {VELOCITY}  힘: {POWER}  최대 견인력: {6:FORCE}{}유지비: {4:CURRENCY_LONG}/년{}수송량: {5:CARGO_LONG}
@@ -3658,13 +3710,18 @@ STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}기관�
 STR_REPLACE_ENGINES                                             :기관차
 STR_REPLACE_WAGONS                                              :화물차
 STR_REPLACE_ALL_RAILTYPE                                        :모든 철도 차량
+STR_REPLACE_ALL_ROADTYPE                                        :모든 자동차
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}교체할 기관차의 선로 종류를 고르세요
+STR_REPLACE_HELP_ROADTYPE                                       :{BLACK}교체할 차량이 속한 도로 종류를 고르세요
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}왼쪽의 선택한 기관차가 어떤 기관차로 교체되고 있는지 표시합니다
 STR_REPLACE_RAIL_VEHICLES                                       :철도 차량
 STR_REPLACE_ELRAIL_VEHICLES                                     :전기철도 차량
 STR_REPLACE_MONORAIL_VEHICLES                                   :모노레일 차량
 STR_REPLACE_MAGLEV_VEHICLES                                     :자기부상 차량
+
+STR_REPLACE_ROAD_VEHICLES                                       :자동차
+STR_REPLACE_TRAM_VEHICLES                                       :전차 차량
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}화물차 제거: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}자동 교체시 열차의 길이가 교체 전보다 길어지면 객차/화차를 (앞쪽부터) 제거하여 열차의 전체 길이가 달라지지 않도록 합니다
@@ -4112,7 +4169,7 @@ STR_AI_LIST_VERSION                                             :{LTBLUE}버전:
 STR_AI_LIST_URL                                                 :{LTBLUE}주소: {ORANGE}{STRING}
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}적용
-STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}선택한 스크립트를 적용합니다.
+STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}선택한 스크립트를 적용합니다
 STR_AI_LIST_CANCEL                                              :{BLACK}취소
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}인공지능 스크립트를 바꾸지 않습니다
 
@@ -4278,7 +4335,7 @@ STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... 이 
 STR_ERROR_TOO_MANY_INDUSTRIES                                   :{WHITE}... 산업시설이 너무 많습니다
 STR_ERROR_CAN_T_GENERATE_INDUSTRIES                             :{WHITE}산업시설을 생성할 수 없습니다...
 STR_ERROR_CAN_T_BUILD_HERE                                      :{WHITE}여기에 {STRING}{G 0 "을" "를"} 건설할 수 없습니다...
-STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY                         :{WHITE}여기는 산업시설을 건설할 수 없는 곳입니다...
+STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY                         :{WHITE}여기에 산업시설을 건설할 수 없습니다...
 STR_ERROR_INDUSTRY_TOO_CLOSE                                    :{WHITE}... 다른 산업시설과 너무 가깝습니다
 STR_ERROR_MUST_FOUND_TOWN_FIRST                                 :{WHITE}... 도시를 먼저 만들어야 합니다
 STR_ERROR_ONLY_ONE_ALLOWED_PER_TOWN                             :{WHITE}... 한 도시에 하나만 지을 수 있습니다
@@ -4387,7 +4444,8 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}신호�
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}적합한 철도 선로가 없습니다
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}선로를 먼저 제거하십시오
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}도로가 일방통행이거나 막혔습니다
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}이 철도 타입에서는 건널목을 만들 수 없습니다.
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}이 선로에는 건널목을 만들 수 없습니다.
+STR_ERROR_CROSSING_DISALLOWED_ROAD                              :{WHITE}이 도로에는 건널목을 만들 수 없습니다
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}여기에 신호기를 건설할 수 없습니다...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}여기에 선로를 건설할 수 없습니다...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}이 선로를 제거할 수 없습니다...
@@ -4407,6 +4465,12 @@ STR_ERROR_CAN_T_REMOVE_ROAD_FROM                                :{WHITE}이 도�
 STR_ERROR_CAN_T_REMOVE_TRAMWAY_FROM                             :{WHITE}이 전찻길을 제거할 수 없습니다...
 STR_ERROR_THERE_IS_NO_ROAD                                      :{WHITE}... 도로가 없습니다
 STR_ERROR_THERE_IS_NO_TRAMWAY                                   :{WHITE}... 전찻길이 없습니다
+STR_ERROR_CAN_T_CONVERT_ROAD                                    :{WHITE}이곳의 도로를 바꿀 수 없습니다...
+STR_ERROR_CAN_T_CONVERT_TRAMWAY                                 :{WHITE}이곳의 전찻길을 바꿀 수 없습니다...
+STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}적합한 도로가 없습니다
+STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}적합한 전찻길이 없습니다
+STR_ERROR_INCOMPATIBLE_ROAD                                     :{WHITE}... 적합하지 않은 도로입니다
+STR_ERROR_INCOMPATIBLE_TRAMWAY                                  :{WHITE}... 적합하지 않은 전찻길입니다
 
 # Waterway construction errors
 STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}여기에 운하를 건설할 수 없습니다...
@@ -4459,6 +4523,7 @@ STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}그룹�
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}이 그룹을 지울 수 없습니다...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}그룹의 이름을 바꿀 수 없습니다
 STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}상위 그룹으로 설정할 수 없습니다...
+STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION                      :{WHITE}... 상위 그룹을 하위 그룹 아래로 옮길 수 없습니다
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}이 그룹의 모든 차량을 제거할 수 없습니다
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}이 그룹에 차량을 추가할 수 없습니다...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}이 그룹에 공유된 차량을 추가할 수 없습니다...

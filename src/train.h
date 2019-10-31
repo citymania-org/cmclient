@@ -36,12 +36,11 @@ enum VehicleRailFlags {
 };
 
 /** Modes for ignoring signals. */
-enum TrainForceProceeding {
+enum TrainForceProceeding : byte {
 	TFP_NONE   = 0,    ///< Normal operation.
 	TFP_STUCK  = 1,    ///< Proceed till next signal, but ignore being stuck till then. This includes force leaving depots.
 	TFP_SIGNAL = 2,    ///< Ignore next signal, after the signal ignore being stuck.
 };
-typedef SimpleTinyEnumT<TrainForceProceeding, byte> TrainForceProceedingByte;
 
 /** Flags for Train::ConsistChanged */
 enum ConsistChangeFlags {
@@ -94,9 +93,9 @@ struct Train FINAL : public GroundVehicle<Train, VEH_TRAIN> {
 	uint16 crash_anim_pos; ///< Crash animation counter.
 
 	uint16 flags;
-	TrackBitsByte track;
-	TrainForceProceedingByte force_proceed;
-	RailTypeByte railtype;
+	TrackBits track;
+	TrainForceProceeding force_proceed;
+	RailType railtype;
 	RailTypes compatible_railtypes;
 
 	/** Ticks waiting in front of a signal, ticks being stuck or a counter for forced proceeding through signals. */
@@ -118,7 +117,7 @@ struct Train FINAL : public GroundVehicle<Train, VEH_TRAIN> {
 	int GetDisplaySpeed() const { return this->gcache.last_speed; }
 	int GetDisplayMaxSpeed() const { return this->vcache.cached_max_speed; }
 	Money GetRunningCost() const;
-	int GetDisplayImageWidth(Point *offset = NULL) const;
+	int GetDisplayImageWidth(Point *offset = nullptr) const;
 	bool IsInDepot() const { return this->track == TRACK_BIT_DEPOT; }
 	bool Tick();
 	void OnNewDay();
@@ -146,7 +145,7 @@ struct Train FINAL : public GroundVehicle<Train, VEH_TRAIN> {
 	inline Train *GetNextUnit() const
 	{
 		Train *v = this->GetNextVehicle();
-		if (v != NULL && v->IsRearDualheaded()) v = v->GetNextVehicle();
+		if (v != nullptr && v->IsRearDualheaded()) v = v->GetNextVehicle();
 
 		return v;
 	}
@@ -158,7 +157,7 @@ struct Train FINAL : public GroundVehicle<Train, VEH_TRAIN> {
 	inline Train *GetPrevUnit()
 	{
 		Train *v = this->GetPrevVehicle();
-		if (v != NULL && v->IsRearDualheaded()) v = v->GetPrevVehicle();
+		if (v != nullptr && v->IsRearDualheaded()) v = v->GetPrevVehicle();
 
 		return v;
 	}
@@ -173,7 +172,7 @@ struct Train FINAL : public GroundVehicle<Train, VEH_TRAIN> {
 		 * longer than the part after the center. This means we have to round up the
 		 * length of the next vehicle but may not round the length of the current
 		 * vehicle. */
-		return this->gcache.cached_veh_length / 2 + (this->Next() != NULL ? this->Next()->gcache.cached_veh_length + 1 : 0) / 2;
+		return this->gcache.cached_veh_length / 2 + (this->Next() != nullptr ? this->Next()->gcache.cached_veh_length + 1 : 0) / 2;
 	}
 
 protected: // These functions should not be called outside acceleration code.

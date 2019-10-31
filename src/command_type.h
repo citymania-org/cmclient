@@ -36,25 +36,25 @@ public:
 	/**
 	 * Creates a command cost return with no cost and no error
 	 */
-	CommandCost() : expense_type(INVALID_EXPENSES), cost(0), message(INVALID_STRING_ID), success(true), textref_stack_grffile(NULL), textref_stack_size(0) {}
+	CommandCost() : expense_type(INVALID_EXPENSES), cost(0), message(INVALID_STRING_ID), success(true), textref_stack_grffile(nullptr), textref_stack_size(0) {}
 
 	/**
 	 * Creates a command return value the is failed with the given message
 	 */
-	explicit CommandCost(StringID msg) : expense_type(INVALID_EXPENSES), cost(0), message(msg), success(false), textref_stack_grffile(NULL), textref_stack_size(0) {}
+	explicit CommandCost(StringID msg) : expense_type(INVALID_EXPENSES), cost(0), message(msg), success(false), textref_stack_grffile(nullptr), textref_stack_size(0) {}
 
 	/**
 	 * Creates a command cost with given expense type and start cost of 0
 	 * @param ex_t the expense type
 	 */
-	explicit CommandCost(ExpensesType ex_t) : expense_type(ex_t), cost(0), message(INVALID_STRING_ID), success(true), textref_stack_grffile(NULL), textref_stack_size(0) {}
+	explicit CommandCost(ExpensesType ex_t) : expense_type(ex_t), cost(0), message(INVALID_STRING_ID), success(true), textref_stack_grffile(nullptr), textref_stack_size(0) {}
 
 	/**
 	 * Creates a command return value with the given start cost and expense type
 	 * @param ex_t the expense type
 	 * @param cst the initial cost of this command
 	 */
-	CommandCost(ExpensesType ex_t, const Money &cst) : expense_type(ex_t), cost(cst), message(INVALID_STRING_ID), success(true), textref_stack_grffile(NULL), textref_stack_size(0) {}
+	CommandCost(ExpensesType ex_t, const Money &cst) : expense_type(ex_t), cost(cst), message(INVALID_STRING_ID), success(true), textref_stack_grffile(nullptr), textref_stack_size(0) {}
 
 
 	/**
@@ -202,6 +202,7 @@ enum Commands {
 	CMD_REMOVE_LONG_ROAD,             ///< remove a complete road (not a "half" one)
 	CMD_BUILD_ROAD,                   ///< build a "half" road
 	CMD_BUILD_ROAD_DEPOT,             ///< build a road depot
+	CMD_CONVERT_ROAD,                 ///< convert a road type
 
 	CMD_BUILD_AIRPORT,                ///< build an airport
 
@@ -395,6 +396,7 @@ enum CommandFlags {
 	CMD_CLIENT_ID = 0x080, ///< set p2 with the ClientID of the sending client.
 	CMD_DEITY     = 0x100, ///< the command may be executed by COMPANY_DEITY
 	CMD_STR_CTRL  = 0x200, ///< the command's string may contain control strings
+	CMD_NO_EST    = 0x400, ///< the command is never estimated.
 };
 DECLARE_ENUM_AS_BIT_SET(CommandFlags)
 

@@ -60,8 +60,8 @@ struct BaseStation : StationPool::PoolItem<&_station_pool> {
 	StringID string_id;             ///< Default name (town area) of station
 
 	Town *town;                     ///< The town this station is associated with
-	OwnerByte owner;                ///< The owner of this station
-	StationFacilityByte facilities; ///< The facilities that this station has
+	Owner owner;                    ///< The owner of this station
+	StationFacility facilities;     ///< The facilities that this station has
 
 	uint8 num_specs;                ///< Number of specs in the speclist
 	StationSpecList *speclist;      ///< List of station specs of this station
@@ -109,6 +109,12 @@ struct BaseStation : StationPool::PoolItem<&_station_pool> {
 	 * Update the coordinated of the sign (as shown in the viewport).
 	 */
 	virtual void UpdateVirtCoord() = 0;
+
+	virtual void MoveSign(TileIndex new_xy)
+	{
+		this->xy = new_xy;
+		this->UpdateVirtCoord();
+	}
 
 	/**
 	 * Get the tile area for a given station type.
@@ -214,7 +220,7 @@ struct SpecializedStation : public BaseStation {
 	 */
 	static inline T *GetIfValid(size_t index)
 	{
-		return IsValidID(index) ? Get(index) : NULL;
+		return IsValidID(index) ? Get(index) : nullptr;
 	}
 
 	/**

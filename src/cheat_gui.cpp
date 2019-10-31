@@ -186,9 +186,9 @@ struct CheatEntry {
 static const CheatEntry _cheats_ui[] = {
 	{SLE_INT32, STR_CHEAT_MONEY,           &_money_cheat_amount,                    &_cheats.money.been_used,            &ClickMoneyCheat         },
 	{SLE_UINT8, STR_CHEAT_CHANGE_COMPANY,  &_local_company,                         &_cheats.switch_company.been_used,   &ClickChangeCompanyCheat },
-	{SLE_BOOL,  STR_CHEAT_EXTRA_DYNAMITE,  &_cheats.magic_bulldozer.value,          &_cheats.magic_bulldozer.been_used,  NULL                     },
-	{SLE_BOOL,  STR_CHEAT_CROSSINGTUNNELS, &_cheats.crossing_tunnels.value,         &_cheats.crossing_tunnels.been_used, NULL                     },
-	{SLE_BOOL,  STR_CHEAT_NO_JETCRASH,     &_cheats.no_jetcrash.value,              &_cheats.no_jetcrash.been_used,      NULL                     },
+	{SLE_BOOL,  STR_CHEAT_EXTRA_DYNAMITE,  &_cheats.magic_bulldozer.value,          &_cheats.magic_bulldozer.been_used,  nullptr                     },
+	{SLE_BOOL,  STR_CHEAT_CROSSINGTUNNELS, &_cheats.crossing_tunnels.value,         &_cheats.crossing_tunnels.been_used, nullptr                     },
+	{SLE_BOOL,  STR_CHEAT_NO_JETCRASH,     &_cheats.no_jetcrash.value,              &_cheats.no_jetcrash.been_used,      nullptr                     },
 	{SLE_BOOL,  STR_CHEAT_SETUP_PROD,      &_cheats.setup_prod.value,               &_cheats.setup_prod.been_used,       &ClickSetProdCheat       },
 	{SLE_UINT8, STR_CHEAT_EDIT_MAX_HL,     &_settings_game.construction.max_heightlevel, &_cheats.edit_max_hl.been_used, &ClickChangeMaxHlCheat   },
 	{SLE_INT32, STR_CHEAT_CHANGE_DATE,     &_cur_year,                              &_cheats.change_date.been_used,      &ClickChangeDateCheat    },
@@ -221,7 +221,7 @@ struct CheatWindow : Window {
 		this->InitNested();
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_C_PANEL) return;
 
@@ -283,7 +283,7 @@ struct CheatWindow : Window {
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_C_PANEL) return;
 
@@ -330,7 +330,7 @@ struct CheatWindow : Window {
 		size->height = this->header_height + WD_FRAMERECT_TOP + WD_PAR_VSEP_NORMAL + WD_FRAMERECT_BOTTOM + this->line_height * lengthof(_cheats_ui);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_C_PANEL);
 		uint btn = (pt.y - wid->pos_y - WD_FRAMERECT_TOP - this->header_height) / this->line_height;
@@ -365,7 +365,7 @@ struct CheatWindow : Window {
 		switch (ce->type) {
 			case SLE_BOOL:
 				value ^= 1;
-				if (ce->proc != NULL) ce->proc(value, 0);
+				if (ce->proc != nullptr) ce->proc(value, 0);
 				break;
 
 			default:
@@ -384,16 +384,16 @@ struct CheatWindow : Window {
 		this->SetDirty();
 	}
 
-	virtual void OnTimeout()
+	void OnTimeout() override
 	{
 		this->clicked = 0;
 		this->SetDirty();
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
 		/* Was 'cancel' pressed or nothing entered? */
-		if (str == NULL || StrEmpty(str)) return;
+		if (str == nullptr || StrEmpty(str)) return;
 
 		const CheatEntry *ce = &_cheats_ui[clicked_widget];
 		int oldvalue = (int32)ReadValue(ce->variable, ce->type);

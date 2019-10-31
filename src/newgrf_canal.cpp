@@ -30,8 +30,8 @@ struct CanalScopeResolver : public ScopeResolver {
 	{
 	}
 
-	/* virtual */ uint32 GetRandomBits() const;
-	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
+	uint32 GetRandomBits() const override;
+	uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override;
 };
 
 /** Resolver object for canals. */
@@ -41,7 +41,7 @@ struct CanalResolverObject : public ResolverObject {
 	CanalResolverObject(CanalFeature feature, TileIndex tile,
 			CallbackID callback = CBID_NO_CALLBACK, uint32 callback_param1 = 0, uint32 callback_param2 = 0);
 
-	/* virtual */ ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0)
+	ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override
 	{
 		switch (scope) {
 			case VSG_SCOPE_SELF: return &this->canal_scope;
@@ -49,7 +49,7 @@ struct CanalResolverObject : public ResolverObject {
 		}
 	}
 
-	/* virtual */ const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
+	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
 };
 
 /* virtual */ uint32 CanalScopeResolver::GetRandomBits() const
@@ -108,7 +108,7 @@ struct CanalResolverObject : public ResolverObject {
 
 /* virtual */ const SpriteGroup *CanalResolverObject::ResolveReal(const RealSpriteGroup *group) const
 {
-	if (group->num_loaded == 0) return NULL;
+	if (group->num_loaded == 0) return nullptr;
 
 	return group->loaded[0];
 }
@@ -138,7 +138,7 @@ SpriteID GetCanalSprite(CanalFeature feature, TileIndex tile)
 {
 	CanalResolverObject object(feature, tile);
 	const SpriteGroup *group = object.Resolve();
-	if (group == NULL) return 0;
+	if (group == nullptr) return 0;
 
 	return group->GetResult();
 }

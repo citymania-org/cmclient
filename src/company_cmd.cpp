@@ -43,8 +43,8 @@
 
 void ClearEnginesHiddenFlagOfCompany(CompanyID cid);
 
-CompanyByte _local_company;   ///< Company controlled by the human player at this client. Can also be #COMPANY_SPECTATOR.
-CompanyByte _current_company; ///< Company currently doing an action.
+CompanyID _local_company;   ///< Company controlled by the human player at this client. Can also be #COMPANY_SPECTATOR.
+CompanyID _current_company; ///< Company currently doing an action.
 Colours _company_colours[MAX_COMPANIES];  ///< NOSAVE: can be determined from company structs.
 CompanyManagerFace _company_manager_face; ///< for company manager face storage in openttd.cfg
 uint _next_competitor_start;              ///< the number of ticks before the next AI is started
@@ -107,10 +107,8 @@ void SetLocalCompany(CompanyID new_company)
 	/* If actually changing to another company, several windows need closing */
 	bool switching_company = _local_company != new_company;
 
-#ifdef ENABLE_NETWORK
 	/* Delete the chat window, if you were team chatting. */
 	if (switching_company) InvalidateWindowData(WC_SEND_NETWORK_MSG, DESTTYPE_TEAM, _local_company);
-#endif
 
 	assert(IsLocalCompany());
 
@@ -198,7 +196,7 @@ bool CheckCompanyHasMoney(CommandCost &cost)
 {
 	if (cost.GetCost() > 0) {
 		const Company *c = Company::GetIfValid(_current_company);
-		if (c != NULL && cost.GetCost() > c->money) {
+		if (c != nullptr && cost.GetCost() > c->money) {
 			SetDParam(0, cost.GetCost());
 			cost.MakeError(STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY);
 			return false;
@@ -244,7 +242,7 @@ static void SubtractMoneyFromAnyCompany(Company *c, CommandCost cost)
 void SubtractMoneyFromCompany(CommandCost cost)
 {
 	Company *c = Company::GetIfValid(_current_company);
-	if (c != NULL) SubtractMoneyFromAnyCompany(c, cost);
+	if (c != nullptr) SubtractMoneyFromAnyCompany(c, cost);
 }
 
 /**
@@ -358,7 +356,7 @@ static void GenerateCompanyName(Company *c)
 
 	StringID str;
 	uint32 strp;
-	if (t->name == NULL && IsInsideMM(t->townnametype, SPECSTR_TOWNNAME_START, SPECSTR_TOWNNAME_LAST + 1)) {
+	if (t->name == nullptr && IsInsideMM(t->townnametype, SPECSTR_TOWNNAME_START, SPECSTR_TOWNNAME_LAST + 1)) {
 		str = t->townnametype - SPECSTR_TOWNNAME_START + SPECSTR_COMPANY_NAME_START;
 		strp = t->townnameparts;
 
@@ -544,7 +542,7 @@ void ResetCompanyLivery(Company *c)
  */
 Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 {
-	if (!Company::CanAllocateItem()) return NULL;
+	if (!Company::CanAllocateItem()) return nullptr;
 
 	/* we have to generate colour before this company is valid */
 	Colours colour = GenerateCompanyColour();
@@ -553,7 +551,7 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 	if (company == INVALID_COMPANY) {
 		c = new Company(STR_SV_UNNAMED, is_ai);
 	} else {
-		if (Company::IsValidID(company)) return NULL;
+		if (Company::IsValidID(company)) return nullptr;
 		c = new (company) Company(STR_SV_UNNAMED, is_ai);
 	}
 
@@ -567,7 +565,7 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 	c->share_owners[0] = c->share_owners[1] = c->share_owners[2] = c->share_owners[3] = INVALID_OWNER;
 
 	c->avail_railtypes = GetCompanyRailtypes(c->index);
-	c->avail_roadtypes = GetCompanyRoadtypes(c->index);
+	c->avail_roadtypes = GetCompanyRoadTypes(c->index);
 	c->inaugurated_year = _cur_year;
 	RandomCompanyManagerFaceBits(c->face, (GenderEthnicity)Random(), false, false); // create a random company manager face
 
@@ -598,11 +596,9 @@ void StartupCompanies()
 }
 
 /** Start a new competitor company if possible. */
-static void MaybeStartNewCompany()
+static bool MaybeStartNewCompany()
 {
-#ifdef ENABLE_NETWORK
-	if (_networking && Company::GetNumItems() >= _settings_client.network.max_companies) return;
-#endif /* ENABLE_NETWORK */
+	if (_networking && Company::GetNumItems() >= _settings_client.network.max_companies) return false;
 
 	Company *c;
 
@@ -615,8 +611,10 @@ static void MaybeStartNewCompany()
 	if (n < (uint)_settings_game.difficulty.max_no_competitors) {
 		/* Send a command to all clients to start up a new AI.
 		 * Works fine for Multiplayer and Singleplayer */
-		DoCommandP(0, CCA_NEW_AI | INVALID_COMPANY << 16, 0, CMD_COMPANY_CTRL);
+		return DoCommandP(0, CCA_NEW_AI | INVALID_COMPANY << 16, 0, CMD_COMPANY_CTRL);
 	}
+
+	return false;
 }
 
 /** Initialize the pool of companies. */
@@ -675,7 +673,7 @@ static void HandleBankruptcyTakeover(Company *c)
 	/* Did we ask everyone for bankruptcy? If so, bail out. */
 	if (c->bankrupt_asked == MAX_UVALUE(CompanyMask)) return;
 
-	Company *c2, *best = NULL;
+	Company *c2, *best = nullptr;
 	int32 best_performance = -1;
 
 	/* Ask the company with the highest performance history first */
@@ -711,17 +709,25 @@ void OnTick_Companies()
 	if (_game_mode == GM_EDITOR) return;
 
 	Company *c = Company::GetIfValid(_cur_company_tick_index);
-	if (c != NULL) {
+	if (c != nullptr) {
 		if (c->name_1 != 0) GenerateCompanyName(c);
 		if (c->bankrupt_asked != 0) HandleBankruptcyTakeover(c);
 	}
 
 	if (_next_competitor_start == 0) {
-		_next_competitor_start = AI::GetStartNextTime() * DAY_TICKS;
+		/* AI::GetStartNextTime() can return 0. */
+		_next_competitor_start = max(1, AI::GetStartNextTime() * DAY_TICKS);
 	}
 
-	if (AI::CanStartNew() && _game_mode != GM_MENU && --_next_competitor_start == 0) {
-		MaybeStartNewCompany();
+	if (_game_mode != GM_MENU && AI::CanStartNew() && --_next_competitor_start == 0) {
+		/* Allow multiple AIs to possibly start in the same tick. */
+		do {
+			if (!MaybeStartNewCompany()) break;
+
+			/* In networking mode, we can only send a command to start but it
+			 * didn't execute yet, so we cannot loop. */
+			if (_networking) break;
+		} while (AI::GetStartNextTime() == 0);
 	}
 
 	_cur_company_tick_index = (_cur_company_tick_index + 1) % MAX_COMPANIES;
@@ -756,14 +762,14 @@ void CompaniesYearlyLoop()
 /**
  * Fill the CompanyNewsInformation struct with the required data.
  * @param c the current company.
- * @param other the other company (use \c NULL if not relevant).
+ * @param other the other company (use \c nullptr if not relevant).
  */
 void CompanyNewsInformation::FillData(const Company *c, const Company *other)
 {
 	SetDParam(0, c->index);
 	GetString(this->company_name, STR_COMPANY_NAME, lastof(this->company_name));
 
-	if (other == NULL) {
+	if (other == nullptr) {
 		*this->other_company_name = '\0';
 	} else {
 		SetDParam(0, other->index);
@@ -785,9 +791,7 @@ void CompanyNewsInformation::FillData(const Company *c, const Company *other)
  */
 void CompanyAdminUpdate(const Company *company)
 {
-#ifdef ENABLE_NETWORK
 	if (_network_server) NetworkAdminCompanyUpdate(company);
-#endif /* ENABLE_NETWORK */
 }
 
 /**
@@ -797,9 +801,7 @@ void CompanyAdminUpdate(const Company *company)
  */
 void CompanyAdminRemove(CompanyID company_id, CompanyRemoveReason reason)
 {
-#ifdef ENABLE_NETWORK
 	if (_network_server) NetworkAdminCompanyRemove(company_id, (AdminCompanyRemoveReason)reason);
-#endif /* ENABLE_NETWORK */
 }
 
 /**
@@ -824,7 +826,6 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			/* This command is only executed in a multiplayer game */
 			if (!_networking) return CMD_ERROR;
 
-#ifdef ENABLE_NETWORK
 			/* Has the network client a correct ClientIndex? */
 			if (!(flags & DC_EXEC)) return CommandCost();
 
@@ -834,8 +835,8 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			/* When replaying the client ID is not a valid client; there
 			 * are actually no clients at all. However, the company has to
 			 * be created, otherwise we cannot rerun the game properly.
-			 * So only allow a NULL client info in that case. */
-			if (ci == NULL) return CommandCost();
+			 * So only allow a nullptr client info in that case. */
+			if (ci == nullptr) return CommandCost();
 #endif /* NOT DEBUG_DUMP_COMMANDS */
 
 			/* Delete multiplayer progress bar */
@@ -844,7 +845,7 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			Company *c = DoStartupNewCompany(false);
 
 			/* A new company could not be created, revert to being a spectator */
-			if (c == NULL) {
+			if (c == nullptr) {
 				if (_network_server) {
 					ci->client_playas = COMPANY_SPECTATOR;
 					NetworkUpdateClientInfo(ci->client_id);
@@ -868,7 +869,6 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			}
 
 			NetworkServerNewCompany(c, ci);
-#endif /* ENABLE_NETWORK */
 			break;
 		}
 
@@ -877,9 +877,7 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 
 			if (company_id != INVALID_COMPANY && (company_id >= MAX_COMPANIES || Company::IsValidID(company_id))) return CMD_ERROR;
 			Company *c = DoStartupNewCompany(true, company_id);
-#ifdef ENABLE_NETWORK
-			if (c != NULL) NetworkServerNewCompany(c, NULL);
-#endif /* ENABLE_NETWORK */
+			if (c != nullptr) NetworkServerNewCompany(c, nullptr);
 			break;
 		}
 
@@ -888,7 +886,7 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			if (reason >= CRR_END) return CMD_ERROR;
 
 			Company *c = Company::GetIfValid(company_id);
-			if (c == NULL) return CMD_ERROR;
+			if (c == nullptr) return CMD_ERROR;
 
 			if (!(flags & DC_EXEC)) return CommandCost();
 
@@ -1060,7 +1058,7 @@ static bool IsUniqueCompanyName(const char *name)
 	const Company *c;
 
 	FOR_ALL_COMPANIES(c) {
-		if (c->name != NULL && strcmp(c->name, name) == 0) return false;
+		if (c->name != nullptr && strcmp(c->name, name) == 0) return false;
 	}
 
 	return true;
@@ -1087,7 +1085,7 @@ CommandCost CmdRenameCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 	if (flags & DC_EXEC) {
 		Company *c = Company::Get(_current_company);
 		free(c->name);
-		c->name = reset ? NULL : stredup(text);
+		c->name = reset ? nullptr : stredup(text);
 		MarkWholeScreenDirty();
 		CompanyAdminUpdate(c);
 	}
@@ -1105,7 +1103,7 @@ static bool IsUniquePresidentName(const char *name)
 	const Company *c;
 
 	FOR_ALL_COMPANIES(c) {
-		if (c->president_name != NULL && strcmp(c->president_name, name) == 0) return false;
+		if (c->president_name != nullptr && strcmp(c->president_name, name) == 0) return false;
 	}
 
 	return true;
@@ -1134,11 +1132,11 @@ CommandCost CmdRenamePresident(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		free(c->president_name);
 
 		if (reset) {
-			c->president_name = NULL;
+			c->president_name = nullptr;
 		} else {
 			c->president_name = stredup(text);
 
-			if (c->name_1 == STR_SV_UNNAMED && c->name == NULL) {
+			if (c->name_1 == STR_SV_UNNAMED && c->name == nullptr) {
 				char buf[80];
 
 				seprintf(buf, lastof(buf), "%s Transport", text);
@@ -1155,13 +1153,13 @@ CommandCost CmdRenamePresident(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 
 /**
  * Get the service interval for the given company and vehicle type.
- * @param c The company, or NULL for client-default settings.
+ * @param c The company, or nullptr for client-default settings.
  * @param type The vehicle type to get the interval for.
  * @return The service interval.
  */
 int CompanyServiceInterval(const Company *c, VehicleType type)
 {
-	const VehicleDefaultSettings *vds = (c == NULL) ? &_settings_client.company.vehicle : &c->settings.vehicle;
+	const VehicleDefaultSettings *vds = (c == nullptr) ? &_settings_client.company.vehicle : &c->settings.vehicle;
 	switch (type) {
 		default: NOT_REACHED();
 		case VEH_TRAIN:    return vds->servint_trains;
@@ -1169,4 +1167,30 @@ int CompanyServiceInterval(const Company *c, VehicleType type)
 		case VEH_AIRCRAFT: return vds->servint_aircraft;
 		case VEH_SHIP:     return vds->servint_ships;
 	}
+}
+
+/**
+ * Get total sum of all owned road bits.
+ * @return Combined total road road bits.
+ */
+uint32 CompanyInfrastructure::GetRoadTotal() const
+{
+	uint32 total = 0;
+	for (RoadType rt = ROADTYPE_BEGIN; rt != ROADTYPE_END; rt++) {
+		if (RoadTypeIsRoad(rt)) total += this->road[rt];
+	}
+	return total;
+}
+
+/**
+ * Get total sum of all owned tram bits.
+ * @return Combined total of tram road bits.
+ */
+uint32 CompanyInfrastructure::GetTramTotal() const
+{
+	uint32 total = 0;
+	for (RoadType rt = ROADTYPE_BEGIN; rt != ROADTYPE_END; rt++) {
+		if (RoadTypeIsTram(rt)) total += this->road[rt];
+	}
+	return total;
 }

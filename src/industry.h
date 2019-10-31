@@ -18,6 +18,7 @@
 #include "industry_map.h"
 #include "industrytype.h"
 #include "tilearea_type.h"
+#include "station_base.h"
 
 
 typedef Pool<Industry, IndustryID, 64, 64000> IndustryPool;
@@ -41,6 +42,7 @@ enum ProductionLevels {
 struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	TileArea location;                                     ///< Location of the industry
 	Town *town;                                            ///< Nearest town
+	Station *neutral_station;                              ///< Associated neutral station
 	CargoID produced_cargo[INDUSTRY_NUM_OUTPUTS];          ///< 16 production cargo slots
 	uint16 produced_cargo_waiting[INDUSTRY_NUM_OUTPUTS];   ///< amount of cargo produced per cargo
 	uint16 incoming_cargo_waiting[INDUSTRY_NUM_INPUTS];    ///< incoming cargo waiting to be processed
@@ -54,23 +56,24 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	uint16 last_month_transported[INDUSTRY_NUM_OUTPUTS];   ///< total units transported per cargo in the last full month
 	uint16 counter;                                        ///< used for animation and/or production (if available cargo)
 
-	IndustryType type;                  ///< type of industry.
-	OwnerByte owner;                    ///< owner of the industry.  Which SHOULD always be (imho) OWNER_NONE
-	byte random_colour;                 ///< randomized colour of the industry, for display purpose
-	Year last_prod_year;                ///< last year of production
-	byte was_cargo_delivered;           ///< flag that indicate this has been the closest industry chosen for cargo delivery by a station. see DeliverGoodsToIndustry
+	IndustryType type;             ///< type of industry.
+	Owner owner;                   ///< owner of the industry.  Which SHOULD always be (imho) OWNER_NONE
+	byte random_colour;            ///< randomized colour of the industry, for display purpose
+	Year last_prod_year;           ///< last year of production
+	byte was_cargo_delivered;      ///< flag that indicate this has been the closest industry chosen for cargo delivery by a station. see DeliverGoodsToIndustry
 
-	PartOfSubsidyByte part_of_subsidy;  ///< NOSAVE: is this industry a source/destination of a subsidy?
+	PartOfSubsidy part_of_subsidy; ///< NOSAVE: is this industry a source/destination of a subsidy?
+	StationList stations_near;     ///< NOSAVE: List of nearby stations.
 
-	OwnerByte founder;                  ///< Founder of the industry
-	Date construction_date;             ///< Date of the construction of the industry
-	uint8 construction_type;            ///< Way the industry was constructed (@see IndustryConstructionType)
+	Owner founder;                 ///< Founder of the industry
+	Date construction_date;        ///< Date of the construction of the industry
+	uint8 construction_type;       ///< Way the industry was constructed (@see IndustryConstructionType)
 	Date last_cargo_accepted_at[INDUSTRY_NUM_INPUTS]; ///< Last day each cargo type was accepted by this industry
-	byte selected_layout;               ///< Which tile layout was used when creating the industry
+	byte selected_layout;          ///< Which tile layout was used when creating the industry
 
-	uint16 random;                      ///< Random value used for randomisation of all kinds of things
+	uint16 random;                 ///< Random value used for randomisation of all kinds of things
 
-	PersistentStorage *psa;             ///< Persistent storage for NewGRF industries.
+	PersistentStorage *psa;        ///< Persistent storage for NewGRF industries.
 
 	Industry(TileIndex tile = INVALID_TILE) : location(tile, 0, 0) {}
 	~Industry();

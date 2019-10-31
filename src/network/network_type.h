@@ -14,8 +14,6 @@
 
 #include "core/game.h"
 
-#ifdef ENABLE_NETWORK
-
 /** How many clients can we have */
 static const uint MAX_CLIENTS = 255;
 
@@ -40,7 +38,7 @@ enum NetworkVehicleType {
 };
 
 /** 'Unique' identifier to be given to clients */
-enum ClientID {
+enum ClientID : uint32 {
 	INVALID_CLIENT_ID = 0, ///< Client is not part of anything
 	CLIENT_ID_SERVER  = 1, ///< Servers always have this ID
 	CLIENT_ID_FIRST   = 2, ///< The first client ID
@@ -130,5 +128,4 @@ enum NetworkErrorCode {
 	NETWORK_ERROR_END,
 };
 
-#endif /* ENABLE_NETWORK */
 #endif /* NETWORK_TYPE_H */

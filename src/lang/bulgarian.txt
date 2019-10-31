@@ -237,6 +237,7 @@ STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Избе
 STR_BUTTON_SORT_BY                                              :{BLACK}Сортирай по
 STR_BUTTON_LOCATION                                             :{BLACK}Позиция
 STR_BUTTON_RENAME                                               :{BLACK}Преименувай
+STR_BUTTON_CATCHMENT                                            :{BLACK}Покритие
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Затвори прозореца
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Заглавие на прозорец - преместване на прозореца с мишката
@@ -919,6 +920,8 @@ STR_GAME_OPTIONS_CURRENCY_ZAR                                   :Южноафр�
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :друга...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Грузинско лари (ГЕЛ)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Ирански Риал (ИРР)
+STR_GAME_OPTIONS_CURRENCY_NTD                                   :Нов тайвански долар
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :Хонгконгски долар (HKD)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Движение по пътищата
@@ -1649,7 +1652,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Инд�
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Съперници
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Компютърни играчи
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Оригинален
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(препоръчва се)
 
@@ -1731,13 +1733,9 @@ STR_QUIT_NO                                                     :{BLACK}Не
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :ДОС
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2362,6 +2360,8 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Пост
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Построй тунел за трамваи. Shift строеж/цена за построяване
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Премахване на асфалтов път
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Превключване строене/разрушаване на трамвайни консктрукции
+
+STR_ROAD_NAME_ROAD                                              :Път
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Ориентация на гараж
@@ -3221,8 +3221,7 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Инфр
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Релсови части:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Сигнали
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Пътни части:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Път
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Трамвай
+STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}Трамвайни вагони:
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Водни части:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Канали
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Станции:
@@ -3297,6 +3296,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Безгруп�
 STR_GROUP_DEFAULT_SHIPS                                         :Безгрупни кораби
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Безгрупни самолети
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Групи - Щракни на група за да видиш списък на всички превозни средства от тази група
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Щракни да създадеш група
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Изтрий избраната група
@@ -3320,10 +3320,14 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Нови еле
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Нови Машини за Монорелсов път
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Нови Машини за Магниторелсов път
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Нови ЖП превозни средства
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Нова кола
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Нови ЖП превозни средства
+STR_BUY_VEHICLE_ROAD_VEHICLE_ALL_CAPTION                        :Ново пътно превозно средство
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Нови Кораби
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Нова летателна машина
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Цена: {GOLD}{CURRENCY_LONG}{BLACK} Тегло: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Скорост: {GOLD}{VELOCITY}{BLACK} Мощност: {GOLD}{POWER}
@@ -3336,8 +3340,10 @@ STR_PURCHASE_INFO_REFITTABLE                                    :(преустр
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Модел: {GOLD}{NUM}{BLACK} Живот: {GOLD}{COMMA} години
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Макс. надеждност: {GOLD}{COMMA}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}Цена: {GOLD}{CURRENCY_LONG}
+STR_PURCHASE_INFO_COST_REFIT                                    :{BLACK}Цена: {GOLD}{CURRENCY_LONG}{BLACK} (Цена за преустройване: {GOLD}{CURRENCY_LONG}{BLACK})
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Тегло: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Цема {GOLD}{CURRENCY_LONG}{BLACK} Скорост: {GOLD}{VELOCITY}
+STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}Цена: {GOLD}{CURRENCY_LONG}{BLACK} (Цена за преустройване: {GOLD}{CURRENCY_LONG}{BLACK}) Скорост: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}Капацитет: {GOLD}{CARGO_LONG}, {CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Вагони с мощност: {GOLD}+{POWER}{BLACK} Тегло: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Преобразуваем на: {GOLD}{STRING}
@@ -3357,10 +3363,14 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Купи
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Купи Кораб
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Купи самолет
 
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_BUTTON                   :{BLACK}Купуване и преустройване на кораб
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}Купуване и преустройване на самолет
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Купи маркираният влак. Shift строеж/цена за построяване
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Купи посоченото МПС. Shift строеж/цена за построяване
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Купи посоченият кораб. Shift строеж/цена за построяване
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Купи посоченият самолет. Shift строеж/цена за построяване
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Преименувай
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Преименувай
@@ -3470,12 +3480,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Иск�
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Съобщение от производител
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Създадохме нов {STRING}.{}Интересувате ли се от изключителното право да използвате това ПС за една година, за да видим как то работи преди да го пуснем на пазара за масова употреба?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :локомотив за двурелсов път
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :автомобил
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :самолет
-STR_ENGINE_PREVIEW_SHIP                                         :кораб
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :локомотив за еднорелсов път
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :локомотив за магниторелсов път
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :автомобил
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :самолет
+STR_ENGINE_PREVIEW_SHIP                                         :кораб
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Цена: {CURRENCY_LONG} Тегло: {WEIGHT_SHORT}{}Скорост: {VELOCITY}  Мощност: {POWER}{}Разход: {CURRENCY_LONG}/г.{}Капацитет: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Цена: {CURRENCY_LONG} Тегло: {WEIGHT_SHORT}{}Скорост: {VELOCITY}  Мощност: {POWER}  Макс. Т.С.: {6:FORCE}{}Експлоатационни разходи: {4:CURRENCY_LONG}/год.{}Вместимост: {5:CARGO_LONG}
@@ -3511,13 +3524,16 @@ STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Прев
 STR_REPLACE_ENGINES                                             :Двигатели
 STR_REPLACE_WAGONS                                              :Вагони
 STR_REPLACE_ALL_RAILTYPE                                        :Всички ЖП композиции
+STR_REPLACE_ALL_ROADTYPE                                        :Всички пътни превозни средства
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Избор на ЖП линия с която да се заменят локомотивите
+STR_REPLACE_HELP_ROADTYPE                                       :Изберете типа път, за който искате да подмените двигателите.
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Показване с кой двигател се заменя ляво избрания, ако има
 STR_REPLACE_RAIL_VEHICLES                                       :ЖП влакове
 STR_REPLACE_ELRAIL_VEHICLES                                     :Електрически локомотиви
 STR_REPLACE_MONORAIL_VEHICLES                                   :Монорелсови локомотиви
 STR_REPLACE_MAGLEV_VEHICLES                                     :Маглев влакове
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Премахване на вагон: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Автоматичната замяна ще запази дължината на влака като премахне вагони (започвайки от предните), ако замяната довежда до по-дълъг влак.
@@ -4236,7 +4252,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Първ
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Неподходящ за употреба релсов път
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Първо трябва да бъде премахнат релсовия път
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Пътят е еднопосочен или блокиран
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Пресичането на различни видове ЖП линии не е позволено.
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Пресичането на различни видове ЖП линии не е позволено.
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Тук не може да бъдат поставени сигнали...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Тук не могат да бъдат построени ЖП релси...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Не може да премахнеш тези ЖП релси...
@@ -4256,6 +4272,8 @@ STR_ERROR_CAN_T_REMOVE_ROAD_FROM                                :{WHITE}Пътя
 STR_ERROR_CAN_T_REMOVE_TRAMWAY_FROM                             :{WHITE}Не може да се разруши трамвайната линия...
 STR_ERROR_THERE_IS_NO_ROAD                                      :{WHITE}... тук няма път
 STR_ERROR_THERE_IS_NO_TRAMWAY                                   :{WHITE}... няма трамвайни линии
+STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Няма подходящ път
+STR_ERROR_INCOMPATIBLE_TRAMWAY                                  :{WHITE}... несъвместима трамвайна линия
 
 # Waterway construction errors
 STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}Тук не е възможно да се прокопае канал...

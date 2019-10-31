@@ -24,7 +24,7 @@ char *_hotkeys_file;
  * List of all HotkeyLists.
  * This is a pointer to ensure initialisation order with the various static HotkeyList instances.
  */
-static SmallVector<HotkeyList*, 16> *_hotkey_lists = NULL;
+static std::vector<HotkeyList*> *_hotkey_lists = nullptr;
 
 /** String representation of a keycode */
 struct KeycodeNames {
@@ -203,7 +203,7 @@ const char *SaveKeycodes(const Hotkey *hotkey)
 {
 	static char buf[128];
 	buf[0] = '\0';
-	for (uint i = 0; i < hotkey->keycodes.Length(); i++) {
+	for (uint i = 0; i < hotkey->keycodes.size(); i++) {
 		const char *str = KeycodeToString(hotkey->keycodes[i]);
 		if (i > 0) strecat(buf, ",", lastof(buf));
 		strecat(buf, str, lastof(buf));
@@ -248,19 +248,19 @@ Hotkey::Hotkey(const uint16 *default_keycodes, const char *name, int num) :
  */
 void Hotkey::AddKeycode(uint16 keycode)
 {
-	this->keycodes.Include(keycode);
+	include(this->keycodes, keycode);
 }
 
 HotkeyList::HotkeyList(const char *ini_group, Hotkey *items, GlobalHotkeyHandlerFunc global_hotkey_handler) :
 	global_hotkey_handler(global_hotkey_handler), ini_group(ini_group), items(items)
 {
-	if (_hotkey_lists == NULL) _hotkey_lists = new SmallVector<HotkeyList*, 16>();
-	*_hotkey_lists->Append() = this;
+	if (_hotkey_lists == nullptr) _hotkey_lists = new std::vector<HotkeyList*>();
+	_hotkey_lists->push_back(this);
 }
 
 HotkeyList::~HotkeyList()
 {
-	_hotkey_lists->Erase(_hotkey_lists->Find(this));
+	_hotkey_lists->erase(std::find(_hotkey_lists->begin(), _hotkey_lists->end(), this));
 }
 
 /**
@@ -270,11 +270,11 @@ HotkeyList::~HotkeyList()
 void HotkeyList::Load(IniFile *ini)
 {
 	IniGroup *group = ini->GetGroup(this->ini_group);
-	for (Hotkey *hotkey = this->items; hotkey->name != NULL; ++hotkey) {
+	for (Hotkey *hotkey = this->items; hotkey->name != nullptr; ++hotkey) {
 		IniItem *item = group->GetItem(hotkey->name, false);
-		if (item != NULL) {
-			hotkey->keycodes.Clear();
-			if (item->value != NULL) ParseHotkeys(hotkey, item->value);
+		if (item != nullptr) {
+			hotkey->keycodes.clear();
+			if (item->value != nullptr) ParseHotkeys(hotkey, item->value);
 		}
 	}
 }
@@ -286,7 +286,7 @@ void HotkeyList::Load(IniFile *ini)
 void HotkeyList::Save(IniFile *ini) const
 {
 	IniGroup *group = ini->GetGroup(this->ini_group);
-	for (const Hotkey *hotkey = this->items; hotkey->name != NULL; ++hotkey) {
+	for (const Hotkey *hotkey = this->items; hotkey->name != nullptr; ++hotkey) {
 		IniItem *item = group->GetItem(hotkey->name, true);
 		item->SetValue(SaveKeycodes(hotkey));
 	}
@@ -300,8 +300,10 @@ void HotkeyList::Save(IniFile *ini) const
  */
 int HotkeyList::CheckMatch(uint16 keycode, bool global_only) const
 {
-	for (const Hotkey *list = this->items; list->name != NULL; ++list) {
-		if (list->keycodes.Contains(keycode | WKC_GLOBAL_HOTKEY) || (!global_only && list->keycodes.Contains(keycode))) {
+	for (const Hotkey *list = this->items; list->name != nullptr; ++list) {
+		auto begin = list->keycodes.begin();
+		auto end = list->keycodes.end();
+		if (std::find(begin, end, keycode | WKC_GLOBAL_HOTKEY) != end || (!global_only && std::find(begin, end, keycode) != end)) {
 			return list->num;
 		}
 	}
@@ -314,11 +316,11 @@ static void SaveLoadHotkeys(bool save)
 	IniFile *ini = new IniFile();
 	ini->LoadFromDisk(_hotkeys_file, NO_DIRECTORY);
 
-	for (HotkeyList **list = _hotkey_lists->Begin(); list != _hotkey_lists->End(); ++list) {
+	for (HotkeyList *list : *_hotkey_lists) {
 		if (save) {
-			(*list)->Save(ini);
+			list->Save(ini);
 		} else {
-			(*list)->Load(ini);
+			list->Load(ini);
 		}
 	}
 
@@ -341,11 +343,11 @@ void SaveHotkeysToConfig()
 
 void HandleGlobalHotkeys(WChar key, uint16 keycode)
 {
-	for (HotkeyList **list = _hotkey_lists->Begin(); list != _hotkey_lists->End(); ++list) {
-		if ((*list)->global_hotkey_handler == NULL) continue;
+	for (HotkeyList *list : *_hotkey_lists) {
+		if (list->global_hotkey_handler == nullptr) continue;
 
-		int hotkey = (*list)->CheckMatch(keycode, true);
-		if (hotkey >= 0 && ((*list)->global_hotkey_handler(hotkey) == ES_HANDLED)) return;
+		int hotkey = list->CheckMatch(keycode, true);
+		if (hotkey >= 0 && (list->global_hotkey_handler(hotkey) == ES_HANDLED)) return;
 	}
 }
 

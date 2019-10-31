@@ -1523,7 +1523,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Ídnað
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Kappingarneytar
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Teldu spælarir
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Upprunaligur
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Viðmældur)
 
@@ -1591,13 +1590,9 @@ STR_QUIT_NO                                                     :{BLACK}Nei
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2167,6 +2162,7 @@ STR_BRIDGE_TUBULAR_SILICON                                      :Rør, silikon
 # Road construction toolbar
 STR_ROAD_TOOLBAR_ROAD_CONSTRUCTION_CAPTION                      :{WHITE}Vegagerð
 STR_ROAD_TOOLBAR_TRAM_CONSTRUCTION_CAPTION                      :{WHITE}Sporvogna bygging
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Akfars goymslu ætt
@@ -2894,8 +2890,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Innanker
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Jarnbreyta pettir:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Tekin
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Vega pettir:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Vegur
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Sporvognur
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Vatn puntar:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Siglingarennir
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Støðir:
@@ -2968,6 +2962,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Óbólkaði akf
 STR_GROUP_DEFAULT_SHIPS                                         :Óbólkaði skip
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Óbólkaði flogfør
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Bólkar - trýst á ein bólk fyri at síggja øll flutningstól í hesum bólki
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Trýst fyri at gera ein bólk
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Strika valda bólkin
@@ -2987,10 +2982,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Nýggj ravmagns
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Nýggj einsporaði jarnbreyta flutningstól
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Nýggj maglev flutningstól
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Nýggj jarnbreyta flutningstól
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Nýggj akfør
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Nýggj jarnbreyta flutningstól
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Nýggj skip
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Nýggj flogfør
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Kostnaður: {GOLD}{CURRENCY_LONG}{BLACK} Vekt: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Ferð: {GOLD}{VELOCITY}{BLACK} Megi: {GOLD}{POWER}
@@ -3023,10 +3021,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Keyp akf
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Keyp skip
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Keyp flogfar
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Keyp undirstrikaða tok flutningstóli. Shift+trýst vísur kostnaðar meting uttan at keypa
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Keyp undirstrikaða akfari. Shift+trýst vísur kostnaðar meting uttan at keypa
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Keyp undirstrikaða skipi. Shift+trýst vísur kostnaðar meting uttan at keypa
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Keyp undirstrikaða flogfari. Shift+trýst vísur kostnaðar meting uttan at keypa
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Navngev
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Navngev
@@ -3124,12 +3124,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Tú er 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Boð frá framleiðarinum av flutningstólinum
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Vit hava júst sniðgivi eitt nýtt {STRING} - hevði tú havt áhuga í einkarrættindum at nýtt hetta flutningstóli í eitt ár, so vit kunnu síggja hvussu ta virkar áðrenn vit gera ta tøkt á marknaðinum?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :jarnbreyta lokomotiv
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=n}akfar
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=n}flogfar
-STR_ENGINE_PREVIEW_SHIP                                         :skip
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :einsporað lokomotiv
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :maglev lokomotiv
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=n}akfar
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=n}flogfar
+STR_ENGINE_PREVIEW_SHIP                                         :skip
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kostnaður: {CURRENCY_LONG} Vekt: {WEIGHT_SHORT}{}Ferð: {VELOCITY}  Megi: {POWER}{}Rakstrar kostnaður: {CURRENCY_LONG}/ár{}Pláss: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Kostnaður: {CURRENCY_LONG} Vekt: {WEIGHT_SHORT}{}Ferð: {VELOCITY}  Megi: {POWER}  Maks. D.Ó.: {6:FORCE}{}Rakstrar kostnaður: {4:CURRENCY_LONG}/ár{}Pláss: {5:CARGO_LONG}
@@ -3166,6 +3169,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Jarnbreyta flut
 STR_REPLACE_ELRAIL_VEHICLES                                     :Ravmagns jarnbreyta flutningstól
 STR_REPLACE_MONORAIL_VEHICLES                                   :Einsporaði jarnbreyta flutningstól
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglev flutningstól
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vogn burturrudding: {ORANGE}{STRING}
 
@@ -3792,7 +3796,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Neyðugt
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Ikki hóskandi jarnbreyt
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Neyðugt at beina burtur jarnbreyt fyrst
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Vegur er einvegis ella blokeraður
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Javnir krossvegir ikki loyvdir fyri hetta slagi av tok bana
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Javnir krossvegir ikki loyvdir fyri hetta slagi av tok bana
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Kann ikki byggja jarnbreytatekin her...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Kann ikki byggja jarnbreyt her...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Kann ikki beina burtur jarnbreyt hagani...

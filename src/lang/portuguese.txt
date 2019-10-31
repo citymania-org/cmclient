@@ -1185,6 +1185,8 @@ STR_CONFIG_SETTING_AUTOSLOPE                                    :Permite altera�
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Permite alteração de terra sob edifícios e vias sem os remover
 STR_CONFIG_SETTING_CATCHMENT                                    :Dimensionamento mais realista de áreas de abrangência: {STRING}
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :Haver diferentes áreas de cobertura para diferentes tipos de estações e aeroportos
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES                     :Estações da companhia podem servir industrias equipadas com estações neutras: {STRING}
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES_HELPTEXT            :Quando activo, industrias com estações incluídas (com as Petrolíferas) podem ser servidas por estações da companhia construídas nas redondezas. Quando inactivo, estas industrias só podem ser servidas pela sua própria estação. Qualquer estação da companhia não poderá servir a industria, nem a estação incluída poder servir outra entidade senão a própria industria
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :Permite remover mais estradas, pontes e túneis detidos pela cidade: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :Facilitar a remoçar de edifícios e infraestruturas detidas pela localidade
 STR_CONFIG_SETTING_TRAIN_LENGTH                                 :Tamanho máximo de comboios: {STRING}
@@ -1201,8 +1203,8 @@ STR_CONFIG_SETTING_TRAIN_SLOPE_STEEPNESS_HELPTEXT               :Ângulo de incl
 STR_CONFIG_SETTING_PERCENTAGE                                   :{COMMA}%
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS                 :Ângulo de inclínação para veículos rodoviários: {STRING}
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS_HELPTEXT        :Declive de um quadrado inclinado para um veiculo de estrada. Valores mais altos tornam mais difícil de subir.
-STR_CONFIG_SETTING_FORBID_90_DEG                                :Proibir comboios e barcos fazer curvas de 90º: {STRING}
-STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :Curvas de 90 graus ocorrem quando uma pista horizontal é directamente seguida por outra vertical num quadrado adjacente, fazendo com que o combóio vire 90 graus quando atravessa a fronteira dos quadrados, ao invés dos habituais 45 graus para outras combinações de pistas. Também se aplica ao raio de curvatura dos navios
+STR_CONFIG_SETTING_FORBID_90_DEG                                :Proibir comboios fazer curvas de 90º: {STRING}
+STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :Curvas de 90 graus ocorrem quando uma pista horizontal é directamente seguida por outra vertical num quadrado adjacente, fazendo com que o combóio vire 90 graus quando atravessa a fronteira dos quadrados, ao invés dos habituais 45 graus para outras combinações de pistas.
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Permitir juntar estações não adjacentes: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Permite adicionar novas partes a uma estação sem tocar nas partes já existentes. Requer pressionar CTRL+click para adicionar as novas partes
 STR_CONFIG_SETTING_INFLATION                                    :Inflação: {STRING}
@@ -1258,8 +1260,8 @@ STR_CONFIG_SETTING_PLANE_SPEED                                  :Fator de veloci
 STR_CONFIG_SETTING_PLANE_SPEED_HELPTEXT                         :Set the relative speed of planes compared to other vehicle types, to reduce the amount of income of transport by aircraft
 STR_CONFIG_SETTING_PLANE_SPEED_VALUE                            :1 / {COMMA}
 STR_CONFIG_SETTING_PLANE_CRASHES                                :Número de acidentes de aeronaves: {STRING}
-STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Indicar a hipótese da ocorrência de um acidente aéreo
-STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Nenhum
+STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Indicar a hipótese da ocorrência de um acidente aéreo.{}* As aeronaves maiores tem um risco acrescido a despenhar quando aterram em aeroportos pequenos
+STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Nenhum*
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :Reduzido
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :Normal
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Permite estações de passagem em estradas das localidades: {STRING}
@@ -1584,6 +1586,10 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Activar esta pr
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Proibido
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :Permitido
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Permitido, estrutura personalizada da localidade
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :Geração de carga citadina: {STRING}
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Quantidade de carga produzida por casas em localidades, relativa à população total da mesma.{}Crescimento quadrático: Uma localidade do dobro do tamanho gera 4x mais passageiros.{}Crescimento linear: Uma localidade do dobro do tamanho gera 2x a quantidade de passageiros.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_ORIGINAL                   :Quadrático (original)
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Linear
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Criação de árvores no decorrer do jogo: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Controlar o aparecimento aleatório de árvores durante o jogo. Isto poderá afectar indústrias que dependem do crescimento de árvores, como as madeireiras
@@ -1711,7 +1717,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distrib
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Oponentes
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Jogadores Computador
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Recomendado)
 
@@ -1795,13 +1800,9 @@ STR_QUIT_NO                                                     :{BLACK}Não
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2139,7 +2140,7 @@ STR_NETWORK_CHAT_ALL                                            :[Todos] {STRING
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}Introduza a mensagem para os outros jogadores
 
 # Network messages
-STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}Não foram encontradas interfaces de rede ou o jogo foi compilado sem ENABLE_NETWORK
+STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}Não foram encontradas interfaces de rede
 STR_NETWORK_ERROR_NOSERVER                                      :{WHITE}Não foram encontrados jogos de rede
 STR_NETWORK_ERROR_NOCONNECTION                                  :{WHITE}O servidor não respondeu ao pedido
 STR_NETWORK_ERROR_NEWGRF_MISMATCH                               :{WHITE}Impossível ligar devido a incompatibilidade de NewGRF
@@ -2431,6 +2432,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Construi
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Construir túnel para eléctricos. Shift alterna contruir/mostrar custo estimado
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Alternar entre construir/remover estradas
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Alternar construir/remover linhas de eléctricos e sinais
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Orientação do Depósito
@@ -3356,8 +3358,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infraest
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Secções de caminho-de-ferro:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Sinais
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Secções de estrada:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Estrada
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Via para elétricos
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Blocos de água:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Canais
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Estações:
@@ -3437,6 +3437,8 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Veículos rodov
 STR_GROUP_DEFAULT_SHIPS                                         :Barcos sem grupo
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Aeronaves sem grupo
 
+STR_GROUP_COUNT_WITH_SUBGROUP                                   :{TINY_FONT}{COMMA} (+{COMMA})
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupos - clique num grupo para listar todos os veículos contidos
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Clique para criar um grupo
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Remover o grupo seleccionado
@@ -3463,12 +3465,16 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Novos Veículos
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Novos Veículos Monocarril
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Novos Veículos Maglev
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Novos Veículos Ferroviários
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Novos Veículos Rodoviários
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Novos Veículos Ferroviários
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Novos Barcos
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Nova Aeronave
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Custo: {GOLD}{CURRENCY_LONG}{BLACK} Peso: {GOLD}{WEIGHT_SHORT}
+STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}Custo: {GOLD}{CURRENCY_LONG}{BLACK} (Custo da conversão: {GOLD}{CURRENCY_LONG}{BLACK}) Peso: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Velocidade: {GOLD}{VELOCITY}{BLACK} Potência: {GOLD}{POWER}
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}Velocidade: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}Velocidade no oceano: {GOLD}{VELOCITY}
@@ -3479,8 +3485,10 @@ STR_PURCHASE_INFO_REFITTABLE                                    :(adaptável)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Concebido: {GOLD}{NUM}{BLACK} Vida útil: {GOLD}{COMMA} ano{P "" s}
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Fiabilidade máxima: {GOLD}{COMMA}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}Custo: {GOLD}{CURRENCY_LONG}
+STR_PURCHASE_INFO_COST_REFIT                                    :{BLACK}Custo: {GOLD}{CURRENCY_LONG}{BLACK} (Custo da adaptação: {GOLD}{CURRENCY_LONG}{BLACK})
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Peso: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Custo: {GOLD}{CURRENCY_LONG}{BLACK} Velocidade: {GOLD}{VELOCITY}
+STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}Custo: {GOLD}{CURRENCY_LONG}{BLACK} (Custo de conversão: {GOLD}{CURRENCY_LONG}{BLACK}) Velocidade: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}Capacidade: {GOLD}{CARGO_LONG}, {CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Vagões Motorizados: {GOLD}+{POWER}{BLACK} Peso: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Reconvertível para: {GOLD}{STRING}
@@ -3501,10 +3509,20 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Comprar 
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Comprar Barco
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Comprar Aeronave
 
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_BUTTON                  :{BLACK}Comprar e Reconverter veiculo
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_BUTTON           :{BLACK}Comprar e Reconverter Veículo
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_BUTTON                   :{BLACK}Comprar e Converter Barco
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}Comprar e Adaptar Carga da Aeronave
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Comprar o veículo ferroviário seleccionado. Shift+Clique mostra estimativa de custo, sem comprar
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Comprar o veículo rodoviário seleccionado. Shift+Clique mostra estimativa de custo, sem comprar
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Comprar barco seleccionado. Shift+Clique mostra estimativa de custo, sem comprar
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Comprar aeronave seleccionada. Shift+Clique mostra estimativa de custo, sem comprar
+
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}Comprar e converter veículo ferroviário seleccionado. Shift+Clique mostra estimativa de custo, sem comprar
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_TOOLTIP          :Comprar e converter veículo rodoviário seleccionado. Shift+Clique mostra estimativa de custo, sem comprar
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_TOOLTIP                  :{BLACK}Comprar e converter barco seleccionado. Shift+Clique mostra estimativa de custo, sem comprar
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_TOOLTIP              :{BLACK}Comprar e converter aeronave seleccionada. Shift+Clique mostra estimativa de custo, sem comprar
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Renomear
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Renomear
@@ -3614,12 +3632,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Está p
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Mensagem de um fabricante de veículos
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Projectámos um novo modelo de {STRING} - gostaria de ter um ano de exclusividade de uso deste veículo, de modo a que possamos avaliar o seu desempenho antes de o disponibilizar globalmente?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :locomotiva ferroviária
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :veículo rodoviário
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :aeronave
-STR_ENGINE_PREVIEW_SHIP                                         :barco
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :locomotiva monocarril
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :locomotiva maglev
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :veículo rodoviário
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :aeronave
+STR_ENGINE_PREVIEW_SHIP                                         :barco
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Custo: {CURRENCY_LONG} Peso: {WEIGHT_SHORT}{}Velocidade Máx.: {VELOCITY}  Potência: {POWER}{}Custo de Circulação: {CURRENCY_LONG}/ano{}Capacidade: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Custo: {CURRENCY_LONG} Peso: {WEIGHT_SHORT}{}Velocidade Máx.: {VELOCITY}  Potência: {POWER}  F.T. Máx.: {6:FORCE}{}Custo de Circulação: {4:CURRENCY_LONG}/ano{}Capacidade: {5:CARGO_LONG}
@@ -3665,6 +3686,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Comboios
 STR_REPLACE_ELRAIL_VEHICLES                                     :Comboios eléctricos
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monocarris
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglevs
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Remover vagões: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Forçar a substituição automática a manter o comprimento do comboio, removendo vagões (do início), nas situações em que a substituição da locomotiva pode resultar num comboio mais comprido.
@@ -4387,7 +4409,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Deverá 
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Tipo de linha não apropriado
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Deverá remover a linha férrea primeiro
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Estrada de sentido único ou bloqueada
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Passagens de nível não são permitidas para este tipo de linha
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Passagens de nível não são permitidas para este tipo de linha
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Não é possível construir sinais aqui...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Não é possível construir linha férrea aqui...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Não é possível remover linha férrea daqui...
@@ -4459,6 +4481,7 @@ STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}Impossí
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}Impossível remover este grupo...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}Impossível renomear o grupo...
 STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}Não é possível definir grupo parente...
+STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION                      :{WHITE}... não são permitidos ciclos na hierarquia de grupos
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}Não é possível remover todos os veículos deste grupo...
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}Impossível adicionar o veículo a este grupo...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}Impossível adicionar veículos com ordens partilhadas ao grupo...

@@ -11,8 +11,6 @@
  * @file tcp_game.cpp Basic functions to receive and send TCP packets for game purposes.
  */
 
-#ifdef ENABLE_NETWORK
-
 #include "../../stdafx.h"
 
 #include "../network.h"
@@ -28,7 +26,7 @@
  * Create a new socket for the game connection.
  * @param s The socket to connect with.
  */
-NetworkGameSocketHandler::NetworkGameSocketHandler(SOCKET s) : info(NULL), client_id(INVALID_CLIENT_ID),
+NetworkGameSocketHandler::NetworkGameSocketHandler(SOCKET s) : info(nullptr), client_id(INVALID_CLIENT_ID),
 		last_frame(_frame_counter), last_frame_server(_frame_counter), last_packet(_realtime_tick)
 {
 	this->sock = s;
@@ -136,7 +134,7 @@ NetworkRecvStatus NetworkGameSocketHandler::HandlePacket(Packet *p)
 NetworkRecvStatus NetworkGameSocketHandler::ReceivePackets()
 {
 	Packet *p;
-	while ((p = this->ReceivePacket()) != NULL) {
+	while ((p = this->ReceivePacket()) != nullptr) {
 		NetworkRecvStatus res = HandlePacket(p);
 		delete p;
 		if (res != NETWORK_RECV_STATUS_OKAY) return res;
@@ -199,5 +197,3 @@ NetworkRecvStatus NetworkGameSocketHandler::Receive_SERVER_MOVE(Packet *p) { ret
 NetworkRecvStatus NetworkGameSocketHandler::Receive_CLIENT_MOVE(Packet *p) { return this->ReceiveInvalidPacket(PACKET_CLIENT_MOVE); }
 NetworkRecvStatus NetworkGameSocketHandler::Receive_SERVER_COMPANY_UPDATE(Packet *p) { return this->ReceiveInvalidPacket(PACKET_SERVER_COMPANY_UPDATE); }
 NetworkRecvStatus NetworkGameSocketHandler::Receive_SERVER_CONFIG_UPDATE(Packet *p) { return this->ReceiveInvalidPacket(PACKET_SERVER_CONFIG_UPDATE); }
-
-#endif /* ENABLE_NETWORK */

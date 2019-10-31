@@ -43,13 +43,13 @@ typedef uint32 TileOrStationID;
  */
 struct CargoPacket : CargoPacketPool::PoolItem<&_cargopacket_pool> {
 private:
-	Money feeder_share;         ///< Value of feeder pickup to be paid for on delivery of cargo.
-	uint16 count;               ///< The amount of cargo in this packet.
-	byte days_in_transit;       ///< Amount of days this packet has been in transit.
-	SourceTypeByte source_type; ///< Type of \c source_id.
-	SourceID source_id;         ///< Index of source, INVALID_SOURCE if unknown/invalid.
-	StationID source;           ///< The station where the cargo came from first.
-	TileIndex source_xy;        ///< The origin of the cargo (first station in feeder chain).
+	Money feeder_share;     ///< Value of feeder pickup to be paid for on delivery of cargo.
+	uint16 count;           ///< The amount of cargo in this packet.
+	byte days_in_transit;   ///< Amount of days this packet has been in transit.
+	SourceType source_type; ///< Type of \c source_id.
+	SourceID source_id;     ///< Index of source, INVALID_SOURCE if unknown/invalid.
+	StationID source;       ///< The station where the cargo came from first.
+	TileIndex source_xy;    ///< The origin of the cargo (first station in feeder chain).
 	union {
 		TileOrStationID loaded_at_xy; ///< Location where this cargo has been loaded into the vehicle.
 		TileOrStationID next_station; ///< Station where the cargo wants to go next.
@@ -286,7 +286,7 @@ protected:
 	typedef CargoList<VehicleCargoList, CargoPacketList> Parent;
 
 	Money feeder_share;                     ///< Cache for the feeder share.
-	uint action_counts[NUM_MOVE_TO_ACTION]; ///< Counts of cargo to be transfered, delivered, kept and loaded.
+	uint action_counts[NUM_MOVE_TO_ACTION]; ///< Counts of cargo to be transferred, delivered, kept and loaded.
 
 	template<class Taction>
 	void ShiftCargo(Taction action);
@@ -549,7 +549,7 @@ public:
 
 	uint Reserve(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationIDStack next);
 	uint Load(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationIDStack next);
-	uint Truncate(uint max_move = UINT_MAX, StationCargoAmountMap *cargo_per_source = NULL);
+	uint Truncate(uint max_move = UINT_MAX, StationCargoAmountMap *cargo_per_source = nullptr);
 	uint Reroute(uint max_move, StationCargoList *dest, StationID avoid, StationID avoid2, const GoodsEntry *ge);
 
 	/**

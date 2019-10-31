@@ -69,9 +69,9 @@ assert_compile(lengthof(_orig_rail_vehicle_info) + lengthof(_orig_road_vehicle_i
 const uint EngineOverrideManager::NUM_DEFAULT_ENGINES = _engine_counts[VEH_TRAIN] + _engine_counts[VEH_ROAD] + _engine_counts[VEH_SHIP] + _engine_counts[VEH_AIRCRAFT];
 
 Engine::Engine() :
-	name(NULL),
+	name(nullptr),
 	overrides_count(0),
-	overrides(NULL)
+	overrides(nullptr)
 {
 }
 
@@ -162,7 +162,7 @@ bool Engine::IsEnabled() const
 uint32 Engine::GetGRFID() const
 {
 	const GRFFile *file = this->GetGRF();
-	return file == NULL ? 0 : file->grfid;
+	return file == nullptr ? 0 : file->grfid;
 }
 
 /**
@@ -199,28 +199,28 @@ bool Engine::CanCarryCargo() const
 /**
  * Determines capacity of a given vehicle from scratch.
  * For aircraft the main capacity is determined. Mail might be present as well.
- * @param v Vehicle of interest; NULL in purchase list
+ * @param v Vehicle of interest; nullptr in purchase list
  * @param mail_capacity returns secondary cargo (mail) capacity of aircraft
  * @return Capacity
  */
 uint Engine::DetermineCapacity(const Vehicle *v, uint16 *mail_capacity) const
 {
-	assert(v == NULL || this->index == v->engine_type);
-	if (mail_capacity != NULL) *mail_capacity = 0;
+	assert(v == nullptr || this->index == v->engine_type);
+	if (mail_capacity != nullptr) *mail_capacity = 0;
 
 	if (!this->CanCarryCargo()) return 0;
 
 	bool new_multipliers = HasBit(this->info.misc_flags, EF_NO_DEFAULT_CARGO_MULTIPLIER);
 	CargoID default_cargo = this->GetDefaultCargoType();
-	CargoID cargo_type = (v != NULL) ? v->cargo_type : default_cargo;
+	CargoID cargo_type = (v != nullptr) ? v->cargo_type : default_cargo;
 
-	if (mail_capacity != NULL && this->type == VEH_AIRCRAFT && IsCargoInClass(cargo_type, CC_PASSENGERS)) {
+	if (mail_capacity != nullptr && this->type == VEH_AIRCRAFT && IsCargoInClass(cargo_type, CC_PASSENGERS)) {
 		*mail_capacity = GetEngineProperty(this->index, PROP_AIRCRAFT_MAIL_CAPACITY, this->u.air.mail_capacity, v);
 	}
 
 	/* Check the refit capacity callback if we are not in the default configuration, or if we are using the new multiplier algorithm. */
 	if (HasBit(this->info.callback_mask, CBM_VEHICLE_REFIT_CAPACITY) &&
-			(new_multipliers || default_cargo != cargo_type || (v != NULL && v->cargo_subtype != 0))) {
+			(new_multipliers || default_cargo != cargo_type || (v != nullptr && v->cargo_subtype != 0))) {
 		uint16 callback = GetVehicleCallback(CBID_VEHICLE_REFIT_CAPACITY, 0, 0, this->index, v);
 		if (callback != CALLBACK_FAILED) return callback;
 	}
@@ -233,7 +233,7 @@ uint Engine::DetermineCapacity(const Vehicle *v, uint16 *mail_capacity) const
 			capacity = GetEngineProperty(this->index, PROP_TRAIN_CARGO_CAPACITY,        this->u.rail.capacity, v);
 
 			/* In purchase list add the capacity of the second head. Always use the plain property for this. */
-			if (v == NULL && this->u.rail.railveh_type == RAILVEH_MULTIHEAD) capacity += this->u.rail.capacity;
+			if (v == nullptr && this->u.rail.railveh_type == RAILVEH_MULTIHEAD) capacity += this->u.rail.capacity;
 			break;
 
 		case VEH_ROAD:
@@ -487,14 +487,15 @@ StringID Engine::GetAircraftTypeText() const
  */
 void EngineOverrideManager::ResetToDefaultMapping()
 {
-	this->Clear();
+	this->clear();
 	for (VehicleType type = VEH_TRAIN; type <= VEH_AIRCRAFT; type++) {
 		for (uint internal_id = 0; internal_id < _engine_counts[type]; internal_id++) {
-			EngineIDMapping *eid = this->Append();
-			eid->type            = type;
-			eid->grfid           = INVALID_GRFID;
-			eid->internal_id     = internal_id;
-			eid->substitute_id   = internal_id;
+			/*C++17: EngineIDMapping &eid = */ this->emplace_back();
+			EngineIDMapping &eid = this->back();
+			eid.type            = type;
+			eid.grfid           = INVALID_GRFID;
+			eid.internal_id     = internal_id;
+			eid.substitute_id   = internal_id;
 		}
 	}
 }
@@ -510,12 +511,12 @@ void EngineOverrideManager::ResetToDefaultMapping()
  */
 EngineID EngineOverrideManager::GetID(VehicleType type, uint16 grf_local_id, uint32 grfid)
 {
-	const EngineIDMapping *end = this->End();
 	EngineID index = 0;
-	for (const EngineIDMapping *eid = this->Begin(); eid != end; eid++, index++) {
-		if (eid->type == type && eid->grfid == grfid && eid->internal_id == grf_local_id) {
+	for (const EngineIDMapping &eid : *this) {
+		if (eid.type == type && eid.grfid == grfid && eid.internal_id == grf_local_id) {
 			return index;
 		}
+		index++;
 	}
 	return INVALID_ENGINE;
 }
@@ -547,15 +548,15 @@ void SetupEngines()
 	DeleteWindowByClass(WC_ENGINE_PREVIEW);
 	_engine_pool.CleanPool();
 
-	assert(_engine_mngr.Length() >= _engine_mngr.NUM_DEFAULT_ENGINES);
-	const EngineIDMapping *end = _engine_mngr.End();
+	assert(_engine_mngr.size() >= _engine_mngr.NUM_DEFAULT_ENGINES);
 	uint index = 0;
-	for (const EngineIDMapping *eid = _engine_mngr.Begin(); eid != end; eid++, index++) {
+	for (const EngineIDMapping &eid : _engine_mngr) {
 		/* Assert is safe; there won't be more than 256 original vehicles
 		 * in any case, and we just cleaned the pool. */
 		assert(Engine::CanAllocateItem());
-		const Engine *e = new Engine(eid->type, eid->internal_id);
+		const Engine *e = new Engine(eid.type, eid.internal_id);
 		assert(e->index == index);
+		index++;
 	}
 }
 
@@ -707,7 +708,7 @@ void StartupEngines()
 	Company *c;
 	FOR_ALL_COMPANIES(c) {
 		c->avail_railtypes = GetCompanyRailtypes(c->index);
-		c->avail_roadtypes = GetCompanyRoadtypes(c->index);
+		c->avail_roadtypes = GetCompanyRoadTypes(c->index);
 	}
 
 	/* Invalidate any open purchase lists */
@@ -729,7 +730,8 @@ static void AcceptEnginePreview(EngineID eid, CompanyID company)
 		assert(e->u.rail.railtype < RAILTYPE_END);
 		c->avail_railtypes = AddDateIntroducedRailTypes(c->avail_railtypes | GetRailTypeInfo(e->u.rail.railtype)->introduces_railtypes, _date);
 	} else if (e->type == VEH_ROAD) {
-		SetBit(c->avail_roadtypes, HasBit(e->info.misc_flags, EF_ROAD_TRAM) ? ROADTYPE_TRAM : ROADTYPE_ROAD);
+		assert(e->u.road.roadtype < ROADTYPE_END);
+		c->avail_roadtypes = AddDateIntroducedRoadTypes(c->avail_roadtypes | GetRoadTypeInfo(e->u.road.roadtype)->introduces_roadtypes, _date);
 	}
 
 	e->preview_company = INVALID_COMPANY;
@@ -809,6 +811,7 @@ void EnginesDailyLoop()
 	Company *c;
 	FOR_ALL_COMPANIES(c) {
 		c->avail_railtypes = AddDateIntroducedRailTypes(c->avail_railtypes, _date);
+		c->avail_roadtypes = AddDateIntroducedRoadTypes(c->avail_roadtypes, _date);
 	}
 
 	if (_cur_year >= _year_engine_aging_stops) return;
@@ -868,7 +871,7 @@ void ClearEnginesHiddenFlagOfCompany(CompanyID cid)
 CommandCost CmdSetVehicleVisibility(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
 {
 	Engine *e = Engine::GetIfValid(GB(p2, 0, 31));
-	if (e == NULL || _current_company >= MAX_COMPANIES) return CMD_ERROR;
+	if (e == nullptr || _current_company >= MAX_COMPANIES) return CMD_ERROR;
 	if (!IsEngineBuildable(e->index, e->type, _current_company)) return CMD_ERROR;
 
 	if ((flags & DC_EXEC) != 0) {
@@ -892,7 +895,7 @@ CommandCost CmdSetVehicleVisibility(TileIndex tile, DoCommandFlag flags, uint32 
 CommandCost CmdWantEnginePreview(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
 {
 	Engine *e = Engine::GetIfValid(p1);
-	if (e == NULL || !(e->flags & ENGINE_EXCLUSIVE_PREVIEW) || e->preview_company != _current_company) return CMD_ERROR;
+	if (e == nullptr || !(e->flags & ENGINE_EXCLUSIVE_PREVIEW) || e->preview_company != _current_company) return CMD_ERROR;
 
 	if (flags & DC_EXEC) AcceptEnginePreview(p1, _current_company);
 
@@ -950,7 +953,8 @@ static void NewVehicleAvailable(Engine *e)
 		FOR_ALL_COMPANIES(c) c->avail_railtypes = AddDateIntroducedRailTypes(c->avail_railtypes | GetRailTypeInfo(e->u.rail.railtype)->introduces_railtypes, _date);
 	} else if (e->type == VEH_ROAD) {
 		/* maybe make another road type available */
-		FOR_ALL_COMPANIES(c) SetBit(c->avail_roadtypes, HasBit(e->info.misc_flags, EF_ROAD_TRAM) ? ROADTYPE_TRAM : ROADTYPE_ROAD);
+		assert(e->u.road.roadtype < ROADTYPE_END);
+		FOR_ALL_COMPANIES(c) c->avail_roadtypes = AddDateIntroducedRoadTypes(c->avail_roadtypes | GetRoadTypeInfo(e->u.road.roadtype)->introduces_roadtypes, _date);
 	}
 
 	/* Only broadcast event if AIs are able to build this vehicle type. */
@@ -1020,7 +1024,7 @@ static bool IsUniqueEngineName(const char *name)
 	const Engine *e;
 
 	FOR_ALL_ENGINES(e) {
-		if (e->name != NULL && strcmp(e->name, name) == 0) return false;
+		if (e->name != nullptr && strcmp(e->name, name) == 0) return false;
 	}
 
 	return true;
@@ -1038,7 +1042,7 @@ static bool IsUniqueEngineName(const char *name)
 CommandCost CmdRenameEngine(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
 {
 	Engine *e = Engine::GetIfValid(p1);
-	if (e == NULL) return CMD_ERROR;
+	if (e == nullptr) return CMD_ERROR;
 
 	bool reset = StrEmpty(text);
 
@@ -1051,7 +1055,7 @@ CommandCost CmdRenameEngine(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 		free(e->name);
 
 		if (reset) {
-			e->name = NULL;
+			e->name = nullptr;
 		} else {
 			e->name = stredup(text);
 		}
@@ -1076,7 +1080,7 @@ bool IsEngineBuildable(EngineID engine, VehicleType type, CompanyID company)
 	const Engine *e = Engine::GetIfValid(engine);
 
 	/* check if it's an engine that is in the engine array */
-	if (e == NULL) return false;
+	if (e == nullptr) return false;
 
 	/* check if it's an engine of specified type */
 	if (e->type != type) return false;
@@ -1097,6 +1101,11 @@ bool IsEngineBuildable(EngineID engine, VehicleType type, CompanyID company)
 		const Company *c = Company::Get(company);
 		if (((GetRailTypeInfo(e->u.rail.railtype))->compatible_railtypes & c->avail_railtypes) == 0) return false;
 	}
+	if (type == VEH_ROAD && company != OWNER_DEITY) {
+		/* Check if the road type is available to this company */
+		const Company *c = Company::Get(company);
+		if ((GetRoadTypeInfo(e->u.road.roadtype)->powered_roadtypes & c->avail_roadtypes) == ROADTYPES_NONE) return false;
+	}
 
 	return true;
 }
@@ -1112,7 +1121,7 @@ bool IsEngineRefittable(EngineID engine)
 	const Engine *e = Engine::GetIfValid(engine);
 
 	/* check if it's an engine that is in the engine array */
-	if (e == NULL) return false;
+	if (e == nullptr) return false;
 
 	if (!e->CanCarryCargo()) return false;
 

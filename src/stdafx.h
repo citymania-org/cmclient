@@ -16,22 +16,22 @@
 	#include "os/macosx/osx_stdafx.h"
 #endif /* __APPLE__ */
 
-#if defined(__BEOS__) || defined(__HAIKU__)
+#if defined(__HAIKU__)
 	#include <SupportDefs.h>
 	#include <unistd.h>
 	#define _GNU_SOURCE
 	#define TROUBLED_INTS
-	#include <strings.h>
-#elif defined(__NDS__)
-	#include <nds/jtypes.h>
-	#define TROUBLED_INTS
+#endif
+
+#if defined(__HAIKU__) || defined(__CYGWIN__)
+#	include <strings.h> /* strncasecmp */
 #endif
 
 /* It seems that we need to include stdint.h before anything else
  * We need INT64_MAX, which for most systems comes from stdint.h. However, MSVC
- * does not have stdint.h and apparently neither does MorphOS.
+ * does not have stdint.h.
  * For OSX the inclusion is already done in osx_stdafx.h. */
-#if !defined(__APPLE__) && (!defined(_MSC_VER) || _MSC_VER >= 1600) && !defined(__MORPHOS__)
+#if !defined(__APPLE__) && (!defined(_MSC_VER) || _MSC_VER >= 1600)
 	#if defined(SUNOS)
 		/* SunOS/Solaris does not have stdint.h, but inttypes.h defines everything
 		 * stdint.h defines and we need. */
@@ -86,6 +86,7 @@
 #include <cstdlib>
 #include <climits>
 #include <cassert>
+#include <memory>
 
 #ifndef SIZE_MAX
 	#define SIZE_MAX ((size_t)-1)
@@ -100,33 +101,9 @@
 	#define strcasecmp stricmp
 #endif
 
-#if defined(SUNOS) || defined(HPUX)
+#if defined(SUNOS) || defined(HPUX) || defined(__CYGWIN__)
 	#include <alloca.h>
 #endif
-
-#if defined(__MORPHOS__)
-	/* MorphOS defines certain Amiga defines per default, we undefine them
-	 * here to make the rest of source less messy and more clear what is
-	 * required for morphos and what for AmigaOS */
-	#if defined(amigaos)
-		#undef amigaos
-	#endif
-	#if defined(__amigaos__)
-		#undef __amigaos__
-	# endif
-	#if defined(__AMIGA__)
-		#undef __AMIGA__
-	#endif
-	#if defined(AMIGA)
-		#undef AMIGA
-	#endif
-	#if defined(amiga)
-		#undef amiga
-	#endif
-	/* Act like we already included this file, as it somehow gives linkage problems
-	 *  (mismatch linkage of C++ and C between this include and unistd.h). */
-	#define CLIB_USERGROUP_PROTOS_H
-#endif /* __MORPHOS__ */
 
 /* Stuff for GCC */
 #if defined(__GNUC__)
@@ -163,7 +140,7 @@
 	#include <malloc.h>
 #endif /* __WATCOMC__ */
 
-#if defined(__MINGW32__) || defined(__CYGWIN__)
+#if defined(__MINGW32__)
 	#include <malloc.h> // alloca()
 #endif
 
@@ -260,7 +237,7 @@
 #	endif
 
 	/* liblzma from vcpkg (before 5.2.4-2) used to patch lzma.h to define LZMA_API_STATIC for static builds */
-#	if defined(WITH_LZMA)
+#	if defined(WITH_LIBLZMA)
 #		if !defined(LZMA_API_STATIC)
 #			define LZMA_API_STATIC
 #		endif
@@ -275,15 +252,6 @@
 	#define S_ISREG(mode) (mode & S_IFREG)
 
 #endif /* defined(_MSC_VER) */
-
-#if defined(DOS)
-	/* The DOS port does not have all signals/signal functions. */
-	#define strsignal(sig) ""
-	/* Use 'no floating point' for bus errors; SIGBUS does not exist
-	 * for DOS, SIGNOFP for other platforms. So it's fairly safe
-	 * to interchange those. */
-	#define SIGBUS SIGNOFP
-#endif
 
 /* NOTE: the string returned by these functions is only valid until the next
  * call to the same function and is not thread- or reentrancy-safe */
@@ -340,17 +308,23 @@
 typedef unsigned char byte;
 
 /* This is already defined in unix, but not in QNX Neutrino (6.x)*/
-#if (!defined(UNIX) && !defined(__CYGWIN__) && !defined(__BEOS__) && !defined(__HAIKU__) && !defined(__MORPHOS__)) || defined(__QNXNTO__)
+#if (!defined(UNIX) && !defined(__HAIKU__)) || defined(__QNXNTO__)
 	typedef unsigned int uint;
 #endif
 
 #if defined(TROUBLED_INTS)
-	/* NDS'/BeOS'/Haiku's types for uint32/int32 are based on longs, which causes
-	 * trouble all over the place in OpenTTD. */
-	#define uint32 uint32_ugly_hack
-	#define int32 int32_ugly_hack
+	/* Haiku's types for uint32/int32/uint64/int64 are different than what
+	 * they are on other platforms; not in length, but how to print them.
+	 * So make them more like the other platforms, to make printf() etc a
+	 * little bit easier. */
+#	define uint32 uint32_ugly_hack
+#	define int32 int32_ugly_hack
+#	define uint64 uint64_ugly_hack
+#	define int64 int64_ugly_hack
 	typedef unsigned int uint32_ugly_hack;
 	typedef signed int int32_ugly_hack;
+	typedef unsigned __int64 uint64_ugly_hack;
+	typedef signed __int64 int64_ugly_hack;
 #else
 	typedef unsigned char    uint8;
 	typedef   signed char     int8;
@@ -466,10 +440,7 @@ void NORETURN CDECL error(const char *str, ...) WARN_FORMAT(1, 2);
 	#define OTTD_ASSERT
 #endif
 
-#if defined(MORPHOS) || defined(__NDS__) || defined(__DJGPP__)
-	/* MorphOS and NDS don't have C++ conformant _stricmp... */
-	#define _stricmp stricmp
-#elif defined(OPENBSD)
+#if defined(OPENBSD)
 	/* OpenBSD uses strcasecmp(3) */
 	#define _stricmp strcasecmp
 #endif

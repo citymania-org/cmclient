@@ -15,6 +15,7 @@
 #include "../../company_base.h"
 #include "../../strings_func.h"
 #include "../../rail.h"
+#include "../../road.h"
 #include "../../engine_base.h"
 #include "../../engine_func.h"
 #include "../../articulated_vehicles.h"
@@ -25,7 +26,7 @@
 /* static */ bool ScriptEngine::IsValidEngine(EngineID engine_id)
 {
 	const Engine *e = ::Engine::GetIfValid(engine_id);
-	if (e == NULL || !e->IsEnabled()) return false;
+	if (e == nullptr || !e->IsEnabled()) return false;
 
 	/* AIs have only access to engines they can purchase or still have in use.
 	 * Deity has access to all engined that will be or were available ever. */
@@ -36,12 +37,12 @@
 /* static */ bool ScriptEngine::IsBuildable(EngineID engine_id)
 {
 	const Engine *e = ::Engine::GetIfValid(engine_id);
-	return e != NULL && ::IsEngineBuildable(engine_id, e->type, ScriptObject::GetCompany());
+	return e != nullptr && ::IsEngineBuildable(engine_id, e->type, ScriptObject::GetCompany());
 }
 
 /* static */ char *ScriptEngine::GetName(EngineID engine_id)
 {
-	if (!IsValidEngine(engine_id)) return NULL;
+	if (!IsValidEngine(engine_id)) return nullptr;
 
 	::SetDParam(0, engine_id);
 	return GetString(STR_ENGINE_NAME);
@@ -219,12 +220,26 @@
 	return ::HasPowerOnRail((::RailType)::RailVehInfo(engine_id)->railtype, (::RailType)track_rail_type);
 }
 
+/* static */ bool ScriptEngine::CanRunOnRoad(EngineID engine_id, ScriptRoad::RoadType road_type)
+{
+	return HasPowerOnRoad(engine_id, road_type);
+}
+
+/* static */ bool ScriptEngine::HasPowerOnRoad(EngineID engine_id, ScriptRoad::RoadType road_type)
+{
+	if (!IsValidEngine(engine_id)) return false;
+	if (GetVehicleType(engine_id) != ScriptVehicle::VT_ROAD) return false;
+	if (!ScriptRoad::IsRoadTypeAvailable(road_type)) return false;
+
+	return ::HasPowerOnRoad((::RoadType)::RoadVehInfo(engine_id)->roadtype, (::RoadType)road_type);
+}
+
 /* static */ ScriptRoad::RoadType ScriptEngine::GetRoadType(EngineID engine_id)
 {
 	if (!IsValidEngine(engine_id)) return ScriptRoad::ROADTYPE_INVALID;
 	if (GetVehicleType(engine_id) != ScriptVehicle::VT_ROAD) return ScriptRoad::ROADTYPE_INVALID;
 
-	return HasBit(::EngInfo(engine_id)->misc_flags, EF_ROAD_TRAM) ? ScriptRoad::ROADTYPE_TRAM : ScriptRoad::ROADTYPE_ROAD;
+	return (ScriptRoad::RoadType)(uint)::RoadVehInfo(engine_id)->roadtype;
 }
 
 /* static */ ScriptRail::RailType ScriptEngine::GetRailType(EngineID engine_id)
@@ -256,9 +271,6 @@
 	if (!IsValidEngine(engine_id)) return 0;
 
 	switch (GetVehicleType(engine_id)) {
-		case ScriptVehicle::VT_WATER:
-			return _settings_game.pf.pathfinder_for_ships != VPF_NPF ? 129 : 0;
-
 		case ScriptVehicle::VT_AIR:
 			return ::Engine::Get(engine_id)->GetRange() * ::Engine::Get(engine_id)->GetRange();
 

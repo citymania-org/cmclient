@@ -18,6 +18,7 @@
 
 #include "script_types.hpp"
 #include "../script_suspend.hpp"
+#include "../squirrel.hpp"
 
 /**
  * The callback function for Mode-classes.
@@ -48,6 +49,7 @@ protected:
 		~ActiveInstance();
 	private:
 		ScriptInstance *last_active;    ///< The active instance before we go instantiated.
+		ScriptAllocatorScope alc_scope; ///< Keep the correct allocator for the script instance activated
 
 		static ScriptInstance *active;  ///< The global current active instance.
 	};
@@ -69,7 +71,7 @@ protected:
 	/**
 	 * Executes a raw DoCommand for the script.
 	 */
-	static bool DoCommand(TileIndex tile, uint32 p1, uint32 p2, uint cmd, const char *text = NULL, Script_SuspendCallbackProc *callback = NULL);
+	static bool DoCommand(TileIndex tile, uint32 p1, uint32 p2, uint cmd, const char *text = nullptr, Script_SuspendCallbackProc *callback = nullptr);
 
 	/**
 	 * Store the latest command executed by the script.

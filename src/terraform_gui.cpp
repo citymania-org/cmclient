@@ -165,14 +165,14 @@ struct TerraformToolbarWindow : Window {
 	{
 	}
 
-	virtual void OnInit()
+	void OnInit() override
 	{
 		/* Don't show the place object button when there are no objects to place. */
 		NWidgetStacked *show_object = this->GetWidget<NWidgetStacked>(WID_TT_SHOW_PLACE_OBJECT);
 		show_object->SetDisplayedPlane(ObjectClass::GetUIClassCount() != 0 ? 0 : SZSP_NONE);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		if (widget < WID_TT_BUTTONS_START) return;
 
@@ -219,7 +219,7 @@ struct TerraformToolbarWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceObject(Point pt, TileIndex tile)
+	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		switch (this->last_user_action) {
 			case WID_TT_LOWER_LAND: // Lower land button
@@ -250,19 +250,19 @@ struct TerraformToolbarWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
+	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
 	{
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
-	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number) override
 	{
 		Point pt = GetToolbarAlignedWindowPosition(sm_width);
 		pt.y += sm_height;
 		return pt;
 	}
 
-	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
+	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (pt.x != -1) {
 			switch (select_proc) {
@@ -277,7 +277,7 @@ struct TerraformToolbarWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceObjectAbort()
+	void OnPlaceObjectAbort() override
 	{
 		this->RaiseButtons();
 	}
@@ -293,8 +293,8 @@ struct TerraformToolbarWindow : Window {
 static EventState TerraformToolbarGlobalHotkeys(int hotkey)
 {
 	if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
-	Window *w = ShowTerraformToolbar(NULL);
-	if (w == NULL) return ES_NOT_HANDLED;
+	Window *w = ShowTerraformToolbar(nullptr);
+	if (w == nullptr) return ES_NOT_HANDLED;
 	return w->OnHotkey(hotkey);
 }
 
@@ -353,14 +353,14 @@ static WindowDesc _terraform_desc(
 /**
  * Show the toolbar for terraforming in the game.
  * @param link The toolbar we might want to link to.
- * @return The allocated toolbar if the window was newly opened, else \c NULL.
+ * @return The allocated toolbar if the window was newly opened, else \c nullptr.
  */
 Window *ShowTerraformToolbar(Window *link)
 {
-	if (!Company::IsValidID(_local_company)) return NULL;
+	if (!Company::IsValidID(_local_company)) return nullptr;
 
 	Window *w;
-	if (link == NULL) {
+	if (link == nullptr) {
 		w = AllocateWindowDescFront<TerraformToolbarWindow>(&_terraform_desc, 0);
 		return w;
 	}
@@ -538,7 +538,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		this->last_user_action = WIDGET_LIST_END;
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		this->DrawWidgets();
 
@@ -547,7 +547,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_ETT_DOTS) return;
 
@@ -555,7 +555,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		size->height = max<uint>(size->height, ScaleGUITrad(31));
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_ETT_DOTS) return;
 
@@ -572,7 +572,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		} while (--n);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		if (widget < WID_ETT_BUTTONS_START) return;
 
@@ -631,14 +631,14 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 				break;
 
 			case WID_ETT_RESET_LANDSCAPE: // Reset landscape
-				ShowQuery(STR_QUERY_RESET_LANDSCAPE_CAPTION, STR_RESET_LANDSCAPE_CONFIRMATION_TEXT, NULL, ResetLandscapeConfirmationCallback);
+				ShowQuery(STR_QUERY_RESET_LANDSCAPE_CAPTION, STR_RESET_LANDSCAPE_CONFIRMATION_TEXT, nullptr, ResetLandscapeConfirmationCallback);
 				break;
 
 			default: NOT_REACHED();
 		}
 	}
 
-	virtual void OnTimeout()
+	void OnTimeout() override
 	{
 		for (uint i = WID_ETT_START; i < this->nested_array_size; i++) {
 			if (i == WID_ETT_BUTTONS_START) i = WID_ETT_BUTTONS_END; // skip the buttons
@@ -649,7 +649,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceObject(Point pt, TileIndex tile)
+	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		switch (this->last_user_action) {
 			case WID_ETT_DEMOLISH: // Demolish aka dynamite button
@@ -680,12 +680,12 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
+	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
 	{
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
-	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
+	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (pt.x != -1) {
 			switch (select_proc) {
@@ -702,7 +702,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceObjectAbort()
+	void OnPlaceObjectAbort() override
 	{
 		this->RaiseButtons();
 		this->SetDirty();
@@ -720,7 +720,7 @@ static EventState TerraformToolbarEditorGlobalHotkeys(int hotkey)
 {
 	if (_game_mode != GM_EDITOR) return ES_NOT_HANDLED;
 	Window *w = ShowEditorTerraformToolbar();
-	if (w == NULL) return ES_NOT_HANDLED;
+	if (w == nullptr) return ES_NOT_HANDLED;
 	return w->OnHotkey(hotkey);
 }
 
@@ -747,7 +747,7 @@ static WindowDesc _scen_edit_land_gen_desc(
 
 /**
  * Show the toolbar for terraforming in the scenario editor.
- * @return The allocated toolbar if the window was newly opened, else \c NULL.
+ * @return The allocated toolbar if the window was newly opened, else \c nullptr.
  */
 Window *ShowEditorTerraformToolbar()
 {

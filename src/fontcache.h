@@ -126,6 +126,15 @@ public:
 	virtual const void *GetFontTable(uint32 tag, size_t &length) = 0;
 
 	/**
+	 * Get the native OS font handle, if there is one.
+	 * @return Opaque OS font handle.
+	 */
+	virtual void *GetOSHandle()
+	{
+		return nullptr;
+	}
+
+	/**
 	 * Get the name of this font.
 	 * @return The name of the font.
 	 */
@@ -147,7 +156,7 @@ public:
 	 */
 	inline bool HasParent()
 	{
-		return this->parent != NULL;
+		return this->parent != nullptr;
 	}
 
 	/**
@@ -202,13 +211,15 @@ static inline bool GetDrawGlyphShadow(FontSize size)
 	return FontCache::Get(size)->GetDrawGlyphShadow();
 }
 
-#ifdef WITH_FREETYPE
+#if defined(WITH_FREETYPE) || defined(_WIN32)
 
 /** Settings for a single freetype font. */
 struct FreeTypeSubSetting {
 	char font[MAX_PATH]; ///< The name of the font, or path to the font.
 	uint size;           ///< The (requested) size of the font.
 	bool aa;             ///< Whether to do anti aliasing or not.
+
+	const void *os_handle = nullptr; ///< Optional native OS font info.
 };
 
 /** Settings for the freetype fonts. */
@@ -221,7 +232,7 @@ struct FreeTypeSettings {
 
 extern FreeTypeSettings _freetype;
 
-#endif /* WITH_FREETYPE */
+#endif /* defined(WITH_FREETYPE) || defined(_WIN32) */
 
 void InitFreeType(bool monospace);
 void UninitFreeType();

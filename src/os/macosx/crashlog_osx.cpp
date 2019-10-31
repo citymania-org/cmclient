@@ -52,7 +52,7 @@ class CrashLogOSX : public CrashLog {
 	char filename_save[MAX_PATH];       ///< Path of crash.sav
 	char filename_screenshot[MAX_PATH]; ///< Path of crash.(png|bmp|pcx)
 
-	/* virtual */ char *LogOSVersion(char *buffer, const char *last) const
+	char *LogOSVersion(char *buffer, const char *last) const override
 	{
 		int ver_maj, ver_min, ver_bug;
 		GetMacOSVersion(&ver_maj, &ver_min, &ver_bug);
@@ -66,12 +66,12 @@ class CrashLogOSX : public CrashLog {
 				" Machine:  %s\n"
 				" Min Ver:  %d\n",
 				ver_maj, ver_min, ver_bug,
-				arch != NULL ? arch->description : "unknown",
+				arch != nullptr ? arch->description : "unknown",
 				MAC_OS_X_VERSION_MIN_REQUIRED
 		);
 	}
 
-	/* virtual */ char *LogError(char *buffer, const char *last, const char *message) const
+	char *LogError(char *buffer, const char *last, const char *message) const override
 	{
 		return buffer + seprintf(buffer, last,
 				"Crash reason:\n"
@@ -79,11 +79,11 @@ class CrashLogOSX : public CrashLog {
 				" Message: %s\n\n",
 				strsignal(this->signum),
 				this->signum,
-				message == NULL ? "<none>" : message
+				message == nullptr ? "<none>" : message
 		);
 	}
 
-	/* virtual */ char *LogStacktrace(char *buffer, const char *last) const
+	char *LogStacktrace(char *buffer, const char *last) const override
 	{
 		/* As backtrace() is only implemented in 10.5 or later,
 		 * we're rolling our own here. Mostly based on
@@ -99,14 +99,14 @@ class CrashLogOSX : public CrashLog {
 		frame = (void **)__builtin_frame_address(0);
 #endif
 
-		for (int i = 0; frame != NULL && i < MAX_STACK_FRAMES; i++) {
+		for (int i = 0; frame != nullptr && i < MAX_STACK_FRAMES; i++) {
 			/* Get IP for current stack frame. */
 #if defined(__ppc__) || defined(__ppc64__)
 			void *ip = frame[2];
 #else
 			void *ip = frame[1];
 #endif
-			if (ip == NULL) break;
+			if (ip == nullptr) break;
 
 			/* Print running index. */
 			buffer += seprintf(buffer, last, " [%02d]", i);
@@ -118,7 +118,7 @@ class CrashLogOSX : public CrashLog {
 			if (dl_valid && dli.dli_fname) {
 				/* Valid image name? Extract filename from the complete path. */
 				const char *s = strrchr(dli.dli_fname, '/');
-				if (s != NULL) {
+				if (s != nullptr) {
 					fname = s + 1;
 				} else {
 					fname = dli.dli_fname;
@@ -128,13 +128,13 @@ class CrashLogOSX : public CrashLog {
 			buffer += seprintf(buffer, last, " %-20s " PRINTF_PTR, fname, (uintptr_t)ip);
 
 			/* Print function offset if information is available. */
-			if (dl_valid && dli.dli_sname != NULL && dli.dli_saddr != NULL) {
+			if (dl_valid && dli.dli_sname != nullptr && dli.dli_saddr != nullptr) {
 				/* Try to demangle a possible C++ symbol. */
 				int status = -1;
-				char *func_name = abi::__cxa_demangle(dli.dli_sname, NULL, 0, &status);
+				char *func_name = abi::__cxa_demangle(dli.dli_sname, nullptr, 0, &status);
 
 				long int offset = (intptr_t)ip - (intptr_t)dli.dli_saddr;
-				buffer += seprintf(buffer, last, " (%s + %ld)", func_name != NULL ? func_name : dli.dli_sname, offset);
+				buffer += seprintf(buffer, last, " (%s + %ld)", func_name != nullptr ? func_name : dli.dli_sname, offset);
 
 				free(func_name);
 			}
