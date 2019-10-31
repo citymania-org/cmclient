@@ -1,0 +1,153 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" Please adjust this date whenever revising the manpage.
+.Dd October 13, 2014
+.Dt OPENTTD 6
+.Os
+.Sh NAME
+.Nm openttd
+.Nd open source clone of the Microprose game \(lqTransport Tycoon Deluxe\(rq
+.Sh SYNOPSIS
+.Nm
+.Op Fl efhx
+.Op Fl b Ar blitter
+.Op Fl c Ar config_file
+.Op Fl d Op Ar level | Ar cat Ns = Ns Ar lvl Ns Op , Ns Ar ...
+.Op Fl D Oo Ar host Oc Ns Op : Ns Ar port
+.Op Fl g Op Ar savegame
+.Op Fl G Ar seed
+.Op Fl I Ar graphicsset
+.Op Fl l Ar host Ns Op : Ns Ar port
+.Op Fl m Ar driver
+.Op Fl M Ar musicset
+.Op Fl n Ar host Ns Oo : Ns Ar port Oc Ns Op # Ns Ar player
+.Op Fl p Ar password
+.Op Fl P Ar password
+.Op Fl q Ar savegame
+.Op Fl r Ar width Ns x Ns Ar height
+.Op Fl s Ar driver
+.Op Fl S Ar soundset
+.Op Fl t Ar year
+.Op Fl v Ar driver
+.Sh OPTIONS
+.Bl -tag -width "-n host[:port][#player]"
+.It Fl b Ar blitter
+Select the blitter
+.Ar blitter ;
+see
+.Fl h
+for a full list.
+.It Fl c Ar config_file
+Use
+.Ar config_file
+instead of
+.Pa openttd.cfg .
+.It Fl d Ar [level]
+Set debug verbosity for all categories to
+.Ar level ,
+or 1 if omitted.
+.It Fl d Ar cat Ns = Ns Ar lvl Ns Op , Ns Ar ...
+Set debug verbosity to
+.Ar lvl
+for a specific category
+.Ar cat .
+.It Fl D Oo Ar host Oc Ns Op : Ns Ar port
+Start a dedicated server.
+.Pp
+Network debug level will be set to 6.
+If you want to change this, set
+.Fl d
+after setting
+.Fl D .
+.It Fl e
+Start in world editor mode.
+.It Fl f
+Fork into background (dedicated server only, see
+.Fl D ) .
+.It Fl g Op Ar savegame
+Load
+.Ar savegame
+at start or start a new game if omitted.
+.Ar savegame
+must be either an absolute path or one relative to the current path or one of
+the search paths.
+.It Fl G Ar seed
+Seed the pseudo random number generator with
+.Ar seed .
+.It Fl h
+Display a summary of all options and list all the available AIs, blitters,
+sound, music and video drivers, graphics sets and sound sets.
+.It Fl I Ar graphicsset
+Select the graphics set
+.Ar graphicsset ;
+see
+.Fl h
+for a full list.
+.It Fl l Ar host Ns Op : Ns Ar port
+Redirect
+.Fn DEBUG
+output; see
+.Fl D .
+.It Fl m Ar driver
+Select the music driver
+.Ar driver ;
+see
+.Fl h
+for a full list.
+.It Fl M Ar musicset
+Select the music set
+.Ar musicset ;
+see
+.Fl h
+for a full list.
+.It Fl n Ar host Ns Oo : Ns Ar port Oc Ns Op # Ns Ar player
+Join a network game, optionally specifying a port to connect to and player to
+play as.
+.It Fl p Ar password
+Password used to join server.
+Only useful with
+.Fl n .
+.It Fl P Ar password
+Password used to join company.
+Only useful with
+.Fl n .
+.It Fl q Ar savegame
+Write some information about the specified savegame and exit.
+.It Fl r Ar width Ns x Ns Ar height
+Set the resolution to
+.Ar width
+\(mu
+.Ar height
+pixels.
+.It Fl s Ar driver
+Select the sound driver
+.Ar driver ;
+see
+.Fl h
+for a full list.
+.It Fl S Ar soundset
+Select the sound set
+.Ar soundset ;
+see
+.Fl h
+for a full list.
+.It Fl t Ar year
+Set the starting year to
+.Ar year .
+.It Fl v Ar driver
+Select the video driver
+.Ar driver ;
+see
+.Fl h
+for a full list.
+.It Fl x
+Do not automatically save to config file on exit.
+.El
+.Sh SEE ALSO
+.Lk https://wiki.openttd.org "Wiki"
+(includes community maintained manual),
+.Lk https://forum.openttd.org "Forum",
+.Lk https://www.openttd.org "News"
+.Sh HISTORY
+Transport Tycoon Deluxe was written by Chris Sawyer and published by Microprose.
+.Nm
+is a free reimplementation.
