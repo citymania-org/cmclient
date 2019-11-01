@@ -48,7 +48,6 @@ public:
 	StringID string; ///< String ID of item
 
 	DropDownListStringItem(StringID string, int result, bool masked) : DropDownListItem(result, masked), string(string) {}
-	virtual ~DropDownListStringItem() {}
 
 	bool Selectable() const override { return true; }
 	uint Width() const override;
@@ -99,7 +98,6 @@ public:
 	uint64 decode_params[10]; ///< Parameters of the string
 
 	DropDownListParamStringItem(StringID string, int result, bool masked) : DropDownListStringItem(string, result, masked) {}
-	virtual ~DropDownListParamStringItem() {}
 
 	StringID String() const override;
 	void SetParam(uint index, uint64 value) { decode_params[index] = value; }
@@ -113,7 +111,6 @@ public:
 	const char *raw_string;
 
 	DropDownListCharStringItem(const char *raw_string, int result, bool masked) : DropDownListStringItem(STR_JUST_RAW_STRING, result, masked), raw_string(raw_string) {}
-	virtual ~DropDownListCharStringItem() {}
 
 	StringID String() const override;
 };
