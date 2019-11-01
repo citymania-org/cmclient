@@ -1,1 +1,0 @@
--rdynamic  -lpthread -lc -lSDL2 -lz  -llzma  -llzo2 -lpng16 -lz  -lfontconfig -lfreetype  -lfreetype  -licui18n -licuuc -licudata 
