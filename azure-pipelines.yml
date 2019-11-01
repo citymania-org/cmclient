@@ -73,10 +73,13 @@ jobs:
 
 - job: linux
   displayName: 'Linux'
+  pool:
+    vmImage: 'ubuntu-16.04'
   dependsOn: source
   strategy:
     matrix:
-      linux-ubuntu-bionic-amd64-gcc: {}
+      linux-ubuntu-bionic-amd64-gcc:
+        Tag: 'linux-ubuntu-bionic-amd64-gcc'
   steps:
   - template: azure-pipelines/templates/release-fetch-source.yml
   - template: azure-pipelines/templates/linux-build.yml
@@ -107,6 +110,7 @@ jobs:
   - template: azure-pipelines/templates/windows-build.yml
     parameters:
       BuildPlatform: $(BuildPlatform)
+      BuildConfiguration: Release
   - bash: |
       set -ex
       mkdir -p bundle
