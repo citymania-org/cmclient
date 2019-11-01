@@ -128,8 +128,8 @@ struct NewsItem {
 
 	NewsReferenceType reftype1;  ///< Type of ref1
 	NewsReferenceType reftype2;  ///< Type of ref2
-	uint32 ref1;                 ///< Reference 1 to some object: Used for a possible viewport, scrolling after clicking on the news, and for deleteing the news when the object is deleted.
-	uint32 ref2;                 ///< Reference 2 to some object: Used for scrolling after clicking on the news, and for deleteing the news when the object is deleted.
+	uint32 ref1;                 ///< Reference 1 to some object: Used for a possible viewport, scrolling after clicking on the news, and for deleting the news when the object is deleted.
+	uint32 ref2;                 ///< Reference 2 to some object: Used for scrolling after clicking on the news, and for deleting the news when the object is deleted.
 
 	void *free_data;             ///< Data to be freed when the news item has reached its end.
 
@@ -155,7 +155,7 @@ struct CompanyNewsInformation {
 	uint32 face; ///< The face of the president
 	byte colour; ///< The colour related to the company
 
-	void FillData(const struct Company *c, const struct Company *other = NULL);
+	void FillData(const struct Company *c, const struct Company *other = nullptr);
 };
 
 #endif /* NEWS_TYPE_H */

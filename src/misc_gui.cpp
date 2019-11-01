@@ -88,7 +88,7 @@ public:
 		return pt;
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_LI_BACKGROUND) return;
 
@@ -112,7 +112,7 @@ public:
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_LI_BACKGROUND) return;
 
@@ -160,7 +160,7 @@ public:
 #undef LANDINFOD_LEVEL
 	}
 
-	virtual void OnInit()
+	void OnInit() override
 	{
 		Town *t = ClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
 
@@ -189,13 +189,16 @@ public:
 		td.airport_tile_name = STR_NULL;
 		td.railtype = STR_NULL;
 		td.rail_speed = 0;
+		td.roadtype = STR_NULL;
 		td.road_speed = 0;
-		td.population = 0;
+		td.tramtype = STR_NULL;
+		td.tram_speed = 0;
+ 		td.population = 0;
 
-		td.grf = NULL;
+		td.grf = nullptr;
 
 		CargoArray acceptance;
-		AddAcceptedCargo(tile, acceptance, NULL);
+		AddAcceptedCargo(tile, acceptance, nullptr);
 		GetTileDesc(tile, &td);
 
 		uint line_nr = 0;
@@ -218,7 +221,7 @@ public:
 		/* Cost to clear/revenue when cleared */
 		StringID str = STR_LAND_AREA_INFORMATION_COST_TO_CLEAR_N_A;
 		Company *c = Company::GetIfValid(_local_company);
-		if (c != NULL) {
+		if (c != nullptr) {
 			assert(_current_company == _local_company);
 			CommandCost costclear = DoCommand(tile, 0, 0, DC_QUERY_COST, CMD_LANDSCAPE_CLEAR);
 			if (costclear.Succeeded()) {
@@ -247,7 +250,7 @@ public:
 
 		/* Local authority */
 		SetDParam(0, STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE);
-		if (t != NULL) {
+		if (t != nullptr) {
 			SetDParam(0, STR_TOWN_NAME);
 			SetDParam(1, t->index);
 		}
@@ -310,6 +313,13 @@ public:
 			line_nr++;
 		}
 
+		/* Road type name */
+		if (td.roadtype != STR_NULL) {
+			SetDParam(0, td.roadtype);
+			GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_ROAD_TYPE, lastof(this->landinfo_data[line_nr]));
+			line_nr++;
+		}
+
 		/* Road speed limit */
 		if (td.road_speed != 0) {
 			SetDParam(0, td.road_speed);
@@ -317,8 +327,22 @@ public:
 			line_nr++;
 		}
 
+		/* Tram type name */
+		if (td.tramtype != STR_NULL) {
+			SetDParam(0, td.tramtype);
+			GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_TRAM_TYPE, lastof(this->landinfo_data[line_nr]));
+			line_nr++;
+		}
+
+		/* Tram speed limit */
+		if (td.tram_speed != 0) {
+			SetDParam(0, td.tram_speed);
+			GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT, lastof(this->landinfo_data[line_nr]));
+			line_nr++;
+		}
+
 		/* NewGRF name */
-		if (td.grf != NULL) {
+		if (td.grf != nullptr) {
 			SetDParamStr(0, td.grf);
 			GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_NEWGRF_NAME, lastof(this->landinfo_data[line_nr]));
 			line_nr++;
@@ -359,12 +383,12 @@ public:
 		if (!found) this->landinfo_data[LAND_INFO_MULTICENTER_LINE][0] = '\0';
 	}
 
-	virtual bool IsNewGRFInspectable() const
+	bool IsNewGRFInspectable() const override
 	{
 		return ::IsNewGRFInspectable(GetGrfSpecFeature(this->tile), this->tile);
 	}
 
-	virtual void ShowNewGRFInspectWindow() const
+	void ShowNewGRFInspectWindow() const override
 	{
 		::ShowNewGRFInspectWindow(GetGrfSpecFeature(this->tile), this->tile);
 	}
@@ -374,7 +398,7 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		switch (data) {
@@ -431,7 +455,7 @@ static const NWidgetPart _nested_about_widgets[] = {
 };
 
 static WindowDesc _about_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_GAME_OPTIONS, WC_NONE,
 	0,
 	_nested_about_widgets, lengthof(_nested_about_widgets)
@@ -448,6 +472,7 @@ static const char * const _credits[] = {
 	"  Ulf Hermann (fonsinchen) - Cargo Distribution (since 1.3)",
 	"  Christoph Elsenhans (frosch) - General coding (since 0.6)",
 	"  Lo\xC3\xAF""c Guilloux (glx) - General / Windows Expert (since 0.4.5)",
+	"  Charles Pigott (LordAro) - General / Correctness police (since 1.9)",
 	"  Michael Lutz (michi_cc) - Path based signals (since 0.7)",
 	"  Niels Martin Hansen (nielsm) - Music system, general coding (since 1.9)",
 	"  Owen Rudge (orudge) - Forum host, OS/2 port (since 0.1)",
@@ -518,12 +543,12 @@ struct AboutWindow : public Window {
 		this->timer.SetInterval(TIMER_INTERVAL);
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		if (widget == WID_A_WEBSITE) SetDParamStr(0, "Website: http://www.openttd.org");
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_A_SCROLLING_TEXT) return;
 
@@ -539,7 +564,7 @@ struct AboutWindow : public Window {
 		*size = maxdim(*size, d);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_A_SCROLLING_TEXT) return;
 
@@ -554,7 +579,7 @@ struct AboutWindow : public Window {
 		}
 	}
 
-	virtual void OnRealtimeTick(uint delta_ms)
+	void OnRealtimeTick(uint delta_ms) override
 	{
 		uint count = this->timer.CountElapsed(delta_ms);
 		if (count > 0) {
@@ -687,7 +712,7 @@ static const NWidgetPart _nested_tooltips_widgets[] = {
 };
 
 static WindowDesc _tool_tips_desc(
-	WDP_MANUAL, NULL, 0, 0, // Coordinates and sizes are not used,
+	WDP_MANUAL, nullptr, 0, 0, // Coordinates and sizes are not used,
 	WC_TOOLTIPS, WC_NONE,
 	WDF_NO_FOCUS,
 	_nested_tooltips_widgets, lengthof(_nested_tooltips_widgets)
@@ -716,7 +741,7 @@ struct TooltipsWindow : public Window
 		CLRBITS(this->flags, WF_WHITE_BORDER);
 	}
 
-	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number) override
 	{
 		/* Find the free screen space between the main toolbar at the top, and the statusbar at the bottom.
 		 * Add a fixed distance 2 so the tooltip floats free from both bars.
@@ -736,7 +761,7 @@ struct TooltipsWindow : public Window
 		return pt;
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		/* There is only one widget. */
 		for (uint i = 0; i != this->paramcount; i++) SetDParam(i, this->params[i]);
@@ -749,7 +774,7 @@ struct TooltipsWindow : public Window
 		size->height += 2 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		/* There is only one widget. */
 		GfxFillRect(r.left, r.top, r.right, r.bottom, PC_BLACK);
@@ -761,7 +786,7 @@ struct TooltipsWindow : public Window
 		DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, r.bottom - WD_FRAMERECT_BOTTOM, this->string_id, TC_FROMSTRING, SA_CENTER);
 	}
 
-	virtual void OnMouseLoop()
+	void OnMouseLoop() override
 	{
 		/* Always close tooltips when the cursor is not in our window. */
 		if (!_cursor.in_window) {
@@ -929,7 +954,7 @@ Rect QueryString::GetBoundingRect(const Window *w, int wid, const char *from, co
  * @param w Window the edit box is in.
  * @param wid Widget index.
  * @param pt Position to test.
- * @return Pointer to the character at the position or NULL if no character is at the position.
+ * @return Pointer to the character at the position or nullptr if no character is at the position.
  */
 const char *QueryString::GetCharAtPosition(const Window *w, int wid, const Point &pt) const
 {
@@ -947,7 +972,7 @@ const char *QueryString::GetCharAtPosition(const Window *w, int wid, const Point
 	int top    = wi->pos_y + WD_FRAMERECT_TOP;
 	int bottom = wi->pos_y + wi->current_y - 1 - WD_FRAMERECT_BOTTOM;
 
-	if (!IsInsideMM(pt.y, top, bottom)) return NULL;
+	if (!IsInsideMM(pt.y, top, bottom)) return nullptr;
 
 	/* Clamp caret position to be inside our current width. */
 	const Textbuf *tb = &this->text;
@@ -990,6 +1015,7 @@ struct QueryStringWindow : public Window
 {
 	QueryString editbox;    ///< Editbox.
 	QueryStringFlags flags; ///< Flags controlling behaviour of the window.
+	Dimension warning_size; ///< How much space to use for the warning text
 
 	QueryStringWindow(StringID str, StringID caption, uint max_bytes, uint max_chars, WindowDesc *desc, Window *parent, CharSetFilter afilter, QueryStringFlags flags) :
 			Window(desc), editbox(max_bytes, max_chars)
@@ -1016,13 +1042,28 @@ struct QueryStringWindow : public Window
 		this->flags = flags;
 
 		this->InitNested(WN_QUERY_STRING);
+		this->UpdateWarningStringSize();
 
 		this->parent = parent;
 
 		this->SetFocusedWidget(WID_QS_TEXT);
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWarningStringSize()
+	{
+		if (this->flags & QSF_PASSWORD) {
+			assert(this->nested_root->smallest_x > 0);
+			this->warning_size.width = this->nested_root->current_x - (WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT);
+			this->warning_size.height = GetStringHeight(STR_WARNING_PASSWORD_SECURITY, this->warning_size.width);
+			this->warning_size.height += WD_FRAMETEXT_TOP + WD_FRAMETEXT_BOTTOM + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+		} else {
+			this->warning_size = Dimension{ 0, 0 };
+		}
+
+		this->ReInit();
+	}
+
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget == WID_QS_DEFAULT && (this->flags & QSF_ENABLE_DEFAULT) == 0) {
 			/* We don't want this widget to show! */
@@ -1030,19 +1071,34 @@ struct QueryStringWindow : public Window
 			resize->width = 0;
 			size->width = 0;
 		}
+
+		if (widget == WID_QS_WARNING) {
+			*size = this->warning_size;
+		}
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
+	{
+		if (widget != WID_QS_WARNING) return;
+
+		if (this->flags & QSF_PASSWORD) {
+			DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT - WD_FRAMERECT_RIGHT,
+				r.top + WD_FRAMERECT_TOP + WD_FRAMETEXT_TOP, r.bottom - WD_FRAMERECT_BOTTOM - WD_FRAMETEXT_BOTTOM,
+				STR_WARNING_PASSWORD_SECURITY, TC_FROMSTRING, SA_CENTER);
+		}
+	}
+
+	void SetStringParameters(int widget) const override
 	{
 		if (widget == WID_QS_CAPTION) SetDParam(0, this->editbox.caption);
 	}
 
 	void OnOk()
 	{
-		if (this->editbox.orig == NULL || strcmp(this->editbox.text.buf, this->editbox.orig) != 0) {
-			/* If the parent is NULL, the editbox is handled by general function
+		if (this->editbox.orig == nullptr || strcmp(this->editbox.text.buf, this->editbox.orig) != 0) {
+			/* If the parent is nullptr, the editbox is handled by general function
 			 * HandleOnEditText */
-			if (this->parent != NULL) {
+			if (this->parent != nullptr) {
 				this->parent->OnQueryTextFinished(this->editbox.text.buf);
 			} else {
 				HandleOnEditText(this->editbox.text.buf);
@@ -1051,7 +1107,7 @@ struct QueryStringWindow : public Window
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_QS_DEFAULT:
@@ -1070,10 +1126,10 @@ struct QueryStringWindow : public Window
 
 	~QueryStringWindow()
 	{
-		if (!this->editbox.handled && this->parent != NULL) {
+		if (!this->editbox.handled && this->parent != nullptr) {
 			Window *parent = this->parent;
-			this->parent = NULL; // so parent doesn't try to delete us again
-			parent->OnQueryTextFinished(NULL);
+			this->parent = nullptr; // so parent doesn't try to delete us again
+			parent->OnQueryTextFinished(nullptr);
 		}
 	}
 };
@@ -1086,6 +1142,7 @@ static const NWidgetPart _nested_query_string_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(WWT_EDITBOX, COLOUR_GREY, WID_QS_TEXT), SetMinimalSize(256, 12), SetFill(1, 1), SetPadding(2, 2, 2, 2),
 	EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_GREY, WID_QS_WARNING), EndContainer(),
 	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
 		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_QS_DEFAULT), SetMinimalSize(87, 12), SetFill(1, 1), SetDataTip(STR_BUTTON_DEFAULT, STR_NULL),
 		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_QS_CANCEL), SetMinimalSize(86, 12), SetFill(1, 1), SetDataTip(STR_BUTTON_CANCEL, STR_NULL),
@@ -1106,7 +1163,7 @@ static WindowDesc _query_string_desc(
  * @param caption StringID of text shown in caption of querywindow
  * @param maxsize maximum size in bytes or characters (including terminating '\0') depending on flags
  * @param parent pointer to a Window that will handle the events (ok/cancel) of this
- *        window. If NULL, results are handled by global function HandleOnEditText
+ *        window. If nullptr, results are handled by global function HandleOnEditText
  * @param afilter filters out unwanted character input
  * @param flags various flags, @see QueryStringFlags
  */
@@ -1143,10 +1200,10 @@ struct QueryWindow : public Window {
 
 	~QueryWindow()
 	{
-		if (this->proc != NULL) this->proc(this->parent, false);
+		if (this->proc != nullptr) this->proc(this->parent, false);
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_Q_CAPTION:
@@ -1160,7 +1217,7 @@ struct QueryWindow : public Window {
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_Q_TEXT) return;
 
@@ -1170,7 +1227,7 @@ struct QueryWindow : public Window {
 		*size = d;
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_Q_TEXT) return;
 
@@ -1178,7 +1235,7 @@ struct QueryWindow : public Window {
 				this->message, TC_FROMSTRING, SA_CENTER);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_Q_YES: {
@@ -1187,11 +1244,11 @@ struct QueryWindow : public Window {
 				QueryCallbackProc *proc = this->proc;
 				Window *parent = this->parent;
 				/* Prevent the destructor calling the callback function */
-				this->proc = NULL;
+				this->proc = nullptr;
 				delete this;
-				if (proc != NULL) {
+				if (proc != nullptr) {
 					proc(parent, true);
-					proc = NULL;
+					proc = nullptr;
 				}
 				break;
 			}
@@ -1201,15 +1258,15 @@ struct QueryWindow : public Window {
 		}
 	}
 
-	virtual EventState OnKeyPress(WChar key, uint16 keycode)
+	EventState OnKeyPress(WChar key, uint16 keycode) override
 	{
 		/* ESC closes the window, Enter confirms the action */
 		switch (keycode) {
 			case WKC_RETURN:
 			case WKC_NUM_ENTER:
-				if (this->proc != NULL) {
+				if (this->proc != nullptr) {
 					this->proc(this->parent, true);
-					this->proc = NULL;
+					this->proc = nullptr;
 				}
 				FALLTHROUGH;
 
@@ -1236,7 +1293,7 @@ static const NWidgetPart _nested_query_widgets[] = {
 };
 
 static WindowDesc _query_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_CONFIRM_POPUP_QUERY, WC_NONE,
 	WDF_MODAL,
 	_nested_query_widgets, lengthof(_nested_query_widgets)
@@ -1247,13 +1304,13 @@ static WindowDesc _query_desc(
  * The window is aligned to the centre of its parent.
  * @param caption string shown as window caption
  * @param message string that will be shown for the window
- * @param parent pointer to parent window, if this pointer is NULL the parent becomes
+ * @param parent pointer to parent window, if this pointer is nullptr the parent becomes
  * the main window WC_MAIN_WINDOW
  * @param callback callback function pointer to set in the window descriptor
  */
 void ShowQuery(StringID caption, StringID message, Window *parent, QueryCallbackProc *callback)
 {
-	if (parent == NULL) parent = FindWindowById(WC_MAIN_WINDOW, 0);
+	if (parent == nullptr) parent = FindWindowById(WC_MAIN_WINDOW, 0);
 
 	const Window *w;
 	FOR_ALL_WINDOWS_FROM_BACK(w) {

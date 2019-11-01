@@ -15,10 +15,10 @@
 /** Widgets of the #BuildRoadToolbarWindow class. */
 enum RoadToolbarWidgets {
 	/* Name starts with RO instead of R, because of collision with RailToolbarWidgets */
+	WID_ROT_CAPTION,        ///< Caption of the window
 	WID_ROT_ROAD_X,         ///< Build road in x-direction.
 	WID_ROT_ROAD_Y,         ///< Build road in y-direction.
 	WID_ROT_AUTOROAD,       ///< Autoroad.
-	WID_ROT_FULLROAD,       ///< Auto full road (no half-tiles).
 	WID_ROT_DEMOLISH,       ///< Demolish.
 	WID_ROT_DEPOT,          ///< Build depot.
 	WID_ROT_BUS_STATION,    ///< Build bus station.
@@ -27,6 +27,7 @@ enum RoadToolbarWidgets {
 	WID_ROT_BUILD_BRIDGE,   ///< Build bridge.
 	WID_ROT_BUILD_TUNNEL,   ///< Build tunnel.
 	WID_ROT_REMOVE,         ///< Remove road.
+	WID_ROT_CONVERT_ROAD,   ///< Convert road.
 };
 
 /** Widgets of the #BuildRoadDepotWindow class. */

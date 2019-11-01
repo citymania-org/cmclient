@@ -1598,7 +1598,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Zama ba
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Lehiakideak
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Ordenagailu jokalariak
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Jatorrizkoa
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Gomendatua)
 
@@ -1680,13 +1679,9 @@ STR_QUIT_NO                                                     :{BLACK}Ez
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2304,6 +2299,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Errepide
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Tranbia tunela eraiki. Shift gutxi gora beherako kostea erakutsi
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Errepidea ezabatu
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Tranbia ezabatu
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Errepide gordailuen norabidea
@@ -3149,8 +3145,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Trenbide sailak:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Seinaleak
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Errepide sailak:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Errepidea
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tranbia sailak
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Urbide sailak:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanalak
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Geltokiak:
@@ -3224,6 +3218,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Taldeetan ez da
 STR_GROUP_DEFAULT_SHIPS                                         :Taldeetan ez dauden itsasontziak
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Taldeetan ez dauden hegazkinak
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Taldeak - Taldean klikatu taldearen ibilgailuak zerrendatzeko
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klikatu taldea sortzeko
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Aukeratutako taldea ezabatu
@@ -3244,10 +3239,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Tren elektriko 
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Monorail tren berriak
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Tren magnetiko berriak
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Tren berriak
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Errepide ibilgailu berriak
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Tren berriak
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Itsasontzi berriak
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Hegazkin berriak
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Kosteak: {GOLD}{CURRENCY_LONG}{BLACK} Pisua: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Abiadura: {GOLD}{VELOCITY}{BLACK} Potentzia: {GOLD}{POWER}
@@ -3280,10 +3278,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Ibilgail
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Itsasontia erosi
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Hegazkina erosi
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Aukeratuta dagoen ibilgailua erosi. Shift+Klik gutxi gora beherako kostea erakutsi
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Aukeratuta dagoen ibilgailua erosi. Shift+Klik gutxi gora beherako kostea erakutsi
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Aukeratuta dagoen itsasontzia erosi. Shift+Klik gutxi gora beherako kostea erakutsi
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Aukeratuta dagoen hegazkina erosi. Shift+Klik gutxi gora beherako kostea erakutsi
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Berrizendatu
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Berrizendatu
@@ -3389,12 +3389,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Gordail
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Ibilgailu frabrikaren mezua
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}{STRING} berria diesinatu dugu - Nahiko zenuke ibilgailu honen urte baterako erabilera esklusiboa izatea? Bere funtzionamendua ikusi ahalko genuke publiko egin aurretik.
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :Lokomotora
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :Errepide ibilgailua
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :Hegazkina
-STR_ENGINE_PREVIEW_SHIP                                         :Itsasontzia
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :Monorail lokomotora
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :Lokomotora magnetikoa
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :Errepide ibilgailua
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :Hegazkina
+STR_ENGINE_PREVIEW_SHIP                                         :Itsasontzia
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kostea: {CURRENCY_LONG} Pisua: {WEIGHT_SHORT}{}Pisua: {VELOCITY}  Potentzia: {POWER}{}Mantenimendua: {CURRENCY_LONG}/urtero{}Edukiera: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Kostua: {CURRENCY_LONG} Pisua: {WEIGHT_SHORT}{}Abiadura: {VELOCITY}  Potentzia: {POWER}  Gehienezko trakzioa: {6:FORCE}{}Mantinemendua: {4:CURRENCY_LONG}/urtero{}Edukiera: {5:CARGO_LONG}
@@ -3433,6 +3436,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Tren ibilgailua
 STR_REPLACE_ELRAIL_VEHICLES                                     :Tren ibilgailu elektrikoak
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monorail trenak
 STR_REPLACE_MAGLEV_VEHICLES                                     :Tren magnetikoak
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Bagoiak ezabatu: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Ordezkatze automatikoari agindu trenaren luzera errespetatzea, bagoiak ezabatuz luzera handitzen badute (trenaren hasierako bagoietik hasita)
@@ -4143,7 +4147,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Lehendab
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Ez dago trenbide egokirik
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Lehendabizi trenbidea ezabatu
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Errepidea norabide bakarrekoa da edo blokeatua dago
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Ezin dira maila bereko pasaguneak egin trenbide mota honetan
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Ezin dira maila bereko pasaguneak egin trenbide mota honetan
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Ezin da seinalerik hemen eraiki...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Ezin da trenbiderik hemen eraiki...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Ezin da hemengo trenbidea ezabatu...

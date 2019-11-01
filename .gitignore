@@ -50,3 +50,7 @@ src/os/windows/ottdres.rc
 !/config.lib
 !*.in
 *.tmp
+
+/bin/data/*
+/game
+/openttd

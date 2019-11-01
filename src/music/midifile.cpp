@@ -21,11 +21,10 @@
 #include "../console_func.h"
 #include "../console_internal.h"
 
-
 /* SMF reader based on description at: http://www.somascape.org/midi/tech/mfile.html */
 
 
-static MidiFile *_midifile_instance = NULL;
+static MidiFile *_midifile_instance = nullptr;
 
 /**
  * Retrieve a well-known MIDI system exclusive message.
@@ -145,7 +144,7 @@ public:
 
 	/**
 	 * Read bytes into a buffer.
-	 * @param[out] dest buffer to copy info
+	 * @param[out] dest buffer to copy into
 	 * @param length number of bytes to read
 	 * @return true if the requested number of bytes were available
 	 */
@@ -154,6 +153,21 @@ public:
 		if (this->IsEnd()) return false;
 		if (this->buflen - this->pos < length) return false;
 		memcpy(dest, this->buf + this->pos, length);
+		this->pos += length;
+		return true;
+	}
+
+	/**
+	 * Read bytes into a MidiFile::DataBlock.
+	 * @param[out] dest DataBlock to copy into
+	 * @param length number of bytes to read
+	 * @return true if the requested number of bytes were available
+	 */
+	bool ReadDataBlock(MidiFile::DataBlock *dest, size_t length)
+	{
+		if (this->IsEnd()) return false;
+		if (this->buflen - this->pos < length) return false;
+		dest->data.insert(dest->data.end(), this->buf + this->pos, this->buf + this->pos + length);
 		this->pos += length;
 		return true;
 	}
@@ -240,7 +254,6 @@ static bool ReadTrackChunk(FILE *file, MidiFile &target)
 			/* Regular channel message */
 			last_status = status;
 		running_status:
-			byte *data;
 			switch (status & 0xF0) {
 				case MIDIST_NOTEOFF:
 				case MIDIST_NOTEON:
@@ -248,20 +261,19 @@ static bool ReadTrackChunk(FILE *file, MidiFile &target)
 				case MIDIST_CONTROLLER:
 				case MIDIST_PITCHBEND:
 					/* 3 byte messages */
-					data = block->data.Append(3);
-					data[0] = status;
-					if (!chunk.ReadBuffer(&data[1], 2)) {
+					block->data.push_back(status);
+					if (!chunk.ReadDataBlock(block, 2)) {
 						return false;
 					}
 					break;
 				case MIDIST_PROGCHG:
 				case MIDIST_CHANPRESS:
 					/* 2 byte messages */
-					data = block->data.Append(2);
-					data[0] = status;
-					if (!chunk.ReadByte(data[1])) {
+					block->data.push_back(status);
+					if (!chunk.ReadByte(buf[0])) {
 						return false;
 					}
+					block->data.push_back(buf[0]);
 					break;
 				default:
 					NOT_REACHED();
@@ -298,15 +310,14 @@ static bool ReadTrackChunk(FILE *file, MidiFile &target)
 			if (!chunk.ReadVariableLength(length)) {
 				return false;
 			}
-			byte *data = block->data.Append(length + 1);
-			data[0] = 0xF0;
-			if (!chunk.ReadBuffer(data + 1, length)) {
+			block->data.push_back(0xF0);
+			if (!chunk.ReadDataBlock(block, length)) {
 				return false;
 			}
-			if (data[length] != 0xF7) {
+			if (block->data.back() != 0xF7) {
 				/* Engage Casio weirdo mode - convert to normal sysex */
 				running_sysex = true;
-				*block->data.Append() = 0xF7;
+				block->data.push_back(0xF7);
 			} else {
 				running_sysex = false;
 			}
@@ -316,8 +327,7 @@ static bool ReadTrackChunk(FILE *file, MidiFile &target)
 			if (!chunk.ReadVariableLength(length)) {
 				return false;
 			}
-			byte *data = block->data.Append(length);
-			if (!chunk.ReadBuffer(data, length)) {
+			if (!chunk.ReadDataBlock(block, length)) {
 				return false;
 			}
 		} else {
@@ -361,14 +371,13 @@ static bool FixupMidiData(MidiFile &target)
 	uint32 last_ticktime = 0;
 	for (size_t i = 0; i < target.blocks.size(); i++) {
 		MidiFile::DataBlock &block = target.blocks[i];
-		if (block.data.Length() == 0) {
+		if (block.data.size() == 0) {
 			continue;
 		} else if (block.ticktime > last_ticktime || merged_blocks.size() == 0) {
 			merged_blocks.push_back(block);
 			last_ticktime = block.ticktime;
 		} else {
-			byte *datadest = merged_blocks.back().data.Append(block.data.Length());
-			memcpy(datadest, block.data.Begin(), block.data.Length());
+			merged_blocks.back().data.insert(merged_blocks.back().data.end(), block.data.begin(), block.data.end());
 		}
 	}
 	std::swap(merged_blocks, target.blocks);
@@ -458,7 +467,7 @@ bool MidiFile::LoadFile(const char *filename)
 
 	bool success = false;
 	FILE *file = FioFOpenFile(filename, "rb", Subdirectory::BASESET_DIR);
-	if (file == NULL) return false;
+	if (file == nullptr) return false;
 
 	SMFHeader header;
 	if (!ReadSMFHeader(file, header)) goto cleanup;
@@ -539,14 +548,14 @@ struct MpsMachine {
 
 	static void AddMidiData(MidiFile::DataBlock &block, byte b1, byte b2)
 	{
-		*block.data.Append() = b1;
-		*block.data.Append() = b2;
+		block.data.push_back(b1);
+		block.data.push_back(b2);
 	}
 	static void AddMidiData(MidiFile::DataBlock &block, byte b1, byte b2, byte b3)
 	{
-		*block.data.Append() = b1;
-		*block.data.Append() = b2;
-		*block.data.Append() = b3;
+		block.data.push_back(b1);
+		block.data.push_back(b2);
+		block.data.push_back(b3);
 	}
 
 	/**
@@ -847,7 +856,7 @@ bool MidiFile::LoadSong(const MusicSongInfo &song)
 		{
 			size_t songdatalen = 0;
 			byte *songdata = GetMusicCatEntryData(song.filename, song.cat_index, songdatalen);
-			if (songdata != NULL) {
+			if (songdata != nullptr) {
 				bool result = this->LoadMpsData(songdata, songdatalen);
 				free(songdata);
 				return result;
@@ -972,8 +981,8 @@ bool MidiFile::WriteSMF(const char *filename)
 		}
 
 		/* Write each block data command */
-		byte *dp = block.data.Begin();
-		while (dp < block.data.End()) {
+		byte *dp = block.data.data();
+		while (dp < block.data.data() + block.data.size()) {
 			/* Always zero delta time inside blocks */
 			if (needtime) {
 				fputc(0, f);
@@ -1056,7 +1065,7 @@ std::string MidiFile::GetSMFFile(const MusicSongInfo &song)
 	char basename[MAX_PATH];
 	{
 		const char *fnstart = strrchr(song.filename, PATHSEPCHAR);
-		if (fnstart == NULL) {
+		if (fnstart == nullptr) {
 			fnstart = song.filename;
 		} else {
 			fnstart++;
@@ -1086,7 +1095,7 @@ std::string MidiFile::GetSMFFile(const MusicSongInfo &song)
 	byte *data;
 	size_t datalen;
 	data = GetMusicCatEntryData(song.filename, song.cat_index, datalen);
-	if (data == NULL) return std::string();
+	if (data == nullptr) return std::string();
 
 	MidiFile midifile;
 	if (!midifile.LoadMpsData(data, datalen)) {
@@ -1114,7 +1123,7 @@ static bool CmdDumpSMF(byte argc, char *argv[])
 		return false;
 	}
 
-	if (_midifile_instance == NULL) {
+	if (_midifile_instance == nullptr) {
 		IConsolePrint(CC_ERROR, "There is no MIDI file loaded currently, make sure music is playing, and you're using a driver that works with raw MIDI.");
 		return false;
 	}
@@ -1152,7 +1161,7 @@ MidiFile::MidiFile()
 MidiFile::~MidiFile()
 {
 	if (_midifile_instance == this) {
-		_midifile_instance = NULL;
+		_midifile_instance = nullptr;
 	}
 }
 

@@ -37,7 +37,7 @@ public:
 	virtual bool Selectable() const { return false; }
 	virtual uint Height(uint width) const { return FONT_HEIGHT_NORMAL; }
 	virtual uint Width() const { return 0; }
-	virtual void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const;
+	virtual void Draw(int left, int right, int top, int bottom, bool sel, Colours bg_colour) const;
 };
 
 /**
@@ -50,13 +50,12 @@ public:
 	DropDownListStringItem(StringID string, int result, bool masked) : DropDownListItem(result, masked), string(string) {}
 	virtual ~DropDownListStringItem() {}
 
-	virtual bool Selectable() const { return true; }
-	virtual uint Width() const;
-	//virtual const char * String() const;
-	virtual void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const;
+	bool Selectable() const override { return true; }
+	uint Width() const override;
+	void Draw(int left, int right, int top, int bottom, bool sel, Colours bg_colour) const override;
 	virtual StringID String() const { return this->string; }
 
-	static int CDECL NatSortFunc(const DropDownListItem * const *first, const DropDownListItem * const *second);
+	static bool NatSortFunc(std::unique_ptr<const DropDownListItem> const &first, std::unique_ptr<const DropDownListItem> const &second);
 };
 
 /**
@@ -102,8 +101,8 @@ public:
 	DropDownListParamStringItem(StringID string, int result, bool masked) : DropDownListStringItem(string, result, masked) {}
 	virtual ~DropDownListParamStringItem() {}
 
-	virtual StringID String() const;
-	virtual void SetParam(uint index, uint64 value) { decode_params[index] = value; }
+	StringID String() const override;
+	void SetParam(uint index, uint64 value) { decode_params[index] = value; }
 };
 
 /**
@@ -116,16 +115,34 @@ public:
 	DropDownListCharStringItem(const char *raw_string, int result, bool masked) : DropDownListStringItem(STR_JUST_RAW_STRING, result, masked), raw_string(raw_string) {}
 	virtual ~DropDownListCharStringItem() {}
 
-	virtual StringID String() const;
+	StringID String() const override;
+};
+
+/**
+ * List item with icon and string.
+ */
+class DropDownListIconItem : public DropDownListParamStringItem {
+	SpriteID sprite;
+	PaletteID pal;
+	Dimension dim;
+	uint sprite_y;
+	uint text_y;
+public:
+	DropDownListIconItem(SpriteID sprite, PaletteID pal, StringID string, int result, bool masked);
+
+	uint Height(uint width) const override;
+	uint Width() const override;
+	void Draw(int left, int right, int top, int bottom, bool sel, Colours bg_colour) const override;
+	void SetDimension(Dimension d);
 };
 
 /**
  * A drop down list is a collection of drop down list items.
  */
-typedef AutoDeleteSmallVector<const DropDownListItem *, 4> DropDownList;
+typedef std::vector<std::unique_ptr<const DropDownListItem>> DropDownList;
 
-void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int button, Rect wi_rect, Colours wi_colour, bool auto_width = false, bool instant_close = false);
+void ShowDropDownListAt(Window *w, DropDownList &&list, int selected, int button, Rect wi_rect, Colours wi_colour, bool auto_width = false, bool instant_close = false);
 
-void ShowDropDownList(Window *w, const DropDownList *list, int selected, int button, uint width = 0, bool auto_width = false, bool instant_close = false);
+void ShowDropDownList(Window *w, DropDownList &&list, int selected, int button, uint width = 0, bool auto_width = false, bool instant_close = false);
 
 #endif /* WIDGETS_DROPDOWN_TYPE_H */

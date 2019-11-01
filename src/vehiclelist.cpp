@@ -65,13 +65,13 @@ bool VehicleListIdentifier::UnpackIfValid(uint32 data)
  * @param type    Type of vehicle
  * @param tile    The tile the depot is located on
  * @param engines Pointer to list to add vehicles to
- * @param wagons  Pointer to list to add wagons to (can be NULL)
+ * @param wagons  Pointer to list to add wagons to (can be nullptr)
  * @param individual_wagons If true add every wagon to \a wagons which is not attached to an engine. If false only add the first wagon of every row.
  */
 void BuildDepotVehicleList(VehicleType type, TileIndex tile, VehicleList *engines, VehicleList *wagons, bool individual_wagons)
 {
-	engines->Clear();
-	if (wagons != NULL && wagons != engines) wagons->Clear();
+	engines->clear();
+	if (wagons != nullptr && wagons != engines) wagons->clear();
 
 	const Vehicle *v;
 	FOR_ALL_VEHICLES(v) {
@@ -84,8 +84,8 @@ void BuildDepotVehicleList(VehicleType type, TileIndex tile, VehicleList *engine
 				const Train *t = Train::From(v);
 				if (t->IsArticulatedPart() || t->IsRearDualheaded()) continue;
 				if (t->track != TRACK_BIT_DEPOT) continue;
-				if (wagons != NULL && t->First()->IsFreeWagon()) {
-					if (individual_wagons || t->IsFreeWagon()) *wagons->Append() = t;
+				if (wagons != nullptr && t->First()->IsFreeWagon()) {
+					if (individual_wagons || t->IsFreeWagon()) wagons->push_back(t);
 					continue;
 				}
 				break;
@@ -98,13 +98,13 @@ void BuildDepotVehicleList(VehicleType type, TileIndex tile, VehicleList *engine
 
 		if (!v->IsPrimaryVehicle()) continue;
 
-		*engines->Append() = v;
+		engines->push_back(v);
 	}
 
 	/* Ensure the lists are not wasting too much space. If the lists are fresh
 	 * (i.e. built within a command) then this will actually do nothing. */
-	engines->Compact();
-	if (wagons != NULL && wagons != engines) wagons->Compact();
+	engines->shrink_to_fit();
+	if (wagons != nullptr && wagons != engines) wagons->shrink_to_fit();
 }
 
 /**
@@ -115,7 +115,7 @@ void BuildDepotVehicleList(VehicleType type, TileIndex tile, VehicleList *engine
  */
 bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli)
 {
-	list->Clear();
+	list->clear();
 
 	const Vehicle *v;
 
@@ -128,7 +128,7 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 					FOR_VEHICLE_ORDERS(v, order) {
 						if ((order->IsType(OT_GOTO_STATION) || order->IsType(OT_GOTO_WAYPOINT) || order->IsType(OT_IMPLICIT))
 								&& order->GetDestination() == vli.index) {
-							*list->Append() = v;
+							list->push_back(v);
 							break;
 						}
 					}
@@ -139,10 +139,10 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 		case VL_SHARED_ORDERS:
 			/* Add all vehicles from this vehicle's shared order list */
 			v = Vehicle::GetIfValid(vli.index);
-			if (v == NULL || v->type != vli.vtype || !v->IsPrimaryVehicle()) return false;
+			if (v == nullptr || v->type != vli.vtype || !v->IsPrimaryVehicle()) return false;
 
-			for (; v != NULL; v = v->NextShared()) {
-				*list->Append() = v;
+			for (; v != nullptr; v = v->NextShared()) {
+				list->push_back(v);
 			}
 			break;
 
@@ -151,7 +151,7 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 				FOR_ALL_VEHICLES(v) {
 					if (v->type == vli.vtype && v->IsPrimaryVehicle() &&
 							v->owner == vli.company && GroupIsInGroup(v->group_id, vli.index)) {
-						*list->Append() = v;
+						list->push_back(v);
 					}
 				}
 				break;
@@ -161,7 +161,7 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 		case VL_STANDARD:
 			FOR_ALL_VEHICLES(v) {
 				if (v->type == vli.vtype && v->owner == vli.company && v->IsPrimaryVehicle()) {
-					*list->Append() = v;
+					list->push_back(v);
 				}
 			}
 			break;
@@ -173,7 +173,7 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 
 					FOR_VEHICLE_ORDERS(v, order) {
 						if (order->IsType(OT_GOTO_DEPOT) && !(order->GetDepotActionType() & ODATFB_NEAREST_DEPOT) && order->GetDestination() == vli.index) {
-							*list->Append() = v;
+							list->push_back(v);
 							break;
 						}
 					}
@@ -184,6 +184,6 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 		default: return false;
 	}
 
-	list->Compact();
+	list->shrink_to_fit();
 	return true;
 }

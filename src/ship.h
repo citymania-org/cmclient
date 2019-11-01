@@ -20,17 +20,17 @@
 void GetShipSpriteSize(EngineID engine, uint &width, uint &height, int &xoffs, int &yoffs, EngineImageType image_type);
 WaterClass GetEffectiveWaterClass(TileIndex tile);
 
-typedef std::deque<TrackdirByte> ShipPathCache;
+typedef std::deque<Trackdir> ShipPathCache;
 
 /**
  * All ships have this type.
  */
 struct Ship FINAL : public SpecializedVehicle<Ship, VEH_SHIP> {
-	TrackBitsByte state;    ///< The "track" the ship is following.
-	ShipPathCache path;     ///< Cached path.
-	DirectionByte rotation; ///< Visible direction.
-	int16 rotation_x_pos;   ///< NOSAVE: X Position before rotation.
-	int16 rotation_y_pos;   ///< NOSAVE: Y Position before rotation.
+	TrackBits state;      ///< The "track" the ship is following.
+	ShipPathCache path;   ///< Cached path.
+	Direction rotation;   ///< Visible direction.
+	int16 rotation_x_pos; ///< NOSAVE: X Position before rotation.
+	int16 rotation_y_pos; ///< NOSAVE: Y Position before rotation.
 
 	/** We don't want GCC to zero our struct! It already is zeroed and has an index! */
 	Ship() : SpecializedVehicleBase() {}
@@ -57,7 +57,7 @@ struct Ship FINAL : public SpecializedVehicle<Ship, VEH_SHIP> {
 	void SetDestTile(TileIndex tile);
 };
 
-static const uint SHIP_MAX_ORDER_DISTANCE = 130;
+bool IsShipDestinationTile(TileIndex tile, StationID station);
 
 /**
  * Iterate over all ships.

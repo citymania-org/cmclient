@@ -34,14 +34,14 @@
 	CCountedPtr<Text> counter(goal);
 
 	EnforcePrecondition(GOAL_INVALID, ScriptObject::GetCompany() == OWNER_DEITY);
-	EnforcePrecondition(GOAL_INVALID, goal != NULL);
+	EnforcePrecondition(GOAL_INVALID, goal != nullptr);
 	const char *text = goal->GetEncodedText();
 	EnforcePreconditionEncodedText(GOAL_INVALID, text);
 	EnforcePrecondition(GOAL_INVALID, company == ScriptCompany::COMPANY_INVALID || ScriptCompany::ResolveCompanyID(company) != ScriptCompany::COMPANY_INVALID);
 
 	uint8 c = company;
 	if (company == ScriptCompany::COMPANY_INVALID) c = INVALID_COMPANY;
-	StoryPage *story_page = NULL;
+	StoryPage *story_page = nullptr;
 	if (type == GT_STORY_PAGE && ScriptStoryPage::IsValidStoryPage((ScriptStoryPage::StoryPageID)destination)) story_page = ::StoryPage::Get((ScriptStoryPage::StoryPageID)destination);
 
 	EnforcePrecondition(GOAL_INVALID, (type == GT_NONE && destination == 0) ||
@@ -49,7 +49,7 @@
 			(type == GT_INDUSTRY && ScriptIndustry::IsValidIndustry(destination)) ||
 			(type == GT_TOWN && ScriptTown::IsValidTown(destination)) ||
 			(type == GT_COMPANY && ScriptCompany::ResolveCompanyID((ScriptCompany::CompanyID)destination) != ScriptCompany::COMPANY_INVALID) ||
-			(type == GT_STORY_PAGE && story_page != NULL && (c == INVALID_COMPANY ? story_page->company == INVALID_COMPANY : story_page->company == INVALID_COMPANY || story_page->company == c)));
+			(type == GT_STORY_PAGE && story_page != nullptr && (c == INVALID_COMPANY ? story_page->company == INVALID_COMPANY : story_page->company == INVALID_COMPANY || story_page->company == c)));
 
 	if (!ScriptObject::DoCommand(0, type | (c << 8), destination, CMD_CREATE_GOAL, text, &ScriptInstance::DoCommandReturnGoalID)) return GOAL_INVALID;
 
@@ -71,7 +71,7 @@
 
 	EnforcePrecondition(false, IsValidGoal(goal_id));
 	EnforcePrecondition(false, ScriptObject::GetCompany() == OWNER_DEITY);
-	EnforcePrecondition(false, goal != NULL);
+	EnforcePrecondition(false, goal != nullptr);
 	EnforcePrecondition(false, !StrEmpty(goal->GetEncodedText()));
 
 	return ScriptObject::DoCommand(0, goal_id, 0, CMD_SET_GOAL_TEXT, goal->GetEncodedText());
@@ -84,12 +84,12 @@
 	EnforcePrecondition(false, IsValidGoal(goal_id));
 	EnforcePrecondition(false, ScriptObject::GetCompany() == OWNER_DEITY);
 
-	/* Ensure null as used for emtpy string. */
-	if (progress != NULL && StrEmpty(progress->GetEncodedText())) {
-		progress = NULL;
+	/* Ensure null as used for empty string. */
+	if (progress != nullptr && StrEmpty(progress->GetEncodedText())) {
+		progress = nullptr;
 	}
 
-	return ScriptObject::DoCommand(0, goal_id, 0, CMD_SET_GOAL_PROGRESS, progress != NULL ? progress->GetEncodedText() : NULL);
+	return ScriptObject::DoCommand(0, goal_id, 0, CMD_SET_GOAL_PROGRESS, progress != nullptr ? progress->GetEncodedText() : nullptr);
 }
 
 /* static */ bool ScriptGoal::SetCompleted(GoalID goal_id, bool completed)
@@ -106,7 +106,7 @@
 	EnforcePrecondition(false, ScriptObject::GetCompany() == OWNER_DEITY);
 
 	Goal *g = Goal::Get(goal_id);
-	return g != NULL && g->completed;
+	return g != nullptr && g->completed;
 }
 
 /* static */ bool ScriptGoal::DoQuestion(uint16 uniqueid, uint32 target, bool is_client, Text *question, QuestionType type, uint32 buttons)
@@ -114,7 +114,7 @@
 	CCountedPtr<Text> counter(question);
 
 	EnforcePrecondition(false, ScriptObject::GetCompany() == OWNER_DEITY);
-	EnforcePrecondition(false, question != NULL);
+	EnforcePrecondition(false, question != nullptr);
 	const char *text = question->GetEncodedText();
 	EnforcePreconditionEncodedText(false, text);
 	EnforcePrecondition(false, CountBits(buttons) >= 1 && CountBits(buttons) <= 3);
@@ -137,13 +137,9 @@
 {
 	EnforcePrecondition(false, ScriptGame::IsMultiplayer());
 	EnforcePrecondition(false, ScriptClient::ResolveClientID(client) != ScriptClient::CLIENT_INVALID);
-#ifdef ENABLE_NETWORK
 	/* Can only send 16 bits of client_id before proper fix is implemented */
 	EnforcePrecondition(false, client < (1 << 16));
 	return DoQuestion(uniqueid, client, true, question, type, buttons);
-#else
-	return false;
-#endif
 }
 
 /* static */ bool ScriptGoal::CloseQuestion(uint16 uniqueid)

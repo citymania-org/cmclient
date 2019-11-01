@@ -64,12 +64,12 @@ struct EndGameHighScoreBaseWindow : Window {
 		return pt;
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		delete this;
 	}
 
-	virtual EventState OnKeyPress(WChar key, uint16 keycode)
+	EventState OnKeyPress(WChar key, uint16 keycode) override
 	{
 		/* All keys are 'handled' by this window but we want to make
 		 * sure that 'quit' still works correctly. Not handling the
@@ -130,13 +130,13 @@ struct EndGameWindow : EndGameHighScoreBaseWindow {
 		ShowHighscoreTable(this->window_number, this->rank);
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		this->SetupHighScoreEndWindow();
 		Point pt = this->GetTopLeft(ScaleGUITrad(640), ScaleGUITrad(480));
 
 		const Company *c = Company::GetIfValid(_local_company);
-		if (c == NULL) return;
+		if (c == nullptr) return;
 
 		/* We need to get performance from last year because the image is shown
 		 * at the start of the new year when these things have already been copied */
@@ -178,7 +178,7 @@ struct HighScoreWindow : EndGameHighScoreBaseWindow {
 		if (!_networking && !this->game_paused_by_player) DoCommandP(0, PM_PAUSED_NORMAL, 0, CMD_PAUSE); // unpause
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		const HighScore *hs = _highscore_table[this->window_number];
 
@@ -211,14 +211,14 @@ static const NWidgetPart _nested_highscore_widgets[] = {
 };
 
 static WindowDesc _highscore_desc(
-	WDP_MANUAL, NULL, 0, 0,
+	WDP_MANUAL, nullptr, 0, 0,
 	WC_HIGHSCORE, WC_NONE,
 	0,
 	_nested_highscore_widgets, lengthof(_nested_highscore_widgets)
 );
 
 static WindowDesc _endgame_desc(
-	WDP_MANUAL, NULL, 0, 0,
+	WDP_MANUAL, nullptr, 0, 0,
 	WC_ENDSCREEN, WC_NONE,
 	0,
 	_nested_highscore_widgets, lengthof(_nested_highscore_widgets)

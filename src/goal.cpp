@@ -79,7 +79,7 @@ CommandCost CmdCreateGoal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 
 		case GT_STORY_PAGE: {
 			if (!StoryPage::IsValidID(p2)) return CMD_ERROR;
-			CompanyByte story_company = StoryPage::Get(p2)->company;
+			CompanyID story_company = StoryPage::Get(p2)->company;
 			if (company == INVALID_COMPANY ? story_company != INVALID_COMPANY : story_company != INVALID_COMPANY && story_company != company) return CMD_ERROR;
 			break;
 		}
@@ -93,7 +93,7 @@ CommandCost CmdCreateGoal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 		g->dst = p2;
 		g->company = company;
 		g->text = stredup(text);
-		g->progress = NULL;
+		g->progress = nullptr;
 		g->completed = false;
 
 		if (g->company == INVALID_COMPANY) {
@@ -187,7 +187,7 @@ CommandCost CmdSetGoalProgress(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		Goal *g = Goal::Get(p1);
 		free(g->progress);
 		if (StrEmpty(text)) {
-			g->progress = NULL;
+			g->progress = nullptr;
 		} else {
 			g->progress = stredup(text);
 		}
@@ -248,9 +248,7 @@ CommandCost CmdGoalQuestion(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 {
 	uint16 uniqueid = (GoalType)GB(p1, 0, 16);
 	CompanyID company = (CompanyID)GB(p1, 16, 8);
-#ifdef ENABLE_NETWORK
 	ClientID client = (ClientID)GB(p1, 16, 16);
-#endif
 
 	assert_compile(GOAL_QUESTION_BUTTON_COUNT < 29);
 	uint32 button_mask = GB(p2, 0, GOAL_QUESTION_BUTTON_COUNT);
@@ -260,11 +258,7 @@ CommandCost CmdGoalQuestion(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	if (StrEmpty(text)) return CMD_ERROR;
 	if (is_client) {
-#ifdef ENABLE_NETWORK
 		if (NetworkClientInfo::GetByClientID(client) == nullptr) return CMD_ERROR;
-#else
-		return CMD_ERROR;
-#endif
 	} else {
 		if (company != INVALID_COMPANY && !Company::IsValidID(company)) return CMD_ERROR;
 	}
@@ -273,9 +267,7 @@ CommandCost CmdGoalQuestion(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 
 	if (flags & DC_EXEC) {
 		if (is_client) {
-#ifdef ENABLE_NETWORK
 			if (client != _network_own_client_id) return CommandCost();
-#endif
 		} else {
 			if (company == INVALID_COMPANY && !Company::IsValidID(_local_company)) return CommandCost();
 			if (company != INVALID_COMPANY && company != _local_company) return CommandCost();

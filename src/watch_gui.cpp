@@ -322,15 +322,11 @@ void WatchCompany::DrawWidget(const Rect &r, int widget) const
 		if ( Company::IsValidID( widget-EWW_HAS_CLIENT_FIRST ) ) {
 			/* Draw the Blot only if Company Exists */
 			Dimension sprite_size = GetSpriteSize(SPR_BLOT);
-#ifdef ENABLE_NETWORK
 			if (!_networking) { // Local game, draw the Blot
 				DrawSprite(SPR_BLOT, Company::IsValidAiID(widget - EWW_HAS_CLIENT_FIRST) ? PALETTE_TO_ORANGE : PALETTE_TO_GREEN, (r.left + r.right - sprite_size.width) / 2, (r.top + r.bottom - sprite_size.height) / 2 );
 			} else { // Network game, draw the blot according to company client count
 				DrawSprite(SPR_BLOT, this->company_count_client[widget-EWW_HAS_CLIENT_FIRST] > 0 ? (company_activity[widget-EWW_HAS_CLIENT_FIRST] > 0 ? PALETTE_TO_RED : PALETTE_TO_GREEN) : PALETTE_TO_GREY, (r.left + r.right - sprite_size.width) / 2, (r.top + r.bottom - sprite_size.height) / 2 );
 			}
-#else
-			DrawSprite(SPR_BLOT, Company::IsValidAiID(widget-EWW_HAS_CLIENT_FIRST) ? PALETTE_TO_ORANGE : PALETTE_TO_GREEN, (r.left + r.right - sprite_size.width) / 2, (r.top + r.bottom - sprite_size.height) / 2 );
-#endif
 		}
 	}
 }
@@ -392,13 +388,11 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 			this->SetDirty();
 		}
 	}
-#ifdef ENABLE_NETWORK
 	else if ( IsInsideMM(widget, EWW_HAS_CLIENT_FIRST, EWW_HAS_CLIENT_LAST + 1)) {
 		if(_networking && Company::IsValidID(widget - EWW_HAS_CLIENT_FIRST)){
 			ShowNetworkChatQueryWindow(DESTTYPE_TEAM, widget - EWW_HAS_CLIENT_FIRST);
 		}
 	}
-#endif
 	else {
 		char msg[128];
 		switch (widget) {
@@ -504,7 +498,6 @@ void WatchCompany::OnInvalidateData(int data, bool gui_scope)
 			GetString( this->company_name, STR_JUST_NOTHING, lastof(this->company_name) );
 
 		}
-	#ifdef ENABLE_NETWORK
 		if (_networking) { // Local game, draw the Blot
 			/* Reset company count - network only */
 			for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {
@@ -518,7 +511,6 @@ void WatchCompany::OnInvalidateData(int data, bool gui_scope)
 				}
 			}
 		}
-	#endif
 	}
 	else if(this->Wtype == EWT_CLIENT){
 		if (data == 2) {
@@ -554,7 +546,7 @@ void WatchCompany::ScrollToTile( TileIndex tile )
  *  @param company The company ID who's client is building
  *  @param tile The tile number where action took place
  */
-void WatchCompany::OnDoCommand( CompanyByte company, TileIndex tile )
+void WatchCompany::OnDoCommand(CompanyID company, TileIndex tile )
 {
 	/* Check if its my company */
 	if (this->watched_company == company)

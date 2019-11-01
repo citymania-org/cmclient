@@ -33,8 +33,8 @@ CommandCost CheckOwnership(Owner owner, TileIndex tile = 0);
 CommandCost CheckTileOwnership(TileIndex tile);
 void CargoResetPeriods(Company *c);
 
-extern CompanyByte _local_company;
-extern CompanyByte _current_company;
+extern CompanyID _local_company;
+extern CompanyID _current_company;
 
 extern Colours _company_colours[MAX_COMPANIES];
 extern CompanyManagerFace _company_manager_face;

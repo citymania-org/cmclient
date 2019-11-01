@@ -131,8 +131,7 @@ bool IsAreaWithinAcceptanceZoneOfStation(TileArea area) {
 	StationFinder morestations(TileArea(TileXY(TileX(area.tile) - catchment / 2, TileY(area.tile) - catchment / 2),
 		TileX(area.tile) + area.w + catchment, TileY(area.tile) + area.h + catchment));
 
-	for (Station * const *st_iter = morestations.GetStations()->Begin(); st_iter != morestations.GetStations()->End(); ++st_iter) {
-		Station *st = *st_iter;
+	for (Station *st: *morestations.GetStations()) {
 		Rect rect = st->GetCatchmentRect();
 		return TileArea(TileXY(rect.left, rect.top), TileXY(rect.right, rect.bottom)).Intersects(area);
 	}
@@ -151,8 +150,7 @@ bool IsTileWithinAcceptanceZoneOfStation(TileIndex tile) {
 	StationFinder morestations(TileArea(TileXY(TileX(tile) - catchment / 2, TileY(tile) - catchment / 2),
 		catchment, catchment));
 
-	for (Station * const *st_iter = morestations.GetStations()->Begin(); st_iter != morestations.GetStations()->End(); ++st_iter) {
-		Station *st = *st_iter;
+	for (Station *st: *morestations.GetStations()) {
 		Rect rect = st->GetCatchmentRect();
 		if ((uint)rect.left <= TileX(tile) && TileX(tile) <= (uint)rect.right
 			&& (uint)rect.top <= TileY(tile) && TileY(tile) <= (uint)rect.bottom )
@@ -211,7 +209,7 @@ SpriteID TileZoneCheckBuildEvaluation(TileIndex tile, Owner owner) {
 	}
 	// For provided goods
 	StationFinder stations(TileArea(tile, 1, 1));
-	if (stations.GetStations()->Length() > 0) {
+	if (!stations.GetStations()->empty()) {
 		return SPR_PALETTE_ZONING_GREEN;
 	}
 	// For accepted goods
@@ -232,7 +230,7 @@ SpriteID TileZoneCheckUnservedBuildingsEvaluation(TileIndex tile) {
 	{
 		StationFinder stations(TileArea(tile, 1, 1));
 
-		if (stations.GetStations()->Length() > 0) {
+		if (!stations.GetStations()->empty()) {
 			return INVALID_SPRITE_ID;
 		}
 		// For accepted goods
@@ -251,7 +249,7 @@ SpriteID TileZoneCheckUnservedIndustriesEvaluation(TileIndex tile) {
 		Industry *ind = Industry::GetByTile(tile);
 		StationFinder stations(ind->location);
 
-		if (stations.GetStations()->Length() > 0){
+		if (!stations.GetStations()->empty()){
 			return INVALID_SPRITE_ID;
 		}
 

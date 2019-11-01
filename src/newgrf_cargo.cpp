@@ -19,7 +19,7 @@
 struct CargoResolverObject : public ResolverObject {
 	CargoResolverObject(const CargoSpec *cs, CallbackID callback = CBID_NO_CALLBACK, uint32 callback_param1 = 0, uint32 callback_param2 = 0);
 
-	/* virtual */ const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
+	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
 };
 
 /* virtual */ const SpriteGroup *CargoResolverObject::ResolveReal(const RealSpriteGroup *group) const
@@ -29,7 +29,7 @@ struct CargoResolverObject : public ResolverObject {
 	if (group->num_loaded > 0) return group->loaded[0];
 	if (group->num_loading > 0) return group->loading[0];
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -54,7 +54,7 @@ SpriteID GetCustomCargoSprite(const CargoSpec *cs)
 {
 	CargoResolverObject object(cs);
 	const SpriteGroup *group = object.Resolve();
-	if (group == NULL) return 0;
+	if (group == nullptr) return 0;
 
 	return group->GetResult();
 }
@@ -82,10 +82,10 @@ CargoID GetCargoTranslation(uint8 cargo, const GRFFile *grffile, bool usebit)
 
 	/* Other cases use (possibly translated) cargobits */
 
-	if (grffile->cargo_list.Length() > 0) {
+	if (grffile->cargo_list.size() > 0) {
 		/* ...and the cargo is in bounds, then get the cargo ID for
 		 * the label */
-		if (cargo < grffile->cargo_list.Length()) return GetCargoIDByLabel(grffile->cargo_list[cargo]);
+		if (cargo < grffile->cargo_list.size()) return GetCargoIDByLabel(grffile->cargo_list[cargo]);
 	} else {
 		/* Else the cargo value is a 'climate independent' 'bitnum' */
 		return GetCargoIDByBitnum(cargo);

@@ -37,7 +37,7 @@ bool IsReleasedVersion()
  *
  * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "1.9.3";
+const char _openttd_revision[] = "1.10.0-beta1";
 
 /**
  * The text version of OpenTTD's build date.
@@ -50,7 +50,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
 /**
  * The git revision hash of this version.
  */
-const char _openttd_revision_hash[] = "f6643952ce53b1823c2273964466f785a907ec1a";
+const char _openttd_revision_hash[] = "9f50c754ffee52211e61d88e6d5fc296dfc585e0";
 
 /**
  * Let us know if current build was modified. This detection
@@ -82,11 +82,4 @@ const byte _openttd_revision_tagged = 1;
  * final release will always have a lower version number than the released
  * version, thus making comparisons on specific revisions easy.
  */
-const uint32 _openttd_newgrf_version = 1 << 28 | 9 << 24 | 3 << 20 | 1 << 19 | 28004;
-
-#ifdef __MORPHOS__
-/**
- * Variable used by MorphOS to show the version.
- */
-extern const char morphos_versions_tag[] = "$VER: OpenTTD 1.9.3 (16.09.19) OpenTTD Team [MorphOS, PowerPC]";
-#endif
+const uint32 _openttd_newgrf_version = 1 << 28 | 10 << 24 | 0 << 20 | 0 << 19 | 28004;

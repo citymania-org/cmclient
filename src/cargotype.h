@@ -17,6 +17,7 @@
 #include "gfx_type.h"
 #include "strings_type.h"
 #include "landscape_type.h"
+#include <vector>
 
 /** Globally unique label of a cargo type. */
 typedef uint32 CargoLabel;
@@ -137,8 +138,7 @@ CargoID GetCargoIDByLabel(CargoLabel cl);
 CargoID GetCargoIDByBitnum(uint8 bitnum);
 
 void InitializeSortedCargoSpecs();
-extern const CargoSpec *_sorted_cargo_specs[NUM_CARGO];
-extern uint8 _sorted_cargo_specs_size;
+extern std::vector<const CargoSpec *> _sorted_cargo_specs;
 extern uint8 _sorted_standard_cargo_specs_size;
 
 /**
@@ -152,7 +152,7 @@ static inline bool IsCargoInClass(CargoID c, CargoClass cc)
 	return (CargoSpec::Get(c)->classes & cc) != 0;
 }
 
-#define FOR_ALL_CARGOSPECS_FROM(var, start) for (size_t cargospec_index = start; var = NULL, cargospec_index < CargoSpec::GetArraySize(); cargospec_index++) \
+#define FOR_ALL_CARGOSPECS_FROM(var, start) for (size_t cargospec_index = start; var = nullptr, cargospec_index < CargoSpec::GetArraySize(); cargospec_index++) \
 		if ((var = CargoSpec::Get(cargospec_index))->IsValid())
 #define FOR_ALL_CARGOSPECS(var) FOR_ALL_CARGOSPECS_FROM(var, 0)
 
@@ -163,7 +163,7 @@ static inline bool IsCargoInClass(CargoID c, CargoClass cc)
  * @param var Reference getting the cargospec.
  * @see CargoSpec
  */
-#define FOR_ALL_SORTED_CARGOSPECS(var) for (uint8 index = 0; index < _sorted_cargo_specs_size && (var = _sorted_cargo_specs[index], true) ; index++)
+#define FOR_ALL_SORTED_CARGOSPECS(var) for (uint8 index = 0; index < _sorted_cargo_specs.size() && (var = _sorted_cargo_specs[index], true) ; index++)
 
 /**
  * Loop header for iterating over 'real' cargoes, sorted by name. Phony cargoes like regearing cargoes are skipped.

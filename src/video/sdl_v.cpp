@@ -17,7 +17,7 @@
 #include "../rev.h"
 #include "../blitter/factory.hpp"
 #include "../network/network.h"
-#include "../thread/thread.h"
+#include "../thread.h"
 #include "../progress.h"
 #include "../core/random_func.hpp"
 #include "../core/math_func.hpp"
@@ -25,6 +25,9 @@
 #include "../framerate_type.h"
 #include "sdl_v.h"
 #include <SDL.h>
+#include <mutex>
+#include <condition_variable>
+#include <algorithm>
 
 #include "../safeguards.h"
 
@@ -36,10 +39,10 @@ static bool _all_modes;
 
 /** Whether the drawing is/may be done in a separate thread. */
 static bool _draw_threaded;
-/** Thread used to 'draw' to the screen, i.e. push data to the screen. */
-static ThreadObject *_draw_thread = NULL;
 /** Mutex to keep the access to the shared memory controlled. */
-static ThreadMutex *_draw_mutex = NULL;
+static std::recursive_mutex *_draw_mutex = nullptr;
+/** Signal to draw the next frame. */
+static std::condition_variable_any *_draw_signal = nullptr;
 /** Should we keep continue drawing? */
 static volatile bool _draw_continue;
 static Palette _local_palette;
@@ -109,7 +112,7 @@ static void UpdatePalette(bool init = false)
 		 * best mapping of shadow palette colors to real palette
 		 * colors from scratch.
 		 */
-		SDL_BlitSurface(_sdl_screen, NULL, _sdl_realscreen, NULL);
+		SDL_BlitSurface(_sdl_screen, nullptr, _sdl_realscreen, nullptr);
 		SDL_UpdateRect(_sdl_realscreen, 0, 0, 0, 0);
 	}
 }
@@ -156,7 +159,7 @@ static void DrawSurfaceToScreen()
 	_num_dirty_rects = 0;
 	if (n > MAX_DIRTY_RECTS) {
 		if (_sdl_screen != _sdl_realscreen) {
-			SDL_BlitSurface(_sdl_screen, NULL, _sdl_realscreen, NULL);
+			SDL_BlitSurface(_sdl_screen, nullptr, _sdl_realscreen, nullptr);
 		}
 		SDL_UpdateRect(_sdl_realscreen, 0, 0, 0, 0);
 	} else {
@@ -169,24 +172,21 @@ static void DrawSurfaceToScreen()
 	}
 }
 
-static void DrawSurfaceToScreenThread(void *)
+static void DrawSurfaceToScreenThread()
 {
 	/* First tell the main thread we're started */
-	_draw_mutex->BeginCritical();
-	_draw_mutex->SendSignal();
+	std::unique_lock<std::recursive_mutex> lock(*_draw_mutex);
+	_draw_signal->notify_one();
 
 	/* Now wait for the first thing to draw! */
-	_draw_mutex->WaitForSignal();
+	_draw_signal->wait(*_draw_mutex);
 
 	while (_draw_continue) {
 		CheckPaletteAnim();
 		/* Then just draw and wait till we stop */
 		DrawSurfaceToScreen();
-		_draw_mutex->WaitForSignal();
+		_draw_signal->wait(lock);
 	}
-
-	_draw_mutex->EndCritical();
-	_draw_thread->Exit();
 }
 
 static const Dimension _default_resolutions[] = {
@@ -205,54 +205,43 @@ static const Dimension _default_resolutions[] = {
 
 static void GetVideoModes()
 {
-	SDL_Rect **modes = SDL_ListModes(NULL, SDL_SWSURFACE | SDL_FULLSCREEN);
-	if (modes == NULL) usererror("sdl: no modes available");
+	SDL_Rect **modes = SDL_ListModes(nullptr, SDL_SWSURFACE | SDL_FULLSCREEN);
+	if (modes == nullptr) usererror("sdl: no modes available");
 
-	_all_modes = (SDL_ListModes(NULL, SDL_SWSURFACE | (_fullscreen ? SDL_FULLSCREEN : 0)) == (void*)-1);
+	_resolutions.clear();
+
+	_all_modes = (SDL_ListModes(nullptr, SDL_SWSURFACE | (_fullscreen ? SDL_FULLSCREEN : 0)) == (void*)-1);
 	if (modes == (void*)-1) {
-		int n = 0;
 		for (uint i = 0; i < lengthof(_default_resolutions); i++) {
 			if (SDL_VideoModeOK(_default_resolutions[i].width, _default_resolutions[i].height, 8, SDL_FULLSCREEN) != 0) {
-				_resolutions[n] = _default_resolutions[i];
-				if (++n == lengthof(_resolutions)) break;
+				_resolutions.push_back(_default_resolutions[i]);
 			}
 		}
-		_num_resolutions = n;
 	} else {
-		int n = 0;
 		for (int i = 0; modes[i]; i++) {
 			uint w = modes[i]->w;
 			uint h = modes[i]->h;
-			int j;
-			for (j = 0; j < n; j++) {
-				if (_resolutions[j].width == w && _resolutions[j].height == h) break;
-			}
-
-			if (j == n) {
-				_resolutions[j].width  = w;
-				_resolutions[j].height = h;
-				if (++n == lengthof(_resolutions)) break;
-			}
+			if (w < 640 || h < 480) continue; // reject too small resolutions
+			if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(w, h)) != _resolutions.end()) continue;
+			_resolutions.emplace_back(w, h);
 		}
-		_num_resolutions = n;
-		SortResolutions(_num_resolutions);
+		if (_resolutions.empty()) usererror("No usable screen resolutions found!\n");
+		SortResolutions();
 	}
 }
 
 static void GetAvailableVideoMode(uint *w, uint *h)
 {
 	/* All modes available? */
-	if (_all_modes || _num_resolutions == 0) return;
+	if (_all_modes || _resolutions.empty()) return;
 
 	/* Is the wanted mode among the available modes? */
-	for (int i = 0; i != _num_resolutions; i++) {
-		if (*w == _resolutions[i].width && *h == _resolutions[i].height) return;
-	}
+	if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(*w, *h)) != _resolutions.end()) return;
 
 	/* Use the closest possible resolution */
-	int best = 0;
+	uint best = 0;
 	uint delta = Delta(_resolutions[0].width, *w) * Delta(_resolutions[0].height, *h);
-	for (int i = 1; i != _num_resolutions; ++i) {
+	for (uint i = 1; i != _resolutions.size(); ++i) {
 		uint newdelta = Delta(_resolutions[i].width, *w) * Delta(_resolutions[i].height, *h);
 		if (newdelta < delta) {
 			best = i;
@@ -277,15 +266,15 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 	if (bpp == 0) usererror("Can't use a blitter that blits 0 bpp for normal visuals");
 
 	char icon_path[MAX_PATH];
-	if (FioFindFullPath(icon_path, lastof(icon_path), BASESET_DIR, "openttd.32.bmp") != NULL) {
+	if (FioFindFullPath(icon_path, lastof(icon_path), BASESET_DIR, "openttd.32.bmp") != nullptr) {
 		/* Give the application an icon */
 		icon = SDL_LoadBMP(icon_path);
-		if (icon != NULL) {
+		if (icon != nullptr) {
 			/* Get the colourkey, which will be magenta */
 			uint32 rgbmap = SDL_MapRGB(icon->format, 255, 0, 255);
 
 			SDL_SetColorKey(icon, SDL_SRCCOLORKEY, rgbmap);
-			SDL_WM_SetIcon(icon, NULL);
+			SDL_WM_SetIcon(icon, nullptr);
 			SDL_FreeSurface(icon);
 		}
 	}
@@ -321,9 +310,9 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 	if (want_hwpalette) DEBUG(driver, 1, "SDL: requesting hardware palette");
 
 	/* Free any previously allocated shadow surface */
-	if (_sdl_screen != NULL && _sdl_screen != _sdl_realscreen) SDL_FreeSurface(_sdl_screen);
+	if (_sdl_screen != nullptr && _sdl_screen != _sdl_realscreen) SDL_FreeSurface(_sdl_screen);
 
-	if (_sdl_realscreen != NULL) {
+	if (_sdl_realscreen != nullptr) {
 		if (_requested_hwpalette != want_hwpalette) {
 			/* SDL (at least the X11 driver), reuses the
 			 * same window and palette settings when the bpp
@@ -348,7 +337,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 
 	/* DO NOT CHANGE TO HWSURFACE, IT DOES NOT WORK */
 	newscreen = SDL_SetVideoMode(w, h, bpp, SDL_SWSURFACE | (want_hwpalette ? SDL_HWPALETTE : 0) | (_fullscreen ? SDL_FULLSCREEN : SDL_RESIZABLE));
-	if (newscreen == NULL) {
+	if (newscreen == nullptr) {
 		DEBUG(driver, 0, "SDL: Couldn't allocate a window to draw on");
 		return false;
 	}
@@ -375,7 +364,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 		 */
 		DEBUG(driver, 1, "SDL: using shadow surface");
 		newscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, bpp, 0, 0, 0, 0);
-		if (newscreen == NULL) {
+		if (newscreen == nullptr) {
 			DEBUG(driver, 0, "SDL: Couldn't allocate a shadow surface to draw on");
 			return false;
 		}
@@ -504,10 +493,6 @@ static uint ConvertSdlKeyIntoMy(SDL_keysym *sym, WChar *character)
 	if (sym->scancode == 41) key = WKC_BACKQUOTE;
 #elif defined(__APPLE__)
 	if (sym->scancode == 10) key = WKC_BACKQUOTE;
-#elif defined(__MORPHOS__)
-	if (sym->scancode == 0)  key = WKC_BACKQUOTE;  // yes, that key is code '0' under MorphOS :)
-#elif defined(__BEOS__)
-	if (sym->scancode == 17) key = WKC_BACKQUOTE;
 #elif defined(__SVR4) && defined(__sun)
 	if (sym->scancode == 60) key = WKC_BACKQUOTE;
 	if (sym->scancode == 49) key = WKC_BACKSPACE;
@@ -648,9 +633,9 @@ const char *VideoDriver_SDL::Start(const char * const *parm)
 	MarkWholeScreenDirty();
 	SetupKeyboard();
 
-	_draw_threaded = GetDriverParam(parm, "no_threads") == NULL && GetDriverParam(parm, "no_thread") == NULL;
+	_draw_threaded = GetDriverParam(parm, "no_threads") == nullptr && GetDriverParam(parm, "no_thread") == nullptr;
 
-	return NULL;
+	return nullptr;
 }
 
 void VideoDriver_SDL::SetupKeyboard()
@@ -678,26 +663,32 @@ void VideoDriver_SDL::MainLoop()
 
 	CheckPaletteAnim();
 
+	std::thread draw_thread;
+	std::unique_lock<std::recursive_mutex> draw_lock;
 	if (_draw_threaded) {
 		/* Initialise the mutex first, because that's the thing we *need*
 		 * directly in the newly created thread. */
-		_draw_mutex = ThreadMutex::New();
-		if (_draw_mutex == NULL) {
+		_draw_mutex = new std::recursive_mutex();
+		if (_draw_mutex == nullptr) {
 			_draw_threaded = false;
 		} else {
-			_draw_mutex->BeginCritical();
+			draw_lock = std::unique_lock<std::recursive_mutex>(*_draw_mutex);
+			_draw_signal = new std::condition_variable_any();
 			_draw_continue = true;
 
-			_draw_threaded = ThreadObject::New(&DrawSurfaceToScreenThread, NULL, &_draw_thread, "ottd:draw-sdl");
+			_draw_threaded = StartNewThread(&draw_thread, "ottd:draw-sdl", &DrawSurfaceToScreenThread);
 
 			/* Free the mutex if we won't be able to use it. */
 			if (!_draw_threaded) {
-				_draw_mutex->EndCritical();
+				draw_lock.unlock();
+				draw_lock.release();
 				delete _draw_mutex;
-				_draw_mutex = NULL;
+				delete _draw_signal;
+				_draw_mutex = nullptr;
+				_draw_signal = nullptr;
 			} else {
 				/* Wait till the draw mutex has started itself. */
-				_draw_mutex->WaitForSignal();
+				_draw_signal->wait(*_draw_mutex);
 			}
 		}
 	}
@@ -763,27 +754,27 @@ void VideoDriver_SDL::MainLoop()
 
 			/* The gameloop is the part that can run asynchronously. The rest
 			 * except sleeping can't. */
-			if (_draw_mutex != NULL) _draw_mutex->EndCritical();
+			if (_draw_mutex != nullptr) draw_lock.unlock();
 
 			GameLoop();
 
-			if (_draw_mutex != NULL) _draw_mutex->BeginCritical();
+			if (_draw_mutex != nullptr) draw_lock.lock();
 
 			UpdateWindows();
 			_local_palette = _cur_palette;
 		} else {
 			/* Release the thread while sleeping */
-			if (_draw_mutex != NULL) _draw_mutex->EndCritical();
+			if (_draw_mutex != nullptr) draw_lock.unlock();
 			CSleep(1);
-			if (_draw_mutex != NULL) _draw_mutex->BeginCritical();
+			if (_draw_mutex != nullptr) draw_lock.lock();
 
 			NetworkDrawChatMessage();
 			DrawMouseCursor();
 		}
 
 		/* End of the critical part. */
-		if (_draw_mutex != NULL && !HasModalProgress()) {
-			_draw_mutex->SendSignal();
+		if (_draw_mutex != nullptr && !HasModalProgress()) {
+			_draw_signal->notify_one();
 		} else {
 			/* Oh, we didn't have threads, then just draw unthreaded */
 			CheckPaletteAnim();
@@ -791,43 +782,45 @@ void VideoDriver_SDL::MainLoop()
 		}
 	}
 
-	if (_draw_mutex != NULL) {
+	if (_draw_mutex != nullptr) {
 		_draw_continue = false;
 		/* Sending signal if there is no thread blocked
 		 * is very valid and results in noop */
-		_draw_mutex->SendSignal();
-		_draw_mutex->EndCritical();
-		_draw_thread->Join();
+		_draw_signal->notify_one();
+		if (draw_lock.owns_lock()) draw_lock.unlock();
+		draw_lock.release();
+		draw_thread.join();
 
 		delete _draw_mutex;
-		delete _draw_thread;
+		delete _draw_signal;
 
-		_draw_mutex = NULL;
-		_draw_thread = NULL;
+		_draw_mutex = nullptr;
+		_draw_signal = nullptr;
 	}
 }
 
 bool VideoDriver_SDL::ChangeResolution(int w, int h)
 {
-	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
-	bool ret = CreateMainSurface(w, h);
-	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
-	return ret;
+	std::unique_lock<std::recursive_mutex> lock;
+	if (_draw_mutex != nullptr) lock = std::unique_lock<std::recursive_mutex>(*_draw_mutex);
+
+	return CreateMainSurface(w, h);
 }
 
 bool VideoDriver_SDL::ToggleFullscreen(bool fullscreen)
 {
-	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
+	std::unique_lock<std::recursive_mutex> lock;
+	if (_draw_mutex != nullptr) lock = std::unique_lock<std::recursive_mutex>(*_draw_mutex);
+
 	_fullscreen = fullscreen;
 	GetVideoModes(); // get the list of available video modes
-	bool ret = _num_resolutions != 0 && CreateMainSurface(_cur_resolution.width, _cur_resolution.height);
+	bool ret = !_resolutions.empty() && CreateMainSurface(_cur_resolution.width, _cur_resolution.height);
 
 	if (!ret) {
 		/* switching resolution failed, put back full_screen to original status */
 		_fullscreen ^= true;
 	}
 
-	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
 	return ret;
 }
 
@@ -838,12 +831,12 @@ bool VideoDriver_SDL::AfterBlitterChange()
 
 void VideoDriver_SDL::AcquireBlitterLock()
 {
-	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
+	if (_draw_mutex != nullptr) _draw_mutex->lock();
 }
 
 void VideoDriver_SDL::ReleaseBlitterLock()
 {
-	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
+	if (_draw_mutex != nullptr) _draw_mutex->unlock();
 }
 
 #endif /* WITH_SDL */

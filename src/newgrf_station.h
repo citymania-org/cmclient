@@ -42,10 +42,10 @@ struct StationScopeResolver : public ScopeResolver {
 	{
 	}
 
-	/* virtual */ uint32 GetRandomBits() const;
-	/* virtual */ uint32 GetTriggers() const;
+	uint32 GetRandomBits() const override;
+	uint32 GetTriggers() const override;
 
-	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
+	uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override;
 };
 
 /** Station resolver. */
@@ -59,7 +59,7 @@ struct StationResolverObject : public ResolverObject {
 
 	TownScopeResolver *GetTown();
 
-	/* virtual */ ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0)
+	ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override
 	{
 		switch (scope) {
 			case VSG_SCOPE_SELF:
@@ -67,7 +67,7 @@ struct StationResolverObject : public ResolverObject {
 
 			case VSG_SCOPE_PARENT: {
 				TownScopeResolver *tsr = this->GetTown();
-				if (tsr != NULL) return tsr;
+				if (tsr != nullptr) return tsr;
 				FALLTHROUGH;
 			}
 
@@ -76,16 +76,15 @@ struct StationResolverObject : public ResolverObject {
 		}
 	}
 
-	/* virtual */ const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
+	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
 };
 
-enum StationClassID {
+enum StationClassID : byte {
 	STAT_CLASS_BEGIN = 0,    ///< the lowest valid value
 	STAT_CLASS_DFLT = 0,     ///< Default station class.
 	STAT_CLASS_WAYP,         ///< Waypoint class.
-	STAT_CLASS_MAX = 256,    ///< Maximum number of classes.
+	STAT_CLASS_MAX = 255,    ///< Maximum number of classes.
 };
-typedef SimpleTinyEnumT<StationClassID, byte> StationClassIDByte;
 template <> struct EnumPropsT<StationClassID> : MakeEnumPropsT<StationClassID, byte, STAT_CLASS_BEGIN, STAT_CLASS_MAX, STAT_CLASS_MAX, 8> {};
 
 /** Allow incrementing of StationClassID variables */

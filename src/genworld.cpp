@@ -34,6 +34,7 @@
 #include "game/game.hpp"
 #include "game/game_instance.hpp"
 #include "string_func.h"
+#include "thread.h"
 
 #include "safeguards.h"
 
@@ -81,8 +82,8 @@ static void CleanupGeneration()
 	/* Show all vital windows again, because we have hidden them */
 	if (_gw.threaded && _game_mode != GM_MENU) ShowVitalWindows();
 	SetModalProgress(false);
-	_gw.proc     = NULL;
-	_gw.abortp   = NULL;
+	_gw.proc     = nullptr;
+	_gw.abortp   = nullptr;
 	_gw.threaded = false;
 
 	DeleteWindowByClass(WC_MODAL_PROGRESS);
@@ -93,14 +94,15 @@ static void CleanupGeneration()
 /**
  * The internal, real, generate function.
  */
-static void _GenerateWorld(void *)
+static void _GenerateWorld()
 {
 	/* Make sure everything is done via OWNER_NONE. */
-	Backup<CompanyByte> _cur_company(_current_company, OWNER_NONE, FILE_LINE);
+	Backup<CompanyID> _cur_company(_current_company, OWNER_NONE, FILE_LINE);
 
+	std::unique_lock<std::mutex> lock(_modal_progress_work_mutex, std::defer_lock);
 	try {
 		_generating_world = true;
-		_modal_progress_work_mutex->BeginCritical();
+		lock.lock();
 		if (_network_dedicated) DEBUG(net, 1, "Generating map, please wait...");
 		/* Set the Random() seed to generation_seed so we produce the same map with the same seed */
 		if (_settings_game.game_creation.generation_seed == GENERATE_NEW_SEED) _settings_game.game_creation.generation_seed = _settings_newgame.game_creation.generation_seed = InteractiveRandom();
@@ -169,7 +171,7 @@ static void _GenerateWorld(void *)
 			if (_game_mode != GM_EDITOR) {
 				Game::StartNew();
 
-				if (Game::GetInstance() != NULL) {
+				if (Game::GetInstance() != nullptr) {
 					SetGeneratingWorldProgress(GWP_RUNSCRIPT, 2500);
 					_generating_world = true;
 					for (i = 0; i < 2500; i++) {
@@ -190,11 +192,11 @@ static void _GenerateWorld(void *)
 
 		SetGeneratingWorldProgress(GWP_GAME_START, 1);
 		/* Call any callback */
-		if (_gw.proc != NULL) _gw.proc();
+		if (_gw.proc != nullptr) _gw.proc();
 		IncreaseGeneratingWorldProgress(GWP_GAME_START);
 
 		CleanupGeneration();
-		_modal_progress_work_mutex->EndCritical();
+		lock.unlock();
 
 		ShowNewGRFError();
 
@@ -210,7 +212,6 @@ static void _GenerateWorld(void *)
 		BasePersistentStorageArray::SwitchMode(PSM_LEAVE_GAMELOOP, true);
 		if (_cur_company.IsValid()) _cur_company.Restore();
 		_generating_world = false;
-		_modal_progress_work_mutex->EndCritical();
 		throw;
 	}
 }
@@ -241,17 +242,15 @@ void GenerateWorldSetAbortCallback(GWAbortProc *proc)
  */
 void WaitTillGeneratedWorld()
 {
-	if (_gw.thread == NULL) return;
+	if (!_gw.thread.joinable()) return;
 
-	_modal_progress_work_mutex->EndCritical();
-	_modal_progress_paint_mutex->EndCritical();
+	_modal_progress_work_mutex.unlock();
+	_modal_progress_paint_mutex.unlock();
 	_gw.quit_thread = true;
-	_gw.thread->Join();
-	delete _gw.thread;
-	_gw.thread   = NULL;
+	_gw.thread.join();
 	_gw.threaded = false;
-	_modal_progress_work_mutex->BeginCritical();
-	_modal_progress_paint_mutex->BeginCritical();
+	_modal_progress_work_mutex.lock();
+	_modal_progress_paint_mutex.lock();
 }
 
 /**
@@ -279,11 +278,11 @@ void HandleGeneratingWorldAbortion()
 	/* Clean up - in SE create an empty map, otherwise, go to intro menu */
 	_switch_mode = (_game_mode == GM_EDITOR) ? SM_EDITOR : SM_MENU;
 
-	if (_gw.abortp != NULL) _gw.abortp();
+	if (_gw.abortp != nullptr) _gw.abortp();
 
 	CleanupGeneration();
 
-	if (_gw.thread != NULL) _gw.thread->Exit();
+	if (_gw.thread.joinable() && _gw.thread.get_id() == std::this_thread::get_id()) throw OTTDThreadExitSignal();
 
 	SwitchToMode(_switch_mode);
 }
@@ -303,7 +302,7 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 	_gw.size_y = size_y;
 	SetModalProgress(true);
 	_gw.abort  = false;
-	_gw.abortp = NULL;
+	_gw.abortp = nullptr;
 	_gw.lc     = _local_company;
 	_gw.quit_thread   = false;
 	_gw.threaded      = true;
@@ -325,18 +324,14 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 	SetupColoursAndInitialWindow();
 	SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
 
-	if (_gw.thread != NULL) {
-		_gw.thread->Join();
-		delete _gw.thread;
-		_gw.thread = NULL;
-	}
+	if (_gw.thread.joinable()) _gw.thread.join();
 
-	if (!VideoDriver::GetInstance()->HasGUI() || !ThreadObject::New(&_GenerateWorld, NULL, &_gw.thread, "ottd:genworld")) {
+	if (!UseThreadedModelProgress() || !VideoDriver::GetInstance()->HasGUI() || !StartNewThread(&_gw.thread, "ottd:genworld", &_GenerateWorld)) {
 		DEBUG(misc, 1, "Cannot create genworld thread, reverting to single-threaded mode");
 		_gw.threaded = false;
-		_modal_progress_work_mutex->EndCritical();
-		_GenerateWorld(NULL);
-		_modal_progress_work_mutex->BeginCritical();
+		_modal_progress_work_mutex.unlock();
+		_GenerateWorld();
+		_modal_progress_work_mutex.lock();
 		return;
 	}
 
@@ -350,7 +345,7 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 	ShowGenerateWorldProgress();
 
 	/* Centre the view on the map */
-	if (FindWindowById(WC_MAIN_WINDOW, 0) != NULL) {
+	if (FindWindowById(WC_MAIN_WINDOW, 0) != nullptr) {
 		ScrollMainWindowToTile(TileXY(MapSizeX() / 2, MapSizeY() / 2), true);
 	}
 }

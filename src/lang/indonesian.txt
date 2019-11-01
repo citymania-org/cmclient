@@ -235,6 +235,7 @@ STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Pilih kr
 STR_BUTTON_SORT_BY                                              :{BLACK}Urutkan
 STR_BUTTON_LOCATION                                             :{BLACK}Lokasi
 STR_BUTTON_RENAME                                               :{BLACK}Ubah nama
+STR_BUTTON_CATCHMENT                                            :{BLACK}Jangkauan
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Tutup window
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Judul Jendela - klik dan tahan disini untuk memindahkan jendela
@@ -1573,6 +1574,8 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Mengaktifkan se
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Dilarang
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :Diijinkan
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Diijinkan, layout kota sendiri
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Seberapa banyak kargo dihasilkan oleh rumah di kota , relatif terhadap keseluruhan populasi kota.{}Pertumbuhan kuadrat: Kota yang membesar dua kali menghasilkan penumpang empat kali lipat.{}Pertumbuhan linier: Kota yang membesar dua kali menghasilkan penumpang dua kali lipat.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Linier
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Penempatan pohon dalam permainan: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Mengendalikan kemunculan pohon dalam permainan. Ini akan berefek pada industri yang memerlukan pohon, contohnya pengolahan kayu gelondongan
@@ -1700,7 +1703,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distrib
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Pesaing
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Pemain Komputer
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Asli
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Recommended)
 
@@ -1783,13 +1785,9 @@ STR_QUIT_NO                                                     :{BLACK}Tidak
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2419,6 +2417,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Membangu
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Bangun/Bongkar konstruksi jalanan
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Membangun/bongkar konstruksi jalur trem
 
+
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Arah Bengkel Kendaraan
 STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Pilih arah bengkel kendaraan
@@ -2721,6 +2720,7 @@ STR_FRAMERATE_GL_ROADVEHS                                       :{WHITE} Titik k
 STR_FRAMERATE_GL_SHIPS                                          :{WHITE} Titik kapal:
 STR_FRAMERATE_GL_AIRCRAFT                                       :{WHITE} Titik pesawat:
 STR_FRAMERATE_GL_LANDSCAPE                                      :{WHITE} Titik dunia:
+STR_FRAMERATE_DRAWING                                           :{BLACK}Render grafis:
 STR_FRAMERATE_DRAWING_VIEWPORTS                                 :{WHITE} Viewport dunia:
 STR_FRAMERATE_VIDEO                                             :{BLACK}Keluaran Video:
 STR_FRAMERATE_SOUND                                             :{WHITE}Mixing suara:
@@ -3305,8 +3305,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastr
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Bagian rel:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Sinyal
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Bagian jalan:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Jalan raya
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Rel Trem
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Perairan:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanal
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stasiun:
@@ -3382,6 +3380,8 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Kendaraan tanpa
 STR_GROUP_DEFAULT_SHIPS                                         :Kapal tanpa kelompok
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Pesawat tanpa kelompok
 
+STR_GROUP_COUNT_WITH_SUBGROUP                                   :{TINY_FONT}{COMMA} (+{COMMA})
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Kelompok - Klik salah satu untuk melihat daftar kendaraan pada kelompok tersebut
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klik untuk membuat kelompok
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Hapus kelompok terpilih
@@ -3407,10 +3407,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Kereta listrik 
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Monorel Baru
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Maglev Baru
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Kereta Baru
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Kendaraan Baru
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Kereta Baru
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Kapal Baru
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Buat Pesawat
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Biaya: {GOLD}{CURRENCY_LONG}{BLACK} Berat: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Kecepatan: {GOLD}{VELOCITY}{BLACK} Daya: {GOLD}{POWER}
@@ -3425,6 +3428,7 @@ STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Kehandal
 STR_PURCHASE_INFO_COST                                          :{BLACK}Biaya: {GOLD}{CURRENCY_LONG}
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Berat: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Biaya: {GOLD}{CURRENCY_LONG}{BLACK} Kecepatan: {GOLD}{VELOCITY}
+STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}Biaya: {GOLD}{CURRENCY_LONG}{BLACK} (Biaya Karoseri: {GOLD}{CURRENCY_LONG}{BLACK}) Kecepatan: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}Daya Muat: {GOLD}{CARGO_LONG}, {CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Daya Gerbong: {GOLD}+{POWER}{BLACK} Berat: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Kargo dapat di ganti untuk: {GOLD}{STRING}
@@ -3444,10 +3448,14 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Beli Ken
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Beli Kapal
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Beli Pesawat
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Beli kereta yang dipilih. Shift untuk menampilkan perkiraan biaya
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Beli kendaraan yang dipilih. Shift untuk menampilkan perkiraan biaya
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Beli kapal yang dipilih. Shift untuk menampilkan perkiraan biaya
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Beli pesawat yang dipilih. Shift untuk menampilkan perkiraan biaya
+
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_TOOLTIP          :{BLACK}Beli lalu karoseri kendaraan yang dipilih. Shift+Klik untuk menampilkan perkiraan biaya tanpa membelinya
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_TOOLTIP                  :{BLACK}Beli lalu karoseri kapal yang dipilih. Shift+Klik untuk menampilkan perkiraan biaya tanpa membelinya
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Ubah Nama
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Ganti Nama
@@ -3557,12 +3565,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Anda ak
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Pesan dari pabrik kendaraan
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Kami telah mendesain {STRING} baru - apakah anda tertarik mempergunakan kendaraan ini secara eksklusif , sehingga kami dapat melihat bagaimana kemampuannya sebelum dijual secara masal?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :lokomotif kereta
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :kendaraan jalan raya
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :pesawat
-STR_ENGINE_PREVIEW_SHIP                                         :kapal
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :lokomotif monorel
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :lokomotif maglev
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :kendaraan jalan raya
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :pesawat
+STR_ENGINE_PREVIEW_SHIP                                         :kapal
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Biaya: {CURRENCY_LONG} Berat: {WEIGHT_SHORT}{}Kecepatan: {VELOCITY}  Daya: {POWER}{}Biaya ops.: {CURRENCY_LONG}/thn{}Kapasitas: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Biaya: {CURRENCY_LONG} Berat: {WEIGHT_SHORT}{}Kecepatan: {VELOCITY}  Power: {POWER}  Max. T.E.: {6:FORCE}{}Biaya Operasional: {4:CURRENCY_LONG}/yr{}Kapasitas: {5:CARGO_LONG}
@@ -3608,6 +3619,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Kereta
 STR_REPLACE_ELRAIL_VEHICLES                                     :Kereta Listrik
 STR_REPLACE_MONORAIL_VEHICLES                                   :Kereta Monorel
 STR_REPLACE_MAGLEV_VEHICLES                                     :Kereta Maglev
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Membuang gerbong: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Membuat panjang kereta tetap sama saat penggantian secara otomatis dengan cara membuang gerbong(dihitung dari bagian depan), jika penggantian lokomotif membuat kereta lebih panjang
@@ -4329,7 +4341,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Sinyal h
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Tidak tersedia rel yang sesuai
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Harus membongkar rel terlebih dahulu
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Jalannya satu arah atau terhalang
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Perlintasan tingkat tidak diperbolehkan pada tipe rel ini
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Perlintasan tingkat tidak diperbolehkan pada tipe rel ini
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Tidak dapat membangun sinyal disini
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Tidak dapat membangun jalur rel disini
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Tidak dapat menghapus jalur rel dari sini

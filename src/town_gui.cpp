@@ -32,7 +32,9 @@
 #include "townname_func.h"
 #include "core/geometry_func.hpp"
 #include "genworld.h"
+#include "stringfilter_type.h"
 #include "widgets/dropdown_func.h"
+#include "town_kdtree.h"
 
 #include "widgets/town_widget.h"
 
@@ -58,12 +60,15 @@ bool TownExecuteAction(const Town *town, uint action){
 	return false;
 }
 
+TownKdtree _town_local_authority_kdtree(&Kdtree_TownXYFunc);
+
 typedef GUIList<const Town*> GUITownList;
 
 static const NWidgetPart _nested_town_authority_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_TA_CAPTION), SetDataTip(STR_LOCAL_AUTHORITY_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_TA_ZONE_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_LOCAL_AUTHORITY_ZONE, STR_LOCAL_AUTHORITY_ZONE_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_BROWN),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_BROWN),
 		NWidget(WWT_STICKYBOX, COLOUR_BROWN),
@@ -118,7 +123,7 @@ public:
 		this->vscroll->SetCapacity((this->GetWidget<NWidgetBase>(WID_TA_COMMAND_LIST)->current_y - WD_FRAMERECT_TOP - WD_FRAMERECT_BOTTOM) / FONT_HEIGHT_NORMAL);
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		int numact;
 		uint buttons = GetMaskOfTownActions(&numact, _local_company, this->town);
@@ -131,6 +136,7 @@ public:
 			this->sel_index = -1;
 		}
 
+		this->SetWidgetLoweredState(WID_TA_ZONE_BUTTON, this->town->show_zone);
 		this->SetWidgetDisabledState(WID_TA_EXECUTE, this->sel_index == -1);
 
 		this->DrawWidgets();
@@ -173,15 +179,14 @@ public:
 				SetDParam(1, c->index);
 
 				int r = this->town->ratings[c->index];
-				StringID str;
-				(str = STR_CARGO_RATING_APPALLING, r <= RATING_APPALLING) || // Apalling
-				(str++,                    r <= RATING_VERYPOOR)  || // Very Poor
-				(str++,                    r <= RATING_POOR)      || // Poor
-				(str++,                    r <= RATING_MEDIOCRE)  || // Mediocore
-				(str++,                    r <= RATING_GOOD)      || // Good
-				(str++,                    r <= RATING_VERYGOOD)  || // Very Good
-				(str++,                    r <= RATING_EXCELLENT) || // Excellent
-				(str++,                    true);                    // Outstanding
+				StringID str = STR_CARGO_RATING_APPALLING;
+				if (r > RATING_APPALLING) str++;
+				if (r > RATING_VERYPOOR)  str++;
+				if (r > RATING_POOR)      str++;
+				if (r > RATING_MEDIOCRE)  str++;
+				if (r > RATING_GOOD)      str++;
+				if (r > RATING_VERYGOOD)  str++;
+				if (r > RATING_EXCELLENT) str++;
 
 				SetDParam(2, str);
 				SetDParam(3, this->town->ratings[c->index]);
@@ -201,12 +206,12 @@ public:
 		}
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		if (widget == WID_TA_CAPTION) SetDParam(0, this->window_number);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_TA_ACTION_INFO:
@@ -241,7 +246,7 @@ public:
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_TA_ACTION_INFO: {
@@ -275,14 +280,26 @@ public:
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
+			case WID_TA_ZONE_BUTTON: {
+				bool new_show_state = !this->town->show_zone;
+				TownID index = this->town->index;
+
+				new_show_state ? _town_local_authority_kdtree.Insert(index) : _town_local_authority_kdtree.Remove(index);
+
+				this->town->show_zone = new_show_state;
+				this->SetWidgetLoweredState(widget, new_show_state);
+				MarkWholeScreenDirty();
+				break;
+			}
+
 			case WID_TA_COMMAND_LIST: {
 				int y = this->GetRowFromWidget(pt.y, WID_TA_COMMAND_LIST, 1, FONT_HEIGHT_NORMAL);
 				if (!IsInsideMM(y, 0, 5)) return;
 
-				y = GetNthSetBit(GetMaskOfTownActions(NULL, _local_company, this->town), y + this->vscroll->GetPosition() - 1);
+				y = GetNthSetBit(GetMaskOfTownActions(nullptr, _local_company, this->town), y + this->vscroll->GetPosition() - 1);
 				if (y >= 0) {
 					this->sel_index = y;
 					this->SetDirty();
@@ -298,7 +315,7 @@ public:
 		}
 	}
 
-	virtual void OnHundredthTick()
+	void OnHundredthTick() override
 	{
 		this->SetDirty();
 	}
@@ -369,7 +386,12 @@ public:
 		this->SetWidgetDisabledState(WID_TV_CB, _game_mode == GM_EDITOR);
 	}
 
-	virtual void SetStringParameters(int widget) const
+	~TownViewWindow()
+	{
+		SetViewportCatchmentTown(Town::Get(this->window_number), false);
+	}
+
+	void SetStringParameters(int widget) const override
 	{
 		if (widget == WID_TV_CAPTION){
 			SetDParam(0, this->town->index);
@@ -385,7 +407,15 @@ public:
 		this->SetDirty();
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void OnPaint() override
+	{
+		extern const Town *_viewport_highlight_town;
+		this->SetWidgetLoweredState(WID_TV_CATCHMENT, _viewport_highlight_town == this->town);
+
+		this->DrawWidgets();
+	}
+
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_TV_INFO) return;
 
@@ -423,7 +453,7 @@ public:
 			uint cargo_text_right = r.right - WD_FRAMERECT_RIGHT - (rtl ? 20 : 0);
 
 			const CargoSpec *cargo = FindFirstCargoWithTownEffect((TownEffect)i);
-			assert(cargo != NULL);
+			assert(cargo != nullptr);
 
 			StringID string;
 
@@ -467,13 +497,13 @@ public:
 			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += FONT_HEIGHT_NORMAL, STR_TOWN_VIEW_NOISE_IN_TOWN);
 		}
 
-		if (this->town->text != NULL) {
+		if (this->town->text != nullptr) {
 			SetDParamStr(0, this->town->text);
 			DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y += FONT_HEIGHT_NORMAL, UINT16_MAX, STR_JUST_RAW_STRING, TC_BLACK);
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_TV_CENTER_VIEW: // scroll to location
@@ -491,6 +521,10 @@ public:
 			case WID_TV_CHANGE_NAME: // rename
 				SetDParam(0, this->window_number);
 				ShowQueryString(STR_TOWN_NAME, STR_TOWN_VIEW_RENAME_TOWN_BUTTON, MAX_LENGTH_TOWN_NAME_CHARS, this, CS_ALPHANUMERAL, QSF_ENABLE_DEFAULT | QSF_LEN_IN_CHARS);
+				break;
+
+			case WID_TV_CATCHMENT:
+				SetViewportCatchmentTown(Town::Get(this->window_number), !this->IsWidgetLowered(WID_TV_CATCHMENT));
 				break;
 
 			case WID_TV_EXPAND: { // expand town - only available on Scenario editor
@@ -517,7 +551,7 @@ public:
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_TV_INFO:
@@ -553,7 +587,7 @@ public:
 
 		if (_settings_game.economy.station_noise_level) aimed_height += FONT_HEIGHT_NORMAL;
 
-		if (this->town->text != NULL) {
+		if (this->town->text != nullptr) {
 			SetDParamStr(0, this->town->text);
 			aimed_height += GetStringHeight(STR_JUST_RAW_STRING, width - WD_FRAMERECT_LEFT - WD_FRAMERECT_RIGHT);
 		}
@@ -570,9 +604,9 @@ public:
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
-		if (this->viewport != NULL) {
+		if (this->viewport != nullptr) {
 			NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_TV_VIEWPORT);
 			nvp->UpdateViewportCoordinates(this);
 
@@ -585,7 +619,7 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		/* Called when setting station noise or required cargoes have changed, in order to resize the window */
@@ -593,11 +627,11 @@ public:
 		this->ResizeWindowAsNeeded();
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
-		if (str == NULL) return;
+		if (str == nullptr) return;
 
-		DoCommandP(0, this->window_number, 0, CMD_RENAME_TOWN | CMD_MSG(STR_ERROR_CAN_T_RENAME_TOWN), NULL, str);
+		DoCommandP(0, this->window_number, 0, CMD_RENAME_TOWN | CMD_MSG(STR_ERROR_CAN_T_RENAME_TOWN), nullptr, str);
 	}
 
 	virtual EventState OnHotkey(int hotkey)
@@ -643,6 +677,7 @@ static const NWidgetPart _nested_town_game_view_widgets[] = {
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CHANGE_NAME), SetMinimalSize(60, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_RENAME, STR_TOWN_VIEW_RENAME_TOOLTIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CB), SetMinimalSize(20, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_CB, 0),
 		EndContainer(),
+		NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_TV_CATCHMENT), SetMinimalSize(14, 12), SetFill(0, 1), SetDataTip(STR_BUTTON_CATCHMENT, STR_TOOLTIP_CATCHMENT),
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
@@ -677,6 +712,7 @@ static const NWidgetPart _nested_town_editor_view_widgets[] = {
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_DELETE), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_DELETE_BUTTON, STR_TOWN_VIEW_DELETE_TOOLTIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CB), SetMinimalSize(20, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_CB, 0),
 		EndContainer(),
+		NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_TV_CATCHMENT), SetMinimalSize(14, 12), SetFill(0, 1), SetDataTip(STR_BUTTON_CATCHMENT, STR_TOOLTIP_CATCHMENT),
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
@@ -710,7 +746,7 @@ static const NWidgetPart _nested_town_directory_widgets[] = {
 			NWidget(NWID_HORIZONTAL),
 				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_TD_SORT_ORDER), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_TD_SORT_CRITERIA), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
-				NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0), EndContainer(),
+				NWidget(WWT_EDITBOX, COLOUR_BROWN, WID_TD_FILTER), SetFill(35, 12), SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
 			EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_BROWN, WID_TD_LIST), SetMinimalSize(196, 0), SetDataTip(0x0, STR_TOWN_DIRECTORY_LIST_TOOLTIP),
 							SetFill(1, 0), SetResize(0, 10), SetScrollbar(WID_TD_SCROLLBAR), EndContainer(),
@@ -736,6 +772,9 @@ private:
 	static const StringID sorter_names[];
 	static GUITownList::SortFunction * const sorter_funcs[];
 
+	StringFilter string_filter;             ///< Filter for towns
+	QueryString townname_editbox;           ///< Filter editbox
+
 	GUITownList towns;
 
 	Scrollbar *vscroll;
@@ -743,94 +782,95 @@ private:
 	void BuildSortTownList()
 	{
 		if (this->towns.NeedRebuild()) {
-			this->towns.Clear();
+			this->towns.clear();
 
 			const Town *t;
 			FOR_ALL_TOWNS(t) {
-				*this->towns.Append() = t;
+				this->towns.push_back(t);
 			}
 
-			this->towns.Compact();
+			this->towns.shrink_to_fit();
 			this->towns.RebuildDone();
-			this->vscroll->SetCount(this->towns.Length()); // Update scrollbar as well.
+			this->vscroll->SetCount((uint)this->towns.size()); // Update scrollbar as well.
 		}
 		/* Always sort the towns. */
-		this->last_town = NULL;
+		this->last_town = nullptr;
 		this->towns.Sort();
 		this->SetWidgetDirty(WID_TD_LIST); // Force repaint of the displayed towns.
 	}
 
 	/** Sort by town name */
-	static int CDECL TownNameSorter(const Town * const *a, const Town * const *b)
+	static bool TownNameSorter(const Town * const &a, const Town * const &b)
 	{
-		static char buf_cache[64];
-		const Town *ta = *a;
-		const Town *tb = *b;
-		char buf[64];
+		static char buf_cache[MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH];
+		char buf[MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH];
 
-		SetDParam(0, ta->index);
+		SetDParam(0, a->index);
 		GetString(buf, STR_TOWN_NAME, lastof(buf));
 
 		/* If 'b' is the same town as in the last round, use the cached value
 		 * We do this to speed stuff up ('b' is called with the same value a lot of
 		 * times after each other) */
-		if (tb != last_town) {
-			last_town = tb;
-			SetDParam(0, tb->index);
+		if (b != last_town) {
+			last_town = b;
+			SetDParam(0, b->index);
 			GetString(buf_cache, STR_TOWN_NAME, lastof(buf_cache));
 		}
 
-		return strnatcmp(buf, buf_cache); // Sort by name (natural sorting).
+		return strnatcmp(buf, buf_cache) < 0; // Sort by name (natural sorting).
 	}
 
 	/** Sort by population (default descending, as big towns are of the most interest). */
-	static int CDECL TownPopulationSorter(const Town * const *a, const Town * const *b)
+	static bool TownPopulationSorter(const Town * const &a, const Town * const &b)
 	{
-		uint32 a_population = (*a)->cache.population;
-		uint32 b_population = (*b)->cache.population;
+		uint32 a_population = a->cache.population;
+		uint32 b_population = b->cache.population;
 		if (a_population == b_population) return TownDirectoryWindow::TownNameSorter(a, b);
-		return (a_population < b_population) ? -1 : 1;
+		return a_population < b_population;
 	}
 
 	/** Sort by real population (default descending, as big towns are of the most interest). */
-	static int CDECL TownRealPopulationSorter(const Town * const *a, const Town * const *b)
+	static bool TownRealPopulationSorter(const Town * const &a, const Town * const &b)
 	{
-		uint32 a_population = (*a)->cache.potential_pop;
-		uint32 b_population = (*b)->cache.potential_pop;
+		uint32 a_population = a->cache.potential_pop;
+		uint32 b_population = b->cache.potential_pop;
 		if (a_population == b_population) return TownDirectoryWindow::TownNameSorter(a, b);
-		return (a_population < b_population) ? -1 : 1;
+		return a_population < b_population;
 	}
 
 	/** Sort by number of houses (default descending, as big towns are of the most interest). */
-	static int CDECL TownHousesSorter(const Town * const *a, const Town * const *b)
+	static bool TownHousesSorter(const Town * const &a, const Town * const &b)
 	{
-		uint32 a_houses = (*a)->cache.num_houses;
-		uint32 b_houses = (*b)->cache.num_houses;
+		uint32 a_houses = a->cache.num_houses;
+		uint32 b_houses = b->cache.num_houses;
 		if (a_houses == b_houses) return TownDirectoryWindow::TownPopulationSorter(a, b);
-		return (a_houses < b_houses) ? -1 : 1;
+		return a_houses < b_houses;
 	}
 
 	/** Sort by town rating */
-	static int CDECL TownRatingSorter(const Town * const *a, const Town * const *b)
+	static bool TownRatingSorter(const Town * const &a, const Town * const &b)
 	{
-		int before = TownDirectoryWindow::last_sorting.order ? 1 : -1; // Value to get 'a' before 'b'.
+		bool before = !TownDirectoryWindow::last_sorting.order; // Value to get 'a' before 'b'.
 
 		/* Towns without rating are always after towns with rating. */
-		if (HasBit((*a)->have_ratings, _local_company)) {
-			if (HasBit((*b)->have_ratings, _local_company)) {
-				int16 a_rating = (*a)->ratings[_local_company];
-				int16 b_rating = (*b)->ratings[_local_company];
+		if (HasBit(a->have_ratings, _local_company)) {
+			if (HasBit(b->have_ratings, _local_company)) {
+				int16 a_rating = a->ratings[_local_company];
+				int16 b_rating = b->ratings[_local_company];
 				if (a_rating == b_rating) return TownDirectoryWindow::TownNameSorter(a, b);
-				return (a_rating < b_rating) ? -1 : 1;
+				return a_rating < b_rating;
 			}
 			return before;
 		}
-		if (HasBit((*b)->have_ratings, _local_company)) return -before;
-		return -before * TownDirectoryWindow::TownNameSorter(a, b); // Sort unrated towns always on ascending town name.
+		if (HasBit(b->have_ratings, _local_company)) return !before;
+
+		/* Sort unrated towns always on ascending town name. */
+		if (before) return TownDirectoryWindow::TownNameSorter(a, b);
+		return !TownDirectoryWindow::TownNameSorter(a, b);
 	}
 
 public:
-	TownDirectoryWindow(WindowDesc *desc) : Window(desc)
+	TownDirectoryWindow(WindowDesc *desc) : Window(desc), townname_editbox(MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH, MAX_LENGTH_TOWN_NAME_CHARS)
 	{
 		this->CreateNestedTree();
 
@@ -842,9 +882,12 @@ public:
 		this->BuildSortTownList();
 
 		this->FinishInitNested(0);
+
+		this->querystrings[WID_TD_FILTER] = &this->townname_editbox;
+		this->townname_editbox.cancel_button = QueryString::ACTION_CLEAR;
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_TD_WORLD_POPULATION:
@@ -879,7 +922,7 @@ public:
 		return t->larger_town ? STR_TOWN_DIRECTORY_CITY : STR_TOWN_DIRECTORY_TOWN;
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_TD_SORT_ORDER:
@@ -889,7 +932,7 @@ public:
 			case WID_TD_LIST: {
 				int n = 0;
 				int y = r.top + WD_FRAMERECT_TOP;
-				if (this->towns.Length() == 0) { // No towns available.
+				if (this->towns.size() == 0) { // No towns available.
 					DrawString(r.left + WD_FRAMERECT_LEFT, r.right, y, STR_TOWN_DIRECTORY_NONE);
 					break;
 				}
@@ -901,7 +944,7 @@ public:
 				int text_right = r.right - WD_FRAMERECT_RIGHT - (rtl ? icon_size.width + 2 : 0);
 				int icon_x = rtl ? r.right - WD_FRAMERECT_RIGHT - icon_size.width : r.left + WD_FRAMERECT_LEFT;
 
-				for (uint i = this->vscroll->GetPosition(); i < this->towns.Length(); i++) {
+				for (uint i = this->vscroll->GetPosition(); i < this->towns.size(); i++) {
 					const Town *t = this->towns[i];
 					assert(t->xy != INVALID_TILE);
 
@@ -930,7 +973,7 @@ public:
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_TD_SORT_ORDER: {
@@ -952,10 +995,10 @@ public:
 			}
 			case WID_TD_LIST: {
 				Dimension d = GetStringBoundingBox(STR_TOWN_DIRECTORY_NONE);
-				for (uint i = 0; i < this->towns.Length(); i++) {
+				for (uint i = 0; i < this->towns.size(); i++) {
 					const Town *t = this->towns[i];
 
-					assert(t != NULL);
+					assert(t != nullptr);
 
 					SetDParam(0, t->index);
 					SetDParamMaxDigits(1, 8);
@@ -983,7 +1026,7 @@ public:
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_TD_SORT_ORDER: // Click on sort order button
@@ -1006,10 +1049,10 @@ public:
 
 			case WID_TD_LIST: { // Click on Town Matrix
 				uint id_v = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_TD_LIST, WD_FRAMERECT_TOP);
-				if (id_v >= this->towns.Length()) return; // click out of town bounds
+				if (id_v >= this->towns.size()) return; // click out of town bounds
 
 				const Town *t = this->towns[id_v];
-				assert(t != NULL);
+				assert(t != nullptr);
 				if (_ctrl_pressed) {
 					ShowExtraViewPortWindow(t->xy);
 				} else {
@@ -1020,7 +1063,7 @@ public:
 		}
 	}
 
-	virtual void OnDropdownSelect(int widget, int index)
+	void OnDropdownSelect(int widget, int index) override
 	{
 		if (widget != WID_TD_SORT_CRITERIA) return;
 
@@ -1031,21 +1074,29 @@ public:
 		}
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		if (this->towns.NeedRebuild()) this->BuildSortTownList();
 		this->DrawWidgets();
 	}
 
-	virtual void OnHundredthTick()
+	void OnHundredthTick() override
 	{
 		this->BuildSortTownList();
 		this->SetDirty();
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_TD_LIST);
+	}
+
+	void OnEditboxChanged(int wid) override
+	{
+		if (wid == WID_TD_FILTER) {
+			this->string_filter.SetFilterTerm(this->townname_editbox.text.buf);
+			this->InvalidateData(TDIWD_FILTER_CHANGES);
+		}
 	}
 
 	/**
@@ -1053,19 +1104,49 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
-		if (data == 0) {
-			/* This needs to be done in command-scope to enforce rebuilding before resorting invalid data */
-			this->towns.ForceRebuild();
-		} else {
-			this->towns.ForceResort();
+		char buf[MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH];
+
+		switch (data) {
+			case TDIWD_FORCE_REBUILD:
+				/* This needs to be done in command-scope to enforce rebuilding before resorting invalid data */
+				this->towns.ForceRebuild();
+				break;
+
+			case TDIWD_FILTER_CHANGES:
+				if (this->string_filter.IsEmpty()) {
+					this->towns.ForceRebuild();
+				} else {
+					this->towns.clear();
+
+					const Town *t;
+					FOR_ALL_TOWNS(t) {
+						this->string_filter.ResetState();
+
+						SetDParam(0, t->index);
+						GetString(buf, STR_TOWN_NAME, lastof(buf));
+
+						this->string_filter.AddLine(buf);
+						if (this->string_filter.GetState()) this->towns.push_back(t);
+					}
+
+					this->towns.SetListing(this->last_sorting);
+					this->towns.ForceResort();
+					this->towns.Sort();
+					this->towns.shrink_to_fit();
+					this->towns.RebuildDone();
+					this->vscroll->SetCount((int)this->towns.size()); // Update scrollbar as well.
+				}
+				break;
+			default:
+				this->towns.ForceResort();
 		}
 	}
 };
 
 Listing TownDirectoryWindow::last_sorting = {false, 0};
-const Town *TownDirectoryWindow::last_town = NULL;
+const Town *TownDirectoryWindow::last_town = nullptr;
 
 /** Names of the sorting functions. */
 const StringID TownDirectoryWindow::sorter_names[] = {
@@ -1242,7 +1323,7 @@ public:
 
 	void ExecuteFoundTownCommand(TileIndex tile, bool random, StringID errstr, CommandCallback cc)
 	{
-		const char *name = NULL;
+		const char *name = nullptr;
 
 		if (!this->townnamevalid) {
 			name = this->townname_editbox.text.buf;
@@ -1260,7 +1341,7 @@ public:
 		if (success && !_shift_pressed) this->RandomTownName();
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_TF_NEW_TOWN:
@@ -1305,12 +1386,12 @@ public:
 		}
 	}
 
-	virtual void OnPlaceObject(Point pt, TileIndex tile)
+	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		this->ExecuteFoundTownCommand(tile, false, STR_ERROR_CAN_T_FOUND_TOWN_HERE, CcFoundTown);
 	}
 
-	virtual void OnPlaceObjectAbort()
+	void OnPlaceObjectAbort() override
 	{
 		this->RaiseButtons();
 		this->UpdateButtons(false);
@@ -1321,7 +1402,7 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		this->UpdateButtons(true);
@@ -1339,6 +1420,11 @@ void ShowFoundTownWindow()
 {
 	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
 	AllocateWindowDescFront<FoundTownWindow>(&_found_town_desc, 0);
+}
+
+void InitializeTownGui()
+{
+	_town_local_authority_kdtree.Clear();
 }
 
 //CB

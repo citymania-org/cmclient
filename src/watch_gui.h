@@ -82,7 +82,7 @@ public:
 	virtual void OnPaint();
 	virtual void OnQueryTextFinished(char *str);
 
-	void OnDoCommand(CompanyByte company, TileIndex tile);
+	void OnDoCommand(CompanyID company, TileIndex tile);
 };
 
 void ShowWatchWindow(CompanyID company_to_watch, int type);

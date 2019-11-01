@@ -1184,6 +1184,7 @@ STR_CONFIG_SETTING_AUTOSLOPE                                    :Erlaabt Landfor
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Erlaabt Terraintransformatioun ënnert Gebaier an Schinnen ouni dës ewechzehuelen
 STR_CONFIG_SETTING_CATCHMENT                                    :Erlaabt méi realistësch Einzugsberäicher: {STRING}
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :Statiounen a Fluchhäfen hunn verschidde grouss Einzugsberäicher
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES                     :Gare vun der Firma kënnen Industrie beliwwere mat neutrale Statiounen: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :Erlaabt d'Ewechhuelen vu méi Stroossen, Brécken, etc. vun der Stad: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :Mach et méi einfach fir Infrastruktur oder Gebaier ewechzehuelen déi enger Stad gehéiren
 STR_CONFIG_SETTING_TRAIN_LENGTH                                 :Maximal Längt vun Zich: {STRING}
@@ -1581,6 +1582,9 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Wann dës Astel
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Verbueden
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :Erlaabt
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Erlaabt, custom Stad-Layout
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :Duerfwuerengeneratioun: {STRING}
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Wéivill Wuere produzéiert ginn, relativ zur Bevölkerung vum Duerf.{}Quadratesche Wuesstum: En duebel sou grousst Duerf, generéiert véier mol souvill Passagéier.{}Lineare Wuesstum: En duebel sou grousst Duerf, generéiert duebel souvill Passagéier.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Linear
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Bamplazéirung: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Kontrolléiert zoufälleg Optauche vu Beem während dem Spill. Dëst kann Industrie beaflossen, déi op d'Wuessen vu Beem ugewisen sinn
@@ -1708,7 +1712,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Wuereve
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Géigner
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Computerspiller
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(recommandéiert)
 
@@ -1792,13 +1795,9 @@ STR_QUIT_NO                                                     :{BLACK}Nee
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2426,6 +2425,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Baut Str
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Tramtunnel bauen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Wiesselt bauen/ofrappen vu Stroossekonstruktiounen
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Wiesselt tëscht bauen/ofrappen beim Trambau
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Ausriichtung vum Stroossendepot
@@ -3336,8 +3336,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastr
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Schinnestécker:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Signaler
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Stroossestécker:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Strooss
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tram
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Waasserfelder:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanäl
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Statiounen:
@@ -3416,6 +3414,8 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Ongruppéiert S
 STR_GROUP_DEFAULT_SHIPS                                         :Ongruppéiert Schëffer
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Ongruppéiert Fligeren
 
+STR_GROUP_COUNT_WITH_SUBGROUP                                   :{TINY_FONT}{COMMA} (+{COMMA})
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Gruppen - klick op eng Grupp fir d'Gefierer aus der Grupp ze gesinn. Per Drag and Drop d'Hierarchie änneren.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klick fir eng Grupp ze maachen
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Déi ungewielte Grupp läschen
@@ -3442,12 +3442,16 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Nei Elektrozich
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Nei Monorailgefierer
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Nei Magnéitbunngefierer
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Nei Zich
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Nei Stroossegefierer
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Nei Zich
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Nei Schëffer
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Neie Fliger
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Käschten: {GOLD}{CURRENCY_LONG}{BLACK} Gewiicht: {GOLD}{WEIGHT_SHORT}
+STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}Käschten: {GOLD}{CURRENCY_LONG}{BLACK} (Embaukäschten: {GOLD}{CURRENCY_LONG}{BLACK}) Gewiicht: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Geschw.: {GOLD}{VELOCITY}{BLACK} Kraaft: {GOLD}{POWER}
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}Geschw.: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}Geschwindegkeet um Ozean: {GOLD}{VELOCITY}
@@ -3458,8 +3462,10 @@ STR_PURCHASE_INFO_REFITTABLE                                    :(ëmbaubar)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Designt: {GOLD}{NUM}{BLACK} Liewenszäit: {GOLD}{COMMA} Joer
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Max. Zouverläss.: {GOLD}{COMMA}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}Käschten: {GOLD}{CURRENCY_LONG}
+STR_PURCHASE_INFO_COST_REFIT                                    :{BLACK}Käschten: {GOLD}{CURRENCY_LONG}{BLACK} (Embaukäschten: {GOLD}{CURRENCY_LONG}{BLACK})
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Gewiicht: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Käschten: {GOLD}{CURRENCY_LONG}{BLACK} Geschw.: {GOLD}{VELOCITY}
+STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}Käschten: {GOLD}{CURRENCY_LONG}{BLACK} (Embaukäschten: {GOLD}{CURRENCY_LONG}{BLACK}) Geschw.: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}Kapazitéit: {GOLD}{CARGO_LONG}, {CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Ugedriwwen Waggonen: {GOLD}+{POWER}{BLACK} Gewiicht: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Embaubar zu: {GOLD}{STRING}
@@ -3479,10 +3485,18 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Gefier k
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Schëff kafen
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Fliger kafen
 
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_BUTTON                  :{BLACK}Gefierer kafen an ëmbauen
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_BUTTON           :{BLACK}Gefierer kafen an ëmbauen
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_BUTTON                   :{BLACK}Schëff kafen an ëmbauen
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}Fligeren kafen an ëmbauen
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Keeft den ungewielten Zuch. Shift+Klick weist ongeféier Käschten ouni Kaf
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Keeft dat ugewielte Stroossegefier. Shift+Klick weist ongeféier Käschten ouni Kaf
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Keeft dat ugewielte Schëff. Shift+Klick weist ongeféier Käschten ouni Kaf
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Keeft den ungewielte Fliger. Shift+Klick weist ongeféier Käschten ouni Kaf
+
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}Gewielten Zuch/Waggon kafen an ëmbauen. Shift+Klick weist ongeféier Käschten ouni Kaf
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_TOOLTIP              :{BLACK}Gewielte Fliger kafen an ëmbauen. Shift+Klick weist ongeféier Käschten ouni Kaf
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Ëmbenennen
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Ëmbenennen
@@ -3592,12 +3606,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Du verk
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Meldung vum Gefierkonstrukteur
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Mir hunn elo en neien {STRING} gebaut - bass du dorun interesséiert dëst Gefier 1 Joer exklusiv ze notzen, fir ze testen op et komplett maarträif ass?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :Lokomotiv
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :Stroossegefier
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :Fliger
-STR_ENGINE_PREVIEW_SHIP                                         :Schëff
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :Monorail Lokomotiv
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :Magnéitbunnlokomotiv
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :Stroossegefier
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :Fliger
+STR_ENGINE_PREVIEW_SHIP                                         :Schëff
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Käschten: {CURRENCY_LONG} Gewiicht: {WEIGHT_SHORT}{}Geschwindegkeet: {VELOCITY}  Kraaft: {POWER}{}Betribskäschten {CURRENCY_LONG}/Jr{}Kapazitéit: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Käschten: {CURRENCY_LONG} Gewicht: {WEIGHT_SHORT}{}Geschw.: {VELOCITY}  Kraaft: {POWER}  Max. T.E.: {6:FORCE}{}Betribskäschten: {4:CURRENCY_LONG}/Jr{}Kapazitéit: {5:CARGO_LONG}
@@ -3643,6 +3660,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Zich
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektresch Zich
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monorail Gefierer
 STR_REPLACE_MAGLEV_VEHICLES                                     :Magnéitbunn Gefierer
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Waggon raushuelen: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Mécht dass d'automatescht Austauschen d'Längt vum Zuch behält, an dem e Waggonen (vu lénks un) wechhëllt, wann d'Lok den Zuch ze laang mécht
@@ -4365,7 +4383,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Signaler
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Keng gëeegent Schinnen
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}D'Schinne musse fir d'éischt ewech
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}D'Strooss ass eng Einbahn oder blockéiert
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Barrièren si fir dësen Schinnentyp net erlaabt
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Barrièren si fir dësen Schinnentyp net erlaabt
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Kann d'Signaler hei net bauen...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Kann d'Schinnen hei net bauen...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Kann d'Schinnen hei net ewech huelen...
@@ -4437,6 +4455,7 @@ STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}Kann d'G
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}Kann d'Grupp net läschen...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}Kann d'Grupp net ëmbenennen...
 STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}Kann iwwergeuerdent Grupp net setzen...
+STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION                      :{WHITE}... Schläifen an der Gruppenhierarchie si net erlabt
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}Kann net all d'Gefierer aus der Grupp läschen...
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}Kann d'Gefier net bei d'Grupp bäisetzen...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}Kann dei gedeelten Gefierer net bei d'Grupp bäisetzen...

@@ -25,6 +25,7 @@ jobs:
   - template: azure-pipelines/templates/windows-build.yml
     parameters:
       BuildPlatform: $(BuildPlatform)
+      BuildConfiguration: Debug
   - script: |
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
       cd projects
@@ -40,8 +41,8 @@ jobs:
     matrix:
       commit-checker:
         Tag: 'commit-checker'
-      linux-amd64-clang-3.8:
-        Tag: 'linux-amd64-clang-3.8'
+      linux-amd64-clang-3.9:
+        Tag: 'linux-amd64-clang-3.9'
       linux-amd64-gcc-6:
         Tag: 'linux-amd64-gcc-6'
       linux-i386-gcc-6:

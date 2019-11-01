@@ -1,6 +1,5 @@
 /* $Id: commands_gui.cpp 21909 2011-01-26 08:14:36Z xi $ */
 
-#ifdef ENABLE_NETWORK
 #include "stdafx.h"
 #include <sstream>
 #include "widgets/dropdown_type.h" //fillrect
@@ -641,7 +640,6 @@ void AccountLogin(CommunityName community){
 	static GetHTTPContent login(uri);
 	login.InitiateLoginSequence();
 }
-#endif /* ENABLE_NETWORK */
 
 //ini login hadling
 void IniLoginInitiate(){

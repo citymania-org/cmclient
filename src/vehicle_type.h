@@ -19,8 +19,8 @@ typedef uint32 VehicleID;
 
 static const int GROUND_ACCELERATION = 9800; ///< Acceleration due to gravity, 9.8 m/s^2
 
-/** Available vehicle types. */
-enum VehicleType {
+/** Available vehicle types. It needs to be 8bits, because we save and load it as such */
+enum VehicleType : byte {
 	VEH_BEGIN,
 
 	VEH_TRAIN = VEH_BEGIN,        ///< %Train vehicle type.
@@ -39,8 +39,6 @@ enum VehicleType {
 DECLARE_POSTFIX_INCREMENT(VehicleType)
 /** Helper information for extract tool. */
 template <> struct EnumPropsT<VehicleType> : MakeEnumPropsT<VehicleType, byte, VEH_TRAIN, VEH_END, VEH_INVALID, 3> {};
-/** It needs to be 8bits, because we save and load it as such */
-typedef SimpleTinyEnumT<VehicleType, byte> VehicleTypeByte;
 
 struct Vehicle;
 struct Train;
@@ -53,21 +51,21 @@ struct DisasterVehicle;
 /** Base vehicle class. */
 struct BaseVehicle
 {
-	VehicleTypeByte type;    ///< Type of vehicle
+	VehicleType type; ///< Type of vehicle
 };
 
 static const VehicleID INVALID_VEHICLE = 0xFFFFF; ///< Constant representing a non-existing vehicle.
 
 /** Pathfinding option states */
 enum VehiclePathFinders {
-	VPF_OPF  = 0, ///< The Original PathFinder (only for ships)
+	// Original PathFinder (OPF) used to be 0
 	VPF_NPF  = 1, ///< New PathFinder
 	VPF_YAPF = 2, ///< Yet Another PathFinder
 };
 
 /** Flags to add to p1 for goto depot commands. */
 enum DepotCommand {
-	DEPOT_SERVICE       = (1U << 28), ///< The vehicle will leave the depot right after arrival (serivce only)
+	DEPOT_SERVICE       = (1U << 28), ///< The vehicle will leave the depot right after arrival (service only)
 	DEPOT_MASS_SEND     = (1U << 29), ///< Tells that it's a mass send to depot command (type in VLW flag)
 	DEPOT_DONT_CANCEL   = (1U << 30), ///< Don't cancel current goto depot command if any
 	DEPOT_LOCATE_HANGAR = (1U << 31), ///< Find another airport if the target one lacks a hangar

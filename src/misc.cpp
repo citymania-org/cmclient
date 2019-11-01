@@ -28,6 +28,9 @@
 #include "core/pool_type.hpp"
 #include "game/game.hpp"
 #include "linkgraph/linkgraphschedule.h"
+#include "station_kdtree.h"
+#include "town_kdtree.h"
+#include "viewport_kdtree.h"
 
 #include "safeguards.h"
 
@@ -44,6 +47,7 @@ void InitializeAirportGui();
 void InitializeDockGui();
 void InitializeGraphGui();
 void InitializeObjectGui();
+void InitializeTownGui();
 void InitializeIndustries();
 void InitializeObjects();
 void InitializeTrees();
@@ -75,6 +79,10 @@ void InitializeGame(uint size_x, uint size_y, bool reset_date, bool reset_settin
 	LinkGraphSchedule::Clear();
 	PoolBase::Clean(PT_NORMAL);
 
+	RebuildStationKdtree();
+	RebuildTownKdtree();
+	RebuildViewportKdtree();
+
 	ResetPersistentNewGRFData();
 
 	InitializeSound();
@@ -90,6 +98,7 @@ void InitializeGame(uint size_x, uint size_y, bool reset_date, bool reset_settin
 	InitializeDockGui();
 	InitializeGraphGui();
 	InitializeObjectGui();
+	InitializeTownGui();
 	InitializeAIGui();
 	InitializeTrees();
 	InitializeIndustries();
@@ -104,9 +113,7 @@ void InitializeGame(uint size_x, uint size_y, bool reset_date, bool reset_settin
 	InitializeCheats();
 
 	InitTextEffects();
-#ifdef ENABLE_NETWORK
 	NetworkInitChatMessage();
-#endif /* ENABLE_NETWORK */
 	InitializeAnimatedTiles();
 
 	InitializeEconomy();

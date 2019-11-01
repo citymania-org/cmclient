@@ -47,7 +47,7 @@ static const uint8 PC_GRASS_LAND      = 0x54; ///< Dark green palette colour for
 static const uint8 PC_BARE_LAND       = 0x37; ///< Brown palette colour for bare land.
 static const uint8 PC_FIELDS          = 0x25; ///< Light brown palette colour for fields.
 static const uint8 PC_TREES           = 0x57; ///< Green palette colour for trees.
-static const uint8 PC_WATER           = 0xCA; ///< Dark blue palette colour for water.
+static const uint8 PC_WATER           = 0xC9; ///< Dark blue palette colour for water.
 
 /** Macro for ordinary entry of LegendAndColour */
 #define MK(a, b) {a, b, INVALID_INDUSTRYTYPE, 0, INVALID_COMPANY, true, false, false}
@@ -178,8 +178,7 @@ void BuildIndustriesLegend()
 	uint j = 0;
 
 	/* Add each name */
-	for (uint i = 0; i < NUM_INDUSTRYTYPES; i++) {
-		IndustryType ind = _sorted_industry_types[i];
+	for (IndustryType ind : _sorted_industry_types) {
 		const IndustrySpec *indsp = GetIndustrySpec(ind);
 		if (indsp->enabled) {
 			_legend_from_industries[j].legend = indsp->name;
@@ -210,7 +209,7 @@ void BuildLinkStatsLegend()
 	memset(_legend_linkstats, 0, sizeof(_legend_linkstats));
 
 	uint i = 0;
-	for (; i < _sorted_cargo_specs_size; ++i) {
+	for (; i < _sorted_cargo_specs.size(); ++i) {
 		const CargoSpec *cs = _sorted_cargo_specs[i];
 
 		_legend_linkstats[i].legend = cs->name;
@@ -272,9 +271,9 @@ struct SmallMapColourScheme {
 
 /** Available colour schemes for height maps. */
 static SmallMapColourScheme _heightmap_schemes[] = {
-	{NULL, _green_map_heights,      lengthof(_green_map_heights),      MKCOLOUR_XXXX(0x54)}, ///< Green colour scheme.
-	{NULL, _dark_green_map_heights, lengthof(_dark_green_map_heights), MKCOLOUR_XXXX(0x62)}, ///< Dark green colour scheme.
-	{NULL, _violet_map_heights,     lengthof(_violet_map_heights),     MKCOLOUR_XXXX(0x82)}, ///< Violet colour scheme.
+	{nullptr, _green_map_heights,      lengthof(_green_map_heights),      MKCOLOUR_XXXX(0x54)}, ///< Green colour scheme.
+	{nullptr, _dark_green_map_heights, lengthof(_dark_green_map_heights), MKCOLOUR_XXXX(0x62)}, ///< Dark green colour scheme.
+	{nullptr, _violet_map_heights,     lengthof(_violet_map_heights),     MKCOLOUR_XXXX(0x81)}, ///< Violet colour scheme.
 };
 
 /**
@@ -283,7 +282,7 @@ static SmallMapColourScheme _heightmap_schemes[] = {
 void BuildLandLegend()
 {
 	/* The smallmap window has never been initialized, so no need to change the legend. */
-	if (_heightmap_schemes[0].height_colours == NULL) return;
+	if (_heightmap_schemes[0].height_colours == nullptr) return;
 
 	/*
 	 * The general idea of this function is to fill the legend with an appropriate evenly spaced
@@ -461,28 +460,51 @@ static inline uint32 GetSmallMapIndustriesPixels(TileIndex tile, TileType t)
  */
 static inline uint32 GetSmallMapRoutesPixels(TileIndex tile, TileType t)
 {
-	if (t == MP_STATION) {
-		switch (GetStationType(tile)) {
-			case STATION_RAIL:    return MKCOLOUR_XXXX(PC_VERY_DARK_BROWN);
-			case STATION_AIRPORT: return MKCOLOUR_XXXX(PC_RED);
-			case STATION_TRUCK:   return MKCOLOUR_XXXX(PC_ORANGE);
-			case STATION_BUS:     return MKCOLOUR_XXXX(PC_YELLOW);
-			case STATION_DOCK:    return MKCOLOUR_XXXX(PC_LIGHT_BLUE);
-			default:              return MKCOLOUR_FFFF;
+	switch (t) {
+		case MP_STATION:
+			switch (GetStationType(tile)) {
+				case STATION_RAIL:    return MKCOLOUR_XXXX(PC_VERY_DARK_BROWN);
+				case STATION_AIRPORT: return MKCOLOUR_XXXX(PC_RED);
+				case STATION_TRUCK:   return MKCOLOUR_XXXX(PC_ORANGE);
+				case STATION_BUS:     return MKCOLOUR_XXXX(PC_YELLOW);
+				case STATION_DOCK:    return MKCOLOUR_XXXX(PC_LIGHT_BLUE);
+				default:              return MKCOLOUR_FFFF;
+			}
+
+		case MP_RAILWAY: {
+			AndOr andor = {
+				MKCOLOUR_0XX0(GetRailTypeInfo(GetRailType(tile))->map_colour),
+				_smallmap_contours_andor[t].mand
+			};
+
+			const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+			return ApplyMask(cs->default_colour, &andor);
 		}
-	} else if (t == MP_RAILWAY) {
-		AndOr andor = {
-			MKCOLOUR_0XX0(GetRailTypeInfo(GetRailType(tile))->map_colour),
-			_smallmap_contours_andor[t].mand
-		};
 
-		const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
-		return ApplyMask(cs->default_colour, &andor);
+		case MP_ROAD: {
+			const RoadTypeInfo *rti = nullptr;
+			if (GetRoadTypeRoad(tile) != INVALID_ROADTYPE) {
+				rti = GetRoadTypeInfo(GetRoadTypeRoad(tile));
+			} else {
+				rti = GetRoadTypeInfo(GetRoadTypeTram(tile));
+			}
+			if (rti != nullptr) {
+				AndOr andor = {
+					MKCOLOUR_0XX0(rti->map_colour),
+					_smallmap_contours_andor[t].mand
+				};
+
+				const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+				return ApplyMask(cs->default_colour, &andor);
+			}
+			FALLTHROUGH;
+		}
+
+		default:
+			/* Ground colour */
+			const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+			return ApplyMask(cs->default_colour, &_smallmap_contours_andor[t]);
 	}
-
-	/* Ground colour */
-	const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
-	return ApplyMask(cs->default_colour, &_smallmap_contours_andor[t]);
 }
 
 /**
@@ -567,7 +589,7 @@ static inline uint32 GetSmallMapOwnerPixels(TileIndex tile, TileType t)
 	return MKCOLOUR_XXXX(_legend_land_owners[_company_to_list_pos[o]].colour);
 }
 
-/** Vehicle colours in #SMT_VEHICLES mode. Indexed by #VehicleTypeByte. */
+/** Vehicle colours in #SMT_VEHICLES mode. Indexed by #VehicleType. */
 static const byte _vehicle_type_colours[6] = {
 	PC_RED, PC_YELLOW, PC_LIGHT_BLUE, PC_WHITE, PC_BLACK, PC_RED
 };
@@ -1071,7 +1093,7 @@ SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) : Window(des
 
 	this->SetupWidgetData();
 
-	this->SetZoomLevel(ZLC_INITIALIZE, NULL);
+	this->SetZoomLevel(ZLC_INITIALIZE, nullptr);
 	this->SmallMapCenterOnCurrentPos();
 	this->SetOverlayCargoMask();
 }
@@ -1474,7 +1496,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 
 		case WID_SM_ENABLE_ALL:
 		case WID_SM_DISABLE_ALL: {
-			LegendAndColour *tbl = NULL;
+			LegendAndColour *tbl = nullptr;
 			switch (this->map_type) {
 				case SMT_INDUSTRY:
 					tbl = _legend_from_industries;
@@ -1682,10 +1704,10 @@ class NWidgetSmallmapDisplay : public NWidgetContainer {
 public:
 	NWidgetSmallmapDisplay() : NWidgetContainer(NWID_VERTICAL)
 	{
-		this->smallmap_window = NULL;
+		this->smallmap_window = nullptr;
 	}
 
-	virtual void SetupSmallestSize(Window *w, bool init_array)
+	void SetupSmallestSize(Window *w, bool init_array) override
 	{
 		NWidgetBase *display = this->head;
 		NWidgetBase *bar = display->next;
@@ -1694,7 +1716,7 @@ public:
 		bar->SetupSmallestSize(w, init_array);
 
 		this->smallmap_window = dynamic_cast<SmallMapWindow *>(w);
-		assert(this->smallmap_window != NULL);
+		assert(this->smallmap_window != nullptr);
 		this->smallest_x = max(display->smallest_x, bar->smallest_x + smallmap_window->GetMinLegendWidth());
 		this->smallest_y = display->smallest_y + max(bar->smallest_y, smallmap_window->GetLegendHeight(smallmap_window->min_number_of_columns));
 		this->fill_x = max(display->fill_x, bar->fill_x);
@@ -1703,7 +1725,7 @@ public:
 		this->resize_y = min(display->resize_y, bar->resize_y);
 	}
 
-	virtual void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl)
+	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl) override
 	{
 		this->pos_x = x;
 		this->pos_y = y;
@@ -1727,19 +1749,19 @@ public:
 		bar->AssignSizePosition(ST_RESIZE, x, y + display_height, given_width, bar_height, rtl);
 	}
 
-	virtual NWidgetCore *GetWidgetFromPos(int x, int y)
+	NWidgetCore *GetWidgetFromPos(int x, int y) override
 	{
-		if (!IsInsideBS(x, this->pos_x, this->current_x) || !IsInsideBS(y, this->pos_y, this->current_y)) return NULL;
-		for (NWidgetBase *child_wid = this->head; child_wid != NULL; child_wid = child_wid->next) {
+		if (!IsInsideBS(x, this->pos_x, this->current_x) || !IsInsideBS(y, this->pos_y, this->current_y)) return nullptr;
+		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
 			NWidgetCore *widget = child_wid->GetWidgetFromPos(x, y);
-			if (widget != NULL) return widget;
+			if (widget != nullptr) return widget;
 		}
-		return NULL;
+		return nullptr;
 	}
 
-	virtual void Draw(const Window *w)
+	void Draw(const Window *w) override
 	{
-		for (NWidgetBase *child_wid = this->head; child_wid != NULL; child_wid = child_wid->next) child_wid->Draw(w);
+		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->Draw(w);
 	}
 };
 
@@ -1862,7 +1884,7 @@ bool ScrollMainWindowTo(int x, int y, int z, bool instant)
 	if (res) return res;
 
 	SmallMapWindow *w = dynamic_cast<SmallMapWindow*>(FindWindowById(WC_SMALLMAP, 0));
-	if (w != NULL) w->SmallMapCenterOnCurrentPos();
+	if (w != nullptr) w->SmallMapCenterOnCurrentPos();
 
 	return res;
 }
