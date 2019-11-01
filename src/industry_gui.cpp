@@ -1405,7 +1405,7 @@ protected:
 	{
 		for (IndustryType indt = 0; indt < NUM_INDUSTRYTYPES; ++indt)
 			this->type_filter[indt] = true;
-			IndustryDirectoryWindow::initialized = true;
+		IndustryDirectoryWindow::initialized = true;
 	}
 
 public:

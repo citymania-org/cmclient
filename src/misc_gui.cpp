@@ -1694,11 +1694,11 @@ public:
 
 			uint waitunits = ge->max_waiting_cargo;
 			int waitunits_stage = 0;
-			(ge->max_waiting_cargo > 1500) ||
-			(waitunits_stage = 1, ge->max_waiting_cargo > 1000) ||
-			(waitunits_stage = 2, ge->max_waiting_cargo > 600) ||
-			(waitunits_stage = 3, ge->max_waiting_cargo > 300) ||
-			(waitunits_stage = 4, ge->max_waiting_cargo > 100) ||
+			(waitunits > 1500) ||
+			(waitunits_stage = 1, waitunits > 1000) ||
+			(waitunits_stage = 2, waitunits > 600) ||
+			(waitunits_stage = 3, waitunits > 300) ||
+			(waitunits_stage = 4, waitunits > 100) ||
 			(waitunits_stage = 5, true);
 			total_rating += STATION_RATING_WAITUNITS[waitunits_stage];
 
@@ -1769,11 +1769,6 @@ public:
 
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
-		uint icon_size = ScaleGUITrad(10);
-		uint line_height = max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
-		uint text_ofs = (line_height - FONT_HEIGHT_NORMAL) >> 1;
-		uint icon_ofs = (line_height - icon_size) >> 1;
-
 		GfxDrawLine(r.left,  r.top,    r.right, r.top,    PC_BLACK);
 		GfxDrawLine(r.left,  r.bottom, r.right, r.bottom, PC_BLACK);
 		GfxDrawLine(r.left,  r.top,    r.left,  r.bottom, PC_BLACK);
