@@ -13,9 +13,6 @@ bin/baseset/*
 !bin/baseset/no_sound.obs
 !bin/baseset/no_music.obm
 !bin/baseset/orig_*.obm
-!bin/game
-bin/game/*
-!bin/game/compat*.nut
 !bin/scripts
 bin/scripts/*
 !bin/scripts/*.example
@@ -54,6 +51,5 @@ src/os/windows/ottdres.rc
 !*.in
 *.tmp
 
-/bin/data/*
-/game
+/game/
 /openttd

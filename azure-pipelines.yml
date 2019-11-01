@@ -86,7 +86,7 @@ jobs:
     parameters:
       Image: compile-farm
       ContainerCommand: '$(Build.BuildNumber)'
-      Tag: $(Agent.JobName)
+      Tag: $(Tag)
 
 - job: windows
   displayName: 'Windows'
