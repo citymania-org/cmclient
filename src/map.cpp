@@ -14,6 +14,7 @@
 #include "core/alloc_func.hpp"
 #include "water_map.h"
 #include "string_func.h"
+#include "citymania/zoning.hpp"
 
 #include "safeguards.h"
 
@@ -63,6 +64,7 @@ void AllocateMap(uint size_x, uint size_y)
 
 	_m = CallocT<Tile>(_map_size);
 	_me = CallocT<TileExtended>(_map_size);
+	citymania::AllocateZoningMap(_map_size);
 }
 
 

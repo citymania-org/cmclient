@@ -54,6 +54,8 @@
 #include "table/strings.h"
 #include "table/town_land.h"
 
+#include "citymania/zoning.hpp"
+
 #include "safeguards.h"
 
 bool _cb_enabled = false;
@@ -1816,6 +1818,7 @@ static bool GrowTown(Town *t)
 
 void UpdateTownRadius(Town *t)
 {
+	auto prev_tz0 = t->cache.squared_town_zone_radius[0];
 	static const uint32 _town_squared_town_zone_radius_data[23][5] = {
 		{  4,  0,  0,  0,  0}, // 0
 		{ 16,  0,  0,  0,  0},
@@ -1855,6 +1858,8 @@ void UpdateTownRadius(Town *t)
 		t->cache.squared_town_zone_radius[3] = mass * 5 - 5;
 		t->cache.squared_town_zone_radius[4] = mass * 3 + 5;
 	}
+  	if (!_generating_world)
+		citymania::UpdateTownZoning(t, prev_tz0);
 }
 
 void UpdateTownMaxPass(Town *t)

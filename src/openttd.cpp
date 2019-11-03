@@ -69,6 +69,8 @@
 
 #include "linkgraph/linkgraphschedule.h"
 
+#include "citymania/zoning.hpp"
+
 #include <stdarg.h>
 #include <system_error>
 
@@ -962,6 +964,7 @@ static void MakeNewGameDone()
 
 	CheckEngines();
 	CheckIndustries();
+	citymania::InitializeZoningMap();
 	MarkWholeScreenDirty();
 }
 
@@ -978,6 +981,7 @@ static void MakeNewGame(bool from_heightmap, bool reset_settings)
 static void MakeNewEditorWorldDone()
 {
 	SetLocalCompany(OWNER_NONE);
+	citymania::InitializeZoningMap();
 }
 
 static void MakeNewEditorWorld()

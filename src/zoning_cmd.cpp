@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <vector>
 
+#include "citymania/zoning.hpp"
+
+
 Zoning _zoning = {CHECKNOTHING, CHECKNOTHING};
 static const SpriteID INVALID_SPRITE_ID = UINT_MAX;
 //RED GREEN BLACK LIGHT_BLUE ORANGE WHITE YELLOW PURPLE
@@ -268,10 +271,11 @@ SpriteID TileZoneCheckTownZones(TileIndex tile) {
 
 	Town *town;
 	FOR_ALL_TOWNS(town) {
+		uint dist = DistanceSquare(tile, town->xy);
 		// town code uses <= for checking town borders (tz0) but < for other zones
 		while (next_zone < HZB_END
 			&& (town->cache.squared_town_zone_radius[next_zone] == 0
-				|| DistanceSquare(tile, town->xy) <= town->cache.squared_town_zone_radius[next_zone] + (next_zone == HZB_BEGIN ? 0 : 1))
+				|| dist <= town->cache.squared_town_zone_radius[next_zone] - (next_zone == HZB_BEGIN ? 0 : 1))
 		){
 			if(town->cache.squared_town_zone_radius[next_zone] != 0)  tz = next_zone;
 			next_zone++;
@@ -397,6 +401,38 @@ SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode 
 	}
 }
 
+SpriteID GetTownZoneBorderColor(uint8 zone) {
+	switch (zone) {
+		default: return SPR_PALETTE_ZONING_LIGHT_BLUE;  // Tz0
+		case 2: return SPR_PALETTE_ZONING_RED;  // Tz1
+		case 3: return SPR_PALETTE_ZONING_YELLOW;  // Tz2
+		case 4: return SPR_PALETTE_ZONING_GREEN;  // Tz3
+		case 5: return SPR_PALETTE_ZONING_WHITE;  // Tz4 - center
+	};
+}
+
+void DrawBorderSprites(const TileInfo *ti, citymania::ZoningBorder border, SpriteID color) {
+	auto b = (uint8)border & 15;
+	auto tile_sprite = SPR_BORDER_HIGHLIGHT_BASE + _tileh_to_sprite[ti->tileh] * 19;
+	if (b) {
+		AddSortableSpriteToDraw(tile_sprite + b - 1,
+		                        color, ti->x, ti->y, 0x10, 0x10, 1, ti->z + 7);
+	}
+	if (border & citymania::ZoningBorder::TOP_CORNER)
+		AddSortableSpriteToDraw(tile_sprite + 15,
+		                        color, ti->x, ti->y, 0x10, 0x10, 1, ti->z + 7);
+	if (border & citymania::ZoningBorder::RIGHT_CORNER)
+		AddSortableSpriteToDraw(tile_sprite + 16,
+		                        color, ti->x, ti->y, 0x10, 0x10, 1, ti->z + 7);
+	if (border & citymania::ZoningBorder::BOTTOM_CORNER)
+		AddSortableSpriteToDraw(tile_sprite + 17,
+		                        color, ti->x, ti->y, 0x10, 0x10, 1, ti->z + 7);
+	if (border & citymania::ZoningBorder::LEFT_CORNER)
+		AddSortableSpriteToDraw(tile_sprite + 18,
+		                        color, ti->x, ti->y, 0x10, 0x10, 1, ti->z + 7);
+
+}
+
 /**
  * Draw the the zoning on the tile.
  * @param TileInfo ti
@@ -406,7 +442,14 @@ void DrawTileZoning(const TileInfo *ti) {
 	if(_zoning.outer == CHECKNOTHING && _zoning.inner == CHECKNOTHING) return; //nothing to do
 	if (_game_mode != GM_NORMAL || ti->tile >= MapSize() || IsTileType(ti->tile, MP_VOID)) return; //check invalid
 	if (_zoning.outer != CHECKNOTHING){
-		DrawZoningSprites(SPR_SELECT_TILE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.outer), ti);
+		if (_zoning.outer == CHECKTOWNZONES) {
+			auto p = citymania::GetTownZoneBorder(ti->tile);
+			if (p.first && p.second) {
+				DrawBorderSprites(ti, p.first, GetTownZoneBorderColor(p.second));
+			}
+		} else {
+			DrawZoningSprites(SPR_SELECT_TILE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.outer), ti);
+		}
 	}
 	if (_zoning.inner != CHECKNOTHING){
 		DrawZoningSprites(SPR_INNER_HIGHLIGHT_BASE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.inner), ti);

@@ -192,7 +192,8 @@ static void LoadSpriteTables()
 			i++
 		);
 	}
-	LoadGrfFile("innerhighlight.grf", SPR_INNER_HIGHLIGHT_BASE, i++);
+	// LoadGrfFile("innerhighlight.grf", SPR_INNER_HIGHLIGHT_BASE, i++);
+	LoadGrfFile("cmclient-1.grf", SPR_INNER_HIGHLIGHT_BASE - 4, i++);
 
 	/* Initialize the unicode to sprite mapping table */
 	InitializeUnicodeGlyphMap();

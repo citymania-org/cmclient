@@ -63,6 +63,8 @@
 #include "../game/game_text.hpp"
 #include "../table/control_codes.h"
 
+#include "../citymania/zoning.hpp"
+
 #include "saveload_internal.h"
 
 #include <signal.h>
@@ -3267,6 +3269,7 @@ bool AfterLoadGame()
 
 	AfterLoadLinkGraphs();
 	AfterLoadFindBTProCBInfo();
+	citymania::InitializeZoningMap();
 	return true;
 }
 
