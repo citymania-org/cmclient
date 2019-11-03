@@ -1,0 +1,3 @@
+##grflangid 0x01
+STR_GRF_NAME                                                    :CityMania Client Resourse Pack v1
+STR_GRF_DESCRIPTION                                             :Provides additional resources for a CityMania patched client (citymania.org/downloads). Should be put in your client data folder. Do not add this to your game via NewGRF options, it may break something.
