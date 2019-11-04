@@ -39,8 +39,12 @@
 StationPool _station_pool("Station");
 INSTANTIATE_POOL_METHODS(Station)
 
+Kdtree_StationXYFunc kd_station_func;
+StationKdtree _station_kdtree(kd_station_func);
 
-StationKdtree _station_kdtree(Kdtree_StationXYFunc);
+uint16 Kdtree_StationXYFunc::operator()(StationID stid, int dim) const {
+    return (dim == 0) ? TileX(BaseStation::Get(stid)->xy) : TileY(BaseStation::Get(stid)->xy);
+}
 
 void RebuildStationKdtree()
 {

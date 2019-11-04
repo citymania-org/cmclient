@@ -96,16 +96,16 @@ void InitializeZoningMap() {
 template <typename F>
 uint8 Get(uint32 x, uint32 y, F getter) {
     if (x >= MapSizeX() || y >= MapSizeY()) return 0;
-    return getter(_mz[TileXY(x, y)]);
+    return getter(TileXY(x, y));
 }
 
-std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile) {
+template <typename F>
+std::pair<ZoningBorder, uint8> CalcTileBorders(TileIndex tile, F getter) {
     auto x = TileX(tile), y = TileY(tile);
     ZoningBorder res = ZoningBorder::NONE;
-    auto z = _mz[tile].town_zone;
+    auto z = getter(tile);
     if (z == 0)
         return std::make_pair(res, 0);
-    auto getter = [](TileZoning tz) { return tz.town_zone; };
     auto tr = Get(x - 1, y, getter);
     auto tl = Get(x, y - 1, getter);
     auto bl = Get(x + 1, y, getter);
@@ -119,6 +119,21 @@ std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile) {
     if (br == z && bl == z && Get(x + 1, y + 1, getter) < z) res |= ZoningBorder::BOTTOM_CORNER;
     if (tl == z && bl == z && Get(x + 1, y - 1, getter) < z) res |= ZoningBorder::LEFT_CORNER;
     return std::make_pair(res, z);
+}
+
+std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile) {
+    return CalcTileBorders(tile, [](TileIndex t) { return _mz[t].town_zone; });
+}
+
+ZoningBorder GetAnyStationCatchmentBorder(TileIndex tile) {
+    ZoningBorder border = ZoningBorder::NONE;
+    StationFinder morestations(TileArea(tile, 1, 1));
+    for (Station *st: *morestations.GetStations()) {
+        border |= CalcTileBorders(tile, [st](TileIndex t) {return st->TileIsInCatchment(t) ? 1 : 0; }).first;
+    }
+    if (border & ZoningBorder::TOP_CORNER && border & (ZoningBorder::TOP_LEFT | ZoningBorder::TOP_RIGHT))
+        border &= ~ZoningBorder::TOP_CORNER;
+    return border;
 }
 
 }  // namespace citymania

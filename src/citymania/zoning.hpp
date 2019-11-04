@@ -35,8 +35,10 @@ void InitializeZoningMap();
 
 void UpdateTownZoning(Town *town, uint32 prev_edge);
 
+
 std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile);
-std::pair<ZoningBorder, uint8> GetTownAdvertisementBorder(TileIndex tile);
+ZoningBorder GetAnyStationCatchmentBorder(TileIndex tlie);
+// std::pair<ZoningBorder, uint8> GetTownAdvertisementBorder(TileIndex tile);
 
 }  // namespace citymania
 

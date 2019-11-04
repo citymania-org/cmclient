@@ -148,18 +148,11 @@ bool IsAreaWithinAcceptanceZoneOfStation(TileArea area) {
  * @return true if a station is found
  */
 bool IsTileWithinAcceptanceZoneOfStation(TileIndex tile) {
-	int catchment = _settings_game.station.station_spread + (_settings_game.station.modified_catchment ? MAX_CATCHMENT : CA_UNMODIFIED);
-
-	StationFinder morestations(TileArea(TileXY(TileX(tile) - catchment / 2, TileY(tile) - catchment / 2),
-		catchment, catchment));
+	StationFinder morestations(TileArea(tile, 1, 1));
 
 	for (Station *st: *morestations.GetStations()) {
-		Rect rect = st->GetCatchmentRect();
-		if ((uint)rect.left <= TileX(tile) && TileX(tile) <= (uint)rect.right
-			&& (uint)rect.top <= TileY(tile) && TileY(tile) <= (uint)rect.bottom )
-		{
+		if (st->TileIsInCatchment(tile))
 			return true;
-		}
 	}
 	return false;
 }
@@ -209,11 +202,6 @@ SpriteID TileZoneCheckBuildEvaluation(TileIndex tile, Owner owner) {
 	// Never on a station.
 	if (IsTileType(tile, MP_STATION)){
 		return INVALID_SPRITE_ID;
-	}
-	// For provided goods
-	StationFinder stations(TileArea(tile, 1, 1));
-	if (!stations.GetStations()->empty()) {
-		return SPR_PALETTE_ZONING_GREEN;
 	}
 	// For accepted goods
 	if (IsTileWithinAcceptanceZoneOfStation(tile)){
@@ -447,6 +435,9 @@ void DrawTileZoning(const TileInfo *ti) {
 			if (p.first && p.second) {
 				DrawBorderSprites(ti, p.first, GetTownZoneBorderColor(p.second));
 			}
+		} else if (_zoning.outer == CHECKSTACATCH) {
+			auto b = citymania::GetAnyStationCatchmentBorder(ti->tile);
+			DrawBorderSprites(ti, b, SPR_PALETTE_ZONING_LIGHT_BLUE);
 		} else {
 			DrawZoningSprites(SPR_SELECT_TILE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.outer), ti);
 		}
