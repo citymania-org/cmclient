@@ -74,6 +74,11 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 1.10.0-beta1 (5 Nov 2019) ***
+- Show company goals in CB window if there is no CB info provided by server.
+- Make zoning UI use new cleaner highlight style for town zones and station catchment outer zoning.
+- Show closest town and advertisement zone in station building window.
+
 *** 1.9.3 (16 Sep 2019) ***
 - OpenTTD update.
 
