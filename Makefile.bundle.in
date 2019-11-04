@@ -26,12 +26,14 @@ endif
 # An OSX application bundle needs the data files, lang files and openttd executable in a different location.
 ifdef OSXAPP
 AI_DIR      = $(BUNDLE_DIR)/$(OSXAPP)/Contents/Resources/ai
+DATA_DIR    = $(BUNDLE_DIR)/$(OSXAPP)/Contents/Resources/data
 GAME_DIR    = $(BUNDLE_DIR)/$(OSXAPP)/Contents/Resources/game
 BASESET_DIR = $(BUNDLE_DIR)/$(OSXAPP)/Contents/Resources/baseset
 LANG_DIR    = $(BUNDLE_DIR)/$(OSXAPP)/Contents/Resources/lang
 TTD_DIR     = $(BUNDLE_DIR)/$(OSXAPP)/Contents/MacOS
 else
 AI_DIR      = $(BUNDLE_DIR)/ai
+DATA_DIR    = $(BUNDLE_DIR)/data
 GAME_DIR    = $(BUNDLE_DIR)/game
 BASESET_DIR = $(BUNDLE_DIR)/baseset
 LANG_DIR    = $(BUNDLE_DIR)/lang
@@ -47,6 +49,7 @@ bundle: all
 	$(Q)mkdir -p "$(BUNDLE_DIR)/scripts"
 	$(Q)mkdir -p "$(TTD_DIR)"
 	$(Q)mkdir -p "$(AI_DIR)"
+	$(Q)mkdir -p "$(DATA_DIR)"
 	$(Q)mkdir -p "$(GAME_DIR)"
 	$(Q)mkdir -p "$(BASESET_DIR)"
 	$(Q)mkdir -p "$(LANG_DIR)"
@@ -62,6 +65,7 @@ ifeq ($(OS),UNIX)
 endif
 	$(Q)cp "$(BIN_DIR)/$(TTD)"                "$(TTD_DIR)/"
 	$(Q)cp "$(BIN_DIR)/ai/"compat_*.nut       "$(AI_DIR)/"
+	$(Q)cp "$(BIN_DIR)/data/"*.grf            "$(DATA_DIR)/"
 	$(Q)cp "$(BIN_DIR)/game/"compat_*.nut     "$(GAME_DIR)/"
 	$(Q)cp "$(BIN_DIR)/baseset/"*.grf         "$(BASESET_DIR)/"
 	$(Q)cp "$(BIN_DIR)/baseset/"*.obg         "$(BASESET_DIR)/"

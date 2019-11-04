@@ -1,4 +1,0 @@
-#Created by the Bamboo Continuous Integration Server
-#Tue Oct 21 20:36:41 CEST 2014
-build.number=57
-build.timestamp="2014-10-21 20\:36\:41"

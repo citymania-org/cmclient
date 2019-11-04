@@ -20,7 +20,7 @@ jobs:
 
       # Rename the folder to openttd-NNN-source
       mkdir openttd-$(Build.BuildNumber)
-      find . -maxdepth 1 -not -name release_files -not -name . -not -name openttd-$(Build.BuildNumber) -exec mv {} openttd-$(Build.BuildNumber)/ \;
+      find . -maxdepth 1 -not -name release_files -not -name .git -not -name . -not -name openttd-$(Build.BuildNumber) -exec mv {} openttd-$(Build.BuildNumber)/ \;
       cp -r release_files/* openttd-$(Build.BuildNumber)/
 
       mkdir bundles
@@ -113,8 +113,6 @@ jobs:
       BuildConfiguration: Release
   - bash: |
       set -ex
-      mkdir -p bundle
-      cp -r bin/data bundle/
       make -f Makefile.msvc bundle_pdb bundle_zip PLATFORM=$(BundlePlatform) BUNDLE_NAME=citymania-client-$(Build.BuildNumber)-$(BundlePlatform)
     displayName: 'Create bundles'
   - task: PublishBuildArtifacts@1
