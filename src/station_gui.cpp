@@ -80,6 +80,23 @@ int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageTyp
 	return DrawStringMultiLine(left, right, top, INT32_MAX, supplies ? STR_STATION_BUILD_SUPPLIES_CARGO : STR_STATION_BUILD_ACCEPTS_CARGO);
 }
 
+int DrawStationAuthorityText(int left, int right, int top) {
+	TileIndex tile = TileVirtXY(_thd.pos.x, _thd.pos.y);
+	Town *town = ClosestTownFromTile(tile, UINT_MAX);
+	auto dist = DistanceManhattan(town->xy, tile);
+
+	SetDParam(0, town ? town->index : INVALID_TOWN);
+	if (dist <= 10) {
+		return DrawStringMultiLine(left, right, top, INT32_MAX, STR_CM_STATION_BUILD_TOWN_SMALL);
+	} else if (dist <= 15) {
+		return DrawStringMultiLine(left, right, top, INT32_MAX, STR_CM_STATION_BUILD_TOWN_MEDIUM);
+	} else if (dist <= 20) {
+		return DrawStringMultiLine(left, right, top, INT32_MAX, STR_CM_STATION_BUILD_TOWN_LARGE);
+	} else {
+		return DrawStringMultiLine(left, right, top, INT32_MAX, STR_CM_STATION_BUILD_TOWN);
+	}
+}
+
 /**
  * Find stations adjacent to the current tile highlight area, so that existing coverage
  * area can be drawn.

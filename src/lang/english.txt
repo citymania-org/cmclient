@@ -5489,3 +5489,7 @@ STR_STATION_RATING_TOOLTIP_STATUE_YES                           :{GREEN}yes, +10
 
 STR_IGNORE_VERSION_CHECK_WARNING : WARNING! You're about to join server running a different version of the game!
 STR_IGNORE_VERSION_CHECK_WARNING_DETAILS : OpenTTD was never indended to work in such way. If you're lucky you may be able to play it but most likely something is going to break sooner or later. Desyncs or crashes are to be expected. So proceed at your own risk and don't report any errors you encounter there.
+STR_CM_STATION_BUILD_TOWN :{BLACK}Town: {GOLD}{TOWN}
+STR_CM_STATION_BUILD_TOWN_LARGE :{BLACK}Town: {GOLD}{TOWN} (L)
+STR_CM_STATION_BUILD_TOWN_MEDIUM :{BLACK}Town: {GOLD}{TOWN} (M)
+STR_CM_STATION_BUILD_TOWN_SMALL :{BLACK}Town: {GOLD}{TOWN} (S)
