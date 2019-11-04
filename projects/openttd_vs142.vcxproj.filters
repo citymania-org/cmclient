@@ -1794,6 +1794,12 @@
     <ClCompile Include="..\src\citymania\base64.cpp">
       <Filter>CityMania files</Filter>
     </ClCompile>
+    <ClInclude Include="..\src\citymania\zoning.hpp">
+      <Filter>CityMania files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\zoning.cpp">
+      <Filter>CityMania files</Filter>
+    </ClCompile>
     <ClInclude Include="..\src\newgrf_revisions.hpp">
       <Filter>CityMania files</Filter>
     </ClInclude>

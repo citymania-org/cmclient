@@ -901,6 +901,8 @@
     <ClCompile Include="..\src\bitstream.cpp" />
     <ClInclude Include="..\src\citymania\base64.h" />
     <ClCompile Include="..\src\citymania\base64.cpp" />
+    <ClInclude Include="..\src\citymania\zoning.hpp" />
+    <ClCompile Include="..\src\citymania\zoning.cpp" />
     <ClInclude Include="..\src\newgrf_revisions.hpp" />
     <ClCompile Include="..\src\saveload\afterload.cpp" />
     <ClCompile Include="..\src\saveload\ai_sl.cpp" />
