@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -58,8 +56,7 @@ void LinkGraphOverlay::RebuildCache()
 	DrawPixelInfo dpi;
 	this->GetWidgetDpi(&dpi);
 
-	const Station *sta;
-	FOR_ALL_STATIONS(sta) {
+	for (const Station *sta : Station::Iterate()) {
 		if (sta->rect.IsEmpty()) continue;
 
 		Point pta = this->GetStationMiddle(sta);

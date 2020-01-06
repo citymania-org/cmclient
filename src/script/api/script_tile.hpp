@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -42,6 +40,9 @@ public:
 
 		/** There is a tunnel underneath */
 		ERR_EXCAVATION_WOULD_DAMAGE,           // [STR_ERROR_EXCAVATION_WOULD_DAMAGE]
+
+		/** Reached the limit for terraforming/clearing/planting */
+		ERR_LIMIT_REACHED,                     // [STR_ERROR_TERRAFORM_LIMIT_REACHED, STR_ERROR_CLEARING_LIMIT_REACHED, STR_ERROR_TREE_PLANT_LIMIT_REACHED]
 	};
 
 	/**

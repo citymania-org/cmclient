@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -89,8 +87,12 @@ void ScriptInstance::Initialize(const char *main_script, const char *instance_na
 		}
 
 		/* Create the main-class */
-		this->instance = MallocT<SQObject>(1);
+		this->instance = new SQObject();
 		if (!this->engine->CreateClassInstance(instance_name, this->controller, this->instance)) {
+			/* If CreateClassInstance has returned false instance has not been
+			 * registered with squirrel, so avoid trying to Release it by clearing it now */
+			delete this->instance;
+			this->instance = nullptr;
 			this->Died();
 			return;
 		}
@@ -139,7 +141,7 @@ ScriptInstance::~ScriptInstance()
 	if (engine != nullptr) delete this->engine;
 	delete this->storage;
 	delete this->controller;
-	free(this->instance);
+	delete this->instance;
 }
 
 void ScriptInstance::Continue()
@@ -156,6 +158,7 @@ void ScriptInstance::Died()
 	this->last_allocated_memory = this->GetAllocatedMemory(); // Update cache
 
 	if (this->instance != nullptr) this->engine->ReleaseObject(this->instance);
+	delete this->instance;
 	delete this->engine;
 	this->instance = nullptr;
 	this->engine = nullptr;

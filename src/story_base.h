@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -62,9 +60,6 @@ struct StoryPageElement : StoryPageElementPool::PoolItem<&_story_page_element_po
 	inline ~StoryPageElement() { free(this->text); }
 };
 
-#define FOR_ALL_STORY_PAGE_ELEMENTS_FROM(var, start) FOR_ALL_ITEMS_FROM(StoryPageElement, story_page_element_index, var, start)
-#define FOR_ALL_STORY_PAGE_ELEMENTS(var) FOR_ALL_STORY_PAGE_ELEMENTS_FROM(var, 0)
-
 /** Struct about stories, current and completed */
 struct StoryPage : StoryPagePool::PoolItem<&_story_page_pool> {
 	uint32 sort_value;   ///< A number that increases for every created story page. Used for sorting. The id of a story page is the pool index.
@@ -84,17 +79,13 @@ struct StoryPage : StoryPagePool::PoolItem<&_story_page_pool> {
 	inline ~StoryPage()
 	{
 		if (!this->CleaningPool()) {
-			StoryPageElement *spe;
-			FOR_ALL_STORY_PAGE_ELEMENTS(spe) {
+			for (StoryPageElement *spe : StoryPageElement::Iterate()) {
 				if (spe->page == this->index) delete spe;
 			}
 		}
 		free(this->title);
 	}
 };
-
-#define FOR_ALL_STORY_PAGES_FROM(var, start) FOR_ALL_ITEMS_FROM(StoryPage, story_page_index, var, start)
-#define FOR_ALL_STORY_PAGES(var) FOR_ALL_STORY_PAGES_FROM(var, 0)
 
 #endif /* STORY_BASE_H */
 

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -96,9 +94,6 @@ static inline bool IsAllGroupID(GroupID id_g)
 {
 	return id_g == ALL_GROUP;
 }
-
-#define FOR_ALL_GROUPS_FROM(var, start) FOR_ALL_ITEMS_FROM(Group, group_index, var, start)
-#define FOR_ALL_GROUPS(var) FOR_ALL_GROUPS_FROM(var, 0)
 
 
 uint GetGroupNumEngines(CompanyID company, GroupID id_g, EngineID id_e);

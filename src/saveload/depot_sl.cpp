@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -32,9 +30,7 @@ static const SaveLoad _depot_desc[] = {
 
 static void Save_DEPT()
 {
-	Depot *depot;
-
-	FOR_ALL_DEPOTS(depot) {
+	for (Depot *depot : Depot::Iterate()) {
 		SlSetArrayIndex(depot->index);
 		SlObject(depot, _depot_desc);
 	}
@@ -55,9 +51,7 @@ static void Load_DEPT()
 
 static void Ptrs_DEPT()
 {
-	Depot *depot;
-
-	FOR_ALL_DEPOTS(depot) {
+	for (Depot *depot : Depot::Iterate()) {
 		SlObject(depot, _depot_desc);
 		if (IsSavegameVersionBefore(SLV_141)) depot->town = Town::Get((size_t)depot->town);
 	}

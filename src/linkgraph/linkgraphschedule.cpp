@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -109,10 +107,8 @@ void LinkGraphSchedule::SpawnAll()
  */
 void LinkGraphSchedule::ShiftDates(int interval)
 {
-	LinkGraph *lg;
-	FOR_ALL_LINK_GRAPHS(lg) lg->ShiftDates(interval);
-	LinkGraphJob *lgj;
-	FOR_ALL_LINK_GRAPH_JOBS(lgj) lgj->ShiftJoinDate(interval);
+	for (LinkGraph *lg : LinkGraph::Iterate()) lg->ShiftDates(interval);
+	for (LinkGraphJob *lgj : LinkGraphJob::Iterate()) lgj->ShiftJoinDate(interval);
 }
 
 /**

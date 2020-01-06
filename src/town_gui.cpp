@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -151,8 +149,7 @@ public:
 		uint exclusive_left = rtl ? right - icon_width - exclusive_width - 2 : left + icon_width + 2;
 
 		/* Draw list of companies */
-		const Company *c;
-		FOR_ALL_COMPANIES(c) {
+		for (const Company *c : Company::Iterate()) {
 			if ((HasBit(this->town->have_ratings, c->index) || this->town->exclusivity == c->index)) {
 				DrawCompanyIcon(c->index, icon_left, y + icon_y_offset);
 
@@ -692,8 +689,7 @@ private:
 		if (this->towns.NeedRebuild()) {
 			this->towns.clear();
 
-			const Town *t;
-			FOR_ALL_TOWNS(t) {
+			for (const Town *t : Town::Iterate()) {
 				this->towns.push_back(t);
 			}
 
@@ -994,8 +990,7 @@ public:
 				} else {
 					this->towns.clear();
 
-					const Town *t;
-					FOR_ALL_TOWNS(t) {
+					for (const Town *t : Town::Iterate()) {
 						this->string_filter.ResetState();
 
 						SetDParam(0, t->index);

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -226,7 +224,7 @@ public:
 		int scr_top = GetMainViewTop() + 20;
 		int scr_bot = GetMainViewBottom() - 20;
 
-		Point pt = RemapCoords2(this->position.x, this->position.y);
+		Point pt = RemapCoords(this->position.x, this->position.y, GetSlopePixelZOutsideMap(this->position.x, this->position.y));
 		const ViewPort *vp = FindWindowById(WC_MAIN_WINDOW, 0)->viewport;
 		if (this->face == INVALID_COMPANY) {
 			/* move x pos to opposite corner */

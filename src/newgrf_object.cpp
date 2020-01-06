@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -188,8 +186,7 @@ static uint32 GetNearbyObjectTileInformation(byte parameter, TileIndex tile, Obj
 static uint32 GetClosestObject(TileIndex tile, ObjectType type, const Object *current)
 {
 	uint32 best_dist = UINT32_MAX;
-	const Object *o;
-	FOR_ALL_OBJECTS(o) {
+	for (const Object *o : Object::Iterate()) {
 		if (o->type != type || o == current) continue;
 
 		best_dist = min(best_dist, DistanceManhattan(tile, o->location.tile));

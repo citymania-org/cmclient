@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -172,8 +170,7 @@ static void InitBlocksizeForVehicles(VehicleType type, EngineImageType image_typ
 	int max_extend_right = 0;
 	uint max_height = 0;
 
-	const Engine *e;
-	FOR_ALL_ENGINES_OF_TYPE(e, type) {
+	for (const Engine *e : Engine::IterateType(type)) {
 		if (!e->IsEnabled()) continue;
 
 		EngineID eid = e->index;
@@ -224,8 +221,7 @@ void InitDepotWindowBlockSizes()
 
 	_consistent_train_width = TRAININFO_DEFAULT_VEHICLE_WIDTH;
 	bool first = true;
-	const Engine *e;
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_TRAIN) {
+	for (const Engine *e : Engine::IterateType(VEH_TRAIN)) {
 		if (!e->IsEnabled()) continue;
 
 		uint w = TRAININFO_DEFAULT_VEHICLE_WIDTH;

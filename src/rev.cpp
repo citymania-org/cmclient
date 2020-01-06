@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -37,7 +35,7 @@ bool IsReleasedVersion()
  *
  * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "1.10.0-beta1";
+const char _openttd_revision[] = "1.10.0-beta2";
 
 /**
  * The text version of OpenTTD's build date.
@@ -50,7 +48,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
 /**
  * The git revision hash of this version.
  */
-const char _openttd_revision_hash[] = "9f50c754ffee52211e61d88e6d5fc296dfc585e0";
+const char _openttd_revision_hash[] = "18f03a300b12bb022fb3273ff6273c430b28f787";
 
 /**
  * Let us know if current build was modified. This detection
