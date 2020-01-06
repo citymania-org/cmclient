@@ -951,8 +951,7 @@ static void DoRegularAdvertising(Town *t) {
 
 	if (t->ad_ref_goods_entry == NULL) {
 		// Pick as ref station and cargo with min rating
-		const Station *st;
-		FOR_ALL_STATIONS(st) {
+		for (Station *st : Station::Iterate()) {
 			if (st->owner == _local_company && DistanceManhattan(t->xy, st->xy) <= 20) {
 				for (CargoID i = 0; i < NUM_CARGO; i++)
 					if (st->goods[i].HasRating() && (t->ad_ref_goods_entry == NULL ||

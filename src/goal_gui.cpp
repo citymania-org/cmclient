@@ -181,8 +181,7 @@ struct GoalListWindow : public Window {
 		resize->height = d.height;
 
 		uint num = 0;
-		const Goal *s;
-		FOR_ALL_GOALS(s) {
+		for (const Goal *s : Goal::Iterate()) {
 			if (s->company == INVALID_COMPANY || s->company == this->window_number) {
 				num++;
 			}

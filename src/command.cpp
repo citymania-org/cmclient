@@ -767,8 +767,7 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 		else break;
 	}
 
-	NetworkClientInfo *ci;
-	FOR_ALL_CLIENT_INFOS(ci) {
+	for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 		if (ci->client_playas == _current_company) {
 			wc = dynamic_cast<WatchCompany*>(FindWindowById(WC_WATCH_COMPANYA, ci->client_id));
 			if (wc != NULL) wc->OnDoCommand(_current_company, tile);

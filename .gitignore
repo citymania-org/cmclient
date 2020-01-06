@@ -53,3 +53,5 @@ src/os/windows/ottdres.rc
 
 /game/
 /openttd
+grf/.nmlcache/
+grf/cmclient.grf

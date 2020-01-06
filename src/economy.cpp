@@ -1976,8 +1976,7 @@ void CompaniesMonthlyLoop()
 	CompaniesPayInterest();
 	HandleEconomyFluctuations();
 
-	Company *c;
-	FOR_ALL_COMPANIES(c){
+	for (Company *c : Company::Iterate()) {
 		CargoResetPeriods(c);
 	}
 }

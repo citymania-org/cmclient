@@ -40,8 +40,7 @@ uint8 GetAnyTownZone(TileIndex tile) {
     HouseZonesBits next_zone = HZB_BEGIN;
     uint8 z = 0;
 
-    Town *town;
-    FOR_ALL_TOWNS(town) {
+    for (Town *town : Town::Iterate()) {
         uint dist = DistanceSquare(tile, town->xy);
         // town code uses <= for checking town borders (tz0) but < for other zones
         while (next_zone < HZB_END
@@ -87,9 +86,8 @@ void UpdateTownZoning(Town *town, uint32 prev_edge) {
 }
 
 void InitializeZoningMap() {
-    Town *town;
-    FOR_ALL_TOWNS(town) {
-        UpdateTownZoning(town, 0);
+    for (Town *t : Town::Iterate()) {
+        UpdateTownZoning(t, 0);
     }
 }
 

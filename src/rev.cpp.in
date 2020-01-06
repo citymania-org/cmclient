@@ -19,7 +19,7 @@
  */
 bool IsReleasedVersion()
 {
-	return HasBit(_openttd_newgrf_version, 19);
+    return HasBit(_openttd_newgrf_version, 19);
 }
 
 /**
@@ -35,7 +35,7 @@ bool IsReleasedVersion()
  *
  * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "1.10.0-beta1";
+const char _openttd_revision[] = "1.10.0-beta2";
 
 /**
  * The text version of OpenTTD's build date.
@@ -48,7 +48,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
 /**
  * The git revision hash of this version.
  */
-const char _openttd_revision_hash[] = "9f50c754ffee52211e61d88e6d5fc296dfc585e0";
+const char _openttd_revision_hash[] = "18f03a300b12bb022fb3273ff6273c430b28f787";
 
 /**
  * Let us know if current build was modified. This detection
@@ -81,5 +81,6 @@ const byte _openttd_revision_tagged = 1;
  * version, thus making comparisons on specific revisions easy.
  */
 const uint32 _openttd_newgrf_version = 1 << 28 | 10 << 24 | 0 << 20 | 0 << 19 | 28004;
+
 
 const char _citymania_version[] = "!!VERSION!! !!DATE!!";

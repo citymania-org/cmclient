@@ -11,15 +11,14 @@ assert_compile(NUM_CARGO < 256);
 
 static void CM_EncodeTownsExtraInfo(BitOStream &bs)
 {
-	Town *t;
 	uint n_affected_towns = 0;
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		if (t->growing_by_chance || t->houses_reconstruction ||
 				t->houses_demolished)
 			n_affected_towns++;
 	}
 	bs.WriteBytes(n_affected_towns, 2);
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		if (t->growing_by_chance || t->houses_reconstruction ||
 				t->houses_demolished) {
 			bs.WriteBytes(t->index, 2);
@@ -42,14 +41,13 @@ static void CM_EncodeTownsGrowthTiles(BitOStream &bs, TownsGrowthTilesIndex &til
 
 static void CM_EncodeTownsLayoutErrors(BitOStream &bs)
 {
-	Town *t;
 	uint n_affected_towns = 0;
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		if (t->cb_houses_removed || t->houses_skipped || t->cycles_skipped)
 			n_affected_towns++;
 	}
 	bs.WriteBytes(n_affected_towns, 2);
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		if (t->cb_houses_removed || t->houses_skipped || t->cycles_skipped) {
 			bs.WriteBytes(t->index, 2);
 			bs.WriteBytes(t->houses_skipped, 2);
@@ -87,9 +85,8 @@ static void CM_EncodeTownsCargo(BitOStream &bs)
 		bs.WriteBytes(CB_GetDecay(cargo), 1);
 	}
 
-	Town *t;
 	bs.WriteBytes(Town::GetNumItems(), 2);
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		bs.WriteBytes(t->index, 2);
 		for (uint i = 0; i < n_cb_cargos; i++) {
 			CargoID cargo = cb_cargos[i];

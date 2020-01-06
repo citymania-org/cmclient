@@ -25,8 +25,7 @@ std::vector<ClosestTownRecord> _closest_cache;
 void RebuildClosestHash(TileIndex tile) {
 	_closest_cache_ref = INVALID_TILE;
 	_closest_cache.clear();
-	Town *t;
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		_closest_cache.push_back(std::make_pair(
 		    DistanceManhattan(t->xy, tile), t));
 	}
@@ -257,8 +256,7 @@ SpriteID TileZoneCheckUnservedIndustriesEvaluation(TileIndex tile) {
 SpriteID TileZoneCheckTownZones(TileIndex tile) {
 	HouseZonesBits next_zone = HZB_BEGIN, tz = HZB_END;
 
-	Town *town;
-	FOR_ALL_TOWNS(town) {
+	for (Town *town : Town::Iterate()) {
 		uint dist = DistanceSquare(tile, town->xy);
 		// town code uses <= for checking town borders (tz0) but < for other zones
 		while (next_zone < HZB_END
@@ -283,8 +281,7 @@ SpriteID TileZoneCheckTownZones(TileIndex tile) {
 
 //Check CB town acceptance area
 SpriteID TileZoneCheckNewCBBorders(TileIndex tile) {
-	Town *town;
-	FOR_ALL_TOWNS(town) {
+	for (Town *town : Town::Iterate()) {
 		if (DistanceSquare(tile, town->xy) <= town->cache.squared_town_zone_radius[0] + 30)
 			return SPR_PALETTE_ZONING_BLACK;
 	}
@@ -305,8 +302,7 @@ SpriteID TileZoneCheckCBBorders(TileIndex tile) {
 
 //Check whether the tile is within citybuilder server town border (where houses could be built)
 SpriteID TileZoneCheckCBTownBorders(TileIndex tile) {
-	Town *town;
-	FOR_ALL_TOWNS(town) {
+	for (Town *town : Town::Iterate()) {
 		uint32 distMax = DistanceMax(town->xy, tile);
 		if (distMax * distMax < town->cache.squared_town_zone_radius[0]){
 			return SPR_PALETTE_ZONING_GREEN;

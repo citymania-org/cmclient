@@ -535,7 +535,6 @@ extern GameStrings *_current_data;
 
 void AfterLoadFindBTProCBInfo() {
 	if (_current_data == NULL) return;
-	StoryPageElement *se;
 
 	char buf[15];
 	char *p = buf;
@@ -553,18 +552,15 @@ void AfterLoadFindBTProCBInfo() {
 				pn = p - buf + seprintf(p, lastof(buf), "%X:", string_id);
 				bool with_decay = (strncmp(s.c_str(), "STR_TOWN_CLAIMED_CARGOS_DECAY",
 					strlen("STR_TOWN_CLAIMED_CARGOS_DECAY")) == 0);
-				FOR_ALL_STORY_PAGE_ELEMENTS(se) {
-					// DEBUG(misc, 0, "SE: %s", se->text);
+				for (StoryPageElement *se : StoryPageElement::Iterate()) {
 					if (!se->text || strncmp(se->text, buf, pn) != 0) continue;
 					uint req, cargomask, from, decay=0;
-					// DEBUG(misc, 0, "BINGO %s", se->text);
 					if (with_decay) {
 						sscanf(se->text + pn, "%X:%X:%X:%X", &req, &cargomask, &from, &decay);
 				 	} else {
 						sscanf(se->text + pn, "%X:%X:%X", &req, &cargomask, &from);
 					}
 					uint cargo_id = FindFirstBit(cargomask);
-					// DEBUG(misc, 0, "PARSED %u %u %u %u", req, cargo_id, from, decay);
 					if (!CB_Enabled()) CB_SetCB(true);
 					CB_SetRequirements(cargo_id, req, from, decay);
 				}

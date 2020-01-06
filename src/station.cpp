@@ -91,8 +91,7 @@ Station::Station(TileIndex tile) :
  */
 Station::~Station()
 {
-	Town *t;
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		// Using poiter comparison instead of cycling cargos
 		if (t->ad_ref_goods_entry >= this->goods &&
 		 	   t->ad_ref_goods_entry < this->goods + NUM_CARGO) {

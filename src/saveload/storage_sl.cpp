@@ -80,8 +80,7 @@ static void Save_CMDataAsPSAC() {
 	};
 
     uint index = 0;
-    PersistentStorage *ps;
-    FOR_ALL_STORAGES(ps) {
+	for (PersistentStorage *ps : PersistentStorage::Iterate()) {
         if (ps->grfid != CITYMANIA_GRFID)
             index = max(index, ps->index + 1);
     }

@@ -896,8 +896,7 @@ public:
 			case TDW_CAPTION_TEXT: {
 				uint16 town_number = 0;
 				uint16 city_number = 0;
-				const Town *t;
-				FOR_ALL_TOWNS(t){
+				for (Town *t : Town::Iterate()) {
 					if(t->larger_town) city_number++;
 					town_number++;
 				}
@@ -1557,8 +1556,7 @@ public:
 	}
 
 	const Company *GetCompany() const {
-		Company *c;
-		FOR_ALL_COMPANIES(c) {
+		for (Company *c : Company::Iterate()) {
 			if (c->location_of_HQ != INVALID_TILE
 			    	&& DistanceMax(c->location_of_HQ, this->town->xy) < 11)
 				return c;
@@ -1579,8 +1577,7 @@ public:
 				uint desired_height = 0;
 				auto company = GetCompany();
 				if (company) {
-					const Goal *g;
-					FOR_ALL_GOALS(g) {
+					for(const Goal *g : Goal::Iterate()) {
 						if (g->company == company->index) {
 							desired_height++;
 						}
@@ -1632,8 +1629,7 @@ public:
 			case WID_CB_GOALS: {
 				auto company = GetCompany();
 				if (!company) break;
-				const Goal *g;
-				FOR_ALL_GOALS(g) {
+				for(const Goal *g : Goal::Iterate()) {
 					if (g->company != company->index)
 						continue;
 					SetDParamStr(0, g->text);

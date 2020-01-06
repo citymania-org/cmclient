@@ -468,6 +468,8 @@ void WatchCompany::OnQueryTextFinished(char *str)
 			seprintf(msg, lastof(msg), "!ban %i %s", this->watched_client, str);
 			NetworkClientSendChatToServer(msg);
 			break;
+		default:
+			break;
 	}
 }
 
@@ -504,8 +506,7 @@ void WatchCompany::OnInvalidateData(int data, bool gui_scope)
 				this->company_count_client[i] = 0;
 			}
 			/* Calculate client count into company - network only */
-			NetworkClientInfo *ci;
-			FOR_ALL_CLIENT_INFOS( ci ) {
+			for (NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 				if (Company::IsValidID(ci->client_playas)) {
 					company_count_client[ci->client_playas] += 1;
 				}
