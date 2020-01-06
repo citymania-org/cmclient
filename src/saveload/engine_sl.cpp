@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -88,8 +86,7 @@ Engine *GetTempDataEngine(EngineID index)
 
 static void Save_ENGN()
 {
-	Engine *e;
-	FOR_ALL_ENGINES(e) {
+	for (Engine *e : Engine::Iterate()) {
 		SlSetArrayIndex(e->index);
 		SlObject(e, _engine_desc);
 	}
@@ -120,8 +117,7 @@ static void Load_ENGN()
  */
 void CopyTempEngineData()
 {
-	Engine *e;
-	FOR_ALL_ENGINES(e) {
+	for (Engine *e : Engine::Iterate()) {
 		if (e->index >= _temp_engine.size()) break;
 
 		const Engine *se = GetTempDataEngine(e->index);

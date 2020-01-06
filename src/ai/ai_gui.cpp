@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1054,8 +1052,7 @@ struct AIDebugWindow : public Window {
 
 		ai_debug_company = INVALID_COMPANY;
 
-		const Company *c;
-		FOR_ALL_COMPANIES(c) {
+		for (const Company *c : Company::Iterate()) {
 			if (c->is_ai) {
 				ChangeToAI(c->index);
 				return;
@@ -1314,8 +1311,7 @@ struct AIDebugWindow : public Window {
 				if ((_pause_mode & PM_PAUSED_NORMAL) == PM_PAUSED_NORMAL) {
 					bool all_unpaused = !Game::IsPaused();
 					if (all_unpaused) {
-						Company *c;
-						FOR_ALL_COMPANIES(c) {
+						for (const Company *c : Company::Iterate()) {
 							if (c->is_ai && AI::IsPaused(c->index)) {
 								all_unpaused = false;
 								break;
@@ -1554,8 +1550,7 @@ void ShowAIDebugWindowIfAIError()
 	/* Network clients can't debug AIs. */
 	if (_networking && !_network_server) return;
 
-	Company *c;
-	FOR_ALL_COMPANIES(c) {
+	for (const Company *c : Company::Iterate()) {
 		if (c->is_ai && c->ai_instance->IsDead()) {
 			ShowAIDebugWindow(c->index);
 			break;

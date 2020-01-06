@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -85,8 +83,7 @@ void InitializeBuildingCounts()
 {
 	memset(&_building_counts, 0, sizeof(_building_counts));
 
-	Town *t;
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		memset(&t->cache.building_counts, 0, sizeof(t->cache.building_counts));
 	}
 }

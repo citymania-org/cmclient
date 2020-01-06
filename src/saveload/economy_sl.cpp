@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -74,8 +72,7 @@ static const SaveLoad _cargopayment_desc[] = {
 
 static void Save_CAPY()
 {
-	CargoPayment *cp;
-	FOR_ALL_CARGO_PAYMENTS(cp) {
+	for (CargoPayment *cp : CargoPayment::Iterate()) {
 		SlSetArrayIndex(cp->index);
 		SlObject(cp, _cargopayment_desc);
 	}
@@ -93,8 +90,7 @@ static void Load_CAPY()
 
 static void Ptrs_CAPY()
 {
-	CargoPayment *cp;
-	FOR_ALL_CARGO_PAYMENTS(cp) {
+	for (CargoPayment *cp : CargoPayment::Iterate()) {
 		SlObject(cp, _cargopayment_desc);
 	}
 }

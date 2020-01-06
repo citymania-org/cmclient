@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -4555,8 +4553,6 @@ static ChangeInfoResult RoadTypeReserveInfo(uint id, int numinfo, int prop, Byte
 				break;
 
 			case 0x10: // Road Type flags
-			case 0x12: // Station graphic
-			case 0x15: // Acceleration model
 			case 0x16: // Map colour
 			case 0x1A: // Sort order
 				buf->ReadByte();
@@ -6626,15 +6622,26 @@ static void SkipIf(ByteReader *buf)
 				break;
 			case 0x0E: result = GetRailTypeByLabel(BSWAP32(cond_val)) != INVALID_RAILTYPE;
 				break;
-			case 0x0F: result = GetRoadTypeByLabel(BSWAP32(cond_val)) == INVALID_ROADTYPE;
+			case 0x0F: {
+				RoadType rt = GetRoadTypeByLabel(BSWAP32(cond_val));
+				result = rt == INVALID_ROADTYPE || !RoadTypeIsRoad(rt);
 				break;
-			case 0x10: result = GetRoadTypeByLabel(BSWAP32(cond_val)) != INVALID_ROADTYPE;
+			}
+			case 0x10: {
+				RoadType rt = GetRoadTypeByLabel(BSWAP32(cond_val));
+				result = rt != INVALID_ROADTYPE && RoadTypeIsRoad(rt);
 				break;
-			case 0x11: result = GetRoadTypeByLabel(BSWAP32(cond_val)) == INVALID_ROADTYPE;
+			}
+			case 0x11: {
+				RoadType rt = GetRoadTypeByLabel(BSWAP32(cond_val));
+				result = rt == INVALID_ROADTYPE || !RoadTypeIsTram(rt);
 				break;
-			case 0x12: result = GetRoadTypeByLabel(BSWAP32(cond_val)) != INVALID_ROADTYPE;
+			}
+			case 0x12: {
+				RoadType rt = GetRoadTypeByLabel(BSWAP32(cond_val));
+				result = rt != INVALID_ROADTYPE && RoadTypeIsTram(rt);
 				break;
-
+			}
 			default: grfmsg(1, "SkipIf: Unsupported condition type %02X. Ignoring", condtype); return;
 		}
 	}
@@ -7943,8 +7950,14 @@ static bool ChangeGRFParamLimits(size_t len, ByteReader *buf)
 		grfmsg(2, "StaticGRFInfo: expected 8 bytes for 'INFO'->'PARA'->'LIMI' but got " PRINTF_SIZE ", ignoring this field", len);
 		buf->Skip(len);
 	} else {
-		_cur_parameter->min_value = buf->ReadDWord();
-		_cur_parameter->max_value = buf->ReadDWord();
+		uint32 min_value = buf->ReadDWord();
+		uint32 max_value = buf->ReadDWord();
+		if (min_value <= max_value) {
+			_cur_parameter->min_value = min_value;
+			_cur_parameter->max_value = max_value;
+		} else {
+			grfmsg(2, "StaticGRFInfo: 'INFO'->'PARA'->'LIMI' values are incoherent, ignoring this field");
+		}
 	}
 	return true;
 }
@@ -8551,8 +8564,7 @@ void ResetNewGRFData()
 	_gted = CallocT<GRFTempEngineData>(Engine::GetPoolSize());
 
 	/* Fill rail type label temporary data for default trains */
-	Engine *e;
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_TRAIN) {
+	for (const Engine *e : Engine::IterateType(VEH_TRAIN)) {
 		_gted[e->index].railtypelabel = GetRailTypeInfo(e->u.rail.railtype)->label;
 	}
 
@@ -8768,9 +8780,7 @@ static const CargoLabel * const _default_refitmasks[] = {
  */
 static void CalculateRefitMasks()
 {
-	Engine *e;
-
-	FOR_ALL_ENGINES(e) {
+	for (Engine *e : Engine::Iterate()) {
 		EngineID engine = e->index;
 		EngineInfo *ei = &e->info;
 		bool only_defaultcargo; ///< Set if the vehicle shall carry only the default cargo
@@ -8884,9 +8894,7 @@ static void FinaliseCanals()
 /** Check for invalid engines */
 static void FinaliseEngineArray()
 {
-	Engine *e;
-
-	FOR_ALL_ENGINES(e) {
+	for (Engine *e : Engine::Iterate()) {
 		if (e->GetGRF() == nullptr) {
 			const EngineIDMapping &eid = _engine_mngr[e->index];
 			if (eid.grfid != INVALID_GRFID || eid.internal_id != eid.substitute_id) {
@@ -9680,8 +9688,7 @@ static void AfterLoadGRFs()
 	InitRailTypes();
 	InitRoadTypes();
 
-	Engine *e;
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_ROAD) {
+	for (Engine *e : Engine::IterateType(VEH_ROAD)) {
 		if (_gted[e->index].rv_max_speed != 0) {
 			/* Set RV maximum speed from the mph/0.8 unit value */
 			e->u.road.max_speed = _gted[e->index].rv_max_speed * 4;
@@ -9713,7 +9720,7 @@ static void AfterLoadGRFs()
 		e->info.climates = 0;
 	}
 
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_TRAIN) {
+	for (Engine *e : Engine::IterateType(VEH_TRAIN)) {
 		RailType railtype = GetRailTypeByLabel(_gted[e->index].railtypelabel);
 		if (railtype == INVALID_RAILTYPE) {
 			/* Rail type is not available, so disable this engine */

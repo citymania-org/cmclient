@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -122,8 +120,7 @@ struct StatusBarWindow : Window {
 
 			case WID_S_RIGHT: {
 				int64 max_money = UINT32_MAX;
-				const Company *c;
-				FOR_ALL_COMPANIES(c) max_money = max<int64>(c->money, max_money);
+				for (const Company *c : Company::Iterate()) max_money = max<int64>(c->money, max_money);
 				SetDParam(0, 100LL * max_money);
 				d = GetStringBoundingBox(STR_COMPANY_MONEY);
 				break;

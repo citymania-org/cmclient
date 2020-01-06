@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -890,8 +888,7 @@ static bool DeleteSelectStationWindow(int32 p1)
 
 static bool UpdateConsists(int32 p1)
 {
-	Train *t;
-	FOR_ALL_TRAINS(t) {
+	for (Train *t : Train::Iterate()) {
 		/* Update the consist of all trains so the maximum speed is set correctly. */
 		if (t->IsFrontEngine() || t->IsFreeWagon()) t->ConsistChanged(CCF_TRACK);
 	}
@@ -926,8 +923,7 @@ static bool CheckInterval(int32 p1)
 
 	if (update_vehicles) {
 		const Company *c = Company::Get(_current_company);
-		Vehicle *v;
-		FOR_ALL_VEHICLES(v) {
+		for (Vehicle *v : Vehicle::Iterate()) {
 			if (v->owner == _current_company && v->IsPrimaryVehicle() && !v->ServiceIntervalIsCustom()) {
 				v->SetServiceInterval(CompanyServiceInterval(c, v->type));
 				v->SetServiceIntervalIsPercent(p1 != 0);
@@ -957,8 +953,7 @@ static bool UpdateInterval(VehicleType type, int32 p1)
 	if (interval != p1) return false;
 
 	if (update_vehicles) {
-		Vehicle *v;
-		FOR_ALL_VEHICLES(v) {
+		for (Vehicle *v : Vehicle::Iterate()) {
 			if (v->owner == _current_company && v->type == type && v->IsPrimaryVehicle() && !v->ServiceIntervalIsCustom()) {
 				v->SetServiceInterval(p1);
 			}
@@ -992,8 +987,7 @@ static bool UpdateIntervalAircraft(int32 p1)
 
 static bool TrainAccelerationModelChanged(int32 p1)
 {
-	Train *t;
-	FOR_ALL_TRAINS(t) {
+	for (Train *t : Train::Iterate()) {
 		if (t->IsFrontEngine()) {
 			t->tcache.cached_max_curve_speed = t->GetCurveSpeedLimit();
 			t->UpdateAcceleration();
@@ -1015,8 +1009,7 @@ static bool TrainAccelerationModelChanged(int32 p1)
  */
 static bool TrainSlopeSteepnessChanged(int32 p1)
 {
-	Train *t;
-	FOR_ALL_TRAINS(t) {
+	for (Train *t : Train::Iterate()) {
 		if (t->IsFrontEngine()) t->CargoChanged();
 	}
 
@@ -1031,8 +1024,7 @@ static bool TrainSlopeSteepnessChanged(int32 p1)
 static bool RoadVehAccelerationModelChanged(int32 p1)
 {
 	if (_settings_game.vehicle.roadveh_acceleration_model != AM_ORIGINAL) {
-		RoadVehicle *rv;
-		FOR_ALL_ROADVEHICLES(rv) {
+		for (RoadVehicle *rv : RoadVehicle::Iterate()) {
 			if (rv->IsFrontEngine()) {
 				rv->CargoChanged();
 			}
@@ -1054,8 +1046,7 @@ static bool RoadVehAccelerationModelChanged(int32 p1)
  */
 static bool RoadVehSlopeSteepnessChanged(int32 p1)
 {
-	RoadVehicle *rv;
-	FOR_ALL_ROADVEHICLES(rv) {
+	for (RoadVehicle *rv : RoadVehicle::Iterate()) {
 		if (rv->IsFrontEngine()) rv->CargoChanged();
 	}
 
@@ -1227,16 +1218,14 @@ static bool CheckFreeformEdges(int32 p1)
 {
 	if (_game_mode == GM_MENU) return true;
 	if (p1 != 0) {
-		Ship *s;
-		FOR_ALL_SHIPS(s) {
+		for (Ship *s : Ship::Iterate()) {
 			/* Check if there is a ship on the northern border. */
 			if (TileX(s->tile) == 0 || TileY(s->tile) == 0) {
 				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_EMPTY, INVALID_STRING_ID, WL_ERROR);
 				return false;
 			}
 		}
-		BaseStation *st;
-		FOR_ALL_BASE_STATIONS(st) {
+		for (const BaseStation *st : BaseStation::Iterate()) {
 			/* Check if there is a non-deleted buoy on the northern border. */
 			if (st->IsInUse() && (TileX(st->xy) == 0 || TileY(st->xy) == 0)) {
 				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_EMPTY, INVALID_STRING_ID, WL_ERROR);
@@ -1337,8 +1326,7 @@ static bool MaxVehiclesChanged(int32 p1)
 
 static bool InvalidateShipPathCache(int32 p1)
 {
-	Ship *s;
-	FOR_ALL_SHIPS(s) {
+	for (Ship *s : Ship::Iterate()) {
 		s->path.clear();
 	}
 	return true;

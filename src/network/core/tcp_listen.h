@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -104,8 +102,7 @@ public:
 		FD_ZERO(&write_fd);
 
 
-		Tsocket *cs;
-		FOR_ALL_ITEMS_FROM(Tsocket, idx, cs, 0) {
+		for (Tsocket *cs : Tsocket::Iterate()) {
 			FD_SET(cs->sock, &read_fd);
 			FD_SET(cs->sock, &write_fd);
 		}
@@ -124,7 +121,7 @@ public:
 		}
 
 		/* read stuff from clients */
-		FOR_ALL_ITEMS_FROM(Tsocket, idx, cs, 0) {
+		for (Tsocket *cs : Tsocket::Iterate()) {
 			cs->writable = !!FD_ISSET(cs->sock, &write_fd);
 			if (FD_ISSET(cs->sock, &read_fd)) {
 				cs->ReceivePackets();

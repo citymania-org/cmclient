@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -89,13 +87,12 @@ static bool HighScoreSorter(const Company * const &a, const Company * const &b)
  */
 int8 SaveHighScoreValueNetwork()
 {
-	const Company *c;
 	const Company *cl[MAX_COMPANIES];
 	uint count = 0;
 	int8 company = -1;
 
 	/* Sort all active companies with the highest score first */
-	FOR_ALL_COMPANIES(c) cl[count++] = c;
+	for (const Company *c : Company::Iterate()) cl[count++] = c;
 
 	std::sort(std::begin(cl), std::begin(cl) + count, HighScoreSorter);
 

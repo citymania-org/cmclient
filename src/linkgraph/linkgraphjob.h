@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -335,8 +333,6 @@ public:
 	 */
 	inline const LinkGraph &Graph() const { return this->link_graph; }
 };
-
-#define FOR_ALL_LINK_GRAPH_JOBS(var) FOR_ALL_ITEMS_FROM(LinkGraphJob, link_graph_job_index, var, 0)
 
 /**
  * A leg of a path in the link graph. Paths can form trees by being "forked".

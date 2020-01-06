@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -45,7 +43,7 @@ extern TownPool _town_pool;
 struct TownCache {
 	uint32 num_houses;                        ///< Amount of houses
 	uint32 population;                        ///< Current population of people
-	ViewportSign sign;                        ///< Location of name sign, UpdateVirtCoord updates this
+	TrackedViewportSign sign;                 ///< Location of name sign, UpdateVirtCoord updates this
 	PartOfSubsidy part_of_subsidy;            ///< Is this town a source/destination of a subsidy?
 	uint32 squared_town_zone_radius[HZB_END]; ///< UpdateTownRadius updates this given the house count
 	BuildingCounts<uint16> building_counts;   ///< The number of each type of building in the town
@@ -186,9 +184,6 @@ CommandCost CheckforTownRating(DoCommandFlag flags, Town *t, TownRatingCheckType
 TileIndexDiff GetHouseNorthPart(HouseID &house);
 
 Town *CalcClosestTownFromTile(TileIndex tile, uint threshold = UINT_MAX);
-
-#define FOR_ALL_TOWNS_FROM(var, start) FOR_ALL_ITEMS_FROM(Town, town_index, var, start)
-#define FOR_ALL_TOWNS(var) FOR_ALL_TOWNS_FROM(var, 0)
 
 void ResetHouses();
 

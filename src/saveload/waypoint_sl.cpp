@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -132,15 +130,13 @@ void MoveWaypointsToBaseStations()
 	}
 
 	/* Update the orders of vehicles */
-	OrderList *ol;
-	FOR_ALL_ORDER_LISTS(ol) {
+	for (OrderList *ol : OrderList::Iterate()) {
 		if (ol->GetFirstSharedVehicle()->type != VEH_TRAIN) continue;
 
 		for (Order *o = ol->GetFirstOrder(); o != nullptr; o = o->next) UpdateWaypointOrder(o);
 	}
 
-	Vehicle *v;
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		if (v->type != VEH_TRAIN) continue;
 
 		UpdateWaypointOrder(&v->current_order);

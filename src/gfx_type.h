@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -269,6 +267,7 @@ enum TextColour {
 
 	TC_IS_PALETTE_COLOUR = 0x100, ///< Colour value is already a real palette colour index, not an index of a StringColour.
 	TC_NO_SHADE          = 0x200, ///< Do not add shading to this text colour.
+	TC_FORCED            = 0x400, ///< Ignore colour changes from strings.
 };
 DECLARE_ENUM_AS_BIT_SET(TextColour)
 

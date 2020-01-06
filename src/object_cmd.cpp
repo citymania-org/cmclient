@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -175,8 +173,7 @@ void UpdateCompanyHQ(TileIndex tile, uint score)
  */
 void UpdateObjectColours(const Company *c)
 {
-	Object *obj;
-	FOR_ALL_OBJECTS(obj) {
+	for (Object *obj : Object::Iterate()) {
 		Owner owner = GetTileOwner(obj->location.tile);
 		/* Not the current owner, so colour doesn't change. */
 		if (owner != c->index) continue;
@@ -559,6 +556,14 @@ static void AddAcceptedCargo_Object(TileIndex tile, CargoArray &acceptance, Carg
 	SetBit(*always_accepted, CT_MAIL);
 }
 
+static void AddProducedCargo_Object(TileIndex tile, CargoArray &produced)
+{
+	if (!IsObjectType(tile, OBJECT_HQ)) return;
+
+	produced[CT_PASSENGERS]++;
+	produced[CT_MAIL]++;
+}
+
 
 static void GetTileDesc_Object(TileIndex tile, TileDesc *td)
 {
@@ -840,7 +845,7 @@ extern const TileTypeProcs _tile_type_object_procs = {
 	AnimateTile_Object,          // animate_tile_proc
 	TileLoop_Object,             // tile_loop_proc
 	ChangeTileOwner_Object,      // change_tile_owner_proc
-	nullptr,                        // add_produced_cargo_proc
+	AddProducedCargo_Object,     // add_produced_cargo_proc
 	nullptr,                        // vehicle_enter_tile_proc
 	GetFoundation_Object,        // get_foundation_proc
 	TerraformTile_Object,        // terraform_tile_proc

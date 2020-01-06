@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -749,9 +747,7 @@ CommandCost CmdDepotMassAutoReplace(TileIndex tile, DoCommandFlag flags, uint32 
  */
 static bool IsUniqueVehicleName(const char *name)
 {
-	const Vehicle *v;
-
-	FOR_ALL_VEHICLES(v) {
+	for (const Vehicle *v : Vehicle::Iterate()) {
 		if (v->name != nullptr && strcmp(v->name, name) == 0) return false;
 	}
 

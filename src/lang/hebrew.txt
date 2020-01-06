@@ -12,8 +12,6 @@
 ##case singular plural gen
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -875,6 +873,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}{1:STRIN
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}{STRING} חדש זמין!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}{STRING} חדש זמין כעת  -  {ENGINE}!
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} אינה מקבלת יותר {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} אינה מקבלת יותר {STRING} או {STRING}
@@ -3324,8 +3323,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}תעשיות
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- אין -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{YELLOW}(שונעו {NBSP}{3:COMMA}%){BLACK} ({1:CARGO_LONG}{2:STRING}) {ORANGE}{0:INDUSTRY}
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{YELLOW}(שונעו {NBSP} {6:COMMA}%/{5:COMMA}%) {BLACK} ({3:CARGO_LONG}{4:STRING}/{1:CARGO_LONG}{2:STRING}) {ORANGE}{0:INDUSTRY}
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}רשימת תעשיות - לחץ על שם כדי להתמקד בתעשייה. Ctrl+לחיצה פותח חלונית תצוגה חדשה על מיקום התעשייה
 

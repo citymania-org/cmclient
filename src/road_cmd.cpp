@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -184,10 +182,7 @@ RoadType AllocateRoadType(RoadTypeLabel label, RoadTramType rtt)
  */
 bool RoadVehiclesAreBuilt()
 {
-	const RoadVehicle *rv;
-	FOR_ALL_ROADVEHICLES(rv) return true;
-
-	return false;
+	return !RoadVehicle::Iterate().empty();
 }
 
 /**
@@ -458,8 +453,7 @@ static CommandCost RemoveRoad(TileIndex tile, DoCommandFlag flags, RoadBits piec
 				if (HasRoadWorks(tile)) {
 					/* flooding tile with road works, don't forget to remove the effect vehicle too */
 					assert(_current_company == OWNER_WATER);
-					EffectVehicle *v;
-					FOR_ALL_EFFECTVEHICLES(v) {
+					for (EffectVehicle *v : EffectVehicle::Iterate()) {
 						if (TileVirtXY(v->x_pos, v->y_pos) == tile) {
 							delete v;
 						}
