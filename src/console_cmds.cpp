@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1144,9 +1142,8 @@ DEF_CONSOLE_CMD(ConStartAI)
 	}
 
 	int n = 0;
-	Company *c;
 	/* Find the next free slot */
-	FOR_ALL_COMPANIES(c) {
+	for (const Company *c : Company::Iterate()) {
 		if (c->index != n) break;
 		n++;
 	}
@@ -1537,8 +1534,7 @@ DEF_CONSOLE_CMD(ConCompanies)
 		return true;
 	}
 
-	Company *c;
-	FOR_ALL_COMPANIES(c) {
+	for (const Company *c : Company::Iterate()) {
 		/* Grab the company name */
 		char company_name[512];
 		SetDParam(0, c->index);

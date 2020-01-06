@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -253,8 +251,7 @@ static StringID GenerateStationName(Station *st, TileIndex tile, StationNaming n
 	bool indtypes[NUM_INDUSTRYTYPES];
 	memset(indtypes, 0, sizeof(indtypes));
 
-	const Station *s;
-	FOR_ALL_STATIONS(s) {
+	for (const Station *s : Station::Iterate()) {
 		if (s != st && s->town == t) {
 			if (s->indtype != IT_INVALID) {
 				indtypes[s->indtype] = true;
@@ -422,9 +419,13 @@ void Station::UpdateVirtCoord()
 	pt.y -= 32 * ZOOM_LVL_BASE;
 	if ((this->facilities & FACIL_AIRPORT) && this->airport.type == AT_OILRIG) pt.y -= 16 * ZOOM_LVL_BASE;
 
+	if (this->sign.kdtree_valid) _viewport_sign_kdtree.Remove(ViewportSignKdtreeItem::MakeStation(this->index));
+
 	SetDParam(0, this->index);
 	SetDParam(1, this->facilities);
 	this->sign.UpdatePosition(pt.x, pt.y, STR_VIEWPORT_STATION);
+
+	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeStation(this->index));
 
 	SetWindowDirty(WC_STATION_VIEW, this->index);
 }
@@ -437,21 +438,17 @@ void Station::MoveSign(TileIndex new_xy)
 {
 	if (this->xy == new_xy) return;
 
-	_viewport_sign_kdtree.Remove(ViewportSignKdtreeItem::MakeStation(this->index));
 	_station_kdtree.Remove(this->index);
 
 	this->BaseStation::MoveSign(new_xy);
 
 	_station_kdtree.Insert(this->index);
-	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeStation(this->index));
 }
 
 /** Update the virtual coords needed to draw the station sign for all stations. */
 void UpdateAllStationVirtCoords()
 {
-	BaseStation *st;
-
-	FOR_ALL_BASE_STATIONS(st) {
+	for (BaseStation *st : BaseStation::Iterate()) {
 		st->UpdateVirtCoord();
 	}
 }
@@ -694,7 +691,6 @@ static CommandCost BuildStationPart(Station **st, DoCommandFlag flags, bool reus
 		if (flags & DC_EXEC) {
 			*st = new Station(area.tile);
 			_station_kdtree.Insert((*st)->index);
-			_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeStation((*st)->index));
 
 			(*st)->town = ClosestTownFromTile(area.tile, UINT_MAX);
 			(*st)->string_id = GenerateStationName(*st, area.tile, name_class);
@@ -2037,8 +2033,7 @@ static CommandCost RemoveRoadStop(TileIndex tile, DoCommandFlag flags)
 		delete cur_stop;
 
 		/* Make sure no vehicle is going to the old roadstop */
-		RoadVehicle *v;
-		FOR_ALL_ROADVEHICLES(v) {
+		for (RoadVehicle *v : RoadVehicle::Iterate()) {
 			if (v->First() == v && v->current_order.IsType(OT_GOTO_STATION) &&
 					v->dest_tile == tile) {
 				v->SetDestTile(v->GetOrderStationLocation(st->index));
@@ -2127,28 +2122,11 @@ CommandCost CmdRemoveRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 			/* Update company infrastructure counts. */
 			int count = CountBits(road_bits);
 			UpdateCompanyRoadInfrastructure(road_type[RTT_ROAD], road_owner[RTT_ROAD], count);
-			UpdateCompanyRoadInfrastructure(road_type[RTT_TRAM], road_owner[RTT_ROAD], count);
+			UpdateCompanyRoadInfrastructure(road_type[RTT_TRAM], road_owner[RTT_TRAM], count);
 		}
 	}
 
 	return had_success ? cost : last_error;
-}
-
-/**
- * Computes the minimal distance from town's xy to any airport's tile.
- * @param it An iterator over all airport tiles.
- * @param town_tile town's tile (t->xy)
- * @return minimal manhattan distance from town_tile to any airport's tile
- */
-static uint GetMinimalAirportDistanceToTile(TileIterator &it, TileIndex town_tile)
-{
-	uint mindist = UINT_MAX;
-
-	for (TileIndex cur_tile = it; cur_tile != INVALID_TILE; cur_tile = ++it) {
-		mindist = min(mindist, DistanceManhattan(town_tile, cur_tile));
-	}
-
-	return mindist;
 }
 
 /**
@@ -2190,14 +2168,25 @@ uint8 GetAirportNoiseLevelForDistance(const AirportSpec *as, uint distance)
  */
 Town *AirportGetNearestTown(const AirportSpec *as, const TileIterator &it, uint &mindist)
 {
-	Town *t, *nearest = nullptr;
-	uint add = as->size_x + as->size_y - 2; // GetMinimalAirportDistanceToTile can differ from DistanceManhattan by this much
-	mindist = UINT_MAX - add; // prevent overflow
-	FOR_ALL_TOWNS(t) {
-		if (DistanceManhattan(t->xy, it) < mindist + add) { // avoid calling GetMinimalAirportDistanceToTile too often
-			TileIterator *copy = it.Clone();
-			uint dist = GetMinimalAirportDistanceToTile(*copy, t->xy);
-			delete copy;
+	assert(Town::GetNumItems() > 0);
+
+	Town *nearest = nullptr;
+
+	uint perimeter_min_x = TileX(it);
+	uint perimeter_min_y = TileY(it);
+	uint perimeter_max_x = perimeter_min_x + as->size_x - 1;
+	uint perimeter_max_y = perimeter_min_y + as->size_y - 1;
+
+	mindist = UINT_MAX - 1; // prevent overflow
+
+	std::unique_ptr<TileIterator> copy(it.Clone());
+	for (TileIndex cur_tile = *copy; cur_tile != INVALID_TILE; cur_tile = ++*copy) {
+		if (TileX(cur_tile) == perimeter_min_x || TileX(cur_tile) == perimeter_max_x || TileY(cur_tile) == perimeter_min_y || TileY(cur_tile) == perimeter_max_y) {
+			Town *t = CalcClosestTownFromTile(cur_tile, mindist + 1);
+			if (t == nullptr) continue;
+
+			uint dist = DistanceManhattan(t->xy, cur_tile);
+			if (dist == mindist && t->index < nearest->index) nearest = t;
 			if (dist < mindist) {
 				nearest = t;
 				mindist = dist;
@@ -2212,12 +2201,9 @@ Town *AirportGetNearestTown(const AirportSpec *as, const TileIterator &it, uint 
 /** Recalculate the noise generated by the airports of each town */
 void UpdateAirportsNoise()
 {
-	Town *t;
-	const Station *st;
+	for (Town *t : Town::Iterate()) t->noise_reached = 0;
 
-	FOR_ALL_TOWNS(t) t->noise_reached = 0;
-
-	FOR_ALL_STATIONS(st) {
+	for (const Station *st : Station::Iterate()) {
 		if (st->airport.tile != INVALID_TILE && st->airport.type != AT_OILRIG) {
 			const AirportSpec *as = st->airport.GetSpec();
 			AirportTileIterator it(st);
@@ -2294,8 +2280,7 @@ CommandCost CmdBuildAirport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 	} else {
 		Town *t = ClosestTownFromTile(tile, UINT_MAX);
 		uint num = 0;
-		const Station *st;
-		FOR_ALL_STATIONS(st) {
+		for (const Station *st : Station::Iterate()) {
 			if (st->town == t && (st->facilities & FACIL_AIRPORT) && st->airport.type != AT_OILRIG) num++;
 		}
 		if (num >= 2) {
@@ -2386,8 +2371,7 @@ static CommandCost RemoveAirport(TileIndex tile, DoCommandFlag flags)
 
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 
-	const Aircraft *a;
-	FOR_ALL_AIRCRAFT(a) {
+	for (const Aircraft *a : Aircraft::Iterate()) {
 		if (!a->IsNormalAircraft()) continue;
 		if (a->targetairport == st->index && a->state != FLYING) {
 			return_cmd_error(STR_ERROR_AIRCRAFT_IN_THE_WAY);
@@ -2486,8 +2470,7 @@ CommandCost CmdOpenCloseAirport(TileIndex tile, DoCommandFlag flags, uint32 p1, 
  */
 bool HasStationInUse(StationID station, bool include_company, CompanyID company)
 {
-	const Vehicle *v;
-	FOR_ALL_VEHICLES(v) {
+	for (const Vehicle *v : Vehicle::Iterate()) {
 		if ((v->owner == company) == include_company) {
 			const Order *order;
 			FOR_VEHICLE_ORDERS(v, order) {
@@ -2727,8 +2710,7 @@ static CommandCost RemoveDock(TileIndex tile, DoCommandFlag flags)
 		 * will be selected and in case of no appropriate order it will just
 		 * wander around the world. */
 		if (!(st->facilities & FACIL_DOCK)) {
-			Ship *s;
-			FOR_ALL_SHIPS(s) {
+			for (Ship *s : Ship::Iterate()) {
 				if (s->current_order.IsType(OT_LOADING) && s->current_order.GetDestination() == st->index) {
 					s->LeaveStation();
 				}
@@ -3670,9 +3652,8 @@ void DeleteStaleLinks(Station *from)
 				if (auto_distributed) {
 					/* Have all vehicles refresh their next hops before deciding to
 					 * remove the node. */
-					OrderList *l;
 					std::vector<Vehicle *> vehicles;
-					FOR_ALL_ORDER_LISTS(l) {
+					for (OrderList *l : OrderList::Iterate()) {
 						bool found_from = false;
 						bool found_to = false;
 						for (Order *order = l->GetFirstOrder(); order != nullptr; order = order->next) {
@@ -3825,8 +3806,7 @@ void OnTick_Station()
 {
 	if (_game_mode == GM_EDITOR) return;
 
-	BaseStation *st;
-	FOR_ALL_BASE_STATIONS(st) {
+	for (BaseStation *st : BaseStation::Iterate()) {
 		StationHandleSmallTick(st);
 
 		/* Clean up the link graph about once a week. */
@@ -3849,9 +3829,7 @@ void OnTick_Station()
 /** Monthly loop for stations. */
 void StationMonthlyLoop()
 {
-	Station *st;
-
-	FOR_ALL_STATIONS(st) {
+	for (Station *st : Station::Iterate()) {
 		for (CargoID i = 0; i < NUM_CARGO; i++) {
 			GoodsEntry *ge = &st->goods[i];
 			SB(ge->status, GoodsEntry::GES_LAST_MONTH, 1, GB(ge->status, GoodsEntry::GES_CURRENT_MONTH, 1));
@@ -3923,9 +3901,7 @@ static uint UpdateStationWaiting(Station *st, CargoID type, uint amount, SourceT
 
 static bool IsUniqueStationName(const char *name)
 {
-	const Station *st;
-
-	FOR_ALL_STATIONS(st) {
+	for (const Station *st : Station::Iterate()) {
 		if (st->name != nullptr && strcmp(st->name, name) == 0) return false;
 	}
 
@@ -4159,7 +4135,6 @@ void BuildOilRig(TileIndex tile)
 	st->rect.BeforeAddTile(tile, StationRect::ADD_FORCE);
 
 	st->UpdateVirtCoord();
-	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeStation(st->index));
 	st->RecomputeCatchment();
 	UpdateStationAcceptance(st, false);
 }
@@ -4172,6 +4147,10 @@ void DeleteOilRig(TileIndex tile)
 
 	/* The oil rig station is not supposed to be shared with anything else */
 	assert(st->facilities == (FACIL_AIRPORT | FACIL_DOCK) && st->airport.type == AT_OILRIG);
+	if (st->industry != nullptr && st->industry->neutral_station == st) {
+		/* Don't leave dangling neutral station pointer */
+		st->industry->neutral_station = nullptr;
+	}
 	delete st;
 }
 

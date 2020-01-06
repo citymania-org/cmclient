@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -49,8 +47,7 @@ uint16 Kdtree_StationXYFunc::operator()(StationID stid, int dim) const {
 void RebuildStationKdtree()
 {
 	std::vector<StationID> stids;
-	BaseStation *st;
-	FOR_ALL_STATIONS(st) {
+	for (const Station *st : Station::Iterate()) {
 		stids.push_back(st->index);
 	}
 	_station_kdtree.Build(stids.begin(), stids.end());
@@ -114,8 +111,7 @@ Station::~Station()
 		this->loading_vehicles.front()->LeaveStation();
 	}
 
-	Aircraft *a;
-	FOR_ALL_AIRCRAFT(a) {
+	for (Aircraft *a : Aircraft::Iterate()) {
 		if (!a->IsNormalAircraft()) continue;
 		if (a->targetairport == this->index) a->targetairport = INVALID_STATION;
 	}
@@ -139,8 +135,7 @@ Station::~Station()
 		}
 	}
 
-	Vehicle *v;
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		/* Forget about this station if this station is removed */
 		if (v->last_station_visited == this->index) {
 			v->last_station_visited = INVALID_STATION;
@@ -178,7 +173,7 @@ Station::~Station()
 	CargoPacket::InvalidateAllFrom(this->index);
 
 	_station_kdtree.Remove(this->index);
-	_viewport_sign_kdtree.Remove(ViewportSignKdtreeItem::MakeStation(this->index));
+	if (this->sign.kdtree_valid) _viewport_sign_kdtree.Remove(ViewportSignKdtreeItem::MakeStation(this->index));
 }
 
 
@@ -400,10 +395,8 @@ static void AddIndustryToDeliver(Industry *ind, Station *st)
  */
 void Station::RemoveFromAllNearbyLists()
 {
-	Town *t;
-	FOR_ALL_TOWNS(t) { t->stations_near.erase(this); }
-	Industry *i;
-	FOR_ALL_INDUSTRIES(i) { i->stations_near.erase(this); }
+	for (Town *t : Town::Iterate()) { t->stations_near.erase(this); }
+	for (Industry *i : Industry::Iterate()) { i->stations_near.erase(this); }
 }
 
 /**
@@ -496,8 +489,7 @@ void Station::RecomputeCatchment()
  */
 /* static */ void Station::RecomputeCatchmentForAll()
 {
-	Station *st;
-	FOR_ALL_STATIONS(st) { st->RecomputeCatchment(); }
+	for (Station *st : Station::Iterate()) { st->RecomputeCatchment(); }
 }
 
 /************************************************************************/
@@ -676,8 +668,7 @@ Money AirportMaintenanceCost(Owner owner)
 {
 	Money total_cost = 0;
 
-	const Station *st;
-	FOR_ALL_STATIONS(st) {
+	for (const Station *st : Station::Iterate()) {
 		if (st->owner == owner && (st->facilities & FACIL_AIRPORT)) {
 			total_cost += _price[PR_INFRASTRUCTURE_AIRPORT] * st->airport.GetSpec()->maintenance_cost;
 		}

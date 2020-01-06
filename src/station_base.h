@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -526,8 +524,6 @@ public:
 
 	void GetTileArea(TileArea *ta, StationType type) const override;
 };
-
-#define FOR_ALL_STATIONS(var) FOR_ALL_BASE_STATIONS_OF_TYPE(Station, var)
 
 /** Iterator to iterate over all tiles belonging to an airport. */
 class AirportTileIterator : public OrthogonalTileIterator {

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -469,6 +467,15 @@ bool EditBoxInGlobalFocus()
 }
 
 /**
+ * Check if a console is focused.
+ * @return returns true if the focused window is a console, else false
+ */
+bool FocusedWindowIsConsole()
+{
+	return _focused_window && _focused_window->window_class == WC_CONSOLE;
+}
+
+/**
  * Makes no widget on this window have focus. The function however doesn't change which window has focus.
  */
 void Window::UnfocusFocusedWidget()
@@ -501,11 +508,20 @@ bool Window::SetFocusedWidget(int widget_index)
 		if (this->nested_focus->type == WWT_EDITBOX) VideoDriver::GetInstance()->EditBoxLostFocus();
 	}
 	this->nested_focus = this->GetWidget<NWidgetCore>(widget_index);
+	if (this->nested_focus->type == WWT_EDITBOX) VideoDriver::GetInstance()->EditBoxGainedFocus();
 	return true;
 }
 
 /**
- * Called when window looses focus
+ * Called when window gains focus
+ */
+void Window::OnFocus()
+{
+	if (this->nested_focus != nullptr && this->nested_focus->type == WWT_EDITBOX) VideoDriver::GetInstance()->EditBoxGainedFocus();
+}
+
+/**
+ * Called when window loses focus
  */
 void Window::OnFocusLost()
 {

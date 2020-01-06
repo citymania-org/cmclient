@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1942,6 +1940,7 @@ public:
 		WID_N_VEH_NAME                               = ::WID_N_VEH_NAME,                               ///< Name of the new vehicle.
 		WID_N_VEH_SPR                                = ::WID_N_VEH_SPR,                                ///< Graphical display of the new vehicle.
 		WID_N_VEH_INFO                               = ::WID_N_VEH_INFO,                               ///< Some technical data of the new vehicle.
+		WID_N_SHOW_GROUP                             = ::WID_N_SHOW_GROUP,                             ///< Show vehicle's group
 	};
 
 	/** Widgets of the #MessageHistoryWindow class. */

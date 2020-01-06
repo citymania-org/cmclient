@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1262,8 +1260,7 @@ struct BuildVehicleWindow : Window {
 		 * Also check to see if the previously selected engine is still available,
 		 * and if not, reset selection to INVALID_ENGINE. This could be the case
 		 * when engines become obsolete and are removed */
-		const Engine *e;
-		FOR_ALL_ENGINES_OF_TYPE(e, VEH_TRAIN) {
+		for (const Engine *e : Engine::IterateType(VEH_TRAIN)) {
 			if (!this->show_hidden_engines && e->IsHidden(_local_company)) continue;
 			EngineID eid = e->index;
 			const RailVehicleInfo *rvi = &e->u.rail;
@@ -1306,8 +1303,7 @@ struct BuildVehicleWindow : Window {
 
 		this->eng_list.clear();
 
-		const Engine *e;
-		FOR_ALL_ENGINES_OF_TYPE(e, VEH_ROAD) {
+		for (const Engine *e : Engine::IterateType(VEH_ROAD)) {
 			if (!this->show_hidden_engines && e->IsHidden(_local_company)) continue;
 			EngineID eid = e->index;
 			if (!IsEngineBuildable(eid, VEH_ROAD, _local_company)) continue;
@@ -1326,8 +1322,7 @@ struct BuildVehicleWindow : Window {
 		EngineID sel_id = INVALID_ENGINE;
 		this->eng_list.clear();
 
-		const Engine *e;
-		FOR_ALL_ENGINES_OF_TYPE(e, VEH_SHIP) {
+		for (const Engine *e : Engine::IterateType(VEH_SHIP)) {
 			if (!this->show_hidden_engines && e->IsHidden(_local_company)) continue;
 			EngineID eid = e->index;
 			if (!IsEngineBuildable(eid, VEH_SHIP, _local_company)) continue;
@@ -1351,8 +1346,7 @@ struct BuildVehicleWindow : Window {
 		 * Also check to see if the previously selected plane is still available,
 		 * and if not, reset selection to INVALID_ENGINE. This could be the case
 		 * when planes become obsolete and are removed */
-		const Engine *e;
-		FOR_ALL_ENGINES_OF_TYPE(e, VEH_AIRCRAFT) {
+		for (const Engine *e : Engine::IterateType(VEH_AIRCRAFT)) {
 			if (!this->show_hidden_engines && e->IsHidden(_local_company)) continue;
 			EngineID eid = e->index;
 			if (!IsEngineBuildable(eid, VEH_AIRCRAFT, _local_company)) continue;

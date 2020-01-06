@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -83,8 +81,7 @@ TownKdtree _town_kdtree(&Kdtree_TownXYFunc);
 void RebuildTownKdtree()
 {
 	std::vector<TownID> townids;
-	Town *town;
-	FOR_ALL_TOWNS(town) {
+	for (const Town *town : Town::Iterate()) {
 		townids.push_back(town->index);
 	}
 	_town_kdtree.Build(townids.begin(), townids.end());
@@ -128,12 +125,10 @@ Town::~Town()
 	DeleteWindowById(WC_TOWN_VIEW, this->index);
 
 	/* Check no industry is related to us. */
-	const Industry *i;
-	FOR_ALL_INDUSTRIES(i) assert(i->town != this);
+	for (const Industry *i : Industry::Iterate()) assert(i->town != this);
 
 	/* ... and no object is related to us. */
-	const Object *o;
-	FOR_ALL_OBJECTS(o) assert(o->town != this);
+	for (const Object *o : Object::Iterate()) assert(o->town != this);
 
 	/* Check no tile is related to us. */
 	for (TileIndex tile = 0; tile < MapSize(); ++tile) {
@@ -176,8 +171,7 @@ void Town::PostDestructor(size_t index)
 	UpdateNearestTownForRoadTiles(false);
 
 	/* Give objects a new home! */
-	Object *o;
-	FOR_ALL_OBJECTS(o) {
+	for (Object *o : Object::Iterate()) {
 		if (o->town == nullptr) o->town = CalcClosestTownFromTile(o->location.tile, UINT_MAX);
 	}
 }
@@ -431,11 +425,16 @@ void Town::UpdateVirtCoord()
 {
 	this->UpdateLabel();
 	Point pt = RemapCoords2(TileX(this->xy) * TILE_SIZE, TileY(this->xy) * TILE_SIZE);
+
+	if (this->cache.sign.kdtree_valid) _viewport_sign_kdtree.Remove(ViewportSignKdtreeItem::MakeTown(this->index));
+
 	SetDParam(0, this->index);
 	SetDParam(1, this->cache.population);
 	this->cache.sign.UpdatePosition(pt.x, pt.y - 24 * ZOOM_LVL_BASE,
 		_settings_client.gui.population_in_label ? STR_VIEWPORT_TOWN_POP : STR_VIEWPORT_TOWN,
 		STR_VIEWPORT_TOWN);
+
+	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeTown(this->index));
 
 	SetWindowDirty(WC_TOWN_VIEW, this->index);
 	SetWindowDirty(WC_CB_TOWN, this->index);
@@ -444,9 +443,7 @@ void Town::UpdateVirtCoord()
 /** Update the virtual coords needed to draw the town sign for all towns. */
 void UpdateAllTownVirtCoords()
 {
-	Town *t;
-
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		t->UpdateVirtCoord();
 	}
 }
@@ -475,9 +472,7 @@ static void ChangePopulation(Town *t, int mod)
 uint32 GetWorldPopulation()
 {
 	uint32 pop = 0;
-	const Town *t;
-
-	FOR_ALL_TOWNS(t) pop += t->cache.population;
+	for (const Town *t : Town::Iterate()) pop += t->cache.population;
 	return pop;
 }
 
@@ -898,10 +893,9 @@ void UpdateTownCargoes(Town *t)
 /** Updates the bitmap of all cargoes accepted by houses. */
 void UpdateTownCargoBitmap()
 {
-	Town *town;
 	_town_cargoes_accepted = 0;
 
-	FOR_ALL_TOWNS(town) {
+	for (const Town *town : Town::Iterate()) {
 		_town_cargoes_accepted |= town->cargo_accepted_total;
 	}
 }
@@ -1010,8 +1004,7 @@ void OnTick_Town()
 {
 	if (_game_mode == GM_EDITOR) return;
 
-	Town *t;
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		TownTickHandler(t);
 	}
 }
@@ -2070,7 +2063,6 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 
 	t->town_label = 3;
 	t->UpdateVirtCoord();
-	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeTown(t->index));
 	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 0);
 
 	t->InitializeLayout(layout);
@@ -2130,9 +2122,7 @@ static CommandCost TownCanBePlacedHere(TileIndex tile)
  */
 static bool IsUniqueTownName(const char *name)
 {
-	const Town *t;
-
-	FOR_ALL_TOWNS(t) {
+	for (const Town *t : Town::Iterate()) {
 		if (t->name != nullptr && strcmp(t->name, name) == 0) return false;
 	}
 
@@ -3165,8 +3155,7 @@ CommandCost CmdDeleteTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 	if (t == nullptr) return CMD_ERROR;
 
 	/* Stations refer to towns. */
-	const Station *st;
-	FOR_ALL_STATIONS(st) {
+	for (const Station *st : Station::Iterate()) {
 		if (st->town == t) {
 			/* Non-oil rig stations are always a problem. */
 			if (!(st->facilities & FACIL_AIRPORT) || st->airport.type != AT_OILRIG) return CMD_ERROR;
@@ -3177,8 +3166,7 @@ CommandCost CmdDeleteTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 	}
 
 	/* Depots refer to towns. */
-	const Depot *d;
-	FOR_ALL_DEPOTS(d) {
+	for (const Depot *d : Depot::Iterate()) {
 		if (d->town == t) return CMD_ERROR;
 	}
 
@@ -3239,7 +3227,7 @@ CommandCost CmdDeleteTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 	/* The town destructor will delete the other things related to the town. */
 	if (flags & DC_EXEC) {
 		_town_kdtree.Remove(t->index);
-		_viewport_sign_kdtree.Remove(ViewportSignKdtreeItem::MakeTown(t->index));
+		if (t->cache.sign.kdtree_valid) _viewport_sign_kdtree.Remove(ViewportSignKdtreeItem::MakeTown(t->index));
 		delete t;
 	}
 
@@ -3453,8 +3441,7 @@ static CommandCost TownActionBribe(Town *t, DoCommandFlag flags)
 			t->unwanted[_current_company] = 6;
 
 			/* set all close by station ratings to 0 */
-			Station *st;
-			FOR_ALL_STATIONS(st) {
+			for (Station *st : Station::Iterate()) {
 				if (st->town == t && st->owner == _current_company) {
 					for (CargoID i = 0; i < NUM_CARGO; i++) st->goods[i].rating = 0;
 				}
@@ -3589,8 +3576,7 @@ static void ForAllStationsNearTown(Town *t, Func func)
 static void UpdateTownRating(Town *t)
 {
 	/* Increase company ratings if they're low */
-	const Company *c;
-	FOR_ALL_COMPANIES(c) {
+	for (const Company *c : Company::Iterate()) {
 		if (t->ratings[c->index] < RATING_GROWTH_MAXIMUM) {
 			t->ratings[c->index] = min((int)RATING_GROWTH_MAXIMUM, t->ratings[c->index] + RATING_GROWTH_UP_STEP);
 		}
@@ -3660,6 +3646,11 @@ static int CountActiveStations(Town *t)
  */
 static uint GetNormalGrowthRate(Town *t)
 {
+	/**
+	 * Note:
+	 * Unserviced+unfunded towns get an additional malus in UpdateTownGrowth(),
+	 * so the "320" is actually not better than the "420".
+	 */
 	static const uint16 _grow_count_values[2][6] = {
 		{ 120, 120, 120, 100,  80,  60 }, // Fund new buildings has been activated
 		{ 320, 420, 300, 220, 160, 100 }  // Normal values
@@ -3750,9 +3741,7 @@ static void UpdateTownAmounts(Town *t)
 
 static void UpdateTownUnwanted(Town *t)
 {
-	const Company *c;
-
-	FOR_ALL_COMPANIES(c) {
+	for (const Company *c : Company::Iterate()) {
 		if (t->unwanted[c->index] > 0) t->unwanted[c->index]--;
 	}
 }
@@ -3951,12 +3940,10 @@ CommandCost CheckforTownRating(DoCommandFlag flags, Town *t, TownRatingCheckType
 
 void TownsMonthlyLoop()
 {
-	Town *t;
-
 	_towns_growth_tiles_last_month = _towns_growth_tiles;
 	_towns_growth_tiles.clear();
 
-	FOR_ALL_TOWNS(t) {
+	for (Town *t : Town::Iterate()) {
 		if (t->road_build_months != 0) t->road_build_months--;
 
 		if (t->exclusive_counter != 0) {

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -258,11 +256,10 @@ static void QZ_GetDisplayModeInfo(CFArrayRef modes, CFIndex i, int &bpp, uint16 
 
 #if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_11)
 		/* Extract bit depth from mode string. */
-		CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(mode);
-		if (CFStringCompare(pixEnc, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) bpp = 32;
-		if (CFStringCompare(pixEnc, CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) bpp = 16;
-		if (CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) bpp = 8;
-		CFRelease(pixEnc);
+		CFAutoRelease<CFStringRef> pixEnc(CGDisplayModeCopyPixelEncoding(mode));
+		if (CFStringCompare(pixEnc.get(), CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) bpp = 32;
+		if (CFStringCompare(pixEnc.get(), CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) bpp = 16;
+		if (CFStringCompare(pixEnc.get(), CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) bpp = 8;
 #else
 		/* CGDisplayModeCopyPixelEncoding is deprecated on OSX 10.11+, but there are no 8 bpp modes anyway... */
 		bpp = 32;
@@ -687,15 +684,13 @@ void CocoaDialog(const char *title, const char *message, const char *buttonLabel
 void cocoaSetApplicationBundleDir()
 {
 	char tmp[MAXPATHLEN];
-	CFURLRef url = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (CFURLGetFileSystemRepresentation(url, true, (unsigned char*)tmp, MAXPATHLEN)) {
+	CFAutoRelease<CFURLRef> url(CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle()));
+	if (CFURLGetFileSystemRepresentation(url.get(), true, (unsigned char*)tmp, MAXPATHLEN)) {
 		AppendPathSeparator(tmp, lastof(tmp));
 		_searchpaths[SP_APPLICATION_BUNDLE_DIR] = stredup(tmp);
 	} else {
 		_searchpaths[SP_APPLICATION_BUNDLE_DIR] = NULL;
 	}
-
-	CFRelease(url);
 }
 
 /**

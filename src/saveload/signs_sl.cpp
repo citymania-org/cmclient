@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -34,9 +32,7 @@ static const SaveLoad _sign_desc[] = {
 /** Save all signs */
 static void Save_SIGN()
 {
-	Sign *si;
-
-	FOR_ALL_SIGNS(si) {
+	for (Sign *si : Sign::Iterate()) {
 		SlSetArrayIndex(si->index);
 		SlObject(si, _sign_desc);
 	}

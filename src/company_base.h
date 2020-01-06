@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -177,9 +175,6 @@ struct Company : CompanyPool::PoolItem<&_company_pool>, CompanyProperties {
 
 	static void PostDestructor(size_t index);
 };
-
-#define FOR_ALL_COMPANIES_FROM(var, start) FOR_ALL_ITEMS_FROM(Company, company_index, var, start)
-#define FOR_ALL_COMPANIES(var) FOR_ALL_COMPANIES_FROM(var, 0)
 
 Money CalculateCompanyValue(const Company *c, bool including_loan = true);
 

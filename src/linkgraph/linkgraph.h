@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -535,7 +533,5 @@ protected:
 	NodeVector nodes;      ///< Nodes in the component.
 	EdgeMatrix edges;      ///< Edges in the component.
 };
-
-#define FOR_ALL_LINK_GRAPHS(var) FOR_ALL_ITEMS_FROM(LinkGraph, link_graph_index, var, 0)
 
 #endif /* LINKGRAPH_H */
