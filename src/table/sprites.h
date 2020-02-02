@@ -317,10 +317,13 @@ static const SpriteID SPR_INNER_HIGHLIGHT_COUNT     = 29;
 
 static const SpriteID SPR_BORDER_HIGHLIGHT_BASE     = SPR_INNER_HIGHLIGHT_BASE + SPR_INNER_HIGHLIGHT_COUNT + 1;
 static const SpriteID SPR_BORDER_HIGHLIGHT_COUNT    = 19 * 19;
-static const SpriteID SPR_RECOLOR_RED               = SPR_BORDER_HIGHLIGHT_BASE + SPR_BORDER_HIGHLIGHT_COUNT;
+static const SpriteID SPR_RECOLOUR_BASE             = SPR_BORDER_HIGHLIGHT_BASE + SPR_BORDER_HIGHLIGHT_COUNT;
+static const SpriteID SPR_RECOLOUR_RED              = SPR_RECOLOUR_BASE;
+static const SpriteID SPR_RECOLOUR_ORANGE           = SPR_RECOLOUR_BASE + 1;
+static const SpriteID SPR_RECOLOUR_COUNT            = 2;
 
 /* From where can we start putting NewGRFs? */
-static const SpriteID SPR_NEWGRFS_BASE = SPR_RECOLOR_RED + 1;
+static const SpriteID SPR_NEWGRFS_BASE = SPR_RECOLOUR_BASE + SPR_RECOLOUR_COUNT;
 
 /* Manager face sprites */
 static const SpriteID SPR_GRADIENT = 874; // background gradient behind manager face

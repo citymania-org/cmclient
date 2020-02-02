@@ -202,10 +202,6 @@ SpriteID TileZoneCheckBuildEvaluation(TileIndex tile, Owner owner) {
 	if (IsTileType(tile, MP_STATION)){
 		return INVALID_SPRITE_ID;
 	}
-	// For accepted goods
-	if (IsTileWithinAcceptanceZoneOfStation(tile)){
-		return SPR_PALETTE_ZONING_LIGHT_BLUE;
-	}
 	return INVALID_SPRITE_ID;
 }
 
@@ -223,10 +219,6 @@ SpriteID TileZoneCheckUnservedBuildingsEvaluation(TileIndex tile) {
 		if (!stations.GetStations()->empty()) {
 			return INVALID_SPRITE_ID;
 		}
-		// For accepted goods
-		if (IsTileWithinAcceptanceZoneOfStation(tile)){
-			return SPR_PALETTE_ZONING_ORANGE;
-		}
 		return SPR_PALETTE_ZONING_RED;
 	}
 	return INVALID_SPRITE_ID;
@@ -243,10 +235,6 @@ SpriteID TileZoneCheckUnservedIndustriesEvaluation(TileIndex tile) {
 			return INVALID_SPRITE_ID;
 		}
 
-		// For accepted goods
-		if (IsAreaWithinAcceptanceZoneOfStation(ind->location)){
-			return SPR_PALETTE_ZONING_ORANGE;
-		}
 		return SPR_PALETTE_ZONING_RED;
 	}
 	return INVALID_SPRITE_ID;
@@ -431,7 +419,7 @@ void DrawTileZoning(const TileInfo *ti) {
 			if (p.first && p.second) {
 				DrawBorderSprites(ti, p.first, GetTownZoneBorderColor(p.second));
 			}
-		} else if (_zoning.outer == CHECKBULUNSER) {
+		} else if (_zoning.outer == CHECKBULUNSER || _zoning.outer == CHECKINDUNSER) {
 			// handled in house drawing
 		} else if (_zoning.outer == CHECKSTACATCH) {
 			auto b = citymania::GetAnyStationCatchmentBorder(ti->tile);

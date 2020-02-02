@@ -2,8 +2,9 @@
 
 #include "zoning.hpp"
 
-#include "../house.h"
 #include "../core/math_func.hpp"
+#include "../house.h"
+#include "../industry.h"
 #include "../town.h"
 #include "../tilearea_type.h"
 #include "../viewport_func.h"
@@ -136,17 +137,30 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tile) {
 
 SpriteID GetTownTileZoningPalette(TileIndex tile) {
     if (_zoning.outer == CHECKBULUNSER) {
-        if (IsTileType (tile, MP_HOUSE)) {
-            StationFinder stations(TileArea(tile, 1, 1));
+        StationFinder stations(TileArea(tile, 1, 1));
 
-            if (!stations.GetStations()->empty()) {
-                return PAL_NONE;
-            }
-            return SPR_RECOLOR_RED;
-        }
+        if (stations.GetStations()->empty())
+            return SPR_RECOLOUR_RED;
     }
     return PAL_NONE;
 }
 
+SpriteID GetIndustryTileZoningPalette(TileIndex tile, Industry *ind) {
+    if (_zoning.outer == CHECKINDUNSER) {
+        auto n_produced = 0;
+        auto n_serviced = 0;
+        for (auto j = 0; j < INDUSTRY_NUM_OUTPUTS; j++) {
+            if (ind->produced_cargo[j] == CT_INVALID) continue;
+            if (ind->last_month_production[j] == 0 && ind->this_month_production[j] == 0) continue;
+            n_produced++;
+            if (ind->last_month_transported[j] > 0 || ind->last_month_transported[j] > 0)
+                n_serviced++;
+        }
+        if (n_serviced < n_produced)
+            return (n_serviced == 0 ? SPR_RECOLOUR_RED : SPR_RECOLOUR_ORANGE);
+    }
+
+    return PAL_NONE;
+}
 
 }  // namespace citymania

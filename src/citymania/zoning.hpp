@@ -3,6 +3,7 @@
 
 #include "../core/enum_type.hpp"
 #include "../gfx_type.h"
+#include "../industry_type.h"
 #include "../tile_type.h"
 #include "../town_type.h"
 
@@ -42,7 +43,7 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tlie);
 // std::pair<ZoningBorder, uint8> GetTownAdvertisementBorder(TileIndex tile);
 //
 SpriteID GetTownTileZoningPalette(TileIndex tile);
-
+SpriteID GetIndustryTileZoningPalette(TileIndex tile, Industry *ind);
 }  // namespace citymania
 
 #endif
