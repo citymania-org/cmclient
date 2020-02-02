@@ -134,4 +134,19 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tile) {
     return border;
 }
 
+SpriteID GetTownTileZoningPalette(TileIndex tile) {
+    if (_zoning.outer == CHECKBULUNSER) {
+        if (IsTileType (tile, MP_HOUSE)) {
+            StationFinder stations(TileArea(tile, 1, 1));
+
+            if (!stations.GetStations()->empty()) {
+                return PAL_NONE;
+            }
+            return SPR_RECOLOR_RED;
+        }
+    }
+    return PAL_NONE;
+}
+
+
 }  // namespace citymania

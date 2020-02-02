@@ -431,6 +431,8 @@ void DrawTileZoning(const TileInfo *ti) {
 			if (p.first && p.second) {
 				DrawBorderSprites(ti, p.first, GetTownZoneBorderColor(p.second));
 			}
+		} else if (_zoning.outer == CHECKBULUNSER) {
+			// handled in house drawing
 		} else if (_zoning.outer == CHECKSTACATCH) {
 			auto b = citymania::GetAnyStationCatchmentBorder(ti->tile);
 			DrawBorderSprites(ti, b, SPR_PALETTE_ZONING_LIGHT_BLUE);

@@ -301,7 +301,8 @@ static void DrawTile_Town(TileInfo *ti)
 
 	if (ti->tileh != SLOPE_FLAT) DrawFoundation(ti, FOUNDATION_LEVELED);
 
-	DrawGroundSprite(dcts->ground.sprite, dcts->ground.pal);
+	auto zoning_pal = citymania::GetTownTileZoningPalette(ti->tile);
+	DrawGroundSprite(dcts->ground.sprite, zoning_pal == PAL_NONE ? dcts->ground.pal : zoning_pal);
 
 	/* If houses are invisible, do not draw the upper part */
 	if (IsInvisibilitySet(TO_HOUSES)) return;
@@ -309,7 +310,7 @@ static void DrawTile_Town(TileInfo *ti)
 	/* Add a house on top of the ground? */
 	SpriteID image = dcts->building.sprite;
 	if (image != 0) {
-		AddSortableSpriteToDraw(image, dcts->building.pal,
+		AddSortableSpriteToDraw(image, zoning_pal == PAL_NONE ? dcts->building.pal : zoning_pal,
 			ti->x + dcts->subtile_x,
 			ti->y + dcts->subtile_y,
 			dcts->width,
