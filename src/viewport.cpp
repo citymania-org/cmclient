@@ -99,6 +99,8 @@
 #include "zoning.h"
 #include "industry_type.h"
 
+#include "citymania/zoning.hpp"
+
 #include "safeguards.h"
 
 Point _tile_fract_coords;
@@ -202,6 +204,8 @@ struct ViewportDrawer {
 	FoundationPart foundation_part;                  ///< Currently active foundation for ground sprite drawing.
 	int *last_foundation_child[FOUNDATION_PART_END]; ///< Tail of ChildSprite list of the foundations. (index into child_screen_sprites_to_draw)
 	Point foundation_offset[FOUNDATION_PART_END];    ///< Pixel offset for ground sprites on the foundations.
+
+	citymania::TileHighlight zoning;
 };
 
 static void MarkViewportDirty(const ViewPort *vp, int left, int top, int right, int bottom);
@@ -557,7 +561,7 @@ static void AddTileSpriteToDraw(SpriteID image, PaletteID pal, int32 x, int32 y,
  * @param extra_offs_x Pixel X offset for the sprite position.
  * @param extra_offs_y Pixel Y offset for the sprite position.
  */
-static void AddChildSpriteToFoundation(SpriteID image, PaletteID pal, const SubSprite *sub, FoundationPart foundation_part, int extra_offs_x, int extra_offs_y)
+void AddChildSpriteToFoundation(SpriteID image, PaletteID pal, const SubSprite *sub, FoundationPart foundation_part, int extra_offs_x, int extra_offs_y)
 {
 	assert(IsInsideMM(foundation_part, 0, FOUNDATION_PART_END));
 	assert(_vd.foundation[foundation_part] != -1);
@@ -911,7 +915,7 @@ static void AddStringToDraw(int x, int y, StringID string, uint64 params_1, uint
  * @param z_offset Z offset relative to the groundsprite. Only used for the sprite position, not for sprite sorting.
  * @param foundation_part Foundation part the sprite belongs to.
  */
-static void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part)
+void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part)
 {
 	/* FIXME: This is not totally valid for some autorail highlights that extend over the edges of the tile. */
 	if (_vd.foundation[foundation_part] == -1) {
@@ -1113,6 +1117,9 @@ static void DrawTileSelection(const TileInfo *ti)
 {
 	/* Highlight tiles insede local authority of selected towns. */
 	HighlightTownLocalAuthorityTiles(ti);
+
+	auto cmth = citymania::GetTileHighlight(ti);
+	citymania::DrawTileSelection(ti, cmth);
 
 	/* Draw a red error square? */
 	bool is_redsq = _thd.redsq == ti->tile;

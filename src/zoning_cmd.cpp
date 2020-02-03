@@ -418,19 +418,23 @@ void DrawBorderSprites(const TileInfo *ti, citymania::ZoningBorder border, Sprit
  *        the tile to draw on.
  */
 void DrawTileZoning(const TileInfo *ti) {
+
+	// AddSortableSpriteToDraw((SPR_FLAT_BARE_LAND|(1U << PALETTE_MODIFIER_TRANSPARENT)) + _tileh_to_sprite[ti->tileh],
+	//                         SPR_RECOLOUR_RED, ti->x, ti->y, 0x10, 0x10, 1, ti->z);
+	// AddSortableSpriteToDraw(SPR_FLAT_BARE_LAND + _tileh_to_sprite[ti->tileh], SPR_RECOLOUR_RED, ti->x, ti->y, 0x10, 0x10, 1, ti->z + 7, false);
 	if(_zoning.outer == CHECKNOTHING && _zoning.inner == CHECKNOTHING) return; //nothing to do
 	if (_game_mode != GM_NORMAL || ti->tile >= MapSize() || IsTileType(ti->tile, MP_VOID)) return; //check invalid
 	if (_zoning.outer != CHECKNOTHING){
 		if (_zoning.outer == CHECKTOWNZONES) {
-			auto p = citymania::GetTownZoneBorder(ti->tile);
-			if (p.first && p.second) {
-				DrawBorderSprites(ti, p.first, GetTownZoneBorderColor(p.second));
-			}
+			// auto p = citymania::GetTownZoneBorder(ti->tile);
+			// if (p.first && p.second) {
+			// 	DrawBorderSprites(ti, p.first, GetTownZoneBorderColor(p.second));
+			// }
 		} else if (_zoning.outer == CHECKBULUNSER || _zoning.outer == CHECKINDUNSER) {
 			// handled in house drawing
 		} else if (_zoning.outer == CHECKSTACATCH) {
-			auto b = citymania::GetAnyStationCatchmentBorder(ti->tile);
-			DrawBorderSprites(ti, b, SPR_PALETTE_ZONING_LIGHT_BLUE);
+			// auto b = citymania::GetAnyStationCatchmentBorder(ti->tile);
+			// DrawBorderSprites(ti, b, SPR_PALETTE_ZONING_LIGHT_BLUE);
 		} else {
 			DrawZoningSprites(SPR_SELECT_TILE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.outer), ti);
 		}

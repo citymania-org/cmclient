@@ -10,6 +10,15 @@
 #include "../viewport_func.h"
 #include "../zoning.h"
 
+/** Enumeration of multi-part foundations */
+enum FoundationPart {
+    FOUNDATION_PART_NONE     = 0xFF,  ///< Neither foundation nor groundsprite drawn yet.
+    FOUNDATION_PART_NORMAL   = 0,     ///< First part (normal foundation or no foundation)
+    FOUNDATION_PART_HALFTILE = 1,     ///< Second part (halftile foundation)
+    FOUNDATION_PART_END
+};
+extern void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part); // viewport.cpp
+
 namespace citymania {
 
 struct TileZoning {
@@ -17,6 +26,54 @@ struct TileZoning {
 };
 
 TileZoning *_mz = nullptr;
+
+const byte _tileh_to_sprite[32] = {
+    0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 0,
+    0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18, 0,
+};
+
+
+void DrawBorderSprites(const TileInfo *ti, ZoningBorder border, SpriteID color) {
+    auto b = (uint8)border & 15;
+    auto tile_sprite = SPR_BORDER_HIGHLIGHT_BASE + _tileh_to_sprite[ti->tileh] * 19;
+    if (b) {
+        DrawSelectionSprite(tile_sprite + b - 1, color, ti, 7, FOUNDATION_PART_NORMAL);
+    }
+    if (border & ZoningBorder::TOP_CORNER)
+        DrawSelectionSprite(tile_sprite + 15, color, ti, 7, FOUNDATION_PART_NORMAL);
+    if (border & ZoningBorder::RIGHT_CORNER)
+        DrawSelectionSprite(tile_sprite + 16, color, ti, 7, FOUNDATION_PART_NORMAL);
+    if (border & ZoningBorder::BOTTOM_CORNER)
+        DrawSelectionSprite(tile_sprite + 17, color, ti, 7, FOUNDATION_PART_NORMAL);
+    if (border & ZoningBorder::LEFT_CORNER)
+        DrawSelectionSprite(tile_sprite + 18, color, ti, 7, FOUNDATION_PART_NORMAL);
+}
+
+TileHighlight GetTileHighlight(const TileInfo *ti) {
+    TileHighlight th;
+    if (_zoning.outer == CHECKTOWNZONES) {
+        auto p = GetTownZoneBorder(ti->tile);
+        th.border = p.first;
+        switch (p.second) {
+            default: th.border_color = SPR_PALETTE_ZONING_WHITE; break; // Tz0
+            case 2: th.border_color = SPR_PALETTE_ZONING_YELLOW; break; // Tz1
+            case 3: th.border_color = SPR_PALETTE_ZONING_ORANGE; break; // Tz2
+            case 4: th.border_color = SPR_PALETTE_ZONING_ORANGE; break; // Tz3
+            case 5: th.border_color = SPR_PALETTE_ZONING_RED; break; // Tz4 - center
+        };
+    } else if (_zoning.outer == CHECKBULUNSER || _zoning.outer == CHECKINDUNSER) {
+        // handled in house drawing
+    } else if (_zoning.outer == CHECKSTACATCH) {
+        th.border = citymania::GetAnyStationCatchmentBorder(ti->tile);
+        th.border_color = SPR_PALETTE_ZONING_LIGHT_BLUE;
+    }
+    return th;
+}
+
+void DrawTileSelection(const TileInfo *ti, const TileHighlight &th) {
+    if (th.border != ZoningBorder::NONE)
+        DrawBorderSprites(ti, th.border, th.border_color);
+}
 
 void AllocateZoningMap(uint map_size) {
     free(_mz);
