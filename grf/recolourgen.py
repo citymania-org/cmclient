@@ -27,7 +27,8 @@ def color_distance(c1, c2):
     return math.sqrt(r*r + g*g + b*b)
 
 
-def gen_recolor(tint, ratio):
+def gen_recolor(tint, ratio, comment):
+    print(f"    // {comment}")
     print("    recolour_sprite {")
     print("        ", end="")
     for i, (r, g, b) in colors:
@@ -58,5 +59,9 @@ for _ in range(256):
     # if c in SAFE_COLORS:
     colors.append((int(i), c))
 
-gen_recolor(spectra.rgb(1, 0, 0), 0.75)
-gen_recolor(spectra.rgb(1.1, 0.6, 0), 0.6)
+gen_recolor(spectra.rgb(1, 0, 0), 0.6, "red recolour")
+gen_recolor(spectra.rgb(1, 0.5, 0), 0.65, "orange recolour")
+gen_recolor(spectra.rgb(1.0, 1.0, 0), 0.6, "yellow recolour")
+gen_recolor(spectra.rgb(1.0, 1.0, 0.5), 0.6, "yellow white recolour")
+gen_recolor(spectra.rgb(1.0, 1.0, 1.0), 0.6, "white recolour")
+gen_recolor(spectra.rgb(0, 1.0, 0), 0.6, "green recolour")

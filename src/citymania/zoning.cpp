@@ -141,6 +141,29 @@ SpriteID GetTownTileZoningPalette(TileIndex tile) {
 
         if (stations.GetStations()->empty())
             return SPR_RECOLOUR_RED;
+    } else if (_zoning.outer == CHECKTOWNZONES) {
+        HouseZonesBits next_zone = HZB_BEGIN, tz = HZB_END;
+
+        for (Town *town : Town::Iterate()) {
+            uint dist = DistanceSquare(tile, town->xy);
+            // town code uses <= for checking town borders (tz0) but < for other zones
+            while (next_zone < HZB_END
+                && (town->cache.squared_town_zone_radius[next_zone] == 0
+                    || dist <= town->cache.squared_town_zone_radius[next_zone] - (next_zone == HZB_BEGIN ? 0 : 1))
+            ){
+                if(town->cache.squared_town_zone_radius[next_zone] != 0)  tz = next_zone;
+                next_zone++;
+            }
+        }
+
+        switch (tz) {
+            case HZB_TOWN_EDGE:         return SPR_RECOLOUR_WHITE; // Tz0
+            case HZB_TOWN_OUTSKIRT:     return SPR_RECOLOUR_YELLOW; // Tz1
+            case HZB_TOWN_OUTER_SUBURB: return SPR_RECOLOUR_ORANGE; // Tz2
+            case HZB_TOWN_INNER_SUBURB: return SPR_RECOLOUR_ORANGE; // Tz3
+            case HZB_TOWN_CENTRE:       return SPR_RECOLOUR_RED; // Tz4 - center
+            default:                    return PAL_NONE; // no town
+        }
     }
     return PAL_NONE;
 }

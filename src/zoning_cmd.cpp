@@ -375,6 +375,13 @@ SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode 
 
 SpriteID GetTownZoneBorderColor(uint8 zone) {
 	switch (zone) {
+		default: return SPR_PALETTE_ZONING_WHITE;  // Tz0
+		case 2: return SPR_PALETTE_ZONING_YELLOW;  // Tz1
+		case 3: return SPR_PALETTE_ZONING_ORANGE;  // Tz2
+		case 4: return SPR_PALETTE_ZONING_ORANGE;  // Tz3
+		case 5: return SPR_PALETTE_ZONING_RED;  // Tz4 - center
+	};
+	switch (zone) {
 		default: return SPR_PALETTE_ZONING_LIGHT_BLUE;  // Tz0
 		case 2: return SPR_PALETTE_ZONING_RED;  // Tz1
 		case 3: return SPR_PALETTE_ZONING_YELLOW;  // Tz2
