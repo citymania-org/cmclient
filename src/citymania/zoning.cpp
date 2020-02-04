@@ -23,15 +23,57 @@ namespace citymania {
 
 struct TileZoning {
     uint8 town_zone : 3;
+    uint8 industry_fund_result : 2;
+    IndustryType industry_fund_type;
 };
 
-TileZoning *_mz = nullptr;
+static TileZoning *_mz = nullptr;
+static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
 
 const byte _tileh_to_sprite[32] = {
     0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 0,
     0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18, 0,
 };
 
+
+template <typename F>
+uint8 Get(uint32 x, uint32 y, F getter) {
+    if (x >= MapSizeX() || y >= MapSizeY()) return 0;
+    return getter(TileXY(x, y));
+}
+
+template <typename F>
+std::pair<ZoningBorder, uint8> CalcTileBorders(TileIndex tile, F getter) {
+    auto x = TileX(tile), y = TileY(tile);
+    ZoningBorder res = ZoningBorder::NONE;
+    auto z = getter(tile);
+    if (z == 0)
+        return std::make_pair(res, 0);
+    auto tr = Get(x - 1, y, getter);
+    auto tl = Get(x, y - 1, getter);
+    auto bl = Get(x + 1, y, getter);
+    auto br = Get(x, y + 1, getter);
+    if (tr < z) res |= ZoningBorder::TOP_RIGHT;
+    if (tl < z) res |= ZoningBorder::TOP_LEFT;
+    if (bl < z) res |= ZoningBorder::BOTTOM_LEFT;
+    if (br < z) res |= ZoningBorder::BOTTOM_RIGHT;
+    if (tr == z && tl == z && Get(x - 1, y - 1, getter) < z) res |= ZoningBorder::TOP_CORNER;
+    if (tr == z && br == z && Get(x - 1, y + 1, getter) < z) res |= ZoningBorder::RIGHT_CORNER;
+    if (br == z && bl == z && Get(x + 1, y + 1, getter) < z) res |= ZoningBorder::BOTTOM_CORNER;
+    if (tl == z && bl == z && Get(x + 1, y - 1, getter) < z) res |= ZoningBorder::LEFT_CORNER;
+    return std::make_pair(res, z);
+}
+
+
+bool CanBuildIndustryOnTileCached(IndustryType type, TileIndex tile) {
+    if (_mz[tile].industry_fund_type != type || !_mz[tile].industry_fund_result) {
+        bool res = CanBuildIndustryOnTile(type, tile);
+        _mz[tile].industry_fund_type = type;
+        _mz[tile].industry_fund_result = res ? 2 : 1;
+        return res;
+    }
+    return (_mz[tile].industry_fund_result == 2);
+}
 
 void DrawBorderSprites(const TileInfo *ti, ZoningBorder border, SpriteID color) {
     auto b = (uint8)border & 15;
@@ -128,6 +170,18 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
         auto pal = GetIndustryZoningPalette(ti->tile);
         if (pal) th.ground_pal = th.structure_pal = PALETTE_TINT_RED_DEEP;
     }
+
+    if (_settings_client.gui.show_industry_forbidden_tiles &&
+            _industry_forbidden_tiles != INVALID_INDUSTRYTYPE) {
+        auto b = CalcTileBorders(ti->tile, [](TileIndex t) { return !CanBuildIndustryOnTileCached(_industry_forbidden_tiles, t); });
+        if(b.first != ZoningBorder::NONE) {
+            th.border = b.first;
+            th.border_color = SPR_PALETTE_ZONING_RED;
+        }
+        if (!CanBuildIndustryOnTileCached(_industry_forbidden_tiles, ti->tile))
+            th.ground_pal = th.structure_pal = PALETTE_TINT_RED;
+    }
+
     return th;
 }
 
@@ -198,6 +252,10 @@ void UpdateTownZoning(Town *town, uint32 prev_edge) {
     // TODO mark dirty only if zoning is on
     TILE_AREA_LOOP(tile, area) {
         uint8 group = GetTownZone(town, tile);
+
+        if (_mz[tile].town_zone != group)
+            _mz[tile].industry_fund_result = 0;
+
         if (_mz[tile].town_zone > group) {
             if (recalc) {
                 _mz[tile].town_zone = GetAnyTownZone(tile);
@@ -217,35 +275,6 @@ void InitializeZoningMap() {
         UpdateTownZoning(t, 0);
     }
 }
-
-template <typename F>
-uint8 Get(uint32 x, uint32 y, F getter) {
-    if (x >= MapSizeX() || y >= MapSizeY()) return 0;
-    return getter(TileXY(x, y));
-}
-
-template <typename F>
-std::pair<ZoningBorder, uint8> CalcTileBorders(TileIndex tile, F getter) {
-    auto x = TileX(tile), y = TileY(tile);
-    ZoningBorder res = ZoningBorder::NONE;
-    auto z = getter(tile);
-    if (z == 0)
-        return std::make_pair(res, 0);
-    auto tr = Get(x - 1, y, getter);
-    auto tl = Get(x, y - 1, getter);
-    auto bl = Get(x + 1, y, getter);
-    auto br = Get(x, y + 1, getter);
-    if (tr < z) res |= ZoningBorder::TOP_RIGHT;
-    if (tl < z) res |= ZoningBorder::TOP_LEFT;
-    if (bl < z) res |= ZoningBorder::BOTTOM_LEFT;
-    if (br < z) res |= ZoningBorder::BOTTOM_RIGHT;
-    if (tr == z && tl == z && Get(x - 1, y - 1, getter) < z) res |= ZoningBorder::TOP_CORNER;
-    if (tr == z && br == z && Get(x - 1, y + 1, getter) < z) res |= ZoningBorder::RIGHT_CORNER;
-    if (br == z && bl == z && Get(x + 1, y + 1, getter) < z) res |= ZoningBorder::BOTTOM_CORNER;
-    if (tl == z && bl == z && Get(x + 1, y - 1, getter) < z) res |= ZoningBorder::LEFT_CORNER;
-    return std::make_pair(res, z);
-}
-
 std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile) {
     return CalcTileBorders(tile, [](TileIndex t) { return _mz[t].town_zone; });
 }
@@ -259,6 +288,14 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tile) {
     if (border & ZoningBorder::TOP_CORNER && border & (ZoningBorder::TOP_LEFT | ZoningBorder::TOP_RIGHT))
         border &= ~ZoningBorder::TOP_CORNER;
     return border;
+}
+
+void SetIndustryForbiddenTilesHighlight(IndustryType type) {
+    if (_settings_client.gui.show_industry_forbidden_tiles &&
+            _industry_forbidden_tiles != type) {
+        MarkWholeScreenDirty();
+    }
+    _industry_forbidden_tiles = type;
 }
 
 }  // namespace citymania

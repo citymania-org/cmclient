@@ -44,6 +44,8 @@
 
 #include <bitset>
 
+#include "citymania/zoning.hpp"
+
 #include "safeguards.h"
 
 bool _ignore_restrictions;
@@ -335,7 +337,7 @@ class BuildIndustryWindow : public Window {
 		if (this->selected_index == -1) {
 			this->selected_index = 0;
 			this->selected_type = this->index[0];
-			SetIndustryForbiddenTilesHighlight(this->selected_type);
+			citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 		}
 
 		this->vscroll->SetCount(this->count);
@@ -418,7 +420,7 @@ public:
 
 	~BuildIndustryWindow()
 	{
-		SetIndustryForbiddenTilesHighlight(INVALID_INDUSTRYTYPE);
+		citymania::SetIndustryForbiddenTilesHighlight(INVALID_INDUSTRYTYPE);
 	}
 
 	void OnInit() override
@@ -607,7 +609,7 @@ public:
 				if (y < this->count) { // Is it within the boundaries of available data?
 					this->selected_index = y;
 					this->selected_type = this->index[y];
-					SetIndustryForbiddenTilesHighlight(this->selected_type);
+					citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 					const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? nullptr : GetIndustrySpec(this->selected_type);
 
 					this->SetDirty();

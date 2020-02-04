@@ -31,8 +31,6 @@ void VpSetPlaceSizingLimit(int limit);
 
 void UpdateTileSelection();
 
-void SetIndustryForbiddenTilesHighlight(IndustryType type);
-
 RailSnapMode GetRailSnapMode();
 void SetRailSnapMode(RailSnapMode mode);
 

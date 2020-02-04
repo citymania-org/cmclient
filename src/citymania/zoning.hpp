@@ -61,7 +61,7 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tlie);
 //
 SpriteID GetTownTileZoningPalette(TileIndex tile);
 SpriteID GetIndustryTileZoningPalette(TileIndex tile, Industry *ind);
-
+void SetIndustryForbiddenTilesHighlight(IndustryType type);
 
 }  // namespace citymania
 
