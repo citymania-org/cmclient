@@ -23,12 +23,15 @@ enum ZoningBorder: uint8 {
     RIGHT_CORNER = 32,
     BOTTOM_CORNER = 64,
     LEFT_CORNER = 128,
+    FULL = TOP_LEFT | TOP_RIGHT | BOTTOM_LEFT | BOTTOM_RIGHT,
 };
 
 class TileHighlight {
 public:
     SpriteID ground_pal = PAL_NONE;
     SpriteID structure_pal = PAL_NONE;
+    SpriteID sprite = 0;
+    SpriteID selection = PAL_NONE;
     ZoningBorder border = ZoningBorder::NONE;
     SpriteID border_color;
 };

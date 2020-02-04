@@ -49,23 +49,84 @@ void DrawBorderSprites(const TileInfo *ti, ZoningBorder border, SpriteID color) 
         DrawSelectionSprite(tile_sprite + 18, color, ti, 7, FOUNDATION_PART_NORMAL);
 }
 
+SpriteID GetIndustryZoningPalette(TileIndex tile) {
+    if (!IsTileType(tile, MP_INDUSTRY)) return PAL_NONE;
+    Industry *ind = Industry::GetByTile(tile);
+    auto n_produced = 0;
+    auto n_serviced = 0;
+    for (auto j = 0; j < INDUSTRY_NUM_OUTPUTS; j++) {
+        if (ind->produced_cargo[j] == CT_INVALID) continue;
+        if (ind->last_month_production[j] == 0 && ind->this_month_production[j] == 0) continue;
+        n_produced++;
+        if (ind->last_month_transported[j] > 0 || ind->last_month_transported[j] > 0)
+            n_serviced++;
+    }
+    if (n_serviced < n_produced)
+        return (n_serviced == 0 ? PALETTE_TINT_RED_DEEP : PALETTE_TINT_ORANGE_DEEP);
+    return PAL_NONE;
+}
+
 TileHighlight GetTileHighlight(const TileInfo *ti) {
     TileHighlight th;
+    if (ti->tile == INVALID_TILE) return th;
     if (_zoning.outer == CHECKTOWNZONES) {
         auto p = GetTownZoneBorder(ti->tile);
         th.border = p.first;
+        auto pal = PAL_NONE;
         switch (p.second) {
-            default: th.border_color = SPR_PALETTE_ZONING_WHITE; break; // Tz0
-            case 2: th.border_color = SPR_PALETTE_ZONING_YELLOW; break; // Tz1
-            case 3: th.border_color = SPR_PALETTE_ZONING_ORANGE; break; // Tz2
-            case 4: th.border_color = SPR_PALETTE_ZONING_ORANGE; break; // Tz3
-            case 5: th.border_color = SPR_PALETTE_ZONING_RED; break; // Tz4 - center
+            default: break; // Tz0
+            case 1: th.border_color = SPR_PALETTE_ZONING_WHITE; pal = PALETTE_TINT_WHITE; break; // Tz0
+            case 2: th.border_color = SPR_PALETTE_ZONING_YELLOW; pal = PALETTE_TINT_YELLOW; break; // Tz1
+            case 3: th.border_color = SPR_PALETTE_ZONING_ORANGE; pal = PALETTE_TINT_ORANGE; break; // Tz2
+            case 4: th.border_color = SPR_PALETTE_ZONING_ORANGE; pal = PALETTE_TINT_ORANGE; break; // Tz3
+            case 5: th.border_color = SPR_PALETTE_ZONING_RED; pal = PALETTE_TINT_RED; break; // Tz4 - center
         };
-    } else if (_zoning.outer == CHECKBULUNSER || _zoning.outer == CHECKINDUNSER) {
-        // handled in house drawing
+        th.ground_pal = th.structure_pal = pal;
     } else if (_zoning.outer == CHECKSTACATCH) {
         th.border = citymania::GetAnyStationCatchmentBorder(ti->tile);
         th.border_color = SPR_PALETTE_ZONING_LIGHT_BLUE;
+    } else if (_zoning.outer == CHECKTOWNGROWTHTILES) {
+        auto tgt = max(_towns_growth_tiles[ti->tile], _towns_growth_tiles_last_month[ti->tile]);
+        // if (tgt == TGTS_NEW_HOUSE) th.sprite = SPR_IMG_HOUSE_NEW;
+        switch (tgt) {
+            case TGTS_CB_HOUSE_REMOVED_NOGROW:
+            case TGTS_RH_REMOVED:
+                th.selection = SPR_PALETTE_ZONING_LIGHT_BLUE;
+                th.ground_pal = PALETTE_TINT_CYAN;
+                break;
+            case TGTS_RH_REBUILT:
+                th.selection = SPR_PALETTE_ZONING_WHITE;
+                th.ground_pal = th.structure_pal = PALETTE_TINT_WHITE;
+                break;
+            case TGTS_NEW_HOUSE:
+                th.selection = SPR_PALETTE_ZONING_GREEN;
+                th.ground_pal = th.structure_pal = PALETTE_TINT_GREEN;
+                break;
+            case TGTS_CYCLE_SKIPPED:
+                th.selection = SPR_PALETTE_ZONING_ORANGE;
+                th.ground_pal = PALETTE_TINT_ORANGE;
+                break;
+            case TGTS_HOUSE_SKIPPED:
+                th.selection = SPR_PALETTE_ZONING_YELLOW;
+                th.ground_pal = PALETTE_TINT_YELLOW;
+                break;
+            case TGTS_CB_HOUSE_REMOVED:
+                th.selection = SPR_PALETTE_ZONING_RED;
+                th.ground_pal = PALETTE_TINT_RED;
+                break;
+            default: th.selection = PAL_NONE;
+        }
+    } else if (_zoning.outer == CHECKBULUNSER) {
+        if (IsTileType (ti->tile, MP_HOUSE)) {
+            StationFinder stations(TileArea(ti->tile, 1, 1));
+
+            // TODO check cargos
+            if (stations.GetStations()->empty())
+                th.ground_pal = th.structure_pal = PALETTE_TINT_RED_DEEP;
+        }
+    } else if (_zoning.outer == CHECKINDUNSER) {
+        auto pal = GetIndustryZoningPalette(ti->tile);
+        if (pal) th.ground_pal = th.structure_pal = PALETTE_TINT_RED_DEEP;
     }
     return th;
 }
@@ -73,6 +134,14 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
 void DrawTileSelection(const TileInfo *ti, const TileHighlight &th) {
     if (th.border != ZoningBorder::NONE)
         DrawBorderSprites(ti, th.border, th.border_color);
+    if (th.sprite) {
+        DrawSelectionSprite(th.sprite, PAL_NONE, ti, 0, FOUNDATION_PART_NORMAL);
+    }
+    if (th.selection) {
+        DrawBorderSprites(ti, ZoningBorder::FULL, th.selection);
+        // DrawSelectionSprite(SPR_SELECT_TILE + _tileh_to_sprite[ti->tileh],
+        //                     th.selection, ti, 0, FOUNDATION_PART_NORMAL);
+    }
 }
 
 void AllocateZoningMap(uint map_size) {
@@ -190,57 +259,6 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tile) {
     if (border & ZoningBorder::TOP_CORNER && border & (ZoningBorder::TOP_LEFT | ZoningBorder::TOP_RIGHT))
         border &= ~ZoningBorder::TOP_CORNER;
     return border;
-}
-
-SpriteID GetTownTileZoningPalette(TileIndex tile) {
-    if (_zoning.outer == CHECKBULUNSER) {
-        StationFinder stations(TileArea(tile, 1, 1));
-
-        if (stations.GetStations()->empty())
-            return SPR_RECOLOUR_RED;
-    } else if (_zoning.outer == CHECKTOWNZONES) {
-        HouseZonesBits next_zone = HZB_BEGIN, tz = HZB_END;
-
-        for (Town *town : Town::Iterate()) {
-            uint dist = DistanceSquare(tile, town->xy);
-            // town code uses <= for checking town borders (tz0) but < for other zones
-            while (next_zone < HZB_END
-                && (town->cache.squared_town_zone_radius[next_zone] == 0
-                    || dist <= town->cache.squared_town_zone_radius[next_zone] - (next_zone == HZB_BEGIN ? 0 : 1))
-            ){
-                if(town->cache.squared_town_zone_radius[next_zone] != 0)  tz = next_zone;
-                next_zone++;
-            }
-        }
-
-        switch (tz) {
-            case HZB_TOWN_EDGE:         return SPR_RECOLOUR_WHITE; // Tz0
-            case HZB_TOWN_OUTSKIRT:     return SPR_RECOLOUR_YELLOW; // Tz1
-            case HZB_TOWN_OUTER_SUBURB: return SPR_RECOLOUR_ORANGE; // Tz2
-            case HZB_TOWN_INNER_SUBURB: return SPR_RECOLOUR_ORANGE; // Tz3
-            case HZB_TOWN_CENTRE:       return SPR_RECOLOUR_RED; // Tz4 - center
-            default:                    return PAL_NONE; // no town
-        }
-    }
-    return PAL_NONE;
-}
-
-SpriteID GetIndustryTileZoningPalette(TileIndex tile, Industry *ind) {
-    if (_zoning.outer == CHECKINDUNSER) {
-        auto n_produced = 0;
-        auto n_serviced = 0;
-        for (auto j = 0; j < INDUSTRY_NUM_OUTPUTS; j++) {
-            if (ind->produced_cargo[j] == CT_INVALID) continue;
-            if (ind->last_month_production[j] == 0 && ind->this_month_production[j] == 0) continue;
-            n_produced++;
-            if (ind->last_month_transported[j] > 0 || ind->last_month_transported[j] > 0)
-                n_serviced++;
-        }
-        if (n_serviced < n_produced)
-            return (n_serviced == 0 ? SPR_RECOLOUR_RED : SPR_RECOLOUR_ORANGE);
-    }
-
-    return PAL_NONE;
 }
 
 }  // namespace citymania

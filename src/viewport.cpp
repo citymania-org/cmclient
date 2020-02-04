@@ -205,7 +205,7 @@ struct ViewportDrawer {
 	int *last_foundation_child[FOUNDATION_PART_END]; ///< Tail of ChildSprite list of the foundations. (index into child_screen_sprites_to_draw)
 	Point foundation_offset[FOUNDATION_PART_END];    ///< Pixel offset for ground sprites on the foundations.
 
-	citymania::TileHighlight zoning;
+	citymania::TileHighlight cm_highlight;
 };
 
 static void MarkViewportDirty(const ViewPort *vp, int left, int top, int right, int bottom);
@@ -594,7 +594,7 @@ void DrawGroundSpriteAt(SpriteID image, PaletteID pal, int32 x, int32 y, int z, 
 {
 	/* Switch to first foundation part, if no foundation was drawn */
 	if (_vd.foundation_part == FOUNDATION_PART_NONE) _vd.foundation_part = FOUNDATION_PART_NORMAL;
-
+	if (_vd.cm_highlight.ground_pal) pal = _vd.cm_highlight.ground_pal;
 	if (_vd.foundation[_vd.foundation_part] != -1) {
 		Point pt = RemapCoords(x, y, z);
 		AddChildSpriteToFoundation(image, pal, sub, _vd.foundation_part, pt.x + extra_offs_x * ZOOM_LVL_BASE, pt.y + extra_offs_y * ZOOM_LVL_BASE);
@@ -702,6 +702,8 @@ void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int w,
 	int32 left, right, top, bottom;
 
 	assert((image & SPRITE_MASK) < MAX_SPRITES);
+
+	if (_vd.cm_highlight.structure_pal) pal = _vd.cm_highlight.structure_pal;
 
 	/* make the sprites transparent with the right palette */
 	if (transparent) {
@@ -1118,9 +1120,6 @@ static void DrawTileSelection(const TileInfo *ti)
 	/* Highlight tiles insede local authority of selected towns. */
 	HighlightTownLocalAuthorityTiles(ti);
 
-	auto cmth = citymania::GetTileHighlight(ti);
-	citymania::DrawTileSelection(ti, cmth);
-
 	/* Draw a red error square? */
 	bool is_redsq = _thd.redsq == ti->tile;
 	if (is_redsq) DrawTileSelectionRect(ti, PALETTE_TILE_RED_PULSATING);
@@ -1323,16 +1322,20 @@ static void ViewportAddLandscape()
 				_vd.foundation[1] = -1;
 				_vd.last_foundation_child[0] = nullptr;
 				_vd.last_foundation_child[1] = nullptr;
+				_vd.cm_highlight = citymania::GetTileHighlight(&tile_info);
 
 				_tile_type_procs[tile_type]->draw_tile_proc(&tile_info);
+
 				if (tile_info.tile != INVALID_TILE){
 					DrawTileZoning(&tile_info);
+					citymania::DrawTileSelection(&tile_info, _vd.cm_highlight);
 					DrawIndustryForbiddenTiles(&tile_info);
 					DrawTileSelection(&tile_info);
 				}
 			}
 		}
 	}
+	_vd.cm_highlight = citymania::TileHighlight();
 }
 
 /**

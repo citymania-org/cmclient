@@ -305,29 +305,33 @@ static const uint16 PALETTE_SPRITE_COUNT = 1;
 static const SpriteID SPR_INNER_HIGHLIGHT_BASE      = SPR_PALETTE_BASE + PALETTE_SPRITE_COUNT;
 static const SpriteID SPR_IMG_COMPANY_CARGO         = SPR_INNER_HIGHLIGHT_BASE + 19;
 static const SpriteID SPR_IMG_COMPANY_GOAL          = SPR_INNER_HIGHLIGHT_BASE + 20;
-static const SpriteID SPR_PALETTE_ZONING_RED        = SPR_INNER_HIGHLIGHT_BASE + 21;
-static const SpriteID SPR_PALETTE_ZONING_GREEN      = SPR_INNER_HIGHLIGHT_BASE + 22;
-static const SpriteID SPR_PALETTE_ZONING_BLACK      = SPR_INNER_HIGHLIGHT_BASE + 23;
-static const SpriteID SPR_PALETTE_ZONING_LIGHT_BLUE = SPR_INNER_HIGHLIGHT_BASE + 24;
-static const SpriteID SPR_PALETTE_ZONING_ORANGE     = SPR_INNER_HIGHLIGHT_BASE + 25;
-static const SpriteID SPR_PALETTE_ZONING_WHITE      = SPR_INNER_HIGHLIGHT_BASE + 26;
-static const SpriteID SPR_PALETTE_ZONING_YELLOW     = SPR_INNER_HIGHLIGHT_BASE + 27;
-static const SpriteID SPR_PALETTE_ZONING_PURPLE     = SPR_INNER_HIGHLIGHT_BASE + 28;
-static const SpriteID SPR_INNER_HIGHLIGHT_COUNT     = 29;
+static const SpriteID SPR_IMG_HOUSE_NEW             = SPR_INNER_HIGHLIGHT_BASE + 21;
+static const SpriteID SPR_PALETTE_ZONING_RED        = SPR_INNER_HIGHLIGHT_BASE + 22;
+static const SpriteID SPR_PALETTE_ZONING_GREEN      = SPR_INNER_HIGHLIGHT_BASE + 23;
+static const SpriteID SPR_PALETTE_ZONING_BLACK      = SPR_INNER_HIGHLIGHT_BASE + 24;
+static const SpriteID SPR_PALETTE_ZONING_LIGHT_BLUE = SPR_INNER_HIGHLIGHT_BASE + 25;
+static const SpriteID SPR_PALETTE_ZONING_ORANGE     = SPR_INNER_HIGHLIGHT_BASE + 26;
+static const SpriteID SPR_PALETTE_ZONING_WHITE      = SPR_INNER_HIGHLIGHT_BASE + 27;
+static const SpriteID SPR_PALETTE_ZONING_YELLOW     = SPR_INNER_HIGHLIGHT_BASE + 28;
+static const SpriteID SPR_PALETTE_ZONING_PURPLE     = SPR_INNER_HIGHLIGHT_BASE + 29;
+static const SpriteID SPR_INNER_HIGHLIGHT_COUNT     = 30;
 
 static const SpriteID SPR_BORDER_HIGHLIGHT_BASE     = SPR_INNER_HIGHLIGHT_BASE + SPR_INNER_HIGHLIGHT_COUNT + 1;
 static const SpriteID SPR_BORDER_HIGHLIGHT_COUNT    = 19 * 19;
-static const SpriteID SPR_RECOLOUR_BASE             = SPR_BORDER_HIGHLIGHT_BASE + SPR_BORDER_HIGHLIGHT_COUNT;
-static const SpriteID SPR_RECOLOUR_RED                = SPR_RECOLOUR_BASE;
-static const SpriteID SPR_RECOLOUR_ORANGE           = SPR_RECOLOUR_BASE + 1;
-static const SpriteID SPR_RECOLOUR_YELLOW           = SPR_RECOLOUR_BASE + 2;
-static const SpriteID SPR_RECOLOUR_YELLOW_WHITE     = SPR_RECOLOUR_BASE + 3;
-static const SpriteID SPR_RECOLOUR_WHITE            = SPR_RECOLOUR_BASE + 4;
-static const SpriteID SPR_RECOLOUR_GREEN            = SPR_RECOLOUR_BASE + 5;
-static const SpriteID SPR_RECOLOUR_COUNT            = 5;
+static const SpriteID PALETTE_TINT_BASE             = SPR_BORDER_HIGHLIGHT_BASE + SPR_BORDER_HIGHLIGHT_COUNT;
+static const SpriteID PALETTE_TINT_RED_DEEP         = PALETTE_TINT_BASE;
+static const SpriteID PALETTE_TINT_ORANGE_DEEP      = PALETTE_TINT_BASE + 1;
+static const SpriteID PALETTE_TINT_RED              = PALETTE_TINT_BASE + 2;
+static const SpriteID PALETTE_TINT_ORANGE           = PALETTE_TINT_BASE + 3;
+static const SpriteID PALETTE_TINT_YELLOW           = PALETTE_TINT_BASE + 4;
+static const SpriteID PALETTE_TINT_YELLOW_WHITE     = PALETTE_TINT_BASE + 5;
+static const SpriteID PALETTE_TINT_WHITE            = PALETTE_TINT_BASE + 6;
+static const SpriteID PALETTE_TINT_GREEN            = PALETTE_TINT_BASE + 7;
+static const SpriteID PALETTE_TINT_CYAN             = PALETTE_TINT_BASE + 8;
+static const SpriteID PALETTE_TINT_COUNT            = 8;
 
 /* From where can we start putting NewGRFs? */
-static const SpriteID SPR_NEWGRFS_BASE = SPR_RECOLOUR_BASE + SPR_RECOLOUR_COUNT;
+static const SpriteID SPR_NEWGRFS_BASE = PALETTE_TINT_BASE + PALETTE_TINT_COUNT;
 
 /* Manager face sprites */
 static const SpriteID SPR_GRADIENT = 874; // background gradient behind manager face

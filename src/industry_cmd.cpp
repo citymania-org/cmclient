@@ -44,8 +44,6 @@
 #include "table/industry_land.h"
 #include "table/build_industry.h"
 
-#include "citymania/zoning.hpp"
-
 #include "safeguards.h"
 
 IndustryPool _industry_pool("Industry");
@@ -350,14 +348,12 @@ static void DrawTile_Industry(TileInfo *ti)
 	/* DrawFoundation() modifies ti->z and ti->tileh */
 	if (ti->tileh != SLOPE_FLAT) DrawFoundation(ti, FOUNDATION_LEVELED);
 
-	auto zoning_pal = citymania::GetIndustryTileZoningPalette(ti->tile, ind);
-
 	/* If the ground sprite is the default flat water sprite, draw also canal/river borders.
 	 * Do not do this if the tile's WaterClass is 'land'. */
 	if (image == SPR_FLAT_WATER_TILE && IsTileOnWater(ti->tile)) {
 		DrawWaterClassGround(ti);
 	} else {
-		DrawGroundSprite(image, zoning_pal == PAL_NONE ? GroundSpritePaletteTransform(image, dits->ground.pal, GENERAL_SPRITE_COLOUR(ind->random_colour)) : zoning_pal);
+		DrawGroundSprite(image, GroundSpritePaletteTransform(image, dits->ground.pal, GENERAL_SPRITE_COLOUR(ind->random_colour)));
 		// DrawGroundSprite(image, GroundSpritePaletteTransform(image, dits->ground.pal, GENERAL_SPRITE_COLOUR(ind->random_colour)));
 	}
 
@@ -367,7 +363,7 @@ static void DrawTile_Industry(TileInfo *ti)
 	/* Add industry on top of the ground? */
 	image = dits->building.sprite;
 	if (image != 0) {
-		AddSortableSpriteToDraw(image, zoning_pal == PAL_NONE ? SpriteLayoutPaletteTransform(image, dits->building.pal, GENERAL_SPRITE_COLOUR(ind->random_colour)) : zoning_pal,
+		AddSortableSpriteToDraw(image, SpriteLayoutPaletteTransform(image, dits->building.pal, GENERAL_SPRITE_COLOUR(ind->random_colour)),
 			ti->x + dits->subtile_x,
 			ti->y + dits->subtile_y,
 			dits->width,

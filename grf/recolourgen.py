@@ -59,9 +59,12 @@ for _ in range(256):
     # if c in SAFE_COLORS:
     colors.append((int(i), c))
 
-gen_recolor(spectra.rgb(1, 0, 0), 0.6, "red recolour")
-gen_recolor(spectra.rgb(1, 0.5, 0), 0.65, "orange recolour")
-gen_recolor(spectra.rgb(1.0, 1.0, 0), 0.6, "yellow recolour")
-gen_recolor(spectra.rgb(1.0, 1.0, 0.5), 0.6, "yellow white recolour")
-gen_recolor(spectra.rgb(1.0, 1.0, 1.0), 0.6, "white recolour")
-gen_recolor(spectra.rgb(0, 1.0, 0), 0.6, "green recolour")
+gen_recolor(spectra.rgb(1, 0, 0), 0.6, "deep red tint")
+gen_recolor(spectra.rgb(1, 0.5, 0), 0.65, "deep orange tint")
+gen_recolor(spectra.rgb(1, 0, 0), 0.4, "red tint")
+gen_recolor(spectra.rgb(1, 0.5, 0), 0.4, "orange tint")
+gen_recolor(spectra.rgb(1.0, 1.0, 0), 0.4, "yellow tint")
+gen_recolor(spectra.rgb(1.0, 1.0, 0.5), 0.4, "yellow white tint")
+gen_recolor(spectra.rgb(1.0, 1.0, 1.0), 0.4, "white tint")
+gen_recolor(spectra.rgb(0, 1.0, 0), 0.4, "green tint")
+gen_recolor(spectra.rgb(0, 1.0, 1.0), 0.4, "cyan tint")
