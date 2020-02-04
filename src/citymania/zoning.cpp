@@ -24,6 +24,7 @@ namespace citymania {
 struct TileZoning {
     uint8 town_zone : 3;
     uint8 industry_fund_result : 2;
+    uint8 advertisement_zone : 2;
     IndustryType industry_fund_type;
 };
 
@@ -169,6 +170,19 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
     } else if (_zoning.outer == CHECKINDUNSER) {
         auto pal = GetIndustryZoningPalette(ti->tile);
         if (pal) th.ground_pal = th.structure_pal = PALETTE_TINT_RED_DEEP;
+    } else if (_zoning.outer == CHECKTOWNADZONES) {
+        auto getter = [](TileIndex t) { return _mz[t].advertisement_zone; };
+        auto b = CalcTileBorders(ti->tile, getter);
+        if (b.first != ZoningBorder::NONE) {
+            th.border = b.first;
+            const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_ORANGE, SPR_PALETTE_ZONING_RED};
+            th.border_color = pal[b.second];
+        }
+        auto z = getter(ti->tile);
+        if (z) {
+            const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_YELLOW, PALETTE_TINT_ORANGE, PALETTE_TINT_RED};
+            th.ground_pal = th.structure_pal = pal[b.second];
+        }
     }
 
     if (_settings_client.gui.show_industry_forbidden_tiles &&
@@ -270,11 +284,29 @@ void UpdateTownZoning(Town *town, uint32 prev_edge) {
     }
 }
 
+void UpdateAdvertisementZoning(TileIndex center, uint radius, uint8 zone) {
+    uint16 x1, y1, x2, y2;
+    x1 = (uint16)max<int>(0, TileX(center) - radius);
+    x2 = (uint16)min<int>(TileX(center) + radius + 1, MapSizeX());
+    y1 = (uint16)max<int>(0, TileY(center) - radius);
+    y2 = (uint16)min<int>(TileY(center) + radius + 1, MapSizeY());
+    for (uint16 y = y1; y < y2; y++) {
+        for (uint16 x = x1; x < x2; x++) {
+            auto tile = TileXY(x, y);
+            _mz[tile].advertisement_zone = max(_mz[tile].advertisement_zone, zone);
+        }
+    }
+}
+
 void InitializeZoningMap() {
     for (Town *t : Town::Iterate()) {
         UpdateTownZoning(t, 0);
+        UpdateAdvertisementZoning(t->xy, 10, 3);
+        UpdateAdvertisementZoning(t->xy, 15, 2);
+        UpdateAdvertisementZoning(t->xy, 20, 1);
     }
 }
+
 std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile) {
     return CalcTileBorders(tile, [](TileIndex t) { return _mz[t].town_zone; });
 }
