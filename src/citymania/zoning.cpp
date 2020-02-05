@@ -18,6 +18,7 @@ enum FoundationPart {
     FOUNDATION_PART_END
 };
 extern void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part); // viewport.cpp
+extern const Station *_viewport_highlight_station;
 
 namespace citymania {
 
@@ -219,6 +220,25 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
         }
         if (!CanBuildIndustryOnTileCached(_industry_forbidden_tiles, ti->tile))
             th.ground_pal = th.structure_pal = PALETTE_TINT_RED;
+    }
+
+    if (_viewport_highlight_station != nullptr) {
+        auto getter = [](TileIndex t) {
+            if (IsTileType(t, MP_STATION) && GetStationIndex(t) == _viewport_highlight_station->index) return 2;
+            if (_viewport_highlight_station->TileIsInCatchment(t)) return 1;
+            return 0;
+        };
+        auto b = CalcTileBorders(ti->tile, getter);
+        if(b.first != ZoningBorder::NONE) {
+            th.border = b.first;
+            const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_WHITE, SPR_PALETTE_ZONING_LIGHT_BLUE};
+            th.border_color = pal[b.second];
+        }
+        auto z = getter(ti->tile);
+        if (z) {
+            const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_WHITE, PALETTE_TINT_CYAN_DEEP};
+            th.ground_pal = th.structure_pal = pal[z];
+        }
     }
 
     return th;

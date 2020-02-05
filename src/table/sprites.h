@@ -322,14 +322,15 @@ static const SpriteID PALETTE_TINT_BASE             = SPR_BORDER_HIGHLIGHT_BASE 
 static const SpriteID PALETTE_TINT_RED_DEEP         = PALETTE_TINT_BASE;
 static const SpriteID PALETTE_TINT_ORANGE_DEEP      = PALETTE_TINT_BASE + 1;
 static const SpriteID PALETTE_TINT_GREEN_DEEP       = PALETTE_TINT_BASE + 2;
-static const SpriteID PALETTE_TINT_RED              = PALETTE_TINT_BASE + 3;
-static const SpriteID PALETTE_TINT_ORANGE           = PALETTE_TINT_BASE + 4;
-static const SpriteID PALETTE_TINT_YELLOW           = PALETTE_TINT_BASE + 5;
-static const SpriteID PALETTE_TINT_YELLOW_WHITE     = PALETTE_TINT_BASE + 6;
-static const SpriteID PALETTE_TINT_WHITE            = PALETTE_TINT_BASE + 7;
-static const SpriteID PALETTE_TINT_GREEN            = PALETTE_TINT_BASE + 8;
-static const SpriteID PALETTE_TINT_CYAN             = PALETTE_TINT_BASE + 9;
-static const SpriteID PALETTE_TINT_COUNT            = 10;
+static const SpriteID PALETTE_TINT_CYAN_DEEP        = PALETTE_TINT_BASE + 3;
+static const SpriteID PALETTE_TINT_RED              = PALETTE_TINT_BASE + 4;
+static const SpriteID PALETTE_TINT_ORANGE           = PALETTE_TINT_BASE + 5;
+static const SpriteID PALETTE_TINT_YELLOW           = PALETTE_TINT_BASE + 6;
+static const SpriteID PALETTE_TINT_YELLOW_WHITE     = PALETTE_TINT_BASE + 7;
+static const SpriteID PALETTE_TINT_WHITE            = PALETTE_TINT_BASE + 8;
+static const SpriteID PALETTE_TINT_GREEN            = PALETTE_TINT_BASE + 9;
+static const SpriteID PALETTE_TINT_CYAN             = PALETTE_TINT_BASE + 10;
+static const SpriteID PALETTE_TINT_COUNT            = 11;
 
 /* From where can we start putting NewGRFs? */
 static const SpriteID SPR_NEWGRFS_BASE = PALETTE_TINT_BASE + PALETTE_TINT_COUNT;

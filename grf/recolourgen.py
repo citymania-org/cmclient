@@ -62,6 +62,7 @@ for _ in range(256):
 gen_recolor(spectra.rgb(1, 0, 0), 0.6, "deep red tint")
 gen_recolor(spectra.rgb(1, 0.5, 0), 0.65, "deep orange tint")
 gen_recolor(spectra.rgb(0, 1, 0), 0.65, "deep green tint")
+gen_recolor(spectra.rgb(0, 1, 1), 0.65, "deep cyan tint")
 gen_recolor(spectra.rgb(1, 0, 0), 0.4, "red tint")
 gen_recolor(spectra.rgb(1, 0.5, 0), 0.4, "orange tint")
 gen_recolor(spectra.rgb(1.0, 1.0, 0), 0.4, "yellow tint")
