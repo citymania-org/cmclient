@@ -178,10 +178,15 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
             const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_ORANGE, SPR_PALETTE_ZONING_RED};
             th.border_color = pal[b.second];
         }
-        auto z = getter(ti->tile);
+        auto check_tile = ti->tile;
+        if (IsTileType (ti->tile, MP_STATION)) {
+            auto station =  Station::GetByTile(ti->tile);
+            if (station) check_tile = station->xy;
+        }
+        auto z = getter(check_tile);
         if (z) {
             const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_YELLOW, PALETTE_TINT_ORANGE, PALETTE_TINT_RED};
-            th.ground_pal = th.structure_pal = pal[b.second];
+            th.ground_pal = th.structure_pal = pal[z];
         }
     }
 
