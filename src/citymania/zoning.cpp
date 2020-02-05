@@ -293,6 +293,7 @@ void UpdateAdvertisementZoning(TileIndex center, uint radius, uint8 zone) {
     for (uint16 y = y1; y < y2; y++) {
         for (uint16 x = x1; x < x2; x++) {
             auto tile = TileXY(x, y);
+            if (DistanceManhattan(tile, center) > radius) continue;
             _mz[tile].advertisement_zone = max(_mz[tile].advertisement_zone, zone);
         }
     }
