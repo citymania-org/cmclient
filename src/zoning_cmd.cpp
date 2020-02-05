@@ -427,6 +427,7 @@ void DrawTileZoning(const TileInfo *ti) {
 			    _zoning.outer == CHECKINDUNSER ||
 			    _zoning.outer == CHECKTOWNADZONES ||
 				_zoning.outer == CHECKSTACATCH ||
+				_zoning.outer == CHECKACTIVESTATIONS ||
 				_zoning.outer == CHECKTOWNGROWTHTILES) {
 			// handled by citymania zoning
 		} else {

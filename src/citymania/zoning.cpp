@@ -188,6 +188,26 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
             const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_YELLOW, PALETTE_TINT_ORANGE, PALETTE_TINT_RED};
             th.ground_pal = th.structure_pal = pal[z];
         }
+    } else if (_zoning.outer == CHECKACTIVESTATIONS) {
+        auto getter = [](TileIndex t) {
+            if (!IsTileType (t, MP_STATION)) return 0;
+            Station *st = Station::GetByTile(t);
+            if (!st) return 0;
+            if (st->time_since_load <= 20 || st->time_since_unload <= 20)
+                return 1;
+            return 2;
+        };
+        auto b = CalcTileBorders(ti->tile, getter);
+        if (b.first != ZoningBorder::NONE) {
+            th.border = b.first;
+            const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_GREEN, SPR_PALETTE_ZONING_RED};
+            th.border_color = pal[b.second];
+        }
+        auto z = getter(ti->tile);
+        if (z) {
+            const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_GREEN_DEEP, PALETTE_TINT_RED_DEEP};
+            th.ground_pal = th.structure_pal = pal[z];
+        }
     }
 
     if (_settings_client.gui.show_industry_forbidden_tiles &&
