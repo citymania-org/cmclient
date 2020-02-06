@@ -1246,11 +1246,12 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		this->DrawWidgets();
 
 		int rad = _settings_game.station.modified_catchment ? ((this->window_class == WC_BUS_STATION) ? CA_BUS : CA_TRUCK) : CA_UNMODIFIED;
-		if (_settings_client.gui.station_show_coverage) {
-			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
-		} else {
-			SetTileSelectSize(1, 1);
-		}
+		SetTileSelectSize(1, 1);
+		// if (_settings_client.gui.station_show_coverage) {
+		SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
+		// } else {
+		// 	SetTileSelectSize(1, 1);
+		// }
 
 		/* 'Accepts' and 'Supplies' texts. */
 		StationCoverageType sct = (this->window_class == WC_BUS_STATION) ? SCT_PASSENGERS_ONLY : SCT_NON_PASSENGERS_ONLY;

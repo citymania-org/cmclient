@@ -460,7 +460,8 @@ public:
 			this->SetWidgetDisabledState(WID_AP_LAYOUT_INCREASE, _selected_airport_layout + 1 >= as->num_table);
 
 			int rad = _settings_game.station.modified_catchment ? as->catchment : (uint)CA_UNMODIFIED;
-			if (_settings_client.gui.station_show_coverage) SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
+			//if (_settings_client.gui.station_show_coverage) SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
+			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
 		}
 	}
 

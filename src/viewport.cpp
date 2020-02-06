@@ -832,7 +832,7 @@ static bool IsInRangeInclusive(int begin, int end, int check)
  * @param y The y coordinate of the point to be checked.
  * @return True if the point is inside the rectangle, else false.
  */
-static bool IsInsideSelectedRectangle(int x, int y)
+bool IsInsideSelectedRectangle(int x, int y)
 {
 	if (!_thd.diagonal) {
 		return IsInsideBS(x, _thd.pos.x, _thd.size.x) && IsInsideBS(y, _thd.pos.y, _thd.size.y);
@@ -1125,6 +1125,11 @@ static void DrawTileSelection(const TileInfo *ti)
 
 	TileHighlightType tht = GetTileHighlightType(ti->tile);
 	DrawTileHighlightType(ti, tht);
+
+	if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
+		// station selector, handled by citymania highlight
+		return;
+	}
 
 	switch (_thd.drawstyle & HT_DRAG_MASK) {
 		default: break; // No tile selection active?

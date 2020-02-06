@@ -7,6 +7,7 @@
 #include "../industry.h"
 #include "../town.h"
 #include "../tilearea_type.h"
+#include "../tilehighlight_type.h"
 #include "../viewport_func.h"
 #include "../zoning.h"
 
@@ -19,6 +20,8 @@ enum FoundationPart {
 };
 extern void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part); // viewport.cpp
 extern const Station *_viewport_highlight_station;
+extern TileHighlightData _thd;
+extern bool IsInsideSelectedRectangle(int x, int y);
 
 namespace citymania {
 
@@ -31,6 +34,12 @@ struct TileZoning {
 
 static TileZoning *_mz = nullptr;
 static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
+BuildingPossibility _station_possibility = BuildingPossibility::OK;
+// struct {
+//     int w;
+//     int h;
+//     int catchment;
+// } _station_select;
 
 const byte _tileh_to_sprite[32] = {
     0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 0,
@@ -222,23 +231,40 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
             th.ground_pal = th.structure_pal = PALETTE_TINT_RED;
     }
 
-    if (_viewport_highlight_station != nullptr) {
-        auto getter = [](TileIndex t) {
-            if (IsTileType(t, MP_STATION) && GetStationIndex(t) == _viewport_highlight_station->index) return 2;
-            if (_viewport_highlight_station->TileIsInCatchment(t)) return 1;
-            return 0;
-        };
-        auto b = CalcTileBorders(ti->tile, getter);
-        if(b.first != ZoningBorder::NONE) {
-            th.border = b.first;
+    bool draw_coverage = false;
+    bool draw_selection = false;
+    if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
+        // we have station selected
+        draw_selection = true;
+        draw_coverage = _settings_client.gui.station_show_coverage;
+    }
+    auto getter = [draw_selection, draw_coverage](TileIndex t) {
+        auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
+        if (draw_selection && IsInsideSelectedRectangle(x, y)) return 3;
+        if (_viewport_highlight_station && IsTileType(t, MP_STATION) && GetStationIndex(t) == _viewport_highlight_station->index) return 2;
+        if (_viewport_highlight_station && _viewport_highlight_station->TileIsInCatchment(t)) return 1;
+        if (draw_coverage && IsInsideBS(x, _thd.pos.x + _thd.offs.x, _thd.size.x + _thd.outersize.x) &&
+                        IsInsideBS(y, _thd.pos.y + _thd.offs.y, _thd.size.y + _thd.outersize.y)) return 1;
+        return 0;
+    };
+    auto b = CalcTileBorders(ti->tile, getter);
+    if(b.first != ZoningBorder::NONE) {
+        th.border = b.first;
+        if (b.second == 3) {
+            const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_GREEN};
+            th.border_color = pal[(int)_station_possibility];
+        } else {
             const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_WHITE, SPR_PALETTE_ZONING_LIGHT_BLUE};
             th.border_color = pal[b.second];
         }
-        auto z = getter(ti->tile);
-        if (z) {
-            const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_WHITE, PALETTE_TINT_CYAN_DEEP};
-            th.ground_pal = th.structure_pal = pal[z];
-        }
+    }
+    auto z = getter(ti->tile);
+    if (z == 3) {
+        const SpriteID pal[] = {PALETTE_TINT_RED, PALETTE_TINT_YELLOW, PALETTE_TINT_GREEN};
+        th.ground_pal = th.structure_pal = pal[(int)_station_possibility];
+    } else if (z) {
+        const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_WHITE, PALETTE_TINT_CYAN_DEEP, PALETTE_TINT_GREEN_DEEP};
+        th.ground_pal = th.structure_pal = pal[z];
     }
 
     return th;
@@ -375,5 +401,16 @@ void SetIndustryForbiddenTilesHighlight(IndustryType type) {
     }
     _industry_forbidden_tiles = type;
 }
+
+// void SetStationTileSelectSize(int w, int h, int catchment) {
+//     _station_select.w = w;
+//     _station_select.h = h;
+//     _station_select.catchment = catchment;
+// }
+
+void SetStationBiildingPossibility(BuildingPossibility possibility) {
+    _station_possibility = possibility;
+};
+
 
 }  // namespace citymania

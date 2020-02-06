@@ -26,6 +26,12 @@ enum ZoningBorder: uint8 {
     FULL = TOP_LEFT | TOP_RIGHT | BOTTOM_LEFT | BOTTOM_RIGHT,
 };
 
+enum class BuildingPossibility {
+    IMPOSSIBLE = 0,
+    QUERY = 1,
+    OK = 2,
+};
+
 class TileHighlight {
 public:
     SpriteID ground_pal = PAL_NONE;
@@ -46,8 +52,11 @@ DECLARE_ENUM_AS_BIT_SET(ZoningBorder);
 // };
 
 
+void SetStationBiildingPossibility(BuildingPossibility possibility);
 TileHighlight GetTileHighlight(const TileInfo *ti);
 void DrawTileSelection(const TileInfo *ti, const TileHighlight &th);
+
+void SetStationTileSelectSize(int w, int h, int catchment);
 
 void AllocateZoningMap(uint map_size);
 void InitializeZoningMap();

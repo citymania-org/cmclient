@@ -1212,7 +1212,8 @@ public:
 
 		int rad = (_settings_game.station.modified_catchment) ? CA_TRAIN : CA_UNMODIFIED;
 
-		if (_settings_client.gui.station_show_coverage) SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
+		//if (_settings_client.gui.station_show_coverage) SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
+		SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad); // always let cm zoning know we're selecting station
 
 		for (uint bits = 0; bits < 7; bits++) {
 			bool disable = bits >= _settings_game.station.station_spread;

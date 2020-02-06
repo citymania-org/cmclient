@@ -39,6 +39,8 @@
 #include <set>
 #include <vector>
 
+#include "citymania/zoning.hpp"
+
 #include "safeguards.h"
 
 /**
@@ -104,6 +106,7 @@ static void FindStationsAroundSelection()
 	/* With distant join we don't know which station will be selected, so don't show any */
 	if (_ctrl_pressed) {
 		SetViewportCatchmentStation(nullptr, true);
+		citymania::SetStationBiildingPossibility(citymania::BuildingPossibility::QUERY);
 		return;
 	}
 
@@ -118,6 +121,7 @@ static void FindStationsAroundSelection()
 	TileArea ta(TileXY(max<int>(0, x - max_c), max<int>(0, y - max_c)), TileXY(min<int>(MapMaxX(), x + location.w + max_c), min<int>(MapMaxY(), y + location.h + max_c)));
 
 	Station *adjacent = nullptr;
+	auto cmbp = citymania::BuildingPossibility::OK;
 
 	/* Direct loop instead of FindStationsAroundTiles as we are not interested in catchment area */
 	TILE_AREA_LOOP(tile, ta) {
@@ -127,12 +131,14 @@ static void FindStationsAroundSelection()
 			if (adjacent != nullptr && st != adjacent) {
 				/* Multiple nearby, distant join is required. */
 				adjacent = nullptr;
+				cmbp =(_ctrl_pressed ? citymania::BuildingPossibility::QUERY : citymania::BuildingPossibility::IMPOSSIBLE);
 				break;
 			}
 			adjacent = st;
 		}
 	}
 	SetViewportCatchmentStation(adjacent, true);
+	citymania::SetStationBiildingPossibility(cmbp);
 }
 
 /**
@@ -2448,11 +2454,13 @@ struct SelectStationWindow : WindowPopup {
 	{
 		if (widget != WID_JS_PANEL || T::EXPECTED_FACIL == FACIL_WAYPOINT) {
 			SetViewportCatchmentStation(nullptr, true);
+			citymania::SetStationBiildingPossibility(citymania::BuildingPossibility::QUERY);
 			return;
 		}
 
 		/* Show coverage area of station under cursor */
 		uint st_index = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_JS_PANEL, WD_FRAMERECT_TOP);
+		citymania::SetStationBiildingPossibility(citymania::BuildingPossibility::OK);
 		if (st_index == 0 || st_index > _stations_nearby_list.size()) {
 			SetViewportCatchmentStation(nullptr, true);
 		} else {

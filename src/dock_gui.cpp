@@ -419,11 +419,15 @@ public:
 
 		this->DrawWidgets();
 
+		SetTileSelectSize(1, 1);
+		SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
+		#if 0
 		if (_settings_client.gui.station_show_coverage) {
 			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
 		} else {
 			SetTileSelectSize(1, 1);
 		}
+		#endif
 
 		/* strings such as 'Size' and 'Coverage Area' */
 		int top = this->GetWidget<NWidgetBase>(BDSW_LT_OFF)->pos_y + this->GetWidget<NWidgetBase>(BDSW_LT_OFF)->current_y + WD_PAR_VSEP_NORMAL;
