@@ -67,7 +67,7 @@
 
 #include "linkgraph/linkgraphschedule.h"
 
-#include "citymania/zoning.hpp"
+#include "citymania/highlight.hpp"
 
 #include <stdarg.h>
 #include <system_error>

@@ -44,7 +44,7 @@
 
 #include <bitset>
 
-#include "citymania/zoning.hpp"
+#include "citymania/highlight.hpp"
 
 #include "safeguards.h"
 

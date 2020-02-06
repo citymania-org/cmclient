@@ -61,7 +61,7 @@
 #include "../game/game_text.hpp"
 #include "../table/control_codes.h"
 
-#include "../citymania/zoning.hpp"
+#include "../citymania/highlight.hpp"
 
 #include "saveload_internal.h"
 

@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "citymania/zoning.hpp"
+#include "citymania/highlight.hpp"
 
 
 Zoning _zoning = {CHECKNOTHING, CHECKNOTHING};
