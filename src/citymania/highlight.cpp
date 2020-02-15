@@ -5,6 +5,7 @@
 #include "../core/math_func.hpp"
 #include "../house.h"
 #include "../industry.h"
+#include "../landscape.h"
 #include "../town.h"
 #include "../tilearea_type.h"
 #include "../tilehighlight_type.h"
@@ -34,7 +35,9 @@ struct TileZoning {
 
 static TileZoning *_mz = nullptr;
 static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
-BuildingPossibility _station_possibility = BuildingPossibility::OK;
+StationBuildingStatus _station_building_status = StationBuildingStatus::NEW;
+const Station *_station_to_join = nullptr;
+TileArea _station_to_join_area;
 // struct {
 //     int w;
 //     int h;
@@ -119,25 +122,94 @@ SpriteID GetIndustryZoningPalette(TileIndex tile) {
     return PAL_NONE;
 }
 
+SpriteID GetTintBySelectionColour(SpriteID colour, bool deep=false) {
+    switch(colour) {
+        case SPR_PALETTE_ZONING_RED: return (deep ? PALETTE_TINT_RED_DEEP : PALETTE_TINT_RED);
+        case SPR_PALETTE_ZONING_ORANGE: return (deep ? PALETTE_TINT_ORANGE_DEEP : PALETTE_TINT_ORANGE);
+        case SPR_PALETTE_ZONING_GREEN: return (deep ? PALETTE_TINT_GREEN_DEEP : PALETTE_TINT_GREEN);
+        case SPR_PALETTE_ZONING_LIGHT_BLUE: return (deep ? PALETTE_TINT_CYAN_DEEP : PALETTE_TINT_CYAN);
+        case SPR_PALETTE_ZONING_YELLOW: return PALETTE_TINT_YELLOW;
+        // case SPR_PALETTE_ZONING__: return PALETTE_TINT_YELLOW_WHITE;
+        case SPR_PALETTE_ZONING_WHITE: return PALETTE_TINT_WHITE;
+        default: return PAL_NONE;
+    }
+}
+
+static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) {
+    bool draw_coverage = false;
+    bool draw_selection = false;
+    if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
+        // we have station selected
+        draw_selection = true;
+        draw_coverage = _settings_client.gui.station_show_coverage;
+    }
+
+    if (draw_selection) {
+        auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
+            auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
+            return IsInsideSelectedRectangle(x, y);
+        });
+        if (b.first != ZoningBorder::NONE) {
+            const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
+            auto color = pal[(int)_station_building_status];
+            th.add_border(b.first, color);
+            th.ground_pal = GetTintBySelectionColour(color);
+            return;
+        }
+    }
+
+    auto highlight_station = _station_to_join ? _station_to_join : _viewport_highlight_station;
+    auto coverage_getter = [draw_coverage, highlight_station](TileIndex t) {
+        auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
+        if (highlight_station && IsTileType(t, MP_STATION) && GetStationIndex(t) == highlight_station->index) return 2;
+        if (draw_coverage && highlight_station && highlight_station->TileIsInCatchment(t)) return 1;
+        if (draw_coverage && IsInsideBS(x, _thd.pos.x + _thd.offs.x, _thd.size.x + _thd.outersize.x) &&
+                        IsInsideBS(y, _thd.pos.y + _thd.offs.y, _thd.size.y + _thd.outersize.y)) return 1;
+        return 0;
+    };
+    auto b = CalcTileBorders(ti->tile, coverage_getter);
+    if (b.second) {
+        const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_WHITE, SPR_PALETTE_ZONING_LIGHT_BLUE};
+        th.add_border(b.first, pal[b.second]);
+        const SpriteID pal2[] = {PAL_NONE, PALETTE_TINT_WHITE, PALETTE_TINT_BLUE};
+        th.ground_pal = th.structure_pal = pal2[b.second];
+    }
+
+    if (_station_to_join) {
+        auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
+
+            return _station_to_join_area.Contains(t) ? 1 : 0;
+        });
+        th.add_border(b.first, SPR_PALETTE_ZONING_LIGHT_BLUE);
+        if (b.second) {
+            switch (th.ground_pal) {
+                case PALETTE_TINT_WHITE: th.ground_pal = th.structure_pal = PALETTE_TINT_CYAN_WHITE; break;
+                case PALETTE_TINT_BLUE: break;
+                default: th.ground_pal = th.structure_pal = PALETTE_TINT_CYAN; break;
+            }
+        }
+    }
+}
+
 TileHighlight GetTileHighlight(const TileInfo *ti) {
     TileHighlight th;
     if (ti->tile == INVALID_TILE) return th;
     if (_zoning.outer == CHECKTOWNZONES) {
         auto p = GetTownZoneBorder(ti->tile);
-        th.border = p.first;
-        auto pal = PAL_NONE;
+        auto color = PAL_NONE;
         switch (p.second) {
             default: break; // Tz0
-            case 1: th.border_color = SPR_PALETTE_ZONING_WHITE; pal = PALETTE_TINT_WHITE; break; // Tz0
-            case 2: th.border_color = SPR_PALETTE_ZONING_YELLOW; pal = PALETTE_TINT_YELLOW; break; // Tz1
-            case 3: th.border_color = SPR_PALETTE_ZONING_ORANGE; pal = PALETTE_TINT_ORANGE; break; // Tz2
-            case 4: th.border_color = SPR_PALETTE_ZONING_ORANGE; pal = PALETTE_TINT_ORANGE; break; // Tz3
-            case 5: th.border_color = SPR_PALETTE_ZONING_RED; pal = PALETTE_TINT_RED; break; // Tz4 - center
+            case 1: color = SPR_PALETTE_ZONING_WHITE; break; // Tz0
+            case 2: color = SPR_PALETTE_ZONING_YELLOW; break; // Tz1
+            case 3: color = SPR_PALETTE_ZONING_ORANGE; break; // Tz2
+            case 4: color = SPR_PALETTE_ZONING_ORANGE; break; // Tz3
+            case 5: color = SPR_PALETTE_ZONING_RED; break; // Tz4 - center
         };
-        th.ground_pal = th.structure_pal = pal;
+        th.add_border(p.first, color);
+        th.ground_pal = th.structure_pal = GetTintBySelectionColour(color);
     } else if (_zoning.outer == CHECKSTACATCH) {
-        th.border = citymania::GetAnyStationCatchmentBorder(ti->tile);
-        th.border_color = SPR_PALETTE_ZONING_LIGHT_BLUE;
+        th.add_border(citymania::GetAnyStationCatchmentBorder(ti->tile),
+                      SPR_PALETTE_ZONING_LIGHT_BLUE);
     } else if (_zoning.outer == CHECKTOWNGROWTHTILES) {
         auto tgt = max(_towns_growth_tiles[ti->tile], _towns_growth_tiles_last_month[ti->tile]);
         // if (tgt == TGTS_NEW_HOUSE) th.sprite = SPR_IMG_HOUSE_NEW;
@@ -145,30 +217,27 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
             case TGTS_CB_HOUSE_REMOVED_NOGROW:
             case TGTS_RH_REMOVED:
                 th.selection = SPR_PALETTE_ZONING_LIGHT_BLUE;
-                th.ground_pal = PALETTE_TINT_CYAN;
                 break;
             case TGTS_RH_REBUILT:
                 th.selection = SPR_PALETTE_ZONING_WHITE;
-                th.ground_pal = th.structure_pal = PALETTE_TINT_WHITE;
+                th.structure_pal = PALETTE_TINT_WHITE;
                 break;
             case TGTS_NEW_HOUSE:
                 th.selection = SPR_PALETTE_ZONING_GREEN;
-                th.ground_pal = th.structure_pal = PALETTE_TINT_GREEN;
+                th.structure_pal = PALETTE_TINT_GREEN;
                 break;
             case TGTS_CYCLE_SKIPPED:
                 th.selection = SPR_PALETTE_ZONING_ORANGE;
-                th.ground_pal = PALETTE_TINT_ORANGE;
                 break;
             case TGTS_HOUSE_SKIPPED:
                 th.selection = SPR_PALETTE_ZONING_YELLOW;
-                th.ground_pal = PALETTE_TINT_YELLOW;
                 break;
             case TGTS_CB_HOUSE_REMOVED:
                 th.selection = SPR_PALETTE_ZONING_RED;
-                th.ground_pal = PALETTE_TINT_RED;
                 break;
             default: th.selection = PAL_NONE;
         }
+        if (th.selection) th.ground_pal = GetTintBySelectionColour(th.selection);
     } else if (_zoning.outer == CHECKBULUNSER) {
         if (IsTileType (ti->tile, MP_HOUSE)) {
             StationFinder stations(TileArea(ti->tile, 1, 1));
@@ -183,21 +252,15 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
     } else if (_zoning.outer == CHECKTOWNADZONES) {
         auto getter = [](TileIndex t) { return _mz[t].advertisement_zone; };
         auto b = CalcTileBorders(ti->tile, getter);
-        if (b.first != ZoningBorder::NONE) {
-            th.border = b.first;
-            const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_ORANGE, SPR_PALETTE_ZONING_RED};
-            th.border_color = pal[b.second];
-        }
+        const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_ORANGE, SPR_PALETTE_ZONING_RED};
+        th.add_border(b.first, pal[b.second]);
         auto check_tile = ti->tile;
         if (IsTileType (ti->tile, MP_STATION)) {
             auto station =  Station::GetByTile(ti->tile);
             if (station) check_tile = station->xy;
         }
         auto z = getter(check_tile);
-        if (z) {
-            const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_YELLOW, PALETTE_TINT_ORANGE, PALETTE_TINT_RED};
-            th.ground_pal = th.structure_pal = pal[z];
-        }
+        if (z) th.ground_pal = th.structure_pal = GetTintBySelectionColour(pal[z]);
     } else if (_zoning.outer == CHECKACTIVESTATIONS) {
         auto getter = [](TileIndex t) {
             if (!IsTileType (t, MP_STATION)) return 0;
@@ -208,71 +271,28 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
             return 2;
         };
         auto b = CalcTileBorders(ti->tile, getter);
-        if (b.first != ZoningBorder::NONE) {
-            th.border = b.first;
-            const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_GREEN, SPR_PALETTE_ZONING_RED};
-            th.border_color = pal[b.second];
-        }
+        const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_GREEN, SPR_PALETTE_ZONING_RED};
+        th.add_border(b.first, pal[b.second]);
         auto z = getter(ti->tile);
-        if (z) {
-            const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_GREEN_DEEP, PALETTE_TINT_RED_DEEP};
-            th.ground_pal = th.structure_pal = pal[z];
-        }
+        if (z) th.ground_pal = th.structure_pal = GetTintBySelectionColour(pal[z]);
     }
 
     if (_settings_client.gui.show_industry_forbidden_tiles &&
             _industry_forbidden_tiles != INVALID_INDUSTRYTYPE) {
         auto b = CalcTileBorders(ti->tile, [](TileIndex t) { return !CanBuildIndustryOnTileCached(_industry_forbidden_tiles, t); });
-        if(b.first != ZoningBorder::NONE) {
-            th.border = b.first;
-            th.border_color = SPR_PALETTE_ZONING_RED;
-        }
+        th.add_border(b.first, SPR_PALETTE_ZONING_RED);
         if (!CanBuildIndustryOnTileCached(_industry_forbidden_tiles, ti->tile))
             th.ground_pal = th.structure_pal = PALETTE_TINT_RED;
     }
 
-    bool draw_coverage = false;
-    bool draw_selection = false;
-    if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
-        // we have station selected
-        draw_selection = true;
-        draw_coverage = _settings_client.gui.station_show_coverage;
-    }
-    auto getter = [draw_selection, draw_coverage](TileIndex t) {
-        auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
-        if (draw_selection && IsInsideSelectedRectangle(x, y)) return 3;
-        if (_viewport_highlight_station && IsTileType(t, MP_STATION) && GetStationIndex(t) == _viewport_highlight_station->index) return 2;
-        if (_viewport_highlight_station && _viewport_highlight_station->TileIsInCatchment(t)) return 1;
-        if (draw_coverage && IsInsideBS(x, _thd.pos.x + _thd.offs.x, _thd.size.x + _thd.outersize.x) &&
-                        IsInsideBS(y, _thd.pos.y + _thd.offs.y, _thd.size.y + _thd.outersize.y)) return 1;
-        return 0;
-    };
-    auto b = CalcTileBorders(ti->tile, getter);
-    if(b.first != ZoningBorder::NONE) {
-        th.border = b.first;
-        if (b.second == 3) {
-            const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_GREEN};
-            th.border_color = pal[(int)_station_possibility];
-        } else {
-            const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_WHITE, SPR_PALETTE_ZONING_LIGHT_BLUE};
-            th.border_color = pal[b.second];
-        }
-    }
-    auto z = getter(ti->tile);
-    if (z == 3) {
-        const SpriteID pal[] = {PALETTE_TINT_RED, PALETTE_TINT_YELLOW, PALETTE_TINT_GREEN};
-        th.ground_pal = th.structure_pal = pal[(int)_station_possibility];
-    } else if (z) {
-        const SpriteID pal[] = {PAL_NONE, PALETTE_TINT_WHITE, PALETTE_TINT_CYAN_DEEP, PALETTE_TINT_GREEN_DEEP};
-        th.ground_pal = th.structure_pal = pal[z];
-    }
+    SetStationSelectionHighlight(ti, th);
 
     return th;
 }
 
 void DrawTileSelection(const TileInfo *ti, const TileHighlight &th) {
-    if (th.border != ZoningBorder::NONE)
-        DrawBorderSprites(ti, th.border, th.border_color);
+    for (uint i = 0; i < th.border_count; i++)
+        DrawBorderSprites(ti, th.border[i], th.border_color[i]);
     if (th.sprite) {
         DrawSelectionSprite(th.sprite, PAL_NONE, ti, 0, FOUNDATION_PART_NORMAL);
     }
@@ -408,9 +428,65 @@ void SetIndustryForbiddenTilesHighlight(IndustryType type) {
 //     _station_select.catchment = catchment;
 // }
 
-void SetStationBiildingPossibility(BuildingPossibility possibility) {
-    _station_possibility = possibility;
+void SetStationBiildingStatus(SetStationBiildingStatus status) {
+    _station_building_status = status;
 };
+
+static const int MAX_TILE_EXTENT_LEFT   = ZOOM_LVL_BASE * TILE_PIXELS;                     ///< Maximum left   extent of tile relative to north corner.
+static const int MAX_TILE_EXTENT_RIGHT  = ZOOM_LVL_BASE * TILE_PIXELS;                     ///< Maximum right  extent of tile relative to north corner.
+static const int MAX_TILE_EXTENT_TOP    = ZOOM_LVL_BASE * MAX_BUILDING_PIXELS;             ///< Maximum top    extent of tile relative to north corner (not considering bridges).
+static const int MAX_TILE_EXTENT_BOTTOM = ZOOM_LVL_BASE * (TILE_PIXELS + 2 * TILE_HEIGHT); ///< Maximum bottom extent of tile relative to north corner (worst case: #SLOPE_STEEP_N).
+
+void MarkTileAreaDirty(const TileArea &ta) {
+    if (ta.tile == INVALID_TILE) return;
+    auto x = TileX(ta.tile);
+    auto y = TileY(ta.tile);
+    Point p1 = RemapCoords(x * TILE_SIZE, y * TILE_SIZE, TileHeight(ta.tile) * TILE_HEIGHT);
+    Point p2 = RemapCoords((x + ta.w)  * TILE_SIZE, (y + ta.h) * TILE_SIZE, TileHeight(TileXY(x + ta.w - 1, y + ta.h - 1)) * TILE_HEIGHT);
+    Point p3 = RemapCoords((x + ta.w)  * TILE_SIZE, y * TILE_SIZE, TileHeight(TileXY(x + ta.w - 1, y)) * TILE_HEIGHT);
+    Point p4 = RemapCoords(x * TILE_SIZE, (y + ta.h) * TILE_SIZE, TileHeight(TileXY(x, y + ta.h - 1)) * TILE_HEIGHT);
+    MarkAllViewportsDirty(
+            p3.x - MAX_TILE_EXTENT_LEFT,
+            p4.x - MAX_TILE_EXTENT_TOP,
+            p1.y + MAX_TILE_EXTENT_RIGHT,
+            p2.y + MAX_TILE_EXTENT_BOTTOM);
+    // TILE_AREA_LOOP(tile, ta) {
+    //     MarkTileDirtyByTile(tile);
+    // }
+}
+
+static void UpdateStationToJoinArea() {
+    auto &r = station->rect;
+    auto d = (int)_settings_game.station.station_spread - 1;
+    ta = TileArea(
+        TileXY(max(r.right - d, 0),
+               max(r.bottom - d, 0)),
+        TileXY(min(r.left + d, MapSizeX() - 1),
+               min(r.top + d, MapSizeY() - 1))
+    );
+    if (_station_to_join_area == ta) return;
+    _station_to_join_area = ta;
+    MarkTileAreaDirty(_station_to_join_area);
+}
+
+void MarkCoverageHighlightDirty() {
+    MarkCatchmentTilesDirty();
+}
+
+void SetStationToJoin(const Station *station) {
+    if (_station_to_join == station) {
+        _station_to_join = nullptr;
+        MarkTileAreaDirty(_station_to_join_area);
+        _station_to_join_area.Clear();
+    } else {
+        _station_to_join = station;
+        UpdateStationToJoinArea();
+    }
+}
+
+const Station *GetStationToJoin() {
+    return _station_to_join;
+}
 
 
 }  // namespace citymania

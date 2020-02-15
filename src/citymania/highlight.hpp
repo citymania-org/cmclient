@@ -4,6 +4,7 @@
 #include "../core/enum_type.hpp"
 #include "../gfx_type.h"
 #include "../industry_type.h"
+#include "../station_type.h"
 #include "../tile_cmd.h"
 #include "../tile_type.h"
 #include "../town_type.h"
@@ -26,10 +27,11 @@ enum ZoningBorder: uint8 {
     FULL = TOP_LEFT | TOP_RIGHT | BOTTOM_LEFT | BOTTOM_RIGHT,
 };
 
-enum class BuildingPossibility {
+enum class StationBuildingStatus {
     IMPOSSIBLE = 0,
     QUERY = 1,
-    OK = 2,
+    JOIN = 2,
+    NEW = 3,
 };
 
 class TileHighlight {
@@ -38,8 +40,20 @@ public:
     SpriteID structure_pal = PAL_NONE;
     SpriteID sprite = 0;
     SpriteID selection = PAL_NONE;
-    ZoningBorder border = ZoningBorder::NONE;
-    SpriteID border_color;
+    ZoningBorder border[4] = {};
+    SpriteID border_color[4] = {};
+    uint border_count = 0;
+
+    void add_border(ZoningBorder border, SpriteID color) {
+        if (border == ZoningBorder::NONE) return;
+        this->border[this->border_count] = border;
+        this->border_color[this->border_count] = color;
+        this->border_count++;
+    }
+
+    void clear_borders() {
+        this->border_count = 0;
+    }
 };
 
 DECLARE_ENUM_AS_BIT_SET(ZoningBorder);
@@ -52,7 +66,7 @@ DECLARE_ENUM_AS_BIT_SET(ZoningBorder);
 // };
 
 
-void SetStationBiildingPossibility(BuildingPossibility possibility);
+void SetStationBiildingStatus(StationBuildingStatus status);
 TileHighlight GetTileHighlight(const TileInfo *ti);
 void DrawTileSelection(const TileInfo *ti, const TileHighlight &th);
 
@@ -71,6 +85,10 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tlie);
 SpriteID GetTownTileZoningPalette(TileIndex tile);
 SpriteID GetIndustryTileZoningPalette(TileIndex tile, Industry *ind);
 void SetIndustryForbiddenTilesHighlight(IndustryType type);
+
+void SetStationToJoin(const Station *station);
+const Station *GetStationToJoin();
+void MarkCoverageHighlightDirty();
 
 }  // namespace citymania
 

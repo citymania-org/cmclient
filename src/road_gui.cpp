@@ -39,6 +39,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/highlight.hpp"
+
 #include "safeguards.h"
 
 static void ShowRVStationPicker(Window *parent, RoadStopType rs);
@@ -289,6 +291,12 @@ static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, u
 	uint8 ddir = _road_station_picker_orientation;
 	SB(p2, 16, 16, INVALID_STATION); // no station to join
 	TileArea ta(start_tile, end_tile);
+
+	if (_ctrl_pressed && start_tile == end_tile && IsTileType (start_tile, MP_STATION)) {
+		/* Select station to join */
+		citymania::SetStationToJoin(Station::GetByTile(end_tile));
+        return;
+	}
 
 	if (ddir >= DIAGDIR_END) {
 		if (ddir < DIAGDIR_END + 2) {
@@ -1330,6 +1338,7 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 				this->LowerWidget(_settings_client.gui.station_show_coverage + WID_BROS_LT_OFF);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
+				citymania::MarkCoverageHighlightDirty();
 				break;
 
 			default:

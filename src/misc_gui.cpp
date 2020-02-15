@@ -39,6 +39,8 @@
 
 #include "safeguards.h"
 
+extern const Station *_viewport_highlight_station; // CM
+
 void GuiShowTooltipsExtra(Window *parent, uint param, TooltipCloseCondition close_tooltip);
 
 /** Method to open the OSK. */
