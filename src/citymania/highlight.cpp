@@ -23,7 +23,7 @@ extern void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *t
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
 extern bool IsInsideSelectedRectangle(int x, int y);
-
+extern void MarkCatchmentTilesDirty();
 namespace citymania {
 
 struct TileZoning {
@@ -169,7 +169,8 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
     };
     auto b = CalcTileBorders(ti->tile, coverage_getter);
     if (b.second) {
-        const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_WHITE, SPR_PALETTE_ZONING_LIGHT_BLUE};
+        // const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_WHITE, SPR_PALETTE_ZONING_LIGHT_BLUE};
+        const SpriteID pal[] = {PAL_NONE, SPR_PALETTE_ZONING_WHITE, PAL_NONE};
         th.add_border(b.first, pal[b.second]);
         const SpriteID pal2[] = {PAL_NONE, PALETTE_TINT_WHITE, PALETTE_TINT_BLUE};
         th.ground_pal = th.structure_pal = pal2[b.second];
@@ -177,7 +178,6 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
 
     if (_station_to_join) {
         auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
-
             return _station_to_join_area.Contains(t) ? 1 : 0;
         });
         th.add_border(b.first, SPR_PALETTE_ZONING_LIGHT_BLUE);
@@ -428,7 +428,7 @@ void SetIndustryForbiddenTilesHighlight(IndustryType type) {
 //     _station_select.catchment = catchment;
 // }
 
-void SetStationBiildingStatus(SetStationBiildingStatus status) {
+void SetStationBiildingStatus(StationBuildingStatus status) {
     _station_building_status = status;
 };
 
@@ -456,15 +456,17 @@ void MarkTileAreaDirty(const TileArea &ta) {
 }
 
 static void UpdateStationToJoinArea() {
-    auto &r = station->rect;
+    auto &r = _station_to_join->rect;
     auto d = (int)_settings_game.station.station_spread - 1;
-    ta = TileArea(
+    TileArea ta(
         TileXY(max(r.right - d, 0),
                max(r.bottom - d, 0)),
         TileXY(min(r.left + d, MapSizeX() - 1),
                min(r.top + d, MapSizeY() - 1))
     );
-    if (_station_to_join_area == ta) return;
+    if (_station_to_join_area.tile == ta.tile &&
+        _station_to_join_area.w == ta.w &&
+        _station_to_join_area.h == ta.h) return;
     _station_to_join_area = ta;
     MarkTileAreaDirty(_station_to_join_area);
 }

@@ -45,7 +45,7 @@ public:
     uint border_count = 0;
 
     void add_border(ZoningBorder border, SpriteID color) {
-        if (border == ZoningBorder::NONE) return;
+        if (border == ZoningBorder::NONE || !color) return;
         this->border[this->border_count] = border;
         this->border_color[this->border_count] = color;
         this->border_count++;

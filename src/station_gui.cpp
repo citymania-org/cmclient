@@ -121,7 +121,7 @@ static void FindStationsAroundSelection()
 	TileArea ta(TileXY(max<int>(0, x - max_c), max<int>(0, y - max_c)), TileXY(min<int>(MapMaxX(), x + location.w + max_c), min<int>(MapMaxY(), y + location.h + max_c)));
 
 	Station *adjacent = nullptr;
-	auto cmbp = citymania::StationBulidingStatus::NEW;
+	auto cmbp = citymania::StationBuildingStatus::NEW;
 
 	/* Direct loop instead of FindStationsAroundTiles as we are not interested in catchment area */
 	TILE_AREA_LOOP(tile, ta) {
@@ -131,14 +131,14 @@ static void FindStationsAroundSelection()
 			if (adjacent != nullptr && st != adjacent) {
 				/* Multiple nearby, distant join is required. */
 				adjacent = nullptr;
-				cmbp =(_ctrl_pressed ? citymania::BuildingPossibility::QUERY : citymania::BuildingPossibility::IMPOSSIBLE);
+				cmbp =(_ctrl_pressed ? citymania::StationBuildingStatus::QUERY : citymania::StationBuildingStatus::IMPOSSIBLE);
 				break;
 			}
 			adjacent = st;
 		}
 	}
 	SetViewportCatchmentStation(adjacent, true);
-	citymania::SetStationBiildingStatus(citymania::StationBulidingStatus::JOIN);
+	citymania::SetStationBiildingStatus(citymania::StationBuildingStatus::JOIN);
 }
 
 /**
@@ -2455,7 +2455,7 @@ struct SelectStationWindow : WindowPopup {
 	{
 		if (widget != WID_JS_PANEL || T::EXPECTED_FACIL == FACIL_WAYPOINT) {
 			SetViewportCatchmentStation(nullptr, true);
-			citymania::SetStationBiildingStatus(citymania::StationBulidingStatus::QUERY);
+			citymania::SetStationBiildingStatus(citymania::StationBuildingStatus::QUERY);
 			return;
 		}
 
@@ -2463,11 +2463,11 @@ struct SelectStationWindow : WindowPopup {
 		uint st_index = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_JS_PANEL, WD_FRAMERECT_TOP);
 		if (st_index == 0 || st_index > _stations_nearby_list.size()) {
 			SetViewportCatchmentStation(nullptr, true);
-			citymania::SetStationBiildingStatus(citymania::StationBulidingStatus::NEW);
+			citymania::SetStationBiildingStatus(citymania::StationBuildingStatus::NEW);
 		} else {
 			st_index--;
 			SetViewportCatchmentStation(Station::Get(_stations_nearby_list[st_index]), true);
-			citymania::SetStationBiildingStatus(citymania::StationBulidingStatus::JOIN);
+			citymania::SetStationBiildingStatus(citymania::StationBuildingStatus::JOIN);
 		}
 	}
 };
