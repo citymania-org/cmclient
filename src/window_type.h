@@ -704,6 +704,12 @@ enum WindowClass {
 	WC_LOGIN_WINDOW,
 	WC_CB_TOWN,
 
+	/**
+	 * Screenshot window; %Window numbers:
+	 *   - 0 = #ScreenshotWidgets
+	 */
+	WC_SCREENSHOT,
+
 	WC_INVALID = 0xFFFF, ///< Invalid window.
 };
 

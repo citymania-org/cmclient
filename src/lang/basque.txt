@@ -464,9 +464,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Konsola aktibatu
 STR_ABOUT_MENU_AI_DEBUG                                         :IA/Joko script-aren garbitzailea
 STR_ABOUT_MENU_SCREENSHOT                                       :Pantailan dagoenaren argazkia hartu (Ctrl+S)
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Pantailan dagoenaren argazkia hartu zoom-a guztiz erabiliz
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :zoom lehenetsikoarekin pantaila-argazkia
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Mapa osoaren argazkia hartu (Ctrl+G)
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :'OpenTTD'-ri buruz
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :"Sprit" lerrokatzailea
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Kaxen neurriak aldatu
@@ -636,9 +633,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Pertsonalizatua 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Musikaren Bolumena
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Efektuen Bolumena
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -3875,6 +3869,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Onartu
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Piztutako script-a aukeratu
 STR_AI_LIST_CANCEL                                              :{BLACK}Ezeztatu
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ez aldatu script-a
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametroak

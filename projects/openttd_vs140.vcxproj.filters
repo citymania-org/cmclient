@@ -318,6 +318,9 @@
     <ClCompile Include="..\src\roadstop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\screenshot_gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\screenshot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -843,6 +846,9 @@
     <ClInclude Include="..\src\newgrf_object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\newgrf_profiling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\newgrf_properties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -970,6 +976,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\screenshot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\screenshot_gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\sound\sdl_s.h">
@@ -1654,6 +1663,9 @@
       <Filter>Widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\src\widgets\road_widget.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\widgets\screenshot_widget.h">
       <Filter>Widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\src\widgets\settings_widget.h">
@@ -2845,6 +2857,9 @@
       <Filter>NewGRF</Filter>
     </ClCompile>
     <ClCompile Include="..\src\newgrf_object.cpp">
+      <Filter>NewGRF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\newgrf_profiling.cpp">
       <Filter>NewGRF</Filter>
     </ClCompile>
     <ClCompile Include="..\src\newgrf_railtype.cpp">

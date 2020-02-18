@@ -472,9 +472,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Hidup/matikan Layar Konsol
 STR_ABOUT_MENU_AI_DEBUG                                         :Debug skrip AI
 STR_ABOUT_MENU_SCREENSHOT                                       :Ambil gambar
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Ambil gambar dengan diperbesar
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Ambil gambar dengan perbesaran normal
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Ambil gambar keseluruhan peta
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Tampilkan laju bingkai
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Tentang 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Penjajar Sprite
@@ -645,9 +642,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Bebas 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Volume Musik
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Volume Efek
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAKS
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -3304,6 +3298,7 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastr
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Bagian rel:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Sinyal
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Bagian jalan:
+STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}Bagian Trem:
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Perairan:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanal
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stasiun:
@@ -4066,6 +4061,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Terapkan
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Pilih skrip AI yg disorot
 STR_AI_LIST_CANCEL                                              :{BLACK}Batal
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Jangan mengubah skrip AI
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parameter

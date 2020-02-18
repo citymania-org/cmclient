@@ -470,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Scoránaigh consól
 STR_ABOUT_MENU_AI_DEBUG                                         :Dífhabhtú AI/Scripteanna Cluiche
 STR_ABOUT_MENU_SCREENSHOT                                       :Seat scáileáin
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Seat scáileáin zúmáilte isteach go hiomlán
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Seat scáileáin le zúm réamhshocraithe
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Seat scáileáin den léarscáil ar fad
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Maidir le 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Ailínóir spriteanna
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Scoránaigh boscaí imill
@@ -642,9 +639,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Saincheaptha 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Airde Ceoil
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Airde na maisíochtaí
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}ÍOSTA
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}UASTA
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -3999,6 +3993,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Glac lei
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Roghnaigh an AI aibhsithe
 STR_AI_LIST_CANCEL                                              :{BLACK}Cuir ar ceal
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ná hathraigh an AI
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}Paraiméadair {STRING}

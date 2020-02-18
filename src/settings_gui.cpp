@@ -527,6 +527,7 @@ struct GameOptionsWindow : Window {
 				ReadLanguagePack(&_languages[index]);
 				DeleteWindowByClass(WC_QUERY_STRING);
 				CheckForMissingGlyphs();
+				ClearAllCachedNames();
 				UpdateAllVirtCoords();
 				ReInitAllWindows();
 				break;
@@ -1590,6 +1591,7 @@ static SettingsContainer &GetSettingsTree()
 			interface->Add(new SettingEntry("gui.expenses_layout"));
 			interface->Add(new SettingEntry("gui.powerfund_money"));
 			interface->Add(new SettingEntry("gui.powerfund_houses"));
+			interface->Add(new SettingEntry("gui.show_newgrf_name"));
 		}
 
 		SettingsPage *advisors = main->Add(new SettingsPage(STR_CONFIG_SETTING_ADVISORS));
@@ -1743,6 +1745,7 @@ static SettingsContainer &GetSettingsTree()
 			genworld->Add(new SettingEntry("economy.town_layout"));
 			genworld->Add(new SettingEntry("difficulty.industry_density"));
 			genworld->Add(new SettingEntry("gui.pause_on_newgame"));
+			genworld->Add(new SettingEntry("game_creation.ending_year"));
 		}
 
 		SettingsPage *environment = main->Add(new SettingsPage(STR_CONFIG_SETTING_ENVIRONMENT));

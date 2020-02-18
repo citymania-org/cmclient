@@ -409,6 +409,7 @@
     <ClCompile Include="..\src\rev.cpp" />
     <ClCompile Include="..\src\road.cpp" />
     <ClCompile Include="..\src\roadstop.cpp" />
+    <ClCompile Include="..\src\screenshot_gui.cpp" />
     <ClCompile Include="..\src\screenshot.cpp" />
     <ClCompile Include="..\src\settings.cpp" />
     <ClCompile Include="..\src\signal.cpp" />
@@ -584,6 +585,7 @@
     <ClInclude Include="..\src\newgrf_industries.h" />
     <ClInclude Include="..\src\newgrf_industrytiles.h" />
     <ClInclude Include="..\src\newgrf_object.h" />
+    <ClInclude Include="..\src\newgrf_profiling.h" />
     <ClInclude Include="..\src\newgrf_properties.h" />
     <ClInclude Include="..\src\newgrf_railtype.h" />
     <ClInclude Include="..\src\newgrf_roadtype.h" />
@@ -627,6 +629,7 @@
     <ClInclude Include="..\src\roadveh.h" />
     <ClInclude Include="..\src\safeguards.h" />
     <ClInclude Include="..\src\screenshot.h" />
+    <ClInclude Include="..\src\screenshot_gui.h" />
     <ClInclude Include="..\src\sound\sdl_s.h" />
     <ClInclude Include="..\src\video\sdl_v.h" />
     <ClInclude Include="..\src\video\sdl2_v.h" />
@@ -855,6 +858,7 @@
     <ClInclude Include="..\src\widgets\osk_widget.h" />
     <ClInclude Include="..\src\widgets\rail_widget.h" />
     <ClInclude Include="..\src\widgets\road_widget.h" />
+    <ClInclude Include="..\src\widgets\screenshot_widget.h" />
     <ClInclude Include="..\src\widgets\settings_widget.h" />
     <ClInclude Include="..\src\widgets\sign_widget.h" />
     <ClInclude Include="..\src\widgets\smallmap_widget.h" />
@@ -1252,6 +1256,7 @@
     <ClCompile Include="..\src\newgrf_industries.cpp" />
     <ClCompile Include="..\src\newgrf_industrytiles.cpp" />
     <ClCompile Include="..\src\newgrf_object.cpp" />
+    <ClCompile Include="..\src\newgrf_profiling.cpp" />
     <ClCompile Include="..\src\newgrf_railtype.cpp" />
     <ClCompile Include="..\src\newgrf_roadtype.cpp" />
     <ClCompile Include="..\src\newgrf_sound.cpp" />

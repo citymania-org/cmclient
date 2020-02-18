@@ -167,7 +167,7 @@ Town::~Town()
  */
 void Town::PostDestructor(size_t index)
 {
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 0);
+	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_REBUILD);
 	UpdateNearestTownForRoadTiles(false);
 
 	/* Give objects a new home! */
@@ -231,6 +231,13 @@ void Town::UpdateLabel()
 		else if(r < RATING_VERYGOOD) this->town_label = 3; // Very Good, WHITE
 		else                         this->town_label = 4; // Excellent and Outstanding, GREEN
 	}
+}
+
+void Town::FillCachedName() const
+{
+	char buf[MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH];
+	char *end = GetTownName(buf, this, lastof(buf));
+	this->cached_name.assign(buf, end);
 }
 
 /**
@@ -448,6 +455,13 @@ void UpdateAllTownVirtCoords()
 	}
 }
 
+void ClearAllTownCachedNames()
+{
+	for (Town *t : Town::Iterate()) {
+		t->cached_name.clear();
+	}
+}
+
 /**
  * Change the towns population
  * @param t Town which population has changed
@@ -461,7 +475,7 @@ static void ChangePopulation(Town *t, int mod)
 	InvalidateWindowData(WC_TOWN_VIEW, t->index); // Cargo requirements may appear/vanish for small populations
 	if (_settings_client.gui.population_in_label) t->UpdateVirtCoord();
 
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 1);
+	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_POPULATION_CHANGE);
 }
 
 /**
@@ -2062,7 +2076,7 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 
 	t->town_label = 3;
 	t->UpdateVirtCoord();
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 0);
+	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_REBUILD);
 
 	t->InitializeLayout(layout);
 
@@ -2974,11 +2988,14 @@ CommandCost CmdRenameTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 	}
 
 	if (flags & DC_EXEC) {
+		t->cached_name.clear();
 		free(t->name);
 		t->name = reset ? nullptr : stredup(text);
 
 		t->UpdateVirtCoord();
-		InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 1);
+		InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_RESORT);
+		ClearAllStationCachedNames();
+		ClearAllIndustryCachedNames();
 		UpdateAllStationVirtCoords();
 	}
 	return CommandCost();
@@ -3093,6 +3110,35 @@ CommandCost CmdTownGrowthRate(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 		UpdateTownGrowth(t);
 		InvalidateWindowData(WC_TOWN_VIEW, p1);
 		InvalidateWindowData(WC_CB_TOWN, p1);
+	}
+
+	return CommandCost();
+}
+
+/**
+ * Change the rating of a company in a town
+ * @param tile Unused.
+ * @param flags Type of operation.
+ * @param p1 Bit 0..15 = Town ID to change, bit 16..23 = Company ID to change.
+ * @param p2 Bit 0..15 = New rating of company (signed int16).
+ * @param text Unused.
+ * @return Empty cost or an error.
+ */
+CommandCost CmdTownRating(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+{
+	if (_current_company != OWNER_DEITY) return CMD_ERROR;
+
+	TownID town_id = (TownID)GB(p1, 0, 16);
+	Town *t = Town::GetIfValid(town_id);
+	if (t == nullptr) return CMD_ERROR;
+
+	CompanyID company_id = (CompanyID)GB(p1, 16, 8);
+	if (!Company::IsValidID(company_id)) return CMD_ERROR;
+
+	int16 new_rating = Clamp((int16)GB(p2, 0, 16), RATING_MINIMUM, RATING_MAXIMUM);
+	if (flags & DC_EXEC) {
+		t->ratings[company_id] = new_rating;
+		InvalidateWindowData(WC_TOWN_AUTHORITY, town_id);
 	}
 
 	return CommandCost();

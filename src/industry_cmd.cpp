@@ -204,7 +204,7 @@ Industry::~Industry()
  */
 void Industry::PostDestructor(size_t index)
 {
-	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, 0);
+	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_FORCE_REBUILD);
 }
 
 
@@ -1823,6 +1823,11 @@ static void DoCreateNewIndustry(Industry *i, TileIndex tile, IndustryType type, 
 				break;
 			}
 			CargoID cargo = GetCargoTranslation(GB(res, 0, 8), indspec->grf_prop.grffile);
+			/* Industries without "unlimited" cargo types support depend on the specific order/slots of cargo types.
+			 * They need to be able to blank out specific slots without aborting the callback sequence,
+			 * and solve this by returning undefined cargo indexes. Skip these. */
+			if (cargo == CT_INVALID && !(indspec->behaviour & INDUSTRYBEH_CARGOTYPES_UNLIMITED)) continue;
+			/* Verify valid cargo */
 			if (std::find(indspec->accepts_cargo, endof(indspec->accepts_cargo), cargo) == endof(indspec->accepts_cargo)) {
 				/* Cargo not in spec, error in NewGRF */
 				ErrorUnknownCallbackResult(indspec->grf_prop.grffile->grfid, CBID_INDUSTRY_INPUT_CARGO_TYPES, res);
@@ -1850,6 +1855,9 @@ static void DoCreateNewIndustry(Industry *i, TileIndex tile, IndustryType type, 
 				break;
 			}
 			CargoID cargo = GetCargoTranslation(GB(res, 0, 8), indspec->grf_prop.grffile);
+			/* Allow older GRFs to skip slots. */
+			if (cargo == CT_INVALID && !(indspec->behaviour & INDUSTRYBEH_CARGOTYPES_UNLIMITED)) continue;
+			/* Verify valid cargo */
 			if (std::find(indspec->produced_cargo, endof(indspec->produced_cargo), cargo) == endof(indspec->produced_cargo)) {
 				/* Cargo not in spec, error in NewGRF */
 				ErrorUnknownCallbackResult(indspec->grf_prop.grffile->grfid, CBID_INDUSTRY_OUTPUT_CARGO_TYPES, res);
@@ -1893,7 +1901,7 @@ static void DoCreateNewIndustry(Industry *i, TileIndex tile, IndustryType type, 
 	if (GetIndustrySpec(i->type)->behaviour & INDUSTRYBEH_PLANT_ON_BUILT) {
 		for (uint j = 0; j != 50; j++) PlantRandomFarmField(i);
 	}
-	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, 0);
+	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_FORCE_REBUILD);
 
 	if (!_generating_world) PopulateStationsNearby(i);
 }
@@ -2346,6 +2354,21 @@ void Industry::RecomputeProductionMultipliers()
 	}
 }
 
+void Industry::FillCachedName() const
+{
+	char buf[256];
+	int64 args_array[] = { this->index };
+	StringParameters tmp_params(args_array);
+	char *end = GetStringWithArgs(buf, STR_INDUSTRY_NAME, &tmp_params, lastof(buf));
+	this->cached_name.assign(buf, end);
+}
+
+void ClearAllIndustryCachedNames()
+{
+	for (Industry *ind : Industry::Iterate()) {
+		ind->cached_name.clear();
+	}
+}
 
 /**
  * Set the #probability and #min_number fields for the industry type \a it for a running game.
@@ -2856,7 +2879,7 @@ void IndustryDailyLoop()
 	cur_company.Restore();
 
 	/* production-change */
-	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, 1);
+	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_PRODUCTION_CHANGE);
 }
 
 void IndustryMonthlyLoop()
@@ -2878,7 +2901,7 @@ void IndustryMonthlyLoop()
 	cur_company.Restore();
 
 	/* production-change */
-	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, 1);
+	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_PRODUCTION_CHANGE);
 }
 
 
