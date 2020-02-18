@@ -661,9 +661,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Monstrare celareve consolam
 STR_ABOUT_MENU_AI_DEBUG                                         :Emendatio IA/Ludi scriptorum
 STR_ABOUT_MENU_SCREENSHOT                                       :Imago conspectus
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Imago conspectus maxime amplificata
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Imago conspectus solite amplificata
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Imago cunctae tabulae geographicae
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :De 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Norma spiritus
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Monstrare celareve arcas finitionum
@@ -833,9 +830,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Propria II
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Amplitudo Musicae
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Amplitido Sonorum
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -4294,6 +4288,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Accipere
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Eligere scriptum
 STR_AI_LIST_CANCEL                                              :{BLACK}Cancellare
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Non scriptum mutare
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametra

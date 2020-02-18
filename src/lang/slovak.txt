@@ -534,9 +534,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Zobraziť / skryť konzolu
 STR_ABOUT_MENU_AI_DEBUG                                         :Umelá inteligencia / Ladenie skriptov
 STR_ABOUT_MENU_SCREENSHOT                                       :Snímka
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Plne priblížená snímka
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Snímka s predvoleným priblížením
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Veľká snímka celej mapy
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :O hre 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Sprite zarovnávač
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Prepnúť okrajové boxy
@@ -706,9 +703,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Vlastné 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Hlasitosť hudby
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Hlasitosť zvuk. efektov
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -4067,6 +4061,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Potvrdi�
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Vybrať vyznačený skript
 STR_AI_LIST_CANCEL                                              :{BLACK}Zrušiť
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Nemeniť skript
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametre

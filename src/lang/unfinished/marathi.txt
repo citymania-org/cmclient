@@ -436,9 +436,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :निरोप
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :जागाची माहिती
 STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_SCREENSHOT                                       :द्श्य
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :द्श्य मोठे करा
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :स्थिर द्श्य
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :संपूर्ण नकाशा स्क्रीनशॉट
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :ओपेन टीटीडी बद्दल
 ############ range ends here
 
@@ -601,9 +598,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}सानुकूल २
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}संगीत आवाज
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}प्रभाव आवाज
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}कमी
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}अधिक
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -1487,6 +1481,7 @@ STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}वे�
 STR_AI_CONFIG_CHANGE_NONE                                       :
 
 # Available AIs window
+
 
 
 

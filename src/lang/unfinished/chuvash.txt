@@ -272,7 +272,6 @@ STR_TOOLBAR_SOUND_MUSIC                                         :Сасӑ/Юрӑ
 ############ range for about menu starts
 STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_SCREENSHOT                                       :Экран сӑнӗ
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Яланхилле экран сӑнӗ
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :'OpenTTD' çинчен
 ############ range ends here
 
@@ -391,9 +390,6 @@ STR_PERFORMANCE_DETAIL_TOTAL                                    :{BLACK}Пурӗ
 ############ End of order list
 
 # Music window
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}ЧИ САХ(MIN)
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}ЧИ НУМ(MAX)
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -1300,6 +1296,7 @@ STR_AI_CONFIG_CHANGE_NONE                                       :
 # Available AIs window
 
 STR_AI_LIST_VERSION                                             :{LTBLUE}Верси: {ORANGE}{NUM}
+
 
 
 # AI Parameters

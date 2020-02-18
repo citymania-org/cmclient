@@ -479,9 +479,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Afficher/Cacher la console
 STR_ABOUT_MENU_AI_DEBUG                                         :Débogage de scripts
 STR_ABOUT_MENU_SCREENSHOT                                       :Copie d'écran
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Copie d'écran au zoom maximum
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Copie d'écran au zoom par défaut
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Copie d'écran de la carte entière
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Afficher la fréquence d'images
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :À propos d'OpenTTD
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Alignement de sprite
@@ -652,9 +649,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Personnalisé 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Volume sonore
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Volume des effets sonores
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -1316,6 +1310,7 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Afficher la pop
 STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Afficher la population des villes dans leur label sur la carte
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Épaisseur des lignes dans les graphiques{NBSP}: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Épaisseur de la ligne dans les graphiques. Une ligne fine est lisible plus précisément, une ligne épaisse est plus facile à voir et les couleurs sont plus facile à distinguer
+STR_CONFIG_SETTING_SHOW_NEWGRF_NAME_HELPTEXT                    :Ajoute une ligne à la fenêtre d'achat des véhicules, montrant de quel NewGRF provient le véhicule sélectionné.
 
 STR_CONFIG_SETTING_LANDSCAPE                                    :Paysage{NBSP}: {STRING}
 STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Les paysages définissent les scénarios de jouabilité classique avec différentes marchandises et exigences pour la croissance des villes. Les NewGRFs et les scripts de jeux autorisent cependant un contrôle plus fin
@@ -1553,6 +1548,10 @@ STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :Complet
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR                           :Les journaux en couleur apparaissent en{NBSP}: {STRING}
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR_HELPTEXT                  :Année à partir de laquelle les annonces des journaux sont imprimées en couleur. Avant cette année ils sont en noir et blanc
 STR_CONFIG_SETTING_STARTING_YEAR                                :Année de départ{NBSP}: {STRING}
+STR_CONFIG_SETTING_ENDING_YEAR                                  :Année de fin du jeu{NBSP}: {STRING}
+STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :À la fin de cette année, le score de la compagnie est enregistré et la fenêtre des meilleurs scores est affichée. Il est quand même possible de continuer de jouer après, mais le score ne sera pas enregistré.{}Si le jeu commence après cette année, les meilleurs scores ne sont jamais affichés.
+STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
+STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Jamais
 STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Permettre une économie stable (petits changements plus nombreux){NBSP}: {STRING}
 STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Lorsqu'il est activé, la production des industries change plus souvent, et plus faiblement. Ce paramètre est généralement sans effets si les types d'industries sont fournis par un NewGRF
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Permettre d'acheter des actions d'autres compagnies{NBSP}: {STRING}
@@ -3402,6 +3401,10 @@ STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUST
 STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} et {NUM} autre{P "" s}...
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Noms des industries - Cliquer sur un nom pour centrer la vue principale sur l'industrie. Ctrl-clic pour ouvrir une nouvelle vue sur l'industrie.
+STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}Cargaison acceptée{NBSP}: {SILVER}{STRING}
+STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}Cargaison produite{NBSP}: {SILVER}{STRING}
+STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :Tous les types de cargaison
+STR_INDUSTRY_DIRECTORY_FILTER_NONE                              :Aucune
 
 # Industry view
 STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTRY}
@@ -4175,6 +4178,14 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Accepter
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Sélectionner le script en surbrillance
 STR_AI_LIST_CANCEL                                              :{BLACK}Annuler
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ne pas modifier le script
+
+STR_SCREENSHOT_CAPTION                                          :{WHITE}Faire une capture d'écran
+STR_SCREENSHOT_SCREENSHOT                                       :{BLACK}Capture d'écran normale
+STR_SCREENSHOT_ZOOMIN_SCREENSHOT                                :{BLACK}Capture d'écran au zoom maximum
+STR_SCREENSHOT_DEFAULTZOOM_SCREENSHOT                           :{BLACK}Capture d'écran sans zoom
+STR_SCREENSHOT_WORLD_SCREENSHOT                                 :{BLACK}Capture d'écran de toute la carte
+STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Capture d'écran de la carte d'altitude
+STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Capture d'écran de la mini-carte
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Paramètres

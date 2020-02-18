@@ -470,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Consolă pornit/oprit
 STR_ABOUT_MENU_AI_DEBUG                                         :Depanare Inteligenţă Artificială / Script Joc
 STR_ABOUT_MENU_SCREENSHOT                                       :Capturează ecranul
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Captură mărită
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Mărimea implicită a capturii
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Capturează toată harta
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Arată FPS
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Despre 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Aliniere imagini
@@ -643,9 +640,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Personale 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Volumul muzicii
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Volumul efectelor sonore
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -3985,6 +3979,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Acceptă
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Alege scriptul marcat
 STR_AI_LIST_CANCEL                                              :{BLACK}Anulează
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Nu schimba scriptul
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametrii
