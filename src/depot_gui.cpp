@@ -884,6 +884,10 @@ struct DepotWindow : Window {
 	 */
 	bool OnVehicleSelect(const Vehicle *v) override
 	{
+		if (DoCommandP(this->window_number, v->index, _ctrl_pressed ? 1 : 0, CMD_CLONE_VEHICLE | CMD_MSG(STR_ERROR_CAN_T_BUY_TRAIN + v->type), CcCloneVehicle))
+			ResetObjectToPlace();
+
+		#if 0  // CM revert #6754
 		if (_ctrl_pressed) {
 			/* Share-clone, do not open new viewport, and keep tool active */
 			DoCommandP(this->window_number, v->index, 1, CMD_CLONE_VEHICLE | CMD_MSG(STR_ERROR_CAN_T_BUY_TRAIN + v->type), nullptr);
@@ -893,6 +897,7 @@ struct DepotWindow : Window {
 				ResetObjectToPlace();
 			}
 		}
+		#endif
 
 		return true;
 	}
