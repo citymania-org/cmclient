@@ -2859,6 +2859,7 @@ void CcBuildPrimaryVehicle(const CommandCost &result, TileIndex tile, uint32 p1,
 
 	const Vehicle *v = Vehicle::Get(_new_vehicle_id);
 	ShowVehicleViewWindow(v);
+	ShowOrdersWindow(v);
 }
 
 /**
