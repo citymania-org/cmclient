@@ -2400,6 +2400,17 @@ static bool IsVehicleRefitable(const Vehicle *v)
 	return false;
 }
 
+void CcCloneVehicleWithOrderIndex(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+{
+	if (result.Failed()) return;
+	if (p2 != 1) CcCloneVehicle(result, tile, p1, p2, cmd);
+	Vehicle *cloned = Vehicle::GetIfValid(p1);
+	if (!cloned || !cloned->IsPrimaryVehicle()) return;
+	const Vehicle *v = Vehicle::Get(_new_vehicle_id);
+	if (cloned->cur_implicit_order_index == v->cur_implicit_order_index) return;
+	DoCommandP(v->tile, v->index, cloned->cur_implicit_order_index, CMD_SKIP_TO_ORDER);
+}
+
 /** Window manager class for viewing a vehicle. */
 struct VehicleViewWindow : Window {
 private:
@@ -2701,7 +2712,7 @@ public:
 				 * most likely already open, but is also visible in the vehicle viewport. */
 				DoCommandP(v->tile, v->index, _ctrl_pressed ? 1 : 0,
 										_vehicle_command_translation_table[VCT_CMD_CLONE_VEH][v->type],
-										_ctrl_pressed ? nullptr : CcCloneVehicle);
+										CcCloneVehicleWithOrderIndex);
 				break;
 			case WID_VV_TURN_AROUND: // turn around
 				assert(v->IsGroundVehicle());
