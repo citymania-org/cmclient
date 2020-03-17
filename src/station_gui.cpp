@@ -39,7 +39,7 @@
 #include <set>
 #include <vector>
 
-#include "citymania/highlight.hpp"
+#include "citymania/station_gui.hpp"
 
 #include "safeguards.h"
 
@@ -105,8 +105,7 @@ static void FindStationsAroundSelection()
 {
 	/* With distant join we don't know which station will be selected, so don't show any */
 	if (_ctrl_pressed) {
-		// SetViewportCatchmentStation(nullptr, true);
-		// citymania::SetStationBiildingStatus(citymania::StationBulidingStatus::JOIN);
+		SetViewportCatchmentStation(nullptr, true);
 		return;
 	}
 
@@ -121,7 +120,6 @@ static void FindStationsAroundSelection()
 	TileArea ta(TileXY(max<int>(0, x - max_c), max<int>(0, y - max_c)), TileXY(min<int>(MapMaxX(), x + location.w + max_c), min<int>(MapMaxY(), y + location.h + max_c)));
 
 	Station *adjacent = nullptr;
-	auto cmbp = citymania::StationBuildingStatus::NEW;
 
 	/* Direct loop instead of FindStationsAroundTiles as we are not interested in catchment area */
 	TILE_AREA_LOOP(tile, ta) {
@@ -131,14 +129,12 @@ static void FindStationsAroundSelection()
 			if (adjacent != nullptr && st != adjacent) {
 				/* Multiple nearby, distant join is required. */
 				adjacent = nullptr;
-				cmbp =(_ctrl_pressed ? citymania::StationBuildingStatus::QUERY : citymania::StationBuildingStatus::IMPOSSIBLE);
 				break;
 			}
 			adjacent = st;
 		}
 	}
 	SetViewportCatchmentStation(adjacent, true);
-	citymania::SetStationBiildingStatus(citymania::StationBuildingStatus::JOIN);
 }
 
 /**
@@ -148,7 +144,10 @@ static void FindStationsAroundSelection()
  */
 void CheckRedrawStationCoverage(const Window *w)
 {
-	return; // CM has better redraw handling
+	if (_settings_client.gui.cm_use_improved_station_join) {
+		citymania::CheckRedrawStationCoverage();
+		return;
+	}
 	/* Test if ctrl state changed */
 	static bool _last_ctrl_pressed;
 	if (_ctrl_pressed != _last_ctrl_pressed) {
@@ -2430,7 +2429,6 @@ struct SelectStationWindow : WindowPopup {
 	{
 		if (widget != WID_JS_PANEL || T::EXPECTED_FACIL == FACIL_WAYPOINT) {
 			SetViewportCatchmentStation(nullptr, true);
-			citymania::SetStationBiildingStatus(citymania::StationBuildingStatus::QUERY);
 			return;
 		}
 
@@ -2438,11 +2436,9 @@ struct SelectStationWindow : WindowPopup {
 		uint st_index = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_JS_PANEL, WD_FRAMERECT_TOP);
 		if (st_index == 0 || st_index > _stations_nearby_list.size()) {
 			SetViewportCatchmentStation(nullptr, true);
-			citymania::SetStationBiildingStatus(citymania::StationBuildingStatus::NEW);
 		} else {
 			st_index--;
 			SetViewportCatchmentStation(Station::Get(_stations_nearby_list[st_index]), true);
-			citymania::SetStationBiildingStatus(citymania::StationBuildingStatus::JOIN);
 		}
 	}
 };
@@ -2499,20 +2495,6 @@ static bool StationJoinerNeeded(const CommandContainer &cmd, TileArea ta)
 template <class T>
 void ShowSelectBaseStationIfNeeded(const CommandContainer &cmd, TileArea ta)
 {
-	// CM No need to show window anymore
-	auto join_to = citymania::GetStationToJoin();
-	auto cmd2 = cmd;
-	SetBit(cmd2.p2, 2);
-	if (_ctrl_pressed) SB(cmd2.p2, 16, 16, NEW_STATION);
-	else if (join_to) SB(cmd2.p2, 16, 16, join_to->index);
-	else {
-		SB(cmd2.p2, 16, 16, INVALID_STATION);
-		ClrBit(cmd2.p2, 2);
-	}
-
-	DoCommandP(&cmd2);
-	return;
-
 	if (StationJoinerNeeded<T>(cmd, ta)) {
 		if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 		new SelectStationWindow<T>(&_select_station_desc, cmd, ta);

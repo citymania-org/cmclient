@@ -1579,6 +1579,7 @@ static SettingsContainer &GetSettingsTree()
 				construction->Add(new SettingEntry("gui.quick_goto"));
 				construction->Add(new SettingEntry("gui.default_rail_type"));
 				construction->Add(new SettingEntry("gui.disable_unsuitable_building"));
+				construction->Add(new SettingEntry("gui.cm_use_improved_station_join"));
 			}
 
 			interface->Add(new SettingEntry("gui.autosave"));

@@ -1368,7 +1368,7 @@ void ViewportAddString(const DrawPixelInfo *dpi, ZoomLevel small_from, const Vie
 	}
 }
 
-static Rect ExpandRectWithViewportSignMargins(Rect r, ZoomLevel zoom)
+Rect ExpandRectWithViewportSignMargins(Rect r, ZoomLevel zoom)
 {
 	/* Pessimistically always use normal font, but also assume small font is never larger in either dimension */
 	const int fh = FONT_HEIGHT_NORMAL;
@@ -2187,7 +2187,7 @@ void SetSelectionRed(bool b)
  * @param sign the sign to check
  * @return true if the sign was hit
  */
-static bool CheckClickOnViewportSign(const ViewPort *vp, int x, int y, const ViewportSign *sign)
+bool CheckClickOnViewportSign(const ViewPort *vp, int x, int y, const ViewportSign *sign)
 {
 	bool small = (vp->zoom >= ZOOM_LVL_OUT_16X);
 	int sign_half_width = ScaleByZoom((small ? sign->width_small : sign->width_normal) / 2, vp->zoom);

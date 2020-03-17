@@ -39,7 +39,7 @@
 
 #include "table/strings.h"
 
-#include "citymania/highlight.hpp"
+#include "citymania/station_gui.hpp"
 
 #include "safeguards.h"
 
@@ -69,7 +69,7 @@ static RoadFlags _place_road_flag;
 static RoadType _cur_roadtype;
 
 static DiagDirection _road_depot_orientation;
-static DiagDirection _road_station_picker_orientation;
+DiagDirection _road_station_picker_orientation;
 
 void CcPlaySound_SPLAT_OTHER(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
@@ -220,7 +220,7 @@ static DiagDirection TileFractCoordsToDiagDir() {
 /*
  * Selects orientation for road object (depot, terminal station)
  */
-static DiagDirection AutodetectRoadObjectDirection(TileIndex tile) {
+DiagDirection AutodetectRoadObjectDirection(TileIndex tile) {
 	RoadBits bits = FindRoadsToConnect(tile);
 	if (HasExactlyOneBit(bits)) {
 		return RoadBitsToDiagDir(bits);
@@ -244,7 +244,7 @@ static DiagDirection AutodetectRoadObjectDirection(TileIndex tile) {
 	NOT_REACHED();
 }
 
-static bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
+bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
 	TILE_AREA_LOOP(tile, area) {
 		if (GetTileType(tile) != MP_ROAD) continue;
 		if (GetRoadTileType(tile) != ROAD_TILE_NORMAL) continue;
@@ -259,7 +259,7 @@ static bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
  * @param area road stop area
  * @return selected direction
  */
-static DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
+DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
 	bool se_suits, ne_suits;
 
 	// Check which direction is available
@@ -288,15 +288,14 @@ static DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
  */
 static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, uint32 cmd)
 {
+	if (_settings_client.gui.cm_use_improved_station_join) {
+		citymania::PlaceRoadStop(start_tile, end_tile, p2, cmd);
+		return;
+	}
+
 	uint8 ddir = _road_station_picker_orientation;
 	SB(p2, 16, 16, INVALID_STATION); // no station to join
 	TileArea ta(start_tile, end_tile);
-
-	if (_ctrl_pressed && start_tile == end_tile && IsTileType (start_tile, MP_STATION)) {
-		/* Select station to join */
-		citymania::SetStationToJoin(Station::GetByTile(end_tile));
-        return;
-	}
 
 	if (ddir >= DIAGDIR_END) {
 		if (ddir < DIAGDIR_END + 2) {
@@ -722,6 +721,8 @@ struct BuildRoadToolbarWindow : Window {
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
 		DeleteWindowById(WC_SELECT_STATION, 0);
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
+
+		citymania::AbortStationPlacement();
 	}
 
 	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
@@ -1255,11 +1256,8 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 
 		int rad = _settings_game.station.modified_catchment ? ((this->window_class == WC_BUS_STATION) ? CA_BUS : CA_TRUCK) : CA_UNMODIFIED;
 		SetTileSelectSize(1, 1);
-		// if (_settings_client.gui.station_show_coverage) {
-		SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
-		// } else {
-		// 	SetTileSelectSize(1, 1);
-		// }
+		if (_settings_client.gui.cm_use_improved_station_join || _settings_client.gui.station_show_coverage)
+			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
 
 		/* 'Accepts' and 'Supplies' texts. */
 		StationCoverageType sct = (this->window_class == WC_BUS_STATION) ? SCT_PASSENGERS_ONLY : SCT_NON_PASSENGERS_ONLY;

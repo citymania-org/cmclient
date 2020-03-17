@@ -58,6 +58,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/station_gui.hpp"
+
 #include "safeguards.h"
 
 /**
@@ -770,6 +772,7 @@ void Station::AfterStationTileSetChange(bool adding, StationType type)
 		DeleteStationIfEmpty(this);
 	}
 
+	citymania::OnStationTileSetChange(this, adding, type);
 }
 
 CommandCost ClearTile_Station(TileIndex tile, DoCommandFlag flags);
@@ -1955,6 +1958,7 @@ CommandCost CmdBuildRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 
 	if (st != nullptr) {
 		st->AfterStationTileSetChange(true, type ? STATION_TRUCK: STATION_BUS);
+		citymania::OnStationPartBuilt(st, tile, p1, p2);
 	}
 	return cost;
 }

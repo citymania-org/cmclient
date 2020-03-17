@@ -38,10 +38,12 @@
 
 #include "widgets/rail_widget.h"
 
+#include "citymania/station_gui.hpp"
+
 #include "safeguards.h"
 
 
-static RailType _cur_railtype;               ///< Rail type of the current build-rail toolbar.
+RailType _cur_railtype;               ///< Rail type of the current build-rail toolbar.
 static bool _remove_button_clicked;          ///< Flag whether 'remove' toggle-button is currently enabled
 static DiagDirection _build_depot_direction; ///< Currently selected depot direction
 static byte _waypoint_count = 1;             ///< Number of waypoint types
@@ -68,7 +70,7 @@ struct RailStationGUISettings {
 	byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
 	byte station_count;               ///< Number of custom stations (if newstations is \c true )
 };
-static RailStationGUISettings _railstation; ///< Settings of the station builder GUI
+RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
 
 static void HandleStationPlacement(TileIndex start, TileIndex end);
@@ -943,6 +945,8 @@ struct BuildRailToolbarWindow : Window {
 		DeleteWindowById(WC_BUILD_WAYPOINT, TRANSPORT_RAIL);
 		DeleteWindowById(WC_SELECT_STATION, 0);
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
+
+		citymania::AbortStationPlacement();
 	}
 
 	void OnPlacePresize(Point pt, TileIndex tile) override
@@ -1078,6 +1082,11 @@ Window *ShowBuildRailToolbar(RailType railtype)
 
 static void HandleStationPlacement(TileIndex start, TileIndex end)
 {
+	if (_settings_client.gui.cm_use_improved_station_join) {
+		citymania::HandleStationPlacement(start, end);
+		return;
+	}
+
 	TileArea ta(start, end);
 	uint numtracks = ta.w;
 	uint platlength = ta.h;
@@ -1212,8 +1221,8 @@ public:
 
 		int rad = (_settings_game.station.modified_catchment) ? CA_TRAIN : CA_UNMODIFIED;
 
-		//if (_settings_client.gui.station_show_coverage) SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
-		SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad); // always let cm zoning know we're selecting station
+		if (_settings_client.gui.cm_use_improved_station_join || _settings_client.gui.station_show_coverage)
+			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
 
 		for (uint bits = 0; bits < 7; bits++) {
 			bool disable = bits >= _settings_game.station.station_spread;
@@ -1518,6 +1527,7 @@ public:
 				this->SetWidgetLoweredState(WID_BRAS_HIGHLIGHT_ON, _settings_client.gui.station_show_coverage);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
+				citymania::MarkCoverageHighlightDirty();
 				break;
 
 			case WID_BRAS_NEWST_LIST: {

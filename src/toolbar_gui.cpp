@@ -92,7 +92,7 @@ static CallBackFunction _last_started_action = CBF_NONE; ///< Last started user 
 #if 0 // CM
 /**
  * Drop down list entry for showing a checked/unchecked toggle item.
- */ 
+ */
 class DropDownListCheckedItem : public DropDownListStringItem {
 	uint checkmark_width;
 public:
@@ -2365,7 +2365,7 @@ static Hotkey maintoolbar_hotkeys[] = {
 	Hotkey('I', "trees", MTHK_TREES),
 	Hotkey((uint16)0, "zoning", MTHK_ZONING),
 	Hotkey((uint16)0, "login_window", MTHK_LOGINWINDOW),
-	Hotkey((uint16)0, "settings_advanced", MTHK_SETTINGS_ADV),
+	Hotkey((uint16)0, "settings_adIanced", MTHK_SETTINGS_ADV),
 	Hotkey((uint16)0, "newgrf_window", MTHK_NEWGRF),
 	Hotkey((uint16)0, "sign_list", MTHK_SIGN_LIST),
 	Hotkey((uint16)0, "land_info", MTHK_LANDINFO),

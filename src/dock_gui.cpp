@@ -31,6 +31,8 @@
 #include "table/sprites.h"
 #include "table/strings.h"
 
+#include "citymania/station_gui.hpp"
+
 #include "safeguards.h"
 
 static void ShowBuildDockStationPicker(Window *parent);
@@ -194,6 +196,12 @@ struct BuildDocksToolbarWindow : Window {
 				break;
 
 			case WID_DT_STATION: { // Build station button
+
+				if (_settings_client.gui.cm_use_improved_station_join) {
+					citymania::PlaceDock(tile);
+					break;
+				}
+
 				uint32 p2 = (uint32)INVALID_STATION << 16; // no station to join
 
 				/* tile is always the land tile, so need to evaluate _thd.pos */
@@ -257,6 +265,8 @@ struct BuildDocksToolbarWindow : Window {
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
 		DeleteWindowById(WC_SELECT_STATION, 0);
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
+
+		citymania::AbortStationPlacement();
 	}
 
 	void OnPlacePresize(Point pt, TileIndex tile_from) override
@@ -455,6 +465,7 @@ public:
 				this->LowerWidget(_settings_client.gui.station_show_coverage + BDSW_LT_OFF);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
+				citymania::MarkCoverageHighlightDirty();
 				break;
 		}
 	}

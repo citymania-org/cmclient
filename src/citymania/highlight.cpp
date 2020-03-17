@@ -3,6 +3,7 @@
 #include "highlight.hpp"
 
 #include "../core/math_func.hpp"
+#include "../command_func.h"
 #include "../house.h"
 #include "../industry.h"
 #include "../landscape.h"
@@ -11,6 +12,9 @@
 #include "../tilehighlight_type.h"
 #include "../viewport_func.h"
 #include "../zoning.h"
+
+#include "station_gui.hpp"
+
 
 /** Enumeration of multi-part foundations */
 enum FoundationPart {
@@ -23,7 +27,7 @@ extern void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *t
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
 extern bool IsInsideSelectedRectangle(int x, int y);
-extern void MarkCatchmentTilesDirty();
+
 namespace citymania {
 
 struct TileZoning {
@@ -35,9 +39,12 @@ struct TileZoning {
 
 static TileZoning *_mz = nullptr;
 static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
-StationBuildingStatus _station_building_status = StationBuildingStatus::NEW;
-const Station *_station_to_join = nullptr;
-TileArea _station_to_join_area;
+
+extern StationBuildingStatus _station_building_status;
+extern const Station *_station_to_join;
+extern const Station *_highlight_station_to_join;
+extern TileArea _highlight_join_area;
+
 // struct {
 //     int w;
 //     int h;
@@ -136,34 +143,31 @@ SpriteID GetTintBySelectionColour(SpriteID colour, bool deep=false) {
 }
 
 static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) {
-    bool draw_coverage = false;
-    bool draw_selection = false;
-    if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
-        // we have station selected
-        draw_selection = true;
-        draw_coverage = _settings_client.gui.station_show_coverage;
-    }
+    bool draw_selection = ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0);
+    const Station *highlight_station = _viewport_highlight_station;
+
+    if (_highlight_station_to_join) highlight_station = _highlight_station_to_join;
 
     if (draw_selection) {
         auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
             auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
             return IsInsideSelectedRectangle(x, y);
         });
-        if (b.first != ZoningBorder::NONE) {
-            const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
-            auto color = pal[(int)_station_building_status];
+        const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
+        auto color = pal[(int)_station_building_status];
+        if (b.first != ZoningBorder::NONE)
             th.add_border(b.first, color);
+        if (IsInsideSelectedRectangle(TileX(ti->tile) * TILE_SIZE, TileY(ti->tile) * TILE_SIZE)) {
             th.ground_pal = GetTintBySelectionColour(color);
             return;
         }
     }
 
-    auto highlight_station = _station_to_join ? _station_to_join : _viewport_highlight_station;
-    auto coverage_getter = [draw_coverage, highlight_station](TileIndex t) {
+    auto coverage_getter = [draw_selection, highlight_station](TileIndex t) {
         auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
         if (highlight_station && IsTileType(t, MP_STATION) && GetStationIndex(t) == highlight_station->index) return 2;
-        if (draw_coverage && highlight_station && highlight_station->TileIsInCatchment(t)) return 1;
-        if (draw_coverage && IsInsideBS(x, _thd.pos.x + _thd.offs.x, _thd.size.x + _thd.outersize.x) &&
+        if (_settings_client.gui.station_show_coverage && highlight_station && highlight_station->TileIsInCatchment(t)) return 1;
+        if (draw_selection && _settings_client.gui.station_show_coverage && IsInsideBS(x, _thd.pos.x + _thd.offs.x, _thd.size.x + _thd.outersize.x) &&
                         IsInsideBS(y, _thd.pos.y + _thd.offs.y, _thd.size.y + _thd.outersize.y)) return 1;
         return 0;
     };
@@ -176,9 +180,9 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
         th.ground_pal = th.structure_pal = pal2[b.second];
     }
 
-    if (_station_to_join) {
+    if (_highlight_join_area.tile != INVALID_TILE) {
         auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
-            return _station_to_join_area.Contains(t) ? 1 : 0;
+            return _highlight_join_area.Contains(t) ? 1 : 0;
         });
         th.add_border(b.first, SPR_PALETTE_ZONING_LIGHT_BLUE);
         if (b.second) {
@@ -421,74 +425,5 @@ void SetIndustryForbiddenTilesHighlight(IndustryType type) {
     }
     _industry_forbidden_tiles = type;
 }
-
-// void SetStationTileSelectSize(int w, int h, int catchment) {
-//     _station_select.w = w;
-//     _station_select.h = h;
-//     _station_select.catchment = catchment;
-// }
-
-void SetStationBiildingStatus(StationBuildingStatus status) {
-    _station_building_status = status;
-};
-
-static const int MAX_TILE_EXTENT_LEFT   = ZOOM_LVL_BASE * TILE_PIXELS;                     ///< Maximum left   extent of tile relative to north corner.
-static const int MAX_TILE_EXTENT_RIGHT  = ZOOM_LVL_BASE * TILE_PIXELS;                     ///< Maximum right  extent of tile relative to north corner.
-static const int MAX_TILE_EXTENT_TOP    = ZOOM_LVL_BASE * MAX_BUILDING_PIXELS;             ///< Maximum top    extent of tile relative to north corner (not considering bridges).
-static const int MAX_TILE_EXTENT_BOTTOM = ZOOM_LVL_BASE * (TILE_PIXELS + 2 * TILE_HEIGHT); ///< Maximum bottom extent of tile relative to north corner (worst case: #SLOPE_STEEP_N).
-
-void MarkTileAreaDirty(const TileArea &ta) {
-    if (ta.tile == INVALID_TILE) return;
-    auto x = TileX(ta.tile);
-    auto y = TileY(ta.tile);
-    Point p1 = RemapCoords(x * TILE_SIZE, y * TILE_SIZE, TileHeight(ta.tile) * TILE_HEIGHT);
-    Point p2 = RemapCoords((x + ta.w)  * TILE_SIZE, (y + ta.h) * TILE_SIZE, TileHeight(TileXY(x + ta.w - 1, y + ta.h - 1)) * TILE_HEIGHT);
-    Point p3 = RemapCoords((x + ta.w)  * TILE_SIZE, y * TILE_SIZE, TileHeight(TileXY(x + ta.w - 1, y)) * TILE_HEIGHT);
-    Point p4 = RemapCoords(x * TILE_SIZE, (y + ta.h) * TILE_SIZE, TileHeight(TileXY(x, y + ta.h - 1)) * TILE_HEIGHT);
-    MarkAllViewportsDirty(
-            p3.x - MAX_TILE_EXTENT_LEFT,
-            p4.x - MAX_TILE_EXTENT_TOP,
-            p1.y + MAX_TILE_EXTENT_RIGHT,
-            p2.y + MAX_TILE_EXTENT_BOTTOM);
-    // TILE_AREA_LOOP(tile, ta) {
-    //     MarkTileDirtyByTile(tile);
-    // }
-}
-
-static void UpdateStationToJoinArea() {
-    auto &r = _station_to_join->rect;
-    auto d = (int)_settings_game.station.station_spread - 1;
-    TileArea ta(
-        TileXY(max(r.right - d, 0),
-               max(r.bottom - d, 0)),
-        TileXY(min(r.left + d, MapSizeX() - 1),
-               min(r.top + d, MapSizeY() - 1))
-    );
-    if (_station_to_join_area.tile == ta.tile &&
-        _station_to_join_area.w == ta.w &&
-        _station_to_join_area.h == ta.h) return;
-    _station_to_join_area = ta;
-    MarkTileAreaDirty(_station_to_join_area);
-}
-
-void MarkCoverageHighlightDirty() {
-    MarkCatchmentTilesDirty();
-}
-
-void SetStationToJoin(const Station *station) {
-    if (_station_to_join == station) {
-        _station_to_join = nullptr;
-        MarkTileAreaDirty(_station_to_join_area);
-        _station_to_join_area.Clear();
-    } else {
-        _station_to_join = station;
-        UpdateStationToJoinArea();
-    }
-}
-
-const Station *GetStationToJoin() {
-    return _station_to_join;
-}
-
 
 }  // namespace citymania

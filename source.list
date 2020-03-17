@@ -620,6 +620,8 @@ citymania/base64.h
 citymania/base64.cpp
 citymania/highlight.hpp
 citymania/highlight.cpp
+citymania/station_gui.hpp
+citymania/station_gui.cpp
 newgrf_revisions.hpp
 
 # Save/Load handlers

@@ -29,11 +29,13 @@
 
 #include "widgets/airport_widget.h"
 
+#include "citymania/station_gui.hpp"
+
 #include "safeguards.h"
 
 
 static AirportClassID _selected_airport_class; ///< the currently visible airport class
-static int _selected_airport_index;            ///< the index of the selected airport in the current class or -1
+int _selected_airport_index;            ///< the index of the selected airport in the current class or -1
 static byte _selected_airport_layout;          ///< selected airport layout number.
 
 static void ShowBuildAirportPicker(Window *parent);
@@ -54,6 +56,11 @@ void CcBuildAirport(const CommandCost &result, TileIndex tile, uint32 p1, uint32
  */
 static void PlaceAirport(TileIndex tile)
 {
+	if (_settings_client.gui.cm_use_improved_station_join) {
+		citymania::PlaceAirport(tile);
+		return;
+	}
+
 	if (_selected_airport_index == -1) return;
 	uint32 p2 = _ctrl_pressed;
 	SB(p2, 16, 16, INVALID_STATION); // no station to join
@@ -148,6 +155,8 @@ struct BuildAirToolbarWindow : Window {
 
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
 		DeleteWindowById(WC_SELECT_STATION, 0);
+
+		citymania::AbortStationPlacement();
 	}
 
 	static HotkeyList hotkeys;

@@ -1,10 +1,9 @@
-#ifndef CITYMANIA_ZONING_HPP
-#define CITYMANIA_ZONING_HPP
+#ifndef CITYMANIA_HIGHLIGHT_HPP
+#define CITYMANIA_HIGHLIGHT_HPP
 
 #include "../core/enum_type.hpp"
 #include "../gfx_type.h"
 #include "../industry_type.h"
-#include "../station_type.h"
 #include "../tile_cmd.h"
 #include "../tile_type.h"
 #include "../town_type.h"
@@ -25,13 +24,6 @@ enum ZoningBorder: uint8 {
     BOTTOM_CORNER = 64,
     LEFT_CORNER = 128,
     FULL = TOP_LEFT | TOP_RIGHT | BOTTOM_LEFT | BOTTOM_RIGHT,
-};
-
-enum class StationBuildingStatus {
-    IMPOSSIBLE = 0,
-    QUERY = 1,
-    JOIN = 2,
-    NEW = 3,
 };
 
 class TileHighlight {
@@ -66,17 +58,13 @@ DECLARE_ENUM_AS_BIT_SET(ZoningBorder);
 // };
 
 
-void SetStationBiildingStatus(StationBuildingStatus status);
 TileHighlight GetTileHighlight(const TileInfo *ti);
 void DrawTileSelection(const TileInfo *ti, const TileHighlight &th);
-
-void SetStationTileSelectSize(int w, int h, int catchment);
 
 void AllocateZoningMap(uint map_size);
 void InitializeZoningMap();
 
 void UpdateTownZoning(Town *town, uint32 prev_edge);
-
 
 std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile);
 ZoningBorder GetAnyStationCatchmentBorder(TileIndex tlie);
@@ -86,9 +74,7 @@ SpriteID GetTownTileZoningPalette(TileIndex tile);
 SpriteID GetIndustryTileZoningPalette(TileIndex tile, Industry *ind);
 void SetIndustryForbiddenTilesHighlight(IndustryType type);
 
-void SetStationToJoin(const Station *station);
-const Station *GetStationToJoin();
-void MarkCoverageHighlightDirty();
+
 
 }  // namespace citymania
 
