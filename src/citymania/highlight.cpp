@@ -13,7 +13,7 @@
 #include "../viewport_func.h"
 #include "../zoning.h"
 
-#include "station_gui.hpp"
+#include "station_ui.hpp"
 
 
 /** Enumeration of multi-part foundations */

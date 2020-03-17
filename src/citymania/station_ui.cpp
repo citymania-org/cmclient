@@ -1,6 +1,6 @@
 #include "../stdafx.h"
 
-#include "station_gui.hpp"
+#include "station_ui.hpp"
 
 #include "../core/math_func.hpp"
 #include "../command_type.h"
@@ -27,9 +27,9 @@ extern DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area);
 extern bool CheckClickOnViewportSign(const ViewPort *vp, int x, int y, const ViewportSign *sign);
 extern Rect ExpandRectWithViewportSignMargins(Rect r, ZoomLevel zoom);
 extern ViewportSignKdtree _viewport_sign_kdtree;
-AirportClassID _selected_airport_class;
+extern AirportClassID _selected_airport_class;
 extern int _selected_airport_index;
-byte _selected_airport_layout;
+extern byte _selected_airport_layout;
 
 extern RailType _cur_railtype;  // rail_gui.cpp
 

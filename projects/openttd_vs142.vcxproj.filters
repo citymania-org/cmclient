@@ -1806,10 +1806,16 @@
     <ClCompile Include="..\src\citymania\base64.cpp">
       <Filter>CityMania files</Filter>
     </ClCompile>
-    <ClInclude Include="..\src\citymania\zoning.hpp">
+    <ClInclude Include="..\src\citymania\highlight.hpp">
       <Filter>CityMania files</Filter>
     </ClInclude>
-    <ClCompile Include="..\src\citymania\zoning.cpp">
+    <ClCompile Include="..\src\citymania\highlight.cpp">
+      <Filter>CityMania files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\citymania\station_ui.hpp">
+      <Filter>CityMania files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\station_ui.cpp">
       <Filter>CityMania files</Filter>
     </ClCompile>
     <ClInclude Include="..\src\newgrf_revisions.hpp">

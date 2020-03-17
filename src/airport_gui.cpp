@@ -29,14 +29,14 @@
 
 #include "widgets/airport_widget.h"
 
-#include "citymania/station_gui.hpp"
+#include "citymania/station_ui.hpp"
 
 #include "safeguards.h"
 
 
-static AirportClassID _selected_airport_class; ///< the currently visible airport class
+AirportClassID _selected_airport_class; ///< the currently visible airport class
 int _selected_airport_index;            ///< the index of the selected airport in the current class or -1
-static byte _selected_airport_layout;          ///< selected airport layout number.
+byte _selected_airport_layout;          ///< selected airport layout number.
 
 static void ShowBuildAirportPicker(Window *parent);
 

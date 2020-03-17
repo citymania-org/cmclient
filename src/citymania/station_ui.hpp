@@ -1,5 +1,5 @@
-#ifndef CITYMANIA_STATION_GUI_HPP
-#define CITYMANIA_STATION_GUI_HPP
+#ifndef CITYMANIA_STATION_UI_HPP
+#define CITYMANIA_STATION_UI_HPP
 
 #include "../core/geometry_type.hpp"
 #include "../command_type.h"
