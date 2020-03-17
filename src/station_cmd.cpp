@@ -58,7 +58,7 @@
 
 #include "table/strings.h"
 
-#include "citymania/station_gui.hpp"
+#include "citymania/station_ui.hpp"
 
 #include "safeguards.h"
 
