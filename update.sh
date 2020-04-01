@@ -7,7 +7,7 @@ wget https://proxy.binaries.openttd.org/openttd-releases/$version/openttd-$versi
 #cp ~/Downloads/openttd-$version-source.tar.xz .
 tar xf openttd-$version-source.tar.xz
 ttdir=$dir/openttd-$version
-cp -r $ttdir/* $curdir
+cp -rT $ttdir $curdir
 cd $ttdir
 find . -type f > $dir/ttd_files
 ./configure
