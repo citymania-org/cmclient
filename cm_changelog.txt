@@ -74,6 +74,9 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 1.10.0-RC1 (1 Apr 2020) ***
+- OpenTTD update.
+
 *** 1.10.0-RC1 (18 Mar 2020) ***
 - When cloning from vehicle window skip orders to same position.
 - Always open vehicle window when ctrl-cloning a vehicle (like it was before 1.9).
