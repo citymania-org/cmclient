@@ -74,6 +74,16 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 1.10.0-RC1 (18 Mar 2020) ***
+- When cloning from vehicle window skip orders to same position.
+- Always open vehicle window when ctrl-cloning a vehicle (like it was before 1.9).
+- Impove rendering performance on high resolutions (about 50% improvement on 4k).
+- A new way of highlighting tiles by coloring them. Some zoning and 1.10.0 default highlights switched to this new way.
+- Experimental way of building and joining stations (unfinished).
+
+*** 1.10.0-beta2 (6 Jan 2020) ***
+- OpenTTD update.
+
 *** 1.10.0-beta1 (5 Nov 2019) ***
 - Show company goals in CB window if there is no CB info provided by server.
 - Make zoning UI use new cleaner highlight style for town zones and station catchment outer zoning.
