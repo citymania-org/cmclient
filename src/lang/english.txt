@@ -5512,3 +5512,7 @@ STR_CM_STATION_BUILD_TOWN :{BLACK}Town: {GOLD}{TOWN}
 STR_CM_STATION_BUILD_TOWN_LARGE :{BLACK}Town: {GOLD}{TOWN} (L)
 STR_CM_STATION_BUILD_TOWN_MEDIUM :{BLACK}Town: {GOLD}{TOWN} (M)
 STR_CM_STATION_BUILD_TOWN_SMALL :{BLACK}Town: {GOLD}{TOWN} (S)
+STR_CM_CONFIG_SETTING_OPEN_VEHICLE_FOR_SHARED_CLONE :Open vehicle window for shared clones: {STRING2}
+STR_CM_CONFIG_SETTING_OPEN_VEHICLE_FOR_SHARED_CLONE_HELPTEXT :Open vehicle window when cloning vehicles with shared orders (as it does for non-shared ones)
+STR_CM_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES :Open orders window for new vehicles: {STRING2}
+STR_CM_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES_HELPTEXT :Automatically open oreders windown along with a vehicle window for a new vehicles

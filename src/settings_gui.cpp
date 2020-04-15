@@ -1576,6 +1576,8 @@ static SettingsContainer &GetSettingsTree()
 				construction->Add(new SettingEntry("gui.enable_signal_gui"));
 				construction->Add(new SettingEntry("gui.persistent_buildingtools"));
 				construction->Add(new SettingEntry("gui.persistent_depottools"));
+				construction->Add(new SettingEntry("gui.cm_open_vehicle_for_shared_clone"));
+				construction->Add(new SettingEntry("gui.cm_open_orders_for_new_vehicles"));
 				construction->Add(new SettingEntry("gui.quick_goto"));
 				construction->Add(new SettingEntry("gui.default_rail_type"));
 				construction->Add(new SettingEntry("gui.disable_unsuitable_building"));
