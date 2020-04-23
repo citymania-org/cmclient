@@ -74,6 +74,13 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** next
+- Show engine id in build window in newgrf developer mode.
+
+*** 1.10.1 (15 Apr 2020) ***
+- Add a setting to autoopen vehicle window when cloning vehicles while sharing orders.
+- Add a setting to autoopen orders window along with a vehicle window for new vehicles.
+
 *** 1.10.0 (1 Apr 2020) ***
 - OpenTTD update.
 

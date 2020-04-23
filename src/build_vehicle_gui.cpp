@@ -870,6 +870,12 @@ int DrawVehiclePurchaseInfo(int left, int right, int y, EngineID engine_number, 
 	bool refittable = IsArticulatedVehicleRefittable(engine_number);
 	bool articulated_cargo = false;
 
+	if (_settings_client.gui.newgrf_developer_tools) {
+		SetDParam(0, e->index);
+		DrawString(left, right, y, STR_CM_PURCHASE_ENGINE_ID);
+		y += FONT_HEIGHT_NORMAL;
+	}
+
 	switch (e->type) {
 		default: NOT_REACHED();
 		case VEH_TRAIN:
