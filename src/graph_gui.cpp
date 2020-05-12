@@ -423,6 +423,46 @@ protected:
 					OverflowSafeInt64 datapoint = this->cost[i][j];
 
 					if (datapoint != INVALID_DATAPOINT) {
+						int mult_range = FindLastBit(x_axis_offset) + FindLastBit(abs(datapoint));
+						int reduce_range = max(mult_range - 31, 0);
+
+						if (datapoint < 0) {
+							datapoint = -(abs(datapoint) >> reduce_range);
+						} else {
+							datapoint >>= reduce_range;
+						}
+						y = r.top + x_axis_offset - ((r.bottom - r.top) * datapoint) / (interval_size >> reduce_range);
+
+						/* Draw the point. */
+						GfxFillRect(x - pointoffs1 - 1, y - pointoffs1 - 1, x + pointoffs2 + 1, y + pointoffs2 + 1, PC_DARK_GREY);
+
+						/* Draw the line connected to the previous point. */
+						if (prev_x != INVALID_DATAPOINT_POS) GfxDrawLine(prev_x, prev_y, x, y, PC_DARK_GREY, linewidth + 2);
+
+						prev_x = x;
+						prev_y = y;
+					} else {
+						prev_x = INVALID_DATAPOINT_POS;
+						prev_y = INVALID_DATAPOINT_POS;
+					}
+
+					x += x_sep;
+				}
+			}
+		}
+		for (int i = 0; i < this->num_dataset; i++) {
+			if (!HasBit(this->excluded_data, i)) {
+				/* Centre the dot between the grid lines. */
+				x = r.left + (x_sep / 2);
+
+				byte colour  = this->colours[i];
+				uint prev_x = INVALID_DATAPOINT_POS;
+				uint prev_y = INVALID_DATAPOINT_POS;
+
+				for (int j = 0; j < this->num_on_x_axis; j++) {
+					OverflowSafeInt64 datapoint = this->cost[i][j];
+
+					if (datapoint != INVALID_DATAPOINT) {
 						/*
 						 * Check whether we need to reduce the 'accuracy' of the
 						 * datapoint value and the highest value to split overflows.
