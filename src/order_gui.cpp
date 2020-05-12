@@ -171,13 +171,19 @@ static const StringID _order_conditional_condition[] = {
 	INVALID_STRING_ID,
 };
 
-struct OrdersFromSettings
-{
-	enum OrderUnloadFlags unload;
-	enum OrderLoadFlags   load;
+enum class FeederOrderMod{
+	NONE,
+	LOAD,
+	UNLOAD
 };
 
-typedef enum {
+struct OrdersFromSettings {
+	OrderLoadFlags load;
+	OrderUnloadFlags unload;
+	FeederOrderMod mod;
+};
+
+enum  GetOrderFromSettingsTypes {
 	GOFS_NONE = 0,
 	GOFS_FULL,
 	GOFS_XFER,
@@ -185,55 +191,52 @@ typedef enum {
 	GOFS_FEEDLOAD,
 	GOFS_FEEDUNLOAD,
 	GOFS_NOLOAD
-} GetOrderFromSettingsTypes;
-
-static enum {
-	GOFS_FEEDER_NULL,
-	GOFS_FEEDER_LOAD,
-	GOFS_FEEDER_UNLOAD
-} gofsfeeder_ordermod = GOFS_FEEDER_NULL;
+};
 
 #define GOFSFEEDER_ORDERMOD_RESET gofsfeeder_ordermod = GOFS_FEEDER_NULL
 
 
 /* fetch and compute orders set from settings */
 
-static void GetOrdersFromSettings(const Vehicle *v, uint8 setting, struct OrdersFromSettings *rv)
+static OrdersFromSettings GetOrdersFromSettings(const Vehicle *v, uint8 setting)
 {
-	rv->load = (enum OrderLoadFlags)-1;
-	rv->unload = (enum OrderUnloadFlags)-1;
+	OrdersFromSettings res {
+		.load = OLFB_NO_LOAD,
+		.unload = OUFB_NO_UNLOAD,
+		.mod = FeederOrderMod::NONE
+	};
 
 	switch(setting) {
 
 	case GOFS_FEEDLOAD:
-		if (v->GetNumOrders()) gofsfeeder_ordermod = GOFS_FEEDER_LOAD;
-		rv->unload = OUFB_NO_UNLOAD;
-		rv->load = OLF_FULL_LOAD_ANY;
+		if (v->GetNumOrders() > 0) res.mod = FeederOrderMod::LOAD;
+		res.unload = OUFB_NO_UNLOAD;
+		res.load = OLF_FULL_LOAD_ANY;
 		break;
 	case GOFS_FULL:
-		rv->load = OLF_FULL_LOAD_ANY;
+		res.load = OLF_FULL_LOAD_ANY;
 		break;
 
 	case GOFS_UNLOAD:
-		rv->unload = OUFB_UNLOAD;
+		res.unload = OUFB_UNLOAD;
 		if (_settings_client.gui.auto_noload_on_unloadall)
-			rv->load = OLFB_NO_LOAD;
+			res.load = OLFB_NO_LOAD;
 		break;
 
 	case GOFS_FEEDUNLOAD:
-		if (v->GetNumOrders()) gofsfeeder_ordermod = GOFS_FEEDER_UNLOAD;
-		rv->unload = OUFB_TRANSFER;
-		rv->load = OLFB_NO_LOAD;
+		if (v->GetNumOrders() > 0) res.mod = FeederOrderMod::UNLOAD;
+		res.unload = OUFB_TRANSFER;
+		res.load = OLFB_NO_LOAD;
 		break;
 
 	case GOFS_XFER:
-		rv->unload = OUFB_TRANSFER;
+		res.unload = OUFB_TRANSFER;
 		if (_settings_client.gui.auto_noload_on_transfer)
-			rv->load = OLFB_NO_LOAD;
+			res.load = OLFB_NO_LOAD;
 		break;
 
 	case GOFS_NOLOAD:
-		rv->load = OLFB_NO_LOAD;
+		res.load = OLFB_NO_LOAD;
 		break;
 
 	case GOFS_NONE:
@@ -241,6 +244,7 @@ static void GetOrdersFromSettings(const Vehicle *v, uint8 setting, struct Orders
 
 	default: NOT_REACHED();
 	}
+	return res;
 }
 
 extern uint ConvertSpeedToDisplaySpeed(uint speed);
@@ -439,7 +443,7 @@ void DrawOrderString(const Vehicle *v, const Order *order, int order_index, int 
  * @param tile Tile being queried.
  * @return The order associated to vehicle v in given tile (or empty order if vehicle can do nothing in the tile).
  */
-static Order GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
+static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
 {
 	/* Hack-ish; unpack order 0, so everything gets initialised with either zero
 	 * or a suitable default value for the variable. Then also override the index
@@ -455,7 +459,7 @@ static Order GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
 
 		if (_ctrl_pressed) order.SetDepotOrderType((OrderDepotTypeFlags)(order.GetDepotOrderType() ^ ODTFB_SERVICE));
 
-		return order;
+		return std::make_pair(order, FeederOrderMod::NONE);
 	}
 
 	/* check rail waypoint */
@@ -464,13 +468,13 @@ static Order GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
 			IsTileOwner(tile, _local_company)) {
 		order.MakeGoToWaypoint(GetStationIndex(tile));
 		if (_settings_client.gui.new_nonstop != _ctrl_pressed) order.SetNonStopType(ONSF_NO_STOP_AT_ANY_STATION);
-		return order;
+		return std::make_pair(order, FeederOrderMod::NONE);
 	}
 
 	/* check buoy (no ownership) */
 	if (IsBuoyTile(tile) && v->type == VEH_SHIP) {
 		order.MakeGoToWaypoint(GetStationIndex(tile));
-		return order;
+		return std::make_pair(order, FeederOrderMod::NONE);
 	}
 
 	/* check for station or industry with neutral station */
@@ -513,25 +517,26 @@ static Order GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
 				else if (_alt_pressed)
 					os = _settings_client.gui.goto_shortcuts_alt_lclick;
 
+				auto feeder_mod = FeederOrderMod::NONE;
 				if (os != 0xff) {
-					struct OrdersFromSettings ofs;
-					GetOrdersFromSettings(v, os, &ofs);
+					auto ofs = GetOrdersFromSettings(v, os);
 					if (ofs.load != (enum OrderLoadFlags)-1)
 						order.SetLoadType(ofs.load);
 					if (ofs.unload != (enum OrderUnloadFlags)-1)
 					order.SetUnloadType(ofs.unload);
+					feeder_mod = ofs.mod;
 				}
 
 				if (_settings_client.gui.new_nonstop && v->IsGroundVehicle()) order.SetNonStopType(ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS);
 				order.SetStopLocation(v->type == VEH_TRAIN ? (OrderStopLocation)(_settings_client.gui.stop_location) : OSL_PLATFORM_FAR_END);
-				return order;
+				return std::make_pair(order, feeder_mod);
 			}
 		}
 	}
 
 	/* not found */
 	order.Free();
-	return order;
+	return std::make_pair(order, FeederOrderMod::NONE);
 }
 
 /** Hotkeys for order window. */
@@ -1578,22 +1583,24 @@ public:
 	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		if (this->goto_type == OPOS_GOTO) {
-			const Order cmd = GetOrderCmdFromTile(this->vehicle, tile);
+			auto cmd_pair = GetOrderCmdFromTile(this->vehicle, tile);
+			auto cmd = cmd_pair.first;
+			auto feeder_mod = cmd_pair.second;
+
 			if (cmd.IsType(OT_NOTHING)) return;
 
-			if (gofsfeeder_ordermod != GOFS_FEEDER_NULL) {
-				if (gofsfeeder_ordermod == GOFS_FEEDER_LOAD) {
-					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((1) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
+			if (feeder_mod != FeederOrderMod::NONE) {
+				if (feeder_mod == FeederOrderMod::LOAD) {
+					if (DoCommandP(this->vehicle->tile, this->vehicle->index + (1 << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
 						DoCommandP(this->vehicle->tile, this->vehicle->index,  0, CMD_DELETE_ORDER |  CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_DELETE_THIS_ORDER));
 					}
 
 				}
-				else if (gofsfeeder_ordermod == GOFS_FEEDER_UNLOAD) { // still flushes the whole order table
-					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((this->vehicle->GetNumOrders()) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
+				else if (feeder_mod == FeederOrderMod::UNLOAD) { // still flushes the whole order table
+					if (DoCommandP(this->vehicle->tile, this->vehicle->index + ((uint32)(this->vehicle->GetNumOrders()) << 20), cmd.Pack(), CMD_INSERT_ORDER | CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
 						DoCommandP(this->vehicle->tile, this->vehicle->index, (this->vehicle->GetNumOrders()-2+(int)_networking) , CMD_DELETE_ORDER | CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_DELETE_THIS_ORDER));
 					}
 				}
-				gofsfeeder_ordermod = GOFS_FEEDER_NULL;
 			}
 			else if (DoCommandP(this->vehicle->tile, this->vehicle->index + (this->OrderGetSel() << 20), cmd.Pack(), CMD_INSERT_ORDER |  CMD_NO_ESTIMATE | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER))) {
 				/* With quick goto the Go To button stays active */
