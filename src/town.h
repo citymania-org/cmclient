@@ -107,7 +107,9 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	uint houses_demolished;              ///< number of houses demolished this month
 	CompanyMask fund_regularly;          ///< funds buildings regularly when previous fund ends
 	CompanyMask do_powerfund;            ///< funds buildings when grow counter is maximal (results in fastest funding possible)
+	uint32 last_funding = 0;             ///< when town was funded the last time
 	CompanyMask advertise_regularly;     ///< advertised regularly to keep stations rating on desired value
+	uint32 last_advertisement = 0;
 	uint8 ad_rating_goal;                ///< value to keep rating at (for regular advertisement) (0..255)
 	const GoodsEntry *ad_ref_goods_entry;      ///< poiter to goods entry of some station, used to check rating for regular advertisement
 

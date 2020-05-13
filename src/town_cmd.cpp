@@ -916,8 +916,7 @@ void UpdateTownCargoBitmap()
 
 static bool GrowTown(Town *t);
 
-static void DoRegularFunding(Town *t)
-{
+bool TownNeedsFunding(Town *t) {
 	bool fund_regularly = HasBit(t->fund_regularly, _local_company);
 	bool do_powerfund = HasBit(t->do_powerfund, _local_company);
 
@@ -927,35 +926,56 @@ static void DoRegularFunding(Town *t)
 	}
 
 	if (!fund_regularly && !do_powerfund)
-		return;
+		return false;
 
+
+	bool is_growing = HasBit(t->flags, TOWN_IS_GROWING);
+
+	if (HasBit(t->flags, TOWN_CUSTOM_GROWTH)) {
+		if (!is_growing)
+			return false;
+
+		if (do_powerfund && t->grow_counter > 2 * TOWN_GROWTH_TICKS)
+			return true;
+
+		return (fund_regularly &&
+		        t->fund_buildings_months == 0 && (
+			     	t->growth_rate <= 2 * TOWN_GROWTH_TICKS ||
+                	t->grow_counter > 2 * TOWN_GROWTH_TICKS
+                ));
+	}
+
+	if (!is_growing)
+		return true;
+
+	if (do_powerfund && t->grow_counter > 2 * TOWN_GROWTH_TICKS)
+		return true;
+
+	return (fund_regularly &&
+	        t->fund_buildings_months == 0 &&
+		    t->growth_rate >= TOWN_GROWTH_TICKS && (
+		    	t->growth_rate <= 2 * TOWN_GROWTH_TICKS ||
+            	t->grow_counter > 2 * TOWN_GROWTH_TICKS
+            ));
+}
+
+static void DoRegularFunding(Town *t)
+{
 	if (_local_company == COMPANY_SPECTATOR)
 		return;
 
-	if (CB_Enabled() && !t->growing)
+	if (!TownNeedsFunding(t))
 		return;
 
-
-	// Funding with grow_counter == 1 doesn't speed up next house building,
-	// so trying to avoid it. This means no powerfunding with gr <= 1, and no
-	// regular funding with grow_counter == 1 unless gr is also 1
-	// (we need to fund anyway even if it doesn't speed up next house)
-	// And in case town is not growing ignore grow_counter and growth_rate
-	// completely (it will start growing once we fund it)
-	bool is_growing = !HasBit(t->flags, TOWN_IS_GROWING);
-	if (fund_regularly) {
-		if (t->fund_buildings_months > 0) return;
-		if (is_growing
-		    && t->growth_rate > 2 * TOWN_GROWTH_TICKS
-		    && t->grow_counter <= 2 * TOWN_GROWTH_TICKS) return;
-	} else if (do_powerfund) {
-		if (t->growth_rate <= 2 * TOWN_GROWTH_TICKS) return;
-		if (t->grow_counter != t->growth_rate && is_growing) return;
-	} else return;
+	/* never fund faster than every TOWN_GROWTH_TICKS */
+	if (_tick_counter < t->last_funding) {
+		if (UINT32_MAX - t->last_funding + _tick_counter < TOWN_GROWTH_TICKS) return;
+	} else if (_tick_counter - t->last_funding < TOWN_GROWTH_TICKS) return;
 
 	CompanyID old = _current_company;
 	_current_company = _local_company;
 	DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION | CMD_NO_ESTIMATE);
+	t->last_funding = _tick_counter;
 	_current_company = old;
 }
 
@@ -981,6 +1001,12 @@ static void DoRegularAdvertising(Town *t) {
 
 	if (t->ad_ref_goods_entry->rating >= t->ad_rating_goal)
 		return;
+
+	// don't advertise faster that once per 30 ticks
+	if (_tick_counter < t->last_advertisement) {
+		if (UINT32_MAX - t->last_advertisement + _tick_counter < 30) return;
+	} else if (_tick_counter - t->last_advertisement < 30) return;
+	t->last_advertisement = _tick_counter;
 
     CompanyID old = _current_company;
     _current_company = _local_company;
