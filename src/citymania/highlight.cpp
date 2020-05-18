@@ -8,6 +8,7 @@
 #include "../industry.h"
 #include "../landscape.h"
 #include "../town.h"
+#include "../town_kdtree.h"
 #include "../tilearea_type.h"
 #include "../tilehighlight_type.h"
 #include "../viewport_func.h"
@@ -195,6 +196,33 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
     }
 }
 
+std::pair<ZoningBorder, bool> CalcCBAcceptanceBorders(TileIndex tile) {
+    int tx = TileX(tile), ty = TileY(tile);
+    uint16 radius = _settings_client.gui.cb_distance_check;
+    bool in_zone = false;
+    ZoningBorder border = ZoningBorder::NONE;
+    _town_kdtree.FindContained(
+        (uint16)max<int>(0, tx - radius),
+        (uint16)max<int>(0, ty - radius),
+        (uint16)min<int>(tx + radius + 1, MapSizeX()),
+        (uint16)min<int>(ty + radius + 1, MapSizeY()),
+        [tx, ty, radius, &in_zone, &border] (TownID tid) {
+            Town *town = Town::GetIfValid(tid);
+            if (!town)
+                return;
+
+            int dx = TileX(town->xy) - tx;
+            int dy = TileY(town->xy) - ty;
+            in_zone = in_zone || (max(abs(dx), abs(dy)) <= radius);
+            if (dx == radius) border |= ZoningBorder::TOP_RIGHT;
+            if (dx == -radius) border |= ZoningBorder::BOTTOM_LEFT;
+            if (dy == radius) border |= ZoningBorder::TOP_LEFT;
+            if (dy == -radius) border |= ZoningBorder::BOTTOM_RIGHT;
+        }
+    );
+    return std::make_pair(border, in_zone);
+}
+
 TileHighlight GetTileHighlight(const TileInfo *ti) {
     TileHighlight th;
     if (ti->tile == INVALID_TILE) return th;
@@ -265,6 +293,12 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
         }
         auto z = getter(check_tile);
         if (z) th.ground_pal = th.structure_pal = GetTintBySelectionColour(pal[z]);
+    } else if (_zoning.outer == CHECKCBACCEPTANCE) {
+        auto b = CalcCBAcceptanceBorders(ti->tile);
+        if (b.first)
+            th.add_border(b.first, SPR_PALETTE_ZONING_WHITE);
+        if (b.second)
+            th.ground_pal = th.structure_pal = PALETTE_TINT_WHITE;
     } else if (_zoning.outer == CHECKACTIVESTATIONS) {
         auto getter = [](TileIndex t) {
             if (!IsTileType (t, MP_STATION)) return 0;
@@ -393,6 +427,7 @@ void UpdateAdvertisementZoning(TileIndex center, uint radius, uint8 zone) {
         }
     }
 }
+
 
 void InitializeZoningMap() {
     for (Town *t : Town::Iterate()) {

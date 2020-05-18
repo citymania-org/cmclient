@@ -278,12 +278,9 @@ SpriteID TileZoneCheckNewCBBorders(TileIndex tile) {
 
 //Check CB town acceptance area
 SpriteID TileZoneCheckCBBorders(TileIndex tile) {
-	Town *town = CMCalcClosestTownFromTile(tile);
-
-	if (town != NULL) {
-		if (DistanceManhattan(town->xy, tile) <= _settings_client.gui.cb_distance_check) {
-			return SPR_PALETTE_ZONING_LIGHT_BLUE; //cb catchment
-		}
+	for (Town *town : Town::Iterate()) {
+		if (DistanceMax(town->xy, tile) <= _settings_client.gui.cb_distance_check)
+			return SPR_PALETTE_ZONING_LIGHT_BLUE;
 	}
 	return INVALID_SPRITE_ID; // no town
 }
@@ -365,7 +362,7 @@ SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode 
 		case CHECKTOWNZONES:   return TileZoneCheckTownZones(tile);
 		case CHECKCBBORDERS:   return TileZoneCheckCBBorders(tile);
 		case CHECKNEWCBBORDERS:   return TileZoneCheckNewCBBorders(tile);
-		case CHECKCBTOWNBORDERS: return TileZoneCheckCBTownBorders(tile);
+		case CHECKCBACCEPTANCE: return TileZoneCheckCBBorders(tile);
 		case CHECKTOWNADZONES: return TileZoneCheckTownAdvertisementZones(tile);
 		case CHECKTOWNGROWTHTILES: return TileZoneCheckTownsGrowthTiles(tile);
 		case CHECKACTIVESTATIONS: return TileZoneCheckActiveStations(tile);
@@ -427,6 +424,7 @@ void DrawTileZoning(const TileInfo *ti) {
 			    _zoning.outer == CHECKINDUNSER ||
 			    _zoning.outer == CHECKTOWNADZONES ||
 				_zoning.outer == CHECKSTACATCH ||
+				_zoning.outer == CHECKCBACCEPTANCE ||
 				_zoning.outer == CHECKACTIVESTATIONS ||
 				_zoning.outer == CHECKTOWNGROWTHTILES) {
 			// handled by citymania zoning

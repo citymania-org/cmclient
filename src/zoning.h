@@ -16,7 +16,7 @@ enum EvaluationMode {
 	CHECKTOWNZONES,  ///< Town zones (Tz*)
 	CHECKCBBORDERS,  ///< Citybuilder cargo acceptment zone
 	CHECKNEWCBBORDERS,  ///< Citybuilder cargo acceptment zone
-	CHECKCBTOWNBORDERS,  ///< Citybuilder server town borders
+	CHECKCBACCEPTANCE,  ///< Citybuilder cargo acceptance zone
 	CHECKTOWNADZONES,  ///< Town advertisement zone
 	CHECKTOWNGROWTHTILES, ///< Town growth tiles (new house, skipped/removed house)
 };

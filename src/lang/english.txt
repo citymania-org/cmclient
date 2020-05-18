@@ -5259,7 +5259,7 @@ STR_ZONING_BUL_CATCH                                            :{BLACK}City cat
 STR_ZONING_BUL_UNSER                                            :{BLACK}Unserved buildings
 STR_ZONING_IND_UNSER                                            :{BLACK}Unserved industries
 STR_ZONING_TOWN_ZONES                                           :{BLACK}Town zones
-STR_ZONING_CB_TOWN_BORDERS                                      :{BLACK}CB town borders
+STR_ZONING_CB_ACCEPTANCE                                        :{BLACK}CB cargo acceptance
 STR_ZONING_CB_BORDERS                                           :{BLACK}CB borders
 STR_ZONING_NEW_CB_BORDERS                                           :{BLACK}New CB borders
 STR_ZONING_ADVERTISEMENT_ZONES                                  :{BLACK}Advertisement
