@@ -29,6 +29,8 @@
 
 #include <bitset>
 
+#include "citymania/minimap.hpp"
+
 #include "safeguards.h"
 
 static int _smallmap_industry_count; ///< Number of used industries
@@ -232,6 +234,7 @@ static const LegendAndColour * const _legend_table[] = {
 	_legend_routes,
 	_legend_vegetation,
 	_legend_land_owners,
+	_legend_from_industries,
 };
 
 #define MKCOLOUR(x)         TO_LE32X(x)
@@ -265,6 +268,7 @@ static SmallMapColourScheme _heightmap_schemes[] = {
 	{nullptr, _green_map_heights,      lengthof(_green_map_heights),      MKCOLOUR_XXXX(0x54)}, ///< Green colour scheme.
 	{nullptr, _dark_green_map_heights, lengthof(_dark_green_map_heights), MKCOLOUR_XXXX(0x62)}, ///< Dark green colour scheme.
 	{nullptr, _violet_map_heights,     lengthof(_violet_map_heights),     MKCOLOUR_XXXX(0x81)}, ///< Violet colour scheme.
+	{nullptr, citymania::_yellow_map_heights,     lengthof(citymania::_yellow_map_heights),     MKCOLOUR_XXXX(0xC1)},
 };
 
 /**
@@ -579,6 +583,31 @@ static inline uint32 GetSmallMapOwnerPixels(TileIndex tile, TileType t)
 	return MKCOLOUR_XXXX(_legend_land_owners[_company_to_list_pos[o]].colour);
 }
 
+static inline uint32 CM_GetSmallMapIMBAPixels(TileIndex tile, TileType t)
+{
+	const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+	switch (t) {
+		// case MP_TREES:
+		// 	if (GetTreeGround(tile) == TREE_GROUND_SNOW_DESERT || GetTreeGround(tile) == TREE_GROUND_ROUGH_SNOW) {
+		// 		return (_settings_game.game_creation.landscape == LT_ARCTIC) ? MKCOLOUR_XYYX(PC_LIGHT_BLUE, PC_TREES) : MKCOLOUR_XYYX(PC_ORANGE, PC_TREES);
+		// 	}
+		// 	return MKCOLOUR_XYYX(PC_GRASS_LAND, PC_TREES);
+
+		case MP_CLEAR:
+			if (IsClearGround(tile, CLEAR_FIELDS) || IsClearGround(tile, CLEAR_DESERT)) {
+				const SmallMapColourScheme *cs = &_heightmap_schemes[3];
+				return cs->height_colours[TileHeight(tile)];
+			}
+			// if (IsClearGround(tile, CLEAR_SNOW))
+			// 	return _vegetation_clear_bits[GetClearGround(tile)];
+			FALLTHROUGH;
+
+		default:
+			const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+			return ApplyMask(cs->height_colours[TileHeight(tile)], &_smallmap_vehicles_andor[t]);
+	}
+}
+
 /** Vehicle colours in #SMT_VEHICLES mode. Indexed by #VehicleType. */
 static const byte _vehicle_type_colours[6] = {
 	PC_RED, PC_YELLOW, PC_LIGHT_BLUE, PC_WHITE, PC_BLACK, PC_RED
@@ -761,7 +790,7 @@ inline uint32 SmallMapWindow::GetTileColours(const TileArea &ta) const
 
 			case MP_INDUSTRY:
 				/* Special handling of industries while in "Industries" smallmap view. */
-				if (this->map_type == SMT_INDUSTRY) {
+				if (this->map_type == SMT_INDUSTRY || this->map_type == CM_SMT_IMBA) {
 					/* If industry is allowed to be seen, use its colour on the map.
 					 * This has the highest priority above any value in _tiletype_importance. */
 					IndustryType type = Industry::GetByTile(ti)->type;
@@ -809,6 +838,9 @@ inline uint32 SmallMapWindow::GetTileColours(const TileArea &ta) const
 
 		case SMT_OWNER:
 			return GetSmallMapOwnerPixels(tile, et);
+
+		case CM_SMT_IMBA:
+			return CM_GetSmallMapIMBAPixels(tile, et);
 
 		default: NOT_REACHED();
 	}
@@ -1032,6 +1064,7 @@ void SmallMapWindow::SetupWidgetData()
 	int plane;
 	switch (this->map_type) {
 		case SMT_INDUSTRY:
+		case CM_SMT_IMBA:
 			legend_tooltip = STR_SMALLMAP_TOOLTIP_INDUSTRY_SELECTION;
 			enable_all_tooltip = STR_SMALLMAP_TOOLTIP_ENABLE_ALL_INDUSTRIES;
 			disable_all_tooltip = STR_SMALLMAP_TOOLTIP_DISABLE_ALL_INDUSTRIES;
@@ -1064,6 +1097,7 @@ void SmallMapWindow::SetupWidgetData()
 	this->GetWidget<NWidgetCore>(WID_SM_ENABLE_ALL)->SetDataTip(STR_SMALLMAP_ENABLE_ALL, enable_all_tooltip);
 	this->GetWidget<NWidgetCore>(WID_SM_DISABLE_ALL)->SetDataTip(STR_SMALLMAP_DISABLE_ALL, disable_all_tooltip);
 	this->GetWidget<NWidgetStacked>(WID_SM_SELECT_BUTTONS)->SetDisplayedPlane(plane);
+	this->SetWidgetDisabledState(WID_SM_SHOW_HEIGHT, this->map_type == CM_SMT_IMBA);
 }
 
 SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) : Window(desc), refresh(GUITimer(FORCE_REFRESH_PERIOD))
@@ -1136,7 +1170,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 		uint num_columns = 1;
 		for (const LegendAndColour *tbl = _legend_table[i]; !tbl->end; ++tbl) {
 			StringID str;
-			if (i == SMT_INDUSTRY) {
+			if (i == SMT_INDUSTRY || i == CM_SMT_IMBA) {
 				SetDParam(0, tbl->legend);
 				SetDParam(1, IndustryPool::MAX_SIZE);
 				str = STR_SMALLMAP_INDUSTRY;
@@ -1220,6 +1254,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 			StringID string = STR_NULL;
 			switch (this->map_type) {
 				case SMT_INDUSTRY:
+				case CM_SMT_IMBA:
 					string = STR_SMALLMAP_INDUSTRY;
 					break;
 				case SMT_LINKSTATS:
@@ -1233,7 +1268,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 			}
 
 			for (const LegendAndColour *tbl = _legend_table[this->map_type]; !tbl->end; ++tbl) {
-				if (tbl->col_break || ((this->map_type == SMT_INDUSTRY || this->map_type == SMT_OWNER || this->map_type == SMT_LINKSTATS) && i++ >= number_of_rows)) {
+				if (tbl->col_break || ((this->map_type == SMT_INDUSTRY || this->map_type == SMT_OWNER || this->map_type == SMT_LINKSTATS || this->map_type == CM_SMT_IMBA) && i++ >= number_of_rows)) {
 					/* Column break needed, continue at top, COLUMN_WIDTH pixels
 					 * (one "row") to the right. */
 					x += rtl ? -(int)this->column_width : this->column_width;
@@ -1245,6 +1280,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 
 				switch (this->map_type) {
 					case SMT_INDUSTRY:
+					case CM_SMT_IMBA:
 						/* Industry name must be formatted, since it's not in tiny font in the specs.
 						 * So, draw with a parameter and use the STR_SMALLMAP_INDUSTRY string, which is tiny font */
 						SetDParam(0, tbl->legend);
@@ -1284,6 +1320,13 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 
 				y += row_height;
 			}
+			break;
+		}
+		case CM_WID_SM_IMBA: {
+			uint offset = this->IsWidgetLowered(CM_WID_SM_IMBA) ? 1 : 0;
+			Dimension d = GetSpriteSize(SPR_IMG_INDUSTRY);
+			DrawSprite(SPR_IMG_INDUSTRY, PAL_NONE, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset);
+			break;
 		}
 	}
 }
@@ -1301,7 +1344,7 @@ void SmallMapWindow::SwitchMapType(SmallMapType map_type)
 	this->SetupWidgetData();
 
 	if (map_type == SMT_LINKSTATS) this->overlay->SetDirty();
-	if (map_type != SMT_INDUSTRY) this->BreakIndustryChainLink();
+	if (map_type != SMT_INDUSTRY && map_type != CM_SMT_IMBA) this->BreakIndustryChainLink();
 	this->SetDirty();
 }
 
@@ -1355,6 +1398,7 @@ void SmallMapWindow::SelectLegendItem(int click_pos, LegendAndColour *legend, in
 	}
 
 	if (this->map_type == SMT_INDUSTRY) this->BreakIndustryChainLink();
+	if (this->map_type == CM_SMT_IMBA) this->BreakIndustryChainLink();
 }
 
 /**
@@ -1393,7 +1437,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 /* virtual */ void SmallMapWindow::OnMouseOver(Point pt, int widget)
 {
 	IndustryType new_highlight = INVALID_INDUSTRYTYPE;
-	if (widget == WID_SM_LEGEND && this->map_type == SMT_INDUSTRY) {
+	if (widget == WID_SM_LEGEND && (this->map_type == SMT_INDUSTRY || this->map_type == CM_SMT_IMBA)) {
 		int industry_pos = GetPositionOnLegend(pt);
 		if (industry_pos >= 0 && industry_pos < _smallmap_industry_count) {
 			new_highlight = _legend_from_industries[industry_pos].type;
@@ -1439,6 +1483,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 		case WID_SM_ROUTES:     // Show transport routes
 		case WID_SM_VEGETATION: // Show vegetation
 		case WID_SM_OWNERS:     // Show land owners
+		case CM_WID_SM_IMBA:
 			this->SwitchMapType((SmallMapType)(widget - WID_SM_CONTOUR));
 			if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 			break;
@@ -1458,12 +1503,12 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 			break;
 
 		case WID_SM_LEGEND: // Legend
-			if (this->map_type == SMT_INDUSTRY || this->map_type == SMT_LINKSTATS || this->map_type == SMT_OWNER) {
+			if (this->map_type == SMT_INDUSTRY || this->map_type == SMT_LINKSTATS || this->map_type == SMT_OWNER || this->map_type == CM_SMT_IMBA) {
 				int click_pos = this->GetPositionOnLegend(pt);
 				if (click_pos < 0) break;
 
 				/* If industry type small map*/
-				if (this->map_type == SMT_INDUSTRY) {
+				if (this->map_type == SMT_INDUSTRY || this->map_type == CM_SMT_IMBA) {
 					/* If click on industries label, find right industry type and enable/disable it. */
 					if (click_pos < _smallmap_industry_count) {
 						this->SelectLegendItem(click_pos, _legend_from_industries, _smallmap_industry_count);
@@ -1487,6 +1532,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 			LegendAndColour *tbl = nullptr;
 			switch (this->map_type) {
 				case SMT_INDUSTRY:
+				case CM_SMT_IMBA:
 					tbl = _legend_from_industries;
 					this->BreakIndustryChainLink();
 					break;
@@ -1535,7 +1581,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 
 		case 0: {
 			extern std::bitset<NUM_INDUSTRYTYPES> _displayed_industries;
-			if (this->map_type != SMT_INDUSTRY) this->SwitchMapType(SMT_INDUSTRY);
+			if (this->map_type != CM_SMT_IMBA) this->SwitchMapType(CM_SMT_IMBA);
 
 			for (int i = 0; i != _smallmap_industry_count; i++) {
 				_legend_from_industries[i].show_on_map = _displayed_industries.test(_legend_from_industries[i].type);
@@ -1675,7 +1721,7 @@ Point SmallMapWindow::GetStationMiddle(const Station *st) const
 	return ret;
 }
 
-SmallMapWindow::SmallMapType SmallMapWindow::map_type = SMT_CONTOUR;
+SmallMapWindow::SmallMapType SmallMapWindow::map_type = CM_SMT_IMBA;
 bool SmallMapWindow::show_towns = true;
 int SmallMapWindow::max_heightlevel = -1;
 
@@ -1772,8 +1818,8 @@ static const NWidgetPart _nested_smallmap_bar[] = {
 							SetDataTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN), SetFill(1, 1),
 					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_CENTERMAP),
 							SetDataTip(SPR_IMG_SMALLMAP, STR_SMALLMAP_CENTER), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_BLANK),
-							SetDataTip(SPR_DOT_SMALL, STR_NULL), SetFill(1, 1),
+					NWidget(WWT_IMGBTN, COLOUR_BROWN, CM_WID_SM_IMBA),
+							SetDataTip(SPR_IMG_SHOW_COUNTOURS, STR_CM_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_CONTOUR),
 							SetDataTip(SPR_IMG_SHOW_COUNTOURS, STR_SMALLMAP_TOOLTIP_SHOW_LAND_CONTOURS_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_VEHICLES),

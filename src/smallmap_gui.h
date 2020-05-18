@@ -51,6 +51,7 @@ protected:
 		SMT_ROUTES,
 		SMT_VEGETATION,
 		SMT_OWNER,
+		CM_SMT_IMBA,
 	};
 
 	/** Available kinds of zoomlevel changes. */

@@ -5517,3 +5517,4 @@ STR_CM_CONFIG_SETTING_OPEN_VEHICLE_FOR_SHARED_CLONE_HELPTEXT :Open vehicle windo
 STR_CM_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES :Open orders window for new vehicles: {STRING2}
 STR_CM_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES_HELPTEXT :Automatically open oreders windown along with a vehicle window for a new vehicles
 STR_CM_PURCHASE_ENGINE_ID :{BLACK}Engine ID: {GOLD}{NUM}
+STR_CM_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP :{BLACK}Show industries on map combined with land contours and vegetation

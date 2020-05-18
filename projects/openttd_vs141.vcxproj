@@ -907,6 +907,8 @@
     <ClCompile Include="..\src\citymania\base64.cpp" />
     <ClInclude Include="..\src\citymania\highlight.hpp" />
     <ClCompile Include="..\src\citymania\highlight.cpp" />
+    <ClInclude Include="..\src\citymania\minimap.hpp" />
+    <ClCompile Include="..\src\citymania\minimap.cpp" />
     <ClInclude Include="..\src\citymania\station_ui.hpp" />
     <ClCompile Include="..\src\citymania\station_ui.cpp" />
     <ClInclude Include="..\src\newgrf_revisions.hpp" />
