@@ -5438,7 +5438,7 @@ STR_TOWN_CB_CARGO_FROM_NOT                                      :{SILVER}{COMMA}
 STR_CONFIG_SETTING_POLYRAIL_DOUBLECLICK_TOOLTIPS                :Enable finishing polyrail with mouse double click{STRING2}
 
 #tooltips extra
-STR_CONFIG_SETTING_ENABLE_EXTRA_TOOLTIPS                        :Enable extra tooltips{STRING2}
+STR_CONFIG_SETTING_ENABLE_EXTRA_TOOLTIPS                        :Enable extra tooltips: {STRING2}
 STR_TTE_HOUSE_NAME                                              :{LTBLUE}{STRING}
 STR_TTE_HOUSE                                                   :{BLACK}Population: {NUM}
 STR_TTE_INDUSTRY_NAME                                           :{LTBLUE}{INDUSTRY}

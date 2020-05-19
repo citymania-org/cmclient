@@ -129,7 +129,7 @@ public:
 
 		if (!StrEmpty(this->landinfo_data[LAND_INFO_MULTICENTER_LINE])) {
 			uint width = GetStringBoundingBox(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
-			size->width = max(size->width, min(300u, width));
+			size->width = max(size->width, min<uint>(ScaleGUITrad(300), width));
 			SetDParamStr(0, this->landinfo_data[LAND_INFO_MULTICENTER_LINE]);
 			size->height += GetStringHeight(STR_JUST_RAW_STRING, size->width - WD_FRAMETEXT_LEFT - WD_FRAMETEXT_RIGHT);
 		}
@@ -1439,6 +1439,9 @@ struct TooltipsExtraWindow : public Window
 			case MP_STATION: {
 				const Station *st = Station::GetIfValid((StationID)this->objIndex);
 				if(st == NULL) break;
+
+				SetDParam(0, st->index);
+				size->width = max(GetStringBoundingBox(STR_TTE_STATION_NAME).width, size->width);
 
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
 					const CargoSpec *cs = _sorted_cargo_specs[i];
