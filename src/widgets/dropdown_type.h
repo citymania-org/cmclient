@@ -14,11 +14,6 @@
 #include "../gfx_func.h"
 #include "../core/smallvec_type.hpp"
 #include "table/strings.h"
-#include "../stdafx.h"
-#include "../window_gui.h"
-#include "../string_func.h"
-#include "../strings_func.h"
-#include "../window_func.h"
 
 /**
  * Base list item class from which others are derived. If placed in a list it
@@ -55,39 +50,6 @@ public:
 	static bool NatSortFunc(std::unique_ptr<const DropDownListItem> const &first, std::unique_ptr<const DropDownListItem> const &second);
 };
 
-/**
- * Drop down list entry for showing a checked/unchecked toggle item. Use
- * DropDownListCheckedItem or DropDownListCharStringCheckedItem depending of
- * type of string used (either StringID or const char*).
- */
-
-template <class T, typename S>
-class DropDownListCheckedItemT : public T {
-	uint checkmark_width;
-public:
-	bool checked;
-	DropDownListCheckedItemT<T,S>(S string, int result, bool masked, bool checked) : T(string, result, masked), checked(checked)
-	{
-		this->checkmark_width = GetStringBoundingBox(STR_JUST_CHECKMARK).width + 3;
-	}
-	virtual ~DropDownListCheckedItemT<T,S>() {}
-	virtual uint Width() const
-	{
-		return T::Width() + this->checkmark_width;
-	}
-
-	virtual void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const
-	{
-		bool rtl = _current_text_dir == TD_RTL;
-		if (this->checked) {
-			DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, top, STR_JUST_CHECKMARK, sel ? TC_WHITE : TC_BLACK);
-		}
-		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : this->checkmark_width), right - WD_FRAMERECT_RIGHT - (rtl ? this->checkmark_width : 0), top, this->String(), sel ? TC_WHITE : TC_BLACK);
-	}
-};
-
-#define DropDownListCheckedItem DropDownListCheckedItemT<DropDownListStringItem,StringID>
-#define DropDownListCharStringCheckedItem DropDownListCheckedItemT<DropDownListCharStringItem,const char*>
 /**
  * String list item with parameters.
  */

@@ -74,14 +74,17 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
-*** next
+*** 1.10.2 ( 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.
 - Rename "CB town border" zone to "CB cargo acceptance", switch it to a new colored highlight and fix for new CB mode.
 - Rename "New CB borders" zone to "CB town limit" and switch it to a new colored highlight. Remove old "CB borders" zone.
 - In CB modes added CB town limit to outer town zones highlight (red border).
 - Show engine id in build window in newgrf developer mode.
+- Fixed automatic funding and advertisement wasting money.
 - Fixed crash on selecting tram station build tool.
 - Fixed zoning hotkeys.
+- Fixed tooltip width on empty stations.
+- Fixed checkboxes in toolbar menu items.
 
 *** 1.10.1 (15 Apr 2020) ***
 - Add a setting to autoopen vehicle window when cloning vehicles while sharing orders.

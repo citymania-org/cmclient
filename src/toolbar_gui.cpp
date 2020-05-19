@@ -89,7 +89,6 @@ enum CallBackFunction {
 
 static CallBackFunction _last_started_action = CBF_NONE; ///< Last started user action.
 
-#if 0 // CM
 /**
  * Drop down list entry for showing a checked/unchecked toggle item.
  */
@@ -117,7 +116,6 @@ public:
 		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : this->checkmark_width), right - WD_FRAMERECT_RIGHT - (rtl ? this->checkmark_width : 0), top, this->String(), sel ? TC_WHITE : TC_BLACK);
 	}
 };
-#endif
 
 /**
  * Drop down list entry for showing a company entry, with companies 'blob'.

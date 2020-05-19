@@ -2,12 +2,12 @@
 
 #include "stdafx.h"
 #include <sstream>
-#include "widgets/dropdown_type.h" //fillrect
 #include "core/geometry_func.hpp" //maxdim
 #include "settings_type.h"
 #include "settings_func.h" //saveconfig
 #include "3rdparty/md5/md5.h" //pass crypt
 #include "network/network_func.h" //network chat
+#include "strings_func.h"
 #include "textbuf_gui.h"  //show query
 #include "network/network.h" //networking
 #include "network/core/tcp_http.h" //http connector
@@ -15,6 +15,9 @@
 #include "fileio_func.h" //personal dir
 #include "error.h" //error message
 #include "debug.h"
+#include "window_func.h"
+#include "window_gui.h"
+
 #include "citymania/base64.h"
 
 
