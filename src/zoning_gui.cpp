@@ -126,7 +126,7 @@ struct ZoningWindow : public Window {
 
 
 static EventState ZoningWindowGlobalHotkeys(int hotkey) {
-	EvaluationMode zoning = (EvaluationMode)(hotkey - ZTW_OUTER_FIRST + 1); // +1:skip CHECKNOTHING
+	EvaluationMode zoning = (EvaluationMode)(hotkey - ZTW_OUTER_FIRST); // +1:skip CHECKNOTHING
 	bool deselect = (_zoning.outer == zoning);
 	_zoning.outer = deselect ? CHECKNOTHING : zoning;
 	MarkWholeScreenDirty();
