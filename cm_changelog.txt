@@ -85,6 +85,7 @@ This is usable for any OpenTTD servers
 - Fixed zoning hotkeys.
 - Fixed tooltip width on empty stations.
 - Fixed checkboxes in toolbar menu items.
+- Fixed CityMania login in server login window.
 
 *** 1.10.1 (15 Apr 2020) ***
 - Add a setting to autoopen vehicle window when cloning vehicles while sharing orders.

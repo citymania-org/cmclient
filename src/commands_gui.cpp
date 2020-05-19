@@ -761,10 +761,7 @@ struct LoginWindow : Window {
 				break;
 			}
 			case LQW_NOVAPOLIS_PW: {
-				char msg[128];
-				strecpy(msg, str, lastof(msg));
-				strtomd5(msg, lastof(msg), (int)strlen(msg));
-				SetLoginItem(NOVAPOLIS_PW, msg);
+				SetLoginItem(NOVAPOLIS_PW, str);
 				break;
 			}
 			case LQW_NICE_LOGIN:
