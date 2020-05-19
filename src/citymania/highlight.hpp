@@ -65,6 +65,7 @@ void AllocateZoningMap(uint map_size);
 void InitializeZoningMap();
 
 void UpdateTownZoning(Town *town, uint32 prev_edge);
+void UpdateZoningTownHouses(const Town *town, uint32 old_houses);
 
 std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile);
 ZoningBorder GetAnyStationCatchmentBorder(TileIndex tlie);

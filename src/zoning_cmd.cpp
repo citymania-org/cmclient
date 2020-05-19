@@ -360,9 +360,8 @@ SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode 
 		case CHECKBULUNSER:    return TileZoneCheckUnservedBuildingsEvaluation(tile);
 		case CHECKINDUNSER:    return TileZoneCheckUnservedIndustriesEvaluation(tile);
 		case CHECKTOWNZONES:   return TileZoneCheckTownZones(tile);
-		case CHECKCBBORDERS:   return TileZoneCheckCBBorders(tile);
-		case CHECKNEWCBBORDERS:   return TileZoneCheckNewCBBorders(tile);
 		case CHECKCBACCEPTANCE: return TileZoneCheckCBBorders(tile);
+		case CHECKCBTOWNLIMIT:   return TileZoneCheckNewCBBorders(tile);
 		case CHECKTOWNADZONES: return TileZoneCheckTownAdvertisementZones(tile);
 		case CHECKTOWNGROWTHTILES: return TileZoneCheckTownsGrowthTiles(tile);
 		case CHECKACTIVESTATIONS: return TileZoneCheckActiveStations(tile);
@@ -425,6 +424,7 @@ void DrawTileZoning(const TileInfo *ti) {
 			    _zoning.outer == CHECKTOWNADZONES ||
 				_zoning.outer == CHECKSTACATCH ||
 				_zoning.outer == CHECKCBACCEPTANCE ||
+				_zoning.outer == CHECKCBTOWNLIMIT ||
 				_zoning.outer == CHECKACTIVESTATIONS ||
 				_zoning.outer == CHECKTOWNGROWTHTILES) {
 			// handled by citymania zoning

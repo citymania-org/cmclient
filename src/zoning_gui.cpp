@@ -17,14 +17,13 @@ const StringID _zone_types[] = {
 	STR_ZONING_BUL_UNSER,
 	STR_ZONING_IND_UNSER,
 	STR_ZONING_TOWN_ZONES,
-	STR_ZONING_CB_BORDERS,
-	STR_ZONING_NEW_CB_BORDERS,
 	STR_ZONING_CB_ACCEPTANCE,
+	STR_ZONING_CB_TOWN_LIMIT,
 	STR_ZONING_ADVERTISEMENT_ZONES,
 	STR_ZONING_TOWN_GROWTH_TILES,
 };
 
-const int ZONES_COUNT = 12;
+const int ZONES_COUNT = 11;
 
 enum ZoningToolbarWidgets {
 	ZTW_CAPTION,
@@ -141,8 +140,8 @@ static Hotkey zoning_hotkeys[] = {
 	Hotkey(WKC_SHIFT | '4', "unserved_buildings", ZTW_OUTER_FIRST + CHECKBULUNSER),
 	Hotkey(WKC_SHIFT | '5', "unserved_industries", ZTW_OUTER_FIRST + CHECKINDUNSER),
 	Hotkey(WKC_SHIFT | '6', "town_zone", ZTW_OUTER_FIRST + CHECKTOWNZONES),
-	Hotkey(WKC_SHIFT | '7', "CB_acceptance", ZTW_OUTER_FIRST + CHECKCBACCEPTANCE),
-	Hotkey(WKC_SHIFT | '8', "CB_build_borders", ZTW_OUTER_FIRST + CHECKCBACCEPTANCE),
+	Hotkey(WKC_SHIFT | '7', "cb_acceptance", ZTW_OUTER_FIRST + CHECKCBACCEPTANCE),
+	Hotkey(WKC_SHIFT | '8', "cb_town_limit", ZTW_OUTER_FIRST + CHECKCBTOWNLIMIT),
 	Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + CHECKTOWNADZONES),
 	Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + CHECKTOWNGROWTHTILES),
 	Hotkey((uint16)0, "active_stations", ZTW_OUTER_FIRST + CHECKACTIVESTATIONS),

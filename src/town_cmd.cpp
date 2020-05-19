@@ -469,9 +469,8 @@ void ClearAllTownCachedNames()
  */
 static void ChangePopulation(Town *t, int mod)
 {
-	// if(mod > 0 && t->houses_construction > 0) t->houses_construction--;
-
 	t->cache.population += mod;
+
 	InvalidateWindowData(WC_TOWN_VIEW, t->index); // Cargo requirements may appear/vanish for small populations
 	if (_settings_client.gui.population_in_label) t->UpdateVirtCoord();
 
@@ -2896,6 +2895,8 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 			}
 		}
 
+		citymania::UpdateZoningTownHouses(t, t->cache.num_houses - 1);
+
 		MakeTownHouse(tile, t, construction_counter, construction_stage, house, random_bits);
 		UpdateTownGrowthTile(tile, TGTS_NEW_HOUSE);
 		UpdateTownRadius(t);
@@ -2987,6 +2988,7 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	if (eflags & BUILDING_HAS_4_TILES) DoClearTownHouseHelper(tile + TileDiffXY(1, 1), t, ++house);
 
 	UpdateTownRadius(t);
+	citymania::UpdateZoningTownHouses(t, t->cache.num_houses + 1);
 
 	/* Update cargo acceptance. */
 	UpdateTownCargoes(t, tile);

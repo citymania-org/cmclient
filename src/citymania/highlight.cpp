@@ -14,6 +14,8 @@
 #include "../viewport_func.h"
 #include "../zoning.h"
 
+#include <set>
+
 #include "station_ui.hpp"
 
 
@@ -46,6 +48,7 @@ extern const Station *_station_to_join;
 extern const Station *_highlight_station_to_join;
 extern TileArea _highlight_join_area;
 
+std::set<std::pair<uint32, const Town*>, std::greater<std::pair<uint32, const Town*> > > _town_cache;
 // struct {
 //     int w;
 //     int h;
@@ -208,7 +211,7 @@ std::pair<ZoningBorder, bool> CalcCBAcceptanceBorders(TileIndex tile) {
         (uint16)min<int>(ty + radius + 1, MapSizeY()),
         [tx, ty, radius, &in_zone, &border] (TownID tid) {
             Town *town = Town::GetIfValid(tid);
-            if (!town)
+            if (!town || town->larger_town)
                 return;
 
             int dx = TileX(town->xy) - tx;
@@ -218,6 +221,45 @@ std::pair<ZoningBorder, bool> CalcCBAcceptanceBorders(TileIndex tile) {
             if (dx == -radius) border |= ZoningBorder::BOTTOM_LEFT;
             if (dy == radius) border |= ZoningBorder::TOP_LEFT;
             if (dy == -radius) border |= ZoningBorder::BOTTOM_RIGHT;
+        }
+    );
+    return std::make_pair(border, in_zone);
+}
+
+
+void AddTownCBLimitBorder(TileIndex tile, const Town *town, ZoningBorder &border, bool &in_zone) {
+    auto sq = town->cache.squared_town_zone_radius[0] + 30;
+    auto x = CalcTileBorders(tile, [town, sq] (TileIndex tile) {
+        return DistanceSquare(tile, town->xy) <= sq ? 1 : 0;
+    });
+    border |= x.first;
+    in_zone = in_zone || x.second;
+}
+
+std::pair<ZoningBorder, bool> CalcCBTownLimitBorder(TileIndex tile) {
+    auto n = Town::GetNumItems();
+    uint32 sq = 0;
+    uint i = 0;
+    ZoningBorder border = ZoningBorder::NONE;
+    bool in_zone = false;
+    for (auto &p : _town_cache) {
+        sq = p.second->cache.squared_town_zone_radius[0] + 30;
+        if (4 * sq * n < MapSize() * i) break;
+        AddTownCBLimitBorder(tile, p.second, border, in_zone);
+        i++;
+    }
+    uint radius = IntSqrt(sq);
+    int tx = TileX(tile), ty = TileY(tile);
+    _town_kdtree.FindContained(
+        (uint16)max<int>(0, tx - radius),
+        (uint16)max<int>(0, ty - radius),
+        (uint16)min<int>(tx + radius + 1, MapSizeX()),
+        (uint16)min<int>(ty + radius + 1, MapSizeY()),
+        [tile, &in_zone, &border] (TownID tid) {
+            Town *town = Town::GetIfValid(tid);
+            if (!town || town->larger_town)
+                return;
+            AddTownCBLimitBorder(tile, town, border, in_zone);
         }
     );
     return std::make_pair(border, in_zone);
@@ -295,6 +337,12 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
         if (z) th.ground_pal = th.structure_pal = GetTintBySelectionColour(pal[z]);
     } else if (_zoning.outer == CHECKCBACCEPTANCE) {
         auto b = CalcCBAcceptanceBorders(ti->tile);
+        if (b.first)
+            th.add_border(b.first, SPR_PALETTE_ZONING_WHITE);
+        if (b.second)
+            th.ground_pal = th.structure_pal = PALETTE_TINT_WHITE;
+    } else if (_zoning.outer == CHECKCBTOWNLIMIT) {
+        auto b = CalcCBTownLimitBorder(ti->tile);
         if (b.first)
             th.add_border(b.first, SPR_PALETTE_ZONING_WHITE);
         if (b.second)
@@ -428,13 +476,23 @@ void UpdateAdvertisementZoning(TileIndex center, uint radius, uint8 zone) {
     }
 }
 
+void UpdateZoningTownHouses(const Town *town, uint32 old_houses) {
+    if (!town->larger_town)
+        return;
+    _town_cache.erase(std::make_pair(old_houses, town));
+    _town_cache.insert(std::make_pair(town->cache.num_houses, town));
+}
 
 void InitializeZoningMap() {
+    _town_cache.clear();
     for (Town *t : Town::Iterate()) {
         UpdateTownZoning(t, 0);
         UpdateAdvertisementZoning(t->xy, 10, 3);
         UpdateAdvertisementZoning(t->xy, 15, 2);
         UpdateAdvertisementZoning(t->xy, 20, 1);
+        UpdateZoningTownHouses(t, 0);
+        if (!t->larger_town)
+            _town_cache.insert(std::make_pair(t->cache.num_houses, t));
     }
 }
 

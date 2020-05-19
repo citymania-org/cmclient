@@ -50,8 +50,6 @@ const Station *_station_to_join = nullptr;
 const Station *_highlight_station_to_join = nullptr;
 TileArea _highlight_join_area;
 
-void CheckRedrawStationCoverage();
-
 // void SetStationTileSelectSize(int w, int h, int catchment) {
 //     _station_select.w = w;
 //     _station_select.h = h;

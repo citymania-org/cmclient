@@ -5260,8 +5260,7 @@ STR_ZONING_BUL_UNSER                                            :{BLACK}Unserved
 STR_ZONING_IND_UNSER                                            :{BLACK}Unserved industries
 STR_ZONING_TOWN_ZONES                                           :{BLACK}Town zones
 STR_ZONING_CB_ACCEPTANCE                                        :{BLACK}CB cargo acceptance
-STR_ZONING_CB_BORDERS                                           :{BLACK}CB borders
-STR_ZONING_NEW_CB_BORDERS                                           :{BLACK}New CB borders
+STR_ZONING_CB_TOWN_LIMIT                                        :{BLACK}CB town limit
 STR_ZONING_ADVERTISEMENT_ZONES                                  :{BLACK}Advertisement
 STR_ZONING_TOWN_GROWTH_TILES                                    :{BLACK}Town growth tiles
 STR_ZONING_ACTIVE_STATIONS                                      :{BLACK}Active stations
