@@ -199,7 +199,7 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
     }
 }
 
-std::pair<ZoningBorder, bool> CalcCBAcceptanceBorders(TileIndex tile) {
+void CalcCBAcceptanceBorders(TileHighlight &th, TileIndex tile, SpriteID border_pal, SpriteID ground_pal) {
     int tx = TileX(tile), ty = TileY(tile);
     uint16 radius = _settings_client.gui.cb_distance_check;
     bool in_zone = false;
@@ -223,7 +223,8 @@ std::pair<ZoningBorder, bool> CalcCBAcceptanceBorders(TileIndex tile) {
             if (dy == -radius) border |= ZoningBorder::BOTTOM_RIGHT;
         }
     );
-    return std::make_pair(border, in_zone);
+    th.add_border(border, border_pal);
+    if (in_zone) th.tint_all(ground_pal);
 }
 
 
@@ -236,7 +237,7 @@ void AddTownCBLimitBorder(TileIndex tile, const Town *town, ZoningBorder &border
     in_zone = in_zone || x.second;
 }
 
-std::pair<ZoningBorder, bool> CalcCBTownLimitBorder(TileIndex tile) {
+void CalcCBTownLimitBorder(TileHighlight &th, TileIndex tile, SpriteID border_pal, SpriteID ground_pal) {
     auto n = Town::GetNumItems();
     uint32 sq = 0;
     uint i = 0;
@@ -262,7 +263,8 @@ std::pair<ZoningBorder, bool> CalcCBTownLimitBorder(TileIndex tile) {
             AddTownCBLimitBorder(tile, town, border, in_zone);
         }
     );
-    return std::make_pair(border, in_zone);
+    th.add_border(border, border_pal);
+    if (in_zone) th.tint_all(ground_pal);
 }
 
 TileHighlight GetTileHighlight(const TileInfo *ti) {
@@ -281,6 +283,8 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
         };
         th.add_border(p.first, color);
         th.ground_pal = th.structure_pal = GetTintBySelectionColour(color);
+        if (CB_Enabled())
+            CalcCBTownLimitBorder(th, ti->tile, SPR_PALETTE_ZONING_RED, PAL_NONE);
     } else if (_zoning.outer == CHECKSTACATCH) {
         th.add_border(citymania::GetAnyStationCatchmentBorder(ti->tile),
                       SPR_PALETTE_ZONING_LIGHT_BLUE);
@@ -336,17 +340,9 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
         auto z = getter(check_tile);
         if (z) th.ground_pal = th.structure_pal = GetTintBySelectionColour(pal[z]);
     } else if (_zoning.outer == CHECKCBACCEPTANCE) {
-        auto b = CalcCBAcceptanceBorders(ti->tile);
-        if (b.first)
-            th.add_border(b.first, SPR_PALETTE_ZONING_WHITE);
-        if (b.second)
-            th.ground_pal = th.structure_pal = PALETTE_TINT_WHITE;
+        CalcCBAcceptanceBorders(th, ti->tile, SPR_PALETTE_ZONING_WHITE, PALETTE_TINT_WHITE);
     } else if (_zoning.outer == CHECKCBTOWNLIMIT) {
-        auto b = CalcCBTownLimitBorder(ti->tile);
-        if (b.first)
-            th.add_border(b.first, SPR_PALETTE_ZONING_WHITE);
-        if (b.second)
-            th.ground_pal = th.structure_pal = PALETTE_TINT_WHITE;
+        CalcCBTownLimitBorder(th, ti->tile, SPR_PALETTE_ZONING_WHITE, PALETTE_TINT_WHITE);
     } else if (_zoning.outer == CHECKACTIVESTATIONS) {
         auto getter = [](TileIndex t) {
             if (!IsTileType (t, MP_STATION)) return 0;

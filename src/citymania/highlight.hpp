@@ -43,6 +43,11 @@ public:
         this->border_count++;
     }
 
+    void tint_all(SpriteID color) {
+        if (!color) return;
+        this->ground_pal = this->structure_pal = color;
+    }
+
     void clear_borders() {
         this->border_count = 0;
     }
