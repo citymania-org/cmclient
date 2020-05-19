@@ -78,7 +78,10 @@ This is usable for any OpenTTD servers
 - Add new minimap mode showing industries, height and farms at the same time.
 - Rename "CB town border" zone to "CB cargo acceptance", switch it to a new colored highlight and fix for new CB mode.
 - Rename "New CB borders" zone to "CB town limit" and switch it to a new colored highlight. Remove old "CB borders" zone.
+- In CB modes added CB town limit to outer town zones highlight (red border).
 - Show engine id in build window in newgrf developer mode.
+- Fixed crash on selecting tram station build tool.
+- Fixed zoning hotkeys.
 
 *** 1.10.1 (15 Apr 2020) ***
 - Add a setting to autoopen vehicle window when cloning vehicles while sharing orders.

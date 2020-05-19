@@ -1234,8 +1234,14 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		const RoadTypeInfo *rti = GetRoadTypeInfo(_cur_roadtype);
 		this->GetWidget<NWidgetCore>(WID_BROS_CAPTION)->widget_data = rti->strings.picker_title[rs];
 
-		for (uint i = RoadTypeIsTram(_cur_roadtype) ? WID_BROS_STATION_X : WID_BROS_STATION_NE; i < WID_BROS_LT_OFF; i++) {
-			this->GetWidget<NWidgetCore>(i)->tool_tip = rti->strings.picker_tooltip[rs];
+		if (RoadTypeIsTram(_cur_roadtype)) {
+			this->GetWidget<NWidgetCore>(WID_BROS_STATION_X)->tool_tip = rti->strings.picker_tooltip[rs];
+			this->GetWidget<NWidgetCore>(WID_BROS_STATION_Y)->tool_tip = rti->strings.picker_tooltip[rs];
+			this->GetWidget<NWidgetCore>(WID_BROS_STATION_XY_AUTO)->tool_tip = rti->strings.picker_tooltip[rs];
+		} else {
+			for (uint i = WID_BROS_STATION_NE; i < WID_BROS_LT_OFF; i++) {
+				this->GetWidget<NWidgetCore>(i)->tool_tip = rti->strings.picker_tooltip[rs];
+			}
 		}
 
 		this->LowerWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
