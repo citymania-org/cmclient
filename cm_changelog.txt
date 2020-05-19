@@ -80,6 +80,7 @@ This is usable for any OpenTTD servers
 - Rename "New CB borders" zone to "CB town limit" and switch it to a new colored highlight. Remove old "CB borders" zone.
 - In CB modes added CB town limit to outer town zones highlight (red border).
 - Show engine id in build window in newgrf developer mode.
+- Add hotkeys (unset by default) to remember locations and scroll back to them.
 - Fixed automatic funding and advertisement wasting money.
 - Fixed crash on selecting tram station build tool.
 - Fixed zoning hotkeys.
