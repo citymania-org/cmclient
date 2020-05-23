@@ -105,6 +105,7 @@ enum ViewportPlaceMethod {
 	VPM_Y_LIMITED       =    8, ///< Drag only in Y axis with limited size
 	VPM_RAILDIRS        = 0x40, ///< all rail directions
 	VPM_SIGNALDIRS      = 0x80, ///< similar to VMP_RAILDIRS, but with different cursor
+	CM_VPM_RAILDIRS        = 0x100, ///<
 };
 DECLARE_ENUM_AS_BIT_SET(ViewportPlaceMethod)
 
@@ -142,6 +143,8 @@ enum ViewportDragDropSelectionProcess {
 	DDSP_REMOVE_BUSSTOP,       ///< Road stop removal (buses)
 	DDSP_REMOVE_TRUCKSTOP,     ///< Road stop removal (trucks)
 	DDSP_CONVERT_ROAD,         ///< Road conversion
+
+	CM_DDSP_PLACE_RAIL,        ///< CityMania rail placement
 };
 
 

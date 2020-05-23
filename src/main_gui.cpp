@@ -110,6 +110,7 @@ bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyl
 	}
 
 	SetObjectToPlace(cursor, PAL_NONE, mode, w->window_class, w->window_number);
+	fprintf(stderr, "OBJECCT TO PLACE\n");
 	w->LowerWidget(widget);
 	return true;
 }
