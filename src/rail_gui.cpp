@@ -325,7 +325,7 @@ static bool RailToolbar_CtrlChanged(Window *w)
 
 	/* allow ctrl to switch remove mode only for these widgets */
 	for (uint i = WID_RAT_BUILD_NS; i <= WID_RAT_BUILD_STATION; i++) {
-		if ((i <= WID_RAT_POLYRAIL || i >= WID_RAT_BUILD_WAYPOINT) && w->IsWidgetLowered(i)) {
+		if ((i <= CM_WID_RAT_RAIL || i >= WID_RAT_BUILD_WAYPOINT) && w->IsWidgetLowered(i)) {
 			ToggleRailButton_Remove(w);
 			return true;
 		}
@@ -573,6 +573,7 @@ struct BuildRailToolbarWindow : Window {
 		this->GetWidget<NWidgetCore>(WID_RAT_BUILD_Y)->widget_data      = rti->gui_sprites.build_y_rail;
 		this->GetWidget<NWidgetCore>(WID_RAT_AUTORAIL)->widget_data     = rti->gui_sprites.auto_rail;
 		this->GetWidget<NWidgetCore>(WID_RAT_POLYRAIL)->widget_data     = rti->gui_sprites.auto_rail;
+		this->GetWidget<NWidgetCore>(CM_WID_RAT_RAIL)->widget_data       = rti->gui_sprites.auto_rail;
 		this->GetWidget<NWidgetCore>(WID_RAT_BUILD_DEPOT)->widget_data  = rti->gui_sprites.build_depot;
 		this->GetWidget<NWidgetCore>(WID_RAT_CONVERT_RAIL)->widget_data = rti->gui_sprites.convert_rail;
 		this->GetWidget<NWidgetCore>(WID_RAT_BUILD_TUNNEL)->widget_data = rti->gui_sprites.build_tunnel;
@@ -602,6 +603,7 @@ struct BuildRailToolbarWindow : Window {
 			case WID_RAT_BUILD_Y:
 			case WID_RAT_AUTORAIL:
 			case WID_RAT_POLYRAIL:
+			case CM_WID_RAT_RAIL:
 			case WID_RAT_BUILD_WAYPOINT:
 			case WID_RAT_BUILD_STATION:
 			case WID_RAT_BUILD_SIGNALS:
@@ -639,6 +641,11 @@ struct BuildRailToolbarWindow : Window {
 			Dimension d = GetSpriteSize(SPR_BLOT);
 			uint offset = this->IsWidgetLowered(WID_RAT_POLYRAIL) ? 1 : 0;
 			DrawSprite(SPR_BLOT, PALETTE_TO_GREY, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset);
+		}
+		if (widget == CM_WID_RAT_RAIL) {
+			Dimension d = GetSpriteSize(SPR_BLOT);
+			uint offset = this->IsWidgetLowered(CM_WID_RAT_RAIL) ? 1 : 0;
+			DrawSprite(SPR_BLOT, PAL_NONE, (r.left + r.right - d.width) / 2 + offset, (r.top + r.bottom - d.height) / 2 + offset);
 		}
 	}
 
@@ -705,6 +712,11 @@ struct BuildRailToolbarWindow : Window {
 				if (was_open == do_open) return; // prevent switching the "remove" button state
 				break;
 			}
+
+			case CM_WID_RAT_RAIL:
+				HandlePlacePushButton(this, CM_WID_RAT_RAIL, GetRailTypeInfo(_cur_railtype)->cursor.autorail, CM_HT_RAIL);
+				this->last_user_action = widget;
+				break;
 
 			case WID_RAT_DEMOLISH:
 				HandlePlacePushButton(this, WID_RAT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
@@ -829,6 +841,9 @@ struct BuildRailToolbarWindow : Window {
 			case WID_RAT_POLYRAIL:
 				VpStartPlaceSizing(tile, VPM_RAILDIRS, DDSP_PLACE_RAIL);
 				break;
+			case CM_WID_RAT_RAIL:
+				VpStartPlaceSizing(tile, CM_VPM_RAILDIRS, CM_DDSP_PLACE_RAIL);
+				break;
 
 			case WID_RAT_DEMOLISH:
 				PlaceProc_DemolishArea(tile);
@@ -931,6 +946,9 @@ struct BuildRailToolbarWindow : Window {
 						}
 					}
 					break;
+				case CM_DDSP_PLACE_RAIL:
+					fprintf(stderr, "TODO: BUild polyrail\n");
+					break;
 			}
 		}
 	}
@@ -1028,6 +1046,8 @@ static const NWidgetPart _nested_build_rail_widgets[] = {
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_AUTORAIL),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTORAIL, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_POLYRAIL),
+						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTORAIL, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_POLYRAIL),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_RAT_RAIL),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTORAIL, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_POLYRAIL),
 
 		NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetMinimalSize(4, 22), SetDataTip(0x0, STR_NULL), EndContainer(),

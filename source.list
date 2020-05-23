@@ -626,6 +626,8 @@ citymania/minimap.hpp
 citymania/minimap.cpp
 citymania/cm_saveload.hpp
 citymania/cm_saveload.cpp
+citymania/polyrail.hpp
+citymania/polyrail.cpp
 citymania/station_ui.hpp
 citymania/station_ui.cpp
 newgrf_revisions.hpp

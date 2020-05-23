@@ -374,6 +374,11 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
 }
 
 void DrawTileSelection(const TileInfo *ti, const TileHighlight &th) {
+    if (_thd.drawstyle == CM_HT_RAIL) {
+        DrawPolyrailTileSelection(ti);
+        return;
+    }
+
     for (uint i = 0; i < th.border_count; i++)
         DrawBorderSprites(ti, th.border[i], th.border_color[i]);
     if (th.sprite) {
