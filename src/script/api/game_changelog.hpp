@@ -15,8 +15,6 @@
  *
  * \b 1.10.0
  *
- * This version is not yet released. The following changes are not set in stone yet.
- *
  * API additions:
  * \li GSVehicle::BuildVehicleWithRefit
  * \li GSVehicle::GetBuildWithRefitCapacity
@@ -25,6 +23,8 @@
  * \li GSRoad::RoadVehHasPowerOnRoad
  * \li GSRoad::ConvertRoadType
  * \li GSRoad::GetMaxSpeed
+ * \li GSEngine::EnableForCompany
+ * \li GSEngine::DisableForCompany
  *
  * \b 1.9.0
  *

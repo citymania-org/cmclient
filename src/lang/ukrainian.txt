@@ -603,9 +603,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Вкл./відкл. консоль
 STR_ABOUT_MENU_AI_DEBUG                                         :Налагодження АІ / Ігрового Скрипта
 STR_ABOUT_MENU_SCREENSHOT                                       :Знімок екрану
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Знімок екрану з максимальним збільшенням
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Знімок екрану зі стандартним збільшенням
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Знімок всієї карти
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Швидкість генерації гри
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Про гру 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Вирівнювання спрайтів
@@ -779,9 +776,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Набір 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Гучність музики
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Гучність ефектів
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}Мін.
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}Макс.
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -2864,7 +2858,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Ця ділян
 STR_ABOUT_OPENTTD                                               :{WHITE}Про OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Авторське право {COPYRIGHT} 1995 Кріс Сойєр, Всі права захищені
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD версія {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 команда OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} команда OpenTTD
 
 # Framerate display window
 STR_FRAMERATE_CAPTION                                           :{WHITE}Швидкість гри
@@ -4304,6 +4298,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Прий
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Вибрати виділений скрипт
 STR_AI_LIST_CANCEL                                              :{BLACK}Відміна
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Не міняти скрипт
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Параметри

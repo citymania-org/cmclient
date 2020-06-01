@@ -66,6 +66,11 @@
 /** List of all loaded GRF files */
 static std::vector<GRFFile *> _grf_files;
 
+const std::vector<GRFFile *> &GetAllGRFFiles()
+{
+	return _grf_files;
+}
+
 /** Miscellaneous GRF features, set by Action 0x0D, parameter 0x9E */
 byte _misc_grf_features = 0;
 
@@ -5000,6 +5005,7 @@ static void NewSpriteGroup(ByteReader *buf)
 
 			assert(DeterministicSpriteGroup::CanAllocateItem());
 			DeterministicSpriteGroup *group = new DeterministicSpriteGroup();
+			group->nfo_line = _cur.nfo_line;
 			act_group = group;
 			group->var_scope = HasBit(type, 1) ? VSG_SCOPE_PARENT : VSG_SCOPE_SELF;
 
@@ -5116,6 +5122,7 @@ static void NewSpriteGroup(ByteReader *buf)
 		{
 			assert(RandomizedSpriteGroup::CanAllocateItem());
 			RandomizedSpriteGroup *group = new RandomizedSpriteGroup();
+			group->nfo_line = _cur.nfo_line;
 			act_group = group;
 			group->var_scope = HasBit(type, 1) ? VSG_SCOPE_PARENT : VSG_SCOPE_SELF;
 
@@ -5164,6 +5171,7 @@ static void NewSpriteGroup(ByteReader *buf)
 
 					assert(RealSpriteGroup::CanAllocateItem());
 					RealSpriteGroup *group = new RealSpriteGroup();
+					group->nfo_line = _cur.nfo_line;
 					act_group = group;
 
 					group->num_loaded  = num_loaded;
@@ -5197,6 +5205,7 @@ static void NewSpriteGroup(ByteReader *buf)
 
 					assert(TileLayoutSpriteGroup::CanAllocateItem());
 					TileLayoutSpriteGroup *group = new TileLayoutSpriteGroup();
+					group->nfo_line = _cur.nfo_line;
 					act_group = group;
 
 					/* On error, bail out immediately. Temporary GRF data was already freed */
@@ -5212,6 +5221,7 @@ static void NewSpriteGroup(ByteReader *buf)
 
 					assert(IndustryProductionSpriteGroup::CanAllocateItem());
 					IndustryProductionSpriteGroup *group = new IndustryProductionSpriteGroup();
+					group->nfo_line = _cur.nfo_line;
 					act_group = group;
 					group->version = type;
 					if (type == 0) {
@@ -8709,18 +8719,18 @@ GRFFile::GRFFile(const GRFConfig *config)
 	}
 
 	/* Initialise rail type map with default rail types */
-	memset(this->railtype_map, INVALID_RAILTYPE, sizeof(this->railtype_map));
+	std::fill(std::begin(this->railtype_map), std::end(this->railtype_map), INVALID_RAILTYPE);
 	this->railtype_map[0] = RAILTYPE_RAIL;
 	this->railtype_map[1] = RAILTYPE_ELECTRIC;
 	this->railtype_map[2] = RAILTYPE_MONO;
 	this->railtype_map[3] = RAILTYPE_MAGLEV;
 
 	/* Initialise road type map with default road types */
-	memset(this->roadtype_map, INVALID_ROADTYPE, sizeof(this->roadtype_map));
+	std::fill(std::begin(this->roadtype_map), std::end(this->roadtype_map), INVALID_ROADTYPE);
 	this->roadtype_map[0] = ROADTYPE_ROAD;
 
 	/* Initialise tram type map with default tram types */
-	memset(this->tramtype_map, INVALID_ROADTYPE, sizeof(this->tramtype_map));
+	std::fill(std::begin(this->tramtype_map), std::end(this->tramtype_map), INVALID_ROADTYPE);
 	this->tramtype_map[0] = ROADTYPE_TRAM;
 
 	/* Copy the initial parameter list

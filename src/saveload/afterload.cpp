@@ -222,6 +222,13 @@ void UpdateAllVirtCoords()
 	RebuildViewportKdtree();
 }
 
+void ClearAllCachedNames()
+{
+	ClearAllStationCachedNames();
+	ClearAllTownCachedNames();
+	ClearAllIndustryCachedNames();
+}
+
 /**
  * Initialization of the windows and several kinds of caches.
  * This is not done directly in AfterLoadGame because these
@@ -238,6 +245,7 @@ static void InitializeWindowsAndCaches()
 	SetupColoursAndInitialWindow();
 
 	/* Update coordinates of the signs. */
+	ClearAllCachedNames();
 	UpdateAllVirtCoords();
 	ResetViewportAfterLoadGame();
 
@@ -747,6 +755,15 @@ bool AfterLoadGame()
 		_settings_game.linkgraph.distribution_default = DT_MANUAL;
 	}
 
+	if (IsSavegameVersionBefore(SLV_105)) {
+		extern int32 _old_ending_year_slv_105; // in date.cpp
+		_settings_game.game_creation.ending_year = _old_ending_year_slv_105 - 1;
+	} else if (IsSavegameVersionBefore(SLV_ENDING_YEAR)) {
+		/* Ending year was a GUI setting before SLV_105, was removed in revision 683b65ee1 (svn r14755). */
+		/* This also converts scenarios, both when loading them into the editor, and when starting a new game. */
+		_settings_game.game_creation.ending_year = DEF_END_YEAR;
+	}
+
 	/* Load the sprites */
 	GfxLoadSprites();
 	LoadStringWidthTable();
@@ -880,6 +897,9 @@ bool AfterLoadGame()
 		switch (GetTileType(t)) {
 			case MP_STATION: {
 				BaseStation *bst = BaseStation::GetByTile(t);
+
+				/* Sanity check */
+				if (!IsBuoy(t) && bst->owner != GetTileOwner(t)) SlErrorCorrupt("Wrong owner for station tile");
 
 				/* Set up station spread */
 				bst->rect.BeforeAddTile(t, StationRect::ADD_FORCE);
@@ -1236,6 +1256,7 @@ bool AfterLoadGame()
 				}
 			} else if (v->z_pos > GetSlopePixelZ(v->x_pos, v->y_pos)) {
 				v->tile = GetNorthernBridgeEnd(v->tile);
+				v->UpdatePosition();
 			} else {
 				continue;
 			}
@@ -2186,7 +2207,7 @@ bool AfterLoadGame()
 			}
 
 			if (remove) {
-				DeleteAnimatedTile(*tile);
+				tile = _animated_tiles.erase(tile);
 			} else {
 				tile++;
 			}
@@ -2954,6 +2975,16 @@ bool AfterLoadGame()
 		}
 	}
 
+	if (IsSavegameVersionBefore(SLV_190)) {
+		for (Order *order : Order::Iterate()) {
+			order->SetTravelTimetabled(order->GetTravelTime() > 0);
+			order->SetWaitTimetabled(order->GetWaitTime() > 0);
+		}
+		for (OrderList *orderlist : OrderList::Iterate()) {
+			orderlist->RecalculateTimetableDuration();
+		}
+	}
+
 	/*
 	 * Only keep order-backups for network clients (and when replaying).
 	 * If we are a network server or not networking, then we just loaded a previously
@@ -3089,10 +3120,21 @@ bool AfterLoadGame()
 				if (IsDock(t) || IsOilRig(t)) Station::GetByTile(t)->ship_station.Add(t);
 			}
 		}
+	}
 
-		/* Scan for docking tiles */
+	if (IsSavegameVersionUntil(SLV_ENDING_YEAR)) {
+		/* Update station docking tiles. Was only needed for pre-SLV_MULTITLE_DOCKS
+		 * savegames, but a bug in docking tiles touched all savegames between
+		 * SLV_MULTITILE_DOCKS and SLV_ENDING_YEAR. */
 		for (Station *st : Station::Iterate()) {
 			if (st->ship_station.tile != INVALID_TILE) UpdateStationDockingTiles(st);
+		}
+
+		/* Reset roadtype/streetcartype info for non-road bridges. */
+		for (TileIndex t = 0; t < map_size; t++) {
+			if (IsTileType(t, MP_TUNNELBRIDGE) && GetTunnelBridgeTransportType(t) != TRANSPORT_ROAD) {
+				SetRoadTypes(t, INVALID_ROADTYPE, INVALID_ROADTYPE);
+			}
 		}
 	}
 

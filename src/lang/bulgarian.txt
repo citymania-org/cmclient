@@ -471,9 +471,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Показване/скриване на конзола
 STR_ABOUT_MENU_AI_DEBUG                                         :ИИ дебъг
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Напълно увеличен в кадъра.
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Увеличение по подразбиране
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Огромен Screenshot
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Показване на честотата на кадрите
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Относно 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Подравнител на спрайтове
@@ -644,9 +641,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Персонален 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Сила на музиката
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Сила на ефектите
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -2642,7 +2636,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Земя, пр�
 STR_ABOUT_OPENTTD                                               :{WHITE}Относно OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Авторски права {COPYRIGHT} 1995 Крис Сойер (Chris Sawyer), Всички права са запазени
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD версия {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2019 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-{STRING} The OpenTTD team
 
 # Framerate display window
 STR_FRAMERATE_CAPTION                                           :{WHITE}Скорост на кадрите
@@ -3977,6 +3971,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Прие
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Избери маркирания AI
 STR_AI_LIST_CANCEL                                              :{BLACK}Отмени
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Не променяй AI
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Параметри

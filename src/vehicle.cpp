@@ -82,7 +82,7 @@ static const uint GEN_HASHX_MASK =  (1 << GEN_HASHX_BITS) - 1;
 static const uint GEN_HASHY_MASK = ((1 << GEN_HASHY_BITS) - 1) << GEN_HASHX_BITS;
 
 VehicleID _new_vehicle_id;
-uint16 _returned_refit_capacity;      ///< Stores the capacity after a refit operation.
+uint _returned_refit_capacity;        ///< Stores the capacity after a refit operation.
 uint16 _returned_mail_refit_capacity; ///< Stores the mail capacity after a refit operation (Aircraft only).
 
 
@@ -1785,7 +1785,7 @@ bool CanBuildVehicleInfrastructure(VehicleType type, byte subtype)
 
 	/* We should be able to build infrastructure when we have the actual vehicle type */
 	for (const Vehicle *v : Vehicle::Iterate()) {
-		if (type == VEH_ROAD && GetRoadTramType(RoadVehicle::From(v)->roadtype) != (RoadTramType)subtype) continue;
+		if (v->type == VEH_ROAD && GetRoadTramType(RoadVehicle::From(v)->roadtype) != (RoadTramType)subtype) continue;
 		if (v->owner == _local_company && v->type == type) return true;
 	}
 

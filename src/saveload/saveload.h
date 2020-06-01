@@ -301,6 +301,7 @@ enum SaveLoadVersion : uint16 {
 	SLV_SCRIPT_MEMLIMIT,                    ///< 215  PR#7516 Limit on AI/GS memory consumption.
 	SLV_MULTITILE_DOCKS,                    ///< 216  PR#7380 Multiple docks per station.
 	SLV_TRADING_AGE,                        ///< 217  PR#7780 Configurable company trading age.
+	SLV_ENDING_YEAR,                        ///< 218  PR#7747 Configurable ending year.
 
 	SL_MAX_VERSION,                         ///< Highest possible saveload version
 };
@@ -470,7 +471,8 @@ enum VarTypes {
 	SLF_NO_NETWORK_SYNC = 1 << 10, ///< do not synchronize over network (but it is saved if SLF_NOT_IN_SAVE is not set)
 	SLF_ALLOW_CONTROL   = 1 << 11, ///< allow control codes in the strings
 	SLF_ALLOW_NEWLINE   = 1 << 12, ///< allow new lines in the strings
-	/* 3 more possible flags */
+	SLF_HEX             = 1 << 13, ///< print numbers as hex in the config file (only useful for unsigned)
+	/* 2 more possible flags */
 };
 
 typedef uint32 VarType;
@@ -765,6 +767,19 @@ static inline bool IsSavegameVersionBefore(SaveLoadVersion major, byte minor = 0
 	extern SaveLoadVersion _sl_version;
 	extern byte            _sl_minor_version;
 	return _sl_version < major || (minor > 0 && _sl_version == major && _sl_minor_version < minor);
+}
+
+/**
+ * Checks whether the savegame is below or at \a major. This should be used to repair data from existing
+ * savegames which is no longer corrupted in new savegames, but for which otherwise no savegame
+ * bump is required.
+ * @param major Major number of the version to check against.
+ * @return Savegame version is at most the specified version.
+ */
+static inline bool IsSavegameVersionUntil(SaveLoadVersion major)
+{
+	extern SaveLoadVersion _sl_version;
+	return _sl_version <= major;
 }
 
 /**

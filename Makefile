@@ -1,6 +1,4 @@
 # Auto-generated file from 'Makefile.in' -- DO NOT EDIT
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -17,12 +15,12 @@ include Makefile.am
 
 CONFIG_CACHE_PWD         = config.cache.pwd
 CONFIG_CACHE_SOURCE_LIST = config.cache.source.list
-BIN_DIR        = /home/pavels/Downloads/openttd-1.10.0-beta1/bin
+BIN_DIR        = /home/pavels/Projects/cmbase/bin
 ICON_THEME_DIR = /usr/local/share/icons/hicolor
 MAN_DIR        = /usr/local/share/man/man6
 MENU_DIR       = /usr/local/share/applications
-SRC_DIR        = /home/pavels/Downloads/openttd-1.10.0-beta1/src
-ROOT_DIR       = /home/pavels/Downloads/openttd-1.10.0-beta1
+SRC_DIR        = /home/pavels/Projects/cmbase/src
+ROOT_DIR       = /home/pavels/Projects/cmbase
 BUNDLE_DIR     = "$(ROOT_DIR)/bundle"
 BUNDLES_DIR    = "$(ROOT_DIR)/bundles"
 INSTALL_DIR    = /
@@ -33,10 +31,10 @@ INSTALL_ICON_DIR       = "$(INSTALL_DIR)/"/usr/local/share/pixmaps
 INSTALL_ICON_THEME_DIR = "$(INSTALL_DIR)/$(ICON_THEME_DIR)"
 INSTALL_DATA_DIR       = "$(INSTALL_DIR)/"/usr/local/share/games/openttd
 INSTALL_DOC_DIR        = "$(INSTALL_DIR)/"/usr/local/share/doc/openttd
-SOURCE_LIST     = /home/pavels/Downloads/openttd-1.10.0-beta1/source.list
-CONFIGURE_FILES = /home/pavels/Downloads/openttd-1.10.0-beta1/configure /home/pavels/Downloads/openttd-1.10.0-beta1/config.lib /home/pavels/Downloads/openttd-1.10.0-beta1/Makefile.in /home/pavels/Downloads/openttd-1.10.0-beta1/Makefile.grf.in /home/pavels/Downloads/openttd-1.10.0-beta1/Makefile.lang.in /home/pavels/Downloads/openttd-1.10.0-beta1/Makefile.src.in /home/pavels/Downloads/openttd-1.10.0-beta1/Makefile.bundle.in /home/pavels/Downloads/openttd-1.10.0-beta1/Makefile.setting.in
+SOURCE_LIST     = /home/pavels/Projects/cmbase/source.list
+CONFIGURE_FILES = /home/pavels/Projects/cmbase/configure /home/pavels/Projects/cmbase/config.lib /home/pavels/Projects/cmbase/Makefile.in /home/pavels/Projects/cmbase/Makefile.grf.in /home/pavels/Projects/cmbase/Makefile.lang.in /home/pavels/Projects/cmbase/Makefile.src.in /home/pavels/Projects/cmbase/Makefile.bundle.in /home/pavels/Projects/cmbase/Makefile.setting.in
 BINARY_NAME = openttd
-STRIP       =  
+STRIP       = strip -s
 TTD         = openttd
 TTDS        = $(SRC_DIRS:%=%/$(TTD))
 OS          = UNIX
@@ -161,16 +159,16 @@ depend:
 	done
 
 run: all
-	$(Q)cd /home/pavels/Downloads/openttd-1.10.0-beta1/bin && ./openttd $(OPENTTD_ARGS)
+	$(Q)cd /home/pavels/Projects/cmbase/bin && ./openttd $(OPENTTD_ARGS)
 
 run-gdb: all
-	$(Q)cd /home/pavels/Downloads/openttd-1.10.0-beta1/bin && gdb --ex run --args ./openttd $(OPENTTD_ARGS)
+	$(Q)cd /home/pavels/Projects/cmbase/bin && gdb --ex run --args ./openttd $(OPENTTD_ARGS)
 
 run-prof: all
-	$(Q)cd /home/pavels/Downloads/openttd-1.10.0-beta1/bin && ./openttd $(OPENTTD_ARGS) && gprof openttd | less
+	$(Q)cd /home/pavels/Projects/cmbase/bin && ./openttd $(OPENTTD_ARGS) && gprof openttd | less
 
 regression: all
-	$(Q)cd /home/pavels/Downloads/openttd-1.10.0-beta1/bin && sh ai/regression/run.sh
+	$(Q)cd /home/pavels/Projects/cmbase/bin && sh ai/regression/run.sh
 test: regression
 
 %.o:

@@ -153,7 +153,7 @@ Town::~Town()
  */
 void Town::PostDestructor(size_t index)
 {
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 0);
+	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_REBUILD);
 	UpdateNearestTownForRoadTiles(false);
 
 	/* Give objects a new home! */
@@ -197,6 +197,13 @@ void Town::InitializeLayout(TownLayout layout)
 	}
 
 	return Town::Get(index);
+}
+
+void Town::FillCachedName() const
+{
+	char buf[MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH];
+	char *end = GetTownName(buf, this, lastof(buf));
+	this->cached_name.assign(buf, end);
 }
 
 /**
@@ -412,6 +419,13 @@ void UpdateAllTownVirtCoords()
 	}
 }
 
+void ClearAllTownCachedNames()
+{
+	for (Town *t : Town::Iterate()) {
+		t->cached_name.clear();
+	}
+}
+
 /**
  * Change the towns population
  * @param t Town which population has changed
@@ -423,7 +437,7 @@ static void ChangePopulation(Town *t, int mod)
 	InvalidateWindowData(WC_TOWN_VIEW, t->index); // Cargo requirements may appear/vanish for small populations
 	if (_settings_client.gui.population_in_label) t->UpdateVirtCoord();
 
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 1);
+	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_POPULATION_CHANGE);
 }
 
 /**
@@ -440,13 +454,22 @@ uint32 GetWorldPopulation()
 
 /**
  * Remove stations from nearby station list if a town is no longer in the catchment area of each.
+ * To improve performance only checks stations that cover the provided house area (doesn't need to contain an actual house).
  * @param t Town to work on
+ * @param tile Location of house area (north part)
+ * @param flags BuildingFlags containing the size of house area
  */
-static void RemoveNearbyStations(Town *t)
+static void RemoveNearbyStations(Town *t, TileIndex tile, BuildingFlags flags)
 {
 	for (StationList::iterator it = t->stations_near.begin(); it != t->stations_near.end(); /* incremented inside loop */) {
 		const Station *st = *it;
-		if (!st->CatchmentCoversTown(t->index)) {
+
+		bool covers_area = st->TileIsInCatchment(tile);
+		if (flags & BUILDING_2_TILES_Y)   covers_area |= st->TileIsInCatchment(tile + TileDiffXY(0, 1));
+		if (flags & BUILDING_2_TILES_X)   covers_area |= st->TileIsInCatchment(tile + TileDiffXY(1, 0));
+		if (flags & BUILDING_HAS_4_TILES) covers_area |= st->TileIsInCatchment(tile + TileDiffXY(1, 1));
+
+		if (covers_area && !st->CatchmentCoversTown(t->index)) {
 			it = t->stations_near.erase(it);
 		} else {
 			++it;
@@ -607,11 +630,7 @@ static void TileLoop_Town(TileIndex tile)
 		ClearTownHouse(t, tile);
 
 		/* Rebuild with another house? */
-		if (GB(r, 24, 8) < 12 || !BuildTownHouse(t, tile))
-		{
-			/* House wasn't replaced, so remove it */
-			if (!_generating_world) RemoveNearbyStations(t);
-		}
+		if (GB(r, 24, 8) >= 12) BuildTownHouse(t, tile);
 	}
 
 	cur_company.Restore();
@@ -640,7 +659,6 @@ static CommandCost ClearTile_Town(TileIndex tile, DoCommandFlag flags)
 	ChangeTownRating(t, -rating, RATING_HOUSE_MINIMUM, flags);
 	if (flags & DC_EXEC) {
 		ClearTownHouse(t, tile);
-		RemoveNearbyStations(t);
 	}
 
 	return cost;
@@ -1777,7 +1795,7 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 	t->townnameparts = townnameparts;
 
 	t->UpdateVirtCoord();
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 0);
+	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_REBUILD);
 
 	t->InitializeLayout(layout);
 
@@ -2235,7 +2253,12 @@ static void MakeTownHouse(TileIndex t, Town *town, byte counter, byte stage, Hou
 	if (size & BUILDING_2_TILES_X)   ClearMakeHouseTile(t + TileDiffXY(1, 0), town, counter, stage, ++type, random_bits);
 	if (size & BUILDING_HAS_4_TILES) ClearMakeHouseTile(t + TileDiffXY(1, 1), town, counter, stage, ++type, random_bits);
 
-	if (!_generating_world) FindStationsAroundTiles(TileArea(t, (size & BUILDING_2_TILES_X) ? 2 : 1, (size & BUILDING_2_TILES_Y) ? 2 : 1), &town->stations_near, false);
+	if (!_generating_world) {
+		ForAllStationsAroundTiles(TileArea(t, (size & BUILDING_2_TILES_X) ? 2 : 1, (size & BUILDING_2_TILES_Y) ? 2 : 1), [town](Station *st, TileIndex tile) {
+			town->stations_near.insert(st);
+			return true;
+		});
+	}
 }
 
 
@@ -2647,11 +2670,12 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	}
 
 	/* Do the actual clearing of tiles */
-	uint eflags = hs->building_flags;
 	DoClearTownHouseHelper(tile, t, house);
-	if (eflags & BUILDING_2_TILES_Y)   DoClearTownHouseHelper(tile + TileDiffXY(0, 1), t, ++house);
-	if (eflags & BUILDING_2_TILES_X)   DoClearTownHouseHelper(tile + TileDiffXY(1, 0), t, ++house);
-	if (eflags & BUILDING_HAS_4_TILES) DoClearTownHouseHelper(tile + TileDiffXY(1, 1), t, ++house);
+	if (hs->building_flags & BUILDING_2_TILES_Y)   DoClearTownHouseHelper(tile + TileDiffXY(0, 1), t, ++house);
+	if (hs->building_flags & BUILDING_2_TILES_X)   DoClearTownHouseHelper(tile + TileDiffXY(1, 0), t, ++house);
+	if (hs->building_flags & BUILDING_HAS_4_TILES) DoClearTownHouseHelper(tile + TileDiffXY(1, 1), t, ++house);
+
+	RemoveNearbyStations(t, tile, hs->building_flags);
 
 	UpdateTownRadius(t);
 
@@ -2681,11 +2705,14 @@ CommandCost CmdRenameTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 	}
 
 	if (flags & DC_EXEC) {
+		t->cached_name.clear();
 		free(t->name);
 		t->name = reset ? nullptr : stredup(text);
 
 		t->UpdateVirtCoord();
-		InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 1);
+		InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_RESORT);
+		ClearAllStationCachedNames();
+		ClearAllIndustryCachedNames();
 		UpdateAllStationVirtCoords();
 	}
 	return CommandCost();
@@ -2799,6 +2826,35 @@ CommandCost CmdTownGrowthRate(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 		}
 		UpdateTownGrowth(t);
 		InvalidateWindowData(WC_TOWN_VIEW, p1);
+	}
+
+	return CommandCost();
+}
+
+/**
+ * Change the rating of a company in a town
+ * @param tile Unused.
+ * @param flags Type of operation.
+ * @param p1 Bit 0..15 = Town ID to change, bit 16..23 = Company ID to change.
+ * @param p2 Bit 0..15 = New rating of company (signed int16).
+ * @param text Unused.
+ * @return Empty cost or an error.
+ */
+CommandCost CmdTownRating(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+{
+	if (_current_company != OWNER_DEITY) return CMD_ERROR;
+
+	TownID town_id = (TownID)GB(p1, 0, 16);
+	Town *t = Town::GetIfValid(town_id);
+	if (t == nullptr) return CMD_ERROR;
+
+	CompanyID company_id = (CompanyID)GB(p1, 16, 8);
+	if (!Company::IsValidID(company_id)) return CMD_ERROR;
+
+	int16 new_rating = Clamp((int16)GB(p2, 0, 16), RATING_MINIMUM, RATING_MAXIMUM);
+	if (flags & DC_EXEC) {
+		t->ratings[company_id] = new_rating;
+		InvalidateWindowData(WC_TOWN_AUTHORITY, town_id);
 	}
 
 	return CommandCost();

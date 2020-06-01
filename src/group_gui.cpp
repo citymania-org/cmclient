@@ -299,7 +299,7 @@ private:
 			spr = SPR_PROFIT_NA;
 		} else if (profit_last_year < 0) {
 			spr = SPR_PROFIT_NEGATIVE;
-		} else if (profit_last_year < (Money)10000 * num_profit_vehicle) { // TODO magic number
+		} else if (profit_last_year < VEHICLE_PROFIT_THRESHOLD * num_profit_vehicle) {
 			spr = SPR_PROFIT_SOME;
 		} else {
 			spr = SPR_PROFIT_LOT;
@@ -1017,6 +1017,7 @@ public:
 				}
 				this->groups.ForceRebuild();
 				this->BuildGroupList(this->owner);
+				this->group_sb->SetCount((uint)this->groups.size());
 				id_g = find_index(this->groups, g);
 			}
 			this->group_sb->ScrollTowards(id_g);

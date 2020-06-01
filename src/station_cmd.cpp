@@ -36,6 +36,7 @@
 #include "animated_tile_func.h"
 #include "elrail_func.h"
 #include "station_base.h"
+#include "station_func.h"
 #include "station_kdtree.h"
 #include "roadstop_base.h"
 #include "newgrf_railtype.h"
@@ -400,13 +401,10 @@ void Station::GetTileArea(TileArea *ta, StationType type) const
 		case STATION_DOCK:
 		case STATION_OILRIG:
 			*ta = this->docking_station;
-			break;
+			return;
 
 		default: NOT_REACHED();
 	}
-
-	ta->w = 1;
-	ta->h = 1;
 }
 
 /**
@@ -450,6 +448,22 @@ void UpdateAllStationVirtCoords()
 {
 	for (BaseStation *st : BaseStation::Iterate()) {
 		st->UpdateVirtCoord();
+	}
+}
+
+void BaseStation::FillCachedName() const
+{
+	char buf[MAX_LENGTH_STATION_NAME_CHARS * MAX_CHAR_LENGTH];
+	int64 args_array[] = { this->index };
+	StringParameters tmp_params(args_array);
+	char *end = GetStringWithArgs(buf, Waypoint::IsExpected(this) ? STR_WAYPOINT_NAME : STR_STATION_NAME, &tmp_params, lastof(buf));
+	this->cached_name.assign(buf, end);
+}
+
+void ClearAllStationCachedNames()
+{
+	for (BaseStation *st : BaseStation::Iterate()) {
+		st->cached_name.clear();
 	}
 }
 
@@ -2588,7 +2602,8 @@ void RemoveDockingTile(TileIndex t)
 		if (!IsValidTile(tile)) continue;
 
 		if (IsTileType(tile, MP_STATION)) {
-			UpdateStationDockingTiles(Station::GetByTile(tile));
+			Station *st = Station::GetByTile(tile);
+			if (st != nullptr) UpdateStationDockingTiles(st);
 		} else if (IsTileType(tile, MP_INDUSTRY)) {
 			Station *neutral = Industry::GetByTile(tile)->neutral_station;
 			if (neutral != nullptr) UpdateStationDockingTiles(neutral);
@@ -3842,7 +3857,7 @@ void StationMonthlyLoop()
 void ModifyStationRatingAround(TileIndex tile, Owner owner, int amount, uint radius)
 {
 	ForAllStationsRadius(tile, radius, [&](Station *st) {
-		if (st->owner == owner) {
+		if (st->owner == owner && DistanceManhattan(tile, st->xy) <= radius) {
 			for (CargoID i = 0; i < NUM_CARGO; i++) {
 				GoodsEntry *ge = &st->goods[i];
 
@@ -3933,6 +3948,7 @@ CommandCost CmdRenameStation(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 	}
 
 	if (flags & DC_EXEC) {
+		st->cached_name.clear();
 		free(st->name);
 		st->name = reset ? nullptr : stredup(text);
 
@@ -3951,131 +3967,131 @@ static void AddNearbyStationsByCatchment(TileIndex tile, StationList *stations, 
 }
 
 /**
- * Find all stations around a rectangular producer (industry, house, headquarter, ...)
- *
- * @param location The location/area of the producer
- * @param[out] stations The list to store the stations in
- * @param use_nearby Use nearby station list of industry/town associated with location.tile
- */
-void FindStationsAroundTiles(const TileArea &location, StationList * const stations, bool use_nearby)
-{
-	if (use_nearby) {
-		/* Industries and towns maintain a list of nearby stations */
-		if (IsTileType(location.tile, MP_INDUSTRY)) {
-			/* Industry nearby stations are already filtered by catchment. */
-			*stations = Industry::GetByTile(location.tile)->stations_near;
-			return;
-		} else if (IsTileType(location.tile, MP_HOUSE)) {
-			/* Town nearby stations need to be filtered per tile. */
-			assert(location.w == 1 && location.h == 1);
-			AddNearbyStationsByCatchment(location.tile, stations, Town::GetByTile(location.tile)->stations_near);
-			return;
-		}
-	}
-
-	/* Not using, or don't have a nearby stations list, so we need to scan. */
-	std::set<StationID> seen_stations;
-
-	/* Scan an area around the building covering the maximum possible station
-	 * to find the possible nearby stations. */
-	uint max_c = _settings_game.station.modified_catchment ? MAX_CATCHMENT : CA_UNMODIFIED;
-	TileArea ta = TileArea(location).Expand(max_c);
-	TILE_AREA_LOOP(tile, ta) {
-		if (IsTileType(tile, MP_STATION)) seen_stations.insert(GetStationIndex(tile));
-	}
-
-	for (StationID stationid : seen_stations) {
-		Station *st = Station::GetIfValid(stationid);
-		if (st == nullptr) continue; /* Waypoint */
-
-		/* Check if station is attached to an industry */
-		if (!_settings_game.station.serve_neutral_industries && st->industry != nullptr) continue;
-
-		/* Test if the tile is within the station's catchment */
-		TILE_AREA_LOOP(tile, location) {
-			if (st->TileIsInCatchment(tile)) {
-				stations->insert(st);
-				break;
-			}
-		}
-	}
-}
-
-/**
  * Run a tile loop to find stations around a tile, on demand. Cache the result for further requests
  * @return pointer to a StationList containing all stations found
  */
 const StationList *StationFinder::GetStations()
 {
 	if (this->tile != INVALID_TILE) {
-		FindStationsAroundTiles(*this, &this->stations);
+		if (IsTileType(this->tile, MP_HOUSE)) {
+			/* Town nearby stations need to be filtered per tile. */
+			assert(this->w == 1 && this->h == 1);
+			AddNearbyStationsByCatchment(this->tile, &this->stations, Town::GetByTile(this->tile)->stations_near);
+		} else {
+			ForAllStationsAroundTiles(*this, [this](Station *st, TileIndex tile) {
+				this->stations.insert(st);
+				return true;
+			});
+		}
 		this->tile = INVALID_TILE;
 	}
 	return &this->stations;
 }
 
+
+static bool CanMoveGoodsToStation(const Station *st, CargoID type)
+{
+	/* Is the station reserved exclusively for somebody else? */
+	if (st->owner != OWNER_NONE && st->town->exclusive_counter > 0 && st->town->exclusivity != st->owner) return false;
+
+	/* Lowest possible rating, better not to give cargo anymore. */
+	if (st->goods[type].rating == 0) return false;
+
+	/* Selectively servicing stations, and not this one. */
+	if (_settings_game.order.selectgoods && !st->goods[type].HasVehicleEverTriedLoading()) return false;
+
+	if (IsCargoInClass(type, CC_PASSENGERS)) {
+		/* Passengers are never served by just a truck stop. */
+		if (st->facilities == FACIL_TRUCK_STOP) return false;
+	} else {
+		/* Non-passengers are never served by just a bus stop. */
+		if (st->facilities == FACIL_BUS_STOP) return false;
+	}
+	return true;
+}
+
 uint MoveGoodsToStation(CargoID type, uint amount, SourceType source_type, SourceID source_id, const StationList *all_stations)
 {
 	/* Return if nothing to do. Also the rounding below fails for 0. */
+	if (all_stations->empty()) return 0;
 	if (amount == 0) return 0;
 
-	Station *st1 = nullptr;   // Station with best rating
-	Station *st2 = nullptr;   // Second best station
-	uint best_rating1 = 0; // rating of st1
-	uint best_rating2 = 0; // rating of st2
+	Station *first_station = nullptr;
+	typedef std::pair<Station *, uint> StationInfo;
+	std::vector<StationInfo> used_stations;
 
 	for (Station *st : *all_stations) {
-		/* Is the station reserved exclusively for somebody else? */
-		if (st->owner != OWNER_NONE && st->town->exclusive_counter > 0 && st->town->exclusivity != st->owner) continue;
+		if (!CanMoveGoodsToStation(st, type)) continue;
 
-		if (st->goods[type].rating == 0) continue; // Lowest possible rating, better not to give cargo anymore
-
-		if (_settings_game.order.selectgoods && !st->goods[type].HasVehicleEverTriedLoading()) continue; // Selectively servicing stations, and not this one
-
-		if (IsCargoInClass(type, CC_PASSENGERS)) {
-			if (st->facilities == FACIL_TRUCK_STOP) continue; // passengers are never served by just a truck stop
-		} else {
-			if (st->facilities == FACIL_BUS_STOP) continue; // non-passengers are never served by just a bus stop
+		/* Avoid allocating a vector if there is only one station to significantly
+		 * improve performance in this common case. */
+		if (first_station == nullptr) {
+			first_station = st;
+			continue;
 		}
-
-		/* This station can be used, add it to st1/st2 */
-		if (st1 == nullptr || st->goods[type].rating >= best_rating1) {
-			st2 = st1; best_rating2 = best_rating1; st1 = st; best_rating1 = st->goods[type].rating;
-		} else if (st2 == nullptr || st->goods[type].rating >= best_rating2) {
-			st2 = st; best_rating2 = st->goods[type].rating;
+		if  (used_stations.empty()) {
+			used_stations.reserve(2);
+			used_stations.emplace_back(std::make_pair(first_station, 0));
 		}
+		used_stations.emplace_back(std::make_pair(st, 0));
 	}
 
 	/* no stations around at all? */
-	if (st1 == nullptr) return 0;
+	if (first_station == nullptr) return 0;
 
-	/* From now we'll calculate with fractal cargo amounts.
-	 * First determine how much cargo we really have. */
-	amount *= best_rating1 + 1;
-
-	if (st2 == nullptr) {
+	if (used_stations.empty()) {
 		/* only one station around */
-		return UpdateStationWaiting(st1, type, amount, source_type, source_id);
+		amount *= first_station->goods[type].rating + 1;
+		return UpdateStationWaiting(first_station, type, amount, source_type, source_id);
 	}
 
-	/* several stations around, the best two (highest rating) are in st1 and st2 */
-	assert(st1 != nullptr);
-	assert(st2 != nullptr);
-	assert(best_rating1 != 0 || best_rating2 != 0);
+	uint company_best[OWNER_NONE + 1] = {};  // best rating for each company, including OWNER_NONE
+	uint company_sum[OWNER_NONE + 1] = {};   // sum of ratings for each company
+	uint best_rating = 0;
+	uint best_sum = 0;  // sum of best ratings for each company
 
-	/* Then determine the amount the worst station gets. We do it this way as the
-	 * best should get a bonus, which in this case is the rounding difference from
-	 * this calculation. In reality that will mean the bonus will be pretty low.
-	 * Nevertheless, the best station should always get the most cargo regardless
-	 * of rounding issues. */
-	uint worst_cargo = amount * best_rating2 / (best_rating1 + best_rating2);
-	assert(worst_cargo <= (amount - worst_cargo));
+	for (auto &p : used_stations) {
+		auto owner = p.first->owner;
+		auto rating = p.first->goods[type].rating;
+		if (rating > company_best[owner]) {
+			best_sum += rating - company_best[owner];  // it's usually faster than iterating companies later
+			company_best[owner] = rating;
+			if (rating > best_rating) best_rating = rating;
+		}
+		company_sum[owner] += rating;
+	}
 
-	/* And then send the cargo to the stations! */
-	uint moved = UpdateStationWaiting(st1, type, amount - worst_cargo, source_type, source_id);
-	/* These two UpdateStationWaiting's can't be in the statement as then the order
-	 * of execution would be undefined and that could cause desyncs with callbacks. */
-	return moved + UpdateStationWaiting(st2, type, worst_cargo, source_type, source_id);
+	/* From now we'll calculate with fractional cargo amounts.
+	 * First determine how much cargo we really have. */
+	amount *= best_rating + 1;
+
+	uint moving = 0;
+	for (auto &p : used_stations) {
+		uint owner = p.first->owner;
+		/* Multiply the amount by (company best / sum of best for each company) to get cargo allocated to a company
+		 * and by (station rating / sum of ratings in a company) to get the result for a single station. */
+		p.second = amount * company_best[owner] * p.first->goods[type].rating / best_sum / company_sum[owner];
+		moving += p.second;
+	}
+
+	/* If there is some cargo left due to rounding issues distribute it among the best rated stations.  */
+	if (amount > moving) {
+		std::sort(used_stations.begin(), used_stations.end(), [type] (const StationInfo &a, const StationInfo &b) {
+			return b.first->goods[type].rating < a.first->goods[type].rating;
+		});
+
+		assert(amount - moving <= used_stations.size());
+		for (uint i = 0; i < amount - moving; i++) {
+			used_stations[i].second++;
+		}
+	}
+
+	uint moved = 0;
+	for (auto &p : used_stations) {
+		moved += UpdateStationWaiting(p.first, type, p.second, source_type, source_id);
+	}
+
+	return moved;
 }
 
 void UpdateStationDockingTiles(Station *st)

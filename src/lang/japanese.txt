@@ -470,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :―――――
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :コンソールの表示切替
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/ゲームスクリプトのデバッグ
 STR_ABOUT_MENU_SCREENSHOT                                       :スクリーンショット撮影(現在のズーム)
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :スクリーンショット撮影(最大ズーム)
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :スクリーンショット撮影(標準ズーム)
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :スクリーンショット撮影(マップ全体)
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :OpenTTDについて
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :スプライトを整列
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :バウンディングボックスの表示切替
@@ -642,9 +639,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}カスタム2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}音楽音量
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}効果音音量
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}最小
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}最大
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -2677,7 +2671,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :社有地
 STR_ABOUT_OPENTTD                                               :{WHITE}OpenTTDについて
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}オリジナル版権{COPYRIGHT} 1995 Chris Sawyer All rights reserved
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD バージョン {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} The OpenTTD team
 
 # Framerate display window
 ############ Leave those lines in this order!!
@@ -4002,6 +3996,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}適用
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}選択したスクリプトを使用します
 STR_AI_LIST_CANCEL                                              :{BLACK}キャンセル
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}スクリプトを変更しません
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} パラメータ

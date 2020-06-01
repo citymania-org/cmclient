@@ -484,9 +484,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :פתח/סגור קונסולה
 STR_ABOUT_MENU_AI_DEBUG                                         :דיבאג של סקריפטים של בינה מלאכותית או של המשחק
 STR_ABOUT_MENU_SCREENSHOT                                       :צילום מסך
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :צילום מסך בהגדלה מלאה
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :ברירת מחדל של תקריב צילום מסך
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :צילום מסך ענק
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :הצג קצב פריימים
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :'OpenTTD'{NBSP}אודות
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :מיישר ספרייטים
@@ -657,9 +654,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}מותאם אישית 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}עוצמת מנגינת רקע
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}עוצמת הצלילים
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}מינ'
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}מקס'
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -2703,7 +2697,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :שטח בבעל
 STR_ABOUT_OPENTTD                                               :{WHITE}OpenTTD אודות
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}כל הזכויות שמורות , {COPYRIGHT}1995 כריס סויר - זכויות יוצרים מקוריות
 STR_ABOUT_VERSION                                               :{BLACK}{REV} גירסה , OpenTTD
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2019 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-{STRING} The OpenTTD team
 
 # Framerate display window
 STR_FRAMERATE_CAPTION                                           :{WHITE}קצב ריענון
@@ -4073,6 +4067,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}אשר
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK} בחר בינה מלאכותית שהודגשה
 STR_AI_LIST_CANCEL                                              :{BLACK}בטל
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}אל תשנה את התסריט
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} פרמטרים

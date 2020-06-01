@@ -1,19 +1,17 @@
 # Auto-generated file from 'Makefile.settings.in' -- DO NOT EDIT
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
 
 SETTINGSGEN      = settings_gen
-SRC_DIR          = /home/pavels/Downloads/openttd-1.10.0-beta1/src
+SRC_DIR          = /home/pavels/Projects/cmbase/src
 CXX_BUILD        = g++
-CFLAGS_BUILD     =  -Wall -Wno-multichar -Wsign-compare -Wundef -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wredundant-decls -Wformat=2 -Wformat-security -Winit-self -fno-strict-aliasing -Wcast-qual -fno-strict-overflow -Wnon-virtual-dtor -Wno-free-nonheap-object -rdynamic -DUNIX -D_FORTIFY_SOURCE=2 -O1 
+CFLAGS_BUILD     =  -Wall -Wno-multichar -Wsign-compare -Wundef -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wredundant-decls -Wformat=2 -Wformat-security -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-but-set-parameter -Winit-self -fno-strict-aliasing -Wcast-qual -fno-strict-overflow -Wnon-virtual-dtor -Wno-free-nonheap-object -rdynamic -DUNIX -D_FORTIFY_SOURCE=2 -O1 -DNDEBUG 
 CXXFLAGS_BUILD   =  -flifetime-dse=1 -std=c++11 
 LDFLAGS_BUILD    =  -rdynamic 
 STAGE            = [SETTING]
-SETTING_OBJS_DIR = /home/pavels/Downloads/openttd-1.10.0-beta1/objs/setting
+SETTING_OBJS_DIR = /home/pavels/Projects/cmbase/objs/setting
 
 # Check if we want to show what we are doing
 ifdef VERBOSE

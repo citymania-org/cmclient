@@ -305,17 +305,6 @@ struct BuildRoadToolbarWindow : Window {
 		if (!gui_scope) return;
 
 		if (_game_mode != GM_EDITOR && !CanBuildVehicleInfrastructure(VEH_ROAD, GetRoadTramType(this->roadtype))) delete this;
-		bool can_build = _game_mode != GM_EDITOR;
-		this->SetWidgetsDisabledState(!can_build,
-				WID_ROT_DEPOT,
-				WID_ROT_BUS_STATION,
-				WID_ROT_TRUCK_STATION,
-				WIDGET_LIST_END);
-		if (!can_build) {
-			DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
-			DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
-			DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
-		}
 	}
 
 	void Initialize(RoadType roadtype)
@@ -717,26 +706,38 @@ struct BuildRoadToolbarWindow : Window {
  * @param last_build Last build road type
  * @return ES_HANDLED if hotkey was accepted.
  */
-static EventState RoadTramToolbarGlobalHotkeys(int hotkey, RoadType last_build)
+static EventState RoadTramToolbarGlobalHotkeys(int hotkey, RoadType last_build, RoadTramType rtt)
 {
-	Window *w = (_game_mode == GM_NORMAL) ? ShowBuildRoadToolbar(last_build) : ShowBuildRoadScenToolbar(last_build);
+	Window* w = nullptr;
+	switch (_game_mode) {
+		case GM_NORMAL:
+			if (!CanBuildVehicleInfrastructure(VEH_ROAD, rtt)) return ES_NOT_HANDLED;
+			w = ShowBuildRoadToolbar(last_build);
+			break;
+
+		case GM_EDITOR:
+			if ((GetRoadTypes(true) & ((rtt == RTT_ROAD) ? ~_roadtypes_type : _roadtypes_type)) == ROADTYPES_NONE) return ES_NOT_HANDLED;
+			w = ShowBuildRoadScenToolbar(last_build);
+			break;
+
+		default:
+			break;
+	}
+
 	if (w == nullptr) return ES_NOT_HANDLED;
 	return w->OnHotkey(hotkey);
 }
 
 static EventState RoadToolbarGlobalHotkeys(int hotkey)
 {
-	if (_game_mode == GM_NORMAL && !CanBuildVehicleInfrastructure(VEH_ROAD, RTT_ROAD)) return ES_NOT_HANDLED;
-
 	extern RoadType _last_built_roadtype;
-	return RoadTramToolbarGlobalHotkeys(hotkey, _last_built_roadtype);
+	return RoadTramToolbarGlobalHotkeys(hotkey, _last_built_roadtype, RTT_ROAD);
 }
 
 static EventState TramToolbarGlobalHotkeys(int hotkey)
 {
-	if (_game_mode != GM_NORMAL || !CanBuildVehicleInfrastructure(VEH_ROAD, RTT_TRAM)) return ES_NOT_HANDLED;
 	extern RoadType _last_built_tramtype;
-	return RoadTramToolbarGlobalHotkeys(hotkey, _last_built_tramtype);
+	return RoadTramToolbarGlobalHotkeys(hotkey, _last_built_tramtype, RTT_TRAM);
 }
 
 static Hotkey roadtoolbar_hotkeys[] = {
@@ -1358,7 +1359,7 @@ DropDownList GetScenRoadTypeDropDownList(RoadTramTypes rtts)
 		DropDownListIconItem *item = new DropDownListIconItem(rti->gui_sprites.build_x_road, PAL_NONE, str, rt, !HasBit(avail_roadtypes, rt));
 		item->SetDimension(d);
 		item->SetParam(0, rti->strings.menu_text);
-		item->SetParam(1, rti->max_speed);
+		item->SetParam(1, rti->max_speed / 2);
 		list.emplace_back(item);
 	}
 

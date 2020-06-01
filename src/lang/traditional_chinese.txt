@@ -470,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :切換主控台
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/遊戲腳本除錯
 STR_ABOUT_MENU_SCREENSHOT                                       :擷取畫面
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :最近鏡截圖
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :在預設的縮放範圍截圖
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :擷取全場景畫面
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :關於「OpenTTD」
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :子畫面定位工具
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :切換邊界框
@@ -642,9 +639,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}自訂二
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}背景音樂音量
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}音效音量
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}最小
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}最大
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -2677,12 +2671,14 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :公司所有土
 STR_ABOUT_OPENTTD                                               :{WHITE}關於 OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}原著作權為 {COPYRIGHT} 1995 Chris Sawyer，保留所有權利
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD 版本 {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 OpenTTD 開發小組
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} OpenTTD 開發小組
 
 # Framerate display window
+STR_FRAMERATE_DATA_POINTS                                       :{BLACK}數據基於 {COMMA} 個採樣
 ############ Leave those lines in this order!!
 ############ End of leave-in-this-order
 ############ Leave those lines in this order!!
+STR_FRAMETIME_CAPTION_ALLSCRIPTS                                :GS/AI 腳本總計
 ############ End of leave-in-this-order
 
 
@@ -3077,6 +3073,7 @@ STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}點選�
 # Story book window
 STR_STORY_BOOK_CAPTION                                          :{WHITE}{COMPANY}的歷史紀錄
 STR_STORY_BOOK_SPECTATOR_CAPTION                                :{WHITE}全局歷史紀錄
+STR_STORY_BOOK_SPECTATOR                                        :全局歷史紀錄
 STR_STORY_BOOK_TITLE                                            :{YELLOW}{STRING}
 STR_STORY_BOOK_GENERIC_PAGE_ITEM                                :第{NUM}頁
 STR_STORY_BOOK_SEL_PAGE_TOOLTIP                                 :{BLACK}在下拉式選單中選擇一頁以前往該頁觀看
@@ -3545,6 +3542,7 @@ STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}按下�
 STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}在車頭及車廂替換畫面間切換。
 STR_REPLACE_ENGINES                                             :車頭
 STR_REPLACE_WAGONS                                              :車廂
+STR_REPLACE_ALL_ROADTYPE                                        :所有公路車輛
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}選擇您要替換車頭的軌道種類
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}顯示左方的車頭要替換成哪種車頭
@@ -4000,6 +3998,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}接受
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}選擇標示到的腳本
 STR_AI_LIST_CANCEL                                              :{BLACK}取消
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}不改變腳本
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} 參數

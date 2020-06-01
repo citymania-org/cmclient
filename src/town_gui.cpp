@@ -671,7 +671,6 @@ struct TownDirectoryWindow : public Window {
 private:
 	/* Runtime saved values */
 	static Listing last_sorting;
-	static const Town *last_town;
 
 	/* Constants for sorting towns */
 	static const StringID sorter_names[];
@@ -690,7 +689,13 @@ private:
 			this->towns.clear();
 
 			for (const Town *t : Town::Iterate()) {
-				this->towns.push_back(t);
+				if (this->string_filter.IsEmpty()) {
+					this->towns.push_back(t);
+					continue;
+				}
+				this->string_filter.ResetState();
+				this->string_filter.AddLine(t->GetCachedName());
+				if (this->string_filter.GetState()) this->towns.push_back(t);
 			}
 
 			this->towns.shrink_to_fit();
@@ -698,7 +703,6 @@ private:
 			this->vscroll->SetCount((uint)this->towns.size()); // Update scrollbar as well.
 		}
 		/* Always sort the towns. */
-		this->last_town = nullptr;
 		this->towns.Sort();
 		this->SetWidgetDirty(WID_TD_LIST); // Force repaint of the displayed towns.
 	}
@@ -706,22 +710,7 @@ private:
 	/** Sort by town name */
 	static bool TownNameSorter(const Town * const &a, const Town * const &b)
 	{
-		static char buf_cache[MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH];
-		char buf[MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH];
-
-		SetDParam(0, a->index);
-		GetString(buf, STR_TOWN_NAME, lastof(buf));
-
-		/* If 'b' is the same town as in the last round, use the cached value
-		 * We do this to speed stuff up ('b' is called with the same value a lot of
-		 * times after each other) */
-		if (b != last_town) {
-			last_town = b;
-			SetDParam(0, b->index);
-			GetString(buf_cache, STR_TOWN_NAME, lastof(buf_cache));
-		}
-
-		return strnatcmp(buf, buf_cache) < 0; // Sort by name (natural sorting).
+		return strnatcmp(a->GetCachedName(), b->GetCachedName()) < 0; // Sort by name (natural sorting).
 	}
 
 	/** Sort by population (default descending, as big towns are of the most interest). */
@@ -965,7 +954,7 @@ public:
 	{
 		if (wid == WID_TD_FILTER) {
 			this->string_filter.SetFilterTerm(this->townname_editbox.text.buf);
-			this->InvalidateData(TDIWD_FILTER_CHANGES);
+			this->InvalidateData(TDIWD_FORCE_REBUILD);
 		}
 	}
 
@@ -976,38 +965,16 @@ public:
 	 */
 	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
-		char buf[MAX_LENGTH_TOWN_NAME_CHARS * MAX_CHAR_LENGTH];
-
 		switch (data) {
 			case TDIWD_FORCE_REBUILD:
 				/* This needs to be done in command-scope to enforce rebuilding before resorting invalid data */
 				this->towns.ForceRebuild();
 				break;
 
-			case TDIWD_FILTER_CHANGES:
-				if (this->string_filter.IsEmpty()) {
-					this->towns.ForceRebuild();
-				} else {
-					this->towns.clear();
-
-					for (const Town *t : Town::Iterate()) {
-						this->string_filter.ResetState();
-
-						SetDParam(0, t->index);
-						GetString(buf, STR_TOWN_NAME, lastof(buf));
-
-						this->string_filter.AddLine(buf);
-						if (this->string_filter.GetState()) this->towns.push_back(t);
-					}
-
-					this->towns.SetListing(this->last_sorting);
-					this->towns.ForceResort();
-					this->towns.Sort();
-					this->towns.shrink_to_fit();
-					this->towns.RebuildDone();
-					this->vscroll->SetCount((int)this->towns.size()); // Update scrollbar as well.
-				}
+			case TDIWD_POPULATION_CHANGE:
+				if (this->towns.SortType() == 1) this->towns.ForceResort();
 				break;
+
 			default:
 				this->towns.ForceResort();
 		}
@@ -1015,7 +982,6 @@ public:
 };
 
 Listing TownDirectoryWindow::last_sorting = {false, 0};
-const Town *TownDirectoryWindow::last_town = nullptr;
 
 /** Names of the sorting functions. */
 const StringID TownDirectoryWindow::sorter_names[] = {

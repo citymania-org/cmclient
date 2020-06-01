@@ -478,9 +478,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Bật/tắt bảng lệnh
 STR_ABOUT_MENU_AI_DEBUG                                         :Gỡ rối AI / Game script
 STR_ABOUT_MENU_SCREENSHOT                                       :Ảnh chụp màn hình
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Phóng to đầy đủ ảnh chụp màn hình
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Phóng to mặc định ảnh chụp màn hình
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Ảnh màn hình toàn bản đồ
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Hiển thị tốc độ khung hình
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Giới thiệu 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Trình điều chỉnh sprite
@@ -651,9 +648,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Tự Chọn 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Âm Lượng
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Hiệu Ứng Tiếng
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}Nhỏ
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}Lớn
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -2733,7 +2727,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Đất công ty
 STR_ABOUT_OPENTTD                                               :{WHITE}Về OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Nguyên tác bản quyền {COPYRIGHT} 1995 Chris Sawyer, All rights reserved
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD phiên bản {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 Nhóm OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} Nhóm OpenTTD
 
 # Framerate display window
 STR_FRAMERATE_CAPTION                                           :{WHITE}Tốc độ khung hình
@@ -4173,6 +4167,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Chấp n
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Chấp nhận AI đã chọn
 STR_AI_LIST_CANCEL                                              :{BLACK}Huỷ bỏ
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Không đổi tập lệnh
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Các Thông Số

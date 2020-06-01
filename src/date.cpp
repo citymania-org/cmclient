@@ -18,6 +18,7 @@
 #include "rail_gui.h"
 #include "linkgraph/linkgraph.h"
 #include "saveload/saveload.h"
+#include "newgrf_profiling.h"
 
 #include "safeguards.h"
 
@@ -26,6 +27,8 @@ Month     _cur_month;  ///< Current month (0..11)
 Date      _date;       ///< Current date in days (day counter)
 DateFract _date_fract; ///< Fractional part of the day.
 uint16 _tick_counter;  ///< Ever incrementing (and sometimes wrapping) tick counter for setting off various events
+
+int32 _old_ending_year_slv_105; ///< Old ending year for savegames before SLV_105
 
 /**
  * Set the date.
@@ -197,8 +200,8 @@ static void OnNewYear()
 
 	if (_cur_year == _settings_client.gui.semaphore_build_before) ResetSignalVariant();
 
-	/* check if we reached end of the game */
-	if (_cur_year == ORIGINAL_END_YEAR) {
+	/* check if we reached end of the game (end of ending year) */
+	if (_cur_year == _settings_game.game_creation.ending_year + 1) {
 		ShowEndGameChart();
 	/* check if we reached the maximum year, decrement dates by a year */
 	} else if (_cur_year == MAX_YEAR + 1) {
@@ -243,6 +246,10 @@ static void OnNewMonth()
  */
 static void OnNewDay()
 {
+	if (!_newgrf_profilers.empty() && _newgrf_profile_end_date <= _date) {
+		NewGRFProfiler::FinishAll();
+	}
+
 	if (_network_server) NetworkServerDailyLoop();
 
 	DisasterDailyLoop();

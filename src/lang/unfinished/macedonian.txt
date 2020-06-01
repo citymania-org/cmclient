@@ -444,8 +444,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Вклучи конзола
 STR_ABOUT_MENU_AI_DEBUG                                         :АИ / игри сценарио де-бубачки
 STR_ABOUT_MENU_SCREENSHOT                                       :Слика од екранот
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Зумира екранот
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Целата сајтот екранот
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :За 'ОтвориTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :самовила усогласат
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Вклучи одблеснува кутии
@@ -614,9 +612,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Свое 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Гласност на музка
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Гласност на ефекти
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}МИН
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -1199,7 +1194,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Компани�
 STR_ABOUT_OPENTTD                                               :{WHITE}За OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Оригинален copyright {COPYRIGHT} 1995 Chris Sawyer, Сите права се задржани
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD верзија {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2019 OpenTTD тимот
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-{STRING} OpenTTD тимот
 
 # Framerate display window
 ############ Leave those lines in this order!!
@@ -1674,6 +1669,7 @@ STR_AI_CONFIG_CHANGE_GAMESCRIPT                                 :GameScript
 # Available AIs window
 STR_AI_LIST_CAPTION_AI                                          :ЗИС
 STR_AI_LIST_CAPTION_GAMESCRIPT                                  :GameScripts
+
 
 
 

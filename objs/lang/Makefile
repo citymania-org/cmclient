@@ -1,25 +1,23 @@
 # Auto-generated file from 'Makefile.lang.in' -- DO NOT EDIT
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
 
 STRGEN        = strgen
-SRC_DIR       = /home/pavels/Downloads/openttd-1.10.0-beta1/src
-LANG_DIR      = /home/pavels/Downloads/openttd-1.10.0-beta1/src/lang
-BIN_DIR       = /home/pavels/Downloads/openttd-1.10.0-beta1/bin
+SRC_DIR       = /home/pavels/Projects/cmbase/src
+LANG_DIR      = /home/pavels/Projects/cmbase/src/lang
+BIN_DIR       = /home/pavels/Projects/cmbase/bin
 LANGS_SRC     = $(shell ls $(LANG_DIR)/*.txt)
 LANGS         = $(LANGS_SRC:$(LANG_DIR)/%.txt=%.lng)
 CXX_BUILD     = g++
-CFLAGS_BUILD  =  -Wall -Wno-multichar -Wsign-compare -Wundef -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wredundant-decls -Wformat=2 -Wformat-security -Winit-self -fno-strict-aliasing -Wcast-qual -fno-strict-overflow -Wnon-virtual-dtor -Wno-free-nonheap-object -rdynamic -DUNIX -D_FORTIFY_SOURCE=2 -O1 
+CFLAGS_BUILD  =  -Wall -Wno-multichar -Wsign-compare -Wundef -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wredundant-decls -Wformat=2 -Wformat-security -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-but-set-parameter -Winit-self -fno-strict-aliasing -Wcast-qual -fno-strict-overflow -Wnon-virtual-dtor -Wno-free-nonheap-object -rdynamic -DUNIX -D_FORTIFY_SOURCE=2 -O1 -DNDEBUG 
 CXXFLAGS_BUILD=  -flifetime-dse=1 -std=c++11 
 LDFLAGS_BUILD =  -rdynamic 
 STRGEN_FLAGS  = 
 STAGE         = [LANG]
 LANG_SUPPRESS = 
-LANG_OBJS_DIR = /home/pavels/Downloads/openttd-1.10.0-beta1/objs/lang
+LANG_OBJS_DIR = /home/pavels/Projects/cmbase/objs/lang
 
 ifeq ($(LANG_SUPPRESS), yes)
 LANG_ERRORS = >/dev/null 2>&1

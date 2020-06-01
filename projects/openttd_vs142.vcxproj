@@ -107,7 +107,7 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <AdditionalIncludeDirectories>..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LIBLZMA;WITH_PNG;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";WITH_ASSERT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LIBLZMA;WITH_PNG;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -230,7 +230,7 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <AdditionalIncludeDirectories>..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LIBLZMA;WITH_PNG;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";_SQ64;WITH_ASSERT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LIBLZMA;WITH_PNG;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";_SQ64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -409,6 +409,7 @@
     <ClCompile Include="..\src\rev.cpp" />
     <ClCompile Include="..\src\road.cpp" />
     <ClCompile Include="..\src\roadstop.cpp" />
+    <ClCompile Include="..\src\screenshot_gui.cpp" />
     <ClCompile Include="..\src\screenshot.cpp" />
     <ClCompile Include="..\src\settings.cpp" />
     <ClCompile Include="..\src\signal.cpp" />
@@ -582,6 +583,7 @@
     <ClInclude Include="..\src\newgrf_industries.h" />
     <ClInclude Include="..\src\newgrf_industrytiles.h" />
     <ClInclude Include="..\src\newgrf_object.h" />
+    <ClInclude Include="..\src\newgrf_profiling.h" />
     <ClInclude Include="..\src\newgrf_properties.h" />
     <ClInclude Include="..\src\newgrf_railtype.h" />
     <ClInclude Include="..\src\newgrf_roadtype.h" />
@@ -625,8 +627,10 @@
     <ClInclude Include="..\src\roadveh.h" />
     <ClInclude Include="..\src\safeguards.h" />
     <ClInclude Include="..\src\screenshot.h" />
+    <ClInclude Include="..\src\screenshot_gui.h" />
     <ClInclude Include="..\src\sound\sdl_s.h" />
     <ClInclude Include="..\src\video\sdl_v.h" />
+    <ClInclude Include="..\src\video\sdl2_v.h" />
     <ClInclude Include="..\src\settings_func.h" />
     <ClInclude Include="..\src\settings_gui.h" />
     <ClInclude Include="..\src\settings_internal.h" />
@@ -845,6 +849,7 @@
     <ClInclude Include="..\src\widgets\osk_widget.h" />
     <ClInclude Include="..\src\widgets\rail_widget.h" />
     <ClInclude Include="..\src\widgets\road_widget.h" />
+    <ClInclude Include="..\src\widgets\screenshot_widget.h" />
     <ClInclude Include="..\src\widgets\settings_widget.h" />
     <ClInclude Include="..\src\widgets\sign_widget.h" />
     <ClInclude Include="..\src\widgets\smallmap_widget.h" />
@@ -1232,6 +1237,7 @@
     <ClCompile Include="..\src\newgrf_industries.cpp" />
     <ClCompile Include="..\src\newgrf_industrytiles.cpp" />
     <ClCompile Include="..\src\newgrf_object.cpp" />
+    <ClCompile Include="..\src\newgrf_profiling.cpp" />
     <ClCompile Include="..\src\newgrf_railtype.cpp" />
     <ClCompile Include="..\src\newgrf_roadtype.cpp" />
     <ClCompile Include="..\src\newgrf_sound.cpp" />
@@ -1326,6 +1332,7 @@
     <ClCompile Include="..\src\video\dedicated_v.cpp" />
     <ClCompile Include="..\src\video\null_v.cpp" />
     <ClCompile Include="..\src\video\sdl_v.cpp" />
+    <ClCompile Include="..\src\video\sdl2_v.cpp" />
     <ClCompile Include="..\src\video\win32_v.cpp" />
     <ClCompile Include="..\src\music\dmusic.cpp" />
     <ClCompile Include="..\src\music\null_m.cpp" />
@@ -1333,6 +1340,7 @@
     <ClCompile Include="..\src\music\win32_m.cpp" />
     <ClCompile Include="..\src\sound\null_s.cpp" />
     <ClCompile Include="..\src\sound\sdl_s.cpp" />
+    <ClCompile Include="..\src\sound\sdl2_s.cpp" />
     <ClCompile Include="..\src\sound\win32_s.cpp" />
     <ClCompile Include="..\src\sound\xaudio2_s.cpp" />
     <ClCompile Include="..\src\os\windows\crashlog_win.cpp" />

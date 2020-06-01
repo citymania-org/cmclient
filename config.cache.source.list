@@ -70,6 +70,7 @@ rail.cpp
 rev.cpp
 road.cpp
 roadstop.cpp
+screenshot_gui.cpp
 screenshot.cpp
 settings.cpp
 signal.cpp
@@ -269,6 +270,7 @@ newgrf_house.h
 newgrf_industries.h
 newgrf_industrytiles.h
 newgrf_object.h
+newgrf_profiling.h
 newgrf_properties.h
 newgrf_railtype.h
 newgrf_roadtype.h
@@ -312,6 +314,7 @@ roadstop_base.h
 roadveh.h
 safeguards.h
 screenshot.h
+screenshot_gui.h
 sound/sdl_s.h
 video/sdl_v.h
 video/sdl2_v.h
@@ -555,6 +558,7 @@ widgets/order_widget.h
 widgets/osk_widget.h
 widgets/rail_widget.h
 widgets/road_widget.h
+widgets/screenshot_widget.h
 widgets/settings_widget.h
 widgets/sign_widget.h
 widgets/smallmap_widget.h
@@ -983,6 +987,7 @@ newgrf_house.cpp
 newgrf_industries.cpp
 newgrf_industrytiles.cpp
 newgrf_object.cpp
+newgrf_profiling.cpp
 newgrf_railtype.cpp
 newgrf_roadtype.cpp
 newgrf_sound.cpp
