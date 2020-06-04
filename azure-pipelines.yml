@@ -91,7 +91,7 @@ jobs:
 - job: windows
   displayName: 'Windows'
   pool:
-    vmImage: 'windows-latest'
+    vmImage: 'VS2017-Win2016'
   dependsOn: source
 
   strategy:
