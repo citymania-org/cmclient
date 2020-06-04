@@ -1812,6 +1812,12 @@
     <ClCompile Include="..\src\citymania\highlight.cpp">
       <Filter>CityMania files</Filter>
     </ClCompile>
+    <ClInclude Include="..\src\citymania\locations.hpp">
+      <Filter>CityMania files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\locations.cpp">
+      <Filter>CityMania files</Filter>
+    </ClCompile>
     <ClInclude Include="..\src\citymania\minimap.hpp">
       <Filter>CityMania files</Filter>
     </ClInclude>
