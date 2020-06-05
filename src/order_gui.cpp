@@ -1,6 +1,6 @@
 /*
  * This file is part of OpenTTD.
- * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
+ * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version  error:141A318A:SSL routines:tls_process_ske_dhe:dh key too smal.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -200,7 +200,7 @@ enum  GetOrderFromSettingsTypes {
 
 static OrdersFromSettings GetOrdersFromSettings(const Vehicle *v, uint8 setting)
 {
-	OrdersFromSettings res {
+	OrdersFromSettings res = {
 		.load = OLFB_NO_LOAD,
 		.unload = OUFB_NO_UNLOAD,
 		.mod = FeederOrderMod::NONE
