@@ -88,4 +88,4 @@ const byte _openttd_revision_tagged = 1;
 const uint32 _openttd_newgrf_version = 1 << 28 | 10 << 24 | 0 << 20 | 1 << 19 | 28004;
 
 
-const char _citymania_version[] = "20200602-master-m1a9e9c3019 04.06.20";
+const char _citymania_version[] = "20200605-master-mf2b6576d8f 05.06.20";

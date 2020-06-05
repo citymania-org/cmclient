@@ -75,7 +75,8 @@ This is usable for any OpenTTD servers
 == CHANGELOG ==
 
 *** next () ***
-- Add a setting to pause games after loading
+- Add a setting to pause games after loading.
+- Add a "step" console command to advance the game for n ticks (singleplayer only).
 
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.
