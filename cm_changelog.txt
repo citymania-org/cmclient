@@ -74,6 +74,9 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** next () ***
+- Add a setting to pause games after loading
+
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.
 - Rename "CB town border" zone to "CB cargo acceptance", switch it to a new colored highlight and fix for new CB mode.

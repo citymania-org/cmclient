@@ -3205,6 +3205,9 @@ bool AfterLoadGame()
 	AfterLoadLinkGraphs();
 	AfterLoadFindBTProCBInfo();
 	citymania::InitializeZoningMap();
+
+	if ((!_networking || _network_server ) && _settings_client.gui.pause_after_load) _pause_mode = PM_PAUSED_NORMAL;
+
 	return true;
 }
 

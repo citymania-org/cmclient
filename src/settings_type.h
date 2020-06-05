@@ -126,6 +126,7 @@ struct GUISettings {
 	byte   max_num_autosaves;                ///< controls how many autosavegames are made before the game starts to overwrite (names them 0 to max_num_autosaves - 1)
 	bool   population_in_label;              ///< show the population of a town in his label?
 	uint8  right_mouse_btn_emulation;        ///< should we emulate right mouse clicking?
+	bool   pause_after_load;                 ///< CM should we pause the game after loading save?
 	uint8  scrollwheel_scrolling;            ///< scrolling using the scroll wheel?
 	uint8  scrollwheel_multiplier;           ///< how much 'wheel' per incoming event from the OS?
 	bool   timetable_arrival_departure;      ///< show arrivals and departures in vehicle timetables
