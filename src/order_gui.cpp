@@ -201,8 +201,8 @@ enum  GetOrderFromSettingsTypes {
 static OrdersFromSettings GetOrdersFromSettings(const Vehicle *v, uint8 setting)
 {
 	OrdersFromSettings res = {
-		OLFB_NO_LOAD,
-		OUFB_NO_UNLOAD,
+		OLF_LOAD_IF_POSSIBLE,
+		OUF_UNLOAD_IF_POSSIBLE,
 		FeederOrderMod::NONE
 	};
 
