@@ -1,4 +1,8 @@
-#include "bitstream.h"
+#include "../stdafx.h"
+
+#include "cm_bitstream.hpp"
+
+namespace citymania {
 
 // Returns 8 higher bits of s-bit integer x
 #define FIRST8(x, s) (((x) >> ((s) - 8)) & 0xFF)
@@ -56,3 +60,5 @@ uint32 BitIStream::ReadBytes(uint amount)
 	}
 	return res;
 }
+
+} // namespace citymania

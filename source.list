@@ -136,7 +136,6 @@ autoslope.h
 base_media_base.h
 base_media_func.h
 base_station_base.h
-bitstream.h
 bitmap_type.h
 bmp.h
 bridge.h
@@ -615,15 +614,18 @@ waypoint_cmd.cpp
 zoning_cmd.cpp
 
 # CityMania files
-bitstream.cpp
 citymania/base64.h
 citymania/base64.cpp
+citymania/cm_bitstream.hpp
+citymania/cm_bitstream.cpp
 citymania/highlight.hpp
 citymania/highlight.cpp
 citymania/locations.hpp
 citymania/locations.cpp
 citymania/minimap.hpp
 citymania/minimap.cpp
+citymania/cm_saveload.hpp
+citymania/cm_saveload.cpp
 citymania/station_ui.hpp
 citymania/station_ui.cpp
 newgrf_revisions.hpp
@@ -636,8 +638,6 @@ saveload/animated_tile_sl.cpp
 saveload/autoreplace_sl.cpp
 saveload/cargomonitor_sl.cpp
 saveload/cargopacket_sl.cpp
-saveload/citymania_sl.cpp
-saveload/citymania_sl.h
 saveload/cheat_sl.cpp
 saveload/company_sl.cpp
 saveload/depot_sl.cpp

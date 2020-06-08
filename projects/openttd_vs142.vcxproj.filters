@@ -438,9 +438,6 @@
     <ClInclude Include="..\src\base_station_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\bitstream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\bitmap_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1797,13 +1794,16 @@
     <ClCompile Include="..\src\zoning_cmd.cpp">
       <Filter>Command handlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\bitstream.cpp">
-      <Filter>CityMania files</Filter>
-    </ClCompile>
     <ClInclude Include="..\src\citymania\base64.h">
       <Filter>CityMania files</Filter>
     </ClInclude>
     <ClCompile Include="..\src\citymania\base64.cpp">
+      <Filter>CityMania files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_bitstream.hpp">
+      <Filter>CityMania files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_bitstream.cpp">
       <Filter>CityMania files</Filter>
     </ClCompile>
     <ClInclude Include="..\src\citymania\highlight.hpp">
@@ -1822,6 +1822,12 @@
       <Filter>CityMania files</Filter>
     </ClInclude>
     <ClCompile Include="..\src\citymania\minimap.cpp">
+      <Filter>CityMania files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_saveload.hpp">
+      <Filter>CityMania files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_saveload.cpp">
       <Filter>CityMania files</Filter>
     </ClCompile>
     <ClInclude Include="..\src\citymania\station_ui.hpp">
@@ -1854,12 +1860,6 @@
     <ClCompile Include="..\src\saveload\cargopacket_sl.cpp">
       <Filter>Save/Load handlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\saveload\citymania_sl.cpp">
-      <Filter>Save/Load handlers</Filter>
-    </ClCompile>
-    <ClInclude Include="..\src\saveload\citymania_sl.h">
-      <Filter>Save/Load handlers</Filter>
-    </ClInclude>
     <ClCompile Include="..\src\saveload\cheat_sl.cpp">
       <Filter>Save/Load handlers</Filter>
     </ClCompile>

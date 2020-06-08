@@ -55,6 +55,28 @@ struct TownCache {
 	BuildingCounts<uint16> building_counts;   ///< The number of each type of building in the town
 };
 
+enum class TownGrowthState: uint8 {
+    NOT_GROWING = 0,
+    GROWING = 1,
+    SHRINKING = 2,
+};
+
+struct CBTownInfo {
+	uint32 pax_delivered;
+	uint32 mail_delivered;
+	uint32 pax_delivered_last_month;
+	uint32 mail_delivered_last_month;
+	TownGrowthState growth_state;
+	uint8 shrink_effeciency;
+	uint16 shrink_rate;
+	uint16 shrink_counter;
+	uint32 stored[NUM_CARGO];
+	uint32 delivered[NUM_CARGO];
+	uint32 required[NUM_CARGO];
+	uint32 delivered_last_month[NUM_CARGO];
+	uint32 required_last_month[NUM_CARGO];
+};
+
 /** Town data structure. */
 struct Town : TownPool::PoolItem<&_town_pool> {
 	TileIndex xy;                  ///< town center tile
@@ -86,12 +108,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	uint32 goal[NUM_TE];                              ///< Amount of cargo required for the town to grow.
 
 	StringID town_label;                ///< Label dependent on _local_company rating.
-	bool growing;                       //CB
-	/* amounts in storage */
-	int storage[NUM_CARGO];             //CB stored cargo
-	uint act_cargo[NUM_CARGO];          //CB delivered last month
-	uint new_act_cargo[NUM_CARGO];      //CB  delivered current month
-	bool delivered_enough[NUM_CARGO];   //CB
+	CBTownInfo cb;
 	bool growing_by_chance;             ///< town growing due to 1/12 chance?
 	uint16 houses_skipped;              ///< number of failed house buildings with next counter reset
 	uint16 houses_skipped_prev;         ///< house_failures on start of previous month

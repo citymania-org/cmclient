@@ -1,8 +1,9 @@
 #ifndef BITSTREAM_H
 #define BITSTREAM_H
 
-#include "stdafx.h"
 #include <vector>
+
+namespace citymania {
 
 typedef std::vector<uint8> u8vector;
 
@@ -37,5 +38,7 @@ public:
 	virtual ~BitIStream(){}
 	uint32 ReadBytes(uint amount);
 };
+
+} // namespace citymania
 
 #endif

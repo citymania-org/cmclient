@@ -709,8 +709,8 @@ static CommandCost ClearTile_Town(TileIndex tile, DoCommandFlag flags)
 	if (flags & DC_EXEC) {
 		if (_current_company == COMPANY_FIRST &&
 				Company::Get(_current_company)->money > NOVAPOLIS_COMPANY_MONEY_THRESHOLD) {
-			if (t->growing) t->cb_houses_removed++;
-			UpdateTownGrowthTile(tile, t->growing ? TGTS_CB_HOUSE_REMOVED: TGTS_CB_HOUSE_REMOVED_NOGROW);
+			if (t->cb.growth_state == TownGrowthState::GROWING) t->cb_houses_removed++;
+			UpdateTownGrowthTile(tile, t->cb.growth_state == TownGrowthState::GROWING ? TGTS_CB_HOUSE_REMOVED: TGTS_CB_HOUSE_REMOVED_NOGROW);
 		}
 		ClearTownHouse(t, tile);
 	}
@@ -1027,11 +1027,11 @@ static void TownTickHandler(Town *t)
 		if (i < 0) {
 			if (GrowTown(t)) {
 				i = t->growth_rate;
-				if (t->cache.num_houses <= houses_prev && (t->growing || !CB_Enabled())){
+				if (t->cache.num_houses <= houses_prev && (t->cb.growth_state == TownGrowthState::GROWING || !CB_Enabled())){
 					t->houses_skipped++;
 				}
 			} else {
-				if (t->growing || !CB_Enabled()){
+				if (t->cb.growth_state == TownGrowthState::GROWING || !CB_Enabled()){
 					t->cycles_skipped++;
 				}
 				/* If growth failed wait a bit before retrying */
@@ -1973,46 +1973,46 @@ uint CB_GetMaxTownStorage(Town *town, uint cargo) {
 
 void CB_UpdateTownStorage(Town *t)
 {
-	InvalidateWindowData(WC_CB_TOWN, t->index);
-	t->growing = true;
-	if (!HasBit(t->flags, TOWN_IS_GROWING)) { //dont grow if not funded or missing transportation
-		t->growing = false;
-	}
-	for (uint i = 0; i < NUM_CARGO ; i++) {
-		if(CBREQ[i] == 0) continue;
+	// InvalidateWindowData(WC_CB_TOWN, t->index);
+	// t->growing = true;
+	// if (!HasBit(t->flags, TOWN_IS_GROWING)) { //dont grow if not funded or missing transportation
+	// 	t->growing = false;
+	// }
+	// for (uint i = 0; i < NUM_CARGO ; i++) {
+	// 	if(CBREQ[i] == 0) continue;
 
-		t->storage[i] += t->new_act_cargo[i]; // add accumulated last month
-		t->storage[i] -= CB_GetTownReq(t->cache.population, CBREQ[i], CBFROM[i], false, true); //subtract monthly req
-		t->storage[i] = min((int)CB_GetMaxTownStorage(t->cache.population, CBREQ[i]), t->storage[i]); //check max storage
+	// 	t->storage[i] += t->new_act_cargo[i]; // add accumulated last month
+	// 	t->storage[i] -= CB_GetTownReq(t->cache.population, CBREQ[i], CBFROM[i], false, true); //subtract monthly req
+	// 	t->storage[i] = min((int)CB_GetMaxTownStorage(t->cache.population, CBREQ[i]), t->storage[i]); //check max storage
 
-		if (t->storage[i] < 0) {
-			t->growing = false;
-			t->delivered_enough[i] = false;
-			t->storage[i] = 0;
-		}
-		else t->delivered_enough[i] = true;
+	// 	if (t->storage[i] < 0) {
+	// 		t->growing = false;
+	// 		t->delivered_enough[i] = false;
+	// 		t->storage[i] = 0;
+	// 	}
+	// 	else t->delivered_enough[i] = true;
 
-		if (CBDECAY[i] == 100 && t->storage[i] > 0) {
-			t->storage[i] = 0;
-		}
-		else {
-			t->storage[i] *= (100 - CBDECAY[i]);
-			t->storage[i] /= 100;
-		}
-		t->act_cargo[i] = t->new_act_cargo[i];
-		t->new_act_cargo[i] = 0;
-	}
+	// 	if (CBDECAY[i] == 100 && t->storage[i] > 0) {
+	// 		t->storage[i] = 0;
+	// 	}
+	// 	else {
+	// 		t->storage[i] *= (100 - CBDECAY[i]);
+	// 		t->storage[i] /= 100;
+	// 	}
+	// 	t->act_cargo[i] = t->new_act_cargo[i];
+	// 	t->new_act_cargo[i] = 0;
+	// }
 
-	if (_settings_game.game_creation.landscape == LT_TROPIC) {
-		if (GetTropicZone(t->xy) == TROPICZONE_DESERT && (t->received[TE_FOOD].old_act <= 0 || t->received[TE_WATER].old_act <= 0) && t->cache.population > 60) {
-			t->growing = false;
-		}
-	}
-	else if (_settings_game.game_creation.landscape == LT_ARCTIC) {
-		if (TilePixelHeight(t->xy) >= GetSnowLine() && t->received[TE_FOOD].old_act <= 0 && t->cache.population > 90) {
-			t->growing = false;
-		}
-	}
+	// if (_settings_game.game_creation.landscape == LT_TROPIC) {
+	// 	if (GetTropicZone(t->xy) == TROPICZONE_DESERT && (t->received[TE_FOOD].old_act <= 0 || t->received[TE_WATER].old_act <= 0) && t->cache.population > 60) {
+	// 		t->growing = false;
+	// 	}
+	// }
+	// else if (_settings_game.game_creation.landscape == LT_ARCTIC) {
+	// 	if (TilePixelHeight(t->xy) >= GetSnowLine() && t->received[TE_FOOD].old_act <= 0 && t->cache.population > 90) {
+	// 		t->growing = false;
+	// 	}
+	// }
 }
 //CB
 
@@ -2069,12 +2069,13 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 
 	t->fund_buildings_months = 0;
 	//CB
-	t->growing = false;
+	t->cb.growth_state = TownGrowthState::NOT_GROWING;
 	for (uint i = 0; i < NUM_CARGO ; i++) {
-		t->storage[i] = 0;
-		t->act_cargo[i] = 0;
-		t->new_act_cargo[i] = 0;
-		t->delivered_enough[i] = false;
+		t->cb.stored[i] = 0;
+		t->cb.delivered[i] = 0;
+		t->cb.required[i] = 0;
+		t->cb.delivered_last_month[i] = 0;
+		t->cb.required_last_month[i] = 0;
 	}
 	t->houses_construction = 0;
 	t->houses_reconstruction = 0;

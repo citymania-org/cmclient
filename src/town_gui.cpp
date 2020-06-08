@@ -1578,7 +1578,7 @@ public:
 		switch(widget){
 			case WID_CB_DETAILS:{
 				//growing
-				if(this->town->growing) DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y, STR_TOWN_CB_GROWING );
+				if(this->town->cb.growth_state == TownGrowthState::GROWING) DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y, STR_TOWN_CB_GROWING );
 				else DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y, STR_TOWN_CB_NOT_GROWING );
 				//population
 				SetDParam(0, this->town->cache.population);
@@ -1651,13 +1651,13 @@ public:
 							break;
 						}
 						case WID_CB_CARGO_AMOUNT: {
-							delivered = this->town->new_act_cargo[cargos->Index()];
+							delivered = this->town->cb.delivered[cargos->Index()];
 							requirements = CB_GetTownReq(this->town->cache.population, CB_GetReq(cargos->Index()), from, true);
 							SetDParam(0, delivered);
 
 							//when required
 							if (this->town->cache.population >= from) {
-								if((delivered + (uint)this->town->storage[cargos->Index()]) >= requirements) string_to_draw = STR_TOWN_CB_CARGO_AMOUNT_GOOD;
+								if((delivered + (uint)this->town->cb.stored[cargos->Index()]) >= requirements) string_to_draw = STR_TOWN_CB_CARGO_AMOUNT_GOOD;
 								else string_to_draw = STR_TOWN_CB_CARGO_AMOUNT_BAD;
 							}
 							//when not required -> all faded
@@ -1676,12 +1676,12 @@ public:
 						}
 						case WID_CB_CARGO_PREVIOUS: {
 							requirements = CB_GetTownReq(this->town->cache.population, CB_GetReq(cargos->Index()), from, true);
-							SetDParam(0, this->town->act_cargo[cargos->Index()]);
+							SetDParam(0, this->town->cb.delivered_last_month[cargos->Index()]);
 							if (this->town->cache.population >= from){
-								if (this->town->delivered_enough[cargos->Index()]) {
-									string_to_draw = (this->town->act_cargo[cargos->Index()] >= requirements) ? STR_TOWN_CB_CARGO_PREVIOUS_YES : STR_TOWN_CB_CARGO_PREVIOUS_EDGE;
-								}
-								else string_to_draw = STR_TOWN_CB_CARGO_PREVIOUS_BAD;
+								// if (this->town->delivered_enough[cargos->Index()]) {
+									string_to_draw = (this->town->cb.delivered_last_month[cargos->Index()] >= requirements) ? STR_TOWN_CB_CARGO_PREVIOUS_YES : STR_TOWN_CB_CARGO_PREVIOUS_EDGE;
+								// }
+								// else string_to_draw = STR_TOWN_CB_CARGO_PREVIOUS_BAD;
 							}
 							else string_to_draw = STR_TOWN_CB_CARGO_PREVIOUS_NOT;
 
@@ -1689,7 +1689,7 @@ public:
 							break;
 						}
 						case WID_CB_CARGO_STORE: {
-							SetDParam(0, this->town->storage[cargos->Index()]);
+							SetDParam(0, this->town->cb.stored[cargos->Index()]);
 							if (CB_GetDecay(cargos->Index()) == 100) string_to_draw = STR_TOWN_CB_CARGO_STORE_DECAY;  //when 100% decay
 							else {
 								if (this->town->cache.population >= from) string_to_draw = STR_TOWN_CB_CARGO_STORE_YES;  //when required
@@ -1703,7 +1703,7 @@ public:
 							uint max_storage = CB_GetMaxTownStorage(this->town, cargos->Index());
 							if (CB_GetDecay(cargos->Index()) == 100 || !max_storage) string_to_draw = STR_TOWN_CB_CARGO_STORE_DECAY;  //when 100% decay
 							else {
-								SetDParam(0, 100 * this->town->storage[cargos->Index()] / max_storage);
+								SetDParam(0, 100 * this->town->cb.stored[cargos->Index()] / max_storage);
 								if (this->town->cache.population >= from) string_to_draw = STR_TOWN_CB_CARGO_STORE_PCT_YES;  //when required
 								else string_to_draw = STR_TOWN_CB_CARGO_STORE_PCT_NOT;
 							}
