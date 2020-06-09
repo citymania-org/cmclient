@@ -52,6 +52,8 @@
 #include "table/strings.h"
 #include "table/town_land.h"
 
+#include "citymania/cm_main.hpp"
+
 #include "safeguards.h"
 
 TownID _new_town_id;
@@ -871,7 +873,10 @@ static void TownTickHandler(Town *t)
 	if (HasBit(t->flags, TOWN_IS_GROWING)) {
 		int i = (int)t->grow_counter - 1;
 		if (i < 0) {
-			if (GrowTown(t)) {
+			uint16 prev_houses = t->cache.num_houses;
+			bool growth_res = GrowTown(t);
+			citymania::Emit((citymania::event::TownGrowthTick){t, growth_res, prev_houses});
+			if (growth_res) {
 				i = t->growth_rate;
 			} else {
 				/* If growth failed wait a bit before retrying */

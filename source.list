@@ -1191,3 +1191,12 @@ sound/null_s.cpp
 
 # Threading
 thread.h
+
+# CityMania
+citymania/cm_event.hpp
+citymania/cm_game.hpp
+citymania/cm_game.cpp
+citymania/cm_main.hpp
+citymania/cm_main.cpp
+citymania/cm_type.hpp
+citymania/extensions/cmext_town.hpp

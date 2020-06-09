@@ -18,6 +18,8 @@
 #include "tilematrix_type.hpp"
 #include <list>
 
+#include "citymania/extensions/cmext_town.hpp"
+
 template <typename T>
 struct BuildingCounts {
 	T id_count[NUM_HOUSES];
@@ -103,6 +105,8 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	bool show_zone;                  ///< NOSAVE: mark town to show the local authority zone in the viewports
 
 	std::list<PersistentStorage *> psa_list;
+
+	citymania::ext::Town cm;
 
 	/**
 	 * Creates a new town.
