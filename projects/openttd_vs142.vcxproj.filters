@@ -103,6 +103,9 @@
     <Filter Include="Threading">
       <UniqueIdentifier>{c76ff9f1-1e62-46d8-8d55-000000000033}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CityMania">
+      <UniqueIdentifier>{c76ff9f1-1e62-46d8-8d55-000000000034}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\airport.cpp">
@@ -3209,6 +3212,27 @@
     </ClCompile>
     <ClInclude Include="..\src\thread.h">
       <Filter>Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\citymania\cm_event.hpp">
+      <Filter>CityMania</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\citymania\cm_game.hpp">
+      <Filter>CityMania</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_game.cpp">
+      <Filter>CityMania</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_main.hpp">
+      <Filter>CityMania</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_main.cpp">
+      <Filter>CityMania</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_type.hpp">
+      <Filter>CityMania</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\citymania\extensions\cmext_town.hpp">
+      <Filter>CityMania</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

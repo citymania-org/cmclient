@@ -1415,12 +1415,12 @@ static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bo
 	}
 
 	///houses stats
-	SetDParam(0, town->houses_skipped);
-	SetDParam(1, town->houses_skipped_last_month);
-	SetDParam(2, town->cycles_skipped);
-	SetDParam(3, town->cycles_skipped_last_month);
-	SetDParam(4, town->cb_houses_removed);
-	SetDParam(5, town->cb_houses_removed_last_month);
+	SetDParam(0, town->cm.hs_total);
+	SetDParam(1, town->cm.hs_last_month);
+	SetDParam(2, town->cm.cs_total);
+	SetDParam(3, town->cm.cs_last_month);
+	SetDParam(4, town->cm.hr_total);
+	SetDParam(5, town->cm.hr_last_month);
 	DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_GROWTH_TILES);
 }
 

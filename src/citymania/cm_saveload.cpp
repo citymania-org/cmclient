@@ -57,22 +57,22 @@ static void EncodeTownsLayoutErrors(BitOStream &bs)
 {
 	uint n_affected_towns = 0;
 	for (const Town *t : Town::Iterate()) {
-		if (t->cb_houses_removed || t->houses_skipped || t->cycles_skipped)
+		if (t->cm.hr_total || t->cm.hs_total || t->cm.cs_total)
 			n_affected_towns++;
 	}
 	bs.WriteBytes(n_affected_towns, 2);
 	for (const Town *t : Town::Iterate()) {
-		if (t->cb_houses_removed || t->houses_skipped || t->cycles_skipped) {
+        if (t->cm.hr_total || t->cm.hs_total || t->cm.cs_total) {
 			bs.WriteBytes(t->index, 2);
-			bs.WriteBytes(t->houses_skipped, 2);
-			bs.WriteBytes(t->houses_skipped_prev, 2);
-			bs.WriteBytes(t->houses_skipped_last_month, 2);
-			bs.WriteBytes(t->cycles_skipped, 2);
-			bs.WriteBytes(t->cycles_skipped_prev, 2);
-			bs.WriteBytes(t->cycles_skipped_last_month, 2);
-			bs.WriteBytes(t->cb_houses_removed, 2);
-			bs.WriteBytes(t->cb_houses_removed_prev, 2);
-			bs.WriteBytes(t->cb_houses_removed_last_month, 2);
+			bs.WriteBytes(t->cm.hs_total, 2);
+			bs.WriteBytes(t->cm.hs_total_prev, 2);
+			bs.WriteBytes(t->cm.hs_last_month, 2);
+			bs.WriteBytes(t->cm.cs_total, 2);
+			bs.WriteBytes(t->cm.cs_total_prev, 2);
+			bs.WriteBytes(t->cm.cs_last_month, 2);
+			bs.WriteBytes(t->cm.hr_total, 2);
+			bs.WriteBytes(t->cm.hr_total_prev, 2);
+			bs.WriteBytes(t->cm.hr_last_month, 2);
 		}
 	}
 	EncodeTownsGrowthTiles(bs, _towns_growth_tiles);
@@ -117,15 +117,15 @@ static void DecodeTownsLayoutErrors(BitIStream &bs)
 			DEBUG(sl, 0, "Invalid TownID in CB towns layout errors (%u)", town_id);
 			continue;
 		}
-		t->houses_skipped = bs.ReadBytes(2);
-		t->houses_skipped_prev = bs.ReadBytes(2);
-		t->houses_skipped_last_month = bs.ReadBytes(2);
-		t->cycles_skipped = bs.ReadBytes(2);
-		t->cycles_skipped_prev = bs.ReadBytes(2);
-		t->cycles_skipped_last_month = bs.ReadBytes(2);
-		t->cb_houses_removed = bs.ReadBytes(2);
-		t->cb_houses_removed_prev = bs.ReadBytes(2);
-		t->cb_houses_removed_last_month = bs.ReadBytes(2);
+		t->cm.hs_total = bs.ReadBytes(2);
+		t->cm.hs_total_prev = bs.ReadBytes(2);
+		t->cm.hs_last_month = bs.ReadBytes(2);
+		t->cm.cs_total = bs.ReadBytes(2);
+		t->cm.cs_total_prev = bs.ReadBytes(2);
+		t->cm.cs_last_month = bs.ReadBytes(2);
+		t->cm.hr_total = bs.ReadBytes(2);
+		t->cm.hr_total_prev = bs.ReadBytes(2);
+		t->cm.hr_last_month = bs.ReadBytes(2);
 	}
 	DecodeTownsGrowthTiles(bs, _towns_growth_tiles);
 	DecodeTownsGrowthTiles(bs, _towns_growth_tiles_last_month);

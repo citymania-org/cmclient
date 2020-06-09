@@ -20,6 +20,8 @@
 #include "saveload/saveload.h"
 #include "newgrf_profiling.h"
 
+#include "citymania/cm_main.hpp"
+
 #include "safeguards.h"
 
 Year      _cur_year;   ///< Current year, starting at 0
@@ -238,6 +240,7 @@ static void OnNewMonth()
 	IndustryMonthlyLoop();
 	SubsidyMonthlyLoop();
 	StationMonthlyLoop();
+	citymania::Emit(citymania::event::NewMonth());
 	if (_network_server) NetworkServerMonthlyLoop();
 }
 

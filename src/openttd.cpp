@@ -69,6 +69,7 @@
 #include "linkgraph/linkgraphschedule.h"
 
 #include "citymania/highlight.hpp"
+#include "citymania/cm_main.hpp"
 
 #include <stdarg.h>
 #include <system_error>
@@ -1047,6 +1048,7 @@ bool SafeLoad(const char *filename, SaveLoadOperation fop, DetailedFileType dft,
 
 void SwitchToMode(SwitchMode new_mode)
 {
+	citymania::SwitchToMode(new_mode);
 	/* If we are saving something, the network stays in his current state */
 	if (new_mode != SM_SAVE_GAME) {
 		/* If the network is active, make it not-active */

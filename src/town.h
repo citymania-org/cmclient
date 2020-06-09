@@ -23,6 +23,8 @@
 #include <list>
 #include <map>
 
+#include "citymania/extensions/cmext_town.hpp"
+
 template <typename T>
 struct BuildingCounts {
 	T id_count[NUM_HOUSES];
@@ -110,15 +112,6 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	StringID town_label;                ///< Label dependent on _local_company rating.
 	CBTownInfo cb;
 	bool growing_by_chance;             ///< town growing due to 1/12 chance?
-	uint16 houses_skipped;              ///< number of failed house buildings with next counter reset
-	uint16 houses_skipped_prev;         ///< house_failures on start of previous month
-	uint16 houses_skipped_last_month;   ///< house_failures during last month
-	uint16 cycles_skipped;              ///< number of house building cycles skipped due to placement failure
-	uint16 cycles_skipped_prev;
-	uint16 cycles_skipped_last_month;
-	uint16 cb_houses_removed;            ///< houses removed by cb server (excluding ones when town is not growing)
-	uint16 cb_houses_removed_prev;       ///< houses removed by cb server on start of previous month
-	uint16 cb_houses_removed_last_month; ///< houses removed by cb server during last month
 	uint houses_construction;            ///< number of houses currently being built
 	uint houses_reconstruction;          ///< number of houses currently being rebuilt
 	uint houses_demolished;              ///< number of houses demolished this month
@@ -154,6 +147,8 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	bool show_zone;                  ///< NOSAVE: mark town to show the local authority zone in the viewports
 
 	std::list<PersistentStorage *> psa_list;
+
+	citymania::ext::Town cm;
 
 	/**
 	 * Creates a new town.

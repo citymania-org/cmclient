@@ -53,6 +53,7 @@
 #include "table/town_land.h"
 
 #include "citymania/highlight.hpp"
+#include "citymania/cm_main.hpp"
 
 #include "safeguards.h"
 
@@ -709,7 +710,7 @@ static CommandCost ClearTile_Town(TileIndex tile, DoCommandFlag flags)
 	if (flags & DC_EXEC) {
 		if (_current_company == COMPANY_FIRST &&
 				Company::Get(_current_company)->money > NOVAPOLIS_COMPANY_MONEY_THRESHOLD) {
-			if (t->cb.growth_state == TownGrowthState::GROWING) t->cb_houses_removed++;
+			if (t->cb.growth_state == TownGrowthState::GROWING) t->cm.hr_total++;
 			UpdateTownGrowthTile(tile, t->cb.growth_state == TownGrowthState::GROWING ? TGTS_CB_HOUSE_REMOVED: TGTS_CB_HOUSE_REMOVED_NOGROW);
 		}
 		ClearTownHouse(t, tile);
@@ -1025,15 +1026,12 @@ static void TownTickHandler(Town *t)
 		int i = (int)t->grow_counter - 1;
 		uint16 houses_prev = t->cache.num_houses;
 		if (i < 0) {
-			if (GrowTown(t)) {
+			uint16 prev_houses = t->cache.num_houses;
+			bool growth_res = GrowTown(t);
+			citymania::Emit((citymania::event::TownGrowthTick){t, growth_res, prev_houses});
+			if (growth_res) {
 				i = t->growth_rate;
-				if (t->cache.num_houses <= houses_prev && (t->cb.growth_state == TownGrowthState::GROWING || !CB_Enabled())){
-					t->houses_skipped++;
-				}
 			} else {
-				if (t->cb.growth_state == TownGrowthState::GROWING || !CB_Enabled()){
-					t->cycles_skipped++;
-				}
 				/* If growth failed wait a bit before retrying */
 				i = min(t->growth_rate, TOWN_GROWTH_TICKS - 1);
 			}
@@ -4048,12 +4046,6 @@ void TownsMonthlyLoop()
 
 		t->houses_demolished = 0;
 		t->houses_reconstruction = 0;
-		t->houses_skipped_last_month = t->houses_skipped - t->houses_skipped_prev;
-		t->houses_skipped_prev = t->houses_skipped;
-		t->cycles_skipped_last_month = t->cycles_skipped - t->cycles_skipped_prev;
-		t->cycles_skipped_prev = t->cycles_skipped;
-		t->cb_houses_removed_last_month = t->cb_houses_removed - t->cb_houses_removed_prev;
-		t->cb_houses_removed_prev = t->cb_houses_removed;
 	}
 
 	UpdateTownCargoBitmap();
