@@ -881,10 +881,7 @@ static void TownTickHandler(Town *t)
 	if (HasBit(t->flags, TOWN_IS_GROWING)) {
 		int i = (int)t->grow_counter - 1;
 		if (i < 0) {
-			uint16 prev_houses = t->cache.num_houses;
-			bool growth_res = GrowTown(t);
-			citymania::Emit((citymania::event::TownGrowthTick){t, growth_res, prev_houses});
-			if (growth_res) {
+			if (GrowTown(t)) {
 				i = t->growth_rate;
 			} else {
 				/* If growth failed wait a bit before retrying */
@@ -1570,17 +1567,24 @@ static bool GrowTownAtRoad(Town *t, TileIndex tile)
 			break;
 	}
 
+	uint16 prev_houses = t->cache.num_houses;
 	do {
 		RoadBits cur_rb = GetTownRoadBits(tile); // The RoadBits of the current tile
 
 		/* Try to grow the town from this point */
 		GrowTownInTile(&tile, cur_rb, target_dir, t);
-		if (_grow_town_result == GROWTH_SUCCEED) return true;
+		if (_grow_town_result == GROWTH_SUCCEED) {
+			citymania::Emit(citymania::event::TownGrowthSucceeded{t, tile, prev_houses});
+			return true;
+		}
 
 		/* Exclude the source position from the bitmask
 		 * and return if no more road blocks available */
 		if (IsValidDiagDirection(target_dir)) cur_rb &= ~DiagDirToRoadBits(ReverseDiagDir(target_dir));
-		if (cur_rb == ROAD_NONE) return false;
+		if (cur_rb == ROAD_NONE) {
+			citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
+			return false;
+		}
 
 		if (IsTileType(tile, MP_TUNNELBRIDGE)) {
 			/* Only build in the direction away from the tunnel or bridge. */
@@ -1589,7 +1593,10 @@ static bool GrowTownAtRoad(Town *t, TileIndex tile)
 			/* Select a random bit from the blockmask, walk a step
 			 * and continue the search from there. */
 			do {
-				if (cur_rb == ROAD_NONE) return false;
+				if (cur_rb == ROAD_NONE) {
+					citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
+					return false;
+				}
 				RoadBits target_bits;
 				do {
 					target_dir = RandomDiagDir();
@@ -1603,6 +1610,7 @@ static bool GrowTownAtRoad(Town *t, TileIndex tile)
 		if (IsTileType(tile, MP_ROAD) && !IsRoadDepot(tile) && HasTileRoadType(tile, RTT_ROAD)) {
 			/* Don't allow building over roads of other cities */
 			if (IsRoadOwner(tile, RTT_ROAD, OWNER_TOWN) && Town::GetByTile(tile) != t) {
+				citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
 				return false;
 			} else if (IsRoadOwner(tile, RTT_ROAD, OWNER_NONE) && _game_mode == GM_EDITOR) {
 				/* If we are in the SE, and this road-piece has no town owner yet, it just found an
@@ -1615,6 +1623,7 @@ static bool GrowTownAtRoad(Town *t, TileIndex tile)
 		/* Max number of times is checked. */
 	} while (--_grow_town_result >= 0);
 
+	citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
 	return false;
 }
 
@@ -1684,6 +1693,7 @@ static bool GrowTown(Town *t)
 					RoadType rt = GetTownRoadType(t);
 					DoCommand(tile, GenRandomRoadBits() | (rt << 4), t->index, DC_EXEC | DC_AUTO, CMD_BUILD_ROAD);
 					cur_company.Restore();
+					citymania::Emit(citymania::event::TownGrowthSucceeded{t, tile, t->cache.num_houses});
 					return true;
 				}
 			}
@@ -1692,6 +1702,7 @@ static bool GrowTown(Town *t)
 	}
 
 	cur_company.Restore();
+	citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
 	return false;
 }
 

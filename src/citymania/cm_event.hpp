@@ -20,10 +20,15 @@ namespace event {
 struct NewMonth {
 };
 
-struct TownGrowthTick {
+struct TownGrowthSucceeded {
     Town *town;
-    bool growth_result;
-    uint16 prev_houses;
+    TileIndex tile;
+    uint32 prev_houses;
+};
+
+struct TownGrowthFailed {
+    Town *town;
+    TileIndex tile;
 };
 
 struct HouseRebuilt {
