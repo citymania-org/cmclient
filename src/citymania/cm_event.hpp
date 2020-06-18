@@ -26,6 +26,24 @@ struct TownGrowthTick {
     uint16 prev_houses;
 };
 
+struct HouseRebuilt {
+    Town *town;
+    TileIndex tile;
+    bool was_successful;
+};
+
+struct HouseBuilt {
+    Town *town;
+    TileIndex tile;
+    const HouseSpec *house_spec;
+};
+
+struct HouseCompleted {
+    Town *town;
+    TileIndex tile;
+    const HouseSpec *house_spec;
+};
+
 struct CompanyEvent {
     Company *company;
 };

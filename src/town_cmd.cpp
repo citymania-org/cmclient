@@ -496,8 +496,14 @@ static void MakeSingleHouseBigger(TileIndex tile)
 	if (IsHouseCompleted(tile)) {
 		/* Now that construction is complete, we can add the population of the
 		 * building to the town. */
-		ChangePopulation(Town::GetByTile(tile), HouseSpec::Get(GetHouseType(tile))->population);
+		HouseID house_id = GetHouseType(tile);
+		auto hs = HouseSpec::Get(house_id);
+		Town *town = Town::GetByTile(tile);
+		ChangePopulation(Town::GetByTile(tile), hs->population);
 		ResetHouseAge(tile);
+
+		if (hs->building_flags & BUILDING_HAS_1_TILE)
+			citymania::Emit(citymania::event::HouseCompleted{town, tile, hs});
 	}
 	MarkTileDirtyByTile(tile);
 }
@@ -632,7 +638,9 @@ static void TileLoop_Town(TileIndex tile)
 		ClearTownHouse(t, tile);
 
 		/* Rebuild with another house? */
-		if (GB(r, 24, 8) >= 12) BuildTownHouse(t, tile);
+		bool rebuild_res = false;
+		if (GB(r, 24, 8) >= 12) rebuild_res = BuildTownHouse(t, tile);
+		citymania::Emit(citymania::event::HouseRebuilt{t, tile, rebuild_res});
 	}
 
 	cur_company.Restore();
@@ -2582,6 +2590,7 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 		byte construction_counter = 0;
 		byte construction_stage = 0;
 
+		bool completed = false;
 		if (_generating_world || _game_mode == GM_EDITOR) {
 			uint32 r = Random();
 
@@ -2590,6 +2599,7 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 
 			if (construction_stage == TOWN_HOUSE_COMPLETED) {
 				ChangePopulation(t, hs->population);
+				completed = true;
 			} else {
 				construction_counter = GB(r, 2, 2);
 			}
@@ -2599,6 +2609,9 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 		UpdateTownRadius(t);
 		UpdateTownGrowthRate(t);
 		UpdateTownCargoes(t, tile);
+
+		citymania::Emit(citymania::event::HouseBuilt{t, tile, hs});
+		if (completed) citymania::Emit(citymania::event::HouseCompleted{t, tile, hs});
 
 		return true;
 	}
@@ -3453,6 +3466,7 @@ static void UpdateTownGrowth(Town *t)
 
 	ClrBit(t->flags, TOWN_IS_GROWING);
 	SetWindowDirty(WC_TOWN_VIEW, t->index);
+	t->cm.growing_by_chance = false;
 
 	if (_settings_game.economy.town_growth_rate == 0 && t->fund_buildings_months == 0) return;
 
@@ -3479,7 +3493,10 @@ static void UpdateTownGrowth(Town *t)
 		return;
 	}
 
-	if (t->fund_buildings_months == 0 && CountActiveStations(t) == 0 && !Chance16(1, 12)) return;
+	if (t->fund_buildings_months == 0 && CountActiveStations(t) == 0) {
+		if(!Chance16(1, 12)) return;
+		t->cm.growing_by_chance = true;
+	}
 
 	SetBit(t->flags, TOWN_IS_GROWING);
 	SetWindowDirty(WC_TOWN_VIEW, t->index);
