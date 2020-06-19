@@ -206,6 +206,10 @@ static void PlaceRail_Station(TileIndex tile)
 		VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_STATION);
 		VpSetPlaceSizingLimit(_settings_game.station.station_spread);
 	} else {
+		if (_settings_client.gui.cm_use_improved_station_join) {
+			citymania::PlaceRail_Station(tile);
+			return;
+		}
 		uint32 p1 = _cur_railtype | _railstation.orientation << 6 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | _ctrl_pressed << 24;
 		uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 

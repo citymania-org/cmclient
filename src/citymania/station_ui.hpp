@@ -21,6 +21,7 @@ void OnStationTileSetChange(const Station *station, bool adding, StationType typ
 void OnStationPartBuilt(const Station *station, TileIndex tile, uint32 p1, uint32 p2);
 void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, uint32 cmd);
 void HandleStationPlacement(TileIndex start, TileIndex end);
+void PlaceRail_Station(TileIndex tile);
 void PlaceDock(TileIndex tile);
 void PlaceAirport(TileIndex tile);
 
