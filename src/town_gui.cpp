@@ -1408,9 +1408,9 @@ static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bo
 	DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_GROWTH);
 
 	if (show_house_states_info) {
-		SetDParam(0, town->houses_construction);
-		SetDParam(1, town->houses_reconstruction);
-		SetDParam(2, town->houses_demolished);
+		SetDParam(0, town->cm.houses_constructing);
+		SetDParam(1, town->cm.houses_reconstructed_last_month);
+		SetDParam(2, town->cm.houses_demolished_last_month);
 		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_HOUSE_STATE);
 	}
 

@@ -18,6 +18,8 @@
 
 #include "station_ui.hpp"
 
+#include "cm_main.hpp"
+
 
 /** Enumeration of multi-part foundations */
 enum FoundationPart {
@@ -289,28 +291,27 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
         th.add_border(citymania::GetAnyStationCatchmentBorder(ti->tile),
                       SPR_PALETTE_ZONING_LIGHT_BLUE);
     } else if (_zoning.outer == CHECKTOWNGROWTHTILES) {
-        auto tgt = max(_towns_growth_tiles[ti->tile], _towns_growth_tiles_last_month[ti->tile]);
         // if (tgt == TGTS_NEW_HOUSE) th.sprite = SPR_IMG_HOUSE_NEW;
-        switch (tgt) {
-            case TGTS_CB_HOUSE_REMOVED_NOGROW:
-            case TGTS_RH_REMOVED:
+        switch (_game->get_town_growth_tile(ti->tile)) {
+            // case TGTS_CB_HOUSE_REMOVED_NOGROW:
+            case TownGrowthTileState::RH_REMOVED:
                 th.selection = SPR_PALETTE_ZONING_LIGHT_BLUE;
                 break;
-            case TGTS_RH_REBUILT:
+            case TownGrowthTileState::RH_REBUILT:
                 th.selection = SPR_PALETTE_ZONING_WHITE;
                 th.structure_pal = PALETTE_TINT_WHITE;
                 break;
-            case TGTS_NEW_HOUSE:
+            case TownGrowthTileState::NEW_HOUSE:
                 th.selection = SPR_PALETTE_ZONING_GREEN;
                 th.structure_pal = PALETTE_TINT_GREEN;
                 break;
-            case TGTS_CYCLE_SKIPPED:
+            case TownGrowthTileState::CS:
                 th.selection = SPR_PALETTE_ZONING_ORANGE;
                 break;
-            case TGTS_HOUSE_SKIPPED:
+            case TownGrowthTileState::HS:
                 th.selection = SPR_PALETTE_ZONING_YELLOW;
                 break;
-            case TGTS_CB_HOUSE_REMOVED:
+            case TownGrowthTileState::HR:
                 th.selection = SPR_PALETTE_ZONING_RED;
                 break;
             default: th.selection = PAL_NONE;

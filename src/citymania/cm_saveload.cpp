@@ -7,6 +7,8 @@
 
 #include "cm_bitstream.hpp"
 #include "cm_saveload.hpp"
+#include "cm_game.hpp"
+#include "cm_main.hpp"
 
 namespace citymania {
 
@@ -25,31 +27,22 @@ static const SaveLoad _storage_desc[] = {
 
 static void EncodeTownsExtraInfo(BitOStream &bs)
 {
-	uint n_affected_towns = 0;
 	for (const Town *t : Town::Iterate()) {
-		if (t->growing_by_chance || t->houses_reconstruction ||
-				t->houses_demolished)
-			n_affected_towns++;
-	}
-	bs.WriteBytes(n_affected_towns, 2);
-	for (const Town *t : Town::Iterate()) {
-		if (t->growing_by_chance || t->houses_reconstruction ||
-				t->houses_demolished) {
-			bs.WriteBytes(t->index, 2);
-			bs.WriteBytes(t->growing_by_chance, 1);
-			bs.WriteBytes(t->houses_reconstruction, 2);
-			bs.WriteBytes(t->houses_demolished, 2);
-		}
+		bs.WriteBytes(t->cm.growing_by_chance, 1);
+        bs.WriteBytes(t->cm.houses_reconstructed_this_month, 2);
+		bs.WriteBytes(t->cm.houses_reconstructed_last_month, 2);
+        bs.WriteBytes(t->cm.houses_demolished_this_month, 2);
+        bs.WriteBytes(t->cm.houses_demolished_last_month, 2);
 	}
 }
 
-static void EncodeTownsGrowthTiles(BitOStream &bs, TownsGrowthTilesIndex &tiles)
+static void EncodeTownsGrowthTiles(BitOStream &bs, Game::TownsGrowthTilesIndex &tiles)
 {
 	bs.WriteBytes(tiles.size(), 4);
-	for (TownsGrowthTilesIndex::iterator p = tiles.begin();
+	for (Game::TownsGrowthTilesIndex::iterator p = tiles.begin();
 			p != tiles.end(); p++) {
 		bs.WriteBytes(p->first, 4);
-		bs.WriteBytes(p->second, 1);
+		bs.WriteBytes((uint8)p->second, 1);
 	}
 }
 
@@ -64,39 +57,33 @@ static void EncodeTownsLayoutErrors(BitOStream &bs)
 	for (const Town *t : Town::Iterate()) {
         if (t->cm.hr_total || t->cm.hs_total || t->cm.cs_total) {
 			bs.WriteBytes(t->index, 2);
-			bs.WriteBytes(t->cm.hs_total, 2);
+			bs.WriteBytes(t->cm.hs_total, 4);
 			bs.WriteBytes(t->cm.hs_total_prev, 2);
 			bs.WriteBytes(t->cm.hs_last_month, 2);
-			bs.WriteBytes(t->cm.cs_total, 2);
+			bs.WriteBytes(t->cm.cs_total, 4);
 			bs.WriteBytes(t->cm.cs_total_prev, 2);
 			bs.WriteBytes(t->cm.cs_last_month, 2);
-			bs.WriteBytes(t->cm.hr_total, 2);
+			bs.WriteBytes(t->cm.hr_total, 4);
 			bs.WriteBytes(t->cm.hr_total_prev, 2);
 			bs.WriteBytes(t->cm.hr_last_month, 2);
 		}
 	}
-	EncodeTownsGrowthTiles(bs, _towns_growth_tiles);
-	EncodeTownsGrowthTiles(bs, _towns_growth_tiles_last_month);
+	EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
+	EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
 }
 
 static void DecodeTownsExtraInfo(BitIStream &bs)
 {
-	Town *t;
-	uint n_affected_towns = bs.ReadBytes(2);
-	for (uint i = 0; i < n_affected_towns; i++) {
-		uint town_id = bs.ReadBytes(2);
-		t = Town::Get(town_id);
-		if (!t) {
-			DEBUG(sl, 0, "Invalid TownID in CM extra towns info (%u)", town_id);
-			continue;
-		}
-		t->growing_by_chance = bs.ReadBytes(1);
-		t->houses_reconstruction = bs.ReadBytes(2);
-		t->houses_demolished = bs.ReadBytes(2);
+    for (Town *t : Town::Iterate()) {
+		t->cm.growing_by_chance = bs.ReadBytes(1);
+        t->cm.houses_reconstructed_this_month = bs.ReadBytes(2);
+        t->cm.houses_reconstructed_last_month = bs.ReadBytes(2);
+        t->cm.houses_demolished_this_month = bs.ReadBytes(2);
+        t->cm.houses_demolished_last_month = bs.ReadBytes(2);
 	}
 }
 
-static void DecodeTownsGrowthTiles(BitIStream &bs, TownsGrowthTilesIndex &tiles)
+static void DecodeTownsGrowthTiles(BitIStream &bs, Game::TownsGrowthTilesIndex &tiles)
 {
 	uint n = bs.ReadBytes(4);
 	for (uint i = 0; i < n; i++) {
@@ -127,8 +114,8 @@ static void DecodeTownsLayoutErrors(BitIStream &bs)
 		t->cm.hr_total_prev = bs.ReadBytes(2);
 		t->cm.hr_last_month = bs.ReadBytes(2);
 	}
-	DecodeTownsGrowthTiles(bs, _towns_growth_tiles);
-	DecodeTownsGrowthTiles(bs, _towns_growth_tiles_last_month);
+	DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
+	DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
 }
 
 void CBController_saveload_encode(BitOStream &bs) {
@@ -310,7 +297,6 @@ static void DecodeTownsCargoV1(BitIStream &bs)
 }
 
 static void DecodeData(u8vector &data) {
-	ResetTownsGrowthTiles();
 	if (data.size() == 0) {
 		DEBUG(sl, 2, "No CityMania save data");
 		return;

@@ -10,6 +10,8 @@
 #include <vector>
 
 #include "citymania/highlight.hpp"
+#include "citymania/cm_game.hpp"
+#include "citymania/cm_main.hpp"
 
 
 Zoning _zoning = {CHECKNOTHING, CHECKNOTHING};
@@ -311,14 +313,14 @@ SpriteID TileZoneCheckTownAdvertisementZones(TileIndex tile) {
 
 //Checks for tile in growth tiles info
 SpriteID TileZoneCheckTownsGrowthTiles(TileIndex tile) {
-	switch (max(_towns_growth_tiles[tile], _towns_growth_tiles_last_month[tile])) {
-		case TGTS_CB_HOUSE_REMOVED_NOGROW: return SPR_PALETTE_ZONING_LIGHT_BLUE;
-		case TGTS_RH_REMOVED:              return SPR_PALETTE_ZONING_LIGHT_BLUE;
-		case TGTS_RH_REBUILT:              return SPR_PALETTE_ZONING_WHITE;
-		case TGTS_NEW_HOUSE:               return SPR_PALETTE_ZONING_GREEN;
-		case TGTS_CYCLE_SKIPPED:           return SPR_PALETTE_ZONING_ORANGE;
-		case TGTS_HOUSE_SKIPPED:           return SPR_PALETTE_ZONING_YELLOW;
-		case TGTS_CB_HOUSE_REMOVED:        return SPR_PALETTE_ZONING_RED;
+	switch (citymania::_game->get_town_growth_tile(tile)) {
+		// case TGTS_CB_HOUSE_REMOVED_NOGROW: return SPR_PALETTE_ZONING_LIGHT_BLUE;
+		case citymania::TownGrowthTileState::RH_REMOVED:   return SPR_PALETTE_ZONING_LIGHT_BLUE;
+		case citymania::TownGrowthTileState::RH_REBUILT:   return SPR_PALETTE_ZONING_WHITE;
+		case citymania::TownGrowthTileState::NEW_HOUSE:    return SPR_PALETTE_ZONING_GREEN;
+		case citymania::TownGrowthTileState::CS:           return SPR_PALETTE_ZONING_ORANGE;
+		case citymania::TownGrowthTileState::HS:           return SPR_PALETTE_ZONING_YELLOW;
+		case citymania::TownGrowthTileState::HR:           return SPR_PALETTE_ZONING_RED;
 		default: return INVALID_SPRITE_ID;
 	}
 }

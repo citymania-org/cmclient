@@ -111,10 +111,6 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 
 	StringID town_label;                ///< Label dependent on _local_company rating.
 	CBTownInfo cb;
-	bool growing_by_chance;             ///< town growing due to 1/12 chance?
-	uint houses_construction;            ///< number of houses currently being built
-	uint houses_reconstruction;          ///< number of houses currently being rebuilt
-	uint houses_demolished;              ///< number of houses demolished this month
 	CompanyMask fund_regularly;          ///< funds buildings regularly when previous fund ends
 	CompanyMask do_powerfund;            ///< funds buildings when grow counter is maximal (results in fastest funding possible)
 	uint32 last_funding = 0;             ///< when town was funded the last time
@@ -299,24 +295,6 @@ uint CB_GetDecay(CargoID cargo);
 int CB_GetTownReq(uint population, uint req, uint from, bool from_non_important, bool prev_month = false);
 uint CB_GetMaxTownStorage(Town *town, uint cargo);
 bool TownExecuteAction(const Town *town, uint action);
-
-enum TownGrowthTileState {
-	TGTS_NONE = 0,
-	TGTS_RH_REMOVED,
-	TGTS_NEW_HOUSE,
-	TGTS_RH_REBUILT,               // rebuilt and removed houses are also
-	TGTS_CB_HOUSE_REMOVED_NOGROW,  // new, so larger priority
-	TGTS_CYCLE_SKIPPED,
-	TGTS_HOUSE_SKIPPED,
-	TGTS_CB_HOUSE_REMOVED
-};
-
-typedef std::map<TileIndex, TownGrowthTileState> TownsGrowthTilesIndex;
-extern TownsGrowthTilesIndex _towns_growth_tiles_last_month;
-extern TownsGrowthTilesIndex _towns_growth_tiles;
-
-void UpdateTownGrowthTile(TileIndex tile, TownGrowthTileState state);
-void ResetTownsGrowthTiles();
 
 /** Town actions of a company. */
 enum TownActions {

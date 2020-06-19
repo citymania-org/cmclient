@@ -66,8 +66,6 @@ uint days_in_month[] = {31, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};//CB
 void CB_UpdateTownStorage(Town *t); //CB
 
 const Money NOVAPOLIS_COMPANY_MONEY_THRESHOLD = INT64_MAX >> 4;
-TownsGrowthTilesIndex _towns_growth_tiles_last_month;
-TownsGrowthTilesIndex _towns_growth_tiles;
 
 TownID _new_town_id;
 CargoTypes _town_cargoes_accepted; ///< Bitmap of all cargoes accepted by houses.
@@ -533,12 +531,13 @@ static void MakeSingleHouseBigger(TileIndex tile)
 		/* Now that construction is complete, we can add the population of the
 		 * building to the town. */
 		HouseID house_id = GetHouseType(tile);
+		auto hs = HouseSpec::Get(house_id);
 		Town *town = Town::GetByTile(tile);
-		const HouseSpec *hs = HouseSpec::Get(house_id);
-		ChangePopulation(town, hs->population);
+		ChangePopulation(Town::GetByTile(tile), hs->population);
 		ResetHouseAge(tile);
+
 		if (hs->building_flags & BUILDING_HAS_1_TILE)
-			town->houses_construction--;
+			citymania::Emit(citymania::event::HouseCompleted{town, tile, hs});
 	}
 	MarkTileDirtyByTile(tile);
 }
@@ -673,14 +672,9 @@ static void TileLoop_Town(TileIndex tile)
 		ClearTownHouse(t, tile);
 
 		/* Rebuild with another house? */
-		if (GB(r, 24, 8) >= 12 && BuildTownHouse(t, tile)) {
-			t->houses_reconstruction++;
-			UpdateTownGrowthTile(tile, TGTS_RH_REBUILT);
-		} else {
-			/* House wasn't replaced, so remove it */
-			t->houses_demolished++;
-			UpdateTownGrowthTile(tile, TGTS_RH_REMOVED);
-		}
+		bool rebuild_res = false;
+		if (GB(r, 24, 8) >= 12) rebuild_res = BuildTownHouse(t, tile);
+		citymania::Emit(citymania::event::HouseRebuilt{t, tile, rebuild_res});
 	}
 
 	cur_company.Restore();
@@ -708,11 +702,11 @@ static CommandCost ClearTile_Town(TileIndex tile, DoCommandFlag flags)
 
 	ChangeTownRating(t, -rating, RATING_HOUSE_MINIMUM, flags);
 	if (flags & DC_EXEC) {
-		if (_current_company == COMPANY_FIRST &&
-				Company::Get(_current_company)->money > NOVAPOLIS_COMPANY_MONEY_THRESHOLD) {
-			if (t->cb.growth_state == TownGrowthState::GROWING) t->cm.hr_total++;
-			UpdateTownGrowthTile(tile, t->cb.growth_state == TownGrowthState::GROWING ? TGTS_CB_HOUSE_REMOVED: TGTS_CB_HOUSE_REMOVED_NOGROW);
-		}
+		// if (_current_company == COMPANY_FIRST &&
+		// 		Company::Get(_current_company)->money > NOVAPOLIS_COMPANY_MONEY_THRESHOLD) {
+		// 	if (t->cb.growth_state == TownGrowthState::GROWING) t->cm.hr_total++;
+		// 	UpdateTownGrowthTile(tile, t->cb.growth_state == TownGrowthState::GROWING ? TGTS_CB_HOUSE_REMOVED: TGTS_CB_HOUSE_REMOVED_NOGROW);
+		// }
 		ClearTownHouse(t, tile);
 	}
 
@@ -1026,10 +1020,7 @@ static void TownTickHandler(Town *t)
 		int i = (int)t->grow_counter - 1;
 		uint16 houses_prev = t->cache.num_houses;
 		if (i < 0) {
-			uint16 prev_houses = t->cache.num_houses;
-			bool growth_res = GrowTown(t);
-			citymania::Emit((citymania::event::TownGrowthTick){t, growth_res, prev_houses});
-			if (growth_res) {
+			if (GrowTown(t)) {
 				i = t->growth_rate;
 			} else {
 				/* If growth failed wait a bit before retrying */
@@ -1690,12 +1681,11 @@ static bool CanFollowRoad(TileIndex tile, DiagDirection dir)
  * @param tile to inquiry
  * @return true if town expansion was possible
  */
-static bool GrowTownAtRoad(Town *t, TileIndex start_tile, TileIndex &tile)
+static bool GrowTownAtRoad(Town *t, TileIndex tile)
 {
 	/* Special case.
 	 * @see GrowTownInTile Check the else if
 	 */
-	tile = start_tile;
 	DiagDirection target_dir = DIAGDIR_END; // The direction in which we want to extend the town
 
 	assert(tile < MapSize());
@@ -1718,17 +1708,24 @@ static bool GrowTownAtRoad(Town *t, TileIndex start_tile, TileIndex &tile)
 			break;
 	}
 
+	uint16 prev_houses = t->cache.num_houses;
 	do {
 		RoadBits cur_rb = GetTownRoadBits(tile); // The RoadBits of the current tile
 
 		/* Try to grow the town from this point */
 		GrowTownInTile(&tile, cur_rb, target_dir, t);
-		if (_grow_town_result == GROWTH_SUCCEED) return true;
+		if (_grow_town_result == GROWTH_SUCCEED) {
+			citymania::Emit(citymania::event::TownGrowthSucceeded{t, tile, prev_houses});
+			return true;
+		}
 
 		/* Exclude the source position from the bitmask
 		 * and return if no more road blocks available */
 		if (IsValidDiagDirection(target_dir)) cur_rb &= ~DiagDirToRoadBits(ReverseDiagDir(target_dir));
-		if (cur_rb == ROAD_NONE) return false;
+		if (cur_rb == ROAD_NONE) {
+			citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
+			return false;
+		}
 
 		if (IsTileType(tile, MP_TUNNELBRIDGE)) {
 			/* Only build in the direction away from the tunnel or bridge. */
@@ -1737,7 +1734,10 @@ static bool GrowTownAtRoad(Town *t, TileIndex start_tile, TileIndex &tile)
 			/* Select a random bit from the blockmask, walk a step
 			 * and continue the search from there. */
 			do {
-				if (cur_rb == ROAD_NONE) return false;
+				if (cur_rb == ROAD_NONE) {
+					citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
+					return false;
+				}
 				RoadBits target_bits;
 				do {
 					target_dir = RandomDiagDir();
@@ -1751,6 +1751,7 @@ static bool GrowTownAtRoad(Town *t, TileIndex start_tile, TileIndex &tile)
 		if (IsTileType(tile, MP_ROAD) && !IsRoadDepot(tile) && HasTileRoadType(tile, RTT_ROAD)) {
 			/* Don't allow building over roads of other cities */
 			if (IsRoadOwner(tile, RTT_ROAD, OWNER_TOWN) && Town::GetByTile(tile) != t) {
+				citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
 				return false;
 			} else if (IsRoadOwner(tile, RTT_ROAD, OWNER_NONE) && _game_mode == GM_EDITOR) {
 				/* If we are in the SE, and this road-piece has no town owner yet, it just found an
@@ -1763,6 +1764,7 @@ static bool GrowTownAtRoad(Town *t, TileIndex start_tile, TileIndex &tile)
 		/* Max number of times is checked. */
 	} while (--_grow_town_result >= 0);
 
+	citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
 	return false;
 }
 
@@ -1814,14 +1816,8 @@ static bool GrowTown(Town *t)
 	const TileIndexDiffC *ptr;
 	for (ptr = _town_coord_mod; ptr != endof(_town_coord_mod); ++ptr) {
 		if (GetTownRoadBits(tile) != ROAD_NONE) {
-			uint16 houses_prev = t->cache.num_houses;
-			TileIndex end_tile;
-			bool success = GrowTownAtRoad(t, tile, end_tile);
+			bool success = GrowTownAtRoad(t, tile);
 			cur_company.Restore();
-			if (!success)
-				UpdateTownGrowthTile(end_tile, TGTS_CYCLE_SKIPPED);
-			else if (t->cache.num_houses <= houses_prev)
-				UpdateTownGrowthTile(end_tile, TGTS_HOUSE_SKIPPED);
 			return success;
 		}
 		tile = TILE_ADD(tile, ToTileIndexDiff(*ptr));
@@ -1837,8 +1833,8 @@ static bool GrowTown(Town *t)
 				if (DoCommand(tile, 0, 0, DC_AUTO | DC_NO_WATER, CMD_LANDSCAPE_CLEAR).Succeeded()) {
 					RoadType rt = GetTownRoadType(t);
 					DoCommand(tile, GenRandomRoadBits() | (rt << 4), t->index, DC_EXEC | DC_AUTO, CMD_BUILD_ROAD);
-					UpdateTownGrowthTile(tile, TGTS_HOUSE_SKIPPED);
 					cur_company.Restore();
+					citymania::Emit(citymania::event::TownGrowthSucceeded{t, tile, t->cache.num_houses});
 					return true;
 				}
 			}
@@ -1846,8 +1842,8 @@ static bool GrowTown(Town *t)
 		}
 	}
 
-	UpdateTownGrowthTile(tile, TGTS_CYCLE_SKIPPED);
 	cur_company.Restore();
+	citymania::Emit(citymania::event::TownGrowthFailed{t, tile});
 	return false;
 }
 
@@ -2014,16 +2010,6 @@ void CB_UpdateTownStorage(Town *t)
 }
 //CB
 
-void UpdateTownGrowthTile(TileIndex tile, TownGrowthTileState state) {
-	_towns_growth_tiles[tile] = max(_towns_growth_tiles[tile], state);
-}
-
-void ResetTownsGrowthTiles() {
-	_towns_growth_tiles_last_month.clear();
-	_towns_growth_tiles.clear();
-}
-
-
 extern TileIndex _closest_cache_ref;
 
 /**
@@ -2075,9 +2061,6 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 		t->cb.delivered_last_month[i] = 0;
 		t->cb.required_last_month[i] = 0;
 	}
-	t->houses_construction = 0;
-	t->houses_reconstruction = 0;
-	t->houses_demolished = 0;
 	t->fund_regularly = 0;
 	t->do_powerfund = 0;
 	t->advertise_regularly = 0;
@@ -2883,7 +2866,6 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 		/* build the house */
 		t->cache.num_houses++;
 		t->cache.potential_pop += hs->population;
-		t->houses_construction++;
 
 		/* Special houses that there can be only one of. */
 		t->flags |= oneof;
@@ -2891,6 +2873,7 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 		byte construction_counter = 0;
 		byte construction_stage = 0;
 
+		bool completed = false;
 		if (_generating_world || _game_mode == GM_EDITOR) {
 			uint32 r = Random();
 
@@ -2899,7 +2882,7 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 
 			if (construction_stage == TOWN_HOUSE_COMPLETED) {
 				ChangePopulation(t, hs->population);
-				t->houses_construction--;
+				completed = true;
 			} else {
 				construction_counter = GB(r, 2, 2);
 			}
@@ -2908,10 +2891,12 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 		citymania::UpdateZoningTownHouses(t, t->cache.num_houses - 1);
 
 		MakeTownHouse(tile, t, construction_counter, construction_stage, house, random_bits);
-		UpdateTownGrowthTile(tile, TGTS_NEW_HOUSE);
 		UpdateTownRadius(t);
 		UpdateTownGrowthRate(t);
 		UpdateTownCargoes(t, tile);
+
+		citymania::Emit(citymania::event::HouseBuilt{t, tile, hs});
+		if (completed) citymania::Emit(citymania::event::HouseCompleted{t, tile, hs});
 
 		return true;
 	}
@@ -2976,8 +2961,6 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	/* Remove population from the town if the house is finished. */
 	if (IsHouseCompleted(tile)) {
 		ChangePopulation(t, -hs->population);
-	} else {
-		t->houses_construction--;
 	}
 
 	t->cache.num_houses--;
@@ -3773,9 +3756,9 @@ static void UpdateTownGrowth(Town *t)
 	UpdateTownGrowthRate(t);
 
 	ClrBit(t->flags, TOWN_IS_GROWING);
-	t->growing_by_chance = false;
 	SetWindowDirty(WC_TOWN_VIEW, t->index);
 	SetWindowDirty(WC_CB_TOWN, t->index);
+	t->cm.growing_by_chance = false;
 
 	if (_settings_game.economy.town_growth_rate == 0 && t->fund_buildings_months == 0) return;
 
@@ -3805,7 +3788,7 @@ static void UpdateTownGrowth(Town *t)
 
 	if (t->fund_buildings_months == 0 && CountActiveStations(t) == 0) {
 		if(!Chance16(1, 12)) return;
-		t->growing_by_chance = true;
+		t->cm.growing_by_chance = true;
 	}
 
 	SetBit(t->flags, TOWN_IS_GROWING);
@@ -4024,9 +4007,6 @@ CommandCost CheckforTownRating(DoCommandFlag flags, Town *t, TownRatingCheckType
 
 void TownsMonthlyLoop()
 {
-	_towns_growth_tiles_last_month = _towns_growth_tiles;
-	_towns_growth_tiles.clear();
-
 	for (Town *t : Town::Iterate()) {
 		if (t->road_build_months != 0) t->road_build_months--;
 
@@ -4043,9 +4023,6 @@ void TownsMonthlyLoop()
 		UpdateTownCargoes(t);
 
 		DoRegularFunding(t);
-
-		t->houses_demolished = 0;
-		t->houses_reconstruction = 0;
 	}
 
 	UpdateTownCargoBitmap();
