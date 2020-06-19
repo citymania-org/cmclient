@@ -18,6 +18,7 @@
 #include "newgrf_sl.h"
 
 #include "../citymania/cm_main.hpp"
+
 #include "../safeguards.h"
 
 /**
@@ -52,7 +53,7 @@ void RebuildTownCaches()
 		UpdateTownCargoes(town);
 	}
 	UpdateTownCargoBitmap();
-	citymania::_game->rebuild_town_caches();
+	citymania::Emit(citymania::event::TownCachesRebuilt());
 }
 
 /**

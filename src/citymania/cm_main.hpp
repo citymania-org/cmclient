@@ -8,6 +8,7 @@ namespace citymania {
 
 extern up<Game> _game;
 
+void ResetGame();
 void SwitchToMode(SwitchMode new_mode);
 
 template <typename T>

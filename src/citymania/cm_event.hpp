@@ -17,8 +17,7 @@ namespace citymania {
 
 namespace event {
 
-struct NewMonth {
-};
+struct NewMonth {};
 
 struct TownGrowthSucceeded {
     Town *town;
@@ -31,6 +30,8 @@ struct TownGrowthFailed {
     TileIndex tile;
 };
 
+struct TownCachesRebuilt {};
+
 struct HouseRebuilt {
     Town *town;
     TileIndex tile;
@@ -41,6 +42,13 @@ struct HouseBuilt {
     Town *town;
     TileIndex tile;
     const HouseSpec *house_spec;
+};
+
+struct HouseCleared {
+    Town *town;
+    TileIndex tile;
+    const HouseSpec *house_spec;
+    bool was_completed;  ///< whether house was completed before destruction
 };
 
 struct HouseCompleted {
@@ -115,14 +123,14 @@ protected:
 
 class Dispatcher {
 protected:
-    std::map<std::type_index, up<TypeDispatcherBase>> dispacthers;
+    std::map<std::type_index, up<TypeDispatcherBase>> dispatchers;
 
     template<typename T>
     TypeDispatcher<T> &get_dispatcher() {
-        auto p = this->dispacthers.find(typeid(T));
-        if (p == this->dispacthers.end()) {
+        auto p = this->dispatchers.find(typeid(T));
+        if (p == this->dispatchers.end()) {
             auto x = make_up<TypeDispatcher<T>>();
-            p = this->dispacthers.emplace_hint(p, typeid(T), std::move(x));
+            p = this->dispatchers.emplace_hint(p, typeid(T), std::move(x));
         }
         return *(static_cast<TypeDispatcher<T> *>((*p).second.get()));
     }

@@ -35,21 +35,6 @@ public:
         auto bs = (b == this->towns_growth_tiles.end() ? TownGrowthTileState::NONE : (*b).second);
         return max(as, bs);
     }
-
-    void rebuild_town_caches() {
-        for (Town *town : Town::Iterate()) {
-            town->cm.houses_constructing = 0;
-            town->cache.potential_pop = 0;
-        }
-        for (TileIndex t = 0; t < MapSize(); t++) {
-            if (!IsTileType(t, MP_HOUSE)) continue;
-            Town *town = Town::GetByTile(t);
-            if (!IsHouseCompleted(t))
-                town->cm.houses_constructing++;
-            HouseID house_id = GetHouseType(t);
-            town->cache.potential_pop += HouseSpec::Get(house_id)->population;
-        }
-    }
 };
 
 } // namespace citymania

@@ -50,11 +50,33 @@ Game::Game() {
 
     this->events.listen<event::HouseBuilt>([this] (const event::HouseBuilt &event) {
         event.town->cm.houses_constructing++;
+        event.town->cm.real_population += event.house_spec->population;
         this->towns_growth_tiles[event.tile] = TownGrowthTileState::NEW_HOUSE;
+    });
+
+    this->events.listen<event::HouseCleared>([this] (const event::HouseCleared &event) {
+        if (!event.was_completed)
+            event.town->cm.houses_constructing--;
+        event.town->cm.real_population -= event.house_spec->population;
     });
 
     this->events.listen<event::HouseCompleted>([this] (const event::HouseCompleted &event) {
         event.town->cm.houses_constructing--;
+    });
+
+    this->events.listen<event::TownCachesRebuilt>([this] (const event::TownCachesRebuilt &event) {
+        for (Town *town : Town::Iterate()) {
+            town->cm.real_population = 0;
+            town->cm.houses_constructing = 0;
+        }
+        for (TileIndex t = 0; t < MapSize(); t++) {
+            if (!IsTileType(t, MP_HOUSE)) continue;
+            Town *town = Town::GetByTile(t);
+            if (!IsHouseCompleted(t))
+                town->cm.houses_constructing++;
+            HouseID house_id = GetHouseType(t);
+            town->cm.real_population += HouseSpec::Get(house_id)->population;
+        }
     });
 }
 

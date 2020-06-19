@@ -817,8 +817,8 @@ private:
 	/** Sort by real population (default descending, as big towns are of the most interest). */
 	static bool TownRealPopulationSorter(const Town * const &a, const Town * const &b)
 	{
-		uint32 a_population = a->cache.potential_pop;
-		uint32 b_population = b->cache.potential_pop;
+		uint32 a_population = a->cm.real_population;
+		uint32 b_population = b->cm.real_population;
 		if (a_population == b_population) return TownDirectoryWindow::TownNameSorter(a, b);
 		return a_population < b_population;
 	}
@@ -944,7 +944,7 @@ public:
 
 					SetDParam(0, t->index);
 					SetDParam(1, t->cache.population);
-					SetDParam(2, t->cache.potential_pop);
+					SetDParam(2, t->cm.real_population);
 					SetDParam(3, t->cache.num_houses);
 					/* CITIES DIFFERENT COLOUR*/
 					DrawString(text_left, text_right, y + (this->resize.step_height - FONT_HEIGHT_NORMAL) / 2, t->larger_town ? STR_TOWN_DIRECTORY_CITY_COLOUR : STR_TOWN_DIRECTORY_TOWN_COLOUR);
@@ -1390,7 +1390,7 @@ void InitializeTownGui()
 //CB
 static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bool show_house_states_info) {
 	//real pop and rating
-	SetDParam(0, town->cache.potential_pop);
+	SetDParam(0, town->cm.real_population);
 	SetDParam(1, town->ratings[_current_company]);
 	DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, y += line, STR_TOWN_VIEW_REALPOP_RATE);
 	//town stats
