@@ -2685,7 +2685,8 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	const HouseSpec *hs = HouseSpec::Get(house);
 
 	/* Remove population from the town if the house is finished. */
-	if (IsHouseCompleted(tile)) {
+	bool is_completed = IsHouseCompleted(tile);
+	if (is_completed) {
 		ChangePopulation(t, -hs->population);
 	}
 
@@ -2710,6 +2711,8 @@ void ClearTownHouse(Town *t, TileIndex tile)
 
 	/* Update cargo acceptance. */
 	UpdateTownCargoes(t, tile);
+
+	citymania::Emit(citymania::event::HouseCleared{t, tile, hs, is_completed});
 }
 
 /**

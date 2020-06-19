@@ -8,6 +8,7 @@ namespace ext {
 class Town {
 public:
     bool growing_by_chance = false;    ///< whether town is growing due to 1/12 chance
+    uint32 real_population = 0;        ///< population including unfinished houses
     uint32 hs_total = 0;               ///< number of skipped house buildings (HS) in total
     uint32 hs_total_prev = 0;          ///< number of skipped house buildings (HS) in total at the end of last month
     uint32 hs_last_month = 0;          ///< number of skipped house buildings (HS) during last month
@@ -22,6 +23,7 @@ public:
     uint32 houses_reconstructed_last_month = 0;  ///< number of houses rebuild last month
     uint32 houses_demolished_this_month = 0; ///< number of houses demolished this month
     uint32 houses_demolished_last_month = 0; ///< number of houses demolished last month
+
 };
 
 } // namespace citymania
