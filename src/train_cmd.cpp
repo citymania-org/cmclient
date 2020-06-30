@@ -4018,3 +4018,7 @@ Trackdir Train::GetVehicleTrackdir() const
 
 	return TrackDirectionToTrackdir(FindFirstTrack(this->track), this->direction);
 }
+
+namespace citymania {
+	auto GetDefaultTrainSprite = &::GetDefaultTrainSprite;
+}

@@ -1193,7 +1193,11 @@ sound/null_s.cpp
 thread.h
 
 # CityMania
+citymania/cm_console_cmds.hpp
+citymania/cm_console_cmds.cpp
 citymania/cm_event.hpp
+citymania/cm_export.hpp
+citymania/cm_export.cpp
 citymania/cm_game.hpp
 citymania/cm_game.cpp
 citymania/cm_main.hpp
