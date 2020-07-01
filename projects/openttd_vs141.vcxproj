@@ -1348,13 +1348,18 @@
     <ClCompile Include="..\src\os\windows\string_uniscribe.cpp" />
     <ClCompile Include="..\src\os\windows\win32.cpp" />
     <ClInclude Include="..\src\thread.h" />
+    <ClInclude Include="..\src\citymania\cm_console_cmds.hpp" />
+    <ClCompile Include="..\src\citymania\cm_console_cmds.cpp" />
     <ClInclude Include="..\src\citymania\cm_event.hpp" />
+    <ClInclude Include="..\src\citymania\cm_export.hpp" />
+    <ClCompile Include="..\src\citymania\cm_export.cpp" />
     <ClInclude Include="..\src\citymania\cm_game.hpp" />
     <ClCompile Include="..\src\citymania\cm_game.cpp" />
     <ClInclude Include="..\src\citymania\cm_main.hpp" />
     <ClCompile Include="..\src\citymania\cm_main.cpp" />
     <ClInclude Include="..\src\citymania\cm_type.hpp" />
     <ClInclude Include="..\src\citymania\extensions\cmext_town.hpp" />
+    <ClInclude Include="..\src\citymania\extensions\cmext_company.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\media\openttd.ico" />

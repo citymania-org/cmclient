@@ -17,6 +17,8 @@
 #include "settings_type.h"
 #include "group.h"
 
+#include "citymania/extensions/cmext_company.hpp"
+
 /** Statistics about the economy. */
 struct CompanyEconomyEntry {
 	Money income;               ///< The amount of income.
@@ -24,6 +26,7 @@ struct CompanyEconomyEntry {
 	CargoArray delivered_cargo; ///< The amount of delivered cargo.
 	int32 performance_history;  ///< Company score (scale 0-1000)
 	Money company_value;        ///< The value of the company.
+	citymania::ext::CompanyEconomyEntry cm;  ///< CityMania extra economy data.
 };
 
 struct CompanyInfrastructure {

@@ -1204,3 +1204,4 @@ citymania/cm_main.hpp
 citymania/cm_main.cpp
 citymania/cm_type.hpp
 citymania/extensions/cmext_town.hpp
+citymania/extensions/cmext_company.hpp
