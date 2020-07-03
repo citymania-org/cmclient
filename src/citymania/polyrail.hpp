@@ -53,7 +53,7 @@ class Polyrail {
 public:
     PolyrailPoint start;
     PolyrailPoint end;
-    std::vector<std::pair<TileIndex, HighLightStyle>> tiles;
+    std::vector<std::pair<TileIndex, Trackdir>> tiles;
 
     Polyrail() {}
     Polyrail(PolyrailPoint start, PolyrailPoint end): start{start}, end{end} {}
@@ -66,6 +66,7 @@ void SetPolyrailStart(TileIndex tile);
 void SetPolyrailSelectionTilesDirty();
 void UpdatePolyrailDrawstyle(Point pt);
 void DrawPolyrailTileSelection(const TileInfo *ti);
+void HandlePolyrailPlacement();
 
 } // namespace citymania
 
