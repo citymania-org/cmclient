@@ -40,7 +40,13 @@ namespace citymania {
 
 class Polyrail {
 public:
+    TileIndex start = INVALID_TILE;
+    TileIndex end = INVALID_TILE;
     std::vector<std::pair<TileIndex, HighLightStyle>> tiles;
+
+    Polyrail() {}
+    Polyrail(TileIndex start, TileIndex end): start{start}, end{end} {}
+
     HighLightStyle GetTileHighlightStyle(TileIndex tile);
 };
 
