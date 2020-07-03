@@ -5,6 +5,7 @@
 #include "../command_type.h"
 #include "../rail_type.h"
 #include "../tilehighlight_type.h"
+#include "../track_func.h"
 #include "../viewport_func.h"
 #include "../table/sprites.h"
 
@@ -72,12 +73,26 @@ namespace citymania {
 
 typedef uint32 Weight;
 
-static const HighLightStyle _highlight_style_from_ddirs[4][4] = {
+// static const HighLightStyle _highlight_style_from_ddirs[4][4] = {
+//     //     NE          SE         SW          NW
+//     {   HT_DIR_X,  HT_DIR_HL, HT_DIR_END,  HT_DIR_VL },
+//     {  HT_DIR_HU,   HT_DIR_Y,  HT_DIR_VL, HT_DIR_END },
+//     { HT_DIR_END,  HT_DIR_VR,   HT_DIR_X,  HT_DIR_HU },
+//     {  HT_DIR_VR, HT_DIR_END,  HT_DIR_HL,   HT_DIR_Y }
+// };
+
+static const Trackdir _trackdir_from_sides[4][4] = {
     //     NE          SE         SW          NW
-    {   HT_DIR_X,  HT_DIR_HL, HT_DIR_END,  HT_DIR_VL },
-    {  HT_DIR_HU,   HT_DIR_Y,  HT_DIR_VL, HT_DIR_END },
-    { HT_DIR_END,  HT_DIR_VR,   HT_DIR_X,  HT_DIR_HU },
-    {  HT_DIR_VR, HT_DIR_END,  HT_DIR_HL,   HT_DIR_Y }
+    {    TRACKDIR_X_NE, TRACKDIR_LOWER_E, INVALID_TRACKDIR,  TRACKDIR_LEFT_N },
+    { TRACKDIR_UPPER_E,    TRACKDIR_Y_SE,  TRACKDIR_LEFT_S, INVALID_TRACKDIR },
+    { INVALID_TRACKDIR, TRACKDIR_RIGHT_S,    TRACKDIR_X_SW, TRACKDIR_UPPER_W },
+    { TRACKDIR_RIGHT_N, INVALID_TRACKDIR, TRACKDIR_LOWER_W,    TRACKDIR_Y_NW }
+};
+
+
+static const Direction _trackdir_to_direction[TRACKDIR_END] = {
+    DIR_NE, DIR_SE, DIR_E, DIR_E, DIR_S, DIR_S, DIR_NE, DIR_SE,
+    DIR_SW, DIR_NW, DIR_W, DIR_W, DIR_N, DIR_N, DIR_SW, DIR_NW
 };
 
 struct {
@@ -245,9 +260,11 @@ Polyrail MakePolyrail(PolyrailPoint start, PolyrailPoint end) {
         auto p = prev.find(res);
         if (p == prev.end()) break;
 
-        polyrail.tiles.push_back(std::make_pair(res.tile, _highlight_style_from_ddirs[(*p).second.side][res.side]));
+        // polyrail.tiles.push_back(std::make_pair(res.tile, _highlight_style_from_ddirs[(*p).second.side][res.side]));
+        polyrail.tiles.push_back(std::make_pair(res.tile, _trackdir_from_sides[(*p).second.side][res.side]));
         res = (*p).second;
     }
+    std::reverse(polyrail.tiles.begin(), polyrail.tiles.end());
 
     return polyrail;
 }
@@ -282,12 +299,22 @@ void SetPolyrailSelectionTilesDirty() {
 
 void DrawPolyrailTileSelection(const TileInfo *ti) {
     if (_thd.drawstyle != CM_HT_RAIL) return;
+    bool is_first_segment = true;
+    Direction first_dir = INVALID_DIR;
     // TODO increase effeciency
     for (auto p : _thd.cm_polyrail.tiles) {
+        auto dir = _trackdir_to_direction[p.second];
+        if (first_dir == INVALID_DIR) first_dir = dir;
+        else if (first_dir != dir) is_first_segment = false;
         if (p.first == ti->tile) {
-            StaticDrawAutorailSelection(ti, p.second, PALETTE_SEL_TILE_BLUE);
+            auto hs = (HighLightStyle)TrackdirToTrack(p.second);
+            StaticDrawAutorailSelection(ti, hs, is_first_segment ? PAL_NONE : PALETTE_SEL_TILE_BLUE);
         }
     }
+}
+
+void HandlePolyrailPlacement() {
+
 }
 
 } // namespace citymania

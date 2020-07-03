@@ -958,7 +958,7 @@ struct BuildRailToolbarWindow : Window {
 					}
 					break;
 				case CM_DDSP_PLACE_RAIL:
-					fprintf(stderr, "TODO: BUild polyrail\n");
+					citymania::HandlePolyrailPlacement();
 					break;
 			}
 		}
