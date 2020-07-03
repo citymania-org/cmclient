@@ -105,6 +105,15 @@ struct {
     },
 };
 
+PolyrailPoint PolyrailPoint::Reverse() {
+    return PolyrailPoint(TileAddByDiagDir(this->tile, this->side), ReverseDiagDir(this->side));
+}
+
+PolyrailPoint PolyrailPoint::Normalize() {
+    return ((this->side == DIAGDIR_NW || this->side == DIAGDIR_NE) ? *this : this->Reverse());
+}
+
+
 static bool CanBuildRail(TileIndex tile, Track track) {
     if (tile > MapSize()) return false;
     auto res = CmdBuildSingleRail(tile, DC_NO_WATER | DC_AUTO, _cur_railtype, track, nullptr);
@@ -117,7 +126,7 @@ uint RailDistance(TileIndex a, TileIndex b) {
     return 3 * max(dx, dy) + min(dx, dy);
 }
 
-Polyrail MakePolyrail(TileIndex start, TileIndex end) {
+Polyrail MakePolyrail(PolyrailPoint start, PolyrailPoint end) {
     auto polyrail = Polyrail(start, end);
     uint16 max_curve = 250;
     uint16 max_slowdown_curve = _settings_game.vehicle.max_train_length * 2;
@@ -147,19 +156,20 @@ Polyrail MakePolyrail(TileIndex start, TileIndex end) {
     std::priority_queue<Item, std::vector<Item>, decltype(item_cmp)> q(item_cmp);
     std::unordered_map<Vertex, Vertex, decltype(vertex_hash)> prev(10, vertex_hash);
     std::unordered_map<Vertex, Weight, decltype(vertex_hash)> g(10, vertex_hash);
-    for (auto ddir: {DIAGDIR_NE, DIAGDIR_SE, DIAGDIR_SW, DIAGDIR_NW}) {
-        auto v = Vertex(start, INVALID_DIR, ddir, max_curve, max_curve);
-        q.push(Item{
-            .weight = (RailDistance(TileAddByDiagDir(start, ddir), end) << 8),
-            .vertex = v,
-        });
-        g.insert(std::make_pair(v, 0));
-    }
 
-    auto res = Vertex(start, INVALID_DIR, INVALID_DIAGDIR, max_curve, max_curve);
+    auto start_weight = RailDistance(start.tile, end.tile) << 8;
+    auto rev_start = start.Reverse();
+    auto sv1 = Vertex(start.tile, INVALID_DIR, start.side, max_curve, max_curve);
+    auto sv2 = Vertex(rev_start.tile, INVALID_DIR, rev_start.side, max_curve, max_curve);
+    q.push(Item{start_weight, sv1});
+    g.insert(std::make_pair(sv1, 0));
+    q.push(Item{start_weight, sv2});
+    g.insert(std::make_pair(sv2, 0));
+
+    auto res = Vertex(start.tile, INVALID_DIR, INVALID_DIAGDIR, max_curve, max_curve);
     auto min_distance = UINT32_MAX;
     uint checked = 0;
-    auto max_weight = (4 * RailDistance(start, end) / 3 + 20) << 8;
+    auto max_weight = (4 * RailDistance(start.tile, end.tile) / 3 + 20) << 8;
 
     while (!q.empty()) {
         auto x = q.top();
@@ -172,13 +182,13 @@ Polyrail MakePolyrail(TileIndex start, TileIndex end) {
         // fprintf(stderr, "Q %d %d %d\n", (int)x.weight, (int)x.vertex.tile, (int)x.vertex.ddir);
 
         // TODO check borders
-        auto tile = TileAddByDiagDir(x.vertex.tile, x.vertex.side);
-        if (tile == end) {
+        if (PolyrailPoint(x.vertex.tile, x.vertex.side).Normalize() == end) {
             res = x.vertex;
             break;
         }
+        auto tile = TileAddByDiagDir(x.vertex.tile, x.vertex.side);
 
-        auto d = RailDistance(tile, end) << 8;
+        auto d = RailDistance(tile, end.tile) << 8;
         if (d < min_distance) {
             res = x.vertex;
             min_distance = d;
@@ -218,19 +228,20 @@ Polyrail MakePolyrail(TileIndex start, TileIndex end) {
                 g.insert(gp, std::make_pair(v, w));
 
             q.push(Item{
-                .weight = w + (RailDistance(TileAddByDiagDir(v.tile, v.side), end) << 8),
+                .weight = w + (RailDistance(TileAddByDiagDir(v.tile, v.side), end.tile) << 8),
                 .vertex = v
             });
 
             auto pp = prev.insert(std::make_pair(v, x.vertex));
             if (!pp.second) pp.first->second = x.vertex;
         }
+        if (checked > 10000) break;
     }
 
     if (res.side == INVALID_DIAGDIR)
         return polyrail;
 
-    while (res.tile != start) {
+    while (!(res == sv1 || res == sv2)) {
         auto p = prev.find(res);
         if (p == prev.end()) break;
 
@@ -238,22 +249,29 @@ Polyrail MakePolyrail(TileIndex start, TileIndex end) {
         res = (*p).second;
     }
 
-    fprintf(stderr, "POLY %d %d %u\n", (int)start, (int)end, checked);
-
     return polyrail;
+}
+
+PolyrailPoint GetPolyrailPoint(Point pt) {
+    auto s = (pt.x + pt.y) >> 4;
+    auto e = (pt.y - pt.x) >> 4;
+    auto side = ((s + e) & 1) ? DIAGDIR_NW : DIAGDIR_NE;
+    auto x = (s - e) >> 1;
+    auto y = (s + e + 1) >> 1;
+    return PolyrailPoint(TileXY(x, y), side);
 }
 
 void UpdatePolyrailDrawstyle(Point pt) {
     if (pt.x == -1) return;
-    _thd.selend = pt;
-    auto start = TileVirtXY(_thd.selstart.x, _thd.selstart.y);
-    if (!start) return;
-    auto end = TileVirtXY(pt.x, pt.y);
+    if (!_thd.selstart.x) return;
+    auto start = GetPolyrailPoint(_thd.selstart);
+    auto end = GetPolyrailPoint(pt);
+    // fprintf(stderr, "POLYUPD %d:%d %d:%d\n", (int)start.tile, (int)start.side, (int)end.tile, (int)end.side);
     _thd.selend = pt;
     if (_thd.cm_polyrail.start == start && _thd.cm_polyrail.end == end)
         return;
     _thd.cm_new_polyrail = MakePolyrail(start, end);
-    fprintf(stderr, "NEW POLY %d %d %d\n", (int)start, (int)end, (int)_thd.cm_new_polyrail.tiles.size());
+    // fprintf(stderr, "POLYNEW %d:%d %d:%d %d\n", (int)start.tile, (int)start.side, (int)end.tile, (int)end.side, (int)_thd.cm_new_polyrail.tiles.size());
 }
 
 void SetPolyrailSelectionTilesDirty() {

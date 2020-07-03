@@ -2773,7 +2773,9 @@ void UpdateTileSelection()
 			_thd.offs.x != _thd.new_offs.x || _thd.offs.y != _thd.new_offs.y ||
 			_thd.outersize.x != _thd.new_outersize.x ||
 			_thd.outersize.y != _thd.new_outersize.y ||
-			_thd.diagonal    != new_diagonal) {
+			_thd.diagonal    != new_diagonal ||
+			!(_thd.cm_polyrail.start == _thd.cm_new_polyrail.start) ||
+			!(_thd.cm_polyrail.end == _thd.cm_new_polyrail.end)) {
 		/* Clear the old tile selection? */
 		if ((_thd.drawstyle & HT_DRAG_MASK) != HT_NONE) SetSelectionTilesDirty();
 

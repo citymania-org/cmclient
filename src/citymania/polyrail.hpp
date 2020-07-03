@@ -38,14 +38,25 @@ DECLARE_ENUM_AS_BIT_SET(HighLightStyle)
 
 namespace citymania {
 
+class PolyrailPoint {
+public:
+    TileIndex tile;
+    DiagDirection side;
+    PolyrailPoint(TileIndex tile, DiagDirection side): tile{tile}, side{side} {}
+    PolyrailPoint(): PolyrailPoint{INVALID_TILE, INVALID_DIAGDIR} {}
+    bool operator==(const PolyrailPoint &p) const { return this->tile == p.tile && this->side == p.side; }
+    PolyrailPoint Reverse();
+    PolyrailPoint Normalize();
+};
+
 class Polyrail {
 public:
-    TileIndex start = INVALID_TILE;
-    TileIndex end = INVALID_TILE;
+    PolyrailPoint start;
+    PolyrailPoint end;
     std::vector<std::pair<TileIndex, HighLightStyle>> tiles;
 
     Polyrail() {}
-    Polyrail(TileIndex start, TileIndex end): start{start}, end{end} {}
+    Polyrail(PolyrailPoint start, PolyrailPoint end): start{start}, end{end} {}
 
     HighLightStyle GetTileHighlightStyle(TileIndex tile);
 };

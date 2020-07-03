@@ -843,6 +843,8 @@ struct BuildRailToolbarWindow : Window {
 				break;
 			case CM_WID_RAT_RAIL:
 				VpStartPlaceSizing(tile, CM_VPM_RAILDIRS, CM_DDSP_PLACE_RAIL);
+				_thd.selstart.x = pt.x;
+				_thd.selstart.y = pt.y;
 				break;
 
 			case WID_RAT_DEMOLISH:
