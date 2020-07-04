@@ -47,6 +47,7 @@ public:
     bool operator==(const PolyrailPoint &p) const { return this->tile == p.tile && this->side == p.side; }
     PolyrailPoint Reverse();
     PolyrailPoint Normalize();
+    bool IsValid() { return tile != INVALID_TILE; }
 };
 
 class Polyrail {
@@ -66,7 +67,7 @@ void SetPolyrailStart(TileIndex tile);
 void SetPolyrailSelectionTilesDirty();
 void UpdatePolyrailDrawstyle(Point pt);
 void DrawPolyrailTileSelection(const TileInfo *ti);
-void HandlePolyrailPlacement();
+void HandlePolyrailPlacement(bool estimate_mode, bool remove_mode);
 
 } // namespace citymania
 
