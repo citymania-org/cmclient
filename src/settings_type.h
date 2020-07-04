@@ -135,8 +135,6 @@ struct GUISettings {
 	bool   enable_signal_gui;                ///< show the signal GUI when the signal button is pressed
 	Year   coloured_news_year;               ///< when does newspaper become coloured?
 	bool   timetable_in_ticks;               ///< whether to show the timetable in ticks rather than days
-	bool cm_open_vehicle_for_shared_clone;
-	bool cm_open_orders_for_new_vehicles;
 	bool   quick_goto;                       ///< Allow quick access to 'goto button' in vehicle orders window
 	bool   auto_euro;                        ///< automatically switch to euro in 2002
 	byte   drag_signals_density;             ///< many signals density
@@ -182,13 +180,18 @@ struct GUISettings {
 
 	bool   old_depot_train_length_calc;      ///< display vehicle length in whole numbers - old style
 	uint8  cb_distance_check;                ///< zoning cb distance
-	bool   enable_extra_tooltips;            ///< enable extra tooltips when hovering over various elements
 	bool   polyrail_double_click;            ///< finish polyrail with mouse double click
 	bool   show_industry_forbidden_tiles;    ///< higlight areas where industry placement is forbidden regardless of terrain
 	bool   runway_too_short_warn;            ///< warn about aircrafts using too short runways
 
 	uint32 powerfund_money;                  ///< minimum amount of money for powerfund to work
 	uint16 powerfund_houses;                 ///< powerfunding maximum houses limit
+
+	bool cm_open_vehicle_for_shared_clone;
+	bool cm_open_orders_for_new_vehicles;
+	bool cm_land_tooltips_for_industries;
+	bool cm_land_tooltips_for_stations;
+	bool cm_land_tooltips_for_houses;
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game

@@ -11,7 +11,7 @@ public:
     Money cargo_income[NUM_CARGO]; ///< Cargo income from each cargo type
 };
 
-} // namespace citymania
+} // namespace ext
 
 } // namespace citymania
 

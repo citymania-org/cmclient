@@ -1567,7 +1567,9 @@ static SettingsContainer &GetSettingsTree()
 				viewports->Add(new SettingEntry("gui.show_track_reservation"));
 				viewports->Add(new SettingEntry("gui.cb_distance_check"));
 				viewports->Add(new SettingEntry("gui.old_depot_train_length_calc"));
-				viewports->Add(new SettingEntry("gui.enable_extra_tooltips"));
+				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_industries"));
+				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_stations"));
+				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_houses"));
 				// viewports->Add(new SettingEntry("gui.polyrail_double_click"));
 			}
 

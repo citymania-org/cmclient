@@ -5437,16 +5437,6 @@ STR_TOWN_CB_CARGO_FROM_NOT                                      :{SILVER}{COMMA}
 #polyrail double click option
 STR_CONFIG_SETTING_POLYRAIL_DOUBLECLICK_TOOLTIPS                :Enable finishing polyrail with mouse double click{STRING2}
 
-#tooltips extra
-STR_CONFIG_SETTING_ENABLE_EXTRA_TOOLTIPS                        :Enable extra tooltips: {STRING2}
-STR_TTE_HOUSE_NAME                                              :{LTBLUE}{STRING}
-STR_TTE_HOUSE                                                   :{BLACK}Population: {NUM}
-STR_TTE_INDUSTRY_NAME                                           :{LTBLUE}{INDUSTRY}
-STR_TTE_INDUSTRY                                                :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
-STR_TTE_STATION_NAME                                            :{LTBLUE}{STATION}
-STR_TTE_STATION                                                 :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
-STR_LAND_AREA_INFORMATION_POP                                   :{BLACK}Population: {LTBLUE}{NUM}
-
 # Industry funding forbidden tiles
 STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE                         :{BLACK}Forbidden areas highlight
 STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF                           :{BLACK}Off
@@ -5519,3 +5509,20 @@ STR_CM_PURCHASE_ENGINE_ID :{BLACK}Engine ID: {GOLD}{NUM}
 STR_CM_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP :{BLACK}Show industries on map combined with land contours and vegetation
 STR_CM_CONFIG_SETTING_PAUSE_AFTER_LOAD                             :Pause the game after loading: {STRING2}
 STR_CM_CONFIG_SETTING_PAUSE_AFTER_LOAD_HELPTEXT                    :Control whether the game should be paused after load (if it's not already paused). Useful for desync debugging.
+
+
+STR_CM_CONFIG_SETTING_LAND_TOOLTIPS_FOR_HOUSES                        :Show tooltips when hovering over houses: {STRING2}
+STR_CM_CONFIG_SETTING_LAND_TOOLTIPS_FOR_INDUSTRIES                    :Show tooltips when hovering over industries: {STRING2}
+STR_CM_CONFIG_SETTING_LAND_TOOLTIPS_FOR_STATIONS                      :Show tooltips when hovering over stations: {STRING2}
+STR_CM_CONFIG_SETTING_LAND_TOOLTIPS_FOR_HOUSES_HELPTEXT               :Show tooltips when hovering over houses in the viewport. {GOLD}(CityMania addon)
+STR_CM_CONFIG_SETTING_LAND_TOOLTIPS_FOR_INDUSTRIES_HELPTEXT           :Show tooltips when hovering over industries in the viewport. {GOLD}(CityMania addon)
+STR_CM_CONFIG_SETTING_LAND_TOOLTIPS_FOR_STATIONS_HELPTEXT             :Show tooltips when hovering over stations in the viewport. {GOLD}(CityMania addon)
+STR_CM_LAND_TOOLTIPS_HOUSE_NAME                   :{LTBLUE}{STRING}
+STR_CM_LAND_TOOLTIPS_HOUSE_POPULATION             :{BLACK}Population: {NUM}
+STR_CM_LAND_TOOLTIPS_INDUSTRY_NAME                :{LTBLUE}{INDUSTRY}
+STR_CM_LAND_TOOLTIPS_INDUSTRY_CARGO               :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
+STR_CM_LAND_TOOLTIPS_STATION_NAME                 :{LTBLUE}{STATION}
+STR_CM_LAND_TOOLTIPS_STATION_CARGO                :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
+
+STR_LAND_AREA_INFORMATION_POP                                   :{BLACK}Population: {LTBLUE}{NUM}
+

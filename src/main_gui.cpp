@@ -476,7 +476,7 @@ struct MainWindow : Window
 
 	virtual void OnMouseOver(Point pt, int widget)
 	{
-		if (_game_mode != GM_MENU && _settings_client.gui.enable_extra_tooltips && pt.x != -1) GuiPrepareTooltipsExtra(this);
+		if (_game_mode != GM_MENU && pt.x != -1) GuiPrepareTooltipsExtra(this);
 	}
 
 	static HotkeyList hotkeys;

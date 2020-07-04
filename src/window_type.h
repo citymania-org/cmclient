@@ -107,7 +107,6 @@ enum WindowClass {
 	 *   - 0 = #ToolTipsWidgets
 	 */
 	WC_TOOLTIPS,
-	WC_TOOLTIPS_EXTRA,
 	WC_STATION_RATING_TOOLTIP,
 
 	/**
@@ -709,6 +708,11 @@ enum WindowClass {
 	 *   - 0 = #ScreenshotWidgets
 	 */
 	WC_SCREENSHOT,
+
+	/*
+	 * CityMania extra windows
+	 */
+	CM_WC_LAND_TOOLTIPS,
 
 	WC_INVALID = 0xFFFF, ///< Invalid window.
 };

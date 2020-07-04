@@ -25,7 +25,7 @@ public:
     uint16 houses_demolished_last_month = 0; ///< number of houses demolished last month
 };
 
-} // namespace citymania
+} // namespace ext
 
 } // namespace citymania
 
