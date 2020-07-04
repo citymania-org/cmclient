@@ -53,6 +53,8 @@
 #include "table/pricebase.h"
 #include "cargo_table_gui.h"
 
+#include "citymania/cm_main.hpp"
+
 #include "safeguards.h"
 
 
@@ -1056,6 +1058,10 @@ static uint DeliverGoodsToIndustry(const Station *st, CargoID cargo_type, uint n
 
 		/* Update the cargo monitor. */
 		AddCargoDelivery(cargo_type, company, amount, ST_INDUSTRY, source, st, ind->index);
+
+		if (amount > 0)
+			citymania::Emit(citymania::event::CargoDeliveredToIndustry{ind, cargo_type, amount, st});
+
 	}
 
 	return accepted;
@@ -1124,15 +1130,11 @@ static Money DeliverGoods(int num_pieces, CargoID cargo_type, StationID dest, Ti
 		}
 	}
 
-	company->cargo_income[cargo_type] += profit;
-	company->cargo_units[cargo_type] += num_pieces;
-
-	company->cargo_income_period[0][cargo_type] += profit;
-	company->cargo_units_period[0][cargo_type] += num_pieces;
-
-	company->cur_economy.cargo_income[cargo_type] += profit;
-
-	InvalidateCargosWindows(company->index);
+	if (accepted_total > 0) {
+		if (accepted_ind != accepted_total)
+			citymania::Emit(citymania::event::CargoDeliveredToUnknown{cargo_type, accepted_total - accepted_ind, st});
+		citymania::Emit(citymania::event::CargoAccepted{company, cargo_type, accepted_total, st, profit, src_type, src});
+	}
 
 	return profit;
 }
@@ -1976,10 +1978,6 @@ void CompaniesMonthlyLoop()
 	}
 	CompaniesPayInterest();
 	HandleEconomyFluctuations();
-
-	for (Company *c : Company::Iterate()) {
-		CargoResetPeriods(c);
-	}
 }
 
 static void DoAcquireCompany(Company *c)

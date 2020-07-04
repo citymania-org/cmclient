@@ -586,21 +586,9 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 
 	if (!is_ai) UpdateAllTownVirtCoords(); //coloured rating
 
-	for (uint j = 0; j < NUM_CARGO; j++) {
-		c->cargo_income[j] = 0;
-		c->cargo_units[j] = 0;
-	}
-	CargoResetPeriods(c);
-
 	return c;
 }
 
-void CargoResetPeriods(Company *c){
-	memmove(&c->cargo_income_period[1], &c->cargo_income_period[0], sizeof(c->cargo_income_period[0]));
-	memset(&c->cargo_income_period, 0, sizeof(c->cargo_income_period[0]));
-	memmove(&c->cargo_units_period[1], &c->cargo_units_period[0], sizeof(c->cargo_units_period[0]));
-	memset(&c->cargo_units_period, 0, sizeof(c->cargo_units_period[0]));
-}
 /** Start the next competitor now. */
 void StartupCompanies()
 {

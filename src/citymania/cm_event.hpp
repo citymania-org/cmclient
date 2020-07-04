@@ -5,6 +5,7 @@
 #include "../cargo_type.h"
 #include "../company_type.h"
 #include "../economy_type.h"
+#include "../industry_type.h"
 #include "../station_type.h"
 #include "../town_type.h"
 
@@ -59,6 +60,19 @@ struct HouseCompleted {
 
 struct CompanyEvent {
     Company *company;
+};
+
+struct CargoDeliveredToIndustry {
+    Industry *industry;
+    CargoID cargo_type;
+    uint amount;
+    const Station *station;
+};
+
+struct CargoDeliveredToUnknown {
+    CargoID cargo_type;
+    uint amount;
+    const Station *station;
 };
 
 struct CargoAccepted {

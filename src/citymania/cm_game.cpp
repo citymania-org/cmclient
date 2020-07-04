@@ -2,6 +2,8 @@
 
 #include "cm_game.hpp"
 
+#include "../company_base.h"
+
 #include "../safeguards.h"
 
 namespace citymania {
@@ -77,6 +79,10 @@ Game::Game() {
             HouseID house_id = GetHouseType(t);
             town->cm.real_population += HouseSpec::Get(house_id)->population;
         }
+    });
+
+    this->events.listen<event::CargoAccepted>([this] (const event::CargoAccepted &event) {
+        event.company->cur_economy.cm.cargo_income[event.cargo_type] += event.profit;
     });
 }
 

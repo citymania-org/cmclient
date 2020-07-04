@@ -29,7 +29,6 @@ void SubtractMoneyFromCompany(CommandCost cost);
 void SubtractMoneyFromCompanyFract(CompanyID company, CommandCost cost);
 CommandCost CheckOwnership(Owner owner, TileIndex tile = 0);
 CommandCost CheckTileOwnership(TileIndex tile);
-void CargoResetPeriods(Company *c);
 
 extern CompanyID _local_company;
 extern CompanyID _current_company;

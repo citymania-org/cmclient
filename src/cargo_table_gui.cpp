@@ -155,14 +155,9 @@ struct CargosWindow : Window {
 			case WID_CT_AMOUNT:
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
 					const CargoSpec *cs = _sorted_cargo_specs[i];
-
-					if (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH) {
-						sum_cargo_amount += c->cargo_units_period[0][cs->Index()];
-						SetDParam(0,  c->cargo_units_period[0][cs->Index()]);
-					} else {
-						sum_cargo_amount += c->cargo_units[cs->Index()];
-						SetDParam(0,  c->cargo_units[cs->Index()]);
-					}
+					auto &economy = (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH ? c->old_economy[0] : c->cur_economy);
+					sum_cargo_amount += economy.delivered_cargo[cs->Index()];
+					SetDParam(0,  economy.delivered_cargo[cs->Index()]);
 
 					DrawString(r.left, r.right, y + text_y_ofs, STR_TOOLBAR_CARGOS_UNITS, TC_FROMSTRING, SA_RIGHT); //cargo amount in pcs
 					y += line_height;
@@ -177,14 +172,10 @@ struct CargosWindow : Window {
 			case WID_CT_INCOME:
 				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
 					const CargoSpec *cs = _sorted_cargo_specs[i];
+					auto &economy = (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH ? c->old_economy[0] : c->cur_economy);
 
-					if (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH) {
-						sum_cargo_income += c->cargo_income_period[0][cs->Index()];
-						DrawPrice(c->cargo_income_period[0][cs->Index()], r.left, r.right, y + text_y_ofs);
-					} else {
-						sum_cargo_income += c->cargo_income[cs->Index()];
-						DrawPrice(c->cargo_income[cs->Index()], r.left, r.right, y + text_y_ofs);
-					}
+					sum_cargo_income += economy.cm.cargo_income[cs->Index()];
+					DrawPrice(economy.cm.cargo_income[cs->Index()], r.left, r.right, y + text_y_ofs);
 
 					y += line_height;
 				}

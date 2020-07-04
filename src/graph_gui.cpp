@@ -872,7 +872,7 @@ struct IncomeGraphWindow : ExcludingCargoBaseGraphWindow {
 		const CargoSpec *cs;
 		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
 			if (!HasBit(_legend_excluded_cargo, cs->Index())){
-				total_income += c->old_economy[j].cargo_income[cs->Index()];
+				total_income += c->old_economy[j].cm.cargo_income[cs->Index()];
 			}
 		}
 		return total_income;

@@ -40,6 +40,8 @@
 #include "table/strings.h"
 #include <time.h>
 
+#include "citymania/cm_console_cmds.hpp"
+
 #include "safeguards.h"
 
 /* scriptfile handling */
@@ -2221,4 +2223,6 @@ void IConsoleStdLibRegister()
 	/* NewGRF development stuff */
 	IConsoleCmdRegister("reload_newgrfs",  ConNewGRFReload, ConHookNewGRFDeveloperTool);
 	IConsoleCmdRegister("newgrf_profile",  ConNewGRFProfile, ConHookNewGRFDeveloperTool);
+
+	IConsoleCmdRegister("cmexport", citymania::ConExport);
 }
