@@ -3,6 +3,7 @@
 #include "polyrail.hpp"
 
 #include "../command_type.h"
+#include "../command_func.h"
 #include "../rail_type.h"
 #include "../tilehighlight_type.h"
 #include "../track_func.h"
@@ -18,6 +19,7 @@ extern TileHighlightData _thd;
 extern void (*StaticDrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal);
 extern CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text);
 extern RailType _cur_railtype;
+extern bool _shift_pressed;
 
 namespace citymania {
 
@@ -120,6 +122,8 @@ struct {
     },
 };
 
+PolyrailPoint _polyrail_start;
+
 PolyrailPoint PolyrailPoint::Reverse() {
     return PolyrailPoint(TileAddByDiagDir(this->tile, this->side), ReverseDiagDir(this->side));
 }
@@ -142,6 +146,7 @@ uint RailDistance(TileIndex a, TileIndex b) {
 }
 
 Polyrail MakePolyrail(PolyrailPoint start, PolyrailPoint end) {
+    fprintf(stderr, "POLYNEW %d:%d %d:%d\n", (int)start.tile, (int)start.side, (int)end.tile, (int)end.side);
     auto polyrail = Polyrail(start, end);
     uint16 max_curve = 250;
     uint16 max_slowdown_curve = _settings_game.vehicle.max_train_length * 2;
@@ -269,26 +274,24 @@ Polyrail MakePolyrail(PolyrailPoint start, PolyrailPoint end) {
     return polyrail;
 }
 
-PolyrailPoint GetPolyrailPoint(Point pt) {
-    auto s = (pt.x + pt.y) >> 4;
-    auto e = (pt.y - pt.x) >> 4;
+PolyrailPoint GetPolyrailPoint(int x, int y) {
+    auto s = (x + y) >> 4;
+    auto e = (y - x) >> 4;
     auto side = ((s + e) & 1) ? DIAGDIR_NW : DIAGDIR_NE;
-    auto x = (s - e) >> 1;
-    auto y = (s + e + 1) >> 1;
-    return PolyrailPoint(TileXY(x, y), side);
+    auto tx = (s - e) >> 1;
+    auto ty = (s + e + 1) >> 1;
+    return PolyrailPoint(TileXY(tx, ty), side);
 }
 
 void UpdatePolyrailDrawstyle(Point pt) {
     if (pt.x == -1) return;
-    if (!_thd.selstart.x) return;
-    auto start = GetPolyrailPoint(_thd.selstart);
-    auto end = GetPolyrailPoint(pt);
+    if (!_polyrail_start.IsValid()) return;
+    auto end = GetPolyrailPoint(pt.x, pt.y);
     // fprintf(stderr, "POLYUPD %d:%d %d:%d\n", (int)start.tile, (int)start.side, (int)end.tile, (int)end.side);
     _thd.selend = pt;
-    if (_thd.cm_polyrail.start == start && _thd.cm_polyrail.end == end)
+    if (_thd.cm_polyrail.start == _polyrail_start && _thd.cm_polyrail.end == end)
         return;
-    _thd.cm_new_polyrail = MakePolyrail(start, end);
-    // fprintf(stderr, "POLYNEW %d:%d %d:%d %d\n", (int)start.tile, (int)start.side, (int)end.tile, (int)end.side, (int)_thd.cm_new_polyrail.tiles.size());
+    _thd.cm_new_polyrail = MakePolyrail(_polyrail_start, end);
 }
 
 void SetPolyrailSelectionTilesDirty() {
@@ -313,8 +316,52 @@ void DrawPolyrailTileSelection(const TileInfo *ti) {
     }
 }
 
-void HandlePolyrailPlacement() {
+// Mostly copied from rail_gui.cpp
+static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_tile, Track track, bool remove_mode)
+{
+    CommandContainer ret = {
+        start_tile,                             // tile
+        end_tile,                               // p1
+        (uint32)(_cur_railtype | (track << 6)), // p2
+        remove_mode ?
+                CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
+                CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK), // cmd
+        CcPlaySound_SPLAT_RAIL,                 // callback
+        ""                                      // text
+    };
+    return ret;
+}
 
+void HandlePolyrailPlacement(bool estimate_mode, bool remove_mode) {
+    auto end = GetPolyrailPoint(_thd.selend.x, _thd.selend.y);
+    if (!_polyrail_start.IsValid()) {
+        _polyrail_start = end;
+        return;
+    }
+    auto polyrail = MakePolyrail(_polyrail_start, end);
+    if (polyrail.tiles.empty()) return;
+
+    Trackdir trackdir = polyrail.tiles[0].second;
+    Direction dir = _trackdir_to_direction[trackdir];
+    TileIndex segment_start = polyrail.tiles[0].first;
+    TileIndex segment_end = segment_start;
+    Trackdir trackdir_end = trackdir;
+    for (auto p : polyrail.tiles) {
+        if (dir != _trackdir_to_direction[p.second]) break;
+        segment_end = p.first;
+        trackdir_end = p.second;
+    }
+
+    auto cmd = DoRailroadTrackCmd(segment_start, segment_end, TrackdirToTrack(trackdir), remove_mode);
+
+    if (estimate_mode) {
+        DoCommandP(&cmd);
+        return;
+    }
+    if (DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT) {
+        if (!DoCommandP(&cmd)) return;
+    }
+    _polyrail_start = PolyrailPoint(segment_end, TrackdirToExitdir(trackdir_end)).Normalize();
 }
 
 } // namespace citymania
