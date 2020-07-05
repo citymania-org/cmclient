@@ -40,6 +40,7 @@
 #include <vector>
 
 #include "citymania/station_ui.hpp"
+#include "citymania/cm_tooltips.hpp"
 
 #include "safeguards.h"
 
@@ -2117,14 +2118,14 @@ struct StationViewWindow : public Window {
 		this->vscroll->SetCapacityFromWidget(this, WID_SV_WAITING, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
 	}
 
-	virtual void OnHover(Point pt, int widget)
+	bool OnTooltip(Point pt, int widget, TooltipCloseCondition close_cond) override
 	{
 		if (widget != WID_SV_ACCEPT_RATING_LIST ||
 		    	this->GetWidget<NWidgetCore>(WID_SV_ACCEPTS_RATINGS)->widget_data == STR_STATION_VIEW_RATINGS_BUTTON)
-			Window::OnHover(pt, widget);
+			return false;
 
 		int ofs_y = pt.y - this->ratings_list_y;
-		if (ofs_y < 0) return;
+		if (ofs_y < 0) return false;
 
 		const Station *st = Station::Get(this->window_number);
 		const CargoSpec *cs;
@@ -2133,10 +2134,10 @@ struct StationViewWindow : public Window {
 			if (!ge->HasRating()) continue;
 			ofs_y -= FONT_HEIGHT_NORMAL;
 			if (ofs_y < 0) {
-				GuiShowStationRatingTooltip(this, st, cs);
-				break;
+				return citymania::ShowStationRatingTooltip(this, st, cs, close_cond);
 			}
 		}
+		return false;
 	}
 
 	/**

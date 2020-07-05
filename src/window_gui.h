@@ -883,7 +883,6 @@ void RelocateAllWindows(int neww, int newh);
 
 void GuiShowTooltips(Window *parent, StringID str, uint paramcount = 0, const uint64 params[] = nullptr, TooltipCloseCondition close_tooltip = TCC_HOVER);
 void GuiPrepareTooltipsExtra(Window *parent);
-void GuiShowStationRatingTooltip(Window *parent, const Station *st, const CargoSpec *cs);
 
 /* widget.cpp */
 int GetWidgetFromPos(const Window *w, int x, int y);
