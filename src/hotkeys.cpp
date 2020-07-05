@@ -79,6 +79,7 @@ static const KeycodeNames _keycode_to_name[] = {
 	{".", WKC_PERIOD},
 	{"-", WKC_MINUS},
 
+	{"TAB", WKC_TAB},
 	{"L_BRACE", WKC_L_BRACE},
 	{"R_BRACE", WKC_R_BRACE},
 	{"L_PAREN", WKC_L_PAREN},
