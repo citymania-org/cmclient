@@ -409,24 +409,6 @@ public:
 				break;
 		}
 	}
-
-	virtual void OnMouseLoop()
-	{
-		/* Always close tooltips when the cursor is not in our window. */
-		if (!_cursor.in_window) {
-			delete this;
-			return;
-		}
-		if (!_mouse_hovering) delete this;
-
-		/* We can show tooltips while dragging tools. These are shown as long as
-		 * we are dragging the tool. Normal tooltips work with hover or rmb. */
-		// switch (this->close_cond) {
-		// 	case TCC_RIGHT_CLICK: if (!_right_button_down) delete this; break;
-		// 	case TCC_LEFT_CLICK: if (!_left_button_down) delete this; break;
-		// 	case TCC_HOVER: if (!_mouse_hovering) delete this; break;
-		// }
-	}
 };
 
 /**
@@ -435,6 +417,10 @@ public:
  */
 void ShowLandInfo(TileIndex tile, TileIndex end_tile)
 {
+    static TileIndex last_tooltip_tile = INVALID_TILE;
+    if (tile == last_tooltip_tile) return;
+    last_tooltip_tile = tile;
+
 	DeleteWindowById(WC_LAND_INFO, 0);
 	if (tile == INVALID_TILE) return;
 	new LandInfoWindow(tile, end_tile);
@@ -1339,6 +1325,7 @@ void GuiPrepareTooltipsExtra(Window *parent){
 		ShowLandInfo(tile);
 		return;
 	}
+	ShowLandInfo(INVALID_TILE);
 
 	if (tile >= MapSize()) tile = INVALID_TILE;
 	citymania::ShowLandTooltips(tile, parent);
