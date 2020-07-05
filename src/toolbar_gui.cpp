@@ -61,6 +61,7 @@
 #include "watch_gui.h"
 
 #include "citymania/locations.hpp"
+#include "citymania/cm_main.hpp"
 
 #include "safeguards.h"
 
@@ -2102,6 +2103,7 @@ enum MainToolbarHotkeys {
 	MTHK_SETTINGS_ADV,
 	MTHK_NEWGRF,
 	MTHK_LANDINFO,
+	CM_MTHK_SMALLMAP_TOGGLE,
 	CM_LOCATION_HOTKEYS,
 };
 
@@ -2218,6 +2220,7 @@ struct MainToolbarWindow : Window {
 			case MTHK_SETTINGS_ADV: ShowGameSettings(); break;
 			case MTHK_NEWGRF: ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, &_grfconfig); break;
 			case MTHK_LANDINFO: _last_started_action = PlaceLandBlockInfo(); break;
+			case CM_MTHK_SMALLMAP_TOGGLE: citymania::ToggleSmallMap(); break;
 			default: return citymania::HandleToolbarHotkey(hotkey);
 		}
 		return ES_HANDLED;
@@ -2370,6 +2373,7 @@ static Hotkey maintoolbar_hotkeys[] = {
 	Hotkey((uint16)0, "newgrf_window", MTHK_NEWGRF),
 	Hotkey((uint16)0, "sign_list", MTHK_SIGN_LIST),
 	Hotkey((uint16)0, "land_info", MTHK_LANDINFO),
+	Hotkey((uint16)0, "cm_smallmap_toggle", CM_MTHK_SMALLMAP_TOGGLE),
 	CM_LOCATION_HOTKEYS_DECL,
 	HOTKEY_LIST_END
 };
@@ -2524,6 +2528,7 @@ enum MainToolbarEditorHotkeys {
 	MTEHK_TERRAFORM,
 	MTEHK_SMALLMAP,
 	MTEHK_EXTRA_VIEWPORT,
+	CM_MTEHK_SMALLMAP_TOGGLE,
 };
 
 struct ScenarioEditorToolbarWindow : Window {
@@ -2633,6 +2638,7 @@ struct ScenarioEditorToolbarWindow : Window {
 			case MTEHK_TERRAFORM:              ShowEditorTerraformToolbar(); break;
 			case MTEHK_SMALLMAP:               ShowSmallMap(); break;
 			case MTEHK_EXTRA_VIEWPORT:         ShowExtraViewPortWindowForTileUnderCursor(); break;
+			case CM_MTEHK_SMALLMAP_TOGGLE:     citymania::ToggleSmallMap(); break;
 			default: return ES_NOT_HANDLED;
 		}
 		if (cbf != CBF_NONE) _last_started_action = cbf;
@@ -2737,6 +2743,7 @@ static Hotkey scenedit_maintoolbar_hotkeys[] = {
 	Hotkey('L', "terraform", MTEHK_TERRAFORM),
 	Hotkey('M', "smallmap", MTEHK_SMALLMAP),
 	Hotkey('V', "extra_viewport", MTEHK_EXTRA_VIEWPORT),
+	Hotkey((uint16)0, "cm_smallmap_toggle", CM_MTEHK_SMALLMAP_TOGGLE),
 	HOTKEY_LIST_END
 };
 HotkeyList ScenarioEditorToolbarWindow::hotkeys("scenedit_maintoolbar", scenedit_maintoolbar_hotkeys);

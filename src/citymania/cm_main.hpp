@@ -16,6 +16,8 @@ void Emit(const T &event) {
     _game->events.emit<T>(event);
 }
 
+void ToggleSmallMap();
+
 } // namespace citymania
 
 #endif
