@@ -9,6 +9,7 @@
 
 #include "../stdafx.h"
 #include "../newgrf_storage.h"
+#include "../citymania/cm_saveload.hpp"
 #include "saveload.h"
 
 #include "../safeguards.h"
@@ -46,5 +47,5 @@ static void Save_PSAC()
 
 /** Chunk handler for persistent storages. */
 extern const ChunkHandler _persistent_storage_chunk_handlers[] = {
-	{ 'PSAC', Save_PSAC, Load_PSAC, nullptr, nullptr, CH_ARRAY | CH_LAST},
+	{ 'PSAC', citymania::Save_PSAC, citymania::Load_PSAC, nullptr, nullptr, CH_ARRAY | CH_LAST},
 };

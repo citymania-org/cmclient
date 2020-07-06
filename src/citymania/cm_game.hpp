@@ -19,12 +19,11 @@ enum class TownGrowthTileState : uint8 {
 };
 
 class Game {
-protected:
+public:
     typedef std::map<TileIndex, TownGrowthTileState> TownsGrowthTilesIndex;
     TownsGrowthTilesIndex towns_growth_tiles_last_month;
     TownsGrowthTilesIndex towns_growth_tiles;
 
-public:
     event::Dispatcher events;
 
     Game();
