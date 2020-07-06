@@ -20,6 +20,8 @@
 #include "zoom_type.h"
 #include "openttd.h"
 
+#include "citymania/cm_settings.hpp"
+
 
 /** Settings profiles and highscore tables. */
 enum SettingsProfile {
@@ -558,6 +560,8 @@ struct GameSettings {
 	LinkGraphSettings    linkgraph;          ///< settings for link graph calculations
 	StationSettings      station;            ///< settings related to station management
 	LocaleSettings       locale;             ///< settings related to used currency/unit system in the current game
+
+	citymania::Settings cm;
 };
 
 /** All settings that are only important for the local client. */
