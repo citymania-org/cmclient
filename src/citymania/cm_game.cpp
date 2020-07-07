@@ -9,7 +9,7 @@
 namespace citymania {
 
 Game::Game() {
-    this->events.listen<event::NewMonth>([this] (const event::NewMonth &) {
+    this->events.listen<event::NewMonth>(event::Slot::GAME, [this] (const event::NewMonth &) {
         for (Town *t : Town::Iterate()) {
             t->cm.hs_last_month = t->cm.hs_total - t->cm.hs_total_prev;
             t->cm.hs_total_prev = t->cm.hs_total;
@@ -28,19 +28,19 @@ Game::Game() {
         this->towns_growth_tiles.clear();
     });
 
-    this->events.listen<event::TownGrowthSucceeded>([this] (const event::TownGrowthSucceeded &event) {
+    this->events.listen<event::TownGrowthSucceeded>(event::Slot::GAME, [this] (const event::TownGrowthSucceeded &event) {
         if (event.town->cache.num_houses <= event.prev_houses) {
             event.town->cm.hs_total++;
             this->set_town_growth_tile(event.tile, TownGrowthTileState::HS);
         }
     });
 
-    this->events.listen<event::TownGrowthFailed>([this] (const event::TownGrowthFailed &event) {
+    this->events.listen<event::TownGrowthFailed>(event::Slot::GAME, [this] (const event::TownGrowthFailed &event) {
         event.town->cm.cs_total++;
         this->set_town_growth_tile(event.tile, TownGrowthTileState::CS);
     });
 
-    this->events.listen<event::HouseRebuilt>([this] (const event::HouseRebuilt &event) {
+    this->events.listen<event::HouseRebuilt>(event::Slot::GAME, [this] (const event::HouseRebuilt &event) {
         if (event.was_successful) {
             event.town->cm.houses_reconstructed_this_month++;
             this->set_town_growth_tile(event.tile, TownGrowthTileState::RH_REBUILT);
@@ -50,23 +50,23 @@ Game::Game() {
         }
     });
 
-    this->events.listen<event::HouseBuilt>([this] (const event::HouseBuilt &event) {
+    this->events.listen<event::HouseBuilt>(event::Slot::GAME, [this] (const event::HouseBuilt &event) {
         event.town->cm.houses_constructing++;
         event.town->cm.real_population += event.house_spec->population;
         this->set_town_growth_tile(event.tile, TownGrowthTileState::NEW_HOUSE);
     });
 
-    this->events.listen<event::HouseCleared>([this] (const event::HouseCleared &event) {
+    this->events.listen<event::HouseCleared>(event::Slot::GAME, [this] (const event::HouseCleared &event) {
         if (!event.was_completed)
             event.town->cm.houses_constructing--;
         event.town->cm.real_population -= event.house_spec->population;
     });
 
-    this->events.listen<event::HouseCompleted>([this] (const event::HouseCompleted &event) {
+    this->events.listen<event::HouseCompleted>(event::Slot::GAME, [this] (const event::HouseCompleted &event) {
         event.town->cm.houses_constructing--;
     });
 
-    this->events.listen<event::TownCachesRebuilt>([this] (const event::TownCachesRebuilt &event) {
+    this->events.listen<event::TownCachesRebuilt>(event::Slot::GAME, [this] (const event::TownCachesRebuilt &event) {
         for (Town *town : Town::Iterate()) {
             town->cm.real_population = 0;
             town->cm.houses_constructing = 0;
@@ -81,7 +81,7 @@ Game::Game() {
         }
     });
 
-    this->events.listen<event::CargoAccepted>([this] (const event::CargoAccepted &event) {
+    this->events.listen<event::CargoAccepted>(event::Slot::GAME, [this] (const event::CargoAccepted &event) {
         event.company->cur_economy.cm.cargo_income[event.cargo_type] += event.profit;
     });
 }

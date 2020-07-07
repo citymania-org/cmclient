@@ -2,6 +2,8 @@
 #define CM_EVENT_HPP
 
 #include "cm_type.hpp"
+
+#include "../console_func.h"
 #include "../cargo_type.h"
 #include "../company_type.h"
 #include "../economy_type.h"
@@ -104,6 +106,12 @@ struct CompanyBalanceChanged {
     Money delta;
 };
 
+enum class Slot : uint8 {
+    CONTROLLER = 10,
+    GAME = 20,
+    CONTROLLER_POST = 30,
+    RECORDER = 40,
+};
 
 class TypeDispatcherBase {
 public:
@@ -119,14 +127,20 @@ public:
     TypeDispatcher() { }
     virtual ~TypeDispatcher() {}
 
-    void listen(Handler &handler) {
-        this->new_handlers.push_back(handler);
+    void listen(Slot slot, Handler &handler) {
+        auto p = this->handler_map.find(slot);
+        if (p != this->handler_map.end())
+            IConsolePrintF(CC_ERROR, "ERROR: Ignored duplicate handler for event %s slot %d", typeid(T).name(), (int)slot);
+        this->handler_map.insert(p, std::make_pair(slot, handler));
+        this->new_handlers = true;
     }
 
     void emit(const T &event) {
-        if (!this->new_handlers.empty()) {
-            this->handlers.insert(this->handlers.end(), this->new_handlers.begin(), this->new_handlers.end());
-            this->new_handlers.clear();
+        if (this->new_handlers) {  // only rebuild handlers while not iterating
+            this->handlers.clear();
+            for (auto &p : this->handler_map) {
+                this->handlers.push_back(p.second);
+            }
         }
         for (auto &h : this->handlers) {
             h(event);
@@ -135,7 +149,8 @@ public:
 
 protected:
     std::vector<Handler> handlers;
-    std::vector<Handler> new_handlers;
+    std::map<Slot, Handler> handler_map;
+    bool new_handlers = false;
 };
 
 
@@ -155,8 +170,8 @@ protected:
 
 public:
     template<typename T>
-    void listen(std::function<void(const T &)> handler) {
-        this->get_dispatcher<T>().listen(handler);
+    void listen(Slot slot, std::function<void(const T &)> handler) {
+        this->get_dispatcher<T>().listen(slot, handler);
     }
 
     template<typename T>
