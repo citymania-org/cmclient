@@ -31,29 +31,29 @@ Game::Game() {
     this->events.listen<event::TownGrowthSucceeded>([this] (const event::TownGrowthSucceeded &event) {
         if (event.town->cache.num_houses <= event.prev_houses) {
             event.town->cm.hs_total++;
-            this->towns_growth_tiles[event.tile] = TownGrowthTileState::HS;
+            this->set_town_growth_tile(event.tile, TownGrowthTileState::HS);
         }
     });
 
     this->events.listen<event::TownGrowthFailed>([this] (const event::TownGrowthFailed &event) {
         event.town->cm.cs_total++;
-        this->towns_growth_tiles[event.tile] = TownGrowthTileState::CS;
+        this->set_town_growth_tile(event.tile, TownGrowthTileState::CS);
     });
 
     this->events.listen<event::HouseRebuilt>([this] (const event::HouseRebuilt &event) {
         if (event.was_successful) {
             event.town->cm.houses_reconstructed_this_month++;
-            this->towns_growth_tiles[event.tile] = TownGrowthTileState::RH_REBUILT;
+            this->set_town_growth_tile(event.tile, TownGrowthTileState::RH_REBUILT);
         } else {
             event.town->cm.houses_demolished_this_month++;
-            this->towns_growth_tiles[event.tile] = TownGrowthTileState::RH_REMOVED;
+            this->set_town_growth_tile(event.tile, TownGrowthTileState::RH_REMOVED);
         }
     });
 
     this->events.listen<event::HouseBuilt>([this] (const event::HouseBuilt &event) {
         event.town->cm.houses_constructing++;
         event.town->cm.real_population += event.house_spec->population;
-        this->towns_growth_tiles[event.tile] = TownGrowthTileState::NEW_HOUSE;
+        this->set_town_growth_tile(event.tile, TownGrowthTileState::NEW_HOUSE);
     });
 
     this->events.listen<event::HouseCleared>([this] (const event::HouseCleared &event) {
@@ -84,6 +84,10 @@ Game::Game() {
     this->events.listen<event::CargoAccepted>([this] (const event::CargoAccepted &event) {
         event.company->cur_economy.cm.cargo_income[event.cargo_type] += event.profit;
     });
+}
+
+void Game::set_town_growth_tile(TileIndex tile, TownGrowthTileState state) {
+    if (this->towns_growth_tiles[tile] < state) this->towns_growth_tiles[tile] = state;
 }
 
 } // namespace citymania

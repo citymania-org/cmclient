@@ -263,30 +263,30 @@ static u8vector EncodeData() {
 	bs.Reserve(1000);
 	bs.WriteBytes(SAVEGAME_DATA_FORMAT_VERSION, 2);
 	bs.WriteBytes(_last_client_version, 2);
-	bs.WriteBytes(_settings_game.cm.controller_type, 1);
+	bs.WriteBytes(_settings_game.citymania.controller_type, 1);
 	bs.WriteBytes(_date, 4);  // Just in case we'll need to detect that game
 	bs.WriteBytes(_date_fract, 1);  // was saved by unmodified client
-	bs.WriteBytes(_settings_game.cm.game_type, 1);
+	bs.WriteBytes(_settings_game.citymania.game_type, 1);
 	bs.WriteBytes(0, 3);  // Reserved
 	bs.WriteBytes(0, 4);  // Reserved
-    EncodeSettings(bs, _settings_game.cm);
+    EncodeSettings(bs, _settings_game.citymania);
     EncodeCompanies(bs);
 	EncodeTowns(bs);
     EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
     EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
-	if (_settings_game.cm.controller_type == 4)
+	if (_settings_game.citymania.controller_type == 4)
 		CBController_saveload_encode(bs);
 
 	return bs.GetVector();
 }
 
 static void DecodeDataV2(BitIStream &bs) {
-    DecodeSettings(bs, _settings_game.cm);
+    DecodeSettings(bs, _settings_game.citymania);
     DecodeCompanies(bs);
     DecodeTowns(bs);
     DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
     DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
-    if (_settings_game.cm.controller_type == 4) CBController_saveload_decode(bs);
+    if (_settings_game.citymania.controller_type == 4) CBController_saveload_decode(bs);
 }
 
 static void DecodeTownsCargoV1(BitIStream &bs)
@@ -332,7 +332,7 @@ static void DecodeTownsCargoV1(BitIStream &bs)
 }
 
 static void DecodeDataV1(BitIStream &bs) {
-    if (_settings_game.cm.controller_type != 0) DecodeTownsCargoV1(bs);
+    if (_settings_game.citymania.controller_type != 0) DecodeTownsCargoV1(bs);
     for (Town *t : Town::Iterate()) {
         t->cm.growing_by_chance = bs.ReadBytes(1);
         t->cm.houses_reconstructed_this_month = bs.ReadBytes(2);
@@ -379,15 +379,15 @@ static void DecodeData(u8vector &data) {
 		}
         DEBUG(sl, 2, "CityMania savegame data version %u", version);
 		_last_client_version = bs.ReadBytes(2);
-		_settings_game.cm.controller_type = bs.ReadBytes(1);
-		if (version <= 1) _settings_game.cm.controller_type = (_settings_game.cm.controller_type ? 4 : 0);
+		_settings_game.citymania.controller_type = bs.ReadBytes(1);
+		if (version <= 1) _settings_game.citymania.controller_type = (_settings_game.citymania.controller_type ? 4 : 0);
 		int32 date = bs.ReadBytes(4);
 		uint32 date_fract = bs.ReadBytes(1);
 		if (date != _date || date_fract != _date_fract) {
 			DEBUG(sl, 0, "Savegame was run in unmodified client, extra save data "
 			      "preserved, but may not be accurate");
 		}
-		_settings_game.cm.game_type = bs.ReadBytes(1);
+		_settings_game.citymania.game_type = bs.ReadBytes(1);
 		bs.ReadBytes(3);  // reserved
 		bs.ReadBytes(4);  // reserved
         if (version == 1) DecodeDataV1(bs);

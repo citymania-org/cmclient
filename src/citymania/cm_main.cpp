@@ -13,7 +13,7 @@ void ResetGame() {
 }
 
 void SwitchToMode(SwitchMode new_mode) {
-    ResetGame();
+    if (new_mode != SM_SAVE_GAME) ResetGame();
 }
 
 

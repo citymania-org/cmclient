@@ -1,5 +1,5 @@
-#ifndef CMEXT_GAME_HPP
-#define CMEXT_GAME_HPP
+#ifndef CM_GAME_HPP
+#define CM_GAME_HPP
 
 #include "../town.h"
 
@@ -27,6 +27,7 @@ public:
     event::Dispatcher events;
 
     Game();
+    void set_town_growth_tile(TileIndex tile, TownGrowthTileState state);
 };
 
 } // namespace citymania

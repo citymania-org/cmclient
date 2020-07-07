@@ -561,7 +561,7 @@ struct GameSettings {
 	StationSettings      station;            ///< settings related to station management
 	LocaleSettings       locale;             ///< settings related to used currency/unit system in the current game
 
-	citymania::Settings cm;
+	citymania::Settings  citymania;
 };
 
 /** All settings that are only important for the local client. */

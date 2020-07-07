@@ -42,12 +42,15 @@ struct HouseRebuilt {
 struct HouseBuilt {
     Town *town;
     TileIndex tile;
+    HouseID house_id;
     const HouseSpec *house_spec;
+    bool is_rebuilding;
 };
 
 struct HouseCleared {
     Town *town;
     TileIndex tile;
+    HouseID house_id;
     const HouseSpec *house_spec;
     bool was_completed;  ///< whether house was completed before destruction
 };
@@ -55,6 +58,7 @@ struct HouseCleared {
 struct HouseCompleted {
     Town *town;
     TileIndex tile;
+    HouseID house_id;
     const HouseSpec *house_spec;
 };
 
