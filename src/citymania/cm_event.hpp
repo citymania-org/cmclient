@@ -107,10 +107,11 @@ struct CompanyBalanceChanged {
 };
 
 enum class Slot : uint8 {
-    CONTROLLER = 10,
-    GAME = 20,
-    CONTROLLER_POST = 30,
-    RECORDER = 40,
+    GOAL = 10,
+    CONTROLLER = 20,
+    GAME = 30,
+    CONTROLLER_POST = 40,
+    RECORDER = 50,
 };
 
 class TypeDispatcherBase {
@@ -128,11 +129,7 @@ public:
     virtual ~TypeDispatcher() {}
 
     void listen(Slot slot, Handler &handler) {
-        auto p = this->handler_map.find(slot);
-        if (p != this->handler_map.end())
-            IConsolePrintF(CC_ERROR, "ERROR: Ignored duplicate handler for event %s slot %d", typeid(T).name(), (int)slot);
-        this->handler_map.insert(p, std::make_pair(slot, handler));
-        this->new_handlers = true;
+        this->handler_map.insert(std::make_pair(slot, handler));
     }
 
     void emit(const T &event) {
@@ -149,7 +146,7 @@ public:
 
 protected:
     std::vector<Handler> handlers;
-    std::map<Slot, Handler> handler_map;
+    std::multimap<Slot, Handler> handler_map;
     bool new_handlers = false;
 };
 
