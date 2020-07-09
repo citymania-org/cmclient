@@ -2,6 +2,8 @@
 #define CM_EVENT_HPP
 
 #include "cm_type.hpp"
+
+#include "../console_func.h"
 #include "../cargo_type.h"
 #include "../company_type.h"
 #include "../economy_type.h"
@@ -42,12 +44,15 @@ struct HouseRebuilt {
 struct HouseBuilt {
     Town *town;
     TileIndex tile;
+    HouseID house_id;
     const HouseSpec *house_spec;
+    bool is_rebuilding;
 };
 
 struct HouseCleared {
     Town *town;
     TileIndex tile;
+    HouseID house_id;
     const HouseSpec *house_spec;
     bool was_completed;  ///< whether house was completed before destruction
 };
@@ -55,6 +60,7 @@ struct HouseCleared {
 struct HouseCompleted {
     Town *town;
     TileIndex tile;
+    HouseID house_id;
     const HouseSpec *house_spec;
 };
 
@@ -100,6 +106,13 @@ struct CompanyBalanceChanged {
     Money delta;
 };
 
+enum class Slot : uint8 {
+    GOAL = 10,
+    CONTROLLER = 20,
+    GAME = 30,
+    CONTROLLER_POST = 40,
+    RECORDER = 50,
+};
 
 class TypeDispatcherBase {
 public:
@@ -115,14 +128,16 @@ public:
     TypeDispatcher() { }
     virtual ~TypeDispatcher() {}
 
-    void listen(Handler &handler) {
-        this->new_handlers.push_back(handler);
+    void listen(Slot slot, Handler &handler) {
+        this->handler_map.insert(std::make_pair(slot, handler));
     }
 
     void emit(const T &event) {
-        if (!this->new_handlers.empty()) {
-            this->handlers.insert(this->handlers.end(), this->new_handlers.begin(), this->new_handlers.end());
-            this->new_handlers.clear();
+        if (this->new_handlers) {  // only rebuild handlers while not iterating
+            this->handlers.clear();
+            for (auto &p : this->handler_map) {
+                this->handlers.push_back(p.second);
+            }
         }
         for (auto &h : this->handlers) {
             h(event);
@@ -131,7 +146,8 @@ public:
 
 protected:
     std::vector<Handler> handlers;
-    std::vector<Handler> new_handlers;
+    std::multimap<Slot, Handler> handler_map;
+    bool new_handlers = false;
 };
 
 
@@ -151,8 +167,8 @@ protected:
 
 public:
     template<typename T>
-    void listen(std::function<void(const T &)> handler) {
-        this->get_dispatcher<T>().listen(handler);
+    void listen(Slot slot, std::function<void(const T &)> handler) {
+        this->get_dispatcher<T>().listen(slot, handler);
     }
 
     template<typename T>

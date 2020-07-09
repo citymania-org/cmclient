@@ -258,7 +258,7 @@ enum TownGrowthResult {
 //	GROWTH_SEARCH_RUNNING >=  1
 };
 
-static bool BuildTownHouse(Town *t, TileIndex tile);
+static bool BuildTownHouse(Town *t, TileIndex tile, bool is_rebuilding = false);
 static Town *CreateRandomTown(uint attempts, uint32 townnameparts, TownSize size, bool city, TownLayout layout);
 
 static void TownDrawHouseLift(const TileInfo *ti)
@@ -537,7 +537,7 @@ static void MakeSingleHouseBigger(TileIndex tile)
 		ResetHouseAge(tile);
 
 		if (hs->building_flags & BUILDING_HAS_1_TILE)
-			citymania::Emit(citymania::event::HouseCompleted{town, tile, hs});
+			citymania::Emit(citymania::event::HouseCompleted{town, tile, house_id, hs});
 	}
 	MarkTileDirtyByTile(tile);
 }
@@ -673,7 +673,7 @@ static void TileLoop_Town(TileIndex tile)
 
 		/* Rebuild with another house? */
 		bool rebuild_res = false;
-		if (GB(r, 24, 8) >= 12) rebuild_res = BuildTownHouse(t, tile);
+		if (GB(r, 24, 8) >= 12) rebuild_res = BuildTownHouse(t, tile, true);
 		citymania::Emit(citymania::event::HouseRebuilt{t, tile, rebuild_res});
 	}
 
@@ -2745,7 +2745,7 @@ static bool CheckTownBuild2x2House(TileIndex *tile, Town *t, int maxz, bool nosl
  * @param tile where the house will be built
  * @return false iff no house can be built at this tile
  */
-static bool BuildTownHouse(Town *t, TileIndex tile)
+static bool BuildTownHouse(Town *t, TileIndex tile, bool is_rebuilding)
 {
 	/* forbidden building here by town layout */
 	if (!TownLayoutAllowsHouseHere(t, tile)) return false;
@@ -2894,8 +2894,10 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 		UpdateTownGrowthRate(t);
 		UpdateTownCargoes(t, tile);
 
-		citymania::Emit(citymania::event::HouseBuilt{t, tile, hs});
-		if (completed) citymania::Emit(citymania::event::HouseCompleted{t, tile, hs});
+		if (!_generating_world) {
+			citymania::Emit(citymania::event::HouseBuilt{t, tile, house, hs, is_rebuilding});
+			if (completed) citymania::Emit(citymania::event::HouseCompleted{t, tile, house, hs});
+		}
 
 		return true;
 	}
@@ -2986,7 +2988,7 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	/* Update cargo acceptance. */
 	UpdateTownCargoes(t, tile);
 
-	citymania::Emit(citymania::event::HouseCleared{t, tile, hs, is_completed});
+	citymania::Emit(citymania::event::HouseCleared{t, tile, house, hs, is_completed});
 }
 
 /**

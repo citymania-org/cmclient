@@ -18,7 +18,7 @@ public:
     bool is_scored;  ///< whether company is eligible for scoring
 };
 
-} // namespace ext
+} // namespace citymania
 
 } // namespace citymania
 

@@ -1,5 +1,5 @@
-#ifndef CMEXT_GAME_HPP
-#define CMEXT_GAME_HPP
+#ifndef CM_GAME_HPP
+#define CM_GAME_HPP
 
 #include "../town.h"
 
@@ -20,13 +20,14 @@ enum class TownGrowthTileState : uint8 {
 
 class Game {
 public:
-    event::Dispatcher events;
-
     typedef std::map<TileIndex, TownGrowthTileState> TownsGrowthTilesIndex;
     TownsGrowthTilesIndex towns_growth_tiles_last_month;
     TownsGrowthTilesIndex towns_growth_tiles;
 
+    event::Dispatcher events;
+
     Game();
+    void set_town_growth_tile(TileIndex tile, TownGrowthTileState state);
 
     TownGrowthTileState get_town_growth_tile(TileIndex tile) {
         auto a = this->towns_growth_tiles.find(tile);

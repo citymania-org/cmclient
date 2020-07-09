@@ -8,6 +8,7 @@
 
 #include "cm_bitstream.hpp"
 #include "cm_saveload.hpp"
+#include "cm_settings.hpp"
 #include "cm_game.hpp"
 #include "cm_main.hpp"
 
@@ -116,7 +117,8 @@ void CBController_saveload_encode(BitOStream &bs) {
     bs.WriteBytes(0 /* version */, 2);
     // Controller::saveload_encode(bs);
     bs.WriteBytes(0, 1);
-    bs.WriteBytes(_settings_client.gui.cb_distance_check, 1);
+    bs.WriteBytes(0, 1);
+    // bs.WriteBytes(_settings_client.gui.cb_distance_check, 1);
     bs.WriteBytes(0, 1);
     bs.WriteBytes(0, 1);
     bs.WriteBytes(0, 1);
@@ -124,43 +126,43 @@ void CBController_saveload_encode(BitOStream &bs) {
     bs.WriteBytes(0, 1);
     bs.WriteBytes(0, 1);
     std::vector<CargoID> cb_cargos;
-	for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++) {
-		if (CB_GetReq(cargo) > 0)
-			cb_cargos.push_back(cargo);
-	}
+	// for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++) {
+	// 	if (CB_GetReq(cargo) > 0)
+	// 		cb_cargos.push_back(cargo);
+	// }
 
-    for (auto cargo_id : cb_cargos) {
-        // bs.WriteBytes(req.cargo_id, 1);
-        // bs.WriteBytes(req.amount, 4);
-        // bs.WriteBytes(req.from, 4);
-        // bs.WriteBytes(req.decay, 1);
-        bs.WriteBytes(cargo_id, 1);
-        bs.WriteBytes(CB_GetReq(cargo_id), 4);
-        bs.WriteBytes(CB_GetFrom(cargo_id), 4);
-        bs.WriteBytes(CB_GetDecay(cargo_id), 1);
-    }
-    // uint16 cb_towns = 0;
-    // ForEachCBTown([this, &cb_towns](Town *, Company *) { cb_towns++; });
-    bs.WriteBytes(Town::GetNumItems(), 2);
-	for (Town *t : Town::Iterate()) {
-        auto &tcb = t->cb;
-        bs.WriteBytes(t->index, 2);
-        bs.WriteBytes(tcb.pax_delivered, 4);
-        bs.WriteBytes(tcb.mail_delivered, 4);
-        bs.WriteBytes(tcb.pax_delivered_last_month, 4);
-        bs.WriteBytes(tcb.mail_delivered_last_month, 4);
-        bs.WriteBytes((uint8)tcb.growth_state, 1);
-        bs.WriteBytes(tcb.shrink_effeciency, 1);
-        bs.WriteBytes(tcb.shrink_rate, 2);
-        bs.WriteBytes(tcb.shrink_counter, 2);
-        for (auto cargo_id : cb_cargos) {
-            bs.WriteBytes(tcb.stored[cargo_id], 4);
-            bs.WriteBytes(tcb.delivered[cargo_id], 4);
-            bs.WriteBytes(tcb.required[cargo_id], 4);
-            bs.WriteBytes(tcb.delivered_last_month[cargo_id], 4);
-            bs.WriteBytes(tcb.required_last_month[cargo_id], 4);
-        }
-    }
+ //    for (auto cargo_id : cb_cargos) {
+ //        // bs.WriteBytes(req.cargo_id, 1);
+ //        // bs.WriteBytes(req.amount, 4);
+ //        // bs.WriteBytes(req.from, 4);
+ //        // bs.WriteBytes(req.decay, 1);
+ //        bs.WriteBytes(cargo_id, 1);
+ //        bs.WriteBytes(CB_GetReq(cargo_id), 4);
+ //        bs.WriteBytes(CB_GetFrom(cargo_id), 4);
+ //        bs.WriteBytes(CB_GetDecay(cargo_id), 1);
+ //    }
+ //    // uint16 cb_towns = 0;
+ //    // ForEachCBTown([this, &cb_towns](Town *, Company *) { cb_towns++; });
+ //    bs.WriteBytes(Town::GetNumItems(), 2);
+	// for (Town *t : Town::Iterate()) {
+ //        auto &tcb = t->cb;
+ //        bs.WriteBytes(t->index, 2);
+ //        bs.WriteBytes(tcb.pax_delivered, 4);
+ //        bs.WriteBytes(tcb.mail_delivered, 4);
+ //        bs.WriteBytes(tcb.pax_delivered_last_month, 4);
+ //        bs.WriteBytes(tcb.mail_delivered_last_month, 4);
+ //        bs.WriteBytes((uint8)tcb.growth_state, 1);
+ //        bs.WriteBytes(tcb.shrink_effeciency, 1);
+ //        bs.WriteBytes(tcb.shrink_rate, 2);
+ //        bs.WriteBytes(tcb.shrink_counter, 2);
+ //        for (auto cargo_id : cb_cargos) {
+ //            bs.WriteBytes(tcb.stored[cargo_id], 4);
+ //            bs.WriteBytes(tcb.delivered[cargo_id], 4);
+ //            bs.WriteBytes(tcb.required[cargo_id], 4);
+ //            bs.WriteBytes(tcb.delivered_last_month[cargo_id], 4);
+ //            bs.WriteBytes(tcb.required_last_month[cargo_id], 4);
+ //        }
+ //    }
 }
 
 bool CBController_saveload_decode(BitIStream &bs) {
@@ -171,7 +173,8 @@ bool CBController_saveload_decode(BitIStream &bs) {
     // if (!Controller::saveload_decode(bs))
     //     return false;
     bs.ReadBytes(1);  /* _settings_game.citymania.cb.requirements_type */
-    _settings_client.gui.cb_distance_check = bs.ReadBytes(1); /* _settings_game.citymania.cb.acceptance_range */
+    bs.ReadBytes(1);  /* _settings_game.citymania.cb.acceptance_range */
+    // _settings_client.gui.cb_distance_check = bs.ReadBytes(1); /* _settings_game.citymania.cb.acceptance_range */
     bs.ReadBytes(1); /* _settings_game.citymania.cb.storage_size */
     bs.ReadBytes(1); /* _settings_game.citymania.cb.town_protection_range */
     bs.ReadBytes(2); /* _settings_game.citymania.cb.claim_max_houses */
@@ -191,7 +194,7 @@ bool CBController_saveload_decode(BitIStream &bs) {
         auto required = bs.ReadBytes(4);
         auto from = bs.ReadBytes(4);
         auto decay = bs.ReadBytes(1);
-		CB_SetRequirements(cargo_id, required, from, decay);
+		// CB_SetRequirements(cargo_id, required, from, decay);
         // _settings_game.citymania.cb.requirements.push_back(CBRequirement(cargo_id, from, required, decay, i, ""));
     }
 
@@ -205,28 +208,54 @@ bool CBController_saveload_decode(BitIStream &bs) {
             return false;
         }
 
-        auto &tcb = t->cb;
-        tcb.pax_delivered = bs.ReadBytes(4);
-        tcb.mail_delivered = bs.ReadBytes(4);
-        tcb.pax_delivered_last_month = bs.ReadBytes(4);
-        tcb.mail_delivered_last_month = bs.ReadBytes(4);
-        tcb.growth_state = (TownGrowthState)bs.ReadBytes(1);
-        tcb.shrink_effeciency = bs.ReadBytes(1);
-        tcb.shrink_rate = bs.ReadBytes(2);
-        tcb.shrink_counter = bs.ReadBytes(2);
-        for (auto cargo_id : cb_cargos) {
-            tcb.stored[cargo_id] = bs.ReadBytes(4);
-            tcb.delivered[cargo_id] = bs.ReadBytes(4);
-            tcb.required[cargo_id] = bs.ReadBytes(4);
-            tcb.delivered_last_month[cargo_id] = bs.ReadBytes(4);
-            tcb.required_last_month[cargo_id] = bs.ReadBytes(4);
-        }
+        // auto &tcb = t->cb;
+        // tcb.pax_delivered = bs.ReadBytes(4);
+        // tcb.mail_delivered = bs.ReadBytes(4);
+        // tcb.pax_delivered_last_month = bs.ReadBytes(4);
+        // tcb.mail_delivered_last_month = bs.ReadBytes(4);
+        // tcb.growth_state = (TownGrowthState)bs.ReadBytes(1);
+        // tcb.shrink_effeciency = bs.ReadBytes(1);
+        // tcb.shrink_rate = bs.ReadBytes(2);
+        // tcb.shrink_counter = bs.ReadBytes(2);
+        // for (auto cargo_id : cb_cargos) {
+        //     tcb.stored[cargo_id] = bs.ReadBytes(4);
+        //     tcb.delivered[cargo_id] = bs.ReadBytes(4);
+        //     tcb.required[cargo_id] = bs.ReadBytes(4);
+        //     tcb.delivered_last_month[cargo_id] = bs.ReadBytes(4);
+        //     tcb.required_last_month[cargo_id] = bs.ReadBytes(4);
+        // }
     };
     return true;
 }
 
-uint8 _controller_type = 0;
-uint8 _game_type = 0;
+void EncodeSettings(BitOStream &bs, Settings &settings) {
+    bs.WriteBytes(settings.max_players_in_company, 1);
+    bs.WriteBytes(settings.destroyed_houses_per_month, 2);
+    bs.WriteBytes(settings.game_length_years, 2);
+    bs.WriteBytes(settings.protect_funded_industries, 1);
+    bs.WriteBytes(settings.same_depot_sell_years, 2);
+    bs.WriteBytes(settings.economy.cashback_for_extra_land_clear, 1);
+    bs.WriteBytes(settings.economy.cashback_for_bridges_and_tunnels, 1);
+    bs.WriteBytes(settings.economy.cashback_for_foundations, 1);
+    bs.WriteBytes(settings.limits.max_airports, 2);
+    bs.WriteBytes(settings.limits.disable_canals, 1);
+    bs.WriteBytes(settings.limits.min_distance_between_docks, 2);
+}
+
+void DecodeSettings(BitIStream &bs, Settings &settings) {
+    settings.max_players_in_company = bs.ReadBytes(1);
+    settings.destroyed_houses_per_month = bs.ReadBytes(2);
+    settings.game_length_years = bs.ReadBytes(2);
+    settings.protect_funded_industries = bs.ReadBytes(1);
+    settings.same_depot_sell_years = bs.ReadBytes(2);
+    settings.economy.cashback_for_extra_land_clear = bs.ReadBytes(1);
+    settings.economy.cashback_for_bridges_and_tunnels = bs.ReadBytes(1);
+    settings.economy.cashback_for_foundations = bs.ReadBytes(1);
+    settings.limits.max_airports = bs.ReadBytes(2);
+    settings.limits.disable_canals = bs.ReadBytes(1);
+    settings.limits.min_distance_between_docks = bs.ReadBytes(2);
+}
+
 uint16 _last_client_version = 1512;
 
 static u8vector EncodeData() {
@@ -234,37 +263,39 @@ static u8vector EncodeData() {
 	bs.Reserve(1000);
 	bs.WriteBytes(SAVEGAME_DATA_FORMAT_VERSION, 2);
 	bs.WriteBytes(_last_client_version, 2);
-	bs.WriteBytes(_controller_type, 1);
+	bs.WriteBytes(_settings_game.citymania.controller_type, 1);
 	bs.WriteBytes(_date, 4);  // Just in case we'll need to detect that game
 	bs.WriteBytes(_date_fract, 1);  // was saved by unmodified client
-	bs.WriteBytes(_game_type, 1);
+	bs.WriteBytes(_settings_game.citymania.game_type, 1);
 	bs.WriteBytes(0, 3);  // Reserved
 	bs.WriteBytes(0, 4);  // Reserved
-
+    EncodeSettings(bs, _settings_game.citymania);
     EncodeCompanies(bs);
 	EncodeTowns(bs);
     EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
     EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
-	if (_controller_type == 4)
+	if (_settings_game.citymania.controller_type == 4)
 		CBController_saveload_encode(bs);
 
 	return bs.GetVector();
 }
 
 static void DecodeDataV2(BitIStream &bs) {
+    DecodeSettings(bs, _settings_game.citymania);
     DecodeCompanies(bs);
     DecodeTowns(bs);
     DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
     DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
-    if (_controller_type == 4) CBController_saveload_decode(bs);
+    if (_settings_game.citymania.controller_type == 4) CBController_saveload_decode(bs);
 }
 
 static void DecodeTownsCargoV1(BitIStream &bs)
 {
-	CB_SetStorage(bs.ReadBytes(1));
-	_settings_client.gui.cb_distance_check = bs.ReadBytes(1);
+    bs.ReadBytes(1);bs.ReadBytes(1);
+	// CB_SetStorage(bs.ReadBytes(1));
+	// _settings_client.gui.cb_distance_check = bs.ReadBytes(1);
 	uint n_cb_cargos = bs.ReadBytes(1);
-	CB_ResetRequirements();
+	// CB_ResetRequirements();
 	std::vector<CargoID> cb_cargos;
 	for (uint i = 0; i < n_cb_cargos; i++) {
 		uint cargo = bs.ReadBytes(1);
@@ -276,7 +307,7 @@ static void DecodeTownsCargoV1(BitIStream &bs)
 		uint req = bs.ReadBytes(4);
 		uint from = bs.ReadBytes(4);
 		uint decay = bs.ReadBytes(1);
-		CB_SetRequirements(cargo, req, from, decay);
+		// CB_SetRequirements(cargo, req, from, decay);
 	}
 	Town *t;
 	uint n_affected_towns = bs.ReadBytes(2);
@@ -287,21 +318,21 @@ static void DecodeTownsCargoV1(BitIStream &bs)
 			DEBUG(sl, 0, "Invalid TownID in CB towns cargo data (%u)", town_id);
 			return;
 		}
-        auto &tcb = t->cb;
-		for (auto cargo_id : cb_cargos) {
-            tcb.stored[cargo_id] = bs.ReadBytes(4);
-            tcb.delivered_last_month[cargo_id] = bs.ReadBytes(4);
-            tcb.delivered[cargo_id] = bs.ReadBytes(4);
-            bs.ReadBytes(1); /* delivered enough */
+  //       auto &tcb = t->cb;
+		// for (auto cargo_id : cb_cargos) {
+  //           tcb.stored[cargo_id] = bs.ReadBytes(4);
+  //           tcb.delivered_last_month[cargo_id] = bs.ReadBytes(4);
+  //           tcb.delivered[cargo_id] = bs.ReadBytes(4);
+  //           bs.ReadBytes(1); /* delivered enough */
 
-            tcb.required[cargo_id] = 0;
-            tcb.required_last_month[cargo_id] = 0;
-		}
+  //           tcb.required[cargo_id] = 0;
+  //           tcb.required_last_month[cargo_id] = 0;
+		// }
 	}
 }
 
 static void DecodeDataV1(BitIStream &bs) {
-    if (_controller_type != 0) DecodeTownsCargoV1(bs);
+    if (_settings_game.citymania.controller_type != 0) DecodeTownsCargoV1(bs);
     for (Town *t : Town::Iterate()) {
         t->cm.growing_by_chance = bs.ReadBytes(1);
         t->cm.houses_reconstructed_this_month = bs.ReadBytes(2);
@@ -348,15 +379,15 @@ static void DecodeData(u8vector &data) {
 		}
         DEBUG(sl, 2, "CityMania savegame data version %u", version);
 		_last_client_version = bs.ReadBytes(2);
-		_controller_type = bs.ReadBytes(1);
-		if (version <= 1) _controller_type = (_controller_type ? 4 : 0);
+		_settings_game.citymania.controller_type = bs.ReadBytes(1);
+		if (version <= 1) _settings_game.citymania.controller_type = (_settings_game.citymania.controller_type ? 4 : 0);
 		int32 date = bs.ReadBytes(4);
 		uint32 date_fract = bs.ReadBytes(1);
 		if (date != _date || date_fract != _date_fract) {
 			DEBUG(sl, 0, "Savegame was run in unmodified client, extra save data "
 			      "preserved, but may not be accurate");
 		}
-		_game_type = bs.ReadBytes(1);
+		_settings_game.citymania.game_type = bs.ReadBytes(1);
 		bs.ReadBytes(3);  // reserved
 		bs.ReadBytes(4);  // reserved
         if (version == 1) DecodeDataV1(bs);
