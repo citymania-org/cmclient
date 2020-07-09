@@ -7,6 +7,9 @@ steps:
     rm -f windows-dependencies.zip
 
     mv windows-dependencies/installed /c/vcpkg/
+    mv windows-dependencies/vcpkg.exe /c/vcpkg/
+    rm -rf /c/vcpkg/scripts
+    mv windows-dependencies/scripts /c/vcpkg/
     rm -rf windows-dependencies
   displayName: 'Install dependencies'
   workingDirectory: $(Build.ArtifactStagingDirectory)
