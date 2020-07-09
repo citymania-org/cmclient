@@ -130,6 +130,7 @@ public:
 
     void listen(Slot slot, Handler &handler) {
         this->handler_map.insert(std::make_pair(slot, handler));
+        this->new_handlers = true;
     }
 
     void emit(const T &event) {
@@ -138,6 +139,7 @@ public:
             for (auto &p : this->handler_map) {
                 this->handlers.push_back(p.second);
             }
+            this->new_handlers = false;
         }
         for (auto &h : this->handlers) {
             h(event);
