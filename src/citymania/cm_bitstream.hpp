@@ -1,6 +1,8 @@
 #ifndef BITSTREAM_H
 #define BITSTREAM_H
 
+#include "../economy_type.h"
+
 #include <vector>
 
 namespace citymania {
@@ -19,6 +21,7 @@ public:
 	void Reserve(int bytes);
 	void WriteBytes(uint32 value, int amount);
 	void WriteBytes64(uint64 value, int amount);
+	void WriteMoney(Money value);
 	const u8vector &GetVector();
 	uint GetByteSize() const;
 };
@@ -37,6 +40,8 @@ public:
 	BitIStream(u8vector &data): f(data), i(0) {}
 	virtual ~BitIStream(){}
 	uint32 ReadBytes(uint amount);
+	uint64 ReadBytes64(uint amount);
+	Money ReadMoney();
 };
 
 } // namespace citymania

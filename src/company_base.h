@@ -100,6 +100,8 @@ struct CompanyProperties {
 	CompanyEconomyEntry old_economy[MAX_HISTORY_QUARTERS]; ///< Economic data of the company of the last #MAX_HISTORY_QUARTERS quarters.
 	byte num_valid_stat_ent;                               ///< Number of valid statistical entries in #old_economy.
 
+	citymania::ext::Company cm;  ///< CityMania extra company data.
+
 	// TODO: Change some of these member variables to use relevant INVALID_xxx constants
 	CompanyProperties()
 		: name_2(0), name_1(0), name(nullptr), president_name_1(0), president_name_2(0), president_name(nullptr),

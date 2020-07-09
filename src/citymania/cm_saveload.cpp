@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 
+#include "../company_base.h"
 #include "../date_func.h"
 #include "../debug.h"
 #include "../saveload/saveload.h"
@@ -25,7 +26,7 @@ static const SaveLoad _storage_desc[] = {
 };
 
 
-static void EncodeTownsExtraInfo(BitOStream &bs)
+static void EncodeTowns(BitOStream &bs)
 {
 	for (const Town *t : Town::Iterate()) {
 		bs.WriteBytes(t->cm.growing_by_chance, 1);
@@ -33,7 +34,36 @@ static void EncodeTownsExtraInfo(BitOStream &bs)
 		bs.WriteBytes(t->cm.houses_reconstructed_last_month, 2);
         bs.WriteBytes(t->cm.houses_demolished_this_month, 2);
         bs.WriteBytes(t->cm.houses_demolished_last_month, 2);
+        bs.WriteBytes(t->cm.hs_total, 4);
+        bs.WriteBytes(t->cm.hs_total_prev, 2);
+        bs.WriteBytes(t->cm.hs_last_month, 2);
+        bs.WriteBytes(t->cm.cs_total, 4);
+        bs.WriteBytes(t->cm.cs_total_prev, 2);
+        bs.WriteBytes(t->cm.cs_last_month, 2);
+        bs.WriteBytes(t->cm.hr_total, 4);
+        bs.WriteBytes(t->cm.hr_total_prev, 2);
+        bs.WriteBytes(t->cm.hr_last_month, 2);
 	}
+}
+
+static void DecodeTowns(BitIStream &bs)
+{
+    for (Town *t : Town::Iterate()) {
+        t->cm.growing_by_chance = bs.ReadBytes(1);
+        t->cm.houses_reconstructed_this_month = bs.ReadBytes(2);
+        t->cm.houses_reconstructed_last_month = bs.ReadBytes(2);
+        t->cm.houses_demolished_this_month = bs.ReadBytes(2);
+        t->cm.houses_demolished_last_month = bs.ReadBytes(2);
+        t->cm.hs_total = bs.ReadBytes(2);
+        t->cm.hs_total_prev = bs.ReadBytes(2);
+        t->cm.hs_last_month = bs.ReadBytes(2);
+        t->cm.cs_total = bs.ReadBytes(2);
+        t->cm.cs_total_prev = bs.ReadBytes(2);
+        t->cm.cs_last_month = bs.ReadBytes(2);
+        t->cm.hr_total = bs.ReadBytes(2);
+        t->cm.hr_total_prev = bs.ReadBytes(2);
+        t->cm.hr_last_month = bs.ReadBytes(2);
+    }
 }
 
 static void EncodeTownsGrowthTiles(BitOStream &bs, Game::TownsGrowthTilesIndex &tiles)
@@ -43,43 +73,6 @@ static void EncodeTownsGrowthTiles(BitOStream &bs, Game::TownsGrowthTilesIndex &
 			p != tiles.end(); p++) {
 		bs.WriteBytes(p->first, 4);
 		bs.WriteBytes((uint8)p->second, 1);
-	}
-}
-
-static void EncodeTownsLayoutErrors(BitOStream &bs)
-{
-	uint n_affected_towns = 0;
-	for (const Town *t : Town::Iterate()) {
-		if (t->cm.hr_total || t->cm.hs_total || t->cm.cs_total)
-			n_affected_towns++;
-	}
-	bs.WriteBytes(n_affected_towns, 2);
-	for (const Town *t : Town::Iterate()) {
-        if (t->cm.hr_total || t->cm.hs_total || t->cm.cs_total) {
-			bs.WriteBytes(t->index, 2);
-			bs.WriteBytes(t->cm.hs_total, 4);
-			bs.WriteBytes(t->cm.hs_total_prev, 2);
-			bs.WriteBytes(t->cm.hs_last_month, 2);
-			bs.WriteBytes(t->cm.cs_total, 4);
-			bs.WriteBytes(t->cm.cs_total_prev, 2);
-			bs.WriteBytes(t->cm.cs_last_month, 2);
-			bs.WriteBytes(t->cm.hr_total, 4);
-			bs.WriteBytes(t->cm.hr_total_prev, 2);
-			bs.WriteBytes(t->cm.hr_last_month, 2);
-		}
-	}
-	EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
-	EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
-}
-
-static void DecodeTownsExtraInfo(BitIStream &bs)
-{
-    for (Town *t : Town::Iterate()) {
-		t->cm.growing_by_chance = bs.ReadBytes(1);
-        t->cm.houses_reconstructed_this_month = bs.ReadBytes(2);
-        t->cm.houses_reconstructed_last_month = bs.ReadBytes(2);
-        t->cm.houses_demolished_this_month = bs.ReadBytes(2);
-        t->cm.houses_demolished_last_month = bs.ReadBytes(2);
 	}
 }
 
@@ -93,29 +86,30 @@ static void DecodeTownsGrowthTiles(BitIStream &bs, Game::TownsGrowthTilesIndex &
 	}
 }
 
-static void DecodeTownsLayoutErrors(BitIStream &bs)
+static void EncodeCompanies(BitOStream &bs)
 {
-	Town *t;
-	uint n_affected_towns = bs.ReadBytes(2);
-	for (uint i = 0; i < n_affected_towns; i++) {
-		uint town_id = bs.ReadBytes(2);
-		t = Town::Get(town_id);
-		if (!t) {
-			DEBUG(sl, 0, "Invalid TownID in CB towns layout errors (%u)", town_id);
-			continue;
-		}
-		t->cm.hs_total = bs.ReadBytes(2);
-		t->cm.hs_total_prev = bs.ReadBytes(2);
-		t->cm.hs_last_month = bs.ReadBytes(2);
-		t->cm.cs_total = bs.ReadBytes(2);
-		t->cm.cs_total_prev = bs.ReadBytes(2);
-		t->cm.cs_last_month = bs.ReadBytes(2);
-		t->cm.hr_total = bs.ReadBytes(2);
-		t->cm.hr_total_prev = bs.ReadBytes(2);
-		t->cm.hr_last_month = bs.ReadBytes(2);
-	}
-	DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
-	DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
+    for (const Company *c : Company::Iterate()) {
+        bs.WriteBytes(c->cm.is_server, 1);
+        bs.WriteBytes(c->cm.is_scored, 1);
+        for (uint i = 0; i < NUM_CARGO; i++)
+            bs.WriteMoney(c->cur_economy.cm.cargo_income[i]);
+        for (uint j = 0; j < MAX_HISTORY_QUARTERS; j++)
+            for (uint i = 0; i < NUM_CARGO; i++)
+                bs.WriteMoney(c->old_economy[j].cm.cargo_income[i]);
+    }
+}
+
+static void DecodeCompanies(BitIStream &bs)
+{
+    for (Company *c : Company::Iterate()) {
+        c->cm.is_server = bs.ReadBytes(1);
+        c->cm.is_scored = bs.ReadBytes(1);
+        for (uint i = 0; i < NUM_CARGO; i++)
+            c->cur_economy.cm.cargo_income[i] = bs.ReadMoney();
+        for (uint j = 0; j < MAX_HISTORY_QUARTERS; j++)
+            for (uint i = 0; i < NUM_CARGO; i++)
+                c->old_economy[j].cm.cargo_income[i] = bs.ReadMoney();
+    }
 }
 
 void CBController_saveload_encode(BitOStream &bs) {
@@ -247,12 +241,22 @@ static u8vector EncodeData() {
 	bs.WriteBytes(0, 3);  // Reserved
 	bs.WriteBytes(0, 4);  // Reserved
 
-	EncodeTownsExtraInfo(bs);
-	EncodeTownsLayoutErrors(bs);
+    EncodeCompanies(bs);
+	EncodeTowns(bs);
+    EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
+    EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
 	if (_controller_type == 4)
 		CBController_saveload_encode(bs);
 
 	return bs.GetVector();
+}
+
+static void DecodeDataV2(BitIStream &bs) {
+    DecodeCompanies(bs);
+    DecodeTowns(bs);
+    DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
+    DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
+    if (_controller_type == 4) CBController_saveload_decode(bs);
 }
 
 static void DecodeTownsCargoV1(BitIStream &bs)
@@ -296,12 +300,42 @@ static void DecodeTownsCargoV1(BitIStream &bs)
 	}
 }
 
+static void DecodeDataV1(BitIStream &bs) {
+    if (_controller_type != 0) DecodeTownsCargoV1(bs);
+    for (Town *t : Town::Iterate()) {
+        t->cm.growing_by_chance = bs.ReadBytes(1);
+        t->cm.houses_reconstructed_this_month = bs.ReadBytes(2);
+        t->cm.houses_reconstructed_last_month = bs.ReadBytes(2);
+        t->cm.houses_demolished_this_month = bs.ReadBytes(2);
+        t->cm.houses_demolished_last_month = bs.ReadBytes(2);
+    }
+
+    Town *t;
+    uint n_affected_towns = bs.ReadBytes(2);
+    for (uint i = 0; i < n_affected_towns; i++) {
+        uint town_id = bs.ReadBytes(2);
+        t = Town::Get(town_id);
+        if (!t) {
+            DEBUG(sl, 0, "Invalid TownID in CB towns layout errors (%u)", town_id);
+            continue;
+        }
+        t->cm.hs_total = bs.ReadBytes(2);
+        t->cm.hs_total_prev = bs.ReadBytes(2);
+        t->cm.hs_last_month = bs.ReadBytes(2);
+        t->cm.cs_total = bs.ReadBytes(2);
+        t->cm.cs_total_prev = bs.ReadBytes(2);
+        t->cm.cs_last_month = bs.ReadBytes(2);
+        t->cm.hr_total = bs.ReadBytes(2);
+        t->cm.hr_total_prev = bs.ReadBytes(2);
+        t->cm.hr_last_month = bs.ReadBytes(2);
+    }
+    DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
+    DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
+}
+
 static void DecodeData(u8vector &data) {
 	if (data.size() == 0) {
 		DEBUG(sl, 2, "No CityMania save data");
-		return;
-	} else {
-		DEBUG(sl, 2, "Ignoring CityMania data in savegame");
 		return;
 	}
 	DEBUG(sl, 2, "CityMania save data takes %lu bytes", data.size());
@@ -312,6 +346,7 @@ static void DecodeData(u8vector &data) {
 			DEBUG(sl, 0, "Savegame was made with newer version of client, extra save data was not loaded");
 			return;
 		}
+        DEBUG(sl, 2, "CityMania savegame data version %u", version);
 		_last_client_version = bs.ReadBytes(2);
 		_controller_type = bs.ReadBytes(1);
 		if (version <= 1) _controller_type = (_controller_type ? 4 : 0);
@@ -324,10 +359,8 @@ static void DecodeData(u8vector &data) {
 		_game_type = bs.ReadBytes(1);
 		bs.ReadBytes(3);  // reserved
 		bs.ReadBytes(4);  // reserved
-		if (version <= 1 && _controller_type != 0) DecodeTownsCargoV1(bs);
-		DecodeTownsExtraInfo(bs);
-		DecodeTownsLayoutErrors(bs);
-		if (version > 1 && _controller_type == 4) CBController_saveload_decode(bs);
+        if (version == 1) DecodeDataV1(bs);
+        else DecodeDataV2(bs);
 	}
 	catch (BitIStreamUnexpectedEnd &e) {
 		DEBUG(sl, 0, "Invalid CityMania save data");
