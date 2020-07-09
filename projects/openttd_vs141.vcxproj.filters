@@ -3135,6 +3135,12 @@
     <ClInclude Include="..\src\thread.h">
       <Filter>Threading</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\citymania\cm_bitstream.hpp">
+      <Filter>CityMania</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_bitstream.cpp">
+      <Filter>CityMania</Filter>
+    </ClCompile>
     <ClInclude Include="..\src\citymania\cm_console_cmds.hpp">
       <Filter>CityMania</Filter>
     </ClInclude>
@@ -3163,6 +3169,15 @@
       <Filter>CityMania</Filter>
     </ClCompile>
     <ClInclude Include="..\src\citymania\cm_type.hpp">
+      <Filter>CityMania</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\citymania\cm_saveload.hpp">
+      <Filter>CityMania</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_saveload.cpp">
+      <Filter>CityMania</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_settings.hpp">
       <Filter>CityMania</Filter>
     </ClInclude>
     <ClInclude Include="..\src\citymania\extensions\cmext_town.hpp">
