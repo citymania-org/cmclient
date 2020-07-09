@@ -75,10 +75,17 @@ This is usable for any OpenTTD servers
 == CHANGELOG ==
 
 *** next () ***
+- Fix order hotkeys adding extra no load/unload orders.
+- Allow to use TAB as a hotkey
+- Add hotkey to toggle minimap
+- Make hotkey to close news and errors configurable (still defaults to SPACE)
+- Remove custom hotkey keycodes that were added to vanilla
+- Make land info tool work with right click tooltip setting
+- Make station rating tooltips work with right click tooltip setting
+- Splilt extra(land) tooltips setting in config into 3 for industries, stations and houses separately.
 - Add a setting to pause games after loading.
 - Add a "step" console command to advance the game for n ticks (singleplayer only).
-- Fix order hotkeys adding extra no load/unload orders.
--
+- cmexport
 
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.
