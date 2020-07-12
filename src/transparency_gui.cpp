@@ -18,6 +18,8 @@
 #include "table/sprites.h"
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 TransparencyOptionBits _transparency_opt;  ///< The bits that should be transparent.
@@ -70,7 +72,7 @@ public:
 	void OnClick(Point pt, int widget, int click_count) override
 	{
 		if (widget >= WID_TT_BEGIN && widget < WID_TT_END) {
-			if (_ctrl_pressed) {
+			if (citymania::_fn_mod) {
 				/* toggle the bit of the transparencies lock variable */
 				ToggleTransparencyLock((TransparencyOption)(widget - WID_TT_BEGIN));
 				this->SetDirty();

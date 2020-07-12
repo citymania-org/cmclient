@@ -39,6 +39,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 const NewsItem *_statusbar_news_item = nullptr;
@@ -506,7 +508,7 @@ struct NewsWindow : Window {
 				} else {
 					TileIndex tile1 = GetReferenceTile(this->ni->reftype1, this->ni->ref1);
 					TileIndex tile2 = GetReferenceTile(this->ni->reftype2, this->ni->ref2);
-					if (_ctrl_pressed) {
+					if (citymania::_fn_mod) {
 						if (tile1 != INVALID_TILE) ShowExtraViewPortWindow(tile1);
 						if (tile2 != INVALID_TILE) ShowExtraViewPortWindow(tile2);
 					} else {

@@ -28,6 +28,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 /**
@@ -128,7 +130,7 @@ struct EnginePreviewWindow : Window {
 				DoCommandP(0, this->window_number, 0, CMD_WANT_ENGINE_PREVIEW);
 				FALLTHROUGH;
 			case WID_EP_NO:
-				if (!_shift_pressed) delete this;
+				if (!citymania::_estimate_mod) delete this;
 				break;
 		}
 	}

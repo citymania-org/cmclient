@@ -35,6 +35,8 @@
 #include "hotkeys.h"
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 /**
@@ -1432,7 +1434,7 @@ struct BuildVehicleWindow : Window {
 				size_t num_items = this->eng_list.size();
 				this->SelectEngine((i < num_items) ? this->eng_list[i] : INVALID_ENGINE);
 				this->SetDirty();
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					this->OnClick(pt, WID_BV_SHOW_HIDE, 1);
 				} else if (click_count > 1 && !this->listview_mode) {
 					this->OnClick(pt, WID_BV_BUILD, 1);

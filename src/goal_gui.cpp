@@ -28,6 +28,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 /** Goal list columns. */
@@ -147,7 +149,7 @@ struct GoalListWindow : public Window {
 			default: NOT_REACHED();
 		}
 
-		if (_ctrl_pressed) {
+		if (citymania::_fn_mod) {
 			ShowExtraViewPortWindow(xy);
 		} else {
 			ScrollMainWindowToTile(xy);

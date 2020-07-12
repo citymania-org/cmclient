@@ -38,6 +38,7 @@
 
 #include "widgets/rail_widget.h"
 
+#include "citymania/cm_hotkeys.hpp"
 #include "citymania/station_ui.hpp"
 
 #include "safeguards.h"
@@ -210,7 +211,7 @@ static void PlaceRail_Station(TileIndex tile)
 			citymania::PlaceRail_Station(tile);
 			return;
 		}
-		uint32 p1 = _cur_railtype | _railstation.orientation << 6 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | _ctrl_pressed << 24;
+		uint32 p1 = _cur_railtype | _railstation.orientation << 6 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | citymania::_fn_mod << 24;
 		uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 
 		int w = _settings_client.gui.station_numtracks;
@@ -254,13 +255,13 @@ static void GenericPlaceSignals(TileIndex tile)
 
 		if (w != nullptr) {
 			/* signal GUI is used */
-			SB(p1, 3, 1, _ctrl_pressed);
+			SB(p1, 3, 1, citymania::_fn_mod);
 			SB(p1, 4, 1, _cur_signal_variant);
 			SB(p1, 5, 3, _cur_signal_type);
 			SB(p1, 8, 1, _convert_signal_button);
 			SB(p1, 9, 6, cycle_bounds[_settings_client.gui.cycle_signal_types]);
 		} else {
-			SB(p1, 3, 1, _ctrl_pressed);
+			SB(p1, 3, 1, citymania::_fn_mod);
 			SB(p1, 4, 1, (_cur_year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC));
 			SB(p1, 5, 3, _default_signal_type[_settings_client.gui.default_signal_type]);
 			SB(p1, 8, 1, 0);
@@ -399,7 +400,7 @@ static void HandleAutodirPlacement()
 	 * snap point over the last overbuilt track piece. In such case we don't
 	 * wan't to show any errors to the user. Don't execute the command right
 	 * away, first check if overbuilding. */
-	if (_shift_pressed || !(_thd.place_mode & HT_POLY) ||
+	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) ||
 			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
 			_rail_track_endtile == INVALID_TILE) {
 		/* Execute. */
@@ -408,7 +409,7 @@ static void HandleAutodirPlacement()
 
 	/* Save new snap points for the polyline tool, no matter if the command
 	 * succeeded, the snapping will be extended over overbuilt track pieces. */
-	if (!_shift_pressed && _rail_track_endtile != INVALID_TILE) {
+	if (!citymania::_estimate_mod && _rail_track_endtile != INVALID_TILE) {
 		StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
 	}
 }
@@ -434,14 +435,14 @@ static void HandleAutoSignalPlacement()
 		/* signal GUI is used */
 		SB(p2,  3, 1, 0);
 		SB(p2,  4, 1, _cur_signal_variant);
-		SB(p2,  6, 1, _ctrl_pressed);
+		SB(p2,  6, 1, citymania::_fn_mod);
 		SB(p2,  7, 3, _cur_signal_type);
 		SB(p2, 24, 8, _settings_client.gui.drag_signals_density);
 		SB(p2, 10, 1, !_settings_client.gui.drag_signals_fixed_distance);
 	} else {
 		SB(p2,  3, 1, 0);
 		SB(p2,  4, 1, (_cur_year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC));
-		SB(p2,  6, 1, _ctrl_pressed);
+		SB(p2,  6, 1, citymania::_fn_mod);
 		SB(p2,  7, 3, _default_signal_type[_settings_client.gui.default_signal_type]);
 		SB(p2, 24, 8, _settings_client.gui.drag_signals_density);
 		SB(p2, 10, 1, !_settings_client.gui.drag_signals_fixed_distance);
@@ -689,7 +690,7 @@ struct BuildRailToolbarWindow : Window {
 				} else if (this->last_user_action == HOTKEY_NEW_POLYRAIL) {
 					do_snap = false;
 					do_open = !was_open || was_snap;
-				} else if (_ctrl_pressed) {
+				} else if (citymania::_fn_mod) {
 					do_snap = !was_open || !was_snap;
 					do_open = true;
 				} else {
@@ -752,7 +753,7 @@ struct BuildRailToolbarWindow : Window {
 			case WID_RAT_BUILD_SIGNALS: {
 				this->last_user_action = widget;
 				bool started = HandlePlacePushButton(this, WID_RAT_BUILD_SIGNALS, ANIMCURSOR_BUILDSIGNALS, HT_RECT);
-				if (started && _settings_client.gui.enable_signal_gui != _ctrl_pressed) {
+				if (started && _settings_client.gui.enable_signal_gui != citymania::_fn_mod) {
 					ShowSignalBuilder(this);
 				}
 				break;
@@ -780,7 +781,7 @@ struct BuildRailToolbarWindow : Window {
 			default: NOT_REACHED();
 		}
 		this->UpdateRemoveWidgetStatus(widget);
-		if (_ctrl_pressed && remove_on_ctrl) RailToolbar_CtrlChanged(this);
+		if (citymania::_remove_mod && remove_on_ctrl) RailToolbar_CtrlChanged(this);
 	}
 
 	EventState OnHotkey(int hotkey) override
@@ -842,7 +843,7 @@ struct BuildRailToolbarWindow : Window {
 				DoCommandP(tile, _cur_railtype, ddir,
 						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
 						CcRailDepot);
-				if (_ctrl_pressed == _settings_client.gui.persistent_depottools)
+				if (citymania::_fn_mod == _settings_client.gui.persistent_depottools)
 					ResetObjectToPlace();
 				break;
 
@@ -905,7 +906,7 @@ struct BuildRailToolbarWindow : Window {
 					break;
 
 				case DDSP_CONVERT_RAIL:
-					DoCommandP(end_tile, start_tile, _cur_railtype | (_ctrl_pressed ? 1 << 6 : 0), CMD_CONVERT_RAIL | CMD_MSG(STR_ERROR_CAN_T_CONVERT_RAIL), CcPlaySound_SPLAT_RAIL);
+					DoCommandP(end_tile, start_tile, _cur_railtype | (citymania::_fn_mod ? 1 << 6 : 0), CMD_CONVERT_RAIL | CMD_MSG(STR_ERROR_CAN_T_CONVERT_RAIL), CcPlaySound_SPLAT_RAIL);
 					break;
 
 				case DDSP_REMOVE_STATION:
@@ -913,17 +914,17 @@ struct BuildRailToolbarWindow : Window {
 					if (this->IsWidgetLowered(WID_RAT_BUILD_STATION)) {
 						/* Station */
 						if (_remove_button_clicked) {
-							DoCommandP(end_tile, start_tile, _ctrl_pressed ? 0 : 1, CMD_REMOVE_FROM_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_REMOVE_PART_OF_STATION), CcPlaySound_SPLAT_RAIL);
+							DoCommandP(end_tile, start_tile, citymania::_fn_mod ? 0 : 1, CMD_REMOVE_FROM_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_REMOVE_PART_OF_STATION), CcPlaySound_SPLAT_RAIL);
 						} else {
 							HandleStationPlacement(start_tile, end_tile);
 						}
 					} else {
 						/* Waypoint */
 						if (_remove_button_clicked) {
-							DoCommandP(end_tile, start_tile, _ctrl_pressed ? 0 : 1, CMD_REMOVE_FROM_RAIL_WAYPOINT | CMD_MSG(STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT), CcPlaySound_SPLAT_RAIL);
+							DoCommandP(end_tile, start_tile, citymania::_fn_mod ? 0 : 1, CMD_REMOVE_FROM_RAIL_WAYPOINT | CMD_MSG(STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT), CcPlaySound_SPLAT_RAIL);
 						} else {
 							TileArea ta(start_tile, end_tile);
-							uint32 p1 = _cur_railtype | (select_method == VPM_X_LIMITED ? AXIS_X : AXIS_Y) << 6 | ta.w << 8 | ta.h << 16 | _ctrl_pressed << 24;
+							uint32 p1 = _cur_railtype | (select_method == VPM_X_LIMITED ? AXIS_X : AXIS_Y) << 6 | ta.w << 8 | ta.h << 16 | citymania::_fn_mod << 24;
 							uint32 p2 = STAT_CLASS_WAYP | _cur_waypoint_type << 8 | INVALID_STATION << 16;
 
 							CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_WAYPOINT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT), CcPlaySound_SPLAT_RAIL, "" };
@@ -959,7 +960,7 @@ struct BuildRailToolbarWindow : Window {
 		VpSetPresizeRange(tile, _build_tunnel_endtile == 0 ? tile : _build_tunnel_endtile);
 	}
 
-	EventState OnCTRLStateChange() override
+	EventState CM_OnRemoveModStateChange() override
 	{
 		/* do not toggle Remove button by Ctrl when placing station */
 		if (!this->IsWidgetLowered(WID_RAT_BUILD_STATION) && !this->IsWidgetLowered(WID_RAT_BUILD_WAYPOINT) && RailToolbar_CtrlChanged(this)) return ES_HANDLED;
@@ -1097,7 +1098,7 @@ static void HandleStationPlacement(TileIndex start, TileIndex end)
 
 	if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
 
-	uint32 p1 = _cur_railtype | _railstation.orientation << 6 | numtracks << 8 | platlength << 16 | _ctrl_pressed << 24;
+	uint32 p1 = _cur_railtype | _railstation.orientation << 6 | numtracks << 8 | platlength << 16 | citymania::_fn_mod << 24;
 	uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 
 	CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };

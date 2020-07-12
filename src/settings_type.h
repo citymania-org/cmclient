@@ -195,6 +195,10 @@ struct GUISettings {
 	bool cm_land_tooltips_for_stations;
 	bool cm_land_tooltips_for_houses;
 
+	citymania::ModKey cm_fn_mod;
+	citymania::ModKey cm_remove_mod;
+	citymania::ModKey cm_estimate_mod;
+
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
 	 * @return whether the user has sufficient privileges to edit newgrfs in an existing game

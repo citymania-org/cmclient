@@ -25,6 +25,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 /** GUI for accessing waypoints and buoys. */
@@ -88,7 +90,7 @@ public:
 	{
 		switch (widget) {
 			case WID_W_CENTER_VIEW: // scroll to location
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowExtraViewPortWindow(this->GetCenterTile());
 				} else {
 					ScrollMainWindowToTile(this->GetCenterTile());

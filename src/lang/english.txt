@@ -5526,3 +5526,13 @@ STR_CM_LAND_TOOLTIPS_STATION_CARGO                :{WHITE}{STRING}  {BLACK}{CARG
 
 STR_LAND_AREA_INFORMATION_POP                                   :{BLACK}Population: {LTBLUE}{NUM}
 
+STR_CM_CONFIG_SETTING_MODIFIER_FN          : Additional function modifier key: {STRING2}
+STR_CM_CONFIG_SETTING_MODIFIER_FN_HELPTEXT : Modifier key for accessing additional functions.
+STR_CM_CONFIG_SETTING_MODIFIER_REMOVE          : Remove modifier key: {STRING2}
+STR_CM_CONFIG_SETTING_MODIFIER_REMOVE_HELPTEXT : Modifier key for removal mode on building tools.
+STR_CM_CONFIG_SETTING_MODIFIER_ESTIMATE          : Estimate modifier key: {STRING2}
+STR_CM_CONFIG_SETTING_MODIFIER_ESTIMATE_HELPTEXT : Modifier key for estimating action cost.
+STR_CM_CONFIG_SETTING_MODIFIER_NONE  : None
+STR_CM_CONFIG_SETTING_MODIFIER_SHIFT : Shift
+STR_CM_CONFIG_SETTING_MODIFIER_CTRL  : Ctrl
+STR_CM_CONFIG_SETTING_MODIFIER_ALT   : Alt

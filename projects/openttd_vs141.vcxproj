@@ -1367,6 +1367,8 @@
     <ClCompile Include="..\src\citymania\cm_export.cpp" />
     <ClInclude Include="..\src\citymania\cm_game.hpp" />
     <ClCompile Include="..\src\citymania\cm_game.cpp" />
+    <ClInclude Include="..\src\citymania\cm_hotkeys.hpp" />
+    <ClCompile Include="..\src\citymania\cm_hotkeys.cpp" />
     <ClInclude Include="..\src\citymania\cm_main.hpp" />
     <ClCompile Include="..\src\citymania\cm_main.cpp" />
     <ClInclude Include="..\src\citymania\cm_tooltips.hpp" />

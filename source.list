@@ -1212,6 +1212,8 @@ citymania/cm_export.hpp
 citymania/cm_export.cpp
 citymania/cm_game.hpp
 citymania/cm_game.cpp
+citymania/cm_hotkeys.hpp
+citymania/cm_hotkeys.cpp
 citymania/cm_main.hpp
 citymania/cm_main.cpp
 citymania/cm_tooltips.hpp

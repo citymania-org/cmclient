@@ -42,6 +42,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 /** The sprite picker. */
@@ -972,10 +974,10 @@ struct SpriteAlignerWindow : Window {
 				}
 				switch (widget) {
 					/* Move eight units at a time if ctrl is pressed. */
-					case WID_SA_UP:    spr->y_offs -= _ctrl_pressed ? 8 : 1; break;
-					case WID_SA_DOWN:  spr->y_offs += _ctrl_pressed ? 8 : 1; break;
-					case WID_SA_LEFT:  spr->x_offs -= _ctrl_pressed ? 8 : 1; break;
-					case WID_SA_RIGHT: spr->x_offs += _ctrl_pressed ? 8 : 1; break;
+					case WID_SA_UP:    spr->y_offs -= citymania::_fn_mod ? 8 : 1; break;
+					case WID_SA_DOWN:  spr->y_offs += citymania::_fn_mod ? 8 : 1; break;
+					case WID_SA_LEFT:  spr->x_offs -= citymania::_fn_mod ? 8 : 1; break;
+					case WID_SA_RIGHT: spr->x_offs += citymania::_fn_mod ? 8 : 1; break;
 				}
 				/* Of course, we need to redraw the sprite, but where is it used?
 				 * Everywhere is a safe bet. */

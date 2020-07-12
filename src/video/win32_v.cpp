@@ -29,6 +29,8 @@
 #include <condition_variable>
 #include <algorithm>
 
+#include "../../citymania/cm_hotkeys.hpp"
+
 #include "../safeguards.h"
 
 /* Missing define in MinGW headers. */
@@ -1253,7 +1255,8 @@ void VideoDriver_Win32::MainLoop()
 				_dirkeys = 0;
 			}
 
-			if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+			// CM if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+			citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
 
 			/* Flush GDI buffer to ensure we don't conflict with the drawing thread. */
 			GdiFlush();

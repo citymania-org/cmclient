@@ -41,6 +41,8 @@
 #include "../zoom_func.h"
 #include "../watch_gui.h"
 
+#include "../citymania/cm_hotkeys.hpp"
+
 #include "../safeguards.h"
 
 
@@ -616,7 +618,7 @@ public:
 		this->SetWidgetDisabledState(WID_NG_JOIN, sel == nullptr || // no Selected Server
 				!sel->online || // Server offline
 				sel->info.clients_on >= sel->info.clients_max || // Server full
-				(!sel->info.compatible && !_ctrl_pressed)); // Revision mismatch
+				(!sel->info.compatible && !citymania::_fn_mod)); // Revision mismatch
 
 		/* 'NewGRF Settings' button invisible if no NewGRF is used */
 		this->GetWidget<NWidgetStacked>(WID_NG_NEWGRF_SEL)->SetDisplayedPlane(sel == nullptr || !sel->online || sel->info.grfconfig == nullptr);
@@ -1221,7 +1223,7 @@ struct NetworkStartServerWindow : public Window {
 
 			case WID_NSS_GENERATE_GAME: // Start game
 				_is_network_server = true;
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					StartNewGameWithoutGUI(GENERATE_NEW_SEED);
 				} else {
 					ShowGenerateLandscape();

@@ -611,8 +611,9 @@ public:
 	 * @return #ES_HANDLED if the change has been handled and no other
 	 *         window should receive the event.
 	 */
-	virtual EventState OnCTRLStateChange() { return ES_NOT_HANDLED; }
-
+	// CM virtual EventState OnCTRLStateChange() { return ES_NOT_HANDLED; }
+	virtual EventState CM_OnFnModStateChange() { return ES_NOT_HANDLED; }
+	virtual EventState CM_OnRemoveModStateChange() { return ES_NOT_HANDLED; }
 
 	/**
 	 * A click with the left mouse button has been made on the window.

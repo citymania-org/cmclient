@@ -31,6 +31,8 @@
 #include "table/strings.h"
 #include "table/sprites.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 struct SelectGameWindow : public Window {
@@ -117,7 +119,7 @@ struct SelectGameWindow : public Window {
 
 		switch (widget) {
 			case WID_SGI_GENERATE_GAME:
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					StartNewGameWithoutGUI(GENERATE_NEW_SEED);
 				} else {
 					ShowGenerateLandscape();

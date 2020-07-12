@@ -23,6 +23,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 struct SubsidyListWindow : Window {
@@ -82,8 +84,8 @@ struct SubsidyListWindow : Window {
 			default: NOT_REACHED();
 		}
 
-		if (_ctrl_pressed || !ScrollMainWindowToTile(xy)) {
-			if (_ctrl_pressed) ShowExtraViewPortWindow(xy);
+		if (citymania::_fn_mod || !ScrollMainWindowToTile(xy)) {
+			if (citymania::_fn_mod) ShowExtraViewPortWindow(xy);
 
 			/* otherwise determine dst coordinate for subsidy and scroll to it */
 			switch (s->dst_type) {
@@ -92,7 +94,7 @@ struct SubsidyListWindow : Window {
 				default: NOT_REACHED();
 			}
 
-			if (_ctrl_pressed) {
+			if (citymania::_fn_mod) {
 				ShowExtraViewPortWindow(xy);
 			} else {
 				ScrollMainWindowToTile(xy);

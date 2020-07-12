@@ -44,6 +44,8 @@
 #include <list>
 #include "console_func.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 struct CargoX {
 	int id;
 	int from;
@@ -504,7 +506,7 @@ public:
 	{
 		switch (widget) {
 			case WID_TV_CENTER_VIEW: // scroll to location
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowExtraViewPortWindow(this->town->xy);
 				} else {
 					ScrollMainWindowToTile(this->town->xy);
@@ -1037,7 +1039,7 @@ public:
 
 				const Town *t = this->towns[id_v];
 				assert(t != nullptr);
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowExtraViewPortWindow(t->xy);
 				} else {
 					ScrollMainWindowToTile(t->xy);
@@ -1298,7 +1300,7 @@ public:
 				townnameparts, CMD_FOUND_TOWN | CMD_MSG(errstr), cc, name);
 
 		/* Rerandomise name, if success and no cost-estimation. */
-		if (success && !_shift_pressed) this->RandomTownName();
+		if (success && !citymania::_estimate_mod) this->RandomTownName();
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override
@@ -1461,7 +1463,7 @@ public:
 		switch (widget) {
 			case WID_CB_LOCATION:
 			case WID_CB_CENTER_VIEW: // scroll to location
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowExtraViewPortWindow(this->town->xy);
 				}
 				else {

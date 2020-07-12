@@ -29,6 +29,7 @@
 
 #include "widgets/airport_widget.h"
 
+#include "citymania/cm_hotkeys.hpp"
 #include "citymania/station_ui.hpp"
 
 #include "safeguards.h"
@@ -62,7 +63,7 @@ static void PlaceAirport(TileIndex tile)
 	}
 
 	if (_selected_airport_index == -1) return;
-	uint32 p2 = _ctrl_pressed;
+	uint32 p2 = (citymania::_fn_mod ? 1 : 0);
 	SB(p2, 16, 16, INVALID_STATION); // no station to join
 
 	uint32 p1 = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();

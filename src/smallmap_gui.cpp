@@ -29,6 +29,7 @@
 
 #include <bitset>
 
+#include "citymania/cm_hotkeys.hpp"
 #include "citymania/minimap.hpp"
 
 #include "safeguards.h"
@@ -1377,7 +1378,7 @@ inline uint SmallMapWindow::GetNumberRowsLegend(uint columns) const
  */
 void SmallMapWindow::SelectLegendItem(int click_pos, LegendAndColour *legend, int end_legend_item, int begin_legend_item)
 {
-	if (_ctrl_pressed) {
+	if (citymania::_fn_mod) {
 		/* Disable all, except the clicked one */
 		bool changes = false;
 		for (int i = begin_legend_item; i != end_legend_item; i++) {

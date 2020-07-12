@@ -1543,6 +1543,9 @@ static SettingsContainer &GetSettingsTree()
 				general->Add(new SettingEntry("gui.window_soft_limit"));
 				general->Add(new SettingEntry("gui.right_mouse_wnd_close"));
 				general->Add(new SettingEntry("gui.pause_after_load"));
+				general->Add(new SettingEntry("gui.cm_fn_mod"));
+				general->Add(new SettingEntry("gui.cm_remove_mod"));
+				general->Add(new SettingEntry("gui.cm_estimate_mod"));
 			}
 
 			SettingsPage *viewports = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_VIEWPORTS));

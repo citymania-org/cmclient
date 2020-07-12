@@ -4,9 +4,16 @@
 #include <memory>
 #include <vector>
 
-// #include "types.hpp"
+#include "../cargo_type.h"
 
 namespace citymania {
+
+enum class ModKey : uint8 {
+    NONE = 0,
+    SHIFT = 1,
+    CTRL = 2,
+    ALT = 3
+};
 
 class CBRequirement {
 public:

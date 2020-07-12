@@ -28,6 +28,8 @@
 #include <condition_variable>
 #include <algorithm>
 
+#include "../citymania/cm_hotkeys.hpp"
+
 #include "../safeguards.h"
 
 static FVideoDriver_SDL iFVideoDriver_SDL;
@@ -752,7 +754,8 @@ void VideoDriver_SDL::MainLoop()
 				(keys[SDL_SCANCODE_UP]    ? 2 : 0) |
 				(keys[SDL_SCANCODE_RIGHT] ? 4 : 0) |
 				(keys[SDL_SCANCODE_DOWN]  ? 8 : 0);
-			if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+			// CM if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+			citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
 
 			/* The gameloop is the part that can run asynchronously. The rest
 			 * except sleeping can't. */

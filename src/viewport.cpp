@@ -102,6 +102,7 @@
 #include "industry_type.h"
 
 #include "citymania/highlight.hpp"
+#include "citymania/cm_hotkeys.hpp"
 
 #include "safeguards.h"
 
@@ -2270,7 +2271,7 @@ static bool CheckClickOnViewportSign(const ViewPort *vp, int x, int y)
 		}
 		return true;
 	} else if (last_t != nullptr) {
-		if (_ctrl_pressed) TownExecuteAction(last_t, 4); //CM build statue
+		if (citymania::_fn_mod) TownExecuteAction(last_t, 4); //CM build statue
 		else ShowTownViewWindow(last_t->index);
 		return true;
 	} else if (last_si != nullptr) {
@@ -2440,7 +2441,7 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y, bool double_click)
 		DEBUG(misc, 2, "Vehicle %d (index %d) at %p", v->unitnumber, v->index, v);
 		if (IsCompanyBuildableVehicleType(v)) {
 			v = v->First();
-			if (_ctrl_pressed && v->owner == _local_company) {
+			if (citymania::_fn_mod && v->owner == _local_company) {
 				if (_settings_client.gui.enable_ctrl_click_start_stop)
 					StartStopVehicle(v, true);
 			} else {
@@ -2583,7 +2584,7 @@ void TileHighlightData::Reset()
  */
 bool TileHighlightData::IsDraggingDiagonal()
 {
-	return (this->place_mode & HT_DIAGONAL) != 0 && _ctrl_pressed && _left_button_down;
+	return (this->place_mode & HT_DIAGONAL) != 0 && citymania::_fn_mod && _left_button_down;
 }
 
 /**

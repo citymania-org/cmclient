@@ -3195,6 +3195,12 @@
     <ClCompile Include="..\src\citymania\cm_game.cpp">
       <Filter>CityMania</Filter>
     </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_hotkeys.hpp">
+      <Filter>CityMania</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_hotkeys.cpp">
+      <Filter>CityMania</Filter>
+    </ClCompile>
     <ClInclude Include="..\src\citymania\cm_main.hpp">
       <Filter>CityMania</Filter>
     </ClInclude>

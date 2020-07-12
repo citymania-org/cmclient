@@ -41,6 +41,8 @@
 #include "guitimer_func.h"
 #include "news_func.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 /** Values for _settings_client.gui.auto_scrolling */
@@ -724,7 +726,7 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count)
 			return;
 
 		case WWT_DEFSIZEBOX: {
-			if (_ctrl_pressed) {
+			if (citymania::_fn_mod) {
 				w->window_desc->pref_width = w->width;
 				w->window_desc->pref_height = w->height;
 			} else {
@@ -758,7 +760,7 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count)
 		case WWT_STICKYBOX:
 			w->flags ^= WF_STICKY;
 			nw->SetDirty(w);
-			if (_ctrl_pressed) w->window_desc->pref_sticky = (w->flags & WF_STICKY) != 0;
+			if (citymania::_fn_mod) w->window_desc->pref_sticky = (w->flags & WF_STICKY) != 0;
 			return;
 
 		default:
@@ -2732,14 +2734,15 @@ void HandleKeypress(uint keycode, WChar key)
 /**
  * State of CONTROL key has changed
  */
-void HandleCtrlChanged()
-{
-	/* Call the event, start with the uppermost window. */
-	Window *w;
-	FOR_ALL_WINDOWS_FROM_FRONT(w) {
-		if (w->OnCTRLStateChange() == ES_HANDLED) return;
-	}
-}
+// Use CityMania modifier key handling
+// void HandleCtrlChanged()
+// {
+// 	/* Call the event, start with the uppermost window. */
+// 	Window *w;
+// 	FOR_ALL_WINDOWS_FROM_FRONT(w) {
+// 		if (w->OnCTRLStateChange() == ES_HANDLED) return;
+// 	}
+// }
 
 /**
  * Insert a text string at the cursor position into the edit box widget.

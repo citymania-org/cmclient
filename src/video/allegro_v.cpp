@@ -28,6 +28,8 @@
 #include <allegro.h>
 #include <algorithm>
 
+#include "../../citymania/cm_hotkeys.hpp"
+
 #include "../safeguards.h"
 
 #ifdef _DEBUG
@@ -508,7 +510,8 @@ void VideoDriver_Allegro::MainLoop()
 				(key[KEY_RIGHT] ? 4 : 0) |
 				(key[KEY_DOWN]  ? 8 : 0);
 
-			if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+			// CM if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+			citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
 
 			GameLoop();
 

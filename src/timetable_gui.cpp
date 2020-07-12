@@ -28,6 +28,8 @@
 #include "table/sprites.h"
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 /** Container for the arrival/departure dates of a vehicle */
@@ -529,7 +531,7 @@ struct TimetableWindow : Window {
 			}
 
 			case WID_VT_START_DATE: // Change the date that the timetable starts.
-				ShowSetDateWindow(this, v->index | (v->orders.list->IsCompleteTimetable() && _ctrl_pressed ? 1U << 20 : 0), _date, _cur_year, _cur_year + 15, ChangeTimetableStartCallback);
+				ShowSetDateWindow(this, v->index | (v->orders.list->IsCompleteTimetable() && citymania::_fn_mod ? 1U << 20 : 0), _date, _cur_year, _cur_year + 15, ChangeTimetableStartCallback);
 				break;
 
 			case WID_VT_CHANGE_TIME: { // "Wait For" button.
@@ -595,7 +597,7 @@ struct TimetableWindow : Window {
 			case WID_VT_AUTOFILL: { // Autofill the timetable.
 				uint32 p2 = 0;
 				if (!HasBit(v->vehicle_flags, VF_AUTOFILL_TIMETABLE)) SetBit(p2, 0);
-				if (_ctrl_pressed) SetBit(p2, 1);
+				if (citymania::_fn_mod) SetBit(p2, 1);
 				DoCommandP(0, v->index, p2, CMD_AUTOFILL_TIMETABLE | CMD_MSG(STR_ERROR_CAN_T_TIMETABLE_VEHICLE));
 				break;
 			}

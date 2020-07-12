@@ -31,6 +31,8 @@
 #include "table/strings.h"
 #include "table/sprites.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 struct SignList {
@@ -555,7 +557,7 @@ static WindowDesc _query_sign_edit_desc(
  */
 void HandleClickOnSign(const Sign *si)
 {
-	if (_ctrl_pressed && (si->owner == _local_company || (si->owner == OWNER_DEITY && _game_mode == GM_EDITOR))) {
+	if (citymania::_fn_mod && (si->owner == _local_company || (si->owner == OWNER_DEITY && _game_mode == GM_EDITOR))) {
 		RenameSign(si->index, nullptr);
 		return;
 	}

@@ -39,6 +39,7 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
 #include "citymania/station_ui.hpp"
 
 #include "safeguards.h"
@@ -618,7 +619,7 @@ struct BuildRoadToolbarWindow : Window {
 			default: NOT_REACHED();
 		}
 		this->UpdateOptionWidgetStatus((RoadToolbarWidgets)widget);
-		if (_ctrl_pressed) RoadToolbar_CtrlChanged(this);
+		if (citymania::_remove_mod) RoadToolbar_CtrlChanged(this);
 	}
 
 	EventState OnHotkey(int hotkey) override
@@ -663,7 +664,7 @@ struct BuildRoadToolbarWindow : Window {
 				}
 				DoCommandP(tile, _cur_roadtype << 2 | ddir, 0,
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(this->rti->strings.err_depot), CcRoadDepot);
-				if (_ctrl_pressed == _settings_client.gui.persistent_depottools)
+				if (citymania::_fn_mod == _settings_client.gui.persistent_depottools)
 					ResetObjectToPlace();
 				break;
 
@@ -809,9 +810,9 @@ struct BuildRoadToolbarWindow : Window {
 					if (this->IsWidgetLowered(WID_ROT_BUS_STATION)) {
 						if (_remove_button_clicked) {
 							TileArea ta(start_tile, end_tile);
-							DoCommandP(ta.tile, ta.w | ta.h << 8, (_ctrl_pressed << 1) | ROADSTOP_BUS, CMD_REMOVE_ROAD_STOP | CMD_MSG(this->rti->strings.err_remove_station[ROADSTOP_BUS]), CcPlaySound_SPLAT_OTHER);
+							DoCommandP(ta.tile, ta.w | ta.h << 8, (citymania::_fn_mod ? 2 : 0) | ROADSTOP_BUS, CMD_REMOVE_ROAD_STOP | CMD_MSG(this->rti->strings.err_remove_station[ROADSTOP_BUS]), CcPlaySound_SPLAT_OTHER);
 						} else {
-							PlaceRoadStop(start_tile, end_tile, _cur_roadtype << 5 | (_ctrl_pressed << 2) | ROADSTOP_BUS, CMD_BUILD_ROAD_STOP | CMD_MSG(this->rti->strings.err_build_station[ROADSTOP_BUS]));
+							PlaceRoadStop(start_tile, end_tile, _cur_roadtype << 5 | (citymania::_fn_mod << 2) | ROADSTOP_BUS, CMD_BUILD_ROAD_STOP | CMD_MSG(this->rti->strings.err_build_station[ROADSTOP_BUS]));
 						}
 					}
 					break;
@@ -821,9 +822,9 @@ struct BuildRoadToolbarWindow : Window {
 					if (this->IsWidgetLowered(WID_ROT_TRUCK_STATION)) {
 						if (_remove_button_clicked) {
 							TileArea ta(start_tile, end_tile);
-							DoCommandP(ta.tile, ta.w | ta.h << 8, (_ctrl_pressed << 1) | ROADSTOP_TRUCK, CMD_REMOVE_ROAD_STOP | CMD_MSG(this->rti->strings.err_remove_station[ROADSTOP_TRUCK]), CcPlaySound_SPLAT_OTHER);
+							DoCommandP(ta.tile, ta.w | ta.h << 8, (citymania::_fn_mod << 1) | ROADSTOP_TRUCK, CMD_REMOVE_ROAD_STOP | CMD_MSG(this->rti->strings.err_remove_station[ROADSTOP_TRUCK]), CcPlaySound_SPLAT_OTHER);
 						} else {
-							PlaceRoadStop(start_tile, end_tile, _cur_roadtype << 5 | (_ctrl_pressed << 2) | ROADSTOP_TRUCK, CMD_BUILD_ROAD_STOP | CMD_MSG(this->rti->strings.err_build_station[ROADSTOP_TRUCK]));
+							PlaceRoadStop(start_tile, end_tile, _cur_roadtype << 5 | (citymania::_fn_mod << 2) | ROADSTOP_TRUCK, CMD_BUILD_ROAD_STOP | CMD_MSG(this->rti->strings.err_build_station[ROADSTOP_TRUCK]));
 						}
 					}
 					break;
@@ -841,7 +842,7 @@ struct BuildRoadToolbarWindow : Window {
 		VpSetPresizeRange(tile, _build_tunnel_endtile == 0 ? tile : _build_tunnel_endtile);
 	}
 
-	EventState OnCTRLStateChange() override
+	EventState CM_OnRemoveModStateChange() override
 	{
 		if (RoadToolbar_CtrlChanged(this)) return ES_HANDLED;
 		return ES_NOT_HANDLED;

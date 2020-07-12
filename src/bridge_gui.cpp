@@ -29,6 +29,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 /** The type of the last built rail bridge */
@@ -385,7 +387,7 @@ void ShowBuildBridgeWindow(TileIndex start, TileIndex end, TransportType transpo
 		case TRANSPORT_RAIL: last_bridge_type = _last_railbridge_type; break;
 		default: break; // water ways and air routes don't have bridge types
 	}
-	if (_ctrl_pressed && CheckBridgeAvailability(last_bridge_type, bridge_len).Succeeded()) {
+	if (citymania::_fn_mod && CheckBridgeAvailability(last_bridge_type, bridge_len).Succeeded()) {
 		DoCommandP(end, start, type | last_bridge_type, CMD_BUILD_BRIDGE | CMD_MSG(STR_ERROR_CAN_T_BUILD_BRIDGE_HERE), CcBuildBridge);
 		return;
 	}

@@ -2,6 +2,8 @@
 
 #include "station_ui.hpp"
 
+#include "cm_hotkeys.hpp"
+
 #include "../core/math_func.hpp"
 #include "../command_type.h"
 #include "../command_func.h"
@@ -172,7 +174,7 @@ const Station *CheckClickOnDeadStationSign() {
 
 bool CheckStationJoin(TileIndex start_tile, TileIndex end_tile) {
     // if (_ctrl_pressed && start_tile == end_tile) {
-    if (_ctrl_pressed) {
+    if (citymania::_fn_mod) {
         if (IsTileType (start_tile, MP_STATION)) {
             citymania::SelectStationToJoin(Station::GetByTile(start_tile));
             return true;
@@ -188,7 +190,7 @@ bool CheckStationJoin(TileIndex start_tile, TileIndex end_tile) {
 
 void JoinAndBuild(CommandContainer cmdcont) {
     auto join_to = _highlight_station_to_join;
-    uint32 adj_bit = ((_ctrl_pressed || join_to) ? 1 : 0);
+    uint32 adj_bit = ((citymania::_fn_mod || join_to) ? 1 : 0);
     auto cmd = (cmdcont.cmd & CMD_ID_MASK);
     if (cmd == CMD_BUILD_RAIL_STATION) {
         SB(cmdcont.p1, 24, 1, adj_bit);
@@ -199,7 +201,7 @@ void JoinAndBuild(CommandContainer cmdcont) {
     } else if (cmd == CMD_BUILD_AIRPORT) {
         SB(cmdcont.p2, 0, 1, adj_bit);
     }
-    if (_ctrl_pressed) SB(cmdcont.p2, 16, 16, NEW_STATION);
+    if (citymania::_fn_mod) SB(cmdcont.p2, 16, 16, NEW_STATION);
     else if (join_to) SB(cmdcont.p2, 16, 16, join_to->index);
     else SB(cmdcont.p2, 16, 16, INVALID_STATION);
 
@@ -251,7 +253,7 @@ void HandleStationPlacement(TileIndex start, TileIndex end)
 
     if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
 
-    uint32 p1 = _cur_railtype | _railstation.orientation << 6 | numtracks << 8 | platlength << 16 | _ctrl_pressed << 24;
+    uint32 p1 = _cur_railtype | _railstation.orientation << 6 | numtracks << 8 | platlength << 16 | (citymania::_fn_mod ? 1 << 24 : 0);
     uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 
     CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
@@ -261,7 +263,7 @@ void HandleStationPlacement(TileIndex start, TileIndex end)
 void PlaceRail_Station(TileIndex tile) {
     if (CheckStationJoin(tile, tile)) return;
 
-    uint32 p1 = _cur_railtype | _railstation.orientation << 6 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | _ctrl_pressed << 24;
+    uint32 p1 = _cur_railtype | _railstation.orientation << 6 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | (citymania::_fn_mod ? 1 << 24 : 0);
     uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 
     int w = _settings_client.gui.station_numtracks;
@@ -278,7 +280,7 @@ void PlaceDock(TileIndex tile) {
     uint32 p2 = (uint32)INVALID_STATION << 16; // no station to join
 
     /* tile is always the land tile, so need to evaluate _thd.pos */
-    CommandContainer cmdcont = { tile, _ctrl_pressed, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
+    CommandContainer cmdcont = { tile, citymania::_fn_mod, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
 
     /* Determine the watery part of the dock. */
     // DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
@@ -292,7 +294,7 @@ void PlaceAirport(TileIndex tile) {
 
     if (_selected_airport_index == -1) return;
 
-    uint32 p2 = _ctrl_pressed;
+    uint32 p2 = (citymania::_fn_mod ? 1 : 0);
     SB(p2, 16, 16, INVALID_STATION); // no station to join
 
     uint32 p1 = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
@@ -331,7 +333,7 @@ static void FindStationsAroundSelection(const TileArea &location)
 }
 
 void CheckRedrawStationCoverage() {
-    static bool last_ctrl_pressed = false;
+    // static bool last_ctrl_pressed = false;
     static TileArea last_location;
     static bool last_station_mode = false;
     static bool last_coverage = false;
@@ -346,7 +348,7 @@ void CheckRedrawStationCoverage() {
     // last_location = location;
     // last_station_mode = station_mode;
 
-    if (_ctrl_pressed) {
+    if (citymania::_fn_mod) {
         Station *st = nullptr;
         if (IsTileType(location.tile, MP_STATION) && GetTileOwner(location.tile) == _local_company)
             st = Station::GetByTile(location.tile);

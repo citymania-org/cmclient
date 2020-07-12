@@ -36,6 +36,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 void CcTerraform(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
@@ -58,7 +60,7 @@ static void GenerateDesertArea(TileIndex end, TileIndex start)
 
 	TileArea ta(start, end);
 	TILE_AREA_LOOP(tile, ta) {
-		SetTropicZone(tile, (_ctrl_pressed) ? TROPICZONE_NORMAL : TROPICZONE_DESERT);
+		SetTropicZone(tile, citymania::_fn_mod ? TROPICZONE_NORMAL : TROPICZONE_DESERT);
 		DoCommandP(tile, 0, 0, CMD_LANDSCAPE_CLEAR);
 		MarkTileDirtyByTile(tile);
 	}
@@ -114,14 +116,14 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 
 	switch (proc) {
 		case DDSP_DEMOLISH_AREA:
-			DoCommandP(end_tile, start_tile, _ctrl_pressed ? 1 : 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+			DoCommandP(end_tile, start_tile, citymania::_fn_mod ? 1 : 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 			break;
 		case DDSP_DEMOLISH_TREES:
 			// loop through every tile and send a demolish command for each tree
 			// orthogonal area
 			TileIndex tree_start_tile, tree_recent_tile, prev_tile;
 			tree_start_tile = tree_recent_tile = prev_tile = 0;
-			if (!_ctrl_pressed) {
+			if (!citymania::_fn_mod) {
 				OrthogonalTileArea square_area = OrthogonalTileArea(start_tile, end_tile);
 				TILE_AREA_LOOP(curr_tile, square_area) {
 					// if we're on a non-consecutive tile or we've hit a black-marked tile
@@ -174,13 +176,13 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 			}
 			break;
 		case DDSP_RAISE_AND_LEVEL_AREA:
-			DoCommandP(end_tile, start_tile, LM_RAISE << 1 | (_ctrl_pressed ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_RAISE_LAND_HERE), CcTerraform);
+			DoCommandP(end_tile, start_tile, LM_RAISE << 1 | (citymania::_fn_mod ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_RAISE_LAND_HERE), CcTerraform);
 			break;
 		case DDSP_LOWER_AND_LEVEL_AREA:
-			DoCommandP(end_tile, start_tile, LM_LOWER << 1 | (_ctrl_pressed ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_LOWER_LAND_HERE), CcTerraform);
+			DoCommandP(end_tile, start_tile, LM_LOWER << 1 | (citymania::_fn_mod ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_LOWER_LAND_HERE), CcTerraform);
 			break;
 		case DDSP_LEVEL_AREA:
-			DoCommandP(end_tile, start_tile, LM_LEVEL << 1 | (_ctrl_pressed ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_LEVEL_LAND_HERE), CcTerraform);
+			DoCommandP(end_tile, start_tile, LM_LEVEL << 1 | (citymania::_fn_mod ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_LEVEL_LAND_HERE), CcTerraform);
 			break;
 		case DDSP_CREATE_ROCKS:
 			GenerateRockyArea(end_tile, start_tile);

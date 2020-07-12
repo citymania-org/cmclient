@@ -29,6 +29,8 @@
 #include "table/strings.h"
 #include "table/sprites.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 typedef GUIList<const StoryPage*> GUIStoryPageList;
@@ -385,7 +387,7 @@ protected:
 				break;
 
 			case SPET_LOCATION:
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowExtraViewPortWindow((TileIndex)pe.referenced_id);
 				} else {
 					ScrollMainWindowToTile((TileIndex)pe.referenced_id);

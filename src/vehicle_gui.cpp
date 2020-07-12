@@ -38,6 +38,8 @@
 #include "zoom_func.h"
 #include "hotkeys.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 
@@ -899,7 +901,7 @@ struct RefitWindow : public Window {
 
 				/* If the selection is not correct, clear it. */
 				if (this->num_vehicles != 0) {
-					if (_ctrl_pressed) this->num_vehicles = UINT8_MAX;
+					if (citymania::_fn_mod) this->num_vehicles = UINT8_MAX;
 					break;
 				}
 				FALLTHROUGH;
@@ -922,7 +924,7 @@ struct RefitWindow : public Window {
 				this->click_x = GetClickPosition(pt.x - nwi->pos_x);
 				this->SetSelectedVehicles(pt.x - nwi->pos_x);
 				this->SetWidgetDirty(WID_VR_VEHICLE_PANEL_DISPLAY);
-				if (!_ctrl_pressed) {
+				if (!citymania::_fn_mod) {
 					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
 				} else {
 					/* The vehicle selection has changed. */
@@ -1627,7 +1629,7 @@ public:
 
 				const Vehicle *v = this->vehicles[id_v];
 				if (!VehicleClicked(v)) {
-					if (_ctrl_pressed) {
+					if (citymania::_fn_mod) {
 						ShowCompanyGroupForVehicle(v);
 					} else {
 						ShowVehicleViewWindow(v);
@@ -1748,10 +1750,10 @@ void ShowVehicleListWindow(CompanyID company, VehicleType vehicle_type)
 {
 	/* If _settings_client.gui.advanced_vehicle_list > 1, display the Advanced list
 	 * if _settings_client.gui.advanced_vehicle_list == 1, display Advanced list only for local company
-	 * if _ctrl_pressed, do the opposite action (Advanced list x Normal list)
+	 * if citymania::_fn_mod, do the opposite action (Advanced list x Normal list)
 	 */
 
-	if ((_settings_client.gui.advanced_vehicle_list > (uint)(company != _local_company)) != _ctrl_pressed) {
+	if ((_settings_client.gui.advanced_vehicle_list > (uint)(company != _local_company)) != citymania::_fn_mod) {
 		ShowCompanyGroup(company, vehicle_type);
 	} else {
 		ShowVehicleListWindowLocal(company, VL_STANDARD, vehicle_type, company);
@@ -2173,7 +2175,7 @@ struct VehicleDetailsWindow : Window {
 
 			case WID_VD_INCREASE_SERVICING_INTERVAL:   // increase int
 			case WID_VD_DECREASE_SERVICING_INTERVAL: { // decrease int
-				int mod = _ctrl_pressed ? 5 : 10;
+				int mod = citymania::_fn_mod ? 5 : 10;
 				const Vehicle *v = Vehicle::Get(this->window_number);
 
 				mod = (widget == WID_VD_DECREASE_SERVICING_INTERVAL) ? -mod : mod;
@@ -2665,7 +2667,7 @@ public:
 
 		switch (widget) {
 			case WID_VV_START_STOP: // start stop
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					/* Scroll to current order destination */
 					TileIndex tile = v->current_order.GetLocation(v);
 					if (tile != INVALID_TILE) ScrollMainWindowToTile(tile);
@@ -2677,7 +2679,7 @@ public:
 			case WID_VV_CENTER_MAIN_VIEW: {// center main view
 				const Window *mainwindow = FindWindowById(WC_MAIN_WINDOW, 0);
 				/* code to allow the main window to 'follow' the vehicle if the ctrl key is pressed */
-				if (_ctrl_pressed && mainwindow->viewport->zoom <= ZOOM_LVL_OUT_4X) {
+				if (citymania::_fn_mod && mainwindow->viewport->zoom <= ZOOM_LVL_OUT_4X) {
 					mainwindow->viewport->follow_vehicle = v->index;
 				} else {
 					ScrollMainWindowTo(v->x_pos, v->y_pos, v->z_pos);
@@ -2686,20 +2688,20 @@ public:
 			}
 
 			case WID_VV_GOTO_DEPOT: // goto hangar
-				DoCommandP(v->tile, v->index | (_ctrl_pressed ? DEPOT_SERVICE : 0U), 0, GetCmdSendToDepot(v));
+				DoCommandP(v->tile, v->index | (citymania::_fn_mod ? DEPOT_SERVICE : 0U), 0, GetCmdSendToDepot(v));
 				break;
 			case WID_VV_REFIT: // refit
 				ShowVehicleRefitWindow(v, INVALID_VEH_ORDER_ID, this);
 				break;
 			case WID_VV_SHOW_ORDERS: // show orders
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowTimetableWindow(v);
 				} else {
 					ShowOrdersWindow(v);
 				}
 				break;
 			case WID_VV_SHOW_DETAILS: // show details
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowCompanyGroupForVehicle(v);
 				} else {
 					ShowVehicleDetailsWindow(v);
@@ -2710,7 +2712,7 @@ public:
 				 * There is no point to it except for starting the vehicle.
 				 * For starting the vehicle the player has to open the depot GUI, which is
 				 * most likely already open, but is also visible in the vehicle viewport. */
-				DoCommandP(v->tile, v->index, _ctrl_pressed ? 1 : 0,
+				DoCommandP(v->tile, v->index, citymania::_fn_mod ? 1 : 0,
 										_vehicle_command_translation_table[VCT_CMD_CLONE_VEH][v->type],
 										CcCloneVehicleWithOrderIndex);
 				break;

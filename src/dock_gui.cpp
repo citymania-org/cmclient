@@ -31,6 +31,7 @@
 #include "table/sprites.h"
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
 #include "citymania/station_ui.hpp"
 
 #include "safeguards.h"
@@ -191,7 +192,7 @@ struct BuildDocksToolbarWindow : Window {
 
 			case WID_DT_DEPOT: // Build depot button
 				DoCommandP(tile, _ship_depot_direction, 0, CMD_BUILD_SHIP_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_SHIP_DEPOT), CcBuildDocks);
-				if (_ctrl_pressed == _settings_client.gui.persistent_depottools)
+				if (citymania::_fn_mod == _settings_client.gui.persistent_depottools)
 					ResetObjectToPlace();
 				break;
 
@@ -205,7 +206,7 @@ struct BuildDocksToolbarWindow : Window {
 				uint32 p2 = (uint32)INVALID_STATION << 16; // no station to join
 
 				/* tile is always the land tile, so need to evaluate _thd.pos */
-				CommandContainer cmdcont = { tile, _ctrl_pressed, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
+				CommandContainer cmdcont = { tile, citymania::_fn_mod, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
 
 				/* Determine the watery part of the dock. */
 				DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
@@ -244,7 +245,7 @@ struct BuildDocksToolbarWindow : Window {
 					GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
 					break;
 				case DDSP_CREATE_WATER:
-					DoCommandP(end_tile, start_tile, (_game_mode == GM_EDITOR && _ctrl_pressed) ? WATER_CLASS_SEA : WATER_CLASS_CANAL, CMD_BUILD_CANAL | CMD_MSG(STR_ERROR_CAN_T_BUILD_CANALS), CcPlaySound_SPLAT_WATER);
+					DoCommandP(end_tile, start_tile, (_game_mode == GM_EDITOR && citymania::_fn_mod) ? WATER_CLASS_SEA : WATER_CLASS_CANAL, CMD_BUILD_CANAL | CMD_MSG(STR_ERROR_CAN_T_BUILD_CANALS), CcPlaySound_SPLAT_WATER);
 					break;
 				case DDSP_CREATE_RIVER:
 					DoCommandP(end_tile, start_tile, WATER_CLASS_RIVER, CMD_BUILD_CANAL | CMD_MSG(STR_ERROR_CAN_T_PLACE_RIVERS), CcPlaySound_SPLAT_WATER);

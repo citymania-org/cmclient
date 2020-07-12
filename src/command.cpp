@@ -31,6 +31,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 CommandProc CmdBuildRailroadTrack;
@@ -564,7 +566,7 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 	 * However, in case of incoming network commands,
 	 * map generation or the pause button we do want
 	 * to execute. */
-	bool estimate_only = _shift_pressed && IsLocalCompany() &&
+	bool estimate_only = citymania::_estimate_mod && IsLocalCompany() &&
 			!_generating_world &&
 			!(cmd & CMD_NETWORK_COMMAND) &&
 			!(GetCommandFlags(cmd) & CMD_NO_EST) &&
