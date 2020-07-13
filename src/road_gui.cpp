@@ -539,7 +539,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	void OnClick(Point pt, int widget, int click_count) override
 	{
-		_remove_button_clicked = false;
+		if (widget != WID_ROT_REMOVE) _remove_button_clicked = false;
 		_one_way_button_clicked = false;
 		switch (widget) {
 			case WID_ROT_ROAD_X:
@@ -590,7 +590,7 @@ struct BuildRoadToolbarWindow : Window {
 				if (this->IsWidgetDisabled(WID_ROT_ONE_WAY)) return;
 				this->SetDirty();
 				this->ToggleWidgetLoweredState(WID_ROT_ONE_WAY);
-				SetSelectionRed(false);
+				// CM SetSelectionRed(false);
 				break;
 
 			case WID_ROT_BUILD_BRIDGE:
@@ -604,11 +604,12 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_REMOVE:
-				if (this->IsWidgetDisabled(WID_ROT_REMOVE)) return;
+				_remove_button_clicked = citymania::RoadToolbar_RemoveModChanged(this, _remove_button_clicked, true, RoadTypeIsRoad(this->roadtype));
+				// if (this->IsWidgetDisabled(WID_ROT_REMOVE)) return;
 
-				DeleteWindowById(WC_SELECT_STATION, 0);
-				ToggleRoadButton_Remove(this);
-				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+				// DeleteWindowById(WC_SELECT_STATION, 0);
+				// ToggleRoadButton_Remove(this);
+				// if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				break;
 
 			case WID_ROT_CONVERT_ROAD:
@@ -618,8 +619,9 @@ struct BuildRoadToolbarWindow : Window {
 
 			default: NOT_REACHED();
 		}
-		this->UpdateOptionWidgetStatus((RoadToolbarWidgets)widget);
-		if (citymania::_remove_mod) RoadToolbar_CtrlChanged(this);
+		citymania::RoadToolbar_UpdateOptionWidgetStatus(this, widget, _remove_button_clicked, RoadTypeIsRoad(this->roadtype));
+		// this->UpdateOptionWidgetStatus((RoadToolbarWidgets)widget);
+		// if (citymania::_remove_mod) RoadToolbar_CtrlChanged(this);
 	}
 
 	EventState OnHotkey(int hotkey) override
@@ -631,7 +633,7 @@ struct BuildRoadToolbarWindow : Window {
 	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		DiagDirection ddir;
-		_remove_button_clicked = this->IsWidgetLowered(WID_ROT_REMOVE);
+		// CM _remove_button_clicked = this->IsWidgetLowered(WID_ROT_REMOVE);
 		_one_way_button_clicked = RoadTypeIsRoad(this->roadtype) ? this->IsWidgetLowered(WID_ROT_ONE_WAY) : false;
 		switch (this->last_started_action) {
 			case WID_ROT_ROAD_X:
@@ -844,7 +846,11 @@ struct BuildRoadToolbarWindow : Window {
 
 	EventState CM_OnRemoveModStateChange() override
 	{
-		if (RoadToolbar_CtrlChanged(this)) return ES_HANDLED;
+		auto new_remove = citymania::RoadToolbar_RemoveModChanged(this, _remove_button_clicked, false, RoadTypeIsRoad(this->roadtype));
+		if (new_remove != _remove_button_clicked) {
+			_remove_button_clicked = new_remove;
+			return ES_HANDLED;
+		}
 		return ES_NOT_HANDLED;
 	}
 

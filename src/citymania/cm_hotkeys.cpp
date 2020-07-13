@@ -12,6 +12,7 @@
 #include "../window_gui.h"
 #include "../window_type.h"
 #include "../widgets/rail_widget.h"
+#include "../widgets/road_widget.h"
 
 #include "../safeguards.h"
 
@@ -124,7 +125,7 @@ bool RailToolbar_RemoveModChanged(Window *w, bool invert_remove, bool remove_act
     if (w->IsWidgetDisabled(WID_RAT_REMOVE)) return false;
 
     DeleteWindowById(WC_SELECT_STATION, 0);
-    for (uint i = WID_RAT_BUILD_NS; i <= WID_RAT_BUILD_TUNNEL; i++) {
+    for (uint i = WID_RAT_BUILD_NS; i < WID_RAT_REMOVE; i++) {
         if (w->IsWidgetLowered(i)) {
             auto old_active = remove_active;
             switch (RailToolbar_GetRemoveMode(i)) {
@@ -144,5 +145,86 @@ bool RailToolbar_RemoveModChanged(Window *w, bool invert_remove, bool remove_act
     }
     return remove_active;
 }
+
+ToolRemoveMode RoadToolbar_GetRemoveMode(int widget) {
+    switch(widget) {
+        case WID_ROT_ROAD_X:
+        case WID_ROT_ROAD_Y:
+        case WID_ROT_AUTOROAD:
+            return ToolRemoveMode::MOD;
+
+        case WID_ROT_BUS_STATION:
+        case WID_ROT_TRUCK_STATION:
+            return HasSeparateRemoveMod() ? ToolRemoveMode::MOD : ToolRemoveMode::BUTTON;
+
+        default:
+            return ToolRemoveMode::NONE;
+    }
+}
+
+void RoadToolbar_UpdateOptionWidgetStatus(Window *w, int widget, bool remove_active, bool is_road) {
+
+    switch (widget) {
+        case WID_ROT_REMOVE:
+        case WID_ROT_ONE_WAY:
+            return;
+
+        case WID_ROT_BUS_STATION:
+        case WID_ROT_TRUCK_STATION:
+            if (is_road) w->DisableWidget(WID_ROT_ONE_WAY);
+            break;
+
+        case WID_ROT_ROAD_X:
+        case WID_ROT_ROAD_Y:
+        case WID_ROT_AUTOROAD:
+            if (is_road) w->SetWidgetDisabledState(WID_ROT_ONE_WAY, !w->IsWidgetLowered(widget));
+            break;
+
+        default:
+            if (is_road) {
+                w->SetWidgetDisabledState(WID_ROT_ONE_WAY, true);
+                w->SetWidgetLoweredState(WID_ROT_ONE_WAY, false);
+            }
+
+            break;
+    }
+
+
+    if (RoadToolbar_GetRemoveMode(widget) == citymania::ToolRemoveMode::NONE || !w->IsWidgetLowered(widget)) {
+        w->DisableWidget(WID_ROT_REMOVE);
+        w->RaiseWidget(WID_ROT_REMOVE);
+    } else {
+        w->EnableWidget(WID_ROT_REMOVE);
+        w->SetWidgetLoweredState(WID_ROT_REMOVE, remove_active);
+        SetSelectionRed(remove_active);
+    }
+    w->SetWidgetDirty(WID_ROT_REMOVE);
+}
+
+bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_clicked, bool is_road) {
+    if (w->IsWidgetDisabled(WID_ROT_REMOVE)) return false;
+
+    DeleteWindowById(WC_SELECT_STATION, 0);
+    for (uint i = WID_ROT_ROAD_X; i < WID_ROT_REMOVE; i++) {
+        if (w->IsWidgetLowered(i)) {
+            auto old_active = remove_active;
+            switch (RoadToolbar_GetRemoveMode(i)) {
+                case ToolRemoveMode::BUTTON:
+                    if (button_clicked) remove_active = !w->IsWidgetLowered(WID_ROT_REMOVE);
+                    break;
+                case ToolRemoveMode::MOD:
+                    if (_remove_mod || !button_clicked) remove_active = _remove_mod;
+                    else remove_active = !w->IsWidgetLowered(WID_ROT_REMOVE);
+                    break;
+                default:
+                    break;
+            }
+            if (old_active != remove_active) RoadToolbar_UpdateOptionWidgetStatus(w, i, remove_active, is_road);
+            return remove_active;
+        }
+    }
+    return remove_active;
+}
+
 
 } // namespace citymania

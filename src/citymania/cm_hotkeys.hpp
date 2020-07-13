@@ -21,6 +21,10 @@ bool RailToolbar_IsRemoveInverted(int widget);
 void RailToolbar_UpdateRemoveWidgetStatus(Window *w, int widged, bool remove_active);
 bool RailToolbar_RemoveModChanged(Window *w, bool invert_remove, bool remove_active, bool button_clicked);
 
+ToolRemoveMode RoadToolbar_GetRemoveMode(int widget);
+void RoadToolbar_UpdateOptionWidgetStatus(Window *w, int widget, bool remove_active, bool is_road);
+bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_clicked, bool is_road);
+
 } // namespace citymania
 
 #endif
