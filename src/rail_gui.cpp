@@ -46,6 +46,7 @@
 
 RailType _cur_railtype;               ///< Rail type of the current build-rail toolbar.
 static bool _remove_button_clicked;          ///< Flag whether 'remove' toggle-button is currently enabled
+static bool _cm_invert_remove;                  ///< Invert remove mode on tools (when fn-clicked)
 static DiagDirection _build_depot_direction; ///< Currently selected depot direction
 static byte _waypoint_count = 1;             ///< Number of waypoint types
 static byte _cur_waypoint_type;              ///< Currently selected waypoint type
@@ -58,6 +59,7 @@ extern TileIndex _rail_track_endtile; // rail_cmd.cpp
 /* Map the setting: default_signal_type to the corresponding signal type */
 static const SignalType _default_signal_type[] = {SIGTYPE_NORMAL, SIGTYPE_PBS, SIGTYPE_PBS_ONEWAY};
 
+static const int HOTKEY_MASK        = 0x1000;
 static const int HOTKEY_POLYRAIL     = 0x1000;
 static const int HOTKEY_NEW_POLYRAIL = 0x1001;
 static const int HOTKEY_BUILD_STATION_SIZED = 0x1010;     ///< Build a station in fixed size mode.
@@ -646,9 +648,7 @@ struct BuildRailToolbarWindow : Window {
 	void OnClick(Point pt, int widget, int click_count) override
 	{
 		if (widget < WID_RAT_BUILD_NS) return;
-		bool remove_on_ctrl = true;  /* do not check ctrl for hotkeys */
 
-		_remove_button_clicked = false;
 		switch (widget) {
 			case WID_RAT_BUILD_NS:
 				HandlePlacePushButton(this, WID_RAT_BUILD_NS, GetRailTypeInfo(_cur_railtype)->cursor.rail_ns, HT_LINE | HT_DIR_VL);
@@ -740,7 +740,6 @@ struct BuildRailToolbarWindow : Window {
 							ShowStationBuilder(this);
 					}
 					this->last_user_action = WID_RAT_BUILD_STATION;
-					remove_on_ctrl = false;
 				} else { /* button */
 					if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT)) {
 						ShowStationBuilder(this);
@@ -770,7 +769,8 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_REMOVE:
-				BuildRailClick_Remove(this);
+				_remove_button_clicked = citymania::RailToolbar_RemoveModChanged(this, _cm_invert_remove, _remove_button_clicked, true);
+				// BuildRailClick_Remove(this);
 				break;
 
 			case WID_RAT_CONVERT_RAIL:
@@ -780,8 +780,16 @@ struct BuildRailToolbarWindow : Window {
 
 			default: NOT_REACHED();
 		}
-		this->UpdateRemoveWidgetStatus(widget);
-		if (citymania::_remove_mod && remove_on_ctrl) RailToolbar_CtrlChanged(this);
+
+		bool is_hotkey = (pt.x == 0 && pt.y == 0);
+		if (widget != WID_RAT_REMOVE) {
+			_cm_invert_remove = (!is_hotkey && citymania::RailToolbar_IsRemoveInverted(widget));
+			_remove_button_clicked = _cm_invert_remove;
+		}
+
+		citymania::RailToolbar_UpdateRemoveWidgetStatus(this, widget, _remove_button_clicked);
+		// this->UpdateRemoveWidgetStatus(widget);
+		// if (_ctrl_pressed) RailToolbar_CtrlChanged(this);
 	}
 
 	EventState OnHotkey(int hotkey) override
@@ -962,8 +970,11 @@ struct BuildRailToolbarWindow : Window {
 
 	EventState CM_OnRemoveModStateChange() override
 	{
-		/* do not toggle Remove button by Ctrl when placing station */
-		if (!this->IsWidgetLowered(WID_RAT_BUILD_STATION) && !this->IsWidgetLowered(WID_RAT_BUILD_WAYPOINT) && RailToolbar_CtrlChanged(this)) return ES_HANDLED;
+		auto new_remove = citymania::RailToolbar_RemoveModChanged(this, _cm_invert_remove, _remove_button_clicked, false);
+		if (new_remove != _remove_button_clicked) {
+			_remove_button_clicked = new_remove;
+			return ES_HANDLED;
+		}
 		return ES_NOT_HANDLED;
 	}
 
