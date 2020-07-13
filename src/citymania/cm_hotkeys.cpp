@@ -139,7 +139,10 @@ bool RailToolbar_RemoveModChanged(Window *w, bool invert_remove, bool remove_act
                 default:
                     break;
             }
-            if (old_active != remove_active) RailToolbar_UpdateRemoveWidgetStatus(w, i, remove_active);
+            if (old_active != remove_active) {
+                if (button_clicked && _settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+                RailToolbar_UpdateRemoveWidgetStatus(w, i, remove_active);
+            }
             return remove_active;
         }
     }
@@ -203,7 +206,6 @@ void RoadToolbar_UpdateOptionWidgetStatus(Window *w, int widget, bool remove_act
 
 bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_clicked, bool is_road) {
     if (w->IsWidgetDisabled(WID_ROT_REMOVE)) return false;
-
     DeleteWindowById(WC_SELECT_STATION, 0);
     for (uint i = WID_ROT_ROAD_X; i < WID_ROT_REMOVE; i++) {
         if (w->IsWidgetLowered(i)) {
@@ -219,7 +221,10 @@ bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_cli
                 default:
                     break;
             }
-            if (old_active != remove_active) RoadToolbar_UpdateOptionWidgetStatus(w, i, remove_active, is_road);
+            if (old_active != remove_active) {
+                if (button_clicked && _settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+                RoadToolbar_UpdateOptionWidgetStatus(w, i, remove_active, is_road);
+            }
             return remove_active;
         }
     }
