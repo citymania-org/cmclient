@@ -161,6 +161,7 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
         });
         const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
         auto color = pal[(int)_station_building_status];
+        if (_thd.make_square_red) color = SPR_PALETTE_ZONING_RED;
         if (b.first != ZoningBorder::NONE)
             th.add_border(b.first, color);
         if (IsInsideSelectedRectangle(TileX(ti->tile) * TILE_SIZE, TileY(ti->tile) * TILE_SIZE)) {
