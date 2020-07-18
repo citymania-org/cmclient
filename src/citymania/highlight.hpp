@@ -81,6 +81,7 @@ SpriteID GetIndustryTileZoningPalette(TileIndex tile, Industry *ind);
 void SetIndustryForbiddenTilesHighlight(IndustryType type);
 
 
+PaletteID GetTreeShadePal(TileIndex tile);
 
 }  // namespace citymania
 

@@ -332,7 +332,15 @@ static const SpriteID PALETTE_TINT_GREEN            = PALETTE_TINT_BASE + 9;
 static const SpriteID PALETTE_TINT_CYAN             = PALETTE_TINT_BASE + 10;
 static const SpriteID PALETTE_TINT_CYAN_WHITE       = PALETTE_TINT_BASE + 11;
 static const SpriteID PALETTE_TINT_BLUE             = PALETTE_TINT_BASE + 12;
-static const SpriteID PALETTE_TINT_COUNT            = 13;
+static const SpriteID PALETTE_SHADE_N              = PALETTE_TINT_BASE + 13;
+static const SpriteID PALETTE_SHADE_NE               = PALETTE_TINT_BASE + 14;
+static const SpriteID PALETTE_SHADE_E               = PALETTE_TINT_BASE + 15;
+static const SpriteID PALETTE_SHADE_SE               = PALETTE_TINT_BASE + 16;
+static const SpriteID PALETTE_SHADE_S               = PALETTE_TINT_BASE + 17;
+static const SpriteID PALETTE_SHADE_SW               = PALETTE_TINT_BASE + 18;
+static const SpriteID PALETTE_SHADE_W               = PALETTE_TINT_BASE + 19;
+static const SpriteID PALETTE_SHADE_NW               = PALETTE_TINT_BASE + 20;
+static const SpriteID PALETTE_TINT_COUNT            = 13 + 8;
 
 /* From where can we start putting NewGRFs? */
 static const SpriteID SPR_NEWGRFS_BASE = PALETTE_TINT_BASE + PALETTE_TINT_COUNT;

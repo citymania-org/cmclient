@@ -517,4 +517,44 @@ void SetIndustryForbiddenTilesHighlight(IndustryType type) {
     _industry_forbidden_tiles = type;
 }
 
+
+PaletteID GetTreeShadePal(TileIndex tile) {
+    if (_settings_client.gui.cm_shaded_trees != 1)
+        return PAL_NONE;
+
+    Slope slope = GetTileSlope(tile);
+    switch (slope) {
+        case SLOPE_STEEP_N:
+        case SLOPE_N:
+            return PALETTE_SHADE_S;
+
+        case SLOPE_NE:
+            return PALETTE_SHADE_SW;
+
+        case SLOPE_E:
+        case SLOPE_STEEP_E:
+            return PALETTE_SHADE_W;
+
+        case SLOPE_SE:
+            return PALETTE_SHADE_NW;
+
+        case SLOPE_STEEP_S:
+        case SLOPE_S:
+            return PALETTE_SHADE_N;
+
+        case SLOPE_SW:
+            return PALETTE_SHADE_NE;
+
+        case SLOPE_STEEP_W:
+        case SLOPE_W:
+            return PALETTE_SHADE_E;
+
+        case SLOPE_NW:
+            return PALETTE_SHADE_SE;
+
+        default:
+            return PAL_NONE;
+    }
+}
+
 }  // namespace citymania

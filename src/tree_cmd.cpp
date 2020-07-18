@@ -27,6 +27,8 @@
 #include "table/tree_land.h"
 #include "table/clear_land.h"
 
+#include "citymania/highlight.hpp"
+
 #include "safeguards.h"
 
 /**
@@ -507,6 +509,8 @@ static void DrawTile_Trees(TileInfo *ti)
 		d++;
 	}
 
+	PaletteID shade_pal = citymania::GetTreeShadePal(ti->tile);
+
 	/* draw them in a sorted way */
 	int z = ti->z + GetSlopeMaxPixelZ(ti->tileh) / 2;
 
@@ -521,7 +525,7 @@ static void DrawTile_Trees(TileInfo *ti)
 			}
 		}
 
-		AddSortableSpriteToDraw(te[mi].sprite, te[mi].pal, ti->x + te[mi].x, ti->y + te[mi].y, 16 - te[mi].x, 16 - te[mi].y, 0x30, z, IsTransparencySet(TO_TREES), -te[mi].x, -te[mi].y);
+		AddSortableSpriteToDraw(te[mi].sprite, te[mi].pal != PAL_NONE ? te[mi].pal : shade_pal, ti->x + te[mi].x, ti->y + te[mi].y, 16 - te[mi].x, 16 - te[mi].y, 0x30, z, IsTransparencySet(TO_TREES), -te[mi].x, -te[mi].y);
 
 		/* replace the removed one with the last one */
 		te[mi] = te[trees - 1];
