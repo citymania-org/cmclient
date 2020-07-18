@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 
 #include "cm_main.hpp"
+#include "cm_hotkeys.hpp"
 
 #include "../smallmap_gui.h"
 #include "../window_func.h"
@@ -13,6 +14,7 @@ up<Game> _game = nullptr;
 
 void ResetGame() {
     _game = make_up<Game>();
+    ResetEffectivveActionCounter();
 }
 
 void SwitchToMode(SwitchMode new_mode) {

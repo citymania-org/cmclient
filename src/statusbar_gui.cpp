@@ -32,6 +32,8 @@
 #include "table/strings.h"
 #include "table/sprites.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 static bool DrawScrollingStatusText(const NewsItem *ni, int scroll_pos, int left, int right, int top, int bottom)
@@ -81,6 +83,7 @@ struct StatusBarWindow : Window {
 	int ticker_scroll;
 	GUITimer ticker_timer;
 	GUITimer reminder_timeout;
+	GUITimer cm_epm_timer;
 
 	static const int TICKER_STOP    = 1640; ///< scrolling is finished when counter reaches this value
 	static const int REMINDER_START = 1350; ///< time in ms for reminder notification (red dot on the right) to stay
@@ -92,6 +95,7 @@ struct StatusBarWindow : Window {
 		this->ticker_scroll = TICKER_STOP;
 		this->ticker_timer.SetInterval(15);
 		this->reminder_timeout.SetInterval(REMINDER_STOP);
+		this->cm_epm_timer.SetInterval(1000);
 
 		this->InitNested();
 		CLRBITS(this->flags, WF_WHITE_BORDER);
@@ -125,6 +129,12 @@ struct StatusBarWindow : Window {
 				d = GetStringBoundingBox(STR_COMPANY_MONEY);
 				break;
 			}
+
+			case CM_WID_S_EPM:
+				SetDParam(0, 999);
+				SetDParam(1, 999);
+				d = GetStringBoundingBox(STR_CM_STATUSBAR_EPM);
+				break;
 
 			default:
 				return;
@@ -187,6 +197,13 @@ struct StatusBarWindow : Window {
 					DrawSprite(SPR_UNREAD_NEWS, PAL_NONE, r.right - WD_FRAMERECT_RIGHT - icon_size.width, r.top + max(0, ((int)(r.bottom - r.top + 1) - (int)icon_size.height) / 2));
 				}
 				break;
+
+			case CM_WID_S_EPM:
+				auto epm = citymania::GetEPM();
+				SetDParam(0, epm.second);
+				SetDParam(1, epm.first);
+				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_CM_STATUSBAR_EPM, TC_FROMSTRING, SA_HOR_CENTER);
+				break;
 		}
 	}
 
@@ -236,14 +253,19 @@ struct StatusBarWindow : Window {
 		if (this->reminder_timeout.Elapsed(delta_ms)) {
 			this->SetWidgetDirty(WID_S_MIDDLE);
 		}
+
+		if (this->cm_epm_timer.CountElapsed(delta_ms)) {
+			this->SetWidgetDirty(CM_WID_S_EPM);
+		}
 	}
 };
 
 static const NWidgetPart _nested_main_status_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_PANEL, COLOUR_GREY, WID_S_LEFT), SetMinimalSize(140, 12), EndContainer(),
+		NWidget(WWT_PANEL, COLOUR_GREY, WID_S_LEFT), SetMinimalSize(100, 12), EndContainer(),
 		NWidget(WWT_PUSHBTN, COLOUR_GREY, WID_S_MIDDLE), SetMinimalSize(40, 12), SetDataTip(0x0, STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS), SetResize(1, 0),
-		NWidget(WWT_PUSHBTN, COLOUR_GREY, WID_S_RIGHT), SetMinimalSize(140, 12),
+		NWidget(WWT_PANEL, COLOUR_GREY, CM_WID_S_EPM), SetMinimalSize(100, 12), EndContainer(),
+		NWidget(WWT_PUSHBTN, COLOUR_GREY, WID_S_RIGHT), SetMinimalSize(100, 12),
 	EndContainer(),
 };
 

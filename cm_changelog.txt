@@ -90,6 +90,7 @@ This is usable for any OpenTTD servers
 - Allow to toggle removal mode with modifier key on station and signal building tools if it's different from fn modifier (otherwise fn takes priority).
 - Center text and icons in the status bar vertically.
 - Shaded trees.
+- Add APM counter to the status bar.
 
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.

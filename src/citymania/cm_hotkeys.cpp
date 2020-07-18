@@ -14,6 +14,8 @@
 #include "../widgets/rail_widget.h"
 #include "../widgets/road_widget.h"
 
+#include <queue>
+
 #include "../safeguards.h"
 
 struct RailStationGUISettings {
@@ -25,6 +27,7 @@ struct RailStationGUISettings {
     byte station_count;               ///< Number of custom stations (if newstations is \c true )
 };
 extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
+extern uint32 _realtime_tick;
 
 namespace citymania {
 
@@ -32,6 +35,33 @@ bool _fn_mod = false;
 bool _remove_mod = false;
 bool _estimate_mod = false;
 
+uint32 _effective_actions = 0;
+uint32 _first_effective_tick = 0;
+std::queue<uint32> _last_actions;
+
+static void PurgeLastActions() {
+    while (!_last_actions.empty() && _last_actions.front() <= _realtime_tick)
+        _last_actions.pop();
+}
+
+void CountEffectiveAction() {
+    if (!_first_effective_tick) _first_effective_tick = _realtime_tick;
+    _effective_actions++;
+    PurgeLastActions();
+    _last_actions.push(_realtime_tick + 60000);
+}
+
+void ResetEffectivveActionCounter() {
+    _first_effective_tick = 0;
+    _effective_actions = 0;
+    std::queue<uint32>().swap(_last_actions);  // clear the queue
+}
+
+std::pair<uint32, uint32> GetEPM() {
+    if (!_first_effective_tick) return std::make_pair(0, 0);
+    PurgeLastActions();
+    return std::make_pair(_effective_actions * 60000 / (_realtime_tick - _first_effective_tick), _last_actions.size());
+}
 
 void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed) {
     ModKey key = ModKey::NONE;

@@ -588,6 +588,7 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 	/* Only set p2 when the command does not come from the network. */
 	if (!(cmd & CMD_NETWORK_COMMAND) && GetCommandFlags(cmd) & CMD_CLIENT_ID && p2 == 0) p2 = CLIENT_ID_SERVER;
 
+	if (!(cmd & CMD_NO_ESTIMATE) && my_cmd) citymania::CountEffectiveAction();
 	CommandCost res = DoCommandPInternal(tile, p1, p2, cmd, callback, text, my_cmd, estimate_only);
 	if (res.Failed()) {
 		/* Only show the error when it's for us. */
