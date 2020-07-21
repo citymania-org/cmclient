@@ -58,7 +58,7 @@ void ResetEffectivveActionCounter() {
 }
 
 std::pair<uint32, uint32> GetEPM() {
-    if (!_first_effective_tick) return std::make_pair(0, 0);
+    if (!_first_effective_tick || _realtime_tick <= _first_effective_tick) return std::make_pair(0, 0);
     PurgeLastActions();
     return std::make_pair(_effective_actions * 60000 / (_realtime_tick - _first_effective_tick), _last_actions.size());
 }
