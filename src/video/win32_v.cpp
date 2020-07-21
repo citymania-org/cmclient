@@ -29,7 +29,7 @@
 #include <condition_variable>
 #include <algorithm>
 
-#include "../../citymania/cm_hotkeys.hpp"
+#include "../citymania/cm_hotkeys.hpp"
 
 #include "../safeguards.h"
 
