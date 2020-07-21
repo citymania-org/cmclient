@@ -39,7 +39,7 @@ bool ConTreeMap(byte argc, char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Loads heighmap-like file and plants trees according to it, values 0-256 ore scaled to 0-4 trees.");
         IConsoleHelp("Usage: 'cmtreemap <file>'");
-        IConsoleHelp("Default lookup patch is in scenario/heightmap in your openttd directory");
+        IConsoleHelp("Default lookup path is in scenario/heightmap in your openttd directory");
         return true;
     }
 
