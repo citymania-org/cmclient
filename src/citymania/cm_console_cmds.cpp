@@ -82,7 +82,7 @@ bool ConTreeMap(byte argc, char *argv[]) {
     }
 
     for (TileIndex tile = 0; tile < MapSize(); tile++) {
-        auto mx = x * TileX(tile) / MapSizeX();
+        auto mx = x - x * TileX(tile) / MapSizeX() - 1;
         auto my = y * TileY(tile) / MapSizeY();
         auto t = map[mx + my * x];
         auto tree_count = min(t / 51, 4);
