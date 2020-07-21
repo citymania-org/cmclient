@@ -2225,4 +2225,5 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("newgrf_profile",  ConNewGRFProfile, ConHookNewGRFDeveloperTool);
 
 	IConsoleCmdRegister("cmexport", citymania::ConExport);
+	IConsoleCmdRegister("cmtreemap", citymania::ConTreeMap, ConHookNoNetwork);
 }

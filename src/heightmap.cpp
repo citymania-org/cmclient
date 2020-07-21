@@ -450,7 +450,7 @@ void FixSlopes()
  * @param[in,out] map If not \c nullptr, destination to store the loaded block of image data.
  * @return Whether loading was successful.
  */
-static bool ReadHeightMap(DetailedFileType dft, const char *filename, uint *x, uint *y, byte **map)
+bool ReadHeightMap(DetailedFileType dft, const char *filename, uint *x, uint *y, byte **map)
 {
 	switch (dft) {
 		default:

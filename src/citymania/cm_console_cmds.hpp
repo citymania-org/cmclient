@@ -4,6 +4,7 @@
 namespace citymania {
 
 bool ConExport(byte argc, char *argv[]);
+bool ConTreeMap(byte argc, char *argv[]);
 
 } // namespace citymania
 
