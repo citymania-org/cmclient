@@ -200,6 +200,7 @@ struct GUISettings {
 	citymania::ModKey cm_estimate_mod;
 
 	uint8 cm_shaded_trees;
+	bool cm_show_apm;
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game

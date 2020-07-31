@@ -76,23 +76,23 @@ This is usable for any OpenTTD servers
 
 *** next () ***
 - Fix order hotkeys adding extra no load/unload orders.
-- Allow to use TAB as a hotkey
-- Add hotkey to toggle minimap
-- Make hotkey to close news and errors configurable (still defaults to SPACE)
-- Remove custom hotkey keycodes that were added to vanilla
+- Allow to use TAB as a hotkey.
+- Add hotkey to toggle minimap.
+- Make hotkey to close news and errors configurable (still defaults to SPACE).
+- Remove custom hotkey keycodes that were added to vanilla.
 - Make land info tool work with right click tooltip setting and/or disabled extra tooltip settings.
 - Make station rating tooltips work with right click tooltip setting
-- Splilt extra(land) tooltips setting in config into 3 for industries, stations and houses separately.
-- Add a setting to pause games after loading.
-- Add a "step" console command to advance the game for n ticks (singleplayer only).
-- cmexport
+- Splilt extra (land) tooltips setting in config into 3 for industries, stations and houses separately.
 - Make modifier key (ctrl/alt/shift) functions configurable.
 - Allow to toggle removal mode with modifier key on station and signal building tools if it's different from fn modifier (otherwise fn takes priority).
-- Center text and icons in the status bar vertically.
-- Shaded trees.
+- Add a setting to pause games after loading.
+- Add "step" console command to advance the game for n ticks (singleplayer only).
+- Add "cmexport" console command to export various in-game data in json format (for developers).
+- Add "cmtreemap" console command to plant trees according to a heightmap image (scenario editor only).
+- Add option to enable shading trees on slopes for better looks.
 - Add APM counter to the status bar.
-- Added cmtreemap console command to plant trees according to a heightmap image (scenario editor only).
 - Fix town HR couter.
+- Allow spectators to open industry funding window from the menu.
 
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.

@@ -1547,6 +1547,7 @@ static SettingsContainer &GetSettingsTree()
 				general->Add(new SettingEntry("gui.cm_fn_mod"));
 				general->Add(new SettingEntry("gui.cm_remove_mod"));
 				general->Add(new SettingEntry("gui.cm_estimate_mod"));
+				general->Add(new SettingEntry("gui.cm_show_apm"));
 			}
 
 			SettingsPage *viewports = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_VIEWPORTS));

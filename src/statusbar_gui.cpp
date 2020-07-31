@@ -130,10 +130,14 @@ struct StatusBarWindow : Window {
 				break;
 			}
 
-			case CM_WID_S_EPM:
+			case CM_WID_S_APM:
+				if (!_settings_client.gui.cm_show_apm) {
+					*size = Dimension(0, 0);
+					return;
+				}
 				SetDParam(0, 999);
 				SetDParam(1, 999);
-				d = GetStringBoundingBox(STR_CM_STATUSBAR_EPM);
+				d = GetStringBoundingBox(STR_CM_STATUSBAR_APM);
 				break;
 
 			default:
@@ -198,11 +202,13 @@ struct StatusBarWindow : Window {
 				}
 				break;
 
-			case CM_WID_S_EPM:
-				auto epm = citymania::GetEPM();
-				SetDParam(0, epm.second);
-				SetDParam(1, epm.first);
-				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_CM_STATUSBAR_EPM, TC_FROMSTRING, SA_HOR_CENTER);
+			case CM_WID_S_APM:
+				if (_settings_client.gui.cm_show_apm) {
+					auto epm = citymania::GetEPM();
+					SetDParam(0, epm.second);
+					SetDParam(1, epm.first);
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_CM_STATUSBAR_APM, TC_FROMSTRING, SA_HOR_CENTER);
+				}
 				break;
 		}
 	}
@@ -255,7 +261,7 @@ struct StatusBarWindow : Window {
 		}
 
 		if (this->cm_epm_timer.CountElapsed(delta_ms)) {
-			this->SetWidgetDirty(CM_WID_S_EPM);
+			this->SetWidgetDirty(CM_WID_S_APM);
 		}
 	}
 };
@@ -264,7 +270,7 @@ static const NWidgetPart _nested_main_status_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_PANEL, COLOUR_GREY, WID_S_LEFT), SetMinimalSize(100, 12), EndContainer(),
 		NWidget(WWT_PUSHBTN, COLOUR_GREY, WID_S_MIDDLE), SetMinimalSize(40, 12), SetDataTip(0x0, STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS), SetResize(1, 0),
-		NWidget(WWT_PANEL, COLOUR_GREY, CM_WID_S_EPM), SetMinimalSize(100, 12), EndContainer(),
+		NWidget(WWT_PANEL, COLOUR_GREY, CM_WID_S_APM), SetMinimalSize(100, 12), EndContainer(),
 		NWidget(WWT_PUSHBTN, COLOUR_GREY, WID_S_RIGHT), SetMinimalSize(100, 12),
 	EndContainer(),
 };
@@ -291,4 +297,9 @@ bool IsNewsTickerShown()
 void ShowStatusBar()
 {
 	new StatusBarWindow(&_main_status_desc);
+}
+
+void CM_RedrawStatusBar() {
+	StatusBarWindow *w = dynamic_cast<StatusBarWindow*>(FindWindowById(WC_STATUS_BAR, 0));
+	w->ReInit();
 }

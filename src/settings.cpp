@@ -2281,3 +2281,10 @@ static bool IsSignedVarMemType(VarType vt)
 	}
 	return false;
 }
+
+// CM
+#include "statusbar_gui.h"
+static bool cm_v_RedrawStatusBar(int32 p1) {
+	CM_RedrawStatusBar();
+	return true;
+}

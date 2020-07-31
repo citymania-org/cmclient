@@ -23,4 +23,6 @@ enum StatusBarInvalidate {
 bool IsNewsTickerShown();
 void ShowStatusBar();
 
+void CM_RedrawStatusBar();
+
 #endif /* STATUSBAR_GUI_H */
