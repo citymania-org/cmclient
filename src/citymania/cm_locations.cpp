@@ -47,6 +47,7 @@ void LoadLocation(uint slot) {
     vp->dest_scrollpos_y = loc.scrollpos_y;
     vp->virtual_width = ScaleByZoom(vp->width, vp->zoom);
     vp->virtual_height = ScaleByZoom(vp->height, vp->zoom);
+    w->SetDirty();
 }
 
 EventState HandleToolbarHotkey(int hotkey) {
