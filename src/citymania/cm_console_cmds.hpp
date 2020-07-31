@@ -3,6 +3,7 @@
 
 namespace citymania {
 
+bool ConStep(byte argc, char *argv[]);
 bool ConExport(byte argc, char *argv[]);
 bool ConTreeMap(byte argc, char *argv[]);
 

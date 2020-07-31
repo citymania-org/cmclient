@@ -23,6 +23,18 @@ static void IConsoleHelp(const char *str)
     IConsolePrintF(CC_WARNING, "- %s", str);
 }
 
+bool ConStep(byte argc, char *argv[]) {
+    if (argc == 0 || argc > 2) {
+        IConsoleHelp("Advances the game for a certain amount of ticks (default 1). Usage: 'cmstep [n]'");
+        return true;
+    }
+    auto n = (argc > 1 ? atoi(argv[1]) : 1);
+
+    DoCommandP(0, PM_PAUSED_NORMAL, 0 | (n << 1), CMD_PAUSE);
+
+    return true;
+}
+
 bool ConExport(byte argc, char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Exports various game data in json format to openttd.json file");

@@ -651,19 +651,6 @@ DEF_CONSOLE_CMD(ConUnpauseGame)
 	return true;
 }
 
-DEF_CONSOLE_CMD(ConStepGame)
-{
-	if (argc == 0 || argc > 2) {
-		IConsoleHelp("Advances the game for a certain amount of ticks (default 1). Usage: 'step [n]'");
-		return true;
-	}
-	auto n = (argc > 1 ? atoi(argv[1]) : 1);
-
-	DoCommandP(0, PM_PAUSED_NORMAL, 0 | (n << 1), CMD_PAUSE);
-
-	return true;
-}
-
 DEF_CONSOLE_CMD(ConRcon)
 {
 	if (argc == 0) {
@@ -2186,7 +2173,6 @@ void IConsoleStdLibRegister()
 
 	IConsoleCmdRegister("pause",           ConPauseGame, ConHookServerOnly);
 	IConsoleCmdRegister("unpause",         ConUnpauseGame, ConHookServerOnly);
-	IConsoleCmdRegister("step",            ConStepGame, ConHookNoNetwork);
 
 	IConsoleCmdRegister("company_pw",      ConCompanyPassword, ConHookNeedNetwork);
 	IConsoleAliasRegister("company_password",      "company_pw %+");
@@ -2224,6 +2210,7 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("reload_newgrfs",  ConNewGRFReload, ConHookNewGRFDeveloperTool);
 	IConsoleCmdRegister("newgrf_profile",  ConNewGRFProfile, ConHookNewGRFDeveloperTool);
 
+	IConsoleCmdRegister("cmstep", citymania::ConStep, ConHookNoNetwork);
 	IConsoleCmdRegister("cmexport", citymania::ConExport);
 	IConsoleCmdRegister("cmtreemap", citymania::ConTreeMap, ConHookNoNetwork);
 }
