@@ -91,6 +91,14 @@ bool HasSeparateRemoveMod() {
     return (_settings_client.gui.cm_fn_mod != _settings_client.gui.cm_remove_mod);
 }
 
+bool SeparateFnPressed() {
+    return HasSeparateRemoveMod() && _fn_mod;
+}
+
+bool SeparateRemovePressed() {
+    return HasSeparateRemoveMod() && _remove_mod;
+}
+
 ToolRemoveMode RailToolbar_GetRemoveMode(int widget) {
     switch(widget) {
         case WID_RAT_BUILD_NS:

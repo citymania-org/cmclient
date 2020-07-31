@@ -1,9 +1,12 @@
 #include "../stdafx.h"
 
-#include "polyrail.hpp"
+#include "cm_polyrail.hpp"
+
+#include "cm_hotkeys.hpp"
 
 #include "../command_type.h"
 #include "../command_func.h"
+#include "../gfx_func.h"
 #include "../rail_type.h"
 #include "../tilehighlight_type.h"
 #include "../track_func.h"
@@ -15,13 +18,22 @@
 
 #include "../safeguards.h"
 
+enum FoundationPart {
+    FOUNDATION_PART_NONE     = 0xFF,  ///< Neither foundation nor groundsprite drawn yet.
+    FOUNDATION_PART_NORMAL   = 0,     ///< First part (normal foundation or no foundation)
+    FOUNDATION_PART_HALFTILE = 1,     ///< Second part (halftile foundation)
+    FOUNDATION_PART_END
+};
 extern TileHighlightData _thd;
-extern void (*StaticDrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal);
 extern CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text);
 extern RailType _cur_railtype;
 extern bool _shift_pressed;
+void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part);
 
 namespace citymania {
+
+extern void (*DrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal);
+extern void (*AddTileSpriteToDraw)(SpriteID image, PaletteID pal, int32 x, int32 y, int z, const SubSprite *sub, int extra_offs_x, int extra_offs_y);
 
 
 // +static HighLightStyle GetPartOfAutoLine(int px, int py, const Point &selstart, const Point &selend, HighLightStyle dir)
@@ -150,7 +162,7 @@ Polyrail MakePolyrail(PolyrailPoint start, PolyrailPoint end) {
     auto polyrail = Polyrail(start, end);
     uint16 max_curve = 250;
     uint16 max_slowdown_curve = _settings_game.vehicle.max_train_length * 2;
-    if (start == end)
+    if (start == end || !start.IsValid() || !end.IsValid())
         return polyrail;
 
     struct Vertex {
@@ -283,6 +295,18 @@ PolyrailPoint GetPolyrailPoint(int x, int y) {
     return PolyrailPoint(TileXY(tx, ty), side);
 }
 
+Point SnapToTileEdge(Point p) {
+    auto s = (p.x + p.y) >> 4;
+    auto e = (p.y - p.x) >> 4;
+    auto x_edge = ((s + e) & 1) ? true : false;
+    auto tx = (s - e) >> 1;
+    auto ty = (s + e + 1) >> 1;
+    return Point{
+        (int)(tx * TILE_SIZE + (x_edge ? TILE_SIZE / 2 : 0)),
+        (int)(ty * TILE_SIZE + (x_edge ? 0 : TILE_SIZE / 2))
+    };
+}
+
 void UpdatePolyrailDrawstyle(Point pt) {
     if (pt.x == -1) return;
     if (!_polyrail_start.IsValid()) return;
@@ -295,13 +319,38 @@ void UpdatePolyrailDrawstyle(Point pt) {
 }
 
 void SetPolyrailSelectionTilesDirty() {
+    MarkTileDirtyByTile(TileVirtXY(_thd.pos.x, _thd.pos.y));
     for (auto p : _thd.cm_polyrail.tiles) {
         MarkTileDirtyByTile(p.first);
     }
 }
 
+HighLightStyle UpdatePolyrailTileSelection() {
+    Point pt = GetTileBelowCursor();
+    if (pt.x == -1) return HT_NONE;
+
+    _thd.new_pos = citymania::SnapToTileEdge(pt);
+    auto end = GetPolyrailPoint(pt.x, pt.y);
+    _thd.cm_new_polyrail = MakePolyrail(_polyrail_start, end);
+
+    return CM_HT_RAIL;
+}
+
+static const int SLOPE_TO_X_EDGE_Z_OFFSET[SLOPE_STEEP_E + 1] = {0, 4, 0, 4, 0, 0, 0, 4, 4, 8, 0, 8, 4, 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 12, 0, 12, 4};
+static const int SLOPE_TO_Y_EDGE_Z_OFFSET[SLOPE_STEEP_E + 1] = {0, 0, 0, 0, 4, 0, 4, 4, 4, 4, 0, 4, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 12, 12};
+
 void DrawPolyrailTileSelection(const TileInfo *ti) {
     if (_thd.drawstyle != CM_HT_RAIL) return;
+
+    if (SeparateFnPressed() || !_thd.cm_polyrail.IsValid()) {
+        if (ti->tile == TileVirtXY(_thd.pos.x, _thd.pos.y)) {
+            auto zofs = (((_thd.pos.x & TILE_UNIT_MASK) ? SLOPE_TO_X_EDGE_Z_OFFSET : SLOPE_TO_Y_EDGE_Z_OFFSET)[(size_t)ti->tileh]);
+            AddTileSpriteToDraw(_cur_dpi->zoom <= ZOOM_LVL_DETAIL ? SPR_DOT : SPR_DOT_SMALL,
+                                PAL_NONE, _thd.pos.x, _thd.pos.y, ti->z + zofs, nullptr, 0, 0);
+        }
+        return;
+    }
+
     bool is_first_segment = true;
     Direction first_dir = INVALID_DIR;
     // TODO increase effeciency
@@ -311,7 +360,7 @@ void DrawPolyrailTileSelection(const TileInfo *ti) {
         else if (first_dir != dir) is_first_segment = false;
         if (p.first == ti->tile) {
             auto hs = (HighLightStyle)TrackdirToTrack(p.second);
-            StaticDrawAutorailSelection(ti, hs, is_first_segment ? PAL_NONE : PALETTE_SEL_TILE_BLUE);
+            DrawAutorailSelection(ti, hs, is_first_segment ? PAL_NONE : PALETTE_SEL_TILE_BLUE);
         }
     }
 }
@@ -332,12 +381,17 @@ static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_t
     return ret;
 }
 
-void HandlePolyrailPlacement(bool estimate_mode, bool remove_mode) {
-    auto end = GetPolyrailPoint(_thd.selend.x, _thd.selend.y);
-    if (!_polyrail_start.IsValid()) {
+void PlaceRail_Polyrail(Point pt, bool remove_mode) {
+    auto end = GetPolyrailPoint(pt.x, pt.y);
+
+    // fprintf(stderr, "%d %d\n", );
+
+    if (!_polyrail_start.IsValid() || SeparateFnPressed()) {
         _polyrail_start = end;
+        _thd.cm_polyrail = MakePolyrail(_polyrail_start, PolyrailPoint());
         return;
     }
+
     auto polyrail = MakePolyrail(_polyrail_start, end);
     if (polyrail.tiles.empty()) return;
 
@@ -354,7 +408,7 @@ void HandlePolyrailPlacement(bool estimate_mode, bool remove_mode) {
 
     auto cmd = DoRailroadTrackCmd(segment_start, segment_end, TrackdirToTrack(trackdir), remove_mode);
 
-    if (estimate_mode) {
+    if (_estimate_mod) {
         DoCommandP(&cmd);
         return;
     }
@@ -362,6 +416,11 @@ void HandlePolyrailPlacement(bool estimate_mode, bool remove_mode) {
         if (!DoCommandP(&cmd)) return;
     }
     _polyrail_start = PolyrailPoint(segment_end, TrackdirToExitdir(trackdir_end)).Normalize();
+}
+
+void SetPolyrailToPlace() {
+    if (SeparateFnPressed()) _polyrail_start = PolyrailPoint();
+    _thd.cm_polyrail = MakePolyrail(_polyrail_start, PolyrailPoint());
 }
 
 } // namespace citymania

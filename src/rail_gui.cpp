@@ -829,6 +829,7 @@ struct BuildRailToolbarWindow : Window {
 	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		DiagDirection ddir;
+		fprintf(stderr, "PLACE OBJECT %d %d\n", pt.x, pt.y);
 		switch (this->last_user_action) {
 			case WID_RAT_BUILD_NS:
 				VpStartPlaceSizing(tile, VPM_FIX_VERTICAL | VPM_RAILDIRS, DDSP_PLACE_RAIL);
@@ -851,7 +852,7 @@ struct BuildRailToolbarWindow : Window {
 				VpStartPlaceSizing(tile, VPM_RAILDIRS, DDSP_PLACE_RAIL);
 				break;
 			case CM_WID_RAT_RAIL:
-				VpStartPlaceSizing(tile, CM_VPM_RAILDIRS, CM_DDSP_PLACE_RAIL);
+				citymania::PlaceRail_Polyrail(pt, _remove_button_clicked);
 				break;
 
 			case WID_RAT_DEMOLISH:
@@ -954,9 +955,6 @@ struct BuildRailToolbarWindow : Window {
 							ShowSelectWaypointIfNeeded(cmdcont, ta);
 						}
 					}
-					break;
-				case CM_DDSP_PLACE_RAIL:
-					citymania::HandlePolyrailPlacement(_shift_pressed, _remove_button_clicked);
 					break;
 			}
 		}

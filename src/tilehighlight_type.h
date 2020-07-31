@@ -15,7 +15,7 @@
 #include "tile_type.h"
 #include "viewport_type.h"
 
-#include "citymania/polyrail.hpp"
+#include "citymania/cm_polyrail.hpp"
 
 // CM moved to citymania/polyrail.hpp
 // /** Highlighting draw styles */

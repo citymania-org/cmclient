@@ -103,7 +103,7 @@
 
 #include "citymania/highlight.hpp"
 #include "citymania/cm_hotkeys.hpp"
-#include "citymania/polyrail.hpp"
+#include "citymania/cm_polyrail.hpp"
 
 #include "safeguards.h"
 
@@ -1133,8 +1133,8 @@ static void DrawTileSelection(const TileInfo *ti)
 		// station selector, handled by citymania highlight
 		return;
 	}
-	if (_thd.drawstyle & CM_HT_RAIL) {
-		// CM polyrail seelctor handled by citymania highlight
+	if (_thd.drawstyle == CM_HT_RAIL) {
+		// CM polyrail selector handled by citymania highlight
 		return;
 	}
 
@@ -2680,6 +2680,8 @@ void UpdateTileSelection()
 			}
 			new_drawstyle = _thd.next_drawstyle;
 		}
+	} else if (_thd.place_mode == CM_HT_RAIL) {
+		new_drawstyle = citymania::UpdatePolyrailTileSelection();
 	} else if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
 		Point pt = GetTileBelowCursor();
 		x1 = pt.x;
@@ -2752,10 +2754,6 @@ void UpdateTileSelection()
 					_thd.selend.x = x1;
 					_thd.selend.y = y1;
 					_thd.dir2 = HT_DIR_END;
-					break;
-				case CM_HT_RAIL:
-					citymania::UpdatePolyrailDrawstyle(pt);
-					new_drawstyle = CM_HT_RAIL;
 					break;
 				default:
 					NOT_REACHED();
@@ -2830,15 +2828,12 @@ void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDrag
 		_thd.selstart.x += TILE_SIZE / 2;
 		_thd.selstart.y += TILE_SIZE / 2;
 	}
-
-	fprintf(stderr, "STARTPLACESIZING %d\n", (int)_thd.place_mode);
-
+	fprintf(stderr, "START place sizing %d %d\n", TileX(tile), TileY(tile));
 	HighLightStyle others = _thd.place_mode & ~(HT_DRAG_MASK | HT_DIR_MASK);
 	if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT) {
 		_thd.place_mode = HT_SPECIAL | others;
 		_thd.next_drawstyle = HT_RECT | others;
 	} else if ((_thd.place_mode & HT_DRAG_MASK) == CM_HT_RAIL) {
-		fprintf(stderr, "STARTPLACESIZING CMRAIL %d\n", (int)_thd.place_mode);
 		_thd.place_mode = CM_HT_RAIL | others;
 		_thd.next_drawstyle = CM_HT_RAIL | others;
 	} else if (_thd.place_mode & (HT_RAIL | HT_LINE)) {
@@ -3594,6 +3589,7 @@ void VpSelectTilesWithMethod(int x, int y, ViewportPlaceMethod method)
 		return;
 	}
 
+	fprintf(stderr, "SELECT Tiles with method %d %d\n", x, y);
 	if ((_thd.place_mode & HT_POLY) && GetRailSnapMode() != RSM_NO_SNAP) {
 		Point pt = { x, y };
 		_thd.next_drawstyle = CalcPolyrailDrawstyle(pt, true);
@@ -3845,6 +3841,8 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 	if ((mode & HT_DRAG_MASK) == HT_SPECIAL) { // special tools, like tunnels or docks start with presizing mode
 		VpStartPreSizing();
 	}
+
+	if (mode == CM_HT_RAIL) citymania::SetPolyrailToPlace();
 
 	if ((icon & ANIMCURSOR_FLAG) != 0) {
 		SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
@@ -4198,5 +4196,8 @@ void ResetRailPlacementEndpoints()
 	_current_snap_lock.x = -1;
 }
 
-// auto StaticDrawAutorailSelection = DrawAutorailSelection;
-void (*StaticDrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal) = &DrawAutorailSelection;
+namespace citymania {
+	// auto StaticDrawAutorailSelection = DrawAutorailSelection;
+	void (*DrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal) = &::DrawAutorailSelection;
+	void (*AddTileSpriteToDraw)(SpriteID image, PaletteID pal, int32 x, int32 y, int z, const SubSprite *sub, int extra_offs_x, int extra_offs_y) = &::AddTileSpriteToDraw;
+}

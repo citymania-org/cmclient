@@ -15,6 +15,10 @@ enum class ToolRemoveMode : uint8 {
     MOD = 2,
 };
 
+bool HasSeparateRemoveMod();
+bool SeparateFnPressed();
+bool SeparateRemovePressed();
+
 void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed);
 
 bool RailToolbar_IsRemoveInverted(int widget);

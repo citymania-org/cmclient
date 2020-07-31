@@ -1,5 +1,5 @@
-#ifndef CITYMANIA_POLYRAIL_HPP
-#define CITYMANIA_POLYRAIL_HPP
+#ifndef CM_POLYRAIL_HPP
+#define CM_POLYRAIL_HPP
 
 #include "../tile_type.h"
 #include "../tile_cmd.h"
@@ -58,16 +58,20 @@ public:
 
     Polyrail() {}
     Polyrail(PolyrailPoint start, PolyrailPoint end): start{start}, end{end} {}
+    bool IsValid() { return this->start.IsValid() && this->end.IsValid(); }
 
     HighLightStyle GetTileHighlightStyle(TileIndex tile);
 };
 
+Point SnapToTileEdge(Point p);
 void SetPolyrailStart(TileIndex tile);
 
 void SetPolyrailSelectionTilesDirty();
 void UpdatePolyrailDrawstyle(Point pt);
 void DrawPolyrailTileSelection(const TileInfo *ti);
-void HandlePolyrailPlacement(bool estimate_mode, bool remove_mode);
+void PlaceRail_Polyrail(Point pt, bool remove_mode);
+HighLightStyle UpdatePolyrailTileSelection();
+void SetPolyrailToPlace();
 
 } // namespace citymania
 
