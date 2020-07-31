@@ -30,7 +30,7 @@
 #include <bitset>
 
 #include "citymania/cm_hotkeys.hpp"
-#include "citymania/minimap.hpp"
+#include "citymania/cm_minimap.hpp"
 
 #include "safeguards.h"
 

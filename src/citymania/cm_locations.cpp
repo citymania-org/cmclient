@@ -7,7 +7,7 @@
 #include "../zoom_func.h"
 #include "../zoom_type.h"
 
-#include "locations.hpp"
+#include "cm_locations.hpp"
 
 #include "../safeguards.h"
 

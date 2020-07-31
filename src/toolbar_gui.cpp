@@ -60,7 +60,7 @@
 #include "zoning.h"
 #include "watch_gui.h"
 
-#include "citymania/locations.hpp"
+#include "citymania/cm_locations.hpp"
 #include "citymania/cm_main.hpp"
 
 #include "safeguards.h"

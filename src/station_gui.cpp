@@ -39,8 +39,8 @@
 #include <set>
 #include <vector>
 
-#include "citymania/station_ui.hpp"
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_station_gui.hpp"
 #include "citymania/cm_tooltips.hpp"
 
 #include "safeguards.h"

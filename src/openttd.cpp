@@ -68,7 +68,7 @@
 
 #include "linkgraph/linkgraphschedule.h"
 
-#include "citymania/highlight.hpp"
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_main.hpp"
 
 #include <stdarg.h>

@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "citymania/highlight.hpp"
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_game.hpp"
 #include "citymania/cm_main.hpp"
 

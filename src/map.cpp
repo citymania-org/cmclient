@@ -12,7 +12,7 @@
 #include "core/alloc_func.hpp"
 #include "water_map.h"
 #include "string_func.h"
-#include "citymania/highlight.hpp"
+#include "citymania/cm_highlight.hpp"
 
 #include "safeguards.h"
 

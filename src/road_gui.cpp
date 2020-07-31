@@ -40,7 +40,7 @@
 #include "table/strings.h"
 
 #include "citymania/cm_hotkeys.hpp"
-#include "citymania/station_ui.hpp"
+#include "citymania/cm_station_gui.hpp"
 
 #include "safeguards.h"
 

@@ -1,5 +1,5 @@
-#ifndef CITYMANIA_MINIMAP_HPP
-#define CITYMANIA_MINIMAP_HPP
+#ifndef CM_MINIMAP_HPP
+#define CM_MINIMAP_HPP
 
 #include "../core/endian_func.hpp"
 

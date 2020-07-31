@@ -1,6 +1,6 @@
 #include "../stdafx.h"
 
-#include "station_ui.hpp"
+#include "cm_station_gui.hpp"
 
 #include "cm_hotkeys.hpp"
 

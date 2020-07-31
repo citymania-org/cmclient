@@ -27,7 +27,7 @@
 #include "table/tree_land.h"
 #include "table/clear_land.h"
 
-#include "citymania/highlight.hpp"
+#include "citymania/cm_highlight.hpp"
 
 #include "safeguards.h"
 

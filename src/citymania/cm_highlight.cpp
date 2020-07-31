@@ -1,6 +1,8 @@
 #include "../stdafx.h"
 
-#include "highlight.hpp"
+#include "cm_highlight.hpp"
+#include "cm_main.hpp"
+#include "cm_station_gui.hpp"
 
 #include "../core/math_func.hpp"
 #include "../command_func.h"
@@ -15,10 +17,6 @@
 #include "../zoning.h"
 
 #include <set>
-
-#include "station_ui.hpp"
-
-#include "cm_main.hpp"
 
 
 /** Enumeration of multi-part foundations */

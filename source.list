@@ -1226,14 +1226,14 @@ citymania/extensions/cmext_town.hpp
 citymania/extensions/cmext_company.hpp
 
 # CityMania client
-citymania/base64.h
-citymania/base64.cpp
-citymania/highlight.hpp
-citymania/highlight.cpp
-citymania/locations.hpp
-citymania/locations.cpp
-citymania/minimap.hpp
-citymania/minimap.cpp
-citymania/station_ui.hpp
-citymania/station_ui.cpp
+citymania/cm_base64.hpp
+citymania/cm_base64.cpp
+citymania/cm_highlight.hpp
+citymania/cm_highlight.cpp
+citymania/cm_locations.hpp
+citymania/cm_locations.cpp
+citymania/cm_minimap.hpp
+citymania/cm_minimap.cpp
+citymania/cm_station_gui.hpp
+citymania/cm_station_gui.cpp
 newgrf_revisions.hpp

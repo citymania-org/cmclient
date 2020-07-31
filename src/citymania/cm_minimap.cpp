@@ -1,6 +1,6 @@
 #include "../stdafx.h"
 
-#include "minimap.hpp"
+#include "cm_minimap.hpp"
 
 #include "../safeguards.h"
 

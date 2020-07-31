@@ -1,5 +1,5 @@
-#ifndef CITYMANIA_LOCATIONS_HPP
-#define CITYMANIA_LOCATIONS_HPP
+#ifndef CM_LOCATIONS_HPP
+#define CM_LOCATIONS_HPP
 
 namespace citymania {
 

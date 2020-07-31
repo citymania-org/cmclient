@@ -1,4 +1,4 @@
-/* 
+/*
    base64.cpp and base64.h
 
    Copyright (C) 2004-2008 René Nyffenegger
@@ -25,10 +25,10 @@
 
 */
 
-#include "base64.h"
+#include "cm_base64.hpp"
 #include <iostream>
 
-static const std::string base64_chars = 
+static const std::string base64_chars =
              "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
              "abcdefghijklmnopqrstuvwxyz"
              "0123456789+/";
@@ -142,10 +142,10 @@ int main2() {
 	fclose(fp);
 
   std::string encoded = base64_encode((unsigned char*)mFileBuffer, mFileLen);//reinterpret_cast<const unsigned char*>(s.c_str()), s.length());
- 
+
   {
   FILE* fileWrite = fopen("d:/PhysicsAnimationBakingDemo.uue64.h","w");
-  
+
   fprintf(fileWrite,"const char* mydata_base64 = {\n");
 	int counter = 0;
 	for (int i=0;i<encoded.size();i++)

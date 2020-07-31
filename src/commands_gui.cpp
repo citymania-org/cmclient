@@ -18,7 +18,7 @@
 #include "window_func.h"
 #include "window_gui.h"
 
-#include "citymania/base64.h"
+#include "citymania/cm_base64.hpp"
 
 
 bool _novahost = false;

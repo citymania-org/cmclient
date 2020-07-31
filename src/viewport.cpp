@@ -101,7 +101,7 @@
 #include "zoning.h"
 #include "industry_type.h"
 
-#include "citymania/highlight.hpp"
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_hotkeys.hpp"
 
 #include "safeguards.h"

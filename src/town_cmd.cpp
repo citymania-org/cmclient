@@ -52,7 +52,7 @@
 #include "table/strings.h"
 #include "table/town_land.h"
 
-#include "citymania/highlight.hpp"
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_main.hpp"
 
 #include "safeguards.h"

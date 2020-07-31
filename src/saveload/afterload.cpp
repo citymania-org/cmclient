@@ -61,7 +61,7 @@
 #include "../game/game_text.hpp"
 #include "../table/control_codes.h"
 
-#include "../citymania/highlight.hpp"
+#include "../citymania/cm_highlight.hpp"
 
 #include "saveload_internal.h"
 

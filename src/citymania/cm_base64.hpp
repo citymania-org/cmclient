@@ -1,5 +1,5 @@
-#ifndef BASE_64_H
-#define BASE_64_H
+#ifndef CM_BASE64_HPP
+#define CM_BASE64_HPP
 
 #include <string>
 
