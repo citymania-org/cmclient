@@ -62,6 +62,14 @@ Game::Game() {
         event.town->cm.real_population -= event.house_spec->population;
     });
 
+    this->events.listen<event::HouseDestroyed>(event::Slot::GAME, [this] (const event::HouseDestroyed &event) {
+        const Company *company = Company::GetIfValid(event.company_id);
+        if (company && company->cm.is_server) {
+            this->set_town_growth_tile(event.tile, TownGrowthTileState::HR);
+            event.town->cm.hr_total++;
+        }
+    });
+
     this->events.listen<event::HouseCompleted>(event::Slot::GAME, [this] (const event::HouseCompleted &event) {
         event.town->cm.houses_constructing--;
     });

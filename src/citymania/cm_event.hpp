@@ -57,6 +57,12 @@ struct HouseCleared {
     bool was_completed;  ///< whether house was completed before destruction
 };
 
+struct HouseDestroyed {  // by dynamite, called after HouseCleared
+    CompanyID company_id;
+    Town *town;
+    TileIndex tile;
+};
+
 struct HouseCompleted {
     Town *town;
     TileIndex tile;

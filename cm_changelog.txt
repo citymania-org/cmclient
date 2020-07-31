@@ -92,6 +92,7 @@ This is usable for any OpenTTD servers
 - Shaded trees.
 - Add APM counter to the status bar.
 - Added cmtreemap console command to plant trees according to a heightmap image (scenario editor only).
+- Fix town HR couter.
 
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.

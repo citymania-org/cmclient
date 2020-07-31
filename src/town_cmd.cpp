@@ -65,8 +65,6 @@ uint CBDECAY[NUM_CARGO] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 uint days_in_month[] = {31, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};//CB
 void CB_UpdateTownStorage(Town *t); //CB
 
-const Money NOVAPOLIS_COMPANY_MONEY_THRESHOLD = INT64_MAX >> 4;
-
 TownID _new_town_id;
 CargoTypes _town_cargoes_accepted; ///< Bitmap of all cargoes accepted by houses.
 
@@ -702,12 +700,8 @@ static CommandCost ClearTile_Town(TileIndex tile, DoCommandFlag flags)
 
 	ChangeTownRating(t, -rating, RATING_HOUSE_MINIMUM, flags);
 	if (flags & DC_EXEC) {
-		// if (_current_company == COMPANY_FIRST &&
-		// 		Company::Get(_current_company)->money > NOVAPOLIS_COMPANY_MONEY_THRESHOLD) {
-		// 	if (t->cb.growth_state == TownGrowthState::GROWING) t->cm.hr_total++;
-		// 	UpdateTownGrowthTile(tile, t->cb.growth_state == TownGrowthState::GROWING ? TGTS_CB_HOUSE_REMOVED: TGTS_CB_HOUSE_REMOVED_NOGROW);
-		// }
 		ClearTownHouse(t, tile);
+		citymania::Emit(citymania::event::HouseDestroyed{_current_company, t, tile});
 	}
 
 	return cost;
