@@ -787,7 +787,9 @@ static CallBackFunction MenuClickLeague(int index)
 static CallBackFunction ToolbarIndustryClick(Window *w)
 {
 	/* Disable build-industry menu if we are a spectator */
-	PopupMainToolbMenu(w, WID_TN_INDUSTRIES, STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY, (_local_company == COMPANY_SPECTATOR) ? 2 : 3);
+	// CM don't disable
+	// PopupMainToolbMenu(w, WID_TN_INDUSTRIES, STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY, (_local_company == COMPANY_SPECTATOR) ? 2 : 3);
+	PopupMainToolbMenu(w, WID_TN_INDUSTRIES, STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY, 3);
 	return CBF_NONE;
 }
 

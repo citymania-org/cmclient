@@ -44,7 +44,7 @@
 #include <bitset>
 
 #include "citymania/cm_hotkeys.hpp"
-#include "citymania/highlight.hpp"
+#include "citymania/cm_highlight.hpp"
 
 #include "safeguards.h"
 
