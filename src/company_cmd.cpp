@@ -38,6 +38,8 @@
 #include "table/strings.h"
 #include "cargo_type.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 void ClearEnginesHiddenFlagOfCompany(CompanyID cid);
@@ -119,6 +121,7 @@ void SetLocalCompany(CompanyID new_company)
 
 	/* Delete any construction windows... */
 	if (switching_company) DeleteConstructionWindows();
+	if (switching_company) citymania::ResetEffectivveActionCounter();
 
 	/* ... and redraw the whole screen. */
 	MarkWholeScreenDirty();

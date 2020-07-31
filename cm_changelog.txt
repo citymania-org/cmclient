@@ -86,7 +86,7 @@ This is usable for any OpenTTD servers
 - Make modifier key (ctrl/alt/shift) functions configurable.
 - Allow to toggle removal mode with modifier key on station and signal building tools if it's different from fn modifier (otherwise fn takes priority).
 - Add a setting to pause games after loading.
-- Add "step" console command to advance the game for n ticks (singleplayer only).
+- Add "cmstep" console command to advance the game for n ticks (singleplayer only).
 - Add "cmexport" console command to export various in-game data in json format (for developers).
 - Add "cmtreemap" console command to plant trees according to a heightmap image (scenario editor only).
 - Add option to enable shading trees on slopes for better looks.
