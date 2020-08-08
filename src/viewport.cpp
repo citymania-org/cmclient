@@ -1018,12 +1018,13 @@ static void DrawAutorailSelection(const TileInfo *ti, HighLightStyle autorail_ty
 	DrawSelectionSprite(image, pal, ti, 7, foundation_part);
 }
 
-enum TileHighlightType {
-	THT_NONE,
-	THT_WHITE,
-	THT_BLUE,
-	THT_RED,
-};
+// CM moved to cm_highlight.hpp
+// enum TileHighlightType {
+// 	THT_NONE,
+// 	THT_WHITE,
+// 	THT_BLUE,
+// 	THT_RED,
+// };
 
 const Station *_viewport_highlight_station; ///< Currently selected station for coverage area highlight
 const Town *_viewport_highlight_town;       ///< Currently selected town for coverage area highlight
@@ -1128,10 +1129,7 @@ static void DrawTileSelection(const TileInfo *ti)
 	TileHighlightType tht = GetTileHighlightType(ti->tile);
 	DrawTileHighlightType(ti, tht);
 
-	if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
-		// station selector, handled by citymania highlight
-		return;
-	}
+	if (citymania::DrawTileSelection(ti, tht)) return;
 
 	switch (_thd.drawstyle & HT_DRAG_MASK) {
 		default: break; // No tile selection active?
@@ -1318,7 +1316,7 @@ static void ViewportAddLandscape()
 
 				if (tile_info.tile != INVALID_TILE){
 					DrawTileZoning(&tile_info);
-					citymania::DrawTileSelection(&tile_info, _vd.cm_highlight);
+					citymania::DrawTileZoning(&tile_info, _vd.cm_highlight);
 					DrawTileSelection(&tile_info);
 				}
 			}
@@ -2752,6 +2750,7 @@ void UpdateTileSelection()
 	}
 
 	if (new_drawstyle & HT_LINE) CalcNewPolylineOutersize();
+	new_drawstyle = citymania::UpdateTileSelection(new_drawstyle);
 
 	/* redraw selection */
 	if (_thd.drawstyle != new_drawstyle ||
@@ -4164,4 +4163,9 @@ void ResetRailPlacementEndpoints()
 	_tile_snap_points.clear();
 	_rail_snap_points.clear();
 	_current_snap_lock.x = -1;
+}
+
+namespace citymania {
+	void (*DrawTileSelectionRect)(const TileInfo *ti, PaletteID pal) = &::DrawTileSelectionRect;
+	void (*DrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal) = &::DrawAutorailSelection;
 }

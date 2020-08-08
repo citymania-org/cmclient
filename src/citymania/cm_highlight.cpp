@@ -9,12 +9,14 @@
 #include "../house.h"
 #include "../industry.h"
 #include "../landscape.h"
+#include "../newgrf_railtype.h"
 #include "../town.h"
 #include "../town_kdtree.h"
 #include "../tilearea_type.h"
 #include "../tilehighlight_type.h"
 #include "../viewport_func.h"
 #include "../zoning.h"
+#include "../table/track_land.h"
 
 #include <set>
 
@@ -30,8 +32,15 @@ extern void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *t
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
 extern bool IsInsideSelectedRectangle(int x, int y);
+extern RailType _cur_railtype;
+RoadBits FindRailsToConnect(TileIndex tile);
+extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
+
 
 namespace citymania {
+
+extern void (*DrawTileSelectionRect)(const TileInfo *ti, PaletteID pal);
+extern void (*DrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal);
 
 struct TileZoning {
     uint8 town_zone : 3;
@@ -59,6 +68,149 @@ const byte _tileh_to_sprite[32] = {
     0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 0,
     0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18, 0,
 };
+
+
+ObjectTileHighlight ObjectTileHighlight::make_depot(DiagDirection ddir) {
+    auto oh = ObjectTileHighlight(Type::RAIL_DEPOT);
+    oh.u.depot.ddir = ddir;
+    return oh;
+}
+
+ObjectTileHighlight ObjectTileHighlight::make_rail(Track track) {
+    auto oh = ObjectTileHighlight(Type::RAIL_TRACK);
+    oh.u.rail.track = track;
+    return oh;
+}
+
+
+bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
+    if (this->type != oh.type) return false;
+    switch (this->type) {
+        case Type::RAIL_DEPOT: return this->u.depot.tile == oh.u.depot.tile && this->u.depot.ddir == oh.u.depot.ddir;
+        default: return true;
+    }
+    return true;
+}
+
+bool ObjectHighlight::operator!=(const ObjectHighlight& oh) {
+    return !(*this == oh);
+}
+
+
+ObjectHighlight ObjectHighlight::make_depot(TileIndex tile, DiagDirection ddir) {
+    auto oh = ObjectHighlight(ObjectHighlight::Type::RAIL_DEPOT);
+    oh.u.depot.tile = tile;
+    oh.u.depot.ddir = ddir;
+    return oh;
+}
+
+/**
+ * Try to add an additional rail-track at the entrance of a depot
+ * @param tile  Tile to use for adding the rail-track
+ * @param dir   Direction to check for already present tracks
+ * @param track Track to add
+ * @see CcRailDepot()
+ */
+void ObjectHighlight::PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track)
+{
+    if (GetRailTileType(tile) != RAIL_TILE_NORMAL) return;
+    if ((GetTrackBits(tile) & DiagdirReachesTracks(dir)) == 0) return;
+
+    this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_rail(track)));
+}
+
+/** Additional pieces of track to add at the entrance of a depot. */
+static const Track _place_depot_extra_track[12] = {
+    TRACK_LEFT,  TRACK_UPPER, TRACK_UPPER, TRACK_RIGHT, // First additional track for directions 0..3
+    TRACK_X,     TRACK_Y,     TRACK_X,     TRACK_Y,     // Second additional track
+    TRACK_LOWER, TRACK_LEFT,  TRACK_RIGHT, TRACK_LOWER, // Third additional track
+};
+
+/** Direction to check for existing track pieces. */
+static const DiagDirection _place_depot_extra_dir[12] = {
+    DIAGDIR_SE, DIAGDIR_SW, DIAGDIR_SE, DIAGDIR_SW,
+    DIAGDIR_SW, DIAGDIR_NW, DIAGDIR_NE, DIAGDIR_SE,
+    DIAGDIR_NW, DIAGDIR_NE, DIAGDIR_NW, DIAGDIR_NE,
+};
+
+void ObjectHighlight::UpdateTiles() {
+    this->tiles.clear();
+    switch (this->type) {
+        case Type::RAIL_DEPOT: {
+            auto dir = this->u.depot.ddir;
+            this->tiles.insert(std::make_pair(this->u.depot.tile, ObjectTileHighlight::make_depot(dir)));
+            auto tile = this->u.depot.tile + TileOffsByDiagDir(dir);
+            if (IsTileType(tile, MP_RAILWAY) && IsCompatibleRail(GetRailType(tile), _cur_railtype)) {
+                PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir], _place_depot_extra_track[dir]);
+                PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 4], _place_depot_extra_track[dir + 4]);
+                PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 8], _place_depot_extra_track[dir + 8]);
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+void ObjectHighlight::MarkDirty() {
+    this->UpdateTiles();
+    for (const auto &kv: this->tiles) {
+        MarkTileDirtyByTile(kv.first);
+    }
+}
+
+
+void DrawTrainDepotSprite(const TileInfo *ti, RailType railtype, DiagDirection ddir)
+{
+    const DrawTileSprites *dts = &_depot_gfx_table[ddir];
+    const RailtypeInfo *rti = GetRailTypeInfo(railtype);
+    SpriteID image = rti->UsesOverlay() ? SPR_FLAT_GRASS_TILE : dts->ground.sprite;
+    uint32 offset = rti->GetRailtypeSpriteOffset();
+
+    if (image != SPR_FLAT_GRASS_TILE) image += offset;
+    PaletteID palette = COMPANY_SPRITE_COLOUR(_local_company);
+
+    // DrawSprite(image, PAL_NONE, x, y);
+
+    switch (ddir) {
+        case DIAGDIR_SW: DrawAutorailSelection(ti, HT_DIR_X, PAL_NONE); break;
+        case DIAGDIR_SE: DrawAutorailSelection(ti, HT_DIR_Y, PAL_NONE); break;
+        default: break;
+    }
+    // if (rti->UsesOverlay()) {
+    //     SpriteID ground = GetCustomRailSprite(rti, INVALID_TILE, RTSG_GROUND);
+
+    //     switch (ddir) {
+    //         case DIAGDIR_SW: DrawSprite(ground + RTO_X, PALETTE_TINT_WHITE, x, y); break;
+    //         case DIAGDIR_SE: DrawSprite(ground + RTO_Y, PALETTE_TINT_WHITE, x, y); break;
+    //         default: break;
+    //     }
+    // }
+    int depot_sprite = GetCustomRailSprite(rti, INVALID_TILE, RTSG_DEPOT);
+    if (depot_sprite != 0) offset = depot_sprite - SPR_RAIL_DEPOT_SE_1;
+
+    DrawRailTileSeq(ti, dts, TO_INVALID, offset, 0, PALETTE_TINT_WHITE);
+}
+
+void ObjectHighlight::Draw(const TileInfo *ti) {
+    this->UpdateTiles();
+    auto range = this->tiles.equal_range(ti->tile);
+    for (auto t = range.first; t != range.second; t++) {
+        auto &oth = t->second;
+        switch (oth.type) {
+            case ObjectTileHighlight::Type::RAIL_DEPOT:
+                DrawTrainDepotSprite(ti, _cur_railtype, oth.u.depot.ddir);
+                break;
+            case ObjectTileHighlight::Type::RAIL_TRACK: {
+                auto hs = (HighLightStyle)oth.u.rail.track;
+                DrawAutorailSelection(ti, hs, PAL_NONE);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+}
 
 
 template <typename F>
@@ -372,7 +524,7 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
     return th;
 }
 
-void DrawTileSelection(const TileInfo *ti, const TileHighlight &th) {
+void DrawTileZoning(const TileInfo *ti, const TileHighlight &th) {
     for (uint i = 0; i < th.border_count; i++)
         DrawBorderSprites(ti, th.border[i], th.border_color[i]);
     if (th.sprite) {
@@ -383,6 +535,94 @@ void DrawTileSelection(const TileInfo *ti, const TileHighlight &th) {
         // DrawSelectionSprite(SPR_SELECT_TILE + _tileh_to_sprite[ti->tileh],
         //                     th.selection, ti, 0, FOUNDATION_PART_NORMAL);
     }
+}
+
+bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
+    _thd.cm.Draw(ti);
+
+    if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
+        // station selector, handled by DrawTileZoning
+        return true;
+    }
+
+    if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && IsInsideSelectedRectangle(ti->x, ti->y)
+            && _cursor.sprite_seq[0].sprite == GetRailTypeInfo(_cur_railtype)->cursor.depot) {
+        // DrawTileSelectionRect(ti, _thd.make_square_red ? PALETTE_SEL_TILE_RED : PAL_NONE);
+
+        // auto rti = GetRailTypeInfo(_cur_railtype);
+        // int depot_sprite = GetCustomRailSprite(rti, ti->tile, RTSG_DEPOT);
+        // auto relocation = depot_sprite != 0 ? depot_sprite - SPR_RAIL_DEPOT_SE_1 : rti->GetRailtypeSpriteOffset();
+        // AddSortableSpriteToDraw(relocation, PALETTE_TINT_WHITE, ti->x, ti->y, 0x10, 0x10, 1, ti->z);
+        // AddSortableSpriteToDraw(SPR_RAIL_DEPOT_SE_1, PALETTE_TINT_WHITE, ti->x, ti->y, 0x10, 0x10, 1, ti->z);
+        // DrawTrainDepotSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), widget - WID_BRAD_DEPOT_NE + DIAGDIR_NE, _cur_railtype);
+        // DrawTrainDepotSprite(ti, _cur_railtype, (DiagDirection)(_thd.drawstyle & HT_DIR_MASK));
+        return true;
+    }
+
+    return false;
+}
+
+
+// almost duplicate from road_gui.cpp
+static DiagDirection TileFractCoordsToDiagDir(Point pt) {
+    auto x = pt.x & TILE_UNIT_MASK;
+    auto y = pt.y & TILE_UNIT_MASK;
+    bool diag = (x + y) < 16;
+    if (x < y) {
+        return diag ? DIAGDIR_NE : DIAGDIR_SE;
+    }
+    return diag ? DIAGDIR_NW : DIAGDIR_SW;
+}
+
+// FIXME duplicate from road_gui.cpp
+static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
+    if (bits < ROAD_SE) {
+        return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
+    }
+    return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
+}
+
+DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt) {
+    RoadBits bits = FindRailsToConnect(tile);
+    // FIXME after this point repeats road autodetection
+    if (HasExactlyOneBit(bits)) return RoadBitsToDiagDir(bits);
+    if (bits == ROAD_NONE) bits = ROAD_ALL;
+    RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir(pt));
+    if (HasExactlyOneBit(frac_bits & bits)) {
+        return RoadBitsToDiagDir(frac_bits & bits);
+    }
+    frac_bits |= MirrorRoadBits(frac_bits);
+    if (HasExactlyOneBit(frac_bits & bits)) {
+        return RoadBitsToDiagDir(frac_bits & bits);
+    }
+    for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+        if (DiagDirToRoadBits(ddir) & bits) {
+            return ddir;
+        }
+    }
+    NOT_REACHED();
+}
+
+HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
+    _thd.cm_new = ObjectHighlight(ObjectHighlight::Type::NONE);
+    if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT &&
+            _cursor.sprite_seq[0].sprite == GetRailTypeInfo(_cur_railtype)->cursor.depot) {
+        auto dir = _build_depot_direction;
+        auto pt = GetTileBelowCursor();
+        auto tile = TileVirtXY(pt.x, pt.y);
+        if (pt.x != -1) {
+            if (dir >= DiagDirection::DIAGDIR_END)
+                dir = AutodetectRailObjectDirection(tile, pt);
+            _thd.cm_new = ObjectHighlight::make_depot(tile, dir);
+        }
+        new_drawstyle = HT_RECT;
+    }
+    if (_thd.cm != _thd.cm_new) {
+        _thd.cm.MarkDirty();
+        _thd.cm = _thd.cm_new;
+        _thd.cm.MarkDirty();
+    }
+    return new_drawstyle;
 }
 
 void AllocateZoningMap(uint map_size) {

@@ -1,14 +1,24 @@
 #ifndef CITYMANIA_HIGHLIGHT_HPP
 #define CITYMANIA_HIGHLIGHT_HPP
 
+#include "cm_highlight_type.hpp"
+
 #include "../core/enum_type.hpp"
 #include "../gfx_type.h"
 #include "../industry_type.h"
 #include "../tile_cmd.h"
 #include "../tile_type.h"
+#include "../tilehighlight_type.h"
 #include "../town_type.h"
 
 #include "../table/sprites.h"
+
+enum TileHighlightType {
+    THT_NONE,
+    THT_WHITE,
+    THT_BLUE,
+    THT_RED,
+};
 
 namespace citymania {
 
@@ -64,13 +74,15 @@ DECLARE_ENUM_AS_BIT_SET(ZoningBorder);
 
 
 TileHighlight GetTileHighlight(const TileInfo *ti);
-void DrawTileSelection(const TileInfo *ti, const TileHighlight &th);
+void DrawTileZoning(const TileInfo *ti, const TileHighlight &th);
+bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht);
 
 void AllocateZoningMap(uint map_size);
 void InitializeZoningMap();
 
 void UpdateTownZoning(Town *town, uint32 prev_edge);
 void UpdateZoningTownHouses(const Town *town, uint32 old_houses);
+HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle);
 
 std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile);
 ZoningBorder GetAnyStationCatchmentBorder(TileIndex tlie);

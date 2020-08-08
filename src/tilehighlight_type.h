@@ -10,6 +10,8 @@
 #ifndef TILEHIGHLIGHT_TYPE_H
 #define TILEHIGHLIGHT_TYPE_H
 
+#include "citymania/cm_highlight_type.hpp"
+
 #include "core/geometry_type.hpp"
 #include "window_type.h"
 #include "tile_type.h"
@@ -39,6 +41,7 @@ enum HighLightStyle {
 	HT_DIR_VR = 5,     ///< vertical right
 	HT_DIR_END,        ///< end marker
 	HT_DIR_MASK = 0x7, ///< masks the drag-direction
+	CM_HT_DIR_AUTO = 4,
 };
 DECLARE_ENUM_AS_BIT_SET(HighLightStyle)
 
@@ -84,6 +87,9 @@ struct TileHighlightData {
 
 	ViewportPlaceMethod select_method;            ///< The method which governs how tiles are selected.
 	ViewportDragDropSelectionProcess select_proc; ///< The procedure that has to be called when the selection is done.
+
+	citymania::ObjectHighlight cm;
+	citymania::ObjectHighlight cm_new;
 
 	void Reset();
 

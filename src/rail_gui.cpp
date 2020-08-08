@@ -47,7 +47,7 @@
 RailType _cur_railtype;               ///< Rail type of the current build-rail toolbar.
 static bool _remove_button_clicked;          ///< Flag whether 'remove' toggle-button is currently enabled
 static bool _cm_invert_remove;                  ///< Invert remove mode on tools (when fn-clicked)
-static DiagDirection _build_depot_direction; ///< Currently selected depot direction
+/* CM  static */ DiagDirection _build_depot_direction; ///< Currently selected depot direction
 static byte _waypoint_count = 1;             ///< Number of waypoint types
 static byte _cur_waypoint_type;              ///< Currently selected waypoint type
 static bool _convert_signal_button;          ///< convert signal button in the signal GUI pressed
@@ -506,7 +506,7 @@ RoadBits FindRailsToConnect(TileIndex tile) {
 /*
  * Selects orientation for rail object (depot)
  */
-static DiagDirection AutodetectRailObjectDirection(TileIndex tile) {
+DiagDirection AutodetectRailObjectDirection(TileIndex tile) {
 	RoadBits bits = FindRailsToConnect(tile);
 	// FIXME after this point repeats road autodetection
 	if (HasExactlyOneBit(bits)) return RoadBitsToDiagDir(bits);
@@ -713,7 +713,7 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_BUILD_DEPOT:
-				if (HandlePlacePushButton(this, WID_RAT_BUILD_DEPOT, GetRailTypeInfo(_cur_railtype)->cursor.depot, HT_RECT)) {
+				if (HandlePlacePushButton(this, WID_RAT_BUILD_DEPOT, GetRailTypeInfo(_cur_railtype)->cursor.depot, HT_RECT | (HighLightStyle)_build_depot_direction)) {
 					ShowBuildTrainDepotPicker(this);
 					this->last_user_action = widget;
 				}

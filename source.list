@@ -1230,6 +1230,7 @@ citymania/cm_base64.hpp
 citymania/cm_base64.cpp
 citymania/cm_highlight.hpp
 citymania/cm_highlight.cpp
+citymania/cm_highlight_type.hpp
 citymania/cm_locations.hpp
 citymania/cm_locations.cpp
 citymania/cm_minimap.hpp
