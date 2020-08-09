@@ -35,6 +35,7 @@ extern bool IsInsideSelectedRectangle(int x, int y);
 extern RailType _cur_railtype;
 RoadBits FindRailsToConnect(TileIndex tile);
 extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
+extern uint32 _realtime_tick;
 
 
 namespace citymania {
@@ -46,7 +47,8 @@ struct TileZoning {
     uint8 town_zone : 3;
     uint8 industry_fund_result : 2;
     uint8 advertisement_zone : 2;
-    IndustryType industry_fund_type;
+    // IndustryType industry_fund_type;
+    uint8 industry_fund_update;
 };
 
 static TileZoning *_mz = nullptr;
@@ -243,9 +245,12 @@ std::pair<ZoningBorder, uint8> CalcTileBorders(TileIndex tile, F getter) {
 
 
 bool CanBuildIndustryOnTileCached(IndustryType type, TileIndex tile) {
-    if (_mz[tile].industry_fund_type != type || !_mz[tile].industry_fund_result) {
+    // if (_mz[tile].industry_fund_type != type || !_mz[tile].industry_fund_result) {
+    uint8 tick_hash = (_realtime_tick & 255);
+    if (_mz[tile].industry_fund_update != tick_hash || !_mz[tile].industry_fund_result) {
         bool res = CanBuildIndustryOnTile(type, tile);
-        _mz[tile].industry_fund_type = type;
+        // _mz[tile].industry_fund_type = type;
+        _mz[tile].industry_fund_update = tick_hash;
         _mz[tile].industry_fund_result = res ? 2 : 1;
         return res;
     }

@@ -94,6 +94,10 @@ This is usable for any OpenTTD servers
 - Fix town HR couter.
 - Allow spectators to open industry funding window from the menu.
 - Fix graphical glitches after switching to location with hotkey.
+- Make new tint highlights work with 32bpp sprites.
+- Show preview when building a rail depot.
+- Fix: sprite preview in sprite aligner is too small with scaled UI.
+- Slightly improve funding highlight update.
 
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.
