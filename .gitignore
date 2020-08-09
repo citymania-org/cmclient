@@ -4,11 +4,15 @@ bin/ai/*
 !bin/ai/compat*.nut
 !bin/ai/regression
 !bin/data
-!bin/baseset
 bin/baseset/*
 !bin/baseset/openttd.grf
 !bin/baseset/opntitle.dat
 !bin/baseset/orig_extra.grf
+!bin/baseset/orig_*.obg
+!bin/baseset/orig_*.obs
+!bin/baseset/no_sound.obs
+!bin/baseset/no_music.obm
+!bin/baseset/orig_*.obm
 !bin/game
 bin/game/*
 !bin/game/compat*.nut
