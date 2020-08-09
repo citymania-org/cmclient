@@ -934,7 +934,7 @@ void ShowIncomeGraph()
 
 struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 	DeliveredCargoGraphWindow(WindowDesc *desc, WindowNumber window_number) :
-			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT, false)
+			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_COMMA, false)
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);

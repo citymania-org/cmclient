@@ -74,7 +74,7 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
-*** 1.10.3 () ***
+*** 1.10.3 (10 Aug 2020) ***
 - Fix order hotkeys adding extra no load/unload orders.
 - Allow to use TAB as a hotkey.
 - Add hotkey to toggle minimap.
@@ -98,6 +98,8 @@ This is usable for any OpenTTD servers
 - Show preview when building a rail depot.
 - Fix: sprite preview in sprite aligner is too small with scaled UI.
 - Slightly improve funding highlight update.
+- Remove cargo color icons from income and delivered cargo graphs to avoid confusion with company colors.
+- Fix delivered cargo graph displaying units as money.
 
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.
