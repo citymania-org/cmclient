@@ -345,7 +345,7 @@ static void DecodeDataV1(BitIStream &bs) {
     uint n_affected_towns = bs.ReadBytes(2);
     for (uint i = 0; i < n_affected_towns; i++) {
         uint town_id = bs.ReadBytes(2);
-        t = Town::Get(town_id);
+        t = Town::GetIfValid(town_id);
         if (!t) {
             DEBUG(sl, 0, "Invalid TownID in CB towns layout errors (%u)", town_id);
             continue;
@@ -408,6 +408,11 @@ void Save_PSAC() {
 		SlSetArrayIndex(ps->index);
 		SlObject(ps, _storage_desc);
 	}
+
+    if (_game_mode == GM_EDITOR) {
+        DEBUG(sl, 2, "Saving scenario, skip CityMania extra data");
+        return;
+    }
 
 	uint32 grfid = CITYMANIA_GRFID;
 	u8vector data = EncodeData();
