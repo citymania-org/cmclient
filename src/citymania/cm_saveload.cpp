@@ -409,6 +409,11 @@ void Save_PSAC() {
 		SlObject(ps, _storage_desc);
 	}
 
+    if (_game_mode == GM_EDITOR) {
+        DEBUG(sl, 2, "Saving scenario, skip CityMania extra data");
+        return;
+    }
+
 	uint32 grfid = CITYMANIA_GRFID;
 	u8vector data = EncodeData();
 	int n_chunks = (data.size() + 1023) / 1024;
