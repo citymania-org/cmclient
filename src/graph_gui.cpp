@@ -648,8 +648,10 @@ public:
 
 
 struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
-	ExcludingCargoBaseGraphWindow(WindowDesc *desc, int widget, StringID format_str_y_axis):
-			BaseGraphWindow(desc, widget, format_str_y_axis)
+	bool show_cargo_colors;
+
+	ExcludingCargoBaseGraphWindow(WindowDesc *desc, int widget, StringID format_str_y_axis, bool show_cargo_colors):
+			BaseGraphWindow(desc, widget, format_str_y_axis), show_cargo_colors{show_cargo_colors}
 	{
 	}
 
@@ -674,10 +676,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		this->icon_size = max<uint>(max_cargo_dim.height, 6);
 		this->line_height = this->icon_size + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 		size->width = (max_cargo_dim.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT + 1
-		               + this->icon_size + WD_PAR_VSEP_NORMAL);
-		// fprintf(stderr, "HEIGHT %u \n", size->height, size->height / this->line_height);
-		// uint lines = min<uint>(max<uint>(1, size->height / this->line_height), _sorted_standard_cargo_specs_size);
-		// fprintf(stderr, "LINES %u\n", lines);
+		               + (this->show_cargo_colors ? this->icon_size + WD_PAR_VSEP_NORMAL : 0));
 		size->height = max<uint>(size->height, this->line_height * _sorted_standard_cargo_specs_size);
 		resize->width = 0;
 		resize->height = this->line_height;
@@ -711,12 +710,16 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 			if (lowered) DrawFrameRect(r.left, y, r.right, y + this->line_height - 1, COLOUR_ORANGE, lowered ? FR_LOWERED : FR_NONE);
 
 			byte clk_dif = lowered ? 1 : 0;
-			int rect_x = clk_dif + 1 + (rtl ? r.right - 12 : r.left + WD_FRAMERECT_LEFT);
 
-			GfxFillRect(rect_x, y + 1 + clk_dif, rect_x + this->icon_size - 2, y + this->icon_size - 2 + clk_dif, PC_BLACK);
-			GfxFillRect(rect_x + 1, y + 2 + clk_dif, rect_x + this->icon_size - 3, y + this->icon_size - 3 + clk_dif, cs->legend_colour);
+			uint icon_offset = 0;
+			if (this->show_cargo_colors) {
+				int rect_x = clk_dif + 1 + (rtl ? r.right - 12 : r.left + WD_FRAMERECT_LEFT);
+				GfxFillRect(rect_x, y + 1 + clk_dif, rect_x + this->icon_size - 2, y + this->icon_size - 2 + clk_dif, PC_BLACK);
+				GfxFillRect(rect_x + 1, y + 2 + clk_dif, rect_x + this->icon_size - 3, y + this->icon_size - 3 + clk_dif, cs->legend_colour);
+				icon_offset = this->icon_size + WD_PAR_VSEP_NORMAL;
+			}
+
 			SetDParam(0, cs->name);
-			uint icon_offset = this->icon_size + WD_PAR_VSEP_NORMAL;
 			DrawString(rtl ? r.left : x + icon_offset + clk_dif, (rtl ? r.right - icon_offset + clk_dif : r.right), y + clk_dif, STR_GRAPH_CARGO_PAYMENT_CARGO);
 
 			y += this->line_height;
@@ -854,7 +857,7 @@ void ShowOperatingProfitGraph()
 
 struct IncomeGraphWindow : ExcludingCargoBaseGraphWindow {
 	IncomeGraphWindow(WindowDesc *desc, WindowNumber window_number) :
-			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT)
+			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT, false)
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
@@ -931,7 +934,7 @@ void ShowIncomeGraph()
 
 struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 	DeliveredCargoGraphWindow(WindowDesc *desc, WindowNumber window_number) :
-			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT)
+			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT, false)
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
@@ -1113,7 +1116,7 @@ void ShowCompanyValueGraph()
 
 struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 	PaymentRatesGraphWindow(WindowDesc *desc, WindowNumber window_number) :
-			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT)
+			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT, true)
 	{
 		this->num_on_x_axis = 20;
 		this->num_vert_lines = 20;
