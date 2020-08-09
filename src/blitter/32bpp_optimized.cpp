@@ -339,6 +339,7 @@ Sprite *Blitter_32bppOptimized::Encode(const SpriteLoader::Sprite *sprite, Alloc
 						dst_px->r = src->r;
 						dst_px->g = src->g;
 						dst_px->b = src->b;
+						*dst_n = this->CM_GetMForRGB(src->r, src->g, src->b) | (DEFAULT_BRIGHTNESS << 8);
 					}
 					dst_px++;
 					dst_n++;

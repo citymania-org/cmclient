@@ -154,6 +154,28 @@ public:
 
 		return ReallyAdjustBrightness(colour, brightness);
 	}
+
+
+	/* CM */
+	uint8 cm_mdict[64*64*64] = {0};
+	uint8 CM_GetMForRGB(uint8 r, uint8 g, uint8 b) {
+		r &= 252; g &= 252; b &= 252;
+		auto key = (r << 10) | (g << 4) | (b >> 2);
+		auto m = this->cm_mdict[key];
+		if (m != 0) return m;
+		uint md = UINT_MAX;
+		for (uint8 i = 1; i < 0xc0; i++) {
+			auto c = this->LookupColourInPalette(i);
+			auto dist = ((uint)c.r - r) * ((uint)c.r - r) + ((uint)c.g - g) * ((uint)c.g - g) + ((uint)c.b - b) * ((uint)c.b - b);
+			if (dist < md) {
+				md = dist;
+				m = i;
+			}
+		}
+		this->cm_mdict[key] = m;
+		return m;
+	}
+
 };
 
 #endif /* BLITTER_32BPP_BASE_HPP */

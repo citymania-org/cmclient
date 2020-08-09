@@ -72,7 +72,7 @@ public:
 		byte data[]; ///< Data, all zoomlevels.
 	};
 
-	Sprite *Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator);
+	Sprite *Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator, Blitter_32bppSimple *base_blitter);
 };
 
 DECLARE_ENUM_AS_BIT_SET(Blitter_32bppSSE_Base::SpriteFlags);
@@ -85,7 +85,7 @@ public:
 	void Draw(const Blitter::BlitterParams *bp, ZoomLevel zoom);
 
 	Sprite *Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator) override {
-		return Blitter_32bppSSE_Base::Encode(sprite, allocator);
+		return Blitter_32bppSSE_Base::Encode(sprite, allocator, this);
 	}
 
 	const char *GetName() override { return "32bpp-sse2"; }

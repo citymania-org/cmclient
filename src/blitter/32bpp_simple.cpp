@@ -84,7 +84,6 @@ void Blitter_32bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 void Blitter_32bppSimple::DrawColourMappingRect(void *dst, int width, int height, PaletteID pal)
 {
 	Colour *udst = (Colour *)dst;
-
 	if (pal == PALETTE_TO_TRANSPARENT) {
 		do {
 			for (int i = 0; i != width; i++) {
@@ -128,8 +127,8 @@ Sprite *Blitter_32bppSimple::Encode(const SpriteLoader::Sprite *sprite, Allocato
 			dst[i].g = src->g;
 			dst[i].b = src->b;
 			dst[i].a = src->a;
-			dst[i].m = 0;
-			dst[i].v = 0;
+			dst[i].m = this->CM_GetMForRGB(src->r, src->g, src->b);
+			dst[i].v = DEFAULT_BRIGHTNESS;
 		} else {
 			/* Get brightest value */
 			uint8 rgb_max = max(src->r, max(src->g, src->b));
