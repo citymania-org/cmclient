@@ -13,7 +13,8 @@ enum class ModKey : uint8 {
     NONE = 0,
     SHIFT = 1,
     CTRL = 2,
-    ALT = 3
+    ALT = 3,
+    END,
 };
 
 class CBRequirement {

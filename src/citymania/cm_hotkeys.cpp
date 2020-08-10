@@ -64,15 +64,15 @@ std::pair<uint32, uint32> GetEPM() {
 }
 
 void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed) {
-    ModKey key = ModKey::NONE;
-    if (alt_pressed) key = ModKey::ALT;
-    if (ctrl_pressed) key = ModKey::CTRL;
-    if (shift_pressed) key = ModKey::SHIFT;
+    bool mod_pressed[(size_t)ModKey::END] = {false};
+    if (shift_pressed) mod_pressed[(size_t)ModKey::SHIFT] = true;
+    if (ctrl_pressed) mod_pressed[(size_t)ModKey::CTRL] = true;
+    if (alt_pressed) mod_pressed[(size_t)ModKey::ALT] = true;
     bool fn_mod_prev = _fn_mod;
     bool remove_mod_prev = _remove_mod;
-    _fn_mod = (_settings_client.gui.cm_fn_mod == key);
-    _remove_mod = (_settings_client.gui.cm_remove_mod == key);
-    _estimate_mod = (_settings_client.gui.cm_estimate_mod == key);
+    _fn_mod = mod_pressed[(size_t)_settings_client.gui.cm_fn_mod];
+    _remove_mod = mod_pressed[(size_t)_settings_client.gui.cm_remove_mod];
+    _estimate_mod = mod_pressed[(size_t)_settings_client.gui.cm_estimate_mod];
 
     Window *w;
     if (fn_mod_prev != _fn_mod) {
