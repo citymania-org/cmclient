@@ -3231,34 +3231,37 @@
     <ClInclude Include="..\src\citymania\extensions\cmext_company.hpp">
       <Filter>CityMania</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\citymania\base64.h">
+    <ClInclude Include="..\src\citymania\cm_base64.hpp">
       <Filter>CityMania client</Filter>
     </ClInclude>
-    <ClCompile Include="..\src\citymania\base64.cpp">
+    <ClCompile Include="..\src\citymania\cm_base64.cpp">
       <Filter>CityMania client</Filter>
     </ClCompile>
-    <ClInclude Include="..\src\citymania\highlight.hpp">
+    <ClInclude Include="..\src\citymania\cm_highlight.hpp">
       <Filter>CityMania client</Filter>
     </ClInclude>
-    <ClCompile Include="..\src\citymania\highlight.cpp">
+    <ClCompile Include="..\src\citymania\cm_highlight.cpp">
       <Filter>CityMania client</Filter>
     </ClCompile>
-    <ClInclude Include="..\src\citymania\locations.hpp">
+    <ClInclude Include="..\src\citymania\cm_highlight_type.hpp">
       <Filter>CityMania client</Filter>
     </ClInclude>
-    <ClCompile Include="..\src\citymania\locations.cpp">
+    <ClInclude Include="..\src\citymania\cm_locations.hpp">
+      <Filter>CityMania client</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_locations.cpp">
       <Filter>CityMania client</Filter>
     </ClCompile>
-    <ClInclude Include="..\src\citymania\minimap.hpp">
+    <ClInclude Include="..\src\citymania\cm_minimap.hpp">
       <Filter>CityMania client</Filter>
     </ClInclude>
-    <ClCompile Include="..\src\citymania\minimap.cpp">
+    <ClCompile Include="..\src\citymania\cm_minimap.cpp">
       <Filter>CityMania client</Filter>
     </ClCompile>
-    <ClInclude Include="..\src\citymania\station_ui.hpp">
+    <ClInclude Include="..\src\citymania\cm_station_gui.hpp">
       <Filter>CityMania client</Filter>
     </ClInclude>
-    <ClCompile Include="..\src\citymania\station_ui.cpp">
+    <ClCompile Include="..\src\citymania\cm_station_gui.cpp">
       <Filter>CityMania client</Filter>
     </ClCompile>
     <ClInclude Include="..\src\newgrf_revisions.hpp">

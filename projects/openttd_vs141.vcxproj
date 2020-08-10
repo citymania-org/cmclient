@@ -1379,16 +1379,17 @@
     <ClInclude Include="..\src\citymania\cm_settings.hpp" />
     <ClInclude Include="..\src\citymania\extensions\cmext_town.hpp" />
     <ClInclude Include="..\src\citymania\extensions\cmext_company.hpp" />
-    <ClInclude Include="..\src\citymania\base64.h" />
-    <ClCompile Include="..\src\citymania\base64.cpp" />
-    <ClInclude Include="..\src\citymania\highlight.hpp" />
-    <ClCompile Include="..\src\citymania\highlight.cpp" />
-    <ClInclude Include="..\src\citymania\locations.hpp" />
-    <ClCompile Include="..\src\citymania\locations.cpp" />
-    <ClInclude Include="..\src\citymania\minimap.hpp" />
-    <ClCompile Include="..\src\citymania\minimap.cpp" />
-    <ClInclude Include="..\src\citymania\station_ui.hpp" />
-    <ClCompile Include="..\src\citymania\station_ui.cpp" />
+    <ClInclude Include="..\src\citymania\cm_base64.hpp" />
+    <ClCompile Include="..\src\citymania\cm_base64.cpp" />
+    <ClInclude Include="..\src\citymania\cm_highlight.hpp" />
+    <ClCompile Include="..\src\citymania\cm_highlight.cpp" />
+    <ClInclude Include="..\src\citymania\cm_highlight_type.hpp" />
+    <ClInclude Include="..\src\citymania\cm_locations.hpp" />
+    <ClCompile Include="..\src\citymania\cm_locations.cpp" />
+    <ClInclude Include="..\src\citymania\cm_minimap.hpp" />
+    <ClCompile Include="..\src\citymania\cm_minimap.cpp" />
+    <ClInclude Include="..\src\citymania\cm_station_gui.hpp" />
+    <ClCompile Include="..\src\citymania\cm_station_gui.cpp" />
     <ClInclude Include="..\src\newgrf_revisions.hpp" />
   </ItemGroup>
   <ItemGroup>

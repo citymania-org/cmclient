@@ -75,27 +75,27 @@ This is usable for any OpenTTD servers
 == CHANGELOG ==
 
 *** 1.10.3 (10 Aug 2020) ***
+- Show preview when building a rail depot.
+- Add an option to enable shading trees on slopes for better looks.
+- Add an option to show APM counter on the status bar.
 - Fix order hotkeys adding extra no load/unload orders.
 - Allow to use TAB as a hotkey.
 - Add hotkey to toggle minimap.
-- Make hotkey to close news and errors configurable (still defaults to SPACE).
+- Make a usinghotkey to close news and errors configurable (still defaults to SPACE).
 - Remove custom hotkey keycodes that were added to vanilla.
-- Make land info tool work with right click tooltip setting and/or disabled extra tooltip settings.
-- Make station rating tooltips work with right click tooltip setting
-- Splilt extra (land) tooltips setting in config into 3 for industries, stations and houses separately.
 - Make modifier key (ctrl/alt/shift) functions configurable.
-- Allow to toggle removal mode with modifier key on station and signal building tools if it's different from fn modifier (otherwise fn takes priority).
-- Add a setting to pause games after loading.
-- Add "cmstep" console command to advance the game for n ticks (singleplayer only).
-- Add "cmexport" console command to export various in-game data in json format (for developers).
+- Allow toggling removal mode with modifier key on station and signal building tools if it's different from the Fn modifier (otherwise fn takes priority).
 - Add "cmtreemap" console command to plant trees according to a heightmap image (scenario editor only).
-- Add option to enable shading trees on slopes for better looks.
-- Add APM counter to the status bar.
-- Fix town HR couter.
-- Allow spectators to open industry funding window from the menu.
-- Fix graphical glitches after switching to location with hotkey.
+- Add "cmexport" console command to export various in-game data in JSON format (for developers).
+- Add "cmstep" console command to advance the game for n ticks (singleplayer only).
+- Make land info tool work with right-click tooltip setting and/or disabled extra tooltip settings.
+- Make station rating tooltips work with right-click tooltip setting
+- Split extra (land) tooltips setting in config into 3 for industries, stations, and houses separately.
+- Add an option to pause games after loading.
+- Fix town HR counter.
+- Allow spectators to open the industry funding window from the menu.
+- Fix graphical glitches after switching location with a hotkey.
 - Make new tint highlights work with 32bpp sprites.
-- Show preview when building a rail depot.
 - Fix: sprite preview in sprite aligner is too small with scaled UI.
 - Slightly improve funding highlight update.
 - Remove cargo color icons from income and delivered cargo graphs to avoid confusion with company colors.
