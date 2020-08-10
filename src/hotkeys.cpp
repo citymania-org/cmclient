@@ -74,8 +74,7 @@ static const KeycodeNames _keycode_to_name[] = {
 	{"\\", WKC_BACKSLASH},
 	{"]", WKC_R_BRACKET},
 	{"'", WKC_SINGLEQUOTE},
-	{",", WKC_COMMA},
-	{"COMMA", WKC_COMMA}, // legacy variant, should be below ","
+	{"COMMA", WKC_COMMA},
 	{".", WKC_PERIOD},
 	{"-", WKC_MINUS},
 
