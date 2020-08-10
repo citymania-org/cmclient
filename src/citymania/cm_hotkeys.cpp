@@ -112,7 +112,8 @@ ToolRemoveMode RailToolbar_GetRemoveMode(int widget) {
 }
 
 bool RailToolbar_IsRemoveInverted(int widget) {
-    return (RailToolbar_GetRemoveMode(widget) != ToolRemoveMode::NONE && citymania::_fn_mod);
+    return false;
+    // return (RailToolbar_GetRemoveMode(widget) != ToolRemoveMode::NONE && citymania::_fn_mod);
 }
 
 void RailToolbar_UpdateRemoveWidgetStatus(Window *w, int widget, bool remove_active) {
