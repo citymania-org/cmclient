@@ -22,7 +22,7 @@ namespace event {
 
 struct NewMonth {};
 
-struct TownBiilt {
+struct TownBuilt {
     Town *town;
 };
 

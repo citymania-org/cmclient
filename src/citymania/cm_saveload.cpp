@@ -36,13 +36,13 @@ static void EncodeTowns(BitOStream &bs)
         bs.WriteBytes(t->cm.houses_demolished_this_month, 2);
         bs.WriteBytes(t->cm.houses_demolished_last_month, 2);
         bs.WriteBytes(t->cm.hs_total, 4);
-        bs.WriteBytes(t->cm.hs_total_prev, 2);
+        bs.WriteBytes(t->cm.hs_this_month, 2);
         bs.WriteBytes(t->cm.hs_last_month, 2);
         bs.WriteBytes(t->cm.cs_total, 4);
-        bs.WriteBytes(t->cm.cs_total_prev, 2);
+        bs.WriteBytes(t->cm.cs_this_month, 2);
         bs.WriteBytes(t->cm.cs_last_month, 2);
         bs.WriteBytes(t->cm.hr_total, 4);
-        bs.WriteBytes(t->cm.hr_total_prev, 2);
+        bs.WriteBytes(t->cm.hr_this_month, 2);
         bs.WriteBytes(t->cm.hr_last_month, 2);
     }
 }
@@ -56,13 +56,13 @@ static void DecodeTowns(BitIStream &bs)
         t->cm.houses_demolished_this_month = bs.ReadBytes(2);
         t->cm.houses_demolished_last_month = bs.ReadBytes(2);
         t->cm.hs_total = bs.ReadBytes(2);
-        t->cm.hs_total_prev = bs.ReadBytes(2);
+        t->cm.hs_this_month = bs.ReadBytes(2);
         t->cm.hs_last_month = bs.ReadBytes(2);
         t->cm.cs_total = bs.ReadBytes(2);
-        t->cm.cs_total_prev = bs.ReadBytes(2);
+        t->cm.cs_this_month = bs.ReadBytes(2);
         t->cm.cs_last_month = bs.ReadBytes(2);
         t->cm.hr_total = bs.ReadBytes(2);
-        t->cm.hr_total_prev = bs.ReadBytes(2);
+        t->cm.hr_this_month = bs.ReadBytes(2);
         t->cm.hr_last_month = bs.ReadBytes(2);
     }
 }
@@ -352,13 +352,13 @@ static void DecodeDataV1(BitIStream &bs) {
             continue;
         }
         t->cm.hs_total = bs.ReadBytes(4);
-        t->cm.hs_total_prev = bs.ReadBytes(2);
+        t->cm.hs_this_month = t->cm.hs_total - bs.ReadBytes(2);
         t->cm.hs_last_month = bs.ReadBytes(2);
         t->cm.cs_total = bs.ReadBytes(4);
-        t->cm.cs_total_prev = bs.ReadBytes(2);
+        t->cm.cs_this_month = t->cm.cs_total - bs.ReadBytes(2);
         t->cm.cs_last_month = bs.ReadBytes(2);
         t->cm.hr_total = bs.ReadBytes(4);
-        t->cm.hr_total_prev = bs.ReadBytes(2);
+        t->cm.hr_this_month = t->cm.hr_total -bs.ReadBytes(2);
         t->cm.hr_last_month = bs.ReadBytes(2);
     }
     DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
