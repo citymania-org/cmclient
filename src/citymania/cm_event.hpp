@@ -22,6 +22,10 @@ namespace event {
 
 struct NewMonth {};
 
+struct TownBiilt {
+    Town *town;
+};
+
 struct TownGrowthSucceeded {
     Town *town;
     TileIndex tile;

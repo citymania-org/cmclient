@@ -1763,6 +1763,7 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32 townnameparts, TownSize
 	UpdateTownGrowthRate(t);
 	UpdateTownMaxPass(t);
 	UpdateAirportsNoise();
+	citymania::Emit(citymania::event::TownBuilt{t});
 }
 
 /**
