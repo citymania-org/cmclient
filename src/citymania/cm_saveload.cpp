@@ -55,13 +55,13 @@ static void DecodeTowns(BitIStream &bs)
         t->cm.houses_reconstructed_last_month = bs.ReadBytes(2);
         t->cm.houses_demolished_this_month = bs.ReadBytes(2);
         t->cm.houses_demolished_last_month = bs.ReadBytes(2);
-        t->cm.hs_total = bs.ReadBytes(2);
+        t->cm.hs_total = bs.ReadBytes(4);
         t->cm.hs_this_month = bs.ReadBytes(2);
         t->cm.hs_last_month = bs.ReadBytes(2);
-        t->cm.cs_total = bs.ReadBytes(2);
+        t->cm.cs_total = bs.ReadBytes(4);
         t->cm.cs_this_month = bs.ReadBytes(2);
         t->cm.cs_last_month = bs.ReadBytes(2);
-        t->cm.hr_total = bs.ReadBytes(2);
+        t->cm.hr_total = bs.ReadBytes(4);
         t->cm.hr_this_month = bs.ReadBytes(2);
         t->cm.hr_last_month = bs.ReadBytes(2);
     }
