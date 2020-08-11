@@ -351,13 +351,13 @@ static void DecodeDataV1(BitIStream &bs) {
             DEBUG(sl, 0, "Invalid TownID in CB towns layout errors (%u)", town_id);
             continue;
         }
-        t->cm.hs_total = bs.ReadBytes(2);
+        t->cm.hs_total = bs.ReadBytes(4);
         t->cm.hs_total_prev = bs.ReadBytes(2);
         t->cm.hs_last_month = bs.ReadBytes(2);
-        t->cm.cs_total = bs.ReadBytes(2);
+        t->cm.cs_total = bs.ReadBytes(4);
         t->cm.cs_total_prev = bs.ReadBytes(2);
         t->cm.cs_last_month = bs.ReadBytes(2);
-        t->cm.hr_total = bs.ReadBytes(2);
+        t->cm.hr_total = bs.ReadBytes(4);
         t->cm.hr_total_prev = bs.ReadBytes(2);
         t->cm.hr_last_month = bs.ReadBytes(2);
     }
