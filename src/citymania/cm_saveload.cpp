@@ -20,19 +20,19 @@ static const uint CITYMANIA_GRFID = 0x534B0501U;  // Luukland_Citybuilder grf id
 
 // copied form storage_sl.cpp
 static const SaveLoad _storage_desc[] = {
-	 SLE_CONDVAR(PersistentStorage, grfid,    SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
-	 SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32,  16,           SLV_161, SLV_EXTEND_PERSISTENT_STORAGE),
-	 SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32, 256,           SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
-	 SLE_END()
+     SLE_CONDVAR(PersistentStorage, grfid,    SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
+     SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32,  16,           SLV_161, SLV_EXTEND_PERSISTENT_STORAGE),
+     SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32, 256,           SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
+     SLE_END()
 };
 
 
 static void EncodeTowns(BitOStream &bs)
 {
-	for (const Town *t : Town::Iterate()) {
-		bs.WriteBytes(t->cm.growing_by_chance, 1);
+    for (const Town *t : Town::Iterate()) {
+        bs.WriteBytes(t->cm.growing_by_chance, 1);
         bs.WriteBytes(t->cm.houses_reconstructed_this_month, 2);
-		bs.WriteBytes(t->cm.houses_reconstructed_last_month, 2);
+        bs.WriteBytes(t->cm.houses_reconstructed_last_month, 2);
         bs.WriteBytes(t->cm.houses_demolished_this_month, 2);
         bs.WriteBytes(t->cm.houses_demolished_last_month, 2);
         bs.WriteBytes(t->cm.hs_total, 4);
@@ -44,7 +44,7 @@ static void EncodeTowns(BitOStream &bs)
         bs.WriteBytes(t->cm.hr_total, 4);
         bs.WriteBytes(t->cm.hr_total_prev, 2);
         bs.WriteBytes(t->cm.hr_last_month, 2);
-	}
+    }
 }
 
 static void DecodeTowns(BitIStream &bs)
@@ -69,22 +69,22 @@ static void DecodeTowns(BitIStream &bs)
 
 static void EncodeTownsGrowthTiles(BitOStream &bs, Game::TownsGrowthTilesIndex &tiles)
 {
-	bs.WriteBytes(tiles.size(), 4);
-	for (Game::TownsGrowthTilesIndex::iterator p = tiles.begin();
-			p != tiles.end(); p++) {
-		bs.WriteBytes(p->first, 4);
-		bs.WriteBytes((uint8)p->second, 1);
-	}
+    bs.WriteBytes(tiles.size(), 4);
+    for (Game::TownsGrowthTilesIndex::iterator p = tiles.begin();
+            p != tiles.end(); p++) {
+        bs.WriteBytes(p->first, 4);
+        bs.WriteBytes((uint8)p->second, 1);
+    }
 }
 
 static void DecodeTownsGrowthTiles(BitIStream &bs, Game::TownsGrowthTilesIndex &tiles)
 {
-	uint n = bs.ReadBytes(4);
-	for (uint i = 0; i < n; i++) {
-		TileIndex tile = bs.ReadBytes(4);
-		TownGrowthTileState state = (TownGrowthTileState)bs.ReadBytes(1);
-		tiles[tile] = state;
-	}
+    uint n = bs.ReadBytes(4);
+    for (uint i = 0; i < n; i++) {
+        TileIndex tile = bs.ReadBytes(4);
+        TownGrowthTileState state = (TownGrowthTileState)bs.ReadBytes(1);
+        tiles[tile] = state;
+    }
 }
 
 static void EncodeCompanies(BitOStream &bs)
@@ -126,10 +126,10 @@ void CBController_saveload_encode(BitOStream &bs) {
     // bs.WriteBytes(0, 1);
     // bs.WriteBytes(0, 1);
     // std::vector<CargoID> cb_cargos;
-	// for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++) {
-	// 	if (CB_GetReq(cargo) > 0)
-	// 		cb_cargos.push_back(cargo);
-	// }
+    // for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++) {
+    //  if (CB_GetReq(cargo) > 0)
+    //      cb_cargos.push_back(cargo);
+    // }
 
  //    for (auto cargo_id : cb_cargos) {
  //        // bs.WriteBytes(req.cargo_id, 1);
@@ -144,7 +144,7 @@ void CBController_saveload_encode(BitOStream &bs) {
  //    // uint16 cb_towns = 0;
  //    // ForEachCBTown([this, &cb_towns](Town *, Company *) { cb_towns++; });
  //    bs.WriteBytes(Town::GetNumItems(), 2);
-	// for (Town *t : Town::Iterate()) {
+    // for (Town *t : Town::Iterate()) {
  //        auto &tcb = t->cb;
  //        bs.WriteBytes(t->index, 2);
  //        bs.WriteBytes(tcb.pax_delivered, 4);
@@ -182,7 +182,7 @@ bool CBController_saveload_decode(BitIStream &bs) {
  //    bs.ReadBytes(1); /* _settings_game.citymania.cb.allow_negative_growth */
  //    // _settings_game.citymania.cb.requirements.clear();
  //    auto n_cargos = bs.ReadBytes(1);
-	// std::vector<CargoID> cb_cargos;
+    // std::vector<CargoID> cb_cargos;
  //    for (uint i = 0; i < n_cargos; i++) {
  //        auto cargo_id = (CargoID)bs.ReadBytes(1);
  //        if (cargo_id >= NUM_CARGO) {
@@ -190,11 +190,11 @@ bool CBController_saveload_decode(BitIStream &bs) {
  //            // ConsoleError("Invalid CargoID in CB towns cargo data ({})", cargo_id);
  //            return false;
  //        }
-	// 	cb_cargos.push_back(cargo_id);
+    //  cb_cargos.push_back(cargo_id);
  //        auto required = bs.ReadBytes(4);
  //        auto from = bs.ReadBytes(4);
  //        auto decay = bs.ReadBytes(1);
-	// 	// CB_SetRequirements(cargo_id, required, from, decay);
+    //  // CB_SetRequirements(cargo_id, required, from, decay);
  //        // _settings_game.citymania.cb.requirements.push_back(CBRequirement(cargo_id, from, required, decay, i, ""));
  //    }
 
@@ -259,25 +259,25 @@ void DecodeSettings(BitIStream &bs, Settings &settings) {
 uint16 _last_client_version = 1512;
 
 static u8vector EncodeData() {
-	BitOStream bs;
-	bs.Reserve(1000);
-	bs.WriteBytes(SAVEGAME_DATA_FORMAT_VERSION, 2);
-	bs.WriteBytes(_last_client_version, 2);
-	bs.WriteBytes(_settings_game.citymania.controller_type, 1);
-	bs.WriteBytes(_date, 4);  // Just in case we'll need to detect that game
-	bs.WriteBytes(_date_fract, 1);  // was saved by unmodified client
-	bs.WriteBytes(_settings_game.citymania.game_type, 1);
-	bs.WriteBytes(0, 3);  // Reserved
-	bs.WriteBytes(0, 4);  // Reserved
+    BitOStream bs;
+    bs.Reserve(1000);
+    bs.WriteBytes(SAVEGAME_DATA_FORMAT_VERSION, 2);
+    bs.WriteBytes(_last_client_version, 2);
+    bs.WriteBytes((uint8)_settings_game.citymania.controller_type, 1);
+    bs.WriteBytes(_date, 4);  // Just in case we'll need to detect that game
+    bs.WriteBytes(_date_fract, 1);  // was saved by unmodified client
+    bs.WriteBytes((uint8)_settings_game.citymania.game_type, 1);
+    bs.WriteBytes(0, 3);  // Reserved
+    bs.WriteBytes(0, 4);  // Reserved
     EncodeSettings(bs, _settings_game.citymania);
     EncodeCompanies(bs);
-	EncodeTowns(bs);
+    EncodeTowns(bs);
     EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
     EncodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
-	if (_settings_game.citymania.controller_type == 4)
-		CBController_saveload_encode(bs);
+    if (_settings_game.citymania.controller_type == ControllerType::CB)
+        CBController_saveload_encode(bs);
 
-	return bs.GetVector();
+    return bs.GetVector();
 }
 
 static void DecodeDataV2(BitIStream &bs) {
@@ -286,40 +286,40 @@ static void DecodeDataV2(BitIStream &bs) {
     DecodeTowns(bs);
     DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles);
     DecodeTownsGrowthTiles(bs, _game->towns_growth_tiles_last_month);
-    if (_settings_game.citymania.controller_type == 4) CBController_saveload_decode(bs);
+    if (_settings_game.citymania.controller_type == ControllerType::CB) CBController_saveload_decode(bs);
 }
 
 static void DecodeTownsCargoV1(BitIStream &bs)
 {
     bs.ReadBytes(1);bs.ReadBytes(1);
-	// CB_SetStorage(bs.ReadBytes(1));
-	// _settings_client.gui.cb_distance_check = bs.ReadBytes(1);
-	uint n_cb_cargos = bs.ReadBytes(1);
-	// CB_ResetRequirements();
-	std::vector<CargoID> cb_cargos;
-	for (uint i = 0; i < n_cb_cargos; i++) {
-		uint cargo = bs.ReadBytes(1);
-		if (cargo >= NUM_CARGO) {
-			DEBUG(sl, 0, "Invalid CargoID in CB towns cargo data (%u)", cargo);
-			return;
-		}
-		cb_cargos.push_back(cargo);
-		uint req = bs.ReadBytes(4);
-		uint from = bs.ReadBytes(4);
-		uint decay = bs.ReadBytes(1);
-		// CB_SetRequirements(cargo, req, from, decay);
-	}
-	Town *t;
-	uint n_affected_towns = bs.ReadBytes(2);
-	for (uint i = 0; i < n_affected_towns; i++) {
-		uint town_id = bs.ReadBytes(2);
-		t = Town::GetIfValid(town_id);
-		if (!t) {
-			DEBUG(sl, 0, "Invalid TownID in CB towns cargo data (%u)", town_id);
-			return;
-		}
+    // CB_SetStorage(bs.ReadBytes(1));
+    // _settings_client.gui.cb_distance_check = bs.ReadBytes(1);
+    uint n_cb_cargos = bs.ReadBytes(1);
+    // CB_ResetRequirements();
+    std::vector<CargoID> cb_cargos;
+    for (uint i = 0; i < n_cb_cargos; i++) {
+        uint cargo = bs.ReadBytes(1);
+        if (cargo >= NUM_CARGO) {
+            DEBUG(sl, 0, "Invalid CargoID in CB towns cargo data (%u)", cargo);
+            return;
+        }
+        cb_cargos.push_back(cargo);
+        uint req = bs.ReadBytes(4);
+        uint from = bs.ReadBytes(4);
+        uint decay = bs.ReadBytes(1);
+        // CB_SetRequirements(cargo, req, from, decay);
+    }
+    Town *t;
+    uint n_affected_towns = bs.ReadBytes(2);
+    for (uint i = 0; i < n_affected_towns; i++) {
+        uint town_id = bs.ReadBytes(2);
+        t = Town::GetIfValid(town_id);
+        if (!t) {
+            DEBUG(sl, 0, "Invalid TownID in CB towns cargo data (%u)", town_id);
+            return;
+        }
   //       auto &tcb = t->cb;
-		for (auto cargo_id : cb_cargos) {
+        for (auto cargo_id : cb_cargos) {
 
             bs.ReadBytes(4);  // tcb.stored[cargo_id]
             bs.ReadBytes(4);  // tcb.delivered_last_month[cargo_id]
@@ -328,12 +328,12 @@ static void DecodeTownsCargoV1(BitIStream &bs)
 
   //           tcb.required[cargo_id] = 0;
   //           tcb.required_last_month[cargo_id] = 0;
-		}
-	}
+        }
+    }
 }
 
 static void DecodeDataV1(BitIStream &bs) {
-    if (_settings_game.citymania.controller_type != 0) DecodeTownsCargoV1(bs);
+    if (_settings_game.citymania.controller_type != ControllerType::GENERIC) DecodeTownsCargoV1(bs);
     for (Town *t : Town::Iterate()) {
         t->cm.growing_by_chance = bs.ReadBytes(1);
         t->cm.houses_reconstructed_this_month = bs.ReadBytes(2);
@@ -366,109 +366,110 @@ static void DecodeDataV1(BitIStream &bs) {
 }
 
 static void DecodeData(u8vector &data) {
-	if (data.size() == 0) {
-		DEBUG(sl, 2, "No CityMania save data");
-		return;
-	}
-	DEBUG(sl, 2, "CityMania save data takes %lu bytes", data.size());
-	BitIStream bs(data);
-	try {
-		uint version = bs.ReadBytes(2);
-		if (version > SAVEGAME_DATA_FORMAT_VERSION) {
-			DEBUG(sl, 0, "Savegame was made with newer version of client, extra save data was not loaded");
-			return;
-		}
+    if (data.size() == 0) {
+        DEBUG(sl, 2, "No CityMania save data");
+        return;
+    }
+    DEBUG(sl, 2, "CityMania save data takes %lu bytes", data.size());
+    BitIStream bs(data);
+    try {
+        uint version = bs.ReadBytes(2);
+        if (version > SAVEGAME_DATA_FORMAT_VERSION) {
+            DEBUG(sl, 0, "Savegame was made with newer version of client, extra save data was not loaded");
+            return;
+        }
         DEBUG(sl, 2, "CityMania savegame data version %u", version);
-		_last_client_version = bs.ReadBytes(2);
-		_settings_game.citymania.controller_type = bs.ReadBytes(1);
-		if (version <= 1) _settings_game.citymania.controller_type = (_settings_game.citymania.controller_type ? 4 : 0);
-		int32 date = bs.ReadBytes(4);
-		uint32 date_fract = bs.ReadBytes(1);
-		if (date != _date || date_fract != _date_fract) {
-			DEBUG(sl, 0, "Savegame was run in unmodified client, extra save data "
-			      "preserved, but may not be accurate");
-		}
-		_settings_game.citymania.game_type = bs.ReadBytes(1);
-		bs.ReadBytes(3);  // reserved
-		bs.ReadBytes(4);  // reserved
+        _last_client_version = bs.ReadBytes(2);
+        _settings_game.citymania.controller_type = (ControllerType)bs.ReadBytes(1);
+        if (version <= 1 && _settings_game.citymania.controller_type != ControllerType::GENERIC)
+            _settings_game.citymania.controller_type = ControllerType::CLASSIC_CB;
+        int32 date = bs.ReadBytes(4);
+        uint32 date_fract = bs.ReadBytes(1);
+        if (date != _date || date_fract != _date_fract) {
+            DEBUG(sl, 0, "Savegame was run in unmodified client, extra save data "
+                  "preserved, but may not be accurate");
+        }
+        _settings_game.citymania.game_type = (GameType)bs.ReadBytes(1);
+        bs.ReadBytes(3);  // reserved
+        bs.ReadBytes(4);  // reserved
         if (version == 1) DecodeDataV1(bs);
         else DecodeDataV2(bs);
-	}
-	catch (BitIStreamUnexpectedEnd &e) {
-		DEBUG(sl, 0, "Invalid CityMania save data");
-	}
+    }
+    catch (BitIStreamUnexpectedEnd &e) {
+        DEBUG(sl, 0, "Invalid CityMania save data");
+    }
 }
 
 void Save_PSAC() {
-	/* Write the industries */
-	for (PersistentStorage *ps : PersistentStorage::Iterate()) {
-		if (ps->grfid == CITYMANIA_GRFID) {
-			continue;
-		}
-		ps->ClearChanges();
-		SlSetArrayIndex(ps->index);
-		SlObject(ps, _storage_desc);
-	}
+    /* Write the industries */
+    for (PersistentStorage *ps : PersistentStorage::Iterate()) {
+        if (ps->grfid == CITYMANIA_GRFID) {
+            continue;
+        }
+        ps->ClearChanges();
+        SlSetArrayIndex(ps->index);
+        SlObject(ps, _storage_desc);
+    }
 
     if (_game_mode == GM_EDITOR) {
         DEBUG(sl, 2, "Saving scenario, skip CityMania extra data");
         return;
     }
 
-	uint32 grfid = CITYMANIA_GRFID;
-	u8vector data = EncodeData();
-	int n_chunks = (data.size() + 1023) / 1024;
-	data.resize(n_chunks * 1024);
-	DEBUG(sl, 2, "Citybuilder data takes %u bytes", (uint)data.size());
-	uint8 *ptr = &data[0];
-	SaveLoadGlobVarList _desc[] = {
-		SLEG_CONDVAR(grfid, SLE_UINT32, SLV_6, SL_MAX_VERSION),
-		SLEG_CONDARR(*ptr,  SLE_UINT32, 256, SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
-		SLEG_END()
-	};
+    uint32 grfid = CITYMANIA_GRFID;
+    u8vector data = EncodeData();
+    int n_chunks = (data.size() + 1023) / 1024;
+    data.resize(n_chunks * 1024);
+    DEBUG(sl, 2, "Citybuilder data takes %u bytes", (uint)data.size());
+    uint8 *ptr = &data[0];
+    SaveLoadGlobVarList _desc[] = {
+        SLEG_CONDVAR(grfid, SLE_UINT32, SLV_6, SL_MAX_VERSION),
+        SLEG_CONDARR(*ptr,  SLE_UINT32, 256, SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
+        SLEG_END()
+    };
 
     uint index = 0;
-	for (PersistentStorage *ps : PersistentStorage::Iterate()) {
+    for (PersistentStorage *ps : PersistentStorage::Iterate()) {
         if (ps->grfid != CITYMANIA_GRFID)
             index = max(index, ps->index + 1);
     }
 
-	for (int i = 0; i < n_chunks; i++, ptr += 1024) {
-		_desc[1].address = (void *)ptr;
-		SlSetArrayIndex(index + i);
-		SlGlobList(_desc);
-	}
+    for (int i = 0; i < n_chunks; i++, ptr += 1024) {
+        _desc[1].address = (void *)ptr;
+        SlSetArrayIndex(index + i);
+        SlGlobList(_desc);
+    }
 }
 
 void Load_PSAC()
 {
-	int index;
+    int index;
 
-	/*
-		CITYMANIA_GRFID is used to hide extra data in persitant storages.
-		To save a bit of memory we only keep at most one PS with this
-		grfid and it is later discarded on save.
-	*/
-	PersistentStorage *ps = NULL;
-	u8vector cmdata;
-	uint chunk_size = IsSavegameVersionBefore(SLV_EXTEND_PERSISTENT_STORAGE) ? 64 : 1024;
+    /*
+        CITYMANIA_GRFID is used to hide extra data in persitant storages.
+        To save a bit of memory we only keep at most one PS with this
+        grfid and it is later discarded on save.
+    */
+    PersistentStorage *ps = NULL;
+    u8vector cmdata;
+    uint chunk_size = IsSavegameVersionBefore(SLV_EXTEND_PERSISTENT_STORAGE) ? 64 : 1024;
 
-	while ((index = SlIterateArray()) != -1) {
-		if (ps == NULL) {
-			assert(PersistentStorage::CanAllocateItem());
-			ps = new (index) PersistentStorage(0, 0, 0);
-		}
-		SlObject(ps, _storage_desc);
+    while ((index = SlIterateArray()) != -1) {
+        if (ps == NULL) {
+            assert(PersistentStorage::CanAllocateItem());
+            ps = new (index) PersistentStorage(0, 0, 0);
+        }
+        SlObject(ps, _storage_desc);
 
-		if (ps->grfid == CITYMANIA_GRFID) {
-			uint8 *data = (uint8 *)(ps->storage);
-			cmdata.insert(cmdata.end(), data, data + chunk_size);
-		} else {
-			ps = NULL;
-		}
-	}
+        if (ps->grfid == CITYMANIA_GRFID) {
+            uint8 *data = (uint8 *)(ps->storage);
+            cmdata.insert(cmdata.end(), data, data + chunk_size);
+        } else {
+            ps = NULL;
+        }
+    }
 
-	DecodeData(cmdata);
+    DecodeData(cmdata);
 }
 
 } // namespace citymania
