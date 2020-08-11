@@ -1,6 +1,8 @@
 #ifndef CM_SETTINGS_HPP
 #define CM_SETTINGS_HPP
 
+#include "cm_type.hpp"
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -64,8 +66,8 @@ struct Settings {
     EconomySettings economy;
     LimitsSettings limits;
 
-    uint8 game_type;  // GameType
-    uint8 controller_type;  // ControllerType
+    GameType game_type;  // GameType
+    ControllerType controller_type;  // ControllerType
     uint8 max_players_in_company;
     uint16 destroyed_houses_per_month;  // max amount of houses a company can destroy per month
     uint16 game_length_years;  // game length in years(0 = disabled)

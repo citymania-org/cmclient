@@ -11,12 +11,9 @@ namespace citymania {
 Game::Game() {
     this->events.listen<event::NewMonth>(event::Slot::GAME, [this] (const event::NewMonth &) {
         for (Town *t : Town::Iterate()) {
-            t->cm.hs_last_month = t->cm.hs_total - t->cm.hs_total_prev;
-            t->cm.hs_total_prev = t->cm.hs_total;
-            t->cm.cs_last_month = t->cm.cs_total - t->cm.cs_total_prev;
-            t->cm.cs_total_prev = t->cm.cs_total;
-            t->cm.hr_last_month = t->cm.hr_total - t->cm.hr_total_prev;
-            t->cm.hr_total_prev = t->cm.hr_total;
+            t->cm.hs_last_month = t->cm.hs_this_month;
+            t->cm.cs_last_month = t->cm.cs_this_month;
+            t->cm.hr_last_month = t->cm.hr_this_month;
 
             t->cm.houses_reconstructed_last_month = t->cm.houses_reconstructed_this_month;
             t->cm.houses_reconstructed_this_month = 0;
@@ -27,16 +24,24 @@ Game::Game() {
         this->towns_growth_tiles_last_month = this->towns_growth_tiles;
         this->towns_growth_tiles.clear();
     });
+    this->events.listen<event::TownBuilt>(event::Slot::GAME, [this] (const event::TownBuilt &event) {
+        auto t = event.town;
+        t->cm.hs_total = t->cm.hs_last_month = t->cm.hs_this_month = 0;
+        t->cm.cs_total = t->cm.cs_last_month = t->cm.cs_this_month = 0;
+        t->cm.hr_total = t->cm.hr_last_month = t->cm.hr_this_month = 0;
+    });
 
     this->events.listen<event::TownGrowthSucceeded>(event::Slot::GAME, [this] (const event::TownGrowthSucceeded &event) {
         if (event.town->cache.num_houses <= event.prev_houses) {
             event.town->cm.hs_total++;
+            event.town->cm.hs_this_month++;
             this->set_town_growth_tile(event.tile, TownGrowthTileState::HS);
         }
     });
 
     this->events.listen<event::TownGrowthFailed>(event::Slot::GAME, [this] (const event::TownGrowthFailed &event) {
         event.town->cm.cs_total++;
+        event.town->cm.cs_this_month++;
         this->set_town_growth_tile(event.tile, TownGrowthTileState::CS);
     });
 
