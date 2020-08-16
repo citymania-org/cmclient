@@ -1235,6 +1235,8 @@ citymania/cm_locations.hpp
 citymania/cm_locations.cpp
 citymania/cm_minimap.hpp
 citymania/cm_minimap.cpp
+citymania/cm_misc_gui.hpp
+citymania/cm_misc_gui.cpp
 citymania/cm_station_gui.hpp
 citymania/cm_station_gui.cpp
 newgrf_revisions.hpp

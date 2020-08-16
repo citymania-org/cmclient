@@ -39,6 +39,7 @@
 #include "industry.h"
 
 #include "citymania/cm_tooltips.hpp"
+#include "citymania/cm_misc_gui.hpp"
 
 #include "safeguards.h"
 
@@ -1322,10 +1323,10 @@ void GuiPrepareTooltipsExtra(Window *parent){
 
 	if (_cursor.sprite_seq[0].sprite == SPR_CURSOR_QUERY) {
 		// Land info tool active
-		ShowLandInfo(tile);
+		citymania::ShowLandInfo(tile);
 		return;
 	}
-	ShowLandInfo(INVALID_TILE);
+	citymania::ShowLandInfo(INVALID_TILE);
 
 	if (tile >= MapSize()) tile = INVALID_TILE;
 	citymania::ShowLandTooltips(tile, parent);
