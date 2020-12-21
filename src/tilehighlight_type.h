@@ -29,6 +29,7 @@ enum HighLightStyle {
 	HT_VEHICLE   = 0x100, ///< vehicle is accepted as target as well (bitmask)
 	HT_DIAGONAL  = 0x200, ///< Also allow 'diagonal rectangles'. Only usable in combination with #HT_RECT or #HT_POINT.
 	HT_POLY      = 0x400, ///< polyline mode; connect highlighted track with previous one
+	CM_HT_BLUEPRINT_PLACE = 0x800, ///< CityMania blueprint placemment
 	HT_DRAG_MASK = 0x0F8, ///< Mask for the tile drag-type modes.
 
 	/* lower bits (used with HT_LINE and HT_RAIL):

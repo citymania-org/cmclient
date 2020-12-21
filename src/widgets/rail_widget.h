@@ -27,8 +27,10 @@ enum RailToolbarWidgets {
 	WID_RAT_BUILD_SIGNALS,  ///< Build signals.
 	WID_RAT_BUILD_BRIDGE,   ///< Build a bridge.
 	WID_RAT_BUILD_TUNNEL,   ///< Build a tunnel.
+	CM_WID_RAT_BLUEPRINT,   ///< CityMania rail blueprint tool.
 	WID_RAT_REMOVE,         ///< Bulldozer to remove rail.
 	WID_RAT_CONVERT_RAIL,   ///< Convert other rail to this type.
+	CM_WID_RAT_BLUEPRINT_PLACE, ///< CityMania rail blueprint tool placement (fake widget).
 };
 
 /** Widgets of the #BuildRailStationWindow class. */

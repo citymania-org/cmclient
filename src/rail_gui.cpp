@@ -38,6 +38,7 @@
 
 #include "widgets/rail_widget.h"
 
+#include "citymania/cm_blueprint.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_station_gui.hpp"
 
@@ -768,6 +769,11 @@ struct BuildRailToolbarWindow : Window {
 				this->last_user_action = widget;
 				break;
 
+			case CM_WID_RAT_BLUEPRINT:
+				HandlePlacePushButton(this, CM_WID_RAT_BLUEPRINT, SPR_CURSOR_RAIL_STATION, HT_RECT);
+				this->last_user_action = widget;
+				break;
+
 			case WID_RAT_REMOVE:
 				_remove_button_clicked = citymania::RailToolbar_RemoveModChanged(this, _cm_invert_remove, _remove_button_clicked, true);
 				// BuildRailClick_Remove(this);
@@ -871,6 +877,15 @@ struct BuildRailToolbarWindow : Window {
 				PlaceRail_Bridge(tile, this);
 				break;
 
+			case CM_WID_RAT_BLUEPRINT:
+				VpStartPlaceSizing(tile, VPM_X_AND_Y, CM_DDSP_BLUEPRINT_AREA);
+				break;
+
+			case CM_WID_RAT_BLUEPRINT_PLACE:
+				citymania::BuildActiveBlueprint(tile);
+				ResetObjectToPlace();
+				break;
+
 			case WID_RAT_BUILD_TUNNEL:
 				DoCommandP(tile, _cur_railtype | (TRANSPORT_RAIL << 8), 0, CMD_BUILD_TUNNEL | CMD_MSG(STR_ERROR_CAN_T_BUILD_TUNNEL_HERE), CcBuildRailTunnel);
 				break;
@@ -940,6 +955,12 @@ struct BuildRailToolbarWindow : Window {
 						}
 					}
 					break;
+
+				case CM_DDSP_BLUEPRINT_AREA:
+					SetObjectToPlace(SPR_CURSOR_RAIL_STATION, PAL_NONE, CM_HT_BLUEPRINT_PLACE, this->window_class, this->window_number);
+					citymania::BlueprintCopyArea(start_tile, end_tile);
+					this->last_user_action = CM_WID_RAT_BLUEPRINT_PLACE;
+					break;
 			}
 		}
 	}
@@ -960,6 +981,7 @@ struct BuildRailToolbarWindow : Window {
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
 
 		citymania::AbortStationPlacement();
+		citymania::ResetActiveBlueprint();
 	}
 
 	void OnPlacePresize(Point pt, TileIndex tile) override
@@ -970,6 +992,10 @@ struct BuildRailToolbarWindow : Window {
 
 	EventState CM_OnRemoveModStateChange() override
 	{
+		if (this->last_user_action == CM_WID_RAT_BLUEPRINT_PLACE) {
+			citymania::RotateActiveBlueprint();
+			return ES_HANDLED;
+		}
 		auto new_remove = citymania::RailToolbar_RemoveModChanged(this, _cm_invert_remove, _remove_button_clicked, false);
 		if (new_remove != _remove_button_clicked) {
 			_remove_button_clicked = new_remove;
@@ -1058,6 +1084,8 @@ static const NWidgetPart _nested_build_rail_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(42, 22), SetDataTip(SPR_IMG_BRIDGE, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_BRIDGE),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_BUILD_TUNNEL),
 						SetFill(0, 1), SetMinimalSize(20, 22), SetDataTip(SPR_IMG_TUNNEL_RAIL, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TUNNEL),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_RAT_BLUEPRINT),
+						SetFill(0, 1), SetMinimalSize(20, 22), SetDataTip(SPR_IMG_BUY_LAND, STR_CM_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_REMOVE),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_REMOVE, STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_CONVERT_RAIL),

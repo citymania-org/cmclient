@@ -1228,6 +1228,8 @@ citymania/extensions/cmext_company.hpp
 # CityMania client
 citymania/cm_base64.hpp
 citymania/cm_base64.cpp
+citymania/cm_blueprint.hpp
+citymania/cm_blueprint.cpp
 citymania/cm_highlight.hpp
 citymania/cm_highlight.cpp
 citymania/cm_highlight_type.hpp

@@ -1,10 +1,13 @@
 #include "../stdafx.h"
 
 #include "cm_highlight.hpp"
+
+#include "cm_blueprint.hpp"
 #include "cm_main.hpp"
 #include "cm_station_gui.hpp"
 
 #include "../core/math_func.hpp"
+#include "../table/bridge_land.h"
 #include "../command_func.h"
 #include "../house.h"
 #include "../industry.h"
@@ -71,27 +74,53 @@ const byte _tileh_to_sprite[32] = {
     0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18, 0,
 };
 
-
-ObjectTileHighlight ObjectTileHighlight::make_depot(DiagDirection ddir) {
+ObjectTileHighlight ObjectTileHighlight::make_rail_depot(DiagDirection ddir) {
     auto oh = ObjectTileHighlight(Type::RAIL_DEPOT);
-    oh.u.depot.ddir = ddir;
+    oh.u.rail.depot.ddir = ddir;
     return oh;
 }
 
-ObjectTileHighlight ObjectTileHighlight::make_rail(Track track) {
+ObjectTileHighlight ObjectTileHighlight::make_rail_track(Track track) {
     auto oh = ObjectTileHighlight(Type::RAIL_TRACK);
     oh.u.rail.track = track;
     return oh;
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_rail_station(Axis axis) {
+    auto oh = ObjectTileHighlight(Type::RAIL_STATION);
+    oh.u.rail.station.axis = axis;
+    return oh;
+}
+
+ObjectTileHighlight ObjectTileHighlight::make_rail_signal(uint pos, SignalType type, SignalVariant variant) {
+    auto oh = ObjectTileHighlight(Type::RAIL_SIGNAL);
+    oh.u.rail.signal.pos = pos;
+    oh.u.rail.signal.type = type;
+    oh.u.rail.signal.variant = variant;
+    return oh;
+}
+
+ObjectTileHighlight ObjectTileHighlight::make_rail_bridge_head(DiagDirection ddir, BridgeType type) {
+    auto oh = ObjectTileHighlight(Type::RAIL_BRIDGE_HEAD);
+    oh.u.rail.bridge_head.ddir = ddir;
+    oh.u.rail.bridge_head.type = type;
+    return oh;
+}
+
+ObjectTileHighlight ObjectTileHighlight::make_rail_tunnel_head(DiagDirection ddir) {
+    auto oh = ObjectTileHighlight(Type::RAIL_TUNNEL_HEAD);
+    oh.u.rail.tunnel_head.ddir = ddir;
+    return oh;
+}
 
 bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
     if (this->type != oh.type) return false;
-    switch (this->type) {
-        case Type::RAIL_DEPOT: return this->u.depot.tile == oh.u.depot.tile && this->u.depot.ddir == oh.u.depot.ddir;
-        default: return true;
-    }
-    return true;
+    return (this->tile == oh.tile && this->ddir == oh.ddir && this->blueprint == oh.blueprint);
+    // switch (this->type) {
+    //     case Type::RAIL_DEPOT: return this->tile == oh.tile && this->ddir == oh.ddir;
+    //     default: return true;
+    // }
+    // return true;
 }
 
 bool ObjectHighlight::operator!=(const ObjectHighlight& oh) {
@@ -100,9 +129,16 @@ bool ObjectHighlight::operator!=(const ObjectHighlight& oh) {
 
 
 ObjectHighlight ObjectHighlight::make_depot(TileIndex tile, DiagDirection ddir) {
-    auto oh = ObjectHighlight(ObjectHighlight::Type::RAIL_DEPOT);
-    oh.u.depot.tile = tile;
-    oh.u.depot.ddir = ddir;
+    auto oh = ObjectHighlight{ObjectHighlight::Type::RAIL_DEPOT};
+    oh.tile = tile;
+    oh.ddir = ddir;
+    return oh;
+}
+
+ObjectHighlight ObjectHighlight::make_blueprint(TileIndex tile, sp<Blueprint> blueprint) {
+    auto oh = ObjectHighlight{ObjectHighlight::Type::BLUEPRINT};
+    oh.tile = tile;
+    oh.blueprint = blueprint;
     return oh;
 }
 
@@ -118,7 +154,7 @@ void ObjectHighlight::PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Tra
     if (GetRailTileType(tile) != RAIL_TILE_NORMAL) return;
     if ((GetTrackBits(tile) & DiagdirReachesTracks(dir)) == 0) return;
 
-    this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_rail(track)));
+    this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_rail_track(track)));
 }
 
 /** Additional pieces of track to add at the entrance of a depot. */
@@ -139,16 +175,20 @@ void ObjectHighlight::UpdateTiles() {
     this->tiles.clear();
     switch (this->type) {
         case Type::RAIL_DEPOT: {
-            auto dir = this->u.depot.ddir;
-            this->tiles.insert(std::make_pair(this->u.depot.tile, ObjectTileHighlight::make_depot(dir)));
-            auto tile = this->u.depot.tile + TileOffsByDiagDir(dir);
+            auto dir = this->ddir;
+            this->tiles.insert(std::make_pair(this->tile, ObjectTileHighlight::make_rail_depot(dir)));
+            auto tile = this->tile + TileOffsByDiagDir(dir);
             if (IsTileType(tile, MP_RAILWAY) && IsCompatibleRail(GetRailType(tile), _cur_railtype)) {
-                PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir], _place_depot_extra_track[dir]);
-                PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 4], _place_depot_extra_track[dir + 4]);
-                PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 8], _place_depot_extra_track[dir + 8]);
+                this->PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir], _place_depot_extra_track[dir]);
+                this->PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 4], _place_depot_extra_track[dir + 4]);
+                this->PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 8], _place_depot_extra_track[dir + 8]);
             }
             break;
         }
+        case Type::BLUEPRINT:
+            if (this->blueprint && this->tile != INVALID_TILE)
+                this->tiles = this->blueprint->GetTiles(this->tile);
+            break;
         default:
             break;
     }
@@ -194,24 +234,208 @@ void DrawTrainDepotSprite(const TileInfo *ti, RailType railtype, DiagDirection d
     DrawRailTileSeq(ti, dts, TO_INVALID, offset, 0, PALETTE_TINT_WHITE);
 }
 
+void DrawTrainStationSprite(const TileInfo *ti, RailType railtype, Axis axis) {
+    int32 total_offset = 0;
+    PaletteID pal = COMPANY_SPRITE_COLOUR(_local_company);
+    const DrawTileSprites *t = GetStationTileLayout(STATION_RAIL, (axis == AXIS_X ? 0 : 1));
+    const RailtypeInfo *rti = nullptr;
+
+    if (railtype != INVALID_RAILTYPE) {
+        rti = GetRailTypeInfo(railtype);
+        total_offset = rti->GetRailtypeSpriteOffset();
+    }
+
+    DrawAutorailSelection(ti, (axis == AXIS_X ? HT_DIR_X : HT_DIR_Y), PAL_NONE);
+
+    // if (roadtype != INVALID_ROADTYPE) {
+    //     const RoadTypeInfo* rti = GetRoadTypeInfo(roadtype);
+    //     if (image >= 4) {
+    //         /* Drive-through stop */
+    //         uint sprite_offset = 5 - image;
+
+    //         /* Road underlay takes precedence over tram */
+    //         if (rti->UsesOverlay()) {
+    //             SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_GROUND);
+    //             DrawSprite(ground + sprite_offset, PAL_NONE, x, y);
+
+    //             SpriteID overlay = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_OVERLAY);
+    //             if (overlay) DrawSprite(overlay + sprite_offset, PAL_NONE, x, y);
+    //         } else if (RoadTypeIsTram(roadtype)) {
+    //             DrawSprite(SPR_TRAMWAY_TRAM + sprite_offset, PAL_NONE, x, y);
+    //         }
+    //     } else {
+    //         /* Drive-in stop */
+    //         if (RoadTypeIsRoad(roadtype) && rti->UsesOverlay()) {
+    //             SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_ROADSTOP);
+    //             DrawSprite(ground + image, PAL_NONE, x, y);
+    //         }
+    //     }
+    // }
+
+    /* Default waypoint has no railtype specific sprites */
+    // DrawRailTileSeq(ti, t, TO_INVALID, (st == STATION_WAYPOINT ? 0 : total_offset), 0, PALETTE_TINT_WHITE);
+    DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, PALETTE_TINT_WHITE);
+}
+
+enum SignalOffsets {  // from rail_cmd.cpp
+    SIGNAL_TO_SOUTHWEST,
+    SIGNAL_TO_NORTHEAST,
+    SIGNAL_TO_SOUTHEAST,
+    SIGNAL_TO_NORTHWEST,
+    SIGNAL_TO_EAST,
+    SIGNAL_TO_WEST,
+    SIGNAL_TO_SOUTH,
+    SIGNAL_TO_NORTH,
+};
+
+/**
+ * copied from rail_cmd.cpp
+ * Get surface height in point (x,y)
+ * On tiles with halftile foundations move (x,y) to a safe point wrt. track
+ */
+static uint GetSaveSlopeZ(uint x, uint y, Track track)
+{
+    switch (track) {
+        case TRACK_UPPER: x &= ~0xF; y &= ~0xF; break;
+        case TRACK_LOWER: x |=  0xF; y |=  0xF; break;
+        case TRACK_LEFT:  x |=  0xF; y &= ~0xF; break;
+        case TRACK_RIGHT: x &= ~0xF; y |=  0xF; break;
+        default: break;
+    }
+    return GetSlopePixelZ(x, y);
+}
+
+void DrawSignal(const TileInfo *ti, RailType railtype, uint pos, SignalType type, SignalVariant variant) {
+    // reference: DraawSingleSignal in rail_cmd.cpp
+    bool side;
+    switch (_settings_game.construction.train_signal_side) {
+        case 0:  side = false;                                 break; // left
+        case 2:  side = true;                                  break; // right
+        default: side = _settings_game.vehicle.road_side != 0; break; // driving side
+    }
+    static const Point SignalPositions[2][12] = {
+        { // Signals on the left side
+        /*  LEFT      LEFT      RIGHT     RIGHT     UPPER     UPPER */
+            { 8,  5}, {14,  1}, { 1, 14}, { 9, 11}, { 1,  0}, { 3, 10},
+        /*  LOWER     LOWER     X         X         Y         Y     */
+            {11,  4}, {14, 14}, {11,  3}, { 4, 13}, { 3,  4}, {11, 13}
+        }, { // Signals on the right side
+        /*  LEFT      LEFT      RIGHT     RIGHT     UPPER     UPPER */
+            {14,  1}, {12, 10}, { 4,  6}, { 1, 14}, {10,  4}, { 0,  1},
+        /*  LOWER     LOWER     X         X         Y         Y     */
+            {14, 14}, { 5, 12}, {11, 13}, { 4,  3}, {13,  4}, { 3, 11}
+        }
+    };
+
+    uint x = TileX(ti->tile) * TILE_SIZE + SignalPositions[side][pos].x;
+    uint y = TileY(ti->tile) * TILE_SIZE + SignalPositions[side][pos].y;
+
+    static const Track pos_track[] = {
+        TRACK_LEFT, TRACK_LEFT, TRACK_RIGHT, TRACK_RIGHT,
+        TRACK_UPPER, TRACK_UPPER, TRACK_LOWER, TRACK_LOWER,
+        TRACK_X, TRACK_X, TRACK_Y, TRACK_Y,
+    };
+    static const SignalOffsets pos_offset[] = {
+        SIGNAL_TO_NORTH, SIGNAL_TO_SOUTH, SIGNAL_TO_NORTH, SIGNAL_TO_SOUTH,
+        SIGNAL_TO_WEST, SIGNAL_TO_EAST, SIGNAL_TO_WEST, SIGNAL_TO_EAST,
+        SIGNAL_TO_SOUTHWEST, SIGNAL_TO_NORTHEAST, SIGNAL_TO_SOUTHEAST, SIGNAL_TO_NORTHWEST,
+    };
+
+    auto track = pos_track[pos];
+    auto image = pos_offset[pos];
+    static const SignalState condition = SIGNAL_STATE_GREEN;
+
+    auto rti = GetRailTypeInfo(railtype);
+    SpriteID sprite = GetCustomSignalSprite(rti, ti->tile, type, variant, condition);
+    if (sprite != 0) {
+        sprite += image;
+    } else {
+        /* Normal electric signals are stored in a different sprite block than all other signals. */
+        sprite = (type == SIGTYPE_NORMAL && variant == SIG_ELECTRIC) ? SPR_ORIGINAL_SIGNALS_BASE : SPR_SIGNALS_BASE - 16;
+        sprite += type * 16 + variant * 64 + image * 2 + condition + (type > SIGTYPE_LAST_NOPBS ? 64 : 0);
+    }
+
+    AddSortableSpriteToDraw(sprite, PALETTE_TINT_WHITE, x, y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, GetSaveSlopeZ(x, y, track));
+}
+
+// copied from tunnelbridge_cmd.cpp
+static inline const PalSpriteID *GetBridgeSpriteTable(int index, BridgePieces table)
+{
+    const BridgeSpec *bridge = GetBridgeSpec(index);
+    assert(table < BRIDGE_PIECE_INVALID);
+    if (bridge->sprite_table == nullptr || bridge->sprite_table[table] == nullptr) {
+        return _bridge_sprite_table[index][table];
+    } else {
+        return bridge->sprite_table[table];
+    }
+}
+
+void DrawBridgeHead(const TileInfo *ti, RailType railtype, DiagDirection ddir, BridgeType type) {
+    auto rti = GetRailTypeInfo(railtype);
+    int base_offset = rti->bridge_offset;
+    const PalSpriteID *psid;
+
+    /* HACK Wizardry to convert the bridge ramp direction into a sprite offset */
+    base_offset += (6 - ddir) % 4;
+
+    /* Table number BRIDGE_PIECE_HEAD always refers to the bridge heads for any bridge type */
+    if (ti->tileh == SLOPE_FLAT) base_offset += 4; // sloped bridge head
+    psid = &GetBridgeSpriteTable(type, BRIDGE_PIECE_HEAD)[base_offset];
+
+    AddSortableSpriteToDraw(psid->sprite, PALETTE_TINT_WHITE, ti->x, ti->y, 16, 16, ti->tileh == SLOPE_FLAT ? 0 : 8, ti->z);
+    // DrawAutorailSelection(ti, (ddir == DIAGDIR_SW || ddir == DIAGDIR_NE ? HT_DIR_X : HT_DIR_Y), PAL_NONE);
+}
+
+void DrawTunnelHead(const TileInfo *ti, RailType railtype, DiagDirection ddir) {
+    auto rti = GetRailTypeInfo(railtype);
+
+    SpriteID image;
+    SpriteID railtype_overlay = 0;
+
+    image = rti->base_sprites.tunnel;
+    if (rti->UsesOverlay()) {
+        /* Check if the railtype has custom tunnel portals. */
+        railtype_overlay = GetCustomRailSprite(rti, ti->tile, RTSG_TUNNEL_PORTAL);
+        if (railtype_overlay != 0) image = SPR_RAILTYPE_TUNNEL_BASE; // Draw blank grass tunnel base.
+    }
+
+    image += ddir * 2;
+    AddSortableSpriteToDraw(image, PALETTE_TINT_WHITE, ti->x, ti->y, 16, 16, 0, ti->z);
+}
+
 void ObjectHighlight::Draw(const TileInfo *ti) {
     this->UpdateTiles();
     auto range = this->tiles.equal_range(ti->tile);
+    auto i=0;
     for (auto t = range.first; t != range.second; t++) {
+        i++;
         auto &oth = t->second;
         switch (oth.type) {
             case ObjectTileHighlight::Type::RAIL_DEPOT:
-                DrawTrainDepotSprite(ti, _cur_railtype, oth.u.depot.ddir);
+                DrawTrainDepotSprite(ti, _cur_railtype, oth.u.rail.depot.ddir);
                 break;
             case ObjectTileHighlight::Type::RAIL_TRACK: {
                 auto hs = (HighLightStyle)oth.u.rail.track;
                 DrawAutorailSelection(ti, hs, PAL_NONE);
                 break;
             }
+            case ObjectTileHighlight::Type::RAIL_STATION:
+                DrawTrainStationSprite(ti, _cur_railtype, oth.u.rail.station.axis);
+                break;
+            case ObjectTileHighlight::Type::RAIL_SIGNAL:
+                DrawSignal(ti, _cur_railtype, oth.u.rail.signal.pos, oth.u.rail.signal.type, oth.u.rail.signal.variant);
+                break;
+            case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
+                DrawBridgeHead(ti, _cur_railtype, oth.u.rail.bridge_head.ddir, oth.u.rail.bridge_head.type);
+                break;
+            case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
+                DrawTunnelHead(ti, _cur_railtype, oth.u.rail.tunnel_head.ddir);
+                break;
             default:
                 break;
         }
     }
+    // fprintf(stderr, "TILEH DRAW %d %d %d\n", ti->tile, (int)i, (int)this->tiles.size());
 }
 
 
@@ -525,6 +749,7 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
     }
 
     SetStationSelectionHighlight(ti, th);
+    SetBlueprintHighlight(ti, th);
 
     return th;
 }
@@ -544,6 +769,8 @@ void DrawTileZoning(const TileInfo *ti, const TileHighlight &th) {
 
 bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
     _thd.cm.Draw(ti);
+
+    if (_thd.drawstyle == CM_HT_BLUEPRINT_PLACE) return true;
 
     if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
         // station selector, handled by DrawTileZoning
@@ -610,11 +837,14 @@ DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt) {
 
 HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     _thd.cm_new = ObjectHighlight(ObjectHighlight::Type::NONE);
-    if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT &&
+    auto pt = GetTileBelowCursor();
+    auto tile = (pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y));
+    if (_thd.place_mode == CM_HT_BLUEPRINT_PLACE) {
+        UpdateBlueprintTileSelection(pt, tile);
+        new_drawstyle = CM_HT_BLUEPRINT_PLACE;
+    } else if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT &&
             _cursor.sprite_seq[0].sprite == GetRailTypeInfo(_cur_railtype)->cursor.depot) {
         auto dir = _build_depot_direction;
-        auto pt = GetTileBelowCursor();
-        auto tile = TileVirtXY(pt.x, pt.y);
         if (pt.x != -1) {
             if (dir >= DiagDirection::DIAGDIR_END)
                 dir = AutodetectRailObjectDirection(tile, pt);
