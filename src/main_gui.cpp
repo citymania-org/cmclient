@@ -31,6 +31,8 @@
 #include "tilehighlight_func.h"
 #include "hotkeys.h"
 #include "guitimer_func.h"
+#include "error.h"
+#include "news_gui.h"
 
 #include "saveload/saveload.h"
 
@@ -45,45 +47,6 @@
 #include "table/strings.h"
 
 #include "safeguards.h"
-
-static int _rename_id = 1;
-static int _rename_what = -1;
-
-void CcGiveMoney(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
-{
-	if (result.Failed() || !_settings_game.economy.give_money) return;
-
-	/* Inform the company of the action of one of its clients (controllers). */
-	char msg[64];
-	SetDParam(0, p2);
-	GetString(msg, STR_COMPANY_NAME, lastof(msg));
-
-	if (!_network_server) {
-		NetworkClientSendChat(NETWORK_ACTION_GIVE_MONEY, DESTTYPE_TEAM, p2, msg, p1);
-	} else {
-		NetworkServerSendChat(NETWORK_ACTION_GIVE_MONEY, DESTTYPE_TEAM, p2, msg, CLIENT_ID_SERVER, p1);
-	}
-}
-
-void HandleOnEditText(const char *str)
-{
-	switch (_rename_what) {
-		case 3: { // Give money, you can only give money in excess of loan
-			const Company *c = Company::GetIfValid(_local_company);
-			if (c == nullptr) break;
-			Money money = min(c->money - c->current_loan, (Money)(atoi(str) / _currency->rate));
-
-			uint32 money_c = Clamp(ClampToI32(money), 0, 20000000); // Clamp between 20 million and 0
-
-			/* Give 'id' the money, and subtract it from ourself */
-			DoCommandP(0, money_c, _rename_id, CMD_GIVE_MONEY | CMD_MSG(STR_ERROR_INSUFFICIENT_FUNDS), CcGiveMoney, str);
-			break;
-		}
-		default: NOT_REACHED();
-	}
-
-	_rename_id = _rename_what = -1;
-}
 
 /**
  * This code is shared for the majority of the pushbuttons.
@@ -118,14 +81,6 @@ void CcPlaySound_EXPLOSION(const CommandCost &result, TileIndex tile, uint32 p1,
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_12_EXPLOSION, tile);
 }
 
-void ShowNetworkGiveMoneyWindow(CompanyID company)
-{
-	_rename_id = company;
-	_rename_what = 3;
-	ShowQueryString(STR_EMPTY, STR_NETWORK_GIVE_MONEY_CAPTION, 30, nullptr, CS_NUMERAL, QSF_NONE);
-}
-
-
 /**
  * Zooms a viewport in a window in or out.
  * @param how Zooming direction.
@@ -135,7 +90,7 @@ void ShowNetworkGiveMoneyWindow(CompanyID company)
  */
 bool DoZoomInOutWindow(ZoomStateChange how, Window *w)
 {
-	ViewPort *vp;
+	Viewport *vp;
 
 	assert(w != nullptr);
 	vp = w->viewport;
@@ -185,7 +140,7 @@ void ZoomInOrOutToCursorWindow(bool in, Window *w)
 	assert(w != nullptr);
 
 	if (_game_mode != GM_MENU) {
-		ViewPort *vp = w->viewport;
+		Viewport *vp = w->viewport;
 		if ((in && vp->zoom <= _settings_client.gui.zoom_min) || (!in && vp->zoom >= _settings_client.gui.zoom_max)) return;
 
 		Point pt = GetTileZoomCenterWindow(in, w);
@@ -201,7 +156,7 @@ void FixTitleGameZoom()
 {
 	if (_game_mode != GM_MENU) return;
 
-	ViewPort *vp = FindWindowByClass(WC_MAIN_WINDOW)->viewport;
+	Viewport *vp = FindWindowByClass(WC_MAIN_WINDOW)->viewport;
 	vp->zoom = _gui_zoom;
 	vp->virtual_width = ScaleByZoom(vp->width, vp->zoom);
 	vp->virtual_height = ScaleByZoom(vp->height, vp->zoom);
@@ -235,6 +190,8 @@ enum {
 	GHK_CHAT_ALL,
 	GHK_CHAT_COMPANY,
 	GHK_CHAT_SERVER,
+	GHK_CLOSE_NEWS,
+	GHK_CLOSE_ERROR,
 };
 
 struct MainWindow : Window
@@ -427,6 +384,14 @@ struct MainWindow : Window
 				}
 				break;
 
+			case GHK_CLOSE_NEWS: // close active news window
+				if (!HideActiveNewsMessage()) return ES_NOT_HANDLED;
+				break;
+
+			case GHK_CLOSE_ERROR: // close active error window
+				if (!HideActiveErrorMessage()) return ES_NOT_HANDLED;
+				break;
+
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
@@ -520,6 +485,8 @@ static Hotkey global_hotkeys[] = {
 	Hotkey(_ghk_chat_all_keys, "chat_all", GHK_CHAT_ALL),
 	Hotkey(_ghk_chat_company_keys, "chat_company", GHK_CHAT_COMPANY),
 	Hotkey(_ghk_chat_server_keys, "chat_server", GHK_CHAT_SERVER),
+	Hotkey(WKC_SPACE, "close_news", GHK_CLOSE_NEWS),
+	Hotkey(WKC_SPACE, "close_error", GHK_CLOSE_ERROR),
 	HOTKEY_LIST_END
 };
 HotkeyList MainWindow::hotkeys("global", global_hotkeys);

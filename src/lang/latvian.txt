@@ -50,9 +50,9 @@ STR_CARGO_PLURAL_WHEAT                                          :Kvieši
 STR_CARGO_PLURAL_RUBBER                                         :Kaučuks
 STR_CARGO_PLURAL_SUGAR                                          :Cukurs
 STR_CARGO_PLURAL_TOYS                                           :Rotaļlietas
-STR_CARGO_PLURAL_CANDY                                          :Saldumi
+STR_CARGO_PLURAL_SWEETS                                         :Saldumi
 STR_CARGO_PLURAL_COLA                                           :Kola
-STR_CARGO_PLURAL_COTTON_CANDY                                   :Cukurvate
+STR_CARGO_PLURAL_CANDYFLOSS                                     :Cukurvate
 STR_CARGO_PLURAL_BUBBLES                                        :Burbuļi
 STR_CARGO_PLURAL_TOFFEE                                         :Īriss
 STR_CARGO_PLURAL_BATTERIES                                      :Baterijas
@@ -84,9 +84,9 @@ STR_CARGO_SINGULAR_WHEAT                                        :Kvieši
 STR_CARGO_SINGULAR_RUBBER                                       :Kaučuks
 STR_CARGO_SINGULAR_SUGAR                                        :Cukurs
 STR_CARGO_SINGULAR_TOY                                          :Rotaļlieta
-STR_CARGO_SINGULAR_CANDY                                        :Saldumi
+STR_CARGO_SINGULAR_SWEETS                                       :Saldumi
 STR_CARGO_SINGULAR_COLA                                         :Kola
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :Cukurvate
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :Cukurvate
 STR_CARGO_SINGULAR_BUBBLE                                       :Burbuļi
 STR_CARGO_SINGULAR_TOFFEE                                       :Īriss
 STR_CARGO_SINGULAR_BATTERY                                      :Baterijas
@@ -196,6 +196,7 @@ STR_COLOUR_DEFAULT                                              :Noklusējuma
 STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA}{NBSP}jūdzes stundā
 STR_UNITS_VELOCITY_METRIC                                       :{COMMA}{NBSP}km/h
 STR_UNITS_VELOCITY_SI                                           :{COMMA}{NBSP}m/s
+STR_UNITS_VELOCITY_GAMEUNITS                                    :{DECIMAL}{NBSP}lauciņi/diena
 
 STR_UNITS_POWER_IMPERIAL                                        :{COMMA}{NBSP}ZS
 STR_UNITS_POWER_METRIC                                          :{COMMA}{NBSP}ZS
@@ -235,8 +236,6 @@ STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Izvēlē
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Izvēlēties kārtošanas pazīmes
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Izvēlēties filtrēšanas pazīmes
 STR_BUTTON_SORT_BY                                              :{BLACK}Kārtot pēc
-STR_BUTTON_LOCATION                                             :{BLACK}Atrašanās vieta
-STR_BUTTON_RENAME                                               :{BLACK}Pārdēvēt
 STR_BUTTON_CATCHMENT                                            :{BLACK}Pārklājums
 STR_TOOLTIP_CATCHMENT                                           :{BLACK}Pārslēgt pārklājuma laukuma rādīšanu
 
@@ -316,6 +315,15 @@ STR_SORT_BY_CARGO_CAPACITY                                      :kravnesības
 STR_SORT_BY_RANGE                                               :apgabala
 STR_SORT_BY_POPULATION                                          :iedzīvotāju skaita
 STR_SORT_BY_RATING                                              :vērtējuma
+STR_SORT_BY_NUM_VEHICLES                                        :Autotransporta līdzekļu skaits
+STR_SORT_BY_TOTAL_PROFIT_LAST_YEAR                              :Kopējā peļņa pagājušajā gadā
+STR_SORT_BY_TOTAL_PROFIT_THIS_YEAR                              :Kopējā peļņa šogad
+STR_SORT_BY_AVERAGE_PROFIT_LAST_YEAR                            :Vidējā peļņa iepriekšējā gadā
+STR_SORT_BY_AVERAGE_PROFIT_THIS_YEAR                            :Vidējā peļņa šajā gadā
+
+# Group by options for vehicle list
+STR_GROUP_BY_NONE                                               :Nav
+STR_GROUP_BY_SHARED_ORDERS                                      :Koplietojamie rīkojumi
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Pauzēt spēli
@@ -404,7 +412,7 @@ STR_FILE_MENU_EXIT                                              :Iziet
 
 # map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :Pasaules karte
-STR_MAP_MENU_EXTRA_VIEW_PORT                                    :Papildu skatvieta
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :Papildu skatvieta
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Kravu plūsmas apzīmējumi
 STR_MAP_MENU_SIGN_LIST                                          :Zīmju saraksts
 
@@ -772,6 +780,7 @@ STR_SMALLMAP_TOOLTIP_ENABLE_ALL_CARGOS                          :{BLACK}Rādīt 
 STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS                            :{BLACK}Rādīt pēdējo ziņojumu vai avīzes rakstu
 STR_STATUSBAR_COMPANY_NAME                                      :{SILVER}- -  {COMPANY}  - -
 STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  PAUZE  *  *
+STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE} * * PAUZE (gaida saites diagrammas atjaunināšanu) * *
 STR_STATUSBAR_AUTOSAVE                                          :{RED}AUTOMĀTISKĀ SAGLABĀŠANA
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  SPĒLE TIEK SAGLABĀTA *  *
 
@@ -886,7 +895,7 @@ STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLAC
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}{TOWN} vietējā pašvaldība panāk vienošanos ar {STRING} par pārvadājumu izņēmuma tiesībām uz vienu gadu!
 
 # Extra view window
-STR_EXTRA_VIEW_PORT_TITLE                                       :{WHITE}Skatvieta {COMMA}
+STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Skatvieta {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}Mainīt skatvietu
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}Kopēt galvenā skata atrašanās vietu uz šo skatvietu
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Mainīt galveno skatu
@@ -937,6 +946,7 @@ STR_GAME_OPTIONS_CURRENCY_MXN                                   :Meksikas peso (
 STR_GAME_OPTIONS_CURRENCY_NTD                                   :Jaunais Taivānas dolārs (NTD)
 STR_GAME_OPTIONS_CURRENCY_CNY                                   :Ķīnas juaņa (CNY)
 STR_GAME_OPTIONS_CURRENCY_HKD                                   :Honkongas dolārs (HKD)
+STR_GAME_OPTIONS_CURRENCY_INR                                   :Indijas rūpija (INR)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Autotransporta līdzekļi
@@ -1554,8 +1564,11 @@ STR_CONFIG_SETTING_ENDING_YEAR                                  :Vērtēšanas b
 STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :Spēles beigas gads (tiek izmantots rezultāta noteikšanai). Šī gada beigās uzņēmuma rezultāti tiek ierakstīti un uz ekrāna tiek parādīti labākie rezultāti, bet spēlētāji var turpināt spēlēt arī pēc šī datuma.{}Ja tas ir norādīts pirms spēles sākuma datuma, labākie rezultāti nekad netiek parādīti.
 STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Nekad
-STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Atļaut vienmērīgas izmaiņas ekonomikā: {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Ja ieslēgts, ražošanas izmaiņas notiek biežāk un ar mazākiem soļiem. Šim iestatījumam parasti nav ietekmes, ja ražotņu veidi ir ieviesti ar NewGRF
+STR_CONFIG_SETTING_ECONOMY_TYPE                                 :Ekonomikas tips: {STRING}
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :Vienmērīga ekonomika liek mainīt ražošanas apjomus biežāk un mazākos soļos. Saldēta ekonomika aptur ražošanas izmaiņas un nozaru slēgšanu. Šim iestatījumam var nebūt ietekmes, ja nozares veidus nodrošina NewGRF.
+STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :Orģināls
+STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :Gluds
+STR_CONFIG_SETTING_ECONOMY_TYPE_FROZEN                          :Saldēts
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Atļaut akciju pirkšanu no citiem uzņēmumiem: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Ja iespējots, ir atļauts pirkt un pārdodot uzņēmumu akcijas. Akcijas būs pieejamas tikai atbilstošu vecumu sasniegušiem uzņēmumiem
 STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :Minimālais uzņēmuma vecums, lai tirgotos ar akcijām: {STRING}
@@ -1607,9 +1620,10 @@ STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Lineārs
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Koku izvietojums spēlē: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Vadīt nejaušu koku parādīšanos spēles laikā. Tas var ietekmēt no kokaudzēšanas atkarīgas ražotnes, piemēram kokzāģētavas
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :nav {RED}(nedarbosies kokzāģētavas)
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :tikai lietusmežos
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :visur
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_SPREAD               :Augt, bet neizplatās {RED} (salauž kokzāģētavas)
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_RAINFOREST       :Aug, bet izplatās tikai lietus mežos
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_ALL              :Aug un izplatās visur
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_GROWTH_NO_SPREAD     :Augt, bet neizplatās {RED} (salauž kokzāģētavas)
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Galvenās rīkjoslas novietojums: {STRING}
 STR_CONFIG_SETTING_TOOLBAR_POS_HELPTEXT                         :Galvenās rīkjoslas horizontālais novietojums ekrāna augšējā daļā
@@ -1676,6 +1690,7 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_HELPTEXT         :Vai lietotāja 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_IMPERIAL         :impērijas, britu (jūdzes stundā)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_METRIC           :metriskās (km/h)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_SI               :SI, starptautiskās (m/s)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_GAMEUNITS        :Spēles vienības (lauciņi/dienas)
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER                     :Transportlīdzekļu jaudas mērvienības: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_HELPTEXT            :Vai lietotāja saskarnē rāda transporta līdzekļa jaudu, rādīt norādītajās mērvienībās
@@ -1810,17 +1825,9 @@ STR_INTRO_TRANSLATION                                           :{BLACK}Šim tul
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Iziet
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Vai jūs tiešām vēlaties iziet no OpenTTD un atgriezties uz {STRING}?
+STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Vai esat pārliecināts ka vēlaties iziet no OpenTTD?
 STR_QUIT_YES                                                    :{BLACK}Jā
 STR_QUIT_NO                                                     :{BLACK}Nē
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Pamest spēli
@@ -1830,7 +1837,6 @@ STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Vai tie
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Blēdības
 STR_CHEATS_TOOLTIP                                              :{BLACK}Atzīmētās rūtiņas norāda uz to, vai esat jau izmantojis šo blēdību
-STR_CHEATS_WARNING                                              :{BLACK}Brīdinājums! Jūs grasāties būt neuzticams saviem spēles biedriem, sāncenšiem. Iegaumējiet, ka šādu negodu viņi atcerēsies mūžīgi
 STR_CHEAT_MONEY                                                 :{LTBLUE}Palielināt naudas līdzekļus par {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Spēlēt kā uzņēmumam: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Burvju buldozers (nojauc ražotnes, nepārvietojamus objektus): {ORANGE}{STRING}
@@ -1942,10 +1948,6 @@ STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Mainīt 
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Vairākspēlētāju spēle
-STR_NETWORK_SERVER_LIST_ADVERTISED                              :{BLACK}Izsludināt
-STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP                      :{BLACK}Izvēlieties starp reklamēto (interneta) un nereklamēto (lokālā tīkla, LAN) spēli
-STR_NETWORK_SERVER_LIST_ADVERTISED_NO                           :Nē
-STR_NETWORK_SERVER_LIST_ADVERTISED_YES                          :Jā
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Spēlētāja vārds:
 STR_NETWORK_SERVER_LIST_ENTER_NAME_TOOLTIP                      :{BLACK}Pēc šā vārda jūs atpazīs citi spēlētāji
 
@@ -1986,8 +1988,10 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}Pievieno
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Atsvaidzināt serveri
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Atsvaidzināt servera informāciju
 
-STR_NETWORK_SERVER_LIST_FIND_SERVER                             :{BLACK}Atrast serveri
-STR_NETWORK_SERVER_LIST_FIND_SERVER_TOOLTIP                     :{BLACK}Meklēt serveri tīklā
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET                  :Meklēt internetā
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET_TOOLTIP          :{BLACK}Meklēt publiskos serverus internetā
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN                       :{BLACK}Meklēt LAN
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN_TOOLTIP               :{BLACK}Meklēt serverus lokālajā tīklā
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Pievienot serveri
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Pievienot serveri sarakstam, kurš vienmēr tiks pārbaudīts vai tajā nav palaistas spēles
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Palaist serveri
@@ -2004,6 +2008,8 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Spēles 
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Uzstādīt paroli
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Aizsargā jūsu spēli ar paroli, ja nevēlaties lai tā būtu publiski pieejama
 
+STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Izsludināt
+STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Izvēlieties starp reklamēto (interneta) un nereklamēto (lokālā tīkla, LAN) spēli
 STR_NETWORK_START_SERVER_UNADVERTISED                           :Nē
 STR_NETWORK_START_SERVER_ADVERTISED                             :Jā
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} spēlētāj{P s i u}
@@ -2117,7 +2123,6 @@ STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Jauns uzņēmum
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Izmest
 STR_NETWORK_CLIENTLIST_BAN                                      :Aizliegt
-STR_NETWORK_CLIENTLIST_GIVE_MONEY                               :Iedot naudu
 STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Runāt ar visiem
 STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Runāt ar uzņēmumu
 STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privāts ziņojums
@@ -2125,8 +2130,6 @@ STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privāts ziņoj
 STR_NETWORK_SERVER                                              :Serveris
 STR_NETWORK_CLIENT                                              :Spēlētājs
 STR_NETWORK_SPECTATORS                                          :Novērotāji
-
-STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Ievadiet cik daudz naudas vēlaties dot
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Nesaglabāt ievadīto paroli
@@ -2214,11 +2217,13 @@ STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_1                  :Spēle joprojā
 STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_2                  :Spēle joprojām pauzēta ({STRING}, {STRING})
 STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_3                  :Spēle joprojām pauzēta ({STRING}, {STRING}, {STRING})
 STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_4                  :Spēle vēl aizvien ir pauzēta ({STRING}, {STRING}, {STRING}, {STRING})
+STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_5                  :Spēle joprojām pauzēta ({STRING}, {STRING}, {STRING}, {STRING}, {STRING})
 STR_NETWORK_SERVER_MESSAGE_GAME_UNPAUSED                        :Spēle atsākta ({STRING})
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_NOT_ENOUGH_PLAYERS       :spēlētāju skaits
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_CONNECTING_CLIENTS       :savieno spēlētājus
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_MANUAL                   :manuālā
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_GAME_SCRIPT              :spēles skripts
+STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH               :gaida uz saišu grafika atjaunošanu
 ############ End of leave-in-this-order
 STR_NETWORK_MESSAGE_CLIENT_LEAVING                              :aizeju
 STR_NETWORK_MESSAGE_CLIENT_JOINED                               :*** {STRING} ir pievienojies spēlei
@@ -2228,8 +2233,6 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} ir
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} ir nodibinājis jaunu uzņēmumu (#{2:NUM})
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} ir pametis spēli ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} ir nomainījis savu nosaukumu uz {STRING}
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} iedeva jūsu uzņēmumam {2:CURRENCY_LONG}
-STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY                             :*** Jūs iedevāt {1:STRING} {2:CURRENCY_LONG}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Serveris beidza sesiju
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Serveris pārstartējas...{}Lūdzu uzgaidiet...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} tika izmests. Iemesls: ({STRING})
@@ -2347,6 +2350,8 @@ STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Būvēt
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Pievienot pieturas punktu
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Uzbūvēt jaunu maršruta punktu
+
+# Generic toolbar
 
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :Dzelzceļa būvniecība
@@ -2535,13 +2540,19 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Izmērs:
 STR_OBJECT_CLASS_LTHS                                           :Bākas
 STR_OBJECT_CLASS_TRNS                                           :Raidītāji
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 STR_PLANT_TREE_CAPTION                                          :{WHITE}Koki
 STR_PLANT_TREE_TOOLTIP                                          :{BLACK}Izvēlēties koka veidu stādīšanai. Ja lauciņš jau ir koks, tas pievienos vairāk jauktu veidu kokus neatkarīgi no izvēlētā veida
 STR_TREES_RANDOM_TYPE                                           :{BLACK}Nejauši izvēlēta veida koki
 STR_TREES_RANDOM_TYPE_TOOLTIP                                   :{BLACK}Izvietot nejaušus kokus. Shift pārslēdz būve/rādīt izmaksu tāmi
 STR_TREES_RANDOM_TREES_BUTTON                                   :{BLACK}Nejauši koki
 STR_TREES_RANDOM_TREES_TOOLTIP                                  :{BLACK}Stādīt nejaušus kokus visā ainavā
+STR_TREES_MODE_NORMAL_BUTTON                                    :{BLACK}Normāls
+STR_TREES_MODE_NORMAL_TOOLTIP                                   :{BLACK}Stādiet atsevišķus kokus, velkot pāri ainavai.
+STR_TREES_MODE_FOREST_SM_BUTTON                                 :{BLACK}Birze
+STR_TREES_MODE_FOREST_SM_TOOLTIP                                :{BLACK}Stādiet mazus mežus, velkot pāri ainavai.
+STR_TREES_MODE_FOREST_LG_BUTTON                                 :{BLACK}Mežs
+STR_TREES_MODE_FOREST_LG_TOOLTIP                                :{BLACK}Stādiet lielos mežus, velkot pāri ainavai.
 
 # Land generation window (SE)
 STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION                   :{WHITE}Zemes radīšana
@@ -3175,10 +3186,10 @@ STR_GOALS_COMPANY_TITLE                                         :{BLACK}Uzņēmu
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Klikšķināt uz mērķa, lai centrētu galveno skatu uz ražotni/pilsētu/lauciņu. Ctrl+klikšķis atver jaunu skatvietu uz ražotni/pilsētu/lauciņu
 
 # Goal question window
-STR_GOAL_QUESTION_CAPTION_QUESTION                              :Jautājums
-STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Informācija
-STR_GOAL_QUESTION_CAPTION_WARNING                               :Brīdinājums
-STR_GOAL_QUESTION_CAPTION_ERROR                                 :Kļūda
+STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}Jautājums
+STR_GOAL_QUESTION_CAPTION_INFORMATION                           :{BLACK}Informācija
+STR_GOAL_QUESTION_CAPTION_WARNING                               :{BLACK}Brīdinājums
+STR_GOAL_QUESTION_CAPTION_ERROR                                 :{YELLOW}Kļūda
 
 ############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Atcelt
@@ -3370,6 +3381,8 @@ STR_COMPANY_VIEW_RELOCATE_HQ                                    :{BLACK}Pārviet
 STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS                  :{BLACK}Pārcelt uzņēmuma centrālo biroju uz citu vietu samaksājot 1% no uzņēmuma vērtības. Shift+klikšķis parāda izmaksu novērtējumu, nemainot biroja atrašanās vietu
 STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}Sīkāk
 STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}Skatīt detalizētāku infrastruktūras uzskaiti
+STR_COMPANY_VIEW_GIVE_MONEY_BUTTON                              :{BLACK}Iedot naudu
+STR_COMPANY_VIEW_GIVE_MONEY_TOOLTIP                             :{BLACK}Iedot naudu šai kompānijai
 
 STR_COMPANY_VIEW_NEW_FACE_BUTTON                                :{BLACK}Jauna seja
 STR_COMPANY_VIEW_NEW_FACE_TOOLTIP                               :{BLACK}Izvēlēties jaunu seju vadītājam
@@ -3387,6 +3400,7 @@ STR_COMPANY_VIEW_SELL_SHARE_TOOLTIP                             :{BLACK}Pārdot 
 
 STR_COMPANY_VIEW_COMPANY_NAME_QUERY_CAPTION                     :Uzņēmuma nosaukums
 STR_COMPANY_VIEW_PRESIDENT_S_NAME_QUERY_CAPTION                 :Vadītāja vārds
+STR_COMPANY_VIEW_GIVE_MONEY_QUERY_CAPTION                       :Ievadiet naudas daudzumu, kuru vēlaties atdot
 
 STR_BUY_COMPANY_MESSAGE                                         :{WHITE}Mēs meklējam transporta uzņēmumu, kurš vēlētos pārņemt mūsējo.{}{}Vai Jūs vēlaties pirkt {COMPANY} par {CURRENCY_LONG}?
 
@@ -3748,10 +3762,6 @@ STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Automāt
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
-STR_VEHICLE_VIEW_TRAIN_LOCATION_TOOLTIP                         :{BLACK}Centrēt galveno skatu uz vilcienu. Ctrl+klikšķis sekos vilcienam galvenajā skatā
-STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Centrēt galveno skatu uz transportlīdzekli. Ctrl+klikšķis sekos transportlīdzeklim galvenajā skatā
-STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Centrēt galveno skatu uz kuģi. Ctrl+klikšķis sekos kuģim galvenajā skatā
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Centrēt galveno skatu uz lidaparātu. Ctrl+klikšķis sekos lidaparātam galvenajā skatā
 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Sūtīt vilcienu uz depo. Ctrl+klikšķis - izvēlēties tikai apkopi
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Sūtīt autotransporta līdzekli uz depo. Ctrl+klikšķis - izvēlēties tikai apkopi
@@ -3783,10 +3793,7 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Rādīt 
 STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Rādīt kuģa informāciju
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Rādīt lidaparāta informāciju
 
-STR_VEHICLE_VIEW_TRAIN_STATE_START_STOP_TOOLTIP                 :{BLACK}Vilciena pašreizējā darbība - klikšķināt šeit, lai apturētu/palaistu vilcienu. Ctrl+klikšķis, lai ritinātu līdz galamērķim
-STR_VEHICLE_VIEW_ROAD_VEHICLE_STATE_START_STOP_TOOLTIP          :{BLACK}Transportlīdzekļa pašreizējā darbība - klikšķināt šeit, lai to apturētu/palaistu. Ctrl+klikšķis, lai ritinātu līdz galamērķim
-STR_VEHICLE_VIEW_SHIP_STATE_START_STOP_TOOLTIP                  :{BLACK}Kuģa pašreizējā darbība - klikšķināt šeit, lai apturētu/palaistu kuģi. Ctrl+klikšķis, lai ritinātu līdz galamērķim
-STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Lidaparāta pašreizējā darbība - klikšķināt šeit, lai apturētu/palaistu lidaparātu. Ctrl+klikšķis, lai ritinātu līdz galamērķim
+
 
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Iekraušana / Izkraušana
@@ -4258,6 +4265,7 @@ STR_GAME_SAVELOAD_ERROR_TOO_NEW_SAVEGAME                        :Spēle ir sagla
 STR_GAME_SAVELOAD_ERROR_FILE_NOT_READABLE                       :Failu nevar nolasīt
 STR_GAME_SAVELOAD_ERROR_FILE_NOT_WRITEABLE                      :Failā nevar ierakstīt
 STR_GAME_SAVELOAD_ERROR_DATA_INTEGRITY_CHECK_FAILED             :Datu integritātes pārbaude neizdevās
+STR_GAME_SAVELOAD_ERROR_PATCHPACK                               :Saglabāšana notiek ar modificētu versiju
 STR_GAME_SAVELOAD_NOT_AVAILABLE                                 :<nav pieejams>
 STR_WARNING_LOADGAME_REMOVED_TRAMS                              :{WHITE}Spēle tika saglabāta bez tramvaju atbalsta. Visi tramvaji tika aizvākti.
 
@@ -4338,6 +4346,7 @@ STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... nav 
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}...{CURRENCY_LONG} nepieciešams
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Nevar atmaksāt aizdevumu...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Bankas aizdoto naudu nevar dot projām...
+STR_ERROR_CAN_T_GIVE_MONEY                                      :{WHITE}Nav iespējams atdot naudu šai kompānijai...
 STR_ERROR_CAN_T_BUY_COMPANY                                     :{WHITE}Nevar nopirkt uzņēmumu...
 STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS                      :{WHITE}Nevar uzbūvēt uzņēmuma biroju...
 STR_ERROR_CAN_T_BUY_25_SHARE_IN_THIS                            :{WHITE}Nevar nopirkt 25% daļu šajā uzņēmumā...
@@ -5050,6 +5059,7 @@ STR_FORMAT_BUOY_NAME                                            :{TOWN} boja
 STR_FORMAT_BUOY_NAME_SERIAL                                     :{TOWN} boja Nr. #{COMMA}
 STR_FORMAT_COMPANY_NUM                                          :({COMMA}. uzņēmums)
 STR_FORMAT_GROUP_NAME                                           :Grupa {COMMA}
+STR_FORMAT_GROUP_VEHICLE_NAME                                   :{GROUP} #{COMMA}
 STR_FORMAT_INDUSTRY_NAME                                        :{1:STRING} {0:TOWN}
 STR_FORMAT_WAYPOINT_NAME                                        :Pieturas punkts {TOWN}
 STR_FORMAT_WAYPOINT_NAME_SERIAL                                 :Pieturas punkts {TOWN} #{COMMA}

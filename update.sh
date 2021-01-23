@@ -9,10 +9,13 @@ ttdir=$dir/openttd-$version
 cp -rT $ttdir $curdir
 cd $ttdir
 find . -type f > $dir/ttd_files
-./configure
-cd objs/release
-make $ttdir/src/rev.cpp
+mkdir build
+cd build
+cmake ..
+make -j
+# cd objs/release
+# make $ttdir/src/rev.cpp
 cd $curdir
-cp $ttdir/src/rev.cpp src/
+cp $ttdir/build/generated/rev.cpp src/rev.cpp.in
 cat $dir/ttd_files | xargs git add
 rm -rf $dir
