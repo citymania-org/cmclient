@@ -1,0 +1,19 @@
+add_subdirectory(extensions)
+
+add_files(
+    cm_bitstream.hpp
+    cm_bitstream.cpp
+    cm_console_cmds.hpp
+    cm_console_cmds.cpp
+    cm_event.hpp
+    cm_export.hpp
+    cm_export.cpp
+    cm_game.hpp
+    cm_game.cpp
+    cm_main.hpp
+    cm_main.cpp
+    cm_type.hpp
+    cm_saveload.hpp
+    cm_saveload.cpp
+    cm_settings.hpp
+)

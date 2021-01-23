@@ -244,7 +244,7 @@ static NewsTypeData _news_type_data[] = {
 	NewsTypeData("news_display.general",           60, SND_BEGIN       ),  ///< NT_GENERAL
 };
 
-assert_compile(lengthof(_news_type_data) == NT_END);
+static_assert(lengthof(_news_type_data) == NT_END);
 
 /**
  * Return the news display option.
@@ -507,8 +507,8 @@ struct NewsWindow : Window {
 					TileIndex tile1 = GetReferenceTile(this->ni->reftype1, this->ni->ref1);
 					TileIndex tile2 = GetReferenceTile(this->ni->reftype2, this->ni->ref2);
 					if (_ctrl_pressed) {
-						if (tile1 != INVALID_TILE) ShowExtraViewPortWindow(tile1);
-						if (tile2 != INVALID_TILE) ShowExtraViewPortWindow(tile2);
+						if (tile1 != INVALID_TILE) ShowExtraViewportWindow(tile1);
+						if (tile2 != INVALID_TILE) ShowExtraViewportWindow(tile2);
 					} else {
 						if ((tile1 == INVALID_TILE || !ScrollMainWindowToTile(tile1)) && tile2 != INVALID_TILE) {
 							ScrollMainWindowToTile(tile2);
@@ -517,16 +517,6 @@ struct NewsWindow : Window {
 				}
 				break;
 		}
-	}
-
-	EventState OnKeyPress(WChar key, uint16 keycode) override
-	{
-		if (keycode == WKC_SPACE) {
-			/* Don't continue. */
-			delete this;
-			return ES_HANDLED;
-		}
-		return ES_NOT_HANDLED;
 	}
 
 	/**
@@ -548,7 +538,7 @@ struct NewsWindow : Window {
 		int count = this->timer.CountElapsed(delta_ms);
 		if (count > 0) {
 			/* Scroll up newsmessages from the bottom */
-			int newtop = max(this->top - 2 * count, _screen.height - this->height - this->status_height - this->chat_height);
+			int newtop = std::max(this->top - 2 * count, _screen.height - this->height - this->status_height - this->chat_height);
 			this->SetWindowTop(newtop);
 		}
 
@@ -566,12 +556,12 @@ private:
 	{
 		if (this->top == newtop) return;
 
-		int mintop = min(newtop, this->top);
-		int maxtop = max(newtop, this->top);
+		int mintop = std::min(newtop, this->top);
+		int maxtop = std::max(newtop, this->top);
 		if (this->viewport != nullptr) this->viewport->top += newtop - this->top;
 		this->top = newtop;
 
-		SetDirtyBlocks(this->left, mintop, this->left + this->width, maxtop + this->height);
+		AddDirtyBlock(this->left, mintop, this->left + this->width, maxtop + this->height);
 	}
 
 	StringID GetCompanyMessageString() const
@@ -602,7 +592,6 @@ private:
 };
 
 /* static */ int NewsWindow::duration = 0; // Instance creation.
-
 
 /** Open up an own newspaper window for the news item */
 static void ShowNewspaper(const NewsItem *ni)
@@ -1033,6 +1022,17 @@ static void ShowNewsMessage(const NewsItem *ni)
 	}
 }
 
+/**
+ * Close active news message window
+ * @return true if a window was closed.
+ */
+bool HideActiveNewsMessage() {
+	NewsWindow *w = (NewsWindow*)FindWindowById(WC_NEWS_WINDOW, 0);
+	if (w == nullptr) return false;
+	delete w;
+	return true;
+}
+
 /** Show previous news item */
 void ShowLastNewsMessage()
 {
@@ -1148,7 +1148,7 @@ struct MessageHistoryWindow : Window {
 			this->date_width = GetStringBoundingBox(STR_SHORT_DATE).width;
 
 			size->height = 4 * resize->height + this->top_spacing + this->bottom_spacing; // At least 4 lines are visible.
-			size->width = max(200u, size->width); // At least 200 pixels wide.
+			size->width = std::max(200u, size->width); // At least 200 pixels wide.
 		}
 	}
 

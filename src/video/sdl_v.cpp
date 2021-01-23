@@ -25,13 +25,12 @@
 #include <SDL.h>
 #include <mutex>
 #include <condition_variable>
-#include <algorithm>
 
 #include "../safeguards.h"
 
 static FVideoDriver_SDL iFVideoDriver_SDL;
 
-static SDL_Surface *_sdl_screen;
+static SDL_Surface *_sdl_surface;
 static SDL_Surface *_sdl_realscreen;
 static bool _all_modes;
 
@@ -73,11 +72,11 @@ static void UpdatePalette(bool init = false)
 		pal[i].unused = 0;
 	}
 
-	SDL_SetColors(_sdl_screen, pal, _local_palette.first_dirty, _local_palette.count_dirty);
+	SDL_SetColors(_sdl_surface, pal, _local_palette.first_dirty, _local_palette.count_dirty);
 
-	if (_sdl_screen != _sdl_realscreen && init) {
+	if (_sdl_surface != _sdl_realscreen && init) {
 		/* When using a shadow surface, also set our palette on the real screen. This lets SDL
-		 * allocate as much colors (or approximations) as
+		 * allocate as many colors (or approximations) as
 		 * possible, instead of using only the default SDL
 		 * palette. This allows us to get more colors exactly
 		 * right and might allow using better approximations for
@@ -99,7 +98,7 @@ static void UpdatePalette(bool init = false)
 		SDL_SetColors(_sdl_realscreen, pal, _local_palette.first_dirty, _local_palette.count_dirty);
 	}
 
-	if (_sdl_screen != _sdl_realscreen && !init) {
+	if (_sdl_surface != _sdl_realscreen && !init) {
 		/* We're not using real hardware palette, but are letting SDL
 		 * approximate the palette during shadow -> screen copy. To
 		 * change the palette, we need to recopy the entire screen.
@@ -110,7 +109,7 @@ static void UpdatePalette(bool init = false)
 		 * best mapping of shadow palette colors to real palette
 		 * colors from scratch.
 		 */
-		SDL_BlitSurface(_sdl_screen, nullptr, _sdl_realscreen, nullptr);
+		SDL_BlitSurface(_sdl_surface, nullptr, _sdl_realscreen, nullptr);
 		SDL_UpdateRect(_sdl_realscreen, 0, 0, 0, 0);
 	}
 }
@@ -155,17 +154,20 @@ static void DrawSurfaceToScreen()
 	if (n == 0) return;
 
 	_num_dirty_rects = 0;
+
 	if (n > MAX_DIRTY_RECTS) {
-		if (_sdl_screen != _sdl_realscreen) {
-			SDL_BlitSurface(_sdl_screen, nullptr, _sdl_realscreen, nullptr);
+		if (_sdl_surface != _sdl_realscreen) {
+			SDL_BlitSurface(_sdl_surface, nullptr, _sdl_realscreen, nullptr);
 		}
+
 		SDL_UpdateRect(_sdl_realscreen, 0, 0, 0, 0);
 	} else {
-		if (_sdl_screen != _sdl_realscreen) {
+		if (_sdl_surface != _sdl_realscreen) {
 			for (int i = 0; i < n; i++) {
-				SDL_BlitSurface(_sdl_screen, &_dirty_rects[i], _sdl_realscreen, &_dirty_rects[i]);
+				SDL_BlitSurface(_sdl_surface, &_dirty_rects[i], _sdl_realscreen, &_dirty_rects[i]);
 			}
 		}
+
 		SDL_UpdateRects(_sdl_realscreen, n, _dirty_rects);
 	}
 }
@@ -263,10 +265,10 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 
 	if (bpp == 0) usererror("Can't use a blitter that blits 0 bpp for normal visuals");
 
-	char icon_path[MAX_PATH];
-	if (FioFindFullPath(icon_path, lastof(icon_path), BASESET_DIR, "openttd.32.bmp") != nullptr) {
+	std::string icon_path = FioFindFullPath(BASESET_DIR, "openttd.32.bmp");
+	if (!icon_path.empty()) {
 		/* Give the application an icon */
-		icon = SDL_LoadBMP(icon_path);
+		icon = SDL_LoadBMP(icon_path.c_str());
 		if (icon != nullptr) {
 			/* Get the colourkey, which will be magenta */
 			uint32 rgbmap = SDL_MapRGB(icon->format, 255, 0, 255);
@@ -308,7 +310,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 	if (want_hwpalette) DEBUG(driver, 1, "SDL: requesting hardware palette");
 
 	/* Free any previously allocated shadow surface */
-	if (_sdl_screen != nullptr && _sdl_screen != _sdl_realscreen) SDL_FreeSurface(_sdl_screen);
+	if (_sdl_surface != nullptr && _sdl_surface != _sdl_realscreen) SDL_FreeSurface(_sdl_surface);
 
 	if (_sdl_realscreen != nullptr) {
 		if (_requested_hwpalette != want_hwpalette) {
@@ -375,7 +377,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 	_screen.height = newscreen->h;
 	_screen.pitch = newscreen->pitch / (bpp / 8);
 	_screen.dst_ptr = newscreen->pixels;
-	_sdl_screen = newscreen;
+	_sdl_surface = newscreen;
 
 	/* When in full screen, we will always have the mouse cursor
 	 * within the window, even though SDL does not give us the
@@ -580,8 +582,8 @@ int VideoDriver_SDL::PollEvent()
 			break;
 
 		case SDL_VIDEORESIZE: {
-			int w = max(ev.resize.w, 64);
-			int h = max(ev.resize.h, 64);
+			int w = std::max(ev.resize.w, 64);
+			int h = std::max(ev.resize.h, 64);
 			CreateMainSurface(w, h);
 			break;
 		}
@@ -596,7 +598,7 @@ int VideoDriver_SDL::PollEvent()
 	return -1;
 }
 
-const char *VideoDriver_SDL::Start(const char * const *parm)
+const char *VideoDriver_SDL::Start(const StringList &parm)
 {
 	char buf[30];
 	_use_hwpalette = GetDriverParamInt(parm, "hw_palette", 2);
@@ -610,7 +612,9 @@ const char *VideoDriver_SDL::Start(const char * const *parm)
 	} else if (SDL_WasInit(SDL_INIT_VIDEO) == 0) {
 		ret_code = SDL_InitSubSystem(SDL_INIT_VIDEO);
 	}
-	if (ret_code == -1) return SDL_GetError();
+	if (ret_code < 0) return SDL_GetError();
+
+	this->UpdateAutoResolution();
 
 	GetVideoModes();
 	if (!CreateMainSurface(_cur_resolution.width, _cur_resolution.height)) {
@@ -623,7 +627,7 @@ const char *VideoDriver_SDL::Start(const char * const *parm)
 	MarkWholeScreenDirty();
 	SetupKeyboard();
 
-	_draw_threaded = GetDriverParam(parm, "no_threads") == nullptr && GetDriverParam(parm, "no_thread") == nullptr;
+	_draw_threaded = !GetDriverParamBool(parm, "no_threads") && !GetDriverParamBool(parm, "no_thread");
 
 	return nullptr;
 }
