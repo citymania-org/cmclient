@@ -1456,12 +1456,10 @@ public:
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		switch (widget) {
-			case WID_CB_LOCATION:
-			case WID_CB_CENTER_VIEW: // scroll to location
+			case WID_CB_CENTER_VIEW:
 				if (citymania::_fn_mod) {
 					ShowExtraViewportWindow(this->town->xy);
-				}
-				else {
+				} else {
 					ScrollMainWindowToTile(this->town->xy);
 				}
 				break;
@@ -1513,7 +1511,7 @@ public:
 
 	virtual void SetStringParameters(int widget) const
 	{
-		if (widget == WID_TV_CAPTION){
+		if (widget == WID_CB_CAPTION){
 			SetDParam(0, this->town->index);
 		}
 	}
@@ -1756,7 +1754,8 @@ HotkeyList CBTownWindow::hotkeys("town_gui", town_hotkeys);
 static const NWidgetPart _nested_cb_town_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
-		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_TV_CAPTION), SetDataTip(STR_TOWN_VIEW_CB_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_CB_CAPTION), SetDataTip(STR_TOWN_VIEW_CB_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_CB_CENTER_VIEW), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, STR_TOWN_VIEW_CENTER_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_BROWN),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_BROWN),
 		NWidget(WWT_STICKYBOX, COLOUR_BROWN),
@@ -1806,7 +1805,6 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_CENTER_VIEW), SetMinimalSize(30, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_ORDER_GO_TO, STR_TOWN_VIEW_CENTER_TOOLTIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_TOWN_VIEW), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_CB_GUI_TOWN_VIEW_BUTTON, STR_CB_GUI_TOWN_VIEW_TOOLTIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_SHOW_AUTHORITY), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON, STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP),
 		EndContainer(),
