@@ -431,7 +431,7 @@ void Save_PSAC() {
     uint index = 0;
     for (PersistentStorage *ps : PersistentStorage::Iterate()) {
         if (ps->grfid != CITYMANIA_GRFID)
-            index = max(index, ps->index + 1);
+            index = std::max(index, ps->index + 1);
     }
 
     for (int i = 0; i < n_chunks; i++, ptr += 1024) {

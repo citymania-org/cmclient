@@ -22,7 +22,6 @@
 
 #include "../safeguards.h"
 
-/* TODO: Remove acceptance matrix from the savegame completely. */
 typedef TileMatrix<CargoTypes, 4> AcceptanceMatrix;
 
 /**
@@ -129,7 +128,7 @@ static const SaveLoad _town_desc[] = {
 	SLE_CONDVAR(Town, townnamegrfid,         SLE_UINT32, SLV_66, SL_MAX_VERSION),
 	    SLE_VAR(Town, townnametype,          SLE_UINT16),
 	    SLE_VAR(Town, townnameparts,         SLE_UINT32),
-	SLE_CONDSTR(Town, name,                  SLE_STR | SLF_ALLOW_CONTROL, 0, SLV_84, SL_MAX_VERSION),
+	SLE_CONDSSTR(Town, name,                 SLE_STR | SLF_ALLOW_CONTROL, SLV_84, SL_MAX_VERSION),
 
 	    SLE_VAR(Town, flags,                 SLE_UINT8),
 	SLE_CONDVAR(Town, statues,               SLE_FILE_U8  | SLE_VAR_U16, SL_MIN_VERSION, SLV_104),
@@ -172,7 +171,7 @@ static const SaveLoad _town_desc[] = {
 
 	SLE_CONDARR(Town, goal, SLE_UINT32, NUM_TE, SLV_165, SL_MAX_VERSION),
 
-	SLE_CONDSTR(Town, text,                  SLE_STR | SLF_ALLOW_CONTROL, 0, SLV_168, SL_MAX_VERSION),
+	SLE_CONDSSTR(Town, text,                 SLE_STR | SLF_ALLOW_CONTROL, SLV_168, SL_MAX_VERSION),
 
 	SLE_CONDVAR(Town, time_until_rebuild,    SLE_FILE_U8 | SLE_VAR_U16,  SL_MIN_VERSION, SLV_54),
 	SLE_CONDVAR(Town, grow_counter,          SLE_FILE_U8 | SLE_VAR_U16,  SL_MIN_VERSION, SLV_54),
@@ -196,10 +195,8 @@ static const SaveLoad _town_desc[] = {
 	SLE_CONDLST(Town, psa_list,            REF_STORAGE,                SLV_161, SL_MAX_VERSION),
 
 	SLE_CONDNULL(4, SLV_166, SLV_EXTEND_CARGOTYPES),  ///< cargo_produced, no longer in use
-	SLE_CONDNULL(8, SLV_EXTEND_CARGOTYPES, SL_MAX_VERSION),  ///< cargo_produced, no longer in use
-
-	/* reserve extra space in savegame here. (currently 30 bytes) */
-	SLE_CONDNULL(30, SLV_2, SL_MAX_VERSION),
+	SLE_CONDNULL(8, SLV_EXTEND_CARGOTYPES, SLV_REMOVE_TOWN_CARGO_CACHE),  ///< cargo_produced, no longer in use
+	SLE_CONDNULL(30, SLV_2, SLV_REMOVE_TOWN_CARGO_CACHE), ///< old reserved space
 
 	SLE_END()
 };
@@ -255,12 +252,6 @@ static void RealSave_Town(Town *t)
 	for (int i = TE_BEGIN; i < NUM_TE; i++) {
 		SlObject(&t->received[i], _town_received_desc);
 	}
-
-	if (IsSavegameVersionBefore(SLV_166)) return;
-
-	/* Write an empty matrix to avoid bumping savegame version. */
-	AcceptanceMatrix dummy;
-	SlObject(&dummy, GetTileMatrixDesc());
 }
 
 static void Save_TOWN()
@@ -291,14 +282,14 @@ static void Load_TOWN()
 			SlErrorCorrupt("Invalid town name generator");
 		}
 
-		if (IsSavegameVersionBefore(SLV_166)) continue;
-
-		/* Discard acceptance matrix to avoid bumping savegame version. */
-		AcceptanceMatrix dummy;
-		SlObject(&dummy, GetTileMatrixDesc());
-		if (dummy.area.w != 0) {
-			uint arr_len = dummy.area.w / AcceptanceMatrix::GRID * dummy.area.h / AcceptanceMatrix::GRID;
-			for (arr_len *= 4; arr_len != 0; arr_len--) SlReadByte();
+		if (!IsSavegameVersionBefore(SLV_166) && IsSavegameVersionBefore(SLV_REMOVE_TOWN_CARGO_CACHE)) {
+			/* Discard now unused acceptance matrix. */
+			AcceptanceMatrix dummy;
+			SlObject(&dummy, GetTileMatrixDesc());
+			if (dummy.area.w != 0) {
+				uint arr_len = dummy.area.w / AcceptanceMatrix::GRID * dummy.area.h / AcceptanceMatrix::GRID;
+				SlSkipBytes(4 * arr_len);
+			}
 		}
 	}
 }

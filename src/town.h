@@ -85,7 +85,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	uint32 townnamegrfid;
 	uint16 townnametype;
 	uint32 townnameparts;
-	char *name;                    ///< Custom town name. If nullptr, the town was not renamed and uses the generated name.
+	std::string name;                ///< Custom town name. If empty, the town was not renamed and uses the generated name.
 	mutable std::string cached_name; ///< NOSAVE: Cache of the resolved name of the town, if not using a custom town name
 
 	byte flags;                    ///< See #TownFlags.
@@ -115,7 +115,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	uint8 ad_rating_goal;                ///< value to keep rating at (for regular advertisement) (0..255)
 	const GoodsEntry *ad_ref_goods_entry;      ///< poiter to goods entry of some station, used to check rating for regular advertisement
 
-	char *text; ///< General text with additional information.
+	std::string text; ///< General text with additional information.
 
 	inline byte GetPercentTransported(CargoID cid) const { return this->supplied[cid].old_act * 256 / (this->supplied[cid].old_max + 1); }
 
@@ -193,7 +193,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 
 	inline const char *GetCachedName() const
 	{
-		if (this->name != nullptr) return this->name;
+		if (!this->name.empty()) return this->name.c_str();
 		if (this->cached_name.empty()) this->FillCachedName();
 		return this->cached_name.c_str();
 	}
@@ -319,7 +319,7 @@ template <class T>
 void MakeDefaultName(T *obj)
 {
 	/* We only want to set names if it hasn't been set before, or when we're calling from afterload. */
-	assert(obj->name == nullptr || obj->town_cn == UINT16_MAX);
+	assert(obj->name.empty() || obj->town_cn == UINT16_MAX);
 
 	obj->town = ClosestTownFromTile(obj->xy, UINT_MAX);
 
@@ -379,7 +379,7 @@ void MakeDefaultName(T *obj)
  * tick 0 is a valid tick so actual amount is one more than the counter value.
  */
 static inline uint16 TownTicksToGameTicks(uint16 ticks) {
-	return (min(ticks, MAX_TOWN_GROWTH_TICKS) + 1) * TOWN_GROWTH_TICKS - 1;
+	return (std::min(ticks, MAX_TOWN_GROWTH_TICKS) + 1) * TOWN_GROWTH_TICKS - 1;
 }
 
 

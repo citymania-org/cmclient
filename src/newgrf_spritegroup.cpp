@@ -8,7 +8,6 @@
 /** @file newgrf_spritegroup.cpp Handling of primarily NewGRF action 2. */
 
 #include "stdafx.h"
-#include <algorithm>
 #include "debug.h"
 #include "newgrf_spritegroup.h"
 #include "newgrf_profiling.h"
@@ -173,15 +172,14 @@ static U EvalAdjustT(const DeterministicSpriteGroupAdjust *adjust, ScopeResolver
 	switch (adjust->operation) {
 		case DSGA_OP_ADD:  return last_value + value;
 		case DSGA_OP_SUB:  return last_value - value;
-		case DSGA_OP_SMIN: return min((S)last_value, (S)value);
-		case DSGA_OP_SMAX: return max((S)last_value, (S)value);
-		case DSGA_OP_UMIN: return min((U)last_value, (U)value);
-		case DSGA_OP_UMAX: return max((U)last_value, (U)value);
-		// replaced ?: with if to avoid VS2015U3 optimizator bug
-		case DSGA_OP_SDIV: if (value == 0) return (S)last_value; else return (S)last_value / (S)value;
-		case DSGA_OP_SMOD: if (value == 0) return (S)last_value; else return (S)last_value % (S)value;
-		case DSGA_OP_UDIV: if (value == 0) return (U)last_value; else return (U)last_value / (U)value;
-		case DSGA_OP_UMOD: if (value == 0) return (U)last_value; else return (U)last_value % (U)value;
+		case DSGA_OP_SMIN: return std::min<S>(last_value, value);
+		case DSGA_OP_SMAX: return std::max<S>(last_value, value);
+		case DSGA_OP_UMIN: return std::min<U>(last_value, value);
+		case DSGA_OP_UMAX: return std::max<U>(last_value, value);
+		case DSGA_OP_SDIV: return value == 0 ? (S)last_value : (S)last_value / (S)value;
+		case DSGA_OP_SMOD: return value == 0 ? (S)last_value : (S)last_value % (S)value;
+		case DSGA_OP_UDIV: return value == 0 ? (U)last_value : (U)last_value / (U)value;
+		case DSGA_OP_UMOD: return value == 0 ? (U)last_value : (U)last_value % (U)value;
 		case DSGA_OP_MUL:  return last_value * value;
 		case DSGA_OP_AND:  return last_value & value;
 		case DSGA_OP_OR:   return last_value | value;

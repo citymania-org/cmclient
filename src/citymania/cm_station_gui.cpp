@@ -26,7 +26,7 @@ extern DiagDirection _road_station_picker_orientation;
 extern bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r);
 extern DiagDirection AutodetectRoadObjectDirection(TileIndex tile);
 extern DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area);
-extern bool CheckClickOnViewportSign(const ViewPort *vp, int x, int y, const ViewportSign *sign);
+extern bool CheckClickOnViewportSign(const Viewport *vp, int x, int y, const ViewportSign *sign);
 extern Rect ExpandRectWithViewportSignMargins(Rect r, ZoomLevel zoom);
 extern ViewportSignKdtree _viewport_sign_kdtree;
 extern AirportClassID _selected_airport_class;
@@ -91,10 +91,10 @@ static void UpdateHiglightJoinArea(const Station *station) {
     auto &r = _station_to_join->rect;
     auto d = (int)_settings_game.station.station_spread - 1;
     TileArea ta(
-        TileXY(max(r.right - d, 0),
-               max(r.bottom - d, 0)),
-        TileXY(min(r.left + d, MapSizeX() - 1),
-               min(r.top + d, MapSizeY() - 1))
+        TileXY(std::max<int>(r.right - d, 0),
+               std::max<int>(r.bottom - d, 0)),
+        TileXY(std::min<int>(r.left + d, MapSizeX() - 1),
+               std::min<int>(r.top + d, MapSizeY() - 1))
     );
     if (_highlight_join_area.tile == ta.tile &&
         _highlight_join_area.w == ta.w &&
@@ -150,7 +150,7 @@ const Station *CheckClickOnDeadStationSign() {
     int y = _cursor.pos.y;
     Window *w = FindWindowFromPt(x, y);
     if (w == nullptr) return nullptr;
-    ViewPort *vp = IsPtInWindowViewport(w, x, y);
+    Viewport *vp = IsPtInWindowViewport(w, x, y);
 
     if (!HasBit(_display_opt, DO_SHOW_STATION_NAMES) && !IsInvisibilitySet(TO_SIGNS))
         return nullptr;
@@ -309,7 +309,7 @@ static void FindStationsAroundSelection(const TileArea &location)
     int x = TileX(location.tile);
     int y = TileY(location.tile);
 
-    TileArea ta(TileXY(max<int>(0, x - 1), max<int>(0, y - 1)), TileXY(min<int>(MapMaxX() - 1, x + location.w + 1), min<int>(MapMaxY() - 1, y + location.h + 1)));
+    TileArea ta(TileXY(std::max<int>(0, x - 1), std::max<int>(0, y - 1)), TileXY(std::min<int>(MapMaxX() - 1, x + location.w + 1), std::min<int>(MapMaxY() - 1, y + location.h + 1)));
 
     Station *adjacent = nullptr;
 

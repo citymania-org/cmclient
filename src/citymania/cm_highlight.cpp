@@ -3,6 +3,7 @@
 #include "cm_highlight.hpp"
 #include "cm_main.hpp"
 #include "cm_station_gui.hpp"
+#include "cm_zoning.hpp"
 
 #include "../core/math_func.hpp"
 #include "../command_func.h"
@@ -15,7 +16,6 @@
 #include "../tilearea_type.h"
 #include "../tilehighlight_type.h"
 #include "../viewport_func.h"
-#include "../zoning.h"
 #include "../table/track_land.h"
 
 #include <set>
@@ -363,10 +363,10 @@ void CalcCBAcceptanceBorders(TileHighlight &th, TileIndex tile, SpriteID border_
     bool in_zone = false;
     ZoningBorder border = ZoningBorder::NONE;
     _town_kdtree.FindContained(
-        (uint16)max<int>(0, tx - radius),
-        (uint16)max<int>(0, ty - radius),
-        (uint16)min<int>(tx + radius + 1, MapSizeX()),
-        (uint16)min<int>(ty + radius + 1, MapSizeY()),
+        (uint16)std::max<int>(0, tx - radius),
+        (uint16)std::max<int>(0, ty - radius),
+        (uint16)std::min<int>(tx + radius + 1, MapSizeX()),
+        (uint16)std::min<int>(ty + radius + 1, MapSizeY()),
         [tx, ty, radius, &in_zone, &border] (TownID tid) {
             Town *town = Town::GetIfValid(tid);
             if (!town || town->larger_town)
@@ -374,7 +374,7 @@ void CalcCBAcceptanceBorders(TileHighlight &th, TileIndex tile, SpriteID border_
 
             int dx = TileX(town->xy) - tx;
             int dy = TileY(town->xy) - ty;
-            in_zone = in_zone || (max(abs(dx), abs(dy)) <= radius);
+            in_zone = in_zone || (std::max(abs(dx), abs(dy)) <= radius);
             if (dx == radius) border |= ZoningBorder::TOP_RIGHT;
             if (dx == -radius) border |= ZoningBorder::BOTTOM_LEFT;
             if (dy == radius) border |= ZoningBorder::TOP_LEFT;
@@ -410,10 +410,10 @@ void CalcCBTownLimitBorder(TileHighlight &th, TileIndex tile, SpriteID border_pa
     uint radius = IntSqrt(sq);
     int tx = TileX(tile), ty = TileY(tile);
     _town_kdtree.FindContained(
-        (uint16)max<int>(0, tx - radius),
-        (uint16)max<int>(0, ty - radius),
-        (uint16)min<int>(tx + radius + 1, MapSizeX()),
-        (uint16)min<int>(ty + radius + 1, MapSizeY()),
+        (uint16)std::max<int>(0, tx - radius),
+        (uint16)std::max<int>(0, ty - radius),
+        (uint16)std::min<int>(tx + radius + 1, MapSizeX()),
+        (uint16)std::min<int>(ty + radius + 1, MapSizeY()),
         [tile, &in_zone, &border] (TownID tid) {
             Town *town = Town::GetIfValid(tid);
             if (!town || town->larger_town)
@@ -704,15 +704,15 @@ void UpdateTownZoning(Town *town, uint32 prev_edge) {
 
 void UpdateAdvertisementZoning(TileIndex center, uint radius, uint8 zone) {
     uint16 x1, y1, x2, y2;
-    x1 = (uint16)max<int>(0, TileX(center) - radius);
-    x2 = (uint16)min<int>(TileX(center) + radius + 1, MapSizeX());
-    y1 = (uint16)max<int>(0, TileY(center) - radius);
-    y2 = (uint16)min<int>(TileY(center) + radius + 1, MapSizeY());
+    x1 = (uint16)std::max<int>(0, TileX(center) - radius);
+    x2 = (uint16)std::min<int>(TileX(center) + radius + 1, MapSizeX());
+    y1 = (uint16)std::max<int>(0, TileY(center) - radius);
+    y2 = (uint16)std::min<int>(TileY(center) + radius + 1, MapSizeY());
     for (uint16 y = y1; y < y2; y++) {
         for (uint16 x = x1; x < x2; x++) {
             auto tile = TileXY(x, y);
             if (DistanceManhattan(tile, center) > radius) continue;
-            _mz[tile].advertisement_zone = max(_mz[tile].advertisement_zone, zone);
+            _mz[tile].advertisement_zone = std::max(_mz[tile].advertisement_zone, zone);
         }
     }
 }

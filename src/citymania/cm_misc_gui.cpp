@@ -49,7 +49,7 @@ public:
         int scr_bot = GetMainViewBottom() - 2;
         Point pt;
         pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot);
-        if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
+        if (pt.y + sm_height > scr_bot) pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
         pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
         return pt;
     }
@@ -87,7 +87,7 @@ public:
             if (StrEmpty(this->landinfo_data[i])) break;
 
             uint width = GetStringBoundingBox(this->landinfo_data[i]).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
-            size->width = max(size->width, width);
+            size->width = std::max(size->width, width);
 
             size->height += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
             if (i == 0) size->height += 4;
@@ -95,7 +95,7 @@ public:
 
         if (!StrEmpty(this->landinfo_data[LAND_INFO_MULTICENTER_LINE])) {
             uint width = GetStringBoundingBox(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
-            size->width = max(size->width, min<uint>(ScaleGUITrad(300), width));
+            size->width = std::max(size->width, std::min<uint>(ScaleGUITrad(300), width));
             SetDParamStr(0, this->landinfo_data[LAND_INFO_MULTICENTER_LINE]);
             size->height += GetStringHeight(STR_JUST_RAW_STRING, size->width - WD_FRAMETEXT_LEFT - WD_FRAMETEXT_RIGHT);
         }

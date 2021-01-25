@@ -20,10 +20,10 @@
 #include "safeguards.h"
 
 #ifdef _SQ64
-	assert_compile((sizeof(ParentSpriteToDraw) % 16) == 0);
-	#define LOAD_128 _mm_load_si128
+	static_assert((sizeof(ParentSpriteToDraw) % 16) == 0);
+#	define LOAD_128 _mm_load_si128
 #else
-	#define LOAD_128 _mm_loadu_si128
+#	define LOAD_128 _mm_loadu_si128
 #endif
 
 void ViewportSortParentSpritesSSE41(ParentSpriteToSortVector *psdv)
@@ -34,13 +34,13 @@ void ViewportSortParentSpritesSSE41(ParentSpriteToSortVector *psdv)
 
 	/* We rely on sprites being, for the most part, already ordered.
 	 * So we don't need to move many of them and can keep track of their
-	 * order effecienty by using stack. We always move sprites to the front
+	 * order efficiently by using stack. We always move sprites to the front
 	 * of the current position, i.e. to the top of the stack.
 	 * Also use special constants to indicate sorting state without
 	 * adding extra fields to ParentSpriteToDraw structure.
 	 */
 	const uint32 ORDER_COMPARED = UINT32_MAX; // Sprite was compared but we still need to compare the ones preceding it
-	const uint32 ORDER_RETURNED = UINT32_MAX - 1; // Makr sorted sprite in case there are other occurences of it in the stack
+	const uint32 ORDER_RETURNED = UINT32_MAX - 1; // Mark sorted sprite in case there are other occurrences of it in the stack
 	std::stack<ParentSpriteToDraw *> sprite_order;
 	uint32 next_order = 0;
 
@@ -80,14 +80,14 @@ void ViewportSortParentSpritesSSE41(ParentSpriteToSortVector *psdv)
 		 * So by iterating sprites with xmin + ymin <= s->xmax + s->ymax
 		 * we get all we need and some more that we filter out later.
 		 * We don't include zmin into the sum as there are usually more neighbors on x and y than z
-		 * so including it will actually increase the amount of false posistives.
-		 * Also min coordinates can be > xmax so use max(xmin, xmax) + max(ymin, ymax)
-		 * to ensure we terate the current sprite as we need to remove it from the list.
+		 * so including it will actually increase the amount of false positives.
+		 * Also min coordinates can be > max so using max(xmin, xmax) + max(ymin, ymax)
+		 * to ensure that we iterate the current sprite as we need to remove it from the list.
 		 */
-		auto ssum = max(s->xmax, s->xmin) + max(s->ymax, s->ymin);
+		auto ssum = std::max(s->xmax, s->xmin) + std::max(s->ymax, s->ymin);
 		auto prev = sprite_list.before_begin();
 		auto x = sprite_list.begin();
-		while(x != sprite_list.end() && ((*x).first <= ssum)) {
+		while (x != sprite_list.end() && ((*x).first <= ssum)) {
 			auto p = (*x).second;
 			if (p == s) {
 				/* We found the current sprite, remove it and move on. */
@@ -118,8 +118,8 @@ void ViewportSortParentSpritesSSE41(ParentSpriteToSortVector *psdv)
 				 * i.e. X=(left+right)/2, etc.
 				 * However, since we only care about order, don't actually divide / 2
 				 */
-					if (s->xmin + s->xmax + s->ymin + s->ymax + s->zmin + s->zmax <=
-							p->xmin + p->xmax + p->ymin + p->ymax + p->zmin + p->zmax) {
+				if (s->xmin + s->xmax + s->ymin + s->ymax + s->zmin + s->zmax <=
+						p->xmin + p->xmax + p->ymin + p->ymax + p->zmin + p->zmax) {
 					continue;
 				}
 			}

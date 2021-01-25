@@ -213,7 +213,7 @@ void WriteEngineInfo(JsonWriter &j) {
         if (e->type != VEH_TRAIN) continue;
         j.begin_dict();
         JKV(j, e->index);
-        j.kv("name", (e->name ? e->name : "null"));
+        j.kv("name", e->name);
         j.kv("cost", e->GetCost());
         j.kv("running_cost", e->GetRunningCost());
         {

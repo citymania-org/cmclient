@@ -54,7 +54,7 @@ struct LandTooltipsWindow : public Window
         int scr_bot = GetMainViewBottom() - 2;
         Point pt;
         pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot);
-        if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
+        if (pt.y + sm_height > scr_bot) pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
         pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
         return pt;
     }
@@ -62,7 +62,7 @@ struct LandTooltipsWindow : public Window
     virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
     {
         uint icon_size = ScaleGUITrad(10);
-        uint line_height = max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
+        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
         uint icons_width = icon_size * 3 + 20;
         size->width = 200;
         size->height = 6 + FONT_HEIGHT_NORMAL;
@@ -74,7 +74,7 @@ struct LandTooltipsWindow : public Window
                 size->width = GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_HOUSE_NAME).width;
                 size->height += line_height;
                 SetDParam(0, hs->population);
-                size->width = max(size->width, GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_HOUSE_POPULATION).width);
+                size->width = std::max(size->width, GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_HOUSE_POPULATION).width);
                 break;
             }
             case MP_INDUSTRY: {
@@ -82,7 +82,7 @@ struct LandTooltipsWindow : public Window
                 if(ind == NULL) break;
 
                 SetDParam(0, ind->index);
-                size->width = max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_INDUSTRY_NAME).width, size->width);
+                size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_INDUSTRY_NAME).width, size->width);
 
                 for (CargoID i = 0; i < lengthof(ind->produced_cargo); i++) {
                     if (ind->produced_cargo[i] == CT_INVALID) continue;
@@ -93,7 +93,7 @@ struct LandTooltipsWindow : public Window
                     SetDParam(1, cs->Index());
                     SetDParam(2, ind->last_month_production[i]);
                     SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
-                    size->width = max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_INDUSTRY_CARGO).width + icons_width, size->width);
+                    size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_INDUSTRY_CARGO).width + icons_width, size->width);
                 }
                 break;
             }
@@ -102,7 +102,7 @@ struct LandTooltipsWindow : public Window
                 if(st == NULL) break;
 
                 SetDParam(0, st->index);
-                size->width = max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_NAME).width, size->width);
+                size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_NAME).width, size->width);
 
                 for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
                     const CargoSpec *cs = _sorted_cargo_specs[i];
@@ -114,7 +114,7 @@ struct LandTooltipsWindow : public Window
                         SetDParam(1, cargoid);
                         SetDParam(2, st->goods[cargoid].cargo.TotalCount());
                         SetDParam(3, ToPercent8(st->goods[cargoid].rating));
-                        size->width = max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_CARGO).width + icons_width, size->width);
+                        size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_CARGO).width + icons_width, size->width);
                     }
                 }
                 break;
@@ -129,7 +129,7 @@ struct LandTooltipsWindow : public Window
     virtual void DrawWidget(const Rect &r, int widget) const
     {
         uint icon_size = ScaleGUITrad(10);
-        uint line_height = max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
+        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
         uint icons_width = icon_size * 3 + 10;
         uint text_ofs = (line_height - FONT_HEIGHT_NORMAL) >> 1;
         uint icon_ofs = (line_height - icon_size) >> 1;
@@ -309,7 +309,7 @@ public:
         int scr_bot = GetMainViewBottom() - 2;
         Point pt;
         pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot);
-        if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
+        if (pt.y + sm_height > scr_bot) pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
         pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
         return pt;
     }
@@ -334,7 +334,7 @@ public:
         if (HasBit(cs->callback_mask, CBM_CARGO_STATION_RATING_CALC)) {
             uint last_speed = ge->HasVehicleEverTriedLoading() ? ge->last_speed : 0xFF;
 
-            uint32 var18 = min(ge->time_since_pickup, 0xFF) | (min(ge->max_waiting_cargo, 0xFFFF) << 8) | (min(last_speed, 0xFF) << 24);
+            uint32 var18 = std::min<uint32>(ge->time_since_pickup, 0xFF) | (std::min<uint32>(ge->max_waiting_cargo, 0xFFFF) << 8) | (std::min<uint32>(last_speed, 0xFF) << 24);
             uint32 var10 = (this->st->last_vehicle_type == VEH_INVALID) ? 0x0 : (this->st->last_vehicle_type + 0x10);
             // TODO can desync
             uint16 callback = GetCargoCallback(CBID_CARGO_STATION_RATING_CALC, var10, var18, this->cs);
@@ -353,15 +353,15 @@ public:
                 GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_RATING, lastof(this->data[line_nr]));
                 line_nr++;
 
-                SetDParam(0, min(last_speed, 0xFF));
+                SetDParam(0, std::min<uint>(last_speed, 0xFF));
                 GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED, lastof(this->data[line_nr]));
                 line_nr++;
 
-                SetDParam(0, min(ge->max_waiting_cargo, 0xFFFF));
+                SetDParam(0, std::min<uint>(ge->max_waiting_cargo, 0xFFFF));
                 GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS, lastof(this->data[line_nr]));
                 line_nr++;
 
-                SetDParam(0, (min(ge->time_since_pickup, 0xFF) * 5 + 1) / 2);
+                SetDParam(0, (std::min<uint>(ge->time_since_pickup, 0xFF) * 5 + 1) / 2);
                 GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME, lastof(this->data[line_nr]));
                 line_nr++;
             }
@@ -452,7 +452,7 @@ public:
             uint width = GetStringBoundingBox(this->data[i]).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT + 2;
             if (this->newgrf_rating_used && i >= 2 && i <= 4)
                 width += RATING_TOOLTIP_NEWGRF_INDENT;
-            size->width = max(size->width, width);
+            size->width = std::max(size->width, width);
             size->height += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
         }
         size->height -= WD_PAR_VSEP_NORMAL;

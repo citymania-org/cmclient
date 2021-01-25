@@ -369,10 +369,10 @@ enum WindowClass {
 	 */
 	WC_BUILD_OBJECT,
 
-	//watch company
+	/* CityMania watch company */
 	WC_WATCH_COMPANY,
 
-	//watch company admin version
+	/* CityMania watch company admin version */
 	WC_WATCH_COMPANYA,
 
 	/**
@@ -629,7 +629,7 @@ enum WindowClass {
 	 * Extra viewport; %Window numbers:
 	 *   - Ascending value = #ExtraViewportWidgets
 	 */
-	WC_EXTRA_VIEW_PORT,
+	WC_EXTRA_VIEWPORT,
 
 
 	/**

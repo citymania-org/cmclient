@@ -97,7 +97,7 @@ bool ConTreeMap(byte argc, char *argv[]) {
         auto mx = x - x * TileX(tile) / MapSizeX() - 1;
         auto my = y * TileY(tile) / MapSizeY();
         auto t = map[mx + my * x];
-        auto tree_count = min(t / 51, 4);
+        auto tree_count = std::min(t / 51, 4);
         // auto tree_growth = (uint)(t % 51) * 7 / 50;
         for (auto i = 0; i < tree_count; i++) {
             DoCommand(tile, TREE_INVALID, tile, DC_EXEC, CMD_PLANT_TREE);

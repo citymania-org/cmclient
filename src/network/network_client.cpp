@@ -28,13 +28,15 @@
 #include "network_client.h"
 #include "../core/backup_type.hpp"
 #include "../thread.h"
+
 #include "table/strings.h"
 
 #include "../town.h"
 #include "network_func.h"
-#include "../newgrf_revisions.hpp"
+#include "../citymania/cm_newgrf_revisions.hpp"
 
 #include "../safeguards.h"
+
 /* This file handles all the client-commands */
 
 void SyncCMUser(const char *msg);
@@ -74,7 +76,7 @@ struct PacketReader : LoadFilter {
 		assert(this->read_bytes == 0);
 
 		size_t in_packet = p->size - p->pos;
-		size_t to_write  = min((size_t)(this->bufe - this->buf), in_packet);
+		size_t to_write  = std::min<size_t>(this->bufe - this->buf, in_packet);
 		const byte *pbuf = p->buffer + p->pos;
 
 		this->written_bytes += in_packet;
@@ -99,7 +101,7 @@ struct PacketReader : LoadFilter {
 	size_t Read(byte *rbuf, size_t size) override
 	{
 		/* Limit the amount to read to whatever we still have. */
-		size_t ret_size = size = min(this->written_bytes - this->read_bytes, size);
+		size_t ret_size = size = std::min(this->written_bytes - this->read_bytes, size);
 		this->read_bytes += ret_size;
 		const byte *rbufe = rbuf + ret_size;
 
@@ -109,7 +111,7 @@ struct PacketReader : LoadFilter {
 				this->bufe = this->buf + CHUNK;
 			}
 
-			size_t to_write = min(this->bufe - this->buf, rbufe - rbuf);
+			size_t to_write = std::min(this->bufe - this->buf, rbufe - rbuf);
 			memcpy(rbuf, this->buf, to_write);
 			rbuf += to_write;
 			this->buf += to_write;
@@ -217,15 +219,22 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 		default:                                  errorno = NETWORK_ERROR_GENERAL; break;
 	}
 
-	/* This means we fucked up and the server closed the connection */
-	if (res != NETWORK_RECV_STATUS_SERVER_ERROR && res != NETWORK_RECV_STATUS_SERVER_FULL &&
-			res != NETWORK_RECV_STATUS_SERVER_BANNED) {
+	if (res == NETWORK_RECV_STATUS_SERVER_ERROR || res == NETWORK_RECV_STATUS_SERVER_FULL ||
+			res == NETWORK_RECV_STATUS_SERVER_BANNED) {
+		/* This means the server closed the connection. Emergency save is
+		 * already created if this was appropriate during handling of the
+		 * disconnect. */
+		this->CloseConnection(res);
+	} else {
+		/* This means we as client made a boo-boo. */
 		SendError(errorno);
+
+		/* Close connection before we make an emergency save, as the save can
+		 * take a bit of time; better that the server doesn't stall while we
+		 * are doing the save, and already disconnects us. */
+		this->CloseConnection(res);
+		ClientNetworkEmergencySave();
 	}
-
-	this->CloseConnection(res);
-
-	ClientNetworkEmergencySave();
 
 	_switch_mode = SM_MENU;
 	_networking = false;
@@ -332,7 +341,7 @@ const char *_network_join_company_password = nullptr;
 const char *_network_join_server_revision = NULL;
 
 /** Make sure the server ID length is the same as a md5 hash. */
-assert_compile(NETWORK_SERVER_ID_LENGTH == 16 * 2 + 1);
+static_assert(NETWORK_SERVER_ID_LENGTH == 16 * 2 + 1);
 
 /***********
  * Sending functions
@@ -571,7 +580,7 @@ bool ClientNetworkGameSocketHandler::IsConnected()
  *   DEF_CLIENT_RECEIVE_COMMAND has parameter: Packet *p
  ************/
 
-extern bool SafeLoad(const char *filename, SaveLoadOperation fop, DetailedFileType dft, GameMode newgm, Subdirectory subdir, struct LoadFilter *lf = nullptr);
+extern bool SafeLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileType dft, GameMode newgm, Subdirectory subdir, struct LoadFilter *lf = nullptr);
 
 NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_FULL(Packet *p)
 {
@@ -720,7 +729,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_ERROR(Packet *p
 		STR_NETWORK_ERROR_TIMEOUT_MAP,       // NETWORK_ERROR_TIMEOUT_MAP
 		STR_NETWORK_ERROR_TIMEOUT_JOIN,      // NETWORK_ERROR_TIMEOUT_JOIN
 	};
-	assert_compile(lengthof(network_error_strings) == NETWORK_ERROR_END);
+	static_assert(lengthof(network_error_strings) == NETWORK_ERROR_END);
 
 	NetworkErrorCode error = (NetworkErrorCode)p->Recv_uint8();
 
@@ -905,7 +914,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 
 	/* The map is done downloading, load it */
 	ClearErrorMessages();
-	bool load_success = SafeLoad(nullptr, SLO_LOAD, DFT_GAME_FILE, GM_NORMAL, NO_DIRECTORY, lf);
+	bool load_success = SafeLoad({}, SLO_LOAD, DFT_GAME_FILE, GM_NORMAL, NO_DIRECTORY, lf);
 
 	/* Long savegame loads shouldn't affect the lag calculation! */
 	this->last_packet = _realtime_tick;
@@ -1031,11 +1040,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHAT(Packet *p)
 				ci = NetworkClientInfo::GetByClientID(_network_own_client_id);
 				break;
 
-			/* For speaking to company or giving money, we need the company-name */
-			case NETWORK_ACTION_GIVE_MONEY:
-				if (!Company::IsValidID(ci_to->client_playas)) return NETWORK_RECV_STATUS_OKAY;
-				FALLTHROUGH;
-
+			/* For speaking to company, we need the company-name */
 			case NETWORK_ACTION_CHAT_COMPANY: {
 				StringID str = Company::IsValidID(ci_to->client_playas) ? STR_COMPANY_NAME : STR_NETWORK_SPECTATORS;
 				SetDParam(0, ci_to->client_playas);
