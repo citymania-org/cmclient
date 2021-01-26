@@ -825,7 +825,7 @@ struct BuildRailToolbarWindow : Window {
 				ddir = _build_depot_direction;
 				if (ddir == DIAGDIR_NW + 1) {
 					assert(_thd.cm.type == citymania::ObjectHighlight::Type::RAIL_DEPOT);
-					ddir = _thd.cm.u.depot.ddir;
+					ddir = _thd.cm.ddir;
 				}
 				DoCommandP(tile, _cur_railtype, ddir,
 						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
