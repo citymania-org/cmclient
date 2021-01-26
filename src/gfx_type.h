@@ -105,13 +105,15 @@ enum WindowKeyCodes {
 
 	WKC_L_BRACE     = 154, ///< { Left brace
 	WKC_R_BRACE     = 155, ///< } Right brace
-	
+
 	WKC_L_PAREN     = 157, ///< ( Left parentheses
 	WKC_R_PAREN     = 158, ///< ) Right parentheses
 	WKC_PLUS        = 159, ///< + Plus
 	WKC_EXCLAIM     = 160, ///< ! Exclamation mark
 	WKC_ASTERISK    = 161, ///< * Asterisk
 	WKC_DOLLAR      = 162, ///< $ Dollar sign
+
+	CM_WKC_MOUSE_MIDDLE = 255, ///< CityMania special code for middle mouse button
 };
 
 /** A single sprite of a list of animated cursors */

@@ -85,6 +85,7 @@ static const KeycodeNames _keycode_to_name[] = {
 	{"R_PAREN", WKC_R_PAREN},
 	{"EXCLAIM", WKC_EXCLAIM},
 	{"ASTERISK", WKC_ASTERISK},
+	{"MOUSE_MIDDLE", CM_WKC_MOUSE_MIDDLE},
 };
 
 /**

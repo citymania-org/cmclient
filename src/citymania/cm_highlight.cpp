@@ -14,6 +14,7 @@
 #include "../town_kdtree.h"
 #include "../tilearea_type.h"
 #include "../tilehighlight_type.h"
+#include "../tilehighlight_func.h"
 #include "../viewport_func.h"
 #include "../zoning.h"
 #include "../table/track_land.h"
@@ -608,6 +609,38 @@ DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt) {
     NOT_REACHED();
 }
 
+TileIndex _autodetection_tile = INVALID_TILE;
+DiagDirDiff _autodetection_rotation = DIAGDIRDIFF_SAME;
+
+static DiagDirDiff GetAutodetectionRotation() {
+    auto pt = GetTileBelowCursor();
+    auto tile = TileVirtXY(pt.x, pt.y);
+
+    if (tile != _autodetection_tile) {
+        _autodetection_tile = tile;
+        _autodetection_rotation = DIAGDIRDIFF_SAME;
+    }
+
+    return _autodetection_rotation;
+}
+
+void RotateAutodetection() {
+    auto rotation = GetAutodetectionRotation();
+    if (rotation == DIAGDIRDIFF_90LEFT) rotation = DIAGDIRDIFF_SAME;
+    else rotation++;
+    _autodetection_rotation = rotation;
+    ::UpdateTileSelection();
+}
+
+void ResetRotateAutodetection() {
+    _autodetection_tile = INVALID_TILE;
+    _autodetection_rotation = DIAGDIRDIFF_SAME;
+}
+
+DiagDirection AddAutodetectionRotation(DiagDirection ddir) {
+    return ChangeDiagDir(ddir, GetAutodetectionRotation());
+}
+
 HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     _thd.cm_new = ObjectHighlight(ObjectHighlight::Type::NONE);
     if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT &&
@@ -616,8 +649,9 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
         auto pt = GetTileBelowCursor();
         auto tile = TileVirtXY(pt.x, pt.y);
         if (pt.x != -1) {
-            if (dir >= DiagDirection::DIAGDIR_END)
-                dir = AutodetectRailObjectDirection(tile, pt);
+            if (dir >= DiagDirection::DIAGDIR_END) {
+                dir = AddAutodetectionRotation(AutodetectRailObjectDirection(tile, pt));
+            }
             _thd.cm_new = ObjectHighlight::make_depot(tile, dir);
         }
         new_drawstyle = HT_RECT;

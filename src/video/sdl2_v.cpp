@@ -544,6 +544,10 @@ int VideoDriver_SDL::PollEvent()
 			break;
 
 		case SDL_MOUSEBUTTONUP:
+			if (ev.button.button == SDL_BUTTON_MIDDLE) {
+				HandleKeypress(CM_WKC_MOUSE_MIDDLE, 0);
+				break;
+			}
 			if (_rightclick_emulate) {
 				_right_button_down = false;
 				_left_button_down = false;

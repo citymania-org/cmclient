@@ -39,6 +39,7 @@
 #include "widgets/rail_widget.h"
 
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_station_gui.hpp"
 
 #include "safeguards.h"
@@ -503,30 +504,6 @@ RoadBits FindRailsToConnect(TileIndex tile) {
 	return passing;
 }
 
-/*
- * Selects orientation for rail object (depot)
- */
-DiagDirection AutodetectRailObjectDirection(TileIndex tile) {
-	RoadBits bits = FindRailsToConnect(tile);
-	// FIXME after this point repeats road autodetection
-	if (HasExactlyOneBit(bits)) return RoadBitsToDiagDir(bits);
-	if (bits == ROAD_NONE) bits = ROAD_ALL;
-	RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir());
-	if (HasExactlyOneBit(frac_bits & bits)) {
-		return RoadBitsToDiagDir(frac_bits & bits);
-	}
-	frac_bits |= MirrorRoadBits(frac_bits);
-	if (HasExactlyOneBit(frac_bits & bits)) {
-		return RoadBitsToDiagDir(frac_bits & bits);
-	}
-	for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
-		if (DiagDirToRoadBits(ddir) & bits) {
-			return ddir;
-		}
-	}
-	NOT_REACHED();
-}
-
 /** Rail toolbar management class. */
 struct BuildRailToolbarWindow : Window {
 	RailType railtype;    ///< Rail type to build.
@@ -714,6 +691,7 @@ struct BuildRailToolbarWindow : Window {
 
 			case WID_RAT_BUILD_DEPOT:
 				if (HandlePlacePushButton(this, WID_RAT_BUILD_DEPOT, GetRailTypeInfo(_cur_railtype)->cursor.depot, HT_RECT | (HighLightStyle)_build_depot_direction)) {
+					citymania::ResetRotateAutodetection();
 					ShowBuildTrainDepotPicker(this);
 					this->last_user_action = widget;
 				}
@@ -846,7 +824,8 @@ struct BuildRailToolbarWindow : Window {
 			case WID_RAT_BUILD_DEPOT:
 				ddir = _build_depot_direction;
 				if (ddir == DIAGDIR_NW + 1) {
-					ddir = AutodetectRailObjectDirection(tile);
+					assert(_thd.cm.type == citymania::ObjectHighlight::Type::RAIL_DEPOT);
+					ddir = _thd.cm.u.depot.ddir;
 				}
 				DoCommandP(tile, _cur_railtype, ddir,
 						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
@@ -1924,6 +1903,10 @@ static void ShowSignalBuilder(Window *parent)
 	new BuildSignalWindow(&_signal_builder_desc, parent);
 }
 
+enum class BuildRailDepotWindowHotkey : int {
+	ROTATE,
+};
+
 struct BuildRailDepotWindow : public PickerWindowBase {
 	BuildRailDepotWindow(WindowDesc *desc, Window *parent) : PickerWindowBase(desc, parent)
 	{
@@ -1971,7 +1954,39 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 				break;
 		}
 	}
+
+
+	EventState OnHotkey(int hotkey) override
+	{
+		switch ((BuildRailDepotWindowHotkey)hotkey) {
+			/* Indicate to the OnClick that the action comes from a hotkey rather
+			 * then from a click and that the CTRL state should be ignored. */
+			case BuildRailDepotWindowHotkey::ROTATE:
+				if (_build_depot_direction < DIAGDIR_END) {
+					this->RaiseWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
+					_build_depot_direction = ChangeDiagDir(_build_depot_direction, DIAGDIRDIFF_90RIGHT);
+					this->LowerWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
+				} else {
+					citymania::RotateAutodetection();
+				}
+				this->SetDirty();
+				return ES_HANDLED;
+
+			default:
+				return ES_NOT_HANDLED;
+		}
+
+		return ES_NOT_HANDLED;
+	}
+
+	static HotkeyList hotkeys;
 };
+
+static Hotkey build_depot_hotkeys[] = {
+	Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", (int)BuildRailDepotWindowHotkey::ROTATE),
+	HOTKEY_LIST_END
+};
+HotkeyList BuildRailDepotWindow::hotkeys("cm_build_depot", build_depot_hotkeys);
 
 /** Nested widget definition of the build rail depot window */
 static const NWidgetPart _nested_build_depot_widgets[] = {
@@ -2014,7 +2029,8 @@ static WindowDesc _build_depot_desc(
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
-	_nested_build_depot_widgets, lengthof(_nested_build_depot_widgets)
+	_nested_build_depot_widgets, lengthof(_nested_build_depot_widgets),
+	&BuildRailDepotWindow::hotkeys
 );
 
 static void ShowBuildTrainDepotPicker(Window *parent)

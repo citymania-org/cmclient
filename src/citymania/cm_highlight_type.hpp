@@ -40,7 +40,6 @@ public:
         RAIL_DEPOT = 1,
     };
 
-protected:
     Type type;
     union {
         struct {
@@ -49,6 +48,7 @@ protected:
         } depot;
     } u;
 
+protected:
     bool tiles_updated = false;
     std::multimap<TileIndex, ObjectTileHighlight> tiles;
     void UpdateTiles();
