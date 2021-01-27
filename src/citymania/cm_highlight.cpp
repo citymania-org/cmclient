@@ -917,7 +917,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
             _thd.cm_new = ObjectHighlight::make_rail_depot(tile, dir);
         }
         new_drawstyle = HT_RECT;
-    } else if (_thd.outersize.x > 0) {  // station
+    } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.outersize.x > 0) {  // station
         if (_thd.size.x >= (int)TILE_SIZE && _thd.size.y >= (int)TILE_SIZE) {
             auto start_tile = TileXY(_thd.pos.x / TILE_SIZE, _thd.pos.y / TILE_SIZE);
             auto end_tile = TileXY(
