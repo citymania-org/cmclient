@@ -27,7 +27,7 @@
 #include <condition_variable>
 #include <algorithm>
 
-#include "../../citymania/cm_hotkeys.hpp"
+#include "../citymania/cm_hotkeys.hpp"
 
 #include "../safeguards.h"
 
@@ -527,7 +527,7 @@ int VideoDriver_SDL::PollEvent()
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
-			if (_rightclick_emulate && SDL_GetModState() & KMOD_CTRL) {
+			if (_rightclick_emulate && (SDL_GetModState() & KMOD_CTRL) && ev.button.button == SDL_BUTTON_LEFT) {
 				ev.button.button = SDL_BUTTON_RIGHT;
 			}
 
@@ -550,6 +550,17 @@ int VideoDriver_SDL::PollEvent()
 			break;
 
 		case SDL_MOUSEBUTTONUP:
+			if (ev.button.button == SDL_BUTTON_MIDDLE) {
+				HandleKeypress(CM_WKC_MOUSE_MIDDLE, 0);
+				break;
+			} else if (ev.button.button > SDL_BUTTON_WHEELDOWN) {
+				int button = CM_WKC_MOUSE_OTHER_START + ev.button.button - 4;
+				if (button >= CM_WKC_MOUSE_OTHER_START && button < CM_WKC_MOUSE_OTHER_END) {
+					HandleKeypress(button, 0);
+				}
+				break;
+			}
+
 			if (_rightclick_emulate) {
 				_right_button_down = false;
 				_left_button_down = false;

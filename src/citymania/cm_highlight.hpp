@@ -95,6 +95,9 @@ void SetIndustryForbiddenTilesHighlight(IndustryType type);
 
 PaletteID GetTreeShadePal(TileIndex tile);
 
+void RotateAutodetection();
+void ResetRotateAutodetection();
+
 }  // namespace citymania
 
 #endif

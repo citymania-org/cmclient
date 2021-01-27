@@ -35,6 +35,9 @@ bool _fn_mod = false;
 bool _remove_mod = false;
 bool _estimate_mod = false;
 
+bool _middle_button_down;     ///< Is middle mouse button pressed?
+bool _middle_button_clicked;  ///< Is middle mouse button clicked?
+
 uint32 _effective_actions = 0;
 uint32 _first_effective_tick = 0;
 std::queue<uint32> _last_actions;
