@@ -130,19 +130,19 @@ public:
     };
 
     std::vector<Item> items;
-    std::set<TileIndexDiffC, TileIndexDiffCCompare> tiles;
+    std::set<TileIndex> source_tiles;
 
     Blueprint() {}
 
     void Clear() {
         this->items.clear();
-        this->tiles.clear();
+        this->source_tiles.clear();
     }
 
-    void Add(Item item);
+    void Add(TileIndex source_tile, Item item);
 
-    bool HasTile(TileIndexDiffC tdiff) {
-        return (this->tiles.find(tdiff) != this->tiles.end());
+    bool HasSourceTile(TileIndex tile) {
+        return (this->source_tiles.find(tile) != this->source_tiles.end());
     }
 
     sp<Blueprint> Rotate();

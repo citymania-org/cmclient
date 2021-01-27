@@ -58,28 +58,26 @@ void CommandExecuted(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
     _command_callbacks.erase(p);
 }
 
-void Blueprint::Add(Blueprint::Item item) {
+void Blueprint::Add(TileIndex source_tile, Blueprint::Item item) {
     this->items.push_back(item);
     switch (item.type) {
         case Item::Type::RAIL_TRACK: {
             auto tdir = item.u.rail.track.start_dir;
-            auto tdiff = item.tdiff;
-            // fprintf(stderr, "TRACK %u %u\n", (uint)tdiff, (uint)item.u.rail.track.end_diff);
             for (auto i = 0; i < item.u.rail.track.length; i++) {
-                this->tiles.insert(tdiff);
-                tdiff = tdiff + TileIndexDiffCByDiagDir(TrackdirToExitdir(tdir));
+                this->source_tiles.insert(source_tile);
+                source_tile = TileAddByDiagDir(source_tile, TrackdirToExitdir(tdir));
                 tdir = NextTrackdir(tdir);
             }
             break;
         }
         case Item::Type::RAIL_BRIDGE:
         case Item::Type::RAIL_TUNNEL:
-            this->tiles.insert(item.u.rail.tunnel.other_end);
+            this->source_tiles.insert(TILE_ADDXY(source_tile, item.u.rail.tunnel.other_end.x, item.u.rail.tunnel.other_end.y));
             FALLTHROUGH;
         case Item::Type::RAIL_DEPOT:
         case Item::Type::RAIL_STATION:
         case Item::Type::RAIL_STATION_PART:
-            this->tiles.insert(item.tdiff);
+            this->source_tiles.insert(source_tile);
             break;
         case Item::Type::RAIL_SIGNAL: // tile is added for track anyway
             break;
@@ -156,7 +154,7 @@ sp<Blueprint> Blueprint::Rotate() {
     auto res = std::make_shared<Blueprint>();
 
     auto rotate = [](TileIndexDiffC td) -> TileIndexDiffC {
-        return TileIndexDiffC {td.y, -td.x};
+        return {static_cast<int16>(td.y), static_cast<int16>(-td.x)};
     };
 
     auto rotate_dir = [](DiagDirection ddir) -> DiagDirection {
@@ -199,8 +197,9 @@ sp<Blueprint> Blueprint::Rotate() {
             default:
                 NOT_REACHED();
         }
-        res->Add(bi);
+        res->items.push_back(bi);
     }
+    res->source_tiles = this->source_tiles;
     return res;
 }
 
@@ -214,7 +213,7 @@ static void BlueprintAddSignals(sp<Blueprint> &blueprint, TileIndex tile, TileIn
         bi.u.rail.signal.pos = pos;
         bi.u.rail.signal.type = GetSignalType(tile, track);
         bi.u.rail.signal.variant = GetSignalVariant(tile, track);
-        blueprint->Add(bi);
+        blueprint->Add(tile, bi);
     };
     auto rails = GetTrackBits(tile);
     if (!(rails & TRACK_BIT_Y)) {
@@ -328,7 +327,7 @@ static void BlueprintAddTracks(sp<Blueprint> &blueprint, TileIndex tile, TileInd
         bi.u.rail.track.length = length;
         bi.u.rail.track.start_dir = _track_iterate_dir[track];
         // fprintf(stderr, "TTTTTTEE %u %u %u\n", tdiff, bi.u.rail.track.end_diff, bi.u.rail.track.start_dir);
-        blueprint->Add(bi);
+        blueprint->Add(tile, bi);
     }
 }
 
@@ -356,7 +355,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
                     case RAIL_TILE_DEPOT: {
                         Blueprint::Item bi(Blueprint::Item::Type::RAIL_DEPOT, td);
                         bi.u.rail.depot.ddir = GetRailDepotDirection(tile);
-                        blueprint->Add(bi);
+                        blueprint->Add(tile, bi);
                         break;
                     }
                     case RAIL_TILE_SIGNALS:
@@ -384,7 +383,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
                     bi.u.rail.tunnel.ddir = GetTunnelBridgeDirection(tile);
                     bi.u.rail.tunnel.other_end = TileIndexToTileIndexDiffC(other, start);
                 }
-                blueprint->Add(bi);
+                blueprint->Add(tile, bi);
                 break;
             }
             default:
@@ -416,13 +415,13 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
         Blueprint::Item bi(Blueprint::Item::Type::RAIL_STATION, TileIndexToTileIndexDiffC(st->xy, start));
         bi.u.rail.station.id = sid;
         bi.u.rail.station.has_part = sign_part;
-        blueprint->Add(bi);
+        blueprint->Add(st->xy, bi);
 
         for (auto tile : tiles) {
             Blueprint::Item bi(Blueprint::Item::Type::RAIL_STATION_PART, TileIndexToTileIndexDiffC(tile, start));
             bi.u.rail.station_part.id = sid;
             bi.u.rail.station_part.axis = GetRailStationAxis(tile);
-            blueprint->Add(bi);
+            blueprint->Add(tile, bi);
         }
     }
 }
@@ -444,8 +443,7 @@ void SetBlueprintHighlight(const TileInfo *ti, TileHighlight &th) {
     if (_active_blueprint.first == INVALID_TILE || !_active_blueprint.second)
         return;
 
-    TileIndexDiffC td = TileIndexToTileIndexDiffC(ti->tile, _active_blueprint.first);
-    if (_active_blueprint.second->HasTile(td)) {
+    if (_active_blueprint.second->HasSourceTile(ti->tile)) {
         th.ground_pal = th.structure_pal = PALETTE_TINT_BLUE;
     }
 }

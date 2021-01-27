@@ -252,6 +252,11 @@ void ObjectHighlight::MarkDirty() {
     for (const auto &kv: this->tiles) {
         MarkTileDirtyByTile(kv.first);
     }
+    if (this->type == ObjectHighlight::Type::BLUEPRINT && this->blueprint) {  // TODO why && blueprint check is needed?
+        for (auto tile : this->blueprint->source_tiles) {
+            MarkTileDirtyByTile(tile);
+        }
+    }
 }
 
 
