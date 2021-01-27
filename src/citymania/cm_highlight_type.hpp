@@ -108,6 +108,8 @@ public:
                 struct {
                     Axis axis;
                     StationID id;
+                    byte numtracks;
+                    byte plat_len;
                 } station_part;
                 struct {
                     uint pos;

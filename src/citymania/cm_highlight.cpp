@@ -220,7 +220,7 @@ void ObjectHighlight::UpdateTiles() {
             auto plat_len = ta.h;
             if (this->axis == AXIS_X) Swap(numtracks, plat_len);
 
-            auto layout_ptr = AllocaM(byte, numtracks * plat_len);
+            auto layout_ptr = AllocaM(byte, (int)numtracks * plat_len);
             GetStationLayout(layout_ptr, numtracks, plat_len, nullptr); // TODO statspec
 
             auto tile_delta = (this->axis == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
