@@ -113,7 +113,9 @@ enum WindowKeyCodes {
 	WKC_ASTERISK    = 161, ///< * Asterisk
 	WKC_DOLLAR      = 162, ///< $ Dollar sign
 
-	CM_WKC_MOUSE_MIDDLE = 255, ///< CityMania special code for middle mouse button
+	CM_WKC_MOUSE_MIDDLE      = 0x703,  ///< CityMania: special code for middle mouse button
+	CM_WKC_MOUSE_OTHER_START = 0x704,  ///< CityMania: start of the numbered buttons (whatever number driver reports), starts as MOUSE_4 hotkey
+	CM_WKC_MOUSE_OTHER_END   = 0x71f, ///< CityMania: 30 buttons should be enough for any mouse, right? ;)
 };
 
 /** A single sprite of a list of animated cursors */

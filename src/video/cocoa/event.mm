@@ -370,7 +370,8 @@ static void QZ_MouseMovedEvent(int x, int y)
 }
 
 
-static void QZ_MouseButtonEvent(int button, BOOL down)
+static void
+QZ_MouseButtonEvent(int button, BOOL down)
 {
 	switch (button) {
 		case 0:
@@ -392,6 +393,18 @@ static void QZ_MouseButtonEvent(int button, BOOL down)
 			}
 			HandleMouseEvents();
 			break;
+
+		case 2:
+			HandleKeypress(CM_WKC_MOUSE_MIDDLE, 0);
+			break;
+
+		default: {
+			int button = CM_WKC_MOUSE_OTHER_START + ev.button.button - 3;
+			if (!down && button >= CM_WKC_MOUSE_OTHER_START && button < CM_WKC_MOUSE_OTHER_END) {
+				HandleKeypress(button, 0);
+			}
+			break
+		}
 	}
 }
 
@@ -501,11 +514,11 @@ static bool QZ_PollEvent()
 			QZ_MouseButtonEvent(1, NO);
 			break;
 
-#if 0
+// #if 0  CityMania uses this!
 		/* This is not needed since openttd currently only use two buttons */
 		case NSOtherMouseDown:
-			pt = QZ_GetMouseLocation(event);
-			if (!QZ_MouseIsInsideView(&pt)) {
+			pt = _cocoa_subdriver->GetMouseLocation(event);
+			if (!_cocoa_subdriver->MouseIsInsideView(&pt)) {
 				[ NSApp sendEvent:event ];
 				break;
 			}
@@ -515,8 +528,8 @@ static bool QZ_PollEvent()
 			break;
 
 		case NSOtherMouseUp:
-			pt = QZ_GetMouseLocation(event);
-			if (!QZ_MouseIsInsideView(&pt)) {
+			pt = _cocoa_subdriver->GetMouseLocation(event);
+			if (!_cocoa_subdriver->MouseIsInsideView(&pt)) {
 				[ NSApp sendEvent:event ];
 				break;
 			}
@@ -524,7 +537,7 @@ static bool QZ_PollEvent()
 			QZ_MouseMovedEvent((int)pt.x, (int)pt.y);
 			QZ_MouseButtonEvent([ event buttonNumber ], NO);
 			break;
-#endif
+// #endif
 
 		case NSKeyDown: {
 			/* Quit, hide and minimize */
