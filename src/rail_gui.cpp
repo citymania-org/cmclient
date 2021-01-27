@@ -64,6 +64,7 @@ static const SignalType _default_signal_type[] = {SIGTYPE_NORMAL, SIGTYPE_PBS, S
 static const int HOTKEY_MASK        = 0x1000;
 static const int HOTKEY_POLYRAIL     = 0x1000;
 static const int HOTKEY_NEW_POLYRAIL = 0x1001;
+static const int HOTKEY_BLUEPRINT_ROTATE = 0x1002;
 static const int HOTKEY_BUILD_STATION_SIZED = 0x1010;     ///< Build a station in fixed size mode.
 static const int HOTKEY_BUILD_STATION_DRAGDROP = 0x1011;  ///< Build a station in dragdrop mode.
 
@@ -793,6 +794,12 @@ struct BuildRailToolbarWindow : Window {
 			case HOTKEY_BUILD_STATION_DRAGDROP:
 				this->last_user_action = hotkey;
 				return this->Window::OnHotkey(WID_RAT_BUILD_STATION);
+
+			case HOTKEY_BLUEPRINT_ROTATE:
+				if (this->last_user_action == CM_WID_RAT_BLUEPRINT_PLACE) {
+					citymania::RotateActiveBlueprint();
+				}
+				break;
 		}
 
 		return Window::OnHotkey(hotkey);
@@ -971,10 +978,6 @@ struct BuildRailToolbarWindow : Window {
 
 	EventState CM_OnRemoveModStateChange() override
 	{
-		if (this->last_user_action == CM_WID_RAT_BLUEPRINT_PLACE) {
-			citymania::RotateActiveBlueprint();
-			return ES_HANDLED;
-		}
 		auto new_remove = citymania::RailToolbar_RemoveModChanged(this, _cm_invert_remove, _remove_button_clicked, false);
 		if (new_remove != _remove_button_clicked) {
 			_remove_button_clicked = new_remove;
@@ -1023,6 +1026,8 @@ static Hotkey railtoolbar_hotkeys[] = {
 	Hotkey('T', "tunnel", WID_RAT_BUILD_TUNNEL),
 	Hotkey('R', "remove", WID_RAT_REMOVE),
 	Hotkey('C', "convert", WID_RAT_CONVERT_RAIL),
+	Hotkey((uint16)0, "cm_blueprint", CM_WID_RAT_BLUEPRINT),
+	Hotkey(CM_WKC_MOUSE_MIDDLE, "cm_blueprint_rotate", HOTKEY_BLUEPRINT_ROTATE),
 	HOTKEY_LIST_END
 };
 HotkeyList BuildRailToolbarWindow::hotkeys("railtoolbar", railtoolbar_hotkeys, RailToolbarGlobalHotkeys);
