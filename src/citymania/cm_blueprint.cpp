@@ -120,7 +120,7 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 add_tile(otile, ObjectTileHighlight::make_rail_depot(o.u.rail.depot.ddir));
                 break;
             case Item::Type::RAIL_STATION_PART:
-                add_tile(otile, ObjectTileHighlight::make_rail_station(o.u.rail.station_part.axis));
+                add_tile(otile, ObjectTileHighlight::make_rail_station(o.u.rail.station_part.axis, 0));
                 break;
             case Item::Type::RAIL_SIGNAL:
                 add_tile(otile, ObjectTileHighlight::make_rail_signal(o.u.rail.signal.pos, o.u.rail.signal.type, o.u.rail.signal.variant));

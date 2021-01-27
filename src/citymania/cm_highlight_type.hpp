@@ -39,6 +39,7 @@ public:
             Track track;
             struct {
                 Axis axis;
+                byte section;
             } station;
             struct {
                 uint pos;
@@ -59,7 +60,7 @@ public:
     ObjectTileHighlight(Type type): type{type} {}
     static ObjectTileHighlight make_rail_depot(DiagDirection ddir);
     static ObjectTileHighlight make_rail_track(Track track);
-    static ObjectTileHighlight make_rail_station(Axis axis);
+    static ObjectTileHighlight make_rail_station(Axis axis, byte section);
     static ObjectTileHighlight make_rail_signal(uint pos, SignalType type, SignalVariant variant);
     static ObjectTileHighlight make_rail_bridge_head(DiagDirection ddir, BridgeType type);
     static ObjectTileHighlight make_rail_tunnel_head(DiagDirection ddir);
