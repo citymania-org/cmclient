@@ -1095,7 +1095,14 @@ static void HandleStationPlacement(TileIndex start, TileIndex end)
 	ShowSelectStationIfNeeded(cmdcont, ta);
 }
 
+
 struct BuildRailStationWindow : public PickerWindowBase {
+/* CityMania code start */
+public:
+	enum class Hotkey : int {
+		ROTATE,
+	};
+/* CityMania code end */
 private:
 	uint line_height;     ///< Height of a single line in the newstation selection matrix (#WID_BRAS_NEWST_LIST widget).
 	uint coverage_height; ///< Height of the coverage texts.
@@ -1579,7 +1586,39 @@ public:
 	{
 		CheckRedrawStationCoverage(this);
 	}
+
+	/* CityMania code start */
+	EventState OnHotkey(int hotkey) override
+	{
+		switch ((BuildRailStationWindow::Hotkey)hotkey) {
+			/* Indicate to the OnClick that the action comes from a hotkey rather
+			 * then from a click and that the CTRL state should be ignored. */
+			case BuildRailStationWindow::Hotkey::ROTATE:
+				this->RaiseWidget(_railstation.orientation + WID_BRAS_PLATFORM_DIR_X);
+				_railstation.orientation = OtherAxis(_railstation.orientation);
+				this->LowerWidget(_railstation.orientation + WID_BRAS_PLATFORM_DIR_X);
+				this->SetDirty();
+				DeleteWindowById(WC_SELECT_STATION, 0);
+				return ES_HANDLED;
+
+			default:
+				NOT_REACHED();
+		}
+
+		return ES_NOT_HANDLED;
+	}
+
+	static HotkeyList hotkeys;
+	/* CityMania code end */
 };
+
+/* CityMania code start */
+static Hotkey build_station_hotkeys[] = {
+	Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", (int)BuildRailStationWindow::Hotkey::ROTATE),
+	HOTKEY_LIST_END
+};
+HotkeyList BuildRailStationWindow::hotkeys("cm_build_rail_station", build_station_hotkeys);
+/* CityMania code end */
 
 static const NWidgetPart _nested_station_builder_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -1680,7 +1719,8 @@ static WindowDesc _station_builder_desc(
 	WDP_AUTO, "build_station_rail", 350, 0,
 	WC_BUILD_STATION, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
-	_nested_station_builder_widgets, lengthof(_nested_station_builder_widgets)
+	_nested_station_builder_widgets, lengthof(_nested_station_builder_widgets),
+	&BuildRailStationWindow::hotkeys  // CityMania addition
 );
 
 /** Open station build window */
@@ -1903,11 +1943,15 @@ static void ShowSignalBuilder(Window *parent)
 	new BuildSignalWindow(&_signal_builder_desc, parent);
 }
 
-enum class BuildRailDepotWindowHotkey : int {
-	ROTATE,
-};
 
 struct BuildRailDepotWindow : public PickerWindowBase {
+/* CityMania code start */
+public:
+	enum class Hotkey : int {
+		ROTATE,
+	};
+/* CityMania code end */
+
 	BuildRailDepotWindow(WindowDesc *desc, Window *parent) : PickerWindowBase(desc, parent)
 	{
 		this->InitNested(TRANSPORT_RAIL);
@@ -1955,13 +1999,13 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 		}
 	}
 
-
+	/* CityMania code start */
 	EventState OnHotkey(int hotkey) override
 	{
-		switch ((BuildRailDepotWindowHotkey)hotkey) {
+		switch ((BuildRailDepotWindow::Hotkey)hotkey) {
 			/* Indicate to the OnClick that the action comes from a hotkey rather
 			 * then from a click and that the CTRL state should be ignored. */
-			case BuildRailDepotWindowHotkey::ROTATE:
+			case BuildRailDepotWindow::Hotkey::ROTATE:
 				if (_build_depot_direction < DIAGDIR_END) {
 					this->RaiseWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
 					_build_depot_direction = ChangeDiagDir(_build_depot_direction, DIAGDIRDIFF_90RIGHT);
@@ -1973,20 +2017,23 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 				return ES_HANDLED;
 
 			default:
-				return ES_NOT_HANDLED;
+				NOT_REACHED();
 		}
 
 		return ES_NOT_HANDLED;
 	}
 
 	static HotkeyList hotkeys;
+	/* CityMania code end */
 };
 
+/* CityMania code start */
 static Hotkey build_depot_hotkeys[] = {
-	Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", (int)BuildRailDepotWindowHotkey::ROTATE),
+	Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", (int)BuildRailDepotWindow::Hotkey::ROTATE),
 	HOTKEY_LIST_END
 };
-HotkeyList BuildRailDepotWindow::hotkeys("cm_build_depot", build_depot_hotkeys);
+HotkeyList BuildRailDepotWindow::hotkeys("cm_build_rail_depot", build_depot_hotkeys);
+/* CityMania code end */
 
 /** Nested widget definition of the build rail depot window */
 static const NWidgetPart _nested_build_depot_widgets[] = {
@@ -2030,7 +2077,7 @@ static WindowDesc _build_depot_desc(
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
 	_nested_build_depot_widgets, lengthof(_nested_build_depot_widgets),
-	&BuildRailDepotWindow::hotkeys
+	&BuildRailDepotWindow::hotkeys  // CityMania addition
 );
 
 static void ShowBuildTrainDepotPicker(Window *parent)
