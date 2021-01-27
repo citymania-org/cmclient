@@ -154,11 +154,14 @@ public:
     enum class Type {
         NONE = 0,
         RAIL_DEPOT = 1,
+        RAIL_STATION = 2,
         // BLUEPRINT = 2,
     };
 
     Type type;
     TileIndex tile = INVALID_TILE;
+    TileIndex end_tile = INVALID_TILE;
+    Axis axis = INVALID_AXIS;
     DiagDirection ddir = INVALID_DIAGDIR;
     sp<Blueprint> blueprint = nullptr;
 
@@ -173,7 +176,8 @@ public:
     bool operator==(const ObjectHighlight& oh);
     bool operator!=(const ObjectHighlight& oh);
 
-    static ObjectHighlight make_depot(TileIndex tile, DiagDirection ddir);
+    static ObjectHighlight make_rail_depot(TileIndex tile, DiagDirection ddir);
+    static ObjectHighlight make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis);
     // static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);
 
     void Draw(const TileInfo *ti);

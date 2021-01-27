@@ -2,7 +2,7 @@
 
 #include "cm_highlight.hpp"
 
-#include "cm_blueprint.hpp"
+// #include "cm_blueprint.hpp"
 #include "cm_main.hpp"
 #include "cm_station_gui.hpp"
 
@@ -13,6 +13,7 @@
 #include "../industry.h"
 #include "../landscape.h"
 #include "../newgrf_railtype.h"
+#include "../newgrf_station.h"
 #include "../town.h"
 #include "../town_kdtree.h"
 #include "../tilearea_type.h"
@@ -40,6 +41,16 @@ extern RailType _cur_railtype;
 RoadBits FindRailsToConnect(TileIndex tile);
 extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
 extern uint32 _realtime_tick;
+
+struct RailStationGUISettings {
+    Axis orientation;                 ///< Currently selected rail station orientation
+
+    bool newstations;                 ///< Are custom station definitions available?
+    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
+    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
+    byte station_count;               ///< Number of custom stations (if newstations is \c true )
+};
+extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
 
 namespace citymania {
@@ -116,7 +127,11 @@ ObjectTileHighlight ObjectTileHighlight::make_rail_tunnel_head(DiagDirection ddi
 
 bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
     if (this->type != oh.type) return false;
-    return (this->tile == oh.tile && this->ddir == oh.ddir && this->blueprint == oh.blueprint);
+    return (this->tile == oh.tile
+            && this->end_tile == oh.end_tile
+            && this->axis == oh.axis
+            && this->ddir == oh.ddir
+            && this->blueprint == oh.blueprint);
     // switch (this->type) {
     //     case Type::RAIL_DEPOT: return this->tile == oh.tile && this->ddir == oh.ddir;
     //     default: return true;
@@ -129,10 +144,18 @@ bool ObjectHighlight::operator!=(const ObjectHighlight& oh) {
 }
 
 
-ObjectHighlight ObjectHighlight::make_depot(TileIndex tile, DiagDirection ddir) {
+ObjectHighlight ObjectHighlight::make_rail_depot(TileIndex tile, DiagDirection ddir) {
     auto oh = ObjectHighlight{ObjectHighlight::Type::RAIL_DEPOT};
     oh.tile = tile;
     oh.ddir = ddir;
+    return oh;
+}
+
+ObjectHighlight ObjectHighlight::make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis) {
+    auto oh = ObjectHighlight{ObjectHighlight::Type::RAIL_STATION};
+    oh.tile = start_tile;
+    oh.end_tile = end_tile;
+    oh.axis = axis;
     return oh;
 }
 
@@ -183,6 +206,13 @@ void ObjectHighlight::UpdateTiles() {
                 this->PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir], _place_depot_extra_track[dir]);
                 this->PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 4], _place_depot_extra_track[dir + 4]);
                 this->PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 8], _place_depot_extra_track[dir + 8]);
+            }
+            break;
+        }
+        case Type::RAIL_STATION: {
+            auto ta = OrthogonalTileArea(this->tile, this->end_tile);
+            TILE_AREA_LOOP(tile, ta) {
+                this->tiles.insert({tile, ObjectTileHighlight::make_rail_station(this->axis)});
             }
             break;
         }
@@ -534,21 +564,21 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
 
     if (_highlight_station_to_join) highlight_station = _highlight_station_to_join;
 
-    if (draw_selection) {
-        auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
-            auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
-            return IsInsideSelectedRectangle(x, y);
-        });
-        const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
-        auto color = pal[(int)_station_building_status];
-        if (_thd.make_square_red) color = SPR_PALETTE_ZONING_RED;
-        if (b.first != ZoningBorder::NONE)
-            th.add_border(b.first, color);
-        if (IsInsideSelectedRectangle(TileX(ti->tile) * TILE_SIZE, TileY(ti->tile) * TILE_SIZE)) {
-            th.ground_pal = GetTintBySelectionColour(color);
-            return;
-        }
-    }
+    // if (draw_selection) {
+    //     auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
+    //         auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
+    //         return IsInsideSelectedRectangle(x, y);
+    //     });
+    //     const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
+    //     auto color = pal[(int)_station_building_status];
+    //     if (_thd.make_square_red) color = SPR_PALETTE_ZONING_RED;
+    //     if (b.first != ZoningBorder::NONE)
+    //         th.add_border(b.first, color);
+    //     if (IsInsideSelectedRectangle(TileX(ti->tile) * TILE_SIZE, TileY(ti->tile) * TILE_SIZE)) {
+    //         th.ground_pal = GetTintBySelectionColour(color);
+    //         return;
+    //     }
+    // }
 
     auto coverage_getter = [draw_selection, highlight_station](TileIndex t) {
         auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
@@ -872,6 +902,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     _thd.cm_new = ObjectHighlight(ObjectHighlight::Type::NONE);
     auto pt = GetTileBelowCursor();
     auto tile = (pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y));
+    // fprintf(stderr, "UPDATE %d %d %d %d\n", tile, _thd.size.x, _thd.size.y, (int)((_thd.place_mode & HT_DRAG_MASK) == HT_RECT));
     // if (_thd.place_mode == CM_HT_BLUEPRINT_PLACE) {
     //     UpdateBlueprintTileSelection(pt, tile);
     //     new_drawstyle = CM_HT_BLUEPRINT_PLACE;
@@ -883,7 +914,17 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
             if (dir >= DiagDirection::DIAGDIR_END) {
                 dir = AddAutodetectionRotation(AutodetectRailObjectDirection(tile, pt));
             }
-            _thd.cm_new = ObjectHighlight::make_depot(tile, dir);
+            _thd.cm_new = ObjectHighlight::make_rail_depot(tile, dir);
+        }
+        new_drawstyle = HT_RECT;
+    } else if (_thd.outersize.x > 0) {  // station
+        if (_thd.size.x >= (int)TILE_SIZE && _thd.size.y >= (int)TILE_SIZE) {
+            auto start_tile = TileXY(_thd.pos.x / TILE_SIZE, _thd.pos.y / TILE_SIZE);
+            auto end_tile = TileXY(
+                std::min((_thd.pos.x + _thd.size.x) / TILE_SIZE, MapSizeX()) - 1,
+                std::min((_thd.pos.y + _thd.size.y) / TILE_SIZE, MapSizeY()) - 1
+            );
+            _thd.cm_new = ObjectHighlight::make_rail_station(start_tile, end_tile, _railstation.orientation);
         }
         new_drawstyle = HT_RECT;
     }
