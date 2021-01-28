@@ -116,6 +116,7 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
         if (tile == INVALID_TILE) return;
         res.emplace(tile, ohl);
     };
+    auto fixme = true;
     for (auto &o: this->items) {
         auto otile = AddTileIndexDiffCWrap(tile, o.tdiff);
         switch(o.type) {
@@ -123,22 +124,22 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 auto end_tile = otile;
                 auto tdir = o.u.rail.track.start_dir;
                 for (auto i = 0; i < o.u.rail.track.length; i++) {
-                    add_tile(end_tile, ObjectTileHighlight::make_rail_track(TrackdirToTrack(tdir)));
+                    add_tile(end_tile, ObjectTileHighlight::make_rail_track(fixme, TrackdirToTrack(tdir)));
                     end_tile = TileAddByDiagDir(end_tile, TrackdirToExitdir(tdir));
                     tdir = NextTrackdir(tdir);
                 }
                 break;
             }
             case Item::Type::RAIL_BRIDGE:
-                add_tile(otile, ObjectTileHighlight::make_rail_bridge_head(o.u.rail.bridge.ddir, o.u.rail.bridge.type));
-                add_tile(AddTileIndexDiffCWrap(tile, o.u.rail.bridge.other_end), ObjectTileHighlight::make_rail_bridge_head(ReverseDiagDir(o.u.rail.bridge.ddir), o.u.rail.bridge.type));
+                add_tile(otile, ObjectTileHighlight::make_rail_bridge_head(fixme, o.u.rail.bridge.ddir, o.u.rail.bridge.type));
+                add_tile(AddTileIndexDiffCWrap(tile, o.u.rail.bridge.other_end), ObjectTileHighlight::make_rail_bridge_head(fixme, ReverseDiagDir(o.u.rail.bridge.ddir), o.u.rail.bridge.type));
                 break;
             case Item::Type::RAIL_TUNNEL:
-                add_tile(otile, ObjectTileHighlight::make_rail_tunnel_head(o.u.rail.tunnel.ddir));
-                add_tile(AddTileIndexDiffCWrap(tile, o.u.rail.tunnel.other_end), ObjectTileHighlight::make_rail_tunnel_head(ReverseDiagDir(o.u.rail.tunnel.ddir)));
+                add_tile(otile, ObjectTileHighlight::make_rail_tunnel_head(fixme, o.u.rail.tunnel.ddir));
+                add_tile(AddTileIndexDiffCWrap(tile, o.u.rail.tunnel.other_end), ObjectTileHighlight::make_rail_tunnel_head(fixme, ReverseDiagDir(o.u.rail.tunnel.ddir)));
                 break;
             case Item::Type::RAIL_DEPOT:
-                add_tile(otile, ObjectTileHighlight::make_rail_depot(o.u.rail.depot.ddir));
+                add_tile(otile, ObjectTileHighlight::make_rail_depot(fixme, o.u.rail.depot.ddir));
                 break;
             case Item::Type::RAIL_STATION_PART: {
                 auto layout_ptr = AllocaM(byte, (int)o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
@@ -147,13 +148,13 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 IterateStation(otile, o.u.rail.station_part.axis, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len,
                     [&](TileIndex tile) {
                         byte layout = *layout_ptr++;
-                        add_tile(tile, ObjectTileHighlight::make_rail_station(o.u.rail.station_part.axis, layout & ~1));
+                        add_tile(tile, ObjectTileHighlight::make_rail_station(fixme, o.u.rail.station_part.axis, layout & ~1));
                     }
                 );
                 break;
             }
             case Item::Type::RAIL_SIGNAL:
-                add_tile(otile, ObjectTileHighlight::make_rail_signal(o.u.rail.signal.pos, o.u.rail.signal.type, o.u.rail.signal.variant));
+                add_tile(otile, ObjectTileHighlight::make_rail_signal(fixme, o.u.rail.signal.pos, o.u.rail.signal.type, o.u.rail.signal.variant));
                 break;
             case Item::Type::RAIL_STATION:
                 break;

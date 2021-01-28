@@ -31,6 +31,8 @@ public:
     };
 
     Type type;
+    SpriteID palette;
+
     union {
         struct {
             struct {
@@ -57,13 +59,13 @@ public:
         } rail;
     } u;
 
-    ObjectTileHighlight(Type type): type{type} {}
-    static ObjectTileHighlight make_rail_depot(DiagDirection ddir);
-    static ObjectTileHighlight make_rail_track(Track track);
-    static ObjectTileHighlight make_rail_station(Axis axis, byte section);
-    static ObjectTileHighlight make_rail_signal(uint pos, SignalType type, SignalVariant variant);
-    static ObjectTileHighlight make_rail_bridge_head(DiagDirection ddir, BridgeType type);
-    static ObjectTileHighlight make_rail_tunnel_head(DiagDirection ddir);
+    ObjectTileHighlight(Type type, SpriteID palette): type{type}, palette{palette} {}
+    static ObjectTileHighlight make_rail_depot(SpriteID palette, DiagDirection ddir);
+    static ObjectTileHighlight make_rail_track(SpriteID palette, Track track);
+    static ObjectTileHighlight make_rail_station(SpriteID palette, Axis axis, byte section);
+    static ObjectTileHighlight make_rail_signal(SpriteID palette, uint pos, SignalType type, SignalVariant variant);
+    static ObjectTileHighlight make_rail_bridge_head(SpriteID palette, DiagDirection ddir, BridgeType type);
+    static ObjectTileHighlight make_rail_tunnel_head(SpriteID palette, DiagDirection ddir);
 };
 
 class TileIndexDiffCCompare{
