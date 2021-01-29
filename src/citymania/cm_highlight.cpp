@@ -197,7 +197,7 @@ static const DiagDirection _place_depot_extra_dir[12] = {
     DIAGDIR_NW, DIAGDIR_NE, DIAGDIR_NW, DIAGDIR_NE,
 };
 
-static bool CanBuild(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
+bool CanBuild(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
     return DoCommandPInternal(
         tile,
         p1,
@@ -208,6 +208,10 @@ static bool CanBuild(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
         true,  // my_cmd
         true  // estimate_only
     ).Succeeded();
+}
+
+bool CanBuild(const CommandContainer &cc) {
+    return CanBuild(cc.tile, cc.p1, cc.p2, cc.cmd);
 }
 
 void ObjectHighlight::UpdateTiles() {
@@ -430,7 +434,7 @@ static uint GetSaveSlopeZ(uint x, uint y, Track track)
     return GetSlopePixelZ(x, y);
 }
 
-void DrawSignal(const TileInfo *ti, RailType railtype, uint pos, SignalType type, SignalVariant variant) {
+void DrawSignal(SpriteID palette, const TileInfo *ti, RailType railtype, uint pos, SignalType type, SignalVariant variant) {
     // reference: DraawSingleSignal in rail_cmd.cpp
     bool side;
     switch (_settings_game.construction.train_signal_side) {
@@ -480,7 +484,7 @@ void DrawSignal(const TileInfo *ti, RailType railtype, uint pos, SignalType type
         sprite += type * 16 + variant * 64 + image * 2 + condition + (type > SIGTYPE_LAST_NOPBS ? 64 : 0);
     }
 
-    AddSortableSpriteToDraw(sprite, PALETTE_TINT_WHITE, x, y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, GetSaveSlopeZ(x, y, track));
+    AddSortableSpriteToDraw(sprite, palette, x, y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, GetSaveSlopeZ(x, y, track));
 }
 
 // copied from tunnelbridge_cmd.cpp
@@ -495,7 +499,7 @@ static inline const PalSpriteID *GetBridgeSpriteTable(int index, BridgePieces ta
     }
 }
 
-void DrawBridgeHead(const TileInfo *ti, RailType railtype, DiagDirection ddir, BridgeType type) {
+void DrawBridgeHead(SpriteID palette, const TileInfo *ti, RailType railtype, DiagDirection ddir, BridgeType type) {
     auto rti = GetRailTypeInfo(railtype);
     int base_offset = rti->bridge_offset;
     const PalSpriteID *psid;
@@ -507,11 +511,11 @@ void DrawBridgeHead(const TileInfo *ti, RailType railtype, DiagDirection ddir, B
     if (ti->tileh == SLOPE_FLAT) base_offset += 4; // sloped bridge head
     psid = &GetBridgeSpriteTable(type, BRIDGE_PIECE_HEAD)[base_offset];
 
-    AddSortableSpriteToDraw(psid->sprite, PALETTE_TINT_WHITE, ti->x, ti->y, 16, 16, ti->tileh == SLOPE_FLAT ? 0 : 8, ti->z);
+    AddSortableSpriteToDraw(psid->sprite, palette, ti->x, ti->y, 16, 16, ti->tileh == SLOPE_FLAT ? 0 : 8, ti->z);
     // DrawAutorailSelection(ti, (ddir == DIAGDIR_SW || ddir == DIAGDIR_NE ? HT_DIR_X : HT_DIR_Y), PAL_NONE);
 }
 
-void DrawTunnelHead(const TileInfo *ti, RailType railtype, DiagDirection ddir) {
+void DrawTunnelHead(SpriteID palette, const TileInfo *ti, RailType railtype, DiagDirection ddir) {
     auto rti = GetRailTypeInfo(railtype);
 
     SpriteID image;
@@ -525,7 +529,7 @@ void DrawTunnelHead(const TileInfo *ti, RailType railtype, DiagDirection ddir) {
     }
 
     image += ddir * 2;
-    AddSortableSpriteToDraw(image, PALETTE_TINT_WHITE, ti->x, ti->y, 16, 16, 0, ti->z);
+    AddSortableSpriteToDraw(image, palette, ti->x, ti->y, 16, 16, 0, ti->z);
 }
 
 void ObjectHighlight::Draw(const TileInfo *ti) {
@@ -538,20 +542,20 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 break;
             case ObjectTileHighlight::Type::RAIL_TRACK: {
                 auto hs = (HighLightStyle)oth.u.rail.track;
-                DrawAutorailSelection(ti, hs, PAL_NONE);
+                DrawAutorailSelection(ti, hs, GetSelectionColourByTint(oth.palette));
                 break;
             }
             case ObjectTileHighlight::Type::RAIL_STATION:
                 DrawTrainStationSprite(oth.palette, ti, _cur_railtype, oth.u.rail.station.axis, oth.u.rail.station.section);
                 break;
             case ObjectTileHighlight::Type::RAIL_SIGNAL:
-                DrawSignal(ti, _cur_railtype, oth.u.rail.signal.pos, oth.u.rail.signal.type, oth.u.rail.signal.variant);
+                DrawSignal(oth.palette, ti, _cur_railtype, oth.u.rail.signal.pos, oth.u.rail.signal.type, oth.u.rail.signal.variant);
                 break;
             case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
-                DrawBridgeHead(ti, _cur_railtype, oth.u.rail.bridge_head.ddir, oth.u.rail.bridge_head.type);
+                DrawBridgeHead(oth.palette, ti, _cur_railtype, oth.u.rail.bridge_head.ddir, oth.u.rail.bridge_head.type);
                 break;
             case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
-                DrawTunnelHead(ti, _cur_railtype, oth.u.rail.tunnel_head.ddir);
+                DrawTunnelHead(oth.palette, ti, _cur_railtype, oth.u.rail.tunnel_head.ddir);
                 break;
             default:
                 break;
