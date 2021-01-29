@@ -41,6 +41,7 @@ extern RailType _cur_railtype;
 RoadBits FindRailsToConnect(TileIndex tile);
 extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
 extern uint32 _realtime_tick;
+extern void GetStationLayout(byte *layout, int numtracks, int plat_len, const StationSpec *statspec);
 
 struct RailStationGUISettings {
     Axis orientation;                 ///< Currently selected rail station orientation
@@ -98,9 +99,10 @@ ObjectTileHighlight ObjectTileHighlight::make_rail_track(Track track) {
     return oh;
 }
 
-ObjectTileHighlight ObjectTileHighlight::make_rail_station(Axis axis) {
+ObjectTileHighlight ObjectTileHighlight::make_rail_station(Axis axis, byte section) {
     auto oh = ObjectTileHighlight(Type::RAIL_STATION);
     oh.u.rail.station.axis = axis;
+    oh.u.rail.station.section = section;
     return oh;
 }
 
@@ -198,6 +200,9 @@ static const DiagDirection _place_depot_extra_dir[12] = {
 void ObjectHighlight::UpdateTiles() {
     this->tiles.clear();
     switch (this->type) {
+        case Type::NONE:
+            break;
+
         case Type::RAIL_DEPOT: {
             auto dir = this->ddir;
             this->tiles.insert(std::make_pair(this->tile, ObjectTileHighlight::make_rail_depot(dir)));
@@ -211,9 +216,26 @@ void ObjectHighlight::UpdateTiles() {
         }
         case Type::RAIL_STATION: {
             auto ta = OrthogonalTileArea(this->tile, this->end_tile);
-            TILE_AREA_LOOP(tile, ta) {
-                this->tiles.insert({tile, ObjectTileHighlight::make_rail_station(this->axis)});
-            }
+            auto numtracks = ta.w;
+            auto plat_len = ta.h;
+            if (this->axis == AXIS_X) Swap(numtracks, plat_len);
+
+            auto layout_ptr = AllocaM(byte, numtracks * plat_len);
+            GetStationLayout(layout_ptr, numtracks, plat_len, nullptr); // TODO statspec
+
+            auto tile_delta = (this->axis == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
+            TileIndex tile_track = this->tile;
+            do {
+                TileIndex tile = tile_track;
+                int w = plat_len;
+                do {
+                    byte layout = *layout_ptr++;
+                    this->tiles.insert({tile, ObjectTileHighlight::make_rail_station(this->axis, layout & ~1)});
+                    tile += tile_delta;
+                } while (--w);
+                tile_track += tile_delta ^ TileDiffXY(1, 1); // perpendicular to tile_delta
+            } while (--numtracks);
+
             break;
         }
         // case Type::BLUEPRINT:
@@ -221,7 +243,7 @@ void ObjectHighlight::UpdateTiles() {
         //         this->tiles = this->blueprint->GetTiles(this->tile);
         //     break;
         default:
-            break;
+            NOT_REACHED();
     }
 }
 
@@ -265,10 +287,10 @@ void DrawTrainDepotSprite(const TileInfo *ti, RailType railtype, DiagDirection d
     DrawRailTileSeq(ti, dts, TO_INVALID, offset, 0, PALETTE_TINT_WHITE);
 }
 
-void DrawTrainStationSprite(const TileInfo *ti, RailType railtype, Axis axis) {
+void DrawTrainStationSprite(const TileInfo *ti, RailType railtype, Axis axis, byte section) {
     int32 total_offset = 0;
     PaletteID pal = COMPANY_SPRITE_COLOUR(_local_company);
-    const DrawTileSprites *t = GetStationTileLayout(STATION_RAIL, (axis == AXIS_X ? 0 : 1));
+    const DrawTileSprites *t = GetStationTileLayout(STATION_RAIL, section + (axis == AXIS_X ? 0 : 1));
     const RailtypeInfo *rti = nullptr;
 
     if (railtype != INVALID_RAILTYPE) {
@@ -451,7 +473,7 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 break;
             }
             case ObjectTileHighlight::Type::RAIL_STATION:
-                DrawTrainStationSprite(ti, _cur_railtype, oth.u.rail.station.axis);
+                DrawTrainStationSprite(ti, _cur_railtype, oth.u.rail.station.axis, oth.u.rail.station.section);
                 break;
             case ObjectTileHighlight::Type::RAIL_SIGNAL:
                 DrawSignal(ti, _cur_railtype, oth.u.rail.signal.pos, oth.u.rail.signal.type, oth.u.rail.signal.variant);
