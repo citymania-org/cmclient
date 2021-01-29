@@ -647,18 +647,20 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
     if (_highlight_station_to_join) highlight_station = _highlight_station_to_join;
 
     if (draw_selection) {
-        // auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
-        //     auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
-        //     return IsInsideSelectedRectangle(x, y);
-        // });
         // const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
         // auto color = pal[(int)_station_building_status];
         // if (_thd.make_square_red) color = SPR_PALETTE_ZONING_RED;
-        // if (b.first != ZoningBorder::NONE)
-        //     th.add_border(b.first, color);
+        if (_thd.make_square_red) {
+            auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
+                auto x = TileX(t) * TILE_SIZE, y = TileY(t) * TILE_SIZE;
+                return IsInsideSelectedRectangle(x, y);
+            });
+            if (b.first != ZoningBorder::NONE)
+                th.add_border(b.first, SPR_PALETTE_ZONING_RED);
+        }
         if (IsInsideSelectedRectangle(TileX(ti->tile) * TILE_SIZE, TileY(ti->tile) * TILE_SIZE)) {
             // th.ground_pal = GetTintBySelectionColour(color);
-            th.ground_pal = PAL_NONE;
+            th.ground_pal = th.structure_pal = (_thd.make_square_red ? PALETTE_TINT_RED : PAL_NONE);
             return;
         }
     }
@@ -998,7 +1000,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
             _thd.cm_new = ObjectHighlight::make_rail_depot(tile, dir);
         }
         new_drawstyle = HT_RECT;
-    } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.outersize.x > 0) {  // station
+    } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.outersize.x > 0 && !_thd.make_square_red) {  // station
         if (_thd.size.x >= (int)TILE_SIZE && _thd.size.y >= (int)TILE_SIZE) {
             auto start_tile = TileXY(_thd.pos.x / TILE_SIZE, _thd.pos.y / TILE_SIZE);
             auto end_tile = TileXY(
