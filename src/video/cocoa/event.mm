@@ -399,9 +399,9 @@ QZ_MouseButtonEvent(int button, BOOL down)
 			break;
 
 		default: {
-			int button = CM_WKC_MOUSE_OTHER_START + ev.button.button - 3;
-			if (!down && button >= CM_WKC_MOUSE_OTHER_START && button < CM_WKC_MOUSE_OTHER_END) {
-				HandleKeypress(button, 0);
+			int cm_button = CM_WKC_MOUSE_OTHER_START + button - 3;
+			if (!down && cm_button >= CM_WKC_MOUSE_OTHER_START && cm_button < CM_WKC_MOUSE_OTHER_END) {
+				HandleKeypress(cm_button, 0);
 			}
 			break;
 		}
