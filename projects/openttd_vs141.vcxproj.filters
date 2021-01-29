@@ -3258,6 +3258,12 @@
     <ClCompile Include="..\src\citymania\cm_minimap.cpp">
       <Filter>CityMania client</Filter>
     </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_misc_gui.hpp">
+      <Filter>CityMania client</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_misc_gui.cpp">
+      <Filter>CityMania client</Filter>
+    </ClCompile>
     <ClInclude Include="..\src\citymania\cm_station_gui.hpp">
       <Filter>CityMania client</Filter>
     </ClInclude>

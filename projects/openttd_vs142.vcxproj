@@ -1388,6 +1388,8 @@
     <ClCompile Include="..\src\citymania\cm_locations.cpp" />
     <ClInclude Include="..\src\citymania\cm_minimap.hpp" />
     <ClCompile Include="..\src\citymania\cm_minimap.cpp" />
+    <ClInclude Include="..\src\citymania\cm_misc_gui.hpp" />
+    <ClCompile Include="..\src\citymania\cm_misc_gui.cpp" />
     <ClInclude Include="..\src\citymania\cm_station_gui.hpp" />
     <ClCompile Include="..\src\citymania\cm_station_gui.cpp" />
     <ClInclude Include="..\src\newgrf_revisions.hpp" />
