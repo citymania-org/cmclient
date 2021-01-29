@@ -3237,6 +3237,12 @@
     <ClCompile Include="..\src\citymania\cm_base64.cpp">
       <Filter>CityMania client</Filter>
     </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_blueprint.hpp">
+      <Filter>CityMania client</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_blueprint.cpp">
+      <Filter>CityMania client</Filter>
+    </ClCompile>
     <ClInclude Include="..\src\citymania\cm_highlight.hpp">
       <Filter>CityMania client</Filter>
     </ClInclude>
@@ -3256,6 +3262,12 @@
       <Filter>CityMania client</Filter>
     </ClInclude>
     <ClCompile Include="..\src\citymania\cm_minimap.cpp">
+      <Filter>CityMania client</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\citymania\cm_misc_gui.hpp">
+      <Filter>CityMania client</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\citymania\cm_misc_gui.cpp">
       <Filter>CityMania client</Filter>
     </ClCompile>
     <ClInclude Include="..\src\citymania\cm_station_gui.hpp">

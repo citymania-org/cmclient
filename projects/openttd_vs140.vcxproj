@@ -1381,6 +1381,8 @@
     <ClInclude Include="..\src\citymania\extensions\cmext_company.hpp" />
     <ClInclude Include="..\src\citymania\cm_base64.hpp" />
     <ClCompile Include="..\src\citymania\cm_base64.cpp" />
+    <ClInclude Include="..\src\citymania\cm_blueprint.hpp" />
+    <ClCompile Include="..\src\citymania\cm_blueprint.cpp" />
     <ClInclude Include="..\src\citymania\cm_highlight.hpp" />
     <ClCompile Include="..\src\citymania\cm_highlight.cpp" />
     <ClInclude Include="..\src\citymania\cm_highlight_type.hpp" />
@@ -1388,6 +1390,8 @@
     <ClCompile Include="..\src\citymania\cm_locations.cpp" />
     <ClInclude Include="..\src\citymania\cm_minimap.hpp" />
     <ClCompile Include="..\src\citymania\cm_minimap.cpp" />
+    <ClInclude Include="..\src\citymania\cm_misc_gui.hpp" />
+    <ClCompile Include="..\src\citymania\cm_misc_gui.cpp" />
     <ClInclude Include="..\src\citymania\cm_station_gui.hpp" />
     <ClCompile Include="..\src\citymania\cm_station_gui.cpp" />
     <ClInclude Include="..\src\newgrf_revisions.hpp" />
