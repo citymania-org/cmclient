@@ -718,12 +718,12 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 		/* CityMania code start */
 		case WM_MBUTTONUP:
 			ReleaseCapture();
-			HandleKeypress(CM_WKC_MOUSE_MIDDLE);
+			HandleKeypress(CM_WKC_MOUSE_MIDDLE, 0);
 			return 0;
 
 		case WM_XBUTTONUP: {
 			ReleaseCapture();
-			int button = CM_WKC_MOUSE_OTHER_START + ev.button.button - 1;
+			int button = CM_WKC_MOUSE_OTHER_START + GET_XBUTTON_WPARAM(wParam) - 1;
 			if (button >= CM_WKC_MOUSE_OTHER_START && button < CM_WKC_MOUSE_OTHER_END) {
 				HandleKeypress(button, 0);
 			}

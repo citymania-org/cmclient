@@ -403,7 +403,7 @@ QZ_MouseButtonEvent(int button, BOOL down)
 			if (!down && button >= CM_WKC_MOUSE_OTHER_START && button < CM_WKC_MOUSE_OTHER_END) {
 				HandleKeypress(button, 0);
 			}
-			break
+			break;
 		}
 	}
 }
