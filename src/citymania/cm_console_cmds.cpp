@@ -10,6 +10,7 @@
 #include "../fileio_type.h"
 #include "../map_type.h"
 #include "../map_func.h"
+#include "../town.h"
 #include "../tree_map.h"
 
 #include "../safeguards.h"
@@ -105,6 +106,25 @@ bool ConTreeMap(byte argc, char *argv[]) {
     }
 
     free(map);
+    return true;
+}
+
+extern void (*UpdateTownGrowthRate)(Town *t);
+
+bool ConResetTownGrowth(byte argc, char *argv[]) {
+    if (argc == 0) {
+        IConsoleHelp("Loads heighmap-like file and plants trees according to it, values 0-256 ore scaled to 0-4 trees.");
+        IConsoleHelp("Usage: 'cmtreemap <file>'");
+        IConsoleHelp("Default lookup path is in scenario/heightmap in your openttd directory");
+        return true;
+    }
+
+    if (argc > 1) return false;
+
+    for (Town *town : Town::Iterate()) {
+        ClrBit(town->flags, TOWN_CUSTOM_GROWTH);
+        UpdateTownGrowthRate(town);
+    }
     return true;
 }
 

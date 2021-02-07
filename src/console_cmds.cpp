@@ -2214,4 +2214,5 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("cmstep", citymania::ConStep, ConHookNoNetwork);
 	IConsoleCmdRegister("cmexport", citymania::ConExport);
 	IConsoleCmdRegister("cmtreemap", citymania::ConTreeMap, ConHookNoNetwork);
+	IConsoleCmdRegister("cmresettowngrowth", citymania::ConResetTownGrowth, ConHookNoNetwork);
 }
