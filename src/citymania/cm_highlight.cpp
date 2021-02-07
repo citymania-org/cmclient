@@ -993,12 +993,12 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
             _thd.cm_new = ObjectHighlight::make_rail_depot(tile, dir);
         }
         new_drawstyle = HT_RECT;
-    } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.outersize.x > 0 && !_thd.make_square_red) {  // station
+    } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.new_outersize.x > 0 && !_thd.make_square_red) {  // station
         if (_thd.size.x >= (int)TILE_SIZE && _thd.size.y >= (int)TILE_SIZE) {
-            auto start_tile = TileXY(_thd.pos.x / TILE_SIZE, _thd.pos.y / TILE_SIZE);
+            auto start_tile = TileXY(_thd.new_pos.x / TILE_SIZE, _thd.new_pos.y / TILE_SIZE);
             auto end_tile = TileXY(
-                std::min((_thd.pos.x + _thd.size.x) / TILE_SIZE, MapSizeX()) - 1,
-                std::min((_thd.pos.y + _thd.size.y) / TILE_SIZE, MapSizeY()) - 1
+                std::min((_thd.new_pos.x + _thd.new_size.x) / TILE_SIZE, MapSizeX()) - 1,
+                std::min((_thd.new_pos.y + _thd.new_size.y) / TILE_SIZE, MapSizeY()) - 1
             );
             _thd.cm_new = ObjectHighlight::make_rail_station(start_tile, end_tile, _railstation.orientation);
         }
