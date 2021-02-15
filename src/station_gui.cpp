@@ -60,6 +60,13 @@ int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageTyp
 	TileIndex tile = TileVirtXY(_thd.pos.x, _thd.pos.y);
 	CargoTypes cargo_mask = 0;
 	if (_thd.drawstyle == HT_RECT && tile < MapSize()) {
+		/* CityMania code begin */
+		if (supplies) {
+			auto s = citymania::GetStationCoverageProductionText(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad, sct);
+			return DrawStringMultiLine(left, right, top, INT32_MAX, s.c_str());
+		}
+		/* CityMania code end */
+
 		CargoArray cargoes;
 		if (supplies) {
 			cargoes = GetProductionAroundTiles(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad);

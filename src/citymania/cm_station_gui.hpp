@@ -3,6 +3,7 @@
 
 #include "../core/geometry_type.hpp"
 #include "../command_type.h"
+#include "../station_gui.h"
 #include "../station_type.h"
 
 namespace citymania {
@@ -30,6 +31,8 @@ void SelectStationToJoin(const Station *station);
 void MarkCoverageHighlightDirty();
 void CheckRedrawStationCoverage();
 void AbortStationPlacement();
+
+std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int rad, StationCoverageType sct);
 
 } // namespace citymania
 
