@@ -344,21 +344,21 @@ static void FindStationsAroundSelection(const TileArea &location)
     _station_building_status = (adjacent == nullptr ? StationBuildingStatus::NEW : StationBuildingStatus::JOIN);
 }
 
-void CheckRedrawStationCoverage() {
+bool CheckRedrawStationCoverage() {
     // static bool last_ctrl_pressed = false;
     static TileArea last_location;
     static bool last_station_mode = false;
-    static bool last_coverage = false;
+    static bool last_fn_mod = false;
     TileArea location(TileVirtXY(_thd.pos.x, _thd.pos.y), _thd.size.x / TILE_SIZE - 1, _thd.size.y / TILE_SIZE - 1);
     bool station_mode = ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0);
     bool location_changed = (location.tile != last_location.tile ||  location.w != last_location.w || location.h != last_location.h);
     bool mode_changed = (last_station_mode != station_mode);
-    // if (!location_changed && _ctrl_pressed == last_ctrl_pressed && !mode_changed)
-    //     return;
+    if (!location_changed && citymania::_fn_mod == last_fn_mod && !mode_changed)
+        return false;
 
-    // last_ctrl_pressed = _ctrl_pressed;
-    // last_location = location;
-    // last_station_mode = station_mode;
+    last_fn_mod = citymania::_fn_mod;
+    last_location = location;
+    last_station_mode = station_mode;
 
     if (citymania::_fn_mod) {
         Station *st = nullptr;
@@ -375,6 +375,7 @@ void CheckRedrawStationCoverage() {
             FindStationsAroundSelection(location);
         }
     }
+    return true;
 }
 
 

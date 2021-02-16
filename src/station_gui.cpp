@@ -153,10 +153,13 @@ static void FindStationsAroundSelection()
  */
 void CheckRedrawStationCoverage(const Window *w)
 {
+	/* CityMania code begin */
 	if (_settings_client.gui.cm_use_improved_station_join) {
-		citymania::CheckRedrawStationCoverage();
+		if (citymania::CheckRedrawStationCoverage()) w->SetDirty();
 		return;
 	}
+	/* CityMania code end */
+
 	/* Test if ctrl state changed */
 	static bool _last_fn_pressed;
 	if (citymania::_fn_mod != _last_fn_pressed) {
