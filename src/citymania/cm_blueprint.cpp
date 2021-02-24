@@ -46,7 +46,7 @@ void AddCommandCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, Comman
 }
 
 void DoCommandWithCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback callback) {
-    AddCommandCallback(tile, p1, p2, cmd, callback);
+    AddCommandCallback(tile, p1, p2, cmd & CMD_ID_MASK, callback);
     DoCommandP(tile, p1, p2, cmd);
 }
 
@@ -55,7 +55,7 @@ void DoCommandWithCallback(const CommandContainer &cc, CommandCallback callback)
 }
 
 void CommandExecuted(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
-    CommandTuple ct {tile, p1, p2, cmd};
+    CommandTuple ct {tile, p1, p2, cmd & CMD_ID_MASK};
     auto p = _command_callbacks.find(ct);
     if (p == _command_callbacks.end()) return;
     for (auto &cb : p->second)
@@ -614,7 +614,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
                 TileIndex tile = AddTileIndexDiffCWrap(start, item.tdiff);
                 auto cc = GetBlueprintCommand(start, item);
                 DoCommandWithCallback(cc,
-                    [&blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res) {
+                    [blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res) {
                         if (!res) return;
                         StationID station_id = GetStationIndex(tile);
                         for (auto &item : blueprint->items) {
@@ -633,7 +633,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
         }
     }
 
-    auto signal_callback = [start, &blueprint](bool res) {
+    auto signal_callback = [start, blueprint](bool res) {
         for (auto &item : blueprint->items) {
             if (item.type != Blueprint::Item::Type::RAIL_SIGNAL) continue;
             auto cc = GetBlueprintCommand(start, item);
