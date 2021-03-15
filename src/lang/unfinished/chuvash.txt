@@ -358,8 +358,8 @@ STR_MONTH_DEC                                                   :Раштав
 
 # Graph window
 STR_GRAPH_KEY_BUTTON                                            :{BLACK}Уҫӑ
-STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}{} {STRING}
-STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{} {STRING}{}{NUM}
+STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}
+STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
 STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COMMA}
 
@@ -517,6 +517,9 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :расна
 
 
 
+
+
+
 # Custom currency window
 
 
@@ -635,6 +638,8 @@ STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 
 
 # Config errors
+
+# Video initalization errors
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -812,6 +817,7 @@ STR_CONTENT_DETAIL_VERSION                                      :{SILVER}Вер�
 # Content downloading progress window
 
 # Content downloading error messages
+
 
 
 # Transparency settings window
