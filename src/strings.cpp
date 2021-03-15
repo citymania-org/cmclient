@@ -1678,22 +1678,6 @@ static char *GetSpecialNameString(char *buff, int ind, StringParameters *args, c
 		return strecpy(buff, " Transport", last);
 	}
 
-	/* language name? */
-	if (IsInsideMM(ind, (SPECSTR_LANGUAGE_START - 0x70E4), (SPECSTR_LANGUAGE_END - 0x70E4) + 1)) {
-		int i = ind - (SPECSTR_LANGUAGE_START - 0x70E4);
-		return strecpy(buff,
-			&_languages[i] == _current_language ? _current_language->own_name : _languages[i].name, last);
-	}
-
-	/* resolution size? */
-	if (IsInsideBS(ind, (SPECSTR_RESOLUTION_START - 0x70E4), _resolutions.size())) {
-		int i = ind - (SPECSTR_RESOLUTION_START - 0x70E4);
-		buff += seprintf(
-			buff, last, "%ux%u", _resolutions[i].width, _resolutions[i].height
-		);
-		return buff;
-	}
-
 	NOT_REACHED();
 }
 
@@ -2073,12 +2057,11 @@ class LanguagePackGlyphSearcher : public MissingGlyphSearcher {
 
 	void SetFontNames(FreeTypeSettings *settings, const char *font_name, const void *os_data) override
 	{
-#if defined(WITH_FREETYPE) || defined(_WIN32)
+#if defined(WITH_FREETYPE) || defined(_WIN32) || defined(WITH_COCOA)
 		strecpy(settings->small.font,  font_name, lastof(settings->small.font));
 		strecpy(settings->medium.font, font_name, lastof(settings->medium.font));
 		strecpy(settings->large.font,  font_name, lastof(settings->large.font));
 
-		free(settings->medium.os_handle); // Only free one, they are all the same pointer.
 		settings->small.os_handle = os_data;
 		settings->medium.os_handle = os_data;
 		settings->large.os_handle = os_data;
@@ -2104,7 +2087,7 @@ void CheckForMissingGlyphs(bool base_font, MissingGlyphSearcher *searcher)
 	static LanguagePackGlyphSearcher pack_searcher;
 	if (searcher == nullptr) searcher = &pack_searcher;
 	bool bad_font = !base_font || searcher->FindMissingGlyphs();
-#if defined(WITH_FREETYPE) || defined(_WIN32)
+#if defined(WITH_FREETYPE) || defined(_WIN32) || defined(WITH_COCOA)
 	if (bad_font) {
 		/* We found an unprintable character... lets try whether we can find
 		 * a fallback font that can print the characters in the current language. */
@@ -2115,9 +2098,6 @@ void CheckForMissingGlyphs(bool base_font, MissingGlyphSearcher *searcher)
 		_freetype.medium.os_handle = nullptr;
 
 		bad_font = !SetFallbackFont(&_freetype, _langpack.langpack->isocode, _langpack.langpack->winlangid, searcher);
-
-		free(_freetype.mono.os_handle);
-		free(_freetype.medium.os_handle);
 
 		memcpy(&_freetype, &backup, sizeof(backup));
 

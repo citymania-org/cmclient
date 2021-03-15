@@ -48,6 +48,8 @@ struct GoalListWindow : public Window {
 		this->vscroll = this->GetScrollbar(WID_GOAL_SCROLLBAR);
 		this->FinishInitNested(window_number);
 		this->owner = (Owner)this->window_number;
+		NWidgetStacked *wi = this->GetWidget<NWidgetStacked>(WID_GOAL_SELECT_BUTTONS);
+		wi->SetDisplayedPlane(window_number == INVALID_COMPANY ? 1 : 0);
 		this->OnInvalidateData(0);
 	}
 
@@ -65,37 +67,31 @@ struct GoalListWindow : public Window {
 
 	void OnClick(Point pt, int widget, int click_count) override
 	{
-		if (widget != WID_GOAL_LIST) return;
+		switch (widget) {
+			case WID_GOAL_GLOBAL_BUTTON:
+				ShowGoalsList(INVALID_COMPANY);
+				break;
 
-		int y = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_GOAL_LIST, WD_FRAMERECT_TOP);
-		int num = 0;
-		for (const Goal *s : Goal::Iterate()) {
-			if (s->company == INVALID_COMPANY) {
-				y--;
-				if (y == 0) {
-					this->HandleClick(s);
-					return;
+			case WID_GOAL_COMPANY_BUTTON:
+				ShowGoalsList(_local_company);
+				break;
+
+			case WID_GOAL_LIST: {
+				int y = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_GOAL_LIST, WD_FRAMERECT_TOP);
+				for (const Goal *s : Goal::Iterate()) {
+					if (s->company == this->window_number) {
+						if (y == 0) {
+							this->HandleClick(s);
+							return;
+						}
+						y--;
+					}
 				}
-				num++;
+				break;
 			}
-		}
 
-		if (num == 0) {
-			y--; // "None" line.
-			if (y < 0) return;
-		}
-
-		y -= 2; // "Company specific goals:" line.
-		if (y < 0) return;
-
-		for (const Goal *s : Goal::Iterate()) {
-			if (s->company == this->window_number && s->company != INVALID_COMPANY) {
-				y--;
-				if (y == 0) {
-					this->HandleClick(s);
-					return;
-				}
-			}
+			default:
+				break;
 		}
 	}
 
@@ -163,28 +159,21 @@ struct GoalListWindow : public Window {
 	uint CountLines()
 	{
 		/* Count number of (non) awarded goals. */
-		uint num_global = 0;
-		uint num_company = 0;
+		uint num = 0;
 		for (const Goal *s : Goal::Iterate()) {
-			if (s->company == INVALID_COMPANY) {
-				num_global++;
-			} else if (s->company == this->window_number) {
-				num_company++;
-			}
+			if (s->company == this->window_number) num++;
 		}
 
 		/* Count the 'none' lines. */
-		if (num_global  == 0) num_global = 1;
-		if (num_company == 0) num_company = 1;
+		if (num == 0) num = 1;
 
-		/* Global, company and an empty line before the accepted ones. */
-		return 3 + num_global + num_company;
+		return num;
 	}
 
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_GOAL_LIST) return;
-		Dimension d = maxdim(GetStringBoundingBox(STR_GOALS_GLOBAL_TITLE), GetStringBoundingBox(STR_GOALS_COMPANY_TITLE));
+		Dimension d = GetStringBoundingBox(STR_GOALS_NONE);
 
 		resize->height = d.height;
 
@@ -202,26 +191,26 @@ struct GoalListWindow : public Window {
 	}
 
 	/**
-	 * Draws either the global goals or the company goal section.
-	 * This is a helper method for #DrawWidget.
-	 * @param[in,out] pos Vertical line number to draw.
-	 * @param cap Number of lines to draw in the window.
-	 * @param x Left edge of the text line to draw.
-	 * @param y Vertical position of the top edge of the window.
-	 * @param right Right edge of the text line to draw.
-	 * @param global_section Whether the global goals are printed.
+	 * Draws a given column of the goal list.
 	 * @param column Which column to draw.
+	 * @param wid Pointer to the goal list widget.
+	 * @param progress_col_width Width of the progress column.
+	 * @return max width of drawn text
 	 */
-	void DrawPartialGoalList(int &pos, const int cap, int x, int y, int right, uint progress_col_width, bool global_section, GoalColumn column) const
+	void DrawListColumn(GoalColumn column, NWidgetBase *wid, uint progress_col_width) const
 	{
-		if (column == GC_GOAL && IsInsideMM(pos, 0, cap)) DrawString(x, right, y + pos * FONT_HEIGHT_NORMAL, global_section ? STR_GOALS_GLOBAL_TITLE : STR_GOALS_COMPANY_TITLE);
-		pos++;
-
+		/* Get column draw area. */
+		int y = wid->pos_y + WD_FRAMERECT_TOP;
+		int x = wid->pos_x + WD_FRAMERECT_LEFT;
+		int right = x + wid->current_x - WD_FRAMERECT_RIGHT;
 		bool rtl = _current_text_dir == TD_RTL;
+
+		int pos = -this->vscroll->GetPosition();
+		const int cap = this->vscroll->GetCapacity();
 
 		uint num = 0;
 		for (const Goal *s : Goal::Iterate()) {
-			if (global_section ? s->company == INVALID_COMPANY : (s->company == this->window_number && s->company != INVALID_COMPANY)) {
+			if (s->company == this->window_number) {
 				if (IsInsideMM(pos, 0, cap)) {
 					switch (column) {
 						case GC_GOAL: {
@@ -250,36 +239,10 @@ struct GoalListWindow : public Window {
 
 		if (num == 0) {
 			if (column == GC_GOAL && IsInsideMM(pos, 0, cap)) {
-				StringID str = !global_section && this->window_number == INVALID_COMPANY ? STR_GOALS_SPECTATOR_NONE : STR_GOALS_NONE;
-				DrawString(x, right, y + pos * FONT_HEIGHT_NORMAL, str);
+				DrawString(x, right, y + pos * FONT_HEIGHT_NORMAL, STR_GOALS_NONE);
 			}
 			pos++;
 		}
-	}
-
-	/**
-	 * Draws a given column of the goal list.
-	 * @param column Which column to draw.
-	 * @param wid Pointer to the goal list widget.
-	 * @param progress_col_width Width of the progress column.
-	 * @return max width of drawn text
-	 */
-	void DrawListColumn(GoalColumn column, NWidgetBase *wid, uint progress_col_width) const
-	{
-		/* Get column draw area. */
-		int y = wid->pos_y + WD_FRAMERECT_TOP;
-		int x = wid->pos_x + WD_FRAMERECT_LEFT;
-		int right = x + wid->current_x - WD_FRAMERECT_RIGHT;
-
-		int pos = -this->vscroll->GetPosition();
-		const int cap = this->vscroll->GetCapacity();
-
-		/* Draw partial list with global goals. */
-		DrawPartialGoalList(pos, cap, x, y, right, progress_col_width, true, column);
-
-		/* Draw partial list with company goals. */
-		pos++;
-		DrawPartialGoalList(pos, cap, x, y, right, progress_col_width, false, column);
 	}
 
 	void OnPaint() override
@@ -322,6 +285,8 @@ struct GoalListWindow : public Window {
 	{
 		if (!gui_scope) return;
 		this->vscroll->SetCount(this->CountLines());
+		this->SetWidgetDisabledState(WID_GOAL_COMPANY_BUTTON, _local_company == COMPANY_SPECTATOR);
+		this->SetWidgetDirty(WID_GOAL_COMPANY_BUTTON);
 		this->SetWidgetDirty(WID_GOAL_LIST);
 	}
 };
@@ -331,6 +296,10 @@ static const NWidgetPart _nested_goals_list_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_GOAL_CAPTION), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_GOAL_SELECT_BUTTONS),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_GOAL_GLOBAL_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GOALS_GLOBAL_BUTTON, STR_GOALS_GLOBAL_BUTTON_HELPTEXT),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_GOAL_COMPANY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GOALS_COMPANY_BUTTON, STR_GOALS_COMPANY_BUTTON_HELPTEXT),
+		EndContainer(),
 		NWidget(WWT_SHADEBOX, COLOUR_BROWN),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_BROWN),
 		NWidget(WWT_STICKYBOX, COLOUR_BROWN),
@@ -384,10 +353,16 @@ struct GoalQuestionWindow : public Window {
 			if (n == 3) break;
 		}
 		this->buttons = n;
-		assert(this->buttons > 0 && this->buttons < 4);
+		assert(this->buttons < 4);
 
 		this->CreateNestedTree();
-		this->GetWidget<NWidgetStacked>(WID_GQ_BUTTONS)->SetDisplayedPlane(this->buttons - 1);
+		if (this->buttons == 0) {
+			this->GetWidget<NWidgetStacked>(WID_GQ_BUTTONS)->SetDisplayedPlane(SZSP_HORIZONTAL);
+			this->GetWidget<NWidgetStacked>(WID_GQ_BUTTON_SPACER)->SetDisplayedPlane(SZSP_HORIZONTAL);
+		} else {
+			this->GetWidget<NWidgetStacked>(WID_GQ_BUTTONS)->SetDisplayedPlane(this->buttons - 1);
+			this->GetWidget<NWidgetStacked>(WID_GQ_BUTTON_SPACER)->SetDisplayedPlane(0);
+		}
 		this->FinishInitNested(window_number);
 	}
 
@@ -472,7 +447,9 @@ static const NWidgetPart _nested_goal_question_widgets_question[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_LIGHT_BLUE, WID_GQ_BUTTON_3), SetDataTip(STR_BLACK_STRING, STR_NULL), SetFill(1, 0),
 			EndContainer(),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_GQ_BUTTON_SPACER),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+		EndContainer(),
 	EndContainer(),
 };
 
@@ -497,7 +474,9 @@ static const NWidgetPart _nested_goal_question_widgets_info[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_LIGHT_BLUE, WID_GQ_BUTTON_3), SetDataTip(STR_BLACK_STRING, STR_NULL), SetFill(1, 0),
 			EndContainer(),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_GQ_BUTTON_SPACER),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+		EndContainer(),
 	EndContainer(),
 };
 
@@ -522,7 +501,9 @@ static const NWidgetPart _nested_goal_question_widgets_warning[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_GQ_BUTTON_3), SetDataTip(STR_BLACK_STRING, STR_NULL), SetFill(1, 0),
 			EndContainer(),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_GQ_BUTTON_SPACER),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+		EndContainer(),
 	EndContainer(),
 };
 
@@ -547,7 +528,9 @@ static const NWidgetPart _nested_goal_question_widgets_error[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_GQ_BUTTON_3), SetDataTip(STR_BLACK_STRING, STR_NULL), SetFill(1, 0),
 			EndContainer(),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_GQ_BUTTON_SPACER),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+		EndContainer(),
 	EndContainer(),
 };
 
@@ -587,6 +570,6 @@ static WindowDesc _goal_question_list_desc[] = {
  */
 void ShowGoalQuestion(uint16 id, byte type, uint32 button_mask, const char *question)
 {
-	assert(type < GOAL_QUESTION_TYPE_COUNT);
+	assert(type < GQT_END);
 	new GoalQuestionWindow(&_goal_question_list_desc[type], id, type == 3 ? TC_WHITE : TC_BLACK, button_mask, question);
 }

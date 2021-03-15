@@ -29,6 +29,7 @@
 #include "../genworld.h"
 #include "../map_type.h"
 #include "../guitimer_func.h"
+#include "../zoom_func.h"
 
 #include "../widgets/network_widget.h"
 
@@ -338,10 +339,9 @@ protected:
 		if (r == 0) r = b->info.compatible - a->info.compatible;
 		/* Passworded servers should be below unpassworded servers */
 		if (r == 0) r = a->info.use_password - b->info.use_password;
-		/* Finally sort on the number of clients of the server */
-		if (r == 0) return NGameClientSorter(a, b);
 
-		return r < 0;
+		/* Finally sort on the number of clients of the server in reverse order. */
+		return (r != 0) ? r < 0 : NGameClientSorter(b, a);
 	}
 
 	/** Sort the server list */
@@ -1407,7 +1407,7 @@ struct NetworkLobbyWindow : public Window {
 				break;
 
 			case WID_NL_MATRIX:
-				resize->height = WD_MATRIX_TOP + std::max(std::max(GetSpriteSize(SPR_LOCK).height, GetSpriteSize(SPR_PROFIT_LOT).height), (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
+				resize->height = WD_MATRIX_TOP + std::max<uint>(std::max(GetSpriteSize(SPR_LOCK).height, GetSpriteSize(SPR_PROFIT_LOT).height), FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
 				size->height = 10 * resize->height;
 				size->width = ScaleGUITrad(146);
 				break;
@@ -1466,11 +1466,11 @@ struct NetworkLobbyWindow : public Window {
 
 		Dimension lock_size = GetSpriteSize(SPR_LOCK);
 		int lock_width      = lock_size.width;
-		int lock_y_offset   = (this->resize.step_height - lock_size.height) / 2;
+		int lock_y_offset   = (this->resize.step_height - WD_MATRIX_TOP - WD_MATRIX_BOTTOM - lock_size.height) / 2 + WD_MATRIX_TOP;
 
 		Dimension profit_size = GetSpriteSize(SPR_PROFIT_LOT);
 		int profit_width      = lock_size.width;
-		int profit_y_offset   = (this->resize.step_height - profit_size.height) / 2;
+		int profit_y_offset   = (this->resize.step_height - WD_MATRIX_TOP - WD_MATRIX_BOTTOM - profit_size.height) / 2 + WD_MATRIX_TOP;
 
 		uint text_left   = left  + (rtl ? lock_width + profit_width + 4 : 0);
 		uint text_right  = right - (rtl ? 0 : lock_width + profit_width + 4);
@@ -1484,7 +1484,7 @@ struct NetworkLobbyWindow : public Window {
 			byte company = NetworkLobbyFindCompanyIndex(pos);
 			bool income = false;
 			if (this->company == company) {
-				GfxFillRect(r.left + 1, y + 1, r.right - 1, y + this->resize.step_height - 1, PC_GREY); // show highlighted item with a different colour
+				GfxFillRect(r.left + WD_BEVEL_LEFT, y + 1, r.right - WD_BEVEL_RIGHT, y + this->resize.step_height - 2, PC_GREY);  // show highlighted item with a different colour
 			}
 
 			DrawString(text_left, text_right, y + text_offset, this->company_info[company].company_name, TC_BLACK);

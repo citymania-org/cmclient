@@ -537,8 +537,8 @@ STR_MONTH_DEC                                                   :Desember
 # Graph window
 STR_GRAPH_KEY_BUTTON                                            :{BLACK}Lykill
 STR_GRAPH_KEY_TOOLTIP                                           :{BLACK}Sýna lykilmynd
-STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}{} {STRING}
-STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{} {STRING}{}{NUM}
+STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}
+STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
 STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COMMA}
 
@@ -888,8 +888,6 @@ STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari (Gel)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Íranskt ríal (IRR)
 ############ end of currency region
 
-STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Aksturstefna
-STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Aksturstefna bifreiða
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :Vinstristefna
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :Hægristefna
 
@@ -940,6 +938,9 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Smelltu 
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Skjáupplausn
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Stilla skjáupplausn
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :annað
+
+
+
 
 
 
@@ -1573,6 +1574,8 @@ STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... slep
 STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Minnið í tölvunni nægir ekki
 STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Úthlutuðum {BYTES} af skyndiminni fyrir hreyfimyndir mistókst. Skyndiminnið vegna hreyfimynda var minnkað í {BYTES}. Þetta mun minnka reiknigetu OpenTTD. Til minnka minniskröfur getur þú reynt að óvikrja 32bpp grafíkina og/eða minnkað leyfilegt súm
 
+# Video initalization errors
+
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
@@ -2081,6 +2084,7 @@ STR_MISSING_GRAPHICS_SET_MESSAGE                                :{BLACK}OpenTTD 
 STR_MISSING_GRAPHICS_YES_DOWNLOAD                               :{BLACK}Já, sækja grafík
 STR_MISSING_GRAPHICS_NO_QUIT                                    :{BLACK}Nei, hætta í OpenTTD
 
+
 # Transparency settings window
 STR_TRANSPARENCY_CAPTION                                        :{WHITE}Stilling gegnsæjis
 STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Virkja/afvirkja gegnsæji skilta. CTRL+smella til að læsa.
@@ -2544,7 +2548,6 @@ STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Hæð sn
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Hækka snjólínu upp um eitt þrep
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Lækka snjólínu niður um eitt þrep
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Landmyndun:
-STR_MAPGEN_TREE_PLACER                                          :{BLACK}Planta trjám:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Gerð lands:
 STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}Magn sjávar:
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}Ár:
@@ -2828,10 +2831,8 @@ STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT          :{YELLOW} Kaupa 
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{YELLOW}Múta bæjaryfirvöldum til að auka við fylgi þitt, með hættu á þungri refsingu komist það upp.{} Kostnaður: {CURRENCY_LONG}
 
 # Goal window
-STR_GOALS_GLOBAL_TITLE                                          :{BLACK}Markmið allra:
 STR_GOALS_TEXT                                                  :{ORANGE}{STRING}
 STR_GOALS_NONE                                                  :{ORANGE}- Engin -
-STR_GOALS_COMPANY_TITLE                                         :{BLACK}Fyrirtækja markmið:
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Smelltu á markmiðið til að miðja aðal sjónarhornið á iðnað/bæ/reit. Ctrl+smella opnar nýtt sjónarhorn á iðnað/bæ/reit
 
 # Goal question window

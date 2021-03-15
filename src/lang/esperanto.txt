@@ -553,8 +553,8 @@ STR_MONTH_DEC                                                   :Decembro
 # Graph window
 STR_GRAPH_KEY_BUTTON                                            :{BLACK}Ŝlosilo
 STR_GRAPH_KEY_TOOLTIP                                           :{BLACK}Montru ŝlosilon al grafikoj
-STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}{} {STRING}
-STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{} {STRING}{}{NUM}
+STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}
+STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
 STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COMMA}
 
@@ -901,8 +901,6 @@ STR_GAME_OPTIONS_CURRENCY_GEL                                   :Kartvela Lario 
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Irana Rialo (IRR)
 ############ end of currency region
 
-STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Stratveturiloj
-STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Elektu stratflankon kie veturu veturiloj
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :Veturu maldekstre
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :Veturu dekstre
 
@@ -954,11 +952,14 @@ STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Ekrana m
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Elektu uzotan ekranan montrograndon
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :alia
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Interfacgrandeco
 
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Normala
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Duobla grandeco
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Kvaroble grandeco
+
+
 
 
 
@@ -1368,6 +1369,8 @@ STR_CONFIG_SETTING_REVERSE_AT_SIGNALS                           :Aŭtomata dorsf
 STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}Ŝanĝu agord-valoron
 
 # Config errors
+
+# Video initalization errors
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -1858,6 +1861,7 @@ STR_MISSING_GRAPHICS_SET_MESSAGE                                :{BLACK}OpenTTD 
 STR_MISSING_GRAPHICS_YES_DOWNLOAD                               :{BLACK}Jes, elŝuti la grafikojn
 STR_MISSING_GRAPHICS_NO_QUIT                                    :{BLACK}Ne, fermi OpenTTD
 
+
 # Transparency settings window
 STR_TRANSPARENCY_CAPTION                                        :{WHITE}Ebloj por travidebleco
 STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Baskuligi travideblecon de signoj. Ctrl+Klak por ŝlosi
@@ -2277,7 +2281,6 @@ STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Neĝlini
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Altigu la neĝlinion per unu
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Malaltigu la neĝlinion per unu
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Landgenerilo:
-STR_MAPGEN_TREE_PLACER                                          :{BLACK}Arba algoritmo:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Terentipo:
 STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}Marnivelo:
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}Riveroj:

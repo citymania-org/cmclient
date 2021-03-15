@@ -35,7 +35,7 @@ CursorVars _cursor;
 bool _ctrl_pressed;   ///< Is Ctrl pressed?
 bool _alt_pressed;    ///< Is Alt pressed?
 bool _shift_pressed;  ///< Is Shift pressed?
-byte _fast_forward;
+uint16 _game_speed = 100; ///< Current game-speed; 100 is 1x, 0 is infinite.
 bool _left_button_down;     ///< Is left mouse button pressed?
 bool _left_button_clicked;  ///< Is left mouse button clicked?
 bool _right_button_down;    ///< Is right mouse button pressed?
@@ -60,6 +60,10 @@ static ReusableBuffer<uint8> _cursor_backup;
 
 ZoomLevel _gui_zoom; ///< GUI Zoom level
 ZoomLevel _font_zoom; ///< Font Zoom level
+
+int8 _gui_zoom_cfg;  ///< GUI zoom level in config.
+int8 _font_zoom_cfg; ///< Font zoom level in config.
+
 
 /**
  * The rect for repaint.
@@ -1346,6 +1350,9 @@ void ScreenSizeChanged()
 
 void UndrawMouseCursor()
 {
+	/* Don't undraw mouse cursor if it is handled by the video driver. */
+	if (VideoDriver::GetInstance()->UseSystemCursor()) return;
+
 	/* Don't undraw the mouse cursor if the screen is not ready */
 	if (_screen.dst_ptr == nullptr) return;
 
@@ -1359,6 +1366,9 @@ void UndrawMouseCursor()
 
 void DrawMouseCursor()
 {
+	/* Don't draw mouse cursor if it is handled by the video driver. */
+	if (VideoDriver::GetInstance()->UseSystemCursor()) return;
+
 	/* Don't draw the mouse cursor if the screen is not ready */
 	if (_screen.dst_ptr == nullptr) return;
 
@@ -1461,29 +1471,6 @@ void DrawDirtyBlocks()
 	const int h = Align(_screen.height, DIRTY_BLOCK_HEIGHT);
 	int x;
 	int y;
-
-	if (HasModalProgress()) {
-		/* We are generating the world, so release our rights to the map and
-		 * painting while we are waiting a bit. */
-		_modal_progress_paint_mutex.unlock();
-		_modal_progress_work_mutex.unlock();
-
-		/* Wait a while and update _realtime_tick so we are given the rights */
-		if (!IsFirstModalProgressLoop()) CSleep(MODAL_PROGRESS_REDRAW_TIMEOUT);
-		_realtime_tick += MODAL_PROGRESS_REDRAW_TIMEOUT;
-
-		/* Modal progress thread may need blitter access while we are waiting for it. */
-		VideoDriver::GetInstance()->ReleaseBlitterLock();
-		_modal_progress_paint_mutex.lock();
-		VideoDriver::GetInstance()->AcquireBlitterLock();
-		_modal_progress_work_mutex.lock();
-
-		/* When we ended with the modal progress, do not draw the blocks.
-		 * Simply let the next run do so, otherwise we would be loading
-		 * the new state (and possibly change the blitter) when we hold
-		 * the drawing lock, which we must not do. */
-		if (_switch_mode != SM_NONE && !HasModalProgress()) return;
-	}
 
 	y = 0;
 	do {
@@ -1877,4 +1864,37 @@ bool ToggleFullScreen(bool fs)
 void SortResolutions()
 {
 	std::sort(_resolutions.begin(), _resolutions.end());
+}
+
+/**
+ * Resolve GUI zoom level, if auto-suggestion is requested.
+ */
+void UpdateGUIZoom()
+{
+	/* Determine real GUI zoom to use. */
+	if (_gui_zoom_cfg == ZOOM_LVL_CFG_AUTO) {
+		_gui_zoom = static_cast<ZoomLevel>(Clamp(VideoDriver::GetInstance()->GetSuggestedUIZoom(), _settings_client.gui.zoom_min, _settings_client.gui.zoom_max));
+	} else {
+		/* Ensure the gui_zoom is clamped between min/max. Change the
+		 * _gui_zoom_cfg if it isn't, as this is used to visually show the
+		 * selection in the Game Options. */
+		_gui_zoom_cfg = Clamp(_gui_zoom_cfg, _settings_client.gui.zoom_min, _settings_client.gui.zoom_max);
+		_gui_zoom = static_cast<ZoomLevel>(_gui_zoom_cfg);
+	}
+
+	/* Determine real font zoom to use. */
+	if (_font_zoom_cfg == ZOOM_LVL_CFG_AUTO) {
+		_font_zoom = static_cast<ZoomLevel>(VideoDriver::GetInstance()->GetSuggestedUIZoom());
+	} else {
+		_font_zoom = static_cast<ZoomLevel>(_font_zoom_cfg);
+	}
+}
+
+void ChangeGameSpeed(bool enable_fast_forward)
+{
+	if (enable_fast_forward) {
+		_game_speed = _settings_client.gui.fast_forward_speed_limit;
+	} else {
+		_game_speed = 100;
+	}
 }

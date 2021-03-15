@@ -243,14 +243,18 @@ std::pair<ZoningBorder, uint8> CalcTileBorders(TileIndex tile, F getter) {
     return std::make_pair(res, z);
 }
 
+static uint8 _industry_highlight_hash = 0;
+
+void UpdateIndustryHighlight() {
+    _industry_highlight_hash++;
+}
 
 bool CanBuildIndustryOnTileCached(IndustryType type, TileIndex tile) {
     // if (_mz[tile].industry_fund_type != type || !_mz[tile].industry_fund_result) {
-    uint8 tick_hash = (_realtime_tick & 255);
-    if (_mz[tile].industry_fund_update != tick_hash || !_mz[tile].industry_fund_result) {
+    if (_mz[tile].industry_fund_update != _industry_highlight_hash || !_mz[tile].industry_fund_result) {
         bool res = CanBuildIndustryOnTile(type, tile);
         // _mz[tile].industry_fund_type = type;
-        _mz[tile].industry_fund_update = tick_hash;
+        _mz[tile].industry_fund_update = _industry_highlight_hash;
         _mz[tile].industry_fund_result = res ? 2 : 1;
         return res;
     }
@@ -758,6 +762,7 @@ void SetIndustryForbiddenTilesHighlight(IndustryType type) {
         MarkWholeScreenDirty();
     }
     _industry_forbidden_tiles = type;
+    UpdateIndustryHighlight();
 }
 
 
