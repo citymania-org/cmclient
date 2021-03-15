@@ -19,6 +19,7 @@
 #include "linkgraph/linkgraph.h"
 #include "saveload/saveload.h"
 #include "newgrf_profiling.h"
+#include "widgets/statusbar_widget.h"
 
 #include "citymania/cm_main.hpp"
 
@@ -258,7 +259,7 @@ static void OnNewDay()
 	DisasterDailyLoop();
 	IndustryDailyLoop();
 
-	SetWindowWidgetDirty(WC_STATUS_BAR, 0, 0);
+	SetWindowWidgetDirty(WC_STATUS_BAR, 0, WID_S_LEFT);
 	EnginesDailyLoop();
 
 	/* Refresh after possible snowline change */

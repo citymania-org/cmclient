@@ -400,6 +400,11 @@ static void DecodeData(u8vector &data) {
     }
 }
 
+struct FakePersistentStorage {
+    uint32 grfid;
+    uint8 *storage;
+};
+
 void Save_PSAC() {
     /* Write the industries */
     for (PersistentStorage *ps : PersistentStorage::Iterate()) {
@@ -416,28 +421,27 @@ void Save_PSAC() {
         return;
     }
 
-    uint32 grfid = CITYMANIA_GRFID;
-    u8vector data = EncodeData();
-    int n_chunks = (data.size() + 1023) / 1024;
-    data.resize(n_chunks * 1024);
-    DEBUG(sl, 2, "Citybuilder data takes %u bytes", (uint)data.size());
-    uint8 *ptr = &data[0];
-    SaveLoadGlobVarList _desc[] = {
-        SLEG_CONDVAR(grfid, SLE_UINT32, SLV_6, SL_MAX_VERSION),
-        SLEG_CONDARR(*ptr,  SLE_UINT32, 256, SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
-        SLEG_END()
-    };
-
     uint index = 0;
     for (PersistentStorage *ps : PersistentStorage::Iterate()) {
         if (ps->grfid != CITYMANIA_GRFID)
             index = std::max(index, ps->index + 1);
     }
 
-    for (int i = 0; i < n_chunks; i++, ptr += 1024) {
-        _desc[1].address = (void *)ptr;
+    u8vector data = EncodeData();
+    int n_chunks = (data.size() + 1023) / 1024;
+    data.resize(n_chunks * 1024);
+    DEBUG(sl, 2, "Citybuilder data takes %u bytes", (uint)data.size());
+    FakePersistentStorage ps{CITYMANIA_GRFID, &data[0]};
+
+    static const SaveLoad _desc[] = {
+        SLE_CONDVAR(FakePersistentStorage, grfid,    SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
+        SLE_CONDARR(FakePersistentStorage, storage,  SLE_UINT32, 256,           SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
+        SLE_END()
+    };
+
+    for (int i = 0; i < n_chunks; i++, ps.storage += 1024) {
         SlSetArrayIndex(index + i);
-        SlGlobList(_desc);
+        SlObject(&ps, _desc);
     }
 }
 

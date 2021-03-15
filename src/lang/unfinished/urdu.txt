@@ -541,8 +541,8 @@ STR_MONTH_DEC                                                   :دسمبر
 # Graph window
 STR_GRAPH_KEY_BUTTON                                            :{BLACK} کلید
 STR_GRAPH_KEY_TOOLTIP                                           :{BLACK}مخطط کی کلیدیں دکھائیں
-STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}{} {STRING}
-STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{} {STRING}{}{NUM}
+STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}
+STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
 STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COMMA}
 
@@ -884,8 +884,6 @@ STR_GAME_OPTIONS_CURRENCY_ZAR                                   :جنوبی اف
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :اپنی مرضی کی ۔۔۔
 ############ end of currency region
 
-STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}گاڑیاں
-STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}اختیار کریں کہ گاڑی سڑک کی کس طرف چلے
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :بائیں طرف چلے
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :دائیں طرف چلے
 
@@ -936,6 +934,9 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}مُکم
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}اسکرین کی resolution
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}اسکرین کی resolution اختیار کریں
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :دیگر
+
+
+
 
 
 
@@ -1324,6 +1325,8 @@ STR_CONFIG_ERROR_INVALID_GRF_INCOMPATIBLE                       :OpenTTD کے ا
 STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN                            :نا معلوم
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL             :{WHITE}- - - کمپریشن کی سطح '{STRING}' درست نہیں ہے
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE} ۔ ۔ ۔ کھیل بچانے کا یہ فارمیٹ '{STRING}' دستیاب نہیں ہے۔ واپس '{STRING}' پر جا رہے ہیں
+
+# Video initalization errors
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -1824,6 +1827,7 @@ STR_MISSING_GRAPHICS_SET_CAPTION                                :{WHITE}گراف
 STR_MISSING_GRAPHICS_SET_MESSAGE                                :{BLACK}OpenTTD کو چلنے کے لئے ضروری گرافکس نہیں ملے۔ کیا آپ ڈاون لوڈ کر کے انسٹال کرنا چاہتے ہیں؟
 STR_MISSING_GRAPHICS_YES_DOWNLOAD                               :{BLACK}ہاں، گرافکس ڈاون لوڈ کریں
 STR_MISSING_GRAPHICS_NO_QUIT                                    :{BLACK}نہیں، OpenTTD سے باہر نکلو
+
 
 # Transparency settings window
 STR_TRANSPARENCY_CAPTION                                        :{WHITE}Transparency کے اختیارات

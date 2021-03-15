@@ -909,7 +909,7 @@ static bool AircraftController(Aircraft *v)
 					SoundID sfx = AircraftVehInfo(v->engine_type)->sfx;
 					/* For compatibility with old NewGRF we ignore the sfx property, unless a NewGRF-defined sound is used.
 					 * The baseset has only one helicopter sound, so this only limits using plane or cow sounds. */
-					if (sfx < ORIGINAL_SAMPLE_COUNT) sfx = SND_18_HELICOPTER;
+					if (sfx < ORIGINAL_SAMPLE_COUNT) sfx = SND_18_TAKEOFF_HELICOPTER;
 					SndPlayVehicleFx(sfx, v);
 				}
 			}
@@ -1328,19 +1328,22 @@ static void CrashAirplane(Aircraft *v)
 	v->Next()->cargo.Truncate();
 	const Station *st = GetTargetAirportIfValid(v);
 	StringID newsitem;
+	TileIndex vt;
 	if (st == nullptr) {
 		newsitem = STR_NEWS_PLANE_CRASH_OUT_OF_FUEL;
+		vt = TileVirtXY(v->x_pos, v->y_pos);
 	} else {
 		SetDParam(1, st->index);
 		newsitem = STR_NEWS_AIRCRAFT_CRASH;
+		vt = v->tile;
 	}
 
-	AI::NewEvent(v->owner, new ScriptEventVehicleCrashed(v->index, v->tile, st == nullptr ? ScriptEventVehicleCrashed::CRASH_AIRCRAFT_NO_AIRPORT : ScriptEventVehicleCrashed::CRASH_PLANE_LANDING));
-	Game::NewEvent(new ScriptEventVehicleCrashed(v->index, v->tile, st == nullptr ? ScriptEventVehicleCrashed::CRASH_AIRCRAFT_NO_AIRPORT : ScriptEventVehicleCrashed::CRASH_PLANE_LANDING));
+	AI::NewEvent(v->owner, new ScriptEventVehicleCrashed(v->index, vt, st == nullptr ? ScriptEventVehicleCrashed::CRASH_AIRCRAFT_NO_AIRPORT : ScriptEventVehicleCrashed::CRASH_PLANE_LANDING));
+	Game::NewEvent(new ScriptEventVehicleCrashed(v->index, vt, st == nullptr ? ScriptEventVehicleCrashed::CRASH_AIRCRAFT_NO_AIRPORT : ScriptEventVehicleCrashed::CRASH_PLANE_LANDING));
 
-	AddTileNewsItem(newsitem, NT_ACCIDENT, v->tile, nullptr, st != nullptr ? st->index : INVALID_STATION);
+	AddTileNewsItem(newsitem, NT_ACCIDENT, vt, nullptr, st != nullptr ? st->index : INVALID_STATION);
 
-	ModifyStationRatingAround(v->tile, v->owner, -160, 30);
+	ModifyStationRatingAround(vt, v->owner, -160, 30);
 	if (_settings_client.sound.disaster) SndPlayVehicleFx(SND_12_EXPLOSION, v);
 }
 

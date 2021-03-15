@@ -576,8 +576,8 @@ STR_MONTH_DEC                                                   :Joulukuu
 # Graph window
 STR_GRAPH_KEY_BUTTON                                            :{BLACK}Selite
 STR_GRAPH_KEY_TOOLTIP                                           :{BLACK}Näytä kuvaajan selite
-STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}{} {STRING}
-STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{} {STRING}{}{NUM}
+STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}
+STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
 STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COMMA}
 
@@ -695,9 +695,9 @@ STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}Poista m
 STR_HIGHSCORE_TOP_COMPANIES_WHO_REACHED                         :{BIG_FONT}{BLACK}Parhaat yhtiöt, jotka saavuttivat vuoden {NUM}
 STR_HIGHSCORE_TOP_COMPANIES_NETWORK_GAME                        :{BIG_FONT}{BLACK}Yhtiökilpailutaulukko vuonna {NUM}
 STR_HIGHSCORE_POSITION                                          :{BIG_FONT}{BLACK}{COMMA}.
-STR_HIGHSCORE_PERFORMANCE_TITLE_BUSINESSMAN                     :Liikemies
+STR_HIGHSCORE_PERFORMANCE_TITLE_BUSINESSMAN                     :Kaupantekijä
 STR_HIGHSCORE_PERFORMANCE_TITLE_ENTREPRENEUR                    :Yrittäjä
-STR_HIGHSCORE_PERFORMANCE_TITLE_INDUSTRIALIST                   :Teollisuusmies
+STR_HIGHSCORE_PERFORMANCE_TITLE_INDUSTRIALIST                   :Teollisuudenharjoittaja
 STR_HIGHSCORE_PERFORMANCE_TITLE_CAPITALIST                      :Kapitalisti
 STR_HIGHSCORE_PERFORMANCE_TITLE_MAGNATE                         :Magnaatti
 STR_HIGHSCORE_PERFORMANCE_TITLE_MOGUL                           :Moguli
@@ -946,10 +946,10 @@ STR_GAME_OPTIONS_CURRENCY_NTD                                   :Uusi Taiwanin d
 STR_GAME_OPTIONS_CURRENCY_CNY                                   :Kiinan renminbi (CNY)
 STR_GAME_OPTIONS_CURRENCY_HKD                                   :Hongkongin dollari (HKD)
 STR_GAME_OPTIONS_CURRENCY_INR                                   :Intian rupia (INR)
+STR_GAME_OPTIONS_CURRENCY_IDR                                   :Indonesian rupia (IDR)
+STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malesian ringgit (MYR)
 ############ end of currency region
 
-STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Kulkuneuvot
-STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Valitse kummalla puolella tietä ajetaan
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :Vasemmanpuolinen liikenne
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :Oikeanpuolinen liikenne
 
@@ -1000,10 +1000,16 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Valitse 
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Näytön tarkkuus
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Valitse käytettävä näytön tarkkuus
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :muu
+STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}×{NUM}
+
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Laitteistokiihdytys
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Valitse tämä, jos haluat, että OpenTTD yrittää käyttää laitteistokiihdytystä. Muutettu asetus tulee voimaan vasta pelin uudelleenkäynnistyksen jälkeen.
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Asetus tulee voimaan vasta pelin uudelleenkäynnistyksen jälkeen
 
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Käyttöliittymän koko
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Valitse käyttöliittymäelementtien koko
 
+STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_AUTO                         :(tunnista automaattisesti)
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Tavallinen
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Kaksinkertainen
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Nelinkertainen
@@ -1011,9 +1017,18 @@ STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Nelinkertainen
 STR_GAME_OPTIONS_FONT_ZOOM                                      :{BLACK}Kirjasinkoko
 STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_TOOLTIP                     :{BLACK}Valitse käyttöliittymän kirjasinkoko
 
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_AUTO                        :(tunnista automaattisesti)
 STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_NORMAL                      :Normaali
 STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_2X_ZOOM                     :Kaksinkertainen koko
 STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_4X_ZOOM                     :Nelinkertainen koko
+
+STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafiikka
+
+STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Näytön virkistystaajuus
+STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Valitse käytettävä näytönvirkistystaajuus
+STR_GAME_OPTIONS_REFRESH_RATE_OTHER                             :muu
+STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM} Hz
+STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Yli 60 Hz:n virkistystaajuudet saattavat vaikuttaa suorituskykyyn.
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Perusgrafiikat
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Valitse käytettävät perusgrafiikat
@@ -1452,6 +1467,10 @@ STR_CONFIG_SETTING_EXPENSES_LAYOUT                              :Ryhmitä kulut 
 STR_CONFIG_SETTING_EXPENSES_LAYOUT_HELPTEXT                     :Määritä asettelu yhtiön rahoitusikkunalle
 STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS                          :Poista automaattisesti opastimia rautateitä rakennettaessa: {STRING}
 STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS_HELPTEXT                 :Poista automaattisesti opastimia, jos ne ovat rautatien rakentamisen tiellä. Huomaa, että tämä saattaa johtaa junien yhteentörmäyksiin.
+STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT                     :Nopeutetun pelin enimmäisnopeus: {STRING}
+STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT_HELPTEXT            :Yläraja pelin nopeudelle, kun pelin nopeutus on käytössä. 0 = ei rajoitusta (niin nopeasti kuin tietokoneesi sallii). Alle 100 %:n arvot hidastavat peliä. Yläraja riippuu tietokoneesi ominaisuuksista ja voi vaihdella pelistä riippuen.
+STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT_VAL                 :{NUM} % pelin normaalinopeudesta
+STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT_ZERO                :Ei rajoitusta (niin nopeasti kuin koneesi sallii)
 
 STR_CONFIG_SETTING_SOUND_TICKER                                 :Uutiset: {STRING}
 STR_CONFIG_SETTING_SOUND_TICKER_HELPTEXT                        :Toista ääni tiivistetyille uutisviesteille
@@ -1621,10 +1640,10 @@ STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Lineaarinen
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Puiden istutus pelissä: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Määrittää puiden sattumanvaraisen luomisen. Tämä voi vaikuttaa teollisuuslaitoksiin, jotka ovat riippuvaisia puiden kasvamisesta, esimerkiksi sahat.
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_SPREAD               :Puut kasvavat, mutta eivät leviä {RED}(rikkoo sahan)
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_SPREAD               :Puut kasvavat, mutta eivät leviä {RED}(rikkoo subtrooppisen sahan)
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_RAINFOREST       :Puut kasvavat, mutta leviävät vain sademetsissä
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_ALL              :Puut kasvavat ja leviävät kaikkialla
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_GROWTH_NO_SPREAD     :Puut eivät kasva eivätkä leviä {RED}(rikkoo sahan)
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_GROWTH_NO_SPREAD     :Puut eivät kasva eivätkä leviä {RED}(rikkoo subtrooppisen sahan)
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Päätyökalupalkin sijainti: {STRING}
 STR_CONFIG_SETTING_TOOLBAR_POS_HELPTEXT                         :Ruudun yläreunassa olevan työkalupalkin sijainti vaakasuunnassa
@@ -1780,6 +1799,10 @@ STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... ohit
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... ohitetaan musiikkipaketti ”{STRING}”: ei löydetty
 STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Muisti lopussa
 STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}{BYTES} sprite-välimuistin varaaminen epäonnistui. Sprite-välimuistin kooksi valittiin {BYTES}. Tämä heikentää OpenTTD:n suorituskykyä. Vähentääksesi muistivaatimuksia voit kokeilla poistaa käytöstä 32bpp-grafiikat ja/tai lähennystasoja
+
+# Video initalization errors
+STR_VIDEO_DRIVER_ERROR                                          :{WHITE}Virhe näyttöasetuksissa…
+STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}… yhteensopivaa grafiikkasuoritinta ei löytynyt. Laitteistokiihdytystä ei käytetä.
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -2311,6 +2334,7 @@ STR_MISSING_GRAPHICS_SET_MESSAGE                                :{BLACK}OpenTTD 
 STR_MISSING_GRAPHICS_YES_DOWNLOAD                               :{BLACK}Kyllä, lataa grafiiikat
 STR_MISSING_GRAPHICS_NO_QUIT                                    :{BLACK}Ei, sulje OpenTTD
 
+
 # Transparency settings window
 STR_TRANSPARENCY_CAPTION                                        :{WHITE}Läpinäkyvyysasetukset
 STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Muuta kylttien läpinäkyvyyttä. Ctrl+napsautus lukitsee.
@@ -2605,12 +2629,18 @@ STR_FOUND_TOWN_SELECT_LAYOUT_RANDOM                             :{BLACK}Sattuman
 # Fund new industry window
 STR_FUND_INDUSTRY_CAPTION                                       :{WHITE}Rakenna uutta teollisuutta
 STR_FUND_INDUSTRY_SELECTION_TOOLTIP                             :{BLACK}Valitse tehdas listasta
-STR_FUND_INDUSTRY_MANY_RANDOM_INDUSTRIES                        :Monta satunnaista teollisuusaluetta
+STR_FUND_INDUSTRY_MANY_RANDOM_INDUSTRIES                        :{BLACK}Luo satunnaisia tuotantolaitoksia
 STR_FUND_INDUSTRY_MANY_RANDOM_INDUSTRIES_TOOLTIP                :{BLACK}Sijoita teollisuuslaitokset satunnaisesti
+STR_FUND_INDUSTRY_MANY_RANDOM_INDUSTRIES_CAPTION                :{WHITE}Luo satunnaista teollisuutta
+STR_FUND_INDUSTRY_MANY_RANDOM_INDUSTRIES_QUERY                  :{YELLOW}Oletko varma, että haluat luoda monta satunnaista tuotantolaitosta?
 STR_FUND_INDUSTRY_INDUSTRY_BUILD_COST                           :{BLACK}Kustannus: {YELLOW}{CURRENCY_LONG}
 STR_FUND_INDUSTRY_PROSPECT_NEW_INDUSTRY                         :{BLACK}Koekaivaus
 STR_FUND_INDUSTRY_BUILD_NEW_INDUSTRY                            :{BLACK}Rakenna
 STR_FUND_INDUSTRY_FUND_NEW_INDUSTRY                             :{BLACK}Perusta
+STR_FUND_INDUSTRY_REMOVE_ALL_INDUSTRIES                         :{BLACK}Poista kaikki tuotantolaitokset
+STR_FUND_INDUSTRY_REMOVE_ALL_INDUSTRIES_TOOLTIP                 :{BLACK}Poista kaikki kartalla olevat tuotantolaitokset
+STR_FUND_INDUSTRY_REMOVE_ALL_INDUSTRIES_CAPTION                 :{WHITE}Poista kaikki tuotantolaitokset
+STR_FUND_INDUSTRY_REMOVE_ALL_INDUSTRIES_QUERY                   :{YELLOW}Oletko varma, että haluat poistaa kaikki tuotantolaitokset?
 
 # Industry cargoes window
 STR_INDUSTRY_CARGOES_INDUSTRY_CAPTION                           :{WHITE}Teollisuusketju teollisuudelle {STRING}
@@ -2841,6 +2871,8 @@ STR_SAVELOAD_DETAIL_GRFSTATUS                                   :{SILVER}NewGRF:
 STR_SAVELOAD_FILTER_TITLE                                       :{BLACK}Suodatinteksti:
 STR_SAVELOAD_OVERWRITE_TITLE                                    :{WHITE}Tiedosto on jo olemassa
 STR_SAVELOAD_OVERWRITE_WARNING                                  :{YELLOW}Haluatko varmasti korvata olemassaolevan tiedoston?
+STR_SAVELOAD_DIRECTORY                                          :{STRING} (hakemisto)
+STR_SAVELOAD_PARENT_DIRECTORY                                   :{STRING} (ylähakemisto)
 
 STR_SAVELOAD_OSKTITLE                                           :{BLACK}Syötä nimi tallennustiedostolle
 
@@ -2859,7 +2891,6 @@ STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Lumiraja
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Siirrä lumirajaa yksi taso ylöspäin
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Siirrä lumirajaa yksi taso alaspäin
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Maastogeneraattori:
-STR_MAPGEN_TREE_PLACER                                          :{BLACK}Puiden algoritmi:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Maaston tyyppi:
 STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}Merenpinta:
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}Joet:
@@ -3163,26 +3194,27 @@ STR_LOCAL_AUTHORITY_ACTION_NEW_BUILDINGS                        :Rahoita uusia r
 STR_LOCAL_AUTHORITY_ACTION_EXCLUSIVE_TRANSPORT                  :Osta yksinoikeudet kuljetuksiin
 STR_LOCAL_AUTHORITY_ACTION_BRIBE                                :Lahjo viranomaisia
 
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_SMALL_ADVERTISING            :{YELLOW}Käynnistä pieni mainoskampanja hoikutellaksesi lisää matkustajia ja rahtia kuljetuspalveluihisi.{}Kustannus: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_MEDIUM_ADVERTISING           :{YELLOW}Käynnistä keskikokoinen mainoskampanja houkutellaksesi lisää matkustajia ja rahtia kuljetuspalveluihisi.{}Kustannus: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_LARGE_ADVERTISING            :{YELLOW}Käynnistä suuri mainoskampanja hoikutellaksesi lisää matkustajia ja rahtia kuljetuspalveluihisi.{}Kustannus: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_ROAD_RECONSTRUCTION          :{YELLOW}Rahoita tieverkon uudelleenrakentamista. Aiheuttaa huomattavaa häiriötä tieliikenteessä jopa kuuden kuukauden ajan.{}Kustannus: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_STATUE_OF_COMPANY            :{YELLOW}Rakenna patsas yhtiösi kunniaksi.{}Kustannus: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_NEW_BUILDINGS                :{YELLOW}Rahoita uusien liikerakennusten rakentamista kunnassa.{}Kustannus: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT          :{YELLOW}Osta vuoden yksinoikeudet kunnan liikennöintiin. Paikallisviranomaiset eivät salli muiden yhtiöiden kuljettaa matkustajia ja rahtia.{}Kustannus: {CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_SMALL_ADVERTISING            :{YELLOW}Käynnistä pieni mainoskampanja hoikutellaksesi lisää matkustajia ja rahtia kuljetuspalveluihisi.{}Tämä kasvattaa tilapäisesti asemien arvioita pienellä säteellä kunnan keskustan ympärillä.{}Kustannus: {CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_MEDIUM_ADVERTISING           :{YELLOW}Käynnistä keskikokoinen mainoskampanja houkutellaksesi lisää matkustajia ja rahtia kuljetuspalveluihisi.{}Tämä kasvattaa tilapäisesti asemien arvioita keskikokoisella säteellä kunnan keskustan ympärillä.{}Kustannus: {CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_LARGE_ADVERTISING            :{YELLOW}Käynnistä suuri mainoskampanja hoikutellaksesi lisää matkustajia ja rahtia kuljetuspalveluihisi.{}Tämä kasvattaa tilapäisesti asemien arvioita suurella säteellä kunnan keskustan ympärillä.{}Kustannus: {CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_ROAD_RECONSTRUCTION          :{YELLOW}Rahoita tieverkon uudelleenrakentamista.{}Aiheuttaa huomattavaa häiriötä tieliikenteessä jopa kuuden kuukauden ajan.{}Kustannus: {CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_STATUE_OF_COMPANY            :{YELLOW}Rakenna patsas yhtiösi kunniaksi.{}Parantaa asemien arvioita pysyvästi tässä kunnassa.{}Kustannus: {CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_NEW_BUILDINGS                :{YELLOW}Rahoita uusien liikerakennusten rakentamista kunnassa.{}Tämä kiihdyttää tämän kunnan kasvua tilapäisesti.{}Kustannus: {CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT          :{YELLOW}Osta vuoden yksinoikeudet kunnan liikennöintiin.{}Tällöin paikallisviranomaiset eivät salli matkustajien ja rahdin käyttää kilpailijoittesi asemia.{}Kustannus: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{YELLOW}Lahjo viranomaisia lisätäksesi arviotasi; rangaistus voi olla kuitenkin suuri, jos jäät kiinni.{}Kustannus: {CURRENCY_LONG}
 
 # Goal window
 STR_GOALS_CAPTION                                               :{WHITE}{COMPANY} Tavoitteet
 STR_GOALS_SPECTATOR_CAPTION                                     :{WHITE}Maailmanlaajuiset tavoitteet
 STR_GOALS_SPECTATOR                                             :Maailmanlaajuiset tavoitteet
-STR_GOALS_GLOBAL_TITLE                                          :{BLACK}Maailmanlaajuiset tavoitteet:
+STR_GOALS_GLOBAL_BUTTON                                         :{BLACK}Maailmanlaajuiset
+STR_GOALS_GLOBAL_BUTTON_HELPTEXT                                :{BLACK}Näytä maailmanlaajuiset tavoitteet
+STR_GOALS_COMPANY_BUTTON                                        :{BLACK}Yhtiö
+STR_GOALS_COMPANY_BUTTON_HELPTEXT                               :{BLACK}Näytä yhtiön tavoitteet
 STR_GOALS_TEXT                                                  :{ORANGE}{STRING}
 STR_GOALS_NONE                                                  :{ORANGE}- Ei mitään -
-STR_GOALS_SPECTATOR_NONE                                        :{ORANGE}- Ei saatavilla -
 STR_GOALS_PROGRESS                                              :{ORANGE}{STRING}
 STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
-STR_GOALS_COMPANY_TITLE                                         :{BLACK}Yhtiön tavoitteet:
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Keskitä päänäkymä laitokseen/kuntaan/ruutuun napsauttamalla tavoitetta. Ctrl+napsautus avaa uuden näkymäikkunan laitoksen/kunnan/ruudun sijaintiin.
 
 # Goal question window
@@ -3506,7 +3538,7 @@ STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}Poista r
 STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}Poista ryhmä
 STR_GROUP_DELETE_QUERY_TEXT                                     :{WHITE}Haluatko varmasti poistaa tämän ryhmän ja sen alaryhmät?
 
-STR_GROUP_ADD_SHARED_VEHICLE                                    :Lisää jaettuja kulkuneuvoja
+STR_GROUP_ADD_SHARED_VEHICLE                                    :Lisää jaetut kulkuneuvot
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :Poista kaikki kulkuneuvot
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Nimeä ryhmä
@@ -3553,6 +3585,7 @@ STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Moottoro
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Sovitettavissa: {GOLD}{STRING}
 STR_PURCHASE_INFO_ALL_TYPES                                     :Kaikki rahtityypit
 STR_PURCHASE_INFO_NONE                                          :Ei mitään
+STR_PURCHASE_INFO_ENGINES_ONLY                                  :Vain veturit
 STR_PURCHASE_INFO_ALL_BUT                                       :Kaikki paitsi {CARGO_LIST}
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Suurin vetovoima: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Toimintasäde: {GOLD}{COMMA} ruutua
