@@ -180,6 +180,7 @@ public:
 	/* CM */
 	uint8 cm_mdict[64*64*64] = {0};
 	uint8 CM_GetMForRGB(uint8 r, uint8 g, uint8 b) {
+		if (r==0 && g==0 && b==0) return 0;
 		r &= 252; g &= 252; b &= 252;
 		auto key = (r << 10) | (g << 4) | (b >> 2);
 		auto m = this->cm_mdict[key];

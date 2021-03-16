@@ -365,7 +365,7 @@ template <bool Tpal_to_rgb> Sprite *Blitter_32bppOptimized::EncodeInternal(const
 						dst_px->r = src->r;
 						dst_px->g = src->g;
 						dst_px->b = src->b;
-						*dst_n = this->CM_GetMForRGB(src->r, src->g, src->b) | (DEFAULT_BRIGHTNESS << 8);
+						if (Tpal_to_rgb) *dst_n = this->CM_GetMForRGB(src->r, src->g, src->b) | (DEFAULT_BRIGHTNESS << 8);
 					}
 					dst_px++;
 					dst_n++;

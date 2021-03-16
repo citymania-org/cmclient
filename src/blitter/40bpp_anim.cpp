@@ -189,7 +189,7 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 							/* In case the m-channel is zero, only apply the crash remap by darkening the RGB colour. */
 							if (m == 0) {
 								*dst = mode == BM_CRASH_REMAP ? this->MakeDark(*src_px) : *src_px;
-								*anim = 0;
+								*anim = mode == BM_CRASH_REMAP ? 0 : remap[this->CM_GetMForRGB(src_px->r, src_px->g, src_px->b)];
 							} else {
 								uint r = remap[m];
 								if (r != 0) {
