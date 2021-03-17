@@ -21,6 +21,7 @@
 #include "sortlist_type.h"
 #include "core/geometry_func.hpp"
 #include "currency.h"
+#include "zoom_func.h"
 
 #include "widgets/graph_widget.h"
 
@@ -167,15 +168,16 @@ protected:
 	static const int GRAPH_MAX_DATASETS     =  64;
 	static const int GRAPH_BASE_COLOUR      =  GREY_SCALE(2);
 	static const int GRAPH_GRID_COLOUR      =  GREY_SCALE(3);
-	static const int GRAPH_AXIS_LINE_COLOUR =  GREY_SCALE(1);
+	static const int GRAPH_AXIS_LINE_COLOUR =  GREY_SCALE(3);
 	static const int GRAPH_ZERO_LINE_COLOUR =  GREY_SCALE(8);
 	static const int GRAPH_YEAR_LINE_COLOUR =  GREY_SCALE(5);
 	static const int GRAPH_NUM_MONTHS       =  24; ///< Number of months displayed in the graph.
 
-	static const TextColour GRAPH_AXIS_LABEL_COLOUR = TC_BLACK; ///< colour of the graph axis label.
+	// static const TextColour GRAPH_AXIS_LABEL_COLOUR = TC_BLACK; ///< colour of the graph axis label.
+	static const TextColour GRAPH_AXIS_LABEL_COLOUR = (TextColour)((uint)TC_IS_PALETTE_COLOUR | 0xC); ///< colour of the graph axis label.
 
 	static const int MIN_GRAPH_NUM_LINES_Y  =   9; ///< Minimal number of horizontal lines to draw.
-	static const int MIN_GRID_PIXEL_SIZE    =  20; ///< Minimum distance between graph lines.
+	static const int MIN_GRID_PIXEL_SIZE    =  10; ///< Minimum distance between graph lines.
 
 	uint64 excluded_data; ///< bitmask of the datasets that shouldn't be displayed.
 	byte num_dataset;
@@ -297,17 +299,24 @@ protected:
 		static_assert(GRAPH_MAX_DATASETS >= (int)NUM_CARGO && GRAPH_MAX_DATASETS >= (int)MAX_COMPANIES);
 		assert(this->num_vert_lines > 0);
 
+		r.top += ScaleGUITrad(2);
+		r.left += ScaleGUITrad(2);
+		r.bottom -= ScaleGUITrad(2);
+
+		GfxFillRect(r.left, r.top, r.right, r.bottom, GRAPH_BASE_COLOUR);
+
 		/* Rect r will be adjusted to contain just the graph, with labels being
 		 * placed outside the area. */
-		r.top    += 5 + GetCharacterHeight(FS_SMALL) / 2;
-		r.bottom -= (this->month == 0xFF ? 1 : 2) * GetCharacterHeight(FS_SMALL) + 4;
-		r.left   += 9;
-		r.right  -= 5;
+		r.top    += ScaleGUITrad(5) + GetCharacterHeight(FS_SMALL) / 2;
+		r.bottom -= (this->month == 0xFF ? 1 : 2) * GetCharacterHeight(FS_SMALL) + ScaleGUITrad(4);
+		r.left   += ScaleGUITrad(9);
+		r.right  -= ScaleGUITrad(5);
 
+		int grid_size_y = std::max(ScaleGUITrad(MIN_GRID_PIXEL_SIZE), FONT_HEIGHT_NORMAL + ScaleGUITrad(WD_PAR_VSEP_NORMAL));
 		/* Initial number of horizontal lines. */
-		int num_hori_lines = 160 / MIN_GRID_PIXEL_SIZE;
+		int num_hori_lines = ScaleGUITrad(160) / grid_size_y;
 		/* For the rest of the height, the number of horizontal lines will increase more slowly. */
-		int resize = (r.bottom - r.top - 160) / (2 * MIN_GRID_PIXEL_SIZE);
+		int resize = (r.bottom - r.top - ScaleGUITrad(160)) / (2 * grid_size_y);
 		if (resize > 0) num_hori_lines += resize;
 
 		interval = GetValuesInterval(num_hori_lines);
@@ -330,32 +339,35 @@ protected:
 
 		/* Draw the background of the graph itself. */
 		GfxFillRect(r.left, r.top, r.right, r.bottom, GRAPH_BASE_COLOUR);
+		// GfxFillRect(r.left, r.top, r.right, r.bottom, GRAPH_BASE_COLOUR);
 
 		/* Draw the vertical grid lines. */
 
-		/* Don't draw the first line, as that's where the axis will be. */
-		x = r.left + x_sep;
+		// CityMania don't draw for less clutter
+		// /* Don't draw the first line, as that's where the axis will be. */
+		// x = r.left + x_sep;
 
-		for (int i = 0; i < this->num_vert_lines; i++) {
-			GfxFillRect(x, r.top, x, r.bottom, GRAPH_GRID_COLOUR);
-			x += x_sep;
-		}
+		// for (int i = 0; i < this->num_vert_lines; i++) {
+		// 	GfxFillRect(x, r.top, x, r.bottom, GRAPH_GRID_COLOUR);
+		// 	x += x_sep;
+		// }
 
 		/* Draw the horizontal grid lines. */
 		y = r.bottom;
 
+		uint line_rect_sub = (ScaleGUITrad(1) - 1) / 2;
+		uint line_rect_add = ScaleGUITrad(1) / 2;
 		for (int i = 0; i < (num_hori_lines + 1); i++) {
-			GfxFillRect(r.left - 3, y, r.left - 1, y, GRAPH_AXIS_LINE_COLOUR);
-			GfxFillRect(r.left, y, r.right, y, GRAPH_GRID_COLOUR);
+			GfxFillRect(r.left - (i && i != num_hori_lines ? ScaleGUITrad(3) : 0), y - line_rect_sub, r.right, y + line_rect_add, GRAPH_GRID_COLOUR);
 			y -= y_sep;
 		}
 
 		/* Draw the y axis. */
-		GfxFillRect(r.left, r.top, r.left, r.bottom, GRAPH_AXIS_LINE_COLOUR);
+		GfxFillRect(r.left - line_rect_sub, r.top, r.left + line_rect_add, r.bottom, GRAPH_AXIS_LINE_COLOUR);
 
 		/* Draw the x axis. */
 		y = x_axis_offset + r.top;
-		GfxFillRect(r.left, y, r.right, y, GRAPH_ZERO_LINE_COLOUR);
+		GfxFillRect(r.left, y - line_rect_sub, r.right, y + line_rect_add, GRAPH_ZERO_LINE_COLOUR);
 
 		/* Find the largest value that will be drawn. */
 		if (this->num_on_x_axis == 0) return;
@@ -369,10 +381,10 @@ protected:
 
 		y = r.top - GetCharacterHeight(FS_SMALL) / 2;
 
-		for (int i = 0; i < (num_hori_lines + 1); i++) {
+		for (int i = 0; i < num_hori_lines; i++) {
 			SetDParam(0, this->format_str_y_axis);
 			SetDParam(1, y_label);
-			DrawString(r.left - label_width - 4, r.left - 4, y, STR_GRAPH_Y_LABEL, GRAPH_AXIS_LABEL_COLOUR, SA_RIGHT);
+			if (i) DrawString(r.left - label_width - ScaleGUITrad(4), r.left - ScaleGUITrad(4), y, STR_GRAPH_Y_LABEL, GRAPH_AXIS_LABEL_COLOUR, SA_RIGHT);
 
 			y_label -= y_label_separation;
 			y += y_sep;
@@ -387,7 +399,7 @@ protected:
 			for (int i = 0; i < this->num_on_x_axis; i++) {
 				SetDParam(0, month + STR_MONTH_ABBREV_JAN);
 				SetDParam(1, year);
-				DrawStringMultiLine(x, x + x_sep, y, this->height, month == 0 ? STR_GRAPH_X_LABEL_MONTH_YEAR : STR_GRAPH_X_LABEL_MONTH, GRAPH_AXIS_LABEL_COLOUR, SA_LEFT);
+				if (i) DrawStringMultiLine(x - x_sep / 2, x + x_sep / 2, y + ScaleGUITrad(4), this->height, month == 6 ? STR_GRAPH_X_LABEL_MONTH_YEAR : STR_GRAPH_X_LABEL_MONTH, GRAPH_AXIS_LABEL_COLOUR, SA_HOR_CENTER);
 
 				month += 3;
 				if (month >= 12) {
@@ -395,7 +407,7 @@ protected:
 					year++;
 
 					/* Draw a lighter grid line between years. Top and bottom adjustments ensure we don't draw over top and bottom horizontal grid lines. */
-					GfxFillRect(x + x_sep, r.top + 1, x + x_sep, r.bottom - 1, GRAPH_YEAR_LINE_COLOUR);
+					GfxFillRect(x + x_sep - line_rect_sub, r.top + 1, x + x_sep + line_rect_add, r.bottom - 1, GRAPH_YEAR_LINE_COLOUR);
 				}
 				x += x_sep;
 			}
@@ -423,7 +435,10 @@ protected:
 				/* Centre the dot between the grid lines. */
 				x = r.left + (x_sep / 2);
 
-				byte colour  = this->colours[i];
+				Colour c = _cur_palette.palette[this->colours[i]];
+				uint sq1000_brightness = c.r * c.r * 299 + c.g * c.g * 587 + c.b * c.b * 114;
+				if (sq1000_brightness > 64 * 64 * 1000) continue;
+
 				uint prev_x = INVALID_DATAPOINT_POS;
 				uint prev_y = INVALID_DATAPOINT_POS;
 
@@ -442,10 +457,10 @@ protected:
 						y = r.top + x_axis_offset - ((r.bottom - r.top) * datapoint) / (interval_size >> reduce_range);
 
 						/* Draw the point. */
-						GfxFillRect(x - pointoffs1 - 1, y - pointoffs1 - 1, x + pointoffs2 + 1, y + pointoffs2 + 1, PC_DARK_GREY);
+						GfxFillRect(x - pointoffs1 - 1, y - pointoffs1 - 1, x + pointoffs2 + 1, y + pointoffs2 + 1, PC_GREY);
 
 						/* Draw the line connected to the previous point. */
-						if (prev_x != INVALID_DATAPOINT_POS) GfxDrawLine(prev_x, prev_y, x, y, PC_DARK_GREY, linewidth + 2);
+						if (prev_x != INVALID_DATAPOINT_POS) GfxDrawLine(prev_x, prev_y, x, y, PC_GREY, linewidth + 2);
 
 						prev_x = x;
 						prev_y = y;
@@ -562,8 +577,8 @@ public:
 		SetDParam(1, INT64_MAX);
 		uint y_label_width = GetStringBoundingBox(STR_GRAPH_Y_LABEL).width;
 
-		size->width  = std::max<uint>(size->width,  5 + y_label_width + this->num_on_x_axis * (x_label_width + 5) + 9);
-		size->height = std::max<uint>(size->height, 5 + (1 + MIN_GRAPH_NUM_LINES_Y * 2 + (this->month != 0xFF ? 3 : 1)) * FONT_HEIGHT_SMALL + 4);
+		size->width  = std::max<uint>(size->width,  ScaleGUITrad(7) + y_label_width + this->num_on_x_axis * (x_label_width + ScaleGUITrad(5)) + ScaleGUITrad(9));
+		size->height = std::max<uint>(size->height, ScaleGUITrad(8) + (1 + MIN_GRAPH_NUM_LINES_Y * 2 + (this->month != 0xFF ? 3 : 1)) * FONT_HEIGHT_SMALL + ScaleGUITrad(4));
 		size->height = std::max<uint>(size->height, size->width / 3);
 	}
 
