@@ -10,7 +10,13 @@
 #include "../fileio_type.h"
 #include "../map_type.h"
 #include "../map_func.h"
+#include "../strings_func.h"
+#include "../town.h"
 #include "../tree_map.h"
+
+#include <fstream>
+#include <sstream>
+#include <queue>
 
 #include "../safeguards.h"
 
@@ -105,6 +111,89 @@ bool ConTreeMap(byte argc, char *argv[]) {
     }
 
     free(map);
+    return true;
+}
+
+extern void (*UpdateTownGrowthRate)(Town *t);
+
+bool ConResetTownGrowth(byte argc, char *argv[]) {
+    if (argc == 0) {
+        IConsoleHelp("Resets growth to normal for all towns.");
+        IConsoleHelp("Usage: 'cmresettowngrowth'");
+        return true;
+    }
+
+    if (argc > 1) return false;
+
+    for (Town *town : Town::Iterate()) {
+        ClrBit(town->flags, TOWN_CUSTOM_GROWTH);
+        UpdateTownGrowthRate(town);
+    }
+    return true;
+}
+
+struct FakeCommand {
+    Date date;
+    DateFract date_fract;
+    uint company_id;
+    uint cmd;
+    TileIndex tile;
+    uint32 p1, p2;
+    std::string text;
+};
+
+static std::queue<FakeCommand> _fake_commands;
+
+void ExecuteFakeCommands(Date date, DateFract date_fract) {
+    auto backup_company = _current_company;
+    while (!_fake_commands.empty() && _fake_commands.front().date <= date && _fake_commands.front().date_fract <= date_fract) {
+        auto &x = _fake_commands.front();
+        if (x.date < date || x.date_fract < date_fract) IConsolePrintF(CC_WARNING,
+                                                                       "Queued command is earlier than execution date: %d/%hu vs %d/%hu",
+                                                                       x.date, x.date_fract, date, date_fract);
+        fprintf(stderr, "Executing command: company=%u cmd=%u tile=%u p1=%u p2=%u text=%s ... ", x.company_id, x.cmd, x.tile, x.p1, x.p2, x.text.c_str());
+        _current_company = (CompanyID)x.company_id;
+        auto res = DoCommandPInternal(x.tile, x.p1, x.p2, x.cmd | CMD_NETWORK_COMMAND, nullptr, x.text.c_str(), false, false);
+        if (res.Failed()) {
+            if (res.GetErrorMessage() != INVALID_STRING_ID) {
+                char buf[DRAW_STRING_BUFFER];
+                GetString(buf, res.GetErrorMessage(), lastof(buf));
+                fprintf(stderr, "%s\n", buf);
+            } else {
+                fprintf(stderr, "FAIL\n");
+            }
+        } else {
+            fprintf(stderr, "OK\n");
+        }
+        _fake_commands.pop();
+    }
+    _current_company = backup_company;
+}
+
+bool ConLoadCommands(byte argc, char *argv[]) {
+    if (argc == 0) {
+        IConsoleHelp("Loads a file with command queue to execute");
+        IConsoleHelp("Usage: 'cmloadcommands <file>'");
+        return true;
+    }
+
+    if (argc != 2) return false;
+
+    std::queue<FakeCommand>().swap(_fake_commands);  // clear queue
+
+    std::ifstream file(argv[1], std::ios::in);
+    std::string str;
+    while(std::getline(file, str))
+    {
+        std::istringstream ss(str);
+        FakeCommand cmd;
+        ss >> cmd.date >> cmd.date_fract >> cmd.company_id >> cmd.cmd >> cmd.p1 >> cmd.p2 >> cmd.tile;
+        std::string s;
+        ss.get();
+        std::getline(ss, cmd.text);
+        // fprintf(stderr, "PARSED: company=%u cmd=%u tile=%u p1=%u p2=%u text=%s\n", cmd.company_id, cmd.cmd, cmd.tile, cmd.p1, cmd.p2, cmd.text.c_str());
+        _fake_commands.push(cmd);
+    }
     return true;
 }
 

@@ -590,8 +590,6 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 	AI::BroadcastNewEvent(new ScriptEventCompanyNew(c->index), c->index);
 	Game::NewEvent(new ScriptEventCompanyNew(c->index));
 
-	if (!is_ai) UpdateAllTownVirtCoords(); //coloured rating
-
 	return c;
 }
 
@@ -862,6 +860,7 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 				 * all clients so everything is in sync */
 				SyncCompanySettings();
 
+				UpdateAllTownVirtCoords();  // CityMania (for colouring towns)
 				MarkWholeScreenDirty();
 			}
 

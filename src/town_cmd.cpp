@@ -4143,3 +4143,7 @@ void ResetHouses()
 	/* Reset any overrides that have been set. */
 	_house_mngr.ResetOverride();
 }
+
+namespace citymania {
+	auto UpdateTownGrowthRate = &::UpdateTownGrowthRate;
+}

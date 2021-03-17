@@ -8,15 +8,27 @@
 #include "../command_type.h"
 #include "../command_func.h"
 #include "../company_func.h"
+#include "../industry_map.h"
+#include "../industry.h"
 #include "../landscape.h"
 #include "../newgrf_station.h"  // StationClassID
+#include "../newgrf_house.h"  // GetHouseCallback
+#include "../newgrf_cargo.h"  // GetCargoTranslation
+#include "../object_type.h"
+#include "../object_map.h"
 #include "../station_base.h"
+#include "../strings_func.h"  // GetString, SetDParam
 #include "../tilehighlight_type.h"
+#include "../town_map.h"
+#include "../town.h"
 #include "../viewport_func.h"
 #include "../viewport_kdtree.h"
 #include "../window_gui.h"
 #include "../zoom_type.h"
 #include "../zoom_func.h"
+
+#include <sstream>
+
 
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
@@ -332,21 +344,21 @@ static void FindStationsAroundSelection(const TileArea &location)
     _station_building_status = (adjacent == nullptr ? StationBuildingStatus::NEW : StationBuildingStatus::JOIN);
 }
 
-void CheckRedrawStationCoverage() {
+bool CheckRedrawStationCoverage() {
     // static bool last_ctrl_pressed = false;
     static TileArea last_location;
     static bool last_station_mode = false;
-    static bool last_coverage = false;
+    static bool last_fn_mod = false;
     TileArea location(TileVirtXY(_thd.pos.x, _thd.pos.y), _thd.size.x / TILE_SIZE - 1, _thd.size.y / TILE_SIZE - 1);
     bool station_mode = ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0);
     bool location_changed = (location.tile != last_location.tile ||  location.w != last_location.w || location.h != last_location.h);
     bool mode_changed = (last_station_mode != station_mode);
-    // if (!location_changed && _ctrl_pressed == last_ctrl_pressed && !mode_changed)
-    //     return;
+    if (!location_changed && citymania::_fn_mod == last_fn_mod && !mode_changed)
+        return false;
 
-    // last_ctrl_pressed = _ctrl_pressed;
-    // last_location = location;
-    // last_station_mode = station_mode;
+    last_fn_mod = citymania::_fn_mod;
+    last_location = location;
+    last_station_mode = station_mode;
 
     if (citymania::_fn_mod) {
         Station *st = nullptr;
@@ -363,6 +375,7 @@ void CheckRedrawStationCoverage() {
             FindStationsAroundSelection(location);
         }
     }
+    return true;
 }
 
 
@@ -379,5 +392,134 @@ void AbortStationPlacement() {
     SetHighlightStationToJoin(nullptr, false);
 }
 
+
+uint GetMonthlyFrom256Tick(uint amount) {
+    return ((amount * DAY_TICKS * 30) >> 8);
+}
+
+uint GetAverageHouseProduction(byte amount) {
+    static const uint AVG[2][256] = {
+        {0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20, 22, 24, 27, 30, 33, 36, 39, 42, 45, 48, 52, 56, 60, 64, 68, 72, 76, 80, 85, 90, 95, 100, 105, 110, 115, 120, 126, 132, 138, 144, 150, 156, 162, 168, 175, 182, 189, 196, 203, 210, 217, 224, 232, 240, 248, 256, 264, 272, 280, 288, 297, 306, 315, 324, 333, 342, 351, 360, 370, 380, 390, 400, 410, 420, 430, 440, 451, 462, 473, 484, 495, 506, 517, 528, 540, 552, 564, 576, 588, 600, 612, 624, 637, 650, 663, 676, 689, 702, 715, 728, 742, 756, 770, 784, 798, 812, 826, 840, 855, 870, 885, 900, 915, 930, 945, 960, 976, 992, 1008, 1024, 1040, 1056, 1072, 1088, 1105, 1122, 1139, 1156, 1173, 1190, 1207, 1224, 1242, 1260, 1278, 1296, 1314, 1332, 1350, 1368, 1387, 1406, 1425, 1444, 1463, 1482, 1501, 1520, 1540, 1560, 1580, 1600, 1620, 1640, 1660, 1680, 1701, 1722, 1743, 1764, 1785, 1806, 1827, 1848, 1870, 1892, 1914, 1936, 1958, 1980, 2002, 2024, 2047, 2070, 2093, 2116, 2139, 2162, 2185, 2208, 2232, 2256, 2280, 2304, 2328, 2352, 2376, 2400, 2425, 2450, 2475, 2500, 2525, 2550, 2575, 2600, 2626, 2652, 2678, 2704, 2730, 2756, 2782, 2808, 2835, 2862, 2889, 2916, 2943, 2970, 2997, 3024, 3052, 3080, 3108, 3136, 3164, 3192, 3220, 3248, 3277, 3306, 3335, 3364, 3393, 3422, 3451, 3480, 3510, 3540, 3570, 3600, 3630, 3660, 3690, 3720, 3751, 3782, 3813, 3844, 3875, 3906, 3937, 3968, 4000, 4032, 4064, 4096, 4128, 4160, 4192},
+        {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 165, 170, 175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225, 230, 235, 240, 246, 252, 258, 264, 270, 276, 282, 288, 294, 300, 306, 312, 318, 324, 330, 336, 343, 350, 357, 364, 371, 378, 385, 392, 399, 406, 413, 420, 427, 434, 441, 448, 456, 464, 472, 480, 488, 496, 504, 512, 520, 528, 536, 544, 552, 560, 568, 576, 585, 594, 603, 612, 621, 630, 639, 648, 657, 666, 675, 684, 693, 702, 711, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 891, 902, 913, 924, 935, 946, 957, 968, 979, 990, 1001, 1012, 1023, 1034, 1045, 1056, 1068, 1080, 1092, 1104, 1116, 1128, 1140, 1152, 1164, 1176, 1188, 1200, 1212, 1224, 1236, 1248, 1261, 1274, 1287, 1300, 1313, 1326, 1339, 1352, 1365, 1378, 1391, 1404, 1417, 1430, 1443, 1456, 1470, 1484, 1498, 1512, 1526, 1540, 1554, 1568, 1582, 1596, 1610, 1624, 1638, 1652, 1666, 1680, 1695, 1710, 1725, 1740, 1755, 1770, 1785, 1800, 1815, 1830, 1845, 1860, 1875, 1890, 1905, 1920, 1936, 1952, 1968, 1984, 2000, 2016, 2032, 2048, 2064, 2080, 2096, 2112, 2128, 2144, 2160}
+    };
+    if (amount == 0) return 0;
+    switch (_settings_game.economy.town_cargogen_mode) {
+        case TCGM_ORIGINAL:
+            return GetMonthlyFrom256Tick(AVG[EconomyIsInRecession() ? 1 : 0][amount]);
+        case TCGM_BITCOUNT: {
+            uint amt = (amount + 7) / 8;
+            if (EconomyIsInRecession()) amt += 2;
+            else amt *= 2;
+            return GetMonthlyFrom256Tick(amt * 16);
+        }
+        default:
+            NOT_REACHED();
+    }
+    return 0;
+}
+
+static void AddProducedCargo_Town(TileIndex tile, CargoArray &produced)
+{
+    if (!IsHouseCompleted(tile)) return;
+
+    HouseID house_id = GetHouseType(tile);
+    const HouseSpec *hs = HouseSpec::Get(house_id);
+    Town *t = Town::GetByTile(tile);
+
+    if (HasBit(hs->callback_mask, CBM_HOUSE_PRODUCE_CARGO)) {
+        for (uint i = 0; i < 256; i++) {
+            uint16 callback = GetHouseCallback(CBID_HOUSE_PRODUCE_CARGO, i, 0, house_id, t, tile);
+
+            if (callback == CALLBACK_FAILED || callback == CALLBACK_HOUSEPRODCARGO_END) break;
+
+            CargoID cargo = GetCargoTranslation(GB(callback, 8, 7), hs->grf_prop.grffile);
+
+            if (cargo == CT_INVALID) continue;
+            produced[cargo] += GetMonthlyFrom256Tick((uint)GB(callback, 0, 8)) ;
+        }
+    } else {
+        produced[CT_PASSENGERS] += GetAverageHouseProduction(hs->population);
+        produced[CT_MAIL] += GetAverageHouseProduction(hs->mail_generation);
+    }
+}
+
+// Similar to ::GetProductionAroundTiles but counts production total
+CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
+{
+    static const uint HQ_AVG_POP[2][5] = {
+        {48, 64, 84, 128, 384},
+        {48, 64, 84, 128, 256},
+    };
+    static const uint HQ_AVG_MAIL[2][5] = {
+        {36, 48, 64, 96, 264},
+        {36, 48, 64, 96, 196}
+    };
+
+    CargoArray produced;
+    std::set<IndustryID> industries;
+    TileArea ta = TileArea(tile, w, h).Expand(rad);
+
+    /* Loop over all tiles to get the produced cargo of
+     * everything except industries */
+    TILE_AREA_LOOP(tile, ta) {
+        switch (GetTileType(tile)) {
+            case MP_INDUSTRY:
+                industries.insert(GetIndustryIndex(tile));
+                break;
+            case MP_HOUSE:
+                AddProducedCargo_Town(tile, produced);
+                break;
+            case MP_OBJECT:
+                if (IsObjectType(tile, OBJECT_HQ)) {
+                    produced[CT_PASSENGERS] += GetMonthlyFrom256Tick(HQ_AVG_POP[EconomyIsInRecession() ? 1 : 0][GetAnimationFrame(tile)]);
+                    produced[CT_MAIL] += GetMonthlyFrom256Tick(HQ_AVG_MAIL[EconomyIsInRecession() ? 1 : 0][GetAnimationFrame(tile)]);
+                }
+            default: break;
+        }
+    }
+
+    /* Loop over the seen industries. They produce cargo for
+     * anything that is within 'rad' of any one of their tiles.
+     */
+    for (IndustryID industry : industries) {
+        const Industry *i = Industry::Get(industry);
+        /* Skip industry with neutral station */
+        if (i->neutral_station != nullptr && !_settings_game.station.serve_neutral_industries) continue;
+
+        for (uint j = 0; j < lengthof(i->produced_cargo); j++) {
+            CargoID cargo = i->produced_cargo[j];
+            if (cargo != CT_INVALID) produced[cargo] += ((uint)i->last_month_production[j]) << 8;
+        }
+    }
+
+    return produced;
+}
+
+std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int rad, StationCoverageType sct) {
+    auto production = GetProductionAroundTiles(tile, w, h, rad);
+
+    std::ostringstream s;
+    char buffer[DRAW_STRING_BUFFER];
+    GetString(buffer, STR_CM_STATION_BUILD_SUPPLIES, lastof(buffer));
+    s << buffer;
+    bool first = true;
+    for (CargoID i = 0; i < NUM_CARGO; i++) {
+        switch (sct) {
+            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_ALL: break;
+            default: NOT_REACHED();
+        }
+        if (production[i] == 0) continue;
+        if (!first) s << ", ";
+        first = false;
+        SetDParam(0, i);
+        SetDParam(1, production[i] >> 8);
+        // GetString(buffer, STR_CM_STATION_BUILD_SUPPLIES_CARGO, lastof(buffer));
+        GetString(buffer, STR_JUST_CARGO, lastof(buffer));
+        s << buffer;
+    }
+    return s.str();
+}
 
 } // namespace citymania

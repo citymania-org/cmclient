@@ -2983,6 +2983,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 			case MC_HOVER:
 				DispatchHoverEvent(w, x - w->left, y - w->top);
 				break;
+
 		}
 	}
 

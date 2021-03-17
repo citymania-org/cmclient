@@ -70,6 +70,7 @@
 
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_main.hpp"
+#include "citymania/cm_console_cmds.hpp"
 
 #include <stdarg.h>
 #include <system_error>
@@ -1516,6 +1517,7 @@ void GameLoop()
 			 * We do this here, because it means that the network is really closed */
 			NetworkClientConnectGame(NetworkAddress(_settings_client.network.last_host, _settings_client.network.last_port), COMPANY_SPECTATOR);
 		}
+		citymania::ExecuteFakeCommands(_date, _date_fract);
 		/* Singleplayer */
 		StateGameLoop();
 	}

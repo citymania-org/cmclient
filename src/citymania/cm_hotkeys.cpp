@@ -34,6 +34,9 @@ bool _fn_mod = false;
 bool _remove_mod = false;
 bool _estimate_mod = false;
 
+bool _middle_button_down;     ///< Is middle mouse button pressed?
+bool _middle_button_clicked;  ///< Is middle mouse button clicked?
+
 static uint32 _effective_actions = 0;
 static std::optional<std::chrono::steady_clock::time_point> _first_effective_tick = {};
 static std::queue<std::chrono::steady_clock::time_point> _last_actions;
