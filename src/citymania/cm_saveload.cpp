@@ -259,6 +259,9 @@ void DecodeSettings(BitIStream &bs, Settings &settings) {
 uint16 _last_client_version = 1512;
 
 static u8vector EncodeData() {
+    // Skip if game is not initialized for some reason (i.e. -d desync)
+    if (!_game) return {};
+
     BitOStream bs;
     bs.Reserve(1000);
     bs.WriteBytes(SAVEGAME_DATA_FORMAT_VERSION, 2);
