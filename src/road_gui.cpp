@@ -289,7 +289,7 @@ DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
  */
 static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, uint32 cmd)
 {
-	if (_settings_client.gui.cm_use_improved_station_join) {
+	if (citymania::UseImprovedStationJoin()) {
 		citymania::PlaceRoadStop(start_tile, end_tile, p2, cmd);
 		return;
 	}
@@ -1270,7 +1270,7 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 
 		int rad = _settings_game.station.modified_catchment ? ((this->window_class == WC_BUS_STATION) ? CA_BUS : CA_TRUCK) : CA_UNMODIFIED;
 		SetTileSelectSize(1, 1);
-		if (_settings_client.gui.cm_use_improved_station_join || _settings_client.gui.station_show_coverage)
+		if (citymania::UseImprovedStationJoin() || _settings_client.gui.station_show_coverage)
 			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
 
 		/* 'Accepts' and 'Supplies' texts. */

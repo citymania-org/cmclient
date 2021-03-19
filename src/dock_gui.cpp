@@ -198,7 +198,7 @@ struct BuildDocksToolbarWindow : Window {
 
 			case WID_DT_STATION: { // Build station button
 
-				if (_settings_client.gui.cm_use_improved_station_join) {
+				if (citymania::UseImprovedStationJoin()) {
 					citymania::PlaceDock(tile);
 					break;
 				}

@@ -70,6 +70,10 @@ TileArea _highlight_join_area;
 //     _station_select.catchment = catchment;
 // }
 
+bool UseImprovedStationJoin() {
+    return _settings_client.gui.cm_use_improved_station_join && _settings_game.station.distant_join_stations;
+}
+
 void SetStationBiildingStatus(StationBuildingStatus status) {
     _station_building_status = status;
 };

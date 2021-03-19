@@ -154,7 +154,7 @@ static void FindStationsAroundSelection()
 void CheckRedrawStationCoverage(const Window *w)
 {
 	/* CityMania code begin */
-	if (_settings_client.gui.cm_use_improved_station_join) {
+	if (citymania::UseImprovedStationJoin()) {
 		if (citymania::CheckRedrawStationCoverage()) w->SetDirty();
 		return;
 	}

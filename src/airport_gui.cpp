@@ -57,7 +57,7 @@ void CcBuildAirport(const CommandCost &result, TileIndex tile, uint32 p1, uint32
  */
 static void PlaceAirport(TileIndex tile)
 {
-	if (_settings_client.gui.cm_use_improved_station_join) {
+	if (citymania::UseImprovedStationJoin()) {
 		citymania::PlaceAirport(tile);
 		return;
 	}

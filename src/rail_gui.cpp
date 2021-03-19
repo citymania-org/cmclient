@@ -210,7 +210,7 @@ static void PlaceRail_Station(TileIndex tile)
 		VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_STATION);
 		VpSetPlaceSizingLimit(_settings_game.station.station_spread);
 	} else {
-		if (_settings_client.gui.cm_use_improved_station_join) {
+		if (citymania::UseImprovedStationJoin()) {
 			citymania::PlaceRail_Station(tile);
 			return;
 		}
@@ -1077,7 +1077,7 @@ Window *ShowBuildRailToolbar(RailType railtype)
 
 static void HandleStationPlacement(TileIndex start, TileIndex end)
 {
-	if (_settings_client.gui.cm_use_improved_station_join) {
+	if (citymania::UseImprovedStationJoin()) {
 		citymania::HandleStationPlacement(start, end);
 		return;
 	}
@@ -1223,7 +1223,7 @@ public:
 
 		int rad = (_settings_game.station.modified_catchment) ? CA_TRAIN : CA_UNMODIFIED;
 
-		if (_settings_client.gui.cm_use_improved_station_join || _settings_client.gui.station_show_coverage)
+		if (citymania::UseImprovedStationJoin() || _settings_client.gui.station_show_coverage)
 			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
 
 		for (uint bits = 0; bits < 7; bits++) {
