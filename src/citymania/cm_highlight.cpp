@@ -879,13 +879,15 @@ bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
 
     // if (_thd.drawstyle == CM_HT_BLUEPRINT_PLACE) return true;
 
-    if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
+    // if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
+    if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_STATION) {
         // station selector, handled by DrawTileZoning
         return true;
     }
 
-    if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && IsInsideSelectedRectangle(ti->x, ti->y)
-            && _cursor.sprite_seq[0].sprite == GetRailTypeInfo(_cur_railtype)->cursor.depot) {
+    if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
+    // if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && IsInsideSelectedRectangle(ti->x, ti->y)
+    //         && _cursor.sprite_seq[0].sprite == GetRailTypeInfo(_cur_railtype)->cursor.depot) {
         // DrawTileSelectionRect(ti, _thd.make_square_red ? PALETTE_SEL_TILE_RED : PAL_NONE);
 
         // auto rti = GetRailTypeInfo(_cur_railtype);
@@ -983,8 +985,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     //     UpdateBlueprintTileSelection(pt, tile);
     //     new_drawstyle = CM_HT_BLUEPRINT_PLACE;
     // } else
-    if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT &&
-            _cursor.sprite_seq[0].sprite == GetRailTypeInfo(_cur_railtype)->cursor.depot) {
+    if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
         auto dir = _build_depot_direction;
         if (pt.x != -1) {
             if (dir >= DiagDirection::DIAGDIR_END) {
@@ -993,7 +994,8 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
             _thd.cm_new = ObjectHighlight::make_rail_depot(tile, dir);
         }
         new_drawstyle = HT_RECT;
-    } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.new_outersize.x > 0 && !_thd.make_square_red) {  // station
+    // } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.new_outersize.x > 0 && !_thd.make_square_red) {  // station
+    } else if (_thd.select_proc == DDSP_BUILD_STATION) {  // station
         if (_thd.size.x >= (int)TILE_SIZE && _thd.size.y >= (int)TILE_SIZE) {
             auto start_tile = TileXY(_thd.new_pos.x / TILE_SIZE, _thd.new_pos.y / TILE_SIZE);
             auto end_tile = TileXY(

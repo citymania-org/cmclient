@@ -90,6 +90,7 @@ public:
             RAIL_SIGNAL,
             RAIL_BRIDGE,
             RAIL_TUNNEL,
+            ROAD_STOP,
             END,
         };
         Type type;
@@ -126,6 +127,12 @@ public:
                     TileIndexDiffC other_end;
                 } tunnel;
             } rail;
+            struct {
+                struct {
+                    DiagDirection ddir;
+                    TileIndexDiffC other_end;
+                } stop;
+            } road;
         } u;
         Item(Type type, TileIndexDiffC tdiff)
             : type{type}, tdiff{tdiff} {}

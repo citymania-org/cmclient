@@ -543,28 +543,28 @@ struct BuildRoadToolbarWindow : Window {
 		_one_way_button_clicked = false;
 		switch (widget) {
 			case WID_ROT_ROAD_X:
-				HandlePlacePushButton(this, WID_ROT_ROAD_X, this->rti->cursor.road_nwse, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_ROAD_X, this->rti->cursor.road_nwse, HT_RECT, DDSP_PLACE_ROAD_X_DIR);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_ROAD_Y:
-				HandlePlacePushButton(this, WID_ROT_ROAD_Y, this->rti->cursor.road_swne, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_ROAD_Y, this->rti->cursor.road_swne, HT_RECT, DDSP_PLACE_ROAD_Y_DIR);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_AUTOROAD:
-				HandlePlacePushButton(this, WID_ROT_AUTOROAD, this->rti->cursor.autoroad, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_AUTOROAD, this->rti->cursor.autoroad, HT_RECT, DDSP_PLACE_AUTOROAD);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_DEMOLISH:
-				HandlePlacePushButton(this, WID_ROT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_ROT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_DEPOT:
 				if (_game_mode == GM_EDITOR || !CanBuildVehicleInfrastructure(VEH_ROAD, GetRoadTramType(this->roadtype))) return;
-				if (HandlePlacePushButton(this, WID_ROT_DEPOT, this->rti->cursor.depot, HT_RECT)) {
+				if (HandlePlacePushButton(this, WID_ROT_DEPOT, this->rti->cursor.depot, HT_RECT, CM_DDSP_BUILD_ROAD_DEPOT)) {
 					ShowRoadDepotPicker(this);
 					this->last_started_action = widget;
 				}
@@ -572,7 +572,7 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_BUS_STATION:
 				if (_game_mode == GM_EDITOR || !CanBuildVehicleInfrastructure(VEH_ROAD, GetRoadTramType(this->roadtype))) return;
-				if (HandlePlacePushButton(this, WID_ROT_BUS_STATION, SPR_CURSOR_BUS_STATION, HT_RECT)) {
+				if (HandlePlacePushButton(this, WID_ROT_BUS_STATION, SPR_CURSOR_BUS_STATION, HT_RECT, DDSP_BUILD_BUSSTOP)) {
 					ShowRVStationPicker(this, ROADSTOP_BUS);
 					this->last_started_action = widget;
 				}
@@ -580,7 +580,7 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_TRUCK_STATION:
 				if (_game_mode == GM_EDITOR || !CanBuildVehicleInfrastructure(VEH_ROAD, GetRoadTramType(this->roadtype))) return;
-				if (HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, SPR_CURSOR_TRUCK_STATION, HT_RECT)) {
+				if (HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, SPR_CURSOR_TRUCK_STATION, HT_RECT, DDSP_BUILD_TRUCKSTOP)) {
 					ShowRVStationPicker(this, ROADSTOP_TRUCK);
 					this->last_started_action = widget;
 				}
@@ -594,12 +594,12 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_BUILD_BRIDGE:
-				HandlePlacePushButton(this, WID_ROT_BUILD_BRIDGE, SPR_CURSOR_BRIDGE, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_BUILD_BRIDGE, SPR_CURSOR_BRIDGE, HT_RECT, CM_DDSP_BUILD_ROAD_BRIDGE);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_BUILD_TUNNEL:
-				HandlePlacePushButton(this, WID_ROT_BUILD_TUNNEL, this->rti->cursor.tunnel, HT_SPECIAL);
+				HandlePlacePushButton(this, WID_ROT_BUILD_TUNNEL, this->rti->cursor.tunnel, HT_SPECIAL, CM_DDSP_BUILD_ROAD_TUNNEL);
 				this->last_started_action = widget;
 				break;
 
@@ -613,7 +613,7 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_CONVERT_ROAD:
-				HandlePlacePushButton(this, WID_ROT_CONVERT_ROAD, this->rti->cursor.convert_road, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_CONVERT_ROAD, this->rti->cursor.convert_road, HT_RECT, DDSP_CONVERT_ROAD);
 				this->last_started_action = widget;
 				break;
 

@@ -1011,7 +1011,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 
 				this->InvalidateData();
 				if (click_count == 1) {
-					if (this->editable && this->active_sel != nullptr) SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+					if (this->editable && this->active_sel != nullptr) SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_NEWGRF_SELECT);
 					break;
 				}
 				/* With double click, continue */
@@ -1069,7 +1069,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 				}
 				this->InvalidateData();
 				if (click_count == 1) {
-					if (this->editable && this->avail_sel != nullptr && !HasBit(this->avail_sel->flags, GCF_INVALID)) SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+					if (this->editable && this->avail_sel != nullptr && !HasBit(this->avail_sel->flags, GCF_INVALID)) SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_NEWGRF_SELECT);
 					break;
 				}
 				/* With double click, continue */

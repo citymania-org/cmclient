@@ -267,7 +267,7 @@ static CallBackFunction SelectSignTool()
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
-		SetObjectToPlace(SPR_CURSOR_SIGN, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetObjectToPlace(SPR_CURSOR_SIGN, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0, CM_DDSP_PLACE_SIGN);
 		return CBF_PLACE_SIGN;
 	}
 }
@@ -278,7 +278,7 @@ static CallBackFunction BuildCompanyHQ(){
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
-		SetObjectToPlace(SPR_CURSOR_HQ, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetObjectToPlace(SPR_CURSOR_HQ, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0, CM_DDSP_BUILD_HQ);
 		SetTileSelectSize(2, 2);
 		return CBF_BUILD_HQ;
 	}
@@ -1115,7 +1115,7 @@ static CallBackFunction PlaceLandBlockInfo()
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
-		SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0, CM_DDSP_LAND_INFO);
 		return CBF_PLACE_LANDINFO;
 	}
 }

@@ -687,7 +687,7 @@ private:
 			HT_NONE,              // OPOS_CONDITIONAL
 			HT_VEHICLE,           // OPOS_SHARE
 		};
-		SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, goto_place_style[type - 1], this);
+		SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, goto_place_style[type - 1], this, CM_DDSP_PICK_STATION);
 		this->goto_type = type;
 		this->SetWidgetDirty(WID_O_GOTO);
 	}
@@ -1336,7 +1336,7 @@ public:
 
 					if (this->vehicle->owner == _local_company) {
 						/* Activate drag and drop */
-						SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+						SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_SELECT_ORDER);
 					}
 				}
 

@@ -259,32 +259,32 @@ struct TerraformToolbarWindow : Window {
 
 		switch (widget) {
 			case WID_TT_LOWER_LAND: // Lower land button
-				HandlePlacePushButton(this, WID_TT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT | HT_DIAGONAL, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_RAISE_LAND: // Raise land button
-				HandlePlacePushButton(this, WID_TT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT | HT_DIAGONAL, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_LEVEL_LAND: // Level land button
-				HandlePlacePushButton(this, WID_TT_LEVEL_LAND, SPR_CURSOR_LEVEL_LAND, HT_POINT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_LEVEL_LAND, SPR_CURSOR_LEVEL_LAND, HT_POINT | HT_DIAGONAL, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_DEMOLISH: // Demolish aka dynamite button
-				HandlePlacePushButton(this, WID_TT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_DEMOLISH_TREES: // Demolish aka dynamite button
-				HandlePlacePushButton(this, WID_TT_DEMOLISH_TREES, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_DEMOLISH_TREES, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH_TREES);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_BUY_LAND: // Buy land button
-				HandlePlacePushButton(this, WID_TT_BUY_LAND, SPR_CURSOR_BUY_LAND, HT_RECT);
+				HandlePlacePushButton(this, WID_TT_BUY_LAND, SPR_CURSOR_BUY_LAND, HT_RECT, CM_DDSP_BUY_LAND);
 				this->last_user_action = widget;
 				break;
 
@@ -293,7 +293,7 @@ struct TerraformToolbarWindow : Window {
 				break;
 
 			case WID_TT_PLACE_SIGN: // Place sign button
-				HandlePlacePushButton(this, WID_TT_PLACE_SIGN, SPR_CURSOR_SIGN, HT_RECT);
+				HandlePlacePushButton(this, WID_TT_PLACE_SIGN, SPR_CURSOR_SIGN, HT_RECT, CM_DDSP_PLACE_SIGN);
 				this->last_user_action = widget;
 				break;
 
@@ -670,32 +670,32 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 
 		switch (widget) {
 			case WID_ETT_DEMOLISH: // Demolish aka dynamite button
-				HandlePlacePushButton(this, WID_ETT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_ETT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_LOWER_LAND: // Lower land button
-				HandlePlacePushButton(this, WID_ETT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT);
+				HandlePlacePushButton(this, WID_ETT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_RAISE_LAND: // Raise land button
-				HandlePlacePushButton(this, WID_ETT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT);
+				HandlePlacePushButton(this, WID_ETT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_LEVEL_LAND: // Level land button
-				HandlePlacePushButton(this, WID_ETT_LEVEL_LAND, SPR_CURSOR_LEVEL_LAND, HT_POINT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_ETT_LEVEL_LAND, SPR_CURSOR_LEVEL_LAND, HT_POINT | HT_DIAGONAL, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_PLACE_ROCKS: // Place rocks button
-				HandlePlacePushButton(this, WID_ETT_PLACE_ROCKS, SPR_CURSOR_ROCKY_AREA, HT_RECT);
+				HandlePlacePushButton(this, WID_ETT_PLACE_ROCKS, SPR_CURSOR_ROCKY_AREA, HT_RECT, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_PLACE_DESERT: // Place desert button (in tropical climate)
-				HandlePlacePushButton(this, WID_ETT_PLACE_DESERT, SPR_CURSOR_DESERT, HT_RECT);
+				HandlePlacePushButton(this, WID_ETT_PLACE_DESERT, SPR_CURSOR_DESERT, HT_RECT, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 

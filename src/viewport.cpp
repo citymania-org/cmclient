@@ -3741,9 +3741,9 @@ EventState VpHandlePlaceSizingDrag()
  * @param mode Mode to perform.
  * @param w %Window requesting the mode change.
  */
-void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Window *w)
+void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Window *w, ViewportDragDropSelectionProcess cm_process)
 {
-	SetObjectToPlace(icon, pal, mode, w->window_class, w->window_number);
+	SetObjectToPlace(icon, pal, mode, w->window_class, w->window_number, cm_process);
 }
 
 #include "table/animcursors.h"
@@ -3756,7 +3756,7 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
  * @param window_class %Window class of the window requesting the mode change.
  * @param window_num Number of the window in its class requesting the mode change.
  */
-void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num)
+void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num, ViewportDragDropSelectionProcess cm_process)
 {
 	if (_thd.window_class != WC_INVALID) {
 		/* Undo clicking on button and drag & drop */
@@ -3785,6 +3785,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 	}
 
 	_thd.place_mode = mode;
+	_thd.select_proc = cm_process;
 	_thd.window_class = window_class;
 	_thd.window_number = window_num;
 
@@ -3803,7 +3804,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 /** Reset the cursor and mouse mode handling back to default (normal cursor, only clicking in windows). */
 void ResetObjectToPlace()
 {
-	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0, CM_DDSP_NONE);
 }
 
 Point GetViewportStationMiddle(const ViewPort *vp, const Station *st)

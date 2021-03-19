@@ -717,7 +717,7 @@ public:
 
 				this->group_sel = this->vli.index = this->groups[id_g]->index;
 
-				SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+				SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_GROUP);
 
 				this->vehicles.ForceRebuild();
 				this->SetDirty();
@@ -737,7 +737,7 @@ public:
 					this->SelectGroup(v->group_id);
 				}
 
-				SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+				SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_GROUP);
 				SetMouseCursorVehicle(v, EIT_IN_LIST);
 				_cursor.vehchain = true;
 

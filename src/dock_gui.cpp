@@ -135,39 +135,39 @@ struct BuildDocksToolbarWindow : Window {
 	{
 		switch (widget) {
 			case WID_DT_CANAL: // Build canal button
-				HandlePlacePushButton(this, WID_DT_CANAL, SPR_CURSOR_CANAL, HT_RECT);
+				HandlePlacePushButton(this, WID_DT_CANAL, SPR_CURSOR_CANAL, HT_RECT, CM_DDSP_BUILD_CANNAL);
 				break;
 
 			case WID_DT_LOCK: // Build lock button
-				HandlePlacePushButton(this, WID_DT_LOCK, SPR_CURSOR_LOCK, HT_SPECIAL);
+				HandlePlacePushButton(this, WID_DT_LOCK, SPR_CURSOR_LOCK, HT_SPECIAL, CM_DDSP_BUILD_LOCK);
 				break;
 
 			case WID_DT_DEMOLISH: // Demolish aka dynamite button
-				HandlePlacePushButton(this, WID_DT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_DT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				break;
 
 			case WID_DT_DEPOT: // Build depot button
 				if (!CanBuildVehicleInfrastructure(VEH_SHIP)) return;
-				if (HandlePlacePushButton(this, WID_DT_DEPOT, SPR_CURSOR_SHIP_DEPOT, HT_RECT)) ShowBuildDocksDepotPicker(this);
+				if (HandlePlacePushButton(this, WID_DT_DEPOT, SPR_CURSOR_SHIP_DEPOT, HT_RECT, CM_DDSP_BUILD_SHIP_DEPOT)) ShowBuildDocksDepotPicker(this);
 				break;
 
 			case WID_DT_STATION: // Build station button
 				if (!CanBuildVehicleInfrastructure(VEH_SHIP)) return;
-				if (HandlePlacePushButton(this, WID_DT_STATION, SPR_CURSOR_DOCK, HT_SPECIAL)) ShowBuildDockStationPicker(this);
+				if (HandlePlacePushButton(this, WID_DT_STATION, SPR_CURSOR_DOCK, HT_SPECIAL, CM_DDSP_BUILD_DOCK)) ShowBuildDockStationPicker(this);
 				break;
 
 			case WID_DT_BUOY: // Build buoy button
 				if (!CanBuildVehicleInfrastructure(VEH_SHIP)) return;
-				HandlePlacePushButton(this, WID_DT_BUOY, SPR_CURSOR_BUOY, HT_RECT);
+				HandlePlacePushButton(this, WID_DT_BUOY, SPR_CURSOR_BUOY, HT_RECT, CM_DDSP_BUILD_BUOY);
 				break;
 
 			case WID_DT_RIVER: // Build river button (in scenario editor)
 				if (_game_mode != GM_EDITOR) return;
-				HandlePlacePushButton(this, WID_DT_RIVER, SPR_CURSOR_RIVER, HT_RECT);
+				HandlePlacePushButton(this, WID_DT_RIVER, SPR_CURSOR_RIVER, HT_RECT, CM_DDSP_BUILD_RIVER);
 				break;
 
 			case WID_DT_BUILD_AQUEDUCT: // Build aqueduct button
-				HandlePlacePushButton(this, WID_DT_BUILD_AQUEDUCT, SPR_CURSOR_AQUEDUCT, HT_SPECIAL);
+				HandlePlacePushButton(this, WID_DT_BUILD_AQUEDUCT, SPR_CURSOR_AQUEDUCT, HT_SPECIAL, CM_DDSP_BUILD_AQUEDUCT);
 				break;
 
 			default: return;

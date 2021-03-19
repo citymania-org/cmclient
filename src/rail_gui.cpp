@@ -628,27 +628,27 @@ struct BuildRailToolbarWindow : Window {
 
 		switch (widget) {
 			case WID_RAT_BUILD_NS:
-				HandlePlacePushButton(this, WID_RAT_BUILD_NS, GetRailTypeInfo(_cur_railtype)->cursor.rail_ns, HT_LINE | HT_DIR_VL);
+				HandlePlacePushButton(this, WID_RAT_BUILD_NS, GetRailTypeInfo(_cur_railtype)->cursor.rail_ns, HT_LINE | HT_DIR_VL, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_X:
-				HandlePlacePushButton(this, WID_RAT_BUILD_X, GetRailTypeInfo(_cur_railtype)->cursor.rail_swne, HT_LINE | HT_DIR_X);
+				HandlePlacePushButton(this, WID_RAT_BUILD_X, GetRailTypeInfo(_cur_railtype)->cursor.rail_swne, HT_LINE | HT_DIR_X, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_EW:
-				HandlePlacePushButton(this, WID_RAT_BUILD_EW, GetRailTypeInfo(_cur_railtype)->cursor.rail_ew, HT_LINE | HT_DIR_HL);
+				HandlePlacePushButton(this, WID_RAT_BUILD_EW, GetRailTypeInfo(_cur_railtype)->cursor.rail_ew, HT_LINE | HT_DIR_HL, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_Y:
-				HandlePlacePushButton(this, WID_RAT_BUILD_Y, GetRailTypeInfo(_cur_railtype)->cursor.rail_nwse, HT_LINE | HT_DIR_Y);
+				HandlePlacePushButton(this, WID_RAT_BUILD_Y, GetRailTypeInfo(_cur_railtype)->cursor.rail_nwse, HT_LINE | HT_DIR_Y, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_AUTORAIL:
-				HandlePlacePushButton(this, WID_RAT_AUTORAIL, GetRailTypeInfo(_cur_railtype)->cursor.autorail, HT_RAIL);
+				HandlePlacePushButton(this, WID_RAT_AUTORAIL, GetRailTypeInfo(_cur_railtype)->cursor.autorail, HT_RAIL, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
@@ -675,7 +675,7 @@ struct BuildRailToolbarWindow : Window {
 					do_open = !was_open;
 				}
 				/* close/open the tool */
-				if (was_open != do_open) HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, HT_RAIL | HT_POLY);
+				if (was_open != do_open) HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, HT_RAIL | HT_POLY, DDSP_PLACE_RAIL);
 				/* set snapping mode */
 				if (do_open) SetRailSnapMode(do_snap ? RSM_SNAP_TO_RAIL : RSM_NO_SNAP);
 
@@ -685,12 +685,12 @@ struct BuildRailToolbarWindow : Window {
 			}
 
 			case WID_RAT_DEMOLISH:
-				HandlePlacePushButton(this, WID_RAT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_RAT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_DEPOT:
-				if (HandlePlacePushButton(this, WID_RAT_BUILD_DEPOT, GetRailTypeInfo(_cur_railtype)->cursor.depot, HT_RECT | (HighLightStyle)_build_depot_direction)) {
+				if (HandlePlacePushButton(this, WID_RAT_BUILD_DEPOT, GetRailTypeInfo(_cur_railtype)->cursor.depot, HT_RECT | (HighLightStyle)_build_depot_direction, CM_DDSP_BUILD_RAIL_DEPOT)) {
 					citymania::ResetRotateAutodetection();
 					ShowBuildTrainDepotPicker(this);
 					this->last_user_action = widget;
@@ -700,7 +700,7 @@ struct BuildRailToolbarWindow : Window {
 			case WID_RAT_BUILD_WAYPOINT:
 				this->last_user_action = widget;
 				_waypoint_count = StationClass::Get(STAT_CLASS_WAYP)->GetSpecCount();
-				if (HandlePlacePushButton(this, WID_RAT_BUILD_WAYPOINT, SPR_CURSOR_WAYPOINT, HT_RECT) && _waypoint_count > 1) {
+				if (HandlePlacePushButton(this, WID_RAT_BUILD_WAYPOINT, SPR_CURSOR_WAYPOINT, HT_RECT, CM_DDSP_BUILD_WAYPOINT) && _waypoint_count > 1) {
 					ShowBuildWaypointPicker(this);
 				}
 				break;
@@ -714,12 +714,12 @@ struct BuildRailToolbarWindow : Window {
 					if (was_open) ResetObjectToPlace();
 					if (!was_open || dragdrop != _settings_client.gui.station_dragdrop) {
 						_settings_client.gui.station_dragdrop = dragdrop;
-						if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT))
+						if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT, DDSP_BUILD_STATION))
 							ShowStationBuilder(this);
 					}
 					this->last_user_action = WID_RAT_BUILD_STATION;
 				} else { /* button */
-					if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT)) {
+					if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT, DDSP_BUILD_STATION)) {
 						ShowStationBuilder(this);
 						this->last_user_action = WID_RAT_BUILD_STATION;
 					}
@@ -729,7 +729,7 @@ struct BuildRailToolbarWindow : Window {
 
 			case WID_RAT_BUILD_SIGNALS: {
 				this->last_user_action = widget;
-				bool started = HandlePlacePushButton(this, WID_RAT_BUILD_SIGNALS, ANIMCURSOR_BUILDSIGNALS, HT_RECT);
+				bool started = HandlePlacePushButton(this, WID_RAT_BUILD_SIGNALS, ANIMCURSOR_BUILDSIGNALS, HT_RECT, DDSP_BUILD_SIGNALS);
 				if (started && _settings_client.gui.enable_signal_gui != citymania::_fn_mod) {
 					ShowSignalBuilder(this);
 				}
@@ -737,12 +737,12 @@ struct BuildRailToolbarWindow : Window {
 			}
 
 			case WID_RAT_BUILD_BRIDGE:
-				HandlePlacePushButton(this, WID_RAT_BUILD_BRIDGE, SPR_CURSOR_BRIDGE, HT_RECT);
+				HandlePlacePushButton(this, WID_RAT_BUILD_BRIDGE, SPR_CURSOR_BRIDGE, HT_RECT, CM_DDSP_BUILD_RAIL_BRIDGE);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_TUNNEL:
-				HandlePlacePushButton(this, WID_RAT_BUILD_TUNNEL, GetRailTypeInfo(_cur_railtype)->cursor.tunnel, HT_SPECIAL);
+				HandlePlacePushButton(this, WID_RAT_BUILD_TUNNEL, GetRailTypeInfo(_cur_railtype)->cursor.tunnel, HT_SPECIAL, CM_DDSP_BUILD_RAIL_TUNNEL);
 				this->last_user_action = widget;
 				break;
 
@@ -752,7 +752,7 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_CONVERT_RAIL:
-				HandlePlacePushButton(this, WID_RAT_CONVERT_RAIL, GetRailTypeInfo(_cur_railtype)->cursor.convert, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_RAT_CONVERT_RAIL, GetRailTypeInfo(_cur_railtype)->cursor.convert, HT_RECT | HT_DIAGONAL, DDSP_CONVERT_RAIL);
 				this->last_user_action = widget;
 				break;
 

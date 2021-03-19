@@ -106,7 +106,7 @@ static void _GenerateWorld()
 		if (_settings_game.game_creation.generation_seed == GENERATE_NEW_SEED) _settings_game.game_creation.generation_seed = _settings_newgame.game_creation.generation_seed = InteractiveRandom();
 		_random.SetSeed(_settings_game.game_creation.generation_seed);
 		SetGeneratingWorldProgress(GWP_MAP_INIT, 2);
-		SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+		SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0, CM_DDSP_ZZZ);
 
 		BasePersistentStorageArray::SwitchMode(PSM_ENTER_GAMELOOP);
 
@@ -326,7 +326,7 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 
 	/* Create toolbars */
 	SetupColoursAndInitialWindow();
-	SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+	SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0, CM_DDSP_ZZZ);
 
 	if (_gw.thread.joinable()) _gw.thread.join();
 
