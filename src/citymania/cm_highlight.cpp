@@ -1021,8 +1021,9 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     //     UpdateBlueprintTileSelection(pt, tile);
     //     new_drawstyle = CM_HT_BLUEPRINT_PLACE;
     // } else
-
-    if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
+    fprintf(stderr, "UPTADE TILE SELECT %d %d\n", (int)_thd.select_proc, (int)_thd.make_square_red);
+    if (_thd.make_square_red) {
+    } else if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
         auto dir = _build_depot_direction;
         if (pt.x != -1) {
             if (dir >= DiagDirection::DIAGDIR_END) {

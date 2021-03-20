@@ -216,7 +216,7 @@ static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, u
 static void PlaceRoad_BusStation(TileIndex tile)
 {
 	if (_remove_button_clicked) {
-		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_REMOVE_BUSSTOP);
+		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_BUILD_BUSSTOP);
 	} else {
 		if (_road_station_picker_orientation < DIAGDIR_END) { // Not a drive-through stop.
 			VpStartPlaceSizing(tile, (DiagDirToAxis(_road_station_picker_orientation) == AXIS_X) ? VPM_X_LIMITED : VPM_Y_LIMITED, DDSP_BUILD_BUSSTOP);
@@ -234,7 +234,7 @@ static void PlaceRoad_BusStation(TileIndex tile)
 static void PlaceRoad_TruckStation(TileIndex tile)
 {
 	if (_remove_button_clicked) {
-		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_REMOVE_TRUCKSTOP);
+		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_BUILD_TRUCKSTOP);
 	} else {
 		if (_road_station_picker_orientation < DIAGDIR_END) { // Not a drive-through stop.
 			VpStartPlaceSizing(tile, (DiagDirToAxis(_road_station_picker_orientation) == AXIS_X) ? VPM_X_LIMITED : VPM_Y_LIMITED, DDSP_BUILD_TRUCKSTOP);
