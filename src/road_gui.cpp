@@ -39,6 +39,7 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_station_gui.hpp"
 
@@ -1110,6 +1111,13 @@ static void ShowRoadDepotPicker(Window *parent)
 }
 
 struct BuildRoadStationWindow : public PickerWindowBase {
+/* CityMania code start */
+public:
+	enum class Hotkey : int {
+		ROTATE,
+	};
+/* CityMania code end */
+
 	BuildRoadStationWindow(WindowDesc *desc, Window *parent, RoadStopType rs) : PickerWindowBase(desc, parent)
 	{
 		this->CreateNestedTree();
@@ -1246,6 +1254,39 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 	{
 		CheckRedrawStationCoverage(this);
 	}
+
+	/* CityMania code start */
+	EventState OnHotkey(int hotkey) override
+	{
+		switch ((BuildRoadStationWindow::Hotkey)hotkey) {
+			/* Indicate to the OnClick that the action comes from a hotkey rather
+			 * then from a click and that the CTRL state should be ignored. */
+			case BuildRoadStationWindow::Hotkey::ROTATE:
+				if (_road_station_picker_orientation < citymania::STATIONDIR_AUTO) {
+					this->RaiseWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
+					if (_road_station_picker_orientation < DIAGDIR_END) {
+						_road_station_picker_orientation = ChangeDiagDir(_road_station_picker_orientation, DIAGDIRDIFF_90RIGHT);
+					} else if (_road_station_picker_orientation == citymania::STATIONDIR_X) {
+						_road_station_picker_orientation = citymania::STATIONDIR_Y;
+					} else if (_road_station_picker_orientation == citymania::STATIONDIR_Y) {
+						_road_station_picker_orientation = citymania::STATIONDIR_X;
+					}
+					this->LowerWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
+				} else {
+					citymania::RotateAutodetection();
+				}
+				this->SetDirty();
+				return ES_HANDLED;
+
+			default:
+				NOT_REACHED();
+		}
+
+		return ES_NOT_HANDLED;
+	}
+
+	static HotkeyList hotkeys;
+	/* CityMania code end */
 };
 
 /** Widget definition of the build road station window */
@@ -1295,11 +1336,20 @@ static const NWidgetPart _nested_road_station_picker_widgets[] = {
 	EndContainer(),
 };
 
+/* CityMania code start */
+static Hotkey _cm_road_station_pickerhotkeys[] = {
+	Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", (int)BuildRoadStationWindow::Hotkey::ROTATE),
+	HOTKEY_LIST_END
+};
+HotkeyList BuildRoadStationWindow::hotkeys("cm_build_road_station", _cm_road_station_pickerhotkeys);
+/* CityMania code end */
+
 static WindowDesc _road_station_picker_desc(
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUS_STATION, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
 	_nested_road_station_picker_widgets, lengthof(_nested_road_station_picker_widgets)
+	,&BuildRoadStationWindow::hotkeys // CityMania addition
 );
 
 /** Widget definition of the build tram station window */
@@ -1344,6 +1394,7 @@ static WindowDesc _tram_station_picker_desc(
 	WC_BUS_STATION, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
 	_nested_tram_station_picker_widgets, lengthof(_nested_tram_station_picker_widgets)
+	,&BuildRoadStationWindow::hotkeys // CityMania addition
 );
 
 static void ShowRVStationPicker(Window *parent, RoadStopType rs)
