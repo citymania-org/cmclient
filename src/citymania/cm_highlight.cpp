@@ -12,6 +12,7 @@
 #include "../house.h"
 #include "../industry.h"
 #include "../landscape.h"
+#include "../newgrf_airporttiles.h"
 #include "../newgrf_railtype.h"
 #include "../newgrf_roadtype.h"
 #include "../newgrf_station.h"
@@ -22,6 +23,7 @@
 #include "../tilehighlight_func.h"
 #include "../viewport_func.h"
 #include "../zoning.h"
+#include "../table/airporttile_ids.h"
 #include "../table/track_land.h"
 
 #include <set>
@@ -40,6 +42,9 @@ extern TileHighlightData _thd;
 extern bool IsInsideSelectedRectangle(int x, int y);
 extern RailType _cur_railtype;
 extern RoadType _cur_roadtype;
+extern AirportClassID _selected_airport_class; ///< the currently visible airport class
+extern int _selected_airport_index;
+extern byte _selected_airport_layout;
 extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
 extern DiagDirection _road_station_picker_orientation;
 extern uint32 _realtime_tick;
@@ -136,6 +141,13 @@ ObjectTileHighlight ObjectTileHighlight::make_road_stop(SpriteID palette, RoadTy
     return oh;
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_airport_tile(SpriteID palette, StationGfx gfx) {
+    auto oh = ObjectTileHighlight(Type::AIRPORT_TILE, palette);
+    oh.u.airport_tile.gfx = gfx;
+    return oh;
+}
+
+
 bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
     if (this->type != oh.type) return false;
     return (this->tile == oh.tile
@@ -144,6 +156,8 @@ bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
             && this->ddir == oh.ddir
             && this->roadtype == oh.roadtype
             && this->is_truck == oh.is_truck
+            && this->airport_type == oh.airport_type
+            && this->airport_layout == oh.airport_layout
             && this->blueprint == oh.blueprint);
     // switch (this->type) {
     //     case Type::RAIL_DEPOT: return this->tile == oh.tile && this->ddir == oh.ddir;
@@ -181,6 +195,15 @@ ObjectHighlight ObjectHighlight::make_road_stop(TileIndex start_tile, TileIndex 
     oh.is_truck = is_truck;
     return oh;
 }
+
+ObjectHighlight ObjectHighlight::make_airport(TileIndex start_tile, int airport_type, byte airport_layout) {
+    auto oh = ObjectHighlight{ObjectHighlight::Type::AIRPORT};
+    oh.tile = start_tile;
+    oh.airport_type = airport_type;
+    oh.airport_layout = airport_layout;
+    return oh;
+}
+
 
 
 // ObjectHighlight ObjectHighlight::make_blueprint(TileIndex tile, sp<Blueprint> blueprint) {
@@ -302,6 +325,27 @@ void ObjectHighlight::UpdateTiles() {
             TileIndex tile;
             TILE_AREA_LOOP(tile, ta) {
                 this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck)));
+            }
+            break;
+        }
+
+        case Type::AIRPORT: {
+            auto palette = (CanBuild(
+                this->tile,
+                this->airport_type | ((uint)this->airport_layout << 8),
+                1 | (NEW_STATION << 16),
+                CMD_BUILD_AIRPORT
+            ) ? PALETTE_TINT_WHITE : PALETTE_TINT_RED_DEEP);
+
+            const AirportSpec *as = AirportSpec::Get(this->airport_type);
+            if (!as->IsAvailable() || this->airport_layout >= as->num_table) break;
+            Direction rotation = as->rotation[this->airport_layout];
+            int w = as->size_x;
+            int h = as->size_y;
+            if (rotation == DIR_E || rotation == DIR_W) Swap(w, h);
+            TileArea airport_area = TileArea(this->tile, w, h);
+            for (AirportTileTableIterator iter(as->table[this->airport_layout], this->tile); iter != INVALID_TILE; ++iter) {
+                this->tiles.insert(std::make_pair(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx())));
             }
             break;
         }
@@ -464,9 +508,50 @@ void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagD
     }
 
     const DrawTileSprites *t = GetStationTileLayout(is_truck ? STATION_TRUCK : STATION_BUS, image);
+    AddSortableSpriteToDraw(t->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
     DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
     /* Draw road, tram catenary */
     // DrawRoadCatenary(ti);
+}
+
+#include "../table/station_land.h"
+
+void DrawAirportTile(SpriteID palette, const TileInfo *ti, StationGfx gfx) {
+    int32 total_offset = 0;
+    const DrawTileSprites *t = nullptr;
+    gfx = GetTranslatedAirportTileID(gfx);
+    if (gfx >= NEW_AIRPORTTILE_OFFSET) {
+        const AirportTileSpec *ats = AirportTileSpec::Get(gfx);
+        if (ats->grf_prop.spritegroup[0] != nullptr /* && DrawNewAirportTile(ti, Station::GetByTile(ti->tile), gfx, ats) */) {
+            return;
+        }
+        /* No sprite group (or no valid one) found, meaning no graphics associated.
+         * Use the substitute one instead */
+        assert(ats->grf_prop.subst_id != INVALID_AIRPORTTILE);
+        gfx = ats->grf_prop.subst_id;
+    }
+    switch (gfx) {
+        case APT_RADAR_GRASS_FENCE_SW:
+            t = &_station_display_datas_airport_radar_grass_fence_sw[GetAnimationFrame(ti->tile)];
+            break;
+        case APT_GRASS_FENCE_NE_FLAG:
+            t = &_station_display_datas_airport_flag_grass_fence_ne[GetAnimationFrame(ti->tile)];
+            break;
+        case APT_RADAR_FENCE_SW:
+            t = &_station_display_datas_airport_radar_fence_sw[GetAnimationFrame(ti->tile)];
+            break;
+        case APT_RADAR_FENCE_NE:
+            t = &_station_display_datas_airport_radar_fence_ne[GetAnimationFrame(ti->tile)];
+            break;
+        case APT_GRASS_FENCE_NE_FLAG_2:
+            t = &_station_display_datas_airport_flag_grass_fence_ne_2[GetAnimationFrame(ti->tile)];
+            break;
+    }
+    if (t == nullptr || t->seq == nullptr) t = GetStationTileLayout(STATION_AIRPORT, gfx);
+    if (t) {
+        AddSortableSpriteToDraw(t->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+        DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
+    }
 }
 
 enum SignalOffsets {  // from rail_cmd.cpp
@@ -622,6 +707,9 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 break;
             case ObjectTileHighlight::Type::ROAD_STOP:
                 DrawRoadStop(oth.palette, ti, oth.u.road.stop.roadtype, oth.u.road.stop.ddir, oth.u.road.stop.is_truck);
+                break;
+            case ObjectTileHighlight::Type::AIRPORT_TILE:
+                DrawAirportTile(oth.palette, ti, oth.u.airport_tile.gfx);
                 break;
             default:
                 break;
@@ -956,7 +1044,7 @@ bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
 
     // if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
     if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_BUSSTOP
-        || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {
+        || _thd.select_proc == DDSP_BUILD_TRUCKSTOP || _thd.select_proc == CM_DDSP_BUILD_AIRPORT) {
         // station selector, handled by DrawTileZoning
         return true;
     }
@@ -1021,7 +1109,6 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     //     UpdateBlueprintTileSelection(pt, tile);
     //     new_drawstyle = CM_HT_BLUEPRINT_PLACE;
     // } else
-    fprintf(stderr, "UPTADE TILE SELECT %d %d\n", (int)_thd.select_proc, (int)_thd.make_square_red);
     if (_thd.make_square_red) {
     } else if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
         auto dir = _build_depot_direction;
@@ -1033,6 +1120,11 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
         }
         new_drawstyle = HT_RECT;
     // } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.new_outersize.x > 0 && !_thd.make_square_red) {  // station
+    } else if (_thd.select_proc == CM_DDSP_BUILD_AIRPORT) {
+        auto tile = TileXY(_thd.new_pos.x / TILE_SIZE, _thd.new_pos.y / TILE_SIZE);
+        const AirportSpec *as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
+        _thd.cm_new = ObjectHighlight::make_airport(tile, as->GetIndex(), _selected_airport_layout);
+        new_drawstyle = HT_RECT;
     } else if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_BUSSTOP
                || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {  // station
         if (_thd.size.x >= (int)TILE_SIZE && _thd.size.y >= (int)TILE_SIZE) {
