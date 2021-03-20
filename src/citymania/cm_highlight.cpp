@@ -13,6 +13,7 @@
 #include "../industry.h"
 #include "../landscape.h"
 #include "../newgrf_railtype.h"
+#include "../newgrf_roadtype.h"
 #include "../newgrf_station.h"
 #include "../town.h"
 #include "../town_kdtree.h"
@@ -38,8 +39,9 @@ extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
 extern bool IsInsideSelectedRectangle(int x, int y);
 extern RailType _cur_railtype;
-RoadBits FindRailsToConnect(TileIndex tile);
+extern RoadType _cur_roadtype;
 extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
+extern DiagDirection _road_station_picker_orientation;
 extern uint32 _realtime_tick;
 extern void GetStationLayout(byte *layout, int numtracks, int plat_len, const StationSpec *statspec);
 
@@ -52,7 +54,6 @@ struct RailStationGUISettings {
     byte station_count;               ///< Number of custom stations (if newstations is \c true )
 };
 extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
-
 
 namespace citymania {
 
@@ -75,7 +76,7 @@ extern const Station *_station_to_join;
 extern const Station *_highlight_station_to_join;
 extern TileArea _highlight_join_area;
 
-std::set<std::pair<uint32, const Town*>, std::greater<std::pair<uint32, const Town*> > > _town_cache;
+std::set<std::pair<uint32, const Town*>, std::greater<std::pair<uint32, const Town*>>> _town_cache;
 // struct {
 //     int w;
 //     int h;
@@ -127,12 +128,22 @@ ObjectTileHighlight ObjectTileHighlight::make_rail_tunnel_head(SpriteID palette,
     return oh;
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck) {
+    auto oh = ObjectTileHighlight(Type::ROAD_STOP, palette);
+    oh.u.road.stop.roadtype = roadtype;
+    oh.u.road.stop.ddir = ddir;
+    oh.u.road.stop.is_truck = is_truck;
+    return oh;
+}
+
 bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
     if (this->type != oh.type) return false;
     return (this->tile == oh.tile
             && this->end_tile == oh.end_tile
             && this->axis == oh.axis
             && this->ddir == oh.ddir
+            && this->roadtype == oh.roadtype
+            && this->is_truck == oh.is_truck
             && this->blueprint == oh.blueprint);
     // switch (this->type) {
     //     case Type::RAIL_DEPOT: return this->tile == oh.tile && this->ddir == oh.ddir;
@@ -160,6 +171,17 @@ ObjectHighlight ObjectHighlight::make_rail_station(TileIndex start_tile, TileInd
     oh.axis = axis;
     return oh;
 }
+
+ObjectHighlight ObjectHighlight::make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck) {
+    auto oh = ObjectHighlight{ObjectHighlight::Type::ROAD_STOP};
+    oh.tile = start_tile;
+    oh.end_tile = end_tile;
+    oh.ddir = orientation;
+    oh.roadtype = roadtype;
+    oh.is_truck = is_truck;
+    return oh;
+}
+
 
 // ObjectHighlight ObjectHighlight::make_blueprint(TileIndex tile, sp<Blueprint> blueprint) {
 //     auto oh = ObjectHighlight{ObjectHighlight::Type::BLUEPRINT};
@@ -267,6 +289,20 @@ void ObjectHighlight::UpdateTiles() {
                 tile_track += tile_delta ^ TileDiffXY(1, 1); // perpendicular to tile_delta
             } while (--numtracks);
 
+            break;
+        }
+        case Type::ROAD_STOP: {
+            auto ta = OrthogonalTileArea(this->tile, this->end_tile);
+            auto palette = (CanBuild(
+                this->tile,
+                (uint32)(ta.w | ta.h << 8),
+                (this->is_truck ? 1 : 0) | (this->ddir >= DIAGDIR_END ? 2 : 0) | (((uint)this->ddir % 4) << 3) | (NEW_STATION << 16),
+                CMD_BUILD_ROAD_STOP
+            ) ? PALETTE_TINT_WHITE : PALETTE_TINT_RED_DEEP);
+            TileIndex tile;
+            TILE_AREA_LOOP(tile, ta) {
+                this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck)));
+            }
             break;
         }
         // case Type::BLUEPRINT:
@@ -395,6 +431,42 @@ void DrawTrainStationSprite(SpriteID palette, const TileInfo *ti, RailType railt
     /* Default waypoint has no railtype specific sprites */
     // DrawRailTileSeq(ti, t, TO_INVALID, (st == STATION_WAYPOINT ? 0 : total_offset), 0, PALETTE_TINT_WHITE);
     DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
+}
+
+void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagDirection orientation, bool is_truck) {
+    int32 total_offset = 0;
+    const RoadTypeInfo* rti = GetRoadTypeInfo(roadtype);
+
+    uint image = (uint)orientation;
+    if (image >= 4) {
+        /* Drive-through stop */
+        uint sprite_offset = 5 - image;
+
+        /* Road underlay takes precedence over tram */
+        if (rti->UsesOverlay()) {
+            SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_GROUND);
+            DrawSprite(ground + sprite_offset, PAL_NONE, ti->x, ti->y);
+
+            SpriteID overlay = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_OVERLAY);
+            // if (overlay) DrawSprite(overlay + sprite_offset, PAL_NONE, x, y);
+            if (overlay) AddSortableSpriteToDraw(overlay + sprite_offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+        } else if (RoadTypeIsTram(roadtype)) {
+            // DrawSprite(SPR_TRAMWAY_TRAM + sprite_offset, PAL_NONE, x, y);
+            AddSortableSpriteToDraw(SPR_TRAMWAY_TRAM + sprite_offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+        }
+    } else {
+        /* Drive-in stop */
+        if (RoadTypeIsRoad(roadtype) && rti->UsesOverlay()) {
+            SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_ROADSTOP);
+            // DrawSprite(, PAL_NONE, x, y);
+            AddSortableSpriteToDraw(ground + image, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+        }
+    }
+
+    const DrawTileSprites *t = GetStationTileLayout(is_truck ? STATION_TRUCK : STATION_BUS, image);
+    DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
+    /* Draw road, tram catenary */
+    // DrawRoadCatenary(ti);
 }
 
 enum SignalOffsets {  // from rail_cmd.cpp
@@ -547,6 +619,9 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 break;
             case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
                 DrawTunnelHead(ti, _cur_railtype, oth.u.rail.tunnel_head.ddir);
+                break;
+            case ObjectTileHighlight::Type::ROAD_STOP:
+                DrawRoadStop(oth.palette, ti, oth.u.road.stop.roadtype, oth.u.road.stop.ddir, oth.u.road.stop.is_truck);
                 break;
             default:
                 break;
@@ -880,7 +955,8 @@ bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
     // if (_thd.drawstyle == CM_HT_BLUEPRINT_PLACE) return true;
 
     // if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
-    if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_STATION) {
+    if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_BUSSTOP
+        || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {
         // station selector, handled by DrawTileZoning
         return true;
     }
@@ -901,47 +977,6 @@ bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
     }
 
     return false;
-}
-
-
-// almost duplicate from road_gui.cpp
-static DiagDirection TileFractCoordsToDiagDir(Point pt) {
-    auto x = pt.x & TILE_UNIT_MASK;
-    auto y = pt.y & TILE_UNIT_MASK;
-    bool diag = (x + y) < 16;
-    if (x < y) {
-        return diag ? DIAGDIR_NE : DIAGDIR_SE;
-    }
-    return diag ? DIAGDIR_NW : DIAGDIR_SW;
-}
-
-// FIXME duplicate from road_gui.cpp
-static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
-    if (bits < ROAD_SE) {
-        return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
-    }
-    return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
-}
-
-DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt) {
-    RoadBits bits = FindRailsToConnect(tile);
-    // FIXME after this point repeats road autodetection
-    if (HasExactlyOneBit(bits)) return RoadBitsToDiagDir(bits);
-    if (bits == ROAD_NONE) bits = ROAD_ALL;
-    RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir(pt));
-    if (HasExactlyOneBit(frac_bits & bits)) {
-        return RoadBitsToDiagDir(frac_bits & bits);
-    }
-    frac_bits |= MirrorRoadBits(frac_bits);
-    if (HasExactlyOneBit(frac_bits & bits)) {
-        return RoadBitsToDiagDir(frac_bits & bits);
-    }
-    for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
-        if (DiagDirToRoadBits(ddir) & bits) {
-            return ddir;
-        }
-    }
-    NOT_REACHED();
 }
 
 TileIndex _autodetection_tile = INVALID_TILE;
@@ -973,6 +1008,7 @@ void ResetRotateAutodetection() {
 }
 
 DiagDirection AddAutodetectionRotation(DiagDirection ddir) {
+    if (ddir >= DIAGDIR_END) return (DiagDirection)(((uint)ddir + (uint)GetAutodetectionRotation()) % 2 + DIAGDIR_END);
     return ChangeDiagDir(ddir, GetAutodetectionRotation());
 }
 
@@ -985,6 +1021,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     //     UpdateBlueprintTileSelection(pt, tile);
     //     new_drawstyle = CM_HT_BLUEPRINT_PLACE;
     // } else
+
     if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
         auto dir = _build_depot_direction;
         if (pt.x != -1) {
@@ -995,14 +1032,37 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
         }
         new_drawstyle = HT_RECT;
     // } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.new_outersize.x > 0 && !_thd.make_square_red) {  // station
-    } else if (_thd.select_proc == DDSP_BUILD_STATION) {  // station
+    } else if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_BUSSTOP
+               || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {  // station
         if (_thd.size.x >= (int)TILE_SIZE && _thd.size.y >= (int)TILE_SIZE) {
             auto start_tile = TileXY(_thd.new_pos.x / TILE_SIZE, _thd.new_pos.y / TILE_SIZE);
             auto end_tile = TileXY(
                 std::min((_thd.new_pos.x + _thd.new_size.x) / TILE_SIZE, MapSizeX()) - 1,
                 std::min((_thd.new_pos.y + _thd.new_size.y) / TILE_SIZE, MapSizeY()) - 1
             );
-            _thd.cm_new = ObjectHighlight::make_rail_station(start_tile, end_tile, _railstation.orientation);
+            if (_thd.select_proc == DDSP_BUILD_STATION)
+                _thd.cm_new = ObjectHighlight::make_rail_station(start_tile, end_tile, _railstation.orientation);
+            else if (_thd.select_proc == DDSP_BUILD_BUSSTOP || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {
+                auto ddir = _road_station_picker_orientation;
+                auto ta = TileArea(start_tile, end_tile);
+                if (pt.x != -1) {
+                    if (ddir >= DIAGDIR_END && ddir < STATIONDIR_AUTO) {
+                        // When placed on road autorotate anyway
+                        if (ddir == STATIONDIR_X) {
+                            if (!CheckDriveThroughRoadStopDirection(ta, ROAD_X))
+                                ddir = STATIONDIR_Y;
+                        } else {
+                            if (!CheckDriveThroughRoadStopDirection(ta, ROAD_Y))
+                                ddir = STATIONDIR_X;
+                        }
+                    } else if (ddir == STATIONDIR_AUTO) {
+                        ddir = AddAutodetectionRotation(AutodetectRoadObjectDirection(start_tile, pt, _cur_roadtype));
+                    } else if (ddir == STATIONDIR_AUTO_XY) {
+                        ddir = AddAutodetectionRotation(AutodetectDriveThroughRoadStopDirection(ta, pt, _cur_roadtype));
+                    }
+                }
+                _thd.cm_new = ObjectHighlight::make_road_stop(start_tile, end_tile, _cur_roadtype, ddir, _thd.select_proc == DDSP_BUILD_TRUCKSTOP);
+            }
         }
         new_drawstyle = HT_RECT;
     }

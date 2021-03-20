@@ -4,6 +4,7 @@
 #include "../bridge.h"
 #include "../direction_type.h"
 #include "../map_func.h"
+#include "../road_type.h"
 #include "../signal_type.h"
 #include "../station_type.h"
 #include "../tile_cmd.h"
@@ -27,6 +28,7 @@ public:
         RAIL_SIGNAL,
         RAIL_BRIDGE_HEAD,
         RAIL_TUNNEL_HEAD,
+        ROAD_STOP,
         END,
     };
 
@@ -57,6 +59,13 @@ public:
                 DiagDirection ddir;
             } tunnel_head;
         } rail;
+        struct {
+            struct {
+                RoadType roadtype;
+                DiagDirection ddir;
+                bool is_truck;
+            } stop;
+        } road;
     } u;
 
     ObjectTileHighlight(Type type, SpriteID palette): type{type}, palette{palette} {}
@@ -66,6 +75,8 @@ public:
     static ObjectTileHighlight make_rail_signal(SpriteID palette, uint pos, SignalType type, SignalVariant variant);
     static ObjectTileHighlight make_rail_bridge_head(SpriteID palette, DiagDirection ddir, BridgeType type);
     static ObjectTileHighlight make_rail_tunnel_head(SpriteID palette, DiagDirection ddir);
+
+    static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck);
 };
 
 class TileIndexDiffCCompare{
@@ -165,6 +176,7 @@ public:
         NONE = 0,
         RAIL_DEPOT = 1,
         RAIL_STATION = 2,
+        ROAD_STOP = 3,
         // BLUEPRINT = 2,
     };
 
@@ -173,6 +185,8 @@ public:
     TileIndex end_tile = INVALID_TILE;
     Axis axis = INVALID_AXIS;
     DiagDirection ddir = INVALID_DIAGDIR;
+    RoadType roadtype = INVALID_ROADTYPE;
+    bool is_truck = false;
     sp<Blueprint> blueprint = nullptr;
 
 protected:
@@ -189,6 +203,7 @@ public:
     static ObjectHighlight make_rail_depot(TileIndex tile, DiagDirection ddir);
     static ObjectHighlight make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis);
     // static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);
+    static ObjectHighlight make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck);
 
     void Draw(const TileInfo *ti);
     void MarkDirty();

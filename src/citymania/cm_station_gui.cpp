@@ -35,11 +35,9 @@ extern TileHighlightData _thd;
 extern void MarkCatchmentTilesDirty();
 
 extern DiagDirection _road_station_picker_orientation;
-extern bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r);
-extern DiagDirection AutodetectRoadObjectDirection(TileIndex tile);
-extern DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area);
 extern bool CheckClickOnViewportSign(const ViewPort *vp, int x, int y, const ViewportSign *sign);
 extern Rect ExpandRectWithViewportSignMargins(Rect r, ZoomLevel zoom);
+extern RoadBits FindRailsToConnect(TileIndex tile);
 extern ViewportSignKdtree _viewport_sign_kdtree;
 extern AirportClassID _selected_airport_class;
 extern int _selected_airport_index;
@@ -225,33 +223,141 @@ void JoinAndBuild(CommandContainer cmdcont) {
     DoCommandP(&cmdcont);
 }
 
+static DiagDirection TileFractCoordsToDiagDir(Point pt) {
+    auto x = pt.x & TILE_UNIT_MASK;
+    auto y = pt.y & TILE_UNIT_MASK;
+    bool diag = (x + y) < 16;
+    if (x < y) {
+        return diag ? DIAGDIR_NE : DIAGDIR_SE;
+    }
+    return diag ? DIAGDIR_NW : DIAGDIR_SW;
+}
+
+static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
+    if (bits < ROAD_SE) {
+        return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
+    }
+    return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
+}
+
+DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt) {
+    RoadBits bits = FindRailsToConnect(tile);
+    // FIXME after this point repeats road autodetection
+    if (HasExactlyOneBit(bits)) return RoadBitsToDiagDir(bits);
+    if (bits == ROAD_NONE) bits = ROAD_ALL;
+    RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir(pt));
+    if (HasExactlyOneBit(frac_bits & bits)) {
+        return RoadBitsToDiagDir(frac_bits & bits);
+    }
+    frac_bits |= MirrorRoadBits(frac_bits);
+    if (HasExactlyOneBit(frac_bits & bits)) {
+        return RoadBitsToDiagDir(frac_bits & bits);
+    }
+    for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+        if (DiagDirToRoadBits(ddir) & bits) {
+            return ddir;
+        }
+    }
+    NOT_REACHED();
+}
+
+static RoadBits FindRoadsToConnect(TileIndex tile, RoadType roadtype) {
+    RoadBits bits = ROAD_NONE;
+    DiagDirection ddir;
+    auto cur_rtt = GetRoadTramType(roadtype);
+    // Prioritize roadbits that head in this direction
+    for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+        TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
+        if (GetAnyRoadBits(cur_tile, cur_rtt, true) &
+            DiagDirToRoadBits(ReverseDiagDir(ddir)))
+        {
+            bits |= DiagDirToRoadBits(ddir);
+        }
+    }
+    if (bits != ROAD_NONE) {
+        return bits;
+    }
+    // Try to connect to any road passing by
+    for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+        TileIndex cur_tile = TileAddByDiagDir(tile,  ddir);
+        if (GetTileType(cur_tile) == MP_ROAD && HasTileRoadType(cur_tile, cur_rtt) &&
+                (GetRoadTileType(cur_tile) == ROAD_TILE_NORMAL)) {
+            bits |= DiagDirToRoadBits(ddir);
+        }
+    }
+    return bits;
+}
+
+bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
+    TILE_AREA_LOOP(tile, area) {
+        if (GetTileType(tile) != MP_ROAD) continue;
+        if (GetRoadTileType(tile) != ROAD_TILE_NORMAL) continue;
+        if (GetAllRoadBits(tile) & ~r) return false;
+    }
+    return true;
+}
+
+/*
+ * Selects orientation for road object (depot, terminal station)
+ */
+DiagDirection AutodetectRoadObjectDirection(TileIndex tile, Point pt, RoadType roadtype) {
+    RoadBits bits = FindRoadsToConnect(tile, roadtype);
+    if (HasExactlyOneBit(bits)) {
+        return RoadBitsToDiagDir(bits);
+    }
+    if (bits == ROAD_NONE){
+        bits = ROAD_ALL;
+    }
+    RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir(pt));
+    if (HasExactlyOneBit(frac_bits & bits)) {
+        return RoadBitsToDiagDir(frac_bits & bits);
+    }
+    frac_bits |= MirrorRoadBits(frac_bits);
+    if (HasExactlyOneBit(frac_bits & bits)) {
+        return RoadBitsToDiagDir(frac_bits & bits);
+    }
+    for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
+        if (DiagDirToRoadBits(ddir) & bits) {
+            return ddir;
+        }
+    }
+    NOT_REACHED();
+}
+
+/*
+ * Automaticaly selects direction to use for road stop.
+ * @param area road stop area
+ * @return selected direction
+ */
+DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area, Point pt, RoadType roadtype) {
+    bool se_suits, ne_suits;
+
+    // Check which direction is available
+    // If both are not use SE, building will fail anyway
+    se_suits = CheckDriveThroughRoadStopDirection(area, ROAD_Y);
+    ne_suits = CheckDriveThroughRoadStopDirection(area, ROAD_X);
+    if (!ne_suits) return STATIONDIR_Y;
+    if (!se_suits) return STATIONDIR_X;
+
+    // Build station along the longer direction
+    if (area.w > area.h) return STATIONDIR_X;
+    if (area.w < area.h) return STATIONDIR_Y;
+
+    return DiagDirToAxis(AutodetectRoadObjectDirection(area.tile, pt, roadtype)) == AXIS_X ? STATIONDIR_X : STATIONDIR_Y;
+}
+
 void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, uint32 cmd) {
-    uint8 ddir = _road_station_picker_orientation;
+    assert(_thd.cm.type == citymania::ObjectHighlight::Type::ROAD_STOP);
+    uint8 ddir = _thd.cm.ddir;
+
     SB(p2, 16, 16, INVALID_STATION); // no station to join
     TileArea ta(start_tile, end_tile);
 
     if (CheckStationJoin(start_tile, end_tile)) return;
 
-    if (ddir >= DIAGDIR_END) {
-        if (ddir < DIAGDIR_END + 2) {
-            SetBit(p2, 1); // It's a drive-through stop.
-            ddir -= DIAGDIR_END; // Adjust picker result to actual direction.
-            // When placed on road autorotate anyway
-            if (ddir == DIAGDIR_SE) {
-                if (!CheckDriveThroughRoadStopDirection(ta, ROAD_Y))
-                    ddir = DIAGDIR_NE;
-            } else {
-                if (!CheckDriveThroughRoadStopDirection(ta, ROAD_X))
-                    ddir = DIAGDIR_SE;
-            }
-        }
-        else if (ddir == DIAGDIR_END + 2) {
-            ddir = AutodetectRoadObjectDirection(start_tile);
-        }
-        else if (ddir == DIAGDIR_END + 3) {
-            SetBit(p2, 1); // It's a drive-through stop.
-            ddir = AutodetectDriveThroughRoadStopDirection(ta);
-        }
+    if (ddir >= DIAGDIR_END) { // drive-through stops
+        SetBit(p2, 1);
+        ddir -= DIAGDIR_END;
     }
     p2 |= ddir << 3; // Set the DiagDirecion into p2 bits 3 and 4.
 

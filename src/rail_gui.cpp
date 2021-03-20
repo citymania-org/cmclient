@@ -460,24 +460,6 @@ static void HandleAutoSignalPlacement()
 			CcPlaySound_SPLAT_RAIL);
 }
 
-
-// FIXME duplicate from road_gui.cpp
-static DiagDirection TileFractCoordsToDiagDir() {
-	bool diag = (_tile_fract_coords.x + _tile_fract_coords.y) < 16;
-	if (_tile_fract_coords.x < _tile_fract_coords.y) {
-		return diag ? DIAGDIR_NE : DIAGDIR_SE;
-	}
-	return diag ? DIAGDIR_NW : DIAGDIR_SW;
-}
-
-// FIXME duplicate from road_gui.cpp
-static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
-	if (bits < ROAD_SE) {
-		return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
-	}
-	return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
-}
-
 RoadBits FindRailsToConnect(TileIndex tile) {
 	RoadBits directed = ROAD_NONE;
 	RoadBits passing = ROAD_NONE;
