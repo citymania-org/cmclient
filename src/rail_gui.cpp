@@ -2058,8 +2058,8 @@ static WindowDesc _build_depot_desc(
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
-	_nested_build_depot_widgets, lengthof(_nested_build_depot_widgets),
-	&BuildRailDepotWindow::hotkeys  // CityMania addition
+	_nested_build_depot_widgets, lengthof(_nested_build_depot_widgets)
+	,&BuildRailDepotWindow::hotkeys  // CityMania addition
 );
 
 static void ShowBuildTrainDepotPicker(Window *parent)
