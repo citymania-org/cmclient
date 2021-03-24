@@ -70,7 +70,7 @@ static RoadFlags _place_road_flag;
 
 /* CM static */ RoadType _cur_roadtype;
 
-static DiagDirection _road_depot_orientation;
+/* CM static */ DiagDirection _road_depot_orientation;
 DiagDirection _road_station_picker_orientation;
 
 void CcPlaySound_SPLAT_OTHER(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
@@ -449,6 +449,7 @@ struct BuildRoadToolbarWindow : Window {
 			case WID_ROT_DEPOT:
 				if (_game_mode == GM_EDITOR || !CanBuildVehicleInfrastructure(VEH_ROAD, GetRoadTramType(this->roadtype))) return;
 				if (HandlePlacePushButton(this, WID_ROT_DEPOT, this->rti->cursor.depot, HT_RECT, CM_DDSP_BUILD_ROAD_DEPOT)) {
+					citymania::ResetRotateAutodetection();
 					ShowRoadDepotPicker(this);
 					this->last_started_action = widget;
 				}
@@ -545,8 +546,9 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_DEPOT:
 				ddir = _road_depot_orientation;
-				if (ddir == DIAGDIR_NW + 1) {
-					ddir = citymania::AutodetectRoadObjectDirection(tile, GetTileBelowCursor(), _cur_roadtype);
+				if (ddir == citymania::DEPOTDIR_AUTO) {
+					assert(_thd.cm.type == citymania::ObjectHighlight::Type::ROAD_DEPOT);
+					ddir = _thd.cm.ddir;
 				}
 				DoCommandP(tile, _cur_roadtype << 2 | ddir, 0,
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(this->rti->strings.err_depot), CcRoadDepot);

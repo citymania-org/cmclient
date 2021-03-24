@@ -805,7 +805,7 @@ struct BuildRailToolbarWindow : Window {
 
 			case WID_RAT_BUILD_DEPOT:
 				ddir = _build_depot_direction;
-				if (ddir == DIAGDIR_NW + 1) {
+				if (ddir == citymania::DEPOTDIR_AUTO) {
 					assert(_thd.cm.type == citymania::ObjectHighlight::Type::RAIL_DEPOT);
 					ddir = _thd.cm.ddir;
 				}
