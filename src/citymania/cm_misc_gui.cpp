@@ -10,6 +10,7 @@
 #include "../strings_func.h"
 #include "../tile_cmd.h"
 #include "../town.h"
+#include "../viewport_func.h"
 #include "../widget_type.h"
 #include "../window_func.h"
 #include "../window_gui.h"
@@ -389,6 +390,23 @@ void ShowLandInfo(TileIndex tile, TileIndex end_tile)
     DeleteWindowById(WC_LAND_INFO, 0);
     if (tile == INVALID_TILE) return;
     new LandInfoWindow(tile, end_tile);
+}
+
+bool _is_viewport_scrolling = false;
+
+void HandleViewportScroll(Window *w) {
+    if (_is_viewport_scrolling) return;
+    _is_viewport_scrolling = true;
+
+    if (!w || (w->window_class != WC_MAIN_WINDOW && w->window_class != WC_EXTRA_VIEW_PORT)) return;
+
+    ZoomInOrOutToCursorWindow(false, w);
+}
+
+void EndViewportScroll(Window *w) {
+    _is_viewport_scrolling = false;
+    if (!w || (w->window_class != WC_MAIN_WINDOW && w->window_class != WC_EXTRA_VIEW_PORT)) return;
+    ZoomInOrOutToCursorWindow(true, w);
 }
 
 } // namespace citymania

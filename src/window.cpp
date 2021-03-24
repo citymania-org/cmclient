@@ -42,6 +42,7 @@
 #include "news_func.h"
 
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_misc_gui.hpp"
 
 #include "safeguards.h"
 
@@ -2498,11 +2499,14 @@ static EventState HandleViewportScroll()
 	if (_last_scroll_window == nullptr) _last_scroll_window = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
 
 	if (_last_scroll_window == nullptr || !((_settings_client.gui.scroll_mode != VSM_MAP_LMB && _right_button_down) || scrollwheel_scrolling || (_settings_client.gui.scroll_mode == VSM_MAP_LMB && _left_button_down))) {
+		citymania::EndViewportScroll(_last_scroll_window);
 		_cursor.fix_at = false;
 		_scrolling_viewport = false;
 		_last_scroll_window = nullptr;
 		return ES_NOT_HANDLED;
 	}
+
+	citymania::HandleViewportScroll(_last_scroll_window);
 
 	if (_last_scroll_window == FindWindowById(WC_MAIN_WINDOW, 0) && _last_scroll_window->viewport->follow_vehicle != INVALID_VEHICLE) {
 		/* If the main window is following a vehicle, then first let go of it! */
