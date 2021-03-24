@@ -58,7 +58,7 @@
  * @param mode Tile highlighting mode, e.g. drawing a rectangle or a dot on the ground
  * @return true if the button is clicked, false if it's unclicked
  */
-bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyle mode)
+bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyle mode, ViewportDragDropSelectionProcess cm_process)
 {
 	if (w->IsWidgetDisabled(widget)) return false;
 
@@ -70,7 +70,7 @@ bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyl
 		return false;
 	}
 
-	SetObjectToPlace(cursor, PAL_NONE, mode, w->window_class, w->window_number);
+	SetObjectToPlace(cursor, PAL_NONE, mode, w->window_class, w->window_number, cm_process);
 	w->LowerWidget(widget);
 	return true;
 }

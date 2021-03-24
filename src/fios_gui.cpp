@@ -360,7 +360,7 @@ public:
 		if (_game_mode != GM_MENU && !_networking && _game_mode != GM_EDITOR) {
 			DoCommandP(0, PM_PAUSED_SAVELOAD, 1, CMD_PAUSE);
 		}
-		SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+		SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0, CM_DDSP_ZZZ);
 
 		this->OnInvalidateData(SLIWD_RESCAN_FILES);
 

@@ -61,6 +61,7 @@
 #include "citymania/cm_commands_gui.hpp"
 #include "citymania/cm_locations.hpp"
 #include "citymania/cm_main.hpp"
+#include "citymania/cm_minimap.hpp"
 #include "citymania/cm_watch_gui.hpp"
 #include "citymania/cm_zoning.hpp"
 
@@ -267,7 +268,7 @@ static CallBackFunction SelectSignTool()
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
-		SetObjectToPlace(SPR_CURSOR_SIGN, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetObjectToPlace(SPR_CURSOR_SIGN, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0, CM_DDSP_PLACE_SIGN);
 		return CBF_PLACE_SIGN;
 	}
 }
@@ -278,7 +279,7 @@ static CallBackFunction BuildCompanyHQ(){
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
-		SetObjectToPlace(SPR_CURSOR_HQ, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetObjectToPlace(SPR_CURSOR_HQ, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0, CM_DDSP_BUILD_HQ);
 		SetTileSelectSize(2, 2);
 		return CBF_BUILD_HQ;
 	}
@@ -517,7 +518,7 @@ static CallBackFunction ToolbarScenMapTownDir(Window *w)
 static CallBackFunction MenuClickMap(int index)
 {
 	switch (index) {
-		case MME_SHOW_SMALLMAP:          ShowSmallMap();            break;
+		case MME_SHOW_SMALLMAP:          citymania::ShowSmallMap();            break;
 		case MME_SHOW_EXTRAVIEWPORTS:    ShowExtraViewportWindow(); break;
 		case MME_SHOW_LINKGRAPH:         ShowLinkGraphLegend();     break;
 		case MME_SHOW_SIGNLISTS:         ShowSignList();            break;
@@ -1116,7 +1117,7 @@ static CallBackFunction PlaceLandBlockInfo()
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
-		SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0, CM_DDSP_LAND_INFO);
 		return CBF_PLACE_LANDINFO;
 	}
 }
@@ -2140,7 +2141,7 @@ struct MainToolbarWindow : Window {
 			case MTHK_SETTINGS: ShowGameOptions(); break;
 			case MTHK_SAVEGAME: MenuClickSaveLoad(); break;
 			case MTHK_LOADGAME: ShowSaveLoadDialog(FT_SAVEGAME, SLO_LOAD); break;
-			case MTHK_SMALLMAP: ShowSmallMap(); break;
+			case MTHK_SMALLMAP: citymania::ShowSmallMap(); break;
 			case MTHK_TOWNDIRECTORY: ShowTownDirectory(); break;
 			case MTHK_SUBSIDIES: ShowSubsidiesList(); break;
 			case MTHK_STATIONS: ShowCompanyStations(_local_company); break;
@@ -2600,7 +2601,7 @@ struct ScenarioEditorToolbarWindow : Window {
 			case MTEHK_ZOOM_IN:                ToolbarZoomInClick(this); break;
 			case MTEHK_ZOOM_OUT:               ToolbarZoomOutClick(this); break;
 			case MTEHK_TERRAFORM:              ShowEditorTerraformToolbar(); break;
-			case MTEHK_SMALLMAP:               ShowSmallMap(); break;
+			case MTEHK_SMALLMAP:               citymania::ShowSmallMap(); break;
 			case MTEHK_EXTRA_VIEWPORT:         ShowExtraViewportWindowForTileUnderCursor(); break;
 			case CM_MTEHK_SMALLMAP_TOGGLE:     citymania::ToggleSmallMap(); break;
 			default: return ES_NOT_HANDLED;

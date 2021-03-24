@@ -14,11 +14,13 @@
 #include "../company_gui.h"
 #include "../date_func.h"
 #include "../viewport_func.h"
-#include "../smallmap_gui.h"
+// #include "../smallmap_gui.h"
 #include "../core/geometry_func.hpp"
 #include "../widgets/link_graph_legend_widget.h"
 
 #include "table/strings.h"
+
+#include "../citymania/cm_minimap.hpp"
 
 #include "../safeguards.h"
 
@@ -346,7 +348,7 @@ Point LinkGraphOverlay::GetStationMiddle(const Station *st) const
 		return GetViewportStationMiddle(this->window->viewport, st);
 	} else {
 		/* assume this is a smallmap */
-		return static_cast<const SmallMapWindow *>(this->window)->GetStationMiddle(st);
+		return static_cast<const citymania::SmallMapWindow *>(this->window)->GetStationMiddle(st);
 	}
 }
 

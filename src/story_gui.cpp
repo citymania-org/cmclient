@@ -577,7 +577,7 @@ protected:
 					this->active_button_id = INVALID_STORY_PAGE_ELEMENT;
 				} else {
 					CursorID cursor = TranslateStoryPageButtonCursor(StoryPageButtonData{ pe.referenced_id }.GetCursor());
-					SetObjectToPlaceWnd(cursor, PAL_NONE, HT_RECT, this);
+					SetObjectToPlaceWnd(cursor, PAL_NONE, HT_RECT, this, CM_DDSP_STORY_BUTTON);
 					this->active_button_id = pe.index;
 				}
 				this->SetWidgetDirty(WID_SB_PAGE_PANEL);
@@ -589,7 +589,7 @@ protected:
 					this->active_button_id = INVALID_STORY_PAGE_ELEMENT;
 				} else {
 					CursorID cursor = TranslateStoryPageButtonCursor(StoryPageButtonData{ pe.referenced_id }.GetCursor());
-					SetObjectToPlaceWnd(cursor, PAL_NONE, HT_VEHICLE, this);
+					SetObjectToPlaceWnd(cursor, PAL_NONE, HT_VEHICLE, this, CM_DDSP_STORY_BUTTON);
 					this->active_button_id = pe.index;
 				}
 				this->SetWidgetDirty(WID_SB_PAGE_PANEL);

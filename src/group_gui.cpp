@@ -716,7 +716,7 @@ public:
 
 				this->group_sel = this->vli.index = this->groups[id_g]->index;
 
-				SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+				SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_GROUP);
 
 				this->vehgroups.ForceRebuild();
 				this->SetDirty();
@@ -755,11 +755,11 @@ public:
 				if (v) {
 					this->vehicle_sel = v->index;
 
-					if (_ctrl_pressed) {
+					if (citymania::_fn_mod) {
 						this->SelectGroup(v->group_id);
 					}
 
-					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_GROUP);
 					SetMouseCursorVehicle(v, EIT_IN_LIST);
 					_cursor.vehchain = true;
 

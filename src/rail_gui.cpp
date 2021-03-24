@@ -177,7 +177,7 @@ void CcRailDepot(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2
 static void PlaceRail_Waypoint(TileIndex tile)
 {
 	if (_remove_button_clicked) {
-		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_REMOVE_STATION);
+		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_BUILD_STATION);
 		return;
 	}
 
@@ -209,13 +209,13 @@ void CcStation(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, 
 static void PlaceRail_Station(TileIndex tile)
 {
 	if (_remove_button_clicked) {
-		VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_REMOVE_STATION);
+		VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_STATION);
 		VpSetPlaceSizingLimit(-1);
 	} else if (_settings_client.gui.station_dragdrop) {
 		VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_STATION);
 		VpSetPlaceSizingLimit(_settings_game.station.station_spread);
 	} else {
-		if (_settings_client.gui.cm_use_improved_station_join) {
+		if (citymania::UseImprovedStationJoin()) {
 			citymania::PlaceRail_Station(tile);
 			return;
 		}
@@ -465,24 +465,6 @@ static void HandleAutoSignalPlacement()
 			CcPlaySound_CONSTRUCTION_RAIL);
 }
 
-
-// FIXME duplicate from road_gui.cpp
-static DiagDirection TileFractCoordsToDiagDir() {
-	bool diag = (_tile_fract_coords.x + _tile_fract_coords.y) < 16;
-	if (_tile_fract_coords.x < _tile_fract_coords.y) {
-		return diag ? DIAGDIR_NE : DIAGDIR_SE;
-	}
-	return diag ? DIAGDIR_NW : DIAGDIR_SW;
-}
-
-// FIXME duplicate from road_gui.cpp
-static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
-	if (bits < ROAD_SE) {
-		return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
-	}
-	return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
-}
-
 RoadBits FindRailsToConnect(TileIndex tile) {
 	RoadBits directed = ROAD_NONE;
 	RoadBits passing = ROAD_NONE;
@@ -633,27 +615,27 @@ struct BuildRailToolbarWindow : Window {
 
 		switch (widget) {
 			case WID_RAT_BUILD_NS:
-				HandlePlacePushButton(this, WID_RAT_BUILD_NS, GetRailTypeInfo(_cur_railtype)->cursor.rail_ns, HT_LINE | HT_DIR_VL);
+				HandlePlacePushButton(this, WID_RAT_BUILD_NS, GetRailTypeInfo(_cur_railtype)->cursor.rail_ns, HT_LINE | HT_DIR_VL, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_X:
-				HandlePlacePushButton(this, WID_RAT_BUILD_X, GetRailTypeInfo(_cur_railtype)->cursor.rail_swne, HT_LINE | HT_DIR_X);
+				HandlePlacePushButton(this, WID_RAT_BUILD_X, GetRailTypeInfo(_cur_railtype)->cursor.rail_swne, HT_LINE | HT_DIR_X, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_EW:
-				HandlePlacePushButton(this, WID_RAT_BUILD_EW, GetRailTypeInfo(_cur_railtype)->cursor.rail_ew, HT_LINE | HT_DIR_HL);
+				HandlePlacePushButton(this, WID_RAT_BUILD_EW, GetRailTypeInfo(_cur_railtype)->cursor.rail_ew, HT_LINE | HT_DIR_HL, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_Y:
-				HandlePlacePushButton(this, WID_RAT_BUILD_Y, GetRailTypeInfo(_cur_railtype)->cursor.rail_nwse, HT_LINE | HT_DIR_Y);
+				HandlePlacePushButton(this, WID_RAT_BUILD_Y, GetRailTypeInfo(_cur_railtype)->cursor.rail_nwse, HT_LINE | HT_DIR_Y, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_AUTORAIL:
-				HandlePlacePushButton(this, WID_RAT_AUTORAIL, GetRailTypeInfo(_cur_railtype)->cursor.autorail, HT_RAIL);
+				HandlePlacePushButton(this, WID_RAT_AUTORAIL, GetRailTypeInfo(_cur_railtype)->cursor.autorail, HT_RAIL, DDSP_PLACE_RAIL);
 				this->last_user_action = widget;
 				break;
 
@@ -680,7 +662,7 @@ struct BuildRailToolbarWindow : Window {
 					do_open = !was_open;
 				}
 				/* close/open the tool */
-				if (was_open != do_open) HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, HT_RAIL | HT_POLY);
+				if (was_open != do_open) HandlePlacePushButton(this, WID_RAT_POLYRAIL, GetRailTypeInfo(railtype)->cursor.autorail, HT_RAIL | HT_POLY, DDSP_PLACE_RAIL);
 				/* set snapping mode */
 				if (do_open) SetRailSnapMode(do_snap ? RSM_SNAP_TO_RAIL : RSM_NO_SNAP);
 
@@ -690,12 +672,12 @@ struct BuildRailToolbarWindow : Window {
 			}
 
 			case WID_RAT_DEMOLISH:
-				HandlePlacePushButton(this, WID_RAT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_RAT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_DEPOT:
-				if (HandlePlacePushButton(this, WID_RAT_BUILD_DEPOT, GetRailTypeInfo(_cur_railtype)->cursor.depot, HT_RECT | (HighLightStyle)_build_depot_direction)) {
+				if (HandlePlacePushButton(this, WID_RAT_BUILD_DEPOT, GetRailTypeInfo(_cur_railtype)->cursor.depot, HT_RECT | (HighLightStyle)_build_depot_direction, CM_DDSP_BUILD_RAIL_DEPOT)) {
 					citymania::ResetRotateAutodetection();
 					ShowBuildTrainDepotPicker(this);
 					this->last_user_action = widget;
@@ -705,7 +687,7 @@ struct BuildRailToolbarWindow : Window {
 			case WID_RAT_BUILD_WAYPOINT:
 				this->last_user_action = widget;
 				_waypoint_count = StationClass::Get(STAT_CLASS_WAYP)->GetSpecCount();
-				if (HandlePlacePushButton(this, WID_RAT_BUILD_WAYPOINT, SPR_CURSOR_WAYPOINT, HT_RECT) && _waypoint_count > 1) {
+				if (HandlePlacePushButton(this, WID_RAT_BUILD_WAYPOINT, SPR_CURSOR_WAYPOINT, HT_RECT, CM_DDSP_BUILD_WAYPOINT) && _waypoint_count > 1) {
 					ShowBuildWaypointPicker(this);
 				}
 				break;
@@ -719,12 +701,12 @@ struct BuildRailToolbarWindow : Window {
 					if (was_open) ResetObjectToPlace();
 					if (!was_open || dragdrop != _settings_client.gui.station_dragdrop) {
 						_settings_client.gui.station_dragdrop = dragdrop;
-						if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT))
+						if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT, DDSP_BUILD_STATION))
 							ShowStationBuilder(this);
 					}
 					this->last_user_action = WID_RAT_BUILD_STATION;
 				} else { /* button */
-					if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT)) {
+					if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT, DDSP_BUILD_STATION)) {
 						ShowStationBuilder(this);
 						this->last_user_action = WID_RAT_BUILD_STATION;
 					}
@@ -734,7 +716,7 @@ struct BuildRailToolbarWindow : Window {
 
 			case WID_RAT_BUILD_SIGNALS: {
 				this->last_user_action = widget;
-				bool started = HandlePlacePushButton(this, WID_RAT_BUILD_SIGNALS, ANIMCURSOR_BUILDSIGNALS, HT_RECT);
+				bool started = HandlePlacePushButton(this, WID_RAT_BUILD_SIGNALS, ANIMCURSOR_BUILDSIGNALS, HT_RECT, DDSP_BUILD_SIGNALS);
 				if (started && _settings_client.gui.enable_signal_gui != citymania::_fn_mod) {
 					ShowSignalBuilder(this);
 				}
@@ -742,12 +724,12 @@ struct BuildRailToolbarWindow : Window {
 			}
 
 			case WID_RAT_BUILD_BRIDGE:
-				HandlePlacePushButton(this, WID_RAT_BUILD_BRIDGE, SPR_CURSOR_BRIDGE, HT_RECT);
+				HandlePlacePushButton(this, WID_RAT_BUILD_BRIDGE, SPR_CURSOR_BRIDGE, HT_RECT, CM_DDSP_BUILD_RAIL_BRIDGE);
 				this->last_user_action = widget;
 				break;
 
 			case WID_RAT_BUILD_TUNNEL:
-				HandlePlacePushButton(this, WID_RAT_BUILD_TUNNEL, GetRailTypeInfo(_cur_railtype)->cursor.tunnel, HT_SPECIAL);
+				HandlePlacePushButton(this, WID_RAT_BUILD_TUNNEL, GetRailTypeInfo(_cur_railtype)->cursor.tunnel, HT_SPECIAL, CM_DDSP_BUILD_RAIL_TUNNEL);
 				this->last_user_action = widget;
 				break;
 
@@ -756,7 +738,7 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_CONVERT_RAIL:
-				HandlePlacePushButton(this, WID_RAT_CONVERT_RAIL, GetRailTypeInfo(_cur_railtype)->cursor.convert, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_RAT_CONVERT_RAIL, GetRailTypeInfo(_cur_railtype)->cursor.convert, HT_RECT | HT_DIAGONAL, DDSP_CONVERT_RAIL);
 				this->last_user_action = widget;
 				break;
 
@@ -1081,7 +1063,7 @@ Window *ShowBuildRailToolbar(RailType railtype)
 
 static void HandleStationPlacement(TileIndex start, TileIndex end)
 {
-	if (_settings_client.gui.cm_use_improved_station_join) {
+	if (citymania::UseImprovedStationJoin()) {
 		citymania::HandleStationPlacement(start, end);
 		return;
 	}
@@ -1359,7 +1341,7 @@ public:
 
 		int rad = (_settings_game.station.modified_catchment) ? CA_TRAIN : CA_UNMODIFIED;
 
-		if (_settings_client.gui.cm_use_improved_station_join || _settings_client.gui.station_show_coverage)
+		if (citymania::UseImprovedStationJoin() || _settings_client.gui.station_show_coverage)
 			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
 
 		for (uint bits = 0; bits < 7; bits++) {

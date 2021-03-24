@@ -170,6 +170,9 @@ static uint _company_to_list_pos[MAX_COMPANIES];
  */
 void BuildIndustriesLegend()
 {
+	citymania::BuildIndustriesLegend();
+	return;
+
 	uint j = 0;
 
 	/* Add each name */
@@ -200,6 +203,9 @@ void BuildIndustriesLegend()
  */
 void BuildLinkStatsLegend()
 {
+	citymania::BuildLinkStatsLegend();
+	return;
+
 	/* Clear the legend */
 	memset(_legend_linkstats, 0, sizeof(_legend_linkstats));
 
@@ -278,6 +284,9 @@ static SmallMapColourScheme _heightmap_schemes[] = {
  */
 void BuildLandLegend()
 {
+	citymania::BuildLandLegend();
+	return;
+
 	/* The smallmap window has never been initialized, so no need to change the legend. */
 	if (_heightmap_schemes[0].height_colours == nullptr) return;
 
@@ -329,6 +338,9 @@ void BuildLandLegend()
  */
 void BuildOwnerLegend()
 {
+	citymania::BuildOwnerLegend();
+	return;
+
 	_legend_land_owners[1].colour = _heightmap_schemes[_settings_client.gui.smallmap_land_colour].default_colour;
 
 	int i = NUM_NO_COMPANY_ENTRIES;
@@ -1890,6 +1902,9 @@ static const NWidgetPart _nested_smallmap_widgets[] = {
 	EndContainer(),
 };
 
+#if 0
+CityMania has its own smallmap
+
 static WindowDesc _smallmap_desc(
 	WDP_AUTO, "smallmap", 484, 314,
 	WC_SMALLMAP, WC_NONE,
@@ -1904,6 +1919,7 @@ void ShowSmallMap()
 {
 	AllocateWindowDescFront<SmallMapWindow>(&_smallmap_desc, 0);
 }
+#endif
 
 /**
  * Scrolls the main window to given coordinates.
@@ -1923,8 +1939,9 @@ bool ScrollMainWindowTo(int x, int y, int z, bool instant)
 
 	if (res) return res;
 
-	SmallMapWindow *w = dynamic_cast<SmallMapWindow*>(FindWindowById(WC_SMALLMAP, 0));
+	citymania::SmallMapWindow *w = dynamic_cast<citymania::SmallMapWindow*>(FindWindowById(WC_SMALLMAP, 0));
 	if (w != nullptr) w->SmallMapCenterOnCurrentPos();
 
 	return res;
 }
+

@@ -541,7 +541,7 @@ struct DepotWindow : Window {
 					this->sel = INVALID_VEHICLE;
 					TrainDepotMoveVehicle(v, sel, gdvp.head);
 				} else if (v != nullptr) {
-					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_DEPOT_MOVE);
 					SetMouseCursorVehicle(v, EIT_IN_DEPOT);
 					_cursor.vehchain = citymania::_fn_mod;
 
@@ -762,7 +762,7 @@ struct DepotWindow : Window {
 						SPR_CURSOR_CLONE_SHIP, SPR_CURSOR_CLONE_AIRPLANE
 					};
 
-					SetObjectToPlaceWnd(clone_icons[this->type], PAL_NONE, HT_VEHICLE, this);
+					SetObjectToPlaceWnd(clone_icons[this->type], PAL_NONE, HT_VEHICLE, this, CM_DDSP_DEPOT_CLONE);
 				} else {
 					ResetObjectToPlace();
 				}

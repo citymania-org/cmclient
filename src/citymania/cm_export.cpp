@@ -3,6 +3,7 @@
 #include "cm_export.hpp"
 
 #include "../cargotype.h"
+#include "../house.h"
 #include "../gfx_func.h"
 #include "../gfx_type.h"
 #include "../engine_base.h"
@@ -139,6 +140,25 @@ public:
 #define JKV(j, field) j.kv(#field, field)
 
 void WriteHouseSpecInfo(JsonWriter &j) {
+    j.begin_list_with_key("house_specs");
+    for (uint i = 0; i < NUM_HOUSES; i++) {
+        const HouseSpec *hs = HouseSpec::Get(i);
+        j.begin_dict();
+        j.kv("min_year", hs->min_year);
+        j.kv("max_year", hs->max_year);
+        j.kv("population", hs->population);
+        j.kv("removal_cost", hs->removal_cost);
+        j.kv("name", hs->building_name);
+        j.kv("mail_generation", hs->mail_generation);
+        j.kv("flags", hs->building_flags);
+        j.kv("availability", hs->building_availability);
+        j.kv("enabled", hs->enabled);
+        j.end_dict();
+    }
+    j.end_list();
+}
+
+void WriteCargoSpecInfo(JsonWriter &j) {
     j.begin_list_with_key("cargo_specs");
     const CargoSpec *cs;
     char buffer[128];
@@ -266,6 +286,7 @@ void WriteEngineInfo(JsonWriter &j) {
 void ExportOpenttdData(const std::string &filename) {
     data_export::JsonWriter j(filename);
     data_export::WriteHouseSpecInfo(j);
+    data_export::WriteCargoSpecInfo(j);
     data_export::WritePaletteInfo(j);
     data_export::WriteEngineInfo(j);
 }

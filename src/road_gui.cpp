@@ -39,6 +39,7 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_station_gui.hpp"
 
@@ -67,7 +68,7 @@ DECLARE_ENUM_AS_BIT_SET(RoadFlags)
 
 static RoadFlags _place_road_flag;
 
-static RoadType _cur_roadtype;
+/* CM static */ RoadType _cur_roadtype;
 
 static DiagDirection _road_depot_orientation;
 DiagDirection _road_station_picker_orientation;
@@ -176,107 +177,6 @@ void CcRoadStop(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2,
 	}
 }
 
-
-static RoadBits FindRoadsToConnect(TileIndex tile) {
-	RoadBits bits = ROAD_NONE;
-	DiagDirection ddir;
-	auto cur_rtt = GetRoadTramType(_cur_roadtype);
-	// Prioritize roadbits that head in this direction
-	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
-		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
-		if (GetAnyRoadBits(cur_tile, cur_rtt, true) &
-			DiagDirToRoadBits(ReverseDiagDir(ddir)))
-		{
-			bits |= DiagDirToRoadBits(ddir);
-		}
-	}
-	if (bits != ROAD_NONE) {
-		return bits;
-	}
-	// Try to connect to any road passing by
-	for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
-		TileIndex cur_tile = TileAddByDiagDir(tile, ddir);
-		if (GetTileType(cur_tile) == MP_ROAD && HasTileRoadType(cur_tile, cur_rtt) &&
-				(GetRoadTileType(cur_tile) == ROAD_TILE_NORMAL)) {
-			bits |= DiagDirToRoadBits(ddir);
-		}
-	}
-	return bits;
-}
-
-static DiagDirection RoadBitsToDiagDir(RoadBits bits) {
-	if (bits < ROAD_SE) {
-		return bits == ROAD_NW ? DIAGDIR_NW : DIAGDIR_SW;
-	}
-	return bits == ROAD_SE ? DIAGDIR_SE : DIAGDIR_NE;
-}
-
-static DiagDirection TileFractCoordsToDiagDir() {
-	bool diag = (_tile_fract_coords.x + _tile_fract_coords.y) < 16;
-	if (_tile_fract_coords.x < _tile_fract_coords.y) {
-		return diag ? DIAGDIR_NE : DIAGDIR_SE;
-	}
-	return diag ? DIAGDIR_NW : DIAGDIR_SW;
-}
-/*
- * Selects orientation for road object (depot, terminal station)
- */
-DiagDirection AutodetectRoadObjectDirection(TileIndex tile) {
-	RoadBits bits = FindRoadsToConnect(tile);
-	if (HasExactlyOneBit(bits)) {
-		return RoadBitsToDiagDir(bits);
-	}
-	if (bits == ROAD_NONE){
-		bits = ROAD_ALL;
-	}
-	RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir());
-	if (HasExactlyOneBit(frac_bits & bits)) {
-		return RoadBitsToDiagDir(frac_bits & bits);
-	}
-	frac_bits |= MirrorRoadBits(frac_bits);
-	if (HasExactlyOneBit(frac_bits & bits)) {
-		return RoadBitsToDiagDir(frac_bits & bits);
-	}
-	for (DiagDirection ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
-		if (DiagDirToRoadBits(ddir) & bits) {
-			return ddir;
-		}
-	}
-	NOT_REACHED();
-}
-
-bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
-	TILE_AREA_LOOP(tile, area) {
-		if (GetTileType(tile) != MP_ROAD) continue;
-		if (GetRoadTileType(tile) != ROAD_TILE_NORMAL) continue;
-		if (GetAllRoadBits(tile) & ~r) return false;
-	}
-	return true;
-}
-
-
-/*
- * Automaticaly selects direction to use for road stop.
- * @param area road stop area
- * @return selected direction
- */
-DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
-	bool se_suits, ne_suits;
-
-	// Check which direction is available
-	// If both are not use SE, building will fail anyway
-	se_suits = CheckDriveThroughRoadStopDirection(area, ROAD_Y);
-	ne_suits = CheckDriveThroughRoadStopDirection(area, ROAD_X);
-	if (!ne_suits) return DIAGDIR_SE;
-	if (!se_suits) return DIAGDIR_NE;
-
-	// Build station along the longer direction
-	if (area.w > area.h) return DIAGDIR_NE;
-	if (area.w < area.h) return DIAGDIR_SE;
-
-	return AutodetectRoadObjectDirection(area.tile);
-}
-
 /**
  * Place a new road stop.
  * @param start_tile First tile of the area.
@@ -289,35 +189,19 @@ DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area) {
  */
 static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, uint32 cmd)
 {
-	if (_settings_client.gui.cm_use_improved_station_join) {
+	if (citymania::UseImprovedStationJoin()) {
 		citymania::PlaceRoadStop(start_tile, end_tile, p2, cmd);
 		return;
 	}
 
-	uint8 ddir = _road_station_picker_orientation;
+	assert(_thd.cm.type == citymania::ObjectHighlight::Type::ROAD_STOP);
+	uint8 ddir = _thd.cm.ddir;
 	SB(p2, 16, 16, INVALID_STATION); // no station to join
 	TileArea ta(start_tile, end_tile);
 
-	if (ddir >= DIAGDIR_END) {
-		if (ddir < DIAGDIR_END + 2) {
-			SetBit(p2, 1); // It's a drive-through stop.
-			ddir -= DIAGDIR_END; // Adjust picker result to actual direction.
-			// When placed on road autorotate anyway
-			if (ddir == DIAGDIR_SE) {
-				if (!CheckDriveThroughRoadStopDirection(ta, ROAD_Y))
-					ddir = DIAGDIR_NE;
-			} else {
-				if (!CheckDriveThroughRoadStopDirection(ta, ROAD_X))
-					ddir = DIAGDIR_SE;
-			}
-		}
-		else if (ddir == DIAGDIR_END + 2) {
-			ddir = AutodetectRoadObjectDirection(start_tile);
-		}
-		else if (ddir == DIAGDIR_END + 3) {
-			SetBit(p2, 1); // It's a drive-through stop.
-			ddir = AutodetectDriveThroughRoadStopDirection(ta);
-		}
+	if (ddir >= DIAGDIR_END) { // drive-through stops
+		SetBit(p2, 1);
+		ddir -= DIAGDIR_END;
 	}
 	p2 |= ddir << 3; // Set the DiagDirecion into p2 bits 3 and 4.
 
@@ -332,7 +216,7 @@ static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, u
 static void PlaceRoad_BusStation(TileIndex tile)
 {
 	if (_remove_button_clicked) {
-		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_REMOVE_BUSSTOP);
+		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_BUILD_BUSSTOP);
 	} else {
 		if (_road_station_picker_orientation < DIAGDIR_END) { // Not a drive-through stop.
 			VpStartPlaceSizing(tile, (DiagDirToAxis(_road_station_picker_orientation) == AXIS_X) ? VPM_X_LIMITED : VPM_Y_LIMITED, DDSP_BUILD_BUSSTOP);
@@ -350,7 +234,7 @@ static void PlaceRoad_BusStation(TileIndex tile)
 static void PlaceRoad_TruckStation(TileIndex tile)
 {
 	if (_remove_button_clicked) {
-		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_REMOVE_TRUCKSTOP);
+		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_BUILD_TRUCKSTOP);
 	} else {
 		if (_road_station_picker_orientation < DIAGDIR_END) { // Not a drive-through stop.
 			VpStartPlaceSizing(tile, (DiagDirToAxis(_road_station_picker_orientation) == AXIS_X) ? VPM_X_LIMITED : VPM_Y_LIMITED, DDSP_BUILD_TRUCKSTOP);
@@ -567,41 +451,41 @@ struct BuildRoadToolbarWindow : Window {
 		_one_way_button_clicked = false;
 		switch (widget) {
 			case WID_ROT_ROAD_X:
-				HandlePlacePushButton(this, WID_ROT_ROAD_X, this->rti->cursor.road_nwse, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_ROAD_X, this->rti->cursor.road_nwse, HT_RECT, DDSP_PLACE_ROAD_X_DIR);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_ROAD_Y:
-				HandlePlacePushButton(this, WID_ROT_ROAD_Y, this->rti->cursor.road_swne, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_ROAD_Y, this->rti->cursor.road_swne, HT_RECT, DDSP_PLACE_ROAD_Y_DIR);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_AUTOROAD:
-				HandlePlacePushButton(this, WID_ROT_AUTOROAD, this->rti->cursor.autoroad, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_AUTOROAD, this->rti->cursor.autoroad, HT_RECT, DDSP_PLACE_AUTOROAD);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_DEMOLISH:
-				HandlePlacePushButton(this, WID_ROT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_ROT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_DEPOT:
-				if (HandlePlacePushButton(this, WID_ROT_DEPOT, this->rti->cursor.depot, HT_RECT)) {
+				if (HandlePlacePushButton(this, WID_ROT_DEPOT, this->rti->cursor.depot, HT_RECT, CM_DDSP_BUILD_ROAD_DEPOT)) {
 					ShowRoadDepotPicker(this);
 					this->last_started_action = widget;
 				}
 				break;
 
 			case WID_ROT_BUS_STATION:
-				if (HandlePlacePushButton(this, WID_ROT_BUS_STATION, SPR_CURSOR_BUS_STATION, HT_RECT)) {
+				if (HandlePlacePushButton(this, WID_ROT_BUS_STATION, SPR_CURSOR_BUS_STATION, HT_RECT, DDSP_BUILD_BUSSTOP)) {
 					ShowRVStationPicker(this, ROADSTOP_BUS);
 					this->last_started_action = widget;
 				}
 				break;
 
 			case WID_ROT_TRUCK_STATION:
-				if (HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, SPR_CURSOR_TRUCK_STATION, HT_RECT)) {
+				if (HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, SPR_CURSOR_TRUCK_STATION, HT_RECT, DDSP_BUILD_TRUCKSTOP)) {
 					ShowRVStationPicker(this, ROADSTOP_TRUCK);
 					this->last_started_action = widget;
 				}
@@ -615,12 +499,12 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_BUILD_BRIDGE:
-				HandlePlacePushButton(this, WID_ROT_BUILD_BRIDGE, SPR_CURSOR_BRIDGE, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_BUILD_BRIDGE, SPR_CURSOR_BRIDGE, HT_RECT, CM_DDSP_BUILD_ROAD_BRIDGE);
 				this->last_started_action = widget;
 				break;
 
 			case WID_ROT_BUILD_TUNNEL:
-				HandlePlacePushButton(this, WID_ROT_BUILD_TUNNEL, this->rti->cursor.tunnel, HT_SPECIAL);
+				HandlePlacePushButton(this, WID_ROT_BUILD_TUNNEL, this->rti->cursor.tunnel, HT_SPECIAL, CM_DDSP_BUILD_ROAD_TUNNEL);
 				this->last_started_action = widget;
 				break;
 
@@ -634,7 +518,7 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_CONVERT_ROAD:
-				HandlePlacePushButton(this, WID_ROT_CONVERT_ROAD, this->rti->cursor.convert_road, HT_RECT);
+				HandlePlacePushButton(this, WID_ROT_CONVERT_ROAD, this->rti->cursor.convert_road, HT_RECT, DDSP_CONVERT_ROAD);
 				this->last_started_action = widget;
 				break;
 
@@ -683,7 +567,7 @@ struct BuildRoadToolbarWindow : Window {
 			case WID_ROT_DEPOT:
 				ddir = _road_depot_orientation;
 				if (ddir == DIAGDIR_NW + 1) {
-					ddir = AutodetectRoadObjectDirection(tile);
+					ddir = citymania::AutodetectRoadObjectDirection(tile, GetTileBelowCursor(), _cur_roadtype);
 				}
 				DoCommandP(tile, _cur_roadtype << 2 | ddir, 0,
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(this->rti->strings.err_depot), CcRoadDepot);
@@ -1247,6 +1131,13 @@ static void ShowRoadDepotPicker(Window *parent)
 }
 
 struct BuildRoadStationWindow : public PickerWindowBase {
+/* CityMania code start */
+public:
+	enum class Hotkey : int {
+		ROTATE,
+	};
+/* CityMania code end */
+
 	BuildRoadStationWindow(WindowDesc *desc, Window *parent, RoadStopType rs) : PickerWindowBase(desc, parent)
 	{
 		this->CreateNestedTree();
@@ -1290,7 +1181,7 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 
 		int rad = _settings_game.station.modified_catchment ? ((this->window_class == WC_BUS_STATION) ? CA_BUS : CA_TRUCK) : CA_UNMODIFIED;
 		SetTileSelectSize(1, 1);
-		if (_settings_client.gui.cm_use_improved_station_join || _settings_client.gui.station_show_coverage)
+		if (citymania::UseImprovedStationJoin() || _settings_client.gui.station_show_coverage)
 			SetTileSelectBigSize(-rad, -rad, 2 * rad, 2 * rad);
 
 		/* 'Accepts' and 'Supplies' texts. */
@@ -1383,6 +1274,39 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 	{
 		CheckRedrawStationCoverage(this);
 	}
+
+	/* CityMania code start */
+	EventState OnHotkey(int hotkey) override
+	{
+		switch ((BuildRoadStationWindow::Hotkey)hotkey) {
+			/* Indicate to the OnClick that the action comes from a hotkey rather
+			 * then from a click and that the CTRL state should be ignored. */
+			case BuildRoadStationWindow::Hotkey::ROTATE:
+				if (_road_station_picker_orientation < citymania::STATIONDIR_AUTO) {
+					this->RaiseWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
+					if (_road_station_picker_orientation < DIAGDIR_END) {
+						_road_station_picker_orientation = ChangeDiagDir(_road_station_picker_orientation, DIAGDIRDIFF_90RIGHT);
+					} else if (_road_station_picker_orientation == citymania::STATIONDIR_X) {
+						_road_station_picker_orientation = citymania::STATIONDIR_Y;
+					} else if (_road_station_picker_orientation == citymania::STATIONDIR_Y) {
+						_road_station_picker_orientation = citymania::STATIONDIR_X;
+					}
+					this->LowerWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
+				} else {
+					citymania::RotateAutodetection();
+				}
+				this->SetDirty();
+				return ES_HANDLED;
+
+			default:
+				NOT_REACHED();
+		}
+
+		return ES_NOT_HANDLED;
+	}
+
+	static HotkeyList hotkeys;
+	/* CityMania code end */
 };
 
 /** Widget definition of the build road station window */
@@ -1432,11 +1356,20 @@ static const NWidgetPart _nested_road_station_picker_widgets[] = {
 	EndContainer(),
 };
 
+/* CityMania code start */
+static Hotkey _cm_road_station_pickerhotkeys[] = {
+	Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", (int)BuildRoadStationWindow::Hotkey::ROTATE),
+	HOTKEY_LIST_END
+};
+HotkeyList BuildRoadStationWindow::hotkeys("cm_build_road_station", _cm_road_station_pickerhotkeys);
+/* CityMania code end */
+
 static WindowDesc _road_station_picker_desc(
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUS_STATION, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
 	_nested_road_station_picker_widgets, lengthof(_nested_road_station_picker_widgets)
+	,&BuildRoadStationWindow::hotkeys // CityMania addition
 );
 
 /** Widget definition of the build tram station window */
@@ -1481,6 +1414,7 @@ static WindowDesc _tram_station_picker_desc(
 	WC_BUS_STATION, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
 	_nested_tram_station_picker_widgets, lengthof(_nested_tram_station_picker_widgets)
+	,&BuildRoadStationWindow::hotkeys // CityMania addition
 );
 
 static void ShowRVStationPicker(Window *parent, RoadStopType rs)

@@ -46,6 +46,7 @@
 
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_highlight.hpp"
+#include "citymania/cm_minimap.hpp"
 
 #include "safeguards.h"
 
@@ -706,7 +707,7 @@ public:
 						DoCommandP(0, this->selected_type, InteractiveRandom(), CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
 						this->HandleButtonClick(WID_DPI_FUND_WIDGET);
 					} else {
-						HandlePlacePushButton(this, WID_DPI_FUND_WIDGET, SPR_CURSOR_INDUSTRY, HT_RECT);
+						HandlePlacePushButton(this, WID_DPI_FUND_WIDGET, SPR_CURSOR_INDUSTRY, HT_RECT, CM_DDSP_FUND_INDUSTRY);
 					}
 				}
 				break;
@@ -3035,7 +3036,7 @@ struct IndustryCargoesWindow : public Window {
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 
 				if (this->IsWidgetLowered(WID_IC_NOTIFY)) {
-					if (FindWindowByClass(WC_SMALLMAP) == nullptr) ShowSmallMap();
+					if (FindWindowByClass(WC_SMALLMAP) == nullptr) citymania::ShowSmallMap();
 					this->NotifySmallmap();
 				}
 				break;

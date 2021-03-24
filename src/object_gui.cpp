@@ -450,7 +450,7 @@ public:
 		}
 
 		if (_selected_object_index != -1) {
-			SetObjectToPlaceWnd(SPR_CURSOR_TRANSMITTER, PAL_NONE, HT_RECT, this);
+			SetObjectToPlaceWnd(SPR_CURSOR_TRANSMITTER, PAL_NONE, HT_RECT, this, CM_DDSP_PLACE_OBJECT);
 		}
 
 		this->UpdateButtons(_selected_object_class, _selected_object_index, _selected_object_view);

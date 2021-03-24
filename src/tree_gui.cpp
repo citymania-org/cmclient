@@ -102,7 +102,7 @@ class BuildTreesWindow : public Window
 		if (this->tree_to_plant >= 0) {
 			/* Activate placement */
 			if (_settings_client.sound.confirm) SndPlayFx(SND_15_BEEP);
-			SetObjectToPlace(SPR_CURSOR_TREE, PAL_NONE, HT_RECT, this->window_class, this->window_number);
+			SetObjectToPlace(SPR_CURSOR_TREE, PAL_NONE, HT_RECT, this->window_class, this->window_number, DDSP_PLANT_TREES);
 			this->tree_to_plant = current_tree; // SetObjectToPlace may call ResetObjectToPlace which may reset tree_to_plant to -1
 		} else {
 			/* Deactivate placement */

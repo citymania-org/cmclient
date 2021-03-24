@@ -1009,7 +1009,7 @@ struct RefitWindow : public Window {
 				this->SetSelectedVehicles(pt.x - nwi->pos_x);
 				this->SetWidgetDirty(WID_VR_VEHICLE_PANEL_DISPLAY);
 				if (!citymania::_fn_mod) {
-					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_SELECT_REFIT);
 				} else {
 					/* The vehicle selection has changed. */
 					this->InvalidateData(2);

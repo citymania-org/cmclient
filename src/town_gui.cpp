@@ -1302,7 +1302,7 @@ public:
 	{
 		switch (widget) {
 			case WID_TF_NEW_TOWN:
-				HandlePlacePushButton(this, WID_TF_NEW_TOWN, SPR_CURSOR_TOWN, HT_RECT);
+				HandlePlacePushButton(this, WID_TF_NEW_TOWN, SPR_CURSOR_TOWN, HT_RECT, CM_DDSP_NEW_TOWN);
 				break;
 
 			case WID_TF_RANDOM_TOWN:
