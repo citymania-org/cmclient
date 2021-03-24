@@ -62,6 +62,7 @@
 
 #include "citymania/cm_locations.hpp"
 #include "citymania/cm_main.hpp"
+#include "citymania/cm_minimap.hpp"
 
 #include "safeguards.h"
 
@@ -516,7 +517,7 @@ static CallBackFunction ToolbarScenMapTownDir(Window *w)
 static CallBackFunction MenuClickMap(int index)
 {
 	switch (index) {
-		case MME_SHOW_SMALLMAP:       ShowSmallMap();            break;
+		case MME_SHOW_SMALLMAP:       citymania::ShowSmallMap();            break;
 		case MME_SHOW_EXTRAVIEWPORTS: ShowExtraViewPortWindow(); break;
 		case MME_SHOW_LINKGRAPH:      ShowLinkGraphLegend();     break;
 		case MME_SHOW_SIGNLISTS:      ShowSignList();            break;
@@ -2179,7 +2180,7 @@ struct MainToolbarWindow : Window {
 			case MTHK_SETTINGS: ShowGameOptions(); break;
 			case MTHK_SAVEGAME: MenuClickSaveLoad(); break;
 			case MTHK_LOADGAME: ShowSaveLoadDialog(FT_SAVEGAME, SLO_LOAD); break;
-			case MTHK_SMALLMAP: ShowSmallMap(); break;
+			case MTHK_SMALLMAP: citymania::ShowSmallMap(); break;
 			case MTHK_TOWNDIRECTORY: ShowTownDirectory(); break;
 			case MTHK_SUBSIDIES: ShowSubsidiesList(); break;
 			case MTHK_STATIONS: ShowCompanyStations(_local_company); break;
@@ -2638,7 +2639,7 @@ struct ScenarioEditorToolbarWindow : Window {
 			case MTEHK_ZOOM_IN:                ToolbarZoomInClick(this); break;
 			case MTEHK_ZOOM_OUT:               ToolbarZoomOutClick(this); break;
 			case MTEHK_TERRAFORM:              ShowEditorTerraformToolbar(); break;
-			case MTEHK_SMALLMAP:               ShowSmallMap(); break;
+			case MTEHK_SMALLMAP:               citymania::ShowSmallMap(); break;
 			case MTEHK_EXTRA_VIEWPORT:         ShowExtraViewPortWindowForTileUnderCursor(); break;
 			case CM_MTEHK_SMALLMAP_TOGGLE:     citymania::ToggleSmallMap(); break;
 			default: return ES_NOT_HANDLED;

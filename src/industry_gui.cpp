@@ -45,6 +45,7 @@
 
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_highlight.hpp"
+#include "citymania/cm_minimap.hpp"
 
 #include "safeguards.h"
 
@@ -2989,7 +2990,7 @@ struct IndustryCargoesWindow : public Window {
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 
 				if (this->IsWidgetLowered(WID_IC_NOTIFY)) {
-					if (FindWindowByClass(WC_SMALLMAP) == nullptr) ShowSmallMap();
+					if (FindWindowByClass(WC_SMALLMAP) == nullptr) citymania::ShowSmallMap();
 					this->NotifySmallmap();
 				}
 				break;
