@@ -3975,7 +3975,7 @@ static LineSnapPoint LineSnapPointAtRailTrackEndpoint(TileIndex tile, DiagDirect
 			TrackStatusToTrackBits(GetTileTrackStatus(tile, TRANSPORT_RAIL, INVALID_DIAGDIR)) == AxisToTrackBits(DiagDirToAxis(exit_dir)) &&
 			IsTileOwner(tile, _local_company)) {
 		/* Check if this is a tunnel/bridge and move the tile to the other end if so. */
-		if (IsTileType(tile, MP_TUNNELBRIDGE)) tile = GetOtherTunnelBridgeEnd(tile);
+		if (IsTileType(tile, MP_TUNNELBRIDGE) && GetTunnelBridgeDirection(tile) == exit_dir) tile = GetOtherTunnelBridgeEnd(tile);
 		LineSnapPoint ex = LineSnapPointAtRailTrackEndpoint(tile, exit_dir, false, extended);
 		if (!bidirectional) return ex; // if we are interested in forward direction only then return just the extended point
 		*extended = ex; // otherwise return two points, extended with forward direction and base with reverse direction
