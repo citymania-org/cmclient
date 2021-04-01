@@ -12,6 +12,7 @@
 
 #include "network_internal.h"
 #include "core/tcp_listen.h"
+#include "../saveload/saveload.h"
 
 class ServerNetworkGameSocketHandler;
 /** Make the code look slightly nicer/simpler. */
@@ -71,6 +72,7 @@ public:
 
 	struct PacketWriter *savegame; ///< Writer used to write the savegame.
 	NetworkAddress client_address; ///< IP-address of the client (so he can be banned)
+	citymania::SavePreset cm_preset; ///< Preset to use for the savegame
 
 	ServerNetworkGameSocketHandler(SOCKET s);
 	~ServerNetworkGameSocketHandler();
