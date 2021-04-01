@@ -68,6 +68,7 @@ set_default() {
 	with_cocoa="1"
 	with_zlib="1"
 	with_lzma="1"
+	with_zstd="1"
 	with_lzo2="1"
 	with_xdg_basedir="1"
 	with_png="1"
@@ -339,6 +340,10 @@ detect_params() {
 			--with-liblzma)               with_lzma="2";;
 			--without-liblzma)            with_lzma="0";;
 			--with-liblzma=*)             with_lzma="$optarg";;
+
+			--with-zstd)                  with_zstd="2";;
+			--without-zstd)               with_zstd="0";;
+			--with-zstd=*)                with_zstd="$optarg";;
 
 			--with-lzo2)                  with_lzo2="2";;
 			--without-lzo2)               with_lzo2="0";;
@@ -820,6 +825,20 @@ check_params() {
 			log 1 "configure: error: no liblzma detected"
 		else
 			log 1 " If you want to compile without lzma use --without-lzma as parameter"
+			exit
+		fi
+	fi
+
+	pre_detect_with_zstd=$with_zstd
+	detect_zstd
+
+	if [ "$with_zstd" = "0" ] || [ -z "$zstd_config" ]; then
+		log 1 "WARNING: zstd was not detected or disabled"
+		if [ "$pre_detect_with_zstd" = "0" ]; then
+			log 1 "WARNING: We strongly suggest you to install zstd."
+		else
+			log 1 "configure: error: no zstd detected"
+			log 1 " If you want to compile without zstd use --without-zstd as parameter"
 			exit
 		fi
 	fi
@@ -1687,6 +1706,17 @@ make_cflags_and_ldflags() {
 			LIBS="$LIBS `$lzma_config --libs --static | tr '\n\r' '  '`"
 		else
 			LIBS="$LIBS `$lzma_config --libs | tr '\n\r' '  '`"
+		fi
+	fi
+
+	if [ -n "$zstd_config" ]; then
+		CFLAGS="$CFLAGS -DWITH_ZSTD"
+		CFLAGS="$CFLAGS `$zstd_config --cflags | tr '\n\r' '  '`"
+
+		if [ "$enable_static" != "0" ]; then
+			LIBS="$LIBS `$zstd_config --libs --static | tr '\n\r' '  '`"
+		else
+			LIBS="$LIBS `$zstd_config --libs | tr '\n\r' '  '`"
 		fi
 	fi
 
@@ -2794,6 +2824,10 @@ detect_pkg_config() {
 
 detect_lzma() {
 	detect_pkg_config "$with_lzma" "liblzma" "lzma_config" "5.0"
+}
+
+detect_zstd() {
+	detect_pkg_config "$with_zstd" "libzstd" "zstd_config" "1.4"
 }
 
 detect_xdg_basedir() {
