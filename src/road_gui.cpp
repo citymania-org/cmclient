@@ -70,7 +70,7 @@ static RoadFlags _place_road_flag;
 
 /* CM static */ RoadType _cur_roadtype;
 
-static DiagDirection _road_depot_orientation;
+/* CM static */ DiagDirection _road_depot_orientation;
 DiagDirection _road_station_picker_orientation;
 
 void CcPlaySound_CONSTRUCTION_OTHER(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
@@ -472,6 +472,7 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_DEPOT:
 				if (HandlePlacePushButton(this, WID_ROT_DEPOT, this->rti->cursor.depot, HT_RECT, CM_DDSP_BUILD_ROAD_DEPOT)) {
+					citymania::ResetRotateAutodetection();
 					ShowRoadDepotPicker(this);
 					this->last_started_action = widget;
 				}
@@ -566,8 +567,9 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_DEPOT:
 				ddir = _road_depot_orientation;
-				if (ddir == DIAGDIR_NW + 1) {
-					ddir = citymania::AutodetectRoadObjectDirection(tile, GetTileBelowCursor(), _cur_roadtype);
+				if (ddir == citymania::DEPOTDIR_AUTO) {
+					assert(_thd.cm.type == citymania::ObjectHighlight::Type::ROAD_DEPOT);
+					ddir = _thd.cm.ddir;
 				}
 				DoCommandP(tile, _cur_roadtype << 2 | ddir, 0,
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(this->rti->strings.err_depot), CcRoadDepot);
@@ -1023,6 +1025,13 @@ Window *ShowBuildRoadScenToolbar(RoadType roadtype)
 }
 
 struct BuildRoadDepotWindow : public PickerWindowBase {
+/* CityMania code start */
+public:
+	enum class Hotkey : int {
+		ROTATE,
+	};
+/* CityMania code end */
+
 	BuildRoadDepotWindow(WindowDesc *desc, Window *parent) : PickerWindowBase(desc, parent)
 	{
 		this->CreateNestedTree();
@@ -1080,6 +1089,33 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 				break;
 		}
 	}
+
+	/* CityMania code start */
+	EventState OnHotkey(int hotkey) override
+	{
+		switch ((BuildRoadDepotWindow::Hotkey)hotkey) {
+			/* Indicate to the OnClick that the action comes from a hotkey rather
+			 * then from a click and that the CTRL state should be ignored. */
+			case BuildRoadDepotWindow::Hotkey::ROTATE:
+				if (_road_depot_orientation < DIAGDIR_END) {
+					this->RaiseWidget(_road_depot_orientation + WID_BROD_DEPOT_NE);
+					_road_depot_orientation = ChangeDiagDir(_road_depot_orientation, DIAGDIRDIFF_90RIGHT);
+					this->LowerWidget(_road_depot_orientation + WID_BROD_DEPOT_NE);
+				} else {
+					citymania::RotateAutodetection();
+				}
+				this->SetDirty();
+				return ES_HANDLED;
+
+			default:
+				NOT_REACHED();
+		}
+
+		return ES_NOT_HANDLED;
+	}
+
+	static HotkeyList hotkeys;
+	/* CityMania code end */
 };
 
 static const NWidgetPart _nested_build_road_depot_widgets[] = {
@@ -1118,11 +1154,20 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 	EndContainer(),
 };
 
+/* CityMania code start */
+static Hotkey build_depot_hotkeys[] = {
+	Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", (int)BuildRoadDepotWindow::Hotkey::ROTATE),
+	HOTKEY_LIST_END
+};
+HotkeyList BuildRoadDepotWindow::hotkeys("cm_build_road_depot", build_depot_hotkeys);
+/* CityMania code end */
+
 static WindowDesc _build_road_depot_desc(
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
 	_nested_build_road_depot_widgets, lengthof(_nested_build_road_depot_widgets)
+	,&BuildRoadDepotWindow::hotkeys  // CityMania addition
 );
 
 static void ShowRoadDepotPicker(Window *parent)

@@ -809,7 +809,7 @@ struct BuildRailToolbarWindow : Window {
 
 			case WID_RAT_BUILD_DEPOT:
 				ddir = _build_depot_direction;
-				if (ddir == DIAGDIR_NW + 1) {
+				if (ddir == citymania::DEPOTDIR_AUTO) {
 					assert(_thd.cm.type == citymania::ObjectHighlight::Type::RAIL_DEPOT);
 					ddir = _thd.cm.ddir;
 				}
@@ -2203,8 +2203,8 @@ static WindowDesc _build_depot_desc(
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
-	_nested_build_depot_widgets, lengthof(_nested_build_depot_widgets),
-	&BuildRailDepotWindow::hotkeys  // CityMania addition
+	_nested_build_depot_widgets, lengthof(_nested_build_depot_widgets)
+	,&BuildRailDepotWindow::hotkeys  // CityMania addition
 );
 
 static void ShowBuildTrainDepotPicker(Window *parent)

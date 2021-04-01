@@ -9,6 +9,7 @@
 
 namespace citymania {
 
+const DiagDirection DEPOTDIR_AUTO = DIAGDIR_END;
 const DiagDirection STATIONDIR_X = DIAGDIR_END;
 const DiagDirection STATIONDIR_Y = (DiagDirection)((uint)DIAGDIR_END + 1);
 const DiagDirection STATIONDIR_AUTO = (DiagDirection)((uint)DIAGDIR_END + 2);

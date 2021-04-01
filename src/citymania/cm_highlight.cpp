@@ -48,6 +48,7 @@ extern int _selected_airport_index;
 extern byte _selected_airport_layout;
 extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
 extern DiagDirection _road_station_picker_orientation;
+extern DiagDirection _road_depot_orientation;
 extern uint32 _realtime_tick;
 extern void GetStationLayout(byte *layout, int numtracks, int plat_len, const StationSpec *statspec);
 
@@ -142,6 +143,13 @@ ObjectTileHighlight ObjectTileHighlight::make_road_stop(SpriteID palette, RoadTy
     return oh;
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir) {
+    auto oh = ObjectTileHighlight(Type::ROAD_DEPOT, palette);
+    oh.u.road.depot.roadtype = roadtype;
+    oh.u.road.depot.ddir = ddir;
+    return oh;
+}
+
 ObjectTileHighlight ObjectTileHighlight::make_airport_tile(SpriteID palette, StationGfx gfx) {
     auto oh = ObjectTileHighlight(Type::AIRPORT_TILE, palette);
     oh.u.airport_tile.gfx = gfx;
@@ -194,6 +202,14 @@ ObjectHighlight ObjectHighlight::make_road_stop(TileIndex start_tile, TileIndex 
     oh.ddir = orientation;
     oh.roadtype = roadtype;
     oh.is_truck = is_truck;
+    return oh;
+}
+
+ObjectHighlight ObjectHighlight::make_road_depot(TileIndex tile, RoadType roadtype, DiagDirection orientation) {
+    auto oh = ObjectHighlight{ObjectHighlight::Type::ROAD_DEPOT};
+    oh.tile = tile;
+    oh.ddir = orientation;
+    oh.roadtype = roadtype;
     return oh;
 }
 
@@ -327,6 +343,17 @@ void ObjectHighlight::UpdateTiles() {
             TILE_AREA_LOOP(tile, ta) {
                 this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck)));
             }
+            break;
+        }
+
+        case Type::ROAD_DEPOT: {
+            auto palette = (CanBuild(
+                this->tile,
+                this->roadtype << 2 | this->ddir,
+                0,
+                CMD_BUILD_ROAD_DEPOT
+            ) ? PALETTE_TINT_WHITE : PALETTE_TINT_RED_DEEP);
+            this->tiles.insert(std::make_pair(this->tile, ObjectTileHighlight::make_road_depot(palette, this->roadtype, this->ddir)));
             break;
         }
 
@@ -513,6 +540,73 @@ void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagD
     DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
     /* Draw road, tram catenary */
     // DrawRoadCatenary(ti);
+}
+
+
+struct DrawRoadTileStruct {
+    uint16 image;
+    byte subcoord_x;
+    byte subcoord_y;
+};
+
+#include "../table/road_land.h"
+
+// copied from road_gui.cpp
+static uint GetRoadSpriteOffset(Slope slope, RoadBits bits)
+{
+    if (slope != SLOPE_FLAT) {
+        switch (slope) {
+            case SLOPE_NE: return 11;
+            case SLOPE_SE: return 12;
+            case SLOPE_SW: return 13;
+            case SLOPE_NW: return 14;
+            default: NOT_REACHED();
+        }
+    } else {
+        static const uint offsets[] = {
+            0, 18, 17, 7,
+            16, 0, 10, 5,
+            15, 8, 1, 4,
+            9, 3, 6, 2
+        };
+        return offsets[bits];
+    }
+}
+
+
+void DrawRoadDepot(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagDirection orientation) {
+    const RoadTypeInfo* rti = GetRoadTypeInfo(roadtype);
+    int relocation = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_DEPOT);
+    bool default_gfx = relocation == 0;
+    if (default_gfx) {
+        if (HasBit(rti->flags, ROTF_CATENARY)) {
+            if (_loaded_newgrf_features.tram == TRAMWAY_REPLACE_DEPOT_WITH_TRACK && RoadTypeIsTram(roadtype) && !rti->UsesOverlay()) {
+                /* Sprites with track only work for default tram */
+                relocation = SPR_TRAMWAY_DEPOT_WITH_TRACK - SPR_ROAD_DEPOT;
+                default_gfx = false;
+            } else {
+                /* Sprites without track are always better, if provided */
+                relocation = SPR_TRAMWAY_DEPOT_NO_TRACK - SPR_ROAD_DEPOT;
+            }
+        }
+    } else {
+        relocation -= SPR_ROAD_DEPOT;
+    }
+
+    const DrawTileSprites *dts = &_road_depot[orientation];
+    AddSortableSpriteToDraw(dts->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+
+    if (default_gfx) {
+        uint offset = GetRoadSpriteOffset(SLOPE_FLAT, DiagDirToRoadBits(orientation));
+        if (rti->UsesOverlay()) {
+            SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_OVERLAY);
+            if (ground != 0) AddSortableSpriteToDraw(ground + offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+        } else if (RoadTypeIsTram(roadtype)) {
+            AddSortableSpriteToDraw(SPR_TRAMWAY_OVERLAY + offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+        }
+    }
+
+    DrawRailTileSeq(ti, dts, TO_INVALID, relocation, 0, palette);
 }
 
 #include "../table/station_land.h"
@@ -708,6 +802,9 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 break;
             case ObjectTileHighlight::Type::ROAD_STOP:
                 DrawRoadStop(oth.palette, ti, oth.u.road.stop.roadtype, oth.u.road.stop.ddir, oth.u.road.stop.is_truck);
+                break;
+            case ObjectTileHighlight::Type::ROAD_DEPOT:
+                DrawRoadDepot(oth.palette, ti, oth.u.road.depot.roadtype, oth.u.road.depot.ddir);
                 break;
             case ObjectTileHighlight::Type::AIRPORT_TILE:
                 DrawAirportTile(oth.palette, ti, oth.u.airport_tile.gfx);
@@ -1047,25 +1144,10 @@ bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
 
     // if (_thd.drawstyle == CM_HT_BLUEPRINT_PLACE) return true;
 
-    // if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0) {
     if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_BUSSTOP
-        || _thd.select_proc == DDSP_BUILD_TRUCKSTOP || _thd.select_proc == CM_DDSP_BUILD_AIRPORT) {
-        // station selector, handled by DrawTileZoning
-        return true;
-    }
-
-    if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
-    // if ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && IsInsideSelectedRectangle(ti->x, ti->y)
-    //         && _cursor.sprite_seq[0].sprite == GetRailTypeInfo(_cur_railtype)->cursor.depot) {
-        // DrawTileSelectionRect(ti, _thd.make_square_red ? PALETTE_SEL_TILE_RED : PAL_NONE);
-
-        // auto rti = GetRailTypeInfo(_cur_railtype);
-        // int depot_sprite = GetCustomRailSprite(rti, ti->tile, RTSG_DEPOT);
-        // auto relocation = depot_sprite != 0 ? depot_sprite - SPR_RAIL_DEPOT_SE_1 : rti->GetRailtypeSpriteOffset();
-        // AddSortableSpriteToDraw(relocation, PALETTE_TINT_WHITE, ti->x, ti->y, 0x10, 0x10, 1, ti->z);
-        // AddSortableSpriteToDraw(SPR_RAIL_DEPOT_SE_1, PALETTE_TINT_WHITE, ti->x, ti->y, 0x10, 0x10, 1, ti->z);
-        // DrawTrainDepotSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), widget - WID_BRAD_DEPOT_NE + DIAGDIR_NE, _cur_railtype);
-        // DrawTrainDepotSprite(ti, _cur_railtype, (DiagDirection)(_thd.drawstyle & HT_DIR_MASK));
+        || _thd.select_proc == DDSP_BUILD_TRUCKSTOP || _thd.select_proc == CM_DDSP_BUILD_AIRPORT
+        || _thd.select_proc == CM_DDSP_BUILD_ROAD_DEPOT || _thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
+        // handled by DrawTileZoning
         return true;
     }
 
@@ -1115,6 +1197,15 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     //     new_drawstyle = CM_HT_BLUEPRINT_PLACE;
     // } else
     if (_thd.make_square_red) {
+    } else if (_thd.select_proc == CM_DDSP_BUILD_ROAD_DEPOT) {
+        auto dir = _road_depot_orientation;
+        if (pt.x != -1) {
+            if (dir == DEPOTDIR_AUTO) {
+                dir = AddAutodetectionRotation(AutodetectRoadObjectDirection(tile, pt, _cur_roadtype));
+            }
+            _thd.cm_new = ObjectHighlight::make_road_depot(tile, _cur_roadtype, dir);
+        }
+        new_drawstyle = HT_RECT;
     } else if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
         auto dir = _build_depot_direction;
         if (pt.x != -1) {

@@ -30,6 +30,7 @@ public:
         RAIL_BRIDGE_HEAD,
         RAIL_TUNNEL_HEAD,
         ROAD_STOP,
+        ROAD_DEPOT,
         AIRPORT_TILE,
         END,
     };
@@ -67,6 +68,10 @@ public:
                 DiagDirection ddir;
                 bool is_truck;
             } stop;
+            struct {
+                RoadType roadtype;
+                DiagDirection ddir;
+            } depot;
         } road;
         struct {
             StationGfx gfx;
@@ -83,6 +88,7 @@ public:
     static ObjectTileHighlight make_rail_tunnel_head(SpriteID palette, DiagDirection ddir);
 
     static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck);
+    static ObjectTileHighlight make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir);
     static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
 };
 
@@ -109,6 +115,7 @@ public:
             RAIL_BRIDGE,
             RAIL_TUNNEL,
             ROAD_STOP,
+            ROAD_DEPOT,
             END,
         };
         Type type;
@@ -150,6 +157,9 @@ public:
                     DiagDirection ddir;
                     TileIndexDiffC other_end;
                 } stop;
+                struct {
+                    DiagDirection ddir;
+                } depot;
             } road;
         } u;
         Item(Type type, TileIndexDiffC tdiff)
@@ -184,7 +194,8 @@ public:
         RAIL_DEPOT = 1,
         RAIL_STATION = 2,
         ROAD_STOP = 3,
-        AIRPORT = 4,
+        ROAD_DEPOT = 4,
+        AIRPORT = 5,
         // BLUEPRINT = 2,
     };
 
@@ -214,6 +225,7 @@ public:
     static ObjectHighlight make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis);
     // static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);
     static ObjectHighlight make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck);
+    static ObjectHighlight make_road_depot(TileIndex tile, RoadType roadtype, DiagDirection orientation);
     static ObjectHighlight make_airport(TileIndex start_tile, int airport_type, byte airport_layout);
 
     void Draw(const TileInfo *ti);
