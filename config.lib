@@ -1499,8 +1499,8 @@ make_cflags_and_ldflags() {
 
 	CFLAGS="$CFLAGS -D$os"
 	CFLAGS_BUILD="$CFLAGS_BUILD -D$os"
-	CXXFLAGS="$CXXFLAGS -std=c++11"
-	CXXFLAGS_BUILD="$CXXFLAGS_BUILD -std=c++11"
+	CXXFLAGS="$CXXFLAGS -std=c++17"
+	CXXFLAGS_BUILD="$CXXFLAGS_BUILD -std=c++17"
 
 	if [ "$enable_debug" = "0" ]; then
 		# No debug, add default stuff
