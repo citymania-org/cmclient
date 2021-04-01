@@ -386,6 +386,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendJoin()
 	p->Send_string(_settings_client.network.client_name); // Client name
 	p->Send_uint8 (_network_join_as);     // PlayAs
 	p->Send_uint8 (NETLANG_ANY);          // Language
+	p->Send_uint8 (citymania::GetAvailableLoadFormats());  // Compressnion formats that we can decompress
 	my_client->SendPacket(p);
 	return NETWORK_RECV_STATUS_OKAY;
 }
