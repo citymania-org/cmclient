@@ -94,7 +94,7 @@ public:
 
 class TileIndexDiffCCompare{
 public:
-    bool operator()(const TileIndexDiffC &a, const TileIndexDiffC &b) {
+    bool operator()(const TileIndexDiffC &a, const TileIndexDiffC &b) const {
         if (a.x < b.x) return true;
         if (a.x == b.x && a.y < b.y) return true;
         return false;
