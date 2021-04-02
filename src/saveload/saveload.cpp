@@ -2514,11 +2514,10 @@ std::optional<SavePreset> FindCompatibleSavePreset(const std::string &server_for
  */
 uint8 GetAvailableLoadFormats()
 {
-    return 3;
     uint8 res = 0;
     for(auto &slf : _saveload_formats) {
         if (slf.init_load != nullptr) {
-            res &= (1 << slf.id);
+            res |= (1 << slf.id);
         }
     }
     return res;
@@ -2858,6 +2857,8 @@ static SaveOrLoadResult DoLoad(LoadFilter *reader, bool load_check)
 		seprintf(err_str, lastof(err_str), "Loader for '%s' is not available.", fmt->name);
 		SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, err_str);
 	}
+
+	DEBUG(sl, 2, "Using saveload format '%s'", fmt->name);
 
 	_sl.lf = fmt->init_load(_sl.lf);
 	_sl.reader = new ReadBuffer(_sl.lf);
