@@ -908,7 +908,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_JOIN(Packet *p)
 	p->Recv_string(name, sizeof(name));
 	playas = (Owner)p->Recv_uint8();
 	client_lang = (NetworkLanguage)p->Recv_uint8();
-	uint8 savegame_formats = p->CanReadFromPacket(1) ? p->Recv_uint8() : 23u /* assume non-modded has everything but zstd */;
+	uint8 savegame_formats = p->CMCheckRead(1) ? p->Recv_uint8() : 23u /* assume non-modded has everything but zstd */;
 
 	if (this->HasClientQuit()) return NETWORK_RECV_STATUS_CONN_LOST;
 
@@ -916,6 +916,8 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_JOIN(Packet *p)
 	auto preset = citymania::FindCompatibleSavePreset("", savegame_formats);
 	if (!preset) return this->SendError(NETWORK_ERROR_NOT_EXPECTED);
 	this->cm_preset = *preset;
+
+	DEBUG(sl, 2, "Using saveload preset '%s:%d' for client %d (mask %d)", this->cm_preset.format->name, (int)this->cm_preset.compression_level, (int)this->client_id, (int)savegame_formats);
 
 	/* join another company does not affect these values */
 	switch (playas) {
