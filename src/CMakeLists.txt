@@ -26,7 +26,6 @@ add_subdirectory(table)
 add_subdirectory(video)
 add_subdirectory(widgets)
 
-
 add_files(
     viewport_sprite_sorter_sse4.cpp
     CONDITION SSE_FOUND
