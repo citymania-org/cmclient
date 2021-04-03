@@ -297,6 +297,7 @@ jobs:
           SDL2-devel \
           wget \
           xz-devel \
+          libzstd-devel \
           zlib-devel \
           # EOF
         echo "::endgroup::"
@@ -379,6 +380,8 @@ jobs:
           bundle_name: "groovy"
         - container_image: "debian:buster"
           bundle_name: "buster"
+        - container_image: "debian:bullseye"
+          bundle_name: "bullseye"
 
     runs-on: ubuntu-20.04
     container:
@@ -412,6 +415,7 @@ jobs:
           libfluidsynth-dev \
           libicu-dev \
           liblzma-dev \
+          libzstd-dev \
           liblzo2-dev \
           libsdl2-dev \
           lsb-release \
@@ -496,7 +500,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /usr/local/share/vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-release-0 # Increase the number whenever dependencies are modified
+        key: ${{ steps.key.outputs.image }}-vcpkg-release-1 # Increase the number whenever dependencies are modified
         restore-keys: |
           ${{ steps.key.outputs.image }}-vcpkg-release
           ${{ steps.key.outputs.image }}-vcpkg-x64
@@ -506,6 +510,8 @@ jobs:
         vcpkg install \
           liblzma:x64-osx \
           liblzma:arm64-osx \
+          zstd:x64-osx \
+          zstd:arm64-osx \
           libpng:x64-osx \
           libpng:arm64-osx \
           lzo:x64-osx \
@@ -699,7 +705,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-0 # Increase the number whenever dependencies are modified
+        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
         restore-keys: |
           ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
 
@@ -708,6 +714,7 @@ jobs:
       run: |
         vcpkg install --triplet=${{ matrix.arch }}-windows-static \
           liblzma \
+          zstd \
           libpng \
           lzo \
           zlib \

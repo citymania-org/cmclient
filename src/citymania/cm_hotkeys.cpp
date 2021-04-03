@@ -14,6 +14,7 @@
 #include "../widgets/rail_widget.h"
 #include "../widgets/road_widget.h"
 
+#include <optional>
 #include <queue>
 
 #include "../safeguards.h"
