@@ -843,7 +843,7 @@ void VideoDriver_Win32Base::InputLoop()
 	bool old_ctrl_pressed = _ctrl_pressed;
 
 	_ctrl_pressed = this->has_focus && GetAsyncKeyState(VK_CONTROL) < 0;
-	_alt_pressed = _wnd.has_focus && GetAsyncKeyState(VK_MENU) < 0;
+	_alt_pressed = this->has_focus && GetAsyncKeyState(VK_MENU) < 0;
 	_shift_pressed = this->has_focus && GetAsyncKeyState(VK_SHIFT) < 0;
 
 #if defined(_DEBUG)

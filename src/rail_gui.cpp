@@ -106,12 +106,12 @@ void CcPlaySound_CONSTRUCTION_RAIL(const CommandCost &result, TileIndex tile, ui
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_20_CONSTRUCTION_RAIL, tile);
 }
 
-static CommandContainer GenericPlaceRailCmd(TileIndex tile, int cmd)
+static CommandContainer GenericPlaceRailCmd(TileIndex tile, uint32 cmd)
 {
 	CommandContainer ret = {
 		tile,  // tile
 		_cur_railtype,  // p1
-		cmd | (_settings_client.gui.auto_remove_signals << 3),  // p2
+		cmd | ((uint32)_settings_client.gui.auto_remove_signals << 3),  // p2
 		_remove_button_clicked ?
 				CMD_REMOVE_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
 				CMD_BUILD_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK), // cmd
