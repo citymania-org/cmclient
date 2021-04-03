@@ -1600,6 +1600,7 @@ static SettingsContainer &GetSettingsTree()
 			interface->Add(new SettingEntry("gui.powerfund_money"));
 			interface->Add(new SettingEntry("gui.powerfund_houses"));
 			interface->Add(new SettingEntry("gui.show_newgrf_name"));
+			interface->Add(new SettingEntry("gui.cm_graph_background"));
 		}
 
 		SettingsPage *advisors = main->Add(new SettingsPage(STR_CONFIG_SETTING_ADVISORS));

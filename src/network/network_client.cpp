@@ -1010,7 +1010,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_COMMAND(Packet 
 		IConsolePrintF(CC_ERROR, "WARNING: %s from server, dropping...", err);
 		return NETWORK_RECV_STATUS_MALFORMED_PACKET;
 	}
-
+	fprintf(stderr, "CMDDR %u %u %u\n", cp.cmd, cp.p1, cp.p2);
 	this->incoming_queue.Append(&cp);
 
 	return NETWORK_RECV_STATUS_OKAY;

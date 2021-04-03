@@ -214,6 +214,7 @@ struct GUISettings {
 
 	uint8 cm_shaded_trees;
 	bool cm_show_apm;
+	uint8 cm_graph_background;
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
