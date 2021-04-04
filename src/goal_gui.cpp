@@ -177,14 +177,7 @@ struct GoalListWindow : public Window {
 
 		resize->height = d.height;
 
-		uint num = 0;
-		for (const Goal *s : Goal::Iterate()) {
-			if (s->company == INVALID_COMPANY || s->company == this->window_number) {
-				num++;
-			}
-		}
-
-		d.height *= (5 + num);
+		d.height *= 5;
 		d.width += padding.width + WD_FRAMERECT_RIGHT + WD_FRAMERECT_LEFT;
 		d.height += padding.height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 		*size = maxdim(*size, d);
