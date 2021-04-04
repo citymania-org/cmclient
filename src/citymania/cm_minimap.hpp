@@ -44,6 +44,9 @@ void ShowSmallMap();
 void BuildLandLegend();
 void BuildOwnerLegend();
 
+
+class NWidgetSmallmapDisplay;
+
 /** Class managing the smallmap window. */
 class SmallMapWindow : public Window {
 protected:
@@ -177,7 +180,7 @@ protected:
     int GetPositionOnLegend(Point pt);
 
 public:
-    friend class NWidgetSmallmapDisplay;
+    friend class citymania::NWidgetSmallmapDisplay;
 
     SmallMapWindow(WindowDesc *desc, int window_number);
     virtual ~SmallMapWindow();
