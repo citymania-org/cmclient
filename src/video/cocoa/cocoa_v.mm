@@ -41,6 +41,8 @@
 #include "../../window_func.h"
 #include "../../window_gui.h"
 
+#include "../../citymania/cm_hotkeys.hpp"
+
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <sys/time.h> /* gettimeofday */
 #include <array>
