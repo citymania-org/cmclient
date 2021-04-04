@@ -446,6 +446,7 @@ void VideoDriver_Cocoa::InputLoop()
 	bool old_ctrl_pressed = _ctrl_pressed;
 
 	_ctrl_pressed = (cur_mods & ( _settings_client.gui.right_mouse_btn_emulation != RMBE_CONTROL ? NSControlKeyMask : NSCommandKeyMask)) != 0;
+	_alt_pressed = (cur_mods & NSAlternateKeyMask) != 0;
 	_shift_pressed = (cur_mods & NSShiftKeyMask) != 0;
 
 #if defined(_DEBUG)
@@ -454,7 +455,8 @@ void VideoDriver_Cocoa::InputLoop()
 	this->fast_forward_key_pressed = _tab_is_down;
 #endif
 
-	if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+	// if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+	citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
 }
 
 /** Main game loop. */
