@@ -80,7 +80,7 @@ This is usable for any OpenTTD servers
 - Added setting to change graphs background colour between old one (grey) and new one (black).
 - Subtle visual improvements for graphs.
 - Made rail depot building preview red if it can't be built there and allow rotating it with a hotkey (defaults to middle mouse button).
-- Added building preview and rotation hotkey(also MMB by default) for rail stations, road stations and road depots.
+- Added building preview and rotation hotkey(also MMB by default) for rail stations, road stops and road depots.
 - Added building preview for aiports.
 - Added Zstandard(zstd) savegame compression option. May or may not reduce map download time on CityMania servers.
 - Show vehicle IDs in vehicle window if newgrf_developer_tools is enabled.

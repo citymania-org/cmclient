@@ -627,19 +627,19 @@ void DrawAirportTile(SpriteID palette, const TileInfo *ti, StationGfx gfx) {
     }
     switch (gfx) {
         case APT_RADAR_GRASS_FENCE_SW:
-            t = &_station_display_datas_airport_radar_grass_fence_sw[GetAnimationFrame(ti->tile)];
+            t = &_station_display_datas_airport_radar_grass_fence_sw[0];
             break;
         case APT_GRASS_FENCE_NE_FLAG:
-            t = &_station_display_datas_airport_flag_grass_fence_ne[GetAnimationFrame(ti->tile)];
+            t = &_station_display_datas_airport_flag_grass_fence_ne[0];
             break;
         case APT_RADAR_FENCE_SW:
-            t = &_station_display_datas_airport_radar_fence_sw[GetAnimationFrame(ti->tile)];
+            t = &_station_display_datas_airport_radar_fence_sw[0];
             break;
         case APT_RADAR_FENCE_NE:
-            t = &_station_display_datas_airport_radar_fence_ne[GetAnimationFrame(ti->tile)];
+            t = &_station_display_datas_airport_radar_fence_ne[0];
             break;
         case APT_GRASS_FENCE_NE_FLAG_2:
-            t = &_station_display_datas_airport_flag_grass_fence_ne_2[GetAnimationFrame(ti->tile)];
+            t = &_station_display_datas_airport_flag_grass_fence_ne_2[0];
             break;
     }
     if (t == nullptr || t->seq == nullptr) t = GetStationTileLayout(STATION_AIRPORT, gfx);
@@ -1196,25 +1196,21 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     //     UpdateBlueprintTileSelection(pt, tile);
     //     new_drawstyle = CM_HT_BLUEPRINT_PLACE;
     // } else
-    if (_thd.make_square_red) {
+    if (pt.x == -1) {
+    } else if (_thd.make_square_red) {
     } else if (_thd.select_proc == CM_DDSP_BUILD_ROAD_DEPOT) {
         auto dir = _road_depot_orientation;
-        if (pt.x != -1) {
-            if (dir == DEPOTDIR_AUTO) {
-                dir = AddAutodetectionRotation(AutodetectRoadObjectDirection(tile, pt, _cur_roadtype));
-            }
-            _thd.cm_new = ObjectHighlight::make_road_depot(tile, _cur_roadtype, dir);
+        if (dir == DEPOTDIR_AUTO) {
+            dir = AddAutodetectionRotation(AutodetectRoadObjectDirection(tile, pt, _cur_roadtype));
         }
+        _thd.cm_new = ObjectHighlight::make_road_depot(tile, _cur_roadtype, dir);
         new_drawstyle = HT_RECT;
     } else if (_thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
         auto dir = _build_depot_direction;
-        if (pt.x != -1) {
-            if (dir >= DiagDirection::DIAGDIR_END) {
-                dir = AddAutodetectionRotation(AutodetectRailObjectDirection(tile, pt));
-            }
-            _thd.cm_new = ObjectHighlight::make_rail_depot(tile, dir);
+        if (dir >= DiagDirection::DIAGDIR_END) {
+            dir = AddAutodetectionRotation(AutodetectRailObjectDirection(tile, pt));
         }
-        new_drawstyle = HT_RECT;
+        _thd.cm_new = ObjectHighlight::make_rail_depot(tile, dir);
     // } else if (((_thd.place_mode & HT_DRAG_MASK) == HT_RECT || ((_thd.place_mode & HT_DRAG_MASK) == HT_SPECIAL && (_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT)) && _thd.new_outersize.x > 0 && !_thd.make_square_red) {  // station
     } else if (_thd.select_proc == CM_DDSP_BUILD_AIRPORT) {
         auto tile = TileXY(_thd.new_pos.x / TILE_SIZE, _thd.new_pos.y / TILE_SIZE);
