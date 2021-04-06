@@ -5457,8 +5457,8 @@ STR_TOOLBAR_CARGOS_CAPTION                                      :{WHITE}{COMPANY
 STR_TOOLBAR_CARGOS_NAME                                         :{BLACK}{STRING}
 
 #towns
-STR_TOWN_DIRECTORY_TOWN_COLOUR                                  :{ORANGE}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} {P "Gebäude" "Gebäude"}
-STR_TOWN_DIRECTORY_CITY_COLOUR                                  :{YELLOW}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} {P "Gebäude" "Gebäude"}
+STR_TOWN_DIRECTORY_TOWN_COLOUR                                  :{ORANGE}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} Gebäude
+STR_TOWN_DIRECTORY_CITY_COLOUR                                  :{YELLOW}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} Gebäude
 STR_OLD_DEPOT_TRAINT_LENGTH                                     :Altes Depotlängenformat: {STRING}
 STR_SMALLMAP_TOWN_LARGE                                         :{TINY_FONT}{YELLOW}{TOWN}
 
@@ -5492,7 +5492,7 @@ STR_CB_POWERFUND_TT                                             :{BLACK}Finanzie
 STR_TOWN_CB_FUNDING                                             :{ORANGE}Für {YELLOW}{COMMA}{ORANGE} Monat{P "" e} finanziert
 STR_TOWN_CB_GROWING                                             :{GREEN}Stadt wächst!
 STR_TOWN_CB_NOT_GROWING                                         :{WHITE}Stadt wächst nicht
-STR_TOWN_CB_GROWING_DETAIL                                      :{ORANGE}1 Gebäude in {YELLOW}{COMMA} {ORANGE}Tagen ({YELLOW}{COMMA}%{ORANGE}). Nächstes Haus in {YELLOW}{COMMA} {ORANGE}Tagen
+STR_TOWN_CB_GROWING_DETAIL                                      :{ORANGE}1 Gebäude in {YELLOW}{COMMA} {ORANGE}Tag{P "" en} ({YELLOW}{COMMA}%{ORANGE}). Nächstes Haus in {YELLOW}{COMMA} {ORANGE}Tag{P "" en}
 
 STR_TOWN_GROWTH_HEADER_CARGO                                    :{BLACK}Fracht
 STR_TOWN_GROWTH_HEADER_AMOUNT                                   :{BLACK}Geliefert
@@ -5546,14 +5546,14 @@ STR_CONFIG_SETTING_POWERFUND_HOUSES                             :Powerfund kann 
 
 STR_STATION_RATING_TOOLTIP_RATING_DETAILS                       :{STRING} Bewertungsdetails
 STR_STATION_RATING_TOOLTIP_TOTAL_RATING                         :Gesamte Zielbewertung: {LTBLUE}{NUM}%
-STR_STATION_RATING_TOOLTIP_NEWGRF_RATING                        :NewGRF-Stationsbewertung: {STRING1} {BLACK}basierend auf
+STR_STATION_RATING_TOOLTIP_NEWGRF_RATING                        :NewGRF-Stationsbewertung: {STRING} {BLACK}basierend auf
 STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_0                      :{GOLD}{NUM}%
 STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_1                      :{LTBLUE}+{NUM}%
 STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED                         :Maximale Geschwindigkeit des letzten Fahrzeugs: {LTBLUE}{VELOCITY}
 STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS                     :Wartende Frachteinheiten: {LTBLUE}{NUM}
-STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME                      :Zeit seit letzter Abholung: {LTBLUE}{NUM} Tage
+STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME                      :Zeit seit letzter Abholung: {LTBLUE}{NUM} Tag{P "" e}
 
-STR_STATION_RATING_TOOLTIP_SPEED                                :Maximale Geschwindigkeit des letzten Fahrzeugs (max 17%): {STRING}
+STR_STATION_RATING_TOOLTIP_SPEED                                :Maximale Geschwindigkeit des letzten Fahrzeugs (max. 17%): {STRING}
 STR_STATION_RATING_TOOLTIP_SPEED_MAX                            :{GREEN}{VELOCITY} oder mehr, +{NUM}%
 STR_STATION_RATING_TOOLTIP_SPEED_ZERO                           :{RED}{VELOCITY}, {NUM}%
 STR_STATION_RATING_TOOLTIP_SPEED_0                              :{ORANGE}{VELOCITY}, +{NUM}%
@@ -5561,21 +5561,21 @@ STR_STATION_RATING_TOOLTIP_SPEED_1                              :{GOLD}{VELOCITY
 STR_STATION_RATING_TOOLTIP_SPEED_2                              :{YELLOW}{VELOCITY}, +{NUM}%
 STR_STATION_RATING_TOOLTIP_SPEED_3                              :{GREEN}{VELOCITY}, +{NUM}%
 
-STR_STATION_RATING_TOOLTIP_AGE                                  :Alter des letzten Fahrzeugs (max 13%): {STRING}
-STR_STATION_RATING_TOOLTIP_AGE_0                                :{ORANGE}{NUM} Jahre, {NUM}%
-STR_STATION_RATING_TOOLTIP_AGE_1                                :{GOLD}{NUM} Jahre, +{NUM}%
-STR_STATION_RATING_TOOLTIP_AGE_2                                :{YELLOW}{NUM} Jahr, +{NUM}%
-STR_STATION_RATING_TOOLTIP_AGE_3                                :{GREEN}{NUM} Jahre, +{NUM}%
+STR_STATION_RATING_TOOLTIP_AGE                                  :Alter des letzten Fahrzeugs (max. 13%): {STRING}
+STR_STATION_RATING_TOOLTIP_AGE_0                                :{ORANGE}{NUM} Jahr{P "" e}, {NUM}%
+STR_STATION_RATING_TOOLTIP_AGE_1                                :{GOLD}{NUM} Jahr{P "" e}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_AGE_2                                :{YELLOW}{NUM} Jahr{P "" e}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_AGE_3                                :{GREEN}{NUM} Jahr{P "" e}, +{NUM}%
 
-STR_STATION_RATING_TOOLTIP_WAITTIME                             :Zeit seit letzter Abholung (max 51%): {STRING}
-STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP                        :Zeit seit letzter Abholung (max 51%): {STRING} (durch Schiff)
-STR_STATION_RATING_TOOLTIP_WAITTIME_0                           :{RED}{NUM} Tage, {NUM}%
-STR_STATION_RATING_TOOLTIP_WAITTIME_1                           :{ORANGE}{NUM} Tage, +{NUM}%
-STR_STATION_RATING_TOOLTIP_WAITTIME_2                           :{GOLD}{NUM} Tage, +{NUM}%
-STR_STATION_RATING_TOOLTIP_WAITTIME_3                           :{YELLOW}{NUM} Tage, +{NUM}%
+STR_STATION_RATING_TOOLTIP_WAITTIME                             :Zeit seit letzter Abholung (max. 51%): {STRING}
+STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP                        :Zeit seit letzter Abholung (max. 51%): {STRING} (durch Schiff)
+STR_STATION_RATING_TOOLTIP_WAITTIME_0                           :{RED}{NUM} Tag{P "" e}, {NUM}%
+STR_STATION_RATING_TOOLTIP_WAITTIME_1                           :{ORANGE}{NUM} Tag{P "" e}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_WAITTIME_2                           :{GOLD}{NUM} Tag{P "" e}, +{NUM}%
+STR_STATION_RATING_TOOLTIP_WAITTIME_3                           :{YELLOW}{NUM} Tag{P "" e}, +{NUM}%
 STR_STATION_RATING_TOOLTIP_WAITTIME_4                           :{GREEN}{NUM} Tag{P "" e}, +{NUM}%
 
-STR_STATION_RATING_TOOLTIP_WAITUNITS                            :Wartende Frachteinheiten (max 16%): {STRING}
+STR_STATION_RATING_TOOLTIP_WAITUNITS                            :Wartende Frachteinheiten (max. 16%): {STRING}
 STR_STATION_RATING_TOOLTIP_WAITUNITS_0                          :{RED}{NUM}, {NUM}%
 STR_STATION_RATING_TOOLTIP_WAITUNITS_1                          :{ORANGE}{NUM}, {NUM}%
 STR_STATION_RATING_TOOLTIP_WAITUNITS_2                          :{GOLD}{NUM}, {NUM}%
@@ -5583,7 +5583,7 @@ STR_STATION_RATING_TOOLTIP_WAITUNITS_3                          :{YELLOW}{NUM}, 
 STR_STATION_RATING_TOOLTIP_WAITUNITS_4                          :{YELLOW}{NUM}, +{NUM}%
 STR_STATION_RATING_TOOLTIP_WAITUNITS_5                          :{GREEN}{NUM}, +{NUM}%
 
-STR_STATION_RATING_TOOLTIP_STATUE                               :Statue in der Stadt (max 10%): {STRING}
+STR_STATION_RATING_TOOLTIP_STATUE                               :Statue in der Stadt (max. 10%): {STRING}
 STR_STATION_RATING_TOOLTIP_STATUE_NO                            :{GOLD}nein, 0%
 STR_STATION_RATING_TOOLTIP_STATUE_YES                           :{GREEN}ja, +10%
 
