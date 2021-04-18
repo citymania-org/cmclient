@@ -25,7 +25,7 @@
 
 namespace citymania {
 
-bool _novahost = false;
+bool _novahost = true;
 IniFile *_inilogin = NULL;
 
 static const int HTTPBUFLEN = 128;
@@ -699,11 +699,11 @@ struct LoginWindow : Window {
 	LoginWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
 	{
 		this->InitNested(window_number);
-		if(_novahost || !_networking){
-			this->DisableWidget(LWW_NICE);
-			this->DisableWidget(LWW_BTPRO);
-		}
-		if(!_novahost || !_networking) this->DisableWidget(LWW_NOVAPOLIS);
+		// if(_novahost || !_networking){
+		// 	this->DisableWidget(LWW_NICE);
+		// 	this->DisableWidget(LWW_BTPRO);
+		// }
+		// if(!_novahost || !_networking) this->DisableWidget(LWW_NOVAPOLIS);
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -734,7 +734,7 @@ struct LoginWindow : Window {
 	{
 		switch (widget) {
 			case LWW_NOVAPOLIS:
-				if(_novahost && _networking) AccountLogin(CITYMANIA);
+				if(/*_novahost && */_networking) AccountLogin(CITYMANIA);
 				break;
 			case LWW_NICE:
 				if(_networking) AccountLogin(NICE);
