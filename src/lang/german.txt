@@ -5427,23 +5427,6 @@ STR_TOOLBAR_COMMANDS_RANK_TOOLTIP                               :{BLACK}Die 10 b
 STR_TOOLBAR_COMMANDS_ME_CAPTION                                 :{BLACK}Mein Rang
 STR_TOOLBAR_COMMANDS_ME_TOOLTIP                                 :{BLACK}Ihren Rang anzeigen
 
-#login window
-STR_LOGINWINDOW_CAPTION                                         :{WHITE}Login-Fenster
-STR_LOGINWINDOW_CITYMANIA                                       :{BLACK}CityMania
-STR_LOGINWINDOW_NICE                                            :{BLACK}N-ice
-STR_LOGINWINDOW_BTPRO                                           :{BLACK}BTPro
-STR_LOGINERROR_NOCONNECT                                        :{WHITE}Verbindung fehlgeschlagen
-STR_LOGINERROR_BADINPUT                                         :{WHITE}Falscher Benutzername oder Passwort
-STR_LOGIN_USERNAME                                              :{WHITE}Benutzername
-STR_LOGIN_PASSWORD                                              :{WHITE}Passwort
-STR_LOGIN_SET                                                   :{WHITE}Gesetzt
-STR_LOGIN_NOTSET                                                :{WHITE}Nicht gesetzt
-STR_LOGIN_CHANGE_USERNAME                                       :{WHITE}Benutzernamen ändern
-STR_LOGIN_CHANGE_PASSWORD                                       :{WHITE}Passwort ändern
-STR_LOGIN_SEND_LOGIN_TT                                         :{WHITE}Login abschicken - Sie müssen auf dem richtigen Community-Server sein
-STR_LOGIN_USERNAME_DISPLAY                                      :{WHITE}{STRING}
-STR_LOGIN_PASSWORD_DISPLAY                                      :{WHITE}{STRING}
-
 #cargo table
 STR_TOOLBAR_CARGOS_HEADER_CARGO                                 :{BLACK}Frachtname
 STR_TOOLBAR_CARGOS_HEADER_AMOUNT                                :{BLACK}Menge
@@ -5644,3 +5627,21 @@ STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND                          :Hintergrundfarb
 STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_HELPTEXT                 :Haupt-Hintergrundfarbe von Fenstern mit Graphen. Andere zugehörige Farben werden entsprechend geändert.
 STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK                    :Schwarz
 STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_GREY                     :Hellgrau
+
+# Community login window
+STR_CM_LOGIN_WINDOW_CAPTION   :{WHITE}Login-Fenster
+STR_CM_LOGIN_WINDOW_CITYMANIA :{BLACK}CityMania
+STR_CM_LOGIN_WINDOW_NICE      :{BLACK}N-ice
+STR_CM_LOGIN_WINDOW_BTPRO     :{BLACK}BTPro
+STR_CM_LOGIN_ERROR_SIGN_IN_FAILED :{WHITE}Verbindung fehlgeschlagen
+STR_CM_LOGIN_ERROR_BAD_INPUT      :{WHITE}Falscher Benutzername oder Passwort
+STR_CM_LOGIN_WINDOW_USERNAME :{WHITE}Benutzername
+STR_CM_LOGIN_WINDOW_PASSWORD :{WHITE}Passwort
+STR_CM_LOGIN_WINDOW_SET     :{WHITE}Gesetzt
+STR_CM_LOGIN_WINDOW_NOT_SET :{WHITE}Nicht gesetzt
+STR_CM_LOGIN_WINDOW_CHANGE_USERNAME          :{WHITE}Benutzernamen ändern
+STR_CM_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT :{BLACK}Benutzernamen ändern
+STR_CM_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT :{BLACK}Passwort ändern
+STR_CM_LOGIN_WINDOW_SIGN_IN_HELPTEXT :{BLACK}Login abschicken (sie müssen auf dem richtigen Community-Server sein)
+STR_CM_LOGIN_WINDOW_USERNAME_DISPLAY :{WHITE}{STRING}
+STR_CM_LOGIN_WINDOW_PASSWORD_DISPLAY :{WHITE}{STRING}

@@ -5426,23 +5426,6 @@ STR_TOOLBAR_COMMANDS_RANK_TOOLTIP                               :{BLACK}Show top
 STR_TOOLBAR_COMMANDS_ME_CAPTION                                 :{BLACK}My Rank
 STR_TOOLBAR_COMMANDS_ME_TOOLTIP                                 :{BLACK}Show your ranking position
 
-#login window
-STR_LOGINWINDOW_CAPTION                                         :{WHITE}Login Window
-STR_LOGINWINDOW_CITYMANIA                                       :{BLACK}CityMania
-STR_LOGINWINDOW_NICE                                            :{BLACK}N-ice
-STR_LOGINWINDOW_BTPRO                                           :{BLACK}BTPro
-STR_LOGINERROR_NOCONNECT                                        :{WHITE}Failed to connect
-STR_LOGINERROR_BADINPUT                                         :{WHITE}Bad username or password
-STR_LOGIN_USERNAME                                              :{WHITE}Username
-STR_LOGIN_PASSWORD                                              :{WHITE}Password
-STR_LOGIN_SET                                                   :{WHITE}Set
-STR_LOGIN_NOTSET                                                :{WHITE}Not Set
-STR_LOGIN_CHANGE_USERNAME                                       :{WHITE}Change username
-STR_LOGIN_CHANGE_PASSWORD                                       :{WHITE}Change password
-STR_LOGIN_SEND_LOGIN_TT                                         :{WHITE}Send Login - you must be on the correct community server
-STR_LOGIN_USERNAME_DISPLAY                                      :{WHITE}{RAW_STRING}
-STR_LOGIN_PASSWORD_DISPLAY                                      :{WHITE}{STRING}
-
 #cargo table
 STR_TOOLBAR_CARGOS_HEADER_CARGO                                 :{BLACK}Cargo Name
 STR_TOOLBAR_CARGOS_HEADER_AMOUNT                                :{BLACK}Amount
@@ -5615,31 +5598,50 @@ STR_CM_LAND_TOOLTIPS_INDUSTRY_CARGO               :{WHITE}{STRING}  {BLACK}{CARG
 STR_CM_LAND_TOOLTIPS_STATION_NAME                 :{LTBLUE}{STATION}
 STR_CM_LAND_TOOLTIPS_STATION_CARGO                :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
 
-STR_LAND_AREA_INFORMATION_POP                                   :{BLACK}Population: {LTBLUE}{NUM}
+STR_LAND_AREA_INFORMATION_POP              :{BLACK}Population: {LTBLUE}{NUM}
 
-STR_CM_CONFIG_SETTING_MODIFIER_FN          : Additional function modifier key: {STRING2}
-STR_CM_CONFIG_SETTING_MODIFIER_FN_HELPTEXT : Modifier key for accessing additional functions.
-STR_CM_CONFIG_SETTING_MODIFIER_REMOVE          : Remove modifier key: {STRING2}
-STR_CM_CONFIG_SETTING_MODIFIER_REMOVE_HELPTEXT : Modifier key for removal mode on building tools.
-STR_CM_CONFIG_SETTING_MODIFIER_ESTIMATE          : Estimate modifier key: {STRING2}
-STR_CM_CONFIG_SETTING_MODIFIER_ESTIMATE_HELPTEXT : Modifier key for estimating action cost.
-STR_CM_CONFIG_SETTING_MODIFIER_NONE  : None
-STR_CM_CONFIG_SETTING_MODIFIER_SHIFT : Shift
-STR_CM_CONFIG_SETTING_MODIFIER_CTRL  : Ctrl
-STR_CM_CONFIG_SETTING_MODIFIER_ALT   : Alt
+STR_CM_CONFIG_SETTING_MODIFIER_FN          :Additional function modifier key: {STRING2}
+STR_CM_CONFIG_SETTING_MODIFIER_FN_HELPTEXT :Modifier key for accessing additional functions.
+STR_CM_CONFIG_SETTING_MODIFIER_REMOVE          :Remove modifier key: {STRING2}
+STR_CM_CONFIG_SETTING_MODIFIER_REMOVE_HELPTEXT :Modifier key for removal mode on building tools.
+STR_CM_CONFIG_SETTING_MODIFIER_ESTIMATE          :Estimate modifier key: {STRING2}
+STR_CM_CONFIG_SETTING_MODIFIER_ESTIMATE_HELPTEXT :Modifier key for estimating action cost.
+STR_CM_CONFIG_SETTING_MODIFIER_NONE  :None
+STR_CM_CONFIG_SETTING_MODIFIER_SHIFT :Shift
+STR_CM_CONFIG_SETTING_MODIFIER_CTRL  :Ctrl
+STR_CM_CONFIG_SETTING_MODIFIER_ALT   :Alt
 
-STR_CM_CONFIG_SETTING_SHADED_TREES          : Shaded trees: {STRING2}
-STR_CM_CONFIG_SETTING_SHADED_TREES_HELPTEXT : Change tree brightness depending on a slope. Enhances visual appeal of mountainous forests.
-STR_CM_CONFIG_SETTING_SHADED_TREES_OFF      : Always off
-STR_CM_CONFIG_SETTING_SHADED_TREES_ON       : Always on
-STR_CM_CONFIG_SETTING_SHADED_TREES_SERVER   : As server
+STR_CM_CONFIG_SETTING_SHADED_TREES          :Shaded trees: {STRING2}
+STR_CM_CONFIG_SETTING_SHADED_TREES_HELPTEXT :Change tree brightness depending on a slope. Enhances visual appeal of mountainous forests.
+STR_CM_CONFIG_SETTING_SHADED_TREES_OFF      :Always off
+STR_CM_CONFIG_SETTING_SHADED_TREES_ON       :Always on
+STR_CM_CONFIG_SETTING_SHADED_TREES_SERVER   :As server
 
-STR_CM_CONFIG_SETTING_SHOW_APM          : Show APM counter: {STRING2}
-STR_CM_CONFIG_SETTING_SHOW_APM_HELPTEXT : Adds APM (actions per minute) counter to the statusbar.
-STR_CM_STATUSBAR_APM                    : {WHITE}APM: {NUM} AVG: {NUM}
+STR_CM_CONFIG_SETTING_SHOW_APM          :Show APM counter: {STRING2}
+STR_CM_CONFIG_SETTING_SHOW_APM_HELPTEXT :Adds APM (actions per minute) counter to the statusbar.
+STR_CM_STATUSBAR_APM                    :{WHITE}APM: {NUM} AVG: {NUM}
+
 STR_CM_STATION_BUILD_SUPPLIES     :{BLACK}Supplies: {GOLD}
 
-STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND : Graph background colour: {STRING2}
-STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_HELPTEXT : Main background colour for the graph windows. Other related colours are changed accordingly.
-STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK : Black
-STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_GREY : Light grey
+STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND          :Graph background colour: {STRING2}
+STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_HELPTEXT :Main background colour for the graph windows. Other related colours are changed accordingly.
+STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK    :Black
+STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND_GREY     :Light grey
+
+# Community login window
+STR_CM_LOGIN_WINDOW_CAPTION   :{WHITE}Login Window
+STR_CM_LOGIN_WINDOW_CITYMANIA :{BLACK}CityMania
+STR_CM_LOGIN_WINDOW_NICE      :{BLACK}N-ice
+STR_CM_LOGIN_WINDOW_BTPRO     :{BLACK}BTPro
+STR_CM_LOGIN_ERROR_SIGN_IN_FAILED :{WHITE}Failed to connect
+STR_CM_LOGIN_ERROR_BAD_INPUT      :{WHITE}Bad username or password
+STR_CM_LOGIN_WINDOW_USERNAME :{WHITE}Username
+STR_CM_LOGIN_WINDOW_PASSWORD :{WHITE}Password
+STR_CM_LOGIN_WINDOW_SET     :{WHITE}Set
+STR_CM_LOGIN_WINDOW_NOT_SET :{WHITE}Not Set
+STR_CM_LOGIN_WINDOW_CHANGE_USERNAME          :{WHITE}Change username
+STR_CM_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT :{BLACK}Change username
+STR_CM_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT :{BLACK}Change password
+STR_CM_LOGIN_WINDOW_SIGN_IN_HELPTEXT :{BLACK}Sign in (you must be on the correct community server)
+STR_CM_LOGIN_WINDOW_USERNAME_DISPLAY :{WHITE}{RAW_STRING}
+STR_CM_LOGIN_WINDOW_PASSWORD_DISPLAY :{WHITE}{STRING}
