@@ -1840,8 +1840,7 @@ public:
 
 						if (vehgroup.NumVehicles() == 1) {
 							ShowVehicleViewWindow(v);
-						}
-						else {
+						} else {
 							ShowVehicleListWindow(v);
 						}
 						break;
