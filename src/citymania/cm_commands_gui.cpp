@@ -743,13 +743,16 @@ struct LoginWindow : Window {
 				if(_networking) AccountLogin(BTPRO);
 				break;
 			case LWW_NOVAPOLIS_LOGIN:
-			case LWW_NOVAPOLIS_PW:
 			case LWW_NICE_LOGIN:
-			case LWW_NICE_PW:
 			case LWW_BTPRO_LOGIN:
-			case LWW_BTPRO_PW:
 				this->query_widget = (LoginWindowQueryWidgets)widget;
 				ShowQueryString(STR_EMPTY, STR_CM_LOGIN_WINDOW_CHANGE_USERNAME, 32, this, CS_ALPHANUMERAL, QSF_NONE);
+				break;
+			case LWW_NOVAPOLIS_PW:
+			case LWW_NICE_PW:
+			case LWW_BTPRO_PW:
+				this->query_widget = (LoginWindowQueryWidgets)widget;
+				ShowQueryString(STR_EMPTY, STR_CM_LOGIN_WINDOW_CHANGE_PASSWORD, 32, this, CS_ALPHANUMERAL, QSF_NONE);
 				break;
 		}
 	}
