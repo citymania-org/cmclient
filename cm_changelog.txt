@@ -74,6 +74,12 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 1.11.0 (19 Apr 2021) ***
+- Fixed crash when building road stop or airport.
+- Fixed joining companies in game.
+- Fixed graphical glitches when using town growth tiles zoning.
+- Added German translation for additional string - by danidoedel.
+
 *** 1.11.0 (5 Apr 2021) ***
 - Added two more minimap zoom levels (very useful on 4k monitors).
 - When building a station show estimated monthly supply amounts.
