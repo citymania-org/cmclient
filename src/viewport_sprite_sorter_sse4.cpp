@@ -151,7 +151,7 @@ void ViewportSortParentSpritesSSE41(ParentSpriteToSortVector *psdv)
 
 		/* Sort all preceding sprites by order and assign new orders in reverse (as original sorter did). */
 		std::sort(preceding.begin(), preceding.end(), [](const ParentSpriteToDraw *a, const ParentSpriteToDraw *b) {
-			return a->order > b->order;
+			return a->order < b->order;
 		});
 
 		s->order = ORDER_COMPARED;
