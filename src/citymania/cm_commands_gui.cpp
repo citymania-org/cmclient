@@ -367,7 +367,7 @@ struct CommandsToolbarWindow : Window {
 					strecpy(ip, NOVAPOLIS_IPV4_PRIMARY, lastof(ip));
 					// else strecpy(ip, NOVAPOLIS_IPV4_SECONDARY, lastof(ip));
 
-					NetworkClientConnectGame(NetworkAddress(ip, (3980 + widget - CTW_NS0)), COMPANY_SPECTATOR);
+					NetworkClientConnectGame(ip, (3980 + widget - CTW_NS0), COMPANY_SPECTATOR);
 				}
 				else if (widget >= CTW_CARGO_FIRST) {
 					int i = widget - CTW_CARGO_FIRST;
