@@ -32,6 +32,7 @@
 #include "screenshot.h"
 #include "network/network.h"
 #include "network/network_func.h"
+#include "network/core/game_info.h"
 #include "ai/ai.hpp"
 #include "ai/ai_config.hpp"
 #include "settings_func.h"
@@ -495,7 +496,7 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 
 			LoadIntroGame();
 			_switch_mode = SM_NONE;
-			NetworkClientConnectGame(NetworkAddress(network_conn, rport), join_as, join_server_password, join_company_password);
+			NetworkClientConnectGame(network_conn, rport, join_as, join_server_password, join_company_password);
 		}
 
 		/* After the scan we're not used anymore. */
@@ -783,7 +784,7 @@ int openttd_main(int argc, char *argv[])
 		ParseConnectionString(&not_used, &port, debuglog_conn);
 		if (port != nullptr) rport = atoi(port);
 
-		NetworkStartDebugLog(NetworkAddress(debuglog_conn, rport));
+		NetworkStartDebugLog(debuglog_conn, rport);
 	}
 
 	if (!HandleBootstrap()) {
@@ -1107,6 +1108,11 @@ void SwitchToMode(SwitchMode new_mode)
 			}
 			break;
 		}
+
+		case SM_JOIN_GAME: // Join a multiplayer game
+			LoadIntroGame();
+			NetworkClientJoinGame();
+			break;
 
 		case SM_MENU: // Switch to game intro menu
 			LoadIntroGame();
@@ -1504,7 +1510,7 @@ void GameLoop()
 		if (_network_reconnect > 0 && --_network_reconnect == 0) {
 			/* This means that we want to reconnect to the last host
 			 * We do this here, because it means that the network is really closed */
-			NetworkClientConnectGame(NetworkAddress(_settings_client.network.last_host, _settings_client.network.last_port), COMPANY_SPECTATOR);
+			NetworkClientConnectGame(_settings_client.network.last_host, _settings_client.network.last_port, COMPANY_SPECTATOR);
 		}
 		/* Singleplayer */
 		StateGameLoop();
