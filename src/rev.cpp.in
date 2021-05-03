@@ -35,7 +35,7 @@ bool IsReleasedVersion()
  *
  * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "1.11.1";
+const char _openttd_revision[] = "1.11.2";
 
 /**
  * The text version of OpenTTD's build date.
@@ -48,7 +48,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
 /**
  * The git revision hash of this version.
  */
-const char _openttd_revision_hash[] = "0be22efffc3c14db08baf5e58c448b5d074f4427";
+const char _openttd_revision_hash[] = "672f285218c6817784d86f737987b75db4bc78fc";
 
 /**
  * The year of this version.
@@ -85,4 +85,4 @@ const byte _openttd_revision_tagged = 1;
  * final release will always have a lower version number than the released
  * version, thus making comparisons on specific revisions easy.
  */
-const uint32 _openttd_newgrf_version = 1 << 28 | 11 << 24 | 0 << 20 | 1 << 19 | 28004;
+const uint32 _openttd_newgrf_version = 1 << 28 | 11 << 24 | 2 << 20 | 1 << 19 | 28004;

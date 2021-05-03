@@ -144,7 +144,7 @@ jobs:
     - name: Test
       run: |
         cd build
-        ctest -j $(nproc)
+        ctest -j $(nproc) --timeout 120
 
   macos:
     name: Mac OS
@@ -226,7 +226,7 @@ jobs:
     - name: Test
       run: |
         cd build
-        ctest -j $(sysctl -n hw.logicalcpu)
+        ctest -j $(sysctl -n hw.logicalcpu) --timeout 120
 
   windows:
     name: Windows
@@ -317,4 +317,4 @@ jobs:
       shell: bash
       run: |
         cd ${GITHUB_WORKSPACE}/build
-        ctest
+        ctest --timeout 120
