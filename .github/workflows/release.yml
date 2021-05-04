@@ -644,7 +644,7 @@ jobs:
         # the zip_filename variable below
         rm -f ../*.dmg
 
-        zip_filename=../citymania-client-${{ steps.metadata.outputs.version }}
+        zip_filename=../citymania-client-${{ needs.source.outputs.version }}
 
         # Package up the existing, notarised .app into a zip file
         zip -r -9 ${zip_filename}.zip OpenTTD.app
@@ -754,7 +754,7 @@ jobs:
         arch: ${{ matrix.host }}
 
     - name: Build (with installer)
-      if: needs.source.outputs.is_tag == 'true'
+      if: ${{ false }} #needs.source.outputs.is_tag == 'true'
       shell: bash
       run: |
         mkdir build
@@ -794,6 +794,8 @@ jobs:
 
         echo "::group::Build"
         cmake --build .
+        echo "::group::Rename"
+        mv bundles/*.zip $(ls bundles/*.zip | sed 's/openttd/citymania-client/')
         echo "::endgroup::"
 
     - name: Create bundles
