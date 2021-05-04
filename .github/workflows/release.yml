@@ -776,7 +776,7 @@ jobs:
         echo "::endgroup::"
 
     - name: Build (without installer)
-      if: needs.source.outputs.is_tag != 'true'
+      if: ${{ true }} # needs.source.outputs.is_tag != 'true'
       shell: bash
       run: |
         mkdir build
