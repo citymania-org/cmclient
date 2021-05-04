@@ -794,8 +794,6 @@ jobs:
 
         echo "::group::Build"
         cmake --build .
-        echo "::group::Rename"
-        mv bundles/*.zip $(ls bundles/*.zip | sed 's/openttd/citymania-client/')
         echo "::endgroup::"
 
     - name: Create bundles
@@ -804,6 +802,10 @@ jobs:
         cd ${GITHUB_WORKSPACE}/build
         echo "::group::Run CPack"
         cpack
+        echo "::endgroup::"
+
+        echo "::group::Rename bundles to citymania-client-*"
+        mv bundles/*.zip $(ls bundles/*.zip | sed 's/openttd/citymania-client/')
         echo "::endgroup::"
 
         echo "::group::Prepare PDB to be bundled"
