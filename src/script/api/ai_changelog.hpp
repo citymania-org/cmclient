@@ -13,6 +13,15 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 1.11.0
+ *
+ * API additions:
+ * \li AICargo::GetName
+ * \li AIPriorityQueue
+ *
+ * Other changes:
+ * \li AIVehicle::CloneVehicle now correctly returns estimate when short on cash
+ *
  * \b 1.10.0
  *
  * API additions:

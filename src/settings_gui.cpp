@@ -16,12 +16,12 @@
 #include "network/network.h"
 #include "town.h"
 #include "settings_internal.h"
-#include "newgrf_townname.h"
 #include "strings_func.h"
 #include "window_func.h"
 #include "string_func.h"
 #include "widgets/dropdown_type.h"
 #include "widgets/dropdown_func.h"
+#include "widgets/slider_func.h"
 #include "highscore.h"
 #include "base_media_base.h"
 #include "company_base.h"
@@ -37,17 +37,15 @@
 #include "hotkeys.h"
 #include "fontcache.h"
 #include "zoom_func.h"
+#include "video/video_driver.hpp"
+#include "music/music_driver.hpp"
 
 #include <vector>
+#include <iterator>
 
 #include "safeguards.h"
+#include "video/video_driver.hpp"
 
-
-static const StringID _driveside_dropdown[] = {
-	STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT,
-	STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT,
-	INVALID_STRING_ID
-};
 
 static const StringID _autosave_dropdown[] = {
 	STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF,
@@ -59,6 +57,7 @@ static const StringID _autosave_dropdown[] = {
 };
 
 static const StringID _gui_zoom_dropdown[] = {
+	STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_AUTO,
 	STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL,
 	STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM,
 	STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM,
@@ -66,54 +65,25 @@ static const StringID _gui_zoom_dropdown[] = {
 };
 
 static const StringID _font_zoom_dropdown[] = {
+	STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_AUTO,
 	STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_NORMAL,
 	STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_2X_ZOOM,
 	STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_4X_ZOOM,
 	INVALID_STRING_ID,
 };
 
-int _nb_orig_names = SPECSTR_TOWNNAME_LAST - SPECSTR_TOWNNAME_START + 1; ///< Number of original town names.
-static StringID *_grf_names = nullptr; ///< Pointer to town names defined by NewGRFs.
-static int _nb_grf_names = 0;       ///< Number of town names defined by NewGRFs.
-
 static Dimension _circle_size; ///< Dimension of the circle +/- icon. This is here as not all users are within the class of the settings window.
 
 static const void *ResolveVariableAddress(const GameSettings *settings_ptr, const SettingDesc *sd);
-
-/** Allocate memory for the NewGRF town names. */
-void InitGRFTownGeneratorNames()
-{
-	free(_grf_names);
-	_grf_names = GetGRFTownNameList();
-	_nb_grf_names = 0;
-	for (StringID *s = _grf_names; *s != INVALID_STRING_ID; s++) _nb_grf_names++;
-}
-
-/**
- * Get a town name.
- * @param town_name Number of the wanted town name.
- * @return Name of the town as string ID.
- */
-static inline StringID TownName(int town_name)
-{
-	if (town_name < _nb_orig_names) return STR_GAME_OPTIONS_TOWN_NAME_ORIGINAL_ENGLISH + town_name;
-	town_name -= _nb_orig_names;
-	if (town_name < _nb_grf_names) return _grf_names[town_name];
-	return STR_UNDEFINED;
-}
 
 /**
  * Get index of the current screen resolution.
  * @return Index of the current screen resolution if it is a known resolution, _resolutions.size() otherwise.
  */
-static uint GetCurRes()
+static uint GetCurrentResolutionIndex()
 {
-	uint i;
-
-	for (i = 0; i != _resolutions.size(); i++) {
-		if (_resolutions[i] == Dimension(_screen.width, _screen.height)) break;
-	}
-	return i;
+	auto it = std::find(_resolutions.begin(), _resolutions.end(), Dimension(_screen.width, _screen.height));
+	return std::distance(_resolutions.begin(), it);
 }
 
 static void ShowCustCurrency();
@@ -153,7 +123,7 @@ struct BaseSetTextfileWindow : public TextfileWindow {
 	{
 		if (widget == WID_TF_CAPTION) {
 			SetDParam(0, content_type);
-			SetDParamStr(1, this->baseset->name);
+			SetDParamStr(1, this->baseset->name.c_str());
 		}
 	}
 };
@@ -171,6 +141,22 @@ void ShowBaseSetTextfileWindow(TextfileType file_type, const TBaseSet* baseset, 
 	new BaseSetTextfileWindow<TBaseSet>(file_type, baseset, content_type);
 }
 
+std::set<int> _refresh_rates = { 30, 60, 75, 90, 100, 120, 144, 240 };
+
+/**
+ * Add the refresh rate from the config and the refresh rates from all the monitors to
+ * our list of refresh rates shown in the GUI.
+ */
+static void AddCustomRefreshRates()
+{
+	/* Add the refresh rate as selected in the config. */
+	_refresh_rates.insert(_settings_client.gui.refresh_rate);
+
+	/* Add all the refresh rates of all monitors connected to the machine.  */
+	std::vector<int> monitorRates = VideoDriver::GetInstance()->GetListOfMonitorRefreshRates();
+	std::copy(monitorRates.begin(), monitorRates.end(), std::inserter(_refresh_rates, _refresh_rates.end()));
+}
+
 struct GameOptionsWindow : Window {
 	GameSettings *opt;
 	bool reload;
@@ -179,6 +165,8 @@ struct GameOptionsWindow : Window {
 	{
 		this->opt = &GetGameSettings();
 		this->reload = false;
+
+		AddCustomRefreshRates();
 
 		this->InitNested(WN_GAME_OPTIONS_GAME_OPTIONS);
 		this->OnInvalidateData(0);
@@ -219,51 +207,6 @@ struct GameOptionsWindow : Window {
 				break;
 			}
 
-			case WID_GO_ROADSIDE_DROPDOWN: { // Setup road-side dropdown
-				*selected_index = this->opt->vehicle.road_side;
-				const StringID *items = _driveside_dropdown;
-				uint disabled = 0;
-
-				/* You can only change the drive side if you are in the menu or ingame with
-				 * no vehicles present. In a networking game only the server can change it */
-				extern bool RoadVehiclesAreBuilt();
-				if ((_game_mode != GM_MENU && RoadVehiclesAreBuilt()) || (_networking && !_network_server)) {
-					disabled = ~(1 << this->opt->vehicle.road_side); // disable the other value
-				}
-
-				for (uint i = 0; *items != INVALID_STRING_ID; items++, i++) {
-					list.emplace_back(new DropDownListStringItem(*items, i, HasBit(disabled, i)));
-				}
-				break;
-			}
-
-			case WID_GO_TOWNNAME_DROPDOWN: { // Setup townname dropdown
-				*selected_index = this->opt->game_creation.town_name;
-
-				int enabled_item = (_game_mode == GM_MENU || Town::GetNumItems() == 0) ? -1 : *selected_index;
-
-				/* Add and sort newgrf townnames generators */
-				for (int i = 0; i < _nb_grf_names; i++) {
-					int result = _nb_orig_names + i;
-					list.emplace_back(new DropDownListStringItem(_grf_names[i], result, enabled_item != result && enabled_item >= 0));
-				}
-				std::sort(list.begin(), list.end(), DropDownListStringItem::NatSortFunc);
-
-				size_t newgrf_size = list.size();
-				/* Insert newgrf_names at the top of the list */
-				if (newgrf_size > 0) {
-					list.emplace_back(new DropDownListItem(-1, false)); // separator line
-					newgrf_size++;
-				}
-
-				/* Add and sort original townnames generators */
-				for (int i = 0; i < _nb_orig_names; i++) {
-					list.emplace_back(new DropDownListStringItem(STR_GAME_OPTIONS_TOWN_NAME_ORIGINAL_ENGLISH + i, i, enabled_item != i && enabled_item >= 0));
-				}
-				std::sort(list.begin() + newgrf_size, list.end(), DropDownListStringItem::NatSortFunc);
-				break;
-			}
-
 			case WID_GO_AUTOSAVE_DROPDOWN: { // Setup autosave dropdown
 				*selected_index = _settings_client.gui.autosave;
 				const StringID *items = _autosave_dropdown;
@@ -275,8 +218,19 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_LANG_DROPDOWN: { // Setup interface language dropdown
 				for (uint i = 0; i < _languages.size(); i++) {
-					if (&_languages[i] == _current_language) *selected_index = i;
-					list.emplace_back(new DropDownListStringItem(SPECSTR_LANGUAGE_START + i, i, false));
+					auto item = new DropDownListParamStringItem(STR_JUST_RAW_STRING, i, false);
+					if (&_languages[i] == _current_language) {
+						*selected_index = i;
+						item->SetParamStr(0, _languages[i].own_name);
+					} else {
+						/* Especially with sprite-fonts, not all localized
+						 * names can be rendered. So instead, we use the
+						 * international names for anything but the current
+						 * selected language. This avoids showing a few ????
+						 * entries in the dropdown list. */
+						item->SetParamStr(0, _languages[i].name);
+					}
+					list.emplace_back(item);
 				}
 				std::sort(list.begin(), list.end(), DropDownListStringItem::NatSortFunc);
 				break;
@@ -285,23 +239,36 @@ struct GameOptionsWindow : Window {
 			case WID_GO_RESOLUTION_DROPDOWN: // Setup resolution dropdown
 				if (_resolutions.empty()) break;
 
-				*selected_index = GetCurRes();
+				*selected_index = GetCurrentResolutionIndex();
 				for (uint i = 0; i < _resolutions.size(); i++) {
-					list.emplace_back(new DropDownListStringItem(SPECSTR_RESOLUTION_START + i, i, false));
+					auto item = new DropDownListParamStringItem(STR_GAME_OPTIONS_RESOLUTION_ITEM, i, false);
+					item->SetParam(0, _resolutions[i].width);
+					item->SetParam(1, _resolutions[i].height);
+					list.emplace_back(item);
+				}
+				break;
+
+			case WID_GO_REFRESH_RATE_DROPDOWN: // Setup refresh rate dropdown
+				for (auto it = _refresh_rates.begin(); it != _refresh_rates.end(); it++) {
+					auto i = std::distance(_refresh_rates.begin(), it);
+					if (*it == _settings_client.gui.refresh_rate) *selected_index = i;
+					auto item = new DropDownListParamStringItem(STR_GAME_OPTIONS_REFRESH_RATE_ITEM, i, false);
+					item->SetParam(0, *it);
+					list.emplace_back(item);
 				}
 				break;
 
 			case WID_GO_GUI_ZOOM_DROPDOWN: {
-				*selected_index = ZOOM_LVL_OUT_4X - _gui_zoom;
+				*selected_index = _gui_zoom_cfg != ZOOM_LVL_CFG_AUTO ? ZOOM_LVL_OUT_4X - _gui_zoom + 1 : 0;
 				const StringID *items = _gui_zoom_dropdown;
 				for (int i = 0; *items != INVALID_STRING_ID; items++, i++) {
-					list.emplace_back(new DropDownListStringItem(*items, i, _settings_client.gui.zoom_min > ZOOM_LVL_OUT_4X - i));
+					list.emplace_back(new DropDownListStringItem(*items, i, i != 0 && _settings_client.gui.zoom_min > ZOOM_LVL_OUT_4X - i + 1));
 				}
 				break;
 			}
 
 			case WID_GO_FONT_ZOOM_DROPDOWN: {
-				*selected_index = ZOOM_LVL_OUT_4X - _font_zoom;
+				*selected_index = _font_zoom_cfg != ZOOM_LVL_CFG_AUTO ? ZOOM_LVL_OUT_4X - _font_zoom + 1 : 0;
 				const StringID *items = _font_zoom_dropdown;
 				for (int i = 0; *items != INVALID_STRING_ID; items++, i++) {
 					list.emplace_back(new DropDownListStringItem(*items, i, false));
@@ -328,19 +295,29 @@ struct GameOptionsWindow : Window {
 	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
-			case WID_GO_CURRENCY_DROPDOWN:   SetDParam(0, _currency_specs[this->opt->locale.currency].name); break;
-			case WID_GO_ROADSIDE_DROPDOWN:   SetDParam(0, STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT + this->opt->vehicle.road_side); break;
-			case WID_GO_TOWNNAME_DROPDOWN:   SetDParam(0, TownName(this->opt->game_creation.town_name)); break;
-			case WID_GO_AUTOSAVE_DROPDOWN:   SetDParam(0, _autosave_dropdown[_settings_client.gui.autosave]); break;
-			case WID_GO_LANG_DROPDOWN:       SetDParamStr(0, _current_language->own_name); break;
-			case WID_GO_RESOLUTION_DROPDOWN: SetDParam(0, GetCurRes() == _resolutions.size() ? STR_GAME_OPTIONS_RESOLUTION_OTHER : SPECSTR_RESOLUTION_START + GetCurRes()); break;
-			case WID_GO_GUI_ZOOM_DROPDOWN:   SetDParam(0, _gui_zoom_dropdown[ZOOM_LVL_OUT_4X - _gui_zoom]); break;
-			case WID_GO_FONT_ZOOM_DROPDOWN:  SetDParam(0, _font_zoom_dropdown[ZOOM_LVL_OUT_4X - _font_zoom]); break;
-			case WID_GO_BASE_GRF_DROPDOWN:   SetDParamStr(0, BaseGraphics::GetUsedSet()->name); break;
-			case WID_GO_BASE_GRF_STATUS:     SetDParam(0, BaseGraphics::GetUsedSet()->GetNumInvalid()); break;
-			case WID_GO_BASE_SFX_DROPDOWN:   SetDParamStr(0, BaseSounds::GetUsedSet()->name); break;
-			case WID_GO_BASE_MUSIC_DROPDOWN: SetDParamStr(0, BaseMusic::GetUsedSet()->name); break;
-			case WID_GO_BASE_MUSIC_STATUS:   SetDParam(0, BaseMusic::GetUsedSet()->GetNumInvalid()); break;
+			case WID_GO_CURRENCY_DROPDOWN:     SetDParam(0, _currency_specs[this->opt->locale.currency].name); break;
+			case WID_GO_AUTOSAVE_DROPDOWN:     SetDParam(0, _autosave_dropdown[_settings_client.gui.autosave]); break;
+			case WID_GO_LANG_DROPDOWN:         SetDParamStr(0, _current_language->own_name); break;
+			case WID_GO_GUI_ZOOM_DROPDOWN:     SetDParam(0, _gui_zoom_dropdown[_gui_zoom_cfg != ZOOM_LVL_CFG_AUTO ? ZOOM_LVL_OUT_4X - _gui_zoom_cfg + 1 : 0]); break;
+			case WID_GO_FONT_ZOOM_DROPDOWN:    SetDParam(0, _font_zoom_dropdown[_font_zoom_cfg != ZOOM_LVL_CFG_AUTO ? ZOOM_LVL_OUT_4X - _font_zoom_cfg + 1 : 0]); break;
+			case WID_GO_BASE_GRF_DROPDOWN:     SetDParamStr(0, BaseGraphics::GetUsedSet()->name.c_str()); break;
+			case WID_GO_BASE_GRF_STATUS:       SetDParam(0, BaseGraphics::GetUsedSet()->GetNumInvalid()); break;
+			case WID_GO_BASE_SFX_DROPDOWN:     SetDParamStr(0, BaseSounds::GetUsedSet()->name.c_str()); break;
+			case WID_GO_BASE_MUSIC_DROPDOWN:   SetDParamStr(0, BaseMusic::GetUsedSet()->name.c_str()); break;
+			case WID_GO_BASE_MUSIC_STATUS:     SetDParam(0, BaseMusic::GetUsedSet()->GetNumInvalid()); break;
+			case WID_GO_REFRESH_RATE_DROPDOWN: SetDParam(0, _settings_client.gui.refresh_rate); break;
+			case WID_GO_RESOLUTION_DROPDOWN: {
+				auto current_resolution = GetCurrentResolutionIndex();
+
+				if (current_resolution == _resolutions.size()) {
+					SetDParam(0, STR_GAME_OPTIONS_RESOLUTION_OTHER);
+				} else {
+					SetDParam(0, STR_GAME_OPTIONS_RESOLUTION_ITEM);
+					SetDParam(1, _resolutions[current_resolution].width);
+					SetDParam(2, _resolutions[current_resolution].height);
+				}
+				break;
+			}
 		}
 	}
 
@@ -361,6 +338,14 @@ struct GameOptionsWindow : Window {
 				SetDParamStr(0, BaseMusic::GetUsedSet()->GetDescription(GetCurrentLanguageIsoCode()));
 				DrawStringMultiLine(r.left, r.right, r.top, UINT16_MAX, STR_BLACK_RAW_STRING);
 				break;
+
+			case WID_GO_BASE_SFX_VOLUME:
+				DrawVolumeSliderWidget(r, _settings_client.music.effect_vol);
+				break;
+
+			case WID_GO_BASE_MUSIC_VOLUME:
+				DrawVolumeSliderWidget(r, _settings_client.music.music_vol);
+				break;
 		}
 	}
 
@@ -371,7 +356,7 @@ struct GameOptionsWindow : Window {
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseGraphics::GetNumSets(); i++) {
 					SetDParamStr(0, BaseGraphics::GetSet(i)->GetDescription(GetCurrentLanguageIsoCode()));
-					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
+					size->height = std::max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;
 
@@ -390,7 +375,7 @@ struct GameOptionsWindow : Window {
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseSounds::GetNumSets(); i++) {
 					SetDParamStr(0, BaseSounds::GetSet(i)->GetDescription(GetCurrentLanguageIsoCode()));
-					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
+					size->height = std::max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;
 
@@ -398,7 +383,7 @@ struct GameOptionsWindow : Window {
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseMusic::GetNumSets(); i++) {
 					SetDParamStr(0, BaseMusic::GetSet(i)->GetDescription(GetCurrentLanguageIsoCode()));
-					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
+					size->height = std::max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;
 
@@ -411,6 +396,16 @@ struct GameOptionsWindow : Window {
 					SetDParam(0, invalid_files);
 					*size = maxdim(*size, GetStringBoundingBox(STR_GAME_OPTIONS_BASE_MUSIC_STATUS));
 				}
+				break;
+
+			case WID_GO_BASE_SFX_VOLUME:
+			case WID_GO_BASE_MUSIC_VOLUME:
+				size->width = ScaleGUITrad(67);
+				size->height = ScaleGUITrad(12);
+				resize->width = 0;
+				resize->height = 0;
+				fill->width = 0;
+				fill->height = 0;
 				break;
 
 			default: {
@@ -460,6 +455,39 @@ struct GameOptionsWindow : Window {
 				this->SetDirty();
 				break;
 
+			case WID_GO_VIDEO_ACCEL_BUTTON:
+				_video_hw_accel = !_video_hw_accel;
+				ShowErrorMessage(STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART, INVALID_STRING_ID, WL_INFO);
+				this->SetWidgetLoweredState(WID_GO_VIDEO_ACCEL_BUTTON, _video_hw_accel);
+#ifndef __APPLE__
+				this->SetWidgetDisabledState(WID_GO_VIDEO_VSYNC_BUTTON, !_video_hw_accel);
+#endif
+				this->SetDirty();
+				break;
+
+			case WID_GO_VIDEO_VSYNC_BUTTON:
+				if (!_video_hw_accel) break;
+
+				_video_vsync = !_video_vsync;
+				VideoDriver::GetInstance()->ToggleVsync(_video_vsync);
+
+				this->SetWidgetLoweredState(WID_GO_VIDEO_VSYNC_BUTTON, _video_vsync);
+				this->SetDirty();
+				break;
+
+			case WID_GO_BASE_SFX_VOLUME:
+			case WID_GO_BASE_MUSIC_VOLUME: {
+				byte &vol = (widget == WID_GO_BASE_MUSIC_VOLUME) ? _settings_client.music.music_vol : _settings_client.music.effect_vol;
+				if (ClickVolumeSliderWidget(this->GetWidget<NWidgetBase>(widget)->GetCurrentRect(), pt, vol)) {
+					if (widget == WID_GO_BASE_MUSIC_VOLUME) MusicDriver::GetInstance()->SetVolume(vol);
+					this->SetDirty();
+					SetWindowClassesDirty(WC_MUSIC_WINDOW);
+				}
+
+				if (click_count > 0) this->mouse_capture_widget = widget;
+				break;
+			}
+
 			default: {
 				int selected;
 				DropDownList list = this->BuildDropDownList(widget, &selected);
@@ -482,10 +510,9 @@ struct GameOptionsWindow : Window {
 	void SetMediaSet(int index)
 	{
 		if (_game_mode == GM_MENU) {
-			const char *name = T::GetSet(index)->name;
+			auto name = T::GetSet(index)->name;
 
-			free(T::ini_set);
-			T::ini_set = stredup(name);
+			T::ini_set = name;
 
 			T::SetSet(name);
 			this->reload = true;
@@ -502,22 +529,6 @@ struct GameOptionsWindow : Window {
 				ReInitAllWindows();
 				break;
 
-			case WID_GO_ROADSIDE_DROPDOWN: // Road side
-				if (this->opt->vehicle.road_side != index) { // only change if setting changed
-					uint i;
-					if (GetSettingFromName("vehicle.road_side", &i) == nullptr) NOT_REACHED();
-					SetSettingValue(i, index);
-					MarkWholeScreenDirty();
-				}
-				break;
-
-			case WID_GO_TOWNNAME_DROPDOWN: // Town names
-				if (_game_mode == GM_MENU || Town::GetNumItems() == 0) {
-					this->opt->game_creation.town_name = index;
-					SetWindowDirty(WC_GAME_OPTIONS, WN_GAME_OPTIONS_GAME_OPTIONS);
-				}
-				break;
-
 			case WID_GO_AUTOSAVE_DROPDOWN: // Autosave options
 				_settings_client.gui.autosave = index;
 				this->SetDirty();
@@ -529,6 +540,7 @@ struct GameOptionsWindow : Window {
 				CheckForMissingGlyphs();
 				ClearAllCachedNames();
 				UpdateAllVirtCoords();
+				CheckBlitter();
 				ReInitAllWindows();
 				break;
 
@@ -538,22 +550,42 @@ struct GameOptionsWindow : Window {
 				}
 				break;
 
-			case WID_GO_GUI_ZOOM_DROPDOWN:
-				GfxClearSpriteCache();
-				_gui_zoom = (ZoomLevel)(ZOOM_LVL_OUT_4X - index);
-				UpdateCursorSize();
-				UpdateAllVirtCoords();
-				FixTitleGameZoom();
-				ReInitAllWindows();
+			case WID_GO_REFRESH_RATE_DROPDOWN: {
+				_settings_client.gui.refresh_rate = *std::next(_refresh_rates.begin(), index);
+				if (_settings_client.gui.refresh_rate > 60) {
+					/* Show warning to the user that this refresh rate might not be suitable on
+					 * larger maps with many NewGRFs and vehicles. */
+					ShowErrorMessage(STR_GAME_OPTIONS_REFRESH_RATE_WARNING, INVALID_STRING_ID, WL_INFO);
+				}
 				break;
+			}
 
-			case WID_GO_FONT_ZOOM_DROPDOWN:
-				GfxClearSpriteCache();
-				_font_zoom = (ZoomLevel)(ZOOM_LVL_OUT_4X - index);
-				ClearFontCache();
-				LoadStringWidthTable();
-				UpdateAllVirtCoords();
+			case WID_GO_GUI_ZOOM_DROPDOWN: {
+				int8 new_zoom = index > 0 ? ZOOM_LVL_OUT_4X - index + 1 : ZOOM_LVL_CFG_AUTO;
+				if (new_zoom != _gui_zoom_cfg) {
+					GfxClearSpriteCache();
+					_gui_zoom_cfg = new_zoom;
+					UpdateGUIZoom();
+					UpdateCursorSize();
+					UpdateAllVirtCoords();
+					FixTitleGameZoom();
+					ReInitAllWindows();
+				}
 				break;
+			}
+
+			case WID_GO_FONT_ZOOM_DROPDOWN: {
+				int8 new_zoom = index > 0 ? ZOOM_LVL_OUT_4X - index + 1 : ZOOM_LVL_CFG_AUTO;
+				if (new_zoom != _font_zoom_cfg) {
+					GfxClearSpriteCache();
+					_font_zoom_cfg = new_zoom;
+					UpdateGUIZoom();
+					ClearFontCache();
+					LoadStringWidthTable();
+					UpdateAllVirtCoords();
+				}
+				break;
+			}
 
 			case WID_GO_BASE_GRF_DROPDOWN:
 				this->SetMediaSet<BaseGraphics>(index);
@@ -578,6 +610,12 @@ struct GameOptionsWindow : Window {
 	{
 		if (!gui_scope) return;
 		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
+		this->SetWidgetLoweredState(WID_GO_VIDEO_ACCEL_BUTTON, _video_hw_accel);
+
+#ifndef __APPLE__
+		this->SetWidgetLoweredState(WID_GO_VIDEO_VSYNC_BUTTON, _video_vsync);
+		this->SetWidgetDisabledState(WID_GO_VIDEO_VSYNC_BUTTON, !_video_hw_accel);
+#endif
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_GRF_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_GRF_STATUS, STR_NULL);
@@ -603,37 +641,57 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_GREY, WID_GO_BACKGROUND), SetPIP(6, 6, 10),
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 10, 10),
 			NWidget(NWID_VERTICAL), SetPIP(0, 6, 0),
-				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_ROADSIDE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP), SetFill(1, 0),
-				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_AUTOSAVE_FRAME, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_AUTOSAVE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP), SetFill(1, 0),
-				EndContainer(),
-				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_RESOLUTION, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_RESOLUTION_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_RESOLUTION_TOOLTIP), SetFill(1, 0), SetPadding(0, 0, 3, 0),
-					NWidget(NWID_HORIZONTAL),
-						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_GAME_OPTIONS_FULLSCREEN, STR_NULL),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_FULLSCREEN_BUTTON), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP),
-					EndContainer(),
 				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_GUI_ZOOM_FRAME, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_GUI_ZOOM_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
-			EndContainer(),
-
-			NWidget(NWID_VERTICAL), SetPIP(0, 6, 0),
-				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_TOWN_NAMES_FRAME, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_TOWNNAME_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_TOWN_NAMES_DROPDOWN_TOOLTIP), SetFill(1, 0),
-				EndContainer(),
-				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_LANGUAGE, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_LANG_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_RAW_STRING, STR_GAME_OPTIONS_LANGUAGE_TOOLTIP), SetFill(1, 0),
-				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_CURRENCY_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetFill(0, 1),
+			EndContainer(),
+
+			NWidget(NWID_VERTICAL), SetPIP(0, 6, 0),
+				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_LANGUAGE, STR_NULL),
+					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_LANG_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_RAW_STRING, STR_GAME_OPTIONS_LANGUAGE_TOOLTIP), SetFill(1, 0),
+				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_FONT_ZOOM, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_FONT_ZOOM_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_TOOLTIP), SetFill(1, 0),
+				EndContainer(),
+			EndContainer(),
+		EndContainer(),
+
+		NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_GRAPHICS, STR_NULL), SetPadding(0, 10, 0, 10),
+			NWidget(NWID_HORIZONTAL),
+				NWidget(NWID_VERTICAL), SetPIP(0, 2, 0),
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12),SetDataTip(STR_GAME_OPTIONS_RESOLUTION, STR_NULL),
+						NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(1, 0),
+						NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_RESOLUTION_DROPDOWN), SetMinimalSize(200, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_RESOLUTION_TOOLTIP),
+					EndContainer(),
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetDataTip(STR_GAME_OPTIONS_REFRESH_RATE, STR_NULL),
+						NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(1, 0),
+						NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_REFRESH_RATE_DROPDOWN), SetMinimalSize(200, 12), SetDataTip(STR_GAME_OPTIONS_REFRESH_RATE_ITEM, STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP),
+					EndContainer(),
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetDataTip(STR_GAME_OPTIONS_FULLSCREEN, STR_NULL),
+						NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(1, 0),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_FULLSCREEN_BUTTON), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP),
+					EndContainer(),
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetDataTip(STR_GAME_OPTIONS_VIDEO_ACCELERATION, STR_NULL),
+						NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(1, 0),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VIDEO_ACCEL_BUTTON), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP),
+					EndContainer(),
+#ifndef __APPLE__
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetDataTip(STR_GAME_OPTIONS_VIDEO_VSYNC, STR_NULL),
+						NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(1, 0),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VIDEO_VSYNC_BUTTON), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP),
+					EndContainer(),
+#endif
 				EndContainer(),
 			EndContainer(),
 		EndContainer(),
@@ -652,9 +710,10 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 		EndContainer(),
 
 		NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_BASE_SFX, STR_NULL), SetPadding(0, 10, 0, 10),
-			NWidget(NWID_HORIZONTAL), SetPIP(0, 30, 0),
+			NWidget(NWID_HORIZONTAL), SetPIP(0, 30, 7),
 				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_BASE_SFX_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_RAW_STRING, STR_GAME_OPTIONS_BASE_SFX_TOOLTIP),
-				NWidget(NWID_SPACER), SetFill(1, 0),
+				NWidget(NWID_SPACER), SetMinimalSize(150, 12), SetFill(1, 0),
+				NWidget(WWT_EMPTY, COLOUR_GREY, WID_GO_BASE_SFX_VOLUME), SetMinimalSize(67, 12), SetMinimalTextLines(1, 0), SetDataTip(0x0, STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC),
 			EndContainer(),
 			NWidget(WWT_TEXT, COLOUR_GREY, WID_GO_BASE_SFX_DESCRIPTION), SetMinimalSize(330, 0), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP), SetFill(1, 0), SetPadding(6, 0, 6, 0),
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(7, 0, 7),
@@ -665,9 +724,10 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 		EndContainer(),
 
 		NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_BASE_MUSIC, STR_NULL), SetPadding(0, 10, 0, 10),
-			NWidget(NWID_HORIZONTAL), SetPIP(0, 30, 0),
+			NWidget(NWID_HORIZONTAL), SetPIP(0, 30, 7),
 				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_BASE_MUSIC_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_RAW_STRING, STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP),
 				NWidget(WWT_TEXT, COLOUR_GREY, WID_GO_BASE_MUSIC_STATUS), SetMinimalSize(150, 12), SetDataTip(STR_EMPTY, STR_NULL), SetFill(1, 0),
+				NWidget(WWT_EMPTY, COLOUR_GREY, WID_GO_BASE_MUSIC_VOLUME), SetMinimalSize(67, 12), SetMinimalTextLines(1, 0), SetDataTip(0x0, STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC),
 			EndContainer(),
 			NWidget(WWT_TEXT, COLOUR_GREY, WID_GO_BASE_MUSIC_DESCRIPTION), SetMinimalSize(330, 0), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP), SetFill(1, 0), SetPadding(6, 0, 6, 0),
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(7, 0, 7),
@@ -1291,7 +1351,7 @@ uint SettingsContainer::GetMaxHelpHeight(int maxw)
 {
 	uint biggest = 0;
 	for (EntryVector::const_iterator it = this->entries.begin(); it != this->entries.end(); ++it) {
-		biggest = max(biggest, (*it)->GetMaxHelpHeight(maxw));
+		biggest = std::max(biggest, (*it)->GetMaxHelpHeight(maxw));
 	}
 	return biggest;
 }
@@ -1516,6 +1576,7 @@ static SettingsContainer &GetSettingsTree()
 		{
 			graphics->Add(new SettingEntry("gui.zoom_min"));
 			graphics->Add(new SettingEntry("gui.zoom_max"));
+			graphics->Add(new SettingEntry("gui.sprite_zoom_min"));
 			graphics->Add(new SettingEntry("gui.smallmap_land_colour"));
 			graphics->Add(new SettingEntry("gui.graph_line_thickness"));
 			graphics->Add(new SettingEntry("gui.cm_shaded_trees"));
@@ -1588,10 +1649,10 @@ static SettingsContainer &GetSettingsTree()
 				construction->Add(new SettingEntry("gui.cm_open_orders_for_new_vehicles"));
 				construction->Add(new SettingEntry("gui.quick_goto"));
 				construction->Add(new SettingEntry("gui.default_rail_type"));
-				construction->Add(new SettingEntry("gui.disable_unsuitable_building"));
 				construction->Add(new SettingEntry("gui.cm_use_improved_station_join"));
 			}
 
+			interface->Add(new SettingEntry("gui.fast_forward_speed_limit"));
 			interface->Add(new SettingEntry("gui.autosave"));
 			interface->Add(new SettingEntry("gui.toolbar_pos"));
 			interface->Add(new SettingEntry("gui.statusbar_pos"));
@@ -1603,6 +1664,7 @@ static SettingsContainer &GetSettingsTree()
 			interface->Add(new SettingEntry("gui.powerfund_money"));
 			interface->Add(new SettingEntry("gui.powerfund_houses"));
 			interface->Add(new SettingEntry("gui.show_newgrf_name"));
+			interface->Add(new SettingEntry("gui.cm_graph_background"));
 		}
 
 		SettingsPage *advisors = main->Add(new SettingsPage(STR_CONFIG_SETTING_ADVISORS));
@@ -1636,6 +1698,7 @@ static SettingsContainer &GetSettingsTree()
 			company->Add(new SettingEntry("gui.default_signal_type"));
 			company->Add(new SettingEntry("gui.cycle_signal_types"));
 			company->Add(new SettingEntry("gui.drag_signals_fixed_distance"));
+			company->Add(new SettingEntry("gui.auto_remove_signals"));
 			company->Add(new SettingEntry("gui.new_nonstop"));
 			company->Add(new SettingEntry("gui.stop_location"));
 			company->Add(new SettingEntry("gui.starting_colour"));
@@ -1714,7 +1777,7 @@ static SettingsContainer &GetSettingsTree()
 			limitations->Add(new SettingEntry("construction.command_pause_level"));
 			limitations->Add(new SettingEntry("construction.autoslope"));
 			limitations->Add(new SettingEntry("construction.extra_dynamite"));
-			limitations->Add(new SettingEntry("construction.max_heightlevel"));
+			limitations->Add(new SettingEntry("construction.map_height_limit"));
 			limitations->Add(new SettingEntry("construction.max_bridge_length"));
 			limitations->Add(new SettingEntry("construction.max_bridge_height"));
 			limitations->Add(new SettingEntry("construction.max_tunnel_length"));
@@ -1747,7 +1810,9 @@ static SettingsContainer &GetSettingsTree()
 			genworld->Add(new SettingEntry("difficulty.terrain_type"));
 			genworld->Add(new SettingEntry("game_creation.tgen_smoothness"));
 			genworld->Add(new SettingEntry("game_creation.variety"));
+			genworld->Add(new SettingEntry("game_creation.snow_coverage"));
 			genworld->Add(new SettingEntry("game_creation.snow_line_height"));
+			genworld->Add(new SettingEntry("game_creation.desert_coverage"));
 			genworld->Add(new SettingEntry("game_creation.amount_of_rivers"));
 			genworld->Add(new SettingEntry("game_creation.tree_placer"));
 			genworld->Add(new SettingEntry("vehicle.road_side"));
@@ -1786,7 +1851,7 @@ static SettingsContainer &GetSettingsTree()
 				industries->Add(new SettingEntry("construction.industry_platform"));
 				industries->Add(new SettingEntry("economy.multiple_industry_per_town"));
 				industries->Add(new SettingEntry("game_creation.oil_refinery_limit"));
-				industries->Add(new SettingEntry("economy.smooth_economy"));
+				industries->Add(new SettingEntry("economy.type"));
 				industries->Add(new SettingEntry("station.serve_neutral_industries"));
 			}
 
@@ -1840,7 +1905,7 @@ static const StringID _game_settings_restrict_dropdown[] = {
 	STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_DEFAULT,          // RM_CHANGED_AGAINST_DEFAULT
 	STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_NEW,              // RM_CHANGED_AGAINST_NEW
 };
-assert_compile(lengthof(_game_settings_restrict_dropdown) == RM_END);
+static_assert(lengthof(_game_settings_restrict_dropdown) == RM_END);
 
 /** Warnings about hidden search results. */
 enum WarnHiddenResult {
@@ -1908,7 +1973,7 @@ struct GameSettingsWindow : Window {
 	{
 		switch (widget) {
 			case WID_GS_OPTIONSPANEL:
-				resize->height = SETTING_HEIGHT = max(max<int>(_circle_size.height, SETTING_BUTTON_HEIGHT), FONT_HEIGHT_NORMAL) + 1;
+				resize->height = SETTING_HEIGHT = std::max({(int)_circle_size.height, SETTING_BUTTON_HEIGHT, FONT_HEIGHT_NORMAL}) + 1;
 				resize->width  = 1;
 
 				size->height = 5 * resize->height + SETTINGTREE_TOP_OFFSET + SETTINGTREE_BOTTOM_OFFSET;
@@ -1922,16 +1987,16 @@ struct GameSettingsWindow : Window {
 				};
 				for (uint i = 0; i < lengthof(setting_types); i++) {
 					SetDParam(0, setting_types[i]);
-					size->width = max(size->width, GetStringBoundingBox(STR_CONFIG_SETTING_TYPE).width);
+					size->width = std::max(size->width, GetStringBoundingBox(STR_CONFIG_SETTING_TYPE).width);
 				}
 				size->height = 2 * FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL +
-						max(size->height, GetSettingsTree().GetMaxHelpHeight(size->width));
+						std::max(size->height, GetSettingsTree().GetMaxHelpHeight(size->width));
 				break;
 			}
 
 			case WID_GS_RESTRICT_CATEGORY:
 			case WID_GS_RESTRICT_TYPE:
-				size->width = max(GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_CATEGORY).width, GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_TYPE).width);
+				size->width = std::max(GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_CATEGORY).width, GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_TYPE).width);
 				break;
 
 			default:
@@ -2244,12 +2309,14 @@ struct GameSettingsWindow : Window {
 		} else {
 			/* Only open editbox if clicked for the second time, and only for types where it is sensible for. */
 			if (this->last_clicked == pe && sd->desc.cmd != SDT_BOOLX && !(sd->desc.flags & SGF_MULTISTRING)) {
+				int64 value64 = value;
 				/* Show the correct currency-translated value */
-				if (sd->desc.flags & SGF_CURRENCY) value *= _currency->rate;
+				if (sd->desc.flags & SGF_CURRENCY) value64 *= _currency->rate;
 
 				this->valuewindow_entry = pe;
-				SetDParam(0, value);
-				ShowQueryString(STR_JUST_INT, STR_CONFIG_SETTING_QUERY_CAPTION, 10, this, CS_NUMERAL, QSF_ENABLE_DEFAULT);
+				SetDParam(0, value64);
+				/* Limit string length to 14 so that MAX_INT32 * max currency rate doesn't exceed MAX_INT64. */
+				ShowQueryString(STR_JUST_INT, STR_CONFIG_SETTING_QUERY_CAPTION, 15, this, CS_NUMERAL, QSF_ENABLE_DEFAULT);
 			}
 			this->SetDisplayedHelpText(pe);
 		}
@@ -2274,10 +2341,12 @@ struct GameSettingsWindow : Window {
 
 		int32 value;
 		if (!StrEmpty(str)) {
-			value = atoi(str);
+			long long llvalue = atoll(str);
 
 			/* Save the correct currency-translated value */
-			if (sd->desc.flags & SGF_CURRENCY) value /= _currency->rate;
+			if (sd->desc.flags & SGF_CURRENCY) llvalue /= _currency->rate;
+
+			value = (int32)ClampToI32(llvalue);
 		} else {
 			value = (int32)(size_t)sd->desc.def;
 		}
@@ -2683,7 +2752,7 @@ struct CustomCurrencyWindow : Window {
 			case WID_CC_YEAR: { // Year to switch to euro
 				int val = atoi(str);
 
-				_custom_currency.to_euro = (val < 2000 ? CF_NOEURO : min(val, MAX_YEAR));
+				_custom_currency.to_euro = (val < 2000 ? CF_NOEURO : std::min(val, MAX_YEAR));
 				break;
 			}
 		}

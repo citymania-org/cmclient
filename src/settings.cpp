@@ -38,7 +38,7 @@
 #include "sound_func.h"
 #include "company_func.h"
 #include "rev.h"
-#if defined(WITH_FREETYPE) || defined(_WIN32)
+#if defined(WITH_FREETYPE) || defined(_WIN32) || defined(WITH_COCOA)
 #include "fontcache.h"
 #endif
 #include "textbuf_gui.h"
@@ -67,7 +67,7 @@
 #include "void_map.h"
 #include "station_base.h"
 
-#if defined(WITH_FREETYPE) || defined(_WIN32)
+#if defined(WITH_FREETYPE) || defined(_WIN32) || defined(WITH_COCOA)
 #define HAS_TRUETYPE_FONT
 #endif
 
@@ -80,13 +80,13 @@ ClientSettings _settings_client;
 GameSettings _settings_game;     ///< Game settings of a running game or the scenario editor.
 GameSettings _settings_newgame;  ///< Game settings for new games (updated from the intro screen).
 VehicleDefaultSettings _old_vds; ///< Used for loading default vehicles settings from old savegames
-char *_config_file; ///< Configuration file of OpenTTD
+std::string _config_file; ///< Configuration file of OpenTTD
 
 typedef std::list<ErrorMessageData> ErrorList;
 static ErrorList _settings_error_list; ///< Errors while loading minimal settings.
 
 
-typedef void SettingDescProc(IniFile *ini, const SettingDesc *desc, const char *grpname, void *object);
+typedef void SettingDescProc(IniFile *ini, const SettingDesc *desc, const char *grpname, void *object, bool only_startup);
 typedef void SettingDescProcList(IniFile *ini, const char *grpname, StringList &list);
 
 static bool IsSignedVarMemType(VarType vt);
@@ -414,6 +414,7 @@ static const void *StringToVal(const SettingDescBase *desc, const char *orig_str
 			return desc->def;
 		}
 
+		case SDT_STDSTRING:
 		case SDT_STRING: return orig_str;
 		case SDT_INTLIST: return str;
 		default: break;
@@ -500,47 +501,45 @@ static void Write_ValidateSetting(void *ptr, const SettingDesc *sd, int32 val)
  *        be given values
  * @param grpname the group of the IniFile to search in for the new values
  * @param object pointer to the object been loaded
+ * @param only_startup load only the startup settings set
  */
-static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grpname, void *object)
+static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grpname, void *object, bool only_startup)
 {
 	IniGroup *group;
 	IniGroup *group_def = ini->GetGroup(grpname);
-	IniItem *item;
-	const void *p;
-	void *ptr;
-	const char *s;
 
 	for (; sd->save.cmd != SL_END; sd++) {
 		const SettingDescBase *sdb = &sd->desc;
 		const SaveLoad        *sld = &sd->save;
 
 		if (!SlIsObjectCurrentlyValid(sld->version_from, sld->version_to)) continue;
+		if (sd->desc.startup != only_startup) continue;
 
 		/* For settings.xx.yy load the settings from [xx] yy = ? */
-		s = strchr(sdb->name, '.');
-		if (s != nullptr) {
-			group = ini->GetGroup(sdb->name, s - sdb->name);
-			s++;
+		std::string s{ sdb->name };
+		auto sc = s.find('.');
+		if (sc != std::string::npos) {
+			group = ini->GetGroup(s.substr(0, sc));
+			s = s.substr(sc + 1);
 		} else {
-			s = sdb->name;
 			group = group_def;
 		}
 
-		item = group->GetItem(s, false);
+		IniItem *item = group->GetItem(s, false);
 		if (item == nullptr && group != group_def) {
-			/* For settings.xx.yy load the settings from [settingss] yy = ? in case the previous
+			/* For settings.xx.yy load the settings from [settings] yy = ? in case the previous
 			 * did not exist (e.g. loading old config files with a [settings] section */
 			item = group_def->GetItem(s, false);
 		}
 		if (item == nullptr) {
 			/* For settings.xx.zz.yy load the settings from [zz] yy = ? in case the previous
 			 * did not exist (e.g. loading old config files with a [yapf] section */
-			const char *sc = strchr(s, '.');
-			if (sc != nullptr) item = ini->GetGroup(s, sc - s)->GetItem(sc + 1, false);
+			sc = s.find('.');
+			if (sc != std::string::npos) item = ini->GetGroup(s.substr(0, sc))->GetItem(s.substr(sc + 1), false);
 		}
 
-		p = (item == nullptr) ? sdb->def : StringToVal(sdb, item->value);
-		ptr = GetVariableAddress(object, sld);
+		const void *p = (item == nullptr) ? sdb->def : StringToVal(sdb, item->value.has_value() ? item->value->c_str() : nullptr);
+		void *ptr = GetVariableAddress(object, sld);
 
 		switch (sdb->cmd) {
 			case SDT_BOOLX: // All four are various types of (integer) numbers
@@ -567,6 +566,22 @@ static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 
 					default: NOT_REACHED();
 				}
+				break;
+
+			case SDT_STDSTRING:
+				switch (GetVarMemType(sld->conv)) {
+					case SLE_VAR_STR:
+					case SLE_VAR_STRQ:
+						if (p != nullptr) {
+							reinterpret_cast<std::string *>(ptr)->assign((const char *)p);
+						} else {
+							reinterpret_cast<std::string *>(ptr)->clear();
+						}
+						break;
+
+					default: NOT_REACHED();
+				}
+
 				break;
 
 			case SDT_INTLIST: {
@@ -599,12 +614,11 @@ static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grp
  * values are reloaded when saving). If settings indeed have changed, we get
  * these and save them.
  */
-static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grpname, void *object)
+static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grpname, void *object, bool)
 {
 	IniGroup *group_def = nullptr, *group;
 	IniItem *item;
 	char buf[512];
-	const char *s;
 	void *ptr;
 
 	for (; sd->save.cmd != SL_END; sd++) {
@@ -617,22 +631,22 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 		if (sld->conv & SLF_NOT_IN_CONFIG) continue;
 
 		/* XXX - wtf is this?? (group override?) */
-		s = strchr(sdb->name, '.');
-		if (s != nullptr) {
-			group = ini->GetGroup(sdb->name, s - sdb->name);
-			s++;
+		std::string s{ sdb->name };
+		auto sc = s.find('.');
+		if (sc != std::string::npos) {
+			group = ini->GetGroup(s.substr(0, sc));
+			s = s.substr(sc + 1);
 		} else {
 			if (group_def == nullptr) group_def = ini->GetGroup(grpname);
-			s = sdb->name;
 			group = group_def;
 		}
 
 		item = group->GetItem(s, true);
 		ptr = GetVariableAddress(object, sld);
 
-		if (item->value != nullptr) {
+		if (item->value.has_value()) {
 			/* check if the value is the same as the old value */
-			const void *p = StringToVal(sdb, item->value);
+			const void *p = StringToVal(sdb, item->value->c_str());
 
 			/* The main type of a variable/setting is in bytes 8-15
 			 * The subtype (what kind of numbers do we have there) is in 0-7 */
@@ -706,6 +720,22 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 				}
 				break;
 
+			case SDT_STDSTRING:
+				switch (GetVarMemType(sld->conv)) {
+					case SLE_VAR_STR: strecpy(buf, reinterpret_cast<std::string *>(ptr)->c_str(), lastof(buf)); break;
+
+					case SLE_VAR_STRQ:
+						if (reinterpret_cast<std::string *>(ptr)->empty()) {
+							buf[0] = '\0';
+						} else {
+							seprintf(buf, lastof(buf), "\"%s\"", reinterpret_cast<std::string *>(ptr)->c_str());
+						}
+						break;
+
+					default: NOT_REACHED();
+				}
+				break;
+
 			case SDT_INTLIST:
 				MakeIntList(buf, lastof(buf), ptr, sld->length, sld->conv);
 				break;
@@ -714,8 +744,7 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 		}
 
 		/* The value is different, that means we have to write it to the ini */
-		free(item->value);
-		item->value = stredup(buf);
+		item->value.emplace(buf);
 	}
 }
 
@@ -737,7 +766,7 @@ static void IniLoadSettingList(IniFile *ini, const char *grpname, StringList &li
 	list.clear();
 
 	for (const IniItem *item = group->item; item != nullptr; item = item->next) {
-		if (item->name != nullptr) list.emplace_back(item->name);
+		if (!item->name.empty()) list.push_back(item->name);
 	}
 }
 
@@ -770,7 +799,7 @@ static void IniSaveSettingList(IniFile *ini, const char *grpname, StringList &li
  */
 void IniLoadWindowSettings(IniFile *ini, const char *grpname, void *desc)
 {
-	IniLoadSettings(ini, _window_settings, grpname, desc);
+	IniLoadSettings(ini, _window_settings, grpname, desc, false);
 }
 
 /**
@@ -781,7 +810,7 @@ void IniLoadWindowSettings(IniFile *ini, const char *grpname, void *desc)
  */
 void IniSaveWindowSettings(IniFile *ini, const char *grpname, void *desc)
 {
-	IniSaveSettings(ini, _window_settings, grpname, desc);
+	IniSaveSettings(ini, _window_settings, grpname, desc, false);
 }
 
 /**
@@ -797,6 +826,7 @@ bool SettingDesc::IsEditable(bool do_command) const
 	if ((this->desc.flags & SGF_NEWGAME_ONLY) &&
 			(_game_mode == GM_NORMAL ||
 			(_game_mode == GM_EDITOR && !(this->desc.flags & SGF_SCENEDIT_TOO)))) return false;
+	if ((this->desc.flags & SGF_SCENEDIT_ONLY) && _game_mode != GM_EDITOR) return false;
 	return true;
 }
 
@@ -1095,6 +1125,13 @@ static bool ZoomMinMaxChanged(int32 p1)
 		UpdateCursorSize();
 		LoadStringWidthTable();
 	}
+	return true;
+}
+
+static bool SpriteZoomMinChanged(int32 p1) {
+	GfxClearSpriteCache();
+	/* Force all sprites to redraw at the new chosen zoom level */
+	MarkWholeScreenDirty();
 	return true;
 }
 
@@ -1427,14 +1464,14 @@ static void AILoadConfig(IniFile *ini, const char *grpname)
 	for (item = group->item; c < MAX_COMPANIES && item != nullptr; c++, item = item->next) {
 		AIConfig *config = AIConfig::GetConfig(c, AIConfig::SSS_FORCE_NEWGAME);
 
-		config->Change(item->name);
+		config->Change(item->name.c_str());
 		if (!config->HasScript()) {
-			if (strcmp(item->name, "none") != 0) {
-				DEBUG(script, 0, "The AI by the name '%s' was no longer found, and removed from the list.", item->name);
+			if (item->name != "none") {
+				DEBUG(script, 0, "The AI by the name '%s' was no longer found, and removed from the list.", item->name.c_str());
 				continue;
 			}
 		}
-		if (item->value != nullptr) config->StringToSettings(item->value);
+		if (item->value.has_value()) config->StringToSettings(item->value->c_str());
 	}
 }
 
@@ -1454,14 +1491,14 @@ static void GameLoadConfig(IniFile *ini, const char *grpname)
 
 	GameConfig *config = GameConfig::GetConfig(AIConfig::SSS_FORCE_NEWGAME);
 
-	config->Change(item->name);
+	config->Change(item->name.c_str());
 	if (!config->HasScript()) {
-		if (strcmp(item->name, "none") != 0) {
-			DEBUG(script, 0, "The GameScript by the name '%s' was no longer found, and removed from the list.", item->name);
+		if (item->name != "none") {
+			DEBUG(script, 0, "The GameScript by the name '%s' was no longer found, and removed from the list.", item->name.c_str());
 			return;
 		}
 	}
-	if (item->value != nullptr) config->StringToSettings(item->value);
+	if (item->value.has_value()) config->StringToSettings(item->value->c_str());
 }
 
 /**
@@ -1485,7 +1522,7 @@ static int DecodeHexNibble(char c)
  * @param dest_size Number of bytes in \a dest.
  * @return Whether reading was successful.
  */
-static bool DecodeHexText(char *pos, uint8 *dest, size_t dest_size)
+static bool DecodeHexText(const char *pos, uint8 *dest, size_t dest_size)
 {
 	while (dest_size > 0) {
 		int hi = DecodeHexNibble(pos[0]);
@@ -1517,7 +1554,7 @@ static GRFConfig *GRFLoadConfig(IniFile *ini, const char *grpname, bool is_stati
 		GRFConfig *c = nullptr;
 
 		uint8 grfid_buf[4], md5sum[16];
-		char *filename = item->name;
+		const char *filename = item->name.c_str();
 		bool has_grfid = false;
 		bool has_md5sum = false;
 
@@ -1541,8 +1578,8 @@ static GRFConfig *GRFLoadConfig(IniFile *ini, const char *grpname, bool is_stati
 		if (c == nullptr) c = new GRFConfig(filename);
 
 		/* Parse parameters */
-		if (!StrEmpty(item->value)) {
-			int count = ParseIntList(item->value, c->param, lengthof(c->param));
+		if (item->value.has_value() && !item->value->empty()) {
+			int count = ParseIntList(item->value->c_str(), c->param, lengthof(c->param));
 			if (count < 0) {
 				SetDParamStr(0, filename);
 				ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_ARRAY, WL_CRITICAL);
@@ -1565,7 +1602,7 @@ static GRFConfig *GRFLoadConfig(IniFile *ini, const char *grpname, bool is_stati
 				SetDParam(1, STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN);
 			}
 
-			SetDParamStr(0, StrEmpty(filename) ? item->name : filename);
+			SetDParamStr(0, StrEmpty(filename) ? item->name.c_str() : filename);
 			ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_GRF, WL_CRITICAL);
 			delete c;
 			continue;
@@ -1686,20 +1723,18 @@ static void GRFSaveConfig(IniFile *ini, const char *grpname, const GRFConfig *li
 }
 
 /* Common handler for saving/loading variables to the configuration file */
-static void HandleSettingDescs(IniFile *ini, SettingDescProc *proc, SettingDescProcList *proc_list, bool basic_settings = true, bool other_settings = true)
+static void HandleSettingDescs(IniFile *ini, SettingDescProc *proc, SettingDescProcList *proc_list, bool only_startup = false)
 {
-	if (basic_settings) {
-		proc(ini, (const SettingDesc*)_misc_settings,    "misc",  nullptr);
+	proc(ini, (const SettingDesc*)_misc_settings,    "misc",  nullptr, only_startup);
 #if defined(_WIN32) && !defined(DEDICATED)
-		proc(ini, (const SettingDesc*)_win32_settings,   "win32", nullptr);
+	proc(ini, (const SettingDesc*)_win32_settings,   "win32", nullptr, only_startup);
 #endif /* _WIN32 */
-	}
 
-	if (other_settings) {
-		proc(ini, _settings,         "patches",  &_settings_newgame);
-		proc(ini, _currency_settings,"currency", &_custom_currency);
-		proc(ini, _company_settings, "company",  &_settings_client.company);
+	proc(ini, _settings,         "patches",  &_settings_newgame, only_startup);
+	proc(ini, _currency_settings,"currency", &_custom_currency, only_startup);
+	proc(ini, _company_settings, "company",  &_settings_client.company, only_startup);
 
+	if (!only_startup) {
 		proc_list(ini, "server_bind_addresses", _network_bind_list);
 		proc_list(ini, "servers", _network_host_list);
 		proc_list(ini, "bans",    _network_ban_list);
@@ -1715,24 +1750,24 @@ static IniFile *IniLoadConfig()
 
 /**
  * Load the values from the configuration files
- * @param minimal Load the minimal amount of the configuration to "bootstrap" the blitter and such.
+ * @param startup Load the minimal amount of the configuration to "bootstrap" the blitter and such.
  */
-void LoadFromConfig(bool minimal)
+void LoadFromConfig(bool startup)
 {
 	IniFile *ini = IniLoadConfig();
-	if (!minimal) ResetCurrencies(false); // Initialize the array of currencies, without preserving the custom one
+	if (!startup) ResetCurrencies(false); // Initialize the array of currencies, without preserving the custom one
 
 	/* Load basic settings only during bootstrap, load other settings not during bootstrap */
-	HandleSettingDescs(ini, IniLoadSettings, IniLoadSettingList, minimal, !minimal);
+	HandleSettingDescs(ini, IniLoadSettings, IniLoadSettingList, startup);
 
-	if (!minimal) {
+	if (!startup) {
 		_grfconfig_newgame = GRFLoadConfig(ini, "newgrf", false);
 		_grfconfig_static  = GRFLoadConfig(ini, "newgrf-static", true);
 		AILoadConfig(ini, "ai_players");
 		GameLoadConfig(ini, "game_scripts");
 
 		PrepareOldDiffCustom();
-		IniLoadSettings(ini, _gameopt_settings, "gameopt", &_settings_newgame);
+		IniLoadSettings(ini, _gameopt_settings, "gameopt", &_settings_newgame, false);
 		HandleOldDiffCustom(false);
 
 		ValidateSettings();
@@ -1776,8 +1811,8 @@ StringList GetGRFPresetList()
 
 	std::unique_ptr<IniFile> ini(IniLoadConfig());
 	for (IniGroup *group = ini->group; group != nullptr; group = group->next) {
-		if (strncmp(group->name, "preset-", 7) == 0) {
-			list.emplace_back(group->name + 7);
+		if (group->name.compare(0, 7, "preset-") == 0) {
+			list.push_back(group->name.substr(7));
 		}
 	}
 
@@ -1886,6 +1921,8 @@ CommandCost CmdChangeSetting(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 		}
 
 		SetWindowClassesDirty(WC_GAME_OPTIONS);
+
+		if (_save_config) SaveToConfig();
 	}
 
 	return CommandCost();
@@ -1954,12 +1991,15 @@ bool SetSettingValue(uint index, int32 value, bool force_newgame)
 
 		SetWindowClassesDirty(WC_GAME_OPTIONS);
 
+		if (_save_config) SaveToConfig();
 		return true;
 	}
 
 	if (force_newgame) {
 		void *var2 = GetVariableAddress(&_settings_newgame, &sd->save);
 		Write_ValidateSetting(var2, sd, value);
+
+		if (_save_config) SaveToConfig();
 		return true;
 	}
 
@@ -2026,6 +2066,7 @@ uint GetCompanySettingIndex(const char *name)
 {
 	uint i;
 	const SettingDesc *sd = GetSettingFromName(name, &i);
+	(void)sd; // Unused without asserts
 	assert(sd != nullptr && (sd->desc.flags & SGF_PER_COMPANY) != 0);
 	return i;
 }
@@ -2052,6 +2093,7 @@ bool SetSettingValue(uint index, const char *value, bool force_newgame)
 	}
 	if (sd->desc.proc != nullptr) sd->desc.proc(0);
 
+	if (_save_config) SaveToConfig();
 	return true;
 }
 
@@ -2132,6 +2174,7 @@ void IConsoleSetSetting(const char *name, int value)
 {
 	uint index;
 	const SettingDesc *sd = GetSettingFromName(name, &index);
+	(void)sd; // Unused without asserts
 	assert(sd != nullptr);
 	SetSettingValue(index, value);
 }

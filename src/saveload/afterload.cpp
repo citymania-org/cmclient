@@ -224,6 +224,7 @@ void UpdateAllVirtCoords()
 	UpdateAllStationVirtCoords();
 	UpdateAllSignVirtCoords();
 	UpdateAllTownVirtCoords();
+	UpdateAllTextEffectVirtCoords();
 	RebuildViewportKdtree();
 }
 
@@ -548,13 +549,10 @@ void AfterLoadFindBTProCBInfo() {
 	char *p = buf;
 	int pn;
 	p += Utf8Encode(p, SCC_ENCODED);
-	for (uint i = 0; i < _current_data->raw_strings.size(); i++) {
-		auto ls = _current_data->raw_strings[i].get();
-		if (!ls) continue;
+	for (const auto &ls : _current_data->raw_strings) {
 		int string_id = 0;
-		for (uint j = 0; j < ls->lines.size(); j++) {
-			auto &s = ls->lines[j];
-			if (!s.size() || s[0] == ';' || s[0] == '#' || s[0] == ' ' || s[0] == '\0') continue;
+		for (const auto &s : ls.lines) {
+			if (s.empty() || s[0] == ';' || s[0] == '#' || s[0] == ' ' || s[0] == '\0') continue;
 			if (strncmp(s.c_str(), "STR_TOWN_CLAIMED_CARGOS", strlen("STR_TOWN_CLAIMED_CARGOS")) == 0 ||
 					strncmp(s.c_str(), "STR_TOWN_CARGOS_NEEDED_CB", strlen("STR_TOWN_CARGOS_NEEDED_CB")) == 0) {
 				pn = p - buf + seprintf(p, lastof(buf), "%X:", string_id);
@@ -615,7 +613,7 @@ bool AfterLoadGame()
 		ResetSignalHandlers();
 		return false;
 	} else if (!_networking || _network_server) {
-		/* If we are in single player, i.e. not networking, and loading the
+		/* If we are in singleplayer mode, i.e. not networking, and loading the
 		 * savegame or we are loading the savegame as network server we do
 		 * not want to be bothered by being paused because of the automatic
 		 * reason of a network server, e.g. joining clients or too few
@@ -643,13 +641,13 @@ bool AfterLoadGame()
 			int dx = TileX(t) - TileX(st->train_station.tile);
 			int dy = TileY(t) - TileY(st->train_station.tile);
 			assert(dx >= 0 && dy >= 0);
-			st->train_station.w = max<uint>(st->train_station.w, dx + 1);
-			st->train_station.h = max<uint>(st->train_station.h, dy + 1);
+			st->train_station.w = std::max<uint>(st->train_station.w, dx + 1);
+			st->train_station.h = std::max<uint>(st->train_station.h, dy + 1);
 		}
 	}
 
 	if (IsSavegameVersionBefore(SLV_194)) {
-		_settings_game.construction.max_heightlevel = 15;
+		_settings_game.construction.map_height_limit = 15;
 
 		/* In old savegame versions, the heightlevel was coded in bits 0..3 of the type field */
 		for (TileIndex t = 0; t < map_size; t++) {
@@ -689,20 +687,20 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_84)) {
 		for (Company *c : Company::Iterate()) {
 			c->name = CopyFromOldName(c->name_1);
-			if (c->name != nullptr) c->name_1 = STR_SV_UNNAMED;
+			if (!c->name.empty()) c->name_1 = STR_SV_UNNAMED;
 			c->president_name = CopyFromOldName(c->president_name_1);
-			if (c->president_name != nullptr) c->president_name_1 = SPECSTR_PRESIDENT_NAME;
+			if (!c->president_name.empty()) c->president_name_1 = SPECSTR_PRESIDENT_NAME;
 		}
 
 		for (Station *st : Station::Iterate()) {
 			st->name = CopyFromOldName(st->string_id);
 			/* generating new name would be too much work for little effect, use the station name fallback */
-			if (st->name != nullptr) st->string_id = STR_SV_STNAME_FALLBACK;
+			if (!st->name.empty()) st->string_id = STR_SV_STNAME_FALLBACK;
 		}
 
 		for (Town *t : Town::Iterate()) {
 			t->name = CopyFromOldName(t->townnametype);
-			if (t->name != nullptr) t->townnametype = SPECSTR_TOWNNAME_START + _settings_game.game_creation.town_name;
+			if (!t->name.empty()) t->townnametype = SPECSTR_TOWNNAME_START + _settings_game.game_creation.town_name;
 		}
 	}
 
@@ -799,12 +797,7 @@ bool AfterLoadGame()
 		_settings_game.linkgraph.distribution_default = DT_MANUAL;
 	}
 
-	if (IsSavegameVersionBefore(SLV_105)) {
-		extern int32 _old_ending_year_slv_105; // in date.cpp
-		_settings_game.game_creation.ending_year = _old_ending_year_slv_105 - 1;
-	} else if (IsSavegameVersionBefore(SLV_ENDING_YEAR)) {
-		/* Ending year was a GUI setting before SLV_105, was removed in revision 683b65ee1 (svn r14755). */
-		/* This also converts scenarios, both when loading them into the editor, and when starting a new game. */
+	if (IsSavegameVersionBefore(SLV_ENDING_YEAR)) {
 		_settings_game.game_creation.ending_year = DEF_END_YEAR;
 	}
 
@@ -976,19 +969,19 @@ bool AfterLoadGame()
 						break;
 
 					case STATION_OILRIG: {
+						/* The internal encoding of oil rigs was changed twice.
+						 * It was 3 (till 2.2) and later 5 (till 5.1).
+						 * DeleteOilRig asserts on the correct type, and
+						 * setting it unconditionally does not hurt.
+						 */
+						Station::GetByTile(t)->airport.type = AT_OILRIG;
+
 						/* Very old savegames sometimes have phantom oil rigs, i.e.
 						 * an oil rig which got shut down, but not completely removed from
 						 * the map
 						 */
 						TileIndex t1 = TILE_ADDXY(t, 0, 1);
-						if (IsTileType(t1, MP_INDUSTRY) &&
-								GetIndustryGfx(t1) == GFX_OILRIG_1) {
-							/* The internal encoding of oil rigs was changed twice.
-							 * It was 3 (till 2.2) and later 5 (till 5.1).
-							 * Setting it unconditionally does not hurt.
-							 */
-							Station::GetByTile(t)->airport.type = AT_OILRIG;
-						} else {
+						if (!IsTileType(t1, MP_INDUSTRY) || GetIndustryGfx(t1) != GFX_OILRIG_1) {
 							DeleteOilRig(t);
 						}
 						break;
@@ -1777,8 +1770,7 @@ bool AfterLoadGame()
 
 			v->current_order.ConvertFromOldSavegame();
 			if (v->type == VEH_ROAD && v->IsPrimaryVehicle() && v->FirstShared() == v) {
-				Order* order;
-				FOR_VEHICLE_ORDERS(v, order) order->SetNonStopType(ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS);
+				for (Order *order : v->Orders()) order->SetNonStopType(ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS);
 			}
 		}
 	} else if (IsSavegameVersionBefore(SLV_94)) {
@@ -2227,7 +2219,7 @@ bool AfterLoadGame()
 			for (iter = st->loading_vehicles.begin(); iter != st->loading_vehicles.end(); ++iter) {
 				/* There are always as many CargoPayments as Vehicles. We need to make the
 				 * assert() in Pool::GetNew() happy by calling CanAllocateItem(). */
-				assert_compile(CargoPaymentPool::MAX_SIZE == VehiclePool::MAX_SIZE);
+				static_assert(CargoPaymentPool::MAX_SIZE == VehiclePool::MAX_SIZE);
 				assert(CargoPayment::CanAllocateItem());
 				Vehicle *v = *iter;
 				if (v->cargo_payment == nullptr) v->cargo_payment = new CargoPayment(v);
@@ -2502,7 +2494,7 @@ bool AfterLoadGame()
 						uint per_proc = _me[t].m7;
 						_me[t].m7 = GB(_me[t].m6, 2, 6) | (GB(_m[t].m3, 5, 1) << 6);
 						SB(_m[t].m3, 5, 1, 0);
-						SB(_me[t].m6, 2, 6, min(per_proc, 63));
+						SB(_me[t].m6, 2, 6, std::min(per_proc, 63U));
 					}
 					break;
 
@@ -2546,11 +2538,11 @@ bool AfterLoadGame()
 		 * highest possible number to get them numbered in the
 		 * order they have in the pool. */
 		for (Waypoint *wp : Waypoint::Iterate()) {
-			if (wp->name != nullptr) wp->town_cn = UINT16_MAX;
+			if (!wp->name.empty()) wp->town_cn = UINT16_MAX;
 		}
 
 		for (Waypoint* wp : Waypoint::Iterate()) {
-			if (wp->name != nullptr) MakeDefaultName(wp);
+			if (!wp->name.empty()) MakeDefaultName(wp);
 		}
 	}
 
@@ -2758,7 +2750,7 @@ bool AfterLoadGame()
 		_settings_game.pf.reverse_at_signals = IsSavegameVersionBefore(SLV_100) || (_settings_game.pf.wait_oneway_signal != 255 && _settings_game.pf.wait_twoway_signal != 255 && _settings_game.pf.wait_for_pbs_path != 255);
 
 		for (Train *t : Train::Iterate()) {
-			_settings_game.vehicle.max_train_length = max<uint8>(_settings_game.vehicle.max_train_length, CeilDiv(t->gcache.cached_total_length, TILE_SIZE));
+			_settings_game.vehicle.max_train_length = std::max<uint8>(_settings_game.vehicle.max_train_length, CeilDiv(t->gcache.cached_total_length, TILE_SIZE));
 		}
 	}
 
@@ -2968,8 +2960,7 @@ bool AfterLoadGame()
 					cur_skip = prev_tile_skip;
 				}
 
-				/*C++17: uint &this_skip = */ skip_frames.push_back(prev_tile_skip);
-				uint &this_skip = skip_frames.back();
+				uint &this_skip = skip_frames.emplace_back(prev_tile_skip);
 
 				/* The following 3 curves now take longer than before */
 				switch (u->state) {
@@ -3167,6 +3158,14 @@ bool AfterLoadGame()
 			if (IsTileType(t, MP_TUNNELBRIDGE) && GetTunnelBridgeTransportType(t) != TRANSPORT_ROAD) {
 				SetRoadTypes(t, INVALID_ROADTYPE, INVALID_ROADTYPE);
 			}
+		}
+	}
+
+	/* Make sure all industries exclusive supplier/consumer set correctly. */
+	if (IsSavegameVersionBefore(SLV_GS_INDUSTRY_CONTROL)) {
+		for (Industry *i : Industry::Iterate()) {
+			i->exclusive_supplier = INVALID_OWNER;
+			i->exclusive_consumer = INVALID_OWNER;
 		}
 	}
 

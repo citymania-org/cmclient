@@ -13,6 +13,7 @@
 #include "engine_func.h"
 #include "landscape.h"
 #include "saveload/saveload.h"
+#include "network/core/game_info.h"
 #include "network/network.h"
 #include "network/network_func.h"
 #include "network/network_base.h"
@@ -36,6 +37,8 @@
 #include "newgrf_profiling.h"
 #include "console_func.h"
 #include "engine_base.h"
+#include "road.h"
+#include "rail.h"
 #include "game/game.hpp"
 #include "table/strings.h"
 #include <time.h>
@@ -45,7 +48,7 @@
 #include "safeguards.h"
 
 /* scriptfile handling */
-static bool _script_running; ///< Script is running (used to abort execution when #ConReturn is encountered).
+static uint _script_current_depth; ///< Depth of scripts running (used to abort execution when #ConReturn is encountered).
 
 /** File list storage for the console, for caching the last 'ls' command. */
 class ConsoleFileList : public FileList {
@@ -147,7 +150,7 @@ DEF_CONSOLE_HOOK(ConHookNeedNetwork)
 }
 
 /**
- * Check whether we are in single player mode.
+ * Check whether we are in singleplayer mode.
  * @return True when no network is active.
  */
 DEF_CONSOLE_HOOK(ConHookNoNetwork)
@@ -893,7 +896,7 @@ DEF_CONSOLE_CMD(ConNetworkReconnect)
 	/* Don't resolve the address first, just print it directly as it comes from the config file. */
 	IConsolePrintF(CC_DEFAULT, "Reconnecting to %s:%d...", _settings_client.network.last_host, _settings_client.network.last_port);
 
-	NetworkClientConnectGame(NetworkAddress(_settings_client.network.last_host, _settings_client.network.last_port), playas);
+	NetworkClientConnectGame(_settings_client.network.last_host, _settings_client.network.last_port, playas);
 	return true;
 }
 
@@ -907,7 +910,6 @@ DEF_CONSOLE_CMD(ConNetworkConnect)
 	}
 
 	if (argc < 2) return false;
-	if (_networking) NetworkDisconnect(); // we are in network-mode, first close it!
 
 	const char *port = nullptr;
 	const char *company = nullptr;
@@ -935,7 +937,7 @@ DEF_CONSOLE_CMD(ConNetworkConnect)
 		IConsolePrintF(CC_DEFAULT, "    port: %s", port);
 	}
 
-	NetworkClientConnectGame(NetworkAddress(ip, rport), join_as);
+	NetworkClientConnectGame(ip, rport, join_as);
 
 	return true;
 }
@@ -960,10 +962,16 @@ DEF_CONSOLE_CMD(ConExec)
 		return true;
 	}
 
-	_script_running = true;
+	if (_script_current_depth == 11) {
+		IConsoleError("Maximum 'exec' depth reached; script A is calling script B is calling script C ... more than 10 times.");
+		return true;
+	}
+
+	_script_current_depth++;
+	uint script_depth = _script_current_depth;
 
 	char cmdline[ICON_CMDLN_SIZE];
-	while (_script_running && fgets(cmdline, sizeof(cmdline), script_file) != nullptr) {
+	while (fgets(cmdline, sizeof(cmdline), script_file) != nullptr) {
 		/* Remove newline characters from the executing script */
 		for (char *cmdptr = cmdline; *cmdptr != '\0'; cmdptr++) {
 			if (*cmdptr == '\n' || *cmdptr == '\r') {
@@ -972,13 +980,18 @@ DEF_CONSOLE_CMD(ConExec)
 			}
 		}
 		IConsoleCmdExec(cmdline);
+		/* Ensure that we are still on the same depth or that we returned via 'return'. */
+		assert(_script_current_depth == script_depth || _script_current_depth == script_depth - 1);
+
+		/* The 'return' command was executed. */
+		if (_script_current_depth == script_depth - 1) break;
 	}
 
 	if (ferror(script_file)) {
 		IConsoleError("Encountered error while trying to read from script file");
 	}
 
-	_script_running = false;
+	if (_script_current_depth == script_depth) _script_current_depth--;
 	FioFCloseFile(script_file);
 	return true;
 }
@@ -990,7 +1003,7 @@ DEF_CONSOLE_CMD(ConReturn)
 		return true;
 	}
 
-	_script_running = false;
+	_script_current_depth--;
 	return true;
 }
 
@@ -1072,6 +1085,23 @@ DEF_CONSOLE_CMD(ConRestart)
 	_settings_game.game_creation.map_x = MapLogX();
 	_settings_game.game_creation.map_y = FindFirstBit(MapSizeY());
 	_switch_mode = SM_RESTARTGAME;
+	return true;
+}
+
+DEF_CONSOLE_CMD(ConReload)
+{
+	if (argc == 0) {
+		IConsoleHelp("Reload game. Usage: 'reload'");
+		IConsoleHelp("Reloads a game.");
+		IConsoleHelp(" * if you started from a savegame / scenario / heightmap, that exact same savegame / scenario / heightmap will be loaded.");
+		IConsoleHelp(" * if you started from a new game, this acts the same as 'restart'.");
+		return true;
+	}
+
+	/* Don't copy the _newgame pointers to the real pointers, so call SwitchToMode directly */
+	_settings_game.game_creation.map_x = MapLogX();
+	_settings_game.game_creation.map_y = FindFirstBit(MapSizeY());
+	_switch_mode = SM_RELOADGAME;
 	return true;
 }
 
@@ -1174,7 +1204,24 @@ DEF_CONSOLE_CMD(ConStartAI)
 
 	AIConfig *config = AIConfig::GetConfig((CompanyID)n);
 	if (argc >= 2) {
-		config->Change(argv[1], -1, true);
+		config->Change(argv[1], -1, false);
+
+		/* If the name is not found, and there is a dot in the name,
+		 * try again with the assumption everything right of the dot is
+		 * the version the user wants to load. */
+		if (!config->HasScript()) {
+			char *name = stredup(argv[1]);
+			char *e = strrchr(name, '.');
+			if (e != nullptr) {
+				*e = '\0';
+				e++;
+
+				int version = atoi(e);
+				config->Change(name, version, true);
+			}
+			free(name);
+		}
+
 		if (!config->HasScript()) {
 			IConsoleWarning("Failed to load the specified AI");
 			return true;
@@ -1214,13 +1261,14 @@ DEF_CONSOLE_CMD(ConReloadAI)
 		return true;
 	}
 
-	if (Company::IsHumanID(company_id)) {
+	/* In singleplayer mode the player can be in an AI company, after cheating or loading network save with an AI in first slot. */
+	if (Company::IsHumanID(company_id) || company_id == _local_company) {
 		IConsoleWarning("Company is not controlled by an AI.");
 		return true;
 	}
 
 	/* First kill the company of the AI, then start a new one. This should start the current AI again */
-	DoCommandP(0, CCA_DELETE | company_id << 16 | CRR_MANUAL << 24, 0,CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_DELETE | company_id << 16 | CRR_MANUAL << 24, 0, CMD_COMPANY_CTRL);
 	DoCommandP(0, CCA_NEW_AI | company_id << 16, 0, CMD_COMPANY_CTRL);
 	IConsolePrint(CC_DEFAULT, "AI reloaded.");
 
@@ -1251,6 +1299,7 @@ DEF_CONSOLE_CMD(ConStopAI)
 		return true;
 	}
 
+	/* In singleplayer mode the player can be in an AI company, after cheating or loading network save with an AI in first slot. */
 	if (Company::IsHumanID(company_id) || company_id == _local_company) {
 		IConsoleWarning("Company is not controlled by an AI.");
 		return true;
@@ -1304,7 +1353,9 @@ DEF_CONSOLE_CMD(ConRescanNewGRF)
 		return true;
 	}
 
-	ScanNewGRFFiles(nullptr);
+	if (!RequestNewGRFScan()) {
+		IConsoleWarning("NewGRF scanning is already running. Please wait until completed to run again.");
+	}
 
 	return true;
 }
@@ -1373,46 +1424,80 @@ DEF_CONSOLE_CMD(ConAlias)
 DEF_CONSOLE_CMD(ConScreenShot)
 {
 	if (argc == 0) {
-		IConsoleHelp("Create a screenshot of the game. Usage: 'screenshot [big | giant | no_con | minimap] [file name]'");
-		IConsoleHelp("'big' makes a zoomed-in screenshot of the visible area, 'giant' makes a screenshot of the "
-				"whole map, 'no_con' hides the console to create the screenshot. 'big' or 'giant' "
-				"screenshots are always drawn without console. "
-				"'minimap' makes a top-viewed minimap screenshot of whole world which represents one tile by one pixel.");
+		IConsoleHelp("Create a screenshot of the game. Usage: 'screenshot [viewport | normal | big | giant | heightmap | minimap] [no_con] [size <width> <height>] [<filename>]'");
+		IConsoleHelp("'viewport' (default) makes a screenshot of the current viewport (including menus, windows, ..), "
+				"'normal' makes a screenshot of the visible area, "
+				"'big' makes a zoomed-in screenshot of the visible area, "
+				"'giant' makes a screenshot of the whole map, "
+				"'heightmap' makes a heightmap screenshot of the map that can be loaded in as heightmap, "
+				"'minimap' makes a top-viewed minimap screenshot of the whole world which represents one tile by one pixel. "
+				"'no_con' hides the console to create the screenshot (only useful in combination with 'viewport'). "
+				"'size' sets the width and height of the viewport to make a screenshot of (only useful in combination with 'normal' or 'big').");
 		return true;
 	}
 
-	if (argc > 3) return false;
+	if (argc > 7) return false;
 
 	ScreenshotType type = SC_VIEWPORT;
-	const char *name = nullptr;
+	uint32 width = 0;
+	uint32 height = 0;
+	std::string name{};
+	uint32 arg_index = 1;
 
-	if (argc > 1) {
-		if (strcmp(argv[1], "big") == 0) {
-			/* screenshot big [filename] */
+	if (argc > arg_index) {
+		if (strcmp(argv[arg_index], "viewport") == 0) {
+			type = SC_VIEWPORT;
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "normal") == 0) {
+			type = SC_DEFAULTZOOM;
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "big") == 0) {
 			type = SC_ZOOMEDIN;
-			if (argc > 2) name = argv[2];
-		} else if (strcmp(argv[1], "giant") == 0) {
-			/* screenshot giant [filename] */
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "giant") == 0) {
 			type = SC_WORLD;
-			if (argc > 2) name = argv[2];
-		} else if (strcmp(argv[1], "minimap") == 0) {
-			/* screenshot minimap [filename] */
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "heightmap") == 0) {
+			type = SC_HEIGHTMAP;
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "minimap") == 0) {
 			type = SC_MINIMAP;
-			if (argc > 2) name = argv[2];
-		} else if (strcmp(argv[1], "no_con") == 0) {
-			/* screenshot no_con [filename] */
-			IConsoleClose();
-			if (argc > 2) name = argv[2];
-		} else if (argc == 2) {
-			/* screenshot filename */
-			name = argv[1];
-		} else {
-			/* screenshot argv[1] argv[2] - invalid */
-			return false;
+			arg_index += 1;
 		}
 	}
 
-	MakeScreenshot(type, name);
+	if (argc > arg_index && strcmp(argv[arg_index], "no_con") == 0) {
+		if (type != SC_VIEWPORT) {
+			IConsoleError("'no_con' can only be used in combination with 'viewport'");
+			return true;
+		}
+		IConsoleClose();
+		arg_index += 1;
+	}
+
+	if (argc > arg_index + 2 && strcmp(argv[arg_index], "size") == 0) {
+		/* size <width> <height> */
+		if (type != SC_DEFAULTZOOM && type != SC_ZOOMEDIN) {
+			IConsoleError("'size' can only be used in combination with 'normal' or 'big'");
+			return true;
+		}
+		GetArgumentInteger(&width, argv[arg_index + 1]);
+		GetArgumentInteger(&height, argv[arg_index + 2]);
+		arg_index += 3;
+	}
+
+	if (argc > arg_index) {
+		/* Last parameter that was not one of the keywords must be the filename. */
+		name = argv[arg_index];
+		arg_index += 1;
+	}
+
+	if (argc > arg_index) {
+		/* We have parameters we did not process; means we misunderstood any of the above. */
+		return false;
+	}
+
+	MakeScreenshot(type, name, width, height);
 	return true;
 }
 
@@ -1745,7 +1830,7 @@ struct ConsoleContentCallback : public ContentCallback {
 static void OutputContentState(const ContentInfo *const ci)
 {
 	static const char * const types[] = { "Base graphics", "NewGRF", "AI", "AI library", "Scenario", "Heightmap", "Base sound", "Base music", "Game script", "GS library" };
-	assert_compile(lengthof(types) == CONTENT_TYPE_END - CONTENT_TYPE_BEGIN);
+	static_assert(lengthof(types) == CONTENT_TYPE_END - CONTENT_TYPE_BEGIN);
 	static const char * const states[] = { "Not selected", "Selected", "Dep Selected", "Installed", "Unknown" };
 	static const TextColour state_to_colour[] = { CC_COMMAND, CC_INFO, CC_INFO, CC_WHITE, CC_ERROR };
 
@@ -1763,10 +1848,10 @@ DEF_CONSOLE_CMD(ConContent)
 	}
 
 	if (argc <= 1) {
-		IConsoleHelp("Query, select and download content. Usage: 'content update|upgrade|select [all|id]|unselect [all|id]|state [filter]|download'");
+		IConsoleHelp("Query, select and download content. Usage: 'content update|upgrade|select [id]|unselect [all|id]|state [filter]|download'");
 		IConsoleHelp("  update: get a new list of downloadable content; must be run first");
 		IConsoleHelp("  upgrade: select all items that are upgrades");
-		IConsoleHelp("  select: select a specific item given by its id or 'all' to select all. If no parameter is given, all selected content will be listed");
+		IConsoleHelp("  select: select a specific item given by its id. If no parameter is given, all selected content will be listed");
 		IConsoleHelp("  unselect: unselect a specific item given by its id or 'all' to unselect all");
 		IConsoleHelp("  state: show the download/select state of all downloadable content. Optionally give a filter string");
 		IConsoleHelp("  download: download all content you've selected");
@@ -1792,7 +1877,13 @@ DEF_CONSOLE_CMD(ConContent)
 				OutputContentState(*iter);
 			}
 		} else if (strcasecmp(argv[2], "all") == 0) {
-			_network_content_client.SelectAll();
+			/* The intention of this function was that you could download
+			 * everything after a filter was applied; but this never really
+			 * took off. Instead, a select few people used this functionality
+			 * to download every available package on BaNaNaS. This is not in
+			 * the spirit of this service. Additionally, these few people were
+			 * good for 70% of the consumed bandwidth of BaNaNaS. */
+			IConsoleError("'select all' is no longer supported since 1.11");
 		} else {
 			_network_content_client.Select((ContentID)atoi(argv[2]));
 		}
@@ -1994,7 +2085,7 @@ DEF_CONSOLE_CMD(ConNewGRFProfile)
 		if (started > 0) {
 			IConsolePrintF(CC_DEBUG, "Started profiling for GRFID%s %s", (started > 1) ? "s" : "", grfids.c_str());
 			if (argc >= 3) {
-				int days = max(atoi(argv[2]), 1);
+				int days = std::max(atoi(argv[2]), 1);
 				_newgrf_profile_end_date = _date + days;
 
 				char datestrbuf[32]{ 0 };
@@ -2074,6 +2165,159 @@ DEF_CONSOLE_CMD(ConFramerateWindow)
 	return true;
 }
 
+static void ConDumpRoadTypes()
+{
+	IConsolePrintF(CC_DEFAULT, "  Flags:");
+	IConsolePrintF(CC_DEFAULT, "    c = catenary");
+	IConsolePrintF(CC_DEFAULT, "    l = no level crossings");
+	IConsolePrintF(CC_DEFAULT, "    X = no houses");
+	IConsolePrintF(CC_DEFAULT, "    h = hidden");
+	IConsolePrintF(CC_DEFAULT, "    T = buildable by towns");
+
+	std::map<uint32, const GRFFile *> grfs;
+	for (RoadType rt = ROADTYPE_BEGIN; rt < ROADTYPE_END; rt++) {
+		const RoadTypeInfo *rti = GetRoadTypeInfo(rt);
+		if (rti->label == 0) continue;
+		uint32 grfid = 0;
+		const GRFFile *grf = rti->grffile[ROTSG_GROUND];
+		if (grf != nullptr) {
+			grfid = grf->grfid;
+			grfs.emplace(grfid, grf);
+		}
+		IConsolePrintF(CC_DEFAULT, "  %02u %s %c%c%c%c, Flags: %c%c%c%c%c, GRF: %08X, %s",
+				(uint)rt,
+				RoadTypeIsTram(rt) ? "Tram" : "Road",
+				rti->label >> 24, rti->label >> 16, rti->label >> 8, rti->label,
+				HasBit(rti->flags, ROTF_CATENARY)          ? 'c' : '-',
+				HasBit(rti->flags, ROTF_NO_LEVEL_CROSSING) ? 'l' : '-',
+				HasBit(rti->flags, ROTF_NO_HOUSES)         ? 'X' : '-',
+				HasBit(rti->flags, ROTF_HIDDEN)            ? 'h' : '-',
+				HasBit(rti->flags, ROTF_TOWN_BUILD)        ? 'T' : '-',
+				BSWAP32(grfid),
+				GetStringPtr(rti->strings.name)
+		);
+	}
+	for (const auto &grf : grfs) {
+		IConsolePrintF(CC_DEFAULT, "  GRF: %08X = %s", BSWAP32(grf.first), grf.second->filename);
+	}
+}
+
+static void ConDumpRailTypes()
+{
+	IConsolePrintF(CC_DEFAULT, "  Flags:");
+	IConsolePrintF(CC_DEFAULT, "    c = catenary");
+	IConsolePrintF(CC_DEFAULT, "    l = no level crossings");
+	IConsolePrintF(CC_DEFAULT, "    h = hidden");
+	IConsolePrintF(CC_DEFAULT, "    s = no sprite combine");
+	IConsolePrintF(CC_DEFAULT, "    a = always allow 90 degree turns");
+	IConsolePrintF(CC_DEFAULT, "    d = always disallow 90 degree turns");
+
+	std::map<uint32, const GRFFile *> grfs;
+	for (RailType rt = RAILTYPE_BEGIN; rt < RAILTYPE_END; rt++) {
+		const RailtypeInfo *rti = GetRailTypeInfo(rt);
+		if (rti->label == 0) continue;
+		uint32 grfid = 0;
+		const GRFFile *grf = rti->grffile[RTSG_GROUND];
+		if (grf != nullptr) {
+			grfid = grf->grfid;
+			grfs.emplace(grfid, grf);
+		}
+		IConsolePrintF(CC_DEFAULT, "  %02u %c%c%c%c, Flags: %c%c%c%c%c%c, GRF: %08X, %s",
+				(uint)rt,
+				rti->label >> 24, rti->label >> 16, rti->label >> 8, rti->label,
+				HasBit(rti->flags, RTF_CATENARY)          ? 'c' : '-',
+				HasBit(rti->flags, RTF_NO_LEVEL_CROSSING) ? 'l' : '-',
+				HasBit(rti->flags, RTF_HIDDEN)            ? 'h' : '-',
+				HasBit(rti->flags, RTF_NO_SPRITE_COMBINE) ? 's' : '-',
+				HasBit(rti->flags, RTF_ALLOW_90DEG)       ? 'a' : '-',
+				HasBit(rti->flags, RTF_DISALLOW_90DEG)    ? 'd' : '-',
+				BSWAP32(grfid),
+				GetStringPtr(rti->strings.name)
+		);
+	}
+	for (const auto &grf : grfs) {
+		IConsolePrintF(CC_DEFAULT, "  GRF: %08X = %s", BSWAP32(grf.first), grf.second->filename);
+	}
+}
+
+static void ConDumpCargoTypes()
+{
+	IConsolePrintF(CC_DEFAULT, "  Cargo classes:");
+	IConsolePrintF(CC_DEFAULT, "    p = passenger");
+	IConsolePrintF(CC_DEFAULT, "    m = mail");
+	IConsolePrintF(CC_DEFAULT, "    x = express");
+	IConsolePrintF(CC_DEFAULT, "    a = armoured");
+	IConsolePrintF(CC_DEFAULT, "    b = bulk");
+	IConsolePrintF(CC_DEFAULT, "    g = piece goods");
+	IConsolePrintF(CC_DEFAULT, "    l = liquid");
+	IConsolePrintF(CC_DEFAULT, "    r = refrigerated");
+	IConsolePrintF(CC_DEFAULT, "    h = hazardous");
+	IConsolePrintF(CC_DEFAULT, "    c = covered/sheltered");
+	IConsolePrintF(CC_DEFAULT, "    S = special");
+
+	std::map<uint32, const GRFFile *> grfs;
+	for (CargoID i = 0; i < NUM_CARGO; i++) {
+		const CargoSpec *spec = CargoSpec::Get(i);
+		if (!spec->IsValid()) continue;
+		uint32 grfid = 0;
+		const GRFFile *grf = spec->grffile;
+		if (grf != nullptr) {
+			grfid = grf->grfid;
+			grfs.emplace(grfid, grf);
+		}
+		IConsolePrintF(CC_DEFAULT, "  %02u Bit: %2u, Label: %c%c%c%c, Callback mask: 0x%02X, Cargo class: %c%c%c%c%c%c%c%c%c%c%c, GRF: %08X, %s",
+				(uint)i,
+				spec->bitnum,
+				spec->label >> 24, spec->label >> 16, spec->label >> 8, spec->label,
+				spec->callback_mask,
+				(spec->classes & CC_PASSENGERS)   != 0 ? 'p' : '-',
+				(spec->classes & CC_MAIL)         != 0 ? 'm' : '-',
+				(spec->classes & CC_EXPRESS)      != 0 ? 'x' : '-',
+				(spec->classes & CC_ARMOURED)     != 0 ? 'a' : '-',
+				(spec->classes & CC_BULK)         != 0 ? 'b' : '-',
+				(spec->classes & CC_PIECE_GOODS)  != 0 ? 'g' : '-',
+				(spec->classes & CC_LIQUID)       != 0 ? 'l' : '-',
+				(spec->classes & CC_REFRIGERATED) != 0 ? 'r' : '-',
+				(spec->classes & CC_HAZARDOUS)    != 0 ? 'h' : '-',
+				(spec->classes & CC_COVERED)      != 0 ? 'c' : '-',
+				(spec->classes & CC_SPECIAL)      != 0 ? 'S' : '-',
+				BSWAP32(grfid),
+				GetStringPtr(spec->name)
+		);
+	}
+	for (const auto &grf : grfs) {
+		IConsolePrintF(CC_DEFAULT, "  GRF: %08X = %s", BSWAP32(grf.first), grf.second->filename);
+	}
+}
+
+
+DEF_CONSOLE_CMD(ConDumpInfo)
+{
+	if (argc != 2) {
+		IConsoleHelp("Dump debugging information.");
+		IConsoleHelp("Usage: dump_info roadtypes|railtypes|cargotypes");
+		IConsoleHelp("  Show information about road/tram types, rail types or cargo types.");
+		return true;
+	}
+
+	if (strcasecmp(argv[1], "roadtypes") == 0) {
+		ConDumpRoadTypes();
+		return true;
+	}
+
+	if (strcasecmp(argv[1], "railtypes") == 0) {
+		ConDumpRailTypes();
+		return true;
+	}
+
+	if (strcasecmp(argv[1], "cargotypes") == 0) {
+		ConDumpCargoTypes();
+		return true;
+	}
+
+	return false;
+}
+
 /*******************************
  * console command registration
  *******************************/
@@ -2092,6 +2336,7 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("list_aliases", ConListAliases);
 	IConsoleCmdRegister("newgame",      ConNewGame);
 	IConsoleCmdRegister("restart",      ConRestart);
+	IConsoleCmdRegister("reload",       ConReload);
 	IConsoleCmdRegister("getseed",      ConGetSeed);
 	IConsoleCmdRegister("getdate",      ConGetDate);
 	IConsoleCmdRegister("getsysdate",   ConGetSysDate);
@@ -2211,7 +2456,11 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("reload_newgrfs",  ConNewGRFReload, ConHookNewGRFDeveloperTool);
 	IConsoleCmdRegister("newgrf_profile",  ConNewGRFProfile, ConHookNewGRFDeveloperTool);
 
-	IConsoleCmdRegister("cmstep", citymania::ConStep, ConHookNoNetwork);
+	IConsoleCmdRegister("dump_info", ConDumpInfo);
+
 	IConsoleCmdRegister("cmexport", citymania::ConExport);
+	IConsoleCmdRegister("cmstep", citymania::ConStep, ConHookNoNetwork);
 	IConsoleCmdRegister("cmtreemap", citymania::ConTreeMap, ConHookNoNetwork);
+	IConsoleCmdRegister("cmresettowngrowth", citymania::ConResetTownGrowth, ConHookNoNetwork);
+	IConsoleCmdRegister("cmloadcommands", citymania::ConLoadCommands, ConHookNoNetwork);
 }

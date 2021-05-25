@@ -19,12 +19,13 @@
 void PlaceProc_DemolishArea(TileIndex tile);
 bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_tile, TileIndex end_tile);
 
-bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyle mode);
-void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Window *w);
-void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num);
+bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyle mode, ViewportDragDropSelectionProcess cm_process);
+void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Window *w, ViewportDragDropSelectionProcess cm_process);
+void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num, ViewportDragDropSelectionProcess cm_process);
 void ResetObjectToPlace();
 
 void VpSelectTilesWithMethod(int x, int y, ViewportPlaceMethod method);
+void VpStartDragging(ViewportDragDropSelectionProcess process);
 void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDragDropSelectionProcess process);
 void VpSetPresizeRange(TileIndex from, TileIndex to);
 void VpSetPlaceSizingLimit(int limit);

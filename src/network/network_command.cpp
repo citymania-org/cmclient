@@ -23,7 +23,7 @@ static CommandCallback * const _callback_table[] = {
 	/* 0x01 */ CcBuildPrimaryVehicle,
 	/* 0x02 */ CcBuildAirport,
 	/* 0x03 */ CcBuildBridge,
-	/* 0x04 */ CcPlaySound_SPLAT_WATER,
+	/* 0x04 */ CcPlaySound_CONSTRUCTION_WATER,
 	/* 0x05 */ CcBuildDocks,
 	/* 0x06 */ CcFoundTown,
 	/* 0x07 */ CcBuildRoadTunnel,
@@ -33,13 +33,13 @@ static CommandCallback * const _callback_table[] = {
 	/* 0x0B */ CcRailDepot,
 	/* 0x0C */ CcPlaceSign,
 	/* 0x0D */ CcPlaySound_EXPLOSION,
-	/* 0x0E */ CcPlaySound_SPLAT_OTHER,
-	/* 0x0F */ CcPlaySound_SPLAT_RAIL,
+	/* 0x0E */ CcPlaySound_CONSTRUCTION_OTHER,
+	/* 0x0F */ CcPlaySound_CONSTRUCTION_RAIL,
 	/* 0x10 */ CcStation,
 	/* 0x11 */ CcTerraform,
 	/* 0x12 */ CcAI,
 	/* 0x13 */ CcCloneVehicle,
-	/* 0x14 */ CcGiveMoney,
+	/* 0x14 */ nullptr,
 	/* 0x15 */ CcCreateGroup,
 	/* 0x16 */ CcFoundRandomTown,
 	/* 0x17 */ CcRoadStop,
@@ -298,7 +298,7 @@ const char *NetworkGameSocketHandler::ReceiveCommand(Packet *p, CommandPacket *c
 	cp->company = (CompanyID)p->Recv_uint8();
 	cp->cmd     = p->Recv_uint32();
 	if (!IsValidCommand(cp->cmd))               return "invalid command";
-	if (GetCommandFlags(cp->cmd) & CMD_OFFLINE) return "offline only command";
+	if (GetCommandFlags(cp->cmd) & CMD_OFFLINE) return "single-player only command";
 	if ((cp->cmd & CMD_FLAGS_MASK) != 0)        return "invalid command flag";
 
 	cp->p1      = p->Recv_uint32();

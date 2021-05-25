@@ -28,14 +28,18 @@
 #include <SDL.h>
 #endif
 
+#ifdef __EMSCRIPTEN__
+#	include <emscripten.h>
+#endif
+
 #ifdef __APPLE__
-	#include <sys/mount.h>
+#	include <sys/mount.h>
 #elif (defined(_POSIX_VERSION) && _POSIX_VERSION >= 200112L) || defined(__GLIBC__)
-	#define HAS_STATVFS
+#	define HAS_STATVFS
 #endif
 
 #if defined(OPENBSD) || defined(__NetBSD__) || defined(__FreeBSD__)
-	#define HAS_SYSCTL
+#	define HAS_SYSCTL
 #endif
 
 #ifdef HAS_STATVFS
@@ -235,8 +239,8 @@ void ShowOSErrorBox(const char *buf, bool system)
 #endif
 
 #ifdef WITH_COCOA
-void cocoaSetupAutoreleasePool();
-void cocoaReleaseAutoreleasePool();
+void CocoaSetupAutoreleasePool();
+void CocoaReleaseAutoreleasePool();
 #endif
 
 int CDECL main(int argc, char *argv[])
@@ -245,7 +249,7 @@ int CDECL main(int argc, char *argv[])
 	for (int i = 0; i < argc; i++) ValidateString(argv[i]);
 
 #ifdef WITH_COCOA
-	cocoaSetupAutoreleasePool();
+	CocoaSetupAutoreleasePool();
 	/* This is passed if we are launched by double-clicking */
 	if (argc >= 2 && strncmp(argv[1], "-psn", 4) == 0) {
 		argv[1] = nullptr;
@@ -261,7 +265,7 @@ int CDECL main(int argc, char *argv[])
 	int ret = openttd_main(argc, argv);
 
 #ifdef WITH_COCOA
-	cocoaReleaseAutoreleasePool();
+	CocoaReleaseAutoreleasePool();
 #endif
 
 	return ret;
@@ -288,7 +292,13 @@ bool GetClipboardContents(char *buffer, const char *last)
 #endif
 
 
-#ifndef __APPLE__
+#if defined(__EMSCRIPTEN__)
+void OSOpenBrowser(const char *url)
+{
+	/* Implementation in pre.js */
+	EM_ASM({ if(window["openttd_open_url"]) window.openttd_open_url($0, $1) }, url, strlen(url));
+}
+#elif !defined( __APPLE__)
 void OSOpenBrowser(const char *url)
 {
 	pid_t child_pid = fork();

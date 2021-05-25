@@ -23,18 +23,21 @@
 #include "../gfx_func.h"
 #include "../error.h"
 #include "../rev.h"
+#include "core/game_info.h"
 #include "network.h"
 #include "network_base.h"
 #include "network_client.h"
 #include "../core/backup_type.hpp"
 #include "../thread.h"
+
 #include "table/strings.h"
 
 #include "../town.h"
 #include "network_func.h"
-#include "../newgrf_revisions.hpp"
+#include "../citymania/cm_newgrf_revisions.hpp"
 
 #include "../safeguards.h"
+
 /* This file handles all the client-commands */
 
 void SyncCMUser(const char *msg);
@@ -74,7 +77,7 @@ struct PacketReader : LoadFilter {
 		assert(this->read_bytes == 0);
 
 		size_t in_packet = p->size - p->pos;
-		size_t to_write  = min((size_t)(this->bufe - this->buf), in_packet);
+		size_t to_write  = std::min<size_t>(this->bufe - this->buf, in_packet);
 		const byte *pbuf = p->buffer + p->pos;
 
 		this->written_bytes += in_packet;
@@ -99,7 +102,7 @@ struct PacketReader : LoadFilter {
 	size_t Read(byte *rbuf, size_t size) override
 	{
 		/* Limit the amount to read to whatever we still have. */
-		size_t ret_size = size = min(this->written_bytes - this->read_bytes, size);
+		size_t ret_size = size = std::min(this->written_bytes - this->read_bytes, size);
 		this->read_bytes += ret_size;
 		const byte *rbufe = rbuf + ret_size;
 
@@ -109,7 +112,7 @@ struct PacketReader : LoadFilter {
 				this->bufe = this->buf + CHUNK;
 			}
 
-			size_t to_write = min(this->bufe - this->buf, rbufe - rbuf);
+			size_t to_write = std::min(this->bufe - this->buf, rbufe - rbuf);
 			memcpy(rbuf, this->buf, to_write);
 			rbuf += to_write;
 			this->buf += to_write;
@@ -217,15 +220,22 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 		default:                                  errorno = NETWORK_ERROR_GENERAL; break;
 	}
 
-	/* This means we fucked up and the server closed the connection */
-	if (res != NETWORK_RECV_STATUS_SERVER_ERROR && res != NETWORK_RECV_STATUS_SERVER_FULL &&
-			res != NETWORK_RECV_STATUS_SERVER_BANNED) {
+	if (res == NETWORK_RECV_STATUS_SERVER_ERROR || res == NETWORK_RECV_STATUS_SERVER_FULL ||
+			res == NETWORK_RECV_STATUS_SERVER_BANNED) {
+		/* This means the server closed the connection. Emergency save is
+		 * already created if this was appropriate during handling of the
+		 * disconnect. */
+		this->CloseConnection(res);
+	} else {
+		/* This means we as client made a boo-boo. */
 		SendError(errorno);
+
+		/* Close connection before we make an emergency save, as the save can
+		 * take a bit of time; better that the server doesn't stall while we
+		 * are doing the save, and already disconnects us. */
+		this->CloseConnection(res);
+		ClientNetworkEmergencySave();
 	}
-
-	this->CloseConnection(res);
-
-	ClientNetworkEmergencySave();
 
 	_switch_mode = SM_MENU;
 	_networking = false;
@@ -279,7 +289,7 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 #else
 			if (_sync_seed_1 != _random.state[0]) {
 #endif
-				NetworkError(STR_NETWORK_ERROR_DESYNC);
+				ShowNetworkError(STR_NETWORK_ERROR_DESYNC);
 				DEBUG(desync, 1, "sync_err: %08x; %02x", _date, _date_fract);
 				DEBUG(net, 0, "Sync error detected!");
 				my_client->ClientError(NETWORK_RECV_STATUS_DESYNC);
@@ -332,7 +342,7 @@ const char *_network_join_company_password = nullptr;
 const char *_network_join_server_revision = NULL;
 
 /** Make sure the server ID length is the same as a md5 hash. */
-assert_compile(NETWORK_SERVER_ID_LENGTH == 16 * 2 + 1);
+static_assert(NETWORK_SERVER_ID_LENGTH == 16 * 2 + 1);
 
 /***********
  * Sending functions
@@ -386,6 +396,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendJoin()
 	p->Send_string(_settings_client.network.client_name); // Client name
 	p->Send_uint8 (_network_join_as);     // PlayAs
 	p->Send_uint8 (NETLANG_ANY);          // Language
+	p->Send_uint8 (citymania::GetAvailableLoadFormats());  // Compressnion formats that we can decompress
 	my_client->SendPacket(p);
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -571,7 +582,7 @@ bool ClientNetworkGameSocketHandler::IsConnected()
  *   DEF_CLIENT_RECEIVE_COMMAND has parameter: Packet *p
  ************/
 
-extern bool SafeLoad(const char *filename, SaveLoadOperation fop, DetailedFileType dft, GameMode newgm, Subdirectory subdir, struct LoadFilter *lf = nullptr);
+extern bool SafeLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileType dft, GameMode newgm, Subdirectory subdir, struct LoadFilter *lf = nullptr);
 
 NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_FULL(Packet *p)
 {
@@ -720,7 +731,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_ERROR(Packet *p
 		STR_NETWORK_ERROR_TIMEOUT_MAP,       // NETWORK_ERROR_TIMEOUT_MAP
 		STR_NETWORK_ERROR_TIMEOUT_JOIN,      // NETWORK_ERROR_TIMEOUT_JOIN
 	};
-	assert_compile(lengthof(network_error_strings) == NETWORK_ERROR_END);
+	static_assert(lengthof(network_error_strings) == NETWORK_ERROR_END);
 
 	NetworkErrorCode error = (NetworkErrorCode)p->Recv_uint8();
 
@@ -754,7 +765,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHECK_NEWGRFS(P
 	/* Check all GRFs */
 	for (; grf_count > 0; grf_count--) {
 		GRFIdentifier c;
-		this->ReceiveGRFIdentifier(p, &c);
+		DeserializeGRFIdentifier(p, &c);
 
 		/* Check whether we know this GRF */
 		const GRFConfig *f = FindGRFConfig(c.grfid, FGCM_EXACT, c.md5sum);
@@ -905,10 +916,10 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 
 	/* The map is done downloading, load it */
 	ClearErrorMessages();
-	bool load_success = SafeLoad(nullptr, SLO_LOAD, DFT_GAME_FILE, GM_NORMAL, NO_DIRECTORY, lf);
+	bool load_success = SafeLoad({}, SLO_LOAD, DFT_GAME_FILE, GM_NORMAL, NO_DIRECTORY, lf);
 
 	/* Long savegame loads shouldn't affect the lag calculation! */
-	this->last_packet = _realtime_tick;
+	this->last_packet = std::chrono::steady_clock::now();
 
 	if (!load_success) {
 		DeleteWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
@@ -1000,7 +1011,6 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_COMMAND(Packet 
 		IConsolePrintF(CC_ERROR, "WARNING: %s from server, dropping...", err);
 		return NETWORK_RECV_STATUS_MALFORMED_PACKET;
 	}
-
 	this->incoming_queue.Append(&cp);
 
 	return NETWORK_RECV_STATUS_OKAY;
@@ -1031,11 +1041,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHAT(Packet *p)
 				ci = NetworkClientInfo::GetByClientID(_network_own_client_id);
 				break;
 
-			/* For speaking to company or giving money, we need the company-name */
-			case NETWORK_ACTION_GIVE_MONEY:
-				if (!Company::IsValidID(ci_to->client_playas)) return NETWORK_RECV_STATUS_OKAY;
-				FALLTHROUGH;
-
+			/* For speaking to company, we need the company-name */
 			case NETWORK_ACTION_CHAT_COMPANY: {
 				StringID str = Company::IsValidID(ci_to->client_playas) ? STR_COMPANY_NAME : STR_NETWORK_SPECTATORS;
 				SetDParam(0, ci_to->client_playas);
@@ -1218,27 +1224,23 @@ void ClientNetworkGameSocketHandler::CheckConnection()
 	/* Only once we're authorized we can expect a steady stream of packets. */
 	if (this->status < STATUS_AUTHORIZED) return;
 
-	/* It might... sometimes occur that the realtime ticker overflows. */
-	if (_realtime_tick < this->last_packet) this->last_packet = _realtime_tick;
-
-	/* Lag is in milliseconds; 5 seconds are roughly twice the
-	 * server's "you're slow" threshold (1 game day). */
-	uint lag = (_realtime_tick - this->last_packet) / 1000;
-	if (lag < 5) return;
+	/* 5 seconds are roughly twice the server's "you're slow" threshold (1 game day). */
+	std::chrono::steady_clock::duration lag = std::chrono::steady_clock::now() - this->last_packet;
+	if (lag < std::chrono::seconds(5)) return;
 
 	/* 20 seconds are (way) more than 4 game days after which
 	 * the server will forcefully disconnect you. */
-	if (lag > 20) {
+	if (lag > std::chrono::seconds(20)) {
 		this->NetworkGameSocketHandler::CloseConnection();
 		return;
 	}
 
 	/* Prevent showing the lag message every tick; just update it when needed. */
-	static uint last_lag = 0;
-	if (last_lag == lag) return;
+	static std::chrono::steady_clock::duration last_lag = {};
+	if (std::chrono::duration_cast<std::chrono::seconds>(last_lag) == std::chrono::duration_cast<std::chrono::seconds>(lag)) return;
 
 	last_lag = lag;
-	SetDParam(0, lag);
+	SetDParam(0, std::chrono::duration_cast<std::chrono::seconds>(lag).count());
 	ShowErrorMessage(STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION, STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION, WL_INFO);
 }
 

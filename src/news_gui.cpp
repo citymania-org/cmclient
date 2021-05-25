@@ -34,6 +34,7 @@
 #include "settings_internal.h"
 #include "guitimer_func.h"
 #include "group_gui.h"
+#include "zoom_func.h"
 
 #include "widgets/news_widget.h"
 
@@ -240,13 +241,13 @@ static NewsTypeData _news_type_data[] = {
 	NewsTypeData("news_display.production_other",  30, SND_BEGIN       ),  ///< NT_INDUSTRY_OTHER
 	NewsTypeData("news_display.production_nobody", 30, SND_BEGIN       ),  ///< NT_INDUSTRY_NOBODY
 	NewsTypeData("news_display.advice",           150, SND_BEGIN       ),  ///< NT_ADVICE
-	NewsTypeData("news_display.new_vehicles",      30, SND_1E_OOOOH    ),  ///< NT_NEW_VEHICLES
+	NewsTypeData("news_display.new_vehicles",      30, SND_1E_NEW_ENGINE), ///< NT_NEW_VEHICLES
 	NewsTypeData("news_display.acceptance",        90, SND_BEGIN       ),  ///< NT_ACCEPTANCE
 	NewsTypeData("news_display.subsidies",        180, SND_BEGIN       ),  ///< NT_SUBSIDIES
 	NewsTypeData("news_display.general",           60, SND_BEGIN       ),  ///< NT_GENERAL
 };
 
-assert_compile(lengthof(_news_type_data) == NT_END);
+static_assert(lengthof(_news_type_data) == NT_END);
 
 /**
  * Return the news display option.
@@ -509,8 +510,8 @@ struct NewsWindow : Window {
 					TileIndex tile1 = GetReferenceTile(this->ni->reftype1, this->ni->ref1);
 					TileIndex tile2 = GetReferenceTile(this->ni->reftype2, this->ni->ref2);
 					if (citymania::_fn_mod) {
-						if (tile1 != INVALID_TILE) ShowExtraViewPortWindow(tile1);
-						if (tile2 != INVALID_TILE) ShowExtraViewPortWindow(tile2);
+						if (tile1 != INVALID_TILE) ShowExtraViewportWindow(tile1);
+						if (tile2 != INVALID_TILE) ShowExtraViewportWindow(tile2);
 					} else {
 						if ((tile1 == INVALID_TILE || !ScrollMainWindowToTile(tile1)) && tile2 != INVALID_TILE) {
 							ScrollMainWindowToTile(tile2);
@@ -540,7 +541,7 @@ struct NewsWindow : Window {
 		int count = this->timer.CountElapsed(delta_ms);
 		if (count > 0) {
 			/* Scroll up newsmessages from the bottom */
-			int newtop = max(this->top - 2 * count, _screen.height - this->height - this->status_height - this->chat_height);
+			int newtop = std::max(this->top - 2 * count, _screen.height - this->height - this->status_height - this->chat_height);
 			this->SetWindowTop(newtop);
 		}
 
@@ -558,12 +559,12 @@ private:
 	{
 		if (this->top == newtop) return;
 
-		int mintop = min(newtop, this->top);
-		int maxtop = max(newtop, this->top);
+		int mintop = std::min(newtop, this->top);
+		int maxtop = std::max(newtop, this->top);
 		if (this->viewport != nullptr) this->viewport->top += newtop - this->top;
 		this->top = newtop;
 
-		SetDirtyBlocks(this->left, mintop, this->left + this->width, maxtop + this->height);
+		AddDirtyBlock(this->left, mintop, this->left + this->width, maxtop + this->height);
 	}
 
 	StringID GetCompanyMessageString() const
@@ -607,7 +608,7 @@ static void ShowNewspaper(const NewsItem *ni)
 /** Show news item in the ticker */
 static void ShowTicker(const NewsItem *ni)
 {
-	if (_settings_client.sound.news_ticker) SndPlayFx(SND_16_MORSE);
+	if (_settings_client.sound.news_ticker) SndPlayFx(SND_16_NEWS_TICKER);
 
 	_statusbar_news_item = ni;
 	InvalidateWindowData(WC_STATUS_BAR, 0, SBI_SHOW_TICKER);
@@ -666,8 +667,6 @@ static void MoveToNextTickerItem()
 	 * especially important with the end game screen when
 	 * there is no status bar but possible news. */
 	if (FindWindowById(WC_STATUS_BAR, 0) == nullptr) return;
-
-	InvalidateWindowData(WC_STATUS_BAR, 0, SBI_NEWS_DELETED); // invalidate the statusbar
 
 	/* if we're not at the last item, then move on */
 	while (_statusbar_news_item != _latest_news) {
@@ -767,6 +766,7 @@ static void DeleteNewsItem(NewsItem *ni)
 		_statusbar_news_item = ni->prev;
 
 		/* About to remove the currently displayed item (ticker, or just a reminder) */
+		InvalidateWindowData(WC_STATUS_BAR, 0, SBI_NEWS_DELETED); // invalidate the statusbar
 		MoveToNextTickerItem();
 	}
 
@@ -1025,9 +1025,9 @@ static void ShowNewsMessage(const NewsItem *ni)
 }
 
 /**
-  * Close active news message window
-  * @return true if a window was closed.
-  */
+ * Close active news message window
+ * @return true if a window was closed.
+ */
 bool HideActiveNewsMessage() {
 	NewsWindow *w = (NewsWindow*)FindWindowById(WC_NEWS_WINDOW, 0);
 	if (w == nullptr) return false;
@@ -1150,7 +1150,7 @@ struct MessageHistoryWindow : Window {
 			this->date_width = GetStringBoundingBox(STR_SHORT_DATE).width;
 
 			size->height = 4 * resize->height + this->top_spacing + this->bottom_spacing; // At least 4 lines are visible.
-			size->width = max(200u, size->width); // At least 200 pixels wide.
+			size->width = std::max(200u, size->width); // At least 200 pixels wide.
 		}
 	}
 
@@ -1176,8 +1176,8 @@ struct MessageHistoryWindow : Window {
 		bool rtl = _current_text_dir == TD_RTL;
 		uint date_left  = rtl ? r.right - WD_FRAMERECT_RIGHT - this->date_width : r.left + WD_FRAMERECT_LEFT;
 		uint date_right = rtl ? r.right - WD_FRAMERECT_RIGHT : r.left + WD_FRAMERECT_LEFT + this->date_width;
-		uint news_left  = rtl ? r.left + WD_FRAMERECT_LEFT : r.left + WD_FRAMERECT_LEFT + this->date_width + WD_FRAMERECT_RIGHT;
-		uint news_right = rtl ? r.right - WD_FRAMERECT_RIGHT - this->date_width - WD_FRAMERECT_RIGHT : r.right - WD_FRAMERECT_RIGHT;
+		uint news_left  = rtl ? r.left + WD_FRAMERECT_LEFT : r.left + WD_FRAMERECT_LEFT + this->date_width + WD_FRAMERECT_RIGHT + ScaleFontTrad(5);
+		uint news_right = rtl ? r.right - WD_FRAMERECT_RIGHT - this->date_width - WD_FRAMERECT_RIGHT - ScaleFontTrad(5) : r.right - WD_FRAMERECT_RIGHT;
 		for (int n = this->vscroll->GetCapacity(); n > 0; n--) {
 			SetDParam(0, ni->date);
 			DrawString(date_left, date_right, y, STR_SHORT_DATE);

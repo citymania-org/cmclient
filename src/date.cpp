@@ -19,6 +19,7 @@
 #include "linkgraph/linkgraph.h"
 #include "saveload/saveload.h"
 #include "newgrf_profiling.h"
+#include "widgets/statusbar_widget.h"
 
 #include "citymania/cm_main.hpp"
 
@@ -29,8 +30,6 @@ Month     _cur_month;  ///< Current month (0..11)
 Date      _date;       ///< Current date in days (day counter)
 DateFract _date_fract; ///< Fractional part of the day.
 uint16 _tick_counter;  ///< Ever incrementing (and sometimes wrapping) tick counter for setting off various events
-
-int32 _old_ending_year_slv_105; ///< Old ending year for savegames before SLV_105
 
 /**
  * Set the date.
@@ -202,11 +201,13 @@ static void OnNewYear()
 
 	if (_cur_year == _settings_client.gui.semaphore_build_before) ResetSignalVariant();
 
-	/* check if we reached end of the game (end of ending year) */
-	if (_cur_year == _settings_game.game_creation.ending_year + 1) {
+	/* check if we reached end of the game (end of ending year); 0 = never */
+	if (_cur_year == _settings_game.game_creation.ending_year + 1 && _settings_game.game_creation.ending_year != 0) {
 		ShowEndGameChart();
+	}
+
 	/* check if we reached the maximum year, decrement dates by a year */
-	} else if (_cur_year == MAX_YEAR + 1) {
+	if (_cur_year == MAX_YEAR + 1) {
 		int days_this_year;
 
 		_cur_year--;
@@ -258,7 +259,7 @@ static void OnNewDay()
 	DisasterDailyLoop();
 	IndustryDailyLoop();
 
-	SetWindowWidgetDirty(WC_STATUS_BAR, 0, 0);
+	SetWindowWidgetDirty(WC_STATUS_BAR, 0, WID_S_LEFT);
 	EnginesDailyLoop();
 
 	/* Refresh after possible snowline change */

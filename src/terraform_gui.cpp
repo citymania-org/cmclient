@@ -43,7 +43,7 @@
 void CcTerraform(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	if (result.Succeeded()) {
-		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
+		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
 	} else {
 		extern TileIndex _terraform_err_tile;
 		SetRedErrorSquare(_terraform_err_tile);
@@ -93,7 +93,7 @@ static void GenerateRockyArea(TileIndex end, TileIndex start)
 		success = true;
 	}
 
-	if (success && _settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, end);
+	if (success && _settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, end);
 }
 
 /**
@@ -259,32 +259,32 @@ struct TerraformToolbarWindow : Window {
 
 		switch (widget) {
 			case WID_TT_LOWER_LAND: // Lower land button
-				HandlePlacePushButton(this, WID_TT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT | HT_DIAGONAL, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_RAISE_LAND: // Raise land button
-				HandlePlacePushButton(this, WID_TT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT | HT_DIAGONAL, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_LEVEL_LAND: // Level land button
-				HandlePlacePushButton(this, WID_TT_LEVEL_LAND, SPR_CURSOR_LEVEL_LAND, HT_POINT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_LEVEL_LAND, SPR_CURSOR_LEVEL_LAND, HT_POINT | HT_DIAGONAL, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_DEMOLISH: // Demolish aka dynamite button
-				HandlePlacePushButton(this, WID_TT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_DEMOLISH_TREES: // Demolish aka dynamite button
-				HandlePlacePushButton(this, WID_TT_DEMOLISH_TREES, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_TT_DEMOLISH_TREES, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH_TREES);
 				this->last_user_action = widget;
 				break;
 
 			case WID_TT_BUY_LAND: // Buy land button
-				HandlePlacePushButton(this, WID_TT_BUY_LAND, SPR_CURSOR_BUY_LAND, HT_RECT);
+				HandlePlacePushButton(this, WID_TT_BUY_LAND, SPR_CURSOR_BUY_LAND, HT_RECT, CM_DDSP_BUY_LAND);
 				this->last_user_action = widget;
 				break;
 
@@ -293,7 +293,7 @@ struct TerraformToolbarWindow : Window {
 				break;
 
 			case WID_TT_PLACE_SIGN: // Place sign button
-				HandlePlacePushButton(this, WID_TT_PLACE_SIGN, SPR_CURSOR_SIGN, HT_RECT);
+				HandlePlacePushButton(this, WID_TT_PLACE_SIGN, SPR_CURSOR_SIGN, HT_RECT, CM_DDSP_PLACE_SIGN);
 				this->last_user_action = widget;
 				break;
 
@@ -329,7 +329,7 @@ struct TerraformToolbarWindow : Window {
 				break;
 
 			case WID_TT_BUY_LAND: // Buy land button
-				DoCommandP(tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound_SPLAT_RAIL);
+				DoCommandP(tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound_CONSTRUCTION_RAIL);
 				break;
 
 			case WID_TT_PLACE_SIGN: // Place sign button
@@ -498,20 +498,20 @@ static void CommonRaiseLowerBigLand(TileIndex tile, int mode)
 
 		if (ta.w == 0 || ta.h == 0) return;
 
-		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
+		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
 
 		uint h;
 		if (mode != 0) {
 			/* Raise land */
 			h = MAX_TILE_HEIGHT;
 			TILE_AREA_LOOP(tile2, ta) {
-				h = min(h, TileHeight(tile2));
+				h = std::min(h, TileHeight(tile2));
 			}
 		} else {
 			/* Lower land */
 			h = 0;
 			TILE_AREA_LOOP(tile2, ta) {
-				h = max(h, TileHeight(tile2));
+				h = std::max(h, TileHeight(tile2));
 			}
 		}
 
@@ -643,8 +643,8 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 	{
 		if (widget != WID_ETT_DOTS) return;
 
-		size->width  = max<uint>(size->width,  ScaleGUITrad(59));
-		size->height = max<uint>(size->height, ScaleGUITrad(31));
+		size->width  = std::max<uint>(size->width,  ScaleGUITrad(59));
+		size->height = std::max<uint>(size->height, ScaleGUITrad(31));
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
@@ -670,32 +670,32 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 
 		switch (widget) {
 			case WID_ETT_DEMOLISH: // Demolish aka dynamite button
-				HandlePlacePushButton(this, WID_ETT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_ETT_DEMOLISH, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_LOWER_LAND: // Lower land button
-				HandlePlacePushButton(this, WID_ETT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT);
+				HandlePlacePushButton(this, WID_ETT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_RAISE_LAND: // Raise land button
-				HandlePlacePushButton(this, WID_ETT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT);
+				HandlePlacePushButton(this, WID_ETT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_LEVEL_LAND: // Level land button
-				HandlePlacePushButton(this, WID_ETT_LEVEL_LAND, SPR_CURSOR_LEVEL_LAND, HT_POINT | HT_DIAGONAL);
+				HandlePlacePushButton(this, WID_ETT_LEVEL_LAND, SPR_CURSOR_LEVEL_LAND, HT_POINT | HT_DIAGONAL, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_PLACE_ROCKS: // Place rocks button
-				HandlePlacePushButton(this, WID_ETT_PLACE_ROCKS, SPR_CURSOR_ROCKY_AREA, HT_RECT);
+				HandlePlacePushButton(this, WID_ETT_PLACE_ROCKS, SPR_CURSOR_ROCKY_AREA, HT_RECT, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_PLACE_DESERT: // Place desert button (in tropical climate)
-				HandlePlacePushButton(this, WID_ETT_PLACE_DESERT, SPR_CURSOR_DESERT, HT_RECT);
+				HandlePlacePushButton(this, WID_ETT_PLACE_DESERT, SPR_CURSOR_DESERT, HT_RECT, CM_DDSP_TERRAFORM);
 				this->last_user_action = widget;
 				break;
 

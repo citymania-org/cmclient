@@ -180,6 +180,21 @@ bool Packet::CanReadFromPacket(uint bytes_to_read)
 	return true;
 }
 
+/* CityMania code begin */
+bool Packet::CMCheckRead(uint bytes_to_read)
+{
+	/* Don't allow reading from a quit client/client who send bad data */
+	if (this->cs->HasClientQuit()) return false;
+
+	/* Check if variable is within packet-size */
+	if (this->pos + bytes_to_read > this->size) {
+		return false;
+	}
+
+	return true;
+}
+/* CityMania code end */
+
 /**
  * Reads the packet size from the raw packet and stores it in the packet->size
  */

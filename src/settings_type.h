@@ -11,6 +11,7 @@
 #define SETTINGS_TYPE_H
 
 #include "date_type.h"
+#include "economy_type.h"
 #include "town_type.h"
 #include "transport_type.h"
 #include "network/core/config.h"
@@ -22,6 +23,15 @@
 
 #include "citymania/cm_settings.hpp"
 
+/* Used to validate sizes of "max" value in settings. */
+const size_t MAX_SLE_UINT8 = UINT8_MAX;
+const size_t MAX_SLE_UINT16 = UINT16_MAX;
+const size_t MAX_SLE_UINT32 = UINT32_MAX;
+const size_t MAX_SLE_UINT = UINT_MAX;
+const size_t MAX_SLE_INT8 = INT8_MAX;
+const size_t MAX_SLE_INT16 = INT16_MAX;
+const size_t MAX_SLE_INT32 = INT32_MAX;
+const size_t MAX_SLE_INT = INT_MAX;
 
 /** Settings profiles and highscore tables. */
 enum SettingsProfile {
@@ -118,7 +128,7 @@ struct GUISettings {
 	uint8  window_soft_limit;                ///< soft limit of maximum number of non-stickied non-vital windows (0 = no limit)
 	ZoomLevel zoom_min;                      ///< minimum zoom out level
 	ZoomLevel zoom_max;                      ///< maximum zoom out level
-	bool   disable_unsuitable_building;      ///< disable infrastructure building when no suitable vehicles are available
+	ZoomLevel sprite_zoom_min;               ///< maximum zoom level at which higher-resolution alternative sprites will be used (if available) instead of scaling a lower resolution sprite
 	byte   autosave;                         ///< how often should we do autosaves?
 	bool   threaded_saves;                   ///< should we do threaded saves?
 	bool   keep_all_autosave;                ///< name the autosave in a different way
@@ -160,6 +170,9 @@ struct GUISettings {
 	uint8  osk_activation;                   ///< Mouse gesture to trigger the OSK.
 	byte   starting_colour;                  ///< default color scheme for the company to start a new game with
 	bool   show_newgrf_name;                 ///< Show the name of the NewGRF in the build vehicle window
+	bool   auto_remove_signals;              ///< automatically remove signals when in the way during rail construction
+	uint16 refresh_rate;                     ///< How often we refresh the screen (time between draw-ticks).
+	uint16 fast_forward_speed_limit;         ///< Game speed to use when fast-forward is enabled.
 
 	uint16 console_backlog_timeout;          ///< the minimum amount of time items should be in the console backlog before they will be removed in ~3 seconds granularity.
 	uint16 console_backlog_length;           ///< the minimum amount of items in the console backlog before items will be removed.
@@ -201,6 +214,7 @@ struct GUISettings {
 
 	uint8 cm_shaded_trees;
 	bool cm_show_apm;
+	uint8 cm_graph_background;
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
@@ -290,7 +304,6 @@ struct NetworkSettings {
 	char   rcon_password[NETWORK_PASSWORD_LENGTH];        ///< password for rconsole (server side)
 	char   admin_password[NETWORK_PASSWORD_LENGTH];       ///< password for the admin network
 	bool   server_advertise;                              ///< advertise the server to the masterserver
-	uint8  lan_internet;                                  ///< search on the LAN or internet for servers
 	char   client_name[NETWORK_CLIENT_NAME_LENGTH];       ///< name of the player (as client)
 	char   default_company_pass[NETWORK_PASSWORD_LENGTH]; ///< default password for new companies in encrypted form
 	char   connect_to_ip[NETWORK_HOSTNAME_LENGTH];        ///< default for the "Add server" query
@@ -320,7 +333,10 @@ struct GameCreationSettings {
 	uint8  map_y;                            ///< Y size of map
 	byte   land_generator;                   ///< the landscape generator
 	byte   oil_refinery_limit;               ///< distance oil refineries allowed from map edge
-	byte   snow_line_height;                 ///< the configured snow line height
+	byte   snow_line_height;                 ///< the configured snow line height (deduced from "snow_coverage")
+	byte   snow_coverage;                    ///< the amount of snow coverage on the map
+	byte   desert_coverage;                  ///< the amount of desert coverage on the map
+	byte   heightmap_height;                 ///< highest mountain for heightmap (towards what it scales)
 	byte   tgen_smoothness;                  ///< how rough is the terrain from 0-3
 	byte   tree_placer;                      ///< the tree placer algorithm
 	byte   heightmap_rotation;               ///< rotation director for the heightmap
@@ -330,6 +346,7 @@ struct GameCreationSettings {
 	byte   water_borders;                    ///< bitset of the borders that are water
 	uint16 custom_town_number;               ///< manually entered number of towns
 	byte   variety;                          ///< variety level applied to TGP
+	byte   custom_terrain_type;              ///< manually entered height for TGP to aim for
 	byte   custom_sea_level;                 ///< manually entered percentage of water in the map
 	byte   min_river_length;                 ///< the minimum river length
 	byte   river_route_random;               ///< the amount of randomicity for the route finding
@@ -338,7 +355,7 @@ struct GameCreationSettings {
 
 /** Settings related to construction in-game */
 struct ConstructionSettings {
-	uint8  max_heightlevel;                  ///< maximum allowed heightlevel
+	uint8  map_height_limit;                 ///< the maximum allowed heightlevel
 	bool   build_on_slopes;                  ///< allow building on slopes
 	bool   autoslope;                        ///< allow terraforming under things
 	uint16 max_bridge_length;                ///< maximum length of bridges
@@ -506,7 +523,7 @@ struct VehicleSettings {
 struct EconomySettings {
 	bool   inflation;                        ///< disable inflation
 	bool   bribe;                            ///< enable bribing the local authority
-	bool   smooth_economy;                   ///< smooth economy
+	EconomyType type;                        ///< economy type (original/smooth/frozen)
 	bool   allow_shares;                     ///< allow the buying/selling of shares
 	uint8  min_years_for_shares;             ///< minimum age of a company for it to trade shares
 	uint8  feeder_payment_share;             ///< percentage of leg payment to virtually pay in feeder systems

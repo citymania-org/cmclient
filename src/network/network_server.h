@@ -12,6 +12,7 @@
 
 #include "network_internal.h"
 #include "core/tcp_listen.h"
+#include "../saveload/saveload.h"
 
 class ServerNetworkGameSocketHandler;
 /** Make the code look slightly nicer/simpler. */
@@ -24,6 +25,7 @@ extern NetworkClientSocketPool _networkclientsocket_pool;
 class ServerNetworkGameSocketHandler : public NetworkClientSocketPool::PoolItem<&_networkclientsocket_pool>, public NetworkGameSocketHandler, public TCPListenHandler<ServerNetworkGameSocketHandler, PACKET_SERVER_FULL, PACKET_SERVER_BANNED> {
 protected:
 	NetworkRecvStatus Receive_CLIENT_JOIN(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_GAME_INFO(Packet *p) override;
 	NetworkRecvStatus Receive_CLIENT_COMPANY_INFO(Packet *p) override;
 	NetworkRecvStatus Receive_CLIENT_GAME_PASSWORD(Packet *p) override;
 	NetworkRecvStatus Receive_CLIENT_COMPANY_PASSWORD(Packet *p) override;
@@ -40,10 +42,10 @@ protected:
 	NetworkRecvStatus Receive_CLIENT_NEWGRFS_CHECKED(Packet *p) override;
 	NetworkRecvStatus Receive_CLIENT_MOVE(Packet *p) override;
 
+	NetworkRecvStatus SendGameInfo();
 	NetworkRecvStatus SendCompanyInfo();
 	NetworkRecvStatus SendNewGRFCheck();
 	NetworkRecvStatus SendWelcome();
-	NetworkRecvStatus SendWait();
 	NetworkRecvStatus SendNeedGamePassword();
 	NetworkRecvStatus SendNeedCompanyPassword();
 
@@ -72,6 +74,7 @@ public:
 
 	struct PacketWriter *savegame; ///< Writer used to write the savegame.
 	NetworkAddress client_address; ///< IP-address of the client (so he can be banned)
+	citymania::SavePreset cm_preset; ///< Preset to use for the savegame
 
 	ServerNetworkGameSocketHandler(SOCKET s);
 	~ServerNetworkGameSocketHandler();
@@ -80,6 +83,9 @@ public:
 	NetworkRecvStatus CloseConnection(NetworkRecvStatus status) override;
 	void GetClientName(char *client_name, const char *last) const;
 
+	void CheckNextClientToSendMap(NetworkClientSocket *ignore_cs = nullptr);
+
+	NetworkRecvStatus SendWait();
 	NetworkRecvStatus SendMap();
 	NetworkRecvStatus SendErrorQuit(ClientID client_id, NetworkErrorCode errorno);
 	NetworkRecvStatus SendQuit(ClientID client_id);

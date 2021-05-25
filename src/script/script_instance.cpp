@@ -58,6 +58,7 @@ ScriptInstance::ScriptInstance(const char *APIName) :
 	is_save_data_on_stack(false),
 	suspend(0),
 	is_paused(false),
+	in_shutdown(false),
 	callback(nullptr)
 {
 	this->storage = new ScriptStorage();
@@ -99,7 +100,7 @@ void ScriptInstance::Initialize(const char *main_script, const char *instance_na
 		ScriptObject::SetAllowDoCommand(true);
 	} catch (Script_FatalError &e) {
 		this->is_dead = true;
-		this->engine->ThrowError(e.GetErrorMessage());
+		this->engine->ThrowError(e.GetErrorMessage().c_str());
 		this->engine->ResumeError();
 		this->Died();
 	}
@@ -115,17 +116,16 @@ bool ScriptInstance::LoadCompatibilityScripts(const char *api_version, Subdirect
 {
 	char script_name[32];
 	seprintf(script_name, lastof(script_name), "compat_%s.nut", api_version);
-	char buf[MAX_PATH];
 	Searchpath sp;
 	FOR_ALL_SEARCHPATHS(sp) {
-		FioAppendDirectory(buf, lastof(buf), sp, dir);
-		strecat(buf, script_name, lastof(buf));
+		std::string buf = FioGetDirectory(sp, dir);
+		buf += script_name;
 		if (!FileExists(buf)) continue;
 
-		if (this->engine->LoadScript(buf)) return true;
+		if (this->engine->LoadScript(buf.c_str())) return true;
 
 		ScriptLog::Error("Failed to load API compatibility script");
-		DEBUG(script, 0, "Error compiling / running API compatibility script: %s", buf);
+		DEBUG(script, 0, "Error compiling / running API compatibility script: %s", buf.c_str());
 		return false;
 	}
 
@@ -136,6 +136,7 @@ bool ScriptInstance::LoadCompatibilityScripts(const char *api_version, Subdirect
 ScriptInstance::~ScriptInstance()
 {
 	ScriptObject::ActiveInstance active(this);
+	this->in_shutdown = true;
 
 	if (instance != nullptr) this->engine->ReleaseObject(this->instance);
 	if (engine != nullptr) delete this->engine;
@@ -154,6 +155,7 @@ void ScriptInstance::Died()
 {
 	DEBUG(script, 0, "The script died unexpectedly.");
 	this->is_dead = true;
+	this->in_shutdown = true;
 
 	this->last_allocated_memory = this->GetAllocatedMemory(); // Update cache
 
@@ -226,7 +228,7 @@ void ScriptInstance::GameLoop()
 			this->callback = e.GetSuspendCallback();
 		} catch (Script_FatalError &e) {
 			this->is_dead = true;
-			this->engine->ThrowError(e.GetErrorMessage());
+			this->engine->ThrowError(e.GetErrorMessage().c_str());
 			this->engine->ResumeError();
 			this->Died();
 		}
@@ -247,7 +249,7 @@ void ScriptInstance::GameLoop()
 		this->callback = e.GetSuspendCallback();
 	} catch (Script_FatalError &e) {
 		this->is_dead = true;
-		this->engine->ThrowError(e.GetErrorMessage());
+		this->engine->ThrowError(e.GetErrorMessage().c_str());
 		this->engine->ResumeError();
 		this->Died();
 	}
@@ -503,7 +505,7 @@ void ScriptInstance::Save()
 			/* If we don't mark the script as dead here cleaning up the squirrel
 			 * stack could throw Script_FatalError again. */
 			this->is_dead = true;
-			this->engine->ThrowError(e.GetErrorMessage());
+			this->engine->ThrowError(e.GetErrorMessage().c_str());
 			this->engine->ResumeError();
 			SaveEmpty();
 			/* We can't kill the script here, so mark it as crashed (not dead) and
@@ -717,4 +719,9 @@ size_t ScriptInstance::GetAllocatedMemory() const
 {
 	if (this->engine == nullptr) return this->last_allocated_memory;
 	return this->engine->GetAllocatedMemory();
+}
+
+void ScriptInstance::ReleaseSQObject(HSQOBJECT *obj)
+{
+	if (!this->in_shutdown) this->engine->ReleaseObject(obj);
 }

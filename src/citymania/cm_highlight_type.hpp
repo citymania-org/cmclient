@@ -4,7 +4,9 @@
 #include "../bridge.h"
 #include "../direction_type.h"
 #include "../map_func.h"
+#include "../road_type.h"
 #include "../signal_type.h"
+#include "../station_map.h"
 #include "../station_type.h"
 #include "../tile_cmd.h"
 #include "../tile_type.h"
@@ -27,6 +29,9 @@ public:
         RAIL_SIGNAL,
         RAIL_BRIDGE_HEAD,
         RAIL_TUNNEL_HEAD,
+        ROAD_STOP,
+        ROAD_DEPOT,
+        AIRPORT_TILE,
         END,
     };
 
@@ -57,6 +62,20 @@ public:
                 DiagDirection ddir;
             } tunnel_head;
         } rail;
+        struct {
+            struct {
+                RoadType roadtype;
+                DiagDirection ddir;
+                bool is_truck;
+            } stop;
+            struct {
+                RoadType roadtype;
+                DiagDirection ddir;
+            } depot;
+        } road;
+        struct {
+            StationGfx gfx;
+        } airport_tile;
     } u;
 
     ObjectTileHighlight(Type type, SpriteID palette): type{type}, palette{palette} {}
@@ -66,11 +85,15 @@ public:
     static ObjectTileHighlight make_rail_signal(SpriteID palette, uint pos, SignalType type, SignalVariant variant);
     static ObjectTileHighlight make_rail_bridge_head(SpriteID palette, DiagDirection ddir, BridgeType type);
     static ObjectTileHighlight make_rail_tunnel_head(SpriteID palette, DiagDirection ddir);
+
+    static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck);
+    static ObjectTileHighlight make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir);
+    static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
 };
 
 class TileIndexDiffCCompare{
 public:
-    bool operator()(const TileIndexDiffC &a, const TileIndexDiffC &b) {
+    bool operator()(const TileIndexDiffC &a, const TileIndexDiffC &b) const {
         if (a.x < b.x) return true;
         if (a.x == b.x && a.y < b.y) return true;
         return false;
@@ -90,6 +113,8 @@ public:
             RAIL_SIGNAL,
             RAIL_BRIDGE,
             RAIL_TUNNEL,
+            ROAD_STOP,
+            ROAD_DEPOT,
             END,
         };
         Type type;
@@ -128,6 +153,15 @@ public:
                     TileIndexDiffC other_end;
                 } tunnel;
             } rail;
+            struct {
+                struct {
+                    DiagDirection ddir;
+                    TileIndexDiffC other_end;
+                } stop;
+                struct {
+                    DiagDirection ddir;
+                } depot;
+            } road;
         } u;
         Item(Type type, TileIndexDiffC tdiff)
             : type{type}, tdiff{tdiff} {}
@@ -160,7 +194,10 @@ public:
         NONE = 0,
         RAIL_DEPOT = 1,
         RAIL_STATION = 2,
-        BLUEPRINT = 3,
+        ROAD_STOP = 3,
+        ROAD_DEPOT = 4,
+        AIRPORT = 5,
+        BLUEPRINT = 6,
     };
 
     Type type;
@@ -168,6 +205,10 @@ public:
     TileIndex end_tile = INVALID_TILE;
     Axis axis = INVALID_AXIS;
     DiagDirection ddir = INVALID_DIAGDIR;
+    RoadType roadtype = INVALID_ROADTYPE;
+    bool is_truck = false;
+    int airport_type = 0;
+    byte airport_layout = 0;
     sp<Blueprint> blueprint = nullptr;
 
 protected:
@@ -183,6 +224,9 @@ public:
 
     static ObjectHighlight make_rail_depot(TileIndex tile, DiagDirection ddir);
     static ObjectHighlight make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis);
+    static ObjectHighlight make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck);
+    static ObjectHighlight make_road_depot(TileIndex tile, RoadType roadtype, DiagDirection orientation);
+    static ObjectHighlight make_airport(TileIndex start_tile, int airport_type, byte airport_layout);
     static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);
 
     void Draw(const TileInfo *ti);

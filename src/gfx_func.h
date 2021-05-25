@@ -55,7 +55,7 @@ extern CursorVars _cursor;
 extern bool _ctrl_pressed;   ///< Is Ctrl pressed?
 extern bool _alt_pressed;    ///< Is Alt pressed?
 extern bool _shift_pressed;  ///< Is Shift pressed?
-extern byte _fast_forward;
+extern uint16 _game_speed;
 
 extern bool _left_button_down;
 extern bool _left_button_clicked;
@@ -74,10 +74,12 @@ void HandleTextInput(const char *str, bool marked = false, const char *caret = n
 void HandleCtrlChanged();
 void HandleMouseEvents();
 void UpdateWindows();
+void ChangeGameSpeed(bool enable_fast_forward);
 
 void DrawMouseCursor();
 void ScreenSizeChanged();
 void GameSizeChanged();
+void UpdateGUIZoom();
 void UndrawMouseCursor();
 
 /** Size of the buffer used for drawing strings. */
@@ -113,7 +115,7 @@ int DrawString(int left, int right, int top, StringID str, TextColour colour = T
 int DrawStringMultiLine(int left, int right, int top, int bottom, const char *str, TextColour colour = TC_FROMSTRING, StringAlignment align = (SA_TOP | SA_LEFT), bool underline = false, FontSize fontsize = FS_NORMAL);
 int DrawStringMultiLine(int left, int right, int top, int bottom, StringID str, TextColour colour = TC_FROMSTRING, StringAlignment align = (SA_TOP | SA_LEFT), bool underline = false, FontSize fontsize = FS_NORMAL);
 
-void DrawCharCentered(uint32 c, int x, int y, TextColour colour);
+void DrawCharCentered(WChar c, int x, int y, TextColour colour);
 
 void GfxFillRect(int left, int top, int right, int bottom, int colour, FillRectMode mode = FILLRECT_OPAQUE);
 void GfxFillPolygon(const std::vector<Point> &shape, int colour, FillRectMode mode = FILLRECT_OPAQUE);
@@ -132,7 +134,7 @@ Point GetCharPosInString(const char *str, const char *ch, FontSize start_fontsiz
 const char *GetCharAtPosition(const char *str, int x, FontSize start_fontsize = FS_NORMAL);
 
 void DrawDirtyBlocks();
-void SetDirtyBlocks(int left, int top, int right, int bottom);
+void AddDirtyBlock(int left, int top, int right, int bottom);
 void MarkWholeScreenDirty();
 
 void GfxInitPalettes();
@@ -165,7 +167,7 @@ void SortResolutions();
 bool ToggleFullScreen(bool fs);
 
 /* gfx.cpp */
-byte GetCharacterWidth(FontSize size, uint32 key);
+byte GetCharacterWidth(FontSize size, WChar key);
 byte GetDigitWidth(FontSize size = FS_NORMAL);
 void GetBroadestDigit(uint *front, uint *next, FontSize size = FS_NORMAL);
 
@@ -228,6 +230,7 @@ static const uint8 PC_LIGHT_BLUE         = 0x98;           ///< Light blue palet
 static const uint8 PC_ROUGH_LAND         = 0x52;           ///< Dark green palette colour for rough land.
 static const uint8 PC_GRASS_LAND         = 0x54;           ///< Dark green palette colour for grass land.
 static const uint8 PC_BARE_LAND          = 0x37;           ///< Brown palette colour for bare land.
+static const uint8 PC_RAINFOREST         = 0x5C;           ///< Pale green palette colour for rainforest.
 static const uint8 PC_FIELDS             = 0x25;           ///< Light brown palette colour for fields.
 static const uint8 PC_TREES              = 0x57;           ///< Green palette colour for trees.
 static const uint8 PC_WATER              = 0xC9;           ///< Dark blue palette colour for water.

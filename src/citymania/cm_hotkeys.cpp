@@ -14,6 +14,7 @@
 #include "../widgets/rail_widget.h"
 #include "../widgets/road_widget.h"
 
+#include <optional>
 #include <queue>
 
 #include "../safeguards.h"
@@ -27,7 +28,6 @@ struct RailStationGUISettings {
     byte station_count;               ///< Number of custom stations (if newstations is \c true )
 };
 extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
-extern uint32 _realtime_tick;
 
 namespace citymania {
 
@@ -38,32 +38,40 @@ bool _estimate_mod = false;
 bool _middle_button_down;     ///< Is middle mouse button pressed?
 bool _middle_button_clicked;  ///< Is middle mouse button clicked?
 
-uint32 _effective_actions = 0;
-uint32 _first_effective_tick = 0;
-std::queue<uint32> _last_actions;
+static uint32 _effective_actions = 0;
+static std::optional<std::chrono::steady_clock::time_point> _first_effective_tick = {};
+static std::queue<std::chrono::steady_clock::time_point> _last_actions;
+
+const std::chrono::minutes EPM_PERIOD(1);  ///< Actions per minute measuring period is, suprisingly, one minute
 
 static void PurgeLastActions() {
-    while (!_last_actions.empty() && _last_actions.front() <= _realtime_tick)
+    auto now = std::chrono::steady_clock::now();
+    while (!_last_actions.empty() && _last_actions.front() <= now)
         _last_actions.pop();
 }
 
 void CountEffectiveAction() {
-    if (!_first_effective_tick) _first_effective_tick = _realtime_tick;
+    auto now = std::chrono::steady_clock::now();
+    if (!_first_effective_tick) _first_effective_tick = now;
     _effective_actions++;
     PurgeLastActions();
-    _last_actions.push(_realtime_tick + 60000);
+    _last_actions.push(now + EPM_PERIOD);
 }
 
 void ResetEffectivveActionCounter() {
-    _first_effective_tick = 0;
+    _first_effective_tick = {};
     _effective_actions = 0;
-    std::queue<uint32>().swap(_last_actions);  // clear the queue
+    std::queue<std::chrono::steady_clock::time_point>().swap(_last_actions);  // clear the queue
 }
 
 std::pair<uint32, uint32> GetEPM() {
-    if (!_first_effective_tick || _realtime_tick <= _first_effective_tick) return std::make_pair(0, 0);
+    auto now = std::chrono::steady_clock::now();
+    if (!_first_effective_tick) return std::make_pair(0, 0);
     PurgeLastActions();
-    return std::make_pair(_effective_actions * 60000 / (_realtime_tick - _first_effective_tick), _last_actions.size());
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - *_first_effective_tick).count();
+    if (ms == 0) return std::make_pair(0, 0);
+    return std::make_pair(_effective_actions * 60000 / ms,
+                          _last_actions.size());
 }
 
 void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed) {

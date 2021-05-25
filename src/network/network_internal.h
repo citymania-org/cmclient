@@ -126,11 +126,6 @@ extern uint32 _network_join_bytes_total;
 
 extern uint8 _network_reconnect;
 
-extern bool _network_udp_server;
-extern uint16 _network_udp_broadcast;
-
-extern uint8 _network_advertise_retries;
-
 extern CompanyMask _network_company_passworded;
 
 void NetworkTCPQueryServer(NetworkAddress address);
@@ -139,8 +134,6 @@ void GetBindAddresses(NetworkAddressList *addresses, uint16 port);
 void NetworkAddServer(const char *b);
 void NetworkRebuildHostList();
 void UpdateNetworkGameWindow();
-
-bool IsNetworkCompatibleVersion(const char *version);
 
 /* From network_command.cpp */
 /**
@@ -160,7 +153,7 @@ void NetworkExecuteLocalCommandQueue();
 void NetworkFreeLocalCommandQueue();
 void NetworkSyncCommandQueue(NetworkClientSocket *cs);
 
-void NetworkError(StringID error_string);
+void ShowNetworkError(StringID error_string);
 void NetworkTextMessage(NetworkAction action, TextColour colour, bool self_send, const char *name, const char *str = "", int64 data = 0);
 uint NetworkCalculateLag(const NetworkClientSocket *cs);
 StringID GetNetworkErrorMsg(NetworkErrorCode err);

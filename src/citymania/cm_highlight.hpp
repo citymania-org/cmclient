@@ -92,6 +92,7 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tlie);
 //
 SpriteID GetTownTileZoningPalette(TileIndex tile);
 SpriteID GetIndustryTileZoningPalette(TileIndex tile, Industry *ind);
+void UpdateIndustryHighlight();
 void SetIndustryForbiddenTilesHighlight(IndustryType type);
 
 

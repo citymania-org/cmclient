@@ -74,6 +74,28 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 1.11.2 (3 May 2021) ***
+- OpenTTD update.
+
+*** 1.11.1 (19 Apr 2021) ***
+- Fixed crash when building road stop or airport.
+- Fixed joining companies in the game.
+- Fixed graphical glitches when using town growth tiles zoning.
+- Added German translation for additional string - by danidoedel.
+
+*** 1.11.0 (5 Apr 2021) ***
+- Added two more minimap zoom levels (very useful on 4k monitors).
+- When building a station show estimated monthly supply amounts.
+- Added setting to change graphs background colour between old one (grey) and new one (black).
+- Subtle visual improvements for graphs.
+- Made rail depot building preview red if it can't be built there and allow rotating it with a hotkey (defaults to middle mouse button).
+- Added building preview and rotation hotkey(also MMB by default) for rail stations, road stops and road depots.
+- Added building preview for aiports.
+- Added Zstandard(zstd) savegame compression option. May or may not reduce map download time on CityMania servers.
+- Show vehicle IDs in vehicle window if newgrf_developer_tools is enabled.
+- Addded `cmresettowngrowth` command to reset growth rate of all towns to normal (helpful if some gamscript messed them up).
+- Exports house spec info in `cmexport` command.
+
 *** 1.10.3 (10 Aug 2020) ***
 - Show preview when building a rail depot.
 - Add an option to enable shading trees on slopes for better looks.

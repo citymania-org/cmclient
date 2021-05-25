@@ -158,6 +158,16 @@ public:
 	virtual void Draw(const Window *w) = 0;
 	virtual void SetDirty(const Window *w) const;
 
+	Rect GetCurrentRect() const
+	{
+		Rect r;
+		r.left = this->pos_x;
+		r.top = this->pos_y;
+		r.right = this->pos_x + this->current_x;
+		r.bottom = this->pos_y + this->current_y;
+		return r;
+	}
+
 	WidgetType type;      ///< Type of the widget / nested widget.
 	uint fill_x;          ///< Horizontal fill stepsize (from initial size, \c 0 means not resizable).
 	uint fill_y;          ///< Vertical fill stepsize (from initial size, \c 0 means not resizable).
@@ -285,6 +295,7 @@ public:
 
 	void SetIndex(int index);
 	void SetDataTip(uint32 widget_data, StringID tool_tip);
+	void SetToolTip(StringID tool_tip);
 
 	inline void SetLowered(bool lowered);
 	inline bool IsLowered() const;
@@ -687,7 +698,7 @@ public:
 		assert(capacity <= MAX_UVALUE(uint16));
 
 		this->cap = capacity;
-		if (this->cap + this->pos > this->count) this->pos = max(0, this->count - this->cap);
+		if (this->cap + this->pos > this->count) this->pos = std::max(0, this->count - this->cap);
 	}
 
 	void SetCapacityFromWidget(Window *w, int widget, int padding = 0);
@@ -717,7 +728,7 @@ public:
 			case SS_BIG:   difference *= this->cap; break;
 			default: break;
 		}
-		this->SetPosition(Clamp(this->pos + difference, 0, max(this->count - this->cap, 0)));
+		this->SetPosition(Clamp(this->pos + difference, 0, std::max(this->count - this->cap, 0)));
 	}
 
 	/**
@@ -1154,6 +1165,6 @@ static inline NWidgetPart NWidgetFunction(NWidgetFunctionType *func_ptr)
 NWidgetContainer *MakeNWidgets(const NWidgetPart *parts, int count, int *biggest_index, NWidgetContainer *container);
 NWidgetContainer *MakeWindowNWidgetTree(const NWidgetPart *parts, int count, int *biggest_index, NWidgetStacked **shade_select);
 
-NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int widget_last, int max_length, StringID button_tooltip);
+NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int widget_last, Colours button_colour, int max_length, StringID button_tooltip);
 
 #endif /* WIDGET_TYPE_H */

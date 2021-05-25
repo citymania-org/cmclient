@@ -19,7 +19,7 @@ class LinkGraphOverlay;
 /**
  * Data structure for viewport, display of a part of the world
  */
-struct ViewPort {
+struct Viewport {
 	int left;    ///< Screen coordinate left edge of the viewport
 	int top;     ///< Screen coordinate top edge of the viewport
 	int width;   ///< Screen width of the viewport
@@ -113,6 +113,7 @@ DECLARE_ENUM_AS_BIT_SET(ViewportPlaceMethod)
  * you've selected it.
  */
 enum ViewportDragDropSelectionProcess {
+	CM_DDSP_NONE,			   ///< CM Nothing is being built
 	DDSP_DEMOLISH_AREA,        ///< Clear area
 	DDSP_DEMOLISH_TREES,       ///< Clear trees
 	DDSP_RAISE_AND_LEVEL_AREA, ///< Raise / level area
@@ -143,7 +144,49 @@ enum ViewportDragDropSelectionProcess {
 	DDSP_REMOVE_TRUCKSTOP,     ///< Road stop removal (trucks)
 	DDSP_CONVERT_ROAD,         ///< Road conversion
 
-	CM_DDSP_BLUEPRINT_AREA,       ///< Blueprint area to copy selection
+	/* CityMania extras */
+	CM_DDSP_BUILD_HQ,
+	CM_DDSP_DEPOT_MOVE,
+	CM_DDSP_DEPOT_CLONE,
+	CM_DDSP_ZZZ,
+	CM_DDSP_STORY_BUTTON,
+	CM_DDSP_GROUP,
+	CM_DDSP_NEWGRF_SELECT,
+	CM_DDSP_PLACE_OBJECT,
+	CM_DDSP_PICK_STATION,
+	CM_DDSP_SELECT_ORDER,
+	CM_DDSP_PLACE_SIGN,
+	CM_DDSP_LAND_INFO,
+	CM_DDSP_SELECT_REFIT,
+
+	CM_DDSP_DEMOLISH,
+
+	CM_DDSP_BUILD_AIRPORT,
+
+	CM_DDSP_BUILD_CANNAL,
+	CM_DDSP_BUILD_LOCK,
+	CM_DDSP_BUILD_SHIP_DEPOT,
+	CM_DDSP_BUILD_DOCK,
+	CM_DDSP_BUILD_BUOY,
+	CM_DDSP_BUILD_RIVER,
+	CM_DDSP_BUILD_AQUEDUCT,
+	CM_DDSP_BUILD_RAIL_DEPOT,
+
+	CM_DDSP_FUND_INDUSTRY,
+	CM_DDSP_BUILD_WAYPOINT,
+	CM_DDSP_BUILD_RAIL_BRIDGE,
+	CM_DDSP_BUILD_RAIL_TUNNEL,
+	CM_DDSP_BUILD_ROAD_DEPOT,
+	CM_DDSP_BUILD_ROAD_BRIDGE,
+	CM_DDSP_BUILD_ROAD_TUNNEL,
+
+	CM_DDSP_DEMOLISH_TREES,
+	CM_DDSP_TERRAFORM,
+	CM_DDSP_BUY_LAND,
+	CM_DDSP_NEW_TOWN,
+
+	CM_DDSP_RAIL_BLUEPRINT,
+	CM_DDSP_BLUEPRINT_AREA,       ///< Blueprint area to copy selection	
 };
 
 

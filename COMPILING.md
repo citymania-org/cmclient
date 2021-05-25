@@ -2,28 +2,29 @@
 
 ## Required/optional libraries
 
-The following libraries are used by OpenTTD for:
+OpenTTD makes use of the following external libraries:
 
-- zlib: (de)compressing of old (0.3.0-1.0.5) savegames, content downloads,
+- (encouraged) zlib: (de)compressing of old (0.3.0-1.0.5) savegames, content downloads,
    heightmaps
-- liblzo2: (de)compressing of old (pre 0.3.0) savegames
-- liblzma: (de)compressing of savegames (1.1.0 and later)
-- libpng: making screenshots and loading heightmaps
+- (encouraged) liblzma: (de)compressing of savegames (1.1.0 and later)
+- (encouraged) libpng: making screenshots and loading heightmaps
+- (optional) liblzo2: (de)compressing of old (pre 0.3.0) savegames
+
+For Linux, the following additional libraries are used (for non-dedicated only):
+
+- libSDL2: hardware access (video, sound, mouse)
 - libfreetype: loading generic fonts and rendering them
 - libfontconfig: searching for fonts, resolving font names to actual fonts
 - libicu: handling of right-to-left scripts (e.g. Arabic and Persian) and
-   natural sorting of strings (Linux only)
-- libSDL2: hardware access (video, sound, mouse) (not required for Windows or macOS)
+   natural sorting of strings
 
 OpenTTD does not require any of the libraries to be present, but without
 liblzma you cannot open most recent savegames and without zlib you cannot
 open most older savegames or use the content downloading system.
-Without libSDL/liballegro on non-Windows and non-macOS machines you have
-no graphical user interface; you would be building a dedicated server.
 
-## Windows:
+## Windows
 
-You need Microsoft Visual Studio 2015 Update 3 or newer.
+You need Microsoft Visual Studio 2017 or more recent.
 
 You can download the free Visual Studio Community Edition from Microsoft at
 https://visualstudio.microsoft.com/vs/community/.
@@ -56,86 +57,94 @@ To install both the x64 (64bit) and x86 (32bit) variants (though only one is nec
 .\vcpkg install liblzma:x86-windows-static libpng:x86-windows-static lzo:x86-windows-static zlib:x86-windows-static
 ```
 
-Open the relevant project file and it should build automatically.
-- VS 2015: projects/openttd_vs140.sln
-- VS 2017: projects/openttd_vs141.sln
-- VS 2019: projects/openttd_vs142.sln
+You can open the folder (as a CMake project). CMake will be detected, and you can compile from there.
+If libraries are installed but not found, you need to set VCPKG_TARGET_TRIPLET in CMake parameters.
+For Visual Studio 2017 you also need to set CMAKE_TOOLCHAIN_FILE.
+(Typical values are shown in the MSVC project file command line example)
 
-Set the build mode to `Release` in
-`Build > Configuration manager > Active solution configuration`.
-You can now compile.
+Alternatively, you can create a MSVC project file via CMake. For this
+either download CMake from https://cmake.org/download/ or use the version
+that comes with vcpkg. After that, you can run something similar to this:
 
-If everything works well the binary should be in `objs\Win[32|64]\Release\openttd.exe`
-and in `bin\openttd.exe`
+```powershell
+mkdir build
+cd build
+cmake.exe .. -G'Visual Studio 16 2019' -DCMAKE_TOOLCHAIN_FILE="<location of vcpkg>\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET="x64-windows-static"
+```
 
-The OpenTTD wiki may provide additional help with [compiling for Windows](https://wiki.openttd.org/Compiling_on_Windows_using_Microsoft_Visual_C%2B%2B_2015).
+Change `<location of vcpkg>` to where you have installed vcpkg. After this
+in the build folder are MSVC project files. MSVC can rebuild the project
+files himself via the `ZERO_CHECK` project.
 
-You can also build OpenTTD with MSYS2/MinGW-w64 or Cygwin/MinGW using the Makefile.  The OpenTTD wiki may provide additional help with [MSYS2](https://wiki.openttd.org/Compiling_on_Windows_using_MSYS2)
+## All other platforms
+Minimum required version of CMake is 3.9.
+By default this produces a Debug build with assertations enabled.
+This is a far slower build than release builds.
 
-## Linux, Unix, Solaris:
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
 
-OpenTTD can be built with GNU '`make`'. On non-GNU systems it is called '`gmake`'.
-However, for the first build one has to do a '`./configure`' first.
+For more information on how to use CMake (including how to make Release builds),
+we urge you to read [their excellent manual](https://cmake.org/cmake/help/latest/guide/user-interaction/index.html).
 
-The OpenTTD wiki may provide additional help with:
+## CMake Options
 
-- [compiling for Linux and *BSD](https://wiki.openttd.org/Compiling_on_%28GNU/%29Linux_and_*BSD)
-- [compiling for Solaris](https://wiki.openttd.org/Compiling_on_Solaris)
+Via CMake, several options can be influenced to get different types of
+builds.
 
-
-## macOS:
-
-Use '`make`' or Xcode (which will then call make for you)
-This will give you a binary for your CPU type (PPC/Intel)
-However, for the first build one has to do a '`./configure`' first.
-To make a universal binary type '`./configure --enable-universal`'
-instead of '`./configure`'.
-
-The OpenTTD wiki may provide additional help with [compiling for macOS](https://wiki.openttd.org/Compiling_on_Mac_OS_X).
-
-## Haiku:
-
-Use '`make`', but do a '`./configure`' before the first build.
-
-The OpenTTD wiki may provide additional help with [compiling for Haiku](https://wiki.openttd.org/Compiling_on_Haiku).
-
-## OS/2:
-
-A comprehensive GNU build environment is required to build the OS/2 version.
-
-The OpenTTD wiki may provide additional help with [compiling for OS/2](https://wiki.openttd.org/Compiling_on_OS/2).
+- `-DCMAKE_BUILD_TYPE=RelWithDebInfo`: build a release build. This is
+   significant faster than a debug build, but has far less useful information
+   in case of a crash.
+- `-DOPTION_DEDICATED=ON`: build OpenTTD without a GUI. Useful if you are
+   running a headless server, as it requires less libraries to operate.
+- `-DOPTION_USE_ASSERTS=OFF`: disable asserts. Use with care, as assert
+   statements capture early signs of trouble. Release builds have them
+   disabled by default.
+- `-DOPTION_USE_THREADS=OFF`: disable the use of threads. This will block
+   the interface in many places, and in general gives a worse experience of
+   the game. Use with care.
+- `-DOPTION_TOOLS_ONLY=ON`: only build tools like `strgen`. Does not build
+   the game itself. Useful for cross-compiling.
 
 ## Supported compilers
 
-The following compilers are tested with and known to compile OpenTTD:
-
-- Microsoft Visual C++ (MSVC) 2015, 2017 and 2019.
-- GNU Compiler Collection (GCC) 4.8 - 9.
-- Clang/LLVM 3.9 - 8
-
-The following compilers are known not to compile OpenTTD:
-
-In general, this is because these old versions do not (fully) support modern
-C++11 language features.
-
-- Microsoft Visual C++ (MSVC) 2013 and earlier.
-- GNU Compiler Collection (GCC) 4.7 and earlier.
-- Clang/LLVM 3.8 and earlier.
-
-If any of these, or any other, compilers can compile OpenTTD, let us know.
-Pull requests to support more compilers are welcome.
+Every compiler that is supported by CMake and supports C++17, should be
+able to compile OpenTTD. As the exact list of compilers changes constantly,
+we refer to the compiler manual to see if it supports C++17, and to CMake
+to see if it supports your compiler.
 
 ## Compilation of base sets
 
 To recompile the extra graphics needed to play with the original Transport
 Tycoon Deluxe graphics you need GRFCodec (which includes NFORenum) as well.
-GRFCodec can be found at https://www.openttd.org/download-grfcodec.
-The compilation of these extra graphics does generally not happen, unless
-you remove the graphics file using '`make maintainer-clean`'.
+GRFCodec can be found at
+https://www.openttd.org/downloads/grfcodec-releases/latest.html.
 
-Re-compilation of the base sets, thus also use of '`--maintainer-clean`' can
-leave the repository in a modified state as different grfcodec versions can
-cause binary differences in the resulting grf. Also translations might have
-been added for the base sets which are not yet included in the base set
-information files. Use the configure option '`--without-grfcodec`' to avoid
-modification of the base set files by the build process.
+Having GRFCodec installed can cause regeneration of the `.grf` files, which
+are written in the source directory. This can leave your repository in a
+modified state, as different GRFCodec versions can cause binary differences
+in the resulting `.grf` files. Also translations might have been added for
+the base sets which are not yet included in the base set information files.
+To avoid this behaviour, disable GRFCodec (and NFORenum) in CMake cache
+(`GRFCODEC_EXECUTABLE` and `NFORENUM_EXECUTABLE`).
+
+## Developers settings
+
+You can control some flags directly via `CXXFLAGS` (any combination
+of these flags will work fine too):
+
+- `-DRANDOM_DEBUG`: this helps with debugging desyncs.
+- `-fno-inline`: this avoids creating inline functions; this can make
+  debugging a lot easier.
+- `-O0`: this disables all optimizations; this can make debugging a
+  lot easier.
+- `-p`: this enables profiling.
+
+Always use a clean buildfolder if you changing `CXXFLAGS`, as this
+value is otherwise cached. Example use:
+
+`CXXFLAGS="-fno-inline" cmake ..`

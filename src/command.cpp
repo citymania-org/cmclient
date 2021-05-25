@@ -25,14 +25,14 @@
 #include "core/backup_type.hpp"
 #include "object_base.h"
 #include "window_func.h"
-#include "watch_gui.h"
 #include "network/network_base.h"
 #include "window_func.h"
 
 #include "table/strings.h"
 
-#include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_blueprint.hpp"
+#include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_watch_gui.hpp"
 
 #include "safeguards.h"
 
@@ -104,6 +104,7 @@ CommandProc CmdInsertOrder;
 CommandProc CmdChangeServiceInt;
 
 CommandProc CmdBuildIndustry;
+CommandProc CmdIndustryCtrl;
 
 CommandProc CmdSetCompanyManagerFace;
 CommandProc CmdSetCompanyColour;
@@ -177,6 +178,7 @@ CommandProc CmdShowStoryPage;
 CommandProc CmdRemoveStoryPage;
 CommandProc CmdRemoveStoryPageElement;
 CommandProc CmdScrollViewport;
+CommandProc CmdStoryPageButton;
 
 CommandProc CmdLevelLand;
 
@@ -271,6 +273,8 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdChangeServiceInt,                               0, CMDT_VEHICLE_MANAGEMENT    ), // CMD_CHANGE_SERVICE_INT
 
 	DEF_CMD(CmdBuildIndustry,                          CMD_DEITY, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_INDUSTRY
+	DEF_CMD(CmdIndustryCtrl,            CMD_STR_CTRL | CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_INDUSTRY_CTRL
+
 	DEF_CMD(CmdSetCompanyManagerFace,                          0, CMDT_OTHER_MANAGEMENT      ), // CMD_SET_COMPANY_MANAGER_FACE
 	DEF_CMD(CmdSetCompanyColour,                               0, CMDT_OTHER_MANAGEMENT      ), // CMD_SET_COMPANY_COLOUR
 
@@ -337,6 +341,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdRemoveStoryPage,                        CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_REMOVE_STORY_PAGE
 	DEF_CMD(CmdRemoveStoryPageElement,                 CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_REMOVE_STORY_ELEMENT_PAGE
 	DEF_CMD(CmdScrollViewport,                         CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_SCROLL_VIEWPORT
+	DEF_CMD(CmdStoryPageButton,                        CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_STORY_PAGE_BUTTON
 
 	DEF_CMD(CmdLevelLand, CMD_ALL_TILES | CMD_NO_TEST | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_LEVEL_LAND; test run might clear tiles multiple times, in execution that only happens once
 
@@ -432,7 +437,7 @@ bool IsCommandAllowedWhilePaused(uint32 cmd)
 		CMDPL_NO_ACTIONS,      ///< CMDT_SERVER_SETTING
 		CMDPL_NO_ACTIONS,      ///< CMDT_CHEAT
 	};
-	assert_compile(lengthof(command_type_lookup) == CMDT_END);
+	static_assert(lengthof(command_type_lookup) == CMDT_END);
 
 	assert(IsValidCommand(cmd));
 	return _game_mode == GM_EDITOR || command_type_lookup[_command_proc_table[cmd & CMD_ID_MASK].type] <= _settings_game.construction.command_pause_level;
@@ -581,7 +586,7 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 	int x = TileX(tile) * TILE_SIZE;
 	int y = TileY(tile) * TILE_SIZE;
 
-	if (_pause_mode != PM_UNPAUSED && !IsCommandAllowedWhilePaused(cmd)) {
+	if (_pause_mode != PM_UNPAUSED && !IsCommandAllowedWhilePaused(cmd) && !estimate_only) {
 		ShowErrorMessage(GB(cmd, 16, 16), STR_ERROR_NOT_ALLOWED_WHILE_PAUSED, WL_INFO, x, y);
 		return false;
 	}
@@ -770,16 +775,16 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 	}
 
 	/* Send Tile Number to Watching Company Windows */
-	WatchCompany *wc;
+	citymania::WatchCompany *wc;
 	for(int watching_window = 0; ; watching_window++){
-		wc = dynamic_cast<WatchCompany*>(FindWindowById(WC_WATCH_COMPANY, watching_window));
+		wc = dynamic_cast<citymania::WatchCompany*>(FindWindowById(WC_WATCH_COMPANY, watching_window));
 		if(wc != NULL) wc->OnDoCommand(_current_company, tile);
 		else break;
 	}
 
 	for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 		if (ci->client_playas == _current_company) {
-			wc = dynamic_cast<WatchCompany*>(FindWindowById(WC_WATCH_COMPANYA, ci->client_id));
+			wc = dynamic_cast<citymania::WatchCompany*>(FindWindowById(WC_WATCH_COMPANYA, ci->client_id));
 			if (wc != NULL) wc->OnDoCommand(_current_company, tile);
 			break;
 		}

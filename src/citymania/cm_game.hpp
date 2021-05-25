@@ -33,8 +33,8 @@ public:
         auto a = this->towns_growth_tiles.find(tile);
         auto b = this->towns_growth_tiles_last_month.find(tile);
         auto as = (a == this->towns_growth_tiles.end() ? TownGrowthTileState::NONE : (*a).second);
-        auto bs = (b == this->towns_growth_tiles.end() ? TownGrowthTileState::NONE : (*b).second);
-        return max(as, bs);
+        auto bs = (b == this->towns_growth_tiles_last_month.end() ? TownGrowthTileState::NONE : (*b).second);
+        return std::max(as, bs);
     }
 };
 

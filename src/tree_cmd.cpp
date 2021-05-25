@@ -44,9 +44,10 @@ enum TreePlacer {
 
 /** Where to place trees while in-game? */
 enum ExtraTreePlacement {
-	ETP_NONE,       ///< Place trees on no tiles
-	ETP_RAINFOREST, ///< Place trees only on rainforest tiles
-	ETP_ALL,        ///< Place trees on all tiles
+	ETP_NO_SPREAD,           ///< Grow trees on tiles that have them but don't spread to new ones
+	ETP_SPREAD_RAINFOREST,   ///< Grow trees on tiles that have them, only spread to new ones in rainforests
+	ETP_SPREAD_ALL,          ///< Grow trees and spread them without restrictions
+	ETP_NO_GROWTH_NO_SPREAD, ///< Don't grow trees and don't spread them at all
 };
 
 /** Determines when to consider building more trees. */
@@ -164,7 +165,8 @@ static void PlaceTree(TileIndex tile, uint32 r)
 	TreeType tree = GetRandomTreeType(tile, GB(r, 24, 8));
 
 	if (tree != TREE_INVALID) {
-		PlantTreesOnTile(tile, tree, GB(r, 22, 2), min(GB(r, 16, 3), 6));
+		PlantTreesOnTile(tile, tree, GB(r, 22, 2), std::min<byte>(GB(r, 16, 3), 6));
+		MarkTileDirtyByTile(tile);
 
 		/* Rerandomize ground, if neither snow nor shore */
 		TreeGround ground = GetTreeGround(tile);
@@ -292,6 +294,51 @@ void PlaceTreesRandomly()
 }
 
 /**
+ * Place some trees in a radius around a tile.
+ * The trees are placed in an quasi-normal distribution around the indicated tile, meaning that while
+ * the radius does define a square, the distribution inside the square will be roughly circular.
+ * @note This function the interactive RNG and must only be used in editor and map generation.
+ * @param tile      Tile to place trees around.
+ * @param treetype  Type of trees to place. Must be a valid tree type for the climate.
+ * @param radius    Maximum distance (on each axis) from tile to place trees.
+ * @param count     Maximum number of trees to place.
+ * @return Number of trees actually placed.
+ */
+uint PlaceTreeGroupAroundTile(TileIndex tile, TreeType treetype, uint radius, uint count)
+{
+	assert(treetype < TREE_TOYLAND + TREE_COUNT_TOYLAND);
+	const bool allow_desert = treetype == TREE_CACTUS;
+	uint planted = 0;
+
+	for (; count > 0; count--) {
+		/* Simple quasi-normal distribution with range [-radius; radius) */
+		auto mkcoord = [&]() -> int32 {
+			const uint32 rand = InteractiveRandom();
+			const int32 dist = GB<int32>(rand, 0, 8) + GB<int32>(rand, 8, 8) + GB<int32>(rand, 16, 8) + GB<int32>(rand, 24, 8);
+			const int32 scu = dist * radius / 512;
+			return scu - radius;
+		};
+		const int32 xofs = mkcoord();
+		const int32 yofs = mkcoord();
+		const TileIndex tile_to_plant = TileAddWrap(tile, xofs, yofs);
+		if (tile_to_plant != INVALID_TILE) {
+			if (IsTileType(tile_to_plant, MP_TREES) && GetTreeCount(tile_to_plant) < 4) {
+				AddTreeCount(tile_to_plant, 1);
+				SetTreeGrowth(tile_to_plant, 0);
+				MarkTileDirtyByTile(tile_to_plant, 0);
+				planted++;
+			} else if (CanPlantTreesOnTile(tile_to_plant, allow_desert)) {
+				PlantTreesOnTile(tile_to_plant, treetype, 0, 3);
+				MarkTileDirtyByTile(tile_to_plant, 0);
+				planted++;
+			}
+		}
+	}
+
+	return planted;
+}
+
+/**
  * Place new trees.
  *
  * This function takes care of the selected tree placer algorithm and
@@ -350,7 +397,7 @@ CommandCost CmdPlantTree(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 		switch (GetTileType(tile)) {
 			case MP_TREES:
 				/* no more space for trees? */
-				if (_game_mode != GM_EDITOR && GetTreeCount(tile) == 4) {
+				if (GetTreeCount(tile) == 4) {
 					msg = STR_ERROR_TREE_ALREADY_HERE;
 					continue;
 				}
@@ -590,10 +637,10 @@ static void TileLoopTreesDesert(TileIndex tile)
 
 		case TROPICZONE_RAINFOREST: {
 			static const SoundFx forest_sounds[] = {
-				SND_42_LOON_BIRD,
-				SND_43_LION,
-				SND_44_MONKEYS,
-				SND_48_DISTANT_BIRD
+				SND_42_RAINFOREST_1,
+				SND_43_RAINFOREST_2,
+				SND_44_RAINFOREST_3,
+				SND_48_RAINFOREST_4
 			};
 			uint32 r = Random();
 
@@ -616,7 +663,7 @@ static void TileLoopTreesAlps(TileIndex tile)
 			default: return;
 		}
 	} else {
-		uint density = min<uint>(k, 3);
+		uint density = std::min<uint>(k, 3);
 
 		if (GetTreeGround(tile) != TREE_GROUND_SNOW_DESERT && GetTreeGround(tile) != TREE_GROUND_ROUGH_SNOW) {
 			TreeGround tg = GetTreeGround(tile) == TREE_GROUND_ROUGH ? TREE_GROUND_ROUGH_SNOW : TREE_GROUND_SNOW_DESERT;
@@ -627,7 +674,7 @@ static void TileLoopTreesAlps(TileIndex tile)
 			if (GetTreeDensity(tile) == 3) {
 				uint32 r = Random();
 				if (Chance16I(1, 200, r) && _settings_client.sound.ambient) {
-					SndPlayTileFx((r & 0x80000000) ? SND_39_HEAVY_WIND : SND_34_WIND, tile);
+					SndPlayTileFx((r & 0x80000000) ? SND_39_ARCTIC_SNOW_2 : SND_34_ARCTIC_SNOW_1, tile);
 				}
 			}
 			return;
@@ -639,8 +686,8 @@ static void TileLoopTreesAlps(TileIndex tile)
 static bool CanPlantExtraTrees(TileIndex tile)
 {
 	return ((_settings_game.game_creation.landscape == LT_TROPIC && GetTropicZone(tile) == TROPICZONE_RAINFOREST) ?
-		_settings_game.construction.extra_tree_placement != ETP_NONE :
-		_settings_game.construction.extra_tree_placement == ETP_ALL);
+		(_settings_game.construction.extra_tree_placement == ETP_SPREAD_ALL || _settings_game.construction.extra_tree_placement == ETP_SPREAD_RAINFOREST) :
+		_settings_game.construction.extra_tree_placement == ETP_SPREAD_ALL);
 }
 
 static void TileLoop_Trees(TileIndex tile)
@@ -666,6 +713,9 @@ static void TileLoop_Trees(TileIndex tile)
 			MarkTileDirtyByTile(tile);
 		}
 	}
+
+	if (_settings_game.construction.extra_tree_placement == ETP_NO_GROWTH_NO_SPREAD) return;
+
 	if (GetTreeCounter(tile) < 15) {
 		AddTreeCounter(tile, 1);
 		return;
@@ -685,7 +735,7 @@ static void TileLoop_Trees(TileIndex tile)
 						break;
 
 					case 1: // add a tree
-						if (GetTreeCount(tile) < 4) {
+						if (GetTreeCount(tile) < 4 && CanPlantExtraTrees(tile)) {
 							AddTreeCount(tile, 1);
 							SetTreeGrowth(tile, 0);
 							break;
@@ -717,13 +767,13 @@ static void TileLoop_Trees(TileIndex tile)
 			break;
 
 		case 6: // final stage of tree destruction
-			if (GetTreeCount(tile) > 1) {
+			if (!CanPlantExtraTrees(tile)) {
+				/* if trees can't spread just plant a new one to prevent deforestation */
+				SetTreeGrowth(tile, 0);
+			} else if (GetTreeCount(tile) > 1) {
 				/* more than one tree, delete it */
 				AddTreeCount(tile, -1);
 				SetTreeGrowth(tile, 3);
-			} else if (!CanPlantExtraTrees(tile)) {
-				/* if trees can't spread just plant a new one to prevent deforestation */
-				SetTreeGrowth(tile, 0);
 			} else {
 				/* just one tree, change type into MP_CLEAR */
 				switch (GetTreeGround(tile)) {
@@ -759,8 +809,8 @@ static void TileLoop_Trees(TileIndex tile)
 
 void OnTick_Trees()
 {
-	/* Don't place trees if that's not allowed */
-	if (_settings_game.construction.extra_tree_placement == ETP_NONE) return;
+	/* Don't spread trees if that's not allowed */
+	if (_settings_game.construction.extra_tree_placement == ETP_NO_SPREAD || _settings_game.construction.extra_tree_placement == ETP_NO_GROWTH_NO_SPREAD) return;
 
 	uint32 r;
 	TileIndex tile;
@@ -775,7 +825,7 @@ void OnTick_Trees()
 	}
 
 	/* byte underflow */
-	if (--_trees_tick_ctr != 0 || _settings_game.construction.extra_tree_placement != ETP_ALL) return;
+	if (--_trees_tick_ctr != 0 || _settings_game.construction.extra_tree_placement == ETP_SPREAD_RAINFOREST) return;
 
 	/* place a tree at a random spot */
 	r = Random();

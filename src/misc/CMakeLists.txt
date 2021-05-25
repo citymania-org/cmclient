@@ -1,0 +1,15 @@
+add_files(
+    array.hpp
+    binaryheap.hpp
+    blob.hpp
+    countedobj.cpp
+    countedptr.hpp
+    dbg_helpers.cpp
+    dbg_helpers.h
+    fixedsizearray.hpp
+    getoptdata.cpp
+    getoptdata.h
+    hashtable.hpp
+    lrucache.hpp
+    str.hpp
+)

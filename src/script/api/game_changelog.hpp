@@ -13,6 +13,31 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 1.11.0
+ *
+ * API additions:
+ * \li GSCargo::GetName
+ * \li GSEventStoryPageButtonClick
+ * \li GSEventStoryPageTileSelect
+ * \li GSEventStoryPageVehicleSelect
+ * \li GSIndustry::GetCargoLastAcceptedDate
+ * \li GSIndustry::GetControlFlags
+ * \li GSIndustry::GetExclusiveConsumer
+ * \li GSIndustry::GetExclusiveSupplier
+ * \li GSIndustry::GetLastProductionYear
+ * \li GSIndustry::SetControlFlags
+ * \li GSIndustry::SetExclusiveConsumer
+ * \li GSIndustry::SetExclusiveSupplier
+ * \li GSIndustry::SetText
+ * \li GSStoryPage::MakePushButtonReference
+ * \li GSStoryPage::MakeTileButtonReference
+ * \li GSStoryPage::MakeVehicleButtonReference
+ * \li GSPriorityQueue
+ *
+ * Other changes:
+ * \li GSCompany::ChangeBankBalance takes one extra parameter to refer to a location to show text effect on
+ * \li GSGoal::Question and GSGoal::QuestionClient no longer require to have any buttons except for the window type GSGoal.QT_QUESTION
+ *
  * \b 1.10.0
  *
  * API additions:

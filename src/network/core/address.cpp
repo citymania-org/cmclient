@@ -239,7 +239,18 @@ SOCKET NetworkAddress::Resolve(int family, int socktype, int flags, SocketList *
 		strecpy(this->hostname, fam == AF_INET ? "0.0.0.0" : "::", lastof(this->hostname));
 	}
 
+	static bool _resolve_timeout_error_message_shown = false;
+	auto start = std::chrono::steady_clock::now();
 	int e = getaddrinfo(StrEmpty(this->hostname) ? nullptr : this->hostname, port_name, &hints, &ai);
+	auto end = std::chrono::steady_clock::now();
+	std::chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+	if (!_resolve_timeout_error_message_shown && duration >= std::chrono::seconds(5)) {
+		DEBUG(net, 0, "getaddrinfo for hostname \"%s\", port %s, address family %s and socket type %s took %i seconds",
+				this->hostname, port_name, AddressFamilyAsString(family), SocketTypeAsString(socktype), (int)duration.count());
+		DEBUG(net, 0, "  this is likely an issue in the DNS name resolver's configuration causing it to time out");
+		_resolve_timeout_error_message_shown = true;
+	}
+
 
 	if (reset_hostname) strecpy(this->hostname, "", lastof(this->hostname));
 
@@ -267,6 +278,18 @@ SOCKET NetworkAddress::Resolve(int family, int socktype, int flags, SocketList *
 			this->address_length = (int)runp->ai_addrlen;
 			assert(sizeof(this->address) >= runp->ai_addrlen);
 			memcpy(&this->address, runp->ai_addr, runp->ai_addrlen);
+#ifdef __EMSCRIPTEN__
+			/* Emscripten doesn't zero sin_zero, but as we compare addresses
+			 * to see if they are the same address, we need them to be zero'd.
+			 * Emscripten is, as far as we know, the only OS not doing this.
+			 *
+			 * https://github.com/emscripten-core/emscripten/issues/12998
+			 */
+			if (this->address.ss_family == AF_INET) {
+				sockaddr_in *address_ipv4 = (sockaddr_in *)&this->address;
+				memset(address_ipv4->sin_zero, 0, sizeof(address_ipv4->sin_zero));
+			}
+#endif
 			break;
 		}
 
@@ -293,14 +316,22 @@ static SOCKET ConnectLoopProc(addrinfo *runp)
 
 	SOCKET sock = socket(runp->ai_family, runp->ai_socktype, runp->ai_protocol);
 	if (sock == INVALID_SOCKET) {
-		DEBUG(net, 1, "[%s] could not create %s socket: %s", type, family, strerror(errno));
+		DEBUG(net, 1, "[%s] could not create %s socket: %s", type, family, NetworkError::GetLast().AsString());
 		return INVALID_SOCKET;
 	}
 
 	if (!SetNoDelay(sock)) DEBUG(net, 1, "[%s] setting TCP_NODELAY failed", type);
 
-	if (connect(sock, runp->ai_addr, (int)runp->ai_addrlen) != 0) {
-		DEBUG(net, 1, "[%s] could not connect %s socket: %s", type, family, strerror(errno));
+	int err = connect(sock, runp->ai_addr, (int)runp->ai_addrlen);
+#ifdef __EMSCRIPTEN__
+	/* Emscripten is asynchronous, and as such a connect() is still in
+	 * progress by the time the call returns. */
+	if (err != 0 && !NetworkError::GetLast().IsConnectInProgress())
+#else
+	if (err != 0)
+#endif
+	{
+		DEBUG(net, 1, "[%s] could not connect %s socket: %s", type, family, NetworkError::GetLast().AsString());
 		closesocket(sock);
 		return INVALID_SOCKET;
 	}
@@ -338,7 +369,7 @@ static SOCKET ListenLoopProc(addrinfo *runp)
 
 	SOCKET sock = socket(runp->ai_family, runp->ai_socktype, runp->ai_protocol);
 	if (sock == INVALID_SOCKET) {
-		DEBUG(net, 0, "[%s] could not create %s socket on port %s: %s", type, family, address, strerror(errno));
+		DEBUG(net, 0, "[%s] could not create %s socket on port %s: %s", type, family, address, NetworkError::GetLast().AsString());
 		return INVALID_SOCKET;
 	}
 
@@ -349,24 +380,24 @@ static SOCKET ListenLoopProc(addrinfo *runp)
 	int on = 1;
 	/* The (const char*) cast is needed for windows!! */
 	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&on, sizeof(on)) == -1) {
-		DEBUG(net, 3, "[%s] could not set reusable %s sockets for port %s: %s", type, family, address, strerror(errno));
+		DEBUG(net, 3, "[%s] could not set reusable %s sockets for port %s: %s", type, family, address, NetworkError::GetLast().AsString());
 	}
 
 #ifndef __OS2__
 	if (runp->ai_family == AF_INET6 &&
 			setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (const char*)&on, sizeof(on)) == -1) {
-		DEBUG(net, 3, "[%s] could not disable IPv4 over IPv6 on port %s: %s", type, address, strerror(errno));
+		DEBUG(net, 3, "[%s] could not disable IPv4 over IPv6 on port %s: %s", type, address, NetworkError::GetLast().AsString());
 	}
 #endif
 
 	if (bind(sock, runp->ai_addr, (int)runp->ai_addrlen) != 0) {
-		DEBUG(net, 1, "[%s] could not bind on %s port %s: %s", type, family, address, strerror(errno));
+		DEBUG(net, 1, "[%s] could not bind on %s port %s: %s", type, family, address, NetworkError::GetLast().AsString());
 		closesocket(sock);
 		return INVALID_SOCKET;
 	}
 
 	if (runp->ai_socktype != SOCK_DGRAM && listen(sock, 1) != 0) {
-		DEBUG(net, 1, "[%s] could not listen at %s port %s: %s", type, family, address, strerror(errno));
+		DEBUG(net, 1, "[%s] could not listen at %s port %s: %s", type, family, address, NetworkError::GetLast().AsString());
 		closesocket(sock);
 		return INVALID_SOCKET;
 	}

@@ -84,7 +84,7 @@ public:
 		offset(0),
 		num_param(Tnum_param)
 	{
-		assert_compile(sizeof(data[0]) == sizeof(uint64));
+		static_assert(sizeof(data[0]) == sizeof(uint64));
 	}
 
 	/**
@@ -277,7 +277,7 @@ public:
 	 */
 	virtual void SetFontNames(struct FreeTypeSettings *settings, const char *font_name, const void *os_data = nullptr) = 0;
 
-	bool FindMissingGlyphs(const char **str);
+	bool FindMissingGlyphs();
 };
 
 void CheckForMissingGlyphs(bool base_font = true, MissingGlyphSearcher *search = nullptr);

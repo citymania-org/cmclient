@@ -46,7 +46,7 @@
  */
 uint GetEngineListHeight(VehicleType type)
 {
-	return max<uint>(FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM, GetVehicleImageCellSize(type, EIT_PURCHASE).height);
+	return std::max<uint>(FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM, GetVehicleImageCellSize(type, EIT_PURCHASE).height);
 }
 
 static const NWidgetPart _nested_build_vehicle_widgets[] = {
@@ -88,8 +88,9 @@ static const NWidgetPart _nested_build_vehicle_widgets[] = {
 };
 
 /** Special cargo filter criteria */
-static const CargoID CF_ANY  = CT_NO_REFIT; ///< Show all vehicles independent of carried cargo (i.e. no filtering)
-static const CargoID CF_NONE = CT_INVALID;  ///< Show only vehicles which do not carry cargo (e.g. train engines)
+static const CargoID CF_ANY     = CT_NO_REFIT;   ///< Show all vehicles independent of carried cargo (i.e. no filtering)
+static const CargoID CF_NONE    = CT_INVALID;    ///< Show only vehicles which do not carry cargo (e.g. train engines)
+static const CargoID CF_ENGINES = CT_AUTO_REFIT; ///< Show only engines (for rail vehicles only)
 
 bool _engine_sort_direction; ///< \c false = descending, \c true = ascending.
 byte _engine_sort_last_criteria[]       = {0, 0, 0, 0};                 ///< Last set sort criteria, for each vehicle type.
@@ -533,16 +534,21 @@ const StringID _engine_sort_listing[][12] = {{
 	INVALID_STRING_ID
 }};
 
-/** Cargo filter functions */
-static bool CDECL CargoFilter(const EngineID *eid, const CargoID cid)
+/** Filters vehicles by cargo and engine (in case of rail vehicle). */
+static bool CDECL CargoAndEngineFilter(const EngineID *eid, const CargoID cid)
 {
-	if (cid == CF_ANY) return true;
-	CargoTypes refit_mask = GetUnionOfArticulatedRefitMasks(*eid, true) & _standard_cargo_mask;
-	return (cid == CF_NONE ? refit_mask == 0 : HasBit(refit_mask, cid));
+	if (cid == CF_ANY) {
+		return true;
+	} else if (cid == CF_ENGINES) {
+		return Engine::Get(*eid)->GetPower() != 0;
+	} else {
+		CargoTypes refit_mask = GetUnionOfArticulatedRefitMasks(*eid, true) & _standard_cargo_mask;
+		return (cid == CF_NONE ? refit_mask == 0 : HasBit(refit_mask, cid));
+	}
 }
 
 static GUIEngineList::FilterFunction * const _filter_funcs[] = {
-	&CargoFilter,
+	&CargoAndEngineFilter,
 };
 
 static int DrawCargoCapacityInfo(int left, int right, int y, EngineID engine, TestedEngineDetails &te)
@@ -1054,10 +1060,10 @@ struct BuildVehicleWindow : Window {
 	EngineID sel_engine;                        ///< Currently selected engine, or #INVALID_ENGINE
 	EngineID rename_engine;                     ///< Engine being renamed.
 	GUIEngineList eng_list;
-	CargoID cargo_filter[NUM_CARGO + 2];        ///< Available cargo filters; CargoID or CF_ANY or CF_NONE
-	StringID cargo_filter_texts[NUM_CARGO + 3]; ///< Texts for filter_cargo, terminated by INVALID_STRING_ID
+	CargoID cargo_filter[NUM_CARGO + 3];        ///< Available cargo filters; CargoID or CF_ANY or CF_NONE or CF_ENGINES
+	StringID cargo_filter_texts[NUM_CARGO + 4]; ///< Texts for filter_cargo, terminated by INVALID_STRING_ID
 	byte cargo_filter_criteria;                 ///< Selected cargo filter
-	int details_height;                         ///< Minimal needed height of the details panels (found so far).
+	int details_height;                         ///< Minimal needed height of the details panels, in text lines (found so far).
 	Scrollbar *vscroll;
 	TestedEngineDetails te;                     ///< Tested cost and capacity after refit.
 
@@ -1117,7 +1123,7 @@ struct BuildVehicleWindow : Window {
 		widget->tool_tip    = STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP + type;
 		widget->SetLowered(this->show_hidden_engines);
 
-		this->details_height = ((this->vehicle_type == VEH_TRAIN) ? 10 : 9) * FONT_HEIGHT_NORMAL + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+		this->details_height = ((this->vehicle_type == VEH_TRAIN) ? 10 : 9);
 
 		this->FinishInitNested(tile == INVALID_TILE ? (int)type : tile);
 
@@ -1173,9 +1179,15 @@ struct BuildVehicleWindow : Window {
 		this->cargo_filter_texts[filter_items] = STR_PURCHASE_INFO_ALL_TYPES;
 		filter_items++;
 
-		/* Add item for vehicles not carrying anything, e.g. train engines.
-		 * This could also be useful for eyecandy vehicles of other types, but is likely too confusing for joe, */
+		/* Specific filters for trains. */
 		if (this->vehicle_type == VEH_TRAIN) {
+			/* Add item for locomotives only in case of trains. */
+			this->cargo_filter[filter_items] = CF_ENGINES;
+			this->cargo_filter_texts[filter_items] = STR_PURCHASE_INFO_ENGINES_ONLY;
+			filter_items++;
+
+			/* Add item for vehicles not carrying anything, e.g. train engines.
+			 * This could also be useful for eyecandy vehicles of other types, but is likely too confusing for joe, */
 			this->cargo_filter[filter_items] = CF_NONE;
 			this->cargo_filter_texts[filter_items] = STR_PURCHASE_INFO_NONE;
 			filter_items++;
@@ -1262,7 +1274,7 @@ struct BuildVehicleWindow : Window {
 	bool FilterSingleEngine(EngineID eid)
 	{
 		CargoID filter_type = this->cargo_filter[this->cargo_filter_criteria];
-		return (filter_type == CF_ANY || CargoFilter(&eid, filter_type));
+		return CargoAndEngineFilter(&eid, filter_type);
 	}
 
 	/* Figure out what train EngineIDs to put in the list */
@@ -1468,7 +1480,7 @@ struct BuildVehicleWindow : Window {
 				if (sel_eng != INVALID_ENGINE) {
 					CommandCallback *callback = (this->vehicle_type == VEH_TRAIN && RailVehInfo(sel_eng)->railveh_type == RAILVEH_WAGON) ? CcBuildWagon : CcBuildPrimaryVehicle;
 					CargoID cargo = this->cargo_filter[this->cargo_filter_criteria];
-					if (cargo == CF_ANY) cargo = CF_NONE;
+					if (cargo == CF_ANY || cargo == CF_ENGINES) cargo = CF_NONE;
 					DoCommandP(this->window_number, sel_eng | (cargo << 24), 0, GetCmdBuildVeh(this->vehicle_type), callback);
 				}
 				break;
@@ -1545,11 +1557,11 @@ struct BuildVehicleWindow : Window {
 			case WID_BV_LIST:
 				resize->height = GetEngineListHeight(this->vehicle_type);
 				size->height = 3 * resize->height;
-				size->width = max(size->width, GetVehicleImageCellSize(this->vehicle_type, EIT_PURCHASE).extend_left + GetVehicleImageCellSize(this->vehicle_type, EIT_PURCHASE).extend_right + 165);
+				size->width = std::max(size->width, GetVehicleImageCellSize(this->vehicle_type, EIT_PURCHASE).extend_left + GetVehicleImageCellSize(this->vehicle_type, EIT_PURCHASE).extend_right + 165);
 				break;
 
 			case WID_BV_PANEL:
-				size->height = this->details_height;
+				size->height = FONT_HEIGHT_NORMAL * this->details_height + padding.height;
 				break;
 
 			case WID_BV_SORT_ASCENDING_DESCENDING: {
@@ -1580,7 +1592,18 @@ struct BuildVehicleWindow : Window {
 	{
 		switch (widget) {
 			case WID_BV_LIST:
-				DrawEngineList(this->vehicle_type, r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, &this->eng_list, this->vscroll->GetPosition(), min(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), (uint)this->eng_list.size()), this->sel_engine, false, DEFAULT_GROUP);
+				DrawEngineList(
+					this->vehicle_type,
+					r.left + WD_FRAMERECT_LEFT,
+					r.right - WD_FRAMERECT_RIGHT,
+					r.top + WD_FRAMERECT_TOP,
+					&this->eng_list,
+					this->vscroll->GetPosition(),
+					static_cast<uint16>(std::min<size_t>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), this->eng_list.size())),
+					this->sel_engine,
+					false,
+					DEFAULT_GROUP
+				);
 				break;
 
 			case WID_BV_SORT_ASCENDING_DESCENDING:
@@ -1605,12 +1628,12 @@ struct BuildVehicleWindow : Window {
 				NWidgetBase *nwi = this->GetWidget<NWidgetBase>(WID_BV_PANEL);
 				int text_end = DrawVehiclePurchaseInfo(nwi->pos_x + WD_FRAMETEXT_LEFT, nwi->pos_x + nwi->current_x - WD_FRAMETEXT_RIGHT,
 						nwi->pos_y + WD_FRAMERECT_TOP, this->sel_engine, this->te);
-				needed_height = max(needed_height, text_end - (int)nwi->pos_y + WD_FRAMERECT_BOTTOM);
+				needed_height = std::max(needed_height, (text_end - (int)nwi->pos_y - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL);
 			}
 			if (needed_height != this->details_height) { // Details window are not high enough, enlarge them.
 				int resize = needed_height - this->details_height;
 				this->details_height = needed_height;
-				this->ReInit(0, resize);
+				this->ReInit(0, resize * FONT_HEIGHT_NORMAL);
 				return;
 			}
 		}

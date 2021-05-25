@@ -42,6 +42,9 @@ public:
 			socklen_t sin_len = sizeof(sin);
 			SOCKET s = accept(ls, (struct sockaddr*)&sin, &sin_len);
 			if (s == INVALID_SOCKET) return;
+#ifdef __EMSCRIPTEN__
+			sin_len = FixAddrLenForEmscripten(sin);
+#endif
 
 			SetNonBlocking(s); // XXX error handling?
 
@@ -61,7 +64,7 @@ public:
 					DEBUG(net, 1, "[%s] Banned ip tried to join (%s), refused", Tsocket::GetName(), entry.c_str());
 
 					if (send(s, (const char*)p.buffer, p.size, 0) < 0) {
-						DEBUG(net, 0, "send failed with error %d", GET_LAST_ERROR());
+						DEBUG(net, 0, "send failed with error %s", NetworkError::GetLast().AsString());
 					}
 					closesocket(s);
 					break;
@@ -78,7 +81,7 @@ public:
 				p.PrepareToSend();
 
 				if (send(s, (const char*)p.buffer, p.size, 0) < 0) {
-					DEBUG(net, 0, "send failed with error %d", GET_LAST_ERROR());
+					DEBUG(net, 0, "send failed with error %s", NetworkError::GetLast().AsString());
 				}
 				closesocket(s);
 
@@ -148,7 +151,7 @@ public:
 
 		if (sockets.size() == 0) {
 			DEBUG(net, 0, "[server] could not start network: could not create listening socket");
-			NetworkError(STR_NETWORK_ERROR_SERVER_START);
+			ShowNetworkError(STR_NETWORK_ERROR_SERVER_START);
 			return false;
 		}
 

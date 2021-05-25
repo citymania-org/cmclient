@@ -105,6 +105,7 @@ static void LoadGrfFileIndexed(const char *filename, const SpriteID *index_tbl, 
 
 		do {
 			bool b = LoadNextSprite(start, file_index, sprite_id, container_ver);
+			(void)b; // Unused without asserts
 			assert(b);
 			sprite_id++;
 		} while (++start <= end);
@@ -122,7 +123,7 @@ void CheckExternalFiles()
 
 	const GraphicsSet *used_set = BaseGraphics::GetUsedSet();
 
-	DEBUG(grf, 1, "Using the %s base graphics set", used_set->name);
+	DEBUG(grf, 1, "Using the %s base graphics set", used_set->name.c_str());
 
 	static const size_t ERROR_MESSAGE_LENGTH = 256;
 	static const size_t MISSING_FILE_MESSAGE_LENGTH = 128;
@@ -137,7 +138,7 @@ void CheckExternalFiles()
 
 	if (used_set->GetNumInvalid() != 0) {
 		/* Not all files were loaded successfully, see which ones */
-		add_pos += seprintf(add_pos, last, "Trying to load graphics set '%s', but it is incomplete. The game will probably not run correctly until you properly install this set or select another one. See section 4.1 of README.md.\n\nThe following files are corrupted or missing:\n", used_set->name);
+		add_pos += seprintf(add_pos, last, "Trying to load graphics set '%s', but it is incomplete. The game will probably not run correctly until you properly install this set or select another one. See section 4.1 of README.md.\n\nThe following files are corrupted or missing:\n", used_set->name.c_str());
 		for (uint i = 0; i < GraphicsSet::NUM_FILES; i++) {
 			MD5File::ChecksumResult res = GraphicsSet::CheckMD5(&used_set->files[i], BASESET_DIR);
 			if (res != MD5File::CR_MATCH) add_pos += seprintf(add_pos, last, "\t%s is %s (%s)\n", used_set->files[i].filename, res == MD5File::CR_MISMATCH ? "corrupt" : "missing", used_set->files[i].missing_warning);
@@ -147,9 +148,9 @@ void CheckExternalFiles()
 
 	const SoundsSet *sounds_set = BaseSounds::GetUsedSet();
 	if (sounds_set->GetNumInvalid() != 0) {
-		add_pos += seprintf(add_pos, last, "Trying to load sound set '%s', but it is incomplete. The game will probably not run correctly until you properly install this set or select another one. See section 4.1 of README.md.\n\nThe following files are corrupted or missing:\n", sounds_set->name);
+		add_pos += seprintf(add_pos, last, "Trying to load sound set '%s', but it is incomplete. The game will probably not run correctly until you properly install this set or select another one. See section 4.1 of README.md.\n\nThe following files are corrupted or missing:\n", sounds_set->name.c_str());
 
-		assert_compile(SoundsSet::NUM_FILES == 1);
+		static_assert(SoundsSet::NUM_FILES == 1);
 		/* No need to loop each file, as long as there is only a single
 		 * sound file. */
 		add_pos += seprintf(add_pos, last, "\t%s is %s (%s)\n", sounds_set->files->filename, SoundsSet::CheckMD5(sounds_set->files, BASESET_DIR) == MD5File::CR_MISMATCH ? "corrupt" : "missing", sounds_set->files->missing_warning);
@@ -190,7 +191,6 @@ static void LoadSpriteTables()
 			i++
 		);
 	}
-	// LoadGrfFile("innerhighlight.grf", SPR_INNER_HIGHLIGHT_BASE, i++);
 	LoadGrfFile("cmclient-3.grf", SPR_INNER_HIGHLIGHT_BASE - 4, i++);
 
 	/* Initialize the unicode to sprite mapping table */
@@ -245,6 +245,28 @@ static void LoadSpriteTables()
 }
 
 
+static void RealChangeBlitter(const char *repl_blitter)
+{
+	const char *cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
+	if (strcmp(cur_blitter, repl_blitter) == 0) return;
+
+	DEBUG(driver, 1, "Switching blitter from '%s' to '%s'... ", cur_blitter, repl_blitter);
+	Blitter *new_blitter = BlitterFactory::SelectBlitter(repl_blitter);
+	if (new_blitter == nullptr) NOT_REACHED();
+	DEBUG(driver, 1, "Successfully switched to %s.", repl_blitter);
+
+	if (!VideoDriver::GetInstance()->AfterBlitterChange()) {
+		/* Failed to switch blitter, let's hope we can return to the old one. */
+		if (BlitterFactory::SelectBlitter(cur_blitter) == nullptr || !VideoDriver::GetInstance()->AfterBlitterChange()) usererror("Failed to reinitialize video driver. Specify a fixed blitter in the config");
+	}
+
+	/* Clear caches that might have sprites for another blitter. */
+	VideoDriver::GetInstance()->ClearSystemSprites();
+	ClearFontCache();
+	GfxClearSpriteCache();
+	ReInitAllWindows();
+}
+
 /**
  * Check blitter needed by NewGRF config and switch if needed.
  * @return False when nothing changed, true otherwise.
@@ -264,11 +286,13 @@ static bool SwitchNewGRFBlitter()
 	 * between multiple 32bpp blitters, which perform differently with 8bpp sprites.
 	 */
 	uint depth_wanted_by_base = BaseGraphics::GetUsedSet()->blitter == BLT_32BPP ? 32 : 8;
-	uint depth_wanted_by_grf = _support8bpp == S8BPP_NONE ? 32 : 8;
+	uint depth_wanted_by_grf = _support8bpp != S8BPP_NONE ? 8 : 32;
 	for (GRFConfig *c = _grfconfig; c != nullptr; c = c->next) {
 		if (c->status == GCS_DISABLED || c->status == GCS_NOT_FOUND || HasBit(c->flags, GCF_INIT_ONLY)) continue;
 		if (c->palette & GRFP_BLT_32BPP) depth_wanted_by_grf = 32;
 	}
+	/* We need a 32bpp blitter for font anti-alias. */
+	if (HasAntialiasedFonts()) depth_wanted_by_grf = 32;
 
 	/* Search the best blitter. */
 	static const struct {
@@ -276,13 +300,14 @@ static bool SwitchNewGRFBlitter()
 		uint animation; ///< 0: no support, 1: do support, 2: both
 		uint min_base_depth, max_base_depth, min_grf_depth, max_grf_depth;
 	} replacement_blitters[] = {
+		{ "8bpp-optimized",  2,  8,  8,  8,  8 },
+		{ "40bpp-anim",      2,  8, 32,  8, 32 },
 #ifdef WITH_SSE
 		{ "32bpp-sse4",      0, 32, 32,  8, 32 },
 		{ "32bpp-ssse3",     0, 32, 32,  8, 32 },
 		{ "32bpp-sse2",      0, 32, 32,  8, 32 },
 		{ "32bpp-sse4-anim", 1, 32, 32,  8, 32 },
 #endif
-		{ "8bpp-optimized",  2,  8,  8,  8,  8 },
 		{ "32bpp-optimized", 0,  8, 32,  8, 32 },
 #ifdef WITH_SSE
 		{ "32bpp-sse2-anim", 1,  8, 32,  8, 32 },
@@ -293,8 +318,6 @@ static bool SwitchNewGRFBlitter()
 	const bool animation_wanted = HasBit(_display_opt, DO_FULL_ANIMATION);
 	const char *cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
 
-	VideoDriver::GetInstance()->AcquireBlitterLock();
-
 	for (uint i = 0; i < lengthof(replacement_blitters); i++) {
 		if (animation_wanted && (replacement_blitters[i].animation == 0)) continue;
 		if (!animation_wanted && (replacement_blitters[i].animation == 1)) continue;
@@ -304,24 +327,14 @@ static bool SwitchNewGRFBlitter()
 		const char *repl_blitter = replacement_blitters[i].name;
 
 		if (strcmp(repl_blitter, cur_blitter) == 0) {
-			VideoDriver::GetInstance()->ReleaseBlitterLock();
 			return false;
 		}
 		if (BlitterFactory::GetBlitterFactory(repl_blitter) == nullptr) continue;
 
-		DEBUG(misc, 1, "Switching blitter from '%s' to '%s'... ", cur_blitter, repl_blitter);
-		Blitter *new_blitter = BlitterFactory::SelectBlitter(repl_blitter);
-		if (new_blitter == nullptr) NOT_REACHED();
-		DEBUG(misc, 1, "Successfully switched to %s.", repl_blitter);
+		/* Inform the video driver we want to switch blitter as soon as possible. */
+		VideoDriver::GetInstance()->QueueOnMainThread(std::bind(&RealChangeBlitter, repl_blitter));
 		break;
 	}
-
-	if (!VideoDriver::GetInstance()->AfterBlitterChange()) {
-		/* Failed to switch blitter, let's hope we can return to the old one. */
-		if (BlitterFactory::SelectBlitter(cur_blitter) == nullptr || !VideoDriver::GetInstance()->AfterBlitterChange()) usererror("Failed to reinitialize video driver. Specify a fixed blitter in the config");
-	}
-
-	VideoDriver::GetInstance()->ReleaseBlitterLock();
 
 	return true;
 }
@@ -342,6 +355,7 @@ void GfxLoadSprites()
 	DEBUG(sprite, 2, "Loading sprite set %d", _settings_game.game_creation.landscape);
 
 	SwitchNewGRFBlitter();
+	VideoDriver::GetInstance()->ClearSystemSprites();
 	ClearFontCache();
 	GfxInitSpriteMem();
 	LoadSpriteTables();
@@ -358,11 +372,11 @@ bool GraphicsSet::FillSetDetails(IniFile *ini, const char *path, const char *ful
 		IniItem *item;
 
 		fetch_metadata("palette");
-		this->palette = (*item->value == 'D' || *item->value == 'd') ? PAL_DOS : PAL_WINDOWS;
+		this->palette = ((*item->value)[0] == 'D' || (*item->value)[0] == 'd') ? PAL_DOS : PAL_WINDOWS;
 
 		/* Get optional blitter information. */
 		item = metadata->GetItem("blitter", false);
-		this->blitter = (item != nullptr && *item->value == '3') ? BLT_32BPP : BLT_8BPP;
+		this->blitter = (item != nullptr && (*item->value)[0] == '3') ? BLT_32BPP : BLT_8BPP;
 	}
 	return ret;
 }
@@ -406,7 +420,7 @@ MD5File::ChecksumResult MD5File::CheckMD5(Subdirectory subdir, size_t max_size) 
 
 	if (f == nullptr) return CR_NO_FILE;
 
-	size = min(size, max_size);
+	size = std::min(size, max_size);
 
 	Md5 checksum;
 	uint8 buffer[1024];

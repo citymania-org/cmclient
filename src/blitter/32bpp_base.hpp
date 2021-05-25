@@ -125,6 +125,18 @@ public:
 	}
 
 	/**
+	 * Make a colour dark grey, for specialized 32bpp remapping.
+	 * @param colour the colour to make dark.
+	 * @return the new colour, now darker.
+	 */
+	static inline Colour MakeDark(Colour colour)
+	{
+		uint8 d = MakeDark(colour.r, colour.g, colour.b);
+
+		return Colour(d, d, d);
+	}
+
+	/**
 	 * Make a colour grey - based.
 	 * @param colour the colour to make grey.
 	 * @return the new colour, now grey.
@@ -155,10 +167,20 @@ public:
 		return ReallyAdjustBrightness(colour, brightness);
 	}
 
+	static inline uint8 GetColourBrightness(Colour colour)
+	{
+		uint8 rgb_max = std::max(colour.r, std::max(colour.g, colour.b));
+
+		/* Black pixel (8bpp or old 32bpp image), so use default value */
+		if (rgb_max == 0) rgb_max = DEFAULT_BRIGHTNESS;
+
+		return rgb_max;
+	}
 
 	/* CM */
 	uint8 cm_mdict[64*64*64] = {0};
 	uint8 CM_GetMForRGB(uint8 r, uint8 g, uint8 b) {
+		if (r==0 && g==0 && b==0) return 0;
 		r &= 252; g &= 252; b &= 252;
 		auto key = (r << 10) | (g << 4) | (b >> 2);
 		auto m = this->cm_mdict[key];

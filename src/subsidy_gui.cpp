@@ -85,7 +85,7 @@ struct SubsidyListWindow : Window {
 		}
 
 		if (citymania::_fn_mod || !ScrollMainWindowToTile(xy)) {
-			if (citymania::_fn_mod) ShowExtraViewPortWindow(xy);
+			if (citymania::_fn_mod) ShowExtraViewportWindow(xy);
 
 			/* otherwise determine dst coordinate for subsidy and scroll to it */
 			switch (s->dst_type) {
@@ -95,7 +95,7 @@ struct SubsidyListWindow : Window {
 			}
 
 			if (citymania::_fn_mod) {
-				ShowExtraViewPortWindow(xy);
+				ShowExtraViewportWindow(xy);
 			} else {
 				ScrollMainWindowToTile(xy);
 			}

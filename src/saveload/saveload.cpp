@@ -44,6 +44,11 @@
 #include "../fios.h"
 #include "../error.h"
 #include <atomic>
+#include <sstream>
+#include <string>
+#ifdef __EMSCRIPTEN__
+#	include <emscripten.h>
+#endif
 
 #include "table/strings.h"
 
@@ -166,7 +171,7 @@ struct MemoryDumper {
 		size_t t = this->GetSize();
 
 		while (t > 0) {
-			size_t to_write = min(MEMORY_CHUNK_SIZE, t);
+			size_t to_write = std::min(MEMORY_CHUNK_SIZE, t);
 
 			writer->Write(this->blocks[i++], to_write);
 			t -= to_write;
@@ -204,7 +209,7 @@ struct SaveLoadParams {
 	StringID error_str;                  ///< the translatable error message to show
 	char *extra_msg;                     ///< the error message
 
-	byte ff_state;                       ///< The state of fast-forward when saving started.
+	uint16 game_speed;                   ///< The game speed when saving started.
 	bool saveinprogress;                 ///< Whether there is currently a save in progress.
 };
 
@@ -301,16 +306,12 @@ static void SlNullPointers()
 	 * pointers from other pools. */
 	_sl_version = SAVEGAME_VERSION;
 
-	DEBUG(sl, 1, "Nulling pointers");
-
 	FOR_ALL_CHUNK_HANDLERS(ch) {
 		if (ch->ptrs_proc != nullptr) {
-			DEBUG(sl, 2, "Nulling pointers for %c%c%c%c", ch->id >> 24, ch->id >> 16, ch->id >> 8, ch->id);
+			DEBUG(sl, 3, "Nulling pointers for %c%c%c%c", ch->id >> 24, ch->id >> 16, ch->id >> 8, ch->id);
 			ch->ptrs_proc();
 		}
 	}
-
-	DEBUG(sl, 1, "All pointers nulled");
 
 	assert(_sl.action == SLA_NULL);
 }
@@ -464,16 +465,6 @@ static inline void SlWriteUint64(uint64 x)
 {
 	SlWriteUint32((uint32)(x >> 32));
 	SlWriteUint32((uint32)x);
-}
-
-/**
- * Read in bytes from the file/data structure but don't do
- * anything with them, discarding them in effect
- * @param length The amount of bytes that is being treated this way
- */
-static inline void SlSkipBytes(size_t length)
-{
-	for (; length != 0; length--) SlReadByte();
 }
 
 /**
@@ -792,7 +783,7 @@ void WriteValue(void *ptr, VarType conv, int64 val)
 		case SLE_VAR_U32: *(uint32*)ptr = val; break;
 		case SLE_VAR_I64: *(int64 *)ptr = val; break;
 		case SLE_VAR_U64: *(uint64*)ptr = val; break;
-		case SLE_VAR_NAME: *(char**)ptr = CopyFromOldName(val); break;
+		case SLE_VAR_NAME: *reinterpret_cast<std::string *>(ptr) = CopyFromOldName(val); break;
 		case SLE_VAR_NULL: break;
 		default: NOT_REACHED();
 	}
@@ -866,7 +857,7 @@ static void SlSaveLoadConv(void *ptr, VarType conv)
 static inline size_t SlCalcNetStringLen(const char *ptr, size_t length)
 {
 	if (ptr == nullptr) return 0;
-	return min(strlen(ptr), length - 1);
+	return std::min(strlen(ptr), length - 1);
 }
 
 /**
@@ -898,6 +889,21 @@ static inline size_t SlCalcStringLen(const void *ptr, size_t length, VarType con
 	}
 
 	len = SlCalcNetStringLen(str, len);
+	return len + SlGetArrayLength(len); // also include the length of the index
+}
+
+/**
+ * Calculate the gross length of the string that it
+ * will occupy in the savegame. This includes the real length, returned
+ * by SlCalcNetStringLen and the length that the index will occupy.
+ * @param ptr Pointer to the \c std::string.
+ * @return The gross length of the string.
+ */
+static inline size_t SlCalcStdStringLen(const void *ptr)
+{
+	const std::string *str = reinterpret_cast<const std::string *>(ptr);
+
+	size_t len = str->length();
 	return len + SlGetArrayLength(len); // also include the length of the index
 }
 
@@ -974,6 +980,53 @@ static void SlString(void *ptr, size_t length, VarType conv)
 			str_validate((char *)ptr, (char *)ptr + len, settings);
 			break;
 		}
+		case SLA_PTRS: break;
+		case SLA_NULL: break;
+		default: NOT_REACHED();
+	}
+}
+
+/**
+ * Save/Load a \c std::string.
+ * @param ptr the string being manipulated
+ * @param conv must be SLE_FILE_STRING
+ */
+static void SlStdString(void *ptr, VarType conv)
+{
+	std::string *str = reinterpret_cast<std::string *>(ptr);
+
+	switch (_sl.action) {
+		case SLA_SAVE: {
+			size_t len = str->length();
+			SlWriteArrayLength(len);
+			SlCopyBytes(const_cast<void *>(static_cast<const void *>(str->c_str())), len);
+			break;
+		}
+
+		case SLA_LOAD_CHECK:
+		case SLA_LOAD: {
+			size_t len = SlReadArrayLength();
+			char *buf = AllocaM(char, len + 1);
+
+			SlCopyBytes(buf, len);
+			buf[len] = '\0'; // properly terminate the string
+
+			StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK;
+			if ((conv & SLF_ALLOW_CONTROL) != 0) {
+				settings = settings | SVS_ALLOW_CONTROL_CODE;
+				if (IsSavegameVersionBefore(SLV_169)) {
+					str_fix_scc_encoded(buf, buf + len);
+				}
+			}
+			if ((conv & SLF_ALLOW_NEWLINE) != 0) {
+				settings = settings | SVS_ALLOW_NEWLINE;
+			}
+			str_validate(buf, buf + len, settings);
+
+			// Store sanitized string.
+			str->assign(buf);
+		}
+
 		case SLA_PTRS: break;
 		case SLA_NULL: break;
 		default: NOT_REACHED();
@@ -1086,7 +1139,7 @@ static size_t ReferenceToInt(const void *obj, SLRefType rt)
  */
 static void *IntToReference(size_t index, SLRefType rt)
 {
-	assert_compile(sizeof(size_t) <= sizeof(void *));
+	static_assert(sizeof(size_t) <= sizeof(void *));
 
 	assert(_sl.action == SLA_PTRS);
 
@@ -1403,6 +1456,7 @@ size_t SlCalcObjMemberLength(const void *object, const SaveLoad *sld)
 		case SL_STR:
 		case SL_LST:
 		case SL_DEQUE:
+		case SL_STDSTR:
 			/* CONDITIONAL saveload types depend on the savegame version */
 			if (!SlIsObjectValidInSavegame(sld)) break;
 
@@ -1413,6 +1467,7 @@ size_t SlCalcObjMemberLength(const void *object, const SaveLoad *sld)
 				case SL_STR: return SlCalcStringLen(GetVariableAddress(object, sld), sld->length, sld->conv);
 				case SL_LST: return SlCalcListLen(GetVariableAddress(object, sld));
 				case SL_DEQUE: return SlCalcDequeLen(GetVariableAddress(object, sld), sld->conv);
+				case SL_STDSTR: return SlCalcStdStringLen(GetVariableAddress(object, sld));
 				default: NOT_REACHED();
 			}
 			break;
@@ -1450,6 +1505,8 @@ static bool IsVariableSizeRight(const SaveLoad *sld)
 				case SLE_VAR_I64:
 				case SLE_VAR_U64:
 					return sld->size == sizeof(int64);
+				case SLE_VAR_NAME:
+					return sld->size == sizeof(std::string);
 				default:
 					return sld->size == sizeof(void *);
 			}
@@ -1460,6 +1517,10 @@ static bool IsVariableSizeRight(const SaveLoad *sld)
 		case SL_STR:
 			/* These should be pointer sized, or fixed array. */
 			return sld->size == sizeof(void *) || sld->size == sld->length;
+
+		case SL_STDSTR:
+			/* These should be all pointers to std::string. */
+			return sld->size == sizeof(std::string);
 
 		default:
 			return true;
@@ -1482,6 +1543,7 @@ bool SlObjectMember(void *ptr, const SaveLoad *sld)
 		case SL_STR:
 		case SL_LST:
 		case SL_DEQUE:
+		case SL_STDSTR:
 			/* CONDITIONAL saveload types depend on the savegame version */
 			if (!SlIsObjectValidInSavegame(sld)) return false;
 			if (SlSkipVariableOnLoad(sld)) return false;
@@ -1510,6 +1572,7 @@ bool SlObjectMember(void *ptr, const SaveLoad *sld)
 				case SL_STR: SlString(ptr, sld->length, sld->conv); break;
 				case SL_LST: SlList(ptr, (SLRefType)conv); break;
 				case SL_DEQUE: SlDeque(ptr, conv); break;
+				case SL_STDSTR: SlStdString(ptr, sld->conv); break;
 				default: NOT_REACHED();
 			}
 			break;
@@ -1556,7 +1619,7 @@ void SlObject(void *object, const SaveLoad *sld)
 	}
 
 	for (; sld->cmd != SL_END; sld++) {
-		void *ptr = sld->global ? sld->address : GetVariableAddress(object, sld);
+		void *ptr = GetVariableAddress(object, sld);
 		SlObjectMember(ptr, sld);
 	}
 }
@@ -1688,32 +1751,6 @@ static void SlLoadCheckChunk(const ChunkHandler *ch)
 }
 
 /**
- * Stub Chunk handlers to only calculate length and do nothing else.
- * The intended chunk handler that should be called.
- */
-static ChunkSaveLoadProc *_stub_save_proc;
-
-/**
- * Stub Chunk handlers to only calculate length and do nothing else.
- * Actually call the intended chunk handler.
- * @param arg ignored parameter.
- */
-static inline void SlStubSaveProc2(void *arg)
-{
-	_stub_save_proc();
-}
-
-/**
- * Stub Chunk handlers to only calculate length and do nothing else.
- * Call SlAutoLenth with our stub save proc that will eventually
- * call the intended chunk handler.
- */
-static void SlStubSaveProc()
-{
-	SlAutolength(SlStubSaveProc2, nullptr);
-}
-
-/**
  * Save a chunk of data (eg. vehicles, stations, etc.). Each chunk is
  * prefixed by an ID identifying it, followed by data, and terminator where appropriate
  * @param ch The chunkhandler that will be used for the operation
@@ -1727,12 +1764,6 @@ static void SlSaveChunk(const ChunkHandler *ch)
 
 	SlWriteUint32(ch->id);
 	DEBUG(sl, 2, "Saving chunk %c%c%c%c", ch->id >> 24, ch->id >> 16, ch->id >> 8, ch->id);
-
-	if (ch->flags & CH_AUTO_LENGTH) {
-		/* Need to calculate the length. Solve that by calling SlAutoLength in the save_proc. */
-		_stub_save_proc = proc;
-		proc = SlStubSaveProc;
-	}
 
 	_sl.block_mode = ch->flags & CH_TYPE_MASK;
 	switch (ch->flags & CH_TYPE_MASK) {
@@ -1813,16 +1844,12 @@ static void SlFixPointers()
 {
 	_sl.action = SLA_PTRS;
 
-	DEBUG(sl, 1, "Fixing pointers");
-
 	FOR_ALL_CHUNK_HANDLERS(ch) {
 		if (ch->ptrs_proc != nullptr) {
-			DEBUG(sl, 2, "Fixing pointers for %c%c%c%c", ch->id >> 24, ch->id >> 16, ch->id >> 8, ch->id);
+			DEBUG(sl, 3, "Fixing pointers for %c%c%c%c", ch->id >> 24, ch->id >> 16, ch->id >> 8, ch->id);
 			ch->ptrs_proc();
 		}
 	}
-
-	DEBUG(sl, 1, "All pointers fixed");
 
 	assert(_sl.action == SLA_PTRS);
 }
@@ -2275,40 +2302,163 @@ struct LZMASaveFilter : SaveFilter {
 
 #endif /* WITH_LIBLZMA */
 
+/********************************************
+ ********** START OF ZSTD CODE **************
+ ********************************************/
+
+#if defined(WITH_ZSTD)
+#include <zstd.h>
+
+
+/** Filter using ZSTD compression. */
+struct ZSTDLoadFilter : LoadFilter {
+	ZSTD_DCtx *zstd;  ///< ZSTD decompression context
+	byte fread_buf[MEMORY_CHUNK_SIZE];  ///< Buffer for reading from the file
+	ZSTD_inBuffer input;  ///< ZSTD input buffer for fread_buf
+
+	/**
+	 * Initialise this filter.
+	 * @param chain The next filter in this chain.
+	 */
+	ZSTDLoadFilter(LoadFilter *chain) : LoadFilter(chain)
+	{
+		this->zstd = ZSTD_createDCtx();
+		if (!this->zstd) SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, "cannot initialize compressor");
+		this->input = {this->fread_buf, 0, 0};
+	}
+
+	/** Clean everything up. */
+	~ZSTDLoadFilter()
+	{
+		ZSTD_freeDCtx(this->zstd);
+	}
+
+	size_t Read(byte *buf, size_t size) override
+	{
+		ZSTD_outBuffer output{buf, size, 0};
+
+		do {
+			/* read more bytes from the file? */
+			if (this->input.pos == this->input.size) {
+				this->input.size = this->chain->Read(this->fread_buf, sizeof(this->fread_buf));
+				this->input.pos = 0;
+			}
+
+			size_t ret = ZSTD_decompressStream(this->zstd, &output, &this->input);
+			if (ZSTD_isError(ret)) SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, "libzstd returned error code");
+			if (ret == 0) break;
+		} while (output.pos < output.size);
+
+		return output.pos;
+	}
+};
+
+/** Filter using ZSTD compression. */
+struct ZSTDSaveFilter : SaveFilter {
+	ZSTD_CCtx *zstd;  ///< ZSTD compression context
+
+	/**
+	 * Initialise this filter.
+	 * @param chain             The next filter in this chain.
+	 * @param compression_level The requested level of compression.
+	 */
+	ZSTDSaveFilter(SaveFilter *chain, byte compression_level) : SaveFilter(chain)
+	{
+		this->zstd = ZSTD_createCCtx();
+		if (!this->zstd) SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, "cannot initialize compressor");
+		if (ZSTD_isError(ZSTD_CCtx_setParameter(this->zstd, ZSTD_c_compressionLevel, (int)compression_level - 100))) {
+			ZSTD_freeCCtx(this->zstd);
+			SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, "invalid compresison level");
+		}
+	}
+
+	/** Clean up what we allocated. */
+	~ZSTDSaveFilter()
+	{
+		ZSTD_freeCCtx(this->zstd);
+	}
+
+	/**
+	 * Helper loop for writing the data.
+	 * @param p      The bytes to write.
+	 * @param len    Amount of bytes to write.
+	 * @param mode   Mode for ZSTD_compressStream2.
+	 */
+	void WriteLoop(byte *p, size_t len, ZSTD_EndDirective mode)
+	{
+		byte buf[MEMORY_CHUNK_SIZE]; // output buffer
+		ZSTD_inBuffer input{p, len, 0};
+
+		bool finished;
+		do {
+			ZSTD_outBuffer output{buf, sizeof(buf), 0};
+			size_t remaining = ZSTD_compressStream2(this->zstd, &output, &input, mode);
+			if (ZSTD_isError(remaining)) SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, "libzstd returned error code");
+
+			if (output.pos != 0) this->chain->Write(buf, output.pos);
+
+			finished = (mode == ZSTD_e_end ? (remaining == 0) : (input.pos == input.size));
+		} while (!finished);
+	}
+
+	void Write(byte *buf, size_t size) override
+	{
+		this->WriteLoop(buf, size, ZSTD_e_continue);
+	}
+
+	void Finish() override
+	{
+		this->WriteLoop(nullptr, 0, ZSTD_e_end);
+		this->chain->Finish();
+	}
+};
+#endif /* WITH_LIBZSTD */
+
 /*******************************************
  ************* END OF CODE *****************
  *******************************************/
 
 /** The format for a reader/writer type of a savegame */
-struct SaveLoadFormat {
-	const char *name;                     ///< name of the compressor/decompressor (debug-only)
-	uint32 tag;                           ///< the 4-letter tag by which it is identified in the savegame
+// struct SaveLoadFormat {
+// 	const char *name;                     ///< name of the compressor/decompressor (debug-only)
+// 	uint32 tag;                           ///< the 4-letter tag by which it is identified in the savegame
 
-	LoadFilter *(*init_load)(LoadFilter *chain);                    ///< Constructor for the load filter.
-	SaveFilter *(*init_write)(SaveFilter *chain, byte compression); ///< Constructor for the save filter.
+// 	LoadFilter *(*init_load)(LoadFilter *chain);                    ///< Constructor for the load filter.
+// 	SaveFilter *(*init_write)(SaveFilter *chain, byte compression); ///< Constructor for the save filter.
 
-	byte min_compression;                 ///< the minimum compression level of this format
-	byte default_compression;             ///< the default compression level of this format
-	byte max_compression;                 ///< the maximum compression level of this format
-};
+// 	byte min_compression;                 ///< the minimum compression level of this format
+// 	byte default_compression;             ///< the default compression level of this format
+// 	byte max_compression;                 ///< the maximum compression level of this format
+// };
 
 /** The different saveload formats known/understood by OpenTTD. */
-static const SaveLoadFormat _saveload_formats[] = {
+static const citymania::SaveLoadFormat _saveload_formats[] = {
+	/* Roughly 5 times larger at only 1% of the CPU usage over zlib level 6. */
+	{0, "none",   TO_BE32X('OTTN'), CreateLoadFilter<NoCompLoadFilter>, CreateSaveFilter<NoCompSaveFilter>, citymania::CompressionMethod::None, 0, 0, 0},
 #if defined(WITH_LZO)
 	/* Roughly 75% larger than zlib level 6 at only ~7% of the CPU usage. */
-	{"lzo",    TO_BE32X('OTTD'), CreateLoadFilter<LZOLoadFilter>,    CreateSaveFilter<LZOSaveFilter>,    0, 0, 0},
+	{1, "lzo",    TO_BE32X('OTTD'), CreateLoadFilter<LZOLoadFilter>,    CreateSaveFilter<LZOSaveFilter>,    citymania::CompressionMethod::LZO, 0, 0, 0},
 #else
-	{"lzo",    TO_BE32X('OTTD'), nullptr,                            nullptr,                            0, 0, 0},
+	{1, "lzo",    TO_BE32X('OTTD'), nullptr,                            nullptr,                            citymania::CompressionMethod::LZO, 0, 0, 0},
 #endif
-	/* Roughly 5 times larger at only 1% of the CPU usage over zlib level 6. */
-	{"none",   TO_BE32X('OTTN'), CreateLoadFilter<NoCompLoadFilter>, CreateSaveFilter<NoCompSaveFilter>, 0, 0, 0},
 #if defined(WITH_ZLIB)
 	/* After level 6 the speed reduction is significant (1.5x to 2.5x slower per level), but the reduction in filesize is
 	 * fairly insignificant (~1% for each step). Lower levels become ~5-10% bigger by each level than level 6 while level
 	 * 1 is "only" 3 times as fast. Level 0 results in uncompressed savegames at about 8 times the cost of "none". */
-	{"zlib",   TO_BE32X('OTTZ'), CreateLoadFilter<ZlibLoadFilter>,   CreateSaveFilter<ZlibSaveFilter>,   0, 6, 9},
+	{2, "zlib",   TO_BE32X('OTTZ'), CreateLoadFilter<ZlibLoadFilter>,   CreateSaveFilter<ZlibSaveFilter>,   citymania::CompressionMethod::Zlib, 0, 6, 9},
 #else
-	{"zlib",   TO_BE32X('OTTZ'), nullptr,                            nullptr,                            0, 0, 0},
+	{2, "zlib",   TO_BE32X('OTTZ'), nullptr,                            nullptr,                            citymania::CompressionMethod::Zlib, 0, 0, 0},
+#endif
+#if defined(WITH_ZSTD)
+	/* Zstd provides a decent compression rate at a very high compression/decompression speed. Compared to lzma level 2
+	 * zstd saves are about 40% larger (on level 1) but it has about 30x faster compression and 5x decompression making it
+	 * a good choice for multiplayer servers. And zstd level 1 seems to be the optimal one for client connection speed
+	 * (compress + 10 MB/s download + decompress time), about 3x faster than lzma:2 and 1.5x than zlib:2 and lzo.
+	 * As zstd has negative compression levels the values were increased by 100 moving zstd level range -100..22 into
+	 * openttd 0..122. Also note that value 100 mathes zstd level 0 which is a special value for default level 3 (openttd 103) */
+	{3, "zstd",   TO_BE32X('OTTS'), CreateLoadFilter<ZSTDLoadFilter>,   CreateSaveFilter<ZSTDSaveFilter>,   citymania::CompressionMethod::ZSTD, 0, 101, 122},
+#else
+	{3, "zstd",   TO_BE32X('OTTS'), nullptr,                            nullptr,                            citymania::CompressionMethod::ZSTD, 0, 0, 0},
 #endif
 #if defined(WITH_LIBLZMA)
 	/* Level 2 compression is speed wise as fast as zlib level 6 compression (old default), but results in ~10% smaller saves.
@@ -2316,11 +2466,109 @@ static const SaveLoadFormat _saveload_formats[] = {
 	 * The next significant reduction in file size is at level 4, but that is already 4 times slower. Level 3 is primarily 50%
 	 * slower while not improving the filesize, while level 0 and 1 are faster, but don't reduce savegame size much.
 	 * It's OTTX and not e.g. OTTL because liblzma is part of xz-utils and .tar.xz is preferred over .tar.lzma. */
-	{"lzma",   TO_BE32X('OTTX'), CreateLoadFilter<LZMALoadFilter>,   CreateSaveFilter<LZMASaveFilter>,   0, 2, 9},
+	{4, "lzma",   TO_BE32X('OTTX'), CreateLoadFilter<LZMALoadFilter>,   CreateSaveFilter<LZMASaveFilter>,   citymania::CompressionMethod::LZMA, 0, 2, 9},
 #else
-	{"lzma",   TO_BE32X('OTTX'), nullptr,                            nullptr,                            0, 0, 0},
+	{4, "lzma",   TO_BE32X('OTTX'), nullptr,                            nullptr,                            citymania::CompressionMethod::LZMA, 0, 0, 0},
 #endif
 };
+
+namespace citymania {  // citymania savegame format handling
+
+static const std::string DEFAULT_NETWORK_SAVEGAME_COMPRESSION = "zstd:1 zlib:2 lzma:0 lzo:0";
+
+/**
+ * Parses the savegame format and compression level string ("format:[compression_level]").
+ * @param str  String to parse
+ * @return Parsest SavePreset or std::nullopt
+ */
+static std::optional<SavePreset> ParseSavePreset(const std::string &str)
+{
+    auto delimiter_pos = str.find(':');
+    auto format = (delimiter_pos != std::string::npos ? str.substr(0, delimiter_pos) : str);
+    for (auto &slf : _saveload_formats) {
+        if (slf.init_write != nullptr && format == slf.name) {
+            /* If compression level wasn't specified use the default one */
+            if (delimiter_pos == std::string::npos) return SavePreset{&slf, slf.default_compression};
+
+            auto level_str = str.substr(delimiter_pos + 1);
+            int level;
+            try{
+                level = stoi(level_str);
+            } catch(const std::exception &e) {
+                /* Can't parse compression level, set it out ouf bounds to fail later */
+                level = (int)slf.max_compression + 1;
+            }
+
+            if (level != Clamp<int>(level, slf.min_compression, slf.max_compression)) {
+                /* Invalid compression level, show the error and use default level */
+                SetDParamStr(0, level_str.c_str());
+                ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL, WL_CRITICAL);
+                return SavePreset{&slf, slf.default_compression};
+            }
+
+            return SavePreset{&slf, (byte)level};
+        }
+    }
+    SetDParamStr(0, str.c_str());
+    ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM, WL_CRITICAL);
+    return {};
+}
+
+static_assert(lengthof(_saveload_formats) <= 8);  // uint8 is used for the bitset of format ids
+
+/**
+ * Finds the best savegame preset to use in network game based on server settings and client capabilies.
+ * @param server_formats  String of space-separated format descriptions in form format[:compression_level] acceptable for the server (listed first take priority).
+ * @param client_formats  Bitset of savegame formats available to the client (as returned by GetAvailableLoadFormats)
+ * @return SavePreset that satisfies both server and client or std::nullopt
+ */
+std::optional<SavePreset> FindCompatibleSavePreset(const std::string &server_formats, uint8 client_formats)
+{
+    std::istringstream iss(server_formats.empty() ? DEFAULT_NETWORK_SAVEGAME_COMPRESSION : server_formats);
+    std::string preset_str;
+    while (std::getline(iss, preset_str, ' ')) {
+        auto preset = ParseSavePreset(preset_str);
+        if (!preset) continue;
+        if ((client_formats & (1 << preset->format->id)) != 0) return preset;
+    }
+    return {};
+}
+
+/**
+ * Return the bitset of savegame formats that this game instance can load
+ * @return bitset of available savegame formats
+ */
+uint8 GetAvailableLoadFormats()
+{
+    uint8 res = 0;
+    for(auto &slf : _saveload_formats) {
+        if (slf.init_load != nullptr) {
+            res |= (1 << slf.id);
+        }
+    }
+    return res;
+}
+
+/**
+ * Return the save preset to use for local game saves.
+ * @return SavePreset to use
+ */
+static SavePreset GetLocalSavePreset()
+{
+    if (!StrEmpty(_savegame_format)) {
+        auto config = ParseSavePreset(_savegame_format);
+        if (config) return *config;
+    }
+
+    const citymania::SaveLoadFormat *def = lastof(_saveload_formats);
+
+    /* find default savegame format, the highest one with which files can be written */
+    while (!def->init_write) def--;
+
+    return {def, def->default_compression};
+}
+
+} // namespace citymania
 
 /**
  * Return the savegameformat of the game. Whether it was created with ZLIB compression
@@ -2329,6 +2577,8 @@ static const SaveLoadFormat _saveload_formats[] = {
  * @param compression_level Output for telling what compression level we want.
  * @return Pointer to SaveLoadFormat struct giving all characteristics of this type of savegame
  */
+#if 0
+Citymania uses other way
 static const SaveLoadFormat *GetSavegameFormat(char *s, byte *compression_level)
 {
 	const SaveLoadFormat *def = lastof(_saveload_formats);
@@ -2376,10 +2626,12 @@ static const SaveLoadFormat *GetSavegameFormat(char *s, byte *compression_level)
 	return def;
 }
 
+#endif
+
 /* actual loader/saver function */
 void InitializeGame(uint size_x, uint size_y, bool reset_date, bool reset_settings);
 extern bool AfterLoadGame();
-extern bool LoadOldSaveGame(const char *file);
+extern bool LoadOldSaveGame(const std::string &file);
 
 /**
  * Clear temporary data that is passed between various saveload phases.
@@ -2416,8 +2668,8 @@ static inline void ClearSaveLoadState()
  */
 static void SaveFileStart()
 {
-	_sl.ff_state = _fast_forward;
-	_fast_forward = 0;
+	_sl.game_speed = _game_speed;
+	_game_speed = 100;
 	SetMouseCursorBusy(true);
 
 	InvalidateWindowData(WC_STATUS_BAR, 0, SBI_SAVELOAD_START);
@@ -2427,11 +2679,15 @@ static void SaveFileStart()
 /** Update the gui accordingly when saving is done and release locks on saveload. */
 static void SaveFileDone()
 {
-	if (_game_mode != GM_MENU) _fast_forward = _sl.ff_state;
+	if (_game_mode != GM_MENU) _game_speed = _sl.game_speed;
 	SetMouseCursorBusy(false);
 
 	InvalidateWindowData(WC_STATUS_BAR, 0, SBI_SAVELOAD_FINISH);
 	_sl.saveinprogress = false;
+
+#ifdef __EMSCRIPTEN__
+	EM_ASM(if (window["openttd_syncfs"]) openttd_syncfs());
+#endif
 }
 
 /** Set the error message from outside of the actual loading/saving of the game (AfterLoadGame and friends) */
@@ -2463,17 +2719,17 @@ static void SaveFileError()
  * We have written the whole game into memory, _memory_savegame, now find
  * and appropriate compressor and start writing to file.
  */
-static SaveOrLoadResult SaveFileToDisk(bool threaded)
+static SaveOrLoadResult SaveFileToDisk(bool threaded, citymania::SavePreset preset)
 {
 	try {
-		byte compression;
-		const SaveLoadFormat *fmt = GetSavegameFormat(_savegame_format, &compression);
+		// byte compression;
+		// const SaveLoadFormat *fmt = GetSavegameFormat(_savegame_format, &compression);
 
 		/* We have written our stuff to memory, now write it to file! */
-		uint32 hdr[2] = { fmt->tag, TO_BE32(SAVEGAME_VERSION << 16) };
+		uint32 hdr[2] = { preset.format->tag, TO_BE32(SAVEGAME_VERSION << 16) };
 		_sl.sf->Write((byte*)hdr, sizeof(hdr));
 
-		_sl.sf = fmt->init_write(_sl.sf, compression);
+		_sl.sf = preset.format->init_write(_sl.sf, preset.compression_level);
 		_sl.dumper->Flush(_sl.sf);
 
 		ClearSaveLoadState();
@@ -2521,7 +2777,7 @@ void WaitTillSaved()
  * @param threaded Whether to try to perform the saving asynchronously.
  * @return Return the result of the action. #SL_OK or #SL_ERROR
  */
-static SaveOrLoadResult DoSave(SaveFilter *writer, bool threaded)
+static SaveOrLoadResult DoSave(SaveFilter *writer, bool threaded, citymania::SavePreset preset)
 {
 	assert(!_sl.saveinprogress);
 
@@ -2535,10 +2791,10 @@ static SaveOrLoadResult DoSave(SaveFilter *writer, bool threaded)
 
 	SaveFileStart();
 
-	if (!threaded || !StartNewThread(&_save_thread, "ottd:savegame", &SaveFileToDisk, true)) {
+	if (!threaded || !StartNewThread(&_save_thread, "ottd:savegame", &SaveFileToDisk, true, std::move(preset))) {
 		if (threaded) DEBUG(sl, 1, "Cannot create savegame thread, reverting to single-threaded mode...");
 
-		SaveOrLoadResult result = SaveFileToDisk(false);
+		SaveOrLoadResult result = SaveFileToDisk(false, preset);
 		SaveFileDone();
 
 		return result;
@@ -2553,11 +2809,11 @@ static SaveOrLoadResult DoSave(SaveFilter *writer, bool threaded)
  * @param threaded Whether to try to perform the saving asynchronously.
  * @return Return the result of the action. #SL_OK or #SL_ERROR
  */
-SaveOrLoadResult SaveWithFilter(SaveFilter *writer, bool threaded)
+SaveOrLoadResult SaveWithFilter(SaveFilter *writer, bool threaded, citymania::SavePreset preset)
 {
 	try {
 		_sl.action = SLA_SAVE;
-		return DoSave(writer, threaded);
+		return DoSave(writer, threaded, preset);
 	} catch (...) {
 		ClearSaveLoadState();
 		return SL_ERROR;
@@ -2585,7 +2841,7 @@ static SaveOrLoadResult DoLoad(LoadFilter *reader, bool load_check)
 	if (_sl.lf->Read((byte*)hdr, sizeof(hdr)) != sizeof(hdr)) SlError(STR_GAME_SAVELOAD_ERROR_FILE_NOT_READABLE);
 
 	/* see if we have any loader for this type. */
-	const SaveLoadFormat *fmt = _saveload_formats;
+	const citymania::SaveLoadFormat *fmt = _saveload_formats;
 	for (;;) {
 		/* No loader found, treat as version 0 and use LZO format */
 		if (fmt == endof(_saveload_formats)) {
@@ -2619,6 +2875,7 @@ static SaveOrLoadResult DoLoad(LoadFilter *reader, bool load_check)
 
 			/* Is the version higher than the current? */
 			if (_sl_version > SAVEGAME_VERSION) SlError(STR_GAME_SAVELOAD_ERROR_TOO_NEW_SAVEGAME);
+			if (_sl_version >= SLV_START_PATCHPACKS && _sl_version <= SLV_END_PATCHPACKS) SlError(STR_GAME_SAVELOAD_ERROR_PATCHPACK);
 			break;
 		}
 
@@ -2631,6 +2888,8 @@ static SaveOrLoadResult DoLoad(LoadFilter *reader, bool load_check)
 		seprintf(err_str, lastof(err_str), "Loader for '%s' is not available.", fmt->name);
 		SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, err_str);
 	}
+
+	DEBUG(sl, 2, "Using saveload format '%s'", fmt->name);
 
 	_sl.lf = fmt->init_load(_sl.lf);
 	_sl.reader = new ReadBuffer(_sl.lf);
@@ -2730,7 +2989,7 @@ SaveOrLoadResult LoadWithFilter(LoadFilter *reader)
  * @param threaded True when threaded saving is allowed
  * @return Return the result of the action. #SL_OK, #SL_ERROR, or #SL_REINIT ("unload" the game)
  */
-SaveOrLoadResult SaveOrLoad(const char *filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded)
+SaveOrLoadResult SaveOrLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded)
 {
 	/* An instance of saving is already active, so don't go saving again */
 	if (_sl.saveinprogress && fop == SLO_SAVE && dft == DFT_GAME_FILE && threaded) {
@@ -2794,15 +3053,15 @@ SaveOrLoadResult SaveOrLoad(const char *filename, SaveLoadOperation fop, Detaile
 		}
 
 		if (fop == SLO_SAVE) { // SAVE game
-			DEBUG(desync, 1, "save: %08x; %02x; %s", _date, _date_fract, filename);
+			DEBUG(desync, 1, "save: %08x; %02x; %s", _date, _date_fract, filename.c_str());
 			if (_network_server || !_settings_client.gui.threaded_saves) threaded = false;
 
-			return DoSave(new FileWriter(fh), threaded);
+			return DoSave(new FileWriter(fh), threaded, citymania::GetLocalSavePreset());
 		}
 
 		/* LOAD game */
 		assert(fop == SLO_LOAD || fop == SLO_CHECK);
-		DEBUG(desync, 1, "load: %s", filename);
+		DEBUG(desync, 1, "load: %s", filename.c_str());
 		return DoLoad(new FileReader(fh), fop == SLO_CHECK);
 	} catch (...) {
 		/* This code may be executed both for old and new save games. */
@@ -2891,7 +3150,7 @@ void FileToSaveLoad::SetMode(SaveLoadOperation fop, AbstractFileType aft, Detail
  */
 void FileToSaveLoad::SetName(const char *name)
 {
-	strecpy(this->name, name, lastof(this->name));
+	this->name = name;
 }
 
 /**

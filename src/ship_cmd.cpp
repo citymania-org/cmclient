@@ -328,11 +328,11 @@ void Ship::UpdateDeltaXY()
 }
 
 /**
- * Test-procedure for HasVehicleOnPos to check for a ship.
+ * Test-procedure for HasVehicleOnPos to check for any ships which are visible and not stopped by the player.
  */
-static Vehicle *EnsureNoVisibleShipProc(Vehicle *v, void *data)
+static Vehicle *EnsureNoMovingShipProc(Vehicle *v, void *data)
 {
-	return v->type == VEH_SHIP && (v->vehstatus & VS_HIDDEN) == 0 ? v : nullptr;
+	return v->type == VEH_SHIP && (v->vehstatus & (VS_HIDDEN | VS_STOPPED)) == 0 ? v : nullptr;
 }
 
 static bool CheckShipLeaveDepot(Ship *v)
@@ -351,7 +351,7 @@ static bool CheckShipLeaveDepot(Ship *v)
 
 	/* Don't leave depot if another vehicle is already entering/leaving */
 	/* This helps avoid CPU load if many ships are set to start at the same time */
-	if (HasVehicleOnPos(v->tile, nullptr, &EnsureNoVisibleShipProc)) return true;
+	if (HasVehicleOnPos(v->tile, nullptr, &EnsureNoMovingShipProc)) return true;
 
 	TileIndex tile = v->tile;
 	Axis axis = GetShipDepotAxis(tile);
@@ -405,8 +405,8 @@ static bool ShipAccelerate(Vehicle *v)
 	uint spd;
 	byte t;
 
-	spd = min(v->cur_speed + 1, v->vcache.cached_max_speed);
-	spd = min(spd, v->current_order.GetMaxSpeed() * 2);
+	spd = std::min<uint>(v->cur_speed + 1, v->vcache.cached_max_speed);
+	spd = std::min<uint>(spd, v->current_order.GetMaxSpeed() * 2);
 
 	/* updates statusbar only if speed have changed to save CPU time */
 	if (spd != v->cur_speed) {
@@ -646,6 +646,8 @@ static void ShipController(Ship *v)
 		if ((v->tick_counter & 7) == 0) {
 			DirDiff diff = DirDifference(v->direction, v->rotation);
 			v->rotation = ChangeDir(v->rotation, diff > DIRDIFF_REVERSE ? DIRDIFF_45LEFT : DIRDIFF_45RIGHT);
+			/* Invalidate the sprite cache direction to force recalculation of viewport */
+			v->sprite_cache.last_direction = INVALID_DIR;
 			v->UpdateViewport(true, true);
 		}
 		return;
@@ -864,7 +866,7 @@ CommandCost CmdBuildShip(TileIndex tile, DoCommandFlag flags, const Engine *e, u
 		v->SetServiceInterval(Company::Get(_current_company)->settings.vehicle.servint_ships);
 		v->date_of_last_service = _date;
 		v->build_year = _cur_year;
-		v->sprite_seq.Set(SPR_IMG_QUERY);
+		v->sprite_cache.sprite_seq.Set(SPR_IMG_QUERY);
 		v->random_bits = VehicleRandomBits();
 
 		v->UpdateCache();

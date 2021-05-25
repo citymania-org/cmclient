@@ -75,6 +75,7 @@ public:
 	void PrepareToRead();
 
 	bool   CanReadFromPacket (uint bytes_to_read);
+	bool   CMCheckRead (uint bytes_to_read);  // CityMaina needs check that doesn't close connections
 	bool   Recv_bool  ();
 	uint8  Recv_uint8 ();
 	uint16 Recv_uint16();

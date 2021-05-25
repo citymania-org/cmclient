@@ -18,7 +18,34 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+/* CTRunDelegateCreate is supported since MacOS X 10.5, but was only included in the SDKs starting with the 10.9 SDK. */
+#ifndef HAVE_OSX_109_SDK
+extern "C" {
+	typedef const struct __CTRunDelegate * CTRunDelegateRef;
+
+	typedef void (*CTRunDelegateDeallocateCallback) (void* refCon);
+	typedef CGFloat (*CTRunDelegateGetAscentCallback) (void* refCon);
+	typedef CGFloat (*CTRunDelegateGetDescentCallback) (void* refCon);
+	typedef CGFloat (*CTRunDelegateGetWidthCallback) (void* refCon);
+	typedef struct {
+		CFIndex                         version;
+		CTRunDelegateDeallocateCallback dealloc;
+		CTRunDelegateGetAscentCallback  getAscent;
+		CTRunDelegateGetDescentCallback getDescent;
+		CTRunDelegateGetWidthCallback   getWidth;
+	} CTRunDelegateCallbacks;
+
+	enum {
+		kCTRunDelegateVersion1 = 1,
+		kCTRunDelegateCurrentVersion = kCTRunDelegateVersion1
+	};
+
+	extern const CFStringRef kCTRunDelegateAttributeName AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+
+	CTRunDelegateRef CTRunDelegateCreate(const CTRunDelegateCallbacks* callbacks, void* refCon) AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+}
+#endif /* HAVE_OSX_109_SDK */
+
 /** Cached current locale. */
 static CFAutoRelease<CFLocaleRef> _osx_locale;
 /** CoreText cache for font information, cleared when OTTD changes fonts. */
@@ -147,12 +174,16 @@ static CTRunDelegateCallbacks _sprite_font_callback = {
 	for (const auto &i : fontMapping) {
 		if (i.first - last == 0) continue;
 
-		if (!_font_cache[i.second->fc->GetSize()]) {
-			/* Cache font information. */
-			CFAutoRelease<CFStringRef> font_name(CFStringCreateWithCString(kCFAllocatorDefault, i.second->fc->GetFontName(), kCFStringEncodingUTF8));
-			_font_cache[i.second->fc->GetSize()].reset(CTFontCreateWithName(font_name.get(), i.second->fc->GetFontSize(), nullptr));
+		CTFontRef font = (CTFontRef)i.second->fc->GetOSHandle();
+		if (font == nullptr) {
+			if (!_font_cache[i.second->fc->GetSize()]) {
+				/* Cache font information. */
+				CFAutoRelease<CFStringRef> font_name(CFStringCreateWithCString(kCFAllocatorDefault, i.second->fc->GetFontName(), kCFStringEncodingUTF8));
+				_font_cache[i.second->fc->GetSize()].reset(CTFontCreateWithName(font_name.get(), i.second->fc->GetFontSize(), nullptr));
+			}
+			font = _font_cache[i.second->fc->GetSize()].get();
 		}
-		CFAttributedStringSetAttribute(str.get(), CFRangeMake(last, i.first - last), kCTFontAttributeName, _font_cache[i.second->fc->GetSize()].get());
+		CFAttributedStringSetAttribute(str.get(), CFRangeMake(last, i.first - last), kCTFontAttributeName, font);
 
 		CGColorRef color = CGColorCreateGenericGray((uint8)i.second->colour / 255.0f, 1.0f); // We don't care about the real colours, just that they are different.
 		CFAttributedStringSetAttribute(str.get(), CFRangeMake(last, i.first - last), kCTForegroundColorAttributeName, color);
@@ -233,7 +264,7 @@ int CoreTextParagraphLayout::CoreTextLine::GetLeading() const
 {
 	int leading = 0;
 	for (const auto &run : *this) {
-		leading = max(leading, run.GetLeading());
+		leading = std::max(leading, run.GetLeading());
 	}
 
 	return leading;
@@ -262,7 +293,18 @@ void MacOSResetScriptCache(FontSize size)
 	_font_cache[size].reset();
 }
 
-/** Store current language locale as a CoreFounation locale. */
+/** Register an external font file with the CoreText system. */
+void MacOSRegisterExternalFont(const char *file_path)
+{
+	if (!MacOSVersionIsAtLeast(10, 6, 0)) return;
+
+	CFAutoRelease<CFStringRef> path(CFStringCreateWithCString(kCFAllocatorDefault, file_path, kCFStringEncodingUTF8));
+	CFAutoRelease<CFURLRef> url(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, path.get(), kCFURLPOSIXPathStyle, false));
+
+	CTFontManagerRegisterFontsForURL(url.get(), kCTFontManagerScopeProcess, nullptr);
+}
+
+/** Store current language locale as a CoreFoundation locale. */
 void MacOSSetCurrentLocaleName(const char *iso_code)
 {
 	if (!MacOSVersionIsAtLeast(10, 5, 0)) return;
@@ -406,23 +448,3 @@ int MacOSStringCompare(const char *s1, const char *s2)
 
 	return new OSXStringIterator();
 }
-
-#else
-void MacOSResetScriptCache(FontSize size) {}
-void MacOSSetCurrentLocaleName(const char *iso_code) {}
-
-int MacOSStringCompare(const char *s1, const char *s2)
-{
-	return 0;
-}
-
-/* static */ StringIterator *OSXStringIterator::Create()
-{
-	return nullptr;
-}
-
-/* static */ ParagraphLayouter *CoreTextParagraphLayoutFactory::GetParagraphLayout(CharType *buff, CharType *buff_end, FontMap &fontMapping)
-{
-	return nullptr;
-}
-#endif /* (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5) */

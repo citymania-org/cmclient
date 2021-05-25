@@ -47,7 +47,7 @@
 #include "safeguards.h"
 
 /** The sprite picker. */
-NewGrfDebugSpritePicker _newgrf_debug_sprite_picker = { SPM_NONE, nullptr, 0, std::vector<SpriteID>() };
+NewGrfDebugSpritePicker _newgrf_debug_sprite_picker = { SPM_NONE, nullptr, std::vector<SpriteID>() };
 
 /**
  * Get the feature index related to the window number.
@@ -81,12 +81,14 @@ enum NIType {
 	NIT_CARGO, ///< The property is a cargo
 };
 
+typedef const void *NIOffsetProc(const void *b);
+
 /** Representation of the data from a NewGRF property. */
 struct NIProperty {
-	const char *name;       ///< A (human readable) name for the property
-	ptrdiff_t offset;       ///< Offset of the variable in the class
-	byte read_size;         ///< Number of bytes (i.e. byte, word, dword etc)
-	byte prop;              ///< The number of the property
+	const char *name;          ///< A (human readable) name for the property
+	NIOffsetProc *offset_proc; ///< Callback proc to get the actual variable address in memory
+	byte read_size;            ///< Number of bytes (i.e. byte, word, dword etc)
+	byte prop;                 ///< The number of the property
 	byte type;
 };
 
@@ -96,11 +98,11 @@ struct NIProperty {
  * information on when they actually apply.
  */
 struct NICallback {
-	const char *name; ///< The human readable name of the callback
-	ptrdiff_t offset; ///< Offset of the variable in the class
-	byte read_size;   ///< The number of bytes (i.e. byte, word, dword etc) to read
-	byte cb_bit;      ///< The bit that needs to be set for this callback to be enabled
-	uint16 cb_id;     ///< The number of the callback
+	const char *name;          ///< The human readable name of the callback
+	NIOffsetProc *offset_proc; ///< Callback proc to get the actual variable address in memory
+	byte read_size;            ///< The number of bytes (i.e. byte, word, dword etc) to read
+	byte cb_bit;               ///< The bit that needs to be set for this callback to be enabled
+	uint16 cb_id;              ///< The number of the callback
 };
 /** Mask to show no bit needs to be enabled for the callback. */
 static const int CBM_NO_BIT = UINT8_MAX;
@@ -376,12 +378,12 @@ struct NewGRFInspectWindow : Window {
 			case WID_NGRFI_VEH_CHAIN: {
 				assert(this->HasChainIndex());
 				GrfSpecFeature f = GetFeatureNum(this->window_number);
-				size->height = max(size->height, GetVehicleImageCellSize((VehicleType)(VEH_TRAIN + (f - GSF_TRAINS)), EIT_IN_DEPOT).height + 2 + WD_BEVEL_TOP + WD_BEVEL_BOTTOM);
+				size->height = std::max(size->height, GetVehicleImageCellSize((VehicleType)(VEH_TRAIN + (f - GSF_TRAINS)), EIT_IN_DEPOT).height + 2 + WD_BEVEL_TOP + WD_BEVEL_BOTTOM);
 				break;
 			}
 
 			case WID_NGRFI_MAINPANEL:
-				resize->height = max(11, FONT_HEIGHT_NORMAL + 1);
+				resize->height = std::max(11, FONT_HEIGHT_NORMAL + 1);
 				resize->width  = 1;
 
 				size->height = 5 * resize->height + TOP_OFFSET + BOTTOM_OFFSET;
@@ -432,7 +434,7 @@ struct NewGRFInspectWindow : Window {
 				int skip = 0;
 				if (total_width > width) {
 					int sel_center = (sel_start + sel_end) / 2;
-					if (sel_center > width / 2) skip = min(total_width - width, sel_center - width / 2);
+					if (sel_center > width / 2) skip = std::min(total_width - width, sel_center - width / 2);
 				}
 
 				GrfSpecFeature f = GetFeatureNum(this->window_number);
@@ -494,7 +496,7 @@ struct NewGRFInspectWindow : Window {
 		if (nif->properties != nullptr) {
 			this->DrawString(r, i++, "Properties:");
 			for (const NIProperty *nip = nif->properties; nip->name != nullptr; nip++) {
-				const void *ptr = (const byte *)base + nip->offset;
+				const void *ptr = nip->offset_proc(base);
 				uint value;
 				switch (nip->read_size) {
 					case 1: value = *(const uint8  *)ptr; break;
@@ -528,7 +530,7 @@ struct NewGRFInspectWindow : Window {
 			this->DrawString(r, i++, "Callbacks:");
 			for (const NICallback *nic = nif->callbacks; nic->name != nullptr; nic++) {
 				if (nic->cb_bit != CBM_NO_BIT) {
-					const void *ptr = (const byte *)base_spec + nic->offset;
+					const void *ptr = nic->offset_proc(base_spec);
 					uint value;
 					switch (nic->read_size) {
 						case 1: value = *(const uint8  *)ptr; break;
@@ -807,7 +809,7 @@ GrfSpecFeature GetGrfSpecFeature(VehicleType type)
 
 /** Window used for aligning sprites. */
 struct SpriteAlignerWindow : Window {
-	typedef SmallPair<int16, int16> XyOffs;    ///< Pair for x and y offsets of the sprite before alignment. First value contains the x offset, second value y offset.
+	typedef std::pair<int16, int16> XyOffs;    ///< Pair for x and y offsets of the sprite before alignment. First value contains the x offset, second value y offset.
 
 	SpriteID current_sprite;                   ///< The currently shown sprite.
 	Scrollbar *vscroll;
@@ -864,7 +866,7 @@ struct SpriteAlignerWindow : Window {
 				size->height = ScaleGUITrad(200);
 				break;
 			case WID_SA_LIST:
-				resize->height = max(11, FONT_HEIGHT_NORMAL + 1);
+				resize->height = std::max(11, FONT_HEIGHT_NORMAL + 1);
 				resize->width  = 1;
 				break;
 			default:
@@ -900,7 +902,7 @@ struct SpriteAlignerWindow : Window {
 				int step_size = nwid->resize_y;
 
 				std::vector<SpriteID> &list = _newgrf_debug_sprite_picker.sprites;
-				int max = min<int>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), (uint)list.size());
+				int max = std::min<int>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), (uint)list.size());
 
 				int y = r.top + WD_FRAMERECT_TOP;
 				for (int i = this->vscroll->GetPosition(); i < max; i++) {

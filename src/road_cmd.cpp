@@ -61,7 +61,7 @@ RoadTypes _roadtypes_type;
  */
 void ResetRoadTypes()
 {
-	assert_compile(lengthof(_original_roadtypes) <= lengthof(_roadtypes));
+	static_assert(lengthof(_original_roadtypes) <= lengthof(_roadtypes));
 
 	uint i = 0;
 	for (; i < lengthof(_original_roadtypes); i++) _roadtypes[i] = _original_roadtypes[i];
@@ -1109,7 +1109,8 @@ CommandCost CmdRemoveLongRoad(TileIndex start_tile, DoCommandFlag flags, uint32 
 		p2 ^= IsInsideMM(p2 & 3, 1, 3) ? 3 : 0;
 	}
 
-	Money money = GetAvailableMoneyForCommand();
+	Money money_available = GetAvailableMoneyForCommand();
+	Money money_spent = 0;
 	TileIndex tile = start_tile;
 	CommandCost last_error = CMD_ERROR;
 	bool had_success = false;
@@ -1126,8 +1127,8 @@ CommandCost CmdRemoveLongRoad(TileIndex start_tile, DoCommandFlag flags, uint32 
 			CommandCost ret = RemoveRoad(tile, flags & ~DC_EXEC, bits, rtt, true);
 			if (ret.Succeeded()) {
 				if (flags & DC_EXEC) {
-					money -= ret.GetCost();
-					if (money < 0) {
+					money_spent += ret.GetCost();
+					if (money_spent > 0 && money_spent > money_available) {
 						_additional_cash_required = DoCommand(start_tile, end_tile, p2, flags & ~DC_EXEC, CMD_REMOVE_LONG_ROAD).GetCost();
 						return cost;
 					}
@@ -1191,7 +1192,7 @@ CommandCost CmdBuildRoadDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 		dep->build_date = _date;
 
 		/* A road depot has two road bits. */
-		UpdateCompanyRoadInfrastructure(rt, _current_company, 2);
+		UpdateCompanyRoadInfrastructure(rt, _current_company, ROAD_DEPOT_TRACKBIT_FACTOR);
 
 		MakeRoadDepot(tile, _current_company, dep->index, dir, rt);
 		MarkTileDirtyByTile(tile);
@@ -1217,7 +1218,7 @@ static CommandCost RemoveRoadDepot(TileIndex tile, DoCommandFlag flags)
 			/* A road depot has two road bits. */
 			RoadType rt = GetRoadTypeRoad(tile);
 			if (rt == INVALID_ROADTYPE) rt = GetRoadTypeTram(tile);
-			c->infrastructure.road[rt] -= 2;
+			c->infrastructure.road[rt] -= ROAD_DEPOT_TRACKBIT_FACTOR;
 			DirtyCompanyInfrastructureWindows(c->index);
 		}
 
@@ -1422,8 +1423,23 @@ void DrawRoadTypeCatenary(const TileInfo *ti, RoadType rt, RoadBits rb)
 	 * For tiles with OWNER_TOWN or OWNER_NONE, recolour CC to grey as a neutral colour. */
 	Owner owner = GetRoadOwner(ti->tile, GetRoadTramType(rt));
 	PaletteID pal = (owner == OWNER_NONE || owner == OWNER_TOWN ? GENERAL_SPRITE_COLOUR(COLOUR_GREY) : COMPANY_SPRITE_COLOUR(owner));
-	if (back != 0) AddSortableSpriteToDraw(back,  pal, ti->x, ti->y, 16, 16, TILE_HEIGHT + BB_HEIGHT_UNDER_BRIDGE, ti->z, IsTransparencySet(TO_CATENARY));
-	if (front != 0) AddSortableSpriteToDraw(front, pal, ti->x, ti->y, 16, 16, TILE_HEIGHT + BB_HEIGHT_UNDER_BRIDGE, ti->z, IsTransparencySet(TO_CATENARY));
+	int z_wires = (ti->tileh == SLOPE_FLAT ? 0 : TILE_HEIGHT) + BB_HEIGHT_UNDER_BRIDGE;
+	if (back != 0) {
+		/* The "back" sprite contains the west, north and east pillars.
+		 * We cut the sprite at 3/8 of the west/east edges to create 3 sprites.
+		 * 3/8 is chosen so that sprites can somewhat graphically extend into the tile. */
+		static const int INF = 1000; ///< big number compared to sprite size
+		static const SubSprite west  = { -INF, -INF, -12, INF };
+		static const SubSprite north = {  -12, -INF,  12, INF };
+		static const SubSprite east  = {   12, -INF, INF, INF };
+		AddSortableSpriteToDraw(back, pal, ti->x, ti->y, 16,  1, z_wires, ti->z, IsTransparencySet(TO_CATENARY), 15,  0, GetSlopePixelZInCorner(ti->tileh, CORNER_W), &west);
+		AddSortableSpriteToDraw(back, pal, ti->x, ti->y,  1,  1, z_wires, ti->z, IsTransparencySet(TO_CATENARY),  0,  0, GetSlopePixelZInCorner(ti->tileh, CORNER_N), &north);
+		AddSortableSpriteToDraw(back, pal, ti->x, ti->y,  1, 16, z_wires, ti->z, IsTransparencySet(TO_CATENARY),  0, 15, GetSlopePixelZInCorner(ti->tileh, CORNER_E), &east);
+	}
+	if (front != 0) {
+		/* Draw the "front" sprite (containing south pillar and wires) at a Z height that is both above the vehicles and above the "back" pillars. */
+		AddSortableSpriteToDraw(front, pal, ti->x, ti->y, 16, 16, z_wires + 1, ti->z, IsTransparencySet(TO_CATENARY), 0, 0, z_wires);
+	}
 }
 
 /**
@@ -1916,7 +1932,7 @@ static void TileLoop_Road(TileIndex tile)
 				if (GetFoundationSlope(tile) == SLOPE_FLAT && EnsureNoVehicleOnGround(tile).Succeeded() && Chance16(1, 40)) {
 					StartRoadWorks(tile);
 
-					if (_settings_client.sound.ambient) SndPlayTileFx(SND_21_JACKHAMMER, tile);
+					if (_settings_client.sound.ambient) SndPlayTileFx(SND_21_ROAD_WORKS, tile);
 					CreateEffectVehicleAbove(
 						TileX(tile) * TILE_SIZE + 7,
 						TileY(tile) * TILE_SIZE + 7,
@@ -2290,7 +2306,7 @@ static bool CanConvertUnownedRoadType(Owner owner, RoadTramType rtt)
 }
 
 /**
- * Convert the ownership of the RoadType of the tile if applyable
+ * Convert the ownership of the RoadType of the tile if applicable
  * @param tile the tile of which convert ownership
  * @param num_pieces the count of the roadbits to assign to the new owner
  * @param owner the current owner of the RoadType
@@ -2388,6 +2404,17 @@ CommandCost CmdConvertRoad(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			}
 		}
 
+		/* Base the ability to replace town roads and bridges on the town's
+		 * acceptance of destructive actions. */
+		if (owner == OWNER_TOWN) {
+			Town *t = ClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
+			CommandCost ret = CheckforTownRating(DC_NONE, t, tt == MP_TUNNELBRIDGE ? TUNNELBRIDGE_REMOVE : ROAD_REMOVE);
+			if (ret.Failed()) {
+				error = ret;
+				continue;
+			}
+		}
+
 		/* Vehicle on the tile when not converting normal <-> powered
 		 * Tunnels and bridges have special check later */
 		if (tt != MP_TUNNELBRIDGE) {
@@ -2405,13 +2432,19 @@ CommandCost CmdConvertRoad(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 				}
 			}
 
-			uint num_pieces = CountBits(GetAnyRoadBits(tile, rtt));;
+			uint num_pieces = CountBits(GetAnyRoadBits(tile, rtt));
+			if (tt == MP_STATION && IsStandardRoadStopTile(tile)) {
+				num_pieces *= ROAD_STOP_TRACKBIT_FACTOR;
+			} else if (tt == MP_ROAD && IsRoadDepot(tile)) {
+				num_pieces *= ROAD_DEPOT_TRACKBIT_FACTOR;
+			}
+
 			found_convertible_road = true;
 			cost.AddCost(num_pieces * RoadConvertCost(from_type, to_type));
 
 			if (flags & DC_EXEC) { // we can safely convert, too
-				/* Update the company infrastructure counters. */
-				if (!IsRoadStopTile(tile) && owner == _current_company) {
+				/* Call ConvertRoadTypeOwner() to update the company infrastructure counters. */
+				if (owner == _current_company) {
 					ConvertRoadTypeOwner(tile, num_pieces, owner, from_type, to_type);
 				}
 
@@ -2460,8 +2493,9 @@ CommandCost CmdConvertRoad(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			if (flags & DC_EXEC) {
 				/* Update the company infrastructure counters. */
 				if (owner == _current_company) {
-					ConvertRoadTypeOwner(tile, num_pieces, owner, from_type, to_type);
-					ConvertRoadTypeOwner(endtile, num_pieces, owner, from_type, to_type);
+					/* Each piece should be counted TUNNELBRIDGE_TRACKBIT_FACTOR times
+					 * for the infrastructure counters (cause of #8297). */
+					ConvertRoadTypeOwner(tile, num_pieces * TUNNELBRIDGE_TRACKBIT_FACTOR, owner, from_type, to_type);
 					SetTunnelBridgeOwner(tile, endtile, _current_company);
 				}
 

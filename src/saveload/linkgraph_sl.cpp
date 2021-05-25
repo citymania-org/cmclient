@@ -11,6 +11,7 @@
 #include "../linkgraph/linkgraph.h"
 #include "../linkgraph/linkgraphjob.h"
 #include "../linkgraph/linkgraphschedule.h"
+#include "../network/network.h"
 #include "../settings_internal.h"
 #include "saveload.h"
 
@@ -52,11 +53,23 @@ const SaveLoad *GetLinkGraphJobDesc()
 	static std::vector<SaveLoad> saveloads;
 	static const char *prefix = "linkgraph.";
 
+	static const SaveLoad job_desc[] = {
+		SLE_VAR(LinkGraphJob, join_date,        SLE_INT32),
+		SLE_VAR(LinkGraphJob, link_graph.index, SLE_UINT16),
+		SLE_END()
+	};
+
+	/* The member offset arithmetic below is only valid if the types in question
+	 * are standard layout types. Otherwise, it would be undefined behaviour. */
+	static_assert(std::is_standard_layout<LinkGraphSettings>::value, "LinkGraphSettings needs to be a standard layout type");
+
+	/* We store the offset of each member of the #LinkGraphSettings in the
+	 * extra data of the saveload struct. Use it together with the address
+	 * of the settings struct inside the job to find the final memory address. */
+	static SaveLoadAddrProc * const proc = [](void *b, size_t extra) -> void * { return const_cast<void *>(static_cast<const void *>(reinterpret_cast<const char *>(std::addressof(static_cast<LinkGraphJob *>(b)->settings)) + extra)); };
+
 	/* Build the SaveLoad array on first call and don't touch it later on */
 	if (saveloads.size() == 0) {
-		size_t offset_gamesettings = cpp_offsetof(GameSettings, linkgraph);
-		size_t offset_component = cpp_offsetof(LinkGraphJob, settings);
-
 		size_t prefixlen = strlen(prefix);
 
 		int setting = 0;
@@ -64,19 +77,11 @@ const SaveLoad *GetLinkGraphJobDesc()
 		while (desc->save.cmd != SL_END) {
 			if (desc->desc.name != nullptr && strncmp(desc->desc.name, prefix, prefixlen) == 0) {
 				SaveLoad sl = desc->save;
-				char *&address = reinterpret_cast<char *&>(sl.address);
-				address -= offset_gamesettings;
-				address += offset_component;
+				sl.address_proc = proc;
 				saveloads.push_back(sl);
 			}
 			desc = GetSettingDescription(++setting);
 		}
-
-		const SaveLoad job_desc[] = {
-			SLE_VAR(LinkGraphJob, join_date,        SLE_INT32),
-			SLE_VAR(LinkGraphJob, link_graph.index, SLE_UINT16),
-			SLE_END()
-		};
 
 		int i = 0;
 		do {
@@ -146,6 +151,7 @@ void SaveLoad_LinkGraph(LinkGraph &lg)
 		} else {
 			/* ... but as that wasted a lot of space we save a sparse matrix now. */
 			for (NodeID to = from; to != INVALID_NODE; to = lg.edges[from][to].next_edge) {
+				if (to >= size) SlErrorCorrupt("Link graph structure overflow");
 				SlObject(&lg.edges[from][to], _edge_desc);
 			}
 		}
@@ -245,6 +251,10 @@ void AfterLoadLinkGraphs()
 	}
 
 	LinkGraphSchedule::instance.SpawnAll();
+
+	if (!_networking || _network_server) {
+		AfterLoad_LinkGraphPauseControl();
+	}
 }
 
 /**
