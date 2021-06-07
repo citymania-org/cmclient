@@ -978,8 +978,10 @@ void SmallMapWindow::DrawSmallMap(DrawPixelInfo *dpi) const
 
 	/* Which tile is displayed at (dpi->left, dpi->top)? */
 	Point tile = this->PixelToTile(dpi->left, dpi->top);
-	int tile_x = tile.x / (int)TILE_SIZE + 1;
-	int tile_y = tile.y / (int)TILE_SIZE - 2;
+	int tile_x = tile.x / (int)TILE_SIZE + this->tile_zoom;
+	int tile_y = tile.y / (int)TILE_SIZE - 2 * this->tile_zoom;
+	tile_x -= tile_x % this->tile_zoom;
+	tile_y -= tile_y % this->tile_zoom;
 	Point tile_pos = this->TileToPixel(tile_x * TILE_SIZE, tile_y * TILE_SIZE);
 	int dx = tile_pos.x - dpi->left;
 	int dy = tile_pos.y - dpi->top;
@@ -1000,7 +1002,6 @@ void SmallMapWindow::DrawSmallMap(DrawPixelInfo *dpi) const
 				this->DrawSmallMapColumn(ptr, tile_x, tile_y, dpi->pitch, reps, x, end_pos, y, dpi->height, blitter);
 			}
 		}
-
 		if (even) {
 			tile_y += this->tile_zoom;
 			y += this->ui_zoom;
