@@ -144,9 +144,9 @@ jobs:
         echo "::set-output name=trigger_type::${TRIGGER_TYPE}"
       env:
         NIGHTLIES_BRANCH: master
-        FOLDER_RELEASES: openttd-releases
-        FOLDER_NIGHTLIES: openttd-nightlies
-        FOLDER_BRANCHES: openttd-branches
+        FOLDER_RELEASES: citymania-client-releases
+        FOLDER_NIGHTLIES: citymania-client-nightlies
+        FOLDER_BRANCHES: citymania-client-branches
 
     - name: Remove VCS information
       run: |
@@ -154,15 +154,15 @@ jobs:
 
     - name: Create bundles
       run: |
-        FOLDER_NAME=openttd-${{ steps.metadata.outputs.version }}
+        FOLDER_NAME=citymania-client-${{ steps.metadata.outputs.version }}
 
         # Rename the folder to openttd-NNN
         mkdir ${FOLDER_NAME}
         find . -maxdepth 1 -not -name . -not -name build -not -name ${FOLDER_NAME} -exec mv {} ${FOLDER_NAME}/ \;
 
-        echo "::group::Create tarball (xz) bundle"
-        tar --xz -cvf build/bundles/${FOLDER_NAME}-source.tar.xz ${FOLDER_NAME}
-        echo "::endgroup::"
+        # echo "::group::Create tarball (xz) bundle"
+        # tar --xz -cvf build/bundles/${FOLDER_NAME}-source.tar.xz ${FOLDER_NAME}
+        # echo "::endgroup::"
 
         # This tarball is only to be used within this workflow.
         echo "::group::Create tarball (gz) bundle"
@@ -176,7 +176,7 @@ jobs:
     - name: Store bundles
       uses: actions/upload-artifact@v2
       with:
-        name: openttd-source
+        name: citymania-client-source
         path: build/bundles/*
         retention-days: 5
 
@@ -192,6 +192,8 @@ jobs:
     needs: source
 
     runs-on: ubuntu-20.04
+
+    if: ${{ false }}
 
     steps:
     - name: Download source
@@ -342,31 +344,31 @@ jobs:
         cmake --build . -j $(nproc)
         echo "::endgroup::"
 
-    - name: Create bundles
-      run: |
-        cd ${GITHUB_WORKSPACE}/build
-        echo "::group::Run CPack"
-        cpack
-        echo "::endgroup::"
+    # - name: Create bundles
+    #   run: |
+    #     cd ${GITHUB_WORKSPACE}/build
+    #     echo "::group::Run CPack"
+    #     cpack
+    #     echo "::endgroup::"
 
-        echo "::group::Cleanup"
-        # Remove the sha256 files CPack generates; we will do this ourself at
-        # the end of this workflow.
-        rm -f bundles/*.sha256
-        echo "::endgroup::"
+    #     echo "::group::Cleanup"
+    #     # Remove the sha256 files CPack generates; we will do this ourself at
+    #     # the end of this workflow.
+    #     rm -f bundles/*.sha256
+    #     echo "::endgroup::"
 
-    - name: Store bundles
-      uses: actions/upload-artifact@v2
-      with:
-        name: openttd-linux-generic
-        path: build/bundles
-        retention-days: 5
+    # - name: Store bundles
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: openttd-linux-generic
+    #     path: build/bundles
+    #     retention-days: 5
 
   linux-distro:
     name: Linux (Distros)
     needs: source
 
-    if: needs.source.outputs.is_tag == 'true'
+    if: ${{ false }} #needs.source.outputs.is_tag == 'true'
 
     strategy:
       fail-fast: false
@@ -642,7 +644,7 @@ jobs:
         # the zip_filename variable below
         rm -f ../*.dmg
 
-        zip_filename=(../openttd-*)
+        zip_filename=../citymania-client-${{ needs.source.outputs.version }}
 
         # Package up the existing, notarised .app into a zip file
         zip -r -9 ${zip_filename}.zip OpenTTD.app
@@ -650,12 +652,12 @@ jobs:
         popd
 
         # Now move it into place to be uploaded
-        mv _CPack_Packages/*/Bundle/openttd-*.zip bundles/
+        mv _CPack_Packages/*/Bundle/citymania-client-*.zip bundles/
 
     - name: Store bundles
       uses: actions/upload-artifact@v2
       with:
-        name: openttd-macos-universal
+        name: citymania-client-macos-universal
         path: build-x64/bundles
         retention-days: 5
 
@@ -752,7 +754,7 @@ jobs:
         arch: ${{ matrix.host }}
 
     - name: Build (with installer)
-      if: needs.source.outputs.is_tag == 'true'
+      if: ${{ false }} #needs.source.outputs.is_tag == 'true'
       shell: bash
       run: |
         mkdir build
@@ -774,7 +776,7 @@ jobs:
         echo "::endgroup::"
 
     - name: Build (without installer)
-      if: needs.source.outputs.is_tag != 'true'
+      if: ${{ true }} # needs.source.outputs.is_tag != 'true'
       shell: bash
       run: |
         mkdir build
@@ -802,6 +804,10 @@ jobs:
         cpack
         echo "::endgroup::"
 
+        echo "::group::Rename bundles to citymania-client-*"
+        mv bundles/*.zip $(ls bundles/*.zip | sed 's/openttd/citymania-client/')
+        echo "::endgroup::"
+
         echo "::group::Prepare PDB to be bundled"
         PDB=$(ls bundles/*.zip | cut -d/ -f2 | sed 's/.zip$/.pdb/')
         cp openttd.pdb bundles/${PDB}
@@ -817,7 +823,7 @@ jobs:
     - name: Store bundles
       uses: actions/upload-artifact@v2
       with:
-        name: openttd-windows-${{ matrix.arch }}
+        name: citymania-client-windows-${{ matrix.arch }}
         path: build/bundles
         retention-days: 5
 
@@ -827,7 +833,7 @@ jobs:
     - source
     - docs
     - linux
-    - linux-distro
+    # - linux-distro
     - macos
     - windows
 
