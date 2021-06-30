@@ -38,6 +38,8 @@
 #include "table/strings.h"
 #include "table/sprites.h"
 
+#include "citymania/cm_terragen.hpp"
+
 #include "safeguards.h"
 
 extern const TileTypeProcs
@@ -1422,6 +1424,9 @@ void GenerateLandscape(byte mode)
 	} else if (_settings_game.game_creation.land_generator == LG_TERRAGENESIS) {
 		SetGeneratingWorldProgress(GWP_LANDSCAPE, steps + GLS_TERRAGENESIS);
 		GenerateTerrainPerlin();
+	} else if (_settings_game.game_creation.land_generator == CM_LG_REALISTIC) {
+		SetGeneratingWorldProgress(GWP_LANDSCAPE, steps + GLS_TERRAGENESIS);
+		citymania::terragen::Generate();
 	} else {
 		SetGeneratingWorldProgress(GWP_LANDSCAPE, steps + GLS_ORIGINAL);
 		if (_settings_game.construction.freeform_edges) {

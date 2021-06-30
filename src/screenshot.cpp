@@ -1062,3 +1062,7 @@ bool MakeMinimapWorldScreenshot()
 	const ScreenshotFormat *sf = _screenshot_formats + _cur_screenshot_format;
 	return sf->proc(MakeScreenshotName(SCREENSHOT_NAME, sf->extension), MinimapScreenCallback, nullptr, MapSizeX(), MapSizeY(), 32, _cur_palette.palette);
 }
+
+namespace citymania {
+	auto MakePNGImage = &::MakePNGImage;
+}

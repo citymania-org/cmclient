@@ -1,0 +1,604 @@
+#include "../stdafx.h"
+
+#include "cm_terragen.hpp"
+
+#include "3rdparty/delaunator.hpp"
+
+#include "../clear_map.h"
+#include "../gfx_type.h"
+#include "../core/math_func.hpp"
+#include "../tgp.h" // TODO remove
+#include "../void_map.h"
+#include "../core/random_func.hpp"
+
+#include <fftw3.h>
+
+#include <cmath>
+#include <vector>
+#include <queue>
+
+#include "../safeguards.h"
+
+// typedef int16 height_t;
+/** Height map - allocated array of heights (MapSizeX() + 1) x (MapSizeY() + 1) */
+// struct HeightMap
+// {
+// 	height_t *h;         //< array of heights
+// 	/* Even though the sizes are always positive, there are many cases where
+// 	 * X and Y need to be signed integers due to subtractions. */
+// 	int      dim_x;      //< height map size_x MapSizeX() + 1
+// 	int      total_size; //< height map total size
+// 	int      size_x;     //< MapSizeX()
+// 	int      size_y;     //< MapSizeY()
+
+// 	/**
+// 	 * Height map accessor
+// 	 * @param x X position
+// 	 * @param y Y position
+// 	 * @return height as fixed point number
+// 	 */
+// 	inline height_t &height(uint x, uint y)
+// 	{
+// 		return h[x + y * dim_x];
+// 	}
+// };
+/** Global height map instance */
+// extern HeightMap _height_map;
+// void HeightMapGenerate();
+
+namespace citymania {
+
+typedef void ScreenshotCallback(void *userdata, void *buf, uint y, uint pitch, uint n);
+extern bool (*MakePNGImage)(const char *name, ScreenshotCallback *callb, void *userdata, uint w, uint h, int pixelformat, const Colour *palette);
+
+namespace terragen {
+
+struct Point {
+public:
+	typedef double coord_t;
+	coord_t x;
+	coord_t y;
+
+	Point(coord_t x, coord_t y): x{x}, y{y} {}
+	Point(): Point(0.0, 0.0) {}
+};
+
+static const Point::coord_t SQRT1_2 = 0.7071067811865476;
+static const Point::coord_t PI = 3.14159265358979323846;
+
+
+static const uint DEBUG_IMG_SCALE = 8;
+
+void plot_points_callback(void *userdata, void *buffer, uint y, uint pitch, uint n) {
+	auto img = static_cast<uint32 *>(userdata);
+	auto buf = static_cast<uint32 *>(buffer);
+	for (uint j = 0; j < n; j++)
+		for (uint i = 0; i < pitch; i++) {
+			buf[j * pitch + i] = img[(j + y) * pitch + i];
+		}
+}
+
+void plot_points(std::vector<Point> &grid, uint width, uint height, const char *filename) {
+	std::vector<uint32> img(width * height * DEBUG_IMG_SCALE * DEBUG_IMG_SCALE);
+	for (auto p: grid) {
+		if (p.x || p.y) {
+			img[(uint)(p.x * DEBUG_IMG_SCALE) + (uint)(p.y * DEBUG_IMG_SCALE) * width * DEBUG_IMG_SCALE] = 0x7f7676;
+		}
+	}
+	MakePNGImage(filename, plot_points_callback, (void *)(&img[0]), width * DEBUG_IMG_SCALE, height * DEBUG_IMG_SCALE, 32, nullptr);
+}
+
+void fft_plot_callback(void *userdata, void *buffer, uint y, uint pitch, uint n) {
+	auto fft = static_cast<fftw_complex *>(userdata);
+	auto buf = static_cast<uint32 *>(buffer);
+	for (uint j = 0; j < n; j++)
+		for (uint i = 0; i < pitch; i++) {
+			uint32 color = (uint8)(fft[(j + y) * pitch + i][0] * 255);
+			if (fft[(j + y) * pitch + i][0] < 0.1) color = 0;
+			buf[j * pitch + i] = color << 8;
+		}
+}
+
+size_t next_halfedge(size_t e) { return (e % 3 == 2) ? e - 2 : e + 1; }
+size_t prev_halfedge(size_t e) { return (e % 3 == 0) ? e + 2 : e - 1; }
+
+void plot_line(std::vector<uint32> &img, delaunator::Delaunator &delaunay, uint width, size_t a, size_t b, uint32 color, int subdivisions = 1) {
+	a *= 2; b *= 2;
+	for (uint j = 0; j < DEBUG_IMG_SCALE * subdivisions; j++) {
+		auto k = DEBUG_IMG_SCALE * subdivisions - j;
+		auto x = (uint)((delaunay.coords[a] * j + delaunay.coords[b] * k) / subdivisions);
+		auto y = (uint)((delaunay.coords[a + 1] * j + delaunay.coords[b + 1] * k) / subdivisions);
+		img[y * width * DEBUG_IMG_SCALE + x] = color;
+	}
+}
+
+void plot_edge(std::vector<uint32> &img, delaunator::Delaunator &delaunay, uint width, size_t e, uint32 color, int subdivisions = 1) {
+	plot_line(img, delaunay, width, delaunay.triangles[e], delaunay.triangles[next_halfedge(e)], color, subdivisions);
+}
+
+void plot_delaunay(delaunator::Delaunator &delaunay, uint width, uint height, const char *filename) {
+	std::vector<uint32> img(width * height * DEBUG_IMG_SCALE * DEBUG_IMG_SCALE);
+    // for(std::size_t i = 0; i < delaunay.triangles.size(); i+=3) {
+    // 	auto tx0 = delaunay.coords[2 * delaunay.triangles[i]];`
+    // 	auto ty0 = delaunay.coords[2 * delaunay.triangles[i] + 1];
+    // 	auto tx1 = delaunay.coords[2 * delaunay.triangles[i + 1]];
+    // 	auto ty1 = delaunay.coords[2 * delaunay.triangles[i + 1] + 1];
+    // 	auto tx2 = delaunay.coords[2 * delaunay.triangles[i + 2]];
+    // 	auto ty2 = delaunay.coords[2 * delaunay.triangles[i + 2] + 1];
+    // 	for (auto j = 0; j < 8; j++) {
+    // 		auto k = 8 - j;
+    // 		img[(int)(tx0 * j + tx1 * k) + (int)(ty0 * j + ty1 * k) * width * 8] = 1;
+    // 		img[(int)(tx2 * j + tx1 * k) + (int)(ty2 * j + ty1 * k) * width * 8] = 1;
+    // 		img[(int)(tx0 * j + tx2 * k) + (int)(ty0 * j + ty2 * k) * width * 8] = 1;
+    // 	}
+    // }
+    for (size_t e = 0; e < delaunay.triangles.size(); e++) {
+        if (e > delaunay.halfedges[e] || delaunay.halfedges[e] == delaunator::INVALID_INDEX) {
+        	plot_line(img, delaunay, width, delaunay.triangles[e], delaunay.triangles[next_halfedge(e)], 0x7f7f7f);
+        }
+    }
+
+    {
+		size_t i = delaunay.hull_start;
+		do {
+			// plot_line(img, delaunay, width, i, delaunay.hull_next[i], 4, 16);
+			plot_edge(img, delaunay, width, delaunay.hull_tri[i], 0xffff00, 16);
+			i = delaunay.hull_next[i];
+		} while (i != delaunay.hull_start);
+
+		i = delaunay.hull_start;
+		do {
+			// auto j = delaunay.hull_tri[i];
+			// j = delaunay.halfedges[next_halfedge(j)];
+			auto j = next_halfedge(delaunay.hull_tri[i]);
+			while (delaunay.halfedges[j] != delaunator::INVALID_INDEX) {
+				plot_edge(img, delaunay, width, j, 0x00ff00, 16);
+				// j = delaunay.halfedges[next_halfedge(j)];
+				j = next_halfedge(delaunay.halfedges[j]);
+			}
+			i = delaunay.hull_next[i];
+		} while (i != delaunay.hull_start);
+    }
+
+ //    for(size_t i = 0; i < delaunay.triangles.size(); i+=100) {
+	//     // auto start = delaunay.halfedges[i];
+	//     auto start = i;
+	//     if (start == delaunator::INVALID_INDEX) continue;
+	// 	auto incoming = start;
+	//     do {
+	//     	auto prev = incoming;
+	//         auto outgoing = next_halfedge(incoming);
+	//         incoming = delaunay.halfedges[outgoing];
+	//         if (incoming != delaunator::INVALID_INDEX) {
+	// 	    	plot_edge(img, delaunay, width, delaunay.triangles[incoming], delaunay.triangles[i], 3, 16);
+	// 	    	plot_edge(img, delaunay, width, delaunay.triangles[incoming], delaunay.triangles[prev], 2, 16);
+	// 	    }
+	//     } while (incoming != delaunator::INVALID_INDEX && incoming != start);
+	// }
+
+   	MakePNGImage(filename, plot_points_callback, (void *)(&img[0]), width * DEBUG_IMG_SCALE, height * DEBUG_IMG_SCALE, 32, nullptr);
+}
+
+void plot_river_flow(delaunator::Delaunator &dln, std::vector<size_t> &prev, std::vector<double> &flow,
+               		 uint width, uint height, const char *filename) {
+	std::vector<uint32> img(width * height * DEBUG_IMG_SCALE * DEBUG_IMG_SCALE);
+    for (size_t e = 0; e < dln.triangles.size(); e++) {
+        if (e > dln.halfedges[e] || dln.halfedges[e] == delaunator::INVALID_INDEX) {
+        	plot_line(img, dln, width, dln.triangles[e], dln.triangles[next_halfedge(e)], 0x1f1f1f);
+        }
+    }
+    auto max_flow = flow[0];
+    for (auto f : flow) max_flow = std::max(max_flow, f);
+    auto fm = std::log(max_flow);
+    auto fh = fm / 2;
+
+    for (size_t e = 0; e < dln.coords.size() / 2; e++) {
+		if (prev[e] == delaunator::INVALID_INDEX) continue;
+		// auto f = 191 * flow[e] / max_flow  + 0x40;
+		// auto f2 =  255 * flow[e] / max_flow;
+		auto fe = std::log(flow[e] + 1);
+		uint32 r =  fe < fh ? 0x40 + 191 * fe / fh : 255;
+		uint32 g =  fe < fh ? r : (2 - fe / fh) * 255;
+		plot_line(img, dln, width, e, prev[e], r << 16 | g << 8, 2);
+	}
+   	MakePNGImage(filename, plot_points_callback, (void *)(&img[0]), width * DEBUG_IMG_SCALE, height * DEBUG_IMG_SCALE, 32, nullptr);
+}
+
+void plot_river_height(delaunator::Delaunator &dln, std::vector<size_t> &prev, std::vector<double> &rheight,
+                       uint width, uint height, const char *filename) {
+	std::vector<uint32> img(width * height * DEBUG_IMG_SCALE * DEBUG_IMG_SCALE);
+    for (size_t e = 0; e < dln.triangles.size(); e++) {
+        if (e > dln.halfedges[e] || dln.halfedges[e] == delaunator::INVALID_INDEX) {
+        	plot_line(img, dln, width, dln.triangles[e], dln.triangles[next_halfedge(e)], 0x1f1f1f);
+        }
+    }
+    for (size_t e = 0; e < dln.coords.size() / 2; e++) {
+		if (prev[e] == delaunator::INVALID_INDEX) continue;
+		auto f = (uint)(191 * rheight[e] + 0x40);
+		plot_line(img, dln, width, e, prev[e], f << 16 | f << 8 | f, 2);
+	}
+   	MakePNGImage(filename, plot_points_callback, (void *)(&img[0]), width * DEBUG_IMG_SCALE, height * DEBUG_IMG_SCALE, 32, nullptr);
+}
+
+// https://observablehq.com/@techsparx/an-improvement-on-bridsons-algorithm-for-poisson-disc-samp/2
+std::vector<double> poissosn_disc_sampling(uint width, uint height) {
+	static int k = 4; // maximum number of samples before rejection
+	static const Point::coord_t radius = 1.0;
+	static const Point::coord_t radius2 = radius * radius;
+	auto cell_size = radius * SQRT1_2;
+	auto grid_width = (int)ceil(width / cell_size);
+	auto grid_height = (int)ceil(height / cell_size);
+
+	std::vector<Point> grid(grid_width * grid_height);
+	std::vector<Point> queue;
+
+	auto sample = [&](Point p) {
+		grid[grid_width * (uint)(p.y / cell_size) + (uint)(p.x / cell_size)] = p;
+		queue.push_back(p);
+	};
+
+	auto far = [&](Point::coord_t x, Point::coord_t y) {
+		auto i = (int)(x / cell_size);
+		auto j = (int)(y / cell_size);
+		auto i0 = std::max(i - 2, 0);
+		auto j0 = std::max(j - 2, 0);
+		auto i1 = std::min(i + 3, grid_width);
+		auto j1 = std::min(j + 3, grid_height);
+		for (auto j = j0; j < j1; j++) {
+			auto o = j * grid_width;
+			for (auto i = i0; i < i1; i++) {
+				auto s = grid[o + i];
+				if (s.x || s.y) {
+					auto dx = s.x - x;
+					auto dy = s.y - y;
+					if (dx * dx + dy * dy < radius2) {
+						return false;
+					}
+					// if (dx * dx + dy * dy < radius2) return false;
+				}
+			}
+		}
+		return true;
+	};
+
+	sample(Point(width / 2, height / 2));
+
+	while (!queue.empty()) {
+		auto i = Random() % queue.size();
+		auto parent = queue[i];
+		Point::coord_t seed = static_cast <Point::coord_t> (Random()) / static_cast <Point::coord_t> (UINT32_MAX);
+		const Point::coord_t eps = 0.0001;
+
+		bool found = false;
+		for (auto j = 0; j < k; j++) {
+			auto a = 2 * PI * (seed + 1.0 * j / k);
+			auto r = radius + eps;
+			auto x = parent.x + r * std::cos(a);
+			auto y = parent.y + r * std::sin(a);
+
+			// Accept candidates that are inside the allowed extent
+			// and farther than 2 * radius to all existing samples.
+			if (0 <= x && x < width && 0 <= y && y < height && far(x, y)) {
+				sample(Point(x, y));
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			// If none of k candidates were accepted, remove it from the queue.
+			auto r = queue.back();
+			queue.pop_back();
+			if (i < queue.size()) queue[i] = r;
+		}
+	}
+
+	plot_points(grid, width, height, "poisson_disc.png");
+
+	std::vector<double> dpoints;
+	for (auto &p: grid) {
+		if (p.x || p.y) {
+			dpoints.push_back(p.x);
+			dpoints.push_back(p.y);
+		}
+	}
+	return dpoints;
+}
+
+void normalize(fftw_complex *begin, fftw_complex *end) {
+	fftw_complex *p;
+    double max_r = (*begin)[0], min_r = (*begin)[0];
+    double max_i = (*begin)[1], min_i = (*begin)[1];
+    for (p = begin + 1; p < end; p++) {
+    	max_r = std::max(max_r, *p[0]);
+    	min_r = std::min(min_r, *p[0]);
+    	max_i = std::max(max_i, *p[1]);
+    	min_i = std::min(min_i, *p[1]);
+    }
+    if (max_r == min_r || max_i == min_i) return;
+    for (p = begin; p < end; p++) {
+    	(*p)[0] = ((*p)[0] - min_r) / (max_r - min_r);
+    	(*p)[1] = ((*p)[1] - min_i) / (max_i - min_i);
+    }
+}
+
+void normalize(std::vector<double> &height) {
+	double max_height = height[0];
+	double min_height = height[0];
+	for (auto x : height) {
+		max_height = std::max(max_height, x);
+		min_height = std::min(min_height, x);
+	}
+	if (max_height == min_height) return;
+	for (auto &x : height) x = (x - min_height) / (max_height - min_height);
+}
+
+
+double fftfreq(size_t i, size_t n) {
+	return (i < n / 2 ? (double)i : (double)i - n);
+}
+
+fftw_complex *genenerate_fft_noise(uint width, uint height, double power, double lower, double upper) {
+    fftw_plan plan;
+    uint size = width * height;
+    fftw_complex *in = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * size);
+    fftw_complex *out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * size);
+    fftw_complex *in_end = in + size;
+    fftw_complex *out_end = out + size;
+    fftw_complex *p;
+
+    for (p = in; p < in_end; p++) {
+    	double a = 2. * PI * Random() / UINT32_MAX;
+    	(*p)[0] = std::cos(a);
+    	(*p)[1] = std::sin(a);
+    }
+
+    plan = fftw_plan_dft_2d(MapSizeY(), MapSizeX(), in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    fftw_execute(plan);
+    fftw_destroy_plan(plan);
+
+    p = out;
+    for (size_t y = 0; y < height; y++) {
+    	auto fy = fftfreq(y, height);
+	    for (size_t x = 0; x < width; x++, p++) {
+	    	auto f = std::hypot(fy, fftfreq(x, width));
+	    	auto e = (f > lower ? std::pow(f, power) : 0.);
+	   		(*p)[0] *= e;
+	   		(*p)[1] *= e;
+	    }
+	}
+
+    plan = fftw_plan_dft_2d(height, width, out, in, FFTW_BACKWARD, FFTW_ESTIMATE);
+    fftw_execute(plan);
+    fftw_destroy_plan(plan);
+
+    fftw_free(out);
+
+	normalize(in, in_end);
+
+    return in;
+}
+
+double get_edge_height(fftw_complex *noise, delaunator::Delaunator &dln, size_t e) {
+	auto x = 2 * dln.triangles[e];
+	return noise[(uint)dln.coords[x] + (uint)dln.coords[x + 1] * MapSizeX()][0];
+}
+
+double lerp(double x, double y, double a) {
+	return (1.0 - a) * x + a * y;
+}
+
+std::pair<double, double> get_edge_direction(delaunator::Delaunator &dln, size_t i, size_t j) {
+	auto dx = dln.coords[j * 2] - dln.coords[i * 2];
+	auto dy = dln.coords[j * 2 + 1] - dln.coords[i * 2 + 1];
+	auto d = hypot(dx, dy);
+	return std::make_pair(dx / d, dy / d);
+}
+
+
+void Generate() {
+    fftw_complex *noise = genenerate_fft_noise(MapSizeX(), MapSizeY(), -2., 2., 1e100);
+	for (int y = 0; y < MapSizeY(); y++)
+		for (int x = 0; x < MapSizeX(); x++) {
+			auto d = 2.0 * hypot(x - (int)MapSizeX() / 2, y - (int)MapSizeY() / 2) / std::max(MapSizeX(), MapSizeY());
+			// auto d = .1;
+			noise[y * MapSizeX() + x][0] *= d;
+			// noise[y * MapSizeX() + x][0] = std::min(1.0, noise[y * MapSizeX() + x][0] + d);
+		}
+
+	MakePNGImage("noise.png", fft_plot_callback, (void *)noise, MapSizeX(), MapSizeY(), 32, nullptr);
+
+	auto points = poissosn_disc_sampling(MapSizeX(), MapSizeY());
+	delaunator::Delaunator dln(points);
+	if (MapSize() <= 1 << 16) plot_delaunay(dln, MapSizeX(), MapSizeY(), "delaunay.png");
+
+	size_t n = dln.coords.size() / 2;
+	std::vector<double> hegiht(n);
+	double sea_level = 0.3;
+	double directional_inertia = 0.4;
+	double default_water_level = 1.0;
+  	double evaporation_rate = 1.0 - 0.02;
+  	double river_downcutting_constant = 1.3;
+  	double max_delta = 0.05;
+
+	typedef std::pair<size_t, double> q_item_t;
+	auto cmp = [](const q_item_t &a, const q_item_t &b) { return a.second > b.second; };
+	std::priority_queue<q_item_t, std::vector<q_item_t>, decltype(cmp) > q(cmp);
+	std::vector<bool> vis(dln.coords.size() / 2);
+	std::vector<size_t> prev(dln.coords.size() / 2);
+	std::vector<double> height(dln.coords.size() / 2);
+
+	for (size_t i = 0; i  < dln.coords.size() / 2; i++) prev[i] = delaunator::INVALID_INDEX;
+	for (size_t e = 0; e < dln.triangles.size(); e++) {
+		if (get_edge_height(noise, dln, e) > sea_level) continue;
+		height[dln.triangles[e]] = 0;
+		auto next_e = next_halfedge(e);
+		auto e_end = dln.triangles[next_e];
+		if (vis[e_end]) continue;
+		auto h = get_edge_height(noise, dln, next_e);
+		vis[e_end] = true;
+		if (h >= sea_level) q.push(std::make_pair(e, 0));
+	}
+
+	while (!q.empty()) {
+		auto x = q.top(); q.pop();
+		auto incoming = x.first;
+		auto ii = dln.triangles[next_halfedge(incoming)];
+		height[ii] = x.second;
+	    do {
+	        auto outgoing = next_halfedge(incoming);
+	        incoming = dln.halfedges[outgoing];
+	        if (incoming == delaunator::INVALID_INDEX) break;
+
+	        auto i = dln.triangles[incoming];
+	        if (vis[i]) continue;
+
+        	vis[i] = true;
+        	// q.push(std::make_pair(outgoing, max(get_edge_height(noise, dln, incoming), x.second)));
+        	q.push(std::make_pair(outgoing, get_edge_height(noise, dln, incoming) + x.second - sea_level));
+        	// prev[i] = outgoing;
+        	prev[i] = ii;
+
+	    } while (incoming != x.first);
+	}
+
+	normalize(height);
+
+	if (MapSize() <= 1 << 16) plot_river_height(dln, prev, height , MapSizeX(), MapSizeY(), "initial_river_height.png");
+
+	for (size_t i = 0; i  < dln.coords.size() / 2; i++) prev[i] = delaunator::INVALID_INDEX;
+
+	struct q2_item_t {
+		double priority;
+		size_t edge;
+		std::pair<double, double> direction;
+		q2_item_t(double	priority, size_t edge, std::pair<double, double> direction)
+			:priority{priority}, edge{edge}, direction{direction} {}
+	};
+
+	auto cmp2 = [](const q2_item_t &a, const q2_item_t &b) { return a.priority > b.priority; };
+	std::priority_queue<q2_item_t, std::vector<q2_item_t>, decltype(cmp2) > q2(cmp2);
+	std::vector<size_t> order;
+
+	for (size_t e = 0; e < dln.triangles.size(); e++) {
+		if (get_edge_height(noise, dln, e) > sea_level) continue;
+		auto next_e = next_halfedge(e);
+		auto e_end = dln.triangles[next_e];
+		auto h = get_edge_height(noise, dln, next_e);
+		if (h >= sea_level) q2.push(q2_item_t(-1.0, e, get_edge_direction(dln, dln.triangles[e], e_end)));
+	}
+
+	while (!q2.empty()) {
+		auto x = q2.top(); q2.pop();
+		auto incoming = x.edge;
+		auto j = dln.triangles[next_halfedge(incoming)];
+
+		if (prev[j] != delaunator::INVALID_INDEX) continue;
+		prev[j] = dln.triangles[incoming];
+		// fprintf(stderr, "IJIJIJIJIJI %lu %lu\n", dln.triangles[incoming], j);
+
+		order.push_back(j);
+	    do {
+	        auto outgoing = next_halfedge(incoming);
+	        incoming = dln.halfedges[outgoing];
+	        if (incoming == delaunator::INVALID_INDEX) break;
+
+	        auto k = dln.triangles[incoming];
+
+	        if (prev[k] != delaunator::INVALID_INDEX || height[k] <= height[j]) continue;
+
+	        // fprintf(stderr, "A %lu %lu %lu\n", dln.triangles[incoming], j, k);
+	        // fprintf(stderr, "B %lu %lu %lu\n", x.edge, incoming, outgoing);
+
+			auto direction = get_edge_direction(dln, j, k);
+
+        	q2.push(q2_item_t(
+				-(direction.first * x.direction.first + direction.second * x.direction.second),
+				outgoing,
+				std::make_pair(lerp(direction.first, x.direction.first, directional_inertia),
+							   lerp(direction.second, x.direction.second, directional_inertia))
+        	));
+	    } while (incoming != x.edge);
+	}
+
+	std::vector<double> flow(dln.coords.size() / 2);
+	std::reverse(order.begin(), order.end());
+	for (size_t i = 0; i  < dln.coords.size() / 2; i++) flow[i] = default_water_level;
+	for (auto i : order) {
+		if (prev[i] == delaunator::INVALID_INDEX) continue;
+		auto j = prev[i];
+		// double d = std::hypot(dln.coords[j * 2] - dln.coords[1 * 2], dln.coords[j * 2 + 1] - dln.coords[1 * 2 + 1]);
+		flow[j] += flow[i] * evaporation_rate;
+	}
+
+	if (MapSize() <= 1 << 16) plot_river_flow(dln, prev, flow, MapSizeX(), MapSizeY(), "river_flow_computed.png");
+
+	for (size_t i = 0; i  < dln.coords.size() / 2; i++) vis[i] = false;
+	for (size_t e = 0; e < dln.triangles.size(); e++) {
+		if (get_edge_height(noise, dln, e) > sea_level) continue;
+		auto next_e = next_halfedge(e);
+		auto e_end = dln.triangles[next_e];
+		if (vis[e_end]) continue;
+		auto h = get_edge_height(noise, dln, next_e);
+		vis[e_end] = true;
+		if (h >= sea_level) q.push(std::make_pair(e, 0));
+	}
+
+	while (!q.empty()) {
+		auto x = q.top(); q.pop();
+		auto incoming = x.first;
+		auto ii = dln.triangles[next_halfedge(incoming)];
+		height[ii] = x.second;
+	    do {
+	        auto outgoing = next_halfedge(incoming);
+	        incoming = dln.halfedges[outgoing];
+	        if (incoming == delaunator::INVALID_INDEX) break;
+
+	        auto i = dln.triangles[incoming];
+	        if (vis[i]) continue;
+
+        	vis[i] = true;
+	        auto v = (prev[i] == ii ? flow[i] : 0.0);
+	        auto downcut = 1.0 / (1.0 + v * river_downcutting_constant);
+
+        	q.push(std::make_pair(outgoing, x.second + (get_edge_height(noise, dln, incoming) - sea_level) * downcut));
+	    } while (incoming != x.first);
+	}
+
+	normalize(height);
+
+	if (MapSize() <= 1 << 16) plot_river_height(dln, prev, height , MapSizeX(), MapSizeY(), "final_river_height.png");
+
+	auto x = dln.coords;
+	auto y = &dln.coords[1];
+	for (size_t e = 0; e < dln.triangles.size(); e += 3) {
+		auto i = 2 * dln.triangles[e];
+		auto j = 2 * dln.triangles[e + 1];
+		auto k = 2 * dln.triangles[e + 2];
+		uint min_x = std::max<int>((int)std::ceil(std::min(std::min(x[i], x[j]), x[k])), 0);
+		uint max_x = std::min<int>((int)std::floor(std::max(std::max(x[i], x[j]), x[k])) + 1, MapSizeX());
+		uint min_y = std::max<int>((int)std::ceil(std::min(std::min(y[i], y[j]), y[k])), 0);
+		uint max_y = std::min<int>((int)std::floor(std::max(std::max(y[i], y[j]), y[k])) + 1, MapSizeY());
+		for (auto xx = min_x; xx < max_x; xx++)
+			for (auto yy = min_y; yy < max_y; yy++) {
+				double *h = noise[yy * MapSizeX() + xx];
+				if (*h <= sea_level) continue;
+				double d = (y[j] - y[k]) * (x[i] - x[k]) + (x[k] - x[j]) * (y[i] - y[k]);
+				double w1 = ((y[j] - y[k]) * (xx - x[k]) + (x[k] - x[j]) * (yy - y[k])) / d;
+				double w2 = ((y[k] - y[i]) * (xx - x[k]) + (x[i] - x[k]) * (yy - y[k])) / d;
+				double w3 = 1.0 - w1 - w2;
+				if (w1 < 0 || w2 < 0 || w3 < 0) continue;
+				*h = height[dln.triangles[e]] * w1 + height[dln.triangles[e + 1]] * w2 + height[dln.triangles[e + 2]] * w3 + sea_level;
+			}
+	}
+	normalize(noise, noise + MapSize());
+	MakePNGImage("terrain.png", fft_plot_callback, (void *)noise, MapSizeX(), MapSizeY(), 32, nullptr);
+
+    fftw_free(noise);
+
+	GenerateTerrainPerlin();
+}
+
+}
+
+}

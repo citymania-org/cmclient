@@ -1360,6 +1360,7 @@ STR_CONFIG_SETTING_LAND_GENERATOR                               :Land generator:
 STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :The original generator depends on the base graphics set, and composes fixed landscape shapes. TerraGenesis is a Perlin noise based generator with finer control settings
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Original
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :TerraGenesis
+STR_CONFIG_SETTING_LAND_GENERATOR_CITYMANIA                     :CityMania
 STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Terrain type: {STRING2}
 STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(TerraGenesis only) Hilliness of the landscape
 STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Industry density: {STRING2}

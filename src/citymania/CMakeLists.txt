@@ -39,6 +39,8 @@ add_files(
     cm_misc_gui.cpp
     cm_station_gui.hpp
     cm_station_gui.cpp
+    cm_terragen.hpp
+    cm_terragen.cpp
     cm_tooltips.hpp
     cm_tooltips.cpp
     cm_newgrf_revisions.hpp
