@@ -2459,8 +2459,10 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("dump_info", ConDumpInfo);
 
 	IConsoleCmdRegister("cmexport", citymania::ConExport);
-	IConsoleCmdRegister("cmstep", citymania::ConStep, ConHookNoNetwork);
 	IConsoleCmdRegister("cmtreemap", citymania::ConTreeMap, ConHookNoNetwork);
-	IConsoleCmdRegister("cmresettowngrowth", citymania::ConResetTownGrowth, ConHookNoNetwork);
-	IConsoleCmdRegister("cmloadcommands", citymania::ConLoadCommands, ConHookNoNetwork);
+
+	IConsoleCmdRegister("cmstep", citymania::ConStep);
+	IConsoleCmdRegister("cmresettowngrowth", citymania::ConResetTownGrowth);
+	IConsoleCmdRegister("cmloadcommands", citymania::ConLoadCommands);
+	IConsoleCmdRegister("cmgamespeed", citymania::ConGameSpeed);
 }

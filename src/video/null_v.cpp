@@ -8,8 +8,11 @@
 /** @file null_v.cpp The video driver that doesn't blit. */
 
 #include "../stdafx.h"
+#include "../console_func.h"
+#include "../date_func.h"
 #include "../gfx_func.h"
 #include "../blitter/factory.hpp"
+#include "../saveload/saveload.h"
 #include "../window_func.h"
 #include "null_v.h"
 
@@ -28,6 +31,7 @@ const char *VideoDriver_Null::Start(const StringList &parm)
 	this->UpdateAutoResolution();
 
 	this->ticks = GetDriverParamInt(parm, "ticks", 1000);
+	this->savefile = GetDriverParam(parm, "save");
 	_screen.width  = _screen.pitch = _cur_resolution.width;
 	_screen.height = _cur_resolution.height;
 	_screen.dst_ptr = nullptr;
@@ -47,10 +51,22 @@ void VideoDriver_Null::MainLoop()
 {
 	uint i;
 
-	for (i = 0; i < this->ticks; i++) {
+	uint16 old_tick;
+	for (i = 0; i < this->ticks; ) {
+		old_tick = _tick_counter;
 		::GameLoop();
 		::InputLoop();
 		::UpdateWindows();
+		if (old_tick != _tick_counter) i++;
+		else _pause_mode = PM_UNPAUSED;
+	}
+	fprintf(stderr, "Null driver ran for %u tics, save: %s\n", this->ticks, this->savefile.c_str());
+	if (!this->savefile.empty()) {
+	    if (SaveOrLoad(this->savefile.c_str(), SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
+	        IConsolePrintF(CC_ERROR, "Error saving the final game state.");
+	    } else {
+	        IConsolePrintF(CC_DEFAULT, "Saved the final game state to %s", this->savefile.c_str());
+	    }
 	}
 }
 

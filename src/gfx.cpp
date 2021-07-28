@@ -46,7 +46,7 @@ bool _exit_game;
 GameMode _game_mode;
 SwitchMode _switch_mode;  ///< The next mainloop command.
 PauseMode _pause_mode;
-uint32 _pause_countdown;
+uint32 _pause_countdown = 0;
 Palette _cur_palette;
 
 static byte _stringwidth_table[FS_END][224]; ///< Cache containing width of often used characters. @see GetCharacterWidth()
