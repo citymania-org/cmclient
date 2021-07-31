@@ -5,6 +5,7 @@
 #include "3rdparty/delaunator.hpp"
 
 #include "../clear_map.h"
+#include "../genworld.h"
 #include "../gfx_type.h"
 #include "../core/math_func.hpp"
 #include "../tgp.h" // TODO remove
@@ -19,32 +20,79 @@
 
 #include "../safeguards.h"
 
-// typedef int16 height_t;
+typedef int16 height_t;
 /** Height map - allocated array of heights (MapSizeX() + 1) x (MapSizeY() + 1) */
-// struct HeightMap
-// {
-// 	height_t *h;         //< array of heights
-// 	/* Even though the sizes are always positive, there are many cases where
-// 	 * X and Y need to be signed integers due to subtractions. */
-// 	int      dim_x;      //< height map size_x MapSizeX() + 1
-// 	int      total_size; //< height map total size
-// 	int      size_x;     //< MapSizeX()
-// 	int      size_y;     //< MapSizeY()
+struct HeightMap
+{
+	height_t *h;         //< array of heights
+	/* Even though the sizes are always positive, there are many cases where
+	 * X and Y need to be signed integers due to subtractions. */
+	int      dim_x;      //< height map size_x MapSizeX() + 1
+	int      total_size; //< height map total size
+	int      size_x;     //< MapSizeX()
+	int      size_y;     //< MapSizeY()
 
-// 	/**
-// 	 * Height map accessor
-// 	 * @param x X position
-// 	 * @param y Y position
-// 	 * @return height as fixed point number
-// 	 */
-// 	inline height_t &height(uint x, uint y)
-// 	{
-// 		return h[x + y * dim_x];
-// 	}
-// };
+	/**
+	 * Height map accessor
+	 * @param x X position
+	 * @param y Y position
+	 * @return height as fixed point number
+	 */
+	inline height_t &height(uint x, uint y)
+	{
+		return h[x + y * dim_x];
+	}
+};
 /** Global height map instance */
-// extern HeightMap _height_map;
-// void HeightMapGenerate();
+
+/** Global height map instance */
+static HeightMap _height_map = {nullptr, 0, 0, 0, 0};
+
+static const int height_decimal_bits = 4;
+
+/** Conversion: int to height_t */
+#define I2H(i) ((i) << height_decimal_bits)
+/** Conversion: height_t to int */
+#define H2I(i) ((i) >> height_decimal_bits)
+
+/** Walk through all items of _height_map.h */
+#define FOR_ALL_TILES_IN_HEIGHT(h) for (h = _height_map.h; h < &_height_map.h[_height_map.total_size]; h++)
+
+static inline bool AllocHeightMap()
+{
+	height_t *h;
+
+	_height_map.size_x = MapSizeX();
+	_height_map.size_y = MapSizeY();
+
+	/* Allocate memory block for height map row pointers */
+	_height_map.total_size = (_height_map.size_x + 1) * (_height_map.size_y + 1);
+	_height_map.dim_x = _height_map.size_x + 1;
+	_height_map.h = CallocT<height_t>(_height_map.total_size);
+
+	/* Iterate through height map and initialise values. */
+	FOR_ALL_TILES_IN_HEIGHT(h) *h = 0;
+
+	return true;
+}
+
+/** Free height map */
+static inline void FreeHeightMap()
+{
+	free(_height_map.h);
+	_height_map.h = nullptr;
+}
+
+/** A small helper function to initialize the terrain */
+static void TgenSetTileHeight(TileIndex tile, int height)
+{
+	SetTileHeight(tile, height);
+
+	/* Only clear the tiles within the map area. */
+	if (IsInnerTile(tile)) {
+		MakeClear(tile, CLEAR_GRASS, 3);
+	}
+}
 
 namespace citymania {
 
@@ -353,7 +401,7 @@ fftw_complex *genenerate_fft_noise(uint width, uint height, double power, double
     	(*p)[1] = std::sin(a);
     }
 
-    plan = fftw_plan_dft_2d(MapSizeY(), MapSizeX(), in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    plan = fftw_plan_dft_2d(width, height, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
     fftw_execute(plan);
     fftw_destroy_plan(plan);
 
@@ -379,9 +427,9 @@ fftw_complex *genenerate_fft_noise(uint width, uint height, double power, double
     return in;
 }
 
-double get_edge_height(fftw_complex *noise, delaunator::Delaunator &dln, size_t e) {
+double get_edge_height(fftw_complex *noise, uint width, delaunator::Delaunator &dln, size_t e) {
 	auto x = 2 * dln.triangles[e];
-	return noise[(uint)dln.coords[x] + (uint)dln.coords[x + 1] * MapSizeX()][0];
+	return noise[(uint)dln.coords[x] + (uint)dln.coords[x + 1] * width][0];
 }
 
 double lerp(double x, double y, double a) {
@@ -396,207 +444,274 @@ std::pair<double, double> get_edge_direction(delaunator::Delaunator &dln, size_t
 }
 
 
-void Generate() {
-    fftw_complex *noise = genenerate_fft_noise(MapSizeX(), MapSizeY(), -2., 2., 1e100);
-	for (int y = 0; y < MapSizeY(); y++)
-		for (int x = 0; x < MapSizeX(); x++) {
-			auto d = 2.0 * hypot(x - (int)MapSizeX() / 2, y - (int)MapSizeY() / 2) / std::max(MapSizeX(), MapSizeY());
-			// auto d = .1;
-			noise[y * MapSizeX() + x][0] *= d;
-			// noise[y * MapSizeX() + x][0] = std::min(1.0, noise[y * MapSizeX() + x][0] + d);
+/**
+ * This routine provides the essential cleanup necessary before OTTD can
+ * display the terrain. When generated, the terrain heights can jump more than
+ * one level between tiles. This routine smooths out those differences so that
+ * the most it can change is one level. When OTTD can support cliffs, this
+ * routine may not be necessary.
+ */
+static void HeightMapSmoothSlopes(height_t dh_max)
+{
+	for (int y = 0; y <= (int)_height_map.size_y; y++) {
+		for (int x = 0; x <= (int)_height_map.size_x; x++) {
+			height_t h_max = std::min(_height_map.height(x > 0 ? x - 1 : x, y), _height_map.height(x, y > 0 ? y - 1 : y)) + dh_max;
+			if (_height_map.height(x, y) > h_max) _height_map.height(x, y) = h_max;
 		}
-
-	MakePNGImage("noise.png", fft_plot_callback, (void *)noise, MapSizeX(), MapSizeY(), 32, nullptr);
-
-	auto points = poissosn_disc_sampling(MapSizeX(), MapSizeY());
-	delaunator::Delaunator dln(points);
-	if (MapSize() <= 1 << 16) plot_delaunay(dln, MapSizeX(), MapSizeY(), "delaunay.png");
-
-	size_t n = dln.coords.size() / 2;
-	std::vector<double> hegiht(n);
-	double sea_level = 0.3;
-	double directional_inertia = 0.4;
-	double default_water_level = 1.0;
-  	double evaporation_rate = 1.0 - 0.02;
-  	double river_downcutting_constant = 1.3;
-  	double max_delta = 0.05;
-
-	typedef std::pair<size_t, double> q_item_t;
-	auto cmp = [](const q_item_t &a, const q_item_t &b) { return a.second > b.second; };
-	std::priority_queue<q_item_t, std::vector<q_item_t>, decltype(cmp) > q(cmp);
-	std::vector<bool> vis(dln.coords.size() / 2);
-	std::vector<size_t> prev(dln.coords.size() / 2);
-	std::vector<double> height(dln.coords.size() / 2);
-
-	for (size_t i = 0; i  < dln.coords.size() / 2; i++) prev[i] = delaunator::INVALID_INDEX;
-	for (size_t e = 0; e < dln.triangles.size(); e++) {
-		if (get_edge_height(noise, dln, e) > sea_level) continue;
-		height[dln.triangles[e]] = 0;
-		auto next_e = next_halfedge(e);
-		auto e_end = dln.triangles[next_e];
-		if (vis[e_end]) continue;
-		auto h = get_edge_height(noise, dln, next_e);
-		vis[e_end] = true;
-		if (h >= sea_level) q.push(std::make_pair(e, 0));
 	}
-
-	while (!q.empty()) {
-		auto x = q.top(); q.pop();
-		auto incoming = x.first;
-		auto ii = dln.triangles[next_halfedge(incoming)];
-		height[ii] = x.second;
-	    do {
-	        auto outgoing = next_halfedge(incoming);
-	        incoming = dln.halfedges[outgoing];
-	        if (incoming == delaunator::INVALID_INDEX) break;
-
-	        auto i = dln.triangles[incoming];
-	        if (vis[i]) continue;
-
-        	vis[i] = true;
-        	// q.push(std::make_pair(outgoing, max(get_edge_height(noise, dln, incoming), x.second)));
-        	q.push(std::make_pair(outgoing, get_edge_height(noise, dln, incoming) + x.second - sea_level));
-        	// prev[i] = outgoing;
-        	prev[i] = ii;
-
-	    } while (incoming != x.first);
+	for (int y = _height_map.size_y; y >= 0; y--) {
+		for (int x = _height_map.size_x; x >= 0; x--) {
+			height_t h_max = std::min(_height_map.height(x < _height_map.size_x ? x + 1 : x, y), _height_map.height(x, y < _height_map.size_y ? y + 1 : y)) + dh_max;
+			if (_height_map.height(x, y) > h_max) _height_map.height(x, y) = h_max;
+		}
 	}
+}
 
-	normalize(height);
+void Generate() {
+    double sea_level = 0.15;
+    const double directional_inertia = 0.3;
+    const double default_water_level = 0.5;
+    const double evaporation_rate = 1.0 - 0.04;
+    const double river_downcutting_constant = 0.5;
+    const double max_delta = 0.05;
+    const double allowed_uphill_delta = 0.005;
 
-	if (MapSize() <= 1 << 16) plot_river_height(dln, prev, height , MapSizeX(), MapSizeY(), "initial_river_height.png");
+    int w = MapSizeX() + 1;
+    int h = MapSizeY() + 1;
+    int wh = w * h;
+    int whmax = std::max(w, h);
 
-	for (size_t i = 0; i  < dln.coords.size() / 2; i++) prev[i] = delaunator::INVALID_INDEX;
+    fftw_complex *noise = genenerate_fft_noise(w, h, -2., 2., 1e100);
+    for (int y = 0; y < h; y++)
+        for (int x = 0; x < w; x++) {
+            auto d = 2.0 * hypot(x - w / 2, y - h / 2) / whmax;
+            auto dm = (d < sea_level) ? 0 : (d - sea_level) / (0.9 - sea_level) + 0.1;
+            dm = std::min(dm * dm + 0.05, 1.0);
+            // dm = std::min(dm, 1.0);
+            auto da = (d < sea_level) ? 0 : (d - sea_level) / 2 + 0.05;
+            // auto d = .1;
+            noise[y * w + x][0] = noise[y * w + x][0] * dm + da;
+            // noise[y * MapSizeX() + x][0] = std::min(1.0, noise[y * MapSizeX() + x][0] + d);
+        }
 
-	struct q2_item_t {
-		double priority;
-		size_t edge;
-		std::pair<double, double> direction;
-		q2_item_t(double	priority, size_t edge, std::pair<double, double> direction)
-			:priority{priority}, edge{edge}, direction{direction} {}
-	};
+    for (int i = 0; i < wh; i++) noise[i][0] = (noise[i][0] < sea_level ? 0 : noise[i][0] - sea_level + 0.05);
 
-	auto cmp2 = [](const q2_item_t &a, const q2_item_t &b) { return a.priority > b.priority; };
-	std::priority_queue<q2_item_t, std::vector<q2_item_t>, decltype(cmp2) > q2(cmp2);
-	std::vector<size_t> order;
+    normalize(noise, noise + wh);
+    MakePNGImage("noise.png", fft_plot_callback, (void *)noise, w, h, 32, nullptr);
+    sea_level = 0.0001;
 
-	for (size_t e = 0; e < dln.triangles.size(); e++) {
-		if (get_edge_height(noise, dln, e) > sea_level) continue;
-		auto next_e = next_halfedge(e);
-		auto e_end = dln.triangles[next_e];
-		auto h = get_edge_height(noise, dln, next_e);
-		if (h >= sea_level) q2.push(q2_item_t(-1.0, e, get_edge_direction(dln, dln.triangles[e], e_end)));
-	}
+    auto points = poissosn_disc_sampling(w, h);
+    delaunator::Delaunator dln(points);
+    if (wh <= 1 << 16) plot_delaunay(dln, w, h, "delaunay.png");
 
-	while (!q2.empty()) {
-		auto x = q2.top(); q2.pop();
-		auto incoming = x.edge;
-		auto j = dln.triangles[next_halfedge(incoming)];
+    size_t n = dln.coords.size() / 2;
+    std::vector<double> hegiht(n);
 
-		if (prev[j] != delaunator::INVALID_INDEX) continue;
-		prev[j] = dln.triangles[incoming];
-		// fprintf(stderr, "IJIJIJIJIJI %lu %lu\n", dln.triangles[incoming], j);
+    typedef std::pair<size_t, double> q_item_t;
+    auto cmp = [](const q_item_t &a, const q_item_t &b) { return a.second > b.second; };
+    std::priority_queue<q_item_t, std::vector<q_item_t>, decltype(cmp) > q(cmp);
+    std::vector<bool> vis(dln.coords.size() / 2);
+    std::vector<size_t> prev(dln.coords.size() / 2);
+    std::vector<double> height(dln.coords.size() / 2);
 
-		order.push_back(j);
-	    do {
-	        auto outgoing = next_halfedge(incoming);
-	        incoming = dln.halfedges[outgoing];
-	        if (incoming == delaunator::INVALID_INDEX) break;
+    for (size_t i = 0; i  < dln.coords.size() / 2; i++) prev[i] = delaunator::INVALID_INDEX;
+    for (size_t e = 0; e < dln.triangles.size(); e++) {
+        if (get_edge_height(noise, w, dln, e) > sea_level) continue;
+        height[dln.triangles[e]] = 0;
+        auto next_e = next_halfedge(e);
+        auto e_end = dln.triangles[next_e];
+        if (vis[e_end]) continue;
+        auto h = get_edge_height(noise, w, dln, next_e);
+        vis[e_end] = true;
+        if (h >= sea_level) q.push(std::make_pair(e, h));
+    }
 
-	        auto k = dln.triangles[incoming];
+    while (!q.empty()) {
+        auto x = q.top(); q.pop();
+        auto incoming = x.first;
+        auto ii = dln.triangles[next_halfedge(incoming)];
+        height[ii] = x.second;
+        do {
+            auto outgoing = next_halfedge(incoming);
+            incoming = dln.halfedges[outgoing];
+            if (incoming == delaunator::INVALID_INDEX) break;
 
-	        if (prev[k] != delaunator::INVALID_INDEX || height[k] <= height[j]) continue;
+            auto i = dln.triangles[incoming];
+            if (vis[i]) continue;
 
-	        // fprintf(stderr, "A %lu %lu %lu\n", dln.triangles[incoming], j, k);
-	        // fprintf(stderr, "B %lu %lu %lu\n", x.edge, incoming, outgoing);
+            vis[i] = true;
+            q.push(std::make_pair(outgoing, std::max(get_edge_height(noise, w, dln, incoming), x.second)));
+            // q.push(std::make_pair(outgoing, get_edge_height(noise, dln, incoming) + x.second - sea_level));
+            prev[i] = ii;
 
-			auto direction = get_edge_direction(dln, j, k);
+        } while (incoming != x.first);
+    }
 
-        	q2.push(q2_item_t(
-				-(direction.first * x.direction.first + direction.second * x.direction.second),
-				outgoing,
-				std::make_pair(lerp(direction.first, x.direction.first, directional_inertia),
-							   lerp(direction.second, x.direction.second, directional_inertia))
-        	));
-	    } while (incoming != x.edge);
-	}
+    normalize(height);
 
-	std::vector<double> flow(dln.coords.size() / 2);
-	std::reverse(order.begin(), order.end());
-	for (size_t i = 0; i  < dln.coords.size() / 2; i++) flow[i] = default_water_level;
-	for (auto i : order) {
-		if (prev[i] == delaunator::INVALID_INDEX) continue;
-		auto j = prev[i];
-		// double d = std::hypot(dln.coords[j * 2] - dln.coords[1 * 2], dln.coords[j * 2 + 1] - dln.coords[1 * 2 + 1]);
-		flow[j] += flow[i] * evaporation_rate;
-	}
+    if (w * h <= 1 << 16) plot_river_height(dln, prev, height , w, h, "initial_river_height.png");
 
-	if (MapSize() <= 1 << 16) plot_river_flow(dln, prev, flow, MapSizeX(), MapSizeY(), "river_flow_computed.png");
+    for (size_t i = 0; i  < dln.coords.size() / 2; i++) prev[i] = delaunator::INVALID_INDEX;
 
-	for (size_t i = 0; i  < dln.coords.size() / 2; i++) vis[i] = false;
-	for (size_t e = 0; e < dln.triangles.size(); e++) {
-		if (get_edge_height(noise, dln, e) > sea_level) continue;
-		auto next_e = next_halfedge(e);
-		auto e_end = dln.triangles[next_e];
-		if (vis[e_end]) continue;
-		auto h = get_edge_height(noise, dln, next_e);
-		vis[e_end] = true;
-		if (h >= sea_level) q.push(std::make_pair(e, 0));
-	}
+    struct q2_item_t {
+        double priority;
+        size_t edge;
+        std::pair<double, double> direction;
+        q2_item_t(double    priority, size_t edge, std::pair<double, double> direction)
+            :priority{priority}, edge{edge}, direction{direction} {}
+    };
 
-	while (!q.empty()) {
-		auto x = q.top(); q.pop();
-		auto incoming = x.first;
-		auto ii = dln.triangles[next_halfedge(incoming)];
-		height[ii] = x.second;
-	    do {
-	        auto outgoing = next_halfedge(incoming);
-	        incoming = dln.halfedges[outgoing];
-	        if (incoming == delaunator::INVALID_INDEX) break;
+    auto cmp2 = [](const q2_item_t &a, const q2_item_t &b) { return a.priority > b.priority; };
+    std::priority_queue<q2_item_t, std::vector<q2_item_t>, decltype(cmp2) > q2(cmp2);
+    std::vector<size_t> order;
 
-	        auto i = dln.triangles[incoming];
-	        if (vis[i]) continue;
+    for (size_t e = 0; e < dln.triangles.size(); e++) {
+        if (get_edge_height(noise, w, dln, e) > sea_level) continue;
+        auto next_e = next_halfedge(e);
+        auto e_end = dln.triangles[next_e];
+        auto h = get_edge_height(noise, w, dln, next_e);
+        if (h >= sea_level) q2.push(q2_item_t(-1.0, e, get_edge_direction(dln, dln.triangles[e], e_end)));
+    }
 
-        	vis[i] = true;
-	        auto v = (prev[i] == ii ? flow[i] : 0.0);
-	        auto downcut = 1.0 / (1.0 + v * river_downcutting_constant);
+    while (!q2.empty()) {
+        auto x = q2.top(); q2.pop();
+        auto incoming = x.edge;
+        auto j = dln.triangles[next_halfedge(incoming)];
 
-        	q.push(std::make_pair(outgoing, x.second + (get_edge_height(noise, dln, incoming) - sea_level) * downcut));
-	    } while (incoming != x.first);
-	}
+        if (prev[j] != delaunator::INVALID_INDEX) continue;
+        prev[j] = dln.triangles[incoming];
+        // fprintf(stderr, "IJIJIJIJIJI %lu %lu\n", dln.triangles[incoming], j);
 
-	normalize(height);
+        order.push_back(j);
+        do {
+            auto outgoing = next_halfedge(incoming);
+            incoming = dln.halfedges[outgoing];
+            if (incoming == delaunator::INVALID_INDEX) break;
 
-	if (MapSize() <= 1 << 16) plot_river_height(dln, prev, height , MapSizeX(), MapSizeY(), "final_river_height.png");
+            auto k = dln.triangles[incoming];
 
-	auto x = dln.coords;
-	auto y = &dln.coords[1];
-	for (size_t e = 0; e < dln.triangles.size(); e += 3) {
-		auto i = 2 * dln.triangles[e];
-		auto j = 2 * dln.triangles[e + 1];
-		auto k = 2 * dln.triangles[e + 2];
-		uint min_x = std::max<int>((int)std::ceil(std::min(std::min(x[i], x[j]), x[k])), 0);
-		uint max_x = std::min<int>((int)std::floor(std::max(std::max(x[i], x[j]), x[k])) + 1, MapSizeX());
-		uint min_y = std::max<int>((int)std::ceil(std::min(std::min(y[i], y[j]), y[k])), 0);
-		uint max_y = std::min<int>((int)std::floor(std::max(std::max(y[i], y[j]), y[k])) + 1, MapSizeY());
-		for (auto xx = min_x; xx < max_x; xx++)
-			for (auto yy = min_y; yy < max_y; yy++) {
-				double *h = noise[yy * MapSizeX() + xx];
-				if (*h <= sea_level) continue;
-				double d = (y[j] - y[k]) * (x[i] - x[k]) + (x[k] - x[j]) * (y[i] - y[k]);
-				double w1 = ((y[j] - y[k]) * (xx - x[k]) + (x[k] - x[j]) * (yy - y[k])) / d;
-				double w2 = ((y[k] - y[i]) * (xx - x[k]) + (x[i] - x[k]) * (yy - y[k])) / d;
-				double w3 = 1.0 - w1 - w2;
-				if (w1 < 0 || w2 < 0 || w3 < 0) continue;
-				*h = height[dln.triangles[e]] * w1 + height[dln.triangles[e + 1]] * w2 + height[dln.triangles[e + 2]] * w3 + sea_level;
-			}
-	}
-	normalize(noise, noise + MapSize());
-	MakePNGImage("terrain.png", fft_plot_callback, (void *)noise, MapSizeX(), MapSizeY(), 32, nullptr);
+            if (prev[k] != delaunator::INVALID_INDEX) continue;
+            if (height[k] + allowed_uphill_delta <= height[j]) continue;
+
+            // fprintf(stderr, "A %lu %lu %lu\n", dln.triangles[incoming], j, k);
+            // fprintf(stderr, "B %lu %lu %lu\n", x.edge, incoming, outgoing);
+
+            auto direction = get_edge_direction(dln, j, k);
+
+            q2.push(q2_item_t(
+                -(direction.first * x.direction.first + direction.second * x.direction.second),
+                outgoing,
+                std::make_pair(lerp(direction.first, x.direction.first, directional_inertia),
+                               lerp(direction.second, x.direction.second, directional_inertia))
+            ));
+        } while (incoming != x.edge);
+    }
+
+    // Compute river flow
+    std::vector<double> flow(dln.coords.size() / 2);
+    std::reverse(order.begin(), order.end());
+    for (size_t i = 0; i  < dln.coords.size() / 2; i++) {
+        // auto d = std::min(1.0, 2.0 * hypot(dln.coords[i * 2] - (int)MapSizeX() / 2, dln.coords[i * 2 + 1] - (int)MapSizeY() / 2) / std::max(MapSizeX(), MapSizeY()));
+        auto d = noise[(int)dln.coords[i * 2 + 1] * w + (int)dln.coords[i * 2]][0];
+        flow[i] = default_water_level * d * d;
+    }
+    for (auto i : order) {
+        if (prev[i] == delaunator::INVALID_INDEX) continue;
+        auto j = prev[i];
+        // double d = std::hypot(dln.coords[j * 2] - dln.coords[1 * 2], dln.coords[j * 2 + 1] - dln.coords[1 * 2 + 1]);
+        flow[j] += flow[i] * evaporation_rate;
+    }
+
+    if (wh <= 1 << 16) plot_river_flow(dln, prev, flow, w, h, "river_flow_computed.png");
+
+    for (size_t i = 0; i  < dln.coords.size() / 2; i++) vis[i] = false;
+    for (size_t e = 0; e < dln.triangles.size(); e++) {
+        if (get_edge_height(noise, w, dln, e) > sea_level) continue;
+        auto next_e = next_halfedge(e);
+        auto e_end = dln.triangles[next_e];
+        if (vis[e_end]) continue;
+        auto h = get_edge_height(noise, w, dln, next_e);
+        vis[e_end] = true;
+        if (h >= sea_level) q.push(std::make_pair(e, 0));
+    }
+
+    while (!q.empty()) {
+        auto x = q.top(); q.pop();
+        auto incoming = x.first;
+        auto ii = dln.triangles[next_halfedge(incoming)];
+        height[ii] = x.second;
+        do {
+            auto outgoing = next_halfedge(incoming);
+            incoming = dln.halfedges[outgoing];
+            if (incoming == delaunator::INVALID_INDEX) break;
+
+            auto i = dln.triangles[incoming];
+            if (vis[i]) continue;
+
+            vis[i] = true;
+            auto v = (prev[i] == ii ? flow[i] : 0.0);
+            auto downcut = 1.0 / (1.0 + v * river_downcutting_constant);
+
+            q.push(std::make_pair(outgoing, x.second + (get_edge_height(noise, w, dln, incoming) - sea_level) * downcut));
+        } while (incoming != x.first);
+    }
+
+    normalize(height);
+
+    if (wh <= 1 << 16) plot_river_height(dln, prev, height, w, h, "final_river_height.png");
+
+    auto x = dln.coords;
+    auto y = &dln.coords[1];
+    for (size_t e = 0; e < dln.triangles.size(); e += 3) {
+        auto i = 2 * dln.triangles[e];
+        auto j = 2 * dln.triangles[e + 1];
+        auto k = 2 * dln.triangles[e + 2];
+        uint min_x = std::max<int>((int)std::floor(std::min(std::min(x[i], x[j]), x[k])), 0);
+        uint max_x = std::min<int>((int)std::ceil(std::max(std::max(x[i], x[j]), x[k])), w);
+        uint min_y = std::max<int>((int)std::floor(std::min(std::min(y[i], y[j]), y[k])), 0);
+        uint max_y = std::min<int>((int)std::ceil(std::max(std::max(y[i], y[j]), y[k])), h);
+        // fprintf(stderr, "%u %u %u %u\n", min_x, max_x, min_y, max_y);
+        for (auto xx = min_x; xx < max_x; xx++)
+            for (auto yy = min_y; yy < max_y; yy++) {
+                double *h = noise[yy * w + xx];
+                if (*h <= sea_level) continue;
+                double d = (y[j] - y[k]) * (x[i] - x[k]) + (x[k] - x[j]) * (y[i] - y[k]);
+                double w1 = ((y[j] - y[k]) * (xx + 0.5 - x[k]) + (x[k] - x[j]) * (yy + 0.5 - y[k])) / d;
+                double w2 = ((y[k] - y[i]) * (xx + 0.5 - x[k]) + (x[i] - x[k]) * (yy + 0.5 - y[k])) / d;
+                double w3 = 1.0 - w1 - w2;
+                if (w1 < 0 || w2 < 0 || w3 < 0) continue;
+                *h = height[dln.triangles[e]] * w1 + height[dln.triangles[e + 1]] * w2 + height[dln.triangles[e + 2]] * w3 + sea_level;
+            }
+    }
+    normalize(noise, noise + wh);
+    for (int i = 0; i < wh; i++) noise[i][0] *= noise[i][0];
+    MakePNGImage("terrain.png", fft_plot_callback, (void *)noise, w, h, 32, nullptr);
 
     fftw_free(noise);
 
-	GenerateTerrainPerlin();
+	if (!AllocHeightMap()) return;
+	GenerateWorldSetAbortCallback(FreeHeightMap);
+
+    for (int y = 0; y < h; y++)
+        for (int x = 0; x < w; x++)
+    		_height_map.height(x, y) = (uint8)(noise[y * w + x][0] * 255);
+
+	HeightMapSmoothSlopes(I2H(1));
+
+	/* First make sure the tiles at the north border are void tiles if needed. */
+	if (_settings_game.construction.freeform_edges) {
+		for (uint x = 0; x < MapSizeX(); x++) MakeVoid(TileXY(x, 0));
+		for (uint y = 0; y < MapSizeY(); y++) MakeVoid(TileXY(0, y));
+	}
+
+	/* Transfer height map into OTTD map */
+	for (int y = 0; y < _height_map.size_y; y++) {
+		for (int x = 0; x < _height_map.size_x; x++) {
+			TgenSetTileHeight(TileXY(x, y), Clamp(H2I(_height_map.height(x, y)), 0, 255));
+		}
+	}
+
+	FreeHeightMap();
 }
 
 }

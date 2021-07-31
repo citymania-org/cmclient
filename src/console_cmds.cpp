@@ -310,7 +310,7 @@ DEF_CONSOLE_CMD(ConSave)
 	}
 
 	if (argc == 2) {
-		char *filename = str_fmt("%s.sav", argv[1]);
+ 		char *filename = str_fmt("%s.sav", argv[1]);
 		IConsolePrint(CC_DEFAULT, "Saving map...");
 
 		if (SaveOrLoad(filename, SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
@@ -2459,8 +2459,10 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("dump_info", ConDumpInfo);
 
 	IConsoleCmdRegister("cmexport", citymania::ConExport);
-	IConsoleCmdRegister("cmstep", citymania::ConStep, ConHookNoNetwork);
 	IConsoleCmdRegister("cmtreemap", citymania::ConTreeMap, ConHookNoNetwork);
-	IConsoleCmdRegister("cmresettowngrowth", citymania::ConResetTownGrowth, ConHookNoNetwork);
-	IConsoleCmdRegister("cmloadcommands", citymania::ConLoadCommands, ConHookNoNetwork);
+
+	IConsoleCmdRegister("cmstep", citymania::ConStep);
+	IConsoleCmdRegister("cmresettowngrowth", citymania::ConResetTownGrowth);
+	IConsoleCmdRegister("cmloadcommands", citymania::ConLoadCommands);
+	// IConsoleCmdRegister("cmgamespeed", citymania::ConGameSpeed);
 }
