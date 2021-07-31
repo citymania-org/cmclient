@@ -34,6 +34,8 @@
 #include "../gfx_func.h"
 #include "../error.h"
 
+#include "citymania/cm_console_cmds.hpp"
+
 #include "../safeguards.h"
 
 #ifdef DEBUG_DUMP_COMMANDS
@@ -999,6 +1001,8 @@ void NetworkGameLoop()
 
 		NetworkExecuteLocalCommandQueue();
 		if (_pause_countdown > 0 && --_pause_countdown == 0) DoCommandP(0, PM_PAUSED_NORMAL, 1, CMD_PAUSE);
+
+		citymania::ExecuteFakeCommands(_date, _date_fract);
 
 		/* Then we make the frame */
 		StateGameLoop();

@@ -203,6 +203,8 @@ static void ShowHelp()
 		"  -c config_file      = Use 'config_file' instead of 'openttd.cfg'\n"
 		"  -x                  = Never save configuration changes to disk\n"
 		"  -q savegame         = Write some information about the savegame and exit\n"
+		"  -C commands         = Load commands to execute (CityMania addition)\n"
+		"  -T ticks            = Save game every n ticks with filename replay_<tick>.sav (CityMania addition)\n"
 		"\n",
 		lastof(buf)
 	);
@@ -542,6 +544,8 @@ static const OptionData _options[] = {
 	 GETOPT_SHORT_NOVAL('x'),
 	 GETOPT_SHORT_VALUE('q'),
 	 GETOPT_SHORT_NOVAL('h'),
+	 GETOPT_SHORT_VALUE('C'),
+	 GETOPT_SHORT_VALUE('T'),
 	GETOPT_END()
 };
 
@@ -677,6 +681,19 @@ int openttd_main(int argc, char *argv[])
 		case 'G': scanner->generation_seed = strtoul(mgo.opt, nullptr, 10); break;
 		case 'c': _config_file = mgo.opt; break;
 		case 'x': scanner->save_config = false; break;
+		case 'C': {
+			DeterminePaths(argv[0]);
+			if (StrEmpty(mgo.opt)) {
+				ret = 1;
+				return ret;
+			}
+			citymania::LoadCommands(mgo.opt);
+			break;
+		}
+		case 'T': {
+			citymania::SetReplaySaveInterval(strtol(mgo.opt, nullptr, 10));
+			break;
+		}
 		case 'h':
 			i = -2; // Force printing of help.
 			break;
@@ -1530,6 +1547,7 @@ void GameLoop()
 		citymania::ExecuteFakeCommands(_date, _date_fract);
 		/* Singleplayer */
 		StateGameLoop();
+		citymania::CheckIntervalSave();
 	}
 
 	if (!_pause_mode && HasBit(_display_opt, DO_FULL_ANIMATION)) DoPaletteAnimations();

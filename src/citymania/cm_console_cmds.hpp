@@ -5,6 +5,12 @@
 
 namespace citymania {
 
+void SkipFakeCommands(Date date, DateFract date_fract);
+void SetReplaySaveInterval(uint32 interval);
+void LoadCommands(const std::string &filename);
+void CheckIntervalSave();
+
+bool ConGameSpeed(byte argc, char *argv[]);
 bool ConStep(byte argc, char *argv[]);
 bool ConExport(byte argc, char *argv[]);
 bool ConTreeMap(byte argc, char *argv[]);

@@ -7,9 +7,11 @@
 #include "../command_func.h"
 #include "../console_func.h"
 #include "../console_type.h"
+#include "../date_func.h"
 #include "../fileio_type.h"
 #include "../map_type.h"
 #include "../map_func.h"
+#include "../network/network_server.h"
 #include "../strings_func.h"
 #include "../town.h"
 #include "../tree_map.h"
@@ -24,9 +26,24 @@ bool ReadHeightMap(DetailedFileType dft, const char *filename, uint *x, uint *y,
 
 namespace citymania {
 
+uint32 _replay_save_interval = 0;
+uint32 _replay_last_save = 0;
+uint32 _replay_ticks = 0;
+bool _replay_started = false;
+
 static void IConsoleHelp(const char *str)
 {
     IConsolePrintF(CC_WARNING, "- %s", str);
+}
+
+bool ConGameSpeed(byte argc, char *argv[]) {
+    if (argc == 0 || argc > 2) {
+        IConsoleHelp("Changes game speed. Usage: 'cmgamespeed [n]'");
+        return true;
+    }
+    _game_speed = (argc > 1 ? atoi(argv[1]) : 100);
+
+    return true;
 }
 
 bool ConStep(byte argc, char *argv[]) {
@@ -135,6 +152,8 @@ bool ConResetTownGrowth(byte argc, char *argv[]) {
 struct FakeCommand {
     Date date;
     DateFract date_fract;
+    uint res;
+    uint32 seed;
     uint company_id;
     uint cmd;
     TileIndex tile;
@@ -144,30 +163,124 @@ struct FakeCommand {
 
 static std::queue<FakeCommand> _fake_commands;
 
+void MakeReplaySave() {
+    char *filename = str_fmt("replay_%d.sav", _replay_ticks);
+    if (SaveOrLoad(filename, SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
+        IConsolePrintF(CC_ERROR, "Replay save failed");
+    } else {
+        IConsolePrintF(CC_DEFAULT, "Replay saved to %s", filename);
+    }
+    _replay_last_save = _replay_ticks;
+}
+
+bool DatePredate(Date date1, DateFract date_fract1, Date date2, DateFract date_fract2) {
+    return date1 < date2 || (date1 == date2 && date_fract1 < date_fract2);
+}
+
+void SkipFakeCommands(Date date, DateFract date_fract) {
+    uint commands_skipped = 0;
+
+    while (!_fake_commands.empty() && DatePredate(_fake_commands.front().date, _fake_commands.front().date_fract, date, date_fract)) {
+        _fake_commands.pop();
+        commands_skipped++;
+    }
+
+    if (commands_skipped) {
+        fprintf(stderr, "Skipped %u commands that predate the current date (%d/%hu)\n", commands_skipped, date, date_fract);
+    }
+}
+
 void ExecuteFakeCommands(Date date, DateFract date_fract) {
+    if (!_replay_started) {
+        SkipFakeCommands(_date, _date_fract);
+        _replay_started = true;
+    }
+
     auto backup_company = _current_company;
-    while (!_fake_commands.empty() && _fake_commands.front().date <= date && _fake_commands.front().date_fract <= date_fract) {
+    while (!_fake_commands.empty() && !DatePredate(date, date_fract, _fake_commands.front().date, _fake_commands.front().date_fract)) {
         auto &x = _fake_commands.front();
-        if (x.date < date || x.date_fract < date_fract) IConsolePrintF(CC_WARNING,
-                                                                       "Queued command is earlier than execution date: %d/%hu vs %d/%hu",
-                                                                       x.date, x.date_fract, date, date_fract);
-        fprintf(stderr, "Executing command: company=%u cmd=%u tile=%u p1=%u p2=%u text=%s ... ", x.company_id, x.cmd, x.tile, x.p1, x.p2, x.text.c_str());
+
+        fprintf(stderr, "Executing command: company=%u cmd=%u(%s) tile=%u p1=%u p2=%u text=%s ... ", x.company_id, x.cmd, GetCommandName(x.cmd), x.tile, x.p1, x.p2, x.text.c_str());
+        if (x.res == 0) {
+            fprintf(stderr, "REJECTED\n");
+            _fake_commands.pop();
+            continue;
+        }
+
+        if (_networking) {
+            CommandPacket cp;
+            cp.tile = x.tile;
+            cp.p1 = x.p1;
+            cp.p2 = x.p2;
+            cp.cmd = x.cmd;
+            strecpy(cp.text, x.text.c_str(), lastof(cp.text));
+            cp.company = (CompanyID)x.company_id;
+            cp.frame = _frame_counter_max + 1;
+            cp.callback = nullptr;
+            cp.my_cmd = false;
+
+            for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
+                if (cs->status >= NetworkClientSocket::STATUS_MAP) {
+                    cs->outgoing_queue.Append(&cp);
+                }
+            }
+        }
         _current_company = (CompanyID)x.company_id;
         auto res = DoCommandPInternal(x.tile, x.p1, x.p2, x.cmd | CMD_NETWORK_COMMAND, nullptr, x.text.c_str(), false, false);
-        if (res.Failed()) {
-            if (res.GetErrorMessage() != INVALID_STRING_ID) {
+        if (res.Failed() != (x.res != 1)) {
+            if (!res.Failed()) {
+                fprintf(stderr, "FAIL (Failing command succeeded)\n");
+            } else if (res.GetErrorMessage() != INVALID_STRING_ID) {
                 char buf[DRAW_STRING_BUFFER];
                 GetString(buf, res.GetErrorMessage(), lastof(buf));
-                fprintf(stderr, "%s\n", buf);
+                fprintf(stderr, "FAIL (Successful command failed: %s)\n", buf);
             } else {
-                fprintf(stderr, "FAIL\n");
+                fprintf(stderr, "FAIL (Successful command failed)\n");
             }
         } else {
             fprintf(stderr, "OK\n");
         }
+        if (x.seed != (_random.state[0] & 255)) {
+            fprintf(stderr, "*** DESYNC expected seed %u vs current %u ***\n", x.seed, _random.state[0] & 255);
+        }
         _fake_commands.pop();
     }
     _current_company = backup_company;
+}
+
+void CheckIntervalSave() {
+    if (_pause_mode == PM_UNPAUSED) {
+        _replay_ticks++;
+        if (_replay_save_interval && _replay_ticks - _replay_last_save  >= _replay_save_interval) {
+            MakeReplaySave();
+        }
+    }
+}
+
+void SetReplaySaveInterval(uint32 interval) {
+    _replay_save_interval = interval;
+    _replay_last_save = 0;
+    _replay_ticks = 0;
+
+    if (_replay_save_interval) MakeReplaySave();
+}
+
+void LoadCommands(const std::string &filename) {
+    std::queue<FakeCommand>().swap(_fake_commands);  // clear queue
+
+    std::ifstream file(filename, std::ios::in);
+    std::string str;
+    while(std::getline(file, str)) {
+        std::istringstream ss(str);
+        FakeCommand cmd;
+        ss >> cmd.date >> cmd.date_fract >> cmd.res >> cmd.seed >> cmd.company_id >> cmd.cmd  >> cmd.tile >> cmd.p1 >> cmd.p2;
+        std::string s;
+        ss.get();
+        std::getline(ss, cmd.text);
+        _fake_commands.push(cmd);
+    }
+
+    _replay_started = false;
 }
 
 bool ConLoadCommands(byte argc, char *argv[]) {
@@ -177,23 +290,11 @@ bool ConLoadCommands(byte argc, char *argv[]) {
         return true;
     }
 
-    if (argc != 2) return false;
+    if (argc > 3) return false;
 
-    std::queue<FakeCommand>().swap(_fake_commands);  // clear queue
+    LoadCommands(argv[1]);
+    SetReplaySaveInterval(argc > 2 ? atoi(argv[2]) : 0);
 
-    std::ifstream file(argv[1], std::ios::in);
-    std::string str;
-    while(std::getline(file, str))
-    {
-        std::istringstream ss(str);
-        FakeCommand cmd;
-        ss >> cmd.date >> cmd.date_fract >> cmd.company_id >> cmd.cmd >> cmd.p1 >> cmd.p2 >> cmd.tile;
-        std::string s;
-        ss.get();
-        std::getline(ss, cmd.text);
-        // fprintf(stderr, "PARSED: company=%u cmd=%u tile=%u p1=%u p2=%u text=%s\n", cmd.company_id, cmd.cmd, cmd.tile, cmd.p1, cmd.p2, cmd.text.c_str());
-        _fake_commands.push(cmd);
-    }
     return true;
 }
 
