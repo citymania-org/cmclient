@@ -6,6 +6,7 @@ namespace citymania {
 namespace terragen {
 
 void Generate();
+void GenerateRivers();
 
 }
 

@@ -5,20 +5,24 @@
 #include "3rdparty/delaunator.hpp"
 
 #include "../clear_map.h"
+#include "../core/math_func.hpp"
+#include "../core/random_func.hpp"
 #include "../genworld.h"
 #include "../gfx_type.h"
-#include "../core/math_func.hpp"
 #include "../tgp.h" // TODO remove
 #include "../void_map.h"
-#include "../core/random_func.hpp"
 
 #include <fftw3.h>
 
 #include <cmath>
+#include <map>
 #include <vector>
 #include <queue>
 
 #include "../safeguards.h"
+
+
+extern CommandCost CmdBuildObject(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text);
 
 typedef int16 height_t;
 /** Height map - allocated array of heights (MapSizeX() + 1) x (MapSizeY() + 1) */
@@ -467,6 +471,8 @@ static void HeightMapSmoothSlopes(height_t dh_max)
 	}
 }
 
+std::vector<std::pair<TileIndex, uint8>> _rivers;
+
 void Generate() {
     double sea_level = 0.15;
     const double directional_inertia = 0.3;
@@ -712,8 +718,60 @@ void Generate() {
 	}
 
 	FreeHeightMap();
+
+
+	std::map<TileIndex, uint8> rivers;
+    for (size_t e = 0; e < dln.coords.size() / 2; e++) {
+		if (prev[e] == delaunator::INVALID_INDEX) continue;
+		if (flow[e] < default_water_level * 30) continue;
+		auto a = e * 2, b = prev[e] * 2;
+		auto ax = dln.coords[a], ay = dln.coords[a + 1];
+		auto bx = dln.coords[b], by = dln.coords[b + 1];
+		auto axi = (int)ax, ayi = (int)ay;
+		auto bxi = (int)bx, byi = (int)by;
+		bool dx = (int)ax != (int)bx;
+		bool dy = (int)ay != (int)by;
+		if (axi < 0 || axi >= MapSizeX()) continue;
+		if (ayi < 0 || ayi >= MapSizeY()) continue;
+		if (bxi < 0 || bxi >= MapSizeX()) continue;
+		if (byi < 0 || byi >= MapSizeY()) continue;
+		if (abs(axi - bxi) > 1 || abs(ayi - byi) > 1) fprintf(stderr, "BOTVA %f %f %f %f\n", ax, ay, bx, by);
+		if (axi == bxi && ayi == byi) continue;
+		if (axi != bxi && ayi != byi) {
+			auto side = (axi > bxi ? 1 : 3);
+			rivers[TileXY(axi, ayi)] |= (2 << (side * 2));
+			rivers[TileXY(bxi, ayi)] |= (1 << ((side ^ 2) * 2));
+			side = (ayi > byi ? 0 : 2);
+			rivers[TileXY(bxi, ayi)] |= (2 << (side * 2));
+			rivers[TileXY(bxi, byi)] |= (1 << ((side ^ 2) * 2));
+			continue;
+		}
+
+		auto side = 1;
+		if (axi > bxi) side = 3;
+		else if (axi == bxi) side = (ayi < byi ? 0 : 2);
+		rivers[TileXY(bxi, byi)] |= (1 << (side * 2));
+		rivers[TileXY(axi, ayi)] |= (2 << ((side ^ 2) * 2));
+	}
+
+	_rivers.clear();
+	for (auto kv : rivers) {
+		_rivers.emplace_back(kv.first,
+			(kv.second % 4) +
+			((kv.second >> 2) % 4) * 3 +
+			((kv.second >> 4) % 4) * 9 +
+			(kv.second >> 6) * 27
+		);
+	}
 }
 
+void GenerateRivers() {
+	for (auto r : _rivers) {
+		// fprintf(stderr, "BUILDOBJ %d(%d %d) %d\n", (int)r.first, (int)TileX(r.first), (int)TileY(r.first), (int)r.second);
+		CmdBuildObject(r.first, DC_EXEC | DC_AUTO | DC_NO_TEST_TOWN_RATING | DC_NO_MODIFY_TOWN_RATING, 6 + r.second, 0, nullptr);
+	}
 }
 
-}
+} // namespace terragen
+
+} // namespace citymania

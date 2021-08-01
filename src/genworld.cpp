@@ -35,6 +35,8 @@
 #include "thread.h"
 #include "tgp.h"
 
+#include "citymania/cm_terragen.hpp"
+
 #include "safeguards.h"
 
 
@@ -135,6 +137,10 @@ static void _GenerateWorld()
 				GenerateObjects();
 				GenerateTrees();
 			}
+		}
+
+		if (_settings_game.game_creation.land_generator == CM_LG_REALISTIC) {
+			citymania::terragen::GenerateRivers();
 		}
 
 		/* These are probably pointless when inside the scenario editor. */
