@@ -272,6 +272,10 @@ void plot_river_height(delaunator::Delaunator &dln, std::vector<size_t> &prev, s
    	MakePNGImage(filename, plot_points_callback, (void *)(&img[0]), width * DEBUG_IMG_SCALE, height * DEBUG_IMG_SCALE, 32, nullptr);
 }
 
+template <typename T> int sign(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 // https://observablehq.com/@techsparx/an-improvement-on-bridsons-algorithm-for-poisson-disc-samp/2
 std::vector<double> poissosn_disc_sampling(uint width, uint height) {
 	static int k = 4; // maximum number of samples before rejection
@@ -479,8 +483,7 @@ void Generate() {
     const double default_water_level = 0.5;
     const double evaporation_rate = 1.0 - 0.04;
     const double river_downcutting_constant = 0.5;
-    const double max_delta = 0.05;
-    const double allowed_uphill_delta = 0.005;
+    const double allowed_uphill_delta = 0.0005;
 
     int w = MapSizeX() + 1;
     int h = MapSizeY() + 1;
@@ -698,9 +701,10 @@ void Generate() {
 	if (!AllocHeightMap()) return;
 	GenerateWorldSetAbortCallback(FreeHeightMap);
 
-    for (int y = 0; y < h; y++)
+    for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++)
     		_height_map.height(x, y) = (uint8)(noise[y * w + x][0] * 255);
+    }
 
 	HeightMapSmoothSlopes(I2H(1));
 
@@ -724,34 +728,53 @@ void Generate() {
     for (size_t e = 0; e < dln.coords.size() / 2; e++) {
 		if (prev[e] == delaunator::INVALID_INDEX) continue;
 		if (flow[e] < default_water_level * 30) continue;
+
+		// grid traversal algo:
+		// https://gamedev.stackexchange.com/questions/81267/how-do-i-generalise-bresenhams-line-algorithm-to-floating-point-endpoints/182143#182143
+
 		auto a = e * 2, b = prev[e] * 2;
 		auto ax = dln.coords[a], ay = dln.coords[a + 1];
 		auto bx = dln.coords[b], by = dln.coords[b + 1];
-		auto axi = (int)ax, ayi = (int)ay;
-		auto bxi = (int)bx, byi = (int)by;
-		bool dx = (int)ax != (int)bx;
-		bool dy = (int)ay != (int)by;
-		if (axi < 0 || axi >= MapSizeX()) continue;
-		if (ayi < 0 || ayi >= MapSizeY()) continue;
-		if (bxi < 0 || bxi >= MapSizeX()) continue;
-		if (byi < 0 || byi >= MapSizeY()) continue;
-		if (abs(axi - bxi) > 1 || abs(ayi - byi) > 1) fprintf(stderr, "BOTVA %f %f %f %f\n", ax, ay, bx, by);
-		if (axi == bxi && ayi == byi) continue;
-		if (axi != bxi && ayi != byi) {
-			auto side = (axi > bxi ? 1 : 3);
-			rivers[TileXY(axi, ayi)] |= (2 << (side * 2));
-			rivers[TileXY(bxi, ayi)] |= (1 << ((side ^ 2) * 2));
-			side = (ayi > byi ? 0 : 2);
-			rivers[TileXY(bxi, ayi)] |= (2 << (side * 2));
-			rivers[TileXY(bxi, byi)] |= (1 << ((side ^ 2) * 2));
-			continue;
-		}
+		uint x = (uint)floor(ax), y = (uint)floor(ay);
+		auto dx = bx - ax, dy = by - ay;
+		int sx = sign(dx), sy = sign(dy);
+		if (x >= MapSizeX()) continue;
+		if (y >= MapSizeY()) continue;
 
-		auto side = 1;
-		if (axi > bxi) side = 3;
-		else if (axi == bxi) side = (ayi < byi ? 0 : 2);
-		rivers[TileXY(bxi, byi)] |= (1 << (side * 2));
-		rivers[TileXY(axi, ayi)] |= (2 << ((side ^ 2) * 2));
+		auto xofs = ((bx > ax) ? ceil(ax) - ax : ax - floor(ax));
+		auto yofs = ((by > ay) ? ceil(ay) - ay : ay - floor(ay));
+		auto aa = atan2(-dy, dx);
+
+		// TODO possible div by 0
+		auto tmaxx = xofs / cos(aa);
+		auto tmaxy = yofs / sin(aa);
+		auto tdx = 1.0 / cos(aa);
+		auto tdy = 1.0 / sin(aa);
+
+		auto md = (int)(abs(floor(bx) - floor(ax)) + abs(floor(by) - floor(ay)));
+
+		fprintf(stderr, "RIVER %f,%f - %f,%f %d  d=%f,%f s=%d,%d\n", ax, ay, bx, by, md, (double)dx, (double)dy, sx, sy);
+		for (auto t = 0; t < md; t++) {
+			if (abs(tmaxx) < abs(tmaxy)) {
+				tmaxx += tdx;
+				uint nx = x + sx;
+				if (nx >= MapSizeX()) break;
+				auto side = (sx > 0 ? 1 : 3);
+				fprintf(stderr, "YCROSS %u-%u %u side=%d\n", x, nx, y, side);
+				rivers[TileXY(x, y)] |= (2 << ((side ^ 2) * 2));
+				rivers[TileXY(nx, y)] |= (1 << (side * 2));
+				x = nx;
+			} else {
+				tmaxy += tdy;
+				uint ny = y + sy;
+				if (ny >= MapSizeY()) break;
+				auto side = (sy > 0 ? 0 : 2);
+				fprintf(stderr, "XCROSS %u %u-%u side=%d\n", x, y, ny, side);
+				rivers[TileXY(x, y)] |= (2 << ((side ^ 2) * 2));
+				rivers[TileXY(x, ny)] |= (1 << (side * 2));
+				y = ny;
+			}
+		}
 	}
 
 	_rivers.clear();
