@@ -41,6 +41,7 @@
 #include "cargo_type.h"
 
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_console_cmds.hpp"
 
 #include "safeguards.h"
 
@@ -824,7 +825,7 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 	switch ((CompanyCtrlAction)GB(p1, 0, 16)) {
 		case CCA_NEW: { // Create a new company
 			/* This command is only executed in a multiplayer game */
-			if (!_networking) return CMD_ERROR;
+			if (!_networking && !citymania::IsReplayingCommands()) return CMD_ERROR;
 
 			/* Has the network client a correct ClientIndex? */
 			if (!(flags & DC_EXEC)) return CommandCost();

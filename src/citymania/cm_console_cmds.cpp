@@ -283,6 +283,11 @@ void LoadCommands(const std::string &filename) {
     _replay_started = false;
 }
 
+bool IsReplayingCommands() {
+    return !_fake_commands.empty();
+}
+
+
 bool ConLoadCommands(byte argc, char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Loads a file with command queue to execute");
