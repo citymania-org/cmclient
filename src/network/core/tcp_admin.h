@@ -109,9 +109,9 @@ enum AdminCompanyRemoveReason {
 /** Main socket handler for admin related connections. */
 class NetworkAdminSocketHandler : public NetworkTCPSocketHandler {
 protected:
-	char admin_name[NETWORK_CLIENT_NAME_LENGTH];           ///< Name of the admin.
-	char admin_version[NETWORK_REVISION_LENGTH];           ///< Version string of the admin.
-	AdminStatus status;                                    ///< Status of this admin.
+	std::string admin_name;    ///< Name of the admin.
+	std::string admin_version; ///< Version string of the admin.
+	AdminStatus status;        ///< Status of this admin.
 
 	NetworkRecvStatus ReceiveInvalidPacket(PacketAdminType type);
 
@@ -222,7 +222,7 @@ protected:
 
 	/**
 	 * Welcome a connected admin to the game:
-	 * string  Name of the Server (e.g. as advertised to master server).
+	 * string  Name of the Server.
 	 * string  OpenTTD version string.
 	 * bool    Server is dedicated.
 	 * string  Name of the Map.
@@ -482,7 +482,6 @@ public:
 	NetworkRecvStatus CloseConnection(bool error = true) override;
 
 	NetworkAdminSocketHandler(SOCKET s);
-	~NetworkAdminSocketHandler();
 
 	NetworkRecvStatus ReceivePackets();
 

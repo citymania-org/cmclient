@@ -100,8 +100,8 @@ bool UsesWagonOverride(const Vehicle *v);
 
 /* Handler to Evaluate callback 36. If the callback fails (i.e. most of the
  * time) orig_value is returned */
-uint GetVehicleProperty(const Vehicle *v, PropertyID property, uint orig_value);
-uint GetEngineProperty(EngineID engine, PropertyID property, uint orig_value, const Vehicle *v = nullptr);
+int GetVehicleProperty(const Vehicle *v, PropertyID property, int orig_value, bool is_signed = false);
+int GetEngineProperty(EngineID engine, PropertyID property, int orig_value, const Vehicle *v = nullptr, bool is_signed = false);
 
 enum VehicleTrigger {
 	VEHICLE_TRIGGER_NEW_CARGO     = 0x01,
@@ -115,8 +115,6 @@ enum VehicleTrigger {
 	VEHICLE_TRIGGER_CALLBACK_32   = 0x10,
 };
 void TriggerVehicle(Vehicle *veh, VehicleTrigger trigger);
-
-void UnloadWagonOverrides(Engine *e);
 
 void AlterVehicleListOrder(EngineID engine, uint target);
 void CommitVehicleListOrderChanges();

@@ -765,6 +765,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  �
 STR_STATUSBAR_AUTOSAVE                                          :{RED}自動儲存
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  遊戲儲存中 *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}訊息記錄
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}列出最近的新聞內容
@@ -863,11 +864,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}補助過期：{}{}將 {STRING} 從 {STRING} 運到 {STRING} 現在起不再提供補助
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}補助結束：{}{}將 {STRING} 從 {STRING} 運到 {STRING} 的服務不再提供補助
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}提供補助：{}{}首先將 {STRING} 從 {STRING} 運到 {STRING} 的公司將得到地方政府補助一年！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} 獲得補助！{}{}將 {STRING} 從 {STRING} 運到 {STRING} 的服務可在往後一年收到額外 50% 的運費補助！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING} 獲得補助！{}{}將 {STRING} 從 {STRING} 運到 {STRING} 的服務可在往後一年收到雙倍運費補助！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING} 獲得補助！{}{}將 {STRING} 從 {STRING} 運到 {STRING} 的服務可在往後一年收到三倍運費補助！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} 獲得補助！{}{}將 {STRING} 從 {STRING} 運到 {STRING} 的服務可在往後一年收到四倍運費補助！
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}{TOWN} 交通大亂！{}{}{STRING} 出資的道路重建計劃為用路人帶來六個月的惡夢！
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}運輸大亨!
@@ -920,6 +916,7 @@ STR_GAME_OPTIONS_CURRENCY_ZAR                                   :南非蘭特 (Z
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :自訂...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :喬治亞拉里 (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :伊朗里亞爾 (IRR)
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :港幣 (HKD)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :靠左行駛
@@ -965,6 +962,7 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :每 12 個月
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}語言
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}選擇要用的介面語言
+STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} (已完成{NUM}%)
 
 STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}全螢幕
 STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}勾選即可在全螢幕下玩 OpenTTD
@@ -1361,6 +1359,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :停用
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :雙撳
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :單撳 (選定輸入方塊時)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :單撳 (立刻)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :右鍵模擬：{STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :選擇模擬右撳鼠鍵的方法
@@ -1879,6 +1878,9 @@ STR_FACE_TIE                                                    :領帶：
 STR_FACE_EARRING                                                :耳飾：
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}改變領帶或耳飾
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}多人遊戲
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}玩家名稱：
@@ -1929,7 +1931,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}起動�
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}起動您自己的伺服器
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}輸入您的名稱
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}輸入主機位址
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}開始新的多人遊戲
@@ -1939,88 +1940,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}遊戲�
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}設定密碼
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}如果您不想讓大眾連線的話，可以用密碼保護遊戲
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}已啟用宣傳
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}選擇是否在互聯網上宣傳此遊戲
-STR_NETWORK_START_SERVER_UNADVERTISED                           :否
-STR_NETWORK_START_SERVER_ADVERTISED                             :是
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} 玩家
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}用戶端上限：
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}選擇連線人數上限，但不是每個名額都要有人連線
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} 公司
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}公司上限：
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}限制伺服器可以建立的公司數量
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM}旁觀者
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}旁觀者上限：
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}限制可加入的旁觀者數量
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}溝通語言：
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}讓其他人知道這個伺服器使用的溝通語言
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}為連線遊戲輸入一個名稱
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :不限
-STR_NETWORK_LANG_ENGLISH                                        :英語
-STR_NETWORK_LANG_GERMAN                                         :德語
-STR_NETWORK_LANG_FRENCH                                         :法語
-STR_NETWORK_LANG_BRAZILIAN                                      :巴西葡萄牙語
-STR_NETWORK_LANG_BULGARIAN                                      :保加利亞語
-STR_NETWORK_LANG_CHINESE                                        :中文
-STR_NETWORK_LANG_CZECH                                          :捷克語
-STR_NETWORK_LANG_DANISH                                         :丹麥語
-STR_NETWORK_LANG_DUTCH                                          :荷蘭語
-STR_NETWORK_LANG_ESPERANTO                                      :世界語
-STR_NETWORK_LANG_FINNISH                                        :芬蘭語
-STR_NETWORK_LANG_HUNGARIAN                                      :匈牙利語
-STR_NETWORK_LANG_ICELANDIC                                      :冰島語
-STR_NETWORK_LANG_ITALIAN                                        :義大利語
-STR_NETWORK_LANG_JAPANESE                                       :日文
-STR_NETWORK_LANG_KOREAN                                         :韓文
-STR_NETWORK_LANG_LITHUANIAN                                     :立陶宛語
-STR_NETWORK_LANG_NORWEGIAN                                      :挪威語
-STR_NETWORK_LANG_POLISH                                         :波蘭語
-STR_NETWORK_LANG_PORTUGUESE                                     :葡萄牙語
-STR_NETWORK_LANG_ROMANIAN                                       :羅馬尼亞語
-STR_NETWORK_LANG_RUSSIAN                                        :俄語
-STR_NETWORK_LANG_SLOVAK                                         :斯洛伐克語
-STR_NETWORK_LANG_SLOVENIAN                                      :斯洛維尼亞語
-STR_NETWORK_LANG_SPANISH                                        :西班牙語
-STR_NETWORK_LANG_SWEDISH                                        :瑞典語
-STR_NETWORK_LANG_TURKISH                                        :土耳其語
-STR_NETWORK_LANG_UKRAINIAN                                      :烏克蘭語
-STR_NETWORK_LANG_AFRIKAANS                                      :南非荷蘭語
-STR_NETWORK_LANG_CROATIAN                                       :克羅埃西亞語
-STR_NETWORK_LANG_CATALAN                                        :加泰隆語 (西班牙)
-STR_NETWORK_LANG_ESTONIAN                                       :愛沙尼亞語
-STR_NETWORK_LANG_GALICIAN                                       :加里西亞語 (西班牙)
-STR_NETWORK_LANG_GREEK                                          :現代希臘語
-STR_NETWORK_LANG_LATVIAN                                        :拉脫維亞語
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}多人遊戲大廳
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}準備加入：{ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}列出遊戲内所有公司。若公司還有空位的話您可以加入現有公司，或是創立新公司
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}公司資訊
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}公司名稱：{WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}成立於：{WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}公司市值：{WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}目前餘額：{WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}去年收入：{WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}效率：{WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}運輸工具總數：{WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}車站：{WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}玩家：{WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}新公司
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}建立新公司
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}旁觀遊戲
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}以旁觀者身分參與遊戲
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}加入公司
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}共同管理這間公司
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}連線中...
@@ -2047,15 +1976,17 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}公司�
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :用戶端清單
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :旁觀者
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :新公司
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :踢除
-STR_NETWORK_CLIENTLIST_BAN                                      :封鎖
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :對全員說話
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :對公司說話
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :私人訊息
+STR_NETWORK_CLIENT_LIST_CAPTION                                 :{WHITE}多人遊戲
+STR_NETWORK_CLIENT_LIST_SERVER                                  :{BLACK}伺服器
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_KICK                       :踢出
+
+
 
 STR_NETWORK_SERVER                                              :伺服器
 STR_NETWORK_CLIENT                                              :用戶端
@@ -2163,6 +2094,7 @@ STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} �
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}伺服器關閉連線
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}伺服器重新啟動中...{}請稍候...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} 已被踢出。原因：({STRING})
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}內容下載中
@@ -2384,6 +2316,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}挖掘�
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}切換鋪設／移除公路
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}切換鋪設電車軌
 STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_ROAD                           :{BLACK}轉換或升級路面類型。按 Shift 鍵可切換鋪設和顯示預估成本。
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_TRAM                           :{BLACK}轉換/升級電車軌道類型。按 Shift 鍵可切換建築/顯示預估成本。
 
 STR_ROAD_NAME_ROAD                                              :路面
 STR_ROAD_NAME_TRAM                                              :電車軌
@@ -2678,6 +2611,7 @@ STR_FRAMERATE_DATA_POINTS                                       :{BLACK}數據�
 STR_FRAMERATE_MS_BAD                                            :{RED}{DECIMAL} 毫秒
 STR_FRAMERATE_BYTES_GOOD                                        :{LTBLUE}{BYTES}
 ############ Leave those lines in this order!!
+STR_FRAMERATE_AI                                                :{BLACK}   AI {NUM} {STRING}
 ############ End of leave-in-this-order
 ############ Leave those lines in this order!!
 STR_FRAMETIME_CAPTION_GL_LANDSCAPE                              :世界刻
@@ -2709,6 +2643,7 @@ STR_SAVELOAD_DETAIL_NOT_AVAILABLE                               :{BLACK}沒有�
 STR_SAVELOAD_DETAIL_COMPANY_INDEX                               :{SILVER}{COMMA}: {WHITE}{STRING}
 STR_SAVELOAD_DETAIL_GRFSTATUS                                   :{SILVER}NewGRF：{WHITE}{STRING}
 STR_SAVELOAD_OVERWRITE_TITLE                                    :{WHITE}覆蓋檔案
+STR_SAVELOAD_OVERWRITE_WARNING                                  :{YELLOW}你確定要覆蓋現有存檔嗎？
 STR_SAVELOAD_DIRECTORY                                          :{STRING} (路徑)
 
 STR_SAVELOAD_OSKTITLE                                           :{BLACK}為存檔輸入一個名稱
@@ -2721,6 +2656,7 @@ STR_MAPGEN_BY                                                   :{BLACK}*
 STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}市鎮數量：
 STR_MAPGEN_DATE                                                 :{BLACK}日期：
 STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}工業數量：
+STR_MAPGEN_SNOW_COVERAGE_TEXT                                   :{BLACK}{NUM}%
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}地形產生器：
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}地形種類：
 STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}海平面：
@@ -3272,6 +3208,7 @@ STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}將工�
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}產出等級：{YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}該工業已宣佈關閉！
 
+STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}需要： {YELLOW}{STRING}{STRING}
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :，{STRING}{STRING}
 
 
@@ -3354,6 +3291,7 @@ STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :新購飛機
 ############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}費用：{GOLD}{CURRENCY_LONG}{BLACK} 載重：{GOLD}{WEIGHT_SHORT}
+STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}費用：{GOLD}{CURRENCY_LONG}{BLACK} (改裝費用：{GOLD}{CURRENCY_LONG}{BLACK}) 載重：{GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}速度：{GOLD}{VELOCITY}{BLACK} 功率：{GOLD}{POWER}
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}速度：{GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}在海上速度: {GOLD}{VELOCITY}
@@ -3385,6 +3323,7 @@ STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}購買�
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}購買飛機
 
 STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_BUTTON                  :{BLACK}購買並改裝車輛
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}購買並改裝飛機
 
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}購買選定的列車。按住 Shift 點選則只會顯示預估的購買費用
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}購買選定的車輛。按住 Shift 點選則只會顯示預估的購買費用
@@ -3553,7 +3492,6 @@ STR_REPLACE_MONORAIL_VEHICLES                                   :單軌列車
 STR_REPLACE_MAGLEV_VEHICLES                                     :磁浮列車
 
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}移除車廂：{ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}如果替換後的車廂較長的話，讓自動替換功能移除多餘的車廂 (從頭開始) 以便維持列車長度
 
 # Vehicle view

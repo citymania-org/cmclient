@@ -170,7 +170,7 @@ void CcRoadStop(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2,
 	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 	TileArea roadstop_area(tile, GB(p1, 0, 8), GB(p1, 8, 8));
-	TILE_AREA_LOOP(cur_tile, roadstop_area) {
+	for (TileIndex cur_tile : roadstop_area) {
 		ConnectRoadToStructure(cur_tile, dir);
 		/* For a drive-through road stop build connecting road for other entrance. */
 		if (HasBit(p2, 1)) ConnectRoadToStructure(cur_tile, ReverseDiagDir(dir));
@@ -302,10 +302,11 @@ struct BuildRoadToolbarWindow : Window {
 		if (_settings_client.gui.link_terraform_toolbar) ShowTerraformToolbar(this);
 	}
 
-	~BuildRoadToolbarWindow()
+	void Close() override
 	{
 		if (_game_mode == GM_NORMAL && (this->IsWidgetLowered(WID_ROT_BUS_STATION) || this->IsWidgetLowered(WID_ROT_TRUCK_STATION))) SetViewportCatchmentStation(nullptr, true);
-		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
+		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WC_SCEN_LAND_GEN, 0, false);
+		this->Window::Close();
 	}
 
 	/**
@@ -325,9 +326,9 @@ struct BuildRoadToolbarWindow : Window {
 			WID_ROT_TRUCK_STATION,
 			WIDGET_LIST_END);
 		if (!can_build) {
-			DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
-			DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
-			DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
+			CloseWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
+			CloseWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
+			CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
 		}
 
 		if (_game_mode != GM_EDITOR) {
@@ -513,7 +514,7 @@ struct BuildRoadToolbarWindow : Window {
 				_remove_button_clicked = citymania::RoadToolbar_RemoveModChanged(this, _remove_button_clicked, true, RoadTypeIsRoad(this->roadtype));
 				// if (this->IsWidgetDisabled(WID_ROT_REMOVE)) return;
 
-				// DeleteWindowById(WC_SELECT_STATION, 0);
+				// CloseWindowById(WC_SELECT_STATION, 0);
 				// ToggleRoadButton_Remove(this);
 				// if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				break;
@@ -615,13 +616,13 @@ struct BuildRoadToolbarWindow : Window {
 			this->SetWidgetDirty(WID_ROT_ONE_WAY);
 		}
 
-		DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
-		DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
-		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
-		DeleteWindowById(WC_SELECT_STATION, 0);
-		DeleteWindowByClass(WC_BUILD_BRIDGE);
-
-		citymania::AbortStationPlacement();
+		CloseWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
+		CloseWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
+		CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		CloseWindowByClass(WC_BUILD_BRIDGE);
+		
+		citymania::AbortStationPlacement();		
 	}
 
 	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
@@ -934,7 +935,7 @@ Window *ShowBuildRoadToolbar(RoadType roadtype)
 	if (!Company::IsValidID(_local_company)) return nullptr;
 	if (!ValParamRoadType(roadtype)) return nullptr;
 
-	DeleteWindowByClass(WC_BUILD_TOOLBAR);
+	CloseWindowByClass(WC_BUILD_TOOLBAR);
 	_cur_roadtype = roadtype;
 
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(RoadTypeIsRoad(_cur_roadtype) ? &_build_road_desc : &_build_tramway_desc, TRANSPORT_ROAD);
@@ -1018,7 +1019,7 @@ static WindowDesc _build_tramway_scen_desc(
  */
 Window *ShowBuildRoadScenToolbar(RoadType roadtype)
 {
-	DeleteWindowById(WC_SCEN_BUILD_TOOLBAR, TRANSPORT_ROAD);
+	CloseWindowById(WC_SCEN_BUILD_TOOLBAR, TRANSPORT_ROAD);
 	_cur_roadtype = roadtype;
 
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(RoadTypeIsRoad(_cur_roadtype) ? &_build_road_scen_desc : &_build_tramway_scen_desc, TRANSPORT_ROAD);
@@ -1215,9 +1216,10 @@ public:
 		this->window_class = (rs == ROADSTOP_BUS) ? WC_BUS_STATION : WC_TRUCK_STATION;
 	}
 
-	virtual ~BuildRoadStationWindow()
+	void Close() override
 	{
-		DeleteWindowById(WC_SELECT_STATION, 0);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		this->PickerWindowBase::Close();
 	}
 
 	void OnPaint() override
@@ -1296,7 +1298,7 @@ public:
 				this->LowerWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				break;
 
 			case WID_BROS_LT_OFF:
@@ -1509,17 +1511,16 @@ DropDownList GetRoadTypeDropDownList(RoadTramTypes rtts, bool for_replacement, b
 	}
 
 	Dimension d = { 0, 0 };
-	RoadType rt;
 	/* Get largest icon size, to ensure text is aligned on each menu item. */
 	if (!for_replacement) {
-		FOR_ALL_SORTED_ROADTYPES(rt) {
+		for (const auto &rt : _sorted_roadtypes) {
 			if (!HasBit(used_roadtypes, rt)) continue;
 			const RoadTypeInfo *rti = GetRoadTypeInfo(rt);
 			d = maxdim(d, GetSpriteSize(rti->gui_sprites.build_x_road));
 		}
 	}
 
-	FOR_ALL_SORTED_ROADTYPES(rt) {
+	for (const auto &rt : _sorted_roadtypes) {
 		/* If it's not used ever, don't show it to the user. */
 		if (!HasBit(used_roadtypes, rt)) continue;
 
@@ -1561,13 +1562,12 @@ DropDownList GetScenRoadTypeDropDownList(RoadTramTypes rtts)
 
 	/* If it's not used ever, don't show it to the user. */
 	Dimension d = { 0, 0 };
-	RoadType rt;
-	FOR_ALL_SORTED_ROADTYPES(rt) {
+	for (const auto &rt : _sorted_roadtypes) {
 		if (!HasBit(used_roadtypes, rt)) continue;
 		const RoadTypeInfo *rti = GetRoadTypeInfo(rt);
 		d = maxdim(d, GetSpriteSize(rti->gui_sprites.build_x_road));
 	}
-	FOR_ALL_SORTED_ROADTYPES(rt) {
+	for (const auto &rt : _sorted_roadtypes) {
 		if (!HasBit(used_roadtypes, rt)) continue;
 
 		const RoadTypeInfo *rti = GetRoadTypeInfo(rt);

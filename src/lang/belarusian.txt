@@ -1083,6 +1083,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}*  *  �
 STR_STATUSBAR_AUTOSAVE                                          :{RED}Аўтазахаваньне
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  ЗАХАВАНЬНЕ ГУЛЬНІ  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Гісторыя паведамленьняў
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Сьпіс нядаўніх навін
@@ -1183,11 +1184,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Прапанова субсыдыі мінула:{}{}Перавозка {STRING.gen} па маршруце {STRING} — {STRING} субсыдыявацца больш ня будзе.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Тэрмін субсыдыі сышоў:{}{}Перавозка {STRING.gen} па маршруце {STRING} — {STRING} больш не субсыдуецца.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Прапанова субсыдыі:{}{}Першая кампанія, якая павязе {STRING.acc} па маршруце {STRING} — {STRING}, атрымае гадавую субсыдыю ад мясцовых уладаў!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Кампанія «{STRING}» атрымала субсыдыю!{}{}Перавозка {STRING.gen} па маршруце {STRING} — {STRING} будзе аплочана ў паўтарачным памеры на працягу года!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Кампанія «{STRING}» атрымала субсыдыю!{}{}Перавозка {STRING.gen} па маршруце {STRING} — {STRING} будзе аплочана ў падвоеным памеры на працягу года!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Кампанія «{STRING}» атрымала субсыдыю!{}{}Перавозка {STRING.gen} па маршруце {STRING} — {STRING} будзе аплочана ў патроеным памеры на працягу года!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Кампанія «{STRING}» атрымала субсыдыю!{}{}Перавозка {STRING.gen} па маршруце {STRING} — {STRING} будзе аплочана ў чатырохразовым памеры на працягу года!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Хаос на дарогах г. {NBSP}{TOWN}!{}{}Рэканструкцыя дарогаў, прафінансаваная {STRING}, прынясе кіроўцам 6 месяцаў пакут!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Транспартная манаполія!
@@ -1696,6 +1692,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :Адключа�
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Падвоеная пстрычка
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Адзіночная пстрычка (калі выдзелена)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Адзіночная пстрычка (неадкладна)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Эмуляцыя правага кліка мышы: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :Выбаць мэтад імітацыі націсьненьня правай кнопкі мышы.
@@ -2225,6 +2222,9 @@ STR_FACE_TIE                                                    :Гальшту�
 STR_FACE_EARRING                                                :Завушніца:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Зьмяніць гальштук або завушніцу
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Сеткавая гульня
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Імя гульца:
@@ -2273,7 +2273,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Запу
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Запуск сэрвэра на вашым кампутары. Да гэтае гульні змогуць далучыцца іншыя гульцы.
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Увядзіце вашае імя
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}Увядзіце адрас сэрвэра
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Запуск новай сеткавай гульні
@@ -2283,88 +2282,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Назв
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Усталяваць пароль
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Абараніце вашу гульню паролем, калі ня хочаце рабіць яе публічна даступнай
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Інтэрнэт
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Выберыце паміж гульнёй праз Інтэрнэт або ў лакальнай сетцы
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Не
-STR_NETWORK_START_SERVER_ADVERTISED                             :Так
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} клiент{P "" ы аў}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Макс. колькасьць клiентаў:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Выбар максымальнай колькасьці кліентаў. Ня ўсе месцы павінны быць занятыя
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} кампанi{P я i яў}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Макс. колькасьць кампанiяў:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Абмежаваць максымальную колькасьць кампаніяў на сэрвэры
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} назіральнік{P "" i аў}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Макс. назіральнiкаў:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Абмежаваць максымальную колькасьць назіральнікаў на сэрвэры
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Мова зносінаў:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Іншыя гульцы будуць ведаць, на якой мове размаўляюць на сэрвэры
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Увядзіце назву сеткавай гульні
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Любая
-STR_NETWORK_LANG_ENGLISH                                        :Анґельская
-STR_NETWORK_LANG_GERMAN                                         :Нямецкая
-STR_NETWORK_LANG_FRENCH                                         :Француская
-STR_NETWORK_LANG_BRAZILIAN                                      :Бразыльская
-STR_NETWORK_LANG_BULGARIAN                                      :Балґарская
-STR_NETWORK_LANG_CHINESE                                        :Кітайская
-STR_NETWORK_LANG_CZECH                                          :Чэская
-STR_NETWORK_LANG_DANISH                                         :Дацкая
-STR_NETWORK_LANG_DUTCH                                          :Нідэрляндзкая
-STR_NETWORK_LANG_ESPERANTO                                      :Эспэранта
-STR_NETWORK_LANG_FINNISH                                        :Фінская
-STR_NETWORK_LANG_HUNGARIAN                                      :Вугорская
-STR_NETWORK_LANG_ICELANDIC                                      :Ісьляндзкая
-STR_NETWORK_LANG_ITALIAN                                        :Італьянская
-STR_NETWORK_LANG_JAPANESE                                       :Японская
-STR_NETWORK_LANG_KOREAN                                         :Карэйская
-STR_NETWORK_LANG_LITHUANIAN                                     :Летувіская
-STR_NETWORK_LANG_NORWEGIAN                                      :Нарвэская
-STR_NETWORK_LANG_POLISH                                         :Польская
-STR_NETWORK_LANG_PORTUGUESE                                     :Партуґальская
-STR_NETWORK_LANG_ROMANIAN                                       :Румынская
-STR_NETWORK_LANG_RUSSIAN                                        :Расейская
-STR_NETWORK_LANG_SLOVAK                                         :Славацкая
-STR_NETWORK_LANG_SLOVENIAN                                      :Славенская
-STR_NETWORK_LANG_SPANISH                                        :Гішпанская
-STR_NETWORK_LANG_SWEDISH                                        :Швэдзкая
-STR_NETWORK_LANG_TURKISH                                        :Турэцкая
-STR_NETWORK_LANG_UKRAINIAN                                      :Украінская
-STR_NETWORK_LANG_AFRIKAANS                                      :Афрыкаанс
-STR_NETWORK_LANG_CROATIAN                                       :Харвацкая
-STR_NETWORK_LANG_CATALAN                                        :Каталёнская
-STR_NETWORK_LANG_ESTONIAN                                       :Эстонская
-STR_NETWORK_LANG_GALICIAN                                       :Ґалісійская
-STR_NETWORK_LANG_GREEK                                          :Грэцкая
-STR_NETWORK_LANG_LATVIAN                                        :Латыская
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Вітальня сеткавай гульні
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Падрыхтоўка далучэньня: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Сьпіс кампаніяў, якія зараз у гульні. Вы можаце далучыцца да якойсьці існуючай або адкрыць сваю, калі ёсьць вольны слот
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}ІНФАРМАЦЫЯ АБ КАМПАНІІ
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Назва кампаніі: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}Заснавана: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Кошт кампаніі: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Бягучы балянс: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Прыбытак летась: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Прадукцыйнасьць: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Транспарт: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Станцыi: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Гульцы: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Новая кампанія
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Заснаваць новую кампанію
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Назіраць за гульнёй
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Сачыць за гульнёй у якасьці гледача
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Далучыцца да кампаніі
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Далучыцца да кампаніі й дапамагчы ў кіраваньні ёю
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Злучэньне...
@@ -2388,19 +2315,17 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Адлу
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Сэрвэр абаронены. Увядзіце пароль
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Кампанія абароненая. Увядзіце пароль
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Сьпіс кліентаў
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Сьпіс кліентаў
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Назіраць
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Новая кампанія
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Выкінуць гульца
-STR_NETWORK_CLIENTLIST_BAN                                      :Бан
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Пагутарыць з усімі
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Пагутарыць з кампаніяй
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Прыватнае паведамленьне
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :Сэрвэр
 STR_NETWORK_CLIENT                                              :Кліент
@@ -2508,6 +2433,7 @@ STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} в
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} зьмяніў сваё імя на {STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Гэты сэрвэр закрыў сэсію
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Гэты сэрвэр перазапускаецца...{}Пачакайце, калі ласка
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Кантэнт запампоўваецца
@@ -3994,7 +3920,6 @@ STR_REPLACE_MAGLEV_VEHICLES                                     :Маґнітн�
 STR_REPLACE_ROAD_VEHICLES                                       :Аўтатранспарт
 STR_REPLACE_TRAM_VEHICLES                                       :Трамваі
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Выдаленьне ваґонаў: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Дазволіць пры аўтазамене захоўваць даўжыню цягнікоў шляхам выдаленьня ваґонаў (пачынаючы з галавы цягніка), калі пры аўтазамене лякаматыва павялічыцца даўжыня цягніка.
 
 # Vehicle view

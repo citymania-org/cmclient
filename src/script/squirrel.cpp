@@ -7,8 +7,6 @@
 
 /** @file squirrel.cpp the implementation of the Squirrel class. It handles all Squirrel-stuff and gives a nice API back to work with. */
 
-#include <stdarg.h>
-#include <map>
 #include "../stdafx.h"
 #include "../debug.h"
 #include "squirrel_std.hpp"
@@ -20,6 +18,9 @@
 #include <../squirrel/sqpcheader.h>
 #include <../squirrel/sqvm.h>
 #include "../core/alloc_func.hpp"
+
+#include <stdarg.h>
+#include <map>
 
 /**
  * In the memory allocator for Squirrel we want to directly use malloc/realloc, so when the OS
@@ -206,7 +207,7 @@ void Squirrel::CompileError(HSQUIRRELVM vm, const SQChar *desc, const SQChar *so
 	engine->crashed = true;
 	SQPrintFunc *func = engine->print_func;
 	if (func == nullptr) {
-		DEBUG(misc, 0, "[Squirrel] Compile error: %s", buf);
+		Debug(misc, 0, "[Squirrel] Compile error: {}", buf);
 	} else {
 		(*func)(true, buf);
 	}
@@ -255,7 +256,7 @@ void Squirrel::RunError(HSQUIRRELVM vm, const SQChar *error)
 
 SQInteger Squirrel::_RunError(HSQUIRRELVM vm)
 {
-	const SQChar *sErr = 0;
+	const SQChar *sErr = nullptr;
 
 	if (sq_gettop(vm) >= 1) {
 		if (SQ_SUCCEEDED(sq_getstring(vm, -1, &sErr))) {
@@ -339,8 +340,8 @@ void Squirrel::AddClassBegin(const char *class_name, const char *parent_class)
 	sq_pushstring(this->vm, class_name, -1);
 	sq_pushstring(this->vm, parent_class, -1);
 	if (SQ_FAILED(sq_get(this->vm, -3))) {
-		DEBUG(misc, 0, "[squirrel] Failed to initialize class '%s' based on parent class '%s'", class_name, parent_class);
-		DEBUG(misc, 0, "[squirrel] Make sure that '%s' exists before trying to define '%s'", parent_class, class_name);
+		Debug(misc, 0, "[squirrel] Failed to initialize class '{}' based on parent class '{}'", class_name, parent_class);
+		Debug(misc, 0, "[squirrel] Make sure that '{}' exists before trying to define '{}'", parent_class, class_name);
 		return;
 	}
 	sq_newclass(this->vm, SQTrue);
@@ -424,7 +425,7 @@ bool Squirrel::CallMethod(HSQOBJECT instance, const char *method_name, HSQOBJECT
 	/* Find the function-name inside the script */
 	sq_pushstring(this->vm, method_name, -1);
 	if (SQ_FAILED(sq_get(this->vm, -2))) {
-		DEBUG(misc, 0, "[squirrel] Could not find '%s' in the class", method_name);
+		Debug(misc, 0, "[squirrel] Could not find '{}' in the class", method_name);
 		sq_settop(this->vm, top);
 		return false;
 	}
@@ -447,7 +448,7 @@ bool Squirrel::CallStringMethodStrdup(HSQOBJECT instance, const char *method_nam
 	if (!this->CallMethod(instance, method_name, &ret, suspend)) return false;
 	if (ret._type != OT_STRING) return false;
 	*res = stredup(ObjectToString(&ret));
-	ValidateString(*res);
+	StrMakeValidInPlace(const_cast<char *>(*res));
 	return true;
 }
 
@@ -489,14 +490,14 @@ bool Squirrel::CallBoolMethod(HSQOBJECT instance, const char *method_name, bool 
 	}
 
 	if (SQ_FAILED(sq_get(vm, -2))) {
-		DEBUG(misc, 0, "[squirrel] Failed to find class by the name '%s%s'", prepend_API_name ? engine->GetAPIName() : "", class_name);
+		Debug(misc, 0, "[squirrel] Failed to find class by the name '{}{}'", prepend_API_name ? engine->GetAPIName() : "", class_name);
 		sq_settop(vm, oldtop);
 		return false;
 	}
 
 	/* Create the instance */
 	if (SQ_FAILED(sq_createinstance(vm, -1))) {
-		DEBUG(misc, 0, "[squirrel] Failed to create instance for class '%s%s'", prepend_API_name ? engine->GetAPIName() : "", class_name);
+		Debug(misc, 0, "[squirrel] Failed to create instance for class '{}{}'", prepend_API_name ? engine->GetAPIName() : "", class_name);
 		sq_settop(vm, oldtop);
 		return false;
 	}
@@ -650,8 +651,7 @@ SQRESULT Squirrel::LoadFile(HSQUIRRELVM vm, const char *filename, SQBool printer
 	}
 	unsigned short bom = 0;
 	if (size >= 2) {
-		size_t sr = fread(&bom, 1, sizeof(bom), file);
-		(void)sr; // Inside tar, no point checking return value of fread
+		[[maybe_unused]] size_t sr = fread(&bom, 1, sizeof(bom), file);
 	}
 
 	SQLEXREADFUNC func;
@@ -736,7 +736,7 @@ bool Squirrel::LoadScript(HSQUIRRELVM vm, const char *script, bool in_root)
 	}
 
 	vm->_ops_till_suspend = ops_left;
-	DEBUG(misc, 0, "[squirrel] Failed to compile '%s'", script);
+	Debug(misc, 0, "[squirrel] Failed to compile '{}'", script);
 	return false;
 }
 

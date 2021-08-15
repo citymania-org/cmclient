@@ -761,6 +761,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  WE
 STR_STATUSBAR_AUTOSAVE                                          :{RED}AWTOGADW
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  CADW GÊM  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Hanes Negeseuon
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Rhestr o'r negeseuon newyddion diweddaraf
@@ -859,11 +860,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}Mae {STA
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Cynnig cymhorthdal ar ben:{}{}Ni fydd cludo {STRING} o {STRING} i {STRING} yn derbyn cymhorthdal bellach
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Cymhorthdal wedi'i dynnu'n ôl:{}{}Ni fydd gwasanaeth {STRING} o {STRING} i {STRING} yn derbyn cymhorthdal bellach
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Cynnig cymhorthdal:{}{}Bydd y gwasanaeth {STRING} cyntaf o {STRING} i {STRING} yn derbyn blwyddyn o gymhorthdal gan yr awdurdod lleol!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Cymhorthdal wedi ei ddyfarnu i {STRING}!{}{}Bydd y gwasanaeth {STRING} o {STRING} i {STRING} yn talu 50% yn fwy am y flwyddyn nesaf!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Cymhorthdal wedi ei ddyfarnu i {STRING}!{}{}Bydd y gwasanaeth {STRING} o {STRING} i {STRING} yn talu dwywaith yn fwy am y flwyddyn nesaf!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Cymhorthdal wedi ei ddyfarnu i {STRING}!{}{}Bydd y gwasanaeth {STRING} o {STRING} i {STRING} yn talu teirgwaith yn fwy am y flwyddyn nesaf!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Cymhorthdal wedi ei ddyfarnu i {STRING}!{}{}Bydd y gwasanaeth {STRING} o {STRING} i {STRING} yn talu pedair gwaith yn fwy am y flwyddyn nesaf!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Anrhefn traffig yn {TOWN}!{}{}Daw gwaith ffordd a ariannwyd gan {STRING} â 6 mis o boen i deithwyr ffordd y dref!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Monopoli cludiant!
@@ -1358,6 +1354,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :Analluogwyd
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Clic ddwbl
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Clic sengl (pan fo ffocws)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Clic sengl (ar unwaith)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Efelychu de-glicio: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :Dewis sut i efelychu cliciau botwm dde y llygoden
@@ -1877,6 +1874,9 @@ STR_FACE_TIE                                                    :Tei:
 STR_FACE_EARRING                                                :Clustlws:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Newid tei neu glustlws
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Amlchwaraewr
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Enw chwaraewr:
@@ -1925,7 +1925,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Dechrau 
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Dechrau eich gweinydd eich hun
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Rhowch eich enw
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}Rhowch gyfeiriad y gwesteiwr
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Dechrau gêm newydd amlchwaraewr
@@ -1935,88 +1934,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Bydd y g
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Gosod cyfrinair
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Diogelwch eich gêm â chyfrinair os nad ydych am i fynediad ato fod yn gyhoeddus
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Hysbys
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Dewis rhwyd gêm a hysbysebir (rhyngrwyd) neu un anhysbys (rhwydwaith leol)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Na
-STR_NETWORK_START_SERVER_ADVERTISED                             :Ia
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} gwestai
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Uchafswm nifer gwesteion:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Dewiswch uchafswm y gwesteion. Does dim rhaid llanw pob slot
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} cwmni
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Uchafswm nifer cwmnïau:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}rhoi cyfyngiad penodol ar sawl cwmni mae'r gweinydd yn ei ganiatáu
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} gwyliwr
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Uchafswm nifer gwylwyr:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}rhoi cyfyngiad penodol ar sawl gwyliwr mae'r gweinydd yn ei ganiatáu
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Iaith i'w siarad:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Rhoi gwybod i'r chwaraewyr pa iaith y dylid ei siarad ar y gweinydd
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Rhowch enw ar gyfer y gêm rhwydwaith
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Unrhyw
-STR_NETWORK_LANG_ENGLISH                                        :Saesneg
-STR_NETWORK_LANG_GERMAN                                         :Almaeneg
-STR_NETWORK_LANG_FRENCH                                         :Ffrangeg
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasilaidd
-STR_NETWORK_LANG_BULGARIAN                                      :Bwlgaraidd
-STR_NETWORK_LANG_CHINESE                                        :Tseineeg
-STR_NETWORK_LANG_CZECH                                          :Tsiecaidd
-STR_NETWORK_LANG_DANISH                                         :Daneg
-STR_NETWORK_LANG_DUTCH                                          :Iseldireg
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Ffineg
-STR_NETWORK_LANG_HUNGARIAN                                      :Hwngareg
-STR_NETWORK_LANG_ICELANDIC                                      :Islandaidd
-STR_NETWORK_LANG_ITALIAN                                        :Eidaleg
-STR_NETWORK_LANG_JAPANESE                                       :Siapaneaidd
-STR_NETWORK_LANG_KOREAN                                         :Coreeg
-STR_NETWORK_LANG_LITHUANIAN                                     :Lithiwaneg
-STR_NETWORK_LANG_NORWEGIAN                                      :Norwyeg
-STR_NETWORK_LANG_POLISH                                         :Pwyleg
-STR_NETWORK_LANG_PORTUGUESE                                     :Portiwgaleg
-STR_NETWORK_LANG_ROMANIAN                                       :Rwmaneg
-STR_NETWORK_LANG_RUSSIAN                                        :Rwsieg
-STR_NETWORK_LANG_SLOVAK                                         :Slofaceg
-STR_NETWORK_LANG_SLOVENIAN                                      :Slofeneg
-STR_NETWORK_LANG_SPANISH                                        :Sbaeneg
-STR_NETWORK_LANG_SWEDISH                                        :Swedeg
-STR_NETWORK_LANG_TURKISH                                        :Twrceg
-STR_NETWORK_LANG_UKRAINIAN                                      :Wcraneg
-STR_NETWORK_LANG_AFRIKAANS                                      :Affricâns
-STR_NETWORK_LANG_CROATIAN                                       :Croatieg
-STR_NETWORK_LANG_CATALAN                                        :Catalaneg
-STR_NETWORK_LANG_ESTONIAN                                       :Estoneg
-STR_NETWORK_LANG_GALICIAN                                       :Galiseg
-STR_NETWORK_LANG_GREEK                                          :Groeg
-STR_NETWORK_LANG_LATVIAN                                        :Latfieg
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Cyntedd Gemau Amlchwaraewr
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Paratoi i ymuno: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Rhestr o'r holl gwmnïau yn y gêm. Gellwch unai ymuno ag un neu ddechrau un newydd os oes slot cwmni'n rhydd
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}GWYBODAETH CWMNI
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Enw cwmni: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}Sefydlwyd: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Gwerth cwmni: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Balans presennol: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Incwm y llynedd: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Perfformiad: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Cerbydau: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Gorsafoedd: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Chwaraewyr: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Cwmni newydd
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Creu cwmni newydd
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Gwylio gêm
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Gwylio'r gêm fel gwyliwr
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Ymuno â chwmni
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Helpu rheoli'r cwmni hwn
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Wrthi'n Cysylltu...
@@ -2043,15 +1970,14 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Mae'r cw
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Rhestr Cleientiaid
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Gwylio
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Cwmni newydd
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Cicio
-STR_NETWORK_CLIENTLIST_BAN                                      :Gwahardd
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Siarad â phawb
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Siarad a'r cwmni
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Neges breifat
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :Gweinydd
 STR_NETWORK_CLIENT                                              :Gwestai
@@ -2158,6 +2084,7 @@ STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** Mae {STRING
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** Mae {STRING} wedi newid ei (h)enw i {STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Fe gaewyd y sesiwn gan y gweinydd
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Mae'r gweinydd yn ailgychwyn...{}Arhoswch...
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Llawrlwytho cynnwys
@@ -3549,7 +3476,6 @@ STR_REPLACE_MONORAIL_VEHICLES                                   :Cerbydau Monore
 STR_REPLACE_MAGLEV_VEHICLES                                     :Cerbydau Maglef
 
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Tynnu wagenni: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Gwneud i awtoddisodli gadw hyd y trên yr un peth drwy dynnu wagenni (gan ddechrau yn y blaen), os byddai newid yr injan yn gwneud y trên yn hirach
 
 # Vehicle view

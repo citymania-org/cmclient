@@ -38,7 +38,7 @@ const char *VideoDriver_Null::Start(const StringList &parm)
 	ScreenSizeChanged();
 
 	/* Do not render, nor blit */
-	DEBUG(misc, 1, "Forcing blitter 'null'...");
+	Debug(misc, 1, "Forcing blitter 'null'...");
 	BlitterFactory::SelectBlitter("null");
 	return nullptr;
 }
@@ -67,6 +67,12 @@ void VideoDriver_Null::MainLoop()
 	    } else {
 	        IConsolePrintF(CC_DEFAULT, "Saved the final game state to %s", this->savefile.c_str());
 	    }
+	}
+
+	/* If requested, make a save just before exit. The normal exit-flow is
+	 * not triggered from this driver, so we have to do this manually. */
+	if (_settings_client.gui.autosave_on_exit) {
+		DoExitSave();
 	}
 }
 

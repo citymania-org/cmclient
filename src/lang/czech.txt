@@ -870,6 +870,7 @@ STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}*  *  P
 STR_STATUSBAR_AUTOSAVE                                          :{RED}Automatické ukládání
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  HRA SE UKLÁDÁ  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Historie zpráv
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Seznam předešlých zpráv
@@ -970,11 +971,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Nabídka dotace přepravy vypršela:{}{}Dotace dopravy {STRING.gen} z{NBSP}{STRING.gen} do {STRING.gen} nebude dále nabízena
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Ukončení dotování dopravy:{}{}Dotace pro {STRING} z{NBSP}{STRING.gen} do {STRING.gen} již nebude dále poskytována
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Nabídka dotace:{}{}Doprava {STRING.gen} z{NBSP}{STRING.gen} do {STRING.gen} bude jeden rok dotována místní správou!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Dotace přidělena společnosti {STRING}.{}{}Doprava {STRING.gen} z{NBSP}{STRING.gen} do {STRING.gen} bude po jeden rok vynášet 150{NBSP}% normální ceny
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Dotace přidělena společnosti {STRING}.{}{}Doprava {STRING.gen} z{NBSP}{STRING.gen} do {STRING.gen} bude po jeden rok vynášet dvojnásobek normální ceny!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Dotace přidělena společnosti {STRING}.{}{}Doprava {STRING.gen} z{NBSP}{STRING.gen} do {STRING.gen} bude po jeden rok vynášet trojnásobek normální ceny!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Dotace přidělena společnosti {STRING}.{}{}Doprava {STRING.gen} z{NBSP}{STRING.gen} do {STRING.gen} bude po jeden rok vynášet čtyřnásobek normální ceny!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}{TOWN} zažívá dopravní chaos!{}{}Program přestavby ulic sponzorovaný {STRING} přináší motoristům 6 měsíců utrpení!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Transportní monopol!
@@ -1234,6 +1230,7 @@ STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Nastavení hry 
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Nastavení hry (uchováno v uložené hře; ovlivní pouze stávající hru)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Nastavení společnosti (uchováno v uložených hrách; ovlivní pouze nové hry)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Nastavení společnosti (uchováno v uložené hře; ovlivní pouze stávající společnost)
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Tato akce resetuje všechna nastavení hry na výchozí hodnoty.{}Jste si jistý, že chcete pokračovat?
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorie:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Druh:
@@ -1515,6 +1512,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :Vypnuto
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Dvojklik
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Jedno kliknutí (je-li zaměřen)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Jedno kliknutí (okamžitě)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Emulace pravého tlačítka: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :Vybrat metodu emulování stisknutí pravého tlačítka myši
@@ -2072,6 +2070,9 @@ STR_FACE_TIE                                                    :Kravata:
 STR_FACE_EARRING                                                :Náušnice:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Změnit kravatu nebo náušnice
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multiplayer
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Jméno hráče:
@@ -2124,7 +2125,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Spustit 
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Spustit vlastní server
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Zadej své jméno
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}Vlož IP adresu serveru
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Začít novou hru
@@ -2134,88 +2134,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Jméno h
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Nastavit heslo
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Svoji hru si můžeš ochránit heslem, když nechceš, aby se ti do ni hlásili jiní lidé
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Vypsané
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Vyber mezi propagovanou (internet) a nepropagovanou (Místní síť, LAN) hrou
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Ne
-STR_NETWORK_START_SERVER_ADVERTISED                             :Ano
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} klient{P "" i ů}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Nejvyšší počet hráčů:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Zvol nejvyšší počet hráčů. Může se jich připojit i méně
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} společnost{P "" i í}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Maximální počet společností:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Omezit serverem počet společností
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} pozorovatel{P "" é ů}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Maximální počet pozorovatelů:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Omezit serverem pocet pozorovatelů
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Jazyk ve hře:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Aby ostatní hráči věděli, jakým jazykem se bude ve hře mluvit
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Zadej jméno této síťové hry
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :jakýkoli
-STR_NETWORK_LANG_ENGLISH                                        :angličtina
-STR_NETWORK_LANG_GERMAN                                         :němčina
-STR_NETWORK_LANG_FRENCH                                         :francouzština
-STR_NETWORK_LANG_BRAZILIAN                                      :brazilská portugalština
-STR_NETWORK_LANG_BULGARIAN                                      :bulharština
-STR_NETWORK_LANG_CHINESE                                        :čínština
-STR_NETWORK_LANG_CZECH                                          :čeština
-STR_NETWORK_LANG_DANISH                                         :dánština
-STR_NETWORK_LANG_DUTCH                                          :nizozemština
-STR_NETWORK_LANG_ESPERANTO                                      :esperanto
-STR_NETWORK_LANG_FINNISH                                        :finština
-STR_NETWORK_LANG_HUNGARIAN                                      :maďarština
-STR_NETWORK_LANG_ICELANDIC                                      :islandština
-STR_NETWORK_LANG_ITALIAN                                        :italština
-STR_NETWORK_LANG_JAPANESE                                       :japonština
-STR_NETWORK_LANG_KOREAN                                         :korejština
-STR_NETWORK_LANG_LITHUANIAN                                     :litevština
-STR_NETWORK_LANG_NORWEGIAN                                      :norština
-STR_NETWORK_LANG_POLISH                                         :polština
-STR_NETWORK_LANG_PORTUGUESE                                     :portugalština
-STR_NETWORK_LANG_ROMANIAN                                       :rumunština
-STR_NETWORK_LANG_RUSSIAN                                        :ruština
-STR_NETWORK_LANG_SLOVAK                                         :slovenština
-STR_NETWORK_LANG_SLOVENIAN                                      :slovinština
-STR_NETWORK_LANG_SPANISH                                        :španělština
-STR_NETWORK_LANG_SWEDISH                                        :švédština
-STR_NETWORK_LANG_TURKISH                                        :turečtina
-STR_NETWORK_LANG_UKRAINIAN                                      :ukrajinština
-STR_NETWORK_LANG_AFRIKAANS                                      :afrikánština
-STR_NETWORK_LANG_CROATIAN                                       :chorvatština
-STR_NETWORK_LANG_CATALAN                                        :katalánština
-STR_NETWORK_LANG_ESTONIAN                                       :estonština
-STR_NETWORK_LANG_GALICIAN                                       :galicijština
-STR_NETWORK_LANG_GREEK                                          :řečtina
-STR_NETWORK_LANG_LATVIAN                                        :lotyština
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Vstupní místnost do hry více hráčů
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Připravuji se na vstoupení: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Současný seznam všech společností v této hře. Buď můžeš do jedné vstoupit, nebo můžeš založit novou
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}INFO O SPOLEČNOSTI
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Jméno společnosti: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}Založeno: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Hodnota společnosti: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Stav na účtu: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Loňský hrubý zisk: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Výkon: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Vozidla: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Stanice: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Hráči: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Nová společnost
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Založit novou společnost
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Navštívit hru
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Připojit se do hry jako pozorovatel
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Vstoupit do společnosti
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Pomoz vést tuto společnost
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Připojování...
@@ -2239,19 +2167,25 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Odpojit 
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Server je chráněný. Napiš heslo
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Společnost je chráněná. Napiš heslo
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :Seznam klientů
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Seznam hráčů
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Pozorovat
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nová společnost
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Vyhodit
-STR_NETWORK_CLIENTLIST_BAN                                      :Ban
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Napsat všem
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Napsat společnosti
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Soukromá zpráva
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_TOOLTIP                     :{BLACK}Název serveru, na kterém hrajete
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_EDIT_TOOLTIP                :{BLACK}Upravte název svého serveru
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_QUERY_CAPTION               :Název serveru
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_TOOLTIP                     :{BLACK}Jméno vašeho hráče
+STR_NETWORK_CLIENT_LIST_JOIN_TOOLTIP                            :{BLACK}Připojit se a hrát za tuto společnost
+STR_NETWORK_CLIENT_LIST_CHAT_CLIENT_TOOLTIP                     :{BLACK}Poslat zprávu tomuto hráči
+STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP                    :{BLACK}Poslat zprávu všem hráčům této firmy
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+STR_NETWORK_CLIENT_LIST_ASK_COMPANY_RESET                       :{YELLOW}Jste si jisti, že chcete smazat společnost '{COMPANY}'?
+
 
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Klient
@@ -2308,6 +2242,7 @@ STR_NETWORK_ERROR_TIMEOUT_PASSWORD                              :{WHITE}Vložen�
 STR_NETWORK_ERROR_TIMEOUT_COMPUTER                              :{WHITE}Tvůj počítač je přiliš pomalý pro udržení kroku se serverem
 STR_NETWORK_ERROR_TIMEOUT_MAP                                   :{WHITE}Tvému počítači trvalo stahování mapy příliš dlouho
 STR_NETWORK_ERROR_TIMEOUT_JOIN                                  :{WHITE}Tvému počítači trvalo připojování na server příliš dlouho
+STR_NETWORK_ERROR_INVALID_CLIENT_NAME                           :{WHITE}Jméno vašeho hráče není platné
 
 ############ Leave those lines in this order!!
 STR_NETWORK_ERROR_CLIENT_GENERAL                                :všeobecná chyba
@@ -2363,6 +2298,8 @@ STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} po
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Server ukončil relaci
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Server se restartuje...{}Počkejte prosím...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} byl vyhozen. Důvod: ({STRING})
+
+STR_NETWORK_ERROR_COORDINATOR_ISOLATED                          :{WHITE}Váš server neumožňuje vzdálené připojení
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Součásti ke stažení
@@ -3908,7 +3845,6 @@ STR_REPLACE_MAGLEV_VEHICLES                                     :Lokomotivy Magl
 STR_REPLACE_ROAD_VEHICLES                                       :Silniční vozidla
 STR_REPLACE_TRAM_VEHICLES                                       :Tramvaje
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Odebírání vagonů: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Funkce automatického vylepšování vlaků může udržovat stejnou délku vlaku odstraňovaním vagonů (od začátku vlaku), pokud by změna mašiny vlak prodloužila
 
 # Vehicle view

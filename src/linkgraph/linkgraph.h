@@ -16,10 +16,10 @@
 #include "../station_base.h"
 #include "../cargotype.h"
 #include "../date_func.h"
+#include "../saveload/saveload.h"
 #include "linkgraph_type.h"
 #include <utility>
 
-struct SaveLoad;
 class LinkGraph;
 
 /**
@@ -495,7 +495,7 @@ public:
 	 * Get the current size of the component.
 	 * @return Size.
 	 */
-	inline uint Size() const { return (uint)this->nodes.size(); }
+	inline NodeID Size() const { return (NodeID)this->nodes.size(); }
 
 	/**
 	 * Get date of last compression.
@@ -525,9 +525,10 @@ public:
 protected:
 	friend class LinkGraph::ConstNode;
 	friend class LinkGraph::Node;
-	friend const SaveLoad *GetLinkGraphDesc();
-	friend const SaveLoad *GetLinkGraphJobDesc();
-	friend void SaveLoad_LinkGraph(LinkGraph &lg);
+	friend SaveLoadTable GetLinkGraphDesc();
+	friend SaveLoadTable GetLinkGraphJobDesc();
+	friend class SlLinkgraphNode;
+	friend class SlLinkgraphEdge;
 
 	CargoID cargo;         ///< Cargo of this component's link graph.
 	Date last_compression; ///< Last time the capacities and supplies were compressed.
