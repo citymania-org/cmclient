@@ -1,10 +1,16 @@
 #ifndef CITYMANIA_SAVELOAD_HPP
 #define CITYMANIA_SAVELOAD_HPP
 
+#include "../saveload/saveload.h"
+
 namespace citymania {
 
-void Save_PSAC();
-void Load_PSAC();
+struct PSACChunkHandler : ChunkHandler {
+    PSACChunkHandler() : ChunkHandler('PSAC', CH_TABLE) {}
+
+    void Load() const override;
+    void Save() const override;
+};
 
 } // namespace citymania
 

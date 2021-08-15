@@ -145,7 +145,7 @@ void WriteHouseSpecInfo(JsonWriter &j) {
     char cargo_label[16];
     bool first = true;
     SetDParam(0, 123);
-    FOR_ALL_CARGOSPECS(cs) {
+    for (const CargoSpec *cs : CargoSpec::Iterate()) {
         j.begin_dict();
         JKV(j, cs->initial_payment);
         j.kv("id", cs->bitnum);

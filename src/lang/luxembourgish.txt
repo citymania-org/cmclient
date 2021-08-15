@@ -783,6 +783,7 @@ STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}*  *  P
 STR_STATUSBAR_AUTOSAVE                                          :{RED}AUTOSPÄICHEREN
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  SPÄICHERT D'SPILL  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Meldungshistorie
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Eng Lëscht vun de leschten Meldungen
@@ -883,11 +884,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Subventioun ofgelaaf:{}{}{STRING} vun {STRING} op {STRING} gëtt net méi subventionéiert
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Subventioun entzunn:{}{}{STRING} Service vun {STRING} op {STRING} gëtt net méi subventionéiert
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Subventioun offréiert:{}{}Eischten {STRING} Service vun {STRING} op {STRING} gëtt mat énger Subventioun vun 1 Joer belount.!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Subventioun geet un {STRING}!{}{}{STRING} Service vun {STRING} op {STRING} gëtt nächst Joer mat 50% Bonus bezuelt!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Subventioun geet un {STRING}!{}{}{STRING} Service vun {STRING} op {STRING} gëtt nächst Joer duebel bezuelt!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Subventioun geet un {STRING}!{}{}{STRING} Service vun {STRING} op {STRING} gëtt nächst Joer dräifach bezuelt!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Subventioun geet un {STRING}!{}{}{STRING} Service vun {STRING} op {STRING} gëtt nächst Joer mat 400% bezuelt!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Trafficchaos an {TOWN}!{}{}Stroossenneibau deen vun {STRING} finanzéiert ginn ass bréngt 6 Méint Misère fir d'Autosfuerer!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Transportmonopol!
@@ -1428,6 +1424,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :Ausgeschalt
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Duebelklick
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Ee Klick (wann fokusséiert)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Ee Klick (direkt)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Rietsklickemulatioun: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :Wiel d'Method aus fir déi riets Maustast ze emuléiren
@@ -1985,6 +1982,9 @@ STR_FACE_TIE                                                    :Krawatt:
 STR_FACE_EARRING                                                :Ouerréng:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Krawatt oder Ouerréng änneren
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multiplayer
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Spillernumm:
@@ -2037,7 +2037,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Server s
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Eegenen Server starten
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Gëff däin Numm an
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}D'Address vum Host uginn
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Nei Multiplayerpartie starten
@@ -2047,88 +2046,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Den Numm
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Passwuert setzen
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}En Passwuert fir d'Spill setzen, dass et net Public accessibel ass
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Ugekënnegt
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Wiel tëschent engem ugekënnegten (Internet) an net ugekënnegten (LAN) Spill
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Nee
-STR_NETWORK_START_SERVER_ADVERTISED                             :Jo
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} Spiller
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Maximal Spiller:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Maximal Unzuel vun de Clients. Et muss net all Slot gefëllt sinn.
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} Firm{P a en}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Maximal Firmen:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}D'Unzuel vun de Firme limitéieren
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} Zuschauer
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Maximal Zuschauer:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}D'Unzuel vun den Zuschauer limitéiren
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Geschwate Sprooch:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Aner Leit gesinn wéieng Sprooch um Server geschwat gëtt
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Gëff en Numm fir d'Spill un
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Egal
-STR_NETWORK_LANG_ENGLISH                                        :Englesch
-STR_NETWORK_LANG_GERMAN                                         :Däitsch
-STR_NETWORK_LANG_FRENCH                                         :Franséisch
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasilianesch
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgaresch
-STR_NETWORK_LANG_CHINESE                                        :Chinesesch
-STR_NETWORK_LANG_CZECH                                          :Tschechesch
-STR_NETWORK_LANG_DANISH                                         :Dänesch
-STR_NETWORK_LANG_DUTCH                                          :Holländesch
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Finnesch
-STR_NETWORK_LANG_HUNGARIAN                                      :Ungaresch
-STR_NETWORK_LANG_ICELANDIC                                      :Isländesch
-STR_NETWORK_LANG_ITALIAN                                        :Italienesch
-STR_NETWORK_LANG_JAPANESE                                       :Japanesch
-STR_NETWORK_LANG_KOREAN                                         :Koreanesch
-STR_NETWORK_LANG_LITHUANIAN                                     :Litauesch
-STR_NETWORK_LANG_NORWEGIAN                                      :Norwegesch
-STR_NETWORK_LANG_POLISH                                         :Polnesch
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugiesesch
-STR_NETWORK_LANG_ROMANIAN                                       :Rumänesch
-STR_NETWORK_LANG_RUSSIAN                                        :Russesch
-STR_NETWORK_LANG_SLOVAK                                         :Slovakesch
-STR_NETWORK_LANG_SLOVENIAN                                      :Slovenesch
-STR_NETWORK_LANG_SPANISH                                        :Spuenesch
-STR_NETWORK_LANG_SWEDISH                                        :Schwedesch
-STR_NETWORK_LANG_TURKISH                                        :Türkesch
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukrainesch
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikaans
-STR_NETWORK_LANG_CROATIAN                                       :Kroatesch
-STR_NETWORK_LANG_CATALAN                                        :Katalanesch
-STR_NETWORK_LANG_ESTONIAN                                       :Estnesch
-STR_NETWORK_LANG_GALICIAN                                       :Gälesch
-STR_NETWORK_LANG_GREEK                                          :Griechesch
-STR_NETWORK_LANG_LATVIAN                                        :Lettesch
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Multiplayer-Spill Lobby
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Preparéiert fir bäizetrieden: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Eng Lëscht vun de Firmen an dësem Spill. Du kanns enger bäitrieden oder eng nei opmaachen.
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}FIRMENINFO
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Firmennumm: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}Grënnung: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Firmewäert: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Kontostand: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Akommes vum leschte Joer: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Performance: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Gefierer: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Statiounen: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Spiller: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Nei Firma
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Nei Firma erstellen
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Dem Spill nokucken
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Dem Spill als Zuschauer nokucken
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Firma bäitrieden
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Des Firma matverwalten
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Connectioun...
@@ -2152,19 +2079,17 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Verbindu
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Server ass geschützt. Passwuert aginn
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Firma ass geschützt. Passwuert aginn
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Spillerlëscht
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Spillerlëscht
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Nokucken
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nei Firma
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Kicken
-STR_NETWORK_CLIENTLIST_BAN                                      :Bannen
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Mat alle schwetzen
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Mat der Firma schwetzen
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privatmessage
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Spiller
@@ -2276,6 +2201,7 @@ STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} hu
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}De Server huet d'Sessioun zougemaach
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}De Server gëtt nei gestart...{}W.e.g. waarden...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} gouf gekickt. Grond: ({STRING})
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Lueden Inhalt erof
@@ -3812,7 +3738,6 @@ STR_REPLACE_MAGLEV_VEHICLES                                     :Magnéitbunn Ge
 STR_REPLACE_ROAD_VEHICLES                                       :Stroossegefierer
 STR_REPLACE_TRAM_VEHICLES                                       :Tram-Gefierer
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Waggon raushuelen: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Mécht dass d'automatescht Austauschen d'Längt vum Zuch behält, an dem e Waggonen (vu lénks un) wechhëllt, wann d'Lok den Zuch ze laang mécht
 
 # Vehicle view

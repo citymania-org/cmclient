@@ -176,7 +176,7 @@ void BaseVehicleListWindow::BuildVehicleList()
 {
 	if (!this->vehgroups.NeedRebuild()) return;
 
-	DEBUG(misc, 3, "Building vehicle list type %d for company %d given index %d", this->vli.type, this->vli.company, this->vli.index);
+	Debug(misc, 3, "Building vehicle list type {} for company {} given index {}", this->vli.type, this->vli.company, this->vli.index);
 
 	this->vehgroups.clear();
 
@@ -513,8 +513,7 @@ struct RefitWindow : public Window {
 
 			/* Loop through all cargoes in the refit mask */
 			int current_index = 0;
-			const CargoSpec *cs;
-			FOR_ALL_SORTED_CARGOSPECS(cs) {
+			for (const auto &cs : _sorted_cargo_specs) {
 				CargoID cid = cs->Index();
 				/* Skip cargo type if it's not listed */
 				if (!HasBit(cmask, cid)) {
@@ -1034,9 +1033,9 @@ struct RefitWindow : public Window {
 
 					if (this->order == INVALID_VEH_ORDER_ID) {
 						bool delete_window = this->selected_vehicle == v->index && this->num_vehicles == UINT8_MAX;
-						if (DoCommandP(v->tile, this->selected_vehicle, this->cargo->cargo | this->cargo->subtype << 8 | this->num_vehicles << 16, GetCmdRefitVeh(v)) && delete_window) delete this;
+						if (DoCommandP(v->tile, this->selected_vehicle, this->cargo->cargo | this->cargo->subtype << 8 | this->num_vehicles << 16, GetCmdRefitVeh(v)) && delete_window) this->Close();
 					} else {
-						if (DoCommandP(v->tile, v->index, this->cargo->cargo | this->order << 16, CMD_ORDER_REFIT)) delete this;
+						if (DoCommandP(v->tile, v->index, this->cargo->cargo | this->order << 16, CMD_ORDER_REFIT)) this->Close();
 					}
 				}
 				break;
@@ -1119,7 +1118,7 @@ static WindowDesc _vehicle_refit_desc(
  */
 void ShowVehicleRefitWindow(const Vehicle *v, VehicleOrderID order, Window *parent, bool auto_refit)
 {
-	DeleteWindowById(WC_VEHICLE_REFIT, v->index);
+	CloseWindowById(WC_VEHICLE_REFIT, v->index);
 	RefitWindow *w = new RefitWindow(&_vehicle_refit_desc, v, order, auto_refit);
 	w->parent = parent;
 }
@@ -1907,7 +1906,7 @@ public:
 		if (this->vehgroups.NeedResort()) {
 			StationID station = (this->vli.type == VL_STATION_LIST) ? this->vli.index : INVALID_STATION;
 
-			DEBUG(misc, 3, "Periodic resort %d list company %d at station %d", this->vli.vtype, this->owner, station);
+			Debug(misc, 3, "Periodic resort {} list company {} at station {}", this->vli.vtype, this->owner, station);
 			this->SetDirty();
 		}
 	}
@@ -2463,8 +2462,8 @@ static WindowDesc _nontrain_vehicle_details_desc(
 /** Shows the vehicle details window of the given vehicle. */
 static void ShowVehicleDetailsWindow(const Vehicle *v)
 {
-	DeleteWindowById(WC_VEHICLE_ORDERS, v->index, false);
-	DeleteWindowById(WC_VEHICLE_TIMETABLE, v->index, false);
+	CloseWindowById(WC_VEHICLE_ORDERS, v->index, false);
+	CloseWindowById(WC_VEHICLE_TIMETABLE, v->index, false);
 	AllocateWindowDescFront<VehicleDetailsWindow>((v->type == VEH_TRAIN) ? &_train_vehicle_details_desc : &_nontrain_vehicle_details_desc, v->index);
 }
 
@@ -2486,7 +2485,7 @@ static const NWidgetPart _nested_vehicle_view_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_PANEL, COLOUR_GREY),
 			NWidget(WWT_INSET, COLOUR_GREY), SetPadding(2, 2, 2, 2),
-				NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_VV_VIEWPORT), SetMinimalSize(226, 84), SetResize(1, 1), SetPadding(1, 1, 1, 1),
+				NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_VV_VIEWPORT), SetMinimalSize(226, 84), SetResize(1, 1),
 			EndContainer(),
 		EndContainer(),
 		NWidget(NWID_VERTICAL),
@@ -2719,12 +2718,13 @@ public:
 		this->UpdateButtonStatus();
 	}
 
-	~VehicleViewWindow()
+	void Close() override
 	{
-		DeleteWindowById(WC_VEHICLE_ORDERS, this->window_number, false);
-		DeleteWindowById(WC_VEHICLE_REFIT, this->window_number, false);
-		DeleteWindowById(WC_VEHICLE_DETAILS, this->window_number, false);
-		DeleteWindowById(WC_VEHICLE_TIMETABLE, this->window_number, false);
+		CloseWindowById(WC_VEHICLE_ORDERS, this->window_number, false);
+		CloseWindowById(WC_VEHICLE_REFIT, this->window_number, false);
+		CloseWindowById(WC_VEHICLE_DETAILS, this->window_number, false);
+		CloseWindowById(WC_VEHICLE_TIMETABLE, this->window_number, false);
+		this->Window::Close();
 	}
 
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override

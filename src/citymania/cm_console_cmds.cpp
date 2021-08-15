@@ -13,7 +13,7 @@ namespace citymania {
 
 static void IConsoleHelp(const char *str)
 {
-    IConsolePrintF(CC_WARNING, "- %s", str);
+    IConsolePrint(CC_WARNING, "- {}", str);
 }
 
 bool ConExport(byte argc, char *argv[]) {
@@ -24,7 +24,7 @@ bool ConExport(byte argc, char *argv[]) {
 
     auto filename = "openttd.json";
     citymania::ExportOpenttdData(filename);
-    IConsolePrintF(CC_DEFAULT, "Data successfully saved to %s", filename);
+    IConsolePrint(CC_DEFAULT, "Data successfully saved to {}", filename);
     return true;
 }
 

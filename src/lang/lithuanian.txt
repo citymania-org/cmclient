@@ -988,6 +988,7 @@ STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}*  *  P
 STR_STATUSBAR_AUTOSAVE                                          :{RED}AUTOMATINIS SAUGOJIMAS
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  Išsaugomas žaidimas  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Žinučių istorija
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Paskutinių žinučių sąrašas
@@ -1088,11 +1089,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Subsidijų pasiūlymas baigėsi:{}{}{STRING.ko} pervežimas iš {STRING.ko} į {STRING.ka} daugiau nebesubsidijuojamas.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Subsidijų laikas baigėsi:{}{}{STRING.ko} transportavimas iš {STRING} į {STRING} daugiau nebesubsidijuojamas.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Subsidijų pasiūlymas:{}{}Pirmasis pervežęs {STRING.ka} iš {STRING} į {STRING} gaus metinę vietinės valdžios subsidiją!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Subsidijos suteiktos {STRING}!{}{}{STRING} pervežimas iš {STRING} į {STRING} visus metus bus apmokamas 50% daugiau!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Subsidijos suteiktos {STRING}!{}{}{STRING} pervežimas iš {STRING} į {STRING} visus metus bus apmokamas dvigubai!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Subsidijos suteiktos {STRING}!{}{}{STRING} pervežimas iš {STRING} į {STRING} visus metus bus apmokamas trigubai!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Subsidijos suteiktos {STRING}!{}{}{STRING} pervežimas iš {STRING} į {STRING} bus metus apmokamas keturgubai!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}{TOWN}: Sutriko susisiekimas keliais!{}{}Kelių rekonstrukcija, finansuojama {STRING}, sutrigdė susisiekimą keliais 6 mėnesiams!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Transporto monopolija!
@@ -1633,6 +1629,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :Išjungta
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Dvikartis spustelėjimas
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Vienkartis spustelėjimas (jei židinyje)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Vienkartis spustelėjimas (iškart)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Dešiniojo pelės mygtuko emuliacija: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :Pasirinkite būdą, kurį atliks dešinio pelės klavišo paspaudimas
@@ -2204,6 +2201,9 @@ STR_FACE_TIE                                                    :Kaklaraištis:
 STR_FACE_EARRING                                                :Auskaras:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Pakeisti kaklaraištį arba auskarą
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Žaidimas tinkle
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Žaidėjo vardas:
@@ -2256,7 +2256,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Sukurti 
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Sukurti savo serverį
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Įrašykite savo vardą
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}Įvesk adresą (IP)
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Pradėti naują daugiažaidėjinį žaidimą
@@ -2266,88 +2265,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Žaidimo
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Nustatyti slaptažodi
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Apsaugokite savo žaidimą slaptažodžiu, jei nenorite, kad jis būtų viešai prieinamas
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Reklamuoti
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Pasirinkite tarp reklamuojamo (internetas) ir nereklamuojamo (Vietinis Tinklas, LAN) žaidimo
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Ne
-STR_NETWORK_START_SERVER_ADVERTISED                             :Taip
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} klient{P as ai ų}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Didžiausias klientų skaičius:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Pasirinkite didžiausią klientų skaičių. Nebūtinai visos jungtys turi būti užpildytos
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} kompanij{P a os ų}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Daugiausia kompanijų:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Riboti serverį iki tam tikro skaičiaus kompanijų
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} stebėtoj{P as ai ų}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Daugiausia žiurovų:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Riboti serverį iki tam tikro skaičiaus žiurovų
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Kalba:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Kiti žaidėjai žinos kokia kalba kalbama serveryje
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Įveskite tinklo žaidimo pavadinimą
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Bet kokia
-STR_NETWORK_LANG_ENGLISH                                        :Anglų
-STR_NETWORK_LANG_GERMAN                                         :Vokiečių
-STR_NETWORK_LANG_FRENCH                                         :Prancūzų
-STR_NETWORK_LANG_BRAZILIAN                                      :Brazilų
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgarų
-STR_NETWORK_LANG_CHINESE                                        :Kinų
-STR_NETWORK_LANG_CZECH                                          :Čekų
-STR_NETWORK_LANG_DANISH                                         :Danų
-STR_NETWORK_LANG_DUTCH                                          :Olandų
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Suomių
-STR_NETWORK_LANG_HUNGARIAN                                      :Vengrų
-STR_NETWORK_LANG_ICELANDIC                                      :Islandų
-STR_NETWORK_LANG_ITALIAN                                        :Italų
-STR_NETWORK_LANG_JAPANESE                                       :Japonų
-STR_NETWORK_LANG_KOREAN                                         :Korėjiečių
-STR_NETWORK_LANG_LITHUANIAN                                     :Lietuvių
-STR_NETWORK_LANG_NORWEGIAN                                      :Norvegų
-STR_NETWORK_LANG_POLISH                                         :Lenkų
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugalų
-STR_NETWORK_LANG_ROMANIAN                                       :Rumunų
-STR_NETWORK_LANG_RUSSIAN                                        :Rusų
-STR_NETWORK_LANG_SLOVAK                                         :Slovakų
-STR_NETWORK_LANG_SLOVENIAN                                      :Slovėnų
-STR_NETWORK_LANG_SPANISH                                        :Ispanų
-STR_NETWORK_LANG_SWEDISH                                        :Švedų
-STR_NETWORK_LANG_TURKISH                                        :Turkų
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukrainiečių
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikiečių
-STR_NETWORK_LANG_CROATIAN                                       :Kroatų
-STR_NETWORK_LANG_CATALAN                                        :Katalonų
-STR_NETWORK_LANG_ESTONIAN                                       :Estų
-STR_NETWORK_LANG_GALICIAN                                       :Galicijos
-STR_NETWORK_LANG_GREEK                                          :Graikų
-STR_NETWORK_LANG_LATVIAN                                        :Latvių
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Kelių žaidėjų meniu
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Ruošiamasi prisijungti: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Sąrašas visų kompanijų žaidime. Gali arba prisijungti prie kurios nors, arba sukurti naują kompaniją (jei yra laisvų vietų)
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}KOMPANIJOS INFORMACIJA
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Įmonės pavadinimas: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{G=vyr}{SILVER}Įkurtas: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Įmonės vertė: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Dabartinis balansas: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Praeitų metų pajamos: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Sparta: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Transporto priemonės: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Stotelės: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Žaidejai: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Nauja kompanija
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Sukursi naują kompaniją
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Stebėti žaidimą
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Stebėsi žaidimą kaip žiūrovas
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Prisijungti prie kompanijos
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Padėsi valdyti šią kompaniją
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Jungiamasi...
@@ -2371,19 +2298,17 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Atsijung
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Serveris apsaugotas. Įvesk slaptažodį
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Kompanija apsaugota. Įvesk slaptažodį
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Žaidėjų sąrašas
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Žaidėjų sąrašas
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Stebėti
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nauja įmonė
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Išmesti (Kick)
-STR_NETWORK_CLIENTLIST_BAN                                      :Užblokuoti
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Sakyti visiems
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Sakyti kompanijai
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privati žinutė
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :Serveris
 STR_NETWORK_CLIENT                                              :Žaidėjas
@@ -2495,6 +2420,7 @@ STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} pe
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Serveris užsidarė
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Serveris persikrauna...{}Prašau palaukti...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} buvo išmestas. Priežastis: ({STRING})
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Turinio atsisiuntimas
@@ -4069,7 +3995,6 @@ STR_REPLACE_MAGLEV_VEHICLES                                     :„Maglev“ tr
 STR_REPLACE_ROAD_VEHICLES                                       :Automobilius
 STR_REPLACE_TRAM_VEHICLES                                       :Tramvajinės transporto priemonės
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vagono pašalinimas: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Pakeitimo metu išlaikyti traukinio ilgį atjungiant vagonus (pradedant nuo priekio), jeigu pakeitus garvežį traukinys pailgėtų
 
 # Vehicle view

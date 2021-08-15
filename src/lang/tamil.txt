@@ -758,6 +758,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}*  *  �
 STR_STATUSBAR_AUTOSAVE                                          :{RED}பதிவுசெய்தல்
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  ஆட்டம் பதிவாகிறது  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}செய்தி வரலாறு
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}சமீப செய்திகளின் பட்டியல்
@@ -851,8 +852,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO                              :{WHITE}{STATION
 STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION} இப்போது {STRING} {STRING} ஆகியவற்றை ஏற்றுக்கொள்கிறது
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}மானியம் இனிமேல் தரப்படாது:{}{}{STRING} இருந்து {STRING} {STRING} வரை போக்குவரத்திற்கு மானியம் வழங்கப்படாது
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} இற்கு சேவை மானியம் வழங்கப்படுகிறது!{}{} {STRING} முதல் {STRING} வரையிலான {STRING} சேவை அடுத்த ஆண்டுக்கு 50% கூடுதல் கட்டணம் செலுத்தும்!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} இற்கு சேவை மானியம் வழங்கப்படுகிறது!{}{}{STRING} முதல் {STRING} வரையிலான {STRING} சேவை அடுத்த ஆண்டுக்கு 4 மடங்கு கட்டணம் செலுத்தும்!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}{TOWN}இல் சாலை போக்குவரத்து பாதிப்பு!{}{}Road rebuilding programme funded by {STRING} brings 6 months of misery to motorists!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}போக்குவரத்து தனியுரிமை!
@@ -1295,6 +1294,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :இரு அ�
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :ஒரு அழுத்தம் (ஒரே இடத்தில் இருந்தால்)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :ஒரு அழுத்தம் (உடனடியாக)
 
+
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Command+Click
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Ctrl+Click
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :அணை
@@ -1734,6 +1734,9 @@ STR_FACE_TIE                                                    :Tie:
 STR_FACE_EARRING                                                :கம்மல்:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Tie அல்லது காதணியை மாற்றவும்
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}பல்வீரர்
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}விளையாடுபவரின் பெயர்:
@@ -1789,84 +1792,15 @@ STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}பு�
 STR_NETWORK_START_SERVER_NEW_GAME_NAME                          :{BLACK}விளையாட்டு பெயர்:
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}கடவுச்சொல்லினை அமைக்கவும்
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}விளம்பரப்படுத்தப்பட்ட
-STR_NETWORK_START_SERVER_UNADVERTISED                           :இல்லை
-STR_NETWORK_START_SERVER_ADVERTISED                             :ஆம்
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} விளையாடுபவர்{P "" கள்}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}அதிகபட்ச வீரர்கள்:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}வாடிக்கையாளர்களின் அதிகபட்ச எண்ணிக்கையைத் தேர்வுசெய்க. எல்லா இடங்களும் நிரப்பப்பட வேண்டியதில்லை
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} நிறுவன{P ம் ங்கள்}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}அதிகபட்ச நிறுவனங்கள்:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}சர்வர்கு குறிப்பிட்ட அளவு நிறுவனங்களை மட்டுமே அனுமதி
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} பார்வையாளர்{P "" கள்}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}அதிகபட்ச பார்வையாளர்கள்:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}சர்வரிற்கு குறிப்பிட்ட அளவு பார்வையாளர்களை மட்டுமே அனுமதி
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}பேசப்படும் மொழிகள்:
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}இணைய ஆட்டத்திற்கு ஒரு பெயரினை இடு
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :எதுவும்
-STR_NETWORK_LANG_ENGLISH                                        :ஆங்கிலம்
-STR_NETWORK_LANG_GERMAN                                         :ஜெர்மன்
-STR_NETWORK_LANG_FRENCH                                         :பிரெஞ்சு
-STR_NETWORK_LANG_BRAZILIAN                                      :பிரசில்லியன்
-STR_NETWORK_LANG_BULGARIAN                                      :பல்கேரியன்
-STR_NETWORK_LANG_CHINESE                                        :சீன மொழி
-STR_NETWORK_LANG_CZECH                                          :செக்
-STR_NETWORK_LANG_DANISH                                         :டேனிஷ்
-STR_NETWORK_LANG_DUTCH                                          :டச்
-STR_NETWORK_LANG_ESPERANTO                                      :உலகப் பொதுச் செயற்கைமொழி
-STR_NETWORK_LANG_FINNISH                                        :பின்னிஷ்
-STR_NETWORK_LANG_HUNGARIAN                                      :ஹங்கேரியன்
-STR_NETWORK_LANG_ICELANDIC                                      :இஸ்லாந்திய மொழி
-STR_NETWORK_LANG_ITALIAN                                        :இத்தாலியன்
-STR_NETWORK_LANG_JAPANESE                                       :ஜப்பானிய மொழி
-STR_NETWORK_LANG_KOREAN                                         :கோரிய மொழி
-STR_NETWORK_LANG_LITHUANIAN                                     :லிதுவேனியன்
-STR_NETWORK_LANG_NORWEGIAN                                      :நார்வேஜியன்
-STR_NETWORK_LANG_POLISH                                         :போலிஷ்
-STR_NETWORK_LANG_PORTUGUESE                                     :போர்த்துகீசியம்
-STR_NETWORK_LANG_ROMANIAN                                       :ரோமானிய மொழி
-STR_NETWORK_LANG_RUSSIAN                                        :ரஷ்ய மொழி
-STR_NETWORK_LANG_SLOVAK                                         :ஸ்லவோனிய மொழி
-STR_NETWORK_LANG_SLOVENIAN                                      :ஸ்லவோனிய மொழி
-STR_NETWORK_LANG_SPANISH                                        :ஸ்பானிஷ்
-STR_NETWORK_LANG_SWEDISH                                        :சவீடிஷ்
-STR_NETWORK_LANG_TURKISH                                        :டர்கிஷ்
-STR_NETWORK_LANG_UKRAINIAN                                      :உக்ரேனியம்
-STR_NETWORK_LANG_AFRIKAANS                                      :ஆப்ரிகான்ஸ்
-STR_NETWORK_LANG_CROATIAN                                       :குரோஏசியன்
-STR_NETWORK_LANG_CATALAN                                        :கடலான்
-STR_NETWORK_LANG_ESTONIAN                                       :எஸ்தோனியம்
-STR_NETWORK_LANG_GALICIAN                                       :கலிசியம்
-STR_NETWORK_LANG_GREEK                                          :கிரேக்க மொழி
-STR_NETWORK_LANG_LATVIAN                                        :லாத்வியன்
-############ End of leave-in-this-order
-
-# Network game lobby
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}சேர தொடங்கப்படுகிறது: {ORANGE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}நிறுவனங்களின் விவரம்
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}நிறுவனத்தின் பெயர்: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}தொடக்கம்: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}நிறுவனத்தின் மதிப்பு: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}தற்போதைய கையிருப்பு: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}சென்ற வருட வருமானம்: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}செயல்திறன்: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}வாகனங்கள்: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}நிலையங்கள்: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}வீரர்கள்: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}புதிய நிருவனம்
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}புதிய நிறுவனத்தை உருவாக்கு
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}விளையாட்டை பார்வையிடு
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}ஆட்டத்தினைப் பார்வையாளராக கவனி
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}நிறுவனத்தில் சேறு
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}நிறுவனத்தை கட்டுபடுத்த உதவு
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}இணைக்கப்படுகிறது...
@@ -1890,19 +1824,17 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}இண�
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}சர்வர் காக்கப்பட்டுள்ளது. கடவுச்சொல்லினை இடவும்
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}நிற்வனம் காக்கப்பட்டுள்ளது. கடவுச்சொல்லினை இடவும்
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}விளையாடுவோர் பட்டியல்
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :விளையாடுவோர் பட்டியல்
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :கவனி
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :புதிய நிறுவனம்
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :உதை
-STR_NETWORK_CLIENTLIST_BAN                                      :அனுமதிக்காதே
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :அனைவருடனும் பேசு
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :நிறுவனத்திடம் பேசு
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :இரகசிய தகவல்
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :சர்வர்
 STR_NETWORK_CLIENT                                              :Client
@@ -2009,6 +1941,7 @@ STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} �
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}சர்வர் ஆட்டத்தினை முடித்தது
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}சர்வர் மீண்டும் தொடங்குகிறது...{}சற்று பொறுக்கவும்...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} வெளியேற்றப்பட்டார். காரணம்: ({STRING})
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}கோப்புகள் பதிவிறக்கம் செய்யப்படுகின்றன
@@ -3336,7 +3269,6 @@ STR_REPLACE_MAGLEV_VEHICLES                                     :மேக்ல
 STR_REPLACE_ROAD_VEHICLES                                       :சாலை வாகனங்கள்
 STR_REPLACE_TRAM_VEHICLES                                       :அமிழ் தண்டூர்தி வாகனங்கள்
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}பெட்டி நீக்கம்: {ORANGE}{STRING}
 
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}

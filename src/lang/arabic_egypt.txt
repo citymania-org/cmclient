@@ -755,6 +755,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  م
 STR_STATUSBAR_AUTOSAVE                                          :{RED}حفظ تلقائي
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  يتم حفظ اللعبة  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}الرسائل السابقة
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}قائمة بآخر الاخبار
@@ -853,11 +854,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK} اعلان عن انتهاء عرض{}{} نقل {STRING} من {STRING} الى {STRING} لن يعطي ارباح اضافية بعد الآن .
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK} تم سحب العرض{}{} نقل {STRING} من {STRING} الى {STRING} لم يعد معروض
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}اعلان عن عرض{}{} نقل اول {STRING} من {STRING} الى {STRING} سوف يعطي زيادة ارباح في السنة القادمة.
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK} العرض قد اعطي لـ {STRING}!{}{} نقل {STRING} من {STRING} الى {STRING} سوف يعطي زيادة 50% ارباح للسنة القادمة
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}العرض قد اعطي لـ {STRING}!{}{} نقل {STRING}من {STRING}الى {STRING} سوف يعطي ضعف الدخل للسنة القادمة
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}شركة {STRING} فازت بالعرض{}{} نقل {STRING} من {STRING} الى {STRING} سوف يعطي 3 اضعاف الدخل للسنة القادمة
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK} شركة {STRING} فازت بالعرض !{}{} نقل {STRING} من {STRING} الى {STRING} سوف يعطي اربعة اضعاف الدخل للسنة القادمة
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK} فوضى طرق عارمة في مدينة {TOWN}!{}{}اعادة ترميم الطرق مولت من قبل شركة {STRING}{} تجلي ستة أشهر من الشقاء لعربات الطريق.
 
@@ -1239,6 +1235,7 @@ STR_CONFIG_SETTING_SCROLLWHEEL_SCROLL                           :تحريك ال
 STR_CONFIG_SETTING_SCROLLWHEEL_OFF                              :عدم استخدام
 STR_CONFIG_SETTING_SCROLLWHEEL_MULTIPLIER                       :سرعة تحريك الخريطة: {STRING}
 
+
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :محاكاة الزر الأيمن : {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :الأوامر
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :للتحكم
@@ -1611,6 +1608,9 @@ STR_FACE_TIE                                                    :الربطة:
 STR_FACE_EARRING                                                :أقراط الأذان:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}غير الربطة أو أقراط الأذن
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}تعدد اللاعبين
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}أسم اللاعب
@@ -1659,7 +1659,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}أبدأ
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}أبدأ خادمك الخاص
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}أدخل أسمك
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}أدخل عنوان المضيف
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}أبدا لعبة متعددة اللاعبين جديدة
@@ -1675,78 +1674,10 @@ STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}أختر
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM}شركة
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}أقصى عدد شركات:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}حدد العدد الاقصى للشركات في هذا الخادم
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM}مشاهد
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}أقصى عدد مشاهدين:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}حدد عدد المشاهدين لهذا الخادم
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}اللغة المتحدثة:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}اللاعبين الآخرين سيعرفون اللغة المتحدثة
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}أدخل أسم اللعبة للشبكة
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :أي
-STR_NETWORK_LANG_ENGLISH                                        :إنجليزي
-STR_NETWORK_LANG_GERMAN                                         :ألماني
-STR_NETWORK_LANG_FRENCH                                         :فرنسي
-STR_NETWORK_LANG_BRAZILIAN                                      :برازيلي
-STR_NETWORK_LANG_BULGARIAN                                      :بلغاري
-STR_NETWORK_LANG_CHINESE                                        :صيني
-STR_NETWORK_LANG_CZECH                                          :شيكي
-STR_NETWORK_LANG_DANISH                                         :دانماركي
-STR_NETWORK_LANG_DUTCH                                          :هولندي
-STR_NETWORK_LANG_ESPERANTO                                      :اسبرانتو
-STR_NETWORK_LANG_FINNISH                                        :الفنلندية
-STR_NETWORK_LANG_HUNGARIAN                                      :هنغاري
-STR_NETWORK_LANG_ICELANDIC                                      :الأيسلاندية
-STR_NETWORK_LANG_ITALIAN                                        :إيطالي
-STR_NETWORK_LANG_JAPANESE                                       :يابانية
-STR_NETWORK_LANG_KOREAN                                         :كورية
-STR_NETWORK_LANG_LITHUANIAN                                     :اللتوانية
-STR_NETWORK_LANG_NORWEGIAN                                      :نرويجية
-STR_NETWORK_LANG_POLISH                                         :البولندية
-STR_NETWORK_LANG_PORTUGUESE                                     :برتغالية
-STR_NETWORK_LANG_ROMANIAN                                       :رومانية
-STR_NETWORK_LANG_RUSSIAN                                        :روسية
-STR_NETWORK_LANG_SLOVAK                                         :السلوفاكية
-STR_NETWORK_LANG_SLOVENIAN                                      :السلوفانية
-STR_NETWORK_LANG_SPANISH                                        :أسبانية
-STR_NETWORK_LANG_SWEDISH                                        :سويدية
-STR_NETWORK_LANG_TURKISH                                        :تركية
-STR_NETWORK_LANG_UKRAINIAN                                      :الأوكرانية
-STR_NETWORK_LANG_AFRIKAANS                                      :الأفريقية
-STR_NETWORK_LANG_CROATIAN                                       :كرواتية
-STR_NETWORK_LANG_CATALAN                                        :الكاتالوينية
-STR_NETWORK_LANG_ESTONIAN                                       :الأستونية
-STR_NETWORK_LANG_GALICIAN                                       :الجاليكية
-STR_NETWORK_LANG_GREEK                                          :اليونانية
-STR_NETWORK_LANG_LATVIAN                                        :اللاتفية
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}ردهة تعدد اللاعبين
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}التحضير لالانضمام الى:{ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}قائمة بالشركات الموجودة باللعبة ، يمكنك الإنضمام لشركة أو تأسيس واحدة
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}معلومات الشركة
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}أسم الشركة:{WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}افتتاح:{WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}قيمة الشركة:{WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}الرصيد الحالي:{WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}دخل السنة الماضية:{WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}الأداء:{WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}مركبة:{WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}محطات:{WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}لاعبين:{WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}شركة جديدة
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}أنشئ شركة جديدة
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}شاهد اللعبة
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}شاهد اللعبة كامشاهد
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}أنضم لشركة
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}ساعد في إدارة الشركة
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}إتصال...
@@ -1773,15 +1704,14 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}الشر
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :قائمة العملاء
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :شاهد
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :شركة جديدة
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :اطرد
-STR_NETWORK_CLIENTLIST_BAN                                      :بان
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :تحدث مع الكل
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :تحدث لشركة
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :رسالة خاصة
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :خادم
 STR_NETWORK_CLIENT                                              :عميل
@@ -1878,6 +1808,7 @@ STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} ق
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} قد غير اسمه / اسمها الى {STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}اقفل الخادم الجلسة
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}يتم بدأ الخادم من جديد ...{} الرجاء الأنتظار
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}تنزيل المحتوى
@@ -3188,7 +3119,6 @@ STR_REPLACE_MAGLEV_VEHICLES                                     :مركبات م
 
 STR_REPLACE_TRAM_VEHICLES                                       :مركبات الترام
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK} إزالة العربات: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK} المحافظة على طول القطار بازالة عربات ابتداء من المقدمة عند التبديل - عندما يكون التبدل ينتج قطارا اطول.
 
 # Vehicle view

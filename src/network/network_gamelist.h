@@ -16,20 +16,22 @@
 
 /** Structure with information shown in the game list (GUI) */
 struct NetworkGameList {
-	NetworkGameInfo info;   ///< The game information of this server
-	NetworkAddress address; ///< The connection info of the game server
-	bool online;            ///< False if the server did not respond (default status)
-	bool manually;          ///< True if the server was added manually
-	uint8 retries;          ///< Number of retries (to stop requerying)
-	NetworkGameList *next;  ///< Next pointer to make a linked game list
+	NetworkGameList(const std::string &connection_string) : connection_string(connection_string) {}
+
+	NetworkGameInfo info = {};       ///< The game information of this server
+	std::string connection_string;   ///< Address of the server
+	bool online = false;             ///< False if the server did not respond (default status)
+	bool manually = false;           ///< True if the server was added manually
+	uint8 retries = 0;               ///< Number of retries (to stop requerying)
+	int version = 0;                 ///< Used to see which servers are no longer available on the Game Coordinator and can be removed.
+	NetworkGameList *next = nullptr; ///< Next pointer to make a linked game list
 };
 
-/** Game list of this client */
 extern NetworkGameList *_network_game_list;
+extern int _network_game_list_version;
 
-void NetworkGameListAddItemDelayed(NetworkGameList *item);
-NetworkGameList *NetworkGameListAddItem(NetworkAddress address);
+NetworkGameList *NetworkGameListAddItem(const std::string &connection_string);
 void NetworkGameListRemoveItem(NetworkGameList *remove);
-void NetworkGameListRequery();
+void NetworkGameListRemoveExpired();
 
 #endif /* NETWORK_GAMELIST_H */

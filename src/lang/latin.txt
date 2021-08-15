@@ -955,6 +955,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}*  *  I
 STR_STATUSBAR_AUTOSAVE                                          :{RED}AUTOSERVANS
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  LUDUM SERVANS  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Historia Nuntiorum
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Index nuntiorum recentium
@@ -1054,11 +1055,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Condicio subsidii discedit:{}{}Vectura {STRING.gen} a {STRING.abl} ad {STRING.acc} non diutius subveniatur
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Subsidium retractum:{}{}Vectura {STRING.gen} a {STRING.abl} ad {STRING.acc} non diutius subvenietur
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Subsidium oblatum:{}{}Prima vectura {STRING.gen} a {STRING.abl} ad {STRING.acc} unum annum subveniatur ab auctoritate vicinale!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} assignatur subsidium!{}{}Vectura {STRING.gen} a {STRING.abl} ad {STRING.acc} merebit reditum sesquiplicem anno secundo!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING} assignatur subsidium!{}{}Vectura {STRING.gen} a {STRING.abl} ad {STRING.acc} merebit reditum duplicem anno secundo!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING} assignatur subsidium!{}{}Vectura {STRING.gen} a {STRING.abl} ad {STRING.acc} merebit reditum triplicem anno secundo!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} assignatur subsidium!{}{}Vectura {STRING.gen} a {STRING.abl} ad {STRING.acc} merebit reditum quadruplicem anno secundo!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Chaos vehicularium in {TOWN}!{}{}Reconstructio viarum, expensis a {STRING} compartis, affert miseriam autoraedariis 6 menses!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Monopolium Vecturae!
@@ -1565,6 +1561,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :Celata
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Bis premendo
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Semel premendo (dum conspicua est)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Semel premendo (statim)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Aemulatio dextrum premendi: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :Eligere modum aemulationis dextrum globulum muris premendi
@@ -2088,6 +2085,9 @@ STR_FACE_TIE                                                    :Focale:
 STR_FACE_EARRING                                                :Inauris:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Mutare focale vel inaurem
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Modus Plurium Lusorum
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nomen lusoris:
@@ -2136,7 +2136,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Servatru
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Servatrum tuum proprium incohare
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Nomen tuum inscribe
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}Inscribe inscriptionem IP servatri
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Incipere novum ludum cum pluribus lusoribus
@@ -2146,88 +2145,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Hoc ludi
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Elige tesseram
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Custodire tessera ludum tuum, si non vis publicos iungere
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Ostensum
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Eligere servatrum ostensum (interretis) aut non ostensum (LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Non
-STR_NETWORK_START_SERVER_ADVERTISED                             :Ita
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} clien{P s tes}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Clientes maximi:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Eligere numerum maximum clientorum. Necesse non est omnes loci pleni esse
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} societa{P s tes}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Societates maximae:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Eligere numerum maximum societatum
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} spectator{P "" es}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Spectatores maximi:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Eligere numerum maximum spectatorum
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Lingua adhibita:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Lingua in servatro adhibita
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Inscribe nomen ludi retis
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Quaevis
-STR_NETWORK_LANG_ENGLISH                                        :Anglica
-STR_NETWORK_LANG_GERMAN                                         :Theodisca
-STR_NETWORK_LANG_FRENCH                                         :Francogallica
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasilica
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgarica
-STR_NETWORK_LANG_CHINESE                                        :Sinica
-STR_NETWORK_LANG_CZECH                                          :Cecha
-STR_NETWORK_LANG_DANISH                                         :Danica
-STR_NETWORK_LANG_DUTCH                                          :Batavica
-STR_NETWORK_LANG_ESPERANTO                                      :Esperantica
-STR_NETWORK_LANG_FINNISH                                        :Finnica
-STR_NETWORK_LANG_HUNGARIAN                                      :Hungarica
-STR_NETWORK_LANG_ICELANDIC                                      :Islandica
-STR_NETWORK_LANG_ITALIAN                                        :Italiana
-STR_NETWORK_LANG_JAPANESE                                       :Iaponica
-STR_NETWORK_LANG_KOREAN                                         :Coreana
-STR_NETWORK_LANG_LITHUANIAN                                     :Lithuanica
-STR_NETWORK_LANG_NORWEGIAN                                      :Norvegica
-STR_NETWORK_LANG_POLISH                                         :Polonica
-STR_NETWORK_LANG_PORTUGUESE                                     :Lusitana
-STR_NETWORK_LANG_ROMANIAN                                       :Romanica
-STR_NETWORK_LANG_RUSSIAN                                        :Russica
-STR_NETWORK_LANG_SLOVAK                                         :Slovaca
-STR_NETWORK_LANG_SLOVENIAN                                      :Slovena
-STR_NETWORK_LANG_SPANISH                                        :Hispanica
-STR_NETWORK_LANG_SWEDISH                                        :Suecica
-STR_NETWORK_LANG_TURKISH                                        :Turcica
-STR_NETWORK_LANG_UKRAINIAN                                      :Ucrainica
-STR_NETWORK_LANG_AFRIKAANS                                      :Africana
-STR_NETWORK_LANG_CROATIAN                                       :Croatica
-STR_NETWORK_LANG_CATALAN                                        :Catalana
-STR_NETWORK_LANG_ESTONIAN                                       :Estonica
-STR_NETWORK_LANG_GALICIAN                                       :Gallaica
-STR_NETWORK_LANG_GREEK                                          :Graeca
-STR_NETWORK_LANG_LATVIAN                                        :Lettonica
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Atrium Plurium Lusorum
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Parans ad iungendum: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Index societatum in hoc ludo. Potes iungere aut novam incipere si locus vacuus adest
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}INDICIA SOCIETATIS
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Nomen societatis: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}Initium: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Aestimatio societatis: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Pecunia currens: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Reditus anni prioris: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Effectus: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Vehicula: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Stationes: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Lusores: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Societas Nova
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Creare societatem novam
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Ludum spectare
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Aspicere ludum sicut spectator
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Societatem iungere
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Administrare hanc societatem
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Coniungens...
@@ -2251,19 +2178,17 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Disiunge
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Servatrum tutum est. Tesseram inscribe
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Societas tuta est. Tesseram inscribe
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Index clientum
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Index clientum
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Spectare
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Societas Nova
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Dimittere
-STR_NETWORK_CLIENTLIST_BAN                                      :Expellere
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Ad omnes loqui
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Ad societatem loqui
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Ad clientem loqui
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :Servatrum
 STR_NETWORK_CLIENT                                              :Cliens
@@ -2370,6 +2295,7 @@ STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} lu
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} nomen suum mutat ad {STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Servatrum iam clausum est
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Servatrum resumit...{}Maneas...
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Arcessitus Rerum
@@ -3805,7 +3731,6 @@ STR_REPLACE_MONORAIL_VEHICLES                                   :Vehicula Monoor
 STR_REPLACE_MAGLEV_VEHICLES                                     :Vehicula Maglev
 
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Ablatio curruum: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Facere ut automutatio longitudinem traminis contineat ablatione curruum (primo primorum), si tramen longius fiat mutatione hamaxae
 
 # Vehicle view

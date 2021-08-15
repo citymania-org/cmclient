@@ -375,8 +375,18 @@ public:
 				break;
 
 			case WID_RV_TRAIN_WAGONREMOVE_TOGGLE: {
-				const Company *c = Company::Get(_local_company);
-				SetDParam(0, c->settings.renew_keep_length ? STR_CONFIG_SETTING_ON : STR_CONFIG_SETTING_OFF);
+				bool remove_wagon;
+				const Group *g = Group::GetIfValid(this->sel_group);
+				if (g != nullptr) {
+					remove_wagon = HasBit(g->flags, GroupFlags::GF_REPLACE_WAGON_REMOVAL);
+					SetDParam(0, STR_GROUP_NAME);
+					SetDParam(1, sel_group);
+				} else {
+					const Company *c = Company::Get(_local_company);
+					remove_wagon = c->settings.renew_keep_length;
+					SetDParam(0, STR_GROUP_DEFAULT_TRAINS + this->window_number);
+				}
+				SetDParam(2, remove_wagon ? STR_CONFIG_SETTING_ON : STR_CONFIG_SETTING_OFF);
 				break;
 			}
 
@@ -528,9 +538,16 @@ public:
 				}
 				break;
 
-			case WID_RV_TRAIN_WAGONREMOVE_TOGGLE: // toggle renew_keep_length
-				DoCommandP(0, GetCompanySettingIndex("company.renew_keep_length"), Company::Get(_local_company)->settings.renew_keep_length ? 0 : 1, CMD_CHANGE_COMPANY_SETTING);
+			case WID_RV_TRAIN_WAGONREMOVE_TOGGLE: {
+				const Group *g = Group::GetIfValid(this->sel_group);
+				if (g != nullptr) {
+					DoCommandP(0, this->sel_group | (GroupFlags::GF_REPLACE_WAGON_REMOVAL << 16), (HasBit(g->flags, GroupFlags::GF_REPLACE_WAGON_REMOVAL) ? 0 : 1) | (_ctrl_pressed << 1), CMD_SET_GROUP_FLAG);
+				} else {
+					// toggle renew_keep_length
+					DoCommandP(0, 0, Company::Get(_local_company)->settings.renew_keep_length ? 0 : 1, CMD_CHANGE_COMPANY_SETTING, nullptr, "company.renew_keep_length");
+				}
 				break;
+			}
 
 			case WID_RV_START_REPLACE: { // Start replacing
 				if (this->GetWidget<NWidgetLeaf>(widget)->ButtonHit(pt)) {
@@ -626,6 +643,20 @@ public:
 				this->ReplaceClick_StartReplace(index != 0);
 				break;
 		}
+	}
+
+	bool OnTooltip(Point pt, int widget, TooltipCloseCondition close_cond) override
+	{
+		if (widget != WID_RV_TRAIN_WAGONREMOVE_TOGGLE) return false;
+
+		if (Group::IsValidID(this->sel_group)) {
+			uint64 params[1];
+			params[0] = STR_REPLACE_REMOVE_WAGON_HELP;
+			GuiShowTooltips(this, STR_REPLACE_REMOVE_WAGON_GROUP_HELP, 1, params, close_cond);
+		} else {
+			GuiShowTooltips(this, STR_REPLACE_REMOVE_WAGON_HELP, 0, nullptr, close_cond);
+		}
+		return true;
 	}
 
 	void OnResize() override
@@ -833,7 +864,7 @@ static WindowDesc _replace_vehicle_desc(
  */
 void ShowReplaceGroupVehicleWindow(GroupID id_g, VehicleType vehicletype)
 {
-	DeleteWindowById(WC_REPLACE_VEHICLE, vehicletype);
+	CloseWindowById(WC_REPLACE_VEHICLE, vehicletype);
 	WindowDesc *desc;
 	switch (vehicletype) {
 		case VEH_TRAIN: desc = &_replace_rail_vehicle_desc; break;

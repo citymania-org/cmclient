@@ -21,9 +21,6 @@
 /** Base socket handler for all Content TCP sockets */
 class NetworkContentSocketHandler : public NetworkTCPSocketHandler {
 protected:
-	NetworkAddress client_addr; ///< The address we're connected to.
-	void Close() override;
-
 	bool ReceiveInvalidPacket(PacketContentType type);
 
 	/**
@@ -119,20 +116,21 @@ public:
 	 * @param s  the socket we are connected with
 	 * @param address IP etc. of the client
 	 */
-	NetworkContentSocketHandler(SOCKET s = INVALID_SOCKET, const NetworkAddress &address = NetworkAddress()) :
-		NetworkTCPSocketHandler(s),
-		client_addr(address)
+	NetworkContentSocketHandler(SOCKET s = INVALID_SOCKET) :
+		NetworkTCPSocketHandler(s)
 	{
 	}
 
 	/** On destructing of this class, the socket needs to be closed */
-	virtual ~NetworkContentSocketHandler() { this->Close(); }
+	virtual ~NetworkContentSocketHandler()
+	{
+		/* Virtual functions get called statically in destructors, so make it explicit to remove any confusion. */
+		this->CloseSocket();
+	}
 
 	bool ReceivePackets();
 };
 
-#ifndef OPENTTD_MSU
 Subdirectory GetContentInfoSubDir(ContentType type);
-#endif /* OPENTTD_MSU */
 
 #endif /* NETWORK_CORE_TCP_CONTENT_H */
