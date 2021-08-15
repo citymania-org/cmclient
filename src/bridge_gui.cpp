@@ -249,7 +249,7 @@ public:
 		if (i < 9 && i < this->bridges->size()) {
 			/* Build the requested bridge */
 			this->BuildBridge(i);
-			delete this;
+			this->Close();
 			return ES_HANDLED;
 		}
 		return ES_NOT_HANDLED;
@@ -263,7 +263,7 @@ public:
 				uint i = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_BBS_BRIDGE_LIST);
 				if (i < this->bridges->size()) {
 					this->BuildBridge(i);
-					delete this;
+					this->Close();
 				}
 				break;
 			}
@@ -360,7 +360,7 @@ static WindowDesc _build_bridge_desc(
  */
 void ShowBuildBridgeWindow(TileIndex start, TileIndex end, TransportType transport_type, byte road_rail_type)
 {
-	DeleteWindowByClass(WC_BUILD_BRIDGE);
+	CloseWindowByClass(WC_BUILD_BRIDGE);
 
 	/* Data type for the bridge.
 	 * Bit 16,15 = transport type,

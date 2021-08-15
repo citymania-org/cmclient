@@ -885,6 +885,7 @@ STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}** ΠΑ
 STR_STATUSBAR_AUTOSAVE                                          :{RED}ΑΥΤΟΜΑΤΗ ΑΠΟΘΗΚΕΥΣΗ
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  ΑΠΟΘΗΚΕΥΣΗ ΠΑΙΧΝΙΔΙΟΥ  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Ιστορικό Μηνυμάτων
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Λίστα των πρόσφατων μηνυμάτων ειδήσεων
@@ -985,11 +986,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}Ο στ�
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Έληξε η προσφορά επιδότησης:{}{}{STRING} από {G τον τη το} {STRING} πρός {G τον τη το} {STRING} δεν θα επιδοτείται πλέον.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Η επιδότηση αποσύρθηκε:{}{}Η υπηρεσια για {STRING.subs} απο το {STRING} προς το {STRING} δεν επιδοτείται πλέον.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Προσφορά χρηματοδότησης υπηρεσίας:{}{}Η πρώτη υπηρεσία για {STRING.subs} από {G τον τη το} {STRING} προς {G τον τη το} {STRING} επιχορηγείται για ένα έτος από την τοπική αρχή!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Η χρηματοδότηση της υπηρεσίας απονεμήθη στην εταιρία {STRING}!{}{}Η υπηρεσία για {STRING.subs} από τον σταθμό {STRING} προς το σταθμό {STRING} θα χρεώνεται 50% παραπάνω για ένα έτος!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Η επιχορήγηση υπηρεσίας απονεμήθη στην εταιρία {STRING}!{}{}Η υπηρεσία για {STRING.subs} από τον σταθμό {STRING} προς το σταθμό {STRING} θα χρεώνεται διπλά για το επόμενο έτος!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Η επιχορήγηση υπηρεσίας απονεμήθη στην εταιρία {STRING}!{}{}Η υπηρεσία για {STRING.subs} από το σταθμό {STRING} προς το σταθμό {STRING} θα χρεώνεται τριπλά για το επόμενο έτος!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Η επιχορήγηση υπηρεσίας απονεμήθη στην εταιρία {STRING}!{}{}Η υπηρεσία για {STRING.subs} από τον σταθμό {STRING} προς τον σταθμό {STRING} θα χρεώνεται τετραπλά για το επόμενο έτος!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Χαώδης κίνηση στην πόλη {TOWN}!{}{}Χρηματοδοτήθηκε πρόγραμμα ανακατασκευής των δρόμων από την εταιρία {STRING} και προκαλεί 6 μήνες μιζέριας στους οδηγούς!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Μονοπώλιο μεταφορών!
@@ -1502,6 +1498,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :Απενεργ�
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Με διπλό κλικ
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Με απλό κλικ (όταν είναι επικεντρωμένο)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Με απλό κλικ (άμεσα)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Εξομοίωση δεξιού κλικ {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :Επιλέξτε τον τρόπο μίμησης των πατημάτων του δεξιού κουμπιού του ποντικιού
@@ -2037,6 +2034,9 @@ STR_FACE_TIE                                                    :Γραβάτα:
 STR_FACE_EARRING                                                :Σκουλαρίκι:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Αλλαγή γραβάτας ή σκουλαρικιού
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Παιχνίδι πολλών παικτών
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Όνομα παίκτη:
@@ -2086,7 +2086,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Εκκί
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Ξεκινήστε το δικό σας διακομιστή
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Εισάγετε το όνομά σας
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}Εισάγετε τη διεύθυνση του οικοδεσπότη
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Έναρξη νέου παιχνιδιού για πολλούς παίκτες
@@ -2096,88 +2095,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Το ό�
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Θέση κωδικού
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Προστατέψτε το παιχνίδι με έναν κωδικό εάν δε θέλετε να είναι δημοσίως προσβάσιμο
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Διαφημιζόμενο
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Επιλογή ανάμεσα σε ένα διαφημιζόμενο (διαδίκτυο) ή μη διαφημιζόμενο (Τοπικό Δίκτυο/LAN) παιχνίδι
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Όχι
-STR_NETWORK_START_SERVER_ADVERTISED                             :Ναι
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} συμπαίκτ{P ης ες}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Μέγιστος αριθμός συμμετεχόντων:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Επιλέξτε τον μέγιστο αριθμό συμμετεχόντων. Δεν είναι ανάγκη να γεμίσουν όλες οι θέσεις
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} εταιρεί{P α ες}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Μέγιστος αριθμός εταιριών:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Περιορισμός του διακομιστή σε συγκεκριμένο αριθμό εταιρειών
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} θεατ{P ής ές}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Μέγιστος αριθμός θεατών:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Περιορισμός του διακομιστή σε συγκεκριμένο αριθμό θεατών
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Ομιλούμενη γλώσσα:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Οι υπόλοιποι παίκτες θα γνωρίζουν ποια γλώσσα ομιλείται στον διακομιστή
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Εισάγετε το όνομα του δικτυακού παιχνιδιού
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Οποιαδήποτε
-STR_NETWORK_LANG_ENGLISH                                        :Αγγλικά
-STR_NETWORK_LANG_GERMAN                                         :Γερμανικά
-STR_NETWORK_LANG_FRENCH                                         :Γαλλικά
-STR_NETWORK_LANG_BRAZILIAN                                      :Βραζιλιάνικα
-STR_NETWORK_LANG_BULGARIAN                                      :Βουλγαρικά
-STR_NETWORK_LANG_CHINESE                                        :Κινέζικα
-STR_NETWORK_LANG_CZECH                                          :Τσεχικά
-STR_NETWORK_LANG_DANISH                                         :Δανικά
-STR_NETWORK_LANG_DUTCH                                          :Ολλανδικά
-STR_NETWORK_LANG_ESPERANTO                                      :Εσπεράντο
-STR_NETWORK_LANG_FINNISH                                        :Φιλανδικά
-STR_NETWORK_LANG_HUNGARIAN                                      :Ουγγρικά
-STR_NETWORK_LANG_ICELANDIC                                      :Ισλανδικά
-STR_NETWORK_LANG_ITALIAN                                        :Ιταλικά
-STR_NETWORK_LANG_JAPANESE                                       :Ιαπωνικά
-STR_NETWORK_LANG_KOREAN                                         :Κορεατικά
-STR_NETWORK_LANG_LITHUANIAN                                     :Λιθουανικά
-STR_NETWORK_LANG_NORWEGIAN                                      :Νορβηγικά
-STR_NETWORK_LANG_POLISH                                         :Πολωνικά
-STR_NETWORK_LANG_PORTUGUESE                                     :Πορτογαλικά
-STR_NETWORK_LANG_ROMANIAN                                       :Ρουμανικά
-STR_NETWORK_LANG_RUSSIAN                                        :Ρωσικά
-STR_NETWORK_LANG_SLOVAK                                         :Σλοβακικά
-STR_NETWORK_LANG_SLOVENIAN                                      :Σλοβενικά
-STR_NETWORK_LANG_SPANISH                                        :Ισπανικά
-STR_NETWORK_LANG_SWEDISH                                        :Σουηδικά
-STR_NETWORK_LANG_TURKISH                                        :Τουρκικά
-STR_NETWORK_LANG_UKRAINIAN                                      :Ουκρανικά
-STR_NETWORK_LANG_AFRIKAANS                                      :Αφρικάνς
-STR_NETWORK_LANG_CROATIAN                                       :Κροατικά
-STR_NETWORK_LANG_CATALAN                                        :Καταλανικά
-STR_NETWORK_LANG_ESTONIAN                                       :Εσθονικά
-STR_NETWORK_LANG_GALICIAN                                       :Γαλικιανά
-STR_NETWORK_LANG_GREEK                                          :Ελληνικά
-STR_NETWORK_LANG_LATVIAN                                        :Λετονικά
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Αίθουσα παιχνιδιού για πολλούς παίκτες
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Προετοιμασία για συμμετοχή: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Λίστα όλων των εταιρειών αυτήν τη στιγμή στο παιχνίδι. Μπορείτε είτε να συμμετάσχετε σε μία ή να δημιουργήσετε μια νέα αν υπάρχει κενή θέση
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}ΠΛΗΡΟΦΟΡΙΕΣ ΕΤΑΙΡΕΙΑΣ
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Όνομα εταιρείας: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}Ίδρυση: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Αξία εταιρείας: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Τρέχων ισοζύγιο: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Έσοδα τελευταίας χρονιάς: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Απόδοση: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Οχήματα: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Σταθμοί: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Παίκτες: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Νέα εταιρεία
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Δημιουργία νέας εταιρείας
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Παρακολούθηση παιχνιδιού
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Δείτε το παιχνίδι ως θεατής
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Συμμετοχή σε εταιρεία
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Βοηθήστε στη διαχείριση αυτής της εταιρείας
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Σύνδεση...
@@ -2201,19 +2128,17 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Αποσ
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Η πρόσβαση στον διακομιστή προστατεύεται. Εισάγετε τον κωδικό
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Η εταιρεία προστατεύεται από κωδικό. Εισάγετε κωδικό
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Λίστα συμμετεχόντων
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Λίστα συμμετεχόντων
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Παρακολούθηση
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Νέα εταιρεία
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Εκδίωξη
-STR_NETWORK_CLIENTLIST_BAN                                      :Απαγόρευση
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Μιλήστε σε όλους
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Μιλήστε στην εταιρεία
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Προσωπικό μήνυμα
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :Διακομιστής
 STR_NETWORK_CLIENT                                              :Πελάτης
@@ -2325,6 +2250,7 @@ STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} έ
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Ο διακομιστής έκλεισε την συνεδρία
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Ο διακομιστής επανεκκινεί...{}Παρακαλώ περιμένετε...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} εκδιώχθηκε. Λόγος: ({STRING})
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Περιεχόμενο κατεβαίνει
@@ -3820,7 +3746,6 @@ STR_REPLACE_MAGLEV_VEHICLES                                     :Οχήματα 
 
 STR_REPLACE_TRAM_VEHICLES                                       :Οχήματα τροχιοδρόμου
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Αφαίρεση βαγονιού: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Υποχρεώνει την αυτόματη αντικατάσταση να διατηρεί σταθερό το μήκος του τρένου αφαιρώντας βαγόνια (ξεκινώντας από μπροστά), όταν η αντικατάσταση της μηχανής κάνει το τρένο μεγαλύτερο
 
 # Vehicle view

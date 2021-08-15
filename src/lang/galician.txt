@@ -774,6 +774,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  EN
 STR_STATUSBAR_AUTOSAVE                                          :{RED}AUTOGRAVADO
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  GRAVANDO PARTIDA  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Historial de mensaxes
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Unha lista das mensaxes e novas recentes
@@ -873,11 +874,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Oferta de subvención expirada:{}{}{STRING} dende {STRING} ata {STRING} non será subvencionada.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Subvención reitrada:{}{}O servizo de transporte de {STRING} dende {STRING} ata {STRING} xa non ten subvención.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Oferta de subvención:{}{}O primeiro servizo de transporte de {STRING} dende {STRING} ata {STRING} será subvencionado durante un ano pola autoridade local!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Subvención concedida a {STRING}!{}{}Polo servizo de transporte de {STRING} dende {STRING} ata {STRING} pagarase un 50% máis durante o vindeiro ano!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Subvención concedida a {STRING}!{}{}Polo servizo de transporte de {STRING} dende {STRING} ata {STRING} pagarase o dobre durante o vindeiro ano!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Subvención concedida a {STRING}!{}{}Polo servizo de transporte de {STRING} dende {STRING} ata {STRING} pagarase o triplo durante o vindeiro ano!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Subvención concedida a {STRING}!{}{}Polo servizo de transporte de {STRING} dende {STRING} ata {STRING} pagaráse o cuádruplo durante o vindeiro ano!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Caos no tráfico de {TOWN}!{}{}O programa de reconstrución de estradas financiado por {STRING} trae 6 meses de miseria para os condutores!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Monopolio de transportes!
@@ -1389,6 +1385,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :Deshabilitado
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Dobre clic
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Clic sinxelo (centrado)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Clic sinxelo (inmediatamente)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Emulación do botón dereito: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :Selecciona o método para emular clics co botón dereito do rato
@@ -1917,6 +1914,9 @@ STR_FACE_TIE                                                    :Garavata:
 STR_FACE_EARRING                                                :Pendentes:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Cambia-la garavata ou os pendentes
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multixogador
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nome do xogador:
@@ -1965,7 +1965,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Iniciar 
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Comezar o teu propio servidor
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Escribe o teu nome
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}Introduce a dirección IP do servidor
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Comezar nova partida multixogador
@@ -1975,88 +1974,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}O nome d
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Establecer contrasinal
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Protexe a túa partida cun contrasinal se non queres ser accesible públicamente
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Anunciado
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Escolle entre unha partida con anuncios (internet) ou sen eles (LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Non
-STR_NETWORK_START_SERVER_ADVERTISED                             :Si
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} cliente{P "" s}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Máximo de clientes:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Escolle o máximo número de clientes. Non tódolos ocos teñen que estar cubertos
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} compañía{P "" s}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Número máx. de compañías:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Limita-lo servidor a unha certa cantidade de compañías
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} espectador{P "" es}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Número máx. de espectadores:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Limita-lo servidor a unha certa cantidade de espectadores
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Idioma falado:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Outros xogadores saberán cal é o idioma que se fala no servidor
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Escribe un nome para a partida en rede
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Calquera
-STR_NETWORK_LANG_ENGLISH                                        :Inglés
-STR_NETWORK_LANG_GERMAN                                         :Alemán
-STR_NETWORK_LANG_FRENCH                                         :Francés
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasileiro
-STR_NETWORK_LANG_BULGARIAN                                      :Búlgaro
-STR_NETWORK_LANG_CHINESE                                        :Chinés
-STR_NETWORK_LANG_CZECH                                          :Checo
-STR_NETWORK_LANG_DANISH                                         :Danés
-STR_NETWORK_LANG_DUTCH                                          :Holandés
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Finés
-STR_NETWORK_LANG_HUNGARIAN                                      :Húngaro
-STR_NETWORK_LANG_ICELANDIC                                      :Islandés
-STR_NETWORK_LANG_ITALIAN                                        :Italiano
-STR_NETWORK_LANG_JAPANESE                                       :Xaponés
-STR_NETWORK_LANG_KOREAN                                         :Coreano
-STR_NETWORK_LANG_LITHUANIAN                                     :Lituano
-STR_NETWORK_LANG_NORWEGIAN                                      :Noruegués
-STR_NETWORK_LANG_POLISH                                         :Polaco
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugués
-STR_NETWORK_LANG_ROMANIAN                                       :Rumano
-STR_NETWORK_LANG_RUSSIAN                                        :Ruso
-STR_NETWORK_LANG_SLOVAK                                         :Eslovaco
-STR_NETWORK_LANG_SLOVENIAN                                      :Esloveno
-STR_NETWORK_LANG_SPANISH                                        :Español
-STR_NETWORK_LANG_SWEDISH                                        :Sueco
-STR_NETWORK_LANG_TURKISH                                        :Turco
-STR_NETWORK_LANG_UKRAINIAN                                      :Ucraniano
-STR_NETWORK_LANG_AFRIKAANS                                      :Africano
-STR_NETWORK_LANG_CROATIAN                                       :Croata
-STR_NETWORK_LANG_CATALAN                                        :Catalán
-STR_NETWORK_LANG_ESTONIAN                                       :Estonio
-STR_NETWORK_LANG_GALICIAN                                       :Galego
-STR_NETWORK_LANG_GREEK                                          :Grego
-STR_NETWORK_LANG_LATVIAN                                        :Letón
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Sala de espera de partida multixogador
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Preparando para unirse: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Unha lista de tódalas compañías nesta patida. Podes unirte a unha ou empezar unha nova se hai algún lugar libre
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}INFORMACIÓN DA COMPAÑÍA
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Nome da compañía: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}Inauguración: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Valor da compañía: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Balance actual: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Ingresos do ano pasado: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Rendemento: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Vehículos: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Estacións: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Xogadores: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Nova compañía
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Crear unha nova compañía
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Observar partida
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Observa-la partida coma espectador
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Unirse a unha compañía
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Axudar a dirixir esta compañía
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Conectando...
@@ -2080,19 +2007,17 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Desconec
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}O servidor está protexido. Introduce o contrasinal
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}A compañía está protexida. Introduce o contrasinal
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Lista de clientes
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Lista de clientes
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Observar
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nova compañía
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Chimpar
-STR_NETWORK_CLIENTLIST_BAN                                      :Bloquear
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Falar a todos
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Falar con compañía
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Mensaxe privada
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :Servidor
 STR_NETWORK_CLIENT                                              :Cliente
@@ -2200,6 +2125,7 @@ STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} ca
 STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} deu {2:CURRENCY_LONG} a {1:STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}O servidor pechou a sesión
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}O servidor estase a reiniciar...{}Agarda por favor...
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Descargando contidos
@@ -3689,7 +3615,6 @@ STR_REPLACE_MAGLEV_VEHICLES                                     :Vehículos magl
 STR_REPLACE_ROAD_VEHICLES                                       :Vehículos de estrada
 STR_REPLACE_TRAM_VEHICLES                                       :Tranvías
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Eliminar os vagóns: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Facer que a autosubstitución manteña a lonxitude do tren quitando vagóns (empezando pola cabeza), se ao substituír a locomotora o tren se fixera máis longo.
 
 # Vehicle view

@@ -737,6 +737,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  DI
 STR_STATUSBAR_AUTOSAVE                                          :{RED}SIMPANAN AUTOMATIK
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  SEDANG SIMPAN PERMAINAN  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}Pesanan Sebelumnya
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Senarai laporan berita terkini
@@ -834,11 +835,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Tempoh tawaran subsidi tamat:{}{}{STRING} dari {STRING} ke {STRING} tidak akan diberi subsidi.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Subsidi ditarik:{}{}Servis {STRING} dari {STRING} ke {STRING} tidak akan diberi subsidi.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Subsidi perkhidmatan ditawarkan:{}{}Perkhidmatan {STRING} pertama dari {STRING} ke {STRING} akan mendapat subsidi selama setahun daripada pihak berkuasa tempatan!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Subsidi perkhidmatan dianugerahkan kepada {STRING}!{}{}Perkhidmatan {STRING} dari {STRING} ke {STRING} akan ditambah bayaran 50% untuk tahun berikutnya!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Subsidi perkhidmatan dianugerahkan kepada {STRING}!{}{}Perkhidmatan {STRING} dari {STRING} ke {STRING} akan dibayar kadar dua kali ganda untuk tahun berikutnya!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Subsidi perkhidmatan dianugerahkan kepada {STRING}!{}{}Perkhidmatan {STRING} dari {STRING} ke {STRING} akan dibayar kadar tiga kali ganda untuk tahun berikutnya!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Subsidi perkhidmatan dianugerahkan kepada {STRING}!{}{}Perkhidmatan {STRING} dari {STRING} ke {STRING} akan dibayar kadar empat kali ganda untuk tahun berikutnya!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Kesesakan lalulintas di {TOWN}!{}{}Rancangan pembinaan semula jalanraya dibiayai oleh {STRING} akan menyeksa pemandu kenderaan selama 6 bulan!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Monopoly pengangkutan!
@@ -1270,6 +1266,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :Dua klik
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :Satu klik (bila difokuskan)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :Satu klik (segera)
 
+
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :Emulasi klik kanan: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Command+Klik
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Ctrl+Klik
@@ -1631,6 +1628,9 @@ STR_FACE_TIE                                                    :Tali leher:
 STR_FACE_EARRING                                                :Anting-anting:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Tukar tali leher atau anting-anting
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Pemain berbilang
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nama pemain:
@@ -1679,7 +1679,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Mulakan 
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Mulakan pelayan sendiri
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Masukkan nama anda
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}Masukkan alamat hos
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Mulakan permainan baru berbilang pemain
@@ -1689,85 +1688,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Nama per
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Tetapkan kata laluan
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Lindungi permainan anda dengan kata laluan jika anda tidak mahu ianya diakses awam
 
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Tidak
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} pelanggan
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Amaun maksimum pemain:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Tentukan bilangan klien maks. Tidak perlu semua slot diisi
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} syarikat
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Amaun maksimum syarikat:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Hadkan bilangan syarikat dalam pelayan
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} penyaksi
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Amaun maxsimum penyaksi:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Hadkan bilangan penyaksi dalam pelayan
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Bahasa yang digunakan:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Pemain lain akan tahu bahasa apa yang digunakan di pelayan ini
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Masukkan nama untuk permainan rangkaian
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Mana-mana
-STR_NETWORK_LANG_ENGLISH                                        :Inggeris
-STR_NETWORK_LANG_GERMAN                                         :Jerman
-STR_NETWORK_LANG_FRENCH                                         :Perancis
-STR_NETWORK_LANG_BRAZILIAN                                      :Brazil
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgaria
-STR_NETWORK_LANG_CHINESE                                        :Cina
-STR_NETWORK_LANG_CZECH                                          :Czech
-STR_NETWORK_LANG_DANISH                                         :Denmark
-STR_NETWORK_LANG_DUTCH                                          :Belanda
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Finland
-STR_NETWORK_LANG_HUNGARIAN                                      :Hungary
-STR_NETWORK_LANG_ICELANDIC                                      :Iceland
-STR_NETWORK_LANG_ITALIAN                                        :Itali
-STR_NETWORK_LANG_JAPANESE                                       :Jepun
-STR_NETWORK_LANG_KOREAN                                         :Korea
-STR_NETWORK_LANG_LITHUANIAN                                     :Lituania
-STR_NETWORK_LANG_NORWEGIAN                                      :Norway
-STR_NETWORK_LANG_POLISH                                         :Poland
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugis
-STR_NETWORK_LANG_ROMANIAN                                       :Romania
-STR_NETWORK_LANG_RUSSIAN                                        :Rusia
-STR_NETWORK_LANG_SLOVAK                                         :Slovak
-STR_NETWORK_LANG_SLOVENIAN                                      :Slovenia
-STR_NETWORK_LANG_SPANISH                                        :Sepanyol
-STR_NETWORK_LANG_SWEDISH                                        :Sweden
-STR_NETWORK_LANG_TURKISH                                        :Turki
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukraine
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikaans
-STR_NETWORK_LANG_CROATIAN                                       :Croatia
-STR_NETWORK_LANG_CATALAN                                        :Catalan
-STR_NETWORK_LANG_ESTONIAN                                       :Estonia
-STR_NETWORK_LANG_GALICIAN                                       :Galician
-STR_NETWORK_LANG_GREEK                                          :Yunani
-STR_NETWORK_LANG_LATVIAN                                        :Latvia
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Ruang tunggu berbilang pemain
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}Sedang bersedia untuk menyambung: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}Senarai semua syarikat yang sedang beroperasi. Anda boleh sertai salah satu syarikat atau mulakan syarikat yang baru jika ada slot kosong
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}MAKLUMAT SYARIKAT
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}Nama syarikat: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}Ditubuhkan: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}Nilai syarikat: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}Baki sekarang: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}Pendapatan tahun lepas: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}Prestasi: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}Kenderaan: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}Stesen-stesen: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}Pemain: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}Syarikat baru
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}Mulakan syarikat baru
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}Saksikan permainan
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}Saksikan permainan sebagai seorang penyaksi
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}Sertai syarikat
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}Bantu uruskan syarikat ini
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}Menyambung...
@@ -1794,15 +1724,14 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Syarikat
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Senarai klien
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Saksi
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Syarikat baru
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Tendang
-STR_NETWORK_CLIENTLIST_BAN                                      :Larang
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Cakap kepada semua
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Cakap kepada syarikat
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Pesanan peribadi
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :Pelayan
 STR_NETWORK_CLIENT                                              :Klien
@@ -1909,6 +1838,7 @@ STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} su
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} telah menukar namanya kepada {STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Pelayan telah menutup sesi ini
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Pelayan sedang dimulakan semula...{}Harap bersabar...
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Kandungan sedang dimuat turun
@@ -3212,7 +3142,6 @@ STR_REPLACE_MONORAIL_VEHICLES                                   :Monorel Kendera
 STR_REPLACE_MAGLEV_VEHICLES                                     :Kenderaan Maglev
 
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Penghapusan wagon: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Membuat penukaran secara automatik menyimpan kepanjangan keretapi yang sama dengan mengeluarkan gerabak (bermula dari bahagian hadapan), sekiranya menyebabkan kereta api lebih panjang
 
 # Vehicle view

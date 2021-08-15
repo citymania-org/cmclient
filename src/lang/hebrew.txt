@@ -778,6 +778,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  ה
 STR_STATUSBAR_AUTOSAVE                                          :{RED}שמירה אוטומטית
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  שומר משחק  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}היסטוריית ההודעות
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}רשימת ההודעות האחרונות
@@ -876,11 +877,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}פג תוקף הצעת סובסידיה:{}{}סובסידיה של הובלת {STRING.plural} מ{STRING} אל {STRING} לא תזכה עוד בסיבסוד.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}סובסידיה הוסרה:{}{}שירות הובלת {STRING.plural} מ{STRING} אל {STRING} אינו מסובסד יותר.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}הצעה למתן סובסידיה:{}{}שירות הובלת {STRING.plural} ראשון מ{STRING} אל {STRING} יזכה לסובסידיה בת שנה מהרשות המקומית!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}סובסידיה לשירות ניתנה לחברת {STRING}!{}{}שירות הובלת {STRING.plural} מ{STRING} אל {STRING} יזכה לשיעור תשלום גדול ב-50% לשנה הקרובה
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}סובסידיה לשירות ניתנה לחברת {STRING}!{}{}שירות הובלת {STRING.plural} מ{STRING} אל {STRING} יזכה לשיעור תשלום כפול לשנה הקרובה!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}סובסידיה לשירות ניתנה לחברת {STRING}!{}{}שירות הובלת {STRING.plural} מ{STRING} אל {STRING} יזכה לשיעור תשלום משולש לשנה הקרובה!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}סובסידיה לשירות ניתנה לחברת {STRING}!{}{}שירות הובלת {STRING.plural} מ{STRING} אל {STRING} יזכה לשיעור תשלום מוכפל פי 4 לשנה הקרובה!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}פקקי תנועה ענקיים ב{TOWN}!{}{} תכנית לשיפוץ מקיף של הכבישים במימון {STRING} מביאה לקטסטרופת תנועה לשישה חודשים
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}מונופול תחבורה!
@@ -1377,6 +1373,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :מבוטל
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :קליק כפול
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :קליק יחיד (כאשר בפוקוס)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :קליק יחיד (מיד)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :{STRING} :הדמיית כפתור ימני בעכבר
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :בחר בשיטה לדימוי קליקים בכפתור העכבר הימני
@@ -1895,6 +1892,9 @@ STR_FACE_TIE                                                    ::עניבה
 STR_FACE_EARRING                                                ::עגילים
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK} שנה עניבה/עגילים
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}משחק רשת
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK} :שם השחקן
@@ -1943,7 +1943,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}הפעל
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}הפעל שרת חדש
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK} :שמך
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}הזן את הכתובת של השרת
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}התחל משחק רב-משתתפים חדש
@@ -1953,88 +1952,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}השם �
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}קבע סיסמה
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}הגן על המשחק שלך עם סיסמה אם אתה לא רוצה שהוא יהיה זמין לכולם
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}מפורסם
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}בחר בין משחק מפורסם (אינטרנטי) ומשחק לא מפורסם (רשת מקומית, LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :לא
-STR_NETWORK_START_SERVER_ADVERTISED                             :כן
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} לקוח{P "" "ות"}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}מספר מקסימלי של לקוחות:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK} :מספר משתתפים מירבי
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} חבר{P "ה" "ות"}
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}מספר מקסימלי של חברות:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}הגבל את השרת למספר מסויים של חברות
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} צופ{P "ה" "ים"}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}מספר צופים מירבי:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}הגבלת השרת למספר צופים מסויים
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}שפת דיבור:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}שחקנים אחרים ידעו איו שפה מדוברת בשרת
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}הזן שם למשחק רשת
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :כלשהו
-STR_NETWORK_LANG_ENGLISH                                        :אנגלית
-STR_NETWORK_LANG_GERMAN                                         :גרמנית
-STR_NETWORK_LANG_FRENCH                                         :צרפתית
-STR_NETWORK_LANG_BRAZILIAN                                      :ברזילאית
-STR_NETWORK_LANG_BULGARIAN                                      :בולגרית
-STR_NETWORK_LANG_CHINESE                                        :סינית
-STR_NETWORK_LANG_CZECH                                          :צ'כית
-STR_NETWORK_LANG_DANISH                                         :דנית
-STR_NETWORK_LANG_DUTCH                                          :הולנדית
-STR_NETWORK_LANG_ESPERANTO                                      :אספרנטו
-STR_NETWORK_LANG_FINNISH                                        :פינית
-STR_NETWORK_LANG_HUNGARIAN                                      :הונגרית
-STR_NETWORK_LANG_ICELANDIC                                      :איסלנדית
-STR_NETWORK_LANG_ITALIAN                                        :איטלקית
-STR_NETWORK_LANG_JAPANESE                                       :יפנית
-STR_NETWORK_LANG_KOREAN                                         :קוריאנית
-STR_NETWORK_LANG_LITHUANIAN                                     :לטבית
-STR_NETWORK_LANG_NORWEGIAN                                      :נורבגית
-STR_NETWORK_LANG_POLISH                                         :פולנית
-STR_NETWORK_LANG_PORTUGUESE                                     :פורטוגזית
-STR_NETWORK_LANG_ROMANIAN                                       :רומנית
-STR_NETWORK_LANG_RUSSIAN                                        :רוסית
-STR_NETWORK_LANG_SLOVAK                                         :סלובקית
-STR_NETWORK_LANG_SLOVENIAN                                      :סלובנית
-STR_NETWORK_LANG_SPANISH                                        :ספרדית
-STR_NETWORK_LANG_SWEDISH                                        :שבדית
-STR_NETWORK_LANG_TURKISH                                        :טורקית
-STR_NETWORK_LANG_UKRAINIAN                                      :אוקראינית
-STR_NETWORK_LANG_AFRIKAANS                                      :אפריקנית
-STR_NETWORK_LANG_CROATIAN                                       :קרואטית
-STR_NETWORK_LANG_CATALAN                                        :קטלונית
-STR_NETWORK_LANG_ESTONIAN                                       :אסטונית
-STR_NETWORK_LANG_GALICIAN                                       :גליציאנית
-STR_NETWORK_LANG_GREEK                                          :יוונית
-STR_NETWORK_LANG_LATVIAN                                        :לטבית
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}לובי של משחק רשת
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{ORANGE}{STRING} {BLACK} :מתכונן להצטרף אל
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}רשימת החברות המשתתפות במשחק. ניתן להצטרף לחברה קיימת או ליצור חברה חדשה במידה וקיים מקום פנוי
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}פרטי חברה
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}שם החברה: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{WHITE}{NUM}{SILVER} :שנת הקמה
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}ערך החברה: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{WHITE}{CURRENCY_LONG}{SILVER} :מאזן נוכחי
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{WHITE}{CURRENCY_LONG}{SILVER} :הכנסות בשנה האחרונה
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{WHITE}{NUM}{SILVER} :מדד הביצועים
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE} {SILVER} :כלי תעבורה
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE} {SILVER} :תחנות
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{WHITE}{STRING} {SILVER} :שחקנים
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}חברה חדשה
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}יצירת חברה חדשה
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}צפה במשחק
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}הצטרף למשחק כצופה
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}הצטרף לחברה
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}הצטרף להנהלת חברה זו
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}מתחבר...
@@ -2061,15 +1988,14 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}חברה
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :רשימת משתתפים
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :צפה
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :חברה חדשה
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :בעט
-STR_NETWORK_CLIENTLIST_BAN                                      :חסימה
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :דבר לכולם
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :דבר לחברה
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :הודעה פרטית
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :שרת
 STR_NETWORK_CLIENT                                              :לקוח
@@ -2176,6 +2102,7 @@ STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :({2:STRING}) ע
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :{STRING} שינה את שמו ל {STRING} ***
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}השרת סגר את המשחק
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}השרת מופעל מחדש...{}אנא המתן...
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}הורדת תוכן
@@ -3587,7 +3514,6 @@ STR_REPLACE_MONORAIL_VEHICLES                                   :רכבות חד
 STR_REPLACE_MAGLEV_VEHICLES                                     :רכבות פס-מגנטי
 
 
-STR_REPLACE_REMOVE_WAGON                                        :{ORANGE}{STRING}{BLACK} : הסרת קרונות
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}שמור על האורך המקורי של הרכבת בעת שימוש בהחלפה אוטומטית, במידה והקטר מאריך את הרכבת הסר קרונות מתחילת הרכבת
 
 # Vehicle view
