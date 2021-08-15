@@ -9,6 +9,7 @@ ttdir=$dir/openttd-$version
 cp -rT $ttdir $curdir
 cd $ttdir
 find . -type f > $dir/ttd_files
+find * > $dir/ttd_all
 mkdir build
 cd build
 cmake ..
@@ -18,4 +19,11 @@ make -j
 cd $curdir
 cp $ttdir/build/generated/rev.cpp src/rev.cpp.in
 cat $dir/ttd_files | xargs git add
-rm -rf $dir
+for i in $(find * -not -path "build*" -not -path "update.sh"); do
+    if ! grep -qxFe "$i" $dir/ttd_all; then
+        echo "Deleting: $i"
+        # the next line is commented out.  Test it.  Then uncomment to removed the files
+        git rm -f "$i"
+    fi
+done
+# rm -rf $dir
