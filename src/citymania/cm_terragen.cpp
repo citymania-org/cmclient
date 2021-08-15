@@ -696,8 +696,6 @@ void Generate() {
     for (int i = 0; i < wh; i++) noise[i][0] *= noise[i][0];
     MakePNGImage("terrain.png", fft_plot_callback, (void *)noise, w, h, 32, nullptr);
 
-    fftw_free(noise);
-
 	if (!AllocHeightMap()) return;
 	GenerateWorldSetAbortCallback(FreeHeightMap);
 
@@ -714,20 +712,22 @@ void Generate() {
 		for (uint y = 0; y < MapSizeY(); y++) MakeVoid(TileXY(0, y));
 	}
 
-	/* Transfer height map into OTTD map */
-	for (int y = 0; y < _height_map.size_y; y++) {
-		for (int x = 0; x < _height_map.size_x; x++) {
-			TgenSetTileHeight(TileXY(x, y), Clamp(H2I(_height_map.height(x, y)), 0, 255));
+	std::vector<bool> visible(dln.coords.size() / 2);
+    for (auto e : order) {
+		if (prev[e] == delaunator::INVALID_INDEX) continue;
+		if (flow[e] > default_water_level * 30 || visible[e]) {
+			visible[e] = true;
+			visible[prev[e]] = true;
 		}
 	}
 
-	FreeHeightMap();
-
-
+    std::reverse(order.begin(), order.end());
 	std::map<TileIndex, uint8> rivers;
-    for (size_t e = 0; e < dln.coords.size() / 2; e++) {
+    // for (size_t e = 0; e < dln.coords.size() / 2; e++) {
+    for (auto e : order) {
 		if (prev[e] == delaunator::INVALID_INDEX) continue;
-		if (flow[e] < default_water_level * 30) continue;
+		// if (flow[e] < default_water_level * 30) continue;
+		if (!visible[e]) continue;
 
 		// grid traversal algo:
 		// https://gamedev.stackexchange.com/questions/81267/how-do-i-generalise-bresenhams-line-algorithm-to-floating-point-endpoints/182143#182143
@@ -753,25 +753,29 @@ void Generate() {
 
 		auto md = (int)(abs(floor(bx) - floor(ax)) + abs(floor(by) - floor(ay)));
 
-		fprintf(stderr, "RIVER %f,%f - %f,%f %d  d=%f,%f s=%d,%d\n", ax, ay, bx, by, md, (double)dx, (double)dy, sx, sy);
+		// fprintf(stderr, "RIVER %f,%f - %f,%f %d  d=%f,%f s=%d,%d\n", ax, ay, bx, by, md, (double)dx, (double)dy, sx, sy);
 		for (auto t = 0; t < md; t++) {
 			if (abs(tmaxx) < abs(tmaxy)) {
 				tmaxx += tdx;
 				uint nx = x + sx;
 				if (nx >= MapSizeX()) break;
 				auto side = (sx > 0 ? 1 : 3);
-				fprintf(stderr, "YCROSS %u-%u %u side=%d\n", x, nx, y, side);
 				rivers[TileXY(x, y)] |= (2 << ((side ^ 2) * 2));
 				rivers[TileXY(nx, y)] |= (1 << (side * 2));
+				auto mx = std::max(x, nx);
+				auto minh = std::min(_height_map.height(mx, y), _height_map.height(mx, y + 1));
+				_height_map.height(mx, y) = _height_map.height(mx, y + 1) = minh;
 				x = nx;
 			} else {
 				tmaxy += tdy;
 				uint ny = y + sy;
 				if (ny >= MapSizeY()) break;
 				auto side = (sy > 0 ? 0 : 2);
-				fprintf(stderr, "XCROSS %u %u-%u side=%d\n", x, y, ny, side);
 				rivers[TileXY(x, y)] |= (2 << ((side ^ 2) * 2));
 				rivers[TileXY(x, ny)] |= (1 << (side * 2));
+				auto my = std::max(y, ny);
+				auto minh = std::min(_height_map.height(x, my), _height_map.height(x + 1, my));
+				_height_map.height(x, my) = _height_map.height(x + 1, my) = minh;
 				y = ny;
 			}
 		}
@@ -780,12 +784,22 @@ void Generate() {
 	_rivers.clear();
 	for (auto kv : rivers) {
 		_rivers.emplace_back(kv.first,
-			(kv.second % 4) +
-			((kv.second >> 2) % 4) * 3 +
-			((kv.second >> 4) % 4) * 9 +
-			(kv.second >> 6) * 27
+			std::min(2, kv.second % 4) +
+			std::min(2, (kv.second >> 2) % 4) * 3 +
+			std::min(2, (kv.second >> 4) % 4) * 9 +
+			std::min(2, kv.second >> 6) * 27
 		);
 	}
+
+	/* Transfer height map into OTTD map */
+	for (int y = 0; y < _height_map.size_y; y++) {
+		for (int x = 0; x < _height_map.size_x; x++) {
+			TgenSetTileHeight(TileXY(x, y), Clamp(H2I(_height_map.height(x, y)), 0, 255));
+		}
+	}
+
+	FreeHeightMap();
+    fftw_free(noise);
 }
 
 void GenerateRivers() {
