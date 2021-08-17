@@ -725,8 +725,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		}
 
 		Dimension max_cargo_dim = {0, 0};
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			SetDParam(0, cs->name);
 			max_cargo_dim = maxdim(max_cargo_dim, GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO));
 		}
@@ -735,7 +734,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		this->line_height = this->icon_size + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 		size->width = (max_cargo_dim.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT + 1
 		               + (this->show_cargo_colors ? this->icon_size + WD_PAR_VSEP_NORMAL : 0));
-		size->height = std::max<uint>(size->height, this->line_height * _sorted_standard_cargo_specs_size);
+		size->height = std::max<uint>(size->height, this->line_height * _sorted_standard_cargo_specs.size());
 		resize->width = 0;
 		resize->height = this->line_height;
 		fill->width = 0;
@@ -757,8 +756,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		int pos = this->vscroll->GetPosition();
 		int max = pos + this->vscroll->GetCapacity();
 
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (pos-- > 0) continue;
 			if (--max < 0) break;
 
@@ -789,8 +787,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		this->excluded_data = 0;
 
 		int i = 0;
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (HasBit(_legend_excluded_cargo, cs->Index())) SetBit(this->excluded_data, i);
 			i++;
 		}
@@ -813,8 +810,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 			case WID_CPR_DISABLE_CARGOES: {
 				/* Add all cargoes to the excluded lists. */
 				int i = 0;
-				const CargoSpec *cs;
-				FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					SetBit(_legend_excluded_cargo, cs->Index());
 					SetBit(this->excluded_data, i);
 					i++;
@@ -824,11 +820,10 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 			}
 
 			case WID_CPR_MATRIX: {
-				uint row = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_CPR_MATRIX, 0, this->line_height);
+				uint row = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_CPR_MATRIX);
 				if (row >= this->vscroll->GetCount()) return;
 
-				const CargoSpec *cs;
-				FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					if (row-- > 0) continue;
 
 					ToggleBit(_legend_excluded_cargo, cs->Index());
@@ -945,7 +940,7 @@ struct IncomeGraphWindow : ExcludingCargoBaseGraphWindow {
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
-		this->vscroll->SetCount(_sorted_standard_cargo_specs_size);
+		this->vscroll->SetCount(_sorted_standard_cargo_specs.size());
 		this->UpdateExcludedData();
 		this->FinishInitNested(window_number);
 	}
@@ -956,8 +951,7 @@ struct IncomeGraphWindow : ExcludingCargoBaseGraphWindow {
 		return c->old_economy[j].income;
 	}
 		uint total_income = 0;
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (!HasBit(_legend_excluded_cargo, cs->Index())){
 				total_income += c->old_economy[j].cm.cargo_income[cs->Index()];
 			}
@@ -1063,7 +1057,7 @@ struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
-		this->vscroll->SetCount(_sorted_standard_cargo_specs_size);
+		this->vscroll->SetCount(_sorted_standard_cargo_specs.size());
 		this->OnHundredthTick();
 		this->FinishInitNested(window_number);
 	}
@@ -1074,8 +1068,7 @@ struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 		return c->old_economy[j].delivered_cargo.GetSum<OverflowSafeInt64>();
 	}
 		uint total_delivered = 0;
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (!HasBit(_legend_excluded_cargo, cs->Index())){
 				total_delivered += c->old_economy[j].delivered_cargo[cs->Index()];
 			}

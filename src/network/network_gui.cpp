@@ -798,7 +798,7 @@ public:
 			case WID_NG_REDDIT:
 			case WID_NG_CITYMANIA:
 				if(!UDP_CC_queried){
-					NetworkUDPQueryMasterServer();
+					// FIXME NetworkUDPQueryMasterServer();
 					UDP_CC_queried = true;
 				}
 				if(widget == WID_NG_NICE) this->filter_editbox.text.Assign("n-ice");

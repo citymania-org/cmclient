@@ -63,9 +63,9 @@ void VideoDriver_Null::MainLoop()
 	fprintf(stderr, "Null driver ran for %u tics, save: %s\n", this->ticks, this->savefile.c_str());
 	if (!this->savefile.empty()) {
 	    if (SaveOrLoad(this->savefile.c_str(), SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
-	        IConsolePrintF(CC_ERROR, "Error saving the final game state.");
+	        IConsolePrint(CC_ERROR, "Error saving the final game state.");
 	    } else {
-	        IConsolePrintF(CC_DEFAULT, "Saved the final game state to %s", this->savefile.c_str());
+	        IConsolePrint(CC_DEFAULT, "Saved the final game state to {}", this->savefile);
 	    }
 	}
 

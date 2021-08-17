@@ -76,8 +76,7 @@ struct CargosWindow : Window {
 			}
 			case WID_CT_HEADER_CARGO:
 			case WID_CT_LIST: {
-				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-					const CargoSpec *cs = _sorted_cargo_specs[i];
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					size->width = std::max(GetStringBoundingBox(cs->name).width + icon_space, size->width);
 				}
 				size->width = std::max(GetStringBoundingBox(STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH).width, size->width);
@@ -94,7 +93,7 @@ struct CargosWindow : Window {
 			case WID_CT_AMOUNT:
 			case WID_CT_INCOME:
 			case WID_CT_LIST: {
-				size->height = _sorted_standard_cargo_specs_size * line_height + CT_LINESPACE + FONT_HEIGHT_NORMAL;
+				size->height = _sorted_standard_cargo_specs.size() * line_height + CT_LINESPACE + FONT_HEIGHT_NORMAL;
 				break;
 			}
 		}
@@ -103,7 +102,7 @@ struct CargosWindow : Window {
 	Dimension GetMaxIconSize() const {
 		const CargoSpec *cs;
 		Dimension size = {0, 0};
-		FOR_ALL_CARGOSPECS(cs) {
+        for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			Dimension icon_size = GetSpriteSize(cs->GetCargoIcon());
 			size.width = std::max(size.width, icon_size.width);
 			size.height = std::max(size.height, icon_size.height);
@@ -134,8 +133,7 @@ struct CargosWindow : Window {
 
 			case WID_CT_LIST: {
 				int rect_x = r.left + WD_FRAMERECT_LEFT;
-				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-					const CargoSpec *cs = _sorted_cargo_specs[i];
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					Dimension icon_size = GetSpriteSize(cs->GetCargoIcon());
 					DrawSprite(cs->GetCargoIcon(), PAL_NONE,
 					           r.left + max_icon_size.width - icon_size.width,
@@ -156,8 +154,7 @@ struct CargosWindow : Window {
 				break;
 			}
 			case WID_CT_AMOUNT:
-				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-					const CargoSpec *cs = _sorted_cargo_specs[i];
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					auto &economy = (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH ? c->old_economy[0] : c->cur_economy);
 					sum_cargo_amount += economy.delivered_cargo[cs->Index()];
 					SetDParam(0,  economy.delivered_cargo[cs->Index()]);
@@ -173,8 +170,7 @@ struct CargosWindow : Window {
 				break;
 
 			case WID_CT_INCOME:
-				for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-					const CargoSpec *cs = _sorted_cargo_specs[i];
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					auto &economy = (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH ? c->old_economy[0] : c->cur_economy);
 
 					sum_cargo_income += economy.cm.cargo_income[cs->Index()];

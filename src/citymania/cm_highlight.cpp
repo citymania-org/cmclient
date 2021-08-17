@@ -50,7 +50,7 @@ extern DiagDirection _build_depot_direction; ///< Currently selected depot direc
 extern DiagDirection _road_station_picker_orientation;
 extern DiagDirection _road_depot_orientation;
 extern uint32 _realtime_tick;
-extern void GetStationLayout(byte *layout, int numtracks, int plat_len, const StationSpec *statspec);
+extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
 struct RailStationGUISettings {
     Axis orientation;                 ///< Currently selected rail station orientation
@@ -266,7 +266,7 @@ static bool CanBuild(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
         p2,
         cmd,
         nullptr,  // callback
-        nullptr,  // text
+        "",  // text
         true,  // my_cmd
         true  // estimate_only
     ).Succeeded();
@@ -340,7 +340,7 @@ void ObjectHighlight::UpdateTiles() {
                 CMD_BUILD_ROAD_STOP
             ) ? PALETTE_TINT_WHITE : PALETTE_TINT_RED_DEEP);
             TileIndex tile;
-            TILE_AREA_LOOP(tile, ta) {
+            for (TileIndex tile : ta) {
                 this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck)));
             }
             break;
@@ -1313,7 +1313,7 @@ void UpdateTownZoning(Town *town, uint32 prev_edge) {
         recalc = false;
     }
     // TODO mark dirty only if zoning is on
-    TILE_AREA_LOOP(tile, area) {
+    for(TileIndex tile : area) {
         uint8 group = GetTownZone(town, tile);
 
         if (_mz[tile].town_zone != group)

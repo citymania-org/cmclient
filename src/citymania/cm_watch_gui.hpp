@@ -5,6 +5,7 @@
 
 #include "../window_gui.h"
 #include "../company_base.h"
+#include "../network/core/config.h"
 
 namespace citymania {
 

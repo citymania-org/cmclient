@@ -4,6 +4,7 @@
 #include "cm_hotkeys.hpp"
 #include "cm_minimap.hpp"
 
+#include "../network/network_func.h"
 #include "../window_func.h"
 
 #include "../safeguards.h"
@@ -25,6 +26,10 @@ void ToggleSmallMap() {
     SmallMapWindow *w = dynamic_cast<citymania::SmallMapWindow*>(FindWindowById(WC_SMALLMAP, 0));
     if (w == nullptr) ShowSmallMap();
     delete w;
+}
+
+void NetworkClientSendChatToServer(const std::string &msg) {
+    NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, msg);
 }
 
 } // namespace citymania

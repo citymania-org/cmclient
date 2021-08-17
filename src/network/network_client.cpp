@@ -41,7 +41,7 @@
 
 /* This file handles all the client-commands */
 
-void SyncCMUser(const char *msg);
+void SyncCMUser(const std::string &msg);
 // extern const std::map<std::string, uint32> OPENTTD_NEWGRF_VERSIONS;
 // extern const std::map<uint32, uint32> OPENTTD_RELEASE_REVISIONS;
 static const uint32 OPENTTD_NEWGRF_REVISION_MASK = (1 << 19) - 1;
@@ -1016,7 +1016,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHAT(Packet *p)
 	}
 
 	if (ci != nullptr) {
-		if (strncmp(msg, "synccmuser", 10) == 0) SyncCMUser(msg);
+		if (msg.rfind("synccmuser", 0) == 0) SyncCMUser(msg);
 		else NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), self_send, name, msg, data);
 	}
 	return NETWORK_RECV_STATUS_OKAY;
@@ -1339,10 +1339,6 @@ void NetworkClientSendChat(NetworkAction action, DestType type, int dest, const 
 	MyClient::SendChat(action, type, dest, msg, data);
 }
 
-void NetworkClientSendChatToServer(const char * msg)
-{
-	NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, msg);
-}
 /**
  * Set/Reset company password on the client side.
  * @param password Password to be set.
@@ -1378,10 +1374,10 @@ bool NetworkMaxCompaniesReached()
 	return Company::GetNumItems() >= (_network_server ? _settings_client.network.max_companies : _network_server_max_companies);
 }
 
-void SyncCMUser(const char *msg) {
+void SyncCMUser(const std::string &msg) {
 	uint user_id, role;
-	sscanf(msg + 10, "%u %u", &user_id, &role);
+	sscanf(msg.c_str() + 10, "%u %u", &user_id, &role);
 	_novarole = (role >= 50);
-	DEBUG(net, 1, "CityMania user synchronized: %u %u", user_id, role);
+	Debug(net, 1, "CityMania user synchronized: %u %u", user_id, role);
 }
 

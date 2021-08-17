@@ -182,7 +182,7 @@ static void LoadSpriteTables()
 			PAL_DOS != used_set->palette
 		);
 	}
-	LoadGrfFile("cmclient-3.grf", SPR_INNER_HIGHLIGHT_BASE - 4, i++);
+	LoadGrfFile("cmclient-3.grf", SPR_INNER_HIGHLIGHT_BASE - 4, PAL_DOS != used_set->palette);
 
 	/* Initialize the unicode to sprite mapping table */
 	InitializeUnicodeGlyphMap();

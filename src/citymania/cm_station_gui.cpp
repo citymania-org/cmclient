@@ -289,7 +289,7 @@ static RoadBits FindRoadsToConnect(TileIndex tile, RoadType roadtype) {
 }
 
 bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
-    TILE_AREA_LOOP(tile, area) {
+    for (TileIndex tile : area) {
         if (GetTileType(tile) != MP_ROAD) continue;
         if (GetRoadTileType(tile) != ROAD_TILE_NORMAL) continue;
         if (GetAllRoadBits(tile) & ~r) return false;
@@ -436,7 +436,7 @@ static void FindStationsAroundSelection(const TileArea &location)
     Station *adjacent = nullptr;
 
     /* Direct loop instead of FindStationsAroundTiles as we are not interested in catchment area */
-    TILE_AREA_LOOP(tile, ta) {
+    for (auto tile : ta) {
         if (IsTileType(tile, MP_STATION) && GetTileOwner(tile) == _local_company) {
             Station *st = Station::GetByTile(tile);
             if (st == nullptr) continue;
@@ -571,7 +571,7 @@ CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
 
     /* Loop over all tiles to get the produced cargo of
      * everything except industries */
-    TILE_AREA_LOOP(tile, ta) {
+    for(auto tile : ta) {
         switch (GetTileType(tile)) {
             case MP_INDUSTRY:
                 industries.insert(GetIndustryIndex(tile));

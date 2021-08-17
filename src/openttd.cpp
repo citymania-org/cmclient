@@ -655,7 +655,7 @@ int openttd_main(int argc, char *argv[])
 		case 'x': scanner->save_config = false; break;
 		case 'X': only_local_path = true; break;
 		case 'C': {
-			DeterminePaths(argv[0]);
+			DeterminePaths(argv[0], true);
 			if (StrEmpty(mgo.opt)) {
 				ret = 1;
 				return ret;

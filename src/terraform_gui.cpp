@@ -126,49 +126,48 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 			tree_start_tile = tree_recent_tile = prev_tile = 0;
 			if (!citymania::_fn_mod) {
 				OrthogonalTileArea square_area = OrthogonalTileArea(start_tile, end_tile);
-				TILE_AREA_LOOP(curr_tile, square_area) {
+				for (auto cur_tile : square_area) {
 					// if we're on a non-consecutive tile or we've hit a black-marked tile
 					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
 					if (tree_start_tile != 0 &&
-							(curr_tile != prev_tile + 1 ||
-							(!IsTileType(curr_tile, MP_TREES) && (!IsTileType(curr_tile, MP_CLEAR) || IsClearGround(curr_tile, CLEAR_FIELDS))))) {
+							(cur_tile != prev_tile + 1 ||
+							(!IsTileType(cur_tile, MP_TREES) && (!IsTileType(cur_tile, MP_CLEAR) || IsClearGround(cur_tile, CLEAR_FIELDS))))) {
 						DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 						tree_start_tile = tree_recent_tile = 0;
 					}
 					// if current tile is a tree
-					if (IsTileType(curr_tile, MP_TREES)) {
+					if (IsTileType(cur_tile, MP_TREES)) {
 						if (tree_start_tile == 0) {
-							tree_start_tile = curr_tile;
+							tree_start_tile = cur_tile;
 						}
-						tree_recent_tile = curr_tile;
+						tree_recent_tile = cur_tile;
 					}
-					prev_tile = curr_tile;
+					prev_tile = cur_tile;
 				}
 				// one last ride to flavortown
 				if (tree_start_tile != 0) {
 					DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 				}
 			} else {  // diagonal area
-				DiagonalTileArea diagonal_area = DiagonalTileArea(start_tile, end_tile);
-				DIAGONAL_TILE_AREA_LOOP(curr_tile, diagonal_area) {
+				for (DiagonalTileIterator cur_tile{start_tile, end_tile}; cur_tile != INVALID_TILE; ++cur_tile) {
 					// same as above but with a different criteria for consecutive tiles
-					TileIndexDiffC tile_diff = TileIndexToTileIndexDiffC(curr_tile, prev_tile);
+					TileIndexDiffC tile_diff = TileIndexToTileIndexDiffC(cur_tile, prev_tile);
 					// if we're on a non-consecutive tile or we've hit a black-marked tile
 					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
 					if (tree_start_tile != 0 &&
 							(!((tile_diff.x == 1 && tile_diff.y == 1) || (tile_diff.x == -1 && tile_diff.y == -1)) ||
-							(!IsTileType(curr_tile, MP_TREES) && (!IsTileType(curr_tile, MP_CLEAR) || IsClearGround(curr_tile, CLEAR_FIELDS))))) {
+							(!IsTileType(cur_tile, MP_TREES) && (!IsTileType(cur_tile, MP_CLEAR) || IsClearGround(cur_tile, CLEAR_FIELDS))))) {
 						DoCommandP(tree_start_tile, tree_recent_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 						tree_start_tile = tree_recent_tile = 0;
 					}
 					// if current tile is a tree
-					if (IsTileType(curr_tile, MP_TREES)) {
+					if (IsTileType(cur_tile, MP_TREES)) {
 						if (tree_start_tile == 0) {
-							tree_start_tile = curr_tile;
+							tree_start_tile = cur_tile;
 						}
-						tree_recent_tile = curr_tile;
+						tree_recent_tile = cur_tile;
 					}
-					prev_tile = curr_tile;
+					prev_tile = cur_tile;
 				}
 				// one last ride to flavortown
 				if (tree_start_tile != 0) {

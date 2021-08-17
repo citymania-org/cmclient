@@ -41,6 +41,7 @@
 #include "widgets/company_widget.h"
 
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_main.hpp"
 
 #include "safeguards.h"
 
@@ -2220,7 +2221,7 @@ static void ResetCallback(Window *w, bool confirmed)
 		CompanyID company2 = (CompanyID)w->window_number;
 		char msg[128];
 		seprintf(msg, lastof(msg), "!reset %i", company2 + 1);
-		NetworkClientSendChatToServer(msg);
+		citymania::NetworkClientSendChatToServer(msg);
 	}
 }
 
@@ -2652,7 +2653,7 @@ struct CompanyWindow : Window
 				// this->query_widget = WID_C_MOD_COMPANY_JOIN;
 				char msg[128];
 				seprintf(msg, lastof(msg), "!move %i", company2 + 1);
-				NetworkClientSendChatToServer(msg);
+				citymania::NetworkClientSendChatToServer(msg);
 				MarkWholeScreenDirty();
 				break;
 			}
@@ -2668,7 +2669,7 @@ struct CompanyWindow : Window
 				CompanyID company2 = (CompanyID)this->window_number;
 				char msg[128];
 				seprintf(msg, lastof(msg), "!lockp %i", company2 + 1);
-				NetworkClientSendChatToServer(msg);
+				citymania::NetworkClientSendChatToServer(msg);
 				MarkWholeScreenDirty();
 				break;
 			}

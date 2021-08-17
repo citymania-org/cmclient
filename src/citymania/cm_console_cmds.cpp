@@ -83,13 +83,13 @@ bool ConTreeMap(byte argc, char *argv[]) {
     std::string filename = argv[1];
 
     if (_game_mode != GM_EDITOR) {
-        IConsolePrintF(CC_ERROR, "This command is only available in scenario editor.");
+        IConsolePrint(CC_ERROR, "This command is only available in scenario editor.");
         return true;
     }
 
 
     if (filename.size() < 4) {
-        IConsolePrintF(CC_ERROR, "Unknown treemap extension should be .bmp or .png.");
+        IConsolePrint(CC_ERROR, "Unknown treemap extension should be .bmp or .png.");
         return true;
     }
 
@@ -101,9 +101,9 @@ bool ConTreeMap(byte argc, char *argv[]) {
 #endif
     else {
 #ifdef WITH_PNG
-        IConsolePrintF(CC_ERROR, "Unknown treemap extension %s, should be .bmp or .png.", ext.c_str());
+        IConsolePrint(CC_ERROR, "Unknown treemap extension {}, should be .bmp or .png.", ext.c_str());
 #else
-        IConsolePrintF(CC_ERROR, "Unknown treemap extension %s, should be .bmp (game was compiled without PNG support).", ext.c_str());
+        IConsolePrint(CC_ERROR, "Unknown treemap extension {}, should be .bmp (game was compiled without PNG support).", ext.c_str());
 #endif
         return true;
     }
@@ -166,9 +166,9 @@ static std::queue<FakeCommand> _fake_commands;
 void MakeReplaySave() {
     char *filename = str_fmt("replay_%d.sav", _replay_ticks);
     if (SaveOrLoad(filename, SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
-        IConsolePrintF(CC_ERROR, "Replay save failed");
+        IConsolePrint(CC_ERROR, "Replay save failed");
     } else {
-        IConsolePrintF(CC_DEFAULT, "Replay saved to %s", filename);
+        IConsolePrint(CC_DEFAULT, "Replay saved to {}", filename);
     }
     _replay_last_save = _replay_ticks;
 }
@@ -213,7 +213,7 @@ void ExecuteFakeCommands(Date date, DateFract date_fract) {
             cp.p1 = x.p1;
             cp.p2 = x.p2;
             cp.cmd = x.cmd;
-            strecpy(cp.text, x.text.c_str(), lastof(cp.text));
+            cp.text = x.text;
             cp.company = (CompanyID)x.company_id;
             cp.frame = _frame_counter_max + 1;
             cp.callback = nullptr;

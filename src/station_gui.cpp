@@ -2139,8 +2139,7 @@ struct StationViewWindow : public Window {
 		if (ofs_y < 0) return false;
 
 		const Station *st = Station::Get(this->window_number);
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			const GoodsEntry *ge = &st->goods[cs->Index()];
 			if (!ge->HasRating()) continue;
 			ofs_y -= FONT_HEIGHT_NORMAL;

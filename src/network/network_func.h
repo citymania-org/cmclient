@@ -57,7 +57,6 @@ void NetworkClientJoinGame();
 void NetworkClientRequestMove(CompanyID company, const std::string &pass = "");
 void NetworkClientSendRcon(const std::string &password, const std::string &command);
 void NetworkClientSendChat(NetworkAction action, DestType type, int dest, const std::string &msg, int64 data = 0);
-void NetworkClientSendChatToServer(const std::string &msg);
 bool NetworkClientPreferTeamChat(const NetworkClientInfo *cio);
 bool NetworkCompanyIsPassworded(CompanyID company_id);
 bool NetworkMaxCompaniesReached();

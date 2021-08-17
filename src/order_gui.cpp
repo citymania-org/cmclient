@@ -763,8 +763,6 @@ private:
 
 		DoCommandP(this->vehicle->tile, this->vehicle->index + (sel_ord << 20), MOF_UNLOAD | (unload_type << 4), CMD_MODIFY_ORDER | CMD_MSG(STR_ERROR_CAN_T_MODIFY_THIS_ORDER));
 
-		/* Transfer and unload orders with leave empty as default */
-		if (unload_type == OUFB_TRANSFER || unload_type == OUFB_UNLOAD) {
 		bool set_no_load = false;
 		if (unload_type == OUFB_TRANSFER){
 			set_no_load = _settings_client.gui.auto_noload_on_transfer;

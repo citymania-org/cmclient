@@ -1327,7 +1327,7 @@ public:
 				_railstation.orientation = OtherAxis(_railstation.orientation);
 				this->LowerWidget(_railstation.orientation + WID_BRAS_PLATFORM_DIR_X);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				return ES_HANDLED;
 
 			default:

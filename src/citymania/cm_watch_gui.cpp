@@ -3,6 +3,7 @@
 #include "../stdafx.h"
 
 #include "cm_watch_gui.hpp"
+#include "cm_main.hpp"
 
 #include "../widget_type.h"
 #include "../gfx_type.h"
