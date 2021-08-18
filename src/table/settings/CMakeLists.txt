@@ -22,6 +22,7 @@ set(TABLE_INI_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/win32_settings.ini
         ${CMAKE_CURRENT_SOURCE_DIR}/window_settings.ini
         ${CMAKE_CURRENT_SOURCE_DIR}/world_settings.ini
+        ${CMAKE_CURRENT_SOURCE_DIR}/citymania_settings.ini
 )
 
 if (HOST_BINARY_DIR)

@@ -25,7 +25,7 @@ void SwitchToMode(SwitchMode new_mode) {
 void ToggleSmallMap() {
     SmallMapWindow *w = dynamic_cast<citymania::SmallMapWindow*>(FindWindowById(WC_SMALLMAP, 0));
     if (w == nullptr) ShowSmallMap();
-    delete w;
+    else w->Close();
 }
 
 void NetworkClientSendChatToServer(const std::string &msg) {

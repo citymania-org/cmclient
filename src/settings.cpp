@@ -85,6 +85,7 @@ static auto &GenericSettingTables()
 		_pathfinding_settings,
 		_script_settings,
 		_world_settings,
+		citymania::_settings,
 	};
 	return _generic_setting_tables;
 }
@@ -1719,11 +1720,4 @@ void IConsoleListSettings(const char *prefilter)
 	}
 
 	IConsolePrint(CC_HELP, "Use 'setting' command to change a value.");
-}
-
-// CM
-#include "statusbar_gui.h"
-static bool cm_v_RedrawStatusBar(int32 p1) {
-	CM_RedrawStatusBar();
-	return true;
 }
