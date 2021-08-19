@@ -574,7 +574,7 @@ struct BuildRoadToolbarWindow : Window {
 				}
 				DoCommandP(tile, _cur_roadtype << 2 | ddir, 0,
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(this->rti->strings.err_depot), CcRoadDepot);
-				if (citymania::_fn_mod == _settings_client.gui.persistent_depottools)
+				if (citymania::_fn_mod == _settings_client.gui.cm_keep_depot_tools)
 					ResetObjectToPlace();
 				break;
 

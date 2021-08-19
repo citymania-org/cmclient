@@ -109,15 +109,14 @@ struct GUISettings {
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
 	bool   show_finances;                    ///< show finances at end of year
 	bool   sg_new_nonstop;                   ///< ttdpatch compatible nonstop handling read from pre v93 savegames
-	bool   enable_ctrl_click_start_stop;     ///< allow ctrl+click to start or stop vehicles
-	uint8  goto_shortcuts_ctrl_lclick;       ///< goto action shortcut CTRL+LEFT-CLICK
-	uint8  goto_shortcuts_shift_lclick;      ///< goto action shortcut SHIFT+LEFT-CLICK
-	uint8  goto_shortcuts_ctrlshift_lclick;  ///< goto action shortcut CTRL+SHIFT+LEFT-CLICK
-	uint8  goto_shortcuts_alt_lclick;        ///< goto action shortcut ALT+LEFT-CLICK
-	uint8  goto_shortcuts_altshift_lclick;   ///< goto action shortcut ALT+SHIFT+LEFT-CLICK
-	uint8  goto_shortcuts_altctrl_lclick;    ///< goto action shortcut ALT+CTRL+LEFT-CLICK
-	bool   auto_noload_on_transfer;          ///< automatically set no-loading when ordering to transfer all cargo
-	bool   auto_noload_on_unloadall;         ///< automatically set no-loading when ordering to unload all cargo
+	uint8  cm_ctrl_order_mod;       ///< goto action shortcut CTRL+LEFT-CLICK
+	uint8  cm_shift_order_mod;      ///< goto action shortcut SHIFT+LEFT-CLICK
+	uint8  cm_ctrl_shift_order_mod;  ///< goto action shortcut CTRL+SHIFT+LEFT-CLICK
+	uint8  cm_alt_order_mod;        ///< goto action shortcut ALT+LEFT-CLICK
+	uint8  cm_alt_shift_order_mod;   ///< goto action shortcut ALT+SHIFT+LEFT-CLICK
+	uint8  cm_alt_ctrl_order_mod;    ///< goto action shortcut ALT+CTRL+LEFT-CLICK
+	bool   cm_no_loading_on_transfer_order;          ///< automatically set no-loading when ordering to transfer all cargo
+	bool   cm_no_loading_on_unload_order;         ///< automatically set no-loading when ordering to unload all cargo
 	bool   new_nonstop;                      ///< ttdpatch compatible nonstop handling
 	uint8  stop_location;                    ///< what is the default stop location of trains?
 	uint8  auto_scrolling;                   ///< scroll when moving mouse to the edge (see #ViewportAutoscrolling)
@@ -149,7 +148,7 @@ struct GUISettings {
 	byte   max_num_autosaves;                ///< controls how many autosavegames are made before the game starts to overwrite (names them 0 to max_num_autosaves - 1)
 	bool   population_in_label;              ///< show the population of a town in its label?
 	uint8  right_mouse_btn_emulation;        ///< should we emulate right mouse clicking?
-	bool   pause_after_load;                 ///< CM should we pause the game after loading save?
+	bool   cm_pause_after_load;                 ///< CM should we pause the game after loading save?
 	uint8  scrollwheel_scrolling;            ///< scrolling using the scroll wheel?
 	uint8  scrollwheel_multiplier;           ///< how much 'wheel' per incoming event from the OS?
 	bool   timetable_arrival_departure;      ///< show arrivals and departures in vehicle timetables
@@ -172,7 +171,7 @@ struct GUISettings {
 	bool   station_dragdrop;                 ///< whether drag and drop is enabled for stations
 	bool   station_show_coverage;            ///< whether to highlight coverage area
 	bool   persistent_buildingtools;         ///< keep the building tools active after usage
-	bool   persistent_depottools;            ///< keep the depot building tools active after usage
+	bool   cm_keep_depot_tools;            ///< keep the depot building tools active after usage
 	bool   cm_use_improved_station_join;     ///< use ctrl-clicking station tiles to join instead of popup window
 	bool   expenses_layout;                  ///< layout of expenses window
 	uint32 last_newgrf_count;                ///< the numbers of NewGRFs we found during the last scan
@@ -204,14 +203,12 @@ struct GUISettings {
 	bool   newgrf_show_old_versions;         ///< whether to show old versions in the NewGRF list
 	uint8  newgrf_default_palette;           ///< default palette to use for NewGRFs without action 14 palette information
 
-	bool   old_depot_train_length_calc;      ///< display vehicle length in whole numbers - old style
-	uint8  cb_distance_check;                ///< zoning cb distance
-	bool   polyrail_double_click;            ///< finish polyrail with mouse double click
-	bool   show_industry_forbidden_tiles;    ///< higlight areas where industry placement is forbidden regardless of terrain
-	bool   runway_too_short_warn;            ///< warn about aircrafts using too short runways
+	uint8  cm_cb_distance;                ///< zoning cb distance
+	bool   cm_show_industry_forbidden_tiles;    ///< higlight areas where industry placement is forbidden regardless of terrain
+	bool   cm_runway_too_short_warning;            ///< warn about aircrafts using too short runways
 
-	uint32 powerfund_money;                  ///< minimum amount of money for powerfund to work
-	uint16 powerfund_houses;                 ///< powerfunding maximum houses limit
+	uint32 cm_powerfund_money;                  ///< minimum amount of money for powerfund to work
+	uint16 cm_powerfund_houses;                 ///< powerfunding maximum houses limit
 
 	bool cm_open_vehicle_for_shared_clone;
 	bool cm_open_orders_for_new_vehicles;

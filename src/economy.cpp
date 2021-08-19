@@ -1121,7 +1121,7 @@ static Money DeliverGoods(int num_pieces, CargoID cargo_type, StationID dest, Ti
 
 	/* Increase town's counter for all goods types only if delivered near town*/
 	if(CB_Enabled()){
-		if (_settings_client.gui.cb_distance_check == 0 || (DistanceManhattan(st->town->xy, st->xy) <= _settings_client.gui.cb_distance_check)) {
+		if (_settings_client.gui.cm_cb_distance == 0 || (DistanceManhattan(st->town->xy, st->xy) <= _settings_client.gui.cm_cb_distance)) {
 			st->town->cb.delivered[cargo_type] += accepted_total;
 			InvalidateWindowData(WC_CB_TOWN, st->town->index);
 		}

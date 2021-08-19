@@ -222,7 +222,7 @@ static OrdersFromSettings GetOrdersFromSettings(const Vehicle *v, uint8 setting)
 
 	case GOFS_UNLOAD:
 		res.unload = OUFB_UNLOAD;
-		if (_settings_client.gui.auto_noload_on_unloadall)
+		if (_settings_client.gui.cm_no_loading_on_unload_order)
 			res.load = OLFB_NO_LOAD;
 		break;
 
@@ -234,7 +234,7 @@ static OrdersFromSettings GetOrdersFromSettings(const Vehicle *v, uint8 setting)
 
 	case GOFS_XFER:
 		res.unload = OUFB_TRANSFER;
-		if (_settings_client.gui.auto_noload_on_transfer)
+		if (_settings_client.gui.cm_no_loading_on_transfer_order)
 			res.load = OLFB_NO_LOAD;
 		break;
 
@@ -506,20 +506,20 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 				uint8 os = 0xff;
 				if (_ctrl_pressed) {
 					if (_shift_pressed)
-						os = _settings_client.gui.goto_shortcuts_ctrlshift_lclick;
+						os = _settings_client.gui.cm_ctrl_shift_order_mod;
 					else if (_alt_pressed)
-						os = _settings_client.gui.goto_shortcuts_altctrl_lclick;
+						os = _settings_client.gui.cm_alt_ctrl_order_mod;
 					else
-						os = _settings_client.gui.goto_shortcuts_ctrl_lclick;
+						os = _settings_client.gui.cm_ctrl_order_mod;
 				}
 				else if (_shift_pressed) {
 					if (_alt_pressed)
-						os = _settings_client.gui.goto_shortcuts_altshift_lclick;
+						os = _settings_client.gui.cm_alt_shift_order_mod;
 					else
-						os = _settings_client.gui.goto_shortcuts_shift_lclick;
+						os = _settings_client.gui.cm_ctrl_order_mod;
 				}
 				else if (_alt_pressed)
-					os = _settings_client.gui.goto_shortcuts_alt_lclick;
+					os = _settings_client.gui.cm_alt_order_mod;
 
 				auto feeder_mod = FeederOrderMod::NONE;
 				if (os != 0xff) {
@@ -765,10 +765,10 @@ private:
 
 		bool set_no_load = false;
 		if (unload_type == OUFB_TRANSFER){
-			set_no_load = _settings_client.gui.auto_noload_on_transfer;
+			set_no_load = _settings_client.gui.cm_no_loading_on_transfer_order;
 		}
 		else if (unload_type == OUFB_UNLOAD){
-			set_no_load = _settings_client.gui.auto_noload_on_unloadall;
+			set_no_load = _settings_client.gui.cm_no_loading_on_unload_order;
 		}
 		/* Transfer orders with leave empty as default */
 		if (set_no_load) {

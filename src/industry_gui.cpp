@@ -365,7 +365,7 @@ class BuildIndustryWindow : public Window {
 	{
 		this->SetWidgetDisabledState(WID_DPI_FUND_WIDGET,  !this->funding_enabled || (this->selected_type != INVALID_INDUSTRYTYPE && !this->enabled[this->selected_index]));
 		this->SetWidgetDisabledState(WID_DPI_DISPLAY_WIDGET, this->selected_type == INVALID_INDUSTRYTYPE && this->enabled[this->selected_index]);
-		this->LowerWidget(_settings_client.gui.show_industry_forbidden_tiles + WID_DPI_FT_OFF);
+		this->LowerWidget(_settings_client.gui.cm_show_industry_forbidden_tiles + WID_DPI_FT_OFF);
 	}
 
 	/**
@@ -727,9 +727,9 @@ public:
 
 			case WID_DPI_FT_OFF:
 			case WID_DPI_FT_ON:
-				this->RaiseWidget(_settings_client.gui.show_industry_forbidden_tiles + WID_DPI_FT_OFF);
-				_settings_client.gui.show_industry_forbidden_tiles = (widget != WID_DPI_FT_OFF);
-				this->LowerWidget(_settings_client.gui.show_industry_forbidden_tiles + WID_DPI_FT_OFF);
+				this->RaiseWidget(_settings_client.gui.cm_show_industry_forbidden_tiles + WID_DPI_FT_OFF);
+				_settings_client.gui.cm_show_industry_forbidden_tiles = (widget != WID_DPI_FT_OFF);
+				this->LowerWidget(_settings_client.gui.cm_show_industry_forbidden_tiles + WID_DPI_FT_OFF);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
 				MarkWholeScreenDirty();

@@ -1640,12 +1640,10 @@ static SettingsContainer &GetSettingsTree()
 				viewports->Add(new SettingEntry("gui.measure_tooltip"));
 				viewports->Add(new SettingEntry("gui.loading_indicators"));
 				viewports->Add(new SettingEntry("gui.show_track_reservation"));
-				viewports->Add(new SettingEntry("gui.cb_distance_check"));
-				viewports->Add(new SettingEntry("gui.old_depot_train_length_calc"));
+				viewports->Add(new SettingEntry("gui.cm_cb_distance"));
 				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_industries"));
 				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_stations"));
 				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_houses"));
-				// viewports->Add(new SettingEntry("gui.polyrail_double_click"));
 			}
 
 			SettingsPage *construction = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION));
@@ -1670,8 +1668,8 @@ static SettingsContainer &GetSettingsTree()
 			interface->Add(new SettingEntry("gui.timetable_in_ticks"));
 			interface->Add(new SettingEntry("gui.timetable_arrival_departure"));
 			interface->Add(new SettingEntry("gui.expenses_layout"));
-			interface->Add(new SettingEntry("gui.powerfund_money"));
-			interface->Add(new SettingEntry("gui.powerfund_houses"));
+			interface->Add(new SettingEntry("gui.cm_powerfund_money"));
+			interface->Add(new SettingEntry("gui.cm_powerfund_houses"));
 			interface->Add(new SettingEntry("gui.show_newgrf_name"));
 			interface->Add(new SettingEntry("gui.cm_graph_background"));
 		}
@@ -1690,7 +1688,7 @@ static SettingsContainer &GetSettingsTree()
 			advisors->Add(new SettingEntry("gui.order_review_system"));
 			advisors->Add(new SettingEntry("gui.vehicle_income_warn"));
 			advisors->Add(new SettingEntry("gui.lost_vehicle_warn"));
-			advisors->Add(new SettingEntry("gui.runway_too_short_warn"));
+			advisors->Add(new SettingEntry("gui.cm_runway_too_short_warning"));
 			advisors->Add(new SettingEntry("gui.show_finances"));
 			advisors->Add(new SettingEntry("news_display.economy"));
 			advisors->Add(new SettingEntry("news_display.subsidies"));
@@ -1739,21 +1737,20 @@ static SettingsContainer &GetSettingsTree()
 			/** Vehicle control page */
 			SettingsPage *veh_control = vehicles->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES_CTRL));
 			{
-				veh_control->Add(new SettingEntry("gui.enable_ctrl_click_start_stop"));
 				veh_control->Add(new SettingEntry("gui.new_nonstop"));
-				veh_control->Add(new SettingEntry("gui.auto_noload_on_transfer"));
-				veh_control->Add(new SettingEntry("gui.auto_noload_on_unloadall"));
+				veh_control->Add(new SettingEntry("gui.cm_no_loading_on_transfer_order"));
+				veh_control->Add(new SettingEntry("gui.cm_no_loading_on_unload_order"));
 			}
 
 			/** Order Shorcuts page */
 			SettingsPage *orders = veh_control->Add(new SettingsPage(STR_CONFIG_SETTING_ORDER_SHORTCUTS));
 			{
-				orders->Add(new SettingEntry("gui.goto_shortcuts_ctrl_lclick"));
-				orders->Add(new SettingEntry("gui.goto_shortcuts_shift_lclick"));
-				orders->Add(new SettingEntry("gui.goto_shortcuts_ctrlshift_lclick"));
-				orders->Add(new SettingEntry("gui.goto_shortcuts_alt_lclick"));
-				orders->Add(new SettingEntry("gui.goto_shortcuts_altshift_lclick"));
-				orders->Add(new SettingEntry("gui.goto_shortcuts_altctrl_lclick"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_order_mod"));
+				orders->Add(new SettingEntry("gui.cm_shift_order_mod"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_shift_order_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_order_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_shift_order_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_ctrl_order_mod"));
 			}
 
 			SettingsPage *physics = vehicles->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES_PHYSICS));

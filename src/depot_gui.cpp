@@ -305,16 +305,9 @@ struct DepotWindow : Window {
 						this->sel, EIT_IN_DEPOT, free_wagon ? 0 : this->hscroll->GetPosition(), this->vehicle_over);
 
 				/* Length of consist in tiles with 1 fractional digit (rounded up) */
-				if (_settings_client.gui.old_depot_train_length_calc) {
-					SetDParam(0, CeilDiv(u->gcache.cached_total_length, 8));
-					SetDParam(1, 1);
-					DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, y + (this->resize.step_height - FONT_HEIGHT_SMALL) / 2, STR_TINY_BLACK_COMA, TC_FROMSTRING, SA_RIGHT); // Draw the counter
-				}
-				else {
-					SetDParam(0, CeilDiv(u->gcache.cached_total_length * 10, TILE_SIZE));
-					SetDParam(1, 1);
-					DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, y + (this->resize.step_height - FONT_HEIGHT_SMALL) / 2, STR_TINY_BLACK_DECIMAL, TC_FROMSTRING, SA_RIGHT); // Draw the counter
-				}
+				SetDParam(0, CeilDiv(u->gcache.cached_total_length * 10, TILE_SIZE));
+				SetDParam(1, 1);
+				DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, y + (this->resize.step_height - FONT_HEIGHT_SMALL) / 2, STR_TINY_BLACK_DECIMAL, TC_FROMSTRING, SA_RIGHT); // Draw the counter
 				break;
 			}
 

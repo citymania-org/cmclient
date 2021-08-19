@@ -817,7 +817,7 @@ struct BuildRailToolbarWindow : Window {
 				DoCommandP(tile, _cur_railtype, ddir,
 						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
 						CcRailDepot);
-				if (citymania::_fn_mod == _settings_client.gui.persistent_depottools)
+				if (citymania::_fn_mod == _settings_client.gui.cm_keep_depot_tools)
 					ResetObjectToPlace();
 				break;
 

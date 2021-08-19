@@ -286,7 +286,7 @@ SpriteID TileZoneCheckNewCBBorders(TileIndex tile) {
 //Check CB town acceptance area
 SpriteID TileZoneCheckCBBorders(TileIndex tile) {
 	for (Town *town : Town::Iterate()) {
-		if (DistanceMax(town->xy, tile) <= _settings_client.gui.cb_distance_check)
+		if (DistanceMax(town->xy, tile) <= _settings_client.gui.cm_cb_distance)
 			return SPR_PALETTE_ZONING_LIGHT_BLUE;
 	}
 	return INVALID_SPRITE_ID; // no town

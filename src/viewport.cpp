@@ -2426,8 +2426,7 @@ bool HandleViewportClicked(const Viewport *vp, int x, int y, bool double_click)
 		if (IsCompanyBuildableVehicleType(v)) {
 			v = v->First();
 			if (citymania::_fn_mod && v->owner == _local_company) {
-				if (_settings_client.gui.enable_ctrl_click_start_stop)
-					StartStopVehicle(v, true);
+				StartStopVehicle(v, true);
 			} else {
 				ShowVehicleViewWindow(v);
 			}

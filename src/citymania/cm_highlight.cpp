@@ -955,7 +955,7 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
 
 void CalcCBAcceptanceBorders(TileHighlight &th, TileIndex tile, SpriteID border_pal, SpriteID ground_pal) {
     int tx = TileX(tile), ty = TileY(tile);
-    uint16 radius = _settings_client.gui.cb_distance_check;
+    uint16 radius = _settings_client.gui.cm_cb_distance;
     bool in_zone = false;
     ZoningBorder border = ZoningBorder::NONE;
     _town_kdtree.FindContained(
@@ -1112,7 +1112,7 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
         if (z) th.ground_pal = th.structure_pal = GetTintBySelectionColour(pal[z]);
     }
 
-    if (_settings_client.gui.show_industry_forbidden_tiles &&
+    if (_settings_client.gui.cm_show_industry_forbidden_tiles &&
             _industry_forbidden_tiles != INVALID_INDUSTRYTYPE) {
         auto b = CalcTileBorders(ti->tile, [](TileIndex t) { return !CanBuildIndustryOnTileCached(_industry_forbidden_tiles, t); });
         th.add_border(b.first, SPR_PALETTE_ZONING_RED);
@@ -1384,7 +1384,7 @@ ZoningBorder GetAnyStationCatchmentBorder(TileIndex tile) {
 }
 
 void SetIndustryForbiddenTilesHighlight(IndustryType type) {
-    if (_settings_client.gui.show_industry_forbidden_tiles &&
+    if (_settings_client.gui.cm_show_industry_forbidden_tiles &&
             _industry_forbidden_tiles != type) {
         MarkWholeScreenDirty();
     }
