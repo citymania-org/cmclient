@@ -2365,7 +2365,7 @@ CommandCost CmdBuildAirport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 		InvalidateWindowData(WC_STATION_VIEW, st->index, -1);
 
 		if (_settings_game.economy.station_noise_level) {
-			SetWindowDirty(WC_TOWN_VIEW, st->town->index);
+			SetWindowDirty(WC_TOWN_VIEW, nearest->index);
 		}
 	}
 
@@ -2413,6 +2413,10 @@ static CommandCost RemoveAirport(TileIndex tile, DoCommandFlag flags)
 		uint dist;
 		Town *nearest = AirportGetNearestTown(as, it, dist);
 		nearest->noise_reached -= GetAirportNoiseLevelForDistance(as, dist);
+
+		if (_settings_game.economy.station_noise_level) {
+			SetWindowDirty(WC_TOWN_VIEW, nearest->index);
+		}
 	}
 
 	for (TileIndex tile_cur : st->airport) {
@@ -2440,10 +2444,6 @@ static CommandCost RemoveAirport(TileIndex tile, DoCommandFlag flags)
 		st->facilities &= ~FACIL_AIRPORT;
 
 		InvalidateWindowData(WC_STATION_VIEW, st->index, -1);
-
-		if (_settings_game.economy.station_noise_level) {
-			SetWindowDirty(WC_TOWN_VIEW, st->town->index);
-		}
 
 		Company::Get(st->owner)->infrastructure.airport--;
 
@@ -3744,7 +3744,7 @@ void DeleteStaleLinks(Station *from)
  * @param usage Usage to add to link stat.
  * @param mode Update mode to be applied.
  */
-void IncreaseStats(Station *st, CargoID cargo, StationID next_station_id, uint capacity, uint usage, EdgeUpdateMode mode)
+void IncreaseStats(Station *st, CargoID cargo, StationID next_station_id, uint capacity, uint usage, uint32 time, EdgeUpdateMode mode)
 {
 	GoodsEntry &ge1 = st->goods[cargo];
 	Station *st2 = Station::Get(next_station_id);
@@ -3786,7 +3786,7 @@ void IncreaseStats(Station *st, CargoID cargo, StationID next_station_id, uint c
 		}
 	}
 	if (lg != nullptr) {
-		(*lg)[ge1.node].UpdateEdge(ge2.node, capacity, usage, mode);
+		(*lg)[ge1.node].UpdateEdge(ge2.node, capacity, usage, time, mode);
 	}
 }
 
@@ -3796,7 +3796,7 @@ void IncreaseStats(Station *st, CargoID cargo, StationID next_station_id, uint c
  * @param front First vehicle in the consist.
  * @param next_station_id Station the consist will be travelling to next.
  */
-void IncreaseStats(Station *st, const Vehicle *front, StationID next_station_id)
+void IncreaseStats(Station *st, const Vehicle *front, StationID next_station_id, uint32 time)
 {
 	for (const Vehicle *v = front; v != nullptr; v = v->Next()) {
 		if (v->refit_cap > 0) {
@@ -3807,7 +3807,7 @@ void IncreaseStats(Station *st, const Vehicle *front, StationID next_station_id)
 			 * As usage is not such an important figure anyway we just
 			 * ignore the additional cargo then.*/
 			IncreaseStats(st, v->cargo_type, next_station_id, v->refit_cap,
-					std::min<uint>(v->refit_cap, v->cargo.StoredCount()), EUM_INCREASE);
+					std::min<uint>(v->refit_cap, v->cargo.StoredCount()), time, EUM_INCREASE);
 		}
 	}
 }
