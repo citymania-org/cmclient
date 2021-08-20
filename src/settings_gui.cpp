@@ -1613,7 +1613,7 @@ static SettingsContainer &GetSettingsTree()
 				general->Add(new SettingEntry("gui.window_snap_radius"));
 				general->Add(new SettingEntry("gui.window_soft_limit"));
 				general->Add(new SettingEntry("gui.right_mouse_wnd_close"));
-				general->Add(new SettingEntry("gui.pause_after_load"));
+				general->Add(new SettingEntry("gui.cm_pause_after_load"));
 				general->Add(new SettingEntry("gui.cm_fn_mod"));
 				general->Add(new SettingEntry("gui.cm_remove_mod"));
 				general->Add(new SettingEntry("gui.cm_estimate_mod"));
@@ -1651,7 +1651,7 @@ static SettingsContainer &GetSettingsTree()
 				construction->Add(new SettingEntry("gui.link_terraform_toolbar"));
 				construction->Add(new SettingEntry("gui.enable_signal_gui"));
 				construction->Add(new SettingEntry("gui.persistent_buildingtools"));
-				construction->Add(new SettingEntry("gui.persistent_depottools"));
+				construction->Add(new SettingEntry("gui.cm_keep_depot_tools"));
 				construction->Add(new SettingEntry("gui.cm_open_vehicle_for_shared_clone"));
 				construction->Add(new SettingEntry("gui.cm_open_orders_for_new_vehicles"));
 				construction->Add(new SettingEntry("gui.quick_goto"));
