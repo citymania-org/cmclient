@@ -1559,7 +1559,7 @@ public:
 			case OHK_TRANSFER:       this->OrderClick_Unload(OUFB_TRANSFER, true); break;
 			case OHK_NO_UNLOAD:      this->OrderClick_Unload(OUFB_NO_UNLOAD, true); break;
 			case OHK_NO_LOAD:        this->OrderClick_FullLoad(OLFB_NO_LOAD, true); break;
-			case OHK_CLOSE:          delete this; break;
+			case OHK_CLOSE:          this->Close(); break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
