@@ -222,7 +222,7 @@ static OrdersFromSettings GetOrdersFromSettings(const Vehicle *v, uint8 setting)
 
 	case GOFS_UNLOAD:
 		res.unload = OUFB_UNLOAD;
-		if (_settings_client.gui.auto_noload_on_unloadall)
+		if (_settings_client.gui.cm_no_loading_on_unload_order)
 			res.load = OLFB_NO_LOAD;
 		break;
 
@@ -234,7 +234,7 @@ static OrdersFromSettings GetOrdersFromSettings(const Vehicle *v, uint8 setting)
 
 	case GOFS_XFER:
 		res.unload = OUFB_TRANSFER;
-		if (_settings_client.gui.auto_noload_on_transfer)
+		if (_settings_client.gui.cm_no_loading_on_transfer_order)
 			res.load = OLFB_NO_LOAD;
 		break;
 
@@ -506,20 +506,20 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 				uint8 os = 0xff;
 				if (_ctrl_pressed) {
 					if (_shift_pressed)
-						os = _settings_client.gui.goto_shortcuts_ctrlshift_lclick;
+						os = _settings_client.gui.cm_ctrl_shift_order_mod;
 					else if (_alt_pressed)
-						os = _settings_client.gui.goto_shortcuts_altctrl_lclick;
+						os = _settings_client.gui.cm_alt_ctrl_order_mod;
 					else
-						os = _settings_client.gui.goto_shortcuts_ctrl_lclick;
+						os = _settings_client.gui.cm_ctrl_order_mod;
 				}
 				else if (_shift_pressed) {
 					if (_alt_pressed)
-						os = _settings_client.gui.goto_shortcuts_altshift_lclick;
+						os = _settings_client.gui.cm_alt_shift_order_mod;
 					else
-						os = _settings_client.gui.goto_shortcuts_shift_lclick;
+						os = _settings_client.gui.cm_ctrl_order_mod;
 				}
 				else if (_alt_pressed)
-					os = _settings_client.gui.goto_shortcuts_alt_lclick;
+					os = _settings_client.gui.cm_alt_order_mod;
 
 				auto feeder_mod = FeederOrderMod::NONE;
 				if (os != 0xff) {
@@ -668,13 +668,13 @@ private:
 	VehicleOrderID GetOrderFromPt(int y)
 	{
 		NWidgetBase *nwid = this->GetWidget<NWidgetBase>(WID_O_ORDER_LIST);
-		int sel = (y - nwid->pos_y - WD_FRAMERECT_TOP) / nwid->resize_y; // Selected line in the WID_O_ORDER_LIST panel.
+		uint sel = (y - nwid->pos_y - WD_FRAMERECT_TOP) / nwid->resize_y; // Selected line in the WID_O_ORDER_LIST panel.
 
-		if ((uint)sel >= this->vscroll->GetCapacity()) return INVALID_VEH_ORDER_ID;
+		if (sel >= this->vscroll->GetCapacity()) return INVALID_VEH_ORDER_ID;
 
 		sel += this->vscroll->GetPosition();
 
-		return (sel <= vehicle->GetNumOrders() && sel >= 0) ? sel : INVALID_VEH_ORDER_ID;
+		return (sel <= vehicle->GetNumOrders()) ? sel : INVALID_VEH_ORDER_ID;
 	}
 
 	/**
@@ -765,10 +765,10 @@ private:
 
 		bool set_no_load = false;
 		if (unload_type == OUFB_TRANSFER){
-			set_no_load = _settings_client.gui.auto_noload_on_transfer;
+			set_no_load = _settings_client.gui.cm_no_loading_on_transfer_order;
 		}
 		else if (unload_type == OUFB_UNLOAD){
-			set_no_load = _settings_client.gui.auto_noload_on_unloadall;
+			set_no_load = _settings_client.gui.cm_no_loading_on_unload_order;
 		}
 		/* Transfer orders with leave empty as default */
 		if (set_no_load) {
@@ -970,7 +970,7 @@ public:
 				/* Removed / replaced all orders (after deleting / sharing) */
 				if (this->selected_order == -1) break;
 
-				this->DeleteChildWindows();
+				this->CloseChildWindows();
 				HideDropDownMenu(this);
 				this->selected_order = -1;
 				break;
@@ -1002,7 +1002,7 @@ public:
 				/* Now we are modifying the selected order */
 				if (to == INVALID_VEH_ORDER_ID) {
 					/* Deleting selected order */
-					this->DeleteChildWindows();
+					this->CloseChildWindows();
 					HideDropDownMenu(this);
 					this->selected_order = -1;
 					break;
@@ -1301,7 +1301,7 @@ public:
 				}
 
 				/* This order won't be selected any more, close all child windows and dropdowns */
-				this->DeleteChildWindows();
+				this->CloseChildWindows();
 				HideDropDownMenu(this);
 
 				if (sel == INVALID_VEH_ORDER_ID || this->vehicle->owner != _local_company) {
@@ -1559,7 +1559,7 @@ public:
 			case OHK_TRANSFER:       this->OrderClick_Unload(OUFB_TRANSFER, true); break;
 			case OHK_NO_UNLOAD:      this->OrderClick_Unload(OUFB_NO_UNLOAD, true); break;
 			case OHK_NO_LOAD:        this->OrderClick_FullLoad(OLFB_NO_LOAD, true); break;
-			case OHK_CLOSE:          delete this; break;
+			case OHK_CLOSE:          this->Close(); break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
@@ -1850,12 +1850,12 @@ static WindowDesc _other_orders_desc(
 
 void ShowOrdersWindow(const Vehicle *v)
 {
-	DeleteWindowById(WC_VEHICLE_DETAILS, v->index, false);
-	DeleteWindowById(WC_VEHICLE_TIMETABLE, v->index, false);
+	CloseWindowById(WC_VEHICLE_DETAILS, v->index, false);
+	CloseWindowById(WC_VEHICLE_TIMETABLE, v->index, false);
 	if (BringWindowToFrontById(WC_VEHICLE_ORDERS, v->index) != nullptr) return;
 
 	/* Using a different WindowDescs for _local_company causes problems.
-	 * Due to this we have to close order windows in ChangeWindowOwner/DeleteCompanyWindows,
+	 * Due to this we have to close order windows in ChangeWindowOwner/CloseCompanyWindows,
 	 * because we cannot change switch the WindowDescs and keeping the old WindowDesc results
 	 * in crashed due to missing widges.
 	 * TODO Rewrite the order GUI to not use different WindowDescs.

@@ -1,8 +1,9 @@
 #include "stdafx.h"
 
-#include "citymania/cm_commands_gui.hpp"
+#include "cm_commands_gui.hpp"
 
-#include "citymania/cm_base64.hpp"
+#include "cm_base64.hpp"
+#include "cm_main.hpp"
 
 #include "core/geometry_func.hpp" //maxdim
 #include "settings_type.h"
@@ -367,7 +368,8 @@ struct CommandsToolbarWindow : Window {
 					strecpy(ip, NOVAPOLIS_IPV4_PRIMARY, lastof(ip));
 					// else strecpy(ip, NOVAPOLIS_IPV4_SECONDARY, lastof(ip));
 
-					NetworkClientConnectGame(ip, (3980 + widget - CTW_NS0), COMPANY_SPECTATOR);
+					// FIXME
+					// NetworkClientConnectGame(ip, (3980 + widget - CTW_NS0), COMPANY_SPECTATOR);
 				}
 				else if (widget >= CTW_CARGO_FIRST) {
 					int i = widget - CTW_CARGO_FIRST;
@@ -446,7 +448,7 @@ struct CommandsToolbarWindow : Window {
 
 	void OnHundredthTick()
 	{
-		for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
+		for (int i = 0; i < _sorted_standard_cargo_specs.size(); i++) {
 			if (this->IsWidgetLowered(i + CTW_CARGO_FIRST)) {
 				static int x = 0;
 				x++;
@@ -466,13 +468,13 @@ static NWidgetBase *MakeCargoButtons(int *biggest_index)
 {
 	NWidgetVertical *ver = new NWidgetVertical;
 
-	for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
+	for (int i = 0; i < _sorted_standard_cargo_specs.size(); i++) {
 		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_ORANGE, CTW_CARGO_FIRST + i, NULL);
 		leaf->tool_tip = STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO;
 		leaf->SetFill(1, 0);
 		ver->Add(leaf);
 	}
-	*biggest_index = CTW_CARGO_FIRST + _sorted_standard_cargo_specs_size - 1;
+	*biggest_index = CTW_CARGO_FIRST + _sorted_standard_cargo_specs.size() - 1;
 	return ver;
 }
 
@@ -849,7 +851,7 @@ static WindowDesc _login_window_desc(
 void ShowLoginWindow()
 {
 	IniLoginInitiate();
-	DeleteWindowByClass(WC_LOGIN_WINDOW);
+	CloseWindowByClass(WC_LOGIN_WINDOW);
 	AllocateWindowDescFront<LoginWindow>(&_login_window_desc, 0);
 }
 

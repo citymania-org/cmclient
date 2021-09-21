@@ -752,6 +752,7 @@ STR_STATUSBAR_PAUSED                                            :{YELLOW}*  *  �
 STR_STATUSBAR_AUTOSAVE                                          :{RED}กำลังทำการเซฟอัตโนมัติ
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  กำลังบันทึกเกม  *  *
 
+
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}ข้อความย้อนหลัง
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}รายการแสดงข้อความข่าวเมื่อเร็วๆนี้
@@ -849,11 +850,6 @@ STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}ข้อเสนอสำหรับการอุดหนุนสิ้นสุด:{}{}{STRING} จาก {STRING} ถึง {STRING} จะไม่ได้รับการอุดหนุนอีกต่อไป.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}การอุดหนุนถูกถอดถอน:{}{}บริการ {STRING} จาก {STRING} ถึง {STRING} จะไม่ได้รับการสนับสนุนอีกต่อไป.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}มีการสนับสนุนในการทำโครงการ:{}{} ขนส่ง {STRING} เที่ยวปฐมฤกษ์ จาก {STRING} ถึง {STRING} หากดำเนินการจะได้รับเงินอุดหนุนพิเศษรายปีจากเจ้าหน้าที่ในท้องถิ่น!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}เงินสนับสนุนโครงการถูกมอบให้กับ {STRING}!{}{} โดยการขนส่ง {STRING} จาก {STRING} ถึง {STRING} จะได้รับเงินอุดหนุนเพิ่มขึ้น 50% สำหรับปีหน้า!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}การอุดหนุนบริการถูกมอบแก่ {STRING}!{}{}บริการ {STRING} จาก {STRING} ถึง {STRING} จะได้รับเงินสองเท่าในปีหน้า!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}การอุดหนุนบริการถูกมอบแก่ {STRING}!{}{}บริการ {STRING} จาก {STRING} ถึง {STRING} จะได้รับเงินสามเท่าในปีหน้า!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}การอุดหนุนบริการถูกมอบแก่ {STRING}!{}{} บริการ {STRING} จาก {STRING} ถึง {STRING} จะได้รับเงินสี่เท่าในปีหน้า!
 
 STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}การจราจรยุ่งเหยิงใน {TOWN}!{}{}การสร้างถนนใหม่ที่ได้รับการสนับสนุนโดย {STRING} นำมาซึ่งหกเดือนแห่งความสงสัยแก่ผู้ใช้ถนน!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}เจ้าพ่อวงการขนส่ง!
@@ -1319,6 +1315,7 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :ไม่ใช
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :คลิกสองครั้ง
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :คลิกครั้งเดียว (เมื่อเพ่งความสนใจไป)
 STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :คลิกครั้งเดียว (ทันที)
+
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :จำลองคลิกขวา: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :เลือกผลของการใช้การคลิ๊กเมาส์ขวา
@@ -1820,6 +1817,9 @@ STR_FACE_TIE                                                    :เนคไท
 STR_FACE_EARRING                                                :ต่างหู:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}เปลี่ยนเนคไทหรือต่างหู
 
+############ Next lines match ServerGameType
+############ End of leave-in-this-order
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}เล่นหลายคน
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}ชื่อผู้เล่น:
@@ -1868,7 +1868,6 @@ STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}เร�
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}เริ่มเซิร์ฟเวอร์ใหม่ของคุณ
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}ป้อนชื่อของคุณ
-STR_NETWORK_SERVER_LIST_ENTER_IP                                :{BLACK}ป้อนที่อยู่ของโฮสต์
 
 # Start new multiplayer server
 STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}เริ่มเกมผู้เล่นหลายคนใหม่
@@ -1878,88 +1877,16 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}ชื�
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}กำหนดรหัสผ่าน
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}ป้องกันเกมด้วยรหัสผ่านหากไม่ต้องการให้มีการเข้าร่วมจากบุคคลทั่วไป
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}การประกาศ
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}เลือกระหว่างการโฆษณา (internet) หรือไม่โฆษณา (Local Area Network, LAN) เกม
-STR_NETWORK_START_SERVER_UNADVERTISED                           :ไม่ใช่
-STR_NETWORK_START_SERVER_ADVERTISED                             :ใช่
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} ลูกข่าย
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}ลูกข่ายสูงสุด:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}เลือกจำนวนมากสุดของลูกข่าย (ไม่จำเป็นต้องครบตามจำนวนนี้)
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} บริษัท
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}จำนวนบริษัทสูงสุด:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}จำกัดจำนวนบริษัทที่อยู่ในเซิร์ฟเวอร์
-STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} ผู้ชม
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}ผู้ชมสูงสุด:
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}จำกัดจำนวนผู้ชมที่อยู่ในเซิร์ฟเวอร์
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}ภาษาที่ใช้พูดคุย:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}ผู้เล่นทุกคนจะสามารถทราบถึงภาษาที่ใช้พูดคุยในเซิร์ฟเวอร์นี้
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}พิมพ์ชื่อสำหรับเล่นในเครือข่าย
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :อะไรก็ได้
-STR_NETWORK_LANG_ENGLISH                                        :ภาษาอังกฤษ
-STR_NETWORK_LANG_GERMAN                                         :ภาษาเยอรมัน
-STR_NETWORK_LANG_FRENCH                                         :ภาษาฝรั่งเศส
-STR_NETWORK_LANG_BRAZILIAN                                      :ภาษาบราซิล
-STR_NETWORK_LANG_BULGARIAN                                      :ภาษาบัลกาเรีย
-STR_NETWORK_LANG_CHINESE                                        :จีน
-STR_NETWORK_LANG_CZECH                                          :เช็ก
-STR_NETWORK_LANG_DANISH                                         :เดนมาร์ก
-STR_NETWORK_LANG_DUTCH                                          :เนเธอร์แลนด์
-STR_NETWORK_LANG_ESPERANTO                                      :ภาษาโลก(Esperanto)
-STR_NETWORK_LANG_FINNISH                                        :ฟินแลนด์
-STR_NETWORK_LANG_HUNGARIAN                                      :ฮังการี
-STR_NETWORK_LANG_ICELANDIC                                      :ไอร์แลนด์
-STR_NETWORK_LANG_ITALIAN                                        :อิตาลี
-STR_NETWORK_LANG_JAPANESE                                       :ญี่ปุ่น
-STR_NETWORK_LANG_KOREAN                                         :เกาหลี
-STR_NETWORK_LANG_LITHUANIAN                                     :ลิทัวเนีย
-STR_NETWORK_LANG_NORWEGIAN                                      :นอร์เวย์
-STR_NETWORK_LANG_POLISH                                         :โปแลนด์
-STR_NETWORK_LANG_PORTUGUESE                                     :โปรตุเกส
-STR_NETWORK_LANG_ROMANIAN                                       :โรมาเนีย
-STR_NETWORK_LANG_RUSSIAN                                        :รัสเซีย
-STR_NETWORK_LANG_SLOVAK                                         :สโลวัก
-STR_NETWORK_LANG_SLOVENIAN                                      :สโลวาเนีย
-STR_NETWORK_LANG_SPANISH                                        :สเปน
-STR_NETWORK_LANG_SWEDISH                                        :สวีเดน
-STR_NETWORK_LANG_TURKISH                                        :ตุรกี
-STR_NETWORK_LANG_UKRAINIAN                                      :ยูเครน
-STR_NETWORK_LANG_AFRIKAANS                                      :อัฟกานิสถาน
-STR_NETWORK_LANG_CROATIAN                                       :โครเอเชีย
-STR_NETWORK_LANG_CATALAN                                        :คาตาลัน
-STR_NETWORK_LANG_ESTONIAN                                       :เอสโตเนีย
-STR_NETWORK_LANG_GALICIAN                                       :กาลีเซีย
-STR_NETWORK_LANG_GREEK                                          :กรีก
-STR_NETWORK_LANG_LATVIAN                                        :ลัทเวีย
-############ End of leave-in-this-order
-
-# Network game lobby
-STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}ห้องรับรองโหมดผู้เล่นหลายคน
-
-STR_NETWORK_GAME_LOBBY_PREPARE_TO_JOIN                          :{BLACK}กำลังเตรียมการเข้าร่วม: {ORANGE}{STRING}
-STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP                     :{BLACK}รายการของบริษัททั้งหมดที่อยู่ในเกมนี้ คุณสามารถที่จะเข้าร่วมหนึ่งในรายชื่อบริษัทเหล่านี้ได้หรือสามารถที่จะสร้างบริษัทใหม่ได้หากมีช่องว่างให้คุณ
-
-STR_NETWORK_GAME_LOBBY_COMPANY_INFO                             :{SILVER}ข้อมูลบริษัท
-STR_NETWORK_GAME_LOBBY_COMPANY_NAME                             :{SILVER}ชื่อบริษัท: {WHITE}{STRING}
-STR_NETWORK_GAME_LOBBY_INAUGURATION_YEAR                        :{SILVER}วันที่เริ่มเปิด: {WHITE}{NUM}
-STR_NETWORK_GAME_LOBBY_VALUE                                    :{SILVER}มูลค่าของบริษัท: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_CURRENT_BALANCE                          :{SILVER}งบดุลปัจจุบัน: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_LAST_YEARS_INCOME                        :{SILVER}รายได้ของปีที่แล้ว: {WHITE}{CURRENCY_LONG}
-STR_NETWORK_GAME_LOBBY_PERFORMANCE                              :{SILVER}สมรรถภาพ: {WHITE}{NUM}
-
-STR_NETWORK_GAME_LOBBY_VEHICLES                                 :{SILVER}ภาหนะ: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_STATIONS                                 :{SILVER}สถานี: {WHITE}{NUM} {TRAIN}, {NUM} {LORRY}, {NUM} {BUS}, {NUM} {SHIP}, {NUM} {PLANE}
-STR_NETWORK_GAME_LOBBY_PLAYERS                                  :{SILVER}ผู้เล่น: {WHITE}{STRING}
-
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY                              :{BLACK}บริษัทใหม่
-STR_NETWORK_GAME_LOBBY_NEW_COMPANY_TOOLTIP                      :{BLACK}สร้างบริษัทใหม่
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME                            :{BLACK}เข้าชมเกม
-STR_NETWORK_GAME_LOBBY_SPECTATE_GAME_TOOLTIP                    :{BLACK}ดูเกมในฐานะผู้ชม
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY                             :{BLACK}เข้าร่วมบริษัท
-STR_NETWORK_GAME_LOBBY_JOIN_COMPANY_TOOLTIP                     :{BLACK}ช่วยบริหารจัดการบริษัทนี้
 
 # Network connecting window
 STR_NETWORK_CONNECTING_CAPTION                                  :{WHITE}กำลังเชื่อมต่อ...
@@ -1986,15 +1913,14 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}บร�
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :รายการลูกข่าย
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :ผู้ชม
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :บริษัทใหม่
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :เตะ
-STR_NETWORK_CLIENTLIST_BAN                                      :แบน
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :พูดกับผู้เล่นทั้งหมด
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :พูดกับผู้เล่นในบริษัทเดียวกัน
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :ข้อความส่วนตัว
+
+############ Begin of ConnectionType
+############ End of ConnectionType
+
+
+
 
 STR_NETWORK_SERVER                                              :เซิฟเวอร์
 STR_NETWORK_CLIENT                                              :ลูกข่าย
@@ -2101,6 +2027,7 @@ STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} �
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} ได้ทำการเปลี่ยนชื่อเป็น {STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}เซิฟเวอร์ปืดเซสซั่นนี้
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}เซิฟเวอร์กำลังทำการเริ่มต้นใหม่...{}กรุณารอซักครู่...
+
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}กำลังโหลดเนื้อหา
@@ -3440,7 +3367,6 @@ STR_REPLACE_MONORAIL_VEHICLES                                   :ยานพา
 STR_REPLACE_MAGLEV_VEHICLES                                     :รถไฟพลังงานแม่แหล็ก
 
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}ขายรถพ่วง: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}ทำให้การแทนที่ขบวนรถไฟทำให้ความยาวของขบวนยังเท่าเดิม
 
 # Vehicle view

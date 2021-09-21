@@ -74,6 +74,13 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 12.0-beta2 (19 Aug 2021) ***
+- Fixed crash when building airport with no valid airport type selected.
+- Renamed a bunch of setttings in the config file adding cm_* prefix to distinguish them from vanilla ones.
+- Removed setting to show train length in old format in the depot (new one is more usable now).
+- Removed setting to disable ending the polyrail with double click (it's always disabled).
+- Removed setting to disable starting-stopping vehicles with ctrl-click (seems pointless).
+
 *** 1.11.2 (3 May 2021) ***
 - OpenTTD update.
 

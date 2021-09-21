@@ -38,7 +38,7 @@ const char *VideoDriver_Null::Start(const StringList &parm)
 	ScreenSizeChanged();
 
 	/* Do not render, nor blit */
-	DEBUG(misc, 1, "Forcing blitter 'null'...");
+	Debug(misc, 1, "Forcing blitter 'null'...");
 	BlitterFactory::SelectBlitter("null");
 	return nullptr;
 }
@@ -63,10 +63,16 @@ void VideoDriver_Null::MainLoop()
 	fprintf(stderr, "Null driver ran for %u tics, save: %s\n", this->ticks, this->savefile.c_str());
 	if (!this->savefile.empty()) {
 	    if (SaveOrLoad(this->savefile.c_str(), SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
-	        IConsolePrintF(CC_ERROR, "Error saving the final game state.");
+	        IConsolePrint(CC_ERROR, "Error saving the final game state.");
 	    } else {
-	        IConsolePrintF(CC_DEFAULT, "Saved the final game state to %s", this->savefile.c_str());
+	        IConsolePrint(CC_DEFAULT, "Saved the final game state to {}", this->savefile);
 	    }
+	}
+
+	/* If requested, make a save just before exit. The normal exit-flow is
+	 * not triggered from this driver, so we have to do this manually. */
+	if (_settings_client.gui.autosave_on_exit) {
+		DoExitSave();
 	}
 }
 

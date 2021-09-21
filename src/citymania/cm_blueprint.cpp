@@ -18,7 +18,7 @@
 
 extern TileHighlightData _thd;
 extern RailType _cur_railtype;
-extern void GetStationLayout(byte *layout, int numtracks, int plat_len, const StationSpec *statspec);
+extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
 namespace citymania {
 
@@ -431,7 +431,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
     std::multimap<StationID, TileIndex> station_tiles;
     std::set<StationID> stations;
 
-    TILE_AREA_LOOP(tile, ta) {
+    for (TileIndex tile : ta) {
         TileIndexDiffC td = TileIndexToTileIndexDiffC(tile, start);
         switch (GetTileType(tile)) {
             case MP_STATION:
@@ -492,7 +492,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
         bool in_area = true;
         bool sign_part = false;
         std::vector<TileIndex> tiles;
-        TILE_AREA_LOOP(tile, sta) {
+        for (TileIndex tile : sta) {
             if (!IsTileType(tile, MP_STATION) || GetStationIndex(tile) != sid || !IsRailStation(tile)) continue;
             if (!ta.Contains(tile)) {
                 in_area = false;

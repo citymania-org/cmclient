@@ -104,9 +104,7 @@ struct LandTooltipsWindow : public Window
                 SetDParam(0, st->index);
                 size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_NAME).width, size->width);
 
-                for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-                    const CargoSpec *cs = _sorted_cargo_specs[i];
-                    if(cs == NULL) continue;
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
                     int cargoid = cs->Index();
                     if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
                         size->height += line_height;
@@ -186,9 +184,7 @@ struct LandTooltipsWindow : public Window
                 DrawString(left, right, y, STR_CM_LAND_TOOLTIPS_STATION_NAME, TC_BLACK, SA_CENTER);
                 y += FONT_HEIGHT_NORMAL + 2;
 
-                for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-                    const CargoSpec *cs = _sorted_cargo_specs[i];
-                    if(cs == NULL) continue;
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
                     int cargoid = cs->Index();
                     if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
                         SetDParam(0, cs->name);
@@ -223,7 +219,7 @@ void ShowLandTooltips(TileIndex tile, Window *parent) {
     last_tooltip_tile = tile;
 
     if (tile == INVALID_TILE) {
-        DeleteWindowById(CM_WC_LAND_TOOLTIPS, 0);
+        CloseWindowById(CM_WC_LAND_TOOLTIPS, 0);
         return;
     }
 
@@ -255,7 +251,7 @@ void ShowLandTooltips(TileIndex tile, Window *parent) {
         default:
             break;
     }
-    DeleteWindowById(CM_WC_LAND_TOOLTIPS, 0);
+    CloseWindowById(CM_WC_LAND_TOOLTIPS, 0);
 
     if (param == 0) return;
     new LandTooltipsWindow(parent, param);
@@ -504,7 +500,7 @@ public:
 };
 
 bool ShowStationRatingTooltip(Window *parent, const Station *st, const CargoSpec *cs, TooltipCloseCondition close_cond) {
-    DeleteWindowById(WC_STATION_RATING_TOOLTIP, 0);
+    CloseWindowById(WC_STATION_RATING_TOOLTIP, 0);
     new StationRatingTooltipWindow(parent, st, cs, close_cond);
     return true;
 }

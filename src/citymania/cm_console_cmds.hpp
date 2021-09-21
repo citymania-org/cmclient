@@ -9,6 +9,7 @@ void SkipFakeCommands(Date date, DateFract date_fract);
 void SetReplaySaveInterval(uint32 interval);
 void LoadCommands(const std::string &filename);
 void CheckIntervalSave();
+bool IsReplayingCommands();
 
 bool ConGameSpeed(byte argc, char *argv[]);
 bool ConStep(byte argc, char *argv[]);

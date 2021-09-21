@@ -3,6 +3,7 @@
 #include "../company_base.h"
 #include "../date_func.h"
 #include "../debug.h"
+#include "../saveload/compat/storage_sl_compat.h"
 #include "../saveload/saveload.h"
 #include "../town.h"
 
@@ -23,7 +24,6 @@ static const SaveLoad _storage_desc[] = {
      SLE_CONDVAR(PersistentStorage, grfid,    SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
      SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32,  16,           SLV_161, SLV_EXTEND_PERSISTENT_STORAGE),
      SLE_CONDARR(PersistentStorage, storage,  SLE_UINT32, 256,           SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
-     SLE_END()
 };
 
 
@@ -303,7 +303,7 @@ static void DecodeTownsCargoV1(BitIStream &bs)
     for (uint i = 0; i < n_cb_cargos; i++) {
         uint cargo = bs.ReadBytes(1);
         if (cargo >= NUM_CARGO) {
-            DEBUG(sl, 0, "Invalid CargoID in CB towns cargo data (%u)", cargo);
+            Debug(sl, 0, "Invalid CargoID in CB towns cargo data (%u)", cargo);
             return;
         }
         cb_cargos.push_back(cargo);
@@ -318,7 +318,7 @@ static void DecodeTownsCargoV1(BitIStream &bs)
         uint town_id = bs.ReadBytes(2);
         t = Town::GetIfValid(town_id);
         if (!t) {
-            DEBUG(sl, 0, "Invalid TownID in CB towns cargo data (%u)", town_id);
+            Debug(sl, 0, "Invalid TownID in CB towns cargo data (%u)", town_id);
             return;
         }
   //       auto &tcb = t->cb;
@@ -351,7 +351,7 @@ static void DecodeDataV1(BitIStream &bs) {
         uint town_id = bs.ReadBytes(2);
         t = Town::GetIfValid(town_id);
         if (!t) {
-            DEBUG(sl, 0, "Invalid TownID in CB towns layout errors (%u)", town_id);
+            Debug(sl, 0, "Invalid TownID in CB towns layout errors (%u)", town_id);
             continue;
         }
         t->cm.hs_total = bs.ReadBytes(4);
@@ -370,18 +370,18 @@ static void DecodeDataV1(BitIStream &bs) {
 
 static void DecodeData(u8vector &data) {
     if (data.size() == 0) {
-        DEBUG(sl, 2, "No CityMania save data");
+        Debug(sl, 2, "No CityMania save data");
         return;
     }
-    DEBUG(sl, 2, "CityMania save data takes %lu bytes", data.size());
+    Debug(sl, 2, "CityMania save data takes %lu bytes", data.size());
     BitIStream bs(data);
     try {
         uint version = bs.ReadBytes(2);
         if (version > SAVEGAME_DATA_FORMAT_VERSION) {
-            DEBUG(sl, 0, "Savegame was made with newer version of client, extra save data was not loaded");
+            Debug(sl, 0, "Savegame was made with newer version of client, extra save data was not loaded");
             return;
         }
-        DEBUG(sl, 2, "CityMania savegame data version %u", version);
+        Debug(sl, 2, "CityMania savegame data version %u", version);
         _last_client_version = bs.ReadBytes(2);
         _settings_game.citymania.controller_type = (ControllerType)bs.ReadBytes(1);
         if (version <= 1 && _settings_game.citymania.controller_type != ControllerType::GENERIC)
@@ -389,7 +389,7 @@ static void DecodeData(u8vector &data) {
         int32 date = bs.ReadBytes(4);
         uint32 date_fract = bs.ReadBytes(1);
         if (date != _date || date_fract != _date_fract) {
-            DEBUG(sl, 0, "Savegame was run in unmodified client, extra save data "
+            Debug(sl, 0, "Savegame was run in unmodified client, extra save data "
                   "preserved, but may not be accurate");
         }
         _settings_game.citymania.game_type = (GameType)bs.ReadBytes(1);
@@ -399,7 +399,7 @@ static void DecodeData(u8vector &data) {
         else DecodeDataV2(bs);
     }
     catch (BitIStreamUnexpectedEnd &e) {
-        DEBUG(sl, 0, "Invalid CityMania save data");
+        Debug(sl, 0, "Invalid CityMania save data");
     }
 }
 
@@ -408,8 +408,9 @@ struct FakePersistentStorage {
     uint8 *storage;
 };
 
-void Save_PSAC() {
+void PSACChunkHandler::Save() const {
     /* Write the industries */
+    SlTableHeader(_storage_desc);
     for (PersistentStorage *ps : PersistentStorage::Iterate()) {
         if (ps->grfid == CITYMANIA_GRFID) {
             continue;
@@ -420,7 +421,7 @@ void Save_PSAC() {
     }
 
     if (_game_mode == GM_EDITOR) {
-        DEBUG(sl, 2, "Saving scenario, skip CityMania extra data");
+        Debug(sl, 2, "Saving scenario, skip CityMania extra data");
         return;
     }
 
@@ -433,13 +434,12 @@ void Save_PSAC() {
     u8vector data = EncodeData();
     int n_chunks = (data.size() + 1023) / 1024;
     data.resize(n_chunks * 1024);
-    DEBUG(sl, 2, "Citybuilder data takes %u bytes", (uint)data.size());
+    Debug(sl, 2, "Citybuilder data takes %u bytes", (uint)data.size());
     FakePersistentStorage ps{CITYMANIA_GRFID, &data[0]};
 
     static const SaveLoad _desc[] = {
         SLE_CONDVAR(FakePersistentStorage, grfid,    SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
         SLE_CONDARR(FakePersistentStorage, storage,  SLE_UINT32, 256,           SLV_EXTEND_PERSISTENT_STORAGE, SL_MAX_VERSION),
-        SLE_END()
     };
 
     for (int i = 0; i < n_chunks; i++, ps.storage += 1024) {
@@ -448,8 +448,7 @@ void Save_PSAC() {
     }
 }
 
-void Load_PSAC()
-{
+void PSACChunkHandler::Load() const {
     int index;
 
     /*
@@ -461,12 +460,14 @@ void Load_PSAC()
     u8vector cmdata;
     uint chunk_size = IsSavegameVersionBefore(SLV_EXTEND_PERSISTENT_STORAGE) ? 64 : 1024;
 
+    const std::vector<SaveLoad> slt = SlCompatTableHeader(_storage_desc, _storage_sl_compat);
+
     while ((index = SlIterateArray()) != -1) {
         if (ps == NULL) {
             assert(PersistentStorage::CanAllocateItem());
             ps = new (index) PersistentStorage(0, 0, 0);
         }
-        SlObject(ps, _storage_desc);
+        SlObject(ps, slt);
 
         if (ps->grfid == CITYMANIA_GRFID) {
             uint8 *data = (uint8 *)(ps->storage);
