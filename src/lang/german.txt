@@ -1834,20 +1834,6 @@ STR_CONFIG_SETTING_CTRL_ENABLE_CTRLCLICK_STARTSTOP              :Strg+Linksklick
 STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                   :"Umladen"-Aufträge sind standardmäßig "Nicht beladen": {STRING}
 STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                     :"Alles entladen"-Aufträge sind standardmäßig "Nicht beladen": {STRING}
 
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLLCLICK                 :Strg+Linksklick: {STRING}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLSHIFTLCLICK            :Strg+Umschalt+Linksklick: {STRING}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_SHIFTLCLICK                :Umschalt+Linksklick: {STRING}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_ALTLCLICK                  :Alt+Linksklick: {STRING}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_ALTSHIFTCLICK              :Alt+Umschalt+Linksklick: {STRING}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLALTLCLICK              :Strg+Alt+Linksklick: {STRING}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_NONE                      :Nichts machen
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FULL_LOAD_ANY             :Mit beliebiger Fracht voll beladen
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_TRANSFER_CARGO            :Fracht umladen
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_UNLOAD_ALL                :Entladen jeder Fracht erzwingen
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FEEDERLOAD                :Zulieferer-Beladung (ersten Auftrag ersetzen)
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FEEDERDROP                :Zulieferer-Entladung (letzten Auftrag ersetzen)
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_NO_LOAD                   :Mit keiner Fracht beladen
-
 # Config errors
 STR_CONFIG_ERROR                                                :{WHITE}Fehler in der Konfigurations-Datei ...
 STR_CONFIG_ERROR_ARRAY                                          :{WHITE}... Fehler im Array „{STRING}“
@@ -5658,3 +5644,18 @@ STR_CM_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT :{BLACK}Passwort ändern
 STR_CM_LOGIN_WINDOW_SIGN_IN_HELPTEXT :{BLACK}Login abschicken (sie müssen auf dem richtigen Community-Server sein)
 STR_CM_LOGIN_WINDOW_USERNAME_DISPLAY :{WHITE}{STRING}
 STR_CM_LOGIN_WINDOW_PASSWORD_DISPLAY :{WHITE}{STRING}
+
+STR_CM_CONFIG_SETTING_ORDER_MOD_CTRL                 :Strg+Linksklick: {STRING}
+STR_CM_CONFIG_SETTING_ORDER_MOD_SHIFT                :Umschalt+Linksklick: {STRING}
+STR_CM_CONFIG_SETTING_ORDER_MOD_CTRL_SHIFT           :Strg+Umschalt+Linksklick: {STRING}
+STR_CM_CONFIG_SETTING_ORDER_MOD_ALT                  :Alt+Linksklick: {STRING}
+STR_CM_CONFIG_SETTING_ORDER_MOD_ALT_SHIFT            :Alt+Umschalt+Linksklick: {STRING}
+STR_CM_CONFIG_SETTING_ORDER_MOD_ALT_CTRL             :Strg+Alt+Linksklick: {STRING}
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTIONS_NONE                      :Nichts machen
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTIONS_FULL_LOAD_ANY             :Mit beliebiger Fracht voll beladen
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTIONS_TRANSFER_CARGO            :Fracht umladen
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTIONS_UNLOAD_ALL                :Entladen jeder Fracht erzwingen
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTIONS_FEEDER_LOAD               :Zulieferer-Beladung (ersten Auftrag ersetzen)
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTIONS_FEEDER_UNLOAD             :Zulieferer-Entladung (letzten Auftrag ersetzen)
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTIONS_NO_LOAD                   :Mit keiner Fracht beladen
+

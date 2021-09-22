@@ -516,7 +516,7 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 					if (_alt_pressed)
 						os = _settings_client.gui.cm_alt_shift_order_mod;
 					else
-						os = _settings_client.gui.cm_ctrl_order_mod;
+						os = _settings_client.gui.cm_shift_order_mod;
 				}
 				else if (_alt_pressed)
 					os = _settings_client.gui.cm_alt_order_mod;

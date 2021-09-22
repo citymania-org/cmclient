@@ -1834,20 +1834,6 @@ STR_CONFIG_SETTING_ORDER_SHORTCUTS                              :{ORANGE}Order's
 STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                   :"Transfer" orders are "No Loading" by default: {STRING2}
 STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                     :"Unload all" orders are "No Loading" by default: {STRING2}
 
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLLCLICK                 :ctrl+left-click: {STRING2}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLSHIFTLCLICK            :ctrl+shift+left-click: {STRING2}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_SHIFTLCLICK                :shift+left-click: {STRING2}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_ALTLCLICK                  :alt+left-click: {STRING2}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_ALTSHIFTCLICK              :alt+shift+left-click: {STRING2}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTCUT_CTRLALTLCLICK              :ctrl+alt+left-click: {STRING2}
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_NONE                      :do nothing
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FULL_LOAD_ANY             :Full load any cargo
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_TRANSFER_CARGO            :Transfer cargo
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_UNLOAD_ALL                :Force unload of all cargo
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FEEDERLOAD                :Feeder Load (replace first order)
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_FEEDERDROP                :Feeder Unload (replace last order)
-STR_CONFIG_SETTING_CTRL_GOTOSHORTOPTS_NO_LOAD                   :Do not load any cargo
-
 # Config errors
 STR_CONFIG_ERROR                                                :{WHITE}Error with the configuration file...
 STR_CONFIG_ERROR_ARRAY                                          :{WHITE}... error in array '{RAW_STRING}'
@@ -5665,3 +5651,17 @@ STR_CM_NETWORK_COMPANY_LIST_NEW_COMPANY                            :New company
 STR_CM_NETWORK_COMPANY_LIST_SPECTATE                               :Spectate
 
 STR_CM_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT : {BLACK}Rail blueprint tool (copy-paste)
+
+STR_CM_CONFIG_SETTING_ORDER_MOD_CTRL                 :Ctrl+click: {STRING2}
+STR_CM_CONFIG_SETTING_ORDER_MOD_SHIFT                :Shift+click: {STRING2}
+STR_CM_CONFIG_SETTING_ORDER_MOD_CTRL_SHIFT           :Ctrl+Shift+lick: {STRING2}
+STR_CM_CONFIG_SETTING_ORDER_MOD_ALT                  :Alt+Click: {STRING2}
+STR_CM_CONFIG_SETTING_ORDER_MOD_ALT_SHIFT            :Alt+Shift+click: {STRING2}
+STR_CM_CONFIG_SETTING_ORDER_MOD_ALT_CTRL             :Ctrl+Alt+click: {STRING2}
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTION_NONE                      :do nothing
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTION_FULL_LOAD_ANY             :Full load any cargo
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTION_TRANSFER_CARGO            :Transfer cargo
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTION_UNLOAD_ALL                :Force unload of all cargo
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_LOAD               :Feeder Load (replace first order)
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_UNLOAD             :Feeder Unload (replace last order)
+STR_CM_CONFIG_SETTING_ORDER_MOD_ACTION_NO_LOAD                   :Do not load any cargo
