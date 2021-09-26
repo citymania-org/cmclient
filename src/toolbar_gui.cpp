@@ -204,7 +204,8 @@ static void PopupMainToolbMenu(Window *w, int widget, StringID string, int count
 
 /** Enum for the Company Toolbar's network related buttons */
 static const int CTMN_CLIENT_LIST = -1; ///< Show the client list
-static const int CTMN_SPECTATOR   = -2; ///< Show a company window as spectator
+static const int CTMN_SPECTATE    = -2; ///< Become spectator
+static const int CTMN_SPECTATOR   = -3; ///< Show a company window as spectator
 
 /**
  * Pop up a generic company list menu.
@@ -222,8 +223,11 @@ static void PopupMainCompanyToolbMenu(Window *w, int widget, int grey = 0)
 
 			/* Add the client list button for the companies menu */
 			list.emplace_back(new DropDownListStringItem(STR_NETWORK_COMPANY_LIST_CLIENT_LIST, CTMN_CLIENT_LIST, false));
-			break;
 
+			if (_local_company != COMPANY_SPECTATOR) {
+				list.emplace_back(new DropDownListStringItem(STR_NETWORK_COMPANY_LIST_SPECTATE, CTMN_SPECTATE, false));
+			}
+			break;
 		case WID_TN_STORY:
 			list.emplace_back(new DropDownListStringItem(STR_STORY_BOOK_SPECTATOR, CTMN_SPECTATOR, false));
 			break;
@@ -602,6 +606,15 @@ static CallBackFunction MenuClickCompany(int index)
 		switch (index) {
 			case CTMN_CLIENT_LIST:
 				ShowClientList();
+				return CBF_NONE;
+
+			case CTMN_SPECTATE:
+				if (_network_server) {
+					NetworkServerDoMove(CLIENT_ID_SERVER, COMPANY_SPECTATOR);
+					MarkWholeScreenDirty();
+				} else {
+					NetworkClientRequestMove(COMPANY_SPECTATOR);
+				}
 				return CBF_NONE;
 		}
 	}
@@ -1929,49 +1942,6 @@ static ToolbarButtonProc * const _toolbar_button_procs[] = {
 	ToolbarNewspaperClick,
 	ToolbarHelpClick,
 	ToolbarSwitchClick,
-};
-
-enum MainToolbarHotkeys {
-	MTHK_PAUSE,
-	MTHK_FASTFORWARD,
-	MTHK_SETTINGS,
-	MTHK_SAVEGAME,
-	MTHK_LOADGAME,
-	MTHK_SMALLMAP,
-	MTHK_TOWNDIRECTORY,
-	MTHK_SUBSIDIES,
-	MTHK_STATIONS,
-	MTHK_FINANCES,
-	MTHK_COMPANIES,
-	MTHK_STORY,
-	MTHK_GOAL,
-	MTHK_GRAPHS,
-	MTHK_LEAGUE,
-	MTHK_INDUSTRIES,
-	MTHK_TRAIN_LIST,
-	MTHK_ROADVEH_LIST,
-	MTHK_SHIP_LIST,
-	MTHK_AIRCRAFT_LIST,
-	MTHK_ZOOM_IN,
-	MTHK_ZOOM_OUT,
-	MTHK_BUILD_RAIL,
-	MTHK_BUILD_ROAD,
-	MTHK_BUILD_TRAM,
-	MTHK_BUILD_DOCKS,
-	MTHK_BUILD_AIRPORT,
-	MTHK_BUILD_TREES,
-	MTHK_MUSIC,
-	MTHK_LANDINFO,
-	MTHK_AI_DEBUG,
-	MTHK_SMALL_SCREENSHOT,
-	MTHK_ZOOMEDIN_SCREENSHOT,
-	MTHK_DEFAULTZOOM_SCREENSHOT,
-	MTHK_GIANT_SCREENSHOT,
-	MTHK_CHEATS,
-	MTHK_TERRAFORM,
-	MTHK_EXTRA_VIEWPORT,
-	MTHK_CLIENT_LIST,
-	MTHK_SIGN_LIST,
 };
 
 /** Main toolbar. */

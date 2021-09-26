@@ -281,7 +281,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 	}
 
 	NetworkAdminClientError(this->client_id, NETWORK_ERROR_CONNECTION_LOST);
-	Debug(net, 3, "Closed client connection {}", this->client_id);
+	Debug(net, 3, "[{}] Client #{} closed connection", ServerNetworkGameSocketHandler::GetName(), this->client_id);
 
 	/* We just lost one client :( */
 	if (this->status >= STATUS_AUTHORIZED) _network_game_info.clients_on--;
@@ -305,7 +305,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 /* static */ bool ServerNetworkGameSocketHandler::AllowConnection()
 {
 	extern byte _network_clients_connected;
-	bool accept = _network_clients_connected < MAX_CLIENTS && _network_game_info.clients_on < _settings_client.network.max_clients;
+	bool accept = _network_clients_connected < MAX_CLIENTS;
 
 	/* We can't go over the MAX_CLIENTS limit here. However, the
 	 * pool must have place for all clients and ourself. */
@@ -671,6 +671,28 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendChat(NetworkAction action,
 }
 
 /**
+ * Send a chat message from external source.
+ * @param source Name of the source this message came from.
+ * @param colour TextColour to use for the message.
+ * @param user Name of the user who sent the messsage.
+ * @param msg The actual message.
+ */
+NetworkRecvStatus ServerNetworkGameSocketHandler::SendExternalChat(const std::string &source, TextColour colour, const std::string &user, const std::string &msg)
+{
+	if (this->status < STATUS_PRE_ACTIVE) return NETWORK_RECV_STATUS_OKAY;
+
+	Packet *p = new Packet(PACKET_SERVER_EXTERNAL_CHAT);
+
+	p->Send_string(source);
+	p->Send_uint16(colour);
+	p->Send_string(user);
+	p->Send_string(msg);
+
+	this->SendPacket(p);
+	return NETWORK_RECV_STATUS_OKAY;
+}
+
+/**
  * Tell the client another client quit with an error.
  * @param client_id The client that quit.
  * @param errorno The reason the client quit.
@@ -803,6 +825,11 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_JOIN(Packet *p)
 	if (this->status != STATUS_INACTIVE) {
 		/* Illegal call, return error and ignore the packet */
 		return this->SendError(NETWORK_ERROR_NOT_EXPECTED);
+	}
+
+	if (_network_game_info.clients_on >= _settings_client.network.max_clients) {
+		/* Turns out we are full. Inform the user about this. */
+		return this->SendError(NETWORK_ERROR_FULL);
 	}
 
 	std::string client_revision = p->Recv_string(NETWORK_REVISION_LENGTH);
@@ -942,6 +969,8 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_MAP_OK(Packet *
 
 		NetworkTextMessage(NETWORK_ACTION_JOIN, CC_DEFAULT, false, client_name, "", this->client_id);
 		InvalidateWindowData(WC_CLIENT_LIST, 0);
+
+		Debug(net, 3, "[{}] Client #{} ({}) joined as {}", ServerNetworkGameSocketHandler::GetName(), this->client_id, this->GetClientIP(), client_name);
 
 		/* Mark the client as pre-active, and wait for an ACK
 		 *  so we know it is done loading and in sync with us */
@@ -1255,10 +1284,25 @@ void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, co
 
 			ci = NetworkClientInfo::GetByClientID(from_id);
 			if (ci != nullptr) {
-				NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), false, ci->client_name, msg, data);
+				NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), false, ci->client_name, msg, data, "");
 			}
 			break;
 	}
+}
+
+/**
+ * Send a chat message from external source.
+ * @param source Name of the source this message came from.
+ * @param colour TextColour to use for the message.
+ * @param user Name of the user who sent the messsage.
+ * @param msg The actual message.
+ */
+void NetworkServerSendExternalChat(const std::string &source, TextColour colour, const std::string &user, const std::string &msg)
+{
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
+		cs->SendExternalChat(source, colour, user, msg);
+	}
+	NetworkTextMessage(NETWORK_ACTION_EXTERNAL_CHAT, colour, false, user, msg, 0, source);
 }
 
 NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_CHAT(Packet *p)

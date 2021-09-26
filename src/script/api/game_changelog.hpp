@@ -20,6 +20,13 @@
  * API additions:
  * \li GSNewGRF
  * \li GSNewGRFList
+ * \li GSMarine::BT_LOCK
+ * \li GSMarine::BT_CANAL
+ * \li GSTile::IsSeaTile
+ * \li GSTile::IsRiverTile
+ * \li GSTile::BT_CLEAR_WATER
+ * \li GSObjectTypeList
+ * \li GSObjectType
  *
  * \b 1.11.0
  *
