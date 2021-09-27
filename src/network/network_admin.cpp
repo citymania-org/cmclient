@@ -76,6 +76,11 @@ ServerNetworkAdminSocketHandler::~ServerNetworkAdminSocketHandler()
 	_network_admins_connected--;
 	Debug(net, 3, "[admin] '{}' ({}) has disconnected", this->admin_name, this->admin_version);
 	if (_redirect_console_to_admin == this->index) _redirect_console_to_admin = INVALID_ADMIN_ID;
+
+	if (this->update_frequency[ADMIN_UPDATE_CONSOLE] & ADMIN_FREQUENCY_AUTOMATIC) {
+		this->update_frequency[ADMIN_UPDATE_CONSOLE] = (AdminUpdateFrequency)0;
+		DebugReconsiderSendRemoteMessages();
+	}
 }
 
 /**
@@ -594,7 +599,7 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::SendCmdNames()
 		/* Should COMPAT_MTU be exceeded, start a new packet
 		 * (magic 5: 1 bool "more data" and one uint16 "command id", one
 		 * byte for string '\0' termination and 1 bool "no more data" */
-		if (p->CanWriteToPacket(strlen(cmdname) + 5)) {
+		if (!p->CanWriteToPacket(strlen(cmdname) + 5)) {
 			p->Send_bool(false);
 			this->SendPacket(p);
 
@@ -688,6 +693,8 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::Receive_ADMIN_UPDATE_FREQUENC
 
 	this->update_frequency[type] = freq;
 
+	if (type == ADMIN_UPDATE_CONSOLE) DebugReconsiderSendRemoteMessages();
+
 	return NETWORK_RECV_STATUS_OKAY;
 }
 
@@ -779,6 +786,25 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::Receive_ADMIN_CHAT(Packet *p)
 			Debug(net, 1, "[admin] Invalid chat action {} from admin '{}' ({}).", action, this->admin_name, this->admin_version);
 			return this->SendError(NETWORK_ERROR_ILLEGAL_PACKET);
 	}
+
+	return NETWORK_RECV_STATUS_OKAY;
+}
+
+NetworkRecvStatus ServerNetworkAdminSocketHandler::Receive_ADMIN_EXTERNAL_CHAT(Packet *p)
+{
+	if (this->status == ADMIN_STATUS_INACTIVE) return this->SendError(NETWORK_ERROR_NOT_EXPECTED);
+
+	std::string source = p->Recv_string(NETWORK_CHAT_LENGTH);
+	TextColour colour = (TextColour)p->Recv_uint16();
+	std::string user = p->Recv_string(NETWORK_CHAT_LENGTH);
+	std::string msg = p->Recv_string(NETWORK_CHAT_LENGTH);
+
+	if (!IsValidConsoleColour(colour)) {
+		Debug(net, 1, "[admin] Not supported chat colour {} ({}, {}, {}) from '{}' ({}).", (uint16)colour, source, user, msg, this->admin_name, this->admin_version);
+		return this->SendError(NETWORK_ERROR_ILLEGAL_PACKET);
+	}
+
+	NetworkServerSendExternalChat(source, colour, user, msg);
 
 	return NETWORK_RECV_STATUS_OKAY;
 }

@@ -4085,8 +4085,8 @@ static ChangeInfoResult ObjectChangeInfo(uint id, int numinfo, int prop, ByteRea
 
 			case 0x0C: // Size
 				spec->size = buf->ReadByte();
-				if ((spec->size & 0xF0) == 0 || (spec->size & 0x0F) == 0) {
-					grfmsg(1, "ObjectChangeInfo: Invalid object size requested (%u) for object id %u. Ignoring.", spec->size, id + i);
+				if (GB(spec->size, 0, 4) == 0 || GB(spec->size, 4, 4) == 0) {
+					grfmsg(0, "ObjectChangeInfo: Invalid object size requested (0x%x) for object id %u. Ignoring.", spec->size, id + i);
 					spec->size = 0x11; // 1x1
 				}
 				break;
@@ -5167,6 +5167,11 @@ static void NewSpriteGroup(ByteReader *buf)
 
 					grfmsg(6, "NewSpriteGroup: New SpriteGroup 0x%02X, %u loaded, %u loading",
 							setid, num_loaded, num_loading);
+
+					if (num_loaded + num_loading == 0) {
+						grfmsg(1, "NewSpriteGroup: no result, skipping invalid RealSpriteGroup");
+						break;
+					}
 
 					if (num_loaded + num_loading == 1) {
 						/* Avoid creating 'Real' sprite group if only one option. */

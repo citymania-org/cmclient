@@ -24,6 +24,7 @@
 #include "core/geometry_func.hpp"
 #include "company_base.h"
 #include "company_gui.h"
+#include "gui.h"
 
 #include "widgets/group_widget.h"
 
@@ -747,17 +748,19 @@ public:
 						NOT_REACHED();
 				}
 				if (v) {
-					this->vehicle_sel = v->index;
-
 					if (citymania::_fn_mod) {
-						this->SelectGroup(v->group_id);
+						if (this->grouping == GB_NONE) {
+							this->SelectGroup(v->group_id);
+						} else {
+							ShowOrdersWindow(v);
+						}
+					} else {
+						this->vehicle_sel = v->index;
+						SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_GROUP);
+						SetMouseCursorVehicle(v, EIT_IN_LIST);
+						_cursor.vehchain = true;
+						this->SetDirty();
 					}
-
-					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this, CM_DDSP_GROUP);
-					SetMouseCursorVehicle(v, EIT_IN_LIST);
-					_cursor.vehchain = true;
-
-					this->SetDirty();
 				}
 
 				break;
