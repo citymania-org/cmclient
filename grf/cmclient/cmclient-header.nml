@@ -6,7 +6,15 @@ grf {
     min_compatible_version: 1;
 }
 
-replace inner_highlight(10000, "sprites/innerhighlight00.png") {
+replace toolbar(10000, "sprites/toolbar.png") {
+    [ 0,     0,   20,   14,  0,    0]
+}
+
+alternative_sprites(toolbar, ZOOM_LEVEL_IN_2X, BIT_DEPTH_8BPP) {
+    [ 32,     0,   40,   40,  0,    0, "sprites/toolbar.png"]
+}
+
+replace inner_highlight(10001, "sprites/innerhighlight00.png") {
     [ 18,     8,   64,   31,  -31,    7]
     [ 98,     8,   64,   31,  -31,    7]
     [178,     8,   64,   23,  -31,    7]
@@ -89,7 +97,7 @@ replace inner_highlight(10000, "sprites/innerhighlight00.png") {
     }
 }
 
-replace border_highlight(10029, "sprites/borderhighlight.png") {
+replace border_highlight(10030, "sprites/borderhighlight.png") {
     [  10,   10, 64, 31, -31,   7]
     [  84,   10, 64, 31, -31,   7]
     [ 158,   10, 64, 31, -31,   7]

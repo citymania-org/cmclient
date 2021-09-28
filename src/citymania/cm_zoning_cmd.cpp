@@ -170,16 +170,16 @@ SpriteID TileZoneCheckOpinionEvaluation(TileIndex tile, Owner owner) {
 	if (town == NULL) return INVALID_SPRITE_ID; // no town
 	else if (HasBit(town->have_ratings, owner)) {  // good : bad
 		int16 rating = town->ratings[owner];
-		if(rating <= RATING_APPALLING) return SPR_PALETTE_ZONING_RED;
-		if(rating <= RATING_POOR) return SPR_PALETTE_ZONING_ORANGE;
-		if(rating <= RATING_MEDIOCRE) return SPR_PALETTE_ZONING_YELLOW;
-		if(rating <= RATING_GOOD) return SPR_PALETTE_ZONING_WHITE;
-		if(rating <= RATING_VERYGOOD) return SPR_PALETTE_ZONING_PURPLE;
-		if(rating <= RATING_EXCELLENT) return SPR_PALETTE_ZONING_LIGHT_BLUE;
-		return SPR_PALETTE_ZONING_GREEN;
+		if(rating <= RATING_APPALLING) return CM_SPR_PALETTE_ZONING_RED;
+		if(rating <= RATING_POOR) return CM_SPR_PALETTE_ZONING_ORANGE;
+		if(rating <= RATING_MEDIOCRE) return CM_SPR_PALETTE_ZONING_YELLOW;
+		if(rating <= RATING_GOOD) return CM_SPR_PALETTE_ZONING_WHITE;
+		if(rating <= RATING_VERYGOOD) return CM_SPR_PALETTE_ZONING_PURPLE;
+		if(rating <= RATING_EXCELLENT) return CM_SPR_PALETTE_ZONING_LIGHT_BLUE;
+		return CM_SPR_PALETTE_ZONING_GREEN;
 	}
 	else {
-		return SPR_PALETTE_ZONING_BLACK;      // no opinion
+		return CM_SPR_PALETTE_ZONING_BLACK;      // no opinion
 	}
 }
 
@@ -190,12 +190,12 @@ SpriteID TileZoneCheckBuildEvaluation(TileIndex tile, Owner owner) {
 		case MP_INDUSTRY:
 		case MP_OBJECT:
 		case MP_HOUSE:
-			return SPR_PALETTE_ZONING_RED; //can't build
+			return CM_SPR_PALETTE_ZONING_RED; //can't build
 		case MP_STATION:
 		case MP_TUNNELBRIDGE:
 		case MP_ROAD:
 		case MP_RAILWAY: {
-			if (GetTileOwner(tile) != owner) return SPR_PALETTE_ZONING_RED; //can't build
+			if (GetTileOwner(tile) != owner) return CM_SPR_PALETTE_ZONING_RED; //can't build
 			else return INVALID_SPRITE_ID;
 		}
 		default: return INVALID_SPRITE_ID;
@@ -226,7 +226,7 @@ SpriteID TileZoneCheckUnservedBuildingsEvaluation(TileIndex tile) {
 		if (!stations.GetStations()->empty()) {
 			return INVALID_SPRITE_ID;
 		}
-		return SPR_PALETTE_ZONING_RED;
+		return CM_SPR_PALETTE_ZONING_RED;
 	}
 	return INVALID_SPRITE_ID;
 }
@@ -242,7 +242,7 @@ SpriteID TileZoneCheckUnservedIndustriesEvaluation(TileIndex tile) {
 			return INVALID_SPRITE_ID;
 		}
 
-		return SPR_PALETTE_ZONING_RED;
+		return CM_SPR_PALETTE_ZONING_RED;
 	}
 	return INVALID_SPRITE_ID;
 }
@@ -264,11 +264,11 @@ SpriteID TileZoneCheckTownZones(TileIndex tile) {
 	}
 
 	switch (tz) {
-		case HZB_TOWN_EDGE:         return SPR_PALETTE_ZONING_LIGHT_BLUE; // Tz0
-		case HZB_TOWN_OUTSKIRT:     return SPR_PALETTE_ZONING_RED; // Tz1
-		case HZB_TOWN_OUTER_SUBURB: return SPR_PALETTE_ZONING_YELLOW; // Tz2
-		case HZB_TOWN_INNER_SUBURB: return SPR_PALETTE_ZONING_GREEN; // Tz3
-		case HZB_TOWN_CENTRE:       return SPR_PALETTE_ZONING_WHITE; // Tz4 - center
+		case HZB_TOWN_EDGE:         return CM_SPR_PALETTE_ZONING_LIGHT_BLUE; // Tz0
+		case HZB_TOWN_OUTSKIRT:     return CM_SPR_PALETTE_ZONING_RED; // Tz1
+		case HZB_TOWN_OUTER_SUBURB: return CM_SPR_PALETTE_ZONING_YELLOW; // Tz2
+		case HZB_TOWN_INNER_SUBURB: return CM_SPR_PALETTE_ZONING_GREEN; // Tz3
+		case HZB_TOWN_CENTRE:       return CM_SPR_PALETTE_ZONING_WHITE; // Tz4 - center
 		default:                    return INVALID_SPRITE_ID; // no town
 	}
 	return INVALID_SPRITE_ID;
@@ -278,7 +278,7 @@ SpriteID TileZoneCheckTownZones(TileIndex tile) {
 SpriteID TileZoneCheckNewCBBorders(TileIndex tile) {
 	for (Town *town : Town::Iterate()) {
 		if (DistanceSquare(tile, town->xy) <= town->cache.squared_town_zone_radius[0] + 30)
-			return SPR_PALETTE_ZONING_BLACK;
+			return CM_SPR_PALETTE_ZONING_BLACK;
 	}
 	return INVALID_SPRITE_ID;
 }
@@ -287,7 +287,7 @@ SpriteID TileZoneCheckNewCBBorders(TileIndex tile) {
 SpriteID TileZoneCheckCBBorders(TileIndex tile) {
 	for (Town *town : Town::Iterate()) {
 		if (DistanceMax(town->xy, tile) <= _settings_client.gui.cm_cb_distance)
-			return SPR_PALETTE_ZONING_LIGHT_BLUE;
+			return CM_SPR_PALETTE_ZONING_LIGHT_BLUE;
 	}
 	return INVALID_SPRITE_ID; // no town
 }
@@ -297,7 +297,7 @@ SpriteID TileZoneCheckCBTownBorders(TileIndex tile) {
 	for (Town *town : Town::Iterate()) {
 		uint32 distMax = DistanceMax(town->xy, tile);
 		if (distMax * distMax < town->cache.squared_town_zone_radius[0]){
-			return SPR_PALETTE_ZONING_GREEN;
+			return CM_SPR_PALETTE_ZONING_GREEN;
 		}
 	}
 	return INVALID_SPRITE_ID;
@@ -310,9 +310,9 @@ SpriteID TileZoneCheckTownAdvertisementZones(TileIndex tile) {
 
 	uint dist = DistanceManhattan(town->xy, tile);
 
-	if (dist <= 10) return SPR_PALETTE_ZONING_GREEN;
-	if (dist <= 15) return SPR_PALETTE_ZONING_YELLOW;
-	if (dist <= 20) return SPR_PALETTE_ZONING_LIGHT_BLUE;
+	if (dist <= 10) return CM_SPR_PALETTE_ZONING_GREEN;
+	if (dist <= 15) return CM_SPR_PALETTE_ZONING_YELLOW;
+	if (dist <= 20) return CM_SPR_PALETTE_ZONING_LIGHT_BLUE;
 	return INVALID_SPRITE_ID;
 }
 
@@ -320,12 +320,12 @@ SpriteID TileZoneCheckTownAdvertisementZones(TileIndex tile) {
 SpriteID TileZoneCheckTownsGrowthTiles(TileIndex tile) {
 	switch (citymania::_game->get_town_growth_tile(tile)) {
 		// case TGTS_CB_HOUSE_REMOVED_NOGROW: return SPR_PALETTE_ZONING_LIGHT_BLUE;
-		case citymania::TownGrowthTileState::RH_REMOVED:   return SPR_PALETTE_ZONING_LIGHT_BLUE;
-		case citymania::TownGrowthTileState::RH_REBUILT:   return SPR_PALETTE_ZONING_WHITE;
-		case citymania::TownGrowthTileState::NEW_HOUSE:    return SPR_PALETTE_ZONING_GREEN;
-		case citymania::TownGrowthTileState::CS:           return SPR_PALETTE_ZONING_ORANGE;
-		case citymania::TownGrowthTileState::HS:           return SPR_PALETTE_ZONING_YELLOW;
-		case citymania::TownGrowthTileState::HR:           return SPR_PALETTE_ZONING_RED;
+		case citymania::TownGrowthTileState::RH_REMOVED:   return CM_SPR_PALETTE_ZONING_LIGHT_BLUE;
+		case citymania::TownGrowthTileState::RH_REBUILT:   return CM_SPR_PALETTE_ZONING_WHITE;
+		case citymania::TownGrowthTileState::NEW_HOUSE:    return CM_SPR_PALETTE_ZONING_GREEN;
+		case citymania::TownGrowthTileState::CS:           return CM_SPR_PALETTE_ZONING_ORANGE;
+		case citymania::TownGrowthTileState::HS:           return CM_SPR_PALETTE_ZONING_YELLOW;
+		case citymania::TownGrowthTileState::HR:           return CM_SPR_PALETTE_ZONING_RED;
 		default: return INVALID_SPRITE_ID;
 	}
 }
@@ -343,10 +343,10 @@ SpriteID TileZoneCheckActiveStations(TileIndex tile) {
 	}
 
 	if (st->time_since_load <= 20 || st->time_since_unload <= 20) {
-		return SPR_PALETTE_ZONING_GREEN;
+		return CM_SPR_PALETTE_ZONING_GREEN;
 	}
 
-	return SPR_PALETTE_ZONING_RED;
+	return CM_SPR_PALETTE_ZONING_RED;
 }
 
 
@@ -378,18 +378,18 @@ SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode 
 
 SpriteID GetTownZoneBorderColor(uint8 zone) {
 	switch (zone) {
-		default: return SPR_PALETTE_ZONING_WHITE;  // Tz0
-		case 2: return SPR_PALETTE_ZONING_YELLOW;  // Tz1
-		case 3: return SPR_PALETTE_ZONING_ORANGE;  // Tz2
-		case 4: return SPR_PALETTE_ZONING_ORANGE;  // Tz3
-		case 5: return SPR_PALETTE_ZONING_RED;  // Tz4 - center
+		default: return CM_SPR_PALETTE_ZONING_WHITE;  // Tz0
+		case 2: return CM_SPR_PALETTE_ZONING_YELLOW;  // Tz1
+		case 3: return CM_SPR_PALETTE_ZONING_ORANGE;  // Tz2
+		case 4: return CM_SPR_PALETTE_ZONING_ORANGE;  // Tz3
+		case 5: return CM_SPR_PALETTE_ZONING_RED;  // Tz4 - center
 	};
 	switch (zone) {
-		default: return SPR_PALETTE_ZONING_LIGHT_BLUE;  // Tz0
-		case 2: return SPR_PALETTE_ZONING_RED;  // Tz1
-		case 3: return SPR_PALETTE_ZONING_YELLOW;  // Tz2
-		case 4: return SPR_PALETTE_ZONING_GREEN;  // Tz3
-		case 5: return SPR_PALETTE_ZONING_WHITE;  // Tz4 - center
+		default: return CM_SPR_PALETTE_ZONING_LIGHT_BLUE;  // Tz0
+		case 2: return CM_SPR_PALETTE_ZONING_RED;  // Tz1
+		case 3: return CM_SPR_PALETTE_ZONING_YELLOW;  // Tz2
+		case 4: return CM_SPR_PALETTE_ZONING_GREEN;  // Tz3
+		case 5: return CM_SPR_PALETTE_ZONING_WHITE;  // Tz4 - center
 	};
 }
 
@@ -419,7 +419,7 @@ void DrawTileZoning(const TileInfo *ti) {
 		}
 	}
 	if (_zoning.inner != CHECKNOTHING){
-		DrawZoningSprites(SPR_INNER_HIGHLIGHT_BASE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.inner), ti);
+		DrawZoningSprites(CM_SPR_INNER_HIGHLIGHT_BASE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.inner), ti);
 	}
 }
 

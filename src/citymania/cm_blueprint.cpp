@@ -215,9 +215,9 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
 
     for (auto &o: this->items) {
         auto otile = AddTileIndexDiffCWrap(tile, o.tdiff);
-        auto palette = PALETTE_TINT_WHITE;
+        auto palette = CM_PALETTE_TINT_WHITE;
         if (o.type != Item::Type::RAIL_SIGNAL && !CanBuild(GetBlueprintCommand(tile, o)))
-            palette = PALETTE_TINT_RED_DEEP;
+            palette = CM_PALETTE_TINT_RED_DEEP;
 
         switch(o.type) {
             case Item::Type::RAIL_TRACK: {
@@ -244,8 +244,8 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
             case Item::Type::RAIL_STATION_PART: {
                 auto layout_ptr = AllocaM(byte, (int)o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
                 GetStationLayout(layout_ptr, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len, nullptr);
-                if (palette == PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
-                    palette = PALETTE_TINT_ORANGE_DEEP;
+                if (palette == CM_PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
+                    palette = CM_PALETTE_TINT_ORANGE_DEEP;
                 IterateStation(otile, o.u.rail.station_part.axis, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len,
                     [&](TileIndex tile) {
                         byte layout = *layout_ptr++;
@@ -255,7 +255,7 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 break;
             }
             case Item::Type::RAIL_SIGNAL:
-                add_tile(otile, ObjectTileHighlight::make_rail_signal(PALETTE_TINT_WHITE, o.u.rail.signal.pos, o.u.rail.signal.type, o.u.rail.signal.variant));
+                add_tile(otile, ObjectTileHighlight::make_rail_signal(CM_PALETTE_TINT_WHITE, o.u.rail.signal.pos, o.u.rail.signal.type, o.u.rail.signal.variant));
                 break;
             case Item::Type::RAIL_STATION:
                 break;
@@ -590,7 +590,7 @@ void SetBlueprintHighlight(const TileInfo *ti, TileHighlight &th) {
         return;
 
     if (_active_blueprint.second->HasSourceTile(ti->tile)) {
-        th.ground_pal = th.structure_pal = PALETTE_TINT_BLUE;
+        th.ground_pal = th.structure_pal = CM_PALETTE_TINT_BLUE;
     }
 }
 
