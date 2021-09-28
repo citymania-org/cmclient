@@ -214,6 +214,7 @@ public:
 protected:
     bool tiles_updated = false;
     std::multimap<TileIndex, ObjectTileHighlight> tiles;
+    void AddTile(TileIndex tile, ObjectTileHighlight &&oh);
     void UpdateTiles();
     void PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track);
 

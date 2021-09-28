@@ -240,7 +240,7 @@ void ObjectHighlight::PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Tra
     if (GetRailTileType(tile) != RAIL_TILE_NORMAL) return;
     if ((GetTrackBits(tile) & DiagdirReachesTracks(dir)) == 0) return;
 
-    this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_rail_track(CM_PALETTE_TINT_WHITE, track)));
+    this->AddTile(tile, ObjectTileHighlight::make_rail_track(CM_PALETTE_TINT_WHITE, track));
 }
 
 /** Additional pieces of track to add at the entrance of a depot. */
@@ -272,6 +272,11 @@ bool CanBuild(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
 
 bool CanBuild(const CommandContainer &cc) {
     return CanBuild(cc.tile, cc.p1, cc.p2, cc.cmd);
+}
+
+void ObjectHighlight::AddTile(TileIndex tile, ObjectTileHighlight &&oh) {
+    if (tile >= MapSize()) return;
+    this->tiles.insert(std::make_pair(tile, std::move(oh)));
 }
 
 void ObjectHighlight::UpdateTiles() {
@@ -325,7 +330,7 @@ void ObjectHighlight::UpdateTiles() {
                 int w = plat_len;
                 do {
                     byte layout = *layout_ptr++;
-                    this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_rail_station(palette, this->axis, layout & ~1)));
+                    this->AddTile(tile, ObjectTileHighlight::make_rail_station(palette, this->axis, layout & ~1));
                     tile += tile_delta;
                 } while (--w);
                 tile_track += tile_delta ^ TileDiffXY(1, 1); // perpendicular to tile_delta
@@ -343,7 +348,7 @@ void ObjectHighlight::UpdateTiles() {
             ) ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
             TileIndex tile;
             for (TileIndex tile : ta) {
-                this->tiles.insert(std::make_pair(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck)));
+                this->AddTile(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck));
             }
             break;
         }
@@ -355,7 +360,7 @@ void ObjectHighlight::UpdateTiles() {
                 0,
                 CMD_BUILD_ROAD_DEPOT
             ) ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
-            this->tiles.insert(std::make_pair(this->tile, ObjectTileHighlight::make_road_depot(palette, this->roadtype, this->ddir)));
+            this->AddTile(this->tile, ObjectTileHighlight::make_road_depot(palette, this->roadtype, this->ddir));
             break;
         }
 
@@ -375,7 +380,7 @@ void ObjectHighlight::UpdateTiles() {
             if (rotation == DIR_E || rotation == DIR_W) Swap(w, h);
             TileArea airport_area = TileArea(this->tile, w, h);
             for (AirportTileTableIterator iter(as->table[this->airport_layout], this->tile); iter != INVALID_TILE; ++iter) {
-                this->tiles.insert(std::make_pair(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx())));
+                this->AddTile(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx()));
             }
             break;
         }
