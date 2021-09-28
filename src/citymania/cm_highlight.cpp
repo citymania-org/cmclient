@@ -471,7 +471,6 @@ void DrawTrainDepotSprite(SpriteID palette, const TileInfo *ti, RailType railtyp
 
 void DrawTrainStationSprite(SpriteID palette, const TileInfo *ti, RailType railtype, Axis axis, byte section) {
     int32 total_offset = 0;
-    PaletteID pal = COMPANY_SPRITE_COLOUR(_local_company);
     const DrawTileSprites *t = GetStationTileLayout(STATION_RAIL, section + (axis == AXIS_X ? 0 : 1));
     const RailtypeInfo *rti = nullptr;
 
@@ -1028,9 +1027,9 @@ void CalcCBTownLimitBorder(TileHighlight &th, TileIndex tile, SpriteID border_pa
     if (in_zone) th.tint_all(ground_pal);
 }
 
-TileHighlight GetTileHighlight(const TileInfo *ti) {
+TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
     TileHighlight th;
-    if (ti->tile == INVALID_TILE) return th;
+    if (ti->tile == INVALID_TILE || tile_type == MP_VOID) return th;
     if (_zoning.outer == CHECKTOWNZONES) {
         auto p = GetTownZoneBorder(ti->tile);
         auto color = PAL_NONE;
@@ -1133,7 +1132,8 @@ TileHighlight GetTileHighlight(const TileInfo *ti) {
     return th;
 }
 
-void DrawTileZoning(const TileInfo *ti, const TileHighlight &th) {
+void DrawTileZoning(const TileInfo *ti, const TileHighlight &th, TileType tile_type) {
+    if (ti->tile == INVALID_TILE || tile_type == MP_VOID) return;
     for (uint i = 0; i < th.border_count; i++)
         DrawBorderSprites(ti, th.border[i], th.border_color[i]);
     if (th.sprite) {
@@ -1147,6 +1147,7 @@ void DrawTileZoning(const TileInfo *ti, const TileHighlight &th) {
 }
 
 bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
+    if (ti->tile == INVALID_TILE || IsTileType(ti->tile, MP_VOID)) return false;
     _thd.cm.Draw(ti);
 
     if (_thd.drawstyle == CM_HT_BLUEPRINT_PLACE) return true;

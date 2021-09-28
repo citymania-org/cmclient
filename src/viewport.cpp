@@ -1312,13 +1312,13 @@ static void ViewportAddLandscape()
 				_vd.foundation[1] = -1;
 				_vd.last_foundation_child[0] = nullptr;
 				_vd.last_foundation_child[1] = nullptr;
-				_vd.cm_highlight = citymania::GetTileHighlight(&tile_info);
+				_vd.cm_highlight = citymania::GetTileHighlight(&tile_info, tile_type);
 
 				_tile_type_procs[tile_type]->draw_tile_proc(&tile_info);
 
 				if (tile_info.tile != INVALID_TILE){
-					citymania::DrawTileZoning(&tile_info);
-					citymania::DrawTileZoning(&tile_info, _vd.cm_highlight);
+					citymania::DrawTileZoning(&tile_info);  // old zoning patch
+					citymania::DrawTileZoning(&tile_info, _vd.cm_highlight, tile_type);
 					DrawTileSelection(&tile_info);
 				}
 			}
