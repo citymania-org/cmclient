@@ -32,6 +32,8 @@
 #include <mutex>
 #include <condition_variable>
 
+#include "../citymania/cm_client_list_gui.hpp"
+
 #include "../safeguards.h"
 
 
@@ -293,6 +295,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 	delete this->GetInfo();
 	delete this;
 
+	citymania::SetClientListDirty();
 	InvalidateWindowData(WC_CLIENT_LIST, 0);
 
 	return status;
@@ -977,6 +980,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_MAP_OK(Packet *
 		std::string client_name = this->GetClientName();
 
 		NetworkTextMessage(NETWORK_ACTION_JOIN, CC_DEFAULT, false, client_name, "", this->client_id);
+		citymania::SetClientListDirty();
 		InvalidateWindowData(WC_CLIENT_LIST, 0);
 
 		Debug(net, 3, "[{}] Client #{} ({}) joined as {}", ServerNetworkGameSocketHandler::GetName(), this->client_id, this->GetClientIP(), client_name);
@@ -1945,6 +1949,7 @@ void NetworkServerDoMove(ClientID client_id, CompanyID company_id)
 	NetworkAction action = (company_id == COMPANY_SPECTATOR) ? NETWORK_ACTION_COMPANY_SPECTATOR : NETWORK_ACTION_COMPANY_JOIN;
 	NetworkServerSendChat(action, DESTTYPE_BROADCAST, 0, "", client_id, company_id + 1);
 
+	citymania::SetClientListDirty();
 	InvalidateWindowData(WC_CLIENT_LIST, 0);
 }
 

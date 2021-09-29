@@ -39,7 +39,8 @@
 #include <sstream>
 #include <iomanip>
 
-#include "citymania/cm_console_cmds.hpp"
+#include "../citymania/cm_client_list_gui.hpp"
+#include "../citymania/cm_console_cmds.hpp"
 
 #include "../safeguards.h"
 
@@ -562,6 +563,7 @@ NetworkAddress ParseConnectionString(const std::string &connection_string, uint1
 	ServerNetworkGameSocketHandler *cs = new ServerNetworkGameSocketHandler(s);
 	cs->client_address = address; // Save the IP of the client
 
+	citymania::SetClientListDirty();
 	InvalidateWindowData(WC_CLIENT_LIST, 0);
 }
 

@@ -41,6 +41,7 @@
 #include "guitimer_func.h"
 #include "news_func.h"
 
+#include "citymania/cm_client_list_gui.hpp"
 #include "citymania/cm_hotkeys.hpp"
 
 #include "safeguards.h"
@@ -3132,6 +3133,7 @@ void UpdateWindows()
 		/* Update viewport only if window is not shaded. */
 		if (w->viewport != nullptr && !w->IsShaded()) UpdateViewportPosition(w);
 	}
+	citymania::DrawClientList();
 	NetworkDrawChatMessage();
 	/* Redraw mouse cursor in case it was hidden */
 	DrawMouseCursor();

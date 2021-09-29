@@ -53,6 +53,7 @@
 #include "../error.h"
 #include "../zoom_func.h"
 
+#include "../citymania/cm_client_list_gui.hpp"
 #include "../citymania/cm_hotkeys.hpp"
 #include "../citymania/cm_watch_gui.hpp"
 
@@ -1328,6 +1329,7 @@ static const NWidgetPart _nested_client_list_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_NETWORK_CLIENT_LIST_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_IMGBTN, COLOUR_GREY, CM_WID_CL_TOGGLE_OVERLAY), SetDataTip(SPR_LARGE_SMALL_WINDOW, CM_STR_TOGGLE_CLIENTS_OVERLAY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
@@ -1743,6 +1745,7 @@ public:
 		this->vscroll = this->GetScrollbar(WID_CL_SCROLLBAR);
 		this->OnInvalidateData();
 		this->FinishInitNested(window_number);
+		this->GetWidget<NWidgetCore>(CM_WID_CL_TOGGLE_OVERLAY)->SetLowered(_settings_client.gui.cm_show_client_overlay);
 	}
 
 	void OnInvalidateData(int data = 0, bool gui_scope = true) override
@@ -1842,6 +1845,12 @@ public:
 				if (button == nullptr) break;
 
 				button->OnClick(this, pt);
+				break;
+			}
+			case CM_WID_CL_TOGGLE_OVERLAY: {
+				_settings_client.gui.cm_show_client_overlay = !_settings_client.gui.cm_show_client_overlay;
+				this->GetWidget<NWidgetCore>(widget)->SetLowered(_settings_client.gui.cm_show_client_overlay);
+				citymania::SetClientListDirty();
 				break;
 			}
 		}

@@ -35,6 +35,7 @@
 #include "../town.h"
 #include "network_func.h"
 #include "../citymania/cm_newgrf_revisions.hpp"
+#include "../citymania/cm_client_list_gui.hpp"
 
 #include "../safeguards.h"
 
@@ -590,6 +591,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CLIENT_INFO(Pac
 		ci->client_playas = playas;
 		ci->client_name = name;
 
+		citymania::SetClientListDirty();
 		InvalidateWindowData(WC_CLIENT_LIST, 0);
 		InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
 		SetWindowClassesDirty(WC_WATCH_COMPANY);
@@ -613,6 +615,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CLIENT_INFO(Pac
 
 	ci->client_name = name;
 
+	citymania::SetClientListDirty();
 	InvalidateWindowData(WC_CLIENT_LIST, 0);
 	InvalidateWindowClassesData(WC_WATCH_COMPANY, 0);
 	SetWindowClassesDirty(WC_WATCH_COMPANY);
@@ -1009,6 +1012,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_ERROR_QUIT(Pack
 		delete ci;
 	}
 
+	citymania::SetClientListDirty();
 	InvalidateWindowData(WC_CLIENT_LIST, 0);
 
 	return NETWORK_RECV_STATUS_OKAY;
@@ -1028,6 +1032,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_QUIT(Packet *p)
 		Debug(net, 1, "Unknown client ({}) is leaving the game", client_id);
 	}
 
+	citymania::SetClientListDirty();
 	InvalidateWindowData(WC_CLIENT_LIST, 0);
 	InvalidateWindowClassesData( WC_WATCH_COMPANYA, 0 );
 	SetWindowClassesDirty( WC_WATCH_COMPANYA );
@@ -1047,6 +1052,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_JOIN(Packet *p)
 		NetworkTextMessage(NETWORK_ACTION_JOIN, CC_DEFAULT, false, ci->client_name);
 	}
 
+	citymania::SetClientListDirty();
 	InvalidateWindowData(WC_CLIENT_LIST, 0);
 
 	return NETWORK_RECV_STATUS_OKAY;

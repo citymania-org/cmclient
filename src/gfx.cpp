@@ -26,6 +26,8 @@
 #include "table/sprites.h"
 #include "table/control_codes.h"
 
+#include "citymania/cm_client_list_gui.hpp"
+
 #include "safeguards.h"
 
 byte _dirkeys;        ///< 1 = left, 2 = up, 4 = right, 8 = down
@@ -94,6 +96,7 @@ void GfxScroll(int left, int top, int width, int height, int xo, int yo)
 	if (_cursor.visible) UndrawMouseCursor();
 
 	if (_networking) NetworkUndrawChatMessage();
+	if (_networking) citymania::UndrawClientList(left, top, left + width, top + height);
 
 	blitter->ScrollBuffer(_screen.dst_ptr, left, top, width, height, xo, yo);
 	/* This part of the screen is now dirty. */
@@ -1585,6 +1588,7 @@ void RedrawScreenRect(int left, int top, int right, int bottom)
 	}
 
 	if (_networking) NetworkUndrawChatMessage();
+	if (_networking) citymania::UndrawClientList(left, top, right, bottom);
 
 	DrawOverlappedWindowForAll(left, top, right, bottom);
 
