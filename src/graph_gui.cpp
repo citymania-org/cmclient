@@ -405,6 +405,7 @@ protected:
 
 		/* Find the largest value that will be drawn. */
 		if (this->num_on_x_axis == 0) return;
+		if (this->num_dataset == 0) return; // CM (disable all cargo)
 
 		assert(this->num_on_x_axis > 0);
 		assert(this->num_dataset > 0);
@@ -655,7 +656,7 @@ public:
 	 * Update the statistics.
 	 * @param initialize Initialize the data structure.
 	 */
-	void UpdateStatistics(bool initialize)
+	virtual void UpdateStatistics(bool initialize)
 	{
 		CompanyMask excluded_companies = _legend_excluded_companies;
 
@@ -705,8 +706,11 @@ public:
 };
 
 
+static_assert(NUM_CARGO == 64);  // 64 bit excluded_cargo
+
 struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 	bool show_cargo_colors;
+	uint64 excluded_cargo;
 
 	ExcludingCargoBaseGraphWindow(WindowDesc *desc, int widget, StringID format_str_y_axis, bool show_cargo_colors):
 			BaseGraphWindow(desc, widget, format_str_y_axis), show_cargo_colors{show_cargo_colors}
@@ -782,15 +786,11 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		}
 	}
 
-	void UpdateExcludedData()
-	{
-		this->excluded_data = 0;
-
-		int i = 0;
-		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-			if (HasBit(_legend_excluded_cargo, cs->Index())) SetBit(this->excluded_data, i);
-			i++;
-		}
+	void UpdateExcludingGraphs() {
+		this->SetDirty();
+		InvalidateWindowData(WC_INCOME_GRAPH, 0);
+		InvalidateWindowData(WC_DELIVERED_CARGO, 0);
+		InvalidateWindowData(WC_PAYMENT_RATES, 0);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -803,8 +803,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 			case WID_CPR_ENABLE_CARGOES:
 				/* Remove all cargoes from the excluded lists. */
 				_legend_excluded_cargo = 0;
-				this->excluded_data = 0;
-				this->SetDirty();
+				this->UpdateExcludingGraphs();
 				break;
 
 			case WID_CPR_DISABLE_CARGOES: {
@@ -812,10 +811,9 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 				int i = 0;
                 for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					SetBit(_legend_excluded_cargo, cs->Index());
-					SetBit(this->excluded_data, i);
 					i++;
 				}
-				this->SetDirty();
+				this->UpdateExcludingGraphs();
 				break;
 			}
 
@@ -827,8 +825,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 					if (row-- > 0) continue;
 
 					ToggleBit(_legend_excluded_cargo, cs->Index());
-					this->UpdateExcludedData();
-					this->SetDirty();
+					this->UpdateExcludingGraphs();
 					break;
 				}
 				break;
@@ -841,15 +838,22 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		this->vscroll->SetCapacityFromWidget(this, WID_CPR_MATRIX);
 	}
 
-	/**
-	 * Some data on this window has become invalid.
-	 * @param data Information about the changed data.
-	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
-	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
-	{
-		if (!gui_scope) return;
-		this->UpdateExcludedData();
+	bool UpdateExcludedCargo() {
+		uint64 new_excluded_cargo = 0;
+
+		int i = 0;
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
+			if (HasBit(_legend_excluded_cargo, cs->Index())) SetBit(new_excluded_cargo, i);
+			i++;
+		}
+		if (this->excluded_cargo == new_excluded_cargo) return false;
+		this->excluded_cargo = new_excluded_cargo;
+		return true;
+	}
+
+	void UpdateStatistics(bool initialize) override {
+		initialize = this->UpdateExcludedCargo() || initialize;
+		BaseGraphWindow::UpdateStatistics(initialize);
 	}
 };
 
@@ -941,15 +945,14 @@ struct IncomeGraphWindow : ExcludingCargoBaseGraphWindow {
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
 		this->vscroll->SetCount(_sorted_standard_cargo_specs.size());
-		this->UpdateExcludedData();
 		this->FinishInitNested(window_number);
 	}
 
 	OverflowSafeInt64 GetGraphData(const Company *c, int j) override
 	{
 		if(_legend_excluded_cargo == 0){
-		return c->old_economy[j].income;
-	}
+			return c->old_economy[j].income;
+		}
 		uint total_income = 0;
 		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (!HasBit(_legend_excluded_cargo, cs->Index())){
@@ -1065,8 +1068,8 @@ struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 	OverflowSafeInt64 GetGraphData(const Company *c, int j) override
 	{
 		if(_legend_excluded_cargo == 0){
-		return c->old_economy[j].delivered_cargo.GetSum<OverflowSafeInt64>();
-	}
+			return c->old_economy[j].delivered_cargo.GetSum<OverflowSafeInt64>();
+		}
 		uint total_delivered = 0;
 		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (!HasBit(_legend_excluded_cargo, cs->Index())){
@@ -1342,7 +1345,7 @@ struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 		this->vscroll->SetCount(static_cast<int>(_sorted_standard_cargo_specs.size()));
 
 		/* Initialise the dataset */
-		this->OnHundredthTick();
+		this->UpdateStatistics(true);
 
 		this->FinishInitNested(window_number);
 	}
@@ -1354,17 +1357,27 @@ struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 
 	void OnHundredthTick() override
 	{
-		this->UpdateExcludedData();
+		this->UpdateStatistics(true);
+	}
+	/**
+	 * Update the statistics.
+	 * @param initialize Initialize the data structure.
+	 */
+	void UpdateStatistics(bool initialize) override
+	{
+		initialize = this->UpdateExcludedCargo() || initialize;
+		if (!initialize) return;
 
-		int i = 0;
+		int numd = 0;
 		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-			this->colours[i] = cs->legend_colour;
-			for (uint j = 0; j != 24; j++) {
-				this->cost[i][j] = GetTransportedGoodsIncome(10, 20, 2*(j * 4 + 4), cs->Index());
+			if (HasBit(this->excluded_cargo, cs->Index())) continue;
+			this->colours[numd] = cs->legend_colour;
+			for (uint j = 0; j != this->num_on_x_axis; j++) {
+				this->cost[numd][j] = GetTransportedGoodsIncome(10, 20, 2 * (j * 4 + 4), cs->Index());
 			}
-			i++;
+			numd++;
 		}
-		this->num_dataset = i;
+		this->num_dataset = numd;
 	}
 };
 
