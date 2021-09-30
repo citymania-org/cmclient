@@ -608,7 +608,7 @@ static inline uint32 CM_GetSmallMapIMBAPixels(TileIndex tile, TileType t)
 		//  return MKCOLOUR_XYYX(PC_GRASS_LAND, PC_TREES);
 
 		case MP_CLEAR:
-			if (IsClearGround(tile, CLEAR_FIELDS) || IsClearGround(tile, CLEAR_DESERT)) {
+			if (IsTileType(tile, MP_CLEAR) && (IsClearGround(tile, CLEAR_FIELDS) || IsClearGround(tile, CLEAR_DESERT))) {
 				const SmallMapColourScheme *cs = &_heightmap_schemes[3];
 				return cs->height_colours[TileHeight(tile)];
 			}
