@@ -692,6 +692,7 @@ static CommandCost ClearTile_Town(TileIndex tile, DoCommandFlag flags)
 	ChangeTownRating(t, -rating, RATING_HOUSE_MINIMUM, flags);
 	if (flags & DC_EXEC) {
 		ClearTownHouse(t, tile);
+		citymania::Emit(citymania::event::HouseDestroyed{_current_company, t, tile});
 	}
 
 	return cost;

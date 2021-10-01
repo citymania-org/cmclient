@@ -37,6 +37,9 @@ extern SettingTable _world_settings;
 #if defined(_WIN32) && !defined(DEDICATED)
 extern SettingTable _win32_settings;
 #endif /* _WIN32 */
+namespace citymania {
+    extern SettingTable _settings;
+}  // namespace citymania
 
 static const uint GAME_DIFFICULTY_NUM = 18;
 extern const std::array<std::string, GAME_DIFFICULTY_NUM> _old_diff_settings;

@@ -14,16 +14,23 @@ Game::Game() {
             t->cm.hs_last_month = t->cm.hs_this_month;
             t->cm.cs_last_month = t->cm.cs_this_month;
             t->cm.hr_last_month = t->cm.hr_this_month;
+            t->cm.hs_this_month = 0;
+            t->cm.cs_this_month = 0;
+            t->cm.hr_this_month = 0;
 
             t->cm.houses_reconstructed_last_month = t->cm.houses_reconstructed_this_month;
             t->cm.houses_reconstructed_this_month = 0;
             t->cm.houses_demolished_last_month = t->cm.houses_demolished_this_month;
             t->cm.houses_demolished_this_month = 0;
+
+            t->cm.growth_tiles_last_month.swap(t->cm.growth_tiles);
+            t->cm.growth_tiles.clear();
         }
 
-        this->towns_growth_tiles_last_month = this->towns_growth_tiles;
+        this->towns_growth_tiles_last_month.swap(this->towns_growth_tiles);
         this->towns_growth_tiles.clear();
     });
+
     this->events.listen<event::TownBuilt>(event::Slot::GAME, [this] (const event::TownBuilt &event) {
         auto t = event.town;
         t->cm.hs_total = t->cm.hs_last_month = t->cm.hs_this_month = 0;
@@ -35,30 +42,30 @@ Game::Game() {
         if (event.town->cache.num_houses <= event.prev_houses) {
             event.town->cm.hs_total++;
             event.town->cm.hs_this_month++;
-            this->set_town_growth_tile(event.tile, TownGrowthTileState::HS);
+            this->set_town_growth_tile(event.town, event.tile, TownGrowthTileState::HS);
         }
     });
 
     this->events.listen<event::TownGrowthFailed>(event::Slot::GAME, [this] (const event::TownGrowthFailed &event) {
         event.town->cm.cs_total++;
         event.town->cm.cs_this_month++;
-        this->set_town_growth_tile(event.tile, TownGrowthTileState::CS);
+        this->set_town_growth_tile(event.town, event.tile, TownGrowthTileState::CS);
     });
 
     this->events.listen<event::HouseRebuilt>(event::Slot::GAME, [this] (const event::HouseRebuilt &event) {
         if (event.was_successful) {
             event.town->cm.houses_reconstructed_this_month++;
-            this->set_town_growth_tile(event.tile, TownGrowthTileState::RH_REBUILT);
+            this->set_town_growth_tile(event.town, event.tile, TownGrowthTileState::RH_REBUILT);
         } else {
             event.town->cm.houses_demolished_this_month++;
-            this->set_town_growth_tile(event.tile, TownGrowthTileState::RH_REMOVED);
+            this->set_town_growth_tile(event.town, event.tile, TownGrowthTileState::RH_REMOVED);
         }
     });
 
     this->events.listen<event::HouseBuilt>(event::Slot::GAME, [this] (const event::HouseBuilt &event) {
         event.town->cm.houses_constructing++;
         event.town->cm.real_population += event.house_spec->population;
-        this->set_town_growth_tile(event.tile, TownGrowthTileState::NEW_HOUSE);
+        this->set_town_growth_tile(event.town, event.tile, TownGrowthTileState::NEW_HOUSE);
     });
 
     this->events.listen<event::HouseCleared>(event::Slot::GAME, [this] (const event::HouseCleared &event) {
@@ -71,10 +78,26 @@ Game::Game() {
         event.town->cm.houses_constructing--;
     });
 
+    this->events.listen<event::HouseDestroyed>(event::Slot::GAME, [this] (const event::HouseDestroyed &event) {
+        const Company *company = Company::GetIfValid(event.company_id);
+        if (company && company->cm.is_server) {
+            this->set_town_growth_tile(event.town, event.tile, TownGrowthTileState::HR);
+            event.town->cm.hr_total++;
+        }
+    });
+
     this->events.listen<event::TownCachesRebuilt>(event::Slot::GAME, [this] (const event::TownCachesRebuilt &event) {
+        this->towns_growth_tiles.clear();
+        this->towns_growth_tiles_last_month.clear();
         for (Town *town : Town::Iterate()) {
             town->cm.real_population = 0;
             town->cm.houses_constructing = 0;
+            for (auto &[tile, state] : town->cm.growth_tiles) {
+                if (this->towns_growth_tiles[tile] < state) this->towns_growth_tiles[tile] = state;
+            }
+            for (auto &[tile, state] : town->cm.growth_tiles_last_month) {
+                if (this->towns_growth_tiles_last_month[tile] < state) this->towns_growth_tiles_last_month[tile] = state;
+            }
         }
         for (TileIndex t = 0; t < MapSize(); t++) {
             if (!IsTileType(t, MP_HOUSE)) continue;
@@ -91,8 +114,9 @@ Game::Game() {
     });
 }
 
-void Game::set_town_growth_tile(TileIndex tile, TownGrowthTileState state) {
+void Game::set_town_growth_tile(Town *town, TileIndex tile, TownGrowthTileState state) {
     if (this->towns_growth_tiles[tile] < state) this->towns_growth_tiles[tile] = state;
+    if (town->cm.growth_tiles[tile] < state) town->cm.growth_tiles[tile] = state;
 }
 
 } // namespace citymania

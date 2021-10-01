@@ -2,6 +2,7 @@ set(GENERATED_BINARY_DIR ${CMAKE_BINARY_DIR}/generated)
 set(TABLE_BINARY_DIR ${GENERATED_BINARY_DIR}/table)
 
 set(TABLE_INI_SOURCE_FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/citymania_settings.ini
         ${CMAKE_CURRENT_SOURCE_DIR}/company_settings.ini
         ${CMAKE_CURRENT_SOURCE_DIR}/currency_settings.ini
         ${CMAKE_CURRENT_SOURCE_DIR}/difficulty_settings.ini

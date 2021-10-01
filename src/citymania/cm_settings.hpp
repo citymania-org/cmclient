@@ -43,7 +43,7 @@ struct LimitsSettings {
 struct CBSettings {
     uint8 requirements_type;  // 0 - regular 1 - income-based requirements (new cb only)
     std::vector<CBRequirement> requirements;
-    uint8 acceptance_range;  // How far can station be to count towards requiremnts
+    uint16 acceptance_range;  // How far can station be to count towards requiremnts
     uint8 storage_size;  // cargo storage multiplier (x * monthly requirements)
     uint8 town_protection_range;  // Claimed town protection range (square from centre), overlaped with tz0
     uint16 claim_max_houses;  // Max amount of houses claimable town can have
