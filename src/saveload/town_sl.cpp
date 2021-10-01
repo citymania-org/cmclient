@@ -21,6 +21,7 @@
 #include "../tilematrix_type.hpp"
 
 #include "../citymania/cm_main.hpp"
+#include "../citymania/cm_saveload.hpp"
 
 #include "../safeguards.h"
 
@@ -273,6 +274,23 @@ static const SaveLoad _town_desc[] = {
 	SLEG_CONDSTRUCTLIST("supplied", SlTownSupplied,                    SLV_165, SL_MAX_VERSION),
 	SLEG_CONDSTRUCTLIST("received", SlTownReceived,                    SLV_165, SL_MAX_VERSION),
 	SLEG_CONDSTRUCTLIST("acceptance_matrix", SlTownAcceptanceMatrix,   SLV_166, SLV_REMOVE_TOWN_CARGO_CACHE),
+
+	CM_SLE_VAR("__cm_growing_by_chance", Town, cm.growing_by_chance, SLE_BOOL),
+	CM_SLE_VAR("__cm_houses_reconstructed_this_month", Town, cm.houses_reconstructed_this_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_houses_reconstructed_last_month", Town, cm.houses_reconstructed_last_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_houses_demolished_this_month", Town, cm.houses_demolished_this_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_houses_demolished_last_month", Town, cm.houses_demolished_last_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_hs_total",      Town, cm.hs_total,      SLE_UINT32),
+	CM_SLE_VAR("__cm_hs_this_month", Town, cm.hs_this_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_hs_last_month", Town, cm.hs_last_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_cs_total",      Town, cm.cs_total,      SLE_UINT32),
+	CM_SLE_VAR("__cm_cs_this_month", Town, cm.cs_this_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_cs_last_month", Town, cm.cs_last_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_hr_total",      Town, cm.hr_total,      SLE_UINT32),
+	CM_SLE_VAR("__cm_hr_this_month", Town, cm.hr_this_month, SLE_UINT16),
+	CM_SLE_VAR("__cm_hr_last_month", Town, cm.hr_last_month, SLE_UINT16),
+	SLEG_CONDSTRUCTLIST("__cm_growth_tiles", citymania::SlTownGrowthTiles, SLV_TABLE_CHUNKS, SL_MAX_VERSION),
+	SLEG_CONDSTRUCTLIST("__cm_growth_tiles_last_month", citymania::SlTownGrowthTilesLastMonth, SLV_TABLE_CHUNKS, SL_MAX_VERSION),
 };
 
 struct HIDSChunkHandler : NewGRFMappingChunkHandler {

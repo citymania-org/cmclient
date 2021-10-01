@@ -966,7 +966,7 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
 
 void CalcCBAcceptanceBorders(TileHighlight &th, TileIndex tile, SpriteID border_pal, SpriteID ground_pal) {
     int tx = TileX(tile), ty = TileY(tile);
-    uint16 radius = _settings_client.gui.cm_cb_distance;
+    uint16 radius = _settings_game.citymania.cb.acceptance_range;
     bool in_zone = false;
     ZoningBorder border = ZoningBorder::NONE;
     _town_kdtree.FindContained(

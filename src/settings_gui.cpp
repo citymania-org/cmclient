@@ -1640,7 +1640,6 @@ static SettingsContainer &GetSettingsTree()
 				viewports->Add(new SettingEntry("gui.measure_tooltip"));
 				viewports->Add(new SettingEntry("gui.loading_indicators"));
 				viewports->Add(new SettingEntry("gui.show_track_reservation"));
-				viewports->Add(new SettingEntry("gui.cm_cb_distance"));
 				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_industries"));
 				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_stations"));
 				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_houses"));

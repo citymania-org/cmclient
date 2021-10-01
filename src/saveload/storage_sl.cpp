@@ -14,8 +14,6 @@
 
 #include "../newgrf_storage.h"
 
-#include "../citymania/cm_saveload.hpp"
-
 #include "../safeguards.h"
 
 /** Description of the data to save and load in #PersistentStorage. */
@@ -55,7 +53,7 @@ struct PSACChunkHandler : ChunkHandler {
 	}
 };
 
-static const citymania::PSACChunkHandler PSAC;
+static const PSACChunkHandler PSAC;
 static const ChunkHandlerRef persistent_storage_chunk_handlers[] = {
 	PSAC,
 };

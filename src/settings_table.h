@@ -39,6 +39,7 @@ extern SettingTable _win32_settings;
 #endif /* _WIN32 */
 namespace citymania {
     extern SettingTable _settings;
+    extern SettingTable _cmclient_settings;
 }  // namespace citymania
 
 static const uint GAME_DIFFICULTY_NUM = 18;

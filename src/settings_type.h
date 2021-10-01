@@ -203,7 +203,6 @@ struct GUISettings {
 	bool   newgrf_show_old_versions;         ///< whether to show old versions in the NewGRF list
 	uint8  newgrf_default_palette;           ///< default palette to use for NewGRFs without action 14 palette information
 
-	uint8  cm_cb_distance;                ///< zoning cb distance
 	bool   cm_show_industry_forbidden_tiles;    ///< higlight areas where industry placement is forbidden regardless of terrain
 	bool   cm_runway_too_short_warning;            ///< warn about aircrafts using too short runways
 

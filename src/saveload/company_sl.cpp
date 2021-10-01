@@ -22,6 +22,8 @@
 
 #include "table/strings.h"
 
+#include "../citymania/cm_saveload.hpp"
+
 #include "../safeguards.h"
 
 /**
@@ -316,6 +318,8 @@ public:
 	void LoadCheck(CompanyProperties *c) const override { this->Load(c); }
 };
 
+static_assert(NUM_CARGO == 64);  // cargo_income needs version bump
+
 class SlCompanyEconomy : public DefaultSaveLoadHandler<SlCompanyEconomy, CompanyProperties> {
 public:
 	inline static const SaveLoad description[] = {
@@ -330,6 +334,7 @@ public:
 		SLE_CONDARR(CompanyEconomyEntry, delivered_cargo,     SLE_UINT32, 32,           SLV_170, SLV_EXTEND_CARGOTYPES),
 		SLE_CONDARR(CompanyEconomyEntry, delivered_cargo,     SLE_UINT32, NUM_CARGO,    SLV_EXTEND_CARGOTYPES, SL_MAX_VERSION),
 		    SLE_VAR(CompanyEconomyEntry, performance_history, SLE_INT32),
+		CM_SLE_ARR("__cm_cargo_income", CompanyEconomyEntry, cm.cargo_income, SLE_INT64, NUM_CARGO),
 	};
 	inline const static SaveLoadCompatTable compat_description = _company_economy_compat;
 
@@ -495,6 +500,8 @@ static const SaveLoad _company_desc[] = {
 	SLEG_STRUCT("cur_economy", SlCompanyEconomy),
 	SLEG_STRUCTLIST("old_economy", SlCompanyOldEconomy),
 	SLEG_CONDSTRUCTLIST("liveries", SlCompanyLiveries,                               SLV_34, SL_MAX_VERSION),
+	CM_SLE_VAR("__cm_is_server", CompanyProperties, cm.is_server, SLE_BOOL),
+	CM_SLE_VAR("__cm_is_scored", CompanyProperties, cm.is_scored, SLE_BOOL),
 };
 
 struct PLYRChunkHandler : ChunkHandler {

@@ -74,6 +74,7 @@ SettingTable _win32_settings{ _win32_settings_table };
 #endif /* _WIN32 */
 namespace citymania {
 	SettingTable _settings{ _citymania_settings_table };
+	SettingTable _cmclient_settings{ _cmclient_settings_table };
 }  // namespace citymania
 
 /* Begin - Callback Functions for the various settings. */
