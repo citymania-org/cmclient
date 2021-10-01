@@ -60,7 +60,7 @@ static NWidgetBase *MakeCompanyButtons(int *biggest_index)
 	for (int company_num = COMPANY_FIRST; company_num < MAX_COMPANIES; company_num++ ) {
 		/* Manage Company Buttons */
 		NWidgetBackground *company_panel = new NWidgetBackground( WWT_PANEL, COLOUR_GREY, EWW_PB_COMPANY_FIRST + company_num );
-		company_panel->SetMinimalSize( company_sprite_size.width, company_sprite_size.height );
+		company_panel->SetMinimalSizeAbsolute( company_sprite_size.width, company_sprite_size.height );
 		company_panel->SetResize( 0, 0 );
 		company_panel->SetFill( 1, 0 );
 		company_panel->SetDataTip( 0x0, STR_WATCH_CLICK_TO_WATCH_COMPANY );
@@ -69,7 +69,7 @@ static NWidgetBase *MakeCompanyButtons(int *biggest_index)
 		/* Manage Has Client Blot */
 
 		NWidgetBackground *hasclient_panel = new NWidgetBackground( WWT_PANEL, COLOUR_GREY, EWW_HAS_CLIENT_FIRST + company_num );
-		company_panel->SetMinimalSize( blot_sprite_size.width, blot_sprite_size.height );
+		company_panel->SetMinimalSizeAbsolute( blot_sprite_size.width, blot_sprite_size.height );
 		company_panel->SetResize( 0, 0 );
 		company_panel->SetFill( 1, 0 );
 		widget_container_hasclient->Add( hasclient_panel );
