@@ -31,7 +31,8 @@ const char *VideoDriver_Null::Start(const StringList &parm)
 	this->UpdateAutoResolution();
 
 	this->ticks = GetDriverParamInt(parm, "ticks", 1000);
-	this->savefile = GetDriverParam(parm, "save");
+	auto saveptr = GetDriverParam(parm, "save");
+	this->savefile = saveptr ? saveptr : "";
 	_screen.width  = _screen.pitch = _cur_resolution.width;
 	_screen.height = _cur_resolution.height;
 	_screen.dst_ptr = nullptr;
@@ -60,7 +61,7 @@ void VideoDriver_Null::MainLoop()
 		if (old_tick != _tick_counter) i++;
 		else _pause_mode = PM_UNPAUSED;
 	}
-	fprintf(stderr, "Null driver ran for %u tics, save: %s\n", this->ticks, this->savefile.c_str());
+	IConsolePrint(CC_DEFAULT, "Null driver ran for {} tics, save: {}", this->ticks, this->savefile);
 	if (!this->savefile.empty()) {
 	    if (SaveOrLoad(this->savefile.c_str(), SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
 	        IConsolePrint(CC_ERROR, "Error saving the final game state.");
