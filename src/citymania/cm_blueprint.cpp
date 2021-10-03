@@ -5,6 +5,7 @@
 #include "cm_highlight.hpp"
 
 #include "../command_func.h"
+#include "../debug.h"
 #include "../direction_type.h"
 #include "../rail_map.h"
 #include "../station_map.h"
@@ -119,6 +120,11 @@ CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &ite
         TRACK_UPPER, TRACK_UPPER, TRACK_LOWER, TRACK_LOWER,
         TRACK_X, TRACK_X, TRACK_Y, TRACK_Y,
     };
+    static const uint SIGNAL_POS_NUM[] = {
+        1, 0, 1, 0,
+        0, 1, 0, 1,
+        0, 1, 0, 1,
+    };
 
     switch (item.type) {
         case Blueprint::Item::Type::RAIL_TRACK: {
@@ -184,10 +190,14 @@ CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &ite
                 nullptr, ""
             };
         case Blueprint::Item::Type::RAIL_SIGNAL:
+            Debug(misc, 0, "SIGNAL: pos={} var={} type={} 2way={}", item.u.rail.signal.pos, item.u.rail.signal.variant, item.u.rail.signal.type, item.u.rail.signal.twoway);
             return CommandContainer {
                 AddTileIndexDiffCWrap(start, item.tdiff),
-                SIGNAL_POS_TRACK[item.u.rail.signal.pos] | (item.u.rail.signal.variant << 4) | (item.u.rail.signal.type << 5)
-                    | ((item.u.rail.signal.pos % 2) << 15),
+                SIGNAL_POS_TRACK[item.u.rail.signal.pos]
+                    | (item.u.rail.signal.variant << 4)
+                    | (item.u.rail.signal.type << 5)
+                    | (SIGNAL_POS_NUM[item.u.rail.signal.pos] + (item.u.rail.signal.type <= SIGTYPE_LAST_NOPBS && !item.u.rail.signal.twoway ? 1 : 0)) << 15
+                    | 1 << 17,
                 0,
                 CMD_BUILD_SIGNALS,
                 nullptr, ""
@@ -256,6 +266,8 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
             }
             case Item::Type::RAIL_SIGNAL:
                 add_tile(otile, ObjectTileHighlight::make_rail_signal(CM_PALETTE_TINT_WHITE, o.u.rail.signal.pos, o.u.rail.signal.type, o.u.rail.signal.variant));
+                if (o.u.rail.signal.twoway)
+                    add_tile(otile, ObjectTileHighlight::make_rail_signal(CM_PALETTE_TINT_WHITE, o.u.rail.signal.pos | 1, o.u.rail.signal.type, o.u.rail.signal.variant));
                 break;
             case Item::Type::RAIL_STATION:
                 break;
@@ -350,39 +362,29 @@ static void BlueprintAddSignals(sp<Blueprint> &blueprint, TileIndex tile, TileIn
     // reference: DrawSignals @ rail_cmd.cpp
 
     auto add = [&](Track track, uint x, uint pos) {
-        if (!IsSignalPresent(tile, x)) return;
+        auto a = IsSignalPresent(tile, x);
+        auto b = IsSignalPresent(tile, x ^ 1);
+        if (!a && !b) return;
+        if (!a) pos = pos | 1;
         Blueprint::Item bi(Blueprint::Item::Type::RAIL_SIGNAL, tdiff);
         bi.u.rail.signal.pos = pos;
         bi.u.rail.signal.type = GetSignalType(tile, track);
         bi.u.rail.signal.variant = GetSignalVariant(tile, track);
+        bi.u.rail.signal.twoway = a && b;
         blueprint->Add(tile, bi);
     };
     auto rails = GetTrackBits(tile);
     if (!(rails & TRACK_BIT_Y)) {
         if (!(rails & TRACK_BIT_X)) {
-            if (rails & TRACK_BIT_LEFT) {
-                add(TRACK_LEFT, 2, 0);
-                add(TRACK_LEFT, 3, 1);
-            }
-            if (rails & TRACK_BIT_RIGHT) {
-                add(TRACK_RIGHT, 0, 2);
-                add(TRACK_RIGHT, 1, 3);
-            }
-            if (rails & TRACK_BIT_UPPER) {
-                add(TRACK_UPPER, 3, 4);
-                add(TRACK_UPPER, 2, 5);
-            }
-            if (rails & TRACK_BIT_LOWER) {
-                add(TRACK_LOWER, 1, 6);
-                add(TRACK_LOWER, 0, 7);
-            }
+            if (rails & TRACK_BIT_LEFT) add(TRACK_LEFT, 2, 0);
+            if (rails & TRACK_BIT_RIGHT) add(TRACK_RIGHT, 0, 2);
+            if (rails & TRACK_BIT_UPPER) add(TRACK_UPPER, 3, 4);
+            if (rails & TRACK_BIT_LOWER) add(TRACK_LOWER, 1, 6);
         } else {
             add(TRACK_X, 3, 8);
-            add(TRACK_X, 2, 9);
         }
     } else {
         add(TRACK_Y, 3, 10);
-        add(TRACK_Y, 2, 11);
     }
 }
 

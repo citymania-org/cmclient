@@ -142,6 +142,7 @@ public:
                     uint pos;
                     SignalType type;
                     SignalVariant variant;
+                    bool twoway;
                 } signal;
                 struct {
                     DiagDirection ddir;

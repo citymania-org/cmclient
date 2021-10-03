@@ -74,6 +74,16 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 12.0 (4 Oct 2021) ***
+- Added rail copy-paste tool.
+- Added client list overlay (toggleable with a button in the regular client list window title).
+- Added back "New company" option to the company toolbar dropdown menu.
+- Fixed crash when closing order window with a hotkey.
+- Fixed crash when building airports outsize the map.
+- Fixed minimap crash in imba mode.
+- Fixed cargo selection in income/cargo graphs.
+- Fixed watch window excessive scaling with interface size.
+
 *** 12.0-beta2 (19 Aug 2021) ***
 - Fixed crash when building airport with no valid airport type selected.
 - Renamed a bunch of setttings in the config file adding cm_* prefix to distinguish them from vanilla ones.
