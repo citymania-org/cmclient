@@ -14,6 +14,7 @@
 #include "../tile_type.h"
 #include "../town_map.h"
 #include "../town.h"
+#include "../viewport_func.h"
 #include "../window_func.h"
 #include "../zoom_func.h"
 
@@ -485,16 +486,22 @@ public:
     {
         /* Always close tooltips when the cursor is not in our window. */
         if (!_cursor.in_window) {
-            delete this;
+            this->Close();
             return;
         }
 
         /* We can show tooltips while dragging tools. These are shown as long as
          * we are dragging the tool. Normal tooltips work with hover or rmb. */
         switch (this->close_cond) {
-            case TCC_RIGHT_CLICK: if (!_right_button_down) delete this; break;
-            case TCC_HOVER: if (!_mouse_hovering) delete this; break;
+            case TCC_RIGHT_CLICK: if (!_right_button_down) this->Close(); break;
+            case TCC_HOVER: if (!_mouse_hovering) this->Close(); break;
             case TCC_NONE: break;
+
+            case TCC_EXIT_VIEWPORT: {
+                Window *w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
+                if (w == nullptr || IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y) == nullptr) this->Close();
+                break;
+            }
         }
     }
 };

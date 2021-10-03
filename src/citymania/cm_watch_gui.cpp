@@ -520,12 +520,12 @@ void WatchCompany::OnInvalidateData(int data, bool gui_scope)
 	}
 	else if(this->Wtype == EWT_CLIENT){
 		if (data == 2) {
-			delete this;
+			this->Close();
 			return;
 		}
 		NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)this->watched_client);
 		if (!ci) {
-			delete this;
+			this->Close();
 			return;
 		}
 		else {
