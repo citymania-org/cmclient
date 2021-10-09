@@ -87,10 +87,20 @@ protected:
     int32 subscroll; ///< Number of pixels (0..3) between the right end of the base tile and the pixel at the top-left corner of the smallmap display.
     int tile_zoom;        ///< Zoom level. Bigger number means more zoom-out (further away).
     int ui_zoom;        ///< Zoom level. Bigger number means more zoom-out (further away).
-    int zoom;        ///< Zoom level. Bigger number means more zoom-out (further away).
+    int zoom = 1;        ///< Zoom level. Bigger number means more zoom-out (further away).
 
     GUITimer refresh; ///< Refresh timer.
     LinkGraphOverlay *overlay;
+
+    struct {
+        int32 scroll_x;
+        int32 scroll_y;
+        uint width = 0;
+        uint height = 0;
+        int zoom;
+        Dimension max_sign;
+        std::vector<std::tuple<const Town *, uint32, uint>> towns;
+    } town_cache;
 
     static void BreakIndustryChainLink();
     Point SmallmapRemapCoords(int x, int y) const;
@@ -179,6 +189,8 @@ protected:
 
     int GetPositionOnLegend(Point pt);
 
+    void UpdateTownCache(bool force);
+
 public:
     friend class citymania::NWidgetSmallmapDisplay;
 
@@ -197,6 +209,7 @@ public:
     bool OnRightClick(Point pt, int widget) override;
     void OnMouseWheel(int wheel) override;
     void OnRealtimeTick(uint delta_ms) override;
+    void OnHundredthTick() override;
     void OnScroll(Point delta) override;
     void OnMouseOver(Point pt, int widget) override;
 };

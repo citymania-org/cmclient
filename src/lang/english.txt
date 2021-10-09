@@ -5737,7 +5737,6 @@ STR_TOOLBAR_CARGOS_NAME                                         :{BLACK}{STRING}
 #towns
 STR_TOWN_DIRECTORY_TOWN_COLOUR                                  :{ORANGE}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} {P "house" "houses"}
 STR_TOWN_DIRECTORY_CITY_COLOUR                                  :{YELLOW}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} {P "house" "houses"}
-STR_SMALLMAP_TOWN_LARGE                                         :{TINY_FONT}{YELLOW}{TOWN}
 
 STR_SORT_BY_HOUSES                                              :Houses
 STR_SORT_BY_REAL_POPULATION                                     :Real population
@@ -5967,3 +5966,7 @@ STR_CM_CONFIG_SETTING_IMPROVED_STATION_JOIN                     :Use improved st
 STR_CM_CONFIG_SETTING_IMPROVED_STATION_JOIN_HELPTEXT            :Use Ctrl-click on station tile to select or deselect station to join. If station has no tiles Ctrl-click its sign. Ctrl-click empty tile for a new station. Also recently built station is automatically selected as a station to join. {RED}Doesn't work if joining stations not directly adjacent(distant join) is not allowed in settings.
 
 CM_STR_TOGGLE_CLIENTS_OVERLAY :Toggle client list overlay.
+
+CM_STR_SMALLMAP_TOWN_LARGE                                         :{TINY_FONT}{YELLOW}{TOWN}
+CM_STR_SMALLMAP_POPULATION_LARGE                                   :{TINY_FONT}{YELLOW}({NUM})
+CM_STR_SMALLMAP_POPULATION                                         :{TINY_FONT}{WHITE}({NUM})

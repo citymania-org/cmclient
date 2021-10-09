@@ -74,8 +74,8 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
-*** 12.0 (4 Oct 2021) ***
-- Added rail copy-paste tool.
+*** 12.0-RC1 (5 Oct 2021) ***
+- Added experimental rail copy-paste tool.
 - Added client list overlay (toggleable with a button in the regular client list window title).
 - Added back "New company" option to the company toolbar dropdown menu.
 - Fixed crash when closing order window with a hotkey.
