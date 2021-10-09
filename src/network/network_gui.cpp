@@ -239,8 +239,6 @@ protected:
 	GUITimer requery_timer;         ///< Timer for network requery.
 	bool searched_internet = false; ///< Did we ever press "Search Internet" button?
 
-	bool UDP_CC_queried; ///< CityMania for buttons check
-
 	int lock_offset; ///< Left offset for lock icon.
 	int blot_offset; ///< Left offset for green/yellow/red compatibility icon.
 	int flag_offset; ///< Left offset for language flag icon.
@@ -495,7 +493,6 @@ public:
 
 		this->querystrings[WID_NG_FILTER] = &this->filter_editbox;
 		this->filter_editbox.cancel_button = QueryString::ACTION_CLEAR;
-		this->UDP_CC_queried = false;
 		this->SetFocusedWidget(WID_NG_FILTER);
 
 		/* As the Game Coordinator doesn't support "websocket" servers yet, we
@@ -515,6 +512,9 @@ public:
 		this->servers.SetSortFuncs(this->sorter_funcs);
 		this->servers.SetFilterFuncs(this->filter_funcs);
 		this->servers.ForceRebuild();
+
+		_network_coordinator_client.GetListing();
+		this->searched_internet = true;
 	}
 
 	~NetworkGameWindow()
@@ -814,18 +814,15 @@ public:
 			case WID_NG_BTPRO:
 			case WID_NG_REDDIT:
 			case WID_NG_CITYMANIA:
-				if(!UDP_CC_queried){
-					// FIXME NetworkUDPQueryMasterServer();
-					UDP_CC_queried = true;
-				}
-				if(widget == WID_NG_NICE) this->filter_editbox.text.Assign("n-ice");
+				_network_coordinator_client.GetListing();
+				if (widget == WID_NG_NICE) this->filter_editbox.text.Assign("n-ice");
 				else if(widget == WID_NG_BTPRO) this->filter_editbox.text.Assign("BTPro");
 				else if(widget == WID_NG_CITYMANIA) this->filter_editbox.text.Assign("citymania");
 				else if(widget == WID_NG_REDDIT) this->filter_editbox.text.Assign("reddit");
-				this->servers.ForceRebuild();
-				this->BuildGUINetworkGameList();
-				this->ScrollToSelectedServer();
-				this->SetDirty();
+				// this->servers.ForceRebuild();
+				// this->BuildGUINetworkGameList();
+				// this->ScrollToSelectedServer();
+				// this->SetDirty();
 				break;
 		}
 	}
