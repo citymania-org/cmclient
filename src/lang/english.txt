@@ -5742,13 +5742,6 @@ STR_SORT_BY_HOUSES                                              :Houses
 STR_SORT_BY_REAL_POPULATION                                     :Real population
 STR_ORDER_DIST                                                  :{NUM}, {NUM}
 
-#server list
-STR_NETWORK_SELECT_CITYMANIA                                    :{BLACK}CityMania
-STR_NETWORK_SELECT_NICE                                         :{BLACK}N-ice
-STR_NETWORK_SELECT_BTPRO                                        :{BLACK}BTPro
-STR_NETWORK_SELECT_REDDIT                                       :{BLACK}reddit
-STR_NETWORK_SELECT_SERVER_TOOLTIP                               :{BLACK}Filter this one
-
 ### Town CB gui
 STR_BUTTON_CB                                                   :{STRING}
 STR_BUTTON_CB_YES                                               :{BLACK}CB
@@ -5970,3 +5963,12 @@ CM_STR_TOGGLE_CLIENTS_OVERLAY :Toggle client list overlay.
 CM_STR_SMALLMAP_TOWN_LARGE                                         :{TINY_FONT}{YELLOW}{TOWN}
 CM_STR_SMALLMAP_POPULATION_LARGE                                   :{TINY_FONT}{YELLOW}({NUM})
 CM_STR_SMALLMAP_POPULATION                                         :{TINY_FONT}{WHITE}({NUM})
+
+# Network server list filters
+CM_STR_NETWORK_SERVER_LIST_FILTER_CITYMANIA                                    :{BLACK}CityMania
+CM_STR_NETWORK_SERVER_LIST_FILTER_NICE                                         :{BLACK}N-ice
+CM_STR_NETWORK_SERVER_LIST_FILTER_BTPRO                                        :{BLACK}BTPro
+CM_STR_NETWORK_SERVER_LIST_FILTER_REDDIT                                       :{BLACK}reddit
+CM_STR_NETWORK_SERVER_LIST_FILTER_TEAMGAME                                     :{BLACK}TeamGame
+CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP                                      :{BLACK}Filter this community
+

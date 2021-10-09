@@ -5744,13 +5744,6 @@ STR_SORT_BY_HOUSES                                              :Gebäude
 STR_SORT_BY_REAL_POPULATION                                     :Reale Bevölkerung
 STR_ORDER_DIST                                                  :{NUM}, {NUM}
 
-#server list
-STR_NETWORK_SELECT_CITYMANIA                                    :{BLACK}CityMania
-STR_NETWORK_SELECT_NICE                                         :{BLACK}N-ice
-STR_NETWORK_SELECT_BTPRO                                        :{BLACK}BTPro
-STR_NETWORK_SELECT_REDDIT                                       :{BLACK}reddit
-STR_NETWORK_SELECT_SERVER_TOOLTIP                               :{BLACK}Diesen filtern
-
 ### Town CB gui
 STR_BUTTON_CB                                                   :{STRING}
 STR_BUTTON_CB_YES                                               :{BLACK}CB
@@ -5960,4 +5953,12 @@ STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS                        :Die Depot-Bauwe
 STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS_HELPTEXT               :Die Bauwerkzeuge für Fahrzeug- und Zugdepot sowie Werft behalten (umkehrbar durch platzieren mit Strg).
 STR_CM_CONFIG_SETTING_IMPROVED_STATION_JOIN                     :Verbesserte Steuerung zur Stationsverbindung verwenden: {STRING}
 STR_CM_CONFIG_SETTING_IMPROVED_STATION_JOIN_HELPTEXT            :Strg-Klick auf ein Stationsfeld anwenden, um eine Station zum verbinden an- oder abzuwählen. Strg-Klick auf das Stationsschild, falls die Station keine Felder hat. Für eine neue Station, Strg-Klick auf ein leeres Feld. Eine kürzlich gebaute Station ist automatisch zum Verbinden ausgewählt. {RED}Funktioniert nicht, falls das Verbinden von nicht direkt angrenzenden Stationen in den Einstellungen verboten ist.
+
+# Network server list filters
+CM_STR_NETWORK_SERVER_LIST_FILTER_CITYMANIA                                    :{BLACK}CityMania
+CM_STR_NETWORK_SERVER_LIST_FILTER_NICE                                         :{BLACK}N-ice
+CM_STR_NETWORK_SERVER_LIST_FILTER_BTPRO                                        :{BLACK}BTPro
+CM_STR_NETWORK_SERVER_LIST_FILTER_REDDIT                                       :{BLACK}reddit
+CM_STR_NETWORK_SERVER_LIST_FILTER_TEAMGAME                                     :{BLACK}TeamGame
+CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP                                      :{BLACK}Diesen filtern
 

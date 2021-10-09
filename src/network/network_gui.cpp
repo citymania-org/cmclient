@@ -810,19 +810,25 @@ public:
 			case WID_NG_NEWGRF_MISSING: // Find missing content online
 				if (this->server != nullptr) ShowMissingContentWindow(this->server->info.grfconfig);
 				break;
-			case WID_NG_NICE:
-			case WID_NG_BTPRO:
-			case WID_NG_REDDIT:
-			case WID_NG_CITYMANIA:
+			case CM_WID_NG_CITYMANIA:
 				_network_coordinator_client.GetListing();
-				if (widget == WID_NG_NICE) this->filter_editbox.text.Assign("n-ice");
-				else if(widget == WID_NG_BTPRO) this->filter_editbox.text.Assign("BTPro");
-				else if(widget == WID_NG_CITYMANIA) this->filter_editbox.text.Assign("citymania");
-				else if(widget == WID_NG_REDDIT) this->filter_editbox.text.Assign("reddit");
-				// this->servers.ForceRebuild();
-				// this->BuildGUINetworkGameList();
-				// this->ScrollToSelectedServer();
-				// this->SetDirty();
+				this->filter_editbox.text.Assign("citymania");
+				break;
+			case CM_WID_NG_REDDIT:
+				_network_coordinator_client.GetListing();
+				this->filter_editbox.text.Assign("reddit");
+				break;
+			case CM_WID_NG_NICE:
+				_network_coordinator_client.GetListing();
+				this->filter_editbox.text.Assign("n-ice");
+				break;
+			case CM_WID_NG_BTPRO:
+				_network_coordinator_client.GetListing();
+				this->filter_editbox.text.Assign("BTPro");
+				break;
+			case CM_WID_NG_TEAMGAME:
+				_network_coordinator_client.GetListing();
+				this->filter_editbox.text.Assign("TG");
 				break;
 		}
 	}
@@ -946,10 +952,11 @@ static const NWidgetPart _nested_network_game_widgets[] = {
 					/* CityMania code */
 					NWidget(NWID_HORIZONTAL), SetPIP(0, 7, 0),
 						NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_CITYMANIA), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_CITYMANIA, STR_NETWORK_SELECT_SERVER_TOOLTIP),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_BTPRO), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_BTPRO, STR_NETWORK_SELECT_SERVER_TOOLTIP),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_NICE), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_NICE, STR_NETWORK_SELECT_SERVER_TOOLTIP),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_REDDIT), SetFill(1, 0), SetDataTip(STR_NETWORK_SELECT_REDDIT, STR_NETWORK_SELECT_SERVER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, CM_WID_NG_CITYMANIA), SetFill(1, 0), SetDataTip(CM_STR_NETWORK_SERVER_LIST_FILTER_CITYMANIA, CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, CM_WID_NG_BTPRO), SetFill(1, 0), SetDataTip(CM_STR_NETWORK_SERVER_LIST_FILTER_BTPRO, CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, CM_WID_NG_NICE), SetFill(1, 0), SetDataTip(CM_STR_NETWORK_SERVER_LIST_FILTER_NICE, CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, CM_WID_NG_REDDIT), SetFill(1, 0), SetDataTip(CM_STR_NETWORK_SERVER_LIST_FILTER_REDDIT, CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, CM_WID_NG_TEAMGAME), SetFill(1, 0), SetDataTip(CM_STR_NETWORK_SERVER_LIST_FILTER_TEAMGAME, CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP),
 					EndContainer(),
 					/* end CityMania code */
 					NWidget(NWID_HORIZONTAL), SetPIP(0, 7, 0),
