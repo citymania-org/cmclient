@@ -1181,7 +1181,7 @@ static void DrawTileSelection(const TileInfo *ti)
 		case HT_LINE: {
 			HighLightStyle type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart, _thd.selend, _thd.drawstyle & HT_DIR_MASK);
 			if (type < HT_DIR_END) {
-				DrawAutorailSelection(ti, type);
+				DrawAutorailSelection(ti, type, _thd.cm_poly_terra ? CM_SPR_PALETTE_ZONING_YELLOW : PAL_NONE);
 			} else if (_thd.dir2 < HT_DIR_END) {
 				type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart2, _thd.selend2, _thd.dir2);
 				if (type < HT_DIR_END) DrawAutorailSelection(ti, type, PALETTE_SEL_TILE_BLUE);
@@ -2695,6 +2695,7 @@ void UpdateTileSelection()
 								_thd.new_size.y = y2 - y1 + TILE_SIZE;
 							}
 						}
+						_thd.cm_new_poly_terra = citymania::_fn_mod;
 						break;
 					}
 					/* HT_RAIL */
@@ -2744,6 +2745,7 @@ void UpdateTileSelection()
 			_thd.offs.x != _thd.new_offs.x || _thd.offs.y != _thd.new_offs.y ||
 			_thd.outersize.x != _thd.new_outersize.x ||
 			_thd.outersize.y != _thd.new_outersize.y ||
+			_thd.cm_poly_terra != _thd.cm_new_poly_terra ||
 			_thd.diagonal    != new_diagonal) {
 		/* Clear the old tile selection? */
 		if ((_thd.drawstyle & HT_DRAG_MASK) != HT_NONE) SetSelectionTilesDirty();
@@ -2753,6 +2755,7 @@ void UpdateTileSelection()
 		_thd.size = _thd.new_size;
 		_thd.offs = _thd.new_offs;
 		_thd.outersize = _thd.new_outersize;
+		_thd.cm_poly_terra = _thd.cm_new_poly_terra;
 		_thd.diagonal = new_diagonal;
 		_thd.dirty = 0xff;
 
@@ -3519,6 +3522,7 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 	_thd.selend.x    -= first_dir.x;
 	_thd.selend.y    -= first_dir.y;
 	Trackdir seldir = PointDirToTrackdir(_thd.selstart, line.first_dir);
+	_thd.cm_poly_dir = seldir;
 	_thd.selstart.x  &= ~TILE_UNIT_MASK;
 	_thd.selstart.y  &= ~TILE_UNIT_MASK;
 

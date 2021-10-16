@@ -399,6 +399,93 @@ static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_t
 	return ret;
 }
 
+namespace citymania {
+
+static void DoAutodirTerraform(bool diagonal, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2) {
+	auto h1 = TileHeight(s1);
+	auto h2 = TileHeight(s2);
+	int diag_flag = (int)diagonal;
+	DoCommandP(e1, s1, ((h1 < h2 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag, CMD_LEVEL_LAND, CcTerraform);
+	DoCommandP(e2, s2, ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag, CMD_LEVEL_LAND, CcTerraform);
+}
+
+static void HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile) {
+	bool eq = (TileX(end_tile) - TileY(end_tile) == TileX(start_tile) - TileY(start_tile));
+	bool ez = (TileX(end_tile) + TileY(end_tile) == TileX(start_tile) + TileY(start_tile));
+	switch (_thd.cm_poly_dir) {
+		case TRACKDIR_X_NE:
+			DoAutodirTerraform(false,
+				TILE_ADDXY(start_tile, 1, 0), end_tile,
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, 1));
+			break;
+		case TRACKDIR_X_SW:
+			DoAutodirTerraform(false,
+				start_tile, TILE_ADDXY(end_tile, 1, 0),
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, 1));
+			break;
+		case TRACKDIR_Y_SE:
+			DoAutodirTerraform(false,
+				start_tile, TILE_ADDXY(end_tile, 0, 1),
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, 1));
+			break;
+		case TRACKDIR_Y_NW:
+			DoAutodirTerraform(false,
+				TILE_ADDXY(start_tile, 0, 1), end_tile,
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, 0));
+			break;
+		case TRACKDIR_LEFT_N: {
+			DoAutodirTerraform(true,
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, eq, 0),
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, !eq));
+			break;
+		}
+		case TRACKDIR_RIGHT_N: {
+			DoAutodirTerraform(true,
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 0, eq),
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, !eq, 0));
+			break;
+		}
+		case TRACKDIR_LEFT_S: {
+			DoAutodirTerraform(true,
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, !eq),
+				start_tile, TILE_ADDXY(end_tile, eq, 1));
+			break;
+		}
+		case TRACKDIR_RIGHT_S: {
+			DoAutodirTerraform(true,
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, !eq, 1),
+				start_tile, TILE_ADDXY(end_tile, 1, eq));
+			break;
+		}
+		case TRACKDIR_UPPER_E: {
+			DoAutodirTerraform(true,
+				start_tile, TILE_ADDXY(end_tile, 0, !ez),
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, !ez, 1));
+			break;
+		}
+		case TRACKDIR_LOWER_E: {
+			DoAutodirTerraform(true,
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, ez, 1),
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 0, ez));
+			break;
+		}
+		case TRACKDIR_UPPER_W: {
+			DoAutodirTerraform(true,
+				start_tile, TILE_ADDXY(end_tile, !ez, 0),
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, !ez));
+			break;
+		}
+		case TRACKDIR_LOWER_W: {
+			DoAutodirTerraform(true,
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, ez),
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, ez, 0));
+			break;
+		}
+	}
+}
+
+}  // namespace citymania
+
 static void HandleAutodirPlacement()
 {
 	Track track = (Track)(_thd.drawstyle & HT_DIR_MASK); // 0..5
@@ -416,6 +503,7 @@ static void HandleAutodirPlacement()
 	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) ||
 			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
 			_rail_track_endtile == INVALID_TILE) {
+		if (_thd.cm_poly_terra) citymania::HandleAutodirTerraform(start_tile, end_tile);
 		/* Execute. */
 		if (!DoCommandP(&cmd)) return;
 	}
@@ -971,6 +1059,14 @@ struct BuildRailToolbarWindow : Window {
 		auto new_remove = citymania::RailToolbar_RemoveModChanged(this, _cm_invert_remove, _remove_button_clicked, false);
 		if (new_remove != _remove_button_clicked) {
 			_remove_button_clicked = new_remove;
+			return ES_HANDLED;
+		}
+		return ES_NOT_HANDLED;
+	}
+
+	EventState CM_OnFnModStateChange() override
+	{
+		if (this->IsWidgetLowered(WID_RAT_POLYRAIL)) {
 			return ES_HANDLED;
 		}
 		return ES_NOT_HANDLED;
