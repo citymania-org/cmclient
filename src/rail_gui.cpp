@@ -42,6 +42,7 @@
 
 #include "widgets/rail_widget.h"
 
+#include "network/network.h"
 #include "citymania/cm_blueprint.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_highlight.hpp"
@@ -401,82 +402,93 @@ static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_t
 
 namespace citymania {
 
-static void DoAutodirTerraform(bool diagonal, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2) {
+static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2) {
 	auto h1 = TileHeight(s1);
 	auto h2 = TileHeight(s2);
 	int diag_flag = (int)diagonal;
 	DoCommandP(e1, s1, ((h1 < h2 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag, CMD_LEVEL_LAND, CcTerraform);
-	DoCommandP(e2, s2, ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag, CMD_LEVEL_LAND, CcTerraform);
+	uint32 p2 = ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
+	DoCommandP(e2, s2, p2, CMD_LEVEL_LAND, CcTerraform);
+    auto rail_callback = [rail_cmd, start_tile, end_tile, track](bool res) {
+    	if (!citymania::_estimate_mod && end_tile != INVALID_TILE)
+			StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
+    	return DoCommandP(&rail_cmd);
+    } ;
+	if (_networking) {
+		citymania::AddCommandCallback(e2, s2, p2, CMD_LEVEL_LAND, rail_callback);
+		return true;
+	} else return rail_callback(true);
 }
 
-static void HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile) {
+static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd) {
 	bool eq = (TileX(end_tile) - TileY(end_tile) == TileX(start_tile) - TileY(start_tile));
 	bool ez = (TileX(end_tile) + TileY(end_tile) == TileX(start_tile) + TileY(start_tile));
+	StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
 	switch (_thd.cm_poly_dir) {
 		case TRACKDIR_X_NE:
-			DoAutodirTerraform(false,
+			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
 				TILE_ADDXY(start_tile, 1, 0), end_tile,
 				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, 1));
 			break;
 		case TRACKDIR_X_SW:
-			DoAutodirTerraform(false,
+			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
 				start_tile, TILE_ADDXY(end_tile, 1, 0),
 				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, 1));
 			break;
 		case TRACKDIR_Y_SE:
-			DoAutodirTerraform(false,
+			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
 				start_tile, TILE_ADDXY(end_tile, 0, 1),
 				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, 1));
 			break;
 		case TRACKDIR_Y_NW:
-			DoAutodirTerraform(false,
+			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
 				TILE_ADDXY(start_tile, 0, 1), end_tile,
 				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, 0));
 			break;
 		case TRACKDIR_LEFT_N: {
-			DoAutodirTerraform(true,
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
 				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, eq, 0),
 				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, !eq));
 			break;
 		}
 		case TRACKDIR_RIGHT_N: {
-			DoAutodirTerraform(true,
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
 				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 0, eq),
 				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, !eq, 0));
 			break;
 		}
 		case TRACKDIR_LEFT_S: {
-			DoAutodirTerraform(true,
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
 				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, !eq),
 				start_tile, TILE_ADDXY(end_tile, eq, 1));
 			break;
 		}
 		case TRACKDIR_RIGHT_S: {
-			DoAutodirTerraform(true,
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
 				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, !eq, 1),
 				start_tile, TILE_ADDXY(end_tile, 1, eq));
 			break;
 		}
 		case TRACKDIR_UPPER_E: {
-			DoAutodirTerraform(true,
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
 				start_tile, TILE_ADDXY(end_tile, 0, !ez),
 				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, !ez, 1));
 			break;
 		}
 		case TRACKDIR_LOWER_E: {
-			DoAutodirTerraform(true,
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
 				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, ez, 1),
 				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 0, ez));
 			break;
 		}
 		case TRACKDIR_UPPER_W: {
-			DoAutodirTerraform(true,
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
 				start_tile, TILE_ADDXY(end_tile, !ez, 0),
 				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, !ez));
 			break;
 		}
 		case TRACKDIR_LOWER_W: {
-			DoAutodirTerraform(true,
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
 				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, ez),
 				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, ez, 0));
 			break;
@@ -503,9 +515,11 @@ static void HandleAutodirPlacement()
 	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) ||
 			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
 			_rail_track_endtile == INVALID_TILE) {
-		if (_thd.cm_poly_terra) citymania::HandleAutodirTerraform(start_tile, end_tile);
-		/* Execute. */
-		if (!DoCommandP(&cmd)) return;
+		if (_thd.cm_poly_terra) {
+			if (!citymania::HandleAutodirTerraform(start_tile, end_tile, track, cmd)) return;
+		} else {
+			if (!DoCommandP(&cmd)) return;
+		}
 	}
 
 	/* Save new snap points for the polyline tool, no matter if the command

@@ -39,7 +39,6 @@ bool operator!=(const TileIndexDiffC &a, const TileIndexDiffC &b) {
 }
 
 typedef std::tuple<TileIndex, uint32, uint32, uint32> CommandTuple;
-typedef std::function<void(bool)> CommandCallback;
 std::map<CommandTuple, std::vector<CommandCallback>> _command_callbacks;
 
 void AddCommandCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback callback) {
@@ -615,8 +614,8 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
                 TileIndex tile = AddTileIndexDiffCWrap(start, item.tdiff);
                 auto cc = GetBlueprintCommand(start, item);
                 DoCommandWithCallback(cc,
-                    [blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res) {
-                        if (!res) return;
+                    [blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res)->bool {
+                        if (!res) return false;
                         StationID station_id = GetStationIndex(tile);
                         for (auto &item : blueprint->items) {
                             if (item.type != Blueprint::Item::Type::RAIL_STATION_PART) continue;
@@ -625,6 +624,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
                             DoCommandP(cc.tile, cc.p1 | (1 << 24), station_id << 16, cc.cmd);
                         }
                         if (!sign_part) DoCommandP(tile, 0, 0, CMD_REMOVE_FROM_RAIL_STATION);
+                        return true;
                     }
                 );
                 break;
@@ -638,7 +638,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
         for (auto &item : blueprint->items) {
             if (item.type != Blueprint::Item::Type::RAIL_SIGNAL) continue;
             auto cc = GetBlueprintCommand(start, item);
-            DoCommandP(&cc);
+            return DoCommandP(&cc);
         }
     };
     if (last_rail.cmd != CMD_END) {  // there can't be any signals if there are no rails
