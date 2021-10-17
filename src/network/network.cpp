@@ -641,6 +641,7 @@ public:
 	{
 		NetworkGameList *item = NetworkGameListAddItem(connection_string);
 		item->status = NGLS_OFFLINE;
+		item->refreshing = false;
 
 		UpdateNetworkGameWindow();
 	}
@@ -658,6 +659,10 @@ public:
 void NetworkQueryServer(const std::string &connection_string)
 {
 	if (!_network_available) return;
+
+	/* Mark the entry as refreshing, so the GUI can show the refresh is pending. */
+	NetworkGameList *item = NetworkGameListAddItem(connection_string);
+	item->refreshing = true;
 
 	new TCPQueryConnecter(connection_string);
 }
