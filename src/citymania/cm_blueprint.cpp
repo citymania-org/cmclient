@@ -100,9 +100,13 @@ void Blueprint::Add(TileIndex source_tile, Blueprint::Item item) {
             );
             break;
         case Item::Type::RAIL_BRIDGE:
+            this->source_tiles.insert(TILE_ADDXY(source_tile, item.u.rail.bridge.other_end.x, item.u.rail.bridge.other_end.y));
+            this->source_tiles.insert(source_tile);
+            break;
         case Item::Type::RAIL_TUNNEL:
             this->source_tiles.insert(TILE_ADDXY(source_tile, item.u.rail.tunnel.other_end.x, item.u.rail.tunnel.other_end.y));
-            FALLTHROUGH;
+            this->source_tiles.insert(source_tile);
+            break;
         case Item::Type::RAIL_DEPOT:
         case Item::Type::RAIL_STATION:
             this->source_tiles.insert(source_tile);
@@ -399,7 +403,6 @@ static void BlueprintAddTracks(sp<Blueprint> &blueprint, TileIndex tile, TileInd
         uint16 length = 0;
         Track c_track = track;
         Trackdir c_tdir = _track_iterate_dir[track];
-        // fprintf(stderr, "TTTTTT %u %u %u\n", c_tile, c_track, GetTrackBits(c_tile));
         while (IsPlainRailTile(c_tile) && HasBit(GetTrackBits(c_tile), c_track)) {
             if (HasBit(track_tiles[c_tile], c_track)) break;
             length++;
@@ -409,13 +412,11 @@ static void BlueprintAddTracks(sp<Blueprint> &blueprint, TileIndex tile, TileInd
             if (!area.Contains(c_tile)) break;
             c_tdir = NextTrackdir(c_tdir);
             c_track = TrackdirToTrack(c_tdir);
-            // fprintf(stderr, "TTTTTTI %u %u %u\n", c_tile, c_track, GetTrackBits(c_tile));
         }
         if (end_tile == INVALID_TILE) continue;
         Blueprint::Item bi(Blueprint::Item::Type::RAIL_TRACK, tdiff);
         bi.u.rail.track.length = length;
         bi.u.rail.track.start_dir = _track_iterate_dir[track];
-        // fprintf(stderr, "TTTTTTEE %u %u %u\n", tdiff, bi.u.rail.track.end_diff, bi.u.rail.track.start_dir);
         blueprint->Add(tile, bi);
     }
 }
@@ -597,9 +598,7 @@ void SetBlueprintHighlight(const TileInfo *ti, TileHighlight &th) {
 }
 
 void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
-    TileIndex last_tile;
-    // uint32 last_p1, last_p2, last_cmd = CMD_END;
-    CommandContainer last_rail = {INVALID_TILE, 0, 0, CMD_END};
+    CommandContainer last_rail = {INVALID_TILE, 0, 0, CMD_END, nullptr, ""};
     for (auto &item : blueprint->items) {
         switch (item.type) {
             case Blueprint::Item::Type::RAIL_TRACK:

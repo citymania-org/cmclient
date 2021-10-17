@@ -400,9 +400,11 @@ void ObjectHighlight::MarkDirty() {
     }
     if (this->type == ObjectHighlight::Type::BLUEPRINT && this->blueprint) {  // TODO why && blueprint check is needed?
         for (auto tile : this->blueprint->source_tiles) {
+            // fprintf(stderr, "D %d\n", (int)tile);
             MarkTileDirtyByTile(tile);
         }
     }
+    // fprintf(stderr, "E\n");
 }
 
 

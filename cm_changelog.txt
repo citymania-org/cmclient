@@ -74,11 +74,12 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
-*** 12.0 (?? Oct 2021) ***
+*** 12.0 (17 Oct 2021) ***
 - Automatically search servers when opening multiplayer window.
 - Added TeamGame server filtering button.
 - Show town population instead of name in IMBA minimap mode.
 - In polyrail mode placing rail while holding Fn modifier will automatically flatten the land for it.
+- Fixed crash when copying rail bridges.
 
 *** 12.0-RC1 (5 Oct 2021) ***
 - Added experimental rail copy-paste tool.
