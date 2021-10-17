@@ -640,7 +640,7 @@ jobs:
       run: |
         cd build-x64
 
-        pushd _CPack_Packages/*/Bundle/openttd-*/
+        pushd _CPack_Packages/*/Bundle/citymania-client-*/
 
         # Remove the Applications symlink from the staging folder
         rm -f Applications
