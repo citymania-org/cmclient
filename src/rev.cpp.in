@@ -35,7 +35,7 @@ bool IsReleasedVersion()
  *
  * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "12.0-RC1";
+const char _openttd_revision[] = "12.0";
 
 /**
  * The text version of OpenTTD's build date.
@@ -48,7 +48,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
 /**
  * The git revision hash of this version.
  */
-const char _openttd_revision_hash[] = "79dc634d41d04f4b48e8e284f2986a9cdb288946";
+const char _openttd_revision_hash[] = "33201896bfeae43ea5b0e381b7f834aa6b6287d2";
 
 /**
  * The year of this version.
@@ -95,4 +95,4 @@ const char _openttd_content_version[] = "12.0";
  * the "patch" part of the version. To make sure "1.11.0" is smaller than "12.0", we
  * have to adjust the major by 16.
  */
-const uint32 _openttd_newgrf_version = (12 + 16) << 24 | 0 << 20 | 0 << 19 | 28004;
+const uint32 _openttd_newgrf_version = (12 + 16) << 24 | 0 << 20 | 1 << 19 | 28004;
