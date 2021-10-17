@@ -409,7 +409,7 @@ static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex en
 	DoCommandP(e1, s1, ((h1 < h2 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag, CMD_LEVEL_LAND, CcTerraform);
 	uint32 p2 = ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
 	DoCommandP(e2, s2, p2, CMD_LEVEL_LAND, CcTerraform);
-    auto rail_callback = [rail_cmd, start_tile, end_tile, track](bool res) {
+    auto rail_callback = [rail_cmd, start_tile, end_tile, track](bool res) -> bool {
     	if (!citymania::_estimate_mod && end_tile != INVALID_TILE)
 			StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
     	return DoCommandP(&rail_cmd);

@@ -3,6 +3,8 @@
 
 #include "cm_highlight.hpp"
 
+#include <functional>
+
 namespace citymania {
 
 typedef std::function<bool(bool)> CommandCallback;

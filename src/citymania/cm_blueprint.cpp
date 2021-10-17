@@ -14,7 +14,6 @@
 #include "../tunnelbridge_map.h"
 #include "../network/network.h"
 
-#include <functional>
 #include <map>
 
 extern TileHighlightData _thd;
