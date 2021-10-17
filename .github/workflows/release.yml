@@ -649,7 +649,7 @@ jobs:
         # the zip_filename variable below
         rm -f ../*.dmg
 
-        zip_filename=../citymania-client-${{ needs.source.outputs.version }}
+        zip_filename=../citymania-client-${{ needs.source.outputs.version }}-macos-universal
 
         # Package up the existing, notarised .app into a zip file
         zip -r -9 ${zip_filename}.zip OpenTTD.app

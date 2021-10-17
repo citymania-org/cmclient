@@ -127,9 +127,9 @@ if(APPLE)
     include(PackageBundle)
 
     if (APPLE_UNIVERSAL_PACKAGE)
-        set(CPACK_PACKAGE_FILE_NAME "openttd-#CPACK_PACKAGE_VERSION#-macos-universal")
+        set(CPACK_PACKAGE_FILE_NAME "citymania-client-#CPACK_PACKAGE_VERSION#-macos-universal")
     else()
-        set(CPACK_PACKAGE_FILE_NAME "openttd-#CPACK_PACKAGE_VERSION#-macos-${CPACK_SYSTEM_NAME}")
+        set(CPACK_PACKAGE_FILE_NAME "citymania-client-#CPACK_PACKAGE_VERSION#-macos-${CPACK_SYSTEM_NAME}")
 	endif()
 elseif(WIN32)
     set(CPACK_GENERATOR "ZIP")
@@ -138,7 +138,7 @@ elseif(WIN32)
         include(PackageNSIS)
     endif()
 
-    set(CPACK_PACKAGE_FILE_NAME "openttd-#CPACK_PACKAGE_VERSION#-windows-${CPACK_SYSTEM_NAME}")
+    set(CPACK_PACKAGE_FILE_NAME "citymania-client-#CPACK_PACKAGE_VERSION#-windows-${CPACK_SYSTEM_NAME}")
 
     if(WINDOWS_CERTIFICATE_COMMON_NAME)
       add_custom_command(TARGET openttd
@@ -196,7 +196,7 @@ elseif(UNIX)
         endif()
     endif()
 
-    set(CPACK_PACKAGE_FILE_NAME "openttd-#CPACK_PACKAGE_VERSION#-linux-${PLATFORM}-${CPACK_SYSTEM_NAME}")
+    set(CPACK_PACKAGE_FILE_NAME "citymania-client-#CPACK_PACKAGE_VERSION#-linux-${PLATFORM}-${CPACK_SYSTEM_NAME}")
 
 else()
     message(FATAL_ERROR "Unknown OS found for packaging; please consider creating a Pull Request to add support for this OS.")
