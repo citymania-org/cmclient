@@ -515,7 +515,7 @@ static void HandleAutodirPlacement()
 	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) ||
 			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
 			_rail_track_endtile == INVALID_TILE) {
-		if (_thd.cm_poly_terra) {
+		if (_thd.cm_poly_terra && !_remove_button_clicked) {
 			if (!citymania::HandleAutodirTerraform(start_tile, end_tile, track, cmd)) return;
 		} else {
 			if (!DoCommandP(&cmd)) return;

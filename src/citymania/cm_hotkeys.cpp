@@ -74,6 +74,10 @@ std::pair<uint32, uint32> GetEPM() {
                           _last_actions.size());
 }
 
+bool HasSeparateRemoveMod() {
+    return (_settings_client.gui.cm_fn_mod != _settings_client.gui.cm_remove_mod);
+}
+
 void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed) {
     bool mod_pressed[(size_t)ModKey::END] = {false};
     if (shift_pressed) mod_pressed[(size_t)ModKey::SHIFT] = true;
@@ -95,10 +99,6 @@ void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed) {
             if (w->CM_OnRemoveModStateChange() == ES_HANDLED) break;
         }
     }
-}
-
-bool HasSeparateRemoveMod() {
-    return (_settings_client.gui.cm_fn_mod != _settings_client.gui.cm_remove_mod);
 }
 
 ToolRemoveMode RailToolbar_GetRemoveMode(int widget) {
