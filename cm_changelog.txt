@@ -74,6 +74,10 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 12.1 (? Oct 2021) ***
+- Hide new auto-terraforming mode for polyrail behind a setting for now as it is still quite bugged.
+- Fix modifer keys selection in settings ui.
+
 *** 12.0 (17 Oct 2021) ***
 - Automatically search servers when opening multiplayer window.
 - Show town population instead of the name in IMBA minimap mode.
