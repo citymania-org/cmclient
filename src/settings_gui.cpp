@@ -1655,6 +1655,7 @@ static SettingsContainer &GetSettingsTree()
 				construction->Add(new SettingEntry("gui.quick_goto"));
 				construction->Add(new SettingEntry("gui.default_rail_type"));
 				construction->Add(new SettingEntry("gui.cm_use_improved_station_join"));
+				construction->Add(new SettingEntry("gui.cm_enable_polyrail_terraform"));
 			}
 
 			interface->Add(new SettingEntry("gui.fast_forward_speed_limit"));

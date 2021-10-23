@@ -2695,7 +2695,7 @@ void UpdateTileSelection()
 								_thd.new_size.y = y2 - y1 + TILE_SIZE;
 							}
 						}
-						_thd.cm_new_poly_terra = citymania::_fn_mod;
+						_thd.cm_new_poly_terra = _settings_client.gui.cm_enable_polyrail_terraform && citymania::_fn_mod;
 						break;
 					}
 					/* HT_RAIL */

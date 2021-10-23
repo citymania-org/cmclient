@@ -5972,3 +5972,5 @@ CM_STR_NETWORK_SERVER_LIST_FILTER_REDDIT                                       :
 CM_STR_NETWORK_SERVER_LIST_FILTER_TEAMGAME                                     :{BLACK}TeamGame
 CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP                                      :{BLACK}Filter this community
 
+CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM :Enable experimental auto-terraforming with polyrail
+CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM_HELPTEXT :Allows to use experimental auto-terraforming mode with polyrail tool (by pressing Fn modifier).

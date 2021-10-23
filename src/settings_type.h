@@ -223,7 +223,7 @@ struct GUISettings {
 	bool cm_show_apm;
 	uint8 cm_graph_background;
 	bool cm_show_client_overlay;
-
+	bool cm_enable_polyrail_terraform;
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
 	 * @return whether the user has sufficient privileges to edit newgrfs in an existing game
