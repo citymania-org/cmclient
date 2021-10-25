@@ -192,7 +192,6 @@ CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &ite
                 nullptr, ""
             };
         case Blueprint::Item::Type::RAIL_SIGNAL:
-            Debug(misc, 0, "SIGNAL: pos={} var={} type={} 2way={}", item.u.rail.signal.pos, item.u.rail.signal.variant, item.u.rail.signal.type, item.u.rail.signal.twoway);
             return CommandContainer {
                 AddTileIndexDiffCWrap(start, item.tdiff),
                 SIGNAL_POS_TRACK[item.u.rail.signal.pos]
@@ -637,8 +636,9 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
         for (auto &item : blueprint->items) {
             if (item.type != Blueprint::Item::Type::RAIL_SIGNAL) continue;
             auto cc = GetBlueprintCommand(start, item);
-            return DoCommandP(&cc);
+            DoCommandP(&cc);
         }
+        return true;
     };
     if (last_rail.cmd != CMD_END) {  // there can't be any signals if there are no rails
         if (_networking) AddCommandCallback(last_rail.tile, last_rail.p1, last_rail.p2, last_rail.cmd, signal_callback);
