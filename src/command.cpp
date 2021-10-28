@@ -30,7 +30,7 @@
 
 #include "table/strings.h"
 
-#include "citymania/cm_blueprint.hpp"
+#include "citymania/cm_commands.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_watch_gui.hpp"
 
@@ -617,7 +617,7 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 		callback(res, tile, p1, p2, cmd);
 	}
 	if (!estimate_only && !only_sending)
-		citymania::CommandExecuted(res.Succeeded(), tile, p1, p2, cmd);
+		citymania::HandleCommandExecution(res.Succeeded(), tile, p1, p2, cmd, text);
 
 	return res.Succeeded();
 }

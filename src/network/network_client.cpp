@@ -34,8 +34,9 @@
 
 #include "../town.h"
 #include "network_func.h"
-#include "../citymania/cm_newgrf_revisions.hpp"
 #include "../citymania/cm_client_list_gui.hpp"
+#include "../citymania/cm_commands.hpp"
+#include "../citymania/cm_newgrf_revisions.hpp"
 
 #include "../safeguards.h"
 
@@ -275,6 +276,8 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 
 	extern void StateGameLoop();
 	StateGameLoop();
+
+	citymania::HandleNextClientFrame();
 
 	/* Check if we are in sync! */
 	if (_sync_frame != 0) {
@@ -776,6 +779,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_BEGIN(Packe
 	this->savegame = new PacketReader();
 
 	_frame_counter = _frame_counter_server = _frame_counter_max = p->Recv_uint32();
+	citymania::InitCommandQueue();
 
 	_network_join_bytes = 0;
 	_network_join_bytes_total = 0;

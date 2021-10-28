@@ -15,6 +15,8 @@
 #include "../company_func.h"
 #include "../settings_type.h"
 
+#include "../citymania/cm_commands.hpp"
+
 #include "../safeguards.h"
 
 /** Table with all the callbacks we'll use for conversion*/
@@ -163,7 +165,8 @@ void NetworkSendCommand(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, Comman
 	c.frame = 0; // The client can't tell which frame, so just make it 0
 
 	/* Clients send their command to the server and forget all about the packet */
-	MyClient::SendCommand(&c);
+	// MyClient::SendCommand(&c);
+	citymania::SendClientCommand(&c);
 }
 
 /**

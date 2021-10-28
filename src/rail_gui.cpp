@@ -42,8 +42,8 @@
 
 #include "widgets/rail_widget.h"
 
-#include "network/network.h"
 #include "citymania/cm_blueprint.hpp"
+#include "citymania/cm_commands.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_station_gui.hpp"
@@ -408,16 +408,12 @@ static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex en
 	int diag_flag = (int)diagonal;
 	DoCommandP(e1, s1, ((h1 < h2 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag, CMD_LEVEL_LAND, CcTerraform);
 	uint32 p2 = ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
-	DoCommandP(e2, s2, p2, CMD_LEVEL_LAND, CcTerraform);
     auto rail_callback = [rail_cmd, start_tile, end_tile, track](bool res) -> bool {
     	if (!citymania::_estimate_mod && end_tile != INVALID_TILE)
 			StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
     	return DoCommandP(&rail_cmd);
     } ;
-	if (_networking) {
-		citymania::AddCommandCallback(e2, s2, p2, CMD_LEVEL_LAND, rail_callback);
-		return true;
-	} else return rail_callback(true);
+	return citymania::DoCommandWithCallback(e2, s2, p2, CMD_LEVEL_LAND, CcTerraform, "", rail_callback);
 }
 
 static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd) {

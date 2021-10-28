@@ -7,9 +7,6 @@
 
 namespace citymania {
 
-typedef std::function<bool(bool)> CommandCallback;
-void AddCommandCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback callback);
-
 void BlueprintCopyArea(TileIndex start, TileIndex end);
 void ResetActiveBlueprint();
 void SetBlueprintHighlight(const TileInfo *ti, TileHighlight &th);
@@ -21,6 +18,6 @@ void RotateActiveBlueprint();
 
 void CommandExecuted(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd);
 
-}  //- namespace citymania
+}  // namespace citymania
 
 #endif

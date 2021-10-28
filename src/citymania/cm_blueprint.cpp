@@ -2,6 +2,7 @@
 
 #include "cm_blueprint.hpp"
 
+#include "cm_commands.hpp"
 #include "cm_highlight.hpp"
 
 #include "../command_func.h"
@@ -35,31 +36,6 @@ bool operator==(const TileIndexDiffC &a, const TileIndexDiffC &b) {
 
 bool operator!=(const TileIndexDiffC &a, const TileIndexDiffC &b) {
     return a.x != b.x || a.y != b.y;
-}
-
-typedef std::tuple<TileIndex, uint32, uint32, uint32> CommandTuple;
-std::map<CommandTuple, std::vector<CommandCallback>> _command_callbacks;
-
-void AddCommandCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback callback) {
-    _command_callbacks[std::make_tuple(tile, p1, p2, cmd)].push_back(callback);
-}
-
-void DoCommandWithCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback callback) {
-    AddCommandCallback(tile, p1, p2, cmd & CMD_ID_MASK, callback);
-    DoCommandP(tile, p1, p2, cmd);
-}
-
-void DoCommandWithCallback(const CommandContainer &cc, CommandCallback callback) {
-    DoCommandWithCallback(cc.tile, cc.p1, cc.p2, cc.cmd, callback);
-}
-
-void CommandExecuted(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
-    CommandTuple ct {tile, p1, p2, cmd & CMD_ID_MASK};
-    auto p = _command_callbacks.find(ct);
-    if (p == _command_callbacks.end()) return;
-    for (auto &cb : p->second)
-        cb(res);
-    _command_callbacks.erase(p);
 }
 
 template<typename Func>
@@ -641,8 +617,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
         return true;
     };
     if (last_rail.cmd != CMD_END) {  // there can't be any signals if there are no rails
-        if (_networking) AddCommandCallback(last_rail.tile, last_rail.p1, last_rail.p2, last_rail.cmd, signal_callback);
-        else signal_callback(true);
+        AddCommandCallback(last_rail.tile, last_rail.p1, last_rail.p2, last_rail.cmd, "", signal_callback);
     }
 }
 

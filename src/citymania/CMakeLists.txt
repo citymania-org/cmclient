@@ -26,6 +26,8 @@ add_files(
     cm_cargo_table_gui.cpp
     cm_client_list_gui.hpp
     cm_client_list_gui.cpp
+    cm_commands.hpp
+    cm_commands.cpp
     cm_commands_gui.hpp
     cm_commands_gui.cpp
     cm_highlight.hpp
