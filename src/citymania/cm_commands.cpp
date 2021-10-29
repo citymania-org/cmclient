@@ -40,13 +40,13 @@ void AddCommandCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, const 
     _command_callbacks[hash].first = sent_frame;
     _command_callbacks[hash].second.push_back(callback);
     _command_sent.push(std::make_pair(hash, sent_frame));
+    // fprintf(stderr, "CALLBACK %lu (%u %u %u %u %s)\n", hash, tile, p1, p2, (uint)(cmd & CMD_ID_MASK), text.c_str());
 }
 
 bool DoCommandWithCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, ::CommandCallback *callback, const std::string &text, CommandCallback cm_callback) {
     if (_networking) {
         AddCommandCallback(tile, p1, p2, cmd, text, cm_callback);
-        DoCommandP(tile, p1, p2, cmd, callback, text);
-        return true;
+        return DoCommandP(tile, p1, p2, cmd, callback, text);
     }
     auto res = DoCommandP(tile, p1, p2, cmd, callback, text);
     cm_callback(res);
@@ -60,6 +60,7 @@ bool DoCommandWithCallback(const CommandContainer &cc, CommandCallback callback)
 void HandleCommandExecution(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, const std::string &text) {
     auto hash = GetCommandHash(tile, p1, p2, cmd & CMD_ID_MASK, text);
     auto p = _command_callbacks.find(hash);
+    // fprintf(stderr, "EXECUTED %lu (%u %u %u %u %s) %u\n", hash, tile, p1, p2, (uint)(cmd & CMD_ID_MASK), text.c_str(), (int)(p == _command_callbacks.end()));
     if (p == _command_callbacks.end()) return;
     for (auto &cb : p->second.second)
         cb(res);

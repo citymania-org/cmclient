@@ -42,6 +42,7 @@
 
 #include "widgets/rail_widget.h"
 
+#include "debug.h"
 #include "citymania/cm_blueprint.hpp"
 #include "citymania/cm_commands.hpp"
 #include "citymania/cm_hotkeys.hpp"
@@ -403,23 +404,33 @@ static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_t
 namespace citymania {
 
 static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2) {
+    auto rail_callback = [rail_cmd, start_tile, end_tile, track, estimate=citymania::_estimate_mod](bool res) -> bool {
+		if (DoCommand(&rail_cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
+				_rail_track_endtile == INVALID_TILE) {
+    		if (!DoCommandP(&rail_cmd)) return false;
+    	}
+    	if (!estimate && _rail_track_endtile != INVALID_TILE)
+			StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
+		return res;
+    };
+
 	auto h1 = TileHeight(s1);
 	auto h2 = TileHeight(s2);
-	int diag_flag = (int)diagonal;
-	DoCommandP(e1, s1, ((h1 < h2 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag, CMD_LEVEL_LAND, CcTerraform);
-	uint32 p2 = ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
-    auto rail_callback = [rail_cmd, start_tile, end_tile, track](bool res) -> bool {
-    	if (!citymania::_estimate_mod && end_tile != INVALID_TILE)
-			StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
-    	return DoCommandP(&rail_cmd);
-    } ;
-	return citymania::DoCommandWithCallback(e2, s2, p2, CMD_LEVEL_LAND, CcTerraform, "", rail_callback);
+	uint32 diag_flag = diagonal ? 1 : 0;
+	uint32 p2_1 = ((h1 < h2 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
+	uint32 p2_2 = ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
+    auto l1_fail = (!DoCommand(e1, s1, p2_1, DC_AUTO | DC_NO_WATER, CMD_LEVEL_LAND).Succeeded());
+    auto l2_fail = (!DoCommand(e2, s2, p2_2, DC_AUTO | DC_NO_WATER, CMD_LEVEL_LAND).Succeeded());
+	if (l1_fail && l2_fail) return rail_callback(true);
+	if (l2_fail) return citymania::DoCommandWithCallback(e1, s1, p2_1, CMD_LEVEL_LAND, CcTerraform, "", rail_callback);
+	if (!l1_fail) DoCommandP(e1, s1, p2_1, CMD_LEVEL_LAND, CcTerraform);
+	return citymania::DoCommandWithCallback(e2, s2, p2_2, CMD_LEVEL_LAND, CcTerraform, "", rail_callback);
 }
 
 static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd) {
 	bool eq = (TileX(end_tile) - TileY(end_tile) == TileX(start_tile) - TileY(start_tile));
 	bool ez = (TileX(end_tile) + TileY(end_tile) == TileX(start_tile) + TileY(start_tile));
-	StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
+	// StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
 	switch (_thd.cm_poly_dir) {
 		case TRACKDIR_X_NE:
 			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
@@ -489,6 +500,8 @@ static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Tra
 				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, ez, 0));
 			break;
 		}
+		default:
+			break;
 	}
 }
 
@@ -508,16 +521,15 @@ static void HandleAutodirPlacement()
 	 * snap point over the last overbuilt track piece. In such case we don't
 	 * wan't to show any errors to the user. Don't execute the command right
 	 * away, first check if overbuilding. */
-	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) ||
-			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
-			_rail_track_endtile == INVALID_TILE) {
-		if (_thd.cm_poly_terra && !_remove_button_clicked) {
-			if (!citymania::HandleAutodirTerraform(start_tile, end_tile, track, cmd)) return;
-		} else {
-			if (!DoCommandP(&cmd)) return;
-		}
+	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) || _remove_button_clicked) {
+		if (!DoCommandP(&cmd)) return;
+	} else if (_thd.cm_poly_terra) {
+		citymania::HandleAutodirTerraform(start_tile, end_tile, track, cmd);
+		return;
+	} else if (DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
+				_rail_track_endtile == INVALID_TILE) {
+		if (!DoCommandP(&cmd)) return;
 	}
-
 	/* Save new snap points for the polyline tool, no matter if the command
 	 * succeeded, the snapping will be extended over overbuilt track pieces. */
 	if (!citymania::_estimate_mod && _rail_track_endtile != INVALID_TILE) {
