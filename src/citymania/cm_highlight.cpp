@@ -17,15 +17,19 @@
 #include "../newgrf_railtype.h"
 #include "../newgrf_roadtype.h"
 #include "../newgrf_station.h"
+#include "../spritecache.h"
 #include "../town.h"
 #include "../town_kdtree.h"
 #include "../tilearea_type.h"
 #include "../tilehighlight_type.h"
 #include "../tilehighlight_func.h"
 #include "../viewport_func.h"
+#include "../zoom_func.h"
 // #include "../zoning.h"
 #include "../table/airporttile_ids.h"
 #include "../table/track_land.h"
+#include "../table/autorail.h"
+#include "../debug.h"
 
 #include <set>
 
@@ -66,6 +70,7 @@ namespace citymania {
 
 extern void (*DrawTileSelectionRect)(const TileInfo *ti, PaletteID pal);
 extern void (*DrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal);
+extern HighLightStyle (*GetPartOfAutoLine)(int px, int py, const Point &selstart, const Point &selend, HighLightStyle dir);
 
 struct TileZoning {
     uint8 town_zone : 3;
@@ -93,6 +98,16 @@ std::set<std::pair<uint32, const Town*>, std::greater<std::pair<uint32, const To
 const byte _tileh_to_sprite[32] = {
     0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 0,
     0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18, 0,
+};
+
+// Copied from rail_cmd.cpp
+static const TileIndexDiffC _trackdelta[] = {
+    { -1,  0 }, {  0,  1 }, { -1,  0 }, {  0,  1 }, {  1,  0 }, {  0,  1 },
+    {  0,  0 },
+    {  0,  0 },
+    {  1,  0 }, {  0, -1 }, {  0, -1 }, {  1,  0 }, {  0, -1 }, { -1,  0 },
+    {  0,  0 },
+    {  0,  0 }
 };
 
 ObjectTileHighlight ObjectTileHighlight::make_rail_depot(SpriteID palette, DiagDirection ddir) {
@@ -156,11 +171,19 @@ ObjectTileHighlight ObjectTileHighlight::make_airport_tile(SpriteID palette, Sta
     return oh;
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_point(SpriteID palette) {
+    return ObjectTileHighlight(Type::POINT, palette);
+}
+
 
 bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
     if (this->type != oh.type) return false;
     return (this->tile == oh.tile
             && this->end_tile == oh.end_tile
+            && this->trackdir == oh.trackdir
+            && this->tile2 == oh.tile2
+            && this->end_tile2 == oh.end_tile2
+            && this->trackdir2 == oh.trackdir2
             && this->axis == oh.axis
             && this->ddir == oh.ddir
             && this->roadtype == oh.roadtype
@@ -228,6 +251,18 @@ ObjectHighlight ObjectHighlight::make_blueprint(TileIndex tile, sp<Blueprint> bl
     return oh;
 }
 
+ObjectHighlight ObjectHighlight::make_polyrail(TileIndex start_tile, TileIndex end_tile, Trackdir trackdir,
+                                               TileIndex start_tile2, TileIndex end_tile2, Trackdir trackdir2) {
+    auto oh = ObjectHighlight{ObjectHighlight::Type::POLYRAIL};
+    oh.tile = start_tile;
+    oh.end_tile = end_tile;
+    oh.trackdir = trackdir;
+    oh.tile2 = start_tile2;
+    oh.end_tile2 = end_tile2;
+    oh.trackdir2 = trackdir2;
+    return oh;
+}
+
 /**
  * Try to add an additional rail-track at the entrance of a depot
  * @param tile  Tile to use for adding the rail-track
@@ -281,6 +316,7 @@ void ObjectHighlight::AddTile(TileIndex tile, ObjectTileHighlight &&oh) {
 
 void ObjectHighlight::UpdateTiles() {
     this->tiles.clear();
+    this->sprites.clear();
     switch (this->type) {
         case Type::NONE:
             break;
@@ -346,7 +382,6 @@ void ObjectHighlight::UpdateTiles() {
                 (this->is_truck ? 1 : 0) | (this->ddir >= DIAGDIR_END ? 2 : 0) | (((uint)this->ddir % 4) << 3) | (NEW_STATION << 16),
                 CMD_BUILD_ROAD_STOP
             ) ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
-            TileIndex tile;
             for (TileIndex tile : ta) {
                 this->AddTile(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck));
             }
@@ -378,7 +413,6 @@ void ObjectHighlight::UpdateTiles() {
             int w = as->size_x;
             int h = as->size_y;
             if (rotation == DIR_E || rotation == DIR_W) Swap(w, h);
-            TileArea airport_area = TileArea(this->tile, w, h);
             for (AirportTileTableIterator iter(as->table[this->airport_layout], this->tile); iter != INVALID_TILE; ++iter) {
                 this->AddTile(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx()));
             }
@@ -388,6 +422,81 @@ void ObjectHighlight::UpdateTiles() {
             if (this->blueprint && this->tile != INVALID_TILE)
                 this->tiles = this->blueprint->GetTiles(this->tile);
             break;
+        case Type::POLYRAIL: {
+
+            auto point1 = this->tile;
+            auto point2 = INVALID_TILE;
+            switch (trackdir) {
+                case TRACKDIR_X_NE:
+                    point1 += ToTileIndexDiff({1, 0});
+                    point2 = point1 + ToTileIndexDiff({0, 1});
+                    break;
+                case TRACKDIR_Y_NW:
+                    point1 += ToTileIndexDiff({0, 1});
+                    point2 = point1 + ToTileIndexDiff({1, 0});
+                    break;
+                case TRACKDIR_Y_SE:
+                    point2 = point1 + ToTileIndexDiff({1, 0});
+                    break;
+                case TRACKDIR_X_SW:
+                    point2 = point1 + ToTileIndexDiff({0, 1});
+                    break;
+                case TRACKDIR_RIGHT_N:
+                case TRACKDIR_LEFT_N:
+                    point1 += ToTileIndexDiff({1, 1});
+                    break;
+                case TRACKDIR_UPPER_W:
+                case TRACKDIR_LOWER_W:
+                    point1 += ToTileIndexDiff({0, 1});
+                    break;
+                case TRACKDIR_UPPER_E:
+                case TRACKDIR_LOWER_E:
+                    point1 += ToTileIndexDiff({1, 0});
+                    break;
+                // TRACKDIR_RIGHT/LEFT_S - ok
+                default:
+                    break;
+            }
+            this->AddTile(point1, ObjectTileHighlight::make_point(CM_PALETTE_TINT_WHITE));
+            if (point2 != INVALID_TILE)
+                this->AddTile(point2, ObjectTileHighlight::make_point(CM_PALETTE_TINT_WHITE));
+            auto z = TileHeight(point1);
+
+            auto add_track = [this, z](TileIndex tile, TileIndex end_tile, Trackdir trackdir, SpriteID palette, TileIndex point1, TileIndex point2) {
+                if (trackdir == INVALID_TRACKDIR) return;
+
+                for(;;) {
+                    this->sprites.emplace_back(
+                        RemapCoords(TileX(tile) * TILE_SIZE, TileY(tile) * TILE_SIZE, z * TILE_HEIGHT + 7 /* z_offset */),
+                        SPR_AUTORAIL_BASE + _AutorailTilehSprite[0][TrackdirToTrack(trackdir)],
+                        palette
+                    );
+                    // this->AddTile(tile, std::move(ObjectTileHighlight::make_rail_track(palette, TrackdirToTrack(trackdir)).set_z(z)));
+                    if (point1 != INVALID_TILE) {
+                        point1 += ToTileIndexDiff(_trackdelta[trackdir]);
+                        this->AddTile(point1, ObjectTileHighlight::make_point(CM_PALETTE_TINT_WHITE));
+                    }
+                    if (point2 != INVALID_TILE) {
+                        point2 += ToTileIndexDiff(_trackdelta[trackdir]);
+                        this->AddTile(point2, ObjectTileHighlight::make_point(CM_PALETTE_TINT_WHITE));
+                    }
+
+                    if (tile == end_tile) break;
+
+                    tile += ToTileIndexDiff(_trackdelta[trackdir]);
+                    /* toggle railbit for the non-diagonal tracks */
+                    if (!IsDiagonalTrackdir(trackdir)) ToggleBit(trackdir, 0);
+                }
+                if (!IsDiagonalTrackdir(trackdir) && point1 != INVALID_TILE) {
+                    ToggleBit(trackdir, 0);
+                    point1 += ToTileIndexDiff(_trackdelta[trackdir]);
+                    this->AddTile(point1, ObjectTileHighlight::make_point(CM_PALETTE_TINT_WHITE));
+                }
+            };
+            add_track(this->tile, this->end_tile, this->trackdir, CM_PALETTE_TINT_YELLOW, point1, point2);
+            add_track(this->tile2, this->end_tile2, this->trackdir2, PALETTE_SEL_TILE_BLUE, INVALID_TILE, INVALID_TILE);
+            break;
+        }
         default:
             NOT_REACHED();
     }
@@ -397,6 +506,17 @@ void ObjectHighlight::MarkDirty() {
     this->UpdateTiles();
     for (const auto &kv: this->tiles) {
         MarkTileDirtyByTile(kv.first);
+    }
+    for (const auto &s: this->sprites) {
+        auto sprite = GetSprite(GB(s.sprite_id, 0, SPRITE_WIDTH), ST_NORMAL);
+        auto left = s.pt.x + sprite->x_offs;
+        auto top = s.pt.y + sprite->y_offs;
+        MarkAllViewportsDirty(
+            left,
+            top,
+            left + UnScaleByZoom(sprite->width, ZOOM_LVL_NORMAL),
+            top + UnScaleByZoom(sprite->height, ZOOM_LVL_NORMAL)
+        );
     }
     if (this->type == ObjectHighlight::Type::BLUEPRINT && this->blueprint) {  // TODO why && blueprint check is needed?
         for (auto tile : this->blueprint->source_tiles) {
@@ -788,6 +908,24 @@ void DrawTunnelHead(SpriteID palette, const TileInfo *ti, RailType railtype, Dia
     AddSortableSpriteToDraw(image, palette, ti->x, ti->y, 16, 16, 0, ti->z);
 }
 
+void DrawSelectionPoint(SpriteID palette, const TileInfo *ti) {
+    int z = 0;
+    FoundationPart foundation_part = FOUNDATION_PART_NORMAL;
+    if (ti->tileh & SLOPE_N) {
+        z += TILE_HEIGHT;
+        if (RemoveHalftileSlope(ti->tileh) == SLOPE_STEEP_N) z += TILE_HEIGHT;
+    }
+    if (IsHalftileSlope(ti->tileh)) {
+        Corner halftile_corner = GetHalftileSlopeCorner(ti->tileh);
+        if ((halftile_corner == CORNER_W) || (halftile_corner == CORNER_E)) z += TILE_HEIGHT;
+        if (halftile_corner != CORNER_S) {
+            foundation_part = FOUNDATION_PART_HALFTILE;
+            if (IsSteepSlope(ti->tileh)) z -= TILE_HEIGHT;
+        }
+    }
+    DrawSelectionSprite(_cur_dpi->zoom <= ZOOM_LVL_DETAIL ? SPR_DOT : SPR_DOT_SMALL, palette, ti, z, foundation_part);
+}
+
 void ObjectHighlight::Draw(const TileInfo *ti) {
     auto range = this->tiles.equal_range(ti->tile);
     for (auto t = range.first; t != range.second; t++) {
@@ -797,8 +935,7 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 DrawTrainDepotSprite(oth.palette, ti, _cur_railtype, oth.u.rail.depot.ddir);
                 break;
             case ObjectTileHighlight::Type::RAIL_TRACK: {
-                auto hs = (HighLightStyle)oth.u.rail.track;
-                DrawAutorailSelection(ti, hs, GetSelectionColourByTint(oth.palette));
+                DrawAutorailSelection(ti, (HighLightStyle)oth.u.rail.track, GetSelectionColourByTint(oth.palette));
                 break;
             }
             case ObjectTileHighlight::Type::RAIL_STATION:
@@ -822,6 +959,9 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
             case ObjectTileHighlight::Type::AIRPORT_TILE:
                 DrawAirportTile(oth.palette, ti, oth.u.airport_tile.gfx);
                 break;
+            case ObjectTileHighlight::Type::POINT:
+                DrawSelectionPoint(oth.palette, ti);
+                break;
             default:
                 break;
         }
@@ -829,6 +969,50 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
     // fprintf(stderr, "TILEH DRAW %d %d %d\n", ti->tile, (int)i, (int)this->tiles.size());
 }
 
+bool Intersects(Point tl, Point br, int left, int top, int right, int bottom) {
+    return (
+        right >= tl.x &&
+        left <= br.x &&
+        bottom >= tl.y &&
+        top <= br.y
+    );
+}
+
+bool Intersects(const Rect &rect, int left, int top, int right, int bottom) {
+    return (
+        right >= rect.left &&
+        left <= rect.right &&
+        bottom >= rect.top &&
+        top <= rect.bottom
+    );
+}
+
+
+void ObjectHighlight::DrawOverlay(DrawPixelInfo *dpi) {
+    for (auto &s : this->sprites) {
+        DrawSpriteViewport(s.sprite_id, s.palette_id, s.pt.x, s.pt.y);
+    }
+    // for (auto &[tile, oth] : this->tiles) {
+    //     switch (oth.type) {
+    //         case ObjectTileHighlight::Type::RAIL_TRACK: {
+    //             if (oth.z != -1) {
+    //                 auto h = oth.z * TILE_HEIGHT + 7 /* z_offset */;
+    //                 auto tx = TileX(tile) * TILE_SIZE, ty = TileY(tile) * TILE_SIZE;
+    //                 auto tl = RemapCoords(tx + TILE_SIZE / 2, ty - TILE_SIZE / 2, h);
+    //                 auto br = RemapCoords(tx + TILE_SIZE / 2, ty + 3 * TILE_SIZE / 2, h);
+    //                 if (Intersects(tl, br, dpi.left, dpi.top, dpi.left + dpi.width, dpi.top + dpi.height)) {
+    //                     auto sprite = SPR_AUTORAIL_BASE + _AutorailTilehSprite[0][oth.u.rail.track];
+    //                     auto p = RemapCoords(tx, ty, h);
+    //                     DrawSpriteViewport(sprite, oth.palette, p.x, p.y);
+    //                 }
+    //             }
+    //             break;
+    //         }
+    //         default:
+    //             break;
+    //     }
+    // }
+}
 
 template <typename F>
 uint8 Get(uint32 x, uint32 y, F getter) {
@@ -1165,9 +1349,17 @@ bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
         // handled by DrawTileZoning
         return true;
     }
+    if (_thd.cm_poly_terra) {
+        return true;
+    }
 
     return false;
 }
+
+void DrawSelectionOverlay(DrawPixelInfo *dpi) {
+    _thd.cm.DrawOverlay(dpi);
+}
+
 
 TileIndex _autodetection_tile = INVALID_TILE;
 DiagDirDiff _autodetection_rotation = DIAGDIRDIFF_SAME;
@@ -1266,7 +1458,14 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
             }
         }
         new_drawstyle = HT_RECT;
-    }
+    } else if (_thd.cm_new_poly_terra) {
+        _thd.cm_new = ObjectHighlight::make_polyrail(TileVirtXY(_thd.selstart.x, _thd.selstart.y),
+                                                     TileVirtXY(_thd.selend.x, _thd.selend.y),
+                                                     _thd.cm_poly_dir,
+                                                     TileVirtXY(_thd.selstart2.x, _thd.selstart2.y),
+                                                     TileVirtXY(_thd.selend2.x, _thd.selend2.y),
+                                                     _thd.cm_poly_dir2);
+}
     if (_thd.cm != _thd.cm_new) {
         _thd.cm.MarkDirty();
         _thd.cm = _thd.cm_new;

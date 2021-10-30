@@ -78,6 +78,7 @@ bool CanBuild(const CommandContainer &cc);
 TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type);
 void DrawTileZoning(const TileInfo *ti, const TileHighlight &th, TileType tile_type);
 bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht);
+void DrawSelectionOverlay(DrawPixelInfo *dpi);
 
 void AllocateZoningMap(uint map_size);
 void InitializeZoningMap();

@@ -32,6 +32,7 @@ public:
         ROAD_STOP,
         ROAD_DEPOT,
         AIRPORT_TILE,
+        POINT,
         END,
     };
 
@@ -89,6 +90,17 @@ public:
     static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck);
     static ObjectTileHighlight make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir);
     static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
+    static ObjectTileHighlight make_point(SpriteID palette);
+};
+
+
+class DetachedHighlight {
+public:
+    Point pt;
+    SpriteID sprite_id;
+    SpriteID palette_id;
+    DetachedHighlight(Point pt, SpriteID sprite_id, SpriteID palette_id)
+        :pt{pt}, sprite_id{sprite_id}, palette_id{palette_id} {}
 };
 
 class TileIndexDiffCCompare{
@@ -199,11 +211,16 @@ public:
         ROAD_DEPOT = 4,
         AIRPORT = 5,
         BLUEPRINT = 6,
+        POLYRAIL = 7,
     };
 
-    Type type;
+    Type type = Type::NONE;
     TileIndex tile = INVALID_TILE;
     TileIndex end_tile = INVALID_TILE;
+    Trackdir trackdir = INVALID_TRACKDIR;
+    TileIndex tile2 = INVALID_TILE;
+    TileIndex end_tile2 = INVALID_TILE;
+    Trackdir trackdir2 = INVALID_TRACKDIR;
     Axis axis = INVALID_AXIS;
     DiagDirection ddir = INVALID_DIAGDIR;
     RoadType roadtype = INVALID_ROADTYPE;
@@ -215,7 +232,9 @@ public:
 protected:
     bool tiles_updated = false;
     std::multimap<TileIndex, ObjectTileHighlight> tiles;
+    std::vector<DetachedHighlight> sprites = {};
     void AddTile(TileIndex tile, ObjectTileHighlight &&oh);
+    // void AddSprite(TileIndex tile, ObjectTileHighlight &&oh);
     void UpdateTiles();
     void PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track);
 
@@ -230,8 +249,11 @@ public:
     static ObjectHighlight make_road_depot(TileIndex tile, RoadType roadtype, DiagDirection orientation);
     static ObjectHighlight make_airport(TileIndex start_tile, int airport_type, byte airport_layout);
     static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);
+    static ObjectHighlight make_polyrail(TileIndex start_tile, TileIndex end_tile, Trackdir trackdir,
+                                         TileIndex start_tile2, TileIndex end_tile2, Trackdir trackdir2);
 
     void Draw(const TileInfo *ti);
+    void DrawOverlay(DrawPixelInfo *dpi);
     void MarkDirty();
 };
 

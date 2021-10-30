@@ -1799,6 +1799,8 @@ void ViewportDoDraw(const Viewport *vp, int left, int top, int right, int bottom
 	_vp_sprite_sorter(&_vd.parent_sprites_to_sort);
 	ViewportDrawParentSprites(&_vd.parent_sprites_to_sort, &_vd.child_screen_sprites_to_draw);
 
+	citymania::DrawSelectionOverlay(&_vd.dpi);
+
 	if (_draw_bounding_boxes) ViewportDrawBoundingBoxes(&_vd.parent_sprites_to_sort);
 	if (_draw_dirty_blocks) ViewportDrawDirtyBlocks();
 
@@ -3538,8 +3540,10 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 		_thd.selstart2.x &= ~TILE_UNIT_MASK;
 		_thd.selstart2.y &= ~TILE_UNIT_MASK;
 		_thd.dir2 = (HighLightStyle)TrackdirToTrack(seldir2);
+		_thd.cm_poly_dir2 = seldir2;
 	} else {
 		_thd.dir2 = HT_DIR_END;
+		_thd.cm_poly_dir2 = INVALID_TRACKDIR;
 	}
 
 	HighLightStyle ret = HT_LINE | (HighLightStyle)TrackdirToTrack(seldir);
@@ -4184,4 +4188,5 @@ void ResetRailPlacementEndpoints()
 namespace citymania {
 	void (*DrawTileSelectionRect)(const TileInfo *ti, PaletteID pal) = &::DrawTileSelectionRect;
 	void (*DrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal) = &::DrawAutorailSelection;
+	HighLightStyle (*GetPartOfAutoLine)(int px, int py, const Point &selstart, const Point &selend, HighLightStyle dir) = &::GetPartOfAutoLine;
 }

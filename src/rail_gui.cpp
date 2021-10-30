@@ -503,6 +503,7 @@ static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Tra
 		default:
 			break;
 	}
+	return true;
 }
 
 }  // namespace citymania
