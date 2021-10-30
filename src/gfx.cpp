@@ -1737,6 +1737,7 @@ void AddDirtyBlock(int left, int top, int right, int bottom)
 void MarkWholeScreenDirty()
 {
 	AddDirtyBlock(0, 0, _screen.width, _screen.height);
+	citymania::SetClientListDirty();
 }
 
 /**
