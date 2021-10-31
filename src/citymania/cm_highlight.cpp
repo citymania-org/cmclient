@@ -1458,14 +1458,14 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
             }
         }
         new_drawstyle = HT_RECT;
-    } else if (_thd.cm_new_poly_terra) {
+    } else if ((_thd.place_mode & HT_POLY) && _thd.cm_new_poly_terra) {
         _thd.cm_new = ObjectHighlight::make_polyrail(TileVirtXY(_thd.selstart.x, _thd.selstart.y),
                                                      TileVirtXY(_thd.selend.x, _thd.selend.y),
                                                      _thd.cm_poly_dir,
                                                      TileVirtXY(_thd.selstart2.x, _thd.selstart2.y),
                                                      TileVirtXY(_thd.selend2.x, _thd.selend2.y),
                                                      _thd.cm_poly_dir2);
-}
+    }
     if (_thd.cm != _thd.cm_new) {
         _thd.cm.MarkDirty();
         _thd.cm = _thd.cm_new;

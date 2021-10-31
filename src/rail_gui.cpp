@@ -1089,9 +1089,9 @@ struct BuildRailToolbarWindow : Window {
 
 	EventState CM_OnFnModStateChange() override
 	{
-		if (_settings_client.gui.cm_enable_polyrail_terraform && this->IsWidgetLowered(WID_RAT_POLYRAIL)) {
-			return ES_HANDLED;
-		}
+		// if (_settings_client.gui.cm_enable_polyrail_terraform && this->IsWidgetLowered(WID_RAT_POLYRAIL)) {
+		// 	return ES_HANDLED;
+		// }
 		return ES_NOT_HANDLED;
 	}
 
