@@ -11,11 +11,17 @@ toolbar_png = grf.ImageFile('sprites/toolbar.png')
 gen.add_sprite(grf.FileSprite(toolbar_png, 0, 0, 20, 14),
                grf.FileSprite(toolbar_png, 32, 0, 40, 40, zoom=grf.ZOOM_2X))
 
-gen.add_sprite(grf.FileSprite(toolbar_png, 0, 44, 12, 10))
-
+sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(toolbar_png, *args, **kw))
+sprite( 0, 44, 12, 10) # hq button icon
 for i in range(3):
     for j in range(4):
-        gen.add_sprite(grf.FileSprite(toolbar_png, 66 + 20 * j, 44 + 11 * i, 10, 10))
+        sprite(66 + 20 * j, 44 + 11 * i, 10, 10)
+sprite( 0, 82, 11, 11)
+sprite(12, 82, 11, 11)
+sprite(24, 82, 11, 11)
+# sprite( 0, 67, 11, 11)
+# sprite(12, 67, 11, 11)
+# sprite(24, 67, 11, 11)
 
 innerhl_png = grf.ImageFile('sprites/innerhighlight00.png')
 sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(innerhl_png, *args, **kw))

@@ -4,6 +4,7 @@
 
 #include "../blitter/factory.hpp"
 #include "../company_base.h"
+#include "../company_func.h"
 #include "../company_gui.h"
 #include "../console_func.h"
 #include "../debug.h"
@@ -61,7 +62,7 @@ public:
     }
     void UpdateSize() {
         this->padding = ScaleGUITrad(3);
-        auto icon_size = GetSpriteSize(SPR_COMPANY_ICON);
+        auto icon_size = GetSpriteSize(CM_SPR_COMPANY_ICON);
         auto common_height = std::max<int>(icon_size.height, FONT_HEIGHT_NORMAL);
         this->line_height = common_height + this->padding;
         this->text_offset_y = (common_height - FONT_HEIGHT_NORMAL) / 2;
@@ -158,25 +159,37 @@ public:
         int y = this->box.y + this->padding;
         int x = this->box.x + this->padding;
 
-        auto text_left = x + GetSpriteSize(SPR_COMPANY_ICON).width + this->padding;
+        auto text_left = x + GetSpriteSize(CM_SPR_COMPANY_ICON).width + this->padding;
         auto text_right = this->box.x + this->box.width - 1 - this->padding;
 
-        std::vector<std::tuple<CompanyID, std::string, TextColour>> clients;
+        const std::pair<TextColour, SpriteID> STYLES[] = {
+            {TC_SILVER, PAL_NONE},
+            {TC_ORANGE, CM_SPR_HOST2},
+            {TC_WHITE , CM_SPR_PLAYER_W2},
+            {TC_SILVER, CM_SPR_COMPANY_ICON},
+            {TC_ORANGE, CM_SPR_COMPANY_ICON_HOST},
+            {TC_WHITE , CM_SPR_COMPANY_ICON_PLAYER},
+        };
+        std::vector<std::tuple<CompanyID, std::string, uint8>> clients;
         for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
-            auto colour = TC_SILVER;
-            if (ci->client_id == _network_own_client_id) colour = TC_WHITE;
-            if (ci->client_id == CLIENT_ID_SERVER) colour = TC_ORANGE;
-            clients.emplace_back(ci->client_playas, ci->client_name, colour);
+            uint8 style = 0;
+            if (ci->client_id == _network_own_client_id) style = 2;
+            if (ci->client_id == CLIENT_ID_SERVER) style = 1;
+            if (Company::IsValidID(ci->client_playas)) style += 3;
+            clients.emplace_back(ci->client_playas, ci->client_name, style);
+
         }
         std::sort(clients.begin(), clients.end());
-        for (const auto &[playas, name, colour] : clients) {
+        for (const auto &[playas, name, style] : clients) {
+            auto [colour, icon] = STYLES[style];
             SetDParamStr(0, name);
             // auto colour = TC_SILVER;
             // if (ci->client_id == _network_own_client_id) colour = TC_WHITE;
             // if (ci->client_id == CLIENT_ID_SERVER) colour = TC_ORANGE;
             DrawString(text_left, text_right, y + this->text_offset_y, STR_JUST_RAW_STRING, colour);
-            if (Company::IsValidID(playas))
-                DrawCompanyIcon(playas, x, y + this->icon_offset_y);
+
+            if (icon != PAL_NONE) DrawSprite(icon, COMPANY_SPRITE_COLOUR(playas), x, y + this->icon_offset_y);
+                // DrawCompanyIcon(playas, x, y + this->icon_offset_y);
             y += this->line_height;
         }
 
