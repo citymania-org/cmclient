@@ -8,7 +8,7 @@ gen = grf.NewGRF(
 )
 
 toolbar_png = grf.ImageFile('sprites/toolbar.png')
-gen.add_sprite(grf.FileSprite(toolbar_png, 0, 0, 20, 14),
+gen.add_sprite(grf.FileSprite(toolbar_png, 0, 0, 20, 14, yofs=4),
                grf.FileSprite(toolbar_png, 32, 0, 40, 40, zoom=grf.ZOOM_2X))
 
 sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(toolbar_png, *args, **kw))
