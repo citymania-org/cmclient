@@ -339,6 +339,7 @@ CommandCost CmdBuildObject(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 				hq_score = UpdateCompanyRatingAndValue(c, false);
 				c->location_of_HQ = tile;
 				SetWindowDirty(WC_COMPANY, c->index);
+				InvalidateWindowData(WC_CLIENT_LIST, 0);
 			}
 			break;
 		}

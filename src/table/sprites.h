@@ -309,10 +309,21 @@ static const uint16 EMPTY_BOUNDING_BOX_SPRITE_COUNT = 1;
 static const SpriteID SPR_PALETTE_BASE = SPR_EMPTY_BOUNDING_BOX + EMPTY_BOUNDING_BOX_SPRITE_COUNT;
 static const uint16 PALETTE_SPRITE_COUNT = 1;
 
-/* zoning stuff */
+/* CityMania extra sprites */
 static const SpriteID CM_SPR_CITYMANIA_BASE            = SPR_PALETTE_BASE + PALETTE_SPRITE_COUNT;
-static const SpriteID CM_SPR_RAIL_COPY_PASTE           = CM_SPR_CITYMANIA_BASE;
-static const SpriteID CM_SPR_INNER_HIGHLIGHT_BASE      = CM_SPR_CITYMANIA_BASE + 2;
+static const SpriteID CM_SPR_RAIL_COPY_PASTE           = CM_SPR_CITYMANIA_BASE + 2;
+static const SpriteID CM_SPR_HQ                        = CM_SPR_CITYMANIA_BASE + 4;
+static const SpriteID CM_SPR_PLAYER1                   = CM_SPR_CITYMANIA_BASE + 5;
+static const SpriteID CM_SPR_PLAYER2                   = CM_SPR_PLAYER1 + 1;
+static const SpriteID CM_SPR_PLAYER3                   = CM_SPR_PLAYER1 + 2;
+static const SpriteID CM_SPR_PLAYER4                   = CM_SPR_PLAYER1 + 3;
+static const SpriteID CM_SPR_PLAYER_W1                 = CM_SPR_PLAYER1 + 4;
+static const SpriteID CM_SPR_PLAYER_W2                 = CM_SPR_PLAYER1 + 5;
+static const SpriteID CM_SPR_HOST1                     = CM_SPR_PLAYER1 + 8;
+static const SpriteID CM_SPR_HOST2                     = CM_SPR_PLAYER1 + 9;
+static const SpriteID CM_SPR_HOST3                     = CM_SPR_PLAYER1 + 10;
+static const SpriteID CM_SPR_HOST4                     = CM_SPR_PLAYER1 + 11;
+static const SpriteID CM_SPR_INNER_HIGHLIGHT_BASE      = CM_SPR_CITYMANIA_BASE + 17;
 static const SpriteID CM_SPR_IMG_COMPANY_CARGO         = CM_SPR_INNER_HIGHLIGHT_BASE + 19;
 static const SpriteID CM_SPR_IMG_COMPANY_GOAL          = CM_SPR_INNER_HIGHLIGHT_BASE + 20;
 static const SpriteID CM_SPR_IMG_HOUSE_NEW             = CM_SPR_INNER_HIGHLIGHT_BASE + 21;
@@ -326,7 +337,7 @@ static const SpriteID CM_SPR_PALETTE_ZONING_YELLOW     = CM_SPR_INNER_HIGHLIGHT_
 static const SpriteID CM_SPR_PALETTE_ZONING_PURPLE     = CM_SPR_INNER_HIGHLIGHT_BASE + 29;
 static const SpriteID CM_SPR_INNER_HIGHLIGHT_COUNT     = 30;
 
-static const SpriteID CM_SPR_BORDER_HIGHLIGHT_BASE     = CM_SPR_INNER_HIGHLIGHT_BASE + CM_SPR_INNER_HIGHLIGHT_COUNT + 1;
+static const SpriteID CM_SPR_BORDER_HIGHLIGHT_BASE     = CM_SPR_INNER_HIGHLIGHT_BASE + CM_SPR_INNER_HIGHLIGHT_COUNT;
 static const SpriteID CM_SPR_BORDER_HIGHLIGHT_COUNT    = 19 * 19;
 static const SpriteID CM_PALETTE_TINT_BASE             = CM_SPR_BORDER_HIGHLIGHT_BASE + CM_SPR_BORDER_HIGHLIGHT_COUNT;
 static const SpriteID CM_PALETTE_TINT_RED_DEEP         = CM_PALETTE_TINT_BASE;
@@ -351,7 +362,6 @@ static const SpriteID CM_PALETTE_SHADE_SW              = CM_PALETTE_TINT_BASE + 
 static const SpriteID CM_PALETTE_SHADE_W               = CM_PALETTE_TINT_BASE + 19;
 static const SpriteID CM_PALETTE_SHADE_NW              = CM_PALETTE_TINT_BASE + 20;
 static const SpriteID CM_PALETTE_TINT_COUNT            = 13 + 8;
-
 /* From where can we start putting NewGRFs? */
 static const SpriteID SPR_NEWGRFS_BASE = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT;
 

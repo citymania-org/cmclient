@@ -182,7 +182,7 @@ static void LoadSpriteTables()
 			PAL_DOS != used_set->palette
 		);
 	}
-	LoadGrfFile("cmclient-4.grf", CM_SPR_CITYMANIA_BASE - 4, PAL_DOS != used_set->palette);
+	LoadGrfFile("cmclient-5.grf", CM_SPR_CITYMANIA_BASE, PAL_DOS != used_set->palette);
 
 	/* Initialize the unicode to sprite mapping table */
 	InitializeUnicodeGlyphMap();

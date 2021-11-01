@@ -9,12 +9,28 @@ grf {
 replace toolbar(10000, "sprites/toolbar.png") {
     [ 0,     0,   20,   14,  0,    0]
 }
-
 alternative_sprites(toolbar, ZOOM_LEVEL_IN_2X, BIT_DEPTH_8BPP) {
     [ 32,     0,   40,   40,  0,    0, "sprites/toolbar.png"]
 }
 
-replace inner_highlight(10001, "sprites/innerhighlight00.png") {
+replace ui_icons(10001, "sprites/toolbar.png") {
+    [   0,    44,   12,   10,  0,    0]
+
+    [  66,    44,   10,   10,  0,    0]
+    [  86,    44,   10,   10,  0,    0]
+    [ 106,    44,   10,   10,  0,    0]
+    [ 126,    44,   10,   10,  0,    0]
+    [  66,    55,   10,   10,  0,    0]
+    [  86,    55,   10,   10,  0,    0]
+    [ 106,    55,   10,   10,  0,    0]
+    [ 126,    55,   10,   10,  0,    0]
+    [  66,    66,   10,   10,  0,    0]
+    [  86,    66,   10,   10,  0,    0]
+    [ 106,    66,   10,   10,  0,    0]
+    [ 126,    66,   10,   10,  0,    0]
+}
+
+replace inner_highlight(10014, "sprites/innerhighlight00.png") {
     [ 18,     8,   64,   31,  -31,    7]
     [ 98,     8,   64,   31,  -31,    7]
     [178,     8,   64,   23,  -31,    7]
@@ -97,7 +113,7 @@ replace inner_highlight(10001, "sprites/innerhighlight00.png") {
     }
 }
 
-replace border_highlight(10030, "sprites/borderhighlight.png") {
+replace border_highlight(10044, "sprites/borderhighlight.png") {
     [  10,   10, 64, 31, -31,   7]
     [  84,   10, 64, 31, -31,   7]
     [ 158,   10, 64, 31, -31,   7]

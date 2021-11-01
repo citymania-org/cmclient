@@ -33,6 +33,7 @@
 #include "../genworld.h"
 #include "../map_type.h"
 #include "../guitimer_func.h"
+#include "../viewport_func.h"
 #include "../zoom_func.h"
 #include "../sprite.h"
 #include "../settings_internal.h"
@@ -1635,6 +1636,14 @@ private:
 		ShowNetworkChatQueryWindow(DESTTYPE_CLIENT, client_id);
 	}
 
+	static void CMOnClickCompanyHQ(NetworkClientListWindow *w, Point pt, CompanyID company_id)
+	{
+		auto company = Company::GetIfValid(company_id);
+		if (company == nullptr || company->location_of_HQ == INVALID_TILE) return;
+		if (citymania::_fn_mod) ShowExtraViewportWindow(company->location_of_HQ);
+		else ScrollMainWindowToTile(company->location_of_HQ);
+	}
+
 	/**
 	 * Part of RebuildList() to create the information for a single company.
 	 * @param company_id The company to build the list for.
@@ -1645,6 +1654,14 @@ private:
 		ButtonCommon *chat_button = new CompanyButton(SPR_CHAT, company_id == COMPANY_SPECTATOR ? STR_NETWORK_CLIENT_LIST_CHAT_SPECTATOR_TOOLTIP : STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::OnClickCompanyChat);
 
 		if (_network_server) this->buttons[line_count].emplace_back(new CompanyButton(SPR_ADMIN, STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_TOOLTIP, COLOUR_RED, company_id, &NetworkClientListWindow::OnClickCompanyAdmin, company_id == COMPANY_SPECTATOR));
+		/* CityMania code start */
+		auto company = Company::GetIfValid(company_id);
+		if (company != nullptr) {
+			ButtonCommon *hq_button = new CompanyButton(CM_SPR_HQ, STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::CMOnClickCompanyHQ);
+			if (company->location_of_HQ == INVALID_TILE) hq_button->disabled = true;
+			this->buttons[line_count].emplace_back(hq_button);
+		}
+		/* CityMania code end */
 		this->buttons[line_count].emplace_back(chat_button);
 		if (client_playas != company_id) this->buttons[line_count].emplace_back(new CompanyButton(SPR_JOIN, STR_NETWORK_CLIENT_LIST_JOIN_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::OnClickCompanyJoin, company_id != COMPANY_SPECTATOR && Company::Get(company_id)->is_ai));
 
