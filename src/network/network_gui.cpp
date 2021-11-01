@@ -2063,8 +2063,9 @@ public:
 		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
 		int offset = std::max(0, ((int)(this->line_height + 1) - (int)d.height) / 2);
 
-		uint text_left = left + (rtl ? (uint)WD_FRAMERECT_LEFT : d.width + 8);
-		uint text_right = right - (rtl ? d.width + 8 : (uint)WD_FRAMERECT_RIGHT);
+		uint padding = ScaleGUITrad(2);
+		uint text_left = left + (rtl ? (uint)WD_FRAMERECT_LEFT : d.width + padding * 2);
+		uint text_right = right - (rtl ? d.width + padding * 2 : (uint)WD_FRAMERECT_RIGHT);
 
 		uint line_start = this->vscroll->GetPosition();
 		uint line_end = line_start + this->vscroll->GetCapacity();
@@ -2082,13 +2083,13 @@ public:
 			}
 
 			if (company_id == COMPANY_SPECTATOR) {
-				DrawSprite(SPR_COMPANY_ICON, PALETTE_TO_GREY, rtl ? right - d.width - 4 : left + 4, y + offset);
+				DrawSprite(SPR_COMPANY_ICON, PALETTE_TO_GREY, rtl ? right - d.width - padding : left + padding, y + offset);
 				DrawString(rtl ? x : text_left, rtl ? text_right : x, y + text_y_offset, STR_NETWORK_CLIENT_LIST_SPECTATORS, TC_SILVER);
 			} else if (company_id == COMPANY_NEW_COMPANY) {
-				DrawSprite(SPR_COMPANY_ICON, PALETTE_TO_GREY, rtl ? right - d.width - 4 : left + 4, y + offset);
+				DrawSprite(SPR_COMPANY_ICON, PALETTE_TO_GREY, rtl ? right - d.width - padding : left + padding, y + offset);
 				DrawString(rtl ? x : text_left, rtl ? text_right : x, y + text_y_offset, STR_NETWORK_CLIENT_LIST_NEW_COMPANY, TC_WHITE);
 			} else {
-				DrawCompanyIcon(company_id, rtl ? right - d.width - 4 : left + 4, y + offset);
+				DrawCompanyIcon(company_id, rtl ? right - d.width - padding : left + padding, y + offset);
 
 				SetDParam(0, company_id);
 				SetDParam(1, company_id);
