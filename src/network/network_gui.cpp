@@ -28,6 +28,7 @@
 #include "../querystring_gui.h"
 #include "../sortlist_type.h"
 #include "../company_func.h"
+#include "../company_gui.h"
 #include "../command_func.h"
 #include "../core/geometry_func.hpp"
 #include "../genworld.h"
@@ -1330,7 +1331,7 @@ static void ShowNetworkStartServerWindow()
 /* The window below gives information about the connected clients
  * and also makes able to kick them (if server) and stuff like that. */
 
-extern void DrawCompanyIcon(CompanyID cid, int x, int y);
+// CM extern void DrawCompanyIcon(CompanyID cid, int x, int y);
 
 static const NWidgetPart _nested_client_list_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -1865,7 +1866,33 @@ public:
 
 			case WID_CL_MATRIX: {
 				ButtonCommon *button = this->GetButtonAtPoint(pt);
-				if (button == nullptr) break;
+				/* CityMania code start */
+				// NOTE: needs to match company order in DrawWidget
+				if (button == nullptr) {
+					NWidgetBase *nwi = this->GetWidget<NWidgetBase>(widget);
+					int y = _cursor.pos.y - this->top - nwi->pos_y - 2;
+					int index = y / this->line_height;
+					NetworkClientInfo *own_ci = NetworkClientInfo::GetByClientID(_network_own_client_id);
+					CompanyID client_playas = own_ci == nullptr ? COMPANY_SPECTATOR : own_ci->client_playas;
+					if (client_playas == COMPANY_SPECTATOR && !NetworkMaxCompaniesReached()) index--;
+					if (index < 0) break;
+					auto count_company = [&index](CompanyID company_id) -> bool {
+						if (index == 0) {
+							if (citymania::_fn_mod) ShowCompanyFinances(company_id);
+							else ShowCompany(company_id);
+							return true;
+						}
+						index--;
+						return false;
+					};
+					if (client_playas != COMPANY_SPECTATOR && count_company(client_playas)) break;
+					for (const Company *c : Company::Iterate()) {
+						if (client_playas == c->index) continue;
+						if (count_company(c->index)) break;
+					}
+					break;
+				}
+				/* CityMania code end */
 
 				button->OnClick(this, pt);
 				break;
