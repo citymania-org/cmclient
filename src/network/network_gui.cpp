@@ -2114,20 +2114,20 @@ public:
 
 				SpriteID player_icon = 0;
 				if (ci->client_id == _network_own_client_id) {
-					player_icon = SPR_PLAYER_SELF;
+					player_icon = CM_SPR_PLAYER1 /* SPR_PLAYER_SELF */;
 				} else if (ci->client_id == CLIENT_ID_SERVER) {
-					player_icon = SPR_PLAYER_HOST;
+					player_icon = CM_SPR_HOST1 /* SPR_PLAYER_HOST */;
 				}
 
 				if (player_icon != 0) {
 					Dimension d2 = GetSpriteSize(player_icon);
-					uint offset_x = CLIENT_OFFSET_LEFT - 3;
+					uint offset_x = ScaleGUITrad(CLIENT_OFFSET_LEFT - 3);
 					int offset_y = std::max(0, ((int)(this->line_height + 1) - (int)d2.height) / 2);
 					DrawSprite(player_icon, PALETTE_TO_GREY, rtl ? text_right - offset_x : text_left + offset_x - d2.width, y + offset_y);
 				}
 
 				SetDParamStr(0, ci->client_name);
-				DrawString(rtl ? x : text_left + CLIENT_OFFSET_LEFT, rtl ? text_right - CLIENT_OFFSET_LEFT : x, y + text_y_offset, STR_JUST_RAW_STRING, TC_BLACK);
+				DrawString(rtl ? x : text_left + ScaleGUITrad(CLIENT_OFFSET_LEFT), rtl ? text_right - ScaleGUITrad(CLIENT_OFFSET_LEFT) : x, y + text_y_offset, STR_JUST_RAW_STRING, TC_BLACK);
 			}
 
 			y += this->line_height;
