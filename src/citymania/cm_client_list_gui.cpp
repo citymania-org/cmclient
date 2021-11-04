@@ -164,8 +164,8 @@ public:
 
         const std::pair<TextColour, SpriteID> STYLES[] = {
             {TC_SILVER, PAL_NONE},
-            {TC_ORANGE, CM_SPR_HOST2},
-            {TC_WHITE , CM_SPR_PLAYER_W2},
+            {TC_ORANGE, CM_SPR_HOST_WHITE},
+            {TC_WHITE , CM_SPR_PLAYER_WHITE},
             {TC_SILVER, CM_SPR_COMPANY_ICON},
             {TC_ORANGE, CM_SPR_COMPANY_ICON_HOST},
             {TC_WHITE , CM_SPR_COMPANY_ICON_PLAYER},

@@ -2142,9 +2142,9 @@ public:
 
 				SpriteID player_icon = 0;
 				if (ci->client_id == _network_own_client_id) {
-					player_icon = CM_SPR_PLAYER1 /* SPR_PLAYER_SELF */;
+					player_icon = CM_SPR_PLAYER /* SPR_PLAYER_SELF */;
 				} else if (ci->client_id == CLIENT_ID_SERVER) {
-					player_icon = CM_SPR_HOST1 /* SPR_PLAYER_HOST */;
+					player_icon = CM_SPR_HOST /* SPR_PLAYER_HOST */;
 				}
 
 				if (player_icon != 0) {

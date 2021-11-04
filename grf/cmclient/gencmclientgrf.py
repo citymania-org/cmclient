@@ -13,13 +13,17 @@ gen.add_sprite(grf.FileSprite(toolbar_png, 0, 0, 20, 14, yofs=4),
 
 sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(toolbar_png, *args, **kw))
 sprite2 = lambda x, y, w, h, x2, y2: gen.add_sprite(grf.FileSprite(toolbar_png, x, y, w, h), grf.FileSprite(toolbar_png, x2, y2, w * 2, h * 2, zoom=grf.ZOOM_2X))
-sprite( 0, 44, 12, 10) # hq button icon
-for i in range(3):
-    for j in range(4):
-        sprite(66 + 20 * j, 44 + 11 * i, 10, 10)
-sprite2( 0, 82, 11, 11,  0, 94)
-sprite2(12, 82, 11, 11, 23, 94)
-sprite2(24, 82, 11, 11, 47, 94)
+sprite( 0, 44, 12, 10)  # hq button icon
+
+sprite( 45, 67, 10, 10)  # host black
+sprite( 45, 44, 10, 10)  # player black
+
+sprite2(85, 67, 11, 11, 97, 67)  # host white
+sprite2(85, 44, 11, 11, 97, 44)  # player white
+
+sprite2( 0, 82, 11, 11,  0, 94)  # competitor coloured
+sprite2(12, 82, 11, 11, 23, 94)  # host coloured
+sprite2(24, 82, 11, 11, 46, 94)  # player coloured
 
 innerhl_png = grf.ImageFile('sprites/innerhighlight00.png')
 sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(innerhl_png, *args, **kw))
