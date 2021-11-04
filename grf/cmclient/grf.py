@@ -242,21 +242,26 @@ class DescriptionSprite(BaseSprite):
 class NewGRF:
     def __init__(self, grfid, name, description):
         self.sprites = []
-        self.sprites.append(DescriptionSprite(grfid, name, description))
+        self.pseudo_sprites = []
+        self.pseudo_sprites.append(DescriptionSprite(grfid, name, description))
         self._next_sprite_id = 1
 
     def add_sprite(self, *sprites):
-        if len(sprites) > 1:
+        assert(len(sprites) > 0)
+        if isinstance(sprites[0], RealSprite):
             assert(all(isinstance(s, RealSprite) for s in sprites))
             assert(len(set(s.zoom for s in sprites)) == len(sprites))
-
-        if isinstance(sprites[0], RealSprite):
             for s in sprites:
                 s.sprite_id = self._next_sprite_id
             self._next_sprite_id += 1
 
-        for s in sprites:
-            self.sprites.append(s)
+            for s in sprites:
+                self.sprites.append(s)
+
+            self.pseudo_sprites.append(sprites[0])
+        else:
+            assert(len(sprites) == 1)
+            self.pseudo_sprites.append(sprites[0])
 
     def _write_pseudo_sprite(self, f, data, grf_type=0xff):
         f.write(struct.pack('<IB', len(data), grf_type))
@@ -264,7 +269,7 @@ class NewGRF:
 
     def write(self, filename):
         data_offset = 14
-        for s in self.sprites:
+        for s in self.pseudo_sprites:
             data_offset += s.get_data_size() + 5
 
         with open(filename, 'wb') as f:
@@ -276,11 +281,10 @@ class NewGRF:
             # f.write(b'\xb0\x01\x00\x00')  # num + 0xff -> recoloursprites() (257 each)
             self._write_pseudo_sprite(f, b'\x02\x00\x00\x00')
 
-            for s in self.sprites:
+            for s in self.pseudo_sprites:
                 self._write_pseudo_sprite(f, s.get_data(), grf_type=0xfd if isinstance(s, RealSprite) else 0xff)
             f.write(b'\x00\x00\x00\x00')
             for s in self.sprites:
-                if not isinstance(s, RealSprite): continue
                 f.write(s.get_real_data())
 
             f.write(b'\x00\x00\x00\x00')
