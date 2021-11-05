@@ -1645,6 +1645,11 @@ private:
 		else ScrollMainWindowToTile(company->location_of_HQ);
 	}
 
+	static void CMOnClickCompanyWatch(NetworkClientListWindow *w, Point pt, CompanyID company_id)
+	{
+		citymania::ShowWatchWindow(company_id, 0);
+	}
+
 	/**
 	 * Part of RebuildList() to create the information for a single company.
 	 * @param company_id The company to build the list for.
@@ -1661,6 +1666,7 @@ private:
 			ButtonCommon *hq_button = new CompanyButton(CM_SPR_HQ, STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::CMOnClickCompanyHQ);
 			if (company->location_of_HQ == INVALID_TILE) hq_button->disabled = true;
 			this->buttons[line_count].emplace_back(hq_button);
+			this->buttons[line_count].emplace_back(new CompanyButton(CM_SPR_WATCH, STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::CMOnClickCompanyWatch));
 		}
 		/* CityMania code end */
 		this->buttons[line_count].emplace_back(chat_button);

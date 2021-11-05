@@ -14,9 +14,11 @@ gen.add_sprite(grf.FileSprite(toolbar_png, 0, 0, 20, 14, yofs=4),
 sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(toolbar_png, *args, **kw))
 sprite2 = lambda x, y, w, h, x2, y2: gen.add_sprite(grf.FileSprite(toolbar_png, x, y, w, h), grf.FileSprite(toolbar_png, x2, y2, w * 2, h * 2, zoom=grf.ZOOM_2X))
 sprite( 0, 44, 12, 10)  # hq button icon
+sprite( 0, 55, 12, 10)  # watch button icon
+# sprite2(0, 55, 12, 10, 13, 55)  # watch button icon
 
-sprite( 45, 67, 10, 10)  # host black
-sprite( 45, 44, 10, 10)  # player black
+sprite(45, 67, 10, 10)  # host black
+sprite(45, 44, 10, 10)  # player black
 
 sprite2(85, 67, 11, 11, 97, 67)  # host white
 sprite2(85, 44, 11, 11, 97, 44)  # player white
