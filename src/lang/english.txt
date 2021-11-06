@@ -5974,3 +5974,5 @@ CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP                                      :
 
 CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM :Enable experimental auto-terraforming with polyrail
 CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM_HELPTEXT :Allows to use experimental auto-terraforming mode with polyrail tool (by pressing Fn modifier).
+CM_STR_NETWORK_CLIENT_LIST_WATCH_TOOLTIP :{BLACK}Watch this company
+CM_STR_NETWORK_CLIENT_LIST_HQ_TOOLTIP :{BLACK}View company headquarters

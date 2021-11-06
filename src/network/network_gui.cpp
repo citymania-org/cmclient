@@ -1663,10 +1663,10 @@ private:
 		/* CityMania code start */
 		auto company = Company::GetIfValid(company_id);
 		if (company != nullptr) {
-			ButtonCommon *hq_button = new CompanyButton(CM_SPR_HQ, STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::CMOnClickCompanyHQ);
+			ButtonCommon *hq_button = new CompanyButton(CM_SPR_HQ, CM_STR_NETWORK_CLIENT_LIST_HQ_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::CMOnClickCompanyHQ);
 			if (company->location_of_HQ == INVALID_TILE) hq_button->disabled = true;
 			this->buttons[line_count].emplace_back(hq_button);
-			this->buttons[line_count].emplace_back(new CompanyButton(CM_SPR_WATCH, STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::CMOnClickCompanyWatch));
+			this->buttons[line_count].emplace_back(new CompanyButton(CM_SPR_WATCH, CM_STR_NETWORK_CLIENT_LIST_WATCH_TOOLTIP, COLOUR_ORANGE, company_id, &NetworkClientListWindow::CMOnClickCompanyWatch));
 		}
 		/* CityMania code end */
 		this->buttons[line_count].emplace_back(chat_button);
