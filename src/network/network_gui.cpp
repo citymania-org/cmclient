@@ -921,7 +921,7 @@ public:
 	}
 };
 
-Listing NetworkGameWindow::last_sorting = {false, 0};
+Listing NetworkGameWindow::last_sorting = {false, 5};
 GUIGameServerList::SortFunction * const NetworkGameWindow::sorter_funcs[] = {
 	&NGameNameSorter,
 	&NGameClientSorter,
