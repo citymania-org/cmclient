@@ -1797,7 +1797,7 @@ public:
 				break;
 
 			case WID_CL_MATRIX: {
-				uint height = std::max({GetSpriteSize(SPR_COMPANY_ICON).height, GetSpriteSize(SPR_JOIN).height, GetSpriteSize(SPR_ADMIN).height, GetSpriteSize(SPR_CHAT).height});
+				uint height = std::max({GetSpriteSize(CM_SPR_COMPANY_ICON).height, GetSpriteSize(SPR_JOIN).height, GetSpriteSize(SPR_ADMIN).height, GetSpriteSize(SPR_CHAT).height});
 				height += ScaleGUITrad(WD_FRAMERECT_TOP) + ScaleGUITrad(WD_FRAMERECT_BOTTOM);
 				this->line_height = std::max(height, (uint)FONT_HEIGHT_NORMAL) + ScaleGUITrad(WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
 
@@ -2093,7 +2093,7 @@ public:
 		bool rtl = _current_text_dir == TD_RTL;
 		int text_y_offset = std::max(0, ((int)(this->line_height + 1) - (int)FONT_HEIGHT_NORMAL) / 2) + WD_MATRIX_BOTTOM;
 
-		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
+		Dimension d = GetSpriteSize(CM_SPR_COMPANY_ICON);
 		int offset = std::max(0, ((int)(this->line_height + 1) - (int)d.height) / 2);
 
 		uint padding = ScaleGUITrad(2);
@@ -2116,13 +2116,14 @@ public:
 			}
 
 			if (company_id == COMPANY_SPECTATOR) {
-				DrawSprite(SPR_COMPANY_ICON, PALETTE_TO_GREY, rtl ? right - d.width - padding : left + padding, y + offset);
+				DrawSprite(CM_SPR_COMPANY_ICON, PALETTE_TO_GREY, rtl ? right - d.width - padding : left + padding, y + offset);
 				DrawString(rtl ? x : text_left, rtl ? text_right : x, y + text_y_offset, STR_NETWORK_CLIENT_LIST_SPECTATORS, TC_SILVER);
 			} else if (company_id == COMPANY_NEW_COMPANY) {
-				DrawSprite(SPR_COMPANY_ICON, PALETTE_TO_GREY, rtl ? right - d.width - padding : left + padding, y + offset);
+				DrawSprite(CM_SPR_COMPANY_ICON, PALETTE_TO_GREY, rtl ? right - d.width - padding : left + padding, y + offset);
 				DrawString(rtl ? x : text_left, rtl ? text_right : x, y + text_y_offset, STR_NETWORK_CLIENT_LIST_NEW_COMPANY, TC_WHITE);
 			} else {
-				DrawCompanyIcon(company_id, rtl ? right - d.width - padding : left + padding, y + offset);
+				// DrawCompanyIcon(company_id, rtl ? right - d.width - padding : left + padding, y + offset);
+				DrawSprite(NetworkCompanyIsPassworded(company_id) ? CM_SPR_COMPANY_ICON_LOCKED : CM_SPR_COMPANY_ICON, COMPANY_SPRITE_COLOUR(company_id), rtl ? right - d.width - padding : left + padding, y + offset);
 
 				SetDParam(0, company_id);
 				SetDParam(1, company_id);
