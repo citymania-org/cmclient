@@ -111,7 +111,9 @@ CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &ite
             auto end_tile = start_tile;
             auto tdir = item.u.rail.track.start_dir;
             for (auto i = 1; i < item.u.rail.track.length; i++) {
-                end_tile = TileAddByDiagDir(end_tile, TrackdirToExitdir(tdir));
+                auto new_tile = AddTileIndexDiffCWrap(end_tile, TileIndexDiffCByDiagDir(TrackdirToExitdir(tdir)));
+                if (new_tile == INVALID_TILE) break;
+                end_tile = new_tile;
                 tdir = NextTrackdir(tdir);
             }
             return CommandContainer {
@@ -212,7 +214,9 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 auto tdir = o.u.rail.track.start_dir;
                 for (auto i = 0; i < o.u.rail.track.length; i++) {
                     add_tile(end_tile, ObjectTileHighlight::make_rail_track(palette, TrackdirToTrack(tdir)));
-                    end_tile = TileAddByDiagDir(end_tile, TrackdirToExitdir(tdir));
+                    auto new_tile = AddTileIndexDiffCWrap(end_tile, TileIndexDiffCByDiagDir(TrackdirToExitdir(tdir)));
+                    if (new_tile == INVALID_TILE) break;
+                    end_tile = new_tile;
                     tdir = NextTrackdir(tdir);
                 }
                 break;
