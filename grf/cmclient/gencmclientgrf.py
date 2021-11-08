@@ -26,6 +26,9 @@ sprite2(85, 44, 11, 11, 97, 44)  # player white
 sprite2( 0, 82, 11, 11,  0, 94)  # competitor coloured
 sprite2(12, 82, 11, 11, 23, 94)  # host coloured
 sprite2(24, 82, 11, 11, 46, 94)  # player coloured
+sprite2(36, 82, 11, 11, 69, 94)  # company afk
+sprite2(48, 82, 11, 11, 92, 94)  # company locked
+
 
 innerhl_png = grf.ImageFile('sprites/innerhighlight00.png')
 sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(innerhl_png, *args, **kw))
