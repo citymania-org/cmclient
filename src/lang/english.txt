@@ -5978,3 +5978,4 @@ CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM :Enable experimental auto-terraf
 CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM_HELPTEXT :Allows to use experimental auto-terraforming mode with polyrail tool (by pressing Fn modifier).
 CM_STR_NETWORK_CLIENT_LIST_WATCH_TOOLTIP :{BLACK}Watch this company
 CM_STR_NETWORK_CLIENT_LIST_HQ_TOOLTIP :{BLACK}View company headquarters
+CM_STR_WATCH_LOCATION_TOOLTIP                      :{BLACK}Centre the main view on the location. Ctrl+Click opens a new viewport on the location

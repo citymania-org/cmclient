@@ -3,18 +3,22 @@
 #include "../stdafx.h"
 
 #include "cm_watch_gui.hpp"
+
+#include "cm_hotkeys.hpp"
 #include "cm_main.hpp"
 
 #include "../widget_type.h"
 #include "../gfx_type.h"
 #include "../gfx_func.h"
+#include "../gui.h"
 #include "../company_base.h"
 #include "../company_gui.h"
+#include "../landscape.h"
+#include "../map_func.h"
+#include "../strings_func.h"
 #include "../viewport_func.h"
 #include "../window_func.h"
-#include "../strings_func.h"
 #include "../zoom_func.h"
-#include "../map_func.h"
 
 #include "../network/network.h"
 #include "../network/network_func.h"
@@ -124,6 +128,7 @@ static const NWidgetPart _nested_watch_company_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetDataTip(STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, CM_STR_WATCH_LOCATION_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
@@ -170,6 +175,7 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetDataTip(STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, CM_STR_WATCH_LOCATION_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
@@ -424,6 +430,12 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 			this->owner = this->watched_company;
 			this->SetDirty();
 		}
+	} else if (widget == EWW_LOCATION) {
+		auto x = this->viewport->scrollpos_x + this->viewport->virtual_width / 2;
+		auto y = this->viewport->scrollpos_y + this->viewport->virtual_height / 2;
+		auto pt = InverseRemapCoords(x, y);
+		if (_fn_mod) citymania::ShowExtraViewportWindow(pt.x, pt.y, 0);
+		else ScrollMainWindowTo(pt.x, pt.y, 0);
 	} else if (IsInsideMM(widget, EWW_PB_COMPANY_FIRST, EWW_PB_COMPANY_LAST + 1)) {
 		/* Click on Company Button */
 		if (!this->IsWidgetDisabled(widget)) {
@@ -629,7 +641,7 @@ void WatchCompany::ScrollToTile( TileIndex tile )
 {
 	/* Scroll window to the tile, only if not zero */
 	if (tile != 0) {
-		ScrollWindowTo( TileX(tile) * TILE_SIZE + TILE_SIZE / 2, TileY(tile) * TILE_SIZE + TILE_SIZE / 2, -1, this );
+		ScrollWindowTo(TileX(tile) * TILE_SIZE + TILE_SIZE / 2, TileY(tile) * TILE_SIZE + TILE_SIZE / 2, -1, this);
 	}
 }
 
