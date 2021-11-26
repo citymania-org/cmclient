@@ -55,6 +55,9 @@ void ShowStoryBook(CompanyID company, uint16 page_id = INVALID_STORY_PAGE);
 void ShowEstimatedCostOrIncome(Money cost, int x, int y);
 
 void ShowExtraViewportWindow(TileIndex tile = INVALID_TILE);
+namespace citymania {
+Window *ShowExtraViewportWindow(int x, int y, int z);
+}
 void ShowExtraViewportWindowForTileUnderCursor();
 
 /* bridge_gui.cpp */

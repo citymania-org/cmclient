@@ -74,11 +74,11 @@ struct GraphLegendWindow : Window {
 		bool rtl = _current_text_dir == TD_RTL;
 
 		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
-		DrawCompanyIcon(cid, rtl ? r.right - d.width - 2 : r.left + 2, r.top + (r.bottom - r.top - d.height) / 2);
+		DrawCompanyIcon(cid, rtl ? r.right - d.width - ScaleGUITrad(2) : r.left + ScaleGUITrad(2), CenterBounds(r.top, r.bottom, d.height));
 
 		SetDParam(0, cid);
 		SetDParam(1, cid);
-		DrawString(r.left + (rtl ? (uint)WD_FRAMERECT_LEFT : (d.width + 4)), r.right - (rtl ? (d.width + 4) : (uint)WD_FRAMERECT_RIGHT), r.top + (r.bottom - r.top + 1 - FONT_HEIGHT_NORMAL) / 2, STR_COMPANY_NAME_COMPANY_NUM, HasBit(_legend_excluded_companies, cid) ? TC_BLACK : TC_WHITE);
+		DrawString(r.left + (rtl ? (uint)WD_FRAMERECT_LEFT : (d.width + ScaleGUITrad(4))), r.right - (rtl ? (d.width + ScaleGUITrad(4)) : (uint)WD_FRAMERECT_RIGHT), CenterBounds(r.top, r.bottom, FONT_HEIGHT_NORMAL), STR_COMPANY_NAME_COMPANY_NUM, HasBit(_legend_excluded_companies, cid) ? TC_BLACK : TC_WHITE);
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override
@@ -119,11 +119,12 @@ struct GraphLegendWindow : Window {
 static NWidgetBase *MakeNWidgetCompanyLines(int *biggest_index)
 {
 	NWidgetVertical *vert = new NWidgetVertical();
-	uint line_height = std::max<uint>(GetSpriteSize(SPR_COMPANY_ICON).height, FONT_HEIGHT_NORMAL) + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+	uint sprite_height = GetSpriteSize(SPR_COMPANY_ICON, nullptr, ZOOM_LVL_OUT_4X).height;
 
 	for (int widnum = WID_GL_FIRST_COMPANY; widnum <= WID_GL_LAST_COMPANY; widnum++) {
 		NWidgetBackground *panel = new NWidgetBackground(WWT_PANEL, ChooseGraphColour(WINDOW_BG1, WINDOW_BG2), widnum);
-		panel->SetMinimalSize(246, line_height);
+		panel->SetMinimalSize(246, sprite_height);
+		panel->SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM, FS_NORMAL);
 		panel->SetFill(1, 0);
 		panel->SetDataTip(0x0, STR_GRAPH_KEY_COMPANY_SELECTION_TOOLTIP);
 		vert->Add(panel);
@@ -163,6 +164,7 @@ static const NWidgetPart _nested_graph_legend_widgets2[] = {
 			NWidgetFunction(MakeNWidgetCompanyLines),
 			NWidget(NWID_SPACER), SetMinimalSize(2, 0),
 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 	EndContainer(),
 };
 
@@ -403,6 +405,7 @@ protected:
 
 		/* Find the largest value that will be drawn. */
 		if (this->num_on_x_axis == 0) return;
+		if (this->num_dataset == 0) return; // CM (disable all cargo)
 
 		assert(this->num_on_x_axis > 0);
 		assert(this->num_dataset > 0);
@@ -653,7 +656,7 @@ public:
 	 * Update the statistics.
 	 * @param initialize Initialize the data structure.
 	 */
-	void UpdateStatistics(bool initialize)
+	virtual void UpdateStatistics(bool initialize)
 	{
 		CompanyMask excluded_companies = _legend_excluded_companies;
 
@@ -703,8 +706,11 @@ public:
 };
 
 
+static_assert(NUM_CARGO == 64);  // 64 bit excluded_cargo
+
 struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 	bool show_cargo_colors;
+	uint64 excluded_cargo;
 
 	ExcludingCargoBaseGraphWindow(WindowDesc *desc, int widget, StringID format_str_y_axis, bool show_cargo_colors):
 			BaseGraphWindow(desc, widget, format_str_y_axis), show_cargo_colors{show_cargo_colors}
@@ -723,8 +729,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		}
 
 		Dimension max_cargo_dim = {0, 0};
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			SetDParam(0, cs->name);
 			max_cargo_dim = maxdim(max_cargo_dim, GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO));
 		}
@@ -733,7 +738,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		this->line_height = this->icon_size + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 		size->width = (max_cargo_dim.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT + 1
 		               + (this->show_cargo_colors ? this->icon_size + WD_PAR_VSEP_NORMAL : 0));
-		size->height = std::max<uint>(size->height, this->line_height * _sorted_standard_cargo_specs_size);
+		size->height = std::max<uint>(size->height, this->line_height * _sorted_standard_cargo_specs.size());
 		resize->width = 0;
 		resize->height = this->line_height;
 		fill->width = 0;
@@ -755,8 +760,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		int pos = this->vscroll->GetPosition();
 		int max = pos + this->vscroll->GetCapacity();
 
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (pos-- > 0) continue;
 			if (--max < 0) break;
 
@@ -782,16 +786,11 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		}
 	}
 
-	void UpdateExcludedData()
-	{
-		this->excluded_data = 0;
-
-		int i = 0;
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
-			if (HasBit(_legend_excluded_cargo, cs->Index())) SetBit(this->excluded_data, i);
-			i++;
-		}
+	void UpdateExcludingGraphs() {
+		this->SetDirty();
+		InvalidateWindowData(WC_INCOME_GRAPH, 0);
+		InvalidateWindowData(WC_DELIVERED_CARGO, 0);
+		InvalidateWindowData(WC_PAYMENT_RATES, 0);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -804,34 +803,29 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 			case WID_CPR_ENABLE_CARGOES:
 				/* Remove all cargoes from the excluded lists. */
 				_legend_excluded_cargo = 0;
-				this->excluded_data = 0;
-				this->SetDirty();
+				this->UpdateExcludingGraphs();
 				break;
 
 			case WID_CPR_DISABLE_CARGOES: {
 				/* Add all cargoes to the excluded lists. */
 				int i = 0;
-				const CargoSpec *cs;
-				FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					SetBit(_legend_excluded_cargo, cs->Index());
-					SetBit(this->excluded_data, i);
 					i++;
 				}
-				this->SetDirty();
+				this->UpdateExcludingGraphs();
 				break;
 			}
 
 			case WID_CPR_MATRIX: {
-				uint row = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_CPR_MATRIX, 0, this->line_height);
+				uint row = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_CPR_MATRIX);
 				if (row >= this->vscroll->GetCount()) return;
 
-				const CargoSpec *cs;
-				FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					if (row-- > 0) continue;
 
 					ToggleBit(_legend_excluded_cargo, cs->Index());
-					this->UpdateExcludedData();
-					this->SetDirty();
+					this->UpdateExcludingGraphs();
 					break;
 				}
 				break;
@@ -844,15 +838,22 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		this->vscroll->SetCapacityFromWidget(this, WID_CPR_MATRIX);
 	}
 
-	/**
-	 * Some data on this window has become invalid.
-	 * @param data Information about the changed data.
-	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
-	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
-	{
-		if (!gui_scope) return;
-		this->UpdateExcludedData();
+	bool UpdateExcludedCargo() {
+		uint64 new_excluded_cargo = 0;
+
+		int i = 0;
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
+			if (HasBit(_legend_excluded_cargo, cs->Index())) SetBit(new_excluded_cargo, i);
+			i++;
+		}
+		if (this->excluded_cargo == new_excluded_cargo) return false;
+		this->excluded_cargo = new_excluded_cargo;
+		return true;
+	}
+
+	void UpdateStatistics(bool initialize) override {
+		initialize = this->UpdateExcludedCargo() || initialize;
+		BaseGraphWindow::UpdateStatistics(initialize);
 	}
 };
 
@@ -943,19 +944,17 @@ struct IncomeGraphWindow : ExcludingCargoBaseGraphWindow {
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
-		this->vscroll->SetCount(_sorted_standard_cargo_specs_size);
-		this->UpdateExcludedData();
+		this->vscroll->SetCount(_sorted_standard_cargo_specs.size());
 		this->FinishInitNested(window_number);
 	}
 
 	OverflowSafeInt64 GetGraphData(const Company *c, int j) override
 	{
 		if(_legend_excluded_cargo == 0){
-		return c->old_economy[j].income;
-	}
+			return c->old_economy[j].income;
+		}
 		uint total_income = 0;
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (!HasBit(_legend_excluded_cargo, cs->Index())){
 				total_income += c->old_economy[j].cm.cargo_income[cs->Index()];
 			}
@@ -1061,7 +1060,7 @@ struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
-		this->vscroll->SetCount(_sorted_standard_cargo_specs_size);
+		this->vscroll->SetCount(_sorted_standard_cargo_specs.size());
 		this->OnHundredthTick();
 		this->FinishInitNested(window_number);
 	}
@@ -1069,11 +1068,10 @@ struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 	OverflowSafeInt64 GetGraphData(const Company *c, int j) override
 	{
 		if(_legend_excluded_cargo == 0){
-		return c->old_economy[j].delivered_cargo.GetSum<OverflowSafeInt64>();
-	}
+			return c->old_economy[j].delivered_cargo.GetSum<OverflowSafeInt64>();
+		}
 		uint total_delivered = 0;
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (!HasBit(_legend_excluded_cargo, cs->Index())){
 				total_delivered += c->old_economy[j].delivered_cargo[cs->Index()];
 			}
@@ -1344,10 +1342,10 @@ struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
-		this->vscroll->SetCount(_sorted_standard_cargo_specs_size);
+		this->vscroll->SetCount(static_cast<int>(_sorted_standard_cargo_specs.size()));
 
 		/* Initialise the dataset */
-		this->OnHundredthTick();
+		this->UpdateStatistics(true);
 
 		this->FinishInitNested(window_number);
 	}
@@ -1359,18 +1357,27 @@ struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 
 	void OnHundredthTick() override
 	{
-		this->UpdateExcludedData();
+		this->UpdateStatistics(true);
+	}
+	/**
+	 * Update the statistics.
+	 * @param initialize Initialize the data structure.
+	 */
+	void UpdateStatistics(bool initialize) override
+	{
+		initialize = this->UpdateExcludedCargo() || initialize;
+		if (!initialize) return;
 
-		int i = 0;
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
-			this->colours[i] = cs->legend_colour;
-			for (uint j = 0; j != 24; j++) {
-				this->cost[i][j] = GetTransportedGoodsIncome(10, 20, 2*(j * 4 + 4), cs->Index());
+		int numd = 0;
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
+			if (HasBit(this->excluded_cargo, cs->Index())) continue;
+			this->colours[numd] = cs->legend_colour;
+			for (uint j = 0; j != this->num_on_x_axis; j++) {
+				this->cost[numd][j] = GetTransportedGoodsIncome(10, 20, 2 * (j * 4 + 4), cs->Index());
 			}
-			i++;
+			numd++;
 		}
-		this->num_dataset = i;
+		this->num_dataset = numd;
 	}
 };
 
@@ -1794,7 +1801,7 @@ struct PerformanceRatingDetailWindow : Window {
 		int64 needed = _score_info[score_type].needed;
 		int   score  = _score_info[score_type].score;
 
-		/* SCORE_TOTAL has his own rules ;) */
+		/* SCORE_TOTAL has its own rules ;) */
 		if (score_type == SCORE_TOTAL) {
 			for (ScoreID i = SCORE_BEGIN; i < SCORE_END; i++) score += _score_info[i].score;
 			needed = SCORE_MAX;

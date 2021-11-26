@@ -56,12 +56,30 @@ enum SQMetaMethod{
 
 struct SQRefCounted
 {
-	SQRefCounted() { _uiRef = 0; _weakref = NULL; }
+	SQRefCounted() { _uiRef = 0; _weakref = nullptr; }
 	virtual ~SQRefCounted();
 	SQWeakRef *GetWeakRef(SQObjectType type);
 	SQUnsignedInteger _uiRef;
 	struct SQWeakRef *_weakref;
 	virtual void Release()=0;
+
+	/* Placement new/delete to prevent memory leaks if constructor throws an exception. */
+	inline void *operator new(size_t size, SQRefCounted *place)
+	{
+		place->size = size;
+		return place;
+	}
+
+	inline void operator delete(void *ptr, SQRefCounted *place)
+	{
+		SQ_FREE(ptr, place->size);
+	}
+
+	/* Never used but required. */
+	inline void operator delete(void *ptr) { NOT_REACHED(); }
+
+private:
+	size_t size;
 };
 
 struct SQWeakRef : SQRefCounted
@@ -134,7 +152,7 @@ struct SQObjectPtr : public SQObject
 	{
 		SQ_OBJECT_RAWINIT()
 		_type=OT_NULL;
-		_unVal.pUserPointer=NULL;
+		_unVal.pUserPointer=nullptr;
 	}
 	SQObjectPtr(const SQObjectPtr &o)
 	{
@@ -281,7 +299,7 @@ struct SQObjectPtr : public SQObject
 		tOldType = _type;
 		unOldVal = _unVal;
 		_type = OT_NULL;
-		_unVal.pUserPointer = NULL;
+		_unVal.pUserPointer = nullptr;
 		__Release(tOldType,unOldVal);
 	}
 	inline SQObjectPtr& operator=(SQInteger i)

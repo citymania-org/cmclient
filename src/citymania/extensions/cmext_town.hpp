@@ -1,7 +1,21 @@
 #ifndef CMEXT_TOWN_HPP
 #define CMEXT_TOWN_HPP
 
+#include <map>
+
 namespace citymania {
+
+enum class TownGrowthTileState : uint8 {
+    NONE = 0,
+    RH_REMOVED,
+    NEW_HOUSE,
+    RH_REBUILT,               // rebuilt and removed houses are also
+    CS,
+    HS,
+    HR
+};
+
+typedef std::map<TileIndex, TownGrowthTileState> TownsGrowthTilesIndex;
 
 namespace ext {
 
@@ -23,6 +37,9 @@ public:
     uint16 houses_reconstructed_last_month = 0;  ///< number of houses rebuild last month
     uint16 houses_demolished_this_month = 0; ///< number of houses demolished this month
     uint16 houses_demolished_last_month = 0; ///< number of houses demolished last month
+
+    TownsGrowthTilesIndex growth_tiles_last_month;
+    TownsGrowthTilesIndex growth_tiles;
 };
 
 } // namespace ext

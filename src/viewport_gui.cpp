@@ -180,6 +180,21 @@ void ShowExtraViewportWindow(TileIndex tile)
 	new ExtraViewportWindow(&_extra_viewport_desc, i, tile);
 }
 
+namespace citymania {
+
+Window *ShowExtraViewportWindow(int x, int y, int z)
+{
+	int i = 0;
+
+	/* find next free window number for extra viewport */
+	while (FindWindowById(WC_EXTRA_VIEWPORT, i) != nullptr) i++;
+
+	auto w = new ExtraViewportWindow(&_extra_viewport_desc, i, INVALID_TILE);
+	if (w) ScrollWindowTo(x, y, 0, w);
+}
+
+}  // namespace citymania
+
 /**
  * Show a new Extra Viewport window.
  * Center it on the tile under the cursor, if the cursor is inside a viewport.

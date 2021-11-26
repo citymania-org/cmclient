@@ -214,8 +214,8 @@ static void PopupMainToolbMenu(Window *w, int widget, StringID string, int count
 
 /** Enum for the Company Toolbar's network related buttons */
 static const int CTMN_CLIENT_LIST = -1; ///< Show the client list
-static const int CTMN_NEW_COMPANY = -2; ///< Create a new company
-static const int CTMN_SPECTATE    = -3; ///< Become spectator
+static const int CTMN_SPECTATE    = -2; ///< Become spectator
+static const int CTMN_NEW_COMPANY = -3; ///< Create a new company
 static const int CTMN_SPECTATOR   = -4; ///< Show a company window as spectator
 
 /**
@@ -236,12 +236,11 @@ static void PopupMainCompanyToolbMenu(Window *w, int widget, int grey = 0)
 			list.emplace_back(new DropDownListStringItem(STR_NETWORK_COMPANY_LIST_CLIENT_LIST, CTMN_CLIENT_LIST, false));
 
 			if (_local_company == COMPANY_SPECTATOR) {
-				list.emplace_back(new DropDownListStringItem(STR_NETWORK_COMPANY_LIST_NEW_COMPANY, CTMN_NEW_COMPANY, NetworkMaxCompaniesReached()));
+				list.emplace_back(new DropDownListStringItem(STR_CM_NETWORK_COMPANY_LIST_NEW_COMPANY, CTMN_NEW_COMPANY, NetworkMaxCompaniesReached()));
 			} else {
-				list.emplace_back(new DropDownListStringItem(STR_NETWORK_COMPANY_LIST_SPECTATE, CTMN_SPECTATE, NetworkMaxSpectatorsReached()));
+				list.emplace_back(new DropDownListStringItem(STR_CM_NETWORK_COMPANY_LIST_SPECTATE, CTMN_SPECTATE, false));
 			}
 			break;
-
 		case WID_TN_STORY:
 			list.emplace_back(new DropDownListStringItem(STR_STORY_BOOK_SPECTATOR, CTMN_SPECTATOR, false));
 			break;
@@ -672,9 +671,10 @@ static CallBackFunction MenuClickCompany(int index)
 				if (_network_server) {
 					DoCommandP(0, CCA_NEW, _network_own_client_id, CMD_COMPANY_CTRL);
 				} else {
-					NetworkSendCommand(0, CCA_NEW, 0, CMD_COMPANY_CTRL, nullptr, nullptr, _local_company);
+					NetworkSendCommand(0, CCA_NEW, 0, CMD_COMPANY_CTRL, nullptr, {}, _local_company);
 				}
 				return CBF_NONE;
+
 
 			case CTMN_SPECTATE:
 				if (_network_server) {
@@ -2022,59 +2022,6 @@ static ToolbarButtonProc * const _toolbar_button_procs[] = {
 	ToolbarSwitchClick,
 };
 
-enum MainToolbarHotkeys {
-	MTHK_PAUSE,
-	MTHK_FASTFORWARD,
-	MTHK_SETTINGS,
-	MTHK_SAVEGAME,
-	MTHK_LOADGAME,
-	MTHK_SMALLMAP,
-	MTHK_TOWNDIRECTORY,
-	MTHK_SUBSIDIES,
-	MTHK_STATIONS,
-	MTHK_FINANCES,
-	MTHK_COMPANIES,
-	MTHK_STORY,
-	MTHK_GOAL,
-	MTHK_GRAPHS,
-	MTHK_LEAGUE,
-	MTHK_INDUSTRIES,
-	MTHK_TRAIN_LIST,
-	MTHK_ROADVEH_LIST,
-	MTHK_SHIP_LIST,
-	MTHK_AIRCRAFT_LIST,
-	MTHK_ZOOM_IN,
-	MTHK_ZOOM_OUT,
-	MTHK_BUILD_RAIL,
-	MTHK_BUILD_ROAD,
-	MTHK_BUILD_TRAM,
-	MTHK_BUILD_DOCKS,
-	MTHK_BUILD_AIRPORT,
-	MTHK_BUILD_TREES,
-	MTHK_MUSIC,
-	MTHK_LANDINFO,
-	MTHK_AI_DEBUG,
-	MTHK_SMALL_SCREENSHOT,
-	MTHK_ZOOMEDIN_SCREENSHOT,
-	MTHK_DEFAULTZOOM_SCREENSHOT,
-	MTHK_GIANT_SCREENSHOT,
-	MTHK_CHEATS,
-	MTHK_TERRAFORM,
-	MTHK_EXTRA_VIEWPORT,
-	MTHK_CLIENT_LIST,
-	MTHK_SIGN_LIST,
-	CM_MTHK_BUILD_HQ,
-	CM_MTHK_COMMANDS_GUI,
-	CM_MTHK_CARGOTABLE,
-	CM_MTHK_TREES,
-	CM_MTHK_ZONING,
-	CM_MTHK_LOGINWINDOW,
-	CM_MTHK_SETTINGS_ADV,
-	CM_MTHK_NEWGRF,
-    CM_MTHK_SMALLMAP_TOGGLE,
-    CM_LOCATION_HOTKEYS,
-};
-
 /** Main toolbar. */
 struct MainToolbarWindow : Window {
 	GUITimer timer;
@@ -2357,7 +2304,7 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 		SPR_IMG_SUBSIDIES,       // WID_TN_SUBSIDIES
 		SPR_IMG_COMPANY_LIST,    // WID_TN_STATIONS
 		SPR_IMG_COMPANY_FINANCE, // WID_TN_FINANCES
-		SPR_IMG_COMPANY_CARGO,   // WID_TN_CARGOS
+		CM_SPR_IMG_COMPANY_CARGO,// WID_TN_CARGOS
 		SPR_IMG_COMPANY_GENERAL, // WID_TN_COMPANIES
 		SPR_IMG_STORY_BOOK,      // WID_TN_STORY
 		SPR_IMG_GOAL,            // WID_TN_GOAL
@@ -2395,7 +2342,9 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 				hor->Add(new NWidgetSpacer(0, 0));
 				break;
 		}
-		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+		NWidgetLeaf *leaf = new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i);
+		leaf->SetMinimalSize(20, 20);
+		hor->Add(leaf);
 	}
 
 	*biggest_index = std::max<int>(*biggest_index, WID_TN_SWITCH_BAR);

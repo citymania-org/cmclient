@@ -42,7 +42,9 @@
 
 #include "widgets/rail_widget.h"
 
+#include "debug.h"
 #include "citymania/cm_blueprint.hpp"
+#include "citymania/cm_commands.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_station_gui.hpp"
@@ -60,10 +62,7 @@ static bool _convert_signal_button;          ///< convert signal button in the s
 static SignalVariant _cur_signal_variant;    ///< set the signal variant (for signal GUI)
 static SignalType _cur_signal_type;          ///< set the signal type (for signal GUI)
 
-extern TileIndex _rail_track_endtile; // rail_cmd.cpp
-
-/* Map the setting: default_signal_type to the corresponding signal type */
-static const SignalType _default_signal_type[] = {SIGTYPE_NORMAL, SIGTYPE_PBS, SIGTYPE_PBS_ONEWAY};
+extern TileIndex _rail_track_endtile; // CM rail_cmd.cpp
 
 static const int HOTKEY_MASK        = 0x1000;
 static const int HOTKEY_POLYRAIL     = 0x1000;
@@ -257,11 +256,17 @@ static void GenericPlaceSignals(TileIndex tile)
 	} else {
 		const Window *w = FindWindowById(WC_BUILD_SIGNAL, 0);
 
-		/* Map the setting cycle_signal_types to the lower and upper allowed signal type. */
-		static const uint cycle_bounds[] = {SIGTYPE_NORMAL | (SIGTYPE_LAST_NOPBS << 3), SIGTYPE_PBS | (SIGTYPE_LAST << 3), SIGTYPE_NORMAL | (SIGTYPE_LAST << 3)};
-
 		/* various bitstuffed elements for CmdBuildSingleSignal() */
 		uint32 p1 = track;
+
+		/* Which signals should we cycle through? */
+		uint8 cycle_types;
+
+		if (_settings_client.gui.cycle_signal_types == SIGNAL_CYCLE_ALL && _settings_client.gui.signal_gui_mode == SIGNAL_GUI_ALL) {
+			cycle_types = SIGTYPE_NORMAL | (SIGTYPE_LAST << 3);
+		} else {
+			cycle_types = SIGTYPE_PBS | (SIGTYPE_LAST << 3);
+		}
 
 		if (w != nullptr) {
 			/* signal GUI is used */
@@ -269,13 +274,13 @@ static void GenericPlaceSignals(TileIndex tile)
 			SB(p1, 4, 1, _cur_signal_variant);
 			SB(p1, 5, 3, _cur_signal_type);
 			SB(p1, 8, 1, _convert_signal_button);
-			SB(p1, 9, 6, cycle_bounds[_settings_client.gui.cycle_signal_types]);
+			SB(p1, 9, 6, cycle_types);
 		} else {
 			SB(p1, 3, 1, citymania::_fn_mod);
 			SB(p1, 4, 1, (_cur_year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC));
-			SB(p1, 5, 3, _default_signal_type[_settings_client.gui.default_signal_type]);
+			SB(p1, 5, 3, SIGTYPE_PBS_ONEWAY);
 			SB(p1, 8, 1, 0);
-			SB(p1, 9, 6, cycle_bounds[_settings_client.gui.cycle_signal_types]);
+			SB(p1, 9, 6, cycle_types);
 		}
 
 		DoCommandP(tile, p1, 0, CMD_BUILD_SIGNALS |
@@ -318,7 +323,7 @@ void CcBuildRailTunnel(const CommandCost &result, TileIndex tile, uint32 p1, uin
  */
 static void ToggleRailButton_Remove(Window *w)
 {
-	DeleteWindowById(WC_SELECT_STATION, 0);
+	CloseWindowById(WC_SELECT_STATION, 0);
 	w->ToggleWidgetLoweredState(WID_RAT_REMOVE);
 	w->SetWidgetDirty(WID_RAT_REMOVE);
 	_remove_button_clicked = w->IsWidgetLowered(WID_RAT_REMOVE);
@@ -396,6 +401,113 @@ static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_t
 	return ret;
 }
 
+namespace citymania {
+
+static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2) {
+    auto rail_callback = [rail_cmd, start_tile, end_tile, track, estimate=citymania::_estimate_mod](bool res) -> bool {
+		if (DoCommand(&rail_cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
+				_rail_track_endtile == INVALID_TILE) {
+    		if (!DoCommandP(&rail_cmd)) return false;
+    	}
+    	if (!estimate && _rail_track_endtile != INVALID_TILE)
+			StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
+		return res;
+    };
+
+	auto h1 = TileHeight(s1);
+	auto h2 = TileHeight(s2);
+	uint32 diag_flag = diagonal ? 1 : 0;
+	uint32 p2_1 = ((h1 < h2 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
+	uint32 p2_2 = ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
+    auto l1_fail = (!DoCommand(e1, s1, p2_1, DC_AUTO | DC_NO_WATER, CMD_LEVEL_LAND).Succeeded());
+    auto l2_fail = (!DoCommand(e2, s2, p2_2, DC_AUTO | DC_NO_WATER, CMD_LEVEL_LAND).Succeeded());
+	if (l1_fail && l2_fail) return rail_callback(true);
+	if (l2_fail) return citymania::DoCommandWithCallback(e1, s1, p2_1, CMD_LEVEL_LAND, CcTerraform, "", rail_callback);
+	if (!l1_fail) DoCommandP(e1, s1, p2_1, CMD_LEVEL_LAND, CcTerraform);
+	return citymania::DoCommandWithCallback(e2, s2, p2_2, CMD_LEVEL_LAND, CcTerraform, "", rail_callback);
+}
+
+static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd) {
+	bool eq = (TileX(end_tile) - TileY(end_tile) == TileX(start_tile) - TileY(start_tile));
+	bool ez = (TileX(end_tile) + TileY(end_tile) == TileX(start_tile) + TileY(start_tile));
+	// StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
+	switch (_thd.cm_poly_dir) {
+		case TRACKDIR_X_NE:
+			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
+				TILE_ADDXY(start_tile, 1, 0), end_tile,
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, 1));
+			break;
+		case TRACKDIR_X_SW:
+			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
+				start_tile, TILE_ADDXY(end_tile, 1, 0),
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, 1));
+			break;
+		case TRACKDIR_Y_SE:
+			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
+				start_tile, TILE_ADDXY(end_tile, 0, 1),
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, 1));
+			break;
+		case TRACKDIR_Y_NW:
+			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
+				TILE_ADDXY(start_tile, 0, 1), end_tile,
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, 0));
+			break;
+		case TRACKDIR_LEFT_N: {
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, eq, 0),
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, !eq));
+			break;
+		}
+		case TRACKDIR_RIGHT_N: {
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 0, eq),
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, !eq, 0));
+			break;
+		}
+		case TRACKDIR_LEFT_S: {
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, !eq),
+				start_tile, TILE_ADDXY(end_tile, eq, 1));
+			break;
+		}
+		case TRACKDIR_RIGHT_S: {
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, !eq, 1),
+				start_tile, TILE_ADDXY(end_tile, 1, eq));
+			break;
+		}
+		case TRACKDIR_UPPER_E: {
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
+				start_tile, TILE_ADDXY(end_tile, 0, !ez),
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, !ez, 1));
+			break;
+		}
+		case TRACKDIR_LOWER_E: {
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, ez, 1),
+				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 0, ez));
+			break;
+		}
+		case TRACKDIR_UPPER_W: {
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
+				start_tile, TILE_ADDXY(end_tile, !ez, 0),
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, !ez));
+			break;
+		}
+		case TRACKDIR_LOWER_W: {
+			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
+				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, ez),
+				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, ez, 0));
+			break;
+		}
+		default:
+			break;
+	}
+	return true;
+}
+
+}  // namespace citymania
+
 static void HandleAutodirPlacement()
 {
 	Track track = (Track)(_thd.drawstyle & HT_DIR_MASK); // 0..5
@@ -410,13 +522,15 @@ static void HandleAutodirPlacement()
 	 * snap point over the last overbuilt track piece. In such case we don't
 	 * wan't to show any errors to the user. Don't execute the command right
 	 * away, first check if overbuilding. */
-	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) ||
-			DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
-			_rail_track_endtile == INVALID_TILE) {
-		/* Execute. */
+	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) || _remove_button_clicked) {
+		if (!DoCommandP(&cmd)) return;
+	} else if (_thd.cm_poly_terra) {
+		citymania::HandleAutodirTerraform(start_tile, end_tile, track, cmd);
+		return;
+	} else if (DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
+				_rail_track_endtile == INVALID_TILE) {
 		if (!DoCommandP(&cmd)) return;
 	}
-
 	/* Save new snap points for the polyline tool, no matter if the command
 	 * succeeded, the snapping will be extended over overbuilt track pieces. */
 	if (!citymania::_estimate_mod && _rail_track_endtile != INVALID_TILE) {
@@ -453,13 +567,13 @@ static void HandleAutoSignalPlacement()
 		SB(p2,  3, 1, 0);
 		SB(p2,  4, 1, (_cur_year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC));
 		SB(p2,  6, 1, citymania::_fn_mod);
-		SB(p2,  7, 3, _default_signal_type[_settings_client.gui.default_signal_type]);
+		SB(p2,  7, 3, SIGTYPE_PBS_ONEWAY);
 		SB(p2, 24, 8, _settings_client.gui.drag_signals_density);
 		SB(p2, 10, 1, !_settings_client.gui.drag_signals_fixed_distance);
 	}
 
 	/* _settings_client.gui.drag_signals_density is given as a parameter such that each user
-	 * in a network game can specify his/her own signal density */
+	 * in a network game can specify their own signal density */
 	DoCommandP(TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y), p2,
 			_remove_button_clicked ?
 			CMD_REMOVE_SIGNAL_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_SIGNALS_FROM) :
@@ -508,10 +622,11 @@ struct BuildRailToolbarWindow : Window {
 		if (_settings_client.gui.link_terraform_toolbar) ShowTerraformToolbar(this);
 	}
 
-	~BuildRailToolbarWindow()
+	void Close() override
 	{
 		if (this->IsWidgetLowered(WID_RAT_BUILD_STATION)) SetViewportCatchmentStation(nullptr, true);
-		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
+		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WC_SCEN_LAND_GEN, 0, false);
+		this->Window::Close();
 	}
 
 	/**
@@ -523,7 +638,7 @@ struct BuildRailToolbarWindow : Window {
 	{
 		if (!gui_scope) return;
 
-		if (!CanBuildVehicleInfrastructure(VEH_TRAIN)) delete this;
+		if (!CanBuildVehicleInfrastructure(VEH_TRAIN)) this->Close();
 	}
 
 	/**
@@ -719,7 +834,7 @@ struct BuildRailToolbarWindow : Window {
 			case WID_RAT_BUILD_SIGNALS: {
 				this->last_user_action = widget;
 				bool started = HandlePlacePushButton(this, WID_RAT_BUILD_SIGNALS, ANIMCURSOR_BUILDSIGNALS, HT_RECT, DDSP_BUILD_SIGNALS);
-				if (started && _settings_client.gui.enable_signal_gui != citymania::_fn_mod) {
+				if (started != citymania::_fn_mod) {
 					ShowSignalBuilder(this);
 				}
 				break;
@@ -829,7 +944,7 @@ struct BuildRailToolbarWindow : Window {
 				DoCommandP(tile, _cur_railtype, ddir,
 						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
 						CcRailDepot);
-				if (citymania::_fn_mod == _settings_client.gui.persistent_depottools)
+				if (citymania::_fn_mod == _settings_client.gui.cm_keep_depot_tools)
 					ResetObjectToPlace();
 				break;
 
@@ -945,12 +1060,12 @@ struct BuildRailToolbarWindow : Window {
 		this->DisableWidget(WID_RAT_REMOVE);
 		this->SetWidgetDirty(WID_RAT_REMOVE);
 
-		DeleteWindowById(WC_BUILD_SIGNAL, TRANSPORT_RAIL);
-		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_RAIL);
-		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_RAIL);
-		DeleteWindowById(WC_BUILD_WAYPOINT, TRANSPORT_RAIL);
-		DeleteWindowById(WC_SELECT_STATION, 0);
-		DeleteWindowByClass(WC_BUILD_BRIDGE);
+		CloseWindowById(WC_BUILD_SIGNAL, TRANSPORT_RAIL);
+		CloseWindowById(WC_BUILD_STATION, TRANSPORT_RAIL);
+		CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_RAIL);
+		CloseWindowById(WC_BUILD_WAYPOINT, TRANSPORT_RAIL);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		CloseWindowByClass(WC_BUILD_BRIDGE);
 
 		citymania::AbortStationPlacement();
 		citymania::ResetActiveBlueprint();
@@ -969,6 +1084,14 @@ struct BuildRailToolbarWindow : Window {
 			_remove_button_clicked = new_remove;
 			return ES_HANDLED;
 		}
+		return ES_NOT_HANDLED;
+	}
+
+	EventState CM_OnFnModStateChange() override
+	{
+		// if (_settings_client.gui.cm_enable_polyrail_terraform && this->IsWidgetLowered(WID_RAT_POLYRAIL)) {
+		// 	return ES_HANDLED;
+		// }
 		return ES_NOT_HANDLED;
 	}
 
@@ -1055,7 +1178,7 @@ static const NWidgetPart _nested_build_rail_widgets[] = {
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_BUILD_TUNNEL),
 						SetFill(0, 1), SetMinimalSize(20, 22), SetDataTip(SPR_IMG_TUNNEL_RAIL, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TUNNEL),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_RAT_BLUEPRINT),
-						SetFill(0, 1), SetMinimalSize(20, 22), SetDataTip(SPR_IMG_BUY_LAND, STR_CM_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT),
+						SetFill(0, 1), SetMinimalSize(20, 22), SetDataTip(CM_SPR_RAIL_COPY_PASTE, STR_CM_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_REMOVE),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_REMOVE, STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_CONVERT_RAIL),
@@ -1085,7 +1208,7 @@ Window *ShowBuildRailToolbar(RailType railtype)
 	if (!Company::IsValidID(_local_company)) return nullptr;
 	if (!ValParamRailtype(railtype)) return nullptr;
 
-	DeleteWindowByClass(WC_BUILD_TOOLBAR);
+	CloseWindowByClass(WC_BUILD_TOOLBAR);
 	_cur_railtype = railtype;
 	_remove_button_clicked = false;
 	return new BuildRailToolbarWindow(&_build_rail_desc, railtype);
@@ -1255,9 +1378,10 @@ public:
 		this->InvalidateData();
 	}
 
-	virtual ~BuildRailStationWindow()
+	void Close() override
 	{
-		DeleteWindowById(WC_SELECT_STATION, 0);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		this->PickerWindowBase::Close();
 	}
 
 	/** Sort station classes by StationClassID. */
@@ -1358,7 +1482,7 @@ public:
 				_railstation.orientation = OtherAxis(_railstation.orientation);
 				this->LowerWidget(_railstation.orientation + WID_BRAS_PLATFORM_DIR_X);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				return ES_HANDLED;
 
 			default:
@@ -1456,7 +1580,7 @@ public:
 				StringID str = this->GetWidget<NWidgetCore>(widget)->widget_data;
 				for (auto station_class : this->station_classes) {
 					StationClass *stclass = StationClass::Get(station_class);
-					for (uint16 j = 0; j < stclass->GetSpecCount(); j++) {
+					for (uint j = 0; j < stclass->GetSpecCount(); j++) {
 						const StationSpec *statspec = stclass->GetSpec(j);
 						SetDParam(0, (statspec != nullptr && statspec->name != 0) ? statspec->name : STR_STATION_CLASS_DFLT);
 						d = maxdim(d, GetStringBoundingBox(str));
@@ -1582,7 +1706,7 @@ public:
 				this->LowerWidget(_railstation.orientation + WID_BRAS_PLATFORM_DIR_X);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				break;
 
 			case WID_BRAS_PLATFORM_NUM_1:
@@ -1616,7 +1740,7 @@ public:
 				this->LowerWidget(_settings_client.gui.station_platlength + WID_BRAS_PLATFORM_LEN_BEGIN);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				break;
 			}
 
@@ -1651,7 +1775,7 @@ public:
 				this->LowerWidget(_settings_client.gui.station_platlength + WID_BRAS_PLATFORM_LEN_BEGIN);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				break;
 			}
 
@@ -1685,7 +1809,7 @@ public:
 				this->SetWidgetLoweredState(_settings_client.gui.station_platlength + WID_BRAS_PLATFORM_LEN_BEGIN, !_settings_client.gui.station_dragdrop);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				break;
 			}
 
@@ -1702,7 +1826,7 @@ public:
 				break;
 
 			case WID_BRAS_NEWST_LIST: {
-				int y = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_BRAS_NEWST_LIST, 0, this->line_height);
+				int y = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_BRAS_NEWST_LIST);
 				if (y >= (int)this->station_classes.size()) return;
 				StationClassID station_class_id = this->station_classes[y];
 				if (_railstation.station_class != station_class_id) {
@@ -1719,7 +1843,7 @@ public:
 				}
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				break;
 			}
 
@@ -1738,7 +1862,7 @@ public:
 
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				break;
 			}
 		}
@@ -1927,16 +2051,34 @@ private:
 				y + this->IsWidgetLowered(widget_index));
 	}
 
+	/** Show or hide buttons for non-path signals in the signal GUI */
+	void SetSignalUIMode()
+	{
+		bool show_non_path_signals = (_settings_client.gui.signal_gui_mode == SIGNAL_GUI_ALL);
+
+		this->GetWidget<NWidgetStacked>(WID_BS_SEMAPHORE_NORM_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+		this->GetWidget<NWidgetStacked>(WID_BS_ELECTRIC_NORM_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+		this->GetWidget<NWidgetStacked>(WID_BS_SEMAPHORE_ENTRY_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+		this->GetWidget<NWidgetStacked>(WID_BS_ELECTRIC_ENTRY_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+		this->GetWidget<NWidgetStacked>(WID_BS_SEMAPHORE_EXIT_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+		this->GetWidget<NWidgetStacked>(WID_BS_ELECTRIC_EXIT_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+		this->GetWidget<NWidgetStacked>(WID_BS_SEMAPHORE_COMBO_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+		this->GetWidget<NWidgetStacked>(WID_BS_ELECTRIC_COMBO_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+	}
+
 public:
 	BuildSignalWindow(WindowDesc *desc, Window *parent) : PickerWindowBase(desc, parent)
 	{
-		this->InitNested(TRANSPORT_RAIL);
+		this->CreateNestedTree();
+		this->SetSignalUIMode();
+		this->FinishInitNested(TRANSPORT_RAIL);
 		this->OnInvalidateData();
 	}
 
-	~BuildSignalWindow()
+	void Close() override
 	{
 		_convert_signal_button = false;
+		this->PickerWindowBase::Close();
 	}
 
 	void OnInit() override
@@ -1967,6 +2109,8 @@ public:
 		} else if (IsInsideMM(widget, WID_BS_SEMAPHORE_NORM, WID_BS_ELECTRIC_PBS_OWAY + 1)) {
 			size->width = std::max(size->width, this->sig_sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT);
 			size->height = std::max(size->height, this->sig_sprite_size.height + WD_IMGBTN_TOP + WD_IMGBTN_BOTTOM);
+		} else if (widget == WID_BS_CAPTION) {
+			size->width += WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
 		}
 	}
 
@@ -2037,6 +2181,12 @@ public:
 				}
 				break;
 
+			case WID_BS_TOGGLE_SIZE:
+				_settings_client.gui.signal_gui_mode = (_settings_client.gui.signal_gui_mode == SIGNAL_GUI_ALL) ? SIGNAL_GUI_PATH : SIGNAL_GUI_ALL;
+				this->SetSignalUIMode();
+				this->ReInit();
+				break;
+
 			default: break;
 		}
 
@@ -2064,23 +2214,40 @@ public:
 static const NWidgetPart _nested_signal_builder_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
-		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_BUILD_SIGNAL_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_BS_CAPTION), SetDataTip(STR_BUILD_SIGNAL_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_BS_TOGGLE_SIZE), SetDataTip(SPR_LARGE_SMALL_WINDOW, STR_BUILD_SIGNAL_TOGGLE_ADVANCED_SIGNAL_TOOLTIP),
 	EndContainer(),
 	NWidget(NWID_VERTICAL, NC_EQUALSIZE),
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_NORM), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_NORM_TOOLTIP), EndContainer(), SetFill(1, 1),
-			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_ENTRY), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_ENTRY_TOOLTIP), EndContainer(), SetFill(1, 1),
-			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_EXIT), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_EXIT_TOOLTIP), EndContainer(), SetFill(1, 1),
-			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_COMBO), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_COMBO_TOOLTIP), EndContainer(), SetFill(1, 1),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_SEMAPHORE_NORM_SEL),
+				NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_NORM), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_NORM_TOOLTIP), EndContainer(), SetFill(1, 1),
+			EndContainer(),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_SEMAPHORE_ENTRY_SEL),
+				NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_ENTRY), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_ENTRY_TOOLTIP), EndContainer(), SetFill(1, 1),
+			EndContainer(),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_SEMAPHORE_EXIT_SEL),
+				NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_EXIT), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_EXIT_TOOLTIP), EndContainer(), SetFill(1, 1),
+			EndContainer(),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_SEMAPHORE_COMBO_SEL),
+				NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_COMBO), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_COMBO_TOOLTIP), EndContainer(), SetFill(1, 1),
+			EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_PBS), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_PBS_TOOLTIP), EndContainer(), SetFill(1, 1),
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_SEMAPHORE_PBS_OWAY), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_SEMAPHORE_PBS_OWAY_TOOLTIP), EndContainer(), SetFill(1, 1),
 			NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_BS_CONVERT), SetDataTip(SPR_IMG_SIGNAL_CONVERT, STR_BUILD_SIGNAL_CONVERT_TOOLTIP), SetFill(1, 1),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_NORM), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_NORM_TOOLTIP), EndContainer(), SetFill(1, 1),
-			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_ENTRY), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_ENTRY_TOOLTIP), EndContainer(), SetFill(1, 1),
-			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_EXIT), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP), EndContainer(), SetFill(1, 1),
-			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_COMBO), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_COMBO_TOOLTIP), EndContainer(), SetFill(1, 1),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_ELECTRIC_NORM_SEL),
+				NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_NORM), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_NORM_TOOLTIP), EndContainer(), SetFill(1, 1),
+			EndContainer(),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_ELECTRIC_ENTRY_SEL),
+				NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_ENTRY), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_ENTRY_TOOLTIP), EndContainer(), SetFill(1, 1),
+			EndContainer(),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_ELECTRIC_EXIT_SEL),
+				NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_EXIT), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP), EndContainer(), SetFill(1, 1),
+			EndContainer(),
+			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_ELECTRIC_COMBO_SEL),
+				NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_COMBO), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_COMBO_TOOLTIP), EndContainer(), SetFill(1, 1),
+			EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_PBS), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_PBS_TOOLTIP), EndContainer(), SetFill(1, 1),
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BS_ELECTRIC_PBS_OWAY), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_ELECTRIC_PBS_OWAY_TOOLTIP), EndContainer(), SetFill(1, 1),
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetDataTip(STR_NULL, STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP), SetFill(1, 1),
@@ -2429,10 +2596,9 @@ static void SetDefaultRailGui()
 /**
  * Updates the current signal variant used in the signal GUI
  * to the one adequate to current year.
- * @param p needed to be called when a setting changes
- * @return success, needed for settings
+ * @param new_value needed to be called when a setting changes
  */
-bool ResetSignalVariant(int32 p)
+void ResetSignalVariant(int32 new_value)
 {
 	SignalVariant new_variant = (_cur_year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC);
 
@@ -2444,8 +2610,6 @@ bool ResetSignalVariant(int32 p)
 		}
 		_cur_signal_variant = new_variant;
 	}
-
-	return true;
 }
 
 /**
@@ -2457,7 +2621,7 @@ void InitializeRailGUI()
 	SetDefaultRailGui();
 
 	_convert_signal_button = false;
-	_cur_signal_type = _default_signal_type[_settings_client.gui.default_signal_type];
+	_cur_signal_type = SIGTYPE_PBS_ONEWAY;
 	ResetSignalVariant();
 }
 
@@ -2490,17 +2654,16 @@ DropDownList GetRailTypeDropDownList(bool for_replacement, bool all_option)
 	}
 
 	Dimension d = { 0, 0 };
-	RailType rt;
 	/* Get largest icon size, to ensure text is aligned on each menu item. */
 	if (!for_replacement) {
-		FOR_ALL_SORTED_RAILTYPES(rt) {
+		for (const auto &rt : _sorted_railtypes) {
 			if (!HasBit(used_railtypes, rt)) continue;
 			const RailtypeInfo *rti = GetRailTypeInfo(rt);
 			d = maxdim(d, GetSpriteSize(rti->gui_sprites.build_x_rail));
 		}
 	}
 
-	FOR_ALL_SORTED_RAILTYPES(rt) {
+	for (const auto &rt : _sorted_railtypes) {
 		/* If it's not used ever, don't show it to the user. */
 		if (!HasBit(used_railtypes, rt)) continue;
 

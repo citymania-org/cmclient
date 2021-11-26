@@ -5,6 +5,7 @@
 
 #include "../window_gui.h"
 #include "../company_base.h"
+#include "../network/core/config.h"
 
 namespace citymania {
 
@@ -12,6 +13,7 @@ namespace citymania {
 
 enum WatchCompanyWidgets {
 	EWW_CAPTION,
+	EWW_LOCATION,
 	EWW_PB_COMPANY_FIRST,
 	EWW_PB_COMPANY_LAST  = EWW_PB_COMPANY_FIRST + MAX_COMPANIES - 1,
 	EWW_HAS_CLIENT_FIRST,
@@ -40,6 +42,9 @@ enum WatchCompanyWidgets {
 	EWW_PRIVATEC_MESSAGE,
 	EWW_CLIENTS,
 	EWW_ENABLE_SELECT,
+	EWW_COMPANY_BEGIN,
+	EWW_COMPANY_END = EWW_COMPANY_BEGIN + MAX_COMPANIES,
+	EWW_COMPANY_FILLER = EWW_COMPANY_END,
 };
 
 enum WatchCompanyQuery {

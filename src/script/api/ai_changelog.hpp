@@ -13,6 +13,20 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 12.0
+ *
+ * API additions:
+ * \li AINewGRF
+ * \li AINewGRFList
+ * \li AIGroup::GetNumVehicles
+ * \li AIMarine::BT_LOCK
+ * \li AIMarine::BT_CANAL
+ * \li AITile::IsSeaTile
+ * \li AITile::IsRiverTile
+ * \li AITile::BT_CLEAR_WATER
+ * \li AIObjectTypeList
+ * \li AIObjectType
+ *
  * \b 1.11.0
  *
  * API additions:

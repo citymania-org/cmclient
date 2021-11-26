@@ -74,6 +74,45 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 12.1 (9 Nov 2021) ***
+- Added company HQ and watch buttons to companies in the online players window.
+- Made companies clickable in the online players window. Regular click opens company window, Fn(Ctrl)-click opens finances.
+- Slightly improved the look of online players widow and client list overlay with more informative icons.
+- Moved company selection to the bottom in the watch window to reduce the waste of a screen space.
+- Changed main viewport centering button in the watch window to a location button in the window title.
+- All outgoing actions are queued and not being sent to the server by more than 2 per frame. Should prevent the client from being kicked from most servers when overusing treedozer or copy-paste.
+- Hid new auto-terraforming mode for polyrail behind a setting for now as it's was quite bugged and confusing. Though all known bugs were fixed so it should quite usable now.
+- Show both terraforming and autorail highlight when using auto-terraforming polyrail mode.
+- Fixed client list overlay disappearing after opening console.
+- Fixed copy-pasting signals.
+- Fixed auto-terraforming messing remove mode in polyrail tool.
+- Fixed modifier keys selection in settings ui.
+- Fixed red highlight on rail tools in remove mode.
+- Fixed crash when trying to move copied rail out of the map.
+
+*** 12.0 (17 Oct 2021) ***
+- Automatically search servers when opening multiplayer window.
+- Show town population instead of the name in IMBA minimap mode.
+- In polyrail mode placing rail while holding Fn modifier will automatically flatten the land for it (only works reliably in singgle-player mode atm).
+- Fixed crash when copying rail bridges.
+
+*** 12.0-RC1 (5 Oct 2021) ***
+- Added experimental rail copy-paste tool.
+- Added client list overlay (toggleable with a button in the regular client list window title).
+- Added back "New company" option to the company toolbar dropdown menu.
+- Fixed crash when closing order window with a hotkey.
+- Fixed crash when building airports outsize the map.
+- Fixed minimap crash in imba mode.
+- Fixed cargo selection in income/cargo graphs.
+- Fixed watch window excessive scaling with interface size.
+
+*** 12.0-beta2 (19 Aug 2021) ***
+- Fixed crash when building airport with no valid airport type selected.
+- Renamed a bunch of setttings in the config file adding cm_* prefix to distinguish them from vanilla ones.
+- Removed setting to show train length in old format in the depot (new one is more usable now).
+- Removed setting to disable ending the polyrail with double click (it's always disabled).
+- Removed setting to disable starting-stopping vehicles with ctrl-click (seems pointless).
+
 *** 1.11.2 (3 May 2021) ***
 - OpenTTD update.
 

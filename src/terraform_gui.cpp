@@ -8,6 +8,7 @@
 /** @file terraform_gui.cpp GUI related to terraforming the map. */
 
 #include "stdafx.h"
+#include "core/backup_type.hpp"
 #include "clear_map.h"
 #include "company_func.h"
 #include "company_base.h"
@@ -56,15 +57,15 @@ static void GenerateDesertArea(TileIndex end, TileIndex start)
 {
 	if (_game_mode != GM_EDITOR) return;
 
-	_generating_world = true;
+	Backup<bool> old_generating_world(_generating_world, true, FILE_LINE);
 
 	TileArea ta(start, end);
-	TILE_AREA_LOOP(tile, ta) {
+	for (TileIndex tile : ta) {
 		SetTropicZone(tile, citymania::_fn_mod ? TROPICZONE_NORMAL : TROPICZONE_DESERT);
 		DoCommandP(tile, 0, 0, CMD_LANDSCAPE_CLEAR);
 		MarkTileDirtyByTile(tile);
 	}
-	_generating_world = false;
+	old_generating_world.Restore();
 	InvalidateWindowClassesData(WC_TOWN_VIEW, 0);
 }
 
@@ -76,7 +77,7 @@ static void GenerateRockyArea(TileIndex end, TileIndex start)
 	bool success = false;
 	TileArea ta(start, end);
 
-	TILE_AREA_LOOP(tile, ta) {
+	for (TileIndex tile : ta) {
 		switch (GetTileType(tile)) {
 			case MP_TREES:
 				if (GetTreeGround(tile) == TREE_GROUND_SHORE) continue;
@@ -125,49 +126,48 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 			tree_start_tile = tree_recent_tile = prev_tile = 0;
 			if (!citymania::_fn_mod) {
 				OrthogonalTileArea square_area = OrthogonalTileArea(start_tile, end_tile);
-				TILE_AREA_LOOP(curr_tile, square_area) {
+				for (auto cur_tile : square_area) {
 					// if we're on a non-consecutive tile or we've hit a black-marked tile
 					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
 					if (tree_start_tile != 0 &&
-							(curr_tile != prev_tile + 1 ||
-							(!IsTileType(curr_tile, MP_TREES) && (!IsTileType(curr_tile, MP_CLEAR) || IsClearGround(curr_tile, CLEAR_FIELDS))))) {
+							(cur_tile != prev_tile + 1 ||
+							(!IsTileType(cur_tile, MP_TREES) && (!IsTileType(cur_tile, MP_CLEAR) || IsClearGround(cur_tile, CLEAR_FIELDS))))) {
 						DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 						tree_start_tile = tree_recent_tile = 0;
 					}
 					// if current tile is a tree
-					if (IsTileType(curr_tile, MP_TREES)) {
+					if (IsTileType(cur_tile, MP_TREES)) {
 						if (tree_start_tile == 0) {
-							tree_start_tile = curr_tile;
+							tree_start_tile = cur_tile;
 						}
-						tree_recent_tile = curr_tile;
+						tree_recent_tile = cur_tile;
 					}
-					prev_tile = curr_tile;
+					prev_tile = cur_tile;
 				}
 				// one last ride to flavortown
 				if (tree_start_tile != 0) {
 					DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 				}
 			} else {  // diagonal area
-				DiagonalTileArea diagonal_area = DiagonalTileArea(start_tile, end_tile);
-				DIAGONAL_TILE_AREA_LOOP(curr_tile, diagonal_area) {
+				for (DiagonalTileIterator cur_tile{start_tile, end_tile}; cur_tile != INVALID_TILE; ++cur_tile) {
 					// same as above but with a different criteria for consecutive tiles
-					TileIndexDiffC tile_diff = TileIndexToTileIndexDiffC(curr_tile, prev_tile);
+					TileIndexDiffC tile_diff = TileIndexToTileIndexDiffC(cur_tile, prev_tile);
 					// if we're on a non-consecutive tile or we've hit a black-marked tile
 					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
 					if (tree_start_tile != 0 &&
 							(!((tile_diff.x == 1 && tile_diff.y == 1) || (tile_diff.x == -1 && tile_diff.y == -1)) ||
-							(!IsTileType(curr_tile, MP_TREES) && (!IsTileType(curr_tile, MP_CLEAR) || IsClearGround(curr_tile, CLEAR_FIELDS))))) {
+							(!IsTileType(cur_tile, MP_TREES) && (!IsTileType(cur_tile, MP_CLEAR) || IsClearGround(cur_tile, CLEAR_FIELDS))))) {
 						DoCommandP(tree_start_tile, tree_recent_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
 						tree_start_tile = tree_recent_tile = 0;
 					}
 					// if current tile is a tree
-					if (IsTileType(curr_tile, MP_TREES)) {
+					if (IsTileType(cur_tile, MP_TREES)) {
 						if (tree_start_tile == 0) {
-							tree_start_tile = curr_tile;
+							tree_start_tile = cur_tile;
 						}
-						tree_recent_tile = curr_tile;
+						tree_recent_tile = cur_tile;
 					}
-					prev_tile = curr_tile;
+					prev_tile = cur_tile;
 				}
 				// one last ride to flavortown
 				if (tree_start_tile != 0) {
@@ -460,7 +460,7 @@ Window *ShowTerraformToolbar(Window *link)
 	}
 
 	/* Delete the terraform toolbar to place it again. */
-	DeleteWindowById(WC_SCEN_LAND_GEN, 0, true);
+	CloseWindowById(WC_SCEN_LAND_GEN, 0, true);
 	w = AllocateWindowDescFront<TerraformToolbarWindow>(&_terraform_desc, 0);
 	/* Align the terraform toolbar under the main toolbar. */
 	w->top -= w->height;
@@ -504,18 +504,18 @@ static void CommonRaiseLowerBigLand(TileIndex tile, int mode)
 		if (mode != 0) {
 			/* Raise land */
 			h = MAX_TILE_HEIGHT;
-			TILE_AREA_LOOP(tile2, ta) {
+			for (TileIndex tile2 : ta) {
 				h = std::min(h, TileHeight(tile2));
 			}
 		} else {
 			/* Lower land */
 			h = 0;
-			TILE_AREA_LOOP(tile2, ta) {
+			for (TileIndex tile2 : ta) {
 				h = std::max(h, TileHeight(tile2));
 			}
 		}
 
-		TILE_AREA_LOOP(tile2, ta) {
+		for (TileIndex tile2 : ta) {
 			if (TileHeight(tile2) == h) {
 				DoCommandP(tile2, SLOPE_N, (uint32)mode, CMD_TERRAFORM_LAND);
 			}
@@ -593,7 +593,7 @@ static void ResetLandscapeConfirmationCallback(Window *w, bool confirmed)
 	if (confirmed) {
 		/* Set generating_world to true to get instant-green grass after removing
 		 * company property. */
-		_generating_world = true;
+		Backup<bool> old_generating_world(_generating_world, true, FILE_LINE);
 
 		/* Delete all companies */
 		for (Company *c : Company::Iterate()) {
@@ -601,7 +601,7 @@ static void ResetLandscapeConfirmationCallback(Window *w, bool confirmed)
 			delete c;
 		}
 
-		_generating_world = false;
+		old_generating_world.Restore();
 
 		/* Delete all station signs */
 		for (BaseStation *st : BaseStation::Iterate()) {

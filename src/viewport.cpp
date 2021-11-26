@@ -286,8 +286,8 @@ void InitializeWindowViewport(Window *w, int x, int y,
 		veh = Vehicle::Get(vp->follow_vehicle);
 		pt = MapXYZToViewport(vp, veh->x_pos, veh->y_pos, veh->z_pos);
 	} else {
-		uint x = TileX(follow_flags) * TILE_SIZE;
-		uint y = TileY(follow_flags) * TILE_SIZE;
+		x = TileX(follow_flags) * TILE_SIZE;
+		y = TileY(follow_flags) * TILE_SIZE;
 
 		vp->follow_vehicle = INVALID_VEHICLE;
 		pt = MapXYZToViewport(vp, x, y, GetSlopePixelZ(x, y));
@@ -307,35 +307,36 @@ void InitializeWindowViewport(Window *w, int x, int y,
 
 static Point _vp_move_offs;
 
-static void DoSetViewportPosition(const Window *w, int left, int top, int width, int height)
+static void DoSetViewportPosition(Window::IteratorToFront it, int left, int top, int width, int height)
 {
-	FOR_ALL_WINDOWS_FROM_BACK_FROM(w, w) {
+	for (; !it.IsEnd(); ++it) {
+		const Window *w = *it;
 		if (left + width > w->left &&
 				w->left + w->width > left &&
 				top + height > w->top &&
 				w->top + w->height > top) {
 
 			if (left < w->left) {
-				DoSetViewportPosition(w, left, top, w->left - left, height);
-				DoSetViewportPosition(w, left + (w->left - left), top, width - (w->left - left), height);
+				DoSetViewportPosition(it, left, top, w->left - left, height);
+				DoSetViewportPosition(it, left + (w->left - left), top, width - (w->left - left), height);
 				return;
 			}
 
 			if (left + width > w->left + w->width) {
-				DoSetViewportPosition(w, left, top, (w->left + w->width - left), height);
-				DoSetViewportPosition(w, left + (w->left + w->width - left), top, width - (w->left + w->width - left), height);
+				DoSetViewportPosition(it, left, top, (w->left + w->width - left), height);
+				DoSetViewportPosition(it, left + (w->left + w->width - left), top, width - (w->left + w->width - left), height);
 				return;
 			}
 
 			if (top < w->top) {
-				DoSetViewportPosition(w, left, top, width, (w->top - top));
-				DoSetViewportPosition(w, left, top + (w->top - top), width, height - (w->top - top));
+				DoSetViewportPosition(it, left, top, width, (w->top - top));
+				DoSetViewportPosition(it, left, top + (w->top - top), width, height - (w->top - top));
 				return;
 			}
 
 			if (top + height > w->top + w->height) {
-				DoSetViewportPosition(w, left, top, width, (w->top + w->height - top));
-				DoSetViewportPosition(w, left, top + (w->top + w->height - top), width, height - (w->top + w->height - top));
+				DoSetViewportPosition(it, left, top, width, (w->top + w->height - top));
+				DoSetViewportPosition(it, left, top + (w->top + w->height - top), width, height - (w->top + w->height - top));
 				return;
 			}
 
@@ -421,7 +422,11 @@ static void SetViewportPosition(Window *w, int x, int y)
 		i = top + height - _screen.height;
 		if (i >= 0) height -= i;
 
-		if (height > 0) DoSetViewportPosition(w->z_front, left, top, width, height);
+		if (height > 0) {
+			Window::IteratorToFront it(w);
+			++it;
+			DoSetViewportPosition(it, left, top, width, height);
+		}
 	}
 }
 
@@ -1176,7 +1181,7 @@ static void DrawTileSelection(const TileInfo *ti)
 		case HT_LINE: {
 			HighLightStyle type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart, _thd.selend, _thd.drawstyle & HT_DIR_MASK);
 			if (type < HT_DIR_END) {
-				DrawAutorailSelection(ti, type);
+				DrawAutorailSelection(ti, type, _thd.cm_poly_terra && !_thd.make_square_red ? CM_SPR_PALETTE_ZONING_YELLOW : -1);
 			} else if (_thd.dir2 < HT_DIR_END) {
 				type = GetPartOfAutoLine(ti->x, ti->y, _thd.selstart2, _thd.selend2, _thd.dir2);
 				if (type < HT_DIR_END) DrawAutorailSelection(ti, type, PALETTE_SEL_TILE_BLUE);
@@ -1307,13 +1312,13 @@ static void ViewportAddLandscape()
 				_vd.foundation[1] = -1;
 				_vd.last_foundation_child[0] = nullptr;
 				_vd.last_foundation_child[1] = nullptr;
-				_vd.cm_highlight = citymania::GetTileHighlight(&tile_info);
+				_vd.cm_highlight = citymania::GetTileHighlight(&tile_info, tile_type);
 
 				_tile_type_procs[tile_type]->draw_tile_proc(&tile_info);
 
 				if (tile_info.tile != INVALID_TILE){
-					citymania::DrawTileZoning(&tile_info);
-					citymania::DrawTileZoning(&tile_info, _vd.cm_highlight);
+					citymania::DrawTileZoning(&tile_info);  // old zoning patch
+					citymania::DrawTileZoning(&tile_info, _vd.cm_highlight, tile_type);
 					DrawTileSelection(&tile_info);
 				}
 			}
@@ -1463,12 +1468,12 @@ static void ViewportAddKdtreeSigns(DrawPixelInfo *dpi)
 		if (Station::IsExpected(st)) {
 			/* Station */
 			ViewportAddString(dpi, ZOOM_LVL_OUT_16X, &st->sign,
-				STR_VIEWPORT_STATION, STR_VIEWPORT_STATION + 1, STR_NULL,
+				STR_VIEWPORT_STATION, STR_VIEWPORT_STATION_TINY, STR_NULL,
 				st->index, st->facilities, (st->owner == OWNER_NONE || !st->IsInUse()) ? COLOUR_GREY : _company_colours[st->owner]);
 		} else {
 			/* Waypoint */
 			ViewportAddString(dpi, ZOOM_LVL_OUT_16X, &st->sign,
-				STR_VIEWPORT_WAYPOINT, STR_VIEWPORT_WAYPOINT + 1, STR_NULL,
+				STR_VIEWPORT_WAYPOINT, STR_VIEWPORT_WAYPOINT_TINY, STR_NULL,
 				st->index, st->facilities, (st->owner == OWNER_NONE || !st->IsInUse()) ? COLOUR_GREY : _company_colours[st->owner]);
 		}
 	}
@@ -1521,8 +1526,7 @@ void ViewportSign::MarkDirty(ZoomLevel maxzoom) const
 		zoomlevels[zoom].bottom = this->top    + ScaleByZoom(VPSM_TOP + FONT_HEIGHT_NORMAL + VPSM_BOTTOM + 1, zoom);
 	}
 
-	Window *w;
-	FOR_ALL_WINDOWS_FROM_BACK(w) {
+	for (const Window *w : Window::Iterate()) {
 		Viewport *vp = w->viewport;
 		if (vp != nullptr && vp->zoom <= maxzoom) {
 			assert(vp->width != 0);
@@ -1795,6 +1799,8 @@ void ViewportDoDraw(const Viewport *vp, int left, int top, int right, int bottom
 	_vp_sprite_sorter(&_vd.parent_sprites_to_sort);
 	ViewportDrawParentSprites(&_vd.parent_sprites_to_sort, &_vd.child_screen_sprites_to_draw);
 
+	citymania::DrawSelectionOverlay(&_vd.dpi);
+
 	if (_draw_bounding_boxes) ViewportDrawBoundingBoxes(&_vd.parent_sprites_to_sort);
 	if (_draw_dirty_blocks) ViewportDrawDirtyBlocks();
 
@@ -1995,8 +2001,7 @@ bool MarkAllViewportsDirty(int left, int top, int right, int bottom)
 {
 	bool dirty = false;
 
-	Window *w;
-	FOR_ALL_WINDOWS_FROM_BACK(w) {
+	for (const Window *w : Window::Iterate()) {
 		Viewport *vp = w->viewport;
 		if (vp != nullptr) {
 			assert(vp->width != 0);
@@ -2009,8 +2014,7 @@ bool MarkAllViewportsDirty(int left, int top, int right, int bottom)
 
 void ConstrainAllViewportsZoom()
 {
-	Window *w;
-	FOR_ALL_WINDOWS_FROM_FRONT(w) {
+	for (Window *w : Window::Iterate()) {
 		if (w->viewport == nullptr) continue;
 
 		ZoomLevel zoom = static_cast<ZoomLevel>(Clamp(w->viewport->zoom, _settings_client.gui.zoom_min, _settings_client.gui.zoom_max));
@@ -2420,12 +2424,11 @@ bool HandleViewportClicked(const Viewport *vp, int x, int y, bool double_click)
 	bool result = CheckClickOnLandscape(vp, x, y);
 
 	if (v != nullptr) {
-		DEBUG(misc, 2, "Vehicle %d (index %d) at %p", v->unitnumber, v->index, v);
+		Debug(misc, 2, "Vehicle {} (index {}) at {}", v->unitnumber, v->index, fmt::ptr(v));
 		if (IsCompanyBuildableVehicleType(v)) {
 			v = v->First();
 			if (citymania::_fn_mod && v->owner == _local_company) {
-				if (_settings_client.gui.enable_ctrl_click_start_stop)
-					StartStopVehicle(v, true);
+				StartStopVehicle(v, true);
 			} else {
 				ShowVehicleViewWindow(v);
 			}
@@ -2694,6 +2697,7 @@ void UpdateTileSelection()
 								_thd.new_size.y = y2 - y1 + TILE_SIZE;
 							}
 						}
+						_thd.cm_new_poly_terra = _settings_client.gui.cm_enable_polyrail_terraform && citymania::_fn_mod;
 						break;
 					}
 					/* HT_RAIL */
@@ -2743,6 +2747,7 @@ void UpdateTileSelection()
 			_thd.offs.x != _thd.new_offs.x || _thd.offs.y != _thd.new_offs.y ||
 			_thd.outersize.x != _thd.new_outersize.x ||
 			_thd.outersize.y != _thd.new_outersize.y ||
+			_thd.cm_poly_terra != _thd.cm_new_poly_terra ||
 			_thd.diagonal    != new_diagonal) {
 		/* Clear the old tile selection? */
 		if ((_thd.drawstyle & HT_DRAG_MASK) != HT_NONE) SetSelectionTilesDirty();
@@ -2752,6 +2757,7 @@ void UpdateTileSelection()
 		_thd.size = _thd.new_size;
 		_thd.offs = _thd.new_offs;
 		_thd.outersize = _thd.new_outersize;
+		_thd.cm_poly_terra = _thd.cm_new_poly_terra;
 		_thd.diagonal = new_diagonal;
 		_thd.dirty = 0xff;
 
@@ -2774,7 +2780,7 @@ static inline void ShowMeasurementTooltips(StringID str, uint paramcount, const 
 
 static void HideMeasurementTooltips()
 {
-	DeleteWindowById(WC_TOOLTIPS, 0);
+	CloseWindowById(WC_TOOLTIPS, 0);
 }
 
 /** highlighting tiles while only going over them with the mouse */
@@ -3518,6 +3524,7 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 	_thd.selend.x    -= first_dir.x;
 	_thd.selend.y    -= first_dir.y;
 	Trackdir seldir = PointDirToTrackdir(_thd.selstart, line.first_dir);
+	_thd.cm_poly_dir = seldir;
 	_thd.selstart.x  &= ~TILE_UNIT_MASK;
 	_thd.selstart.y  &= ~TILE_UNIT_MASK;
 
@@ -3533,8 +3540,10 @@ static HighLightStyle CalcPolyrailDrawstyle(Point pt, bool dragging)
 		_thd.selstart2.x &= ~TILE_UNIT_MASK;
 		_thd.selstart2.y &= ~TILE_UNIT_MASK;
 		_thd.dir2 = (HighLightStyle)TrackdirToTrack(seldir2);
+		_thd.cm_poly_dir2 = seldir2;
 	} else {
 		_thd.dir2 = HT_DIR_END;
+		_thd.cm_poly_dir2 = INVALID_TRACKDIR;
 	}
 
 	HighLightStyle ret = HT_LINE | (HighLightStyle)TrackdirToTrack(seldir);
@@ -3885,7 +3894,7 @@ void InitializeSpriteSorter()
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdScrollViewport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdScrollViewport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	ViewportScrollTarget target = (ViewportScrollTarget)p1;
@@ -4179,4 +4188,5 @@ void ResetRailPlacementEndpoints()
 namespace citymania {
 	void (*DrawTileSelectionRect)(const TileInfo *ti, PaletteID pal) = &::DrawTileSelectionRect;
 	void (*DrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal) = &::DrawAutorailSelection;
+	HighLightStyle (*GetPartOfAutoLine)(int px, int py, const Point &selstart, const Point &selend, HighLightStyle dir) = &::GetPartOfAutoLine;
 }

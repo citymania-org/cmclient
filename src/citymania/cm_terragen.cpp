@@ -22,17 +22,16 @@
 #include "../safeguards.h"
 
 
-extern CommandCost CmdBuildObject(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text);
+extern CommandCost CmdBuildObject(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text);
 
 typedef int16 height_t;
 /** Height map - allocated array of heights (MapSizeX() + 1) x (MapSizeY() + 1) */
 struct HeightMap
 {
-	height_t *h;         //< array of heights
+	std::vector<height_t> h; //< array of heights
 	/* Even though the sizes are always positive, there are many cases where
 	 * X and Y need to be signed integers due to subtractions. */
 	int      dim_x;      //< height map size_x MapSizeX() + 1
-	int      total_size; //< height map total size
 	int      size_x;     //< MapSizeX()
 	int      size_y;     //< MapSizeY()
 
@@ -50,7 +49,7 @@ struct HeightMap
 /** Global height map instance */
 
 /** Global height map instance */
-static HeightMap _height_map = {nullptr, 0, 0, 0, 0};
+static HeightMap _height_map = { {}, 0, 0, 0 };
 
 static const int height_decimal_bits = 4;
 
@@ -64,18 +63,15 @@ static const int height_decimal_bits = 4;
 
 static inline bool AllocHeightMap()
 {
-	height_t *h;
+	assert(_height_map.h.empty());
 
 	_height_map.size_x = MapSizeX();
 	_height_map.size_y = MapSizeY();
 
 	/* Allocate memory block for height map row pointers */
-	_height_map.total_size = (_height_map.size_x + 1) * (_height_map.size_y + 1);
+	size_t total_size = (_height_map.size_x + 1) * (_height_map.size_y + 1);
 	_height_map.dim_x = _height_map.size_x + 1;
-	_height_map.h = CallocT<height_t>(_height_map.total_size);
-
-	/* Iterate through height map and initialise values. */
-	FOR_ALL_TILES_IN_HEIGHT(h) *h = 0;
+	_height_map.h.resize(total_size);
 
 	return true;
 }
@@ -83,8 +79,7 @@ static inline bool AllocHeightMap()
 /** Free height map */
 static inline void FreeHeightMap()
 {
-	free(_height_map.h);
-	_height_map.h = nullptr;
+	_height_map.h.clear();
 }
 
 /** A small helper function to initialize the terrain */
@@ -805,7 +800,7 @@ void Generate() {
 void GenerateRivers() {
 	for (auto r : _rivers) {
 		// fprintf(stderr, "BUILDOBJ %d(%d %d) %d\n", (int)r.first, (int)TileX(r.first), (int)TileY(r.first), (int)r.second);
-		CmdBuildObject(r.first, DC_EXEC | DC_AUTO | DC_NO_TEST_TOWN_RATING | DC_NO_MODIFY_TOWN_RATING, 6 + r.second, 0, nullptr);
+		CmdBuildObject(r.first, DC_EXEC | DC_AUTO | DC_NO_TEST_TOWN_RATING | DC_NO_MODIFY_TOWN_RATING, 6 + r.second, 0, "");
 	}
 }
 

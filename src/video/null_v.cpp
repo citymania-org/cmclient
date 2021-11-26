@@ -8,8 +8,11 @@
 /** @file null_v.cpp The video driver that doesn't blit. */
 
 #include "../stdafx.h"
+#include "../console_func.h"
+#include "../date_func.h"
 #include "../gfx_func.h"
 #include "../blitter/factory.hpp"
+#include "../saveload/saveload.h"
 #include "../window_func.h"
 #include "null_v.h"
 
@@ -28,13 +31,15 @@ const char *VideoDriver_Null::Start(const StringList &parm)
 	this->UpdateAutoResolution();
 
 	this->ticks = GetDriverParamInt(parm, "ticks", 1000);
+	auto saveptr = GetDriverParam(parm, "save");
+	this->savefile = saveptr ? saveptr : "";
 	_screen.width  = _screen.pitch = _cur_resolution.width;
 	_screen.height = _cur_resolution.height;
 	_screen.dst_ptr = nullptr;
 	ScreenSizeChanged();
 
 	/* Do not render, nor blit */
-	DEBUG(misc, 1, "Forcing blitter 'null'...");
+	Debug(misc, 1, "Forcing blitter 'null'...");
 	BlitterFactory::SelectBlitter("null");
 	return nullptr;
 }
@@ -47,10 +52,28 @@ void VideoDriver_Null::MainLoop()
 {
 	uint i;
 
-	for (i = 0; i < this->ticks; i++) {
+	uint16 old_tick;
+	for (i = 0; i < this->ticks; ) {
+		old_tick = _tick_counter;
 		::GameLoop();
 		::InputLoop();
 		::UpdateWindows();
+		if (old_tick != _tick_counter) i++;
+		else _pause_mode = PM_UNPAUSED;
+	}
+	IConsolePrint(CC_DEFAULT, "Null driver ran for {} tics, save: {}", this->ticks, this->savefile);
+	if (!this->savefile.empty()) {
+	    if (SaveOrLoad(this->savefile.c_str(), SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
+	        IConsolePrint(CC_ERROR, "Error saving the final game state.");
+	    } else {
+	        IConsolePrint(CC_DEFAULT, "Saved the final game state to {}", this->savefile);
+	    }
+	}
+
+	/* If requested, make a save just before exit. The normal exit-flow is
+	 * not triggered from this driver, so we have to do this manually. */
+	if (_settings_client.gui.autosave_on_exit) {
+		DoExitSave();
 	}
 }
 

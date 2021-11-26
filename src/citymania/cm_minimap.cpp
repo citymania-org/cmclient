@@ -608,7 +608,7 @@ static inline uint32 CM_GetSmallMapIMBAPixels(TileIndex tile, TileType t)
 		//  return MKCOLOUR_XYYX(PC_GRASS_LAND, PC_TREES);
 
 		case MP_CLEAR:
-			if (IsClearGround(tile, CLEAR_FIELDS) || IsClearGround(tile, CLEAR_DESERT)) {
+			if (IsTileType(tile, MP_CLEAR) && (IsClearGround(tile, CLEAR_FIELDS) || IsClearGround(tile, CLEAR_DESERT))) {
 				const SmallMapColourScheme *cs = &_heightmap_schemes[3];
 				return cs->height_colours[TileHeight(tile)];
 			}
@@ -729,7 +729,7 @@ inline uint32 SmallMapWindow::GetTileColours(const TileArea &ta) const
 	TileIndex tile = INVALID_TILE; // Position of the most important tile.
 	TileType et = MP_VOID;         // Effective tile type at that position.
 
-	TILE_AREA_LOOP(ti, ta) {
+	for(TileIndex ti : ta) {
 		TileType ttype = GetTileType(ti);
 
 		switch (ttype) {
@@ -915,20 +915,24 @@ void SmallMapWindow::DrawVehicles(const DrawPixelInfo *dpi, Blitter *blitter) co
  */
 void SmallMapWindow::DrawTowns(const DrawPixelInfo *dpi) const
 {
-	for (const Town *t : Town::Iterate()) {
-		/* Remap the town coordinate */
+	for (auto &[t, population, width] : this->town_cache.towns) {
 		Point pt = this->TileToPixel(TileX(t->xy) * TILE_SIZE, TileY(t->xy) * TILE_SIZE);
-		int x = pt.x - (t->cache.sign.width_small >> 1);
-		int y = pt.y;
+		int x = pt.x - width / 2;
+		int y = pt.y - FONT_HEIGHT_SMALL / 2;
 
 		/* Check if the town sign is within bounds */
-		if (x + t->cache.sign.width_small > dpi->left &&
+		if ((int)(x + width) > dpi->left &&
 				x < dpi->left + dpi->width &&
 				y + FONT_HEIGHT_SMALL > dpi->top &&
 				y < dpi->top + dpi->height) {
-			/* And draw it. */
-			SetDParam(0, t->index);
-			DrawString(x, x + t->cache.sign.width_small, y, t->larger_town ? STR_SMALLMAP_TOWN_LARGE : STR_SMALLMAP_TOWN);
+			if (this->map_type == CM_SMT_IMBA) {
+				/* And draw it. */
+				SetDParam(0, population);
+				DrawString(x, x + width, y, t->larger_town ? CM_STR_SMALLMAP_POPULATION_LARGE : CM_STR_SMALLMAP_POPULATION);
+			} else {
+				SetDParam(0, t->index);
+				DrawString(x, x + t->cache.sign.width_small, y, t->larger_town ? CM_STR_SMALLMAP_TOWN_LARGE : STR_SMALLMAP_TOWN);
+			}
 		}
 	}
 }
@@ -1187,6 +1191,9 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 
 	/* The width of a column is the minimum width of all texts + the size of the blob + some spacing */
 	this->column_width = min_width + LEGEND_BLOB_WIDTH + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
+
+	SetDParam(0, 9999999);  // max reasonable population
+	this->town_cache.max_sign = GetStringBoundingBox(CM_STR_SMALLMAP_POPULATION);
 }
 
 /* virtual */ void SmallMapWindow::OnPaint()
@@ -1202,6 +1209,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 		}
 	}
 
+	this->UpdateTownCache(false);
 	this->DrawWidgets();
 }
 
@@ -1440,7 +1448,6 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 			Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
 			pt = this->PixelToTile(pt.x - wid->pos_x, pt.y - wid->pos_y);
 			ScrollWindowTo(pt.x, pt.y, -1, w);
-
 			this->SetDirty();
 			break;
 		}
@@ -1615,6 +1622,14 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 	this->SetDirty();
 }
 
+/* virtual */ void SmallMapWindow::OnHundredthTick()
+{
+	if (this->show_towns) {
+		this->UpdateTownCache(true);
+		this->SetDirty();
+	}
+}
+
 /* virtual */ void SmallMapWindow::OnScroll(Point delta)
 {
 	if (_settings_client.gui.scroll_mode == VSM_VIEWPORT_RMB_FIXED || _settings_client.gui.scroll_mode == VSM_MAP_RMB_FIXED) _cursor.fix_at = true;
@@ -1657,6 +1672,62 @@ Point SmallMapWindow::GetStationMiddle(const Station *st) const
 	 */
 	ret.x -= 3;
 	return ret;
+}
+
+static bool IsSignVisible(const Rect &rect, Point pt, int sign_width, int sign_height) {
+	auto x = pt.x - sign_width / 2;
+	auto y = pt.y - sign_height / 2;
+	return (
+	    x < rect.right &&
+	    x + sign_width > rect.left &&
+	    y < rect.bottom &&
+	    y + sign_height > rect.top
+	);
+}
+
+void SmallMapWindow::UpdateTownCache(bool force) {
+	const NWidgetBase *widget = this->GetWidget<NWidgetBase>(WID_SM_MAP);
+
+	if (!this->show_towns) {
+		this->town_cache.width = 0;
+		return;
+	}
+
+	if (!force &&
+	    	this->town_cache.zoom == this->zoom &&
+			this->town_cache.scroll_x == this->scroll_x &&
+			this->town_cache.scroll_y == this->scroll_y &&
+			this->town_cache.width == widget->current_x &&
+			this->town_cache.height == widget->current_y)
+		return;
+
+	this->town_cache.zoom = this->zoom;
+	this->town_cache.scroll_x = this->scroll_x;
+	this->town_cache.scroll_y = this->scroll_y;
+	this->town_cache.width = widget->current_x;
+	this->town_cache.height = widget->current_y;
+
+	auto rect = widget->GetCurrentRect();
+
+	this->town_cache.towns.clear();
+	for (const Town *t : Town::Iterate()) {
+		/* Remap the town coordinate */
+		Point pt = this->TileToPixel(TileX(t->xy) * TILE_SIZE, TileY(t->xy) * TILE_SIZE);
+
+
+		if (this->map_type == CM_SMT_IMBA) {
+			if (!IsSignVisible(rect, pt, this->town_cache.max_sign.width, this->town_cache.max_sign.height)) continue;
+			SetDParam(0, t->cache.population);
+			auto dim = GetStringBoundingBox(CM_STR_SMALLMAP_POPULATION);
+
+			if (!IsSignVisible(rect, pt, dim.width, dim.height)) continue;
+
+			this->town_cache.towns.push_back(std::make_tuple(t, t->cache.population, dim.width));
+		} else {
+			if (!IsSignVisible(rect, pt, t->cache.sign.width_small, FONT_HEIGHT_SMALL)) continue;
+			this->town_cache.towns.push_back(std::make_tuple(t, t->cache.population, t->cache.sign.width_small));
+		}
+	}
 }
 
 SmallMapWindow::SmallMapType SmallMapWindow::map_type = CM_SMT_IMBA;

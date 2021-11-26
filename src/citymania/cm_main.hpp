@@ -17,6 +17,7 @@ void Emit(const T &event) {
 }
 
 void ToggleSmallMap();
+void NetworkClientSendChatToServer(const std::string &msg);
 
 } // namespace citymania
 

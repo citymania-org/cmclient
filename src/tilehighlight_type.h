@@ -91,6 +91,10 @@ struct TileHighlightData {
 
 	citymania::ObjectHighlight cm;
 	citymania::ObjectHighlight cm_new;
+	bool cm_poly_terra;
+	bool cm_new_poly_terra;
+	Trackdir cm_poly_dir;
+	Trackdir cm_poly_dir2;
 
 	void Reset();
 

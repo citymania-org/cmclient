@@ -14,6 +14,7 @@
 #include "../tile_type.h"
 #include "../town_map.h"
 #include "../town.h"
+#include "../viewport_func.h"
 #include "../window_func.h"
 #include "../zoom_func.h"
 
@@ -104,9 +105,7 @@ struct LandTooltipsWindow : public Window
                 SetDParam(0, st->index);
                 size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_NAME).width, size->width);
 
-                for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-                    const CargoSpec *cs = _sorted_cargo_specs[i];
-                    if(cs == NULL) continue;
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
                     int cargoid = cs->Index();
                     if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
                         size->height += line_height;
@@ -186,9 +185,7 @@ struct LandTooltipsWindow : public Window
                 DrawString(left, right, y, STR_CM_LAND_TOOLTIPS_STATION_NAME, TC_BLACK, SA_CENTER);
                 y += FONT_HEIGHT_NORMAL + 2;
 
-                for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-                    const CargoSpec *cs = _sorted_cargo_specs[i];
-                    if(cs == NULL) continue;
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
                     int cargoid = cs->Index();
                     if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
                         SetDParam(0, cs->name);
@@ -223,7 +220,7 @@ void ShowLandTooltips(TileIndex tile, Window *parent) {
     last_tooltip_tile = tile;
 
     if (tile == INVALID_TILE) {
-        DeleteWindowById(CM_WC_LAND_TOOLTIPS, 0);
+        CloseWindowById(CM_WC_LAND_TOOLTIPS, 0);
         return;
     }
 
@@ -255,7 +252,7 @@ void ShowLandTooltips(TileIndex tile, Window *parent) {
         default:
             break;
     }
-    DeleteWindowById(CM_WC_LAND_TOOLTIPS, 0);
+    CloseWindowById(CM_WC_LAND_TOOLTIPS, 0);
 
     if (param == 0) return;
     new LandTooltipsWindow(parent, param);
@@ -489,22 +486,28 @@ public:
     {
         /* Always close tooltips when the cursor is not in our window. */
         if (!_cursor.in_window) {
-            delete this;
+            this->Close();
             return;
         }
 
         /* We can show tooltips while dragging tools. These are shown as long as
          * we are dragging the tool. Normal tooltips work with hover or rmb. */
         switch (this->close_cond) {
-            case TCC_RIGHT_CLICK: if (!_right_button_down) delete this; break;
-            case TCC_HOVER: if (!_mouse_hovering) delete this; break;
+            case TCC_RIGHT_CLICK: if (!_right_button_down) this->Close(); break;
+            case TCC_HOVER: if (!_mouse_hovering) this->Close(); break;
             case TCC_NONE: break;
+
+            case TCC_EXIT_VIEWPORT: {
+                Window *w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
+                if (w == nullptr || IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y) == nullptr) this->Close();
+                break;
+            }
         }
     }
 };
 
 bool ShowStationRatingTooltip(Window *parent, const Station *st, const CargoSpec *cs, TooltipCloseCondition close_cond) {
-    DeleteWindowById(WC_STATION_RATING_TOOLTIP, 0);
+    CloseWindowById(WC_STATION_RATING_TOOLTIP, 0);
     new StationRatingTooltipWindow(parent, st, cs, close_cond);
     return true;
 }

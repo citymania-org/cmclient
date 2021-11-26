@@ -3,6 +3,8 @@
 
 #include "cm_highlight.hpp"
 
+#include <functional>
+
 namespace citymania {
 
 void BlueprintCopyArea(TileIndex start, TileIndex end);
@@ -16,6 +18,6 @@ void RotateActiveBlueprint();
 
 void CommandExecuted(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd);
 
-}  //- namespace citymania
+}  // namespace citymania
 
 #endif

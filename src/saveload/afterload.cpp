@@ -184,7 +184,7 @@ static void UpdateExclusiveRights()
 	 *     Build an array town_blocked[ town_id ][ company_id ]
 	 *     that stores if at least one station in that town is blocked for a company
 	 * 2.) Go through that array, if you find a town that is not blocked for
-	 *     one company, but for all others, then give him exclusivity.
+	 *     one company, but for all others, then give it exclusivity.
 	 */
 }
 
@@ -398,8 +398,8 @@ static void CDECL HandleSavegameLoadCrash(int signum)
 			"or older version.\n"
 			"It will load a NewGRF with the same GRF ID as the missing NewGRF.\n"
 			"This means that if the author makes incompatible NewGRFs with the\n"
-			"same GRF ID OpenTTD cannot magically do the right thing. In most\n"
-			"cases OpenTTD will load the savegame and not crash, but this is an\n"
+			"same GRF ID, OpenTTD cannot magically do the right thing. In most\n"
+			"cases, OpenTTD will load the savegame and not crash, but this is an\n"
 			"exception.\n"
 			"Please load the savegame with the appropriate NewGRFs installed.\n"
 			"The missing/compatible NewGRFs are:\n");
@@ -407,9 +407,11 @@ static void CDECL HandleSavegameLoadCrash(int signum)
 		for (const GRFConfig *c = _grfconfig; c != nullptr; c = c->next) {
 			if (HasBit(c->flags, GCF_COMPATIBLE)) {
 				const GRFIdentifier *replaced = GetOverriddenIdentifier(c);
-				char buf[40];
-				md5sumToString(buf, lastof(buf), replaced->md5sum);
-				p += seprintf(p, lastof(buffer), "NewGRF %08X (checksum %s) not found.\n  Loaded NewGRF \"%s\" with same GRF ID instead.\n", BSWAP32(c->ident.grfid), buf, c->filename);
+				char original_md5[40];
+				char replaced_md5[40];
+				md5sumToString(original_md5, lastof(original_md5), c->original_md5sum);
+				md5sumToString(replaced_md5, lastof(replaced_md5), replaced->md5sum);
+				p += seprintf(p, lastof(buffer), "NewGRF %08X (checksum %s) not found.\n  Loaded NewGRF \"%s\" (checksum %s) with same GRF ID instead.\n", BSWAP32(c->ident.grfid), original_md5, c->filename, replaced_md5);
 			}
 			if (c->status == GCS_NOT_FOUND) {
 				char buf[40];
@@ -607,8 +609,8 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_119)) {
 		_pause_mode = (_pause_mode == 2) ? PM_PAUSED_NORMAL : PM_UNPAUSED;
 	} else if (_network_dedicated && (_pause_mode & PM_PAUSED_ERROR) != 0) {
-		DEBUG(net, 0, "The loading savegame was paused due to an error state.");
-		DEBUG(net, 0, "  The savegame cannot be used for multiplayer!");
+		Debug(net, 0, "The loading savegame was paused due to an error state");
+		Debug(net, 0, "  This savegame cannot be used for multiplayer");
 		/* Restore the signals */
 		ResetSignalHandlers();
 		return false;
@@ -772,7 +774,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_6, 1)) _settings_game.pf.forbid_90_deg = false;
 	if (IsSavegameVersionBefore(SLV_21))   _settings_game.vehicle.train_acceleration_model = 0;
 	if (IsSavegameVersionBefore(SLV_90))   _settings_game.vehicle.plane_speed = 4;
-	if (IsSavegameVersionBefore(SLV_95))   _settings_game.vehicle.dynamic_engines = 0;
+	if (IsSavegameVersionBefore(SLV_95))   _settings_game.vehicle.dynamic_engines = false;
 	if (IsSavegameVersionBefore(SLV_96))   _settings_game.economy.station_noise_level = false;
 	if (IsSavegameVersionBefore(SLV_133)) {
 		_settings_game.vehicle.train_slope_steepness = 3;
@@ -1454,7 +1456,7 @@ bool AfterLoadGame()
 		c->avail_roadtypes = GetCompanyRoadTypes(c->index);
 	}
 
-	if (!IsSavegameVersionBefore(SLV_27)) AfterLoadStations();
+	AfterLoadStations();
 
 	/* Time starts at 0 instead of 1920.
 	 * Account for this in older games by adding an offset */
@@ -1896,7 +1898,7 @@ bool AfterLoadGame()
 				}
 			} else if (IsTileType(t, MP_ROAD)) {
 				/* works for all RoadTileType */
-				FOR_ALL_ROADTRAMTYPES(rtt) {
+				for (RoadTramType rtt : _roadtramtypes) {
 					/* update even non-existing road types to update tile owner too */
 					Owner o = GetRoadOwner(t, rtt);
 					if (o < MAX_COMPANIES && !Company::IsValidID(o)) SetRoadOwner(t, rtt, OWNER_NONE);
@@ -2347,7 +2349,7 @@ bool AfterLoadGame()
 			/* At some point, invalid depots were saved into the game (possibly those removed in the past?)
 			 * Remove them here, so they don't cause issues further down the line */
 			if (!IsDepotTile(d->xy)) {
-				DEBUG(sl, 0, "Removing invalid depot %d at %d, %d", d->index, TileX(d->xy), TileY(d->xy));
+				Debug(sl, 0, "Removing invalid depot {} at {}, {}", d->index, TileX(d->xy), TileY(d->xy));
 				delete d;
 				d = nullptr;
 				continue;
@@ -3145,14 +3147,14 @@ bool AfterLoadGame()
 		}
 	}
 
-	if (IsSavegameVersionUntil(SLV_ENDING_YEAR)) {
-		/* Update station docking tiles. Was only needed for pre-SLV_MULTITLE_DOCKS
-		 * savegames, but a bug in docking tiles touched all savegames between
-		 * SLV_MULTITILE_DOCKS and SLV_ENDING_YEAR. */
+	if (IsSavegameVersionBefore(SLV_REPAIR_OBJECT_DOCKING_TILES)) {
+		/* Placing objects on docking tiles was not updating adjacent station's docking tiles. */
 		for (Station *st : Station::Iterate()) {
 			if (st->ship_station.tile != INVALID_TILE) UpdateStationDockingTiles(st);
 		}
+	}
 
+	if (IsSavegameVersionBeforeOrAt(SLV_ENDING_YEAR)) {
 		/* Reset roadtype/streetcartype info for non-road bridges. */
 		for (TileIndex t = 0; t < map_size; t++) {
 			if (IsTileType(t, MP_TUNNELBRIDGE) && GetTunnelBridgeTransportType(t) != TRANSPORT_ROAD) {
@@ -3166,6 +3168,23 @@ bool AfterLoadGame()
 		for (Industry *i : Industry::Iterate()) {
 			i->exclusive_supplier = INVALID_OWNER;
 			i->exclusive_consumer = INVALID_OWNER;
+		}
+	}
+
+	if (IsSavegameVersionBefore(SLV_GROUP_REPLACE_WAGON_REMOVAL)) {
+		/* Propagate wagon removal flag for compatibility */
+		/* Temporary bitmask of company wagon removal setting */
+		uint16 wagon_removal = 0;
+		for (const Company *c : Company::Iterate()) {
+			if (c->settings.renew_keep_length) SetBit(wagon_removal, c->index);
+		}
+		for (Group *g : Group::Iterate()) {
+			if (g->flags != 0) {
+				/* Convert old replace_protection value to flag. */
+				g->flags = 0;
+				SetBit(g->flags, GroupFlags::GF_REPLACE_PROTECTION);
+			}
+			if (HasBit(wagon_removal, g->owner)) SetBit(g->flags, GroupFlags::GF_REPLACE_WAGON_REMOVAL);
 		}
 	}
 
@@ -3193,7 +3212,7 @@ bool AfterLoadGame()
 	AfterLoadFindBTProCBInfo();
 	citymania::InitializeZoningMap();
 
-	if ((!_networking || _network_server ) && _settings_client.gui.pause_after_load) _pause_mode = PM_PAUSED_NORMAL;
+	if ((!_networking || _network_server ) && _settings_client.gui.cm_pause_after_load) _pause_mode = PM_PAUSED_NORMAL;
 
 	return true;
 }

@@ -13,6 +13,19 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 12.0
+ *
+ * API additions:
+ * \li GSNewGRF
+ * \li GSNewGRFList
+ * \li GSMarine::BT_LOCK
+ * \li GSMarine::BT_CANAL
+ * \li GSTile::IsSeaTile
+ * \li GSTile::IsRiverTile
+ * \li GSTile::BT_CLEAR_WATER
+ * \li GSObjectTypeList
+ * \li GSObjectType
+ *
  * \b 1.11.0
  *
  * API additions:

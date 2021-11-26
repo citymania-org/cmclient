@@ -2,9 +2,11 @@
 
 #include "cm_blueprint.hpp"
 
+#include "cm_commands.hpp"
 #include "cm_highlight.hpp"
 
 #include "../command_func.h"
+#include "../debug.h"
 #include "../direction_type.h"
 #include "../rail_map.h"
 #include "../station_map.h"
@@ -13,12 +15,11 @@
 #include "../tunnelbridge_map.h"
 #include "../network/network.h"
 
-#include <functional>
 #include <map>
 
 extern TileHighlightData _thd;
 extern RailType _cur_railtype;
-extern void GetStationLayout(byte *layout, int numtracks, int plat_len, const StationSpec *statspec);
+extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
 namespace citymania {
 
@@ -35,32 +36,6 @@ bool operator==(const TileIndexDiffC &a, const TileIndexDiffC &b) {
 
 bool operator!=(const TileIndexDiffC &a, const TileIndexDiffC &b) {
     return a.x != b.x || a.y != b.y;
-}
-
-typedef std::tuple<TileIndex, uint32, uint32, uint32> CommandTuple;
-typedef std::function<void(bool)> CommandCallback;
-std::map<CommandTuple, std::vector<CommandCallback>> _command_callbacks;
-
-void AddCommandCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback callback) {
-    _command_callbacks[std::make_tuple(tile, p1, p2, cmd)].push_back(callback);
-}
-
-void DoCommandWithCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback callback) {
-    AddCommandCallback(tile, p1, p2, cmd & CMD_ID_MASK, callback);
-    DoCommandP(tile, p1, p2, cmd);
-}
-
-void DoCommandWithCallback(const CommandContainer &cc, CommandCallback callback) {
-    DoCommandWithCallback(cc.tile, cc.p1, cc.p2, cc.cmd, callback);
-}
-
-void CommandExecuted(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
-    CommandTuple ct {tile, p1, p2, cmd & CMD_ID_MASK};
-    auto p = _command_callbacks.find(ct);
-    if (p == _command_callbacks.end()) return;
-    for (auto &cb : p->second)
-        cb(res);
-    _command_callbacks.erase(p);
 }
 
 template<typename Func>
@@ -99,9 +74,13 @@ void Blueprint::Add(TileIndex source_tile, Blueprint::Item item) {
             );
             break;
         case Item::Type::RAIL_BRIDGE:
+            this->source_tiles.insert(TILE_ADDXY(source_tile, item.u.rail.bridge.other_end.x, item.u.rail.bridge.other_end.y));
+            this->source_tiles.insert(source_tile);
+            break;
         case Item::Type::RAIL_TUNNEL:
             this->source_tiles.insert(TILE_ADDXY(source_tile, item.u.rail.tunnel.other_end.x, item.u.rail.tunnel.other_end.y));
-            FALLTHROUGH;
+            this->source_tiles.insert(source_tile);
+            break;
         case Item::Type::RAIL_DEPOT:
         case Item::Type::RAIL_STATION:
             this->source_tiles.insert(source_tile);
@@ -119,6 +98,11 @@ CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &ite
         TRACK_UPPER, TRACK_UPPER, TRACK_LOWER, TRACK_LOWER,
         TRACK_X, TRACK_X, TRACK_Y, TRACK_Y,
     };
+    static const uint SIGNAL_POS_NUM[] = {
+        1, 0, 1, 0,
+        0, 1, 0, 1,
+        0, 1, 0, 1,
+    };
 
     switch (item.type) {
         case Blueprint::Item::Type::RAIL_TRACK: {
@@ -127,7 +111,9 @@ CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &ite
             auto end_tile = start_tile;
             auto tdir = item.u.rail.track.start_dir;
             for (auto i = 1; i < item.u.rail.track.length; i++) {
-                end_tile = TileAddByDiagDir(end_tile, TrackdirToExitdir(tdir));
+                auto new_tile = AddTileIndexDiffCWrap(end_tile, TileIndexDiffCByDiagDir(TrackdirToExitdir(tdir)));
+                if (new_tile == INVALID_TILE) break;
+                end_tile = new_tile;
                 tdir = NextTrackdir(tdir);
             }
             return CommandContainer {
@@ -186,8 +172,11 @@ CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &ite
         case Blueprint::Item::Type::RAIL_SIGNAL:
             return CommandContainer {
                 AddTileIndexDiffCWrap(start, item.tdiff),
-                SIGNAL_POS_TRACK[item.u.rail.signal.pos] | (item.u.rail.signal.variant << 4) | (item.u.rail.signal.type << 5)
-                    | ((item.u.rail.signal.pos % 2) << 15),
+                SIGNAL_POS_TRACK[item.u.rail.signal.pos]
+                    | (item.u.rail.signal.variant << 4)
+                    | (item.u.rail.signal.type << 5)
+                    | (SIGNAL_POS_NUM[item.u.rail.signal.pos] + (item.u.rail.signal.type <= SIGTYPE_LAST_NOPBS && !item.u.rail.signal.twoway ? 1 : 0)) << 15
+                    | 1 << 17,
                 0,
                 CMD_BUILD_SIGNALS,
                 nullptr, ""
@@ -215,9 +204,9 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
 
     for (auto &o: this->items) {
         auto otile = AddTileIndexDiffCWrap(tile, o.tdiff);
-        auto palette = PALETTE_TINT_WHITE;
+        auto palette = CM_PALETTE_TINT_WHITE;
         if (o.type != Item::Type::RAIL_SIGNAL && !CanBuild(GetBlueprintCommand(tile, o)))
-            palette = PALETTE_TINT_RED_DEEP;
+            palette = CM_PALETTE_TINT_RED_DEEP;
 
         switch(o.type) {
             case Item::Type::RAIL_TRACK: {
@@ -225,7 +214,9 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 auto tdir = o.u.rail.track.start_dir;
                 for (auto i = 0; i < o.u.rail.track.length; i++) {
                     add_tile(end_tile, ObjectTileHighlight::make_rail_track(palette, TrackdirToTrack(tdir)));
-                    end_tile = TileAddByDiagDir(end_tile, TrackdirToExitdir(tdir));
+                    auto new_tile = AddTileIndexDiffCWrap(end_tile, TileIndexDiffCByDiagDir(TrackdirToExitdir(tdir)));
+                    if (new_tile == INVALID_TILE) break;
+                    end_tile = new_tile;
                     tdir = NextTrackdir(tdir);
                 }
                 break;
@@ -244,8 +235,8 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
             case Item::Type::RAIL_STATION_PART: {
                 auto layout_ptr = AllocaM(byte, (int)o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
                 GetStationLayout(layout_ptr, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len, nullptr);
-                if (palette == PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
-                    palette = PALETTE_TINT_ORANGE_DEEP;
+                if (palette == CM_PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
+                    palette = CM_PALETTE_TINT_ORANGE_DEEP;
                 IterateStation(otile, o.u.rail.station_part.axis, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len,
                     [&](TileIndex tile) {
                         byte layout = *layout_ptr++;
@@ -255,7 +246,9 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 break;
             }
             case Item::Type::RAIL_SIGNAL:
-                add_tile(otile, ObjectTileHighlight::make_rail_signal(PALETTE_TINT_WHITE, o.u.rail.signal.pos, o.u.rail.signal.type, o.u.rail.signal.variant));
+                add_tile(otile, ObjectTileHighlight::make_rail_signal(CM_PALETTE_TINT_WHITE, o.u.rail.signal.pos, o.u.rail.signal.type, o.u.rail.signal.variant));
+                if (o.u.rail.signal.twoway)
+                    add_tile(otile, ObjectTileHighlight::make_rail_signal(CM_PALETTE_TINT_WHITE, o.u.rail.signal.pos | 1, o.u.rail.signal.type, o.u.rail.signal.variant));
                 break;
             case Item::Type::RAIL_STATION:
                 break;
@@ -350,39 +343,29 @@ static void BlueprintAddSignals(sp<Blueprint> &blueprint, TileIndex tile, TileIn
     // reference: DrawSignals @ rail_cmd.cpp
 
     auto add = [&](Track track, uint x, uint pos) {
-        if (!IsSignalPresent(tile, x)) return;
+        auto a = IsSignalPresent(tile, x);
+        auto b = IsSignalPresent(tile, x ^ 1);
+        if (!a && !b) return;
+        if (!a) pos = pos | 1;
         Blueprint::Item bi(Blueprint::Item::Type::RAIL_SIGNAL, tdiff);
         bi.u.rail.signal.pos = pos;
         bi.u.rail.signal.type = GetSignalType(tile, track);
         bi.u.rail.signal.variant = GetSignalVariant(tile, track);
+        bi.u.rail.signal.twoway = a && b;
         blueprint->Add(tile, bi);
     };
     auto rails = GetTrackBits(tile);
     if (!(rails & TRACK_BIT_Y)) {
         if (!(rails & TRACK_BIT_X)) {
-            if (rails & TRACK_BIT_LEFT) {
-                add(TRACK_LEFT, 2, 0);
-                add(TRACK_LEFT, 3, 1);
-            }
-            if (rails & TRACK_BIT_RIGHT) {
-                add(TRACK_RIGHT, 0, 2);
-                add(TRACK_RIGHT, 1, 3);
-            }
-            if (rails & TRACK_BIT_UPPER) {
-                add(TRACK_UPPER, 3, 4);
-                add(TRACK_UPPER, 2, 5);
-            }
-            if (rails & TRACK_BIT_LOWER) {
-                add(TRACK_LOWER, 1, 6);
-                add(TRACK_LOWER, 0, 7);
-            }
+            if (rails & TRACK_BIT_LEFT) add(TRACK_LEFT, 2, 0);
+            if (rails & TRACK_BIT_RIGHT) add(TRACK_RIGHT, 0, 2);
+            if (rails & TRACK_BIT_UPPER) add(TRACK_UPPER, 3, 4);
+            if (rails & TRACK_BIT_LOWER) add(TRACK_LOWER, 1, 6);
         } else {
             add(TRACK_X, 3, 8);
-            add(TRACK_X, 2, 9);
         }
     } else {
         add(TRACK_Y, 3, 10);
-        add(TRACK_Y, 2, 11);
     }
 }
 
@@ -397,7 +380,6 @@ static void BlueprintAddTracks(sp<Blueprint> &blueprint, TileIndex tile, TileInd
         uint16 length = 0;
         Track c_track = track;
         Trackdir c_tdir = _track_iterate_dir[track];
-        // fprintf(stderr, "TTTTTT %u %u %u\n", c_tile, c_track, GetTrackBits(c_tile));
         while (IsPlainRailTile(c_tile) && HasBit(GetTrackBits(c_tile), c_track)) {
             if (HasBit(track_tiles[c_tile], c_track)) break;
             length++;
@@ -407,13 +389,11 @@ static void BlueprintAddTracks(sp<Blueprint> &blueprint, TileIndex tile, TileInd
             if (!area.Contains(c_tile)) break;
             c_tdir = NextTrackdir(c_tdir);
             c_track = TrackdirToTrack(c_tdir);
-            // fprintf(stderr, "TTTTTTI %u %u %u\n", c_tile, c_track, GetTrackBits(c_tile));
         }
         if (end_tile == INVALID_TILE) continue;
         Blueprint::Item bi(Blueprint::Item::Type::RAIL_TRACK, tdiff);
         bi.u.rail.track.length = length;
         bi.u.rail.track.start_dir = _track_iterate_dir[track];
-        // fprintf(stderr, "TTTTTTEE %u %u %u\n", tdiff, bi.u.rail.track.end_diff, bi.u.rail.track.start_dir);
         blueprint->Add(tile, bi);
     }
 }
@@ -431,7 +411,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
     std::multimap<StationID, TileIndex> station_tiles;
     std::set<StationID> stations;
 
-    TILE_AREA_LOOP(tile, ta) {
+    for (TileIndex tile : ta) {
         TileIndexDiffC td = TileIndexToTileIndexDiffC(tile, start);
         switch (GetTileType(tile)) {
             case MP_STATION:
@@ -492,7 +472,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
         bool in_area = true;
         bool sign_part = false;
         std::vector<TileIndex> tiles;
-        TILE_AREA_LOOP(tile, sta) {
+        for (TileIndex tile : sta) {
             if (!IsTileType(tile, MP_STATION) || GetStationIndex(tile) != sid || !IsRailStation(tile)) continue;
             if (!ta.Contains(tile)) {
                 in_area = false;
@@ -590,14 +570,12 @@ void SetBlueprintHighlight(const TileInfo *ti, TileHighlight &th) {
         return;
 
     if (_active_blueprint.second->HasSourceTile(ti->tile)) {
-        th.ground_pal = th.structure_pal = PALETTE_TINT_BLUE;
+        th.ground_pal = th.structure_pal = CM_PALETTE_TINT_BLUE;
     }
 }
 
 void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
-    TileIndex last_tile;
-    // uint32 last_p1, last_p2, last_cmd = CMD_END;
-    CommandContainer last_rail = {INVALID_TILE, 0, 0, CMD_END};
+    CommandContainer last_rail = {INVALID_TILE, 0, 0, CMD_END, nullptr, ""};
     for (auto &item : blueprint->items) {
         switch (item.type) {
             case Blueprint::Item::Type::RAIL_TRACK:
@@ -614,8 +592,8 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
                 TileIndex tile = AddTileIndexDiffCWrap(start, item.tdiff);
                 auto cc = GetBlueprintCommand(start, item);
                 DoCommandWithCallback(cc,
-                    [blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res) {
-                        if (!res) return;
+                    [blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res)->bool {
+                        if (!res) return false;
                         StationID station_id = GetStationIndex(tile);
                         for (auto &item : blueprint->items) {
                             if (item.type != Blueprint::Item::Type::RAIL_STATION_PART) continue;
@@ -624,6 +602,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
                             DoCommandP(cc.tile, cc.p1 | (1 << 24), station_id << 16, cc.cmd);
                         }
                         if (!sign_part) DoCommandP(tile, 0, 0, CMD_REMOVE_FROM_RAIL_STATION);
+                        return true;
                     }
                 );
                 break;
@@ -639,10 +618,10 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
             auto cc = GetBlueprintCommand(start, item);
             DoCommandP(&cc);
         }
+        return true;
     };
     if (last_rail.cmd != CMD_END) {  // there can't be any signals if there are no rails
-        if (_networking) AddCommandCallback(last_rail.tile, last_rail.p1, last_rail.p2, last_rail.cmd, signal_callback);
-        else signal_callback(true);
+        AddCommandCallback(last_rail.tile, last_rail.p1, last_rail.p2, last_rail.cmd, "", signal_callback);
     }
 }
 
