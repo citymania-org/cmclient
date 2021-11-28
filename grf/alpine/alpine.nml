@@ -1,0 +1,1707 @@
+grf {
+    grfid: "CMAL";
+    name: string(STR_GRF_NAME);
+    desc: string(STR_GRF_DESCRIPTION);
+    version: 1;
+    min_compatible_version: 1;
+}
+
+template tmpl_groundsprites_flags(x, y, flags) {
+                                    // N E S W STEEP
+    [   0+x,   y, 64, 31, -31,  0, flags ] //
+    [  80+x,   y, 64, 31, -31,  0, flags ] //       W
+    [ 160+x,   y, 64, 23, -31,  0, flags ] //     S
+    [ 240+x,   y, 64, 23, -31,  0, flags ] //     S W
+
+    [ 320+x,   y, 64, 31, -31,  0, flags ] //   E
+    [ 398+x,   y, 64, 31, -31,  0, flags ] //   E   W
+    [ 478+x,   y, 64, 23, -31,  0, flags ] //   E S
+    [ 558+x,   y, 64, 23, -31,  0, flags ] //   E S W
+
+    [ 638+x,   y, 64, 39, -31, -8, flags ] // N
+    [ 718+x,   y, 64, 39, -31, -8, flags ] // N     W
+    [ 798+x,   y, 64, 31, -31, -8, flags ] // N   S
+    [ 878+x,   y, 64, 31, -31, -8, flags ] // N   S W
+
+    [ 958+x,   y, 64, 39, -31, -8, flags ] // N E
+    [1038+x,   y, 64, 39, -31, -8, flags ] // N E   W
+    [1118+x,   y, 64, 31, -31, -8, flags ] // N E S
+    [1196+x,   y, 64, 47, -31,-16, flags ] // N E   W STEEP
+
+    [1276+x,   y, 64, 15, -31,  0, flags ] //   E S W STEEP
+    [1356+x,   y, 64, 31, -31, -8, flags ] // N   S W STEEP
+    [1436+x,   y, 64, 31, -31, -8, flags ] // N E S   STEEP
+}
+
+template tmpl_groundsprites(x, y) {
+    tmpl_groundsprites_flags(x, y, 0)
+}
+
+template tmpl_groundsprites_anim(x, y) {
+    tmpl_groundsprites_flags(x, y, ANIM)
+}
+
+template tmpl_level_ground(x, y) {
+    [ x, y, 64, 31, -31,  0 ]
+}
+
+template tmpl_rough(x, y) {
+    tmpl_level_ground(    x, y)
+    tmpl_level_ground( 80+x, y)
+    tmpl_level_ground(160+x, y)
+    tmpl_level_ground(240+x, y)
+}
+
+template tmpl_additional_rough(x, y) {
+    tmpl_rough(1510+x, y)
+}
+
+template tmpl_16shore_tiles(x, y) {
+    [1276+x,   y, 64, 15, -31,  0 ]
+    [  80+x,   y, 64, 31, -31,  0 ]
+    [ 160+x,   y, 64, 23, -31,  0 ]
+    [ 240+x,   y, 64, 23, -31,  0 ]
+
+    [ 320+x,   y, 64, 31, -31,  0 ]
+    [1356+x,   y, 64, 31, -31, -8 ]
+    [ 478+x,   y, 64, 23, -31,  0 ]
+    [ 558+x,   y, 64, 23, -31,  0 ]
+
+    [ 638+x,   y, 64, 39, -31, -8 ]
+    [ 718+x,   y, 64, 39, -31, -8 ]
+    [1196+x,   y, 64, 47, -31,-16 ]
+    [ 878+x,   y, 64, 31, -31, -8 ]
+
+    [ 958+x,   y, 64, 39, -31, -8 ]
+    [1038+x,   y, 64, 39, -31, -8 ]
+    [1118+x,   y, 64, 31, -31, -8 ]
+    [1436+x,   y, 64, 31, -31, -8 ]
+}
+
+template tmpl_8shore_tiles(x, y) {
+    [ 320+x,   y, 64, 31, -31,  0 ]
+    [  80+x,   y, 64, 31, -31,  0 ]
+    [ 160+x,   y, 64, 23, -31,  0 ]
+    [ 638+x,   y, 64, 39, -31, -8 ]
+
+    [ 478+x,   y, 64, 23, -31,  0 ]
+    [ 958+x,   y, 64, 39, -31, -8 ]
+    [ 240+x,   y, 64, 23, -31,  0 ]
+    [ 718+x,   y, 64, 39, -31, -8 ]
+}
+
+template tmpl_tree_wide() {
+    [  0, 0, 45, 80, -24, -73]
+    [ 50, 0, 45, 80, -24, -73]
+    [100, 0, 45, 80, -24, -73]
+    [150, 0, 45, 80, -24, -73]
+    [200, 0, 45, 80, -24, -73]
+    [250, 0, 45, 80, -24, -73]
+    [300, 0, 45, 80, -24, -73]
+}
+
+template tmpl_tree_narrow() {
+    [  0, 0, 35, 80, -19, -73]
+    [ 40, 0, 35, 80, -19, -73]
+    [ 80, 0, 35, 80, -19, -73]
+    [120, 0, 35, 80, -19, -73]
+    [160, 0, 35, 80, -19, -73]
+    [200, 0, 35, 80, -19, -73]
+    [240, 0, 35, 80, -19, -73]
+}
+
+// Normal land:
+replace (3981, "gfx/grass_grid_temperate.gimp.png") { tmpl_groundsprites(1, 1) }
+
+// bulldozed (bare) land and regeneration stages:
+replace (3924, "gfx/bare03_grid.gimp.png") { tmpl_groundsprites(1, 1) }
+replace (3943, "gfx/bare13_grid_temperate.gimp.png") { tmpl_groundsprites(1, 1) }
+replace (3962, "gfx/bare23_grid_temperate.gimp.png") { tmpl_groundsprites(1, 1) }
+
+// rough terrain
+replace (4000, "gfx/rough_grid_temperate.gimp.png") { tmpl_groundsprites(1, 1) }
+replace (4019, "gfx/rough_grid_temperate.gimp.png") { tmpl_additional_rough(1, 1) }
+
+// rocky terrain
+replace (4023, "gfx/rocks_grid_temperate.gimp.png") { tmpl_groundsprites(1, 1) }
+
+// different snow densities:
+replace (4493, "gfx/snow14_grid_alpine.gimp.png") { tmpl_groundsprites(1,  1) }
+replace (4512, "gfx/snow24_grid_alpine.gimp.png") { tmpl_groundsprites(1,  1) }
+replace (4531, "gfx/snow34_grid_alpine.gimp.png") { tmpl_groundsprites(1,  1) }
+replace (4550, "gfx/snow_grid.gimp.png") { tmpl_groundsprites(1,  1) }
+
+// shore sprites
+replace (4062, "gfx/water/seashore_grid_temperate.gimp.png") { tmpl_8shore_tiles(1,    1) }
+replacenew (COAST_TILES, "gfx/water/seashore_grid_temperate.gimp.png") { tmpl_16shore_tiles(1,    1) }
+
+
+// //Arctic trees: the following trees have snowy equivalents:
+// base_graphics spr1709(1709, "trees/tree_01_conifer.gimp.png") { tmpl_tree_narrow() }      // 1709 conifer (snowy: 1765)
+// base_graphics spr1716(1716, "trees/tree_06_leaf.gimp.png") { tmpl_tree_narrow() }         // 1716 leaf tree (snowy: 1772)
+// base_graphics spr1723(1723, "trees/tree_07_leaf.gimp.png") { tmpl_tree_narrow() }         // 1723 leaf tree (snowy: 1779)
+// base_graphics spr1730(1730, "trees/tree_08_conifer.gimp.png") { tmpl_tree_narrow() }      // 1730 conifer (snowy: 1786)
+// base_graphics spr1737(1737, "trees/tree_09_conifer.gimp.png") { tmpl_tree_narrow() }      // 1737 conifer (snowy: 1793)
+// base_graphics spr1744(1744, "trees/tree_04_conifer.gimp.png") { tmpl_tree_narrow() }      // 1744 conifer (snowy: 1800)
+// base_graphics spr1751(1751, "trees/tree_05_conifer.gimp.png") { tmpl_tree_narrow() }      // 1751 conifer (snowy: 1807)
+// base_graphics spr1758(1758, "trees/tree_10_leaf.gimp.png") { tmpl_tree_narrow() }         // 1758 leaf tree (snowy: 1814)
+// // snowy trees
+// base_graphics spr1765(1765, "trees/tree_01_snow_conifer.gimp.png") { tmpl_tree_narrow() } // 1765 snowy conifer (equiv of 1709)
+// base_graphics spr1772(1772, "trees/tree_06_snow_leaf.gimp.png") { tmpl_tree_narrow() }    // 1772 snowy leaf tree (equiv. of 1716)
+// base_graphics spr1779(1779, "trees/tree_07_snow_leaf.gimp.png") { tmpl_tree_narrow() }    // 1779 snowy leaf tree (equiv. of 1723)
+// base_graphics spr1786(1786, "trees/tree_08_snow_conifer.gimp.png") { tmpl_tree_narrow() } // 1786 snowy conifer (equiv. of 1730)
+// base_graphics spr1793(1793, "trees/tree_09_snow_conifer.gimp.png") { tmpl_tree_narrow() } // 1793 snowy conifer (equiv. of 1737)
+// base_graphics spr1800(1800, "trees/tree_04_snow_conifer.gimp.png") { tmpl_tree_narrow() } // 1800 snowy conifer (equiv. of 1744)
+// base_graphics spr1807(1807, "trees/tree_05_snow_conifer.gimp.png") { tmpl_tree_narrow() } // 1807 snowy conifer (equiv. of 1751)
+// base_graphics spr1814(1814, "trees/tree_10_snow_leaf.gimp.png") { tmpl_tree_narrow() }    // 1814 snowy leaf tree (equiv. of 1758)
+
+spriteset (meadow_groundsprites, "gfx/meadow_grid_temperate.png") { tmpl_groundsprites(1, 1) }
+
+
+spriteset (meadow_transitions, "gfx/meadow_transitions.png") {
+    tmpl_groundsprites(1, 0 * 64 + 1)
+    tmpl_groundsprites(1, 1 * 64 + 1)
+    tmpl_groundsprites(1, 2 * 64 + 1)
+    tmpl_groundsprites(1, 3 * 64 + 1)
+    tmpl_groundsprites(1, 4 * 64 + 1)
+    tmpl_groundsprites(1, 5 * 64 + 1)
+    tmpl_groundsprites(1, 6 * 64 + 1)
+    tmpl_groundsprites(1, 7 * 64 + 1)
+    tmpl_groundsprites(1, 8 * 64 + 1)
+    tmpl_groundsprites(1, 9 * 64 + 1)
+    tmpl_groundsprites(1, 10 * 64 + 1)
+    tmpl_groundsprites(1, 11 * 64 + 1)
+    tmpl_groundsprites(1, 12 * 64 + 1)
+    tmpl_groundsprites(1, 13 * 64 + 1)
+    tmpl_groundsprites(1, 14 * 64 + 1)
+    tmpl_groundsprites(1, 15 * 64 + 1)
+}
+
+spritelayout meadow_groundsprites_default {
+    ground {
+        sprite: meadow_transitions(
+            slope_to_sprite_offset(tile_slope)
+            + (nearby_tile_object_type( 0, -1) == meadow && nearby_tile_object_type(-1, -1) == meadow &&nearby_tile_object_type(-1, 0) == meadow ? 0 : 19)
+            + (nearby_tile_object_type(-1,  0) == meadow && nearby_tile_object_type(-1,  1) == meadow &&nearby_tile_object_type( 0,  1) == meadow ? 0 : 38)
+            + (nearby_tile_object_type( 0,  1) == meadow && nearby_tile_object_type( 1,  1) == meadow &&nearby_tile_object_type( 1,  0) == meadow ? 0 : 76)
+            + (nearby_tile_object_type( 1,  0) == meadow && nearby_tile_object_type( 1, -1) == meadow &&nearby_tile_object_type( 0, -1) == meadow ? 0 : 152)
+        );
+    }
+}
+
+spritelayout meadow_groundsprites_purchase {
+    ground {
+        sprite: meadow_groundsprites;
+    }
+}
+
+
+switch (FEAT_OBJECTS, SELF, switch_meadow_groundsprites_default, [
+        STORE_TEMP(slope_to_sprite_offset(tile_slope), 0)
+        ]) {
+    meadow_groundsprites_default;
+}
+
+
+item (FEAT_OBJECTS, meadow) {
+    property {
+        class: "FLMA";
+        classname: string(STR_FLMA);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: meadow_groundsprites_default;
+        purchase: meadow_groundsprites_purchase;
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+spriteset (creek_groundsprites, "gfx/rivers.png") {
+    tmpl_groundsprites_anim(1, 0 * 64 + 1)
+    tmpl_groundsprites_anim(1, 1 * 64 + 1)
+    tmpl_groundsprites_anim(1, 2 * 64 + 1)
+    tmpl_groundsprites_anim(1, 3 * 64 + 1)
+    tmpl_groundsprites_anim(1, 4 * 64 + 1)
+    tmpl_groundsprites_anim(1, 5 * 64 + 1)
+    tmpl_groundsprites_anim(1, 6 * 64 + 1)
+    tmpl_groundsprites_anim(1, 7 * 64 + 1)
+    tmpl_groundsprites_anim(1, 8 * 64 + 1)
+    tmpl_groundsprites_anim(1, 9 * 64 + 1)
+    tmpl_groundsprites_anim(1, 10 * 64 + 1)
+    tmpl_groundsprites_anim(1, 11 * 64 + 1)
+    tmpl_groundsprites_anim(1, 12 * 64 + 1)
+    tmpl_groundsprites_anim(1, 13 * 64 + 1)
+    tmpl_groundsprites_anim(1, 14 * 64 + 1)
+    tmpl_groundsprites_anim(1, 15 * 64 + 1)
+    tmpl_groundsprites_anim(1, 16 * 64 + 1)
+    tmpl_groundsprites_anim(1, 17 * 64 + 1)
+    tmpl_groundsprites_anim(1, 18 * 64 + 1)
+    tmpl_groundsprites_anim(1, 19 * 64 + 1)
+    tmpl_groundsprites_anim(1, 20 * 64 + 1)
+    tmpl_groundsprites_anim(1, 21 * 64 + 1)
+    tmpl_groundsprites_anim(1, 22 * 64 + 1)
+    tmpl_groundsprites_anim(1, 23 * 64 + 1)
+    tmpl_groundsprites_anim(1, 24 * 64 + 1)
+    tmpl_groundsprites_anim(1, 25 * 64 + 1)
+    tmpl_groundsprites_anim(1, 26 * 64 + 1)
+    tmpl_groundsprites_anim(1, 27 * 64 + 1)
+    tmpl_groundsprites_anim(1, 28 * 64 + 1)
+    tmpl_groundsprites_anim(1, 29 * 64 + 1)
+    tmpl_groundsprites_anim(1, 30 * 64 + 1)
+    tmpl_groundsprites_anim(1, 31 * 64 + 1)
+    tmpl_groundsprites_anim(1, 32 * 64 + 1)
+    tmpl_groundsprites_anim(1, 33 * 64 + 1)
+    tmpl_groundsprites_anim(1, 34 * 64 + 1)
+    tmpl_groundsprites_anim(1, 35 * 64 + 1)
+    tmpl_groundsprites_anim(1, 36 * 64 + 1)
+    tmpl_groundsprites_anim(1, 37 * 64 + 1)
+    tmpl_groundsprites_anim(1, 38 * 64 + 1)
+    tmpl_groundsprites_anim(1, 39 * 64 + 1)
+    tmpl_groundsprites_anim(1, 40 * 64 + 1)
+    tmpl_groundsprites_anim(1, 41 * 64 + 1)
+    tmpl_groundsprites_anim(1, 42 * 64 + 1)
+    tmpl_groundsprites_anim(1, 43 * 64 + 1)
+    tmpl_groundsprites_anim(1, 44 * 64 + 1)
+    tmpl_groundsprites_anim(1, 45 * 64 + 1)
+    tmpl_groundsprites_anim(1, 46 * 64 + 1)
+    tmpl_groundsprites_anim(1, 47 * 64 + 1)
+    tmpl_groundsprites_anim(1, 48 * 64 + 1)
+    tmpl_groundsprites_anim(1, 49 * 64 + 1)
+    tmpl_groundsprites_anim(1, 50 * 64 + 1)
+    tmpl_groundsprites_anim(1, 51 * 64 + 1)
+    tmpl_groundsprites_anim(1, 52 * 64 + 1)
+    tmpl_groundsprites_anim(1, 53 * 64 + 1)
+    tmpl_groundsprites_anim(1, 54 * 64 + 1)
+    tmpl_groundsprites_anim(1, 55 * 64 + 1)
+    tmpl_groundsprites_anim(1, 56 * 64 + 1)
+    tmpl_groundsprites_anim(1, 57 * 64 + 1)
+    tmpl_groundsprites_anim(1, 58 * 64 + 1)
+    tmpl_groundsprites_anim(1, 59 * 64 + 1)
+    tmpl_groundsprites_anim(1, 60 * 64 + 1)
+    tmpl_groundsprites_anim(1, 61 * 64 + 1)
+    tmpl_groundsprites_anim(1, 62 * 64 + 1)
+    tmpl_groundsprites_anim(1, 63 * 64 + 1)
+    tmpl_groundsprites_anim(1, 64 * 64 + 1)
+    tmpl_groundsprites_anim(1, 65 * 64 + 1)
+    tmpl_groundsprites_anim(1, 66 * 64 + 1)
+    tmpl_groundsprites_anim(1, 67 * 64 + 1)
+    tmpl_groundsprites_anim(1, 68 * 64 + 1)
+    tmpl_groundsprites_anim(1, 69 * 64 + 1)
+    tmpl_groundsprites_anim(1, 70 * 64 + 1)
+    tmpl_groundsprites_anim(1, 71 * 64 + 1)
+    tmpl_groundsprites_anim(1, 72 * 64 + 1)
+    tmpl_groundsprites_anim(1, 73 * 64 + 1)
+    tmpl_groundsprites_anim(1, 74 * 64 + 1)
+    tmpl_groundsprites_anim(1, 75 * 64 + 1)
+    tmpl_groundsprites_anim(1, 76 * 64 + 1)
+    tmpl_groundsprites_anim(1, 77 * 64 + 1)
+    tmpl_groundsprites_anim(1, 78 * 64 + 1)
+    tmpl_groundsprites_anim(1, 79 * 64 + 1)
+    tmpl_groundsprites_anim(1, 80 * 64 + 1)
+}
+
+spritelayout creek_groundsprites_default(n, tile_height) {
+    ground {
+        sprite:
+            (climate == CLIMATE_ARCTIC && tile_height > snowline_height - 2 ?
+                GROUNDSPRITE_SNOW + min(tile_height - snowline_height - 2, 0) * 19
+                : (terrain_type == TILETYPE_DESERT ? GROUNDSPRITE_DESERT : GROUNDSPRITE_NORMAL))
+            + slope_to_sprite_offset(tile_slope);
+    }
+    childsprite {
+        sprite: creek_groundsprites(
+            slope_to_sprite_offset(tile_slope) + 19 * n
+        );
+        always_draw: 1;
+    }
+}
+
+spritelayout creek_groundsprites_purchase(n) {
+    ground { sprite: GROUNDSPRITE_NORMAL; }
+    childsprite {
+        sprite: creek_groundsprites(19 * n);
+        always_draw: 1;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_0) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(0, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(0);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_1) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(1, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(1);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_2) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(2, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(2);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_3) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(3, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(3);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_4) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(4, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(4);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_5) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(5, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(5);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_6) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(6, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(6);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_7) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(7, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(7);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_8) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(8, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(8);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_9) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(9, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(9);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_10) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(10, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(10);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_11) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(11, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(11);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_12) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(12, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(12);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_13) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(13, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(13);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_14) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(14, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(14);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_15) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(15, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(15);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_16) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(16, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(16);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_17) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(17, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(17);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_18) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(18, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(18);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_19) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(19, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(19);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_20) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(20, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(20);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_21) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(21, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(21);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_22) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(22, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(22);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_23) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(23, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(23);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_24) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(24, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(24);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_25) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(25, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(25);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_26) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(26, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(26);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_27) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(27, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(27);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_28) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(28, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(28);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_29) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(29, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(29);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_30) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(30, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(30);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_31) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(31, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(31);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_32) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(32, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(32);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_33) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(33, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(33);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_34) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(34, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(34);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_35) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(35, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(35);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_36) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(36, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(36);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_37) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(37, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(37);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_38) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(38, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(38);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_39) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(39, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(39);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_40) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(40, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(40);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_41) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(41, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(41);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_42) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(42, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(42);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_43) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(43, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(43);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_44) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(44, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(44);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_45) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(45, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(45);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_46) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(46, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(46);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_47) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(47, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(47);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_48) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(48, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(48);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_49) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(49, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(49);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_50) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(50, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(50);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_51) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(51, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(51);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_52) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(52, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(52);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_53) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(53, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(53);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_54) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(54, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(54);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_55) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(55, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(55);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_56) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(56, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(56);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_57) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(57, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(57);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_58) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(58, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(58);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_59) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(59, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(59);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_60) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(60, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(60);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_61) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(61, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(61);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_62) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(62, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(62);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_63) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(63, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(63);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_64) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(64, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(64);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_65) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(65, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(65);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_66) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(66, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(66);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_67) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(67, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(67);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_68) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(68, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(68);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_69) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(69, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(69);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_70) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(70, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(70);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_71) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(71, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(71);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_72) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(72, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(72);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_73) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(73, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(73);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_74) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(74, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(74);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_75) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(75, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(75);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_76) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(76, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(76);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_77) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(77, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(77);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_78) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(78, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(78);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_79) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(79, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(79);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+item (FEAT_OBJECTS, rivers_80) {
+    property {
+        class: "CREE";
+        classname: string(STR_CREEK);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: creek_groundsprites_default(80, nearby_tile_height(0, 0));
+        purchase: creek_groundsprites_purchase(80);
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
