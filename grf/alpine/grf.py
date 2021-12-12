@@ -18,6 +18,9 @@ WATER_COLORS = set(range(0xF5, 0xFF))
 ZOOM_4X, ZOOM_NORMAL, ZOOM_2X, ZOOM_8X, ZOOM_16X, ZOOM_32X = range(6)
 BPP_8, BPP_32 = range(2)
 
+OBJECT = 0x0f
+
+
 def color_distance(c1, c2):
     rmean = (c1.rgb[0] + c2.rgb[0]) / 2.
     r = c1.rgb[0] - c2.rgb[0]
@@ -42,6 +45,81 @@ def find_best_color(x, in_range=SAFE_COLORS):
 # def map_rgb_image(self, im):
 #     assert im.mode == 'RGB', im.mode
 #     data = np.array(im)
+
+OP_ADD = 0x00
+OP_SUB = 0x01
+OP_TSTO = 0x0E
+OP_PSTO = 0x10
+
+OPERATORS = {
+    OP_ADD: ('{a} + {b}', 2),
+    OP_SUB: ('{a} - {b}', 2),
+    OP_TSTO: ('TEMP[{b}] = {a}', 1),
+    OP_PSTO: ('PERM[{b}] = {a}', 1),
+}
+
+DEFAULT_INDENT_STR = '    '
+
+
+class Node:
+    def __init__(self):
+        pass
+
+    def _make_node(self, value):
+        if isinstance(value, int):
+            return Value(value)
+        assert isinstance(value, Node)
+        return value
+
+    def __add__(self, other):
+        return Expr(OP_ADD, self, self._make_node(other))
+
+    def __sub__(self, other):
+        return Expr(OP_SUB, self, self._make_node(other))
+
+    def store_temp(self, register):
+        return Expr(OP_TSTO, self, self._make_node(register))
+
+    def store_perm(self, register):
+        return Expr(OP_PSTO, self, self._make_node(register))
+
+    def format(self, parent_priority=0, indent=0, indent_str=DEFAULT_INDENT_STR):
+        raise NotImplementedError
+
+    def __str__(self):
+        return self.format()
+
+    def __repr__(self):
+        return self.format()
+
+
+class Expr(Node):
+    def __init__(self, op, a, b):
+        self.op = op
+        self.a = a
+        self.b = b
+
+    def format(self, parent_priority=0, indent=0, indent_str=DEFAULT_INDENT_STR):
+        if self.op in OPERATORS:
+            fmt, prio = OPERATORS[self.op]
+        else:
+            fmt, prio = '{a} <{self.op:02x}> {b}', 1
+        astr = self.a.format(prio, indent=0)
+        bstr = self.b.format(prio, indent=0)
+        res = fmt.format(a=astr, b=bstr)
+        suffix = indent_str * indent
+        if prio <= parent_priority:
+            return suffix + f'({res})'
+        return suffix + res
+
+
+class Value(Node):
+    def __init__(self, value):
+        super().__init__()
+        self.value = value
+
+    def format(self, parent_priority=0, indent=0, indent_str=DEFAULT_INDENT_STR):
+        return indent_str * indent + str(self.value)
 
 
 class BaseSprite:
@@ -253,7 +331,7 @@ class InformationSprite(BaseSprite):  # action 14
         return len(self._data)
 
 
-class ReplaceSprites:  # action A
+class ReplaceSprites(BaseSprite):  # action A
     def __init__(self, sets):
         assert isinstance(sets, (list, tuple))
         assert len(sets) <= 0xff
@@ -270,7 +348,7 @@ class ReplaceSprites:  # action A
         return 2 + 3 * len(self.sets)
 
 
-class ReplaceNewSprites:  # action 5
+class ReplaceNewSprites(BaseSprite):  # action 5
     def __init__(self, set_type, num):  # TODO offset
         assert isinstance(set_type, int)
         assert isinstance(num, int)
@@ -282,6 +360,159 @@ class ReplaceNewSprites:  # action 5
 
     def get_data_size(self):
         return 5
+
+ACTION0_OBJECT_PROPS = (
+    (0x08, 'label', 'L'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Class label, see below
+    (0x09, 'class_name_id', 'W'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Text ID for class
+    (0x0A, 'name_id', 'W'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Text ID for this object
+    (0x0B, 'climate', 'B'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Climate availability
+    (0x0C, 'size', 'B'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Byte representing size, see below
+    (0x0D, 'build_cost_factor', 'B'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Object build cost factor (sets object removal cost factor as well)
+    (0x0E, 'intro_date', 'D'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Introduction date, see below
+    (0x0F, 'eol_date', 'D'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   End of life date, see below
+    (0x10, 'flags', 'W'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Object flags, see below
+    (0x11, 'anim_info', 'W'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Animation information
+    (0x12, 'anim_speed', 'B'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Animation speed
+    (0x13, 'anim_trigger', 'W'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Animation triggers
+    (0x14, 'removal_cost_factor', 'B'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Object removal cost factor (set after object build cost factor)
+    (0x15, 'cb_flags', 'W'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Callback flags, see below
+    (0x16, 'building_height', 'B'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Height of the building
+    (0x17, 'num_views', 'B'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Number of object views
+    (0x18, 'num_objects', 'B'),  # Supported by OpenTTD 1.4 (r25879)1.4 Not supported by TTDPatch  Measure for number of objects placed upon map creation
+)
+
+ACTION0_OBJECT_PROP_DICT = {name: (id, size) for id, name, size in ACTION0_OBJECT_PROPS}
+
+
+class LazyBaseSprite(BaseSprite):
+    def __init__(self):
+        super().__init__()
+        self._data = None
+
+    def _encode(self):
+        raise NotImplemented
+
+    def get_data(self):
+        if self._data is None:
+            self._data = self._encode()
+        return self._data
+
+    def get_data_size(self):
+        return len(self.get_data())
+
+class Action0(LazyBaseSprite):  # action 0
+    def __init__(self, feature, first_id, count, props):
+        super().__init__()
+        self.feature = feature
+        self.first_id = first_id
+        self.count = count
+        if feature != OBJECT:
+            raise NotImplemented
+        self.props = props
+        assert all(x in ACTION0_OBJECT_PROP_DICT for x in props)
+
+    def _encode_value(self, value, fmt):
+        if fmt == 'B': return struct.pack('<B', value)
+        if fmt == 'W': return struct.pack('<H', value)
+        if fmt == 'D': return struct.pack('<I', value)
+        if fmt == 'L':
+            if isinstance(value, int): return struct.pack('<I', value)
+            assert isinstance(value, bytes)
+            assert len(value) == 4, len(value)
+            return value
+        if fmt == 'B*': return struct.pack('<BH', 255, value)
+        if fmt == 'n*B':
+            assert isinstance(value, bytes)
+            assert len(value) < 256, len(value)
+            return struct.pack('<B', len(value)) + value
+
+    def _encode(self):
+        res = struct.pack('<BBBBBH',
+            0, self.feature, len(self.props), self.count, 255, self.first_id)
+        for prop, value in self.props.items():
+            code, fmt = ACTION0_OBJECT_PROP_DICT[prop]
+            res += bytes((code,)) + self._encode_value(value, fmt)
+        return res
+
+
+class Object(Action0):
+    class Flags:
+        NONE               =       0  # Just nothing.
+        ONLY_IN_SCENEDIT   = 1 <<  0  # Object can only be constructed in the scenario editor.
+        CANNOT_REMOVE      = 1 <<  1  # Object can not be removed.
+        AUTOREMOVE         = 1 <<  2  # Object get automatically removed (like "owned land").
+        BUILT_ON_WATER     = 1 <<  3  # Object can be built on water (not required).
+        CLEAR_INCOME       = 1 <<  4  # When object is cleared a positive income is generated instead of a cost.
+        HAS_NO_FOUNDATION  = 1 <<  5  # Do not display foundations when on a slope.
+        ANIMATION          = 1 <<  6  # Object has animated tiles.
+        ONLY_IN_GAME       = 1 <<  7  # Object can only be built in game.
+        CC2_COLOUR         = 1 <<  8  # Object wants 2CC colour mapping.
+        NOT_ON_LAND        = 1 <<  9  # Object can not be on land, implicitly sets #OBJECT_FLAG_BUILT_ON_WATER.
+        DRAW_WATER         = 1 << 10  # Object wants to be drawn on water.
+        ALLOW_UNDER_BRIDGE = 1 << 11  # Object can built under a bridge.
+        ANIM_RANDOM_BITS   = 1 << 12  # Object wants random bits in "next animation frame" callback.
+        SCALE_BY_WATER     = 1 << 13  # Object count is roughly scaled by water amount at edges.
+
+
+    def __init__(self, id, **props):
+        super().__init__(OBJECT, id, 1, props)
+
+
+class Action1(LazyBaseSprite):
+    def __init__(self, feature, set_count, sprite_count):
+        super().__init__()
+        self.feature = feature
+        self.set_count = set_count
+        self.sprite_count = sprite_count
+
+    def _encode(self):
+        return struct.pack('<BBBBH', 0x01,
+                           self.feature, self.set_count, 0xFF, self.sprite_count)
+
+
+class SpriteSet(Action1):
+    def __init__(self, feature, sprite_count):
+        super().__init__(feature, 1, sprite_count)
+
+
+class BasicSpriteLayout(LazyBaseSprite):
+    def __init__(self, feature, ref_id, xofs=0, yofs=0, extent=(0, 0, 0)):
+        super().__init__()
+        assert feature in (0x07, 0x09, OBJECT, 0x11), feature
+        self.feature = feature
+        self.ref_id = ref_id
+        self.xofs = xofs
+        self.yofs = yofs
+        self.extent = extent
+
+    def _encode_sprite(self, id=0, mode=0, recolor=0, draw_in_transparent=False, use_last=False):
+        return id | (mode << 14) | (recolor << 16) | (draw_in_transparent << 30) | (use_last << 31)
+
+    def _encode(self):
+        return struct.pack('<BBBBIIbbBBB', 0x02, self.feature, self.ref_id, 0,
+                           # self._encode_sprite(), self._encode_sprite(),
+                           self._encode_sprite(use_last=True), 0,
+                           self.xofs, self.yofs,
+                           *self.extent)
+
+
+class Action3(LazyBaseSprite):
+    def __init__(self, feature, ids, maps, default):
+        super().__init__()
+        self.feature = feature
+        self.ids = ids
+        self.maps = maps
+        self.default = default
+
+    def _encode(self):
+        idcount = len(self.ids)
+        mcount = len(self.maps)
+        res = struct.pack(
+            '<BBB' + 'B' * idcount + 'B' + 'BH' * mcount + 'H',
+            0x03, self.feature, idcount,
+            *self.ids, mcount, *sum(self.maps, []),
+            self.default)
+        return res
 
 
 class NewGRF:

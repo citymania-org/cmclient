@@ -2,6 +2,8 @@ import sys
 import struct
 from nml import lz77
 
+from grf import Node, Expr, Value
+
 
 def hex_str(s):
     if isinstance(s, (bytes, memoryview)):
@@ -145,7 +147,6 @@ def read_property(data, ofs, fmt):
 
 
 def decode_action0(data):
-    num = data[0]
     feature = data[0]
     num_props = data[1]
     num_info = data[2]
@@ -164,7 +165,6 @@ def decode_action0(data):
 
 
 def decode_action1(data):
-    num = data[0]
     feature = data[0]
     num_sets = data[1]
     num_ent, _ = read_extended_byte(data, 2)
@@ -270,6 +270,33 @@ def read_sprite_layout_registers(d, flags, is_parent):
     return regs
 
 
+class Set:
+    def __init__(self, set_id):
+        self.is_callback = bool(set_id & 0x8000)
+        self.set_id = set_id & 0x7fff
+
+    def __str__(self):
+        if self.is_callback:
+            return f'CB({self.set_id})'
+        return f'Set({self.set_id})'
+
+    __repr__ = __str__
+
+
+class Range:
+    def __init__(self, low, high, set):
+        self.set = set
+        self.low = low
+        self.high = high
+
+    def __str__(self):
+        if self.low == self.high:
+            return f'{self.low} -> {self.set}'
+        return f'{self.low}..{self.high} -> {self.set}'
+
+    __repr__ = __str__
+
+
 def read_sprite_layout(d, num, no_z_position):
     has_z_position = not no_z_position
     has_flags = bool((num >> 6) & 1)
@@ -302,6 +329,127 @@ def read_sprite_layout(d, num, no_z_position):
         'sprites': sprites
     }
 
+
+VA2_GLOBALS = {
+    0x00: ('date', 'W'),  # 80      W   current date (counted as days from 1920)[1]
+    0x01: ('year', 'B'),  # 81      B   ￼0.6 ￼2.0   Current year (count from 1920, max. 2175 even with eternalgame)[1]
+    0x02: ('month', 'B/D'),  # 82      B/D ￼0.6 ￼2.0   current month (0-11) in bits 0-7; the higher bytes contain unusable junk.[1] ￼0.7 ￼ Since OpenTTD r13594 'day of month' (0-30) is stored in bits 8-12, bit 15 is set in leapyears and 'day of year'(0-364 resp. 365) is stored in bits 16-24. All other bits are reserved and should be masked.
+    0x03: ('climate', 'B'),  # 83      B   ￼0.6 ￼2.0   Current climate: 00 = temp, 01 = arctic, 02 = trop, 03 = toyland
+                      # 84      D   ￼0.6 ￼2.0   GRF loading stage, see below
+                      # 85      B   ￼0.6 ￼2.0   TTDPatch flags: only for bit tests
+    0x06: ('drive_side', 'B'),  # 86      B   ￼0.6 ￼2.0   Road traffic side: bit 4 clear=left, set=right; other bits are reserved and must be masked. (87)    (87)    B   ￼ ￼ No longer used since TTDPatch 2.0. (was width of "€" character)
+                      # 88      4*B   ￼0.6 ￼2.0   Checks specified GRFID (see condition-types)[2]
+    0x09: ('date_fract', 'W'),  # 89      W   ￼0.6 ￼2.0   date fraction, incremented by 0x375 every engine tick
+    0x0A: ('anim_counter', 'W'),  # 8A      W   ￼0.6 ￼2.0   animation counter, incremented every tick
+    0x0B: ('ttdp_version', 'D'),  # 8B      D   ￼ ￼2.0  TTDPatch version, see below [3][4]
+    0x0C: ('cur_cb_id', 'W'),  #         W   ￼0.6 ￼2.5   current callback ID (feature-specific), set to 00 when not in a callback
+    0x0D: ('ttd_version', 'B'),  # 8D      B   ￼0.6 ￼2.5   TTD version, 0=DOS, 1=Windows
+    0x0E: ('train_y_ofs', 'B'),  # 8E  8E  B   ￼0.6 ￼2.5   Y-Offset for train sprites
+    0x0F: ('rail_cost', '3*B'),  # 8F  8F  3*B ￼0.6 ￼2.5   Rail track type cost factors
+    0x10: ('cb_info1', 'D'),  #         D   ￼0.6 ￼2.5   Extra callback info 1, see below.
+    0x11: ('cur_rail_tool', 'B'),  #         B   ￼ ￼2.5  current rail tool type (for station callbacks)
+    0x12: ('game_mode', 'B'),  # 92      B   ￼0.6 ￼2.5   Game mode, 0 in title screen, 1 in game and 2 in editor
+    0x13: ('tile_refresh_left', 'W'),  # 93  93  W   ￼ ￼2.5  Tile refresh offset to left [5]
+    0x14: ('tile_refresh_right', 'W'),  # 94  94  W   ￼ ￼2.5  Tile refresh offset to right [5]
+    0x15: ('tile_refresh_up', 'W'),  # 95  95  W   ￼ ￼2.5  Tile refresh offset upwards [5]
+    0x16: ('tile_refresh_down', 'W'),  # 96  96  W   ￼ ￼2.5  Tile refresh offset downwards [5]
+                      # 97  97  B   ￼ ￼2.5  Fixed snow line height [6][7]
+    0x18: ('cb_info2', 'D'),  #         D   ￼0.6 ￼2.5   Extra callback info 2, see below.
+                      # 99  99  D   ￼ ￼2.5  Global ID offset
+    0x1A: ('max_uint32', 'D'),  # 9A      D   ￼0.6 ￼2.5   Has always all bits set; you can use this to make unconditional jumps
+    0x1B: ('display_options', 'B'),  #         B   ￼ ￼2.5  display options; bit 0=town names, 1=station names, 2=signs, 3=animation, 4=transparency, 5=full detail
+    0x1C: ('va2_ret', 'D'),  #         D   ￼0.6 ￼2.5   result from most recent VarAction2
+    0x1D: ('ttd_platform', 'D'),  # 9D      D   ￼0.6 ￼2.5   TTD Platform, 0=TTDPatch, 1=OpenTTD [4]
+    0x1E: ('grf_featuers', 'D'),  # 9E  9E  D   ￼0.6 ￼2.5   Misc. GRF Features
+                      # 9F  D   ￼ ￼2.5  writable only: Locale-dependent settings
+    0x20: ('snow_line', 'B'),  #         B   ￼0.6 ￼2.5   Current snow line height, FFh if snow isn't present at all [7]
+    0x21: ('openttd_version', 'D'),  # A1      D   ￼0.6 ￼  OpenTTD version, see below. [4]
+    0x22: ('difficulty_level', 'D'),  # A2      D   ￼0.7 ￼2.6   Difficulty level: 00= easy, 01=medium, 02=hard, 03=custom
+    0x23: ('date_long', 'D'),  # A3      D   ￼0.7 ￼2.6   Current date long format
+    0x24: ('year_zero', 'D'),  # A4      D   ￼0.7 ￼2.6   Current year zero based
+    0x25: ('a3_grfid', 'D'),  #         D   ￼0.7 ￼  GRFID of the grf that contains the corresponding Action3. Useful when accessing the "related" object. Currently only supported for vehicles.
+}
+
+V2_OBJECT_VARS = {
+    0x40: ('relative_pos', 'D'),  # Relative position, like Industry Tile var43
+    0x41: ('tile_info', 'W'),  # Tile information, see below
+    0x42: ('constructed', 'D'),  # Construction date from year 0
+    0x43: ('anim_counter', 'B'),  # Animation counter, see below
+    0x44: ('founder', 'B'),  # Object founder information
+    0x45: ('closest_town_info', 'D'),  # Get town zone and Manhattan distance of closest town
+    0x46: ('closest_town_dist_squared', 'D'),  # Get square of Euclidian distance of closest town
+    0x47: ('colour', 'B'),  # Object colour
+    0x48: ('views', 'B'),  # Object views
+    0x60: ('type_view_ofs', 'W'),  # Get object type and view at offset
+    0x61: ('random_ofs', 'B'),  # Get random bits at offset
+    0x62: ('nearby_tile_info', 'D'),  # Land info of nearby tiles
+    0x63: ('nearby_anim_counter', 'W'),  # Animation counter of nearby tile
+    0x64: ('object_count', 'D'),  # Count of object, distance of closest instance
+}
+
+VA2_OP = {
+    0x00: '+',  # \2+ result = val1 + val2    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5
+    0x01: '-',  # \2- result = val1 - val2    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5
+    0x02: 'min',  # \2< result = min(val1, val2)    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5    val1 and val2 are both considered signed
+    0x03: 'max',  # \2> result = max(val1, val2)    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5
+    0x04: 'min',  # \2u<    result = min(val1, val2)    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5    val1 and val2 are both considered unsigned
+    0x05: 'max',  # \2u>    result = max(val1, val2)    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5
+    0x06: '/',  #  \2/ result = val1 / val2    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5    val1 and val2 are both considered signed
+    0x07: '%',  #  \2% result = val1 mod val2  Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5
+    0x08: 'u/',  #  \2u/    result = val1 / val2    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5    val1 and val2 are both considered unsigned
+    0x09: 'u%',  #  \2u%    result = val1 mod val2  Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5
+    0x0A: '*',  #   \2* result = val1 * val2    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5    result will be truncated to B/W/D (that makes it the same for signed/unsigned operands)
+    0x0B: '&',  #   \2& result = val1 & val2    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5    bitwise AND
+    0x0C: '|',  #   \2| result = val1 | val2    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5    bitwise OR
+    0x0D: '^',  #   \2^ result = val1 ^ val2    Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.52.5    bitwise XOR
+    0x0E: '(tsto)',  #  \2s or \2sto [1]    var7D[val2] = val1, result = val1   Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.6 (r1246)2.6    Store result. See Temporary storage.
+    0x0F: ';',  #   \2r or \2rst [1]    result = val2 [2]   Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.6 (r1246)2.6
+    0x10: '(psto)',  #  \2psto [3]  var7C[val2] = val1, result = val1   Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.6 (r1315)2.6    Store result into persistent storage. See Persistent storage.
+    0x11: '(ror)',  #  \2ror or \2rot [4]  result = val1 rotate right val2 Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.6 (r1651)2.6    Always a 32-bit rotation.
+    0x12: '(cmp)',  #  \2cmp [3]   see notes   Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.6 (r1698)2.6    Result is 0 if val1<val2, 1 if val1=val2 and 2 if val1>val2. Both values are considered signed. [5]
+    0x13: '(ucmp)',  #  \2ucmp [3]  see notes   Supported by OpenTTD 0.60.6 Supported by TTDPatch 2.6 (r1698)2.6    The same as 12, but operands are considered unsigned. [5]
+    0x14: '<<',  #  \2<< [3]    result = val1 << val2   Supported by OpenTTD 1.1 (r20332)1.1 Supported by TTDPatch 2.6 (r2335)2.6   shift left; val2 should be in the range 0 to 31.
+    0x15: 'u>>',  # \2u>> [3]   result = val1 >> val2   Supported by OpenTTD 1.1 (r20332)1.1 Supported by TTDPatch 2.6 (r2335)2.6   shift right (unsigned); val2 should be in the range 0 to 31.
+    0x16: '>>',  #  \2>> [3]    result = val1 >> val2   Supported by OpenTTD 1.1 (r20332)1.1 Supported by TTDPatch 2.6 (r2335)2.6   shift right (signed); val2 should be in the range 0 to 31.
+}
+
+
+def get_va2_var(var):
+    if var < 0x40:
+        name, fmt = VA2_GLOBALS[var]
+        return f'[{name}]', fmt
+    if var == 0x5f: return '(random)', 'D'
+    if var == 0x7b: return '(var_eval)', ''
+    if var == 0x7c: return '(perm)', 'D'
+    if var == 0x7d: return '(temp)', 'D'
+    if var == 0x7e: return '(call)', 'D'
+    if var == 0x7f: return '(param)', 'D'
+    return V2_OBJECT_VARS[var]
+
+
+class Call(Node):
+    def __init__(self, subroutine):
+        self.suroutine = subroutine
+
+
+class Generic(Node):
+    def __init__(self, var, shift, and_mask, type, add_val, divmod_val):
+        self.var = var
+        self.shift = shift
+        self.and_mask = and_mask
+        self.type = type
+        self.add_val = add_val
+        self.divmod_val = divmod_val
+
+    def format(self, parent_priority=0, indent=0, indent_str='   '):
+        addstr = ''
+        if self.type == 1:
+            addstr = ' +{self.add_val} /{self.divmod_val}'
+        elif self.type == 2:
+            addstr = ' +{self.add_val} %{self.divmod_val}'
+        return (indent_str * indent) + f'(var: {self.var} >>{self.shift} &{self.and_mask}{addstr})'
+
+
 def decode_action2(data):
     feature = data[0]
     set_id = data[1]
@@ -315,50 +463,78 @@ def decode_action2(data):
             ground_sprite, building_sprite, xofs, yofs, xext, yext, zext = struct.unpack_from('<IIBBBBB', data, offset=3)
             ground_sprite = str_sprite(ground_sprite)
             building_sprite = str_sprite(building_sprite)
-            print(f'ground_sprite:{ground_sprite} building_sprite:{building_sprite} '
+            print(f'BASIC ground_sprite:{ground_sprite} building_sprite:{building_sprite} '
                   f'xofs:{xofs} yofs:{yofs} extent:({xext}, {yext}, {zext})')
             return
         if num_ent1 < 0x3f:
             raise NotImplemented
 
         if num_ent1 in (0x81, 0x82, 0x85, 0x86, 0x89, 0x8a):
+            # varact2
             group_size = (num_ent1 >> 2) & 3
+            related_scope = bool(num_ent1 & 2)
             first = True
             ofs = 3
-            adjusts = []
+            root = None
             while True:
-                res = {}
-                res['op'] = 0 if first else d.get_byte()
-                var = res['var'] = d.get_byte()
-                if var == 0x7e:
-                    res['subroutine'] = d.get_byte()
-                else:
-                    res['parameter'] = d.get_byte() if 0x60 <= var < 0x80 else 0
+                op = 0 if first else d.get_byte()
+                var = d.get_byte()
+                if 0x60 <= var < 0x80:
+                    param = d.get_byte()
                 varadj = d.get_byte()
-                res['shift_num'] = varadj & 0x1f
+                shift = varadj & 0x1f
                 has_more = bool(varadj & 0x20)
-                res['type'] = varadj >> 6
-                res['and_mask'] = d.get_var(group_size)
-                if res['type'] != 0:
-                    res['add_val'] = d.get_var(group_size)
-                    res['divmod_val'] = d.get_var(group_size)
-                adjusts.append(res)
+                node_type = varadj >> 6
+                and_mask = d.get_var(group_size)
+                if node_type != 0:
+                    # old magic, use advaction2 instead
+                    add_val = d.get_var(group_size)
+                    divmod_val = d.get_var(group_size)
+                    node = Generic(var, shift, and_mask, node_type, add_val, divmod_val)
+                elif var == 0x1a and shift == 0:
+                    node = Value(and_mask)
+                else:
+                    node = Generic(var, shift, and_mask, 0, None, None)
 
+                if first:
+                    root = node
+                else:
+                    root = Expr(op, root, node)
+
+                first = False
                 if not has_more:
                     break
 
+            # no ranges is special for "do not switch, return the switch value"
+            # <frosch123> oh, also, the ranges are unsigned
+            # <frosch123> so if you want to set -5..5 you have to split into two ranges -5..-1, 0..5
             n_ranges = d.get_byte()
             ranges = []
             for _ in range(n_ranges):
                 group = d.get_word()
                 low = d.get_var(group_size)
                 high = d.get_var(group_size)
-                ranges.append((group, low, high))
+                ranges.append(Range(low, high, Set(group)))
 
-            default_group = d.get_word()
+            default_group = Set(d.get_word())
 
-            print(f'default_group: {default_group} adjusts:{adjusts} ranges:{ranges} ')
-
+            print(f'VARACT default_group:{default_group} related_scope:{related_scope} ranges:{ranges} ')
+            # for a in adjusts:
+            #     var = a['var']
+            #     name, fmt = get_va2_var(var)
+            #     op = VA2_OP[a['op']]
+            #     param_str = ''
+            #     if 0x60 <= var < 0x80:
+            #         if var == 0x7e:
+            #             param_str = ' proc:{:02x}'.format(a['subroutine'])
+            #         else:
+            #             param_str = ' param:{:02x}'.format(a['parameter'])
+            #     type_str = ''
+            #     if a['type'] != 0:
+            #         type_str = '+{add_val} /%{divmod_val}'.format(**a)
+            #     print(f'   op<{a["op"]}>:{op} var<{var:02x}>:{name}({fmt}){param_str} type:{a["type"]} >>{a["shift_num"]} &{a["and_mask"]:x}{type_str}')
+            print()
+            print(root.format(indent=1))
             return
 
         layout = read_sprite_layout(d, max(num_ent1, 1), num_ent1 == 0)
@@ -376,6 +552,26 @@ def decode_action2(data):
     ent1 = struct.unpack_from('<' + 'H' * num_ent1, data, offset=4)
     ent2 = struct.unpack_from('<' + 'H' * num_ent2, data, offset=4 + 2 * num_ent1)
     print(f'ent1:{ent1} ent2:{ent2}')
+
+
+def decode_action3(data):
+    feature = data[0]
+    idcount = data[1]
+    print(f'    <3>MAP feature:{str_feature(feature)} ', end='')
+    if data[1] == 0:
+        _, set_id = struct.unpack_from('<BH', data, offset=2)
+        print(f'set_id:{set_id}');
+    else:
+        d = DataReader(data, 2)
+        objs = [d.get_byte() for _ in range(idcount)]
+        cidcount = d.get_byte()
+        maps = []
+        for _ in range(cidcount):
+            ctype = d.get_byte()
+            groupid = d.get_word()
+            maps.append({'ctype': ctype, 'groupid': groupid})
+        def_gid = d.get_word()
+        print(f'objs:{objs} maps:{maps} default_gid:{def_gid}')
 
 
 def decode_action4(data):
@@ -479,6 +675,7 @@ ACTIONS = {
     0x00: decode_action0,
     0x01: decode_action1,
     0x02: decode_action2,
+    0x03: decode_action3,
     0x04: decode_action4,
     0x05: decode_action5,
     0x06: decode_action6,
@@ -487,7 +684,7 @@ ACTIONS = {
     0x14: decode_action14,
 }
 
-def read_pseudo_sprite(f):
+def read_pseudo_sprite(f, nfo_line):
     l = struct.unpack('<I', f.read(4))[0]
     if l == 0:
         print('End of pseudo sprites')
@@ -495,7 +692,7 @@ def read_pseudo_sprite(f):
     grf_type = f.read(1)[0]
     grf_type_str = hex(grf_type)[2:]
     data = f.read(l)
-    print(f'Sprite({l}, {grf_type_str}): ', hex_str(data[:100]))
+    print(f'{nfo_line}: Sprite({l}, {grf_type_str}): ', hex_str(data[:100]))
     if grf_type == 0xff:
         decoder = ACTIONS.get(data[0])
         if decoder:
@@ -550,8 +747,10 @@ with open(sys.argv[1], 'rb') as f:
     data_offest, compression = struct.unpack('<IB', f.read(5))
     header_offset = f.tell() - 1
     print(f'Offset: {data_offest} compresion: {compression}')
-    while read_pseudo_sprite(f):
-        pass
+    print('Magic sprite:', hex_str(f.read(5 + 4)))
+    nfo_line = 1
+    while read_pseudo_sprite(f, nfo_line):
+        nfo_line += 1
     real_data_offset = f.tell() - header_offset
     # while read_real_sprite(f):
     #     pass

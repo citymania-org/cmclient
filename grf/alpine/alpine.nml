@@ -176,7 +176,7 @@ spriteset (meadow_transitions, "gfx/meadow_transitions.png") {
     tmpl_groundsprites(1, 14 * 64 + 1)
     tmpl_groundsprites(1, 15 * 64 + 1)
 }
-
+/*
 spritelayout meadow_groundsprites_default {
     ground {
         sprite: meadow_transitions(
@@ -187,7 +187,14 @@ spritelayout meadow_groundsprites_default {
             + (nearby_tile_object_type( 1,  0) == meadow && nearby_tile_object_type( 1, -1) == meadow &&nearby_tile_object_type( 0, -1) == meadow ? 0 : 152)
         );
     }
+}*/
+
+spritelayout meadow_groundsprites_default(n) {
+    ground {
+        sprite: meadow_groundsprites(n);
+    }
 }
+
 
 spritelayout meadow_groundsprites_purchase {
     ground {
@@ -196,12 +203,35 @@ spritelayout meadow_groundsprites_purchase {
 }
 
 
-switch (FEAT_OBJECTS, SELF, switch_meadow_groundsprites_default, [
+/*switch (FEAT_OBJECTS, SELF, switch_meadow_groundsprites_default, [
         STORE_TEMP(slope_to_sprite_offset(tile_slope), 0)
         ]) {
     meadow_groundsprites_default;
 }
+*/
 
+switch(FEAT_OBJECTS, SELF, meadow_ground_switch, tile_slope) {
+    0: return  meadow_groundsprites_default(0);
+    1: return  meadow_groundsprites_default(1);
+    2: return  meadow_groundsprites_default(2);
+    4: return  meadow_groundsprites_default(4);
+    8: return  meadow_groundsprites_default(8);
+    9: return  meadow_groundsprites_default(9);
+    3: return  meadow_groundsprites_default(3);
+    6: return  meadow_groundsprites_default(6);
+    12: return meadow_groundsprites_default(12);
+    5: return  meadow_groundsprites_default(5);
+    10: return meadow_groundsprites_default(10);
+    11: return meadow_groundsprites_default(11);
+    7: return  meadow_groundsprites_default(7);
+    14: return meadow_groundsprites_default(14);
+    13: return meadow_groundsprites_default(13);
+    27: return meadow_groundsprites_default(17);
+    23: return meadow_groundsprites_default(16);
+    30: return meadow_groundsprites_default(18);
+    29: return meadow_groundsprites_default(15);
+    default: return meadow_groundsprites_default(17);
+}
 
 item (FEAT_OBJECTS, meadow) {
     property {
@@ -214,12 +244,13 @@ item (FEAT_OBJECTS, meadow) {
         size: [1,1];
     }
     graphics {
-        default: meadow_groundsprites_default;
-        purchase: meadow_groundsprites_purchase;
-        tile_check: CB_RESULT_LOCATION_ALLOW;
+   ///     default: meadow_groundsprites_default(0);
+        default: meadow_ground_switch();
+        //purchase: meadow_groundsprites_purchase;
+       //tile_check: CB_RESULT_LOCATION_ALLOW;
     }
 }
-
+/*
 spriteset (creek_groundsprites, "gfx/rivers.png") {
     tmpl_groundsprites_anim(1, 0 * 64 + 1)
     tmpl_groundsprites_anim(1, 1 * 64 + 1)
@@ -1705,3 +1736,4 @@ item (FEAT_OBJECTS, rivers_80) {
     }
 }
 
+*/
