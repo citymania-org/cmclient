@@ -2,7 +2,7 @@ import sys
 import struct
 from nml import lz77
 
-from grf import Node, Expr, Value
+from grf import Node, Expr, Value, Var, Temp, Perm, Range, Set, Call
 
 
 def hex_str(s):
@@ -270,33 +270,6 @@ def read_sprite_layout_registers(d, flags, is_parent):
     return regs
 
 
-class Set:
-    def __init__(self, set_id):
-        self.is_callback = bool(set_id & 0x8000)
-        self.set_id = set_id & 0x7fff
-
-    def __str__(self):
-        if self.is_callback:
-            return f'CB({self.set_id})'
-        return f'Set({self.set_id})'
-
-    __repr__ = __str__
-
-
-class Range:
-    def __init__(self, low, high, set):
-        self.set = set
-        self.low = low
-        self.high = high
-
-    def __str__(self):
-        if self.low == self.high:
-            return f'{self.low} -> {self.set}'
-        return f'{self.low}..{self.high} -> {self.set}'
-
-    __repr__ = __str__
-
-
 def read_sprite_layout(d, num, no_z_position):
     has_z_position = not no_z_position
     has_flags = bool((num >> 6) & 1)
@@ -427,11 +400,6 @@ def get_va2_var(var):
     return V2_OBJECT_VARS[var]
 
 
-class Call(Node):
-    def __init__(self, subroutine):
-        self.suroutine = subroutine
-
-
 class Generic(Node):
     def __init__(self, var, shift, and_mask, type, add_val, divmod_val):
         self.var = var
@@ -441,13 +409,13 @@ class Generic(Node):
         self.add_val = add_val
         self.divmod_val = divmod_val
 
-    def format(self, parent_priority=0, indent=0, indent_str='   '):
+    def format(self, parent_priority=0):
         addstr = ''
         if self.type == 1:
-            addstr = ' +{self.add_val} /{self.divmod_val}'
+            addstr = f' +{self.add_val} /{self.divmod_val}'
         elif self.type == 2:
-            addstr = ' +{self.add_val} %{self.divmod_val}'
-        return (indent_str * indent) + f'(var: {self.var} >>{self.shift} &{self.and_mask}{addstr})'
+            addstr = f' +{self.add_val} %{self.divmod_val}'
+        return [f'(var{self.var:02x} >>{self.shift} &{self.and_mask:x}{addstr})']
 
 
 def decode_action2(data):
@@ -466,7 +434,7 @@ def decode_action2(data):
             print(f'BASIC ground_sprite:{ground_sprite} building_sprite:{building_sprite} '
                   f'xofs:{xofs} yofs:{yofs} extent:({xext}, {yext}, {zext})')
             return
-        if num_ent1 < 0x3f:
+        if num_ent1 <= 0x3f:
             raise NotImplemented
 
         if num_ent1 in (0x81, 0x82, 0x85, 0x86, 0x89, 0x8a):
@@ -486,6 +454,7 @@ def decode_action2(data):
                 has_more = bool(varadj & 0x20)
                 node_type = varadj >> 6
                 and_mask = d.get_var(group_size)
+                # print(f'CODE op:{op:x} var{var:02x} >>{shift} &{and_mask:x} has_more:{has_more} node_type:{node_type}')
                 if node_type != 0:
                     # old magic, use advaction2 instead
                     add_val = d.get_var(group_size)
@@ -493,6 +462,14 @@ def decode_action2(data):
                     node = Generic(var, shift, and_mask, node_type, add_val, divmod_val)
                 elif var == 0x1a and shift == 0:
                     node = Value(and_mask)
+                elif (var, shift, and_mask) == (0x7c, 0, 0xffffffff):
+                    node = Perm(param)
+                elif (var, shift, and_mask) == (0x7d, 0, 0xffffffff):
+                    node = Temp(param)
+                elif (var, shift, and_mask) == (0x7e, 0, 0xffffffff):
+                    node = Call(param)
+                elif (var, shift, and_mask) == (0x41, 8, 0x1f):
+                    node = Var('tile_slope')
                 else:
                     node = Generic(var, shift, and_mask, 0, None, None)
 
@@ -533,8 +510,8 @@ def decode_action2(data):
             #     if a['type'] != 0:
             #         type_str = '+{add_val} /%{divmod_val}'.format(**a)
             #     print(f'   op<{a["op"]}>:{op} var<{var:02x}>:{name}({fmt}){param_str} type:{a["type"]} >>{a["shift_num"]} &{a["and_mask"]:x}{type_str}')
-            print()
-            print(root.format(indent=1))
+            for line in root.format():
+                print('        ', line)
             return
 
         layout = read_sprite_layout(d, max(num_ent1, 1), num_ent1 == 0)
@@ -684,6 +661,7 @@ ACTIONS = {
     0x14: decode_action14,
 }
 
+
 def read_pseudo_sprite(f, nfo_line):
     l = struct.unpack('<I', f.read(4))[0]
     if l == 0:
@@ -698,6 +676,7 @@ def read_pseudo_sprite(f, nfo_line):
         if decoder:
             decoder(data[1:])
     return True
+
 
 def decode_sprite(f, num):
     data = b''
@@ -720,6 +699,7 @@ def decode_sprite(f, num):
     if num != 0: raise RuntimeError('Corrupt sprite')
     return data
 
+
 def read_real_sprite(f):
     sprite_id = struct.unpack('<I', f.read(4))[0]
     if sprite_id == 0:
@@ -741,6 +721,7 @@ def read_real_sprite(f):
     # print('Data: ', hex_str(data[:40]))
     f.seek(start_pos + num - 1, 0)
     return True
+
 
 with open(sys.argv[1], 'rb') as f:
     print('Header:', hex_str(f.read(10)))

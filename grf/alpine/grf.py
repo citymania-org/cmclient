@@ -6,6 +6,9 @@ import spectra
 import struct
 import numpy as np
 
+from parser import Node, Expr, Value, Var, Temp, Perm, Call, parse_code, OP_INIT
+
+
 to_spectra = lambda r, g, b: spectra.rgb(float(r) / 255., float(g) / 255., float(b) / 255.)
 # working with DOS palette only
 PALETTE = (0, 0, 255, 16, 16, 16, 32, 32, 32, 48, 48, 48, 64, 64, 64, 80, 80, 80, 100, 100, 100, 116, 116, 116, 132, 132, 132, 148, 148, 148, 168, 168, 168, 184, 184, 184, 200, 200, 200, 216, 216, 216, 232, 232, 232, 252, 252, 252, 52, 60, 72, 68, 76, 92, 88, 96, 112, 108, 116, 132, 132, 140, 152, 156, 160, 172, 176, 184, 196, 204, 208, 220, 48, 44, 4, 64, 60, 12, 80, 76, 20, 96, 92, 28, 120, 120, 64, 148, 148, 100, 176, 176, 132, 204, 204, 168, 72, 44, 4, 88, 60, 20, 104, 80, 44, 124, 104, 72, 152, 132, 92, 184, 160, 120, 212, 188, 148, 244, 220, 176, 64, 0, 4, 88, 4, 16, 112, 16, 32, 136, 32, 52, 160, 56, 76, 188, 84, 108, 204, 104, 124, 220, 132, 144, 236, 156, 164, 252, 188, 192, 252, 208, 0, 252, 232, 60, 252, 252, 128, 76, 40, 0, 96, 60, 8, 116, 88, 28, 136, 116, 56, 156, 136, 80, 176, 156, 108, 196, 180, 136, 68, 24, 0, 96, 44, 4, 128, 68, 8, 156, 96, 16, 184, 120, 24, 212, 156, 32, 232, 184, 16, 252, 212, 0, 252, 248, 128, 252, 252, 192, 32, 4, 0, 64, 20, 8, 84, 28, 16, 108, 44, 28, 128, 56, 40, 148, 72, 56, 168, 92, 76, 184, 108, 88, 196, 128, 108, 212, 148, 128, 8, 52, 0, 16, 64, 0, 32, 80, 4, 48, 96, 4, 64, 112, 12, 84, 132, 20, 104, 148, 28, 128, 168, 44, 28, 52, 24, 44, 68, 32, 60, 88, 48, 80, 104, 60, 104, 124, 76, 128, 148, 92, 152, 176, 108, 180, 204, 124, 16, 52, 24, 32, 72, 44, 56, 96, 72, 76, 116, 88, 96, 136, 108, 120, 164, 136, 152, 192, 168, 184, 220, 200, 32, 24, 0, 56, 28, 0, 72, 40, 4, 88, 52, 12, 104, 64, 24, 124, 84, 44, 140, 108, 64, 160, 128, 88, 76, 40, 16, 96, 52, 24, 116, 68, 40, 136, 84, 56, 164, 96, 64, 184, 112, 80, 204, 128, 96, 212, 148, 112, 224, 168, 128, 236, 188, 148, 80, 28, 4, 100, 40, 20, 120, 56, 40, 140, 76, 64, 160, 100, 96, 184, 136, 136, 36, 40, 68, 48, 52, 84, 64, 64, 100, 80, 80, 116, 100, 100, 136, 132, 132, 164, 172, 172, 192, 212, 212, 224, 40, 20, 112, 64, 44, 144, 88, 64, 172, 104, 76, 196, 120, 88, 224, 140, 104, 252, 160, 136, 252, 188, 168, 252, 0, 24, 108, 0, 36, 132, 0, 52, 160, 0, 72, 184, 0, 96, 212, 24, 120, 220, 56, 144, 232, 88, 168, 240, 128, 196, 252, 188, 224, 252, 16, 64, 96, 24, 80, 108, 40, 96, 120, 52, 112, 132, 80, 140, 160, 116, 172, 192, 156, 204, 220, 204, 240, 252, 172, 52, 52, 212, 52, 52, 252, 52, 52, 252, 100, 88, 252, 144, 124, 252, 184, 160, 252, 216, 200, 252, 244, 236, 72, 20, 112, 92, 44, 140, 112, 68, 168, 140, 100, 196, 168, 136, 224, 200, 176, 248, 208, 184, 255, 232, 208, 252, 60, 0, 0, 92, 0, 0, 128, 0, 0, 160, 0, 0, 196, 0, 0, 224, 0, 0, 252, 0, 0, 252, 80, 0, 252, 108, 0, 252, 136, 0, 252, 164, 0, 252, 192, 0, 252, 220, 0, 252, 252, 0, 204, 136, 8, 228, 144, 4, 252, 156, 0, 252, 176, 48, 252, 196, 100, 252, 216, 152, 8, 24, 88, 12, 36, 104, 20, 52, 124, 28, 68, 140, 40, 92, 164, 56, 120, 188, 72, 152, 216, 100, 172, 224, 92, 156, 52, 108, 176, 64, 124, 200, 76, 144, 224, 92, 224, 244, 252, 200, 236, 248, 180, 220, 236, 132, 188, 216, 88, 152, 172, 244, 0, 244, 245, 0, 245, 246, 0, 246, 247, 0, 247, 248, 0, 248, 249, 0, 249, 250, 0, 250, 251, 0, 251, 252, 0, 252, 253, 0, 253, 254, 0, 254, 255, 0, 255, 76, 24, 8, 108, 44, 24, 144, 72, 52, 176, 108, 84, 210, 146, 126, 252, 60, 0, 252, 84, 0, 252, 104, 0, 252, 124, 0, 252, 148, 0, 252, 172, 0, 252, 196, 0, 64, 0, 0, 255, 0, 0, 48, 48, 0, 64, 64, 0, 80, 80, 0, 255, 255, 0, 32, 68, 112, 36, 72, 116, 40, 76, 120, 44, 80, 124, 48, 84, 128, 72, 100, 144, 100, 132, 168, 216, 244, 252, 96, 128, 164, 68, 96, 140, 255, 255, 255)
@@ -19,6 +22,12 @@ ZOOM_4X, ZOOM_NORMAL, ZOOM_2X, ZOOM_8X, ZOOM_16X, ZOOM_32X = range(6)
 BPP_8, BPP_32 = range(2)
 
 OBJECT = 0x0f
+
+
+def hex_str(s):
+    if isinstance(s, (bytes, memoryview)):
+        return ':'.join('{:02x}'.format(b) for b in s)
+    return ':'.join('{:02x}'.format(ord(c)) for c in s)
 
 
 def color_distance(c1, c2):
@@ -45,82 +54,6 @@ def find_best_color(x, in_range=SAFE_COLORS):
 # def map_rgb_image(self, im):
 #     assert im.mode == 'RGB', im.mode
 #     data = np.array(im)
-
-OP_ADD = 0x00
-OP_SUB = 0x01
-OP_TSTO = 0x0E
-OP_PSTO = 0x10
-
-OPERATORS = {
-    OP_ADD: ('{a} + {b}', 2),
-    OP_SUB: ('{a} - {b}', 2),
-    OP_TSTO: ('TEMP[{b}] = {a}', 1),
-    OP_PSTO: ('PERM[{b}] = {a}', 1),
-}
-
-DEFAULT_INDENT_STR = '    '
-
-
-class Node:
-    def __init__(self):
-        pass
-
-    def _make_node(self, value):
-        if isinstance(value, int):
-            return Value(value)
-        assert isinstance(value, Node)
-        return value
-
-    def __add__(self, other):
-        return Expr(OP_ADD, self, self._make_node(other))
-
-    def __sub__(self, other):
-        return Expr(OP_SUB, self, self._make_node(other))
-
-    def store_temp(self, register):
-        return Expr(OP_TSTO, self, self._make_node(register))
-
-    def store_perm(self, register):
-        return Expr(OP_PSTO, self, self._make_node(register))
-
-    def format(self, parent_priority=0, indent=0, indent_str=DEFAULT_INDENT_STR):
-        raise NotImplementedError
-
-    def __str__(self):
-        return self.format()
-
-    def __repr__(self):
-        return self.format()
-
-
-class Expr(Node):
-    def __init__(self, op, a, b):
-        self.op = op
-        self.a = a
-        self.b = b
-
-    def format(self, parent_priority=0, indent=0, indent_str=DEFAULT_INDENT_STR):
-        if self.op in OPERATORS:
-            fmt, prio = OPERATORS[self.op]
-        else:
-            fmt, prio = '{a} <{self.op:02x}> {b}', 1
-        astr = self.a.format(prio, indent=0)
-        bstr = self.b.format(prio, indent=0)
-        res = fmt.format(a=astr, b=bstr)
-        suffix = indent_str * indent
-        if prio <= parent_priority:
-            return suffix + f'({res})'
-        return suffix + res
-
-
-class Value(Node):
-    def __init__(self, value):
-        super().__init__()
-        self.value = value
-
-    def format(self, parent_priority=0, indent=0, indent_str=DEFAULT_INDENT_STR):
-        return indent_str * indent + str(self.value)
-
 
 class BaseSprite:
     def get_data(self):
@@ -476,11 +409,11 @@ class SpriteSet(Action1):
 
 
 class BasicSpriteLayout(LazyBaseSprite):
-    def __init__(self, feature, ref_id, xofs=0, yofs=0, extent=(0, 0, 0)):
+    def __init__(self, feature, set_id, xofs=0, yofs=0, extent=(0, 0, 0)):
         super().__init__()
         assert feature in (0x07, 0x09, OBJECT, 0x11), feature
         self.feature = feature
-        self.ref_id = ref_id
+        self.set_id = set_id
         self.xofs = xofs
         self.yofs = yofs
         self.extent = extent
@@ -489,11 +422,133 @@ class BasicSpriteLayout(LazyBaseSprite):
         return id | (mode << 14) | (recolor << 16) | (draw_in_transparent << 30) | (use_last << 31)
 
     def _encode(self):
-        return struct.pack('<BBBBIIbbBBB', 0x02, self.feature, self.ref_id, 0,
+        return struct.pack('<BBBBIIbbBBB', 0x02, self.feature, self.set_id, 0,
                            # self._encode_sprite(), self._encode_sprite(),
                            self._encode_sprite(use_last=True), 0,
                            self.xofs, self.yofs,
+
                            *self.extent)
+
+
+class AdvancedSpriteLayout(LazyBaseSprite):
+    def __init__(self, feature, set_id, ground, sprites=()):
+        super().__init__()
+        assert feature in (0x07, 0x09, OBJECT, 0x11), feature
+        assert len(sprites) < 64, len(sprites)
+        self.feature = feature
+        self.set_id = set_id
+        self.ground = ground
+        self.sprites = sprites
+
+    def _encode_sprite(self, sprite, aux=False):
+        res = struct.pack('<HHH', sprite['sprite'], sprite['pal'], sprite['flags'])
+
+        if aux:
+            delta = s.get('delta', (0, 0, 0))
+            is_parent = bool(sprite.get('parent'))
+            if not is_parent:
+                delta = (delta[0], delta[1], 0x80)
+            res += struct.pack('<BBB', *delta)
+            if is_parent:
+                res += struct.pack('<BBB', *sprite.get('size'))
+
+        for k in ('dodraw', 'add', 'palette', 'sprite_var10', 'palette_var10'):
+            if k in sprite:
+                val = sprite[k]
+                if k == 'add':
+                    assert isinstance(val, Temp)
+                    val = val.register
+                res += bytes((val, ))
+        # TODO deltas
+        return res
+
+    def _encode(self):
+        res = struct.pack('<BBBB', 0x02, self.feature, self.set_id, len(self.sprites) + 0x40)
+        res += self._encode_sprite(self.ground)
+        for s in self.sprites:
+            res += self._encode_sprite(s, True)
+
+        return res
+
+
+class Set:
+    def __init__(self, set_id):
+        self.value = set_id
+        self.is_callback = bool(set_id & 0x8000)
+        self.set_id = set_id & 0x7fff
+
+    def __str__(self):
+        if self.is_callback:
+            return f'CB({self.set_id})'
+        return f'Set({self.set_id})'
+
+    __repr__ = __str__
+
+
+class CB(Set):
+    def __init__(self, value):
+        super().__init__(value | 0x8000)
+
+
+class Range:
+    def __init__(self, low, high, set):
+        self.set = set
+        self.low = low
+        self.high = high
+
+    def __str__(self):
+        if self.low == self.high:
+            return f'{self.low} -> {self.set}'
+        return f'{self.low}..{self.high} -> {self.set}'
+
+    __repr__ = __str__
+
+
+class VarAction2(LazyBaseSprite):
+    def __init__(self, feature, set_id, use_related, ranges, default, code):
+        super().__init__()
+        self.feature = feature
+        assert feature == OBJECT, feature
+        self.set_id = set_id
+        self.use_related = use_related
+        self.ranges = ranges
+        self.default = default
+        self.code = parse_code(code)
+
+    def _get_set_value(self, set_obj):
+        if isinstance(set_obj, Set):
+            return set_obj.value
+        assert isinstance(set_obj, int)
+        return set_obj | 0x8000
+
+    def _encode(self):
+        res = bytes((0x02, self.feature, self.set_id, 0x8a if self.use_related else 0x89))
+        code = self.code[0].compile(register=0x80)[1]
+        for c in self.code[1:]:
+            code += bytes((OP_INIT,))
+            code += c.compile(register=0x80)[1]
+        # print('CODE', hex_str(code))
+        res += code[:-5]
+        res += bytes((code[-5] & ~0x20,))  # mark the end of a chain
+        res += code[-4:]
+        res += bytes((len(self.ranges),))
+        # print('RES', hex_str(res))
+        ranges = self.ranges
+        if isinstance(ranges, dict):
+            ranges = self.ranges.items()
+        for r in ranges:
+            if isinstance(r, Range):
+                set_obj = r.set
+                low = r.low
+                high = r.high
+            else:
+                set_obj = r[1]
+                low = r[0]
+                high = r[0]
+            # TODO split (or validate) negative-positive ranges
+            res += struct.pack('<HII', self._get_set_value(set_obj), low, high)
+        res += struct.pack('<H', self._get_set_value(self.default))
+        return res
 
 
 class Action3(LazyBaseSprite):
