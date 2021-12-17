@@ -83,6 +83,85 @@ ACTION0_TRAIN_PROPS = {
     0x2E:  'W',  # Supported by OpenTTD 12 (g2183fd4dab)12 Not supported by TTDPatch   Maximum curve speed modifier    yes
 }
 
+ACTION0_GLOBAL_PROPS = {
+    0x08: ('basecost', 'B'),  # Cost base multipliers
+    0x09: ('cargo_table', 'D'),  # Cargo translation table
+    0x0A: ('currency_name', 'W'),  # Currency display names
+    0x0B: ('currency_mult', 'D'),  # Currency multipliers
+    0x0C: ('currency_options', 'W'),  # Currency options
+    0x0D: ('currency_symbols', '0E'),  # Currency symbols
+    0x0F: ('currency_euro_date', 'W'),  # Euro introduction dates
+    0x10: ('snowline_table', '12*32*B'),  # Snow line height table
+    0x11: ('grfid_overrides', '2*D'),  # GRFID overrides for engines
+    0x12: ('railtype_table', 'D'),  # Railtype translation table
+    0x13: ('gender_table1', '(BV)+'),  # Gender/case translation table
+    0x14: ('gender_table2', '(BV)+'),  # Gender/case translation table
+    0x15: ('plural_form', 'B'),  # Plural form
+    0x16: ('roadtype_table1', 'B'),  # Road-/tramtype translation table
+    0x17: ('roadtype_table2', 'D'),  # Road-/tramtype translation table
+}
+
+ACTION0_INDUSTRY_PROPS = {
+    0x08: ('substitute_type', 'B'),  # Substitute industry type
+    0x09: ('override_type', 'B'),  # Industry type override
+    0x0A: ('layouts', 'V'),  # Set industry layout(s)
+    0x0B: ('production_flags', 'B'),  # Industry production flags
+    0x0C: ('closure_message', 'W'),  # Industry closure message
+    0x0D: ('production_increase_message', 'W'),  # Production increase message
+    0x0E: ('production_decrease_message', 'W'),  # Production decrease message
+    0x0F: ('func_cost', 'B'),  # Fund cost multiplier
+    0x10: ('production_cargo', 'W'),  # Production cargo types
+    0x11: ('acceptance_cargo', 'D'),  # Acceptance cargo types
+    0x12: ('produciton_multipliers', 'B'),  # Production multipliers
+    0x13: ('acceptance_multipliers', 'B'),  # Production multipliers
+    0x14: ('minimal_distributed', 'B'),  # Minimal amount of cargo distributed
+    0x15: ('random_sound', 'V'),  # Random sound effects
+    0x16: ('conflicting_indtypes', '3*B'),  # Conflicting industry types
+    0x17: ('mapgen_probability', 'B'),  # Probability in random game
+    0x18: ('ingame_probability', 'B'),  # Probability during gameplay
+    0x19: ('map_colour', 'B'),  # Map color
+    0x1A: ('special_flags', 'D'),  # Special industry flags to define special behavior
+    0x1B: ('text_id', 'W'),  # New industry text ID
+    0x1C: ('input_mult1', 'D'),  # Input cargo multipliers for the three input cargo types
+    0x1D: ('input_mult2', 'D'),  # Input cargo multipliers for the three input cargo types
+    0x1E: ('input_mult3', 'D'),  # Input cargo multipliers for the three input cargo types
+    0x1F: ('name', 'W'),  # Industry name
+    0x20: ('prospecting_chance', 'D'),  # Prospecting success chance
+    0x21: ('cb_flags1', 'B'),  # Callback flags
+    0x22: ('cb_flags2', 'B'),  # Callback flags
+    0x23: ('destruction_cost', 'D'),  # Destruction cost multiplier
+    0x24: ('station_text', 'W'),  # Default text for nearby station
+    0x25: ('production_types', 'V'),  # Production cargo type list
+    0x26: ('acceptance_typess', 'V'),  # Acceptance cargo type list
+    0x27: ('produciton_multipliers', 'V'),  # Production multiplier list
+    0x28: ('input_multipliers', 'V'),  # Input cargo multiplier list
+}
+
+ACTION0_CARGO_PROPS = {
+    0x08: ('bit_number', 'B'),  # Bit number for bitmasks
+    0x09: ('type_text', 'W'),  # TextID for the cargo type name
+    0x0A: ('unit_text', 'W'),  # TextID for the name of one unit from the cargo type
+    0x0B: ('one_text', 'W'),  # TextID to be displayed for 1 unit of cargo
+    0x0C: ('many_text', 'W'),  # TextID to be displayed for multiple units of cargo
+    0x0D: ('abbr_text', 'W'),  # TextID for cargo type abbreviation
+    0x0E: ('icon_sprite', 'W'),  # Sprite number for the icon of the cargo
+    0x0F: ('weight', 'B'),  # Weight of one unit of the cargo
+    0x10: ('penalty1', 'B'),  # Penalty times
+    0x11: ('penalty2', 'B'),  # Penalty times
+    0x12: ('base_price', 'D'),  # Base price
+    0x13: ('station_colour', 'B'),  # Color for the station list window
+    0x14: ('colour', 'B'),  # Color for the cargo payment list window
+    0x15: ('is_freight', 'B'),  # Freight status (for freight-weight-multiplier setting); 0=not freight, 1=is freight
+    0x16: ('classes', 'W'),  # Cargo classes
+    0x17: ('label', 'D'),  # Cargo label
+    0x18: ('town_growth_sub', 'B'),  # Substitute type for town growth
+    0x19: ('town_growth_mult', 'W'),  # Multiplier for town growth
+    0x1A: ('cb_flags', 'B'),  # Callback flags
+    0x1B: ('units_text', 'W'),  # TextID for displaying the units of a cargo
+    0x1C: ('amount_text', 'W'),  # TextID for displaying the amount of cargo
+    0x1D: ('capacity_mult', 'W'),  # Capacity mulitplier
+}
+
 ACTION0_OBJECT_PROPS = {
     0x08: ('label', 'L'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Class label, see below
     0x09: ('class_name_id', 'W'),  # Supported by OpenTTD 1.1 (r20670)1.1 Supported by TTDPatch 2.6 (r2340)2.6   Text ID for class
@@ -103,8 +182,12 @@ ACTION0_OBJECT_PROPS = {
     0x18: ('num_objects', 'B'),  # Supported by OpenTTD 1.4 (r25879)1.4 Not supported by TTDPatch  Measure for number of objects placed upon map creation
 }
 
+
 ACTION0_PROPS = {
     0: ACTION0_TRAIN_PROPS,
+    0x8: ACTION0_GLOBAL_PROPS,
+    0xa: ACTION0_INDUSTRY_PROPS,
+    0xb: ACTION0_CARGO_PROPS,
     0xf: ACTION0_OBJECT_PROPS,
 }
 
@@ -142,6 +225,14 @@ def read_property(data, ofs, fmt):
     if fmt == 'n*B':
         n = data[ofs]
         return data[ofs + 1: ofs + 1 + n], ofs + 1 + n
+
+    if fmt == '(BV)+':
+        res = {}
+        while data[ofs] != 0:
+            name_end = data.find(b'\0', ofs + 1)
+            res[data[ofs]] = data[ofs + 1: name_end]
+            ofs = name_end + 1
+        return res, ofs + 1
 
     assert False, fmt
 
@@ -554,7 +645,8 @@ def decode_action3(data):
 def decode_action4(data):
     fmt = '<BBB' + ('H' if data[1] & 0xf0 else 'B')
     feature, lang, num, offset = struct.unpack_from(fmt, data)
-    strings = [s.decode('utf-8') for s in data[struct.calcsize(fmt):].split(b'\0')[:-1]]
+    # strings = [s.decode('utf-8') for s in data[struct.calcsize(fmt):].split(b'\0')[:-1]]
+    strings = [s for s in data[struct.calcsize(fmt):].split(b'\0')[:-1]]
     print(f'    <4>STRINGS feature:{str_feature(feature)} lang:{lang} num:{num} offset:{offset} strings:{strings}')
 
 
@@ -637,7 +729,11 @@ def decode_action14(data):
             l = data[ofs] | (data[ofs + 1] << 8)
             res[chunk_id] = data[ofs + 2: ofs + 2 + l]
             ofs += 2 + l
-        # elif chunk_type == b'T'[0]:
+        elif chunk_type == b'T'[0]:
+            lang = data[ofs]
+            text_end = data.find(b'\0', ofs + 1)
+            text = data[ofs + 1 : text_end]
+            ofs = text_end + 1
         else:
             assert False, chunk_type
         return True

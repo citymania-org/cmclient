@@ -153,73 +153,85 @@ gen.add_sprite(grf.VarAction2(
 
 gen.add_sprite(grf.Action3(grf.OBJECT, [0], [[255, 255]], 255))
 
-
 # CREEKS
 
-# MEADOW
+png = grf.ImageFile("gfx/meadow_grid_temperate.png")
+gen.add_sprite(grf.SpriteSet(grf.OBJECT, 19))
+tmpl_ground_sprites(lambda *args, **kw: gen.add_sprite(grf.FileSprite(png, *args, **kw)), 1, 1)
+# gen.add_sprite(grf.BasicSpriteLayout(grf.OBJECT, 255))
+gen.add_sprite(grf.AdvancedSpriteLayout(
+    grf.OBJECT, 255,
+    ground={
+        'sprite': 0,
+        'pal': 32768,
+        'flags': 2,
+        'add': grf.Temp(0),
+    }
+))
 
-# spriteset (meadow_groundsprites, "gfx/meadow_grid_temperate.png") { tmpl_groundsprites(1, 1) }
+gen.add_sprite(grf.Object(0,
+    label=b'FLMA',
+    size=0x11,
+    climate=0xf,
+    eol_date=0,
+    flags=grf.Object.Flags.HAS_NO_FOUNDATION | grf.Object.Flags.ALLOW_UNDER_BRIDGE,
+))
 
-# spriteset (meadow_transitions, "gfx/meadow_transitions.png") {
-#     tmpl_groundsprites(1, 0 * 64 + 1)
-#     tmpl_groundsprites(1, 1 * 64 + 1)
-#     tmpl_groundsprites(1, 2 * 64 + 1)
-#     tmpl_groundsprites(1, 3 * 64 + 1)
-#     tmpl_groundsprites(1, 4 * 64 + 1)
-#     tmpl_groundsprites(1, 5 * 64 + 1)
-#     tmpl_groundsprites(1, 6 * 64 + 1)
-#     tmpl_groundsprites(1, 7 * 64 + 1)
-#     tmpl_groundsprites(1, 8 * 64 + 1)
-#     tmpl_groundsprites(1, 9 * 64 + 1)
-#     tmpl_groundsprites(1, 10 * 64 + 1)
-#     tmpl_groundsprites(1, 11 * 64 + 1)
-#     tmpl_groundsprites(1, 12 * 64 + 1)
-#     tmpl_groundsprites(1, 13 * 64 + 1)
-#     tmpl_groundsprites(1, 14 * 64 + 1)
-#     tmpl_groundsprites(1, 15 * 64 + 1)
-# }
+gen.add_sprite(grf.VarAction2(
+    feature=grf.OBJECT,
+    use_related=False,
+    set_id=0,
+    ranges={0: 0, 1: 1, 2: 2, 4: 4, 8: 8, 9: 9, 3: 3, 6: 6, 12: 12, 5: 5, 10: 10, 11: 11, 7: 7, 14: 14, 13: 13, 27: 17, 23: 16, 30: 18, 29: 15},
+    default=0,
+    code='tile_slope'
+))
 
-# spritelayout meadow_groundsprites_default {
-#     ground {
-#         sprite: meadow_transitions(
-#             slope_to_sprite_offset(tile_slope)
-#             + (nearby_tile_object_type( 0, -1) == meadow && nearby_tile_object_type(-1, -1) == meadow &&nearby_tile_object_type(-1, 0) == meadow ? 0 : 19)
-#             + (nearby_tile_object_type(-1,  0) == meadow && nearby_tile_object_type(-1,  1) == meadow &&nearby_tile_object_type( 0,  1) == meadow ? 0 : 38)
-#             + (nearby_tile_object_type( 0,  1) == meadow && nearby_tile_object_type( 1,  1) == meadow &&nearby_tile_object_type( 1,  0) == meadow ? 0 : 76)
-#             + (nearby_tile_object_type( 1,  0) == meadow && nearby_tile_object_type( 1, -1) == meadow &&nearby_tile_object_type( 0, -1) == meadow ? 0 : 152)
-#         );
-#     }
-# }
+gen.add_sprite(grf.VarAction2(
+    feature=grf.OBJECT,
+    use_related=False,
+    set_id=255,
+    ranges={0: grf.Set(255)},
+    default=grf.Set(255),
+    code='TEMP[0] = call(0)'
+))
 
-# spritelayout meadow_groundsprites_purchase {
-#     ground {
-#         sprite: meadow_groundsprites;
-#     }
-# }
+gen.add_sprite(grf.Action3(grf.OBJECT, [0], [[255, 255]], 255))
+
+# creeks
+
+gen.add_sprite(grf.SpriteSet(grf.OBJECT, 19 * 81))
+png = grf.ImageFile("gfx/rivers.png")
+for i in range(81):
+    tmpl_ground_sprites(lambda *args, **kw: gen.add_sprite(grf.FileSprite(png, *args, **kw)), 1, i * 64 + 1)
 
 
-# switch (FEAT_OBJECTS, SELF, switch_meadow_groundsprites_default, [
-#         STORE_TEMP(slope_to_sprite_offset(tile_slope), 0)
-#         ]) {
-#     meadow_groundsprites_default;
-# }
+gen.add_sprite(grf.AdvancedSpriteLayout(
+    grf.OBJECT, 255,
+    ground={
+        'sprite': 0,
+        'pal': 32768,
+        'flags': 2,
+        'add': grf.Temp(0),
+    }
+))
 
+gen.add_sprite(grf.Object(0,
+    label=b'CREE',
+    size=0x11,
+    climate=0xf,
+    eol_date=0,
+    flags=grf.Object.Flags.HAS_NO_FOUNDATION | grf.Object.Flags.ALLOW_UNDER_BRIDGE,
+))
 
-# item (FEAT_OBJECTS, meadow) {
-#     property {
-#         class: "FLMA";
-#         classname: string(STR_FLMA);
-#         name: string(STR_TEST_OBJECT);
-#         climates_available: ALL_CLIMATES;
-#         end_of_life_date: 0xFFFFFFFF;
-#         object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
-#         size: [1,1];
-#     }
-#     graphics {
-#         default: meadow_groundsprites_default;
-#         purchase: meadow_groundsprites_purchase;
-#         tile_check: CB_RESULT_LOCATION_ALLOW;
-#     }
-# }
+gen.add_sprite(grf.VarAction2(
+    feature=grf.OBJECT,
+    use_related=False,
+    set_id=255,
+    ranges={0: grf.Set(255)},
+    default=grf.Set(255),
+    code='TEMP[0] = call(0)'
+))
+
+gen.add_sprite(grf.Action3(grf.OBJECT, [0], [[255, 255]], 255))
 
 gen.write('alpine.grf')
