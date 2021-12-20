@@ -388,6 +388,8 @@ class Object(Action0):
 
 
     def __init__(self, id, **props):
+        if 'size' in props:
+            props['size'] = (props['size'][1] << 4) | props['size'][0]
         super().__init__(OBJECT, id, 1, props)
 
 
@@ -444,7 +446,7 @@ class AdvancedSpriteLayout(LazyBaseSprite):
         res = struct.pack('<HHH', sprite['sprite'], sprite['pal'], sprite['flags'])
 
         if aux:
-            delta = s.get('delta', (0, 0, 0))
+            delta = sprite.get('delta', (0, 0, 0))
             is_parent = bool(sprite.get('parent'))
             if not is_parent:
                 delta = (delta[0], delta[1], 0x80)
@@ -546,7 +548,7 @@ class VarAction2(LazyBaseSprite):
                 low = r[0]
                 high = r[0]
             # TODO split (or validate) negative-positive ranges
-            res += struct.pack('<HII', self._get_set_value(set_obj), low, high)
+            res += struct.pack('<Hii', self._get_set_value(set_obj), low, high)
         res += struct.pack('<H', self._get_set_value(self.default))
         return res
 
@@ -568,6 +570,11 @@ class Action3(LazyBaseSprite):
             *self.ids, mcount, *sum(self.maps, []),
             self.default)
         return res
+
+
+class Map(Action3):
+    def __init__(self, object, maps, default):
+        super().__init__(object.feature, [object.first_id], maps, default)
 
 
 class NewGRF:

@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftBINORleftBINXORleftBINANDleftADDSUBleftMULADD ASSIGN BINAND BINOR BINXOR COMMA LBRACKET LPAREN MUL NAME NEWLINE NUMBER RBRACKET RPAREN SUBlines : line\n             | expression\n             | lines line\n    line : expression NEWLINE\n            | NEWLINE\n    expression : expression ADD expression\n                  | expression SUB expression\n                  | expression MUL expression\n                  | expression BINAND expression\n                  | expression BINOR expression\n                  | expression BINXOR expression\n    expression : NAME LBRACKET NUMBER RBRACKET ASSIGN expressionexpression : NAME LPAREN NUMBER RPARENexpression : NAME LPAREN expression COMMA expression RPARENexpression : LPAREN expression RPARENexpression : NAME LBRACKET NUMBER RBRACKETexpression : NUMBERexpression : NAME'
+_lr_signature = 'leftSHRSHLleftBINORleftBINXORleftBINANDleftADDSUBleftMULrightUMINUSADD ASSIGN BINAND BINOR BINXOR COMMA LBRACKET LPAREN MUL NAME NEWLINE NUMBER RBRACKET RPAREN SHL SHR SUBlines : line\n             | expression\n             | lines line\n    line : expression NEWLINE\n            | NEWLINE\n    expression : expression ADD expression\n                  | expression SUB expression\n                  | expression MUL expression\n                  | expression BINAND expression\n                  | expression BINOR expression\n                  | expression BINXOR expression\n                  | expression SHL expression\n                  | expression SHR expression\n    expression : NAME LBRACKET NUMBER RBRACKET ASSIGN expressionexpression : NAME LPAREN NUMBER RPARENexpression : NAME LPAREN expression COMMA expression RPARENexpression : LPAREN expression RPARENexpression : NAME LBRACKET NUMBER RBRACKETexpression : NUMBER\n                  | SUB NUMBER %prec UMINUS\n    expression : NAME'
     
-_lr_action_items = {'NEWLINE':([0,1,2,3,4,5,6,8,9,10,20,21,22,23,24,25,29,30,31,35,36,],[4,4,-1,10,-5,-18,-17,-3,10,-4,-6,-7,-8,-9,-10,-11,-15,-16,-13,-12,-14,]),'NAME':([0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,18,20,21,22,23,24,25,29,30,31,32,33,35,36,],[5,5,-1,-2,-5,-18,-17,5,-3,-4,5,5,5,5,5,5,5,-6,-7,-8,-9,-10,-11,-15,-16,-13,5,5,-12,-14,]),'LPAREN':([0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,18,20,21,22,23,24,25,29,30,31,32,33,35,36,],[7,7,-1,-2,-5,18,-17,7,-3,-4,7,7,7,7,7,7,7,-6,-7,-8,-9,-10,-11,-15,-16,-13,7,7,-12,-14,]),'NUMBER':([0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,20,21,22,23,24,25,29,30,31,32,33,35,36,],[6,6,-1,-2,-5,-18,-17,6,-3,-4,6,6,6,6,6,6,26,27,-6,-7,-8,-9,-10,-11,-15,-16,-13,6,6,-12,-14,]),'$end':([1,2,3,4,5,6,8,10,20,21,22,23,24,25,29,30,31,35,36,],[0,-1,-2,-5,-18,-17,-3,-4,-6,-7,-8,-9,-10,-11,-15,-16,-13,-12,-14,]),'ADD':([3,5,6,9,19,20,21,22,23,24,25,27,28,29,30,31,34,35,36,],[11,-18,-17,11,11,-6,-7,-8,11,11,11,-17,11,-15,-16,-13,11,11,-14,]),'SUB':([3,5,6,9,19,20,21,22,23,24,25,27,28,29,30,31,34,35,36,],[12,-18,-17,12,12,-6,-7,-8,12,12,12,-17,12,-15,-16,-13,12,12,-14,]),'MUL':([3,5,6,9,19,20,21,22,23,24,25,27,28,29,30,31,34,35,36,],[13,-18,-17,13,13,13,13,-8,13,13,13,-17,13,-15,-16,-13,13,13,-14,]),'BINAND':([3,5,6,9,19,20,21,22,23,24,25,27,28,29,30,31,34,35,36,],[14,-18,-17,14,14,-6,-7,-8,-9,14,14,-17,14,-15,-16,-13,14,14,-14,]),'BINOR':([3,5,6,9,19,20,21,22,23,24,25,27,28,29,30,31,34,35,36,],[15,-18,-17,15,15,-6,-7,-8,-9,-10,-11,-17,15,-15,-16,-13,15,15,-14,]),'BINXOR':([3,5,6,9,19,20,21,22,23,24,25,27,28,29,30,31,34,35,36,],[16,-18,-17,16,16,-6,-7,-8,-9,16,-11,-17,16,-15,-16,-13,16,16,-14,]),'LBRACKET':([5,],[17,]),'RPAREN':([5,6,19,20,21,22,23,24,25,27,29,30,31,34,35,36,],[-18,-17,29,-6,-7,-8,-9,-10,-11,31,-15,-16,-13,36,-12,-14,]),'COMMA':([5,6,20,21,22,23,24,25,27,28,29,30,31,35,36,],[-18,-17,-6,-7,-8,-9,-10,-11,-17,32,-15,-16,-13,-12,-14,]),'RBRACKET':([26,],[30,]),'ASSIGN':([30,],[33,]),}
+_lr_action_items = {'NEWLINE':([0,1,2,3,4,6,7,9,10,11,20,24,25,26,27,28,29,30,31,35,36,37,41,42,],[4,4,-1,11,-5,-21,-19,-3,11,-4,-20,-6,-7,-8,-9,-10,-11,-12,-13,-17,-18,-15,-14,-16,]),'NAME':([0,1,2,3,4,6,7,8,9,11,12,13,14,15,16,17,18,19,20,22,24,25,26,27,28,29,30,31,35,36,37,38,39,41,42,],[6,6,-1,-2,-5,-21,-19,6,-3,-4,6,6,6,6,6,6,6,6,-20,6,-6,-7,-8,-9,-10,-11,-12,-13,-17,-18,-15,6,6,-14,-16,]),'LPAREN':([0,1,2,3,4,6,7,8,9,11,12,13,14,15,16,17,18,19,20,22,24,25,26,27,28,29,30,31,35,36,37,38,39,41,42,],[8,8,-1,-2,-5,22,-19,8,-3,-4,8,8,8,8,8,8,8,8,-20,8,-6,-7,-8,-9,-10,-11,-12,-13,-17,-18,-15,8,8,-14,-16,]),'NUMBER':([0,1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,35,36,37,38,39,41,42,],[7,7,-1,-2,-5,20,-21,-19,7,-3,-4,7,7,7,7,7,7,7,7,-20,32,33,-6,-7,-8,-9,-10,-11,-12,-13,-17,-18,-15,7,7,-14,-16,]),'SUB':([0,1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,24,25,26,27,28,29,30,31,33,34,35,36,37,38,39,40,41,42,],[5,5,-1,13,-5,-21,-19,5,-3,13,-4,5,5,5,5,5,5,5,5,-20,5,13,-6,-7,-8,13,13,13,13,13,-19,13,-17,-18,-15,5,5,13,13,-16,]),'$end':([1,2,3,4,6,7,9,11,20,24,25,26,27,28,29,30,31,35,36,37,41,42,],[0,-1,-2,-5,-21,-19,-3,-4,-20,-6,-7,-8,-9,-10,-11,-12,-13,-17,-18,-15,-14,-16,]),'ADD':([3,6,7,10,20,23,24,25,26,27,28,29,30,31,33,34,35,36,37,40,41,42,],[12,-21,-19,12,-20,12,-6,-7,-8,12,12,12,12,12,-19,12,-17,-18,-15,12,12,-16,]),'MUL':([3,6,7,10,20,23,24,25,26,27,28,29,30,31,33,34,35,36,37,40,41,42,],[14,-21,-19,14,-20,14,14,14,-8,14,14,14,14,14,-19,14,-17,-18,-15,14,14,-16,]),'BINAND':([3,6,7,10,20,23,24,25,26,27,28,29,30,31,33,34,35,36,37,40,41,42,],[15,-21,-19,15,-20,15,-6,-7,-8,-9,15,15,15,15,-19,15,-17,-18,-15,15,15,-16,]),'BINOR':([3,6,7,10,20,23,24,25,26,27,28,29,30,31,33,34,35,36,37,40,41,42,],[16,-21,-19,16,-20,16,-6,-7,-8,-9,-10,-11,16,16,-19,16,-17,-18,-15,16,16,-16,]),'BINXOR':([3,6,7,10,20,23,24,25,26,27,28,29,30,31,33,34,35,36,37,40,41,42,],[17,-21,-19,17,-20,17,-6,-7,-8,-9,17,-11,17,17,-19,17,-17,-18,-15,17,17,-16,]),'SHL':([3,6,7,10,20,23,24,25,26,27,28,29,30,31,33,34,35,36,37,40,41,42,],[18,-21,-19,18,-20,18,-6,-7,-8,-9,-10,-11,-12,-13,-19,18,-17,-18,-15,18,18,-16,]),'SHR':([3,6,7,10,20,23,24,25,26,27,28,29,30,31,33,34,35,36,37,40,41,42,],[19,-21,-19,19,-20,19,-6,-7,-8,-9,-10,-11,-12,-13,-19,19,-17,-18,-15,19,19,-16,]),'LBRACKET':([6,],[21,]),'RPAREN':([6,7,20,23,24,25,26,27,28,29,30,31,33,35,36,37,40,41,42,],[-21,-19,-20,35,-6,-7,-8,-9,-10,-11,-12,-13,37,-17,-18,-15,42,-14,-16,]),'COMMA':([6,7,20,24,25,26,27,28,29,30,31,33,34,35,36,37,41,42,],[-21,-19,-20,-6,-7,-8,-9,-10,-11,-12,-13,-19,38,-17,-18,-15,-14,-16,]),'RBRACKET':([32,],[36,]),'ASSIGN':([36,],[39,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'lines':([0,],[1,]),'line':([0,1,],[2,8,]),'expression':([0,1,7,11,12,13,14,15,16,18,32,33,],[3,9,19,20,21,22,23,24,25,28,34,35,]),}
+_lr_goto_items = {'lines':([0,],[1,]),'line':([0,1,],[2,9,]),'expression':([0,1,8,12,13,14,15,16,17,18,19,22,38,39,],[3,10,23,24,25,26,27,28,29,30,31,34,40,41,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,22 +27,25 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> lines","S'",1,None,None,None),
-  ('lines -> line','lines',1,'p_lines','parser.py',272),
-  ('lines -> expression','lines',1,'p_lines','parser.py',273),
-  ('lines -> lines line','lines',2,'p_lines','parser.py',274),
-  ('line -> expression NEWLINE','line',2,'p_line','parser.py',288),
-  ('line -> NEWLINE','line',1,'p_line','parser.py',289),
-  ('expression -> expression ADD expression','expression',3,'p_expression_binop','parser.py',316),
-  ('expression -> expression SUB expression','expression',3,'p_expression_binop','parser.py',317),
-  ('expression -> expression MUL expression','expression',3,'p_expression_binop','parser.py',318),
-  ('expression -> expression BINAND expression','expression',3,'p_expression_binop','parser.py',319),
-  ('expression -> expression BINOR expression','expression',3,'p_expression_binop','parser.py',320),
-  ('expression -> expression BINXOR expression','expression',3,'p_expression_binop','parser.py',321),
-  ('expression -> NAME LBRACKET NUMBER RBRACKET ASSIGN expression','expression',6,'p_expression_assign','parser.py',350),
-  ('expression -> NAME LPAREN NUMBER RPAREN','expression',4,'p_expression_call1','parser.py',362),
-  ('expression -> NAME LPAREN expression COMMA expression RPAREN','expression',6,'p_expression_call2','parser.py',368),
-  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_group','parser.py',383),
-  ('expression -> NAME LBRACKET NUMBER RBRACKET','expression',4,'p_expression_storage','parser.py',388),
-  ('expression -> NUMBER','expression',1,'p_expression_number','parser.py',396),
-  ('expression -> NAME','expression',1,'p_expression_name','parser.py',401),
+  ('lines -> line','lines',1,'p_lines','parser.py',334),
+  ('lines -> expression','lines',1,'p_lines','parser.py',335),
+  ('lines -> lines line','lines',2,'p_lines','parser.py',336),
+  ('line -> expression NEWLINE','line',2,'p_line','parser.py',350),
+  ('line -> NEWLINE','line',1,'p_line','parser.py',351),
+  ('expression -> expression ADD expression','expression',3,'p_expression_binop','parser.py',378),
+  ('expression -> expression SUB expression','expression',3,'p_expression_binop','parser.py',379),
+  ('expression -> expression MUL expression','expression',3,'p_expression_binop','parser.py',380),
+  ('expression -> expression BINAND expression','expression',3,'p_expression_binop','parser.py',381),
+  ('expression -> expression BINOR expression','expression',3,'p_expression_binop','parser.py',382),
+  ('expression -> expression BINXOR expression','expression',3,'p_expression_binop','parser.py',383),
+  ('expression -> expression SHL expression','expression',3,'p_expression_binop','parser.py',384),
+  ('expression -> expression SHR expression','expression',3,'p_expression_binop','parser.py',385),
+  ('expression -> NAME LBRACKET NUMBER RBRACKET ASSIGN expression','expression',6,'p_expression_assign','parser.py',416),
+  ('expression -> NAME LPAREN NUMBER RPAREN','expression',4,'p_expression_call1','parser.py',429),
+  ('expression -> NAME LPAREN expression COMMA expression RPAREN','expression',6,'p_expression_call2','parser.py',435),
+  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_group','parser.py',450),
+  ('expression -> NAME LBRACKET NUMBER RBRACKET','expression',4,'p_expression_storage','parser.py',455),
+  ('expression -> NUMBER','expression',1,'p_expression_number','parser.py',463),
+  ('expression -> SUB NUMBER','expression',2,'p_expression_number','parser.py',464),
+  ('expression -> NAME','expression',1,'p_expression_name','parser.py',472),
 ]

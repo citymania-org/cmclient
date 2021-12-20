@@ -48,6 +48,12 @@ OPERATORS = {
 DEFAULT_INDENT_STR = '    '
 
 
+def hex_str(s):
+    if isinstance(s, (bytes, memoryview)):
+        return ':'.join('{:02x}'.format(b) for b in s)
+    return ':'.join('{:02x}'.format(ord(c)) for c in s)
+
+
 class Node:
     def __init__(self):
         pass
@@ -119,10 +125,10 @@ class Expr(Node):
             return False, res
 
         # Calculate secord arg first and store in in a temp var
-        res += b_code
+        res = b_code
         res += struct.pack('<BBBIB', OP_TSTO, 0x1a, 0x20, register, OP_INIT)
         res += self.a.compile(register + 1, shift, and_mask)[1]
-        res += struct.pack('<BBBI', self.op, 0x7d, 0x20, 0xffffffff)
+        res += struct.pack('<BBBBI', self.op, 0x7d, register, 0x20, 0xffffffff)
         return False, res
 
 
@@ -141,6 +147,51 @@ class Value(Node):
         return True, struct.pack('<BBI', 0x1a, 0x20, valueadj)
 
 
+NML_VARACT2_GLOBALVARS = {
+    'current_month'        : {'var': 0x02, 'start':  0, 'size':  8},
+    'current_day_of_month' : {'var': 0x02, 'start':  8, 'size':  5},
+    'is_leapyear'          : {'var': 0x02, 'start': 15, 'size':  1},
+    'current_day_of_year'  : {'var': 0x02, 'start': 16, 'size':  9},
+    'traffic_side'         : {'var': 0x06, 'start':  4, 'size':  1},
+    'animation_counter'    : {'var': 0x0A, 'start':  0, 'size': 16},
+    'current_callback'     : {'var': 0x0C, 'start':  0, 'size': 16},
+    'extra_callback_info1' : {'var': 0x10, 'start':  0, 'size': 32},
+    'game_mode'            : {'var': 0x12, 'start':  0, 'size':  8},
+    'extra_callback_info2' : {'var': 0x18, 'start':  0, 'size': 32},
+    'display_options'      : {'var': 0x1B, 'start':  0, 'size':  6},
+    'last_computed_result' : {'var': 0x1C, 'start':  0, 'size': 32},
+    'snowline_height'      : {'var': 0x20, 'start':  0, 'size':  8},
+    'difficulty_level'     : {'var': 0x22, 'start':  0, 'size':  8},
+    'current_date'         : {'var': 0x23, 'start':  0, 'size': 32},
+    'current_year'         : {'var': 0x24, 'start':  0, 'size': 32},
+
+    # TODO object vars
+    'relative_x'             : {'var': 0x40, 'start':  0, 'size':  8},
+    'relative_y'             : {'var': 0x40, 'start':  8, 'size':  8},
+    'relative_pos'           : {'var': 0x40, 'start':  0, 'size': 16},
+
+    'terrain_type'           : {'var': 0x41, 'start':  0, 'size':  3},
+    'tile_slope'             : {'var': 0x41, 'start':  8, 'size':  5},
+
+    'build_date'             : {'var': 0x42, 'start':  0, 'size': 32},
+
+    'animation_frame'        : {'var': 0x43, 'start':  0, 'size':  8},
+    'company_colour'         : {'var': 0x43, 'start':  0, 'size':  8},
+
+    'owner'                  : {'var': 0x44, 'start':  0, 'size':  8},
+
+    'town_manhattan_dist'    : {'var': 0x45, 'start':  0, 'size': 16},
+    'town_zone'              : {'var': 0x45, 'start': 16, 'size':  8},
+
+    'town_euclidean_dist'    : {'var': 0x46, 'start':  0, 'size': 16},
+    'view'                   : {'var': 0x48, 'start':  0, 'size':  8},
+    'random_bits'            : {'var': 0x5F, 'start':  8, 'size':  8},
+
+    # TODO object nearby vars
+    'tile_height'            : {'var': 0x62, 'start':  16, 'size':  8, 'param': 0},
+}
+
+
 class Var(Node):
     def __init__(self, name):
         super().__init__()
@@ -150,21 +201,25 @@ class Var(Node):
         return [self.name]
 
     def compile(self, register, shift=0, and_mask=0xffffffff):
-        var_data = VARS = {
-            'tile_slope': (0x41, 8, 0x1f)
-        }.get(self.name)
+        var_data = NML_VARACT2_GLOBALVARS.get(self.name)
+
         if var_data is None:
             raise ValueError(f'Unknown variable `{self.name}`')
-        and_mask &= var_data[2] >> shift
-        shift += var_data[1]
+        var_mask = (1 << var_data['size']) - 1
+        and_mask &= var_mask >> shift
+        shift += var_data['start']
         assert shift < 0x20, shift
         assert and_mask <= 0xffffffff, and_mask
-        return True, struct.pack('<BBI', var_data[0], 0x20 | shift, and_mask)
+        if 'param' in var_data:
+            return True, struct.pack('<BBBI', var_data['var'], var_data['param'], 0x20 | shift, and_mask)
+        else:
+            return True, struct.pack('<BBI', var_data['var'], 0x20 | shift, and_mask)
 
 
 class Temp(Node):
     def __init__(self, register):
         super().__init__()
+        assert isinstance(register, int), type(register)
         self.register = register
 
     def format(self, parent_priority=0):
@@ -173,7 +228,7 @@ class Temp(Node):
     def compile(self, register, shift=0, and_mask=0xffffffff):
         assert shift < 0x20, shift
         assert and_mask <= 0xffffffff, and_mask
-        return True, struct.pack('<BBI', 0x7d, 0x20 | shift, and_mask)
+        return True, struct.pack('<BBBI', 0x7d, self.register, 0x20 | shift, and_mask)
 
 
 class Perm(Node):
@@ -207,7 +262,7 @@ class Call(Node):
 tokens = (
     'NAME', 'NUMBER', 'NEWLINE',
     'ADD', 'SUB', 'MUL',
-    'BINAND', 'BINOR', 'BINXOR',
+    'BINAND', 'BINOR', 'BINXOR', 'SHR', 'SHL',
     'ASSIGN', 'COMMA',
     'LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET',
 )
@@ -222,6 +277,8 @@ t_MUL = r'\*'
 t_BINAND = r'\&'
 t_BINOR = r'\|'
 t_BINXOR = r'\^'
+t_SHR = r'>>'
+t_SHL = r'<<'
 t_ASSIGN = r'='
 t_COMMA = r','
 t_LPAREN = r'\('
@@ -259,12 +316,13 @@ def t_error(t):
 # Parsing rules
 
 precedence = (
+    ('left', 'SHR', 'SHL'),
     ('left', 'BINOR'),
     ('left', 'BINXOR'),
     ('left', 'BINAND'),
     ('left', 'ADD', 'SUB'),
     ('left', 'MUL'),
-    # ('right', 'UMINUS'),
+    ('right', 'UMINUS'),
 )
 
 
@@ -319,6 +377,8 @@ def p_expression_binop(t):
                   | expression BINAND expression
                   | expression BINOR expression
                   | expression BINXOR expression
+                  | expression SHL expression
+                  | expression SHR expression
     '''
     op = {
         '+': OP_ADD,
@@ -327,6 +387,8 @@ def p_expression_binop(t):
         '&': OP_BINAND,
         '|': OP_BINOR,
         '^': OP_BINXOR,
+        '>>': OP_SHL,
+        '<<': OP_SHR,
     }.get(t[2])
 
     assert op is not None, t[2]
@@ -357,6 +419,7 @@ def p_expression_assign(t):
 # def p_expression_uminus(t):
 #     'expression : SUB expression %prec UMINUS'
 #     t[0] = -t[2]
+
 
 def p_expression_call1(t):
     'expression : NAME LPAREN NUMBER RPAREN'
@@ -389,12 +452,17 @@ def p_expression_storage(t):
     assert t[1] in ('TEMP', 'PERM'), t[1]
     cls = Temp if t[1] == 'TEMP' else Perm
     register = int(t[3])
-    t[0] = cls(Value(register))
+    t[0] = cls(register)
 
 
 def p_expression_number(t):
-    'expression : NUMBER'
-    t[0] = Value(int(t[1]))
+    '''expression : NUMBER
+                  | SUB NUMBER %prec UMINUS
+    '''
+    if len(t) == 2:
+        t[0] = Value(int(t[1]))
+    else:
+        t[0] = Value(-int(t[2]))
 
 
 def p_expression_name(t):

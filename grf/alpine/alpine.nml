@@ -250,7 +250,7 @@ item (FEAT_OBJECTS, meadow) {
        //tile_check: CB_RESULT_LOCATION_ALLOW;
     }
 }
-/*
+
 spriteset (creek_groundsprites, "gfx/rivers.png") {
     tmpl_groundsprites_anim(1, 0 * 64 + 1)
     tmpl_groundsprites_anim(1, 1 * 64 + 1)
@@ -338,10 +338,15 @@ spriteset (creek_groundsprites, "gfx/rivers.png") {
 spritelayout creek_groundsprites_default(n, tile_height) {
     ground {
         sprite:
-            (climate == CLIMATE_ARCTIC && tile_height > snowline_height - 2 ?
+            (tile_height > snowline_height - 2 ?
                 GROUNDSPRITE_SNOW + min(tile_height - snowline_height - 2, 0) * 19
-                : (terrain_type == TILETYPE_DESERT ? GROUNDSPRITE_DESERT : GROUNDSPRITE_NORMAL))
+                : GROUNDSPRITE_NORMAL)
             + slope_to_sprite_offset(tile_slope);
+//        sprite:
+//           (climate == CLIMATE_ARCTIC && tile_height > snowline_height - 2 ?
+//                GROUNDSPRITE_SNOW + min(tile_height - snowline_height - 2, 0) * 19
+//                : (terrain_type == TILETYPE_DESERT ? GROUNDSPRITE_DESERT : GROUNDSPRITE_NORMAL))
+//            + slope_to_sprite_offset(tile_slope);
     }
     childsprite {
         sprite: creek_groundsprites(
@@ -1736,4 +1741,4 @@ item (FEAT_OBJECTS, rivers_80) {
     }
 }
 
-*/
+/* */
