@@ -5,6 +5,9 @@ import math
 import os
 import spectra
 
+import grf
+
+
 SAFE_COLORS = list(range(1, 0xD7))
 f = open("../ttd-newgrf-dos.gpl")
 
@@ -75,11 +78,11 @@ def gen_land_recolor():
         r, g, b = x.rgb
         if 2 * g > r + b:
             x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.05)
-            x = x.saturate(20)
-        # # elif 3 * b > r + g:
-        #     # x = x.blend(spectra.rgb(0, 0, 1), ratio=0.3)
-        #     # x = x.blend(spectra.rgb(1, 0, 1), ratio=0.5)
-        #     # x = x.saturate(40)
+            x = x.saturate(10)
+        # elif 3 * b > r + g:
+        #     x = x.blend(spectra.rgb(0, 0, 1), ratio=0.3)
+        #     x = x.blend(spectra.rgb(1, 0, 1), ratio=0.5)
+        #     x = x.saturate(40)
         else:
             x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.05)
             x = x.saturate(5)
@@ -88,7 +91,7 @@ def gen_land_recolor():
 
 def remap_file(f_in, f_out, palmap):
     print(f"Converting {f_out}...")
-    im = Image.open(f_in)
+    im = grf.open_image(f_in)
     data = np.array(im)
     data = palmap[data]
     im2 = Image.fromarray(data)
@@ -112,31 +115,9 @@ for fname in ("grass_grid_temperate.gimp.png",
               "snow34_grid_alpine.gimp.png",
               "snow_grid.gimp.png",
               "water/seashore_grid_temperate.gimp.png",
+              "infrastructure/road_grid_temperate.gimp.png",
               ):
     remap_file(os.path.join(SOURCE_DIR, fname), os.path.join(DEST_DIR, fname), land_palmap)
-
-# SOURCE_DIR = "/home/pavels/Builds/OpenGFX"
-
-# TREES = [
-#     "sprites/png/trees/arctic/tree_01_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_06_leaf.gimp.png",
-#     "sprites/png/trees/arctic/tree_07_leaf.gimp.png",
-#     "sprites/png/trees/arctic/tree_08_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_09_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_04_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_05_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_10_leaf.gimp.png",
-#     "sprites/png/trees/arctic/tree_01_snow_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_06_snow_leaf.gimp.png",
-#     "sprites/png/trees/arctic/tree_07_snow_leaf.gimp.png",
-#     "sprites/png/trees/arctic/tree_08_snow_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_09_snow_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_04_snow_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_05_snow_conifer.gimp.png",
-#     "sprites/png/trees/arctic/tree_10_snow_leaf.gimp.png",
-# ]
-
-# for fname in TREES:
 
 def meadow_recolor(x):
     x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.2)
@@ -146,8 +127,41 @@ def half_meadow_recolor(x):
     x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.2)
     return x.blend(spectra.rgb(1, 1, 0), ratio=0.2)
 
-remap_file(os.path.join(SOURCE_DIR, "grass_grid_temperate.gimp.png"), os.path.join(DEST_DIR, "meadow_grid_temperate.png"), gen_recolor(meadow_recolor))
-remap_file(os.path.join(SOURCE_DIR, "grass_grid_temperate.gimp.png"), os.path.join(DEST_DIR, "half_meadow_grid_temperate.png"), gen_recolor(half_meadow_recolor))
+# remap_file(os.path.join(SOURCE_DIR, "grass_grid_temperate.gimp.png"), os.path.join(DEST_DIR, "meadow_grid_temperate.png"), gen_recolor(meadow_recolor))
+# remap_file(os.path.join(SOURCE_DIR, "grass_grid_temperate.gimp.png"), os.path.join(DEST_DIR, "half_meadow_grid_temperate.png"), gen_recolor(half_meadow_recolor))
+
+
+# Generate snow transition tiles
+
+
+grass = grf.open_image(os.path.join(SOURCE_DIR, "grass_grid_temperate.gimp.png"))
+snow = grf.open_image(os.path.join(SOURCE_DIR, "snow_grid.gimp.png"))
+grass_data = land_palmap[np.array(grass)]
+snow_data = land_palmap[np.array(snow)]
+for i in range(1, 4):
+    ratio = [0, 0.15, 0.35, 0.7][i]
+    grass_desaturate = [0, 10, 30, 15][i]
+    grass_blend = [0, 0.1, 0.2, 0.2][i]
+    print(f'Generating snow transitions {i}/3 ... ', end='')
+    data = np.array(grass)
+    cache = {(0, 0): 0}
+    for y in range(grass.height):
+        for x in range(grass.width):
+            cache_key = grass_index, snow_index = snow_data[y, x], grass_data[y, x]
+            if cache_key in cache:
+                data[y, x] = cache[cache_key]
+                continue
+            snow_colour = grf.SPECTRA_PALETTE[snow_index]
+            grass_colour = grf.SPECTRA_PALETTE[grass_index]
+            grass_colour = grass_colour.blend(spectra.rgb(0.7, 0.7, 0), ratio=grass_blend)
+            grass_colour = grass_colour.desaturate(grass_desaturate)
+            data[y, x] = cache[cache_key] = grf.find_best_color(snow_colour.blend(grass_colour, ratio=ratio))
+    im = Image.fromarray(data)
+    im.putpalette(grf.PALETTE)
+    im.save(os.path.join(DEST_DIR, f'snow_transition_{i}.png'))
+    print('Done')
+
+
 
 # Generate meadow transition tiles
 im = Image.open(os.path.join(SOURCE_DIR, "grass_grid_temperate.gimp.png"))

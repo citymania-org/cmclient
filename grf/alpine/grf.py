@@ -51,6 +51,23 @@ def find_best_color(x, in_range=SAFE_COLORS):
     return mj
 
 
+def fix_palette(img):
+    assert (img.mode == 'P')  # TODO
+    pal = tuple(img.getpalette())
+    if pal == PALETTE: return img
+    print(f'Custom palette in file {self.filename}, converting...')
+    # for i in range(256):
+    #     if tuple(pal[i * 3: i*3 + 3]) != PALETTE[i * 3: i*3 + 3]:
+    #         print(i, pal[i * 3: i*3 + 3], PALETTE[i * 3: i*3 + 3])
+    remap = PaletteRemap()
+    for i in ALL_COLORS:
+        remap.remap[i] = find_best_color(to_spectra(pal[3 * i], pal[3 * i + 1], pal[3 * i + 2]), in_range=ALL_COLORS)
+    return remap.remap_image(img)
+
+
+def open_image(filename, *args, **kw):
+    return fix_palette(Image.open(filename, *args, **kw))
+
 # def map_rgb_image(self, im):
 #     assert im.mode == 'RGB', im.mode
 #     data = np.array(im)
@@ -135,19 +152,7 @@ class ImageFile:
         if self._image:
             return self._image
         img = Image.open(self.filename)
-        assert (img.mode == 'P')  # TODO
-        pal = tuple(img.getpalette())
-        if pal != PALETTE:
-            print(f'Custom palette in file {self.filename}, converting...')
-            # for i in range(256):
-            #     if tuple(pal[i * 3: i*3 + 3]) != PALETTE[i * 3: i*3 + 3]:
-            #         print(i, pal[i * 3: i*3 + 3], PALETTE[i * 3: i*3 + 3])
-            remap = PaletteRemap()
-            for i in ALL_COLORS:
-                remap.remap[i] = find_best_color(to_spectra(pal[3 * i], pal[3 * i + 1], pal[3 * i + 2]), in_range=ALL_COLORS)
-            self._image = remap.remap_image(img)
-        else:
-            self._image = img
+        self._image = fix_palette(img)
         return self._image
 
 
@@ -516,6 +521,9 @@ class VarAction2(LazyBaseSprite):
         self.ranges = ranges
         self.default = default
         self.code = parse_code(code)
+
+    def __str__(self):
+        return str(self.set_id)
 
     def _get_set_value(self, set_obj):
         if isinstance(set_obj, Set):

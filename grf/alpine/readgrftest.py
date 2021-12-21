@@ -831,8 +831,8 @@ ACTIONS = {
 }
 
 
-def read_pseudo_sprite(f, nfo_line):
-    l = struct.unpack('<I', f.read(4))[0]
+def read_pseudo_sprite(f, nfo_line, container):
+    l = struct.unpack('<H' if container == 1 else '<I', f.read(2 if container == 1 else 4))[0]
     if l == 0:
         print('End of pseudo sprites')
         return False
@@ -840,10 +840,17 @@ def read_pseudo_sprite(f, nfo_line):
     grf_type_str = hex(grf_type)[2:]
     data = f.read(l)
     print(f'{nfo_line}: Sprite({l}, {grf_type_str}): ', hex_str(data[:100]))
+    if container == 1:
+        return True
     if grf_type == 0xff:
         decoder = ACTIONS.get(data[0])
         if decoder:
             decoder(data[1:])
+    elif grf_type == 0xff:
+        pass
+    else:
+        if container == 1:
+            read_real_sprite(f)
     return True
 
 
@@ -893,17 +900,29 @@ def read_real_sprite(f):
 
 
 with open(sys.argv[1], 'rb') as f:
-    print('Header:', hex_str(f.read(10)))
-    data_offest, compression = struct.unpack('<IB', f.read(5))
-    header_offset = f.tell() - 1
-    print(f'Offset: {data_offest} compresion: {compression}')
-    print('Magic sprite:', hex_str(f.read(5 + 4)))
+    first = f.read(1)
+    container = None
+    if first == b'\00':
+        print('Header:', hex_str(first + f.read(9)))
+        data_offest, compression = struct.unpack('<IB', f.read(5))
+        header_offset = f.tell() - 1
+        print(f'Offset: {data_offest} compresion: {compression}')
+        print('Magic sprite:', hex_str(f.read(5 + 4)))
+        container = 2
+    else:
+        f.seek(0, 0)
+        print('Old container, no header!')
+        container = 1
+        print('Magic sprite:', hex_str(f.read(5 + 2)))
+    # print('Magic sprite:', hex_str(f.read(4)))
     nfo_line = 1
-    while read_pseudo_sprite(f, nfo_line):
+    while read_pseudo_sprite(f, nfo_line, container):
         nfo_line += 1
     real_data_offset = f.tell() - header_offset
     # while read_real_sprite(f):
     #     pass
+        # nfo_line += 1
+
     if data_offest != real_data_offset:
         print(f'[ERROR] Data offset check failed: {data_offest} {real_data_offset}')
 
