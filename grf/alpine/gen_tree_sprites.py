@@ -5,7 +5,8 @@ import numpy as np
 
 import grf
 
-SOURCE_DIR = "/home/pavels/Projects/cmclient/local/ogfx-landscape-1.1.2-source/src/gfx"
+# SOURCE_DIR = "/home/pavels/Projects/cmclient/local/ogfx-landscape-1.1.2-source/src/gfx"
+SOURCE_DIR = "gfx/trees_ogfx"
 
 class TreeImageFile(grf.ImageFile):
     def get_image(self):
