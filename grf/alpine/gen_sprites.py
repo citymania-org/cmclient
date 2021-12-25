@@ -89,6 +89,16 @@ def gen_land_recolor():
         return x
     return gen_recolor(func)
 
+def gen_land_recolor2():
+    def func(x):
+        r, g, b = x.rgb
+        if 3 * g / 2 > r + b:
+            x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.05)
+            x = x.saturate(10)
+        return x
+    return gen_recolor(func)
+
+
 def remap_file(f_in, f_out, palmap):
     print(f"Converting {f_out}...")
     im = grf.open_image(f_in)
@@ -102,7 +112,6 @@ def remap_file(f_in, f_out, palmap):
 SOURCE_DIR = "/home/pavels/Projects/cmclient/local/ogfx-landscape-1.1.2-source/src/gfx"
 DEST_DIR = "gfx"
 land_palmap = gen_land_recolor()
-
 for fname in ("grass_grid_temperate.gimp.png",
               "bare03_grid.gimp.png",
               "bare13_grid_temperate.gimp.png",
@@ -115,9 +124,18 @@ for fname in ("grass_grid_temperate.gimp.png",
               "snow34_grid_alpine.gimp.png",
               "snow_grid.gimp.png",
               "water/seashore_grid_temperate.gimp.png",
-              "infrastructure/road_grid_temperate.gimp.png",
+
+              "infrastructure/tunnel_rail_grid_temperate.gimp.png",
+              "infrastructure_road_tunnel_grid.png",
               ):
     remap_file(os.path.join(SOURCE_DIR, fname), os.path.join(DEST_DIR, fname), land_palmap)
+
+
+land_palmap = gen_land_recolor2()
+for fname in ("infrastructure_road_tunnel_grid.png",
+              "infrastructure/road_grid_temperate.gimp.png",):
+    remap_file(os.path.join(SOURCE_DIR, fname), os.path.join(DEST_DIR, fname), land_palmap)
+
 
 def meadow_recolor(x):
     x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.2)

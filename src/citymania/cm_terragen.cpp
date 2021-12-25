@@ -136,12 +136,12 @@ void plot_points(std::vector<Point> &grid, uint width, uint height, const char *
 }
 
 void fft_plot_callback(void *userdata, void *buffer, uint y, uint pitch, uint n) {
-	auto fft = static_cast<fftw_complex *>(userdata);
+	auto [fft, sea_level] = *static_cast<std::pair<fftw_complex *, double *> *>(userdata);
 	auto buf = static_cast<uint32 *>(buffer);
 	for (uint j = 0; j < n; j++)
 		for (uint i = 0; i < pitch; i++) {
 			uint32 color = (uint8)(fft[(j + y) * pitch + i][0] * 255);
-			if (fft[(j + y) * pitch + i][0] < 0.1) color = 0;
+			if (fft[(j + y) * pitch + i][0] < *sea_level) color = 0;
 			buf[j * pitch + i] = color << 8;
 		}
 }
@@ -446,6 +446,15 @@ std::pair<double, double> get_edge_direction(delaunator::Delaunator &dln, size_t
 	return std::make_pair(dx / d, dy / d);
 }
 
+double get_point_gradient(fftw_complex *noise, uint width, uint height, delaunator::Delaunator &dln, size_t e) {
+	auto i = 2 * dln.triangles[e];
+	auto x = (size_t)dln.coords[i];
+	auto y = (size_t)dln.coords[i + 1];
+	auto dx = noise[(x + 1) % width + y * width] - noise[(x + width - 1) % width + y * width];
+	auto dy = noise[x + ((y + 1) % height) * width] - noise[x + ((y + height - 1) % height) * width];
+	return hypot(dx, dy);
+}
+
 
 /**
  * This routine provides the essential cleanup necessary before OTTD can
@@ -479,13 +488,20 @@ void Generate() {
     const double evaporation_rate = 1.0 - 0.04;
     const double river_downcutting_constant = 0.5;
     const double allowed_uphill_delta = 0.0005;
+    const double sea_coverage = 0.15;
 
     int w = MapSizeX() + 1;
     int h = MapSizeY() + 1;
     int wh = w * h;
     int whmax = std::max(w, h);
 
+    bool save_debug_images = (wh < (1 << 17));
+
     fftw_complex *noise = genenerate_fft_noise(w, h, -2., 2., 1e100);
+
+	auto plot_pair = std::make_pair(noise, &sea_level);
+
+    /* Lake scenario
     for (int y = 0; y < h; y++)
         for (int x = 0; x < w; x++) {
             auto d = 2.0 * hypot(x - w / 2, y - h / 2) / whmax;
@@ -497,16 +513,21 @@ void Generate() {
             noise[y * w + x][0] = noise[y * w + x][0] * dm + da;
             // noise[y * MapSizeX() + x][0] = std::min(1.0, noise[y * MapSizeX() + x][0] + d);
         }
+    for (int i = 0; i < wh; i++) noise[i][0] = (noise[i][0] < sea_level ? 0 : noise[i][0] - sea_level + 0.05);
+	*/
 
+    // for (int y = 0; y < h; y++)
+    //     for (int x = 0; x < w; x++) {
+    //     }
     for (int i = 0; i < wh; i++) noise[i][0] = (noise[i][0] < sea_level ? 0 : noise[i][0] - sea_level + 0.05);
 
     normalize(noise, noise + wh);
-    MakePNGImage("noise.png", fft_plot_callback, (void *)noise, w, h, 32, nullptr);
+    MakePNGImage("noise.png", fft_plot_callback, (void *)(&plot_pair), w, h, 32, nullptr);
     sea_level = 0.0001;
 
     auto points = poissosn_disc_sampling(w, h);
     delaunator::Delaunator dln(points);
-    if (wh <= 1 << 16) plot_delaunay(dln, w, h, "delaunay.png");
+    if (save_debug_images) plot_delaunay(dln, w, h, "delaunay.png");
 
     size_t n = dln.coords.size() / 2;
     std::vector<double> hegiht(n);
@@ -527,7 +548,7 @@ void Generate() {
         if (vis[e_end]) continue;
         auto h = get_edge_height(noise, w, dln, next_e);
         vis[e_end] = true;
-        if (h >= sea_level) q.push(std::make_pair(e, h));
+        if (h >= sea_level) q.push(std::make_pair(e, 0.0));
     }
 
     while (!q.empty()) {
@@ -544,7 +565,8 @@ void Generate() {
             if (vis[i]) continue;
 
             vis[i] = true;
-            q.push(std::make_pair(outgoing, std::max(get_edge_height(noise, w, dln, incoming), x.second)));
+
+            q.push(std::make_pair(outgoing, x.second + get_point_gradient(noise, w, h, dln, outgoing)));
             // q.push(std::make_pair(outgoing, get_edge_height(noise, dln, incoming) + x.second - sea_level));
             prev[i] = ii;
 
@@ -553,7 +575,7 @@ void Generate() {
 
     normalize(height);
 
-    if (w * h <= 1 << 16) plot_river_height(dln, prev, height , w, h, "initial_river_height.png");
+    if (save_debug_images) plot_river_height(dln, prev, height , w, h, "initial_river_height.png");
 
     for (size_t i = 0; i  < dln.coords.size() / 2; i++) prev[i] = delaunator::INVALID_INDEX;
 
@@ -595,7 +617,7 @@ void Generate() {
             auto k = dln.triangles[incoming];
 
             if (prev[k] != delaunator::INVALID_INDEX) continue;
-            if (height[k] + allowed_uphill_delta <= height[j]) continue;
+            if (height[k] + allowed_uphill_delta < height[j]) continue;
 
             // fprintf(stderr, "A %lu %lu %lu\n", dln.triangles[incoming], j, k);
             // fprintf(stderr, "B %lu %lu %lu\n", x.edge, incoming, outgoing);
@@ -626,7 +648,8 @@ void Generate() {
         flow[j] += flow[i] * evaporation_rate;
     }
 
-    if (wh <= 1 << 16) plot_river_flow(dln, prev, flow, w, h, "river_flow_computed.png");
+
+    if (save_debug_images) plot_river_flow(dln, prev, flow, w, h, "river_flow_computed.png");
 
     for (size_t i = 0; i  < dln.coords.size() / 2; i++) vis[i] = false;
     for (size_t e = 0; e < dln.triangles.size(); e++) {
@@ -662,7 +685,7 @@ void Generate() {
 
     normalize(height);
 
-    if (wh <= 1 << 16) plot_river_height(dln, prev, height, w, h, "final_river_height.png");
+    if (save_debug_images) plot_river_height(dln, prev, height, w, h, "final_river_height.png");
 
     auto x = dln.coords;
     auto y = &dln.coords[1];
@@ -689,14 +712,32 @@ void Generate() {
     }
     normalize(noise, noise + wh);
     for (int i = 0; i < wh; i++) noise[i][0] *= noise[i][0];
-    MakePNGImage("terrain.png", fft_plot_callback, (void *)noise, w, h, 32, nullptr);
+    MakePNGImage("terrain.png", fft_plot_callback, (void *)(&plot_pair), w, h, 32, nullptr);
 
 	if (!AllocHeightMap()) return;
 	GenerateWorldSetAbortCallback(FreeHeightMap);
 
+	{
+		uint counts[101] = {0};
+	    for (int i = 0; i < wh; i++) counts[(uint)(noise[i][0] * 100)]++;
+	    uint tc = sea_coverage * wh;
+		uint ii = 0;
+		while (ii < 101 && tc > counts[ii]) {
+			ii++;
+			tc -= counts[ii];
+		}
+		sea_level = (1.0 * tc / std::max(counts[ii], tc) + ii) / 100.0;
+	}
+
+    MakePNGImage("terrain_relevel.png", fft_plot_callback, (void *)(&plot_pair), w, h, 32, nullptr);
+
+    double sea_scale = _settings_game.construction.map_height_limit / std::min(1 - sea_level, 0.99);
     for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++)
-    		_height_map.height(x, y) = (uint8)(noise[y * w + x][0] * 255);
+        for (int x = 0; x < w; x++) {
+        	auto h = noise[y * w + x][0];
+        	if (h < sea_level) _height_map.height(x, y) = I2H(0);
+        	else _height_map.height(x, y) = I2H((uint8)((h - sea_level) * sea_scale) + 1);
+        }
     }
 
 	HeightMapSmoothSlopes(I2H(1));
@@ -797,10 +838,24 @@ void Generate() {
     fftw_free(noise);
 }
 
+bool CanPlaceRiver(TileIndex tile) {
+	uint x1 = TileX(tile);
+	uint y1 = TileY(tile);
+	uint x2 = std::min(x1 + 1, MapMaxX());
+	uint y2 = std::min(y1 + 1, MapMaxY());
+	uint zerocount = 0;
+	if (0 == TileHeight(tile)          ) zerocount++; // N corner
+	if (0 == TileHeight(TileXY(x2, y1))) zerocount++; // W corner
+	if (0 == TileHeight(TileXY(x1, y2))) zerocount++; // E corner
+	if (0 == TileHeight(TileXY(x2, y2))) zerocount++; // S corner
+	return (zerocount < 3);
+}
+
 void GenerateRivers() {
 	for (auto r : _rivers) {
+		if (CanPlaceRiver(r.first) <= 0) continue;
 		// fprintf(stderr, "BUILDOBJ %d(%d %d) %d\n", (int)r.first, (int)TileX(r.first), (int)TileY(r.first), (int)r.second);
-		CmdBuildObject(r.first, DC_EXEC | DC_AUTO | DC_NO_TEST_TOWN_RATING | DC_NO_MODIFY_TOWN_RATING, 6 + r.second, 0, "");
+		CmdBuildObject(r.first, DC_EXEC | DC_AUTO | DC_NO_TEST_TOWN_RATING | DC_NO_MODIFY_TOWN_RATING, 5 + r.second, 0, "");
 	}
 }
 

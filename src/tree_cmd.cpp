@@ -133,6 +133,13 @@ static void PlantTreesOnTile(TileIndex tile, TreeType treetype, uint count, uint
  */
 static TreeType GetRandomTreeType(TileIndex tile, uint seed)
 {
+	if (_generating_world && _settings_game.game_creation.land_generator == CM_LG_REALISTIC
+	    	&& _settings_game.game_creation.landscape == LT_ARCTIC) {
+		if (TileHeight(tile) + 2 > _settings_game.game_creation.snow_line_height) {
+			return (TreeType)(seed * TREE_COUNT_SUB_ARCTIC / 256 + TREE_SUB_ARCTIC);
+		}
+		return (TreeType)(seed * TREE_COUNT_TEMPERATE / 256 + TREE_TEMPERATE);
+	}
 	switch (_settings_game.game_creation.landscape) {
 		case LT_TEMPERATE:
 			return (TreeType)(seed * TREE_COUNT_TEMPERATE / 256 + TREE_TEMPERATE);
