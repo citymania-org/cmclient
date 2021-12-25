@@ -227,31 +227,65 @@ def tmpl_tree_narrow(func, **kw):
     func(240, 0, 35, 80, xofs=-19, yofs=-73, **kw)
 
 
+def tmpl_tree_wide(func, **kw):
+    func(  0, 0, 45, 80, xofs=-24, yofs=-73, **kw)
+    func( 50, 0, 45, 80, xofs=-24, yofs=-73, **kw)
+    func(100, 0, 45, 80, xofs=-24, yofs=-73, **kw)
+    func(150, 0, 45, 80, xofs=-24, yofs=-73, **kw)
+    func(200, 0, 45, 80, xofs=-24, yofs=-73, **kw)
+    func(250, 0, 45, 80, xofs=-24, yofs=-73, **kw)
+    func(300, 0, 45, 80, xofs=-24, yofs=-73, **kw)
+
+
 TREES = [
-    (1709, 'tree_01_conifer.gimp.png'),
-    (1765, 'tree_01_snow_conifer.gimp.png'),
-    (1744, 'tree_04_conifer.gimp.png'),
-    (1800, 'tree_04_snow_conifer.gimp.png'),
-    (1751, 'tree_05_conifer.gimp.png'),
-    (1807, 'tree_05_snow_conifer.gimp.png'),
-    (1716, 'tree_06_leaf.gimp.png'),
-    (1772, 'tree_06_snow_leaf.gimp.png'),
-    (1723, 'tree_07_leaf.gimp.png'),
-    (1779, 'tree_07_snow_leaf.gimp.png'),
-    (1730, 'tree_08_conifer.gimp.png'),
-    (1786, 'tree_08_snow_conifer.gimp.png'),
-    (1737, 'tree_09_conifer.gimp.png'),
-    (1793, 'tree_09_snow_conifer.gimp.png'),
-    (1758, 'tree_10_leaf.gimp.png'),
-    (1814, 'tree_10_snow_leaf.gimp.png'),
+    (1576, 'temperate/tree_wide_01_leaf.gimp.png', True),
+    (1583, 'temperate/tree_wide_02_leaf.gimp.png', True),
+    (1590, 'temperate/tree_wide_03_conifer.gimp.png', True),
+    (1597, 'arctic/tree_01_conifer.gimp.png', False),
+    (1604, 'temperate/tree_wide_05_leaf.gimp.png', True),
+    (1611, 'arctic/tree_08_conifer.gimp.png', False),
+    (1618, 'temperate/tree_wide_07_leaf.gimp.png', True),
+    (1625, 'arctic/tree_06_leaf.gimp.png', False),
+    (1632, 'arctic/tree_07_leaf.gimp.png', False),
+    (1639, 'arctic/tree_10_leaf.gimp.png', False),
+    (1646, 'temperate/tree_wide_11_leaf.gimp.png', True),
+    (1653, 'temperate/tree_wide_12_leaf.gimp.png',  True),
+    (1660, 'temperate/tree_wide_13_leaf.gimp.png',  True),
+    (1667, 'arctic/tree_09_conifer.gimp.png', False),
+    (1674, 'temperate/tree_wide_15_leaf.gimp.png', True),
+    (1681, 'temperate/tree_wide_16_leaf.gimp.png', True),
+    (1688, 'temperate/tree_wide_17_leaf.gimp.png', True),
+    (1695, 'temperate/tree_wide_18_leaf.gimp.png', True),
+    (1702, 'temperate/tree_wide_19_leaf.gimp.png', True),
+
+    # Arctic trees with snow
+    (1709, 'tree_01_conifer.gimp.png', False),
+    (1716, 'tree_06_leaf.gimp.png', False),
+    (1723, 'tree_07_leaf.gimp.png', False),
+    (1730, 'tree_08_conifer.gimp.png', False),
+    (1737, 'tree_09_conifer.gimp.png', False),
+    (1744, 'tree_04_conifer.gimp.png', False),
+    (1751, 'tree_05_conifer.gimp.png', False),
+    (1758, 'tree_10_leaf.gimp.png', False),
+    (1765, 'tree_01_snow_conifer.gimp.png', False),
+    (1772, 'tree_06_snow_leaf.gimp.png', False),
+    (1779, 'tree_07_snow_leaf.gimp.png', False),
+    (1786, 'tree_08_snow_conifer.gimp.png', False),
+    (1793, 'tree_09_snow_conifer.gimp.png', False),
+    (1800, 'tree_04_snow_conifer.gimp.png', False),
+    (1807, 'tree_05_snow_conifer.gimp.png', False),
+    (1814, 'tree_10_snow_leaf.gimp.png', False),
 ]
 
 
-for sprite_id, file in TREES:
+for sprite_id, file, is_wide in TREES:
     gen.add_sprite(grf.ReplaceSprites([(sprite_id, 7)]))
     png = grf.ImageFile('gfx/trees/' + file)
     sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(png, *args, **kw))
-    tmpl_tree_narrow(sprite)
+    if is_wide:
+        tmpl_tree_wide(sprite)
+    else:
+        tmpl_tree_narrow(sprite)
 
 
 # Tile slope to sprite offset
