@@ -55,7 +55,7 @@ def fix_palette(img):
     assert (img.mode == 'P')  # TODO
     pal = tuple(img.getpalette())
     if pal == PALETTE: return img
-    print(f'Custom palette in file {self.filename}, converting...')
+    print(f'Custom palette in file {img.filename}, converting...')
     # for i in range(256):
     #     if tuple(pal[i * 3: i*3 + 3]) != PALETTE[i * 3: i*3 + 3]:
     #         print(i, pal[i * 3: i*3 + 3], PALETTE[i * 3: i*3 + 3])
