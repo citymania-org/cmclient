@@ -66,6 +66,28 @@ def tmpl_infrastructure_road(func, **kw):
     tmpl_level_ground(func, 642, 152, **kw)
 
 
+def tmpl_infrastructure_railtunnels(func, **kw):
+    tmpl_long_slope  (func,   2, 200, **kw)
+    func(82, 152, 64, 39, xofs=-31, yofs=-38, **kw)
+    tmpl_short_slope (func,  82, 200, **kw)
+    func(162, 152, 64, 23, xofs=-31, yofs=-30, **kw)
+    tmpl_short_slope (func, 162, 200, **kw)
+    func(242, 152, 64, 23, xofs=-31, yofs=-30, **kw)
+    tmpl_long_slope  (func, 242, 200, **kw)
+    func(322, 152, 64, 39, xofs=-31, yofs=-38, **kw)
+
+
+def tmpl_temperate_road_tunnels_grid(func, **kw):
+    func(113, 27, 64, 39, xofs=-31, yofs=-8)
+    func(193, 27, 64, 39, xofs=-31, yofs=-38)
+    func(653, 27, 64, 23, xofs=-31, yofs=0)
+    func(733, 27, 64, 23, xofs=-31, yofs=-30)
+    func(337, 27, 64, 23, xofs=-31, yofs=0)
+    func(417, 27, 64, 23, xofs=-31, yofs=-30)
+    func(877, 27, 64, 39, xofs=-31, yofs=-8)
+    func(957, 27, 64, 39, xofs=-31, yofs=-38)
+
+
 def replace_ground_sprites(sprite_id, file, x, y, **kw):
     png = grf.ImageFile(file)
     gen.add_sprite(grf.ReplaceSprites([(sprite_id, 19)]))
@@ -96,6 +118,13 @@ def replace_additional_rough_sprites(sprite_id, file, x, y, **kw):
     sprite(160+x, y, 64, 31, xofs=-31, yofs=0, **kw)
     sprite(240+x, y, 64, 31, xofs=-31, yofs=0, **kw)
 
+
+def replace_sprites_template(sprite_id, amount, file, func):
+    png = grf.ImageFile(file)
+    gen.add_sprite(grf.ReplaceSprites([(sprite_id, amount)]))
+    func(lambda *args, **kw: gen.add_sprite(grf.FileSprite(png, *args, **kw)))
+
+
 # Normal land
 replace_ground_sprites(3981, 'gfx/grass_grid_temperate.gimp.png', 1, 1)
 
@@ -112,9 +141,7 @@ replace_additional_rough_sprites(4019, 'gfx/rough_grid_temperate.gimp.png', 1511
 replace_ground_sprites(4023, 'gfx/rocks_grid_temperate.gimp.png', 1, 1)
 
 # road sprites
-png = grf.ImageFile('gfx/infrastructure/road_grid_temperate.gimp.png')
-gen.add_sprite(grf.ReplaceSprites([(1332, 19)]))
-tmpl_infrastructure_road(lambda *args, **kw: gen.add_sprite(grf.FileSprite(png, *args, **kw)))
+replace_sprites_template(1332, 19, 'gfx/infrastructure/road_grid_temperate.gimp.png', tmpl_infrastructure_road)
 
 # different snow densities:
 # replace_ground_sprites(4493, 'gfx/snow14_grid_alpine.gimp.png', 1, 1)
@@ -124,6 +151,10 @@ replace_ground_sprites(4493, 'gfx/snow_transition_1.png', 1, 1)
 replace_ground_sprites(4512, 'gfx/snow_transition_2.png', 1, 1)
 replace_ground_sprites(4531, 'gfx/snow_transition_3.png', 1, 1)
 replace_ground_sprites(4550, 'gfx/snow_grid.gimp.png', 1, 1)
+
+replace_sprites_template(2365, 8, 'gfx/infrastructure/tunnel_rail_grid_temperate.gimp.png', tmpl_infrastructure_railtunnels)
+replace_sprites_template(2389, 8, 'gfx/infrastructure_road_tunnel_grid.png', tmpl_temperate_road_tunnels_grid)
+
 
 # shore sprites (replacing 16 seems to do these as well)
 # replace_shore_sprites(4062, 'gfx/water/seashore_grid_temperate.gimp.png', 1, 1)
@@ -284,7 +315,7 @@ for i in range(81):
         size=(1, 1),
         climate=0xf,
         eol_date=0,
-        flags=grf.Object.Flags.HAS_NO_FOUNDATION | grf.Object.Flags.ALLOW_UNDER_BRIDGE | grf.Object.Flags.CANNOT_REMOVE,
+        flags=grf.Object.Flags.HAS_NO_FOUNDATION | grf.Object.Flags.ALLOW_UNDER_BRIDGE | grf.Object.Flags.AUTOREMOVE,
     ))
 
 
