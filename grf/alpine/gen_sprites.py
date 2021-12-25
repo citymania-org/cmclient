@@ -109,8 +109,16 @@ def remap_file(f_in, f_out, palmap):
     im2.save(f_out)
 
 
-SOURCE_DIR = "/home/pavels/Projects/cmclient/local/ogfx-landscape-1.1.2-source/src/gfx"
 DEST_DIR = "gfx"
+
+SOURCE_DIR = "/home/pavels/Builds/OpenGFX/sprites/png"
+land_palmap = gen_land_recolor()
+for fname in ("miscellaneous/hq.png",
+              ):
+    remap_file(os.path.join(SOURCE_DIR, fname), os.path.join(DEST_DIR, fname), land_palmap)
+
+
+SOURCE_DIR = "/home/pavels/Projects/cmclient/local/ogfx-landscape-1.1.2-source/src/gfx"
 land_palmap = gen_land_recolor()
 for fname in ("grass_grid_temperate.gimp.png",
               "bare03_grid.gimp.png",
@@ -135,6 +143,7 @@ land_palmap = gen_land_recolor2()
 for fname in ("infrastructure_road_tunnel_grid.png",
               "infrastructure/road_grid_temperate.gimp.png",):
     remap_file(os.path.join(SOURCE_DIR, fname), os.path.join(DEST_DIR, fname), land_palmap)
+
 
 
 def meadow_recolor(x):
