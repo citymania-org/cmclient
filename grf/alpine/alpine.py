@@ -119,10 +119,10 @@ def replace_additional_rough_sprites(sprite_id, file, x, y, **kw):
     sprite(240+x, y, 64, 31, xofs=-31, yofs=0, **kw)
 
 
-def replace_sprites_template(sprite_id, amount, file, func):
+def replace_sprites_template(sprite_id, amount, file, func, **kw):
     png = grf.ImageFile(file)
     gen.add_sprite(grf.ReplaceSprites([(sprite_id, amount)]))
-    func(lambda *args, **kw: gen.add_sprite(grf.FileSprite(png, *args, **kw)))
+    func(lambda *args, **kw: gen.add_sprite(grf.FileSprite(png, *args, **kw)), **kw)
 
 
 # Normal land
@@ -154,6 +154,8 @@ replace_ground_sprites(4550, 'gfx/snow_grid.gimp.png', 1, 1)
 
 replace_sprites_template(2365, 8, 'gfx/infrastructure/tunnel_rail_grid_temperate.gimp.png', tmpl_infrastructure_railtunnels)
 replace_sprites_template(2389, 8, 'gfx/infrastructure_road_tunnel_grid.png', tmpl_temperate_road_tunnels_grid)
+
+replace_sprites_template(4061, 1, 'gfx/seashore_temperate.gimp.png', tmpl_level_ground, x=1, y=1)
 
 def tmpl_hq(func, **kw):
     func( 82,    8,  64,  31, xofs=-31, yofs=  0, **kw)
