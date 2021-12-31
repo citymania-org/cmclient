@@ -2514,4 +2514,6 @@ void IConsoleStdLibRegister()
 	IConsole::CmdRegister("cmresettowngrowth", citymania::ConResetTownGrowth);
 	IConsole::CmdRegister("cmloadcommands", citymania::ConLoadCommands);
 	IConsole::CmdRegister("cmgamespeed", citymania::ConGameSpeed);
+	IConsole::CmdRegister("cmstartrecord", citymania::ConStartRecord);
+	IConsole::CmdRegister("cmstoprecord", citymania::ConStopRecord);
 }

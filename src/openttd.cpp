@@ -69,6 +69,7 @@
 
 #include "linkgraph/linkgraphschedule.h"
 
+#include "citymania/cm_export.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_main.hpp"
 #include "citymania/cm_console_cmds.hpp"
@@ -1412,6 +1413,8 @@ void StateGameLoop()
 		CallWindowGameTickEvent();
 		NewsLoop();
 		cur_company.Restore();
+
+		citymania::ExportFrameSprites();
 	}
 
 	if (_pause_countdown > 0 && --_pause_countdown == 0) {

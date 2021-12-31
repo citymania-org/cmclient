@@ -19,6 +19,9 @@ bool ConResetTownGrowth(byte argc, char *argv[]);
 bool ConLoadCommands(byte argc, char *argv[]);
 void ExecuteFakeCommands(Date date, DateFract date_fract);
 
+bool ConStartRecord(byte argc, char *argv[]);
+bool ConStopRecord(byte argc, char *argv[]);
+
 } // namespace citymania
 
 #endif

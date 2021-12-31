@@ -1105,6 +1105,7 @@ static void DoDrawVehicle(const Vehicle *v)
 	EndSpriteCombine();
 }
 
+
 /**
  * Add the vehicle sprites that should be drawn at a part of the screen.
  * @param dpi Rectangle being drawn.

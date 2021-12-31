@@ -303,4 +303,14 @@ bool ConLoadCommands(byte argc, char *argv[]) {
     return true;
 }
 
+bool ConStartRecord(byte argc, char *argv[]) {
+    StartRecording();
+    return true;
+}
+
+bool ConStopRecord(byte argc, char *argv[]) {
+    StopRecording();
+    return true;
+}
+
 } // namespace citymania

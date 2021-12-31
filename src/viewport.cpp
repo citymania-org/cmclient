@@ -221,7 +221,7 @@ static TileInfo *_cur_ti;
 bool _draw_bounding_boxes = false;
 bool _draw_dirty_blocks = false;
 uint _dirty_block_colour = 0;
-static VpSpriteSorter _vp_sprite_sorter = nullptr;
+/* CM static */ VpSpriteSorter _vp_sprite_sorter = nullptr;
 
 static RailSnapMode _rail_snap_mode = RSM_NO_SNAP; ///< Type of rail track snapping (polyline tool).
 static LineSnapPoints _tile_snap_points; ///< Tile to which a rail track will be snapped to (polyline tool).
@@ -4189,4 +4189,60 @@ namespace citymania {
 	void (*DrawTileSelectionRect)(const TileInfo *ti, PaletteID pal) = &::DrawTileSelectionRect;
 	void (*DrawAutorailSelection)(const TileInfo *ti, HighLightStyle autorail_type, PaletteID pal) = &::DrawAutorailSelection;
 	HighLightStyle (*GetPartOfAutoLine)(int px, int py, const Point &selstart, const Point &selend, HighLightStyle dir) = &::GetPartOfAutoLine;
+	auto ViewportAddLandscape = &::ViewportAddLandscape;
+	auto ViewportAddVehicles = &::ViewportAddVehicles;
+	auto ViewportAddKdtreeSigns = &::ViewportAddKdtreeSigns;
+	auto ViewportDrawTileSprites = &::ViewportDrawTileSprites;
+
+	DrawPixelInfo *old_dpi;
+
+	void ViewportExportDrawBegin(const Viewport *vp, int left, int top, int right, int bottom) {
+	    old_dpi = _cur_dpi;
+	    _cur_dpi = &_vd.dpi;
+
+	    _vd.dpi.zoom = vp->zoom;
+	    int mask = ScaleByZoom(-1, vp->zoom);
+
+	    _vd.combine_sprites = SPRITE_COMBINE_NONE;
+
+	    _vd.dpi.width = (right - left) & mask;
+	    _vd.dpi.height = (bottom - top) & mask;
+	    _vd.dpi.left = left & mask;
+	    _vd.dpi.top = top & mask;
+	    _vd.dpi.pitch = old_dpi->pitch;
+	    _vd.last_child = nullptr;
+
+	    ViewportAddLandscape();
+	    ViewportAddVehicles(&_vd.dpi);
+
+	    ViewportAddKdtreeSigns(&_vd.dpi);
+
+	    // DrawTextEffects(&_vd.dpi);
+
+	    for (auto &psd : _vd.parent_sprites_to_draw) {
+	        _vd.parent_sprites_to_sort.push_back(&psd);
+	    }
+
+	    _vp_sprite_sorter(&_vd.parent_sprites_to_sort);
+	}
+
+	void ViewportExportDrawEnd() {
+	    _cur_dpi = old_dpi;
+	    _vd.string_sprites_to_draw.clear();
+	    _vd.tile_sprites_to_draw.clear();
+	    _vd.parent_sprites_to_draw.clear();
+	    _vd.parent_sprites_to_sort.clear();
+	    _vd.child_screen_sprites_to_draw.clear();
+	}
+
+	TileSpriteToDrawVector &ViewportExportGetTileSprites() {
+		return _vd.tile_sprites_to_draw;
+	}
+	ParentSpriteToSortVector &ViewportExportGetSortedParentSprites() {
+		return _vd.parent_sprites_to_sort;
+	}
+
+	ChildScreenSpriteToDrawVector &ViewportExportGetChildSprites() {
+		return _vd.child_screen_sprites_to_draw;
+	}
 }

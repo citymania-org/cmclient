@@ -116,6 +116,9 @@ struct CompanyBalanceChanged {
     Money delta;
 };
 
+struct Tick {};
+struct RealtimeTick {};
+
 enum class Slot : uint8 {
     GOAL = 10,
     CONTROLLER = 20,

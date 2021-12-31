@@ -3,17 +3,27 @@
 #include "cm_export.hpp"
 
 #include "../cargotype.h"
+#include "../debug.h"
+#include "../date_func.h"
 #include "../house.h"
 #include "../gfx_func.h"
 #include "../gfx_type.h"
 #include "../engine_base.h"
+#include "../screenshot.h"
 #include "../spritecache.h"
 #include "../strings_func.h"
 #include "../strings_type.h"
 #include "../table/palettes.h"
 #include "../table/sprites.h"
 #include "../table/train_cmd.h"
+#include "../viewport_sprite_sorter.h"
+#include "../viewport_type.h"
+#include "../window_func.h"
+#include "../window_gui.h"
+#include "../zoom_func.h"
 
+
+#include <set>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -32,19 +42,21 @@ protected:
     int i = 0;
     bool no_comma = true;
     char buffer[128];
+    bool js = false;
 
 public:
     std::ofstream f;
 
-    JsonWriter(const std::string &fname) {
+    JsonWriter(const std::string &fname, bool js=false) {
+        this->js = js;
         f.open(fname.c_str());
-        f << "OPENTTD = {";
+        if (this->js) f << "OPENTTD = {";
         no_comma = true;
     }
 
     ~JsonWriter() {
         this->ident(false);
-        f << "}" << std::endl;
+        if (this->js) f << "}" << std::endl;
         f.close();
     }
 
@@ -284,11 +296,226 @@ void WriteEngineInfo(JsonWriter &j) {
 } // namespace export
 
 void ExportOpenttdData(const std::string &filename) {
-    data_export::JsonWriter j(filename);
+    data_export::JsonWriter j(filename, true);
     data_export::WriteHouseSpecInfo(j);
     data_export::WriteCargoSpecInfo(j);
     data_export::WritePaletteInfo(j);
     data_export::WriteEngineInfo(j);
+}
+
+struct StringSpriteToDraw {
+    StringID string;
+    Colours colour;
+    int32 x;
+    int32 y;
+    uint64 params[2];
+    uint16 width;
+};
+
+struct TileSpriteToDraw {
+    SpriteID image;
+    PaletteID pal;
+    const SubSprite *sub;           ///< only draw a rectangular part of the sprite
+    int32 x;                        ///< screen X coordinate of sprite
+    int32 y;                        ///< screen Y coordinate of sprite
+};
+
+struct ChildScreenSpriteToDraw {
+    SpriteID image;
+    PaletteID pal;
+    const SubSprite *sub;           ///< only draw a rectangular part of the sprite
+    int32 x;
+    int32 y;
+    int next;                       ///< next child to draw (-1 at the end)
+};
+
+typedef std::vector<TileSpriteToDraw> TileSpriteToDrawVector;
+typedef std::vector<ParentSpriteToDraw> ParentSpriteToDrawVector;
+typedef std::vector<ChildScreenSpriteToDraw> ChildScreenSpriteToDrawVector;
+
+extern void ViewportExportDrawBegin(const Viewport *vp, int left, int top, int right, int bottom);
+extern void ViewportExportDrawEnd();
+
+extern TileSpriteToDrawVector &ViewportExportGetTileSprites();
+extern ParentSpriteToSortVector &ViewportExportGetSortedParentSprites();
+extern ChildScreenSpriteToDrawVector &ViewportExportGetChildSprites();
+
+void ViewportExportJson(const Viewport *vp, int left, int top, int right, int bottom) {
+    ViewportExportDrawBegin(vp, left, top, right, bottom);
+
+    auto fname = fmt::format("snaps/tick_{}.json", _tick_counter);
+    Debug(misc, 0, "Exporting tick {} into {} box ({},{})-({},{}) ", _tick_counter, fname, left, top, right, bottom);
+    data_export::JsonWriter j(fname);
+    j.begin_dict();
+    j.kv("tick", _tick_counter);
+    j.begin_list_with_key("tile_sprites");
+    for (auto &ts : ViewportExportGetTileSprites()) {
+        j.begin_dict();
+        j.kv("image", ts.image);
+        j.kv("pal", ts.pal);
+        j.kv("x", ts.x);
+        j.kv("y", ts.y);
+        if (ts.sub) {
+            j.begin_dict_with_key("sub");
+            j.kv("left", ts.sub->left);
+            j.kv("top", ts.sub->top);
+            j.kv("right", ts.sub->right);
+            j.kv("bottom", ts.sub->bottom);
+            j.end_dict();
+        }
+        j.end_dict();
+    }
+    j.end_list();
+    j.begin_list_with_key("parent_sprites");
+    auto &child_sprites = ViewportExportGetChildSprites();
+    for (const ParentSpriteToDraw *s : ViewportExportGetSortedParentSprites()) {
+        j.begin_dict();
+        j.kv("image", s->image);
+        j.kv("pal", s->pal);
+        j.kv("x", s->x);
+        j.kv("y", s->y);
+        j.kv("left", s->left);
+        j.kv("top", s->top);
+        j.kv("xmin", s->xmin);
+        j.kv("ymin", s->ymin);
+        j.kv("zmin", s->zmin);
+        j.kv("xmax", s->xmax);
+        j.kv("ymax", s->ymax);
+        j.kv("zmax", s->zmax);
+        if (s->sub) {
+            j.begin_dict_with_key("sub");
+            j.kv("left", s->sub->left);
+            j.kv("top", s->sub->top);
+            j.kv("right", s->sub->right);
+            j.kv("bottom", s->sub->bottom);
+            j.end_dict();
+        }
+        int child_idx = s->first_child;
+        if (child_idx >= 0) {
+            j.begin_list_with_key("children");
+            while (child_idx >= 0) {
+                const ChildScreenSpriteToDraw *cs = &child_sprites[child_idx];
+                child_idx = cs->next;
+                j.begin_dict();
+                j.kv("image", cs->image);
+                j.kv("pal", cs->pal);
+                j.kv("x", cs->x);
+                j.kv("y", cs->y);
+                if (cs->sub) {
+                    j.begin_dict_with_key("sub");
+                    j.kv("left", cs->sub->left);
+                    j.kv("top", cs->sub->top);
+                    j.kv("right", cs->sub->right);
+                    j.kv("bottom", cs->sub->bottom);
+                    j.end_dict();
+                }
+                j.end_dict();
+            }
+            j.end_dict();
+        }
+        j.end_dict();
+
+    }
+    j.end_list();
+    j.end_dict();
+
+    ViewportExportDrawEnd();
+}
+
+void ExportFrameSpritesJson() {
+    Viewport vp;
+    SetupScreenshotViewport(SC_VIEWPORT, &vp);
+    Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
+    vp.zoom = w->viewport->zoom;
+    ViewportExportJson(&vp,
+        vp.virtual_left,
+        vp.virtual_top,
+        vp.virtual_left + vp.virtual_width,
+        vp.virtual_top + vp.virtual_height
+    );
+}
+
+void ExportSprite(SpriteID sprite, SpriteType type) {
+    static std::set<SpriteID> exported;
+    if (exported.find(sprite) != exported.end()) return;
+    auto fname = fmt::format("snaps/sprite_{}.bin", sprite);
+    std::ofstream f(fname, std::ios::binary);
+    uint size;
+    void *raw = GetRawSprite(sprite, type);
+    if (type == ST_RECOLOUR) size = 257;
+    else size = *(((size_t *)raw) - 1);
+    f.write((char *)raw, size);
+    exported.insert(sprite);
+}
+
+void ExportSpriteAndPal(SpriteID img, SpriteID pal) {
+    SpriteID real_sprite = GB(img, 0, SPRITE_WIDTH);
+    if (HasBit(img, PALETTE_MODIFIER_TRANSPARENT)) {
+        ExportSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR);
+        ExportSprite(real_sprite, ST_NORMAL);
+    } else if (pal != PAL_NONE) {
+        if (HasBit(pal, PALETTE_TEXT_RECOLOUR)) {
+            //SetColourRemap((TextColour)GB(pal, 0, PALETTE_WIDTH));
+        } else {
+            ExportSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR);
+        }
+        ExportSprite(real_sprite, ST_NORMAL);
+    } else {
+        ExportSprite(real_sprite, ST_NORMAL);
+    }
+}
+
+void ViewportExport(const Viewport *vp, int left, int top, int right, int bottom) {
+    ViewportExportDrawBegin(vp, left, top, right, bottom);
+
+    auto fname = fmt::format("snaps/tick_{}.bin", _tick_counter);
+    Debug(misc, 0, "Exporting tick {} into {} box ({},{})-({},{}) ", _tick_counter, fname, left, top, right, bottom);
+    std::ofstream f(fname, std::ios::binary);
+    auto &tile_sprites = ViewportExportGetTileSprites();
+    uint64 n = tile_sprites.size();
+    f.write((char *)&n, 8);
+    f.write((const char *)tile_sprites.data(), n * sizeof(TileSpriteToDraw));
+    for (const auto &ts : tile_sprites) ExportSpriteAndPal(ts.image, ts.pal);
+
+    auto &parent_sprites = ViewportExportGetSortedParentSprites();
+    n = parent_sprites.size();
+    f.write((char *)&n, 8);
+    for (const ParentSpriteToDraw *s : ViewportExportGetSortedParentSprites()) {
+        f.write((const char *)s, sizeof(ParentSpriteToDraw) - 4);
+        ExportSpriteAndPal(s->image, s->pal);
+    }
+
+    auto &child_sprites = ViewportExportGetChildSprites();
+    n = child_sprites.size();
+    f.write((char *)&n, 8);
+    f.write((const char *)child_sprites.data(), n * sizeof(ChildScreenSpriteToDraw));
+    for (const auto &cs : child_sprites) ExportSpriteAndPal(cs.image, cs.pal);
+
+    ViewportExportDrawEnd();
+}
+
+bool _is_recording = false;
+
+void ExportFrameSprites() {
+    if (!_is_recording) return;
+    Viewport vp;
+    SetupScreenshotViewport(SC_VIEWPORT, &vp);
+    Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
+    vp.zoom = w->viewport->zoom;
+    ViewportExport(&vp,
+        vp.virtual_left,
+        vp.virtual_top,
+        vp.virtual_left + vp.virtual_width,
+        vp.virtual_top + vp.virtual_height
+    );
+}
+
+void StartRecording() {
+    _is_recording = true;
+}
+
+void StopRecording() {
+    _is_recording = false;
 }
 
 } // namespace citymania
