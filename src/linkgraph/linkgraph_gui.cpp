@@ -14,11 +14,13 @@
 #include "../company_gui.h"
 #include "../date_func.h"
 #include "../viewport_func.h"
-#include "../smallmap_gui.h"
+// #include "../smallmap_gui.h"
 #include "../core/geometry_func.hpp"
 #include "../widgets/link_graph_legend_widget.h"
 
 #include "table/strings.h"
+
+#include "../citymania/cm_minimap.hpp"
 
 #include "../safeguards.h"
 
@@ -65,8 +67,7 @@ void LinkGraphOverlay::RebuildCache()
 		StationLinkMap &seen_links = this->cached_links[from];
 
 		uint supply = 0;
-		CargoID c;
-		FOR_EACH_SET_CARGO_ID(c, this->cargo_mask) {
+		for (CargoID c : SetCargoBitIterator(this->cargo_mask)) {
 			if (!CargoSpec::Get(c)->IsValid()) continue;
 			if (!LinkGraph::IsValidID(sta->goods[c].link_graph)) continue;
 			const LinkGraph &lg = *LinkGraph::Get(sta->goods[c].link_graph);
@@ -192,8 +193,7 @@ inline bool LinkGraphOverlay::IsLinkVisible(Point pta, Point ptb, const DrawPixe
  */
 void LinkGraphOverlay::AddLinks(const Station *from, const Station *to)
 {
-	CargoID c;
-	FOR_EACH_SET_CARGO_ID(c, this->cargo_mask) {
+	for (CargoID c : SetCargoBitIterator(this->cargo_mask)) {
 		if (!CargoSpec::Get(c)->IsValid()) continue;
 		const GoodsEntry &ge = from->goods[c];
 		if (!LinkGraph::IsValidID(ge.link_graph) ||
@@ -224,7 +224,7 @@ void LinkGraphOverlay::AddLinks(const Station *from, const Station *to)
 {
 	/* multiply the numbers by 32 in order to avoid comparing to 0 too often. */
 	if (cargo.capacity == 0 ||
-			max(cargo.usage, cargo.planned) * 32 / (cargo.capacity + 1) < max(new_usg, new_plan) * 32 / (new_cap + 1)) {
+			std::max(cargo.usage, cargo.planned) * 32 / (cargo.capacity + 1) < std::max(new_usg, new_plan) * 32 / (new_cap + 1)) {
 		cargo.capacity = new_cap;
 		cargo.usage = new_usg;
 		cargo.planned = new_plan;
@@ -272,7 +272,7 @@ void LinkGraphOverlay::DrawLinks(const DrawPixelInfo *dpi) const
  */
 void LinkGraphOverlay::DrawContent(Point pta, Point ptb, const LinkProperties &cargo) const
 {
-	uint usage_or_plan = min(cargo.capacity * 2 + 1, max(cargo.usage, cargo.planned));
+	uint usage_or_plan = std::min(cargo.capacity * 2 + 1, std::max(cargo.usage, cargo.planned));
 	int colour = LinkGraphOverlay::LINK_COLOURS[usage_or_plan * lengthof(LinkGraphOverlay::LINK_COLOURS) / (cargo.capacity * 2 + 2)];
 	int dash = cargo.shared ? this->scale * 4 : 0;
 
@@ -302,7 +302,7 @@ void LinkGraphOverlay::DrawStationDots(const DrawPixelInfo *dpi) const
 		Point pt = this->GetStationMiddle(st);
 		if (!this->IsPointVisible(pt, dpi, 3 * this->scale)) continue;
 
-		uint r = this->scale * 2 + this->scale * 2 * min(200, i->second) / 200;
+		uint r = this->scale * 2 + this->scale * 2 * std::min(200U, i->second) / 200;
 
 		LinkGraphOverlay::DrawVertex(pt.x, pt.y, r,
 				_colour_gradient[st->owner != OWNER_NONE ?
@@ -346,7 +346,7 @@ Point LinkGraphOverlay::GetStationMiddle(const Station *st) const
 		return GetViewportStationMiddle(this->window->viewport, st);
 	} else {
 		/* assume this is a smallmap */
-		return static_cast<const SmallMapWindow *>(this->window)->GetStationMiddle(st);
+		return static_cast<const citymania::SmallMapWindow *>(this->window)->GetStationMiddle(st);
 	}
 }
 
@@ -375,7 +375,7 @@ void LinkGraphOverlay::SetCompanyMask(uint32 company_mask)
 /** Make a number of rows with buttons for each company for the linkgraph legend window. */
 NWidgetBase *MakeCompanyButtonRowsLinkGraphGUI(int *biggest_index)
 {
-	return MakeCompanyButtonRows(biggest_index, WID_LGL_COMPANY_FIRST, WID_LGL_COMPANY_LAST, 3, STR_NULL);
+	return MakeCompanyButtonRows(biggest_index, WID_LGL_COMPANY_FIRST, WID_LGL_COMPANY_LAST, COLOUR_GREY, 3, STR_NULL);
 }
 
 NWidgetBase *MakeSaturationLegendLinkGraphGUI(int *biggest_index)
@@ -383,7 +383,8 @@ NWidgetBase *MakeSaturationLegendLinkGraphGUI(int *biggest_index)
 	NWidgetVertical *panel = new NWidgetVertical(NC_EQUALSIZE);
 	for (uint i = 0; i < lengthof(LinkGraphOverlay::LINK_COLOURS); ++i) {
 		NWidgetBackground * wid = new NWidgetBackground(WWT_PANEL, COLOUR_DARK_GREEN, i + WID_LGL_SATURATION_FIRST);
-		wid->SetMinimalSize(50, FONT_HEIGHT_SMALL);
+		wid->SetMinimalSize(50, 0);
+		wid->SetMinimalTextLines(1, 0, FS_SMALL);
 		wid->SetFill(1, 1);
 		wid->SetResize(0, 0);
 		panel->Add(wid);
@@ -403,14 +404,16 @@ NWidgetBase *MakeCargoesLegendLinkGraphGUI(int *biggest_index)
 			row = new NWidgetHorizontal(NC_EQUALSIZE);
 		}
 		NWidgetBackground * wid = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, i + WID_LGL_CARGO_FIRST);
-		wid->SetMinimalSize(25, FONT_HEIGHT_SMALL);
+		wid->SetMinimalSize(25, 0);
+		wid->SetMinimalTextLines(1, 0, FS_SMALL);
 		wid->SetFill(1, 1);
 		wid->SetResize(0, 0);
 		row->Add(wid);
 	}
 	/* Fill up last row */
 	for (uint i = 0; i < 4 - (NUM_CARGO - 1) % 5; ++i) {
-		NWidgetSpacer *spc = new NWidgetSpacer(25, FONT_HEIGHT_SMALL);
+		NWidgetSpacer *spc = new NWidgetSpacer(25, 0);
+		spc->SetMinimalTextLines(1, 0, FS_SMALL);
 		spc->SetFill(1, 1);
 		spc->SetResize(0, 0);
 		row->Add(spc);
@@ -454,7 +457,7 @@ static const NWidgetPart _nested_linkgraph_legend_widgets[] = {
 	EndContainer()
 };
 
-assert_compile(WID_LGL_SATURATION_LAST - WID_LGL_SATURATION_FIRST ==
+static_assert(WID_LGL_SATURATION_LAST - WID_LGL_SATURATION_FIRST ==
 		lengthof(LinkGraphOverlay::LINK_COLOURS) - 1);
 
 static WindowDesc _linkgraph_legend_desc(

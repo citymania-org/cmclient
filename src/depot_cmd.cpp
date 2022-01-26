@@ -26,10 +26,10 @@
  * @param name The name to check.
  * @return True if there is no depot with the given name.
  */
-static bool IsUniqueDepotName(const char *name)
+static bool IsUniqueDepotName(const std::string &name)
 {
 	for (const Depot *d : Depot::Iterate()) {
-		if (d->name != nullptr && strcmp(d->name, name) == 0) return false;
+		if (!d->name.empty() && d->name == name) return false;
 	}
 
 	return true;
@@ -44,7 +44,7 @@ static bool IsUniqueDepotName(const char *name)
  * @param text the new name or an empty string when resetting to the default
  * @return the cost of this operation or an error
  */
-CommandCost CmdRenameDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRenameDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Depot *d = Depot::GetIfValid(p1);
 	if (d == nullptr) return CMD_ERROR;
@@ -52,7 +52,7 @@ CommandCost CmdRenameDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 	CommandCost ret = CheckTileOwnership(d->xy);
 	if (ret.Failed()) return ret;
 
-	bool reset = StrEmpty(text);
+	bool reset = text.empty();
 
 	if (!reset) {
 		if (Utf8StringLength(text) >= MAX_LENGTH_DEPOT_NAME_CHARS) return CMD_ERROR;
@@ -60,13 +60,11 @@ CommandCost CmdRenameDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 	}
 
 	if (flags & DC_EXEC) {
-		free(d->name);
-
 		if (reset) {
-			d->name = nullptr;
+			d->name.clear();
 			MakeDefaultName(d);
 		} else {
-			d->name = stredup(text);
+			d->name = text;
 		}
 
 		/* Update the orders and depot */

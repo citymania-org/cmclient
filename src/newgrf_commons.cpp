@@ -264,7 +264,7 @@ void IndustryOverrideManager::SetEntitySpec(IndustrySpec *inds)
 
 	if (ind_id == invalid_ID) {
 		/* Not found.
-		 * Or it has already been overridden, so you've lost your place old boy.
+		 * Or it has already been overridden, so you've lost your place.
 		 * Or it is a simple substitute.
 		 * We need to find a free available slot */
 		ind_id = this->AddEntityID(inds->grf_prop.local_id, inds->grf_prop.grffile->grfid, inds->grf_prop.subst_id);
@@ -319,7 +319,7 @@ void ObjectOverrideManager::SetEntitySpec(ObjectSpec *spec)
 
 	if (type == invalid_ID) {
 		/* Not found.
-		 * Or it has already been overridden, so you've lost your place old boy.
+		 * Or it has already been overridden, so you've lost your place.
 		 * Or it is a simple substitute.
 		 * We need to find a free available slot */
 		type = this->AddEntityID(spec->grf_prop.local_id, spec->grf_prop.grffile->grfid, OBJECT_TRANSMITTER);
@@ -530,12 +530,12 @@ void ErrorUnknownCallbackResult(uint32 grfid, uint16 cbid, uint16 cb_res)
 
 	SetDParamStr(0, grfconfig->GetName());
 	GetString(buffer, STR_NEWGRF_BUGGY, lastof(buffer));
-	DEBUG(grf, 0, "%s", buffer + 3);
+	Debug(grf, 0, "{}", buffer + 3);
 
 	SetDParam(1, cbid);
 	SetDParam(2, cb_res);
 	GetString(buffer, STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT, lastof(buffer));
-	DEBUG(grf, 0, "%s", buffer + 3);
+	Debug(grf, 0, "{}", buffer + 3);
 }
 
 /**
@@ -664,8 +664,7 @@ uint32 NewGRFSpriteLayout::PrepareLayout(uint32 orig_offset, uint32 newgrf_groun
 
 	/* Create a copy of the spritelayout, so we can modify some values.
 	 * Also include the groundsprite into the sequence for easier processing. */
-	/*C++17: DrawTileSeqStruct *result = &*/ result_seq.emplace_back();
-	DrawTileSeqStruct *result = &result_seq.back();
+	DrawTileSeqStruct *result = &result_seq.emplace_back();
 	result->image = ground;
 	result->delta_x = 0;
 	result->delta_y = 0;
@@ -675,8 +674,7 @@ uint32 NewGRFSpriteLayout::PrepareLayout(uint32 orig_offset, uint32 newgrf_groun
 	foreach_draw_tile_seq(dtss, this->seq) {
 		result_seq.push_back(*dtss);
 	}
-	result_seq.emplace_back() /*C++17: .MakeTerminator()*/;
-	result_seq.back().MakeTerminator();
+	result_seq.emplace_back().MakeTerminator();
 	/* Determine the var10 values the action-1-2-3 chains needs to be resolved for,
 	 * and apply the default sprite offsets (unless disabled). */
 	const TileLayoutRegisters *regs = this->registers;

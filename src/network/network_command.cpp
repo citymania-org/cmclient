@@ -15,6 +15,8 @@
 #include "../company_func.h"
 #include "../settings_type.h"
 
+#include "../citymania/cm_commands.hpp"
+
 #include "../safeguards.h"
 
 /** Table with all the callbacks we'll use for conversion*/
@@ -23,7 +25,7 @@ static CommandCallback * const _callback_table[] = {
 	/* 0x01 */ CcBuildPrimaryVehicle,
 	/* 0x02 */ CcBuildAirport,
 	/* 0x03 */ CcBuildBridge,
-	/* 0x04 */ CcPlaySound_SPLAT_WATER,
+	/* 0x04 */ CcPlaySound_CONSTRUCTION_WATER,
 	/* 0x05 */ CcBuildDocks,
 	/* 0x06 */ CcFoundTown,
 	/* 0x07 */ CcBuildRoadTunnel,
@@ -33,13 +35,13 @@ static CommandCallback * const _callback_table[] = {
 	/* 0x0B */ CcRailDepot,
 	/* 0x0C */ CcPlaceSign,
 	/* 0x0D */ CcPlaySound_EXPLOSION,
-	/* 0x0E */ CcPlaySound_SPLAT_OTHER,
-	/* 0x0F */ CcPlaySound_SPLAT_RAIL,
+	/* 0x0E */ CcPlaySound_CONSTRUCTION_OTHER,
+	/* 0x0F */ CcPlaySound_CONSTRUCTION_RAIL,
 	/* 0x10 */ CcStation,
 	/* 0x11 */ CcTerraform,
 	/* 0x12 */ CcAI,
 	/* 0x13 */ CcCloneVehicle,
-	/* 0x14 */ CcGiveMoney,
+	/* 0x14 */ nullptr,
 	/* 0x15 */ CcCreateGroup,
 	/* 0x16 */ CcFoundRandomTown,
 	/* 0x17 */ CcRoadStop,
@@ -56,7 +58,7 @@ static CommandCallback * const _callback_table[] = {
  */
 void CommandQueue::Append(CommandPacket *p)
 {
-	CommandPacket *add = MallocT<CommandPacket>(1);
+	CommandPacket *add = new CommandPacket();
 	*add = *p;
 	add->next = nullptr;
 	if (this->first == nullptr) {
@@ -113,7 +115,7 @@ void CommandQueue::Free()
 {
 	CommandPacket *cp;
 	while ((cp = this->Pop()) != nullptr) {
-		free(cp);
+		delete cp;
 	}
 	assert(this->count == 0);
 }
@@ -133,7 +135,7 @@ static CommandQueue _local_execution_queue;
  * @param text The text to pass
  * @param company The company that wants to send the command
  */
-void NetworkSendCommand(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback *callback, const char *text, CompanyID company)
+void NetworkSendCommand(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback *callback, const std::string &text, CompanyID company)
 {
 	assert((cmd & CMD_FLAGS_MASK) == 0);
 
@@ -144,8 +146,7 @@ void NetworkSendCommand(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, Comman
 	c.p2       = p2;
 	c.cmd      = cmd;
 	c.callback = callback;
-
-	strecpy(c.text, (text != nullptr) ? text : "", lastof(c.text));
+	c.text     = text;
 
 	if (_network_server) {
 		/* If we are the server, we queue the command in our 'special' queue.
@@ -164,7 +165,8 @@ void NetworkSendCommand(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, Comman
 	c.frame = 0; // The client can't tell which frame, so just make it 0
 
 	/* Clients send their command to the server and forget all about the packet */
-	MyClient::SendCommand(&c);
+	// MyClient::SendCommand(&c);
+	citymania::SendClientCommand(&c);
 }
 
 /**
@@ -180,7 +182,7 @@ void NetworkSyncCommandQueue(NetworkClientSocket *cs)
 {
 	for (CommandPacket *p = _local_execution_queue.Peek(); p != nullptr; p = p->next) {
 		CommandPacket c = *p;
-		c.callback = 0;
+		c.callback = nullptr;
 		cs->outgoing_queue.Append(&c);
 	}
 }
@@ -203,7 +205,7 @@ void NetworkExecuteLocalCommandQueue()
 		if (_frame_counter > cp->frame) {
 			/* If we reach here, it means for whatever reason, we've already executed
 			 * past the command we need to execute. */
-			error("[net] Trying to execute a packet in the past!");
+			error("[net] Trying to execute a packet in the past! (frame=%u cmd_frame=%u tile=%u p1=%u p2=%u cmd=%u)", (uint)_frame_counter, (uint)cp->frame, (uint)cp->tile, (uint)cp->p1, (uint)cp->p2, (uint)cp->cmd);
 		}
 
 		/* We can execute this command */
@@ -212,7 +214,7 @@ void NetworkExecuteLocalCommandQueue()
 		DoCommandP(cp, cp->my_cmd);
 
 		queue.Pop();
-		free(cp);
+		delete cp;
 	}
 
 	/* Local company may have changed, so we should not restore the old value */
@@ -271,7 +273,7 @@ static void DistributeQueue(CommandQueue *queue, const NetworkClientSocket *owne
 	while (--to_go >= 0 && (cp = queue->Pop(true)) != nullptr) {
 		DistributeCommandPacket(*cp, owner);
 		NetworkAdminCmdLogging(owner, cp);
-		free(cp);
+		delete cp;
 	}
 }
 
@@ -298,13 +300,13 @@ const char *NetworkGameSocketHandler::ReceiveCommand(Packet *p, CommandPacket *c
 	cp->company = (CompanyID)p->Recv_uint8();
 	cp->cmd     = p->Recv_uint32();
 	if (!IsValidCommand(cp->cmd))               return "invalid command";
-	if (GetCommandFlags(cp->cmd) & CMD_OFFLINE) return "offline only command";
+	if (GetCommandFlags(cp->cmd) & CMD_OFFLINE) return "single-player only command";
 	if ((cp->cmd & CMD_FLAGS_MASK) != 0)        return "invalid command flag";
 
 	cp->p1      = p->Recv_uint32();
 	cp->p2      = p->Recv_uint32();
 	cp->tile    = p->Recv_uint32();
-	p->Recv_string(cp->text, lengthof(cp->text), (!_network_server && GetCommandFlags(cp->cmd) & CMD_STR_CTRL) != 0 ? SVS_ALLOW_CONTROL_CODE | SVS_REPLACE_WITH_QUESTION_MARK : SVS_REPLACE_WITH_QUESTION_MARK);
+	cp->text    = p->Recv_string(NETWORK_COMPANY_NAME_LENGTH, (!_network_server && GetCommandFlags(cp->cmd) & CMD_STR_CTRL) != 0 ? SVS_ALLOW_CONTROL_CODE | SVS_REPLACE_WITH_QUESTION_MARK : SVS_REPLACE_WITH_QUESTION_MARK);
 
 	byte callback = p->Recv_uint8();
 	if (callback >= lengthof(_callback_table))  return "invalid callback";
@@ -333,7 +335,7 @@ void NetworkGameSocketHandler::SendCommand(Packet *p, const CommandPacket *cp)
 	}
 
 	if (callback == lengthof(_callback_table)) {
-		DEBUG(net, 0, "Unknown callback. (Pointer: %p) No callback sent", cp->callback);
+		Debug(net, 0, "Unknown callback for command; no callback sent (command: {})", cp->cmd);
 		callback = 0; // _callback_table[0] == nullptr
 	}
 	p->Send_uint8 (callback);

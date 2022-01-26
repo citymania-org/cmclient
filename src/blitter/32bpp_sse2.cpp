@@ -20,7 +20,7 @@
 /** Instantiation of the SSE2 32bpp blitter factory. */
 static FBlitter_32bppSSE2 iFBlitter_32bppSSE2;
 
-Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator)
+Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator, Blitter_32bppSimple *base_blitter)
 {
 	/* First uint32 of a line = the number of transparent pixels from the left.
 	 * Second uint32 of a line = the number of transparent pixels from the right.
@@ -80,7 +80,7 @@ Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::Sprite *sprite, Alloca
 						if (src->m >= PALETTE_ANIM_START) has_anim = true;
 
 						/* Get brightest value (or default brightness if it's a black pixel). */
-						const uint8 rgb_max = max(src->r, max(src->g, src->b));
+						const uint8 rgb_max = std::max({src->r, src->g, src->b});
 						dst_mv->v = (rgb_max == 0) ? Blitter_32bppBase::DEFAULT_BRIGHTNESS : rgb_max;
 
 						/* Pre-convert the mapping channel to a RGB value. */
@@ -89,9 +89,11 @@ Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::Sprite *sprite, Alloca
 						dst_rgba->g = colour.g;
 						dst_rgba->b = colour.b;
 					} else {
+						has_remap = true;
 						dst_rgba->r = src->r;
 						dst_rgba->g = src->g;
 						dst_rgba->b = src->b;
+						dst_mv->m = base_blitter->CM_GetMForRGB(src->r, src->g, src->b);
 						dst_mv->v = Blitter_32bppBase::DEFAULT_BRIGHTNESS;
 					}
 				} else {

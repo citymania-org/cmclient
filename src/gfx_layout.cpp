@@ -116,7 +116,7 @@ void Font::getGlyphAdvance(LEGlyphID glyph, LEPoint &advance) const
 
 le_bool Font::getGlyphPoint(LEGlyphID glyph, le_int32 pointNumber, LEPoint &point) const
 {
-	return FALSE;
+	return false;
 }
 
 /**
@@ -431,7 +431,7 @@ int FallbackParagraphLayout::FallbackLine::GetLeading() const
 {
 	int leading = 0;
 	for (const auto &run : *this) {
-		leading = max(leading, run.GetLeading());
+		leading = std::max(leading, run.GetLeading());
 	}
 
 	return leading;
@@ -696,7 +696,7 @@ Layouter::Layouter(const char *str, int maxw, TextColour colour, FontSize fontsi
 			if (line.layout == nullptr) {
 				static bool warned = false;
 				if (!warned) {
-					DEBUG(misc, 0, "ICU layouter bailed on the font. Falling back to the fallback layouter");
+					Debug(misc, 0, "ICU layouter bailed on the font. Falling back to the fallback layouter");
 					warned = true;
 				}
 
@@ -747,7 +747,7 @@ Dimension Layouter::GetBounds()
 {
 	Dimension d = { 0, 0 };
 	for (const auto &l : *this) {
-		d.width = max<uint>(d.width, l->GetWidth());
+		d.width = std::max<uint>(d.width, l->GetWidth());
 		d.height += l->GetLeading();
 	}
 	return d;
@@ -888,6 +888,12 @@ Layouter::LineCacheItem &Layouter::GetCachedParagraphLayout(const char *str, siz
 		linecache = new LineCache();
 	}
 
+	if (auto match = linecache->find(LineCacheQuery{state, std::string_view{str, len}});
+		match != linecache->end()) {
+		return match->second;
+	}
+
+	/* Create missing entry */
 	LineCacheKey key;
 	key.state_before = state;
 	key.str.assign(str, len);

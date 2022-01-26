@@ -17,6 +17,7 @@
 #include "cargo_type.h"
 #include "vehicle_type.h"
 #include "core/multimap.hpp"
+#include "saveload/saveload.h"
 #include <list>
 
 /** Unique identifier for a single cargo packet. */
@@ -32,7 +33,7 @@ struct GoodsEntry; // forward-declare for Stage() and RerouteStalePackets()
 
 template <class Tinst, class Tcont> class CargoList;
 class StationCargoList; // forward-declare, so we can use it in VehicleCargoList.
-extern const struct SaveLoad *GetCargoPacketDesc();
+extern SaveLoadTable GetCargoPacketDesc();
 
 typedef uint32 TileOrStationID;
 
@@ -58,7 +59,7 @@ private:
 	friend class VehicleCargoList;
 	friend class StationCargoList;
 	/** We want this to be saved, right? */
-	friend const struct SaveLoad *GetCargoPacketDesc();
+	friend SaveLoadTable GetCargoPacketDesc();
 public:
 	/** Maximum number of items in a single cargo packet. */
 	static const uint16 MAX_COUNT = UINT16_MAX;
@@ -304,8 +305,8 @@ public:
 	friend class StationCargoList;
 	/** The super class ought to know what it's doing. */
 	friend class CargoList<VehicleCargoList, CargoPacketList>;
-	/** The vehicles have a cargo list (and we want that saved). */
-	friend const struct SaveLoad *GetVehicleDescription(VehicleType vt);
+	/* So we can use private/protected variables in the saveload code */
+	friend class SlVehicleCommon;
 
 	friend class CargoShift;
 	friend class CargoTransfer;
@@ -423,7 +424,7 @@ public:
 	uint Reroute(uint max_move, VehicleCargoList *dest, StationID avoid, StationID avoid2, const GoodsEntry *ge);
 
 	/**
-	 * Are two the two CargoPackets mergeable in the context of
+	 * Are the two CargoPackets mergeable in the context of
 	 * a list of CargoPackets for a Vehicle?
 	 * @param cp1 First CargoPacket.
 	 * @param cp2 Second CargoPacket.
@@ -455,8 +456,8 @@ protected:
 public:
 	/** The super class ought to know what it's doing. */
 	friend class CargoList<StationCargoList, StationCargoPacketMap>;
-	/** The stations, via GoodsEntry, have a CargoList. */
-	friend const struct SaveLoad *GetGoodsDesc();
+	/* So we can use private/protected variables in the saveload code */
+	friend class SlStationGoods;
 
 	friend class CargoLoad;
 	friend class CargoTransfer;
@@ -486,7 +487,7 @@ public:
 		while (!next.IsEmpty()) {
 			if (this->packets.find(next.Pop()) != this->packets.end()) return true;
 		}
-		/* Packets for INVALID_STTION can go anywhere. */
+		/* Packets for INVALID_STATION can go anywhere. */
 		return this->packets.find(INVALID_STATION) != this->packets.end();
 	}
 
@@ -538,8 +539,8 @@ public:
 	uint Reroute(uint max_move, StationCargoList *dest, StationID avoid, StationID avoid2, const GoodsEntry *ge);
 
 	/**
-	 * Are two the two CargoPackets mergeable in the context of
-	 * a list of CargoPackets for a Vehicle?
+	 * Are the two CargoPackets mergeable in the context of
+	 * a list of CargoPackets for a Station?
 	 * @param cp1 First CargoPacket.
 	 * @param cp2 Second CargoPacket.
 	 * @return True if they are mergeable.

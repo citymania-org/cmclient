@@ -8,31 +8,27 @@
  /** @file screenshot_gui.cpp GUI functions related to screenshots. */
 
 #include "stdafx.h"
-#include "gui.h"
-#include "viewport_func.h"
 #include "window_func.h"
 #include "window_gui.h"
 #include "screenshot.h"
-#include "textbuf_gui.h"
-#include "strings_func.h"
-
 #include "widgets/screenshot_widget.h"
-
 #include "table/strings.h"
-
-static ScreenshotType _screenshot_type;
+#include "gfx_func.h"
 
 struct ScreenshotWindow : Window {
-	ScreenshotWindow(WindowDesc *desc) : Window(desc) {
+	ScreenshotWindow(WindowDesc *desc) : Window(desc)
+	{
 		this->CreateNestedTree();
 		this->FinishInitNested();
 	}
 
-	void OnPaint() override {
+	void OnPaint() override
+	{
 		this->DrawWidgets();
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override {
+	void OnClick(Point pt, int widget, int click_count) override
+	{
 		if (widget < 0) return;
 		ScreenshotType st;
 		switch (widget) {
@@ -44,37 +40,7 @@ struct ScreenshotWindow : Window {
 			case WID_SC_TAKE_HEIGHTMAP:   st = SC_HEIGHTMAP;   break;
 			case WID_SC_TAKE_MINIMAP:     st = SC_MINIMAP;     break;
 		}
-		TakeScreenshot(st);
-	}
-
-	/**
-	 * Make a screenshot.
-	 * Ask for confirmation if the screenshot will be huge.
-	 * @param t Screenshot type: World, defaultzoom, heightmap or viewport screenshot
-	 */
-	static void TakeScreenshot(ScreenshotType st) {
-		ViewPort vp;
-		SetupScreenshotViewport(st, &vp);
-		if ((uint64)vp.width * (uint64)vp.height > 8192 * 8192) {
-			/* Ask for confirmation */
-			_screenshot_type = st;
-			SetDParam(0, vp.width);
-			SetDParam(1, vp.height);
-			ShowQuery(STR_WARNING_SCREENSHOT_SIZE_CAPTION, STR_WARNING_SCREENSHOT_SIZE_MESSAGE, nullptr, ScreenshotConfirmationCallback);
-		}
-		else {
-			/* Less than 64M pixels, just do it */
-			MakeScreenshot(st, nullptr);
-		}
-	}
-
-	/**
-	 * Callback on the confirmation window for huge screenshots.
-	 * @param w Window with viewport
-	 * @param confirmed true on confirmation
-	 */
-	static void ScreenshotConfirmationCallback(Window *w, bool confirmed) {
-		if (confirmed) MakeScreenshot(_screenshot_type, nullptr);
+		MakeScreenshotWithConfirm(st);
 	}
 };
 
@@ -102,7 +68,29 @@ static WindowDesc _screenshot_window_desc(
 	_nested_screenshot, lengthof(_nested_screenshot)
 );
 
-void ShowScreenshotWindow() {
-	DeleteWindowById(WC_SCREENSHOT, 0);
+void ShowScreenshotWindow()
+{
+	CloseWindowById(WC_SCREENSHOT, 0);
 	new ScreenshotWindow(&_screenshot_window_desc);
+}
+
+/**
+ * Set the visibility of the screenshot window when taking a screenshot.
+ * @param hide Are we hiding the window or showing it again after the screenshot is taken?
+ */
+void SetScreenshotWindowVisibility(bool hide)
+{
+	ScreenshotWindow *scw = (ScreenshotWindow *)FindWindowById(WC_SCREENSHOT, 0);
+
+	if (scw == nullptr) return;
+
+	if (hide) {
+		/* Set dirty the screen area where the window is covering (not the window itself), then move window off screen. */
+		scw->SetDirty();
+		scw->left += 2 * _screen.width;
+	} else {
+		/* Return window to original position. */
+		scw->left -= 2 * _screen.width;
+		scw->SetDirty();
+	}
 }

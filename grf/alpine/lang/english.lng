@@ -1,0 +1,8 @@
+##grflangid 0x01
+STR_GRF_NAME                                                    :CityMania Alpine Landscape
+STR_GRF_DESCRIPTION                                             :Modified OpenGFX spritess for alpine climate
+STR_TEST_OBJECT : CM Test object
+STR_FLMA : Flower Meadow
+STR_TREE : Tree
+STR_CREEK : Creek
+STR_MINEFIELD : Minefield

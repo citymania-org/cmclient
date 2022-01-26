@@ -12,7 +12,7 @@
 #include "core/alloc_func.hpp"
 #include "water_map.h"
 #include "string_func.h"
-#include "citymania/highlight.hpp"
+#include "citymania/cm_highlight.hpp"
 
 #include "safeguards.h"
 
@@ -48,7 +48,7 @@ void AllocateMap(uint size_x, uint size_y)
 		error("Invalid map size");
 	}
 
-	DEBUG(map, 1, "Allocating map of size %dx%d", size_x, size_y);
+	Debug(map, 1, "Allocating map of size {}x{}", size_x, size_y);
 
 	_map_log_x = FindFirstBit(size_x);
 	_map_log_y = FindFirstBit(size_y);
@@ -192,7 +192,7 @@ uint DistanceMax(TileIndex t0, TileIndex t1)
 {
 	const uint dx = Delta(TileX(t0), TileX(t1));
 	const uint dy = Delta(TileY(t0), TileY(t1));
-	return max(dx, dy);
+	return std::max(dx, dy);
 }
 
 
@@ -222,9 +222,9 @@ uint DistanceFromEdge(TileIndex tile)
 	const uint yl = TileY(tile);
 	const uint xh = MapSizeX() - 1 - xl;
 	const uint yh = MapSizeY() - 1 - yl;
-	const uint minl = min(xl, yl);
-	const uint minh = min(xh, yh);
-	return min(minl, minh);
+	const uint minl = std::min(xl, yl);
+	const uint minh = std::min(xh, yh);
+	return std::min(minl, minh);
 }
 
 /**

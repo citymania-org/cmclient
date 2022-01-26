@@ -108,8 +108,6 @@ void IncreaseBuildingCount(Town *t, HouseID house_id)
 {
 	HouseClassID class_id = HouseSpec::Get(house_id)->class_id;
 
-	if (!_loaded_newgrf_features.has_newhouses) return;
-
 	t->cache.building_counts.id_count[house_id]++;
 	_building_counts.id_count[house_id]++;
 
@@ -128,8 +126,6 @@ void IncreaseBuildingCount(Town *t, HouseID house_id)
 void DecreaseBuildingCount(Town *t, HouseID house_id)
 {
 	HouseClassID class_id = HouseSpec::Get(house_id)->class_id;
-
-	if (!_loaded_newgrf_features.has_newhouses) return;
 
 	if (t->cache.building_counts.id_count[house_id] > 0) t->cache.building_counts.id_count[house_id]--;
 	if (_building_counts.id_count[house_id] > 0) _building_counts.id_count[house_id]--;
@@ -408,7 +404,7 @@ static uint32 GetDistanceFromNearbyHouse(uint8 parameter, TileIndex tile, HouseI
 		}
 	}
 
-	DEBUG(grf, 1, "Unhandled house variable 0x%X", variable);
+	Debug(grf, 1, "Unhandled house variable 0x{:X}", variable);
 
 	*available = false;
 	return UINT_MAX;

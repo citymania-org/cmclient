@@ -33,9 +33,9 @@ DEFINE_POOL_METHOD(inline)::Pool(const char *name) :
 		first_free(0),
 		first_unused(0),
 		items(0),
-#ifdef OTTD_ASSERT
+#ifdef WITH_ASSERT
 		checked(0),
-#endif /* OTTD_ASSERT */
+#endif /* WITH_ASSERT */
 		cleaning(false),
 		data(nullptr),
 		alloc_cache(nullptr)
@@ -52,7 +52,7 @@ DEFINE_POOL_METHOD(inline void)::ResizeFor(size_t index)
 	assert(index >= this->size);
 	assert(index < Tmax_size);
 
-	size_t new_size = min(Tmax_size, Align(index + 1, Tgrowth_step));
+	size_t new_size = std::min(Tmax_size, Align(index + 1, Tgrowth_step));
 
 	this->data = ReallocT(this->data, new_size);
 	MemSetT(this->data + this->size, 0, new_size - this->size);
@@ -100,7 +100,7 @@ DEFINE_POOL_METHOD(inline void *)::AllocateItem(size_t size, size_t index)
 {
 	assert(this->data[index] == nullptr);
 
-	this->first_unused = max(this->first_unused, index + 1);
+	this->first_unused = std::max(this->first_unused, index + 1);
 	this->items++;
 
 	Titem *item;
@@ -133,10 +133,10 @@ DEFINE_POOL_METHOD(void *)::GetNew(size_t size)
 {
 	size_t index = this->FindFirstFree();
 
-#ifdef OTTD_ASSERT
+#ifdef WITH_ASSERT
 	assert(this->checked != 0);
 	this->checked--;
-#endif /* OTTD_ASSERT */
+#endif /* WITH_ASSERT */
 	if (index == NO_FREE_ITEM) {
 		error("%s: no more free items", this->name);
 	}
@@ -187,7 +187,7 @@ DEFINE_POOL_METHOD(void)::FreeItem(size_t index)
 		free(this->data[index]);
 	}
 	this->data[index] = nullptr;
-	this->first_free = min(this->first_free, index);
+	this->first_free = std::min(this->first_free, index);
 	this->items--;
 	if (!this->cleaning) Titem::PostDestructor(index);
 }

@@ -14,7 +14,6 @@
 #include "../core/endian_func.hpp"
 #include "../base_media_base.h"
 #include "midi.h"
-#include <algorithm>
 
 #include "../console_func.h"
 #include "../console_internal.h"
@@ -1048,14 +1047,12 @@ bool MidiFile::WriteSMF(const char *filename)
 std::string MidiFile::GetSMFFile(const MusicSongInfo &song)
 {
 	if (song.filetype == MTT_STANDARDMIDI) {
-		char filename[MAX_PATH];
-		if (FioFindFullPath(filename, lastof(filename), Subdirectory::BASESET_DIR, song.filename)) {
-			return std::string(filename);
-		} else if (FioFindFullPath(filename, lastof(filename), Subdirectory::OLD_GM_DIR, song.filename)) {
-			return std::string(filename);
-		} else {
-			return std::string();
-		}
+		std::string filename = FioFindFullPath(Subdirectory::BASESET_DIR, song.filename);
+		if (!filename.empty()) return filename;
+		filename = FioFindFullPath(Subdirectory::OLD_GM_DIR, song.filename);
+		if (!filename.empty()) return filename;
+
+		return std::string();
 	}
 
 	if (song.filetype != MTT_MPSMIDI) return std::string();
@@ -1077,17 +1074,16 @@ std::string MidiFile::GetSMFFile(const MusicSongInfo &song)
 		*wp++ = '\0';
 	}
 
-	char tempdirname[MAX_PATH];
-	FioGetFullPath(tempdirname, lastof(tempdirname), Searchpath::SP_AUTODOWNLOAD_DIR, Subdirectory::BASESET_DIR, basename);
-	if (!AppendPathSeparator(tempdirname, lastof(tempdirname))) return std::string();
+	std::string tempdirname = FioGetDirectory(Searchpath::SP_AUTODOWNLOAD_DIR, Subdirectory::BASESET_DIR);
+	tempdirname += basename;
+	AppendPathSeparator(tempdirname);
 	FioCreateDirectory(tempdirname);
 
-	char output_filename[MAX_PATH];
-	seprintf(output_filename, lastof(output_filename), "%s%d.mid", tempdirname, song.cat_index);
+	std::string output_filename = tempdirname + std::to_string(song.cat_index) + ".mid";
 
 	if (FileExists(output_filename)) {
 		/* If the file already exists, assume it's the correct decoded data */
-		return std::string(output_filename);
+		return output_filename;
 	}
 
 	byte *data;
@@ -1102,8 +1098,8 @@ std::string MidiFile::GetSMFFile(const MusicSongInfo &song)
 	}
 	free(data);
 
-	if (midifile.WriteSMF(output_filename)) {
-		return std::string(output_filename);
+	if (midifile.WriteSMF(output_filename.c_str())) {
+		return output_filename;
 	} else {
 		return std::string();
 	}
@@ -1113,7 +1109,7 @@ std::string MidiFile::GetSMFFile(const MusicSongInfo &song)
 static bool CmdDumpSMF(byte argc, char *argv[])
 {
 	if (argc == 0) {
-		IConsolePrint(CC_WARNING, "Write the current song to a Standard MIDI File. Usage: 'dumpsmf <filename>'");
+		IConsolePrint(CC_HELP, "Write the current song to a Standard MIDI File. Usage: 'dumpsmf <filename>'.");
 		return true;
 	}
 	if (argc != 2) {
@@ -1131,7 +1127,7 @@ static bool CmdDumpSMF(byte argc, char *argv[])
 		IConsolePrint(CC_ERROR, "Filename too long.");
 		return false;
 	}
-	IConsolePrintF(CC_INFO, "Dumping MIDI to: %s", fnbuf);
+	IConsolePrint(CC_INFO, "Dumping MIDI to '{}'.", fnbuf);
 
 	if (_midifile_instance->WriteSMF(fnbuf)) {
 		IConsolePrint(CC_INFO, "File written successfully.");
@@ -1146,7 +1142,7 @@ static void RegisterConsoleMidiCommands()
 {
 	static bool registered = false;
 	if (!registered) {
-		IConsoleCmdRegister("dumpsmf", CmdDumpSMF);
+		IConsole::CmdRegister("dumpsmf", CmdDumpSMF);
 		registered = true;
 	}
 }

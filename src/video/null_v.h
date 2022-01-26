@@ -16,9 +16,10 @@
 class VideoDriver_Null : public VideoDriver {
 private:
 	uint ticks; ///< Amount of ticks to run.
+	std::string savefile;
 
 public:
-	const char *Start(const char * const *param) override;
+	const char *Start(const StringList &param) override;
 
 	void Stop() override;
 

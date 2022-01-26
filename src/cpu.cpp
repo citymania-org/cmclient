@@ -16,11 +16,18 @@
 
 /* rdtsc for MSC_VER, uses simple inline assembly, or _rdtsc
  * from external win64.asm because VS2005 does not support inline assembly */
-#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64)) && !defined(RDTSC_AVAILABLE)
+#if defined(_MSC_VER) && !defined(RDTSC_AVAILABLE)
 #include <intrin.h>
+#include <windows.h>
 uint64 ottd_rdtsc()
 {
+#if defined(_M_ARM)
+	return __rdpmccntr64();
+#elif defined(_M_ARM64)
+	return _ReadStatusReg(ARM64_PMCCNTR_EL0);
+#else
 	return __rdtsc();
+#endif
 }
 #define RDTSC_AVAILABLE
 #endif
@@ -63,6 +70,24 @@ uint64 ottd_rdtsc()
 				  );
 	return ((uint64)high << 32) | low;
 }
+# define RDTSC_AVAILABLE
+#endif
+
+/* rdtsc for MCST Elbrus 2000 */
+#if defined(__e2k__) && !defined(RDTSC_AVAILABLE)
+uint64 ottd_rdtsc()
+{
+	uint64_t dst;
+# pragma asm_inline
+	asm("rrd %%clkr, %0" : "=r" (dst));
+	return dst;
+}
+# define RDTSC_AVAILABLE
+#endif
+
+#if defined(__EMSCRIPTEN__) && !defined(RDTSC_AVAILABLE)
+/* On emscripten doing TIC/TOC would be ill-advised */
+uint64 ottd_rdtsc() {return 0;}
 # define RDTSC_AVAILABLE
 #endif
 
@@ -117,6 +142,24 @@ void ottd_cpuid(int info[4], int type)
 			: "a" (type)
 	);
 #endif /* i386 PIC */
+}
+#elif defined(__e2k__) /* MCST Elbrus 2000*/
+void ottd_cpuid(int info[4], int type)
+{
+	info[0] = info[1] = info[2] = info[3] = 0;
+	if (type == 0) {
+		info[0] = 1;
+	} else if (type == 1) {
+#if defined(__SSE4_1__)
+		info[2] |= (1<<19); /* HasCPUIDFlag(1, 2, 19) */
+#endif
+#if defined(__SSSE3__)
+		info[2] |= (1<<9); /* HasCPUIDFlag(1, 2, 9) */
+#endif
+#if defined(__SSE2__)
+		info[3] |= (1<<26); /* HasCPUIDFlag(1, 3, 26) */
+#endif
+	}
 }
 #else
 void ottd_cpuid(int info[4], int type)

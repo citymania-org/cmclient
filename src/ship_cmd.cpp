@@ -257,7 +257,7 @@ Trackdir Ship::GetVehicleTrackdir() const
 	}
 
 	if (this->state == TRACK_BIT_WORMHOLE) {
-		/* ship on aqueduct, so just use his direction and assume a diagonal track */
+		/* ship on aqueduct, so just use its direction and assume a diagonal track */
 		return DiagDirToDiagTrackdir(DirToDiagDir(this->direction));
 	}
 
@@ -328,11 +328,23 @@ void Ship::UpdateDeltaXY()
 }
 
 /**
- * Test-procedure for HasVehicleOnPos to check for a ship.
+ * Test-procedure for HasVehicleOnPos to check for any ships which are visible and not stopped by the player.
  */
-static Vehicle *EnsureNoVisibleShipProc(Vehicle *v, void *data)
+static Vehicle *EnsureNoMovingShipProc(Vehicle *v, void *data)
 {
-	return v->type == VEH_SHIP && (v->vehstatus & VS_HIDDEN) == 0 ? v : nullptr;
+	return v->type == VEH_SHIP && (v->vehstatus & (VS_HIDDEN | VS_STOPPED)) == 0 ? v : nullptr;
+}
+
+static bool CheckReverseShip(const Ship *v, Trackdir *trackdir = nullptr)
+{
+	/* Ask pathfinder for best direction */
+	bool reverse = false;
+	switch (_settings_game.pf.pathfinder_for_ships) {
+		case VPF_NPF: reverse = NPFShipCheckReverse(v, trackdir); break;
+		case VPF_YAPF: reverse = YapfShipCheckReverse(v, trackdir); break;
+		default: NOT_REACHED();
+	}
+	return reverse;
 }
 
 static bool CheckShipLeaveDepot(Ship *v)
@@ -351,7 +363,7 @@ static bool CheckShipLeaveDepot(Ship *v)
 
 	/* Don't leave depot if another vehicle is already entering/leaving */
 	/* This helps avoid CPU load if many ships are set to start at the same time */
-	if (HasVehicleOnPos(v->tile, nullptr, &EnsureNoVisibleShipProc)) return true;
+	if (HasVehicleOnPos(v->tile, nullptr, &EnsureNoMovingShipProc)) return true;
 
 	TileIndex tile = v->tile;
 	Axis axis = GetShipDepotAxis(tile);
@@ -364,14 +376,7 @@ static bool CheckShipLeaveDepot(Ship *v)
 	TrackBits north_tracks = DiagdirReachesTracks(north_dir) & GetTileShipTrackStatus(north_neighbour);
 	TrackBits south_tracks = DiagdirReachesTracks(south_dir) & GetTileShipTrackStatus(south_neighbour);
 	if (north_tracks && south_tracks) {
-		/* Ask pathfinder for best direction */
-		bool reverse = false;
-		switch (_settings_game.pf.pathfinder_for_ships) {
-			case VPF_NPF: reverse = NPFShipCheckReverse(v); break;
-			case VPF_YAPF: reverse = YapfShipCheckReverse(v); break;
-			default: NOT_REACHED();
-		}
-		if (reverse) north_tracks = TRACK_BIT_NONE;
+		if (CheckReverseShip(v)) north_tracks = TRACK_BIT_NONE;
 	}
 
 	if (north_tracks) {
@@ -405,8 +410,8 @@ static bool ShipAccelerate(Vehicle *v)
 	uint spd;
 	byte t;
 
-	spd = min(v->cur_speed + 1, v->vcache.cached_max_speed);
-	spd = min(spd, v->current_order.GetMaxSpeed() * 2);
+	spd = std::min<uint>(v->cur_speed + 1, v->vcache.cached_max_speed);
+	spd = std::min<uint>(spd, v->current_order.GetMaxSpeed() * 2);
 
 	/* updates statusbar only if speed have changed to save CPU time */
 	if (spd != v->cur_speed) {
@@ -624,6 +629,7 @@ static void ShipController(Ship *v)
 	const byte *b;
 	Track track;
 	TrackBits tracks;
+	GetNewVehiclePosResult gp;
 
 	v->tick_counter++;
 	v->current_order_time++;
@@ -632,7 +638,8 @@ static void ShipController(Ship *v)
 
 	if (v->vehstatus & VS_STOPPED) return;
 
-	ProcessOrders(v);
+	if (ProcessOrders(v) && CheckReverseShip(v)) goto reverse_direction;
+
 	v->HandleLoading();
 
 	if (v->current_order.IsType(OT_LOADING)) return;
@@ -646,6 +653,8 @@ static void ShipController(Ship *v)
 		if ((v->tick_counter & 7) == 0) {
 			DirDiff diff = DirDifference(v->direction, v->rotation);
 			v->rotation = ChangeDir(v->rotation, diff > DIRDIFF_REVERSE ? DIRDIFF_45LEFT : DIRDIFF_45RIGHT);
+			/* Invalidate the sprite cache direction to force recalculation of viewport */
+			v->sprite_cache.last_direction = INVALID_DIR;
 			v->UpdateViewport(true, true);
 		}
 		return;
@@ -655,7 +664,7 @@ static void ShipController(Ship *v)
 
 	if (!ShipAccelerate(v)) return;
 
-	GetNewVehiclePosResult gp = GetNewVehiclePos(v);
+	gp = GetNewVehiclePos(v);
 	if (v->state != TRACK_BIT_WORMHOLE) {
 		/* Not on a bridge */
 		if (gp.old_tile == gp.new_tile) {
@@ -716,7 +725,19 @@ static void ShipController(Ship *v)
 			DiagDirection diagdir = DiagdirBetweenTiles(gp.old_tile, gp.new_tile);
 			assert(diagdir != INVALID_DIAGDIR);
 			tracks = GetAvailShipTracks(gp.new_tile, diagdir);
-			if (tracks == TRACK_BIT_NONE) goto reverse_direction;
+			if (tracks == TRACK_BIT_NONE) {
+				Trackdir trackdir = INVALID_TRACKDIR;
+				CheckReverseShip(v, &trackdir);
+				if (trackdir == INVALID_TRACKDIR) goto reverse_direction;
+				static const Direction _trackdir_to_direction[] = {
+					DIR_NE, DIR_SE, DIR_E, DIR_E, DIR_S, DIR_S, INVALID_DIR, INVALID_DIR,
+					DIR_SW, DIR_NW, DIR_W, DIR_W, DIR_N, DIR_N, INVALID_DIR, INVALID_DIR,
+				};
+				v->direction = _trackdir_to_direction[trackdir];
+				assert(v->direction != INVALID_DIR);
+				v->state = TrackdirBitsToTrackBits(TrackdirToTrackdirBits(trackdir));
+				goto direction_changed;
+			}
 
 			/* Choose a direction, and continue if we find one */
 			track = ChooseShipTrack(v, gp.new_tile, diagdir, tracks);
@@ -787,6 +808,7 @@ getout:
 
 reverse_direction:
 	v->direction = ReverseDir(v->direction);
+direction_changed:
 	/* Remember our current location to avoid movement glitch */
 	v->rotation_x_pos = v->x_pos;
 	v->rotation_y_pos = v->y_pos;
@@ -864,7 +886,7 @@ CommandCost CmdBuildShip(TileIndex tile, DoCommandFlag flags, const Engine *e, u
 		v->SetServiceInterval(Company::Get(_current_company)->settings.vehicle.servint_ships);
 		v->date_of_last_service = _date;
 		v->build_year = _cur_year;
-		v->sprite_seq.Set(SPR_IMG_QUERY);
+		v->sprite_cache.sprite_seq.Set(SPR_IMG_QUERY);
 		v->random_bits = VehicleRandomBits();
 
 		v->UpdateCache();

@@ -195,7 +195,7 @@ struct TimetableWindow : Window {
 			case WID_VT_ARRIVAL_DEPARTURE_PANEL:
 				SetDParamMaxValue(0, MAX_YEAR * DAYS_IN_YEAR, 0, FS_SMALL);
 				this->deparr_time_width = GetStringBoundingBox(STR_JUST_DATE_TINY).width;
-				this->deparr_abbr_width = max(GetStringBoundingBox(STR_TIMETABLE_ARRIVAL_ABBREVIATION).width, GetStringBoundingBox(STR_TIMETABLE_DEPARTURE_ABBREVIATION).width);
+				this->deparr_abbr_width = std::max(GetStringBoundingBox(STR_TIMETABLE_ARRIVAL_ABBREVIATION).width, GetStringBoundingBox(STR_TIMETABLE_DEPARTURE_ABBREVIATION).width);
 				size->width = WD_FRAMERECT_LEFT + this->deparr_abbr_width + 10 + this->deparr_time_width + WD_FRAMERECT_RIGHT;
 				FALLTHROUGH;
 
@@ -213,13 +213,13 @@ struct TimetableWindow : Window {
 
 	int GetOrderFromTimetableWndPt(int y, const Vehicle *v)
 	{
-		int sel = (y - this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->pos_y - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
+		uint sel = (y - this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->pos_y - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
 
-		if ((uint)sel >= this->vscroll->GetCapacity()) return INVALID_ORDER;
+		if (sel >= this->vscroll->GetCapacity()) return INVALID_ORDER;
 
 		sel += this->vscroll->GetPosition();
 
-		return (sel < v->GetNumOrders() * 2 && sel >= 0) ? sel : INVALID_ORDER;
+		return (sel < v->GetNumOrders() * 2u) ? sel : INVALID_ORDER;
 	}
 
 	/**
@@ -239,7 +239,7 @@ struct TimetableWindow : Window {
 				/* Removed / replaced all orders (after deleting / sharing) */
 				if (this->sel_index == -1) break;
 
-				this->DeleteChildWindows();
+				this->CloseChildWindows();
 				this->sel_index = -1;
 				break;
 
@@ -278,7 +278,7 @@ struct TimetableWindow : Window {
 					/* Now we are modifying the selected order */
 					if (to == INVALID_VEH_ORDER_ID) {
 						/* Deleting selected order */
-						this->DeleteChildWindows();
+						this->CloseChildWindows();
 						this->sel_index = -1;
 						break;
 					} else {
@@ -525,7 +525,7 @@ struct TimetableWindow : Window {
 			case WID_VT_TIMETABLE_PANEL: { // Main panel.
 				int selected = GetOrderFromTimetableWndPt(pt.y, v);
 
-				this->DeleteChildWindows();
+				this->CloseChildWindows();
 				this->sel_index = (selected == INVALID_ORDER || selected == this->sel_index) ? -1 : selected;
 				break;
 			}
@@ -629,7 +629,7 @@ struct TimetableWindow : Window {
 			if (!_settings_client.gui.timetable_in_ticks) val *= DAY_TICKS;
 		}
 
-		uint32 p2 = minu(val, UINT16_MAX);
+		uint32 p2 = std::min<uint32>(val, UINT16_MAX);
 
 		DoCommandP(0, p1, p2, CMD_CHANGE_TIMETABLE | CMD_MSG(STR_ERROR_CAN_T_TIMETABLE_VEHICLE));
 	}
@@ -709,7 +709,7 @@ static WindowDesc _timetable_desc(
  */
 void ShowTimetableWindow(const Vehicle *v)
 {
-	DeleteWindowById(WC_VEHICLE_DETAILS, v->index, false);
-	DeleteWindowById(WC_VEHICLE_ORDERS, v->index, false);
+	CloseWindowById(WC_VEHICLE_DETAILS, v->index, false);
+	CloseWindowById(WC_VEHICLE_ORDERS, v->index, false);
 	AllocateWindowDescFront<TimetableWindow>(&_timetable_desc, v->index);
 }

@@ -28,8 +28,10 @@ enum RailToolbarWidgets {
 	WID_RAT_BUILD_SIGNALS,  ///< Build signals.
 	WID_RAT_BUILD_BRIDGE,   ///< Build a bridge.
 	WID_RAT_BUILD_TUNNEL,   ///< Build a tunnel.
+	CM_WID_RAT_BLUEPRINT,   ///< CityMania rail blueprint tool.
 	WID_RAT_REMOVE,         ///< Bulldozer to remove rail.
 	WID_RAT_CONVERT_RAIL,   ///< Convert other rail to this type.
+	CM_WID_RAT_BLUEPRINT_PLACE, ///< CityMania rail blueprint tool placement (fake widget).
 };
 
 /** Widgets of the #BuildRailStationWindow class. */
@@ -64,6 +66,8 @@ enum BuildRailStationWidgets {
 	WID_BRAS_IMAGE,                ///< Panel used at each cell of the matrix.
 	WID_BRAS_MATRIX_SCROLL,        ///< Scrollbar of the matrix widget.
 
+	WID_BRAS_FILTER_CONTAINER,     ///< Container for the filter text box for the station class list.
+	WID_BRAS_FILTER_EDITBOX,       ///< Filter text box for the station class list.
 	WID_BRAS_SHOW_NEWST_DEFSIZE,   ///< Selection for default-size button for newstation.
 	WID_BRAS_SHOW_NEWST_ADDITIONS, ///< Selection for newstation class selection list.
 	WID_BRAS_SHOW_NEWST_MATRIX,    ///< Selection for newstation image matrix.
@@ -78,22 +82,32 @@ enum BuildRailStationWidgets {
 
 /** Widgets of the #BuildSignalWindow class. */
 enum BuildSignalWidgets {
-	WID_BS_SEMAPHORE_NORM,     ///< Build a semaphore normal block signal
-	WID_BS_SEMAPHORE_ENTRY,    ///< Build a semaphore entry block signal
-	WID_BS_SEMAPHORE_EXIT,     ///< Build a semaphore exit block signal
-	WID_BS_SEMAPHORE_COMBO,    ///< Build a semaphore combo block signal
+	WID_BS_CAPTION,            ///< Caption for the Signal Selection window.
+	WID_BS_TOGGLE_SIZE,        ///< Toggle showing advanced signal types.
+	WID_BS_SEMAPHORE_NORM,     ///< Build a semaphore normal block signal.
+	WID_BS_SEMAPHORE_ENTRY,    ///< Build a semaphore entry block signal.
+	WID_BS_SEMAPHORE_EXIT,     ///< Build a semaphore exit block signal.
+	WID_BS_SEMAPHORE_COMBO,    ///< Build a semaphore combo block signal.
 	WID_BS_SEMAPHORE_PBS,      ///< Build a semaphore path signal.
 	WID_BS_SEMAPHORE_PBS_OWAY, ///< Build a semaphore one way path signal.
-	WID_BS_ELECTRIC_NORM,      ///< Build an electric normal block signal
-	WID_BS_ELECTRIC_ENTRY,     ///< Build an electric entry block signal
-	WID_BS_ELECTRIC_EXIT,      ///< Build an electric exit block signal
-	WID_BS_ELECTRIC_COMBO,     ///< Build an electric combo block signal
+	WID_BS_ELECTRIC_NORM,      ///< Build an electric normal block signal.
+	WID_BS_ELECTRIC_ENTRY,     ///< Build an electric entry block signal.
+	WID_BS_ELECTRIC_EXIT,      ///< Build an electric exit block signal.
+	WID_BS_ELECTRIC_COMBO,     ///< Build an electric combo block signal.
 	WID_BS_ELECTRIC_PBS,       ///< Build an electric path signal.
 	WID_BS_ELECTRIC_PBS_OWAY,  ///< Build an electric one way path signal.
 	WID_BS_CONVERT,            ///< Convert the signal.
 	WID_BS_DRAG_SIGNALS_DENSITY_LABEL,    ///< The current signal density.
 	WID_BS_DRAG_SIGNALS_DENSITY_DECREASE, ///< Decrease the signal density.
 	WID_BS_DRAG_SIGNALS_DENSITY_INCREASE, ///< Increase the signal density.
+	WID_BS_SEMAPHORE_NORM_SEL,  ///< NWID_SELECTION for WID_BS_SEMAPHORE_NORM.
+	WID_BS_ELECTRIC_NORM_SEL,   ///< NWID_SELECTION for WID_BS_ELECTRIC_NORM.
+	WID_BS_SEMAPHORE_ENTRY_SEL, ///< NWID_SELECTION for WID_BS_SEMAPHORE_ENTRY.
+	WID_BS_ELECTRIC_ENTRY_SEL,  ///< NWID_SELECTION for WID_BS_ELECTRIC_ENTRY.
+	WID_BS_SEMAPHORE_EXIT_SEL,  ///< NWID_SELECTION for WID_BS_SEMAPHORE_EXIT.
+	WID_BS_ELECTRIC_EXIT_SEL,   ///< NWID_SELECTION for WID_BS_ELECTRIC_EXIT.
+	WID_BS_SEMAPHORE_COMBO_SEL, ///< NWID_SELECTION for WID_BS_SEMAPHORE_COMBO.
+	WID_BS_ELECTRIC_COMBO_SEL,  ///< NWID_SELECTION for WID_BS_ELECTRIC_COMBO.
 };
 
 /** Widgets of the #BuildRailDepotWindow class. */

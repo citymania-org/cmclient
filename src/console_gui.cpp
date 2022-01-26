@@ -12,6 +12,7 @@
 #include "window_gui.h"
 #include "console_gui.h"
 #include "console_internal.h"
+#include "guitimer_func.h"
 #include "window_func.h"
 #include "string_func.h"
 #include "strings_func.h"
@@ -171,6 +172,7 @@ struct IConsoleWindow : Window
 	static int scroll;
 	int line_height;   ///< Height of one line of text in the console.
 	int line_offset;
+	GUITimer truncate_timer;
 
 	IConsoleWindow() : Window(&_console_window_desc)
 	{
@@ -179,13 +181,15 @@ struct IConsoleWindow : Window
 		this->line_offset = GetStringBoundingBox("] ").width + 5;
 
 		this->InitNested(0);
+		this->truncate_timer.SetInterval(3000);
 		ResizeWindow(this, _screen.width, _screen.height / 3);
 	}
 
-	~IConsoleWindow()
+	void Close() override
 	{
 		_iconsole_mode = ICONSOLE_CLOSED;
 		VideoDriver::GetInstance()->EditBoxLostFocus();
+		this->Window::Close();
 	}
 
 	/**
@@ -194,7 +198,7 @@ struct IConsoleWindow : Window
 	 */
 	void Scroll(int amount)
 	{
-		int max_scroll = max<int>(0, IConsoleLine::size + 1 - this->height / this->line_height);
+		int max_scroll = std::max(0, IConsoleLine::size + 1 - this->height / this->line_height);
 		IConsoleWindow::scroll = Clamp<int>(IConsoleWindow::scroll + amount, 0, max_scroll);
 		this->SetDirty();
 	}
@@ -227,11 +231,13 @@ struct IConsoleWindow : Window
 		}
 	}
 
-	void OnHundredthTick() override
+	void OnRealtimeTick(uint delta_ms) override
 	{
+		if (this->truncate_timer.CountElapsed(delta_ms) == 0) return;
+
 		if (IConsoleLine::Truncate() &&
 				(IConsoleWindow::scroll > IConsoleLine::size)) {
-			IConsoleWindow::scroll = max(0, IConsoleLine::size - (this->height / this->line_height) + 1);
+			IConsoleWindow::scroll = std::max(0, IConsoleLine::size - (this->height / this->line_height) + 1);
 			this->SetDirty();
 		}
 	}
@@ -281,7 +287,7 @@ struct IConsoleWindow : Window
 				/* We always want the ] at the left side; we always force these strings to be left
 				 * aligned anyway. So enforce this in all cases by adding a left-to-right marker,
 				 * otherwise it will be drawn at the wrong side with right-to-left texts. */
-				IConsolePrintF(CC_COMMAND, LRM "] %s", _iconsole_cmdline.buf);
+				IConsolePrint(CC_COMMAND, LRM "] {}", _iconsole_cmdline.buf);
 				const char *cmd = IConsoleHistoryAdd(_iconsole_cmdline.buf);
 				IConsoleClearCommand();
 
@@ -341,7 +347,7 @@ struct IConsoleWindow : Window
 
 	Point GetCaretPosition() const override
 	{
-		int delta = min(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
+		int delta = std::min<int>(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
 		Point pt = {this->line_offset + delta + _iconsole_cmdline.caretxoffs, this->height - this->line_height};
 
 		return pt;
@@ -349,7 +355,7 @@ struct IConsoleWindow : Window
 
 	Rect GetTextBoundingRect(const char *from, const char *to) const override
 	{
-		int delta = min(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
+		int delta = std::min<int>(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
 
 		Point p1 = GetCharPosInString(_iconsole_cmdline.buf, from, FS_NORMAL);
 		Point p2 = from != to ? GetCharPosInString(_iconsole_cmdline.buf, from) : p1;
@@ -360,7 +366,7 @@ struct IConsoleWindow : Window
 
 	const char *GetTextCharacterAtPosition(const Point &pt) const override
 	{
-		int delta = min(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
+		int delta = std::min<int>(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
 
 		if (!IsInsideMM(pt.y, this->height - this->line_height, this->height)) return nullptr;
 
@@ -393,10 +399,10 @@ void IConsoleGUIInit()
 	IConsoleLine::Reset();
 	memset(_iconsole_history, 0, sizeof(_iconsole_history));
 
-	IConsolePrintF(CC_WARNING, "OpenTTD Game Console Revision 7 - %s", _openttd_revision);
-	IConsolePrint(CC_WHITE,  "------------------------------------");
-	IConsolePrint(CC_WHITE,  "use \"help\" for more information");
-	IConsolePrint(CC_WHITE,  "");
+	IConsolePrint(TC_LIGHT_BLUE, "OpenTTD Game Console Revision 7 - {}", _openttd_revision);
+	IConsolePrint(CC_WHITE, "------------------------------------");
+	IConsolePrint(CC_WHITE, "use \"help\" for more information.");
+	IConsolePrint(CC_WHITE, "");
 	IConsoleClearCommand();
 }
 
@@ -437,7 +443,7 @@ void IConsoleSwitch()
 			break;
 
 		case ICONSOLE_OPENED: case ICONSOLE_FULL:
-			DeleteWindowById(WC_CONSOLE, 0);
+			CloseWindowById(WC_CONSOLE, 0);
 			break;
 	}
 

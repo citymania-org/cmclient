@@ -191,7 +191,7 @@ static void TileLoopClearAlps(TileIndex tile)
 	}
 	/* Update snow density. */
 	uint current_density = GetClearDensity(tile);
-	uint req_density = (k < 0) ? 0u : min((uint)k, 3);
+	uint req_density = (k < 0) ? 0u : std::min<uint>(k, 3u);
 
 	if (current_density < req_density) {
 		AddClearDensity(tile, 1);
@@ -338,6 +338,7 @@ void GenerateClearTile()
 				TileIndex tile_new;
 
 				SetClearGroundDensity(tile, CLEAR_ROCKS, 3);
+				MarkTileDirtyByTile(tile);
 				do {
 					if (--j == 0) goto get_out;
 					tile_new = tile + TileOffsByDiagDir((DiagDirection)GB(Random(), 0, 2));

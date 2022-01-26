@@ -25,7 +25,7 @@ enum FoundationPart {
     FOUNDATION_PART_END
 };
 extern TileHighlightData _thd;
-extern CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text);
+extern CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text);
 extern RailType _cur_railtype;
 extern bool _shift_pressed;
 void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part);
@@ -147,14 +147,14 @@ PolyrailPoint PolyrailPoint::Normalize() {
 
 static bool CanBuildRail(TileIndex tile, Track track) {
     if (tile > MapSize()) return false;
-    auto res = CmdBuildSingleRail(tile, DC_NO_WATER | DC_AUTO, _cur_railtype, track, nullptr);
+    auto res = CmdBuildSingleRail(tile, DC_NO_WATER | DC_AUTO, _cur_railtype, track, "");
     return res.Succeeded();
 }
 
 uint RailDistance(TileIndex a, TileIndex b) {
     uint dx = abs((int)TileX(a) - (int)TileX(b));
     uint dy = abs((int)TileY(a) - (int)TileY(b));
-    return 3 * max(dx, dy) + min(dx, dy);
+    return 3 * std::max(dx, dy) + std::min(dx, dy);
 }
 
 Polyrail MakePolyrail(PolyrailPoint start, PolyrailPoint end) {
@@ -231,8 +231,8 @@ Polyrail MakePolyrail(PolyrailPoint start, PolyrailPoint end) {
             if (!CanBuildRail(tile, n.track)) continue;
             uint16 curve = max_curve;
             uint8 track_len = (IsDiagonalDirection(n.dir) ? 2 : 1);
-            uint16 last_left = min(x.vertex.last_left + track_len, max_curve);
-            uint16 last_right = min(x.vertex.last_right + track_len, max_curve);
+            uint16 last_left = std::min<uint16>(x.vertex.last_left + track_len, max_curve);
+            uint16 last_right = std::min<uint16>(x.vertex.last_right + track_len, max_curve);
             if (x.vertex.dir != INVALID_DIR) {
                 if (n.dir == ChangeDir(x.vertex.dir, DIRDIFF_45LEFT)) {
                     curve = last_left;
@@ -342,7 +342,7 @@ static const int SLOPE_TO_Y_EDGE_Z_OFFSET[SLOPE_STEEP_E + 1] = {0, 0, 0, 0, 4, 0
 void DrawPolyrailTileSelection(const TileInfo *ti) {
     if (_thd.drawstyle != CM_HT_RAIL) return;
 
-    if (SeparateFnPressed() || !_thd.cm_polyrail.IsValid()) {
+    if (_fn_mod || !_thd.cm_polyrail.IsValid()) {
         if (ti->tile == TileVirtXY(_thd.pos.x, _thd.pos.y)) {
             auto zofs = (((_thd.pos.x & TILE_UNIT_MASK) ? SLOPE_TO_X_EDGE_Z_OFFSET : SLOPE_TO_Y_EDGE_Z_OFFSET)[(size_t)ti->tileh]);
             AddTileSpriteToDraw(_cur_dpi->zoom <= ZOOM_LVL_DETAIL ? SPR_DOT : SPR_DOT_SMALL,
@@ -375,7 +375,7 @@ static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_t
         remove_mode ?
                 CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
                 CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK), // cmd
-        CcPlaySound_SPLAT_RAIL,                 // callback
+        CcPlaySound_CONSTRUCTION_RAIL,          // callback
         ""                                      // text
     };
     return ret;
@@ -386,7 +386,7 @@ void PlaceRail_Polyrail(Point pt, bool remove_mode) {
 
     // fprintf(stderr, "%d %d\n", );
 
-    if (!_polyrail_start.IsValid() || SeparateFnPressed()) {
+    if (!_polyrail_start.IsValid() || _fn_mod) {
         _polyrail_start = end;
         _thd.cm_polyrail = MakePolyrail(_polyrail_start, PolyrailPoint());
         return;
@@ -419,7 +419,7 @@ void PlaceRail_Polyrail(Point pt, bool remove_mode) {
 }
 
 void SetPolyrailToPlace() {
-    if (SeparateFnPressed()) _polyrail_start = PolyrailPoint();
+    if (_fn_mod) _polyrail_start = PolyrailPoint();
     _thd.cm_polyrail = MakePolyrail(_polyrail_start, PolyrailPoint());
 }
 

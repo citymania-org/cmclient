@@ -140,9 +140,9 @@
 	if (quarter > EARLIEST_QUARTER) return -1;
 
 	if (quarter == CURRENT_QUARTER) {
-		return ::Company::Get(company)->cur_economy.delivered_cargo.GetSum<OverflowSafeInt<int32, INT32_MAX, INT32_MIN> >();
+		return ::Company::Get(company)->cur_economy.delivered_cargo.GetSum<OverflowSafeInt32>();
 	}
-	return ::Company::Get(company)->old_economy[quarter - 1].delivered_cargo.GetSum<OverflowSafeInt<int32, INT32_MAX, INT32_MIN> >();
+	return ::Company::Get(company)->old_economy[quarter - 1].delivered_cargo.GetSum<OverflowSafeInt32>();
 }
 
 /* static */ int32 ScriptCompany::GetQuarterlyPerformanceRating(ScriptCompany::CompanyID company, uint32 quarter)
@@ -204,8 +204,10 @@
 
 	if (loan == GetLoanAmount()) return true;
 
+	Money amount = abs(loan - GetLoanAmount());
+
 	return ScriptObject::DoCommand(0,
-			abs(loan - GetLoanAmount()), 2,
+			amount >> 32, (amount & 0xFFFFFFFC) | 2,
 			(loan > GetLoanAmount()) ? CMD_INCREASE_LOAN : CMD_DECREASE_LOAN);
 }
 
@@ -224,17 +226,19 @@
 	return GetLoanAmount() == loan;
 }
 
-/* static */ bool ScriptCompany::ChangeBankBalance(CompanyID company, Money delta, ExpensesType expenses_type)
+/* static */ bool ScriptCompany::ChangeBankBalance(CompanyID company, Money delta, ExpensesType expenses_type, TileIndex tile)
 {
 	EnforcePrecondition(false, ScriptObject::GetCompany() == OWNER_DEITY);
 	EnforcePrecondition(false, expenses_type < (ExpensesType)::EXPENSES_END);
 	EnforcePrecondition(false, (int64)delta >= INT32_MIN);
 	EnforcePrecondition(false, (int64)delta <= INT32_MAX);
+	EnforcePrecondition(false, tile == INVALID_TILE || ::IsValidTile(tile));
 
 	company = ResolveCompanyID(company);
 	EnforcePrecondition(false, company != COMPANY_INVALID);
 
-	return ScriptObject::DoCommand(0, (uint32)(delta), company | expenses_type << 8 , CMD_CHANGE_BANK_BALANCE);
+	/* Network commands only allow 0 to indicate invalid tiles, not INVALID_TILE */
+	return ScriptObject::DoCommand(tile == INVALID_TILE ? 0 : tile , (uint32)(delta), company | expenses_type << 8 , CMD_CHANGE_BANK_BALANCE);
 }
 
 /* static */ bool ScriptCompany::BuildCompanyHQ(TileIndex tile)
@@ -256,7 +260,7 @@
 
 /* static */ bool ScriptCompany::SetAutoRenewStatus(bool autorenew)
 {
-	return ScriptObject::DoCommand(0, ::GetCompanySettingIndex("company.engine_renew"), autorenew ? 1 : 0, CMD_CHANGE_COMPANY_SETTING);
+	return ScriptObject::DoCommand(0, 0, autorenew ? 1 : 0, CMD_CHANGE_COMPANY_SETTING, "company.engine_renew");
 }
 
 /* static */ bool ScriptCompany::GetAutoRenewStatus(CompanyID company)
@@ -269,7 +273,7 @@
 
 /* static */ bool ScriptCompany::SetAutoRenewMonths(int16 months)
 {
-	return ScriptObject::DoCommand(0, ::GetCompanySettingIndex("company.engine_renew_months"), months, CMD_CHANGE_COMPANY_SETTING);
+	return ScriptObject::DoCommand(0, 0, months, CMD_CHANGE_COMPANY_SETTING, "company.engine_renew_months");
 }
 
 /* static */ int16 ScriptCompany::GetAutoRenewMonths(CompanyID company)
@@ -284,7 +288,7 @@
 {
 	EnforcePrecondition(false, money >= 0);
 	EnforcePrecondition(false, (int64)money <= UINT32_MAX);
-	return ScriptObject::DoCommand(0, ::GetCompanySettingIndex("company.engine_renew_money"), money, CMD_CHANGE_COMPANY_SETTING);
+	return ScriptObject::DoCommand(0, 0, money, CMD_CHANGE_COMPANY_SETTING, "company.engine_renew_money");
 }
 
 /* static */ Money ScriptCompany::GetAutoRenewMoney(CompanyID company)

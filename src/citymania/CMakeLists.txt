@@ -1,0 +1,56 @@
+add_subdirectory(extensions)
+
+add_files(
+    cm_bitstream.hpp
+    cm_bitstream.cpp
+    cm_console_cmds.hpp
+    cm_console_cmds.cpp
+    cm_event.hpp
+    cm_export.hpp
+    cm_export.cpp
+    cm_game.hpp
+    cm_game.cpp
+    cm_main.hpp
+    cm_main.cpp
+    cm_type.hpp
+    cm_saveload.hpp
+    cm_saveload.cpp
+    cm_settings.hpp
+
+    # CityMania client
+    cm_base64.hpp
+    cm_base64.cpp
+    cm_blueprint.hpp
+    cm_blueprint.cpp
+    cm_cargo_table_gui.hpp
+    cm_cargo_table_gui.cpp
+    cm_client_list_gui.hpp
+    cm_client_list_gui.cpp
+    cm_commands.hpp
+    cm_commands.cpp
+    cm_commands_gui.hpp
+    cm_commands_gui.cpp
+    cm_highlight.hpp
+    cm_highlight.cpp
+    cm_highlight_type.hpp
+    cm_hotkeys.hpp
+    cm_hotkeys.cpp
+    cm_locations.hpp
+    cm_locations.cpp
+    cm_minimap.hpp
+    cm_minimap.cpp
+    cm_misc_gui.hpp
+    cm_misc_gui.cpp
+    cm_polyrail.hpp
+    cm_polyrail.cpp
+    cm_station_gui.hpp
+    cm_station_gui.cpp
+    cm_tooltips.hpp
+    cm_tooltips.cpp
+    cm_newgrf_revisions.hpp
+    cm_watch_gui.hpp
+    cm_watch_gui.cpp
+    cm_zoning.hpp
+    cm_zoning_cmd.cpp
+    cm_zoning_gui.cpp
+)

@@ -230,6 +230,7 @@ enum Commands {
 	CMD_CHANGE_SERVICE_INT,           ///< change the server interval of a vehicle
 
 	CMD_BUILD_INDUSTRY,               ///< build a new industry
+	CMD_INDUSTRY_CTRL,                ///< change industry properties
 
 	CMD_SET_COMPANY_MANAGER_FACE,     ///< set the manager's face of the company
 	CMD_SET_COMPANY_COLOUR,           ///< set the colour of the company
@@ -295,6 +296,7 @@ enum Commands {
 	CMD_REMOVE_STORY_PAGE,            ///< remove a story page
 	CMD_REMOVE_STORY_PAGE_ELEMENT,    ///< remove a story page element
 	CMD_SCROLL_VIEWPORT,              ///< scroll main viewport of players
+	CMD_STORY_PAGE_BUTTON,            ///< selection via story page button
 
 	CMD_LEVEL_LAND,                   ///< level land
 
@@ -322,7 +324,7 @@ enum Commands {
 	CMD_ADD_VEHICLE_GROUP,            ///< add a vehicle to a group
 	CMD_ADD_SHARED_VEHICLE_GROUP,     ///< add all other shared vehicles to a group which are missing
 	CMD_REMOVE_ALL_VEHICLES_GROUP,    ///< remove all vehicles from a group
-	CMD_SET_GROUP_REPLACE_PROTECTION, ///< set the autoreplace-protection for a group
+	CMD_SET_GROUP_FLAG,               ///< set/clear a flag for a group
 	CMD_SET_GROUP_LIVERY,             ///< set the livery for a group
 
 	CMD_MOVE_ORDER,                   ///< move an order
@@ -347,7 +349,7 @@ enum DoCommandFlag {
 	DC_AUTO                  = 0x002, ///< don't allow building on structures
 	DC_QUERY_COST            = 0x004, ///< query cost only,  don't build.
 	DC_NO_WATER              = 0x008, ///< don't allow building on water
-	DC_NO_RAIL_OVERLAP       = 0x010, ///< don't allow overlap of rails (used in buildrail)
+	// 0x010 is unused
 	DC_NO_TEST_TOWN_RATING   = 0x020, ///< town rating does not disallow you from building
 	DC_BANKRUPT              = 0x040, ///< company bankrupts, skip money check, skip vehicle on tile check in some cases
 	DC_AUTOREPLACE           = 0x080, ///< autoreplace/autorenew is in progress, this shall disable vehicle limits when building, and ignore certain restrictions when undoing things (like vehicle attach callback)
@@ -442,7 +444,7 @@ enum CommandPauseLevel {
  * @param text Additional text
  * @return The CommandCost of the command, which can be succeeded or failed.
  */
-typedef CommandCost CommandProc(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text);
+typedef CommandCost CommandProc(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text);
 
 /**
  * Define a command with the flags which belongs to it.
@@ -481,7 +483,7 @@ struct CommandContainer {
 	uint32 p2;                       ///< parameter p2.
 	uint32 cmd;                      ///< command being executed.
 	CommandCallback *callback;       ///< any callback function executed upon successful completion of the command.
-	char text[32 * MAX_CHAR_LENGTH]; ///< possible text sent for name changes etc, in bytes including '\0'.
+	std::string text;                ///< possible text sent for name changes etc.
 };
 
 #endif /* COMMAND_TYPE_H */

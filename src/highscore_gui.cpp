@@ -58,13 +58,13 @@ struct EndGameHighScoreBaseWindow : Window {
 	/** Return the coordinate of the screen such that a window of 640x480 is centered at the screen. */
 	Point GetTopLeft(int x, int y)
 	{
-		Point pt = {max(0, (_screen.width / 2) - (x / 2)), max(0, (_screen.height / 2) - (y / 2))};
+		Point pt = {std::max(0, (_screen.width / 2) - (x / 2)), std::max(0, (_screen.height / 2) - (y / 2))};
 		return pt;
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override
 	{
-		delete this;
+		this->Close();
 	}
 
 	EventState OnKeyPress(WChar key, uint16 keycode) override
@@ -79,7 +79,7 @@ struct EndGameHighScoreBaseWindow : Window {
 			case WKC_RETURN:
 			case WKC_ESC:
 			case WKC_SPACE:
-				delete this;
+				this->Close();
 				return ES_HANDLED;
 
 			default:
@@ -113,7 +113,7 @@ struct EndGameWindow : EndGameHighScoreBaseWindow {
 			this->window_number = SP_MULTIPLAYER;
 			this->rank = SaveHighScoreValueNetwork();
 		} else {
-			/* in single player _local company is always valid */
+			/* in singleplayer mode _local company is always valid */
 			const Company *c = Company::Get(_local_company);
 			this->window_number = SP_CUSTOM;
 			this->rank = SaveHighScoreValue(c);
@@ -122,10 +122,11 @@ struct EndGameWindow : EndGameHighScoreBaseWindow {
 		MarkWholeScreenDirty();
 	}
 
-	~EndGameWindow()
+	void Close() override
 	{
 		if (!_networking) DoCommandP(0, PM_PAUSED_NORMAL, 0, CMD_PAUSE); // unpause
 		ShowHighscoreTable(this->window_number, this->rank);
+		this->EndGameHighScoreBaseWindow::Close();
 	}
 
 	void OnPaint() override
@@ -169,11 +170,13 @@ struct HighScoreWindow : EndGameHighScoreBaseWindow {
 		this->rank = ranking;
 	}
 
-	~HighScoreWindow()
+	void Close() override
 	{
 		if (_game_mode != GM_MENU) ShowVitalWindows();
 
 		if (!_networking && !this->game_paused_by_player) DoCommandP(0, PM_PAUSED_NORMAL, 0, CMD_PAUSE); // unpause
+
+		this->EndGameHighScoreBaseWindow::Close();
 	}
 
 	void OnPaint() override
@@ -183,7 +186,7 @@ struct HighScoreWindow : EndGameHighScoreBaseWindow {
 		this->SetupHighScoreEndWindow();
 		Point pt = this->GetTopLeft(ScaleGUITrad(640), ScaleGUITrad(480));
 
-		SetDParam(0, ORIGINAL_END_YEAR);
+		SetDParam(0, _settings_game.game_creation.ending_year);
 		DrawStringMultiLine(pt.x + ScaleGUITrad(70), pt.x + ScaleGUITrad(570), pt.y, pt.y + ScaleGUITrad(140), !_networking ? STR_HIGHSCORE_TOP_COMPANIES_WHO_REACHED : STR_HIGHSCORE_TOP_COMPANIES_NETWORK_GAME, TC_FROMSTRING, SA_CENTER);
 
 		/* Draw Highscore peepz */
@@ -205,7 +208,7 @@ struct HighScoreWindow : EndGameHighScoreBaseWindow {
 };
 
 static const NWidgetPart _nested_highscore_widgets[] = {
-	NWidget(WWT_PANEL, COLOUR_BROWN, WID_H_BACKGROUND), SetMinimalSize(641, 481), SetResize(1, 1), EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_BROWN, WID_H_BACKGROUND), SetResize(1, 1), EndContainer(),
 };
 
 static WindowDesc _highscore_desc(
@@ -229,7 +232,7 @@ static WindowDesc _endgame_desc(
  */
 void ShowHighscoreTable(int difficulty, int8 ranking)
 {
-	DeleteWindowByClass(WC_HIGHSCORE);
+	CloseWindowByClass(WC_HIGHSCORE);
 	new HighScoreWindow(&_highscore_desc, difficulty, ranking);
 }
 
@@ -243,6 +246,6 @@ void ShowEndGameChart()
 	if (_network_dedicated || (!_networking && !Company::IsValidID(_local_company))) return;
 
 	HideVitalWindows();
-	DeleteWindowByClass(WC_ENDSCREEN);
+	CloseWindowByClass(WC_ENDSCREEN);
 	new EndGameWindow(&_endgame_desc);
 }

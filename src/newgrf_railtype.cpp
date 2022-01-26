@@ -52,17 +52,10 @@
 		}
 	}
 
-	DEBUG(grf, 1, "Unhandled rail type tile variable 0x%X", variable);
+	Debug(grf, 1, "Unhandled rail type tile variable 0x{:X}", variable);
 
 	*available = false;
 	return UINT_MAX;
-}
-
-/* virtual */ const SpriteGroup *RailTypeResolverObject::ResolveReal(const RealSpriteGroup *group) const
-{
-	if (group->num_loading > 0) return group->loading[0];
-	if (group->num_loaded  > 0) return group->loaded[0];
-	return nullptr;
 }
 
 GrfSpecFeature RailTypeResolverObject::GetFeature() const
@@ -136,6 +129,28 @@ SpriteID GetCustomSignalSprite(const RailtypeInfo *rti, TileIndex tile, SignalTy
 	if (group == nullptr || group->GetNumResults() == 0) return 0;
 
 	return group->GetResult();
+}
+
+/**
+ * Translate an index to the GRF-local railtype-translation table into a RailType.
+ * @param railtype  Index into GRF-local translation table.
+ * @param grffile   Originating GRF file.
+ * @return RailType or INVALID_RAILTYPE if the railtype is unknown.
+ */
+RailType GetRailTypeTranslation(uint8 railtype, const GRFFile *grffile)
+{
+	if (grffile == nullptr || grffile->railtype_list.size() == 0) {
+		/* No railtype table present. Return railtype as-is (if valid), so it works for original railtypes. */
+		if (railtype >= RAILTYPE_END || GetRailTypeInfo(static_cast<RailType>(railtype))->label == 0) return INVALID_RAILTYPE;
+
+		return static_cast<RailType>(railtype);
+	} else {
+		/* Railtype table present, but invalid index, return invalid type. */
+		if (railtype >= grffile->railtype_list.size()) return INVALID_RAILTYPE;
+
+		/* Look up railtype including alternate labels. */
+		return GetRailTypeByLabel(grffile->railtype_list[railtype]);
+	}
 }
 
 /**

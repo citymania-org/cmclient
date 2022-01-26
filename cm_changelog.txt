@@ -74,24 +74,93 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
-*** next () ***
+*** 12.1 (9 Nov 2021) ***
+- Added company HQ and watch buttons to companies in the online players window.
+- Made companies clickable in the online players window. Regular click opens company window, Fn(Ctrl)-click opens finances.
+- Slightly improved the look of online players widow and client list overlay with more informative icons.
+- Moved company selection to the bottom in the watch window to reduce the waste of a screen space.
+- Changed main viewport centering button in the watch window to a location button in the window title.
+- All outgoing actions are queued and not being sent to the server by more than 2 per frame. Should prevent the client from being kicked from most servers when overusing treedozer or copy-paste.
+- Hid new auto-terraforming mode for polyrail behind a setting for now as it's was quite bugged and confusing. Though all known bugs were fixed so it should quite usable now.
+- Show both terraforming and autorail highlight when using auto-terraforming polyrail mode.
+- Fixed client list overlay disappearing after opening console.
+- Fixed copy-pasting signals.
+- Fixed auto-terraforming messing remove mode in polyrail tool.
+- Fixed modifier keys selection in settings ui.
+- Fixed red highlight on rail tools in remove mode.
+- Fixed crash when trying to move copied rail out of the map.
+
+*** 12.0 (17 Oct 2021) ***
+- Automatically search servers when opening multiplayer window.
+- Show town population instead of the name in IMBA minimap mode.
+- In polyrail mode placing rail while holding Fn modifier will automatically flatten the land for it (only works reliably in singgle-player mode atm).
+- Fixed crash when copying rail bridges.
+
+*** 12.0-RC1 (5 Oct 2021) ***
+- Added experimental rail copy-paste tool.
+- Added client list overlay (toggleable with a button in the regular client list window title).
+- Added back "New company" option to the company toolbar dropdown menu.
+- Fixed crash when closing order window with a hotkey.
+- Fixed crash when building airports outsize the map.
+- Fixed minimap crash in imba mode.
+- Fixed cargo selection in income/cargo graphs.
+- Fixed watch window excessive scaling with interface size.
+
+*** 12.0-beta2 (19 Aug 2021) ***
+- Fixed crash when building airport with no valid airport type selected.
+- Renamed a bunch of setttings in the config file adding cm_* prefix to distinguish them from vanilla ones.
+- Removed setting to show train length in old format in the depot (new one is more usable now).
+- Removed setting to disable ending the polyrail with double click (it's always disabled).
+- Removed setting to disable starting-stopping vehicles with ctrl-click (seems pointless).
+
+*** 1.11.2 (3 May 2021) ***
+- OpenTTD update.
+
+*** 1.11.1 (19 Apr 2021) ***
+- Fixed crash when building road stop or airport.
+- Fixed joining companies in the game.
+- Fixed graphical glitches when using town growth tiles zoning.
+- Added German translation for additional string - by danidoedel.
+
+*** 1.11.0 (5 Apr 2021) ***
+- Added two more minimap zoom levels (very useful on 4k monitors).
+- When building a station show estimated monthly supply amounts.
+- Added setting to change graphs background colour between old one (grey) and new one (black).
+- Subtle visual improvements for graphs.
+- Made rail depot building preview red if it can't be built there and allow rotating it with a hotkey (defaults to middle mouse button).
+- Added building preview and rotation hotkey(also MMB by default) for rail stations, road stops and road depots.
+- Added building preview for aiports.
+- Added Zstandard(zstd) savegame compression option. May or may not reduce map download time on CityMania servers.
+- Show vehicle IDs in vehicle window if newgrf_developer_tools is enabled.
+- Addded `cmresettowngrowth` command to reset growth rate of all towns to normal (helpful if some gamscript messed them up).
+- Exports house spec info in `cmexport` command.
+
+*** 1.10.3 (10 Aug 2020) ***
+- Show preview when building a rail depot.
+- Add an option to enable shading trees on slopes for better looks.
+- Add an option to show APM counter on the status bar.
 - Fix order hotkeys adding extra no load/unload orders.
-- Allow to use TAB as a hotkey
-- Add hotkey to toggle minimap
-- Make hotkey to close news and errors configurable (still defaults to SPACE)
-- Remove custom hotkey keycodes that were added to vanilla
-- Make land info tool work with right click tooltip setting and/or disabled extra tooltip settings.
-- Make station rating tooltips work with right click tooltip setting
-- Splilt extra(land) tooltips setting in config into 3 for industries, stations and houses separately.
-- Add a setting to pause games after loading.
-- Add a "step" console command to advance the game for n ticks (singleplayer only).
-- cmexport
+- Allow to use TAB as a hotkey.
+- Add hotkey to toggle minimap.
+- Make a usinghotkey to close news and errors configurable (still defaults to SPACE).
+- Remove custom hotkey keycodes that were added to vanilla.
 - Make modifier key (ctrl/alt/shift) functions configurable.
-- Allow to toggle removal mode with modifier key on station and signal building tools if it's different from fn modifier (otherwise fn takes priority).
-- Center text and icons in the status bar vertically.
-- Shaded trees.
-- Add APM counter to the status bar.
-- Added cmtreemap console command to plant trees according to a heightmap image (scenario editor only).
+- Allow toggling removal mode with modifier key on station and signal building tools if it's different from the Fn modifier (otherwise fn takes priority).
+- Add "cmtreemap" console command to plant trees according to a heightmap image (scenario editor only).
+- Add "cmexport" console command to export various in-game data in JSON format (for developers).
+- Add "cmstep" console command to advance the game for n ticks (singleplayer only).
+- Make land info tool work with right-click tooltip setting and/or disabled extra tooltip settings.
+- Make station rating tooltips work with right-click tooltip setting
+- Split extra (land) tooltips setting in config into 3 for industries, stations, and houses separately.
+- Add an option to pause games after loading.
+- Fix town HR counter.
+- Allow spectators to open the industry funding window from the menu.
+- Fix graphical glitches after switching location with a hotkey.
+- Make new tint highlights work with 32bpp sprites.
+- Fix: sprite preview in sprite aligner is too small with scaled UI.
+- Slightly improve funding highlight update.
+- Remove cargo color icons from income and delivered cargo graphs to avoid confusion with company colors.
+- Fix delivered cargo graph displaying units as money.
 
 *** 1.10.2 (5 Jun 2020) ***
 - Add new minimap mode showing industries, height and farms at the same time.

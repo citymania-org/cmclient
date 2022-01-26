@@ -14,6 +14,7 @@
 #include "../tile_type.h"
 #include "../town_map.h"
 #include "../town.h"
+#include "../viewport_func.h"
 #include "../window_func.h"
 #include "../zoom_func.h"
 
@@ -54,7 +55,7 @@ struct LandTooltipsWindow : public Window
         int scr_bot = GetMainViewBottom() - 2;
         Point pt;
         pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot);
-        if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
+        if (pt.y + sm_height > scr_bot) pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
         pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
         return pt;
     }
@@ -62,7 +63,7 @@ struct LandTooltipsWindow : public Window
     virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
     {
         uint icon_size = ScaleGUITrad(10);
-        uint line_height = max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
+        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
         uint icons_width = icon_size * 3 + 20;
         size->width = 200;
         size->height = 6 + FONT_HEIGHT_NORMAL;
@@ -74,7 +75,7 @@ struct LandTooltipsWindow : public Window
                 size->width = GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_HOUSE_NAME).width;
                 size->height += line_height;
                 SetDParam(0, hs->population);
-                size->width = max(size->width, GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_HOUSE_POPULATION).width);
+                size->width = std::max(size->width, GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_HOUSE_POPULATION).width);
                 break;
             }
             case MP_INDUSTRY: {
@@ -82,7 +83,7 @@ struct LandTooltipsWindow : public Window
                 if(ind == NULL) break;
 
                 SetDParam(0, ind->index);
-                size->width = max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_INDUSTRY_NAME).width, size->width);
+                size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_INDUSTRY_NAME).width, size->width);
 
                 for (CargoID i = 0; i < lengthof(ind->produced_cargo); i++) {
                     if (ind->produced_cargo[i] == CT_INVALID) continue;
@@ -93,7 +94,7 @@ struct LandTooltipsWindow : public Window
                     SetDParam(1, cs->Index());
                     SetDParam(2, ind->last_month_production[i]);
                     SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
-                    size->width = max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_INDUSTRY_CARGO).width + icons_width, size->width);
+                    size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_INDUSTRY_CARGO).width + icons_width, size->width);
                 }
                 break;
             }
@@ -102,11 +103,9 @@ struct LandTooltipsWindow : public Window
                 if(st == NULL) break;
 
                 SetDParam(0, st->index);
-                size->width = max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_NAME).width, size->width);
+                size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_NAME).width, size->width);
 
-                for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-                    const CargoSpec *cs = _sorted_cargo_specs[i];
-                    if(cs == NULL) continue;
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
                     int cargoid = cs->Index();
                     if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
                         size->height += line_height;
@@ -114,7 +113,7 @@ struct LandTooltipsWindow : public Window
                         SetDParam(1, cargoid);
                         SetDParam(2, st->goods[cargoid].cargo.TotalCount());
                         SetDParam(3, ToPercent8(st->goods[cargoid].rating));
-                        size->width = max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_CARGO).width + icons_width, size->width);
+                        size->width = std::max(GetStringBoundingBox(STR_CM_LAND_TOOLTIPS_STATION_CARGO).width + icons_width, size->width);
                     }
                 }
                 break;
@@ -129,7 +128,7 @@ struct LandTooltipsWindow : public Window
     virtual void DrawWidget(const Rect &r, int widget) const
     {
         uint icon_size = ScaleGUITrad(10);
-        uint line_height = max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
+        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
         uint icons_width = icon_size * 3 + 10;
         uint text_ofs = (line_height - FONT_HEIGHT_NORMAL) >> 1;
         uint icon_ofs = (line_height - icon_size) >> 1;
@@ -186,9 +185,7 @@ struct LandTooltipsWindow : public Window
                 DrawString(left, right, y, STR_CM_LAND_TOOLTIPS_STATION_NAME, TC_BLACK, SA_CENTER);
                 y += FONT_HEIGHT_NORMAL + 2;
 
-                for (int i = 0; i < _sorted_standard_cargo_specs_size; i++) {
-                    const CargoSpec *cs = _sorted_cargo_specs[i];
-                    if(cs == NULL) continue;
+                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
                     int cargoid = cs->Index();
                     if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
                         SetDParam(0, cs->name);
@@ -223,7 +220,7 @@ void ShowLandTooltips(TileIndex tile, Window *parent) {
     last_tooltip_tile = tile;
 
     if (tile == INVALID_TILE) {
-        DeleteWindowById(CM_WC_LAND_TOOLTIPS, 0);
+        CloseWindowById(CM_WC_LAND_TOOLTIPS, 0);
         return;
     }
 
@@ -255,7 +252,7 @@ void ShowLandTooltips(TileIndex tile, Window *parent) {
         default:
             break;
     }
-    DeleteWindowById(CM_WC_LAND_TOOLTIPS, 0);
+    CloseWindowById(CM_WC_LAND_TOOLTIPS, 0);
 
     if (param == 0) return;
     new LandTooltipsWindow(parent, param);
@@ -309,7 +306,7 @@ public:
         int scr_bot = GetMainViewBottom() - 2;
         Point pt;
         pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot);
-        if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
+        if (pt.y + sm_height > scr_bot) pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
         pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
         return pt;
     }
@@ -334,7 +331,7 @@ public:
         if (HasBit(cs->callback_mask, CBM_CARGO_STATION_RATING_CALC)) {
             uint last_speed = ge->HasVehicleEverTriedLoading() ? ge->last_speed : 0xFF;
 
-            uint32 var18 = min(ge->time_since_pickup, 0xFF) | (min(ge->max_waiting_cargo, 0xFFFF) << 8) | (min(last_speed, 0xFF) << 24);
+            uint32 var18 = std::min<uint32>(ge->time_since_pickup, 0xFF) | (std::min<uint32>(ge->max_waiting_cargo, 0xFFFF) << 8) | (std::min<uint32>(last_speed, 0xFF) << 24);
             uint32 var10 = (this->st->last_vehicle_type == VEH_INVALID) ? 0x0 : (this->st->last_vehicle_type + 0x10);
             // TODO can desync
             uint16 callback = GetCargoCallback(CBID_CARGO_STATION_RATING_CALC, var10, var18, this->cs);
@@ -353,15 +350,15 @@ public:
                 GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_RATING, lastof(this->data[line_nr]));
                 line_nr++;
 
-                SetDParam(0, min(last_speed, 0xFF));
+                SetDParam(0, std::min<uint>(last_speed, 0xFF));
                 GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED, lastof(this->data[line_nr]));
                 line_nr++;
 
-                SetDParam(0, min(ge->max_waiting_cargo, 0xFFFF));
+                SetDParam(0, std::min<uint>(ge->max_waiting_cargo, 0xFFFF));
                 GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS, lastof(this->data[line_nr]));
                 line_nr++;
 
-                SetDParam(0, (min(ge->time_since_pickup, 0xFF) * 5 + 1) / 2);
+                SetDParam(0, (std::min<uint>(ge->time_since_pickup, 0xFF) * 5 + 1) / 2);
                 GetString(this->data[line_nr], STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME, lastof(this->data[line_nr]));
                 line_nr++;
             }
@@ -452,7 +449,7 @@ public:
             uint width = GetStringBoundingBox(this->data[i]).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT + 2;
             if (this->newgrf_rating_used && i >= 2 && i <= 4)
                 width += RATING_TOOLTIP_NEWGRF_INDENT;
-            size->width = max(size->width, width);
+            size->width = std::max(size->width, width);
             size->height += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
         }
         size->height -= WD_PAR_VSEP_NORMAL;
@@ -489,22 +486,28 @@ public:
     {
         /* Always close tooltips when the cursor is not in our window. */
         if (!_cursor.in_window) {
-            delete this;
+            this->Close();
             return;
         }
 
         /* We can show tooltips while dragging tools. These are shown as long as
          * we are dragging the tool. Normal tooltips work with hover or rmb. */
         switch (this->close_cond) {
-            case TCC_RIGHT_CLICK: if (!_right_button_down) delete this; break;
-            case TCC_HOVER: if (!_mouse_hovering) delete this; break;
+            case TCC_RIGHT_CLICK: if (!_right_button_down) this->Close(); break;
+            case TCC_HOVER: if (!_mouse_hovering) this->Close(); break;
             case TCC_NONE: break;
+
+            case TCC_EXIT_VIEWPORT: {
+                Window *w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
+                if (w == nullptr || IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y) == nullptr) this->Close();
+                break;
+            }
         }
     }
 };
 
 bool ShowStationRatingTooltip(Window *parent, const Station *st, const CargoSpec *cs, TooltipCloseCondition close_cond) {
-    DeleteWindowById(WC_STATION_RATING_TOOLTIP, 0);
+    CloseWindowById(WC_STATION_RATING_TOOLTIP, 0);
     new StationRatingTooltipWindow(parent, st, cs, close_cond);
     return true;
 }

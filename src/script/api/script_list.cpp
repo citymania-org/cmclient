@@ -468,8 +468,8 @@ int64 ScriptList::Begin()
 
 int64 ScriptList::Next()
 {
-	if (this->initialized == false) {
-		DEBUG(script, 0, "Next() is invalid as Begin() is never called");
+	if (!this->initialized) {
+		Debug(script, 0, "Next() is invalid as Begin() is never called");
 		return 0;
 	}
 	return this->sorter->Next();
@@ -482,8 +482,8 @@ bool ScriptList::IsEmpty()
 
 bool ScriptList::IsEnd()
 {
-	if (this->initialized == false) {
-		DEBUG(script, 0, "IsEnd() is invalid as Begin() is never called");
+	if (!this->initialized) {
+		Debug(script, 0, "IsEnd() is invalid as Begin() is never called");
 		return true;
 	}
 	return this->sorter->IsEnd();
@@ -557,10 +557,17 @@ void ScriptList::AddList(ScriptList *list)
 {
 	if (list == this) return;
 
-	ScriptListMap *list_items = &list->items;
-	for (ScriptListMap::iterator iter = list_items->begin(); iter != list_items->end(); iter++) {
-		this->AddItem((*iter).first);
-		this->SetValue((*iter).first, (*iter).second);
+	if (this->IsEmpty()) {
+		/* If this is empty, we can just take the items of the other list as is. */
+		this->items = list->items;
+		this->buckets = list->buckets;
+		this->modifications++;
+	} else {
+		ScriptListMap *list_items = &list->items;
+		for (ScriptListMap::iterator iter = list_items->begin(); iter != list_items->end(); iter++) {
+			this->AddItem((*iter).first);
+			this->SetValue((*iter).first, (*iter).second);
+		}
 	}
 }
 
@@ -825,7 +832,7 @@ SQInteger ScriptList::_nexti(HSQUIRRELVM vm)
 	SQInteger idx;
 	sq_getinteger(vm, 2, &idx);
 
-	int val = this->Next();
+	SQInteger val = this->Next();
 	if (this->IsEnd()) {
 		sq_pushnull(vm);
 		return 1;

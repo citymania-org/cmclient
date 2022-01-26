@@ -17,13 +17,12 @@
 
 void InitializeOldNames();
 StringID RemapOldStringID(StringID s);
-char *CopyFromOldName(StringID id);
+std::string CopyFromOldName(StringID id);
 void ResetOldNames();
 
 void ResetOldWaypoints();
 void MoveBuoysToWaypoints();
 void MoveWaypointsToBaseStations();
-const SaveLoad *GetBaseStationDescription();
 
 void AfterLoadVehicles(bool part_of_load);
 void FixupTrainLengths();

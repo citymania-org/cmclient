@@ -11,6 +11,7 @@
 #define CURRENCY_H
 
 #include "date_type.h"
+#include "string_func.h"
 #include "strings_type.h"
 
 static const int CF_NOEURO = 0; ///< Currency never switches to the Euro (as far as known).
@@ -61,16 +62,19 @@ enum Currencies {
 	CURRENCY_NTD,       ///< New Taiwan Dollar
 	CURRENCY_CNY,       ///< Chinese Renminbi
 	CURRENCY_HKD,       ///< Hong Kong Dollar
+	CURRENCY_INR,       ///< Indian Rupee
+	CURRENCY_IDR,       ///< Indonesian Rupiah
+	CURRENCY_MYR,       ///< Malaysian Ringgit
 	CURRENCY_END,       ///< always the last item
 };
 
 /** Specification of a currency. */
 struct CurrencySpec {
-	uint16 rate;
-	char separator[8];
-	Year to_euro;      ///< %Year of switching to the Euro. May also be #CF_NOEURO or #CF_ISEURO.
-	char prefix[16];
-	char suffix[16];
+	uint16 rate;           ///< The conversion rate compared to the base currency.
+	std::string separator; ///< The thousands separator for this currency.
+	Year to_euro;          ///< %Year of switching to the Euro. May also be #CF_NOEURO or #CF_ISEURO.
+	std::string prefix;    ///< Prefix to apply when formatting money in this currency.
+	std::string suffix;    ///< Suffix to apply when formatting money in this currency.
 	/**
 	 * The currency symbol is represented by two possible values, prefix and suffix
 	 * Usage of one or the other is determined by #symbol_pos.
@@ -82,6 +86,13 @@ struct CurrencySpec {
 	 */
 	byte symbol_pos;
 	StringID name;
+
+	CurrencySpec() = default;
+
+	CurrencySpec(uint16 rate, const char *separator, Year to_euro, const char *prefix, const char *suffix, byte symbol_pos, StringID name) :
+		rate(rate), separator(separator), to_euro(to_euro), prefix(prefix), suffix(suffix), symbol_pos(symbol_pos), name(name)
+	{
+	}
 };
 
 extern CurrencySpec _currency_specs[CURRENCY_END];

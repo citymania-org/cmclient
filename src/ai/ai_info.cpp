@@ -15,6 +15,7 @@
 #include "../debug.h"
 #include "../string_func.h"
 #include "../rev.h"
+#include <set>
 
 #include "../safeguards.h"
 
@@ -24,10 +25,8 @@
  */
 static bool CheckAPIVersion(const char *api_version)
 {
-	return strcmp(api_version, "0.7") == 0 || strcmp(api_version, "1.0") == 0 || strcmp(api_version, "1.1") == 0 ||
-			strcmp(api_version, "1.2") == 0 || strcmp(api_version, "1.3") == 0 || strcmp(api_version, "1.4") == 0 ||
-			strcmp(api_version, "1.5") == 0 || strcmp(api_version, "1.6") == 0 || strcmp(api_version, "1.7") == 0 ||
-			strcmp(api_version, "1.8") == 0 || strcmp(api_version, "1.9") == 0 || strcmp(api_version, "1.10") == 0;
+	static const std::set<std::string> versions = { "0.7", "1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10", "1.11", "12" };
+	return versions.find(api_version) != versions.end();
 }
 
 #if defined(_WIN32)
@@ -64,7 +63,7 @@ template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 {
 	/* Get the AIInfo */
 	SQUserPointer instance = nullptr;
-	if (SQ_FAILED(sq_getinstanceup(vm, 2, &instance, 0)) || instance == nullptr) return sq_throwerror(vm, "Pass an instance of a child class of AIInfo to RegisterAI");
+	if (SQ_FAILED(sq_getinstanceup(vm, 2, &instance, nullptr)) || instance == nullptr) return sq_throwerror(vm, "Pass an instance of a child class of AIInfo to RegisterAI");
 	AIInfo *info = (AIInfo *)instance;
 
 	SQInteger res = ScriptInfo::Constructor(vm, info);
@@ -90,7 +89,7 @@ template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 	if (info->engine->MethodExists(*info->SQ_instance, "GetAPIVersion")) {
 		if (!info->engine->CallStringMethodStrdup(*info->SQ_instance, "GetAPIVersion", &info->api_version, MAX_GET_OPS)) return SQ_ERROR;
 		if (!CheckAPIVersion(info->api_version)) {
-			DEBUG(script, 1, "Loading info.nut from (%s.%d): GetAPIVersion returned invalid version", info->GetName(), info->GetVersion());
+			Debug(script, 1, "Loading info.nut from ({}.{}): GetAPIVersion returned invalid version", info->GetName(), info->GetVersion());
 			return SQ_ERROR;
 		}
 	} else {
@@ -108,7 +107,7 @@ template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 {
 	/* Get the AIInfo */
 	SQUserPointer instance;
-	sq_getinstanceup(vm, 2, &instance, 0);
+	sq_getinstanceup(vm, 2, &instance, nullptr);
 	AIInfo *info = (AIInfo *)instance;
 	info->api_version = nullptr;
 

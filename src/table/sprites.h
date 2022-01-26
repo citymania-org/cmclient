@@ -54,7 +54,7 @@ static const SpriteID SPR_LARGE_SMALL_WINDOW = 682;
 
 /** Extra graphic spritenumbers */
 static const SpriteID SPR_OPENTTD_BASE   = 4896;
-static const uint16 OPENTTD_SPRITE_COUNT = 184;
+static const uint16 OPENTTD_SPRITE_COUNT = 191;
 
 /* Halftile-selection sprites */
 static const SpriteID SPR_HALFTILE_SELECTION_FLAT = SPR_OPENTTD_BASE;
@@ -163,6 +163,14 @@ static const SpriteID SPR_IMG_DELETE_LEFT            = SPR_OPENTTD_BASE + 166;
 static const SpriteID SPR_IMG_DELETE_RIGHT           = SPR_OPENTTD_BASE + 167;
 
 static const SpriteID SPR_WINDOW_DEFSIZE             = SPR_OPENTTD_BASE + 168;
+static const SpriteID SPR_RENAME                     = SPR_OPENTTD_BASE + 184;
+static const SpriteID SPR_GOTO_LOCATION              = SPR_OPENTTD_BASE + 185;
+
+static const SpriteID SPR_CHAT                       = SPR_OPENTTD_BASE + 186;
+static const SpriteID SPR_ADMIN                      = SPR_OPENTTD_BASE + 187;
+static const SpriteID SPR_JOIN                       = SPR_OPENTTD_BASE + 188;
+static const SpriteID SPR_PLAYER_SELF                = SPR_OPENTTD_BASE + 189;
+static const SpriteID SPR_PLAYER_HOST                = SPR_OPENTTD_BASE + 190;
 
 static const SpriteID SPR_IMG_CARGOFLOW              = SPR_OPENTTD_BASE + 174;
 
@@ -274,8 +282,8 @@ static const SpriteID SPR_TRAMWAY_PAVED_STRAIGHT_X     = SPR_TRAMWAY_BASE + 47;
 static const SpriteID SPR_TRAMWAY_DEPOT_WITH_TRACK     = SPR_TRAMWAY_BASE + 49;
 static const SpriteID SPR_TRAMWAY_BACK_WIRES_STRAIGHT  = SPR_TRAMWAY_BASE + 55;
 static const SpriteID SPR_TRAMWAY_FRONT_WIRES_STRAIGHT = SPR_TRAMWAY_BASE + 56;
-static const SpriteID SPR_TRAMWAY_BACK_WIRES_SLOPED    = SPR_TRAMWAY_BASE + 72;
-static const SpriteID SPR_TRAMWAY_FRONT_WIRES_SLOPED   = SPR_TRAMWAY_BASE + 68;
+static const SpriteID SPR_TRAMWAY_BACK_WIRES_SLOPED    = SPR_TRAMWAY_BASE + 68;
+static const SpriteID SPR_TRAMWAY_FRONT_WIRES_SLOPED   = SPR_TRAMWAY_BASE + 72;
 static const SpriteID SPR_TRAMWAY_TUNNEL_WIRES         = SPR_TRAMWAY_BASE + 80;
 static const SpriteID SPR_TRAMWAY_BRIDGE               = SPR_TRAMWAY_BASE + 107;
 static const SpriteID SPR_TRAMWAY_DEPOT_NO_TRACK       = SPR_TRAMWAY_BASE + 113;
@@ -301,49 +309,61 @@ static const uint16 EMPTY_BOUNDING_BOX_SPRITE_COUNT = 1;
 static const SpriteID SPR_PALETTE_BASE = SPR_EMPTY_BOUNDING_BOX + EMPTY_BOUNDING_BOX_SPRITE_COUNT;
 static const uint16 PALETTE_SPRITE_COUNT = 1;
 
-/* zoning stuff */
-static const SpriteID SPR_INNER_HIGHLIGHT_BASE      = SPR_PALETTE_BASE + PALETTE_SPRITE_COUNT;
-static const SpriteID SPR_IMG_COMPANY_CARGO         = SPR_INNER_HIGHLIGHT_BASE + 19;
-static const SpriteID SPR_IMG_COMPANY_GOAL          = SPR_INNER_HIGHLIGHT_BASE + 20;
-static const SpriteID SPR_IMG_HOUSE_NEW             = SPR_INNER_HIGHLIGHT_BASE + 21;
-static const SpriteID SPR_PALETTE_ZONING_RED        = SPR_INNER_HIGHLIGHT_BASE + 22;
-static const SpriteID SPR_PALETTE_ZONING_GREEN      = SPR_INNER_HIGHLIGHT_BASE + 23;
-static const SpriteID SPR_PALETTE_ZONING_BLACK      = SPR_INNER_HIGHLIGHT_BASE + 24;
-static const SpriteID SPR_PALETTE_ZONING_LIGHT_BLUE = SPR_INNER_HIGHLIGHT_BASE + 25;
-static const SpriteID SPR_PALETTE_ZONING_ORANGE     = SPR_INNER_HIGHLIGHT_BASE + 26;
-static const SpriteID SPR_PALETTE_ZONING_WHITE      = SPR_INNER_HIGHLIGHT_BASE + 27;
-static const SpriteID SPR_PALETTE_ZONING_YELLOW     = SPR_INNER_HIGHLIGHT_BASE + 28;
-static const SpriteID SPR_PALETTE_ZONING_PURPLE     = SPR_INNER_HIGHLIGHT_BASE + 29;
-static const SpriteID SPR_INNER_HIGHLIGHT_COUNT     = 30;
+/* CityMania extra sprites */
+static const SpriteID CM_SPR_CITYMANIA_BASE            = SPR_PALETTE_BASE + PALETTE_SPRITE_COUNT;
+static const SpriteID CM_SPR_RAIL_COPY_PASTE           = CM_SPR_CITYMANIA_BASE + 2;
+static const SpriteID CM_SPR_HQ                        = CM_SPR_CITYMANIA_BASE + 3;
+static const SpriteID CM_SPR_WATCH                     = CM_SPR_CITYMANIA_BASE + 4;
+static const SpriteID CM_SPR_HOST                      = CM_SPR_CITYMANIA_BASE + 5;
+static const SpriteID CM_SPR_PLAYER                    = CM_SPR_HOST + 1;
+static const SpriteID CM_SPR_HOST_WHITE                = CM_SPR_HOST + 2;
+static const SpriteID CM_SPR_PLAYER_WHITE              = CM_SPR_HOST + 3;
+static const SpriteID CM_SPR_COMPANY_ICON              = CM_SPR_HOST + 4;
+static const SpriteID CM_SPR_COMPANY_ICON_HOST         = CM_SPR_HOST + 5;
+static const SpriteID CM_SPR_COMPANY_ICON_PLAYER       = CM_SPR_HOST + 6;
+static const SpriteID CM_SPR_COMPANY_ICON_AFK          = CM_SPR_HOST + 7;
+static const SpriteID CM_SPR_COMPANY_ICON_LOCKED       = CM_SPR_HOST + 8;
+static const SpriteID CM_SPR_INNER_HIGHLIGHT_BASE      = CM_SPR_COMPANY_ICON_LOCKED + 1;
+static const SpriteID CM_SPR_IMG_COMPANY_CARGO         = CM_SPR_INNER_HIGHLIGHT_BASE + 19;
+static const SpriteID CM_SPR_IMG_COMPANY_GOAL          = CM_SPR_INNER_HIGHLIGHT_BASE + 20;
+static const SpriteID CM_SPR_IMG_HOUSE_NEW             = CM_SPR_INNER_HIGHLIGHT_BASE + 21;
+static const SpriteID CM_SPR_PALETTE_ZONING_RED        = CM_SPR_INNER_HIGHLIGHT_BASE + 22;
+static const SpriteID CM_SPR_PALETTE_ZONING_GREEN      = CM_SPR_INNER_HIGHLIGHT_BASE + 23;
+static const SpriteID CM_SPR_PALETTE_ZONING_BLACK      = CM_SPR_INNER_HIGHLIGHT_BASE + 24;
+static const SpriteID CM_SPR_PALETTE_ZONING_LIGHT_BLUE = CM_SPR_INNER_HIGHLIGHT_BASE + 25;
+static const SpriteID CM_SPR_PALETTE_ZONING_ORANGE     = CM_SPR_INNER_HIGHLIGHT_BASE + 26;
+static const SpriteID CM_SPR_PALETTE_ZONING_WHITE      = CM_SPR_INNER_HIGHLIGHT_BASE + 27;
+static const SpriteID CM_SPR_PALETTE_ZONING_YELLOW     = CM_SPR_INNER_HIGHLIGHT_BASE + 28;
+static const SpriteID CM_SPR_PALETTE_ZONING_PURPLE     = CM_SPR_INNER_HIGHLIGHT_BASE + 29;
+static const SpriteID CM_SPR_INNER_HIGHLIGHT_COUNT     = 30;
 
-static const SpriteID SPR_BORDER_HIGHLIGHT_BASE     = SPR_INNER_HIGHLIGHT_BASE + SPR_INNER_HIGHLIGHT_COUNT + 1;
-static const SpriteID SPR_BORDER_HIGHLIGHT_COUNT    = 19 * 19;
-static const SpriteID PALETTE_TINT_BASE             = SPR_BORDER_HIGHLIGHT_BASE + SPR_BORDER_HIGHLIGHT_COUNT;
-static const SpriteID PALETTE_TINT_RED_DEEP         = PALETTE_TINT_BASE;
-static const SpriteID PALETTE_TINT_ORANGE_DEEP      = PALETTE_TINT_BASE + 1;
-static const SpriteID PALETTE_TINT_GREEN_DEEP       = PALETTE_TINT_BASE + 2;
-static const SpriteID PALETTE_TINT_CYAN_DEEP        = PALETTE_TINT_BASE + 3;
-static const SpriteID PALETTE_TINT_RED              = PALETTE_TINT_BASE + 4;
-static const SpriteID PALETTE_TINT_ORANGE           = PALETTE_TINT_BASE + 5;
-static const SpriteID PALETTE_TINT_YELLOW           = PALETTE_TINT_BASE + 6;
-static const SpriteID PALETTE_TINT_YELLOW_WHITE     = PALETTE_TINT_BASE + 7;
-static const SpriteID PALETTE_TINT_WHITE            = PALETTE_TINT_BASE + 8;
-static const SpriteID PALETTE_TINT_GREEN            = PALETTE_TINT_BASE + 9;
-static const SpriteID PALETTE_TINT_CYAN             = PALETTE_TINT_BASE + 10;
-static const SpriteID PALETTE_TINT_CYAN_WHITE       = PALETTE_TINT_BASE + 11;
-static const SpriteID PALETTE_TINT_BLUE             = PALETTE_TINT_BASE + 12;
-static const SpriteID PALETTE_SHADE_N              = PALETTE_TINT_BASE + 13;
-static const SpriteID PALETTE_SHADE_NE               = PALETTE_TINT_BASE + 14;
-static const SpriteID PALETTE_SHADE_E               = PALETTE_TINT_BASE + 15;
-static const SpriteID PALETTE_SHADE_SE               = PALETTE_TINT_BASE + 16;
-static const SpriteID PALETTE_SHADE_S               = PALETTE_TINT_BASE + 17;
-static const SpriteID PALETTE_SHADE_SW               = PALETTE_TINT_BASE + 18;
-static const SpriteID PALETTE_SHADE_W               = PALETTE_TINT_BASE + 19;
-static const SpriteID PALETTE_SHADE_NW               = PALETTE_TINT_BASE + 20;
-static const SpriteID PALETTE_TINT_COUNT            = 13 + 8;
-
+static const SpriteID CM_SPR_BORDER_HIGHLIGHT_BASE     = CM_SPR_INNER_HIGHLIGHT_BASE + CM_SPR_INNER_HIGHLIGHT_COUNT;
+static const SpriteID CM_SPR_BORDER_HIGHLIGHT_COUNT    = 19 * 19;
+static const SpriteID CM_PALETTE_TINT_BASE             = CM_SPR_BORDER_HIGHLIGHT_BASE + CM_SPR_BORDER_HIGHLIGHT_COUNT;
+static const SpriteID CM_PALETTE_TINT_RED_DEEP         = CM_PALETTE_TINT_BASE;
+static const SpriteID CM_PALETTE_TINT_ORANGE_DEEP      = CM_PALETTE_TINT_BASE + 1;
+static const SpriteID CM_PALETTE_TINT_GREEN_DEEP       = CM_PALETTE_TINT_BASE + 2;
+static const SpriteID CM_PALETTE_TINT_CYAN_DEEP        = CM_PALETTE_TINT_BASE + 3;
+static const SpriteID CM_PALETTE_TINT_RED              = CM_PALETTE_TINT_BASE + 4;
+static const SpriteID CM_PALETTE_TINT_ORANGE           = CM_PALETTE_TINT_BASE + 5;
+static const SpriteID CM_PALETTE_TINT_YELLOW           = CM_PALETTE_TINT_BASE + 6;
+static const SpriteID CM_PALETTE_TINT_YELLOW_WHITE     = CM_PALETTE_TINT_BASE + 7;
+static const SpriteID CM_PALETTE_TINT_WHITE            = CM_PALETTE_TINT_BASE + 8;
+static const SpriteID CM_PALETTE_TINT_GREEN            = CM_PALETTE_TINT_BASE + 9;
+static const SpriteID CM_PALETTE_TINT_CYAN             = CM_PALETTE_TINT_BASE + 10;
+static const SpriteID CM_PALETTE_TINT_CYAN_WHITE       = CM_PALETTE_TINT_BASE + 11;
+static const SpriteID CM_PALETTE_TINT_BLUE             = CM_PALETTE_TINT_BASE + 12;
+static const SpriteID CM_PALETTE_SHADE_N               = CM_PALETTE_TINT_BASE + 13;
+static const SpriteID CM_PALETTE_SHADE_NE              = CM_PALETTE_TINT_BASE + 14;
+static const SpriteID CM_PALETTE_SHADE_E               = CM_PALETTE_TINT_BASE + 15;
+static const SpriteID CM_PALETTE_SHADE_SE              = CM_PALETTE_TINT_BASE + 16;
+static const SpriteID CM_PALETTE_SHADE_S               = CM_PALETTE_TINT_BASE + 17;
+static const SpriteID CM_PALETTE_SHADE_SW              = CM_PALETTE_TINT_BASE + 18;
+static const SpriteID CM_PALETTE_SHADE_W               = CM_PALETTE_TINT_BASE + 19;
+static const SpriteID CM_PALETTE_SHADE_NW              = CM_PALETTE_TINT_BASE + 20;
+static const SpriteID CM_PALETTE_TINT_COUNT            = 13 + 8;
 /* From where can we start putting NewGRFs? */
-static const SpriteID SPR_NEWGRFS_BASE = PALETTE_TINT_BASE + PALETTE_TINT_COUNT;
+static const SpriteID SPR_NEWGRFS_BASE = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT;
 
 /* Manager face sprites */
 static const SpriteID SPR_GRADIENT = 874; // background gradient behind manager face
@@ -1180,33 +1200,38 @@ static const SpriteID SPR_IT_TOY_FACTORY_ROBOT        = 4720;
 static const SpriteID SPR_IT_POWER_PLANT_TRANSFORMERS = 2054;
 
 /* small icons of cargo available in station waiting*/
-static const SpriteID SPR_CARGO_PASSENGER             = 4297;
+static const SpriteID SPR_CARGO_PASSENGERS            = 4297;
 static const SpriteID SPR_CARGO_COAL                  = 4298;
 static const SpriteID SPR_CARGO_MAIL                  = 4299;
 static const SpriteID SPR_CARGO_OIL                   = 4300;
 static const SpriteID SPR_CARGO_LIVESTOCK             = 4301;
 static const SpriteID SPR_CARGO_GOODS                 = 4302;
-static const SpriteID SPR_CARGO_GRAIN                 = 4303;
+static const SpriteID SPR_CARGO_GRAIN                 = 4303;  // shared sprite with SPR_CARGO_WHEAT, SPR_CARGO_MAIZE
+static const SpriteID SPR_CARGO_WHEAT                 = 4303;  // shared sprite with SPR_CARGO_GRAIN, SPR_CARGO_MAIZE
+static const SpriteID SPR_CARGO_MAIZE                 = 4303;  // shared sprite with SPR_CARGO_GRAIN, SPR_CARGO_WHEAT
 static const SpriteID SPR_CARGO_WOOD                  = 4304;
 static const SpriteID SPR_CARGO_IRON_ORE              = 4305;
 static const SpriteID SPR_CARGO_STEEL                 = 4306;
-static const SpriteID SPR_CARGO_VALUES_GOLD           = 4307;  // shared between temperate and arctic
+static const SpriteID SPR_CARGO_VALUABLES             = 4307;  // shared between temperate and arctic ( SPR_CARGO_GOLD )
+static const SpriteID SPR_CARGO_GOLD                  = 4307;  // shared between temperate and arctic ( SPR_CARGO_VALUABLES )
 static const SpriteID SPR_CARGO_FRUIT                 = 4308;
 static const SpriteID SPR_CARGO_COPPER_ORE            = 4309;
-static const SpriteID SPR_CARGO_WATERCOLA             = 4310;  // shared between desert and toyland
+static const SpriteID SPR_CARGO_WATER                 = 4310;  // shared between desert and toyland ( SPR_CARGO_COLA )
+static const SpriteID SPR_CARGO_COLA                  = 4310;  // shared between desert and toyland ( SPR_CARGO_WATER )
 static const SpriteID SPR_CARGO_DIAMONDS              = 4311;
 static const SpriteID SPR_CARGO_FOOD                  = 4312;
 static const SpriteID SPR_CARGO_PAPER                 = 4313;
 static const SpriteID SPR_CARGO_RUBBER                = 4314;
-static const SpriteID SPR_CARGO_CANDY                 = 4315;
+static const SpriteID SPR_CARGO_SWEETS                = 4315;
 static const SpriteID SPR_CARGO_SUGAR                 = 4316;
 static const SpriteID SPR_CARGO_TOYS                  = 4317;
-static const SpriteID SPR_CARGO_COTTONCANDY           = 4318;
-static const SpriteID SPR_CARGO_FIZZYDRINK            = 4319;
+static const SpriteID SPR_CARGO_CANDYFLOSS            = 4318;
+static const SpriteID SPR_CARGO_FIZZY_DRINKS          = 4319;
 static const SpriteID SPR_CARGO_TOFFEE                = 4320;
 static const SpriteID SPR_CARGO_BUBBLES               = 4321;
 static const SpriteID SPR_CARGO_PLASTIC               = 4322;
 static const SpriteID SPR_CARGO_BATTERIES             = 4323;
+static const SpriteID SPR_CARGO_NOTHING               = SPR_ASCII_SPACE; // Placeholder for void cargo slots.
 
 /* Effect vehicles */
 static const SpriteID SPR_BULLDOZER_NE = 1416;
@@ -1581,11 +1606,11 @@ enum SpriteMasks {
 	PALETTE_MASK = MAX_PALETTES - 1,       ///< The mask for the auxiliary sprite (the one that takes care of recolouring)
 };
 
-assert_compile( (1 << TRANSPARENT_BIT & SPRITE_MASK) == 0 );
-assert_compile( (1 << RECOLOUR_BIT & SPRITE_MASK) == 0 );
-assert_compile( TRANSPARENT_BIT != RECOLOUR_BIT );
-assert_compile( (1 << TRANSPARENT_BIT & PALETTE_MASK) == 0);
-assert_compile( (1 << RECOLOUR_BIT & PALETTE_MASK) == 0 );
+static_assert( (1 << TRANSPARENT_BIT & SPRITE_MASK) == 0 );
+static_assert( (1 << RECOLOUR_BIT & SPRITE_MASK) == 0 );
+static_assert( TRANSPARENT_BIT != RECOLOUR_BIT );
+static_assert( (1 << TRANSPARENT_BIT & PALETTE_MASK) == 0);
+static_assert( (1 << RECOLOUR_BIT & PALETTE_MASK) == 0 );
 
 
 static const PaletteID PAL_NONE                    = 0;

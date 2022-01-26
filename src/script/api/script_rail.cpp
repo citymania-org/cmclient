@@ -178,13 +178,24 @@
 	if (station_id != ScriptStation::STATION_JOIN_ADJACENT) p1 |= (1 << 24);
 
 	const GRFFile *file;
-	uint16 res = GetAiPurchaseCallbackResult(GSF_STATIONS, cargo_id, 0, source_industry, goal_industry, min(255, distance / 2), AICE_STATION_GET_STATION_ID, source_station ? 0 : 1, min(15, num_platforms) << 4 | min(15, platform_length), &file);
+	uint16 res = GetAiPurchaseCallbackResult(
+		GSF_STATIONS,
+		cargo_id,
+		0,
+		source_industry,
+		goal_industry,
+		std::min(255, distance / 2),
+		AICE_STATION_GET_STATION_ID,
+		source_station ? 0 : 1,
+		std::min(15u, num_platforms) << 4 | std::min(15u, platform_length),
+		&file
+	);
 	uint32 p2 = (ScriptStation::IsValidStation(station_id) ? station_id : INVALID_STATION) << 16;
 	if (res != CALLBACK_FAILED) {
 		int index = 0;
 		const StationSpec *spec = StationClass::GetByGrf(file->grfid, res, &index);
 		if (spec == nullptr) {
-			DEBUG(grf, 1, "%s returned an invalid station ID for 'AI construction/purchase selection (18)' callback", file->filename);
+			Debug(grf, 1, "{} returned an invalid station ID for 'AI construction/purchase selection (18)' callback", file->filename);
 		} else {
 			/* We might have gotten an usable station spec. Try to build it, but if it fails we'll fall back to the original station. */
 			if (ScriptObject::DoCommand(tile, p1, p2 | spec->cls_id | index << 8, CMD_BUILD_RAIL_STATION)) return true;

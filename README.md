@@ -34,7 +34,7 @@ Both 'stable' and 'nightly' versions are available for download:
 - most people should choose the 'stable' version, as this has been more extensively tested
 - the 'nightly' version includes the latest changes and features, but may sometimes be less reliable
 
-On some platforms OpenTTD will also be available via your OS package manager or a similar service.
+OpenTTD is also available for free on [Steam](https://store.steampowered.com/app/1536610/OpenTTD/), [GOG.com](https://www.gog.com/game/openttd), and the [Microsoft Store](https://www.microsoft.com/p/openttd-official/9ncjg5rvrr1c). On some platforms OpenTTD will be available via your OS package manager or a similar service.
 
 
 ## 1.2) OpenTTD gameplay manual
@@ -46,15 +46,13 @@ OpenTTD has a [community-maintained wiki](https://wiki.openttd.org/), including 
 
 OpenTTD has been ported to several platforms and operating systems.
 
-The currently working platforms are:
+The currently supported platforms are:
 
-- FreeBSD (SDL)
-- Haiku (SDL)
-- Linux (SDL)
-- macOS (universal) (Cocoa video and sound drivers)
-- OpenBSD (SDL)
-- OS/2 (SDL)
-- Windows (Win32 GDI (faster) or SDL)
+- Linux (SDL (OpenGL and non-OpenGL))
+- macOS (universal) (Cocoa)
+- Windows (Win32 GDI / OpenGL)
+
+Other platforms may also work (in particular various BSD systems), but we don't actively test or maintain these.
 
 ### 1.3.1) Legacy support
 Platforms, languages and compilers change.
@@ -65,13 +63,13 @@ Please report a bug if you find a save that doesn't load.
 
 ## 1.4) Installing and running OpenTTD
 
-OpenTTD is usually straightforward to install, but for more help the wiki [includes an installation guide](https://wiki.openttd.org/Installation).
+OpenTTD is usually straightforward to install, but for more help the wiki [includes an installation guide](https://wiki.openttd.org/en/Manual/Installation).
 
 OpenTTD needs some additional graphics and sound files to run.
 
 For some platforms these will be downloaded during the installation process if required.
 
-For some platforms, you will need to refer to [the installation guide](https://wiki.openttd.org/Installation).
+For some platforms, you will need to refer to [the installation guide](https://wiki.openttd.org/en/Manual/Installation).
 
 
 ### 1.4.1) Free graphics and sound files
@@ -79,9 +77,9 @@ For some platforms, you will need to refer to [the installation guide](https://w
 The free data files, split into OpenGFX for graphics, OpenSFX for sounds and
 OpenMSX for music can be found at:
 
-- https://www.openttd.org/download-opengfx for OpenGFX
-- https://www.openttd.org/download-opensfx for OpenSFX
-- https://www.openttd.org/download-openmsx for OpenMSX
+- https://www.openttd.org/downloads/opengfx-releases/ for OpenGFX
+- https://www.openttd.org/downloads/opensfx-releases/ for OpenSFX
+- https://www.openttd.org/downloads/openmsx-releases/ for OpenMSX
 
 Please follow the readme of these packages about the installation procedure.
 The Windows installer can optionally download and install these packages.
@@ -116,7 +114,7 @@ OpenTTD features multiple types of add-on content, which modify gameplay in diff
 
 Most types of add-on content can be downloaded within OpenTTD via the 'Check Online Content' button in the main menu.
 
-Add-on content can also be installed manually, but that's more complicated; the [OpenTTD wiki](https://wiki.openttd.org/OpenTTD) may offer help with that, or the [OpenTTD directory structure guide](./docs/directory_structure.md).
+Add-on content can also be installed manually, but that's more complicated; the [OpenTTD wiki](https://wiki.openttd.org/) may offer help with that, or the [OpenTTD directory structure guide](./docs/directory_structure.md).
 
 ### 1.5.1) AI opponents
 
@@ -138,7 +136,7 @@ A wide range of add-content is available as NewGRFs, including vehicles, industr
 
 NewGRFs can be added via the 'Check Online Content' button in the main menu.
 
-See also the wiki [guide to NewGRFs](https://wiki.openttd.org/NewGRF) and [the forum graphics development section](https://www.tt-forums.net/viewforum.php?f=66).
+See also the wiki [guide to NewGRFs](https://wiki.openttd.org/en/Manual/NewGRF) and [the forum graphics development section](https://www.tt-forums.net/viewforum.php?f=66).
 
 ### 1.5.4) Game scripts
 
@@ -146,7 +144,7 @@ Game scripts can provide additional challenges or changes to the standard OpenTT
 
 Game scripts can be added via the 'Check Online Content' button in the main menu.
 
-See also the wiki [guide to game scripts](https://wiki.openttd.org/Game_script) and [the forum graphics game script section](https://www.tt-forums.net/viewforum.php?f=65).
+See also the wiki [guide to game scripts](https://wiki.openttd.org/en/Manual/Game%20script) and [the forum graphics game script section](https://www.tt-forums.net/viewforum.php?f=65).
 
 ### 1.6) OpenTTD directories
 
@@ -164,14 +162,14 @@ If you want to compile OpenTTD from source, instructions can be found in [COMPIL
 'Official' channels
 
 - [OpenTTD website](https://www.openttd.org)
-- IRC chat using #openttd on irc.oftc.net [more info about our irc channel](https://wiki.openttd.org/Irc)
+- IRC chat using #openttd on irc.oftc.net [more info about our irc channel](https://wiki.openttd.org/en/Development/IRC%20channel)
 - [OpenTTD on Github](https://github.com/openTTD/) for code repositories and for reporting issues
 - [forum.openttd.org](https://forum.openttd.org/) - the primary community forum site for discussing OpenTTD and related games
 - [OpenTTD wiki](https://wiki.openttd.org/) community-maintained wiki, including topics like gameplay guide, detailed explanation of some game mechanics, how to use add-on content (mods) and much more
 
 'Unofficial' channels
 
-- the OpenTTD wiki has a [page listing OpenTTD communities](https://wiki.openttd.org/Community) including some in languages other than English
+- the OpenTTD wiki has a [page listing OpenTTD communities](https://wiki.openttd.org/en/Community/Community) including some in languages other than English
 
 
 ### 2.1) Contributing to OpenTTD
@@ -206,6 +204,9 @@ See the comments in the source files in `src/3rdparty/md5` for the complete lice
 
 The implementations of Posix `getaddrinfo` and `getnameinfo` for OS/2 in `src/3rdparty/os2` are distributed partly under the GNU Lesser General Public License 2.1, and partly under the (3-clause) BSD license.
 The exact licensing terms can be found in `src/3rdparty/os2/getaddrinfo.c` resp. `src/3rdparty/os2/getnameinfo.c`.
+
+The fmt implementation in `src/3rdparty/fmt` is licensed under the MIT license.
+See `src/3rdparty/fmt/LICENSE.rst` for the complete license text.
 
 
 ## 4.0 Credits

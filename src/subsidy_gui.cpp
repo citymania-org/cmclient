@@ -85,7 +85,7 @@ struct SubsidyListWindow : Window {
 		}
 
 		if (citymania::_fn_mod || !ScrollMainWindowToTile(xy)) {
-			if (citymania::_fn_mod) ShowExtraViewPortWindow(xy);
+			if (citymania::_fn_mod) ShowExtraViewportWindow(xy);
 
 			/* otherwise determine dst coordinate for subsidy and scroll to it */
 			switch (s->dst_type) {
@@ -95,7 +95,7 @@ struct SubsidyListWindow : Window {
 			}
 
 			if (citymania::_fn_mod) {
-				ShowExtraViewPortWindow(xy);
+				ShowExtraViewportWindow(xy);
 			} else {
 				ScrollMainWindowToTile(xy);
 			}
@@ -163,7 +163,7 @@ struct SubsidyListWindow : Window {
 			if (!s->IsAwarded()) {
 				if (IsInsideMM(pos, 0, cap)) {
 					/* Displays the two offered towns */
-					SetupSubsidyDecodeParam(s, true);
+					SetupSubsidyDecodeParam(s, SubsidyDecodeParamType::Gui);
 					SetDParam(7, _date - ymd.day + s->remaining * 32);
 					DrawString(x, right, y + pos * FONT_HEIGHT_NORMAL, STR_SUBSIDIES_OFFERED_FROM_TO);
 				}
@@ -186,7 +186,7 @@ struct SubsidyListWindow : Window {
 		for (const Subsidy *s : Subsidy::Iterate()) {
 			if (s->IsAwarded()) {
 				if (IsInsideMM(pos, 0, cap)) {
-					SetupSubsidyDecodeParam(s, true);
+					SetupSubsidyDecodeParam(s, SubsidyDecodeParamType::Gui);
 					SetDParam(7, s->awarded);
 					SetDParam(8, _date - ymd.day + s->remaining * 32);
 

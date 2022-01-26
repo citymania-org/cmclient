@@ -14,6 +14,7 @@
 #include "../widgets/rail_widget.h"
 #include "../widgets/road_widget.h"
 
+#include <optional>
 #include <queue>
 
 #include "../safeguards.h"
@@ -27,7 +28,6 @@ struct RailStationGUISettings {
     byte station_count;               ///< Number of custom stations (if newstations is \c true )
 };
 extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
-extern uint32 _realtime_tick;
 
 namespace citymania {
 
@@ -35,68 +35,70 @@ bool _fn_mod = false;
 bool _remove_mod = false;
 bool _estimate_mod = false;
 
-uint32 _effective_actions = 0;
-uint32 _first_effective_tick = 0;
-std::queue<uint32> _last_actions;
+bool _middle_button_down;     ///< Is middle mouse button pressed?
+bool _middle_button_clicked;  ///< Is middle mouse button clicked?
+
+static uint32 _effective_actions = 0;
+static std::optional<std::chrono::steady_clock::time_point> _first_effective_tick = {};
+static std::queue<std::chrono::steady_clock::time_point> _last_actions;
+
+const std::chrono::minutes EPM_PERIOD(1);  ///< Actions per minute measuring period is, suprisingly, one minute
 
 static void PurgeLastActions() {
-    while (!_last_actions.empty() && _last_actions.front() <= _realtime_tick)
+    auto now = std::chrono::steady_clock::now();
+    while (!_last_actions.empty() && _last_actions.front() <= now)
         _last_actions.pop();
 }
 
 void CountEffectiveAction() {
-    if (!_first_effective_tick) _first_effective_tick = _realtime_tick;
+    auto now = std::chrono::steady_clock::now();
+    if (!_first_effective_tick) _first_effective_tick = now;
     _effective_actions++;
     PurgeLastActions();
-    _last_actions.push(_realtime_tick + 60000);
+    _last_actions.push(now + EPM_PERIOD);
 }
 
 void ResetEffectivveActionCounter() {
-    _first_effective_tick = 0;
+    _first_effective_tick = {};
     _effective_actions = 0;
-    std::queue<uint32>().swap(_last_actions);  // clear the queue
+    std::queue<std::chrono::steady_clock::time_point>().swap(_last_actions);  // clear the queue
 }
 
 std::pair<uint32, uint32> GetEPM() {
-    if (!_first_effective_tick || _realtime_tick <= _first_effective_tick) return std::make_pair(0, 0);
+    auto now = std::chrono::steady_clock::now();
+    if (!_first_effective_tick) return std::make_pair(0, 0);
     PurgeLastActions();
-    return std::make_pair(_effective_actions * 60000 / (_realtime_tick - _first_effective_tick), _last_actions.size());
-}
-
-void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed) {
-    ModKey key = ModKey::NONE;
-    if (alt_pressed) key = ModKey::ALT;
-    if (ctrl_pressed) key = ModKey::CTRL;
-    if (shift_pressed) key = ModKey::SHIFT;
-    bool fn_mod_prev = _fn_mod;
-    bool remove_mod_prev = _remove_mod;
-    _fn_mod = (_settings_client.gui.cm_fn_mod == key);
-    _remove_mod = (_settings_client.gui.cm_remove_mod == key);
-    _estimate_mod = (_settings_client.gui.cm_estimate_mod == key);
-
-    Window *w;
-    if (fn_mod_prev != _fn_mod) {
-        FOR_ALL_WINDOWS_FROM_FRONT(w) {
-            if (w->CM_OnFnModStateChange() == ES_HANDLED) break;
-        }
-    }
-    if (remove_mod_prev != _remove_mod) {
-        FOR_ALL_WINDOWS_FROM_FRONT(w) {
-            if (w->CM_OnRemoveModStateChange() == ES_HANDLED) break;
-        }
-    }
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - *_first_effective_tick).count();
+    if (ms == 0) return std::make_pair(0, 0);
+    return std::make_pair(_effective_actions * 60000 / ms,
+                          _last_actions.size());
 }
 
 bool HasSeparateRemoveMod() {
     return (_settings_client.gui.cm_fn_mod != _settings_client.gui.cm_remove_mod);
 }
 
-bool SeparateFnPressed() {
-    return HasSeparateRemoveMod() && _fn_mod;
-}
+void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed) {
+    bool mod_pressed[(size_t)ModKey::END] = {false};
+    if (shift_pressed) mod_pressed[(size_t)ModKey::SHIFT] = true;
+    if (ctrl_pressed) mod_pressed[(size_t)ModKey::CTRL] = true;
+    if (alt_pressed) mod_pressed[(size_t)ModKey::ALT] = true;
+    bool fn_mod_prev = _fn_mod;
+    bool remove_mod_prev = _remove_mod;
+    _fn_mod = mod_pressed[(size_t)_settings_client.gui.cm_fn_mod];
+    _remove_mod = mod_pressed[(size_t)_settings_client.gui.cm_remove_mod];
+    _estimate_mod = mod_pressed[(size_t)_settings_client.gui.cm_estimate_mod];
 
-bool SeparateRemovePressed() {
-    return HasSeparateRemoveMod() && _remove_mod;
+    if (fn_mod_prev != _fn_mod) {
+        for (auto w : Window::IterateFromFront()) {
+            if (w->CM_OnFnModStateChange() == ES_HANDLED) break;
+        }
+    }
+    if (remove_mod_prev != _remove_mod) {
+        for (auto w : Window::IterateFromFront()) {
+            if (w->CM_OnRemoveModStateChange() == ES_HANDLED) break;
+        }
+    }
 }
 
 ToolRemoveMode RailToolbar_GetRemoveMode(int widget) {
@@ -120,7 +122,8 @@ ToolRemoveMode RailToolbar_GetRemoveMode(int widget) {
 }
 
 bool RailToolbar_IsRemoveInverted(int widget) {
-    return (RailToolbar_GetRemoveMode(widget) != ToolRemoveMode::NONE && citymania::_fn_mod);
+    return false;
+    // return (RailToolbar_GetRemoveMode(widget) != ToolRemoveMode::NONE && citymania::_fn_mod);
 }
 
 void RailToolbar_UpdateRemoveWidgetStatus(Window *w, int widget, bool remove_active) {
@@ -162,7 +165,7 @@ void RailToolbar_UpdateRemoveWidgetStatus(Window *w, int widget, bool remove_act
 bool RailToolbar_RemoveModChanged(Window *w, bool invert_remove, bool remove_active, bool button_clicked) {
     if (w->IsWidgetDisabled(WID_RAT_REMOVE)) return false;
 
-    DeleteWindowById(WC_SELECT_STATION, 0);
+    CloseWindowById(WC_SELECT_STATION, 0);
     for (uint i = WID_RAT_BUILD_NS; i < WID_RAT_REMOVE; i++) {
         if (w->IsWidgetLowered(i)) {
             auto old_active = remove_active;
@@ -244,7 +247,7 @@ void RoadToolbar_UpdateOptionWidgetStatus(Window *w, int widget, bool remove_act
 
 bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_clicked, bool is_road) {
     if (w->IsWidgetDisabled(WID_ROT_REMOVE)) return false;
-    DeleteWindowById(WC_SELECT_STATION, 0);
+    CloseWindowById(WC_SELECT_STATION, 0);
     for (uint i = WID_ROT_ROAD_X; i < WID_ROT_REMOVE; i++) {
         if (w->IsWidgetLowered(i)) {
             auto old_active = remove_active;

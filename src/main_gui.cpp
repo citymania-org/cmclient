@@ -45,47 +45,9 @@
 
 #include "table/sprites.h"
 #include "table/strings.h"
+#include "debug.h"
 
 #include "safeguards.h"
-
-static int _rename_id = 1;
-static int _rename_what = -1;
-
-void CcGiveMoney(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
-{
-	if (result.Failed() || !_settings_game.economy.give_money) return;
-
-	/* Inform the company of the action of one of its clients (controllers). */
-	char msg[64];
-	SetDParam(0, p2);
-	GetString(msg, STR_COMPANY_NAME, lastof(msg));
-
-	if (!_network_server) {
-		NetworkClientSendChat(NETWORK_ACTION_GIVE_MONEY, DESTTYPE_TEAM, p2, msg, p1);
-	} else {
-		NetworkServerSendChat(NETWORK_ACTION_GIVE_MONEY, DESTTYPE_TEAM, p2, msg, CLIENT_ID_SERVER, p1);
-	}
-}
-
-void HandleOnEditText(const char *str)
-{
-	switch (_rename_what) {
-		case 3: { // Give money, you can only give money in excess of loan
-			const Company *c = Company::GetIfValid(_local_company);
-			if (c == nullptr) break;
-			Money money = min(c->money - c->current_loan, (Money)(atoi(str) / _currency->rate));
-
-			uint32 money_c = Clamp(ClampToI32(money), 0, 20000000); // Clamp between 20 million and 0
-
-			/* Give 'id' the money, and subtract it from ourself */
-			DoCommandP(0, money_c, _rename_id, CMD_GIVE_MONEY | CMD_MSG(STR_ERROR_INSUFFICIENT_FUNDS), CcGiveMoney, str);
-			break;
-		}
-		default: NOT_REACHED();
-	}
-
-	_rename_id = _rename_what = -1;
-}
 
 /**
  * This code is shared for the majority of the pushbuttons.
@@ -97,7 +59,7 @@ void HandleOnEditText(const char *str)
  * @param mode Tile highlighting mode, e.g. drawing a rectangle or a dot on the ground
  * @return true if the button is clicked, false if it's unclicked
  */
-bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyle mode)
+bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyle mode, ViewportDragDropSelectionProcess cm_process)
 {
 	if (w->IsWidgetDisabled(widget)) return false;
 
@@ -109,7 +71,7 @@ bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyl
 		return false;
 	}
 
-	SetObjectToPlace(cursor, PAL_NONE, mode, w->window_class, w->window_number);
+	SetObjectToPlace(cursor, PAL_NONE, mode, w->window_class, w->window_number, cm_process);
 	fprintf(stderr, "OBJECCT TO PLACE\n");
 	w->LowerWidget(widget);
 	return true;
@@ -121,14 +83,6 @@ void CcPlaySound_EXPLOSION(const CommandCost &result, TileIndex tile, uint32 p1,
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_12_EXPLOSION, tile);
 }
 
-void ShowNetworkGiveMoneyWindow(CompanyID company)
-{
-	_rename_id = company;
-	_rename_what = 3;
-	ShowQueryString(STR_EMPTY, STR_NETWORK_GIVE_MONEY_CAPTION, 30, nullptr, CS_NUMERAL, QSF_NONE);
-}
-
-
 /**
  * Zooms a viewport in a window in or out.
  * @param how Zooming direction.
@@ -138,7 +92,7 @@ void ShowNetworkGiveMoneyWindow(CompanyID company)
  */
 bool DoZoomInOutWindow(ZoomStateChange how, Window *w)
 {
-	ViewPort *vp;
+	Viewport *vp;
 
 	assert(w != nullptr);
 	vp = w->viewport;
@@ -188,7 +142,7 @@ void ZoomInOrOutToCursorWindow(bool in, Window *w)
 	assert(w != nullptr);
 
 	if (_game_mode != GM_MENU) {
-		ViewPort *vp = w->viewport;
+		Viewport *vp = w->viewport;
 		if ((in && vp->zoom <= _settings_client.gui.zoom_min) || (!in && vp->zoom >= _settings_client.gui.zoom_max)) return;
 
 		Point pt = GetTileZoomCenterWindow(in, w);
@@ -200,12 +154,24 @@ void ZoomInOrOutToCursorWindow(bool in, Window *w)
 	}
 }
 
-void FixTitleGameZoom()
+void FixTitleGameZoom(int zoom_adjust)
 {
 	if (_game_mode != GM_MENU) return;
 
-	ViewPort *vp = FindWindowByClass(WC_MAIN_WINDOW)->viewport;
+	Viewport *vp = FindWindowByClass(WC_MAIN_WINDOW)->viewport;
+
+	/* Adjust the zoom in/out.
+	 * Can't simply add, since operator+ is not defined on the ZoomLevel type. */
 	vp->zoom = _gui_zoom;
+	while (zoom_adjust < 0 && vp->zoom != _settings_client.gui.zoom_min) {
+		vp->zoom--;
+		zoom_adjust++;
+	}
+	while (zoom_adjust > 0 && vp->zoom != _settings_client.gui.zoom_max) {
+		vp->zoom++;
+		zoom_adjust--;
+	}
+
 	vp->virtual_width = ScaleByZoom(vp->width, vp->zoom);
 	vp->virtual_height = ScaleByZoom(vp->height, vp->zoom);
 }
@@ -352,17 +318,17 @@ struct MainWindow : Window
 			}
 
 			case GHK_RESET_OBJECT_TO_PLACE: ResetObjectToPlace(); break;
-			case GHK_DELETE_WINDOWS: DeleteNonVitalWindows(); break;
-			case GHK_DELETE_NONVITAL_WINDOWS: DeleteAllNonVitalWindows(); break;
+			case GHK_DELETE_WINDOWS: CloseNonVitalWindows(); break;
+			case GHK_DELETE_NONVITAL_WINDOWS: CloseAllNonVitalWindows(); break;
 			case GHK_DELETE_ALL_MESSAGES: DeleteAllMessages(); break;
 			case GHK_REFRESH_SCREEN: MarkWholeScreenDirty(); break;
 
 			case GHK_CRASH: // Crash the game
-				*(volatile byte *)0 = 0;
+				*(volatile byte *)nullptr = 0;
 				break;
 
 			case GHK_MONEY: // Gimme money
-				/* You can only cheat for money in single player. */
+				/* You can only cheat for money in singleplayer mode. */
 				if (!_networking) DoCommandP(0, 10000000, 0, CMD_MONEY_CHEAT);
 				break;
 

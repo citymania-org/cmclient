@@ -25,27 +25,34 @@
 #define STRING_FUNC_H
 
 #include <stdarg.h>
+#include <iosfwd>
 
 #include "core/bitmath_func.hpp"
 #include "string_type.h"
 
-char *strecat(char *dst, const char *src, const char *last);
-char *strecpy(char *dst, const char *src, const char *last);
-char *stredup(const char *src, const char *last = nullptr);
+char *strecat(char *dst, const char *src, const char *last) NOACCESS(3);
+char *strecpy(char *dst, const char *src, const char *last) NOACCESS(3);
+char *stredup(const char *src, const char *last = nullptr) NOACCESS(2);
 
-int CDECL seprintf(char *str, const char *last, const char *format, ...) WARN_FORMAT(3, 4);
-int CDECL vseprintf(char *str, const char *last, const char *format, va_list ap);
+int CDECL seprintf(char *str, const char *last, const char *format, ...) WARN_FORMAT(3, 4) NOACCESS(2);
+int CDECL vseprintf(char *str, const char *last, const char *format, va_list ap) WARN_FORMAT(3, 0) NOACCESS(2);
 
 char *CDECL str_fmt(const char *str, ...) WARN_FORMAT(1, 2);
 
-void str_validate(char *str, const char *last, StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK);
-void ValidateString(const char *str);
+void StrMakeValidInPlace(char *str, const char *last, StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK) NOACCESS(2);
+[[nodiscard]] std::string StrMakeValid(const std::string &str, StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK);
+void StrMakeValidInPlace(char *str, StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK);
 
-void str_fix_scc_encoded(char *str, const char *last);
+void str_fix_scc_encoded(char *str, const char *last) NOACCESS(2);
 void str_strip_colours(char *str);
 bool strtolower(char *str);
+bool strtolower(std::string &str, std::string::size_type offs = 0);
 
-bool StrValid(const char *str, const char *last);
+bool StrValid(const char *str, const char *last) NOACCESS(2);
+void StrTrimInPlace(std::string &str);
+
+bool StrStartsWith(const std::string_view str, const std::string_view prefix);
+bool StrEndsWith(const std::string_view str, const std::string_view suffix);
 
 /**
  * Check if a string buffer is empty.
@@ -79,6 +86,7 @@ bool IsValidChar(WChar key, CharSetFilter afilter);
 
 size_t Utf8Decode(WChar *c, const char *s);
 size_t Utf8Encode(char *buf, WChar c);
+size_t Utf8Encode(std::ostreambuf_iterator<char> &buf, WChar c);
 size_t Utf8TrimString(char *s, size_t maxlen);
 
 
@@ -86,6 +94,14 @@ static inline WChar Utf8Consume(const char **s)
 {
 	WChar c;
 	*s += Utf8Decode(&c, *s);
+	return c;
+}
+
+template <class Titr>
+static inline WChar Utf8Consume(Titr &s)
+{
+	WChar c;
+	s += Utf8Decode(&c, &*s);
 	return c;
 }
 
@@ -153,6 +169,7 @@ static inline const char *Utf8PrevChar(const char *s)
 }
 
 size_t Utf8StringLength(const char *s);
+size_t Utf8StringLength(const std::string &str);
 
 /**
  * Is the given character a lead surrogate code point?

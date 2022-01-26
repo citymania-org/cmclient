@@ -29,6 +29,7 @@ protected:
 	NetworkRecvStatus Receive_ADMIN_UPDATE_FREQUENCY(Packet *p) override;
 	NetworkRecvStatus Receive_ADMIN_POLL(Packet *p) override;
 	NetworkRecvStatus Receive_ADMIN_CHAT(Packet *p) override;
+	NetworkRecvStatus Receive_ADMIN_EXTERNAL_CHAT(Packet *p) override;
 	NetworkRecvStatus Receive_ADMIN_RCON(Packet *p) override;
 	NetworkRecvStatus Receive_ADMIN_GAMESCRIPT(Packet *p) override;
 	NetworkRecvStatus Receive_ADMIN_PING(Packet *p) override;
@@ -37,7 +38,7 @@ protected:
 	NetworkRecvStatus SendPong(uint32 d1);
 public:
 	AdminUpdateFrequency update_frequency[ADMIN_UPDATE_END]; ///< Admin requested update intervals.
-	uint32 realtime_connect;                                 ///< Time of connection.
+	std::chrono::steady_clock::time_point connect_time;      ///< Time of connection.
 	NetworkAddress address;                                  ///< Address of the admin.
 
 	ServerNetworkAdminSocketHandler(SOCKET s);
@@ -61,13 +62,13 @@ public:
 	NetworkRecvStatus SendCompanyEconomy();
 	NetworkRecvStatus SendCompanyStats();
 
-	NetworkRecvStatus SendChat(NetworkAction action, DestType desttype, ClientID client_id, const char *msg, int64 data);
-	NetworkRecvStatus SendRcon(uint16 colour, const char *command);
-	NetworkRecvStatus SendConsole(const char *origin, const char *command);
-	NetworkRecvStatus SendGameScript(const char *json);
+	NetworkRecvStatus SendChat(NetworkAction action, DestType desttype, ClientID client_id, const std::string &msg, int64 data);
+	NetworkRecvStatus SendRcon(uint16 colour, const std::string_view command);
+	NetworkRecvStatus SendConsole(const std::string_view origin, const std::string_view command);
+	NetworkRecvStatus SendGameScript(const std::string_view json);
 	NetworkRecvStatus SendCmdNames();
 	NetworkRecvStatus SendCmdLogging(ClientID client_id, const CommandPacket *cp);
-	NetworkRecvStatus SendRconEnd(const char *command);
+	NetworkRecvStatus SendRconEnd(const std::string_view command);
 
 	static void Send();
 	static void AcceptConnection(SOCKET s, const NetworkAddress &address);
@@ -106,11 +107,11 @@ void NetworkAdminCompanyInfo(const Company *company, bool new_company);
 void NetworkAdminCompanyUpdate(const Company *company);
 void NetworkAdminCompanyRemove(CompanyID company_id, AdminCompanyRemoveReason bcrr);
 
-void NetworkAdminChat(NetworkAction action, DestType desttype, ClientID client_id, const char *msg, int64 data = 0, bool from_admin = false);
+void NetworkAdminChat(NetworkAction action, DestType desttype, ClientID client_id, const std::string &msg, int64 data = 0, bool from_admin = false);
 void NetworkAdminUpdate(AdminUpdateFrequency freq);
-void NetworkServerSendAdminRcon(AdminIndex admin_index, TextColour colour_code, const char *string);
-void NetworkAdminConsole(const char *origin, const char *string);
-void NetworkAdminGameScript(const char *json);
+void NetworkServerSendAdminRcon(AdminIndex admin_index, TextColour colour_code, const std::string_view string);
+void NetworkAdminConsole(const std::string_view origin, const std::string_view string);
+void NetworkAdminGameScript(const std::string_view json);
 void NetworkAdminCmdLogging(const NetworkClientSocket *owner, const CommandPacket *cp);
 
 #endif /* NETWORK_ADMIN_H */

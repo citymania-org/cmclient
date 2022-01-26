@@ -44,6 +44,27 @@ template<class T, class... Args>
     make_up(Args&&...) = delete;
 
 
+enum class GameType: uint8 {
+    GENERIC = 0,
+    GOAL = 1,
+    MULTIGOAL = 2,
+    QUEST = 3,
+    BR = 4,
+    _NOT_A_GAME_TYPE_CLASSIC_CB = 4,
+    _NOT_A_GAME_TYPE_CB = 5,
+    _NOT_A_GAME_TYPE_TOWN_DEFENCE = 6,
+};
+
+enum class ControllerType: uint8 {
+    GENERIC = 0,
+    _NOT_A_CONTROLLER_GOAL = 1,
+    _NOT_A_CONTROLLER_MULTIGOAL = 2,
+    _NOT_A_CONTROLLER_QUEST = 3,
+    CLASSIC_CB = 4,
+    CB = 5,
+    TOWN_DEFENCE = 6,
+};
+
 // template<typename T> const auto make_up = std::make_unique<T>;
 // template<typename T> const auto make_sp = std::make_shared<T>;
 

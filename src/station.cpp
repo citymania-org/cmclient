@@ -56,15 +56,14 @@ void RebuildStationKdtree()
 
 BaseStation::~BaseStation()
 {
-	free(this->name);
 	free(this->speclist);
 
 	if (CleaningPool()) return;
 
-	DeleteWindowById(WC_TRAINS_LIST,   VehicleListIdentifier(VL_STATION_LIST, VEH_TRAIN,    this->owner, this->index).Pack());
-	DeleteWindowById(WC_ROADVEH_LIST,  VehicleListIdentifier(VL_STATION_LIST, VEH_ROAD,     this->owner, this->index).Pack());
-	DeleteWindowById(WC_SHIPS_LIST,    VehicleListIdentifier(VL_STATION_LIST, VEH_SHIP,     this->owner, this->index).Pack());
-	DeleteWindowById(WC_AIRCRAFT_LIST, VehicleListIdentifier(VL_STATION_LIST, VEH_AIRCRAFT, this->owner, this->index).Pack());
+	CloseWindowById(WC_TRAINS_LIST,   VehicleListIdentifier(VL_STATION_LIST, VEH_TRAIN,    this->owner, this->index).Pack());
+	CloseWindowById(WC_ROADVEH_LIST,  VehicleListIdentifier(VL_STATION_LIST, VEH_ROAD,     this->owner, this->index).Pack());
+	CloseWindowById(WC_SHIPS_LIST,    VehicleListIdentifier(VL_STATION_LIST, VEH_SHIP,     this->owner, this->index).Pack());
+	CloseWindowById(WC_AIRCRAFT_LIST, VehicleListIdentifier(VL_STATION_LIST, VEH_AIRCRAFT, this->owner, this->index).Pack());
 
 	this->sign.MarkDirty();
 }
@@ -157,7 +156,7 @@ Station::~Station()
 		InvalidateWindowData(WC_STATION_LIST, this->owner, 0);
 	}
 
-	DeleteWindowById(WC_STATION_VIEW, index);
+	CloseWindowById(WC_STATION_VIEW, index);
 
 	/* Now delete all orders that go to the station */
 	RemoveOrderFromAllVehicles(OT_GOTO_STATION, this->index);
@@ -334,11 +333,11 @@ uint Station::GetCatchmentRadius() const
 	uint ret = CA_NONE;
 
 	if (_settings_game.station.modified_catchment) {
-		if (this->bus_stops          != nullptr)         ret = max<uint>(ret, CA_BUS);
-		if (this->truck_stops        != nullptr)         ret = max<uint>(ret, CA_TRUCK);
-		if (this->train_station.tile != INVALID_TILE) ret = max<uint>(ret, CA_TRAIN);
-		if (this->ship_station.tile  != INVALID_TILE) ret = max<uint>(ret, CA_DOCK);
-		if (this->airport.tile       != INVALID_TILE) ret = max<uint>(ret, this->airport.GetSpec()->catchment);
+		if (this->bus_stops          != nullptr)      ret = std::max<uint>(ret, CA_BUS);
+		if (this->truck_stops        != nullptr)      ret = std::max<uint>(ret, CA_TRUCK);
+		if (this->train_station.tile != INVALID_TILE) ret = std::max<uint>(ret, CA_TRAIN);
+		if (this->ship_station.tile  != INVALID_TILE) ret = std::max<uint>(ret, CA_DOCK);
+		if (this->airport.tile       != INVALID_TILE) ret = std::max<uint>(ret, this->airport.GetSpec()->catchment);
 	} else {
 		if (this->bus_stops != nullptr || this->truck_stops != nullptr || this->train_station.tile != INVALID_TILE || this->ship_station.tile != INVALID_TILE || this->airport.tile != INVALID_TILE) {
 			ret = CA_UNMODIFIED;
@@ -360,10 +359,10 @@ Rect Station::GetCatchmentRect() const
 	int catchment_radius = this->GetCatchmentRadius();
 
 	Rect ret = {
-		max<int>(this->rect.left   - catchment_radius, 0),
-		max<int>(this->rect.top    - catchment_radius, 0),
-		min<int>(this->rect.right  + catchment_radius, MapMaxX()),
-		min<int>(this->rect.bottom + catchment_radius, MapMaxY())
+		std::max<int>(this->rect.left   - catchment_radius, 0),
+		std::max<int>(this->rect.top    - catchment_radius, 0),
+		std::min<int>(this->rect.right  + catchment_radius, MapMaxX()),
+		std::min<int>(this->rect.bottom + catchment_radius, MapMaxY())
 	};
 
 	return ret;
@@ -430,7 +429,7 @@ void Station::RecomputeCatchment()
 	if (!_settings_game.station.serve_neutral_industries && this->industry != nullptr) {
 		/* Station is associated with an industry, so we only need to deliver to that industry. */
 		this->catchment_tiles.Initialize(this->industry->location);
-		TILE_AREA_LOOP(tile, this->industry->location) {
+		for (TileIndex tile : this->industry->location) {
 			if (IsTileType(tile, MP_INDUSTRY) && GetIndustryIndex(tile) == this->industry->index) {
 				this->catchment_tiles.SetTile(tile);
 			}
@@ -449,7 +448,7 @@ void Station::RecomputeCatchment()
 
 	/* Loop finding all station tiles */
 	TileArea ta(TileXY(this->rect.left, this->rect.top), TileXY(this->rect.right, this->rect.bottom));
-	TILE_AREA_LOOP(tile, ta) {
+	for (TileIndex tile : ta) {
 		if (!IsTileType(tile, MP_STATION) || GetStationIndex(tile) != this->index) continue;
 
 		uint r = GetTileCatchmentRadius(tile, this);
@@ -457,7 +456,7 @@ void Station::RecomputeCatchment()
 
 		/* This tile sub-loop doesn't need to test any tiles, they are simply added to the catchment set. */
 		TileArea ta2 = TileArea(tile, 1, 1).Expand(r);
-		TILE_AREA_LOOP(tile2, ta2) this->catchment_tiles.SetTile(tile2);
+		for (TileIndex tile2 : ta2) this->catchment_tiles.SetTile(tile2);
 	}
 
 	/* Search catchment tiles for towns and industries */
@@ -537,7 +536,7 @@ CommandCost StationRect::BeforeAddTile(TileIndex tile, StationRectMode mode)
 	} else if (!this->PtInExtendedRect(x, y)) {
 		/* current rect is not empty and new point is outside this rect
 		 * make new spread-out rectangle */
-		Rect new_rect = {min(x, this->left), min(y, this->top), max(x, this->right), max(y, this->bottom)};
+		Rect new_rect = {std::min(x, this->left), std::min(y, this->top), std::max(x, this->right), std::max(y, this->bottom)};
 
 		/* check new rect dimensions against preset max */
 		int w = new_rect.right - new_rect.left + 1;
@@ -581,7 +580,7 @@ CommandCost StationRect::BeforeAddRect(TileIndex tile, int w, int h, StationRect
 /* static */ bool StationRect::ScanForStationTiles(StationID st_id, int left_a, int top_a, int right_a, int bottom_a)
 {
 	TileArea ta(TileXY(left_a, top_a), TileXY(right_a, bottom_a));
-	TILE_AREA_LOOP(tile, ta) {
+	for (TileIndex tile : ta) {
 		if (IsTileType(tile, MP_STATION) && GetStationIndex(tile) == st_id) return true;
 	}
 

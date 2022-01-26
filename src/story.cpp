@@ -21,6 +21,10 @@
 #include "goal_base.h"
 #include "window_func.h"
 #include "gui.h"
+#include "vehicle_base.h"
+#include "game/game.hpp"
+#include "script/api/script_story_page.hpp"
+#include "script/api/script_event_types.hpp"
 
 #include "safeguards.h"
 
@@ -47,6 +51,8 @@ INSTANTIATE_POOL_METHODS(StoryPage)
  */
 static bool VerifyElementContentParameters(StoryPageID page_id, StoryPageElementType type, TileIndex tile, uint32 reference, const char *text)
 {
+	StoryPageButtonData button_data{ reference };
+
 	switch (type) {
 		case SPET_TEXT:
 			if (StrEmpty(text)) return false;
@@ -60,6 +66,18 @@ static bool VerifyElementContentParameters(StoryPageID page_id, StoryPageElement
 			/* Reject company specific goals on global pages */
 			if (StoryPage::Get(page_id)->company == INVALID_COMPANY && Goal::Get((GoalID)reference)->company != INVALID_COMPANY) return false;
 			break;
+		case SPET_BUTTON_PUSH:
+			if (!button_data.ValidateColour()) return false;
+			return true;
+		case SPET_BUTTON_TILE:
+			if (!button_data.ValidateColour()) return false;
+			if (!button_data.ValidateCursor()) return false;
+			return true;
+		case SPET_BUTTON_VEHICLE:
+			if (!button_data.ValidateColour()) return false;
+			if (!button_data.ValidateCursor()) return false;
+			if (!button_data.ValidateVehicleType()) return false;
+			return true;
 		default:
 			return false;
 	}
@@ -88,8 +106,92 @@ static void UpdateElement(StoryPageElement &pe, TileIndex tile, uint32 reference
 		case SPET_GOAL:
 			pe.referenced_id = (GoalID)reference;
 			break;
+		case SPET_BUTTON_PUSH:
+		case SPET_BUTTON_TILE:
+		case SPET_BUTTON_VEHICLE:
+			pe.text = stredup(text);
+			pe.referenced_id = reference;
+			break;
 		default: NOT_REACHED();
 	}
+}
+
+/** Set the button background colour. */
+void StoryPageButtonData::SetColour(Colours button_colour)
+{
+	assert(button_colour < COLOUR_END);
+	SB(this->referenced_id, 0, 8, button_colour);
+}
+
+void StoryPageButtonData::SetFlags(StoryPageButtonFlags flags)
+{
+	SB(this->referenced_id, 24, 8, flags);
+}
+
+/** Set the mouse cursor used while waiting for input for the button. */
+void StoryPageButtonData::SetCursor(StoryPageButtonCursor cursor)
+{
+	assert(cursor < SPBC_END);
+	SB(this->referenced_id, 8, 8, cursor);
+}
+
+/** Set the type of vehicles that are accepted by the button */
+void StoryPageButtonData::SetVehicleType(VehicleType vehtype)
+{
+	assert(vehtype == VEH_INVALID || vehtype < VEH_COMPANY_END);
+	SB(this->referenced_id, 16, 8, vehtype);
+}
+
+/** Get the button background colour. */
+Colours StoryPageButtonData::GetColour() const
+{
+	return Extract<Colours, 0, 8>(this->referenced_id);
+}
+
+StoryPageButtonFlags StoryPageButtonData::GetFlags() const
+{
+	return (StoryPageButtonFlags)GB(this->referenced_id, 24, 8);
+}
+
+/** Get the mouse cursor used while waiting for input for the button. */
+StoryPageButtonCursor StoryPageButtonData::GetCursor() const
+{
+	return Extract<StoryPageButtonCursor, 8, 8>(this->referenced_id);
+}
+
+/** Get the type of vehicles that are accepted by the button */
+VehicleType StoryPageButtonData::GetVehicleType() const
+{
+	return (VehicleType)GB(this->referenced_id, 16, 8);
+}
+
+/** Verify that the data stored a valid Colour value */
+bool StoryPageButtonData::ValidateColour() const
+{
+	return GB(this->referenced_id, 0, 8) < COLOUR_END;
+}
+
+bool StoryPageButtonData::ValidateFlags() const
+{
+	byte flags = GB(this->referenced_id, 24, 8);
+	/* Don't allow float left and right together */
+	if ((flags & SPBF_FLOAT_LEFT) && (flags & SPBF_FLOAT_RIGHT)) return false;
+	/* Don't allow undefined flags */
+	if (flags & ~(SPBF_FLOAT_LEFT | SPBF_FLOAT_RIGHT)) return false;
+	return true;
+}
+
+/** Verify that the data stores a valid StoryPageButtonCursor value */
+bool StoryPageButtonData::ValidateCursor() const
+{
+	return GB(this->referenced_id, 8, 8) < SPBC_END;
+}
+
+/** Verity that the data stored a valid VehicleType value */
+bool StoryPageButtonData::ValidateVehicleType() const
+{
+	byte vehtype = GB(this->referenced_id, 16, 8);
+	return vehtype == VEH_INVALID || vehtype < VEH_COMPANY_END;
 }
 
 /**
@@ -102,7 +204,7 @@ static void UpdateElement(StoryPageElement &pe, TileIndex tile, uint32 reference
  * @param text Title of the story page. Null is allowed in which case a generic page title is provided by OpenTTD.
  * @return the cost of this operation or an error
  */
-CommandCost CmdCreateStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdCreateStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (!StoryPage::CanAllocateItem()) return CMD_ERROR;
 
@@ -121,10 +223,10 @@ CommandCost CmdCreateStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		s->sort_value = _story_page_next_sort_value;
 		s->date = _date;
 		s->company = company;
-		if (StrEmpty(text)) {
+		if (text.empty()) {
 			s->title = nullptr;
 		} else {
-			s->title = stredup(text);
+			s->title = stredup(text.c_str());
 		}
 
 		InvalidateWindowClassesData(WC_STORY_BOOK, -1);
@@ -148,7 +250,7 @@ CommandCost CmdCreateStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, u
  * @param text Text content in case it is a text or location page element
  * @return the cost of this operation or an error
  */
-CommandCost CmdCreateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdCreateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (!StoryPageElement::CanAllocateItem()) return CMD_ERROR;
 
@@ -164,7 +266,7 @@ CommandCost CmdCreateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint3
 
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	if (!StoryPage::IsValidID(page_id)) return CMD_ERROR;
-	if (!VerifyElementContentParameters(page_id, type, tile, p2, text)) return CMD_ERROR;
+	if (!VerifyElementContentParameters(page_id, type, tile, p2, text.c_str())) return CMD_ERROR;
 
 	if (flags & DC_EXEC) {
 		if (_story_page_element_pool.items == 0) {
@@ -176,7 +278,7 @@ CommandCost CmdCreateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint3
 		pe->sort_value = _story_page_element_next_sort_value;
 		pe->type = type;
 		pe->page = page_id;
-		UpdateElement(*pe, tile, p2, text);
+		UpdateElement(*pe, tile, p2, text.c_str());
 
 		InvalidateWindowClassesData(WC_STORY_BOOK, page_id);
 
@@ -198,7 +300,7 @@ CommandCost CmdCreateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint3
  * @param text Text content in case it is a text or location page element
  * @return the cost of this operation or an error
  */
-CommandCost CmdUpdateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdUpdateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	StoryPageElementID page_element_id = (StoryPageElementID)GB(p1, 0, 16);
 
@@ -209,10 +311,10 @@ CommandCost CmdUpdateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint3
 	StoryPageID page_id = pe->page;
 	StoryPageElementType type = pe->type;
 
-	if (!VerifyElementContentParameters(page_id, type, tile, p2, text)) return CMD_ERROR;
+	if (!VerifyElementContentParameters(page_id, type, tile, p2, text.c_str())) return CMD_ERROR;
 
 	if (flags & DC_EXEC) {
-		UpdateElement(*pe, tile, p2, text);
+		UpdateElement(*pe, tile, p2, text.c_str());
 		InvalidateWindowClassesData(WC_STORY_BOOK, pe->page);
 	}
 
@@ -228,7 +330,7 @@ CommandCost CmdUpdateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint3
  * @param text title text of the story page.
  * @return the cost of this operation or an error
  */
-CommandCost CmdSetStoryPageTitle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSetStoryPageTitle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	StoryPageID page_id = (StoryPageID)GB(p1, 0, 16);
@@ -237,10 +339,10 @@ CommandCost CmdSetStoryPageTitle(TileIndex tile, DoCommandFlag flags, uint32 p1,
 	if (flags & DC_EXEC) {
 		StoryPage *p = StoryPage::Get(page_id);
 		free(p->title);
-		if (StrEmpty(text)) {
+		if (text.empty()) {
 			p->title = nullptr;
 		} else {
-			p->title = stredup(text);
+			p->title = stredup(text.c_str());
 		}
 
 		InvalidateWindowClassesData(WC_STORY_BOOK, page_id);
@@ -258,7 +360,7 @@ CommandCost CmdSetStoryPageTitle(TileIndex tile, DoCommandFlag flags, uint32 p1,
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdSetStoryPageDate(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSetStoryPageDate(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	StoryPageID page_id = (StoryPageID)GB(p1, 0, 16);
@@ -285,7 +387,7 @@ CommandCost CmdSetStoryPageDate(TileIndex tile, DoCommandFlag flags, uint32 p1, 
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdShowStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdShowStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	StoryPageID page_id = (StoryPageID)GB(p1, 0, 16);
@@ -307,7 +409,7 @@ CommandCost CmdShowStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
  * @param text unused.
  * @return the cost of this operation or an error
  */
-CommandCost CmdRemoveStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRemoveStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	StoryPageID page_id = (StoryPageID)p1;
@@ -340,7 +442,7 @@ CommandCost CmdRemoveStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, u
  * @param text unused.
  * @return the cost of this operation or an error
  */
-CommandCost CmdRemoveStoryPageElement(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRemoveStoryPageElement(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	StoryPageElementID page_element_id = (StoryPageElementID)p1;
@@ -357,3 +459,45 @@ CommandCost CmdRemoveStoryPageElement(TileIndex tile, DoCommandFlag flags, uint3
 
 	return CommandCost();
 }
+
+/**
+ * Clicked/used a button on a story page.
+ * @param tile   Tile selected, for tile selection buttons, otherwise unused.
+ * @param flags  Type of operation.
+ * @param p1     Bit 0..15 = story page element id of button.
+ * @param p2     ID of selected item for buttons that select an item (e.g. vehicle), otherwise unused.
+ * @param text   Unused.
+ * @return The cost of the operation, or an error.
+ */
+CommandCost CmdStoryPageButton(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+{
+	StoryPageElementID page_element_id = (StoryPageElementID)GB(p1, 0, 16);
+
+	if (!StoryPageElement::IsValidID(page_element_id)) return CMD_ERROR;
+	const StoryPageElement *const pe = StoryPageElement::Get(page_element_id);
+
+	/* Check the player belongs to the company that owns the page. */
+	const StoryPage *const sp = StoryPage::Get(pe->page);
+	if (sp->company != INVALID_COMPANY && sp->company != _current_company) return CMD_ERROR;
+
+	switch (pe->type) {
+		case SPET_BUTTON_PUSH:
+			/* No validation required */
+			if (flags & DC_EXEC) Game::NewEvent(new ScriptEventStoryPageButtonClick(_current_company, pe->page, page_element_id));
+			break;
+		case SPET_BUTTON_TILE:
+			if (!IsValidTile(tile)) return CMD_ERROR;
+			if (flags & DC_EXEC) Game::NewEvent(new ScriptEventStoryPageTileSelect(_current_company, pe->page, page_element_id, tile));
+			break;
+		case SPET_BUTTON_VEHICLE:
+			if (!Vehicle::IsValidID(p2)) return CMD_ERROR;
+			if (flags & DC_EXEC) Game::NewEvent(new ScriptEventStoryPageVehicleSelect(_current_company, pe->page, page_element_id, (VehicleID)p2));
+			break;
+		default:
+			/* Invalid page element type, not a button. */
+			return CMD_ERROR;
+	}
+
+	return CommandCost();
+}
+

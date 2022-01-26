@@ -30,6 +30,8 @@
 #include "newgrf.h"
 #include "company_base.h"
 #include "core/random_func.hpp"
+#include <sstream>
+#include <iomanip>
 
 #include "table/strings.h"
 
@@ -70,7 +72,7 @@ CommandCost CmdBuildRoadVehicle(TileIndex tile, DoCommandFlag flags, const Engin
 CommandCost CmdBuildShip       (TileIndex tile, DoCommandFlag flags, const Engine *e, uint16 data, Vehicle **v);
 CommandCost CmdBuildAircraft   (TileIndex tile, DoCommandFlag flags, const Engine *e, uint16 data, Vehicle **v);
 
-CommandCost CmdRefitVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text);
+CommandCost CmdRefitVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text);
 
 /**
  * Build a vehicle.
@@ -84,7 +86,7 @@ CommandCost CmdRefitVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuildVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	/* Elementary check for valid location. */
 	if (!IsDepotTile(tile) || !IsTileOwner(tile, _current_company)) return CMD_ERROR;
@@ -122,7 +124,7 @@ CommandCost CmdBuildVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 	/* Check whether we can allocate a unit number. Autoreplace does not allocate
 	 * an unit number as it will (always) reuse the one of the replaced vehicle
 	 * and (train) wagons don't have an unit number in any scenario. */
-	UnitID unit_num = (flags & DC_AUTOREPLACE || (type == VEH_TRAIN && e->u.rail.railveh_type == RAILVEH_WAGON)) ? 0 : GetFreeUnitNumber(type);
+	UnitID unit_num = (flags & DC_QUERY_COST || flags & DC_AUTOREPLACE || (type == VEH_TRAIN && e->u.rail.railveh_type == RAILVEH_WAGON)) ? 0 : GetFreeUnitNumber(type);
 	if (unit_num == UINT16_MAX) return_cmd_error(STR_ERROR_TOO_MANY_VEHICLES_IN_GAME);
 
 	/* If we are refitting we need to temporarily purchase the vehicle to be able to
@@ -152,7 +154,7 @@ CommandCost CmdBuildVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 
 		if (refitting) {
 			/* Refit only one vehicle. If we purchased an engine, it may have gained free wagons. */
-			value.AddCost(CmdRefitVehicle(tile, flags, v->index, cargo | (1 << 16), nullptr));
+			value.AddCost(CmdRefitVehicle(tile, flags, v->index, cargo | (1 << 16), {}));
 		} else {
 			/* Fill in non-refitted capacities */
 			_returned_refit_capacity = e->GetDisplayDefaultCapacity(&_returned_mail_refit_capacity);
@@ -204,7 +206,7 @@ CommandCost CmdSellRailWagon(DoCommandFlag flags, Vehicle *v, uint16 data, uint3
  * @param text unused.
  * @return the cost of this operation or an error.
  */
-CommandCost CmdSellVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSellVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Vehicle *v = Vehicle::GetIfValid(GB(p1, 0, 20));
 	if (v == nullptr) return CMD_ERROR;
@@ -431,14 +433,14 @@ static CommandCost RefitVehicle(Vehicle *v, bool only_this, uint8 num_vehicles, 
 		/* Store the result */
 		for (RefitResult &result : refit_result) {
 			Vehicle *u = result.v;
-			u->refit_cap = (u->cargo_type == new_cid) ? min(result.capacity, u->refit_cap) : 0;
+			u->refit_cap = (u->cargo_type == new_cid) ? std::min<uint16>(result.capacity, u->refit_cap) : 0;
 			if (u->cargo.TotalCount() > u->refit_cap) u->cargo.Truncate(u->cargo.TotalCount() - u->refit_cap);
 			u->cargo_type = new_cid;
 			u->cargo_cap = result.capacity;
 			u->cargo_subtype = result.subtype;
 			if (u->type == VEH_AIRCRAFT) {
 				Vehicle *w = u->Next();
-				w->refit_cap = min(w->refit_cap, result.mail_capacity);
+				w->refit_cap = std::min<uint16>(w->refit_cap, result.mail_capacity);
 				w->cargo_cap = result.mail_capacity;
 				if (w->cargo.TotalCount() > w->refit_cap) w->cargo.Truncate(w->cargo.TotalCount() - w->refit_cap);
 			}
@@ -466,7 +468,7 @@ static CommandCost RefitVehicle(Vehicle *v, bool only_this, uint8 num_vehicles, 
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdRefitVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRefitVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Vehicle *v = Vehicle::GetIfValid(p1);
 	if (v == nullptr) return CMD_ERROR;
@@ -554,7 +556,7 @@ CommandCost CmdRefitVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdStartStopVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdStartStopVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	/* Disable the effect of p2 bit 0, when DC_AUTOREPLACE is not set */
 	if ((flags & DC_AUTOREPLACE) == 0) SetBit(p2, 0);
@@ -638,7 +640,7 @@ CommandCost CmdStartStopVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, 
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdMassStartStopVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdMassStartStopVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleList list;
 	bool do_start = HasBit(p1, 0);
@@ -678,7 +680,7 @@ CommandCost CmdMassStartStopVehicle(TileIndex tile, DoCommandFlag flags, uint32 
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdDepotSellAllVehicles(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdDepotSellAllVehicles(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleList list;
 
@@ -716,7 +718,7 @@ CommandCost CmdDepotSellAllVehicles(TileIndex tile, DoCommandFlag flags, uint32 
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdDepotMassAutoReplace(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdDepotMassAutoReplace(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleList list;
 	CommandCost cost = CommandCost(EXPENSES_NEW_VEHICLES);
@@ -746,10 +748,10 @@ CommandCost CmdDepotMassAutoReplace(TileIndex tile, DoCommandFlag flags, uint32 
  * @param name Name to test.
  * @return True ifffffff the name is unique.
  */
-static bool IsUniqueVehicleName(const char *name)
+static bool IsUniqueVehicleName(const std::string &name)
 {
 	for (const Vehicle *v : Vehicle::Iterate()) {
-		if (v->name != nullptr && strcmp(v->name, name) == 0) return false;
+		if (!v->name.empty() && v->name == name) return false;
 	}
 
 	return true;
@@ -762,42 +764,48 @@ static bool IsUniqueVehicleName(const char *name)
  */
 static void CloneVehicleName(const Vehicle *src, Vehicle *dst)
 {
-	char buf[256];
+	std::string buf;
 
 	/* Find the position of the first digit in the last group of digits. */
 	size_t number_position;
-	for (number_position = strlen(src->name); number_position > 0; number_position--) {
+	for (number_position = src->name.length(); number_position > 0; number_position--) {
 		/* The design of UTF-8 lets this work simply without having to check
 		 * for UTF-8 sequences. */
 		if (src->name[number_position - 1] < '0' || src->name[number_position - 1] > '9') break;
 	}
 
 	/* Format buffer and determine starting number. */
-	int num;
+	long num;
 	byte padding = 0;
-	if (number_position == strlen(src->name)) {
+	if (number_position == src->name.length()) {
 		/* No digit at the end, so start at number 2. */
-		strecpy(buf, src->name, lastof(buf));
-		strecat(buf, " ", lastof(buf));
-		number_position = strlen(buf);
+		buf = src->name;
+		buf += " ";
+		number_position = buf.length();
 		num = 2;
 	} else {
 		/* Found digits, parse them and start at the next number. */
-		strecpy(buf, src->name, lastof(buf));
-		buf[number_position] = '\0';
-		char *endptr;
-		num = strtol(&src->name[number_position], &endptr, 10) + 1;
-		padding = endptr - &src->name[number_position];
+		buf = src->name.substr(0, number_position);
+
+		auto num_str = src->name.substr(number_position);
+		padding = (byte)num_str.length();
+
+		std::istringstream iss(num_str);
+		iss >> num;
+		num++;
 	}
 
 	/* Check if this name is already taken. */
 	for (int max_iterations = 1000; max_iterations > 0; max_iterations--, num++) {
+		std::ostringstream oss;
+
 		/* Attach the number to the temporary name. */
-		seprintf(&buf[number_position], lastof(buf), "%0*d", padding, num);
+		oss << buf << std::setw(padding) << std::setfill('0') << std::internal << num;
 
 		/* Check the name is unique. */
-		if (IsUniqueVehicleName(buf)) {
-			dst->name = stredup(buf);
+		auto new_name = oss.str();
+		if (IsUniqueVehicleName(new_name)) {
+			dst->name = new_name;
 			break;
 		}
 	}
@@ -814,7 +822,7 @@ static void CloneVehicleName(const Vehicle *src, Vehicle *dst)
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdCloneVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdCloneVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	CommandCost total_cost(EXPENSES_NEW_VEHICLES);
 
@@ -970,20 +978,23 @@ CommandCost CmdCloneVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 		 * the vehicle refitted before doing this, otherwise the moved
 		 * cargo types might not match (passenger vs non-passenger)
 		 */
-		DoCommand(0, w_front->index | (p2 & 1 ? CO_SHARE : CO_COPY) << 30, v_front->index, flags, CMD_CLONE_ORDER);
-
-		/* Now clone the vehicle's name, if it has one. */
-		if (v_front->name != nullptr) CloneVehicleName(v_front, w_front);
-	}
-
-	/* Since we can't estimate the cost of cloning a vehicle accurately we must
-	 * check whether the company has enough money manually. */
-	if (!CheckCompanyHasMoney(total_cost)) {
-		if (flags & DC_EXEC) {
+		CommandCost result = DoCommand(0, w_front->index | (p2 & 1 ? CO_SHARE : CO_COPY) << 30, v_front->index, flags, CMD_CLONE_ORDER);
+		if (result.Failed()) {
 			/* The vehicle has already been bought, so now it must be sold again. */
 			DoCommand(w_front->tile, w_front->index | 1 << 20, 0, flags, GetCmdSellVeh(w_front));
+			return result;
 		}
-		return total_cost;
+
+		/* Now clone the vehicle's name, if it has one. */
+		if (!v_front->name.empty()) CloneVehicleName(v_front, w_front);
+
+		/* Since we can't estimate the cost of cloning a vehicle accurately we must
+		 * check whether the company has enough money manually. */
+		if (!CheckCompanyHasMoney(total_cost)) {
+			/* The vehicle has already been bought, so now it must be sold again. */
+			DoCommand(w_front->tile, w_front->index | 1 << 20, 0, flags, GetCmdSellVeh(w_front));
+			return total_cost;
+		}
 	}
 
 	return total_cost;
@@ -1033,7 +1044,7 @@ static CommandCost SendAllVehiclesToDepot(DoCommandFlag flags, bool service, con
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdSendVehicleToDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSendVehicleToDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (p1 & DEPOT_MASS_SEND) {
 		/* Mass goto depot requested */
@@ -1058,7 +1069,7 @@ CommandCost CmdSendVehicleToDepot(TileIndex tile, DoCommandFlag flags, uint32 p1
  * @param text the new name or an empty string when resetting to the default
  * @return the cost of this operation or an error
  */
-CommandCost CmdRenameVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRenameVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Vehicle *v = Vehicle::GetIfValid(p1);
 	if (v == nullptr || !v->IsPrimaryVehicle()) return CMD_ERROR;
@@ -1066,7 +1077,7 @@ CommandCost CmdRenameVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 	CommandCost ret = CheckOwnership(v->owner);
 	if (ret.Failed()) return ret;
 
-	bool reset = StrEmpty(text);
+	bool reset = text.empty();
 
 	if (!reset) {
 		if (Utf8StringLength(text) >= MAX_LENGTH_VEHICLE_NAME_CHARS) return CMD_ERROR;
@@ -1074,8 +1085,11 @@ CommandCost CmdRenameVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 	}
 
 	if (flags & DC_EXEC) {
-		free(v->name);
-		v->name = reset ? nullptr : stredup(text);
+		if (reset) {
+			v->name.clear();
+		} else {
+			v->name = text;
+		}
 		InvalidateWindowClassesData(GetWindowClassForVehicleType(v->type), 1);
 		MarkWholeScreenDirty();
 	}
@@ -1096,7 +1110,7 @@ CommandCost CmdRenameVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdChangeServiceInt(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdChangeServiceInt(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Vehicle *v = Vehicle::GetIfValid(p1);
 	if (v == nullptr || !v->IsPrimaryVehicle()) return CMD_ERROR;

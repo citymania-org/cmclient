@@ -388,7 +388,7 @@ void EmitPlural(Buffer *buffer, char *buf, int value)
 	int argidx = _cur_argidx;
 	int offset = -1;
 	int expected = _plural_forms[_lang.plural_form].plural_count;
-	const char **words = AllocaM(const char *, max(expected, MAX_PLURALS));
+	const char **words = AllocaM(const char *, std::max(expected, MAX_PLURALS));
 	int nw = 0;
 
 	/* Parse out the number, if one exists. Otherwise default to prev arg. */
@@ -457,7 +457,7 @@ void EmitGender(Buffer *buffer, char *buf, int value)
 
 		/* This is a {G 0 foo bar two} command.
 		 * If no relative number exists, default to +0 */
-		if (!ParseRelNum(&buf, &argidx, &offset)) {}
+		ParseRelNum(&buf, &argidx, &offset);
 
 		const CmdStruct *cmd = _cur_pcs.cmd[argidx];
 		if (cmd == nullptr || (cmd->flags & C_GENDER) == 0) {
@@ -489,7 +489,7 @@ static uint ResolveCaseName(const char *str, size_t len)
 {
 	/* First get a clean copy of only the case name, then resolve it. */
 	char case_str[CASE_GENDER_LEN];
-	len = min(lengthof(case_str) - 1, len);
+	len = std::min(lengthof(case_str) - 1, len);
 	memcpy(case_str, str, len);
 	case_str[len] = '\0';
 
@@ -818,8 +818,12 @@ void StringReader::ParseFile()
 	char buf[2048];
 	_warnings = _errors = 0;
 
-	_translation = this->master || this->translation;
+	_translation = this->translation;
 	_file = this->file;
+
+	/* Abusing _show_todo to replace "warning" with "info" for translations. */
+	_show_todo &= 3;
+	if (!this->translation) _show_todo |= 4;
 
 	/* For each new file we parse, reset the genders, and language codes. */
 	MemSetT(&_lang, 0);

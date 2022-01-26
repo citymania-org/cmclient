@@ -16,7 +16,7 @@
 
 #include "safeguards.h"
 
-char *_hotkeys_file;
+std::string _hotkeys_file;
 
 /**
  * List of all HotkeyLists.
@@ -67,18 +67,27 @@ static const KeycodeNames _keycode_to_name[] = {
 	{"NUM_PLUS", WKC_NUM_PLUS},
 	{"NUM_ENTER", WKC_NUM_ENTER},
 	{"NUM_DOT", WKC_NUM_DECIMAL},
-	{"/", WKC_SLASH},
-	{";", WKC_SEMICOLON},
-	{"=", WKC_EQUALS},
-	{"[", WKC_L_BRACKET},
-	{"\\", WKC_BACKSLASH},
-	{"]", WKC_R_BRACKET},
-	{"'", WKC_SINGLEQUOTE},
-	{",", WKC_COMMA},
-	{"COMMA", WKC_COMMA}, // legacy variant, should be below ","
-	{".", WKC_PERIOD},
-	{"-", WKC_MINUS},
+	{"SLASH", WKC_SLASH},
+	{"/", WKC_SLASH}, /* deprecated, use SLASH */
+	{"SEMICOLON", WKC_SEMICOLON},
+	{";", WKC_SEMICOLON}, /* deprecated, use SEMICOLON */
+	{"EQUALS", WKC_EQUALS},
+	{"=", WKC_EQUALS}, /* deprecated, use EQUALS */
+	{"L_BRACKET", WKC_L_BRACKET},
+	{"[", WKC_L_BRACKET}, /* deprecated, use L_BRACKET */
+	{"BACKSLASH", WKC_BACKSLASH},
+	{"\\", WKC_BACKSLASH}, /* deprecated, use BACKSLASH */
+	{"R_BRACKET", WKC_R_BRACKET},
+	{"]", WKC_R_BRACKET}, /* deprecated, use R_BRACKET */
+	{"SINGLEQUOTE", WKC_SINGLEQUOTE},
+	{"'", WKC_SINGLEQUOTE}, /* deprecated, use SINGLEQUOTE */
+	{"COMMA", WKC_COMMA},
+	{"PERIOD", WKC_PERIOD},
+	{".", WKC_PERIOD}, /* deprecated, use PERIOD */
+	{"MINUS", WKC_MINUS},
+	{"-", WKC_MINUS}, /* deprecated, use MINUS */
 
+	/* CityMania additions */
 	{"TAB", WKC_TAB},
 	{"L_BRACE", WKC_L_BRACE},
 	{"R_BRACE", WKC_R_BRACE},
@@ -86,6 +95,35 @@ static const KeycodeNames _keycode_to_name[] = {
 	{"R_PAREN", WKC_R_PAREN},
 	{"EXCLAIM", WKC_EXCLAIM},
 	{"ASTERISK", WKC_ASTERISK},
+
+	{"MOUSE_MIDDLE", CM_WKC_MOUSE_MIDDLE},
+	{"MOUSE_4", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 0)},
+	{"MOUSE_5", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 1)},
+	{"MOUSE_6", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 2)},
+	{"MOUSE_7", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 3)},
+	{"MOUSE_8", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 4)},
+	{"MOUSE_9", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 5)},
+	{"MOUSE_10", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 6)},
+	{"MOUSE_11", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 7)},
+	{"MOUSE_12", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 8)},
+	{"MOUSE_13", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 9)},
+	{"MOUSE_14", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 10)},
+	{"MOUSE_15", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 11)},
+	{"MOUSE_16", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 12)},
+	{"MOUSE_17", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 13)},
+	{"MOUSE_18", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 14)},
+	{"MOUSE_19", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 15)},
+	{"MOUSE_20", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 16)},
+	{"MOUSE_21", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 17)},
+	{"MOUSE_22", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 18)},
+	{"MOUSE_23", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 19)},
+	{"MOUSE_24", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 20)},
+	{"MOUSE_25", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 21)},
+	{"MOUSE_26", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 22)},
+	{"MOUSE_27", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 23)},
+	{"MOUSE_28", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 24)},
+	{"MOUSE_29", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 25)},
+	{"MOUSE_30", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 26)},
 };
 
 /**
@@ -298,7 +336,7 @@ void HotkeyList::Load(IniFile *ini)
 		IniItem *item = group->GetItem(hotkey->name, false);
 		if (item != nullptr) {
 			hotkey->keycodes.clear();
-			if (item->value != nullptr) ParseHotkeys(hotkey, item->value);
+			if (item->value.has_value()) ParseHotkeys(hotkey, item->value->c_str());
 		}
 	}
 }

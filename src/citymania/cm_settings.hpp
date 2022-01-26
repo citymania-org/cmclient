@@ -1,6 +1,8 @@
 #ifndef CM_SETTINGS_HPP
 #define CM_SETTINGS_HPP
 
+#include "cm_type.hpp"
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -13,7 +15,8 @@ enum class ModKey : uint8 {
     NONE = 0,
     SHIFT = 1,
     CTRL = 2,
-    ALT = 3
+    ALT = 3,
+    END,
 };
 
 class CBRequirement {
@@ -50,7 +53,7 @@ struct LimitsSettings {
 struct CBSettings {
     uint8 requirements_type;  // 0 - regular 1 - income-based requirements (new cb only)
     std::vector<CBRequirement> requirements;
-    uint8 acceptance_range;  // How far can station be to count towards requiremnts
+    uint16 acceptance_range;  // How far can station be to count towards requiremnts
     uint8 storage_size;  // cargo storage multiplier (x * monthly requirements)
     uint8 town_protection_range;  // Claimed town protection range (square from centre), overlaped with tz0
     uint16 claim_max_houses;  // Max amount of houses claimable town can have
@@ -63,8 +66,8 @@ struct Settings {
     EconomySettings economy;
     LimitsSettings limits;
 
-    uint8 game_type;  // GameType
-    uint8 controller_type;  // ControllerType
+    GameType game_type;  // GameType
+    ControllerType controller_type;  // ControllerType
     uint8 max_players_in_company;
     uint16 destroyed_houses_per_month;  // max amount of houses a company can destroy per month
     uint16 game_length_years;  // game length in years(0 = disabled)

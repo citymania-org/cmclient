@@ -22,6 +22,10 @@ namespace event {
 
 struct NewMonth {};
 
+struct TownBuilt {
+    Town *town;
+};
+
 struct TownGrowthSucceeded {
     Town *town;
     TileIndex tile;
@@ -55,6 +59,12 @@ struct HouseCleared {
     HouseID house_id;
     const HouseSpec *house_spec;
     bool was_completed;  ///< whether house was completed before destruction
+};
+
+struct HouseDestroyed {  // by dynamite, called after HouseCleared
+    CompanyID company_id;
+    Town *town;
+    TileIndex tile;
 };
 
 struct HouseCompleted {
@@ -105,6 +115,9 @@ struct CompanyBalanceChanged {
     Company *company;
     Money delta;
 };
+
+struct Tick {};
+struct RealtimeTick {};
 
 enum class Slot : uint8 {
     GOAL = 10,

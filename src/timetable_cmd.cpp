@@ -97,7 +97,7 @@ static void ChangeTimetable(Vehicle *v, VehicleOrderID order_number, uint16 val,
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdChangeTimetable(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdChangeTimetable(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh = GB(p1, 0, 20);
 
@@ -191,7 +191,7 @@ CommandCost CmdChangeTimetable(TileIndex tile, DoCommandFlag flags, uint32 p1, u
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdSetVehicleOnTime(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSetVehicleOnTime(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh = GB(p1, 0, 20);
 
@@ -258,7 +258,7 @@ static bool VehicleTimetableSorter(Vehicle * const &a, Vehicle * const &b)
  * @param text Not used.
  * @return The error or cost of the operation.
  */
-CommandCost CmdSetTimetableStart(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSetTimetableStart(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	bool timetable_all = HasBit(p1, 20);
 	Vehicle *v = Vehicle::GetIfValid(GB(p1, 0, 20));
@@ -323,7 +323,7 @@ CommandCost CmdSetTimetableStart(TileIndex tile, DoCommandFlag flags, uint32 p1,
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdAutofillTimetable(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdAutofillTimetable(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh = GB(p1, 0, 20);
 
@@ -430,7 +430,7 @@ void UpdateVehicleTimetable(Vehicle *v, bool travelling)
 		 * the timetable entry like is done for road vehicles/ships.
 		 * Thus always make sure at least one tick is used between the
 		 * processing of different orders when filling the timetable. */
-		uint time_to_set = CeilDiv(max(time_taken, 1U), DAY_TICKS) * DAY_TICKS;
+		uint time_to_set = CeilDiv(std::max(time_taken, 1U), DAY_TICKS) * DAY_TICKS;
 
 		if (travelling && (autofilling || !real_current_order->IsTravelTimetabled())) {
 			ChangeTimetable(v, v->cur_real_order_index, time_to_set, MTF_TRAVEL_TIME, autofilling);

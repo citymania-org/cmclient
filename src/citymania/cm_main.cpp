@@ -2,8 +2,9 @@
 
 #include "cm_main.hpp"
 #include "cm_hotkeys.hpp"
+#include "cm_minimap.hpp"
 
-#include "../smallmap_gui.h"
+#include "../network/network_func.h"
 #include "../window_func.h"
 
 #include "../safeguards.h"
@@ -22,9 +23,13 @@ void SwitchToMode(SwitchMode new_mode) {
 }
 
 void ToggleSmallMap() {
-    SmallMapWindow *w = dynamic_cast<SmallMapWindow*>(FindWindowById(WC_SMALLMAP, 0));
+    SmallMapWindow *w = dynamic_cast<citymania::SmallMapWindow*>(FindWindowById(WC_SMALLMAP, 0));
     if (w == nullptr) ShowSmallMap();
-    delete w;
+    else w->Close();
+}
+
+void NetworkClientSendChatToServer(const std::string &msg) {
+    NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER, msg);
 }
 
 } // namespace citymania

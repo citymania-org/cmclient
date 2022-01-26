@@ -16,6 +16,7 @@
 #include "vehicle_type.h"
 #include "engine_type.h"
 #include "livery.h"
+#include <string>
 
 typedef Pool<Group, GroupID, 16, 64000> GroupPool;
 extern GroupPool _group_pool; ///< Pool of groups.
@@ -61,13 +62,19 @@ struct GroupStatistics {
 	static void UpdateAutoreplace(CompanyID company);
 };
 
+enum GroupFlags : uint8 {
+	GF_REPLACE_PROTECTION,    ///< If set to true, the global autoreplace has no effect on the group
+	GF_REPLACE_WAGON_REMOVAL, ///< If set, autoreplace will perform wagon removal on vehicles in this group.
+	GF_END,
+};
+
 /** Group data. */
 struct Group : GroupPool::PoolItem<&_group_pool> {
-	char *name;                 ///< Group Name
+	std::string name;           ///< Group Name
 	Owner owner;                ///< Group Owner
 	VehicleType vehicle_type;   ///< Vehicle type of the group
 
-	bool replace_protection;    ///< If set to true, the global autoreplace have no effect on the group
+	uint8 flags;                ///< Group flags
 	Livery livery;              ///< Custom colour scheme for vehicles in this group
 	GroupStatistics statistics; ///< NOSAVE: Statistics and caches on the vehicles in the group.
 
@@ -76,7 +83,6 @@ struct Group : GroupPool::PoolItem<&_group_pool> {
 	GroupID parent;             ///< Parent group
 
 	Group(CompanyID owner = INVALID_COMPANY);
-	~Group();
 };
 
 

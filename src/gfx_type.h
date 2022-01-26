@@ -105,13 +105,17 @@ enum WindowKeyCodes {
 
 	WKC_L_BRACE     = 154, ///< { Left brace
 	WKC_R_BRACE     = 155, ///< } Right brace
-	
+
 	WKC_L_PAREN     = 157, ///< ( Left parentheses
 	WKC_R_PAREN     = 158, ///< ) Right parentheses
 	WKC_PLUS        = 159, ///< + Plus
 	WKC_EXCLAIM     = 160, ///< ! Exclamation mark
 	WKC_ASTERISK    = 161, ///< * Asterisk
 	WKC_DOLLAR      = 162, ///< $ Dollar sign
+
+	CM_WKC_MOUSE_MIDDLE      = 0x703,  ///< CityMania: special code for middle mouse button
+	CM_WKC_MOUSE_OTHER_START = 0x704,  ///< CityMania: start of the numbered buttons (whatever number driver reports), starts as MOUSE_4 hotkey
+	CM_WKC_MOUSE_OTHER_END   = 0x71f, ///< CityMania: 30 buttons should be enough for any mouse, right? ;)
 };
 
 /** A single sprite of a list of animated cursors */
@@ -153,6 +157,7 @@ struct CursorVars {
 	/* Drag data */
 	bool vehchain;                ///< vehicle chain is dragged
 
+	void UpdateCursorPositionRelative(int delta_x, int delta_y);
 	bool UpdateCursorPosition(int x, int y, bool queued_warp);
 
 private:
@@ -172,7 +177,9 @@ struct DrawPixelInfo {
 union Colour {
 	uint32 data; ///< Conversion of the channel information to a 32 bit number.
 	struct {
-#if TTD_ENDIAN == TTD_BIG_ENDIAN
+#if defined(__EMSCRIPTEN__)
+		uint8 r, g, b, a;  ///< colour channels as used in browsers
+#elif TTD_ENDIAN == TTD_BIG_ENDIAN
 		uint8 a, r, g, b; ///< colour channels in BE order
 #else
 		uint8 b, g, r, a; ///< colour channels in LE order
@@ -187,7 +194,9 @@ union Colour {
 	 * @param a The channel for the alpha/transparency.
 	 */
 	Colour(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) :
-#if TTD_ENDIAN == TTD_BIG_ENDIAN
+#if defined(__EMSCRIPTEN__)
+		r(r), g(g), b(b), a(a)
+#elif TTD_ENDIAN == TTD_BIG_ENDIAN
 		a(a), r(r), g(g), b(b)
 #else
 		b(b), g(g), r(r), a(a)
@@ -204,7 +213,7 @@ union Colour {
 	}
 };
 
-assert_compile(sizeof(Colour) == sizeof(uint32));
+static_assert(sizeof(Colour) == sizeof(uint32));
 
 
 /** Available font sizes */
@@ -327,5 +336,23 @@ enum Support8bpp {
 	S8BPP_SYSTEM,   ///< No 8bpp support by hardware, do not try to use 8bpp video modes or hardware palettes.
 	S8BPP_HARDWARE, ///< Full 8bpp support by OS and hardware.
 };
+
+	/** How to align the to-be drawn text. */
+enum StringAlignment {
+	SA_LEFT        = 0 << 0, ///< Left align the text.
+	SA_HOR_CENTER  = 1 << 0, ///< Horizontally center the text.
+	SA_RIGHT       = 2 << 0, ///< Right align the text (must be a single bit).
+	SA_HOR_MASK    = 3 << 0, ///< Mask for horizontal alignment.
+
+	SA_TOP         = 0 << 2, ///< Top align the text.
+	SA_VERT_CENTER = 1 << 2, ///< Vertically center the text.
+	SA_BOTTOM      = 2 << 2, ///< Bottom align the text.
+	SA_VERT_MASK   = 3 << 2, ///< Mask for vertical alignment.
+
+	SA_CENTER      = SA_HOR_CENTER | SA_VERT_CENTER, ///< Center both horizontally and vertically.
+
+	SA_FORCE       = 1 << 4, ///< Force the alignment, i.e. don't swap for RTL languages.
+};
+DECLARE_ENUM_AS_BIT_SET(StringAlignment)
 
 #endif /* GFX_TYPE_H */

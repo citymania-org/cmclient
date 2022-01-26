@@ -61,25 +61,9 @@ enum RightMouseButtonEmulationState {
 static unsigned int _current_mods;
 static bool _tab_is_down;
 static bool _emulating_right_button;
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 static float _current_magnification;
-#endif
 #ifdef _DEBUG
 static uint32 _tEvent;
-#endif
-
-
-/* Support for touch gestures is only available starting with the
- * 10.6 SDK, even if it says that support starts in fact with 10.5.2.
- * Replicate the needed stuff for older SDKs. */
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
-static const NSUInteger NSEventTypeMagnify    = 30;
-static const NSUInteger NSEventTypeEndGesture = 20;
-
-@interface NSEvent ()
-/* This message is valid for events of type NSEventTypeMagnify, on 10.5.2 or later */
-- (CGFloat)magnification WEAK_IMPORT_ATTRIBUTE;
-@end
 #endif
 
 
@@ -370,7 +354,8 @@ static void QZ_MouseMovedEvent(int x, int y)
 }
 
 
-static void QZ_MouseButtonEvent(int button, BOOL down)
+static void
+QZ_MouseButtonEvent(int button, BOOL down)
 {
 	switch (button) {
 		case 0:
@@ -392,6 +377,18 @@ static void QZ_MouseButtonEvent(int button, BOOL down)
 			}
 			HandleMouseEvents();
 			break;
+
+		case 2:
+			HandleKeypress(CM_WKC_MOUSE_MIDDLE, 0);
+			break;
+
+		default: {
+			int cm_button = CM_WKC_MOUSE_OTHER_START + button - 3;
+			if (!down && cm_button >= CM_WKC_MOUSE_OTHER_START && cm_button < CM_WKC_MOUSE_OTHER_END) {
+				HandleKeypress(cm_button, 0);
+			}
+			break;
+		}
 	}
 }
 
@@ -501,11 +498,11 @@ static bool QZ_PollEvent()
 			QZ_MouseButtonEvent(1, NO);
 			break;
 
-#if 0
+// #if 0  CityMania uses this!
 		/* This is not needed since openttd currently only use two buttons */
 		case NSOtherMouseDown:
-			pt = QZ_GetMouseLocation(event);
-			if (!QZ_MouseIsInsideView(&pt)) {
+			pt = _cocoa_subdriver->GetMouseLocation(event);
+			if (!_cocoa_subdriver->MouseIsInsideView(&pt)) {
 				[ NSApp sendEvent:event ];
 				break;
 			}
@@ -515,8 +512,8 @@ static bool QZ_PollEvent()
 			break;
 
 		case NSOtherMouseUp:
-			pt = QZ_GetMouseLocation(event);
-			if (!QZ_MouseIsInsideView(&pt)) {
+			pt = _cocoa_subdriver->GetMouseLocation(event);
+			if (!_cocoa_subdriver->MouseIsInsideView(&pt)) {
 				[ NSApp sendEvent:event ];
 				break;
 			}
@@ -524,7 +521,7 @@ static bool QZ_PollEvent()
 			QZ_MouseMovedEvent((int)pt.x, (int)pt.y);
 			QZ_MouseButtonEvent([ event buttonNumber ], NO);
 			break;
-#endif
+// #endif
 
 		case NSKeyDown: {
 			/* Quit, hide and minimize */
@@ -581,16 +578,13 @@ static bool QZ_PollEvent()
 			CGFloat deltaY;
 
 			/* Use precise scrolling-specific deltas if they're supported. */
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7)
 			if ([event respondsToSelector:@selector(hasPreciseScrollingDeltas)]) {
 				/* No precise deltas indicates a scroll wheel is being used, so we don't want 2D scrolling. */
 				if (![ event hasPreciseScrollingDeltas ]) break;
 
 				deltaX = [ event scrollingDeltaX ] * 0.5f;
 				deltaY = [ event scrollingDeltaY ] * 0.5f;
-			} else
-#endif
-			{
+			} else {
 				deltaX = [ event deltaX ] * 5;
 				deltaY = [ event deltaY ] * 5;
 			}
@@ -600,7 +594,6 @@ static bool QZ_PollEvent()
 
 			break;
 
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 		case NSEventTypeMagnify:
 			/* Pinch open or close gesture. */
 			_current_magnification += [ event magnification ] * 5.0f;
@@ -621,7 +614,6 @@ static bool QZ_PollEvent()
 			/* Gesture ended. */
 			_current_magnification = 0.0f;
 			break;
-#endif
 
 		case NSCursorUpdate:
 		case NSMouseEntered:
@@ -640,7 +632,7 @@ static bool QZ_PollEvent()
 }
 
 
-void QZ_GameLoop()
+void VideoDriver_Cocoa::GameLoop()
 {
 	uint32 cur_ticks = GetTick();
 	uint32 last_cur_ticks = cur_ticks;
@@ -656,7 +648,7 @@ void QZ_GameLoop()
 	_cocoa_subdriver->Draw(true);
 	CSleep(1);
 
-	for (int i = 0; i < 2; i++) GameLoop();
+	for (int i = 0; i < 2; i++) ::GameLoop();
 
 	UpdateWindows();
 	QZ_CheckPaletteAnim();
@@ -675,7 +667,11 @@ void QZ_GameLoop()
 
 		while (QZ_PollEvent()) {}
 
-		if (_exit_game) break;
+		if (_exit_game) {
+			/* Restore saved resolution if in fullscreen mode. */
+			if (_cocoa_subdriver->IsFullscreen()) _cur_resolution = this->orig_res;
+			break;
+		}
 
 #if defined(_DEBUG)
 		if (_current_mods & NSShiftKeyMask)
@@ -702,7 +698,7 @@ void QZ_GameLoop()
 			// CM if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
 			citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
 
-			GameLoop();
+			::GameLoop();
 
 			UpdateWindows();
 			QZ_CheckPaletteAnim();
