@@ -567,10 +567,14 @@ static WindowDesc _query_sign_edit_desc(
  */
 void HandleClickOnSign(const Sign *si)
 {
+	/* If we can't rename the sign, don't even open the rename GUI. */
+	if (!CompanyCanRenameSign(si)) return;
+
 	if (citymania::_fn_mod && (si->owner == _local_company || (si->owner == OWNER_DEITY && _game_mode == GM_EDITOR))) {
 		RenameSign(si->index, "");
 		return;
 	}
+
 	ShowRenameSignWindow(si);
 }
 

@@ -31,6 +31,38 @@
 
 #include "../safeguards.h"
 
+
+struct StringSpriteToDraw {
+    StringID string;
+    Colours colour;
+    int32 x;
+    int32 y;
+    uint64 params[2];
+    uint16 width;
+};
+
+struct TileSpriteToDraw {
+    SpriteID image;
+    PaletteID pal;
+    const SubSprite *sub;           ///< only draw a rectangular part of the sprite
+    int32 x;                        ///< screen X coordinate of sprite
+    int32 y;                        ///< screen Y coordinate of sprite
+};
+
+struct ChildScreenSpriteToDraw {
+    SpriteID image;
+    PaletteID pal;
+    const SubSprite *sub;           ///< only draw a rectangular part of the sprite
+    int32 x;
+    int32 y;
+    int next;                       ///< next child to draw (-1 at the end)
+};
+
+typedef std::vector<TileSpriteToDraw> TileSpriteToDrawVector;
+typedef std::vector<ParentSpriteToDraw> ParentSpriteToDrawVector;
+typedef std::vector<ChildScreenSpriteToDraw> ChildScreenSpriteToDrawVector;
+
+
 namespace citymania {
 
 extern SpriteID (*GetDefaultTrainSprite)(uint8, Direction);  // train_cmd.cpp
@@ -302,36 +334,6 @@ void ExportOpenttdData(const std::string &filename) {
     data_export::WritePaletteInfo(j);
     data_export::WriteEngineInfo(j);
 }
-
-struct StringSpriteToDraw {
-    StringID string;
-    Colours colour;
-    int32 x;
-    int32 y;
-    uint64 params[2];
-    uint16 width;
-};
-
-struct TileSpriteToDraw {
-    SpriteID image;
-    PaletteID pal;
-    const SubSprite *sub;           ///< only draw a rectangular part of the sprite
-    int32 x;                        ///< screen X coordinate of sprite
-    int32 y;                        ///< screen Y coordinate of sprite
-};
-
-struct ChildScreenSpriteToDraw {
-    SpriteID image;
-    PaletteID pal;
-    const SubSprite *sub;           ///< only draw a rectangular part of the sprite
-    int32 x;
-    int32 y;
-    int next;                       ///< next child to draw (-1 at the end)
-};
-
-typedef std::vector<TileSpriteToDraw> TileSpriteToDrawVector;
-typedef std::vector<ParentSpriteToDraw> ParentSpriteToDrawVector;
-typedef std::vector<ChildScreenSpriteToDraw> ChildScreenSpriteToDrawVector;
 
 extern void ViewportExportDrawBegin(const Viewport *vp, int left, int top, int right, int bottom);
 extern void ViewportExportDrawEnd();
