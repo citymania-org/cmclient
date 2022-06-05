@@ -291,7 +291,7 @@ for sprite_id, file, is_wide in TREES:
 
 
 # Tile slope to sprite offset
-get_tile_slope_offset = grf.VarAction2(
+get_tile_slope_offset = grf.Switch(
     feature=grf.OBJECT,
     ref_id=0,
     ranges={0: 0, 1: 1, 2: 2, 4: 4, 8: 8, 9: 9, 3: 3, 6: 6, 12: 12, 5: 5, 10: 10, 11: 11, 7: 7, 14: 14, 13: 13, 27: 17, 23: 16, 30: 18, 29: 15},
@@ -301,7 +301,7 @@ get_tile_slope_offset = grf.VarAction2(
 gen.add(get_tile_slope_offset)
 
 # Ground sprite
-get_ground_sprite = grf.VarAction2(
+get_ground_sprite = grf.Switch(
     feature=grf.OBJECT,
     ref_id=1,
     ranges={-2: 4550 , -1: 4550 - 19, 0: 4550 - 19 * 2, 1: 4550 - 19 * 3},
@@ -326,12 +326,12 @@ gen.add(get_ground_sprite)
 # gen.add(grf.Object(0,
 #     label=b'FLMA',
 #     size=0x11,
-#     climate=0xf,
+#     climate=grf.ALL_CLIMATES,
 #     eol_date=0,
 #     flags=grf.Object.Flags.HAS_NO_FOUNDATION | grf.Object.Flags.ALLOW_UNDER_BRIDGE,
 # ))
 
-# gen.add(grf.VarAction2(
+# gen.add(grf.Switch(
 #     feature=grf.OBJECT,
 #     ref_id=255,
 #     ranges={0: grf.Set(255)},
@@ -349,14 +349,11 @@ for i in range(81):
     tmpl_ground_sprites(lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw)), 1, i * 64 + 1)
 
 for i in range(81):
-    gen.add(grf.AdvancedSpriteLayout(
+    gen.add(layout := grf.AdvancedSpriteLayout(
         feature=grf.OBJECT,
-        ref_id=255,
         ground={
-            # 'sprite': grf.SpriteRef(0, is_global=True),
             'sprite': grf.SpriteRef(4550, is_global=True),
             'flags': 2,
-            # 'add': grf.Temp(1),
         },
         buildings=[{
             'sprite': grf.SpriteRef(i, is_global=False),
@@ -365,11 +362,10 @@ for i in range(81):
         }]
     ))
 
-    gen.add(grf.VarAction2(
+    gen.add(layout_switch := grf.Switch(
         feature=grf.OBJECT,
-        ref_id=255,
-        ranges={0: grf.Ref(255)},
-        default=grf.Ref(255),
+        ranges={0: layout},
+        default=layout,
         code=f'''
             TEMP[0] = call({get_tile_slope_offset})
             TEMP[1] = call({get_ground_sprite}) + TEMP[0]
@@ -381,7 +377,7 @@ for i in range(81):
         props={
             'label' : b'CREE',
             'size' : (1, 1),
-            'climate' : 0xf,
+            'climate' : grf.ALL_CLIMATES,
             'eol_date' : 0,
             'flags' : grf.Object.Flags.HAS_NO_FOUNDATION | grf.Object.Flags.ALLOW_UNDER_BRIDGE | grf.Object.Flags.AUTOREMOVE,
         }
@@ -390,8 +386,8 @@ for i in range(81):
 
     gen.add(grf.Map(
         object=creek_obj,
-        maps={255: grf.Ref(255)},
-        default=grf.Ref(255),
+        maps={255: layout_switch},
+        default=layout_switch,
     ))
 
 gen.write('alpine.grf')
