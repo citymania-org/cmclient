@@ -839,15 +839,8 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 	}
 
 	bool UpdateExcludedCargo() {
-		uint64 new_excluded_cargo = 0;
-
-		int i = 0;
-		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-			if (HasBit(_legend_excluded_cargo, cs->Index())) SetBit(new_excluded_cargo, i);
-			i++;
-		}
-		if (this->excluded_cargo == new_excluded_cargo) return false;
-		this->excluded_cargo = new_excluded_cargo;
+		if (this->excluded_cargo == _legend_excluded_cargo) return false;
+		this->excluded_cargo = _legend_excluded_cargo;
 		return true;
 	}
 
