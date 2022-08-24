@@ -74,6 +74,12 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** ??? ***
+- Fix cargo selection in charts.
+
+*** 12.2 (3 Apr 2022) ***
+- OpenTTD update.
+
 *** 12.1 (9 Nov 2021) ***
 - Added company HQ and watch buttons to companies in the online players window.
 - Made companies clickable in the online players window. Regular click opens company window, Fn(Ctrl)-click opens finances.
