@@ -58,7 +58,7 @@ void CountEffectiveAction() {
     _last_actions.push(now + EPM_PERIOD);
 }
 
-void ResetEffectivveActionCounter() {
+void ResetEffectiveActionCounter() {
     _first_effective_tick = {};
     _effective_actions = 0;
     std::queue<std::chrono::steady_clock::time_point>().swap(_last_actions);  // clear the queue

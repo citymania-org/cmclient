@@ -124,7 +124,7 @@ void SetLocalCompany(CompanyID new_company)
 
 	/* Delete any construction windows... */
 	if (switching_company) CloseConstructionWindows();
-	if (switching_company) citymania::ResetEffectivveActionCounter();
+	if (switching_company) citymania::ResetEffectiveActionCounter();
 
 	/* ... and redraw the whole screen. */
 	MarkWholeScreenDirty();

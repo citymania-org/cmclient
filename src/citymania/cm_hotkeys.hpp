@@ -27,7 +27,7 @@ void RoadToolbar_UpdateOptionWidgetStatus(Window *w, int widget, bool remove_act
 bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_clicked, bool is_road);
 
 void CountEffectiveAction();
-void ResetEffectivveActionCounter();
+void ResetEffectiveActionCounter();
 std::pair<uint32, uint32> GetEPM();
 
 } // namespace citymania

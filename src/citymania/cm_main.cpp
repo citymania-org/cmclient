@@ -15,7 +15,7 @@ up<Game> _game = nullptr;
 
 void ResetGame() {
     _game = make_up<Game>();
-    ResetEffectivveActionCounter();
+    ResetEffectiveActionCounter();
 }
 
 void SwitchToMode(SwitchMode new_mode) {
