@@ -75,6 +75,7 @@ This is usable for any OpenTTD servers
 == CHANGELOG ==
 
 *** ??? ***
+- Fix company selection when clicking in online players window.
 - Fix cargo selection in charts.
 - Fix shaded trees setting UI.
 

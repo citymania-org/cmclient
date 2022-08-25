@@ -1877,8 +1877,7 @@ public:
 				// NOTE: needs to match company order in DrawWidget
 				if (button == nullptr) {
 					NWidgetBase *nwi = this->GetWidget<NWidgetBase>(widget);
-					int y = _cursor.pos.y - this->top - nwi->pos_y - 2;
-					int index = y / this->line_height;
+					int index = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_CL_MATRIX);
 					NetworkClientInfo *own_ci = NetworkClientInfo::GetByClientID(_network_own_client_id);
 					CompanyID client_playas = own_ci == nullptr ? COMPANY_SPECTATOR : own_ci->client_playas;
 					if (client_playas == COMPANY_SPECTATOR && !NetworkMaxCompaniesReached()) index--;
@@ -1896,6 +1895,12 @@ public:
 					for (const Company *c : Company::Iterate()) {
 						if (client_playas == c->index) continue;
 						if (count_company(c->index)) break;
+
+						// Skip lines with company players
+						for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
+							if (ci->client_playas == c->index) index--;
+						}
+						if (index < 0) break;
 					}
 					break;
 				}
