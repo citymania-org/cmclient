@@ -76,6 +76,7 @@ This is usable for any OpenTTD servers
 
 *** ??? ***
 - Fix cargo selection in charts.
+- Fix shaded trees setting UI.
 
 *** 12.2 (3 Apr 2022) ***
 - OpenTTD update.
