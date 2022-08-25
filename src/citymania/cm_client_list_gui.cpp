@@ -112,10 +112,9 @@ public:
         if (!this->dirty) return;
         this->dirty = false;
 
-        this->UpdateSize();
         Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 
-        bool make_backup = true;
+        bool was_drawn = this->drawn;
 
         if (this->drawn) {
             /* Put our 'shot' back to the screen */
@@ -124,13 +123,6 @@ public:
             VideoDriver::GetInstance()->MakeDirty(this->backup_box.x, this->backup_box.y, this->backup_box.width, this->backup_box.height);
 
             this->drawn = false;
-
-            make_backup = (
-                this->box.x != this->backup_box.x ||
-                this->box.y != this->backup_box.y ||
-                this->box.width != this->backup_box.width ||
-                this->box.height != this->backup_box.height
-            );
         }
 
         if (_game_mode != GM_NORMAL) return;
@@ -139,7 +131,13 @@ public:
         if (!_settings_client.gui.cm_show_client_overlay) return;
         if (this->box.width <= 0 || this->box.height <= 0) return;
 
-        if (make_backup) {
+        this->UpdateSize();
+
+        if (!was_drawn ||
+                this->box.x != this->backup_box.x ||
+                this->box.y != this->backup_box.y ||
+                this->box.width != this->backup_box.width ||
+                this->box.height != this->backup_box.height) {
             auto size = this->box.width * this->box.height * BlitterFactory::GetCurrentBlitter()->GetBytesPerPixel();
             if (size > this->backup_size) {
                 this->backup  = ReallocT(this->backup, size);
