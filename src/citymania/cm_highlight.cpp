@@ -18,6 +18,7 @@
 #include "../newgrf_roadtype.h"
 #include "../newgrf_station.h"
 #include "../spritecache.h"
+#include "../strings_func.h"
 #include "../town.h"
 #include "../town_kdtree.h"
 #include "../tilearea_type.h"
@@ -54,6 +55,8 @@ extern DiagDirection _build_depot_direction; ///< Currently selected depot direc
 extern DiagDirection _road_station_picker_orientation;
 extern DiagDirection _road_depot_orientation;
 extern uint32 _realtime_tick;
+extern uint32 _cm_funding_layout;
+extern IndustryType _cm_funding_type;
 extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
 struct RailStationGUISettings {
@@ -175,6 +178,12 @@ ObjectTileHighlight ObjectTileHighlight::make_point(SpriteID palette) {
     return ObjectTileHighlight(Type::POINT, palette);
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_numbered_rect(SpriteID palette, uint32 number) {
+    auto oh = ObjectTileHighlight(Type::NUMBERED_RECT, palette);
+    oh.u.numbered_rect.number = number;
+    return oh;
+}
+
 
 bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
     if (this->type != oh.type) return false;
@@ -260,6 +269,14 @@ ObjectHighlight ObjectHighlight::make_polyrail(TileIndex start_tile, TileIndex e
     oh.tile2 = start_tile2;
     oh.end_tile2 = end_tile2;
     oh.trackdir2 = trackdir2;
+    return oh;
+}
+
+ObjectHighlight ObjectHighlight::make_industry(TileIndex tile, IndustryType ind_type, uint32 ind_layout) {
+    auto oh = ObjectHighlight{ObjectHighlight::Type::INDUSTRY};
+    oh.tile = tile;
+    oh.ind_type = ind_type;
+    oh.ind_layout = ind_layout;
     return oh;
 }
 
@@ -497,6 +514,9 @@ void ObjectHighlight::UpdateTiles() {
             add_track(this->tile2, this->end_tile2, this->trackdir2, PALETTE_SEL_TILE_BLUE, INVALID_TILE, INVALID_TILE);
             break;
         }
+        case Type::INDUSTRY:
+            this->AddTile(this->tile, ObjectTileHighlight::make_numbered_rect(CM_PALETTE_TINT_WHITE, this->ind_layout));
+            break;
         default:
             NOT_REACHED();
     }
@@ -962,6 +982,24 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
             case ObjectTileHighlight::Type::POINT:
                 DrawSelectionPoint(oth.palette, ti);
                 break;
+            case ObjectTileHighlight::Type::NUMBERED_RECT: {
+                DrawTileSelectionRect(ti, oth.palette);
+                ViewportSign sign;
+                auto string_id = oth.u.numbered_rect.number ? CM_STR_LAYOUT_NUM : CM_STR_LAYOUT_RANDOM;
+
+                SetDParam(0, oth.u.numbered_rect.number);
+                char buffer[DRAW_STRING_BUFFER];
+                GetString(buffer, string_id, lastof(buffer));
+                auto bb = GetStringBoundingBox(buffer);
+                sign.width_normal = VPSM_LEFT + Align(bb.width, 2) + VPSM_RIGHT;
+                Point pt = RemapCoords2(TileX(ti->tile) * TILE_SIZE + TILE_SIZE / 2, TileY(ti->tile) * TILE_SIZE + TILE_SIZE / 2);
+                sign.center = pt.x;
+                sign.top = pt.y - bb.height / 2;
+
+                ViewportAddString(_cur_dpi, ZOOM_LVL_OUT_8X, &sign,
+                                  string_id, STR_NULL, STR_NULL, oth.u.numbered_rect.number, 0, COLOUR_WHITE);
+                break;
+            }
             default:
                 break;
         }
@@ -1398,12 +1436,17 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     _thd.cm_new = ObjectHighlight(ObjectHighlight::Type::NONE);
     auto pt = GetTileBelowCursor();
     auto tile = (pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y));
+    bool force_new = false;
     // fprintf(stderr, "UPDATE %d %d %d %d\n", tile, _thd.size.x, _thd.size.y, (int)((_thd.place_mode & HT_DRAG_MASK) == HT_RECT));
     if (_thd.place_mode == CM_HT_BLUEPRINT_PLACE) {
         UpdateBlueprintTileSelection(pt, tile);
         new_drawstyle = CM_HT_BLUEPRINT_PLACE;
     } else if (pt.x == -1) {
     } else if (_thd.make_square_red) {
+    } else if (_thd.select_proc == CM_DDSP_FUND_INDUSTRY) {
+        _thd.cm_new = ObjectHighlight::make_industry(tile, _cm_funding_type, _cm_funding_layout);
+        force_new = true;
+        new_drawstyle = HT_RECT;
     } else if (_thd.select_proc == CM_DDSP_BUILD_ROAD_DEPOT) {
         auto dir = _road_depot_orientation;
         if (dir == DEPOTDIR_AUTO) {
@@ -1466,7 +1509,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
                                                      TileVirtXY(_thd.selend2.x, _thd.selend2.y),
                                                      _thd.cm_poly_dir2);
     }
-    if (_thd.cm != _thd.cm_new) {
+    if (force_new || _thd.cm != _thd.cm_new) {
         _thd.cm.MarkDirty();
         _thd.cm = _thd.cm_new;
         _thd.cm.MarkDirty();

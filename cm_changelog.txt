@@ -75,9 +75,11 @@ This is usable for any OpenTTD servers
 == CHANGELOG ==
 
 *** ??? ***
-- Fix company selection when clicking in online players window.
-- Fix cargo selection in charts.
-- Fix shaded trees setting UI.
+- Added a hotkey to switch industry layouts when funding (MMB by default).
+- Fixed crash when no graphics were installed.
+- Fixed company selection when clicking in online players window.
+- Fixed cargo selection in charts.
+- Fixed shaded trees setting UI.
 
 *** 12.2 (3 Apr 2022) ***
 - OpenTTD update.

@@ -33,6 +33,7 @@ public:
         ROAD_DEPOT,
         AIRPORT_TILE,
         POINT,
+        NUMBERED_RECT,
         END,
     };
 
@@ -77,6 +78,9 @@ public:
         struct {
             StationGfx gfx;
         } airport_tile;
+        struct {
+            uint32 number;
+        } numbered_rect;
     } u;
 
     ObjectTileHighlight(Type type, SpriteID palette): type{type}, palette{palette} {}
@@ -91,6 +95,7 @@ public:
     static ObjectTileHighlight make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir);
     static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
     static ObjectTileHighlight make_point(SpriteID palette);
+    static ObjectTileHighlight make_numbered_rect(SpriteID palette, uint32 number);
 };
 
 
@@ -212,6 +217,7 @@ public:
         AIRPORT = 5,
         BLUEPRINT = 6,
         POLYRAIL = 7,
+        INDUSTRY = 8,
     };
 
     Type type = Type::NONE;
@@ -228,6 +234,8 @@ public:
     int airport_type = 0;
     byte airport_layout = 0;
     sp<Blueprint> blueprint = nullptr;
+    IndustryType ind_type = INVALID_INDUSTRYTYPE;
+    uint32 ind_layout = 0;
 
 protected:
     bool tiles_updated = false;
@@ -251,6 +259,8 @@ public:
     static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);
     static ObjectHighlight make_polyrail(TileIndex start_tile, TileIndex end_tile, Trackdir trackdir,
                                          TileIndex start_tile2, TileIndex end_tile2, Trackdir trackdir2);
+
+    static ObjectHighlight make_industry(TileIndex tile, IndustryType ind_type, uint32 ind_layout);
 
     void Draw(const TileInfo *ti);
     void DrawOverlay(DrawPixelInfo *dpi);

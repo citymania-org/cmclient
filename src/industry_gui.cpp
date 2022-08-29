@@ -51,8 +51,13 @@
 
 #include "safeguards.h"
 
+static const int CM_HOTKEY_MASK        = 0x1000;
+static const int CM_HOTKEY_SWITCH_LAYOUT = 0x1001;
+
 bool _ignore_restrictions;
 std::bitset<NUM_INDUSTRYTYPES> _displayed_industries; ///< Communication from the industry chain window to the smallmap window about what industries to display.
+uint32 _cm_funding_layout;
+IndustryType _cm_funding_type;
 
 /** Cargo suffix type (for which window is it requested) */
 enum CargoSuffixType {
@@ -309,7 +314,7 @@ class BuildIndustryWindow : public Window {
 	bool enabled[NUM_INDUSTRYTYPES + 1];        ///< availability state, coming from CBID_INDUSTRY_PROBABILITY (if ever)
 	Scrollbar *vscroll;
 	Dimension legend;                           ///< Dimension of the legend 'blob'.
-	
+
 	bool funding_enabled;
 
 	/** The largest allowed minimum-width of the window, given in line heights */
@@ -351,7 +356,7 @@ class BuildIndustryWindow : public Window {
 		 * I'll be damned if there are none available ;) */
 		if (this->selected_index == -1) {
 			this->selected_index = 0;
-			this->selected_type = this->index[0];
+			_cm_funding_type = this->selected_type = this->index[0];
 			citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 		}
 
@@ -419,7 +424,8 @@ public:
 	BuildIndustryWindow(WindowDesc *desc) : Window(desc)
 	{
 		this->selected_index = -1;
-		this->selected_type = INVALID_INDUSTRYTYPE;
+		_cm_funding_type = this->selected_type = INVALID_INDUSTRYTYPE;
+		_cm_funding_layout = 0;
 
 		this->funding_enabled = false;
 
@@ -688,7 +694,8 @@ public:
 				int y = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_DPI_MATRIX_WIDGET);
 				if (y < this->count) { // Is it within the boundaries of available data?
 					this->selected_index = y;
-					this->selected_type = this->index[y];
+					_cm_funding_type = this->selected_type = this->index[y];
+					_cm_funding_layout = 0;
 					citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 					const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? nullptr : GetIndustrySpec(this->selected_type);
 
@@ -750,6 +757,7 @@ public:
 		const IndustrySpec *indsp = GetIndustrySpec(this->selected_type);
 		uint32 seed = InteractiveRandom();
 		uint32 layout_index = InteractiveRandomRange((uint32)indsp->layouts.size());
+		if (_cm_funding_layout > 0) layout_index = _cm_funding_layout - 1;
 
 		if (_game_mode == GM_EDITOR) {
 			/* Show error if no town exists at all */
@@ -823,6 +831,16 @@ public:
 
 	virtual EventState OnHotkey(int hotkey)
 	{
+		switch (hotkey) {
+			case CM_HOTKEY_SWITCH_LAYOUT:
+				if (this->selected_type != INVALID_INDUSTRYTYPE && _thd.select_proc == CM_DDSP_FUND_INDUSTRY) {
+					const IndustrySpec *indspec = GetIndustrySpec(this->selected_type);
+					size_t num_layouts = indspec->layouts.size();
+					MarkTileDirtyByTile(TileVirtXY(_thd.pos.x, _thd.pos.y)); // redraw tile selection
+					_cm_funding_layout = (_cm_funding_layout + 1) % (num_layouts + 1);
+					return ES_HANDLED;
+				} else return ES_NOT_HANDLED;
+		}
 		return Window::OnHotkey(hotkey);
 	}
 
@@ -832,6 +850,7 @@ public:
 static Hotkey build_industry_hotkeys[] = {
 	Hotkey((uint16)0, "display_chain", WID_DPI_DISPLAY_WIDGET),
 	Hotkey((uint16)0, "build_button", WID_DPI_FUND_WIDGET),
+	Hotkey(CM_WKC_MOUSE_MIDDLE, "cm_switch_layout", CM_HOTKEY_SWITCH_LAYOUT),
 	HOTKEY_LIST_END
 };
 
