@@ -56,7 +56,7 @@ void ShowEstimatedCostOrIncome(Money cost, int x, int y);
 
 void ShowExtraViewportWindow(TileIndex tile = INVALID_TILE);
 namespace citymania {
-Window *ShowExtraViewportWindow(int x, int y, int z);
+void ShowExtraViewportWindow(int x, int y, int z);
 }
 void ShowExtraViewportWindowForTileUnderCursor();
 
