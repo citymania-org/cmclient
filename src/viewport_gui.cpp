@@ -182,7 +182,7 @@ void ShowExtraViewportWindow(TileIndex tile)
 
 namespace citymania {
 
-Window *ShowExtraViewportWindow(int x, int y, int z)
+void ShowExtraViewportWindow(int x, int y, int z)
 {
 	int i = 0;
 
