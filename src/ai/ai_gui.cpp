@@ -28,6 +28,8 @@
 #include "../hotkeys.h"
 #include "../core/geometry_func.hpp"
 #include "../guitimer_func.h"
+#include "../company_cmd.h"
+#include "../misc_cmd.h"
 
 #include "ai.hpp"
 #include "ai_gui.hpp"
@@ -683,10 +685,10 @@ static const NWidgetPart _nested_ai_config_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_MAUVE, WID_AIC_BACKGROUND),
 		NWidget(NWID_VERTICAL), SetPIP(4, 4, 4),
 			NWidget(NWID_HORIZONTAL), SetPIP(7, 0, 7),
-				NWidget(WWT_PUSHARROWBTN, COLOUR_YELLOW, WID_AIC_DECREASE), SetFill(0, 1), SetDataTip(AWV_DECREASE, STR_NULL),
-				NWidget(WWT_PUSHARROWBTN, COLOUR_YELLOW, WID_AIC_INCREASE), SetFill(0, 1), SetDataTip(AWV_INCREASE, STR_NULL),
+				NWidget(WWT_PUSHARROWBTN, COLOUR_YELLOW, WID_AIC_DECREASE), SetDataTip(AWV_DECREASE, STR_NULL),
+				NWidget(WWT_PUSHARROWBTN, COLOUR_YELLOW, WID_AIC_INCREASE), SetDataTip(AWV_INCREASE, STR_NULL),
 				NWidget(NWID_SPACER), SetMinimalSize(6, 0),
-				NWidget(WWT_TEXT, COLOUR_MAUVE, WID_AIC_NUMBER), SetDataTip(STR_DIFFICULTY_LEVEL_SETTING_MAXIMUM_NO_COMPETITORS, STR_NULL), SetFill(1, 0), SetPadding(1, 0, 0, 0),
+				NWidget(WWT_TEXT, COLOUR_MAUVE, WID_AIC_NUMBER), SetDataTip(STR_DIFFICULTY_LEVEL_SETTING_MAXIMUM_NO_COMPETITORS, STR_NULL), SetFill(1, 0),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(7, 0, 7),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_AIC_MOVE_UP), SetResize(1, 0), SetFill(1, 0), SetDataTip(STR_AI_CONFIG_MOVE_UP, STR_AI_CONFIG_MOVE_UP_TOOLTIP),
@@ -778,6 +780,11 @@ struct AIConfigWindow : public Window {
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
+			case WID_AIC_DECREASE:
+			case WID_AIC_INCREASE:
+				*size = maxdim(*size, NWidgetScrollbar::GetHorizontalDimension());
+				break;
+
 			case WID_AIC_GAMELIST:
 				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
 				size->height = 1 * this->line_height;
@@ -1290,8 +1297,8 @@ struct AIDebugWindow : public Window {
 			case WID_AID_RELOAD_TOGGLE:
 				if (ai_debug_company == OWNER_DEITY) break;
 				/* First kill the company of the AI, then start a new one. This should start the current AI again */
-				DoCommandP(0, CCA_DELETE | ai_debug_company << 16 | CRR_MANUAL << 24, 0, CMD_COMPANY_CTRL);
-				DoCommandP(0, CCA_NEW_AI | ai_debug_company << 16, 0, CMD_COMPANY_CTRL);
+				Command<CMD_COMPANY_CTRL>::Post(CCA_DELETE, ai_debug_company, CRR_MANUAL, INVALID_CLIENT_ID);
+				Command<CMD_COMPANY_CTRL>::Post(CCA_NEW_AI, ai_debug_company, CRR_NONE, INVALID_CLIENT_ID);
 				break;
 
 			case WID_AID_SETTINGS:
@@ -1330,7 +1337,7 @@ struct AIDebugWindow : public Window {
 						}
 						if (all_unpaused) {
 							/* All scripts have been unpaused => unpause the game. */
-							DoCommandP(0, PM_PAUSED_NORMAL, 0, CMD_PAUSE);
+							Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, false);
 						}
 					}
 				}
@@ -1379,7 +1386,7 @@ struct AIDebugWindow : public Window {
 
 					/* Pause the game. */
 					if ((_pause_mode & PM_PAUSED_NORMAL) == PM_UNPAUSED) {
-						DoCommandP(0, PM_PAUSED_NORMAL, 1, CMD_PAUSE);
+						Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, true);
 					}
 
 					/* Highlight row that matched */

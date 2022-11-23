@@ -80,6 +80,7 @@ void DrawMouseCursor();
 void ScreenSizeChanged();
 void GameSizeChanged();
 void UpdateGUIZoom();
+bool AdjustGUIZoom();
 void UndrawMouseCursor();
 
 /** Size of the buffer used for drawing strings. */
@@ -173,6 +174,17 @@ int GetCharacterHeight(FontSize size);
 #define FONT_HEIGHT_MONO  (GetCharacterHeight(FS_MONO))
 
 extern DrawPixelInfo *_cur_dpi;
+
+/**
+ * Checks if a Colours value is valid.
+ *
+ * @param colours The value to check
+ * @return true if the given value is a valid Colours.
+ */
+static inline bool IsValidColours(Colours colours)
+{
+	return colours < COLOUR_END;
+}
 
 TextColour GetContrastColour(uint8 background, uint8 threshold = 128);
 

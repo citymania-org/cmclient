@@ -430,6 +430,7 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :oħrajn
 
 
 
+
 # Custom currency window
 
 
@@ -452,7 +453,7 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :oħrajn
 
 ###length 7
 
-###length 3
+###length 4
 
 
 # Settings tree window
@@ -586,6 +587,8 @@ STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            :Avza jekk jinti
 
 ###length 4
 
+###length 4
+
 
 
 ###length 3
@@ -621,7 +624,6 @@ STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Ippermetti l-uz
 
 
 
-
 ###setting-zero-is-special
 
 
@@ -646,6 +648,7 @@ STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Ippermetti l-uz
 
 
 ###setting-zero-is-special
+
 
 
 
@@ -831,6 +834,8 @@ STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
 # Linkgraph legend window
 
 # Linkgraph legend window and linkgraph legend in smallmap
+
+# Linkgraph tooltip
 
 # Base for station construction window(s)
 
@@ -1041,6 +1046,9 @@ STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOIN
 
 # Finances window
 STR_FINANCES_YEAR                                               :{WHITE}{NUM}
+
+###length 3
+
 
 ###length 13
 

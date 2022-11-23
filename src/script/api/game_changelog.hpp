@@ -13,6 +13,18 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 13.0
+ *
+ * This version is not yet released. The following changes are not set in stone yet.
+ *
+ * API additions:
+ * \li GSCargo::GetWeight
+ * \li GSIndustryType::ResolveNewGRFID
+ * \li GSObjectType::ResolveNewGRFID
+ *
+ * Other changes:
+ * \li GSRoad::HasRoadType now correctly checks RoadType against RoadType
+ *
  * \b 12.0
  *
  * API additions:

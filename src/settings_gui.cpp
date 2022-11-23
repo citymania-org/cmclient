@@ -310,6 +310,7 @@ struct GameOptionsWindow : Window {
 			case WID_GO_BASE_SFX_DROPDOWN:     SetDParamStr(0, BaseSounds::GetUsedSet()->name); break;
 			case WID_GO_BASE_MUSIC_DROPDOWN:   SetDParamStr(0, BaseMusic::GetUsedSet()->name); break;
 			case WID_GO_BASE_MUSIC_STATUS:     SetDParam(0, BaseMusic::GetUsedSet()->GetNumInvalid()); break;
+			case WID_GO_VIDEO_DRIVER_INFO:     SetDParamStr(0, VideoDriver::GetInstance()->GetInfoString()); break;
 			case WID_GO_REFRESH_RATE_DROPDOWN: SetDParam(0, _settings_client.gui.refresh_rate); break;
 			case WID_GO_RESOLUTION_DROPDOWN: {
 				auto current_resolution = GetCurrentResolutionIndex();
@@ -690,6 +691,9 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VIDEO_VSYNC_BUTTON), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP),
 					EndContainer(),
 #endif
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXT, COLOUR_GREY, WID_GO_VIDEO_DRIVER_INFO), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_GAME_OPTIONS_VIDEO_DRIVER_INFO, STR_NULL),
+					EndContainer(),
 				EndContainer(),
 			EndContainer(),
 		EndContainer(),
@@ -1573,6 +1577,7 @@ static SettingsContainer &GetSettingsTree()
 			graphics->Add(new SettingEntry("gui.zoom_max"));
 			graphics->Add(new SettingEntry("gui.sprite_zoom_min"));
 			graphics->Add(new SettingEntry("gui.smallmap_land_colour"));
+			graphics->Add(new SettingEntry("gui.linkgraph_colours"));
 			graphics->Add(new SettingEntry("gui.graph_line_thickness"));
 		}
 
@@ -1638,7 +1643,6 @@ static SettingsContainer &GetSettingsTree()
 			interface->Add(new SettingEntry("gui.advanced_vehicle_list"));
 			interface->Add(new SettingEntry("gui.timetable_in_ticks"));
 			interface->Add(new SettingEntry("gui.timetable_arrival_departure"));
-			interface->Add(new SettingEntry("gui.expenses_layout"));
 			interface->Add(new SettingEntry("gui.show_newgrf_name"));
 		}
 
@@ -1648,6 +1652,7 @@ static SettingsContainer &GetSettingsTree()
 			advisors->Add(new SettingEntry("news_display.general"));
 			advisors->Add(new SettingEntry("news_display.new_vehicles"));
 			advisors->Add(new SettingEntry("news_display.accident"));
+			advisors->Add(new SettingEntry("news_display.accident_other"));
 			advisors->Add(new SettingEntry("news_display.company_info"));
 			advisors->Add(new SettingEntry("news_display.acceptance"));
 			advisors->Add(new SettingEntry("news_display.arrival_player"));
@@ -2441,7 +2446,7 @@ static const NWidgetPart _nested_settings_selection_widgets[] = {
 		NWidget(WWT_DEFSIZEBOX, COLOUR_MAUVE),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_MAUVE),
-		NWidget(NWID_VERTICAL), SetPIP(0, WD_PAR_VSEP_NORMAL, 0), SetPadding(WD_TEXTPANEL_TOP, 0, WD_TEXTPANEL_BOTTOM, 0),
+		NWidget(NWID_VERTICAL), SetPIP(WD_TEXTPANEL_TOP, WD_PAR_VSEP_NORMAL, WD_TEXTPANEL_BOTTOM),
 			NWidget(NWID_HORIZONTAL), SetPIP(WD_FRAMETEXT_LEFT, WD_FRAMETEXT_RIGHT, WD_FRAMETEXT_RIGHT),
 				NWidget(WWT_TEXT, COLOUR_MAUVE, WID_GS_RESTRICT_CATEGORY), SetDataTip(STR_CONFIG_SETTING_RESTRICT_CATEGORY, STR_NULL),
 				NWidget(WWT_DROPDOWN, COLOUR_MAUVE, WID_GS_RESTRICT_DROPDOWN), SetMinimalSize(100, 12), SetDataTip(STR_BLACK_STRING, STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT), SetFill(1, 0), SetResize(1, 0),
@@ -2450,19 +2455,17 @@ static const NWidgetPart _nested_settings_selection_widgets[] = {
 				NWidget(WWT_TEXT, COLOUR_MAUVE, WID_GS_RESTRICT_TYPE), SetDataTip(STR_CONFIG_SETTING_RESTRICT_TYPE, STR_NULL),
 				NWidget(WWT_DROPDOWN, COLOUR_MAUVE, WID_GS_TYPE_DROPDOWN), SetMinimalSize(100, 12), SetDataTip(STR_BLACK_STRING, STR_CONFIG_SETTING_TYPE_DROPDOWN_HELPTEXT), SetFill(1, 0), SetResize(1, 0),
 			EndContainer(),
-		EndContainer(),
-		NWidget(NWID_HORIZONTAL), SetPadding(0, 0, WD_TEXTPANEL_BOTTOM, 0),
-				SetPIP(WD_FRAMETEXT_LEFT, WD_FRAMETEXT_RIGHT, WD_FRAMETEXT_RIGHT),
-			NWidget(WWT_TEXT, COLOUR_MAUVE), SetFill(0, 1), SetDataTip(STR_CONFIG_SETTING_FILTER_TITLE, STR_NULL),
-			NWidget(WWT_EDITBOX, COLOUR_MAUVE, WID_GS_FILTER), SetFill(1, 0), SetMinimalSize(50, 12), SetResize(1, 0),
-					SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
+			NWidget(NWID_HORIZONTAL), SetPIP(WD_FRAMETEXT_LEFT, WD_FRAMETEXT_RIGHT, WD_FRAMETEXT_RIGHT),
+				NWidget(WWT_TEXT, COLOUR_MAUVE), SetFill(0, 1), SetDataTip(STR_CONFIG_SETTING_FILTER_TITLE, STR_NULL),
+				NWidget(WWT_EDITBOX, COLOUR_MAUVE, WID_GS_FILTER), SetMinimalSize(50, 12), SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
+			EndContainer(),
 		EndContainer(),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_PANEL, COLOUR_MAUVE, WID_GS_OPTIONSPANEL), SetMinimalSize(400, 174), SetScrollbar(WID_GS_SCROLLBAR), EndContainer(),
 		NWidget(NWID_VSCROLLBAR, COLOUR_MAUVE, WID_GS_SCROLLBAR),
 	EndContainer(),
-	NWidget(WWT_PANEL, COLOUR_MAUVE), SetMinimalSize(400, 40),
+	NWidget(WWT_PANEL, COLOUR_MAUVE),
 		NWidget(WWT_EMPTY, INVALID_COLOUR, WID_GS_HELP_TEXT), SetMinimalSize(300, 25), SetFill(1, 1), SetResize(1, 0),
 				SetPadding(WD_FRAMETEXT_TOP, WD_FRAMETEXT_RIGHT, WD_FRAMETEXT_BOTTOM, WD_FRAMETEXT_LEFT),
 	EndContainer(),

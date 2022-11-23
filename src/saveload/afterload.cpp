@@ -823,10 +823,12 @@ bool AfterLoadGame()
 	 *  a company does not exist yet. So create one here.
 	 * 1 exception: network-games. Those can have 0 companies
 	 *   But this exception is not true for non-dedicated network servers! */
-	if (!Company::IsValidID(COMPANY_FIRST) && (!_networking || (_networking && _network_server && !_network_dedicated))) {
-		DoStartupNewCompany(false);
-		Company *c = Company::Get(COMPANY_FIRST);
-		c->settings = _settings_client.company;
+	if (!_networking || (_networking && _network_server && !_network_dedicated)) {
+		CompanyID first_human_company = GetFirstPlayableCompanyID();
+		if (!Company::IsValidID(first_human_company)) {
+			Company *c = DoStartupNewCompany(false, first_human_company);
+			c->settings = _settings_client.company;
+		}
 	}
 
 	/* Fix the cache for cargo payments. */
@@ -1006,10 +1008,10 @@ bool AfterLoadGame()
 		/* When loading a game, _local_company is not yet set to the correct value.
 		 * However, in a dedicated server we are a spectator, so nothing needs to
 		 * happen. In case we are not a dedicated server, the local company always
-		 * becomes company 0, unless we are in the scenario editor where all the
-		 * companies are 'invalid'.
+		 * becomes the first available company, unless we are in the scenario editor
+		 * where all the companies are 'invalid'.
 		 */
-		Company *c = Company::GetIfValid(COMPANY_FIRST);
+		Company *c = Company::GetIfValid(GetFirstPlayableCompanyID());
 		if (!_network_dedicated && c != nullptr) {
 			c->settings = _settings_client.company;
 		}
@@ -1720,9 +1722,9 @@ bool AfterLoadGame()
 		for (Order *order : Order::Iterate()) order->ConvertFromOldSavegame();
 
 		for (Vehicle *v : Vehicle::Iterate()) {
-			if (v->orders.list != nullptr && v->orders.list->GetFirstOrder() != nullptr && v->orders.list->GetFirstOrder()->IsType(OT_NOTHING)) {
-				v->orders.list->FreeChain();
-				v->orders.list = nullptr;
+			if (v->orders != nullptr && v->orders->GetFirstOrder() != nullptr && v->orders->GetFirstOrder()->IsType(OT_NOTHING)) {
+				v->orders->FreeChain();
+				v->orders = nullptr;
 			}
 
 			v->current_order.ConvertFromOldSavegame();
@@ -1755,10 +1757,9 @@ bool AfterLoadGame()
 		 * 2) shares that are owned by inactive companies or self
 		 *     (caused by cheating clients in earlier revisions) */
 		for (Company *c : Company::Iterate()) {
-			for (uint i = 0; i < 4; i++) {
-				CompanyID company = c->share_owners[i];
-				if (company == INVALID_COMPANY) continue;
-				if (!Company::IsValidID(company) || company == c->index) c->share_owners[i] = INVALID_COMPANY;
+			for (auto &share_owner : c->share_owners) {
+				if (share_owner == INVALID_COMPANY) continue;
+				if (!Company::IsValidID(share_owner) || share_owner == c->index) share_owner = INVALID_COMPANY;
 			}
 		}
 	}
@@ -3144,6 +3145,13 @@ bool AfterLoadGame()
 				SetBit(g->flags, GroupFlags::GF_REPLACE_PROTECTION);
 			}
 			if (HasBit(wagon_removal, g->owner)) SetBit(g->flags, GroupFlags::GF_REPLACE_WAGON_REMOVAL);
+		}
+	}
+
+	/* Use current order time to approximate last loading time */
+	if (IsSavegameVersionBefore(SLV_LAST_LOADING_TICK)) {
+		for (Vehicle *v : Vehicle::Iterate()) {
+			v->last_loading_tick = std::max(_tick_counter, static_cast<uint64>(v->current_order_time)) - v->current_order_time;
 		}
 	}
 

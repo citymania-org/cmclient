@@ -123,6 +123,7 @@ enum ViewportDragDropSelectionProcess {
 	DDSP_CREATE_RIVER,         ///< Create rivers
 	DDSP_PLANT_TREES,          ///< Plant trees
 	DDSP_BUILD_BRIDGE,         ///< Bridge placement
+	DDSP_BUILD_OBJECT,         ///< Build an object
 
 	/* Rail specific actions */
 	DDSP_PLACE_RAIL,           ///< Rail placement
@@ -146,7 +147,7 @@ enum ViewportDragDropSelectionProcess {
 /**
  * Target of the viewport scrolling GS method
  */
-enum ViewportScrollTarget {
+enum ViewportScrollTarget : byte {
 	VST_EVERYONE, ///< All players
 	VST_COMPANY,  ///< All players in specific company
 	VST_CLIENT,   ///< Single player

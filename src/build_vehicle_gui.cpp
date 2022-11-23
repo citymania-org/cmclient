@@ -30,6 +30,9 @@
 #include "cargotype.h"
 #include "core/geometry_func.hpp"
 #include "autoreplace_func.h"
+#include "engine_cmd.h"
+#include "train_cmd.h"
+#include "vehicle_cmd.h"
 
 #include "widgets/build_vehicle_widget.h"
 
@@ -1079,7 +1082,7 @@ struct BuildVehicleWindow : Window {
 	{
 		this->vehicle_type = type;
 		this->listview_mode = tile == INVALID_TILE;
-		this->window_number = this->listview_mode ? (int)type : tile;
+		this->window_number = this->listview_mode ? (int)type : (int)tile;
 
 		this->sel_engine = INVALID_ENGINE;
 
@@ -1114,7 +1117,7 @@ struct BuildVehicleWindow : Window {
 
 		this->details_height = ((this->vehicle_type == VEH_TRAIN) ? 10 : 9);
 
-		this->FinishInitNested(tile == INVALID_TILE ? (int)type : tile);
+		this->FinishInitNested(tile == INVALID_TILE ? (int)type : (int)tile);
 
 		this->owner = (tile != INVALID_TILE) ? GetTileOwner(tile) : _local_company;
 
@@ -1226,11 +1229,11 @@ struct BuildVehicleWindow : Window {
 
 		if (!this->listview_mode) {
 			/* Query for cost and refitted capacity */
-			CommandCost ret = DoCommand(this->window_number, this->sel_engine | (cargo << 24), 0, DC_QUERY_COST, GetCmdBuildVeh(this->vehicle_type));
+			auto [ret, veh_id, refit_capacity, refit_mail] = Command<CMD_BUILD_VEHICLE>::Do(DC_QUERY_COST, this->window_number, this->sel_engine, true, cargo, INVALID_CLIENT_ID);
 			if (ret.Succeeded()) {
 				this->te.cost          = ret.GetCost() - e->GetCost();
-				this->te.capacity      = _returned_refit_capacity;
-				this->te.mail_capacity = _returned_mail_refit_capacity;
+				this->te.capacity      = refit_capacity;
+				this->te.mail_capacity = refit_mail;
 				this->te.cargo         = (cargo == CT_INVALID) ? e->GetDefaultCargoType() : cargo;
 				return;
 			}
@@ -1458,7 +1461,7 @@ struct BuildVehicleWindow : Window {
 			case WID_BV_SHOW_HIDE: {
 				const Engine *e = (this->sel_engine == INVALID_ENGINE) ? nullptr : Engine::Get(this->sel_engine);
 				if (e != nullptr) {
-					DoCommandP(0, 0, this->sel_engine | (e->IsHidden(_current_company) ? 0 : (1u << 31)), CMD_SET_VEHICLE_VISIBILITY);
+					Command<CMD_SET_VEHICLE_VISIBILITY>::Post(this->sel_engine, !e->IsHidden(_current_company));
 				}
 				break;
 			}
@@ -1466,10 +1469,13 @@ struct BuildVehicleWindow : Window {
 			case WID_BV_BUILD: {
 				EngineID sel_eng = this->sel_engine;
 				if (sel_eng != INVALID_ENGINE) {
-					CommandCallback *callback = (this->vehicle_type == VEH_TRAIN && RailVehInfo(sel_eng)->railveh_type == RAILVEH_WAGON) ? CcBuildWagon : CcBuildPrimaryVehicle;
 					CargoID cargo = this->cargo_filter[this->cargo_filter_criteria];
 					if (cargo == CF_ANY || cargo == CF_ENGINES) cargo = CF_NONE;
-					DoCommandP(this->window_number, sel_eng | (cargo << 24), 0, GetCmdBuildVeh(this->vehicle_type), callback);
+					if (this->vehicle_type == VEH_TRAIN && RailVehInfo(sel_eng)->railveh_type == RAILVEH_WAGON) {
+						Command<CMD_BUILD_VEHICLE>::Post(GetCmdBuildVehMsg(this->vehicle_type), CcBuildWagon, this->window_number, sel_eng, true, cargo, INVALID_CLIENT_ID);
+					} else {
+						Command<CMD_BUILD_VEHICLE>::Post(GetCmdBuildVehMsg(this->vehicle_type), CcBuildPrimaryVehicle, this->window_number, sel_eng, true, cargo, INVALID_CLIENT_ID);
+					}
 				}
 				break;
 			}
@@ -1634,7 +1640,7 @@ struct BuildVehicleWindow : Window {
 	{
 		if (str == nullptr) return;
 
-		DoCommandP(0, this->rename_engine, 0, CMD_RENAME_ENGINE | CMD_MSG(STR_ERROR_CAN_T_RENAME_TRAIN_TYPE + this->vehicle_type), nullptr, str);
+		Command<CMD_RENAME_ENGINE>::Post(STR_ERROR_CAN_T_RENAME_TRAIN_TYPE + this->vehicle_type, this->rename_engine, str);
 	}
 
 	void OnDropdownSelect(int widget, int index) override
@@ -1681,7 +1687,7 @@ void ShowBuildVehicleWindow(TileIndex tile, VehicleType type)
 	 *  so if tile == INVALID_TILE (Available XXX Window), use 'type' as unique number.
 	 *  As it always is a low value, it won't collide with any real tile
 	 *  number. */
-	uint num = (tile == INVALID_TILE) ? (int)type : tile;
+	uint num = (tile == INVALID_TILE) ? (int)type : (int)tile;
 
 	assert(IsCompanyBuildableVehicleType(type));
 

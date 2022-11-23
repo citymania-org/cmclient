@@ -341,6 +341,7 @@ function Regression::Cargo()
 		print("    GetCargoIncome(10, 10):  " + AICargo.GetCargoIncome(i, 10, 10));
 		print("    GetCargoIncome(100, 10): " + AICargo.GetCargoIncome(i, 100, 10));
 		print("    GetCargoIncome(10, 100): " + AICargo.GetCargoIncome(i, 10, 100));
+		print("    GetWeight(100):          " + AICargo.GetWeight(i, 100));
 		print("    GetRoadVehicleTypeForCargo(): " + AIRoad.GetRoadVehicleTypeForCargo(i));
 	}
 }
@@ -1023,6 +1024,30 @@ function Regression::Rail()
 	print("    IsRailTile():                  " + AIRail.IsRailTile(10002));
 	print("    BuildRailTrack():              " + AIRail.BuildRailTrack(10002, AIRail.RAILTRACK_NW_SE));
 	print("    BuildSignal():                 " + AIRail.BuildSignal(10002, 10258, AIRail.SIGNALTYPE_PBS));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10258));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 9746));
+	print("    RemoveSignal():                " + AIRail.RemoveSignal(10002, 10258));
+	print("    BuildSignal():                 " + AIRail.BuildSignal(10002, 9746, AIRail.SIGNALTYPE_ENTRY));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10258));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 9746));
+	print("    RemoveSignal():                " + AIRail.RemoveSignal(10002, 9746));
+	print("    BuildSignal():                 " + AIRail.BuildSignal(10002, 9746, AIRail.SIGNALTYPE_EXIT_TWOWAY));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10258));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 9746));
+	print("    RemoveRailTrack():             " + AIRail.RemoveRailTrack(10002, AIRail.RAILTRACK_NW_NE));
+	print("    RemoveRailTrack():             " + AIRail.RemoveRailTrack(10002, AIRail.RAILTRACK_NW_SE));
+	print("    BuildRailTrack():              " + AIRail.BuildRailTrack(10002, AIRail.RAILTRACK_NW_NE));
+	print("    BuildSignal():                 " + AIRail.BuildSignal(10002, 10003, AIRail.SIGNALTYPE_PBS));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10003));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10001));
+	print("    RemoveSignal():                " + AIRail.RemoveSignal(10002, 10003));
+	print("    BuildSignal():                 " + AIRail.BuildSignal(10002, 10001, AIRail.SIGNALTYPE_ENTRY));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10003));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10001));
+	print("    RemoveSignal():                " + AIRail.RemoveSignal(10002, 10001));
+	print("    BuildSignal():                 " + AIRail.BuildSignal(10002, 10001, AIRail.SIGNALTYPE_EXIT_TWOWAY));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10003));
+	print("    GetSignalType():               " + AIRail.GetSignalType(10002, 10001));
 	print("    RemoveRailTrack():             " + AIRail.RemoveRailTrack(10002, AIRail.RAILTRACK_NW_NE));
 	print("    RemoveRailTrack():             " + AIRail.RemoveRailTrack(10002, AIRail.RAILTRACK_NW_SE));
 	print("    BuildRail():                   " + AIRail.BuildRail(10002, 10003, 10006));

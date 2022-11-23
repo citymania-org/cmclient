@@ -26,6 +26,7 @@
 #include "zoom_func.h"
 #include "guitimer_func.h"
 #include "viewport_func.h"
+#include "landscape_cmd.h"
 #include "rev.h"
 
 #include "widgets/misc_widget.h"
@@ -191,7 +192,7 @@ public:
 		Company *c = Company::GetIfValid(_local_company);
 		if (c != nullptr) {
 			assert(_current_company == _local_company);
-			CommandCost costclear = DoCommand(tile, 0, 0, DC_QUERY_COST, CMD_LANDSCAPE_CLEAR);
+			CommandCost costclear = Command<CMD_LANDSCAPE_CLEAR>::Do(DC_QUERY_COST, tile);
 			if (costclear.Succeeded()) {
 				Money cost = costclear.GetCost();
 				if (cost < 0) {
@@ -408,10 +409,7 @@ static const char * const _credits[] = {
 	u8"Original graphics by Simon Foster",
 	u8"",
 	u8"The OpenTTD team (in alphabetical order):",
-	u8"  Grzegorz Duczy\u0144ski (adf88) - General coding (since 1.7.2)",
-	u8"  Albert Hofkamp (Alberth) - GUI expert (since 0.7)",
 	u8"  Matthijs Kooijman (blathijs) - Pathfinder-guru, Debian port (since 0.3)",
-	u8"  Ulf Hermann (fonsinchen) - Cargo Distribution (since 1.3)",
 	u8"  Christoph Elsenhans (frosch) - General coding (since 0.6)",
 	u8"  Lo\u00efc Guilloux (glx) - General / Windows Expert (since 0.4.5)",
 	u8"  Charles Pigott (LordAro) - General / Correctness police (since 1.9)",
@@ -419,20 +417,23 @@ static const char * const _credits[] = {
 	u8"  Niels Martin Hansen (nielsm) - Music system, general coding (since 1.9)",
 	u8"  Owen Rudge (orudge) - Forum host, OS/2 port (since 0.1)",
 	u8"  Peter Nelson (peter1138) - Spiritual descendant from NewGRF gods (since 0.4.5)",
-	u8"  Ingo von Borstel (planetmaker) - General, Support (since 1.1)",
-	u8"  Remko Bijker (Rubidium) - Lead coder and way more (since 0.4.5)",
-	u8"  Jos\u00e9 Soler (Terkhen) - General coding (since 1.0)",
+	u8"  Remko Bijker (Rubidium) - Coder and way more (since 0.4.5)",
+	u8"  Patric Stout (TrueBrain) - NoProgrammer (since 0.3), sys op",
 	u8"",
 	u8"Inactive Developers:",
+	u8"  Grzegorz Duczy\u0144ski (adf88) - General coding (1.7 - 1.8)",
+	u8"  Albert Hofkamp (Alberth) - GUI expert (0.7 - 1.9)",
 	u8"  Jean-Fran\u00e7ois Claeys (Belugas) - GUI, NewGRF and more (0.4.5 - 1.0)",
 	u8"  Bjarni Corfitzen (Bjarni) - MacOSX port, coder and vehicles (0.3 - 0.7)",
 	u8"  Victor Fischer (Celestar) - Programming everywhere you need him to (0.3 - 0.6)",
+	u8"  Ulf Hermann (fonsinchen) - Cargo Distribution (1.3 - 1.6)",
 	u8"  Jaroslav Mazanec (KUDr) - YAPG (Yet Another Pathfinder God) ;) (0.4.5 - 0.6)",
 	u8"  Jonathan Coome (Maedhros) - High priest of the NewGRF Temple (0.5 - 0.6)",
 	u8"  Attila B\u00e1n (MiHaMiX) - Developer WebTranslator 1 and 2 (0.3 - 0.5)",
+	u8"  Ingo von Borstel (planetmaker) - General coding, Support (1.1 - 1.9)",
 	u8"  Zden\u011bk Sojka (SmatZ) - Bug finder and fixer (0.6 - 1.3)",
+	u8"  Jos\u00e9 Soler (Terkhen) - General coding (1.0 - 1.4)",
 	u8"  Christoph Mallon (Tron) - Programmer, code correctness police (0.3 - 0.5)",
-	u8"  Patric Stout (TrueBrain) - NoAI, NoGo, Network (0.3 - 1.2), sys op (active)",
 	u8"  Thijs Marinussen (Yexo) - AI Framework, General (0.6 - 1.3)",
 	u8"  Leif Linse (Zuu) - AI/Game Script (1.2 - 1.6)",
 	u8"",
@@ -454,8 +455,6 @@ static const char * const _credits[] = {
 	u8"  Mike Ragsdale - OpenTTD installer",
 	u8"  Christian Rosentreter (tokai) - MorphOS / AmigaOS port",
 	u8"  Richard Kempton (richK) - additional airports, initial TGP implementation",
-	u8"  Plus C - title game",
-	u8"",
 	u8"  Alberto Demichelis - Squirrel scripting language \u00a9 2003-2008",
 	u8"  L. Peter Deutsch - MD5 implementation \u00a9 1999, 2000, 2002",
 	u8"  Michael Blunck - Pre-signals and semaphores \u00a9 2003",
@@ -565,7 +564,7 @@ void ShowEstimatedCostOrIncome(Money cost, int x, int y)
 }
 
 /**
- * Display animated income or costs on the map.
+ * Display animated income or costs on the map. Does nothing if cost is zero.
  * @param x    World X position of the animation location.
  * @param y    World Y position of the animation location.
  * @param z    World Z position of the animation location.
@@ -573,6 +572,9 @@ void ShowEstimatedCostOrIncome(Money cost, int x, int y)
  */
 void ShowCostOrIncomeAnimation(int x, int y, int z, Money cost)
 {
+	if (cost == 0) {
+		return;
+	}
 	Point pt = RemapCoords(x, y, z);
 	StringID msg = STR_INCOME_FLOAT_COST;
 
@@ -670,7 +672,7 @@ struct TooltipsWindow : public Window
 {
 	StringID string_id;               ///< String to display as tooltip.
 	byte paramcount;                  ///< Number of string parameters in #string_id.
-	uint64 params[5];                 ///< The string parameters.
+	uint64 params[8];                 ///< The string parameters.
 	TooltipCloseCondition close_cond; ///< Condition for closing the window.
 
 	TooltipsWindow(Window *parent, StringID str, uint paramcount, const uint64 params[], TooltipCloseCondition close_tooltip) : Window(&_tool_tips_desc)
@@ -679,6 +681,10 @@ struct TooltipsWindow : public Window
 		this->string_id = str;
 		static_assert(sizeof(this->params[0]) == sizeof(params[0]));
 		assert(paramcount <= lengthof(this->params));
+		if (params == nullptr) {
+			_global_string_params.offset = 0;
+			params = _global_string_params.GetDataPointer();
+		}
 		if (paramcount > 0) memcpy(this->params, params, sizeof(this->params[0]) * paramcount);
 		this->paramcount = paramcount;
 		this->close_cond = close_tooltip;
