@@ -25,6 +25,7 @@
 #include "company_base.h"
 #include "tilehighlight_func.h"
 #include "vehicle_base.h"
+#include "story_cmd.h"
 
 #include "widgets/story_widget.h"
 
@@ -566,7 +567,7 @@ protected:
 				this->SetTimeout();
 				this->SetWidgetDirty(WID_SB_PAGE_PANEL);
 
-				DoCommandP(0, pe.index, 0, CMD_STORY_PAGE_BUTTON);
+				Command<CMD_STORY_PAGE_BUTTON>::Post(0, pe.index, 0);
 				break;
 
 			case SPET_BUTTON_TILE:
@@ -921,7 +922,7 @@ public:
 			return;
 		}
 
-		DoCommandP(tile, pe->index, 0, CMD_STORY_PAGE_BUTTON);
+		Command<CMD_STORY_PAGE_BUTTON>::Post(tile, pe->index, 0);
 		ResetObjectToPlace();
 	}
 
@@ -940,7 +941,7 @@ public:
 		VehicleType wanted_vehtype = data.GetVehicleType();
 		if (wanted_vehtype != VEH_INVALID && wanted_vehtype != v->type) return false;
 
-		DoCommandP(0, pe->index, v->index, CMD_STORY_PAGE_BUTTON);
+		Command<CMD_STORY_PAGE_BUTTON>::Post(0, pe->index, v->index);
 		ResetObjectToPlace();
 		return true;
 	}
@@ -969,19 +970,15 @@ static const NWidgetPart _nested_story_book_widgets[] = {
 		NWidget(WWT_STICKYBOX, COLOUR_BROWN),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL), SetFill(1, 1),
-		NWidget(NWID_VERTICAL), SetFill(1, 1),
-			NWidget(WWT_PANEL, COLOUR_BROWN, WID_SB_PAGE_PANEL), SetResize(1, 1), SetScrollbar(WID_SB_SCROLLBAR), EndContainer(),
-			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_SB_PREV_PAGE), SetMinimalSize(100, 0), SetFill(0, 0), SetDataTip(STR_STORY_BOOK_PREV_PAGE, STR_STORY_BOOK_PREV_PAGE_TOOLTIP),
-				NWidget(NWID_BUTTON_DROPDOWN, COLOUR_BROWN, WID_SB_SEL_PAGE), SetMinimalSize(93, 12), SetFill(1, 0),
-														SetDataTip(STR_BLACK_RAW_STRING, STR_STORY_BOOK_SEL_PAGE_TOOLTIP), SetResize(1, 0),
-				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_SB_NEXT_PAGE), SetMinimalSize(100, 0), SetFill(0, 0), SetDataTip(STR_STORY_BOOK_NEXT_PAGE, STR_STORY_BOOK_NEXT_PAGE_TOOLTIP),
-			EndContainer(),
-		EndContainer(),
-		NWidget(NWID_VERTICAL), SetFill(0, 1),
-			NWidget(NWID_VSCROLLBAR, COLOUR_BROWN, WID_SB_SCROLLBAR),
-			NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
-		EndContainer(),
+		NWidget(WWT_PANEL, COLOUR_BROWN, WID_SB_PAGE_PANEL), SetResize(1, 1), SetScrollbar(WID_SB_SCROLLBAR), EndContainer(),
+		NWidget(NWID_VSCROLLBAR, COLOUR_BROWN, WID_SB_SCROLLBAR),
+	EndContainer(),
+	NWidget(NWID_HORIZONTAL),
+		NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_SB_PREV_PAGE), SetMinimalSize(100, 0), SetFill(0, 0), SetDataTip(STR_STORY_BOOK_PREV_PAGE, STR_STORY_BOOK_PREV_PAGE_TOOLTIP),
+		NWidget(NWID_BUTTON_DROPDOWN, COLOUR_BROWN, WID_SB_SEL_PAGE), SetMinimalSize(93, 12), SetFill(1, 0),
+												SetDataTip(STR_BLACK_RAW_STRING, STR_STORY_BOOK_SEL_PAGE_TOOLTIP), SetResize(1, 0),
+		NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_SB_NEXT_PAGE), SetMinimalSize(100, 0), SetFill(0, 0), SetDataTip(STR_STORY_BOOK_NEXT_PAGE, STR_STORY_BOOK_NEXT_PAGE_TOOLTIP),
+		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
 

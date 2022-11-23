@@ -122,6 +122,7 @@ static const NWidgetPart _nested_generate_landscape_widgets[] = {
 						NWidget(NWID_SELECTION, INVALID_COLOUR, WID_GL_CLIMATE_SEL_LABEL),
 							NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_SNOW_COVERAGE, STR_NULL), SetFill(1, 1),
 							NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_DESERT_COVERAGE, STR_NULL), SetFill(1, 1),
+							NWidget(NWID_SPACER),
 						EndContainer(),
 						NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_DATE, STR_NULL), SetFill(1, 1),
 						NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_SMOOTHNESS, STR_NULL), SetFill(1, 1),
@@ -142,6 +143,8 @@ static const NWidgetPart _nested_generate_landscape_widgets[] = {
 								NWidget(WWT_TEXTBTN, COLOUR_ORANGE, WID_GL_DESERT_COVERAGE_TEXT), SetDataTip(STR_MAPGEN_DESERT_COVERAGE_TEXT, STR_NULL), SetFill(1, 0),
 								NWidget(WWT_IMGBTN, COLOUR_ORANGE, WID_GL_DESERT_COVERAGE_UP), SetDataTip(SPR_ARROW_UP, STR_MAPGEN_DESERT_COVERAGE_UP), SetFill(0, 1),
 							EndContainer(),
+							/* Temperate/Toyland spacer */
+							NWidget(NWID_SPACER),
 						EndContainer(),
 						/* Starting date. */
 						NWidget(NWID_HORIZONTAL),
@@ -222,7 +225,7 @@ static const NWidgetPart _nested_heightmap_load_widgets[] = {
 			EndContainer(),
 			/* Widgets at the right of the labels. */
 			NWidget(NWID_VERTICAL), SetPIP(0, 4, 0),
-				NWidget(WWT_EMPTY, COLOUR_ORANGE, WID_GL_HEIGHTMAP_NAME_TEXT), SetFill(1, 0),
+				NWidget(WWT_TEXT, COLOUR_ORANGE, WID_GL_HEIGHTMAP_NAME_TEXT), SetTextColour(TC_ORANGE), SetDataTip(STR_JUST_RAW_STRING, STR_EMPTY), SetFill(1, 0),
 				NWidget(NWID_HORIZONTAL), SetPIP(0, 5, 0),
 					NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPIP(0, 4, 0),
 						NWidget(WWT_TEXT, COLOUR_ORANGE, WID_GL_HEIGHTMAP_SIZE_TEXT), SetDataTip(STR_MAPGEN_HEIGHTMAP_SIZE, STR_NULL), SetFill(1, 0),
@@ -244,6 +247,7 @@ static const NWidgetPart _nested_heightmap_load_widgets[] = {
 								NWidget(NWID_SELECTION, INVALID_COLOUR, WID_GL_CLIMATE_SEL_LABEL),
 									NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_SNOW_COVERAGE, STR_NULL), SetFill(1, 1),
 									NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_DESERT_COVERAGE, STR_NULL), SetFill(1, 1),
+									NWidget(NWID_SPACER),
 								EndContainer(),
 								NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_DATE, STR_NULL), SetFill(1, 1),
 								NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_GAME_OPTIONS_TOWN_NAMES_FRAME, STR_NULL), SetFill(1, 1),
@@ -265,6 +269,7 @@ static const NWidgetPart _nested_heightmap_load_widgets[] = {
 										NWidget(WWT_TEXTBTN, COLOUR_ORANGE, WID_GL_DESERT_COVERAGE_TEXT), SetDataTip(STR_MAPGEN_DESERT_COVERAGE_TEXT, STR_NULL), SetFill(1, 0),
 										NWidget(WWT_IMGBTN, COLOUR_ORANGE, WID_GL_DESERT_COVERAGE_UP), SetDataTip(SPR_ARROW_UP, STR_MAPGEN_DESERT_COVERAGE_UP), SetFill(0, 1),
 									EndContainer(),
+									NWidget(NWID_SPACER),
 								EndContainer(),
 								NWidget(NWID_HORIZONTAL),
 									NWidget(WWT_IMGBTN, COLOUR_ORANGE, WID_GL_START_DATE_DOWN), SetDataTip(SPR_ARROW_DOWN, STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD), SetFill(0, 1),
@@ -436,6 +441,7 @@ struct GenerateLandscapeWindow : public Window {
 				}
 				break;
 
+			case WID_GL_HEIGHTMAP_NAME_TEXT: SetDParamStr(0, this->name); break;
 			case WID_GL_RIVER_PULLDOWN:      SetDParam(0, _rivers[_settings_newgame.game_creation.amount_of_rivers]); break;
 			case WID_GL_SMOOTHNESS_PULLDOWN: SetDParam(0, _smoothness[_settings_newgame.game_creation.tgen_smoothness]); break;
 			case WID_GL_VARIETY_PULLDOWN:    SetDParam(0, _variety[_settings_newgame.game_creation.variety]); break;
@@ -499,10 +505,10 @@ struct GenerateLandscapeWindow : public Window {
 		/* Set snow/rainforest selections */
 		int climate_plane = 0;
 		switch (_settings_newgame.game_creation.landscape) {
-			case LT_TEMPERATE: climate_plane = SZSP_VERTICAL; break;
-			case LT_ARCTIC:    climate_plane = 0;             break;
-			case LT_TROPIC:    climate_plane = 1;             break;
-			case LT_TOYLAND:   climate_plane = SZSP_VERTICAL; break;
+			case LT_TEMPERATE: climate_plane = 2; break;
+			case LT_ARCTIC:    climate_plane = 0; break;
+			case LT_TROPIC:    climate_plane = 1; break;
+			case LT_TOYLAND:   climate_plane = 2; break;
 		}
 		this->GetWidget<NWidgetStacked>(WID_GL_CLIMATE_SEL_LABEL)->SetDisplayedPlane(climate_plane);
 		this->GetWidget<NWidgetStacked>(WID_GL_CLIMATE_SEL_SELECTOR)->SetDisplayedPlane(climate_plane);
@@ -617,16 +623,6 @@ struct GenerateLandscapeWindow : public Window {
 		}
 		size->width += padding.width;
 		size->height = std::max(size->height, (uint)(FONT_HEIGHT_NORMAL + WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM));
-	}
-
-	void DrawWidget(const Rect &r, int widget) const override
-	{
-		switch (widget) {
-			case WID_GL_HEIGHTMAP_NAME_TEXT: {
-				DrawString(r.left, r.right, r.top, this->name, TC_ORANGE);
-				break;
-			}
-		}
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override

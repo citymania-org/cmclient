@@ -23,6 +23,7 @@
 #include "roadveh.h"
 #include "ship.h"
 #include "aircraft.h"
+#include "engine_cmd.h"
 
 #include "widgets/engine_widget.h"
 
@@ -125,7 +126,7 @@ struct EnginePreviewWindow : Window {
 	{
 		switch (widget) {
 			case WID_EP_YES:
-				DoCommandP(0, this->window_number, 0, CMD_WANT_ENGINE_PREVIEW);
+				Command<CMD_WANT_ENGINE_PREVIEW>::Post(this->window_number);
 				FALLTHROUGH;
 			case WID_EP_NO:
 				if (!_shift_pressed) this->Close();

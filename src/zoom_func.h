@@ -37,6 +37,17 @@ static inline int UnScaleByZoom(int value, ZoomLevel zoom)
 }
 
 /**
+ * Adjust by zoom level; zoom < 0 shifts right, zoom >= 0 shifts left
+ * @param value value to shift
+ * @param zoom zoom level to shift to
+ * @return shifted value
+ */
+static inline int AdjustByZoom(int value, int zoom)
+{
+	return zoom < 0 ? UnScaleByZoom(value, ZoomLevel(-zoom)) : ScaleByZoom(value, ZoomLevel(zoom));
+}
+
+/**
  * Scale by zoom level, usually shift left (when zoom > ZOOM_LVL_NORMAL)
  * @param value value to shift
  * @param zoom  zoom level to shift to
@@ -66,6 +77,26 @@ static inline int UnScaleByZoomLower(int value, ZoomLevel zoom)
 static inline int UnScaleGUI(int value)
 {
 	return UnScaleByZoom(value, ZOOM_LVL_GUI);
+}
+
+/**
+ * Scale zoom level relative to GUI zoom.
+ * @param value zoom level to scale
+ * @return scaled zoom level
+ */
+static inline ZoomLevel ScaleZoomGUI(ZoomLevel value)
+{
+	return std::clamp(ZoomLevel(value + (ZOOM_LVL_GUI - ZOOM_LVL_OUT_4X)), ZOOM_LVL_MIN, ZOOM_LVL_MAX);
+}
+
+/**
+ * UnScale zoom level relative to GUI zoom.
+ * @param value zoom level to scale
+ * @return un-scaled zoom level
+ */
+static inline ZoomLevel UnScaleZoomGUI(ZoomLevel value)
+{
+	return std::clamp(ZoomLevel(value - (ZOOM_LVL_GUI - ZOOM_LVL_OUT_4X)), ZOOM_LVL_MIN, ZOOM_LVL_MAX);
 }
 
 /**
