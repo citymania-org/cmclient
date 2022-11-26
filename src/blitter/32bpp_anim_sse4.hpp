@@ -40,7 +40,7 @@ public:
 	void Draw(const Blitter::BlitterParams *bp, ZoomLevel zoom);
 	void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom) override;
 	Sprite *Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator) override {
-		return Blitter_32bppSSE_Base::Encode(sprite, allocator, this);
+		return Blitter_32bppSSE2::Encode(sprite, allocator);
 	}
 	const char *GetName() override { return "32bpp-sse4-anim"; }
 	using Blitter_32bppSSE2_Anim::LookupColourInPalette;

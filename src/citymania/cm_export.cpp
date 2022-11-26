@@ -15,7 +15,7 @@
 #include "../strings_type.h"
 #include "../table/palettes.h"
 #include "../table/sprites.h"
-#include "../table/train_cmd.h"
+#include "../table/train_sprites.h"
 #include "../viewport_sprite_sorter.h"
 #include "../viewport_type.h"
 #include "../window_func.h"

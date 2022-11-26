@@ -261,7 +261,7 @@ void CommandHelperBase::InternalPostResult(const CommandCost &res, TileIndex til
 	int x = TileX(tile) * TILE_SIZE;
 	int y = TileY(tile) * TILE_SIZE;
 
-	FIXME if (!(cmd & CMD_NO_ESTIMATE) && my_cmd) citymania::CountEffectiveAction();
+	// FIXME if (!(cmd & CMD_NO_ESTIMATE) && my_cmd) citymania::CountEffectiveAction();
 
 	if (res.Failed()) {
 		/* Only show the error when it's for us. */
@@ -412,22 +412,7 @@ CommandCost CommandHelperBase::InternalExecuteProcessResult(Commands cmd, Comman
 		if (c != nullptr) c->last_build_coordinate = tile;
 	}
 
-	FIXME
-	/* Send Tile Number to Watching Company Windows */
-	citymania::WatchCompany *wc;
-	for(int watching_window = 0; ; watching_window++){
-		wc = dynamic_cast<citymania::WatchCompany*>(FindWindowById(WC_WATCH_COMPANY, watching_window));
-		if(wc != NULL) wc->OnDoCommand(_current_company, tile);
-		else break;
-	}
-
-	for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
-		if (ci->client_playas == _current_company) {
-			wc = dynamic_cast<citymania::WatchCompany*>(FindWindowById(WC_WATCH_COMPANYA, ci->client_id));
-			if (wc != NULL) wc->OnDoCommand(_current_company, tile);
-			break;
-		}
-	}
+	citymania::UpdateWatching(_current_company, tile);
 
 	SubtractMoneyFromCompany(res_exec);
 

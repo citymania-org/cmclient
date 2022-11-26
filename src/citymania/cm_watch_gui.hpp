@@ -91,6 +91,7 @@ public:
 };
 
 void ShowWatchWindow(CompanyID company_to_watch, int type);
+void UpdateWatching(CompanyID company, TileIndex tile);
 
 } // namespace citymania
 

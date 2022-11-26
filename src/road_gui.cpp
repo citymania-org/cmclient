@@ -647,19 +647,19 @@ struct BuildRoadToolbarWindow : Window {
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
-	void TryToRemoveExtraRoadBits(TileIndex tile, RoadBits &rb) {
-		for (DiagDirection dir = DIAGDIR_BEGIN; dir != DIAGDIR_END; dir++) {
-			RoadBits dir_rb = DiagDirToRoadBits(dir);
-			if (!(rb & dir_rb)) continue;
-			if (CanConnectToRoad(tile, _cur_roadtype, dir)) continue;
-			DoCommandP(tile, tile,
-			    (dir_rb == ROAD_NW || dir_rb == ROAD_NE ? 0 : 3) |
-			    (dir_rb & ROAD_X ? 0 : 4) |
-			    (_cur_roadtype << 3),
-			    CMD_REMOVE_LONG_ROAD);
-			rb &= ~dir_rb;
-		}
-	}
+	// void TryToRemoveExtraRoadBits(TileIndex tile, RoadBits &rb) {
+	// 	for (DiagDirection dir = DIAGDIR_BEGIN; dir != DIAGDIR_END; dir++) {
+	// 		RoadBits dir_rb = DiagDirToRoadBits(dir);
+	// 		if (!(rb & dir_rb)) continue;
+	// 		if (CanConnectToRoad(tile, _cur_roadtype, dir)) continue;
+	// 		DoCommandP(tile, tile,
+	// 		    (dir_rb == ROAD_NW || dir_rb == ROAD_NE ? 0 : 3) |
+	// 		    (dir_rb & ROAD_X ? 0 : 4) |
+	// 		    (_cur_roadtype << 3),
+	// 		    CMD_REMOVE_LONG_ROAD);
+	// 		rb &= ~dir_rb;
+	// 	}
+	// }
 
 	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{

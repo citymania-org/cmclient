@@ -59,6 +59,7 @@
 #include "object_type.h"
 
 #include "citymania/cm_cargo_table_gui.hpp"
+#include "citymania/cm_commands.hpp"
 #include "citymania/cm_commands_gui.hpp"
 #include "citymania/cm_locations.hpp"
 #include "citymania/cm_main.hpp"
@@ -88,7 +89,7 @@ enum CallBackFunction {
 	CBF_NONE,
 	CBF_PLACE_SIGN,
 	CBF_PLACE_LANDINFO,
-	CBF_BUILD_HQ,
+	CM_CBF_BUILD_HQ,
 };
 
 static CallBackFunction _last_started_action = CBF_NONE; ///< Last started user action.
@@ -275,13 +276,13 @@ static CallBackFunction SelectSignTool()
 
 /* hq hotkey */
 static CallBackFunction BuildCompanyHQ(){
-	if (_last_started_action == CBF_BUILD_HQ) {
+	if (_last_started_action == CM_CBF_BUILD_HQ) {
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
 		SetObjectToPlace(SPR_CURSOR_HQ, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0, CM_DDSP_BUILD_HQ);
 		SetTileSelectSize(2, 2);
-		return CBF_BUILD_HQ;
+		return CM_CBF_BUILD_HQ;
 	}
 }
 
@@ -670,12 +671,11 @@ static CallBackFunction MenuClickCompany(int index)
 
 			case CTMN_NEW_COMPANY:
 				if (_network_server) {
-					DoCommandP(0, CCA_NEW, _network_own_client_id, CMD_COMPANY_CTRL);
+					Command<CMD_COMPANY_CTRL>::Post(CCA_NEW, INVALID_COMPANY, CRR_NONE, _network_own_client_id);
 				} else {
-					NetworkSendCommand(0, CCA_NEW, 0, CMD_COMPANY_CTRL, nullptr, {}, _local_company);
+					Command<CMD_COMPANY_CTRL>::SendNet(STR_NULL, _local_company, CCA_NEW, INVALID_COMPANY, CRR_NONE, INVALID_CLIENT_ID);
 				}
 				return CBF_NONE;
-
 
 			case CTMN_SPECTATE:
 				if (_network_server) {
@@ -2167,8 +2167,11 @@ struct MainToolbarWindow : Window {
 				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_MEASURE);
 				break;
 
-			case CBF_BUILD_HQ:
-				if(DoCommandP(tile, OBJECT_HQ, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS))){
+			case CM_CBF_BUILD_HQ:
+				if(citymania::cmd::BuildObject(OBJECT_HQ, 0)
+					   	.WithTile(tile)
+					   	.WithError(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS)
+					   	.Post()) {
 					ResetObjectToPlace();
 					this->RaiseButtons();
 				}

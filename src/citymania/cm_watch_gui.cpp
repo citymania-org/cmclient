@@ -701,4 +701,22 @@ void ShowWatchWindow(CompanyID company_to_watch = INVALID_COMPANY, int type = EW
 	}
 }
 
+void UpdateWatching(CompanyID company, TileIndex tile) {
+	/* Send Tile Number to Watching Company Windows */
+	WatchCompany *wc;
+	for(int watching_window = 0; ; watching_window++){
+		wc = dynamic_cast<citymania::WatchCompany*>(FindWindowById(WC_WATCH_COMPANY, watching_window));
+		if(wc != NULL) wc->OnDoCommand(_current_company, tile);
+		else break;
+	}
+
+	for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
+		if (ci->client_playas == _current_company) {
+			wc = dynamic_cast<citymania::WatchCompany*>(FindWindowById(WC_WATCH_COMPANYA, ci->client_id));
+			if (wc != NULL) wc->OnDoCommand(_current_company, tile);
+			break;
+		}
+	}
+}
+
 } // namespace citymania

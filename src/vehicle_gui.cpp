@@ -43,6 +43,7 @@
 #include "train_cmd.h"
 
 #include "hotkeys.h"
+#include "citymania/cm_commands.hpp"
 #include "citymania/cm_hotkeys.hpp"
 
 #include "safeguards.h"
@@ -2647,7 +2648,9 @@ void CcCloneVehicleWithOrderIndex(const CommandCost &result, TileIndex tile, uin
 	if (!cloned || !cloned->IsPrimaryVehicle()) return;
 	const Vehicle *v = Vehicle::Get(_new_vehicle_id);
 	if (cloned->cur_implicit_order_index == v->cur_implicit_order_index) return;
-	DoCommandP(v->tile, v->index, cloned->cur_implicit_order_index, CMD_SKIP_TO_ORDER);
+	citymania::cmd::SkipToOrder(v->index, cloned->cur_implicit_order_index)
+		.WithTile(v->tile)
+		.Post();
 }
 
 /** Window manager class for viewing a vehicle. */

@@ -202,25 +202,18 @@ bool CheckStationJoin(TileIndex start_tile, TileIndex end_tile) {
     return false;
 }
 
-void JoinAndBuild(CommandContainer cmdcont) {
-    auto join_to = _highlight_station_to_join;
-    uint32 adj_bit = ((citymania::_fn_mod || join_to) ? 1 : 0);
-    auto cmd = (cmdcont.cmd & CMD_ID_MASK);
-    if (cmd == CMD_BUILD_RAIL_STATION) {
-        SB(cmdcont.p1, 24, 1, adj_bit);
-    } else if (cmd == CMD_BUILD_ROAD_STOP) {
-        SB(cmdcont.p2, 2, 1, adj_bit);
-    } else if (cmd == CMD_BUILD_DOCK) {
-        SB(cmdcont.p1, 0, 1, adj_bit);
-    } else if (cmd == CMD_BUILD_AIRPORT) {
-        SB(cmdcont.p2, 0, 1, adj_bit);
-    }
-    if (citymania::_fn_mod) SB(cmdcont.p2, 16, 16, NEW_STATION);
-    else if (join_to) SB(cmdcont.p2, 16, 16, join_to->index);
-    else SB(cmdcont.p2, 16, 16, INVALID_STATION);
+using JoinAndBuildCmdProc = std::function<bool(bool test, StationID to_join, bool adjacent)>;
 
-    _last_station_bulid_cmd = cmdcont;
-    DoCommandP(&cmdcont);
+void JoinAndBuild(JoinAndBuildCmdProc proc) {
+    auto join_to = _highlight_station_to_join;
+    bool adjacent = (citymania::_fn_mod || join_to);
+    StationID to_join = INVALID_STATION;
+
+    if (citymania::_fn_mod) to_join = NEW_STATION;
+    else if (join_to) to_join = join_to->index;
+
+    FIXME _last_station_bulid_cmd = cmdcont;
+    proc(false, to_join, adjacent);
 }
 
 static DiagDirection TileFractCoordsToDiagDir(Point pt) {
@@ -412,16 +405,22 @@ void PlaceDock(TileIndex tile) {
 }
 
 void PlaceAirport(TileIndex tile) {
+    FIXME
     if (CheckStationJoin(tile, tile)) return;
 
     if (_selected_airport_index == -1) return;
 
-    uint32 p2 = (citymania::_fn_mod ? 1 : 0);
-    SB(p2, 16, 16, INVALID_STATION); // no station to join
+    byte airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
+    byte layout = _selected_airport_layout;
 
-    uint32 p1 = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
-    p1 |= _selected_airport_layout << 8;
-    CommandContainer cmdcont = { tile, p1, p2, CMD_BUILD_AIRPORT | CMD_MSG(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE), CcBuildAirport, "" };
+    auto proc = [=](bool test, StationID to_join, bool adjacent) -> bool {
+        if (test) {
+            return Command<CMD_BUILD_AIRPORT>::Do(CommandFlagsToDCFlags(GetCommandFlags<CMD_BUILD_AIRPORT>()), tile, airport_type, layout, INVALID_STATION, adjacent).Succeeded();
+        } else {
+            return Command<CMD_BUILD_AIRPORT>::Post(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE, CcBuildAirport, tile, airport_type, layout, to_join, adjacent);
+        }
+    };
+
     JoinAndBuild(cmdcont);
 }
 

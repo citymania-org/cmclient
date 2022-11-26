@@ -5,17 +5,19 @@
 #include "../tile_type.h"
 #include "../network/network_internal.h"
 
+#include "generated/cm_gen_commands.hpp"
+
 namespace citymania {
 
 typedef std::function<bool(bool)> CommandCallback;
-void AddCommandCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, const std::string &text, CommandCallback callback);
-bool DoCommandWithCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, ::CommandCallback *callback, const std::string &text, CommandCallback cm_callback);
-bool DoCommandWithCallback(const CommandContainer &cc, CommandCallback callback);
+// void AddCommandCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, const std::string &text, CommandCallback callback);
+// bool DoCommandWithCallback(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, ::CommandCallback *callback, const std::string &text, CommandCallback cm_callback);
+// bool DoCommandWithCallback(const CommandContainer &cc, CommandCallback callback);
 void HandleCommandExecution(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, const std::string &text);
 
 void InitCommandQueue();
 void HandleNextClientFrame();
-void SendClientCommand(const CommandPacket *cp);
+// void SendClientCommand(const CommandPacket *cp);
 
 }  // namespace citymania
 

@@ -460,7 +460,7 @@ public:
 			/* strings such as 'Size' and 'Coverage Area' */
 			top = DrawStationCoverageAreaText(r.left, r.right, top, SCT_ALL, rad, false) + ScaleGUITrad(WD_PAR_VSEP_NORMAL);
 			top = DrawStationCoverageAreaText(r.left, r.right, top, SCT_ALL, rad, true) + ScaleGUITrad(WD_PAR_VSEP_NORMAL);
-			top = DrawStationAuthorityText(panel_nwi->pos_x + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, top) + WD_PAR_VSEP_NORMAL;			
+			top = DrawStationAuthorityText(r.left, r.right, top) + ScaleGUITrad(WD_PAR_VSEP_NORMAL);
 		}
 
 		/* Resize background if the window is too small.

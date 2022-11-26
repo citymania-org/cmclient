@@ -881,11 +881,13 @@ struct DepotWindow : Window {
 	 */
 	bool OnVehicleSelect(const Vehicle *v) override
 	{
-		if (_settings_client.gui.cm_open_vehicle_for_shared_clone) { // CM
-			if (DoCommandP(this->window_number, v->index, citymania::_fn_mod ? 1 : 0, CMD_CLONE_VEHICLE | CMD_MSG(STR_ERROR_CAN_T_BUY_TRAIN + v->type), CcCloneVehicle))
+		/* CityMania code start */
+		if (_settings_client.gui.cm_open_vehicle_for_shared_clone) {
+			if (Command<CMD_CLONE_VEHICLE>::Post(STR_ERROR_CAN_T_BUY_TRAIN + v->type, CcCloneVehicle, this->window_number, v->index, citymania::_fn_mod))
 				ResetObjectToPlace();
 			return true;
 		}
+		/* CityMania code end */
 
 		if (citymania::_fn_mod) {
 			/* Share-clone, do not open new viewport, and keep tool active */

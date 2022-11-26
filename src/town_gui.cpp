@@ -60,7 +60,10 @@ static void DrawExtraTownInfo (const Rect &r, uint &y, Town *town, uint line, bo
 
 bool TownExecuteAction(const Town *town, uint action){
 	if(!(action == HK_STATUE && HasBit(town->statues, _current_company))){ //don't built statue when there is one
-		return DoCommandP(town->xy, town->index, action, CMD_DO_TOWN_ACTION | CMD_MSG(STR_ERROR_CAN_T_DO_THIS));
+		return citymania::cmd::DoTownAction(town->index, action)
+			.WithTile(town->xy)
+			.WithError(STR_ERROR_CAN_T_DO_THIS)
+			.Post();
 	}
 	return false;
 }

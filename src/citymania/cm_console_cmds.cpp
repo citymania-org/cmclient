@@ -2,6 +2,7 @@
 
 #include "cm_console_cmds.hpp"
 
+#include "cm_commands.hpp"
 #include "cm_export.hpp"
 
 #include "../command_func.h"
@@ -53,7 +54,8 @@ bool ConStep(byte argc, char *argv[]) {
     }
     auto n = (argc > 1 ? atoi(argv[1]) : 1);
 
-    DoCommandP(0, PM_PAUSED_NORMAL, 0 | (n << 1), CMD_PAUSE);
+    // FIXME (n << 1)
+    cmd::Pause(PM_PAUSED_NORMAL, 0).Post();
 
     return true;
 }
@@ -123,7 +125,8 @@ bool ConTreeMap(byte argc, char *argv[]) {
         auto tree_count = std::min(t / 51, 4);
         // auto tree_growth = (uint)(t % 51) * 7 / 50;
         for (auto i = 0; i < tree_count; i++) {
-            DoCommand(tile, TREE_INVALID, tile, DC_EXEC, CMD_PLANT_TREE);
+            // FIXME
+//            DoCommand(tile, TREE_INVALID, tile, DC_EXEC, CMD_PLANT_TREE);
         }
     }
 
@@ -200,7 +203,8 @@ void ExecuteFakeCommands(Date date, DateFract date_fract) {
     while (!_fake_commands.empty() && !DatePredate(date, date_fract, _fake_commands.front().date, _fake_commands.front().date_fract)) {
         auto &x = _fake_commands.front();
 
-        fprintf(stderr, "Executing command: company=%u cmd=%u(%s) tile=%u p1=%u p2=%u text=%s ... ", x.company_id, x.cmd, GetCommandName(x.cmd), x.tile, x.p1, x.p2, x.text.c_str());
+        // FIXME
+        // fprintf(stderr, "Executing command: company=%u cmd=%u(%s) tile=%u p1=%u p2=%u text=%s ... ", x.company_id, x.cmd, GetCommandName(x.cmd), x.tile, x.p1, x.p2, x.text.c_str());
         if (x.res == 0) {
             fprintf(stderr, "REJECTED\n");
             _fake_commands.pop();
@@ -208,6 +212,7 @@ void ExecuteFakeCommands(Date date, DateFract date_fract) {
         }
 
         if (_networking) {
+            /* FIXME
             CommandPacket cp;
             cp.tile = x.tile;
             cp.p1 = x.p1;
@@ -223,9 +228,10 @@ void ExecuteFakeCommands(Date date, DateFract date_fract) {
                 if (cs->status >= NetworkClientSocket::STATUS_MAP) {
                     cs->outgoing_queue.Append(&cp);
                 }
-            }
+            }*/
         }
         _current_company = (CompanyID)x.company_id;
+        /* FIXME
         auto res = DoCommandPInternal(x.tile, x.p1, x.p2, x.cmd | CMD_NETWORK_COMMAND, nullptr, x.text.c_str(), false, false);
         if (res.Failed() != (x.res != 1)) {
             if (!res.Failed()) {
@@ -242,7 +248,7 @@ void ExecuteFakeCommands(Date date, DateFract date_fract) {
         }
         if (x.seed != (_random.state[0] & 255)) {
             fprintf(stderr, "*** DESYNC expected seed %u vs current %u ***\n", x.seed, _random.state[0] & 255);
-        }
+        }*/
         _fake_commands.pop();
     }
     _current_company = backup_company;
@@ -273,7 +279,7 @@ void LoadCommands(const std::string &filename) {
     while(std::getline(file, str)) {
         std::istringstream ss(str);
         FakeCommand cmd;
-        ss >> cmd.date >> cmd.date_fract >> cmd.res >> cmd.seed >> cmd.company_id >> cmd.cmd  >> cmd.tile >> cmd.p1 >> cmd.p2;
+        // FIXME ss >> cmd.date >> cmd.date_fract >> cmd.res >> cmd.seed >> cmd.company_id >> cmd.cmd  >> cmd.tile >> cmd.p1 >> cmd.p2;
         std::string s;
         ss.get();
         std::getline(ss, cmd.text);

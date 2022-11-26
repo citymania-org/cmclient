@@ -19,6 +19,19 @@
 
 namespace citymania {
 
+class TileIndexWrapper {
+public:
+    TileIndex tile;
+    TileIndexWrapper() {}
+    TileIndexWrapper(TileIndex tile)
+        :tile{tile} {}
+
+    inline operator TileIndex () const
+    {
+        return this->tile;
+    }
+};
+
 class ObjectTileHighlight {
 public:
     enum class Type {
@@ -31,6 +44,7 @@ public:
         RAIL_TUNNEL_HEAD,
         ROAD_STOP,
         ROAD_DEPOT,
+
         AIRPORT_TILE,
         POINT,
         NUMBERED_RECT,
@@ -57,7 +71,7 @@ public:
             } signal;
             struct {
                 DiagDirection ddir;
-                TileIndex other_end;
+                TileIndexWrapper other_end;
                 BridgeType type;
             } bridge_head;
             struct {

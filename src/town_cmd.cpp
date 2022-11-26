@@ -56,6 +56,7 @@
 #include "table/strings.h"
 #include "table/town_land.h"
 
+#include "citymania/cm_commands.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_main.hpp"
 
@@ -918,11 +919,12 @@ static void DoRegularFunding(Town *t)
 		if (UINT32_MAX - t->last_funding + _tick_counter < TOWN_GROWTH_TICKS) return;
 	} else if (_tick_counter - t->last_funding < TOWN_GROWTH_TICKS) return;
 
-	CompanyID old = _current_company;
-	_current_company = _local_company;
-	DoCommandP(t->xy, t->index, HK_FUND, CMD_DO_TOWN_ACTION | CMD_NO_ESTIMATE);
+	citymania::cmd::DoTownAction(t->index, HK_FUND)
+		.WithTile(t->xy)
+		.SetAuto()
+		.AsCompany(_local_company)
+		.Post();
 	t->last_funding = _tick_counter;
-	_current_company = old;
 }
 
 static void DoRegularAdvertising(Town *t) {
@@ -954,10 +956,11 @@ static void DoRegularAdvertising(Town *t) {
 	} else if (_tick_counter - t->last_advertisement < 30) return;
 	t->last_advertisement = _tick_counter;
 
-    CompanyID old = _current_company;
-    _current_company = _local_company;
-    DoCommandP(t->xy, t->index, HK_LADVERT, CMD_DO_TOWN_ACTION | CMD_NO_ESTIMATE);
-    _current_company = old;
+	citymania::cmd::DoTownAction(t->index, HK_LADVERT)
+		.WithTile(t->xy)
+		.SetAuto()
+		.AsCompany(_local_company)
+		.Post();
 }
 
 static void TownTickHandler(Town *t)

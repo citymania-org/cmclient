@@ -1,4 +1,5 @@
 add_subdirectory(extensions)
+add_subdirectory(generated)
 
 add_files(
     cm_bitstream.hpp
