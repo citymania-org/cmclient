@@ -2882,6 +2882,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 					_scrolling_viewport = true;
 					_cursor.fix_at = (_settings_client.gui.scroll_mode == VSM_VIEWPORT_RMB_FIXED ||
 							_settings_client.gui.scroll_mode == VSM_MAP_RMB_FIXED);
+					DispatchRightClickEvent(w, x - w->left, y - w->top);
 					return;
 				}
 				break;
@@ -2891,28 +2892,25 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		}
 	}
 
-	if (vp == nullptr || (w->flags & WF_DISABLE_VP_SCROLL)) {
-		switch (click) {
-			case MC_LEFT:
-			case MC_DOUBLE_LEFT:
-				DispatchLeftClickEvent(w, x - w->left, y - w->top, click == MC_DOUBLE_LEFT ? 2 : 1);
-				return;
+	switch (click) {
+		case MC_LEFT:
+		case MC_DOUBLE_LEFT:
+			DispatchLeftClickEvent(w, x - w->left, y - w->top, click == MC_DOUBLE_LEFT ? 2 : 1);
+			return;
 
-			default:
-				if (!scrollwheel_scrolling || w == nullptr || w->window_class != WC_SMALLMAP) break;
-				/* We try to use the scrollwheel to scroll since we didn't touch any of the buttons.
-				 * Simulate a right button click so we can get started. */
-				FALLTHROUGH;
+		default:
+			if (!scrollwheel_scrolling || w == nullptr || w->window_class != WC_SMALLMAP) break;
+			/* We try to use the scrollwheel to scroll since we didn't touch any of the buttons.
+			 * Simulate a right button click so we can get started. */
+			FALLTHROUGH;
 
-			case MC_RIGHT:
-				DispatchRightClickEvent(w, x - w->left, y - w->top);
-				return;
+		case MC_RIGHT:
+			DispatchRightClickEvent(w, x - w->left, y - w->top);
+			return;
 
-			case MC_HOVER:
-				DispatchHoverEvent(w, x - w->left, y - w->top);
-				break;
-
-		}
+		case MC_HOVER:
+			DispatchHoverEvent(w, x - w->left, y - w->top);
+			break;
 	}
 
 	/* We're not doing anything with 2D scrolling, so reset the value.  */
@@ -2976,11 +2974,12 @@ void HandleMouseEvents()
 			hover_pos = _cursor.pos;
 			hover_time = std::chrono::steady_clock::now();
 			_mouse_hovering = false;
-		} else {
+		} else if (!_mouse_hovering) {
 			if (std::chrono::steady_clock::now() > hover_time + std::chrono::milliseconds(_settings_client.gui.hover_delay_ms)) {
 				click = MC_HOVER;
 				_input_events_this_tick++;
 				_mouse_hovering = true;
+				hover_time = std::chrono::steady_clock::now();
 			}
 		}
 	}
@@ -3354,6 +3353,13 @@ void HideVitalWindows()
 	CloseWindowById(WC_STATUS_BAR, 0);
 }
 
+void ReInitWindow(Window *w, bool zoom_changed)
+{
+	if (w == nullptr) return;
+	if (zoom_changed) w->nested_root->AdjustPaddingForZoom();
+	w->ReInit();
+}
+
 /** Re-initialize all windows. */
 void ReInitAllWindows(bool zoom_changed)
 {
@@ -3363,9 +3369,13 @@ void ReInitAllWindows(bool zoom_changed)
 	extern void InitDepotWindowBlockSizes();
 	InitDepotWindowBlockSizes();
 
+	/* When _gui_zoom has changed, we need to resize toolbar and statusbar first,
+	 * so EnsureVisibleCaption uses the updated size information. */
+	ReInitWindow(FindWindowById(WC_MAIN_TOOLBAR, 0), zoom_changed);
+	ReInitWindow(FindWindowById(WC_STATUS_BAR, 0), zoom_changed);
 	for (Window *w : Window::Iterate()) {
-		if (zoom_changed) w->nested_root->AdjustPaddingForZoom();
-		w->ReInit();
+		if (w->window_class == WC_MAIN_TOOLBAR || w->window_class == WC_STATUS_BAR) continue;
+		ReInitWindow(w, zoom_changed);
 	}
 
 	void NetworkReInitChatBoxSize();

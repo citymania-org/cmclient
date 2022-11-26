@@ -20,10 +20,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: /emsdk/upstream/emscripten/cache
         key: 2.0.31-${{ runner.os }}
@@ -91,7 +91,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Install dependencies
       run: |
@@ -167,15 +167,15 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Prepare cache key
       id: key
       run: |
-        echo "::set-output name=image::$ImageOS-$ImageVersion"
+        echo "image=$ImageOS-$ImageVersion" >> $GITHUB_OUTPUT
 
     - name: Enable vcpkg cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: /usr/local/share/vcpkg/installed
         key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
@@ -246,7 +246,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Prepare cache key
       id: key
@@ -255,10 +255,10 @@ jobs:
         # Work around caching failure with GNU tar
         New-Item -Type Junction -Path vcpkg -Target c:\vcpkg
 
-        Write-Output "::set-output name=image::$env:ImageOS-$env:ImageVersion"
+        Write-Output "image=$env:ImageOS-$env:ImageVersion" >> $env:GITHUB_OUTPUT
 
     - name: Enable vcpkg cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: vcpkg/installed
         key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
@@ -341,7 +341,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
@@ -411,4 +411,4 @@ jobs:
 
     steps:
     - name: Check annotations
-      uses: OpenTTD/actions/annotation-check@v2
+      uses: OpenTTD/actions/annotation-check@v3

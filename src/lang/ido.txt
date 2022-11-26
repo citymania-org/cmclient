@@ -497,6 +497,7 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :altra
 
 
 
+
 # Custom currency window
 
 
@@ -537,7 +538,7 @@ STR_SEA_LEVEL_CUSTOM_PERCENTAGE                                 :Kustumigita ({N
 
 ###length 7
 
-###length 3
+###length 4
 
 
 # Settings tree window
@@ -659,6 +660,8 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violkolora
 
 ###length 4
 
+###length 4
+
 
 
 ###length 3
@@ -690,7 +693,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violkolora
 
 
 
-
 ###setting-zero-is-special
 
 
@@ -715,6 +717,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violkolora
 
 
 ###setting-zero-is-special
+
 
 
 
@@ -902,6 +905,8 @@ STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
 # Linkgraph legend window
 
 # Linkgraph legend window and linkgraph legend in smallmap
+
+# Linkgraph tooltip
 
 # Base for station construction window(s)
 STR_STATION_BUILD_ACCEPTS_CARGO                                 :{BLACK}Aceptas: {GOLD}{CARGO_LIST}
@@ -1140,6 +1145,9 @@ STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOIN
 
 # Finances window
 STR_FINANCES_YEAR                                               :{WHITE}{NUM}
+
+###length 3
+
 
 ###length 13
 

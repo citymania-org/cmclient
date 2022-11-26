@@ -13,6 +13,8 @@
 #include "command_type.h"
 #include "tilearea_type.h"
 #include "window_type.h"
+#include "station_type.h"
+#include <functional>
 
 
 /** Types of cargo to display for station coverage. */
@@ -26,7 +28,9 @@ int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageTyp
 int DrawStationAuthorityText(int left, int right, int top);
 void CheckRedrawStationCoverage(const Window *w);
 
-void ShowSelectStationIfNeeded(const CommandContainer &cmd, TileArea ta);
-void ShowSelectWaypointIfNeeded(const CommandContainer &cmd, TileArea ta);
+using StationPickerCmdProc = std::function<bool(bool test, StationID to_join)>;
+
+void ShowSelectStationIfNeeded(TileArea ta, StationPickerCmdProc proc);
+void ShowSelectWaypointIfNeeded(TileArea ta, StationPickerCmdProc proc);
 
 #endif /* STATION_GUI_H */

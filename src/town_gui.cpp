@@ -33,6 +33,7 @@
 #include "stringfilter_type.h"
 #include "widgets/dropdown_func.h"
 #include "town_kdtree.h"
+#include "town_cmd.h"
 
 #include "widgets/town_widget.h"
 
@@ -48,6 +49,7 @@
 /* CityMania end */
 
 #include "safeguards.h"
+#include "zoom_func.h"
 
 struct CargoX {
 	int id;
@@ -311,7 +313,7 @@ public:
 			}
 
 			case WID_TA_EXECUTE:
-				DoCommandP(this->town->xy, this->window_number, this->sel_index, CMD_DO_TOWN_ACTION | CMD_MSG(STR_ERROR_CAN_T_DO_THIS));
+				Command<CMD_DO_TOWN_ACTION>::Post(STR_ERROR_CAN_T_DO_THIS, this->town->xy, this->window_number, this->sel_index);
 				break;
 		}
 	}
@@ -377,7 +379,7 @@ public:
 
 		this->flags |= WF_DISABLE_VP_SCROLL;
 		NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_TV_VIEWPORT);
-		nvp->InitializeViewport(this, this->town->xy, ZOOM_LVL_NEWS);
+		nvp->InitializeViewport(this, this->town->xy, ScaleZoomGUI(ZOOM_LVL_TOWN));
 
 		/* disable renaming town in network games if you are not the server */
 		this->SetWidgetDisabledState(WID_TV_CHANGE_NAME, _networking && !_network_server);
@@ -535,7 +537,7 @@ public:
 					_warn_town_no_roads = true;
 				}
 
-				DoCommandP(0, this->window_number, 0, CMD_EXPAND_TOWN | CMD_MSG(STR_ERROR_CAN_T_EXPAND_TOWN));
+				Command<CMD_EXPAND_TOWN>::Post(STR_ERROR_CAN_T_EXPAND_TOWN, this->window_number, 0);
 				break;
 			}
 
@@ -545,7 +547,7 @@ public:
 				break;
 
 			case WID_TV_DELETE: // delete town - only available on Scenario editor
-				DoCommandP(0, this->window_number, 0, CMD_DELETE_TOWN | CMD_MSG(STR_ERROR_TOWN_CAN_T_DELETE));
+				Command<CMD_DELETE_TOWN>::Post(STR_ERROR_TOWN_CAN_T_DELETE, this->window_number);
 				break;
 		}
 	}
@@ -630,7 +632,7 @@ public:
 	{
 		if (str == nullptr) return;
 
-		DoCommandP(0, this->window_number, 0, CMD_RENAME_TOWN | CMD_MSG(STR_ERROR_CAN_T_RENAME_TOWN), nullptr, str);
+		Command<CMD_RENAME_TOWN>::Post(STR_ERROR_CAN_T_RENAME_TOWN, this->window_number, str);
 	}
 
 	virtual EventState OnHotkey(int hotkey)
@@ -1138,7 +1140,7 @@ void ShowTownDirectory()
 	new TownDirectoryWindow(&_town_directory_desc);
 }
 
-void CcFoundTown(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcFoundTown(Commands cmd, const CommandCost &result, TileIndex tile)
 {
 	if (result.Failed()) return;
 
@@ -1146,9 +1148,9 @@ void CcFoundTown(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 }
 
-void CcFoundRandomTown(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcFoundRandomTown(Commands cmd, const CommandCost &result, Money, TownID town_id)
 {
-	if (result.Succeeded()) ScrollMainWindowToTile(Town::Get(_new_town_id)->xy);
+	if (result.Succeeded()) ScrollMainWindowToTile(Town::Get(town_id)->xy);
 }
 
 static const NWidgetPart _nested_found_town_widgets[] = {
@@ -1279,7 +1281,8 @@ public:
 		this->SetDirty();
 	}
 
-	void ExecuteFoundTownCommand(TileIndex tile, bool random, StringID errstr, CommandCallback cc)
+	template <typename Tcallback>
+	void ExecuteFoundTownCommand(TileIndex tile, bool random, StringID errstr, Tcallback cc)
 	{
 		std::string name;
 
@@ -1292,8 +1295,8 @@ public:
 			if (strcmp(buf, this->townname_editbox.text.buf) != 0) name = this->townname_editbox.text.buf;
 		}
 
-		bool success = DoCommandP(tile, this->town_size | this->city << 2 | this->town_layout << 3 | random << 6,
-				townnameparts, CMD_FOUND_TOWN | CMD_MSG(errstr), cc, name);
+		bool success = Command<CMD_FOUND_TOWN>::Post(errstr, cc,
+				tile, this->town_size, this->city, this->town_layout, random, townnameparts, name);
 
 		/* Rerandomise name, if success and no cost-estimation. */
 		if (success && !citymania::_estimate_mod) this->RandomTownName();

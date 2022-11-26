@@ -39,6 +39,7 @@
 #include "widgets/industry_widget.h"
 #include "clear_map.h"
 #include "zoom_func.h"
+#include "industry_cmd.h"
 
 #include "table/strings.h"
 #include "hotkeys.h"
@@ -228,17 +229,15 @@ void SortIndustryTypes()
 
 /**
  * Command callback. In case of failure to build an industry, show an error message.
+ * @param cmd    Unused.
  * @param result Result of the command.
  * @param tile   Tile where the industry is placed.
- * @param p1     Additional data of the #CMD_BUILD_INDUSTRY command.
- * @param p2     Additional data of the #CMD_BUILD_INDUSTRY command.
- * @param cmd    Unused.
+ * @param indtype Industry type.
  */
-void CcBuildIndustry(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcBuildIndustry(Commands cmd, const CommandCost &result, TileIndex tile, IndustryType indtype, uint32, bool, uint32)
 {
 	if (result.Succeeded()) return;
 
-	uint8 indtype = GB(p1, 0, 8);
 	if (indtype < NUM_INDUSTRYTYPES) {
 		const IndustrySpec *indsp = GetIndustrySpec(indtype);
 		if (indsp->enabled) {
@@ -542,8 +541,12 @@ public:
 					/* We've chosen many random industries but no industries have been specified */
 					SetDParam(0, STR_FUND_INDUSTRY_BUILD_NEW_INDUSTRY);
 				} else {
-					const IndustrySpec *indsp = GetIndustrySpec(this->index[this->selected_index]);
-					SetDParam(0, (_settings_game.construction.raw_industry_construction == 2 && indsp->IsRawIndustry()) ? STR_FUND_INDUSTRY_PROSPECT_NEW_INDUSTRY : STR_FUND_INDUSTRY_FUND_NEW_INDUSTRY);
+					if (count > 0) {
+						const IndustrySpec *indsp = GetIndustrySpec(this->index[this->selected_index]);
+						SetDParam(0, (_settings_game.construction.raw_industry_construction == 2 && indsp->IsRawIndustry()) ? STR_FUND_INDUSTRY_PROSPECT_NEW_INDUSTRY : STR_FUND_INDUSTRY_FUND_NEW_INDUSTRY);
+					} else {
+						SetDParam(0, STR_FUND_INDUSTRY_FUND_NEW_INDUSTRY);
+					}
 				}
 				break;
 		}
@@ -652,7 +655,9 @@ public:
 		} else {
 			extern void GenerateIndustries();
 			Backup<bool> old_generating_world(_generating_world, true, FILE_LINE);
+			BasePersistentStorageArray::SwitchMode(PSM_ENTER_GAMELOOP);
 			GenerateIndustries();
+			BasePersistentStorageArray::SwitchMode(PSM_LEAVE_GAMELOOP);
 			old_generating_world.Restore();
 		}
 	}
@@ -723,7 +728,7 @@ public:
 			case WID_DPI_FUND_WIDGET: {
 				if (this->selected_type != INVALID_INDUSTRYTYPE) {
 					if (_game_mode != GM_EDITOR && _settings_game.construction.raw_industry_construction == 2 && GetIndustrySpec(this->selected_type)->IsRawIndustry()) {
-						DoCommandP(0, this->selected_type, InteractiveRandom(), CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
+						Command<CMD_BUILD_INDUSTRY>::Post(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY, 0, this->selected_type, 0, false, InteractiveRandom());
 						this->HandleButtonClick(WID_DPI_FUND_WIDGET);
 					} else {
 						HandlePlacePushButton(this, WID_DPI_FUND_WIDGET, SPR_CURSOR_INDUSTRY, HT_RECT, CM_DDSP_FUND_INDUSTRY);
@@ -771,14 +776,13 @@ public:
 			Backup<bool> old_generating_world(_generating_world, true, FILE_LINE);
 			_ignore_restrictions = true;
 
-			DoCommandP(tile, (layout_index << 8) | this->selected_type, seed,
-					CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY), &CcBuildIndustry);
+			Command<CMD_BUILD_INDUSTRY>::Post(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY, &CcBuildIndustry, tile, this->selected_type, layout_index, false, seed);
 
 			cur_company.Restore();
 			old_generating_world.Restore();
 			_ignore_restrictions = false;
 		} else {
-			success = DoCommandP(tile, (layout_index << 8) | this->selected_type, seed, CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
+			success = Command<CMD_BUILD_INDUSTRY>::Post(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY, tile, this->selected_type, layout_index, false, seed);
 		}
 
 		/* If an industry has been built, just reset the cursor and the system */
@@ -789,6 +793,7 @@ public:
 	{
 		citymania::UpdateIndustryHighlight();
 		if (_game_mode == GM_EDITOR) return;
+		if (this->count == 0) return;
 		const IndustrySpec *indsp = GetIndustrySpec(this->selected_type);
 
 		if (indsp->enabled) {
@@ -926,7 +931,7 @@ public:
 
 		this->InitNested(window_number);
 		NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_IV_VIEWPORT);
-		nvp->InitializeViewport(this, Industry::Get(window_number)->location.GetCenterTile(), ZOOM_LVL_INDUSTRY);
+		nvp->InitializeViewport(this, Industry::Get(window_number)->location.GetCenterTile(), ScaleZoomGUI(ZOOM_LVL_INDUSTRY));
 
 		this->InvalidateData();
 	}
@@ -1418,10 +1423,10 @@ protected:
 	static CargoID produced_cargo_filter;
 
 	enum class SorterType : uint8 {
-		IDW_SORT_BY_NAME,                       ///< Sorter type to sort by name
-		IDW_SORT_BY_TYPE,                       ///< Sorter type to sort by type
-		IDW_SORT_BY_PRODUCTION,                 ///< Sorter type to sort by production amount
-		IDW_SORT_BY_TRANSPORTED,                ///< Sorter type to sort by transported percentage
+		ByName,        ///< Sorter type to sort by name
+		ByType,        ///< Sorter type to sort by type
+		ByProduction,  ///< Sorter type to sort by production amount
+		ByTransported, ///< Sorter type to sort by transported percentage
 	};
 
 	/**
@@ -1646,9 +1651,9 @@ protected:
 		}
 
 		switch (static_cast<IndustryDirectoryWindow::SorterType>(this->industries.SortType())) {
-			case IndustryDirectoryWindow::SorterType::IDW_SORT_BY_NAME:
-			case IndustryDirectoryWindow::SorterType::IDW_SORT_BY_TYPE:
-			case IndustryDirectoryWindow::SorterType::IDW_SORT_BY_PRODUCTION:
+			case IndustryDirectoryWindow::SorterType::ByName:
+			case IndustryDirectoryWindow::SorterType::ByType:
+			case IndustryDirectoryWindow::SorterType::ByProduction:
 				/* Sort by descending production, then descending transported */
 				std::sort(cargos.begin(), cargos.end(), [](const CargoInfo &a, const CargoInfo &b) {
 					if (a.production != b.production) return a.production > b.production;
@@ -1656,7 +1661,7 @@ protected:
 				});
 				break;
 
-			case IndustryDirectoryWindow::SorterType::IDW_SORT_BY_TRANSPORTED:
+			case IndustryDirectoryWindow::SorterType::ByTransported:
 				/* Sort by descending transported, then descending production */
 				std::sort(cargos.begin(), cargos.end(), [](const CargoInfo &a, const CargoInfo &b) {
 					if (a.transported != b.transported) return a.transported > b.transported;
@@ -1958,22 +1963,18 @@ static const NWidgetPart _nested_industry_cargoes_widgets[] = {
 		NWidget(WWT_STICKYBOX, COLOUR_BROWN),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
-		NWidget(NWID_VERTICAL),
-			NWidget(WWT_PANEL, COLOUR_BROWN, WID_IC_PANEL), SetResize(1, 10), SetMinimalSize(200, 90), SetScrollbar(WID_IC_SCROLLBAR), EndContainer(),
-			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_IC_NOTIFY),
-					SetDataTip(STR_INDUSTRY_CARGOES_NOTIFY_SMALLMAP, STR_INDUSTRY_CARGOES_NOTIFY_SMALLMAP_TOOLTIP),
-				NWidget(WWT_PANEL, COLOUR_BROWN), SetFill(1, 0), SetResize(0, 0), EndContainer(),
-				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_IC_IND_DROPDOWN), SetFill(0, 0), SetResize(0, 0),
-						SetDataTip(STR_INDUSTRY_CARGOES_SELECT_INDUSTRY, STR_INDUSTRY_CARGOES_SELECT_INDUSTRY_TOOLTIP),
-				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_IC_CARGO_DROPDOWN), SetFill(0, 0), SetResize(0, 0),
-						SetDataTip(STR_INDUSTRY_CARGOES_SELECT_CARGO, STR_INDUSTRY_CARGOES_SELECT_CARGO_TOOLTIP),
-			EndContainer(),
-		EndContainer(),
-		NWidget(NWID_VERTICAL),
-			NWidget(NWID_VSCROLLBAR, COLOUR_BROWN, WID_IC_SCROLLBAR),
-			NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
-		EndContainer(),
+		NWidget(WWT_PANEL, COLOUR_BROWN, WID_IC_PANEL), SetResize(1, 10), SetMinimalSize(200, 90), SetScrollbar(WID_IC_SCROLLBAR), EndContainer(),
+		NWidget(NWID_VSCROLLBAR, COLOUR_BROWN, WID_IC_SCROLLBAR),
+	EndContainer(),
+	NWidget(NWID_HORIZONTAL),
+		NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_IC_NOTIFY),
+			SetDataTip(STR_INDUSTRY_CARGOES_NOTIFY_SMALLMAP, STR_INDUSTRY_CARGOES_NOTIFY_SMALLMAP_TOOLTIP),
+		NWidget(WWT_PANEL, COLOUR_BROWN), SetFill(1, 0), SetResize(0, 0), EndContainer(),
+		NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_IC_IND_DROPDOWN), SetFill(0, 0), SetResize(0, 0),
+				SetDataTip(STR_INDUSTRY_CARGOES_SELECT_INDUSTRY, STR_INDUSTRY_CARGOES_SELECT_INDUSTRY_TOOLTIP),
+		NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_IC_CARGO_DROPDOWN), SetFill(0, 0), SetResize(0, 0),
+				SetDataTip(STR_INDUSTRY_CARGOES_SELECT_CARGO, STR_INDUSTRY_CARGOES_SELECT_CARGO_TOOLTIP),
+		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
 

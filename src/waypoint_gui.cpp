@@ -20,6 +20,7 @@
 #include "company_base.h"
 #include "window_func.h"
 #include "waypoint_base.h"
+#include "waypoint_cmd.h"
 
 #include "widgets/waypoint_widget.h"
 
@@ -28,6 +29,7 @@
 #include "citymania/cm_hotkeys.hpp"
 
 #include "safeguards.h"
+#include "zoom_func.h"
 
 /** GUI for accessing waypoints and buoys. */
 struct WaypointWindow : Window {
@@ -71,7 +73,7 @@ public:
 		this->flags |= WF_DISABLE_VP_SCROLL;
 
 		NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_W_VIEWPORT);
-		nvp->InitializeViewport(this, this->GetCenterTile(), ZOOM_LVL_VIEWPORT);
+		nvp->InitializeViewport(this, this->GetCenterTile(), ScaleZoomGUI(ZOOM_LVL_VIEWPORT));
 
 		this->OnInvalidateData(0);
 	}
@@ -140,7 +142,7 @@ public:
 	{
 		if (str == nullptr) return;
 
-		DoCommandP(0, this->window_number, 0, CMD_RENAME_WAYPOINT | CMD_MSG(STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME), nullptr, str);
+		Command<CMD_RENAME_WAYPOINT>::Post(STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME, this->window_number, str);
 	}
 
 };

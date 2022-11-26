@@ -31,7 +31,12 @@
 #include "hotkeys.h"
 #include "engine_base.h"
 #include "terraform_gui.h"
+#include "terraform_cmd.h"
 #include "zoom_func.h"
+#include "rail_cmd.h"
+#include "landscape_cmd.h"
+#include "terraform_cmd.h"
+#include "object_cmd.h"
 
 #include "widgets/terraform_widget.h"
 
@@ -41,13 +46,12 @@
 
 #include "safeguards.h"
 
-void CcTerraform(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcTerraform(Commands cmd, const CommandCost &result, Money, TileIndex tile)
 {
 	if (result.Succeeded()) {
 		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
 	} else {
-		extern TileIndex _terraform_err_tile;
-		SetRedErrorSquare(_terraform_err_tile);
+		SetRedErrorSquare(tile);
 	}
 }
 
@@ -61,8 +65,8 @@ static void GenerateDesertArea(TileIndex end, TileIndex start)
 
 	TileArea ta(start, end);
 	for (TileIndex tile : ta) {
-		SetTropicZone(tile, citymania::_fn_mod ? TROPICZONE_NORMAL : TROPICZONE_DESERT);
-		DoCommandP(tile, 0, 0, CMD_LANDSCAPE_CLEAR);
+		SetTropicZone(tile, (citymania::_fn_mod) ? TROPICZONE_NORMAL : TROPICZONE_DESERT);
+		Command<CMD_LANDSCAPE_CLEAR>::Post(tile);
 		MarkTileDirtyByTile(tile);
 	}
 	old_generating_world.Restore();
@@ -117,7 +121,7 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 
 	switch (proc) {
 		case DDSP_DEMOLISH_AREA:
-			DoCommandP(end_tile, start_tile, citymania::_fn_mod ? 1 : 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+			Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, end_tile, start_tile, citymania::_fn_mod);
 			break;
 		case DDSP_DEMOLISH_TREES:
 			// loop through every tile and send a demolish command for each tree
@@ -132,7 +136,7 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 					if (tree_start_tile != 0 &&
 							(cur_tile != prev_tile + 1 ||
 							(!IsTileType(cur_tile, MP_TREES) && (!IsTileType(cur_tile, MP_CLEAR) || IsClearGround(cur_tile, CLEAR_FIELDS))))) {
-						DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+						Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 0);
 						tree_start_tile = tree_recent_tile = 0;
 					}
 					// if current tile is a tree
@@ -146,7 +150,7 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 				}
 				// one last ride to flavortown
 				if (tree_start_tile != 0) {
-					DoCommandP(tree_start_tile, tree_recent_tile, 0, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+					Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 0);
 				}
 			} else {  // diagonal area
 				for (DiagonalTileIterator cur_tile{start_tile, end_tile}; cur_tile != INVALID_TILE; ++cur_tile) {
@@ -157,7 +161,7 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 					if (tree_start_tile != 0 &&
 							(!((tile_diff.x == 1 && tile_diff.y == 1) || (tile_diff.x == -1 && tile_diff.y == -1)) ||
 							(!IsTileType(cur_tile, MP_TREES) && (!IsTileType(cur_tile, MP_CLEAR) || IsClearGround(cur_tile, CLEAR_FIELDS))))) {
-						DoCommandP(tree_start_tile, tree_recent_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+						Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 1);
 						tree_start_tile = tree_recent_tile = 0;
 					}
 					// if current tile is a tree
@@ -171,18 +175,18 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 				}
 				// one last ride to flavortown
 				if (tree_start_tile != 0) {
-					DoCommandP(tree_start_tile, tree_recent_tile, 1, CMD_CLEAR_AREA | CMD_MSG(STR_ERROR_CAN_T_CLEAR_THIS_AREA), CcPlaySound_EXPLOSION);
+					Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 1);
 				}
 			}
 			break;
 		case DDSP_RAISE_AND_LEVEL_AREA:
-			DoCommandP(end_tile, start_tile, LM_RAISE << 1 | (citymania::_fn_mod ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_RAISE_LAND_HERE), CcTerraform);
+			Command<CMD_LEVEL_LAND>::Post(STR_ERROR_CAN_T_RAISE_LAND_HERE, CcTerraform, end_tile, start_tile, citymania::_fn_mod, LM_RAISE);
 			break;
 		case DDSP_LOWER_AND_LEVEL_AREA:
-			DoCommandP(end_tile, start_tile, LM_LOWER << 1 | (citymania::_fn_mod ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_LOWER_LAND_HERE), CcTerraform);
+			Command<CMD_LEVEL_LAND>::Post(STR_ERROR_CAN_T_LOWER_LAND_HERE, CcTerraform, end_tile, start_tile, citymania::_fn_mod, LM_LOWER);
 			break;
 		case DDSP_LEVEL_AREA:
-			DoCommandP(end_tile, start_tile, LM_LEVEL << 1 | (citymania::_fn_mod ? 1 : 0), CMD_LEVEL_LAND | CMD_MSG(STR_ERROR_CAN_T_LEVEL_LAND_HERE), CcTerraform);
+			Command<CMD_LEVEL_LAND>::Post(STR_ERROR_CAN_T_LEVEL_LAND_HERE, CcTerraform, end_tile, start_tile, citymania::_fn_mod, LM_LEVEL);
 			break;
 		case DDSP_CREATE_ROCKS:
 			GenerateRockyArea(end_tile, start_tile);
@@ -284,7 +288,7 @@ struct TerraformToolbarWindow : Window {
 				break;
 
 			case WID_TT_BUY_LAND: // Buy land button
-				HandlePlacePushButton(this, WID_TT_BUY_LAND, SPR_CURSOR_BUY_LAND, HT_RECT, CM_DDSP_BUY_LAND);
+				HandlePlacePushButton(this, WID_TT_BUY_LAND, SPR_CURSOR_BUY_LAND, HT_RECT | HT_DIAGONAL, CM_DDSP_BUY_LAND);
 				this->last_user_action = widget;
 				break;
 
@@ -329,7 +333,7 @@ struct TerraformToolbarWindow : Window {
 				break;
 
 			case WID_TT_BUY_LAND: // Buy land button
-				DoCommandP(tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound_CONSTRUCTION_RAIL);
+				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_BUILD_OBJECT);
 				break;
 
 			case WID_TT_PLACE_SIGN: // Place sign button
@@ -363,6 +367,16 @@ struct TerraformToolbarWindow : Window {
 				case DDSP_LOWER_AND_LEVEL_AREA:
 				case DDSP_LEVEL_AREA:
 					GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
+					break;
+				case DDSP_BUILD_OBJECT:
+					if (!_settings_game.construction.freeform_edges) {
+						/* When end_tile is MP_VOID, the error tile will not be visible to the
+							* user. This happens when terraforming at the southern border. */
+						if (TileX(end_tile) == MapMaxX()) end_tile += TileDiffXY(-1, 0);
+						if (TileY(end_tile) == MapMaxY()) end_tile += TileDiffXY(0, -1);
+					}
+					Command<CMD_BUILD_OBJECT_AREA>::Post(STR_ERROR_CAN_T_PURCHASE_THIS_LAND, CcPlaySound_CONSTRUCTION_RAIL,
+						end_tile, start_tile, OBJECT_OWNED_LAND, 0, (_ctrl_pressed ? true : false));
 					break;
 			}
 		}
@@ -482,15 +496,15 @@ static byte _terraform_size = 1;
  * @todo : Incorporate into game itself to allow for ingame raising/lowering of
  *         larger chunks at the same time OR remove altogether, as we have 'level land' ?
  * @param tile The top-left tile where the terraforming will start
- * @param mode 1 for raising, 0 for lowering land
+ * @param mode true for raising, false for lowering land
  */
-static void CommonRaiseLowerBigLand(TileIndex tile, int mode)
+static void CommonRaiseLowerBigLand(TileIndex tile, bool mode)
 {
 	if (_terraform_size == 1) {
 		StringID msg =
 			mode ? STR_ERROR_CAN_T_RAISE_LAND_HERE : STR_ERROR_CAN_T_LOWER_LAND_HERE;
 
-		DoCommandP(tile, SLOPE_N, (uint32)mode, CMD_TERRAFORM_LAND | CMD_MSG(msg), CcTerraform);
+		Command<CMD_TERRAFORM_LAND>::Post(msg, CcTerraform, tile, SLOPE_N, mode);
 	} else {
 		assert(_terraform_size != 0);
 		TileArea ta(tile, _terraform_size, _terraform_size);
@@ -517,7 +531,7 @@ static void CommonRaiseLowerBigLand(TileIndex tile, int mode)
 
 		for (TileIndex tile2 : ta) {
 			if (TileHeight(tile2) == h) {
-				DoCommandP(tile2, SLOPE_N, (uint32)mode, CMD_TERRAFORM_LAND);
+				Command<CMD_TERRAFORM_LAND>::Post(tile2, SLOPE_N, mode);
 			}
 		}
 	}
@@ -606,7 +620,7 @@ static void ResetLandscapeConfirmationCallback(Window *w, bool confirmed)
 		/* Delete all station signs */
 		for (BaseStation *st : BaseStation::Iterate()) {
 			/* There can be buoys, remove them */
-			if (IsBuoyTile(st->xy)) DoCommand(st->xy, 0, 0, DC_EXEC | DC_BANKRUPT, CMD_LANDSCAPE_CLEAR);
+			if (IsBuoyTile(st->xy)) Command<CMD_LANDSCAPE_CLEAR>::Do(DC_EXEC | DC_BANKRUPT, st->xy);
 			if (!st->IsInUse()) delete st;
 		}
 
@@ -749,11 +763,11 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 				break;
 
 			case WID_ETT_LOWER_LAND: // Lower land button
-				CommonRaiseLowerBigLand(tile, 0);
+				CommonRaiseLowerBigLand(tile, false);
 				break;
 
 			case WID_ETT_RAISE_LAND: // Raise land button
-				CommonRaiseLowerBigLand(tile, 1);
+				CommonRaiseLowerBigLand(tile, true);
 				break;
 
 			case WID_ETT_LEVEL_LAND: // Level land button

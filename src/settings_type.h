@@ -126,6 +126,7 @@ struct GUISettings {
 	uint16 hover_delay_ms;                   ///< time required to activate a hover event, in milliseconds
 	bool   link_terraform_toolbar;           ///< display terraform toolbar when displaying rail, road, water and airport toolbars
 	uint8  smallmap_land_colour;             ///< colour used for land and heightmap at the smallmap
+	uint8  linkgraph_colours;                ///< linkgraph overlay colours
 	uint8  scroll_mode;                      ///< viewport scroll mode
 	bool   smooth_scroll;                    ///< smooth scroll viewports
 	bool   measure_tooltip;                  ///< show a permanent tooltip when dragging tools
@@ -278,6 +279,7 @@ struct NewsSettings {
 	uint8 arrival_player;                                 ///< NewsDisplay of vehicles arriving at new stations of current player
 	uint8 arrival_other;                                  ///< NewsDisplay of vehicles arriving at new stations of other players
 	uint8 accident;                                       ///< NewsDisplay of accidents that occur
+	uint8 accident_other;                                 ///< NewsDisplay if a vehicle from another company is involved in an accident
 	uint8 company_info;                                   ///< NewsDisplay of general company information
 	uint8 open;                                           ///< NewsDisplay on new industry constructions
 	uint8 close;                                          ///< NewsDisplay about closing industries
@@ -387,6 +389,8 @@ struct ConstructionSettings {
 	uint16 clear_frame_burst;                ///< how many tiles may, over a short period, be cleared?
 	uint32 tree_per_64k_frames;              ///< how many trees may, over a long period, be planted per 65536 frames?
 	uint16 tree_frame_burst;                 ///< how many trees may, over a short period, be planted?
+	uint32 build_object_per_64k_frames;      ///< how many tiles may, over a long period, be purchased or have objects built on them per 65536 frames?
+	uint16 build_object_frame_burst;         ///< how many tiles may, over a short period, be purchased or have objects built on them?
 };
 
 /** Settings related to the AI. */
@@ -552,7 +556,7 @@ struct EconomySettings {
 	bool   allow_town_roads;                 ///< towns are allowed to build roads (always allowed when generating world / in SE)
 	TownFounding found_town;                 ///< town founding.
 	bool   station_noise_level;              ///< build new airports when the town noise level is still within accepted limits
-	uint16 town_noise_population[3];         ///< population to base decision on noise evaluation (@see town_council_tolerance)
+	uint16 town_noise_population[4];         ///< population to base decision on noise evaluation (@see town_council_tolerance)
 	bool   allow_town_level_crossings;       ///< towns are allowed to build level crossings
 	bool   infrastructure_maintenance;       ///< enable monthly maintenance fee for owner infrastructure
 };

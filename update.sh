@@ -13,7 +13,7 @@ find * > $dir/ttd_all
 mkdir build
 cd build
 cmake ..
-make -j
+make -j 4
 # cd objs/release
 # make $ttdir/src/rev.cpp
 cd $curdir

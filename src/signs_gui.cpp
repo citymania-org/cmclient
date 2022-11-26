@@ -26,6 +26,7 @@
 #include "hotkeys.h"
 #include "transparency.h"
 #include "gui.h"
+#include "signs_cmd.h"
 
 #include "widgets/sign_widget.h"
 
@@ -415,7 +416,7 @@ Window *ShowSignList()
 static bool RenameSign(SignID index, const char *text)
 {
 	bool remove = StrEmpty(text);
-	DoCommandP(0, index, 0, CMD_RENAME_SIGN | (StrEmpty(text) ? CMD_MSG(STR_ERROR_CAN_T_DELETE_SIGN) : CMD_MSG(STR_ERROR_CAN_T_CHANGE_SIGN_NAME)), nullptr, text);
+	Command<CMD_RENAME_SIGN>::Post(StrEmpty(text) ? STR_ERROR_CAN_T_DELETE_SIGN : STR_ERROR_CAN_T_CHANGE_SIGN_NAME, index, text);
 	return remove;
 }
 

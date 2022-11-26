@@ -27,6 +27,7 @@
 #include "newgrf_sound.h"
 #include "newgrf_station.h"
 #include "industrytype.h"
+#include "industry_map.h"
 #include "newgrf_canal.h"
 #include "newgrf_townname.h"
 #include "newgrf_industries.h"
@@ -1947,6 +1948,12 @@ static ChangeInfoResult StationChangeInfo(uint stid, int numinfo, int prop, Byte
 					}
 					dts->Clone(tmp_layout.data());
 				}
+
+				/* Number of layouts must be even, alternating X and Y */
+				if (statspec->renderdata.size() & 1) {
+					grfmsg(1, "StationChangeInfo: Station %u defines an odd number of sprite layouts, dropping the last item", stid + i);
+					statspec->renderdata.pop_back();
+				}
 				break;
 			}
 
@@ -2068,6 +2075,12 @@ static ChangeInfoResult StationChangeInfo(uint stid, int numinfo, int prop, Byte
 					uint num_building_sprites = buf->ReadByte();
 					/* On error, bail out immediately. Temporary GRF data was already freed */
 					if (ReadSpriteLayout(buf, num_building_sprites, false, GSF_STATIONS, true, false, dts)) return CIR_DISABLED;
+				}
+
+				/* Number of layouts must be even, alternating X and Y */
+				if (statspec->renderdata.size() & 1) {
+					grfmsg(1, "StationChangeInfo: Station %u defines an odd number of sprite layouts, dropping the last item", stid + i);
+					statspec->renderdata.pop_back();
 				}
 				break;
 			}
@@ -3019,7 +3032,7 @@ static ChangeInfoResult CargoChangeInfo(uint cid, int numinfo, int prop, ByteRea
 			}
 
 			case 0x19: // Town growth coefficient
-				cs->multipliertowngrowth = buf->ReadWord();
+				buf->ReadWord();
 				break;
 
 			case 0x1A: // Bitmask of callbacks to use
@@ -3374,6 +3387,8 @@ static ChangeInfoResult IgnoreIndustryProperty(int prop, ByteReader *buf)
 static bool ValidateIndustryLayout(const IndustryTileLayout &layout)
 {
 	const size_t size = layout.size();
+	if (size == 0) return false;
+
 	for (size_t i = 0; i < size - 1; i++) {
 		for (size_t j = i + 1; j < size; j++) {
 			if (layout[i].ti.x == layout[j].ti.x &&
@@ -3382,7 +3397,16 @@ static bool ValidateIndustryLayout(const IndustryTileLayout &layout)
 			}
 		}
 	}
-	return true;
+
+	bool have_regular_tile = false;
+	for (size_t i = 0; i < size; i++) {
+		if (layout[i].gfx != GFX_WATERTILE_SPECIALCHECK) {
+			have_regular_tile = true;
+			break;
+		}
+	}
+
+	return have_regular_tile;
 }
 
 /**
@@ -3533,7 +3557,7 @@ static ChangeInfoResult IndustriesChangeInfo(uint indid, int numinfo, int prop, 
 								/* Declared as been valid, can be used */
 								it.gfx = tempid;
 							}
-						} else if (it.gfx == 0xFF) {
+						} else if (it.gfx == GFX_WATERTILE_SPECIALCHECK) {
 							it.ti.x = (int8)GB(it.ti.x, 0, 8);
 							it.ti.y = (int8)GB(it.ti.y, 0, 8);
 
@@ -4059,7 +4083,7 @@ static ChangeInfoResult ObjectChangeInfo(uint id, int numinfo, int prop, ByteRea
 				if (*ospec == nullptr) {
 					*ospec = CallocT<ObjectSpec>(1);
 					(*ospec)->views = 1; // Default for NewGRFs that don't set it.
-					(*ospec)->size = 0x11; // Default for NewGRFs that manage to not set it (1x1)
+					(*ospec)->size = OBJECT_SIZE_1X1; // Default for NewGRFs that manage to not set it (1x1)
 				}
 
 				/* Swap classid because we read it in BE. */
@@ -4087,7 +4111,7 @@ static ChangeInfoResult ObjectChangeInfo(uint id, int numinfo, int prop, ByteRea
 				spec->size = buf->ReadByte();
 				if (GB(spec->size, 0, 4) == 0 || GB(spec->size, 4, 4) == 0) {
 					grfmsg(0, "ObjectChangeInfo: Invalid object size requested (0x%x) for object id %u. Ignoring.", spec->size, id + i);
-					spec->size = 0x11; // 1x1
+					spec->size = OBJECT_SIZE_1X1;
 				}
 				break;
 
@@ -6146,7 +6170,7 @@ static const Action5Type _action5_types[] = {
 	/* 0x11 */ { A5BLOCK_ALLOW_OFFSET, SPR_ROADSTOP_BASE,            1, ROADSTOP_SPRITE_COUNT,                       "Road stop graphics"       },
 	/* 0x12 */ { A5BLOCK_ALLOW_OFFSET, SPR_AQUEDUCT_BASE,            1, AQUEDUCT_SPRITE_COUNT,                       "Aqueduct graphics"        },
 	/* 0x13 */ { A5BLOCK_ALLOW_OFFSET, SPR_AUTORAIL_BASE,            1, AUTORAIL_SPRITE_COUNT,                       "Autorail graphics"        },
-	/* 0x14 */ { A5BLOCK_ALLOW_OFFSET, SPR_FLAGS_BASE,               1, FLAGS_SPRITE_COUNT,                          "Flag graphics"            },
+	/* 0x14 */ { A5BLOCK_INVALID,      0,                            1, 0,                                           "Flag graphics"            }, // deprecated, no longer used.
 	/* 0x15 */ { A5BLOCK_ALLOW_OFFSET, SPR_OPENTTD_BASE,             1, OPENTTD_SPRITE_COUNT,                        "OpenTTD GUI graphics"     },
 	/* 0x16 */ { A5BLOCK_ALLOW_OFFSET, SPR_AIRPORT_PREVIEW_BASE,     1, SPR_AIRPORT_PREVIEW_COUNT,                   "Airport preview graphics" },
 	/* 0x17 */ { A5BLOCK_ALLOW_OFFSET, SPR_RAILTYPE_TUNNEL_BASE,     1, RAILTYPE_TUNNEL_BASE_COUNT,                  "Railtype tunnel base"     },
@@ -6289,7 +6313,7 @@ bool GetGlobalVariable(byte param, uint32 *value, const GRFFile *grffile)
 			return true;
 
 		case 0x0A: // animation counter
-			*value = _tick_counter;
+			*value = GB(_tick_counter, 0, 16);
 			return true;
 
 		case 0x0B: { // TTDPatch version
@@ -7045,6 +7069,10 @@ static uint32 GetPatchVariable(uint8 param)
 		/* Shore base sprite */
 		case 0x16:
 			return SPR_SHORE_BASE;
+
+		/* Game map seed */
+		case 0x17:
+			return _settings_game.game_creation.generation_seed;
 
 		default:
 			grfmsg(2, "ParamSet: Unknown Patch variable 0x%02X.", param);
@@ -9786,7 +9814,7 @@ void LoadNewGRF(uint load_index, uint num_baseset)
 	Date date            = _date;
 	Year year            = _cur_year;
 	DateFract date_fract = _date_fract;
-	uint16 tick_counter  = _tick_counter;
+	uint64 tick_counter  = _tick_counter;
 	byte display_opt     = _display_opt;
 
 	if (_networking) {

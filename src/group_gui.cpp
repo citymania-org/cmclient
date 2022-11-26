@@ -25,6 +25,8 @@
 #include "company_base.h"
 #include "company_gui.h"
 #include "gui.h"
+#include "group_cmd.h"
+#include "vehicle_cmd.h"
 
 #include "widgets/group_widget.h"
 
@@ -48,7 +50,7 @@ static const NWidgetPart _nested_group_widgets[] = {
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
 		/* left part */
-		NWidget(NWID_VERTICAL),
+		NWidget(NWID_VERTICAL, NC_BIGFIRST),
 			NWidget(WWT_PANEL, COLOUR_GREY, WID_GL_ALL_VEHICLES), SetFill(1, 0), EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_GREY, WID_GL_DEFAULT_VEHICLES), SetFill(1, 0), EndContainer(),
 			NWidget(NWID_HORIZONTAL),
@@ -383,26 +385,11 @@ public:
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
-			case WID_GL_LIST_GROUP: {
+			case WID_GL_LIST_GROUP:
 				size->width = this->ComputeGroupInfoSize();
 				resize->height = this->tiny_step_height;
-
-				/* Minimum height is the height of the list widget minus all and default vehicles... */
-				size->height = 4 * GetVehicleListHeight(this->vli.vtype, this->tiny_step_height);
-
-				/* ... minus the buttons at the bottom ... */
-				uint max_icon_height = GetSpriteSize(this->GetWidget<NWidgetCore>(WID_GL_CREATE_GROUP)->widget_data).height;
-				max_icon_height = std::max(max_icon_height, GetSpriteSize(this->GetWidget<NWidgetCore>(WID_GL_RENAME_GROUP)->widget_data).height);
-				max_icon_height = std::max(max_icon_height, GetSpriteSize(this->GetWidget<NWidgetCore>(WID_GL_DELETE_GROUP)->widget_data).height);
-				max_icon_height = std::max(max_icon_height, GetSpriteSize(this->GetWidget<NWidgetCore>(WID_GL_REPLACE_PROTECTION)->widget_data).height);
-
-				/* ... minus the height of the group info ... */
-				max_icon_height += (FONT_HEIGHT_NORMAL * 3) + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
-
-				/* Get a multiple of tiny_step_height of that amount */
-				size->height = Ceil(size->height - max_icon_height, tiny_step_height);
+				fill->height = this->tiny_step_height;
 				break;
-			}
 
 			case WID_GL_ALL_VEHICLES:
 			case WID_GL_DEFAULT_VEHICLES:
@@ -642,7 +629,7 @@ public:
 		if (confirmed) {
 			VehicleGroupWindow *w = (VehicleGroupWindow*)win;
 			w->vli.index = ALL_GROUP;
-			DoCommandP(0, w->group_confirm, 0, CMD_DELETE_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_DELETE));
+			Command<CMD_DELETE_GROUP>::Post(STR_ERROR_GROUP_CAN_T_DELETE, w->group_confirm);
 		}
 	}
 
@@ -773,7 +760,7 @@ public:
 			}
 
 			case WID_GL_CREATE_GROUP: { // Create a new group
-				DoCommandP(0, this->vli.vtype, this->vli.index, CMD_CREATE_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_CREATE), CcCreateGroup);
+				Command<CMD_CREATE_GROUP>::Post(STR_ERROR_GROUP_CAN_T_CREATE, CcCreateGroup, this->vli.vtype, this->vli.index);
 				break;
 			}
 
@@ -802,14 +789,14 @@ public:
 
 			case WID_GL_START_ALL:
 			case WID_GL_STOP_ALL: { // Start/stop all vehicles of the list
-				DoCommandP(0, (1 << 1) | (widget == WID_GL_START_ALL ? (1 << 0) : 0), this->vli.Pack(), CMD_MASS_START_STOP);
+				Command<CMD_MASS_START_STOP>::Post(0, widget == WID_GL_START_ALL, true, this->vli);
 				break;
 			}
 
 			case WID_GL_REPLACE_PROTECTION: {
 				const Group *g = Group::GetIfValid(this->vli.index);
 				if (g != nullptr) {
-					DoCommandP(0, this->vli.index | (GroupFlags::GF_REPLACE_PROTECTION << 16), (HasBit(g->flags, GroupFlags::GF_REPLACE_PROTECTION) ? 0 : 1) | (citymania::_fn_mod ? 2 : 0), CMD_SET_GROUP_FLAG);
+					Command<CMD_SET_GROUP_FLAG>::Post(this->vli.index, GroupFlags::GF_REPLACE_PROTECTION, !HasBit(g->flags, GroupFlags::GF_REPLACE_PROTECTION), citymania::_fn_mod);
 				}
 				break;
 			}
@@ -824,7 +811,7 @@ public:
 			case WID_GL_ALL_VEHICLES: // All vehicles
 			case WID_GL_DEFAULT_VEHICLES: // Ungrouped vehicles
 				if (g->parent != INVALID_GROUP) {
-					DoCommandP(0, this->group_sel | (1 << 16), INVALID_GROUP, CMD_ALTER_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_SET_PARENT));
+					Command<CMD_ALTER_GROUP>::Post(STR_ERROR_GROUP_CAN_T_SET_PARENT, AlterGroupMode::SetParent, this->group_sel, INVALID_GROUP, {});
 				}
 
 				this->group_sel = INVALID_GROUP;
@@ -837,7 +824,7 @@ public:
 				GroupID new_g = id_g >= this->groups.size() ? INVALID_GROUP : this->groups[id_g]->index;
 
 				if (this->group_sel != new_g && g->parent != new_g) {
-					DoCommandP(0, this->group_sel | (1 << 16), new_g, CMD_ALTER_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_SET_PARENT));
+					Command<CMD_ALTER_GROUP>::Post(STR_ERROR_GROUP_CAN_T_SET_PARENT, AlterGroupMode::SetParent, this->group_sel, new_g, {});
 				}
 
 				this->group_sel = INVALID_GROUP;
@@ -852,7 +839,7 @@ public:
 	{
 		switch (widget) {
 			case WID_GL_DEFAULT_VEHICLES: // Ungrouped vehicles
-				DoCommandP(0, DEFAULT_GROUP, this->vehicle_sel | (citymania::_fn_mod || this->grouping == GB_SHARED_ORDERS ? 1 << 31 : 0), CMD_ADD_VEHICLE_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_ADD_VEHICLE));
+				Command<CMD_ADD_VEHICLE_GROUP>::Post(STR_ERROR_GROUP_CAN_T_ADD_VEHICLE, DEFAULT_GROUP, this->vehicle_sel, citymania::_fn_mod || this->grouping == GB_SHARED_ORDERS);
 
 				this->vehicle_sel = INVALID_VEHICLE;
 				this->group_over = INVALID_GROUP;
@@ -869,7 +856,7 @@ public:
 				uint id_g = this->group_sb->GetScrolledRowFromWidget(pt.y, this, WID_GL_LIST_GROUP);
 				GroupID new_g = id_g >= this->groups.size() ? NEW_GROUP : this->groups[id_g]->index;
 
-				DoCommandP(0, new_g, vindex | (citymania::_fn_mod || this->grouping == GB_SHARED_ORDERS ? 1 << 31 : 0), CMD_ADD_VEHICLE_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_ADD_VEHICLE), new_g == NEW_GROUP ? CcAddVehicleNewGroup : nullptr);
+				Command<CMD_ADD_VEHICLE_GROUP>::Post(STR_ERROR_GROUP_CAN_T_ADD_VEHICLE, new_g == NEW_GROUP ? CcAddVehicleNewGroup : nullptr, 0, new_g, vindex, citymania::_fn_mod || this->grouping == GB_SHARED_ORDERS);
 				break;
 			}
 
@@ -924,7 +911,7 @@ public:
 
 	void OnQueryTextFinished(char *str) override
 	{
-		if (str != nullptr) DoCommandP(0, this->group_rename, 0, CMD_ALTER_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_RENAME), nullptr, str);
+		if (str != nullptr) Command<CMD_ALTER_GROUP>::Post(STR_ERROR_GROUP_CAN_T_RENAME, AlterGroupMode::Rename, this->group_rename, 0, str);
 		this->group_rename = INVALID_GROUP;
 	}
 
@@ -954,19 +941,19 @@ public:
 						break;
 					case ADI_SERVICE: // Send for servicing
 					case ADI_DEPOT: { // Send to Depots
-						DoCommandP(0, DEPOT_MASS_SEND | (index == ADI_SERVICE ? DEPOT_SERVICE : 0U), this->vli.Pack(), GetCmdSendToDepot(this->vli.vtype));
+						Command<CMD_SEND_VEHICLE_TO_DEPOT>::Post(GetCmdSendToDepotMsg(this->vli.vtype), 0, DepotCommand::MassSend | (index == ADI_SERVICE ? DepotCommand::Service : DepotCommand::None), this->vli);
 						break;
 					}
 
 					case ADI_ADD_SHARED: // Add shared Vehicles
 						assert(Group::IsValidID(this->vli.index));
 
-						DoCommandP(0, this->vli.index, this->vli.vtype, CMD_ADD_SHARED_VEHICLE_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE));
+						Command<CMD_ADD_SHARED_VEHICLE_GROUP>::Post(STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE, this->vli.index, this->vli.vtype);
 						break;
 					case ADI_REMOVE_ALL: // Remove all Vehicles from the selected group
 						assert(Group::IsValidID(this->vli.index));
 
-						DoCommandP(0, this->vli.index, 0, CMD_REMOVE_ALL_VEHICLES_GROUP | CMD_MSG(STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES));
+						Command<CMD_REMOVE_ALL_VEHICLES_GROUP>::Post(STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES, this->vli.index);
 						break;
 					default: NOT_REACHED();
 				}
@@ -1141,36 +1128,44 @@ static inline VehicleGroupWindow *FindVehicleGroupWindow(VehicleType vt, Owner o
 
 /**
  * Opens a 'Rename group' window for newly created group.
- * @param result Did command succeed?
- * @param tile Unused.
- * @param p1 Vehicle type.
- * @param p2 Unused.
+ * @param veh_type Vehicle type.
+ */
+static void CcCreateGroup(GroupID gid, VehicleType veh_type)
+{
+	VehicleGroupWindow *w = FindVehicleGroupWindow(veh_type, _current_company);
+	if (w != nullptr) w->ShowRenameGroupWindow(gid, true);
+}
+
+/**
+ * Opens a 'Rename group' window for newly created group.
  * @param cmd Unused.
+ * @param result Did command succeed?
+ * @param new_group ID of the created group.
+ * @param vt Vehicle type.
+ * @param parent_group Parent group of the new group.
  * @see CmdCreateGroup
  */
-void CcCreateGroup(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcCreateGroup(Commands cmd, const CommandCost &result, GroupID new_group, VehicleType vt, GroupID parent_group)
 {
 	if (result.Failed()) return;
-	assert(p1 <= VEH_AIRCRAFT);
 
-	VehicleGroupWindow *w = FindVehicleGroupWindow((VehicleType)p1, _current_company);
-	if (w != nullptr) w->ShowRenameGroupWindow(_new_group_id, true);
+	assert(vt <= VEH_AIRCRAFT);
+	CcCreateGroup(new_group, vt);
 }
 
 /**
  * Open rename window after adding a vehicle to a new group via drag and drop.
- * @param result Did command succeed?
- * @param tile Unused.
- * @param p1 Unused.
- * @param p2 Bit 0-19: Vehicle ID.
  * @param cmd Unused.
+ * @param result Did command succeed?
+ * @param new_group ID of the created group.
+ * @param veh_id vehicle to add to a group
  */
-void CcAddVehicleNewGroup(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcAddVehicleNewGroup(Commands cmd, const CommandCost &result, GroupID new_group, GroupID, VehicleID veh_id, bool)
 {
 	if (result.Failed()) return;
-	assert(Vehicle::IsValidID(GB(p2, 0, 20)));
 
-	CcCreateGroup(result, 0, Vehicle::Get(GB(p2, 0, 20))->type, 0, cmd);
+	assert(Vehicle::IsValidID(veh_id));
+	CcCreateGroup(new_group, Vehicle::Get(veh_id)->type);
 }
 
 /**
