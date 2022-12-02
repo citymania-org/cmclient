@@ -2640,7 +2640,7 @@ static bool IsVehicleRefitable(const Vehicle *v)
 	return false;
 }
 
-void CcCloneVehicleWithOrderIndex(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+/* FIXME void CcCloneVehicleWithOrderIndex(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	if (result.Failed()) return;
 	if (p2 != 1) CcCloneVehicle(result, tile, p1, p2, cmd);
@@ -2651,7 +2651,7 @@ void CcCloneVehicleWithOrderIndex(const CommandCost &result, TileIndex tile, uin
 	citymania::cmd::SkipToOrder(v->index, cloned->cur_implicit_order_index)
 		.WithTile(v->tile)
 		.Post();
-}
+}*/
 
 /** Window manager class for viewing a vehicle. */
 struct VehicleViewWindow : Window {

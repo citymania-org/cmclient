@@ -58,6 +58,7 @@
 #include "network/network_func.h"
 #include "object_type.h"
 
+#include "company_cmd.h"
 #include "citymania/cm_cargo_table_gui.hpp"
 #include "citymania/cm_commands.hpp"
 #include "citymania/cm_commands_gui.hpp"
@@ -2164,7 +2165,7 @@ struct MainToolbarWindow : Window {
 				break;
 
 			case CBF_PLACE_LANDINFO:
-				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_MEASURE);
+				VpStartPlaceSizing(tile, VPM_X_AND_Y, CM_DDSP_MEASURE);
 				break;
 
 			case CM_CBF_BUILD_HQ:
@@ -2573,7 +2574,7 @@ struct ScenarioEditorToolbarWindow : Window {
 				break;
 
 			case CBF_PLACE_LANDINFO:
-				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_MEASURE);
+				VpStartPlaceSizing(tile, VPM_X_AND_Y, CM_DDSP_MEASURE);
 				break;
 
 			default: NOT_REACHED();

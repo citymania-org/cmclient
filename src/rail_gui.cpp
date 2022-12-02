@@ -373,7 +373,7 @@ static void BuildRailClick_Remove(Window *w)
 	}
 }
 
-static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_tile, Track track)
+/* FIXME static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_tile, Track track)
 {
 	CommandContainer ret = {
 		start_tile,                             // tile
@@ -388,9 +388,9 @@ static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_t
 
 	return ret;
 }
-
+*/
 namespace citymania {
-
+/*
 static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2) {
     auto rail_callback = [rail_cmd, start_tile, end_tile, track, estimate=citymania::_estimate_mod](bool res) -> bool {
 		if (DoCommand(&rail_cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
@@ -492,11 +492,11 @@ static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Tra
 			break;
 	}
 	return true;
-}
+}*/
 
 }  // namespace citymania
 
-FIXME
+//FIXME
 static void DoRailroadTrack(Track track)
 {
 	if (_remove_button_clicked) {
@@ -521,12 +521,13 @@ static void HandleAutodirPlacement()
 }
 // end FIXME
 
+/*
 static void HandleAutodirPlacement()
 {
 	Track track = (Track)(_thd.drawstyle & HT_DIR_MASK); // 0..5
 	TileIndex start_tile = TileVirtXY(_thd.selstart.x, _thd.selstart.y);
 	TileIndex end_tile = TileVirtXY(_thd.selend.x, _thd.selend.y);
-
+	/* FIXME
 	CommandContainer cmd = (_thd.drawstyle & HT_RAIL) ?
 			GenericPlaceRailCmd(end_tile, track) : // one tile case
 			DoRailroadTrackCmd(start_tile, end_tile, track); // multitile selection
@@ -535,7 +536,7 @@ static void HandleAutodirPlacement()
 	 * snap point over the last overbuilt track piece. In such case we don't
 	 * wan't to show any errors to the user. Don't execute the command right
 	 * away, first check if overbuilding. */
-	if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) || _remove_button_clicked) {
+	/* if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) || _remove_button_clicked) {
 		if (!DoCommandP(&cmd)) return;
 	} else if (_thd.cm_poly_terra) {
 		citymania::HandleAutodirTerraform(start_tile, end_tile, track, cmd);
@@ -543,13 +544,13 @@ static void HandleAutodirPlacement()
 	} else if (DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
 				_rail_track_endtile == INVALID_TILE) {
 		if (!DoCommandP(&cmd)) return;
-	}
+	} */
 	/* Save new snap points for the polyline tool, no matter if the command
 	 * succeeded, the snapping will be extended over overbuilt track pieces. */
-	if (!citymania::_estimate_mod && _rail_track_endtile != INVALID_TILE) {
+	/*if (!citymania::_estimate_mod && _rail_track_endtile != INVALID_TILE) {
 		StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
 	}
-}
+}*/
 
 /**
  * Build new signals or remove signals or (if only one tile marked) edit a signal.

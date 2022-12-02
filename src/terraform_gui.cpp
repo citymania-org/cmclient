@@ -123,7 +123,7 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 		case DDSP_DEMOLISH_AREA:
 			Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, end_tile, start_tile, citymania::_fn_mod);
 			break;
-		case DDSP_DEMOLISH_TREES:
+		case DDSP_DEMOLISH_TREES: {
 			// loop through every tile and send a demolish command for each tree
 			// orthogonal area
 			TileIndex tree_start_tile, tree_recent_tile, prev_tile;
@@ -179,6 +179,7 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 				}
 			}
 			break;
+		}
 		case DDSP_RAISE_AND_LEVEL_AREA:
 			Command<CMD_LEVEL_LAND>::Post(STR_ERROR_CAN_T_RAISE_LAND_HERE, CcTerraform, end_tile, start_tile, citymania::_fn_mod, LM_RAISE);
 			break;

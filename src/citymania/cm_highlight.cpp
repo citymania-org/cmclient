@@ -3,6 +3,7 @@
 #include "cm_highlight.hpp"
 
 #include "cm_blueprint.hpp"
+#include "cm_commands.hpp"
 #include "cm_main.hpp"
 #include "cm_station_gui.hpp"
 #include "cm_zoning.hpp"
@@ -309,23 +310,6 @@ static const DiagDirection _place_depot_extra_dir[12] = {
     DIAGDIR_NW, DIAGDIR_NE, DIAGDIR_NW, DIAGDIR_NE,
 };
 
-bool CanBuild(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd) {
-    return DoCommandPInternal(
-        tile,
-        p1,
-        p2,
-        cmd,
-        nullptr,  // callback
-        "",  // text
-        true,  // my_cmd
-        true  // estimate_only
-    ).Succeeded();
-}
-
-bool CanBuild(const CommandContainer &cc) {
-    return CanBuild(cc.tile, cc.p1, cc.p2, cc.cmd);
-}
-
 void ObjectHighlight::AddTile(TileIndex tile, ObjectTileHighlight &&oh) {
     if (tile >= MapSize()) return;
     this->tiles.insert(std::make_pair(tile, std::move(oh)));
@@ -341,12 +325,11 @@ void ObjectHighlight::UpdateTiles() {
         case Type::RAIL_DEPOT: {
             auto dir = this->ddir;
 
-            auto palette = (CanBuild(
+            auto palette = (cmd::BuildTrainDepot(
                 this->tile,
                 _cur_railtype,
-                dir,
-                CMD_BUILD_TRAIN_DEPOT
-            ) ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+                dir
+            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             this->tiles.insert(std::make_pair(this->tile, ObjectTileHighlight::make_rail_depot(palette, dir)));
             auto tile = this->tile + TileOffsByDiagDir(dir);
@@ -363,15 +346,17 @@ void ObjectHighlight::UpdateTiles() {
             auto plat_len = ta.h;
             if (this->axis == AXIS_X) Swap(numtracks, plat_len);
 
-            auto palette = (CanBuild(
+            auto palette = (cmd::BuildRailStation(
                 this->tile,
-                _cur_railtype
-                    | (this->axis << 6)
-                    | ((uint32)numtracks << 8)
-                    | ((uint32)plat_len << 16),
-                NEW_STATION << 16,
-                CMD_BUILD_RAIL_STATION
-            ) ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+                _cur_railtype,
+                this->axis,
+                numtracks,
+                plat_len,
+                _railstation.station_class,
+                _railstation.station_type,
+                NEW_STATION,
+                true
+            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             auto layout_ptr = AllocaM(byte, (int)numtracks * plat_len);
             GetStationLayout(layout_ptr, numtracks, plat_len, nullptr); // TODO statspec
@@ -393,12 +378,17 @@ void ObjectHighlight::UpdateTiles() {
         }
         case Type::ROAD_STOP: {
             auto ta = OrthogonalTileArea(this->tile, this->end_tile);
-            auto palette = (CanBuild(
+            auto palette = (cmd::BuildRoadStop(
                 this->tile,
-                (uint32)(ta.w | ta.h << 8),
-                (this->is_truck ? 1 : 0) | (this->ddir >= DIAGDIR_END ? 2 : 0) | (((uint)this->ddir % 4) << 3) | (NEW_STATION << 16),
-                CMD_BUILD_ROAD_STOP
-            ) ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+                ta.w,
+                ta.h,
+                (this->is_truck ? ROADSTOP_TRUCK : ROADSTOP_BUS),
+                (this->ddir >= DIAGDIR_END),  // is_drive_through
+                (DiagDirection)(this->ddir % 4),
+                this->roadtype,
+                NEW_STATION,
+                true
+            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
             for (TileIndex tile : ta) {
                 this->AddTile(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck));
             }
@@ -406,23 +396,23 @@ void ObjectHighlight::UpdateTiles() {
         }
 
         case Type::ROAD_DEPOT: {
-            auto palette = (CanBuild(
+            auto palette = (cmd::BuildRoadDepot(
                 this->tile,
-                this->roadtype << 2 | this->ddir,
-                0,
-                CMD_BUILD_ROAD_DEPOT
-            ) ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+                this->roadtype,
+                this->ddir
+            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
             this->AddTile(this->tile, ObjectTileHighlight::make_road_depot(palette, this->roadtype, this->ddir));
             break;
         }
 
         case Type::AIRPORT: {
-            auto palette = (CanBuild(
+            auto palette = (cmd::BuildAirport(
                 this->tile,
-                this->airport_type | ((uint)this->airport_layout << 8),
-                1 | (NEW_STATION << 16),
-                CMD_BUILD_AIRPORT
-            ) ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+                this->airport_type,
+                this->airport_layout,
+                NEW_STATION,
+                true
+            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             const AirportSpec *as = AirportSpec::Get(this->airport_type);
             if (!as->IsAvailable() || this->airport_layout >= as->num_table) break;

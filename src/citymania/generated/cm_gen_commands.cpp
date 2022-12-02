@@ -5,104 +5,355 @@
 #include "../../src/misc_cmd.h"
 #include "../../src/object_cmd.h"
 #include "../../src/order_cmd.h"
+#include "../../src/rail_cmd.h"
+#include "../../src/road_cmd.h"
+#include "../../src/station_cmd.h"
 #include "../../src/town_cmd.h"
+#include "../../src/tunnelbridge_cmd.h"
 namespace citymania {
 namespace cmd {
 
 bool MoneyCheat::DoPost() {
     return ::Command<CMD_MONEY_CHEAT>::Post(this->error, this->tile, this->amount);
 }
+bool MoneyCheat::DoTest() {
+    return (::Command<CMD_MONEY_CHEAT>::Do(DC_NONE, this->amount)).Succeeded();
+}
 
 bool ChangeBankBalance::DoPost() {
     return ::Command<CMD_CHANGE_BANK_BALANCE>::Post(this->error, this->tile, this->delta, this->company, this->expenses_type);
+}
+bool ChangeBankBalance::DoTest() {
+    return (::Command<CMD_CHANGE_BANK_BALANCE>::Do(DC_NONE, this->tile, this->delta, this->company, this->expenses_type)).Succeeded();
 }
 
 bool IncreaseLoan::DoPost() {
     return ::Command<CMD_INCREASE_LOAN>::Post(this->error, this->tile, this->cmd, this->amount);
 }
+bool IncreaseLoan::DoTest() {
+    return (::Command<CMD_INCREASE_LOAN>::Do(DC_NONE, this->cmd, this->amount)).Succeeded();
+}
 
 bool DecreaseLoan::DoPost() {
     return ::Command<CMD_DECREASE_LOAN>::Post(this->error, this->tile, this->cmd, this->amount);
+}
+bool DecreaseLoan::DoTest() {
+    return (::Command<CMD_DECREASE_LOAN>::Do(DC_NONE, this->cmd, this->amount)).Succeeded();
 }
 
 bool Pause::DoPost() {
     return ::Command<CMD_PAUSE>::Post(this->error, this->tile, this->mode, this->pause);
 }
+bool Pause::DoTest() {
+    return (::Command<CMD_PAUSE>::Do(DC_NONE, this->mode, this->pause)).Succeeded();
+}
 
 bool BuildObject::DoPost() {
     return ::Command<CMD_BUILD_OBJECT>::Post(this->error, this->tile, this->type, this->view);
+}
+bool BuildObject::DoTest() {
+    return (::Command<CMD_BUILD_OBJECT>::Do(DC_NONE, this->tile, this->type, this->view)).Succeeded();
 }
 
 bool BuildObjectArea::DoPost() {
     return ::Command<CMD_BUILD_OBJECT_AREA>::Post(this->error, this->tile, this->start_tile, this->type, this->view, this->diagonal);
 }
+bool BuildObjectArea::DoTest() {
+    return (::Command<CMD_BUILD_OBJECT_AREA>::Do(DC_NONE, this->tile, this->start_tile, this->type, this->view, this->diagonal)).Succeeded();
+}
 
 bool ModifyOrder::DoPost() {
     return ::Command<CMD_MODIFY_ORDER>::Post(this->error, this->tile, this->veh, this->sel_ord, this->mof, this->data);
+}
+bool ModifyOrder::DoTest() {
+    return (::Command<CMD_MODIFY_ORDER>::Do(DC_NONE, this->veh, this->sel_ord, this->mof, this->data)).Succeeded();
 }
 
 bool SkipToOrder::DoPost() {
     return ::Command<CMD_SKIP_TO_ORDER>::Post(this->error, this->tile, this->veh_id, this->sel_ord);
 }
+bool SkipToOrder::DoTest() {
+    return (::Command<CMD_SKIP_TO_ORDER>::Do(DC_NONE, this->veh_id, this->sel_ord)).Succeeded();
+}
 
 bool DeleteOrder::DoPost() {
     return ::Command<CMD_DELETE_ORDER>::Post(this->error, this->tile, this->veh_id, this->sel_ord);
+}
+bool DeleteOrder::DoTest() {
+    return (::Command<CMD_DELETE_ORDER>::Do(DC_NONE, this->veh_id, this->sel_ord)).Succeeded();
 }
 
 bool InsertOrder::DoPost() {
     return ::Command<CMD_INSERT_ORDER>::Post(this->error, this->tile, this->veh, this->sel_ord, this->new_order);
 }
+bool InsertOrder::DoTest() {
+    return (::Command<CMD_INSERT_ORDER>::Do(DC_NONE, this->veh, this->sel_ord, this->new_order)).Succeeded();
+}
 
 bool OrderRefit::DoPost() {
     return ::Command<CMD_ORDER_REFIT>::Post(this->error, this->tile, this->veh, this->order_number, this->cargo);
+}
+bool OrderRefit::DoTest() {
+    return (::Command<CMD_ORDER_REFIT>::Do(DC_NONE, this->veh, this->order_number, this->cargo)).Succeeded();
 }
 
 bool CloneOrder::DoPost() {
     return ::Command<CMD_CLONE_ORDER>::Post(this->error, this->tile, this->action, this->veh_dst, this->veh_src);
 }
+bool CloneOrder::DoTest() {
+    return (::Command<CMD_CLONE_ORDER>::Do(DC_NONE, this->action, this->veh_dst, this->veh_src)).Succeeded();
+}
 
 bool MoveOrder::DoPost() {
     return ::Command<CMD_MOVE_ORDER>::Post(this->error, this->tile, this->veh, this->moving_order, this->target_order);
+}
+bool MoveOrder::DoTest() {
+    return (::Command<CMD_MOVE_ORDER>::Do(DC_NONE, this->veh, this->moving_order, this->target_order)).Succeeded();
 }
 
 bool ClearOrderBackup::DoPost() {
     return ::Command<CMD_CLEAR_ORDER_BACKUP>::Post(this->error, this->tile, this->user_id);
 }
+bool ClearOrderBackup::DoTest() {
+    return (::Command<CMD_CLEAR_ORDER_BACKUP>::Do(DC_NONE, this->tile, this->user_id)).Succeeded();
+}
+
+bool BuildRailroadTrack::DoPost() {
+    return ::Command<CMD_BUILD_RAILROAD_TRACK>::Post(this->error, this->tile, this->start_tile, this->railtype, this->track, this->auto_remove_signals, this->fail_on_obstacle);
+}
+bool BuildRailroadTrack::DoTest() {
+    return (::Command<CMD_BUILD_RAILROAD_TRACK>::Do(DC_NONE, this->tile, this->start_tile, this->railtype, this->track, this->auto_remove_signals, this->fail_on_obstacle)).Succeeded();
+}
+
+bool RemoveRailroadTrack::DoPost() {
+    return ::Command<CMD_REMOVE_RAILROAD_TRACK>::Post(this->error, this->tile, this->start_tile, this->track);
+}
+bool RemoveRailroadTrack::DoTest() {
+    return (::Command<CMD_REMOVE_RAILROAD_TRACK>::Do(DC_NONE, this->tile, this->start_tile, this->track)).Succeeded();
+}
+
+bool BuildSingleRail::DoPost() {
+    return ::Command<CMD_BUILD_SINGLE_RAIL>::Post(this->error, this->tile, this->railtype, this->track, this->auto_remove_signals);
+}
+bool BuildSingleRail::DoTest() {
+    return (::Command<CMD_BUILD_SINGLE_RAIL>::Do(DC_NONE, this->tile, this->railtype, this->track, this->auto_remove_signals)).Succeeded();
+}
+
+bool RemoveSingleRail::DoPost() {
+    return ::Command<CMD_REMOVE_SINGLE_RAIL>::Post(this->error, this->tile, this->track);
+}
+bool RemoveSingleRail::DoTest() {
+    return (::Command<CMD_REMOVE_SINGLE_RAIL>::Do(DC_NONE, this->tile, this->track)).Succeeded();
+}
+
+bool BuildTrainDepot::DoPost() {
+    return ::Command<CMD_BUILD_TRAIN_DEPOT>::Post(this->error, this->tile, this->railtype, this->dir);
+}
+bool BuildTrainDepot::DoTest() {
+    return (::Command<CMD_BUILD_TRAIN_DEPOT>::Do(DC_NONE, this->tile, this->railtype, this->dir)).Succeeded();
+}
+
+bool BuildSingleSignal::DoPost() {
+    return ::Command<CMD_BUILD_SIGNALS>::Post(this->error, this->tile, this->track, this->sigtype, this->sigvar, this->convert_signal, this->skip_existing_signals, this->ctrl_pressed, this->cycle_start, this->cycle_stop, this->num_dir_cycle, this->signals_copy);
+}
+bool BuildSingleSignal::DoTest() {
+    return (::Command<CMD_BUILD_SIGNALS>::Do(DC_NONE, this->tile, this->track, this->sigtype, this->sigvar, this->convert_signal, this->skip_existing_signals, this->ctrl_pressed, this->cycle_start, this->cycle_stop, this->num_dir_cycle, this->signals_copy)).Succeeded();
+}
+
+bool RemoveSingleSignal::DoPost() {
+    return ::Command<CMD_REMOVE_SIGNALS>::Post(this->error, this->tile, this->track);
+}
+bool RemoveSingleSignal::DoTest() {
+    return (::Command<CMD_REMOVE_SIGNALS>::Do(DC_NONE, this->tile, this->track)).Succeeded();
+}
+
+bool ConvertRail::DoPost() {
+    return ::Command<CMD_CONVERT_RAIL>::Post(this->error, this->tile, this->area_start, this->totype, this->diagonal);
+}
+bool ConvertRail::DoTest() {
+    return (::Command<CMD_CONVERT_RAIL>::Do(DC_NONE, this->tile, this->area_start, this->totype, this->diagonal)).Succeeded();
+}
+
+bool BuildSignalTrack::DoPost() {
+    return ::Command<CMD_BUILD_SIGNAL_TRACK>::Post(this->error, this->tile, this->end_tile, this->track, this->sigtype, this->sigvar, this->mode, this->autofill, this->minimise_gaps, this->signal_density);
+}
+bool BuildSignalTrack::DoTest() {
+    return (::Command<CMD_BUILD_SIGNAL_TRACK>::Do(DC_NONE, this->tile, this->end_tile, this->track, this->sigtype, this->sigvar, this->mode, this->autofill, this->minimise_gaps, this->signal_density)).Succeeded();
+}
+
+bool RemoveSignalTrack::DoPost() {
+    return ::Command<CMD_REMOVE_SIGNAL_TRACK>::Post(this->error, this->tile, this->end_tile, this->track, this->autofill);
+}
+bool RemoveSignalTrack::DoTest() {
+    return (::Command<CMD_REMOVE_SIGNAL_TRACK>::Do(DC_NONE, this->tile, this->end_tile, this->track, this->autofill)).Succeeded();
+}
+
+bool BuildLongRoad::DoPost() {
+    return ::Command<CMD_BUILD_LONG_ROAD>::Post(this->error, this->tile, this->start_tile, this->rt, this->axis, this->drd, this->start_half, this->end_half, this->is_ai);
+}
+bool BuildLongRoad::DoTest() {
+    return (::Command<CMD_BUILD_LONG_ROAD>::Do(DC_NONE, this->tile, this->start_tile, this->rt, this->axis, this->drd, this->start_half, this->end_half, this->is_ai)).Succeeded();
+}
+
+bool RemoveLongRoad::DoPost() {
+    return ::Command<CMD_REMOVE_LONG_ROAD>::Post(this->error, this->tile, this->start_tile, this->rt, this->axis, this->start_half, this->end_half);
+}
+bool RemoveLongRoad::DoTest() {
+    return std::get<0>(::Command<CMD_REMOVE_LONG_ROAD>::Do(DC_NONE, this->tile, this->start_tile, this->rt, this->axis, this->start_half, this->end_half)).Succeeded();
+}
+
+bool BuildRoad::DoPost() {
+    return ::Command<CMD_BUILD_ROAD>::Post(this->error, this->tile, this->pieces, this->rt, this->toggle_drd, this->town_id);
+}
+bool BuildRoad::DoTest() {
+    return (::Command<CMD_BUILD_ROAD>::Do(DC_NONE, this->tile, this->pieces, this->rt, this->toggle_drd, this->town_id)).Succeeded();
+}
+
+bool BuildRoadDepot::DoPost() {
+    return ::Command<CMD_BUILD_ROAD_DEPOT>::Post(this->error, this->tile, this->rt, this->dir);
+}
+bool BuildRoadDepot::DoTest() {
+    return (::Command<CMD_BUILD_ROAD_DEPOT>::Do(DC_NONE, this->tile, this->rt, this->dir)).Succeeded();
+}
+
+bool ConvertRoad::DoPost() {
+    return ::Command<CMD_CONVERT_ROAD>::Post(this->error, this->tile, this->area_start, this->to_type);
+}
+bool ConvertRoad::DoTest() {
+    return (::Command<CMD_CONVERT_ROAD>::Do(DC_NONE, this->tile, this->area_start, this->to_type)).Succeeded();
+}
+
+bool BuildAirport::DoPost() {
+    return ::Command<CMD_BUILD_AIRPORT>::Post(this->error, this->tile, this->airport_type, this->layout, this->station_to_join, this->allow_adjacent);
+}
+bool BuildAirport::DoTest() {
+    return (::Command<CMD_BUILD_AIRPORT>::Do(DC_NONE, this->tile, this->airport_type, this->layout, this->station_to_join, this->allow_adjacent)).Succeeded();
+}
+
+bool BuildDock::DoPost() {
+    return ::Command<CMD_BUILD_DOCK>::Post(this->error, this->tile, this->station_to_join, this->adjacent);
+}
+bool BuildDock::DoTest() {
+    return (::Command<CMD_BUILD_DOCK>::Do(DC_NONE, this->tile, this->station_to_join, this->adjacent)).Succeeded();
+}
+
+bool BuildRailStation::DoPost() {
+    return ::Command<CMD_BUILD_RAIL_STATION>::Post(this->error, this->tile, this->rt, this->axis, this->numtracks, this->plat_len, this->spec_class, this->spec_index, this->station_to_join, this->adjacent);
+}
+bool BuildRailStation::DoTest() {
+    return (::Command<CMD_BUILD_RAIL_STATION>::Do(DC_NONE, this->tile, this->rt, this->axis, this->numtracks, this->plat_len, this->spec_class, this->spec_index, this->station_to_join, this->adjacent)).Succeeded();
+}
+
+bool RemoveFromRailStation::DoPost() {
+    return ::Command<CMD_REMOVE_FROM_RAIL_STATION>::Post(this->error, this->tile, this->end, this->keep_rail);
+}
+bool RemoveFromRailStation::DoTest() {
+    return (::Command<CMD_REMOVE_FROM_RAIL_STATION>::Do(DC_NONE, this->tile, this->end, this->keep_rail)).Succeeded();
+}
+
+bool BuildRoadStop::DoPost() {
+    return ::Command<CMD_BUILD_ROAD_STOP>::Post(this->error, this->tile, this->width, this->length, this->stop_type, this->is_drive_through, this->ddir, this->rt, this->station_to_join, this->adjacent);
+}
+bool BuildRoadStop::DoTest() {
+    return (::Command<CMD_BUILD_ROAD_STOP>::Do(DC_NONE, this->tile, this->width, this->length, this->stop_type, this->is_drive_through, this->ddir, this->rt, this->station_to_join, this->adjacent)).Succeeded();
+}
+
+bool RemoveRoadStop::DoPost() {
+    return ::Command<CMD_REMOVE_ROAD_STOP>::Post(this->error, this->tile, this->width, this->height, this->stop_type, this->remove_road);
+}
+bool RemoveRoadStop::DoTest() {
+    return (::Command<CMD_REMOVE_ROAD_STOP>::Do(DC_NONE, this->tile, this->width, this->height, this->stop_type, this->remove_road)).Succeeded();
+}
+
+bool RenameStation::DoPost() {
+    return ::Command<CMD_RENAME_STATION>::Post(this->error, this->tile, this->station_id, this->text);
+}
+bool RenameStation::DoTest() {
+    return (::Command<CMD_RENAME_STATION>::Do(DC_NONE, this->station_id, this->text)).Succeeded();
+}
+
+bool OpenCloseAirport::DoPost() {
+    return ::Command<CMD_OPEN_CLOSE_AIRPORT>::Post(this->error, this->tile, this->station_id);
+}
+bool OpenCloseAirport::DoTest() {
+    return (::Command<CMD_OPEN_CLOSE_AIRPORT>::Do(DC_NONE, this->station_id)).Succeeded();
+}
 
 bool FoundTown::DoPost() {
     return ::Command<CMD_FOUND_TOWN>::Post(this->error, this->tile, this->size, this->city, this->layout, this->random_location, this->townnameparts, this->text);
+}
+bool FoundTown::DoTest() {
+    return std::get<0>(::Command<CMD_FOUND_TOWN>::Do(DC_NONE, this->tile, this->size, this->city, this->layout, this->random_location, this->townnameparts, this->text)).Succeeded();
 }
 
 bool RenameTown::DoPost() {
     return ::Command<CMD_RENAME_TOWN>::Post(this->error, this->tile, this->town_id, this->text);
 }
+bool RenameTown::DoTest() {
+    return (::Command<CMD_RENAME_TOWN>::Do(DC_NONE, this->town_id, this->text)).Succeeded();
+}
 
 bool DoTownAction::DoPost() {
     return ::Command<CMD_DO_TOWN_ACTION>::Post(this->error, this->tile, this->town_id, this->action);
+}
+bool DoTownAction::DoTest() {
+    return (::Command<CMD_DO_TOWN_ACTION>::Do(DC_NONE, this->town_id, this->action)).Succeeded();
 }
 
 bool TownGrowthRate::DoPost() {
     return ::Command<CMD_TOWN_GROWTH_RATE>::Post(this->error, this->tile, this->town_id, this->growth_rate);
 }
+bool TownGrowthRate::DoTest() {
+    return (::Command<CMD_TOWN_GROWTH_RATE>::Do(DC_NONE, this->town_id, this->growth_rate)).Succeeded();
+}
 
 bool TownRating::DoPost() {
     return ::Command<CMD_TOWN_RATING>::Post(this->error, this->tile, this->town_id, this->company_id, this->rating);
+}
+bool TownRating::DoTest() {
+    return (::Command<CMD_TOWN_RATING>::Do(DC_NONE, this->town_id, this->company_id, this->rating)).Succeeded();
 }
 
 bool TownCargoGoal::DoPost() {
     return ::Command<CMD_TOWN_CARGO_GOAL>::Post(this->error, this->tile, this->town_id, this->te, this->goal);
 }
+bool TownCargoGoal::DoTest() {
+    return (::Command<CMD_TOWN_CARGO_GOAL>::Do(DC_NONE, this->town_id, this->te, this->goal)).Succeeded();
+}
 
 bool TownSetText::DoPost() {
     return ::Command<CMD_TOWN_SET_TEXT>::Post(this->error, this->tile, this->town_id, this->text);
+}
+bool TownSetText::DoTest() {
+    return (::Command<CMD_TOWN_SET_TEXT>::Do(DC_NONE, this->town_id, this->text)).Succeeded();
 }
 
 bool ExpandTown::DoPost() {
     return ::Command<CMD_EXPAND_TOWN>::Post(this->error, this->tile, this->town_id, this->grow_amount);
 }
+bool ExpandTown::DoTest() {
+    return (::Command<CMD_EXPAND_TOWN>::Do(DC_NONE, this->town_id, this->grow_amount)).Succeeded();
+}
 
 bool DeleteTown::DoPost() {
     return ::Command<CMD_DELETE_TOWN>::Post(this->error, this->tile, this->town_id);
+}
+bool DeleteTown::DoTest() {
+    return (::Command<CMD_DELETE_TOWN>::Do(DC_NONE, this->town_id)).Succeeded();
+}
+
+bool BuildBridge::DoPost() {
+    return ::Command<CMD_BUILD_BRIDGE>::Post(this->error, this->tile, this->tile_start, this->transport_type, this->bridge_type, this->road_rail_type);
+}
+bool BuildBridge::DoTest() {
+    return (::Command<CMD_BUILD_BRIDGE>::Do(DC_NONE, this->tile, this->tile_start, this->transport_type, this->bridge_type, this->road_rail_type)).Succeeded();
+}
+
+bool BuildTunnel::DoPost() {
+    return ::Command<CMD_BUILD_TUNNEL>::Post(this->error, this->tile, this->transport_type, this->road_rail_type);
+}
+bool BuildTunnel::DoTest() {
+    return (::Command<CMD_BUILD_TUNNEL>::Do(DC_NONE, this->tile, this->transport_type, this->road_rail_type)).Succeeded();
 }
 
 }  // namespace cmd

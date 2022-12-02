@@ -17,6 +17,7 @@
 #include "../object_type.h"
 #include "../object_map.h"
 #include "../station_base.h"
+#include "../station_cmd.h"
 #include "../strings_func.h"  // GetString, SetDParam
 #include "../tilehighlight_type.h"
 #include "../town_map.h"
@@ -42,7 +43,7 @@ extern ViewportSignKdtree _viewport_sign_kdtree;
 extern AirportClassID _selected_airport_class;
 extern int _selected_airport_index;
 extern byte _selected_airport_layout;
-
+extern void CcBuildAirport(Commands cmd, const CommandCost &result, TileIndex tile);
 extern RailType _cur_railtype;  // rail_gui.cpp
 
 struct RailStationGUISettings {
@@ -148,13 +149,14 @@ void OnStationTileSetChange(const Station *station, bool adding, StationType typ
     if (station == _viewport_highlight_station) MarkCoverageAreaDirty(_viewport_highlight_station);
 }
 
-CommandContainer _last_station_bulid_cmd;
+// CommandContainer _last_station_bulid_cmd;
 
 void OnStationPartBuilt(const Station *station, TileIndex tile, uint32 p1, uint32 p2) {
     if (_current_company != _local_company) return;
-    if (tile != _last_station_bulid_cmd.tile ||
-        p1 != _last_station_bulid_cmd.p1 ||
-        p2 != _last_station_bulid_cmd.p2) return;
+    // FIXME
+    // if (tile != _last_station_bulid_cmd.tile ||
+    //     p1 != _last_station_bulid_cmd.p1 ||
+    //     p2 != _last_station_bulid_cmd.p2) return;
     _station_to_join = station;
     CheckRedrawStationCoverage();
 }
@@ -212,7 +214,7 @@ void JoinAndBuild(JoinAndBuildCmdProc proc) {
     if (citymania::_fn_mod) to_join = NEW_STATION;
     else if (join_to) to_join = join_to->index;
 
-    FIXME _last_station_bulid_cmd = cmdcont;
+    //FIXME _last_station_bulid_cmd = cmdcont;
     proc(false, to_join, adjacent);
 }
 
@@ -354,8 +356,9 @@ void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, uint32 c
     }
     p2 |= ddir << 3; // Set the DiagDirecion into p2 bits 3 and 4.
 
-    CommandContainer cmdcont = { ta.tile, (uint32)(ta.w | ta.h << 8), p2, cmd, CcRoadStop, "" };
-    JoinAndBuild(cmdcont);
+    // FIXME
+    // CommandContainer cmdcont = { ta.tile, (uint32)(ta.w | ta.h << 8), p2, cmd, CcRoadStop, "" };
+    // JoinAndBuild(cmdcont);
 }
 
 void HandleStationPlacement(TileIndex start, TileIndex end)
@@ -371,8 +374,9 @@ void HandleStationPlacement(TileIndex start, TileIndex end)
     uint32 p1 = _cur_railtype | _railstation.orientation << 6 | numtracks << 8 | platlength << 16 | (citymania::_fn_mod ? 1 << 24 : 0);
     uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 
-    CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
-    JoinAndBuild(cmdcont);
+    // FIXME
+    // CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
+    // JoinAndBuild(cmdcont);
 }
 
 void PlaceRail_Station(TileIndex tile) {
@@ -385,8 +389,9 @@ void PlaceRail_Station(TileIndex tile) {
     int h = _settings_client.gui.station_platlength;
     if (!_railstation.orientation) Swap(w, h);
 
-    CommandContainer cmdcont = { tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
-    JoinAndBuild(cmdcont);
+    // FIXME
+    // CommandContainer cmdcont = { tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
+    // JoinAndBuild(cmdcont);
 }
 
 void PlaceDock(TileIndex tile) {
@@ -395,17 +400,18 @@ void PlaceDock(TileIndex tile) {
     uint32 p2 = (uint32)INVALID_STATION << 16; // no station to join
 
     /* tile is always the land tile, so need to evaluate _thd.pos */
-    CommandContainer cmdcont = { tile, citymania::_fn_mod, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
+    // CommandContainer cmdcont = { tile, citymania::_fn_mod, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
 
     /* Determine the watery part of the dock. */
     // DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
     // TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(dir)) : tile);
 
-    JoinAndBuild(cmdcont);
+    // FIXME
+    // JoinAndBuild(cmdcont);
 }
 
 void PlaceAirport(TileIndex tile) {
-    FIXME
+    // FIXME
     if (CheckStationJoin(tile, tile)) return;
 
     if (_selected_airport_index == -1) return;
@@ -421,7 +427,7 @@ void PlaceAirport(TileIndex tile) {
         }
     };
 
-    JoinAndBuild(cmdcont);
+    // FIXME JoinAndBuild(cmdcont);
 }
 
 static void FindStationsAroundSelection(const TileArea &location)
@@ -605,7 +611,7 @@ CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
 }
 
 std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int rad, StationCoverageType sct) {
-    auto production = GetProductionAroundTiles(tile, w, h, rad);
+    auto production = citymania::GetProductionAroundTiles(tile, w, h, rad);
 
     std::ostringstream s;
     char buffer[DRAW_STRING_BUFFER];

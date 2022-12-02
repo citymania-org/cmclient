@@ -9,6 +9,7 @@
 #include "../debug.h"
 #include "../direction_type.h"
 #include "../rail_map.h"
+#include "../station_cmd.h"
 #include "../station_map.h"
 #include "../station_base.h"
 #include "../tilearea_type.h"
@@ -20,6 +21,17 @@
 extern TileHighlightData _thd;
 extern RailType _cur_railtype;
 extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
+
+// from rail_gui.cpp
+struct RailStationGUISettings {
+    Axis orientation;                 ///< Currently selected rail station orientation
+
+    bool newstations;                 ///< Are custom station definitions available?
+    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
+    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
+    byte station_count;               ///< Number of custom stations (if newstations is \c true )
+};
+extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
 namespace citymania {
 
@@ -92,7 +104,7 @@ void Blueprint::Add(TileIndex source_tile, Blueprint::Item item) {
     }
 }
 
-CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &item) {
+up<Command> GetBlueprintCommand(TileIndex start, const Blueprint::Item &item) {
     static const Track SIGNAL_POS_TRACK[] = {
         TRACK_LEFT, TRACK_LEFT, TRACK_RIGHT, TRACK_RIGHT,
         TRACK_UPPER, TRACK_UPPER, TRACK_LOWER, TRACK_LOWER,
@@ -116,71 +128,76 @@ CommandContainer GetBlueprintCommand(TileIndex start, const Blueprint::Item &ite
                 end_tile = new_tile;
                 tdir = NextTrackdir(tdir);
             }
-            return CommandContainer {
-                start_tile,
+            return make_up<cmd::BuildRailroadTrack>(
                 end_tile,
-                (uint32)(_cur_railtype) | ((uint32)TrackdirToTrack(item.u.rail.track.start_dir) << 6),
-                CMD_BUILD_RAILROAD_TRACK,
-                nullptr, ""
-            };
+                start_tile,
+                _cur_railtype,
+                TrackdirToTrack(item.u.rail.track.start_dir),
+                true,  // auto_remove_signals
+                false  // fail_on_obastacle
+            );
         }
         case Blueprint::Item::Type::RAIL_DEPOT:
-            return CommandContainer {
+            return make_up<cmd::BuildTrainDepot>(
                 AddTileIndexDiffCWrap(start, item.tdiff),
                 _cur_railtype,
-                item.u.rail.depot.ddir,
-                CMD_BUILD_TRAIN_DEPOT,
-                nullptr, ""
-            };
+                item.u.rail.depot.ddir
+            );
         case Blueprint::Item::Type::RAIL_TUNNEL:
             // TODO check that other end is where it should be
-            return CommandContainer {
+            return make_up<cmd::BuildTunnel>(
                 AddTileIndexDiffCWrap(start, item.tdiff),
-                (uint32)_cur_railtype | ((uint32)TRANSPORT_RAIL << 8),
-                0,
-                CMD_BUILD_TUNNEL,
-                nullptr, ""
-            };
+                TRANSPORT_RAIL,
+                _cur_railtype
+            );
         case Blueprint::Item::Type::RAIL_BRIDGE:
-            return CommandContainer {
+            return make_up<cmd::BuildBridge>(
                 AddTileIndexDiffCWrap(start, item.u.rail.bridge.other_end),
                 AddTileIndexDiffCWrap(start, item.tdiff),
-                item.u.rail.bridge.type | (_cur_railtype << 8) | (TRANSPORT_RAIL << 15),
-                CMD_BUILD_BRIDGE,
-                nullptr, ""
-            };
+                TRANSPORT_RAIL,
+                item.u.rail.bridge.type,
+                _cur_railtype
+            );
         case Blueprint::Item::Type::RAIL_STATION_PART:
-            return CommandContainer {
+            return make_up<cmd::BuildRailStation>(
                 AddTileIndexDiffCWrap(start, item.tdiff),
-                (uint32)_cur_railtype
-                    | ((uint32)item.u.rail.station_part.axis << 6)
-                    | ((uint32)item.u.rail.station_part.numtracks << 8)
-                    | ((uint32)item.u.rail.station_part.plat_len << 16),
-                (uint32)NEW_STATION << 16,
-                CMD_BUILD_RAIL_STATION,
-                nullptr, ""
-            };
+                _cur_railtype,
+                item.u.rail.station_part.axis,
+                item.u.rail.station_part.numtracks,
+                item.u.rail.station_part.plat_len,
+                _railstation.station_class,
+                _railstation.station_type,
+                NEW_STATION,
+                true
+            );
         case Blueprint::Item::Type::RAIL_STATION:
             // TODO station types
-            return CommandContainer {
+            return make_up<cmd::BuildRailStation>(
                 AddTileIndexDiffCWrap(start, item.tdiff),
-                (uint32)_cur_railtype | ((uint32)1 << 8) | ((uint32)1 << 16) | ((uint32)1 << 24),
-                (uint32)NEW_STATION << 16,
-                CMD_BUILD_RAIL_STATION,
-                nullptr, ""
-            };
+                _cur_railtype,
+                AXIS_X,
+                1,
+                1,
+                _railstation.station_class,
+                _railstation.station_type,
+                NEW_STATION,
+                true
+            );
         case Blueprint::Item::Type::RAIL_SIGNAL:
-            return CommandContainer {
+            return make_up<cmd::BuildSingleSignal>(
                 AddTileIndexDiffCWrap(start, item.tdiff),
-                SIGNAL_POS_TRACK[item.u.rail.signal.pos]
-                    | (item.u.rail.signal.variant << 4)
-                    | (item.u.rail.signal.type << 5)
-                    | (SIGNAL_POS_NUM[item.u.rail.signal.pos] + (item.u.rail.signal.type <= SIGTYPE_LAST_NOPBS && !item.u.rail.signal.twoway ? 1 : 0)) << 15
-                    | 1 << 17,
-                0,
-                CMD_BUILD_SIGNALS,
-                nullptr, ""
-            };
+                SIGNAL_POS_TRACK[item.u.rail.signal.pos],
+                item.u.rail.signal.type,
+                item.u.rail.signal.variant,
+                false,  // convert_signal
+                true,  // skip_existing_signals
+                false,  // ctrl_pressed
+                SIGTYPE_NORMAL,  // cycle_start
+                SIGTYPE_NORMAL,  // cycle_stop
+                SIGNAL_POS_NUM[item.u.rail.signal.pos] +
+                    (item.u.rail.signal.type <= SIGTYPE_LAST_NOPBS && !item.u.rail.signal.twoway ? 1 : 0),
+                false  // signals_copy
+            );
         default:
             NOT_REACHED();
     }
@@ -198,14 +215,14 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
     std::set<StationID> can_build_station_sign;
     for (auto &item: this->items) {
         if (item.type != Item::Type::RAIL_STATION) continue;
-        if (CanBuild(GetBlueprintCommand(tile, item)))
+        if (GetBlueprintCommand(tile, item)->Test())
             can_build_station_sign.insert(item.u.rail.station.id);
     }
 
     for (auto &o: this->items) {
         auto otile = AddTileIndexDiffCWrap(tile, o.tdiff);
         auto palette = CM_PALETTE_TINT_WHITE;
-        if (o.type != Item::Type::RAIL_SIGNAL && !CanBuild(GetBlueprintCommand(tile, o)))
+        if (o.type != Item::Type::RAIL_SIGNAL && !GetBlueprintCommand(tile, o)->Test())
             palette = CM_PALETTE_TINT_RED_DEEP;
 
         switch(o.type) {
@@ -575,7 +592,7 @@ void SetBlueprintHighlight(const TileInfo *ti, TileHighlight &th) {
 }
 
 void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
-    CommandContainer last_rail = {INVALID_TILE, 0, 0, CMD_END, nullptr, ""};
+    up<Command> last_rail = nullptr;
     for (auto &item : blueprint->items) {
         switch (item.type) {
             case Blueprint::Item::Type::RAIL_TRACK:
@@ -583,15 +600,16 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
             case Blueprint::Item::Type::RAIL_TUNNEL:
             case Blueprint::Item::Type::RAIL_BRIDGE: {
                 auto cc = GetBlueprintCommand(start, item);
-                if (item.type == Blueprint::Item::Type::RAIL_TRACK) last_rail = cc;
-                DoCommandP(&cc);
+                cc->Post();
+                if (item.type == Blueprint::Item::Type::RAIL_TRACK) last_rail = std::move(cc);
                 break;
             }
             case Blueprint::Item::Type::RAIL_STATION: {
                 // TODO station types
                 TileIndex tile = AddTileIndexDiffCWrap(start, item.tdiff);
                 auto cc = GetBlueprintCommand(start, item);
-                DoCommandWithCallback(cc,
+                // FIXME
+                /* DoCommandWithCallback(cc,
                     [blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res)->bool {
                         if (!res) return false;
                         StationID station_id = GetStationIndex(tile);
@@ -599,12 +617,12 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
                             if (item.type != Blueprint::Item::Type::RAIL_STATION_PART) continue;
                             if (item.u.rail.station_part.id != sid) continue;
                             auto cc = GetBlueprintCommand(start, item);
-                            DoCommandP(cc.tile, cc.p1 | (1 << 24), station_id << 16, cc.cmd);
+                            // FIXME DoCommandP(cc.tile, cc.p1 | (1 << 24), station_id << 16, cc.cmd);
                         }
-                        if (!sign_part) DoCommandP(tile, 0, 0, CMD_REMOVE_FROM_RAIL_STATION);
+                        if (!sign_part) ::Command<CMD_REMOVE_FROM_RAIL_STATION>::Post(tile, 0, false);
                         return true;
                     }
-                );
+                );*/
                 break;
             }
             default:
@@ -616,12 +634,12 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
         for (auto &item : blueprint->items) {
             if (item.type != Blueprint::Item::Type::RAIL_SIGNAL) continue;
             auto cc = GetBlueprintCommand(start, item);
-            DoCommandP(&cc);
+            cc->Post();
         }
         return true;
     };
-    if (last_rail.cmd != CMD_END) {  // there can't be any signals if there are no rails
-        AddCommandCallback(last_rail.tile, last_rail.p1, last_rail.p2, last_rail.cmd, "", signal_callback);
+    if (last_rail != nullptr) {  // there can't be any signals if there are no rails
+// FIXME        AddCommandCallback(last_rail.tile, last_rail.p1, last_rail.p2, last_rail.cmd, "", signal_callback);
     }
 }
 

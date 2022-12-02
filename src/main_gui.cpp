@@ -48,6 +48,8 @@
 #include "table/strings.h"
 #include "debug.h"
 
+#include "citymania/cm_commands.hpp"
+
 #include "safeguards.h"
 
 /**

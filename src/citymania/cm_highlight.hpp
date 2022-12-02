@@ -72,9 +72,6 @@ DECLARE_ENUM_AS_BIT_SET(ZoningBorder);
 //     SMALL = 3,
 // };
 
-bool CanBuild(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd);
-bool CanBuild(const CommandContainer &cc);
-
 TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type);
 void DrawTileZoning(const TileInfo *ti, const TileHighlight &th, TileType tile_type);
 bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht);

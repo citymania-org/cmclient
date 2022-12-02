@@ -3198,7 +3198,7 @@ CommandCost CmdTownGrowthRate(DoCommandFlag flags, TownID town_id, uint16 growth
 		}
 		UpdateTownGrowth(t);
 		InvalidateWindowData(WC_TOWN_VIEW, town_id);
-		InvalidateWindowData(WC_CB_TOWN, p1);
+		InvalidateWindowData(WC_CB_TOWN, town_id);
 	}
 
 	return CommandCost();

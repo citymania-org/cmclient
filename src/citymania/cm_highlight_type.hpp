@@ -71,7 +71,7 @@ public:
             } signal;
             struct {
                 DiagDirection ddir;
-                TileIndexWrapper other_end;
+                uint32 other_end;
                 BridgeType type;
             } bridge_head;
             struct {

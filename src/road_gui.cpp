@@ -9,7 +9,6 @@
 
 #include "stdafx.h"
 #include "gui.h"
-#include "cmd_helper.h"
 #include "window_gui.h"
 #include "station_func.h"
 #include "station_gui.h"
@@ -171,7 +170,8 @@ void CcRoadStop(Commands cmd, const CommandCost &result, TileIndex tile, uint8 w
 static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg)
 {
 	if (citymania::UseImprovedStationJoin()) {
-		citymania::PlaceRoadStop(start_tile, end_tile, p2, cmd);
+		// FIXME
+//		citymania::PlaceRoadStop(start_tile, end_tile, stop_type, adjacent, rt, err_msg);
 		return;
 	}
 

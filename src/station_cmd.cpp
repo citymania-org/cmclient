@@ -1464,7 +1464,7 @@ CommandCost CmdBuildRailStation(DoCommandFlag flags, TileIndex tile_org, RailTyp
 
 		st->MarkTilesDirty(false);
 		st->AfterStationTileSetChange(true, STATION_RAIL);
-		citymania::OnStationPartBuilt(st, tile_org, p1, p2);
+		// FIXME citymania::OnStationPartBuilt(st, tile_org, p1, p2);
 	}
 
 	return cost;
@@ -1932,7 +1932,7 @@ CommandCost CmdBuildRoadStop(DoCommandFlag flags, TileIndex tile, uint8 width, u
 		}
 		
 		if (st != nullptr) {
-			FIXME citymania::OnStationPartBuilt(st, tile, p1, p2);
+			// FIXME citymania::OnStationPartBuilt(st, tile, p1, p2);
 			st->AfterStationTileSetChange(true, is_truck_stop ? STATION_TRUCK: STATION_BUS);
 		}
 	}
@@ -2328,7 +2328,7 @@ CommandCost CmdBuildAirport(DoCommandFlag flags, TileIndex tile, byte airport_ty
 		Company::Get(st->owner)->infrastructure.airport++;
 
 		st->AfterStationTileSetChange(true, STATION_AIRPORT);
-		citymania::OnStationPartBuilt(st, tile, p1, p2);
+		// FIXME citymania::OnStationPartBuilt(st, tile, p1, p2);
 		InvalidateWindowData(WC_STATION_VIEW, st->index, -1);
 
 		if (_settings_game.economy.station_noise_level) {
@@ -2558,7 +2558,7 @@ CommandCost CmdBuildDock(DoCommandFlag flags, TileIndex tile, StationID station_
 		UpdateStationDockingTiles(st);
 
 		st->AfterStationTileSetChange(true, STATION_DOCK);
-		citymania::OnStationPartBuilt(st, tile, p1, p2);
+		// FIXME citymania::OnStationPartBuilt(st, tile, p1, p2);
 	}
 
 	return cost;

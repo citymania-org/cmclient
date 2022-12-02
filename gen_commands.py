@@ -3,6 +3,7 @@ from pathlib import Path
 from pprint import pprint
 
 RX_COMMAND = re.compile(r'(?P<returns>CommandCost|std::tuple<CommandCost, [^>]*>) (?P<name>Cmd\w*)\((?P<args>[^)]*)\);')
+RX_DEF_TRAIT = re.compile(r'DEF_CMD_TRAIT\((?P<constant>\w+),\s+(?P<function>\w+),\s+[^,]*,\s+(?P<category>\w+)\)')
 RX_ARG = re.compile(r'(?P<type>(:?const |)[\w:]* &?)(?P<name>\w*)')
 RX_CAMEL_TO_SNAKE = re.compile(r'(?<!^)(?=[A-Z])')
 
@@ -10,7 +11,11 @@ FILES = [
     'src/misc_cmd.h',
     'src/object_cmd.h',
     'src/order_cmd.h',
+    'src/rail_cmd.h',
+    'src/road_cmd.h',
+    'src/station_cmd.h',
     'src/town_cmd.h',
+    'src/tunnelbridge_cmd.h',
 ]
 
 BASE_DIR = Path(__file__).parent
@@ -20,17 +25,28 @@ OUTPUT = BASE_DIR / 'src/citymania/generated/cm_gen_commands'
 def parse_commands():
     res = []
     for f in FILES:
-        for returns, name, args_str in RX_COMMAND.findall(open(BASE_DIR / f).read()):
+        data = open(BASE_DIR / f).read()
+        traits = {}
+        for constant, name, category in RX_DEF_TRAIT.findall(data):
+            traits[name] = constant
+        for returns, name, args_str in RX_COMMAND.findall(data):
             if returns.startswith('std::tuple'):
                 ret_type = returns[24: -1]
             else:
                 ret_type = None
             args = [RX_ARG.fullmatch(x).group('type', 'name') for x in args_str.split(', ')]
-            args = args[1:]
-            if args[0][0].strip() == 'TileIndex':
+            args = args[1:]  # flags
+            first_tile_arg = (args[0][0].strip() == 'TileIndex')
+            if first_tile_arg:
                 args = args[1:]
-            print(name, args)
-            res.append((ret_type, name[3:], args))
+            print(name, traits[name], args)
+            res.append({
+                'name': name[3:],
+                'constant': traits[name],
+                'args': args,
+                'first_tile_arg': first_tile_arg,
+                'returns': ret_type,
+            })
     return res
 
 
@@ -45,22 +61,31 @@ def run():
             'namespace citymania {\n'
             'namespace cmd {\n\n'
         )
-        for rt, name, args in commands:
-            args_list = ', '.join(f'{at} {an}' for at, an in args)
-            args_init = ', '.join(f'{an}{{{an}}}' for _, an in args)
+        for cmd in commands:
+            name = cmd['name']
+            args_list = ', '.join(f'{at}{an}' for at, an in cmd['args'])
+            args_init = ', '.join(f'{an}{{{an}}}' for _, an in cmd['args'])
             f.write(
                 f'class {name}: public Command {{\n'
                 f'public:\n'
             )
-            for at, an in args:
+            for at, an in cmd['args']:
                 f.write(f'    {at}{an};\n')
             f.write(
                 f'\n'
                 f'    {name}({args_list})\n'
                 f'        :{args_init} {{}}\n'
+            )
+            if cmd.get('first_tile_arg'):
+                f.write(
+                    f'    {name}(TileIndex tile, {args_list})\n'
+                    f'        :Command{{tile}}, {args_init} {{}}\n'
+                )
+            f.write(
                 f'    ~{name}() override {{}}\n'
                 f'\n'
                 f'    bool DoPost() override;\n'
+                f'    bool DoTest() override;\n'
                 f'}};\n\n'
             )
         f.write(
@@ -81,12 +106,25 @@ def run():
             'namespace citymania {\n'
             'namespace cmd {\n\n'
         )
-        for rt, name, args in commands:
-            constant = 'CMD_' + RX_CAMEL_TO_SNAKE.sub('_', name).upper()
-            args_list = ', '.join(f'this->{an}' for _, an in args)
+        for cmd in commands:
+            name = cmd['name']
+            constant = cmd['constant']
+            # constant = 'CMD_' + RX_CAMEL_TO_SNAKE.sub('_', name).upper()
+            args_list = ', '.join(f'this->{an}' for _, an in cmd['args'])
+            test_args_list = args_list
+            if cmd.get('first_tile_arg'):
+                test_args_list = f'this->tile, ' + args_list
+
+            cost_getter = '' if cmd['returns'] is None else 'std::get<0>'
+
             f.write(
                 f'bool {name}::DoPost() {{\n'
                 f'    return ::Command<{constant}>::Post(this->error, this->tile, {args_list});\n'
+                '}\n'
+            )
+            f.write(
+                f'bool {name}::DoTest() {{\n'
+                f'    return {cost_getter}(::Command<{constant}>::Do(DC_NONE, {test_args_list})).Succeeded();\n'
                 '}\n'
             )
             f.write('\n')

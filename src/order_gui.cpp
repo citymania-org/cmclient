@@ -1570,18 +1570,20 @@ public:
 	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		if (this->goto_type == OPOS_GOTO) {
-			const Order cmd = GetOrderCmdFromTile(this->vehicle, tile);
+			auto res = GetOrderCmdFromTile(this->vehicle, tile);
+			const Order cmd = res.first;
+			auto feeder_mod = res.second;
 			if (cmd.IsType(OT_NOTHING)) return;
 
 			if (feeder_mod != FeederOrderMod::NONE) {
 				if (feeder_mod == FeederOrderMod::LOAD) {
 					if (Command<CMD_INSERT_ORDER>::Post(STR_ERROR_CAN_T_INSERT_NEW_ORDER, this->vehicle->tile, this->vehicle->index, 1, cmd)) {
-						Command<CMD_DELETE_ORDER>::Post(STR_ERROR_CAN_T_DELETE_THIS_ORDER, this->vehicle->tile, this->vehicle->index, 0)
+						Command<CMD_DELETE_ORDER>::Post(STR_ERROR_CAN_T_DELETE_THIS_ORDER, this->vehicle->tile, this->vehicle->index, 0);
 					}
 
 				} else if (feeder_mod == FeederOrderMod::UNLOAD) { // still flushes the whole order table
 					if (Command<CMD_INSERT_ORDER>::Post(STR_ERROR_CAN_T_INSERT_NEW_ORDER, this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders(), cmd)) {
-						Command<CMD_DELETE_ORDER>::Post(STR_ERROR_CAN_T_DELETE_THIS_ORDER, this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders() + (int)_networking - 2)
+						Command<CMD_DELETE_ORDER>::Post(STR_ERROR_CAN_T_DELETE_THIS_ORDER, this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders() + (int)_networking - 2);
 					}
 				}
 			} else if (Command<CMD_INSERT_ORDER>::Post(STR_ERROR_CAN_T_INSERT_NEW_ORDER, this->vehicle->tile, this->vehicle->index, this->OrderGetSel(), cmd)) {

@@ -279,11 +279,11 @@ void CommandHelperBase::InternalPostResult(const CommandCost &res, TileIndex til
 		ShowCostOrIncomeAnimation(x, y, GetSlopePixelZ(x, y), res.GetCost());
 	}
 
-	FIXME mode to callback
+	/*	FIXME mode to callback
 	if (!estimate_only && !only_sending)
 		citymania::HandleCommandExecution(res.Succeeded(), tile, p1, p2, cmd, text);
-
 	return res.Succeeded();
+	*/
 }
 
 /** Helper to make a desync log for a command. */

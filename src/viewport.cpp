@@ -3642,7 +3642,7 @@ calc_heightdiff_single_direction:;
 			FALLTHROUGH;
 
 		case VPM_X_AND_Y: // drag an X by Y area
-			if (_settings_client.gui.measure_tooltip || _thd.select_proc == DDSP_MEASURE) {
+			if (_settings_client.gui.measure_tooltip || _thd.select_proc == CM_DDSP_MEASURE) {
 				static const StringID measure_strings_area[] = {
 					STR_NULL, STR_NULL, STR_MEASURE_AREA, STR_MEASURE_AREA_HEIGHTDIFF,
 					STR_MEASURE_DIST_HEIGHTDIFF,
@@ -3701,7 +3701,7 @@ calc_heightdiff_single_direction:;
 					params[index++] = dx - (style & HT_POINT ? 1 : 0);
 					params[index++] = dy - (style & HT_POINT ? 1 : 0);
 
-					if (_thd.select_proc == DDSP_MEASURE) {
+					if (_thd.select_proc == CM_DDSP_MEASURE) {
 						params[index++] = sqrtl(dx * dx + dy * dy);
 					}
 

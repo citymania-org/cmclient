@@ -2,6 +2,7 @@
 
 #include "cm_misc_gui.hpp"
 
+#include "../landscape_cmd.h"
 #include "../command_func.h"
 #include "../company_base.h"
 #include "../debug.h"
@@ -189,7 +190,7 @@ public:
         Company *c = Company::GetIfValid(_local_company);
         if (c != nullptr) {
             assert(_current_company == _local_company);
-            CommandCost costclear = DoCommand(tile, 0, 0, DC_QUERY_COST, CMD_LANDSCAPE_CLEAR);
+            CommandCost costclear = ::Command<CMD_LANDSCAPE_CLEAR>::Do(DC_QUERY_COST, tile);
             if (costclear.Succeeded()) {
                 Money cost = costclear.GetCost();
                 if (cost < 0) {

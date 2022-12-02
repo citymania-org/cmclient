@@ -71,7 +71,7 @@ void CcBuildBridge(Commands cmd, const CommandCost &result, TileIndex end_tile, 
 		ConnectRoadToStructure(tile_start, start_direction);
 	}
 
-	StoreRailPlacementEndpoints(p1, end_tile, (TileX(p1) == TileX(end_tile)) ? TRACK_Y : TRACK_X, false);
+	StoreRailPlacementEndpoints(tile_start, end_tile, (TileX(tile_start) == TileX(end_tile)) ? TRACK_Y : TRACK_X, false);
 }
 
 /** Window class for handling the bridge-build GUI. */

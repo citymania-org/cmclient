@@ -26,7 +26,7 @@ void hash_combine(std::size_t& seed, const T& v, const Rest&... rest)
 
 size_t GetCommandHash(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, const std::string &text) {
     size_t res = 0;
-    hash_combine(res, tile, p1, p2, cmd, text);
+    // hash_combine(res, tile, p1, p2, cmd, text);
     return res;
 }
 /*
@@ -58,13 +58,14 @@ bool DoCommandWithCallback(const CommandContainer &cc, CommandCallback callback)
 }
 */
 void HandleCommandExecution(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, const std::string &text) {
+    /* FIXME
     auto hash = GetCommandHash(tile, p1, p2, cmd & CMD_ID_MASK, text);
     auto p = _command_callbacks.find(hash);
     // fprintf(stderr, "EXECUTED %lu (%u %u %u %u %s) %u\n", hash, tile, p1, p2, (uint)(cmd & CMD_ID_MASK), text.c_str(), (int)(p == _command_callbacks.end()));
     if (p == _command_callbacks.end()) return;
     for (auto &cb : p->second.second)
         cb(res);
-    _command_callbacks.erase(p);
+    _command_callbacks.erase(p); */
 }
 
 void ClearOldCallbacks() {
@@ -117,25 +118,5 @@ void HandleNextClientFrame() {
     }
     _outgoing_queue.push(*cp);
 }*/
-
-
-namespace cmd {
-
-bool Pause::Post(bool automati) {
-    return ::Command<CMD_PAUSE>::Post(this->mode, this->pause);
-}
-
-bool DoTownAction::Post(bool automatic) {
-    return ::Command<CMD_DO_TOWN_ACTION>::Post(this->town_id, this->town_action);
-}
-
-bool SkipToOrder::Post(bool automatic) {
-    return ::Command<CMD_SKIP_TO_ORDER>::Post(
-        this->veh_id, this->sel_ord
-        _ctrl_pressed ? STR_ERROR_CAN_T_SKIP_TO_ORDER : STR_ERROR_CAN_T_SKIP_ORDER,
-                this->vehicle->tile, this->vehicle->index, citymania::_fn_mod ? this->OrderGetSel() : ((this->vehicle->cur_implicit_order_index + 1) % this->vehicle->GetNumOrders()));
-}
-
-}  // namespace cmd
 
 }  // namespace citymania

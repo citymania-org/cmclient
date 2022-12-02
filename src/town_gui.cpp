@@ -45,6 +45,7 @@
 #include <list>
 #include "console_func.h"
 
+#include "citymania/cm_commands.hpp"
 #include "citymania/cm_hotkeys.hpp"
 /* CityMania end */
 
