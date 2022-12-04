@@ -11,7 +11,7 @@
 #include "../strings_type.h"
 #include "../table/palettes.h"
 #include "../table/sprites.h"
-#include "../table/train_cmd.h"
+#include "../table/train_sprites.h"
 
 #include <iostream>
 #include <fstream>
