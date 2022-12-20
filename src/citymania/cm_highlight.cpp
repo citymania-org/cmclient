@@ -329,7 +329,7 @@ void ObjectHighlight::UpdateTiles() {
                 this->tile,
                 _cur_railtype,
                 dir
-            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             this->tiles.insert(std::make_pair(this->tile, ObjectTileHighlight::make_rail_depot(palette, dir)));
             auto tile = this->tile + TileOffsByDiagDir(dir);
@@ -356,7 +356,7 @@ void ObjectHighlight::UpdateTiles() {
                 _railstation.station_type,
                 NEW_STATION,
                 true
-            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             auto layout_ptr = AllocaM(byte, (int)numtracks * plat_len);
             GetStationLayout(layout_ptr, numtracks, plat_len, nullptr); // TODO statspec
@@ -388,7 +388,7 @@ void ObjectHighlight::UpdateTiles() {
                 this->roadtype,
                 NEW_STATION,
                 true
-            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
             for (TileIndex tile : ta) {
                 this->AddTile(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck));
             }
@@ -400,7 +400,7 @@ void ObjectHighlight::UpdateTiles() {
                 this->tile,
                 this->roadtype,
                 this->ddir
-            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
             this->AddTile(this->tile, ObjectTileHighlight::make_road_depot(palette, this->roadtype, this->ddir));
             break;
         }
@@ -412,7 +412,7 @@ void ObjectHighlight::UpdateTiles() {
                 this->airport_layout,
                 NEW_STATION,
                 true
-            ).Test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             const AirportSpec *as = AirportSpec::Get(this->airport_type);
             if (!as->IsAvailable() || this->airport_layout >= as->num_table) break;

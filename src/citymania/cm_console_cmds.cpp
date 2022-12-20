@@ -55,7 +55,7 @@ bool ConStep(byte argc, char *argv[]) {
     auto n = (argc > 1 ? atoi(argv[1]) : 1);
 
     // FIXME (n << 1)
-    cmd::Pause(PM_PAUSED_NORMAL, 0).Post();
+    cmd::Pause(PM_PAUSED_NORMAL, 0).post();
 
     return true;
 }

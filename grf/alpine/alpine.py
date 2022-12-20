@@ -7,6 +7,8 @@ gen = grf.NewGRF(
     grfid=b'CMAL',
     name='CityMania Alpine Landscape',
     description='Modified OpenGFX sprites for alpine climate.',
+    version=2,
+    min_compatible_version=0,
 )
 
 
@@ -352,8 +354,9 @@ for i in range(81):
     gen.add(layout := grf.AdvancedSpriteLayout(
         feature=grf.OBJECT,
         ground={
-            'sprite': grf.SpriteRef(4550, is_global=True),
+            'sprite': grf.SpriteRef(0, is_global=True),
             'flags': 2,
+            'add': grf.Temp(1),
         },
         buildings=[{
             'sprite': grf.SpriteRef(i, is_global=False),
@@ -363,7 +366,6 @@ for i in range(81):
     ))
 
     gen.add(layout_switch := grf.Switch(
-        feature=grf.OBJECT,
         ranges={0: layout},
         default=layout,
         code=f'''

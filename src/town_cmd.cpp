@@ -920,10 +920,10 @@ static void DoRegularFunding(Town *t)
 	} else if (_tick_counter - t->last_funding < TOWN_GROWTH_TICKS) return;
 
 	citymania::cmd::DoTownAction(t->index, HK_FUND)
-		.WithTile(t->xy)
-		.SetAuto()
-		.AsCompany(_local_company)
-		.Post();
+		.with_tile(t->xy)
+		.set_auto()
+		.as_company(_local_company)
+		.post();
 	t->last_funding = _tick_counter;
 }
 
@@ -957,10 +957,10 @@ static void DoRegularAdvertising(Town *t) {
 	t->last_advertisement = _tick_counter;
 
 	citymania::cmd::DoTownAction(t->index, HK_LADVERT)
-		.WithTile(t->xy)
-		.SetAuto()
-		.AsCompany(_local_company)
-		.Post();
+		.with_tile(t->xy)
+		.set_auto()
+		.as_company(_local_company)
+		.post();
 }
 
 static void TownTickHandler(Town *t)

@@ -217,6 +217,11 @@ struct BuildDocksToolbarWindow : Window {
 				DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
 				TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(dir)) : tile);
 
+				if (citymania::UseImprovedStationJoin()) {
+					citymania::PlaceDock(tile, tile_to);
+					break;
+				}
+
 				bool adjacent = _ctrl_pressed;
 				auto proc = [=](bool test, StationID to_join) -> bool {
 					if (test) {

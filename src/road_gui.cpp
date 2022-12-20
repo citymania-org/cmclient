@@ -170,8 +170,7 @@ void CcRoadStop(Commands cmd, const CommandCost &result, TileIndex tile, uint8 w
 static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg)
 {
 	if (citymania::UseImprovedStationJoin()) {
-		// FIXME
-//		citymania::PlaceRoadStop(start_tile, end_tile, stop_type, adjacent, rt, err_msg);
+		citymania::PlaceRoadStop(start_tile, end_tile, stop_type, adjacent, rt, err_msg);
 		return;
 	}
 

@@ -2170,9 +2170,9 @@ struct MainToolbarWindow : Window {
 
 			case CM_CBF_BUILD_HQ:
 				if(citymania::cmd::BuildObject(OBJECT_HQ, 0)
-					   	.WithTile(tile)
-					   	.WithError(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS)
-					   	.Post()) {
+					   	.with_tile(tile)
+					   	.with_error(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS)
+					   	.post()) {
 					ResetObjectToPlace();
 					this->RaiseButtons();
 				}

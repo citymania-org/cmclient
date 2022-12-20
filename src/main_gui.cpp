@@ -375,8 +375,8 @@ struct MainWindow : Window
 
 			case GHK_BORROW_ALL:
 				citymania::cmd::IncreaseLoan(LoanCommand::Max, 0)
-					.WithError(STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY)
-					.Post();
+					.with_error(STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY)
+					.post();
 				break;
 
 			case GHK_CHAT: // smart chat; send to team if any, otherwise to all

@@ -3,6 +3,7 @@ import numpy as np
 
 import math
 import os
+import random
 import spectra
 
 import grf
@@ -308,6 +309,10 @@ for i in range (81):
         for ii in inp:
             for oo in outp:
                 xy = ((edges[ii][0] + xx, edges[ii][1] + yy), (edges[oo][0] + xx, edges[oo][1] + yy))
+                draw_bezier(imd2, 0x38, 5, xy[0], center, xy[1])
+        for ii in inp:
+            for oo in outp:
+                xy = ((edges[ii][0] + xx, edges[ii][1] + yy), (edges[oo][0] + xx, edges[oo][1] + yy))
                 draw_bezier(imd2, 0x42, 4, xy[0], center, xy[1])
         for ii in inp:
             for oo in outp:
@@ -340,4 +345,14 @@ for i in range (81):
         #         dout[oy + y + 64 * i, ox + x] = find_best_color(c)
 # im2 = Image.fromarray(dout)
 # im2.putpalette(im.getpalette())
+#
+px = im2.load()
+for y in range(im2.height):
+    for x in range(im2.width):
+        if px[x, y] == 0xF5:
+            px[x, y] = random.randint(0xF5, 0xF9)
+        elif px[x, y] == 0x42:
+            px[x, y] = random.randint(0x10, 0x14)
+        elif px[x, y] == 0x38:
+            px[x, y] = random.randint(0x19, 0x1e)
 im2.save(os.path.join(DEST_DIR, "rivers.png"))

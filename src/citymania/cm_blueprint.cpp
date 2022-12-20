@@ -215,14 +215,14 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
     std::set<StationID> can_build_station_sign;
     for (auto &item: this->items) {
         if (item.type != Item::Type::RAIL_STATION) continue;
-        if (GetBlueprintCommand(tile, item)->Test())
+        if (GetBlueprintCommand(tile, item)->test())
             can_build_station_sign.insert(item.u.rail.station.id);
     }
 
     for (auto &o: this->items) {
         auto otile = AddTileIndexDiffCWrap(tile, o.tdiff);
         auto palette = CM_PALETTE_TINT_WHITE;
-        if (o.type != Item::Type::RAIL_SIGNAL && !GetBlueprintCommand(tile, o)->Test())
+        if (o.type != Item::Type::RAIL_SIGNAL && !GetBlueprintCommand(tile, o)->test())
             palette = CM_PALETTE_TINT_RED_DEEP;
 
         switch(o.type) {
@@ -600,7 +600,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
             case Blueprint::Item::Type::RAIL_TUNNEL:
             case Blueprint::Item::Type::RAIL_BRIDGE: {
                 auto cc = GetBlueprintCommand(start, item);
-                cc->Post();
+                cc->post();
                 if (item.type == Blueprint::Item::Type::RAIL_TRACK) last_rail = std::move(cc);
                 break;
             }
@@ -634,7 +634,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
         for (auto &item : blueprint->items) {
             if (item.type != Blueprint::Item::Type::RAIL_SIGNAL) continue;
             auto cc = GetBlueprintCommand(start, item);
-            cc->Post();
+            cc->post();
         }
         return true;
     };

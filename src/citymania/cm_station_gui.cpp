@@ -3,6 +3,7 @@
 #include "cm_station_gui.hpp"
 
 #include "cm_hotkeys.hpp"
+#include "cm_commands.hpp"
 
 #include "../core/math_func.hpp"
 #include "../command_type.h"
@@ -189,7 +190,6 @@ const Station *CheckClickOnDeadStationSign() {
 }
 
 bool CheckStationJoin(TileIndex start_tile, TileIndex end_tile) {
-    // if (_ctrl_pressed && start_tile == end_tile) {
     if (citymania::_fn_mod) {
         if (IsTileType (start_tile, MP_STATION)) {
             citymania::SelectStationToJoin(Station::GetByTile(start_tile));
@@ -204,18 +204,19 @@ bool CheckStationJoin(TileIndex start_tile, TileIndex end_tile) {
     return false;
 }
 
-using JoinAndBuildCmdProc = std::function<bool(bool test, StationID to_join, bool adjacent)>;
+// using JoinAndBuildCmdProc = std::function<bool(bool test, StationID to_join, bool adjacent)>;
 
-void JoinAndBuild(JoinAndBuildCmdProc proc) {
+template <typename Tcommand, typename Tcallback>
+void JoinAndBuild(Tcommand command, Tcallback *callback) {
     auto join_to = _highlight_station_to_join;
-    bool adjacent = (citymania::_fn_mod || join_to);
-    StationID to_join = INVALID_STATION;
+    command.adjacent = (citymania::_fn_mod || join_to);
+    command.station_to_join = INVALID_STATION;
 
-    if (citymania::_fn_mod) to_join = NEW_STATION;
-    else if (join_to) to_join = join_to->index;
+    if (citymania::_fn_mod) command.station_to_join = NEW_STATION;
+    else if (join_to) command.station_to_join = join_to->index;
 
     //FIXME _last_station_bulid_cmd = cmdcont;
-    proc(false, to_join, adjacent);
+    command.post(callback);
 }
 
 static DiagDirection TileFractCoordsToDiagDir(Point pt) {
@@ -341,24 +342,30 @@ DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area, Point pt, R
     return DiagDirToAxis(AutodetectRoadObjectDirection(area.tile, pt, roadtype)) == AXIS_X ? STATIONDIR_X : STATIONDIR_Y;
 }
 
-void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, uint32 cmd) {
+void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg) {
     assert(_thd.cm.type == citymania::ObjectHighlight::Type::ROAD_STOP);
-    uint8 ddir = _thd.cm.ddir;
+    DiagDirection ddir = _thd.cm.ddir;
 
-    SB(p2, 16, 16, INVALID_STATION); // no station to join
     TileArea ta(start_tile, end_tile);
 
     if (CheckStationJoin(start_tile, end_tile)) return;
 
-    if (ddir >= DIAGDIR_END) { // drive-through stops
-        SetBit(p2, 1);
-        ddir -= DIAGDIR_END;
-    }
-    p2 |= ddir << 3; // Set the DiagDirecion into p2 bits 3 and 4.
+    bool drive_through = (ddir >= DIAGDIR_END);
+    if (drive_through) ddir = static_cast<DiagDirection>(ddir - DIAGDIR_END); // Adjust picker result to actual direction.
 
-    // FIXME
-    // CommandContainer cmdcont = { ta.tile, (uint32)(ta.w | ta.h << 8), p2, cmd, CcRoadStop, "" };
-    // JoinAndBuild(cmdcont);
+    auto c = cmd::BuildRoadStop(
+        ta.tile,
+        ta.w,
+        ta.h,
+        stop_type,
+        drive_through,
+        static_cast<DiagDirection>(ddir),
+        rt,
+        INVALID_STATION,
+        adjacent
+    );
+    c.with_error(err_msg);
+    JoinAndBuild(c, CcRoadStop);
 }
 
 void HandleStationPlacement(TileIndex start, TileIndex end)
@@ -371,47 +378,51 @@ void HandleStationPlacement(TileIndex start, TileIndex end)
 
     if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
 
-    uint32 p1 = _cur_railtype | _railstation.orientation << 6 | numtracks << 8 | platlength << 16 | (citymania::_fn_mod ? 1 << 24 : 0);
-    uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
-
-    // FIXME
-    // CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
-    // JoinAndBuild(cmdcont);
+    auto c = cmd::BuildRailStation(
+        ta.tile,
+        _cur_railtype,
+        _railstation.orientation,
+        numtracks,
+        platlength,
+        _railstation.station_class,
+        _railstation.station_type,
+        INVALID_STATION,
+        false
+    );
+    c.with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
+    JoinAndBuild(c, CcStation);
 }
 
 void PlaceRail_Station(TileIndex tile) {
     if (CheckStationJoin(tile, tile)) return;
-
-    uint32 p1 = _cur_railtype | _railstation.orientation << 6 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | (citymania::_fn_mod ? 1 << 24 : 0);
-    uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
-
-    int w = _settings_client.gui.station_numtracks;
-    int h = _settings_client.gui.station_platlength;
-    if (!_railstation.orientation) Swap(w, h);
-
-    // FIXME
-    // CommandContainer cmdcont = { tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
-    // JoinAndBuild(cmdcont);
+    auto c = cmd::BuildRailStation(
+        tile,
+        _cur_railtype,
+        _railstation.orientation,
+        _settings_client.gui.station_numtracks,
+        _settings_client.gui.station_platlength,
+        _railstation.station_class,
+        _railstation.station_type,
+        INVALID_STATION,
+        false
+    );
+    c.with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
+    JoinAndBuild(c, CcStation);
 }
 
-void PlaceDock(TileIndex tile) {
-    if (CheckStationJoin(tile, tile)) return;
+void PlaceDock(TileIndex tile, TileIndex tile_to) {
+    if (CheckStationJoin(tile, tile_to)) return;
 
-    uint32 p2 = (uint32)INVALID_STATION << 16; // no station to join
-
-    /* tile is always the land tile, so need to evaluate _thd.pos */
-    // CommandContainer cmdcont = { tile, citymania::_fn_mod, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
-
-    /* Determine the watery part of the dock. */
-    // DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
-    // TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(dir)) : tile);
-
-    // FIXME
-    // JoinAndBuild(cmdcont);
+    auto c = cmd::BuildDock(
+        tile,
+        INVALID_STATION,
+        false
+    );
+    c.with_error(STR_ERROR_CAN_T_BUILD_DOCK_HERE);
+    JoinAndBuild(c, CcBuildDocks);
 }
 
 void PlaceAirport(TileIndex tile) {
-    // FIXME
     if (CheckStationJoin(tile, tile)) return;
 
     if (_selected_airport_index == -1) return;
@@ -419,15 +430,15 @@ void PlaceAirport(TileIndex tile) {
     byte airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
     byte layout = _selected_airport_layout;
 
-    auto proc = [=](bool test, StationID to_join, bool adjacent) -> bool {
-        if (test) {
-            return Command<CMD_BUILD_AIRPORT>::Do(CommandFlagsToDCFlags(GetCommandFlags<CMD_BUILD_AIRPORT>()), tile, airport_type, layout, INVALID_STATION, adjacent).Succeeded();
-        } else {
-            return Command<CMD_BUILD_AIRPORT>::Post(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE, CcBuildAirport, tile, airport_type, layout, to_join, adjacent);
-        }
-    };
-
-    // FIXME JoinAndBuild(cmdcont);
+    auto c = cmd::BuildAirport(
+        tile,
+        airport_type,
+        layout,
+        INVALID_STATION,
+        false
+    );
+    c.with_error(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE);
+    JoinAndBuild(c, CcBuildAirport);
 }
 
 static void FindStationsAroundSelection(const TileArea &location)

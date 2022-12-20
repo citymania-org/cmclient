@@ -2213,10 +2213,10 @@ void UpdateAirportsNoise()
  * @param airport_type airport type, @see airport.h
  * @param layout airport layout
  * @param station_to_join station ID to join (NEW_STATION if build new one)
- * @param allow_adjacent allow airports directly adjacent to other airports.
+ * @param adjacent allow airports directly adjacent to other airports.
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildAirport(DoCommandFlag flags, TileIndex tile, byte airport_type, byte layout, StationID station_to_join, bool allow_adjacent)
+CommandCost CmdBuildAirport(DoCommandFlag flags, TileIndex tile, byte airport_type, byte layout, StationID station_to_join, bool adjacent)
 {
 	bool reuse = (station_to_join != NEW_STATION);
 	if (!reuse) station_to_join = INVALID_STATION;
@@ -2281,7 +2281,7 @@ CommandCost CmdBuildAirport(DoCommandFlag flags, TileIndex tile, byte airport_ty
 	}
 
 	Station *st = nullptr;
-	ret = FindJoiningStation(INVALID_STATION, station_to_join, allow_adjacent, airport_area, &st);
+	ret = FindJoiningStation(INVALID_STATION, station_to_join, adjacent, airport_area, &st);
 	if (ret.Failed()) return ret;
 
 	/* Distant join */
