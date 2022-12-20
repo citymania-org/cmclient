@@ -93,12 +93,19 @@ constexpr auto MakeCallback() noexcept {
     }
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCreateGoal(std::index_sequence<i...>) noexcept
+template <Commands Tcmd, typename... Targs, typename T, T... i>
+inline constexpr auto MakeDispatchTableHelper(std::index_sequence<i...>) noexcept
 {
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CompanyID , GoalType , GoalTypeID , const std::string &), sizeof...(i)>{MakeCallback<CMD_CREATE_GOAL, i, CompanyID , GoalType , GoalTypeID , const std::string &>()... };
+    return std::array<bool (*)(StringID err_msg, TileIndex tile, Targs...), sizeof...(i)>{MakeCallback<Tcmd, i, Targs...>()... };
 }
-static constexpr auto _CreateGoal_dispatch = MakeDispatchTableCreateGoal(std::make_index_sequence<_callback_tuple_size>{});
+
+template <Commands Tcmd, typename... Targs>
+inline constexpr auto MakeDispatchTable() noexcept
+{
+    return MakeDispatchTableHelper<Tcmd, Targs...>(std::make_index_sequence<_callback_tuple_size>{});
+}
+
+static constexpr auto _CreateGoal_dispatch = MakeDispatchTable<CMD_CREATE_GOAL, CompanyID , GoalType , GoalTypeID , const std::string &>();
 bool CreateGoal::do_post(CommandCallback *callback) {
     return _CreateGoal_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->company, this->type, this->dest, this->text);
 }
@@ -106,12 +113,7 @@ bool CreateGoal::do_test() {
     return std::get<0>(::Command<CMD_CREATE_GOAL>::Do(DC_NONE, company, type, dest, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveGoal(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GoalID ), sizeof...(i)>{MakeCallback<CMD_REMOVE_GOAL, i, GoalID >()... };
-}
-static constexpr auto _RemoveGoal_dispatch = MakeDispatchTableRemoveGoal(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveGoal_dispatch = MakeDispatchTable<CMD_REMOVE_GOAL, GoalID >();
 bool RemoveGoal::do_post(CommandCallback *callback) {
     return _RemoveGoal_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->goal);
 }
@@ -119,12 +121,7 @@ bool RemoveGoal::do_test() {
     return (::Command<CMD_REMOVE_GOAL>::Do(DC_NONE, goal)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetGoalText(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GoalID , const std::string &), sizeof...(i)>{MakeCallback<CMD_SET_GOAL_TEXT, i, GoalID , const std::string &>()... };
-}
-static constexpr auto _SetGoalText_dispatch = MakeDispatchTableSetGoalText(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetGoalText_dispatch = MakeDispatchTable<CMD_SET_GOAL_TEXT, GoalID , const std::string &>();
 bool SetGoalText::do_post(CommandCallback *callback) {
     return _SetGoalText_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->goal, this->text);
 }
@@ -132,12 +129,7 @@ bool SetGoalText::do_test() {
     return (::Command<CMD_SET_GOAL_TEXT>::Do(DC_NONE, goal, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetGoalProgress(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GoalID , const std::string &), sizeof...(i)>{MakeCallback<CMD_SET_GOAL_PROGRESS, i, GoalID , const std::string &>()... };
-}
-static constexpr auto _SetGoalProgress_dispatch = MakeDispatchTableSetGoalProgress(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetGoalProgress_dispatch = MakeDispatchTable<CMD_SET_GOAL_PROGRESS, GoalID , const std::string &>();
 bool SetGoalProgress::do_post(CommandCallback *callback) {
     return _SetGoalProgress_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->goal, this->text);
 }
@@ -145,12 +137,7 @@ bool SetGoalProgress::do_test() {
     return (::Command<CMD_SET_GOAL_PROGRESS>::Do(DC_NONE, goal, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetGoalCompleted(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GoalID , bool ), sizeof...(i)>{MakeCallback<CMD_SET_GOAL_COMPLETED, i, GoalID , bool >()... };
-}
-static constexpr auto _SetGoalCompleted_dispatch = MakeDispatchTableSetGoalCompleted(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetGoalCompleted_dispatch = MakeDispatchTable<CMD_SET_GOAL_COMPLETED, GoalID , bool >();
 bool SetGoalCompleted::do_post(CommandCallback *callback) {
     return _SetGoalCompleted_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->goal, this->completed);
 }
@@ -158,12 +145,7 @@ bool SetGoalCompleted::do_test() {
     return (::Command<CMD_SET_GOAL_COMPLETED>::Do(DC_NONE, goal, completed)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableGoalQuestion(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, uint16 , uint16 , bool , uint32 , GoalQuestionType , const std::string &), sizeof...(i)>{MakeCallback<CMD_GOAL_QUESTION, i, uint16 , uint16 , bool , uint32 , GoalQuestionType , const std::string &>()... };
-}
-static constexpr auto _GoalQuestion_dispatch = MakeDispatchTableGoalQuestion(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _GoalQuestion_dispatch = MakeDispatchTable<CMD_GOAL_QUESTION, uint16 , uint16 , bool , uint32 , GoalQuestionType , const std::string &>();
 bool GoalQuestion::do_post(CommandCallback *callback) {
     return _GoalQuestion_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->uniqueid, this->target, this->is_client, this->button_mask, this->type, this->text);
 }
@@ -171,12 +153,7 @@ bool GoalQuestion::do_test() {
     return (::Command<CMD_GOAL_QUESTION>::Do(DC_NONE, uniqueid, target, is_client, button_mask, type, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableGoalQuestionAnswer(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, uint16 , uint8 ), sizeof...(i)>{MakeCallback<CMD_GOAL_QUESTION_ANSWER, i, uint16 , uint8 >()... };
-}
-static constexpr auto _GoalQuestionAnswer_dispatch = MakeDispatchTableGoalQuestionAnswer(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _GoalQuestionAnswer_dispatch = MakeDispatchTable<CMD_GOAL_QUESTION_ANSWER, uint16 , uint8 >();
 bool GoalQuestionAnswer::do_post(CommandCallback *callback) {
     return _GoalQuestionAnswer_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->uniqueid, this->button);
 }
@@ -184,12 +161,7 @@ bool GoalQuestionAnswer::do_test() {
     return (::Command<CMD_GOAL_QUESTION_ANSWER>::Do(DC_NONE, uniqueid, button)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCustomNewsItem(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, NewsType , NewsReferenceType , CompanyID , uint32 , const std::string &), sizeof...(i)>{MakeCallback<CMD_CUSTOM_NEWS_ITEM, i, NewsType , NewsReferenceType , CompanyID , uint32 , const std::string &>()... };
-}
-static constexpr auto _CustomNewsItem_dispatch = MakeDispatchTableCustomNewsItem(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _CustomNewsItem_dispatch = MakeDispatchTable<CMD_CUSTOM_NEWS_ITEM, NewsType , NewsReferenceType , CompanyID , uint32 , const std::string &>();
 bool CustomNewsItem::do_post(CommandCallback *callback) {
     return _CustomNewsItem_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->type, this->reftype1, this->company, this->reference, this->text);
 }
@@ -197,12 +169,7 @@ bool CustomNewsItem::do_test() {
     return (::Command<CMD_CUSTOM_NEWS_ITEM>::Do(DC_NONE, type, reftype1, company, reference, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCreateStoryPage(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CompanyID , const std::string &), sizeof...(i)>{MakeCallback<CMD_CREATE_STORY_PAGE, i, CompanyID , const std::string &>()... };
-}
-static constexpr auto _CreateStoryPage_dispatch = MakeDispatchTableCreateStoryPage(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _CreateStoryPage_dispatch = MakeDispatchTable<CMD_CREATE_STORY_PAGE, CompanyID , const std::string &>();
 bool CreateStoryPage::do_post(CommandCallback *callback) {
     return _CreateStoryPage_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->company, this->text);
 }
@@ -210,12 +177,7 @@ bool CreateStoryPage::do_test() {
     return std::get<0>(::Command<CMD_CREATE_STORY_PAGE>::Do(DC_NONE, company, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCreateStoryPageElement(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StoryPageID , StoryPageElementType , uint32 , const std::string &), sizeof...(i)>{MakeCallback<CMD_CREATE_STORY_PAGE_ELEMENT, i, StoryPageID , StoryPageElementType , uint32 , const std::string &>()... };
-}
-static constexpr auto _CreateStoryPageElement_dispatch = MakeDispatchTableCreateStoryPageElement(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _CreateStoryPageElement_dispatch = MakeDispatchTable<CMD_CREATE_STORY_PAGE_ELEMENT, StoryPageID , StoryPageElementType , uint32 , const std::string &>();
 bool CreateStoryPageElement::do_post(CommandCallback *callback) {
     return _CreateStoryPageElement_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->page_id, this->type, this->reference, this->text);
 }
@@ -223,12 +185,7 @@ bool CreateStoryPageElement::do_test() {
     return std::get<0>(::Command<CMD_CREATE_STORY_PAGE_ELEMENT>::Do(DC_NONE, this->tile, page_id, type, reference, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableUpdateStoryPageElement(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StoryPageElementID , uint32 , const std::string &), sizeof...(i)>{MakeCallback<CMD_UPDATE_STORY_PAGE_ELEMENT, i, StoryPageElementID , uint32 , const std::string &>()... };
-}
-static constexpr auto _UpdateStoryPageElement_dispatch = MakeDispatchTableUpdateStoryPageElement(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _UpdateStoryPageElement_dispatch = MakeDispatchTable<CMD_UPDATE_STORY_PAGE_ELEMENT, StoryPageElementID , uint32 , const std::string &>();
 bool UpdateStoryPageElement::do_post(CommandCallback *callback) {
     return _UpdateStoryPageElement_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->page_element_id, this->reference, this->text);
 }
@@ -236,12 +193,7 @@ bool UpdateStoryPageElement::do_test() {
     return (::Command<CMD_UPDATE_STORY_PAGE_ELEMENT>::Do(DC_NONE, this->tile, page_element_id, reference, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetStoryPageTitle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StoryPageID , const std::string &), sizeof...(i)>{MakeCallback<CMD_SET_STORY_PAGE_TITLE, i, StoryPageID , const std::string &>()... };
-}
-static constexpr auto _SetStoryPageTitle_dispatch = MakeDispatchTableSetStoryPageTitle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetStoryPageTitle_dispatch = MakeDispatchTable<CMD_SET_STORY_PAGE_TITLE, StoryPageID , const std::string &>();
 bool SetStoryPageTitle::do_post(CommandCallback *callback) {
     return _SetStoryPageTitle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->page_id, this->text);
 }
@@ -249,12 +201,7 @@ bool SetStoryPageTitle::do_test() {
     return (::Command<CMD_SET_STORY_PAGE_TITLE>::Do(DC_NONE, page_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetStoryPageDate(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StoryPageID , Date ), sizeof...(i)>{MakeCallback<CMD_SET_STORY_PAGE_DATE, i, StoryPageID , Date >()... };
-}
-static constexpr auto _SetStoryPageDate_dispatch = MakeDispatchTableSetStoryPageDate(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetStoryPageDate_dispatch = MakeDispatchTable<CMD_SET_STORY_PAGE_DATE, StoryPageID , Date >();
 bool SetStoryPageDate::do_post(CommandCallback *callback) {
     return _SetStoryPageDate_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->page_id, this->date);
 }
@@ -262,12 +209,7 @@ bool SetStoryPageDate::do_test() {
     return (::Command<CMD_SET_STORY_PAGE_DATE>::Do(DC_NONE, page_id, date)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableShowStoryPage(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StoryPageID ), sizeof...(i)>{MakeCallback<CMD_SHOW_STORY_PAGE, i, StoryPageID >()... };
-}
-static constexpr auto _ShowStoryPage_dispatch = MakeDispatchTableShowStoryPage(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ShowStoryPage_dispatch = MakeDispatchTable<CMD_SHOW_STORY_PAGE, StoryPageID >();
 bool ShowStoryPage::do_post(CommandCallback *callback) {
     return _ShowStoryPage_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->page_id);
 }
@@ -275,12 +217,7 @@ bool ShowStoryPage::do_test() {
     return (::Command<CMD_SHOW_STORY_PAGE>::Do(DC_NONE, page_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveStoryPage(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StoryPageID ), sizeof...(i)>{MakeCallback<CMD_REMOVE_STORY_PAGE, i, StoryPageID >()... };
-}
-static constexpr auto _RemoveStoryPage_dispatch = MakeDispatchTableRemoveStoryPage(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveStoryPage_dispatch = MakeDispatchTable<CMD_REMOVE_STORY_PAGE, StoryPageID >();
 bool RemoveStoryPage::do_post(CommandCallback *callback) {
     return _RemoveStoryPage_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->page_id);
 }
@@ -288,12 +225,7 @@ bool RemoveStoryPage::do_test() {
     return (::Command<CMD_REMOVE_STORY_PAGE>::Do(DC_NONE, page_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveStoryPageElement(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StoryPageElementID ), sizeof...(i)>{MakeCallback<CMD_REMOVE_STORY_PAGE_ELEMENT, i, StoryPageElementID >()... };
-}
-static constexpr auto _RemoveStoryPageElement_dispatch = MakeDispatchTableRemoveStoryPageElement(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveStoryPageElement_dispatch = MakeDispatchTable<CMD_REMOVE_STORY_PAGE_ELEMENT, StoryPageElementID >();
 bool RemoveStoryPageElement::do_post(CommandCallback *callback) {
     return _RemoveStoryPageElement_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->page_element_id);
 }
@@ -301,12 +233,7 @@ bool RemoveStoryPageElement::do_test() {
     return (::Command<CMD_REMOVE_STORY_PAGE_ELEMENT>::Do(DC_NONE, page_element_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableStoryPageButton(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StoryPageElementID , VehicleID ), sizeof...(i)>{MakeCallback<CMD_STORY_PAGE_BUTTON, i, StoryPageElementID , VehicleID >()... };
-}
-static constexpr auto _StoryPageButton_dispatch = MakeDispatchTableStoryPageButton(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _StoryPageButton_dispatch = MakeDispatchTable<CMD_STORY_PAGE_BUTTON, StoryPageElementID , VehicleID >();
 bool StoryPageButton::do_post(CommandCallback *callback) {
     return _StoryPageButton_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->page_element_id, this->reference);
 }
@@ -314,12 +241,7 @@ bool StoryPageButton::do_test() {
     return (::Command<CMD_STORY_PAGE_BUTTON>::Do(DC_NONE, this->tile, page_element_id, reference)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, EngineID , bool , CargoID , ClientID ), sizeof...(i)>{MakeCallback<CMD_BUILD_VEHICLE, i, EngineID , bool , CargoID , ClientID >()... };
-}
-static constexpr auto _BuildVehicle_dispatch = MakeDispatchTableBuildVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildVehicle_dispatch = MakeDispatchTable<CMD_BUILD_VEHICLE, EngineID , bool , CargoID , ClientID >();
 bool BuildVehicle::do_post(CommandCallback *callback) {
     return _BuildVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->eid, this->use_free_vehicles, this->cargo, this->client_id);
 }
@@ -327,12 +249,7 @@ bool BuildVehicle::do_test() {
     return std::get<0>(::Command<CMD_BUILD_VEHICLE>::Do(DC_NONE, this->tile, eid, use_free_vehicles, cargo, client_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSellVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , bool , bool , ClientID ), sizeof...(i)>{MakeCallback<CMD_SELL_VEHICLE, i, VehicleID , bool , bool , ClientID >()... };
-}
-static constexpr auto _SellVehicle_dispatch = MakeDispatchTableSellVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SellVehicle_dispatch = MakeDispatchTable<CMD_SELL_VEHICLE, VehicleID , bool , bool , ClientID >();
 bool SellVehicle::do_post(CommandCallback *callback) {
     return _SellVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->v_id, this->sell_chain, this->backup_order, this->client_id);
 }
@@ -340,12 +257,7 @@ bool SellVehicle::do_test() {
     return (::Command<CMD_SELL_VEHICLE>::Do(DC_NONE, v_id, sell_chain, backup_order, client_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRefitVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , CargoID , byte , bool , bool , uint8 ), sizeof...(i)>{MakeCallback<CMD_REFIT_VEHICLE, i, VehicleID , CargoID , byte , bool , bool , uint8 >()... };
-}
-static constexpr auto _RefitVehicle_dispatch = MakeDispatchTableRefitVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RefitVehicle_dispatch = MakeDispatchTable<CMD_REFIT_VEHICLE, VehicleID , CargoID , byte , bool , bool , uint8 >();
 bool RefitVehicle::do_post(CommandCallback *callback) {
     return _RefitVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->new_cid, this->new_subtype, this->auto_refit, this->only_this, this->num_vehicles);
 }
@@ -353,12 +265,7 @@ bool RefitVehicle::do_test() {
     return std::get<0>(::Command<CMD_REFIT_VEHICLE>::Do(DC_NONE, veh_id, new_cid, new_subtype, auto_refit, only_this, num_vehicles)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSendVehicleToDepot(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , DepotCommand , const VehicleListIdentifier &), sizeof...(i)>{MakeCallback<CMD_SEND_VEHICLE_TO_DEPOT, i, VehicleID , DepotCommand , const VehicleListIdentifier &>()... };
-}
-static constexpr auto _SendVehicleToDepot_dispatch = MakeDispatchTableSendVehicleToDepot(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SendVehicleToDepot_dispatch = MakeDispatchTable<CMD_SEND_VEHICLE_TO_DEPOT, VehicleID , DepotCommand , const VehicleListIdentifier &>();
 bool SendVehicleToDepot::do_post(CommandCallback *callback) {
     return _SendVehicleToDepot_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->depot_cmd, this->vli);
 }
@@ -366,12 +273,7 @@ bool SendVehicleToDepot::do_test() {
     return (::Command<CMD_SEND_VEHICLE_TO_DEPOT>::Do(DC_NONE, veh_id, depot_cmd, vli)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableChangeServiceInt(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , uint16 , bool , bool ), sizeof...(i)>{MakeCallback<CMD_CHANGE_SERVICE_INT, i, VehicleID , uint16 , bool , bool >()... };
-}
-static constexpr auto _ChangeServiceInt_dispatch = MakeDispatchTableChangeServiceInt(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ChangeServiceInt_dispatch = MakeDispatchTable<CMD_CHANGE_SERVICE_INT, VehicleID , uint16 , bool , bool >();
 bool ChangeServiceInt::do_post(CommandCallback *callback) {
     return _ChangeServiceInt_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->serv_int, this->is_custom, this->is_percent);
 }
@@ -379,12 +281,7 @@ bool ChangeServiceInt::do_test() {
     return (::Command<CMD_CHANGE_SERVICE_INT>::Do(DC_NONE, veh_id, serv_int, is_custom, is_percent)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenameVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_VEHICLE, i, VehicleID , const std::string &>()... };
-}
-static constexpr auto _RenameVehicle_dispatch = MakeDispatchTableRenameVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenameVehicle_dispatch = MakeDispatchTable<CMD_RENAME_VEHICLE, VehicleID , const std::string &>();
 bool RenameVehicle::do_post(CommandCallback *callback) {
     return _RenameVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->text);
 }
@@ -392,12 +289,7 @@ bool RenameVehicle::do_test() {
     return (::Command<CMD_RENAME_VEHICLE>::Do(DC_NONE, veh_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCloneVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , bool ), sizeof...(i)>{MakeCallback<CMD_CLONE_VEHICLE, i, VehicleID , bool >()... };
-}
-static constexpr auto _CloneVehicle_dispatch = MakeDispatchTableCloneVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _CloneVehicle_dispatch = MakeDispatchTable<CMD_CLONE_VEHICLE, VehicleID , bool >();
 bool CloneVehicle::do_post(CommandCallback *callback) {
     return _CloneVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->share_orders);
 }
@@ -405,12 +297,7 @@ bool CloneVehicle::do_test() {
     return std::get<0>(::Command<CMD_CLONE_VEHICLE>::Do(DC_NONE, this->tile, veh_id, share_orders)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableStartStopVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , bool ), sizeof...(i)>{MakeCallback<CMD_START_STOP_VEHICLE, i, VehicleID , bool >()... };
-}
-static constexpr auto _StartStopVehicle_dispatch = MakeDispatchTableStartStopVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _StartStopVehicle_dispatch = MakeDispatchTable<CMD_START_STOP_VEHICLE, VehicleID , bool >();
 bool StartStopVehicle::do_post(CommandCallback *callback) {
     return _StartStopVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->evaluate_startstop_cb);
 }
@@ -418,12 +305,7 @@ bool StartStopVehicle::do_test() {
     return (::Command<CMD_START_STOP_VEHICLE>::Do(DC_NONE, veh_id, evaluate_startstop_cb)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableMassStartStopVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, bool , bool , const VehicleListIdentifier &), sizeof...(i)>{MakeCallback<CMD_MASS_START_STOP, i, bool , bool , const VehicleListIdentifier &>()... };
-}
-static constexpr auto _MassStartStopVehicle_dispatch = MakeDispatchTableMassStartStopVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _MassStartStopVehicle_dispatch = MakeDispatchTable<CMD_MASS_START_STOP, bool , bool , const VehicleListIdentifier &>();
 bool MassStartStopVehicle::do_post(CommandCallback *callback) {
     return _MassStartStopVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->do_start, this->vehicle_list_window, this->vli);
 }
@@ -431,12 +313,7 @@ bool MassStartStopVehicle::do_test() {
     return (::Command<CMD_MASS_START_STOP>::Do(DC_NONE, this->tile, do_start, vehicle_list_window, vli)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableDepotSellAllVehicles(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleType ), sizeof...(i)>{MakeCallback<CMD_DEPOT_SELL_ALL_VEHICLES, i, VehicleType >()... };
-}
-static constexpr auto _DepotSellAllVehicles_dispatch = MakeDispatchTableDepotSellAllVehicles(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _DepotSellAllVehicles_dispatch = MakeDispatchTable<CMD_DEPOT_SELL_ALL_VEHICLES, VehicleType >();
 bool DepotSellAllVehicles::do_post(CommandCallback *callback) {
     return _DepotSellAllVehicles_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->vehicle_type);
 }
@@ -444,12 +321,7 @@ bool DepotSellAllVehicles::do_test() {
     return (::Command<CMD_DEPOT_SELL_ALL_VEHICLES>::Do(DC_NONE, this->tile, vehicle_type)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableDepotMassAutoReplace(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleType ), sizeof...(i)>{MakeCallback<CMD_DEPOT_MASS_AUTOREPLACE, i, VehicleType >()... };
-}
-static constexpr auto _DepotMassAutoReplace_dispatch = MakeDispatchTableDepotMassAutoReplace(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _DepotMassAutoReplace_dispatch = MakeDispatchTable<CMD_DEPOT_MASS_AUTOREPLACE, VehicleType >();
 bool DepotMassAutoReplace::do_post(CommandCallback *callback) {
     return _DepotMassAutoReplace_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->vehicle_type);
 }
@@ -457,12 +329,7 @@ bool DepotMassAutoReplace::do_test() {
     return (::Command<CMD_DEPOT_MASS_AUTOREPLACE>::Do(DC_NONE, this->tile, vehicle_type)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableChangeSetting(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, const std::string &, int32 ), sizeof...(i)>{MakeCallback<CMD_CHANGE_SETTING, i, const std::string &, int32 >()... };
-}
-static constexpr auto _ChangeSetting_dispatch = MakeDispatchTableChangeSetting(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ChangeSetting_dispatch = MakeDispatchTable<CMD_CHANGE_SETTING, const std::string &, int32 >();
 bool ChangeSetting::do_post(CommandCallback *callback) {
     return _ChangeSetting_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->name, this->value);
 }
@@ -470,12 +337,7 @@ bool ChangeSetting::do_test() {
     return (::Command<CMD_CHANGE_SETTING>::Do(DC_NONE, name, value)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableChangeCompanySetting(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, const std::string &, int32 ), sizeof...(i)>{MakeCallback<CMD_CHANGE_COMPANY_SETTING, i, const std::string &, int32 >()... };
-}
-static constexpr auto _ChangeCompanySetting_dispatch = MakeDispatchTableChangeCompanySetting(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ChangeCompanySetting_dispatch = MakeDispatchTable<CMD_CHANGE_COMPANY_SETTING, const std::string &, int32 >();
 bool ChangeCompanySetting::do_post(CommandCallback *callback) {
     return _ChangeCompanySetting_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->name, this->value);
 }
@@ -483,12 +345,7 @@ bool ChangeCompanySetting::do_test() {
     return (::Command<CMD_CHANGE_COMPANY_SETTING>::Do(DC_NONE, name, value)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCreateGroup(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleType , GroupID ), sizeof...(i)>{MakeCallback<CMD_CREATE_GROUP, i, VehicleType , GroupID >()... };
-}
-static constexpr auto _CreateGroup_dispatch = MakeDispatchTableCreateGroup(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _CreateGroup_dispatch = MakeDispatchTable<CMD_CREATE_GROUP, VehicleType , GroupID >();
 bool CreateGroup::do_post(CommandCallback *callback) {
     return _CreateGroup_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->vt, this->parent_group);
 }
@@ -496,12 +353,7 @@ bool CreateGroup::do_test() {
     return std::get<0>(::Command<CMD_CREATE_GROUP>::Do(DC_NONE, vt, parent_group)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableAlterGroup(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, AlterGroupMode , GroupID , GroupID , const std::string &), sizeof...(i)>{MakeCallback<CMD_ALTER_GROUP, i, AlterGroupMode , GroupID , GroupID , const std::string &>()... };
-}
-static constexpr auto _AlterGroup_dispatch = MakeDispatchTableAlterGroup(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _AlterGroup_dispatch = MakeDispatchTable<CMD_ALTER_GROUP, AlterGroupMode , GroupID , GroupID , const std::string &>();
 bool AlterGroup::do_post(CommandCallback *callback) {
     return _AlterGroup_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->mode, this->group_id, this->parent_id, this->text);
 }
@@ -509,12 +361,7 @@ bool AlterGroup::do_test() {
     return (::Command<CMD_ALTER_GROUP>::Do(DC_NONE, mode, group_id, parent_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableDeleteGroup(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GroupID ), sizeof...(i)>{MakeCallback<CMD_DELETE_GROUP, i, GroupID >()... };
-}
-static constexpr auto _DeleteGroup_dispatch = MakeDispatchTableDeleteGroup(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _DeleteGroup_dispatch = MakeDispatchTable<CMD_DELETE_GROUP, GroupID >();
 bool DeleteGroup::do_post(CommandCallback *callback) {
     return _DeleteGroup_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->group_id);
 }
@@ -522,12 +369,7 @@ bool DeleteGroup::do_test() {
     return (::Command<CMD_DELETE_GROUP>::Do(DC_NONE, group_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableAddVehicleGroup(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GroupID , VehicleID , bool ), sizeof...(i)>{MakeCallback<CMD_ADD_VEHICLE_GROUP, i, GroupID , VehicleID , bool >()... };
-}
-static constexpr auto _AddVehicleGroup_dispatch = MakeDispatchTableAddVehicleGroup(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _AddVehicleGroup_dispatch = MakeDispatchTable<CMD_ADD_VEHICLE_GROUP, GroupID , VehicleID , bool >();
 bool AddVehicleGroup::do_post(CommandCallback *callback) {
     return _AddVehicleGroup_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->group_id, this->veh_id, this->add_shared);
 }
@@ -535,12 +377,7 @@ bool AddVehicleGroup::do_test() {
     return std::get<0>(::Command<CMD_ADD_VEHICLE_GROUP>::Do(DC_NONE, group_id, veh_id, add_shared)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableAddSharedVehicleGroup(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GroupID , VehicleType ), sizeof...(i)>{MakeCallback<CMD_ADD_SHARED_VEHICLE_GROUP, i, GroupID , VehicleType >()... };
-}
-static constexpr auto _AddSharedVehicleGroup_dispatch = MakeDispatchTableAddSharedVehicleGroup(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _AddSharedVehicleGroup_dispatch = MakeDispatchTable<CMD_ADD_SHARED_VEHICLE_GROUP, GroupID , VehicleType >();
 bool AddSharedVehicleGroup::do_post(CommandCallback *callback) {
     return _AddSharedVehicleGroup_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->id_g, this->type);
 }
@@ -548,12 +385,7 @@ bool AddSharedVehicleGroup::do_test() {
     return (::Command<CMD_ADD_SHARED_VEHICLE_GROUP>::Do(DC_NONE, id_g, type)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveAllVehiclesGroup(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GroupID ), sizeof...(i)>{MakeCallback<CMD_REMOVE_ALL_VEHICLES_GROUP, i, GroupID >()... };
-}
-static constexpr auto _RemoveAllVehiclesGroup_dispatch = MakeDispatchTableRemoveAllVehiclesGroup(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveAllVehiclesGroup_dispatch = MakeDispatchTable<CMD_REMOVE_ALL_VEHICLES_GROUP, GroupID >();
 bool RemoveAllVehiclesGroup::do_post(CommandCallback *callback) {
     return _RemoveAllVehiclesGroup_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->group_id);
 }
@@ -561,12 +393,7 @@ bool RemoveAllVehiclesGroup::do_test() {
     return (::Command<CMD_REMOVE_ALL_VEHICLES_GROUP>::Do(DC_NONE, group_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetGroupFlag(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GroupID , GroupFlags , bool , bool ), sizeof...(i)>{MakeCallback<CMD_SET_GROUP_FLAG, i, GroupID , GroupFlags , bool , bool >()... };
-}
-static constexpr auto _SetGroupFlag_dispatch = MakeDispatchTableSetGroupFlag(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetGroupFlag_dispatch = MakeDispatchTable<CMD_SET_GROUP_FLAG, GroupID , GroupFlags , bool , bool >();
 bool SetGroupFlag::do_post(CommandCallback *callback) {
     return _SetGroupFlag_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->group_id, this->flag, this->value, this->recursive);
 }
@@ -574,12 +401,7 @@ bool SetGroupFlag::do_test() {
     return (::Command<CMD_SET_GROUP_FLAG>::Do(DC_NONE, group_id, flag, value, recursive)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetGroupLivery(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GroupID , bool , Colours ), sizeof...(i)>{MakeCallback<CMD_SET_GROUP_LIVERY, i, GroupID , bool , Colours >()... };
-}
-static constexpr auto _SetGroupLivery_dispatch = MakeDispatchTableSetGroupLivery(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetGroupLivery_dispatch = MakeDispatchTable<CMD_SET_GROUP_LIVERY, GroupID , bool , Colours >();
 bool SetGroupLivery::do_post(CommandCallback *callback) {
     return _SetGroupLivery_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->group_id, this->primary, this->colour);
 }
@@ -587,12 +409,7 @@ bool SetGroupLivery::do_test() {
     return (::Command<CMD_SET_GROUP_LIVERY>::Do(DC_NONE, group_id, primary, colour)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableTurnRoadVeh(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID ), sizeof...(i)>{MakeCallback<CMD_TURN_ROADVEH, i, VehicleID >()... };
-}
-static constexpr auto _TurnRoadVeh_dispatch = MakeDispatchTableTurnRoadVeh(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _TurnRoadVeh_dispatch = MakeDispatchTable<CMD_TURN_ROADVEH, VehicleID >();
 bool TurnRoadVeh::do_post(CommandCallback *callback) {
     return _TurnRoadVeh_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id);
 }
@@ -600,12 +417,7 @@ bool TurnRoadVeh::do_test() {
     return (::Command<CMD_TURN_ROADVEH>::Do(DC_NONE, veh_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableChangeTimetable(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , VehicleOrderID , ModifyTimetableFlags , uint16 ), sizeof...(i)>{MakeCallback<CMD_CHANGE_TIMETABLE, i, VehicleID , VehicleOrderID , ModifyTimetableFlags , uint16 >()... };
-}
-static constexpr auto _ChangeTimetable_dispatch = MakeDispatchTableChangeTimetable(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ChangeTimetable_dispatch = MakeDispatchTable<CMD_CHANGE_TIMETABLE, VehicleID , VehicleOrderID , ModifyTimetableFlags , uint16 >();
 bool ChangeTimetable::do_post(CommandCallback *callback) {
     return _ChangeTimetable_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh, this->order_number, this->mtf, this->data);
 }
@@ -613,12 +425,7 @@ bool ChangeTimetable::do_test() {
     return (::Command<CMD_CHANGE_TIMETABLE>::Do(DC_NONE, veh, order_number, mtf, data)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetVehicleOnTime(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID ), sizeof...(i)>{MakeCallback<CMD_SET_VEHICLE_ON_TIME, i, VehicleID >()... };
-}
-static constexpr auto _SetVehicleOnTime_dispatch = MakeDispatchTableSetVehicleOnTime(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetVehicleOnTime_dispatch = MakeDispatchTable<CMD_SET_VEHICLE_ON_TIME, VehicleID >();
 bool SetVehicleOnTime::do_post(CommandCallback *callback) {
     return _SetVehicleOnTime_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh);
 }
@@ -626,12 +433,7 @@ bool SetVehicleOnTime::do_test() {
     return (::Command<CMD_SET_VEHICLE_ON_TIME>::Do(DC_NONE, veh)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableAutofillTimetable(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , bool , bool ), sizeof...(i)>{MakeCallback<CMD_AUTOFILL_TIMETABLE, i, VehicleID , bool , bool >()... };
-}
-static constexpr auto _AutofillTimetable_dispatch = MakeDispatchTableAutofillTimetable(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _AutofillTimetable_dispatch = MakeDispatchTable<CMD_AUTOFILL_TIMETABLE, VehicleID , bool , bool >();
 bool AutofillTimetable::do_post(CommandCallback *callback) {
     return _AutofillTimetable_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh, this->autofill, this->preserve_wait_time);
 }
@@ -639,12 +441,7 @@ bool AutofillTimetable::do_test() {
     return (::Command<CMD_AUTOFILL_TIMETABLE>::Do(DC_NONE, veh, autofill, preserve_wait_time)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetTimetableStart(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , bool , Date ), sizeof...(i)>{MakeCallback<CMD_SET_TIMETABLE_START, i, VehicleID , bool , Date >()... };
-}
-static constexpr auto _SetTimetableStart_dispatch = MakeDispatchTableSetTimetableStart(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetTimetableStart_dispatch = MakeDispatchTable<CMD_SET_TIMETABLE_START, VehicleID , bool , Date >();
 bool SetTimetableStart::do_post(CommandCallback *callback) {
     return _SetTimetableStart_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->timetable_all, this->start_date);
 }
@@ -652,12 +449,7 @@ bool SetTimetableStart::do_test() {
     return (::Command<CMD_SET_TIMETABLE_START>::Do(DC_NONE, veh_id, timetable_all, start_date)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableWantEnginePreview(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, EngineID ), sizeof...(i)>{MakeCallback<CMD_WANT_ENGINE_PREVIEW, i, EngineID >()... };
-}
-static constexpr auto _WantEnginePreview_dispatch = MakeDispatchTableWantEnginePreview(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _WantEnginePreview_dispatch = MakeDispatchTable<CMD_WANT_ENGINE_PREVIEW, EngineID >();
 bool WantEnginePreview::do_post(CommandCallback *callback) {
     return _WantEnginePreview_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->engine_id);
 }
@@ -665,12 +457,7 @@ bool WantEnginePreview::do_test() {
     return (::Command<CMD_WANT_ENGINE_PREVIEW>::Do(DC_NONE, engine_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableEngineCtrl(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, EngineID , CompanyID , bool ), sizeof...(i)>{MakeCallback<CMD_ENGINE_CTRL, i, EngineID , CompanyID , bool >()... };
-}
-static constexpr auto _EngineCtrl_dispatch = MakeDispatchTableEngineCtrl(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _EngineCtrl_dispatch = MakeDispatchTable<CMD_ENGINE_CTRL, EngineID , CompanyID , bool >();
 bool EngineCtrl::do_post(CommandCallback *callback) {
     return _EngineCtrl_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->engine_id, this->company_id, this->allow);
 }
@@ -678,12 +465,7 @@ bool EngineCtrl::do_test() {
     return (::Command<CMD_ENGINE_CTRL>::Do(DC_NONE, engine_id, company_id, allow)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenameEngine(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, EngineID , const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_ENGINE, i, EngineID , const std::string &>()... };
-}
-static constexpr auto _RenameEngine_dispatch = MakeDispatchTableRenameEngine(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenameEngine_dispatch = MakeDispatchTable<CMD_RENAME_ENGINE, EngineID , const std::string &>();
 bool RenameEngine::do_post(CommandCallback *callback) {
     return _RenameEngine_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->engine_id, this->text);
 }
@@ -691,12 +473,7 @@ bool RenameEngine::do_test() {
     return (::Command<CMD_RENAME_ENGINE>::Do(DC_NONE, engine_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetVehicleVisibility(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, EngineID , bool ), sizeof...(i)>{MakeCallback<CMD_SET_VEHICLE_VISIBILITY, i, EngineID , bool >()... };
-}
-static constexpr auto _SetVehicleVisibility_dispatch = MakeDispatchTableSetVehicleVisibility(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetVehicleVisibility_dispatch = MakeDispatchTable<CMD_SET_VEHICLE_VISIBILITY, EngineID , bool >();
 bool SetVehicleVisibility::do_post(CommandCallback *callback) {
     return _SetVehicleVisibility_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->engine_id, this->hide);
 }
@@ -704,12 +481,7 @@ bool SetVehicleVisibility::do_test() {
     return (::Command<CMD_SET_VEHICLE_VISIBILITY>::Do(DC_NONE, engine_id, hide)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTablePlantTree(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , byte ), sizeof...(i)>{MakeCallback<CMD_PLANT_TREE, i, TileIndex , byte >()... };
-}
-static constexpr auto _PlantTree_dispatch = MakeDispatchTablePlantTree(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _PlantTree_dispatch = MakeDispatchTable<CMD_PLANT_TREE, TileIndex , byte >();
 bool PlantTree::do_post(CommandCallback *callback) {
     return _PlantTree_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->tree_to_plant);
 }
@@ -717,12 +489,7 @@ bool PlantTree::do_test() {
     return (::Command<CMD_PLANT_TREE>::Do(DC_NONE, this->tile, start_tile, tree_to_plant)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableLandscapeClear(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile), sizeof...(i)>{MakeCallback<CMD_LANDSCAPE_CLEAR, i>()... };
-}
-static constexpr auto _LandscapeClear_dispatch = MakeDispatchTableLandscapeClear(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _LandscapeClear_dispatch = MakeDispatchTable<CMD_LANDSCAPE_CLEAR>();
 bool LandscapeClear::do_post(CommandCallback *callback) {
     return _LandscapeClear_dispatch[FindCallbackIndex(callback)](this->error, this->tile);
 }
@@ -730,12 +497,7 @@ bool LandscapeClear::do_test() {
     return (::Command<CMD_LANDSCAPE_CLEAR>::Do(DC_NONE, this->tile)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableClearArea(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , bool ), sizeof...(i)>{MakeCallback<CMD_CLEAR_AREA, i, TileIndex , bool >()... };
-}
-static constexpr auto _ClearArea_dispatch = MakeDispatchTableClearArea(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ClearArea_dispatch = MakeDispatchTable<CMD_CLEAR_AREA, TileIndex , bool >();
 bool ClearArea::do_post(CommandCallback *callback) {
     return _ClearArea_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->diagonal);
 }
@@ -743,12 +505,7 @@ bool ClearArea::do_test() {
     return std::get<0>(::Command<CMD_CLEAR_AREA>::Do(DC_NONE, this->tile, start_tile, diagonal)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildAirport(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, byte , byte , StationID , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_AIRPORT, i, byte , byte , StationID , bool >()... };
-}
-static constexpr auto _BuildAirport_dispatch = MakeDispatchTableBuildAirport(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildAirport_dispatch = MakeDispatchTable<CMD_BUILD_AIRPORT, byte , byte , StationID , bool >();
 bool BuildAirport::do_post(CommandCallback *callback) {
     return _BuildAirport_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->airport_type, this->layout, this->station_to_join, this->adjacent);
 }
@@ -756,12 +513,7 @@ bool BuildAirport::do_test() {
     return (::Command<CMD_BUILD_AIRPORT>::Do(DC_NONE, this->tile, airport_type, layout, station_to_join, adjacent)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildDock(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StationID , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_DOCK, i, StationID , bool >()... };
-}
-static constexpr auto _BuildDock_dispatch = MakeDispatchTableBuildDock(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildDock_dispatch = MakeDispatchTable<CMD_BUILD_DOCK, StationID , bool >();
 bool BuildDock::do_post(CommandCallback *callback) {
     return _BuildDock_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->station_to_join, this->adjacent);
 }
@@ -769,12 +521,7 @@ bool BuildDock::do_test() {
     return (::Command<CMD_BUILD_DOCK>::Do(DC_NONE, this->tile, station_to_join, adjacent)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildRailStation(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, RailType , Axis , byte , byte , StationClassID , byte , StationID , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_RAIL_STATION, i, RailType , Axis , byte , byte , StationClassID , byte , StationID , bool >()... };
-}
-static constexpr auto _BuildRailStation_dispatch = MakeDispatchTableBuildRailStation(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildRailStation_dispatch = MakeDispatchTable<CMD_BUILD_RAIL_STATION, RailType , Axis , byte , byte , StationClassID , byte , StationID , bool >();
 bool BuildRailStation::do_post(CommandCallback *callback) {
     return _BuildRailStation_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->rt, this->axis, this->numtracks, this->plat_len, this->spec_class, this->spec_index, this->station_to_join, this->adjacent);
 }
@@ -782,12 +529,7 @@ bool BuildRailStation::do_test() {
     return (::Command<CMD_BUILD_RAIL_STATION>::Do(DC_NONE, this->tile, rt, axis, numtracks, plat_len, spec_class, spec_index, station_to_join, adjacent)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveFromRailStation(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , bool ), sizeof...(i)>{MakeCallback<CMD_REMOVE_FROM_RAIL_STATION, i, TileIndex , bool >()... };
-}
-static constexpr auto _RemoveFromRailStation_dispatch = MakeDispatchTableRemoveFromRailStation(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveFromRailStation_dispatch = MakeDispatchTable<CMD_REMOVE_FROM_RAIL_STATION, TileIndex , bool >();
 bool RemoveFromRailStation::do_post(CommandCallback *callback) {
     return _RemoveFromRailStation_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->end, this->keep_rail);
 }
@@ -795,12 +537,7 @@ bool RemoveFromRailStation::do_test() {
     return (::Command<CMD_REMOVE_FROM_RAIL_STATION>::Do(DC_NONE, this->tile, end, keep_rail)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildRoadStop(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, uint8 , uint8 , RoadStopType , bool , DiagDirection , RoadType , StationID , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_ROAD_STOP, i, uint8 , uint8 , RoadStopType , bool , DiagDirection , RoadType , StationID , bool >()... };
-}
-static constexpr auto _BuildRoadStop_dispatch = MakeDispatchTableBuildRoadStop(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildRoadStop_dispatch = MakeDispatchTable<CMD_BUILD_ROAD_STOP, uint8 , uint8 , RoadStopType , bool , DiagDirection , RoadType , StationID , bool >();
 bool BuildRoadStop::do_post(CommandCallback *callback) {
     return _BuildRoadStop_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->width, this->length, this->stop_type, this->is_drive_through, this->ddir, this->rt, this->station_to_join, this->adjacent);
 }
@@ -808,12 +545,7 @@ bool BuildRoadStop::do_test() {
     return (::Command<CMD_BUILD_ROAD_STOP>::Do(DC_NONE, this->tile, width, length, stop_type, is_drive_through, ddir, rt, station_to_join, adjacent)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveRoadStop(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, uint8 , uint8 , RoadStopType , bool ), sizeof...(i)>{MakeCallback<CMD_REMOVE_ROAD_STOP, i, uint8 , uint8 , RoadStopType , bool >()... };
-}
-static constexpr auto _RemoveRoadStop_dispatch = MakeDispatchTableRemoveRoadStop(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveRoadStop_dispatch = MakeDispatchTable<CMD_REMOVE_ROAD_STOP, uint8 , uint8 , RoadStopType , bool >();
 bool RemoveRoadStop::do_post(CommandCallback *callback) {
     return _RemoveRoadStop_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->width, this->height, this->stop_type, this->remove_road);
 }
@@ -821,12 +553,7 @@ bool RemoveRoadStop::do_test() {
     return (::Command<CMD_REMOVE_ROAD_STOP>::Do(DC_NONE, this->tile, width, height, stop_type, remove_road)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenameStation(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StationID , const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_STATION, i, StationID , const std::string &>()... };
-}
-static constexpr auto _RenameStation_dispatch = MakeDispatchTableRenameStation(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenameStation_dispatch = MakeDispatchTable<CMD_RENAME_STATION, StationID , const std::string &>();
 bool RenameStation::do_post(CommandCallback *callback) {
     return _RenameStation_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->station_id, this->text);
 }
@@ -834,12 +561,7 @@ bool RenameStation::do_test() {
     return (::Command<CMD_RENAME_STATION>::Do(DC_NONE, station_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableOpenCloseAirport(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StationID ), sizeof...(i)>{MakeCallback<CMD_OPEN_CLOSE_AIRPORT, i, StationID >()... };
-}
-static constexpr auto _OpenCloseAirport_dispatch = MakeDispatchTableOpenCloseAirport(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _OpenCloseAirport_dispatch = MakeDispatchTable<CMD_OPEN_CLOSE_AIRPORT, StationID >();
 bool OpenCloseAirport::do_post(CommandCallback *callback) {
     return _OpenCloseAirport_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->station_id);
 }
@@ -847,12 +569,7 @@ bool OpenCloseAirport::do_test() {
     return (::Command<CMD_OPEN_CLOSE_AIRPORT>::Do(DC_NONE, station_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCompanyCtrl(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CompanyCtrlAction , CompanyID , CompanyRemoveReason , ClientID ), sizeof...(i)>{MakeCallback<CMD_COMPANY_CTRL, i, CompanyCtrlAction , CompanyID , CompanyRemoveReason , ClientID >()... };
-}
-static constexpr auto _CompanyCtrl_dispatch = MakeDispatchTableCompanyCtrl(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _CompanyCtrl_dispatch = MakeDispatchTable<CMD_COMPANY_CTRL, CompanyCtrlAction , CompanyID , CompanyRemoveReason , ClientID >();
 bool CompanyCtrl::do_post(CommandCallback *callback) {
     return _CompanyCtrl_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->cca, this->company_id, this->reason, this->client_id);
 }
@@ -860,12 +577,7 @@ bool CompanyCtrl::do_test() {
     return (::Command<CMD_COMPANY_CTRL>::Do(DC_NONE, cca, company_id, reason, client_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableGiveMoney(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, uint32 , CompanyID ), sizeof...(i)>{MakeCallback<CMD_GIVE_MONEY, i, uint32 , CompanyID >()... };
-}
-static constexpr auto _GiveMoney_dispatch = MakeDispatchTableGiveMoney(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _GiveMoney_dispatch = MakeDispatchTable<CMD_GIVE_MONEY, uint32 , CompanyID >();
 bool GiveMoney::do_post(CommandCallback *callback) {
     return _GiveMoney_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->money, this->dest_company);
 }
@@ -873,12 +585,7 @@ bool GiveMoney::do_test() {
     return (::Command<CMD_GIVE_MONEY>::Do(DC_NONE, money, dest_company)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenameCompany(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_COMPANY, i, const std::string &>()... };
-}
-static constexpr auto _RenameCompany_dispatch = MakeDispatchTableRenameCompany(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenameCompany_dispatch = MakeDispatchTable<CMD_RENAME_COMPANY, const std::string &>();
 bool RenameCompany::do_post(CommandCallback *callback) {
     return _RenameCompany_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->text);
 }
@@ -886,12 +593,7 @@ bool RenameCompany::do_test() {
     return (::Command<CMD_RENAME_COMPANY>::Do(DC_NONE, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenamePresident(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_PRESIDENT, i, const std::string &>()... };
-}
-static constexpr auto _RenamePresident_dispatch = MakeDispatchTableRenamePresident(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenamePresident_dispatch = MakeDispatchTable<CMD_RENAME_PRESIDENT, const std::string &>();
 bool RenamePresident::do_post(CommandCallback *callback) {
     return _RenamePresident_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->text);
 }
@@ -899,12 +601,7 @@ bool RenamePresident::do_test() {
     return (::Command<CMD_RENAME_PRESIDENT>::Do(DC_NONE, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetCompanyManagerFace(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CompanyManagerFace ), sizeof...(i)>{MakeCallback<CMD_SET_COMPANY_MANAGER_FACE, i, CompanyManagerFace >()... };
-}
-static constexpr auto _SetCompanyManagerFace_dispatch = MakeDispatchTableSetCompanyManagerFace(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetCompanyManagerFace_dispatch = MakeDispatchTable<CMD_SET_COMPANY_MANAGER_FACE, CompanyManagerFace >();
 bool SetCompanyManagerFace::do_post(CommandCallback *callback) {
     return _SetCompanyManagerFace_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->cmf);
 }
@@ -912,12 +609,7 @@ bool SetCompanyManagerFace::do_test() {
     return (::Command<CMD_SET_COMPANY_MANAGER_FACE>::Do(DC_NONE, cmf)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetCompanyColour(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, LiveryScheme , bool , Colours ), sizeof...(i)>{MakeCallback<CMD_SET_COMPANY_COLOUR, i, LiveryScheme , bool , Colours >()... };
-}
-static constexpr auto _SetCompanyColour_dispatch = MakeDispatchTableSetCompanyColour(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetCompanyColour_dispatch = MakeDispatchTable<CMD_SET_COMPANY_COLOUR, LiveryScheme , bool , Colours >();
 bool SetCompanyColour::do_post(CommandCallback *callback) {
     return _SetCompanyColour_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->scheme, this->primary, this->colour);
 }
@@ -925,12 +617,7 @@ bool SetCompanyColour::do_test() {
     return (::Command<CMD_SET_COMPANY_COLOUR>::Do(DC_NONE, scheme, primary, colour)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenameDepot(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, DepotID , const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_DEPOT, i, DepotID , const std::string &>()... };
-}
-static constexpr auto _RenameDepot_dispatch = MakeDispatchTableRenameDepot(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenameDepot_dispatch = MakeDispatchTable<CMD_RENAME_DEPOT, DepotID , const std::string &>();
 bool RenameDepot::do_post(CommandCallback *callback) {
     return _RenameDepot_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->depot_id, this->text);
 }
@@ -938,12 +625,7 @@ bool RenameDepot::do_test() {
     return (::Command<CMD_RENAME_DEPOT>::Do(DC_NONE, depot_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableAutoreplaceVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID ), sizeof...(i)>{MakeCallback<CMD_AUTOREPLACE_VEHICLE, i, VehicleID >()... };
-}
-static constexpr auto _AutoreplaceVehicle_dispatch = MakeDispatchTableAutoreplaceVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _AutoreplaceVehicle_dispatch = MakeDispatchTable<CMD_AUTOREPLACE_VEHICLE, VehicleID >();
 bool AutoreplaceVehicle::do_post(CommandCallback *callback) {
     return _AutoreplaceVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id);
 }
@@ -951,12 +633,7 @@ bool AutoreplaceVehicle::do_test() {
     return (::Command<CMD_AUTOREPLACE_VEHICLE>::Do(DC_NONE, veh_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSetAutoReplace(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, GroupID , EngineID , EngineID , bool ), sizeof...(i)>{MakeCallback<CMD_SET_AUTOREPLACE, i, GroupID , EngineID , EngineID , bool >()... };
-}
-static constexpr auto _SetAutoReplace_dispatch = MakeDispatchTableSetAutoReplace(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SetAutoReplace_dispatch = MakeDispatchTable<CMD_SET_AUTOREPLACE, GroupID , EngineID , EngineID , bool >();
 bool SetAutoReplace::do_post(CommandCallback *callback) {
     return _SetAutoReplace_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->id_g, this->old_engine_type, this->new_engine_type, this->when_old);
 }
@@ -964,12 +641,7 @@ bool SetAutoReplace::do_test() {
     return (::Command<CMD_SET_AUTOREPLACE>::Do(DC_NONE, id_g, old_engine_type, new_engine_type, when_old)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildShipDepot(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Axis ), sizeof...(i)>{MakeCallback<CMD_BUILD_SHIP_DEPOT, i, Axis >()... };
-}
-static constexpr auto _BuildShipDepot_dispatch = MakeDispatchTableBuildShipDepot(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildShipDepot_dispatch = MakeDispatchTable<CMD_BUILD_SHIP_DEPOT, Axis >();
 bool BuildShipDepot::do_post(CommandCallback *callback) {
     return _BuildShipDepot_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->axis);
 }
@@ -977,12 +649,7 @@ bool BuildShipDepot::do_test() {
     return (::Command<CMD_BUILD_SHIP_DEPOT>::Do(DC_NONE, this->tile, axis)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildCanal(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , WaterClass , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_CANAL, i, TileIndex , WaterClass , bool >()... };
-}
-static constexpr auto _BuildCanal_dispatch = MakeDispatchTableBuildCanal(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildCanal_dispatch = MakeDispatchTable<CMD_BUILD_CANAL, TileIndex , WaterClass , bool >();
 bool BuildCanal::do_post(CommandCallback *callback) {
     return _BuildCanal_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->wc, this->diagonal);
 }
@@ -990,12 +657,7 @@ bool BuildCanal::do_test() {
     return (::Command<CMD_BUILD_CANAL>::Do(DC_NONE, this->tile, start_tile, wc, diagonal)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildLock(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile), sizeof...(i)>{MakeCallback<CMD_BUILD_LOCK, i>()... };
-}
-static constexpr auto _BuildLock_dispatch = MakeDispatchTableBuildLock(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildLock_dispatch = MakeDispatchTable<CMD_BUILD_LOCK>();
 bool BuildLock::do_post(CommandCallback *callback) {
     return _BuildLock_dispatch[FindCallbackIndex(callback)](this->error, this->tile);
 }
@@ -1003,12 +665,7 @@ bool BuildLock::do_test() {
     return (::Command<CMD_BUILD_LOCK>::Do(DC_NONE, this->tile)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildLongRoad(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , RoadType , Axis , DisallowedRoadDirections , bool , bool , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_LONG_ROAD, i, TileIndex , RoadType , Axis , DisallowedRoadDirections , bool , bool , bool >()... };
-}
-static constexpr auto _BuildLongRoad_dispatch = MakeDispatchTableBuildLongRoad(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildLongRoad_dispatch = MakeDispatchTable<CMD_BUILD_LONG_ROAD, TileIndex , RoadType , Axis , DisallowedRoadDirections , bool , bool , bool >();
 bool BuildLongRoad::do_post(CommandCallback *callback) {
     return _BuildLongRoad_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->rt, this->axis, this->drd, this->start_half, this->end_half, this->is_ai);
 }
@@ -1016,12 +673,7 @@ bool BuildLongRoad::do_test() {
     return (::Command<CMD_BUILD_LONG_ROAD>::Do(DC_NONE, this->tile, start_tile, rt, axis, drd, start_half, end_half, is_ai)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveLongRoad(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , RoadType , Axis , bool , bool ), sizeof...(i)>{MakeCallback<CMD_REMOVE_LONG_ROAD, i, TileIndex , RoadType , Axis , bool , bool >()... };
-}
-static constexpr auto _RemoveLongRoad_dispatch = MakeDispatchTableRemoveLongRoad(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveLongRoad_dispatch = MakeDispatchTable<CMD_REMOVE_LONG_ROAD, TileIndex , RoadType , Axis , bool , bool >();
 bool RemoveLongRoad::do_post(CommandCallback *callback) {
     return _RemoveLongRoad_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->rt, this->axis, this->start_half, this->end_half);
 }
@@ -1029,12 +681,7 @@ bool RemoveLongRoad::do_test() {
     return std::get<0>(::Command<CMD_REMOVE_LONG_ROAD>::Do(DC_NONE, this->tile, start_tile, rt, axis, start_half, end_half)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildRoad(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, RoadBits , RoadType , DisallowedRoadDirections , TownID ), sizeof...(i)>{MakeCallback<CMD_BUILD_ROAD, i, RoadBits , RoadType , DisallowedRoadDirections , TownID >()... };
-}
-static constexpr auto _BuildRoad_dispatch = MakeDispatchTableBuildRoad(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildRoad_dispatch = MakeDispatchTable<CMD_BUILD_ROAD, RoadBits , RoadType , DisallowedRoadDirections , TownID >();
 bool BuildRoad::do_post(CommandCallback *callback) {
     return _BuildRoad_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->pieces, this->rt, this->toggle_drd, this->town_id);
 }
@@ -1042,12 +689,7 @@ bool BuildRoad::do_test() {
     return (::Command<CMD_BUILD_ROAD>::Do(DC_NONE, this->tile, pieces, rt, toggle_drd, town_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildRoadDepot(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, RoadType , DiagDirection ), sizeof...(i)>{MakeCallback<CMD_BUILD_ROAD_DEPOT, i, RoadType , DiagDirection >()... };
-}
-static constexpr auto _BuildRoadDepot_dispatch = MakeDispatchTableBuildRoadDepot(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildRoadDepot_dispatch = MakeDispatchTable<CMD_BUILD_ROAD_DEPOT, RoadType , DiagDirection >();
 bool BuildRoadDepot::do_post(CommandCallback *callback) {
     return _BuildRoadDepot_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->rt, this->dir);
 }
@@ -1055,12 +697,7 @@ bool BuildRoadDepot::do_test() {
     return (::Command<CMD_BUILD_ROAD_DEPOT>::Do(DC_NONE, this->tile, rt, dir)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableConvertRoad(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , RoadType ), sizeof...(i)>{MakeCallback<CMD_CONVERT_ROAD, i, TileIndex , RoadType >()... };
-}
-static constexpr auto _ConvertRoad_dispatch = MakeDispatchTableConvertRoad(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ConvertRoad_dispatch = MakeDispatchTable<CMD_CONVERT_ROAD, TileIndex , RoadType >();
 bool ConvertRoad::do_post(CommandCallback *callback) {
     return _ConvertRoad_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->area_start, this->to_type);
 }
@@ -1068,12 +705,7 @@ bool ConvertRoad::do_test() {
     return (::Command<CMD_CONVERT_ROAD>::Do(DC_NONE, this->tile, area_start, to_type)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildRailroadTrack(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , RailType , Track , bool , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_RAILROAD_TRACK, i, TileIndex , RailType , Track , bool , bool >()... };
-}
-static constexpr auto _BuildRailroadTrack_dispatch = MakeDispatchTableBuildRailroadTrack(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildRailroadTrack_dispatch = MakeDispatchTable<CMD_BUILD_RAILROAD_TRACK, TileIndex , RailType , Track , bool , bool >();
 bool BuildRailroadTrack::do_post(CommandCallback *callback) {
     return _BuildRailroadTrack_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->railtype, this->track, this->auto_remove_signals, this->fail_on_obstacle);
 }
@@ -1081,12 +713,7 @@ bool BuildRailroadTrack::do_test() {
     return (::Command<CMD_BUILD_RAILROAD_TRACK>::Do(DC_NONE, this->tile, start_tile, railtype, track, auto_remove_signals, fail_on_obstacle)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveRailroadTrack(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , Track ), sizeof...(i)>{MakeCallback<CMD_REMOVE_RAILROAD_TRACK, i, TileIndex , Track >()... };
-}
-static constexpr auto _RemoveRailroadTrack_dispatch = MakeDispatchTableRemoveRailroadTrack(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveRailroadTrack_dispatch = MakeDispatchTable<CMD_REMOVE_RAILROAD_TRACK, TileIndex , Track >();
 bool RemoveRailroadTrack::do_post(CommandCallback *callback) {
     return _RemoveRailroadTrack_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->track);
 }
@@ -1094,12 +721,7 @@ bool RemoveRailroadTrack::do_test() {
     return (::Command<CMD_REMOVE_RAILROAD_TRACK>::Do(DC_NONE, this->tile, start_tile, track)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildSingleRail(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, RailType , Track , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_SINGLE_RAIL, i, RailType , Track , bool >()... };
-}
-static constexpr auto _BuildSingleRail_dispatch = MakeDispatchTableBuildSingleRail(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildSingleRail_dispatch = MakeDispatchTable<CMD_BUILD_SINGLE_RAIL, RailType , Track , bool >();
 bool BuildSingleRail::do_post(CommandCallback *callback) {
     return _BuildSingleRail_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->railtype, this->track, this->auto_remove_signals);
 }
@@ -1107,12 +729,7 @@ bool BuildSingleRail::do_test() {
     return (::Command<CMD_BUILD_SINGLE_RAIL>::Do(DC_NONE, this->tile, railtype, track, auto_remove_signals)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveSingleRail(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Track ), sizeof...(i)>{MakeCallback<CMD_REMOVE_SINGLE_RAIL, i, Track >()... };
-}
-static constexpr auto _RemoveSingleRail_dispatch = MakeDispatchTableRemoveSingleRail(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveSingleRail_dispatch = MakeDispatchTable<CMD_REMOVE_SINGLE_RAIL, Track >();
 bool RemoveSingleRail::do_post(CommandCallback *callback) {
     return _RemoveSingleRail_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->track);
 }
@@ -1120,12 +737,7 @@ bool RemoveSingleRail::do_test() {
     return (::Command<CMD_REMOVE_SINGLE_RAIL>::Do(DC_NONE, this->tile, track)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildTrainDepot(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, RailType , DiagDirection ), sizeof...(i)>{MakeCallback<CMD_BUILD_TRAIN_DEPOT, i, RailType , DiagDirection >()... };
-}
-static constexpr auto _BuildTrainDepot_dispatch = MakeDispatchTableBuildTrainDepot(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildTrainDepot_dispatch = MakeDispatchTable<CMD_BUILD_TRAIN_DEPOT, RailType , DiagDirection >();
 bool BuildTrainDepot::do_post(CommandCallback *callback) {
     return _BuildTrainDepot_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->railtype, this->dir);
 }
@@ -1133,12 +745,7 @@ bool BuildTrainDepot::do_test() {
     return (::Command<CMD_BUILD_TRAIN_DEPOT>::Do(DC_NONE, this->tile, railtype, dir)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildSingleSignal(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Track , SignalType , SignalVariant , bool , bool , bool , SignalType , SignalType , uint8 , byte ), sizeof...(i)>{MakeCallback<CMD_BUILD_SIGNALS, i, Track , SignalType , SignalVariant , bool , bool , bool , SignalType , SignalType , uint8 , byte >()... };
-}
-static constexpr auto _BuildSingleSignal_dispatch = MakeDispatchTableBuildSingleSignal(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildSingleSignal_dispatch = MakeDispatchTable<CMD_BUILD_SIGNALS, Track , SignalType , SignalVariant , bool , bool , bool , SignalType , SignalType , uint8 , byte >();
 bool BuildSingleSignal::do_post(CommandCallback *callback) {
     return _BuildSingleSignal_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->track, this->sigtype, this->sigvar, this->convert_signal, this->skip_existing_signals, this->ctrl_pressed, this->cycle_start, this->cycle_stop, this->num_dir_cycle, this->signals_copy);
 }
@@ -1146,12 +753,7 @@ bool BuildSingleSignal::do_test() {
     return (::Command<CMD_BUILD_SIGNALS>::Do(DC_NONE, this->tile, track, sigtype, sigvar, convert_signal, skip_existing_signals, ctrl_pressed, cycle_start, cycle_stop, num_dir_cycle, signals_copy)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveSingleSignal(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Track ), sizeof...(i)>{MakeCallback<CMD_REMOVE_SIGNALS, i, Track >()... };
-}
-static constexpr auto _RemoveSingleSignal_dispatch = MakeDispatchTableRemoveSingleSignal(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveSingleSignal_dispatch = MakeDispatchTable<CMD_REMOVE_SIGNALS, Track >();
 bool RemoveSingleSignal::do_post(CommandCallback *callback) {
     return _RemoveSingleSignal_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->track);
 }
@@ -1159,12 +761,7 @@ bool RemoveSingleSignal::do_test() {
     return (::Command<CMD_REMOVE_SIGNALS>::Do(DC_NONE, this->tile, track)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableConvertRail(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , RailType , bool ), sizeof...(i)>{MakeCallback<CMD_CONVERT_RAIL, i, TileIndex , RailType , bool >()... };
-}
-static constexpr auto _ConvertRail_dispatch = MakeDispatchTableConvertRail(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ConvertRail_dispatch = MakeDispatchTable<CMD_CONVERT_RAIL, TileIndex , RailType , bool >();
 bool ConvertRail::do_post(CommandCallback *callback) {
     return _ConvertRail_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->area_start, this->totype, this->diagonal);
 }
@@ -1172,12 +769,7 @@ bool ConvertRail::do_test() {
     return (::Command<CMD_CONVERT_RAIL>::Do(DC_NONE, this->tile, area_start, totype, diagonal)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildSignalTrack(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , Track , SignalType , SignalVariant , bool , bool , bool , byte ), sizeof...(i)>{MakeCallback<CMD_BUILD_SIGNAL_TRACK, i, TileIndex , Track , SignalType , SignalVariant , bool , bool , bool , byte >()... };
-}
-static constexpr auto _BuildSignalTrack_dispatch = MakeDispatchTableBuildSignalTrack(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildSignalTrack_dispatch = MakeDispatchTable<CMD_BUILD_SIGNAL_TRACK, TileIndex , Track , SignalType , SignalVariant , bool , bool , bool , byte >();
 bool BuildSignalTrack::do_post(CommandCallback *callback) {
     return _BuildSignalTrack_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->end_tile, this->track, this->sigtype, this->sigvar, this->mode, this->autofill, this->minimise_gaps, this->signal_density);
 }
@@ -1185,12 +777,7 @@ bool BuildSignalTrack::do_test() {
     return (::Command<CMD_BUILD_SIGNAL_TRACK>::Do(DC_NONE, this->tile, end_tile, track, sigtype, sigvar, mode, autofill, minimise_gaps, signal_density)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveSignalTrack(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , Track , bool ), sizeof...(i)>{MakeCallback<CMD_REMOVE_SIGNAL_TRACK, i, TileIndex , Track , bool >()... };
-}
-static constexpr auto _RemoveSignalTrack_dispatch = MakeDispatchTableRemoveSignalTrack(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveSignalTrack_dispatch = MakeDispatchTable<CMD_REMOVE_SIGNAL_TRACK, TileIndex , Track , bool >();
 bool RemoveSignalTrack::do_post(CommandCallback *callback) {
     return _RemoveSignalTrack_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->end_tile, this->track, this->autofill);
 }
@@ -1198,12 +785,7 @@ bool RemoveSignalTrack::do_test() {
     return (::Command<CMD_REMOVE_SIGNAL_TRACK>::Do(DC_NONE, this->tile, end_tile, track, autofill)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildIndustry(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, IndustryType , uint32 , bool , uint32 ), sizeof...(i)>{MakeCallback<CMD_BUILD_INDUSTRY, i, IndustryType , uint32 , bool , uint32 >()... };
-}
-static constexpr auto _BuildIndustry_dispatch = MakeDispatchTableBuildIndustry(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildIndustry_dispatch = MakeDispatchTable<CMD_BUILD_INDUSTRY, IndustryType , uint32 , bool , uint32 >();
 bool BuildIndustry::do_post(CommandCallback *callback) {
     return _BuildIndustry_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->it, this->first_layout, this->fund, this->seed);
 }
@@ -1211,12 +793,7 @@ bool BuildIndustry::do_test() {
     return (::Command<CMD_BUILD_INDUSTRY>::Do(DC_NONE, this->tile, it, first_layout, fund, seed)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableIndustryCtrl(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, IndustryID , IndustryAction , IndustryControlFlags , Owner , const std::string &), sizeof...(i)>{MakeCallback<CMD_INDUSTRY_CTRL, i, IndustryID , IndustryAction , IndustryControlFlags , Owner , const std::string &>()... };
-}
-static constexpr auto _IndustryCtrl_dispatch = MakeDispatchTableIndustryCtrl(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _IndustryCtrl_dispatch = MakeDispatchTable<CMD_INDUSTRY_CTRL, IndustryID , IndustryAction , IndustryControlFlags , Owner , const std::string &>();
 bool IndustryCtrl::do_post(CommandCallback *callback) {
     return _IndustryCtrl_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->ind_id, this->action, this->ctlflags, this->company_id, this->text);
 }
@@ -1224,12 +801,7 @@ bool IndustryCtrl::do_test() {
     return (::Command<CMD_INDUSTRY_CTRL>::Do(DC_NONE, ind_id, action, ctlflags, company_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildRailWaypoint(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Axis , byte , byte , StationClassID , byte , StationID , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_RAIL_WAYPOINT, i, Axis , byte , byte , StationClassID , byte , StationID , bool >()... };
-}
-static constexpr auto _BuildRailWaypoint_dispatch = MakeDispatchTableBuildRailWaypoint(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildRailWaypoint_dispatch = MakeDispatchTable<CMD_BUILD_RAIL_WAYPOINT, Axis , byte , byte , StationClassID , byte , StationID , bool >();
 bool BuildRailWaypoint::do_post(CommandCallback *callback) {
     return _BuildRailWaypoint_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->axis, this->width, this->height, this->spec_class, this->spec_index, this->station_to_join, this->adjacent);
 }
@@ -1237,12 +809,7 @@ bool BuildRailWaypoint::do_test() {
     return (::Command<CMD_BUILD_RAIL_WAYPOINT>::Do(DC_NONE, this->tile, axis, width, height, spec_class, spec_index, station_to_join, adjacent)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRemoveFromRailWaypoint(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , bool ), sizeof...(i)>{MakeCallback<CMD_REMOVE_FROM_RAIL_WAYPOINT, i, TileIndex , bool >()... };
-}
-static constexpr auto _RemoveFromRailWaypoint_dispatch = MakeDispatchTableRemoveFromRailWaypoint(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RemoveFromRailWaypoint_dispatch = MakeDispatchTable<CMD_REMOVE_FROM_RAIL_WAYPOINT, TileIndex , bool >();
 bool RemoveFromRailWaypoint::do_post(CommandCallback *callback) {
     return _RemoveFromRailWaypoint_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->end, this->keep_rail);
 }
@@ -1250,12 +817,7 @@ bool RemoveFromRailWaypoint::do_test() {
     return (::Command<CMD_REMOVE_FROM_RAIL_WAYPOINT>::Do(DC_NONE, this->tile, end, keep_rail)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildBuoy(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile), sizeof...(i)>{MakeCallback<CMD_BUILD_BUOY, i>()... };
-}
-static constexpr auto _BuildBuoy_dispatch = MakeDispatchTableBuildBuoy(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildBuoy_dispatch = MakeDispatchTable<CMD_BUILD_BUOY>();
 bool BuildBuoy::do_post(CommandCallback *callback) {
     return _BuildBuoy_dispatch[FindCallbackIndex(callback)](this->error, this->tile);
 }
@@ -1263,12 +825,7 @@ bool BuildBuoy::do_test() {
     return (::Command<CMD_BUILD_BUOY>::Do(DC_NONE, this->tile)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenameWaypoint(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, StationID , const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_WAYPOINT, i, StationID , const std::string &>()... };
-}
-static constexpr auto _RenameWaypoint_dispatch = MakeDispatchTableRenameWaypoint(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenameWaypoint_dispatch = MakeDispatchTable<CMD_RENAME_WAYPOINT, StationID , const std::string &>();
 bool RenameWaypoint::do_post(CommandCallback *callback) {
     return _RenameWaypoint_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->waypoint_id, this->text);
 }
@@ -1276,12 +833,7 @@ bool RenameWaypoint::do_test() {
     return (::Command<CMD_RENAME_WAYPOINT>::Do(DC_NONE, waypoint_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableFoundTown(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownSize , bool , TownLayout , bool , uint32 , const std::string &), sizeof...(i)>{MakeCallback<CMD_FOUND_TOWN, i, TownSize , bool , TownLayout , bool , uint32 , const std::string &>()... };
-}
-static constexpr auto _FoundTown_dispatch = MakeDispatchTableFoundTown(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _FoundTown_dispatch = MakeDispatchTable<CMD_FOUND_TOWN, TownSize , bool , TownLayout , bool , uint32 , const std::string &>();
 bool FoundTown::do_post(CommandCallback *callback) {
     return _FoundTown_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->size, this->city, this->layout, this->random_location, this->townnameparts, this->text);
 }
@@ -1289,12 +841,7 @@ bool FoundTown::do_test() {
     return std::get<0>(::Command<CMD_FOUND_TOWN>::Do(DC_NONE, this->tile, size, city, layout, random_location, townnameparts, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenameTown(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownID , const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_TOWN, i, TownID , const std::string &>()... };
-}
-static constexpr auto _RenameTown_dispatch = MakeDispatchTableRenameTown(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenameTown_dispatch = MakeDispatchTable<CMD_RENAME_TOWN, TownID , const std::string &>();
 bool RenameTown::do_post(CommandCallback *callback) {
     return _RenameTown_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->town_id, this->text);
 }
@@ -1302,12 +849,7 @@ bool RenameTown::do_test() {
     return (::Command<CMD_RENAME_TOWN>::Do(DC_NONE, town_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableDoTownAction(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownID , uint8 ), sizeof...(i)>{MakeCallback<CMD_DO_TOWN_ACTION, i, TownID , uint8 >()... };
-}
-static constexpr auto _DoTownAction_dispatch = MakeDispatchTableDoTownAction(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _DoTownAction_dispatch = MakeDispatchTable<CMD_DO_TOWN_ACTION, TownID , uint8 >();
 bool DoTownAction::do_post(CommandCallback *callback) {
     return _DoTownAction_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->town_id, this->action);
 }
@@ -1315,12 +857,7 @@ bool DoTownAction::do_test() {
     return (::Command<CMD_DO_TOWN_ACTION>::Do(DC_NONE, town_id, action)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableTownGrowthRate(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownID , uint16 ), sizeof...(i)>{MakeCallback<CMD_TOWN_GROWTH_RATE, i, TownID , uint16 >()... };
-}
-static constexpr auto _TownGrowthRate_dispatch = MakeDispatchTableTownGrowthRate(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _TownGrowthRate_dispatch = MakeDispatchTable<CMD_TOWN_GROWTH_RATE, TownID , uint16 >();
 bool TownGrowthRate::do_post(CommandCallback *callback) {
     return _TownGrowthRate_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->town_id, this->growth_rate);
 }
@@ -1328,12 +865,7 @@ bool TownGrowthRate::do_test() {
     return (::Command<CMD_TOWN_GROWTH_RATE>::Do(DC_NONE, town_id, growth_rate)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableTownRating(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownID , CompanyID , int16 ), sizeof...(i)>{MakeCallback<CMD_TOWN_RATING, i, TownID , CompanyID , int16 >()... };
-}
-static constexpr auto _TownRating_dispatch = MakeDispatchTableTownRating(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _TownRating_dispatch = MakeDispatchTable<CMD_TOWN_RATING, TownID , CompanyID , int16 >();
 bool TownRating::do_post(CommandCallback *callback) {
     return _TownRating_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->town_id, this->company_id, this->rating);
 }
@@ -1341,12 +873,7 @@ bool TownRating::do_test() {
     return (::Command<CMD_TOWN_RATING>::Do(DC_NONE, town_id, company_id, rating)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableTownCargoGoal(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownID , TownEffect , uint32 ), sizeof...(i)>{MakeCallback<CMD_TOWN_CARGO_GOAL, i, TownID , TownEffect , uint32 >()... };
-}
-static constexpr auto _TownCargoGoal_dispatch = MakeDispatchTableTownCargoGoal(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _TownCargoGoal_dispatch = MakeDispatchTable<CMD_TOWN_CARGO_GOAL, TownID , TownEffect , uint32 >();
 bool TownCargoGoal::do_post(CommandCallback *callback) {
     return _TownCargoGoal_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->town_id, this->te, this->goal);
 }
@@ -1354,12 +881,7 @@ bool TownCargoGoal::do_test() {
     return (::Command<CMD_TOWN_CARGO_GOAL>::Do(DC_NONE, town_id, te, goal)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableTownSetText(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownID , const std::string &), sizeof...(i)>{MakeCallback<CMD_TOWN_SET_TEXT, i, TownID , const std::string &>()... };
-}
-static constexpr auto _TownSetText_dispatch = MakeDispatchTableTownSetText(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _TownSetText_dispatch = MakeDispatchTable<CMD_TOWN_SET_TEXT, TownID , const std::string &>();
 bool TownSetText::do_post(CommandCallback *callback) {
     return _TownSetText_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->town_id, this->text);
 }
@@ -1367,12 +889,7 @@ bool TownSetText::do_test() {
     return (::Command<CMD_TOWN_SET_TEXT>::Do(DC_NONE, town_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableExpandTown(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownID , uint32 ), sizeof...(i)>{MakeCallback<CMD_EXPAND_TOWN, i, TownID , uint32 >()... };
-}
-static constexpr auto _ExpandTown_dispatch = MakeDispatchTableExpandTown(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ExpandTown_dispatch = MakeDispatchTable<CMD_EXPAND_TOWN, TownID , uint32 >();
 bool ExpandTown::do_post(CommandCallback *callback) {
     return _ExpandTown_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->town_id, this->grow_amount);
 }
@@ -1380,12 +897,7 @@ bool ExpandTown::do_test() {
     return (::Command<CMD_EXPAND_TOWN>::Do(DC_NONE, town_id, grow_amount)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableDeleteTown(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TownID ), sizeof...(i)>{MakeCallback<CMD_DELETE_TOWN, i, TownID >()... };
-}
-static constexpr auto _DeleteTown_dispatch = MakeDispatchTableDeleteTown(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _DeleteTown_dispatch = MakeDispatchTable<CMD_DELETE_TOWN, TownID >();
 bool DeleteTown::do_post(CommandCallback *callback) {
     return _DeleteTown_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->town_id);
 }
@@ -1393,12 +905,7 @@ bool DeleteTown::do_test() {
     return (::Command<CMD_DELETE_TOWN>::Do(DC_NONE, town_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildObject(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, ObjectType , uint8 ), sizeof...(i)>{MakeCallback<CMD_BUILD_OBJECT, i, ObjectType , uint8 >()... };
-}
-static constexpr auto _BuildObject_dispatch = MakeDispatchTableBuildObject(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildObject_dispatch = MakeDispatchTable<CMD_BUILD_OBJECT, ObjectType , uint8 >();
 bool BuildObject::do_post(CommandCallback *callback) {
     return _BuildObject_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->type, this->view);
 }
@@ -1406,12 +913,7 @@ bool BuildObject::do_test() {
     return (::Command<CMD_BUILD_OBJECT>::Do(DC_NONE, this->tile, type, view)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildObjectArea(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , ObjectType , uint8 , bool ), sizeof...(i)>{MakeCallback<CMD_BUILD_OBJECT_AREA, i, TileIndex , ObjectType , uint8 , bool >()... };
-}
-static constexpr auto _BuildObjectArea_dispatch = MakeDispatchTableBuildObjectArea(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildObjectArea_dispatch = MakeDispatchTable<CMD_BUILD_OBJECT_AREA, TileIndex , ObjectType , uint8 , bool >();
 bool BuildObjectArea::do_post(CommandCallback *callback) {
     return _BuildObjectArea_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->type, this->view, this->diagonal);
 }
@@ -1419,12 +921,7 @@ bool BuildObjectArea::do_test() {
     return (::Command<CMD_BUILD_OBJECT_AREA>::Do(DC_NONE, this->tile, start_tile, type, view, diagonal)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableMoveRailVehicle(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , VehicleID , bool ), sizeof...(i)>{MakeCallback<CMD_MOVE_RAIL_VEHICLE, i, VehicleID , VehicleID , bool >()... };
-}
-static constexpr auto _MoveRailVehicle_dispatch = MakeDispatchTableMoveRailVehicle(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _MoveRailVehicle_dispatch = MakeDispatchTable<CMD_MOVE_RAIL_VEHICLE, VehicleID , VehicleID , bool >();
 bool MoveRailVehicle::do_post(CommandCallback *callback) {
     return _MoveRailVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->src_veh, this->dest_veh, this->move_chain);
 }
@@ -1432,12 +929,7 @@ bool MoveRailVehicle::do_test() {
     return (::Command<CMD_MOVE_RAIL_VEHICLE>::Do(DC_NONE, src_veh, dest_veh, move_chain)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableForceTrainProceed(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID ), sizeof...(i)>{MakeCallback<CMD_FORCE_TRAIN_PROCEED, i, VehicleID >()... };
-}
-static constexpr auto _ForceTrainProceed_dispatch = MakeDispatchTableForceTrainProceed(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ForceTrainProceed_dispatch = MakeDispatchTable<CMD_FORCE_TRAIN_PROCEED, VehicleID >();
 bool ForceTrainProceed::do_post(CommandCallback *callback) {
     return _ForceTrainProceed_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id);
 }
@@ -1445,12 +937,7 @@ bool ForceTrainProceed::do_test() {
     return (::Command<CMD_FORCE_TRAIN_PROCEED>::Do(DC_NONE, veh_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableReverseTrainDirection(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , bool ), sizeof...(i)>{MakeCallback<CMD_REVERSE_TRAIN_DIRECTION, i, VehicleID , bool >()... };
-}
-static constexpr auto _ReverseTrainDirection_dispatch = MakeDispatchTableReverseTrainDirection(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ReverseTrainDirection_dispatch = MakeDispatchTable<CMD_REVERSE_TRAIN_DIRECTION, VehicleID , bool >();
 bool ReverseTrainDirection::do_post(CommandCallback *callback) {
     return _ReverseTrainDirection_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->reverse_single_veh);
 }
@@ -1458,12 +945,7 @@ bool ReverseTrainDirection::do_test() {
     return (::Command<CMD_REVERSE_TRAIN_DIRECTION>::Do(DC_NONE, veh_id, reverse_single_veh)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTablePlaceSign(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, const std::string &), sizeof...(i)>{MakeCallback<CMD_PLACE_SIGN, i, const std::string &>()... };
-}
-static constexpr auto _PlaceSign_dispatch = MakeDispatchTablePlaceSign(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _PlaceSign_dispatch = MakeDispatchTable<CMD_PLACE_SIGN, const std::string &>();
 bool PlaceSign::do_post(CommandCallback *callback) {
     return _PlaceSign_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->text);
 }
@@ -1471,12 +953,7 @@ bool PlaceSign::do_test() {
     return std::get<0>(::Command<CMD_PLACE_SIGN>::Do(DC_NONE, this->tile, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableRenameSign(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, SignID , const std::string &), sizeof...(i)>{MakeCallback<CMD_RENAME_SIGN, i, SignID , const std::string &>()... };
-}
-static constexpr auto _RenameSign_dispatch = MakeDispatchTableRenameSign(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _RenameSign_dispatch = MakeDispatchTable<CMD_RENAME_SIGN, SignID , const std::string &>();
 bool RenameSign::do_post(CommandCallback *callback) {
     return _RenameSign_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->sign_id, this->text);
 }
@@ -1484,12 +961,7 @@ bool RenameSign::do_test() {
     return (::Command<CMD_RENAME_SIGN>::Do(DC_NONE, sign_id, text)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildBridge(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , TransportType , BridgeType , byte ), sizeof...(i)>{MakeCallback<CMD_BUILD_BRIDGE, i, TileIndex , TransportType , BridgeType , byte >()... };
-}
-static constexpr auto _BuildBridge_dispatch = MakeDispatchTableBuildBridge(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildBridge_dispatch = MakeDispatchTable<CMD_BUILD_BRIDGE, TileIndex , TransportType , BridgeType , byte >();
 bool BuildBridge::do_post(CommandCallback *callback) {
     return _BuildBridge_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->tile_start, this->transport_type, this->bridge_type, this->road_rail_type);
 }
@@ -1497,12 +969,7 @@ bool BuildBridge::do_test() {
     return (::Command<CMD_BUILD_BRIDGE>::Do(DC_NONE, this->tile, tile_start, transport_type, bridge_type, road_rail_type)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuildTunnel(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TransportType , byte ), sizeof...(i)>{MakeCallback<CMD_BUILD_TUNNEL, i, TransportType , byte >()... };
-}
-static constexpr auto _BuildTunnel_dispatch = MakeDispatchTableBuildTunnel(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuildTunnel_dispatch = MakeDispatchTable<CMD_BUILD_TUNNEL, TransportType , byte >();
 bool BuildTunnel::do_post(CommandCallback *callback) {
     return _BuildTunnel_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->transport_type, this->road_rail_type);
 }
@@ -1510,12 +977,7 @@ bool BuildTunnel::do_test() {
     return (::Command<CMD_BUILD_TUNNEL>::Do(DC_NONE, this->tile, transport_type, road_rail_type)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableTerraformLand(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Slope , bool ), sizeof...(i)>{MakeCallback<CMD_TERRAFORM_LAND, i, Slope , bool >()... };
-}
-static constexpr auto _TerraformLand_dispatch = MakeDispatchTableTerraformLand(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _TerraformLand_dispatch = MakeDispatchTable<CMD_TERRAFORM_LAND, Slope , bool >();
 bool TerraformLand::do_post(CommandCallback *callback) {
     return _TerraformLand_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->slope, this->dir_up);
 }
@@ -1523,12 +985,7 @@ bool TerraformLand::do_test() {
     return std::get<0>(::Command<CMD_TERRAFORM_LAND>::Do(DC_NONE, this->tile, slope, dir_up)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableLevelLand(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, TileIndex , bool , LevelMode ), sizeof...(i)>{MakeCallback<CMD_LEVEL_LAND, i, TileIndex , bool , LevelMode >()... };
-}
-static constexpr auto _LevelLand_dispatch = MakeDispatchTableLevelLand(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _LevelLand_dispatch = MakeDispatchTable<CMD_LEVEL_LAND, TileIndex , bool , LevelMode >();
 bool LevelLand::do_post(CommandCallback *callback) {
     return _LevelLand_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->diagonal, this->lm);
 }
@@ -1536,12 +993,7 @@ bool LevelLand::do_test() {
     return std::get<0>(::Command<CMD_LEVEL_LAND>::Do(DC_NONE, this->tile, start_tile, diagonal, lm)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableMoneyCheat(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Money ), sizeof...(i)>{MakeCallback<CMD_MONEY_CHEAT, i, Money >()... };
-}
-static constexpr auto _MoneyCheat_dispatch = MakeDispatchTableMoneyCheat(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _MoneyCheat_dispatch = MakeDispatchTable<CMD_MONEY_CHEAT, Money >();
 bool MoneyCheat::do_post(CommandCallback *callback) {
     return _MoneyCheat_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->amount);
 }
@@ -1549,12 +1001,7 @@ bool MoneyCheat::do_test() {
     return (::Command<CMD_MONEY_CHEAT>::Do(DC_NONE, amount)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableChangeBankBalance(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Money , CompanyID , ExpensesType ), sizeof...(i)>{MakeCallback<CMD_CHANGE_BANK_BALANCE, i, Money , CompanyID , ExpensesType >()... };
-}
-static constexpr auto _ChangeBankBalance_dispatch = MakeDispatchTableChangeBankBalance(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ChangeBankBalance_dispatch = MakeDispatchTable<CMD_CHANGE_BANK_BALANCE, Money , CompanyID , ExpensesType >();
 bool ChangeBankBalance::do_post(CommandCallback *callback) {
     return _ChangeBankBalance_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->delta, this->company, this->expenses_type);
 }
@@ -1562,12 +1009,7 @@ bool ChangeBankBalance::do_test() {
     return (::Command<CMD_CHANGE_BANK_BALANCE>::Do(DC_NONE, this->tile, delta, company, expenses_type)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableIncreaseLoan(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, LoanCommand , Money ), sizeof...(i)>{MakeCallback<CMD_INCREASE_LOAN, i, LoanCommand , Money >()... };
-}
-static constexpr auto _IncreaseLoan_dispatch = MakeDispatchTableIncreaseLoan(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _IncreaseLoan_dispatch = MakeDispatchTable<CMD_INCREASE_LOAN, LoanCommand , Money >();
 bool IncreaseLoan::do_post(CommandCallback *callback) {
     return _IncreaseLoan_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->cmd, this->amount);
 }
@@ -1575,12 +1017,7 @@ bool IncreaseLoan::do_test() {
     return (::Command<CMD_INCREASE_LOAN>::Do(DC_NONE, cmd, amount)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableDecreaseLoan(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, LoanCommand , Money ), sizeof...(i)>{MakeCallback<CMD_DECREASE_LOAN, i, LoanCommand , Money >()... };
-}
-static constexpr auto _DecreaseLoan_dispatch = MakeDispatchTableDecreaseLoan(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _DecreaseLoan_dispatch = MakeDispatchTable<CMD_DECREASE_LOAN, LoanCommand , Money >();
 bool DecreaseLoan::do_post(CommandCallback *callback) {
     return _DecreaseLoan_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->cmd, this->amount);
 }
@@ -1588,12 +1025,7 @@ bool DecreaseLoan::do_test() {
     return (::Command<CMD_DECREASE_LOAN>::Do(DC_NONE, cmd, amount)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTablePause(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, PauseMode , bool ), sizeof...(i)>{MakeCallback<CMD_PAUSE, i, PauseMode , bool >()... };
-}
-static constexpr auto _Pause_dispatch = MakeDispatchTablePause(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _Pause_dispatch = MakeDispatchTable<CMD_PAUSE, PauseMode , bool >();
 bool Pause::do_post(CommandCallback *callback) {
     return _Pause_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->mode, this->pause);
 }
@@ -1601,12 +1033,7 @@ bool Pause::do_test() {
     return (::Command<CMD_PAUSE>::Do(DC_NONE, mode, pause)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableModifyOrder(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , VehicleOrderID , ModifyOrderFlags , uint16 ), sizeof...(i)>{MakeCallback<CMD_MODIFY_ORDER, i, VehicleID , VehicleOrderID , ModifyOrderFlags , uint16 >()... };
-}
-static constexpr auto _ModifyOrder_dispatch = MakeDispatchTableModifyOrder(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ModifyOrder_dispatch = MakeDispatchTable<CMD_MODIFY_ORDER, VehicleID , VehicleOrderID , ModifyOrderFlags , uint16 >();
 bool ModifyOrder::do_post(CommandCallback *callback) {
     return _ModifyOrder_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh, this->sel_ord, this->mof, this->data);
 }
@@ -1614,12 +1041,7 @@ bool ModifyOrder::do_test() {
     return (::Command<CMD_MODIFY_ORDER>::Do(DC_NONE, veh, sel_ord, mof, data)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSkipToOrder(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , VehicleOrderID ), sizeof...(i)>{MakeCallback<CMD_SKIP_TO_ORDER, i, VehicleID , VehicleOrderID >()... };
-}
-static constexpr auto _SkipToOrder_dispatch = MakeDispatchTableSkipToOrder(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SkipToOrder_dispatch = MakeDispatchTable<CMD_SKIP_TO_ORDER, VehicleID , VehicleOrderID >();
 bool SkipToOrder::do_post(CommandCallback *callback) {
     return _SkipToOrder_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->sel_ord);
 }
@@ -1627,12 +1049,7 @@ bool SkipToOrder::do_test() {
     return (::Command<CMD_SKIP_TO_ORDER>::Do(DC_NONE, veh_id, sel_ord)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableDeleteOrder(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , VehicleOrderID ), sizeof...(i)>{MakeCallback<CMD_DELETE_ORDER, i, VehicleID , VehicleOrderID >()... };
-}
-static constexpr auto _DeleteOrder_dispatch = MakeDispatchTableDeleteOrder(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _DeleteOrder_dispatch = MakeDispatchTable<CMD_DELETE_ORDER, VehicleID , VehicleOrderID >();
 bool DeleteOrder::do_post(CommandCallback *callback) {
     return _DeleteOrder_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh_id, this->sel_ord);
 }
@@ -1640,12 +1057,7 @@ bool DeleteOrder::do_test() {
     return (::Command<CMD_DELETE_ORDER>::Do(DC_NONE, veh_id, sel_ord)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableInsertOrder(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , VehicleOrderID , const Order &), sizeof...(i)>{MakeCallback<CMD_INSERT_ORDER, i, VehicleID , VehicleOrderID , const Order &>()... };
-}
-static constexpr auto _InsertOrder_dispatch = MakeDispatchTableInsertOrder(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _InsertOrder_dispatch = MakeDispatchTable<CMD_INSERT_ORDER, VehicleID , VehicleOrderID , const Order &>();
 bool InsertOrder::do_post(CommandCallback *callback) {
     return _InsertOrder_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh, this->sel_ord, this->new_order);
 }
@@ -1653,12 +1065,7 @@ bool InsertOrder::do_test() {
     return (::Command<CMD_INSERT_ORDER>::Do(DC_NONE, veh, sel_ord, new_order)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableOrderRefit(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , VehicleOrderID , CargoID ), sizeof...(i)>{MakeCallback<CMD_ORDER_REFIT, i, VehicleID , VehicleOrderID , CargoID >()... };
-}
-static constexpr auto _OrderRefit_dispatch = MakeDispatchTableOrderRefit(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _OrderRefit_dispatch = MakeDispatchTable<CMD_ORDER_REFIT, VehicleID , VehicleOrderID , CargoID >();
 bool OrderRefit::do_post(CommandCallback *callback) {
     return _OrderRefit_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh, this->order_number, this->cargo);
 }
@@ -1666,12 +1073,7 @@ bool OrderRefit::do_test() {
     return (::Command<CMD_ORDER_REFIT>::Do(DC_NONE, veh, order_number, cargo)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCloneOrder(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CloneOptions , VehicleID , VehicleID ), sizeof...(i)>{MakeCallback<CMD_CLONE_ORDER, i, CloneOptions , VehicleID , VehicleID >()... };
-}
-static constexpr auto _CloneOrder_dispatch = MakeDispatchTableCloneOrder(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _CloneOrder_dispatch = MakeDispatchTable<CMD_CLONE_ORDER, CloneOptions , VehicleID , VehicleID >();
 bool CloneOrder::do_post(CommandCallback *callback) {
     return _CloneOrder_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->action, this->veh_dst, this->veh_src);
 }
@@ -1679,12 +1081,7 @@ bool CloneOrder::do_test() {
     return (::Command<CMD_CLONE_ORDER>::Do(DC_NONE, action, veh_dst, veh_src)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableMoveOrder(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, VehicleID , VehicleOrderID , VehicleOrderID ), sizeof...(i)>{MakeCallback<CMD_MOVE_ORDER, i, VehicleID , VehicleOrderID , VehicleOrderID >()... };
-}
-static constexpr auto _MoveOrder_dispatch = MakeDispatchTableMoveOrder(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _MoveOrder_dispatch = MakeDispatchTable<CMD_MOVE_ORDER, VehicleID , VehicleOrderID , VehicleOrderID >();
 bool MoveOrder::do_post(CommandCallback *callback) {
     return _MoveOrder_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->veh, this->moving_order, this->target_order);
 }
@@ -1692,12 +1089,7 @@ bool MoveOrder::do_test() {
     return (::Command<CMD_MOVE_ORDER>::Do(DC_NONE, veh, moving_order, target_order)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableClearOrderBackup(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, ClientID ), sizeof...(i)>{MakeCallback<CMD_CLEAR_ORDER_BACKUP, i, ClientID >()... };
-}
-static constexpr auto _ClearOrderBackup_dispatch = MakeDispatchTableClearOrderBackup(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ClearOrderBackup_dispatch = MakeDispatchTable<CMD_CLEAR_ORDER_BACKUP, ClientID >();
 bool ClearOrderBackup::do_post(CommandCallback *callback) {
     return _ClearOrderBackup_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->user_id);
 }
@@ -1705,12 +1097,7 @@ bool ClearOrderBackup::do_test() {
     return (::Command<CMD_CLEAR_ORDER_BACKUP>::Do(DC_NONE, this->tile, user_id)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableCreateSubsidy(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CargoID , SourceType , SourceID , SourceType , SourceID ), sizeof...(i)>{MakeCallback<CMD_CREATE_SUBSIDY, i, CargoID , SourceType , SourceID , SourceType , SourceID >()... };
-}
-static constexpr auto _CreateSubsidy_dispatch = MakeDispatchTableCreateSubsidy(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _CreateSubsidy_dispatch = MakeDispatchTable<CMD_CREATE_SUBSIDY, CargoID , SourceType , SourceID , SourceType , SourceID >();
 bool CreateSubsidy::do_post(CommandCallback *callback) {
     return _CreateSubsidy_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->cid, this->src_type, this->src, this->dst_type, this->dst);
 }
@@ -1718,12 +1105,7 @@ bool CreateSubsidy::do_test() {
     return (::Command<CMD_CREATE_SUBSIDY>::Do(DC_NONE, cid, src_type, src, dst_type, dst)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableScrollViewport(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, ViewportScrollTarget , uint32 ), sizeof...(i)>{MakeCallback<CMD_SCROLL_VIEWPORT, i, ViewportScrollTarget , uint32 >()... };
-}
-static constexpr auto _ScrollViewport_dispatch = MakeDispatchTableScrollViewport(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _ScrollViewport_dispatch = MakeDispatchTable<CMD_SCROLL_VIEWPORT, ViewportScrollTarget , uint32 >();
 bool ScrollViewport::do_post(CommandCallback *callback) {
     return _ScrollViewport_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->target, this->ref);
 }
@@ -1731,12 +1113,7 @@ bool ScrollViewport::do_test() {
     return (::Command<CMD_SCROLL_VIEWPORT>::Do(DC_NONE, this->tile, target, ref)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuyShareInCompany(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CompanyID ), sizeof...(i)>{MakeCallback<CMD_BUY_SHARE_IN_COMPANY, i, CompanyID >()... };
-}
-static constexpr auto _BuyShareInCompany_dispatch = MakeDispatchTableBuyShareInCompany(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuyShareInCompany_dispatch = MakeDispatchTable<CMD_BUY_SHARE_IN_COMPANY, CompanyID >();
 bool BuyShareInCompany::do_post(CommandCallback *callback) {
     return _BuyShareInCompany_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->target_company);
 }
@@ -1744,12 +1121,7 @@ bool BuyShareInCompany::do_test() {
     return (::Command<CMD_BUY_SHARE_IN_COMPANY>::Do(DC_NONE, target_company)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableSellShareInCompany(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CompanyID ), sizeof...(i)>{MakeCallback<CMD_SELL_SHARE_IN_COMPANY, i, CompanyID >()... };
-}
-static constexpr auto _SellShareInCompany_dispatch = MakeDispatchTableSellShareInCompany(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _SellShareInCompany_dispatch = MakeDispatchTable<CMD_SELL_SHARE_IN_COMPANY, CompanyID >();
 bool SellShareInCompany::do_post(CommandCallback *callback) {
     return _SellShareInCompany_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->target_company);
 }
@@ -1757,12 +1129,7 @@ bool SellShareInCompany::do_test() {
     return (::Command<CMD_SELL_SHARE_IN_COMPANY>::Do(DC_NONE, target_company)).Succeeded();
 }
 
-template <typename T, T... i, size_t... j>
-inline constexpr auto MakeDispatchTableBuyCompany(std::index_sequence<i...>) noexcept
-{
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, CompanyID ), sizeof...(i)>{MakeCallback<CMD_BUY_COMPANY, i, CompanyID >()... };
-}
-static constexpr auto _BuyCompany_dispatch = MakeDispatchTableBuyCompany(std::make_index_sequence<_callback_tuple_size>{});
+static constexpr auto _BuyCompany_dispatch = MakeDispatchTable<CMD_BUY_COMPANY, CompanyID >();
 bool BuyCompany::do_post(CommandCallback *callback) {
     return _BuyCompany_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->target_company);
 }

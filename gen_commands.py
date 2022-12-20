@@ -112,6 +112,18 @@ constexpr auto MakeCallback() noexcept {
     }
 }
 
+template <Commands Tcmd, typename... Targs, typename T, T... i>
+inline constexpr auto MakeDispatchTableHelper(std::index_sequence<i...>) noexcept
+{
+    return std::array<bool (*)(StringID err_msg, TileIndex tile, Targs...), sizeof...(i)>{MakeCallback<Tcmd, i, Targs...>()... };
+}
+
+template <Commands Tcmd, typename... Targs>
+inline constexpr auto MakeDispatchTable() noexcept
+{
+    return MakeDispatchTableHelper<Tcmd, Targs...>(std::make_index_sequence<_callback_tuple_size>{});
+}
+
 '''
 
 def run():
@@ -214,13 +226,7 @@ def run():
                 sep_args_type_list = ', ' + args_type_list
                 sep_this_args_list = ', ' + this_args_list
             f.write(
-                f''
-                'template <typename T, T... i, size_t... j>\n'
-                f'inline constexpr auto MakeDispatchTable{name}(std::index_sequence<i...>) noexcept\n'
-                '{\n'
-                f'    return std::array<bool (*)(StringID err_msg, TileIndex tile{sep_args_type_list}), sizeof...(i)>{{MakeCallback<{constant}, i{sep_args_type_list}>()... }};\n'
-                '}\n'
-                f'static constexpr auto _{name}_dispatch = MakeDispatchTable{name}(std::make_index_sequence<_callback_tuple_size>{{}});\n'
+                f'static constexpr auto _{name}_dispatch = MakeDispatchTable<{constant}{sep_args_type_list}>();\n'
                 f'bool {name}::do_post(CommandCallback *callback) {{\n'
                 f'    return _{name}_dispatch[FindCallbackIndex(callback)](this->error, this->tile{sep_this_args_list});\n'
                 '}\n'
