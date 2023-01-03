@@ -286,14 +286,15 @@ void NetworkSendCommand(Commands cmd, StringID err_message, CommandCallback *cal
 		c.my_cmd = true;
 
 		_local_wait_queue.Append(&c);
+		citymania::AddCommandCallback(&c);
 		return;
 	}
 
 	c.frame = 0; // The client can't tell which frame, so just make it 0
 
 	/* Clients send their command to the server and forget all about the packet */
-	MyClient::SendCommand(&c);
-	// FIXME citymania::SendClientCommand(&c);
+	// MyClient::SendCommand(&c);
+	citymania::SendClientCommand(&c);
 }
 
 /**
@@ -542,6 +543,8 @@ CommandDataBuffer SanitizeCmdStrings(const CommandDataBuffer &data)
 template <Commands Tcmd, size_t Tcb>
 void UnpackNetworkCommand(const CommandPacket* cp)
 {
+	citymania::BeforeNetworkCommandExecution(cp);
 	auto args = EndianBufferReader::ToValue<typename CommandTraits<Tcmd>::Args>(cp->data);
 	Command<Tcmd>::PostFromNet(cp->err_msg, std::get<Tcb>(_callback_tuple), cp->my_cmd, cp->tile, args);
+	citymania::AfterNetworkCommandExecution(cp);
 }

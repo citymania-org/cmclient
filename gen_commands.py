@@ -74,7 +74,7 @@ inline constexpr size_t _callback_tuple_size = std::tuple_size_v<decltype(_callb
 
 template <size_t... i>
 inline auto MakeCallbackTable(std::index_sequence<i...>) noexcept {
-    return std::array<CommandCallback *, sizeof...(i)>{{ reinterpret_cast<CommandCallback *>(reinterpret_cast<void(*)()>(std::get<i>(_callback_tuple)))... }}; // MingW64 fails linking when casting a pointer to its own type. To work around, cast it to some other type first.
+    return std::array<::CommandCallback *, sizeof...(i)>{{ reinterpret_cast<::CommandCallback *>(reinterpret_cast<void(*)()>(std::get<i>(_callback_tuple)))... }}; // MingW64 fails linking when casting a pointer to its own type. To work around, cast it to some other type first.
 }
 /** Type-erased table of callbacks. */
 static auto _callback_table = MakeCallbackTable(std::make_index_sequence<_callback_tuple_size>{});\n
@@ -87,7 +87,7 @@ struct CallbackArgsHelper<void(*const)(Commands, const CommandCost &, Targs...)>
 #   pragma GCC diagnostic pop
 #endif
 
-static size_t FindCallbackIndex(CommandCallback *callback) {
+static size_t FindCallbackIndex(::CommandCallback *callback) {
     if (auto it = std::find(std::cbegin(_callback_table), std::cend(_callback_table), callback); it != std::cend(_callback_table)) {
         return static_cast<size_t>(std::distance(std::cbegin(_callback_table), it));
     }
@@ -102,7 +102,7 @@ template <Commands Tcmd, size_t Tcb, typename... Targs>
 constexpr auto MakeCallback() noexcept {
     /* Check if the callback matches with the command arguments. If not, don''t generate an Unpack proc. */
     using Tcallback = std::tuple_element_t<Tcb, decltype(_callback_tuple)>;
-    if constexpr (std::is_same_v<Tcallback, CommandCallback * const> ||
+    if constexpr (std::is_same_v<Tcallback, ::CommandCallback * const> ||
             std::is_same_v<Tcallback, CommandCallbackData * const> ||
             std::is_same_v<typename CommandTraits<Tcmd>::CbArgs, typename CallbackArgsHelper<Tcallback>::Args> ||
             (!std::is_void_v<typename CommandTraits<Tcmd>::RetTypes> && std::is_same_v<typename CallbackArgsHelper<typename CommandTraits<Tcmd>::RetCallbackProc const>::Args, typename CallbackArgsHelper<Tcallback>::Args>)) {
@@ -170,8 +170,9 @@ def run():
             f.write(
                 f'    ~{name}() override {{}}\n'
                 f'\n'
-                f'    bool do_post(CommandCallback * callback) override;\n'
-                f'    bool do_test() override;\n'
+                f'    bool _post(::CommandCallback * callback) override;\n'
+                f'    CommandCost _do(DoCommandFlag flags) override;\n'
+                f'    Commands get_command() override;\n'
                 f'}};\n\n'
             )
         f.write(
@@ -198,7 +199,7 @@ def run():
             ' * but the table is not the same.\n'
             ' */\n'
             'static constexpr auto _callback_tuple = std::make_tuple(\n'
-            '    (CommandCallback *)nullptr, // Make sure this is actually a pointer-to-function.\n'
+            '    (::CommandCallback *)nullptr, // Make sure this is actually a pointer-to-function.\n'
         )
         for i, cb in enumerate(callbacks):
             comma = ',' if i != len(callbacks) - 1 else ''
@@ -226,12 +227,13 @@ def run():
                 sep_args_type_list = ', ' + args_type_list
                 sep_this_args_list = ', ' + this_args_list
             f.write(
+                f'Commands {name}::get_command() {{ return {constant}; }}\n'
                 f'static constexpr auto _{name}_dispatch = MakeDispatchTable<{constant}{sep_args_type_list}>();\n'
-                f'bool {name}::do_post(CommandCallback *callback) {{\n'
+                f'bool {name}::_post(::CommandCallback *callback) {{\n'
                 f'    return _{name}_dispatch[FindCallbackIndex(callback)](this->error, this->tile{sep_this_args_list});\n'
                 '}\n'
-                f'bool {name}::do_test() {{\n'
-                f'    return {cost_getter}(::Command<{constant}>::Do(DC_NONE, {test_args_list})).Succeeded();\n'
+                f'CommandCost {name}::_do(DoCommandFlag flags) {{\n'
+                f'    return {cost_getter}(::Command<{constant}>::Do(flags, {test_args_list}));\n'
                 '}\n'
             )
             f.write('\n')

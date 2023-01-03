@@ -128,7 +128,7 @@ up<Command> GetBlueprintCommand(TileIndex start, const Blueprint::Item &item) {
                 end_tile = new_tile;
                 tdir = NextTrackdir(tdir);
             }
-            return make_up<cmd::BuildRailroadTrack>(
+            return std::make_unique<cmd::BuildRailroadTrack>(
                 end_tile,
                 start_tile,
                 _cur_railtype,

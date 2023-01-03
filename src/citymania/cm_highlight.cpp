@@ -472,7 +472,7 @@ void ObjectHighlight::UpdateTiles() {
             auto add_track = [this, z](TileIndex tile, TileIndex end_tile, Trackdir trackdir, SpriteID palette, TileIndex point1, TileIndex point2) {
                 if (trackdir == INVALID_TRACKDIR) return;
 
-                for(;;) {
+                while(tile <= MapSize()) {
                     this->sprites.emplace_back(
                         RemapCoords(TileX(tile) * TILE_SIZE, TileY(tile) * TILE_SIZE, z * TILE_HEIGHT + 7 /* z_offset */),
                         SPR_AUTORAIL_BASE + _AutorailTilehSprite[0][TrackdirToTrack(trackdir)],

@@ -18,6 +18,9 @@
 #include "misc/endian_buffer.hpp"
 #include "tile_map.h"
 
+struct CommandPacket;
+namespace citymania { extern void ExecuteCurrentCallback(const CommandCost &cost); }
+
 /**
  * Define a default return value for a failed command.
  *
@@ -338,6 +341,7 @@ protected:
 					std::apply(callback, std::tuple_cat(std::make_tuple(Tcmd), res, args));
 				}
 			}
+			citymania::ExecuteCurrentCallback(ExtractCommandCost(res));
 		}
 
 		return ExtractCommandCost(res).Succeeded();

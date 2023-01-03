@@ -52,6 +52,7 @@
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_station_gui.hpp"
+#include "citymania/cm_rail_gui.hpp"
 
 #include "safeguards.h"
 
@@ -65,8 +66,6 @@ static byte _cur_waypoint_type;              ///< Currently selected waypoint ty
 static bool _convert_signal_button;          ///< convert signal button in the signal GUI pressed
 static SignalVariant _cur_signal_variant;    ///< set the signal variant (for signal GUI)
 static SignalType _cur_signal_type;          ///< set the signal type (for signal GUI)
-
-extern TileIndex _rail_track_endtile; // CM rail_cmd.cpp
 
 static const int HOTKEY_MASK        = 0x1000;
 static const int HOTKEY_POLYRAIL     = 0x1000;
@@ -109,17 +108,6 @@ static bool IsStationAvailable(const StationSpec *statspec)
 void CcPlaySound_CONSTRUCTION_RAIL(Commands cmd, const CommandCost &result, TileIndex tile)
 {
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_20_CONSTRUCTION_RAIL, tile);
-}
-
-static void GenericPlaceRail(TileIndex tile, Track track)
-{
-	if (_remove_button_clicked) {
-		Command<CMD_REMOVE_SINGLE_RAIL>::Post(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK, CcPlaySound_CONSTRUCTION_RAIL,
-				tile, track);
-	} else {
-		Command<CMD_BUILD_SINGLE_RAIL>::Post(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK, CcPlaySound_CONSTRUCTION_RAIL,
-				tile, _cur_railtype, track, _settings_client.gui.auto_remove_signals);
-	}
 }
 
 /**
@@ -372,185 +360,6 @@ static void BuildRailClick_Remove(Window *w)
 		}
 	}
 }
-
-/* FIXME static CommandContainer DoRailroadTrackCmd(TileIndex start_tile, TileIndex end_tile, Track track)
-{
-	CommandContainer ret = {
-		start_tile,                             // tile
-		end_tile,                               // p1
-		((uint32)_cur_railtype | ((uint32)track << 6) | ((uint32)_settings_client.gui.auto_remove_signals << 11)), // p2
-		_remove_button_clicked ?
-				CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
-				CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK), // cmd
-		CcPlaySound_CONSTRUCTION_RAIL,          // callback
-		""                                      // text
-	};
-
-	return ret;
-}
-*/
-namespace citymania {
-/*
-static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2) {
-    auto rail_callback = [rail_cmd, start_tile, end_tile, track, estimate=citymania::_estimate_mod](bool res) -> bool {
-		if (DoCommand(&rail_cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
-				_rail_track_endtile == INVALID_TILE) {
-    		if (!DoCommandP(&rail_cmd)) return false;
-    	}
-    	if (!estimate && _rail_track_endtile != INVALID_TILE)
-			StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
-		return res;
-    };
-
-	auto h1 = TileHeight(s1);
-	auto h2 = TileHeight(s2);
-	uint32 diag_flag = diagonal ? 1 : 0;
-	uint32 p2_1 = ((h1 < h2 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
-	uint32 p2_2 = ((h2 < h1 ? LM_RAISE : LM_LEVEL) << 1) | diag_flag;
-    auto l1_fail = (!DoCommand(e1, s1, p2_1, DC_AUTO | DC_NO_WATER, CMD_LEVEL_LAND).Succeeded());
-    auto l2_fail = (!DoCommand(e2, s2, p2_2, DC_AUTO | DC_NO_WATER, CMD_LEVEL_LAND).Succeeded());
-	if (l1_fail && l2_fail) return rail_callback(true);
-	if (l2_fail) return citymania::DoCommandWithCallback(e1, s1, p2_1, CMD_LEVEL_LAND, CcTerraform, "", rail_callback);
-	if (!l1_fail) DoCommandP(e1, s1, p2_1, CMD_LEVEL_LAND, CcTerraform);
-	return citymania::DoCommandWithCallback(e2, s2, p2_2, CMD_LEVEL_LAND, CcTerraform, "", rail_callback);
-}
-
-static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Track track, CommandContainer &rail_cmd) {
-	bool eq = (TileX(end_tile) - TileY(end_tile) == TileX(start_tile) - TileY(start_tile));
-	bool ez = (TileX(end_tile) + TileY(end_tile) == TileX(start_tile) + TileY(start_tile));
-	// StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
-	switch (_thd.cm_poly_dir) {
-		case TRACKDIR_X_NE:
-			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
-				TILE_ADDXY(start_tile, 1, 0), end_tile,
-				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, 1));
-			break;
-		case TRACKDIR_X_SW:
-			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
-				start_tile, TILE_ADDXY(end_tile, 1, 0),
-				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, 1));
-			break;
-		case TRACKDIR_Y_SE:
-			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
-				start_tile, TILE_ADDXY(end_tile, 0, 1),
-				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, 1));
-			break;
-		case TRACKDIR_Y_NW:
-			return DoAutodirTerraform(false, start_tile, end_tile, track, rail_cmd,
-				TILE_ADDXY(start_tile, 0, 1), end_tile,
-				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, 0));
-			break;
-		case TRACKDIR_LEFT_N: {
-			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
-				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, eq, 0),
-				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, !eq));
-			break;
-		}
-		case TRACKDIR_RIGHT_N: {
-			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
-				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 0, eq),
-				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, !eq, 0));
-			break;
-		}
-		case TRACKDIR_LEFT_S: {
-			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
-				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, !eq),
-				start_tile, TILE_ADDXY(end_tile, eq, 1));
-			break;
-		}
-		case TRACKDIR_RIGHT_S: {
-			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
-				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, !eq, 1),
-				start_tile, TILE_ADDXY(end_tile, 1, eq));
-			break;
-		}
-		case TRACKDIR_UPPER_E: {
-			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
-				start_tile, TILE_ADDXY(end_tile, 0, !ez),
-				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, !ez, 1));
-			break;
-		}
-		case TRACKDIR_LOWER_E: {
-			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
-				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, ez, 1),
-				TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 0, ez));
-			break;
-		}
-		case TRACKDIR_UPPER_W: {
-			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
-				start_tile, TILE_ADDXY(end_tile, !ez, 0),
-				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, !ez));
-			break;
-		}
-		case TRACKDIR_LOWER_W: {
-			return DoAutodirTerraform(true, start_tile, end_tile, track, rail_cmd,
-				TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, ez),
-				TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, ez, 0));
-			break;
-		}
-		default:
-			break;
-	}
-	return true;
-}*/
-
-}  // namespace citymania
-
-//FIXME
-static void DoRailroadTrack(Track track)
-{
-	if (_remove_button_clicked) {
-		Command<CMD_REMOVE_RAILROAD_TRACK>::Post(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK, CcPlaySound_CONSTRUCTION_RAIL,
-				TileVirtXY(_thd.selend.x, _thd.selend.y), TileVirtXY(_thd.selstart.x, _thd.selstart.y), track);
-	} else {
-		Command<CMD_BUILD_RAILROAD_TRACK>::Post(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK, CcPlaySound_CONSTRUCTION_RAIL,
-				TileVirtXY(_thd.selend.x, _thd.selend.y), TileVirtXY(_thd.selstart.x, _thd.selstart.y),  _cur_railtype, track, _settings_client.gui.auto_remove_signals, false);
-	}
-}
-
-static void HandleAutodirPlacement()
-{
-	Track trackstat = static_cast<Track>( _thd.drawstyle & HT_DIR_MASK); // 0..5
-
-	if (_thd.drawstyle & HT_RAIL) { // one tile case
-		GenericPlaceRail(TileVirtXY(_thd.selend.x, _thd.selend.y), trackstat);
-		return;
-	}
-
-	DoRailroadTrack(trackstat);
-}
-// end FIXME
-
-/*
-static void HandleAutodirPlacement()
-{
-	Track track = (Track)(_thd.drawstyle & HT_DIR_MASK); // 0..5
-	TileIndex start_tile = TileVirtXY(_thd.selstart.x, _thd.selstart.y);
-	TileIndex end_tile = TileVirtXY(_thd.selend.x, _thd.selend.y);
-	/* FIXME
-	CommandContainer cmd = (_thd.drawstyle & HT_RAIL) ?
-			GenericPlaceRailCmd(end_tile, track) : // one tile case
-			DoRailroadTrackCmd(start_tile, end_tile, track); // multitile selection
-
-	/* When overbuilding existing tracks in polyline mode we want to move the
-	 * snap point over the last overbuilt track piece. In such case we don't
-	 * wan't to show any errors to the user. Don't execute the command right
-	 * away, first check if overbuilding. */
-	/* if (citymania::_estimate_mod || !(_thd.place_mode & HT_POLY) || _remove_button_clicked) {
-		if (!DoCommandP(&cmd)) return;
-	} else if (_thd.cm_poly_terra) {
-		citymania::HandleAutodirTerraform(start_tile, end_tile, track, cmd);
-		return;
-	} else if (DoCommand(&cmd, DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
-				_rail_track_endtile == INVALID_TILE) {
-		if (!DoCommandP(&cmd)) return;
-	} */
-	/* Save new snap points for the polyline tool, no matter if the command
-	 * succeeded, the snapping will be extended over overbuilt track pieces. */
-	/*if (!citymania::_estimate_mod && _rail_track_endtile != INVALID_TILE) {
-		StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
-	}
-}*/
 
 /**
  * Build new signals or remove signals or (if only one tile marked) edit a signal.
@@ -1002,7 +811,7 @@ struct BuildRailToolbarWindow : Window {
 					break;
 
 				case DDSP_PLACE_RAIL:
-					HandleAutodirPlacement();
+					citymania::HandleAutodirPlacement(_cur_railtype, _remove_button_clicked);
 					break;
 
 				case DDSP_BUILD_SIGNALS:

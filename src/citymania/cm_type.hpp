@@ -43,6 +43,10 @@ template<class T, class... Args>
     typename _Unique_if<T>::_Known_bound
     make_up(Args&&...) = delete;
 
+// template<typename T> const auto make_up = std::make_unique<T>;
+// template<typename T> const auto make_sp = std::make_shared<T>;
+template<typename T, class... Args> const auto make_sp = std::make_shared<T, Args...>;
+
 
 enum class GameType: uint8 {
     GENERIC = 0,
@@ -64,9 +68,6 @@ enum class ControllerType: uint8 {
     CB = 5,
     TOWN_DEFENCE = 6,
 };
-
-// template<typename T> const auto make_up = std::make_unique<T>;
-// template<typename T> const auto make_sp = std::make_shared<T>;
 
 } // namespace citymania
 

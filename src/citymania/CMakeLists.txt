@@ -42,6 +42,8 @@ add_files(
     cm_minimap.cpp
     cm_misc_gui.hpp
     cm_misc_gui.cpp
+    cm_rail_gui.hpp
+    cm_rail_gui.cpp
     cm_station_gui.hpp
     cm_station_gui.cpp
     cm_tooltips.hpp

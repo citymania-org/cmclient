@@ -31,7 +31,6 @@
 
 #include <sstream>
 
-
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
 extern void MarkCatchmentTilesDirty();
