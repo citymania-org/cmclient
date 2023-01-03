@@ -500,7 +500,7 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 		if (!IsNonContinuousFoundation(f)) {
 			/* Lower part of foundation */
 			AddSortableSpriteToDraw(
-				leveled_base + (ti->tileh & ~SLOPE_STEEP), PAL_NONE, ti->x, ti->y, 16, 16, 7, ti->z
+				leveled_base + (ti->tileh & ~SLOPE_STEEP), PAL_NONE, ti->x, ti->y, TILE_SIZE, TILE_SIZE, TILE_HEIGHT - 1, ti->z
 			);
 		}
 
@@ -512,38 +512,44 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 			byte inclined = highest_corner * 2 + (f == FOUNDATION_INCLINED_Y ? 1 : 0);
 
 			AddSortableSpriteToDraw(inclined_base + inclined, PAL_NONE, ti->x, ti->y,
-				f == FOUNDATION_INCLINED_X ? 16 : 1,
-				f == FOUNDATION_INCLINED_Y ? 16 : 1,
+				f == FOUNDATION_INCLINED_X ? TILE_SIZE : 1,
+				f == FOUNDATION_INCLINED_Y ? TILE_SIZE : 1,
 				TILE_HEIGHT, ti->z
 			);
-			OffsetGroundSprite(31, 9);
+			OffsetGroundSprite(0, 0);
 		} else if (IsLeveledFoundation(f)) {
-			AddSortableSpriteToDraw(leveled_base + SlopeWithOneCornerRaised(highest_corner), PAL_NONE, ti->x, ti->y, 16, 16, 7, ti->z - TILE_HEIGHT);
-			OffsetGroundSprite(31, 1);
+			AddSortableSpriteToDraw(leveled_base + SlopeWithOneCornerRaised(highest_corner), PAL_NONE, ti->x, ti->y, TILE_SIZE, TILE_SIZE, TILE_HEIGHT - 1, ti->z - TILE_HEIGHT);
+			OffsetGroundSprite(0, -(int)TILE_HEIGHT);
 		} else if (f == FOUNDATION_STEEP_LOWER) {
 			/* one corner raised */
-			OffsetGroundSprite(31, 1);
+			OffsetGroundSprite(0, -(int)TILE_HEIGHT);
 		} else {
 			/* halftile foundation */
-			int x_bb = (((highest_corner == CORNER_W) || (highest_corner == CORNER_S)) ? 8 : 0);
-			int y_bb = (((highest_corner == CORNER_S) || (highest_corner == CORNER_E)) ? 8 : 0);
+			int x_bb = (((highest_corner == CORNER_W) || (highest_corner == CORNER_S)) ? TILE_SIZE / 2 : 0);
+			int y_bb = (((highest_corner == CORNER_S) || (highest_corner == CORNER_E)) ? TILE_SIZE / 2 : 0);
 
-			AddSortableSpriteToDraw(halftile_base + highest_corner, PAL_NONE, ti->x + x_bb, ti->y + y_bb, 8, 8, 7, ti->z + TILE_HEIGHT);
-			OffsetGroundSprite(31, 9);
+			AddSortableSpriteToDraw(halftile_base + highest_corner, PAL_NONE, ti->x + x_bb, ti->y + y_bb, TILE_SIZE / 2, TILE_SIZE / 2, TILE_HEIGHT - 1, ti->z + TILE_HEIGHT);
+			/* Reposition ground sprite back to original position after bounding box change above. This is similar to
+			 * RemapCoords() but without zoom scaling. */
+			Point pt = {(y_bb - x_bb) * 2, y_bb + x_bb};
+			OffsetGroundSprite(-pt.x, -pt.y);
 		}
 	} else {
 		if (IsLeveledFoundation(f)) {
 			/* leveled foundation */
-			AddSortableSpriteToDraw(leveled_base + ti->tileh, PAL_NONE, ti->x, ti->y, 16, 16, 7, ti->z);
-			OffsetGroundSprite(31, 1);
+			AddSortableSpriteToDraw(leveled_base + ti->tileh, PAL_NONE, ti->x, ti->y, TILE_SIZE, TILE_SIZE, TILE_HEIGHT - 1, ti->z);
+			OffsetGroundSprite(0, -(int)TILE_HEIGHT);
 		} else if (IsNonContinuousFoundation(f)) {
 			/* halftile foundation */
 			Corner halftile_corner = GetHalftileFoundationCorner(f);
-			int x_bb = (((halftile_corner == CORNER_W) || (halftile_corner == CORNER_S)) ? 8 : 0);
-			int y_bb = (((halftile_corner == CORNER_S) || (halftile_corner == CORNER_E)) ? 8 : 0);
+			int x_bb = (((halftile_corner == CORNER_W) || (halftile_corner == CORNER_S)) ? TILE_SIZE / 2 : 0);
+			int y_bb = (((halftile_corner == CORNER_S) || (halftile_corner == CORNER_E)) ? TILE_SIZE / 2 : 0);
 
-			AddSortableSpriteToDraw(halftile_base + halftile_corner, PAL_NONE, ti->x + x_bb, ti->y + y_bb, 8, 8, 7, ti->z);
-			OffsetGroundSprite(31, 9);
+			AddSortableSpriteToDraw(halftile_base + halftile_corner, PAL_NONE, ti->x + x_bb, ti->y + y_bb, TILE_SIZE / 2, TILE_SIZE / 2, TILE_HEIGHT - 1, ti->z);
+			/* Reposition ground sprite back to original position after bounding box change above. This is similar to
+			 * RemapCoords() but without zoom scaling. */
+			Point pt = {(y_bb - x_bb) * 2, y_bb + x_bb};
+			OffsetGroundSprite(-pt.x, -pt.y);
 		} else if (IsSpecialRailFoundation(f)) {
 			/* anti-zig-zag foundation */
 			SpriteID spr;
@@ -554,18 +560,18 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 				/* tile-slope = sloped along X/Y, foundation-slope = three corners raised */
 				spr = inclined_base + 2 * GetRailFoundationCorner(f) + ((ti->tileh == SLOPE_SW || ti->tileh == SLOPE_NE) ? 1 : 0);
 			}
-			AddSortableSpriteToDraw(spr, PAL_NONE, ti->x, ti->y, 16, 16, 7, ti->z);
-			OffsetGroundSprite(31, 9);
+			AddSortableSpriteToDraw(spr, PAL_NONE, ti->x, ti->y, TILE_SIZE, TILE_SIZE, TILE_HEIGHT - 1, ti->z);
+			OffsetGroundSprite(0, 0);
 		} else {
 			/* inclined foundation */
 			byte inclined = GetHighestSlopeCorner(ti->tileh) * 2 + (f == FOUNDATION_INCLINED_Y ? 1 : 0);
 
 			AddSortableSpriteToDraw(inclined_base + inclined, PAL_NONE, ti->x, ti->y,
-				f == FOUNDATION_INCLINED_X ? 16 : 1,
-				f == FOUNDATION_INCLINED_Y ? 16 : 1,
+				f == FOUNDATION_INCLINED_X ? TILE_SIZE : 1,
+				f == FOUNDATION_INCLINED_Y ? TILE_SIZE : 1,
 				TILE_HEIGHT, ti->z
 			);
-			OffsetGroundSprite(31, 9);
+			OffsetGroundSprite(0, 0);
 		}
 		ti->z += ApplyPixelFoundationToSlope(f, &ti->tileh);
 	}
@@ -1176,9 +1182,39 @@ static bool RiverMakeWider(TileIndex tile, void *data)
 				Command<CMD_TERRAFORM_LAND>::Do(DC_EXEC | DC_AUTO, tile, to_change, true);
 			}
 		}
+		/* Update cur_slope after possibly terraforming. */
+		cur_slope = GetTileSlope(tile);
 	}
-	/* Update cur_slope after possibly terraforming. */
-	cur_slope = GetTileSlope(tile);
+
+	/* Sloped rivers need water both upstream and downstream. */
+	if (IsInclinedSlope(cur_slope)) {
+		DiagDirection slope_direction = GetInclinedSlopeDirection(cur_slope);
+
+		TileIndex upstream_tile = TileAddByDiagDir(tile, slope_direction);
+		TileIndex downstream_tile = TileAddByDiagDir(tile, ReverseDiagDir(slope_direction));
+
+		/* Don't look outside the map. */
+		if (!IsValidTile(upstream_tile) || !IsValidTile(downstream_tile)) return false;
+
+		/* Downstream might be new ocean created by our terraforming, and it hasn't flooded yet. */
+		bool downstream_is_ocean = GetTileZ(downstream_tile) == 0 && (GetTileSlope(downstream_tile) == SLOPE_FLAT || IsSlopeWithOneCornerRaised(GetTileSlope(downstream_tile)));
+
+		/* If downstream is dry, flat, and not ocean, try making it a river tile. */
+		if (!IsWaterTile(downstream_tile) && !downstream_is_ocean) {
+			/* If the tile upstream isn't flat, don't bother. */
+			if (GetTileSlope(downstream_tile) != SLOPE_FLAT) return false;
+
+			MakeRiver(downstream_tile, Random());
+		}
+
+		/* If upstream is dry and flat, try making it a river tile. */
+		if (!IsWaterTile(upstream_tile)) {
+			/* If the tile upstream isn't flat, don't bother. */
+			if (GetTileSlope(upstream_tile) != SLOPE_FLAT) return false;
+
+			MakeRiver(upstream_tile, Random());
+		}
+	}
 
 	/* If the tile slope matches the desired slope, add a river tile. */
 	if (cur_slope == desired_slope) {
@@ -1289,7 +1325,7 @@ static void River_FoundEndNode(AyStar *aystar, OpenListNode *current)
 			current_river_length = DistanceManhattan(data->spring, tile);
 			radius = std::min(3u, (current_river_length / (long_river_length / 3u)) + 1u);
 
-			if (radius > 1) CircularTileSearch(&tile, radius + RandomRange(1), RiverMakeWider, (void *)&path->node.tile);
+			if (radius > 1) CircularTileSearch(&tile, radius, RiverMakeWider, (void *)&path->node.tile);
 		}
 	}
 }

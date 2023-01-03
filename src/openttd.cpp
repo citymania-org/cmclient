@@ -13,6 +13,7 @@
 #include "sound/sound_driver.hpp"
 #include "music/music_driver.hpp"
 #include "video/video_driver.hpp"
+#include "mixer.h"
 
 #include "fontcache.h"
 #include "error.h"
@@ -178,7 +179,7 @@ static void ShowHelp()
 		"\n"
 		"Command line options:\n"
 		"  -v drv              = Set video driver (see below)\n"
-		"  -s drv              = Set sound driver (see below) (param bufsize,hz)\n"
+		"  -s drv              = Set sound driver (see below)\n"
 		"  -m drv              = Set music driver (see below)\n"
 		"  -b drv              = Set the blitter to use (see below)\n"
 		"  -r res              = Set resolution (for instance 800x600)\n"
@@ -456,8 +457,9 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 		/* We have loaded the config, so we may possibly save it. */
 		_save_config = save_config;
 
-		/* restore saved music volume */
+		/* restore saved music and effects volumes */
 		MusicDriver::GetInstance()->SetVolume(_settings_client.music.music_vol);
+		SetEffectVolume(_settings_client.music.effect_vol);
 
 		if (startyear != INVALID_YEAR) IConsoleSetSetting("game_creation.starting_year", startyear);
 		if (generation_seed != GENERATE_NEW_SEED) _settings_newgame.game_creation.generation_seed = generation_seed;
@@ -758,7 +760,9 @@ int openttd_main(int argc, char *argv[])
 
 	/* Initialize the zoom level of the screen to normal */
 	_screen.zoom = ZOOM_LVL_NORMAL;
-	UpdateGUIZoom();
+
+	/* The video driver is now selected, now initialise GUI zoom */
+	AdjustGUIZoom(false);
 
 	NetworkStartUp(); // initialize network-core
 

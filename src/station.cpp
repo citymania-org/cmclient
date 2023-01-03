@@ -51,8 +51,6 @@ void RebuildStationKdtree()
 
 BaseStation::~BaseStation()
 {
-	free(this->speclist);
-
 	if (CleaningPool()) return;
 
 	CloseWindowById(WC_TRAINS_LIST,   VehicleListIdentifier(VL_STATION_LIST, VEH_TRAIN,    this->owner, this->index).Pack());
@@ -227,7 +225,7 @@ void Station::MarkTilesDirty(bool cargo_change) const
 		/* Don't waste time updating if there are no custom station graphics
 		 * that might change. Even if there are custom graphics, they might
 		 * not change. Unfortunately we have no way of telling. */
-		if (this->num_specs == 0) return;
+		if (this->speclist.size() == 0) return;
 	}
 
 	for (h = 0; h < train_station.h; h++) {
@@ -551,8 +549,8 @@ CommandCost StationRect::BeforeAddTile(TileIndex tile, StationRectMode mode)
 		Rect new_rect = {std::min(x, this->left), std::min(y, this->top), std::max(x, this->right), std::max(y, this->bottom)};
 
 		/* check new rect dimensions against preset max */
-		int w = new_rect.right - new_rect.left + 1;
-		int h = new_rect.bottom - new_rect.top + 1;
+		int w = new_rect.Width();
+		int h = new_rect.Height();
 		if (mode != ADD_FORCE && (w > _settings_game.station.station_spread || h > _settings_game.station.station_spread)) {
 			assert(mode != ADD_TRY);
 			return_cmd_error(STR_ERROR_STATION_TOO_SPREAD_OUT);
