@@ -119,8 +119,8 @@ void GetShipSpriteSize(EngineID engine, uint &width, uint &height, int &xoffs, i
 	Rect rect;
 	seq.GetBounds(&rect);
 
-	width  = UnScaleGUI(rect.right - rect.left + 1);
-	height = UnScaleGUI(rect.bottom - rect.top + 1);
+	width  = UnScaleGUI(rect.Width());
+	height = UnScaleGUI(rect.Height());
 	xoffs  = UnScaleGUI(rect.left);
 	yoffs  = UnScaleGUI(rect.top);
 }
@@ -272,16 +272,10 @@ void Ship::MarkDirty()
 	this->UpdateCache();
 }
 
-static void PlayShipSound(const Vehicle *v)
+void Ship::PlayLeaveStationSound(bool force) const
 {
-	if (!PlayVehicleSound(v, VSE_START)) {
-		SndPlayVehicleFx(ShipVehInfo(v->engine_type)->sfx, v);
-	}
-}
-
-void Ship::PlayLeaveStationSound() const
-{
-	PlayShipSound(this);
+	if (PlayVehicleSound(this, VSE_START, force)) return;
+	SndPlayVehicleFx(ShipVehInfo(this->engine_type)->sfx, this);
 }
 
 TileIndex Ship::GetOrderStationLocation(StationID station)
@@ -398,7 +392,7 @@ static bool CheckShipLeaveDepot(Ship *v)
 	v->UpdateViewport(true, true);
 	SetWindowDirty(WC_VEHICLE_DEPOT, v->tile);
 
-	PlayShipSound(v);
+	v->PlayLeaveStationSound();
 	VehicleServiceInDepot(v);
 	InvalidateWindowData(WC_VEHICLE_DEPOT, v->tile);
 	SetWindowClassesDirty(WC_SHIPS_LIST);

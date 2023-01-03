@@ -26,6 +26,7 @@
 #include "../group_cmd.h"
 #include "../industry_cmd.h"
 #include "../landscape_cmd.h"
+#include "../league_cmd.h"
 #include "../misc_cmd.h"
 #include "../news_cmd.h"
 #include "../object_cmd.h"
@@ -149,7 +150,7 @@ constexpr UnpackNetworkCommandProc MakeUnpackNetworkCommandCallback() noexcept
 template <Commands Tcmd, size_t... i>
 constexpr UnpackDispatchT MakeUnpackNetworkCommand(std::index_sequence<i...>) noexcept
 {
-	return UnpackDispatchT{{ {MakeUnpackNetworkCommandCallback<Tcmd, i>()}...}};
+	return UnpackDispatchT{{ MakeUnpackNetworkCommandCallback<Tcmd, i>()...}};
 }
 
 template <typename T, T... i, size_t... j>

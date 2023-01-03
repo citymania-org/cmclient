@@ -115,8 +115,11 @@ void SetLocalCompany(CompanyID new_company)
 
 	_current_company = _local_company = new_company;
 
-	/* Delete any construction windows... */
-	if (switching_company) CloseConstructionWindows();
+	if (switching_company) {
+		InvalidateWindowClassesData(WC_COMPANY);
+		/* Delete any construction windows... */
+		CloseConstructionWindows();
+	}
 
 	/* ... and redraw the whole screen. */
 	MarkWholeScreenDirty();
@@ -566,8 +569,8 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 	c->inaugurated_year = _cur_year;
 
 	/* If starting a player company in singleplayer and a favorite company manager face is selected, choose it. Otherwise, use a random face.
-	 * In a network game, we'll choose the favorite face later in CmdCompanyCtrl to sync it to all clients, but we choose it here for the first (host) company. */
-	if (_company_manager_face != 0 && !is_ai) {
+	 * In a network game, we'll choose the favorite face later in CmdCompanyCtrl to sync it to all clients. */
+	if (_company_manager_face != 0 && !is_ai && !_networking) {
 		c->face = _company_manager_face;
 	} else {
 		RandomCompanyManagerFaceBits(c->face, (GenderEthnicity)Random(), false, false);
@@ -889,8 +892,6 @@ CommandCost CmdCompanyCtrl(DoCommandFlag flags, CompanyCtrlAction cca, CompanyID
 
 			if (!(flags & DC_EXEC)) return CommandCost();
 
-			/* Delete any open window of the company */
-			CloseCompanyWindows(c->index);
 			CompanyNewsInformation *cni = new CompanyNewsInformation(c);
 
 			/* Show the bankrupt news */
