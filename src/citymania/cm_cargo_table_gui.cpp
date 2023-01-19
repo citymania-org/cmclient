@@ -132,7 +132,7 @@ struct CargosWindow : Window {
 				break;
 
 			case WID_CT_LIST: {
-				int rect_x = r.left + WD_FRAMERECT_LEFT;
+				int rect_x = r.left + WidgetDimensions::scaled.framerect.left;
                 for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					Dimension icon_size = GetSpriteSize(cs->GetCargoIcon());
 					DrawSprite(cs->GetCargoIcon(), PAL_NONE,
@@ -195,14 +195,14 @@ static const NWidgetPart _nested_cargos_widgets[] = {
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 1),
-		NWidget(NWID_HORIZONTAL), SetPadding(WD_FRAMERECT_TOP, WD_FRAMERECT_RIGHT, WD_FRAMERECT_BOTTOM, WD_FRAMERECT_LEFT), SetPIP(0, 9, 0),
+		NWidget(NWID_HORIZONTAL), SetPadding(WidgetDimensions::scaled.framerect.top, WidgetDimensions::scaled.framerect.right, WidgetDimensions::scaled.framerect.bottom, WidgetDimensions::scaled.framerect.left), SetPIP(0, 9, 0),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_CT_HEADER_CARGO), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_TOOLBAR_CARGOS_HEADER_CARGO, STR_TOOLBAR_CARGOS_HEADER_CARGO),
 			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_AMOUNT), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_NULL, STR_NULL),
 			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_INCOME), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_NULL, STR_NULL),
 		EndContainer(),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 1),
-		NWidget(NWID_HORIZONTAL), SetPadding(WD_FRAMERECT_TOP, WD_FRAMERECT_RIGHT, WD_FRAMERECT_BOTTOM, WD_FRAMERECT_LEFT), SetPIP(0, 9, 0),
+		NWidget(NWID_HORIZONTAL), SetPadding(WidgetDimensions::scaled.framerect.top, WidgetDimensions::scaled.framerect.right, WidgetDimensions::scaled.framerect.bottom, WidgetDimensions::scaled.framerect.left), SetPIP(0, 9, 0),
 			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_LIST),SetFill(1, 0), SetPadding(2,2,2,2), SetResize(1, 1),
 			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_AMOUNT),SetMinimalSize(108, 0),SetFill(1, 0), SetPadding(2,2,2,2), SetResize(1, 1),
 			NWidget(WWT_EMPTY, COLOUR_GREY, WID_CT_INCOME),SetMinimalSize(108, 0),SetFill(1, 0), SetPadding(2,2,2,2), SetResize(1, 1),

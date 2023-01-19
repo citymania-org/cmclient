@@ -18,7 +18,6 @@
 #include "window_func.h"
 #include "date_func.h"
 #include "gfx_func.h"
-#include "sortlist_type.h"
 #include "core/geometry_func.hpp"
 #include "currency.h"
 #include "zoom_func.h"
@@ -73,12 +72,14 @@ struct GraphLegendWindow : Window {
 
 		bool rtl = _current_text_dir == TD_RTL;
 
+		const Rect ir = r.Shrink(WidgetDimensions::scaled.framerect);
 		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
-		DrawCompanyIcon(cid, rtl ? r.right - d.width - ScaleGUITrad(2) : r.left + ScaleGUITrad(2), CenterBounds(r.top, r.bottom, d.height));
+		DrawCompanyIcon(cid, rtl ? ir.right - d.width : ir.left, CenterBounds(ir.top, ir.bottom, d.height));
 
+		const Rect tr = ir.Indent(d.width + WidgetDimensions::scaled.hsep_normal, rtl);
 		SetDParam(0, cid);
 		SetDParam(1, cid);
-		DrawString(r.left + (rtl ? (uint)WD_FRAMERECT_LEFT : (d.width + ScaleGUITrad(4))), r.right - (rtl ? (d.width + ScaleGUITrad(4)) : (uint)WD_FRAMERECT_RIGHT), CenterBounds(r.top, r.bottom, FONT_HEIGHT_NORMAL), STR_COMPANY_NAME_COMPANY_NUM, HasBit(_legend_excluded_companies, cid) ? TC_BLACK : TC_WHITE);
+		DrawString(tr.left, tr.right, CenterBounds(tr.top, tr.bottom, FONT_HEIGHT_NORMAL), STR_COMPANY_NAME_COMPANY_NUM, HasBit(_legend_excluded_companies, cid) ? TC_BLACK : TC_WHITE);
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override
@@ -124,8 +125,8 @@ static NWidgetBase *MakeNWidgetCompanyLines(int *biggest_index)
 
 	for (int widnum = WID_GL_FIRST_COMPANY; widnum <= WID_GL_LAST_COMPANY; widnum++) {
 		NWidgetBackground *panel = new NWidgetBackground(WWT_PANEL, ChooseGraphColour(WINDOW_BG1, WINDOW_BG2), widnum);
-		panel->SetMinimalSize(246, sprite_height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
-		panel->SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM, FS_NORMAL);
+		panel->SetMinimalSize(246, sprite_height + WidgetDimensions::unscaled.framerect.Vertical());
+		panel->SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical(), FS_NORMAL);
 		panel->SetFill(1, 1);
 		panel->SetDataTip(0x0, STR_GRAPH_KEY_COMPANY_SELECTION_TOOLTIP);
 		vert->Add(panel);
@@ -336,7 +337,7 @@ protected:
 		r.left   += ScaleGUITrad(9);
 		r.right  -= ScaleGUITrad(5);
 
-		int grid_size_y = std::max(ScaleGUITrad(MIN_GRID_PIXEL_SIZE), FONT_HEIGHT_NORMAL + ScaleGUITrad(WD_PAR_VSEP_NORMAL));
+		int grid_size_y = std::max(ScaleGUITrad(MIN_GRID_PIXEL_SIZE), FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal);
 		/* Initial number of horizontal lines. */
 		int num_hori_lines = ScaleGUITrad(160) / grid_size_y;
 		/* For the rest of the height, the number of horizontal lines will increase more slowly. */
@@ -418,7 +419,7 @@ protected:
 		/* Draw x-axis labels and markings for graphs based on financial quarters and years.  */
 		if (this->month != 0xFF) {
 			x = r.left;
-			y = r.bottom + 2;
+			y = r.bottom + ScaleGUITrad(2);
 			byte month = this->month;
 			Year year  = this->year;
 			for (int i = 0; i < this->num_on_x_axis; i++) {
@@ -439,7 +440,7 @@ protected:
 		} else {
 			/* Draw x-axis labels for graphs not based on quarterly performance (cargo payment rates). */
 			x = r.left;
-			y = r.bottom + 2;
+			y = r.bottom + ScaleGUITrad(2);
 			uint16 label = this->x_values_start;
 
 			for (int i = 0; i < this->num_on_x_axis; i++) {
@@ -699,17 +700,23 @@ public:
 static_assert(NUM_CARGO == 64);  // 64 bit excluded_cargo
 
 struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
+	uint line_height;   ///< Pixel height of each cargo type row.
+	uint icon_size;     ///< Size of the cargo color icon.
+	Scrollbar *vscroll; ///< Cargo list scrollbar.
+	uint legend_width;  ///< Width of legend 'blob'.
+
 	bool show_cargo_colors;
 	uint64 excluded_cargo;
 
 	ExcludingCargoBaseGraphWindow(WindowDesc *desc, int widget, StringID format_str_y_axis, bool show_cargo_colors):
 			BaseGraphWindow(desc, widget, format_str_y_axis), show_cargo_colors{show_cargo_colors}
-	{
-	}
+	{}
 
-	uint line_height;   ///< Pixel height of each cargo type row.
-	uint icon_size;     ///< Size of the cargo color icon.
-	Scrollbar *vscroll; ///< Cargo list scrollbar.
+	void OnInit() override
+	{
+		/* Width of the legend blob. */
+		this->legend_width = (FONT_HEIGHT_SMALL - ScaleGUITrad(1)) * 8 / 5;
+	}
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
@@ -721,13 +728,18 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		Dimension max_cargo_dim = {0, 0};
 		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			SetDParam(0, cs->name);
-			max_cargo_dim = maxdim(max_cargo_dim, GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO));
+			Dimension d = GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO);
+			d.width += this->legend_width + WidgetDimensions::scaled.hsep_normal; // colour field
+			d.width += WidgetDimensions::scaled.framerect.Horizontal();
+			d.height += WidgetDimensions::scaled.framerect.Vertical();
+			*size = maxdim(d, *size);
 		}
 
+		// FIXME doesn't match openttd source, check if intentional
 		this->icon_size = std::max<uint>(max_cargo_dim.height, 6);
-		this->line_height = this->icon_size + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
-		size->width = (max_cargo_dim.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT + 1
-		               + (this->show_cargo_colors ? this->icon_size + WD_PAR_VSEP_NORMAL : 0));
+		this->line_height = this->icon_size + WidgetDimensions::scaled.framerect.Vertical();
+		size->width += (WidgetDimensions::scaled.framerect.Horizontal() + 1
+		               + (this->show_cargo_colors ? this->icon_size + WidgetDimensions::scaled.vsep_normal : 0));
 		size->height = std::max<uint>(size->height, this->line_height * _sorted_standard_cargo_specs.size());
 		resize->width = 0;
 		resize->height = this->line_height;
@@ -744,35 +756,34 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 
 		bool rtl = _current_text_dir == TD_RTL;
 
-		int x = r.left + WD_FRAMERECT_LEFT;
-		int y = r.top;
-
 		int pos = this->vscroll->GetPosition();
 		int max = pos + this->vscroll->GetCapacity();
 
+		Rect line = r.WithHeight(this->line_height);
 		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			if (pos-- > 0) continue;
 			if (--max < 0) break;
 
 			bool lowered = !HasBit(_legend_excluded_cargo, cs->Index());
 
-			/* Redraw box if lowered */
-			if (lowered) DrawFrameRect(r.left, y, r.right, y + this->line_height - 1, ChooseGraphColour(WINDOW_BG1, WINDOW_BG2), lowered ? FR_LOWERED : FR_NONE);
+			/* Redraw frame if lowered */
+			if (lowered) DrawFrameRect(line, COLOUR_BROWN, FR_LOWERED);
 
-			byte clk_dif = lowered ? 1 : 0;
+			const Rect text = line.Shrink(WidgetDimensions::scaled.framerect).Translate(lowered ? WidgetDimensions::scaled.pressed : 0, lowered ? WidgetDimensions::scaled.pressed : 0);
 
 			uint icon_offset = 0;
 			if (this->show_cargo_colors) {
-				int rect_x = clk_dif + 1 + (rtl ? r.right - 12 : r.left + WD_FRAMERECT_LEFT);
-				GfxFillRect(rect_x, y + 1 + clk_dif, rect_x + this->icon_size - 2, y + this->icon_size - 2 + clk_dif, PC_BLACK);
-				GfxFillRect(rect_x + 1, y + 2 + clk_dif, rect_x + this->icon_size - 3, y + this->icon_size - 3 + clk_dif, cs->legend_colour);
-				icon_offset = this->icon_size + WD_PAR_VSEP_NORMAL;
+				/* Cargo-colour box with outline */
+				const Rect cargo = text.WithWidth(this->legend_width, rtl);
+				GfxFillRect(cargo, PC_BLACK);
+				GfxFillRect(cargo.Shrink(WidgetDimensions::scaled.bevel), cs->legend_colour);
+				icon_offset = this->legend_width + WidgetDimensions::scaled.hsep_normal;
 			}
 
 			SetDParam(0, cs->name);
-			DrawString(rtl ? r.left : x + icon_offset + clk_dif, (rtl ? r.right - icon_offset + clk_dif : r.right), y + clk_dif, STR_GRAPH_CARGO_PAYMENT_CARGO);
+			DrawString(text.Indent(icon_offset, rtl), STR_GRAPH_CARGO_PAYMENT_CARGO);
 
-			y += this->line_height;
+			line = line.Translate(0, this->line_height);
 		}
 	}
 
@@ -861,7 +872,7 @@ static const NWidgetPart _nested_operating_profit_widgets1[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG1),
 		NWidget(WWT_CAPTION, WINDOW_BG1), SetDataTip(STR_GRAPH_OPERATING_PROFIT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG1),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG1),
 		NWidget(WWT_STICKYBOX, WINDOW_BG1),
@@ -881,7 +892,7 @@ static const NWidgetPart _nested_operating_profit_widgets2[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG2),
 		NWidget(WWT_CAPTION, WINDOW_BG2), SetDataTip(STR_GRAPH_OPERATING_PROFIT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG2),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG2),
 		NWidget(WWT_STICKYBOX, WINDOW_BG2),
@@ -950,7 +961,7 @@ static const NWidgetPart _nested_income_graph_widgets1[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG1),
 		NWidget(WWT_CAPTION, WINDOW_BG1), SetDataTip(STR_GRAPH_INCOME_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CPR_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CPR_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG1),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG1),
 		NWidget(WWT_STICKYBOX, WINDOW_BG1),
@@ -981,7 +992,7 @@ static const NWidgetPart _nested_income_graph_widgets2[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG2),
 		NWidget(WWT_CAPTION, WINDOW_BG2), SetDataTip(STR_GRAPH_INCOME_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CPR_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CPR_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG2),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG2),
 		NWidget(WWT_STICKYBOX, WINDOW_BG2),
@@ -1061,7 +1072,7 @@ static const NWidgetPart _nested_delivered_cargo_graph_widgets1[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG1),
 		NWidget(WWT_CAPTION, WINDOW_BG1), SetDataTip(STR_GRAPH_CARGO_DELIVERED_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CPR_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CPR_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG1),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG1),
 		NWidget(WWT_STICKYBOX, WINDOW_BG1),
@@ -1092,7 +1103,7 @@ static const NWidgetPart _nested_delivered_cargo_graph_widgets2[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG2),
 		NWidget(WWT_CAPTION, WINDOW_BG2), SetDataTip(STR_GRAPH_CARGO_DELIVERED_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CPR_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CPR_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG2),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG2),
 		NWidget(WWT_STICKYBOX, WINDOW_BG2),
@@ -1165,8 +1176,8 @@ static const NWidgetPart _nested_performance_history_widgets1[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG1),
 		NWidget(WWT_CAPTION, WINDOW_BG1), SetDataTip(STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_PHG_DETAILED_PERFORMANCE), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_PERFORMANCE_DETAIL_KEY, STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_PHG_KEY), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_PHG_DETAILED_PERFORMANCE), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_PERFORMANCE_DETAIL_KEY, STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_PHG_KEY), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG1),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG1),
 		NWidget(WWT_STICKYBOX, WINDOW_BG1),
@@ -1186,8 +1197,8 @@ static const NWidgetPart _nested_performance_history_widgets2[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG2),
 		NWidget(WWT_CAPTION, WINDOW_BG2), SetDataTip(STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_PHG_DETAILED_PERFORMANCE), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_PERFORMANCE_DETAIL_KEY, STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_PHG_KEY), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_PHG_DETAILED_PERFORMANCE), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_PERFORMANCE_DETAIL_KEY, STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_PHG_KEY), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG2),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG2),
 		NWidget(WWT_STICKYBOX, WINDOW_BG2),
@@ -1242,7 +1253,7 @@ static const NWidgetPart _nested_company_value_graph_widgets1[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG1),
 		NWidget(WWT_CAPTION, WINDOW_BG1), SetDataTip(STR_GRAPH_COMPANY_VALUES_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG1),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG1),
 		NWidget(WWT_STICKYBOX, WINDOW_BG1),
@@ -1262,7 +1273,7 @@ static const NWidgetPart _nested_company_value_graph_widgets2[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG2),
 		NWidget(WWT_CAPTION, WINDOW_BG2), SetDataTip(STR_GRAPH_COMPANY_VALUES_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WidgetDimensions::unscaled.framerect.Vertical() + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
 		NWidget(WWT_SHADEBOX, WINDOW_BG2),
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG2),
 		NWidget(WWT_STICKYBOX, WINDOW_BG2),
@@ -1382,7 +1393,7 @@ static const NWidgetPart _nested_cargo_payment_rates_widgets1[] = {
 			NWidget(NWID_SPACER), SetMinimalSize(5, 0), SetFill(0, 1), SetResize(0, 1),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(NWID_SPACER), SetMinimalSize(WD_RESIZEBOX_WIDTH, 0), SetFill(1, 0), SetResize(1, 0),
+			NWidget(NWID_SPACER), SetMinimalSize(12, 0), SetFill(1, 0), SetResize(1, 0),
 			NWidget(WWT_TEXT, WINDOW_BG1, WID_CPR_FOOTER), SetMinimalSize(0, 6), SetPadding(2, 0, 2, 0), SetDataTip(STR_GRAPH_CARGO_PAYMENT_RATES_X_LABEL, STR_NULL),
 			NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
 			NWidget(WWT_RESIZEBOX, WINDOW_BG1, WID_CPR_RESIZE),
@@ -1420,7 +1431,7 @@ static const NWidgetPart _nested_cargo_payment_rates_widgets2[] = {
 			NWidget(NWID_SPACER), SetMinimalSize(5, 0), SetFill(0, 1), SetResize(0, 1),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(NWID_SPACER), SetMinimalSize(WD_RESIZEBOX_WIDTH, 0), SetFill(1, 0), SetResize(1, 0),
+			NWidget(NWID_SPACER), SetMinimalSize(12, 0), SetFill(1, 0), SetResize(1, 0),
 			NWidget(WWT_TEXT, WINDOW_BG2, WID_CPR_FOOTER), SetMinimalSize(0, 6), SetPadding(2, 0, 2, 0), SetDataTip(STR_GRAPH_CARGO_PAYMENT_RATES_X_LABEL, STR_NULL),
 			NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
 			NWidget(WWT_RESIZEBOX, WINDOW_BG2, WID_CPR_RESIZE),
@@ -1446,209 +1457,6 @@ static WindowDesc _cargo_payment_rates_desc2(
 void ShowCargoPaymentRates()
 {
 	AllocateWindowDescFront<PaymentRatesGraphWindow>(ChooseGraphColour(&_cargo_payment_rates_desc1, &_cargo_payment_rates_desc2), 0);
-}
-
-/************************/
-/* COMPANY LEAGUE TABLE */
-/************************/
-
-static const StringID _performance_titles[] = {
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_ENGINEER,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_ENGINEER,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_TRAFFIC_MANAGER,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_TRAFFIC_MANAGER,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_TRANSPORT_COORDINATOR,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_TRANSPORT_COORDINATOR,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_ROUTE_SUPERVISOR,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_ROUTE_SUPERVISOR,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_DIRECTOR,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_DIRECTOR,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_CHIEF_EXECUTIVE,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_CHIEF_EXECUTIVE,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_CHAIRMAN,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_CHAIRMAN,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_PRESIDENT,
-	STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_TYCOON,
-};
-
-static inline StringID GetPerformanceTitleFromValue(uint value)
-{
-	return _performance_titles[std::min(value, 1000u) >> 6];
-}
-
-class CompanyLeagueWindow : public Window {
-private:
-	GUIList<const Company*> companies;
-	uint ordinal_width; ///< The width of the ordinal number
-	uint text_width;    ///< The width of the actual text
-	uint icon_width;    ///< The width of the company icon
-	int line_height;    ///< Height of the text lines
-
-	/**
-	 * (Re)Build the company league list
-	 */
-	void BuildCompanyList()
-	{
-		if (!this->companies.NeedRebuild()) return;
-
-		this->companies.clear();
-
-		for (const Company *c : Company::Iterate()) {
-			this->companies.push_back(c);
-		}
-
-		this->companies.shrink_to_fit();
-		this->companies.RebuildDone();
-	}
-
-	/** Sort the company league by performance history */
-	static bool PerformanceSorter(const Company * const &c1, const Company * const &c2)
-	{
-		return c2->old_economy[0].performance_history < c1->old_economy[0].performance_history;
-	}
-
-public:
-	CompanyLeagueWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
-	{
-		this->InitNested(window_number);
-		this->companies.ForceRebuild();
-		this->companies.NeedResort();
-	}
-
-	void OnPaint() override
-	{
-		this->BuildCompanyList();
-		this->companies.Sort(&PerformanceSorter);
-
-		this->DrawWidgets();
-	}
-
-	void DrawWidget(const Rect &r, int widget) const override
-	{
-		if (widget != WID_CL_BACKGROUND) return;
-
-		int icon_y_offset = 1 + (FONT_HEIGHT_NORMAL - this->line_height) / 2;
-		uint y = r.top + WD_FRAMERECT_TOP - icon_y_offset;
-
-		bool rtl = _current_text_dir == TD_RTL;
-		uint ordinal_left  = rtl ? r.right - WD_FRAMERECT_LEFT - this->ordinal_width : r.left + WD_FRAMERECT_LEFT;
-		uint ordinal_right = rtl ? r.right - WD_FRAMERECT_LEFT : r.left + WD_FRAMERECT_LEFT + this->ordinal_width;
-		uint icon_left     = r.left + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT + (rtl ? this->text_width : this->ordinal_width);
-		uint text_left     = rtl ? r.left + WD_FRAMERECT_LEFT : r.right - WD_FRAMERECT_LEFT - this->text_width;
-		uint text_right    = rtl ? r.left + WD_FRAMERECT_LEFT + this->text_width : r.right - WD_FRAMERECT_LEFT;
-
-		for (uint i = 0; i != this->companies.size(); i++) {
-			const Company *c = this->companies[i];
-			DrawString(ordinal_left, ordinal_right, y, i + STR_ORDINAL_NUMBER_1ST, i == 0 ? TC_WHITE : TC_YELLOW);
-
-			DrawCompanyIcon(c->index, icon_left, y + icon_y_offset);
-
-			SetDParam(0, c->index);
-			SetDParam(1, c->index);
-			SetDParam(2, GetPerformanceTitleFromValue(c->old_economy[0].performance_history));
-			DrawString(text_left, text_right, y, STR_COMPANY_LEAGUE_COMPANY_NAME);
-			y += this->line_height;
-		}
-	}
-
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
-	{
-		if (widget != WID_CL_BACKGROUND) return;
-
-		this->ordinal_width = 0;
-		for (uint i = 0; i < MAX_COMPANIES; i++) {
-			this->ordinal_width = std::max(this->ordinal_width, GetStringBoundingBox(STR_ORDINAL_NUMBER_1ST + i).width);
-		}
-		this->ordinal_width += 5; // Keep some extra spacing
-
-		uint widest_width = 0;
-		uint widest_title = 0;
-		for (uint i = 0; i < lengthof(_performance_titles); i++) {
-			uint width = GetStringBoundingBox(_performance_titles[i]).width;
-			if (width > widest_width) {
-				widest_title = i;
-				widest_width = width;
-			}
-		}
-
-		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
-		this->icon_width = d.width + 2;
-		this->line_height = std::max<int>(d.height + 2, FONT_HEIGHT_NORMAL);
-
-		for (const Company *c : Company::Iterate()) {
-			SetDParam(0, c->index);
-			SetDParam(1, c->index);
-			SetDParam(2, _performance_titles[widest_title]);
-			widest_width = std::max(widest_width, GetStringBoundingBox(STR_COMPANY_LEAGUE_COMPANY_NAME).width);
-		}
-
-		this->text_width = widest_width + 30; // Keep some extra spacing
-
-		size->width = WD_FRAMERECT_LEFT + this->ordinal_width + WD_FRAMERECT_RIGHT + this->icon_width + WD_FRAMERECT_LEFT + this->text_width + WD_FRAMERECT_RIGHT;
-		size->height = WD_FRAMERECT_TOP + this->line_height * MAX_COMPANIES + WD_FRAMERECT_BOTTOM;
-	}
-
-
-	void OnGameTick() override
-	{
-		if (this->companies.NeedResort()) {
-			this->SetDirty();
-		}
-	}
-
-	/**
-	 * Some data on this window has become invalid.
-	 * @param data Information about the changed data.
-	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
-	 */
-	void OnInvalidateData(int data = 0, bool gui_scope = true) override
-	{
-		if (data == 0) {
-			/* This needs to be done in command-scope to enforce rebuilding before resorting invalid data */
-			this->companies.ForceRebuild();
-		} else {
-			this->companies.ForceResort();
-		}
-	}
-};
-
-static const NWidgetPart _nested_company_league_widgets1[] = {
-	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_CLOSEBOX, WINDOW_BG1),
-		NWidget(WWT_CAPTION, WINDOW_BG1), SetDataTip(STR_COMPANY_LEAGUE_TABLE_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_SHADEBOX, WINDOW_BG1),
-		NWidget(WWT_STICKYBOX, WINDOW_BG1),
-	EndContainer(),
-	NWidget(WWT_PANEL, WINDOW_BG1, WID_CL_BACKGROUND), SetMinimalSize(400, 0), SetMinimalTextLines(15, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM),
-};
-
-static const NWidgetPart _nested_company_league_widgets2[] = {
-	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_CLOSEBOX, WINDOW_BG2),
-		NWidget(WWT_CAPTION, WINDOW_BG2), SetDataTip(STR_COMPANY_LEAGUE_TABLE_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_SHADEBOX, WINDOW_BG2),
-		NWidget(WWT_STICKYBOX, WINDOW_BG2),
-	EndContainer(),
-	NWidget(WWT_PANEL, WINDOW_BG2, WID_CL_BACKGROUND), SetMinimalSize(400, 0), SetMinimalTextLines(15, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM),
-};
-
-static WindowDesc _company_league_desc1(
-	WDP_AUTO, "league", 0, 0,
-	WC_COMPANY_LEAGUE, WC_NONE,
-	0,
-	_nested_company_league_widgets1, lengthof(_nested_company_league_widgets1)
-);
-
-static WindowDesc _company_league_desc2(
-	WDP_AUTO, "league", 0, 0,
-	WC_COMPANY_LEAGUE, WC_NONE,
-	0,
-	_nested_company_league_widgets2, lengthof(_nested_company_league_widgets2)
-);
-
-void ShowCompanyLeagueTable()
-{
-	AllocateWindowDescFront<CompanyLeagueWindow>(ChooseGraphColour(&_company_league_desc1, &_company_league_desc2), 0);
 }
 
 /*****************************/
@@ -1691,18 +1499,18 @@ struct PerformanceRatingDetailWindow : Window {
 	{
 		switch (widget) {
 			case WID_PRD_SCORE_FIRST:
-				this->bar_height = FONT_HEIGHT_NORMAL + 4;
-				size->height = this->bar_height + 2 * WD_MATRIX_TOP;
+				this->bar_height = FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.fullbevel.Vertical();
+				size->height = this->bar_height + WidgetDimensions::scaled.matrix.Vertical();
 
 				uint score_info_width = 0;
 				for (uint i = SCORE_BEGIN; i < SCORE_END; i++) {
 					score_info_width = std::max(score_info_width, GetStringBoundingBox(STR_PERFORMANCE_DETAIL_VEHICLES + i).width);
 				}
 				SetDParamMaxValue(0, 1000);
-				score_info_width += GetStringBoundingBox(STR_BLACK_COMMA).width + WD_FRAMERECT_LEFT;
+				score_info_width += GetStringBoundingBox(STR_BLACK_COMMA).width + WidgetDimensions::scaled.hsep_wide;
 
 				SetDParamMaxValue(0, 100);
-				this->bar_width = GetStringBoundingBox(STR_PERFORMANCE_DETAIL_PERCENT).width + 20; // Wide bars!
+				this->bar_width = GetStringBoundingBox(STR_PERFORMANCE_DETAIL_PERCENT).width + WidgetDimensions::scaled.hsep_indent * 2; // Wide bars!
 
 				/* At this number we are roughly at the max; it can become wider,
 				 * but then you need at 1000 times more money. At that time you're
@@ -1728,9 +1536,9 @@ struct PerformanceRatingDetailWindow : Window {
 				SetDParam(1, max);
 				uint score_detail_width = GetStringBoundingBox(STR_PERFORMANCE_DETAIL_AMOUNT_CURRENCY).width;
 
-				size->width = 7 + score_info_width + 5 + this->bar_width + 5 + score_detail_width + 7;
-				uint left  = 7;
-				uint right = size->width - 7;
+				size->width = WidgetDimensions::scaled.frametext.Horizontal() + score_info_width + WidgetDimensions::scaled.hsep_wide + this->bar_width + WidgetDimensions::scaled.hsep_wide + score_detail_width;
+				uint left  = WidgetDimensions::scaled.frametext.left;
+				uint right = size->width - WidgetDimensions::scaled.frametext.right;
 
 				bool rtl = _current_text_dir == TD_RTL;
 				this->score_info_left  = rtl ? right - score_info_width : left;
@@ -1739,8 +1547,8 @@ struct PerformanceRatingDetailWindow : Window {
 				this->score_detail_left  = rtl ? left : right - score_detail_width;
 				this->score_detail_right = rtl ? left + score_detail_width : right;
 
-				this->bar_left  = left + (rtl ? score_detail_width : score_info_width) + 5;
-				this->bar_right = this->bar_left + this->bar_width;
+				this->bar_left  = left + (rtl ? score_detail_width : score_info_width) + WidgetDimensions::scaled.hsep_wide;
+				this->bar_right = this->bar_left + this->bar_width - 1;
 				break;
 		}
 	}
@@ -1753,9 +1561,9 @@ struct PerformanceRatingDetailWindow : Window {
 		if (IsInsideMM(widget, WID_PRD_COMPANY_FIRST, WID_PRD_COMPANY_LAST + 1)) {
 			if (this->IsWidgetDisabled(widget)) return;
 			CompanyID cid = (CompanyID)(widget - WID_PRD_COMPANY_FIRST);
-			int offset = (cid == this->company) ? 1 : 0;
+			int offset = (cid == this->company) ? WidgetDimensions::scaled.pressed : 0;
 			Dimension sprite_size = GetSpriteSize(SPR_COMPANY_ICON);
-			DrawCompanyIcon(cid, (r.left + r.right - sprite_size.width) / 2 + offset, (r.top + r.bottom - sprite_size.height) / 2 + offset);
+			DrawCompanyIcon(cid, CenterBounds(r.left, r.right, sprite_size.width) + offset, CenterBounds(r.top, r.bottom, sprite_size.height) + offset);
 			return;
 		}
 
@@ -1778,8 +1586,8 @@ struct PerformanceRatingDetailWindow : Window {
 			needed = SCORE_MAX;
 		}
 
-		uint bar_top  = r.top + WD_MATRIX_TOP;
-		uint text_top = bar_top + 2;
+		uint bar_top  = CenterBounds(r.top, r.bottom, this->bar_height);
+		uint text_top = CenterBounds(r.top, r.bottom, FONT_HEIGHT_NORMAL);
 
 		DrawString(this->score_info_left, this->score_info_right, text_top, STR_PERFORMANCE_DETAIL_VEHICLES + score_type);
 
@@ -1797,8 +1605,8 @@ struct PerformanceRatingDetailWindow : Window {
 		}
 
 		/* Draw the bar */
-		if (x != this->bar_left)  GfxFillRect(this->bar_left, bar_top, x, bar_top + this->bar_height, rtl ? colour_notdone : colour_done);
-		if (x != this->bar_right) GfxFillRect(x, bar_top, this->bar_right, bar_top + this->bar_height, rtl ? colour_done : colour_notdone);
+		if (x != this->bar_left)  GfxFillRect(this->bar_left, bar_top, x,               bar_top + this->bar_height - 1, rtl ? colour_notdone : colour_done);
+		if (x != this->bar_right) GfxFillRect(x,              bar_top, this->bar_right, bar_top + this->bar_height - 1, rtl ? colour_done : colour_notdone);
 
 		/* Draw it */
 		SetDParam(0, Clamp<int64>(val, 0, needed) * 100 / needed);
@@ -1929,7 +1737,7 @@ static const NWidgetPart _nested_performance_rating_detail_widgets1[] = {
 		NWidget(WWT_STICKYBOX, WINDOW_BG1),
 	EndContainer(),
 	NWidget(WWT_PANEL, WINDOW_BG1),
-		NWidgetFunction(MakeCompanyButtonRowsGraphGUI), SetPadding(0, 1, 1, 2),
+		NWidgetFunction(MakeCompanyButtonRowsGraphGUI), SetPadding(2),
 	EndContainer(),
 	NWidgetFunction(MakePerformanceDetailPanels),
 };

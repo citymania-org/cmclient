@@ -26,6 +26,7 @@
 #include "../tilehighlight_type.h"
 #include "../tilehighlight_func.h"
 #include "../viewport_func.h"
+#include "../window_gui.h"
 #include "../zoom_func.h"
 // #include "../zoning.h"
 #include "../table/airporttile_ids.h"
@@ -43,7 +44,7 @@ enum FoundationPart {
     FOUNDATION_PART_HALFTILE = 1,     ///< Second part (halftile foundation)
     FOUNDATION_PART_END
 };
-extern void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part); // viewport.cpp
+extern void DrawSelectionSprite(SpriteID image, PaletteID pal, const TileInfo *ti, int z_offset, FoundationPart foundation_part, int extra_offs_x = 0, int extra_offs_y = 0); // viewport.cpp
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
 extern bool IsInsideSelectedRectangle(int x, int y);
@@ -981,7 +982,7 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 char buffer[DRAW_STRING_BUFFER];
                 GetString(buffer, string_id, lastof(buffer));
                 auto bb = GetStringBoundingBox(buffer);
-                sign.width_normal = VPSM_LEFT + Align(bb.width, 2) + VPSM_RIGHT;
+                sign.width_normal = WidgetDimensions::scaled.fullbevel.left + Align(bb.width, 2) + WidgetDimensions::scaled.fullbevel.right;
                 Point pt = RemapCoords2(TileX(ti->tile) * TILE_SIZE + TILE_SIZE / 2, TileY(ti->tile) * TILE_SIZE + TILE_SIZE / 2);
                 sign.center = pt.x;
                 sign.top = pt.y - bb.height / 2;

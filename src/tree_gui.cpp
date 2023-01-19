@@ -58,8 +58,8 @@ static Dimension GetMaxTreeSpriteSize()
 	Dimension size, this_size;
 	Point offset;
 	/* Avoid to use it uninitialized */
-	size.width = 32; // default width - WD_FRAMERECT_LEFT
-	size.height = 39; // default height - BUTTON_BOTTOM_OFFSET
+	size.width = ScaleGUITrad(32); // default width - WD_FRAMERECT_LEFT
+	size.height = ScaleGUITrad(39); // default height - BUTTON_BOTTOM_OFFSET
 	offset.x = 0;
 	offset.y = 0;
 
@@ -159,8 +159,8 @@ public:
 		if (widget >= WID_BT_TYPE_BUTTON_FIRST) {
 			/* Ensure tree type buttons are sized after the largest tree type */
 			Dimension d = GetMaxTreeSpriteSize();
-			size->width = d.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-			size->height = d.height + WD_FRAMERECT_RIGHT + WD_FRAMERECT_BOTTOM + ScaleGUITrad(BUTTON_BOTTOM_OFFSET); // we need some more space
+			size->width = d.width + padding.width;
+			size->height = d.height + padding.height + ScaleGUITrad(BUTTON_BOTTOM_OFFSET); // we need some more space
 		}
 	}
 
@@ -169,7 +169,7 @@ public:
 		if (widget >= WID_BT_TYPE_BUTTON_FIRST) {
 			const int index = widget - WID_BT_TYPE_BUTTON_FIRST;
 			/* Trees "grow" in the centre on the bottom line of the buttons */
-			DrawSprite(tree_sprites[index].sprite, tree_sprites[index].pal, (r.left + r.right) / 2 + WD_FRAMERECT_LEFT, r.bottom - ScaleGUITrad(BUTTON_BOTTOM_OFFSET));
+			DrawSprite(tree_sprites[index].sprite, tree_sprites[index].pal, CenterBounds(r.left, r.right, 0), r.bottom - ScaleGUITrad(BUTTON_BOTTOM_OFFSET));
 		}
 	}
 

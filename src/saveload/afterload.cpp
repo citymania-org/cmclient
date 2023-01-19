@@ -24,6 +24,7 @@
 #include "../string_func.h"
 #include "../date_func.h"
 #include "../roadveh.h"
+#include "../roadveh_cmd.h"
 #include "../train.h"
 #include "../station_base.h"
 #include "../waypoint_base.h"
@@ -40,6 +41,7 @@
 #include "../road_cmd.h"
 #include "../ai/ai.hpp"
 #include "../ai/ai_gui.hpp"
+#include "../game/game.hpp"
 #include "../town.h"
 #include "../economy_base.h"
 #include "../animated_tile_func.h"
@@ -307,7 +309,6 @@ static void InitializeWindowsAndCaches()
 
 	CheckTrainsLengths();
 	ShowNewGRFError();
-	ShowAIDebugWindowIfAIError();
 
 	/* Rebuild the smallmap list of owners. */
 	BuildOwnerLegend();
@@ -579,6 +580,22 @@ void AfterLoadFindBTProCBInfo() {
 }
 
 /**
+ * Start the scripts.
+ */
+static void StartScripts()
+{
+	/* Start the GameScript. */
+	Game::StartNew();
+
+	/* Start the AIs. */
+	for (const Company *c : Company::Iterate()) {
+		if (Company::IsValidAiID(c->index)) AI::StartNew(c->index, false);
+	}
+
+	ShowAIDebugWindowIfAIError();
+}
+
+/**
  * Perform a (large) amount of savegame conversion *magic* in order to
  * load older savegames and to fill the caches for various purposes.
  * @return True iff conversion went without a problem.
@@ -838,13 +855,6 @@ bool AfterLoadGame()
 
 	/* Update all vehicles */
 	AfterLoadVehicles(true);
-
-	/* Make sure there is an AI attached to an AI company */
-	{
-		for (const Company *c : Company::Iterate()) {
-			if (c->is_ai && c->ai_instance == nullptr) AI::StartNew(c->index);
-		}
-	}
 
 	/* make sure there is a town in the game */
 	if (_game_mode == GM_NORMAL && Town::GetNumItems() == 0) {
@@ -3196,6 +3206,56 @@ bool AfterLoadGame()
 		}
 	}
 
+	/* Road stops is 'only' updating some caches, but they are needed for PF calls in SLV_MULTITRACK_LEVEL_CROSSINGS teleporting. */
+	AfterLoadRoadStops();
+
+	/* Road vehicles stopped on multitrack level crossings need teleporting to a depot
+	 * to avoid crashing into the side of the train they're waiting for. */
+	if (IsSavegameVersionBefore(SLV_MULTITRACK_LEVEL_CROSSINGS)) {
+		/* Teleport road vehicles to the nearest depot. */
+		for (RoadVehicle *rv : RoadVehicle::Iterate()) {
+			/* Ignore trailers of articulated vehicles. */
+			if (rv->IsArticulatedPart()) continue;
+
+			/* Ignore moving vehicles. */
+			if (rv->cur_speed > 0) continue;
+
+			/* Ignore crashed vehicles. */
+			if (rv->vehstatus & VS_CRASHED) continue;
+
+			/* Ignore vehicles not on level crossings. */
+			TileIndex cur_tile = rv->tile;
+			if (!IsLevelCrossingTile(cur_tile)) continue;
+
+			TileIndex location;
+			DestinationID destination;
+			bool reverse = true;
+
+			/* Try to find a depot with a distance limit of 512 tiles (Manhattan distance). */
+			if (rv->FindClosestDepot(&location, &destination, &reverse) && DistanceManhattan(rv->tile, location) < 512u) {
+				/* Teleport all parts of articulated vehicles. */
+				for (RoadVehicle *u = rv; u != nullptr; u = u->Next()) {
+					u->tile = location;
+					int x = TileX(location) * TILE_SIZE + TILE_SIZE / 2;
+					int y = TileY(location) * TILE_SIZE + TILE_SIZE / 2;
+					u->x_pos = x;
+					u->y_pos = y;
+					u->z_pos = GetSlopePixelZ(x, y);
+
+					u->vehstatus |= VS_HIDDEN;
+					u->state = RVSB_IN_DEPOT;
+					u->UpdatePosition();
+				}
+				RoadVehLeaveDepot(rv, false);
+			}
+		}
+
+		/* Refresh all level crossings to bar adjacent crossing tiles. */
+		for (TileIndex tile = 0; tile < MapSize(); tile++) {
+			if (IsLevelCrossingTile(tile)) UpdateLevelCrossing(tile, false, true);
+		}
+	}
+
 	/* Compute station catchment areas. This is needed here in case UpdateStationAcceptance is called below. */
 	Station::RecomputeCatchmentForAll();
 
@@ -3204,8 +3264,6 @@ bool AfterLoadGame()
 		for (Station *st : Station::Iterate()) UpdateStationAcceptance(st, false);
 	}
 
-	/* Road stops is 'only' updating some caches */
-	AfterLoadRoadStops();
 	AfterLoadLabelMaps();
 	AfterLoadCompanyStats();
 	AfterLoadStoryBook();
@@ -3221,6 +3279,9 @@ bool AfterLoadGame()
 	citymania::InitializeZoningMap();
 
 	if ((!_networking || _network_server ) && _settings_client.gui.cm_pause_after_load) _pause_mode = PM_PAUSED_NORMAL;
+
+	/* Start the scripts. This MUST happen after everything else. */
+	StartScripts();
 
 	return true;
 }

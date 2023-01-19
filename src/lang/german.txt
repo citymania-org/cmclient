@@ -201,6 +201,7 @@ STR_UNITS_POWER_IMPERIAL                                        :{COMMA}{NBSP}PS
 STR_UNITS_POWER_METRIC                                          :{COMMA}{NBSP}PS
 STR_UNITS_POWER_SI                                              :{COMMA}{NBSP}kW
 
+
 STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{COMMA}{NBSP}t
 STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA}{NBSP}t
 STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA}{NBSP}kg
@@ -398,10 +399,9 @@ STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Beenden
 
 # Settings menu
-###length 14
+###length 15
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Spieleinstellungen
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Einstellungen
-STR_SETTINGS_MENU_SCRIPT_SETTINGS                               :KI- / Skripteinstellungen
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF-Einstellungen
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Transparenzeinstellungen
 STR_SETTINGS_MENU_ZONING                                        :Zonen
@@ -975,36 +975,6 @@ STR_GAME_OPTIONS_CURRENCY_INR                                   :Indische Rupie 
 STR_GAME_OPTIONS_CURRENCY_IDR                                   :Indonesische Rupiah (IDR)
 STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malaysische Ringgit (MYR)
 
-###length 2
-STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :Linksverkehr
-STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :Rechtsverkehr
-
-STR_GAME_OPTIONS_TOWN_NAMES_FRAME                               :{BLACK}Städtenamen:
-STR_GAME_OPTIONS_TOWN_NAMES_DROPDOWN_TOOLTIP                    :{BLACK}Wähle die Sprache für die Städtenamen aus
-
-###length 21
-STR_GAME_OPTIONS_TOWN_NAME_ORIGINAL_ENGLISH                     :Englisch
-STR_GAME_OPTIONS_TOWN_NAME_FRENCH                               :Französisch
-STR_GAME_OPTIONS_TOWN_NAME_GERMAN                               :Deutsch
-STR_GAME_OPTIONS_TOWN_NAME_ADDITIONAL_ENGLISH                   :Englisch (Zusätzlich)
-STR_GAME_OPTIONS_TOWN_NAME_LATIN_AMERICAN                       :Lateinamerikanisch
-STR_GAME_OPTIONS_TOWN_NAME_SILLY                                :Verrückt
-STR_GAME_OPTIONS_TOWN_NAME_SWEDISH                              :Schwedisch
-STR_GAME_OPTIONS_TOWN_NAME_DUTCH                                :Niederländisch
-STR_GAME_OPTIONS_TOWN_NAME_FINNISH                              :Finnisch
-STR_GAME_OPTIONS_TOWN_NAME_POLISH                               :Polnisch
-STR_GAME_OPTIONS_TOWN_NAME_SLOVAK                               :Slowakisch
-STR_GAME_OPTIONS_TOWN_NAME_NORWEGIAN                            :Norwegisch
-STR_GAME_OPTIONS_TOWN_NAME_HUNGARIAN                            :Ungarisch
-STR_GAME_OPTIONS_TOWN_NAME_AUSTRIAN                             :Österreichisch
-STR_GAME_OPTIONS_TOWN_NAME_ROMANIAN                             :Rumänisch
-STR_GAME_OPTIONS_TOWN_NAME_CZECH                                :Tschechisch
-STR_GAME_OPTIONS_TOWN_NAME_SWISS                                :Schweizerisch
-STR_GAME_OPTIONS_TOWN_NAME_DANISH                               :Dänisch
-STR_GAME_OPTIONS_TOWN_NAME_TURKISH                              :Türkisch
-STR_GAME_OPTIONS_TOWN_NAME_ITALIAN                              :Italienisch
-STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :Katalanisch
-
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Autosicherung
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Abstand zwischen den automatischen Spielesicherungen wählen
 
@@ -1037,21 +1007,8 @@ STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Dieses K
 
 STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Aktueller Treiber: {STRING}
 
-STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Größe der Bedienelemente
-STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Wähle die Größe der Bedienelemente
 
-STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_AUTO                         :(automatisch erkennen)
-STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Normal
-STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Doppelt
-STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Vierfach
 
-STR_GAME_OPTIONS_FONT_ZOOM                                      :{BLACK}Schriftgröße
-STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_TOOLTIP                     :{BLACK}Die Schriftgröße der Spieloberfläche auswählen
-
-STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_AUTO                        :(automatisch erkennen)
-STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_NORMAL                      :Normal
-STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_2X_ZOOM                     :Doppelt
-STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_4X_ZOOM                     :Vierfach
 
 STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafik
 
@@ -1103,8 +1060,6 @@ STR_CURRENCY_PREVIEW                                            :{LTBLUE}Vorscha
 STR_CURRENCY_CUSTOM_CURRENCY_PREVIEW_TOOLTIP                    :{BLACK}10000 Pfund (£) in der eigenen Währung
 STR_CURRENCY_CHANGE_PARAMETER                                   :{BLACK}Parameter für eigene Währung ändern
 
-STR_DIFFICULTY_LEVEL_SETTING_MAXIMUM_NO_COMPETITORS             :{LTBLUE}Max. Mitbewerber-Zahl: {ORANGE}{COMMA}
-
 STR_NONE                                                        :Keine
 STR_FUNDING_ONLY                                                :Nur durch Spieler
 STR_MINIMAL                                                     :Minimal
@@ -1153,6 +1108,12 @@ STR_SUBSIDY_X1_5                                                :×1,5
 STR_SUBSIDY_X2                                                  :×2
 STR_SUBSIDY_X3                                                  :×3
 STR_SUBSIDY_X4                                                  :×4
+
+###length 4
+STR_CLIMATE_TEMPERATE_LANDSCAPE                                 :Gemäßigt
+STR_CLIMATE_SUB_ARCTIC_LANDSCAPE                                :Subarktisch
+STR_CLIMATE_SUB_TROPICAL_LANDSCAPE                              :Subtropisch
+STR_CLIMATE_TOYLAND_LANDSCAPE                                   :Spielzeugland
 
 ###length 7
 STR_TERRAIN_TYPE_VERY_FLAT                                      :Sehr flach
@@ -1512,6 +1473,10 @@ STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :Verbessert
 
 STR_CONFIG_SETTING_ROAD_SIDE                                    :Straßenfahrzeuge: {STRING}
 STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :Die Seite des Straßenverkehrs auswählen
+
+###length 2
+STR_CONFIG_SETTING_ROAD_SIDE_LEFT                               :Linksverkehr
+STR_CONFIG_SETTING_ROAD_SIDE_RIGHT                              :Rechtsverkehr
 
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Drehung der Reliefkarte: {STRING}
 ###length 2
@@ -2047,7 +2012,7 @@ STR_CONFIG_SETTING_REVERSE_AT_SIGNALS                           :Automatisches U
 STR_CONFIG_SETTING_REVERSE_AT_SIGNALS_HELPTEXT                  :Erlaube Zügen, an Signalen umzudrehen, wenn sie dort zu lange gewartet haben
 ###length 2
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
-STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(empfohlen)
+STR_CONFIG_SETTING_PATHFINDER_YAPF                              :YAPF {BLUE}(empfohlen)
 
 STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}Wert der Einstellung ändern
 
@@ -2096,7 +2061,6 @@ STR_INTRO_HIGHSCORE                                             :{BLACK}Bestenli
 STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Einstellungen
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF-Einstellungen
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Erweiterungen herunterladen
-STR_INTRO_SCRIPT_SETTINGS                                       :{BLACK}KI- / Skripteinstellungen
 STR_INTRO_QUIT                                                  :{BLACK}Beenden
 
 STR_INTRO_TOOLTIP_NEW_GAME                                      :{BLACK}Ein neues Spiel beginnen. Strg+Klick überspringt Karteneinstellungen
@@ -2116,7 +2080,6 @@ STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Zeige di
 STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Einstellungen anzeigen
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}NewGRF-Einstellungen anzeigen und/oder ändern
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Prüfe, ob neue oder aktualisierte Erweiterungen zum Herunterladen bereitstehen
-STR_INTRO_TOOLTIP_SCRIPT_SETTINGS                               :{BLACK}Zeige KI- und Skripteinstellungen
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}OpenTTD beenden
 
 STR_INTRO_BASESET                                               :{BLACK}Den momentan ausgewählten Basisgrafiken fehl{P 0 "t" "en"} {NUM} Sprite{P 0 "" "s"}. Bitte überprüfen, ob es Updates für die Basisgrafiken gibt.
@@ -2147,12 +2110,6 @@ STR_CHEAT_EDIT_MAX_HL_QUERY_CAPT                                :{WHITE}Die Maxi
 STR_CHEAT_CHANGE_DATE                                           :{LTBLUE}Ändere Datum: {ORANGE}{DATE_SHORT}
 STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Ändert das Spieljahr
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Erlaube manuelles Ändern der Produktionsleistungen: {ORANGE}{STRING}
-
-###length 4
-STR_CHEAT_SWITCH_CLIMATE_TEMPERATE_LANDSCAPE                    :Gemäßigt
-STR_CHEAT_SWITCH_CLIMATE_SUB_ARCTIC_LANDSCAPE                   :Subarktisch
-STR_CHEAT_SWITCH_CLIMATE_SUB_TROPICAL_LANDSCAPE                 :Subtropisch
-STR_CHEAT_SWITCH_CLIMATE_TOYLAND_LANDSCAPE                      :Spielzeugland
 
 # Livery window
 STR_LIVERY_CAPTION                                              :{WHITE}{COMPANY} – Farbschema
@@ -2513,13 +2470,13 @@ STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH               :Warten auf Neub
 
 STR_NETWORK_MESSAGE_CLIENT_LEAVING                              :geht
 STR_NETWORK_MESSAGE_CLIENT_JOINED                               :*** {STRING} ist dem Spiel beigetreten
-STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {STRING} ist dem Spiel beigetreten (Teilnehmer #{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {STRING} ist der Firma #{2:NUM} beigetreten
+STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {0:STRING} ist dem Spiel beigetreten (Teilnehmer #{2:NUM})
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {0:STRING} ist der Firma #{2:NUM} beigetreten
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} ist den Zuschauern beigetreten
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} hat eine neue Firma gegründet (#{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} hat das Spiel verlassen ({2:STRING})
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {0:STRING} hat eine neue Firma gegründet (#{2:NUM})
+STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {0:STRING} hat das Spiel verlassen ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} hat den eigenen Namen zu {STRING} geändert
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} gab {2:CURRENCY_LONG} an {1:STRING}
+STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} gab {2:CURRENCY_LONG} an {1:STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Der Server hat das Spiel beendet
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Der Server startet neu...{}Bitte warten...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} wurde vom Server hinausgeworfen. Grund: ({STRING})
@@ -3165,6 +3122,8 @@ STR_MAPGEN_MAPSIZE                                              :{BLACK}Spielfel
 STR_MAPGEN_MAPSIZE_TOOLTIP                                      :{BLACK}Die Größe des Spielfelds auswählen. Die tatsächlich verfügbare Anzahl Felder wird geringfügig kleiner sein
 STR_MAPGEN_BY                                                   :{BLACK}*
 STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}Städteanzahl:
+STR_MAPGEN_TOWN_NAME_LABEL                                      :{BLACK}Städtenamen:
+STR_MAPGEN_TOWN_NAME_DROPDOWN_TOOLTIP                           :{BLACK}Wähle die Sprache für die Städtenamen aus
 STR_MAPGEN_DATE                                                 :{BLACK}Datum:
 STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Industriedichte:
 STR_MAPGEN_HEIGHTMAP_HEIGHT                                     :{BLACK}Höchster Gipfel:
@@ -3180,11 +3139,34 @@ STR_MAPGEN_DESERT_COVERAGE_DOWN                                 :{BLACK}Wüstenb
 STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}{NUM}%
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Landgenerator:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Landschaftstyp:
-STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}Gewässermenge:
+STR_MAPGEN_SEA_LEVEL                                            :{BLACK}Gewässermenge:
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}Flüsse:
 STR_MAPGEN_SMOOTHNESS                                           :{BLACK}Gleichmäßigkeit:
 STR_MAPGEN_VARIETY                                              :{BLACK}Größe der Geländeformen:
 STR_MAPGEN_GENERATE                                             :{WHITE}Erzeugen
+
+###length 21
+STR_MAPGEN_TOWN_NAME_ORIGINAL_ENGLISH                           :Englisch
+STR_MAPGEN_TOWN_NAME_FRENCH                                     :Französisch
+STR_MAPGEN_TOWN_NAME_GERMAN                                     :Deutsch
+STR_MAPGEN_TOWN_NAME_ADDITIONAL_ENGLISH                         :Englisch (Zusätzlich)
+STR_MAPGEN_TOWN_NAME_LATIN_AMERICAN                             :Lateinamerikanisch
+STR_MAPGEN_TOWN_NAME_SILLY                                      :Verrückt
+STR_MAPGEN_TOWN_NAME_SWEDISH                                    :Schwedisch
+STR_MAPGEN_TOWN_NAME_DUTCH                                      :Niederländisch
+STR_MAPGEN_TOWN_NAME_FINNISH                                    :Finnisch
+STR_MAPGEN_TOWN_NAME_POLISH                                     :Polnisch
+STR_MAPGEN_TOWN_NAME_SLOVAK                                     :Slowakisch
+STR_MAPGEN_TOWN_NAME_NORWEGIAN                                  :Norwegisch
+STR_MAPGEN_TOWN_NAME_HUNGARIAN                                  :Ungarisch
+STR_MAPGEN_TOWN_NAME_AUSTRIAN                                   :Österreichisch
+STR_MAPGEN_TOWN_NAME_ROMANIAN                                   :Rumänisch
+STR_MAPGEN_TOWN_NAME_CZECH                                      :Tschechisch
+STR_MAPGEN_TOWN_NAME_SWISS                                      :Schweizerisch
+STR_MAPGEN_TOWN_NAME_DANISH                                     :Dänisch
+STR_MAPGEN_TOWN_NAME_TURKISH                                    :Türkisch
+STR_MAPGEN_TOWN_NAME_ITALIAN                                    :Italienisch
+STR_MAPGEN_TOWN_NAME_CATALAN                                    :Katalanisch
 
 # Strings for map borders at game generation
 STR_MAPGEN_BORDER_TYPE                                          :{BLACK}Spielfeldränder:
@@ -3330,6 +3312,10 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Vorherig
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Gehe zum vorherigen normalen Sprite und überspringe alle Pseudo-, Recolour- und Schriftsprites (springt ggf. vom letzten bis zum ersten Sprite)
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Darstellung des aktuellen Sprites. Die Ausrichtung wird beim Zeichnen des Sprites ignoriert
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Bewege die Sprites und ändere dadurch die X- und Y-Offsets. Strg+Klick um die Sprites 8 Blöcke weit zu bewegen.
+
+###length 2
+
+
 STR_SPRITE_ALIGNER_RESET_BUTTON                                 :{BLACK}Setze zurück
 STR_SPRITE_ALIGNER_RESET_TOOLTIP                                :{BLACK}Setze die aktuellen relativen Versätze zurück
 STR_SPRITE_ALIGNER_OFFSETS_ABS                                  :{BLACK}X-Versatz: {NUM}, Y-Versatz: {NUM} (Absolut)
@@ -3347,15 +3333,15 @@ STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Schwerer F
 STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}Ein schwerer NewGRF-Fehler ist aufgetreten:{}{STRING}
 STR_NEWGRF_ERROR_POPUP                                          :{WHITE}Ein NewGRF-Fehler ist aufgetreten:{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} funktioniert nicht im Zusammenhang mit der von OpenTTD ermittelten TTDPatch-Version
-STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} ist für die {STRING}-Version von TTD
-STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} ist für die Nutzung mit {STRING} vorgesehen
-STR_NEWGRF_ERROR_INVALID_PARAMETER                              :Falscher Parameter für {1:STRING}: Parameter {STRING} ({NUM})
-STR_NEWGRF_ERROR_LOAD_BEFORE                                    :{1:STRING} muss vor {STRING} geladen werden
-STR_NEWGRF_ERROR_LOAD_AFTER                                     :{1:STRING} muss nach {STRING} geladen werden
-STR_NEWGRF_ERROR_OTTD_VERSION_NUMBER                            :{1:STRING} Benötigt OpenTTD-Version {STRING} oder höher
+STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} ist für die {2:STRING}-Version von TTD
+STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} ist für die Nutzung mit {2:STRING} vorgesehen
+STR_NEWGRF_ERROR_INVALID_PARAMETER                              :Ungültiger Parameter für {1:STRING}: Parameter {2:STRING} ({3:NUM})
+STR_NEWGRF_ERROR_LOAD_BEFORE                                    :{1:STRING} muss vor {2:STRING} geladen werden
+STR_NEWGRF_ERROR_LOAD_AFTER                                     :{1:STRING} muss nach {2:STRING} geladen werden
+STR_NEWGRF_ERROR_OTTD_VERSION_NUMBER                            :{1:STRING} benötigt OpenTTD-Version {2:STRING} oder höher
 STR_NEWGRF_ERROR_AFTER_TRANSLATED_FILE                          :der NewGRF-Datei, die es übersetzen soll,
 STR_NEWGRF_ERROR_TOO_MANY_NEWGRFS_LOADED                        :Zu viele NewGRFs geladen
-STR_NEWGRF_ERROR_STATIC_GRF_CAUSES_DESYNC                       :Das Laden von {1:STRING} als statisches NewGRF mit {STRING} könnte Synchronisationsfehler hervorrufen
+STR_NEWGRF_ERROR_STATIC_GRF_CAUSES_DESYNC                       :Das Laden von {1:STRING} als statisches NewGRF mit {2:STRING} könnte Synchronisationsfehler hervorrufen
 STR_NEWGRF_ERROR_UNEXPECTED_SPRITE                              :Unerwartetes Sprite (Sprite {3:NUM})
 STR_NEWGRF_ERROR_UNKNOWN_PROPERTY                               :Unbekannte Action-0-Eigenschaft {4:HEX} (Sprite {3:NUM})
 STR_NEWGRF_ERROR_INVALID_ID                                     :Zugriff auf eine ungültige ID (Sprite {3:NUM})
@@ -3670,7 +3656,6 @@ STR_FINANCES_SECTION_OTHER                                      :{GOLD}Sonstiges
 STR_FINANCES_NEGATIVE_INCOME                                    :-{CURRENCY_LONG}
 STR_FINANCES_ZERO_INCOME                                        :{CURRENCY_LONG}
 STR_FINANCES_POSITIVE_INCOME                                    :+{CURRENCY_LONG}
-STR_FINANCES_NET_PROFIT                                         :{WHITE}Reingewinn
 STR_FINANCES_BANK_BALANCE_TITLE                                 :{WHITE}Kontostand
 STR_FINANCES_OWN_FUNDS_TITLE                                    :{WHITE}Eigenes Kapital
 STR_FINANCES_LOAN_TITLE                                         :{WHITE}Kredit
@@ -3777,7 +3762,7 @@ STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}Produzie
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :, {STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Benötigt:
-STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{STRING}{BLACK}{3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{0:STRING}{BLACK}{3:STRING}
 STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} wartend{STRING}
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Produktion ändern (Vielfache von 8, maximal 2040)
@@ -3897,6 +3882,8 @@ STR_PURCHASE_INFO_ALL_BUT                                       :Alles außer {C
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Max. Zugkraft: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Reichweite: {GOLD}{COMMA} Felder
 STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}Flugzeugtyp: {GOLD}{STRING}
+
+###length 3
 
 ###length VEHICLE_TYPES
 STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Schienenfahrzeugsliste. Einzelheiten durch Anklicken des Fahrzeuges. Strg+Klick schaltet um zwischen Verstecken und Zeigen des Fahrzeugtyps
@@ -4066,7 +4053,7 @@ STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=n}Flugzeug
 STR_ENGINE_PREVIEW_SHIP                                         :{G=n}Schiff
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kosten: {CURRENCY_LONG}   Gewicht: {WEIGHT_SHORT}{}Geschwindigk.: {VELOCITY} Leistung: {POWER}{}Betriebskosten: {CURRENCY_LONG} pro Jahr{}Kapazität: {CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Preis: {CURRENCY_LONG} Gewicht: {WEIGHT_SHORT}{}Max. Geschwindigkeit: {VELOCITY}  Leistung: {POWER}  Max. Zugkraft: {6:FORCE}{}Betriebskosten: {4:CURRENCY_LONG}/Jahr{}Kapazität: {5:CARGO_LONG}
+STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Preis: {0:CURRENCY_LONG} Gewicht: {1:WEIGHT_SHORT}{}Max. Geschwindigkeit: {2:VELOCITY} Leistung: {3:POWER} Max. Zugkraft: {6:FORCE}{}Betriebskosten: {4:CURRENCY_LONG}/Jahr{}Kapazität: {5:CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Preis: {CURRENCY_LONG} Höchstgeschw.: {VELOCITY}{}Kapazität: {CARGO_LONG}{}Betriebskosten: {CURRENCY_LONG}/Jahr
 STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Kosten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY}{}Flugzeugtyp: {STRING}{}Kapazität: {CARGO_LONG}, {CARGO_LONG}{}Betriebskosten: {CURRENCY_LONG}/Jahr
 STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Kosten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY}{}Flugzeugtyp: {STRING}{}Kapazität: {CARGO_LONG}{}Betriebskosten: {CURRENCY_LONG}/Jahr
@@ -4230,8 +4217,8 @@ STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Zuverlä
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}Gebaut: {LTBLUE}{NUM}{BLACK} Wert: {LTBLUE}{CURRENCY_LONG}
 STR_CM_VEHICLE_INFO_BUILT_VALUE_WITH_ID                         :{LTBLUE}{ENGINE} {BLACK}Gebaut: {LTBLUE}{NUM}{BLACK} Wert: {LTBLUE}{CURRENCY_LONG}{BLACK} ID: {LTBLUE}{NUM}
 STR_VEHICLE_INFO_NO_CAPACITY                                    :{BLACK}Kapazität: {LTBLUE}Keine{STRING}
-STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}Kapazität: {LTBLUE}{CARGO_LONG}{3:STRING}
-STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}Kapazität: {LTBLUE}{CARGO_LONG}{3:STRING} (x{4:NUM})
+STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}Kapazität: {LTBLUE}{0:CARGO_LONG}{3:STRING}
+STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}Kapazität: {LTBLUE}{0:CARGO_LONG}{3:STRING} (x{4:NUM})
 STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Kapazität: {LTBLUE}{CARGO_LONG}, {CARGO_LONG}{STRING}
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Transfer-Einnahmen: {LTBLUE}{CURRENCY_LONG}
@@ -4561,12 +4548,12 @@ STR_ERROR_AI_PLEASE_REPORT_CRASH                                :{WHITE}Eine der
 STR_ERROR_AI_DEBUG_SERVER_ONLY                                  :{YELLOW}Debugfenster für KI oder Skripte ist nur auf dem Server verfügbar
 
 # AI configuration window
-STR_AI_CONFIG_CAPTION                                           :{WHITE}KI / Skripte einstellen
 STR_AI_CONFIG_GAMELIST_TOOLTIP                                  :{BLACK}Das Skript, das im nächsten Spiel geladen wird
 STR_AI_CONFIG_AILIST_TOOLTIP                                    :{BLACK}Die KIs, die im nächsten Spiel geladen werden
 STR_AI_CONFIG_HUMAN_PLAYER                                      :Menschlicher Spieler
 STR_AI_CONFIG_RANDOM_AI                                         :Zufällige KI
 STR_AI_CONFIG_NONE                                              :-
+STR_AI_CONFIG_MAX_COMPETITORS                                   :{LTBLUE}Max. Mitbewerber-Zahl: {ORANGE}{COMMA}
 
 STR_AI_CONFIG_MOVE_UP                                           :{BLACK}Nach oben verschieben
 STR_AI_CONFIG_MOVE_UP_TOOLTIP                                   :{BLACK}Die ausgewählte KI in der Liste nach oben verschieben
@@ -4576,8 +4563,6 @@ STR_AI_CONFIG_MOVE_DOWN_TOOLTIP                                 :{BLACK}Die ausg
 STR_AI_CONFIG_GAMESCRIPT                                        :{SILVER}Skript
 STR_AI_CONFIG_AI                                                :{SILVER}KIs
 
-STR_AI_CONFIG_CHANGE                                            :{BLACK}Wähle {STRING} aus
-STR_AI_CONFIG_CHANGE_NONE                                       :
 STR_AI_CONFIG_CHANGE_AI                                         :KI
 STR_AI_CONFIG_CHANGE_GAMESCRIPT                                 :Skript
 STR_AI_CONFIG_CHANGE_TOOLTIP                                    :{BLACK}Lade ein anderes Skript
@@ -4608,9 +4593,7 @@ STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Reliefka
 STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Übersichtskartenscreenshot
 
 # AI Parameters
-STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parameter
 STR_AI_SETTINGS_CAPTION_AI                                      :KI
-STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :Skript
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}Schließen
 STR_AI_SETTINGS_RESET                                           :{BLACK}Zurücksetzen
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
@@ -5027,6 +5010,7 @@ STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}Zu viele
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Das Wartungsintervall kann nicht geändert werden ...
 
 STR_ERROR_VEHICLE_IS_DESTROYED                                  :{WHITE}... Fahrzeug ist zerstört
+
 
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Es sind keine Fahrzeuge verfügbar!
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Bitte die NewGRF-Einstellungen ändern, damit Fahrzeuge früher verfügbar sind

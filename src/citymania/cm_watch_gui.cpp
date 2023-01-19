@@ -53,12 +53,12 @@ static NWidgetBase *MakeCompanyButtons(int *biggest_index)
 	// widget_container_activity = new NWidgetVertical( );
 
 	Dimension company_sprite_size = GetSpriteSize( SPR_COMPANY_ICON );
-	company_sprite_size.width  += WD_MATRIX_LEFT + WD_MATRIX_RIGHT;
-	company_sprite_size.height += WD_MATRIX_TOP + WD_MATRIX_BOTTOM + 1; // 1 for the 'offset' of being pressed
+	company_sprite_size.width  += WidgetDimensions::scaled.matrix.Horizontal();
+	company_sprite_size.height += WidgetDimensions::scaled.matrix.Vertical() + 1; // 1 for the 'offset' of being pressed
 
 	Dimension blot_sprite_size = GetSpriteSize( SPR_BLOT );
-	blot_sprite_size.width  += WD_MATRIX_LEFT + WD_MATRIX_RIGHT;
-	blot_sprite_size.height += WD_MATRIX_TOP + WD_MATRIX_BOTTOM + 1; // 1 for the 'offset' of being pressed
+	blot_sprite_size.width  += WidgetDimensions::scaled.matrix.Horizontal();
+	blot_sprite_size.height += WidgetDimensions::scaled.matrix.Vertical() + 1; // 1 for the 'offset' of being pressed
 
 
 	for (int company_num = COMPANY_FIRST; company_num < MAX_COMPANIES; company_num++ ) {
@@ -92,8 +92,8 @@ static NWidgetBase *MakeCompanyButtons2(int *biggest_index)
 	NWidgetHorizontal *widget_container_horiz = new NWidgetHorizontal();
 
 	Dimension company_sprite_size = GetSpriteSize(CM_SPR_COMPANY_ICON);
-	company_sprite_size.width  += WD_MATRIX_LEFT + WD_MATRIX_RIGHT;
-	company_sprite_size.height += WD_MATRIX_TOP + WD_MATRIX_BOTTOM + 1; // 1 for the 'offset' of being pressed
+	company_sprite_size.width  += WidgetDimensions::scaled.matrix.Horizontal();
+	company_sprite_size.height += WidgetDimensions::scaled.matrix.Vertical() + 1; // 1 for the 'offset' of being pressed
 
 	// for (const Company *c : Company::Iterate()) {
 	for (int widnum = EWW_COMPANY_BEGIN; widnum < EWW_COMPANY_END; widnum++) {

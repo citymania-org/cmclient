@@ -1018,7 +1018,7 @@ static GRFConfig *GRFLoadConfig(IniFile &ini, const char *grpname, bool is_stati
 				SetDParam(1, STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN);
 			}
 
-			SetDParamStr(0, StrEmpty(filename) ? item->name : filename);
+			SetDParamStr(0, StrEmpty(filename) ? item->name.c_str() : filename);
 			ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_GRF, WL_CRITICAL);
 			delete c;
 			continue;
@@ -1604,8 +1604,8 @@ void SyncCompanySettings()
 	const void *new_object = &_settings_client.company;
 	for (auto &desc : _company_settings) {
 		const SettingDesc *sd = GetSettingDesc(desc);
-		uint32 old_value = (uint32)sd->AsIntSetting()->Read(new_object);
-		uint32 new_value = (uint32)sd->AsIntSetting()->Read(old_object);
+		uint32 old_value = (uint32)sd->AsIntSetting()->Read(old_object);
+		uint32 new_value = (uint32)sd->AsIntSetting()->Read(new_object);
 		if (old_value != new_value) Command<CMD_CHANGE_COMPANY_SETTING>::SendNet(STR_NULL, _local_company, sd->GetName(), new_value);
 	}
 }

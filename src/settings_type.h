@@ -183,6 +183,7 @@ struct GUISettings {
 	uint8  osk_activation;                   ///< Mouse gesture to trigger the OSK.
 	byte   starting_colour;                  ///< default color scheme for the company to start a new game with
 	bool   show_newgrf_name;                 ///< Show the name of the NewGRF in the build vehicle window
+	bool   show_cargo_in_vehicle_lists;      ///< Show the cargoes the vehicles can carry in the list windows
 	bool   auto_remove_signals;              ///< automatically remove signals when in the way during rail construction
 	uint16 refresh_rate;                     ///< How often we refresh the screen (time between draw-ticks).
 	uint16 fast_forward_speed_limit;         ///< Game speed to use when fast-forward is enabled.
@@ -200,11 +201,13 @@ struct GUISettings {
 	uint8  developer;                        ///< print non-fatal warnings in console (>= 1), copy debug output to console (== 2)
 	bool   show_date_in_logs;                ///< whether to show dates in console logs
 	bool   newgrf_developer_tools;           ///< activate NewGRF developer tools and allow modifying NewGRFs in an existing game
-	bool   ai_developer_tools;               ///< activate AI developer tools
+	bool   ai_developer_tools;               ///< activate AI/GS developer tools
 	bool   scenario_developer;               ///< activate scenario developer: allow modifying NewGRFs in an existing game
 	uint8  settings_restriction_mode;        ///< selected restriction mode in adv. settings GUI. @see RestrictionMode
 	bool   newgrf_show_old_versions;         ///< whether to show old versions in the NewGRF list
 	uint8  newgrf_default_palette;           ///< default palette to use for NewGRFs without action 14 palette information
+
+	bool   scale_bevels;                     ///< bevels are scaled with GUI scale.
 
 	bool   cm_show_industry_forbidden_tiles;    ///< higlight areas where industry placement is forbidden regardless of terrain
 	bool   cm_runway_too_short_warning;            ///< warn about aircrafts using too short runways

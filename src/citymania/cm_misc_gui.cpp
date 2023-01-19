@@ -17,6 +17,9 @@
 #include "../zoom_func.h"
 #include "../widgets/misc_widget.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace citymania {
 
 static const NWidgetPart _nested_land_info_widgets[] = {
@@ -64,18 +67,17 @@ public:
         GfxDrawLine(r.left,  r.top,    r.left,  r.bottom, PC_BLACK);
         GfxDrawLine(r.right, r.top,    r.right, r.bottom, PC_BLACK);
 
-        uint y = r.top + WD_TEXTPANEL_TOP;
+        Rect ir = r.Shrink(WidgetDimensions::scaled.frametext);
         for (uint i = 0; i < LAND_INFO_CENTERED_LINES; i++) {
             if (StrEmpty(this->landinfo_data[i])) break;
 
-            DrawString(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, y, this->landinfo_data[i], i == 0 ? TC_LIGHT_BLUE : TC_FROMSTRING, SA_HOR_CENTER);
-            y += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
-            if (i == 0) y += 4;
+            DrawString(ir, this->landinfo_data[i], i == 0 ? TC_LIGHT_BLUE : TC_FROMSTRING, SA_HOR_CENTER);
+            ir.top += FONT_HEIGHT_NORMAL + (i == 0 ? WidgetDimensions::scaled.vsep_wide : WidgetDimensions::scaled.vsep_normal);
         }
 
         if (!StrEmpty(this->landinfo_data[LAND_INFO_MULTICENTER_LINE])) {
             SetDParamStr(0, this->landinfo_data[LAND_INFO_MULTICENTER_LINE]);
-            DrawStringMultiLine(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, y, r.bottom - WD_TEXTPANEL_BOTTOM, STR_JUST_RAW_STRING, TC_FROMSTRING, SA_CENTER);
+            DrawStringMultiLine(ir, STR_JUST_RAW_STRING, TC_FROMSTRING, SA_CENTER);
         }
     }
 
@@ -83,22 +85,21 @@ public:
     {
         if (widget != WID_LI_BACKGROUND) return;
 
-        size->height = WD_TEXTPANEL_TOP + WD_TEXTPANEL_BOTTOM;
+        size->height = WidgetDimensions::scaled.frametext.Vertical();
         for (uint i = 0; i < LAND_INFO_CENTERED_LINES; i++) {
             if (StrEmpty(this->landinfo_data[i])) break;
 
-            uint width = GetStringBoundingBox(this->landinfo_data[i]).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
+            uint width = GetStringBoundingBox(this->landinfo_data[i]).width + WidgetDimensions::scaled.frametext.Horizontal();
             size->width = std::max(size->width, width);
 
-            size->height += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
-            if (i == 0) size->height += 4;
+            size->height += FONT_HEIGHT_NORMAL + (i == 0 ? WidgetDimensions::scaled.vsep_wide : WidgetDimensions::scaled.vsep_normal);
         }
 
         if (!StrEmpty(this->landinfo_data[LAND_INFO_MULTICENTER_LINE])) {
-            uint width = GetStringBoundingBox(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
+            uint width = GetStringBoundingBox(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]).width + WidgetDimensions::scaled.frametext.Horizontal();
             size->width = std::max(size->width, std::min<uint>(ScaleGUITrad(300), width));
             SetDParamStr(0, this->landinfo_data[LAND_INFO_MULTICENTER_LINE]);
-            size->height += GetStringHeight(STR_JUST_RAW_STRING, size->width - WD_FRAMETEXT_LEFT - WD_FRAMETEXT_RIGHT);
+            size->height += GetStringHeight(STR_JUST_RAW_STRING, size->width - WidgetDimensions::scaled.frametext.Horizontal());
         }
     }
 
@@ -206,12 +207,14 @@ public:
         line_nr++;
 
         /* Location */
-        char tmp[16];
-        seprintf(tmp, lastof(tmp), "0x%.4X", tile);
+        std::stringstream tile_ss;
+        tile_ss << "0x" << std::setfill('0') << std::setw(4) << std::hex << std::uppercase << tile; // 0x%.4X
+        std::string tile_str = tile_ss.str(); // Can't pass it directly to SetDParamStr as the string is only a temporary and would be destructed before the GetString call.
+
         SetDParam(0, TileX(tile));
         SetDParam(1, TileY(tile));
         SetDParam(2, GetTileZ(tile));
-        SetDParamStr(3, tmp);
+        SetDParamStr(3, tile_str);
         GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_LANDINFO_COORDS, lastof(this->landinfo_data[line_nr]));
         line_nr++;
 

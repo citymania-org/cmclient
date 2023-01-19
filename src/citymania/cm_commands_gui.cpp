@@ -418,8 +418,8 @@ struct CommandsToolbarWindow : Window {
 		SetDParam(0, cs->name);
 		Dimension d = GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO);
 		d.width += 14; // colour field
-		d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+		d.width += WidgetDimensions::scaled.framerect.Horizontal();
+		d.height += WidgetDimensions::scaled.framerect.Vertical();
 		*size = maxdim(d, *size);
 	}
 
@@ -435,10 +435,10 @@ struct CommandsToolbarWindow : Window {
 		 * clk_dif will move one pixel down and one pixel to the right
 		 * when the button is clicked */
 		byte clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
-		int x = r.left + WD_FRAMERECT_LEFT;
+		int x = r.left + WidgetDimensions::scaled.framerect.left;
 		int y = r.top;
 
-		int rect_x = clk_dif + (rtl ? r.right - 12 : r.left + WD_FRAMERECT_LEFT);
+		int rect_x = clk_dif + (rtl ? r.right - 12 : r.left + WidgetDimensions::scaled.framerect.left);
 
 		GfxFillRect(rect_x, y + clk_dif, rect_x + 8, y + 5 + clk_dif, 0);
 		GfxFillRect(rect_x + 1, y + 1 + clk_dif, rect_x + 7, y + 4 + clk_dif, cs->legend_colour);

@@ -97,7 +97,7 @@ struct ZoningWindow : public Window {
 
 		bool rtl = _current_text_dir == TD_RTL;
 		byte clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
-		int x = r.left + WD_FRAMERECT_LEFT;
+		int x = r.left + WidgetDimensions::scaled.framerect.left;
 		int y = r.top;
 
 		DrawString(rtl ? r.left : x + clk_dif + 1, (rtl ? r.right + clk_dif : r.right), y + 1 + clk_dif, strid, TC_FROMSTRING, SA_LEFT);

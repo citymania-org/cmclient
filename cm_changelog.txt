@@ -80,6 +80,7 @@ This is usable for any OpenTTD servers
 - Fixed company selection when clicking in online players window.
 - Fixed cargo selection in charts.
 - Fixed shaded trees setting UI.
+- Renamed `vehicle_orders, vehicle_go, vehicle_refit, vehicle_clone` hotkeys in `vehiclegui` group to `cm_orders, cm_go, cm_refit, cm_clone` in the new `vehicleview` group.
 
 *** 12.2 (3 Apr 2022) ***
 - OpenTTD update.

@@ -63,7 +63,7 @@ struct LandTooltipsWindow : public Window
     virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
     {
         uint icon_size = ScaleGUITrad(10);
-        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
+        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + WidgetDimensions::scaled.hsep_normal;
         uint icons_width = icon_size * 3 + 20;
         size->width = 200;
         size->height = 6 + FONT_HEIGHT_NORMAL;
@@ -121,14 +121,15 @@ struct LandTooltipsWindow : public Window
             default:
                 break;
         }
-        size->width  += 8 + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-        size->height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+        size->width  += WidgetDimensions::scaled.framerect.Horizontal() + WidgetDimensions::scaled.fullbevel.Horizontal();
+        size->height += WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
     }
 
     virtual void DrawWidget(const Rect &r, int widget) const
     {
         uint icon_size = ScaleGUITrad(10);
-        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + 2;
+        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + WidgetDimensions::scaled.hsep_normal;
+        uint text_height = FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.hsep_normal;
         uint icons_width = icon_size * 3 + 10;
         uint text_ofs = (line_height - FONT_HEIGHT_NORMAL) >> 1;
         uint icon_ofs = (line_height - icon_size) >> 1;
@@ -138,9 +139,7 @@ struct LandTooltipsWindow : public Window
         GfxDrawLine(r.left,  r.top,    r.left,  r.bottom, PC_BLACK);
         GfxDrawLine(r.right, r.top,    r.right, r.bottom, PC_BLACK);
 
-        int y = r.top + WD_FRAMERECT_TOP + 4;
-        int left = r.left + WD_FRAMERECT_LEFT + 4;
-        int right = r.right - WD_FRAMERECT_RIGHT - 4;
+        auto ir = r.Shrink(WidgetDimensions::scaled.framerect).Shrink(WidgetDimensions::scaled.bevel);
 
         switch(this->tiletype) {
             case MP_HOUSE: {
@@ -148,10 +147,10 @@ struct LandTooltipsWindow : public Window
                 if(hs == NULL) break;
 
                 SetDParam(0, hs->building_name);
-                DrawString(left, right, y, STR_CM_LAND_TOOLTIPS_HOUSE_NAME, TC_BLACK, SA_CENTER);
-                y += FONT_HEIGHT_NORMAL + 2;
+                DrawString(ir, STR_CM_LAND_TOOLTIPS_HOUSE_NAME, TC_BLACK, SA_CENTER);
+                ir.top += text_height;
                 SetDParam(0, hs->population);
-                DrawString(left, right, y, STR_CM_LAND_TOOLTIPS_HOUSE_POPULATION, TC_BLACK, SA_CENTER);
+                DrawString(ir, STR_CM_LAND_TOOLTIPS_HOUSE_POPULATION, TC_BLACK, SA_CENTER);
                 break;
             }
             case MP_INDUSTRY: {
@@ -159,8 +158,8 @@ struct LandTooltipsWindow : public Window
                 if(ind == NULL) break;
 
                 SetDParam(0, ind->index);
-                DrawString(left, right, y, STR_CM_LAND_TOOLTIPS_INDUSTRY_NAME, TC_BLACK, SA_CENTER);
-                y += FONT_HEIGHT_NORMAL + 2;
+                DrawString(ir, STR_CM_LAND_TOOLTIPS_INDUSTRY_NAME, TC_BLACK, SA_CENTER);
+                ir.top += text_height;
 
                 for (CargoID i = 0; i < lengthof(ind->produced_cargo); i++) {
                     if (ind->produced_cargo[i] == CT_INVALID) continue;
@@ -171,9 +170,9 @@ struct LandTooltipsWindow : public Window
                     SetDParam(2, ind->last_month_production[i]);
                     SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
 
-                    this->DrawSpriteIcons(cs->GetCargoIcon(), left, y + icon_ofs);
-                    DrawString(left + icons_width, right, y + text_ofs, STR_CM_LAND_TOOLTIPS_INDUSTRY_CARGO);
-                    y += line_height;
+                    this->DrawSpriteIcons(cs->GetCargoIcon(), ir.left, ir.top + icon_ofs);
+                    DrawString(ir.left + icons_width, ir.right, ir.top + text_ofs, STR_CM_LAND_TOOLTIPS_INDUSTRY_CARGO);
+                    ir.top += line_height;
                 }
                 break;
             }
@@ -182,8 +181,8 @@ struct LandTooltipsWindow : public Window
                 if(st == NULL) break;
 
                 SetDParam(0, st->index);
-                DrawString(left, right, y, STR_CM_LAND_TOOLTIPS_STATION_NAME, TC_BLACK, SA_CENTER);
-                y += FONT_HEIGHT_NORMAL + 2;
+                DrawString(ir, STR_CM_LAND_TOOLTIPS_STATION_NAME, TC_BLACK, SA_CENTER);
+                ir.top += text_height;
 
                 for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
                     int cargoid = cs->Index();
@@ -193,9 +192,9 @@ struct LandTooltipsWindow : public Window
                         SetDParam(2, st->goods[cargoid].cargo.TotalCount());
                         SetDParam(3, ToPercent8(st->goods[cargoid].rating));
 
-                        this->DrawSpriteIcons(cs->GetCargoIcon(), left, y + icon_ofs);
-                        DrawString(left + icons_width, right, y + text_ofs, STR_CM_LAND_TOOLTIPS_STATION_CARGO);
-                        y += line_height;
+                        this->DrawSpriteIcons(cs->GetCargoIcon(), ir.left, ir.top + icon_ofs);
+                        DrawString(ir.left + icons_width, ir.right, ir.top + text_ofs, STR_CM_LAND_TOOLTIPS_STATION_CARGO);
+                        ir.top += line_height;
                     }
                 }
                 break;
@@ -442,17 +441,17 @@ public:
 
     void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
     {
-        size->height = WD_FRAMETEXT_TOP + WD_FRAMETEXT_BOTTOM + 2;
+        size->height = WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
         for (uint i = 0; i <= RATING_TOOLTIP_MAX_LINES; i++) {
             if (StrEmpty(this->data[i])) break;
 
-            uint width = GetStringBoundingBox(this->data[i]).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT + 2;
+            uint width = GetStringBoundingBox(this->data[i]).width + WidgetDimensions::scaled.framerect.Horizontal() + WidgetDimensions::scaled.fullbevel.Horizontal();
             if (this->newgrf_rating_used && i >= 2 && i <= 4)
                 width += RATING_TOOLTIP_NEWGRF_INDENT;
             size->width = std::max(size->width, width);
-            size->height += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
+            size->height += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.hsep_normal;
         }
-        size->height -= WD_PAR_VSEP_NORMAL;
+        size->height -= WidgetDimensions::scaled.hsep_normal;
     }
 
     void DrawWidget(const Rect &r, int widget) const override
@@ -462,11 +461,11 @@ public:
         GfxDrawLine(r.left,  r.top,    r.left,  r.bottom, PC_BLACK);
         GfxDrawLine(r.right, r.top,    r.right, r.bottom, PC_BLACK);
 
-        int y = r.top + WD_FRAMETEXT_TOP + 1;
-        int left0 = r.left + WD_FRAMETEXT_LEFT + 1;
-        int right0 = r.right - WD_FRAMETEXT_RIGHT - 1;
+        int y = r.top + WidgetDimensions::scaled.framerect.top + 1;
+        int left0 = r.left + WidgetDimensions::scaled.framerect.left + 1;
+        int right0 = r.right - WidgetDimensions::scaled.framerect.right - 1;
         DrawString(left0, right0, y, this->data[0], TC_LIGHT_BLUE, SA_CENTER);
-        y += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
+        y += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
         for (uint i = 1; i <= RATING_TOOLTIP_MAX_LINES; i++) {
             if (StrEmpty(this->data[i])) break;
             int left = left0, right = right0;
@@ -478,7 +477,7 @@ public:
                 }
             }
             DrawString(left, right, y, this->data[i], TC_BLACK);
-            y += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
+            y += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
         }
     }
 
