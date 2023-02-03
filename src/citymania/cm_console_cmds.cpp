@@ -126,8 +126,7 @@ bool ConTreeMap(byte argc, char *argv[]) {
         auto tree_count = std::min(t / 51, 4);
         // auto tree_growth = (uint)(t % 51) * 7 / 50;
         for (auto i = 0; i < tree_count; i++) {
-            // FIXME
-//            DoCommand(tile, TREE_INVALID, tile, DC_EXEC, CMD_PLANT_TREE);
+            ::Command<CMD_PLANT_TREE>::Post(tile, tile, TREE_INVALID, false);
         }
     }
 
