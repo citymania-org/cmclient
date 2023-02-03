@@ -4,164 +4,45 @@
 #define CM_GEN_COMMANDS_HPP
 #include "../cm_command_type.hpp"
 #include "../../dock_cmd.h"
-#include "../../goal_cmd.h"
-#include "../../news_cmd.h"
 #include "../../story_cmd.h"
-#include "../../vehicle_cmd.h"
-#include "../../settings_cmd.h"
-#include "../../group_cmd.h"
-#include "../../airport_cmd.h"
-#include "../../roadveh_cmd.h"
-#include "../../timetable_cmd.h"
-#include "../../engine_cmd.h"
-#include "../../ship_cmd.h"
-#include "../../tree_cmd.h"
-#include "../../landscape_cmd.h"
-#include "../../station_cmd.h"
-#include "../../company_cmd.h"
-#include "../../depot_cmd.h"
-#include "../../autoreplace_cmd.h"
-#include "../../tile_cmd.h"
-#include "../../water_cmd.h"
-#include "../../road_cmd.h"
-#include "../../rail_cmd.h"
-#include "../../industry_cmd.h"
 #include "../../waypoint_cmd.h"
-#include "../../town_cmd.h"
+#include "../../station_cmd.h"
+#include "../../goal_cmd.h"
+#include "../../settings_cmd.h"
+#include "../../ship_cmd.h"
+#include "../../news_cmd.h"
 #include "../../object_cmd.h"
+#include "../../water_cmd.h"
+#include "../../aircraft_cmd.h"
+#include "../../road_cmd.h"
+#include "../../economy_cmd.h"
+#include "../../landscape_cmd.h"
 #include "../../train_cmd.h"
-#include "../../signs_cmd.h"
-#include "../../tunnelbridge_cmd.h"
-#include "../../terraform_cmd.h"
-#include "../../misc_cmd.h"
-#include "../../order_cmd.h"
 #include "../../subsidy_cmd.h"
 #include "../../viewport_cmd.h"
-#include "../../economy_cmd.h"
-#include "../../aircraft_cmd.h"
+#include "../../timetable_cmd.h"
+#include "../../tile_cmd.h"
+#include "../../tree_cmd.h"
+#include "../../league_cmd.h"
+#include "../../signs_cmd.h"
+#include "../../vehicle_cmd.h"
+#include "../../airport_cmd.h"
+#include "../../terraform_cmd.h"
+#include "../../depot_cmd.h"
+#include "../../rail_cmd.h"
+#include "../../company_cmd.h"
+#include "../../autoreplace_cmd.h"
+#include "../../town_cmd.h"
+#include "../../roadveh_cmd.h"
+#include "../../industry_cmd.h"
+#include "../../order_cmd.h"
+#include "../../misc_cmd.h"
+#include "../../engine_cmd.h"
+#include "../../tunnelbridge_cmd.h"
+#include "../../group_cmd.h"
 
 namespace citymania {
 namespace cmd {
-
-class CreateGoal: public citymania::Command {
-public:
-    CompanyID company;
-    GoalType type;
-    GoalTypeID dest;
-    const std::string &text;
-
-    CreateGoal(CompanyID company, GoalType type, GoalTypeID dest, const std::string &text)
-        :company{company}, type{type}, dest{dest}, text{text} {}
-    ~CreateGoal() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RemoveGoal: public Command {
-public:
-    GoalID goal;
-
-    RemoveGoal(GoalID goal)
-        :goal{goal} {}
-    ~RemoveGoal() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetGoalText: public Command {
-public:
-    GoalID goal;
-    const std::string &text;
-
-    SetGoalText(GoalID goal, const std::string &text)
-        :goal{goal}, text{text} {}
-    ~SetGoalText() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetGoalProgress: public Command {
-public:
-    GoalID goal;
-    const std::string &text;
-
-    SetGoalProgress(GoalID goal, const std::string &text)
-        :goal{goal}, text{text} {}
-    ~SetGoalProgress() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetGoalCompleted: public Command {
-public:
-    GoalID goal;
-    bool completed;
-
-    SetGoalCompleted(GoalID goal, bool completed)
-        :goal{goal}, completed{completed} {}
-    ~SetGoalCompleted() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class GoalQuestion: public Command {
-public:
-    uint16 uniqueid;
-    uint16 target;
-    bool is_client;
-    uint32 button_mask;
-    GoalQuestionType type;
-    const std::string &text;
-
-    GoalQuestion(uint16 uniqueid, uint16 target, bool is_client, uint32 button_mask, GoalQuestionType type, const std::string &text)
-        :uniqueid{uniqueid}, target{target}, is_client{is_client}, button_mask{button_mask}, type{type}, text{text} {}
-    ~GoalQuestion() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class GoalQuestionAnswer: public Command {
-public:
-    uint16 uniqueid;
-    uint8 button;
-
-    GoalQuestionAnswer(uint16 uniqueid, uint8 button)
-        :uniqueid{uniqueid}, button{button} {}
-    ~GoalQuestionAnswer() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class CustomNewsItem: public Command {
-public:
-    NewsType type;
-    NewsReferenceType reftype1;
-    CompanyID company;
-    uint32 reference;
-    const std::string &text;
-
-    CustomNewsItem(NewsType type, NewsReferenceType reftype1, CompanyID company, uint32 reference, const std::string &text)
-        :type{type}, reftype1{reftype1}, company{company}, reference{reference}, text{text} {}
-    ~CustomNewsItem() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
 
 class CreateStoryPage: public Command {
 public:
@@ -289,6 +170,868 @@ public:
     StoryPageButton(TileIndex tile, StoryPageElementID page_element_id, VehicleID reference)
         :Command{tile}, page_element_id{page_element_id}, reference{reference} {}
     ~StoryPageButton() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildRailWaypoint: public Command {
+public:
+    Axis axis;
+    byte width;
+    byte height;
+    StationClassID spec_class;
+    byte spec_index;
+    StationID station_to_join;
+    bool adjacent;
+
+    BuildRailWaypoint(Axis axis, byte width, byte height, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
+        :axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    BuildRailWaypoint(TileIndex tile, Axis axis, byte width, byte height, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
+        :Command{tile}, axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    ~BuildRailWaypoint() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RemoveFromRailWaypoint: public Command {
+public:
+    TileIndex end;
+    bool keep_rail;
+
+    RemoveFromRailWaypoint(TileIndex end, bool keep_rail)
+        :end{end}, keep_rail{keep_rail} {}
+    RemoveFromRailWaypoint(TileIndex tile, TileIndex end, bool keep_rail)
+        :Command{tile}, end{end}, keep_rail{keep_rail} {}
+    ~RemoveFromRailWaypoint() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildBuoy: public Command {
+public:
+
+    BuildBuoy() {}
+    BuildBuoy(TileIndex tile)
+        :Command{tile} {}
+    ~BuildBuoy() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RenameWaypoint: public Command {
+public:
+    StationID waypoint_id;
+    const std::string &text;
+
+    RenameWaypoint(StationID waypoint_id, const std::string &text)
+        :waypoint_id{waypoint_id}, text{text} {}
+    ~RenameWaypoint() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildAirport: public Command {
+public:
+    byte airport_type;
+    byte layout;
+    StationID station_to_join;
+    bool adjacent;
+
+    BuildAirport(byte airport_type, byte layout, StationID station_to_join, bool adjacent)
+        :airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    BuildAirport(TileIndex tile, byte airport_type, byte layout, StationID station_to_join, bool adjacent)
+        :Command{tile}, airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    ~BuildAirport() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildDock: public Command {
+public:
+    StationID station_to_join;
+    bool adjacent;
+
+    BuildDock(StationID station_to_join, bool adjacent)
+        :station_to_join{station_to_join}, adjacent{adjacent} {}
+    BuildDock(TileIndex tile, StationID station_to_join, bool adjacent)
+        :Command{tile}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    ~BuildDock() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildRailStation: public Command {
+public:
+    RailType rt;
+    Axis axis;
+    byte numtracks;
+    byte plat_len;
+    StationClassID spec_class;
+    byte spec_index;
+    StationID station_to_join;
+    bool adjacent;
+
+    BuildRailStation(RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
+        :rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    BuildRailStation(TileIndex tile, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
+        :Command{tile}, rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    ~BuildRailStation() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RemoveFromRailStation: public Command {
+public:
+    TileIndex end;
+    bool keep_rail;
+
+    RemoveFromRailStation(TileIndex end, bool keep_rail)
+        :end{end}, keep_rail{keep_rail} {}
+    RemoveFromRailStation(TileIndex tile, TileIndex end, bool keep_rail)
+        :Command{tile}, end{end}, keep_rail{keep_rail} {}
+    ~RemoveFromRailStation() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildRoadStop: public Command {
+public:
+    uint8 width;
+    uint8 length;
+    RoadStopType stop_type;
+    bool is_drive_through;
+    DiagDirection ddir;
+    RoadType rt;
+    StationID station_to_join;
+    bool adjacent;
+
+    BuildRoadStop(uint8 width, uint8 length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, StationID station_to_join, bool adjacent)
+        :width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    BuildRoadStop(TileIndex tile, uint8 width, uint8 length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, StationID station_to_join, bool adjacent)
+        :Command{tile}, width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    ~BuildRoadStop() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RemoveRoadStop: public Command {
+public:
+    uint8 width;
+    uint8 height;
+    RoadStopType stop_type;
+    bool remove_road;
+
+    RemoveRoadStop(uint8 width, uint8 height, RoadStopType stop_type, bool remove_road)
+        :width{width}, height{height}, stop_type{stop_type}, remove_road{remove_road} {}
+    RemoveRoadStop(TileIndex tile, uint8 width, uint8 height, RoadStopType stop_type, bool remove_road)
+        :Command{tile}, width{width}, height{height}, stop_type{stop_type}, remove_road{remove_road} {}
+    ~RemoveRoadStop() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RenameStation: public Command {
+public:
+    StationID station_id;
+    const std::string &text;
+
+    RenameStation(StationID station_id, const std::string &text)
+        :station_id{station_id}, text{text} {}
+    ~RenameStation() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class OpenCloseAirport: public Command {
+public:
+    StationID station_id;
+
+    OpenCloseAirport(StationID station_id)
+        :station_id{station_id} {}
+    ~OpenCloseAirport() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class CreateGoal: public Command {
+public:
+    CompanyID company;
+    GoalType type;
+    GoalTypeID dest;
+    const std::string &text;
+
+    CreateGoal(CompanyID company, GoalType type, GoalTypeID dest, const std::string &text)
+        :company{company}, type{type}, dest{dest}, text{text} {}
+    ~CreateGoal() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RemoveGoal: public Command {
+public:
+    GoalID goal;
+
+    RemoveGoal(GoalID goal)
+        :goal{goal} {}
+    ~RemoveGoal() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetGoalText: public Command {
+public:
+    GoalID goal;
+    const std::string &text;
+
+    SetGoalText(GoalID goal, const std::string &text)
+        :goal{goal}, text{text} {}
+    ~SetGoalText() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetGoalProgress: public Command {
+public:
+    GoalID goal;
+    const std::string &text;
+
+    SetGoalProgress(GoalID goal, const std::string &text)
+        :goal{goal}, text{text} {}
+    ~SetGoalProgress() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetGoalCompleted: public Command {
+public:
+    GoalID goal;
+    bool completed;
+
+    SetGoalCompleted(GoalID goal, bool completed)
+        :goal{goal}, completed{completed} {}
+    ~SetGoalCompleted() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class GoalQuestion: public Command {
+public:
+    uint16 uniqueid;
+    uint16 target;
+    bool is_client;
+    uint32 button_mask;
+    GoalQuestionType type;
+    const std::string &text;
+
+    GoalQuestion(uint16 uniqueid, uint16 target, bool is_client, uint32 button_mask, GoalQuestionType type, const std::string &text)
+        :uniqueid{uniqueid}, target{target}, is_client{is_client}, button_mask{button_mask}, type{type}, text{text} {}
+    ~GoalQuestion() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class GoalQuestionAnswer: public Command {
+public:
+    uint16 uniqueid;
+    uint8 button;
+
+    GoalQuestionAnswer(uint16 uniqueid, uint8 button)
+        :uniqueid{uniqueid}, button{button} {}
+    ~GoalQuestionAnswer() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class ChangeSetting: public Command {
+public:
+    const std::string &name;
+    int32 value;
+
+    ChangeSetting(const std::string &name, int32 value)
+        :name{name}, value{value} {}
+    ~ChangeSetting() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class ChangeCompanySetting: public Command {
+public:
+    const std::string &name;
+    int32 value;
+
+    ChangeCompanySetting(const std::string &name, int32 value)
+        :name{name}, value{value} {}
+    ~ChangeCompanySetting() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class CustomNewsItem: public Command {
+public:
+    NewsType type;
+    NewsReferenceType reftype1;
+    CompanyID company;
+    uint32 reference;
+    const std::string &text;
+
+    CustomNewsItem(NewsType type, NewsReferenceType reftype1, CompanyID company, uint32 reference, const std::string &text)
+        :type{type}, reftype1{reftype1}, company{company}, reference{reference}, text{text} {}
+    ~CustomNewsItem() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildObject: public Command {
+public:
+    ObjectType type;
+    uint8 view;
+
+    BuildObject(ObjectType type, uint8 view)
+        :type{type}, view{view} {}
+    BuildObject(TileIndex tile, ObjectType type, uint8 view)
+        :Command{tile}, type{type}, view{view} {}
+    ~BuildObject() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildObjectArea: public Command {
+public:
+    TileIndex start_tile;
+    ObjectType type;
+    uint8 view;
+    bool diagonal;
+
+    BuildObjectArea(TileIndex start_tile, ObjectType type, uint8 view, bool diagonal)
+        :start_tile{start_tile}, type{type}, view{view}, diagonal{diagonal} {}
+    BuildObjectArea(TileIndex tile, TileIndex start_tile, ObjectType type, uint8 view, bool diagonal)
+        :Command{tile}, start_tile{start_tile}, type{type}, view{view}, diagonal{diagonal} {}
+    ~BuildObjectArea() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildShipDepot: public Command {
+public:
+    Axis axis;
+
+    BuildShipDepot(Axis axis)
+        :axis{axis} {}
+    BuildShipDepot(TileIndex tile, Axis axis)
+        :Command{tile}, axis{axis} {}
+    ~BuildShipDepot() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildCanal: public Command {
+public:
+    TileIndex start_tile;
+    WaterClass wc;
+    bool diagonal;
+
+    BuildCanal(TileIndex start_tile, WaterClass wc, bool diagonal)
+        :start_tile{start_tile}, wc{wc}, diagonal{diagonal} {}
+    BuildCanal(TileIndex tile, TileIndex start_tile, WaterClass wc, bool diagonal)
+        :Command{tile}, start_tile{start_tile}, wc{wc}, diagonal{diagonal} {}
+    ~BuildCanal() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildLock: public Command {
+public:
+
+    BuildLock() {}
+    BuildLock(TileIndex tile)
+        :Command{tile} {}
+    ~BuildLock() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildLongRoad: public Command {
+public:
+    TileIndex start_tile;
+    RoadType rt;
+    Axis axis;
+    DisallowedRoadDirections drd;
+    bool start_half;
+    bool end_half;
+    bool is_ai;
+
+    BuildLongRoad(TileIndex start_tile, RoadType rt, Axis axis, DisallowedRoadDirections drd, bool start_half, bool end_half, bool is_ai)
+        :start_tile{start_tile}, rt{rt}, axis{axis}, drd{drd}, start_half{start_half}, end_half{end_half}, is_ai{is_ai} {}
+    BuildLongRoad(TileIndex tile, TileIndex start_tile, RoadType rt, Axis axis, DisallowedRoadDirections drd, bool start_half, bool end_half, bool is_ai)
+        :Command{tile}, start_tile{start_tile}, rt{rt}, axis{axis}, drd{drd}, start_half{start_half}, end_half{end_half}, is_ai{is_ai} {}
+    ~BuildLongRoad() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RemoveLongRoad: public Command {
+public:
+    TileIndex start_tile;
+    RoadType rt;
+    Axis axis;
+    bool start_half;
+    bool end_half;
+
+    RemoveLongRoad(TileIndex start_tile, RoadType rt, Axis axis, bool start_half, bool end_half)
+        :start_tile{start_tile}, rt{rt}, axis{axis}, start_half{start_half}, end_half{end_half} {}
+    RemoveLongRoad(TileIndex tile, TileIndex start_tile, RoadType rt, Axis axis, bool start_half, bool end_half)
+        :Command{tile}, start_tile{start_tile}, rt{rt}, axis{axis}, start_half{start_half}, end_half{end_half} {}
+    ~RemoveLongRoad() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildRoad: public Command {
+public:
+    RoadBits pieces;
+    RoadType rt;
+    DisallowedRoadDirections toggle_drd;
+    TownID town_id;
+
+    BuildRoad(RoadBits pieces, RoadType rt, DisallowedRoadDirections toggle_drd, TownID town_id)
+        :pieces{pieces}, rt{rt}, toggle_drd{toggle_drd}, town_id{town_id} {}
+    BuildRoad(TileIndex tile, RoadBits pieces, RoadType rt, DisallowedRoadDirections toggle_drd, TownID town_id)
+        :Command{tile}, pieces{pieces}, rt{rt}, toggle_drd{toggle_drd}, town_id{town_id} {}
+    ~BuildRoad() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildRoadDepot: public Command {
+public:
+    RoadType rt;
+    DiagDirection dir;
+
+    BuildRoadDepot(RoadType rt, DiagDirection dir)
+        :rt{rt}, dir{dir} {}
+    BuildRoadDepot(TileIndex tile, RoadType rt, DiagDirection dir)
+        :Command{tile}, rt{rt}, dir{dir} {}
+    ~BuildRoadDepot() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class ConvertRoad: public Command {
+public:
+    TileIndex area_start;
+    RoadType to_type;
+
+    ConvertRoad(TileIndex area_start, RoadType to_type)
+        :area_start{area_start}, to_type{to_type} {}
+    ConvertRoad(TileIndex tile, TileIndex area_start, RoadType to_type)
+        :Command{tile}, area_start{area_start}, to_type{to_type} {}
+    ~ConvertRoad() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuyShareInCompany: public Command {
+public:
+    CompanyID target_company;
+
+    BuyShareInCompany(CompanyID target_company)
+        :target_company{target_company} {}
+    ~BuyShareInCompany() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SellShareInCompany: public Command {
+public:
+    CompanyID target_company;
+
+    SellShareInCompany(CompanyID target_company)
+        :target_company{target_company} {}
+    ~SellShareInCompany() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuyCompany: public Command {
+public:
+    CompanyID target_company;
+
+    BuyCompany(CompanyID target_company)
+        :target_company{target_company} {}
+    ~BuyCompany() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class LandscapeClear: public Command {
+public:
+
+    LandscapeClear() {}
+    LandscapeClear(TileIndex tile)
+        :Command{tile} {}
+    ~LandscapeClear() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class ClearArea: public Command {
+public:
+    TileIndex start_tile;
+    bool diagonal;
+
+    ClearArea(TileIndex start_tile, bool diagonal)
+        :start_tile{start_tile}, diagonal{diagonal} {}
+    ClearArea(TileIndex tile, TileIndex start_tile, bool diagonal)
+        :Command{tile}, start_tile{start_tile}, diagonal{diagonal} {}
+    ~ClearArea() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class MoveRailVehicle: public Command {
+public:
+    VehicleID src_veh;
+    VehicleID dest_veh;
+    bool move_chain;
+
+    MoveRailVehicle(VehicleID src_veh, VehicleID dest_veh, bool move_chain)
+        :src_veh{src_veh}, dest_veh{dest_veh}, move_chain{move_chain} {}
+    ~MoveRailVehicle() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class ForceTrainProceed: public Command {
+public:
+    VehicleID veh_id;
+
+    ForceTrainProceed(VehicleID veh_id)
+        :veh_id{veh_id} {}
+    ~ForceTrainProceed() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class ReverseTrainDirection: public Command {
+public:
+    VehicleID veh_id;
+    bool reverse_single_veh;
+
+    ReverseTrainDirection(VehicleID veh_id, bool reverse_single_veh)
+        :veh_id{veh_id}, reverse_single_veh{reverse_single_veh} {}
+    ~ReverseTrainDirection() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class CreateSubsidy: public Command {
+public:
+    CargoID cid;
+    SourceType src_type;
+    SourceID src;
+    SourceType dst_type;
+    SourceID dst;
+
+    CreateSubsidy(CargoID cid, SourceType src_type, SourceID src, SourceType dst_type, SourceID dst)
+        :cid{cid}, src_type{src_type}, src{src}, dst_type{dst_type}, dst{dst} {}
+    ~CreateSubsidy() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class ScrollViewport: public Command {
+public:
+    ViewportScrollTarget target;
+    uint32 ref;
+
+    ScrollViewport(ViewportScrollTarget target, uint32 ref)
+        :target{target}, ref{ref} {}
+    ScrollViewport(TileIndex tile, ViewportScrollTarget target, uint32 ref)
+        :Command{tile}, target{target}, ref{ref} {}
+    ~ScrollViewport() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class ChangeTimetable: public Command {
+public:
+    VehicleID veh;
+    VehicleOrderID order_number;
+    ModifyTimetableFlags mtf;
+    uint16 data;
+
+    ChangeTimetable(VehicleID veh, VehicleOrderID order_number, ModifyTimetableFlags mtf, uint16 data)
+        :veh{veh}, order_number{order_number}, mtf{mtf}, data{data} {}
+    ~ChangeTimetable() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BulkChangeTimetable: public Command {
+public:
+    VehicleID veh;
+    ModifyTimetableFlags mtf;
+    uint16 data;
+
+    BulkChangeTimetable(VehicleID veh, ModifyTimetableFlags mtf, uint16 data)
+        :veh{veh}, mtf{mtf}, data{data} {}
+    ~BulkChangeTimetable() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetVehicleOnTime: public Command {
+public:
+    VehicleID veh;
+
+    SetVehicleOnTime(VehicleID veh)
+        :veh{veh} {}
+    ~SetVehicleOnTime() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class AutofillTimetable: public Command {
+public:
+    VehicleID veh;
+    bool autofill;
+    bool preserve_wait_time;
+
+    AutofillTimetable(VehicleID veh, bool autofill, bool preserve_wait_time)
+        :veh{veh}, autofill{autofill}, preserve_wait_time{preserve_wait_time} {}
+    ~AutofillTimetable() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetTimetableStart: public Command {
+public:
+    VehicleID veh_id;
+    bool timetable_all;
+    Date start_date;
+
+    SetTimetableStart(VehicleID veh_id, bool timetable_all, Date start_date)
+        :veh_id{veh_id}, timetable_all{timetable_all}, start_date{start_date} {}
+    ~SetTimetableStart() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class PlantTree: public Command {
+public:
+    TileIndex start_tile;
+    byte tree_to_plant;
+    bool diagonal;
+
+    PlantTree(TileIndex start_tile, byte tree_to_plant, bool diagonal)
+        :start_tile{start_tile}, tree_to_plant{tree_to_plant}, diagonal{diagonal} {}
+    PlantTree(TileIndex tile, TileIndex start_tile, byte tree_to_plant, bool diagonal)
+        :Command{tile}, start_tile{start_tile}, tree_to_plant{tree_to_plant}, diagonal{diagonal} {}
+    ~PlantTree() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class CreateLeagueTable: public Command {
+public:
+    const std::string &title;
+    const std::string &header;
+    const std::string &footer;
+
+    CreateLeagueTable(const std::string &title, const std::string &header, const std::string &footer)
+        :title{title}, header{header}, footer{footer} {}
+    ~CreateLeagueTable() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class CreateLeagueTableElement: public Command {
+public:
+    LeagueTableID table;
+    int64 rating;
+    CompanyID company;
+    const std::string &text;
+    const std::string &score;
+    LinkType link_type;
+    LinkTargetID link_target;
+
+    CreateLeagueTableElement(LeagueTableID table, int64 rating, CompanyID company, const std::string &text, const std::string &score, LinkType link_type, LinkTargetID link_target)
+        :table{table}, rating{rating}, company{company}, text{text}, score{score}, link_type{link_type}, link_target{link_target} {}
+    ~CreateLeagueTableElement() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class UpdateLeagueTableElementData: public Command {
+public:
+    LeagueTableElementID element;
+    CompanyID company;
+    const std::string &text;
+    LinkType link_type;
+    LinkTargetID link_target;
+
+    UpdateLeagueTableElementData(LeagueTableElementID element, CompanyID company, const std::string &text, LinkType link_type, LinkTargetID link_target)
+        :element{element}, company{company}, text{text}, link_type{link_type}, link_target{link_target} {}
+    ~UpdateLeagueTableElementData() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class UpdateLeagueTableElementScore: public Command {
+public:
+    LeagueTableElementID element;
+    int64 rating;
+    const std::string &score;
+
+    UpdateLeagueTableElementScore(LeagueTableElementID element, int64 rating, const std::string &score)
+        :element{element}, rating{rating}, score{score} {}
+    ~UpdateLeagueTableElementScore() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RemoveLeagueTableElement: public Command {
+public:
+    LeagueTableElementID element;
+
+    RemoveLeagueTableElement(LeagueTableElementID element)
+        :element{element} {}
+    ~RemoveLeagueTableElement() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class PlaceSign: public Command {
+public:
+    const std::string &text;
+
+    PlaceSign(const std::string &text)
+        :text{text} {}
+    PlaceSign(TileIndex tile, const std::string &text)
+        :Command{tile}, text{text} {}
+    ~PlaceSign() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RenameSign: public Command {
+public:
+    SignID sign_id;
+    const std::string &text;
+
+    RenameSign(SignID sign_id, const std::string &text)
+        :sign_id{sign_id}, text{text} {}
+    ~RenameSign() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
@@ -469,540 +1212,33 @@ public:
     Commands get_command() override;
 };
 
-class ChangeSetting: public Command {
+class TerraformLand: public Command {
 public:
-    const std::string &name;
-    int32 value;
+    Slope slope;
+    bool dir_up;
 
-    ChangeSetting(const std::string &name, int32 value)
-        :name{name}, value{value} {}
-    ~ChangeSetting() override {}
+    TerraformLand(Slope slope, bool dir_up)
+        :slope{slope}, dir_up{dir_up} {}
+    TerraformLand(TileIndex tile, Slope slope, bool dir_up)
+        :Command{tile}, slope{slope}, dir_up{dir_up} {}
+    ~TerraformLand() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class ChangeCompanySetting: public Command {
-public:
-    const std::string &name;
-    int32 value;
-
-    ChangeCompanySetting(const std::string &name, int32 value)
-        :name{name}, value{value} {}
-    ~ChangeCompanySetting() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class CreateGroup: public Command {
-public:
-    VehicleType vt;
-    GroupID parent_group;
-
-    CreateGroup(VehicleType vt, GroupID parent_group)
-        :vt{vt}, parent_group{parent_group} {}
-    ~CreateGroup() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class AlterGroup: public Command {
-public:
-    AlterGroupMode mode;
-    GroupID group_id;
-    GroupID parent_id;
-    const std::string &text;
-
-    AlterGroup(AlterGroupMode mode, GroupID group_id, GroupID parent_id, const std::string &text)
-        :mode{mode}, group_id{group_id}, parent_id{parent_id}, text{text} {}
-    ~AlterGroup() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class DeleteGroup: public Command {
-public:
-    GroupID group_id;
-
-    DeleteGroup(GroupID group_id)
-        :group_id{group_id} {}
-    ~DeleteGroup() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class AddVehicleGroup: public Command {
-public:
-    GroupID group_id;
-    VehicleID veh_id;
-    bool add_shared;
-
-    AddVehicleGroup(GroupID group_id, VehicleID veh_id, bool add_shared)
-        :group_id{group_id}, veh_id{veh_id}, add_shared{add_shared} {}
-    ~AddVehicleGroup() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class AddSharedVehicleGroup: public Command {
-public:
-    GroupID id_g;
-    VehicleType type;
-
-    AddSharedVehicleGroup(GroupID id_g, VehicleType type)
-        :id_g{id_g}, type{type} {}
-    ~AddSharedVehicleGroup() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RemoveAllVehiclesGroup: public Command {
-public:
-    GroupID group_id;
-
-    RemoveAllVehiclesGroup(GroupID group_id)
-        :group_id{group_id} {}
-    ~RemoveAllVehiclesGroup() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetGroupFlag: public Command {
-public:
-    GroupID group_id;
-    GroupFlags flag;
-    bool value;
-    bool recursive;
-
-    SetGroupFlag(GroupID group_id, GroupFlags flag, bool value, bool recursive)
-        :group_id{group_id}, flag{flag}, value{value}, recursive{recursive} {}
-    ~SetGroupFlag() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetGroupLivery: public Command {
-public:
-    GroupID group_id;
-    bool primary;
-    Colours colour;
-
-    SetGroupLivery(GroupID group_id, bool primary, Colours colour)
-        :group_id{group_id}, primary{primary}, colour{colour} {}
-    ~SetGroupLivery() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class TurnRoadVeh: public Command {
-public:
-    VehicleID veh_id;
-
-    TurnRoadVeh(VehicleID veh_id)
-        :veh_id{veh_id} {}
-    ~TurnRoadVeh() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class ChangeTimetable: public Command {
-public:
-    VehicleID veh;
-    VehicleOrderID order_number;
-    ModifyTimetableFlags mtf;
-    uint16 data;
-
-    ChangeTimetable(VehicleID veh, VehicleOrderID order_number, ModifyTimetableFlags mtf, uint16 data)
-        :veh{veh}, order_number{order_number}, mtf{mtf}, data{data} {}
-    ~ChangeTimetable() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetVehicleOnTime: public Command {
-public:
-    VehicleID veh;
-
-    SetVehicleOnTime(VehicleID veh)
-        :veh{veh} {}
-    ~SetVehicleOnTime() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class AutofillTimetable: public Command {
-public:
-    VehicleID veh;
-    bool autofill;
-    bool preserve_wait_time;
-
-    AutofillTimetable(VehicleID veh, bool autofill, bool preserve_wait_time)
-        :veh{veh}, autofill{autofill}, preserve_wait_time{preserve_wait_time} {}
-    ~AutofillTimetable() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetTimetableStart: public Command {
-public:
-    VehicleID veh_id;
-    bool timetable_all;
-    Date start_date;
-
-    SetTimetableStart(VehicleID veh_id, bool timetable_all, Date start_date)
-        :veh_id{veh_id}, timetable_all{timetable_all}, start_date{start_date} {}
-    ~SetTimetableStart() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class WantEnginePreview: public Command {
-public:
-    EngineID engine_id;
-
-    WantEnginePreview(EngineID engine_id)
-        :engine_id{engine_id} {}
-    ~WantEnginePreview() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class EngineCtrl: public Command {
-public:
-    EngineID engine_id;
-    CompanyID company_id;
-    bool allow;
-
-    EngineCtrl(EngineID engine_id, CompanyID company_id, bool allow)
-        :engine_id{engine_id}, company_id{company_id}, allow{allow} {}
-    ~EngineCtrl() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RenameEngine: public Command {
-public:
-    EngineID engine_id;
-    const std::string &text;
-
-    RenameEngine(EngineID engine_id, const std::string &text)
-        :engine_id{engine_id}, text{text} {}
-    ~RenameEngine() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetVehicleVisibility: public Command {
-public:
-    EngineID engine_id;
-    bool hide;
-
-    SetVehicleVisibility(EngineID engine_id, bool hide)
-        :engine_id{engine_id}, hide{hide} {}
-    ~SetVehicleVisibility() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class PlantTree: public Command {
-public:
-    TileIndex start_tile;
-    byte tree_to_plant;
-
-    PlantTree(TileIndex start_tile, byte tree_to_plant)
-        :start_tile{start_tile}, tree_to_plant{tree_to_plant} {}
-    PlantTree(TileIndex tile, TileIndex start_tile, byte tree_to_plant)
-        :Command{tile}, start_tile{start_tile}, tree_to_plant{tree_to_plant} {}
-    ~PlantTree() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class LandscapeClear: public Command {
-public:
-
-    LandscapeClear() {}
-    LandscapeClear(TileIndex tile)
-        :Command{tile} {}
-    ~LandscapeClear() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class ClearArea: public Command {
+class LevelLand: public Command {
 public:
     TileIndex start_tile;
     bool diagonal;
+    LevelMode lm;
 
-    ClearArea(TileIndex start_tile, bool diagonal)
-        :start_tile{start_tile}, diagonal{diagonal} {}
-    ClearArea(TileIndex tile, TileIndex start_tile, bool diagonal)
-        :Command{tile}, start_tile{start_tile}, diagonal{diagonal} {}
-    ~ClearArea() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildAirport: public Command {
-public:
-    byte airport_type;
-    byte layout;
-    StationID station_to_join;
-    bool adjacent;
-
-    BuildAirport(byte airport_type, byte layout, StationID station_to_join, bool adjacent)
-        :airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    BuildAirport(TileIndex tile, byte airport_type, byte layout, StationID station_to_join, bool adjacent)
-        :Command{tile}, airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    ~BuildAirport() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildDock: public Command {
-public:
-    StationID station_to_join;
-    bool adjacent;
-
-    BuildDock(StationID station_to_join, bool adjacent)
-        :station_to_join{station_to_join}, adjacent{adjacent} {}
-    BuildDock(TileIndex tile, StationID station_to_join, bool adjacent)
-        :Command{tile}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    ~BuildDock() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildRailStation: public Command {
-public:
-    RailType rt;
-    Axis axis;
-    byte numtracks;
-    byte plat_len;
-    StationClassID spec_class;
-    byte spec_index;
-    StationID station_to_join;
-    bool adjacent;
-
-    BuildRailStation(RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
-        :rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    BuildRailStation(TileIndex tile, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
-        :Command{tile}, rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    ~BuildRailStation() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RemoveFromRailStation: public Command {
-public:
-    TileIndex end;
-    bool keep_rail;
-
-    RemoveFromRailStation(TileIndex end, bool keep_rail)
-        :end{end}, keep_rail{keep_rail} {}
-    RemoveFromRailStation(TileIndex tile, TileIndex end, bool keep_rail)
-        :Command{tile}, end{end}, keep_rail{keep_rail} {}
-    ~RemoveFromRailStation() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildRoadStop: public Command {
-public:
-    uint8 width;
-    uint8 length;
-    RoadStopType stop_type;
-    bool is_drive_through;
-    DiagDirection ddir;
-    RoadType rt;
-    StationID station_to_join;
-    bool adjacent;
-
-    BuildRoadStop(uint8 width, uint8 length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, StationID station_to_join, bool adjacent)
-        :width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    BuildRoadStop(TileIndex tile, uint8 width, uint8 length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, StationID station_to_join, bool adjacent)
-        :Command{tile}, width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    ~BuildRoadStop() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RemoveRoadStop: public Command {
-public:
-    uint8 width;
-    uint8 height;
-    RoadStopType stop_type;
-    bool remove_road;
-
-    RemoveRoadStop(uint8 width, uint8 height, RoadStopType stop_type, bool remove_road)
-        :width{width}, height{height}, stop_type{stop_type}, remove_road{remove_road} {}
-    RemoveRoadStop(TileIndex tile, uint8 width, uint8 height, RoadStopType stop_type, bool remove_road)
-        :Command{tile}, width{width}, height{height}, stop_type{stop_type}, remove_road{remove_road} {}
-    ~RemoveRoadStop() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RenameStation: public Command {
-public:
-    StationID station_id;
-    const std::string &text;
-
-    RenameStation(StationID station_id, const std::string &text)
-        :station_id{station_id}, text{text} {}
-    ~RenameStation() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class OpenCloseAirport: public Command {
-public:
-    StationID station_id;
-
-    OpenCloseAirport(StationID station_id)
-        :station_id{station_id} {}
-    ~OpenCloseAirport() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class CompanyCtrl: public Command {
-public:
-    CompanyCtrlAction cca;
-    CompanyID company_id;
-    CompanyRemoveReason reason;
-    ClientID client_id;
-
-    CompanyCtrl(CompanyCtrlAction cca, CompanyID company_id, CompanyRemoveReason reason, ClientID client_id)
-        :cca{cca}, company_id{company_id}, reason{reason}, client_id{client_id} {}
-    ~CompanyCtrl() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class GiveMoney: public Command {
-public:
-    uint32 money;
-    CompanyID dest_company;
-
-    GiveMoney(uint32 money, CompanyID dest_company)
-        :money{money}, dest_company{dest_company} {}
-    ~GiveMoney() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RenameCompany: public Command {
-public:
-    const std::string &text;
-
-    RenameCompany(const std::string &text)
-        :text{text} {}
-    ~RenameCompany() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RenamePresident: public Command {
-public:
-    const std::string &text;
-
-    RenamePresident(const std::string &text)
-        :text{text} {}
-    ~RenamePresident() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetCompanyManagerFace: public Command {
-public:
-    CompanyManagerFace cmf;
-
-    SetCompanyManagerFace(CompanyManagerFace cmf)
-        :cmf{cmf} {}
-    ~SetCompanyManagerFace() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetCompanyColour: public Command {
-public:
-    LiveryScheme scheme;
-    bool primary;
-    Colours colour;
-
-    SetCompanyColour(LiveryScheme scheme, bool primary, Colours colour)
-        :scheme{scheme}, primary{primary}, colour{colour} {}
-    ~SetCompanyColour() override {}
+    LevelLand(TileIndex start_tile, bool diagonal, LevelMode lm)
+        :start_tile{start_tile}, diagonal{diagonal}, lm{lm} {}
+    LevelLand(TileIndex tile, TileIndex start_tile, bool diagonal, LevelMode lm)
+        :Command{tile}, start_tile{start_tile}, diagonal{diagonal}, lm{lm} {}
+    ~LevelLand() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
@@ -1017,170 +1253,6 @@ public:
     RenameDepot(DepotID depot_id, const std::string &text)
         :depot_id{depot_id}, text{text} {}
     ~RenameDepot() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class AutoreplaceVehicle: public Command {
-public:
-    VehicleID veh_id;
-
-    AutoreplaceVehicle(VehicleID veh_id)
-        :veh_id{veh_id} {}
-    ~AutoreplaceVehicle() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SetAutoReplace: public Command {
-public:
-    GroupID id_g;
-    EngineID old_engine_type;
-    EngineID new_engine_type;
-    bool when_old;
-
-    SetAutoReplace(GroupID id_g, EngineID old_engine_type, EngineID new_engine_type, bool when_old)
-        :id_g{id_g}, old_engine_type{old_engine_type}, new_engine_type{new_engine_type}, when_old{when_old} {}
-    ~SetAutoReplace() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildShipDepot: public Command {
-public:
-    Axis axis;
-
-    BuildShipDepot(Axis axis)
-        :axis{axis} {}
-    BuildShipDepot(TileIndex tile, Axis axis)
-        :Command{tile}, axis{axis} {}
-    ~BuildShipDepot() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildCanal: public Command {
-public:
-    TileIndex start_tile;
-    WaterClass wc;
-    bool diagonal;
-
-    BuildCanal(TileIndex start_tile, WaterClass wc, bool diagonal)
-        :start_tile{start_tile}, wc{wc}, diagonal{diagonal} {}
-    BuildCanal(TileIndex tile, TileIndex start_tile, WaterClass wc, bool diagonal)
-        :Command{tile}, start_tile{start_tile}, wc{wc}, diagonal{diagonal} {}
-    ~BuildCanal() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildLock: public Command {
-public:
-
-    BuildLock() {}
-    BuildLock(TileIndex tile)
-        :Command{tile} {}
-    ~BuildLock() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildLongRoad: public Command {
-public:
-    TileIndex start_tile;
-    RoadType rt;
-    Axis axis;
-    DisallowedRoadDirections drd;
-    bool start_half;
-    bool end_half;
-    bool is_ai;
-
-    BuildLongRoad(TileIndex start_tile, RoadType rt, Axis axis, DisallowedRoadDirections drd, bool start_half, bool end_half, bool is_ai)
-        :start_tile{start_tile}, rt{rt}, axis{axis}, drd{drd}, start_half{start_half}, end_half{end_half}, is_ai{is_ai} {}
-    BuildLongRoad(TileIndex tile, TileIndex start_tile, RoadType rt, Axis axis, DisallowedRoadDirections drd, bool start_half, bool end_half, bool is_ai)
-        :Command{tile}, start_tile{start_tile}, rt{rt}, axis{axis}, drd{drd}, start_half{start_half}, end_half{end_half}, is_ai{is_ai} {}
-    ~BuildLongRoad() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RemoveLongRoad: public Command {
-public:
-    TileIndex start_tile;
-    RoadType rt;
-    Axis axis;
-    bool start_half;
-    bool end_half;
-
-    RemoveLongRoad(TileIndex start_tile, RoadType rt, Axis axis, bool start_half, bool end_half)
-        :start_tile{start_tile}, rt{rt}, axis{axis}, start_half{start_half}, end_half{end_half} {}
-    RemoveLongRoad(TileIndex tile, TileIndex start_tile, RoadType rt, Axis axis, bool start_half, bool end_half)
-        :Command{tile}, start_tile{start_tile}, rt{rt}, axis{axis}, start_half{start_half}, end_half{end_half} {}
-    ~RemoveLongRoad() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildRoad: public Command {
-public:
-    RoadBits pieces;
-    RoadType rt;
-    DisallowedRoadDirections toggle_drd;
-    TownID town_id;
-
-    BuildRoad(RoadBits pieces, RoadType rt, DisallowedRoadDirections toggle_drd, TownID town_id)
-        :pieces{pieces}, rt{rt}, toggle_drd{toggle_drd}, town_id{town_id} {}
-    BuildRoad(TileIndex tile, RoadBits pieces, RoadType rt, DisallowedRoadDirections toggle_drd, TownID town_id)
-        :Command{tile}, pieces{pieces}, rt{rt}, toggle_drd{toggle_drd}, town_id{town_id} {}
-    ~BuildRoad() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildRoadDepot: public Command {
-public:
-    RoadType rt;
-    DiagDirection dir;
-
-    BuildRoadDepot(RoadType rt, DiagDirection dir)
-        :rt{rt}, dir{dir} {}
-    BuildRoadDepot(TileIndex tile, RoadType rt, DiagDirection dir)
-        :Command{tile}, rt{rt}, dir{dir} {}
-    ~BuildRoadDepot() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class ConvertRoad: public Command {
-public:
-    TileIndex area_start;
-    RoadType to_type;
-
-    ConvertRoad(TileIndex area_start, RoadType to_type)
-        :area_start{area_start}, to_type{to_type} {}
-    ConvertRoad(TileIndex tile, TileIndex area_start, RoadType to_type)
-        :Command{tile}, area_start{area_start}, to_type{to_type} {}
-    ~ConvertRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
@@ -1365,99 +1437,113 @@ public:
     Commands get_command() override;
 };
 
-class BuildIndustry: public Command {
+class CompanyCtrl: public Command {
 public:
-    IndustryType it;
-    uint32 first_layout;
-    bool fund;
-    uint32 seed;
+    CompanyCtrlAction cca;
+    CompanyID company_id;
+    CompanyRemoveReason reason;
+    ClientID client_id;
 
-    BuildIndustry(IndustryType it, uint32 first_layout, bool fund, uint32 seed)
-        :it{it}, first_layout{first_layout}, fund{fund}, seed{seed} {}
-    BuildIndustry(TileIndex tile, IndustryType it, uint32 first_layout, bool fund, uint32 seed)
-        :Command{tile}, it{it}, first_layout{first_layout}, fund{fund}, seed{seed} {}
-    ~BuildIndustry() override {}
+    CompanyCtrl(CompanyCtrlAction cca, CompanyID company_id, CompanyRemoveReason reason, ClientID client_id)
+        :cca{cca}, company_id{company_id}, reason{reason}, client_id{client_id} {}
+    ~CompanyCtrl() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class IndustryCtrl: public Command {
+class GiveMoney: public Command {
 public:
-    IndustryID ind_id;
-    IndustryAction action;
-    IndustryControlFlags ctlflags;
-    Owner company_id;
+    uint32 money;
+    CompanyID dest_company;
+
+    GiveMoney(uint32 money, CompanyID dest_company)
+        :money{money}, dest_company{dest_company} {}
+    ~GiveMoney() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RenameCompany: public Command {
+public:
     const std::string &text;
 
-    IndustryCtrl(IndustryID ind_id, IndustryAction action, IndustryControlFlags ctlflags, Owner company_id, const std::string &text)
-        :ind_id{ind_id}, action{action}, ctlflags{ctlflags}, company_id{company_id}, text{text} {}
-    ~IndustryCtrl() override {}
+    RenameCompany(const std::string &text)
+        :text{text} {}
+    ~RenameCompany() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class BuildRailWaypoint: public Command {
+class RenamePresident: public Command {
 public:
-    Axis axis;
-    byte width;
-    byte height;
-    StationClassID spec_class;
-    byte spec_index;
-    StationID station_to_join;
-    bool adjacent;
-
-    BuildRailWaypoint(Axis axis, byte width, byte height, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
-        :axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    BuildRailWaypoint(TileIndex tile, Axis axis, byte width, byte height, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
-        :Command{tile}, axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    ~BuildRailWaypoint() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RemoveFromRailWaypoint: public Command {
-public:
-    TileIndex end;
-    bool keep_rail;
-
-    RemoveFromRailWaypoint(TileIndex end, bool keep_rail)
-        :end{end}, keep_rail{keep_rail} {}
-    RemoveFromRailWaypoint(TileIndex tile, TileIndex end, bool keep_rail)
-        :Command{tile}, end{end}, keep_rail{keep_rail} {}
-    ~RemoveFromRailWaypoint() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildBuoy: public Command {
-public:
-
-    BuildBuoy() {}
-    BuildBuoy(TileIndex tile)
-        :Command{tile} {}
-    ~BuildBuoy() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RenameWaypoint: public Command {
-public:
-    StationID waypoint_id;
     const std::string &text;
 
-    RenameWaypoint(StationID waypoint_id, const std::string &text)
-        :waypoint_id{waypoint_id}, text{text} {}
-    ~RenameWaypoint() override {}
+    RenamePresident(const std::string &text)
+        :text{text} {}
+    ~RenamePresident() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetCompanyManagerFace: public Command {
+public:
+    CompanyManagerFace cmf;
+
+    SetCompanyManagerFace(CompanyManagerFace cmf)
+        :cmf{cmf} {}
+    ~SetCompanyManagerFace() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetCompanyColour: public Command {
+public:
+    LiveryScheme scheme;
+    bool primary;
+    Colours colour;
+
+    SetCompanyColour(LiveryScheme scheme, bool primary, Colours colour)
+        :scheme{scheme}, primary{primary}, colour{colour} {}
+    ~SetCompanyColour() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class AutoreplaceVehicle: public Command {
+public:
+    VehicleID veh_id;
+
+    AutoreplaceVehicle(VehicleID veh_id)
+        :veh_id{veh_id} {}
+    ~AutoreplaceVehicle() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetAutoReplace: public Command {
+public:
+    GroupID id_g;
+    EngineID old_engine_type;
+    EngineID new_engine_type;
+    bool when_old;
+
+    SetAutoReplace(GroupID id_g, EngineID old_engine_type, EngineID new_engine_type, bool when_old)
+        :id_g{id_g}, old_engine_type{old_engine_type}, new_engine_type{new_engine_type}, when_old{when_old} {}
+    ~SetAutoReplace() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
@@ -1597,244 +1683,48 @@ public:
     Commands get_command() override;
 };
 
-class BuildObject: public Command {
-public:
-    ObjectType type;
-    uint8 view;
-
-    BuildObject(ObjectType type, uint8 view)
-        :type{type}, view{view} {}
-    BuildObject(TileIndex tile, ObjectType type, uint8 view)
-        :Command{tile}, type{type}, view{view} {}
-    ~BuildObject() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildObjectArea: public Command {
-public:
-    TileIndex start_tile;
-    ObjectType type;
-    uint8 view;
-    bool diagonal;
-
-    BuildObjectArea(TileIndex start_tile, ObjectType type, uint8 view, bool diagonal)
-        :start_tile{start_tile}, type{type}, view{view}, diagonal{diagonal} {}
-    BuildObjectArea(TileIndex tile, TileIndex start_tile, ObjectType type, uint8 view, bool diagonal)
-        :Command{tile}, start_tile{start_tile}, type{type}, view{view}, diagonal{diagonal} {}
-    ~BuildObjectArea() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class MoveRailVehicle: public Command {
-public:
-    VehicleID src_veh;
-    VehicleID dest_veh;
-    bool move_chain;
-
-    MoveRailVehicle(VehicleID src_veh, VehicleID dest_veh, bool move_chain)
-        :src_veh{src_veh}, dest_veh{dest_veh}, move_chain{move_chain} {}
-    ~MoveRailVehicle() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class ForceTrainProceed: public Command {
+class TurnRoadVeh: public Command {
 public:
     VehicleID veh_id;
 
-    ForceTrainProceed(VehicleID veh_id)
+    TurnRoadVeh(VehicleID veh_id)
         :veh_id{veh_id} {}
-    ~ForceTrainProceed() override {}
+    ~TurnRoadVeh() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class ReverseTrainDirection: public Command {
+class BuildIndustry: public Command {
 public:
-    VehicleID veh_id;
-    bool reverse_single_veh;
+    IndustryType it;
+    uint32 first_layout;
+    bool fund;
+    uint32 seed;
 
-    ReverseTrainDirection(VehicleID veh_id, bool reverse_single_veh)
-        :veh_id{veh_id}, reverse_single_veh{reverse_single_veh} {}
-    ~ReverseTrainDirection() override {}
+    BuildIndustry(IndustryType it, uint32 first_layout, bool fund, uint32 seed)
+        :it{it}, first_layout{first_layout}, fund{fund}, seed{seed} {}
+    BuildIndustry(TileIndex tile, IndustryType it, uint32 first_layout, bool fund, uint32 seed)
+        :Command{tile}, it{it}, first_layout{first_layout}, fund{fund}, seed{seed} {}
+    ~BuildIndustry() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class PlaceSign: public Command {
+class IndustryCtrl: public Command {
 public:
+    IndustryID ind_id;
+    IndustryAction action;
+    IndustryControlFlags ctlflags;
+    Owner company_id;
     const std::string &text;
 
-    PlaceSign(const std::string &text)
-        :text{text} {}
-    PlaceSign(TileIndex tile, const std::string &text)
-        :Command{tile}, text{text} {}
-    ~PlaceSign() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class RenameSign: public Command {
-public:
-    SignID sign_id;
-    const std::string &text;
-
-    RenameSign(SignID sign_id, const std::string &text)
-        :sign_id{sign_id}, text{text} {}
-    ~RenameSign() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildBridge: public Command {
-public:
-    TileIndex tile_start;
-    TransportType transport_type;
-    BridgeType bridge_type;
-    byte road_rail_type;
-
-    BuildBridge(TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, byte road_rail_type)
-        :tile_start{tile_start}, transport_type{transport_type}, bridge_type{bridge_type}, road_rail_type{road_rail_type} {}
-    BuildBridge(TileIndex tile, TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, byte road_rail_type)
-        :Command{tile}, tile_start{tile_start}, transport_type{transport_type}, bridge_type{bridge_type}, road_rail_type{road_rail_type} {}
-    ~BuildBridge() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class BuildTunnel: public Command {
-public:
-    TransportType transport_type;
-    byte road_rail_type;
-
-    BuildTunnel(TransportType transport_type, byte road_rail_type)
-        :transport_type{transport_type}, road_rail_type{road_rail_type} {}
-    BuildTunnel(TileIndex tile, TransportType transport_type, byte road_rail_type)
-        :Command{tile}, transport_type{transport_type}, road_rail_type{road_rail_type} {}
-    ~BuildTunnel() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class TerraformLand: public Command {
-public:
-    Slope slope;
-    bool dir_up;
-
-    TerraformLand(Slope slope, bool dir_up)
-        :slope{slope}, dir_up{dir_up} {}
-    TerraformLand(TileIndex tile, Slope slope, bool dir_up)
-        :Command{tile}, slope{slope}, dir_up{dir_up} {}
-    ~TerraformLand() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class LevelLand: public Command {
-public:
-    TileIndex start_tile;
-    bool diagonal;
-    LevelMode lm;
-
-    LevelLand(TileIndex start_tile, bool diagonal, LevelMode lm)
-        :start_tile{start_tile}, diagonal{diagonal}, lm{lm} {}
-    LevelLand(TileIndex tile, TileIndex start_tile, bool diagonal, LevelMode lm)
-        :Command{tile}, start_tile{start_tile}, diagonal{diagonal}, lm{lm} {}
-    ~LevelLand() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class MoneyCheat: public Command {
-public:
-    Money amount;
-
-    MoneyCheat(Money amount)
-        :amount{amount} {}
-    ~MoneyCheat() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class ChangeBankBalance: public Command {
-public:
-    Money delta;
-    CompanyID company;
-    ExpensesType expenses_type;
-
-    ChangeBankBalance(Money delta, CompanyID company, ExpensesType expenses_type)
-        :delta{delta}, company{company}, expenses_type{expenses_type} {}
-    ChangeBankBalance(TileIndex tile, Money delta, CompanyID company, ExpensesType expenses_type)
-        :Command{tile}, delta{delta}, company{company}, expenses_type{expenses_type} {}
-    ~ChangeBankBalance() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class IncreaseLoan: public Command {
-public:
-    LoanCommand cmd;
-    Money amount;
-
-    IncreaseLoan(LoanCommand cmd, Money amount)
-        :cmd{cmd}, amount{amount} {}
-    ~IncreaseLoan() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class DecreaseLoan: public Command {
-public:
-    LoanCommand cmd;
-    Money amount;
-
-    DecreaseLoan(LoanCommand cmd, Money amount)
-        :cmd{cmd}, amount{amount} {}
-    ~DecreaseLoan() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class Pause: public Command {
-public:
-    PauseMode mode;
-    bool pause;
-
-    Pause(PauseMode mode, bool pause)
-        :mode{mode}, pause{pause} {}
-    ~Pause() override {}
+    IndustryCtrl(IndustryID ind_id, IndustryAction action, IndustryControlFlags ctlflags, Owner company_id, const std::string &text)
+        :ind_id{ind_id}, action{action}, ctlflags{ctlflags}, company_id{company_id}, text{text} {}
+    ~IndustryCtrl() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
@@ -1960,72 +1850,278 @@ public:
     Commands get_command() override;
 };
 
-class CreateSubsidy: public Command {
+class MoneyCheat: public Command {
 public:
-    CargoID cid;
-    SourceType src_type;
-    SourceID src;
-    SourceType dst_type;
-    SourceID dst;
+    Money amount;
 
-    CreateSubsidy(CargoID cid, SourceType src_type, SourceID src, SourceType dst_type, SourceID dst)
-        :cid{cid}, src_type{src_type}, src{src}, dst_type{dst_type}, dst{dst} {}
-    ~CreateSubsidy() override {}
+    MoneyCheat(Money amount)
+        :amount{amount} {}
+    ~MoneyCheat() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class ScrollViewport: public Command {
+class ChangeBankBalance: public Command {
 public:
-    ViewportScrollTarget target;
-    uint32 ref;
+    Money delta;
+    CompanyID company;
+    ExpensesType expenses_type;
 
-    ScrollViewport(ViewportScrollTarget target, uint32 ref)
-        :target{target}, ref{ref} {}
-    ScrollViewport(TileIndex tile, ViewportScrollTarget target, uint32 ref)
-        :Command{tile}, target{target}, ref{ref} {}
-    ~ScrollViewport() override {}
+    ChangeBankBalance(Money delta, CompanyID company, ExpensesType expenses_type)
+        :delta{delta}, company{company}, expenses_type{expenses_type} {}
+    ChangeBankBalance(TileIndex tile, Money delta, CompanyID company, ExpensesType expenses_type)
+        :Command{tile}, delta{delta}, company{company}, expenses_type{expenses_type} {}
+    ~ChangeBankBalance() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class BuyShareInCompany: public Command {
+class IncreaseLoan: public Command {
 public:
-    CompanyID target_company;
+    LoanCommand cmd;
+    Money amount;
 
-    BuyShareInCompany(CompanyID target_company)
-        :target_company{target_company} {}
-    ~BuyShareInCompany() override {}
+    IncreaseLoan(LoanCommand cmd, Money amount)
+        :cmd{cmd}, amount{amount} {}
+    ~IncreaseLoan() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class SellShareInCompany: public Command {
+class DecreaseLoan: public Command {
 public:
-    CompanyID target_company;
+    LoanCommand cmd;
+    Money amount;
 
-    SellShareInCompany(CompanyID target_company)
-        :target_company{target_company} {}
-    ~SellShareInCompany() override {}
+    DecreaseLoan(LoanCommand cmd, Money amount)
+        :cmd{cmd}, amount{amount} {}
+    ~DecreaseLoan() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
     Commands get_command() override;
 };
 
-class BuyCompany: public Command {
+class Pause: public Command {
 public:
-    CompanyID target_company;
+    PauseMode mode;
+    bool pause;
 
-    BuyCompany(CompanyID target_company)
-        :target_company{target_company} {}
-    ~BuyCompany() override {}
+    Pause(PauseMode mode, bool pause)
+        :mode{mode}, pause{pause} {}
+    ~Pause() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class WantEnginePreview: public Command {
+public:
+    EngineID engine_id;
+
+    WantEnginePreview(EngineID engine_id)
+        :engine_id{engine_id} {}
+    ~WantEnginePreview() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class EngineCtrl: public Command {
+public:
+    EngineID engine_id;
+    CompanyID company_id;
+    bool allow;
+
+    EngineCtrl(EngineID engine_id, CompanyID company_id, bool allow)
+        :engine_id{engine_id}, company_id{company_id}, allow{allow} {}
+    ~EngineCtrl() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RenameEngine: public Command {
+public:
+    EngineID engine_id;
+    const std::string &text;
+
+    RenameEngine(EngineID engine_id, const std::string &text)
+        :engine_id{engine_id}, text{text} {}
+    ~RenameEngine() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetVehicleVisibility: public Command {
+public:
+    EngineID engine_id;
+    bool hide;
+
+    SetVehicleVisibility(EngineID engine_id, bool hide)
+        :engine_id{engine_id}, hide{hide} {}
+    ~SetVehicleVisibility() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildBridge: public Command {
+public:
+    TileIndex tile_start;
+    TransportType transport_type;
+    BridgeType bridge_type;
+    byte road_rail_type;
+
+    BuildBridge(TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, byte road_rail_type)
+        :tile_start{tile_start}, transport_type{transport_type}, bridge_type{bridge_type}, road_rail_type{road_rail_type} {}
+    BuildBridge(TileIndex tile, TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, byte road_rail_type)
+        :Command{tile}, tile_start{tile_start}, transport_type{transport_type}, bridge_type{bridge_type}, road_rail_type{road_rail_type} {}
+    ~BuildBridge() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildTunnel: public Command {
+public:
+    TransportType transport_type;
+    byte road_rail_type;
+
+    BuildTunnel(TransportType transport_type, byte road_rail_type)
+        :transport_type{transport_type}, road_rail_type{road_rail_type} {}
+    BuildTunnel(TileIndex tile, TransportType transport_type, byte road_rail_type)
+        :Command{tile}, transport_type{transport_type}, road_rail_type{road_rail_type} {}
+    ~BuildTunnel() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class CreateGroup: public Command {
+public:
+    VehicleType vt;
+    GroupID parent_group;
+
+    CreateGroup(VehicleType vt, GroupID parent_group)
+        :vt{vt}, parent_group{parent_group} {}
+    ~CreateGroup() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class AlterGroup: public Command {
+public:
+    AlterGroupMode mode;
+    GroupID group_id;
+    GroupID parent_id;
+    const std::string &text;
+
+    AlterGroup(AlterGroupMode mode, GroupID group_id, GroupID parent_id, const std::string &text)
+        :mode{mode}, group_id{group_id}, parent_id{parent_id}, text{text} {}
+    ~AlterGroup() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class DeleteGroup: public Command {
+public:
+    GroupID group_id;
+
+    DeleteGroup(GroupID group_id)
+        :group_id{group_id} {}
+    ~DeleteGroup() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class AddVehicleGroup: public Command {
+public:
+    GroupID group_id;
+    VehicleID veh_id;
+    bool add_shared;
+
+    AddVehicleGroup(GroupID group_id, VehicleID veh_id, bool add_shared)
+        :group_id{group_id}, veh_id{veh_id}, add_shared{add_shared} {}
+    ~AddVehicleGroup() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class AddSharedVehicleGroup: public Command {
+public:
+    GroupID id_g;
+    VehicleType type;
+
+    AddSharedVehicleGroup(GroupID id_g, VehicleType type)
+        :id_g{id_g}, type{type} {}
+    ~AddSharedVehicleGroup() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RemoveAllVehiclesGroup: public Command {
+public:
+    GroupID group_id;
+
+    RemoveAllVehiclesGroup(GroupID group_id)
+        :group_id{group_id} {}
+    ~RemoveAllVehiclesGroup() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetGroupFlag: public Command {
+public:
+    GroupID group_id;
+    GroupFlags flag;
+    bool value;
+    bool recursive;
+
+    SetGroupFlag(GroupID group_id, GroupFlags flag, bool value, bool recursive)
+        :group_id{group_id}, flag{flag}, value{value}, recursive{recursive} {}
+    ~SetGroupFlag() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class SetGroupLivery: public Command {
+public:
+    GroupID group_id;
+    bool primary;
+    Colours colour;
+
+    SetGroupLivery(GroupID group_id, bool primary, Colours colour)
+        :group_id{group_id}, primary{primary}, colour{colour} {}
+    ~SetGroupLivery() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;

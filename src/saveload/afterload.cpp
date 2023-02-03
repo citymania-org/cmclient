@@ -870,18 +870,6 @@ bool AfterLoadGame()
 	 * version. It didn't show up before r12070. */
 	if (IsSavegameVersionBefore(SLV_87)) UpdateVoidTiles();
 
-	/* If Load Scenario / New (Scenario) Game is used,
-	 *  a company does not exist yet. So create one here.
-	 * 1 exception: network-games. Those can have 0 companies
-	 *   But this exception is not true for non-dedicated network servers! */
-	if (!_networking || (_networking && _network_server && !_network_dedicated)) {
-		CompanyID first_human_company = GetFirstPlayableCompanyID();
-		if (!Company::IsValidID(first_human_company)) {
-			Company *c = DoStartupNewCompany(false, first_human_company);
-			c->settings = _settings_client.company;
-		}
-	}
-
 	/* Fix the cache for cargo payments. */
 	for (CargoPayment *cp : CargoPayment::Iterate()) {
 		cp->front->cargo_payment = cp;
@@ -2034,13 +2022,6 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_101)) {
 		for (const Train *t : Train::Iterate()) {
 			if (t->First() == t) t->ReserveTrackUnderConsist();
-		}
-	}
-
-	if (IsSavegameVersionBefore(SLV_102)) {
-		for (TileIndex t = 0; t < map_size; t++) {
-			/* Now all crossings should be in correct state */
-			if (IsLevelCrossingTile(t)) UpdateLevelCrossing(t, false);
 		}
 	}
 
@@ -3250,9 +3231,9 @@ bool AfterLoadGame()
 			}
 		}
 
-		/* Refresh all level crossings to bar adjacent crossing tiles. */
+		/* Refresh all level crossings to bar adjacent crossing tiles, if needed. */
 		for (TileIndex tile = 0; tile < MapSize(); tile++) {
-			if (IsLevelCrossingTile(tile)) UpdateLevelCrossing(tile, false, true);
+			if (IsLevelCrossingTile(tile)) UpdateLevelCrossing(tile, false);
 		}
 	}
 
@@ -3280,8 +3261,21 @@ bool AfterLoadGame()
 
 	if ((!_networking || _network_server ) && _settings_client.gui.cm_pause_after_load) _pause_mode = PM_PAUSED_NORMAL;
 
-	/* Start the scripts. This MUST happen after everything else. */
+	/* Start the scripts. This MUST happen after everything else except
+	 * starting a new company. */
 	StartScripts();
+
+	/* If Load Scenario / New (Scenario) Game is used,
+	 *  a company does not exist yet. So create one here.
+	 * 1 exception: network-games. Those can have 0 companies
+	 *   But this exception is not true for non-dedicated network servers! */
+	if (!_networking || (_networking && _network_server && !_network_dedicated)) {
+		CompanyID first_human_company = GetFirstPlayableCompanyID();
+		if (!Company::IsValidID(first_human_company)) {
+			Company *c = DoStartupNewCompany(false, first_human_company);
+			c->settings = _settings_client.company;
+		}
+	}
 
 	return true;
 }
