@@ -31,6 +31,7 @@ uint32 _replay_save_interval = 0;
 uint32 _replay_last_save = 0;
 uint32 _replay_ticks = 0;
 bool _replay_started = false;
+extern uint32 _pause_countdown;
 
 static void IConsoleHelp(const char *str)
 {
@@ -54,7 +55,7 @@ bool ConStep(byte argc, char *argv[]) {
     }
     auto n = (argc > 1 ? atoi(argv[1]) : 1);
 
-    // FIXME (n << 1)
+    _pause_countdown = n;
     cmd::Pause(PM_PAUSED_NORMAL, 0).post();
 
     return true;

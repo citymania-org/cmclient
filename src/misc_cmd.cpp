@@ -171,7 +171,6 @@ CommandCost CmdPause(DoCommandFlag flags, PauseMode mode, bool pause)
 
 			if (pause) {
 				_pause_mode |= mode;
-				// FIXME //_pause_countdown = (p2 >> 1);
 			} else {
 				_pause_mode &= ~mode;
 			}

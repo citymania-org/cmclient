@@ -74,7 +74,7 @@ DECLARE_ENUM_AS_BIT_SET(PauseMode)
 
 /** The current pause mode */
 extern PauseMode _pause_mode;
-extern uint32 _pause_countdown;
+namespace citymania { extern uint32 _pause_countdown; }
 
 void AskExitGame();
 void AskExitToGameMenu();

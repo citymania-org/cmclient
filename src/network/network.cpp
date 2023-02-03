@@ -1180,7 +1180,7 @@ void NetworkGameLoop()
 		}
 
 		NetworkExecuteLocalCommandQueue();
-		if (_pause_countdown > 0 && --_pause_countdown == 0) Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, 1);
+		if (citymania::_pause_countdown > 0 && --citymania::_pause_countdown == 0) Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, 1);
 
 		citymania::ExecuteFakeCommands(_date, _date_fract);
 
