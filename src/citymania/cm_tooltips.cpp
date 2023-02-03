@@ -134,10 +134,10 @@ struct LandTooltipsWindow : public Window
         uint text_ofs = (line_height - FONT_HEIGHT_NORMAL) >> 1;
         uint icon_ofs = (line_height - icon_size) >> 1;
 
-        GfxDrawLine(r.left,  r.top,    r.right, r.top,    PC_BLACK);
-        GfxDrawLine(r.left,  r.bottom, r.right, r.bottom, PC_BLACK);
-        GfxDrawLine(r.left,  r.top,    r.left,  r.bottom, PC_BLACK);
-        GfxDrawLine(r.right, r.top,    r.right, r.bottom, PC_BLACK);
+        GfxFillRect(r.left, r.top, r.right, r.top + WidgetDimensions::scaled.bevel.top - 1, PC_BLACK);
+        GfxFillRect(r.left, r.bottom - WidgetDimensions::scaled.bevel.bottom + 1, r.right, r.bottom, PC_BLACK);
+        GfxFillRect(r.left, r.top, r.left + WidgetDimensions::scaled.bevel.left - 1,  r.bottom, PC_BLACK);
+        GfxFillRect(r.right - WidgetDimensions::scaled.bevel.right + 1, r.top, r.right, r.bottom, PC_BLACK);
 
         auto ir = r.Shrink(WidgetDimensions::scaled.framerect).Shrink(WidgetDimensions::scaled.bevel);
 
@@ -456,28 +456,20 @@ public:
 
     void DrawWidget(const Rect &r, int widget) const override
     {
-        GfxDrawLine(r.left,  r.top,    r.right, r.top,    PC_BLACK);
-        GfxDrawLine(r.left,  r.bottom, r.right, r.bottom, PC_BLACK);
-        GfxDrawLine(r.left,  r.top,    r.left,  r.bottom, PC_BLACK);
-        GfxDrawLine(r.right, r.top,    r.right, r.bottom, PC_BLACK);
+        GfxFillRect(r.left, r.top, r.right, r.top + WidgetDimensions::scaled.bevel.top - 1, PC_BLACK);
+        GfxFillRect(r.left, r.bottom - WidgetDimensions::scaled.bevel.bottom + 1, r.right, r.bottom, PC_BLACK);
+        GfxFillRect(r.left, r.top, r.left + WidgetDimensions::scaled.bevel.left - 1,  r.bottom, PC_BLACK);
+        GfxFillRect(r.right - WidgetDimensions::scaled.bevel.right + 1, r.top, r.right, r.bottom, PC_BLACK);
 
-        int y = r.top + WidgetDimensions::scaled.framerect.top + 1;
-        int left0 = r.left + WidgetDimensions::scaled.framerect.left + 1;
-        int right0 = r.right - WidgetDimensions::scaled.framerect.right - 1;
-        DrawString(left0, right0, y, this->data[0], TC_LIGHT_BLUE, SA_CENTER);
-        y += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
+        auto ir = r.Shrink(WidgetDimensions::scaled.framerect).Shrink(WidgetDimensions::scaled.bevel);
+
+        DrawString(ir, this->data[0], TC_LIGHT_BLUE, SA_CENTER);
+        ir.top += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
         for (uint i = 1; i <= RATING_TOOLTIP_MAX_LINES; i++) {
             if (StrEmpty(this->data[i])) break;
-            int left = left0, right = right0;
-            if (this->newgrf_rating_used && i >= 2 && i <= 4) {
-                if (_current_text_dir == TD_RTL) {
-                    right -= RATING_TOOLTIP_NEWGRF_INDENT;
-                } else {
-                    left += RATING_TOOLTIP_NEWGRF_INDENT;
-                }
-            }
-            DrawString(left, right, y, this->data[i], TC_BLACK);
-            y += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
+            auto indent = (this->newgrf_rating_used && i >= 2 && i <= 4 ? RATING_TOOLTIP_NEWGRF_INDENT : 0);
+            DrawString(ir.Indent(indent, _current_text_dir == TD_RTL), this->data[i], TC_BLACK);
+            ir.top += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
         }
     }
 
