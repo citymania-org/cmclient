@@ -149,15 +149,9 @@ void OnStationTileSetChange(const Station *station, bool adding, StationType typ
     if (station == _viewport_highlight_station) MarkCoverageAreaDirty(_viewport_highlight_station);
 }
 
-// CommandContainer _last_station_bulid_cmd;
-
-void OnStationPartBuilt(const Station *station, TileIndex tile, uint32 p1, uint32 p2) {
-    if (_current_company != _local_company) return;
-    // FIXME
-    // if (tile != _last_station_bulid_cmd.tile ||
-    //     p1 != _last_station_bulid_cmd.p1 ||
-    //     p2 != _last_station_bulid_cmd.p2) return;
-    _station_to_join = station;
+const Station *_last_built_station;
+void OnStationPartBuilt(const Station *station) {
+    _last_built_station = station;
     CheckRedrawStationCoverage();
 }
 
@@ -214,8 +208,11 @@ void JoinAndBuild(Tcommand command, Tcallback *callback) {
     if (citymania::_fn_mod) command.station_to_join = NEW_STATION;
     else if (join_to) command.station_to_join = join_to->index;
 
-    //FIXME _last_station_bulid_cmd = cmdcont;
-    command.post(callback);
+    command.with_callback([] (bool res)->bool {
+        if (!res) return false;
+        _station_to_join = _last_built_station;
+        return true;
+    }).post(callback);
 }
 
 static DiagDirection TileFractCoordsToDiagDir(Point pt) {

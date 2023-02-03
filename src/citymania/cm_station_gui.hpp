@@ -26,7 +26,7 @@ enum class StationBuildingStatus {
 // void SetStationTileSelectSize(int w, int h, int catchment);
 bool UseImprovedStationJoin();
 void OnStationTileSetChange(const Station *station, bool adding, StationType type);
-void OnStationPartBuilt(const Station *station, TileIndex tile, uint32 p1, uint32 p2);
+void OnStationPartBuilt(const Station *station);
 void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg);
 void HandleStationPlacement(TileIndex start, TileIndex end);
 void PlaceRail_Station(TileIndex tile);
