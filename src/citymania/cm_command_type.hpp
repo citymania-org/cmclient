@@ -53,7 +53,6 @@ public:
         _auto_command = this->automatic;
         _current_callback = this->callback;
         bool res = this->_post(reinterpret_cast<::CommandCallback *>(reinterpret_cast<void(*)()>(callback)));
-        assert(_current_callback == nullptr);
         _current_callback = nullptr;
         _auto_command = false;
         _current_company = old;
