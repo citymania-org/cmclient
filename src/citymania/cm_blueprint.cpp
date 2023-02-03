@@ -600,29 +600,34 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
             case Blueprint::Item::Type::RAIL_TUNNEL:
             case Blueprint::Item::Type::RAIL_BRIDGE: {
                 auto cc = GetBlueprintCommand(start, item);
-                cc->post();
-                if (item.type == Blueprint::Item::Type::RAIL_TRACK) last_rail = std::move(cc);
+                if (item.type == Blueprint::Item::Type::RAIL_TRACK) {
+                    if (last_rail != nullptr) last_rail->post();
+                    last_rail = std::move(cc);
+                } else {
+                    cc->post();
+                }
                 break;
             }
             case Blueprint::Item::Type::RAIL_STATION: {
                 // TODO station types
                 TileIndex tile = AddTileIndexDiffCWrap(start, item.tdiff);
                 auto cc = GetBlueprintCommand(start, item);
-                // FIXME
-                /* DoCommandWithCallback(cc,
-                    [blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res)->bool {
-                        if (!res) return false;
-                        StationID station_id = GetStationIndex(tile);
-                        for (auto &item : blueprint->items) {
-                            if (item.type != Blueprint::Item::Type::RAIL_STATION_PART) continue;
-                            if (item.u.rail.station_part.id != sid) continue;
-                            auto cc = GetBlueprintCommand(start, item);
-                            // FIXME DoCommandP(cc.tile, cc.p1 | (1 << 24), station_id << 16, cc.cmd);
-                        }
-                        if (!sign_part) ::Command<CMD_REMOVE_FROM_RAIL_STATION>::Post(tile, 0, false);
-                        return true;
+                cc->with_callback([blueprint, tile, start, sign_part=item.u.rail.station.has_part, sid=item.u.rail.station.id] (bool res)->bool {
+                    if (!res) return false;
+                    StationID station_id = GetStationIndex(tile);
+                    for (auto &item : blueprint->items) {
+                        if (item.type != Blueprint::Item::Type::RAIL_STATION_PART) continue;
+                        if (item.u.rail.station_part.id != sid) continue;
+                        auto cc = GetBlueprintCommand(start, item);
+                        auto &scmd = dynamic_cast<cmd::BuildRailStation &>(*cc);
+                        scmd.adjacent = true;
+                        scmd.station_to_join = station_id;
+                        scmd.post();
                     }
-                );*/
+                    if (!sign_part) ::Command<CMD_REMOVE_FROM_RAIL_STATION>::Post(tile, 0, false);
+                    return true;
+                }
+                ).post();
                 break;
             }
             default:
@@ -630,16 +635,15 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
         }
     }
 
-    auto signal_callback = [start, blueprint](bool res) {
-        for (auto &item : blueprint->items) {
-            if (item.type != Blueprint::Item::Type::RAIL_SIGNAL) continue;
-            auto cc = GetBlueprintCommand(start, item);
-            cc->post();
-        }
-        return true;
-    };
     if (last_rail != nullptr) {  // there can't be any signals if there are no rails
-// FIXME        AddCommandCallback(last_rail.tile, last_rail.p1, last_rail.p2, last_rail.cmd, "", signal_callback);
+        last_rail->with_callback([start, blueprint](bool res) {
+            for (auto &item : blueprint->items) {
+                if (item.type != Blueprint::Item::Type::RAIL_SIGNAL) continue;
+                auto cc = GetBlueprintCommand(start, item);
+                cc->post();
+            }
+            return true;
+        }).post();
     }
 }
 

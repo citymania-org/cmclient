@@ -63,8 +63,9 @@ void ExecuteCurrentCallback(const CommandCost &cost) {
 void BeforeNetworkCommandExecution(const CommandPacket* cp) {
     if (!cp->my_cmd) return;
     size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->tile, cp->data);
+    Debug(misc, 5, "CM BeforeNetworkCommandExecution: cmd={} hash={}", cp->cmd, hash);
     while (!_callback_queue.empty() && _callback_queue.front().first != hash) {
-        Debug(misc, 0, "CM Dismissing command from callback queue: cmd={}", cp->cmd);
+        Debug(misc, 0, "CM Dismissing command from callback queue: hash={}", _callback_queue.front().first);
         _callback_queue.pop();
     }
     if (_callback_queue.empty()) {
@@ -82,6 +83,7 @@ void AfterNetworkCommandExecution(const CommandPacket* cp) {
 
 void AddCommandCallback(const CommandPacket *cp) {
     size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->tile, cp->data);
+    Debug(misc, 5, "CM Added callback: cmd={} hash={}", cp->cmd, hash);
     _callback_queue.push(std::make_pair(hash, _current_callback));
     _current_callback = nullptr;
 }
