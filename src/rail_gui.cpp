@@ -2131,7 +2131,7 @@ public:
 				break;
 
 			case WID_BRAD_DEPOT_AUTO:
-				size->width  = ScaleGUITrad(128) + 4 + WidgetDimensions::scaled.fullbevel.Horizontal();
+				size->width  = ScaleGUITrad(128 + 2) + 2 * WidgetDimensions::scaled.fullbevel.Horizontal();
 				break;
 		}
 	}

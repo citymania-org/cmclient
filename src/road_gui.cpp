@@ -1031,8 +1031,7 @@ public:
 				size->height = ScaleGUITrad(48) + WidgetDimensions::scaled.fullbevel.Vertical();
 				break;
 			case WID_BROD_DEPOT_AUTO:
-				// FIXME use proper padding instead of 4
- 				size->width = ScaleGUITrad(128) + 4 + WidgetDimensions::scaled.fullbevel.Horizontal();
+				size->width = ScaleGUITrad(128 + 2) + 2 * WidgetDimensions::scaled.fullbevel.Horizontal();
 				break;
 			default:
 				break;
@@ -1119,13 +1118,8 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SW), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP), EndContainer(),
 					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SE), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP), EndContainer(),
 				EndContainer(),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
 			EndContainer(),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-		NWidget(NWID_HORIZONTAL), SetPIP(2, 2, 2),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
@@ -1236,11 +1230,11 @@ public:
 				size->height = ScaleGUITrad(48) + WidgetDimensions::scaled.fullbevel.Vertical();
 				break;
 			case WID_BROS_STATION_AUTO:
-				size->width  = ScaleGUITrad(128) + 4 + WidgetDimensions::scaled.fullbevel.Horizontal();
+				size->width  = ScaleGUITrad(128 + 2) + 2 * WidgetDimensions::scaled.fullbevel.Horizontal();
 				break;
 			case WID_BROS_STATION_XY_AUTO:
 				if (RoadTypeIsTram(_cur_roadtype))
-					size->width  = ScaleGUITrad(128) + 4 + WidgetDimensions::scaled.fullbevel.Horizontal();
+					size->width  = ScaleGUITrad(128 + 2) + 2 * WidgetDimensions::scaled.fullbevel.Horizontal();
 				else
 					size->width  = ScaleGUITrad(64) + WidgetDimensions::scaled.fullbevel.Horizontal();
 				break;
@@ -1360,15 +1354,13 @@ static const NWidgetPart _nested_road_station_picker_widgets[] = {
 					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SE), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 				EndContainer(),
+				NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),		
 		NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetPadding(WidgetDimensions::unscaled.framerect), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL), SetFill(1, 0),
 		NWidget(NWID_HORIZONTAL), SetPadding(3),
 			NWidget(NWID_SPACER), SetFill(1, 0),
@@ -1412,14 +1404,10 @@ static const NWidgetPart _nested_tram_station_picker_widgets[] = {
 					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 				EndContainer(),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_XY_AUTO), SetMinimalSize(274, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_STATION_XY_AUTO), SetMinimalSize(274, 12), SetDataTip(STR_STATION_BUILD_ORIENTATION_AUTO, STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),		
 		NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetPadding(WidgetDimensions::unscaled.framerect), SetMinimalSize(140, 14), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL), SetFill(1, 0),
 		NWidget(NWID_HORIZONTAL), SetPadding(3),
 			NWidget(NWID_SPACER), SetFill(1, 0),
