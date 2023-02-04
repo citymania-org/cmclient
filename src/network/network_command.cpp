@@ -334,8 +334,7 @@ void NetworkExecuteLocalCommandQueue()
 		if (_frame_counter > cp->frame) {
 			/* If we reach here, it means for whatever reason, we've already executed
 			 * past the command we need to execute. */
-			error("[net] Trying to execute a packet in the past! (frame=%u cmd_frame=%u)", (uint)_frame_counter, (uint)cp->frame);
-			// FIXME error("[net] Trying to execute a packet in the past! (frame=%u cmd_frame=%u tile=%u p1=%u p2=%u cmd=%u)", (uint)_frame_counter, (uint)cp->frame, (uint)cp->tile, (uint)cp->p1, (uint)cp->p2, (uint)cp->cmd);
+			error("[net] Trying to execute a packet in the past! (frame=%u cmd_frame=%u cmd=%u tile=%u)", (uint)_frame_counter, (uint)cp->frame, (uint)cp->cmd, (uint)cp->tile);
 		}
 
 		/* We can execute this command */

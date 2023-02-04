@@ -490,4 +490,17 @@ static void cm_v_RedrawStatusBar(int32 p1) {
 	// TODO is this function even needed?
 	CM_RedrawStatusBar();
 }
+
+static void cm_v_RedrawGraphs(int32 p1) {
+	InvalidateWindowData(WC_INCOME_GRAPH, 0);
+	InvalidateWindowData(WC_OPERATING_PROFIT, 0);
+	InvalidateWindowData(WC_DELIVERED_CARGO, 0);
+	InvalidateWindowData(WC_PERFORMANCE_HISTORY, 0);
+	InvalidateWindowData(WC_COMPANY_VALUE, 0);
+	InvalidateWindowData(WC_PAYMENT_RATES, 0);
+	InvalidateWindowData(WC_PERFORMANCE_DETAIL, 0);
+}
+
+
+
 /* End - Callback Functions */

@@ -197,8 +197,6 @@ bool CheckStationJoin(TileIndex start_tile, TileIndex end_tile) {
     return false;
 }
 
-// using JoinAndBuildCmdProc = std::function<bool(bool test, StationID to_join, bool adjacent)>;
-
 template <typename Tcommand, typename Tcallback>
 void JoinAndBuild(Tcommand command, Tcallback *callback) {
     auto join_to = _highlight_station_to_join;
