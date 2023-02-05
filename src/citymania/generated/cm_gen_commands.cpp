@@ -93,7 +93,7 @@ constexpr auto MakeCallback() noexcept {
     }
 }
 
-template <Commands Tcmd, typename... Targs, typename T, T... i>
+template <Commands Tcmd, typename... Targs, size_t... i>
 inline constexpr auto MakeDispatchTableHelper(std::index_sequence<i...>) noexcept
 {
     return std::array<bool (*)(StringID err_msg, TileIndex tile, Targs...), sizeof...(i)>{MakeCallback<Tcmd, i, Targs...>()... };
