@@ -36,6 +36,7 @@ void DrawRoadVehDetails(const Vehicle *v, const Rect &r)
 	SetDParam(2, v->value);
 	if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
 	DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? STR_CM_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
+	y += FONT_HEIGHT_NORMAL;
 
 	if (v->HasArticulatedPart()) {
 		CargoArray max_cargo;
