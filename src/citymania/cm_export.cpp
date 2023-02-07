@@ -55,6 +55,7 @@ struct ChildScreenSpriteToDraw {
     const SubSprite *sub;           ///< only draw a rectangular part of the sprite
     int32 x;
     int32 y;
+    bool relative;
     int next;                       ///< next child to draw (-1 at the end)
 };
 
