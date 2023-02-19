@@ -729,17 +729,15 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			SetDParam(0, cs->name);
 			Dimension d = GetStringBoundingBox(STR_GRAPH_CARGO_PAYMENT_CARGO);
-			d.width += this->legend_width + WidgetDimensions::scaled.hsep_normal; // colour field
-			d.width += WidgetDimensions::scaled.framerect.Horizontal();
-			d.height += WidgetDimensions::scaled.framerect.Vertical();
-			*size = maxdim(d, *size);
+			max_cargo_dim = maxdim(d, max_cargo_dim);
 		}
 
-		// FIXME doesn't match openttd source, check if intentional
-		this->icon_size = std::max<uint>(max_cargo_dim.height, 6);
+		this->icon_size = std::max<uint>(max_cargo_dim.height, ScaleGUITrad(6));
 		this->line_height = this->icon_size + WidgetDimensions::scaled.framerect.Vertical();
-		size->width += (WidgetDimensions::scaled.framerect.Horizontal() + 1
-		               + (this->show_cargo_colors ? this->icon_size + WidgetDimensions::scaled.vsep_normal : 0));
+		size->width = std::max<uint>(
+			size->width,
+			max_cargo_dim.width + WidgetDimensions::scaled.framerect.Horizontal()
+			+ (this->show_cargo_colors ? this->icon_size + WidgetDimensions::scaled.vsep_normal : 0));
 		size->height = std::max<uint>(size->height, this->line_height * _sorted_standard_cargo_specs.size());
 		resize->width = 0;
 		resize->height = this->line_height;

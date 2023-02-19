@@ -486,12 +486,12 @@ static void UpdateClientConfigValues()
 
 // CM
 #include "statusbar_gui.h"
-static void cm_v_RedrawStatusBar(int32 p1) {
+static void cm_v_RedrawStatusBar(int32 new_value) {
 	// TODO is this function even needed?
 	CM_RedrawStatusBar();
 }
 
-static void cm_v_RedrawGraphs(int32 p1) {
+static void cm_v_RedrawGraphs(int32 new_value) {
 	InvalidateWindowData(WC_INCOME_GRAPH, 0);
 	InvalidateWindowData(WC_OPERATING_PROFIT, 0);
 	InvalidateWindowData(WC_DELIVERED_CARGO, 0);
