@@ -37,6 +37,7 @@
 
 #include "widgets/order_widget.h"
 
+#include "citymania/cm_commands.hpp"
 #include "citymania/cm_hotkeys.hpp"
 
 #include "safeguards.h"
@@ -814,6 +815,7 @@ private:
 		if (citymania::_fn_mod && this->vehicle->cur_implicit_order_index == this->OrderGetSel()) return;
 		if (this->vehicle->GetNumOrders() <= 1) return;
 
+		// TODO no estimate
 		Command<CMD_SKIP_TO_ORDER>::Post(_ctrl_pressed ? STR_ERROR_CAN_T_SKIP_TO_ORDER : STR_ERROR_CAN_T_SKIP_ORDER,
 				this->vehicle->tile, this->vehicle->index, citymania::_fn_mod ? this->OrderGetSel() : ((this->vehicle->cur_implicit_order_index + 1) % this->vehicle->GetNumOrders()));
 	}
@@ -1581,16 +1583,36 @@ public:
 
 			if (feeder_mod != FeederOrderMod::NONE) {
 				if (feeder_mod == FeederOrderMod::LOAD) {
-					if (Command<CMD_INSERT_ORDER>::Post(STR_ERROR_CAN_T_INSERT_NEW_ORDER, this->vehicle->tile, this->vehicle->index, 1, cmd)) {
-						Command<CMD_DELETE_ORDER>::Post(STR_ERROR_CAN_T_DELETE_THIS_ORDER, this->vehicle->tile, this->vehicle->index, 0);
+					if (citymania::cmd::InsertOrder(this->vehicle->index, 1, cmd)
+							.with_tile(this->vehicle->tile)
+							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
+							.no_estimate()
+							.post()) {
+						citymania::cmd::DeleteOrder(this->vehicle->index, 0)
+							.with_tile(this->vehicle->tile)
+							.with_error(STR_ERROR_CAN_T_DELETE_THIS_ORDER)
+							.no_estimate()
+							.post();
 					}
 
 				} else if (feeder_mod == FeederOrderMod::UNLOAD) { // still flushes the whole order table
-					if (Command<CMD_INSERT_ORDER>::Post(STR_ERROR_CAN_T_INSERT_NEW_ORDER, this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders(), cmd)) {
-						Command<CMD_DELETE_ORDER>::Post(STR_ERROR_CAN_T_DELETE_THIS_ORDER, this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders() + (int)_networking - 2);
+					if (citymania::cmd::InsertOrder(this->vehicle->index, this->vehicle->GetNumOrders(), cmd)
+							.with_tile(this->vehicle->tile)
+							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
+							.no_estimate()
+							.post()) {
+						citymania::cmd::DeleteOrder(this->vehicle->index, this->vehicle->GetNumOrders() + (int)_networking - 2)
+							.with_tile(this->vehicle->tile)
+							.with_error(STR_ERROR_CAN_T_DELETE_THIS_ORDER)
+							.no_estimate()
+							.post();
 					}
 				}
-			} else if (Command<CMD_INSERT_ORDER>::Post(STR_ERROR_CAN_T_INSERT_NEW_ORDER, this->vehicle->tile, this->vehicle->index, this->OrderGetSel(), cmd)) {
+			} else if (citymania::cmd::InsertOrder(this->vehicle->index, this->OrderGetSel(), cmd)
+							.with_tile(this->vehicle->tile)
+							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
+							.no_estimate()
+							.post()) {
 				/* With quick goto the Go To button stays active */
 				if (!_settings_client.gui.quick_goto) ResetObjectToPlace();
 			}

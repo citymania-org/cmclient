@@ -18,7 +18,7 @@ const uint32 MAX_CALLBACK_LIFETIME = 30;  // it should be executed within few fr
 std::map<size_t, std::pair<uint32, std::vector<CommandCallback>>> _command_callbacks;
 std::queue<std::pair<size_t, uint32>> _command_sent;
 CommandCallback _current_callback = nullptr;
-bool _auto_command = false;
+bool _no_estimate_command = false;
 std::queue<std::pair<size_t, CommandCallback>> _callback_queue;
 
 uint GetCurrentQueueDelay();

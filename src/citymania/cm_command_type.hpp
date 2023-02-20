@@ -26,13 +26,13 @@ namespace citymania {
 
 typedef std::function<bool(bool)> CommandCallback;
 
-extern bool _auto_command;
+extern bool _no_estimate_command;
 extern CommandCallback _current_callback;
 
 class Command {
 public:
     TileIndex tile = 0;
-    bool automatic = false;
+    bool no_estimate_flag = false;
     CompanyID company = INVALID_COMPANY;
     StringID error = (StringID)0;
     CommandCallback callback = nullptr;
@@ -50,11 +50,11 @@ public:
         CompanyID old = _current_company;
         if (this->company != INVALID_COMPANY)
             _current_company = company;
-        _auto_command = this->automatic;
+        _no_estimate_command = this->no_estimate_flag;
         _current_callback = this->callback;
         bool res = this->_post(reinterpret_cast<::CommandCallback *>(reinterpret_cast<void(*)()>(callback)));
         _current_callback = nullptr;
-        _auto_command = false;
+        _no_estimate_command = false;
         _current_company = old;
         return res;
     }
@@ -86,8 +86,8 @@ public:
         return *this;
     }
 
-    Command &set_auto() {
-        this->automatic = true;
+    Command &no_estimate() {
+        this->no_estimate_flag = true;
         return *this;
     }
 

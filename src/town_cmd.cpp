@@ -921,7 +921,7 @@ static void DoRegularFunding(Town *t)
 
 	citymania::cmd::DoTownAction(t->index, HK_FUND)
 		.with_tile(t->xy)
-		.set_auto()
+		.no_estimate()
 		.as_company(_local_company)
 		.post();
 	t->last_funding = _tick_counter;
@@ -958,7 +958,7 @@ static void DoRegularAdvertising(Town *t) {
 
 	citymania::cmd::DoTownAction(t->index, HK_LADVERT)
 		.with_tile(t->xy)
-		.set_auto()
+		.no_estimate()
 		.as_company(_local_company)
 		.post();
 }
