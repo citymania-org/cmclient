@@ -815,9 +815,13 @@ private:
 		if (citymania::_fn_mod && this->vehicle->cur_implicit_order_index == this->OrderGetSel()) return;
 		if (this->vehicle->GetNumOrders() <= 1) return;
 
-		// TODO no estimate
-		Command<CMD_SKIP_TO_ORDER>::Post(_ctrl_pressed ? STR_ERROR_CAN_T_SKIP_TO_ORDER : STR_ERROR_CAN_T_SKIP_ORDER,
-				this->vehicle->tile, this->vehicle->index, citymania::_fn_mod ? this->OrderGetSel() : ((this->vehicle->cur_implicit_order_index + 1) % this->vehicle->GetNumOrders()));
+		citymania::cmd::SkipToOrder(
+				this->vehicle->index,
+				citymania::_fn_mod ? this->OrderGetSel() : ((this->vehicle->cur_implicit_order_index + 1) % this->vehicle->GetNumOrders()))
+			.with_error(citymania::_fn_mod ? STR_ERROR_CAN_T_SKIP_TO_ORDER : STR_ERROR_CAN_T_SKIP_ORDER)
+			.with_tile(this->vehicle->tile)
+			.no_estimate()
+			.post();
 	}
 
 	/**
