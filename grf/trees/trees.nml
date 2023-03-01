@@ -1,0 +1,21 @@
+grf {
+    grfid: "CMTR";
+    name: string(STR_GRF_NAME);
+    desc: string(STR_GRF_DESCRIPTION);
+    version: 1;
+    min_compatible_version: 1;
+}
+
+template tmpl_tree_wide(x, y) {
+    [  0 + x, y, 45, 80, -24, -73]
+    [ 50 + x, y, 45, 80, -24, -73]
+    [100 + x, y, 45, 80, -24, -73]
+    [150 + x, y, 45, 80, -24, -73]
+    [200 + x, y, 45, 80, -24, -73]
+    [250 + x, y, 45, 80, -24, -73]
+    [300 + x, y, 45, 80, -24, -73]
+}
+
+// base_graphics spr1688(1688, "trees.png") { tmpl_tree_wide(0, 0) }
+replace (1688, "trees.png") { tmpl_tree_wide(0, 0) }
+replace (1716, "trees.png") { tmpl_tree_wide(0, 0) }

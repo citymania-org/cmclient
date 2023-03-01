@@ -1,0 +1,15 @@
+grf {
+    grfid: "CMTS";
+    name: string(STR_GRF_NAME);
+    desc: string(STR_GRF_DESCRIPTION);
+    version: 1;
+    min_compatible_version: 1;
+}
+
+// 5212
+// 5227
+
+replacenew(PRE_SIGNAL_SEMAPHORE_PBS, "trollsig.png", 124) { [ 16,   0, 16, 14, 0,  -14 ] }
+replacenew(PRE_SIGNAL_SEMAPHORE_PBS, "trollsig.png", 141) { [ 0,   0, 16, 14, 0,  -14 ] }
+replacenew(PRE_SIGNAL_SEMAPHORE_PBS, "trollsig.png", 188) { [ 0,   0, 16, 14, 0,  -14 ] }
+replacenew(PRE_SIGNAL_SEMAPHORE_PBS, "trollsig.png", 204) { [ 16,   0, 16, 14, 0,  -14 ] }

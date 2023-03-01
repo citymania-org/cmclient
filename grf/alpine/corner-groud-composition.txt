@@ -1,0 +1,153 @@
+# Failed experiment of compossing ground sprites from 4 parts, turned out too fiddly and impractical as seemingly same parts may have different inclanation visually and so different graphics.
+
+
+spriteset (meadow_groundsprites, "gfx/meadow_grid_temperate.png") { tmpl_groundsprites(1, 1) }
+
+
+template tmpl_corner_ground(x, y, h, dy) {
+    [ x + 64 * 0,              y, 32, h, -31, dy]
+    [ x + 64 * 1,              y, 32, h, -31, dy]
+    [ x + 64 * 2,              y, 32, h, -31, dy]
+    [ x + 64 * 3,              y, 32, h, -31, dy]
+    [ x + 64 * 4,              y, 32, h, -31, dy]
+    [ x + 64 * 5,              y, 32, h, -31, dy]
+    [ x + 64 * 6,              y, 32, h, -31, dy]
+    [ x + 64 * 7,              y, 32, h, -31, dy]
+    [ x + 64 * 0 + 32,             y , 32, h, 1, dy]
+    [ x + 64 * 1 + 32,             y , 32, h, 1, dy]
+    [ x + 64 * 2 + 32,             y , 32, h, 1, dy]
+    [ x + 64 * 3 + 32,             y , 32, h, 1, dy]
+    [ x + 64 * 4 + 32,             y , 32, h, 1, dy]
+    [ x + 64 * 5 + 32,             y , 32, h, 1, dy]
+    [ x + 64 * 6 + 32,             y , 32, h, 1, dy]
+    [ x + 64 * 7 + 32,             y , 32, h, 1, dy]
+    [ x + 64 * 0,              y + h, 32, h + 1, -31, h + dy]
+    [ x + 64 * 1,              y + h, 32, h + 1, -31, h + dy]
+    [ x + 64 * 2,              y + h, 32, h + 1, -31, h + dy]
+    [ x + 64 * 3,              y + h, 32, h + 1, -31, h + dy]
+    [ x + 64 * 4,              y + h, 32, h + 1, -31, h + dy]
+    [ x + 64 * 5,              y + h, 32, h + 1, -31, h + dy]
+    [ x + 64 * 6,              y + h, 32, h + 1, -31, h + dy]
+    [ x + 64 * 7,              y + h, 32, h + 1, -31, h + dy]
+    [ x + 64 * 0 + 32,             y + h , 32, h + 1, 1, h + dy]
+    [ x + 64 * 1 + 32,             y + h , 32, h + 1, 1, h + dy]
+    [ x + 64 * 2 + 32,             y + h , 32, h + 1, 1, h + dy]
+    [ x + 64 * 3 + 32,             y + h , 32, h + 1, 1, h + dy]
+    [ x + 64 * 4 + 32,             y + h , 32, h + 1, 1, h + dy]
+    [ x + 64 * 5 + 32,             y + h , 32, h + 1, 1, h + dy]
+    [ x + 64 * 6 + 32,             y + h , 32, h + 1, 1, h + dy]
+    [ x + 64 * 7 + 32,             y + h , 32, h + 1, 1, h + dy]
+}
+
+spriteset (meadow_transitions, "gfx/meadow_transitions.png") {
+    tmpl_corner_ground(0, 0, 15, -16)
+    tmpl_corner_ground(0, 64, 23, -16)
+    tmpl_corner_ground(0, 128, 7, 0)
+}
+
+spritelayout meadow_groundsprites_default {
+    ground {
+        sprite: GROUNDSPRITE_NORMAL + slope_to_sprite_offset(tile_slope);
+    }
+    childsprite {
+        sprite: meadow_transitions(0
+                                   // + ((tile_slope & bitmask(CORNER_N)) && !(tile_slope & bitmask(CORNER_W)) || (tile_slope & bitmask(IS_STEEP_SLOPE)) ? 32 : 0)
+                                   // + ((tile_slope & bitmask(CORNER_N)) && !(tile_slope & bitmask(CORNER_W)) || (tile_slope & bitmask(IS_STEEP_SLOPE)) ? 32 : 0)
+                                   + ((tile_slope & bitmask(CORNER_W)) && !(tile_slope & bitmask(CORNER_N)) ? 64 : 0)
+                                   // + (nearby_tile_object_type(1, -1) != test_tree || nearby_tile_object_type(1, 0) != test_tree || nearby_tile_object_type(0, -1) != test_tree)
+                                   // + (nearby_tile_object_type(0, -1) != test_tree) * 2
+                                   // + (nearby_tile_object_type(-1, -1) != test_tree || nearby_tile_object_type(-1, 0) != test_tree || nearby_tile_object_type(0, -1) != test_tree) * 4
+                                   );
+        //yoffset: (tile_slope & bitmask(CORNER_N) ? 0 : 8) + (tile_slope == SLOPE_STEEP_N ? 0 : 8);
+        yoffset: 0;
+    }
+    childsprite {
+        sprite: meadow_transitions(8
+                                   + ((tile_slope & bitmask(CORNER_N)) && !(tile_slope & bitmask(CORNER_E)) || (tile_slope & bitmask(IS_STEEP_SLOPE)) ? 32 : 0)
+                                   + ((tile_slope & bitmask(CORNER_E)) && !(tile_slope & bitmask(CORNER_N)) ? 64 : 0)
+                                   // + (nearby_tile_object_type(-1, 1) != test_tree || nearby_tile_object_type(0, 1) != test_tree || nearby_tile_object_type(-1, 0) != test_tree)
+                                   // + (nearby_tile_object_type(-1, 0) != test_tree) * 2
+                                   // + (nearby_tile_object_type(-1, -1) != test_tree || nearby_tile_object_type(0, -1) != test_tree || nearby_tile_object_type(-1, 0) != test_tree) * 4
+                                   );
+        yoffset: (tile_slope & bitmask(CORNER_N) ? 0 : 8) + (tile_slope == SLOPE_STEEP_N ? 0 : 8);
+        // yoffset: 8 * (tile_slope & bitmask(CORNER_N) ? 1 : 0);
+        // yoffset: -8 * ((tile_slope & bitmask(CORNER_N) ? 1 : 0) + (tile_slope == SLOPE_STEEP_N ? 1 : 0));
+    }
+    childsprite {
+        sprite: meadow_transitions(16
+                                   // + (nearby_tile_object_type(1, -1) != test_tree || nearby_tile_object_type(0, -1) != test_tree || nearby_tile_object_type(1, 0) != test_tree)
+                                   // + (nearby_tile_object_type(1, 0) != test_tree) * 2
+                                   // + (nearby_tile_object_type(1, 1) != test_tree || nearby_tile_object_type(0, 1) != test_tree || nearby_tile_object_type(1, 0) != test_tree) * 4
+                                   );
+        yoffset: 16;
+    }
+    childsprite {
+        sprite: meadow_transitions(24
+                                   // + (nearby_tile_object_type(-1, 1) != test_tree || nearby_tile_object_type(-1, 0) != test_tree || nearby_tile_object_type(0, 1) != test_tree)
+                                   // + (nearby_tile_object_type(0, 1) != test_tree) * 2
+                                   // + (nearby_tile_object_type(1, 1) != test_tree || nearby_tile_object_type(1, 0) != test_tree || nearby_tile_object_type(0, 1) != test_tree) * 4
+                                   );
+        yoffset: 16;
+    }
+}
+
+spritelayout meadow_groundsprites_purchase {
+    ground {
+        sprite: meadow_groundsprites;
+    }
+}
+
+
+switch (FEAT_OBJECTS, SELF, switch_meadow_groundsprites_default, [
+        STORE_TEMP(slope_to_sprite_offset(tile_slope), 0)
+        ]) {
+    meadow_groundsprites_default;
+}
+
+
+item (FEAT_OBJECTS, test_tree) {
+    property {
+        class: "FLMA";
+        classname: string(STR_FLMA);
+        name: string(STR_TEST_OBJECT);
+        climates_available: ALL_CLIMATES;
+        end_of_life_date: 0xFFFFFFFF;
+        object_flags:bitmask(OBJ_FLAG_ALLOW_BRIDGE, OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_NO_FOUNDATIONS);
+        size: [1,1];
+    }
+    graphics {
+        default: meadow_groundsprites_default;
+        purchase: meadow_groundsprites_purchase;
+        tile_check: CB_RESULT_LOCATION_ALLOW;
+    }
+}
+
+
+
+# Generate meadow transition tiles
+im = Image.open(os.path.join(SOURCE_DIR, "grass_grid_temperate.gimp.png"))
+din = np.array(im)
+
+# dout = np.zeros((64 * 8, 31 + 47 + 15), dtype=np.uint8)
+# dout = np.zeros((31 + 47 + 15, 64 * 8), dtype=np.uint8)
+dout = np.zeros((64 * 3, 64 * 8), dtype=np.uint8)
+for j, (h, ox) in enumerate(((31, 1), (47, 1197), (15, 1277))):
+    hh = (h - 1) / 2.
+    for i in range (8):
+        ut, uc, ub = i & 1, (i & 2) / 2, (i & 4) / 4
+        for y in range(0, h):
+            for x in range(0, 64):
+                c = din[y + 1, x + ox]
+                if not c: continue
+                dx, dy = abs(31.5 - x) / 31.5, abs(hh - y) / hh
+                a = abs(4 * math.atan2(dy, dx) / math.pi - 1.)
+                f = (uc * (1. - a) + a * (ut if dy < dx else ub)) * (dx + dy)
+                f = min(1, 1 - f)
+                bc = spectra.rgb(f, 1, 0)
+                c = colors[c][1].blend(bc, ratio=0.2 + 0.5 * f)
+                # bc = spectra.rgb(0.7 + 0.3 * f, 1, 0)
+                # c = colors[c][1].blend(bc, ratio=0.2 + 0.1 * f)
+                dout[y + 64 * j, x + 64 * i] = find_best_color(c)
+im2 = Image.fromarray(dout)
+im2.putpalette(im.getpalette())
+im2.save(os.path.join(DEST_DIR, "meadow_transitions.png"))
