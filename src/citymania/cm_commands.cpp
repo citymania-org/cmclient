@@ -55,8 +55,9 @@ size_t GetCommandHash(Commands cmd, CompanyID company_id, StringID err_msg, ::Co
 
 void ExecuteCurrentCallback(const CommandCost &cost) {
     if (_current_callback != nullptr) {
-        _current_callback(cost.Succeeded());
-        _current_callback == nullptr;
+        auto copy_callback = _current_callback;  // copy to prevent corruption when _current_callback is overwritten in callback
+        _current_callback = nullptr;
+        copy_callback(cost.Succeeded());
     }
 }
 
@@ -78,6 +79,7 @@ void BeforeNetworkCommandExecution(const CommandPacket* cp) {
 }
 
 void AfterNetworkCommandExecution(const CommandPacket* cp) {
+    Debug(misc, 0, "AfterNetworkCommandExecution {}", cp->cmd);
     _current_callback = nullptr;
 }
 

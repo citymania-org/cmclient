@@ -56,12 +56,12 @@ static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex en
     auto h2 = TileHeight(s2);
     auto cmd1 = cmd::LevelLand(e1, s1, diagonal, h1 < h2 ? LM_RAISE : LM_LEVEL);
     auto cmd2 = cmd::LevelLand(e2, s2, diagonal, h2 < h1 ? LM_RAISE : LM_LEVEL);
-    auto c1_fail = (!cmd1.call(DC_AUTO | DC_NO_WATER).Succeeded());
-    auto c2_fail = (!cmd2.call(DC_AUTO | DC_NO_WATER).Succeeded());
+    auto c1_fail = cmd1.call(DC_AUTO | DC_NO_WATER).Failed();
+    auto c2_fail = cmd2.call(DC_AUTO | DC_NO_WATER).Failed();
     if (c1_fail && c2_fail) return rail_callback(true);
-    if (c2_fail) return cmd1.with_callback(std::move(rail_callback)).post(CcTerraform);
-    if (!c1_fail) cmd1.post(CcTerraform);
-    return cmd2.with_callback(std::move(rail_callback)).post(CcTerraform);
+    if (c2_fail) return cmd1.with_callback(rail_callback).post();
+    if (!c1_fail) cmd1.post();
+    return cmd2.with_callback(rail_callback).post();
 }
 
 static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, RailType railtype, Track track, sp<Command> rail_cmd, bool remove_mode) {

@@ -47,15 +47,13 @@ public:
 
     template <typename Tcallback>
     bool post(Tcallback callback) {
-        CompanyID old = _current_company;
+        CompanyID company_backup = _current_company;
         if (this->company != INVALID_COMPANY)
             _current_company = company;
         _no_estimate_command = this->no_estimate_flag;
         _current_callback = this->callback;
         bool res = this->_post(reinterpret_cast<::CommandCallback *>(reinterpret_cast<void(*)()>(callback)));
-        _current_callback = nullptr;
-        _no_estimate_command = false;
-        _current_company = old;
+        _current_company = company_backup;
         return res;
     }
 
