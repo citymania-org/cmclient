@@ -129,9 +129,9 @@ public:
         if (_iconsole_mode != ICONSOLE_CLOSED) return;
         if (!_networking) return;
         if (!_settings_client.gui.cm_show_client_overlay) return;
-        if (this->box.width <= 0 || this->box.height <= 0) return;
 
         this->UpdateSize();
+        if (this->box.width <= 0 || this->box.height <= 0) return;
 
         if (!was_drawn ||
                 this->box.x != this->backup_box.x ||
