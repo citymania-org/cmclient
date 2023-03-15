@@ -19,6 +19,7 @@ void AfterNetworkCommandExecution(const CommandPacket* cp);
 void InitCommandQueue();
 void HandleNextClientFrame();
 void SendClientCommand(const CommandPacket *cp);
+int get_average_command_lag();
 
 }  // namespace citymania
 

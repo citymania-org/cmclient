@@ -9,6 +9,7 @@
 
 #include <queue>
 #include <vector>
+#include <chrono>
 
 
 namespace citymania {
@@ -19,7 +20,48 @@ std::map<size_t, std::pair<uint32, std::vector<CommandCallback>>> _command_callb
 std::queue<std::pair<size_t, uint32>> _command_sent;
 CommandCallback _current_callback = nullptr;
 bool _no_estimate_command = false;
-std::queue<std::pair<size_t, CommandCallback>> _callback_queue;
+
+template <typename T, int MaxLen>
+class SumLast {
+protected:
+    T sum {};
+    std::queue<T> values;
+public:
+    void reset() {
+        this->sum = {};
+        this->values = {};
+    }
+
+    void add(const T& value) {
+        if (this->values.size() == MaxLen) {
+            this->sum -= this->values.front();
+            this->values.pop();
+        }
+        this->sum += value;
+        this->values.push(value);
+    }
+
+    T get_sum() { return this->sum; }
+    size_t get_count() { return this->values.size(); }
+};
+
+struct CallbackQueueEntry {
+    size_t hash;
+    CommandCallback callback;
+    std::chrono::time_point<std::chrono::steady_clock> created;
+
+    CallbackQueueEntry(size_t hash, CommandCallback callback)
+            : hash{hash}, callback{callback} {
+        this->created = std::chrono::steady_clock::now();
+    }
+
+    double get_time_elapsed() {
+        return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->created).count() * 1000;
+    }
+};
+
+SumLast<double, 100> _command_lag_tracker;
+std::queue<CallbackQueueEntry> _callback_queue;
 
 uint GetCurrentQueueDelay();
 
@@ -65,28 +107,30 @@ void BeforeNetworkCommandExecution(const CommandPacket* cp) {
     if (!cp->my_cmd) return;
     size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->tile, cp->data);
     Debug(misc, 5, "CM BeforeNetworkCommandExecution: cmd={} hash={}", cp->cmd, hash);
-    while (!_callback_queue.empty() && _callback_queue.front().first != hash) {
-        Debug(misc, 0, "CM Dismissing command from callback queue: hash={}", _callback_queue.front().first);
+    while (!_callback_queue.empty() && _callback_queue.front().hash != hash) {
+        Debug(misc, 0, "CM Dismissing command from callback queue: hash={}", _callback_queue.front().hash);
         _callback_queue.pop();
     }
     if (_callback_queue.empty()) {
         Debug(misc, 0, "CM Received unexpected network command: cmd={}", cp->cmd);
         return;
     }
-    _current_callback = _callback_queue.front().second;
+    auto &cbdata = _callback_queue.front();
+    _current_callback = cbdata.callback;
+    _command_lag_tracker.add(cbdata.get_time_elapsed());
     _callback_queue.pop();
     return;
 }
 
 void AfterNetworkCommandExecution(const CommandPacket* cp) {
-    Debug(misc, 0, "AfterNetworkCommandExecution {}", cp->cmd);
+    Debug(misc, 5, "AfterNetworkCommandExecution {}", cp->cmd);
     _current_callback = nullptr;
 }
 
 void AddCommandCallback(const CommandPacket *cp) {
     size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->tile, cp->data);
     Debug(misc, 5, "CM Added callback: cmd={} hash={}", cp->cmd, hash);
-    _callback_queue.push(std::make_pair(hash, _current_callback));
+    _callback_queue.emplace(hash, _current_callback);
     _current_callback = nullptr;
 }
 
@@ -134,6 +178,7 @@ void InitCommandQueue() {
     _commands_this_frame = 0;
     std::queue<CommandPacket>().swap(_outgoing_queue);  // clear queue
     _command_callbacks.clear();
+    _command_lag_tracker.reset();
 }
 
 bool CanSendCommand() {
@@ -166,6 +211,14 @@ void SendClientCommand(const CommandPacket *cp) {
         return;
     }
     _outgoing_queue.push(*cp);
+}
+
+int get_average_command_lag() {
+    Debug(misc, 0, "Command lag {} / {}", _command_lag_tracker.get_sum(), _command_lag_tracker.get_count());
+    auto count = _command_lag_tracker.get_count();
+    if (count == 0) return 0;
+
+    return (int)(_command_lag_tracker.get_sum() / count);
 }
 
 }  // namespace citymania

@@ -5977,7 +5977,7 @@ STR_CM_CONFIG_SETTING_SHADED_TREES_SERVER                       :Wie Server
 
 STR_CM_CONFIG_SETTING_SHOW_APM                                  :Zeige APM-Zähler: {STRING}
 STR_CM_CONFIG_SETTING_SHOW_APM_HELPTEXT                         :Fügt einen APM-Zähler (Aktionen pro Minute) zur Statusleiste hinzu.
-STR_CM_STATUSBAR_APM                                            :{WHITE}APM: {NUM} AVG: {NUM}
+STR_CM_STATUSBAR_APM                                            :{WHITE}APM: {NUM} AVG: {NUM} LAG: {NUM}
 STR_CM_STATION_BUILD_SUPPLIES                                   :{BLACK}Liefert: {GOLD}
 
 STR_CM_CONFIG_SETTING_GRAPH_BACKGROUND                          :Hintergrundfarbe von Graphen: {STRING}

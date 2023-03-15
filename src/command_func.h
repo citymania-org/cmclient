@@ -17,6 +17,9 @@
 #include "core/backup_type.hpp"
 #include "misc/endian_buffer.hpp"
 #include "tile_map.h"
+#include "date_func.h"
+#include "core/random_func.hpp"  // CM for _random debug print
+
 
 struct CommandPacket;
 namespace citymania { void ExecuteCurrentCallback(const CommandCost &cost); }
@@ -420,6 +423,7 @@ protected:
 			return {};
 		}
 
+		Debug(misc, 0, "{}/{} {} {} company={} tile={}", _date, _date_fract, _random.state[0], GetCommandName(Tcmd), (int)_current_company, tile);
 		if (desync_log) LogCommandExecution(Tcmd, err_message, tile, EndianBufferWriter<CommandDataBuffer>::FromValue(args), false);
 
 		/* Actually try and execute the command. */
