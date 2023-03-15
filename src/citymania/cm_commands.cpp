@@ -214,7 +214,6 @@ void SendClientCommand(const CommandPacket *cp) {
 }
 
 int get_average_command_lag() {
-    Debug(misc, 0, "Command lag {} / {}", _command_lag_tracker.get_sum(), _command_lag_tracker.get_count());
     auto count = _command_lag_tracker.get_count();
     if (count == 0) return 0;
 
