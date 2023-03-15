@@ -7,7 +7,6 @@ namespace citymania {
 
 void SkipFakeCommands(Date date, DateFract date_fract);
 void SetReplaySaveInterval(uint32 interval);
-void LoadCommands(const std::string &filename);
 void CheckIntervalSave();
 bool IsReplayingCommands();
 

@@ -22,7 +22,10 @@
 
 
 struct CommandPacket;
-namespace citymania { void ExecuteCurrentCallback(const CommandCost &cost); }
+namespace citymania {
+	extern CommandCost _command_execute_cost;
+	void ExecuteCurrentCallback(const CommandCost &cost);
+}
 
 /**
  * Define a default return value for a failed command.
@@ -322,6 +325,7 @@ protected:
 
 		Tret res = Execute(err_message, reinterpret_cast<CommandCallback *>(callback), my_cmd, estimate_only, network_command, tile, args);
 		InternalPostResult(ExtractCommandCost(res), tile, estimate_only, only_sending, err_message, my_cmd);
+		citymania::_command_execute_cost = ExtractCommandCost(res);
 
 		if (!estimate_only && !only_sending && callback != nullptr) {
 			if constexpr (std::is_same_v<Tcallback, CommandCallback>) {

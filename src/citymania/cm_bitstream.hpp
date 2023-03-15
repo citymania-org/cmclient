@@ -42,6 +42,10 @@ public:
 	uint32 ReadBytes(uint amount);
 	uint64 ReadBytes64(uint amount);
 	Money ReadMoney();
+	std::vector<byte> ReadData();
+	bool eof() {
+		return this->i >= f.size();
+	}
 };
 
 } // namespace citymania

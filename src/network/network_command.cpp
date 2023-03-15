@@ -352,6 +352,19 @@ void NetworkExecuteLocalCommandQueue()
 	_current_company = _local_company;
 }
 
+namespace citymania {
+	CommandCost _command_execute_cost;
+	CommandCost ExecuteCommand(CommandPacket *cp) {
+		_current_company = cp->company;
+		size_t cb_index = FindCallbackIndex(cp->callback);
+		assert(cb_index < _callback_tuple_size);
+		assert(_cmd_dispatch[cp->cmd].Unpack[cb_index] != nullptr);
+		_cmd_dispatch[cp->cmd].Unpack[cb_index](cp);
+		return _command_execute_cost;
+	}
+}
+
+
 /**
  * Free the local command queues.
  */

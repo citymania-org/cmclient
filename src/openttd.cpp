@@ -71,6 +71,7 @@
 
 #include "linkgraph/linkgraphschedule.h"
 
+#include "citymania/cm_command_log.hpp"
 #include "citymania/cm_export.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_main.hpp"
@@ -674,7 +675,9 @@ int openttd_main(int argc, char *argv[])
 				ret = 1;
 				return ret;
 			}
-			citymania::LoadCommands(mgo.opt);
+			citymania::load_replay_commands(mgo.opt, [](auto error) {
+				fprintf(stderr, "%s\n", error.c_str());
+			});
 			break;
 		}
 		case 'T': {

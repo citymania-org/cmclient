@@ -31,6 +31,8 @@ add_files(
     cm_commands.cpp
     cm_commands_gui.hpp
     cm_commands_gui.cpp
+    cm_command_log.hpp
+    cm_command_log.cpp
     cm_highlight.hpp
     cm_highlight.cpp
     cm_highlight_type.hpp

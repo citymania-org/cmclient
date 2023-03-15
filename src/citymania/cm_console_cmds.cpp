@@ -3,6 +3,7 @@
 #include "cm_console_cmds.hpp"
 
 #include "cm_commands.hpp"
+#include "cm_command_log.hpp"
 #include "cm_export.hpp"
 
 #include "../command_func.h"
@@ -12,7 +13,6 @@
 #include "../fileio_type.h"
 #include "../map_type.h"
 #include "../map_func.h"
-#include "../network/network_server.h"
 #include "../strings_func.h"
 #include "../town.h"
 #include "../tree_map.h"
@@ -30,7 +30,6 @@ namespace citymania {
 uint32 _replay_save_interval = 0;
 uint32 _replay_last_save = 0;
 uint32 _replay_ticks = 0;
-bool _replay_started = false;
 extern uint32 _pause_countdown;
 
 static void IConsoleHelp(const char *str)
@@ -152,106 +151,14 @@ bool ConResetTownGrowth(byte argc, char *argv[]) {
     return true;
 }
 
-struct FakeCommand {
-    Date date;
-    DateFract date_fract;
-    uint res;
-    uint32 seed;
-    uint company_id;
-    uint cmd;
-    TileIndex tile;
-    uint32 p1, p2;
-    std::string text;
-};
-
-static std::queue<FakeCommand> _fake_commands;
-
 void MakeReplaySave() {
-    char *filename = str_fmt("replay_%d.sav", _replay_ticks);
+    auto filename = fmt::format("replay_{}.sav", _replay_ticks);
     if (SaveOrLoad(filename, SLO_SAVE, DFT_GAME_FILE, SAVE_DIR) != SL_OK) {
         IConsolePrint(CC_ERROR, "Replay save failed");
     } else {
         IConsolePrint(CC_DEFAULT, "Replay saved to {}", filename);
     }
     _replay_last_save = _replay_ticks;
-}
-
-bool DatePredate(Date date1, DateFract date_fract1, Date date2, DateFract date_fract2) {
-    return date1 < date2 || (date1 == date2 && date_fract1 < date_fract2);
-}
-
-void SkipFakeCommands(Date date, DateFract date_fract) {
-    uint commands_skipped = 0;
-
-    while (!_fake_commands.empty() && DatePredate(_fake_commands.front().date, _fake_commands.front().date_fract, date, date_fract)) {
-        _fake_commands.pop();
-        commands_skipped++;
-    }
-
-    if (commands_skipped) {
-        fprintf(stderr, "Skipped %u commands that predate the current date (%d/%hu)\n", commands_skipped, date, date_fract);
-    }
-}
-
-void ExecuteFakeCommands(Date date, DateFract date_fract) {
-    if (!_replay_started) {
-        SkipFakeCommands(_date, _date_fract);
-        _replay_started = true;
-    }
-
-    auto backup_company = _current_company;
-    while (!_fake_commands.empty() && !DatePredate(date, date_fract, _fake_commands.front().date, _fake_commands.front().date_fract)) {
-        auto &x = _fake_commands.front();
-
-        // FIXME
-        // fprintf(stderr, "Executing command: company=%u cmd=%u(%s) tile=%u p1=%u p2=%u text=%s ... ", x.company_id, x.cmd, GetCommandName(x.cmd), x.tile, x.p1, x.p2, x.text.c_str());
-        if (x.res == 0) {
-            fprintf(stderr, "REJECTED\n");
-            _fake_commands.pop();
-            continue;
-        }
-
-        if (_networking) {
-            /* FIXME
-            CommandPacket cp;
-            cp.tile = x.tile;
-            cp.p1 = x.p1;
-            cp.p2 = x.p2;
-            cp.cmd = x.cmd;
-            cp.text = x.text;
-            cp.company = (CompanyID)x.company_id;
-            cp.frame = _frame_counter_max + 1;
-            cp.callback = nullptr;
-            cp.my_cmd = false;
-
-            for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
-                if (cs->status >= NetworkClientSocket::STATUS_MAP) {
-                    cs->outgoing_queue.Append(&cp);
-                }
-            }*/
-        }
-        _current_company = (CompanyID)x.company_id;
-        /* FIXME
-        auto res = DoCommandPInternal(x.tile, x.p1, x.p2, x.cmd | CMD_NETWORK_COMMAND, nullptr, x.text.c_str(), false, false);
-        if (res.Failed() != (x.res != 1)) {
-            if (!res.Failed()) {
-                fprintf(stderr, "FAIL (Failing command succeeded)\n");
-            } else if (res.GetErrorMessage() != INVALID_STRING_ID) {
-                char buf[DRAW_STRING_BUFFER];
-                GetString(buf, res.GetErrorMessage(), lastof(buf));
-                fprintf(stderr, "FAIL (Successful command failed: %s)\n", buf);
-            } else {
-                fprintf(stderr, "FAIL (Successful command failed)\n");
-            }
-        } else {
-            fprintf(stderr, "OK\n");
-        }
-        if (x.seed != (_random.state[0] & 255)) {
-            fprintf(stderr, "*** DESYNC expected seed %u vs current %u ***\n", x.seed, _random.state[0] & 255);
-        }*/
-        _fake_commands.pop();
-    }
-    _current_company = backup_company;
 }
 
 void CheckIntervalSave() {
@@ -271,29 +178,6 @@ void SetReplaySaveInterval(uint32 interval) {
     if (_replay_save_interval) MakeReplaySave();
 }
 
-void LoadCommands(const std::string &filename) {
-    std::queue<FakeCommand>().swap(_fake_commands);  // clear queue
-
-    std::ifstream file(filename, std::ios::in);
-    std::string str;
-    while(std::getline(file, str)) {
-        std::istringstream ss(str);
-        FakeCommand cmd;
-        // FIXME ss >> cmd.date >> cmd.date_fract >> cmd.res >> cmd.seed >> cmd.company_id >> cmd.cmd  >> cmd.tile >> cmd.p1 >> cmd.p2;
-        std::string s;
-        ss.get();
-        std::getline(ss, cmd.text);
-        _fake_commands.push(cmd);
-    }
-
-    _replay_started = false;
-}
-
-bool IsReplayingCommands() {
-    return !_fake_commands.empty();
-}
-
-
 bool ConLoadCommands(byte argc, char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Loads a file with command queue to execute");
@@ -303,7 +187,9 @@ bool ConLoadCommands(byte argc, char *argv[]) {
 
     if (argc > 3) return false;
 
-    LoadCommands(argv[1]);
+    load_replay_commands(argv[1], [](auto error) {
+        IConsolePrint(CC_ERROR, "{}", error);
+    });
     SetReplaySaveInterval(argc > 2 ? atoi(argv[2]) : 0);
 
     return true;

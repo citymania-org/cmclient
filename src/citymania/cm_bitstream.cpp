@@ -84,4 +84,11 @@ Money BitIStream::ReadMoney() {
 	return (Money)this->ReadBytes64(8);
 }
 
+std::vector<byte> BitIStream::ReadData() {
+	auto len = this->ReadBytes(2);
+	std::vector<byte> res;
+	for (auto i = 0; i < len; i++) res.push_back(this->ReadBytes(1));
+	return res;
+}
+
 } // namespace citymania
