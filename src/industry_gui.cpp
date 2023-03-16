@@ -3143,7 +3143,14 @@ struct IndustryCargoesWindow : public Window {
 			case WID_IC_CARGO_DROPDOWN: {
 				DropDownList lst;
 				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-					lst.emplace_back(new DropDownListStringItem(cs->name, cs->Index(), false));
+					if (_settings_client.gui.developer < 1) {
+						lst.emplace_back(new DropDownListStringItem(cs->name, cs->Index(), false));
+						continue;
+					}
+					DropDownListParamStringItem *item = new DropDownListParamStringItem(CM_STR_CARGO_WITH_ID, cs->Index(), false);
+					item->SetParam(0, cs->name);
+					item->SetParam(1, cs->Index());
+					lst.emplace_back(item);
 				}
 				if (!lst.empty()) {
 					int selected = (this->ind_cargo >= NUM_INDUSTRYTYPES) ? (int)(this->ind_cargo - NUM_INDUSTRYTYPES) : -1;
@@ -3157,7 +3164,14 @@ struct IndustryCargoesWindow : public Window {
 				for (IndustryType ind : _sorted_industry_types) {
 					const IndustrySpec *indsp = GetIndustrySpec(ind);
 					if (!indsp->enabled) continue;
-					lst.emplace_back(new DropDownListStringItem(indsp->name, ind, false));
+					if (_settings_client.gui.developer < 1) {
+						lst.emplace_back(new DropDownListStringItem(indsp->name, ind, false));
+						continue;
+					}
+					DropDownListParamStringItem *item = new DropDownListParamStringItem(CM_STR_INDUSTRY_TYPE_WITH_ID, ind, false);
+					item->SetParam(0, indsp->name);
+					item->SetParam(1, ind);
+					lst.emplace_back(item);
 				}
 				if (!lst.empty()) {
 					int selected = (this->ind_cargo < NUM_INDUSTRYTYPES) ? (int)this->ind_cargo : -1;

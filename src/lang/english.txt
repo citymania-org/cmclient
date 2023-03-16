@@ -6055,3 +6055,6 @@ CM_STR_VIEWPORT_TOWN_TINY_MEDIOCRE_RATING                       :{TINY_FONT}{ORA
 CM_STR_VIEWPORT_TOWN_TINY_GOOD_RATING                           :{TINY_FONT}{YELLOW}{TOWN}
 CM_STR_VIEWPORT_TOWN_TINY_VERY_GOOD_RATING                      :{TINY_FONT}{WHITE}{TOWN}
 CM_STR_VIEWPORT_TOWN_TINY_EXCELLENT_RATING                      :{TINY_FONT}{GREEN}{TOWN}
+
+CM_STR_CARGO_WITH_ID                                            :{STRING} {SILVER}#{NUM}
+CM_STR_INDUSTRY_TYPE_WITH_ID                                    :{STRING} {SILVER}#{NUM}
