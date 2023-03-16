@@ -6,6 +6,7 @@
 #include "cm_command_log.hpp"
 #include "cm_export.hpp"
 
+#include "../aircraft.h"
 #include "../command_func.h"
 #include "../console_func.h"
 #include "../console_type.h"
@@ -13,8 +14,11 @@
 #include "../fileio_type.h"
 #include "../map_type.h"
 #include "../map_func.h"
+#include "../roadveh.h"
 #include "../strings_func.h"
+#include "../ship.h"
 #include "../town.h"
+#include "../train.h"
 #include "../tree_map.h"
 
 #include <fstream>
@@ -202,6 +206,32 @@ bool ConStartRecord(byte argc, char *argv[]) {
 
 bool ConStopRecord(byte argc, char *argv[]) {
     StopRecording();
+    return true;
+}
+
+bool ConGameStats(byte argc, char *argv[]) {
+    auto num_trains = 0u;
+    auto num_rvs = 0u;
+    auto num_ships = 0u;
+    auto num_aircraft = 0u;
+
+    for (Vehicle *v : Vehicle::Iterate()) {
+        if (!v->IsPrimaryVehicle()) continue;
+        switch (v->type) {
+            default: break;
+            case VEH_TRAIN: num_trains++; break;
+            case VEH_ROAD: num_rvs++; break;
+            case VEH_AIRCRAFT: num_aircraft++; break;
+            case VEH_SHIP: num_ships++; break;
+        }
+    }
+
+    IConsolePrint(CC_INFO, "Number of trains: {}", num_trains);
+    IConsolePrint(CC_INFO, "Number of rvs: {}", num_rvs);
+    IConsolePrint(CC_INFO, "Number of ships: {}", num_ships);
+    IConsolePrint(CC_INFO, "Number of aircraft: {}", num_aircraft);
+    IConsolePrint(CC_INFO, "Total number of vehicles: {}", num_trains + num_rvs + num_ships + num_aircraft);
+
     return true;
 }
 

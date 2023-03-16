@@ -2670,4 +2670,5 @@ void IConsoleStdLibRegister()
 	IConsole::CmdRegister("cmgamespeed", citymania::ConGameSpeed);
 	IConsole::CmdRegister("cmstartrecord", citymania::ConStartRecord);
 	IConsole::CmdRegister("cmstoprecord", citymania::ConStopRecord);
+	IConsole::CmdRegister("cmgamestats", citymania::ConGameStats);
 }
