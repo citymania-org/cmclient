@@ -329,7 +329,7 @@ public:
 		/* House pop */
 		if (td.population != 0) {
 			SetDParam(0, td.population);
-			this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_POP));
+			this->landinfo_data.push_back(GetString(CM_STR_LAND_AREA_INFORMATION_POP));
 		}
 
 		/* Cargo acceptance is displayed in a extra multiline */

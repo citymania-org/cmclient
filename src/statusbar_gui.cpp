@@ -139,7 +139,7 @@ struct StatusBarWindow : Window {
 				SetDParam(0, 999);
 				SetDParam(1, 999);
 				SetDParam(2, 9999);
-				d = GetStringBoundingBox(STR_CM_STATUSBAR_APM);
+				d = GetStringBoundingBox(CM_STR_STATUSBAR_APM);
 				break;
 
 			default:
@@ -215,7 +215,7 @@ struct StatusBarWindow : Window {
 					SetDParam(0, epm.second);
 					SetDParam(1, epm.first);
 					SetDParam(2, std::min(citymania::get_average_command_lag(), 9999));
-					DrawString(tr, STR_CM_STATUSBAR_APM, TC_FROMSTRING, SA_HOR_CENTER);
+					DrawString(tr, CM_STR_STATUSBAR_APM, TC_FROMSTRING, SA_HOR_CENTER);
 				}
 				break;
 		}

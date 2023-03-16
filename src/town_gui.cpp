@@ -211,7 +211,7 @@ public:
 					DrawSprite(SPR_EXCLUSIVE_TRANSPORT, COMPANY_SPRITE_COLOUR(c->index), exclusive.left, text.top + exclusive_y_offset);
 				}
 
-				DrawString(text.left, text.right, text.top + text_y_offset, STR_LOCAL_AUTHORITY_COMPANY_RATING_NUM);
+				DrawString(text.left, text.right, text.top + text_y_offset, CM_STR_LOCAL_AUTHORITY_COMPANY_RATING_NUM);
 				text.top += this->resize.step_height;
 			}
 		}
@@ -427,7 +427,7 @@ public:
 		if (widget == WID_TV_CB){
 			// if(this->wcb_disable) SetDParam(0, STR_EMPTY);
 			// else
-			SetDParam(0, STR_BUTTON_CB_YES);
+			SetDParam(0, CM_STR_BUTTON_CB_YES);
 		}
 	}
 
@@ -706,7 +706,7 @@ static const NWidgetPart _nested_town_game_view_widgets[] = {
 	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_SHOW_AUTHORITY), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON, STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP),
 		NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_TV_CATCHMENT), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_CATCHMENT, STR_TOOLTIP_CATCHMENT),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CB), SetMinimalSize(20, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_CB, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CB), SetMinimalSize(20, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(CM_STR_BUTTON_CB, 0),
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
@@ -739,7 +739,7 @@ static const NWidgetPart _nested_town_editor_view_widgets[] = {
 		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_EXPAND), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_EXPAND_BUTTON, STR_TOWN_VIEW_EXPAND_TOOLTIP),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_DELETE), SetMinimalSize(80, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_DELETE_BUTTON, STR_TOWN_VIEW_DELETE_TOOLTIP),
 		NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_TV_CATCHMENT), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_CATCHMENT, STR_TOOLTIP_CATCHMENT),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CB), SetMinimalSize(20, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_BUTTON_CB, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_TV_CB), SetMinimalSize(20, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(CM_STR_BUTTON_CB, 0),
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
@@ -763,7 +763,7 @@ void ShowTownViewWindow(TownID town)
 static const NWidgetPart _nested_town_directory_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
-		NWidget(WWT_CAPTION, COLOUR_BROWN, TDW_CAPTION_TEXT), SetDataTip(STR_TOWN_DIRECTORY_CAPTION_EXTRA, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_BROWN, TDW_CAPTION_TEXT), SetDataTip(CM_STR_TOWN_DIRECTORY_CAPTION_EXTRA, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_SHADEBOX, COLOUR_BROWN),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_BROWN),
 		NWidget(WWT_STICKYBOX, COLOUR_BROWN),
@@ -976,7 +976,7 @@ public:
 					SetDParam(2, t->cm.real_population);
 					SetDParam(3, t->cache.num_houses);
 					/* CITIES DIFFERENT COLOUR*/
-					DrawString(tr.left, tr.right, tr.top + (this->resize.step_height - FONT_HEIGHT_NORMAL) / 2, t->larger_town ? STR_TOWN_DIRECTORY_CITY_COLOUR : STR_TOWN_DIRECTORY_TOWN_COLOUR);
+					DrawString(tr.left, tr.right, tr.top + (this->resize.step_height - FONT_HEIGHT_NORMAL) / 2, t->larger_town ? CM_STR_TOWN_DIRECTORY_CITY_COLOUR : CM_STR_TOWN_DIRECTORY_TOWN_COLOUR);
 
 
 					tr.top += this->resize.step_height;
@@ -1017,7 +1017,7 @@ public:
 					SetDParam(0, t->index);
 					SetDParamMaxDigits(1, 8);
 					SetDParamMaxDigits(2, 5);
-					d = maxdim(d, GetStringBoundingBox(STR_TOWN_DIRECTORY_TOWN_COLOUR));
+					d = maxdim(d, GetStringBoundingBox(CM_STR_TOWN_DIRECTORY_TOWN_COLOUR));
 				}
 				Dimension icon_size = GetSpriteSize(SPR_TOWN_RATING_GOOD);
 				d.width += icon_size.width + 2;
@@ -1142,8 +1142,8 @@ Listing TownDirectoryWindow::last_sorting = {false, 0};
 const StringID TownDirectoryWindow::sorter_names[] = {
 	STR_SORT_BY_NAME,
 	STR_SORT_BY_POPULATION,
-	STR_SORT_BY_REAL_POPULATION,
-	STR_SORT_BY_HOUSES,
+	CM_STR_SORT_BY_REAL_POPULATION,
+	CM_STR_SORT_BY_HOUSES,
 	STR_SORT_BY_RATING,
 	INVALID_STRING_ID
 };
@@ -1432,7 +1432,7 @@ static void DrawExtraTownInfo (Rect &r, Town *town, uint line, bool show_house_s
 	//real pop and rating
 	SetDParam(0, town->cm.real_population);
 	SetDParam(1, town->ratings[_current_company]);
-	DrawString(r, STR_TOWN_VIEW_REALPOP_RATE);
+	DrawString(r, CM_STR_TOWN_VIEW_REALPOP_RATE);
 	r.top += line;
 	//town stats
 	// int grow_rate = 0;
@@ -1440,20 +1440,20 @@ static void DrawExtraTownInfo (Rect &r, Town *town, uint line, bool show_house_s
 	// else grow_rate = TownTicksToDays((town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1);
 
 	SetDParam(0, town->growth_rate);
-	SetDParam(1, HasBit(town->flags, TOWN_CUSTOM_GROWTH) ? STR_TOWN_VIEW_GROWTH_RATE_CUSTOM : STR_EMPTY);
+	SetDParam(1, HasBit(town->flags, TOWN_CUSTOM_GROWTH) ? CM_STR_TOWN_VIEW_GROWTH_RATE_CUSTOM : STR_EMPTY);
 	// SetDParam(2, town->grow_counter < 16000 ? TownTicksToDays(town->grow_counter + 1) : -1);
 	SetDParam(2, town->grow_counter);
 	SetDParam(3, town->time_until_rebuild);
 	SetDParam(4, HasBit(town->flags, TOWN_IS_GROWING) ? 1 : 0);
 	SetDParam(5, town->fund_buildings_months);
-	DrawString(r, STR_TOWN_VIEW_GROWTH);
+	DrawString(r, CM_STR_TOWN_VIEW_GROWTH);
 	r.top += line;
 
 	if (show_house_states_info) {
 		SetDParam(0, town->cm.houses_constructing);
 		SetDParam(1, town->cm.houses_reconstructed_last_month);
 		SetDParam(2, town->cm.houses_demolished_last_month);
-		DrawString(r, STR_TOWN_VIEW_HOUSE_STATE);
+		DrawString(r, CM_STR_TOWN_VIEW_HOUSE_STATE);
 		r.top += line;
 	}
 
@@ -1464,7 +1464,7 @@ static void DrawExtraTownInfo (Rect &r, Town *town, uint line, bool show_house_s
 	SetDParam(3, town->cm.cs_last_month);
 	SetDParam(4, town->cm.hr_total);
 	SetDParam(5, town->cm.hr_last_month);
-	DrawString(r, STR_TOWN_VIEW_GROWTH_TILES);
+	DrawString(r, CM_STR_TOWN_VIEW_GROWTH_TILES);
 	r.top += line;
 }
 
@@ -1529,7 +1529,7 @@ public:
 			case WID_CB_ADVERT_REGULAR:
 				if (!this->town->advertise_regularly) {
 					SetDParam(0, ToPercent8(this->town->ad_rating_goal));
-					ShowQueryString(STR_JUST_INT, STR_CB_ADVERT_REGULAR_RATING_TO_KEEP,
+					ShowQueryString(STR_JUST_INT, CM_STR_CB_ADVERT_REGULAR_RATING_TO_KEEP,
 					                4, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
 				} else this->OnQueryTextFinished(NULL);
 				break;
@@ -1622,8 +1622,8 @@ public:
 			case WID_CB_DETAILS:{
 				// growing
 				if(this->town->cb.growth_state == TownGrowthState::GROWING)
-					DrawString(tr, STR_TOWN_CB_GROWING );
-				else DrawString(tr, STR_TOWN_CB_NOT_GROWING );
+					DrawString(tr, CM_STR_TOWN_CB_GROWING);
+				else DrawString(tr, CM_STR_TOWN_CB_NOT_GROWING);
 				tr.top += FONT_HEIGHT_NORMAL;
 
 				// population
@@ -1636,7 +1636,7 @@ public:
 
 				// regular funding
 				if(this->town->fund_regularly != 0){
-					DrawString(tr, STR_CB_FUNDED_REGULARLY);
+					DrawString(tr, CM_STR_CB_FUNDED_REGULARLY);
 					tr.top += EXP_LINESPACE;
 				}
 				break;
@@ -1676,7 +1676,7 @@ public:
 					if (it2 == cargoes2.begin()) { // header
 						// FIXME rtl support
 						DrawString(tr.Shrink(ScaleGUITrad(14), 0, 0, 0),
-							(STR_TOWN_GROWTH_HEADER_CARGO + widget - WID_CB_CARGO_NAME), TC_FROMSTRING,
+							(CM_STR_TOWN_GROWTH_HEADER_CARGO + widget - WID_CB_CARGO_NAME), TC_FROMSTRING,
 							(widget == WID_CB_CARGO_NAME) ? SA_LEFT : SA_RIGHT);
 
 						tr.top += EXP_LINESPACE;
@@ -1694,7 +1694,7 @@ public:
 							GfxFillRect(tr.left + 1, tr.top + 2, tr.left + 7, tr.top + 5, cargos->legend_colour);
 
 							SetDParam(0, cargos->name);
-							DrawString(tr.Shrink(ScaleGUITrad(14), 0, 0, 0), STR_TOWN_CB_CARGO_NAME);
+							DrawString(tr.Shrink(ScaleGUITrad(14), 0, 0, 0), CM_STR_TOWN_CB_CARGO_NAME);
 							break;
 						}
 						case WID_CB_CARGO_AMOUNT: {
@@ -1704,11 +1704,11 @@ public:
 
 							//when required
 							if (this->town->cache.population >= from) {
-								if((delivered + (uint)this->town->cb.stored[cargos->Index()]) >= requirements) string_to_draw = STR_TOWN_CB_CARGO_AMOUNT_GOOD;
-								else string_to_draw = STR_TOWN_CB_CARGO_AMOUNT_BAD;
+								if((delivered + (uint)this->town->cb.stored[cargos->Index()]) >= requirements) string_to_draw = CM_STR_TOWN_CB_CARGO_AMOUNT_GOOD;
+								else string_to_draw = CM_STR_TOWN_CB_CARGO_AMOUNT_BAD;
 							}
 							//when not required -> all faded
-							else string_to_draw = STR_TOWN_CB_CARGO_AMOUNT_NOT;
+							else string_to_draw = CM_STR_TOWN_CB_CARGO_AMOUNT_NOT;
 
 							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
 							break;
@@ -1717,7 +1717,7 @@ public:
 							requirements = CB_GetTownReq(this->town->cache.population, CB_GetReq(cargos->Index()), from, true);
 							SetDParam(0, requirements);
 							 //when required
-							string_to_draw = (this->town->cache.population >= from) ? STR_TOWN_CB_CARGO_REQ_YES : STR_TOWN_CB_CARGO_REQ_NOT;
+							string_to_draw = (this->town->cache.population >= from) ? CM_STR_TOWN_CB_CARGO_REQ_YES : CM_STR_TOWN_CB_CARGO_REQ_NOT;
 							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
 							break;
 						}
@@ -1726,21 +1726,21 @@ public:
 							SetDParam(0, this->town->cb.delivered_last_month[cargos->Index()]);
 							if (this->town->cache.population >= from){
 								// if (this->town->delivered_enough[cargos->Index()]) {
-									string_to_draw = (this->town->cb.delivered_last_month[cargos->Index()] >= requirements) ? STR_TOWN_CB_CARGO_PREVIOUS_YES : STR_TOWN_CB_CARGO_PREVIOUS_EDGE;
+									string_to_draw = (this->town->cb.delivered_last_month[cargos->Index()] >= requirements) ? CM_STR_TOWN_CB_CARGO_PREVIOUS_YES : CM_STR_TOWN_CB_CARGO_PREVIOUS_EDGE;
 								// }
 								// else string_to_draw = STR_TOWN_CB_CARGO_PREVIOUS_BAD;
 							}
-							else string_to_draw = STR_TOWN_CB_CARGO_PREVIOUS_NOT;
+							else string_to_draw = CM_STR_TOWN_CB_CARGO_PREVIOUS_NOT;
 
 							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
 							break;
 						}
 						case WID_CB_CARGO_STORE: {
 							SetDParam(0, this->town->cb.stored[cargos->Index()]);
-							if (CB_GetDecay(cargos->Index()) == 100) string_to_draw = STR_TOWN_CB_CARGO_STORE_DECAY;  //when 100% decay
+							if (CB_GetDecay(cargos->Index()) == 100) string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_DECAY;  //when 100% decay
 							else {
-								if (this->town->cache.population >= from) string_to_draw = STR_TOWN_CB_CARGO_STORE_YES;  //when required
-								else string_to_draw = STR_TOWN_CB_CARGO_STORE_NOT;
+								if (this->town->cache.population >= from) string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_YES;  //when required
+								else string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_NOT;
 							}
 
 							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
@@ -1748,11 +1748,11 @@ public:
 						}
 						case WID_CB_CARGO_STORE_PCT: {
 							uint max_storage = CB_GetMaxTownStorage(this->town, cargos->Index());
-							if (CB_GetDecay(cargos->Index()) == 100 || !max_storage) string_to_draw = STR_TOWN_CB_CARGO_STORE_DECAY;  //when 100% decay
+							if (CB_GetDecay(cargos->Index()) == 100 || !max_storage) string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_DECAY;  //when 100% decay
 							else {
 								SetDParam(0, 100 * this->town->cb.stored[cargos->Index()] / max_storage);
-								if (this->town->cache.population >= from) string_to_draw = STR_TOWN_CB_CARGO_STORE_PCT_YES;  //when required
-								else string_to_draw = STR_TOWN_CB_CARGO_STORE_PCT_NOT;
+								if (this->town->cache.population >= from) string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_PCT_YES;  //when required
+								else string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_PCT_NOT;
 							}
 
 							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
@@ -1760,7 +1760,7 @@ public:
 						}
 						case WID_CB_CARGO_FROM: {
 							SetDParam(0, from);
-							string_to_draw = (this->town->cache.population >= from) ? STR_TOWN_CB_CARGO_FROM_YES : STR_TOWN_CB_CARGO_FROM_NOT; //when required
+							string_to_draw = (this->town->cache.population >= from) ? CM_STR_TOWN_CB_CARGO_FROM_YES : CM_STR_TOWN_CB_CARGO_FROM_NOT; //when required
 
 							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
 							break;
@@ -1806,7 +1806,7 @@ HotkeyList CBTownWindow::hotkeys("town_gui", town_hotkeys);
 static const NWidgetPart _nested_cb_town_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
-		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_CB_CAPTION), SetDataTip(STR_TOWN_VIEW_CB_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_CB_CAPTION), SetDataTip(CM_STR_TOWN_VIEW_CB_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_CB_CENTER_VIEW), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, STR_TOWN_VIEW_CENTER_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_BROWN),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_BROWN),
@@ -1819,23 +1819,23 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_DETAILS), SetMinimalSize(66, 0), SetResize(1, 0), SetFill(1, 0),
 				NWidget(NWID_VERTICAL),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
 						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_FUND),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_NEW_BUILDINGS, 0),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_FUND),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_NEW_BUILDINGS, 0),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_ADVERT_REGULAR, STR_CB_ADVERT_REGULAR_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_ADVERT_REGULAR, CM_STR_CB_ADVERT_REGULAR_TT),
  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_FUND_REGULAR, STR_CB_FUND_REGULAR_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_FUND_REGULAR, CM_STR_CB_FUND_REGULAR_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
   						NWidget(NWID_SPACER), SetMinimalSize(33, 0), SetFill(1, 0),
   						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_POWERFUND),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(STR_CB_POWERFUND, STR_CB_POWERFUND_TT),
+						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_POWERFUND),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_POWERFUND, CM_STR_CB_POWERFUND_TT),
 						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
 					EndContainer(),
 				EndContainer(),
@@ -1857,7 +1857,7 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_TOWN_VIEW), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_CB_GUI_TOWN_VIEW_BUTTON, STR_CB_GUI_TOWN_VIEW_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_TOWN_VIEW), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(CM_STR_CB_GUI_TOWN_VIEW_BUTTON, CM_STR_CB_GUI_TOWN_VIEW_TOOLTIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_SHOW_AUTHORITY), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON, STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP),
 		EndContainer(),
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),

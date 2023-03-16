@@ -321,7 +321,7 @@ public:
         /* House pop */
         if (td.population != 0) {
             SetDParam(0, td.population);
-            GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_POP, lastof(this->landinfo_data[line_nr]));
+            GetString(this->landinfo_data[line_nr], CM_STR_LAND_AREA_INFORMATION_POP, lastof(this->landinfo_data[line_nr]));
             line_nr++;
         }
 

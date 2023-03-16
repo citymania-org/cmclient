@@ -67,7 +67,7 @@ static NWidgetBase *MakeCompanyButtons(int *biggest_index)
 		company_panel->SetMinimalSizeAbsolute( company_sprite_size.width, company_sprite_size.height );
 		company_panel->SetResize( 0, 0 );
 		company_panel->SetFill( 1, 0 );
-		company_panel->SetDataTip( 0x0, STR_WATCH_CLICK_TO_WATCH_COMPANY );
+		company_panel->SetDataTip( 0x0, CM_STR_WATCH_CLICK_TO_WATCH_COMPANY );
 		widget_container_company->Add( company_panel );
 
 		/* Manage Has Client Blot */
@@ -101,7 +101,7 @@ static NWidgetBase *MakeCompanyButtons2(int *biggest_index)
 		company_panel->SetMinimalSizeAbsolute(company_sprite_size.width, company_sprite_size.height);
 		company_panel->SetResize(1, 0);
 		company_panel->SetFill(1, 1);
-		company_panel->SetDataTip(0, STR_WATCH_CLICK_TO_WATCH_COMPANY);
+		company_panel->SetDataTip(0, CM_STR_WATCH_CLICK_TO_WATCH_COMPANY);
 		widget_container_horiz->Add(company_panel);
 	}
 
@@ -127,7 +127,7 @@ static const NWidgetPart _nested_watch_company_widgets[] = {
 	/* Title Bar with close box, title, shade and stick boxes */
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetDataTip(STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetDataTip(CM_STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, CM_STR_WATCH_LOCATION_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
@@ -174,7 +174,7 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 	/* Title Bar with close box, title, shade and stick boxes */
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetDataTip(STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetDataTip(CM_STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, CM_STR_WATCH_LOCATION_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
@@ -185,13 +185,13 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 			/* Buton Zoom Out, In, Scrollto */
 		NWidget(NWID_SELECTION, INVALID_COLOUR, EWW_ENABLE_SELECT),
 				NWidget(NWID_VERTICAL ),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_KICK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(STR_XI_KICK, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_BAN), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(STR_XI_BAN, 0 ),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_LOCK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(STR_XI_LOCK, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_UNLOCK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(STR_XI_UNLOCK, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_JOIN), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(STR_XI_JOIN, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_KICKC), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(STR_XI_KICKC, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_RESET), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(STR_XI_RESET, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_KICK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_KICK, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_BAN), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_BAN, 0 ),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_LOCK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_LOCK, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_UNLOCK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_UNLOCK, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_JOIN), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_JOIN, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_KICKC), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_KICKC, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_RESET), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_RESET, 0),
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
@@ -201,11 +201,11 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 				NWidget(WWT_PANEL, COLOUR_GREY, EWW_NEW_WINDOW), SetDataTip(0, 0), EndContainer(),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_CLIENTS), SetMinimalSize(23, 10), SetDataTip(SPR_IMG_COMPANY_GENERAL, STR_XI_PLAYERS_TOOLTIP),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_COMPANYW), SetMinimalSize(23, 10), SetDataTip(SPR_IMG_COMPANY_LIST, STR_XI_COMPANYW_TOOLTIP),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_COMPANYHQ), SetMinimalSize(23, 10), SetDataTip(STR_XI_COMPANYHQ, STR_XI_COMPANYHQ_TOOLTIP),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_PRIVATEP_MESSAGE), SetMinimalSize(23, 10), SetDataTip(STR_XI_PRIVATE_PLAYER_MESSAGE, STR_XI_PRIVATE_PLAYER_MESSAGE_TOOLTIP),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_PRIVATEC_MESSAGE), SetMinimalSize(23, 10), SetDataTip(STR_XI_PRIVATE_COMPANY_MESSAGE, STR_XI_PRIVATE_COMPANY_MESSAGE_TOOLTIP),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_CLIENTS), SetMinimalSize(23, 10), SetDataTip(SPR_IMG_COMPANY_GENERAL, CM_STR_XI_PLAYERS_TOOLTIP),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_COMPANYW), SetMinimalSize(23, 10), SetDataTip(SPR_IMG_COMPANY_LIST, CM_STR_XI_COMPANYW_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_COMPANYHQ), SetMinimalSize(23, 10), SetDataTip(CM_STR_XI_COMPANYHQ, CM_STR_XI_COMPANYHQ_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_PRIVATEP_MESSAGE), SetMinimalSize(23, 10), SetDataTip(CM_STR_XI_PRIVATE_PLAYER_MESSAGE, CM_STR_XI_PRIVATE_PLAYER_MESSAGE_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_PRIVATEC_MESSAGE), SetMinimalSize(23, 10), SetDataTip(CM_STR_XI_PRIVATE_COMPANY_MESSAGE, CM_STR_XI_PRIVATE_COMPANY_MESSAGE_TOOLTIP),
 				NWidget(WWT_PANEL, COLOUR_GREY, EWW_NEW_WINDOW), SetDataTip(0, 0), EndContainer(),
 			EndContainer(),
 			/* Background panel for resize purpose */
@@ -508,10 +508,10 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 				break;
 			case EWW_BAN:
 				this->query_widget = EWQ_BAN;
-				ShowQueryString(STR_XI_BAN_DAYSDEFAULT, STR_XI_BAN_QUERY, 128, this, CS_ALPHANUMERAL, QSF_NONE);
+				ShowQueryString(CM_STR_XI_BAN_DAYSDEFAULT, CM_STR_XI_BAN_QUERY, 128, this, CS_ALPHANUMERAL, QSF_NONE);
 				break;
 			case EWW_RESET:
-				ShowQuery(STR_XI_RESET_CAPTION, STR_XI_REALY_RESET, this, ResetCallback);
+				ShowQuery(CM_STR_XI_RESET_CAPTION, CM_STR_XI_REALY_RESET, this, ResetCallback);
 				break;
 			case EWW_PRIVATEP_MESSAGE:{
 				const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)this->watched_client);

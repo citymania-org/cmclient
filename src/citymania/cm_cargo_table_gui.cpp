@@ -79,7 +79,7 @@ struct CargosWindow : Window {
                 for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					size->width = std::max(GetStringBoundingBox(cs->name).width + icon_space, size->width);
 				}
-				size->width = std::max(GetStringBoundingBox(STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH).width, size->width);
+				size->width = std::max(GetStringBoundingBox(CM_STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH).width, size->width);
 				break;
 			}
 		}
@@ -125,10 +125,10 @@ struct CargosWindow : Window {
 			case WID_CT_HEADER_CARGO:
 				break;
 			case WID_CT_HEADER_AMOUNT:
-				DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_HEADER_AMOUNT, TC_FROMSTRING, SA_RIGHT);
+				DrawString(r.left, r.right, y, CM_STR_TOOLBAR_CARGOS_HEADER_AMOUNT, TC_FROMSTRING, SA_RIGHT);
 				break;
 			case WID_CT_HEADER_INCOME:
-				DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_HEADER_INCOME, TC_FROMSTRING, SA_RIGHT);
+				DrawString(r.left, r.right, y, CM_STR_TOOLBAR_CARGOS_HEADER_INCOME, TC_FROMSTRING, SA_RIGHT);
 				break;
 
 			case WID_CT_LIST: {
@@ -140,7 +140,7 @@ struct CargosWindow : Window {
 					           y + (line_height - (int)icon_size.height) / 2);
 
 					SetDParam(0, cs->name);
-					DrawString(r.left + icon_space, r.right, y + text_y_ofs, STR_TOOLBAR_CARGOS_NAME);
+					DrawString(r.left + icon_space, r.right, y + text_y_ofs, CM_STR_TOOLBAR_CARGOS_NAME);
 
 					y += line_height;
 				}
@@ -148,7 +148,7 @@ struct CargosWindow : Window {
 				GfxFillRect(r.left, y + 1, r.right, y + 1, PC_BLACK);
 				y += CT_LINESPACE;
 
-				StringID string_to_draw = STR_TOOLBAR_CARGOS_HEADER_TOTAL;
+				StringID string_to_draw = CM_STR_TOOLBAR_CARGOS_HEADER_TOTAL;
 				if (this->cargoPeriod != WID_CT_OPTION_CARGO_TOTAL) string_to_draw++;
 				DrawString(r.left, r.right, y, string_to_draw);
 				break;
@@ -159,14 +159,14 @@ struct CargosWindow : Window {
 					sum_cargo_amount += economy.delivered_cargo[cs->Index()];
 					SetDParam(0,  economy.delivered_cargo[cs->Index()]);
 
-					DrawString(r.left, r.right, y + text_y_ofs, STR_TOOLBAR_CARGOS_UNITS, TC_FROMSTRING, SA_RIGHT); //cargo amount in pcs
+					DrawString(r.left, r.right, y + text_y_ofs, CM_STR_TOOLBAR_CARGOS_UNITS, TC_FROMSTRING, SA_RIGHT); //cargo amount in pcs
 					y += line_height;
 				}
 
 				GfxFillRect(r.left, y + 1, r.right, y + 1, PC_BLACK);
 				y += CT_LINESPACE;
 				SetDParam(0, sum_cargo_amount);
-				DrawString(r.left, r.right, y, STR_TOOLBAR_CARGOS_UNITS_TOTAL, TC_FROMSTRING, SA_RIGHT);
+				DrawString(r.left, r.right, y, CM_STR_TOOLBAR_CARGOS_UNITS_TOTAL, TC_FROMSTRING, SA_RIGHT);
 				break;
 
 			case WID_CT_INCOME:
@@ -190,13 +190,13 @@ struct CargosWindow : Window {
 static const NWidgetPart _nested_cargos_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, WID_CT_CAPTION), SetDataTip(STR_TOOLBAR_CARGOS_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, WID_CT_CAPTION), SetDataTip(CM_STR_TOOLBAR_CARGOS_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 1),
 		NWidget(NWID_HORIZONTAL), SetPadding(WidgetDimensions::scaled.framerect.top, WidgetDimensions::scaled.framerect.right, WidgetDimensions::scaled.framerect.bottom, WidgetDimensions::scaled.framerect.left), SetPIP(0, 9, 0),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_CT_HEADER_CARGO), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_TOOLBAR_CARGOS_HEADER_CARGO, STR_TOOLBAR_CARGOS_HEADER_CARGO),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_CT_HEADER_CARGO), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(CM_STR_TOOLBAR_CARGOS_HEADER_CARGO, CM_STR_TOOLBAR_CARGOS_HEADER_CARGO),
 			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_AMOUNT), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_NULL, STR_NULL),
 			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_INCOME), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_NULL, STR_NULL),
 		EndContainer(),

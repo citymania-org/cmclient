@@ -114,6 +114,8 @@ def read_language_file(filename, strings_found, errors):
             name = line.split(":")[0].strip()
             strings_defined.append(name)
 
+            if name.startswith('CM_'):
+                name = name[3:]
             # If a string ends on _TINY or _SMALL, it can be the {TINY} variant.
             # Check for this by some fuzzy matching.
             if name.endswith(("_SMALL", "_TINY")):
@@ -177,7 +179,7 @@ def scan_source_files(path, strings_found):
                 output = fp.read()
 
         # Find all the string references.
-        matches = re.findall(r"[^A-Z_](STR_[A-Z0-9_]*)", output)
+        matches = re.findall(r"[^A-Z_]((?:CM_)?STR_[A-Z0-9_]*)", output)
         strings_found.update(matches)
 
 

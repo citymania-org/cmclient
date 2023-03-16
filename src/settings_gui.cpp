@@ -1780,7 +1780,7 @@ static SettingsContainer &GetSettingsTree()
 		SettingsPage *vehicles = main->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES));
 		{
 			/** Vehicle control page */
-			SettingsPage *veh_control = vehicles->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES_CTRL));
+			SettingsPage *veh_control = vehicles->Add(new SettingsPage(CM_STR_CONFIG_SETTING_VEHICLES_CTRL));
 			{
 				veh_control->Add(new SettingEntry("gui.new_nonstop"));
 				veh_control->Add(new SettingEntry("gui.cm_no_loading_on_transfer_order"));
@@ -1788,7 +1788,7 @@ static SettingsContainer &GetSettingsTree()
 			}
 
 			/** Order Shorcuts page */
-			SettingsPage *orders = veh_control->Add(new SettingsPage(STR_CONFIG_SETTING_ORDER_SHORTCUTS));
+			SettingsPage *orders = veh_control->Add(new SettingsPage(CM_STR_CONFIG_SETTING_ORDER_SHORTCUTS));
 			{
 				orders->Add(new SettingEntry("gui.cm_ctrl_order_mod"));
 				orders->Add(new SettingEntry("gui.cm_shift_order_mod"));

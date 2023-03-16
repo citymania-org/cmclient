@@ -618,7 +618,7 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
 
     std::ostringstream s;
     char buffer[DRAW_STRING_BUFFER];
-    GetString(buffer, STR_CM_STATION_BUILD_SUPPLIES, lastof(buffer));
+    GetString(buffer, CM_STR_STATION_BUILD_SUPPLIES, lastof(buffer));
     s << buffer;
     bool first = true;
     for (CargoID i = 0; i < NUM_CARGO; i++) {
@@ -633,7 +633,7 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
         first = false;
         SetDParam(0, i);
         SetDParam(1, production[i] >> 8);
-        // GetString(buffer, STR_CM_STATION_BUILD_SUPPLIES_CARGO, lastof(buffer));
+        // GetString(buffer, CM_STR_STATION_BUILD_SUPPLIES_CARGO, lastof(buffer));
         GetString(buffer, STR_JUST_CARGO, lastof(buffer));
         s << buffer;
     }

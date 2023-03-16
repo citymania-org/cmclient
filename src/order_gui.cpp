@@ -444,7 +444,7 @@ void DrawOrderString(const Vehicle *v, const Order *order, int order_index, int 
 	}
 	SetDParam(0, order_dist_sq);
 	SetDParam(1, order_dist_mh);
-	DrawString(middle, right, y, STR_ORDER_DIST, TC_WHITE, SA_RIGHT);
+	DrawString(middle, right, y, CM_STR_ORDER_DIST, TC_WHITE, SA_RIGHT);
 }
 
 /**

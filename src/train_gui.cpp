@@ -232,13 +232,13 @@ static void TrainDetailsInfoTab(const Vehicle *v, int left, int right, int y)
 		SetDParam(0, v->engine_type);
 		SetDParam(1, v->value);
 		if (_settings_client.gui.newgrf_developer_tools) SetDParam(2, v->index);  // CM
-		DrawString(left, right, y, _settings_client.gui.newgrf_developer_tools ? STR_CM_VEHICLE_DETAILS_TRAIN_WAGON_VALUE_WITH_ID : STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE);
+		DrawString(left, right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE_WITH_ID : STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE);
 	} else {
 		SetDParam(0, v->engine_type);
 		SetDParam(1, v->build_year);
 		SetDParam(2, v->value);
 		if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
-		DrawString(left, right, y, _settings_client.gui.newgrf_developer_tools ? STR_CM_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE_WITH_ID : STR_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE);
+		DrawString(left, right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE_WITH_ID : STR_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE);
 	}
 }
 

@@ -3655,7 +3655,7 @@ calc_heightdiff_single_direction:;
 			if (_settings_client.gui.measure_tooltip || _thd.select_proc == CM_DDSP_MEASURE) {
 				static const StringID measure_strings_area[] = {
 					STR_NULL, STR_NULL, STR_MEASURE_AREA, STR_MEASURE_AREA_HEIGHTDIFF,
-					STR_MEASURE_DIST_HEIGHTDIFF,
+					CM_STR_MEASURE_DIST_HEIGHTDIFF,
 				};
 
 				TileIndex t0 = TileVirtXY(sx, sy);

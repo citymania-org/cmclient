@@ -38,7 +38,7 @@ void DrawAircraftDetails(const Aircraft *v, const Rect &r)
 			SetDParam(1, u->build_year);
 			SetDParam(2, u->value);
 			if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
-			DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? STR_CM_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
+			DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
 			y += FONT_HEIGHT_NORMAL;
 
 			SetDParam(0, u->cargo_type);

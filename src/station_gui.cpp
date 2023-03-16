@@ -97,13 +97,13 @@ int DrawStationAuthorityText(int left, int right, int top) {
 
 	SetDParam(0, town ? town->index : INVALID_TOWN);
 	if (dist <= 10) {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, STR_CM_STATION_BUILD_TOWN_SMALL);
+		return DrawStringMultiLine(left, right, top, INT32_MAX, CM_STR_STATION_BUILD_TOWN_SMALL);
 	} else if (dist <= 15) {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, STR_CM_STATION_BUILD_TOWN_MEDIUM);
+		return DrawStringMultiLine(left, right, top, INT32_MAX, CM_STR_STATION_BUILD_TOWN_MEDIUM);
 	} else if (dist <= 20) {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, STR_CM_STATION_BUILD_TOWN_LARGE);
+		return DrawStringMultiLine(left, right, top, INT32_MAX, CM_STR_STATION_BUILD_TOWN_LARGE);
 	} else {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, STR_CM_STATION_BUILD_TOWN);
+		return DrawStringMultiLine(left, right, top, INT32_MAX, CM_STR_STATION_BUILD_TOWN);
 	}
 }
 
