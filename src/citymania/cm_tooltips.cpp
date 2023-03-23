@@ -3,6 +3,7 @@
 #include "cm_tooltips.hpp"
 
 #include "../company_base.h"
+#include "../debug.h"
 #include "../house.h"
 #include "../industry.h"
 #include "../newgrf_callbacks.h"
@@ -66,16 +67,17 @@ struct LandTooltipsWindow : public Window
     {
         uint icon_size = ScaleGUITrad(10);
         uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + WidgetDimensions::scaled.hsep_normal;
-        uint icons_width = icon_size * 3 + 20;
-        size->width = 200;
-        size->height = 6 + FONT_HEIGHT_NORMAL;
+        uint text_height = FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.hsep_normal;
+        uint icons_width = icon_size * 3 + WidgetDimensions::scaled.vsep_normal;
+        size->width = ScaleGUITrad(194);
+        size->height = FONT_HEIGHT_NORMAL;
         switch(this->tiletype) {
             case MP_HOUSE: {
                 const HouseSpec *hs = HouseSpec::Get((HouseID)this->objIndex);
                 if(hs == NULL) break;
                 SetDParam(0, hs->building_name);
-                size->width = GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_NAME).width;
-                size->height += line_height;
+                size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_NAME).width, size->width);
+                size->height += text_height;
                 SetDParam(0, hs->population);
                 size->width = std::max(size->width, GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_POPULATION).width);
                 break;
@@ -132,7 +134,7 @@ struct LandTooltipsWindow : public Window
         uint icon_size = ScaleGUITrad(10);
         uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + WidgetDimensions::scaled.hsep_normal;
         uint text_height = FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.hsep_normal;
-        uint icons_width = icon_size * 3 + 10;
+        uint icons_width = icon_size * 3 + WidgetDimensions::scaled.vsep_normal;
         uint text_ofs = (line_height - FONT_HEIGHT_NORMAL) >> 1;
         uint icon_ofs = (line_height - icon_size) >> 1;
 
@@ -141,8 +143,7 @@ struct LandTooltipsWindow : public Window
         GfxFillRect(r.left, r.top, r.left + WidgetDimensions::scaled.bevel.left - 1,  r.bottom, PC_BLACK);
         GfxFillRect(r.right - WidgetDimensions::scaled.bevel.right + 1, r.top, r.right, r.bottom, PC_BLACK);
 
-        auto ir = r.Shrink(WidgetDimensions::scaled.framerect).Shrink(WidgetDimensions::scaled.bevel);
-
+        auto ir = r.Shrink(WidgetDimensions::scaled.framerect).Shrink(WidgetDimensions::scaled.fullbevel);
         switch(this->tiletype) {
             case MP_HOUSE: {
                 const HouseSpec *hs = HouseSpec::Get((HouseID)this->objIndex);

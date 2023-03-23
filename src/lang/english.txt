@@ -5930,11 +5930,11 @@ CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_STATIONS_HELPTEXT       :Show tooltips w
 CM_STR_LAND_TOOLTIPS_HOUSE_NAME                                 :{LTBLUE}{STRING}
 CM_STR_LAND_TOOLTIPS_HOUSE_POPULATION                           :{BLACK}Population: {NUM}
 CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME                              :{LTBLUE}{INDUSTRY}
-CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO                             :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
+CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO                             :{WHITE}{STRING} {BLACK}{CARGO_SHORT} {YELLOW}{NUM}%
 CM_STR_LAND_TOOLTIPS_STATION_NAME                               :{LTBLUE}{STATION}
-CM_STR_LAND_TOOLTIPS_STATION_CARGO                              :{WHITE}{STRING}  {BLACK}{CARGO_SHORT} {YELLOW}{NUM} %
+CM_STR_LAND_TOOLTIPS_STATION_CARGO                              :{WHITE}{STRING} {BLACK}{CARGO_SHORT} {YELLOW}{NUM}%
 
-CM_STR_LAND_AREA_INFORMATION_POP                                   :{BLACK}Population: {LTBLUE}{NUM}
+CM_STR_LAND_AREA_INFORMATION_POP                                :{BLACK}Population: {LTBLUE}{NUM}
 
 CM_STR_CONFIG_SETTING_MODIFIER_FN                               :Additional function modifier key: {STRING2}
 CM_STR_CONFIG_SETTING_MODIFIER_FN_HELPTEXT                      :Modifier key for accessing additional functions.
