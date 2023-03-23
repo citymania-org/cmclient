@@ -13,6 +13,7 @@ namespace citymania {
 
 void ShowLandTooltips(TileIndex tile, Window *parent);
 bool ShowStationRatingTooltip(Window *parent, const Station *st, const CargoSpec *cs, TooltipCloseCondition close_cond);
+Window *FindHoverableWindowFromPt(int x, int y);
 
 } // namespace citymania
 

@@ -7,6 +7,7 @@
 #include "../industry.h"
 #include "../newgrf_callbacks.h"
 #include "../newgrf_cargo.h"
+#include "../progress.h"
 #include "../station_base.h"
 #include "../station_map.h"
 #include "../string_func.h"
@@ -32,6 +33,7 @@ static WindowDesc _land_tooltips_desc(
     0,
     _nested_land_tooltips_widgets, lengthof(_nested_land_tooltips_widgets)
 );
+
 
 struct LandTooltipsWindow : public Window
 {
@@ -503,5 +505,34 @@ bool ShowStationRatingTooltip(Window *parent, const Station *st, const CargoSpec
     return true;
 }
 
+/* copied from window.cpp */
+static bool MayBeShown(const Window *w)
+{
+    /* If we're not modal, everything is okay. */
+    if (!HasModalProgress()) return true;
+
+    switch (w->window_class) {
+        case WC_MAIN_WINDOW:    ///< The background, i.e. the game.
+        case WC_MODAL_PROGRESS: ///< The actual progress window.
+        case WC_CONFIRM_POPUP_QUERY: ///< The abort window.
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+Window *FindHoverableWindowFromPt(int x, int y)
+{
+    for (Window *w : Window::IterateFromFront()) {
+        if (MayBeShown(w) && IsInsideBS(x, w->left, w->width) && IsInsideBS(y, w->top, w->height)
+                && dynamic_cast<LandTooltipsWindow*>(w) == nullptr
+                && dynamic_cast<StationRatingTooltipWindow*>(w) == nullptr) {
+            return w;
+        }
+    }
+
+    return nullptr;
+}
 
 } // namespace citymania

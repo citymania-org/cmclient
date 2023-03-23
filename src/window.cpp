@@ -43,6 +43,7 @@
 
 #include "citymania/cm_client_list_gui.hpp"
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_tooltips.hpp"
 
 #include "safeguards.h"
 
@@ -1972,7 +1973,7 @@ static EventState HandleMouseDragDrop()
 /** Report position of the mouse to the underlying window. */
 static void HandleMouseOver()
 {
-	Window *w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
+	Window *w = citymania::FindHoverableWindowFromPt(_cursor.pos.x, _cursor.pos.y);
 
 	/* We changed window, put an OnMouseOver event to the last window */
 	if (_mouseover_last_w != nullptr && _mouseover_last_w != w) {
