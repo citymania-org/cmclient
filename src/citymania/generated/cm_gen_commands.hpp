@@ -47,9 +47,9 @@ namespace cmd {
 class CreateStoryPage: public Command {
 public:
     CompanyID company;
-    const std::string &text;
+    const std::string & text;
 
-    CreateStoryPage(CompanyID company, const std::string &text)
+    CreateStoryPage(CompanyID company, const std::string & text)
         :company{company}, text{text} {}
     ~CreateStoryPage() override {}
 
@@ -63,11 +63,11 @@ public:
     StoryPageID page_id;
     StoryPageElementType type;
     uint32 reference;
-    const std::string &text;
+    const std::string & text;
 
-    CreateStoryPageElement(StoryPageID page_id, StoryPageElementType type, uint32 reference, const std::string &text)
+    CreateStoryPageElement(StoryPageID page_id, StoryPageElementType type, uint32 reference, const std::string & text)
         :page_id{page_id}, type{type}, reference{reference}, text{text} {}
-    CreateStoryPageElement(TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32 reference, const std::string &text)
+    CreateStoryPageElement(TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32 reference, const std::string & text)
         :Command{tile}, page_id{page_id}, type{type}, reference{reference}, text{text} {}
     ~CreateStoryPageElement() override {}
 
@@ -80,11 +80,11 @@ class UpdateStoryPageElement: public Command {
 public:
     StoryPageElementID page_element_id;
     uint32 reference;
-    const std::string &text;
+    const std::string & text;
 
-    UpdateStoryPageElement(StoryPageElementID page_element_id, uint32 reference, const std::string &text)
+    UpdateStoryPageElement(StoryPageElementID page_element_id, uint32 reference, const std::string & text)
         :page_element_id{page_element_id}, reference{reference}, text{text} {}
-    UpdateStoryPageElement(TileIndex tile, StoryPageElementID page_element_id, uint32 reference, const std::string &text)
+    UpdateStoryPageElement(TileIndex tile, StoryPageElementID page_element_id, uint32 reference, const std::string & text)
         :Command{tile}, page_element_id{page_element_id}, reference{reference}, text{text} {}
     ~UpdateStoryPageElement() override {}
 
@@ -96,9 +96,9 @@ public:
 class SetStoryPageTitle: public Command {
 public:
     StoryPageID page_id;
-    const std::string &text;
+    const std::string & text;
 
-    SetStoryPageTitle(StoryPageID page_id, const std::string &text)
+    SetStoryPageTitle(StoryPageID page_id, const std::string & text)
         :page_id{page_id}, text{text} {}
     ~SetStoryPageTitle() override {}
 
@@ -229,9 +229,9 @@ public:
 class RenameWaypoint: public Command {
 public:
     StationID waypoint_id;
-    const std::string &text;
+    const std::string & text;
 
-    RenameWaypoint(StationID waypoint_id, const std::string &text)
+    RenameWaypoint(StationID waypoint_id, const std::string & text)
         :waypoint_id{waypoint_id}, text{text} {}
     ~RenameWaypoint() override {}
 
@@ -355,9 +355,9 @@ public:
 class RenameStation: public Command {
 public:
     StationID station_id;
-    const std::string &text;
+    const std::string & text;
 
-    RenameStation(StationID station_id, const std::string &text)
+    RenameStation(StationID station_id, const std::string & text)
         :station_id{station_id}, text{text} {}
     ~RenameStation() override {}
 
@@ -382,11 +382,11 @@ public:
 class CreateGoal: public Command {
 public:
     CompanyID company;
-    GoalType type;
-    GoalTypeID dest;
-    const std::string &text;
+    ::GoalType type;
+    ::GoalTypeID dest;
+    const std::string & text;
 
-    CreateGoal(CompanyID company, GoalType type, GoalTypeID dest, const std::string &text)
+    CreateGoal(CompanyID company, ::GoalType type, ::GoalTypeID dest, const std::string & text)
         :company{company}, type{type}, dest{dest}, text{text} {}
     ~CreateGoal() override {}
 
@@ -397,9 +397,9 @@ public:
 
 class RemoveGoal: public Command {
 public:
-    GoalID goal;
+    ::GoalID goal;
 
-    RemoveGoal(GoalID goal)
+    RemoveGoal(::GoalID goal)
         :goal{goal} {}
     ~RemoveGoal() override {}
 
@@ -410,10 +410,10 @@ public:
 
 class SetGoalText: public Command {
 public:
-    GoalID goal;
-    const std::string &text;
+    ::GoalID goal;
+    const std::string & text;
 
-    SetGoalText(GoalID goal, const std::string &text)
+    SetGoalText(::GoalID goal, const std::string & text)
         :goal{goal}, text{text} {}
     ~SetGoalText() override {}
 
@@ -424,10 +424,10 @@ public:
 
 class SetGoalProgress: public Command {
 public:
-    GoalID goal;
-    const std::string &text;
+    ::GoalID goal;
+    const std::string & text;
 
-    SetGoalProgress(GoalID goal, const std::string &text)
+    SetGoalProgress(::GoalID goal, const std::string & text)
         :goal{goal}, text{text} {}
     ~SetGoalProgress() override {}
 
@@ -438,10 +438,10 @@ public:
 
 class SetGoalCompleted: public Command {
 public:
-    GoalID goal;
+    ::GoalID goal;
     bool completed;
 
-    SetGoalCompleted(GoalID goal, bool completed)
+    SetGoalCompleted(::GoalID goal, bool completed)
         :goal{goal}, completed{completed} {}
     ~SetGoalCompleted() override {}
 
@@ -457,9 +457,9 @@ public:
     bool is_client;
     uint32 button_mask;
     GoalQuestionType type;
-    const std::string &text;
+    const std::string & text;
 
-    GoalQuestion(uint16 uniqueid, uint16 target, bool is_client, uint32 button_mask, GoalQuestionType type, const std::string &text)
+    GoalQuestion(uint16 uniqueid, uint16 target, bool is_client, uint32 button_mask, GoalQuestionType type, const std::string & text)
         :uniqueid{uniqueid}, target{target}, is_client{is_client}, button_mask{button_mask}, type{type}, text{text} {}
     ~GoalQuestion() override {}
 
@@ -484,10 +484,10 @@ public:
 
 class ChangeSetting: public Command {
 public:
-    const std::string &name;
+    const std::string & name;
     int32 value;
 
-    ChangeSetting(const std::string &name, int32 value)
+    ChangeSetting(const std::string & name, int32 value)
         :name{name}, value{value} {}
     ~ChangeSetting() override {}
 
@@ -498,10 +498,10 @@ public:
 
 class ChangeCompanySetting: public Command {
 public:
-    const std::string &name;
+    const std::string & name;
     int32 value;
 
-    ChangeCompanySetting(const std::string &name, int32 value)
+    ChangeCompanySetting(const std::string & name, int32 value)
         :name{name}, value{value} {}
     ~ChangeCompanySetting() override {}
 
@@ -516,9 +516,9 @@ public:
     NewsReferenceType reftype1;
     CompanyID company;
     uint32 reference;
-    const std::string &text;
+    const std::string & text;
 
-    CustomNewsItem(NewsType type, NewsReferenceType reftype1, CompanyID company, uint32 reference, const std::string &text)
+    CustomNewsItem(NewsType type, NewsReferenceType reftype1, CompanyID company, uint32 reference, const std::string & text)
         :type{type}, reftype1{reftype1}, company{company}, reference{reference}, text{text} {}
     ~CustomNewsItem() override {}
 
@@ -932,11 +932,11 @@ public:
 
 class CreateLeagueTable: public Command {
 public:
-    const std::string &title;
-    const std::string &header;
-    const std::string &footer;
+    const std::string & title;
+    const std::string & header;
+    const std::string & footer;
 
-    CreateLeagueTable(const std::string &title, const std::string &header, const std::string &footer)
+    CreateLeagueTable(const std::string & title, const std::string & header, const std::string & footer)
         :title{title}, header{header}, footer{footer} {}
     ~CreateLeagueTable() override {}
 
@@ -950,12 +950,12 @@ public:
     LeagueTableID table;
     int64 rating;
     CompanyID company;
-    const std::string &text;
-    const std::string &score;
+    const std::string & text;
+    const std::string & score;
     LinkType link_type;
     LinkTargetID link_target;
 
-    CreateLeagueTableElement(LeagueTableID table, int64 rating, CompanyID company, const std::string &text, const std::string &score, LinkType link_type, LinkTargetID link_target)
+    CreateLeagueTableElement(LeagueTableID table, int64 rating, CompanyID company, const std::string & text, const std::string & score, LinkType link_type, LinkTargetID link_target)
         :table{table}, rating{rating}, company{company}, text{text}, score{score}, link_type{link_type}, link_target{link_target} {}
     ~CreateLeagueTableElement() override {}
 
@@ -968,11 +968,11 @@ class UpdateLeagueTableElementData: public Command {
 public:
     LeagueTableElementID element;
     CompanyID company;
-    const std::string &text;
+    const std::string & text;
     LinkType link_type;
     LinkTargetID link_target;
 
-    UpdateLeagueTableElementData(LeagueTableElementID element, CompanyID company, const std::string &text, LinkType link_type, LinkTargetID link_target)
+    UpdateLeagueTableElementData(LeagueTableElementID element, CompanyID company, const std::string & text, LinkType link_type, LinkTargetID link_target)
         :element{element}, company{company}, text{text}, link_type{link_type}, link_target{link_target} {}
     ~UpdateLeagueTableElementData() override {}
 
@@ -985,9 +985,9 @@ class UpdateLeagueTableElementScore: public Command {
 public:
     LeagueTableElementID element;
     int64 rating;
-    const std::string &score;
+    const std::string & score;
 
-    UpdateLeagueTableElementScore(LeagueTableElementID element, int64 rating, const std::string &score)
+    UpdateLeagueTableElementScore(LeagueTableElementID element, int64 rating, const std::string & score)
         :element{element}, rating{rating}, score{score} {}
     ~UpdateLeagueTableElementScore() override {}
 
@@ -1011,11 +1011,11 @@ public:
 
 class PlaceSign: public Command {
 public:
-    const std::string &text;
+    const std::string & text;
 
-    PlaceSign(const std::string &text)
+    PlaceSign(const std::string & text)
         :text{text} {}
-    PlaceSign(TileIndex tile, const std::string &text)
+    PlaceSign(TileIndex tile, const std::string & text)
         :Command{tile}, text{text} {}
     ~PlaceSign() override {}
 
@@ -1027,9 +1027,9 @@ public:
 class RenameSign: public Command {
 public:
     SignID sign_id;
-    const std::string &text;
+    const std::string & text;
 
-    RenameSign(SignID sign_id, const std::string &text)
+    RenameSign(SignID sign_id, const std::string & text)
         :sign_id{sign_id}, text{text} {}
     ~RenameSign() override {}
 
@@ -1094,9 +1094,9 @@ class SendVehicleToDepot: public Command {
 public:
     VehicleID veh_id;
     DepotCommand depot_cmd;
-    const VehicleListIdentifier &vli;
+    const VehicleListIdentifier & vli;
 
-    SendVehicleToDepot(VehicleID veh_id, DepotCommand depot_cmd, const VehicleListIdentifier &vli)
+    SendVehicleToDepot(VehicleID veh_id, DepotCommand depot_cmd, const VehicleListIdentifier & vli)
         :veh_id{veh_id}, depot_cmd{depot_cmd}, vli{vli} {}
     ~SendVehicleToDepot() override {}
 
@@ -1124,9 +1124,9 @@ public:
 class RenameVehicle: public Command {
 public:
     VehicleID veh_id;
-    const std::string &text;
+    const std::string & text;
 
-    RenameVehicle(VehicleID veh_id, const std::string &text)
+    RenameVehicle(VehicleID veh_id, const std::string & text)
         :veh_id{veh_id}, text{text} {}
     ~RenameVehicle() override {}
 
@@ -1169,11 +1169,11 @@ class MassStartStopVehicle: public Command {
 public:
     bool do_start;
     bool vehicle_list_window;
-    const VehicleListIdentifier &vli;
+    const VehicleListIdentifier & vli;
 
-    MassStartStopVehicle(bool do_start, bool vehicle_list_window, const VehicleListIdentifier &vli)
+    MassStartStopVehicle(bool do_start, bool vehicle_list_window, const VehicleListIdentifier & vli)
         :do_start{do_start}, vehicle_list_window{vehicle_list_window}, vli{vli} {}
-    MassStartStopVehicle(TileIndex tile, bool do_start, bool vehicle_list_window, const VehicleListIdentifier &vli)
+    MassStartStopVehicle(TileIndex tile, bool do_start, bool vehicle_list_window, const VehicleListIdentifier & vli)
         :Command{tile}, do_start{do_start}, vehicle_list_window{vehicle_list_window}, vli{vli} {}
     ~MassStartStopVehicle() override {}
 
@@ -1248,9 +1248,9 @@ public:
 class RenameDepot: public Command {
 public:
     DepotID depot_id;
-    const std::string &text;
+    const std::string & text;
 
-    RenameDepot(DepotID depot_id, const std::string &text)
+    RenameDepot(DepotID depot_id, const std::string & text)
         :depot_id{depot_id}, text{text} {}
     ~RenameDepot() override {}
 
@@ -1469,9 +1469,9 @@ public:
 
 class RenameCompany: public Command {
 public:
-    const std::string &text;
+    const std::string & text;
 
-    RenameCompany(const std::string &text)
+    RenameCompany(const std::string & text)
         :text{text} {}
     ~RenameCompany() override {}
 
@@ -1482,9 +1482,9 @@ public:
 
 class RenamePresident: public Command {
 public:
-    const std::string &text;
+    const std::string & text;
 
-    RenamePresident(const std::string &text)
+    RenamePresident(const std::string & text)
         :text{text} {}
     ~RenamePresident() override {}
 
@@ -1557,11 +1557,11 @@ public:
     TownLayout layout;
     bool random_location;
     uint32 townnameparts;
-    const std::string &text;
+    const std::string & text;
 
-    FoundTown(TownSize size, bool city, TownLayout layout, bool random_location, uint32 townnameparts, const std::string &text)
+    FoundTown(TownSize size, bool city, TownLayout layout, bool random_location, uint32 townnameparts, const std::string & text)
         :size{size}, city{city}, layout{layout}, random_location{random_location}, townnameparts{townnameparts}, text{text} {}
-    FoundTown(TileIndex tile, TownSize size, bool city, TownLayout layout, bool random_location, uint32 townnameparts, const std::string &text)
+    FoundTown(TileIndex tile, TownSize size, bool city, TownLayout layout, bool random_location, uint32 townnameparts, const std::string & text)
         :Command{tile}, size{size}, city{city}, layout{layout}, random_location{random_location}, townnameparts{townnameparts}, text{text} {}
     ~FoundTown() override {}
 
@@ -1573,9 +1573,9 @@ public:
 class RenameTown: public Command {
 public:
     TownID town_id;
-    const std::string &text;
+    const std::string & text;
 
-    RenameTown(TownID town_id, const std::string &text)
+    RenameTown(TownID town_id, const std::string & text)
         :town_id{town_id}, text{text} {}
     ~RenameTown() override {}
 
@@ -1645,9 +1645,9 @@ public:
 class TownSetText: public Command {
 public:
     TownID town_id;
-    const std::string &text;
+    const std::string & text;
 
-    TownSetText(TownID town_id, const std::string &text)
+    TownSetText(TownID town_id, const std::string & text)
         :town_id{town_id}, text{text} {}
     ~TownSetText() override {}
 
@@ -1720,9 +1720,9 @@ public:
     IndustryAction action;
     IndustryControlFlags ctlflags;
     Owner company_id;
-    const std::string &text;
+    const std::string & text;
 
-    IndustryCtrl(IndustryID ind_id, IndustryAction action, IndustryControlFlags ctlflags, Owner company_id, const std::string &text)
+    IndustryCtrl(IndustryID ind_id, IndustryAction action, IndustryControlFlags ctlflags, Owner company_id, const std::string & text)
         :ind_id{ind_id}, action{action}, ctlflags{ctlflags}, company_id{company_id}, text{text} {}
     ~IndustryCtrl() override {}
 
@@ -1779,9 +1779,9 @@ class InsertOrder: public Command {
 public:
     VehicleID veh;
     VehicleOrderID sel_ord;
-    const Order &new_order;
+    const Order & new_order;
 
-    InsertOrder(VehicleID veh, VehicleOrderID sel_ord, const Order &new_order)
+    InsertOrder(VehicleID veh, VehicleOrderID sel_ord, const Order & new_order)
         :veh{veh}, sel_ord{sel_ord}, new_order{new_order} {}
     ~InsertOrder() override {}
 
@@ -1953,9 +1953,9 @@ public:
 class RenameEngine: public Command {
 public:
     EngineID engine_id;
-    const std::string &text;
+    const std::string & text;
 
-    RenameEngine(EngineID engine_id, const std::string &text)
+    RenameEngine(EngineID engine_id, const std::string & text)
         :engine_id{engine_id}, text{text} {}
     ~RenameEngine() override {}
 
@@ -2031,9 +2031,9 @@ public:
     AlterGroupMode mode;
     GroupID group_id;
     GroupID parent_id;
-    const std::string &text;
+    const std::string & text;
 
-    AlterGroup(AlterGroupMode mode, GroupID group_id, GroupID parent_id, const std::string &text)
+    AlterGroup(AlterGroupMode mode, GroupID group_id, GroupID parent_id, const std::string & text)
         :mode{mode}, group_id{group_id}, parent_id{parent_id}, text{text} {}
     ~AlterGroup() override {}
 

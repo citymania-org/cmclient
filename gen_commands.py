@@ -1,14 +1,16 @@
 import glob
+import json
 import re
 from pathlib import Path
 from pprint import pprint
 
 RX_COMMAND = re.compile(r'(?P<returns>CommandCost|std::tuple<CommandCost, [^>]*>) (?P<name>Cmd\w*)\((?P<args>[^)]*)\);')
-RX_DEF_TRAIT = re.compile(r'DEF_CMD_TRAIT\((?P<constant>\w+),\s+(?P<function>\w+),\s+[^,]*,\s+(?P<category>\w+)\)')
+RX_DEF_TRAIT = re.compile(r'DEF_CMD_TRAIT\((?P<constant>\w+),\s+(?P<function>\w+),\s+(?P<flags>[^,]*),\s+(?P<category>\w+)\)')
 RX_ARG = re.compile(r'(?P<type>(:?const |)[\w:]* &?)(?P<name>\w*)')
 RX_CALLBACK = re.compile(r'void\s+(?P<name>Cc\w+)\(Commands')
 RX_CALLBACK_REF = re.compile(r'CommandCallback\s+(?P<name>Cc\w+);')
 RX_CAMEL_TO_SNAKE = re.compile(r'(?<!^)(?=[A-Z])')
+RX_CMD_CONSTANT = re.compile(r'CMD_[\w_]+')
 
 FILES = [
     'src/misc_cmd.h',
@@ -23,18 +25,84 @@ FILES = [
 
 BASE_DIR = Path(__file__).parent
 OUTPUT = BASE_DIR / 'src/citymania/generated/cm_gen_commands'
+GLOBAL_TYPES = set(('GoalType', 'GoalTypeID', 'GoalID'))
 
+TYPE_CONVERT = {
+    'const std::string &': 'std::string',
+}
+
+AREA_CODE = {
+    ('CMD_BUILD_RAIL_STATION',): (
+        'if (this->axis == AXIS_X) return CommandArea(this->tile, this->plat_len, this->numtracks);\n'
+        'return CommandArea(this->tile, this->numtracks, this->plat_len);\n'
+    ),
+    ('CMD_BUILD_AIRPORT',): (
+        'const AirportSpec *as = AirportSpec::Get(this->airport_type);\n'
+        'if (!as->IsAvailable()) return CommandArea(this->tile);\n'
+        'return CommandArea(this->tile, as->size_x, as->size_y);\n'
+    ),
+    ('CMD_BUILD_ROAD_STOP',):
+        'return CommandArea(this->tile, this->width, this->length);\n',
+    #TODO diagonal areas
+    (
+        'CMD_PLANT_TREE',
+        'CMD_BUILD_RAILROAD_TRACK',
+        'CMD_REMOVE_RAILROAD_TRACK',
+        'CMD_BUILD_LONG_ROAD',
+        'CMD_REMOVE_LONG_ROAD',
+        'CMD_CLEAR_AREA',
+        'CMD_BUILD_CANAL',
+        'CMD_LEVEL_LAND',
+        'CMD_BUILD_BRIDGE',
+    ): 'return CommandArea(this->start_tile, this->tile);\n',
+    (
+        'CMD_BUILD_BRIDGE',
+    ): 'return CommandArea(this->tile_start, this->tile);\n',
+    (
+        'CMD_BUILD_SINGLE_RAIL',
+        'CMD_BUILD_TRAIN_DEPOT',
+        'CMD_BUILD_BUOY',
+        'CMD_BUILD_ROAD',
+        'CMD_BUILD_ROAD_DEPOT',
+        'CMD_PLACE_SIGN',
+        'CMD_LANDSCAPE_CLEAR',
+        'CMD_TERRAFORM_LAND',
+        'CMD_FOUND_TOWN',  # TODO
+        'CMD_BUILD_DOCK',  # TODO
+        'CMD_BUILD_SHIP_DEPOT',  # TODO
+        'CMD_BUILD_LOCK',  # TODO
+        'CMD_BUILD_OBJECT',  # TODO
+        'CMD_BUILD_INDUSTRY',  # TODO
+        'CMD_BUILD_TUNNEL',  # TODO find other end
+    ): 'return CommandArea(this->tile);\n'
+}
+
+DEFAULT_AREA_CODE = 'return CommandArea();\n'
 
 def parse_commands():
     res = []
     includes = []
     callbacks = []
+
+    command_ids = {}
+    cid = 0
+    for l in open(BASE_DIR / 'src' / 'command_type.h'):
+        cl = RX_CMD_CONSTANT.findall(l)
+        if not cl:
+            continue
+        cmd = cl[0]
+        if cmd == 'CMD_END':
+            break
+        command_ids[cmd] = cid
+        cid += 1
+
     for f in glob.glob(str(BASE_DIR / 'src' / '*_cmd.h')):
+    # for f in glob.glob(str(BASE_DIR / 'src' / 'group_cmd.h')):
         includes.append(Path(f).name)
         data = open(f).read()
         traits = {}
-        for constant, name, category in RX_DEF_TRAIT.findall(data):
-            traits[name] = constant, category
+        for constant, name, flags, category in RX_DEF_TRAIT.findall(data):
+            traits[name] = constant, flags, category
         callbacks.extend(RX_CALLBACK.findall(data))
         callbacks.extend(RX_CALLBACK_REF.findall(data))
         for returns, name, args_str in RX_COMMAND.findall(data):
@@ -43,24 +111,51 @@ def parse_commands():
                 print(f'Not a command: {name}')
                 continue
             print(f, name, end=' ', flush=True)
-            constant, category = trait
+            constant, flags, category = trait
+            cid = command_ids[constant]
             if returns.startswith('std::tuple'):
-                ret_type = returns[24: -1]
+                result_type = returns[24: -1]
+                if result_type in GLOBAL_TYPES:
+                    result_type = '::' + result_type
             else:
-                ret_type = None
+                result_type = None
             args = [RX_ARG.fullmatch(x).group('type', 'name') for x in args_str.split(', ')]
             args = args[1:]  # flags
             first_tile_arg = (args[0][0].strip() == 'TileIndex')
             if first_tile_arg:
                 args = args[1:]
-            print(constant, category, args)
+            for i, (at, an) in enumerate(args):
+                at = at.strip()
+                if at in GLOBAL_TYPES:
+                    at = '::' + at
+                args[i] = (at, an)
+            print(cid, constant, category, args)
+            callback_args = 'CommandCost' if result_type is None else f'CommandCost, {result_type}'
+            callback_type = f'std::function<void ({callback_args})>'
+            area_code = DEFAULT_AREA_CODE
+            for cl, cc in AREA_CODE.items():
+                if constant in cl:
+                    area_code = cc
+
+            default_run_as = 'INVALID_COMPANY'
+            if 'CMD_DEITY' in flags:
+                default_run_as = 'OWNER_DEITY'
+            if 'CMD_SERVER' in flags or 'CMD_SPECTATOR' in flags:
+                default_run_as = 'COMPANY_SPECTATOR'  # same as INVALID though
+
             res.append({
                 'name': name[3:],
+                'id': cid,
                 'constant': constant,
                 'category': category,
+                'flags': flags,
+                'default_run_as': default_run_as,
                 'args': args,
                 'first_tile_arg': first_tile_arg,
-                'returns': ret_type,
+                'returns': returns,
+                'result_type': result_type,
+                'callback_type': callback_type,
+                'area_code': area_code,
             })
     return res, includes, callbacks
 
@@ -128,6 +223,11 @@ inline constexpr auto MakeDispatchTable() noexcept
 
 def run():
     commands, includes, callbacks = parse_commands()
+    json.dump({
+        'commands': commands,
+        'includes': includes,
+        'callbacks': callbacks,
+    }, open('commands.json', 'w'))
     with open(OUTPUT.with_suffix('.hpp'), 'w') as f:
         f.write(
             '// This file is generated by gen_commands.py, do not edit\n\n'
@@ -144,14 +244,14 @@ def run():
         )
         for cmd in commands:
             name = cmd['name']
-            args_list = ', '.join(f'{at}{an}' for at, an in cmd['args'])
+            args_list = ', '.join(f'{at} {an}' for at, an in cmd['args'])
             args_init = ', '.join(f'{an}{{{an}}}' for _, an in cmd['args'])
             f.write(
                 f'class {name}: public Command {{\n'
                 f'public:\n'
             )
             for at, an in cmd['args']:
-                f.write(f'    {at}{an};\n')
+                f.write(f'    {at} {an};\n')
             f.write(f'\n')
             if args_init:
                 f.write(
@@ -220,7 +320,7 @@ def run():
                 else:
                     test_args_list = f'this->tile'
 
-            cost_getter = '' if cmd['returns'] is None else 'std::get<0>'
+            cost_getter = '' if cmd['result_type'] is None else 'std::get<0>'
             sep_args_list = sep_args_type_list = sep_this_args_list = ''
             if args_list:
                 sep_args_list = ', ' + args_list

@@ -133,7 +133,6 @@ void load_replay_commands(const std::string &filename, std::function<void(const 
     lzma.next_out = &data[0];
     lzma.avail_out = data.size();
     do {
-        fprintf(stderr, "LZMA in %d\n", (int)lzma.avail_in);
         if (lzma.avail_in == 0 && !std::feof(f)) {
             lzma.next_in = inbuf;
             lzma.avail_in = std::fread((char *)inbuf, 1, sizeof(inbuf), f);
@@ -172,8 +171,7 @@ void load_replay_commands(const std::string &filename, std::function<void(const 
         return;
     }
 
-    // auto openttd_version = bs.ReadBytes(4);
-    auto openttd_version = _openttd_newgrf_version;
+    auto openttd_version = bs.ReadBytes(4);
 
     if (_openttd_newgrf_version != openttd_version) {
         error_func(fmt::format("OpenTTD version doesn't match: current {}, log file {}",
