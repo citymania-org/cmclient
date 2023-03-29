@@ -45,6 +45,12 @@ void BuildLandLegend();
 void BuildOwnerLegend();
 
 
+
+//struct Mi
+// inline uint16 Kdtree_MinimapSignXYFunc(TownID tid, int dim) { return (dim == 0) ? TileX(Town::Get(tid)->xy) : TileY(Town::Get(tid)->xy); }
+// typedef Kdtree<TownID, decltype(&Kdtree_TownXYFunc), uint16, int> TownKdtree;
+
+
 class NWidgetSmallmapDisplay;
 
 /** Class managing the smallmap window. */
@@ -178,6 +184,7 @@ protected:
     void DrawMapIndicators() const;
     void DrawSmallMapColumn(void *dst, uint xc, uint yc, int pitch, int reps, int start_pos, int end_pos, int y, int end_y, Blitter *blitter) const;
     void DrawVehicles(const DrawPixelInfo *dpi, Blitter *blitter) const;
+    void DrawIndustryProduction(const DrawPixelInfo *dpi) const;
     void DrawTowns(const DrawPixelInfo *dpi) const;
     void DrawSmallMap(DrawPixelInfo *dpi) const;
 

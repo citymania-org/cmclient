@@ -2520,6 +2520,26 @@ DEF_CONSOLE_CMD(ConDumpInfo)
 	return false;
 }
 
+DEF_CONSOLE_CMD(ConGfxDebug)
+{
+	if (argc < 1 || argc > 2) {
+		IConsolePrint(CC_HELP, "Debug: gfx flags.  Usage: 'gfx_debug [<flags>]'");
+		IConsolePrint(CC_HELP, "  1: GDF_SHOW_WINDOW_DIRTY");
+		IConsolePrint(CC_HELP, "  2: GDF_SHOW_WIDGET_DIRTY");
+		IConsolePrint(CC_HELP, "  4: GDF_SHOW_RECT_DIRTY");
+		return true;
+	}
+
+	extern uint32 _gfx_debug_flags;
+	if (argc == 1) {
+		IConsolePrint(CC_DEFAULT, "Gfx debug flags: {:X}", _gfx_debug_flags);
+	} else {
+		_gfx_debug_flags = strtoul(argv[1], nullptr, 16);
+	}
+
+	return true;
+}
+
 /*******************************
  * console command registration
  *******************************/
@@ -2671,4 +2691,6 @@ void IConsoleStdLibRegister()
 	IConsole::CmdRegister("cmstartrecord", citymania::ConStartRecord);
 	IConsole::CmdRegister("cmstoprecord", citymania::ConStopRecord);
 	IConsole::CmdRegister("cmgamestats", citymania::ConGameStats);
+
+	IConsole::CmdRegister("gfx_debug", ConGfxDebug);
 }

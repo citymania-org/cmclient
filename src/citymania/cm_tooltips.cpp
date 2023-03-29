@@ -507,21 +507,21 @@ bool ShowStationRatingTooltip(Window *parent, const Station *st, const CargoSpec
 }
 
 /* copied from window.cpp */
-static bool MayBeShown(const Window *w)
-{
-    /* If we're not modal, everything is okay. */
-    if (!HasModalProgress()) return true;
+// static bool MayBeShown(const Window *w)
+// {
+//     /* If we're not modal, everything is okay. */
+//     if (!HasModalProgress()) return true;
 
-    switch (w->window_class) {
-        case WC_MAIN_WINDOW:    ///< The background, i.e. the game.
-        case WC_MODAL_PROGRESS: ///< The actual progress window.
-        case WC_CONFIRM_POPUP_QUERY: ///< The abort window.
-            return true;
+//     switch (w->window_class) {
+//         case WC_MAIN_WINDOW:    ///< The background, i.e. the game.
+//         case WC_MODAL_PROGRESS: ///< The actual progress window.
+//         case WC_CONFIRM_POPUP_QUERY: ///< The abort window.
+//             return true;
 
-        default:
-            return false;
-    }
-}
+//         default:
+//             return false;
+//     }
+// }
 
 Window *FindHoverableWindowFromPt(int x, int y)
 {

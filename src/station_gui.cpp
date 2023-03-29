@@ -152,7 +152,7 @@ static void FindStationsAroundSelection()
  * If it is needed actually make the window for redrawing.
  * @param w the window to check.
  */
-void CheckRedrawStationCoverage(const Window *w)
+void CheckRedrawStationCoverage(Window *w)
 {
 	/* CityMania code begin */
 	if (citymania::UseImprovedStationJoin()) {
