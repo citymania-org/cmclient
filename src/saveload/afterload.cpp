@@ -64,6 +64,7 @@
 #include "../table/control_codes.h"
 
 #include "../citymania/cm_highlight.hpp"
+#include "../citymania/cm_minimap.hpp"
 
 #include "saveload_internal.h"
 
@@ -3258,6 +3259,7 @@ bool AfterLoadGame()
 	AfterLoadLinkGraphs();
 	AfterLoadFindBTProCBInfo();
 	citymania::InitializeZoningMap();
+	citymania::minimap_init_industries();
 
 	if ((!_networking || _network_server ) && _settings_client.gui.cm_pause_after_load) _pause_mode = PM_PAUSED_NORMAL;
 

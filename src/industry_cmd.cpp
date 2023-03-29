@@ -50,6 +50,7 @@
 #include "table/build_industry.h"
 
 #include "citymania/cm_highlight.hpp"
+#include "citymania/cm_minimap.hpp"
 
 #include "safeguards.h"
 
@@ -150,6 +151,8 @@ Industry::~Industry()
 	 * This means that we do not have to clear tiles either.
 	 * Also we must not decrement industry counts in that case. */
 	if (this->location.w == 0) return;
+
+	citymania::minimap_remove_industry(this);
 
 	const bool has_neutral_station = this->neutral_station != nullptr;
 
@@ -1931,6 +1934,8 @@ static void DoCreateNewIndustry(Industry *i, TileIndex tile, IndustryType type, 
 	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_FORCE_REBUILD);
 
 	if (!_generating_world) PopulateStationsNearby(i);
+
+	citymania::minimap_add_industry(i);
 	citymania::UpdateIndustryHighlight();
 }
 

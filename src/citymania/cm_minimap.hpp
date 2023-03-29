@@ -44,11 +44,9 @@ void ShowSmallMap();
 void BuildLandLegend();
 void BuildOwnerLegend();
 
-
-
-//struct Mi
-// inline uint16 Kdtree_MinimapSignXYFunc(TownID tid, int dim) { return (dim == 0) ? TileX(Town::Get(tid)->xy) : TileY(Town::Get(tid)->xy); }
-// typedef Kdtree<TownID, decltype(&Kdtree_TownXYFunc), uint16, int> TownKdtree;
+void minimap_add_industry(const Industry *ind);
+void minimap_remove_industry(const Industry *ind);
+void minimap_init_industries();
 
 
 class NWidgetSmallmapDisplay;
@@ -108,6 +106,7 @@ protected:
         Dimension max_sign;
         std::vector<std::tuple<const Town *, uint32, uint>> towns;
     } town_cache;
+    mutable Dimension industry_max_sign;
 
     static void BreakIndustryChainLink();
     Point SmallmapRemapCoords(int x, int y) const;
