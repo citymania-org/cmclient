@@ -770,8 +770,8 @@ inline Point SmallMapWindow::PixelToTile(int px, int py) const
 void SmallMapWindow::SetZoomLevel(ZoomLevelChange change, const Point *zoom_pt)
 {
 	// static const int zoomlevels[] = {1, 2, 4, 6, 8}; // Available zoom levels. Bigger number means more zoom-out (further away).
-	static const int tile_zoomlevels[] = {1, 1, 1, 2, 4, 6, 8}; // Available zoom levels. Bigger number means more zoom-out (further away).
-	static const int ui_zoomlevels[] = {4, 2, 1, 1, 1, 1, 1}; // Available zoom levels. Bigger number means more zoom-out (further away).
+	static const int tile_zoomlevels[] = {1, 1, 1, 1, 1, 2, 4, 6, 8}; // Available zoom levels. Bigger number means more zoom-out (further away).
+	static const int ui_zoomlevels[] = {16, 8, 4, 2, 1, 1, 1, 1, 1}; // Available zoom levels. Bigger number means more zoom-out (further away).
 	static const int MIN_ZOOM_INDEX = 0;
 	static const int MAX_ZOOM_INDEX = lengthof(tile_zoomlevels) - 1;
 
@@ -780,7 +780,7 @@ void SmallMapWindow::SetZoomLevel(ZoomLevelChange change, const Point *zoom_pt)
 	switch (change) {
 		case ZLC_INITIALIZE:
 			cur_index = - 1; // Definitely different from new_index.
-			new_index = Clamp((int)ZOOM_LVL_GUI, MIN_ZOOM_INDEX, MAX_ZOOM_INDEX);
+			new_index = Clamp((int)ZOOM_LVL_GUI + 2, MIN_ZOOM_INDEX, MAX_ZOOM_INDEX);
 			tile.x = tile.y = 0;
 			break;
 
@@ -1162,7 +1162,7 @@ void SmallMapWindow::DrawSmallMap(DrawPixelInfo *dpi) const
 	/* Draw vehicles */
 	if (this->map_type == SMT_CONTOUR || this->map_type == SMT_VEHICLES) this->DrawVehicles(dpi, blitter);
 
-	if (this->ui_zoom == 4) this->DrawIndustryProduction(dpi);
+	if (this->ui_zoom >= 4) this->DrawIndustryProduction(dpi);
 
 	/* Draw link stat overlay */
 	if (this->map_type == SMT_LINKSTATS) this->overlay->Draw(dpi);
