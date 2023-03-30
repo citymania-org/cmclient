@@ -6058,3 +6058,4 @@ CM_STR_VIEWPORT_TOWN_TINY_EXCELLENT_RATING                      :{TINY_FONT}{GRE
 
 CM_STR_CARGO_WITH_ID                                            :{STRING} {SILVER}#{NUM}
 CM_STR_INDUSTRY_TYPE_WITH_ID                                    :{STRING} {SILVER}#{NUM}
+CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania patchpack settings

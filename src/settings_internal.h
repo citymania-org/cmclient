@@ -28,6 +28,7 @@ enum SettingFlag : uint16 {
 	SF_NOT_IN_SAVE             = 1 << 10, ///< Do not save with savegame, basically client-based.
 	SF_NOT_IN_CONFIG           = 1 << 11, ///< Do not save to config file.
 	SF_NO_NETWORK_SYNC         = 1 << 12, ///< Do not synchronize over network (but it is saved if SF_NOT_IN_SAVE is not set).
+	CM_SF_CITYMANIA            = 1 << 13, ///< Added by CityMania patchpack.
 };
 DECLARE_ENUM_AS_BIT_SET(SettingFlag)
 
@@ -64,6 +65,8 @@ enum SettingType {
 	ST_CLIENT,    ///< Client setting.
 
 	ST_ALL,       ///< Used in setting filter to match all types.
+
+	CM_ST_CITYMANIA, ///< CityMania settings.
 };
 
 struct IniItem;
