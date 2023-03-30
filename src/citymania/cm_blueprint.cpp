@@ -208,7 +208,7 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
     std::multimap<TileIndex, ObjectTileHighlight> res;
     if (tile == INVALID_TILE) return res;
     auto add_tile = [&res](TileIndex tile, const ObjectTileHighlight &ohl) {
-        if (tile == INVALID_TILE) return;
+        if (tile >= MapSize()) return;
         res.emplace(tile, ohl);
     };
 
