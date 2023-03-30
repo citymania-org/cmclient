@@ -83,9 +83,6 @@ int _gui_scale_cfg;                        ///< GUI scale in config.
 static const byte *_colour_remap_ptr;
 static byte _string_colourremap[3]; ///< Recoloursprite for stringdrawing. The grf loader ensures that #ST_FONT sprites only use colours 0 to 2.
 
-static const uint DIRTY_BLOCK_HEIGHT   = 8;
-static const uint DIRTY_BLOCK_WIDTH    = 64;
-
 extern uint _dirty_block_colour;
 static bool _whole_screen_dirty = false;
 bool _gfx_draw_active = false;
@@ -1687,7 +1684,7 @@ static void DrawDirtyViewport(uint occlusion, int left, int top, int right, int 
 		ViewportDrawChk(_dirty_viewport, left, top, right, bottom);
 
 		if (_dirty_viewport_disp_flags & (ND_SHADE_GREY | ND_SHADE_DIMMED)) {
-			GfxFillRect(left, top, right, bottom,
+			GfxFillRect(left, top, right - 1, bottom - 1,
 					(_dirty_viewport_disp_flags & ND_SHADE_DIMMED) ? PALETTE_TO_TRANSPARENT : PALETTE_NEWSPAPER, FILLRECT_RECOLOUR);
 		}
 		VideoDriver::GetInstance()->MakeDirty(left, top, right - left, bottom - top);

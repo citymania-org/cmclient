@@ -279,8 +279,8 @@ void InitializeWindowViewport(Window *w, int x, int y,
 
 	vp->virtual_left = 0;
 	vp->virtual_top = 0;
-	vp->virtual_width = ScaleByZoom(width, zoom);
-	vp->virtual_height = ScaleByZoom(height, zoom);
+	vp->virtual_width = ScaleByZoom(width, vp->zoom);
+	vp->virtual_height = ScaleByZoom(height, vp->zoom);
 
 	UpdateViewportSizeZoom(vp);
 
