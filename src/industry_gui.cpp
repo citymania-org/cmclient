@@ -688,9 +688,10 @@ public:
 				if (y < this->count) { // Is it within the boundaries of available data?
 					this->selected_index = y;
 					_cm_funding_type = this->selected_type = this->index[y];
-					_cm_funding_layout = 0;
-					citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 					const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? nullptr : GetIndustrySpec(this->selected_type);
+
+					_cm_funding_layout = (indsp == nullptr ? 0 : InteractiveRandomRange((uint32)indsp->layouts.size()));
+					citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 
 					this->SetDirty();
 
@@ -749,8 +750,8 @@ public:
 		/* We do not need to protect ourselves against "Random Many Industries" in this mode */
 		const IndustrySpec *indsp = GetIndustrySpec(this->selected_type);
 		uint32 seed = InteractiveRandom();
-		uint32 layout_index = InteractiveRandomRange((uint32)indsp->layouts.size());
-		if (_cm_funding_layout > 0) layout_index = _cm_funding_layout - 1;
+		// uint32 layout_index = InteractiveRandomRange((uint32)indsp->layouts.size());
+		uint32 layout_index = _cm_funding_layout;
 
 		if (_game_mode == GM_EDITOR) {
 			/* Show error if no town exists at all */
@@ -769,6 +770,7 @@ public:
 			cur_company.Restore();
 			old_generating_world.Restore();
 			_ignore_restrictions = false;
+			_cm_funding_layout = InteractiveRandomRange((uint32)indsp->layouts.size());
 		} else {
 			success = Command<CMD_BUILD_INDUSTRY>::Post(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY, tile, this->selected_type, layout_index, false, seed);
 		}
@@ -830,7 +832,7 @@ public:
 					const IndustrySpec *indspec = GetIndustrySpec(this->selected_type);
 					size_t num_layouts = indspec->layouts.size();
 					MarkTileDirtyByTile(TileVirtXY(_thd.pos.x, _thd.pos.y)); // redraw tile selection
-					_cm_funding_layout = (_cm_funding_layout + 1) % (num_layouts + 1);
+					_cm_funding_layout = (_cm_funding_layout + 1) % num_layouts;
 					return ES_HANDLED;
 				} else return ES_NOT_HANDLED;
 		}

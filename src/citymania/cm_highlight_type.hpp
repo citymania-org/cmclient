@@ -46,7 +46,9 @@ public:
         ROAD_DEPOT,
 
         AIRPORT_TILE,
+        INDUSTRY_TILE,
         POINT,
+        RECT,
         NUMBERED_RECT,
         END,
     };
@@ -93,6 +95,9 @@ public:
             StationGfx gfx;
         } airport_tile;
         struct {
+            IndustryGfx gfx;
+        } industry_tile;
+        struct {
             uint32 number;
         } numbered_rect;
     } u;
@@ -108,7 +113,9 @@ public:
     static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck);
     static ObjectTileHighlight make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir);
     static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
+    static ObjectTileHighlight make_industry_tile(SpriteID palette, IndustryGfx gfx);
     static ObjectTileHighlight make_point(SpriteID palette);
+    static ObjectTileHighlight make_rect(SpriteID palette);
     static ObjectTileHighlight make_numbered_rect(SpriteID palette, uint32 number);
 };
 
@@ -257,7 +264,6 @@ protected:
     std::vector<DetachedHighlight> sprites = {};
     void AddTile(TileIndex tile, ObjectTileHighlight &&oh);
     // void AddSprite(TileIndex tile, ObjectTileHighlight &&oh);
-    void UpdateTiles();
     void PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track);
 
 public:
@@ -278,6 +284,7 @@ public:
 
     void Draw(const TileInfo *ti);
     void DrawOverlay(DrawPixelInfo *dpi);
+    void UpdateTiles();
     void MarkDirty();
 };
 

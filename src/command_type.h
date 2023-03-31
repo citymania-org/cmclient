@@ -15,6 +15,8 @@
 #include "tile_type.h"
 #include <vector>
 
+#include "citymania/extensions/cmext_commandcost.hpp"
+
 struct GRFFile;
 
 /**
@@ -32,6 +34,8 @@ class CommandCost {
 	static uint32 textref_stack[16];
 
 public:
+	citymania::ext::CommandCost cm;
+
 	/**
 	 * Creates a command cost return with no cost and no error
 	 */

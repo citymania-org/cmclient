@@ -32,6 +32,7 @@
 #include "../table/airporttile_ids.h"
 #include "../table/track_land.h"
 #include "../table/autorail.h"
+#include "../table/industry_land.h"
 #include "../debug.h"
 
 #include <set>
@@ -176,8 +177,19 @@ ObjectTileHighlight ObjectTileHighlight::make_airport_tile(SpriteID palette, Sta
     return oh;
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_industry_tile(SpriteID palette, IndustryGfx gfx) {
+    auto oh = ObjectTileHighlight(Type::INDUSTRY_TILE, palette);
+    oh.u.industry_tile.gfx = gfx;
+    return oh;
+}
+
 ObjectTileHighlight ObjectTileHighlight::make_point(SpriteID palette) {
     return ObjectTileHighlight(Type::POINT, palette);
+}
+
+ObjectTileHighlight ObjectTileHighlight::make_rect(SpriteID palette) {
+    auto oh = ObjectTileHighlight(Type::RECT, palette);
+    return oh;
 }
 
 ObjectTileHighlight ObjectTileHighlight::make_numbered_rect(SpriteID palette, uint32 number) {
@@ -505,16 +517,35 @@ void ObjectHighlight::UpdateTiles() {
             add_track(this->tile2, this->end_tile2, this->trackdir2, PALETTE_SEL_TILE_BLUE, INVALID_TILE, INVALID_TILE);
             break;
         }
-        case Type::INDUSTRY:
-            this->AddTile(this->tile, ObjectTileHighlight::make_numbered_rect(CM_PALETTE_TINT_WHITE, this->ind_layout));
+        case Type::INDUSTRY: {
+            auto cost = cmd::BuildIndustry{this->tile, this->ind_type, this->ind_layout, true, 0}.call(DC_NONE);
+            if (cost.Succeeded()) {
+                const IndustrySpec *indspec = GetIndustrySpec(this->ind_type);
+                Debug(misc, 0, "Layout requested: {}, layout founded: {}", this->ind_layout, cost.cm.industry_layout);
+                if (indspec == nullptr) break;
+                if (cost.cm.industry_layout >= indspec->layouts.size()) break;
+
+                const IndustryTileLayout &layout = indspec->layouts[cost.cm.industry_layout];
+                for (const IndustryTileLayoutTile &it : layout) {
+                    if (it.gfx == GFX_WATERTILE_SPECIALCHECK) continue;
+                    TileIndex cur_tile = this->tile + ToTileIndexDiff(it.ti);
+                    // WaterClass wc = (IsWaterTile(cur_tile) ? GetWaterClass(cur_tile) : WATER_CLASS_INVALID);
+                    this->AddTile(
+                        cur_tile,
+                        ObjectTileHighlight::make_industry_tile(CM_PALETTE_TINT_WHITE, it.gfx)
+                    );
+                }
+            } else {
+                this->AddTile(this->tile, ObjectTileHighlight::make_rect(CM_SPR_PALETTE_ZONING_RED));
+            }
             break;
+        }
         default:
             NOT_REACHED();
     }
 }
 
 void ObjectHighlight::MarkDirty() {
-    this->UpdateTiles();
     for (const auto &kv: this->tiles) {
         MarkTileDirtyByTile(kv.first);
     }
@@ -793,6 +824,57 @@ void DrawAirportTile(SpriteID palette, const TileInfo *ti, StationGfx gfx) {
     }
 }
 
+void DrawIndustryTile(SpriteID palette, const TileInfo *ti, IndustryGfx gfx) {
+    const IndustryTileSpec *indts = GetIndustryTileSpec(gfx);
+
+    if (gfx >= NEW_INDUSTRYTILEOFFSET) return; // TODO
+    // if (gfx >= NEW_INDUSTRYTILEOFFSET) {
+    //     /* Draw the tile using the specialized method of newgrf industrytile.
+    //      * DrawNewIndustry will return false if ever the resolver could not
+    //      * find any sprite to display.  So in this case, we will jump on the
+    //      * substitute gfx instead. */
+    //     if (indts->grf_prop.spritegroup[0] != nullptr && DrawNewIndustryTile(ti, ind, gfx, indts)) {
+    //         return;
+    //     } else {
+    //         /* No sprite group (or no valid one) found, meaning no graphics associated.
+    //          * Use the substitute one instead */
+    //         if (indts->grf_prop.subst_id != INVALID_INDUSTRYTILE) {
+    //             gfx = indts->grf_prop.subst_id;
+    //             /* And point the industrytile spec accordingly */
+    //             indts = GetIndustryTileSpec(gfx);
+    //         }
+    //     }
+    // }
+
+    const DrawBuildingsTileStruct *dits = &_industry_draw_tile_data[gfx << 2 | INDUSTRY_COMPLETED];
+
+    SpriteID image = dits->ground.sprite;
+
+    /* DrawFoundation() modifies ti->z and ti->tileh */
+    // if (ti->tileh != SLOPE_FLAT) DrawFoundation(ti, FOUNDATION_LEVELED);
+
+    /* If the ground sprite is the default flat water sprite, draw also canal/river borders.
+     * Do not do this if the tile's WaterClass is 'land'. */
+    // if (image == SPR_FLAT_WATER_TILE && IsTileOnWater(ti->tile)) {
+    //     DrawWaterClassGround(ti);
+    // } else {
+        DrawGroundSprite(image, GroundSpritePaletteTransform(image, palette, PALETTE_RECOLOUR_START));
+    // }
+
+    /* Add industry on top of the ground? */
+    image = dits->building.sprite;
+    if (image != 0) {
+        AddSortableSpriteToDraw(image, palette,
+            ti->x + dits->subtile_x,
+            ti->y + dits->subtile_y,
+            dits->width,
+            dits->height,
+            dits->dz,
+            ti->z,
+            false);
+    }
+}
+
 enum SignalOffsets {  // from rail_cmd.cpp
     SIGNAL_TO_SOUTHWEST,
     SIGNAL_TO_NORTHEAST,
@@ -970,8 +1052,14 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
             case ObjectTileHighlight::Type::AIRPORT_TILE:
                 DrawAirportTile(oth.palette, ti, oth.u.airport_tile.gfx);
                 break;
+            case ObjectTileHighlight::Type::INDUSTRY_TILE:
+                DrawIndustryTile(oth.palette, ti, oth.u.industry_tile.gfx);
+                break;
             case ObjectTileHighlight::Type::POINT:
                 DrawSelectionPoint(oth.palette, ti);
+                break;
+            case ObjectTileHighlight::Type::RECT:
+                DrawTileSelectionRect(ti, oth.palette);
                 break;
             case ObjectTileHighlight::Type::NUMBERED_RECT: {
                 DrawTileSelectionRect(ti, oth.palette);
@@ -1374,7 +1462,8 @@ bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
 
     if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_BUSSTOP
         || _thd.select_proc == DDSP_BUILD_TRUCKSTOP || _thd.select_proc == CM_DDSP_BUILD_AIRPORT
-        || _thd.select_proc == CM_DDSP_BUILD_ROAD_DEPOT || _thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT) {
+        || _thd.select_proc == CM_DDSP_BUILD_ROAD_DEPOT || _thd.select_proc == CM_DDSP_BUILD_RAIL_DEPOT
+        || _thd.select_proc == CM_DDSP_FUND_INDUSTRY) {
         // handled by DrawTileZoning
         return true;
     }
@@ -1503,6 +1592,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     if (force_new || _thd.cm != _thd.cm_new) {
         _thd.cm.MarkDirty();
         _thd.cm = _thd.cm_new;
+        _thd.cm.UpdateTiles();
         _thd.cm.MarkDirty();
     }
     return new_drawstyle;

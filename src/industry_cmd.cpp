@@ -2102,6 +2102,7 @@ CommandCost CmdBuildIndustry(DoCommandFlag flags, TileIndex tile, IndustryType i
 					for (size_t j = 0; j < num_layouts; j++) {
 						layout = (layout + 1) % num_layouts;
 						ret = CreateNewIndustryHelper(tile, it, flags, indspec, layout, random_var8f, random_initial_bits, cur_company.GetOriginalValue(), calltype, &ind);
+						ret.cm.industry_layout = layout;
 						if (ret.Succeeded()) break;
 					}
 					if (ret.Succeeded()) break;
@@ -2124,6 +2125,7 @@ CommandCost CmdBuildIndustry(DoCommandFlag flags, TileIndex tile, IndustryType i
 		for (size_t i = 0; i < num_layouts; i++) {
 			layout = (layout + 1) % num_layouts;
 			ret = CreateNewIndustryHelper(tile, it, flags, indspec, layout, random_var8f, random_initial_bits, _current_company, _current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_USERCREATION, &ind);
+			ret.cm.industry_layout = layout;
 			if (ret.Succeeded()) break;
 		}
 
@@ -2135,7 +2137,9 @@ CommandCost CmdBuildIndustry(DoCommandFlag flags, TileIndex tile, IndustryType i
 		AdvertiseIndustryOpening(ind);
 	}
 
-	return CommandCost(EXPENSES_OTHER, indspec->GetConstructionCost());
+	auto cm_ret = CommandCost(EXPENSES_OTHER, indspec->GetConstructionCost());
+	cm_ret.cm.industry_layout = ret.cm.industry_layout;
+	return cm_ret;
 }
 
 /**
