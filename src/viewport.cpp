@@ -718,13 +718,16 @@ static void AddCombinedSprite(SpriteID image, PaletteID pal, int x, int y, int z
  * @param bb_offset_z bounding box extent towards negative Z (world)
  * @param sub Only draw a part of the sprite.
  */
-void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int w, int h, int dz, int z, bool transparent, int bb_offset_x, int bb_offset_y, int bb_offset_z, const SubSprite *sub)
+void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int w, int h, int dz, int z, bool transparent, int bb_offset_x, int bb_offset_y, int bb_offset_z, const SubSprite *sub, bool ignore_highlight_pal)
 {
 	int32 left, right, top, bottom;
 
 	assert((image & SPRITE_MASK) < MAX_SPRITES);
 
-	if (_vd.cm_highlight.structure_pal) pal = _vd.cm_highlight.structure_pal;
+	if (!ignore_highlight_pal) {
+		if (_vd.cm_highlight.structure_pal) pal = _vd.cm_highlight.structure_pal;
+		if (pal == CM_PALETTE_HIDE_SPRITE) return;
+	}
 
 	/* make the sprites transparent with the right palette */
 	if (transparent) {
@@ -1337,6 +1340,8 @@ static void ViewportAddLandscape()
 				_tile_type_procs[tile_type]->draw_tile_proc(&tile_info);
 
 				if (tile_info.tile != INVALID_TILE){
+				    _vd.cm_highlight.ground_pal = _vd.cm_highlight.highlight_ground_pal;
+				    _vd.cm_highlight.structure_pal = _vd.cm_highlight.highlight_structure_pal;
 					citymania::DrawTileZoning(&tile_info);  // old zoning patch
 					citymania::DrawTileZoning(&tile_info, _vd.cm_highlight, tile_type);
 					DrawTileSelection(&tile_info);

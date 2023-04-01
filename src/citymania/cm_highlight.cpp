@@ -18,6 +18,7 @@
 #include "../newgrf_railtype.h"
 #include "../newgrf_roadtype.h"
 #include "../newgrf_station.h"
+#include "../newgrf_industrytiles.h"
 #include "../spritecache.h"
 #include "../strings_func.h"
 #include "../town.h"
@@ -61,6 +62,7 @@ extern uint32 _realtime_tick;
 extern uint32 _cm_funding_layout;
 extern IndustryType _cm_funding_type;
 extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
+extern void IndustryDrawTileLayout(const TileInfo *ti, const TileLayoutSpriteGroup *group, byte rnd_colour, byte stage, IndustryGfx gfx);
 
 struct RailStationGUISettings {
     Axis orientation;                 ///< Currently selected rail station orientation
@@ -177,9 +179,12 @@ ObjectTileHighlight ObjectTileHighlight::make_airport_tile(SpriteID palette, Sta
     return oh;
 }
 
-ObjectTileHighlight ObjectTileHighlight::make_industry_tile(SpriteID palette, IndustryGfx gfx) {
+ObjectTileHighlight ObjectTileHighlight::make_industry_tile(SpriteID palette, IndustryType ind_type, byte ind_layout, TileIndexDiff tile_diff, IndustryGfx gfx) {
     auto oh = ObjectTileHighlight(Type::INDUSTRY_TILE, palette);
+    oh.u.industry_tile.tile_diff = tile_diff;
     oh.u.industry_tile.gfx = gfx;
+    oh.u.industry_tile.ind_type = ind_type;
+    oh.u.industry_tile.ind_layout = ind_layout;
     return oh;
 }
 
@@ -521,18 +526,24 @@ void ObjectHighlight::UpdateTiles() {
             auto cost = cmd::BuildIndustry{this->tile, this->ind_type, this->ind_layout, true, 0}.call(DC_NONE);
             if (cost.Succeeded()) {
                 const IndustrySpec *indspec = GetIndustrySpec(this->ind_type);
-                Debug(misc, 0, "Layout requested: {}, layout founded: {}", this->ind_layout, cost.cm.industry_layout);
                 if (indspec == nullptr) break;
                 if (cost.cm.industry_layout >= indspec->layouts.size()) break;
 
                 const IndustryTileLayout &layout = indspec->layouts[cost.cm.industry_layout];
                 for (const IndustryTileLayoutTile &it : layout) {
                     if (it.gfx == GFX_WATERTILE_SPECIALCHECK) continue;
-                    TileIndex cur_tile = this->tile + ToTileIndexDiff(it.ti);
+                    auto tile_diff = ToTileIndexDiff(it.ti);
+                    TileIndex cur_tile = this->tile + tile_diff;
                     // WaterClass wc = (IsWaterTile(cur_tile) ? GetWaterClass(cur_tile) : WATER_CLASS_INVALID);
                     this->AddTile(
                         cur_tile,
-                        ObjectTileHighlight::make_industry_tile(CM_PALETTE_TINT_WHITE, it.gfx)
+                        ObjectTileHighlight::make_industry_tile(
+                            CM_PALETTE_TINT_WHITE,
+                            this->ind_type,
+                            cost.cm.industry_layout,
+                            tile_diff,
+                            it.gfx
+                        )
                     );
                 }
             } else {
@@ -824,27 +835,170 @@ void DrawAirportTile(SpriteID palette, const TileInfo *ti, StationGfx gfx) {
     }
 }
 
-void DrawIndustryTile(SpriteID palette, const TileInfo *ti, IndustryGfx gfx) {
-    const IndustryTileSpec *indts = GetIndustryTileSpec(gfx);
+bool is_same_industry(TileIndex tile, Industry* ind) {
+    const IndustrySpec *indspec = GetIndustrySpec(ind->type);
+    const IndustryTileLayout &layout = indspec->layouts[ind->selected_layout - 1];
 
-    if (gfx >= NEW_INDUSTRYTILEOFFSET) return; // TODO
-    // if (gfx >= NEW_INDUSTRYTILEOFFSET) {
-    //     /* Draw the tile using the specialized method of newgrf industrytile.
-    //      * DrawNewIndustry will return false if ever the resolver could not
-    //      * find any sprite to display.  So in this case, we will jump on the
-    //      * substitute gfx instead. */
-    //     if (indts->grf_prop.spritegroup[0] != nullptr && DrawNewIndustryTile(ti, ind, gfx, indts)) {
-    //         return;
-    //     } else {
-    //         /* No sprite group (or no valid one) found, meaning no graphics associated.
-    //          * Use the substitute one instead */
-    //         if (indts->grf_prop.subst_id != INVALID_INDUSTRYTILE) {
-    //             gfx = indts->grf_prop.subst_id;
-    //             /* And point the industrytile spec accordingly */
-    //             indts = GetIndustryTileSpec(gfx);
-    //         }
-    //     }
-    // }
+    auto diff = TileIndexToTileIndexDiffC(tile, ind->location.tile);
+    for (const IndustryTileLayoutTile &it : layout) {
+        if (it.ti.x == diff.x && it.ti.y == diff.y) return true;
+    }
+    return false;
+}
+
+uint32 GetNearbyIndustryTileInformation(byte parameter, TileIndex tile, Industry* ind, bool signed_offsets, bool grf_version8)
+{
+    if (parameter != 0) tile = GetNearbyTile(parameter, tile, signed_offsets); // only perform if it is required
+
+    //auto same = is_same_industry(tile, ind);
+    auto same = true;
+    auto res = GetNearbyTileInformation(tile, grf_version8) | (same ? 1 : 0) << 8;
+    if (same) res = (res & 0xFFFFFFU) | ((uint32)MP_INDUSTRY << 24);
+    return res;
+}
+
+
+struct IndustryTilePreviewScopeResolver : public IndustryTileScopeResolver {
+    IndustryTilePreviewScopeResolver(ResolverObject &ro, Industry *industry, TileIndex tile)
+        : IndustryTileScopeResolver{ro, industry, tile} {}
+
+    uint32 GetRandomBits() const override { return 0; };
+    uint32 GetTriggers() const override { return 0; };
+
+    uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override {
+        // Debug(misc, 0, "TILE VAR {:X} requested", variable);
+        switch (variable) {
+            /* Construction state of the tile: a value between 0 and 3 */
+            case 0x40: return INDUSTRY_COMPLETED;
+
+            /* Animation frame. Like house variable 46 but can contain anything 0..FF. */
+            case 0x44: return 0;
+
+            /* Land info of nearby tiles */
+            case 0x60:
+                return citymania::GetNearbyIndustryTileInformation(parameter, this->tile,
+                    this->industry, true, this->ro.grffile->grf_version >= 8);
+
+            /* Animation stage of nearby tiles */
+            case 0x61: {
+                TileIndex tile = GetNearbyTile(parameter, this->tile);
+                if (is_same_industry(tile, this->industry)) return 0;
+                return UINT_MAX;
+            }
+
+            /* Get industry tile ID at offset */
+            case 0x62:
+                if (is_same_industry(GetNearbyTile(parameter, this->tile), this->industry)) {
+                    const IndustrySpec *indspec = GetIndustrySpec(this->industry->type);
+                    return indspec->grf_prop.local_id;  // our local id
+                };
+                return 0xFFFF;  // empty tile
+
+            default:
+                return IndustryTileScopeResolver::GetVariable(variable, parameter, available);
+        }
+    }
+};
+
+struct IndustriesPreviewScopeResolver : public IndustriesScopeResolver {
+    IndustriesPreviewScopeResolver(ResolverObject &ro, TileIndex tile, Industry *industry, IndustryType type, uint32 random_bits = 0)
+        : IndustriesScopeResolver{ro, tile, industry, type, random_bits} {}
+
+    uint32 GetRandomBits() const override { return 0; };
+    uint32 GetTriggers() const override { return 0; };
+    uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override {
+        // Debug(misc, 0, "UNDUSTRY VAR {:X} requested", variable);
+        return IndustriesScopeResolver::GetVariable(variable, parameter, available);
+    }
+};
+
+static const GRFFile *GetIndTileGrffile(IndustryGfx gfx)
+{
+    const IndustryTileSpec *its = GetIndustryTileSpec(gfx);
+    return (its != nullptr) ? its->grf_prop.grffile : nullptr;
+}
+
+struct IndustryTilePreviewResolverObject : public ResolverObject {
+    IndustryTilePreviewScopeResolver indtile_scope; ///< Scope resolver for the industry tile.
+    IndustriesPreviewScopeResolver ind_scope;       ///< Scope resolver for the industry owning the tile.
+    IndustryGfx gfx;
+
+    IndustryTilePreviewResolverObject(IndustryGfx gfx, TileIndex tile, Industry *indus,
+            CallbackID callback = CBID_NO_CALLBACK, uint32 callback_param1 = 0, uint32 callback_param2 = 0)
+        :ResolverObject(GetIndTileGrffile(gfx), callback, callback_param1, callback_param2),
+         indtile_scope(*this, indus, tile),
+         ind_scope(*this, tile, indus, indus->type),
+         gfx(gfx)
+    {
+        this->root_spritegroup = GetIndustryTileSpec(gfx)->grf_prop.spritegroup[0];
+    }
+
+    ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override {
+        // Debug(misc, 0, "Scope requested {} {}", (int)scope, (int)relative);
+        switch (scope) {
+            case VSG_SCOPE_SELF: return &indtile_scope;
+            case VSG_SCOPE_PARENT: return &ind_scope;
+            default: return ResolverObject::GetScope(scope, relative);
+        }
+    }
+
+    GrfSpecFeature GetFeature() const override { return GSF_INDUSTRYTILES; }
+    uint32 GetDebugID() const override { return GetIndustryTileSpec(gfx)->grf_prop.local_id; }
+};
+
+bool DrawNewIndustryTile(TileInfo *ti, Industry *i, IndustryGfx gfx, const IndustryTileSpec *inds)
+{
+    if (ti->tileh != SLOPE_FLAT) {
+        bool draw_old_one = true;
+        if (HasBit(inds->callback_mask, CBM_INDT_DRAW_FOUNDATIONS)) {
+            /* Called to determine the type (if any) of foundation to draw for industry tile */
+            uint32 callback_res = GetIndustryTileCallback(CBID_INDTILE_DRAW_FOUNDATIONS, 0, 0, gfx, i, ti->tile);
+            if (callback_res != CALLBACK_FAILED) draw_old_one = ConvertBooleanCallback(inds->grf_prop.grffile, CBID_INDTILE_DRAW_FOUNDATIONS, callback_res);
+        }
+
+        if (draw_old_one) DrawFoundation(ti, FOUNDATION_LEVELED);
+    }
+
+    // IndustryTileResolverObject object(gfx, ti->tile, i);
+    IndustryTilePreviewResolverObject object(gfx, ti->tile, i);
+
+    const SpriteGroup *group = object.Resolve();
+    auto diff = TileIndexToTileIndexDiffC(ti->tile, i->location.tile);
+    if (group == nullptr || group->type != SGT_TILELAYOUT) return false;
+
+    /* Limit the building stage to the number of stages supplied. */
+    const TileLayoutSpriteGroup *tlgroup = (const TileLayoutSpriteGroup *)group;
+
+    IndustryDrawTileLayout(ti, tlgroup, i->random_colour, INDUSTRY_COMPLETED, gfx);
+    return true;
+}
+
+void DrawIndustryTile(SpriteID palette, const TileInfo *ti, IndustryType ind_type, byte ind_layout, IndustryGfx gfx, TileIndexDiff tile_diff) {
+    static Industry ind;
+    const IndustryTileSpec *indts = GetIndustryTileSpec(gfx);
+    if (gfx >= NEW_INDUSTRYTILEOFFSET) {
+        TileInfo nti = *ti;
+        ind.type = ind_type;
+        ind.selected_layout = ind_layout + 1;
+        ind.index = INVALID_INDUSTRY;
+        ind.location.tile = ti->tile - tile_diff;
+
+        /* Draw the tile using the specialized method of newgrf industrytile.
+         * DrawNewIndustry will return false if ever the resolver could not
+         * find any sprite to display.  So in this case, we will jump on the
+         * substitute gfx instead. */
+        if (indts->grf_prop.spritegroup[0] != nullptr && citymania::DrawNewIndustryTile(&nti, &ind, gfx, indts)) {
+            return;
+        } else {
+            /* No sprite group (or no valid one) found, meaning no graphics associated.
+             * Use the substitute one instead */
+            if (indts->grf_prop.subst_id != INVALID_INDUSTRYTILE) {
+                gfx = indts->grf_prop.subst_id;
+                /* And point the industrytile spec accordingly */
+                indts = GetIndustryTileSpec(gfx);
+            }
+        }
+    }
 
     const DrawBuildingsTileStruct *dits = &_industry_draw_tile_data[gfx << 2 | INDUSTRY_COMPLETED];
 
@@ -871,7 +1025,9 @@ void DrawIndustryTile(SpriteID palette, const TileInfo *ti, IndustryGfx gfx) {
             dits->height,
             dits->dz,
             ti->z,
-            false);
+            false,
+            0, 0, 0, nullptr,
+            true);
     }
 }
 
@@ -1019,6 +1175,33 @@ void DrawSelectionPoint(SpriteID palette, const TileInfo *ti) {
     DrawSelectionSprite(_cur_dpi->zoom <= ZOOM_LVL_DETAIL ? SPR_DOT : SPR_DOT_SMALL, palette, ti, z, foundation_part);
 }
 
+TileHighlight ObjectHighlight::GetTileHighlight(const TileInfo *ti) {
+    TileHighlight th;
+    auto range = this->tiles.equal_range(ti->tile);
+    for (auto t = range.first; t != range.second; t++) {
+        auto &oth = t->second;
+        switch (oth.type) {
+            case ObjectTileHighlight::Type::RAIL_DEPOT:
+            case ObjectTileHighlight::Type::RAIL_TRACK:
+            case ObjectTileHighlight::Type::RAIL_STATION:
+            case ObjectTileHighlight::Type::RAIL_SIGNAL:
+            case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
+            case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
+            case ObjectTileHighlight::Type::ROAD_STOP:
+            case ObjectTileHighlight::Type::ROAD_DEPOT:
+            case ObjectTileHighlight::Type::AIRPORT_TILE:
+            case ObjectTileHighlight::Type::INDUSTRY_TILE:
+                th.structure_pal = CM_PALETTE_HIDE_SPRITE;
+                th.highlight_ground_pal = th.highlight_structure_pal = oth.palette;
+                break;
+
+            default:
+                break;
+        }
+    }
+    return th;
+}
+
 void ObjectHighlight::Draw(const TileInfo *ti) {
     auto range = this->tiles.equal_range(ti->tile);
     for (auto t = range.first; t != range.second; t++) {
@@ -1053,7 +1236,7 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 DrawAirportTile(oth.palette, ti, oth.u.airport_tile.gfx);
                 break;
             case ObjectTileHighlight::Type::INDUSTRY_TILE:
-                DrawIndustryTile(oth.palette, ti, oth.u.industry_tile.gfx);
+                DrawIndustryTile(oth.palette, ti, oth.u.industry_tile.ind_type, oth.u.industry_tile.ind_layout, oth.u.industry_tile.gfx, oth.u.industry_tile.tile_diff);
                 break;
             case ObjectTileHighlight::Type::POINT:
                 DrawSelectionPoint(oth.palette, ti);
@@ -1230,7 +1413,14 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
         }
         if (IsInsideSelectedRectangle(TileX(ti->tile) * TILE_SIZE, TileY(ti->tile) * TILE_SIZE)) {
             // th.ground_pal = GetTintBySelectionColour(color);
-            th.ground_pal = th.structure_pal = (_thd.make_square_red ? CM_PALETTE_TINT_RED : PAL_NONE);
+            if (_thd.make_square_red) {
+                th.ground_pal = th.structure_pal = CM_PALETTE_TINT_RED;
+                th.highlight_structure_pal = th.highlight_ground_pal = CM_PALETTE_TINT_RED;
+            } else {
+                th.ground_pal = PAL_NONE;
+                th.structure_pal = CM_PALETTE_HIDE_SPRITE;
+                th.highlight_structure_pal = th.highlight_ground_pal = PAL_NONE;
+            }
             return;
         }
     }
@@ -1336,7 +1526,7 @@ void CalcCBTownLimitBorder(TileHighlight &th, TileIndex tile, SpriteID border_pa
 }
 
 TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
-    TileHighlight th;
+    TileHighlight th = _thd.cm.GetTileHighlight(ti);;
     if (ti->tile == INVALID_TILE || tile_type == MP_VOID) return th;
     if (_zoning.outer == CHECKTOWNZONES) {
         auto p = GetTownZoneBorder(ti->tile);
