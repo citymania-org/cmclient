@@ -306,6 +306,8 @@ public:
     sp<Blueprint> blueprint = nullptr;
     IndustryType ind_type = INVALID_INDUSTRYTYPE;
     uint32 ind_layout = 0;
+    CommandCost cost;
+    Dimension overlay_dim;
 
 protected:
     bool tiles_updated = false;
@@ -333,6 +335,7 @@ public:
 
     TileHighlight GetTileHighlight(const TileInfo *ti);
     void Draw(const TileInfo *ti);
+    void DrawSelectionOverlay(DrawPixelInfo *dpi);
     void DrawOverlay(DrawPixelInfo *dpi);
     void UpdateTiles();
     void MarkDirty();

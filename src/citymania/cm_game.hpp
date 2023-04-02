@@ -11,6 +11,7 @@ class Game {
 protected:
     TownsGrowthTilesIndex towns_growth_tiles_last_month;
     TownsGrowthTilesIndex towns_growth_tiles;
+    uint64 start_countdown = 0;
 
 public:
     event::Dispatcher events;

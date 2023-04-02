@@ -237,8 +237,10 @@ MinimapIndustryKdtree _minimap_industry_idx{Kdtree_MinimapIndustryXYFunc};
 uint _max_industry_outputs = 0;
 
 bool is_cached_industry(const Industry *ind) {
-	const IndustrySpec *indspec = GetIndustrySpec(ind->type);
-	return ((indspec->life_type & (INDUSTRYLIFE_ORGANIC | INDUSTRYLIFE_EXTRACTIVE)) != 0);
+	for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++)
+		if (ind->produced_cargo[i] != INVALID_CARGO)
+			return true;
+	return false;
 }
 
 MinimapIndustryKdtreeEntry get_industry_entry(const Industry *ind) {

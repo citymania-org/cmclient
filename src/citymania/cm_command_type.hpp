@@ -70,8 +70,8 @@ public:
         return res;
     }
 
-    bool test() {
-        return this->call(DC_NONE).Succeeded();
+    CommandCost test() {
+        return this->call(DC_NONE);
     }
 
     Command &with_tile(TileIndex tile) {

@@ -336,6 +336,7 @@ void ObjectHighlight::AddTile(TileIndex tile, ObjectTileHighlight &&oh) {
 void ObjectHighlight::UpdateTiles() {
     this->tiles.clear();
     this->sprites.clear();
+    this->cost = CMD_ERROR;
     switch (this->type) {
         case Type::NONE:
             break;
@@ -343,11 +344,12 @@ void ObjectHighlight::UpdateTiles() {
         case Type::RAIL_DEPOT: {
             auto dir = this->ddir;
 
-            auto palette = (cmd::BuildTrainDepot(
+            this->cost = cmd::BuildTrainDepot(
                 this->tile,
                 _cur_railtype,
                 dir
-            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test();
+            auto palette = (cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             this->tiles.insert(std::make_pair(this->tile, ObjectTileHighlight::make_rail_depot(palette, dir)));
             auto tile = this->tile + TileOffsByDiagDir(dir);
@@ -364,7 +366,7 @@ void ObjectHighlight::UpdateTiles() {
             auto plat_len = ta.h;
             if (this->axis == AXIS_X) Swap(numtracks, plat_len);
 
-            auto palette = (cmd::BuildRailStation(
+            this->cost = cmd::BuildRailStation(
                 this->tile,
                 _cur_railtype,
                 this->axis,
@@ -374,7 +376,8 @@ void ObjectHighlight::UpdateTiles() {
                 _railstation.station_type,
                 NEW_STATION,
                 true
-            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test();
+            auto palette = (this->cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             auto layout_ptr = AllocaM(byte, (int)numtracks * plat_len);
             GetStationLayout(layout_ptr, numtracks, plat_len, nullptr); // TODO statspec
@@ -396,7 +399,7 @@ void ObjectHighlight::UpdateTiles() {
         }
         case Type::ROAD_STOP: {
             auto ta = OrthogonalTileArea(this->tile, this->end_tile);
-            auto palette = (cmd::BuildRoadStop(
+            this->cost = cmd::BuildRoadStop(
                 this->tile,
                 ta.w,
                 ta.h,
@@ -406,7 +409,8 @@ void ObjectHighlight::UpdateTiles() {
                 this->roadtype,
                 NEW_STATION,
                 true
-            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test();
+            auto palette = (this->cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
             for (TileIndex tile : ta) {
                 this->AddTile(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck));
             }
@@ -414,23 +418,25 @@ void ObjectHighlight::UpdateTiles() {
         }
 
         case Type::ROAD_DEPOT: {
-            auto palette = (cmd::BuildRoadDepot(
+            this->cost = cmd::BuildRoadDepot(
                 this->tile,
                 this->roadtype,
                 this->ddir
-            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test();
+            auto palette = (this->cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
             this->AddTile(this->tile, ObjectTileHighlight::make_road_depot(palette, this->roadtype, this->ddir));
             break;
         }
 
         case Type::AIRPORT: {
-            auto palette = (cmd::BuildAirport(
+            this->cost = cmd::BuildAirport(
                 this->tile,
                 this->airport_type,
                 this->airport_layout,
                 NEW_STATION,
                 true
-            ).test() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ).test();
+            auto palette = (this->cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             const AirportSpec *as = AirportSpec::Get(this->airport_type);
             if (!as->IsAvailable() || this->airport_layout >= as->num_table) break;
@@ -523,8 +529,8 @@ void ObjectHighlight::UpdateTiles() {
             break;
         }
         case Type::INDUSTRY: {
-            auto cost = cmd::BuildIndustry{this->tile, this->ind_type, this->ind_layout, true, 0}.call(DC_NONE);
-            if (cost.Succeeded()) {
+            this->cost = cmd::BuildIndustry{this->tile, this->ind_type, this->ind_layout, true, 0}.call(DC_NONE);
+            if (this->cost.Succeeded()) {
                 const IndustrySpec *indspec = GetIndustrySpec(this->ind_type);
                 if (indspec == nullptr) break;
                 if (cost.cm.industry_layout >= indspec->layouts.size()) break;
@@ -553,6 +559,10 @@ void ObjectHighlight::UpdateTiles() {
         }
         default:
             NOT_REACHED();
+    }
+
+    if (this->cost.Succeeded()) {
+        // TODO overlay size
     }
 }
 
@@ -1288,7 +1298,7 @@ bool Intersects(const Rect &rect, int left, int top, int right, int bottom) {
 }
 
 
-void ObjectHighlight::DrawOverlay(DrawPixelInfo *dpi) {
+void ObjectHighlight::DrawSelectionOverlay(DrawPixelInfo *dpi) {
     for (auto &s : this->sprites) {
         DrawSpriteViewport(s.sprite_id, s.palette_id, s.pt.x, s.pt.y);
     }
@@ -1312,6 +1322,10 @@ void ObjectHighlight::DrawOverlay(DrawPixelInfo *dpi) {
     //             break;
     //     }
     // }
+}
+
+void ObjectHighlight::DrawOverlay(DrawPixelInfo *dpi) {
+    if (!this->cost.Succeeded()) return;
 }
 
 template <typename F>
@@ -1665,7 +1679,7 @@ bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
 }
 
 void DrawSelectionOverlay(DrawPixelInfo *dpi) {
-    _thd.cm.DrawOverlay(dpi);
+    _thd.cm.DrawSelectionOverlay(dpi);
 }
 
 

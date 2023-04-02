@@ -5909,7 +5909,7 @@ CM_STR_CONFIG_SETTING_OPEN_VEHICLE_FOR_SHARED_CLONE             :Fahrzeugfenster
 CM_STR_CONFIG_SETTING_OPEN_VEHICLE_FOR_SHARED_CLONE_HELPTEXT    :Fahrzeugfenster beim Klonen von Fahrzeugen mit geteilten Aufträgen öffnen (wie es bei den nicht-geteilten der Fall ist)
 CM_STR_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES              :Auftragsfenster für neue Fahrzeuge öffnen: {STRING}
 CM_STR_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES_HELPTEXT     :Auftragsfenster automatisch zusammen mit dem Fahrzeugfenster für neue Fahrzeuge öffnen
-CM_STR_PURCHASE_ENGINE_ID                                       :{BLACK}Fahrzeug-ID: {GOLD}{NUM}
+CM_STR_PURCHASE_ENGINE_ID                                       :{BLACK}Fahrzeug-ID: {GOLD}{NUM} {BLACK}ID(GRF}: {GOLD}{NUM}
 CM_STR_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP                        :{BLACK}Industrien zusammen mit Landkonturen und Vegetation auf der Karte anzeigen
 CM_STR_CONFIG_SETTING_PAUSE_AFTER_LOAD                          :Spiel nach dem Laden pausieren: {STRING}
 CM_STR_CONFIG_SETTING_PAUSE_AFTER_LOAD_HELPTEXT                 :Beeinflusst ob das Spiel nach dem Laden pausiert werden soll (falls es noch nicht pausiert ist). Zum Desync-Debugging nützlich.
