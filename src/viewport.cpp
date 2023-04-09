@@ -2048,9 +2048,9 @@ static bool MarkViewportDirty(Viewport *vp, int left, int top, int right, int bo
 	uint w = (std::max<int>(0, UnScaleByZoomLower(right, vp->zoom) - 1 - vp->dirty_block_left_margin) >> vp->GetDirtyBlockWidthShift()) + 1 - x;
 	uint h = ((UnScaleByZoom(bottom, vp->zoom) - 1) >> vp->GetDirtyBlockHeightShift()) + 1 - y;
 
-	// TODO somehow not needed in jgrpp
-	assert(x < vp->dirty_blocks_per_row);
-	assert(y < vp->dirty_blocks_per_column);
+	// TODO somehow JGRPP avoids these checks
+	if (x >= vp->dirty_blocks_per_row) return false;
+	if (y >= vp->dirty_blocks_per_column) return false;
 	h -= std::max((int)y + (int)h - (int)vp->dirty_blocks_per_column, 0);
 	w -= std::max((int)x + (int)w - (int)vp->dirty_blocks_per_row, 0);
 
