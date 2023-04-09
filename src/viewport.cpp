@@ -1554,7 +1554,6 @@ void ViewportSign::MarkDirty(ZoomLevel maxzoom) const
 	for (const Window *w : Window::Iterate()) {
 		Viewport *vp = w->viewport;
 		if (vp != nullptr && vp->zoom <= maxzoom) {
-			assert(vp->width != 0);
 			Rect &zl = zoomlevels[vp->zoom];
 			MarkViewportDirty(vp, zl.left, zl.top, zl.right, zl.bottom);
 		}
