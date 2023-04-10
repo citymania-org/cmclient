@@ -44,7 +44,7 @@ void CcBuildWagon(Commands cmd, const CommandCost &result, VehicleID new_veh_id,
 	if (found != nullptr) {
 		found = found->Last();
 		/* put the new wagon at the end of the loco. */
-		Command<CMD_MOVE_RAIL_VEHICLE>::Post(new_veh_id, found->index, false);
+		Command<CMD_MOVE_RAIL_VEHICLE>::Post(found->tile, new_veh_id, found->index, false);
 		InvalidateWindowClassesData(WC_TRAINS_LIST, 0);
 	}
 }
@@ -229,12 +229,12 @@ static void TrainDetailsInfoTab(const Vehicle *v, int left, int right, int y)
 {
 
 	if (RailVehInfo(v->engine_type)->railveh_type == RAILVEH_WAGON) {
-		SetDParam(0, v->engine_type);
+		SetDParam(0, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails));
 		SetDParam(1, v->value);
 		if (_settings_client.gui.newgrf_developer_tools) SetDParam(2, v->index);  // CM
 		DrawString(left, right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE_WITH_ID : STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE);
 	} else {
-		SetDParam(0, v->engine_type);
+		SetDParam(0, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails));
 		SetDParam(1, v->build_year);
 		SetDParam(2, v->value);
 		if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM

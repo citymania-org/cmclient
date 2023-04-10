@@ -63,7 +63,7 @@ void DrawShipDetails(const Vehicle *v, const Rect &r)
 {
 	int y = r.top;
 
-	SetDParam(0, v->engine_type);
+	SetDParam(0, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails));
 	SetDParam(1, v->build_year);
 	SetDParam(2, v->value);
 	if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM

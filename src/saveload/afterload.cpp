@@ -585,13 +585,15 @@ void AfterLoadFindBTProCBInfo() {
  */
 static void StartScripts()
 {
-	/* Start the GameScript. */
-	Game::StartNew();
+	/* Script debug window requires AIs to be started before trying to start GameScript. */
 
 	/* Start the AIs. */
 	for (const Company *c : Company::Iterate()) {
 		if (Company::IsValidAiID(c->index)) AI::StartNew(c->index, false);
 	}
+
+	/* Start the GameScript. */
+	Game::StartNew();
 
 	ShowAIDebugWindowIfAIError();
 }

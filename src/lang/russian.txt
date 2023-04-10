@@ -908,7 +908,7 @@ STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES                           :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_FOREST                                     :{TINY_FONT}{BLACK}Лес
 STR_SMALLMAP_LEGENDA_RAILROAD_STATION                           :{TINY_FONT}{BLACK}Ж/д станция
 STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY                          :{TINY_FONT}{BLACK}Грузовой терминал
-STR_SMALLMAP_LEGENDA_BUS_STATION                                :{TINY_FONT}{BLACK}Автобусная станция
+STR_SMALLMAP_LEGENDA_BUS_STATION                                :{TINY_FONT}{BLACK}Автобусная остановка
 STR_SMALLMAP_LEGENDA_AIRPORT_HELIPORT                           :{TINY_FONT}{BLACK}Аэропорт/Вертодром
 STR_SMALLMAP_LEGENDA_DOCK                                       :{TINY_FONT}{BLACK}Пристань
 STR_SMALLMAP_LEGENDA_ROUGH_LAND                                 :{TINY_FONT}{BLACK}Бездорожье
@@ -1357,7 +1357,9 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :справа
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Максимальная сумма кредита: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Максимальная сумма кредита для компании (без учета инфляции)
+STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_VALUE                   :{CURRENCY_LONG}
 ###setting-zero-is-special
+STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_DISABLED                :нет {RED}(необходим игровой скрипт, предоставляющий начальные средства)
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :Процентная ставка: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Процентная ставка по кредитам; также устанавливает уровень инфляции, если та включена.
@@ -1956,7 +1958,7 @@ STR_CONFIG_SETTING_ALLOW_SHARES                                 :Разреши�
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Разрешает торговлю акциями транспортных компаний. Акции выпускаются компаниями через некоторое время после основания.
 
 STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :Мин. возраст компании для выпуска акций: {STRING}
-STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES_HELPTEXT                :Минимальный возраст, которого должна достичь компания для начала выпуска акций, которыми смогут торговать другие игроки.
+STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES_HELPTEXT                :Минимальный возраст, которого должна достичь компания для начала выпуска акций, которые смогут покупать и продавать другие игроки.
 
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Процент дохода, начисляемый при частичной перевозке: {STRING}
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :Процент прибыли, начисляемый транспорту за частичную перевозку груза.
@@ -2918,7 +2920,7 @@ STR_BUILD_DEPOT_TRAM_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Выбо
 
 # Road vehicle station construction window
 STR_STATION_BUILD_BUS_ORIENTATION                               :{WHITE}Направление остановки
-STR_STATION_BUILD_BUS_ORIENTATION_TOOLTIP                       :{BLACK}Выберите направление автобусной остановки
+STR_STATION_BUILD_BUS_ORIENTATION_TOOLTIP                       :{BLACK}Выберите направление остановки
 STR_STATION_BUILD_TRUCK_ORIENTATION                             :{WHITE}Ориентация терминала
 STR_STATION_BUILD_TRUCK_ORIENTATION_TOOLTIP                     :{BLACK}Выберите направление грузового терминала
 STR_STATION_BUILD_PASSENGER_TRAM_ORIENTATION                    :{WHITE}Направление пассажирской трамвайной остановки
