@@ -5,7 +5,7 @@ if(NOT BINARY_NAME)
 endif()
 
 project(${BINARY_NAME}
-    VERSION 13.0
+    VERSION 13.1
 )
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -279,6 +279,8 @@ if(NOT OPTION_DEDICATED)
         link_package(OpenGL TARGET OpenGL::GL)
     endif()
 endif()
+
+include(CheckAtomic)
 
 if(APPLE)
     link_package(Iconv TARGET Iconv::Iconv)

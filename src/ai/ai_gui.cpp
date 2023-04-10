@@ -501,7 +501,7 @@ struct AISettingsWindow : public Window {
 				} else if (!bool_item && !config_item.complete_labels) {
 					/* Display a query box so users can enter a custom value. */
 					SetDParam(0, old_val);
-					ShowQueryString(STR_JUST_INT, STR_CONFIG_SETTING_QUERY_CAPTION, 10, this, CS_NUMERAL, QSF_NONE);
+					ShowQueryString(STR_JUST_INT, STR_CONFIG_SETTING_QUERY_CAPTION, INT32_DIGITS_WITH_SIGN_AND_TERMINATION, this, CS_NUMERAL_SIGNED, QSF_NONE);
 				}
 				this->SetDirty();
 				break;
@@ -1114,9 +1114,7 @@ struct AIDebugWindow : public Window {
 		}
 		if (this->autoscroll) {
 			int scroll_pos = std::max(0, log->used - this->vscroll->GetCapacity());
-			if (scroll_pos != this->vscroll->GetPosition()) {
-				this->vscroll->SetPosition(scroll_pos);
-
+			if (this->vscroll->SetPosition(scroll_pos)) {
 				/* We need a repaint */
 				this->SetWidgetDirty(WID_AID_SCROLLBAR);
 				this->SetWidgetDirty(WID_AID_LOG_PANEL);
