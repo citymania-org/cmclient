@@ -74,18 +74,18 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
-*** 13.1 (10 Apr 2022) ***
+*** 13.1 (11 Apr 2022) ***
 - Show building preview when funding industries.
 - Show industry production on the minimap on high zoom levels in IMBA mode.
 - Added two more zoom levels to the minimap.
 - Improved performance of the UI for about 20% (ported from JGRPP).
 - Show cargo and industry type IDs in industry chains window in developer mode.
-- Added cmgamestats console command to show the total number of vehicles in the game.
+- Added `cmgamestats` console command to show the total number of vehicles in the game.
 - Added a server lag counter in the status bar (when show APM is enabled).
 - Improved how regular advertisement tracks stations.
 - Fixed crash when moving station blueprint outside the map area.
-- Fixed crash in polyrail terraforming mode (#15)
-- Fixed clients overlay
+- Fixed crash in polyrail terraforming mode (#15).
+- Fixed clients overlay.
 - Fixed shaded trees and graph background settings not being available in multiplayer.
 
 *** 13.0 (21 Feb 2023) ***

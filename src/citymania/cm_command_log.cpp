@@ -106,7 +106,7 @@ void ExecuteFakeCommands(Date date, DateFract date_fract) {
 void load_replay_commands(const std::string &filename, std::function<void(const std::string &)> error_func) {
     _fake_commands = {};
 
-    FILE *f = std::fopen(filename.c_str(), "rb");
+    FILE *f = fopen(filename.c_str(), "rb");
 
     if (f == nullptr) {
         error_func(fmt::format("Cannot open file `{}`: {}", filename, std::strerror(errno)));
