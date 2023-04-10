@@ -60,7 +60,7 @@ void ExecuteFakeCommands(Date date, DateFract date_fract) {
     while (!_fake_commands.empty() && !DatePredate(date, date_fract, _fake_commands.front().date, _fake_commands.front().date_fract)) {
         auto &x = _fake_commands.front();
 
-        fprintf(stderr, "Executing command: %s(%u) company=%u tile=%u ... ", GetCommandName(x.cp.cmd), x.cp.cmd, x.cp.company, (uint)x.cp.tile);
+        fprintf(stderr, "Executing command: %s(%u) company=%u ... ", GetCommandName(x.cp.cmd), x.cp.cmd, x.cp.company);
         if (x.res == 0) {
             fprintf(stderr, "REJECTED\n");
             _fake_commands.pop();
@@ -166,7 +166,7 @@ void load_replay_commands(const std::string &filename, std::function<void(const 
 
     auto bs = BitIStream(data);
     auto version = bs.ReadBytes(2);
-    if (version != 1) {
+    if (version != 2) {
         error_func(fmt::format("Unsupported log file version {}", version));
         return;
     }
@@ -189,11 +189,10 @@ void load_replay_commands(const std::string &filename, std::function<void(const 
             fk.cp.company = (Owner)bs.ReadBytes(1);
             fk.client_id = bs.ReadBytes(2);
             fk.cp.cmd = (Commands)bs.ReadBytes(2);
-            fk.cp.tile = bs.ReadBytes(4);
             fk.cp.data = bs.ReadData();
             fk.cp.callback = nullptr;
             _fake_commands.push(fk);
-            error_func(fmt::format("Command {}({}) company={} client={} tile={}", GetCommandName(fk.cp.cmd), fk.cp.cmd, fk.cp.company, fk.client_id, fk.cp.tile));
+            error_func(fmt::format("Command {}({}) company={} client={} tile={}", GetCommandName(fk.cp.cmd), fk.cp.cmd, fk.cp.company, fk.client_id));
         }
     }
     catch (BitIStreamUnexpectedEnd &) {

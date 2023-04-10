@@ -121,14 +121,14 @@ def parse_commands():
                 result_type = None
             args = [RX_ARG.fullmatch(x).group('type', 'name') for x in args_str.split(', ')]
             args = args[1:]  # flags
-            first_tile_arg = (args[0][0].strip() == 'TileIndex')
-            if first_tile_arg:
-                args = args[1:]
             for i, (at, an) in enumerate(args):
                 at = at.strip()
                 if at in GLOBAL_TYPES:
                     at = '::' + at
                 args[i] = (at, an)
+            do_args = args[:]
+            if 'CMD_LOCATION' in flags:
+                args = [('TileIndex', 'location')] + args
             print(cid, constant, category, args)
             callback_args = 'CommandCost' if result_type is None else f'CommandCost, {result_type}'
             callback_type = f'std::function<void ({callback_args})>'
@@ -151,7 +151,7 @@ def parse_commands():
                 'flags': flags,
                 'default_run_as': default_run_as,
                 'args': args,
-                'first_tile_arg': first_tile_arg,
+                'do_args': do_args,
                 'returns': returns,
                 'result_type': result_type,
                 'callback_type': callback_type,
@@ -190,8 +190,8 @@ static size_t FindCallbackIndex(::CommandCallback *callback) {
 }
 
 template <Commands Tcmd, size_t Tcb, typename... Targs>
-bool _DoPost(StringID err_msg, TileIndex tile, Targs... args) {
-    return ::Command<Tcmd>::Post(err_msg, std::get<Tcb>(_callback_tuple), tile, std::forward<Targs>(args)...);
+bool _DoPost(StringID err_msg, Targs... args) {
+    return ::Command<Tcmd>::Post(err_msg, std::get<Tcb>(_callback_tuple), std::forward<Targs>(args)...);
 }
 template <Commands Tcmd, size_t Tcb, typename... Targs>
 constexpr auto MakeCallback() noexcept {
@@ -210,7 +210,7 @@ constexpr auto MakeCallback() noexcept {
 template <Commands Tcmd, typename... Targs, size_t... i>
 inline constexpr auto MakeDispatchTableHelper(std::index_sequence<i...>) noexcept
 {
-    return std::array<bool (*)(StringID err_msg, TileIndex tile, Targs...), sizeof...(i)>{MakeCallback<Tcmd, i, Targs...>()... };
+    return std::array<bool (*)(StringID err_msg, Targs...), sizeof...(i)>{MakeCallback<Tcmd, i, Targs...>()... };
 }
 
 template <Commands Tcmd, typename... Targs>
@@ -261,12 +261,6 @@ def run():
             else:
                 f.write(f'    {name}({args_list}) {{}}\n')
 
-            if cmd.get('first_tile_arg'):
-                separator = ', ' if args_list else ''
-                f.write(
-                    f'    {name}(TileIndex tile{separator}{args_list})\n'
-                    f'        :Command{{tile}}{separator}{args_init} {{}}\n'
-                )
             f.write(
                 f'    ~{name}() override {{}}\n'
                 f'\n'
@@ -313,13 +307,7 @@ def run():
             this_args_list = ', '.join(f'this->{an}' for _, an in cmd['args'])
             args_list = ', '.join(f'{an}' for _, an in cmd['args'])
             args_type_list = ', '.join(f'{at}' for at, an in cmd['args'])
-            test_args_list = args_list
-            if cmd.get('first_tile_arg'):
-                if args_list:
-                    test_args_list = f'this->tile, ' + args_list
-                else:
-                    test_args_list = f'this->tile'
-
+            test_args_list = ', '.join(f'{an}' for _, an in cmd['do_args'])
             cost_getter = '' if cmd['result_type'] is None else 'std::get<0>'
             sep_args_list = sep_args_type_list = sep_this_args_list = ''
             if args_list:
@@ -330,7 +318,7 @@ def run():
                 f'Commands {name}::get_command() {{ return {constant}; }}\n'
                 f'static constexpr auto _{name}_dispatch = MakeDispatchTable<{constant}{sep_args_type_list}>();\n'
                 f'bool {name}::_post(::CommandCallback *callback) {{\n'
-                f'    return _{name}_dispatch[FindCallbackIndex(callback)](this->error, this->tile{sep_this_args_list});\n'
+                f'    return _{name}_dispatch[FindCallbackIndex(callback)](this->error{sep_this_args_list});\n'
                 '}\n'
                 f'CommandCost {name}::_do(DoCommandFlag flags) {{\n'
                 f'    return {cost_getter}(::Command<{constant}>::Do(flags, {test_args_list}));\n'

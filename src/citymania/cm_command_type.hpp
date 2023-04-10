@@ -31,14 +31,12 @@ extern CommandCallback _current_callback;
 
 class Command {
 public:
-    TileIndex tile = 0;
     bool no_estimate_flag = false;
     CompanyID company = INVALID_COMPANY;
     StringID error = (StringID)0;
     CommandCallback callback = nullptr;
 
     Command() {}
-    Command(TileIndex tile) :tile{tile} {}
     virtual ~Command() {}
 
     virtual bool _post(::CommandCallback *callback)=0;
@@ -72,11 +70,6 @@ public:
 
     CommandCost test() {
         return this->call(DC_NONE);
-    }
-
-    Command &with_tile(TileIndex tile) {
-        this->tile = tile;
-        return *this;
     }
 
     Command &with_error(StringID error) {

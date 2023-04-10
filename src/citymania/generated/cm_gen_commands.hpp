@@ -60,15 +60,14 @@ public:
 
 class CreateStoryPageElement: public Command {
 public:
+    TileIndex tile;
     StoryPageID page_id;
     StoryPageElementType type;
     uint32 reference;
     const std::string & text;
 
-    CreateStoryPageElement(StoryPageID page_id, StoryPageElementType type, uint32 reference, const std::string & text)
-        :page_id{page_id}, type{type}, reference{reference}, text{text} {}
     CreateStoryPageElement(TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32 reference, const std::string & text)
-        :Command{tile}, page_id{page_id}, type{type}, reference{reference}, text{text} {}
+        :tile{tile}, page_id{page_id}, type{type}, reference{reference}, text{text} {}
     ~CreateStoryPageElement() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -78,14 +77,13 @@ public:
 
 class UpdateStoryPageElement: public Command {
 public:
+    TileIndex tile;
     StoryPageElementID page_element_id;
     uint32 reference;
     const std::string & text;
 
-    UpdateStoryPageElement(StoryPageElementID page_element_id, uint32 reference, const std::string & text)
-        :page_element_id{page_element_id}, reference{reference}, text{text} {}
     UpdateStoryPageElement(TileIndex tile, StoryPageElementID page_element_id, uint32 reference, const std::string & text)
-        :Command{tile}, page_element_id{page_element_id}, reference{reference}, text{text} {}
+        :tile{tile}, page_element_id{page_element_id}, reference{reference}, text{text} {}
     ~UpdateStoryPageElement() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -162,13 +160,12 @@ public:
 
 class StoryPageButton: public Command {
 public:
+    TileIndex tile;
     StoryPageElementID page_element_id;
     VehicleID reference;
 
-    StoryPageButton(StoryPageElementID page_element_id, VehicleID reference)
-        :page_element_id{page_element_id}, reference{reference} {}
     StoryPageButton(TileIndex tile, StoryPageElementID page_element_id, VehicleID reference)
-        :Command{tile}, page_element_id{page_element_id}, reference{reference} {}
+        :tile{tile}, page_element_id{page_element_id}, reference{reference} {}
     ~StoryPageButton() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -178,6 +175,7 @@ public:
 
 class BuildRailWaypoint: public Command {
 public:
+    TileIndex start_tile;
     Axis axis;
     byte width;
     byte height;
@@ -186,10 +184,8 @@ public:
     StationID station_to_join;
     bool adjacent;
 
-    BuildRailWaypoint(Axis axis, byte width, byte height, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
-        :axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    BuildRailWaypoint(TileIndex tile, Axis axis, byte width, byte height, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
-        :Command{tile}, axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    BuildRailWaypoint(TileIndex start_tile, Axis axis, byte width, byte height, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
+        :start_tile{start_tile}, axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildRailWaypoint() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -199,13 +195,12 @@ public:
 
 class RemoveFromRailWaypoint: public Command {
 public:
+    TileIndex start;
     TileIndex end;
     bool keep_rail;
 
-    RemoveFromRailWaypoint(TileIndex end, bool keep_rail)
-        :end{end}, keep_rail{keep_rail} {}
-    RemoveFromRailWaypoint(TileIndex tile, TileIndex end, bool keep_rail)
-        :Command{tile}, end{end}, keep_rail{keep_rail} {}
+    RemoveFromRailWaypoint(TileIndex start, TileIndex end, bool keep_rail)
+        :start{start}, end{end}, keep_rail{keep_rail} {}
     ~RemoveFromRailWaypoint() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -215,10 +210,10 @@ public:
 
 class BuildBuoy: public Command {
 public:
+    TileIndex tile;
 
-    BuildBuoy() {}
     BuildBuoy(TileIndex tile)
-        :Command{tile} {}
+        :tile{tile} {}
     ~BuildBuoy() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -242,15 +237,14 @@ public:
 
 class BuildAirport: public Command {
 public:
+    TileIndex tile;
     byte airport_type;
     byte layout;
     StationID station_to_join;
     bool adjacent;
 
-    BuildAirport(byte airport_type, byte layout, StationID station_to_join, bool adjacent)
-        :airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
     BuildAirport(TileIndex tile, byte airport_type, byte layout, StationID station_to_join, bool adjacent)
-        :Command{tile}, airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
+        :tile{tile}, airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildAirport() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -260,13 +254,12 @@ public:
 
 class BuildDock: public Command {
 public:
+    TileIndex tile;
     StationID station_to_join;
     bool adjacent;
 
-    BuildDock(StationID station_to_join, bool adjacent)
-        :station_to_join{station_to_join}, adjacent{adjacent} {}
     BuildDock(TileIndex tile, StationID station_to_join, bool adjacent)
-        :Command{tile}, station_to_join{station_to_join}, adjacent{adjacent} {}
+        :tile{tile}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildDock() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -276,6 +269,7 @@ public:
 
 class BuildRailStation: public Command {
 public:
+    TileIndex tile_org;
     RailType rt;
     Axis axis;
     byte numtracks;
@@ -285,10 +279,8 @@ public:
     StationID station_to_join;
     bool adjacent;
 
-    BuildRailStation(RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
-        :rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
-    BuildRailStation(TileIndex tile, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
-        :Command{tile}, rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    BuildRailStation(TileIndex tile_org, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
+        :tile_org{tile_org}, rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildRailStation() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -298,13 +290,12 @@ public:
 
 class RemoveFromRailStation: public Command {
 public:
+    TileIndex start;
     TileIndex end;
     bool keep_rail;
 
-    RemoveFromRailStation(TileIndex end, bool keep_rail)
-        :end{end}, keep_rail{keep_rail} {}
-    RemoveFromRailStation(TileIndex tile, TileIndex end, bool keep_rail)
-        :Command{tile}, end{end}, keep_rail{keep_rail} {}
+    RemoveFromRailStation(TileIndex start, TileIndex end, bool keep_rail)
+        :start{start}, end{end}, keep_rail{keep_rail} {}
     ~RemoveFromRailStation() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -314,6 +305,7 @@ public:
 
 class BuildRoadStop: public Command {
 public:
+    TileIndex tile;
     uint8 width;
     uint8 length;
     RoadStopType stop_type;
@@ -323,10 +315,8 @@ public:
     StationID station_to_join;
     bool adjacent;
 
-    BuildRoadStop(uint8 width, uint8 length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, StationID station_to_join, bool adjacent)
-        :width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, station_to_join{station_to_join}, adjacent{adjacent} {}
     BuildRoadStop(TileIndex tile, uint8 width, uint8 length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, StationID station_to_join, bool adjacent)
-        :Command{tile}, width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, station_to_join{station_to_join}, adjacent{adjacent} {}
+        :tile{tile}, width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildRoadStop() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -336,15 +326,14 @@ public:
 
 class RemoveRoadStop: public Command {
 public:
+    TileIndex tile;
     uint8 width;
     uint8 height;
     RoadStopType stop_type;
     bool remove_road;
 
-    RemoveRoadStop(uint8 width, uint8 height, RoadStopType stop_type, bool remove_road)
-        :width{width}, height{height}, stop_type{stop_type}, remove_road{remove_road} {}
     RemoveRoadStop(TileIndex tile, uint8 width, uint8 height, RoadStopType stop_type, bool remove_road)
-        :Command{tile}, width{width}, height{height}, stop_type{stop_type}, remove_road{remove_road} {}
+        :tile{tile}, width{width}, height{height}, stop_type{stop_type}, remove_road{remove_road} {}
     ~RemoveRoadStop() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -529,13 +518,12 @@ public:
 
 class BuildObject: public Command {
 public:
+    TileIndex tile;
     ObjectType type;
     uint8 view;
 
-    BuildObject(ObjectType type, uint8 view)
-        :type{type}, view{view} {}
     BuildObject(TileIndex tile, ObjectType type, uint8 view)
-        :Command{tile}, type{type}, view{view} {}
+        :tile{tile}, type{type}, view{view} {}
     ~BuildObject() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -545,15 +533,14 @@ public:
 
 class BuildObjectArea: public Command {
 public:
+    TileIndex tile;
     TileIndex start_tile;
     ObjectType type;
     uint8 view;
     bool diagonal;
 
-    BuildObjectArea(TileIndex start_tile, ObjectType type, uint8 view, bool diagonal)
-        :start_tile{start_tile}, type{type}, view{view}, diagonal{diagonal} {}
     BuildObjectArea(TileIndex tile, TileIndex start_tile, ObjectType type, uint8 view, bool diagonal)
-        :Command{tile}, start_tile{start_tile}, type{type}, view{view}, diagonal{diagonal} {}
+        :tile{tile}, start_tile{start_tile}, type{type}, view{view}, diagonal{diagonal} {}
     ~BuildObjectArea() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -563,12 +550,11 @@ public:
 
 class BuildShipDepot: public Command {
 public:
+    TileIndex tile;
     Axis axis;
 
-    BuildShipDepot(Axis axis)
-        :axis{axis} {}
     BuildShipDepot(TileIndex tile, Axis axis)
-        :Command{tile}, axis{axis} {}
+        :tile{tile}, axis{axis} {}
     ~BuildShipDepot() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -578,14 +564,13 @@ public:
 
 class BuildCanal: public Command {
 public:
+    TileIndex tile;
     TileIndex start_tile;
     WaterClass wc;
     bool diagonal;
 
-    BuildCanal(TileIndex start_tile, WaterClass wc, bool diagonal)
-        :start_tile{start_tile}, wc{wc}, diagonal{diagonal} {}
     BuildCanal(TileIndex tile, TileIndex start_tile, WaterClass wc, bool diagonal)
-        :Command{tile}, start_tile{start_tile}, wc{wc}, diagonal{diagonal} {}
+        :tile{tile}, start_tile{start_tile}, wc{wc}, diagonal{diagonal} {}
     ~BuildCanal() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -595,10 +580,10 @@ public:
 
 class BuildLock: public Command {
 public:
+    TileIndex tile;
 
-    BuildLock() {}
     BuildLock(TileIndex tile)
-        :Command{tile} {}
+        :tile{tile} {}
     ~BuildLock() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -608,6 +593,7 @@ public:
 
 class BuildLongRoad: public Command {
 public:
+    TileIndex end_tile;
     TileIndex start_tile;
     RoadType rt;
     Axis axis;
@@ -616,10 +602,8 @@ public:
     bool end_half;
     bool is_ai;
 
-    BuildLongRoad(TileIndex start_tile, RoadType rt, Axis axis, DisallowedRoadDirections drd, bool start_half, bool end_half, bool is_ai)
-        :start_tile{start_tile}, rt{rt}, axis{axis}, drd{drd}, start_half{start_half}, end_half{end_half}, is_ai{is_ai} {}
-    BuildLongRoad(TileIndex tile, TileIndex start_tile, RoadType rt, Axis axis, DisallowedRoadDirections drd, bool start_half, bool end_half, bool is_ai)
-        :Command{tile}, start_tile{start_tile}, rt{rt}, axis{axis}, drd{drd}, start_half{start_half}, end_half{end_half}, is_ai{is_ai} {}
+    BuildLongRoad(TileIndex end_tile, TileIndex start_tile, RoadType rt, Axis axis, DisallowedRoadDirections drd, bool start_half, bool end_half, bool is_ai)
+        :end_tile{end_tile}, start_tile{start_tile}, rt{rt}, axis{axis}, drd{drd}, start_half{start_half}, end_half{end_half}, is_ai{is_ai} {}
     ~BuildLongRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -629,16 +613,15 @@ public:
 
 class RemoveLongRoad: public Command {
 public:
+    TileIndex end_tile;
     TileIndex start_tile;
     RoadType rt;
     Axis axis;
     bool start_half;
     bool end_half;
 
-    RemoveLongRoad(TileIndex start_tile, RoadType rt, Axis axis, bool start_half, bool end_half)
-        :start_tile{start_tile}, rt{rt}, axis{axis}, start_half{start_half}, end_half{end_half} {}
-    RemoveLongRoad(TileIndex tile, TileIndex start_tile, RoadType rt, Axis axis, bool start_half, bool end_half)
-        :Command{tile}, start_tile{start_tile}, rt{rt}, axis{axis}, start_half{start_half}, end_half{end_half} {}
+    RemoveLongRoad(TileIndex end_tile, TileIndex start_tile, RoadType rt, Axis axis, bool start_half, bool end_half)
+        :end_tile{end_tile}, start_tile{start_tile}, rt{rt}, axis{axis}, start_half{start_half}, end_half{end_half} {}
     ~RemoveLongRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -648,15 +631,14 @@ public:
 
 class BuildRoad: public Command {
 public:
+    TileIndex tile;
     RoadBits pieces;
     RoadType rt;
     DisallowedRoadDirections toggle_drd;
     TownID town_id;
 
-    BuildRoad(RoadBits pieces, RoadType rt, DisallowedRoadDirections toggle_drd, TownID town_id)
-        :pieces{pieces}, rt{rt}, toggle_drd{toggle_drd}, town_id{town_id} {}
     BuildRoad(TileIndex tile, RoadBits pieces, RoadType rt, DisallowedRoadDirections toggle_drd, TownID town_id)
-        :Command{tile}, pieces{pieces}, rt{rt}, toggle_drd{toggle_drd}, town_id{town_id} {}
+        :tile{tile}, pieces{pieces}, rt{rt}, toggle_drd{toggle_drd}, town_id{town_id} {}
     ~BuildRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -666,13 +648,12 @@ public:
 
 class BuildRoadDepot: public Command {
 public:
+    TileIndex tile;
     RoadType rt;
     DiagDirection dir;
 
-    BuildRoadDepot(RoadType rt, DiagDirection dir)
-        :rt{rt}, dir{dir} {}
     BuildRoadDepot(TileIndex tile, RoadType rt, DiagDirection dir)
-        :Command{tile}, rt{rt}, dir{dir} {}
+        :tile{tile}, rt{rt}, dir{dir} {}
     ~BuildRoadDepot() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -682,13 +663,12 @@ public:
 
 class ConvertRoad: public Command {
 public:
+    TileIndex tile;
     TileIndex area_start;
     RoadType to_type;
 
-    ConvertRoad(TileIndex area_start, RoadType to_type)
-        :area_start{area_start}, to_type{to_type} {}
     ConvertRoad(TileIndex tile, TileIndex area_start, RoadType to_type)
-        :Command{tile}, area_start{area_start}, to_type{to_type} {}
+        :tile{tile}, area_start{area_start}, to_type{to_type} {}
     ~ConvertRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -737,10 +717,10 @@ public:
 
 class LandscapeClear: public Command {
 public:
+    TileIndex tile;
 
-    LandscapeClear() {}
     LandscapeClear(TileIndex tile)
-        :Command{tile} {}
+        :tile{tile} {}
     ~LandscapeClear() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -750,13 +730,12 @@ public:
 
 class ClearArea: public Command {
 public:
+    TileIndex tile;
     TileIndex start_tile;
     bool diagonal;
 
-    ClearArea(TileIndex start_tile, bool diagonal)
-        :start_tile{start_tile}, diagonal{diagonal} {}
     ClearArea(TileIndex tile, TileIndex start_tile, bool diagonal)
-        :Command{tile}, start_tile{start_tile}, diagonal{diagonal} {}
+        :tile{tile}, start_tile{start_tile}, diagonal{diagonal} {}
     ~ClearArea() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -766,12 +745,13 @@ public:
 
 class MoveRailVehicle: public Command {
 public:
+    TileIndex location;
     VehicleID src_veh;
     VehicleID dest_veh;
     bool move_chain;
 
-    MoveRailVehicle(VehicleID src_veh, VehicleID dest_veh, bool move_chain)
-        :src_veh{src_veh}, dest_veh{dest_veh}, move_chain{move_chain} {}
+    MoveRailVehicle(TileIndex location, VehicleID src_veh, VehicleID dest_veh, bool move_chain)
+        :location{location}, src_veh{src_veh}, dest_veh{dest_veh}, move_chain{move_chain} {}
     ~MoveRailVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -781,10 +761,11 @@ public:
 
 class ForceTrainProceed: public Command {
 public:
+    TileIndex location;
     VehicleID veh_id;
 
-    ForceTrainProceed(VehicleID veh_id)
-        :veh_id{veh_id} {}
+    ForceTrainProceed(TileIndex location, VehicleID veh_id)
+        :location{location}, veh_id{veh_id} {}
     ~ForceTrainProceed() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -794,11 +775,12 @@ public:
 
 class ReverseTrainDirection: public Command {
 public:
+    TileIndex location;
     VehicleID veh_id;
     bool reverse_single_veh;
 
-    ReverseTrainDirection(VehicleID veh_id, bool reverse_single_veh)
-        :veh_id{veh_id}, reverse_single_veh{reverse_single_veh} {}
+    ReverseTrainDirection(TileIndex location, VehicleID veh_id, bool reverse_single_veh)
+        :location{location}, veh_id{veh_id}, reverse_single_veh{reverse_single_veh} {}
     ~ReverseTrainDirection() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -825,13 +807,12 @@ public:
 
 class ScrollViewport: public Command {
 public:
+    TileIndex tile;
     ViewportScrollTarget target;
     uint32 ref;
 
-    ScrollViewport(ViewportScrollTarget target, uint32 ref)
-        :target{target}, ref{ref} {}
     ScrollViewport(TileIndex tile, ViewportScrollTarget target, uint32 ref)
-        :Command{tile}, target{target}, ref{ref} {}
+        :tile{tile}, target{target}, ref{ref} {}
     ~ScrollViewport() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -915,14 +896,13 @@ public:
 
 class PlantTree: public Command {
 public:
+    TileIndex tile;
     TileIndex start_tile;
     byte tree_to_plant;
     bool diagonal;
 
-    PlantTree(TileIndex start_tile, byte tree_to_plant, bool diagonal)
-        :start_tile{start_tile}, tree_to_plant{tree_to_plant}, diagonal{diagonal} {}
     PlantTree(TileIndex tile, TileIndex start_tile, byte tree_to_plant, bool diagonal)
-        :Command{tile}, start_tile{start_tile}, tree_to_plant{tree_to_plant}, diagonal{diagonal} {}
+        :tile{tile}, start_tile{start_tile}, tree_to_plant{tree_to_plant}, diagonal{diagonal} {}
     ~PlantTree() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1011,12 +991,11 @@ public:
 
 class PlaceSign: public Command {
 public:
+    TileIndex tile;
     const std::string & text;
 
-    PlaceSign(const std::string & text)
-        :text{text} {}
     PlaceSign(TileIndex tile, const std::string & text)
-        :Command{tile}, text{text} {}
+        :tile{tile}, text{text} {}
     ~PlaceSign() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1040,15 +1019,14 @@ public:
 
 class BuildVehicle: public Command {
 public:
+    TileIndex tile;
     EngineID eid;
     bool use_free_vehicles;
     CargoID cargo;
     ClientID client_id;
 
-    BuildVehicle(EngineID eid, bool use_free_vehicles, CargoID cargo, ClientID client_id)
-        :eid{eid}, use_free_vehicles{use_free_vehicles}, cargo{cargo}, client_id{client_id} {}
     BuildVehicle(TileIndex tile, EngineID eid, bool use_free_vehicles, CargoID cargo, ClientID client_id)
-        :Command{tile}, eid{eid}, use_free_vehicles{use_free_vehicles}, cargo{cargo}, client_id{client_id} {}
+        :tile{tile}, eid{eid}, use_free_vehicles{use_free_vehicles}, cargo{cargo}, client_id{client_id} {}
     ~BuildVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1058,13 +1036,14 @@ public:
 
 class SellVehicle: public Command {
 public:
+    TileIndex location;
     VehicleID v_id;
     bool sell_chain;
     bool backup_order;
     ClientID client_id;
 
-    SellVehicle(VehicleID v_id, bool sell_chain, bool backup_order, ClientID client_id)
-        :v_id{v_id}, sell_chain{sell_chain}, backup_order{backup_order}, client_id{client_id} {}
+    SellVehicle(TileIndex location, VehicleID v_id, bool sell_chain, bool backup_order, ClientID client_id)
+        :location{location}, v_id{v_id}, sell_chain{sell_chain}, backup_order{backup_order}, client_id{client_id} {}
     ~SellVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1074,6 +1053,7 @@ public:
 
 class RefitVehicle: public Command {
 public:
+    TileIndex location;
     VehicleID veh_id;
     CargoID new_cid;
     byte new_subtype;
@@ -1081,8 +1061,8 @@ public:
     bool only_this;
     uint8 num_vehicles;
 
-    RefitVehicle(VehicleID veh_id, CargoID new_cid, byte new_subtype, bool auto_refit, bool only_this, uint8 num_vehicles)
-        :veh_id{veh_id}, new_cid{new_cid}, new_subtype{new_subtype}, auto_refit{auto_refit}, only_this{only_this}, num_vehicles{num_vehicles} {}
+    RefitVehicle(TileIndex location, VehicleID veh_id, CargoID new_cid, byte new_subtype, bool auto_refit, bool only_this, uint8 num_vehicles)
+        :location{location}, veh_id{veh_id}, new_cid{new_cid}, new_subtype{new_subtype}, auto_refit{auto_refit}, only_this{only_this}, num_vehicles{num_vehicles} {}
     ~RefitVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1137,13 +1117,12 @@ public:
 
 class CloneVehicle: public Command {
 public:
+    TileIndex tile;
     VehicleID veh_id;
     bool share_orders;
 
-    CloneVehicle(VehicleID veh_id, bool share_orders)
-        :veh_id{veh_id}, share_orders{share_orders} {}
     CloneVehicle(TileIndex tile, VehicleID veh_id, bool share_orders)
-        :Command{tile}, veh_id{veh_id}, share_orders{share_orders} {}
+        :tile{tile}, veh_id{veh_id}, share_orders{share_orders} {}
     ~CloneVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1153,11 +1132,12 @@ public:
 
 class StartStopVehicle: public Command {
 public:
+    TileIndex location;
     VehicleID veh_id;
     bool evaluate_startstop_cb;
 
-    StartStopVehicle(VehicleID veh_id, bool evaluate_startstop_cb)
-        :veh_id{veh_id}, evaluate_startstop_cb{evaluate_startstop_cb} {}
+    StartStopVehicle(TileIndex location, VehicleID veh_id, bool evaluate_startstop_cb)
+        :location{location}, veh_id{veh_id}, evaluate_startstop_cb{evaluate_startstop_cb} {}
     ~StartStopVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1167,14 +1147,13 @@ public:
 
 class MassStartStopVehicle: public Command {
 public:
+    TileIndex tile;
     bool do_start;
     bool vehicle_list_window;
     const VehicleListIdentifier & vli;
 
-    MassStartStopVehicle(bool do_start, bool vehicle_list_window, const VehicleListIdentifier & vli)
-        :do_start{do_start}, vehicle_list_window{vehicle_list_window}, vli{vli} {}
     MassStartStopVehicle(TileIndex tile, bool do_start, bool vehicle_list_window, const VehicleListIdentifier & vli)
-        :Command{tile}, do_start{do_start}, vehicle_list_window{vehicle_list_window}, vli{vli} {}
+        :tile{tile}, do_start{do_start}, vehicle_list_window{vehicle_list_window}, vli{vli} {}
     ~MassStartStopVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1184,12 +1163,11 @@ public:
 
 class DepotSellAllVehicles: public Command {
 public:
+    TileIndex tile;
     VehicleType vehicle_type;
 
-    DepotSellAllVehicles(VehicleType vehicle_type)
-        :vehicle_type{vehicle_type} {}
     DepotSellAllVehicles(TileIndex tile, VehicleType vehicle_type)
-        :Command{tile}, vehicle_type{vehicle_type} {}
+        :tile{tile}, vehicle_type{vehicle_type} {}
     ~DepotSellAllVehicles() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1199,12 +1177,11 @@ public:
 
 class DepotMassAutoReplace: public Command {
 public:
+    TileIndex tile;
     VehicleType vehicle_type;
 
-    DepotMassAutoReplace(VehicleType vehicle_type)
-        :vehicle_type{vehicle_type} {}
     DepotMassAutoReplace(TileIndex tile, VehicleType vehicle_type)
-        :Command{tile}, vehicle_type{vehicle_type} {}
+        :tile{tile}, vehicle_type{vehicle_type} {}
     ~DepotMassAutoReplace() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1214,13 +1191,12 @@ public:
 
 class TerraformLand: public Command {
 public:
+    TileIndex tile;
     Slope slope;
     bool dir_up;
 
-    TerraformLand(Slope slope, bool dir_up)
-        :slope{slope}, dir_up{dir_up} {}
     TerraformLand(TileIndex tile, Slope slope, bool dir_up)
-        :Command{tile}, slope{slope}, dir_up{dir_up} {}
+        :tile{tile}, slope{slope}, dir_up{dir_up} {}
     ~TerraformLand() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1230,14 +1206,13 @@ public:
 
 class LevelLand: public Command {
 public:
+    TileIndex tile;
     TileIndex start_tile;
     bool diagonal;
     LevelMode lm;
 
-    LevelLand(TileIndex start_tile, bool diagonal, LevelMode lm)
-        :start_tile{start_tile}, diagonal{diagonal}, lm{lm} {}
     LevelLand(TileIndex tile, TileIndex start_tile, bool diagonal, LevelMode lm)
-        :Command{tile}, start_tile{start_tile}, diagonal{diagonal}, lm{lm} {}
+        :tile{tile}, start_tile{start_tile}, diagonal{diagonal}, lm{lm} {}
     ~LevelLand() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1261,16 +1236,15 @@ public:
 
 class BuildRailroadTrack: public Command {
 public:
+    TileIndex end_tile;
     TileIndex start_tile;
     RailType railtype;
     Track track;
     bool auto_remove_signals;
     bool fail_on_obstacle;
 
-    BuildRailroadTrack(TileIndex start_tile, RailType railtype, Track track, bool auto_remove_signals, bool fail_on_obstacle)
-        :start_tile{start_tile}, railtype{railtype}, track{track}, auto_remove_signals{auto_remove_signals}, fail_on_obstacle{fail_on_obstacle} {}
-    BuildRailroadTrack(TileIndex tile, TileIndex start_tile, RailType railtype, Track track, bool auto_remove_signals, bool fail_on_obstacle)
-        :Command{tile}, start_tile{start_tile}, railtype{railtype}, track{track}, auto_remove_signals{auto_remove_signals}, fail_on_obstacle{fail_on_obstacle} {}
+    BuildRailroadTrack(TileIndex end_tile, TileIndex start_tile, RailType railtype, Track track, bool auto_remove_signals, bool fail_on_obstacle)
+        :end_tile{end_tile}, start_tile{start_tile}, railtype{railtype}, track{track}, auto_remove_signals{auto_remove_signals}, fail_on_obstacle{fail_on_obstacle} {}
     ~BuildRailroadTrack() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1280,13 +1254,12 @@ public:
 
 class RemoveRailroadTrack: public Command {
 public:
+    TileIndex end_tile;
     TileIndex start_tile;
     Track track;
 
-    RemoveRailroadTrack(TileIndex start_tile, Track track)
-        :start_tile{start_tile}, track{track} {}
-    RemoveRailroadTrack(TileIndex tile, TileIndex start_tile, Track track)
-        :Command{tile}, start_tile{start_tile}, track{track} {}
+    RemoveRailroadTrack(TileIndex end_tile, TileIndex start_tile, Track track)
+        :end_tile{end_tile}, start_tile{start_tile}, track{track} {}
     ~RemoveRailroadTrack() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1296,14 +1269,13 @@ public:
 
 class BuildSingleRail: public Command {
 public:
+    TileIndex tile;
     RailType railtype;
     Track track;
     bool auto_remove_signals;
 
-    BuildSingleRail(RailType railtype, Track track, bool auto_remove_signals)
-        :railtype{railtype}, track{track}, auto_remove_signals{auto_remove_signals} {}
     BuildSingleRail(TileIndex tile, RailType railtype, Track track, bool auto_remove_signals)
-        :Command{tile}, railtype{railtype}, track{track}, auto_remove_signals{auto_remove_signals} {}
+        :tile{tile}, railtype{railtype}, track{track}, auto_remove_signals{auto_remove_signals} {}
     ~BuildSingleRail() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1313,12 +1285,11 @@ public:
 
 class RemoveSingleRail: public Command {
 public:
+    TileIndex tile;
     Track track;
 
-    RemoveSingleRail(Track track)
-        :track{track} {}
     RemoveSingleRail(TileIndex tile, Track track)
-        :Command{tile}, track{track} {}
+        :tile{tile}, track{track} {}
     ~RemoveSingleRail() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1328,13 +1299,12 @@ public:
 
 class BuildTrainDepot: public Command {
 public:
+    TileIndex tile;
     RailType railtype;
     DiagDirection dir;
 
-    BuildTrainDepot(RailType railtype, DiagDirection dir)
-        :railtype{railtype}, dir{dir} {}
     BuildTrainDepot(TileIndex tile, RailType railtype, DiagDirection dir)
-        :Command{tile}, railtype{railtype}, dir{dir} {}
+        :tile{tile}, railtype{railtype}, dir{dir} {}
     ~BuildTrainDepot() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1344,6 +1314,7 @@ public:
 
 class BuildSingleSignal: public Command {
 public:
+    TileIndex tile;
     Track track;
     SignalType sigtype;
     SignalVariant sigvar;
@@ -1355,10 +1326,8 @@ public:
     uint8 num_dir_cycle;
     byte signals_copy;
 
-    BuildSingleSignal(Track track, SignalType sigtype, SignalVariant sigvar, bool convert_signal, bool skip_existing_signals, bool ctrl_pressed, SignalType cycle_start, SignalType cycle_stop, uint8 num_dir_cycle, byte signals_copy)
-        :track{track}, sigtype{sigtype}, sigvar{sigvar}, convert_signal{convert_signal}, skip_existing_signals{skip_existing_signals}, ctrl_pressed{ctrl_pressed}, cycle_start{cycle_start}, cycle_stop{cycle_stop}, num_dir_cycle{num_dir_cycle}, signals_copy{signals_copy} {}
     BuildSingleSignal(TileIndex tile, Track track, SignalType sigtype, SignalVariant sigvar, bool convert_signal, bool skip_existing_signals, bool ctrl_pressed, SignalType cycle_start, SignalType cycle_stop, uint8 num_dir_cycle, byte signals_copy)
-        :Command{tile}, track{track}, sigtype{sigtype}, sigvar{sigvar}, convert_signal{convert_signal}, skip_existing_signals{skip_existing_signals}, ctrl_pressed{ctrl_pressed}, cycle_start{cycle_start}, cycle_stop{cycle_stop}, num_dir_cycle{num_dir_cycle}, signals_copy{signals_copy} {}
+        :tile{tile}, track{track}, sigtype{sigtype}, sigvar{sigvar}, convert_signal{convert_signal}, skip_existing_signals{skip_existing_signals}, ctrl_pressed{ctrl_pressed}, cycle_start{cycle_start}, cycle_stop{cycle_stop}, num_dir_cycle{num_dir_cycle}, signals_copy{signals_copy} {}
     ~BuildSingleSignal() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1368,12 +1337,11 @@ public:
 
 class RemoveSingleSignal: public Command {
 public:
+    TileIndex tile;
     Track track;
 
-    RemoveSingleSignal(Track track)
-        :track{track} {}
     RemoveSingleSignal(TileIndex tile, Track track)
-        :Command{tile}, track{track} {}
+        :tile{tile}, track{track} {}
     ~RemoveSingleSignal() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1383,14 +1351,13 @@ public:
 
 class ConvertRail: public Command {
 public:
+    TileIndex tile;
     TileIndex area_start;
     RailType totype;
     bool diagonal;
 
-    ConvertRail(TileIndex area_start, RailType totype, bool diagonal)
-        :area_start{area_start}, totype{totype}, diagonal{diagonal} {}
     ConvertRail(TileIndex tile, TileIndex area_start, RailType totype, bool diagonal)
-        :Command{tile}, area_start{area_start}, totype{totype}, diagonal{diagonal} {}
+        :tile{tile}, area_start{area_start}, totype{totype}, diagonal{diagonal} {}
     ~ConvertRail() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1400,6 +1367,7 @@ public:
 
 class BuildSignalTrack: public Command {
 public:
+    TileIndex tile;
     TileIndex end_tile;
     Track track;
     SignalType sigtype;
@@ -1409,10 +1377,8 @@ public:
     bool minimise_gaps;
     byte signal_density;
 
-    BuildSignalTrack(TileIndex end_tile, Track track, SignalType sigtype, SignalVariant sigvar, bool mode, bool autofill, bool minimise_gaps, byte signal_density)
-        :end_tile{end_tile}, track{track}, sigtype{sigtype}, sigvar{sigvar}, mode{mode}, autofill{autofill}, minimise_gaps{minimise_gaps}, signal_density{signal_density} {}
     BuildSignalTrack(TileIndex tile, TileIndex end_tile, Track track, SignalType sigtype, SignalVariant sigvar, bool mode, bool autofill, bool minimise_gaps, byte signal_density)
-        :Command{tile}, end_tile{end_tile}, track{track}, sigtype{sigtype}, sigvar{sigvar}, mode{mode}, autofill{autofill}, minimise_gaps{minimise_gaps}, signal_density{signal_density} {}
+        :tile{tile}, end_tile{end_tile}, track{track}, sigtype{sigtype}, sigvar{sigvar}, mode{mode}, autofill{autofill}, minimise_gaps{minimise_gaps}, signal_density{signal_density} {}
     ~BuildSignalTrack() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1422,14 +1388,13 @@ public:
 
 class RemoveSignalTrack: public Command {
 public:
+    TileIndex tile;
     TileIndex end_tile;
     Track track;
     bool autofill;
 
-    RemoveSignalTrack(TileIndex end_tile, Track track, bool autofill)
-        :end_tile{end_tile}, track{track}, autofill{autofill} {}
     RemoveSignalTrack(TileIndex tile, TileIndex end_tile, Track track, bool autofill)
-        :Command{tile}, end_tile{end_tile}, track{track}, autofill{autofill} {}
+        :tile{tile}, end_tile{end_tile}, track{track}, autofill{autofill} {}
     ~RemoveSignalTrack() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1552,6 +1517,7 @@ public:
 
 class FoundTown: public Command {
 public:
+    TileIndex tile;
     TownSize size;
     bool city;
     TownLayout layout;
@@ -1559,10 +1525,8 @@ public:
     uint32 townnameparts;
     const std::string & text;
 
-    FoundTown(TownSize size, bool city, TownLayout layout, bool random_location, uint32 townnameparts, const std::string & text)
-        :size{size}, city{city}, layout{layout}, random_location{random_location}, townnameparts{townnameparts}, text{text} {}
     FoundTown(TileIndex tile, TownSize size, bool city, TownLayout layout, bool random_location, uint32 townnameparts, const std::string & text)
-        :Command{tile}, size{size}, city{city}, layout{layout}, random_location{random_location}, townnameparts{townnameparts}, text{text} {}
+        :tile{tile}, size{size}, city{city}, layout{layout}, random_location{random_location}, townnameparts{townnameparts}, text{text} {}
     ~FoundTown() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1586,11 +1550,12 @@ public:
 
 class DoTownAction: public Command {
 public:
+    TileIndex location;
     TownID town_id;
     uint8 action;
 
-    DoTownAction(TownID town_id, uint8 action)
-        :town_id{town_id}, action{action} {}
+    DoTownAction(TileIndex location, TownID town_id, uint8 action)
+        :location{location}, town_id{town_id}, action{action} {}
     ~DoTownAction() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1685,10 +1650,11 @@ public:
 
 class TurnRoadVeh: public Command {
 public:
+    TileIndex location;
     VehicleID veh_id;
 
-    TurnRoadVeh(VehicleID veh_id)
-        :veh_id{veh_id} {}
+    TurnRoadVeh(TileIndex location, VehicleID veh_id)
+        :location{location}, veh_id{veh_id} {}
     ~TurnRoadVeh() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1698,15 +1664,14 @@ public:
 
 class BuildIndustry: public Command {
 public:
+    TileIndex tile;
     IndustryType it;
     uint32 first_layout;
     bool fund;
     uint32 seed;
 
-    BuildIndustry(IndustryType it, uint32 first_layout, bool fund, uint32 seed)
-        :it{it}, first_layout{first_layout}, fund{fund}, seed{seed} {}
     BuildIndustry(TileIndex tile, IndustryType it, uint32 first_layout, bool fund, uint32 seed)
-        :Command{tile}, it{it}, first_layout{first_layout}, fund{fund}, seed{seed} {}
+        :tile{tile}, it{it}, first_layout{first_layout}, fund{fund}, seed{seed} {}
     ~BuildIndustry() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1733,13 +1698,14 @@ public:
 
 class ModifyOrder: public Command {
 public:
+    TileIndex location;
     VehicleID veh;
     VehicleOrderID sel_ord;
     ModifyOrderFlags mof;
     uint16 data;
 
-    ModifyOrder(VehicleID veh, VehicleOrderID sel_ord, ModifyOrderFlags mof, uint16 data)
-        :veh{veh}, sel_ord{sel_ord}, mof{mof}, data{data} {}
+    ModifyOrder(TileIndex location, VehicleID veh, VehicleOrderID sel_ord, ModifyOrderFlags mof, uint16 data)
+        :location{location}, veh{veh}, sel_ord{sel_ord}, mof{mof}, data{data} {}
     ~ModifyOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1749,11 +1715,12 @@ public:
 
 class SkipToOrder: public Command {
 public:
+    TileIndex location;
     VehicleID veh_id;
     VehicleOrderID sel_ord;
 
-    SkipToOrder(VehicleID veh_id, VehicleOrderID sel_ord)
-        :veh_id{veh_id}, sel_ord{sel_ord} {}
+    SkipToOrder(TileIndex location, VehicleID veh_id, VehicleOrderID sel_ord)
+        :location{location}, veh_id{veh_id}, sel_ord{sel_ord} {}
     ~SkipToOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1763,11 +1730,12 @@ public:
 
 class DeleteOrder: public Command {
 public:
+    TileIndex location;
     VehicleID veh_id;
     VehicleOrderID sel_ord;
 
-    DeleteOrder(VehicleID veh_id, VehicleOrderID sel_ord)
-        :veh_id{veh_id}, sel_ord{sel_ord} {}
+    DeleteOrder(TileIndex location, VehicleID veh_id, VehicleOrderID sel_ord)
+        :location{location}, veh_id{veh_id}, sel_ord{sel_ord} {}
     ~DeleteOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1777,12 +1745,13 @@ public:
 
 class InsertOrder: public Command {
 public:
+    TileIndex location;
     VehicleID veh;
     VehicleOrderID sel_ord;
     const Order & new_order;
 
-    InsertOrder(VehicleID veh, VehicleOrderID sel_ord, const Order & new_order)
-        :veh{veh}, sel_ord{sel_ord}, new_order{new_order} {}
+    InsertOrder(TileIndex location, VehicleID veh, VehicleOrderID sel_ord, const Order & new_order)
+        :location{location}, veh{veh}, sel_ord{sel_ord}, new_order{new_order} {}
     ~InsertOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1792,12 +1761,13 @@ public:
 
 class OrderRefit: public Command {
 public:
+    TileIndex location;
     VehicleID veh;
     VehicleOrderID order_number;
     CargoID cargo;
 
-    OrderRefit(VehicleID veh, VehicleOrderID order_number, CargoID cargo)
-        :veh{veh}, order_number{order_number}, cargo{cargo} {}
+    OrderRefit(TileIndex location, VehicleID veh, VehicleOrderID order_number, CargoID cargo)
+        :location{location}, veh{veh}, order_number{order_number}, cargo{cargo} {}
     ~OrderRefit() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1807,12 +1777,13 @@ public:
 
 class CloneOrder: public Command {
 public:
+    TileIndex location;
     CloneOptions action;
     VehicleID veh_dst;
     VehicleID veh_src;
 
-    CloneOrder(CloneOptions action, VehicleID veh_dst, VehicleID veh_src)
-        :action{action}, veh_dst{veh_dst}, veh_src{veh_src} {}
+    CloneOrder(TileIndex location, CloneOptions action, VehicleID veh_dst, VehicleID veh_src)
+        :location{location}, action{action}, veh_dst{veh_dst}, veh_src{veh_src} {}
     ~CloneOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1822,12 +1793,13 @@ public:
 
 class MoveOrder: public Command {
 public:
+    TileIndex location;
     VehicleID veh;
     VehicleOrderID moving_order;
     VehicleOrderID target_order;
 
-    MoveOrder(VehicleID veh, VehicleOrderID moving_order, VehicleOrderID target_order)
-        :veh{veh}, moving_order{moving_order}, target_order{target_order} {}
+    MoveOrder(TileIndex location, VehicleID veh, VehicleOrderID moving_order, VehicleOrderID target_order)
+        :location{location}, veh{veh}, moving_order{moving_order}, target_order{target_order} {}
     ~MoveOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1837,12 +1809,11 @@ public:
 
 class ClearOrderBackup: public Command {
 public:
+    TileIndex tile;
     ClientID user_id;
 
-    ClearOrderBackup(ClientID user_id)
-        :user_id{user_id} {}
     ClearOrderBackup(TileIndex tile, ClientID user_id)
-        :Command{tile}, user_id{user_id} {}
+        :tile{tile}, user_id{user_id} {}
     ~ClearOrderBackup() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1865,14 +1836,13 @@ public:
 
 class ChangeBankBalance: public Command {
 public:
+    TileIndex tile;
     Money delta;
     CompanyID company;
     ExpensesType expenses_type;
 
-    ChangeBankBalance(Money delta, CompanyID company, ExpensesType expenses_type)
-        :delta{delta}, company{company}, expenses_type{expenses_type} {}
     ChangeBankBalance(TileIndex tile, Money delta, CompanyID company, ExpensesType expenses_type)
-        :Command{tile}, delta{delta}, company{company}, expenses_type{expenses_type} {}
+        :tile{tile}, delta{delta}, company{company}, expenses_type{expenses_type} {}
     ~ChangeBankBalance() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1980,15 +1950,14 @@ public:
 
 class BuildBridge: public Command {
 public:
+    TileIndex tile_end;
     TileIndex tile_start;
     TransportType transport_type;
     BridgeType bridge_type;
     byte road_rail_type;
 
-    BuildBridge(TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, byte road_rail_type)
-        :tile_start{tile_start}, transport_type{transport_type}, bridge_type{bridge_type}, road_rail_type{road_rail_type} {}
-    BuildBridge(TileIndex tile, TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, byte road_rail_type)
-        :Command{tile}, tile_start{tile_start}, transport_type{transport_type}, bridge_type{bridge_type}, road_rail_type{road_rail_type} {}
+    BuildBridge(TileIndex tile_end, TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, byte road_rail_type)
+        :tile_end{tile_end}, tile_start{tile_start}, transport_type{transport_type}, bridge_type{bridge_type}, road_rail_type{road_rail_type} {}
     ~BuildBridge() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1998,13 +1967,12 @@ public:
 
 class BuildTunnel: public Command {
 public:
+    TileIndex start_tile;
     TransportType transport_type;
     byte road_rail_type;
 
-    BuildTunnel(TransportType transport_type, byte road_rail_type)
-        :transport_type{transport_type}, road_rail_type{road_rail_type} {}
-    BuildTunnel(TileIndex tile, TransportType transport_type, byte road_rail_type)
-        :Command{tile}, transport_type{transport_type}, road_rail_type{road_rail_type} {}
+    BuildTunnel(TileIndex start_tile, TransportType transport_type, byte road_rail_type)
+        :start_tile{start_tile}, transport_type{transport_type}, road_rail_type{road_rail_type} {}
     ~BuildTunnel() override {}
 
     bool _post(::CommandCallback * callback) override;

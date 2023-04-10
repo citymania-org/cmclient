@@ -332,7 +332,7 @@ void NetworkExecuteLocalCommandQueue()
 		if (_frame_counter > cp->frame) {
 			/* If we reach here, it means for whatever reason, we've already executed
 			 * past the command we need to execute. */
-			error("[net] Trying to execute a packet in the past! (frame=%u cmd_frame=%u cmd=%u tile=%u)", (uint)_frame_counter, (uint)cp->frame, (uint)cp->cmd, (uint)cp->tile);
+			error("[net] Trying to execute a packet in the past! (frame=%u cmd_frame=%u cmd=%u)", (uint)_frame_counter, (uint)cp->frame, (uint)cp->cmd);
 		}
 
 		/* We can execute this command */
@@ -554,7 +554,7 @@ void UnpackNetworkCommand(const CommandPacket* cp)
 {
 	citymania::BeforeNetworkCommandExecution(cp);
 	auto args = EndianBufferReader::ToValue<typename CommandTraits<Tcmd>::Args>(cp->data);
-	Debug(misc, 5, "UnpackNetworkCommand cmd={} my={} tile={}", GetCommandName(cp->cmd), cp->my_cmd, cp->tile);
+	Debug(misc, 5, "UnpackNetworkCommand cmd={} my={}", GetCommandName(cp->cmd), cp->my_cmd);
 	Command<Tcmd>::PostFromNet(cp->err_msg, std::get<Tcb>(_callback_tuple), cp->my_cmd, args);
 	citymania::AfterNetworkCommandExecution(cp);
 }

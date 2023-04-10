@@ -816,10 +816,10 @@ private:
 		if (this->vehicle->GetNumOrders() <= 1) return;
 
 		citymania::cmd::SkipToOrder(
+				this->vehicle->tile,
 				this->vehicle->index,
 				citymania::_fn_mod ? this->OrderGetSel() : ((this->vehicle->cur_implicit_order_index + 1) % this->vehicle->GetNumOrders()))
 			.with_error(citymania::_fn_mod ? STR_ERROR_CAN_T_SKIP_TO_ORDER : STR_ERROR_CAN_T_SKIP_ORDER)
-			.with_tile(this->vehicle->tile)
 			.no_estimate()
 			.post();
 	}
@@ -1587,33 +1587,28 @@ public:
 
 			if (feeder_mod != FeederOrderMod::NONE) {
 				if (feeder_mod == FeederOrderMod::LOAD) {
-					if (citymania::cmd::InsertOrder(this->vehicle->index, 1, cmd)
-							.with_tile(this->vehicle->tile)
+					if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, 1, cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
 							.no_estimate()
 							.post()) {
-						citymania::cmd::DeleteOrder(this->vehicle->index, 0)
-							.with_tile(this->vehicle->tile)
+						citymania::cmd::DeleteOrder(this->vehicle->tile, this->vehicle->index, 0)
 							.with_error(STR_ERROR_CAN_T_DELETE_THIS_ORDER)
 							.no_estimate()
 							.post();
 					}
 
 				} else if (feeder_mod == FeederOrderMod::UNLOAD) { // still flushes the whole order table
-					if (citymania::cmd::InsertOrder(this->vehicle->index, this->vehicle->GetNumOrders(), cmd)
-							.with_tile(this->vehicle->tile)
+					if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders(), cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
 							.no_estimate()
 							.post()) {
-						citymania::cmd::DeleteOrder(this->vehicle->index, this->vehicle->GetNumOrders() + (int)_networking - 2)
-							.with_tile(this->vehicle->tile)
+						citymania::cmd::DeleteOrder(this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders() + (int)_networking - 2)
 							.with_error(STR_ERROR_CAN_T_DELETE_THIS_ORDER)
 							.no_estimate()
 							.post();
 					}
 				}
-			} else if (citymania::cmd::InsertOrder(this->vehicle->index, this->OrderGetSel(), cmd)
-							.with_tile(this->vehicle->tile)
+			} else if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, this->OrderGetSel(), cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
 							.no_estimate()
 							.post()) {

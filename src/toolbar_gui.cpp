@@ -2231,8 +2231,7 @@ struct MainToolbarWindow : Window {
 				break;
 
 			case CM_CBF_BUILD_HQ:
-				if(citymania::cmd::BuildObject(OBJECT_HQ, 0)
-					   	.with_tile(tile)
+				if(citymania::cmd::BuildObject(tile, OBJECT_HQ, 0)
 					   	.with_error(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS)
 					   	.post()) {
 					ResetObjectToPlace();

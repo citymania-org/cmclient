@@ -919,8 +919,7 @@ static void DoRegularFunding(Town *t)
 		if (UINT32_MAX - t->last_funding + _tick_counter < TOWN_GROWTH_TICKS) return;
 	} else if (_tick_counter - t->last_funding < TOWN_GROWTH_TICKS) return;
 
-	citymania::cmd::DoTownAction(t->index, HK_FUND)
-		.with_tile(t->xy)
+	citymania::cmd::DoTownAction(t->xy, t->index, HK_FUND)
 		.no_estimate()
 		.as_company(_local_company)
 		.post();
@@ -957,8 +956,7 @@ static void DoRegularAdvertising(Town *t) {
 	t->last_advertisement = _tick_counter;
 
 	auto prev_rating = t->ad_ref_goods_entry->rating;
-	citymania::cmd::DoTownAction(t->index, HK_LADVERT)
-		.with_tile(t->xy)
+	citymania::cmd::DoTownAction(t->xy, t->index, HK_LADVERT)
 		.no_estimate()
 		.as_company(_local_company)
 		.with_callback([=] (bool res) -> bool {

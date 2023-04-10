@@ -89,9 +89,9 @@ namespace std {
 }  // namespace std
 namespace citymania {
 
-size_t GetCommandHash(Commands cmd, CompanyID company_id, StringID err_msg, ::CommandCallback callback, TileIndex tile, const CommandDataBuffer &data) {
+size_t GetCommandHash(Commands cmd, CompanyID company_id, StringID err_msg, ::CommandCallback callback, const CommandDataBuffer &data) {
     size_t res = 0;
-    hash_combine(res, cmd, (uint16)company_id, err_msg, callback, (uint32)tile, data);
+    hash_combine(res, cmd, (uint16)company_id, err_msg, callback, data);
     return res;
 }
 
@@ -105,7 +105,7 @@ void ExecuteCurrentCallback(const CommandCost &cost) {
 
 void BeforeNetworkCommandExecution(const CommandPacket* cp) {
     if (!cp->my_cmd) return;
-    size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->tile, cp->data);
+    size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->data);
     Debug(misc, 5, "CM BeforeNetworkCommandExecution: cmd={} hash={}", cp->cmd, hash);
     while (!_callback_queue.empty() && _callback_queue.front().hash != hash) {
         Debug(misc, 0, "CM Dismissing command from callback queue: hash={}", _callback_queue.front().hash);
@@ -128,7 +128,7 @@ void AfterNetworkCommandExecution(const CommandPacket* cp) {
 }
 
 void AddCommandCallback(const CommandPacket *cp) {
-    size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->tile, cp->data);
+    size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->data);
     Debug(misc, 5, "CM Added callback: cmd={} hash={}", cp->cmd, hash);
     _callback_queue.emplace(hash, _current_callback);
     _current_callback = nullptr;
