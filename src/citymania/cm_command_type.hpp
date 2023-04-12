@@ -52,6 +52,7 @@ public:
         _current_callback = this->callback;
         bool res = this->_post(reinterpret_cast<::CommandCallback *>(reinterpret_cast<void(*)()>(callback)));
         _current_company = company_backup;
+        _no_estimate_command = false;
         return res;
     }
 
