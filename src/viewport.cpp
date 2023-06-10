@@ -2043,21 +2043,23 @@ static bool MarkViewportDirty(Viewport *vp, int left, int top, int right, int bo
 
 	if (top >= vp->virtual_height) return false;
 
-	uint x = std::max<int>(0, UnScaleByZoomLower(left, vp->zoom) - vp->dirty_block_left_margin) >> vp->GetDirtyBlockWidthShift();
-	uint y = UnScaleByZoomLower(top, vp->zoom) >> vp->GetDirtyBlockHeightShift();
-	uint w = (std::max<int>(0, UnScaleByZoomLower(right, vp->zoom) - 1 - vp->dirty_block_left_margin) >> vp->GetDirtyBlockWidthShift()) + 1 - x;
-	uint h = ((UnScaleByZoom(bottom, vp->zoom) - 1) >> vp->GetDirtyBlockHeightShift()) + 1 - y;
+	int x = std::max<int>(0, UnScaleByZoomLower(left, vp->zoom) - vp->dirty_block_left_margin) >> vp->GetDirtyBlockWidthShift();
+	int y = UnScaleByZoomLower(top, vp->zoom) >> vp->GetDirtyBlockHeightShift();
+	int w = (std::max<int>(0, UnScaleByZoomLower(right, vp->zoom) - 1 - vp->dirty_block_left_margin) >> vp->GetDirtyBlockWidthShift()) + 1 - x;
+	int h = ((UnScaleByZoom(bottom, vp->zoom) - 1) >> vp->GetDirtyBlockHeightShift()) + 1 - y;
 
 	// TODO somehow JGRPP avoids these checks
-	if (x >= vp->dirty_blocks_per_row) return false;
-	if (y >= vp->dirty_blocks_per_column) return false;
+	if (w < 0 || h < 0) return false;
+	if (x >= (int)vp->dirty_blocks_per_row) return false;
+	if (y >= (int)vp->dirty_blocks_per_column) return false;
 	h -= std::max((int)y + (int)h - (int)vp->dirty_blocks_per_column, 0);
 	w -= std::max((int)x + (int)w - (int)vp->dirty_blocks_per_row, 0);
 
 	uint column_skip = vp->dirty_blocks_per_column - h;
 	uint pos = (x * vp->dirty_blocks_per_column) + y;
-	for (uint i = 0; i < w; i++) {
-		for (uint j = 0; j < h; j++) {
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < h; j++) {
+
 			vp->dirty_blocks[pos] = true;
 			pos++;
 		}
