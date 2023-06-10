@@ -74,6 +74,9 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 13.2 (10 Jun 2023) ***
+- Fixed station highlight crash (#17)
+
 *** 13.1 (11 Apr 2022) ***
 - Show building preview when funding industries.
 - Show industry production on the minimap on high zoom levels in IMBA mode.
