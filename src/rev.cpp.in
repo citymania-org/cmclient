@@ -35,7 +35,7 @@ bool IsReleasedVersion()
  *
  * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "${REV_VERSION}";
+const char _openttd_revision[] = "13.2";
 
 /**
  * The text version of OpenTTD's build date.
@@ -48,12 +48,12 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
 /**
  * The git revision hash of this version.
  */
-const char _openttd_revision_hash[] = "${REV_HASH}";
+const char _openttd_revision_hash[] = "d4df692a707dcc428e98b11dfe4c2e51c922d661";
 
 /**
  * The year of this version.
  */
-const char _openttd_revision_year[] = "${REV_YEAR}";
+const char _openttd_revision_year[] = "2023";
 
 /**
  * Let us know if current build was modified. This detection
@@ -63,21 +63,21 @@ const char _openttd_revision_year[] = "${REV_YEAR}";
  * (compiling from sources without any version control software)
  * and 2 is for modified revision.
  */
-const byte _openttd_revision_modified = ${REV_MODIFIED};
+const byte _openttd_revision_modified = 0;
 
 /**
  * Indicate whether this is a tagged version.
  * If this is non-0, then _openttd_revision is the name of the tag,
  * and the version is likely a beta, release candidate, or real release.
  */
-const byte _openttd_revision_tagged = ${REV_ISTAG};
+const byte _openttd_revision_tagged = 1;
 
 /**
  * To check compatibility of BaNaNaS content, this version string is used.
  * It should never contain things like "beta", but only the release version
  * we are compatible with.
  */
-const char _openttd_content_version[] = "${REV_MAJOR}.${REV_MINOR}";
+const char _openttd_content_version[] = "13.1";
 
 /**
  * The NewGRF revision of OTTD:
@@ -95,4 +95,4 @@ const char _openttd_content_version[] = "${REV_MAJOR}.${REV_MINOR}";
  * the "patch" part of the version. To make sure "1.11.0" is smaller than "12.0", we
  * have to adjust the major by 16.
  */
-const uint32 _openttd_newgrf_version = (${REV_MAJOR} + 16) << 24 | ${REV_MINOR} << 20 | ${REV_ISSTABLETAG} << 19 | 28004;
+const uint32 _openttd_newgrf_version = (13 + 16) << 24 | 1 << 20 | 1 << 19 | 28004;
