@@ -4,6 +4,7 @@
 #
 macro(compile_flags)
     if(MSVC)
+        add_compile_options(/bigobj)
         if(VCPKG_TARGET_TRIPLET MATCHES "-static" AND NOT VCPKG_TARGET_TRIPLET MATCHES "-md")
             # Switch to MT (static) instead of MD (dynamic) binary
 
