@@ -350,12 +350,12 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Städtev
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Subventionen anzeigen
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Liste der firmeneigenen Stationen anzeigen
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Firmenfinanzen anzeigen
-STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_CARGOS_CM                   :{BLACK}Fracht-Firmeninformationen anzeigen
+CM_STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_CARGOS                   :{BLACK}Fracht-Firmeninformationen anzeigen
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Allgemeine Firmeninformationen anzeigen
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Zeigt die Chronik an
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Zeigt die von einem Spielskript festgelegten Ziele an
-STR_TOOLBAR_TOOLTIP_DISPLAY_WATCH_CM                            :{BLACK}Firmenaktionen beobachten
-STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Firmendiagramme und Frachtraten anzeigen
+CM_STR_TOOLBAR_TOOLTIP_DISPLAY_WATCH                            :{BLACK}Firmenaktionen beobachten
+STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Diagramme anzeigen
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Firmentabelle oder Punktestand anzeigen
 STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Industrien betrachten oder den Bau einer neuen Industrie finanzieren
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}Zuglisten der Firmen anzeigen. Strg+Klick wechselt zwischen einfacher und erweiterter Liste
@@ -403,14 +403,14 @@ STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Beenden
 
 # Settings menu
-###length 15
+###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Spieleinstellungen
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Einstellungen
 STR_SETTINGS_MENU_AI_SETTINGS                                   :KI-Einstellungen
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Spielskripteinstellungen
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF-Einstellungen
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Transparenzeinstellungen
-STR_SETTINGS_MENU_ZONING_CM                                     :Zonen
+CM_STR_SETTINGS_MENU_ZONING                                     :Zonen
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Städtenamen anzeigen
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Stationsnamen anzeigen
 STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Wegpunktnamen anzeigen
@@ -435,7 +435,7 @@ STR_MAP_MENU_MAP_OF_WORLD                                       :Weltkarte
 STR_MAP_MENU_EXTRA_VIEWPORT                                     :Zusatzansicht
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Frachtverbindungen
 STR_MAP_MENU_SIGN_LIST                                          :Schilderliste
-STR_MAP_MENU_WATCH_COMPANY_CM                                   :Firma beobachten
+CM_STR_MAP_MENU_WATCH_COMPANY                                   :Firma beobachten
 
 # Town menu
 ###length 2
@@ -507,7 +507,7 @@ STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Alle Nachrichte
 ###length 11
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Gebietsinformationen
 STR_ABOUT_MENU_SEPARATOR                                        :
-STR_ABOUT_MENU_LOGIN_WINDOW_CM                                  :CityMania server-login
+CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania-Serverlogin
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Konsole öffnen/schließen
 STR_ABOUT_MENU_AI_DEBUG                                         :KI-/Skript-Debug
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot (Standard: Strg+S)
@@ -5634,8 +5634,10 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
-### PATCH
-CM_STR_TOWN_DIRECTORY_CAPTION_EXTRA                             :{WHITE}Städte ({YELLOW}{COMMA}{WHITE} / {ORANGE}{COMMA}{WHITE})
+
+### ----------------- CityMania fork strings ------------------
+
+CM_STR_TOWN_DIRECTORY_CAPTION_EXTRA                             :{WHITE}Towns ({YELLOW}{COMMA}{WHITE} / {ORANGE}{COMMA}{WHITE})
 CM_STR_LOCAL_AUTHORITY_COMPANY_RATING_NUM                       :{YELLOW}{COMPANY} {COMPANY_NUM}: {ORANGE}{STRING} {BLACK}({COMMA})
 CM_STR_TOWN_VIEW_GROWTH                                         :{BLACK}GR: {ORANGE}{COMMA}{STRING}  {BLACK}Nächste: {ORANGE}{COMMA}  {BLACK}RH: {ORANGE}{COMMA}  {BLACK}Flag {ORANGE}{NUM}  {BLACK}FB: {ORANGE}{NUM} {BLACK}Monat{P "" e}
 CM_STR_TOWN_VIEW_GROWTH_RATE_CUSTOM                             :*
@@ -5683,17 +5685,17 @@ CM_STR_NETWORK_CLIENT_EXTRA                                     :{WHITE}(#{NUM} 
 ######## Zoning toolbar
 
 CM_STR_ZONING_TOOLBAR                                           :{WHITE}Zonen-Werkzeugleiste
-CM_STR_ZONING_OUTER                                             :{BLACK}Äußere Feldränder:
-CM_STR_ZONING_INNER                                             :{BLACK}Innere Feldränder:
-CM_STR_ZONING_OUTER_INFO                                        :{BLACK}Typ der gewünschten Zone auf dem äußeren Rand eines Felds auswählen.
-CM_STR_ZONING_INNER_INFO                                        :{BLACK}Typ der gewünschten Zone auf dem inneren Rand eines Felds auswählen.
+#CM_STR_ZONING_OUTER                                             :{BLACK}Äußere Feldränder:
+#CM_STR_ZONING_INNER                                             :{BLACK}Innere Feldränder:
+#CM_STR_ZONING_OUTER_INFO                                        :{BLACK}Typ der gewünschten Zone auf dem äußeren Rand eines Felds auswählen.
+#CM_STR_ZONING_INNER_INFO                                        :{BLACK}Typ der gewünschten Zone auf dem inneren Rand eines Felds auswählen.
 
-CM_STR_ZONING_NO_ZONING                                         :{BLACK}Nichts
+#CM_STR_ZONING_NO_ZONING                                         :{BLACK}Nichts
 CM_STR_ZONING_AUTHORITY                                         :{BLACK}Stadtverwaltung
 CM_STR_ZONING_CAN_BUILD                                         :{BLACK}Wo ich nicht bauen kann
 CM_STR_ZONING_STA_CATCH                                         :{BLACK}Einzugsgebiet der Station
-CM_STR_ZONING_IND_CATCH                                         :{BLACK}Einzugsgebiet der Industrie
-CM_STR_ZONING_BUL_CATCH                                         :{BLACK}Einzugsgebiet der Stadt
+#CM_STR_ZONING_IND_CATCH                                         :{BLACK}Einzugsgebiet der Industrie
+#CM_STR_ZONING_BUL_CATCH                                         :{BLACK}Einzugsgebiet der Stadt
 CM_STR_ZONING_BUL_UNSER                                         :{BLACK}Unbediente Gebäude
 CM_STR_ZONING_IND_UNSER                                         :{BLACK}Unbediente Industrien
 CM_STR_ZONING_TOWN_ZONES                                        :{BLACK}Stadtzonen
@@ -5787,7 +5789,6 @@ CM_STR_TOOLBAR_CARGOS_NAME                                      :{BLACK}{STRING}
 #towns
 CM_STR_TOWN_DIRECTORY_TOWN_COLOUR                               :{ORANGE}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} Gebäude
 CM_STR_TOWN_DIRECTORY_CITY_COLOUR                               :{YELLOW}{TOWN}{BLACK} ({COMMA}->{COMMA}) {YELLOW}{COMMA} Gebäude
-CM_STR_SMALLMAP_TOWN_LARGE                                      :{TINY_FONT}{YELLOW}{TOWN}
 
 CM_STR_SORT_BY_HOUSES                                           :Gebäude
 CM_STR_SORT_BY_REAL_POPULATION                                  :Reale Bevölkerung
@@ -5957,6 +5958,7 @@ CM_STR_CONFIG_SETTING_SHADED_TREES_SERVER                       :Wie Server
 CM_STR_CONFIG_SETTING_SHOW_APM                                  :Zeige APM-Zähler: {STRING}
 CM_STR_CONFIG_SETTING_SHOW_APM_HELPTEXT                         :Fügt einen APM-Zähler (Aktionen pro Minute) zur Statusleiste hinzu.
 CM_STR_STATUSBAR_APM                                            :{WHITE}APM: {NUM} AVG: {NUM} LAG: {NUM}
+
 CM_STR_STATION_BUILD_SUPPLIES                                   :{BLACK}Liefert: {GOLD}
 
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND                          :Hintergrundfarbe von Graphen: {STRING}
@@ -5979,9 +5981,14 @@ CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Benutzer
 CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Passwort ändern
 CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT                    :{BLACK}Benutzernamen ändern
 CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT                    :{BLACK}Passwort ändern
-CM_STR_LOGIN_WINDOW_SIGN_IN_HELPTEXT                            :{BLACK}Login abschicken (sie müssen auf dem richtigen Community-Server sein)
+CM_STR_LOGIN_WINDOW_SIGN_IN_HELPTEXT                            :{BLACK}Login abschicken (Sie müssen auf dem richtigen Community-Server sein)
 CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{STRING}
 CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
+
+CM_STR_NETWORK_COMPANY_LIST_NEW_COMPANY                         :Neue Firma
+CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Zuschauen
+
+CM_STR_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT                           :{BLACK}Schienen-Blaupausen-Tool (kopieren-einfügen)
 
 CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL                            :Strg+Linksklick: {STRING}
 CM_STR_CONFIG_SETTING_ORDER_MOD_SHIFT                           :Umschalt+Linksklick: {STRING}
@@ -6007,6 +6014,12 @@ CM_STR_CONFIG_SETTING_ORDER_SHORTCUTS                           :{ORANGE}Auftrag
 CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                :"Umladen"-Aufträge sind standardmäßig "Nicht beladen": {STRING}
 CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                  :"Alles entladen"-Aufträge sind standardmäßig "Nicht beladen": {STRING}
 
+CM_STR_TOGGLE_CLIENTS_OVERLAY                                   :{BLACK}Nutzerlistenoverlay umschalten.
+
+CM_STR_SMALLMAP_TOWN_LARGE                                      :{TINY_FONT}{YELLOW}{TOWN}
+CM_STR_SMALLMAP_POPULATION_LARGE                                :{TINY_FONT}{YELLOW}({NUM})
+CM_STR_SMALLMAP_POPULATION                                      :{TINY_FONT}{WHITE}({NUM})
+
 # Network server list filters
 CM_STR_NETWORK_SERVER_LIST_FILTER_CITYMANIA                     :{BLACK}CityMania
 CM_STR_NETWORK_SERVER_LIST_FILTER_NICE                          :{BLACK}N-ice
@@ -6014,6 +6027,15 @@ CM_STR_NETWORK_SERVER_LIST_FILTER_BTPRO                         :{BLACK}BTPro
 CM_STR_NETWORK_SERVER_LIST_FILTER_REDDIT                        :{BLACK}reddit
 CM_STR_NETWORK_SERVER_LIST_FILTER_TEAMGAME                      :{BLACK}TeamGame
 CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP                       :{BLACK}Diesen filtern
+
+CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM                 :Experimentelle automatische Landschaftsgestaltung mit Polylinie aktivieren
+CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM_HELPTEXT        :Erlaubt die Verwendung der automatischen Landschaftsgestaltung bei Verwendung des Polylinientools (durch Drücken der Steuerungstaste Fn).
+CM_STR_NETWORK_CLIENT_LIST_WATCH_TOOLTIP                        :{BLACK}Diese Firma beobachten
+CM_STR_NETWORK_CLIENT_LIST_HQ_TOOLTIP                           :{BLACK}Firmensitz anzeigen
+CM_STR_WATCH_LOCATION_TOOLTIP                                   :{BLACK}Hauptansicht auf den Standort zentrieren. Strg-Klick öffnet ein neues Ansichtsfenster für den Standort
+
+CM_STR_LAYOUT_NUM                                               :{BLACK}{NUM}
+CM_STR_LAYOUT_RANDOM                                            :{BLACK}rng
 
 CM_STR_TOOLTIP_DEMOLISH_TREES                                   :{BLACK}Nur Bäume von einem Planquadrat abreißen. Strg wählt ein diagonales Gebiet aus
 CM_STR_MEASURE_DIST_HEIGHTDIFF                                  :{BLACK}Gebiet: {NUM} x {NUM}{}Distanz: {NUM}{}Höhenunterschied: {HEIGHT}
@@ -6035,3 +6057,9 @@ CM_STR_VIEWPORT_TOWN_TINY_MEDIOCRE_RATING                       :{TINY_FONT}{ORA
 CM_STR_VIEWPORT_TOWN_TINY_GOOD_RATING                           :{TINY_FONT}{YELLOW}{TOWN}
 CM_STR_VIEWPORT_TOWN_TINY_VERY_GOOD_RATING                      :{TINY_FONT}{WHITE}{TOWN}
 CM_STR_VIEWPORT_TOWN_TINY_EXCELLENT_RATING                      :{TINY_FONT}{GREEN}{TOWN}
+
+CM_STR_CARGO_WITH_ID                                            :{STRING} {SILVER}#{NUM}
+CM_STR_INDUSTRY_TYPE_WITH_ID                                    :{STRING} {SILVER}#{NUM}
+CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania-Patchpack-Einstellungen
+
+CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Kosten
