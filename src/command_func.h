@@ -415,7 +415,7 @@ protected:
 			return {};
 		}
 
-		Debug(misc, 0, "{}/{} {} {} company={} tile={}", _date, _date_fract, _random.state[0], GetCommandName(Tcmd), (int)_current_company, tile);
+		// Debug(misc, 0, "{}/{} {} {} company={} tile={}", _date, _date_fract, _random.state[0], GetCommandName(Tcmd), (int)_current_company, tile);
 		if (desync_log) LogCommandExecution(Tcmd, err_message, tile, EndianBufferWriter<CommandDataBuffer>::FromValue(args), false);
 
 		/* Actually try and execute the command. */

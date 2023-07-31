@@ -192,7 +192,7 @@ void load_replay_commands(const std::string &filename, std::function<void(const 
             fk.cp.data = bs.ReadData();
             fk.cp.callback = nullptr;
             _fake_commands.push(fk);
-            error_func(fmt::format("Command {}({}) company={} client={} tile={}", GetCommandName(fk.cp.cmd), fk.cp.cmd, fk.cp.company, fk.client_id));
+            error_func(fmt::format("Command {}({}) company={} client={}", GetCommandName(fk.cp.cmd), fk.cp.cmd, fk.cp.company, fk.client_id));
         }
     }
     catch (BitIStreamUnexpectedEnd &) {

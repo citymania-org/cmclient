@@ -255,20 +255,28 @@ MinimapIndustryKdtreeEntry get_industry_entry(const Industry *ind) {
 }
 
 void minimap_add_industry(const Industry *ind) {
+	auto x = get_industry_entry(ind);
+	//fmt::print("ADD {}: {},{} {}\n", ind->index, x.mx, x.my, is_cached_industry(ind));
 	if (!is_cached_industry(ind)) return;
 	_minimap_industry_idx.Insert(get_industry_entry(ind));
 }
 
 void minimap_remove_industry(const Industry *ind) {
+	auto x = get_industry_entry(ind);
+	//fmt::print("REMOVE {}: {},{} {}\n", ind->index, x.mx, x.my, is_cached_industry(ind));
 	if (!is_cached_industry(ind)) return;
 	_minimap_industry_idx.Remove(get_industry_entry(ind));
 }
 
 void minimap_init_industries() {
 	_max_industry_outputs = 0;
-	for (auto i : Industry::Iterate()) {
-		minimap_add_industry(i);
+	std::vector<MinimapIndustryKdtreeEntry> entries;
+	for (auto ind : Industry::Iterate()) {
+		if (is_cached_industry(ind)) entries.push_back(get_industry_entry(ind));
+		auto x = get_industry_entry(ind);
+		//fmt::print("INIT {}: {},{} {}\n", ind->index, x.mx, x.my, is_cached_industry(ind));
 	}
+	_minimap_industry_idx.Build(entries.begin(), entries.end());
 }
 
 
