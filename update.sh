@@ -3,7 +3,7 @@ dir=`mktemp -d`
 curdir=`pwd`
 echo $dir
 cd $dir
-wget https://proxy.binaries.openttd.org/openttd-releases/$version/openttd-$version-source.tar.xz
+wget https://cdn.openttd.org/openttd-releases/$version/openttd-$version-source.tar.xz
 tar xf openttd-$version-source.tar.xz
 ttdir=$dir/openttd-$version
 cp -rT $ttdir $curdir
