@@ -75,6 +75,7 @@
 #include "citymania/cm_export.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_main.hpp"
+#include "citymania/cm_minimap.hpp"
 #include "citymania/cm_console_cmds.hpp"
 
 #include <stdarg.h>
@@ -942,6 +943,7 @@ static void MakeNewGameDone()
 	CheckEngines();
 	CheckIndustries();
 	citymania::InitializeZoningMap();
+	citymania::minimap_init_industries();
 	MarkWholeScreenDirty();
 
 	if (_network_server && !_network_dedicated) ShowClientList();
