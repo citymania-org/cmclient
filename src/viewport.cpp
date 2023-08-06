@@ -726,7 +726,6 @@ void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int w,
 
 	if (!ignore_highlight_pal) {
 		if (_vd.cm_highlight.structure_pal) pal = _vd.cm_highlight.structure_pal;
-		if (pal == CM_PALETTE_HIDE_SPRITE) return;
 	}
 
 	/* make the sprites transparent with the right palette */
@@ -741,6 +740,7 @@ void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int w,
 	}
 
 	_vd.last_child = nullptr;
+	if (!ignore_highlight_pal && pal == CM_PALETTE_HIDE_SPRITE) return;
 
 	Point pt = RemapCoords(x, y, z);
 	int tmp_left, tmp_top, tmp_x = pt.x, tmp_y = pt.y;

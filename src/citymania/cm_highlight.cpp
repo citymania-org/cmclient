@@ -1192,7 +1192,7 @@ TileHighlight ObjectHighlight::GetTileHighlight(const TileInfo *ti) {
         auto &oth = t->second;
         switch (oth.type) {
             case ObjectTileHighlight::Type::RAIL_DEPOT:
-            case ObjectTileHighlight::Type::RAIL_TRACK:
+            // case ObjectTileHighlight::Type::RAIL_TRACK:  Depot track shouldn't remove foundation
             case ObjectTileHighlight::Type::RAIL_STATION:
             case ObjectTileHighlight::Type::RAIL_SIGNAL:
             case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
