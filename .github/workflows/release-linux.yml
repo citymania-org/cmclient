@@ -42,6 +42,7 @@ jobs:
           perl-IPC-Cmd \
           wget \
           libzstd-devel \
+          zip \
           # EOF
         echo "::endgroup::"
 

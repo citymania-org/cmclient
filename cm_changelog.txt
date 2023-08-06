@@ -74,6 +74,15 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 13.4 (6 Aug 2023) ***
+- Fix broken building preview in some cases (#21).
+- Allow community passwords to have up to 128 letters (#19).
+- Fix crash/assertion in minimap after starting a new game.
+- Update German translations - by danidoedel
+
+*** 13.3 (11 Jun 2023) ***
+- OpenTTD update.
+
 *** 13.2 (10 Jun 2023) ***
 - Fixed station highlight crash (#17)
 
