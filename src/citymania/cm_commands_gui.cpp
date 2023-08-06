@@ -29,7 +29,8 @@ namespace citymania {
 bool _novahost = true;
 IniFile *_inilogin = NULL;
 
-static const int HTTPBUFLEN = 128;
+static const int HTTPBUFLEN = 1024;
+static const int MAX_COMMUNITY_STRING_LEN = 128;
 
 // nova* stuff probabaly obsolete
 static const char * const NOVAPOLIS_IPV4_PRIMARY   = "188.165.194.77";
@@ -174,7 +175,7 @@ enum IniLoginKeys {
 	BTPROPW,
 };
 
-char _inilogindata[6][64];
+char _inilogindata[6][MAX_COMMUNITY_STRING_LEN];
 
 void AccountLogin(CommunityName community);
 void IniReloadLogin();
@@ -229,7 +230,7 @@ std::string GetLoginItem(const char *itemname){
 }
 
 void IniReloadLogin(){
-	char str[64];
+	char str[MAX_COMMUNITY_STRING_LEN * 2];
 	for(int i = 0, len = lengthof(INI_LOGIN_KEYS); i < len; i++){
 		auto itemvalue = GetLoginItem(INI_LOGIN_KEYS[i]);
 		if (itemvalue.empty()){
@@ -673,7 +674,7 @@ std::string btpro_encode(const char *value) {
 
 //send login
 void AccountLogin(CommunityName community){
-	char uri[128];
+	char uri[MAX_COMMUNITY_STRING_LEN * 2 + 32];
 	switch(community){
 		case CITYMANIA:
 			seprintf(uri, lastof(uri), "!login %s %s", _inilogindata[NOVAPOLISUSER], _inilogindata[NOVAPOLISPW]);
@@ -749,13 +750,13 @@ struct LoginWindow : Window {
 			case LWW_NICE_LOGIN:
 			case LWW_BTPRO_LOGIN:
 				this->query_widget = (LoginWindowQueryWidgets)widget;
-				ShowQueryString(STR_EMPTY, CM_STR_LOGIN_WINDOW_CHANGE_USERNAME, 32, this, CS_ALPHANUMERAL, QSF_NONE);
+				ShowQueryString(STR_EMPTY, CM_STR_LOGIN_WINDOW_CHANGE_USERNAME, MAX_COMMUNITY_STRING_LEN, this, CS_ALPHANUMERAL, QSF_NONE);
 				break;
 			case LWW_NOVAPOLIS_PW:
 			case LWW_NICE_PW:
 			case LWW_BTPRO_PW:
 				this->query_widget = (LoginWindowQueryWidgets)widget;
-				ShowQueryString(STR_EMPTY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD, 32, this, CS_ALPHANUMERAL, QSF_NONE);
+				ShowQueryString(STR_EMPTY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD, MAX_COMMUNITY_STRING_LEN, this, CS_ALPHANUMERAL, QSF_NONE);
 				break;
 		}
 	}
