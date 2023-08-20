@@ -73,6 +73,10 @@ static const int HOTKEY_NEW_POLYRAIL = 0x1001;
 static const int HOTKEY_BLUEPRINT_ROTATE = 0x1002;
 static const int HOTKEY_BUILD_STATION_SIZED = 0x1010;     ///< Build a station in fixed size mode.
 static const int HOTKEY_BUILD_STATION_DRAGDROP = 0x1011;  ///< Build a station in dragdrop mode.
+static const int HOTKEY_BLUEPRINT_LOAD = 0x1020;
+static const int HOTKEY_BLUEPRINT_LOAD_END = 0x1030;
+static const int HOTKEY_BLUEPRINT_SAVE = 0x1030;
+static const int HOTKEY_BLUEPRINT_SAVE_END = 0x1040;
 
 struct RailStationGUISettings {
 	Axis orientation;                 ///< Currently selected rail station orientation
@@ -709,8 +713,20 @@ struct BuildRailToolbarWindow : Window {
 			case HOTKEY_BLUEPRINT_ROTATE:
 				if (this->last_user_action == CM_WID_RAT_BLUEPRINT_PLACE) {
 					citymania::RotateActiveBlueprint();
+					return ES_HANDLED;
 				}
 				break;
+			case HOTKEY_BLUEPRINT_LOAD ... HOTKEY_BLUEPRINT_LOAD_END - 1:
+				if (citymania::LoadBlueprint(hotkey - HOTKEY_BLUEPRINT_LOAD)) {
+					ResetObjectToPlace();
+					SetObjectToPlace(SPR_CURSOR_RAIL_STATION, PAL_NONE, CM_HT_BLUEPRINT_PLACE, this->window_class, this->window_number, CM_DDSP_BLUEPRINT_AREA);
+					this->last_user_action = CM_WID_RAT_BLUEPRINT_PLACE;
+				}
+				return ES_HANDLED;
+			case HOTKEY_BLUEPRINT_SAVE ... HOTKEY_BLUEPRINT_SAVE_END - 1:
+				citymania::SaveBlueprint(hotkey - HOTKEY_BLUEPRINT_SAVE);
+				ResetObjectToPlace();
+				return ES_HANDLED;
 		}
 
 		return Window::OnHotkey(hotkey);
@@ -954,6 +970,26 @@ static Hotkey railtoolbar_hotkeys[] = {
 	Hotkey('R', "remove", WID_RAT_REMOVE),
 	Hotkey('C', "convert", WID_RAT_CONVERT_RAIL),
 	Hotkey((uint16)0, "cm_blueprint", CM_WID_RAT_BLUEPRINT),
+	Hotkey((uint16)0, "cm_blueprint_load_0", HOTKEY_BLUEPRINT_LOAD + 0),
+	Hotkey((uint16)0, "cm_blueprint_load_1", HOTKEY_BLUEPRINT_LOAD + 1),
+	Hotkey((uint16)0, "cm_blueprint_load_2", HOTKEY_BLUEPRINT_LOAD + 2),
+	Hotkey((uint16)0, "cm_blueprint_load_3", HOTKEY_BLUEPRINT_LOAD + 3),
+	Hotkey((uint16)0, "cm_blueprint_load_4", HOTKEY_BLUEPRINT_LOAD + 4),
+	Hotkey((uint16)0, "cm_blueprint_load_5", HOTKEY_BLUEPRINT_LOAD + 5),
+	Hotkey((uint16)0, "cm_blueprint_load_6", HOTKEY_BLUEPRINT_LOAD + 6),
+	Hotkey((uint16)0, "cm_blueprint_load_7", HOTKEY_BLUEPRINT_LOAD + 7),
+	Hotkey((uint16)0, "cm_blueprint_load_8", HOTKEY_BLUEPRINT_LOAD + 8),
+	Hotkey((uint16)0, "cm_blueprint_load_9", HOTKEY_BLUEPRINT_LOAD + 9),
+	Hotkey((uint16)0, "cm_blueprint_save_0", HOTKEY_BLUEPRINT_SAVE + 0),
+	Hotkey((uint16)0, "cm_blueprint_save_1", HOTKEY_BLUEPRINT_SAVE + 1),
+	Hotkey((uint16)0, "cm_blueprint_save_2", HOTKEY_BLUEPRINT_SAVE + 2),
+	Hotkey((uint16)0, "cm_blueprint_save_3", HOTKEY_BLUEPRINT_SAVE + 3),
+	Hotkey((uint16)0, "cm_blueprint_save_4", HOTKEY_BLUEPRINT_SAVE + 4),
+	Hotkey((uint16)0, "cm_blueprint_save_5", HOTKEY_BLUEPRINT_SAVE + 5),
+	Hotkey((uint16)0, "cm_blueprint_save_6", HOTKEY_BLUEPRINT_SAVE + 6),
+	Hotkey((uint16)0, "cm_blueprint_save_7", HOTKEY_BLUEPRINT_SAVE + 7),
+	Hotkey((uint16)0, "cm_blueprint_save_8", HOTKEY_BLUEPRINT_SAVE + 8),
+	Hotkey((uint16)0, "cm_blueprint_save_9", HOTKEY_BLUEPRINT_SAVE + 9),
 	Hotkey(CM_WKC_MOUSE_MIDDLE, "cm_blueprint_rotate", HOTKEY_BLUEPRINT_ROTATE),
 	HOTKEY_LIST_END
 };

@@ -5,13 +5,16 @@
 #include "cm_commands.hpp"
 #include "cm_highlight.hpp"
 
+#include "../console_func.h"
 #include "../command_func.h"
+#include "../error.h"
 #include "../debug.h"
 #include "../direction_type.h"
 #include "../rail_map.h"
 #include "../station_cmd.h"
 #include "../station_map.h"
 #include "../station_base.h"
+#include "../strings_func.h"
 #include "../tilearea_type.h"
 #include "../tunnelbridge_map.h"
 #include "../network/network.h"
@@ -37,6 +40,9 @@ namespace citymania {
 
 
 std::pair<TileIndex, sp<Blueprint>> _active_blueprint = std::make_pair(INVALID_TILE, nullptr);
+const size_t MAX_BLUEPRINT_SLOTS = 16;
+
+sp<Blueprint> _blueprint_slots[16] = {};
 
 TileIndexDiffC operator+(const TileIndexDiffC &a, const TileIndexDiffC &b) {
     return TileIndexDiffC{(int16)(a.x + b.x), (int16)(a.y + b.y)};
@@ -569,9 +575,8 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
     _active_blueprint = std::make_pair(start, blueprint);
 }
 
-
 void UpdateBlueprintTileSelection(Point pt, TileIndex tile) {
-    if (tile == INVALID_TILE || _active_blueprint.first == INVALID_TILE || !_active_blueprint.second) {
+    if (_active_blueprint.second == nullptr) {
         _thd.cm_new = ObjectHighlight{};
         return;
     }
@@ -657,5 +662,20 @@ void BuildActiveBlueprint(TileIndex start) {
     BuildBlueprint(_active_blueprint.second, start);
 }
 
+void SaveBlueprint(uint slot) {
+    if (slot >= MAX_BLUEPRINT_SLOTS) return;
+    _blueprint_slots[slot] = _active_blueprint.second;
+    _active_blueprint = {INVALID_TILE, nullptr};
+}
+
+bool LoadBlueprint(uint slot) {
+    if (slot >= MAX_BLUEPRINT_SLOTS) return false;
+    _active_blueprint = {INVALID_TILE, _blueprint_slots[slot]};
+    if (_active_blueprint.second == nullptr) {
+        SetDParam(0, slot);
+        ShowErrorMessage(CM_STR_NO_BLUEPRINT_IN_SLOT, INVALID_STRING_ID, WL_ERROR);
+    }
+    return _active_blueprint.second != nullptr;
+}
 
 }  // namespace citymania
