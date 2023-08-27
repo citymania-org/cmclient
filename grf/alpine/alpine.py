@@ -1,16 +1,345 @@
+from pathlib import Path
+
+import numpy as np
 import spectra
+from PIL import Image
 
 import grf
 
 
-gen = grf.NewGRF(
+OGFX_PATH = Path('OpenGFX2_Classic-0.1')
+OGFX_BASE_PATH = OGFX_PATH / 'ogfx21_base_8.grf'
+THIS_FILE = grf.PythonFile(__file__)
+
+
+class GRFFile(grf.LoadedResourceFile):
+    def __init__(self, path):
+        self.path = path
+        self.real_sprites = None
+        self.load()
+
+    def load(self):
+        if self.real_sprites is not None:
+            return
+        print(f'Decompiling {self.path}...')
+        self.context = grf.decompile.ParsingContext()
+        self.f = open(self.path, 'rb')
+        self.gen, self.container, self.real_sprites = grf.decompile.read(self.f, self.context)
+
+    def unload(self):
+        self.context = None
+        self.gen = None
+        self.container = None
+        self.real_sprites = None
+        self.f.close()
+
+    def get_sprite_data(self, sprite_id):
+        s = self.real_sprites[sprite_id + 1]
+        assert len(s) == 1, len(s)
+        s = s[0]
+        self.f.seek(s.offset)
+        data, _ = grf.decompile.decode_sprite(self.f, s, self.container)
+        return data
+
+    def get_sprite(self, sprite_id):
+        s = self.real_sprites[sprite_id + 1]
+        assert len(s) == 1, len(s)
+        s = s[0]
+        return GRFSprite(self, s.type, s.bpp, sprite_id, w=s.width, h=s.height, xofs=s.xofs, yofs=s.yofs, zoom=s.zoom, crop=False)
+
+
+class GRFSprite(grf.Sprite):
+
+    class Mask(grf.ImageMask):
+        def get_fingerprint(self):
+            return True
+
+    def __init__(self, file, type, grf_bpp, sprite_id, *args, **kw):
+        super().__init__(*args, **kw)
+        self.file = file
+        self.type = type
+        self.grf_bpp = grf_bpp
+        self.sprite_id = sprite_id
+
+        bpp = grf_bpp
+        if self.type & 0x04:
+            bpp -= 1
+
+        if bpp == 3:
+            self.bpp = grf.BPP_24
+        elif bpp == 4:
+            self.bpp = grf.BPP_32
+        else:
+            self.bpp = grf.BPP_8
+
+        self._image = None
+
+    def get_resource_files(self):
+        return (self.file, THIS_FILE)
+
+    def get_fingerprint(self):
+        return {
+            'class': self.__class__.__name__,
+            'sprite_id': self.sprite_id,
+        }
+
+    def load(self):
+        if self._image is not None:
+            return
+
+        data = self.file.get_sprite_data(self.sprite_id)
+
+        a = np.frombuffer(data, dtype=np.uint8)
+        assert a.size == self.w * self.h * self.grf_bpp, (a.size, self.w, self.h, self.grf_bpp)
+
+        bpp = self.grf_bpp
+        a.shape = (self.h, self.w, bpp)
+
+        mask = None
+        if self.type & 0x04 > 0:
+            bpp -= 1
+            mask = Image.fromarray(a[:, :, -1], mode='P')
+            mask.putpalette(grf.PALETTE)
+
+        if bpp == 3:
+            self._image = Image.fromarray(a[:, :, :bpp], mode='RGB'), grf.BPP_24
+        elif bpp == 4:
+            self._image = Image.fromarray(a[:, :, :bpp], mode='RGBA'), grf.BPP_32
+        else:
+            self._image = mask, grf.BPP_8
+            mask = None
+
+        if mask is not None:
+            self.mask = self.Mask(mask)
+
+        # return self._image[0].show()
+
+    def get_image(self):
+        self.load()
+        return self._image
+
+
+class RecolourSprite(grf.Sprite):
+    def __init__(self, sprite, recolour):
+        super().__init__(sprite.w, sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, bpp=sprite.bpp, zoom=sprite.zoom, crop=sprite.crop)
+        self.sprite = sprite
+        self.recolour = recolour
+        self._image = None
+
+    def get_resource_files(self):
+        return self.sprite.get_resource_files()
+
+    def get_fingerprint(self):
+        return grf.combine_fingerprint(
+            super().get_fingerprint_base(),
+            sprite=self.sprite.get_fingerprint,
+            recolour=True,
+        )
+
+    def get_image(self):
+        if self._image is not None:
+            return self._image
+        im, bpp = self.sprite.get_image()
+        assert bpp == 8
+        data = np.array(im)
+        data = self.recolour[data]
+        im2 = Image.fromarray(data)
+        im2.putpalette(im.getpalette())
+        self._image = im2, grf.BPP_8
+        return self._image
+
+
+class SnowTransitionSprite(grf.Sprite):
+    def __init__(self, grass_sprite, snow_sprite, snow_level):
+        assert snow_level in (1, 2, 3)
+        self.grass_sprite = grass_sprite
+        self.snow_sprite = snow_sprite
+        self.snow_level = snow_level
+        super().__init__(
+            grass_sprite.w,
+            grass_sprite.h,
+            xofs=grass_sprite.xofs,
+            yofs=grass_sprite.yofs,
+            zoom=grass_sprite.zoom,
+            crop=grass_sprite.crop,
+        )
+        self._image = None
+
+    def get_image(self):
+        if self._image is not None:
+            return self._image
+
+        grass_data = np.array(self.grass_sprite.get_image()[0])
+        snow_data = np.array(self.snow_sprite.get_image()[0])
+
+        ratio = [0, 0.15, 0.35, 0.7][self.snow_level]
+        grass_desaturate = [0, 10, 30, 15][self.snow_level]
+        grass_blend = [0, 0.1, 0.2, 0.2][self.snow_level]
+
+        data = grass_data.copy()
+        cache = {(0, 0): 0}
+        h, w = data.shape
+        for y in range(h):
+            for x in range(w):
+                cache_key = grass_index, snow_index = snow_data[y, x], grass_data[y, x]
+                if cache_key in cache:
+                    data[y, x] = cache[cache_key]
+                    continue
+                snow_colour = grf.SPECTRA_PALETTE[snow_index]
+                grass_colour = grf.SPECTRA_PALETTE[grass_index]
+                grass_colour = grass_colour.blend(spectra.rgb(0.7, 0.7, 0), ratio=grass_blend)
+                grass_colour = grass_colour.desaturate(grass_desaturate)
+                data[y, x] = cache[cache_key] = grf.find_best_color(snow_colour.blend(grass_colour, ratio=ratio))
+        im = Image.fromarray(data)
+        im.putpalette(grf.PALETTE)
+        self._image = im, grf.BPP_8
+        return self._image
+
+    def get_resource_files(self):
+        return self.grass_sprite.get_resource_files() + self.snow_sprite.get_resource_files()
+
+    def get_fingerprint(self):
+        return grf.combine_fingerprint(
+            grass=self.grass_sprite.get_fingerprint,
+            snow=self.snow_sprite.get_fingerprint,
+            level=self.snow_level,
+        )
+
+
+def gen_recolour(color_func):
+    out = np.arange(256, dtype=np.uint8)
+    for i, c in grf.SPECTRA_PALETTE.items():
+        if i not in grf.SAFE_COLOURS:
+            continue
+        out[i] = grf.find_best_color(color_func(c))
+    return out
+
+
+def gen_tint(tint, ratio):
+    return lambda x: grf.find_best_color(x.blend(tint, ratio=ratio))
+
+
+def gen_brightness(level):
+    def func(x):
+        if level > 0:
+            return x.brighten(amount=2.56 * level)
+        else:
+            return x.darken(amount=-2.56 * level)
+    return gen_recolour(func)
+
+
+def gen_land_recolour():
+    def func(x):
+        r, g, b = x.rgb
+        if 2 * g > r + b:
+            x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.05)
+            x = x.saturate(10)
+        # elif 3 * b > r + g:
+        #     x = x.blend(spectra.rgb(0, 0, 1), ratio=0.3)
+        #     x = x.blend(spectra.rgb(1, 0, 1), ratio=0.5)
+        #     x = x.saturate(40)
+        else:
+            x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.05)
+            x = x.saturate(5)
+        return x
+    return gen_recolour(func)
+
+
+def gen_land_recolour2():
+    def func(x):
+        r, g, b = x.rgb
+        if 3 * g / 2 > r + b:
+            x = x.blend(spectra.rgb(0.7, 1, 0), ratio=0.05)
+            x = x.saturate(10)
+        return x
+    return gen_recolour(func)
+
+
+GROUND_RECOLOUR = gen_land_recolour()
+
+g = grf.NewGRF(
     grfid=b'CMAL',
-    name='CityMania Alpine Landscape',
-    description='Modified OpenGFX sprites for alpine climate.',
-    version=2,
+    name='CityMania Alpine Landscape for OpenGFX2',
+    description='Modified OpenGFX2 sprites for alpine climate.',
+    version=3,
     min_compatible_version=0,
 )
+ogfx = GRFFile(OGFX_BASE_PATH)
 
+
+def replace_old_sprites(first_id, amount, sprite_func):
+    g.add(grf.ReplaceOldSprites([(first_id, amount)]))
+    res = []
+    for i in range(amount):
+        res.append(sprite_func(first_id, i))
+    g.add(*res)
+    return res
+
+
+# shore sprites (replacing 16 seems to do these as well)
+# replace_shore_sprites(4062, 'gfx/water/seashore_grid_temperate.gimp.png', 1, 1)
+# def replace_coastal_sprites(file, x, y, **kw):
+#     png = grf.ImageFile(file)
+#     gen.add(grf.ReplaceNewSprites(0x0d, 16))
+#     sprite = lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw))
+#     sprite(1276+x,   y, 64, 15, xofs=-31, yofs=  0, **kw)
+#     sprite(  80+x,   y, 64, 31, xofs=-31, yofs=  0, **kw)
+#     sprite( 160+x,   y, 64, 23, xofs=-31, yofs=  0, **kw)
+#     sprite( 240+x,   y, 64, 23, xofs=-31, yofs=  0, **kw)
+#     sprite( 320+x,   y, 64, 31, xofs=-31, yofs=  0, **kw)
+#     sprite(1356+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)
+#     sprite( 478+x,   y, 64, 23, xofs=-31, yofs=  0, **kw)
+#     sprite( 558+x,   y, 64, 23, xofs=-31, yofs=  0, **kw)
+#     sprite( 638+x,   y, 64, 39, xofs=-31, yofs= -8, **kw)
+#     sprite( 718+x,   y, 64, 39, xofs=-31, yofs= -8, **kw)
+#     sprite(1196+x,   y, 64, 47, xofs=-31, yofs=-16, **kw)
+#     sprite( 878+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)
+#     sprite( 958+x,   y, 64, 39, xofs=-31, yofs= -8, **kw)
+#     sprite(1038+x,   y, 64, 39, xofs=-31, yofs= -8, **kw)
+#     sprite(1118+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)
+#     sprite(1436+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)
+
+
+# replace_coastal_sprites('gfx/water/seashore_grid_temperate.gimp.png', 1, 1)
+
+
+def ground_func(first_id, i):
+    ogfx_sprite = ogfx.get_sprite(first_id + i)
+    return RecolourSprite(ogfx_sprite, GROUND_RECOLOUR)
+
+
+# Normal land
+grass = replace_old_sprites(3981, 19, ground_func)
+
+#bulldozed (bare) land and regeneration stages:
+replace_old_sprites(3924, 19, ground_func)
+replace_old_sprites(3943, 19, ground_func)
+replace_old_sprites(3962, 19, ground_func)
+
+# rough terrain
+replace_old_sprites(4000, 19 + 4, ground_func)
+
+# rocky terrain
+replace_old_sprites(4023, 19, ground_func)
+
+# road sprites
+replace_old_sprites(1332, 19, ground_func)
+replace_old_sprites(2389, 8, ground_func)  # tunnels
+
+# rail tunnels
+replace_old_sprites(2365, 8, ground_func)
+
+# hq
+replace_old_sprites(2603, 29, ground_func)
+
+# different snow densities:
+snow = replace_old_sprites(4550, 19, ground_func)
+replace_old_sprites(4493, 19, lambda _, i: SnowTransitionSprite(grass[i], snow[i], 1))
+replace_old_sprites(4512, 19, lambda _, i: SnowTransitionSprite(grass[i], snow[i], 2))
+replace_old_sprites(4531, 19, lambda _, i: SnowTransitionSprite(grass[i], snow[i], 3))
+
+
+# CREEKS
 
 def tmpl_ground_sprites(func, x, y, **kw):
     func(   0+x,   y, 64, 31, xofs=-31, yofs=  0, **kw)  #
@@ -34,264 +363,6 @@ def tmpl_ground_sprites(func, x, y, **kw):
     func(1436+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)  # N E S   STEEP
 
 
-def tmpl_level_ground(func, x, y, **kw):
-    func(x, y, 64, 31, xofs=-31, yofs=0, **kw)
-
-
-def tmpl_short_slope(func, x, y, **kw):
-    func(x, y, 64, 23, xofs=-31, yofs=0, **kw)
-
-
-def tmpl_long_slope(func, x, y, **kw):
-    func(x, y, 64, 39, xofs=-31, yofs=-8, **kw)
-
-
-def tmpl_infrastructure_road(func, **kw):
-    tmpl_level_ground(func,  82, 40, **kw)
-    tmpl_level_ground(func, 162, 40, **kw)
-    tmpl_level_ground(func, 242, 40, **kw)
-    tmpl_level_ground(func, 322, 40, **kw)
-    tmpl_level_ground(func, 402, 40, **kw)
-    tmpl_level_ground(func, 482, 40, **kw)
-    tmpl_level_ground(func, 562, 40, **kw)
-    tmpl_level_ground(func, 642, 40, **kw)
-    tmpl_level_ground(func, 722, 40, **kw)
-    tmpl_level_ground(func,   2, 88, **kw)
-    tmpl_level_ground(func,  82, 88, **kw)
-    tmpl_long_slope  (func,  82, 152, **kw)
-    tmpl_short_slope (func, 162, 152, **kw)
-    tmpl_short_slope (func, 242, 152, **kw)
-    tmpl_long_slope  (func, 322, 152, **kw)
-    tmpl_level_ground(func, 402, 152, **kw)
-    tmpl_level_ground(func, 482, 152, **kw)
-    tmpl_level_ground(func, 562, 152, **kw)
-    tmpl_level_ground(func, 642, 152, **kw)
-
-
-def tmpl_infrastructure_railtunnels(func, **kw):
-    tmpl_long_slope  (func,   2, 200, **kw)
-    func(82, 152, 64, 39, xofs=-31, yofs=-38, **kw)
-    tmpl_short_slope (func,  82, 200, **kw)
-    func(162, 152, 64, 23, xofs=-31, yofs=-30, **kw)
-    tmpl_short_slope (func, 162, 200, **kw)
-    func(242, 152, 64, 23, xofs=-31, yofs=-30, **kw)
-    tmpl_long_slope  (func, 242, 200, **kw)
-    func(322, 152, 64, 39, xofs=-31, yofs=-38, **kw)
-
-
-def tmpl_temperate_road_tunnels_grid(func, **kw):
-    func(113, 27, 64, 39, xofs=-31, yofs=-8)
-    func(193, 27, 64, 39, xofs=-31, yofs=-38)
-    func(653, 27, 64, 23, xofs=-31, yofs=0)
-    func(733, 27, 64, 23, xofs=-31, yofs=-30)
-    func(337, 27, 64, 23, xofs=-31, yofs=0)
-    func(417, 27, 64, 23, xofs=-31, yofs=-30)
-    func(877, 27, 64, 39, xofs=-31, yofs=-8)
-    func(957, 27, 64, 39, xofs=-31, yofs=-38)
-
-
-def replace_ground_sprites(sprite_id, file, x, y, **kw):
-    png = grf.ImageFile(file)
-    gen.add(grf.ReplaceOldSprites([(sprite_id, 19)]))
-    sprite = lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw))
-    tmpl_ground_sprites(sprite, x, y, **kw)
-
-
-def replace_shore_sprites(sprite_id, file, x, y, **kw):
-    png = grf.ImageFile(file)
-    gen.add(grf.ReplaceOldSprites([(sprite_id, 8)]))
-    sprite = lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw))
-    sprite(320+x,   y, 64, 31, xofs=-31, yofs= 0, **kw)
-    sprite( 80+x,   y, 64, 31, xofs=-31, yofs= 0, **kw)
-    sprite(160+x,   y, 64, 23, xofs=-31, yofs= 0, **kw)
-    sprite(638+x,   y, 64, 39, xofs=-31, yofs=-8, **kw)
-    sprite(478+x,   y, 64, 23, xofs=-31, yofs= 0, **kw)
-    sprite(958+x,   y, 64, 39, xofs=-31, yofs=-8, **kw)
-    sprite(240+x,   y, 64, 23, xofs=-31, yofs= 0, **kw)
-    sprite(718+x,   y, 64, 39, xofs=-31, yofs=-8, **kw)
-
-
-def replace_additional_rough_sprites(sprite_id, file, x, y, **kw):
-    png = grf.ImageFile(file)
-    gen.add(grf.ReplaceOldSprites([(sprite_id, 4)]))
-    sprite = lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw))
-    sprite(    x, y, 64, 31, xofs=-31, yofs=0, **kw)
-    sprite( 80+x, y, 64, 31, xofs=-31, yofs=0, **kw)
-    sprite(160+x, y, 64, 31, xofs=-31, yofs=0, **kw)
-    sprite(240+x, y, 64, 31, xofs=-31, yofs=0, **kw)
-
-
-def replace_sprites_template(sprite_id, amount, file, func, **kw):
-    png = grf.ImageFile(file)
-    gen.add(grf.ReplaceOldSprites([(sprite_id, amount)]))
-    func(lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw)), **kw)
-
-
-# Normal land
-replace_ground_sprites(3981, 'gfx/grass_grid_temperate.gimp.png', 1, 1)
-
-# bulldozed (bare) land and regeneration stages:
-replace_ground_sprites(3924, 'gfx/bare03_grid.gimp.png', 1, 1)
-replace_ground_sprites(3943, 'gfx/bare13_grid_temperate.gimp.png', 1, 1)
-replace_ground_sprites(3962, 'gfx/bare23_grid_temperate.gimp.png', 1, 1)
-
-# rough terrain
-replace_ground_sprites(4000, 'gfx/rough_grid_temperate.gimp.png', 1, 1)
-replace_additional_rough_sprites(4019, 'gfx/rough_grid_temperate.gimp.png', 1511, 1)
-
-# rocky terrain
-replace_ground_sprites(4023, 'gfx/rocks_grid_temperate.gimp.png', 1, 1)
-
-# road sprites
-replace_sprites_template(1332, 19, 'gfx/infrastructure/road_grid_temperate.gimp.png', tmpl_infrastructure_road)
-
-# different snow densities:
-# replace_ground_sprites(4493, 'gfx/snow14_grid_alpine.gimp.png', 1, 1)
-# replace_ground_sprites(4512, 'gfx/snow24_grid_alpine.gimp.png', 1, 1)
-# replace_ground_sprites(4531, 'gfx/snow34_grid_alpine.gimp.png', 1, 1)
-replace_ground_sprites(4493, 'gfx/snow_transition_1.png', 1, 1)
-replace_ground_sprites(4512, 'gfx/snow_transition_2.png', 1, 1)
-replace_ground_sprites(4531, 'gfx/snow_transition_3.png', 1, 1)
-replace_ground_sprites(4550, 'gfx/snow_grid.gimp.png', 1, 1)
-
-replace_sprites_template(2365, 8, 'gfx/infrastructure/tunnel_rail_grid_temperate.gimp.png', tmpl_infrastructure_railtunnels)
-replace_sprites_template(2389, 8, 'gfx/infrastructure_road_tunnel_grid.png', tmpl_temperate_road_tunnels_grid)
-
-replace_sprites_template(4061, 1, 'gfx/seashore_temperate.gimp.png', tmpl_level_ground, x=1, y=1)
-
-def tmpl_hq(func, **kw):
-    func( 82,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(162,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(242,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(322,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(402,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(482,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(562,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(642,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(722,    8,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(  2,   56,  59,  15, xofs=-26, yofs=  0, **kw)
-    func( 66,   56,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(146,   56,  32,  18, xofs=  1, yofs= -3, **kw)
-    func(194,   56,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(274,   56,   4,   5, xofs=-31, yofs= 12, **kw)
-    func(290,   56,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(242,  200,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(322,  200,  64,  51, xofs=-31, yofs=-20, **kw)
-    func(402,  200,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(482,  200,  64,  54, xofs=-31, yofs=-23, **kw)
-    func(562,  200,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(642,  200,  64,  40, xofs=-31, yofs= -9, **kw)
-    func(722,  200,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(  2,  264,  64,  31, xofs=-31, yofs=  0, **kw)
-    func( 82,  264,  64,  73, xofs=-31, yofs=-42, **kw)
-    func(162,  264,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(242,  264,  64,  37, xofs=-31, yofs= -6, **kw)
-    func(322,  264,  64,  31, xofs=-31, yofs=  0, **kw)
-    func(402,  264,  64,  77, xofs=-31, yofs=-46, **kw)
-    func(482,  264,  64,  31, xofs=-31, yofs=  0, **kw)
-
-replace_sprites_template(2603, 29, 'gfx/miscellaneous/hq.png', tmpl_hq)
-
-
-# shore sprites (replacing 16 seems to do these as well)
-# replace_shore_sprites(4062, 'gfx/water/seashore_grid_temperate.gimp.png', 1, 1)
-
-def replace_coastal_sprites(file, x, y, **kw):
-    png = grf.ImageFile(file)
-    gen.add(grf.ReplaceNewSprites(0x0d, 16))
-    sprite = lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw))
-    sprite(1276+x,   y, 64, 15, xofs=-31, yofs=  0, **kw)
-    sprite(  80+x,   y, 64, 31, xofs=-31, yofs=  0, **kw)
-    sprite( 160+x,   y, 64, 23, xofs=-31, yofs=  0, **kw)
-    sprite( 240+x,   y, 64, 23, xofs=-31, yofs=  0, **kw)
-    sprite( 320+x,   y, 64, 31, xofs=-31, yofs=  0, **kw)
-    sprite(1356+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)
-    sprite( 478+x,   y, 64, 23, xofs=-31, yofs=  0, **kw)
-    sprite( 558+x,   y, 64, 23, xofs=-31, yofs=  0, **kw)
-    sprite( 638+x,   y, 64, 39, xofs=-31, yofs= -8, **kw)
-    sprite( 718+x,   y, 64, 39, xofs=-31, yofs= -8, **kw)
-    sprite(1196+x,   y, 64, 47, xofs=-31, yofs=-16, **kw)
-    sprite( 878+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)
-    sprite( 958+x,   y, 64, 39, xofs=-31, yofs= -8, **kw)
-    sprite(1038+x,   y, 64, 39, xofs=-31, yofs= -8, **kw)
-    sprite(1118+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)
-    sprite(1436+x,   y, 64, 31, xofs=-31, yofs= -8, **kw)
-
-
-replace_coastal_sprites('gfx/water/seashore_grid_temperate.gimp.png', 1, 1)
-
-
-def tmpl_tree_narrow(func, **kw):
-    func(  0, 0, 35, 80, xofs=-19, yofs=-73, **kw)
-    func( 40, 0, 35, 80, xofs=-19, yofs=-73, **kw)
-    func( 80, 0, 35, 80, xofs=-19, yofs=-73, **kw)
-    func(120, 0, 35, 80, xofs=-19, yofs=-73, **kw)
-    func(160, 0, 35, 80, xofs=-19, yofs=-73, **kw)
-    func(200, 0, 35, 80, xofs=-19, yofs=-73, **kw)
-    func(240, 0, 35, 80, xofs=-19, yofs=-73, **kw)
-
-
-def tmpl_tree_wide(func, **kw):
-    func(  0, 0, 45, 80, xofs=-24, yofs=-73, **kw)
-    func( 50, 0, 45, 80, xofs=-24, yofs=-73, **kw)
-    func(100, 0, 45, 80, xofs=-24, yofs=-73, **kw)
-    func(150, 0, 45, 80, xofs=-24, yofs=-73, **kw)
-    func(200, 0, 45, 80, xofs=-24, yofs=-73, **kw)
-    func(250, 0, 45, 80, xofs=-24, yofs=-73, **kw)
-    func(300, 0, 45, 80, xofs=-24, yofs=-73, **kw)
-
-
-TREES = [
-    (1576, 'temperate/tree_wide_01_leaf.gimp.png', True),
-    (1583, 'temperate/tree_wide_02_leaf.gimp.png', True),
-    (1590, 'temperate/tree_wide_03_conifer.gimp.png', True),
-    (1597, 'arctic/tree_01_conifer.gimp.png', False),
-    (1604, 'temperate/tree_wide_05_leaf.gimp.png', True),
-    (1611, 'arctic/tree_08_conifer.gimp.png', False),
-    (1618, 'temperate/tree_wide_07_leaf.gimp.png', True),
-    (1625, 'arctic/tree_06_leaf.gimp.png', False),
-    (1632, 'arctic/tree_07_leaf.gimp.png', False),
-    (1639, 'arctic/tree_10_leaf.gimp.png', False),
-    (1646, 'temperate/tree_wide_11_leaf.gimp.png', True),
-    (1653, 'temperate/tree_wide_12_leaf.gimp.png',  True),
-    (1660, 'temperate/tree_wide_13_leaf.gimp.png',  True),
-    (1667, 'arctic/tree_09_conifer.gimp.png', False),
-    (1674, 'temperate/tree_wide_15_leaf.gimp.png', True),
-    (1681, 'temperate/tree_wide_16_leaf.gimp.png', True),
-    (1688, 'temperate/tree_wide_17_leaf.gimp.png', True),
-    (1695, 'temperate/tree_wide_18_leaf.gimp.png', True),
-    (1702, 'temperate/tree_wide_19_leaf.gimp.png', True),
-
-    # Arctic trees with snow
-    (1709, 'tree_01_conifer.gimp.png', False),
-    (1716, 'tree_06_leaf.gimp.png', False),
-    (1723, 'tree_07_leaf.gimp.png', False),
-    (1730, 'tree_08_conifer.gimp.png', False),
-    (1737, 'tree_09_conifer.gimp.png', False),
-    (1744, 'tree_04_conifer.gimp.png', False),
-    (1751, 'tree_05_conifer.gimp.png', False),
-    (1758, 'tree_10_leaf.gimp.png', False),
-    (1765, 'tree_01_snow_conifer.gimp.png', False),
-    (1772, 'tree_06_snow_leaf.gimp.png', False),
-    (1779, 'tree_07_snow_leaf.gimp.png', False),
-    (1786, 'tree_08_snow_conifer.gimp.png', False),
-    (1793, 'tree_09_snow_conifer.gimp.png', False),
-    (1800, 'tree_04_snow_conifer.gimp.png', False),
-    (1807, 'tree_05_snow_conifer.gimp.png', False),
-    (1814, 'tree_10_snow_leaf.gimp.png', False),
-]
-
-
-for sprite_id, file, is_wide in TREES:
-    gen.add(grf.ReplaceOldSprites([(sprite_id, 7)]))
-    png = grf.ImageFile('gfx/trees/' + file)
-    sprite = lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw))
-    if is_wide:
-        tmpl_tree_wide(sprite)
-    else:
-        tmpl_tree_narrow(sprite)
-
-
 # Tile slope to sprite offset
 get_tile_slope_offset = grf.Switch(
     feature=grf.OBJECT,
@@ -300,7 +371,7 @@ get_tile_slope_offset = grf.Switch(
     default=0,
     code='tile_slope'
 )
-gen.add(get_tile_slope_offset)
+g.add(get_tile_slope_offset)
 
 # Ground sprite
 get_ground_sprite = grf.Switch(
@@ -310,48 +381,15 @@ get_ground_sprite = grf.Switch(
     default=3981,
     code='max(snowline_height - tile_height, -2)'
 )
-gen.add(get_ground_sprite)
+g.add(get_ground_sprite)
 
-# png = grf.ImageFile("gfx/meadow_grid_temperate.png")
-# gen.add(grf.SpriteSet(grf.OBJECT, 19))
-# tmpl_ground_sprites(lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw)), 1, 1)
-# gen.add(grf.AdvancedSpriteLayout(
-#     grf.OBJECT, 255,
-#     ground={
-#         'sprite': 0,
-#         'pal': 32768,
-#         'flags': 2,
-#         'add': grf.Temp(0),
-#     }
-# ))
-
-# gen.add(grf.Object(0,
-#     label=b'FLMA',
-#     size=0x11,
-#     climate=grf.ALL_CLIMATES,
-#     eol_date=0,
-#     flags=grf.Object.Flags.HAS_NO_FOUNDATION | grf.Object.Flags.ALLOW_UNDER_BRIDGE,
-# ))
-
-# gen.add(grf.Switch(
-#     feature=grf.OBJECT,
-#     ref_id=255,
-#     ranges={0: grf.Set(255)},
-#     default=grf.Set(255),
-#     code='TEMP[0] = call(0)'
-# ))
-
-# gen.add(grf.Action3(grf.OBJECT, [0], [[255, 255]], 255))
-
-# CREEKS
-
-gen.add(grf.Action1(grf.OBJECT, 81, 19))
+g.add(grf.Action1(grf.OBJECT, 81, 19))
 png = grf.ImageFile("gfx/rivers.png")
 for i in range(81):
-    tmpl_ground_sprites(lambda *args, **kw: gen.add(grf.FileSprite(png, *args, **kw)), 1, i * 64 + 1)
+    tmpl_ground_sprites(lambda *args, **kw: g.add(grf.FileSprite(png, *args, **kw)), 1, i * 64 + 1)
 
 for i in range(81):
-    gen.add(layout := grf.AdvancedSpriteLayout(
+    g.add(layout := grf.AdvancedSpriteLayout(
         feature=grf.OBJECT,
         ground={
             'sprite': grf.SpriteRef(0, is_global=True),
@@ -365,7 +403,7 @@ for i in range(81):
         }]
     ))
 
-    gen.add(layout_switch := grf.Switch(
+    g.add(layout_switch := grf.Switch(
         ranges={0: layout},
         default=layout,
         code=f'''
@@ -373,23 +411,23 @@ for i in range(81):
             TEMP[1] = call({get_ground_sprite}) + TEMP[0]
         '''
     ))
-    gen.add(creek_obj := grf.Define(
+    g.add(creek_obj := grf.Define(
         feature=grf.OBJECT,
         id=i,
         props={
-            'label' : b'CREE',
+            'class' : b'CREE',
             'size' : (1, 1),
-            'climate' : grf.ALL_CLIMATES,
-            'eol_date' : 0,
+            'climates_available' : grf.ALL_CLIMATES,
+            'end_of_life_date' : 0,
             'flags' : grf.Object.Flags.HAS_NO_FOUNDATION | grf.Object.Flags.ALLOW_UNDER_BRIDGE | grf.Object.Flags.AUTOREMOVE,
         }
     ))
 
 
-    gen.add(grf.Map(
-        object=creek_obj,
+    g.add(grf.Map(
+        definition=creek_obj,
         maps={255: layout_switch},
         default=layout_switch,
     ))
 
-gen.write('alpine.grf')
+grf.main(g, 'alpine.grf')
