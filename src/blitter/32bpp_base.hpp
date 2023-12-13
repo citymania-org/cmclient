@@ -188,7 +188,12 @@ public:
 		uint md = UINT_MAX;
 		for (uint8 i = 1; i < 0xc0; i++) {
 			auto c = this->LookupColourInPalette(i);
-			auto dist = ((uint)c.r - r) * ((uint)c.r - r) + ((uint)c.g - g) * ((uint)c.g - g) + ((uint)c.b - b) * ((uint)c.b - b);
+			auto rmean = ((uint)c.r + (uint)r) / 2;
+			auto dr = (uint)c.r - (uint)r;
+			auto dg = (uint)c.g - (uint)g;
+			auto db = (uint)c.b - (uint)b;
+			auto dist = (512 + rmean) * dr * dr + 1024 * dg * dg + (767 - rmean) * db * db;
+			// auto dist = r * r + g * g +  b * b;
 			if (dist < md) {
 				md = dist;
 				m = i;
