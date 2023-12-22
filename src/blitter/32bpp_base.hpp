@@ -188,11 +188,11 @@ public:
 		uint md = UINT_MAX;
 		for (uint8 i = 1; i < 0xc0; i++) {
 			auto c = this->LookupColourInPalette(i);
-			auto rmean = ((uint)c.r + (uint)r) / 2;
-			auto dr = (uint)c.r - (uint)r;
-			auto dg = (uint)c.g - (uint)g;
-			auto db = (uint)c.b - (uint)b;
-			auto dist = (512 + rmean) * dr * dr + 1024 * dg * dg + (767 - rmean) * db * db;
+			auto rmean = (int)c.r + (int)r;
+			auto dr = (int)c.r - (int)r;
+			auto dg = (int)c.g - (int)g;
+			auto db = (int)c.b - (int)b;
+			auto dist = (1020 + rmean) * dr * dr + 2040 * dg * dg + (1530 - rmean) * db * db;
 			// auto dist = r * r + g * g +  b * b;
 			if (dist < md) {
 				md = dist;
