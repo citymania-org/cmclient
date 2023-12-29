@@ -210,8 +210,10 @@ replace_new_sprites(11, 4, None, 2488)
 # replace_new_sprites(21, 137, 38, 2488+112+15+55+38+36+6)
 # replace_new_sprites(21, 137, 38, 2750)
 ofs, sprite = 38, 2750
+# for x in [16] + [1] * 39 + [17, 4, 23, 1, 8, 1, 6, 9, 13]:
 for x in [16] + [1] * 39 + [17, 4, 23, 1, 8, 1, 6, 9, 13]:
-    replace_new_sprites(21, x, ofs, sprite)
+    if sprite != 2831:  # skip helipad
+        replace_new_sprites(21, x, ofs, sprite)
     sprite += x + 1
     ofs += x
 
