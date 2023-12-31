@@ -1,18 +1,24 @@
 import grf
-import spectra
 
-gen = grf.NewGRF(
-    b'CMC\x01',
-    'CityMania Client Resourse Pack v5',
-    'Provides additional resources for a CityMania patched client (citymania.org/downloads). Should be put in your client data folder. Do not add this to your game via NewGRF options, it may break something.',
-)
+import numpy as np
+
+
+g = grf.BaseNewGRF()
+g.add(grf.SetDescription(
+    format_version=8,
+    grfid=b'CMC\x01',
+    name='CityMania Client Resourse Pack v5',
+    description='Provides additional resources for a CityMania patched client (citymania.org/downloads). Should be put in your client data folder. Do not add this to your game via NewGRF options, it may break something.',
+))
 
 toolbar_png = grf.ImageFile('sprites/toolbar.png')
-gen.add_sprite(grf.FileSprite(toolbar_png, 0, 0, 20, 14, yofs=4),
-               grf.FileSprite(toolbar_png, 32, 0, 40, 40, zoom=grf.ZOOM_2X))
+g.add(grf.AlternativeSprites(
+    grf.FileSprite(toolbar_png, 0, 0, 20, 14, yofs=4),
+    grf.FileSprite(toolbar_png, 32, 0, 40, 40, zoom=grf.ZOOM_2X)
+))
 
-sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(toolbar_png, *args, **kw))
-sprite2 = lambda x, y, w, h, x2, y2: gen.add_sprite(grf.FileSprite(toolbar_png, x, y, w, h), grf.FileSprite(toolbar_png, x2, y2, w * 2, h * 2, zoom=grf.ZOOM_2X))
+sprite = lambda *args, **kw: g.add(grf.FileSprite(toolbar_png, *args, **kw))
+sprite2 = lambda x, y, w, h, x2, y2: g.add(grf.AlternativeSprites(grf.FileSprite(toolbar_png, x, y, w, h), grf.FileSprite(toolbar_png, x2, y2, w * 2, h * 2, zoom=grf.ZOOM_2X)))
 sprite( 0, 44, 12, 10)  # hq button icon
 sprite( 0, 55, 12, 10)  # watch button icon
 # sprite2(0, 55, 12, 10, 13, 55)  # watch button icon
@@ -31,7 +37,7 @@ sprite2(48, 82, 11, 11, 92, 94)  # company locked
 
 
 innerhl_png = grf.ImageFile('sprites/innerhighlight00.png')
-sprite = lambda *args, **kw: gen.add_sprite(grf.FileSprite(innerhl_png, *args, **kw))
+sprite = lambda *args, **kw: g.add(grf.FileSprite(innerhl_png, *args, **kw))
 sprite( 18,   8, 64, 31, xofs=-31, yofs= 7)
 sprite( 98,   8, 64, 31, xofs=-31, yofs= 7)
 sprite(178,   8, 64, 23, xofs=-31, yofs= 7)
@@ -56,7 +62,7 @@ sprite( 34, 136, 20, 20, xofs=  0, yofs= 0)
 sprite(185, 125, 18, 15, xofs= -8, yofs= 7)
 
 #red
-gen.add_sprite(grf.PaletteRemap([
+g.add(grf.PaletteRemap([
     [0x01, 0x09, 0x00],
     [0x0A, 0x0B, 0xB6],
     [0x0C, 0x0D, 0xB7],
@@ -65,49 +71,49 @@ gen.add_sprite(grf.PaletteRemap([
 ]))
 
 # green
-gen.add_sprite(grf.PaletteRemap([
+g.add(grf.PaletteRemap([
     [0x0A, 0x0B, 0xCF],
     [0x0C, 0x0D, 0xD0],
     [0x0E, 0x0F, 0xD1],
 ]))
 
 # black
-gen.add_sprite(grf.PaletteRemap([
+g.add(grf.PaletteRemap([
     [0x0A, 0x0B, 0x10],
     [0x0C, 0x0D, 0x11],
     [0x0E, 0x0F, 0x12],
 ]))
 
 # ligth blue
-gen.add_sprite(grf.PaletteRemap([
+g.add(grf.PaletteRemap([
     [0x0A, 0x0B, 0x96],
     [0x0C, 0x0D, 0x97],
     [0x0E, 0x0F, 0x98],
 ]))
 
 # orange
-gen.add_sprite(grf.PaletteRemap([
+g.add(grf.PaletteRemap([
     [0x0A, 0x0B, 0xB9],
     [0x0C, 0x0D, 0xBA],
     [0x0E, 0x0F, 0xBB],
 ]))
 
 # white
-gen.add_sprite(grf.PaletteRemap([
+g.add(grf.PaletteRemap([
     [0x0A, 0x0B, 0x0D],
     [0x0C, 0x0D, 0x0E],
     [0x0E, 0x0F, 0x0F],
 ]))
 
 # white (yellow)
-gen.add_sprite(grf.PaletteRemap([
+g.add(grf.PaletteRemap([
     [0x0A, 0x0B, 0x32],
     [0x0C, 0x0D, 0x33],
     [0x0E, 0x0F, 0x34],
 ]))
 
 # white (purple)
-gen.add_sprite(grf.PaletteRemap([
+g.add(grf.PaletteRemap([
     [0x0A, 0x0B, 0xAC],
     [0x0C, 0x0D, 0xAD],
     [0x0E, 0x0F, 0xAE],
@@ -141,47 +147,54 @@ for p in TILEDATA:
     x = SPRITE_MARGIN
     _, _, w, h, xofs, yofs = p
     for _ in range(1, 16 + 4):
-        gen.add_sprite(grf.FileSprite(borderhl_png, x, y, w, h, xofs=xofs, yofs=yofs))
+        g.add(grf.FileSprite(borderhl_png, x, y, w, h, xofs=xofs, yofs=yofs))
         x += SPRITE_MARGIN + w
 
     y += h + SPRITE_MARGIN
 
 
 def gen_tint(tint, ratio):
-    return lambda x: x.blend(tint, ratio=ratio)
+    tint = grf.srgb_to_oklab(np.array(tint) * 255)
+    return lambda x: grf.oklab_blend(x, tint, ratio=1.-(1 - ratio)**2)
+
 
 def gen_brightness(level):
     def func(x):
         if level > 0:
-            return x.brighten(amount=2.56 * level)
+            return grf.oklab_blend(x, grf.srgb_to_oklab((255, 255, 192)), ratio=0.04 * level)
         else:
-            return x.darken(amount=-2.56 * level)
+            return grf.oklab_blend(x, grf.srgb_to_oklab((4, 0, 16)), ratio=-0.04 * level)
+        # l, a, b = x
+        # l = min(max(l + 0.019 * level, 0.), 1.)
+        # return np.array((l, a, b))
     return func
+
 
 def gen_white_tint_contrast():
     def func(x):
-        white = spectra.rgb(1.0, 1.0, 1.0)
-        x = x.blend(white, ratio=0.4)
-        if grf.color_distance(x, white) < 0.5:
-            x = x.blend(spectra.rgb(0.5, 1.0, 0.0), ratio=0.2)
+        # white = grf.srgb_to_oklab((255, 255, 255))
+        white = np.array((1., 0, 0))
+        x = grf.oklab_blend(x, white, ratio=0.4)
+        # if grf.color_distance(x, white) < 0.5:
+        #     x = x.blend(spectra.rgb(0.5, 1.0, 0.0), ratio=0.2)
         return x
     return func
 
 
-remap = lambda f: gen.add_sprite(grf.PaletteRemap.from_function(f, remap_water=True))
-remap(gen_tint(spectra.rgb(1, 0, 0), 0.6))  # deep red tint
-remap(gen_tint(spectra.rgb(1, 0.5, 0), 0.65))  # deep orange tint
-remap(gen_tint(spectra.rgb(0, 1, 0), 0.65))  # deep green tint
-remap(gen_tint(spectra.rgb(0, 1, 1), 0.65))  # deep cyan tint
-remap(gen_tint(spectra.rgb(1, 0, 0), 0.4))  # red tint
-remap(gen_tint(spectra.rgb(1, 0.5, 0), 0.4))  # orange tint
-remap(gen_tint(spectra.rgb(1.0, 1.0, 0), 0.4))  # yellow tint
-remap(gen_tint(spectra.rgb(1.0, 1.0, 0.5), 0.4))  # yellow white tint
+remap = lambda f: g.add(grf.PaletteRemap.oklab_from_function(f, remap_water=True))
+remap(gen_tint((1, 0, 0), 0.6))  # deep red tint
+remap(gen_tint((1, 0.5, 0), 0.65))  # deep orange tint
+remap(gen_tint((0, 1, 0), 0.65))  # deep green tint
+remap(gen_tint((0, 1, 1), 0.65))  # deep cyan tint
+remap(gen_tint((1, 0, 0), 0.4))  # red tint
+remap(gen_tint((1, 0.5, 0), 0.4))  # orange tint
+remap(gen_tint((1.0, 1.0, 0), 0.4))  # yellow tint
+remap(gen_tint((1.0, 1.0, 0.5), 0.4))  # yellow white tint
 remap(gen_white_tint_contrast())  # white tint
-remap(gen_tint(spectra.rgb(0, 1.0, 0), 0.4))  # green tint
-remap(gen_tint(spectra.rgb(0, 1.0, 1.0), 0.4))  # cyan tint
-remap(gen_tint(spectra.rgb(0.5, 1.0, 1.0), 0.4))  # cyan white tint
-remap(gen_tint(spectra.rgb(0, 0, 1.0), 0.4))  # blue tint
+remap(gen_tint((0, 1.0, 0), 0.4))  # green tint
+remap(gen_tint((0, 1.0, 1.0), 0.4))  # cyan tint
+remap(gen_tint((0.5, 1.0, 1.0), 0.4))  # cyan white tint
+remap(gen_tint((0, 0, 1.0), 0.4))  # blue tint
 
 B = 22.2
 remap(gen_brightness(21.7 - B))  # shade N
@@ -193,4 +206,9 @@ remap(gen_brightness(18.4 - B))  # shade SW
 remap(gen_brightness(17.1 - B))  # shade W
 remap(gen_brightness(17.5 - B))  # shade NW
 
-gen.write('../../bin/data/cmclient-5.grf')
+grf.main(g, '../../bin/data/cmclient-5.grf')
+
+# func = gen_brightness(17.1 - B)
+# grf.make_palette_image([grf.oklab_to_srgb(func(x)) for x in grf.OKLAB_PALETTE]).show()
+# remap = grf.PaletteRemap.oklab_from_function(func, remap_water=True).remap
+# grf.make_palette_image([grf.PALETTE[x] for x in remap]).show()
