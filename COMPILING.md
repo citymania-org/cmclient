@@ -4,19 +4,24 @@
 
 OpenTTD makes use of the following external libraries:
 
+- (encouraged) breakpad: creates minidumps on crash
 - (encouraged) zlib: (de)compressing of old (0.3.0-1.0.5) savegames, content downloads,
    heightmaps
 - (encouraged) liblzma: (de)compressing of savegames (1.1.0 and later)
 - (encouraged) libpng: making screenshots and loading heightmaps
 - (optional) liblzo2: (de)compressing of old (pre 0.3.0) savegames
 
-For Linux, the following additional libraries are used (for non-dedicated only):
+For Linux, the following additional libraries are used:
 
+- (encouraged) libcurl: content downloads
 - libSDL2: hardware access (video, sound, mouse)
 - libfreetype: loading generic fonts and rendering them
 - libfontconfig: searching for fonts, resolving font names to actual fonts
+- harfbuzz: handling of right-to-left scripts (e.g. Arabic and Persian) (required libicu)
 - libicu: handling of right-to-left scripts (e.g. Arabic and Persian) and
    natural sorting of strings
+
+If you are building a dedicated-server only, you don't need the last four.
 
 OpenTTD does not require any of the libraries to be present, but without
 liblzma you cannot open most recent savegames and without zlib you cannot
@@ -33,7 +38,7 @@ OpenTTD needs the Platform SDK, if it isn't installed already. This can be
 done during installing Visual Studio, by selecting
 `Visual C++ MFC for x86 and x64` (and possibly
 `Visual C++ ATL for x86 and x64` depending on your version). If not, you
-can get download it as [MS Windows Platform SDK](https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk).
+can get download it as [MS Windows Platform SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-sdk).
 
 Install the SDK by following the instructions as given.
 
@@ -45,6 +50,7 @@ by following the `Quick Start` instructions of their
 After this, you can install the dependencies OpenTTD needs. We advise to use
 the `static` versions, and OpenTTD currently needs the following dependencies:
 
+- breakpad
 - liblzma
 - libpng
 - lzo
@@ -53,8 +59,8 @@ the `static` versions, and OpenTTD currently needs the following dependencies:
 To install both the x64 (64bit) and x86 (32bit) variants (though only one is necessary), you can use:
 
 ```ps
-.\vcpkg install liblzma:x64-windows-static libpng:x64-windows-static lzo:x64-windows-static zlib:x64-windows-static
-.\vcpkg install liblzma:x86-windows-static libpng:x86-windows-static lzo:x86-windows-static zlib:x86-windows-static
+.\vcpkg install --triplet=x64-windows-static
+.\vcpkg install --triplet=x86-windows-static
 ```
 
 You can open the folder (as a CMake project). CMake will be detected, and you can compile from there.
@@ -97,7 +103,7 @@ Via CMake, several options can be influenced to get different types of
 builds.
 
 - `-DCMAKE_BUILD_TYPE=RelWithDebInfo`: build a release build. This is
-   significant faster than a debug build, but has far less useful information
+   significantly faster than a debug build, but has far less useful information
    in case of a crash.
 - `-DOPTION_DEDICATED=ON`: build OpenTTD without a GUI. Useful if you are
    running a headless server, as it requires less libraries to operate.

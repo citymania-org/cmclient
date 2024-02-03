@@ -136,17 +136,17 @@ const Sprite *TrueTypeFontCache::GetGlyph(GlyphID key)
 			};
 #undef CPSET
 #undef CP___
-			static const SpriteLoader::Sprite builtin_questionmark = {
+			static const SpriteLoader::SpriteCollection builtin_questionmark = {{ {
 				10, // height
 				8,  // width
 				0,  // x_offs
 				0,  // y_offs
-				ST_FONT,
+				SpriteType::Font,
 				SCC_PAL,
 				builtin_questionmark_data
-			};
+			} }};
 
-			Sprite *spr = BlitterFactory::GetCurrentBlitter()->Encode(&builtin_questionmark, SimpleSpriteAlloc);
+			Sprite *spr = BlitterFactory::GetCurrentBlitter()->Encode(builtin_questionmark, SimpleSpriteAlloc);
 			assert(spr != nullptr);
 			GlyphEntry new_glyph;
 			new_glyph.sprite = spr;
@@ -165,16 +165,16 @@ const Sprite *TrueTypeFontCache::GetGlyph(GlyphID key)
 	return this->InternalGetGlyph(key, GetFontAAState(this->fs));
 }
 
-const void *TrueTypeFontCache::GetFontTable(uint32 tag, size_t &length)
+const void *TrueTypeFontCache::GetFontTable(uint32_t tag, size_t &length)
 {
-	const FontTable::iterator iter = this->font_tables.Find(tag);
-	if (iter != this->font_tables.data() + this->font_tables.size()) {
+	const auto iter = this->font_tables.find(tag);
+	if (iter != this->font_tables.end()) {
 		length = iter->second.first;
 		return iter->second.second;
 	}
 
 	const void *result = this->InternalGetFontTable(tag, length);
 
-	this->font_tables.Insert(tag, std::pair<size_t, const void *>(length, result));
+	this->font_tables[tag] = std::pair<size_t, const void *>(length, result);
 	return result;
 }

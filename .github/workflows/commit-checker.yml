@@ -3,6 +3,10 @@ name: Commit checker
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 jobs:
   commit-checker:
     name: Commit checker
@@ -10,12 +14,12 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 4
 
     - name: Get pull-request commits
-      uses: OpenTTD/actions/checkout-pull-request@v2
+      uses: OpenTTD/actions/checkout-pull-request@v5
 
     - name: Check commits
       uses: OpenTTD/OpenTTD-git-hooks@main

@@ -125,7 +125,7 @@ static TrackBits GetRailTrackBitsUniversal(TileIndex t, byte *override)
 static TrackBits MaskWireBits(TileIndex t, TrackBits tracks)
 {
 	/* Single track bits are never masked out. */
-	if (likely(HasAtMostOneBit(tracks))) return tracks;
+	if (HasAtMostOneBit(tracks)) [[likely]] return tracks;
 
 	if (!IsPlainRailTile(t)) return tracks;
 
@@ -176,7 +176,7 @@ static TrackBits MaskWireBits(TileIndex t, TrackBits tracks)
  */
 static inline SpriteID GetWireBase(TileIndex tile, TileContext context = TCX_NORMAL)
 {
-	const RailtypeInfo *rti = GetRailTypeInfo(GetRailType(tile));
+	const RailTypeInfo *rti = GetRailTypeInfo(GetRailType(tile));
 	SpriteID wires = GetCustomRailSprite(rti, tile, RTSG_WIRES, context);
 	return wires == 0 ? SPR_WIRE_BASE : wires;
 }
@@ -186,7 +186,7 @@ static inline SpriteID GetWireBase(TileIndex tile, TileContext context = TCX_NOR
  */
 static inline SpriteID GetPylonBase(TileIndex tile, TileContext context = TCX_NORMAL)
 {
-	const RailtypeInfo *rti = GetRailTypeInfo(GetRailType(tile));
+	const RailTypeInfo *rti = GetRailTypeInfo(GetRailType(tile));
 	SpriteID pylons = GetCustomRailSprite(rti, tile, RTSG_PYLONS, context);
 	return pylons == 0 ? SPR_PYLON_BASE : pylons;
 }
@@ -232,9 +232,11 @@ static int GetPCPElevation(TileIndex tile, DiagDirection PCPpos)
 	 * Also note that the result of GetSlopePixelZ() is very special on bridge-ramps.
 	 */
 
-	int z = GetSlopePixelZ(TileX(tile) * TILE_SIZE + std::min<int8>(x_pcp_offsets[PCPpos], TILE_SIZE - 1),
-	                       TileY(tile) * TILE_SIZE + std::min<int8>(y_pcp_offsets[PCPpos], TILE_SIZE - 1));
-	return (z + 2) & ~3; // this means z = (z + TILE_HEIGHT / 4) / (TILE_HEIGHT / 2) * (TILE_HEIGHT / 2);
+	int z = GetSlopePixelZ(TileX(tile) * TILE_SIZE + std::min<int8_t>(x_pcp_offsets[PCPpos], TILE_SIZE - 1),
+	                       TileY(tile) * TILE_SIZE + std::min<int8_t>(y_pcp_offsets[PCPpos], TILE_SIZE - 1), true);
+	/* Round the Z to the nearest half tile height. */
+	static const uint HALF_TILE_HEIGHT = TILE_HEIGHT / 2;
+	return (z + HALF_TILE_HEIGHT / 2) / HALF_TILE_HEIGHT * HALF_TILE_HEIGHT;
 }
 
 /**
@@ -489,7 +491,7 @@ static void DrawRailCatenaryRailway(const TileInfo *ti)
 		 * down to the nearest full height change.
 		 */
 		AddSortableSpriteToDraw(wire_base + sss->image_offset, PAL_NONE, ti->x + sss->x_offset, ti->y + sss->y_offset,
-			sss->x_size, sss->y_size, sss->z_size, (GetSlopePixelZ(ti->x + sss->x_offset, ti->y + sss->y_offset) + 4) / 8 * 8 + sss->z_offset,
+			sss->x_size, sss->y_size, sss->z_size, (GetSlopePixelZ(ti->x + sss->x_offset, ti->y + sss->y_offset, true) + 4) / 8 * 8 + sss->z_offset,
 			IsTransparencySet(TO_CATENARY));
 	}
 }
@@ -593,7 +595,7 @@ void DrawRailCatenary(const TileInfo *ti)
 	DrawRailCatenaryRailway(ti);
 }
 
-void SettingsDisableElrail(int32 new_value)
+void SettingsDisableElrail(int32_t new_value)
 {
 	bool disable = (new_value != 0);
 
@@ -631,7 +633,7 @@ void SettingsDisableElrail(int32 new_value)
 		}
 	}
 
-	for (Company *c : Company::Iterate()) c->avail_railtypes = GetCompanyRailtypes(c->index);
+	for (Company *c : Company::Iterate()) c->avail_railtypes = GetCompanyRailTypes(c->index);
 
 	/* This resets the _last_built_railtype, which will be invalid for electric
 	 * rails. It may have unintended consequences if that function is ever

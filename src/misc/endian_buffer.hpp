@@ -10,9 +10,7 @@
 #ifndef ENDIAN_BUFFER_HPP
 #define ENDIAN_BUFFER_HPP
 
-#include <iterator>
 #include <string_view>
-#include "../core/span_type.hpp"
 #include "../core/bitmath_func.hpp"
 #include "../core/overflowsafe_type.hpp"
 
@@ -54,7 +52,7 @@ public:
 		if constexpr (std::is_enum_v<T>) {
 			this->Write(static_cast<std::underlying_type_t<const T>>(data));
 		} else if constexpr (std::is_base_of_v<StrongTypedefBase, T>) {
-			this->Write(data.value);
+			this->Write(data.base());
 		} else {
 			this->Write(data);
 		}
@@ -73,7 +71,8 @@ public:
 private:
 	/** Helper function to write a tuple to the buffer. */
 	template<class Ttuple, size_t... Tindices>
-	void WriteTuple(const Ttuple &values, std::index_sequence<Tindices...>) {
+	void WriteTuple(const Ttuple &values, std::index_sequence<Tindices...>)
+	{
 		((*this << std::get<Tindices>(values)), ...);
 	}
 
@@ -119,12 +118,12 @@ private:
  */
 class EndianBufferReader {
 	/** Reference to storage buffer. */
-	span<const byte> buffer;
+	std::span<const byte> buffer;
 	/** Current read position. */
 	size_t read_pos = 0;
 
 public:
-	EndianBufferReader(span<const byte> buffer) : buffer(buffer) {}
+	EndianBufferReader(std::span<const byte> buffer) : buffer(buffer) {}
 
 	void rewind() { this->read_pos = 0; }
 
@@ -147,7 +146,7 @@ public:
 		if constexpr (std::is_enum_v<T>) {
 			data = static_cast<T>(this->Read<std::underlying_type_t<T>>());
 		} else if constexpr (std::is_base_of_v<StrongTypedefBase, T>) {
-			data.value = this->Read<decltype(data.value)>();
+			data = this->Read<typename T::BaseType>();
 		} else {
 			data = this->Read<T>();
 		}
@@ -155,7 +154,7 @@ public:
 	}
 
 	template <typename Tvalue>
-	static Tvalue ToValue(span<const byte> buffer)
+	static Tvalue ToValue(std::span<const byte> buffer)
 	{
 		Tvalue result{};
 		EndianBufferReader reader{ buffer };
@@ -166,7 +165,8 @@ public:
 private:
 	/** Helper function to read a tuple from the buffer. */
 	template<class Ttuple, size_t... Tindices>
-	void ReadTuple(Ttuple &values, std::index_sequence<Tindices...>) {
+	void ReadTuple(Ttuple &values, std::index_sequence<Tindices...>)
+	{
 		((*this >> std::get<Tindices>(values)), ...);
 	}
 

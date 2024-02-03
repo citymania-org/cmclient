@@ -48,16 +48,16 @@ private:
 
 	GLuint remap_program;    ///< Shader program for blending and rendering a RGBA + remap texture.
 	GLint  remap_sprite_loc; ///< Uniform location for sprite parameters.
-	GLint  remap_screen_loc; ///< Uniform location for screen size;
-	GLint  remap_zoom_loc;   ///< Uniform location for sprite zoom;
-	GLint  remap_rgb_loc;    ///< Uniform location for RGB mode flag;
+	GLint  remap_screen_loc; ///< Uniform location for screen size.
+	GLint  remap_zoom_loc;   ///< Uniform location for sprite zoom.
+	GLint  remap_rgb_loc;    ///< Uniform location for RGB mode flag.
 
 	GLuint sprite_program;    ///< Shader program for blending and rendering a sprite to the video buffer.
 	GLint  sprite_sprite_loc; ///< Uniform location for sprite parameters.
-	GLint  sprite_screen_loc; ///< Uniform location for screen size;
-	GLint  sprite_zoom_loc;   ///< Uniform location for sprite zoom;
-	GLint  sprite_rgb_loc;    ///< Uniform location for RGB mode flag;
-	GLint  sprite_crash_loc;  ///< Uniform location for crash remap mode flag;
+	GLint  sprite_screen_loc; ///< Uniform location for screen size.
+	GLint  sprite_zoom_loc;   ///< Uniform location for sprite zoom.
+	GLint  sprite_rgb_loc;    ///< Uniform location for RGB mode flag.
+	GLint  sprite_crash_loc;  ///< Uniform location for crash remap mode flag.
 
 	LRUCache<SpriteID, Sprite> cursor_cache;   ///< Cache of encoded cursor sprites.
 	PaletteID last_sprite_pal = (PaletteID)-1; ///< Last uploaded remap palette.
@@ -101,15 +101,15 @@ public:
 	void ClearCursorCache();
 
 	void *GetVideoBuffer();
-	uint8 *GetAnimBuffer();
+	uint8_t *GetAnimBuffer();
 	void ReleaseVideoBuffer(const Rect &update_rect);
 	void ReleaseAnimBuffer(const Rect &update_rect);
 
 	/* SpriteEncoder */
 
 	bool Is32BppSupported() override { return true; }
-	uint GetSpriteAlignment() override { return 1u << (ZOOM_LVL_COUNT - 1); }
-	Sprite *Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator) override;
+	uint GetSpriteAlignment() override { return 1u << (ZOOM_LVL_END - 1); }
+	Sprite *Encode(const SpriteLoader::SpriteCollection &sprite, AllocatorProc *allocator) override;
 };
 
 

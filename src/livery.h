@@ -11,6 +11,7 @@
 #define LIVERY_H
 
 #include "company_type.h"
+#include "gfx_type.h"
 
 static const byte LIT_NONE    = 0; ///< Don't show the liveries at all
 static const byte LIT_COMPANY = 1; ///< Show the liveries of your own company
@@ -57,11 +58,9 @@ enum LiveryScheme : byte {
 };
 
 DECLARE_POSTFIX_INCREMENT(LiveryScheme)
-/** Helper information for extract tool. */
-template <> struct EnumPropsT<LiveryScheme> : MakeEnumPropsT<LiveryScheme, byte, LS_BEGIN, LS_END, LS_END, 8> {};
 
 /** List of different livery classes, used only by the livery GUI. */
-enum LiveryClass {
+enum LiveryClass : byte {
 	LC_OTHER,
 	LC_RAIL,
 	LC_ROAD,
@@ -73,12 +72,13 @@ enum LiveryClass {
 	LC_GROUP_AIRCRAFT,
 	LC_END
 };
+DECLARE_ENUM_AS_ADDABLE(LiveryClass)
 
 /** Information about a particular livery. */
 struct Livery {
 	byte in_use;  ///< Bit 0 set if this livery should override the default livery first colour, Bit 1 for the second colour.
-	byte colour1; ///< First colour, for all vehicles.
-	byte colour2; ///< Second colour, for vehicles with 2CC support.
+	Colours colour1; ///< First colour, for all vehicles.
+	Colours colour2; ///< Second colour, for vehicles with 2CC support.
 };
 
 void ResetCompanyLivery(Company *c);

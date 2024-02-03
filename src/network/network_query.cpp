@@ -8,7 +8,7 @@
 /** @file network_query.cpp Query part of the network protocol. */
 
 #include "../stdafx.h"
-#include "core/game_info.h"
+#include "core/network_game_info.h"
 #include "network_query.h"
 #include "network_gamelist.h"
 #include "../error.h"
@@ -24,6 +24,15 @@ NetworkRecvStatus QueryNetworkGameSocketHandler::CloseConnection(NetworkRecvStat
 	assert(status != NETWORK_RECV_STATUS_OKAY);
 	assert(this->sock != INVALID_SOCKET);
 
+	/* Connection is closed, but we never received a packet. Must be offline. */
+	NetworkGameList *item = NetworkGameListAddItem(this->connection_string);
+	if (item->refreshing) {
+		item->status = NGLS_OFFLINE;
+		item->refreshing = false;
+
+		UpdateNetworkGameWindow();
+	}
+
 	return status;
 }
 
@@ -36,6 +45,7 @@ bool QueryNetworkGameSocketHandler::CheckConnection()
 
 	/* If there was no response in 5 seconds, terminate the query. */
 	if (lag > std::chrono::seconds(5)) {
+		Debug(net, 0, "Timeout while waiting for response from {}", this->connection_string);
 		this->CloseConnection(NETWORK_RECV_STATUS_CONNECTION_LOST);
 		return false;
 	}
@@ -71,12 +81,16 @@ void QueryNetworkGameSocketHandler::Send()
  */
 NetworkRecvStatus QueryNetworkGameSocketHandler::SendGameInfo()
 {
+	Debug(net, 9, "Query::SendGameInfo()");
+
 	this->SendPacket(new Packet(PACKET_CLIENT_GAME_INFO));
 	return NETWORK_RECV_STATUS_OKAY;
 }
 
-NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_FULL(Packet *p)
+NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_FULL(Packet *)
 {
+	Debug(net, 9, "Query::Receive_SERVER_FULL()");
+
 	NetworkGameList *item = NetworkGameListAddItem(this->connection_string);
 	item->status = NGLS_FULL;
 	item->refreshing = false;
@@ -86,8 +100,10 @@ NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_FULL(Packet *p)
 	return NETWORK_RECV_STATUS_CLOSE_QUERY;
 }
 
-NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_BANNED(Packet *p)
+NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_BANNED(Packet *)
 {
+	Debug(net, 9, "Query::Receive_SERVER_BANNED()");
+
 	NetworkGameList *item = NetworkGameListAddItem(this->connection_string);
 	item->status = NGLS_BANNED;
 	item->refreshing = false;
@@ -99,6 +115,8 @@ NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_BANNED(Packet *p
 
 NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_GAME_INFO(Packet *p)
 {
+	Debug(net, 9, "Query::Receive_SERVER_GAME_INFO()");
+
 	NetworkGameList *item = NetworkGameListAddItem(this->connection_string);
 
 	/* Clear any existing GRFConfig chain. */
@@ -119,6 +137,8 @@ NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_GAME_INFO(Packet
 NetworkRecvStatus QueryNetworkGameSocketHandler::Receive_SERVER_ERROR(Packet *p)
 {
 	NetworkErrorCode error = (NetworkErrorCode)p->Recv_uint8();
+
+	Debug(net, 9, "Query::Receive_SERVER_ERROR(): error={}", error);
 
 	NetworkGameList *item = NetworkGameListAddItem(this->connection_string);
 

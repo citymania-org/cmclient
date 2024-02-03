@@ -24,7 +24,7 @@
 #define IS_CUSTOM_FIRSTHEAD_SPRITE(x) (x == 0xFD)
 #define IS_CUSTOM_SECONDHEAD_SPRITE(x) (x == 0xFE)
 
-static const int VEHICLE_PROFIT_MIN_AGE = DAYS_IN_YEAR * 2; ///< Only vehicles older than this have a meaningful profit.
+static const int VEHICLE_PROFIT_MIN_AGE = CalendarTime::DAYS_IN_YEAR * 2; ///< Only vehicles older than this have a meaningful profit.
 static const Money VEHICLE_PROFIT_THRESHOLD = 10000;        ///< Threshold for a vehicle to be considered making good profit.
 
 /**
@@ -34,7 +34,7 @@ static const Money VEHICLE_PROFIT_THRESHOLD = 10000;        ///< Threshold for a
  * @return True iff the image index is valid.
  */
 template <VehicleType T>
-bool IsValidImageIndex(uint8 image_index);
+bool IsValidImageIndex(uint8_t image_index);
 
 typedef Vehicle *VehicleFromPosProc(Vehicle *v, void *data);
 
@@ -45,11 +45,10 @@ void FindVehicleOnPosXY(int x, int y, void *data, VehicleFromPosProc *proc);
 bool HasVehicleOnPos(TileIndex tile, void *data, VehicleFromPosProc *proc);
 bool HasVehicleOnPosXY(int x, int y, void *data, VehicleFromPosProc *proc);
 void CallVehicleTicks();
-uint8 CalcPercentVehicleFilled(const Vehicle *v, StringID *colour);
+uint8_t CalcPercentVehicleFilled(const Vehicle *v, StringID *colour);
 
 void VehicleLengthChanged(const Vehicle *u);
 
-byte VehicleRandomBits();
 void ResetVehicleHash();
 void ResetVehicleColourMap();
 
@@ -63,6 +62,7 @@ CommandCost TunnelBridgeIsFree(TileIndex tile, TileIndex endtile, const Vehicle 
 void DecreaseVehicleValue(Vehicle *v);
 void CheckVehicleBreakdown(Vehicle *v);
 void AgeVehicle(Vehicle *v);
+void RunVehicleCalendarDayProc();
 void VehicleEnteredDepotThisTick(Vehicle *v);
 
 UnitID GetFreeUnitNumber(VehicleType type);
@@ -86,7 +86,7 @@ Direction GetDirectionTowards(const Vehicle *v, int x, int y);
  * @param type Vehicle type being queried.
  * @return Vehicle type is buildable by a company.
  */
-static inline bool IsCompanyBuildableVehicleType(VehicleType type)
+inline bool IsCompanyBuildableVehicleType(VehicleType type)
 {
 	switch (type) {
 		case VEH_TRAIN:
@@ -104,7 +104,7 @@ static inline bool IsCompanyBuildableVehicleType(VehicleType type)
  * @param v Vehicle being queried.
  * @return Vehicle is buildable by a company.
  */
-static inline bool IsCompanyBuildableVehicleType(const BaseVehicle *v)
+inline bool IsCompanyBuildableVehicleType(const BaseVehicle *v)
 {
 	return IsCompanyBuildableVehicleType(v->type);
 }
@@ -121,42 +121,42 @@ extern const StringID _veh_refit_msg_table[];
 extern const StringID _send_to_depot_msg_table[];
 
 /* Functions to find the right command for certain vehicle type */
-static inline StringID GetCmdBuildVehMsg(VehicleType type)
+inline StringID GetCmdBuildVehMsg(VehicleType type)
 {
 	return _veh_build_msg_table[type];
 }
 
-static inline StringID GetCmdBuildVehMsg(const BaseVehicle *v)
+inline StringID GetCmdBuildVehMsg(const BaseVehicle *v)
 {
 	return GetCmdBuildVehMsg(v->type);
 }
 
-static inline StringID GetCmdSellVehMsg(VehicleType type)
+inline StringID GetCmdSellVehMsg(VehicleType type)
 {
 	return _veh_sell_msg_table[type];
 }
 
-static inline StringID GetCmdSellVehMsg(const BaseVehicle *v)
+inline StringID GetCmdSellVehMsg(const BaseVehicle *v)
 {
 	return GetCmdSellVehMsg(v->type);
 }
 
-static inline StringID GetCmdRefitVehMsg(VehicleType type)
+inline StringID GetCmdRefitVehMsg(VehicleType type)
 {
 	return _veh_refit_msg_table[type];
 }
 
-static inline StringID GetCmdRefitVehMsg(const BaseVehicle *v)
+inline StringID GetCmdRefitVehMsg(const BaseVehicle *v)
 {
 	return GetCmdRefitVehMsg(v->type);
 }
 
-static inline StringID GetCmdSendToDepotMsg(VehicleType type)
+inline StringID GetCmdSendToDepotMsg(VehicleType type)
 {
 	return _send_to_depot_msg_table[type];
 }
 
-static inline StringID GetCmdSendToDepotMsg(const BaseVehicle *v)
+inline StringID GetCmdSendToDepotMsg(const BaseVehicle *v)
 {
 	return GetCmdSendToDepotMsg(v->type);
 }
@@ -166,11 +166,12 @@ CommandCost EnsureNoTrainOnTrackBits(TileIndex tile, TrackBits track_bits);
 
 bool CanVehicleUseStation(EngineID engine_type, const struct Station *st);
 bool CanVehicleUseStation(const Vehicle *v, const struct Station *st);
+StringID GetVehicleCannotUseStationReason(const Vehicle *v, const Station *st);
 
 void ReleaseDisastersTargetingVehicle(VehicleID vehicle);
 
 typedef std::vector<VehicleID> VehicleSet;
-void GetVehicleSet(VehicleSet &set, Vehicle *v, uint8 num_vehicles);
+void GetVehicleSet(VehicleSet &set, Vehicle *v, uint8_t num_vehicles);
 
 void CheckCargoCapacity(Vehicle *v);
 

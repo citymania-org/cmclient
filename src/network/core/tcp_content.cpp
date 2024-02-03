@@ -49,11 +49,11 @@ bool ContentInfo::IsValid() const
 /**
  * Search a textfile file next to this file in the content list.
  * @param type The type of the textfile to search for.
- * @return The filename for the textfile, \c nullptr otherwise.
+ * @return The filename for the textfile.
  */
-const char *ContentInfo::GetTextfile(TextfileType type) const
+std::optional<std::string> ContentInfo::GetTextfile(TextfileType type) const
 {
-	if (this->state == INVALID) return nullptr;
+	if (this->state == INVALID) return std::nullopt;
 	const char *tmp;
 	switch (this->type) {
 		default: NOT_REACHED();
@@ -70,8 +70,8 @@ const char *ContentInfo::GetTextfile(TextfileType type) const
 			tmp = Game::GetScannerLibrary()->FindMainScript(this, true);
 			break;
 		case CONTENT_TYPE_NEWGRF: {
-			const GRFConfig *gc = FindGRFConfig(BSWAP32(this->unique_id), FGCM_EXACT, this->md5sum);
-			tmp = gc != nullptr ? gc->filename : nullptr;
+			const GRFConfig *gc = FindGRFConfig(BSWAP32(this->unique_id), FGCM_EXACT, &this->md5sum);
+			tmp = gc != nullptr ? gc->filename.c_str() : nullptr;
 			break;
 		}
 		case CONTENT_TYPE_BASE_GRAPHICS:
@@ -85,11 +85,10 @@ const char *ContentInfo::GetTextfile(TextfileType type) const
 			break;
 		case CONTENT_TYPE_SCENARIO:
 		case CONTENT_TYPE_HEIGHTMAP:
-			extern const char *FindScenario(const ContentInfo *ci, bool md5sum);
 			tmp = FindScenario(this, true);
 			break;
 	}
-	if (tmp == nullptr) return nullptr;
+	if (tmp == nullptr) return std::nullopt;
 	return ::GetTextfile(type, GetContentInfoSubDir(this->type), tmp);
 }
 
@@ -171,13 +170,13 @@ bool NetworkContentSocketHandler::ReceiveInvalidPacket(PacketContentType type)
 	return false;
 }
 
-bool NetworkContentSocketHandler::Receive_CLIENT_INFO_LIST(Packet *p) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_INFO_LIST); }
-bool NetworkContentSocketHandler::Receive_CLIENT_INFO_ID(Packet *p) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_INFO_ID); }
-bool NetworkContentSocketHandler::Receive_CLIENT_INFO_EXTID(Packet *p) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_INFO_EXTID); }
-bool NetworkContentSocketHandler::Receive_CLIENT_INFO_EXTID_MD5(Packet *p) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_INFO_EXTID_MD5); }
-bool NetworkContentSocketHandler::Receive_SERVER_INFO(Packet *p) { return this->ReceiveInvalidPacket(PACKET_CONTENT_SERVER_INFO); }
-bool NetworkContentSocketHandler::Receive_CLIENT_CONTENT(Packet *p) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_CONTENT); }
-bool NetworkContentSocketHandler::Receive_SERVER_CONTENT(Packet *p) { return this->ReceiveInvalidPacket(PACKET_CONTENT_SERVER_CONTENT); }
+bool NetworkContentSocketHandler::Receive_CLIENT_INFO_LIST(Packet *) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_INFO_LIST); }
+bool NetworkContentSocketHandler::Receive_CLIENT_INFO_ID(Packet *) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_INFO_ID); }
+bool NetworkContentSocketHandler::Receive_CLIENT_INFO_EXTID(Packet *) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_INFO_EXTID); }
+bool NetworkContentSocketHandler::Receive_CLIENT_INFO_EXTID_MD5(Packet *) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_INFO_EXTID_MD5); }
+bool NetworkContentSocketHandler::Receive_SERVER_INFO(Packet *) { return this->ReceiveInvalidPacket(PACKET_CONTENT_SERVER_INFO); }
+bool NetworkContentSocketHandler::Receive_CLIENT_CONTENT(Packet *) { return this->ReceiveInvalidPacket(PACKET_CONTENT_CLIENT_CONTENT); }
+bool NetworkContentSocketHandler::Receive_SERVER_CONTENT(Packet *) { return this->ReceiveInvalidPacket(PACKET_CONTENT_SERVER_CONTENT); }
 
 /**
  * Helper to get the subdirectory a #ContentInfo is located in.
