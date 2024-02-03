@@ -203,39 +203,39 @@ STR_QUANTITY_N_A                                                :N/A
 
 # Two letter abbreviation of cargo name
 STR_ABBREV_NOTHING                                              :
-STR_ABBREV_PASSENGERS                                           :{TINY_FONT}CE
-STR_ABBREV_COAL                                                 :{TINY_FONT}UH
-STR_ABBREV_MAIL                                                 :{TINY_FONT}PO
-STR_ABBREV_OIL                                                  :{TINY_FONT}RO
-STR_ABBREV_LIVESTOCK                                            :{TINY_FONT}DO
-STR_ABBREV_GOODS                                                :{TINY_FONT}ZB
-STR_ABBREV_GRAIN                                                :{TINY_FONT}ZR
-STR_ABBREV_WOOD                                                 :{TINY_FONT}DŘ
-STR_ABBREV_IRON_ORE                                             :{TINY_FONT}ŽR
-STR_ABBREV_STEEL                                                :{TINY_FONT}OC
-STR_ABBREV_VALUABLES                                            :{TINY_FONT}CN
-STR_ABBREV_COPPER_ORE                                           :{TINY_FONT}MR
-STR_ABBREV_MAIZE                                                :{TINY_FONT}KU
-STR_ABBREV_FRUIT                                                :{TINY_FONT}OV
-STR_ABBREV_DIAMONDS                                             :{TINY_FONT}DI
-STR_ABBREV_FOOD                                                 :{TINY_FONT}JÍ
-STR_ABBREV_PAPER                                                :{TINY_FONT}PA
-STR_ABBREV_GOLD                                                 :{TINY_FONT}ZL
-STR_ABBREV_WATER                                                :{TINY_FONT}VO
-STR_ABBREV_WHEAT                                                :{TINY_FONT}PŠ
-STR_ABBREV_RUBBER                                               :{TINY_FONT}KA
-STR_ABBREV_SUGAR                                                :{TINY_FONT}CU
-STR_ABBREV_TOYS                                                 :{TINY_FONT}HR
-STR_ABBREV_SWEETS                                               :{TINY_FONT}BO
-STR_ABBREV_COLA                                                 :{TINY_FONT}KO
-STR_ABBREV_CANDYFLOSS                                           :{TINY_FONT}CV
-STR_ABBREV_BUBBLES                                              :{TINY_FONT}BU
-STR_ABBREV_TOFFEE                                               :{TINY_FONT}KA
-STR_ABBREV_BATTERIES                                            :{TINY_FONT}BA
-STR_ABBREV_PLASTIC                                              :{TINY_FONT}PL
-STR_ABBREV_FIZZY_DRINKS                                         :{TINY_FONT}LI
-STR_ABBREV_NONE                                                 :{TINY_FONT}NIC
-STR_ABBREV_ALL                                                  :{TINY_FONT}VŠE
+STR_ABBREV_PASSENGERS                                           :CE
+STR_ABBREV_COAL                                                 :UH
+STR_ABBREV_MAIL                                                 :PO
+STR_ABBREV_OIL                                                  :RO
+STR_ABBREV_LIVESTOCK                                            :DO
+STR_ABBREV_GOODS                                                :ZB
+STR_ABBREV_GRAIN                                                :ZR
+STR_ABBREV_WOOD                                                 :DŘ
+STR_ABBREV_IRON_ORE                                             :ŽR
+STR_ABBREV_STEEL                                                :OC
+STR_ABBREV_VALUABLES                                            :CN
+STR_ABBREV_COPPER_ORE                                           :MR
+STR_ABBREV_MAIZE                                                :KU
+STR_ABBREV_FRUIT                                                :OV
+STR_ABBREV_DIAMONDS                                             :DI
+STR_ABBREV_FOOD                                                 :JÍ
+STR_ABBREV_PAPER                                                :PA
+STR_ABBREV_GOLD                                                 :ZL
+STR_ABBREV_WATER                                                :VO
+STR_ABBREV_WHEAT                                                :PŠ
+STR_ABBREV_RUBBER                                               :KA
+STR_ABBREV_SUGAR                                                :CU
+STR_ABBREV_TOYS                                                 :HR
+STR_ABBREV_SWEETS                                               :BO
+STR_ABBREV_COLA                                                 :KO
+STR_ABBREV_CANDYFLOSS                                           :CV
+STR_ABBREV_BUBBLES                                              :BU
+STR_ABBREV_TOFFEE                                               :KA
+STR_ABBREV_BATTERIES                                            :BA
+STR_ABBREV_PLASTIC                                              :PL
+STR_ABBREV_FIZZY_DRINKS                                         :LI
+STR_ABBREV_NONE                                                 :NIC
+STR_ABBREV_ALL                                                  :VŠE
 
 # 'Mode' of transport for cargoes
 STR_PASSENGERS                                                  :{COMMA}{NBSP}cestující{P "" "" ch}
@@ -265,15 +265,21 @@ STR_COLOUR_GREY                                                 :Šedá
 STR_COLOUR_WHITE                                                :Bílá
 STR_COLOUR_RANDOM                                               :Náhodná
 
-# Units used in OpenTTD
-STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA}{NBSP}m{P íle íle il}/h
-STR_UNITS_VELOCITY_METRIC                                       :{COMMA}{NBSP}km/h
-STR_UNITS_VELOCITY_SI                                           :{COMMA}{NBSP}m/s
-STR_UNITS_VELOCITY_GAMEUNITS                                    :{DECIMAL}{NBSP}políčka/den
+###length 17
+STR_COLOUR_SECONDARY_DARK_BLUE                                  :Tmavomodrá
+STR_COLOUR_SECONDARY_BROWN                                      :Hnědá
+STR_COLOUR_SECONDARY_GREY                                       :Šedá
+STR_COLOUR_SECONDARY_WHITE                                      :Bílá
 
-STR_UNITS_POWER_IMPERIAL                                        :{COMMA}{NBSP}hp
-STR_UNITS_POWER_METRIC                                          :{COMMA}{NBSP}hp
-STR_UNITS_POWER_SI                                              :{COMMA}{NBSP}kW
+
+# Units used in OpenTTD
+STR_UNITS_VELOCITY_IMPERIAL                                     :{DECIMAL}{NBSP}m{P íle íle il}/h
+STR_UNITS_VELOCITY_METRIC                                       :{DECIMAL}{NBSP}km/h
+STR_UNITS_VELOCITY_SI                                           :{DECIMAL}{NBSP}m/s
+
+STR_UNITS_POWER_IMPERIAL                                        :{DECIMAL}{NBSP}hp
+STR_UNITS_POWER_METRIC                                          :{DECIMAL}{NBSP}hp
+STR_UNITS_POWER_SI                                              :{DECIMAL}{NBSP}kW
 
 STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_IMPERIAL                     :{DECIMAL}{NBSP}hp/t
 STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_METRIC                       :{DECIMAL}{NBSP}hp/t
@@ -285,29 +291,33 @@ STR_UNITS_POWER_SI_TO_WEIGHT_IMPERIAL                           :{DECIMAL}{NBSP}
 STR_UNITS_POWER_SI_TO_WEIGHT_METRIC                             :{DECIMAL}{NBSP}kW/t
 STR_UNITS_POWER_SI_TO_WEIGHT_SI                                 :{DECIMAL}{NBSP}W/kg
 
-STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{COMMA}{NBSP}t
-STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA}{NBSP}t
-STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA}{NBSP}kg
+STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{DECIMAL}{NBSP}t
+STR_UNITS_WEIGHT_SHORT_METRIC                                   :{DECIMAL}{NBSP}t
+STR_UNITS_WEIGHT_SHORT_SI                                       :{DECIMAL}{NBSP}kg
 
-STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{COMMA}{NBSP}tun{P a y ""}
-STR_UNITS_WEIGHT_LONG_METRIC                                    :{COMMA}{NBSP}tun{P a y ""}
-STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA}{NBSP}kg
+STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{DECIMAL}{NBSP}tun{P a y ""}
+STR_UNITS_WEIGHT_LONG_METRIC                                    :{DECIMAL}{NBSP}tun{P a y ""}
+STR_UNITS_WEIGHT_LONG_SI                                        :{DECIMAL}{NBSP}kg
 
-STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{COMMA}{NBSP}gal
-STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA}{NBSP}l
-STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA}{NBSP}m³
+STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{DECIMAL}{NBSP}gal
+STR_UNITS_VOLUME_SHORT_METRIC                                   :{DECIMAL}{NBSP}l
+STR_UNITS_VOLUME_SHORT_SI                                       :{DECIMAL}{NBSP}m³
 
-STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{COMMA}{NBSP}gallon{P "" "y" "ů"}
-STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA}{NBSP}litr{P "" y ů}
-STR_UNITS_VOLUME_LONG_SI                                        :{COMMA}{NBSP}m³
+STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{DECIMAL}{NBSP}gallon{P "" "y" "ů"}
+STR_UNITS_VOLUME_LONG_METRIC                                    :{DECIMAL}{NBSP}litr{P "" y ů}
+STR_UNITS_VOLUME_LONG_SI                                        :{DECIMAL}{NBSP}m³
 
-STR_UNITS_FORCE_IMPERIAL                                        :{COMMA}{NBSP}lbf
-STR_UNITS_FORCE_METRIC                                          :{COMMA}{NBSP}kgf
-STR_UNITS_FORCE_SI                                              :{COMMA}{NBSP}kN
+STR_UNITS_FORCE_IMPERIAL                                        :{DECIMAL}{NBSP}lbf
+STR_UNITS_FORCE_METRIC                                          :{DECIMAL}{NBSP}kgf
+STR_UNITS_FORCE_SI                                              :{DECIMAL}{NBSP}kN
 
-STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA}{NBSP}stop{P a y ""}
-STR_UNITS_HEIGHT_METRIC                                         :{COMMA}{NBSP}m
-STR_UNITS_HEIGHT_SI                                             :{COMMA}{NBSP}m
+STR_UNITS_HEIGHT_IMPERIAL                                       :{DECIMAL}{NBSP}stop{P a y ""}
+STR_UNITS_HEIGHT_METRIC                                         :{DECIMAL}{NBSP}m
+STR_UNITS_HEIGHT_SI                                             :{DECIMAL}{NBSP}m
+
+# Time units used in string control characters
+
+
 
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Filtrovat řetězec:
@@ -476,7 +486,7 @@ STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Ukončit
 
 # Settings menu
-###length 15
+###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Možnosti hry
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Nastavení
 STR_SETTINGS_MENU_AI_SETTINGS                                   :Nastavení AI
@@ -494,31 +504,25 @@ STR_SETTINGS_MENU_TRANSPARENT_BUILDINGS                         :Průhledné bud
 STR_SETTINGS_MENU_TRANSPARENT_SIGNS                             :Průhledné popisky
 
 # File menu
-###length 5
 STR_FILE_MENU_SAVE_GAME                                         :Uložit hru
 STR_FILE_MENU_LOAD_GAME                                         :Načíst hru
 STR_FILE_MENU_QUIT_GAME                                         :Ukončit hru
-STR_FILE_MENU_SEPARATOR                                         :
 STR_FILE_MENU_EXIT                                              :Ukončit program
 
 # Map menu
-###length 4
 STR_MAP_MENU_MAP_OF_WORLD                                       :Mapa světa
 STR_MAP_MENU_EXTRA_VIEWPORT                                     :Další pohled
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Legenda toku nákladu
 STR_MAP_MENU_SIGN_LIST                                          :Seznam popisků
 
 # Town menu
-###length 2
 STR_TOWN_MENU_TOWN_DIRECTORY                                    :Seznam měst
 STR_TOWN_MENU_FOUND_TOWN                                        :Založit město
 
 # Subsidies menu
-###length 1
 STR_SUBSIDIES_MENU_SUBSIDIES                                    :Dotace
 
 # Graph menu
-###length 6
 STR_GRAPH_MENU_OPERATING_PROFIT_GRAPH                           :Graf provozního zisku
 STR_GRAPH_MENU_INCOME_GRAPH                                     :Graf příjmů
 STR_GRAPH_MENU_DELIVERED_CARGO_GRAPH                            :Graf doručeného zboží
@@ -527,57 +531,46 @@ STR_GRAPH_MENU_COMPANY_VALUE_GRAPH                              :Graf hodnoty sp
 STR_GRAPH_MENU_CARGO_PAYMENT_RATES                              :Graf přepravních sazeb
 
 # Company league menu
-###length 3
 STR_GRAPH_MENU_COMPANY_LEAGUE_TABLE                             :Tabulka společností
 STR_GRAPH_MENU_DETAILED_PERFORMANCE_RATING                      :Podrobné hodnocení výkonu
 STR_GRAPH_MENU_HIGHSCORE                                        :Nejlepší výsledky
 
 # Industry menu
-###length 3
 STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY                            :Seznam průmyslu
 STR_INDUSTRY_MENU_INDUSTRY_CHAIN                                :Průmyslové řetězce
 STR_INDUSTRY_MENU_FUND_NEW_INDUSTRY                             :Investovat do průmyslu
 
 # URailway construction menu
-###length 4
 STR_RAIL_MENU_RAILROAD_CONSTRUCTION                             :Výstavba železnice
 STR_RAIL_MENU_ELRAIL_CONSTRUCTION                               :Výstavba elektrifikované železnice
 STR_RAIL_MENU_MONORAIL_CONSTRUCTION                             :Výstavba monorailu
 STR_RAIL_MENU_MAGLEV_CONSTRUCTION                               :Výstavba maglevu
 
 # Road construction menu
-###length 2
 STR_ROAD_MENU_ROAD_CONSTRUCTION                                 :Výstavba silnic
 STR_ROAD_MENU_TRAM_CONSTRUCTION                                 :Výstavba tramvajové tratě
 
 # Waterways construction menu
-###length 1
 STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION                       :Výstavba vodních cest
 
 # Aairport construction menu
-###length 1
 STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION                          :Stavba letiště
 
 # Landscaping menu
-###length 3
 STR_LANDSCAPING_MENU_LANDSCAPING                                :Úpravy krajiny
 STR_LANDSCAPING_MENU_PLANT_TREES                                :Vysadit stromy
 STR_LANDSCAPING_MENU_PLACE_SIGN                                 :Umístit nápis
 
 # Music menu
-###length 1
 STR_TOOLBAR_SOUND_MUSIC                                         :Zvuk/Hudba
 
 # Message menu
-###length 3
 STR_NEWS_MENU_LAST_MESSAGE_NEWS_REPORT                          :Poslední zpráva nebo článek
 STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Historie zpráv
 STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Smazat všechny zprávy
 
 # About menu
-###length 10
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Informace o zemi
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Zobrazit nebo skrýt konzoli
 STR_ABOUT_MENU_AI_DEBUG                                         :Ladění AI / herních skriptů
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot
@@ -586,24 +579,6 @@ STR_ABOUT_MENU_ABOUT_OPENTTD                                    :O 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Zarovnávání spritů
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Přepnout ohraničení
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Přepnout zbarvení špinavých bloků
-
-# Place in highscore window
-###length 15
-STR_ORDINAL_NUMBER_1ST                                          :1.
-STR_ORDINAL_NUMBER_2ND                                          :2.
-STR_ORDINAL_NUMBER_3RD                                          :3.
-STR_ORDINAL_NUMBER_4TH                                          :4.
-STR_ORDINAL_NUMBER_5TH                                          :5.
-STR_ORDINAL_NUMBER_6TH                                          :6.
-STR_ORDINAL_NUMBER_7TH                                          :7.
-STR_ORDINAL_NUMBER_8TH                                          :8.
-STR_ORDINAL_NUMBER_9TH                                          :9.
-STR_ORDINAL_NUMBER_10TH                                         :10.
-STR_ORDINAL_NUMBER_11TH                                         :11.
-STR_ORDINAL_NUMBER_12TH                                         :12.
-STR_ORDINAL_NUMBER_13TH                                         :13.
-STR_ORDINAL_NUMBER_14TH                                         :14.
-STR_ORDINAL_NUMBER_15TH                                         :15.
 
 ###length 31
 STR_DAY_NUMBER_1ST                                              :1.
@@ -692,8 +667,8 @@ STR_GRAPH_CARGO_DELIVERED_CAPTION                               :{WHITE}Doručen
 STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Hodnocení společností (nejvyšší hodnocení je 1000)
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Hodnota společností
 
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Ceny za přepravu nákladu
-STR_GRAPH_CARGO_PAYMENT_RATES_X_LABEL                           :{TINY_FONT}{BLACK}Doba přepravy ve dnech
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Platba za doručeni 10 jednotek (nebo 10 000 litru) nákladu do vzdálenosti 20 čtverecků
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Zobraz vše
 STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}Vypni vše
@@ -740,11 +715,9 @@ STR_PERFORMANCE_DETAIL_CARGO                                    :{BLACK}Druhů n
 STR_PERFORMANCE_DETAIL_MONEY                                    :{BLACK}Hotovost:
 STR_PERFORMANCE_DETAIL_LOAN                                     :{BLACK}Dluh:
 STR_PERFORMANCE_DETAIL_TOTAL                                    :{BLACK}Celkem:
+###next-name-looks-similar
 
-###length 10
-STR_PERFORMANCE_DETAIL_VEHICLES_TOOLTIP                         :{BLACK}Počet dopravních prostředků, které vykázaly poslední rok zisk; zahrnuje silniční vozidla, vlaky, lodě a letadla
 STR_PERFORMANCE_DETAIL_STATIONS_TOOLTIP                         :{BLACK}Počet nedávno obsloužených stanic. Nádraží, autobusové zastávky, letiště a podobně se počítají zvlášť, i když patří k jediné stanici
-STR_PERFORMANCE_DETAIL_MIN_PROFIT_TOOLTIP                       :{BLACK}Minimální hrubý zisk (= s provoz. náklady) vozidla s nejnižším příjmem (staršího 2 let)
 STR_PERFORMANCE_DETAIL_MIN_INCOME_TOOLTIP                       :{BLACK}Čistý zisk (= bez provoz. nakladů) v nejslabším čtvrtletí za posledních 12 čtvrtletí
 STR_PERFORMANCE_DETAIL_MAX_INCOME_TOOLTIP                       :{BLACK}Čistý zisk ve čtvrtletí s největším příjmem za posledních 12 čtvrtletí
 STR_PERFORMANCE_DETAIL_DELIVERED_TOOLTIP                        :{BLACK}Počet doručených jednotek nákladu za poslední rok (4Q)
@@ -799,8 +772,6 @@ STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK                         :{BLACK}Skladba 
 STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}Hudební stopu odstraníš ze současného programu (pouze u vlastního) kliknutím na ni
 
 # Highscore window
-STR_HIGHSCORE_TOP_COMPANIES_WHO_REACHED                         :{BIG_FONT}{BLACK}Nejlepší společnosti, které dosáhly {NUM}
-STR_HIGHSCORE_TOP_COMPANIES_NETWORK_GAME                        :{BIG_FONT}{BLACK}Tabulka společností v roce {NUM}
 STR_HIGHSCORE_POSITION                                          :{BIG_FONT}{BLACK}{COMMA}.
 STR_HIGHSCORE_PERFORMANCE_TITLE_BUSINESSMAN                     :Obchodník
 STR_HIGHSCORE_PERFORMANCE_TITLE_ENTREPRENEUR                    :Manažer
@@ -977,7 +948,6 @@ STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD_AND                        :{WHITE}{VEHICLE} silně zastarává a nutně potřebuje nahradit
 STR_NEWS_TRAIN_IS_STUCK                                         :{WHITE}{VEHICLE} nemůže najít cestu
 STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE} se ztratil{G 0 "" a o i y y a}
-STR_NEWS_VEHICLE_IS_UNPROFITABLE                                :{WHITE}{VEHICLE} - loňský zisk {CURRENCY_LONG}
 STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE} se nemůže dostat do dalšího cíle, protože je mimo dosah
 
 STR_NEWS_ORDER_REFIT_FAILED                                     :{WHITE}{VEHICLE} stojí kvůli selhání příkazu na změnu nákladu
@@ -989,23 +959,13 @@ STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Nov{G ý
 
 STR_NEWS_SHOW_VEHICLE_GROUP_TOOLTIP                             :{BLACK}Otevřít okno skupin s předvybranou skupinou daného vozidla
 
-STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} už dále nepřijímá {STRING.acc}
-STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} už dále nepřijímá {STRING.acc} ani {STRING.acc}
-STR_NEWS_STATION_NOW_ACCEPTS_CARGO                              :{WHITE}{STATION} nyní přijímá {STRING.acc}
-STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION} nyní přijímá {STRING.acc} a {STRING.acc}
+STR_NEWS_STATION_NOW_ACCEPTS_CARGO_LIST                         :{WHITE}{STATION} přijímá: {CARGO_LIST}
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Nabídka dotace přepravy vypršela:{}{}Dotace dopravy {STRING.gen} z{NBSP}{STRING.gen} do {STRING.gen} nebude dále nabízena
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Ukončení dotování dopravy:{}{}Dotace pro {STRING} z{NBSP}{STRING.gen} do {STRING.gen} již nebude dále poskytována
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Nabídka dotace:{}{}Doprava {STRING} z {STRING} do {STRING} bude {NUM} rok dotována místní správou!
 ###length 4
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Dotace přidělena společnosti {STRING}!{}{}Doprava {STRING.gen} z{NBSP}{STRING.gen} do {STRING.gen} bude po {NUM} rok{P “” ů ů} vynášet 150{NBSP}% normální ceny
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Dotace přidělena společnosti {STRING}!{}{} Doprava {STRING} z{NBSP}{STRING} do {STRING} bude po {NUM} rok{P "" "" ů} vynášet dvojnásobek normální ceny!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Dotace na přepravu přidělena společnosti {STRING}!{}{}Přeprava {STRING.gen} z {STRING.gen} do {STRING.gen} bude po {NUM} rok{P “” y ů} vynášet trojnásobek normální sazby!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Dotace přidělena společnosti {STRING}.{}{}Doprava {STRING.gen} z{STRING.gen} do {STRING.gen} bude po {NUM} rok{P “” ů ů} vynášet čtyřnásobek normální ceny!
 
-STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}{TOWN} zažívá dopravní chaos!{}{}Program přestavby ulic sponzorovaný {STRING} přináší motoristům 6 měsíců utrpení!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Transportní monopol!
-STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}Místní správa města {TOWN} podepsala dohodu s {STRING} na jeden rok exkluzivní dopravy!
 
 # Extra view window
 STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Pohled {COMMA}
@@ -1016,52 +976,66 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}Nastavit
 
 # Game options window
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Možnosti hry
+
+STR_GAME_OPTIONS_TAB_GENERAL                                    :Obecné
+STR_GAME_OPTIONS_TAB_GENERAL_TT                                 :{BLACK}Zobrazit obecná nastavení
+STR_GAME_OPTIONS_TAB_GRAPHICS_TT                                :{BLACK}Zobrazit nastavení grafiky
+STR_GAME_OPTIONS_TAB_SOUND                                      :Zvuk
+
+STR_GAME_OPTIONS_VOLUME                                         :Hlasitost
+STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Hudba
+
+STR_GAME_OPTIONS_VOLUME_0                                       :0%
+STR_GAME_OPTIONS_VOLUME_75                                      :75%
+STR_GAME_OPTIONS_VOLUME_100                                     :100%
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Měna
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Výběr jednotek měny
 
-###length 42
-STR_GAME_OPTIONS_CURRENCY_GBP                                   :Libra (GBP)
-STR_GAME_OPTIONS_CURRENCY_USD                                   :Dolar (USD)
-STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro (EUR)
-STR_GAME_OPTIONS_CURRENCY_JPY                                   :Japonský jen (JPY)
-STR_GAME_OPTIONS_CURRENCY_ATS                                   :Rakouský šilink (ATS)
-STR_GAME_OPTIONS_CURRENCY_BEF                                   :Belgický frank (BEF)
-STR_GAME_OPTIONS_CURRENCY_CHF                                   :Švýcarský frank (CHF)
-STR_GAME_OPTIONS_CURRENCY_CZK                                   :Česká koruna (CZK)
-STR_GAME_OPTIONS_CURRENCY_DEM                                   :Německá marka (DEM)
-STR_GAME_OPTIONS_CURRENCY_DKK                                   :Dánská koruna (DKK)
-STR_GAME_OPTIONS_CURRENCY_ESP                                   :Španělská peseta (ESP)
-STR_GAME_OPTIONS_CURRENCY_FIM                                   :Finská marka (FIM)
-STR_GAME_OPTIONS_CURRENCY_FRF                                   :Francouzský frank (FRF)
-STR_GAME_OPTIONS_CURRENCY_GRD                                   :Řecká drachma (GRD)
-STR_GAME_OPTIONS_CURRENCY_HUF                                   :Maďarský forint (HUF)
-STR_GAME_OPTIONS_CURRENCY_ISK                                   :Islandská koruna (ISK)
-STR_GAME_OPTIONS_CURRENCY_ITL                                   :Italská lira (ITL)
-STR_GAME_OPTIONS_CURRENCY_NLG                                   :Holandský gulden (NLG)
-STR_GAME_OPTIONS_CURRENCY_NOK                                   :Norská koruna (NOK)
-STR_GAME_OPTIONS_CURRENCY_PLN                                   :Polský zlotý (PLN)
-STR_GAME_OPTIONS_CURRENCY_RON                                   :Rumunský lei (RON)
-STR_GAME_OPTIONS_CURRENCY_RUR                                   :Ruský rubl (RUR)
-STR_GAME_OPTIONS_CURRENCY_SIT                                   :Slovinský tolar (SIT)
-STR_GAME_OPTIONS_CURRENCY_SEK                                   :Švédská koruna (SEK)
-STR_GAME_OPTIONS_CURRENCY_TRY                                   :Turecká lira (TRY)
-STR_GAME_OPTIONS_CURRENCY_SKK                                   :Slovenská koruna (SKK)
-STR_GAME_OPTIONS_CURRENCY_BRL                                   :Brazilský real (BRL)
-STR_GAME_OPTIONS_CURRENCY_EEK                                   :Estonská koruna (EEK)
-STR_GAME_OPTIONS_CURRENCY_LTL                                   :Litevský litas (LTL)
-STR_GAME_OPTIONS_CURRENCY_KRW                                   :Jihokorejský won (KRW)
-STR_GAME_OPTIONS_CURRENCY_ZAR                                   :Jihoafrický rand (ZAR)
+
+###length 43
+STR_GAME_OPTIONS_CURRENCY_GBP                                   :Libra
+STR_GAME_OPTIONS_CURRENCY_USD                                   :Dolar
+STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
+STR_GAME_OPTIONS_CURRENCY_JPY                                   :Japonský jen
+STR_GAME_OPTIONS_CURRENCY_ATS                                   :Rakouský šilink
+STR_GAME_OPTIONS_CURRENCY_BEF                                   :Belgický frank
+STR_GAME_OPTIONS_CURRENCY_CHF                                   :Švýcarský frank
+STR_GAME_OPTIONS_CURRENCY_CZK                                   :Česká koruna
+STR_GAME_OPTIONS_CURRENCY_DEM                                   :Německá marka
+STR_GAME_OPTIONS_CURRENCY_DKK                                   :Dánská koruna
+STR_GAME_OPTIONS_CURRENCY_ESP                                   :Španělská peseta
+STR_GAME_OPTIONS_CURRENCY_FIM                                   :Finská marka
+STR_GAME_OPTIONS_CURRENCY_FRF                                   :Francouzský frank
+STR_GAME_OPTIONS_CURRENCY_GRD                                   :Řecká drachma
+STR_GAME_OPTIONS_CURRENCY_HUF                                   :Maďarský forint
+STR_GAME_OPTIONS_CURRENCY_ISK                                   :Islandská koruna
+STR_GAME_OPTIONS_CURRENCY_ITL                                   :Italská lira
+STR_GAME_OPTIONS_CURRENCY_NLG                                   :Holandský gulden
+STR_GAME_OPTIONS_CURRENCY_NOK                                   :Norská koruna
+STR_GAME_OPTIONS_CURRENCY_PLN                                   :Polský zlotý
+STR_GAME_OPTIONS_CURRENCY_RON                                   :Rumunský lei
+STR_GAME_OPTIONS_CURRENCY_RUR                                   :Ruský rubl
+STR_GAME_OPTIONS_CURRENCY_SIT                                   :Slovinský tolar
+STR_GAME_OPTIONS_CURRENCY_SEK                                   :Švédská koruna
+STR_GAME_OPTIONS_CURRENCY_TRY                                   :Turecká lira
+STR_GAME_OPTIONS_CURRENCY_SKK                                   :Slovenská koruna
+STR_GAME_OPTIONS_CURRENCY_BRL                                   :Brazilský real
+STR_GAME_OPTIONS_CURRENCY_EEK                                   :Estonská koruna
+STR_GAME_OPTIONS_CURRENCY_LTL                                   :Litevský litas
+STR_GAME_OPTIONS_CURRENCY_KRW                                   :Jihokorejský won
+STR_GAME_OPTIONS_CURRENCY_ZAR                                   :Jihoafrický rand
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Vlastní...
-STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgijské Lari (GEL)
-STR_GAME_OPTIONS_CURRENCY_IRR                                   :Íránský Riál (IRR)
-STR_GAME_OPTIONS_CURRENCY_RUB                                   :Ruský rubl (RUB)
-STR_GAME_OPTIONS_CURRENCY_MXN                                   :Mexické peso (MXN)
-STR_GAME_OPTIONS_CURRENCY_NTD                                   :Nový taiwanský dolar (NTD)
-STR_GAME_OPTIONS_CURRENCY_CNY                                   :Čínský renminbi (CNY)
-STR_GAME_OPTIONS_CURRENCY_HKD                                   :Hongkongský dolar (HKD)
-STR_GAME_OPTIONS_CURRENCY_INR                                   :Indická rupie (INR)
-STR_GAME_OPTIONS_CURRENCY_IDR                                   :Indonéská rupie (IDR)
-STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malajsijský Ringgit (MYR)
+STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgijské Lari
+STR_GAME_OPTIONS_CURRENCY_IRR                                   :Íránský Riál
+STR_GAME_OPTIONS_CURRENCY_RUB                                   :Ruský rubl
+STR_GAME_OPTIONS_CURRENCY_MXN                                   :Mexické peso
+STR_GAME_OPTIONS_CURRENCY_NTD                                   :Nový taiwanský dolar
+STR_GAME_OPTIONS_CURRENCY_CNY                                   :Čínský renminbi
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :Hongkongský dolar
+STR_GAME_OPTIONS_CURRENCY_INR                                   :Indická rupie
+STR_GAME_OPTIONS_CURRENCY_IDR                                   :Indonéská rupie
+STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malajsijský Ringgit
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Automatické ukládání
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Volba intervalu mezi automatickým ukládáním hry
@@ -1069,10 +1043,8 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Volba in
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Vypnuto
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Každý měsíc
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Každé 3 měsíce
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Každých 6 měsíců
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Každých 12 měsíců
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_10_MINUTES             :Každých 10 minut
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :Každých 120 minut
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Jazyk
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Zvolit jazyk uživatelského rozhraní
@@ -1103,11 +1075,15 @@ STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Zaškrtn
 STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Škálovat úkosy
 STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :{BLACK}Zaškrtni toto políčko pro škálování úkosů dle velikosti uživatelského rozhraní
 
+
 STR_GAME_OPTIONS_GUI_SCALE_1X                                   :1x
 STR_GAME_OPTIONS_GUI_SCALE_2X                                   :2x
 STR_GAME_OPTIONS_GUI_SCALE_3X                                   :3x
 STR_GAME_OPTIONS_GUI_SCALE_4X                                   :4x
 STR_GAME_OPTIONS_GUI_SCALE_5X                                   :5x
+
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Náhled výsledků průzkumu
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Zobrazovat výsledek průzkumu z aktuálně běžící hry
 
 STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafiky
 
@@ -1118,7 +1094,6 @@ STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Obnovova
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Základní sada grafiky
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Zvol základní sadu grafiky
-STR_GAME_OPTIONS_BASE_GRF_STATUS                                :{RED}{NUM} chybějící{P "" "" ch}/poškozen{P ý é ých} soubor{P "" y ů}
 STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Další informace o základní sadě grafiky
 
 STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Základní sada zvuků
@@ -1127,8 +1102,11 @@ STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Další 
 
 STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Základní hudební set
 STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Vyberte jaký základní hudební set použít
-STR_GAME_OPTIONS_BASE_MUSIC_STATUS                              :{RED}{NUM} poškozen{P ý é é} soubor{P "" y y}
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Další informace o základním hudebním setu
+
+
+
+
 
 STR_ERROR_RESOLUTION_LIST_FAILED                                :{WHITE}Nepodařilo se získat seznam podporovaných rozlišení
 STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}Selhalo přepnutí na celou obrazovku
@@ -1291,6 +1269,9 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_LEFT                          :vlevo
 STR_CONFIG_SETTING_HORIZONTAL_POS_CENTER                        :uprostřed
 STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :vpravo
 
+STR_CONFIG_SETTING_SECONDS_VALUE                                :{COMMA}{NBSP}sekund{P a y ""}
+
+
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Maximální půjčka: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Jak moc si může společnost půjčit (bez ohledu na inflaci)
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_VALUE                   :{CURRENCY_LONG}
@@ -1313,9 +1294,9 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER                           :Výše dotací:
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Nastavuje jak moc jsou dotovaná spojení dotována
 
 STR_CONFIG_SETTING_SUBSIDY_DURATION                             :Doba trvání dotace: {STRING}
+###length 2
 STR_CONFIG_SETTING_SUBSIDY_DURATION_HELPTEXT                    :Nastav počet roků, po které je dotace přiznaná
 
-STR_CONFIG_SETTING_SUBSIDY_DURATION_VALUE                       :{NUM} rok{P "" y y}
 ###setting-zero-is-special
 STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :Žádné dotace
 
@@ -1411,7 +1392,10 @@ STR_CONFIG_SETTING_SIGNALSIDE_LEFT                              :Vlevo
 STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :Na straně řidiče
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :Vpravo
 
+###length 2
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Ukazovat finanční okno na konci každého roku: {STRING}
+
+###length 2
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :Na konci každého roku zobrazit okno s finančním přehledem pro snadnou kontrolu hospodaření společnosti.
 
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :Vydávat nové příkazy jako 'bez zastavení': {STRING}
@@ -1433,9 +1417,11 @@ STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT                     :Hlavní pohled
 STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :Všechny pohledy
 
 STR_CONFIG_SETTING_BRIBE                                        :Povolit úplatek místní správě: {STRING}
+###length 2
 STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :Umožňuje společnostem pokusit se podplatit místní správu. Pokud na to přijde inspekce, nebude možno ve městě 6 měsíců nic dělat
 
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :Umožnit kupování výhradních přepravních práv: {STRING}
+###length 2
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :Pokud společnost zakoupí exkluzivní přepravní právo v daném městě, nebudou zde stanice ostatních společností přijímat jakokýkoliv náklad (pasažéři a ostatní), po dobu jednoho roku.
 
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS                         :Povolit dotování nových budov: {STRING}
@@ -1461,6 +1447,7 @@ STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Žádná*
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :Redukovaný
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :Obvyklý
 
+
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Stavba průjezdných zastávek na obecních silnicích: {STRING}
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :Povoluje stavbu průjezdných stanic na městem vlastněných silnicích
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :Stavba průjezdných zastávek na silnicích vlastněných konkurencí: {STRING}
@@ -1472,6 +1459,7 @@ STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Pokud je zapnut
 
 STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR                      :Počáteční barva společnosti: {STRING}
 STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR_HELPTEXT             :Vyberte počáteční barvu společnosti
+
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Žádný druh letiště nezastará: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Povolení této možnosti způsobí, že všechny druhy letišť zůstanou po uvedení dostupné napořád. (nezastarají).
@@ -1487,10 +1475,17 @@ STR_CONFIG_SETTING_ORDER_REVIEW_EXDEPOT                         :Ano, pouze krom
 STR_CONFIG_SETTING_ORDER_REVIEW_ON                              :U všech vozidel
 
 STR_CONFIG_SETTING_WARN_INCOME_LESS                             :Varovat, pokud vozidlo prodělává: {STRING}
+###length 2
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :Pokud je zapnuto, budou zobrazovány zprávy o vozidlech, která v posledním kalendářním roce neměla žádný zisk.
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Vozidlům se nikdy nezastaví výroba ('nezastarají'): {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :Pokud je zapnuto, všechny modely vlaků zůstanou po uvedení dostupné napořád. (nezastarají)
+
+###length 2
+
+
+###setting-zero-is-special
+
 
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :Automaticky nahradit dopravní prostředek, když zestárne: {STRING}
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE_HELPTEXT                   :Pokud je zapnuto, vozidla na konci své plánované životnosti budou automaticky nahrazena, když jsou splněny podmínky pro automatické obnovení.
@@ -1506,7 +1501,6 @@ STR_CONFIG_SETTING_AUTORENEW_MONEY_HELPTEXT                     :Minimální č�
 
 STR_CONFIG_SETTING_ERRMSG_DURATION                              :Doba zobrazení chybové zprávy: {STRING}
 STR_CONFIG_SETTING_ERRMSG_DURATION_HELPTEXT                     :Doba zobrazení chybových zpráv v červeném okně. Některé zprávy o (kritických) chybách však nejsou zavírány automaticky a musí být zavřeny ručně.
-STR_CONFIG_SETTING_ERRMSG_DURATION_VALUE                        :{COMMA} sekund
 
 STR_CONFIG_SETTING_HOVER_DELAY                                  :Zobrazení kontextové nápovědy: {STRING}
 STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :Prodleva před zobrazením nápovědy, pokud kurzor leží nad nějakým ovládacím prvkem. Nápověda může být rovněž vyvolána pravým tlačítkem myši.
@@ -1674,9 +1668,8 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :vypnutá
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Zavírat okno kliknutím pravým tlačítkem myši: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :Zavírat okno kliknutím pravým tlačítkem na něj. Znemožňuje využívat nápovědu zobrazující se při stisknutí pravého tlačítka myši!
-
-STR_CONFIG_SETTING_AUTOSAVE                                     :Automaticky ukládat: {STRING}
-STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Zvol frekvenci automatického ukládání
+###length 3
+STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_YES                    :Ano
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Pro jméno uložené hry použít {STRING} formát
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Formát data v názvu uložené hry
@@ -1702,8 +1695,7 @@ STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Umožňuje pou�
 STR_CONFIG_SETTING_LOADING_INDICATORS                           :Používat ukazatele naložení: {STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS_HELPTEXT                  :Vyber jestli budou zobrazovány ukazatele naložení nad nakládajícími a vykládajícími vozidly.
 
-STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :Zobrazit jízdní řády v cyklech místo ve dnech: {STRING}
-STR_CONFIG_SETTING_TIMETABLE_IN_TICKS_HELPTEXT                  :Ukazuje cestovní časy v jízdních řádech
+###length 3
 
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :Ukazovat v jízdním řádu příjezdy a odjezdy: {STRING}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :Zobrazit předpokládané časy příjezdu a odjezdu v jízdních řádech.
@@ -1739,7 +1731,10 @@ STR_CONFIG_SETTING_SOUND_TICKER_HELPTEXT                        :Přehrávat zvu
 STR_CONFIG_SETTING_SOUND_NEWS                                   :Noviny: {STRING}
 STR_CONFIG_SETTING_SOUND_NEWS_HELPTEXT                          :Přehrát zvuk při zobrazení novin
 
+###length 2
 STR_CONFIG_SETTING_SOUND_NEW_YEAR                               :Konec roku: {STRING}
+
+###length 2
 STR_CONFIG_SETTING_SOUND_NEW_YEAR_HELPTEXT                      :Na konci roku přehrát zvuk shrnující výkon společnosti v porovnání s předchozím rokem
 
 STR_CONFIG_SETTING_SOUND_CONFIRM                                :Výstavba: {STRING}
@@ -1781,13 +1776,6 @@ STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT_HELPTEXT                  :Zapnutím této
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS                              :Zakázat počítači lodě: {STRING}
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS_HELPTEXT                     :Zapnutím této volby znemožníte budování lodí hráčům, kteří jsou ovládání počítačem (AI)
 
-STR_CONFIG_SETTING_AI_PROFILE                                   :Výchozí nastavení: {STRING}
-STR_CONFIG_SETTING_AI_PROFILE_HELPTEXT                          :Vyber, který profil nastavení se použije pro náhnodné AI nebo jako úvodní hodnoty po přidání AI nebo herního skriptu do hry
-###length 3
-STR_CONFIG_SETTING_AI_PROFILE_EASY                              :Lehká
-STR_CONFIG_SETTING_AI_PROFILE_MEDIUM                            :Střední
-STR_CONFIG_SETTING_AI_PROFILE_HARD                              :Těžká
-
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER                            :Povolit AI v síťové hře: {STRING}
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :Umožňuje AI počítačem řízeným hráčům připojit se do hry s více hráči
 
@@ -1814,6 +1802,7 @@ STR_CONFIG_SETTING_SERVINT_DISABLED                             :Vypnuto
 
 STR_CONFIG_SETTING_NOSERVICE                                    :Vypnout servisy, když jsou vypnuty poruchy: {STRING}
 STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Pokud je zapnuto a zároveň jsou vypnuty poruchy, vozidla nebudou vůbec jezdit do servisu, protože se nemohou nikdy porouchat
+
 
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Zapnout omezení rychlosti vagonů: {STRING}
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :Pokud zapnuto, použije rychlostní omezení vagónů při stanovení maximální rychlosti vlaku
@@ -1890,12 +1879,6 @@ STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :Původní
 STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :Plynulá
 STR_CONFIG_SETTING_ECONOMY_TYPE_FROZEN                          :Zmražená
 
-STR_CONFIG_SETTING_ALLOW_SHARES                                 :Povolit kupování podílu z ostatních společností: {STRING}
-STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Pokud je zapnuto, umožní kupovaní akcií ve společnostech. Akcie jsou k dispozici pouze u společností od určitého stáří
-
-STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :Minimální stáří společnosti pro obchod s akciemi: {STRING}
-STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES_HELPTEXT                :Určuje stáří společnosti, od kterého mohou ostatní společnosti kupovat a prodávat její akcie.
-
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Podíl ze zisku při překládce: {STRING}
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :Procentuální podíl příjmu, který je předán mezistanicím v překládacích systémech, předá větší kontrolu nad příjmem
 
@@ -1911,7 +1894,6 @@ STR_CONFIG_SETTING_SEMAPHORE_BUILD_BEFORE_DATE_HELPTEXT         :Nastav rok, ve 
 STR_CONFIG_SETTING_CYCLE_SIGNAL_TYPES                           :Vybírat dokola návěstidla: {STRING}
 STR_CONFIG_SETTING_CYCLE_SIGNAL_TYPES_HELPTEXT                  :Vyber které semafory budou nabízeny při Ctrl+klikání při jejich stavbě.
 ###length 2
-STR_CONFIG_SETTING_CYCLE_SIGNAL_PBS                             :pouze dokonalejší (PBS)
 STR_CONFIG_SETTING_CYCLE_SIGNAL_ALL                             :Vše viditelné
 
 STR_CONFIG_SETTING_SIGNAL_GUI_MODE                              :Zobraz signály typu: {STRING}
@@ -2009,10 +1991,8 @@ STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :Žádné
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Činitel základní velikosti města: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Průměrná velikost větších měst v porovnání s ostatními městy na začátku hry
 
-STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Aktualizovat distribuční graf po {STRING}{P 0:2 dni dnech dnech}
-STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :Čas mezi přepočítáváním částí grafu spojení. Každý přepočet přepočítává plány jedné části grafu. To znamená, že hodnota X u toho nastavení nezpůsobí, že se každých X dní přepočítá celý graf, ale pouze určité části. Čím kratší interval nastavíš, tím více času CPU bude potřeba ke spočítání. Čím delší nastavíš, tím déle bude trvat dokud si distribuce nákladu najde nové trasy.
-STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Zaber si {STRING}{NBSP}{P 0:2 "den" "dny" "dní"} na přepočet grafu spojení
-STR_CONFIG_SETTING_LINKGRAPH_TIME_HELPTEXT                      :Čas vyhrazený pro každý přepočet části grafu spojení. Pokud přepočet začne, je vytvořeno nové vlákno, které má dovoleno běžet po zvolený počet dnů. Čím nižší hodnotu nastavíš tím je pravděpodobnější, že vlákno nebude dokončeno kdy má. Pokud se tak stane, hra se zastaví ("lagne") dokud dokončeno nebude. Čím vyšší hodnotu nastavíš, tím déle bude trvat aktualizace grafu pokud se trasy změní.
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL_HELPTEXT           :Čas mezi dvěma po sobě jdoucími přepočty grafu (distribučních) spojení. Každý přepočet se týká jedné části grafu; hodnota X tohoto nastavení tedy neznamená, že by se celý graf aktualizoval každých X sekund, jen jeho určitá část. Čím kratší čas nastavíš, tím více procesorového času bude na přepočet třeba. Čím delší čas nastavíš, tím déle potrvá, než distribuce začne působit na nových trasách.
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME                        :Přepočet grafu distribuce trvá {STRING}
 
 STR_CONFIG_SETTING_DISTRIBUTION_PAX                             :Mód distribuce pro cestující: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :"Rovnoměrný" znamená, že téměř stejné množství cestujících chce cestovat ze stanice A do stanice B, jako ze stanice B do A. "Nerovnoměrný" znamená, že libovolné množství cestujících může cestovat v jakémkoliv směru. "Manuální" znamená, že zde nebude žádná automatická distribuce pro cestující.
@@ -2040,11 +2020,9 @@ STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :Vzhledem k tomu
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Jednotky rychlosti: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_HELPTEXT         :Kdykoliv se rychlost zobrazí v uživatelském rozhraní, bude ve zvolených jednotkách
-###length 4
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_IMPERIAL         :Imperiální (mph)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_METRIC           :Metrické (km/h)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_SI               :SI (m/s)
-STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_GAMEUNITS        :Herní jednotky (políčko/den)
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER                     :Jednotky výkonu vozidla: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_HELPTEXT            :Kdykoliv se výkon vozidla zobrazí v uživatelském rozhraní, bude ve zvolených jednotkách
@@ -2081,30 +2059,30 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Imperiální (f
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Metrické (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
 
-STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}Překlad
-STR_CONFIG_SETTING_GRAPHICS                                     :{ORANGE}Grafika
-STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Zvuk
-STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Ovládaní
-STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}Obecné
-STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}Pohledy
-STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Výstavba
-STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}Novinky / Poradci
-STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Společnost
-STR_CONFIG_SETTING_ACCOUNTING                                   :{ORANGE}Účetnictví
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Dopravní prostředky
-STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}Fyzika
-STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Směrování
-STR_CONFIG_SETTING_LIMITATIONS                                  :{ORANGE}Omezení
-STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Katastrofy / Nehody
-STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Generování krajiny
-STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Prostředí
-STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Městská správa
-STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Města
-STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Průmysl
-STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distribuce nákladu
-STR_CONFIG_SETTING_AI                                           :{ORANGE}Konkurenti
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Umělá inteligence
-STR_CONFIG_SETTING_NETWORK                                      :{ORANGE}Síť
+STR_CONFIG_SETTING_LOCALISATION                                 :Překlad
+STR_CONFIG_SETTING_GRAPHICS                                     :Grafika
+STR_CONFIG_SETTING_SOUND                                        :Zvuk
+STR_CONFIG_SETTING_INTERFACE                                    :Ovládaní
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :Obecné
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :Pohledy
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :Výstavba
+STR_CONFIG_SETTING_ADVISORS                                     :Novinky / Poradci
+STR_CONFIG_SETTING_COMPANY                                      :Společnost
+STR_CONFIG_SETTING_ACCOUNTING                                   :Účetnictví
+STR_CONFIG_SETTING_VEHICLES                                     :Dopravní prostředky
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :Fyzika
+STR_CONFIG_SETTING_VEHICLES_ROUTING                             :Směrování
+STR_CONFIG_SETTING_LIMITATIONS                                  :Omezení
+STR_CONFIG_SETTING_ACCIDENTS                                    :Katastrofy / Nehody
+STR_CONFIG_SETTING_GENWORLD                                     :Generování krajiny
+STR_CONFIG_SETTING_ENVIRONMENT                                  :Prostředí
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :Městská správa
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :Města
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :Průmysl
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :Distribuce nákladu
+STR_CONFIG_SETTING_AI                                           :Konkurenti
+STR_CONFIG_SETTING_AI_NPC                                       :Umělá inteligence
+STR_CONFIG_SETTING_NETWORK                                      :Síť
 
 STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS                        :Hledač cesty pro vlaky: {STRING}
 STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS_HELPTEXT               :Hledač cesty pro vlaky
@@ -2198,10 +2176,14 @@ STR_ABANDON_GAME_CAPTION                                        :{WHITE}Konec hr
 STR_ABANDON_GAME_QUERY                                          :{YELLOW}Opravdu chceš ukončit tuto hru?
 STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Určite chceš opustit toto mapu?
 
+# Help window
+STR_HELP_WINDOW_DOCUMENTS                                       :{BLACK}Dokumenty
+STR_HELP_WINDOW_KNOWN_BUGS                                      :{BLACK}Nahlášené chyby
+STR_HELP_WINDOW_MAIN_WEBSITE                                    :{BLACK}OpenTTD
+STR_HELP_WINDOW_COMMUNITY                                       :{BLACK}Komunita
+
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Cheaty
-STR_CHEATS_TOOLTIP                                              :{BLACK}Zaškrtávací políčka ukazují, jestli jsi tento cheat už použil
-STR_CHEATS_NOTE                                                 :{BLACK}Poznámka: jakékoliv použití těchto nastavení bude zaznamenáno v uložené hře
 STR_CHEAT_MONEY                                                 :{LTBLUE}Navýšit peníze o {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Hrát jako společnost: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Magický buldozer (odstraní průmysl a další objekty): {ORANGE}{STRING}
@@ -2329,8 +2311,6 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION                        :{BLACK}Rozměry
 STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION_TOOLTIP                :{BLACK}Rozměry mapy ve hře{}Kliknutím hry seřadíš podle plochy
 STR_NETWORK_SERVER_LIST_DATE_CAPTION                            :{BLACK}Datum
 STR_NETWORK_SERVER_LIST_DATE_CAPTION_TOOLTIP                    :{BLACK}Současné datum
-STR_NETWORK_SERVER_LIST_YEARS_CAPTION                           :{BLACK}Roků
-STR_NETWORK_SERVER_LIST_YEARS_CAPTION_TOOLTIP                   :{BLACK}Počet let,{}po které už hra běží
 STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}Jazyk, verze serveru, atd.
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}Hru vybereš kliknutím do seznamu
@@ -2445,7 +2425,8 @@ STR_NETWORK_CLIENT_LIST_NEW_COMPANY                             :(Nová společn
 STR_NETWORK_CLIENT_LIST_NEW_COMPANY_TOOLTIP                     :{BLACK}Vytvořit novou společnost a připojit se do ní
 STR_NETWORK_CLIENT_LIST_PLAYER_ICON_SELF_TOOLTIP                :{BLACK}Tohle jsi ty
 STR_NETWORK_CLIENT_LIST_PLAYER_ICON_HOST_TOOLTIP                :{BLACK}Toto je hostitel hry
-STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT                    :{BLACK}{NUM} klient{P "" i i} / {NUM} společnost{P “” i i}
+STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT                    :{BLACK}{NUM} klient{P "" i i} - {NUM}/{NUM} společnost{P “” i i}
+STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT_TOOLTIP            :{BLACK}Počet momentálně připojených hráčů, počet společností a maximální počet společností povolený administrátorem serveru
 
 # Matches ConnectionType
 ###length 5
@@ -2471,6 +2452,10 @@ STR_NETWORK_ASK_RELAY_TEXT                                      :{YELLOW}Nepoda�
 STR_NETWORK_ASK_RELAY_NO                                        :{BLACK}Ne
 STR_NETWORK_ASK_RELAY_YES_ONCE                                  :{BLACK}Ano, toto jednou
 STR_NETWORK_ASK_RELAY_YES_ALWAYS                                :{BLACK}Ano, znovu se neptat
+
+STR_NETWORK_ASK_SURVEY_TEXT                                     :Chceš se zúčastnit automatického průzkumu?{}OpenTTD odešle výsledky průzkumu při ukončení hry.{}Toto nastavení můžeš kdykoliv změnit v "Nastavení".
+STR_NETWORK_ASK_SURVEY_NO                                       :Ne
+STR_NETWORK_ASK_SURVEY_YES                                      :Ano
 
 STR_NETWORK_SPECTATORS                                          :Pozorovatelé
 
@@ -2677,7 +2662,6 @@ STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Změna p
 STR_TRANSPARENT_BRIDGES_TOOLTIP                                 :{BLACK}Změna průhlednosti mostů. Nastavení se zamkne Ctrl+kliknutím
 STR_TRANSPARENT_STRUCTURES_TOOLTIP                              :{BLACK}Změna průhlednosti staveb jako majáků a vysílačů. Nastavení se zamkne Ctrl+kliknutím
 STR_TRANSPARENT_CATENARY_TOOLTIP                                :{BLACK}Změna průhlednosti elektrifikace. Nastavení se zamkne Ctrl+kliknutím
-STR_TRANSPARENT_LOADING_TOOLTIP                                 :{BLACK}Přepnout zobrazení ukazatelů naložení. Nastavení se zamkne Ctrl+kliknutím
 STR_TRANSPARENT_INVISIBLE_TOOLTIP                               :{BLACK}Objekty budou neviditelné, ne průhledné
 
 # Linkgraph legend window
@@ -2693,9 +2677,7 @@ STR_LINKGRAPH_LEGEND_SATURATED                                  :{TINY_FONT}{BLA
 STR_LINKGRAPH_LEGEND_OVERLOADED                                 :{TINY_FONT}{BLACK}přetížení
 
 # Linkgraph tooltip
-STR_LINKGRAPH_STATS_TOOLTIP                                     :{BLACK}{CARGO_LONG} nákladu měsíčně k přepravě z {STATION} do {STATION} ({COMMA}% z kapacity){STRING}
 STR_LINKGRAPH_STATS_TOOLTIP_RETURN_EXTENSION                    :{}{CARGO_LONG} má být přepraveno zpět ({COMMA}% z kapacity)
-STR_LINKGRAPH_STATS_TOOLTIP_TIME_EXTENSION                      :{}Průměrná doba cesty: {NUM}{NBSP}{P "den" "dny" "dnů"}
 
 # Base for station construction window(s)
 STR_STATION_BUILD_COVERAGE_AREA_TITLE                           :{BLACK}Zvýraznění oblasti pokrytí
@@ -2705,7 +2687,6 @@ STR_STATION_BUILD_COVERAGE_AREA_OFF_TOOLTIP                     :{BLACK}Nezvýra
 STR_STATION_BUILD_COVERAGE_AREA_ON_TOOLTIP                      :{BLACK}Zvýraznit oblast pokrytí
 STR_STATION_BUILD_ACCEPTS_CARGO                                 :{BLACK}Přijímá: {GOLD}{CARGO_LIST}
 STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Poskytuje: {GOLD}{CARGO_LIST}
-STR_STATION_BUILD_INFRASTRUCTURE_COST                           :{BLACK}Náklady na údržbu: {GOLD}{CURRENCY_SHORT}/rok
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Spojování stanic
@@ -2762,6 +2743,8 @@ STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Vyber, k
 STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Vyber typ stavěné stanice
 
 STR_STATION_CLASS_DFLT                                          :Původní stanice
+STR_STATION_CLASS_DFLT_STATION                                  :Původní stanice
+STR_STATION_CLASS_DFLT_ROADSTOP                                 :Původní silniční stanoviště
 STR_STATION_CLASS_WAYP                                          :Směrování
 
 # Signal window
@@ -3244,7 +3227,6 @@ STR_MAPGEN_DESERT_COVERAGE                                      :{BLACK}Pokrytí
 STR_MAPGEN_DESERT_COVERAGE_UP                                   :{BLACK}Zvětšit pokrytí pouštěmi o deset procent
 STR_MAPGEN_DESERT_COVERAGE_DOWN                                 :{BLACK}Zmenšit pokrytí pouštěmi o deset procent
 STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}{NUM}%
-STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Generátor krajiny:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Typ krajiny:
 STR_MAPGEN_SEA_LEVEL                                            :{BLACK}Četnost jezer:
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}Řeky:
@@ -3446,8 +3428,8 @@ STR_NEWGRF_ERROR_MSG_INFO                                       :{SILVER}{STRING
 STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}Varování: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}Chyba: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Závažná chyba: {SILVER}{STRING}
-STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}Vyskytla se kritická chyba v NewGRF:{}{STRING}
-STR_NEWGRF_ERROR_POPUP                                          :{WHITE}Došlo k chybě v NewGRF:{}{STRING}
+STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}V NewGRF "{STRING}" se vyskytla kritická chyba:{}{STRING}
+STR_NEWGRF_ERROR_POPUP                                          :{WHITE}V NewGRF "{STRING}" došlo k chybě{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} nebude fungovat s verzí TTDPatche, kterou OpenTTD hlásí
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} je pro TTD verzi {2:STRING}
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} je navržen pro práci s {STRING}
@@ -3551,8 +3533,6 @@ STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} doručeno
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (ještě požadováno)
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN} (doručeno)
-STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}Město se rozrůstá co {ORANGE}{COMMA}{BLACK}{NBSP}d{P en ny ní}
-STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}Město se rozrůstá každý {ORANGE}{COMMA}.{BLACK}{NBSP}den (financováno)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}Město se {RED}nerozrůstá{BLACK}
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}Hlukový limit ve městě: {ORANGE}{COMMA}{BLACK}  max.: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Vystředit pohled na město. Ctrl+Klik otevře nový pohled
@@ -3587,15 +3567,13 @@ STR_LOCAL_AUTHORITY_ACTION_STATUE_OF_COMPANY                    :Postavit sochu 
 STR_LOCAL_AUTHORITY_ACTION_NEW_BUILDINGS                        :Dotovat nové budovy
 STR_LOCAL_AUTHORITY_ACTION_EXCLUSIVE_TRANSPORT                  :Koupit výhradní právo k přepravě
 STR_LOCAL_AUTHORITY_ACTION_BRIBE                                :Podplatit místní správu
+###next-name-looks-similar
 
-###length 8
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_SMALL_ADVERTISING            :{PUSH_COLOUR}{YELLOW}Zahájit malou reklamní kampaň, která přiláká více cestujících a nákladu.{}Poskytuje dočasné zvýšení hodnocení přepravy v blízkém okolí městského centra.{}{POP_COLOUR}Cena: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_MEDIUM_ADVERTISING           :{PUSH_COLOUR}{YELLOW}Zahájit středně velkou reklamní kampaň, která přiláká více cestujících a nákladu.{}Poskytuje dočasné zvýšení hodnocení přepravy ve středně širokém okolí městského centra.{}{POP_COLOUR}Cena: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_LARGE_ADVERTISING            :{PUSH_COLOUR}{YELLOW}Zahájit velkou reklamní kampaň, která přiláká více cestujících a nákladu.{}Poskytuje dočasné zvýšení hodnocení přepravy v širokém okolí městského centra.{}{POP_COLOUR}Cena: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_ROAD_RECONSTRUCTION          :{PUSH_COLOUR}{YELLOW}Dotovat rekonstrukci sítě místních ulic.{}Způsobí problémy v dopravě po dobu až 6 měsíců.{}{POP_COLOUR}Cena: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_STATUE_OF_COMPANY            :{PUSH_COLOUR}{YELLOW}Postavit sochu jako poctu tvé společnosti.{}Poskytuje permanentní bonus k hodnocení stanic v tomto městě.{}{POP_COLOUR}Cena: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_NEW_BUILDINGS                :{PUSH_COLOUR}{YELLOW}Dotovat stavbu nových obchodních budov ve městě.{}Poskytuje dočasné zvýšení rychlosti růstu města.{}{POP_COLOUR}Cena: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT          :{PUSH_COLOUR}{YELLOW}Koupit roční výhradní přepravní práva pro toto město. Místní správa nedovolí dovolí cestujícím ani nákladu používat stanice konkurentů.{}{POP_COLOUR}Cena: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{PUSH_COLOUR}{YELLOW}Podplatit místní správu pro zvýšení hodnocení společnosti. Riziko trestu v případě přistižení.{}{POP_COLOUR}Cena: {CURRENCY_LONG}
 
 # Goal window
@@ -3642,10 +3620,8 @@ STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Zavřít
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Dotace
 STR_SUBSIDIES_OFFERED_TITLE                                     :{BLACK}Nabídnuté dotace pro službu:
-STR_SUBSIDIES_OFFERED_FROM_TO                                   :{ORANGE}{STRING.big} z{NBSP}{STRING.gen} do {STRING.gen}{YELLOW} (do {DATE_SHORT.gen})
 STR_SUBSIDIES_NONE                                              :{ORANGE}- Nic -
 STR_SUBSIDIES_SUBSIDISED_TITLE                                  :{BLACK}Již přiznané dotace:
-STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}{STRING.big} z{NBSP}{STRING.gen} do {STRING.gen}{YELLOW} ({COMPANY}{YELLOW}, do {DATE_SHORT.gen})
 STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Kliknutím na dotaci zaměříš pohled na průmysl/město. Při stisknutém Ctrl otevřeš nový pohled
 
 # Story book window
@@ -3686,7 +3662,6 @@ STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :Společnost {YE
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Hodnocení
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Ukázat hodnocení společností
-STR_STATION_VIEW_SUPPLY_RATINGS_TITLE                           :{BLACK}Měsíční zásobování a lokální rating:
 STR_STATION_VIEW_CARGO_SUPPLY_RATING                            :{WHITE}{STRING}: {YELLOW}{COMMA} / {STRING} ({COMMA}%)
 
 STR_STATION_VIEW_GROUP                                          :{BLACK}Seskupit podle
@@ -3800,7 +3775,6 @@ STR_COMPANY_VIEW_AIRCRAFT                                       :{WHITE}{COMMA} 
 STR_COMPANY_VIEW_SHIPS                                          :{WHITE}{COMMA} lo{P ď dě dí}
 STR_COMPANY_VIEW_VEHICLES_NONE                                  :{WHITE}Nic
 STR_COMPANY_VIEW_COMPANY_VALUE                                  :{GOLD}Hodnota společnosti: {WHITE}{CURRENCY_LONG}
-STR_COMPANY_VIEW_SHARES_OWNED_BY                                :{WHITE}({COMMA}% vlastněno {COMPANY})
 STR_COMPANY_VIEW_INFRASTRUCTURE                                 :{GOLD}Infrastruktura:
 STR_COMPANY_VIEW_INFRASTRUCTURE_RAIL                            :{WHITE}{COMMA} železniční oblasti
 STR_COMPANY_VIEW_INFRASTRUCTURE_ROAD                            :{WHITE}{COMMA} silniční oblasti
@@ -3829,11 +3803,6 @@ STR_COMPANY_VIEW_COMPANY_NAME_TOOLTIP                           :{BLACK}Změnit 
 STR_COMPANY_VIEW_PRESIDENT_NAME_BUTTON                          :{BLACK}Prezident
 STR_COMPANY_VIEW_PRESIDENT_NAME_TOOLTIP                         :{BLACK}Změnit jméno prezidenta
 
-STR_COMPANY_VIEW_BUY_SHARE_BUTTON                               :{BLACK}Koupit 25% podíl ve společnosti
-STR_COMPANY_VIEW_SELL_SHARE_BUTTON                              :{BLACK}Prodat 25% podíl ve společnosti
-STR_COMPANY_VIEW_BUY_SHARE_TOOLTIP                              :{BLACK}Koupit 25% podíl v této společnosti. Stisknutý Shift+Kliknutí pro zobrazení odhadované ceny
-STR_COMPANY_VIEW_SELL_SHARE_TOOLTIP                             :{BLACK}Prodat 25% podíl v této společnosti. Stisknutý Shift+Kliknutí pro zobrazení odhadované ceny
-
 STR_COMPANY_VIEW_COMPANY_NAME_QUERY_CAPTION                     :Jméno společnosti
 STR_COMPANY_VIEW_PRESIDENT_S_NAME_QUERY_CAPTION                 :Jméno prezidenta
 STR_COMPANY_VIEW_GIVE_MONEY_QUERY_CAPTION                       :Zadej částku, kterou chceš poslat
@@ -3851,7 +3820,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Průplav
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stanice:
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATIONS                        :{WHITE}Staniční oblasti
 STR_COMPANY_INFRASTRUCTURE_VIEW_AIRPORTS                        :{WHITE}Letiště
-STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENCY_LONG}/rok
 
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Průmysl
@@ -3910,9 +3878,8 @@ STR_VEHICLE_LIST_MANAGE_LIST                                    :{BLACK}Upravit 
 STR_VEHICLE_LIST_MANAGE_LIST_TOOLTIP                            :{BLACK}Poslat příkazy všem vozidlům v tomto seznamu
 STR_VEHICLE_LIST_REPLACE_VEHICLES                               :Vyměňování vozidel
 STR_VEHICLE_LIST_SEND_FOR_SERVICING                             :Provést údržbu
+STR_VEHICLE_LIST_CREATE_GROUP                                   :Vytvořit skupinu
 STR_VEHICLE_LIST_PROFIT_THIS_YEAR_LAST_YEAR                     :{TINY_FONT}{BLACK}Letošní zisk: {CURRENCY_LONG} (vloni: {CURRENCY_LONG})
-STR_VEHICLE_LIST_CARGO                                          :{TINY_FONT}{BLACK}[{CARGO_LIST}]
-STR_VEHICLE_LIST_NAME_AND_CARGO                                 :{TINY_FONT}{BLACK}{STRING} {STRING}
 
 STR_VEHICLE_LIST_SEND_TRAIN_TO_DEPOT                            :Poslat do depa
 STR_VEHICLE_LIST_SEND_ROAD_VEHICLE_TO_DEPOT                     :Poslat do depa
@@ -3983,7 +3950,6 @@ STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Rychlost
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}Rychlost: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}Rychlost na moři: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_CANAL                                   :{BLACK}Rychlost v průplavech a řekách: {GOLD}{VELOCITY}
-STR_PURCHASE_INFO_RUNNINGCOST                                   :{BLACK}Provozní cena: {GOLD}{CURRENCY_LONG} ročně
 STR_PURCHASE_INFO_CAPACITY                                      :{BLACK}Kapacita: {GOLD}{CARGO_LONG} {STRING}
 STR_PURCHASE_INFO_REFITTABLE                                    :(lze přestavět)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Vyvinuto: {GOLD}{NUM}{BLACK} Životnost: {GOLD}{COMMA} {P rok roky let}
@@ -4179,13 +4145,6 @@ STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :tramvaj
 STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=n}letadlo
 STR_ENGINE_PREVIEW_SHIP                                         :{G=f}loď
 
-STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Cena: {CURRENCY_LONG} Hmotnost: {WEIGHT_SHORT}{}Rychlost: {VELOCITY}  Výkon: {POWER}{}Cena provozu: {CURRENCY_LONG} ročně{}Kapacita: {CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Cena: {CURRENCY_LONG} Váha: {WEIGHT_SHORT}{}Rychlost: {VELOCITY}  Síla: {POWER}  Maximální tažná síla: {6:FORCE}{}Provozní náklady: {4:CURRENCY_LONG}/rok{}Kapacita: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Cena: {CURRENCY_LONG} Max. rychlost: {VELOCITY}{}Kapacita: {CARGO_LONG}{}Cena provozu: {CURRENCY_LONG} ročně
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Cena: {CURRENCY_LONG} Max. rychlost: {VELOCITY}{}Typ letadla: {STRING}{}Kapacita: {CARGO_LONG}, {CARGO_LONG}{}Provozní náklady: {CURRENCY_LONG}/rok
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Cena: {CURRENCY_LONG} Max. rychlost: {VELOCITY}{}Typ letadla: {STRING}{}Kapacita: {CARGO_LONG}{}Provozní náklady: {CURRENCY_LONG}/rok
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST    :{BLACK}Cena: {CURRENCY_LONG} Max. rychlost: {VELOCITY}{}Typ letadla: {STRING} Dosah: {COMMA} políč{P ko ka ek}{}Kapacita: {CARGO_LONG}, {CARGO_LONG}{}Provozní náklady: {CURRENCY_LONG}/rok
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST        :{BLACK}Cena: {CURRENCY_LONG} Max. rychlost: {VELOCITY}{}Typ letadla: {STRING} Dosah: {COMMA} políč{P ko ka ek}{}Kapacita: {CARGO_LONG}{}Provozní náklady: {CURRENCY_LONG}/rok
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Vyměňování {STRING} - {STRING}
@@ -4328,9 +4287,9 @@ STR_VEHICLE_DETAILS_ROAD_VEHICLE_RENAME                         :{BLACK}Pojmenov
 STR_VEHICLE_DETAILS_SHIP_RENAME                                 :{BLACK}Pojmenovat loď
 STR_VEHICLE_DETAILS_AIRCRAFT_RENAME                             :{BLACK}Pojmenovat letadlo
 
-STR_VEHICLE_INFO_AGE_RUNNING_COST_YR                            :{BLACK}Stáří: {LTBLUE}{STRING}{BLACK}   Cena provozu: {LTBLUE}{CURRENCY_LONG} ročně
 STR_VEHICLE_INFO_AGE                                            :{COMMA} {P rok roky let} ({COMMA})
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} {P rok roky let} ({COMMA})
+STR_VEHICLE_INFO_AGE_RUNNING_COST_YR                            :{BLACK}Stáří: {LTBLUE}{STRING}{BLACK}   Cena provozu: {LTBLUE}{CURRENCY_LONG} ročně
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Max. rychlost: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Max. rychlost: {LTBLUE}{VELOCITY} {BLACK}Typ letadla: {LTBLUE}{STRING}
@@ -4350,14 +4309,9 @@ STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Kapacita
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Podíl za převoz: {LTBLUE}{CURRENCY_LONG}
 
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Interval servisů: {LTBLUE}{COMMA}{NBSP}d{P en ny ní}{BLACK}   Naposledy v servisu: {LTBLUE}{DATE_LONG}
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}Interval servisů: {LTBLUE}{COMMA}%{BLACK}   Naposledy v servisu: {LTBLUE}{DATE_LONG}
-STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Prodloužit interval servisů o 10. S Ctrl prodloužit o 5
-STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Zkrátit interval servisů o 10. S Ctrl zkrátit o 5
 
 STR_SERVICE_INTERVAL_DROPDOWN_TOOLTIP                           :{BLACK}Změnit typ servisního intervalu
 STR_VEHICLE_DETAILS_DEFAULT                                     :Defaultní
-STR_VEHICLE_DETAILS_DAYS                                        :Dnů
 STR_VEHICLE_DETAILS_PERCENT                                     :Procent
 
 ###length VEHICLE_TYPES
@@ -4423,7 +4377,6 @@ STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Přepnou
 
 STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Seznam příkazů - stiskni příkaz pro označení. Kliknutím na příkaz se stisknutým CTRL se nastaví pohled na cíl seznamu
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
-STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING}
 
 STR_ORDERS_END_OF_ORDERS                                        :- - Konec příkazů - -
 STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - Konec sdílených příkazů - -
@@ -4457,11 +4410,9 @@ STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}Zvolit d
 STR_ORDER_DROP_REFIT_AUTO                                       :Neměnný náklad
 STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Dostupný náklad
 
-STR_ORDER_SERVICE                                               :{BLACK}Údržba
 STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :Jeď vždy
 STR_ORDER_DROP_SERVICE_DEPOT                                    :Údržba v případě potřeby
 STR_ORDER_DROP_HALT_DEPOT                                       :Zastavit
-STR_ORDER_SERVICE_TOOLTIP                                       :{BLACK}Přeskoč tento cíl, pokud není potřeba pravidelná údržba
 
 STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}Vlastnost vozidla, podle které přeskakovat
 
@@ -4529,6 +4480,7 @@ STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT
 STR_ORDER_REFIT_ORDER                                           :(Přestavět na {STRING})
 STR_ORDER_REFIT_STOP_ORDER                                      :(Přestavět na {STRING} a zastavit)
 STR_ORDER_STOP_ORDER                                            :(Zastavit)
+
 
 STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
 STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(Nemůže použít stanici){POP_COLOUR} {STRING} {STATION} {STRING}
@@ -4598,8 +4550,6 @@ STR_TIMETABLE_STAY_FOR_ESTIMATED                                :(zůstaň {STRI
 STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(jet {STRING}, mimo jízdní řád)
 STR_TIMETABLE_STAY_FOR                                          :a zůstat {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :a jet {STRING}
-STR_TIMETABLE_DAYS                                              :{COMMA}{NBSP}d{P en ny ní}
-STR_TIMETABLE_TICKS                                             :{COMMA}{NBSP}cykl{P us y ů}
 
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}Tento jízdní řád bude trvat {STRING}
 STR_TIMETABLE_TOTAL_TIME_INCOMPLETE                             :{BLACK}Tento jízdní řád bude trvat nejméně {STRING} (vozidla mimo jízdní řád)
@@ -4608,10 +4558,8 @@ STR_TIMETABLE_STATUS_ON_TIME                                    :{BLACK}Vozidlo 
 STR_TIMETABLE_STATUS_LATE                                       :{BLACK}Vozidlo má {STRING} zpoždění
 STR_TIMETABLE_STATUS_EARLY                                      :{BLACK}Vozidlo jede {STRING} napřed
 STR_TIMETABLE_STATUS_NOT_STARTED                                :{BLACK}Tento jízdní řád ještě nezačal
-STR_TIMETABLE_STATUS_START_AT                                   :{BLACK}Tento jízdní řád začne v {STRING}
 
-STR_TIMETABLE_STARTING_DATE                                     :{BLACK}Datum začátku
-STR_TIMETABLE_STARTING_DATE_TOOLTIP                             :{BLACK}Vyber počáteční datum tohoto jízdního řádu. Ctrl+Klik rovnoměrně rozloží odjezdy jednotlivých vozidel sdílejích příkazy s ohledem na současný jízdní řád.
+
 
 STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}Změnit čas
 STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}Změnit čas pro splnění jízdního příkazu. Ctrl+klik změní čas pro všechny příkazy.
@@ -4626,7 +4574,7 @@ STR_TIMETABLE_CLEAR_SPEED                                       :{BLACK}Odstrani
 STR_TIMETABLE_CLEAR_SPEED_TOOLTIP                               :{BLACK}Odstranit maximální cestovní rychlost u vybraného příkazu. Ctrl+klik odstraní maximální rychlosti u všech příkazů
 
 STR_TIMETABLE_RESET_LATENESS                                    :{BLACK}Zapomenout zpoždění
-STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}Smazat zpoždění, takže vozidlo pojede na čas
+STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}Smazat zpoždění, takže vozidlo pojede na čas. Ctrl+Click smaže zpoždění celé skupině, takže poslední vozidlo pojede na čas a ostatní brzy.
 
 STR_TIMETABLE_AUTOFILL                                          :{BLACK}Automaticky
 STR_TIMETABLE_AUTOFILL_TOOLTIP                                  :{BLACK}Automaticky vyplň rozvrh hodnotami z následující cesty. Ctrl+klik pro zachování vyčkávací doby.
@@ -4635,8 +4583,6 @@ STR_TIMETABLE_EXPECTED                                          :{BLACK}Očekáv
 STR_TIMETABLE_SCHEDULED                                         :{BLACK}Plánovaný
 STR_TIMETABLE_EXPECTED_TOOLTIP                                  :{BLACK}Přepnout mezi očekávaným a plánovaným
 
-STR_TIMETABLE_ARRIVAL_ABBREVIATION                              :P:
-STR_TIMETABLE_DEPARTURE_ABBREVIATION                            :O:
 
 
 # Date window (for timetable)
@@ -4681,6 +4627,7 @@ STR_AI_CONFIG_HUMAN_PLAYER                                      :Lidský hráč
 STR_AI_CONFIG_RANDOM_AI                                         :Náhodná AI
 STR_AI_CONFIG_NONE                                              :(žádný)
 STR_AI_CONFIG_MAX_COMPETITORS                                   :{LTBLUE}Maximální počet protivníků: {ORANGE}{COMMA}
+STR_AI_CONFIG_COMPETITORS_INTERVAL                              :{LTBLUE}Interval zakládání konkurenčních AI společností: {ORANGE}{COMMA} minut{P a y ""}
 
 STR_AI_CONFIG_MOVE_UP                                           :{BLACK}Přesunout nahoru
 STR_AI_CONFIG_MOVE_UP_TOOLTIP                                   :{BLACK}Přesunout vybranou AI v seznamu výše
@@ -4720,12 +4667,13 @@ STR_SCREENSHOT_WORLD_SCREENSHOT                                 :{BLACK}Snímek 
 STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Snímek výškové mapy
 STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Snímek (náhledové) mapy světa
 
-# AI Parameters
+# Script Parameters
+STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametry
 STR_AI_SETTINGS_CAPTION_AI                                      :{WHITE}Parametry AI
+STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :Herní skript
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}Zavřít
 STR_AI_SETTINGS_RESET                                           :{BLACK}Obnovit nastavení
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
-STR_AI_SETTINGS_START_DELAY                                     :Počet dní kdy se spustí tato AI po předchozí (plus/mínus): {ORANGE}{STRING}
 
 
 # Textfile window
@@ -4734,10 +4682,12 @@ STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Zalomit 
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Zobrazit readme
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Novinky ve verzi
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licence
-###length 3
+###length 5
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} readme {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} změny ve verzi {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} licence {STRING}
+STR_TEXTFILE_SURVEY_RESULT_CAPTION                              :{WHITE}Náhled výsledků průzkumu
+STR_TEXTFILE_GAME_MANUAL_CAPTION                                :{WHITE}OpenTTD dokument '{STRING}'
 
 
 # Vehicle loading indicators
@@ -4862,9 +4812,6 @@ STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Nelze da
 STR_ERROR_CAN_T_GIVE_MONEY                                      :{WHITE}Této společnosti nemůžeš poslat peníze...
 STR_ERROR_CAN_T_BUY_COMPANY                                     :{WHITE}Nelze koupit společnost...
 STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS                      :{WHITE}Nelze postavit ředitelství společnosti...
-STR_ERROR_CAN_T_BUY_25_SHARE_IN_THIS                            :{WHITE}Nelze koupit podíl v této společnosti...
-STR_ERROR_CAN_T_SELL_25_SHARE_IN                                :{WHITE}Nelze prodat podíl v této společnosti...
-STR_ERROR_PROTECTED                                             :{WHITE}Tato společnost zatím neobchoduje s akciemi...
 
 # Town related errors
 STR_ERROR_CAN_T_GENERATE_TOWN                                   :{WHITE}Nelze vygenerovat žádné město
@@ -4875,7 +4822,6 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... moc 
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... moc blízko k jinému městu
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... příliš mnoho měst
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... na mapě už není místo
-STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}Město nebude stavět silnice. Můžete to změnit přes Pokročilé nastavení->Ekonomika->Města
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Silnice je v rekonstrukci
 STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Nelze vybourat město...{}Buď k němu patří stanice nebo depo, anebo se nedá odklidit políčko městem vlastněné
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... v tomto městě není žádné místo vhodné pro umístění sochy
@@ -4984,6 +4930,8 @@ STR_ERROR_UNABLE_TO_FIND_ROUTE_TO                               :{WHITE}Nelze na
 STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT                            :{WHITE}Nelze najít místní garáž
 
 STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :Nevhodný druh depa
+
+# Depot unbunching related errors
 
 # Autoreplace related errors
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{WHITE}{VEHICLE} je po výměně moc dlouhý
@@ -5185,6 +5133,20 @@ STR_ERROR_CAN_T_STOP_SHARING_ORDER_LIST                         :{WHITE}Nelze za
 STR_ERROR_CAN_T_COPY_ORDER_LIST                                 :{WHITE}Nelze kopírovat seznam příkazů...
 STR_ERROR_TOO_FAR_FROM_PREVIOUS_DESTINATION                     :{WHITE}... příliš daleko od předcházejícího cíle
 STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... letadlo nemá dostatečný dolet
+
+# Extra messages which go on the third line of errors, explaining why orders failed
+STR_ERROR_NO_RAIL_STATION                                       :{WHITE}Není zde žádná železniční stanice
+STR_ERROR_NO_BUS_STATION                                        :Není zde žádná autobusová stanice
+STR_ERROR_NO_TRUCK_STATION                                      :Není zde žádná nákladní rampa
+STR_ERROR_NO_DOCK                                               :{WHITE}Není zde žádný přístav
+STR_ERROR_NO_AIRPORT                                            :{WHITE}Zde není žádné letiště
+STR_ERROR_NO_STOP_COMPATIBLE_ROAD_TYPE                          :{WHITE}Nejsou zde žádné zastávky kompatibilní s tímto druhem silnice
+STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :{WHITE}Zde není žádná zastávka kompatibilní s tímto typem tramvaje
+STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :{WHITE}Nejsou zde žádné stanice vhodné pro kloubové silniční vozidla.{}Kloubové silniční vozidla vyžadují průjezdnou stanici.
+STR_ERROR_AIRPORT_NO_PLANES                                     :{WHITE}Toto letadlo nemůže přistát na tomto letišti
+STR_ERROR_AIRPORT_NO_HELICOPTERS                                :{WHITE}Tato helikoptéra nemůže přistát na tomto letišti
+STR_ERROR_NO_RAIL_WAYPOINT                                      :{WHITE}Zde není žádný kolejový směrovač
+STR_ERROR_NO_BUOY                                               :{WHITE}Zde není žádná bójka
 
 # Timetable related errors
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}Tomuto vozidlu nejde nastavit jízdní řád...
@@ -5712,11 +5674,11 @@ STR_VEHICLE_NAME_AIRCRAFT_POWERNAUT_HELICOPTER                  :Vrtulník Power
 
 ##id 0x8800
 # Formatting of some strings
-STR_FORMAT_DATE_TINY                                            :{STRING}-{STRING}-{NUM}
+STR_FORMAT_DATE_TINY                                            :{ZEROFILL_NUM}-{ZEROFILL_NUM}-{NUM}
 STR_FORMAT_DATE_SHORT                                           :{STRING} {NUM}
 STR_FORMAT_DATE_SHORT.gen                                       :{STRING.gen} {NUM}
 STR_FORMAT_DATE_LONG                                            :{STRING} {STRING} {NUM}
-STR_FORMAT_DATE_ISO                                             :{2:NUM}-{1:STRING}-{0:STRING}
+STR_FORMAT_DATE_ISO                                             :{2:NUM}-{1:ZEROFILL_NUM}-{0:ZEROFILL_NUM}
 
 STR_FORMAT_COMPANY_NUM                                          :(společnost {COMMA})
 STR_FORMAT_GROUP_NAME                                           :Skupina {COMMA}
@@ -5785,12 +5747,15 @@ STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
 
+
 STR_JUST_CARGO                                                  :{CARGO_LONG}
+STR_JUST_RIGHT_ARROW                                            :{RIGHT_ARROW}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}
 STR_JUST_COMMA                                                  :{COMMA}
 STR_JUST_CURRENCY_SHORT                                         :{CURRENCY_SHORT}
 STR_JUST_CURRENCY_LONG                                          :{CURRENCY_LONG}
 STR_JUST_CARGO_LIST                                             :{CARGO_LIST}
+STR_JUST_DECIMAL                                                :{DECIMAL}
 STR_JUST_INT                                                    :{NUM}
 STR_JUST_DATE_TINY                                              :{DATE_TINY}
 STR_JUST_DATE_SHORT                                             :{DATE_SHORT}
@@ -5802,33 +5767,8 @@ STR_JUST_RAW_STRING                                             :{STRING}
 STR_JUST_BIG_RAW_STRING                                         :{BIG_FONT}{STRING}
 
 # Slightly 'raw' stringcodes with colour or size
-STR_BLACK_COMMA                                                 :{BLACK}{COMMA}
-STR_TINY_BLACK_COMA                                             :{TINY_FONT}{BLACK}{COMMA}
-STR_TINY_COMMA                                                  :{TINY_FONT}{COMMA}
-STR_BLUE_COMMA                                                  :{BLUE}{COMMA}
-STR_RED_COMMA                                                   :{RED}{COMMA}
-STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
-STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
-STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
-STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
-STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
-STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
-STR_TINY_GROUP                                                  :{TINY_FONT}{GROUP}
-STR_BLACK_INT                                                   :{BLACK}{NUM}
-STR_ORANGE_INT                                                  :{ORANGE}{NUM}
 STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
-STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
-STR_BLACK_STRING                                                :{BLACK}{STRING}
-STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
-STR_WHITE_STRING                                                :{WHITE}{STRING}
-STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}
-STR_ORANGE_STRING1_LTBLUE                                       :{ORANGE}{STRING}{LTBLUE}
 STR_TINY_BLACK_HEIGHT                                           :{TINY_FONT}{BLACK}{HEIGHT}
-STR_TINY_BLACK_VEHICLE                                          :{TINY_FONT}{BLACK}{VEHICLE}
-STR_TINY_RIGHT_ARROW                                            :{TINY_FONT}{RIGHT_ARROW}
 
 STR_BLACK_1                                                     :{BLACK}1
 STR_BLACK_2                                                     :{BLACK}2

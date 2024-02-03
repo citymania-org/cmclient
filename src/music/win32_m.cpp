@@ -17,12 +17,13 @@
 #include "midifile.hpp"
 #include "midi.h"
 #include "../base_media_base.h"
+#include "../core/mem_func.hpp"
 #include <mutex>
 
 #include "../safeguards.h"
 
 struct PlaybackSegment {
-	uint32 start, end;
+	uint32_t start, end;
 	size_t start_block;
 	bool loop;
 };
@@ -58,7 +59,7 @@ static byte ScaleVolume(byte original, byte scale)
 }
 
 
-void CALLBACK MidiOutProc(HMIDIOUT hmo, UINT wMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
+void CALLBACK MidiOutProc(HMIDIOUT hmo, UINT wMsg, DWORD_PTR, DWORD_PTR dwParam1, DWORD_PTR)
 {
 	if (wMsg == MOM_DONE) {
 		MIDIHDR *hdr = (LPMIDIHDR)dwParam1;
@@ -107,8 +108,10 @@ static void TransmitStandardSysex(MidiSysexMessage msg)
  * Realtime MIDI playback service routine.
  * This is called by the multimedia timer.
  */
-void CALLBACK TimerCallback(UINT uTimerID, UINT, DWORD_PTR dwUser, DWORD_PTR, DWORD_PTR)
+void CALLBACK TimerCallback(UINT uTimerID, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR)
 {
+	static int volume_throttle = 0;
+
 	/* Ensure only one timer callback is running at once, and prevent races on status flags */
 	std::unique_lock<std::mutex> mutex_lock(_midi.lock, std::defer_lock);
 	if (!mutex_lock.try_lock()) return;
@@ -162,6 +165,9 @@ void CALLBACK TimerCallback(UINT uTimerID, UINT, DWORD_PTR dwUser, DWORD_PTR, DW
 			_midi.current_block = 0;
 
 			MemSetT<byte>(_midi.channel_volumes, 127, lengthof(_midi.channel_volumes));
+			/* Invalidate current volume. */
+			_midi.current_volume = UINT8_MAX;
+			volume_throttle = 0;
 		}
 	} else if (!_midi.playing) {
 		/* not playing, stop the timer */
@@ -172,7 +178,6 @@ void CALLBACK TimerCallback(UINT uTimerID, UINT, DWORD_PTR dwUser, DWORD_PTR, DW
 	}
 
 	/* check for volume change */
-	static int volume_throttle = 0;
 	if (_midi.current_volume != _midi.new_volume) {
 		if (volume_throttle == 0) {
 			Debug(driver, 2, "Win32-MIDI: timer: volume change");

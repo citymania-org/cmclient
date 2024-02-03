@@ -10,7 +10,7 @@
 #ifndef YAPF_COSTCACHE_HPP
 #define YAPF_COSTCACHE_HPP
 
-#include "../../date_func.h"
+#include "../../timer/timer_game_calendar.h"
 
 /**
  * CYapfSegmentCostCacheNoneT - the formal only yapf cost cache provider that implements
@@ -28,7 +28,7 @@ public:
 	 * Called by YAPF to attach cached or local segment cost data to the given node.
 	 *  @return true if globally cached data were used or false if local data was used
 	 */
-	inline bool PfNodeCacheFetch(Node &n)
+	inline bool PfNodeCacheFetch(Node &)
 	{
 		return false;
 	}
@@ -37,7 +37,7 @@ public:
 	 * Called by YAPF to flush the cached segment cost data back into cache storage.
 	 *  Current cache implementation doesn't use that.
 	 */
-	inline void PfNodeCacheFlush(Node &n)
+	inline void PfNodeCacheFlush(Node &)
 	{
 	}
 };
@@ -63,7 +63,7 @@ protected:
 	LocalCache      m_local_cache;
 
 	/** to access inherited path finder */
-	inline Tpf& Yapf()
+	inline Tpf &Yapf()
 	{
 		return *static_cast<Tpf *>(this);
 	}
@@ -84,7 +84,7 @@ public:
 	 * Called by YAPF to flush the cached segment cost data back into cache storage.
 	 *  Current cache implementation doesn't use that.
 	 */
-	inline void PfNodeCacheFlush(Node &n)
+	inline void PfNodeCacheFlush(Node &)
 	{
 	}
 };
@@ -101,7 +101,7 @@ struct CSegmentCostCacheBase
 {
 	static int   s_rail_change_counter;
 
-	static void NotifyTrackLayoutChange(TileIndex tile, Track track)
+	static void NotifyTrackLayoutChange(TileIndex, Track)
 	{
 		s_rail_change_counter++;
 	}
@@ -138,7 +138,7 @@ struct CSegmentCostCacheT : public CSegmentCostCacheBase {
 		m_heap.Clear();
 	}
 
-	inline Tsegment& Get(Key &key, bool *found)
+	inline Tsegment &Get(Key &key, bool *found)
 	{
 		Tsegment *item = m_map.Find(key);
 		if (item == nullptr) {
@@ -174,12 +174,12 @@ protected:
 	inline CYapfSegmentCostCacheGlobalT() : m_global_cache(stGetGlobalCache()) {};
 
 	/** to access inherited path finder */
-	inline Tpf& Yapf()
+	inline Tpf &Yapf()
 	{
 		return *static_cast<Tpf *>(this);
 	}
 
-	inline static Cache& stGetGlobalCache()
+	inline static Cache &stGetGlobalCache()
 	{
 		static int last_rail_change_counter = 0;
 		static Cache C;
@@ -213,7 +213,7 @@ public:
 	 * Called by YAPF to flush the cached segment cost data back into cache storage.
 	 *  Current cache implementation doesn't use that.
 	 */
-	inline void PfNodeCacheFlush(Node &n)
+	inline void PfNodeCacheFlush(Node &)
 	{
 	}
 };

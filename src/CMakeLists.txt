@@ -24,12 +24,20 @@ add_subdirectory(saveload)
 add_subdirectory(sound)
 add_subdirectory(spriteloader)
 add_subdirectory(table)
+add_subdirectory(tests)
+add_subdirectory(timer)
 add_subdirectory(video)
 add_subdirectory(widgets)
 
 add_files(
     viewport_sprite_sorter_sse4.cpp
     CONDITION SSE_FOUND
+)
+
+add_files(
+    gfx_layout_icu.cpp
+    gfx_layout_icu.h
+    CONDITION ICU_i18n_FOUND AND HARFBUZZ_FOUND
 )
 
 add_files(
@@ -108,11 +116,8 @@ add_files(
     crashlog.h
     currency.cpp
     currency.h
-    date.cpp
-    date_func.h
     date_gui.cpp
     date_gui.h
-    date_type.h
     debug.cpp
     debug.h
     dedicated.cpp
@@ -150,6 +155,8 @@ add_files(
     engine_gui.h
     engine_type.h
     error.h
+    error.cpp
+    error_func.h
     error_gui.cpp
     fileio.cpp
     fileio_func.h
@@ -172,6 +179,8 @@ add_files(
     gfx_func.h
     gfx_layout.cpp
     gfx_layout.h
+    gfx_layout_fallback.cpp
+    gfx_layout_fallback.h
     gfx_type.h
     gfxinit.cpp
     gfxinit.h
@@ -191,9 +200,10 @@ add_files(
     group_gui.h
     group_type.h
     gui.h
-    guitimer_func.h
     heightmap.cpp
     heightmap.h
+    help_gui.cpp
+    help_gui.h
     highscore.cpp
     highscore.h
     highscore_gui.cpp
@@ -223,6 +233,7 @@ add_files(
     league_gui.h
     league_gui.cpp
     league_type.h
+    library_loader.h
     livery.h
     main_gui.cpp
     map.cpp
@@ -275,6 +286,8 @@ add_files(
     newgrf_properties.h
     newgrf_railtype.cpp
     newgrf_railtype.h
+    newgrf_roadstop.cpp
+    newgrf_roadstop.h
     newgrf_roadtype.cpp
     newgrf_roadtype.h
     newgrf_sound.cpp
@@ -314,6 +327,8 @@ add_files(
     order_gui.cpp
     order_type.h
     osk_gui.cpp
+    palette.cpp
+    palette_func.h
     pbs.cpp
     pbs.h
     progress.cpp
@@ -368,6 +383,8 @@ add_files(
     signal.cpp
     signal_func.h
     signal_type.h
+    signature.cpp
+    signature.h
     signs.cpp
     signs_base.h
     signs_cmd.cpp
@@ -379,6 +396,8 @@ add_files(
     slope_type.h
     smallmap_gui.cpp
     smallmap_gui.h
+    social_integration.cpp
+    social_integration.h
     sortlist_type.h
     sound.cpp
     sound_func.h
@@ -387,6 +406,7 @@ add_files(
     sprite.h
     spritecache.cpp
     spritecache.h
+    spritecache_internal.h
     station.cpp
     station_base.h
     station_cmd.cpp
@@ -405,7 +425,6 @@ add_files(
     story_cmd.h
     story_gui.cpp
     story_type.h
-    strgen/strgen.h
     string.cpp
     string_base.h
     string_func.h
@@ -414,6 +433,7 @@ add_files(
     stringfilter_type.h
     strings.cpp
     strings_func.h
+    strings_internal.h
     strings_type.h
     subsidy.cpp
     subsidy_base.h
@@ -421,6 +441,8 @@ add_files(
     subsidy_func.h
     subsidy_gui.cpp
     subsidy_type.h
+    survey.cpp
+    survey.h
     tar_type.h
     terraform_cmd.cpp
     terraform_cmd.h
@@ -493,6 +515,8 @@ add_files(
     vehicle_type.h
     vehiclelist.cpp
     vehiclelist.h
+    vehiclelist_cmd.h
+    vehiclelist_func.h
     viewport.cpp
     viewport_cmd.h
     viewport_func.h
@@ -502,7 +526,6 @@ add_files(
     viewport_type.h
     void_cmd.cpp
     void_map.h
-    walltime_func.h
     water.h
     water_cmd.cpp
     water_cmd.h

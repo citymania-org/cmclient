@@ -128,39 +128,39 @@ STR_QUANTITY_N_A                                                :N/B
 
 # Two letter abbreviation of cargo name
 STR_ABBREV_NOTHING                                              :
-STR_ABBREV_PASSENGERS                                           :{TINY_FONT}P
-STR_ABBREV_COAL                                                 :{TINY_FONT}GL
-STR_ABBREV_MAIL                                                 :{TINY_FONT}PT
-STR_ABBREV_OIL                                                  :{TINY_FONT}OL
-STR_ABBREV_LIVESTOCK                                            :{TINY_FONT}BS
-STR_ABBREV_GOODS                                                :{TINY_FONT}EA
-STR_ABBREV_GRAIN                                                :{TINY_FONT}AR
-STR_ABBREV_WOOD                                                 :{TINY_FONT}AD
-STR_ABBREV_IRON_ORE                                             :{TINY_FONT}IA
-STR_ABBREV_STEEL                                                :{TINY_FONT}CR
-STR_ABBREV_VALUABLES                                            :{TINY_FONT}EL
-STR_ABBREV_COPPER_ORE                                           :{TINY_FONT}CO
-STR_ABBREV_MAIZE                                                :{TINY_FONT}AI
-STR_ABBREV_FRUIT                                                :{TINY_FONT}TO
-STR_ABBREV_DIAMONDS                                             :{TINY_FONT}DM
-STR_ABBREV_FOOD                                                 :{TINY_FONT}BI
-STR_ABBREV_PAPER                                                :{TINY_FONT}PR
-STR_ABBREV_GOLD                                                 :{TINY_FONT}ÓR
-STR_ABBREV_WATER                                                :{TINY_FONT}UI
-STR_ABBREV_WHEAT                                                :{TINY_FONT}CR
-STR_ABBREV_RUBBER                                               :{TINY_FONT}RB
-STR_ABBREV_SUGAR                                                :{TINY_FONT}SI
-STR_ABBREV_TOYS                                                 :{TINY_FONT}BR
-STR_ABBREV_SWEETS                                               :{TINY_FONT}MI
-STR_ABBREV_COLA                                                 :{TINY_FONT}CL
-STR_ABBREV_CANDYFLOSS                                           :{TINY_FONT}SS
-STR_ABBREV_BUBBLES                                              :{TINY_FONT}SÚ
-STR_ABBREV_TOFFEE                                               :{TINY_FONT}TF
-STR_ABBREV_BATTERIES                                            :{TINY_FONT}CE
-STR_ABBREV_PLASTIC                                              :{TINY_FONT}PL
-STR_ABBREV_FIZZY_DRINKS                                         :{TINY_FONT}DS
-STR_ABBREV_NONE                                                 :{TINY_FONT}TD
-STR_ABBREV_ALL                                                  :{TINY_FONT}GACH
+STR_ABBREV_PASSENGERS                                           :P
+STR_ABBREV_COAL                                                 :GL
+STR_ABBREV_MAIL                                                 :PT
+STR_ABBREV_OIL                                                  :OL
+STR_ABBREV_LIVESTOCK                                            :BS
+STR_ABBREV_GOODS                                                :EA
+STR_ABBREV_GRAIN                                                :AR
+STR_ABBREV_WOOD                                                 :AD
+STR_ABBREV_IRON_ORE                                             :IA
+STR_ABBREV_STEEL                                                :CR
+STR_ABBREV_VALUABLES                                            :EL
+STR_ABBREV_COPPER_ORE                                           :CO
+STR_ABBREV_MAIZE                                                :AI
+STR_ABBREV_FRUIT                                                :TO
+STR_ABBREV_DIAMONDS                                             :DM
+STR_ABBREV_FOOD                                                 :BI
+STR_ABBREV_PAPER                                                :PR
+STR_ABBREV_GOLD                                                 :ÓR
+STR_ABBREV_WATER                                                :UI
+STR_ABBREV_WHEAT                                                :CR
+STR_ABBREV_RUBBER                                               :RB
+STR_ABBREV_SUGAR                                                :SI
+STR_ABBREV_TOYS                                                 :BR
+STR_ABBREV_SWEETS                                               :MI
+STR_ABBREV_COLA                                                 :CL
+STR_ABBREV_CANDYFLOSS                                           :SS
+STR_ABBREV_BUBBLES                                              :SÚ
+STR_ABBREV_TOFFEE                                               :TF
+STR_ABBREV_BATTERIES                                            :CE
+STR_ABBREV_PLASTIC                                              :PL
+STR_ABBREV_FIZZY_DRINKS                                         :DS
+STR_ABBREV_NONE                                                 :TD
+STR_ABBREV_ALL                                                  :GACH
 
 # 'Mode' of transport for cargoes
 STR_PASSENGERS                                                  :{COMMA}{NBSP}{P ph ph ph bp p}aisinéir
@@ -190,40 +190,46 @@ STR_COLOUR_GREY                                                 :Liath
 STR_COLOUR_WHITE                                                :Bán
 STR_COLOUR_RANDOM                                               :Randamach
 
+###length 17
+
+
 # Units used in OpenTTD
-STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA}{NBSP}m/u
-STR_UNITS_VELOCITY_METRIC                                       :{COMMA}{NBSP}km/u
-STR_UNITS_VELOCITY_SI                                           :{COMMA}{NBSP}m/s
-STR_UNITS_VELOCITY_GAMEUNITS                                    :{DECIMAL}{NBSP}{P th th th dt t}íl/lá
+STR_UNITS_VELOCITY_IMPERIAL                                     :{DECIMAL}{NBSP}m/u
+STR_UNITS_VELOCITY_METRIC                                       :{DECIMAL}{NBSP}km/u
+STR_UNITS_VELOCITY_SI                                           :{DECIMAL}{NBSP}m/s
 
-STR_UNITS_POWER_IMPERIAL                                        :{COMMA}hp
-STR_UNITS_POWER_METRIC                                          :{COMMA}hp
-STR_UNITS_POWER_SI                                              :{COMMA}{NBSP}kW
+STR_UNITS_POWER_IMPERIAL                                        :{DECIMAL}hp
+STR_UNITS_POWER_METRIC                                          :{DECIMAL}hp
+STR_UNITS_POWER_SI                                              :{DECIMAL}{NBSP}kW
 
 
-STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{COMMA}{NBSP}t
-STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA}t
-STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA}kg
+STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{DECIMAL}{NBSP}t
+STR_UNITS_WEIGHT_SHORT_METRIC                                   :{DECIMAL}t
+STR_UNITS_WEIGHT_SHORT_SI                                       :{DECIMAL}kg
 
-STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{COMMA}{NBSP}tona
-STR_UNITS_WEIGHT_LONG_METRIC                                    :{COMMA}{NBSP}{P "th" "th" "th" "dt" "t"}ona
-STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA}{NBSP}kg
+STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{DECIMAL}{NBSP}tona
+STR_UNITS_WEIGHT_LONG_METRIC                                    :{DECIMAL}{NBSP}{P "th" "th" "th" "dt" "t"}ona
+STR_UNITS_WEIGHT_LONG_SI                                        :{DECIMAL}{NBSP}kg
 
-STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{COMMA}{NBSP}gal
-STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA}{NBSP}l
-STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA}{NBSP}m³
+STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{DECIMAL}{NBSP}gal
+STR_UNITS_VOLUME_SHORT_METRIC                                   :{DECIMAL}{NBSP}l
+STR_UNITS_VOLUME_SHORT_SI                                       :{DECIMAL}{NBSP}m³
 
-STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{COMMA}{NBSP}galún
-STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA}{NBSP}lítear
-STR_UNITS_VOLUME_LONG_SI                                        :{COMMA}{NBSP}m³
+STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{DECIMAL}{NBSP}galún
+STR_UNITS_VOLUME_LONG_METRIC                                    :{DECIMAL}{NBSP}lítear
+STR_UNITS_VOLUME_LONG_SI                                        :{DECIMAL}{NBSP}m³
 
-STR_UNITS_FORCE_IMPERIAL                                        :{COMMA}{NBSP}lbf
-STR_UNITS_FORCE_METRIC                                          :{COMMA}{NBSP}kgf
-STR_UNITS_FORCE_SI                                              :{COMMA}{NBSP}kN
+STR_UNITS_FORCE_IMPERIAL                                        :{DECIMAL}{NBSP}lbf
+STR_UNITS_FORCE_METRIC                                          :{DECIMAL}{NBSP}kgf
+STR_UNITS_FORCE_SI                                              :{DECIMAL}{NBSP}kN
 
-STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA}{NBSP}tr
-STR_UNITS_HEIGHT_METRIC                                         :{COMMA}{NBSP}m
-STR_UNITS_HEIGHT_SI                                             :{COMMA}{NBSP}m
+STR_UNITS_HEIGHT_IMPERIAL                                       :{DECIMAL}{NBSP}tr
+STR_UNITS_HEIGHT_METRIC                                         :{DECIMAL}{NBSP}m
+STR_UNITS_HEIGHT_SI                                             :{DECIMAL}{NBSP}m
+
+# Time units used in string control characters
+
+
 
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Teaghrán scagtha:
@@ -392,7 +398,7 @@ STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Scoir
 
 # Settings menu
-###length 15
+###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Roghanna an chluiche
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Socruithe
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Socruithe NewGRF
@@ -408,31 +414,25 @@ STR_SETTINGS_MENU_TRANSPARENT_BUILDINGS                         :Foignimh trédh
 STR_SETTINGS_MENU_TRANSPARENT_SIGNS                             :Comharthaí trédhearcacha
 
 # File menu
-###length 5
 STR_FILE_MENU_SAVE_GAME                                         :Sábháil an cluiche
 STR_FILE_MENU_LOAD_GAME                                         :Lódáil cluiche
 STR_FILE_MENU_QUIT_GAME                                         :Fág an cluiche
-STR_FILE_MENU_SEPARATOR                                         :
 STR_FILE_MENU_EXIT                                              :Scoir
 
 # Map menu
-###length 4
 STR_MAP_MENU_MAP_OF_WORLD                                       :Léarscáil den domhan
 STR_MAP_MENU_EXTRA_VIEWPORT                                     :Fuinneog amhairc bhreise
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Eochair an tSreafa Lastais
 STR_MAP_MENU_SIGN_LIST                                          :Liosta na gcomharthaí
 
 # Town menu
-###length 2
 STR_TOWN_MENU_TOWN_DIRECTORY                                    :Liosta bailte
 STR_TOWN_MENU_FOUND_TOWN                                        :Aimsíodh baile
 
 # Subsidies menu
-###length 1
 STR_SUBSIDIES_MENU_SUBSIDIES                                    :Fóirdheontais
 
 # Graph menu
-###length 6
 STR_GRAPH_MENU_OPERATING_PROFIT_GRAPH                           :Graf den bhrabús oibriúcháin
 STR_GRAPH_MENU_INCOME_GRAPH                                     :Graf den ioncam
 STR_GRAPH_MENU_DELIVERED_CARGO_GRAPH                            :Graf den lastas a seachadadh
@@ -441,57 +441,46 @@ STR_GRAPH_MENU_COMPANY_VALUE_GRAPH                              :Graf de luach n
 STR_GRAPH_MENU_CARGO_PAYMENT_RATES                              :Rátaí íocaíochta do lastas
 
 # Company league menu
-###length 3
 STR_GRAPH_MENU_COMPANY_LEAGUE_TABLE                             :Tábla sraithe na gcuideachtaí
 STR_GRAPH_MENU_DETAILED_PERFORMANCE_RATING                      :Rátáil feidhmíochta mionsonraithe
 STR_GRAPH_MENU_HIGHSCORE                                        :Tábla na n-ardscór
 
 # Industry menu
-###length 3
 STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY                            :Liosta de na tionscail
 STR_INDUSTRY_MENU_INDUSTRY_CHAIN                                :Slabhraí na dtionscal
 STR_INDUSTRY_MENU_FUND_NEW_INDUSTRY                             :Déan maoiniú ar thionscal nua
 
 # URailway construction menu
-###length 4
 STR_RAIL_MENU_RAILROAD_CONSTRUCTION                             :Tógáil iarnróid
 STR_RAIL_MENU_ELRAIL_CONSTRUCTION                               :Tógáil iarnróid leictrithe
 STR_RAIL_MENU_MONORAIL_CONSTRUCTION                             :Tógáil iarnród aonráille
 STR_RAIL_MENU_MAGLEV_CONSTRUCTION                               :Tógáil maglev
 
 # Road construction menu
-###length 2
 STR_ROAD_MENU_ROAD_CONSTRUCTION                                 :Tógáil bóithre
 STR_ROAD_MENU_TRAM_CONSTRUCTION                                 :Tógáil trambhealaigh
 
 # Waterways construction menu
-###length 1
 STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION                       :Tógáil uiscebhealaí
 
 # Aairport construction menu
-###length 1
 STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION                          :Tógáil aerfoirt
 
 # Landscaping menu
-###length 3
 STR_LANDSCAPING_MENU_LANDSCAPING                                :Tírdhreachú
 STR_LANDSCAPING_MENU_PLANT_TREES                                :Crainnte a chur
 STR_LANDSCAPING_MENU_PLACE_SIGN                                 :Comhartha a chur
 
 # Music menu
-###length 1
 STR_TOOLBAR_SOUND_MUSIC                                         :Fuaim/ceol
 
 # Message menu
-###length 3
 STR_NEWS_MENU_LAST_MESSAGE_NEWS_REPORT                          :Teachtaireacht/tuairisc nuachta deiridh
 STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Stair na dteachtaireachtaí
 STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Scrios gach teachtaireacht
 
 # About menu
-###length 10
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Faisnéis faoin limistéar talún
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Scoránaigh consól
 STR_ABOUT_MENU_AI_DEBUG                                         :Dífhabhtú AI/Scripteanna Cluiche
 STR_ABOUT_MENU_SCREENSHOT                                       :Seat scáileáin
@@ -500,24 +489,6 @@ STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Maidir le 'Open
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Ailínóir spriteanna
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Scoránaigh boscaí imill
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Scor anaigh dath na mbloc salacha
-
-# Place in highscore window
-###length 15
-STR_ORDINAL_NUMBER_1ST                                          :1ú
-STR_ORDINAL_NUMBER_2ND                                          :2ú
-STR_ORDINAL_NUMBER_3RD                                          :3ú
-STR_ORDINAL_NUMBER_4TH                                          :4ú
-STR_ORDINAL_NUMBER_5TH                                          :5ú
-STR_ORDINAL_NUMBER_6TH                                          :6ú
-STR_ORDINAL_NUMBER_7TH                                          :7ú
-STR_ORDINAL_NUMBER_8TH                                          :8ú
-STR_ORDINAL_NUMBER_9TH                                          :9ú
-STR_ORDINAL_NUMBER_10TH                                         :10ú
-STR_ORDINAL_NUMBER_11TH                                         :11ú
-STR_ORDINAL_NUMBER_12TH                                         :12ú
-STR_ORDINAL_NUMBER_13TH                                         :13ú
-STR_ORDINAL_NUMBER_14TH                                         :14ú
-STR_ORDINAL_NUMBER_15TH                                         :15ú
 
 ###length 31
 STR_DAY_NUMBER_1ST                                              :1ú
@@ -594,8 +565,8 @@ STR_GRAPH_CARGO_DELIVERED_CAPTION                               :{WHITE}Aonad la
 STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Rátálacha feidhmíochta cuideachtaí (uasrátáil=1000)
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Luachanna cuideachta
 
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Rátaí íocaíochta do lastas
-STR_GRAPH_CARGO_PAYMENT_RATES_X_LABEL                           :{TINY_FONT}{BLACK}Laethanta faoi bhealach
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Íocaíocht as 10 n-aonad (nó 10,000 lítear) de lastas a sheachadadh fad 20 cearnóg
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Cumasaigh gach
 STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}Díchumasaigh gach
@@ -642,11 +613,9 @@ STR_PERFORMANCE_DETAIL_CARGO                                    :{BLACK}Lastas:
 STR_PERFORMANCE_DETAIL_MONEY                                    :{BLACK}Airgead:
 STR_PERFORMANCE_DETAIL_LOAN                                     :{BLACK}Iasacht:
 STR_PERFORMANCE_DETAIL_TOTAL                                    :{BLACK}Iomlán:
+###next-name-looks-similar
 
-###length 10
-STR_PERFORMANCE_DETAIL_VEHICLES_TOOLTIP                         :{BLACK}Líon na bhfeithiclí a rinne brabús anuraidh, Áirítear leis seo feithiclí bóithre, traenacha, longa agus aerárthaigh
 STR_PERFORMANCE_DETAIL_STATIONS_TOOLTIP                         :{BLACK}Líon na stáisiún ar tugadh lastas chomh fada leo le déanaí. Áirítear stáisiún traenach, stadanna bus, aerfort agus mar sin de ar leithligh, fiú amháin más cuid d'aon stáisiún amháin iad
-STR_PERFORMANCE_DETAIL_MIN_PROFIT_TOOLTIP                       :{BLACK}Brabús na feithicle a bhfuil an t-ioncam is ísle aici (ní thógtar san áireamh ach feithiclí atá níos mó ná 2 bhliain d'aois)
 STR_PERFORMANCE_DETAIL_MIN_INCOME_TOOLTIP                       :{BLACK}An méid airgead a rinneadh sa ráithe ina raibh an brabús is ísle le 12 ráithe anuas
 STR_PERFORMANCE_DETAIL_MAX_INCOME_TOOLTIP                       :{BLACK}An méid airgid a rinneadh sa ráithe ina raibh an brabús is airde le 12 ráithe anuas
 STR_PERFORMANCE_DETAIL_DELIVERED_TOOLTIP                        :{BLACK}Aonaid lastais a seachadadh le ceithre ráithe anuas
@@ -701,8 +670,6 @@ STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK                         :{BLACK}Cliceái
 STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}Cliceáil ar rian ceoil chun é a bhaint ón gclár reatha (Saincheaptha1 nó Sainche
 
 # Highscore window
-STR_HIGHSCORE_TOP_COMPANIES_WHO_REACHED                         :{BIG_FONT}{BLACK}Cuideachtaí is fearr a bhain amach {NUM}
-STR_HIGHSCORE_TOP_COMPANIES_NETWORK_GAME                        :{BIG_FONT}{BLACK}Tábla Sraithe na gCuideachtaí in {NUM}
 STR_HIGHSCORE_POSITION                                          :{BIG_FONT}{BLACK}{COMMA}.
 STR_HIGHSCORE_PERFORMANCE_TITLE_BUSINESSMAN                     :Fear gnó
 STR_HIGHSCORE_PERFORMANCE_TITLE_ENTREPRENEUR                    :Fiontraí
@@ -879,7 +846,6 @@ STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}Tá {VEH
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD_AND                        :{WHITE}Tá {VEHICLE} ag fáil an-sean agus ní mór é a ionadú go práinneach
 STR_NEWS_TRAIN_IS_STUCK                                         :{WHITE}Ní féidir le {VEHICLE} bealach a aimsiú le leanúint ar aghaidh.
 STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}Tá {VEHICLE} caillte.
-STR_NEWS_VEHICLE_IS_UNPROFITABLE                                :{WHITE}Rinne {VEHICLE} brabús de {CURRENCY_LONG} anuraidh
 STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}Ní féidir le {VEHICLE} an chéad cheann scríbe eile a bhaint amach mar tá sé as raon
 
 STR_NEWS_ORDER_REFIT_FAILED                                     :{WHITE}Stop {VEHICLE} mar gheall gur theip ar athfheistiú a ordaíodh
@@ -891,23 +857,12 @@ STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Tá {STR
 
 STR_NEWS_SHOW_VEHICLE_GROUP_TOOLTIP                             :{BLACK}Oscail fuinneog an ghrúpa atá dírithe ar ghrúpa na feithicle
 
-STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}Ní ghlacann {STATION} le {STRING} a thuilleadh
-STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}Ní ghlacann {STATION} le {STRING} ná le {STRING} a thuilleadh
-STR_NEWS_STATION_NOW_ACCEPTS_CARGO                              :{WHITE}Glacann {STATION} le {STRING} anois
-STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}Glacann {STATION} le {STRING} agus le {STRING} anois
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Fóirdheontas a tairiscíodh imithe as dáta:{}{}Ní thabharfar fóirdheontas ar {STRING} ó {STRING} go {STRING} anois.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Fóirdheontas tarraingte siar:{}{}Ní thabharfar fóirdheontas ar sheirbhís {STRING} ó {STRING} go {STRING} a thuilleadh.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Déantar fóirdheontas seirbhíse a thairiscint:{}{}Tabharfaidh an t-údarás aitiúil fóirdheontas don chéad seirbhís {STRING} ó {STRING} go {STRING} ar feadh {NUM} {P "bhliain amháin" "bhliain" "bliana" "mbliana" "bliain" }!
 ###length 4
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Bronnadh fóirdheontas seirbhíse ar {STRING}!{}{}Tabharfar 50% breise  don tseirbhís {STRING} ó {STRING} go {STRING} ar feadh {NUM} {P "bhliain amháin" "bhliain eile" "bliana eile" "mbliana eile" "bliain eile"}!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}Bronnadh fóirdheontas seirbhíse ar {STRING}!{}{}Íocfar rátaí dúbailte ar feadh bliana don tseirbhís {STRING} ó {STRING} go {STRING} as seo go ceann {NUM} {P "bhliain amháin" "bhliain" "bliana" "mbliana" "bliain"}!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}Bronnadh fóirdheontas seirbhíse ar {STRING}!{}{}Íocfar rátaí trí oiread níos mó don tseirbhís {STRING} ó {STRING} go {STRING} ar feadh {NUM} {P "bhliain amháin" "bhliain" "bliana" "mbliana" "bliain" } eile!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}Bronnadh fóirdheontas seirbhíse ar {STRING}!{}{}Íocfar rátaí ceithre oiread níos mó don tseirbhís {STRING} ó {STRING} go {STRING} ar feadh {NUM} {P "bhliain amháin" "bhliain" "bliana" "mbliana" "bliain" } eile!
 
-STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Anord tráchta in {TOWN}!{}{}Beidh 6 mhí de chrá croí do thiománaithe de bharr clár atógáil bóithre arna maoiniú ag {STRING}!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Monaplacht ar iompar!
-STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}Síníonn údarás áitiúil {TOWN} conradh le {STRING} le haghaidh cearta eisiacha iompair ar feadh bliana!
 
 # Extra view window
 STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Amharc {COMMA}
@@ -918,52 +873,57 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}Gramaigh
 
 # Game options window
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Roghanna Cluiche
+
+
+
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Aonaid airgeadra
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Aonaid airgeadra a roghnú
 
-###length 42
-STR_GAME_OPTIONS_CURRENCY_GBP                                   :Punt na Breataine (GBP)
-STR_GAME_OPTIONS_CURRENCY_USD                                   :Dollar Mheiriceá (USD)
-STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro (EUR)
-STR_GAME_OPTIONS_CURRENCY_JPY                                   :Yen na Seapáine (JPY)
-STR_GAME_OPTIONS_CURRENCY_ATS                                   :Scilling na hOstaire (ATS)
-STR_GAME_OPTIONS_CURRENCY_BEF                                   :Franc na Beilge (BEF)
-STR_GAME_OPTIONS_CURRENCY_CHF                                   :Franc na hEilbhéise (CHF)
-STR_GAME_OPTIONS_CURRENCY_CZK                                   :Koruna Phoblacht na Seice (CZK)
-STR_GAME_OPTIONS_CURRENCY_DEM                                   :Deutschmark (DEM)
-STR_GAME_OPTIONS_CURRENCY_DKK                                   :Krone na Danmhairge (DKK)
-STR_GAME_OPTIONS_CURRENCY_ESP                                   :Peseta na Spáinne (ESP)
-STR_GAME_OPTIONS_CURRENCY_FIM                                   :Markka na Fionlainne (FIM)
-STR_GAME_OPTIONS_CURRENCY_FRF                                   :Franc na Fraince (FRF)
-STR_GAME_OPTIONS_CURRENCY_GRD                                   :Drachma na Gréige (GRD)
-STR_GAME_OPTIONS_CURRENCY_HUF                                   :Forint na hUngáire (HUF)
-STR_GAME_OPTIONS_CURRENCY_ISK                                   :Krona na hÍoslainne (ISK)
-STR_GAME_OPTIONS_CURRENCY_ITL                                   :Lira na hIodáile (ITL)
-STR_GAME_OPTIONS_CURRENCY_NLG                                   :Guilder na hÍsiltíre (NLG)
-STR_GAME_OPTIONS_CURRENCY_NOK                                   :Krone na hIorua (NOK)
-STR_GAME_OPTIONS_CURRENCY_PLN                                   :Złoty na Polainne (PLN)
-STR_GAME_OPTIONS_CURRENCY_RON                                   :Leu na Rómáine (RON)
-STR_GAME_OPTIONS_CURRENCY_RUR                                   :Rúbal na Rúise (RUR)
-STR_GAME_OPTIONS_CURRENCY_SIT                                   :Tolar na Slóivéine (SIT)
-STR_GAME_OPTIONS_CURRENCY_SEK                                   :Krona na Sualainne (SEK)
-STR_GAME_OPTIONS_CURRENCY_TRY                                   :Lira na Tuirce (TRY)
-STR_GAME_OPTIONS_CURRENCY_SKK                                   :Koruna na Slováice (SKK)
-STR_GAME_OPTIONS_CURRENCY_BRL                                   :Real na Brasaíle (BRL)
-STR_GAME_OPTIONS_CURRENCY_EEK                                   :Krooni na hEastóine (EEK)
-STR_GAME_OPTIONS_CURRENCY_LTL                                   :Litas na Liotuáine (LTL)
-STR_GAME_OPTIONS_CURRENCY_KRW                                   :Won na Cóiré Theas (KRW)
-STR_GAME_OPTIONS_CURRENCY_ZAR                                   :Rand na hAfraice Theas (ZAR)
+
+###length 43
+STR_GAME_OPTIONS_CURRENCY_GBP                                   :Punt na Breataine
+STR_GAME_OPTIONS_CURRENCY_USD                                   :Dollar Mheiriceá
+STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
+STR_GAME_OPTIONS_CURRENCY_JPY                                   :Yen na Seapáine
+STR_GAME_OPTIONS_CURRENCY_ATS                                   :Scilling na hOstaire
+STR_GAME_OPTIONS_CURRENCY_BEF                                   :Franc na Beilge
+STR_GAME_OPTIONS_CURRENCY_CHF                                   :Franc na hEilbhéise
+STR_GAME_OPTIONS_CURRENCY_CZK                                   :Koruna Phoblacht na Seice
+STR_GAME_OPTIONS_CURRENCY_DEM                                   :Deutschmark
+STR_GAME_OPTIONS_CURRENCY_DKK                                   :Krone na Danmhairge
+STR_GAME_OPTIONS_CURRENCY_ESP                                   :Peseta na Spáinne
+STR_GAME_OPTIONS_CURRENCY_FIM                                   :Markka na Fionlainne
+STR_GAME_OPTIONS_CURRENCY_FRF                                   :Franc na Fraince
+STR_GAME_OPTIONS_CURRENCY_GRD                                   :Drachma na Gréige
+STR_GAME_OPTIONS_CURRENCY_HUF                                   :Forint na hUngáire
+STR_GAME_OPTIONS_CURRENCY_ISK                                   :Krona na hÍoslainne
+STR_GAME_OPTIONS_CURRENCY_ITL                                   :Lira na hIodáile
+STR_GAME_OPTIONS_CURRENCY_NLG                                   :Guilder na hÍsiltíre
+STR_GAME_OPTIONS_CURRENCY_NOK                                   :Krone na hIorua
+STR_GAME_OPTIONS_CURRENCY_PLN                                   :Złoty na Polainne
+STR_GAME_OPTIONS_CURRENCY_RON                                   :Leu na Rómáine
+STR_GAME_OPTIONS_CURRENCY_RUR                                   :Rúbal na Rúise
+STR_GAME_OPTIONS_CURRENCY_SIT                                   :Tolar na Slóivéine
+STR_GAME_OPTIONS_CURRENCY_SEK                                   :Krona na Sualainne
+STR_GAME_OPTIONS_CURRENCY_TRY                                   :Lira na Tuirce
+STR_GAME_OPTIONS_CURRENCY_SKK                                   :Koruna na Slováice
+STR_GAME_OPTIONS_CURRENCY_BRL                                   :Real na Brasaíle
+STR_GAME_OPTIONS_CURRENCY_EEK                                   :Krooni na hEastóine
+STR_GAME_OPTIONS_CURRENCY_LTL                                   :Litas na Liotuáine
+STR_GAME_OPTIONS_CURRENCY_KRW                                   :Won na Cóiré Theas
+STR_GAME_OPTIONS_CURRENCY_ZAR                                   :Rand na hAfraice Theas
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Saincheaptha...
-STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari na Seoirsia (GEL)
-STR_GAME_OPTIONS_CURRENCY_IRR                                   :Rial na hIaráine (IRR)
-STR_GAME_OPTIONS_CURRENCY_RUB                                   :Rúbal Nua na Rúise (RUB)
-STR_GAME_OPTIONS_CURRENCY_MXN                                   :Peso Mheicsiceo (MXN)
-STR_GAME_OPTIONS_CURRENCY_NTD                                   :Dollar Nua na Téaváine (NTD)
-STR_GAME_OPTIONS_CURRENCY_CNY                                   :Renminbi na Síne (CNY)
-STR_GAME_OPTIONS_CURRENCY_HKD                                   :Dollar Hong Cong (HKD)
-STR_GAME_OPTIONS_CURRENCY_INR                                   :Rúipí na hIndia (INR)
-STR_GAME_OPTIONS_CURRENCY_IDR                                   :Rupiah na hIndinéise (IDR)
-STR_GAME_OPTIONS_CURRENCY_MYR                                   :Ringgit na Malaeisia (MYR)
+STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari na Seoirsia
+STR_GAME_OPTIONS_CURRENCY_IRR                                   :Rial na hIaráine
+STR_GAME_OPTIONS_CURRENCY_RUB                                   :Rúbal Nua na Rúise
+STR_GAME_OPTIONS_CURRENCY_MXN                                   :Peso Mheicsiceo
+STR_GAME_OPTIONS_CURRENCY_NTD                                   :Dollar Nua na Téaváine
+STR_GAME_OPTIONS_CURRENCY_CNY                                   :Renminbi na Síne
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :Dollar Hong Cong
+STR_GAME_OPTIONS_CURRENCY_INR                                   :Rúipí na hIndia
+STR_GAME_OPTIONS_CURRENCY_IDR                                   :Rupiah na hIndinéise
+STR_GAME_OPTIONS_CURRENCY_MYR                                   :Ringgit na Malaeisia
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Uathshábháil
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Roghnaigh eatramh idir uathshábhálacha an chluiche
@@ -971,10 +931,6 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Roghnaig
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :As
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Gach mí
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Gach 3 mí
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Gach 6 mí
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Gach 12 mí
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Teanga
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Roghnaigh an teanga comhéadain le húsáid
@@ -999,6 +955,8 @@ STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Cuir tic
 
 
 
+
+
 STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafaicí
 
 STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Ráta athnuachana na taispeána
@@ -1008,7 +966,6 @@ STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}D'fhéad
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Sraith graifice bunaidh
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Roghnaigh an sraith grafaice bunaidh le húsáid
-STR_GAME_OPTIONS_BASE_GRF_STATUS                                :{RED}{NUM} {P ch ch ch gc c}omhad ar iarraidh/truaillithe
 STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Faisnéis breise faoin sraith grafaice bunaidh
 
 STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Sraith fuaimeanna bunaidh
@@ -1017,8 +974,11 @@ STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Faisnéi
 
 STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Sraith ceoil bunaidh
 STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Roghnaigh an tsraith ceoil bunaidh le húsáid
-STR_GAME_OPTIONS_BASE_MUSIC_STATUS                              :{RED}{NUM} {P ch ch ch gc c}omhad truaillithe
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Faisnéis breise faoin tsraith ceoil bunaidh
+
+
+
+
 
 STR_ERROR_RESOLUTION_LIST_FAILED                                :{WHITE}Teipeadh liosta de na taifigh a dtacaítear leo a fháil
 STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}Theip ar an mód lánscáileáin
@@ -1180,6 +1140,8 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_LEFT                          :Ar chlé
 STR_CONFIG_SETTING_HORIZONTAL_POS_CENTER                        :Sa lár
 STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :Ar dheis
 
+
+
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Iasacht tosaigh uasta: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Uasmhéid is féidir le cuideachta a chur ar iasacht (gan boilsciú a chur san áireamh)
 ###setting-zero-is-special
@@ -1200,9 +1162,9 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER                           :Iolraitheoir na
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Socraigh an méid a íoctar ar naisc atá faoi fhóirdheontas
 
 STR_CONFIG_SETTING_SUBSIDY_DURATION                             :Fad na bhfóirdheontas: {STRING}
+###length 2
 STR_CONFIG_SETTING_SUBSIDY_DURATION_HELPTEXT                    :Socraigh líon na mblianta a bhronnfar fóirdheontas ina leith
 
-STR_CONFIG_SETTING_SUBSIDY_DURATION_VALUE                       :{NUM} {P "bliain amháin" "bhliain" "bliana" "mbliana" "bliain"}
 ###setting-zero-is-special
 STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :Gan fóirdheontas
 
@@ -1298,7 +1260,10 @@ STR_CONFIG_SETTING_SIGNALSIDE_LEFT                              :Ar chlé
 STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :Ar thaobh na tiomána
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :Ar dheis
 
+###length 2
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Taispeáin an fhuinneoig airgeadais ag deireadh na bliana: {STRING}
+
+###length 2
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :Má tá sé cumasaithe, preabann an fhuinneog airgeadais aníos ag deireadh gach bliana le gur féidir stádas airgeadais na cuideachta a scrúdú go héasca
 
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :Bíonn orduithe nua 'gan-stad' mar réamhshocrú: {STRING}
@@ -1320,9 +1285,11 @@ STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT                     :Príomhfhuinneo
 STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :Gach fuinneog amhairc
 
 STR_CONFIG_SETTING_BRIBE                                        :Ceadaigh breabanna a thabhairt don údarás áitiúil: {STRING}
+###length 2
 STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :Tabhair cead do chuideachtaí iarracht a dhéanamh breab a thabhairt d'údarás áitiúil baile. Má thugann cigire an breab faoi dearra, ní bheidh an chuideachta in ann aon ghníomh a dhéanamh sa bhaile ar feadh sé mhí
 
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :Ceadaigh cearta eisiach iompair a cheannach: {STRING}
+###length 2
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :Má cheannaíonn cuideachta cearta eisiacha iompair i mbaile, ní gheobhaidh stáisiúin iomaitheoirí (idir stáisiúin phaisinéirí agus lastais) lastas ar bith ar feadh bliain iomlán
 
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS                         :Ceadaigh maoiniú foirgneamh: {STRING}
@@ -1348,6 +1315,7 @@ STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Ceann ar bith
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :Laghdaithe
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :Gnáth
 
+
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Ceadaigh stadanna bóthair 'tiomáin tríd' ar bhóithre ar le bailte iad: {STRING}
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :Ceadaigh stopann bóthair 'tiomáin tríd' a thógáil ar bhóithre ar le bailte iad
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :Ceadaigh stopanna bóthair 'tiomáin tríd' ar bhóithre ar le hiomaitheoirí iad: {STRING}
@@ -1359,6 +1327,7 @@ STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Má tá sé cum
 
 STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR                      :Dath tosaigh na cuideachta: {STRING}
 STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR_HELPTEXT             :Roghnaigh dath tosaigh don chuideachta
+
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Ní imíonn aerfoirt as dáta riamh: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Má dhéantar an socrú seo a chumasú beidh gach cineál aerfoirt ar fáil go deo tar éis é a thabhairt isteach
@@ -1374,10 +1343,17 @@ STR_CONFIG_SETTING_ORDER_REVIEW_EXDEPOT                         :Déan é, ach n
 STR_CONFIG_SETTING_ORDER_REVIEW_ON                              :ar gach feithicil
 
 STR_CONFIG_SETTING_WARN_INCOME_LESS                             :Tabhair rabhadh má tá ioncam feithicile diúltach: {STRING}
+###length 2
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :Má dhéantar é a chumasú, seoltar teachtaireacht nuachta más rud é nach ndearna feithicil brabús ar bith i mbliain féilire
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Ní imíonn feithiclí as dáta riamh: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :Má dhéantar é a chumasú beidh gach cineál feithicle ar fáil go deo tar éis é a thabhairt isteach
+
+###length 2
+
+
+###setting-zero-is-special
+
 
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :Déan uathathnuachan ar an bhfeithicil nuair a éiríonn sé sean: {STRING}
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE_HELPTEXT                   :Má tá sé cumasaithe, déantar feithicil atá ag teacht chuig deireadh a ré a ionadú go huathoibríoch má tá na coinníollacha athnuachana comhlíonta
@@ -1393,7 +1369,6 @@ STR_CONFIG_SETTING_AUTORENEW_MONEY_HELPTEXT                     :An t-íosmhéid
 
 STR_CONFIG_SETTING_ERRMSG_DURATION                              :Fad ama na teachtaireachta earráide: {STRING}
 STR_CONFIG_SETTING_ERRMSG_DURATION_HELPTEXT                     :An fad a thaispeánfar teachtaireachtaí earráide i bhfuinneog dhearg. Tabhair faoi deara nach ndúnfar teachtaireachtaí (criticiúla) áirithe go huathoibríoch tar éis an fad ama se, agus nach mór iad a dhúnadh de láimh
-STR_CONFIG_SETTING_ERRMSG_DURATION_VALUE                        :{COMMA} {P sh sh sh s s}oicind
 
 STR_CONFIG_SETTING_HOVER_DELAY                                  :Taispeáin leideanna uirlise: {STRING}
 STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :An mhoill sula dtaispeántar leideanna uirlise agus an luchóg os cionn eilimint den chomhéadan. Mar mhalairt, ceanglaítear leideanna uirlise don deaschlic luchóige má shocraítear an luach seo ag 0.
@@ -1551,9 +1526,7 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :As
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Dún an fhuinneog le deas-chliceáil: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :Dúntar fuinneog trí dheas-chliceáil laistigh de. Díchumasaítear leis seo na leideanna uirlise deas-cliceála!
-
-STR_CONFIG_SETTING_AUTOSAVE                                     :Uathshábháil: {STRING}
-STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Roghnaigh an t-eatramh idir uathshábhálacha cluichí
+###length 3
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Úsáid an formáid dáta {STRING} d'ainmneacha na gcluichí sábháilte
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Formáid an dáta i gcomhadainmneacha na gcluichí sábháilte
@@ -1579,8 +1552,7 @@ STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Cumasaigh úsá
 STR_CONFIG_SETTING_LOADING_INDICATORS                           :Úsáid táscairí lódála: {STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS_HELPTEXT                  :Roghnaigh cibé acu an dtaispeánfar táscairí lódála os cionn feithiclí atá ag lódáil nó ag dílódáil nó nach dtaispeánfar
 
-STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :Taispeáin an t-amchlár i dticeanna seachas i laethanta: {STRING}
-STR_CONFIG_SETTING_TIMETABLE_IN_TICKS_HELPTEXT                  :Taispeáin amanna taistil i dtáblaí ama i dticeanna cluiche seachas laethanta
+###length 3
 
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :Taispeáin am teacht isteach agus fágála in amchláir: {STRING}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :Taispeáin na hamanna teacht isteach agus imeachta a bhfuiltear ag súil leo sna hamchláir
@@ -1614,7 +1586,10 @@ STR_CONFIG_SETTING_SOUND_TICKER_HELPTEXT                        :Seinn fuaim do 
 STR_CONFIG_SETTING_SOUND_NEWS                                   :Nuachtán: {STRING}
 STR_CONFIG_SETTING_SOUND_NEWS_HELPTEXT                          :Seinn fuiam nuair a thaispeántar nuachtáin
 
+###length 2
 STR_CONFIG_SETTING_SOUND_NEW_YEAR                               :Deireadh na bliana: {STRING}
+
+###length 2
 STR_CONFIG_SETTING_SOUND_NEW_YEAR_HELPTEXT                      :Seinn fuaim ag deireadh na bliana nuair a thugtar achoimre ar fheidhmíocht cuideachta i rith na bliana sin i gcomparáid leis an mbliain roimhe
 
 STR_CONFIG_SETTING_SOUND_CONFIRM                                :foirgníochta: {STRING}
@@ -1656,13 +1631,6 @@ STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT_HELPTEXT                  :Má dhéantar a
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS                              :Díchumasaigh longa don ríomhare: {STRING}
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS_HELPTEXT                     :Má dhéantar an socrú seo a chumasú ní bheidh ríomhimreoir in ann longa a thógáil
 
-STR_CONFIG_SETTING_AI_PROFILE                                   :Próifíl socruithe réamhshocraithe: {STRING}
-STR_CONFIG_SETTING_AI_PROFILE_HELPTEXT                          :Roghnaigh cén próifíl socruithe a úsáidfear do AInna fánacha nó na luachanna tosaigh nuair a chuirfear AI nó Script Cluiche nua leis
-###length 3
-STR_CONFIG_SETTING_AI_PROFILE_EASY                              :Éasca
-STR_CONFIG_SETTING_AI_PROFILE_MEDIUM                            :Méanach
-STR_CONFIG_SETTING_AI_PROFILE_HARD                              :Deacair
-
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER                            :Ceadaigh AIanna i gcluiche ilimreora: {STRING}
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :Ceadaigh do ríomhimreoirí AI a bheith páirteach i gcluichí ilimreora
 
@@ -1689,6 +1657,7 @@ STR_CONFIG_SETTING_SERVINT_DISABLED                             :Díchumasaithe
 
 STR_CONFIG_SETTING_NOSERVICE                                    :Díchumasaigh seirbhísiú nuair nach mbíonn aon bhriseadh síos: {STRING}
 STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Má tá sé cumasaithe, ní dhéantar feithiclí a sheirbhísí má rud é nach féidir leo briseadh síos
+
 
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Cumasaigh teorainneacha luais vaigíní: {STRING}
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :Má tá sé cumasaithe, úsáid teorainneacha luais na vaigíní freisin chun luas uasta traenacha a shocrú
@@ -1762,12 +1731,6 @@ STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :Bunaidh
 STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :Mín
 STR_CONFIG_SETTING_ECONOMY_TYPE_FROZEN                          :Reoite
 
-STR_CONFIG_SETTING_ALLOW_SHARES                                 :Ceadaigh scaireanna a cheannach ó chuideachtaí eile: {STRING}
-STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Má tá sé cumasaithe, tá cead scaireanna i gcuideachta a cheannach agus a dhíol. Ní bheidh scaireanna ar fáil ach do chuideachtaí a bhfuil aois áirithe bainte amach acu
-
-STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :Aois íosta na gcuideachtaí le bheith in ann scaireanna a thrádáil: {STRING}
-STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES_HELPTEXT                :Socraigh aois íosta na gcuideachtaí sula mbeidh daoine eile in ann scaireanna iontu a cheannach agus a dhíol.
-
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :An céatadán den bhrabús a íocfar ar chuid den turas i gcórais fhriothálacha: {STRING}
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :An céatadán den bhrabús a thugtar as lastais a thabhairt cuid den bhealach i gcórais fhriothálacha, rud a fhágann go bhfuil tuilleadh smachta agat ar an ioncam
 
@@ -1783,7 +1746,6 @@ STR_CONFIG_SETTING_SEMAPHORE_BUILD_BEFORE_DATE_HELPTEXT         :Socraigh an bli
 STR_CONFIG_SETTING_CYCLE_SIGNAL_TYPES                           :Téigh trí na cineálacha comharthaí in ord: {STRING}
 STR_CONFIG_SETTING_CYCLE_SIGNAL_TYPES_HELPTEXT                  :Roghnaigh cad iad na cineálacha comharthaí a rachfar tríd, nuair a dhéánfar Ctrl+cliceáil ar chomhartha atá tógtha le huirlis na gcomharthaí
 ###length 2
-STR_CONFIG_SETTING_CYCLE_SIGNAL_PBS                             :Comharthaí cosán amháin
 STR_CONFIG_SETTING_CYCLE_SIGNAL_ALL                             :Gach ceann infheicthe
 
 STR_CONFIG_SETTING_SIGNAL_GUI_MODE                              :Taispeáin cineálacha comharthaí: {STRING}
@@ -1881,10 +1843,6 @@ STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :Ceann ar bith
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Iolraitheoir tosaigh mhéid na gcathracha: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Meánmhéid na gcathracha i gcomórtas le gnáthbhailte ag tús an chluiche
 
-STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Nuashonraigh an graf dáileacháin gach {STRING}{NBSP}lá
-STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :An t-aga idir gach athríomh ina dhiadh sin ar ghraf na nasc. Déantar na pleananna a ríomh do chomhpháirt amháin den ghraf gach uair a dhéantar athríomh. Mar sin, má shocraíonn tú luach X don socrú seo, ní chiallaíonn sé go ndéanfar an graf iomlá a thabhairt cothrom le dáta gach X lá, ní thabharfar ach comhpháirteanna áirithe de cothrom le dáta. Dá ghiorra an luach a shocraíonn tú is é is mó ama CPU a thógfaidh sé chun é a ríomh. Dá fhaide a shocraíonn tú é is é is faide a thógfaidh sé chun an dáileadh lastais a thosú ar bhealaí nua.
-STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Tóg {STRING}{NBSP}lá chun an graf dáileacháin a athríomh
-STR_CONFIG_SETTING_LINKGRAPH_TIME_HELPTEXT                      :An t-am a thógfar ar gach athríomh ar chomhpháirt de ghraf na nasc. Nuair a thosaítear ar athríomh, gintear snáithe agus ligfear don snáithe sin rith ar feadh an líon sin laethanta. Dá ghiorra an luach a shocróidh tú anseo is mó an seans nach mbeidh an snáithe críochnaithe nuair atá sé in ainm is a bheith. Ansin stopfaidh an cluiche go dtí go mbeidh sé críochnaithe (i.e. beidh "moill" ann). Dá fhaide a shocraíonn tú é is é is faide a thógfaidh sé chun an dáileachán a thabhairt cothrom le dáta nuair nuair a athraíonn na bealaí.
 
 STR_CONFIG_SETTING_DISTRIBUTION_PAX                             :An mód dáileacháin do phaisinéirí: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :Ciallaíonn "siméadrach" go rachaidh thart ar an méid céanna paisinéirí ó stáisiún A go stáisiún B agus a rachaidh ó B go A. Ciallaíonn "neamhshiméadrach" gur féidir méideanna neamhshrianta paisinéiri dul i gceachtar den dá threo. Ciallaíonn "de láimh" nach ndéanfar dáileadh uathoibríoch ar phaisinéirí.
@@ -1912,11 +1870,9 @@ STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :Go minic bíonn
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Aonaid luais: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_HELPTEXT         :Aon áit a thaispeántar luas sa chomhéadan úsáideora, taispeain sna haonaid roghnaithe é
-###length 4
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_IMPERIAL         :Impiriúil (msu)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_METRIC           :Méadrach (km/u)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_SI               :SI (m/s)
-STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_GAMEUNITS        :Aonaid an chluiche (tíleanna/lá)
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER                     :Aonaid chumhachta feithiclí: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_HELPTEXT            :Aon áit a thaispeántar cumhacht feithicle sa chomhéadan úsáideora, taispeain sna haonaid roghnaithe í
@@ -1953,30 +1909,30 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Impiriúil (tr)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Méadrach (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
 
-STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}Logánú
-STR_CONFIG_SETTING_GRAPHICS                                     :{ORANGE}Grafaicí
-STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Fuaim
-STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Comhéadan
-STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}Ginearálta
-STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}Painéil amhairc
-STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Tógáil
-STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}Nuacht / Comhairleoirí
-STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Cuideachta
-STR_CONFIG_SETTING_ACCOUNTING                                   :{ORANGE}Cuntasaíocht
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Feithiclí
-STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}Fisic
-STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Ródú
-STR_CONFIG_SETTING_LIMITATIONS                                  :{ORANGE}Teorainneacha
-STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Tubaistí / Timpistí
-STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Domhan a chruthú
-STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Timpeallacht
-STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Údaráis
-STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Bailte
-STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Tionscail
-STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Dáileadh lastais
-STR_CONFIG_SETTING_AI                                           :{ORANGE}Iomaitheoirí
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Ríomh-imreoirí
-STR_CONFIG_SETTING_NETWORK                                      :{ORANGE}Líonra
+STR_CONFIG_SETTING_LOCALISATION                                 :Logánú
+STR_CONFIG_SETTING_GRAPHICS                                     :Grafaicí
+STR_CONFIG_SETTING_SOUND                                        :Fuaim
+STR_CONFIG_SETTING_INTERFACE                                    :Comhéadan
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :Ginearálta
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :Painéil amhairc
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :Tógáil
+STR_CONFIG_SETTING_ADVISORS                                     :Nuacht / Comhairleoirí
+STR_CONFIG_SETTING_COMPANY                                      :Cuideachta
+STR_CONFIG_SETTING_ACCOUNTING                                   :Cuntasaíocht
+STR_CONFIG_SETTING_VEHICLES                                     :Feithiclí
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :Fisic
+STR_CONFIG_SETTING_VEHICLES_ROUTING                             :Ródú
+STR_CONFIG_SETTING_LIMITATIONS                                  :Teorainneacha
+STR_CONFIG_SETTING_ACCIDENTS                                    :Tubaistí / Timpistí
+STR_CONFIG_SETTING_GENWORLD                                     :Domhan a chruthú
+STR_CONFIG_SETTING_ENVIRONMENT                                  :Timpeallacht
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :Údaráis
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :Bailte
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :Tionscail
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :Dáileadh lastais
+STR_CONFIG_SETTING_AI                                           :Iomaitheoirí
+STR_CONFIG_SETTING_AI_NPC                                       :Ríomh-imreoirí
+STR_CONFIG_SETTING_NETWORK                                      :Líonra
 
 STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS                        :Aimsitheoir bealaigh do thraenacha: {STRING}
 STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS_HELPTEXT               :An t-aimsitheoir bealaigh a úsáidfear do thraenacha
@@ -2066,10 +2022,10 @@ STR_ABANDON_GAME_CAPTION                                        :{WHITE}Fág an 
 STR_ABANDON_GAME_QUERY                                          :{YELLOW}An bhfuil tú cinnte gur mhaith leat an cluiche seo a fhágáil?
 STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}An bhfuil tú cinnte gur mhaith leat an scéal seo a fhágáil?
 
+# Help window
+
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Caimiléireacht
-STR_CHEATS_TOOLTIP                                              :{BLACK}Tugann ticbhoscaí le fios más rud é gur úsáid tú an chaimiléireacht seo roimhe seo
-STR_CHEATS_NOTE                                                 :{BLACK}Tabhair faoi deara: taifeadfar aon úsáid a bhainfear as na socruithe seo sa chluiche sábháilte
 STR_CHEAT_MONEY                                                 :{LTBLUE}Méadaigh airgead de {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Ag imirt mar chuideachta: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Ollscartaire draíochta (bain tionscail, nithe dobhogtha): {ORANGE}{STRING}
@@ -2197,8 +2153,6 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION                        :{BLACK}Méid na
 STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION_TOOLTIP                :{BLACK}Méid léarscáile an chluiche{}Cliceáil le sortáil de réir achair
 STR_NETWORK_SERVER_LIST_DATE_CAPTION                            :{BLACK}Dáta
 STR_NETWORK_SERVER_LIST_DATE_CAPTION_TOOLTIP                    :{BLACK}Dáta reatha
-STR_NETWORK_SERVER_LIST_YEARS_CAPTION                           :{BLACK}Blianta
-STR_NETWORK_SERVER_LIST_YEARS_CAPTION_TOOLTIP                   :{BLACK}Líon blianta a{}bhfuil an cluiche ar rith
 STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}Teanga, leagan an fhreastalaí, srl.
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}Cliceáil ar chluiche ón liosta lena roghnú
@@ -2313,7 +2267,6 @@ STR_NETWORK_CLIENT_LIST_NEW_COMPANY                             :(Cuideachta nua
 STR_NETWORK_CLIENT_LIST_NEW_COMPANY_TOOLTIP                     :{BLACK}Cruthaigh cuideachta nua agus téigh isteach ann
 STR_NETWORK_CLIENT_LIST_PLAYER_ICON_SELF_TOOLTIP                :{BLACK}Seo tusa
 STR_NETWORK_CLIENT_LIST_PLAYER_ICON_HOST_TOOLTIP                :{BLACK}Is é seo óstach an chluiche
-STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT                    :{BLACK}{NUM} {P ch ch ch gc c}liant / {NUM} {P ch ch ch gc c}uideachta
 
 # Matches ConnectionType
 ###length 5
@@ -2339,6 +2292,7 @@ STR_NETWORK_ASK_RELAY_TEXT                                      :{YELLOW}Níorbh
 STR_NETWORK_ASK_RELAY_NO                                        :{BLACK}Níl
 STR_NETWORK_ASK_RELAY_YES_ONCE                                  :{BLACK}Tá, an uair seo
 STR_NETWORK_ASK_RELAY_YES_ALWAYS                                :{BLACK}Tá, ná fiafraigh díom arís
+
 
 STR_NETWORK_SPECTATORS                                          :Féachadóirí
 
@@ -2545,7 +2499,6 @@ STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Scorána
 STR_TRANSPARENT_BRIDGES_TOOLTIP                                 :{BLACK}Scoránaigh trédhearcacht do dhroichid. Ctrl+Cliceáil le glasáil.
 STR_TRANSPARENT_STRUCTURES_TOOLTIP                              :{BLACK}Scoránaigh trédhearcacht do struchtúir cosúil le tithe solais agus aeróga. Ctrl+Cliceáil le glasáil.
 STR_TRANSPARENT_CATENARY_TOOLTIP                                :{BLACK}Scoránaigh trédhearcacht do chuair. Ctrl+Cliceáil le glasáil.
-STR_TRANSPARENT_LOADING_TOOLTIP                                 :{BLACK}Scoránaigh trédhearcacht do tháscairí lódála. Ctrl+Cliceáil le glasáil.
 STR_TRANSPARENT_INVISIBLE_TOOLTIP                               :{BLACK}Socraigh go bhfuil nithe dofheicthe seachas trédhearcach
 
 # Linkgraph legend window
@@ -3094,7 +3047,6 @@ STR_MAPGEN_DESERT_COVERAGE                                      :{BLACK}Clúdach
 STR_MAPGEN_DESERT_COVERAGE_UP                                   :{BLACK}Méadaigh clúdach an fhásaigh deich faoin gcéad
 STR_MAPGEN_DESERT_COVERAGE_DOWN                                 :{BLACK}Laghdaigh clúdach an fhásaigh deich faoin gcéad
 STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}{NUM}%
-STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Talamh a chruthú:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Cineál tír-raoin:
 STR_MAPGEN_SEA_LEVEL                                            :{BLACK}Leibhéal na farraige:
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}Aibhneacha:
@@ -3287,8 +3239,6 @@ STR_NEWGRF_ERROR_MSG_INFO                                       :{SILVER}{STRING
 STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}Rabhadh: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}Earráid: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Marfach: {SILVER}{STRING}
-STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}Tharla earráid mharfach NewGRF:{}{STRING}
-STR_NEWGRF_ERROR_POPUP                                          :{WHITE}Tharla earráid NewGRF:{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :Ní oibreoidh {1:STRING} leis an leagan de TTDPatch a thuairiscigh OpenTTD.
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING}: Is don leagan {STRING} de TTD é
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :Tá {1:STRING} deartha le húsáid le {STRING}
@@ -3391,8 +3341,6 @@ STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} seachadta
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (fós ag teastáil)
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN} (seachadta)
-STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}Fásann an baile gach {ORANGE}{COMMA}{BLACK}{NBSP}lá{P "" "" "" "" ""}
-STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}Fásann an baile gach {ORANGE}{COMMA}{BLACK}{NBSP}lá{P "" "" "" "" ""} (maoinithe)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}{RED}Níl{BLACK} an baile ag fás
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}Teorainn torainn sa bhaile: {ORANGE}{COMMA}{BLACK}  uasmhéid: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Cuir suíomh an bhaile i lár an phríomh-amhairc. Osclaítar amharc nua ar shuíomh an bhaile le Ctrl+Cliceáil
@@ -3427,15 +3375,13 @@ STR_LOCAL_AUTHORITY_ACTION_STATUE_OF_COMPANY                    :Tóg dealbh d'�
 STR_LOCAL_AUTHORITY_ACTION_NEW_BUILDINGS                        :Tabhair maoiniú d'fhoirgnimh nua
 STR_LOCAL_AUTHORITY_ACTION_EXCLUSIVE_TRANSPORT                  :Ceannaigh cearta eisiacha iompair
 STR_LOCAL_AUTHORITY_ACTION_BRIBE                                :Tabhair breab don údarás áitiúil
+###next-name-looks-similar
 
-###length 8
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_SMALL_ADVERTISING            :{YELLOW}Cuir tús le feachtas beag áitiúil fógraíochta, chun tuilleadh paisinéirí agus lastais a mhealladh chuig do sheirbhísí iompair.{}Costas: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_MEDIUM_ADVERTISING           :{YELLOW}Cuir tús le feachtas meánach áitiúil fógraíochta, chun tuilleadh paisinéirí agus lastais a mhealladh chuig do sheirbhísí iompair.{}Costas: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_LARGE_ADVERTISING            :{YELLOW}Cuir tús le feachtas mór áitiúil fógraíochta, chun tuilleadh paisinéirí agus lastais a mhealladh chuig do sheirbhísí iompair.{}Costas: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_ROAD_RECONSTRUCTION          :{YELLOW}Tabhair maoiniú chun atógáil a dhéanamh ar an líonra bóithre uirbeach. Cuirtear isteach go mór ar thrácht ar bhóithre ar feadh suas le 6 mhí.{}Costas: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_STATUE_OF_COMPANY            :{YELLOW}Tóg dealbh le comóradh a dhéanamh ar do chuideachta.{}Costas: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_NEW_BUILDINGS                :{YELLOW}Tabhair maoiniú chun foirgnimh tráchtála nua a thógáil sa bhaile.{}Costas: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT          :{YELLOW}Ceannaigh cearta eisiacha iompair ar feadh bliana sa bhaile seo. Ní cheadóidh údarás an bhaile do phaisinéirí agus lastas ach na stáisiúin atá agatsa a úsáid.{}Costas: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{YELLOW}Tabhair breab don údarás áitiúil chun do rátáil a mhéadú, leis an mbaol ann go mbeidh pionós trom ort má bheirtear ort.{}Costas: {CURRENCY_LONG}
 
 # Goal window
@@ -3482,10 +3428,8 @@ STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Dún
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Fóirdheontais
 STR_SUBSIDIES_OFFERED_TITLE                                     :{BLACK}Fóirdheontais le fáil do sheirbhísí chun:
-STR_SUBSIDIES_OFFERED_FROM_TO                                   :{ORANGE}{STRING} a thabhairt ó {STRING} go {STRING}{YELLOW} (roimh {DATE_SHORT})
 STR_SUBSIDIES_NONE                                              :{ORANGE}- Ceann ar bith -
 STR_SUBSIDIES_SUBSIDISED_TITLE                                  :{BLACK}Seirbhísí a fhaigheann fóirdheontas:
-STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}{STRING} a thabhairt ó {STRING} go {STRING}{YELLOW} ({COMPANY}{YELLOW}, go dtí {DATE_SHORT})
 STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Cliceáil ar sheirbhís chun an t-amharc a lárú ar thionscal/bhaile. Déantar amharc nua a oscailt ar shuíomh an tionscail/bhaile le Ctrl+Cliceáil
 
 # Story book window
@@ -3526,7 +3470,6 @@ STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{BLACK}Cheannai
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Rátálacha
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Taispeáin rátálacha na stáisiún
-STR_STATION_VIEW_SUPPLY_RATINGS_TITLE                           :{BLACK}Soláthar míosúil agus rátáil áitiúil:
 STR_STATION_VIEW_CARGO_SUPPLY_RATING                            :{WHITE}{STRING}: {YELLOW}{COMMA} / {STRING} ({COMMA}%)
 
 STR_STATION_VIEW_GROUP                                          :{BLACK}Grúpáil de réir
@@ -3626,7 +3569,6 @@ STR_COMPANY_VIEW_AIRCRAFT                                       :{WHITE}{COMMA} 
 STR_COMPANY_VIEW_SHIPS                                          :{WHITE}{COMMA} {P "" "" "" "" ""}long
 STR_COMPANY_VIEW_VEHICLES_NONE                                  :{WHITE}Ceann ar bith
 STR_COMPANY_VIEW_COMPANY_VALUE                                  :{GOLD}Luach na cuideachta: {WHITE}{CURRENCY_LONG}
-STR_COMPANY_VIEW_SHARES_OWNED_BY                                :{WHITE}(is le {1:COMPANY} {0:COMMA}%)
 STR_COMPANY_VIEW_INFRASTRUCTURE                                 :{GOLD}Bonneagar:
 STR_COMPANY_VIEW_INFRASTRUCTURE_RAIL                            :{WHITE}{COMMA} {P ph ph ph bp p}íosa iarnróid
 STR_COMPANY_VIEW_INFRASTRUCTURE_ROAD                            :{WHITE}{COMMA} {P ph ph ph bp p}íosa bóthair
@@ -3655,11 +3597,6 @@ STR_COMPANY_VIEW_COMPANY_NAME_TOOLTIP                           :{BLACK}Athraigh
 STR_COMPANY_VIEW_PRESIDENT_NAME_BUTTON                          :{BLACK}Ainm an Bhainisteora
 STR_COMPANY_VIEW_PRESIDENT_NAME_TOOLTIP                         :{BLACK}Athraigh ainm an bhainisteora
 
-STR_COMPANY_VIEW_BUY_SHARE_BUTTON                               :{BLACK}Ceannaigh sciar 25% sa chuideachta
-STR_COMPANY_VIEW_SELL_SHARE_BUTTON                              :{BLACK}Díol sciar 25% sa chuideachta
-STR_COMPANY_VIEW_BUY_SHARE_TOOLTIP                              :{BLACK}Ceannaigh sciar 25% sa chuideachta seo
-STR_COMPANY_VIEW_SELL_SHARE_TOOLTIP                             :{BLACK}Díol sciar 25% sa chuideachta seo
-
 STR_COMPANY_VIEW_COMPANY_NAME_QUERY_CAPTION                     :Ainm na Cuideachta
 STR_COMPANY_VIEW_PRESIDENT_S_NAME_QUERY_CAPTION                 :Ainm an Bhainisteora
 STR_COMPANY_VIEW_GIVE_MONEY_QUERY_CAPTION                       :Cuir isteach an méid airgid is mian leat a thabhairt
@@ -3677,7 +3614,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Canálac
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stáisiúin:
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATIONS                        :{WHITE}Tíleanna stáisiúin
 STR_COMPANY_INFRASTRUCTURE_VIEW_AIRPORTS                        :{WHITE}Aerfoirt
-STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENCY_LONG}/bl
 
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Tionscail
@@ -3807,7 +3743,6 @@ STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Luas: {G
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}Luas: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}Luas ar aigéan: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_CANAL                                   :{BLACK}Luas ar chanáil/abhainn: {GOLD}{VELOCITY}
-STR_PURCHASE_INFO_RUNNINGCOST                                   :{BLACK}Costas Coinneála: {GOLD}{CURRENCY_LONG}/bl
 STR_PURCHASE_INFO_CAPACITY                                      :{BLACK}Toilleadh: {GOLD}{CARGO_LONG} {STRING}
 STR_PURCHASE_INFO_REFITTABLE                                    :(is féidir athfheistiú)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Deartha: {GOLD}{NUM}{BLACK} Saolré: {GOLD}{COMMA} bliain
@@ -3997,13 +3932,6 @@ STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :feithicil tramb
 STR_ENGINE_PREVIEW_AIRCRAFT                                     :aerárthach
 STR_ENGINE_PREVIEW_SHIP                                         :long
 
-STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Costas {CURRENCY_LONG} Meáchan: {WEIGHT_SHORT}{}Luas: {VELOCITY}  Cumhacht: {POWER}{}Costas Coinneála {CURRENCY_LONG}/bl{}Toilleadh: {CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Costas: {CURRENCY_LONG} Meáchan: {WEIGHT_SHORT}{}Luas: {VELOCITY}  Cumhacht: {POWER}  T.E. uasta: {6:FORCE}{}Costas Coinneála: {4:CURRENCY_LONG}/bl{}Toilleadh: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Costas: {CURRENCY_LONG} Luas Uasta: {VELOCITY}{}Toilleadh: {CARGO_LONG}{}Costas Coinneála: {CURRENCY_LONG}/bl
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Costas: {CURRENCY_LONG} Luas Uasta: {VELOCITY}{}Cineál aerárthaigh: {STRING}{}Toilleadh: {CARGO_LONG}, {CARGO_LONG}{}Costas Coinneála: {CURRENCY_LONG}/bl
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Costas: {CURRENCY_LONG} Luas Uasta: {VELOCITY}{}Cineál aerárthaigh: {STRING}{}Capacity: {CARGO_LONG}{}Costas Coinneála: {CURRENCY_LONG}/bl
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST    :{BLACK}Costas: {CURRENCY_LONG} Luas Uasta: {VELOCITY}{}Cineál aerárthaigh: {STRING} Raon: {COMMA} tíl{}Toilleadh: {CARGO_LONG}, {CARGO_LONG}{}Costas Coinneála: {CURRENCY_LONG}/bl
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST        :{BLACK}Costas: {CURRENCY_LONG} Luas Uasta: {VELOCITY}{}Cineál aerárthaigh: {STRING} Raon: {COMMA} tíl{}Toilleadh: {CARGO_LONG}{}Costas Coinneála: {CURRENCY_LONG}/bl
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Ionadaigh{STRING} - {STRING}
@@ -4146,9 +4074,9 @@ STR_VEHICLE_DETAILS_ROAD_VEHICLE_RENAME                         :{BLACK}Ainmnigh
 STR_VEHICLE_DETAILS_SHIP_RENAME                                 :{BLACK}Ainmnigh long
 STR_VEHICLE_DETAILS_AIRCRAFT_RENAME                             :{BLACK}Ainmnigh aerárthach
 
-STR_VEHICLE_INFO_AGE_RUNNING_COST_YR                            :{BLACK}Aois: {LTBLUE}{STRING}{BLACK}   Costas le Rith: {LTBLUE}{CURRENCY_LONG}/bl
 STR_VEHICLE_INFO_AGE                                            :{COMMA} {P bhliain bhliain bliana mbliana bliana} ({COMMA})
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} {P bhliain bhliain bliana mbliana bliana} ({COMMA})
+STR_VEHICLE_INFO_AGE_RUNNING_COST_YR                            :{BLACK}Aois: {LTBLUE}{STRING}{BLACK}   Costas le Rith: {LTBLUE}{CURRENCY_LONG}/bl
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Luas uasta: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Luas Uasta: {LTBLUE}{VELOCITY} {BLACK}Cineál aerárthaigh: {LTBLUE}{STRING}
@@ -4167,14 +4095,9 @@ STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Toillead
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Creidmheasanna Aistrithe: {LTBLUE}{CURRENCY_LONG}
 
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Eatramh seirbhísithe: {LTBLUE}{COMMA}lá{BLACK}   Seirbhísiú deiridh: {LTBLUE}{DATE_LONG}
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}Eatramh seirbhísithe: {LTBLUE}{COMMA}%{BLACK}   Seirbhísiú deiridh: {LTBLUE}{DATE_LONG}
-STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Méadaigh an t-eatramh seirbhísithe de 10. Méadaítear an t-eatramh seirbhísithe de 5 le Ctrl+Cliceáil
-STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Laghdaigh an t-eatramh seirbhísithe d 10. Laghdaítear an t-eatramh seirbhísithe de 5 le Ctrl+Cliceáil
 
 STR_SERVICE_INTERVAL_DROPDOWN_TOOLTIP                           :{BLACK}Athraigh cineál eatramh seirbhísithe
 STR_VEHICLE_DETAILS_DEFAULT                                     :Réamhshocrú
-STR_VEHICLE_DETAILS_DAYS                                        :Laethanta
 STR_VEHICLE_DETAILS_PERCENT                                     :Céatadán
 
 ###length VEHICLE_TYPES
@@ -4240,7 +4163,6 @@ STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Athraigh
 
 STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Liosta na n-orduithe - cliceáil ar ordú chun é a aibhisiú. Is féidir scrollú chuig an stáisiún le Ctrl+Cliceáil
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
-STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING}
 
 STR_ORDERS_END_OF_ORDERS                                        :- - Deireadh na nOrduithe - -
 STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - Deireadh na nOrduithe Comhroinnte - -
@@ -4274,11 +4196,9 @@ STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}Roghnaig
 STR_ORDER_DROP_REFIT_AUTO                                       :Lastas seasta
 STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Lastas atá ar fáil
 
-STR_ORDER_SERVICE                                               :{BLACK}Seirbhísigh
 STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :Téigh i gcónaí
 STR_ORDER_DROP_SERVICE_DEPOT                                    :Seirbhísigh más gá
 STR_ORDER_DROP_HALT_DEPOT                                       :Stop
-STR_ORDER_SERVICE_TOOLTIP                                       :{BLACK}Téigh thar an t-ordú seo ach amháin má theastaíonn seirbhísiú
 
 STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}Sonraí feithicle a bhunófar an léim air
 
@@ -4346,6 +4266,7 @@ STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT
 STR_ORDER_REFIT_ORDER                                           :(Athfheistigh go {STRING})
 STR_ORDER_REFIT_STOP_ORDER                                      :(Athfheistigh go {STRING} agus stop)
 STR_ORDER_STOP_ORDER                                            :(Stop)
+
 
 STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
 STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(Ní féidir an stáisiún a úsáid){POP_COLOUR} {STRING} {STATION} {STRING}
@@ -4415,8 +4336,6 @@ STR_TIMETABLE_STAY_FOR_ESTIMATED                                :(fan ar feadh {
 STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(taisteal ar feadh {STRING}, gan amchlár)
 STR_TIMETABLE_STAY_FOR                                          :agus fan ar feadh {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :agus taisteal ar feadh {STRING}
-STR_TIMETABLE_DAYS                                              :{COMMA} lá{P "" "" "" "" ""}
-STR_TIMETABLE_TICKS                                             :{COMMA} {P th th th dt t}ic
 
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}Tógfaidh sé {STRING} an t-amchlár seo a chur i gcrích
 STR_TIMETABLE_TOTAL_TIME_INCOMPLETE                             :{BLACK}Glacfaidh sé ar a laghad {STRING} chun an t-amhchlár seo a chur i gcrích (níl gach rud ar an amchlár)
@@ -4425,10 +4344,8 @@ STR_TIMETABLE_STATUS_ON_TIME                                    :{BLACK}Tá an f
 STR_TIMETABLE_STATUS_LATE                                       :{BLACK}Tá an fheithicil seo ag rith {STRING} mall faoi láthair
 STR_TIMETABLE_STATUS_EARLY                                      :{BLACK}Tá an fheithicil seo ag rith {STRING} luath faoi láthair
 STR_TIMETABLE_STATUS_NOT_STARTED                                :{BLACK}Níor thosaigh an t-amchlár seo fós
-STR_TIMETABLE_STATUS_START_AT                                   :{BLACK}Tosóidh an t-amchlár seo ag {STRING}
 
-STR_TIMETABLE_STARTING_DATE                                     :{BLACK}Dáta tosaigh
-STR_TIMETABLE_STARTING_DATE_TOOLTIP                             :{BLACK}Roghnaigh dáta mar phointe tosaigh don amchlár seo. Ctrl+Cliceáil chun pointe tosaigh an amchlár a shocrú agus gach feithicil a chomhroinneann an t-ordú seo a dháileadh go cothrom bunaithe ar a hordú coibhneasta, fiú má tá amchlár iomlán ann don ordú sin
+
 
 STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}Athraigh Am
 STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}Athraigh an méid ama ar chóir don ordú aibhsithe a thógáil
@@ -4452,8 +4369,6 @@ STR_TIMETABLE_EXPECTED                                          :{BLACK}Ag súil
 STR_TIMETABLE_SCHEDULED                                         :{BLACK}Sceidealta
 STR_TIMETABLE_EXPECTED_TOOLTIP                                  :{BLACK}Athraigh idir an t-am a bhfuil súil leis agus an t-am sceidealta
 
-STR_TIMETABLE_ARRIVAL_ABBREVIATION                              :I:
-STR_TIMETABLE_DEPARTURE_ABBREVIATION                            :F:
 
 
 # Date window (for timetable)
@@ -4534,12 +4449,11 @@ STR_SCREENSHOT_WORLD_SCREENSHOT                                 :{BLACK}Seat sc�
 STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Seat scáileáin den mhapa airde
 STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Seat scáileáin den mhion-léarscáil
 
-# AI Parameters
+# Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}Dún
 STR_AI_SETTINGS_RESET                                           :{BLACK}Athshocraigh
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
-STR_AI_SETTINGS_START_DELAY                                     :Líon na laethanta a thógfaidh sé chun an AI seo a thosú tar éis an ceann roimhe (a bheag nó a mhór): {ORANGE}{STRING}
 
 
 # Textfile window
@@ -4548,7 +4462,7 @@ STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Timthria
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Amharc ar léigh mé
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Loga na n-athruithe
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Ceadúnas
-###length 3
+###length 5
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} léigh mé de {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} loga athruithe de {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} ceadúnas de {STRING}
@@ -4676,9 +4590,6 @@ STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Ní féi
 STR_ERROR_CAN_T_GIVE_MONEY                                      :{WHITE}Ní féidir airgead a thabhairt uait chuig an gcuideachta seo...
 STR_ERROR_CAN_T_BUY_COMPANY                                     :{WHITE}Ní féidir an chuideachta a cheannach...
 STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS                      :{WHITE}Ní féidir ceanncheathrú na cuideachta a thógáil...
-STR_ERROR_CAN_T_BUY_25_SHARE_IN_THIS                            :{WHITE}Ní féidir sciar 25% a cheannach sa chuideachta seo...
-STR_ERROR_CAN_T_SELL_25_SHARE_IN                                :{WHITE}Ní féidir sciar 25% a dhíol sa chuideachta seo...
-STR_ERROR_PROTECTED                                             :{WHITE}Níl an chuideachta seo sean go leor le scaireanna a thrádáil fós...
 
 # Town related errors
 STR_ERROR_CAN_T_GENERATE_TOWN                                   :{WHITE}Ní féidir baile ar bith a thógáil
@@ -4689,7 +4600,6 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... rogh
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... roghearr do bhaile eile
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... an iomarca bailte
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... níl a thuilleadh spáis ar an léarscáil
-STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}Ní thógfaidh an baile seo bóithre. Is féidir leat tógáil bóithre a chumasú in Ardsocruithe->Geilleagar->Bailte.
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Tá oibreacha bóthair ar bun
 STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Ní féidir an baile seo a scriosadh...{}Ní féidir stáisiún nó iosta atá ag tagairt don bhaile nó do thíle atá faoi úinéireacht an bhaile a bhaint
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... níl aon suíomh oiriúnach do dhealbh i lár an bhaile seo
@@ -4795,6 +4705,8 @@ STR_ERROR_UNABLE_TO_FIND_ROUTE_TO                               :{WHITE}Ní féi
 STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT                            :{WHITE}Ní féidir iosta a aimsiú i gcóngar
 
 STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :Cineál iosta mícheart
+
+# Depot unbunching related errors
 
 # Autoreplace related errors
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{WHITE}Tá {VEHICLE} rófhada tar éis athsholáthair
@@ -4985,6 +4897,8 @@ STR_ERROR_CAN_T_STOP_SHARING_ORDER_LIST                         :{WHITE}Ní féi
 STR_ERROR_CAN_T_COPY_ORDER_LIST                                 :{WHITE}Ní féidir liosta orduithe a chóipeáil...
 STR_ERROR_TOO_FAR_FROM_PREVIOUS_DESTINATION                     :{WHITE}... rófhada ón gceann scríbe roimhe seo
 STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... níl raon fada go leor ag an aerárthach
+
+# Extra messages which go on the third line of errors, explaining why orders failed
 
 # Timetable related errors
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}Ní féidir amchlár a thabhairt d'fheithicil...
@@ -5401,10 +5315,10 @@ STR_VEHICLE_NAME_AIRCRAFT_POWERNAUT_HELICOPTER                  :Héileacaptar P
 
 ##id 0x8800
 # Formatting of some strings
-STR_FORMAT_DATE_TINY                                            :{STRING}-{STRING}-{NUM}
+STR_FORMAT_DATE_TINY                                            :{ZEROFILL_NUM}-{ZEROFILL_NUM}-{NUM}
 STR_FORMAT_DATE_SHORT                                           :{STRING} {NUM}
 STR_FORMAT_DATE_LONG                                            :{STRING} {STRING} {NUM}
-STR_FORMAT_DATE_ISO                                             :{2:NUM}-{1:STRING}-{0:STRING}
+STR_FORMAT_DATE_ISO                                             :{2:NUM}-{1:ZEROFILL_NUM}-{0:ZEROFILL_NUM}
 
 STR_FORMAT_COMPANY_NUM                                          :(Cuideachta {COMMA})
 STR_FORMAT_GROUP_NAME                                           :Grúpa {COMMA}
@@ -5468,6 +5382,7 @@ STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
 
+
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}
 STR_JUST_COMMA                                                  :{COMMA}
@@ -5485,33 +5400,8 @@ STR_JUST_RAW_STRING                                             :{STRING}
 STR_JUST_BIG_RAW_STRING                                         :{BIG_FONT}{STRING}
 
 # Slightly 'raw' stringcodes with colour or size
-STR_BLACK_COMMA                                                 :{BLACK}{COMMA}
-STR_TINY_BLACK_COMA                                             :{TINY_FONT}{BLACK}{COMMA}
-STR_TINY_COMMA                                                  :{TINY_FONT}{COMMA}
-STR_BLUE_COMMA                                                  :{BLUE}{COMMA}
-STR_RED_COMMA                                                   :{RED}{COMMA}
-STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
-STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
-STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
-STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
-STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
-STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
-STR_TINY_GROUP                                                  :{TINY_FONT}{GROUP}
-STR_BLACK_INT                                                   :{BLACK}{NUM}
-STR_ORANGE_INT                                                  :{ORANGE}{NUM}
 STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
-STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
-STR_BLACK_STRING                                                :{BLACK}{STRING}
-STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
-STR_WHITE_STRING                                                :{WHITE}{STRING}
-STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}
-STR_ORANGE_STRING1_LTBLUE                                       :{ORANGE}{STRING}{LTBLUE}
 STR_TINY_BLACK_HEIGHT                                           :{TINY_FONT}{BLACK}{HEIGHT}
-STR_TINY_BLACK_VEHICLE                                          :{TINY_FONT}{BLACK}{VEHICLE}
-STR_TINY_RIGHT_ARROW                                            :{TINY_FONT}{RIGHT_ARROW}
 
 STR_BLACK_1                                                     :{BLACK}1
 STR_BLACK_2                                                     :{BLACK}2

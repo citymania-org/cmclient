@@ -13,6 +13,94 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 14.0
+ *
+ * This version is not yet released. The following changes are not set in stone yet.
+ *
+ * API additions:
+ * \li GSIndustry::GetConstructionDate
+ * \li GSAsyncMode
+ * \li GSCompanyMode::IsValid
+ * \li GSCompanyMode::IsDeity
+ * \li GSTimeMode
+ * \li GSTown::ROAD_LAYOUT_RANDOM
+ * \li GSVehicle::IsPrimaryVehicle
+ * \li GSOrder::SetOrderJumpTo
+ * \li GSOrder::SetOrderCondition
+ * \li GSOrder::SetOrderCompareFunction
+ * \li GSOrder::SetOrderCompareValue
+ * \li GSOrder::SetStopLocation
+ * \li GSOrder::SetOrderRefit
+ * \li GSOrder::AppendOrder
+ * \li GSOrder::AppendConditionalOrder
+ * \li GSOrder::InsertOrder
+ * \li GSOrder::InsertConditionalOrder
+ * \li GSOrder::RemoveOrder
+ * \li GSOrder::SetOrderFlags
+ * \li GSOrder::MoveOrder
+ * \li GSOrder::SkipToOrder
+ * \li GSOrder::CopyOrders
+ * \li GSOrder::ShareOrders
+ * \li GSOrder::UnshareOrders
+ * \li GSCompany::IsMine
+ * \li GSCompany::SetPresidentGender
+ * \li GSCompany::SetAutoRenewStatus
+ * \li GSCompany::SetAutoRenewMonths
+ * \li GSCompany::SetAutoRenewMoney
+ * \li GSCompany::SetMaxLoanAmountForCompany
+ * \li GSCompany::ResetMaxLoanAmountForCompany
+ * \li GSGameSettings::IsDisabledVehicleType
+ * \li GSGroup::GroupID
+ * \li GSGroup::IsValidGroup
+ * \li GSGroup::CreateGroup
+ * \li GSGroup::DeleteGroup
+ * \li GSGroup::GetVehicleType
+ * \li GSGroup::SetName
+ * \li GSGroup::GetName
+ * \li GSGroup::SetParent
+ * \li GSGroup::GetParent
+ * \li GSGroup::EnableAutoReplaceProtection
+ * \li GSGroup::GetAutoReplaceProtection
+ * \li GSGroup::GetNumEngines
+ * \li GSGroup::GetNumVehicles
+ * \li GSGroup::MoveVehicle
+ * \li GSGroup::EnableWagonRemoval
+ * \li GSGroup::HasWagonRemoval
+ * \li GSGroup::SetAutoReplace
+ * \li GSGroup::GetEngineReplacement
+ * \li GSGroup::StopAutoReplace
+ * \li GSGroup::GetProfitThisYear
+ * \li GSGroup::GetProfitLastYear
+ * \li GSGroup::GetCurrentUsage
+ * \li GSGroup::SetPrimaryColour
+ * \li GSGroup::SetSecondaryColour
+ * \li GSGroup::GetPrimaryColour
+ * \li GSGroup::GetSecondaryColour
+ * \li GSGroupList
+ * \li GSVehicleList_Group
+ * \li GSVehicleList_DefaultGroup
+ * \li GSGoal::IsValidGoalDestination
+ * \li GSGoal::SetDestination
+ * \li GSIndustry::GetProductionLevel
+ * \li GSIndustry::SetProductionLevel
+ * \li GSStoryPage::IsValidStoryPageElementType
+ * \li GSStoryPage::IsValidStoryPageButtonColour
+ * \li GSStoryPage::IsValidStoryPageButtonFlags
+ * \li GSStoryPage::IsValidStoryPageButtonCursor
+ *
+ * API removals:
+ * \li GSError::ERR_PRECONDITION_TOO_MANY_PARAMETERS, that error is never returned anymore.
+ * \li AIInfo::CONFIG_RANDOM, no longer used.
+ *
+ * Other changes:
+ * \li GSGroupList accepts an optional filter function
+ * \li GSIndustryList accepts an optional filter function
+ * \li GSSignList accepts an optional filter function
+ * \li GSSubsidyList accepts an optional filter function
+ * \li GSTownList accepts an optional filter function
+ * \li GSVehicleList accepts an optional filter function
+ * \li GSInfo::AddSettings easy_value / medium_value / hard_value are replaced with default_value
+ *
  * \b 13.0
  *
  * API additions:

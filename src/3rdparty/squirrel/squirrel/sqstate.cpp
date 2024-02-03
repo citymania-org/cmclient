@@ -201,7 +201,7 @@ SQSharedState::~SQSharedState()
 			t = nx;
 		}
 	}
-//	assert(_gc_chain==NULL); //just to proove a theory
+//	assert(_gc_chain==nullptr); //just to proove a theory
 	while(_gc_chain){
 		_gc_chain->_uiRef--;
 		_gc_chain->Release();
@@ -246,9 +246,9 @@ void SQSharedState::DelayFinalFree(SQCollectable *collectable)
 	if (!this->_collectable_free_processing) {
 		this->_collectable_free_processing = true;
 		while (!this->_collectable_free_queue.empty()) {
-			SQCollectable *collectable = this->_collectable_free_queue.back();
+			SQCollectable *collectable_to_free = this->_collectable_free_queue.back();
 			this->_collectable_free_queue.pop_back();
-			collectable->FinalFree();
+			collectable_to_free->FinalFree();
 		}
 		this->_collectable_free_processing = false;
 	}
@@ -274,7 +274,7 @@ void SQSharedState::EnqueueMarkObject(SQObjectPtr &o,SQGCMarkerQueue &queue)
 }
 
 
-SQInteger SQSharedState::CollectGarbage(SQVM *vm)
+SQInteger SQSharedState::CollectGarbage(SQVM *)
 {
 	SQInteger n=0;
 	SQVM *vms = _thread(_root_vm);
@@ -453,7 +453,7 @@ void RefTable::Resize(SQUnsignedInteger size)
 	[[maybe_unused]] SQUnsignedInteger nfound = 0;
 	for(SQUnsignedInteger n = 0; n < oldnumofslots; n++) {
 		if(type(t->obj) != OT_NULL) {
-			//add back;
+			//add back
 			assert(t->refs != 0);
 			RefNode *nn = Add(::HashObj(t->obj)&(_numofslots-1),t->obj);
 			nn->refs = t->refs;
@@ -513,7 +513,7 @@ void RefTable::AllocNodes(SQUnsignedInteger size)
 		bucks[n] = nullptr;
 		temp->refs = 0;
 		new (&temp->obj) SQObjectPtr;
-		temp->next = temp+1;
+		temp->next = &temp[1];
 		temp++;
 	}
 	bucks[n] = nullptr;

@@ -146,10 +146,12 @@ add_files(
     script_accounting.hpp
     script_admin.hpp
     script_airport.hpp
+    script_asyncmode.hpp
     script_base.hpp
     script_basestation.hpp
     script_bridge.hpp
     script_bridgelist.hpp
+    script_timemode.hpp
     script_cargo.hpp
     script_cargolist.hpp
     script_cargomonitor.hpp
@@ -180,6 +182,7 @@ add_files(
     script_league.hpp
     script_list.hpp
     script_log.hpp
+    script_log_types.hpp
     script_map.hpp
     script_marine.hpp
     script_newgrf.hpp
@@ -218,10 +221,12 @@ add_files(
     script_accounting.cpp
     script_admin.cpp
     script_airport.cpp
+    script_asyncmode.cpp
     script_base.cpp
     script_basestation.cpp
     script_bridge.cpp
     script_bridgelist.cpp
+    script_timemode.cpp
     script_cargo.cpp
     script_cargolist.cpp
     script_cargomonitor.cpp

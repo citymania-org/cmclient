@@ -13,7 +13,6 @@
 
 #include "script_object.hpp"
 #include <utility>
-#include <vector>
 
 /**
  * Class that creates a queue which keeps its items ordered by an item priority.
@@ -21,7 +20,7 @@
  */
 class ScriptPriorityQueue : public ScriptObject {
 public:
-	typedef std::pair<int64, HSQOBJECT> PriorityItem;
+	typedef std::pair<SQInteger, HSQOBJECT> PriorityItem;
 private:
 	struct PriorityComparator {
 		bool operator()(const PriorityItem &lhs, const PriorityItem &rhs) const noexcept
@@ -43,7 +42,7 @@ public:
 	 * @param priority The priority to assign the item.
 	 * @return True if the item was inserted, false if it was already in the queue.
 	 */
-	bool Insert(void *item, int64 priority);
+	bool Insert(void *item, SQInteger priority);
 
 	/**
 	 * Remove and return the item with the lowest priority.

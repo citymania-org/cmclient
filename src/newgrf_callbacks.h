@@ -282,6 +282,9 @@ enum CallbackID {
 
 	/** Called to determine the engine name to show. */
 	CBID_VEHICLE_NAME                    = 0x161, // 15 bit callback
+
+	/** Called to determine probability during build. */
+	CBID_VEHICLE_BUILD_PROBABILITY       = 0x162, // 15 bit callback
 };
 
 /**
@@ -309,6 +312,15 @@ enum StationCallbackMask {
 	CBM_STATION_ANIMATION_NEXT_FRAME = 2, ///< Use a custom next frame callback
 	CBM_STATION_ANIMATION_SPEED      = 3, ///< Customize the animation speed of the station
 	CBM_STATION_SLOPE_CHECK          = 4, ///< Check slope of new station tiles
+};
+
+/**
+ * Callback masks for road stops.
+ */
+enum RoadStopCallbackMask {
+	CBM_ROAD_STOP_AVAIL                = 0, ///< Availability of road stop in construction window
+	CBM_ROAD_STOP_ANIMATION_NEXT_FRAME = 1, ///< Use a custom next frame callback
+	CBM_ROAD_STOP_ANIMATION_SPEED      = 2, ///< Customize the animation speed of the road stop
 };
 
 /**

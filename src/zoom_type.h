@@ -27,8 +27,6 @@ enum ZoomLevel : byte {
 	ZOOM_LVL_OUT_32X,    ///< Zoomed 32 times out.
 	ZOOM_LVL_END,        ///< End for iteration.
 
-	ZOOM_LVL_COUNT = ZOOM_LVL_END - ZOOM_LVL_BEGIN, ///< Number of zoom levels.
-
 	/* Here we define in which zoom viewports are */
 	ZOOM_LVL_VIEWPORT = ZOOM_LVL_OUT_4X, ///< Default zoom level for viewports.
 	ZOOM_LVL_NEWS     = ZOOM_LVL_OUT_4X, ///< Default zoom level for the news messages.
@@ -47,11 +45,13 @@ enum ZoomLevel : byte {
 
 };
 DECLARE_POSTFIX_INCREMENT(ZoomLevel)
+DECLARE_ENUM_AS_ADDABLE(ZoomLevel)
 
 extern int _gui_scale;
 extern int _gui_scale_cfg;
 
 extern ZoomLevel _gui_zoom;
+extern ZoomLevel _font_zoom;
 #define ZOOM_LVL_GUI (_gui_zoom)
 
 static const int MIN_INTERFACE_SCALE = 100;

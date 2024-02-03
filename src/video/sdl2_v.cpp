@@ -10,7 +10,6 @@
 #include "../stdafx.h"
 #include "../openttd.h"
 #include "../gfx_func.h"
-#include "../rev.h"
 #include "../blitter/factory.hpp"
 #include "../thread.h"
 #include "../progress.h"
@@ -60,13 +59,15 @@ static void FindResolutions()
 {
 	_resolutions.clear();
 
-	for (int i = 0; i < SDL_GetNumDisplayModes(0); i++) {
-		SDL_DisplayMode mode;
-		SDL_GetDisplayMode(0, i, &mode);
+	for (int display = 0; display < SDL_GetNumVideoDisplays(); display++) {
+		for (int i = 0; i < SDL_GetNumDisplayModes(display); i++) {
+			SDL_DisplayMode mode;
+			SDL_GetDisplayMode(display, i, &mode);
 
-		if (mode.w < 640 || mode.h < 480) continue;
-		if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(mode.w, mode.h)) != _resolutions.end()) continue;
-		_resolutions.emplace_back(mode.w, mode.h);
+			if (mode.w < 640 || mode.h < 480) continue;
+			if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(mode.w, mode.h)) != _resolutions.end()) continue;
+			_resolutions.emplace_back(mode.w, mode.h);
+		}
 	}
 
 	/* We have found no resolutions, show the default list */
@@ -149,10 +150,9 @@ bool VideoDriver_SDL_Base::CreateMainWindow(uint w, uint h, uint flags)
 		y = r.y + std::max(0, r.h - static_cast<int>(h)) / 4; // decent desktops have taskbars at the bottom
 	}
 
-	char caption[50];
-	seprintf(caption, lastof(caption), "OpenTTD %s", _openttd_revision);
+	std::string caption = VideoDriver::GetCaption();
 	this->sdl_window = SDL_CreateWindow(
-		caption,
+		caption.c_str(),
 		x, y,
 		w, h,
 		flags);
@@ -168,7 +168,7 @@ bool VideoDriver_SDL_Base::CreateMainWindow(uint w, uint h, uint flags)
 		SDL_Surface *icon = SDL_LoadBMP(icon_path.c_str());
 		if (icon != nullptr) {
 			/* Get the colourkey, which will be magenta */
-			uint32 rgbmap = SDL_MapRGB(icon->format, 255, 0, 255);
+			uint32_t rgbmap = SDL_MapRGB(icon->format, 255, 0, 255);
 
 			SDL_SetColorKey(icon, SDL_TRUE, rgbmap);
 			SDL_SetWindowIcon(this->sdl_window, icon);
@@ -304,7 +304,7 @@ static const SDLVkMapping _vk_mapping[] = {
 	AS(SDLK_PERIOD,  WKC_PERIOD)
 };
 
-static uint ConvertSdlKeyIntoMy(SDL_Keysym *sym, WChar *character)
+static uint ConvertSdlKeyIntoMy(SDL_Keysym *sym, char32_t *character)
 {
 	const SDLVkMapping *map;
 	uint key = 0;
@@ -442,7 +442,7 @@ bool VideoDriver_SDL_Base::PollEvent()
 					(ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_f)) {
 				if (ev.key.repeat == 0) ToggleFullScreen(!_fullscreen);
 			} else {
-				WChar character;
+				char32_t character;
 
 				uint keycode = ConvertSdlKeyIntoMy(&ev.key.keysym, &character);
 				// Only handle non-text keys here. Text is handled in
@@ -472,7 +472,7 @@ bool VideoDriver_SDL_Base::PollEvent()
 			uint keycode = ConvertSdlKeycodeIntoMy(kc);
 
 			if (keycode == WKC_BACKQUOTE && FocusedWindowIsConsole()) {
-				WChar character;
+				char32_t character;
 				Utf8Decode(&character, ev.text.text);
 				HandleKeypress(keycode, character);
 			} else {
@@ -507,11 +507,6 @@ bool VideoDriver_SDL_Base::PollEvent()
 
 static const char *InitializeSDL()
 {
-	/* Explicitly disable hardware acceleration. Enabling this causes
-	 * UpdateWindowSurface() to update the window's texture instead of
-	 * its surface. */
-	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, "0");
-
 	/* Check if the video-driver is already initialized. */
 	if (SDL_WasInit(SDL_INIT_VIDEO) != 0) return nullptr;
 
@@ -577,7 +572,7 @@ void VideoDriver_SDL_Base::Stop()
 
 void VideoDriver_SDL_Base::InputLoop()
 {
-	uint32 mod = SDL_GetModState();
+	uint32_t mod = SDL_GetModState();
 	const Uint8 *keys = SDL_GetKeyboardState(nullptr);
 
 	bool old_ctrl_pressed = _ctrl_pressed;
@@ -585,13 +580,9 @@ void VideoDriver_SDL_Base::InputLoop()
 	_ctrl_pressed  = !!(mod & KMOD_CTRL);
 	_shift_pressed = !!(mod & KMOD_SHIFT);
 
-#if defined(_DEBUG)
-	this->fast_forward_key_pressed = _shift_pressed;
-#else
 	/* Speedup when pressing tab, except when using ALT+TAB
 	 * to switch to another application. */
 	this->fast_forward_key_pressed = keys[SDL_SCANCODE_TAB] && (mod & KMOD_ALT) == 0;
-#endif /* defined(_DEBUG) */
 
 	/* Determine which directional keys are down. */
 	_dirkeys =
@@ -613,13 +604,19 @@ void VideoDriver_SDL_Base::LoopOnce()
 		 * normally done at the end of the main loop for non-Emscripten.
 		 * After that, Emscripten just halts, and the HTML shows a nice
 		 * "bye, see you next time" message. */
+		extern void PostMainLoop();
+		PostMainLoop();
+
 		emscripten_cancel_main_loop();
 		emscripten_exit_pointerlock();
 		/* In effect, the game ends here. As emscripten_set_main_loop() caused
 		 * the stack to be unwound, the code after MainLoop() in
 		 * openttd_main() is never executed. */
-		EM_ASM(if (window["openttd_syncfs"]) openttd_syncfs());
-		EM_ASM(if (window["openttd_exit"]) openttd_exit());
+		if (_game_mode == GM_BOOTSTRAP) {
+			EM_ASM(if (window["openttd_bootstrap_reload"]) openttd_bootstrap_reload());
+		} else {
+			EM_ASM(if (window["openttd_exit"]) openttd_exit());
+		}
 #endif
 		return;
 	}
@@ -663,7 +660,7 @@ bool VideoDriver_SDL_Base::ToggleFullscreen(bool fullscreen)
 	if (fullscreen) {
 		/* Find fullscreen window size */
 		SDL_DisplayMode dm;
-		if (SDL_GetCurrentDisplayMode(0, &dm) < 0) {
+		if (SDL_GetCurrentDisplayMode(SDL_GetWindowDisplayIndex(this->sdl_window), &dm) < 0) {
 			Debug(driver, 0, "SDL_GetCurrentDisplayMode() failed: {}", SDL_GetError());
 		} else {
 			SDL_SetWindowSize(this->sdl_window, dm.w, dm.h);

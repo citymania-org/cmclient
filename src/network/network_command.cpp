@@ -22,6 +22,7 @@
 #include "../dock_cmd.h"
 #include "../economy_cmd.h"
 #include "../engine_cmd.h"
+#include "../error_func.h"
 #include "../goal_cmd.h"
 #include "../group_cmd.h"
 #include "../industry_cmd.h"
@@ -50,7 +51,6 @@
 #include "../water_cmd.h"
 #include "../waypoint_cmd.h"
 #include "../script/script_cmd.h"
-#include <array>
 
 #include "../safeguards.h"
 
@@ -328,7 +328,7 @@ void NetworkExecuteLocalCommandQueue()
 		if (_frame_counter > cp->frame) {
 			/* If we reach here, it means for whatever reason, we've already executed
 			 * past the command we need to execute. */
-			error("[net] Trying to execute a packet in the past!");
+			FatalError("[net] Trying to execute a packet in the past!");
 		}
 
 		/* We can execute this command */
@@ -392,6 +392,10 @@ static void DistributeQueue(CommandQueue *queue, const NetworkClientSocket *owne
 	int to_go = UINT16_MAX;
 #else
 	int to_go = _settings_client.network.commands_per_frame;
+	if (owner == nullptr) {
+		/* This is the server, use the commands_per_frame_server setting if higher */
+		to_go = std::max<int>(to_go, _settings_client.network.commands_per_frame_server);
+	}
 #endif
 
 	CommandPacket *cp;
@@ -453,7 +457,7 @@ void NetworkGameSocketHandler::SendCommand(Packet *p, const CommandPacket *cp)
 		Debug(net, 0, "Unknown callback for command; no callback sent (command: {})", cp->cmd);
 		callback = 0; // _callback_table[0] == nullptr
 	}
-	p->Send_uint8 ((uint8)callback);
+	p->Send_uint8 ((uint8_t)callback);
 }
 
 /** Helper to process a single ClientID argument. */
@@ -533,7 +537,7 @@ CommandDataBuffer SanitizeCmdStrings(const CommandDataBuffer &data)
  * @param cp Command packet to unpack.
  */
 template <Commands Tcmd, size_t Tcb>
-void UnpackNetworkCommand(const CommandPacket* cp)
+void UnpackNetworkCommand(const CommandPacket *cp)
 {
 	auto args = EndianBufferReader::ToValue<typename CommandTraits<Tcmd>::Args>(cp->data);
 	Command<Tcmd>::PostFromNet(cp->err_msg, std::get<Tcb>(_callback_tuple), cp->my_cmd, args);

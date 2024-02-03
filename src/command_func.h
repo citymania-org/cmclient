@@ -42,7 +42,6 @@ void NetworkSendCommand(Commands cmd, StringID err_message, CommandCallback *cal
 bool IsValidCommand(Commands cmd);
 CommandFlags GetCommandFlags(Commands cmd);
 const char *GetCommandName(Commands cmd);
-Money GetAvailableMoneyForCommand();
 bool IsCommandAllowedWhilePaused(Commands cmd);
 
 template <Commands Tcmd>
@@ -102,7 +101,7 @@ protected:
 	static bool InternalExecutePrepTest(CommandFlags cmd_flags, TileIndex tile, Backup<CompanyID> &cur_company);
 	static std::tuple<bool, bool, bool> InternalExecuteValidateTestAndPrepExec(CommandCost &res, CommandFlags cmd_flags, bool estimate_only, bool network_command, Backup<CompanyID> &cur_company);
 	static CommandCost InternalExecuteProcessResult(Commands cmd, CommandFlags cmd_flags, const CommandCost &res_test, const CommandCost &res_exec, Money extra_cash, TileIndex tile, Backup<CompanyID> &cur_company);
-	static void LogCommandExecution(Commands cmd, StringID err_message, TileIndex tile, const CommandDataBuffer &args, bool failed);
+	static void LogCommandExecution(Commands cmd, StringID err_message, const CommandDataBuffer &args, bool failed);
 };
 
 /**
@@ -152,7 +151,7 @@ public:
 		if constexpr (std::is_same_v<TileIndex, std::tuple_element_t<0, std::tuple<Targs...>>>) {
 			/* Do not even think about executing out-of-bounds tile-commands. */
 			TileIndex tile = std::get<0>(std::make_tuple(args...));
-			if (tile != 0 && (tile >= MapSize() || (!IsValidTile(tile) && (flags & DC_ALL_TILES) == 0))) return MakeResult(CMD_ERROR);
+			if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && (flags & DC_ALL_TILES) == 0))) return MakeResult(CMD_ERROR);
 		}
 
 		RecursiveCommandCounter counter{};
@@ -257,7 +256,7 @@ public:
 protected:
 	/** Helper to process a single ClientID argument. */
 	template <class T>
-	static inline void SetClientIdHelper(T &data)
+	static inline void SetClientIdHelper([[maybe_unused]] T &data)
 	{
 		if constexpr (std::is_same_v<ClientID, T>) {
 			if (data == INVALID_CLIENT_ID) data = CLIENT_ID_SERVER;
@@ -294,7 +293,7 @@ protected:
 	static bool InternalPost(StringID err_message, Tcallback *callback, bool my_cmd, bool network_command, TileIndex tile, std::tuple<Targs...> args)
 	{
 		/* Do not even think about executing out-of-bounds tile-commands. */
-		if (tile != 0 && (tile >= MapSize() || (!IsValidTile(tile) && (GetCommandFlags<Tcmd>() & CMD_ALL_TILES) == 0))) return false;
+		if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && (GetCommandFlags<Tcmd>() & CMD_ALL_TILES) == 0))) return false;
 
 		auto [err, estimate_only, only_sending] = InternalPostBefore(Tcmd, GetCommandFlags<Tcmd>(), tile, err_message, network_command);
 		if (err) return false;
@@ -333,7 +332,7 @@ protected:
 
 	/** Helper to process a single ClientID argument. */
 	template <class T>
-	static inline bool ClientIdIsSet(T &data)
+	static inline bool ClientIdIsSet([[maybe_unused]] T &data)
 	{
 		if constexpr (std::is_same_v<ClientID, T>) {
 			return data != INVALID_CLIENT_ID;
@@ -350,7 +349,7 @@ protected:
 	}
 
 	template<class Ttuple>
-	static inline Money ExtractAdditionalMoney(Ttuple &values)
+	static inline Money ExtractAdditionalMoney([[maybe_unused]] Ttuple &values)
 	{
 		if constexpr (std::is_same_v<std::tuple_element_t<1, Tret>, Money>) {
 			return std::get<1>(values);
@@ -359,7 +358,7 @@ protected:
 		}
 	}
 
-	static Tret Execute(StringID err_message, CommandCallback *callback, bool my_cmd, bool estimate_only, bool network_command, TileIndex tile, std::tuple<Targs...> args)
+	static Tret Execute(StringID err_message, CommandCallback *callback, bool, bool estimate_only, bool network_command, TileIndex tile, std::tuple<Targs...> args)
 	{
 		/* Prevent recursion; it gives a mess over the network */
 		RecursiveCommandCounter counter{};
@@ -385,7 +384,7 @@ protected:
 
 		auto [exit_test, desync_log, send_net] = InternalExecuteValidateTestAndPrepExec(ExtractCommandCost(res), cmd_flags, estimate_only, network_command, cur_company);
 		if (exit_test) {
-			if (desync_log) LogCommandExecution(Tcmd, err_message, tile, EndianBufferWriter<CommandDataBuffer>::FromValue(args), true);
+			if (desync_log) LogCommandExecution(Tcmd, err_message, EndianBufferWriter<CommandDataBuffer>::FromValue(args), true);
 			cur_company.Restore();
 			return res;
 		}
@@ -403,7 +402,7 @@ protected:
 			return {};
 		}
 
-		if (desync_log) LogCommandExecution(Tcmd, err_message, tile, EndianBufferWriter<CommandDataBuffer>::FromValue(args), false);
+		if (desync_log) LogCommandExecution(Tcmd, err_message, EndianBufferWriter<CommandDataBuffer>::FromValue(args), false);
 
 		/* Actually try and execute the command. */
 		Tret res2 = std::apply(CommandTraits<Tcmd>::proc, std::tuple_cat(std::make_tuple(flags | DC_EXEC), args));
@@ -443,14 +442,14 @@ struct CommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...), false> : CommandHel
 	static bool Post(StringID err_message, Tcallback *callback, Targs... args) = delete;
 
 	/**
-	 * Shortcut for Post when not using an error message.
+	 * Shortcut for Post when not using a callback.
 	 * @param err_message Message prefix to show on error
 	 * @param location Tile location for user feedback.
 	 * @param args Parameters for the command
 	 */
 	static inline bool Post(StringID err_message, TileIndex location, Targs... args) { return Post<CommandCallback>(err_message, nullptr, location, std::forward<Targs>(args)...); }
 	/**
-	 * Shortcut for Post when not using a callback.
+	 * Shortcut for Post when not using an error message.
 	 * @param callback A callback function to call after the command is finished
 	 * @param location Tile location for user feedback.
 	 * @param args Parameters for the command

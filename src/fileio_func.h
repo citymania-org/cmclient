@@ -12,20 +12,18 @@
 
 #include "core/enum_type.hpp"
 #include "fileio_type.h"
-#include <string>
-#include <vector>
 
 void FioFCloseFile(FILE *f);
 FILE *FioFOpenFile(const std::string &filename, const char *mode, Subdirectory subdir, size_t *filesize = nullptr);
 bool FioCheckFileExists(const std::string &filename, Subdirectory subdir);
-std::string FioFindFullPath(Subdirectory subdir, const char *filename);
+std::string FioFindFullPath(Subdirectory subdir, const std::string &filename);
 std::string FioGetDirectory(Searchpath sp, Subdirectory subdir);
 std::string FioFindDirectory(Subdirectory subdir);
 void FioCreateDirectory(const std::string &name);
 
 const char *FiosGetScreenshotDir();
 
-void SanitizeFilename(char *filename);
+void SanitizeFilename(std::string &filename);
 void AppendPathSeparator(std::string &buf);
 void DeterminePaths(const char *exe, bool only_local_path);
 std::unique_ptr<char[]> ReadFileToMem(const std::string &filename, size_t &lenp, size_t maxsize);
@@ -41,10 +39,10 @@ protected:
 	Subdirectory subdir; ///< The current sub directory we are searching through
 public:
 	/** Destruct the proper one... */
-	virtual ~FileScanner() {}
+	virtual ~FileScanner() = default;
 
 	uint Scan(const char *extension, Subdirectory sd, bool tars = true, bool recursive = true);
-	uint Scan(const char *extension, const char *directory, bool recursive = true);
+	uint Scan(const char *extension, const std::string &directory, bool recursive = true);
 
 	/**
 	 * Add a file with the given filename.
@@ -110,7 +108,7 @@ int closedir(DIR *d);
  * @param path string to open directory of
  * @return DIR pointer
  */
-static inline DIR *ttd_opendir(const char *path)
+inline DIR *ttd_opendir(const char *path)
 {
 	return opendir(OTTD2FS(path).c_str());
 }

@@ -12,8 +12,9 @@
 #define SCRIPT_LIST_HPP
 
 #include "script_object.hpp"
-#include <map>
-#include <set>
+
+/** Maximum number of operations allowed for valuating a list. */
+static const int MAX_VALUATE_OPS = 1000000;
 
 class ScriptListSorter;
 
@@ -41,10 +42,111 @@ private:
 	bool initialized;             ///< Whether an iteration has been started
 	int modifications;            ///< Number of modification that has been done. To prevent changing data while valuating.
 
+protected:
+	template<typename T, class ItemValid, class ItemFilter>
+	static void FillList(ScriptList *list, ItemValid item_valid, ItemFilter item_filter)
+	{
+		for (const T *item : T::Iterate()) {
+			if (!item_valid(item)) continue;
+			if (!item_filter(item)) continue;
+			list->AddItem(item->index);
+		}
+	}
+
+	template<typename T, class ItemValid>
+	static void FillList(ScriptList *list, ItemValid item_valid)
+	{
+		ScriptList::FillList<T>(list, item_valid, [](const T *) { return true; });
+	}
+
+	template<typename T>
+	static void FillList(ScriptList *list)
+	{
+		ScriptList::FillList<T>(list, [](const T *) { return true; });
+	}
+
+	template<typename T, class ItemValid>
+	static void FillList(HSQUIRRELVM vm, ScriptList *list, ItemValid item_valid)
+	{
+		int nparam = sq_gettop(vm) - 1;
+		if (nparam >= 1) {
+			/* Make sure the filter function is really a function, and not any
+			 * other type. It's parameter 2 for us, but for the user it's the
+			 * first parameter they give. */
+			SQObjectType valuator_type = sq_gettype(vm, 2);
+			if (valuator_type != OT_CLOSURE && valuator_type != OT_NATIVECLOSURE) {
+				throw sq_throwerror(vm, "parameter 1 has an invalid type (expected function)");
+			}
+
+			/* Push the function to call */
+			sq_push(vm, 2);
+		}
+
+		/* Don't allow docommand from a Valuator, as we can't resume in
+		 * mid C++-code. */
+		bool backup_allow = ScriptObject::GetAllowDoCommand();
+		ScriptObject::SetAllowDoCommand(false);
+
+
+		if (nparam < 1) {
+			ScriptList::FillList<T>(list, item_valid);
+		} else {
+			/* Limit the total number of ops that can be consumed by a filter operation, if a filter function is present */
+			SQOpsLimiter limiter(vm, MAX_VALUATE_OPS, "list filter function");
+
+			ScriptList::FillList<T>(list, item_valid,
+				[vm, nparam, backup_allow](const T *item) {
+					/* Push the root table as instance object, this is what squirrel does for meta-functions. */
+					sq_pushroottable(vm);
+					/* Push all arguments for the valuator function. */
+					sq_pushinteger(vm, item->index);
+					for (int i = 0; i < nparam - 1; i++) {
+						sq_push(vm, i + 3);
+					}
+
+					/* Call the function. Squirrel pops all parameters and pushes the return value. */
+					if (SQ_FAILED(sq_call(vm, nparam + 1, SQTrue, SQTrue))) {
+						ScriptObject::SetAllowDoCommand(backup_allow);
+						throw sq_throwerror(vm, "failed to run filter");
+					}
+
+					SQBool add = SQFalse;
+
+					/* Retrieve the return value */
+					switch (sq_gettype(vm, -1)) {
+						case OT_BOOL:
+							sq_getbool(vm, -1, &add);
+							break;
+
+						default:
+							ScriptObject::SetAllowDoCommand(backup_allow);
+							throw sq_throwerror(vm, "return value of filter is not valid (not bool)");
+					}
+
+					/* Pop the return value. */
+					sq_poptop(vm);
+
+					return add;
+				}
+			);
+
+			/* Pop the filter function */
+			sq_poptop(vm);
+		}
+
+		ScriptObject::SetAllowDoCommand(backup_allow);
+	}
+
+	template<typename T>
+	static void FillList(HSQUIRRELVM vm, ScriptList *list)
+	{
+		ScriptList::FillList<T>(vm, list, [](const T *) { return true; });
+	}
+
 public:
-	typedef std::set<int64> ScriptItemList;                   ///< The list of items inside the bucket
-	typedef std::map<int64, ScriptItemList> ScriptListBucket; ///< The bucket list per value
-	typedef std::map<int64, int64> ScriptListMap;             ///< List per item
+	typedef std::set<SQInteger> ScriptItemList;                   ///< The list of items inside the bucket
+	typedef std::map<SQInteger, ScriptItemList> ScriptListBucket; ///< The bucket list per value
+	typedef std::map<SQInteger, SQInteger> ScriptListMap;         ///< List per item
 
 	ScriptListMap items;           ///< The items in the list
 	ScriptListBucket buckets;      ///< The items in the list, sorted by value
@@ -58,16 +160,16 @@ public:
 	 * @param item the item to add. Should be unique, otherwise it is ignored.
 	 * @param value the value to assign.
 	 */
-	void AddItem(int64 item, int64 value);
+	void AddItem(SQInteger item, SQInteger value);
 #else
-	void AddItem(int64 item, int64 value = 0);
+	void AddItem(SQInteger item, SQInteger value = 0);
 #endif /* DOXYGEN_API */
 
 	/**
 	 * Remove a single item from the list.
 	 * @param item the item to remove. If not existing, it is ignored.
 	 */
-	void RemoveItem(int64 item);
+	void RemoveItem(SQInteger item);
 
 	/**
 	 * Clear the list, making Count() returning 0 and IsEmpty() returning true.
@@ -79,21 +181,21 @@ public:
 	 * @param item the item to check for.
 	 * @return true if the item is in the list.
 	 */
-	bool HasItem(int64 item);
+	bool HasItem(SQInteger item);
 
 	/**
 	 * Go to the beginning of the list and return the item. To get the value use list.GetValue(list.Begin()).
 	 * @return the first item.
 	 * @note returns 0 if beyond end-of-list. Use IsEnd() to check for end-of-list.
 	 */
-	int64 Begin();
+	SQInteger Begin();
 
 	/**
 	 * Go to the next item in the list and return the item. To get the value use list.GetValue(list.Next()).
 	 * @return the next item.
 	 * @note returns 0 if beyond end-of-list. Use IsEnd() to check for end-of-list.
 	 */
-	int64 Next();
+	SQInteger Next();
 
 	/**
 	 * Check if a list is empty.
@@ -112,14 +214,14 @@ public:
 	 * Returns the amount of items in the list.
 	 * @return amount of items in the list.
 	 */
-	int32 Count();
+	SQInteger Count();
 
 	/**
 	 * Get the value that belongs to this item.
 	 * @param item the item to get the value from
 	 * @return the value that belongs to this item.
 	 */
-	int64 GetValue(int64 item);
+	SQInteger GetValue(SQInteger item);
 
 	/**
 	 * Set a value of an item directly.
@@ -129,7 +231,7 @@ public:
 	 * @note Changing values of items while looping through a list might cause
 	 *  entries to be skipped. Be very careful with such operations.
 	 */
-	bool SetValue(int64 item, int64 value);
+	bool SetValue(SQInteger item, SQInteger value);
 
 	/**
 	 * Sort this list by the given sorter and direction.
@@ -160,38 +262,38 @@ public:
 	 * Removes all items with a higher value than 'value'.
 	 * @param value the value above which all items are removed.
 	 */
-	void RemoveAboveValue(int64 value);
+	void RemoveAboveValue(SQInteger value);
 
 	/**
 	 * Removes all items with a lower value than 'value'.
 	 * @param value the value below which all items are removed.
 	 */
-	void RemoveBelowValue(int64 value);
+	void RemoveBelowValue(SQInteger value);
 
 	/**
 	 * Removes all items with a value above start and below end.
 	 * @param start the lower bound of the to be removed values (exclusive).
 	 * @param end   the upper bound of the to be removed values (exclusive).
 	 */
-	void RemoveBetweenValue(int64 start, int64 end);
+	void RemoveBetweenValue(SQInteger start, SQInteger end);
 
 	/**
 	 * Remove all items with this value.
 	 * @param value the value to remove.
 	 */
-	void RemoveValue(int64 value);
+	void RemoveValue(SQInteger value);
 
 	/**
 	 * Remove the first count items.
 	 * @param count the amount of items to remove.
 	 */
-	void RemoveTop(int32 count);
+	void RemoveTop(SQInteger count);
 
 	/**
 	 * Remove the last count items.
 	 * @param count the amount of items to remove.
 	 */
-	void RemoveBottom(int32 count);
+	void RemoveBottom(SQInteger count);
 
 	/**
 	 * Remove everything that is in the given list from this list (same item index that is).
@@ -204,38 +306,38 @@ public:
 	 * Keep all items with a higher value than 'value'.
 	 * @param value the value above which all items are kept.
 	 */
-	void KeepAboveValue(int64 value);
+	void KeepAboveValue(SQInteger value);
 
 	/**
 	 * Keep all items with a lower value than 'value'.
 	 * @param value the value below which all items are kept.
 	 */
-	void KeepBelowValue(int64 value);
+	void KeepBelowValue(SQInteger value);
 
 	/**
 	 * Keep all items with a value above start and below end.
 	 * @param start the lower bound of the to be kept values (exclusive).
 	 * @param end   the upper bound of the to be kept values (exclusive).
 	 */
-	void KeepBetweenValue(int64 start, int64 end);
+	void KeepBetweenValue(SQInteger start, SQInteger end);
 
 	/**
 	 * Keep all items with this value.
 	 * @param value the value to keep.
 	 */
-	void KeepValue(int64 value);
+	void KeepValue(SQInteger value);
 
 	/**
 	 * Keep the first count items, i.e. remove everything except the first count items.
 	 * @param count the amount of items to keep.
 	 */
-	void KeepTop(int32 count);
+	void KeepTop(SQInteger count);
 
 	/**
 	 * Keep the last count items, i.e. remove everything except the last count items.
 	 * @param count the amount of items to keep.
 	 */
-	void KeepBottom(int32 count);
+	void KeepBottom(SQInteger count);
 
 	/**
 	 * Keeps everything that is in the given list from this list (same item index that is).

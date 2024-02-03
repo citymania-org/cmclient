@@ -14,14 +14,13 @@
 #include "spritecache.h"
 
 /** Glyphs are characters from a font. */
-typedef uint32 GlyphID;
+typedef uint32_t GlyphID;
 static const GlyphID SPRITE_GLYPH = 1U << 30;
 
 /** Font cache for basic fonts. */
 class FontCache {
-private:
-	static FontCache *caches[FS_END]; ///< All the font caches.
 protected:
+	static FontCache *caches[FS_END]; ///< All the font caches.
 	FontCache *parent;                ///< The parent of this font cache.
 	const FontSize fs;                ///< The size of the font.
 	int height;                       ///< The height of the font.
@@ -32,6 +31,8 @@ protected:
 public:
 	FontCache(FontSize fs);
 	virtual ~FontCache();
+
+	static void InitializeFontCaches();
 
 	static int GetDefaultFontHeight(FontSize fs);
 
@@ -76,7 +77,7 @@ public:
 	 * @param key The key to map to.
 	 * @param sprite The sprite that is being mapped.
 	 */
-	virtual void SetUnicodeGlyph(WChar key, SpriteID sprite) = 0;
+	virtual void SetUnicodeGlyph(char32_t key, SpriteID sprite) = 0;
 
 	/** Initialize the glyph map */
 	virtual void InitializeUnicodeGlyphMap() = 0;
@@ -107,9 +108,10 @@ public:
 	/**
 	 * Map a character into a glyph.
 	 * @param key The character.
+	 * @param fallback Allow fallback to the parent font.
 	 * @return The glyph ID used to draw the character.
 	 */
-	virtual GlyphID MapCharToGlyph(WChar key) = 0;
+	virtual GlyphID MapCharToGlyph(char32_t key, bool fallback = true) = 0;
 
 	/**
 	 * Read a font table from the font.
@@ -117,7 +119,7 @@ public:
 	 * @param length The length of the read data.
 	 * @return The loaded table data.
 	 */
-	virtual const void *GetFontTable(uint32 tag, size_t &length) = 0;
+	virtual const void *GetFontTable(uint32_t tag, size_t &length) = 0;
 
 	/**
 	 * Get the native OS font handle, if there is one.
@@ -145,6 +147,8 @@ public:
 		return FontCache::caches[fs];
 	}
 
+	static std::string GetName(FontSize fs);
+
 	/**
 	 * Check whether the font cache has a parent.
 	 */
@@ -160,20 +164,20 @@ public:
 };
 
 /** Map a SpriteID to the font size and key */
-static inline void SetUnicodeGlyph(FontSize size, WChar key, SpriteID sprite)
+inline void SetUnicodeGlyph(FontSize size, char32_t key, SpriteID sprite)
 {
 	FontCache::Get(size)->SetUnicodeGlyph(key, sprite);
 }
 
 /** Initialize the glyph map */
-static inline void InitializeUnicodeGlyphMap()
+inline void InitializeUnicodeGlyphMap()
 {
 	for (FontSize fs = FS_BEGIN; fs < FS_END; fs++) {
 		FontCache::Get(fs)->InitializeUnicodeGlyphMap();
 	}
 }
 
-static inline void ClearFontCache()
+inline void ClearFontCache()
 {
 	for (FontSize fs = FS_BEGIN; fs < FS_END; fs++) {
 		FontCache::Get(fs)->ClearFontCache();
@@ -181,20 +185,20 @@ static inline void ClearFontCache()
 }
 
 /** Get the Sprite for a glyph */
-static inline const Sprite *GetGlyph(FontSize size, WChar key)
+inline const Sprite *GetGlyph(FontSize size, char32_t key)
 {
 	FontCache *fc = FontCache::Get(size);
 	return fc->GetGlyph(fc->MapCharToGlyph(key));
 }
 
 /** Get the width of a glyph */
-static inline uint GetGlyphWidth(FontSize size, WChar key)
+inline uint GetGlyphWidth(FontSize size, char32_t key)
 {
 	FontCache *fc = FontCache::Get(size);
 	return fc->GetGlyphWidth(fc->MapCharToGlyph(key));
 }
 
-static inline bool GetDrawGlyphShadow(FontSize size)
+inline bool GetDrawGlyphShadow(FontSize size)
 {
 	return FontCache::Get(size)->GetDrawGlyphShadow();
 }
@@ -214,6 +218,8 @@ struct FontCacheSettings {
 	FontCacheSubSetting medium; ///< The normal font size.
 	FontCacheSubSetting large;  ///< The largest font; mostly used for newspapers.
 	FontCacheSubSetting mono;   ///< The mono space font used for license/readme viewers.
+	bool prefer_sprite;         ///< Whether to prefer the built-in sprite font over resizable fonts.
+	bool global_aa;             ///< Whether to anti alias all font sizes.
 };
 
 extern FontCacheSettings _fcsettings;
@@ -223,7 +229,7 @@ extern FontCacheSettings _fcsettings;
  * @param fs The font size to look up.
  * @return The settings.
  */
-static inline FontCacheSubSetting *GetFontCacheSubSetting(FontSize fs)
+inline FontCacheSubSetting *GetFontCacheSubSetting(FontSize fs)
 {
 	switch (fs) {
 		default: NOT_REACHED();

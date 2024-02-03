@@ -82,6 +82,22 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 	return GetStorage()->mode_instance;
 }
 
+/* static */ void ScriptObject::SetDoCommandAsyncMode(ScriptAsyncModeProc *proc, ScriptObject *instance)
+{
+	GetStorage()->async_mode = proc;
+	GetStorage()->async_mode_instance = instance;
+}
+
+/* static */ ScriptAsyncModeProc *ScriptObject::GetDoCommandAsyncMode()
+{
+	return GetStorage()->async_mode;
+}
+
+/* static */ ScriptObject *ScriptObject::GetDoCommandAsyncModeInstance()
+{
+	return GetStorage()->async_mode_instance;
+}
+
 /* static */ void ScriptObject::SetLastCommand(const CommandDataBuffer &data, Commands cmd)
 {
 	ScriptStorage *s = GetStorage();
@@ -184,6 +200,16 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 	return GetStorage()->allow_do_command;
 }
 
+/* static */ void ScriptObject::SetTimeMode(bool calendar)
+{
+	GetStorage()->time_mode = calendar;
+}
+
+/* static */ bool ScriptObject::IsCalendarTimeMode()
+{
+	return GetStorage()->time_mode;
+}
+
 /* static */ void ScriptObject::SetCompany(CompanyID company)
 {
 	if (GetStorage()->root_company == INVALID_OWNER) GetStorage()->root_company = company;
@@ -213,17 +239,14 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 	return GetStorage()->event_data;
 }
 
-/* static */ void *&ScriptObject::GetLogPointer()
+/* static */ ScriptLogTypes::LogData &ScriptObject::GetLogData()
 {
 	return GetStorage()->log_data;
 }
 
-/* static */ char *ScriptObject::GetString(StringID string)
+/* static */ std::string ScriptObject::GetString(StringID string)
 {
-	char buffer[64];
-	::GetString(buffer, string, lastof(buffer));
-	::StrMakeValidInPlace(buffer, lastof(buffer), SVS_NONE);
-	return ::stredup(buffer);
+	return ::StrMakeValid(::GetString(string));
 }
 
 /* static */ void ScriptObject::SetCallbackVariable(int index, int value)
@@ -242,7 +265,7 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 	return ScriptObject::GetActiveInstance()->GetDoCommandCallback();
 }
 
-std::tuple<bool, bool, bool> ScriptObject::DoCommandPrep()
+std::tuple<bool, bool, bool, bool> ScriptObject::DoCommandPrep()
 {
 	if (!ScriptObject::CanSuspend()) {
 		throw Script_FatalError("You are not allowed to execute any DoCommand (even indirect) in your constructor, Save(), Load(), and any valuator.");
@@ -251,17 +274,20 @@ std::tuple<bool, bool, bool> ScriptObject::DoCommandPrep()
 	/* Are we only interested in the estimate costs? */
 	bool estimate_only = GetDoCommandMode() != nullptr && !GetDoCommandMode()();
 
+	/* Should the command be executed asynchronously? */
+	bool asynchronous = GetDoCommandAsyncMode() != nullptr && GetDoCommandAsyncMode()();
+
 	bool networking = _networking && !_generating_world;
 
-	if (ScriptObject::GetCompany() != OWNER_DEITY && !::Company::IsValidID(ScriptObject::GetCompany())) {
+	if (!ScriptCompanyMode::IsDeity() && !ScriptCompanyMode::IsValid()) {
 		ScriptObject::SetLastError(ScriptError::ERR_PRECONDITION_INVALID_COMPANY);
-		return { true, estimate_only, networking };
+		return { true, estimate_only, asynchronous, networking };
 	}
 
-	return { false, estimate_only, networking };
+	return { false, estimate_only, asynchronous, networking };
 }
 
-bool ScriptObject::DoCommandProcessResult(const CommandCost &res, Script_SuspendCallbackProc *callback, bool estimate_only)
+bool ScriptObject::DoCommandProcessResult(const CommandCost &res, Script_SuspendCallbackProc *callback, bool estimate_only, bool asynchronous)
 {
 	/* Set the default callback to return a true/false result of the DoCommand */
 	if (callback == nullptr) callback = &ScriptInstance::DoCommandReturn;
@@ -285,8 +311,13 @@ bool ScriptObject::DoCommandProcessResult(const CommandCost &res, Script_Suspend
 	SetLastCost(res.GetCost());
 	SetLastCommandRes(true);
 
-	if (_generating_world) {
+	if (_generating_world || asynchronous) {
 		IncreaseDoCommandCosts(res.GetCost());
+		if (!_generating_world) {
+			/* Charge a nominal fee for asynchronously executed commands */
+			Squirrel *engine = ScriptObject::GetActiveInstance()->engine;
+			Squirrel::DecreaseOps(engine->GetVM(), 100);
+		}
 		if (callback != nullptr) {
 			/* Insert return value into to stack and throw a control code that
 			 * the return value in the stack should be used. */
@@ -308,4 +339,20 @@ bool ScriptObject::DoCommandProcessResult(const CommandCost &res, Script_Suspend
 	}
 
 	NOT_REACHED();
+}
+
+
+/* static */ Randomizer ScriptObject::random_states[OWNER_END];
+
+Randomizer &ScriptObject::GetRandomizer(Owner owner)
+{
+	return ScriptObject::random_states[owner];
+}
+
+void ScriptObject::InitializeRandomizers()
+{
+	Randomizer random = _random;
+	for (Owner owner = OWNER_BEGIN; owner < OWNER_END; owner++) {
+		ScriptObject::GetRandomizer(owner).SetSeed(random.Next());
+	}
 }

@@ -27,6 +27,8 @@
 #include "transparency.h"
 #include "gui.h"
 #include "signs_cmd.h"
+#include "timer/timer.h"
+#include "timer/timer_window.h"
 
 #include "widgets/sign_widget.h"
 
@@ -39,13 +41,13 @@ struct SignList {
 	/**
 	 * A GUIList contains signs and uses a StringFilter for filtering.
 	 */
-	typedef GUIList<const Sign *, StringFilter &> GUISignList;
+	typedef GUIList<const Sign *, std::nullptr_t, StringFilter &> GUISignList;
 
 	GUISignList signs;
 
 	StringFilter string_filter;                                       ///< The match string to be used when the GUIList is (re)-sorted.
 	static bool match_case;                                           ///< Should case sensitive matching be used?
-	static char default_name[64];                                     ///< Default sign name, used if Sign::name is nullptr.
+	static std::string default_name;                                  ///< Default sign name, used if Sign::name is nullptr.
 
 	/**
 	 * Creates a SignList with filtering disabled by default.
@@ -77,10 +79,10 @@ struct SignList {
 		 * a lot of them. Therefore a worthwhile performance gain can be made by
 		 * directly comparing Sign::name instead of going through the string
 		 * system for each comparison. */
-		const char *a_name = a->name.empty() ? SignList::default_name : a->name.c_str();
-		const char *b_name = b->name.empty() ? SignList::default_name : b->name.c_str();
+		const std::string &a_name = a->name.empty() ? SignList::default_name : a->name;
+		const std::string &b_name = b->name.empty() ? SignList::default_name : b->name;
 
-		int r = strnatcmp(a_name, b_name); // Sort by name (natural sorting).
+		int r = StrNaturalCompare(a_name, b_name); // Sort by name (natural sorting).
 
 		return r != 0 ? r < 0 : (a->index < b->index);
 	}
@@ -94,7 +96,7 @@ struct SignList {
 	static bool CDECL SignNameFilter(const Sign * const *a, StringFilter &filter)
 	{
 		/* Same performance benefit as above for sorting. */
-		const char *a_name = (*a)->name.empty() ? SignList::default_name : (*a)->name.c_str();
+		const std::string &a_name = (*a)->name.empty() ? SignList::default_name : (*a)->name;
 
 		filter.ResetState();
 		filter.AddLine(a_name);
@@ -102,14 +104,14 @@ struct SignList {
 	}
 
 	/** Filter sign list excluding OWNER_DEITY */
-	static bool CDECL OwnerDeityFilter(const Sign * const *a, StringFilter &filter)
+	static bool CDECL OwnerDeityFilter(const Sign * const *a, StringFilter &)
 	{
 		/* You should never be able to edit signs of owner DEITY */
 		return (*a)->owner != OWNER_DEITY;
 	}
 
 	/** Filter sign list by owner */
-	static bool CDECL OwnerVisibilityFilter(const Sign * const *a, StringFilter &filter)
+	static bool CDECL OwnerVisibilityFilter(const Sign * const *a, StringFilter &)
 	{
 		assert(!HasBit(_display_opt, DO_SHOW_COMPETITOR_SIGNS));
 		/* Hide sign if non-own signs are hidden in the viewport */
@@ -128,7 +130,7 @@ struct SignList {
 };
 
 bool SignList::match_case = false;
-char SignList::default_name[64];
+std::string SignList::default_name;
 
 /** Enum referring to the Hotkeys in the sign list window */
 enum SignListHotkeys {
@@ -163,7 +165,7 @@ struct SignListWindow : Window, SignList {
 	void OnInit() override
 	{
 		/* Default sign name, used if Sign::name is nullptr. */
-		GetString(SignList::default_name, STR_DEFAULT_SIGN_NAME, lastof(SignList::default_name));
+		SignList::default_name = GetString(STR_DEFAULT_SIGN_NAME);
 		this->signs.ForceResort();
 		this->SortSignsList();
 		this->SetDirty();
@@ -190,12 +192,12 @@ struct SignListWindow : Window, SignList {
 		this->DrawWidgets();
 	}
 
-	void DrawWidget(const Rect &r, int widget) const override
+	void DrawWidget(const Rect &r, WidgetID widget) const override
 	{
 		switch (widget) {
 			case WID_SIL_LIST: {
 				Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
-				uint text_offset_y = (this->resize.step_height - FONT_HEIGHT_NORMAL + 1) / 2;
+				uint text_offset_y = (this->resize.step_height - GetCharacterHeight(FS_NORMAL) + 1) / 2;
 				/* No signs? */
 				if (this->vscroll->GetCount() == 0) {
 					DrawString(tr.left, tr.right, tr.top + text_offset_y, STR_STATION_LIST_NONE);
@@ -209,7 +211,7 @@ struct SignListWindow : Window, SignList {
 				tr = tr.Indent(this->text_offset, rtl);
 
 				/* At least one sign available. */
-				for (uint16 i = this->vscroll->GetPosition(); this->vscroll->IsVisible(i) && i < this->vscroll->GetCount(); i++)
+				for (uint16_t i = this->vscroll->GetPosition(); this->vscroll->IsVisible(i) && i < this->vscroll->GetCount(); i++)
 				{
 					const Sign *si = this->signs[i];
 
@@ -224,19 +226,19 @@ struct SignListWindow : Window, SignList {
 		}
 	}
 
-	void SetStringParameters(int widget) const override
+	void SetStringParameters(WidgetID widget) const override
 	{
 		if (widget == WID_SIL_CAPTION) SetDParam(0, this->vscroll->GetCount());
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_SIL_LIST: {
-				uint id_v = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_SIL_LIST, WidgetDimensions::scaled.framerect.top);
-				if (id_v == INT_MAX) return;
+				auto it = this->vscroll->GetScrolledItemFromWidget(this->signs, pt.y, this, WID_SIL_LIST, WidgetDimensions::scaled.framerect.top);
+				if (it == this->signs.end()) return;
 
-				const Sign *si = this->signs[id_v];
+				const Sign *si = *it;
 				ScrollMainWindowToTile(TileVirtXY(si->x, si->y));
 				break;
 			}
@@ -261,13 +263,13 @@ struct SignListWindow : Window, SignList {
 		this->vscroll->SetCapacityFromWidget(this, WID_SIL_LIST, WidgetDimensions::scaled.framerect.Vertical());
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_SIL_LIST: {
 				Dimension spr_dim = GetSpriteSize(SPR_COMPANY_ICON);
 				this->text_offset = WidgetDimensions::scaled.frametext.left + spr_dim.width + 2; // 2 pixels space between icon and the sign text.
-				resize->height = std::max<uint>(FONT_HEIGHT_NORMAL, spr_dim.height + 2);
+				resize->height = std::max<uint>(GetCharacterHeight(FS_NORMAL), spr_dim.height + 2);
 				Dimension d = {(uint)(this->text_offset + WidgetDimensions::scaled.frametext.right), padding.height + 5 * resize->height};
 				*size = maxdim(*size, d);
 				break;
@@ -297,7 +299,7 @@ struct SignListWindow : Window, SignList {
 		return ES_HANDLED;
 	}
 
-	void OnEditboxChanged(int widget) override
+	void OnEditboxChanged(WidgetID widget) override
 	{
 		if (widget == WID_SIL_FILTER_TEXT) this->SetFilterString(this->filter_editbox.text.buf);
 	}
@@ -306,24 +308,24 @@ struct SignListWindow : Window, SignList {
 	{
 		if (this->signs.NeedRebuild()) {
 			this->BuildSignsList();
-			this->vscroll->SetCount((uint)this->signs.size());
+			this->vscroll->SetCount(this->signs.size());
 			this->SetWidgetDirty(WID_SIL_CAPTION);
 		}
 		this->SortSignsList();
 	}
 
-	void OnHundredthTick() override
-	{
+	/** Resort the sign listing on a regular interval. */
+	IntervalTimer<TimerWindow> rebuild_interval = {std::chrono::seconds(3), [this](auto) {
 		this->BuildSortSignList();
 		this->SetDirty();
-	}
+	}};
 
 	/**
 	 * Some data on this window has become invalid.
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	void OnInvalidateData(int data = 0, bool gui_scope = true) override
+	void OnInvalidateData([[maybe_unused]] int data = 0, [[maybe_unused]] bool gui_scope = true) override
 	{
 		/* When there is a filter string, we always need to rebuild the list even if
 		 * the amount of signs in total is unchanged, as the subset of signs that is
@@ -336,29 +338,25 @@ struct SignListWindow : Window, SignList {
 		}
 	}
 
-	static HotkeyList hotkeys;
+	/**
+	 * Handler for global hotkeys of the SignListWindow.
+	 * @param hotkey Hotkey
+	 * @return ES_HANDLED if hotkey was accepted.
+	 */
+	static EventState SignListGlobalHotkeys(int hotkey)
+	{
+		if (_game_mode == GM_MENU) return ES_NOT_HANDLED;
+		Window *w = ShowSignList();
+		if (w == nullptr) return ES_NOT_HANDLED;
+		return w->OnHotkey(hotkey);
+	}
+
+	static inline HotkeyList hotkeys{"signlist", {
+		Hotkey('F', "focus_filter_box", SLHK_FOCUS_FILTER_BOX),
+	}, SignListGlobalHotkeys};
 };
 
-/**
- * Handler for global hotkeys of the SignListWindow.
- * @param hotkey Hotkey
- * @return ES_HANDLED if hotkey was accepted.
- */
-static EventState SignListGlobalHotkeys(int hotkey)
-{
-	if (_game_mode == GM_MENU) return ES_NOT_HANDLED;
-	Window *w = ShowSignList();
-	if (w == nullptr) return ES_NOT_HANDLED;
-	return w->OnHotkey(hotkey);
-}
-
-static Hotkey signlist_hotkeys[] = {
-	Hotkey('F', "focus_filter_box", SLHK_FOCUS_FILTER_BOX),
-	HOTKEY_LIST_END
-};
-HotkeyList SignListWindow::hotkeys("signlist", signlist_hotkeys, SignListGlobalHotkeys);
-
-static const NWidgetPart _nested_sign_list_widgets[] = {
+static constexpr NWidgetPart _nested_sign_list_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_SIL_CAPTION), SetDataTip(STR_SIGN_LIST_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -379,19 +377,17 @@ static const NWidgetPart _nested_sign_list_widgets[] = {
 			EndContainer(),
 		EndContainer(),
 		NWidget(NWID_VERTICAL),
-			NWidget(NWID_VERTICAL), SetFill(0, 1),
-				NWidget(NWID_VSCROLLBAR, COLOUR_BROWN, WID_SIL_SCROLLBAR),
-			EndContainer(),
+			NWidget(NWID_VSCROLLBAR, COLOUR_BROWN, WID_SIL_SCROLLBAR),
 			NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 		EndContainer(),
 	EndContainer(),
 };
 
-static WindowDesc _sign_list_desc(
+static WindowDesc _sign_list_desc(__FILE__, __LINE__,
 	WDP_AUTO, "list_signs", 358, 138,
 	WC_SIGN_LIST, WC_NONE,
 	0,
-	_nested_sign_list_widgets, lengthof(_nested_sign_list_widgets),
+	std::begin(_nested_sign_list_widgets), std::end(_nested_sign_list_widgets),
 	&SignListWindow::hotkeys
 );
 
@@ -478,7 +474,7 @@ struct SignWindow : Window, SignList {
 		return next ? this->signs.front() : this->signs.back();
 	}
 
-	void SetStringParameters(int widget) const override
+	void SetStringParameters(WidgetID widget) const override
 	{
 		switch (widget) {
 			case WID_QES_CAPTION:
@@ -487,7 +483,7 @@ struct SignWindow : Window, SignList {
 		}
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_QES_LOCATION: {
@@ -525,7 +521,7 @@ struct SignWindow : Window, SignList {
 
 			case WID_QES_OK:
 				if (RenameSign(this->cur_sign, this->name_editbox.text.buf)) break;
-				FALLTHROUGH;
+				[[fallthrough]];
 
 			case WID_QES_CANCEL:
 				this->Close();
@@ -534,10 +530,10 @@ struct SignWindow : Window, SignList {
 	}
 };
 
-static const NWidgetPart _nested_query_sign_edit_widgets[] = {
+static constexpr NWidgetPart _nested_query_sign_edit_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, WID_QES_CAPTION), SetDataTip(STR_WHITE_STRING, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, WID_QES_CAPTION), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS), SetTextStyle(TC_WHITE),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_QES_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, STR_EDIT_SIGN_LOCATION_TOOLTIP),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY),
@@ -553,11 +549,11 @@ static const NWidgetPart _nested_query_sign_edit_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _query_sign_edit_desc(
-	WDP_CENTER, "query_sign", 0, 0,
+static WindowDesc _query_sign_edit_desc(__FILE__, __LINE__,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_QUERY_STRING, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_query_sign_edit_widgets, lengthof(_nested_query_sign_edit_widgets)
+	std::begin(_nested_query_sign_edit_widgets), std::end(_nested_query_sign_edit_widgets)
 );
 
 /**

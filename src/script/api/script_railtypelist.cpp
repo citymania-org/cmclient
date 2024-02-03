@@ -9,13 +9,17 @@
 
 #include "../../stdafx.h"
 #include "script_railtypelist.hpp"
+#include "script_error.hpp"
 #include "../../rail.h"
 
 #include "../../safeguards.h"
 
 ScriptRailTypeList::ScriptRailTypeList()
 {
+	EnforceDeityOrCompanyModeValid_Void();
+	bool is_deity = ScriptCompanyMode::IsDeity();
+	CompanyID owner = ScriptObject::GetCompany();
 	for (RailType rt = RAILTYPE_BEGIN; rt != RAILTYPE_END; rt++) {
-		if (ScriptObject::GetCompany() == OWNER_DEITY || ::HasRailtypeAvail(ScriptObject::GetCompany(), rt)) this->AddItem(rt);
+		if (is_deity || ::HasRailTypeAvail(owner, rt)) this->AddItem(rt);
 	}
 }

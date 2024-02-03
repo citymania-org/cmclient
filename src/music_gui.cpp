@@ -8,7 +8,6 @@
 /** @file music_gui.cpp GUI for the music playback. */
 
 #include "stdafx.h"
-#include <vector>
 #include "openttd.h"
 #include "base_media_base.h"
 #include "music/music_driver.hpp"
@@ -19,6 +18,7 @@
 #include "gfx_func.h"
 #include "zoom_func.h"
 #include "core/random_func.hpp"
+#include "core/mem_func.hpp"
 #include "error.h"
 #include "core/geometry_func.hpp"
 #include "string_func.h"
@@ -43,7 +43,7 @@ struct MusicSystem {
 		uint set_index;        ///< index of song in set
 
 		PlaylistEntry(const MusicSet *set, uint set_index) : MusicSongInfo(set->songinfo[set_index]), set(set), set_index(set_index) { }
-		bool IsValid() const { return !StrEmpty(this->songname); }
+		bool IsValid() const { return !this->songname.empty(); }
 	};
 	typedef std::vector<PlaylistEntry> Playlist;
 
@@ -87,6 +87,8 @@ struct MusicSystem {
 	void PlaylistClear();
 
 private:
+	uint GetSetIndex();
+	void SetPositionBySetIndex(uint set_index);
 	void ChangePlaylistPosition(int ofs);
 	int playlist_position;
 
@@ -147,18 +149,16 @@ void MusicSystem::ChangePlaylist(PlaylistChoices pl)
 {
 	assert(pl < PLCH_MAX && pl >= PLCH_ALLMUSIC);
 
-	this->displayed_playlist = this->standard_playlists[pl];
-	this->active_playlist = this->displayed_playlist;
-	this->selected_playlist = pl;
-	this->playlist_position = 0;
+	if (pl != PLCH_THEMEONLY) _settings_client.music.playlist = pl;
 
-	if (this->selected_playlist != PLCH_THEMEONLY) _settings_client.music.playlist = this->selected_playlist;
+	if (_game_mode != GM_MENU || pl == PLCH_THEMEONLY) {
+		this->displayed_playlist = this->standard_playlists[pl];
+		this->active_playlist = this->displayed_playlist;
+		this->selected_playlist = pl;
+		this->playlist_position = 0;
 
-	if (_settings_client.music.shuffle) {
-		this->Shuffle();
-		/* Shuffle() will also Play() if necessary, only start once */
-	} else if (_settings_client.music.playing) {
-		this->Play();
+		if (_settings_client.music.shuffle) this->Shuffle();
+		if (_settings_client.music.playing) this->Play();
 	}
 
 	InvalidateWindowData(WC_MUSIC_TRACK_SELECTION, 0);
@@ -171,39 +171,69 @@ void MusicSystem::ChangePlaylist(PlaylistChoices pl)
  */
 void MusicSystem::ChangeMusicSet(const std::string &set_name)
 {
-	BaseMusic::SetSet(set_name);
+	BaseMusic::SetSetByName(set_name);
 	BaseMusic::ini_set = set_name;
 
 	this->BuildPlaylists();
 	this->ChangePlaylist(this->selected_playlist);
 
 	InvalidateWindowData(WC_GAME_OPTIONS, WN_GAME_OPTIONS_GAME_OPTIONS, 0, true);
+	InvalidateWindowData(WC_MUSIC_TRACK_SELECTION, 0, 1, true);
+	InvalidateWindowData(WC_MUSIC_WINDOW, 0, 1, true);
 }
 
-/** Enable shuffle mode and restart playback */
+/**
+ * Set playlist position by set index.
+ * @param set_index Set index to select.
+ */
+void MusicSystem::SetPositionBySetIndex(uint set_index)
+{
+	auto it = std::find_if(std::begin(this->active_playlist), std::end(this->active_playlist), [&set_index](const PlaylistEntry &ple) { return ple.set_index == set_index; });
+	if (it != std::end(this->active_playlist)) this->playlist_position = std::distance(std::begin(this->active_playlist), it);
+}
+
+/**
+ * Get set index from current playlist position.
+ * @return current set index, or UINT_MAX if nothing is selected.
+ */
+uint MusicSystem::GetSetIndex()
+{
+	return static_cast<size_t>(this->playlist_position) < this->active_playlist.size()
+		? this->active_playlist[this->playlist_position].set_index
+		: UINT_MAX;
+}
+
+/**
+ * Enable shuffle mode.
+ */
 void MusicSystem::Shuffle()
 {
 	_settings_client.music.shuffle = true;
 
+	uint set_index = this->GetSetIndex();
 	this->active_playlist = this->displayed_playlist;
 	for (size_t i = 0; i < this->active_playlist.size(); i++) {
 		size_t shuffle_index = InteractiveRandom() % (this->active_playlist.size() - i);
 		std::swap(this->active_playlist[i], this->active_playlist[i + shuffle_index]);
 	}
+	this->SetPositionBySetIndex(set_index);
 
-	if (_settings_client.music.playing) this->Play();
-
+	InvalidateWindowData(WC_MUSIC_TRACK_SELECTION, 0);
 	InvalidateWindowData(WC_MUSIC_WINDOW, 0);
 }
 
-/** Disable shuffle and restart playback */
+/**
+ * Disable shuffle mode.
+ */
 void MusicSystem::Unshuffle()
 {
 	_settings_client.music.shuffle = false;
+
+	uint set_index = this->GetSetIndex();
 	this->active_playlist = this->displayed_playlist;
+	this->SetPositionBySetIndex(set_index);
 
-	if (_settings_client.music.playing) this->Play();
-
+	InvalidateWindowData(WC_MUSIC_TRACK_SELECTION, 0);
 	InvalidateWindowData(WC_MUSIC_WINDOW, 0);
 }
 
@@ -410,9 +440,9 @@ void MusicSystem::SaveCustomPlaylist(PlaylistChoices pl)
 	size_t num = 0;
 	MemSetT(settings_pl, 0, NUM_SONGS_PLAYLIST);
 
-	for (Playlist::const_iterator song = this->standard_playlists[pl].begin(); song != this->standard_playlists[pl].end(); ++song) {
+	for (const auto &song : this->standard_playlists[pl]) {
 		/* Music set indices in the settings playlist are 1-based, 0 means unused slot */
-		settings_pl[num++] = (byte)song->set_index + 1;
+		settings_pl[num++] = (byte)song.set_index + 1;
 	}
 }
 
@@ -456,7 +486,7 @@ struct MusicTrackSelectionWindow : public Window {
 		this->LowerWidget(WID_MTS_ALL + _settings_client.music.playlist);
 	}
 
-	void SetStringParameters(int widget) const override
+	void SetStringParameters(WidgetID widget) const override
 	{
 		switch (widget) {
 			case WID_MTS_PLAYLIST:
@@ -473,17 +503,22 @@ struct MusicTrackSelectionWindow : public Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	void OnInvalidateData(int data = 0, bool gui_scope = true) override
+	void OnInvalidateData([[maybe_unused]] int data = 0, [[maybe_unused]] bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		for (int i = 0; i < 6; i++) {
 			this->SetWidgetLoweredState(WID_MTS_ALL + i, i == _settings_client.music.playlist);
 		}
 		this->SetWidgetDisabledState(WID_MTS_CLEAR, _settings_client.music.playlist <= 3);
-		this->SetDirty();
+
+		if (data == 1) {
+			this->ReInit();
+		} else {
+			this->SetDirty();
+		}
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_MTS_PLAYLIST: {
@@ -502,10 +537,10 @@ struct MusicTrackSelectionWindow : public Window {
 			case WID_MTS_LIST_LEFT: case WID_MTS_LIST_RIGHT: {
 				Dimension d = {0, 0};
 
-				for (MusicSystem::Playlist::const_iterator song = _music.music_set.begin(); song != _music.music_set.end(); ++song) {
-					SetDParam(0, song->tracknr);
+				for (const auto &song : _music.music_set) {
+					SetDParam(0, song.tracknr);
 					SetDParam(1, 2);
-					SetDParamStr(2, song->songname);
+					SetDParamStr(2, song.songname);
 					Dimension d2 = GetStringBoundingBox(STR_PLAYLIST_TRACK_NAME);
 					d.width = std::max(d.width, d2.width);
 					d.height += d2.height;
@@ -518,19 +553,19 @@ struct MusicTrackSelectionWindow : public Window {
 		}
 	}
 
-	void DrawWidget(const Rect &r, int widget) const override
+	void DrawWidget(const Rect &r, WidgetID widget) const override
 	{
 		switch (widget) {
 			case WID_MTS_LIST_LEFT: {
 				GfxFillRect(r.Shrink(WidgetDimensions::scaled.bevel), PC_BLACK);
 
 				Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
-				for (MusicSystem::Playlist::const_iterator song = _music.music_set.begin(); song != _music.music_set.end(); ++song) {
-					SetDParam(0, song->tracknr);
+				for (const auto &song : _music.music_set) {
+					SetDParam(0, song.tracknr);
 					SetDParam(1, 2);
-					SetDParamStr(2, song->songname);
+					SetDParamStr(2, song.songname);
 					DrawString(tr, STR_PLAYLIST_TRACK_NAME);
-					tr.top += FONT_HEIGHT_SMALL;
+					tr.top += GetCharacterHeight(FS_SMALL);
 				}
 				break;
 			}
@@ -539,36 +574,36 @@ struct MusicTrackSelectionWindow : public Window {
 				GfxFillRect(r.Shrink(WidgetDimensions::scaled.bevel), PC_BLACK);
 
 				Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
-				for (MusicSystem::Playlist::const_iterator song = _music.active_playlist.begin(); song != _music.active_playlist.end(); ++song) {
-					SetDParam(0, song->tracknr);
+				for (const auto &song : _music.active_playlist) {
+					SetDParam(0, song.tracknr);
 					SetDParam(1, 2);
-					SetDParamStr(2, song->songname);
+					SetDParamStr(2, song.songname);
 					DrawString(tr, STR_PLAYLIST_TRACK_NAME);
-					tr.top += FONT_HEIGHT_SMALL;
+					tr.top += GetCharacterHeight(FS_SMALL);
 				}
 				break;
 			}
 		}
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_MTS_LIST_LEFT: { // add to playlist
-				int y = this->GetRowFromWidget(pt.y, widget, 0, FONT_HEIGHT_SMALL);
+				int y = this->GetRowFromWidget(pt.y, widget, 0, GetCharacterHeight(FS_SMALL));
 				_music.PlaylistAdd(y);
 				break;
 			}
 
 			case WID_MTS_LIST_RIGHT: { // remove from playlist
-				int y = this->GetRowFromWidget(pt.y, widget, 0, FONT_HEIGHT_SMALL);
+				int y = this->GetRowFromWidget(pt.y, widget, 0, GetCharacterHeight(FS_SMALL));
 				_music.PlaylistRemove(y);
 				break;
 			}
 
 			case WID_MTS_MUSICSET: {
 				int selected = 0;
-				ShowDropDownList(this, BuildMusicSetDropDownList(&selected), selected, widget, 0, true, false);
+				ShowDropDownList(this, BuildSetDropDownList<BaseMusic>(&selected), selected, widget);
 				break;
 			}
 
@@ -583,7 +618,7 @@ struct MusicTrackSelectionWindow : public Window {
 		}
 	}
 
-	void OnDropdownSelect(int widget, int index) override
+	void OnDropdownSelect(WidgetID widget, int index) override
 	{
 		switch (widget) {
 			case WID_MTS_MUSICSET:
@@ -595,7 +630,7 @@ struct MusicTrackSelectionWindow : public Window {
 	}
 };
 
-static const NWidgetPart _nested_music_track_selection_widgets[] = {
+static constexpr NWidgetPart _nested_music_track_selection_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_MTS_CAPTION), SetDataTip(STR_PLAYLIST_MUSIC_SELECTION_SETNAME, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -605,9 +640,9 @@ static const NWidgetPart _nested_music_track_selection_widgets[] = {
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 4, 2),
 			/* Left panel. */
 			NWidget(NWID_VERTICAL),
-				NWidget(WWT_LABEL, COLOUR_GREY), SetDataTip(STR_PLAYLIST_TRACK_INDEX, STR_NULL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_MTS_LIST_LEFT), SetMinimalSize(180, 194), SetDataTip(0x0, STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK), EndContainer(),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+				NWidget(WWT_LABEL, COLOUR_GREY), SetFill(1, 0), SetDataTip(STR_PLAYLIST_TRACK_INDEX, STR_NULL),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_MTS_LIST_LEFT), SetFill(1, 1), SetMinimalSize(180, 194), SetDataTip(0x0, STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK), EndContainer(),
+				NWidget(NWID_SPACER), SetFill(1, 0), SetMinimalSize(0, 2),
 			EndContainer(),
 			/* Middle buttons. */
 			NWidget(NWID_VERTICAL),
@@ -624,19 +659,19 @@ static const NWidgetPart _nested_music_track_selection_widgets[] = {
 			EndContainer(),
 			/* Right panel. */
 			NWidget(NWID_VERTICAL),
-				NWidget(WWT_LABEL, COLOUR_GREY, WID_MTS_PLAYLIST), SetDataTip(STR_PLAYLIST_PROGRAM, STR_NULL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_MTS_LIST_RIGHT), SetMinimalSize(180, 194), SetDataTip(0x0, STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK), EndContainer(),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
+				NWidget(WWT_LABEL, COLOUR_GREY, WID_MTS_PLAYLIST), SetFill(1, 0), SetDataTip(STR_PLAYLIST_PROGRAM, STR_NULL),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_MTS_LIST_RIGHT), SetFill(1, 1), SetMinimalSize(180, 194), SetDataTip(0x0, STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK), EndContainer(),
+				NWidget(NWID_SPACER), SetFill(1, 0), SetMinimalSize(0, 2),
 			EndContainer(),
 		EndContainer(),
 	EndContainer(),
 };
 
-static WindowDesc _music_track_selection_desc(
-	WDP_AUTO, "music_track", 0, 0,
+static WindowDesc _music_track_selection_desc(__FILE__, __LINE__,
+	WDP_AUTO, nullptr, 0, 0,
 	WC_MUSIC_TRACK_SELECTION, WC_NONE,
 	0,
-	_nested_music_track_selection_widgets, lengthof(_nested_music_track_selection_widgets)
+	std::begin(_nested_music_track_selection_widgets), std::end(_nested_music_track_selection_widgets)
 );
 
 static void ShowMusicTrackSelection()
@@ -661,12 +696,11 @@ struct MusicWindow : public Window {
 		this->SetWidgetsDisabledState(
 			BaseMusic::GetUsedSet()->num_available == 0,
 			WID_M_PREV, WID_M_NEXT, WID_M_STOP, WID_M_PLAY, WID_M_SHUFFLE,
-			WID_M_ALL, WID_M_OLD, WID_M_NEW, WID_M_EZY, WID_M_CUSTOM1, WID_M_CUSTOM2,
-			WIDGET_LIST_END
+			WID_M_ALL, WID_M_OLD, WID_M_NEW, WID_M_EZY, WID_M_CUSTOM1, WID_M_CUSTOM2
 			);
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
 	{
 		switch (widget) {
 			/* Make sure that WID_M_SHUFFLE and WID_M_PROGRAMME have the same size.
@@ -690,8 +724,8 @@ struct MusicWindow : public Window {
 
 			case WID_M_TRACK_NAME: {
 				Dimension d = GetStringBoundingBox(STR_MUSIC_TITLE_NONE);
-				for (MusicSystem::Playlist::const_iterator song = _music.music_set.begin(); song != _music.music_set.end(); ++song) {
-					SetDParamStr(0, song->songname);
+				for (const auto &song : _music.music_set) {
+					SetDParamStr(0, song.songname);
 					d = maxdim(d, GetStringBoundingBox(STR_MUSIC_TITLE_NAME));
 				}
 				d.width += padding.width;
@@ -708,7 +742,7 @@ struct MusicWindow : public Window {
 		}
 	}
 
-	void DrawWidget(const Rect &r, int widget) const override
+	void DrawWidget(const Rect &r, WidgetID widget) const override
 	{
 		switch (widget) {
 			case WID_M_TRACK_NR: {
@@ -755,7 +789,7 @@ struct MusicWindow : public Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	void OnInvalidateData(int data = 0, bool gui_scope = true) override
+	void OnInvalidateData([[maybe_unused]] int data = 0, [[maybe_unused]] bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		for (int i = 0; i < 6; i++) {
@@ -764,10 +798,14 @@ struct MusicWindow : public Window {
 
 		UpdateDisabledButtons();
 
-		this->SetDirty();
+		if (data == 1) {
+			this->ReInit();
+		} else {
+			this->SetDirty();
+		}
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_M_PREV: // skip to prev
@@ -824,7 +862,7 @@ struct MusicWindow : public Window {
 	}
 };
 
-static const NWidgetPart _nested_music_window_widgets[] = {
+static constexpr NWidgetPart _nested_music_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_MUSIC_JAZZ_JUKEBOX_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -888,11 +926,11 @@ static const NWidgetPart _nested_music_window_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _music_window_desc(
+static WindowDesc _music_window_desc(__FILE__, __LINE__,
 	WDP_AUTO, "music", 0, 0,
 	WC_MUSIC_WINDOW, WC_NONE,
 	0,
-	_nested_music_window_widgets, lengthof(_nested_music_window_widgets)
+	std::begin(_nested_music_window_widgets), std::end(_nested_music_window_widgets)
 );
 
 void ShowMusicWindow()

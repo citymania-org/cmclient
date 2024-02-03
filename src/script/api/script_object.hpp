@@ -15,15 +15,24 @@
 #include "../../rail_type.h"
 #include "../../string_func.h"
 #include "../../command_func.h"
+#include "../../core/random_func.hpp"
 
 #include "script_types.hpp"
+#include "script_log_types.hpp"
 #include "../script_suspend.hpp"
 #include "../squirrel.hpp"
+
+#include <utility>
 
 /**
  * The callback function for Mode-classes.
  */
 typedef bool (ScriptModeProc)();
+
+/**
+ * The callback function for Async Mode-classes.
+ */
+typedef bool (ScriptAsyncModeProc)();
 
 /**
  * Uper-parent object of all API classes. You should never use this class in
@@ -35,6 +44,7 @@ typedef bool (ScriptModeProc)();
 class ScriptObject : public SimpleCountedObject {
 friend class ScriptInstance;
 friend class ScriptController;
+friend class TestScriptController;
 protected:
 	/**
 	 * A class that handles the current active instance. By instantiating it at
@@ -72,6 +82,18 @@ public:
 	 * @return The instance.
 	 */
 	static class ScriptInstance *GetActiveInstance();
+
+	/**
+	 * Get a reference of the randomizer that brings this script random values.
+	 * @param owner The owner/script to get the randomizer for. This defaults to ScriptObject::GetRootCompany()
+	 */
+	static Randomizer &GetRandomizer(Owner owner = ScriptObject::GetRootCompany());
+
+	/**
+	 * Initialize/reset the script random states. The state of the scripts are
+	 * based on the current _random seed, but _random does not get changed.
+	 */
+	static void InitializeRandomizers();
 
 protected:
 	template<Commands TCmd, typename T> struct ScriptDoCommandHelper;
@@ -173,6 +195,21 @@ protected:
 	static ScriptObject *GetDoCommandModeInstance();
 
 	/**
+	 * Set the current async mode of your script to this proc.
+	 */
+	static void SetDoCommandAsyncMode(ScriptAsyncModeProc *proc, ScriptObject *instance);
+
+	/**
+	 * Get the current async mode your script is currently under.
+	 */
+	static ScriptModeProc *GetDoCommandAsyncMode();
+
+	/**
+	 * Get the instance of the current async mode your script is currently under.
+	 */
+	static ScriptObject *GetDoCommandAsyncModeInstance();
+
+	/**
 	 * Set the delay of the DoCommand.
 	 */
 	static void SetDoCommandDelay(uint ticks);
@@ -206,6 +243,20 @@ protected:
 	 * @return True iff DoCommands are allowed in the current scope.
 	 */
 	static bool GetAllowDoCommand();
+
+	/**
+	 * Set if the script is running in calendar time or economy time mode.
+	 * Calendar time is used by OpenTTD for technology like vehicle introductions and expiration, and variable snowline. It can be sped up or slowed down by the player.
+	 * Economy time always runs at the same pace and handles things like cargo production, everything related to money, etc.
+	 * @param Calendar Should we use calendar time mode? (Set to false for economy time mode.)
+	 */
+	static void SetTimeMode(bool calendar);
+
+	/**
+	 * Check if the script is operating in calendar time mode, or in economy time mode. See SetTimeMode() for more information.
+	 * @return True if we are in calendar time mode, false if we are in economy time mode.
+	 */
+	static bool IsCalendarTimeMode();
 
 	/**
 	 * Set the current company to execute commands for or request
@@ -261,18 +312,19 @@ protected:
 	/**
 	 * Get the pointer to store log message in.
 	 */
-	static void *&GetLogPointer();
+	static ScriptLogTypes::LogData &GetLogData();
 
 	/**
 	 * Get an allocated string with all control codes stripped off.
 	 */
-	static char *GetString(StringID string);
+	static std::string GetString(StringID string);
 
 private:
 	/* Helper functions for DoCommand. */
-	static std::tuple<bool, bool, bool> DoCommandPrep();
-	static bool DoCommandProcessResult(const CommandCost &res, Script_SuspendCallbackProc *callback, bool estimate_only);
+	static std::tuple<bool, bool, bool, bool> DoCommandPrep();
+	static bool DoCommandProcessResult(const CommandCost &res, Script_SuspendCallbackProc *callback, bool estimate_only, bool asynchronous);
 	static CommandCallbackData *GetDoCommandCallback();
+	static Randomizer random_states[OWNER_END]; ///< Random states for each of the scripts (game script uses OWNER_DEITY)
 };
 
 namespace ScriptObjectInternal {
@@ -321,7 +373,7 @@ namespace ScriptObjectInternal {
 template <Commands Tcmd, typename Tret, typename... Targs>
 bool ScriptObject::ScriptDoCommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...)>::Execute(Script_SuspendCallbackProc *callback, std::tuple<Targs...> args)
 {
-	auto [err, estimate_only, networking] = ScriptObject::DoCommandPrep();
+	auto [err, estimate_only, asynchronous, networking] = ScriptObject::DoCommandPrep();
 	if (err) return false;
 
 	if ((::GetCommandFlags<Tcmd>() & CMD_STR_CTRL) == 0) {
@@ -334,7 +386,7 @@ bool ScriptObject::ScriptDoCommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...)>
 	}
 
 	/* Do not even think about executing out-of-bounds tile-commands. */
-	if (tile != 0 && (tile >= MapSize() || (!IsValidTile(tile) && (GetCommandFlags<Tcmd>() & CMD_ALL_TILES) == 0))) return false;
+	if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && (GetCommandFlags<Tcmd>() & CMD_ALL_TILES) == 0))) return false;
 
 	/* Only set ClientID parameters when the command does not come from the network. */
 	if constexpr ((::GetCommandFlags<Tcmd>() & CMD_CLIENT_ID) != 0) ScriptObjectInternal::SetClientIds(args, std::index_sequence_for<Targs...>{});
@@ -346,11 +398,75 @@ bool ScriptObject::ScriptDoCommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...)>
 	Tret res = ::Command<Tcmd>::Unsafe((StringID)0, networking ? ScriptObject::GetDoCommandCallback() : nullptr, false, estimate_only, tile, args);
 
 	if constexpr (std::is_same_v<Tret, CommandCost>) {
-		return ScriptObject::DoCommandProcessResult(res, callback, estimate_only);
+		return ScriptObject::DoCommandProcessResult(res, callback, estimate_only, asynchronous);
 	} else {
 		ScriptObject::SetLastCommandResData(EndianBufferWriter<CommandDataBuffer>::FromValue(ScriptObjectInternal::RemoveFirstTupleElement(res)));
-		return ScriptObject::DoCommandProcessResult(std::get<0>(res), callback, estimate_only);
+		return ScriptObject::DoCommandProcessResult(std::get<0>(res), callback, estimate_only, asynchronous);
 	}
 }
+
+/**
+ * Internally used class to automate the ScriptObject reference counting.
+ * @api -all
+ */
+template <typename T>
+class ScriptObjectRef {
+private:
+	T *data; ///< The reference counted object.
+public:
+	/**
+	 * Create the reference counter for the given ScriptObject instance.
+	 * @param data The underlying object.
+	 */
+	ScriptObjectRef(T *data) : data(data)
+	{
+		this->data->AddRef();
+	}
+
+	/* No copy constructor. */
+	ScriptObjectRef(const ScriptObjectRef<T> &ref) = delete;
+
+	/* Move constructor. */
+	ScriptObjectRef(ScriptObjectRef<T> &&ref) noexcept : data(std::exchange(ref.data, nullptr))
+	{
+	}
+
+	/* No copy assignment. */
+	ScriptObjectRef& operator=(const ScriptObjectRef<T> &other) = delete;
+
+	/* Move assignment. */
+	ScriptObjectRef& operator=(ScriptObjectRef<T> &&other) noexcept
+	{
+		std::swap(this->data, other.data);
+		return *this;
+	}
+
+	/**
+	 * Release the reference counted object.
+	 */
+	~ScriptObjectRef()
+	{
+		if (this->data != nullptr) this->data->Release();
+	}
+
+	/**
+	 * Dereferencing this reference returns a reference to the reference
+	 * counted object
+	 * @return Reference to the underlying object.
+	 */
+	T &operator*()
+	{
+		return *this->data;
+	}
+
+	/**
+	 * The arrow operator on this reference returns the reference counted object.
+	 * @return Pointer to the underlying object.
+	 */
+	T *operator->()
+	{
+		return this->data;
+	}
+};
 
 #endif /* SCRIPT_OBJECT_HPP */
