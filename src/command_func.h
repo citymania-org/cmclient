@@ -19,6 +19,7 @@
 #include "tile_map.h"
 #include "date_func.h"
 #include "core/random_func.hpp"  // CM for _random debug print
+extern uint32 _frame_counter;
 
 
 struct CommandPacket;
@@ -178,6 +179,7 @@ public:
 		/* Execute the command here. All cost-relevant functions set the expenses type
 		 * themselves to the cost object at some point. */
 		InternalDoBefore(counter.IsTopLevel(), false);
+		Debug(misc, 0, "DO {}/{} {} {}({}) seed={} company={}", _date, _date_fract, _frame_counter, GetCommandName(Tcmd), Tcmd, _random.state[0] & 0xFF, (int)_current_company);
 		Tret res = CommandTraits<Tcmd>::proc(flags, args...);
 		InternalDoAfter(ExtractCommandCost(res), flags, counter.IsTopLevel(), false);
 
@@ -415,9 +417,9 @@ protected:
 			return {};
 		}
 
-		// Debug(misc, 0, "{}/{} {} {} company={} tile={}", _date, _date_fract, _random.state[0], GetCommandName(Tcmd), (int)_current_company, tile);
 		if (desync_log) LogCommandExecution(Tcmd, err_message, tile, EndianBufferWriter<CommandDataBuffer>::FromValue(args), false);
 
+		Debug(misc, 0, "EXEC {}/{} {} {}({}) seed={} company={} tile={}", _date, _date_fract, _frame_counter, GetCommandName(Tcmd), Tcmd, _random.state[0] & 0xFF, (int)_current_company, tile);
 		/* Actually try and execute the command. */
 		Tret res2 = std::apply(CommandTraits<Tcmd>::proc, std::tuple_cat(std::make_tuple(flags | DC_EXEC), args));
 
