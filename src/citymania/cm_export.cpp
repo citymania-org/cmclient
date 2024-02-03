@@ -15,6 +15,8 @@
 #include "../strings_type.h"
 #include "../table/palettes.h"
 #include "../table/sprites.h"
+#include "../table/strings.h"
+#include "../table/town_land.h"
 #include "../table/train_sprites.h"
 #include "../viewport_sprite_sorter.h"
 #include "../viewport_type.h"
@@ -198,6 +200,22 @@ void WriteHouseSpecInfo(JsonWriter &j) {
         j.kv("flags", hs->building_flags);
         j.kv("availability", hs->building_availability);
         j.kv("enabled", hs->enabled);
+        j.end_dict();
+    }
+    j.end_list();
+    j.begin_list_with_key("house_draw_tile_data");
+    for (auto &d : _town_draw_tile_data) {
+        j.begin_dict();
+        j.kv("ground_sprite", d.ground.sprite);
+        j.kv("ground_pal", d.ground.pal);
+        j.kv("building_sprite", d.building.sprite);
+        j.kv("building_pal", d.building.pal);
+        j.kv("subtile_x", d.subtile_x);
+        j.kv("subtile_y", d.subtile_y);
+        j.kv("width", d.width);
+        j.kv("height", d.height);
+        j.kv("dz", d.dz);
+        j.kv("draw_proc", d.draw_proc);
         j.end_dict();
     }
     j.end_list();
