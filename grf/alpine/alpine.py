@@ -49,11 +49,6 @@ class GRFFile(grf.LoadedResourceFile):
 
 
 class GRFSprite(grf.Sprite):
-
-    class Mask(grf.ImageMask):
-        def get_fingerprint(self):
-            return True
-
     def __init__(self, file, type, grf_bpp, sprite_id, *args, **kw):
         super().__init__(*args, **kw)
         self.file = file
@@ -83,10 +78,7 @@ class GRFSprite(grf.Sprite):
             'sprite_id': self.sprite_id,
         }
 
-    def load(self):
-        if self._image is not None:
-            return
-
+    def get_data_layers(self):
         data = self.file.get_sprite_data(self.sprite_id)
 
         a = np.frombuffer(data, dtype=np.uint8)
@@ -98,25 +90,13 @@ class GRFSprite(grf.Sprite):
         mask = None
         if self.type & 0x04 > 0:
             bpp -= 1
-            mask = Image.fromarray(a[:, :, -1], mode='P')
-            mask.putpalette(grf.PALETTE)
+            mask = a[:, :, -1]
 
-        if bpp == 3:
-            self._image = Image.fromarray(a[:, :, :bpp], mode='RGB'), grf.BPP_24
-        elif bpp == 4:
-            self._image = Image.fromarray(a[:, :, :bpp], mode='RGBA'), grf.BPP_32
-        else:
-            self._image = mask, grf.BPP_8
-            mask = None
+        if bpp == 3 or bpp == 4:
+            rgb = a[:, :, :bpp]
 
-        if mask is not None:
-            self.mask = self.Mask(mask)
+        return self.w, self.h, rgb, None, mask
 
-        # return self._image[0].show()
-
-    def get_image(self):
-        self.load()
-        return self._image
 
 
 class RecolourSprite(grf.Sprite):
@@ -185,9 +165,9 @@ class SnowTransitionSprite(grf.Sprite):
                 if cache_key in cache:
                     data[y, x] = cache[cache_key]
                     continue
-                snow_colour = grf.SPECTRA_PALETTE[snow_index]
-                grass_colour = grf.SPECTRA_PALETTE[grass_index]
-                grass_colour = grass_colour.blend(spectra.rgb(0.7, 0.7, 0), ratio=grass_blend)
+                snow_colour = grf.OKLAB_PALETTE[snow_index]
+                grass_colour = grf.OKLAB_PALETTE[grass_index]
+                grass_colour = grf.oklab_blend(grass_colour, grf.srgb_to_oklab((0.7, 0.7, 0)), ratio=grass_blend)
                 grass_colour = grass_colour.desaturate(grass_desaturate)
                 data[y, x] = cache[cache_key] = grf.find_best_color(snow_colour.blend(grass_colour, ratio=ratio))
         im = Image.fromarray(data)
