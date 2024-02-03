@@ -1,7 +1,6 @@
 #include "../stdafx.h"
 
 #include "../company_base.h"
-#include "../date_func.h"
 #include "../debug.h"
 #include "../saveload/compat/storage_sl_compat.h"
 #include "../saveload/saveload.h"

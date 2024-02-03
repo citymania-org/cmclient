@@ -2823,7 +2823,7 @@ static_assert(lengthof(_saveload_formats) <= 8);  // uint8 is used for the bitse
  * @param client_formats  Bitset of savegame formats available to the client (as returned by GetAvailableLoadFormats)
  * @return SavePreset that satisfies both server and client or std::nullopt
  */
-std::optional<SavePreset> FindCompatibleSavePreset(const std::string &server_formats, uint8 client_formats)
+std::optional<SavePreset> FindCompatibleSavePreset(const std::string &server_formats, uint8_t client_formats)
 {
     std::istringstream iss(server_formats.empty() ? DEFAULT_NETWORK_SAVEGAME_COMPRESSION : server_formats);
     std::string preset_str;
@@ -2839,9 +2839,9 @@ std::optional<SavePreset> FindCompatibleSavePreset(const std::string &server_for
  * Return the bitset of savegame formats that this game instance can load
  * @return bitset of available savegame formats
  */
-uint8 GetAvailableLoadFormats()
+uint8_t GetAvailableLoadFormats()
 {
-    uint8 res = 0;
+    uint8_t res = 0;
     for(auto &slf : _saveload_formats) {
         if (slf.init_load != nullptr) {
             res |= (1 << slf.id);

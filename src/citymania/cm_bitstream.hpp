@@ -7,20 +7,20 @@
 
 namespace citymania {
 
-typedef std::vector<uint8> u8vector;
+typedef std::vector<uint8_t> u8vector;
 
 class BitOStream {
 protected:
 	u8vector f;
-	uint32 c;
-	uint32 v;
+	uint32_t c;
+	uint32_t v;
 
 public:
 	BitOStream(): c(0), v(0) {}
 	virtual ~BitOStream(){}
 	void Reserve(int bytes);
-	void WriteBytes(uint32 value, int amount);
-	void WriteBytes64(uint64 value, int amount);
+	void WriteBytes(uint32_t value, int amount);
+	void WriteBytes64(uint64_t value, int amount);
 	void WriteMoney(Money value);
 	const u8vector &GetVector();
 	uint GetByteSize() const;
@@ -35,12 +35,12 @@ class BitIStreamUnexpectedEnd: public std::exception {
 class BitIStream {
 protected:
 	u8vector &f;
-	uint32 i;
+	uint32_t i;
 public:
 	BitIStream(u8vector &data): f(data), i(0) {}
 	virtual ~BitIStream(){}
-	uint32 ReadBytes(uint amount);
-	uint64 ReadBytes64(uint amount);
+	uint32_t ReadBytes(uint amount);
+	uint64_t ReadBytes64(uint amount);
 	Money ReadMoney();
 };
 

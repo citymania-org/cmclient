@@ -1744,7 +1744,7 @@ static bool GrowTownAtRoad(Town *t, TileIndex tile)
 			break;
 	}
 
-	uint16 prev_houses = t->cache.num_houses;
+	uint16_t prev_houses = t->cache.num_houses;
 	do {
 		RoadBits cur_rb = GetTownRoadBits(tile); // The RoadBits of the current tile
 

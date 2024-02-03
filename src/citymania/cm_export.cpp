@@ -6,6 +6,7 @@
 #include "../gfx_func.h"
 #include "../gfx_type.h"
 #include "../engine_base.h"
+#include "../palette_func.h"  // CM _colour_gradient
 #include "../spritecache.h"
 #include "../strings_func.h"
 #include "../strings_type.h"
@@ -22,7 +23,7 @@
 
 namespace citymania {
 
-extern SpriteID (*GetDefaultTrainSprite)(uint8, Direction);  // train_cmd.cpp
+extern SpriteID (*GetDefaultTrainSprite)(uint8_t, Direction);  // train_cmd.cpp
 
 namespace data_export {
 
@@ -70,7 +71,7 @@ public:
         f << val;
     }
 
-    void value(uint64 val) {
+    void value(uint64_t val) {
         f << val;
     }
 
@@ -97,9 +98,8 @@ public:
     }
 
     void ks(const char *k, StringID s) {
-        GetString(buffer, s, lastof(buffer));
         key(k);
-        value(buffer);
+        value(GetString(s));
     }
 
     void begin_dict_with_key(const char *k) {
@@ -149,8 +149,8 @@ void WriteHouseSpecInfo(JsonWriter &j) {
         j.begin_dict();
         JKV(j, cs->initial_payment);
         j.kv("id", cs->bitnum);
-        j.kv("transit_days_1", cs->transit_days[0]);
-        j.kv("transit_days_2", cs->transit_days[1]);
+        j.kv("transit_periods_1", cs->transit_periods[0]);
+        j.kv("transit_periods_2", cs->transit_periods[1]);
         JKV(j, cs->weight);
         JKV(j, cs->multiplier);
         JKV(j, cs->is_freight);
@@ -164,7 +164,7 @@ void WriteHouseSpecInfo(JsonWriter &j) {
         j.ks("abbrev", cs->abbrev);
 
         for (uint i = 0; i < sizeof(cs->label); i++) {
-            cargo_label[i] = GB(cs->label, (uint8)(sizeof(cs->label) - i - 1) * 8, 8);
+            cargo_label[i] = GB(cs->label, (uint8_t)(sizeof(cs->label) - i - 1) * 8, 8);
         }
         cargo_label[sizeof(cs->label)] = '\0';
         JKV(j, cs->label);
@@ -203,7 +203,7 @@ void WritePaletteInfo(JsonWriter &j) {
         j.f << "]";
     }
     j.end_list();
-    const byte *remap = GetNonSprite(GB(PALETTE_TO_RED, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
+    const byte *remap = GetNonSprite(GB(PALETTE_TO_RED, 0, PALETTE_WIDTH), SpriteType::Recolour) + 1;
 }
 
 void WriteEngineInfo(JsonWriter &j) {
@@ -221,9 +221,9 @@ void WriteEngineInfo(JsonWriter &j) {
             JKV(j, e->info.cargo_type);
             JKV(j, e->info.cargo_age_period);
             JKV(j, e->info.climates);
-            JKV(j, e->info.base_intro);
-            JKV(j, e->info.lifelength);
-            JKV(j, e->info.base_life);
+            JKV(j, e->info.base_intro.base());
+            JKV(j, e->info.lifelength.base());
+            JKV(j, e->info.base_life.base());
             JKV(j, e->info.refit_mask);
             JKV(j, e->info.refit_cost);
             JKV(j, e->info.load_amount);

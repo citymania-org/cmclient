@@ -99,7 +99,7 @@ Game::Game() {
                 if (this->towns_growth_tiles_last_month[tile] < state) this->towns_growth_tiles_last_month[tile] = state;
             }
         }
-        for (TileIndex t = 0; t < MapSize(); t++) {
+        for (auto t : Map::Iterate()) {
             if (!IsTileType(t, MP_HOUSE)) continue;
             Town *town = Town::GetByTile(t);
             if (!IsHouseCompleted(t))

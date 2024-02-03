@@ -412,7 +412,7 @@ enum SavegameType {
 
 namespace citymania {
 
-enum class CompressionMethod : uint8 {
+enum class CompressionMethod : uint8_t {
 	None = 0u,
 	LZO = 1u,
 	Zlib = 2u,
@@ -422,9 +422,9 @@ enum class CompressionMethod : uint8 {
 
 /** The format for a reader/writer type of a savegame */
 struct SaveLoadFormat {
-	uint8 id;                             ///< unique integer id of this savegame format (olny used for networkking so is not guaranteed to be preserved between versions)
+	uint8_t id;                             ///< unique integer id of this savegame format (olny used for networkking so is not guaranteed to be preserved between versions)
 	const char *name;                     ///< name of the compressor/decompressor (debug-only)
-	uint32 tag;                           ///< the 4-letter tag by which it is identified in the savegame
+	uint32_t tag;                           ///< the 4-letter tag by which it is identified in the savegame
 
 	LoadFilter *(*init_load)(LoadFilter *chain);                    ///< Constructor for the load filter.
 	SaveFilter *(*init_write)(SaveFilter *chain, byte compression); ///< Constructor for the save filter.
@@ -441,8 +441,8 @@ struct SavePreset {
 	byte compression_level;        ///< compression level to use
 };
 
-std::optional<SavePreset> FindCompatibleSavePreset(const std::string &server_formats, uint8 client_format_flags);
-uint8 GetAvailableLoadFormats();
+std::optional<SavePreset> FindCompatibleSavePreset(const std::string &server_formats, uint8_t client_format_flags);
+uint8_t GetAvailableLoadFormats();
 
 } // namespace citymania
 

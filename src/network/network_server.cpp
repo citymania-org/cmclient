@@ -912,7 +912,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_JOIN(Packet *p)
 	std::string client_name = p->Recv_string(NETWORK_CLIENT_NAME_LENGTH);
 	CompanyID playas = (Owner)p->Recv_uint8();
 	p->Recv_uint8();  // former client_lang now 0
-	uint8 savegame_formats = p->CanReadFromPacket(1, false) ? p->Recv_uint8() : 23u /* assume non-modded has everything but zstd */;
+	uint8_t savegame_formats = p->CanReadFromPacket(1, false) ? p->Recv_uint8() : 23u /* assume non-modded has everything but zstd */;
 
 	if (this->HasClientQuit()) return NETWORK_RECV_STATUS_CLIENT_QUIT;
 
