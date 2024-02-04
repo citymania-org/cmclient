@@ -30,6 +30,8 @@
 #include "station_cmd.h"
 #include "water_cmd.h"
 #include "waypoint_cmd.h"
+#include "timer/timer.h"
+#include "timer/timer_game_calendar.h"
 
 #include "widgets/dock_widget.h"
 
@@ -46,7 +48,7 @@ static void ShowBuildDocksDepotPicker(Window *parent);
 
 static Axis _ship_depot_direction;
 
-void CcBuildDocks(Commands cmd, const CommandCost &result, TileIndex tile)
+void CcBuildDocks(Commands, const CommandCost &result, TileIndex tile)
 {
 	if (result.Failed()) return;
 
@@ -54,7 +56,7 @@ void CcBuildDocks(Commands cmd, const CommandCost &result, TileIndex tile)
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 }
 
-void CcPlaySound_CONSTRUCTION_WATER(Commands cmd, const CommandCost &result, TileIndex tile)
+void CcPlaySound_CONSTRUCTION_WATER(Commands, const CommandCost &result, TileIndex tile)
 {
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_02_CONSTRUCTION_WATER, tile);
 }
@@ -109,7 +111,7 @@ struct BuildDocksToolbarWindow : Window {
 		if (_settings_client.gui.link_terraform_toolbar) ShowTerraformToolbar(this);
 	}
 
-	void Close() override
+	void Close([[maybe_unused]] int data = 0) override
 	{
 		if (_game_mode == GM_NORMAL && this->IsWidgetLowered(WID_DT_STATION)) SetViewportCatchmentStation(nullptr, true);
 		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WC_SCEN_LAND_GEN, 0, false);
@@ -121,7 +123,7 @@ struct BuildDocksToolbarWindow : Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	void OnInvalidateData(int data = 0, bool gui_scope = true) override
+	void OnInvalidateData([[maybe_unused]] int data = 0, [[maybe_unused]] bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 
@@ -129,8 +131,7 @@ struct BuildDocksToolbarWindow : Window {
 		this->SetWidgetsDisabledState(!can_build,
 			WID_DT_DEPOT,
 			WID_DT_STATION,
-			WID_DT_BUOY,
-			WIDGET_LIST_END);
+			WID_DT_BUOY);
 		if (!can_build) {
 			CloseWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
 			CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
@@ -150,7 +151,7 @@ struct BuildDocksToolbarWindow : Window {
 		}
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_DT_CANAL: // Build canal button
@@ -191,7 +192,7 @@ struct BuildDocksToolbarWindow : Window {
 		this->last_clicked_widget = (DockToolbarWidgets)widget;
 	}
 
-	void OnPlaceObject(Point pt, TileIndex tile) override
+	void OnPlaceObject([[maybe_unused]] Point pt, TileIndex tile) override
 	{
 		switch (this->last_clicked_widget) {
 			case WID_DT_CANAL: // Build canal button
@@ -251,12 +252,12 @@ struct BuildDocksToolbarWindow : Window {
 		}
 	}
 
-	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
+	void OnPlaceDrag(ViewportPlaceMethod select_method, [[maybe_unused]] ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt) override
 	{
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
-	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
+	void OnPlaceMouseUp([[maybe_unused]] ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (pt.x != -1) {
 			switch (select_proc) {
@@ -289,7 +290,7 @@ struct BuildDocksToolbarWindow : Window {
 		citymania::AbortStationPlacement();
 	}
 
-	void OnPlacePresize(Point pt, TileIndex tile_from) override
+	void OnPlacePresize([[maybe_unused]] Point pt, TileIndex tile_from) override
 	{
 		TileIndex tile_to = tile_from;
 
@@ -308,42 +309,36 @@ struct BuildDocksToolbarWindow : Window {
 		VpSetPresizeRange(tile_from, tile_to);
 	}
 
-	static HotkeyList hotkeys;
+	/**
+	 * Handler for global hotkeys of the BuildDocksToolbarWindow.
+	 * @param hotkey Hotkey
+	 * @return ES_HANDLED if hotkey was accepted.
+	 */
+	static EventState DockToolbarGlobalHotkeys(int hotkey)
+	{
+		if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
+		Window *w = ShowBuildDocksToolbar();
+		if (w == nullptr) return ES_NOT_HANDLED;
+		return w->OnHotkey(hotkey);
+	}
+
+	static inline HotkeyList hotkeys{"dockstoolbar", {
+		Hotkey('1', "canal", WID_DT_CANAL),
+		Hotkey('2', "lock", WID_DT_LOCK),
+		Hotkey('3', "demolish", WID_DT_DEMOLISH),
+		Hotkey('4', "depot", WID_DT_DEPOT),
+		Hotkey('5', "dock", WID_DT_STATION),
+		Hotkey('6', "buoy", WID_DT_BUOY),
+		Hotkey('7', "river", WID_DT_RIVER),
+		Hotkey({'B', '8'}, "aqueduct", WID_DT_BUILD_AQUEDUCT),
+	}, DockToolbarGlobalHotkeys};
 };
-
-/**
- * Handler for global hotkeys of the BuildDocksToolbarWindow.
- * @param hotkey Hotkey
- * @return ES_HANDLED if hotkey was accepted.
- */
-static EventState DockToolbarGlobalHotkeys(int hotkey)
-{
-	if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
-	Window *w = ShowBuildDocksToolbar();
-	if (w == nullptr) return ES_NOT_HANDLED;
-	return w->OnHotkey(hotkey);
-}
-
-const uint16 _dockstoolbar_aqueduct_keys[] = {'B', '8', 0};
-
-static Hotkey dockstoolbar_hotkeys[] = {
-	Hotkey('1', "canal", WID_DT_CANAL),
-	Hotkey('2', "lock", WID_DT_LOCK),
-	Hotkey('3', "demolish", WID_DT_DEMOLISH),
-	Hotkey('4', "depot", WID_DT_DEPOT),
-	Hotkey('5', "dock", WID_DT_STATION),
-	Hotkey('6', "buoy", WID_DT_BUOY),
-	Hotkey('7', "river", WID_DT_RIVER),
-	Hotkey(_dockstoolbar_aqueduct_keys, "aqueduct", WID_DT_BUILD_AQUEDUCT),
-	HOTKEY_LIST_END
-};
-HotkeyList BuildDocksToolbarWindow::hotkeys("dockstoolbar", dockstoolbar_hotkeys, DockToolbarGlobalHotkeys);
 
 /**
  * Nested widget parts of docks toolbar, game version.
  * Position of #WID_DT_RIVER widget has changed.
  */
-static const NWidgetPart _nested_build_docks_toolbar_widgets[] = {
+static constexpr NWidgetPart _nested_build_docks_toolbar_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_WATERWAYS_TOOLBAR_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -361,11 +356,11 @@ static const NWidgetPart _nested_build_docks_toolbar_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _build_docks_toolbar_desc(
+static WindowDesc _build_docks_toolbar_desc(__FILE__, __LINE__,
 	WDP_ALIGN_TOOLBAR, "toolbar_water", 0, 0,
 	WC_BUILD_TOOLBAR, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_build_docks_toolbar_widgets, lengthof(_nested_build_docks_toolbar_widgets),
+	std::begin(_nested_build_docks_toolbar_widgets), std::end(_nested_build_docks_toolbar_widgets),
 	&BuildDocksToolbarWindow::hotkeys
 );
 
@@ -388,7 +383,7 @@ Window *ShowBuildDocksToolbar()
  * Nested widget parts of docks toolbar, scenario editor version.
  * Positions of #WID_DT_DEPOT, #WID_DT_STATION, and #WID_DT_BUOY widgets have changed.
  */
-static const NWidgetPart _nested_build_docks_scen_toolbar_widgets[] = {
+static constexpr NWidgetPart _nested_build_docks_scen_toolbar_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_WATERWAYS_TOOLBAR_CAPTION_SE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -405,11 +400,11 @@ static const NWidgetPart _nested_build_docks_scen_toolbar_widgets[] = {
 };
 
 /** Window definition for the build docks in scenario editor window. */
-static WindowDesc _build_docks_scen_toolbar_desc(
+static WindowDesc _build_docks_scen_toolbar_desc(__FILE__, __LINE__,
 	WDP_AUTO, "toolbar_water_scen", 0, 0,
 	WC_SCEN_BUILD_TOOLBAR, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_build_docks_scen_toolbar_widgets, lengthof(_nested_build_docks_scen_toolbar_widgets)
+	std::begin(_nested_build_docks_scen_toolbar_widgets), std::end(_nested_build_docks_scen_toolbar_widgets)
 );
 
 /**
@@ -439,7 +434,7 @@ public:
 		this->LowerWidget(_settings_client.gui.station_show_coverage + BDSW_LT_OFF);
 	}
 
-	void Close() override
+	void Close([[maybe_unused]] int data = 0) override
 	{
 		CloseWindowById(WC_SELECT_STATION, 0);
 		this->PickerWindowBase::Close();
@@ -463,7 +458,7 @@ public:
 
 		/* strings such as 'Size' and 'Coverage Area' */
 		Rect r = this->GetWidget<NWidgetBase>(BDSW_ACCEPTANCE)->GetCurrentRect();
-		int top = r.top + WidgetDimensions::scaled.vsep_normal;
+		int top = r.top;
 		top = DrawStationCoverageAreaText(r.left, r.right, top, SCT_ALL, rad, false) + WidgetDimensions::scaled.vsep_normal;
 		top = DrawStationCoverageAreaText(r.left, r.right, top, SCT_ALL, rad, true) + WidgetDimensions::scaled.vsep_normal;
 		top = DrawStationAuthorityText(r.left, r.right, top) + WidgetDimensions::scaled.vsep_normal;
@@ -475,7 +470,7 @@ public:
 		}
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case BDSW_LT_OFF:
@@ -491,33 +486,41 @@ public:
 		}
 	}
 
-	void OnRealtimeTick(uint delta_ms) override
+	void OnRealtimeTick([[maybe_unused]] uint delta_ms) override
 	{
 		CheckRedrawStationCoverage(this);
 	}
+
+	IntervalTimer<TimerGameCalendar> yearly_interval = {{TimerGameCalendar::YEAR, TimerGameCalendar::Priority::NONE}, [this](auto) {
+		this->InvalidateData();
+	}};
 };
 
 /** Nested widget parts of a build dock station window. */
-static const NWidgetPart _nested_build_dock_station_widgets[] = {
+static constexpr NWidgetPart _nested_build_dock_station_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_STATION_BUILD_DOCK_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN, BDSW_BACKGROUND),
-		NWidget(WWT_LABEL, COLOUR_DARK_GREEN, BDSW_INFO), SetPadding(WidgetDimensions::unscaled.framerect), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL), SetFill(1, 0),
-		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(14, 0, 14),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, BDSW_LT_OFF), SetMinimalSize(60, 12), SetFill(1, 0), SetDataTip(STR_STATION_BUILD_COVERAGE_OFF, STR_STATION_BUILD_COVERAGE_AREA_OFF_TOOLTIP),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, BDSW_LT_ON), SetMinimalSize(60, 12), SetFill(1, 0), SetDataTip(STR_STATION_BUILD_COVERAGE_ON, STR_STATION_BUILD_COVERAGE_AREA_ON_TOOLTIP),
+		NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_normal, 0), SetPadding(WidgetDimensions::unscaled.picker),
+			NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_picker, 0),
+				NWidget(WWT_LABEL, COLOUR_DARK_GREEN, BDSW_INFO), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL), SetFill(1, 0),
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(14, 0, 14),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, BDSW_LT_OFF), SetMinimalSize(60, 12), SetFill(1, 0), SetDataTip(STR_STATION_BUILD_COVERAGE_OFF, STR_STATION_BUILD_COVERAGE_AREA_OFF_TOOLTIP),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, BDSW_LT_ON), SetMinimalSize(60, 12), SetFill(1, 0), SetDataTip(STR_STATION_BUILD_COVERAGE_ON, STR_STATION_BUILD_COVERAGE_AREA_ON_TOOLTIP),
+				EndContainer(),
+			EndContainer(),
+			NWidget(WWT_EMPTY, COLOUR_GREY, BDSW_ACCEPTANCE), SetResize(0, 1), SetMinimalTextLines(2, WidgetDimensions::unscaled.vsep_normal),
 		EndContainer(),
-		NWidget(WWT_EMPTY, COLOUR_GREY, BDSW_ACCEPTANCE), SetPadding(WidgetDimensions::unscaled.framerect), SetResize(0, 1),
 	EndContainer(),
 };
 
-static WindowDesc _build_dock_station_desc(
+static WindowDesc _build_dock_station_desc(__FILE__, __LINE__,
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_STATION, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
-	_nested_build_dock_station_widgets, lengthof(_nested_build_dock_station_widgets)
+	std::begin(_nested_build_dock_station_widgets), std::end(_nested_build_dock_station_widgets)
 );
 
 static void ShowBuildDockStationPicker(Window *parent)
@@ -540,11 +543,11 @@ public:
 	BuildDocksDepotWindow(WindowDesc *desc, Window *parent) : PickerWindowBase(desc, parent)
 	{
 		this->InitNested(TRANSPORT_WATER);
-		this->LowerWidget(_ship_depot_direction + WID_BDD_X);
+		this->LowerWidget(WID_BDD_X + _ship_depot_direction);
 		UpdateDocksDirection();
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_BDD_X:
@@ -555,7 +558,7 @@ public:
 		}
 	}
 
-	void DrawWidget(const Rect &r, int widget) const override
+	void DrawWidget(const Rect &r, WidgetID widget) const override
 	{
 		DrawPixelInfo tmp_dpi;
 
@@ -564,30 +567,29 @@ public:
 			case WID_BDD_Y: {
 				Axis axis = widget == WID_BDD_X ? AXIS_X : AXIS_Y;
 
-				if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.Width(), r.Height())) {
-					DrawPixelInfo *old_dpi = _cur_dpi;
-					_cur_dpi = &tmp_dpi;
-					int x = (r.Width()  - ScaleSpriteTrad(96)) / 2;
-					int y = (r.Height() - ScaleSpriteTrad(64)) / 2;
+				Rect ir = r.Shrink(WidgetDimensions::scaled.bevel);
+				if (FillDrawPixelInfo(&tmp_dpi, ir)) {
+					AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
+					int x = (ir.Width()  - ScaleSpriteTrad(96)) / 2;
+					int y = (ir.Height() - ScaleSpriteTrad(64)) / 2;
 					int x1 = ScaleSpriteTrad(63);
 					int x2 = ScaleSpriteTrad(31);
 					DrawShipDepotSprite(x + (axis == AXIS_X ? x1 : x2), y + ScaleSpriteTrad(17), axis, DEPOT_PART_NORTH);
 					DrawShipDepotSprite(x + (axis == AXIS_X ? x2 : x1), y + ScaleSpriteTrad(33), axis, DEPOT_PART_SOUTH);
-					_cur_dpi = old_dpi;
 				}
 				break;
 			}
 		}
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_BDD_X:
 			case WID_BDD_Y:
-				this->RaiseWidget(_ship_depot_direction + WID_BDD_X);
+				this->RaiseWidget(WID_BDD_X + _ship_depot_direction);
 				_ship_depot_direction = (widget == WID_BDD_X ? AXIS_X : AXIS_Y);
-				this->LowerWidget(_ship_depot_direction + WID_BDD_X);
+				this->LowerWidget(WID_BDD_X + _ship_depot_direction);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				UpdateDocksDirection();
 				this->SetDirty();
@@ -596,28 +598,24 @@ public:
 	}
 };
 
-static const NWidgetPart _nested_build_docks_depot_widgets[] = {
+static constexpr NWidgetPart _nested_build_docks_depot_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_DEPOT_BUILD_SHIP_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BDD_BACKGROUND),
-		NWidget(NWID_HORIZONTAL), SetPadding(3),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(NWID_HORIZONTAL_LTR), SetPIP(0, 2, 0),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BDD_X), SetMinimalSize(98, 66), SetDataTip(0x0, STR_DEPOT_BUILD_SHIP_ORIENTATION_TOOLTIP), EndContainer(),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BDD_Y), SetMinimalSize(98, 66), SetDataTip(0x0, STR_DEPOT_BUILD_SHIP_ORIENTATION_TOOLTIP), EndContainer(),
-			EndContainer(),
-			NWidget(NWID_SPACER), SetFill(1, 0),
+		NWidget(NWID_HORIZONTAL_LTR), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1), SetPadding(WidgetDimensions::unscaled.picker),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BDD_X), SetMinimalSize(98, 66), SetDataTip(0x0, STR_DEPOT_BUILD_SHIP_ORIENTATION_TOOLTIP),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BDD_Y), SetMinimalSize(98, 66), SetDataTip(0x0, STR_DEPOT_BUILD_SHIP_ORIENTATION_TOOLTIP),
 		EndContainer(),
 	EndContainer(),
 };
 
-static WindowDesc _build_docks_depot_desc(
+static WindowDesc _build_docks_depot_desc(__FILE__, __LINE__,
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
-	_nested_build_docks_depot_widgets, lengthof(_nested_build_docks_depot_widgets)
+	std::begin(_nested_build_docks_depot_widgets), std::end(_nested_build_docks_depot_widgets)
 );
 
 

@@ -41,7 +41,7 @@ enum MainToolbarHotkeys {
 	MTHK_BUILD_TREES,
 	MTHK_MUSIC,
 	MTHK_LANDINFO,
-	MTHK_AI_DEBUG,
+	MTHK_SCRIPT_DEBUG,
 	MTHK_SMALL_SCREENSHOT,
 	MTHK_ZOOMEDIN_SCREENSHOT,
 	MTHK_DEFAULTZOOM_SCREENSHOT,
@@ -66,6 +66,7 @@ enum MainToolbarHotkeys {
 void AllocateToolbar();
 void ToggleBoundingBoxes();
 void ToggleDirtyBlocks();
+void ToggleWidgetOutlines();
 
 extern uint _toolbar_width;
 

@@ -44,7 +44,7 @@ public:
 
 protected:
 	/** to access inherited pathfinder */
-	inline Tpf& Yapf()
+	inline Tpf &Yapf()
 	{
 		return *static_cast<Tpf *>(this);
 	}
@@ -196,7 +196,7 @@ public:
 
 protected:
 	/** to access inherited path finder */
-	inline Tpf& Yapf()
+	inline Tpf &Yapf()
 	{
 		return *static_cast<Tpf *>(this);
 	}
@@ -287,7 +287,7 @@ public:
 
 protected:
 	/** to access inherited path finder */
-	inline Tpf& Yapf()
+	inline Tpf &Yapf()
 	{
 		return *static_cast<Tpf *>(this);
 	}
@@ -370,7 +370,7 @@ public:
 
 protected:
 	/** to access inherited path finder */
-	inline Tpf& Yapf()
+	inline Tpf &Yapf()
 	{
 		return *static_cast<Tpf *>(this);
 	}
@@ -417,7 +417,7 @@ public:
 		return result1;
 	}
 
-	inline Trackdir ChooseRailTrack(const Train *v, TileIndex tile, DiagDirection enterdir, TrackBits tracks, bool &path_found, bool reserve_track, PBSTileInfo *target, TileIndex *dest)
+	inline Trackdir ChooseRailTrack(const Train *v, TileIndex, DiagDirection, TrackBits, bool &path_found, bool reserve_track, PBSTileInfo *target, TileIndex *dest)
 	{
 		if (target != nullptr) target->tile = INVALID_TILE;
 		if (dest != nullptr) *dest = INVALID_TILE;

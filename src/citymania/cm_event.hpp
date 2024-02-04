@@ -29,7 +29,7 @@ struct TownBuilt {
 struct TownGrowthSucceeded {
     Town *town;
     TileIndex tile;
-    uint32 prev_houses;
+    uint32_t prev_houses;
 };
 
 struct TownGrowthFailed {
@@ -119,7 +119,7 @@ struct CompanyBalanceChanged {
 struct Tick {};
 struct RealtimeTick {};
 
-enum class Slot : uint8 {
+enum class Slot : uint8_t {
     GOAL = 10,
     CONTROLLER = 20,
     GAME = 30,

@@ -16,7 +16,8 @@
 #include "network/network.h"
 #include "heightmap.h"
 #include "viewport_func.h"
-#include "date_func.h"
+#include "timer/timer_game_calendar.h"
+#include "timer/timer_game_tick.h"
 #include "engine_func.h"
 #include "water.h"
 #include "video/video_driver.hpp"
@@ -70,8 +71,6 @@ static void CleanupGeneration()
 	_generating_world = false;
 
 	SetMouseCursorBusy(false);
-	/* Show all vital windows again, because we have hidden them */
-	if (_game_mode != GM_MENU) ShowVitalWindows();
 	SetModalProgress(false);
 	_gw.proc     = nullptr;
 	_gw.abortp   = nullptr;
@@ -96,6 +95,7 @@ static void _GenerateWorld()
 		_random.SetSeed(_settings_game.game_creation.generation_seed);
 		SetGeneratingWorldProgress(GWP_MAP_INIT, 2);
 		SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0, CM_DDSP_ZZZ);
+		ScriptObject::InitializeRandomizers();
 
 		BasePersistentStorageArray::SwitchMode(PSM_ENTER_GAMELOOP);
 
@@ -103,14 +103,20 @@ static void _GenerateWorld()
 		/* Must start economy early because of the costs. */
 		StartupEconomy();
 
+		bool landscape_generated = false;
+
 		/* Don't generate landscape items when in the scenario editor. */
-		if (_gw.mode == GWM_EMPTY) {
+		if (_gw.mode != GWM_EMPTY) {
+			landscape_generated = GenerateLandscape(_gw.mode);
+		}
+
+		if (!landscape_generated) {
 			SetGeneratingWorldProgress(GWP_OBJECT, 1);
 
 			/* Make sure the tiles at the north border are void tiles if needed. */
 			if (_settings_game.construction.freeform_edges) {
-				for (uint x = 0; x < MapSizeX(); x++) MakeVoid(TileXY(x, 0));
-				for (uint y = 0; y < MapSizeY(); y++) MakeVoid(TileXY(0, y));
+				for (uint x = 0; x < Map::SizeX(); x++) MakeVoid(TileXY(x, 0));
+				for (uint y = 0; y < Map::SizeY(); y++) MakeVoid(TileXY(0, y));
 			}
 
 			/* Make the map the height of the setting */
@@ -121,7 +127,6 @@ static void _GenerateWorld()
 
 			_settings_game.game_creation.snow_line_height = DEF_SNOWLINE_HEIGHT;
 		} else {
-			GenerateLandscape(_gw.mode);
 			GenerateClearTile();
 
 			/* Only generate towns, tree and industries in newgame mode. */
@@ -152,7 +157,7 @@ static void _GenerateWorld()
 			SetGeneratingWorldProgress(GWP_RUNTILELOOP, 0x500);
 			for (i = 0; i < 0x500; i++) {
 				RunTileLoop();
-				_tick_counter++;
+				TimerGameTick::counter++;
 				IncreaseGeneratingWorldProgress(GWP_RUNTILELOOP);
 			}
 
@@ -177,6 +182,8 @@ static void _GenerateWorld()
 		ResetObjectToPlace();
 		_cur_company.Trash();
 		_current_company = _local_company = _gw.lc;
+		/* Show all vital windows again, because we have hidden them. */
+		if (_game_mode != GM_MENU) ShowVitalWindows();
 
 		SetGeneratingWorldProgress(GWP_GAME_START, 1);
 		/* Call any callback */
@@ -191,8 +198,7 @@ static void _GenerateWorld()
 		Debug(desync, 1, "new_map: {:08x}", _settings_game.game_creation.generation_seed);
 
 		if (_debug_desync_level > 0) {
-			char name[MAX_PATH];
-			seprintf(name, lastof(name), "dmp_cmds_%08x_%08x.sav", _settings_game.game_creation.generation_seed, _date);
+			std::string name = fmt::format("dmp_cmds_{:08x}_{:08x}.sav", _settings_game.game_creation.generation_seed, TimerGameEconomy::date);
 			SaveOrLoad(name, SLO_SAVE, DFT_GAME_FILE, AUTOSAVE_DIR, false);
 		}
 	} catch (AbortGenerateWorldSignal&) {
@@ -301,7 +307,7 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 		_settings_game.construction.map_height_limit = std::max(MAP_HEIGHT_LIMIT_AUTO_MINIMUM, std::min(MAX_MAP_HEIGHT_LIMIT, estimated_height + MAP_HEIGHT_LIMIT_AUTO_CEILING_ROOM));
 	}
 
-	if (_settings_game.game_creation.generation_seed == GENERATE_NEW_SEED) _settings_game.game_creation.generation_seed = _settings_newgame.game_creation.generation_seed = InteractiveRandom();
+	if (_settings_game.game_creation.generation_seed == GENERATE_NEW_SEED) _settings_game.game_creation.generation_seed = InteractiveRandom();
 
 	/* Load the right landscape stuff, and the NewGRFs! */
 	GfxLoadSprites();
@@ -321,9 +327,7 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 	ShowGenerateWorldProgress();
 
 	/* Centre the view on the map */
-	if (FindWindowById(WC_MAIN_WINDOW, 0) != nullptr) {
-		ScrollMainWindowToTile(TileXY(MapSizeX() / 2, MapSizeY() / 2), true);
-	}
+	ScrollMainWindowToTile(TileXY(Map::SizeX() / 2, Map::SizeY() / 2), true);
 
 	_GenerateWorld();
 }

@@ -48,7 +48,7 @@ template<class T, class... Args>
 template<typename T, class... Args> const auto make_sp = std::make_shared<T, Args...>;
 
 
-enum class GameType: uint8 {
+enum class GameType: uint8_t {
     GENERIC = 0,
     GOAL = 1,
     MULTIGOAL = 2,
@@ -59,7 +59,7 @@ enum class GameType: uint8 {
     _NOT_A_GAME_TYPE_TOWN_DEFENCE = 6,
 };
 
-enum class ControllerType: uint8 {
+enum class ControllerType: uint8_t {
     GENERIC = 0,
     _NOT_A_CONTROLLER_GOAL = 1,
     _NOT_A_CONTROLLER_MULTIGOAL = 2,

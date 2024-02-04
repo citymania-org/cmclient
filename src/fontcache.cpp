@@ -18,6 +18,7 @@
 #include "strings_func.h"
 #include "viewport_func.h"
 #include "window_func.h"
+#include "fileio_func.h"
 
 #include "safeguards.h"
 
@@ -53,6 +54,21 @@ int FontCache::GetDefaultFontHeight(FontSize fs)
 	return _default_font_height[fs];
 }
 
+/**
+ * Get the font name of a given font size.
+ * @param fs The font size to look up.
+ * @return The font name.
+ */
+std::string FontCache::GetName(FontSize fs)
+{
+	FontCache *fc = FontCache::Get(fs);
+	if (fc != nullptr) {
+		return fc->GetFontName();
+	} else {
+		return "[NULL]";
+	}
+}
+
 
 /**
  * Get height of a character for a given font size.
@@ -65,9 +81,14 @@ int GetCharacterHeight(FontSize size)
 }
 
 
-/* static */ FontCache *FontCache::caches[FS_END] = { new SpriteFontCache(FS_NORMAL), new SpriteFontCache(FS_SMALL), new SpriteFontCache(FS_LARGE), new SpriteFontCache(FS_MONO) };
+/* static */ FontCache *FontCache::caches[FS_END];
 
-
+/* static */ void FontCache::InitializeFontCaches()
+{
+	for (FontSize fs = FS_BEGIN; fs != FS_END; fs++) {
+		if (FontCache::caches[fs] == nullptr) new SpriteFontCache(fs); /* FontCache inserts itself into to the cache. */
+	}
+}
 
 /* Check if a glyph should be rendered with anti-aliasing. */
 bool GetFontAAState(FontSize size, bool check_blitter)
@@ -75,10 +96,10 @@ bool GetFontAAState(FontSize size, bool check_blitter)
 	/* AA is only supported for 32 bpp */
 	if (check_blitter && BlitterFactory::GetCurrentBlitter()->GetScreenDepth() != 32) return false;
 
-	return GetFontCacheSubSetting(size)->aa;
+	return _fcsettings.global_aa || GetFontCacheSubSetting(size)->aa;
 }
 
-void SetFont(FontSize fontsize, const std::string& font, uint size, bool aa)
+void SetFont(FontSize fontsize, const std::string &font, uint size, bool aa)
 {
 	FontCacheSubSetting *setting = GetFontCacheSubSetting(fontsize);
 	bool changed = false;
@@ -121,28 +142,79 @@ void SetFont(FontSize fontsize, const std::string& font, uint size, bool aa)
 	if (_save_config) SaveToConfig();
 }
 
+#ifdef WITH_FREETYPE
+extern void LoadFreeTypeFont(FontSize fs);
+extern void LoadFreeTypeFont(FontSize fs, const std::string &file_name, uint size);
+extern void UninitFreeType();
+#elif defined(_WIN32)
+extern void LoadWin32Font(FontSize fs);
+extern void LoadWin32Font(FontSize fs, const std::string &file_name, uint size);
+#elif defined(WITH_COCOA)
+extern void LoadCoreTextFont(FontSize fs);
+extern void LoadCoreTextFont(FontSize fs, const std::string &file_name, uint size);
+#endif
+
+static void TryLoadDefaultTrueTypeFont([[maybe_unused]] FontSize fs)
+{
+#if defined(WITH_FREETYPE) || defined(_WIN32) || defined(WITH_COCOA)
+	std::string font_name{};
+	switch (fs) {
+		case FS_NORMAL:
+			font_name = "OpenTTD-Sans.ttf";
+			break;
+		case FS_SMALL:
+			font_name = "OpenTTD-Small.ttf";
+			break;
+		case FS_LARGE:
+			font_name = "OpenTTD-Serif.ttf";
+			break;
+		case FS_MONO:
+			font_name = "OpenTTD-Mono.ttf";
+			break;
+
+		default: NOT_REACHED();
+	}
+
+	/* Find font file. */
+	std::string full_font = FioFindFullPath(BASESET_DIR, font_name);
+	if (!full_font.empty()) {
+		int size = FontCache::GetDefaultFontHeight(fs);
+#ifdef WITH_FREETYPE
+		LoadFreeTypeFont(fs, full_font, size);
+#elif defined(_WIN32)
+		LoadWin32Font(fs, full_font, size);
+#elif defined(WITH_COCOA)
+		LoadCoreTextFont(fs, full_font, size);
+#endif
+	}
+#endif /* defined(WITH_FREETYPE) || defined(_WIN32) || defined(WITH_COCOA) */
+}
+
 /**
  * (Re)initialize the font cache related things, i.e. load the non-sprite fonts.
  * @param monospace Whether to initialise the monospace or regular fonts.
  */
 void InitFontCache(bool monospace)
 {
+	FontCache::InitializeFontCaches();
+
 	for (FontSize fs = FS_BEGIN; fs < FS_END; fs++) {
 		if (monospace != (fs == FS_MONO)) continue;
 
 		FontCache *fc = FontCache::Get(fs);
 		if (fc->HasParent()) delete fc;
 
+		if (!_fcsettings.prefer_sprite && GetFontCacheSubSetting(fs)->font.empty()) {
+			TryLoadDefaultTrueTypeFont(fs);
+		} else {
 #ifdef WITH_FREETYPE
-		extern void LoadFreeTypeFont(FontSize fs);
-		LoadFreeTypeFont(fs);
+			LoadFreeTypeFont(fs);
 #elif defined(_WIN32)
-		extern void LoadWin32Font(FontSize fs);
-		LoadWin32Font(fs);
+			LoadWin32Font(fs);
 #elif defined(WITH_COCOA)
-		extern void LoadCoreTextFont(FontSize fs);
-		LoadCoreTextFont(fs);
+			LoadCoreTextFont(fs);
 #endif
+		}
 	}
 }
 
@@ -157,7 +229,6 @@ void UninitFontCache()
 	}
 
 #ifdef WITH_FREETYPE
-	extern void UninitFreeType();
 	UninitFreeType();
 #endif /* WITH_FREETYPE */
 }
@@ -177,5 +248,5 @@ bool HasAntialiasedFonts()
 
 #if !defined(_WIN32) && !defined(__APPLE__) && !defined(WITH_FONTCONFIG) && !defined(WITH_COCOA)
 
-bool SetFallbackFont(FontCacheSettings *settings, const char *language_isocode, int winlangid, MissingGlyphSearcher *callback) { return false; }
+bool SetFallbackFont(FontCacheSettings *, const std::string &, int, MissingGlyphSearcher *) { return false; }
 #endif /* !defined(_WIN32) && !defined(__APPLE__) && !defined(WITH_FONTCONFIG) && !defined(WITH_COCOA) */

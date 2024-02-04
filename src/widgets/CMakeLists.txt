@@ -24,6 +24,7 @@ add_files(
     goal_widget.h
     graph_widget.h
     group_widget.h
+    help_widget.h
     highscore_widget.h
     industry_widget.h
     intro_widget.h
@@ -44,6 +45,7 @@ add_files(
     rail_widget.h
     road_widget.h
     screenshot_widget.h
+    script_widget.h
     settings_widget.h
     sign_widget.h
     slider.cpp

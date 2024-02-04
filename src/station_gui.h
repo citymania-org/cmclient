@@ -14,7 +14,6 @@
 #include "tilearea_type.h"
 #include "window_type.h"
 #include "station_type.h"
-#include <functional>
 
 
 /** Types of cargo to display for station coverage. */
@@ -26,7 +25,8 @@ enum StationCoverageType {
 
 int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageType sct, int rad, bool supplies);
 int DrawStationAuthorityText(int left, int right, int top);
-void CheckRedrawStationCoverage(Window *w);
+void CheckRedrawStationCoverage(const Window *w);
+void CheckRedrawWaypointCoverage(const Window *w);
 
 using StationPickerCmdProc = std::function<bool(bool test, StationID to_join)>;
 

@@ -17,7 +17,6 @@
 
 #include <atomic>
 #include <chrono>
-#include <map>
 #include <thread>
 
 /** The states of sending the packets. */
@@ -101,6 +100,8 @@ private:
 	NetworkAddress bind_address;                        ///< Address we're binding to, if any.
 	int family = AF_UNSPEC;                             ///< Family we are using to connect with.
 
+	static std::vector<std::shared_ptr<TCPConnecter>> connecters; ///< List of connections that are currently being created.
+
 	void Resolve();
 	void OnResolved(addrinfo *ai);
 	bool TryNextAddress();
@@ -115,14 +116,14 @@ private:
 
 public:
 	TCPConnecter() {};
-	TCPConnecter(const std::string &connection_string, uint16 default_port, NetworkAddress bind_address = {}, int family = AF_UNSPEC);
+	TCPConnecter(const std::string &connection_string, uint16_t default_port, const NetworkAddress &bind_address = {}, int family = AF_UNSPEC);
 	virtual ~TCPConnecter();
 
 	/**
 	 * Callback when the connection succeeded.
 	 * @param s the socket that we opened
 	 */
-	virtual void OnConnect(SOCKET s) {}
+	virtual void OnConnect([[maybe_unused]] SOCKET s) {}
 
 	/**
 	 * Callback for when the connection attempt failed.
@@ -133,6 +134,18 @@ public:
 
 	static void CheckCallbacks();
 	static void KillAll();
+
+	/**
+	 * Create the connecter, and initiate connecting by putting it in the collection of TCP connections to make.
+	 * @tparam T The type of connecter to create.
+	 * @param args The arguments to the constructor of T.
+	 * @return Shared pointer to the connecter.
+	 */
+	template <class T, typename... Args>
+	static std::shared_ptr<TCPConnecter> Create(Args&& ... args)
+	{
+		return TCPConnecter::connecters.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
+	}
 };
 
 class TCPServerConnecter : public TCPConnecter {
@@ -144,7 +157,7 @@ private:
 public:
 	ServerAddress server_address; ///< Address we are connecting to.
 
-	TCPServerConnecter(const std::string &connection_string, uint16 default_port);
+	TCPServerConnecter(const std::string &connection_string, uint16_t default_port);
 
 	void SetConnected(SOCKET sock);
 	void SetFailure();

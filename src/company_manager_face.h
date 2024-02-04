@@ -93,7 +93,7 @@ static_assert(lengthof(_cmf_info) == CMFV_END);
  * @pre _cmf_info[cmfv].valid_values[ge] != 0
  * @return the requested bits
  */
-static inline uint GetCompanyManagerFaceBits(CompanyManagerFace cmf, CompanyManagerFaceVariable cmfv, GenderEthnicity ge)
+inline uint GetCompanyManagerFaceBits(CompanyManagerFace cmf, CompanyManagerFaceVariable cmfv, [[maybe_unused]] GenderEthnicity ge)
 {
 	assert(_cmf_info[cmfv].valid_values[ge] != 0);
 
@@ -108,7 +108,7 @@ static inline uint GetCompanyManagerFaceBits(CompanyManagerFace cmf, CompanyMana
  * @param val  the new value
  * @pre val < _cmf_info[cmfv].valid_values[ge]
  */
-static inline void SetCompanyManagerFaceBits(CompanyManagerFace &cmf, CompanyManagerFaceVariable cmfv, GenderEthnicity ge, uint val)
+inline void SetCompanyManagerFaceBits(CompanyManagerFace &cmf, CompanyManagerFaceVariable cmfv, [[maybe_unused]] GenderEthnicity ge, uint val)
 {
 	assert(val < _cmf_info[cmfv].valid_values[ge]);
 
@@ -127,9 +127,9 @@ static inline void SetCompanyManagerFaceBits(CompanyManagerFace &cmf, CompanyMan
  *
  * @pre 0 <= val < _cmf_info[cmfv].valid_values[ge]
  */
-static inline void IncreaseCompanyManagerFaceBits(CompanyManagerFace &cmf, CompanyManagerFaceVariable cmfv, GenderEthnicity ge, int8 amount)
+inline void IncreaseCompanyManagerFaceBits(CompanyManagerFace &cmf, CompanyManagerFaceVariable cmfv, GenderEthnicity ge, int8_t amount)
 {
-	int8 val = GetCompanyManagerFaceBits(cmf, cmfv, ge) + amount; // the new value for the cmfv
+	int8_t val = GetCompanyManagerFaceBits(cmf, cmfv, ge) + amount; // the new value for the cmfv
 
 	/* scales the new value to the correct scope */
 	if (val >= _cmf_info[cmfv].valid_values[ge]) {
@@ -148,7 +148,7 @@ static inline void IncreaseCompanyManagerFaceBits(CompanyManagerFace &cmf, Compa
  * @param ge   the gender and ethnicity of the face
  * @return true if and only if the bits are valid
  */
-static inline bool AreCompanyManagerFaceBitsValid(CompanyManagerFace cmf, CompanyManagerFaceVariable cmfv, GenderEthnicity ge)
+inline bool AreCompanyManagerFaceBitsValid(CompanyManagerFace cmf, CompanyManagerFaceVariable cmfv, GenderEthnicity ge)
 {
 	return GB(cmf, _cmf_info[cmfv].offset, _cmf_info[cmfv].length) < _cmf_info[cmfv].valid_values[ge];
 }
@@ -161,7 +161,7 @@ static inline bool AreCompanyManagerFaceBitsValid(CompanyManagerFace cmf, Compan
  * @pre val < (1U << _cmf_info[cmfv].length), i.e. val has a value of 0..2^(bits used for this variable)-1
  * @return the scaled value
  */
-static inline uint ScaleCompanyManagerFaceValue(CompanyManagerFaceVariable cmfv, GenderEthnicity ge, uint val)
+inline uint ScaleCompanyManagerFaceValue(CompanyManagerFaceVariable cmfv, GenderEthnicity ge, uint val)
 {
 	assert(val < (1U << _cmf_info[cmfv].length));
 
@@ -173,7 +173,7 @@ static inline uint ScaleCompanyManagerFaceValue(CompanyManagerFaceVariable cmfv,
  *
  * @param cmf the company manager's face to write the bits to
  */
-static inline void ScaleAllCompanyManagerFaceBits(CompanyManagerFace &cmf)
+inline void ScaleAllCompanyManagerFaceBits(CompanyManagerFace &cmf)
 {
 	IncreaseCompanyManagerFaceBits(cmf, CMFV_ETHNICITY, GE_WM, 0); // scales the ethnicity
 
@@ -199,15 +199,13 @@ static inline void ScaleAllCompanyManagerFaceBits(CompanyManagerFace &cmf)
  * @param cmf the company manager's face to write the bits to
  * @param ge  the gender and ethnicity of the old company manager's face
  * @param adv if it for the advanced company manager's face window
- * @param interactive is the call from within the user interface?
+ * @param randomizer the source of random to use for creating the manager face
  *
  * @pre scale 'ge' to a valid gender/ethnicity combination
  */
-static inline void RandomCompanyManagerFaceBits(CompanyManagerFace &cmf, GenderEthnicity ge, bool adv, bool interactive = true)
+inline void RandomCompanyManagerFaceBits(CompanyManagerFace &cmf, GenderEthnicity ge, bool adv, Randomizer &randomizer)
 {
-	/* This method is called from a command when not interactive and
-	 * then we must use Random to get the same result on all clients. */
-	cmf = interactive ? InteractiveRandom() : Random(); // random all company manager's face bits
+	cmf = randomizer.Next(); // random all company manager's face bits
 
 	/* scale ge: 0 == GE_WM, 1 == GE_WF, 2 == GE_BM, 3 == GE_BF (and maybe in future: ...) */
 	ge = (GenderEthnicity)((uint)ge % GE_END);
@@ -231,13 +229,13 @@ static inline void RandomCompanyManagerFaceBits(CompanyManagerFace &cmf, GenderE
  * @pre _cmf_info[cmfv].valid_values[ge] != 0
  * @return sprite to draw
  */
-static inline SpriteID GetCompanyManagerFaceSprite(CompanyManagerFace cmf, CompanyManagerFaceVariable cmfv, GenderEthnicity ge)
+inline SpriteID GetCompanyManagerFaceSprite(CompanyManagerFace cmf, CompanyManagerFaceVariable cmfv, GenderEthnicity ge)
 {
 	assert(_cmf_info[cmfv].valid_values[ge] != 0);
 
 	return _cmf_info[cmfv].first_sprite[ge] + GB(cmf, _cmf_info[cmfv].offset, _cmf_info[cmfv].length);
 }
 
-void DrawCompanyManagerFace(CompanyManagerFace face, int colour, int x, int y);
+void DrawCompanyManagerFace(CompanyManagerFace face, Colours colour, const Rect &r);
 
 #endif /* COMPANY_MANAGER_FACE_H */

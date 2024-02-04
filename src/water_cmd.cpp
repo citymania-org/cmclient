@@ -32,13 +32,14 @@
 #include "game/game.hpp"
 #include "core/random_func.hpp"
 #include "core/backup_type.hpp"
-#include "date_func.h"
+#include "timer/timer_game_calendar.h"
 #include "company_base.h"
 #include "company_gui.h"
 #include "newgrf_generic.h"
 #include "industry.h"
 #include "water_cmd.h"
 #include "landscape_cmd.h"
+#include "pathfinder/water_regions.h"
 
 #include "table/strings.h"
 
@@ -47,7 +48,7 @@
 /**
  * Describes from which directions a specific slope can be flooded (if the tile is floodable at all).
  */
-static const uint8 _flood_from_dirs[] = {
+static const uint8_t _flood_from_dirs[] = {
 	(1 << DIR_NW) | (1 << DIR_SW) | (1 << DIR_SE) | (1 << DIR_NE), // SLOPE_FLAT
 	(1 << DIR_NE) | (1 << DIR_SE),                                 // SLOPE_W
 	(1 << DIR_NW) | (1 << DIR_NE),                                 // SLOPE_S
@@ -134,7 +135,7 @@ CommandCost CmdBuildShipDepot(DoCommandFlag flags, TileIndex tile, Axis axis)
 
 	if (flags & DC_EXEC) {
 		Depot *depot = new Depot(tile);
-		depot->build_date = _date;
+		depot->build_date = TimerGameCalendar::date;
 
 		uint new_water_infra = 2 * LOCK_DEPOT_TILE_FACTOR;
 		/* Update infrastructure counts after the tile clears earlier.
@@ -158,13 +159,13 @@ CommandCost CmdBuildShipDepot(DoCommandFlag flags, TileIndex tile, Axis axis)
 	return cost;
 }
 
-bool IsPossibleDockingTile(TileIndex t)
+bool IsPossibleDockingTile(Tile t)
 {
 	assert(IsValidTile(t));
 	switch (GetTileType(t)) {
 		case MP_WATER:
 			if (IsLock(t) && GetLockPart(t) == LOCK_PART_MIDDLE) return false;
-			FALLTHROUGH;
+			[[fallthrough]];
 		case MP_RAILWAY:
 		case MP_STATION:
 		case MP_TUNNELBRIDGE:
@@ -186,7 +187,7 @@ void CheckForDockingTile(TileIndex t)
 		TileIndex tile = t + TileOffsByDiagDir(d);
 		if (!IsValidTile(tile)) continue;
 
-		if (IsDockTile(tile) && IsValidDockingDirectionForDock(tile, d)) {
+		if (IsDockTile(tile) && IsDockWaterPart(tile)) {
 			Station::GetByTile(tile)->docking_station.Add(t);
 			SetDockingTile(t, true);
 		}
@@ -267,7 +268,7 @@ static CommandCost RemoveShipDepot(TileIndex tile, DoCommandFlag flags)
 
 	/* do not check for ship on tile when company goes bankrupt */
 	if (!(flags & DC_BANKRUPT)) {
-		CommandCost ret = EnsureNoVehicleOnGround(tile);
+		ret = EnsureNoVehicleOnGround(tile);
 		if (ret.Succeeded()) ret = EnsureNoVehicleOnGround(tile2);
 		if (ret.Failed()) return ret;
 	}
@@ -359,6 +360,8 @@ static CommandCost DoBuildLock(TileIndex tile, DiagDirection dir, DoCommandFlag 
 		MarkTileDirtyByTile(tile + delta);
 		MarkCanalsAndRiversAroundDirty(tile - delta);
 		MarkCanalsAndRiversAroundDirty(tile + delta);
+		InvalidateWaterRegion(tile - delta);
+		InvalidateWaterRegion(tile + delta);
 	}
 	cost.AddCost(_price[PR_BUILD_LOCK]);
 
@@ -431,6 +434,19 @@ bool RiverModifyDesertZone(TileIndex tile, void *)
 }
 
 /**
+ * Make a river tile and remove desert directly around it.
+ * @param tile The tile to change into river and create non-desert around
+ */
+void MakeRiverAndModifyDesertZoneAround(TileIndex tile)
+{
+	MakeRiver(tile, Random());
+	MarkTileDirtyByTile(tile);
+
+	/* Remove desert directly around the river tile. */
+	CircularTileSearch(&tile, RIVER_OFFSET_DESERT_DISTANCE, RiverModifyDesertZone, nullptr);
+}
+
+/**
  * Build a piece of canal.
  * @param flags type of operation
  * @param tile end tile of stretch-dragging
@@ -441,20 +457,14 @@ bool RiverModifyDesertZone(TileIndex tile, void *)
  */
 CommandCost CmdBuildCanal(DoCommandFlag flags, TileIndex tile, TileIndex start_tile, WaterClass wc, bool diagonal)
 {
-	if (start_tile >= MapSize() || !IsValidWaterClass(wc)) return CMD_ERROR;
+	if (start_tile >= Map::Size() || !IsValidWaterClass(wc)) return CMD_ERROR;
 
 	/* Outside of the editor you can only build canals, not oceans */
 	if (wc != WATER_CLASS_CANAL && _game_mode != GM_EDITOR) return CMD_ERROR;
 
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 
-	std::unique_ptr<TileIterator> iter;
-	if (diagonal) {
-		iter = std::make_unique<DiagonalTileIterator>(tile, start_tile);
-	} else {
-		iter = std::make_unique<OrthogonalTileIterator>(tile, start_tile);
-	}
-
+	std::unique_ptr<TileIterator> iter = TileIterator::Create(tile, start_tile, diagonal);
 	for (; *iter != INVALID_TILE; ++(*iter)) {
 		TileIndex current_tile = *iter;
 		CommandCost ret;
@@ -497,7 +507,7 @@ CommandCost CmdBuildCanal(DoCommandFlag flags, TileIndex tile, TileIndex start_t
 						MakeSea(current_tile);
 						break;
 					}
-					FALLTHROUGH;
+					[[fallthrough]];
 
 				default:
 					MakeCanal(current_tile, _current_company, Random());
@@ -522,6 +532,7 @@ CommandCost CmdBuildCanal(DoCommandFlag flags, TileIndex tile, TileIndex start_t
 	}
 }
 
+
 static CommandCost ClearTile_Water(TileIndex tile, DoCommandFlag flags)
 {
 	switch (GetWaterTileType(tile)) {
@@ -530,8 +541,8 @@ static CommandCost ClearTile_Water(TileIndex tile, DoCommandFlag flags)
 
 			Money base_cost = IsCanal(tile) ? _price[PR_CLEAR_CANAL] : _price[PR_CLEAR_WATER];
 			/* Make sure freeform edges are allowed or it's not an edge tile. */
-			if (!_settings_game.construction.freeform_edges && (!IsInsideMM(TileX(tile), 1, MapMaxX() - 1) ||
-					!IsInsideMM(TileY(tile), 1, MapMaxY() - 1))) {
+			if (!_settings_game.construction.freeform_edges && (!IsInsideMM(TileX(tile), 1, Map::MaxX() - 1) ||
+					!IsInsideMM(TileY(tile), 1, Map::MaxY() - 1))) {
 				return_cmd_error(STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP);
 			}
 
@@ -541,7 +552,7 @@ static CommandCost ClearTile_Water(TileIndex tile, DoCommandFlag flags)
 
 			Owner owner = GetTileOwner(tile);
 			if (owner != OWNER_WATER && owner != OWNER_NONE) {
-				CommandCost ret = CheckTileOwnership(tile);
+				ret = CheckTileOwnership(tile);
 				if (ret.Failed()) return ret;
 			}
 
@@ -745,7 +756,7 @@ static void DrawWaterEdges(bool canal, uint offset, TileIndex tile)
 }
 
 /** Draw a plain sea water tile with no edges */
-static void DrawSeaWater(TileIndex tile)
+static void DrawSeaWater(TileIndex)
 {
 	DrawGroundSprite(SPR_FLAT_WATER_TILE, PAL_NONE);
 }
@@ -823,7 +834,7 @@ static void DrawWaterLock(const TileInfo *ti)
 	if (base == 0) {
 		/* If no custom graphics, use defaults. */
 		base = SPR_LOCK_BASE;
-		uint8 z_threshold = part == LOCK_PART_UPPER ? 8 : 0;
+		uint8_t z_threshold = part == LOCK_PART_UPPER ? 8 : 0;
 		zoffs = ti->z > z_threshold ? 24 : 0;
 	}
 
@@ -935,7 +946,7 @@ void DrawShipDepotSprite(int x, int y, Axis axis, DepotPart part)
 }
 
 
-static int GetSlopePixelZ_Water(TileIndex tile, uint x, uint y)
+static int GetSlopePixelZ_Water(TileIndex tile, uint x, uint y, bool)
 {
 	int z;
 	Slope tileh = GetTilePixelSlope(tile, &z);
@@ -943,7 +954,7 @@ static int GetSlopePixelZ_Water(TileIndex tile, uint x, uint y)
 	return z + GetPartialPixelZ(x & 0xF, y & 0xF, tileh);
 }
 
-static Foundation GetFoundation_Water(TileIndex tile, Slope tileh)
+static Foundation GetFoundation_Water(TileIndex, Slope)
 {
 	return FOUNDATION_NONE;
 }
@@ -1076,7 +1087,7 @@ FloodingBehaviour GetFloodingBehaviour(TileIndex tile)
 				Slope tileh = GetTileSlope(tile);
 				return (IsSlopeWithOneCornerRaised(tileh) ? FLOOD_ACTIVE : FLOOD_DRYUP);
 			}
-			FALLTHROUGH;
+			[[fallthrough]];
 		case MP_STATION:
 		case MP_INDUSTRY:
 		case MP_OBJECT:
@@ -1090,6 +1101,9 @@ FloodingBehaviour GetFloodingBehaviour(TileIndex tile)
 
 		case MP_TREES:
 			return (GetTreeGround(tile) == TREE_GROUND_SHORE ? FLOOD_DRYUP : FLOOD_NONE);
+
+		case MP_VOID:
+			return FLOOD_ACTIVE;
 
 		default:
 			return FLOOD_NONE;
@@ -1125,7 +1139,7 @@ void DoFloodTile(TileIndex target)
 					flooded = true;
 					break;
 				}
-				FALLTHROUGH;
+				[[fallthrough]];
 
 			case MP_CLEAR:
 				if (Command<CMD_LANDSCAPE_CLEAR>::Do(DC_EXEC, target).Succeeded()) {
@@ -1242,7 +1256,7 @@ void TileLoop_Water(TileIndex tile)
 			Slope slope_here = GetFoundationSlope(tile) & ~SLOPE_HALFTILE_MASK & ~SLOPE_STEEP;
 			for (uint dir : SetBitIterator(_flood_from_dirs[slope_here])) {
 				TileIndex dest = tile + TileOffsByDir((Direction)dir);
-				if (!IsValidTile(dest)) continue;
+				if (dest >= Map::Size()) continue;
 
 				FloodingBehaviour dest_behaviour = GetFloodingBehaviour(dest);
 				if ((dest_behaviour == FLOOD_ACTIVE) || (dest_behaviour == FLOOD_PASSIVE)) return;
@@ -1259,7 +1273,7 @@ void ConvertGroundTilesIntoWaterTiles()
 {
 	int z;
 
-	for (TileIndex tile = 0; tile < MapSize(); ++tile) {
+	for (TileIndex tile = 0; tile < Map::Size(); ++tile) {
 		Slope slope = GetTileSlope(tile, &z);
 		if (IsTileType(tile, MP_CLEAR) && z == 0) {
 			/* Make both water for tiles at level 0
@@ -1281,7 +1295,7 @@ void ConvertGroundTilesIntoWaterTiles()
 					for (uint dir : SetBitIterator(_flood_from_dirs[slope & ~SLOPE_STEEP])) {
 						TileIndex dest = TileAddByDir(tile, (Direction)dir);
 						Slope slope_dest = GetTileSlope(dest) & ~SLOPE_STEEP;
-						if (slope_dest == SLOPE_FLAT || IsSlopeWithOneCornerRaised(slope_dest)) {
+						if (slope_dest == SLOPE_FLAT || IsSlopeWithOneCornerRaised(slope_dest) || IsTileType(dest, MP_VOID)) {
 							MakeShore(tile);
 							break;
 						}
@@ -1292,7 +1306,7 @@ void ConvertGroundTilesIntoWaterTiles()
 	}
 }
 
-static TrackStatus GetTileTrackStatus_Water(TileIndex tile, TransportType mode, uint sub_mode, DiagDirection side)
+static TrackStatus GetTileTrackStatus_Water(TileIndex tile, TransportType mode, uint, DiagDirection)
 {
 	static const TrackBits coast_tracks[] = {TRACK_BIT_NONE, TRACK_BIT_RIGHT, TRACK_BIT_UPPER, TRACK_BIT_NONE, TRACK_BIT_LEFT, TRACK_BIT_NONE, TRACK_BIT_NONE,
 		TRACK_BIT_NONE, TRACK_BIT_LOWER, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE};
@@ -1364,12 +1378,12 @@ static void ChangeTileOwner_Water(TileIndex tile, Owner old_owner, Owner new_own
 	}
 }
 
-static VehicleEnterTileStatus VehicleEnter_Water(Vehicle *v, TileIndex tile, int x, int y)
+static VehicleEnterTileStatus VehicleEnter_Water(Vehicle *, TileIndex, int, int)
 {
 	return VETSB_CONTINUE;
 }
 
-static CommandCost TerraformTile_Water(TileIndex tile, DoCommandFlag flags, int z_new, Slope tileh_new)
+static CommandCost TerraformTile_Water(TileIndex tile, DoCommandFlag flags, int, Slope)
 {
 	/* Canals can't be terraformed */
 	if (IsWaterTile(tile) && IsCanal(tile)) return_cmd_error(STR_ERROR_MUST_DEMOLISH_CANAL_FIRST);

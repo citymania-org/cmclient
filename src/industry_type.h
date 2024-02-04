@@ -10,11 +10,9 @@
 #ifndef INDUSTRY_TYPE_H
 #define INDUSTRY_TYPE_H
 
-#include "tile_type.h"
-
-typedef uint16 IndustryID;
-typedef uint16 IndustryGfx;
-typedef uint8 IndustryType;
+typedef uint16_t IndustryID;
+typedef uint16_t IndustryGfx;
+typedef uint8_t IndustryType;
 struct Industry;
 
 struct IndustrySpec;
@@ -42,6 +40,10 @@ static const int INDUSTRY_NUM_OUTPUTS = 16; ///< Number of cargo types an indust
 
 
 void CheckIndustries();
+
+/* CityMania code start */
+#include "tile_type.h"
 bool CanBuildIndustryOnTile(IndustryType type, TileIndex tile);
+/* CityMania code end */
 
 #endif /* INDUSTRY_TYPE_H */

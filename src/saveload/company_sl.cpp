@@ -44,7 +44,7 @@
  * @param face the face in the old format
  * @return the face in the new format
  */
-CompanyManagerFace ConvertFromOldCompanyManagerFace(uint32 face)
+CompanyManagerFace ConvertFromOldCompanyManagerFace(uint32_t face)
 {
 	CompanyManagerFace cmf = 0;
 	GenderEthnicity ge = GE_WM;
@@ -108,7 +108,7 @@ void AfterLoadCompanyStats()
 	}
 
 	Company *c;
-	for (TileIndex tile = 0; tile < MapSize(); tile++) {
+	for (TileIndex tile = 0; tile < Map::Size(); tile++) {
 		switch (GetTileType(tile)) {
 			case MP_RAILWAY:
 				c = Company::GetIfValid(GetTileOwner(tile));
@@ -188,7 +188,7 @@ void AfterLoadCompanyStats()
 						}
 					}
 				}
-				FALLTHROUGH;
+				[[fallthrough]];
 
 			case MP_OBJECT:
 				if (GetWaterClass(tile) == WATER_CLASS_CANAL) {
@@ -242,7 +242,7 @@ void AfterLoadCompanyStats()
 
 /* We do need to read this single value, as the bigger it gets, the more data is stored */
 struct CompanyOldAI {
-	uint8 num_build_rec;
+	uint8_t num_build_rec;
 };
 
 class SlCompanyOldAIBuildRec : public DefaultSaveLoadHandler<SlCompanyOldAIBuildRec, CompanyOldAI> {
@@ -369,7 +369,7 @@ public:
 	void Load(CompanyProperties *c) const override
 	{
 		if (!IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH)) {
-			c->num_valid_stat_ent = (uint8)SlGetStructListLength(UINT8_MAX);
+			c->num_valid_stat_ent = (uint8_t)SlGetStructListLength(UINT8_MAX);
 		}
 		if (c->num_valid_stat_ent > lengthof(c->old_economy)) SlErrorCorrupt("Too many old economy entries");
 
@@ -463,6 +463,7 @@ static const SaveLoad _company_desc[] = {
 
 	SLE_CONDVAR(CompanyProperties, current_loan,          SLE_VAR_I64 | SLE_FILE_I32,  SL_MIN_VERSION, SLV_65),
 	SLE_CONDVAR(CompanyProperties, current_loan,          SLE_INT64,                  SLV_65, SL_MAX_VERSION),
+	SLE_CONDVAR(CompanyProperties, max_loan,              SLE_INT64, SLV_MAX_LOAN_FOR_COMPANY, SL_MAX_VERSION),
 
 	    SLE_VAR(CompanyProperties, colour,                SLE_UINT8),
 	    SLE_VAR(CompanyProperties, money_fraction,        SLE_UINT8),
@@ -474,8 +475,6 @@ static const SaveLoad _company_desc[] = {
 	SLE_CONDVAR(CompanyProperties, last_build_coordinate, SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
 	SLE_CONDVAR(CompanyProperties, inaugurated_year,      SLE_FILE_U8  | SLE_VAR_I32,  SL_MIN_VERSION, SLV_31),
 	SLE_CONDVAR(CompanyProperties, inaugurated_year,      SLE_INT32,                  SLV_31, SL_MAX_VERSION),
-
-	    SLE_ARR(CompanyProperties, share_owners,          SLE_UINT8, 4),
 
 	SLE_CONDVAR(CompanyProperties, num_valid_stat_ent,    SLE_UINT8,                   SL_MIN_VERSION, SLV_SAVELOAD_LIST_LENGTH),
 
@@ -525,7 +524,7 @@ struct PLYRChunkHandler : ChunkHandler {
 		while ((index = SlIterateArray()) != -1) {
 			Company *c = new (index) Company();
 			SlObject(c, slt);
-			_company_colours[index] = (Colours)c->colour;
+			_company_colours[index] = c->colour;
 		}
 	}
 
@@ -536,8 +535,8 @@ struct PLYRChunkHandler : ChunkHandler {
 
 		int index;
 		while ((index = SlIterateArray()) != -1) {
-			CompanyProperties *cprops = new CompanyProperties();
-			SlObject(cprops, slt);
+			std::unique_ptr<CompanyProperties> cprops = std::make_unique<CompanyProperties>();
+			SlObject(cprops.get(), slt);
 
 			/* We do not load old custom names */
 			if (IsSavegameVersionBefore(SLV_84)) {
@@ -557,7 +556,9 @@ struct PLYRChunkHandler : ChunkHandler {
 				cprops->name_1 = STR_GAME_SAVELOAD_NOT_AVAILABLE;
 			}
 
-			if (!_load_check_data.companies.Insert(index, cprops)) delete cprops;
+			if (_load_check_data.companies.count(index) == 0) {
+				_load_check_data.companies[index] = std::move(cprops);
+			}
 		}
 	}
 

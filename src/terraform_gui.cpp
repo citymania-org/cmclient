@@ -46,7 +46,7 @@
 
 #include "safeguards.h"
 
-void CcTerraform(Commands cmd, const CommandCost &result, Money, TileIndex tile)
+void CcTerraform(Commands, const CommandCost &result, Money, TileIndex tile)
 {
 	if (result.Succeeded()) {
 		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
@@ -85,7 +85,7 @@ static void GenerateRockyArea(TileIndex end, TileIndex start)
 		switch (GetTileType(tile)) {
 			case MP_TREES:
 				if (GetTreeGround(tile) == TREE_GROUND_SHORE) continue;
-				FALLTHROUGH;
+				[[fallthrough]];
 
 			case MP_CLEAR:
 				MakeClear(tile, CLEAR_ROCKS, 3);
@@ -115,8 +115,8 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 	if (!_settings_game.construction.freeform_edges) {
 		/* When end_tile is MP_VOID, the error tile will not be visible to the
 		 * user. This happens when terraforming at the southern border. */
-		if (TileX(end_tile) == MapMaxX()) end_tile += TileDiffXY(-1, 0);
-		if (TileY(end_tile) == MapMaxY()) end_tile += TileDiffXY(0, -1);
+		if (TileX(end_tile) == Map::MaxX()) end_tile += TileDiffXY(-1, 0);
+		if (TileY(end_tile) == Map::MaxY()) end_tile += TileDiffXY(0, -1);
 	}
 
 	switch (proc) {
@@ -220,7 +220,7 @@ struct TerraformToolbarWindow : Window {
 		/* This is needed as we like to have the tree available on OnInit. */
 		this->CreateNestedTree();
 		this->FinishInitNested(window_number);
-		this->last_user_action = WIDGET_LIST_END;
+		this->last_user_action = INVALID_WID_TT;
 	}
 
 	~TerraformToolbarWindow()
@@ -258,7 +258,7 @@ struct TerraformToolbarWindow : Window {
 		show_object->SetDisplayedPlane(ObjectClass::GetUIClassCount() != 0 ? 0 : SZSP_NONE);
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		if (widget < WID_TT_BUTTONS_START) return;
 
@@ -310,7 +310,7 @@ struct TerraformToolbarWindow : Window {
 		}
 	}
 
-	void OnPlaceObject(Point pt, TileIndex tile) override
+	void OnPlaceObject([[maybe_unused]] Point pt, TileIndex tile) override
 	{
 		switch (this->last_user_action) {
 			case WID_TT_LOWER_LAND: // Lower land button
@@ -345,19 +345,19 @@ struct TerraformToolbarWindow : Window {
 		}
 	}
 
-	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
+	void OnPlaceDrag(ViewportPlaceMethod select_method, [[maybe_unused]] ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt) override
 	{
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
-	Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number) override
+	Point OnInitialPosition([[maybe_unused]] int16_t sm_width, [[maybe_unused]] int16_t sm_height, [[maybe_unused]] int window_number) override
 	{
 		Point pt = GetToolbarAlignedWindowPosition(sm_width);
 		pt.y += sm_height;
 		return pt;
 	}
 
-	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
+	void OnPlaceMouseUp([[maybe_unused]] ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (pt.x != -1) {
 			switch (select_proc) {
@@ -372,9 +372,9 @@ struct TerraformToolbarWindow : Window {
 				case DDSP_BUILD_OBJECT:
 					if (!_settings_game.construction.freeform_edges) {
 						/* When end_tile is MP_VOID, the error tile will not be visible to the
-							* user. This happens when terraforming at the southern border. */
-						if (TileX(end_tile) == MapMaxX()) end_tile += TileDiffXY(-1, 0);
-						if (TileY(end_tile) == MapMaxY()) end_tile += TileDiffXY(0, -1);
+						 * user. This happens when terraforming at the southern border. */
+						if (TileX(end_tile) == Map::MaxX()) end_tile += TileDiffXY(-1, 0);
+						if (TileY(end_tile) == Map::MaxY()) end_tile += TileDiffXY(0, -1);
 					}
 					Command<CMD_BUILD_OBJECT_AREA>::Post(STR_ERROR_CAN_T_PURCHASE_THIS_LAND, CcPlaySound_CONSTRUCTION_RAIL,
 						end_tile, start_tile, OBJECT_OWNED_LAND, 0, (_ctrl_pressed ? true : false));
@@ -388,9 +388,32 @@ struct TerraformToolbarWindow : Window {
 		this->RaiseButtons();
 	}
 
-	static HotkeyList hotkeys;
+	/**
+	 * Handler for global hotkeys of the TerraformToolbarWindow.
+	 * @param hotkey Hotkey
+	 * @return ES_HANDLED if hotkey was accepted.
+	 */
+	static EventState TerraformToolbarGlobalHotkeys(int hotkey)
+	{
+		if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
+		Window *w = ShowTerraformToolbar(nullptr);
+		if (w == nullptr) return ES_NOT_HANDLED;
+		return w->OnHotkey(hotkey);
+	}
+
+	static inline HotkeyList hotkeys{"terraform", {
+		Hotkey('Q' | WKC_GLOBAL_HOTKEY, "lower", WID_TT_LOWER_LAND),
+		Hotkey('W' | WKC_GLOBAL_HOTKEY, "raise", WID_TT_RAISE_LAND),
+		Hotkey('E' | WKC_GLOBAL_HOTKEY, "level", WID_TT_LEVEL_LAND),
+		Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_TT_DEMOLISH),
+		Hotkey('U', "buyland", WID_TT_BUY_LAND),
+		Hotkey('I', "trees", WID_TT_PLANT_TREES),
+		Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
+		Hotkey('P', "placeobject", WID_TT_PLACE_OBJECT),
+	}, TerraformToolbarGlobalHotkeys};
 };
 
+<<<<<<< HEAD
 /**
  * Handler for global hotkeys of the TerraformToolbarWindow.
  * @param hotkey Hotkey
@@ -419,6 +442,37 @@ static Hotkey terraform_hotkeys[] = {
 HotkeyList TerraformToolbarWindow::hotkeys("terraform", terraform_hotkeys, TerraformToolbarGlobalHotkeys);
 
 static const NWidgetPart _nested_terraform_widgets[] = {
+||||||| 77ed90fc
+/**
+ * Handler for global hotkeys of the TerraformToolbarWindow.
+ * @param hotkey Hotkey
+ * @return ES_HANDLED if hotkey was accepted.
+ */
+static EventState TerraformToolbarGlobalHotkeys(int hotkey)
+{
+	if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
+	Window *w = ShowTerraformToolbar(nullptr);
+	if (w == nullptr) return ES_NOT_HANDLED;
+	return w->OnHotkey(hotkey);
+}
+
+static Hotkey terraform_hotkeys[] = {
+	Hotkey('Q' | WKC_GLOBAL_HOTKEY, "lower", WID_TT_LOWER_LAND),
+	Hotkey('W' | WKC_GLOBAL_HOTKEY, "raise", WID_TT_RAISE_LAND),
+	Hotkey('E' | WKC_GLOBAL_HOTKEY, "level", WID_TT_LEVEL_LAND),
+	Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_TT_DEMOLISH),
+	Hotkey('U', "buyland", WID_TT_BUY_LAND),
+	Hotkey('I', "trees", WID_TT_PLANT_TREES),
+	Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
+	Hotkey('P', "placeobject", WID_TT_PLACE_OBJECT),
+	HOTKEY_LIST_END
+};
+HotkeyList TerraformToolbarWindow::hotkeys("terraform", terraform_hotkeys, TerraformToolbarGlobalHotkeys);
+
+static const NWidgetPart _nested_terraform_widgets[] = {
+=======
+static constexpr NWidgetPart _nested_terraform_widgets[] = {
+>>>>>>> upstream/master
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_LANDSCAPING_TOOLBAR, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -451,11 +505,11 @@ static const NWidgetPart _nested_terraform_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _terraform_desc(
+static WindowDesc _terraform_desc(__FILE__, __LINE__,
 	WDP_MANUAL, "toolbar_landscape", 0, 0,
 	WC_SCEN_LAND_GEN, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_terraform_widgets, lengthof(_nested_terraform_widgets),
+	std::begin(_nested_terraform_widgets), std::end(_nested_terraform_widgets),
 	&TerraformToolbarWindow::hotkeys
 );
 
@@ -538,7 +592,7 @@ static void CommonRaiseLowerBigLand(TileIndex tile, bool mode)
 	}
 }
 
-static const int8 _multi_terraform_coords[][2] = {
+static const int8_t _multi_terraform_coords[][2] = {
 	{  0, -2},
 	{  4,  0}, { -4,  0}, {  0,  2},
 	{ -8,  2}, { -4,  4}, {  0,  6}, {  4,  4}, {  8,  2},
@@ -549,7 +603,7 @@ static const int8 _multi_terraform_coords[][2] = {
 	{-28,  0}, {-24, -2}, {-20, -4}, {-16, -6}, {-12, -8}, { -8,-10}, { -4,-12}, {  0,-14}, {  4,-12}, {  8,-10}, { 12, -8}, { 16, -6}, { 20, -4}, { 24, -2}, { 28,  0},
 };
 
-static const NWidgetPart _nested_scen_edit_land_gen_widgets[] = {
+static constexpr NWidgetPart _nested_scen_edit_land_gen_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -600,10 +654,9 @@ static const NWidgetPart _nested_scen_edit_land_gen_widgets[] = {
 
 /**
  * Callback function for the scenario editor 'reset landscape' confirmation window
- * @param w Window unused
  * @param confirmed boolean value, true when yes was clicked, false otherwise
  */
-static void ResetLandscapeConfirmationCallback(Window *w, bool confirmed)
+static void ResetLandscapeConfirmationCallback(Window *, bool confirmed)
 {
 	if (confirmed) {
 		/* Set generating_world to true to get instant-green grass after removing
@@ -642,7 +695,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		NWidgetStacked *show_desert = this->GetWidget<NWidgetStacked>(WID_ETT_SHOW_PLACE_DESERT);
 		show_desert->SetDisplayedPlane(_settings_game.game_creation.landscape == LT_TROPIC ? 0 : SZSP_NONE);
 		this->FinishInitNested(window_number);
-		this->last_user_action = WIDGET_LIST_END;
+		this->last_user_action = INVALID_WID_ETT;
 	}
 
 	void OnPaint() override
@@ -654,7 +707,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		}
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
 	{
 		if (widget != WID_ETT_DOTS) return;
 
@@ -662,7 +715,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		size->height = std::max<uint>(size->height, ScaleGUITrad(31));
 	}
 
-	void DrawWidget(const Rect &r, int widget) const override
+	void DrawWidget(const Rect &r, WidgetID widget) const override
 	{
 		if (widget != WID_ETT_DOTS) return;
 
@@ -670,7 +723,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		int center_y = RoundDivSU(r.top + r.bottom, 2);
 
 		int n = _terraform_size * _terraform_size;
-		const int8 *coords = &_multi_terraform_coords[0][0];
+		const int8_t *coords = &_multi_terraform_coords[0][0];
 
 		assert(n != 0);
 		do {
@@ -679,7 +732,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		} while (--n);
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		if (widget < WID_ETT_BUTTONS_START) return;
 
@@ -747,16 +800,13 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 
 	void OnTimeout() override
 	{
-		for (uint i = WID_ETT_START; i < this->nested_array_size; i++) {
-			if (i == WID_ETT_BUTTONS_START) i = WID_ETT_BUTTONS_END; // skip the buttons
-			if (this->IsWidgetLowered(i)) {
-				this->RaiseWidget(i);
-				this->SetWidgetDirty(i);
-			}
+		for (const auto &pair : this->widget_lookup) {
+			if (pair.first < WID_ETT_START || (pair.first >= WID_ETT_BUTTONS_START && pair.first < WID_ETT_BUTTONS_END)) continue; // skip the buttons
+			this->RaiseWidgetWhenLowered(pair.first);
 		}
 	}
 
-	void OnPlaceObject(Point pt, TileIndex tile) override
+	void OnPlaceObject([[maybe_unused]] Point pt, TileIndex tile) override
 	{
 		switch (this->last_user_action) {
 			case WID_ETT_DEMOLISH: // Demolish aka dynamite button
@@ -787,12 +837,12 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		}
 	}
 
-	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
+	void OnPlaceDrag(ViewportPlaceMethod select_method, [[maybe_unused]] ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt) override
 	{
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
-	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
+	void OnPlaceMouseUp([[maybe_unused]] ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (pt.x != -1) {
 			switch (select_proc) {
@@ -815,40 +865,35 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 		this->SetDirty();
 	}
 
-	static HotkeyList hotkeys;
+	/**
+	 * Handler for global hotkeys of the ScenarioEditorLandscapeGenerationWindow.
+	 * @param hotkey Hotkey
+	 * @return ES_HANDLED if hotkey was accepted.
+	 */
+	static EventState TerraformToolbarEditorGlobalHotkeys(int hotkey)
+	{
+		if (_game_mode != GM_EDITOR) return ES_NOT_HANDLED;
+		Window *w = ShowEditorTerraformToolbar();
+		if (w == nullptr) return ES_NOT_HANDLED;
+		return w->OnHotkey(hotkey);
+	}
+
+	static inline HotkeyList hotkeys{"terraform_editor", {
+		Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_ETT_DEMOLISH),
+		Hotkey('Q' | WKC_GLOBAL_HOTKEY, "lower", WID_ETT_LOWER_LAND),
+		Hotkey('W' | WKC_GLOBAL_HOTKEY, "raise", WID_ETT_RAISE_LAND),
+		Hotkey('E' | WKC_GLOBAL_HOTKEY, "level", WID_ETT_LEVEL_LAND),
+		Hotkey('R', "rocky", WID_ETT_PLACE_ROCKS),
+		Hotkey('T', "desert", WID_ETT_PLACE_DESERT),
+		Hotkey('O', "object", WID_ETT_PLACE_OBJECT),
+	}, TerraformToolbarEditorGlobalHotkeys};
 };
 
-/**
- * Handler for global hotkeys of the ScenarioEditorLandscapeGenerationWindow.
- * @param hotkey Hotkey
- * @return ES_HANDLED if hotkey was accepted.
- */
-static EventState TerraformToolbarEditorGlobalHotkeys(int hotkey)
-{
-	if (_game_mode != GM_EDITOR) return ES_NOT_HANDLED;
-	Window *w = ShowEditorTerraformToolbar();
-	if (w == nullptr) return ES_NOT_HANDLED;
-	return w->OnHotkey(hotkey);
-}
-
-static Hotkey terraform_editor_hotkeys[] = {
-	Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_ETT_DEMOLISH),
-	Hotkey('Q' | WKC_GLOBAL_HOTKEY, "lower", WID_ETT_LOWER_LAND),
-	Hotkey('W' | WKC_GLOBAL_HOTKEY, "raise", WID_ETT_RAISE_LAND),
-	Hotkey('E' | WKC_GLOBAL_HOTKEY, "level", WID_ETT_LEVEL_LAND),
-	Hotkey('R', "rocky", WID_ETT_PLACE_ROCKS),
-	Hotkey('T', "desert", WID_ETT_PLACE_DESERT),
-	Hotkey('O', "object", WID_ETT_PLACE_OBJECT),
-	HOTKEY_LIST_END
-};
-
-HotkeyList ScenarioEditorLandscapeGenerationWindow::hotkeys("terraform_editor", terraform_editor_hotkeys, TerraformToolbarEditorGlobalHotkeys);
-
-static WindowDesc _scen_edit_land_gen_desc(
+static WindowDesc _scen_edit_land_gen_desc(__FILE__, __LINE__,
 	WDP_AUTO, "toolbar_landscape_scen", 0, 0,
 	WC_SCEN_LAND_GEN, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_scen_edit_land_gen_widgets, lengthof(_nested_scen_edit_land_gen_widgets),
+	std::begin(_nested_scen_edit_land_gen_widgets), std::end(_nested_scen_edit_land_gen_widgets),
 	&ScenarioEditorLandscapeGenerationWindow::hotkeys
 );
 

@@ -23,7 +23,7 @@
 #include "safeguards.h"
 
 /* Extra Viewport Window Stuff */
-static const NWidgetPart _nested_extra_viewport_widgets[] = {
+static constexpr NWidgetPart _nested_extra_viewport_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_EV_CAPTION), SetDataTip(STR_EXTRA_VIEWPORT_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -57,28 +57,11 @@ public:
 		this->InitNested(window_number);
 
 		NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_EV_VIEWPORT);
-		nvp->InitializeViewport(this, 0, ScaleZoomGUI(ZOOM_LVL_VIEWPORT));
+		nvp->InitializeViewport(this, tile, ScaleZoomGUI(ZOOM_LVL_VIEWPORT));
 		if (_settings_client.gui.zoom_min == viewport->zoom) this->DisableWidget(WID_EV_ZOOM_IN);
-
-		Point pt;
-		if (tile == INVALID_TILE) {
-			/* No tile? Use center of main viewport. */
-			const Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
-
-			/* center on same place as main window (zoom is maximum, no adjustment needed) */
-			pt.x = w->viewport->scrollpos_x + w->viewport->virtual_width / 2;
-			pt.y = w->viewport->scrollpos_y + w->viewport->virtual_height / 2;
-		} else {
-			pt = RemapCoords(TileX(tile) * TILE_SIZE + TILE_SIZE / 2, TileY(tile) * TILE_SIZE + TILE_SIZE / 2, TilePixelHeight(tile));
-		}
-
-		this->viewport->scrollpos_x = pt.x - this->viewport->virtual_width / 2;
-		this->viewport->scrollpos_y = pt.y - this->viewport->virtual_height / 2;
-		this->viewport->dest_scrollpos_x = this->viewport->scrollpos_x;
-		this->viewport->dest_scrollpos_y = this->viewport->scrollpos_y;
 	}
 
-	void SetStringParameters(int widget) const override
+	void SetStringParameters(WidgetID widget) const override
 	{
 		switch (widget) {
 			case WID_EV_CAPTION:
@@ -88,14 +71,14 @@ public:
 		}
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_EV_ZOOM_IN: DoZoomInOutWindow(ZOOM_IN,  this); break;
 			case WID_EV_ZOOM_OUT: DoZoomInOutWindow(ZOOM_OUT, this); break;
 
 			case WID_EV_MAIN_TO_VIEW: { // location button (move main view to same spot as this view) 'Paste Location'
-				Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
+				Window *w = GetMainWindow();
 				int x = this->viewport->scrollpos_x; // Where is the main looking at
 				int y = this->viewport->scrollpos_y;
 
@@ -107,7 +90,7 @@ public:
 			}
 
 			case WID_EV_VIEW_TO_MAIN: { // inverse location button (move this view to same spot as main view) 'Copy Location'
-				const Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
+				const Window *w = GetMainWindow();
 				int x = w->viewport->scrollpos_x;
 				int y = w->viewport->scrollpos_y;
 
@@ -134,6 +117,11 @@ public:
 		this->viewport->dest_scrollpos_y = this->viewport->scrollpos_y;
 	}
 
+	bool OnRightClick([[maybe_unused]] Point pt, WidgetID widget) override
+	{
+		return widget == WID_EV_VIEWPORT;
+	}
+
 	void OnMouseWheel(int wheel) override
 	{
 		if (_settings_client.gui.scrollwheel_scrolling != 2) {
@@ -146,7 +134,7 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	void OnInvalidateData(int data = 0, bool gui_scope = true) override
+	void OnInvalidateData([[maybe_unused]] int data = 0, [[maybe_unused]] bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		/* Only handle zoom message if intended for us (msg ZOOM_IN/ZOOM_OUT) */
@@ -159,11 +147,11 @@ public:
 	}
 };
 
-static WindowDesc _extra_viewport_desc(
+static WindowDesc _extra_viewport_desc(__FILE__, __LINE__,
 	WDP_AUTO, "extra_viewport", 300, 268,
 	WC_EXTRA_VIEWPORT, WC_NONE,
 	0,
-	_nested_extra_viewport_widgets, lengthof(_nested_extra_viewport_widgets)
+	std::begin(_nested_extra_viewport_widgets), std::end(_nested_extra_viewport_widgets)
 );
 
 /**

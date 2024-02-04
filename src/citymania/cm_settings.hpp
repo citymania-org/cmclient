@@ -22,17 +22,17 @@ enum class ModKey : uint8 {
 class CBRequirement {
 public:
     CargoID cargo_id;
-    uint32 from;
-    uint32 amount;
-    uint8 decay;
-    uint8 index;
+    uint32_t from;
+    uint32_t amount;
+    uint8_t decay;
+    uint8_t index;
     std::string name;
     bool has_storage;
 
-    static CBRequirement Parse(const char *name, const char *value, uint8 index);
+    static CBRequirement Parse(const char *name, const char *value, uint8_t index);
 
-    CBRequirement(CargoID cargo_id, uint32 from, uint32 amount, uint8 decay,
-                  uint8 index, std::string name)
+    CBRequirement(CargoID cargo_id, uint32_t from, uint32_t amount, uint8_t decay,
+                  uint8_t index, std::string name)
         :cargo_id{cargo_id}, from{from}, amount{amount}, decay{decay},
             index{index}, name{name}, has_storage{decay < 100} {}
 };
@@ -44,19 +44,19 @@ struct EconomySettings {
 };
 
 struct LimitsSettings {
-    uint16 max_airports; ///< maximum number of airports per company, 0=unlimited
+    uint16_t max_airports; ///< maximum number of airports per company, 0=unlimited
     bool disable_canals;
-    uint16 min_distance_between_docks; ///< docks can be build only x tiles apart another, 0=disable check
+    uint16_t min_distance_between_docks; ///< docks can be build only x tiles apart another, 0=disable check
 };
 
 
 struct CBSettings {
-    uint8 requirements_type;  // 0 - regular 1 - income-based requirements (new cb only)
+    uint8_t requirements_type;  // 0 - regular 1 - income-based requirements (new cb only)
     std::vector<CBRequirement> requirements;
-    uint16 acceptance_range;  // How far can station be to count towards requiremnts
-    uint8 storage_size;  // cargo storage multiplier (x * monthly requirements)
-    uint8 town_protection_range;  // Claimed town protection range (square from centre), overlaped with tz0
-    uint16 claim_max_houses;  // Max amount of houses claimable town can have
+    uint16_t acceptance_range;  // How far can station be to count towards requiremnts
+    uint8_t storage_size;  // cargo storage multiplier (x * monthly requirements)
+    uint8_t town_protection_range;  // Claimed town protection range (square from centre), overlaped with tz0
+    uint16_t claim_max_houses;  // Max amount of houses claimable town can have
     bool smooth_growth_rate;  // Calculate growth rate precisely instead of rounding to 50 houses and allow going below 70 ticks (default max)
     bool allow_negative_growth;  // Make town shrink (with the same speed as growth) if requirements aren't satisfied
 };
@@ -68,11 +68,11 @@ struct Settings {
 
     GameType game_type;  // GameType
     ControllerType controller_type;  // ControllerType
-    uint8 max_players_in_company;
-    uint16 destroyed_houses_per_month;  // max amount of houses a company can destroy per month
-    uint16 game_length_years;  // game length in years(0 = disabled)
+    uint8_t max_players_in_company;
+    uint16_t destroyed_houses_per_month;  // max amount of houses a company can destroy per month
+    uint16_t game_length_years;  // game length in years(0 = disabled)
     bool protect_funded_industries;
-    uint16 same_depot_sell_years;  // can only sell vehicles in the same place (20 tiles radius) for first x yearss of its lifetime (0 = disabled)
+    uint16_t same_depot_sell_years;  // can only sell vehicles in the same place (20 tiles radius) for first x yearss of its lifetime (0 = disabled)
 };
 
 }; // namespace citymania

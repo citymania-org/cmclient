@@ -18,11 +18,13 @@
 #include "station_base.h"
 #include "newgrf_engine.h"
 #include "pathfinder/yapf/yapf.h"
+#include "pathfinder/yapf/yapf_ship_regions.h"
 #include "newgrf_sound.h"
 #include "spritecache.h"
 #include "strings_func.h"
 #include "window_func.h"
-#include "date_func.h"
+#include "timer/timer_game_calendar.h"
+#include "timer/timer_game_economy.h"
 #include "vehicle_func.h"
 #include "sound_func.h"
 #include "ai/ai.hpp"
@@ -38,7 +40,12 @@
 
 #include "table/strings.h"
 
+#include <unordered_set>
+
 #include "safeguards.h"
+
+/** Max distance in tiles (as the crow flies) to search for depots when user clicks "go to depot". */
+constexpr int MAX_SHIP_DEPOT_SEARCH_DISTANCE = 80;
 
 /**
  * Determine the effective #WaterClass for a ship travelling on a tile.
@@ -59,10 +66,10 @@ WaterClass GetEffectiveWaterClass(TileIndex tile)
 	NOT_REACHED();
 }
 
-static const uint16 _ship_sprites[] = {0x0E5D, 0x0E55, 0x0E65, 0x0E6D};
+static const uint16_t _ship_sprites[] = {0x0E5D, 0x0E55, 0x0E65, 0x0E6D};
 
 template <>
-bool IsValidImageIndex<VEH_SHIP>(uint8 image_index)
+bool IsValidImageIndex<VEH_SHIP>(uint8_t image_index)
 {
 	return image_index < lengthof(_ship_sprites);
 }
@@ -75,7 +82,7 @@ static inline TrackBits GetTileShipTrackStatus(TileIndex tile)
 static void GetShipIcon(EngineID engine, EngineImageType image_type, VehicleSpriteSeq *result)
 {
 	const Engine *e = Engine::Get(engine);
-	uint8 spritenum = e->u.ship.image_index;
+	uint8_t spritenum = e->u.ship.image_index;
 
 	if (is_custom_sprite(spritenum)) {
 		GetCustomVehicleIcon(engine, DIR_W, image_type, result);
@@ -127,7 +134,7 @@ void GetShipSpriteSize(EngineID engine, uint &width, uint &height, int &xoffs, i
 
 void Ship::GetImage(Direction direction, EngineImageType image_type, VehicleSpriteSeq *result) const
 {
-	uint8 spritenum = this->spritenum;
+	uint8_t spritenum = this->spritenum;
 
 	if (image_type == EIT_ON_MAP) direction = this->rotation;
 
@@ -144,21 +151,49 @@ void Ship::GetImage(Direction direction, EngineImageType image_type, VehicleSpri
 
 static const Depot *FindClosestShipDepot(const Vehicle *v, uint max_distance)
 {
-	/* Find the closest depot */
-	const Depot *best_depot = nullptr;
-	/* If we don't have a maximum distance, i.e. distance = 0,
-	 * we want to find any depot so the best distance of no
-	 * depot must be more than any correct distance. On the
-	 * other hand if we have set a maximum distance, any depot
-	 * further away than max_distance can safely be ignored. */
-	uint best_dist = max_distance == 0 ? UINT_MAX : max_distance + 1;
+	const int max_region_distance = (max_distance / WATER_REGION_EDGE_LENGTH) + 1;
 
+	static std::unordered_set<int> visited_patch_hashes;
+	static std::deque<WaterRegionPatchDesc> patches_to_search;
+	visited_patch_hashes.clear();
+	patches_to_search.clear();
+
+	/* Step 1: find a set of reachable Water Region Patches using BFS. */
+	const WaterRegionPatchDesc start_patch = GetWaterRegionPatchInfo(v->tile);
+	patches_to_search.push_back(start_patch);
+	visited_patch_hashes.insert(CalculateWaterRegionPatchHash(start_patch));
+
+	while (!patches_to_search.empty()) {
+		/* Remove first patch from the queue and make it the current patch. */
+		const WaterRegionPatchDesc current_node = patches_to_search.front();
+		patches_to_search.pop_front();
+
+		/* Add neighbors of the current patch to the search queue. */
+		TVisitWaterRegionPatchCallBack visitFunc = [&](const WaterRegionPatchDesc &water_region_patch) {
+			/* Note that we check the max distance per axis, not the total distance. */
+			if (std::abs(water_region_patch.x - start_patch.x) > max_region_distance ||
+					std::abs(water_region_patch.y - start_patch.y) > max_region_distance) return;
+
+			const int hash = CalculateWaterRegionPatchHash(water_region_patch);
+			if (visited_patch_hashes.count(hash) == 0) {
+				visited_patch_hashes.insert(hash);
+				patches_to_search.push_back(water_region_patch);
+			}
+		};
+
+		VisitWaterRegionPatchNeighbors(current_node, visitFunc);
+	}
+
+	/* Step 2: Find the closest depot within the reachable Water Region Patches. */
+	const Depot *best_depot = nullptr;
+	uint best_dist_sq = std::numeric_limits<uint>::max();
 	for (const Depot *depot : Depot::Iterate()) {
-		TileIndex tile = depot->xy;
+		const TileIndex tile = depot->xy;
 		if (IsShipDepotTile(tile) && IsTileOwner(tile, v->owner)) {
-			uint dist = DistanceManhattan(tile, v->tile);
-			if (dist < best_dist) {
-				best_dist = dist;
+			const uint dist_sq = DistanceSquare(tile, v->tile);
+			if (dist_sq < best_dist_sq && dist_sq <= max_distance * max_distance &&
+					visited_patch_hashes.count(CalculateWaterRegionPatchHash(GetWaterRegionPatchInfo(tile))) > 0) {
+				best_dist_sq = dist_sq;
 				best_depot = depot;
 			}
 		}
@@ -222,21 +257,27 @@ Money Ship::GetRunningCost() const
 	return GetPrice(PR_RUNNING_SHIP, cost_factor, e->GetGRF());
 }
 
-void Ship::OnNewDay()
+/** Calendar day handler. */
+void Ship::OnNewCalendarDay()
+{
+	AgeVehicle(this);
+}
+
+/** Economy day handler. */
+void Ship::OnNewEconomyDay()
 {
 	if ((++this->day_counter & 7) == 0) {
 		DecreaseVehicleValue(this);
 	}
 
 	CheckVehicleBreakdown(this);
-	AgeVehicle(this);
 	CheckIfShipNeedsService(this);
 
 	CheckOrders(this);
 
 	if (this->running_ticks == 0) return;
 
-	CommandCost cost(EXPENSES_SHIP_RUN, this->GetRunningCost() * this->running_ticks / (DAYS_IN_YEAR * DAY_TICKS));
+	CommandCost cost(EXPENSES_SHIP_RUN, this->GetRunningCost() * this->running_ticks / (CalendarTime::DAYS_IN_YEAR * Ticks::DAY_TICKS));
 
 	this->profit_this_year -= cost.GetCost();
 	this->running_ticks = 0;
@@ -293,7 +334,7 @@ TileIndex Ship::GetOrderStationLocation(StationID station)
 
 void Ship::UpdateDeltaXY()
 {
-	static const int8 _delta_xy_table[8][4] = {
+	static const int8_t _delta_xy_table[8][4] = {
 		/* y_extent, x_extent, y_offs, x_offs */
 		{ 6,  6,  -3,  -3}, // N
 		{ 6, 32,  -3, -16}, // NE
@@ -305,7 +346,7 @@ void Ship::UpdateDeltaXY()
 		{32,  6, -16,  -3}, // NW
 	};
 
-	const int8 *bb = _delta_xy_table[this->rotation];
+	const int8_t *bb = _delta_xy_table[this->rotation];
 	this->x_offs        = bb[3];
 	this->y_offs        = bb[2];
 	this->x_extent      = bb[1];
@@ -325,7 +366,7 @@ void Ship::UpdateDeltaXY()
 /**
  * Test-procedure for HasVehicleOnPos to check for any ships which are visible and not stopped by the player.
  */
-static Vehicle *EnsureNoMovingShipProc(Vehicle *v, void *data)
+static Vehicle *EnsureNoMovingShipProc(Vehicle *v, void *)
 {
 	return v->type == VEH_SHIP && (v->vehstatus & (VS_HIDDEN | VS_STOPPED)) == 0 ? v : nullptr;
 }
@@ -345,6 +386,9 @@ static bool CheckReverseShip(const Ship *v, Trackdir *trackdir = nullptr)
 static bool CheckShipLeaveDepot(Ship *v)
 {
 	if (!v->IsChainInDepot()) return false;
+
+	/* Check if we should wait here for unbunching. */
+	if (v->IsWaitingForUnbunching()) return true;
 
 	/* We are leaving a depot, but have to go to the exact same one; re-enter */
 	if (v->current_order.IsType(OT_GOTO_DEPOT) &&
@@ -392,8 +436,9 @@ static bool CheckShipLeaveDepot(Ship *v)
 	v->UpdateViewport(true, true);
 	SetWindowDirty(WC_VEHICLE_DEPOT, v->tile);
 
-	v->PlayLeaveStationSound();
 	VehicleServiceInDepot(v);
+	v->LeaveUnbunchingDepot();
+	v->PlayLeaveStationSound();
 	InvalidateWindowData(WC_VEHICLE_DEPOT, v->tile);
 	SetWindowClassesDirty(WC_SHIPS_LIST);
 
@@ -408,8 +453,7 @@ static bool CheckShipLeaveDepot(Ship *v)
 static uint ShipAccelerate(Vehicle *v)
 {
 	uint speed;
-
-	speed = std::min<uint>(v->cur_speed + 1, v->vcache.cached_max_speed);
+	speed = std::min<uint>(v->cur_speed + v->acceleration, v->vcache.cached_max_speed);
 	speed = std::min<uint>(speed, v->current_order.GetMaxSpeed() * 2);
 
 	/* updates statusbar only if speed have changed to save CPU time */
@@ -624,7 +668,7 @@ bool IsShipDestinationTile(TileIndex tile, StationID station)
 	for (DiagDirection d = DIAGDIR_BEGIN; d != DIAGDIR_END; d++) {
 		TileIndex t = tile + TileOffsByDiagDir(d);
 		if (!IsValidTile(t)) continue;
-		if (IsDockTile(t) && GetStationIndex(t) == station && IsValidDockingDirectionForDock(t, d)) return true;
+		if (IsDockTile(t) && GetStationIndex(t) == station && IsDockWaterPart(t)) return true;
 		if (IsTileType(t, MP_INDUSTRY)) {
 			const Industry *i = Industry::GetByTile(t);
 			if (i->neutral_station != nullptr && i->neutral_station->index == station) return true;
@@ -704,6 +748,8 @@ static void ShipController(Ship *v)
 
 	const uint number_of_steps = ShipAccelerate(v);
 	for (uint i = 0; i < number_of_steps; ++i) {
+		if (ShipMoveUpDownOnLock(v)) return;
+
 		GetNewVehiclePosResult gp = GetNewVehiclePos(v);
 		if (v->state != TRACK_BIT_WORMHOLE) {
 			/* Not on a bridge */
@@ -902,11 +948,13 @@ CommandCost CmdBuildShip(DoCommandFlag flags, TileIndex tile, const Engine *e, V
 		v->state = TRACK_BIT_DEPOT;
 
 		v->SetServiceInterval(Company::Get(_current_company)->settings.vehicle.servint_ships);
-		v->date_of_last_service = _date;
-		v->build_year = _cur_year;
+		v->date_of_last_service = TimerGameEconomy::date;
+		v->date_of_last_service_newgrf = TimerGameCalendar::date;
+		v->build_year = TimerGameCalendar::year;
 		v->sprite_cache.sprite_seq.Set(SPR_IMG_QUERY);
-		v->random_bits = VehicleRandomBits();
+		v->random_bits = Random();
 
+		v->acceleration = svi->acceleration;
 		v->UpdateCache();
 
 		if (e->flags & ENGINE_EXCLUSIVE_PREVIEW) SetBit(v->vehicle_flags, VF_BUILT_AS_PROTOTYPE);
@@ -924,14 +972,10 @@ CommandCost CmdBuildShip(DoCommandFlag flags, TileIndex tile, const Engine *e, V
 	return CommandCost();
 }
 
-bool Ship::FindClosestDepot(TileIndex *location, DestinationID *destination, bool *reverse)
+ClosestDepot Ship::FindClosestDepot()
 {
-	const Depot *depot = FindClosestShipDepot(this, 0);
+	const Depot *depot = FindClosestShipDepot(this, MAX_SHIP_DEPOT_SEARCH_DISTANCE);
+	if (depot == nullptr) return ClosestDepot();
 
-	if (depot == nullptr) return false;
-
-	if (location    != nullptr) *location    = depot->xy;
-	if (destination != nullptr) *destination = depot->index;
-
-	return true;
+	return ClosestDepot(depot->xy, depot->index);
 }

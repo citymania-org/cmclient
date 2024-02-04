@@ -12,10 +12,9 @@
 
 #include "core/smallstack_type.hpp"
 #include "tilearea_type.h"
-#include <set>
 
-typedef uint16 StationID;
-typedef uint16 RoadStopID;
+typedef uint16_t StationID;
+typedef uint16_t RoadStopID;
 
 struct BaseStation;
 struct Station;

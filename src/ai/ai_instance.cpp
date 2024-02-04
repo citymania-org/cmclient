@@ -14,11 +14,11 @@
 #include "../script/squirrel_class.hpp"
 
 #include "ai_config.hpp"
-#include "ai_gui.hpp"
 #include "ai.hpp"
 
 #include "../script/script_storage.hpp"
 #include "../script/script_cmd.h"
+#include "../script/script_gui.h"
 #include "ai_info.hpp"
 #include "ai_instance.hpp"
 
@@ -64,13 +64,13 @@ void AIInstance::Died()
 	/* Intro is not supposed to use AI, but it may have 'dummy' AI which instant dies. */
 	if (_game_mode == GM_MENU) return;
 
-	ShowAIDebugWindow(_current_company);
+	ShowScriptDebugWindow(_current_company);
 
 	const AIInfo *info = AIConfig::GetConfig(_current_company, AIConfig::SSS_FORCE_GAME)->GetInfo();
 	if (info != nullptr) {
 		ShowErrorMessage(STR_ERROR_AI_PLEASE_REPORT_CRASH, INVALID_STRING_ID, WL_WARNING);
 
-		if (info->GetURL() != nullptr) {
+		if (!info->GetURL().empty()) {
 			ScriptLog::Info("Please report the error to the following URL:");
 			ScriptLog::Info(info->GetURL());
 		}
@@ -80,16 +80,15 @@ void AIInstance::Died()
 void AIInstance::LoadDummyScript()
 {
 	ScriptAllocatorScope alloc_scope(this->engine);
-	extern void Script_CreateDummy(HSQUIRRELVM vm, StringID string, const char *type);
 	Script_CreateDummy(this->engine->GetVM(), STR_ERROR_AI_NO_AI_FOUND, "AI");
 }
 
-int AIInstance::GetSetting(const char *name)
+int AIInstance::GetSetting(const std::string &name)
 {
 	return AIConfig::GetConfig(_current_company)->GetSetting(name);
 }
 
-ScriptInfo *AIInstance::FindLibrary(const char *library, int version)
+ScriptInfo *AIInstance::FindLibrary(const std::string &library, int version)
 {
 	return (ScriptInfo *)AI::FindLibrary(library, version);
 }

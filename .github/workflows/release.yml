@@ -39,12 +39,18 @@ jobs:
     uses: ./.github/workflows/release-linux.yml
     secrets: inherit
 
+    with:
+      survey_key: ${{ needs.source.outputs.survey_key }}
+
   macos:
     name: MacOS
     needs: source
 
     uses: ./.github/workflows/release-macos.yml
     secrets: inherit
+
+    with:
+      survey_key: ${{ needs.source.outputs.survey_key }}
 
   windows:
     name: Windows
@@ -55,6 +61,7 @@ jobs:
 
     with:
       is_tag: ${{ needs.source.outputs.is_tag }}
+      survey_key: ${{ needs.source.outputs.survey_key }}
 
   windows-store:
     name: Windows Store
@@ -71,8 +78,8 @@ jobs:
     with:
       version: ${{ needs.source.outputs.version }}
 
-  upload-cdn:
-    name: Upload (CDN)
+  upload:
+    name: Upload
     needs:
     - source
     - docs
@@ -86,6 +93,25 @@ jobs:
     # The always() makes sure the rest is always evaluated.
     # if: always() && needs.source.result == 'success' && needs.docs.result == 'success' && needs.linux.result == 'success' && needs.macos.result == 'success' && needs.windows.result == 'success' && (needs.windows-store.result == 'success' || needs.windows-store.result == 'skipped')
 
+    runs-on: ubuntu-latest
+
+    # This job is empty, but ensures no upload job starts before all targets finished and are successful.
+    steps:
+    - name: Build completed
+      run: |
+        true
+
+  upload-cdn:
+    name: Upload (CDN)
+    needs:
+    - source
+    - upload
+
+    # As windows-store is condition, we need to check ourselves if we need to run.
+    # The always() makes sure the rest is always evaluated.
+    # Yes, you even need to do this if you yourself don't depend on the condition.
+    if: always() && needs.source.result == 'success' && needs.upload.result == 'success'
+
     uses: ./.github/workflows/upload-cdn.yml
     secrets: inherit
 
@@ -98,12 +124,14 @@ jobs:
     name: Upload (Steam)
     needs:
     - source
-    - linux
-    - macos
-    - windows
+    - upload
 
+    # As windows-store is condition, we need to check ourselves if we need to run.
+    # The always() makes sure the rest is always evaluated.
+    # Yes, you even need to do this if you yourself don't depend on the condition.
+    # Additionally, only nightlies and releases go to Steam; not PRs.
+    # if: always() && needs.source.result == 'success' && needs.upload.result == 'success' && (needs.source.outputs.trigger_type == 'new-master' || needs.source.outputs.trigger_type == 'new-tag')
     if: ${{ false }}  # CM
-    # if: needs.source.outputs.trigger_type == 'new-master' || needs.source.outputs.trigger_type == 'new-tag'
 
     uses: ./.github/workflows/upload-steam.yml
     secrets: inherit
@@ -116,12 +144,14 @@ jobs:
     name: Upload (GOG)
     needs:
     - source
-    - linux
-    - macos
-    - windows
+    - upload
 
+    # As windows-store is condition, we need to check ourselves if we need to run.
+    # The always() makes sure the rest is always evaluated.
+    # Yes, you even need to do this if you yourself don't depend on the condition.
+    # Additionally, only releases go to GOG; not nightlies or PRs.
+    # if: always() && needs.source.result == 'success' && needs.upload.result == 'success' && needs.source.outputs.trigger_type == 'new-tag'
     if: ${{ false }}  # CM
-    # if: needs.source.outputs.trigger_type == 'new-tag'
 
     uses: ./.github/workflows/upload-gog.yml
     secrets: inherit

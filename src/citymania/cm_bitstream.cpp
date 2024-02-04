@@ -9,7 +9,7 @@ namespace citymania {
 // Returns 8 higher bits of s-bit integer x
 #define FIRST8(x, s) (((x) >> ((s) - 8)) & 0xFF)
 
-void BitOStream::WriteBytes(uint32 value, int amount)
+void BitOStream::WriteBytes(uint32_t value, int amount)
 {
 	do {
 		v = (v << 8) | FIRST8(value, amount << 3);
@@ -17,7 +17,7 @@ void BitOStream::WriteBytes(uint32 value, int amount)
 	} while (--amount);
 }
 
-void BitOStream::WriteBytes64(uint64 value, int amount)
+void BitOStream::WriteBytes64(uint64_t value, int amount)
 {
 	do {
 		v = (v << 8) | FIRST8(value, amount << 3);
@@ -56,9 +56,9 @@ uint BitOStream::GetByteSize() const
 
 BitIStreamUnexpectedEnd _bit_i_stream_unexpected_end;
 
-uint32 BitIStream::ReadBytes(uint amount)
+uint32_t BitIStream::ReadBytes(uint amount)
 {
-	uint32 res = 0;
+	uint32_t res = 0;
 	while (amount--) {
 		if (i >= f.size()) {
 			throw _bit_i_stream_unexpected_end;
@@ -68,9 +68,9 @@ uint32 BitIStream::ReadBytes(uint amount)
 	return res;
 }
 
-uint64 BitIStream::ReadBytes64(uint amount)
+uint64_t BitIStream::ReadBytes64(uint amount)
 {
-	uint64 res = 0;
+	uint64_t res = 0;
 	while (amount--) {
 		if (i >= f.size()) {
 			throw _bit_i_stream_unexpected_end;

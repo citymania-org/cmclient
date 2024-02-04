@@ -36,14 +36,14 @@ using Microsoft::WRL::ComPtr;
 #include "../safeguards.h"
 
 // Definition of the "XAudio2Create" call used to initialise XAudio2
-typedef HRESULT(__stdcall *API_XAudio2Create)(_Outptr_ IXAudio2** ppXAudio2, UINT32 Flags, XAUDIO2_PROCESSOR XAudio2Processor);
+typedef HRESULT(__stdcall *API_XAudio2Create)(_Outptr_ IXAudio2 **ppXAudio2, UINT32 Flags, XAUDIO2_PROCESSOR XAudio2Processor);
 
 static FSoundDriver_XAudio2 iFSoundDriver_XAudio2;
 
 /**
-* Implementation of the IXAudio2VoiceCallback interface.
-* Provides buffered audio to XAudio2 from the OpenTTD mixer.
-*/
+ * Implementation of the IXAudio2VoiceCallback interface.
+ * Provides buffered audio to XAudio2 from the OpenTTD mixer.
+ */
 class StreamingVoiceContext : public IXAudio2VoiceCallback
 {
 private:
@@ -51,7 +51,7 @@ private:
 	char *buffer;
 
 public:
-	IXAudio2SourceVoice* SourceVoice;
+	IXAudio2SourceVoice *SourceVoice;
 
 	StreamingVoiceContext(int bufferLength)
 	{
@@ -112,10 +112,10 @@ public:
 };
 
 static HMODULE _xaudio_dll_handle;
-static IXAudio2SourceVoice* _source_voice = nullptr;
-static IXAudio2MasteringVoice* _mastering_voice = nullptr;
+static IXAudio2SourceVoice *_source_voice = nullptr;
+static IXAudio2MasteringVoice *_mastering_voice = nullptr;
 static ComPtr<IXAudio2> _xaudio2;
-static StreamingVoiceContext* _voice_context = nullptr;
+static StreamingVoiceContext *_voice_context = nullptr;
 
 /** Create XAudio2 context with SEH exception checking. */
 static HRESULT CreateXAudio(API_XAudio2Create xAudio2Create)
@@ -132,12 +132,12 @@ static HRESULT CreateXAudio(API_XAudio2Create xAudio2Create)
 }
 
 /**
-* Initialises the XAudio2 driver.
-*
-* @param parm Driver parameters.
-* @return An error message if unsuccessful, or nullptr otherwise.
-*
-*/
+ * Initialises the XAudio2 driver.
+ *
+ * @param parm Driver parameters.
+ * @return An error message if unsuccessful, or nullptr otherwise.
+ *
+ */
 const char *SoundDriver_XAudio2::Start(const StringList &parm)
 {
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
@@ -261,8 +261,8 @@ const char *SoundDriver_XAudio2::Start(const StringList &parm)
 }
 
 /**
-* Terminates the XAudio2 driver.
-*/
+ * Terminates the XAudio2 driver.
+ */
 void SoundDriver_XAudio2::Stop()
 {
 	// Clean up XAudio2

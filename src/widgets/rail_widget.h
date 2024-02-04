@@ -11,7 +11,7 @@
 #define WIDGETS_RAIL_WIDGET_H
 
 /** Widgets of the #BuildRailToolbarWindow class. */
-enum RailToolbarWidgets {
+enum RailToolbarWidgets : WidgetID {
 	/* Name starts with RA instead of R, because of collision with RoadToolbarWidgets */
 	WID_RAT_CAPTION,        ///< Caption of the window.
 	WID_RAT_BUILD_NS,       ///< Build rail along the game view Y axis.
@@ -31,10 +31,12 @@ enum RailToolbarWidgets {
 	WID_RAT_REMOVE,         ///< Bulldozer to remove rail.
 	WID_RAT_CONVERT_RAIL,   ///< Convert other rail to this type.
 	CM_WID_RAT_BLUEPRINT_PLACE, ///< CityMania rail blueprint tool placement (fake widget).
+
+	INVALID_WID_RAT = -1,	
 };
 
 /** Widgets of the #BuildRailStationWindow class. */
-enum BuildRailStationWidgets {
+enum BuildRailStationWidgets : WidgetID {
 	/* Name starts with BRA instead of BR, because of collision with BuildRoadStationWidgets */
 	WID_BRAS_PLATFORM_DIR_X,       ///< Button to select '/' view.
 	WID_BRAS_PLATFORM_DIR_Y,       ///< Button to select '\' view.
@@ -80,7 +82,7 @@ enum BuildRailStationWidgets {
 };
 
 /** Widgets of the #BuildSignalWindow class. */
-enum BuildSignalWidgets {
+enum BuildSignalWidgets : WidgetID {
 	WID_BS_CAPTION,            ///< Caption for the Signal Selection window.
 	WID_BS_TOGGLE_SIZE,        ///< Toggle showing advanced signal types.
 	WID_BS_SEMAPHORE_NORM,     ///< Build a semaphore normal block signal.
@@ -99,18 +101,12 @@ enum BuildSignalWidgets {
 	WID_BS_DRAG_SIGNALS_DENSITY_LABEL,    ///< The current signal density.
 	WID_BS_DRAG_SIGNALS_DENSITY_DECREASE, ///< Decrease the signal density.
 	WID_BS_DRAG_SIGNALS_DENSITY_INCREASE, ///< Increase the signal density.
-	WID_BS_SEMAPHORE_NORM_SEL,  ///< NWID_SELECTION for WID_BS_SEMAPHORE_NORM.
-	WID_BS_ELECTRIC_NORM_SEL,   ///< NWID_SELECTION for WID_BS_ELECTRIC_NORM.
-	WID_BS_SEMAPHORE_ENTRY_SEL, ///< NWID_SELECTION for WID_BS_SEMAPHORE_ENTRY.
-	WID_BS_ELECTRIC_ENTRY_SEL,  ///< NWID_SELECTION for WID_BS_ELECTRIC_ENTRY.
-	WID_BS_SEMAPHORE_EXIT_SEL,  ///< NWID_SELECTION for WID_BS_SEMAPHORE_EXIT.
-	WID_BS_ELECTRIC_EXIT_SEL,   ///< NWID_SELECTION for WID_BS_ELECTRIC_EXIT.
-	WID_BS_SEMAPHORE_COMBO_SEL, ///< NWID_SELECTION for WID_BS_SEMAPHORE_COMBO.
-	WID_BS_ELECTRIC_COMBO_SEL,  ///< NWID_SELECTION for WID_BS_ELECTRIC_COMBO.
+	WID_BS_BLOCK_SEL,           ///< Container for the block signal group, which can be hidden.
+	WID_BS_BLOCK_SPACER_SEL,    ///< Container for the spacer between block and path signal groups, which can be hidden.
 };
 
 /** Widgets of the #BuildRailDepotWindow class. */
-enum BuildRailDepotWidgets {
+enum BuildRailDepotWidgets : WidgetID {
 	/* Name starts with BRA instead of BR, because of collision with BuildRoadDepotWidgets */
 	WID_BRAD_DEPOT_NE,   ///< Build a depot with the entrance in the north east.
 	WID_BRAD_DEPOT_SE,   ///< Build a depot with the entrance in the south east.
@@ -120,10 +116,12 @@ enum BuildRailDepotWidgets {
 };
 
 /** Widgets of the #BuildRailWaypointWindow class. */
-enum BuildRailWaypointWidgets {
+enum BuildRailWaypointWidgets : WidgetID {
+	WID_BRW_FILTER,          ///< Text filter.
 	WID_BRW_WAYPOINT_MATRIX, ///< Matrix with waypoints.
 	WID_BRW_WAYPOINT,        ///< A single waypoint.
 	WID_BRW_SCROLL,          ///< Scrollbar for the matrix.
+	WID_BRW_NAME,            ///< Name of selected waypoint.
 };
 
 #endif /* WIDGETS_RAIL_WIDGET_H */

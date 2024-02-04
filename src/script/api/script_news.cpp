@@ -20,12 +20,13 @@
 
 #include "../../safeguards.h"
 
-/* static */ bool ScriptNews::Create(NewsType type, Text *text, ScriptCompany::CompanyID company, NewsReferenceType ref_type, uint32 reference)
+/* static */ bool ScriptNews::Create(NewsType type, Text *text, ScriptCompany::CompanyID company, NewsReferenceType ref_type, SQInteger reference)
 {
 	CCountedPtr<Text> counter(text);
 
+	EnforceDeityMode(false);
 	EnforcePrecondition(false, text != nullptr);
-	const char *encoded = text->GetEncodedText();
+	std::string encoded = text->GetEncodedText();
 	EnforcePreconditionEncodedText(false, encoded);
 	EnforcePrecondition(false, type == NT_ECONOMY || type == NT_SUBSIDIES || type == NT_GENERAL);
 	EnforcePrecondition(false, company == ScriptCompany::COMPANY_INVALID || ScriptCompany::ResolveCompanyID(company) != ScriptCompany::COMPANY_INVALID);
@@ -35,7 +36,7 @@
 	                           (ref_type == NR_INDUSTRY && ScriptIndustry::IsValidIndustry(reference)) ||
 	                           (ref_type == NR_TOWN     && ScriptTown::IsValidTown(reference)));
 
-	uint8 c = company;
+	uint8_t c = company;
 	if (company == ScriptCompany::COMPANY_INVALID) c = INVALID_COMPANY;
 
 	if (ref_type == NR_NONE) reference = 0;

@@ -13,7 +13,7 @@
 #include "core/enum_type.hpp"
 
 /** The type all our vehicle IDs have. */
-typedef uint32 VehicleID;
+typedef uint32_t VehicleID;
 
 static const int GROUND_ACCELERATION = 9800; ///< Acceleration due to gravity, 9.8 m/s^2
 
@@ -35,8 +35,7 @@ enum VehicleType : byte {
 	VEH_INVALID = 0xFF,           ///< Non-existing type of vehicle.
 };
 DECLARE_POSTFIX_INCREMENT(VehicleType)
-/** Helper information for extract tool. */
-template <> struct EnumPropsT<VehicleType> : MakeEnumPropsT<VehicleType, byte, VEH_TRAIN, VEH_END, VEH_INVALID, 3> {};
+DECLARE_ENUM_AS_ADDABLE(VehicleType)
 
 struct Vehicle;
 struct Train;

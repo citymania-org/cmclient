@@ -12,7 +12,7 @@
 
 #include "core/enum_type.hpp"
 
-typedef uint16 TownID;
+typedef uint16_t TownID;
 struct Town;
 
 /** Supported initial town sizes */
@@ -24,7 +24,7 @@ enum TownSize : byte {
 
 	TSZ_END,    ///< Number of available town sizes.
 };
-template <> struct EnumPropsT<TownSize> : MakeEnumPropsT<TownSize, byte, TSZ_SMALL, TSZ_END, TSZ_END, 2> {};
+DECLARE_ENUM_AS_ADDABLE(TownSize)
 
 enum Ratings {
 	/* These refer to the maximums, so Appalling is -1000 to -400
@@ -88,7 +88,7 @@ enum TownLayout : byte {
 
 	NUM_TLS,             ///< Number of town layouts
 };
-template <> struct EnumPropsT<TownLayout> : MakeEnumPropsT<TownLayout, byte, TL_BEGIN, NUM_TLS, NUM_TLS, 3> {};
+DECLARE_ENUM_AS_ADDABLE(TownLayout)
 
 /** Town founding setting values. It needs to be 8bits, because we save and load it as such */
 enum TownFounding : byte {

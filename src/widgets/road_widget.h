@@ -11,12 +11,12 @@
 #define WIDGETS_ROAD_WIDGET_H
 
 /** Widgets of the #BuildRoadToolbarWindow class. */
-enum RoadToolbarWidgets {
+enum RoadToolbarWidgets : WidgetID {
 	/* Name starts with RO instead of R, because of collision with RailToolbarWidgets */
 	WID_ROT_CAPTION,        ///< Caption of the window
 	WID_ROT_ROAD_X,         ///< Build road in x-direction.
 	WID_ROT_ROAD_Y,         ///< Build road in y-direction.
-	WID_ROT_AUTOROAD,       ///< Autoroad.
+	CM_WID_ROT_AUTOROAD,       ///< Autoroad.
 	WID_ROT_DEMOLISH,       ///< Demolish.
 	WID_ROT_DEPOT,          ///< Build depot.
 	WID_ROT_BUS_STATION,    ///< Build bus station.
@@ -26,36 +26,52 @@ enum RoadToolbarWidgets {
 	WID_ROT_BUILD_TUNNEL,   ///< Build tunnel.
 	WID_ROT_REMOVE,         ///< Remove road.
 	WID_ROT_CONVERT_ROAD,   ///< Convert road.
+
+	INVALID_WID_ROT = -1,
 };
 
 /** Widgets of the #BuildRoadDepotWindow class. */
-enum BuildRoadDepotWidgets {
+enum BuildRoadDepotWidgets : WidgetID {
 	/* Name starts with BRO instead of BR, because of collision with BuildRailDepotWidgets */
 	WID_BROD_CAPTION,    ///< Caption of the window.
 	WID_BROD_DEPOT_NE,   ///< Depot with NE entry.
 	WID_BROD_DEPOT_SE,   ///< Depot with SE entry.
 	WID_BROD_DEPOT_SW,   ///< Depot with SW entry.
 	WID_BROD_DEPOT_NW,   ///< Depot with NW entry.
-	WID_BROD_DEPOT_AUTO, ///< Depot, autodetect entry.
+	CM_WID_BROD_DEPOT_AUTO, ///< Depot, autodetect entry.
 };
 
 /** Widgets of the #BuildRoadStationWindow class. */
-enum BuildRoadStationWidgets {
+enum BuildRoadStationWidgets : WidgetID {
 	/* Name starts with BRO instead of BR, because of collision with BuildRailStationWidgets */
-	WID_BROS_CAPTION,       ///< Caption of the window.
-	WID_BROS_BACKGROUND,    ///< Background of the window.
-	WID_BROS_STATION_NE,    ///< Terminal station with NE entry.
-	WID_BROS_STATION_SE,    ///< Terminal station with SE entry.
-	WID_BROS_STATION_SW,    ///< Terminal station with SW entry.
-	WID_BROS_STATION_NW,    ///< Terminal station with NW entry.
-	WID_BROS_STATION_X,     ///< Drive-through station in x-direction.
-	WID_BROS_STATION_Y,     ///< Drive-through station in y-direction.
-	WID_BROS_STATION_AUTO,     ///< Terminal station, autoselect entry.
-	WID_BROS_STATION_XY_AUTO,  ///< Drive-through station, autoselect direction.
-	WID_BROS_LT_OFF,        ///< Turn off area highlight.
-	WID_BROS_LT_ON,         ///< Turn on area highlight.
-	WID_BROS_INFO,          ///< Station acceptance toggle.
-	WID_BROS_ACCEPTANCE,    ///< Station acceptance.
+	WID_BROS_CAPTION,                ///< Caption of the window.
+	WID_BROS_STATION_NE,             ///< Terminal station with NE entry.
+	WID_BROS_STATION_SE,             ///< Terminal station with SE entry.
+	WID_BROS_STATION_SW,             ///< Terminal station with SW entry.
+	WID_BROS_STATION_NW,             ///< Terminal station with NW entry.
+	WID_BROS_STATION_X,              ///< Drive-through station in x-direction.
+	WID_BROS_STATION_Y,              ///< Drive-through station in y-direction.
+	CM_WID_BROS_STATION_AUTO,     ///< Terminal station, autoselect entry.
+	CM_WID_BROS_STATION_XY_AUTO,  ///< Drive-through station, autoselect direction.
+	WID_BROS_LT_OFF,                 ///< Turn off area highlight.
+	WID_BROS_LT_ON,                  ///< Turn on area highlight.
+	WID_BROS_ACCEPTANCE,             ///< Station acceptance info.
+	WID_BROS_MATRIX,                 ///< Matrix widget displaying all available road stops.
+	WID_BROS_IMAGE,                  ///< Panel used for each image of the matrix.
+	WID_BROS_MATRIX_SCROLL,          ///< Scrollbar of the #WID_BROS_SHOW_NEWST_ADDITIONS.
+	WID_BROS_FILTER_CONTAINER,       ///< Container for the filter text box for the road stop class list.
+	WID_BROS_FILTER_EDITBOX,         ///< Filter text box for the road stop class list.
+	WID_BROS_SHOW_NEWST_DEFSIZE,     ///< Selection for default-size button for new road stops.
+	WID_BROS_SHOW_NEWST_ADDITIONS,   ///< Selection for new class selection list.
+	WID_BROS_SHOW_NEWST_MATRIX,      ///< Selection for new stop image matrix.
+	WID_BROS_SHOW_NEWST_RESIZE,      ///< Selection for panel and resize at bottom right for new stops.
+	WID_BROS_SHOW_NEWST_ORIENTATION, ///< Selection for the orientation string for new stops.
+	WID_BROS_SHOW_NEWST_TYPE_SEL,    ///< Selection for the type name.
+	WID_BROS_SHOW_NEWST_TYPE,        ///< Display of selected stop type.
+	WID_BROS_NEWST_LIST,             ///< List with new road stops.
+	WID_BROS_NEWST_SCROLL,           ///< Scrollbar of the #WID_BROS_NEWST_LIST.
+	CM_WID_BROS_STATION_AUTO,     ///< Terminal station, autoselect entry.
+	CM_WID_BROS_STATION_XY_AUTO,  ///< Drive-through station, autoselect direction.
 };
 
 #endif /* WIDGETS_ROAD_WIDGET_H */

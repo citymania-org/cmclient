@@ -27,12 +27,11 @@ struct ScreenshotWindow : Window {
 		this->DrawWidgets();
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
-		if (widget < 0) return;
 		ScreenshotType st;
 		switch (widget) {
-			default:
+			default: return;
 			case WID_SC_TAKE:             st = SC_VIEWPORT;    break;
 			case WID_SC_TAKE_ZOOMIN:      st = SC_ZOOMEDIN;    break;
 			case WID_SC_TAKE_DEFAULTZOOM: st = SC_DEFAULTZOOM; break;
@@ -44,7 +43,7 @@ struct ScreenshotWindow : Window {
 	}
 };
 
-static const NWidgetPart _nested_screenshot[] = {
+static constexpr NWidgetPart _nested_screenshot[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_SCREENSHOT_CAPTION, 0),
@@ -61,11 +60,11 @@ static const NWidgetPart _nested_screenshot[] = {
 	EndContainer(),
 };
 
-static WindowDesc _screenshot_window_desc(
+static WindowDesc _screenshot_window_desc(__FILE__, __LINE__,
 	WDP_AUTO, "take_a_screenshot", 200, 100,
 	WC_SCREENSHOT, WC_NONE,
 	0,
-	_nested_screenshot, lengthof(_nested_screenshot)
+	std::begin(_nested_screenshot), std::end(_nested_screenshot)
 );
 
 void ShowScreenshotWindow()

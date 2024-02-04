@@ -200,39 +200,39 @@ STR_QUANTITY_N_A                                                :N/A
 
 # Two letter abbreviation of cargo name
 STR_ABBREV_NOTHING                                              :
-STR_ABBREV_PASSENGERS                                           :{TINY_FONT}PS
-STR_ABBREV_COAL                                                 :{TINY_FONT}KB
-STR_ABBREV_MAIL                                                 :{TINY_FONT}PT
-STR_ABBREV_OIL                                                  :{TINY_FONT}OL
-STR_ABBREV_LIVESTOCK                                            :{TINY_FONT}BR
-STR_ABBREV_GOODS                                                :{TINY_FONT}VR
-STR_ABBREV_GRAIN                                                :{TINY_FONT}GR
-STR_ABBREV_WOOD                                                 :{TINY_FONT}LG
-STR_ABBREV_IRON_ORE                                             :{TINY_FONT}FE
-STR_ABBREV_STEEL                                                :{TINY_FONT}ŜT
-STR_ABBREV_VALUABLES                                            :{TINY_FONT}VL
-STR_ABBREV_COPPER_ORE                                           :{TINY_FONT}KE
-STR_ABBREV_MAIZE                                                :{TINY_FONT}MZ
-STR_ABBREV_FRUIT                                                :{TINY_FONT}FT
-STR_ABBREV_DIAMONDS                                             :{TINY_FONT}DM
-STR_ABBREV_FOOD                                                 :{TINY_FONT}MN
-STR_ABBREV_PAPER                                                :{TINY_FONT}PR
-STR_ABBREV_GOLD                                                 :{TINY_FONT}OR
-STR_ABBREV_WATER                                                :{TINY_FONT}AK
-STR_ABBREV_WHEAT                                                :{TINY_FONT}TT
-STR_ABBREV_RUBBER                                               :{TINY_FONT}KA
-STR_ABBREV_SUGAR                                                :{TINY_FONT}SK
-STR_ABBREV_TOYS                                                 :{TINY_FONT}LD
-STR_ABBREV_SWEETS                                               :{TINY_FONT}DL
-STR_ABBREV_COLA                                                 :{TINY_FONT}KL
-STR_ABBREV_CANDYFLOSS                                           :{TINY_FONT}SS
-STR_ABBREV_BUBBLES                                              :{TINY_FONT}VZ
-STR_ABBREV_TOFFEE                                               :{TINY_FONT}TF
-STR_ABBREV_BATTERIES                                            :{TINY_FONT}BA
-STR_ABBREV_PLASTIC                                              :{TINY_FONT}PL
-STR_ABBREV_FIZZY_DRINKS                                         :{TINY_FONT}AT
-STR_ABBREV_NONE                                                 :{TINY_FONT}NENIU
-STR_ABBREV_ALL                                                  :{TINY_FONT}ĈIU
+STR_ABBREV_PASSENGERS                                           :PS
+STR_ABBREV_COAL                                                 :KB
+STR_ABBREV_MAIL                                                 :PT
+STR_ABBREV_OIL                                                  :OL
+STR_ABBREV_LIVESTOCK                                            :BR
+STR_ABBREV_GOODS                                                :VR
+STR_ABBREV_GRAIN                                                :GR
+STR_ABBREV_WOOD                                                 :LG
+STR_ABBREV_IRON_ORE                                             :FE
+STR_ABBREV_STEEL                                                :ŜT
+STR_ABBREV_VALUABLES                                            :VL
+STR_ABBREV_COPPER_ORE                                           :KE
+STR_ABBREV_MAIZE                                                :MZ
+STR_ABBREV_FRUIT                                                :FT
+STR_ABBREV_DIAMONDS                                             :DM
+STR_ABBREV_FOOD                                                 :MN
+STR_ABBREV_PAPER                                                :PR
+STR_ABBREV_GOLD                                                 :OR
+STR_ABBREV_WATER                                                :AK
+STR_ABBREV_WHEAT                                                :TT
+STR_ABBREV_RUBBER                                               :KA
+STR_ABBREV_SUGAR                                                :SK
+STR_ABBREV_TOYS                                                 :LD
+STR_ABBREV_SWEETS                                               :DL
+STR_ABBREV_COLA                                                 :KL
+STR_ABBREV_CANDYFLOSS                                           :SS
+STR_ABBREV_BUBBLES                                              :VZ
+STR_ABBREV_TOFFEE                                               :TF
+STR_ABBREV_BATTERIES                                            :BA
+STR_ABBREV_PLASTIC                                              :PL
+STR_ABBREV_FIZZY_DRINKS                                         :AT
+STR_ABBREV_NONE                                                 :NENIU
+STR_ABBREV_ALL                                                  :ĈIU
 
 # 'Mode' of transport for cargoes
 STR_PASSENGERS                                                  :{COMMA}{NBSP}pasaĝero{P "" j}
@@ -268,41 +268,19 @@ STR_COLOUR_GREY                                                 :Griza
 STR_COLOUR_WHITE                                                :Blanka
 STR_COLOUR_RANDOM                                               :Hazarda
 
-STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA}{NBSP}mph
-STR_UNITS_VELOCITY_METRIC                                       :{COMMA}{NBSP}km/h
-STR_UNITS_VELOCITY_SI                                           :{COMMA}{NBSP}m/s
-
-STR_UNITS_POWER_IMPERIAL                                        :{COMMA}{NBSP}ĉp
-STR_UNITS_POWER_METRIC                                          :{COMMA}{NBSP}ĉp
-STR_UNITS_POWER_SI                                              :{COMMA}{NBSP}kW
+###length 17
 
 
-STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{COMMA}{NBSP}t
-STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA}{NBSP}t
-STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA}{NBSP}kg
-
-STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{COMMA}{NBSP}tuno{P "" j}
-STR_UNITS_WEIGHT_LONG_METRIC                                    :{COMMA}{NBSP}tuno{P "" j}
-STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA}{NBSP}kg
-
-STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{COMMA}{NBSP}gal
-STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA}{NBSP}l
-STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA}{NBSP}m³
-
-STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{COMMA}{NBSP}galono{P "" j}
-STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA}{NBSP}litro{P "" j}
-STR_UNITS_VOLUME_LONG_SI                                        :{COMMA}{NBSP}m³
-
-STR_UNITS_FORCE_IMPERIAL                                        :{COMMA}{NBSP}lbf
-STR_UNITS_FORCE_METRIC                                          :{COMMA}{NBSP}kgf
-STR_UNITS_FORCE_SI                                              :{COMMA}{NBSP}kN
-
-STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA}{NBSP}ft
-STR_UNITS_HEIGHT_METRIC                                         :{COMMA}{NBSP}m
-STR_UNITS_HEIGHT_SI                                             :{COMMA}{NBSP}m
 # Units used in OpenTTD
-STR_UNITS_VELOCITY_GAMEUNITS                                    :{DECIMAL}{NBSP}kaheloj tage
-STR_UNITS_VELOCITY_GAMEUNITS.n                                  :{DECIMAL}{NBSP}kahelojn tage
+STR_UNITS_VELOCITY_IMPERIAL                                     :{DECIMAL}{NBSP}mph
+STR_UNITS_VELOCITY_METRIC                                       :{DECIMAL}{NBSP}km/h
+STR_UNITS_VELOCITY_SI                                           :{DECIMAL}{NBSP}m/s
+STR_UNITS_VELOCITY_KNOTS                                        :{DECIMAL}{NBSP}knotoj
+
+STR_UNITS_POWER_IMPERIAL                                        :{DECIMAL}{NBSP}ĉp
+STR_UNITS_POWER_METRIC                                          :{DECIMAL}{NBSP}ĉp
+STR_UNITS_POWER_SI                                              :{DECIMAL}{NBSP}kW
+
 STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_IMPERIAL                     :{DECIMAL}{NBSP}ĉp/t
 STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_METRIC                       :{DECIMAL}{NBSP}ĉp/t
 STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_SI                           :{DECIMAL}{NBSP}ĉp/Mg
@@ -312,10 +290,38 @@ STR_UNITS_POWER_METRIC_TO_WEIGHT_SI                             :{DECIMAL}{NBSP}
 STR_UNITS_POWER_SI_TO_WEIGHT_IMPERIAL                           :{DECIMAL}{NBSP}kW/t
 STR_UNITS_POWER_SI_TO_WEIGHT_METRIC                             :{DECIMAL}{NBSP}kW/t
 STR_UNITS_POWER_SI_TO_WEIGHT_SI                                 :{DECIMAL}{NBSP}W/kg
+
+STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{DECIMAL}{NBSP}t
+STR_UNITS_WEIGHT_SHORT_METRIC                                   :{DECIMAL}{NBSP}t
+STR_UNITS_WEIGHT_SHORT_SI                                       :{DECIMAL}{NBSP}kg
+
+STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{DECIMAL}{NBSP}tuno{P "" j}
 STR_UNITS_WEIGHT_LONG_IMPERIAL.n                                :{DECIMAL}{NBSP}tuno{P "" j}n
+STR_UNITS_WEIGHT_LONG_METRIC                                    :{DECIMAL}{NBSP}tuno{P "" j}
 STR_UNITS_WEIGHT_LONG_METRIC.n                                  :{DECIMAL}{NBSP}tuno{P "" j}n
+STR_UNITS_WEIGHT_LONG_SI                                        :{DECIMAL}{NBSP}kg
+
+STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{DECIMAL}{NBSP}gal
+STR_UNITS_VOLUME_SHORT_METRIC                                   :{DECIMAL}{NBSP}l
+STR_UNITS_VOLUME_SHORT_SI                                       :{DECIMAL}{NBSP}m³
+
+STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{DECIMAL}{NBSP}galjono{P "" j}
 STR_UNITS_VOLUME_LONG_IMPERIAL.n                                :{DECIMAL}{NBSP}galjono{P "" j}n
+STR_UNITS_VOLUME_LONG_METRIC                                    :{DECIMAL}{NBSP}litro{P "" j}
 STR_UNITS_VOLUME_LONG_METRIC.n                                  :{DECIMAL}{NBSP}litro{P "" j}n
+STR_UNITS_VOLUME_LONG_SI                                        :{DECIMAL}{NBSP}m³
+
+STR_UNITS_FORCE_IMPERIAL                                        :{DECIMAL}{NBSP}lbf
+STR_UNITS_FORCE_METRIC                                          :{DECIMAL}{NBSP}kgf
+STR_UNITS_FORCE_SI                                              :{DECIMAL}{NBSP}kN
+
+STR_UNITS_HEIGHT_IMPERIAL                                       :{DECIMAL}{NBSP}ft
+STR_UNITS_HEIGHT_METRIC                                         :{DECIMAL}{NBSP}m
+STR_UNITS_HEIGHT_SI                                             :{DECIMAL}{NBSP}m
+
+# Time units used in string control characters
+
+
 
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Filtroteksto:
@@ -482,7 +488,7 @@ STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Forlasi
 
 # Settings menu
-###length 15
+###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Ludaj opcioj
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Agordoj
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Ludoskriptaj agordoj
@@ -499,31 +505,25 @@ STR_SETTINGS_MENU_TRANSPARENT_BUILDINGS                         :Travideblaj kon
 STR_SETTINGS_MENU_TRANSPARENT_SIGNS                             :Travideblaj signoj
 
 # File menu
-###length 5
 STR_FILE_MENU_SAVE_GAME                                         :Konservu ludon
 STR_FILE_MENU_LOAD_GAME                                         :Ŝarĝu ludon
 STR_FILE_MENU_QUIT_GAME                                         :Foriru de la ludo
-STR_FILE_MENU_SEPARATOR                                         :
 STR_FILE_MENU_EXIT                                              :Fermu
 
 # Map menu
-###length 4
 STR_MAP_MENU_MAP_OF_WORLD                                       :Mondomapo
 STR_MAP_MENU_EXTRA_VIEWPORT                                     :Plia vidujo
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Klarigeto de ŝarĝfluo
 STR_MAP_MENU_SIGN_LIST                                          :Listo de ŝildoj
 
 # Town menu
-###length 2
 STR_TOWN_MENU_TOWN_DIRECTORY                                    :Urba katalogo
 STR_TOWN_MENU_FOUND_TOWN                                        :Urbo troviĝas.
 
 # Subsidies menu
-###length 1
 STR_SUBSIDIES_MENU_SUBSIDIES                                    :Subvencioj
 
 # Graph menu
-###length 6
 STR_GRAPH_MENU_OPERATING_PROFIT_GRAPH                           :Gajna grafiko
 STR_GRAPH_MENU_INCOME_GRAPH                                     :Enspeza grafiko
 STR_GRAPH_MENU_DELIVERED_CARGO_GRAPH                            :Liveriteca grafiko
@@ -532,57 +532,46 @@ STR_GRAPH_MENU_COMPANY_VALUE_GRAPH                              :Kompanivalora g
 STR_GRAPH_MENU_CARGO_PAYMENT_RATES                              :Ŝarĝpaga grafiko
 
 # Company league menu
-###length 3
 STR_GRAPH_MENU_COMPANY_LEAGUE_TABLE                             :Kompaniara tabelo
 STR_GRAPH_MENU_DETAILED_PERFORMANCE_RATING                      :Detala rendimento
 STR_GRAPH_MENU_HIGHSCORE                                        :Altpoentara tabelo
 
 # Industry menu
-###length 3
 STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY                            :Industria katalogo
 STR_INDUSTRY_MENU_INDUSTRY_CHAIN                                :Industriaj ĉenoj
 STR_INDUSTRY_MENU_FUND_NEW_INDUSTRY                             :Fondu novan industrion
 
 # URailway construction menu
-###length 4
 STR_RAIL_MENU_RAILROAD_CONSTRUCTION                             :Fervoja Konstruado
 STR_RAIL_MENU_ELRAIL_CONSTRUCTION                               :Elektrofervoja konstruado
 STR_RAIL_MENU_MONORAIL_CONSTRUCTION                             :Unurelfervoja konstruado
 STR_RAIL_MENU_MAGLEV_CONSTRUCTION                               :Maglevfervoja konstruado
 
 # Road construction menu
-###length 2
 STR_ROAD_MENU_ROAD_CONSTRUCTION                                 :Vojkonstruado
 STR_ROAD_MENU_TRAM_CONSTRUCTION                                 :Konstruado de tramvojo
 
 # Waterways construction menu
-###length 1
 STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION                       :Konstruado de akvovojoj
 
 # Aairport construction menu
-###length 1
 STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION                          :Flughavena konstruado
 
 # Landscaping menu
-###length 3
 STR_LANDSCAPING_MENU_LANDSCAPING                                :Landaspektigi
 STR_LANDSCAPING_MENU_PLANT_TREES                                :Plantu arbojn
 STR_LANDSCAPING_MENU_PLACE_SIGN                                 :Metu signon
 
 # Music menu
-###length 1
 STR_TOOLBAR_SOUND_MUSIC                                         :Sono/muziko
 
 # Message menu
-###length 3
 STR_NEWS_MENU_LAST_MESSAGE_NEWS_REPORT                          :Lasta mesaĝo/novaĵo
 STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Mesaĝa Historio
 STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Forigu ĉiujn mesaĝojn
 
 # About menu
-###length 10
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Landkvadrataj informoj
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Baskuligi Konzolon
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Ludoskripta sencimigo
 STR_ABOUT_MENU_SCREENSHOT                                       :Ekranfoto
@@ -591,24 +580,6 @@ STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Pri 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Bildeto-liniigilo
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Montri/ne montri limigujo
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :(Mal)ŝalti la kolorigon de malpuraj blokoj
-
-# Place in highscore window
-###length 15
-STR_ORDINAL_NUMBER_1ST                                          :1a
-STR_ORDINAL_NUMBER_2ND                                          :2a
-STR_ORDINAL_NUMBER_3RD                                          :3a
-STR_ORDINAL_NUMBER_4TH                                          :4a
-STR_ORDINAL_NUMBER_5TH                                          :5a
-STR_ORDINAL_NUMBER_6TH                                          :6a
-STR_ORDINAL_NUMBER_7TH                                          :7a
-STR_ORDINAL_NUMBER_8TH                                          :8a
-STR_ORDINAL_NUMBER_9TH                                          :9a
-STR_ORDINAL_NUMBER_10TH                                         :10a
-STR_ORDINAL_NUMBER_11TH                                         :11a
-STR_ORDINAL_NUMBER_12TH                                         :12a
-STR_ORDINAL_NUMBER_13TH                                         :13a
-STR_ORDINAL_NUMBER_14TH                                         :14a
-STR_ORDINAL_NUMBER_15TH                                         :15a
 
 ###length 31
 STR_DAY_NUMBER_1ST                                              :1a de
@@ -685,8 +656,8 @@ STR_GRAPH_CARGO_DELIVERED_CAPTION                               :{WHITE}Kiom da 
 STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Kompania rendimento (maksimumo=1000)
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Kompaniaj valoroj
 
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Ŝarĝpagaj Tarifoj
-STR_GRAPH_CARGO_PAYMENT_RATES_X_LABEL                           :{TINY_FONT}{BLACK}Tagoj en transporto
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Pago por liveri 10 unuojn (aŭ 10,000 litrojn) da ŝarĝo trans 20 kvadratoj
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Aktivu ĉiujn
 STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}Malaktivu ĉiujn
@@ -733,11 +704,9 @@ STR_PERFORMANCE_DETAIL_CARGO                                    :{BLACK}Ŝarĝo:
 STR_PERFORMANCE_DETAIL_MONEY                                    :{BLACK}Mono:
 STR_PERFORMANCE_DETAIL_LOAN                                     :{BLACK}Prunto:
 STR_PERFORMANCE_DETAIL_TOTAL                                    :{BLACK}Entute:
+###next-name-looks-similar
 
-###length 10
-STR_PERFORMANCE_DETAIL_VEHICLES_TOOLTIP                         :{BLACK}Nombro da veturiloj, kiuj lastjare profitis. Tio inkluzivas stratveturilojn, trajnojn, ŝipojn kaj aviadilojn.
 STR_PERFORMANCE_DETAIL_STATIONS_TOOLTIP                         :{BLACK}Nombro da staciopartoj lastatempe servitaj. Ĉiu stacioparto (ekz. stacidomo, bushaltejo, flughaveno) alkalkuliĝas, eĉ se ligite kiel unu stacio.
-STR_PERFORMANCE_DETAIL_MIN_PROFIT_TOOLTIP                       :{BLACK}La profito de la malplejenspeza veturilo (nur de veturiloj pli aĝaj ol 2 jaroj).
 STR_PERFORMANCE_DETAIL_MIN_INCOME_TOOLTIP                       :{BLACK}Enspezo dum la plej malaltprofita kvarono de la lastaj 12 kvaronoj
 STR_PERFORMANCE_DETAIL_MAX_INCOME_TOOLTIP                       :{BLACK}Enspezo dum la plej altprofita kvaronjaro el la lastaj 12 kvaronjaroj
 STR_PERFORMANCE_DETAIL_DELIVERED_TOOLTIP                        :{BLACK}Ŝarĝunuoj liveritaj dum la pasintaj 4 kvaronjaroj
@@ -791,8 +760,6 @@ STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK                         :{BLACK}Alklaku 
 STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}Alklaku muzikeron por viŝi el la nuna programo (nur propra)
 
 # Highscore window
-STR_HIGHSCORE_TOP_COMPANIES_WHO_REACHED                         :{BIG_FONT}{BLACK}Superkompanioj kiuj atingis {NUM}
-STR_HIGHSCORE_TOP_COMPANIES_NETWORK_GAME                        :{BIG_FONT}{BLACK}Kompania tabelo en {NUM}
 STR_HIGHSCORE_POSITION                                          :{BIG_FONT}{BLACK}{COMMA}.
 STR_HIGHSCORE_PERFORMANCE_TITLE_BUSINESSMAN                     :Komercisto
 STR_HIGHSCORE_PERFORMANCE_TITLE_ENTREPRENEUR                    :Entreprenisto
@@ -967,7 +934,6 @@ STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD_AND                        :{WHITE}{VEHICLE} tro malnoviĝis kaj postulas anstataŭiĝon
 STR_NEWS_TRAIN_IS_STUCK                                         :{WHITE}{VEHICLE} ne povas trovi padon por daŭrigi.
 STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE} estas perdita
-STR_NEWS_VEHICLE_IS_UNPROFITABLE                                :{WHITE}{VEHICLE} pasintjare gajnis {CURRENCY_LONG}
 STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE} ne povas iri ĝis la sekva celpunkto ĉar ĝi estas ekster la atingebla distanco
 
 STR_NEWS_ORDER_REFIT_FAILED                                     :{WHITE}{VEHICLE} haltis ĉar komanda transformo fiaskis
@@ -978,23 +944,12 @@ STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLAC
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Nova {STRING} nun haveblas!  -  {ENGINE}
 
 
-STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} ne plu akceptas {STRING.n}
-STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} ne plu akceptas {STRING.n} aŭ {STRING.n}
-STR_NEWS_STATION_NOW_ACCEPTS_CARGO                              :{WHITE}{STATION} nun akceptas {STRING.n}
-STR_NEWS_STATION_NOW_ACCEPTS_CARGO_AND_CARGO                    :{WHITE}{STATION} nun akceptas {STRING.n} kaj {STRING.n}
 
 STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Subvencia oferto ne plu validas:{}{}Transportado de {STRING} de {STRING} al {STRING} ne estos subvenciata.
 STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Subvencio retiriĝis:{}{}Servo de {STRING} de {STRING} al {STRING} ne plu estas subvenciata.
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Subvencia oferto:{}{}Kiu unue transportos {STRING.n} de {STRING} al {STRING} ricevos {NUM}-jaran subvencion de la lokaj estroj!
 ###length 4
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} ricevis subvencion!{}{}Transportado de {STRING} de {STRING} al {STRING} pagiĝos je 50% pli dum la sekva{P 4 "" j} {4:NUM} jaro{P 4 "" j}!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING} ricevis subvencion!{}{}Transportado de {STRING} de {STRING} al {STRING} pagiĝos duoble dum la sekva{P 4 "" j} {4:NUM} jaro{P 4 "" j}!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING} ricevis subvencion!{}{}Transportado de {STRING} de {STRING} al {STRING} pagiĝos trioble dum la sekva{P 4 "" j} {4:NUM} jaro{P 4 "" j}!
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} ricevis subvencion!{}{}Transportado de {STRING} de {STRING} al {STRING} pagiĝos kvaroble dum la sekva{P 4 "" j} {4:NUM} jaro{P 4 "" j}!
 
-STR_NEWS_ROAD_REBUILDING                                        :{BIG_FONT}{BLACK}Trafika ĥaoso en {TOWN}!{}{}Vojrekonstruada programo komencita de {STRING} alportas 6-monatan mizeron al vojuzantoj!
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}Transporta monopolo!
-STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}La lokaj estroj de {TOWN} subskribas kontrakton kun {STRING} por unu jaro de ekskluzivaj transportrajtoj!
 
 # Extra view window
 STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Vidujo {COMMA}
@@ -1005,52 +960,71 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}Gluu la 
 
 # Game options window
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Ludaj Opcioj
+
+STR_GAME_OPTIONS_TAB_GENERAL                                    :Ĝenerale
+STR_GAME_OPTIONS_TAB_GENERAL_TT                                 :{BLACK}Elektu ĝeneralajn agordojn
+STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Grafiko
+STR_GAME_OPTIONS_TAB_GRAPHICS_TT                                :{BLACK}Elektu agordojn pri grafiko
+STR_GAME_OPTIONS_TAB_SOUND                                      :Sono
+STR_GAME_OPTIONS_TAB_SOUND_TT                                   :{BLACK}Elektu agordojn pri sono kaj muziko
+
+STR_GAME_OPTIONS_VOLUME                                         :Laŭteco
+STR_GAME_OPTIONS_SFX_VOLUME                                     :Sonefektoj
+STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Muziko
+
+STR_GAME_OPTIONS_VOLUME_0                                       :0%
+STR_GAME_OPTIONS_VOLUME_25                                      :25%
+STR_GAME_OPTIONS_VOLUME_50                                      :50%
+STR_GAME_OPTIONS_VOLUME_75                                      :75%
+STR_GAME_OPTIONS_VOLUME_100                                     :100%
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Monunuoj
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Elekto de monunuoj
 
-###length 42
-STR_GAME_OPTIONS_CURRENCY_GBP                                   :Brita Pundo (GBP)
-STR_GAME_OPTIONS_CURRENCY_USD                                   :Usona Dolaro (USD)
-STR_GAME_OPTIONS_CURRENCY_EUR                                   :Eŭro (EUR)
-STR_GAME_OPTIONS_CURRENCY_JPY                                   :Enoj (JPY)
-STR_GAME_OPTIONS_CURRENCY_ATS                                   :Aŭstriaj Ŝilingoj (ATS)
-STR_GAME_OPTIONS_CURRENCY_BEF                                   :Belgaj Frankoj (BEF)
-STR_GAME_OPTIONS_CURRENCY_CHF                                   :Svisaj Frankoj (CHF)
-STR_GAME_OPTIONS_CURRENCY_CZK                                   :Ĉeĥaj Korunoj (CZK)
-STR_GAME_OPTIONS_CURRENCY_DEM                                   :Germanaj Markoj (DEM)
-STR_GAME_OPTIONS_CURRENCY_DKK                                   :Danaj Kronoj (DKK)
-STR_GAME_OPTIONS_CURRENCY_ESP                                   :Pesetoj (ESP)
-STR_GAME_OPTIONS_CURRENCY_FIM                                   :Finnaj Markoj (FIM)
-STR_GAME_OPTIONS_CURRENCY_FRF                                   :Frankoj (FRF)
-STR_GAME_OPTIONS_CURRENCY_GRD                                   :Grekaj Draĥmoj (GRD)
-STR_GAME_OPTIONS_CURRENCY_HUF                                   :Hungaraj Forintoj (HUF)
-STR_GAME_OPTIONS_CURRENCY_ISK                                   :Islandaj Kronoj (ISK)
-STR_GAME_OPTIONS_CURRENCY_ITL                                   :Italaj Liroj (ITL)
-STR_GAME_OPTIONS_CURRENCY_NLG                                   :Nederlandaj Guldenoj (NLG)
-STR_GAME_OPTIONS_CURRENCY_NOK                                   :Norvegaj Kronoj (NOK)
-STR_GAME_OPTIONS_CURRENCY_PLN                                   :Polaj Zlotoj (PLN)
-STR_GAME_OPTIONS_CURRENCY_RON                                   :Rumanaj Leŭoj (RON)
-STR_GAME_OPTIONS_CURRENCY_RUR                                   :Rusaj Rubloj (RUR)
-STR_GAME_OPTIONS_CURRENCY_SIT                                   :Slovenaj Tolaroj (SIT)
-STR_GAME_OPTIONS_CURRENCY_SEK                                   :Svedaj Kronoj (SEK)
-STR_GAME_OPTIONS_CURRENCY_TRY                                   :Turkaj Liroj (TRY)
-STR_GAME_OPTIONS_CURRENCY_SKK                                   :Slovakaj Korunoj (SKK)
-STR_GAME_OPTIONS_CURRENCY_BRL                                   :Brazilaj Realoj (BRL)
-STR_GAME_OPTIONS_CURRENCY_EEK                                   :Estona Krono (EEK)
-STR_GAME_OPTIONS_CURRENCY_LTL                                   :Litova lido (LTL)
-STR_GAME_OPTIONS_CURRENCY_KRW                                   :Sud-korea ŭono (KRW)
-STR_GAME_OPTIONS_CURRENCY_ZAR                                   :Sudafrika rando (ZAR)
+
+###length 43
+STR_GAME_OPTIONS_CURRENCY_GBP                                   :Brita Pundo
+STR_GAME_OPTIONS_CURRENCY_USD                                   :Usona Dolaro
+STR_GAME_OPTIONS_CURRENCY_EUR                                   :Eŭro
+STR_GAME_OPTIONS_CURRENCY_JPY                                   :Enoj
+STR_GAME_OPTIONS_CURRENCY_ATS                                   :Aŭstriaj Ŝilingoj
+STR_GAME_OPTIONS_CURRENCY_BEF                                   :Belgaj Frankoj
+STR_GAME_OPTIONS_CURRENCY_CHF                                   :Svisaj Frankoj
+STR_GAME_OPTIONS_CURRENCY_CZK                                   :Ĉeĥaj Korunoj
+STR_GAME_OPTIONS_CURRENCY_DEM                                   :Germanaj Markoj
+STR_GAME_OPTIONS_CURRENCY_DKK                                   :Danaj Kronoj
+STR_GAME_OPTIONS_CURRENCY_ESP                                   :Pesetoj
+STR_GAME_OPTIONS_CURRENCY_FIM                                   :Finnaj Markoj
+STR_GAME_OPTIONS_CURRENCY_FRF                                   :Frankoj
+STR_GAME_OPTIONS_CURRENCY_GRD                                   :Grekaj Draĥmoj
+STR_GAME_OPTIONS_CURRENCY_HUF                                   :Hungaraj Forintoj
+STR_GAME_OPTIONS_CURRENCY_ISK                                   :Islandaj Kronoj
+STR_GAME_OPTIONS_CURRENCY_ITL                                   :Italaj Liroj
+STR_GAME_OPTIONS_CURRENCY_NLG                                   :Nederlandaj Guldenoj
+STR_GAME_OPTIONS_CURRENCY_NOK                                   :Norvegaj Kronoj
+STR_GAME_OPTIONS_CURRENCY_PLN                                   :Polaj Zlotoj
+STR_GAME_OPTIONS_CURRENCY_RON                                   :Rumanaj Leŭoj
+STR_GAME_OPTIONS_CURRENCY_RUR                                   :Rusaj Rubloj
+STR_GAME_OPTIONS_CURRENCY_SIT                                   :Slovenaj Tolaroj
+STR_GAME_OPTIONS_CURRENCY_SEK                                   :Svedaj Kronoj
+STR_GAME_OPTIONS_CURRENCY_TRY                                   :Turkaj Liroj
+STR_GAME_OPTIONS_CURRENCY_SKK                                   :Slovakaj Korunoj
+STR_GAME_OPTIONS_CURRENCY_BRL                                   :Brazilaj Realoj
+STR_GAME_OPTIONS_CURRENCY_EEK                                   :Estona Krono
+STR_GAME_OPTIONS_CURRENCY_LTL                                   :Litova lido
+STR_GAME_OPTIONS_CURRENCY_KRW                                   :Sud-korea ŭono
+STR_GAME_OPTIONS_CURRENCY_ZAR                                   :Sudafrika rando
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Alia...
-STR_GAME_OPTIONS_CURRENCY_GEL                                   :Kartvela Lario (GEL)
-STR_GAME_OPTIONS_CURRENCY_IRR                                   :Irana Rialo (IRR)
-STR_GAME_OPTIONS_CURRENCY_RUB                                   :Nova rusia rublo (RUB)
-STR_GAME_OPTIONS_CURRENCY_MXN                                   :Meksika peso (MXN)
-STR_GAME_OPTIONS_CURRENCY_NTD                                   :Nova tajvana dolaro (NTD)
-STR_GAME_OPTIONS_CURRENCY_CNY                                   :Ĉina juano (CNY)
-STR_GAME_OPTIONS_CURRENCY_HKD                                   :Honkonga dolaro (HKD)
-STR_GAME_OPTIONS_CURRENCY_INR                                   :Barata rupio (INR)
-STR_GAME_OPTIONS_CURRENCY_IDR                                   :Indonezia rupio (IDR)
-STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malajzia ringito (MYR)
+STR_GAME_OPTIONS_CURRENCY_GEL                                   :Kartvela Lario
+STR_GAME_OPTIONS_CURRENCY_IRR                                   :Irana Rialo
+STR_GAME_OPTIONS_CURRENCY_RUB                                   :Nova rusia rublo
+STR_GAME_OPTIONS_CURRENCY_MXN                                   :Meksika peso
+STR_GAME_OPTIONS_CURRENCY_NTD                                   :Nova tajvana dolaro
+STR_GAME_OPTIONS_CURRENCY_CNY                                   :Ĉina juano
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :Honkonga dolaro
+STR_GAME_OPTIONS_CURRENCY_INR                                   :Barata rupio
+STR_GAME_OPTIONS_CURRENCY_IDR                                   :Indonezia rupio
+STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malajzia ringito
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Aŭtomata konservado
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Elektu intervalon inter aŭtomataj konservadoj de la ludo
@@ -1058,10 +1032,10 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Elektu i
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Malaktiva
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Je ĉiu monato
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Je ĉiuj 3 monatoj
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Je ĉiuj 6 monatoj
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Je ĉiuj 12 monatoj
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_10_MINUTES             :Ĉiujn 10 minutojn
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_30_MINUTES             :Ĉiujn 30 minutojn
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_60_MINUTES             :Ĉiujn 60 minutojn
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :Ĉiujn 120 minutojn
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Lingvo
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Elektu uzotan interfacan lingvon
@@ -1087,14 +1061,22 @@ STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Interfac
 STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Aŭtomate rekonu grandecon
 
 
+
 STR_GAME_OPTIONS_GUI_SCALE_1X                                   :1x
 STR_GAME_OPTIONS_GUI_SCALE_2X                                   :2x
 STR_GAME_OPTIONS_GUI_SCALE_3X                                   :3x
 STR_GAME_OPTIONS_GUI_SCALE_4X                                   :4x
 STR_GAME_OPTIONS_GUI_SCALE_5X                                   :5x
 
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Aŭtomata sondado
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Partopreni aŭtomatan sondadon
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}Kiam tiu ĉi agordo estas aktiva, OpenTTD sendos sondaĵon je forlaso de ludo
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}Pri sondado kaj privateco
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Antaŭmontru sondaĵrezulton
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Montru la sondaĵrezulton de la kuranta ludo
 
 STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafiko
+
 STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Montru aktualigoftecon
 STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Elektu ekranan aktualigoftecon
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}Hz
@@ -1102,7 +1084,6 @@ STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Aktualig
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Baza grafikaro
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Selektu la uzendan bazgrafikaron
-STR_GAME_OPTIONS_BASE_GRF_STATUS                                :{RED}{NUM} mankanta{P "" j}/koruptita{P "" j} dosiero{P "" j}
 STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Aldonaj informoj pri la baza grafikaro
 
 STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Baza sonaro
@@ -1111,8 +1092,11 @@ STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Aldonaj 
 
 STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Baza muzikaro.
 STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Elekti bazan muzikaron por uzi.
-STR_GAME_OPTIONS_BASE_MUSIC_STATUS                              :{RED}{NUM} difektita{P "" j} dosiero{P "" j}
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Pluaj informoj pri la baza muzikaro.
+
+
+
+
 
 STR_ERROR_RESOLUTION_LIST_FAILED                                :{WHITE}Ne eblis akiri liston de subtenataj distingivoj
 STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}Plenekrana moduso fiaskis
@@ -1223,6 +1207,7 @@ STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Maletend
 STR_CONFIG_SETTING_COLLAPSE_ALL.n                               :{BLACK}Collapse all
 STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Restarigu ĉiujn valorojn
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(neniu ekspliko disponeble)
+STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Defaŭlta valoro: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Tipo de agordo: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE_CLIENT                                  :Klienta agordo (ne enmemorigata en konservitaj ludoj; tuŝas ĉiujn ludojn)
@@ -1276,6 +1261,8 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_LEFT                          :Maldekstre
 STR_CONFIG_SETTING_HORIZONTAL_POS_CENTER                        :Centre
 STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :Dekstre
 
+
+
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Maksimuma komenca prunto: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Maksimuma monsumo kiun kompanio povas prunti (sen enkalkulado de inflacio)
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_VALUE                   :{CURRENCY_LONG}
@@ -1297,10 +1284,9 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER                           :Subvencia multo
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Ŝanĝu kio oni pagas por subvenciataj rilatoj
 
 STR_CONFIG_SETTING_SUBSIDY_DURATION                             :Daŭro de subvencio: {STRING}
+###length 2
 STR_CONFIG_SETTING_SUBSIDY_DURATION_HELPTEXT                    :Indiku por kiom da jaroj validas subvencio
 
-STR_CONFIG_SETTING_SUBSIDY_DURATION_VALUE                       :{NUM} jaro{P "" j}
-STR_CONFIG_SETTING_SUBSIDY_DURATION_VALUE.n                     :{NUM} jaro{P "" j}n
 ###setting-zero-is-special
 STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :Neniuj subvencioj
 
@@ -1390,7 +1376,10 @@ STR_CONFIG_SETTING_SIGNALSIDE_LEFT                              :Maldekstre
 STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :En la strata stirflanko
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :Dekstre
 
+###length 2
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Montru financan fenestron fine de la jaro: {STRING}
+
+###length 2
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :Kiam tiu ĉi agordo estas aktiva, la financa fenesto aperas je la fino de ĉiu jaro por ebligi facilan inspektadon de la financa stato de la kompanio
 
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :Novaj ordonoj estas 'sen-halte' per defaŭlto: {STRING}
@@ -1411,9 +1400,11 @@ STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT                     :Ĉefa vidujo
 STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :Ĉiu vidujo
 
 STR_CONFIG_SETTING_BRIBE                                        :Permesu subaĉeti la lokajn estrojn: {STRING}
+###length 2
 STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :Permesu al kompanioj provi subaĉeti lokajn estrojn. Se inspektoro rimarkas la subaĉeton, la kompanio dum ses monatoj ne povos agi en la urbo
 
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :Permesu aĉeti ekskluzivajn transportrajtojn: {STRING}
+###length 2
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :Se kompanio aĉetas ekskluzivajn transportrajtojn en urbo, stacioj de konkurantoj (pasaĝeraj kaj kargaj) ne ricevos ŝarĝojn dum tuta jaro
 
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS                         :Permesi financi konstruaĵojn: {STRING}
@@ -1438,6 +1429,7 @@ STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :neniu
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :reduktita
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :normala
 
+
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Permesu trairajn bushaltejojn sur urboposedataj stratoj: {STRING}
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :Permesu konstrui trairajn strathaltejojn sur stratoj posedataj de urboj
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :Permesu trairajn strathaltejojn sur stratoj posedataj de konkurantoj: {STRING}
@@ -1449,6 +1441,7 @@ STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Kiam tiu ĉi ag
 
 STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR                      :Komenca kompania koloro: {STRING}
 STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR_HELPTEXT             :Elektu komencan koloron por la kompanio
+
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Flughavenoj neniam antikviĝas: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Se tiu ĉi agordo estas aktiva, ĉiuj tipoj de flughavenoj restos konstrueblaj por ĉiam post ekhaveblo
@@ -1464,10 +1457,17 @@ STR_CONFIG_SETTING_ORDER_REVIEW_EXDEPOT                         :jes, escepte de
 STR_CONFIG_SETTING_ORDER_REVIEW_ON                              :de ĉiuj veturiloj
 
 STR_CONFIG_SETTING_WARN_INCOME_LESS                             :Avertu se gajno de veturilo negativas: {STRING}
+###length 2
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :Kiam tiu ĉi agordo estas aktiva, aperas anonco kiam iu veturilo ne faris profiton dum kalendara jaro
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Veturiloj neniam eluziĝas: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :Se tiu ĉi agordo estas aktiva, ĉiuj modeloj de veturiloj restos aĉeteblaj por ĉiam post ekhaveblo
+
+###length 2
+
+
+###setting-zero-is-special
+
 
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :Aŭtomate anstataŭu veturilon se malnoviĝas: {STRING}
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE_HELPTEXT                   :Se tiu ĉi agordo estas aktiva, veturilo kiu alproksimiĝas al la fino de sia vivdaŭro estos aŭtomate anstataŭigita kiam la renovigkondiĉoj estas plenumitaj
@@ -1484,7 +1484,6 @@ STR_CONFIG_SETTING_AUTORENEW_MONEY                              :Minimuma mono p
 STR_CONFIG_SETTING_AUTORENEW_MONEY_HELPTEXT                     :Minimuma monkvanto kiu devas resti en la banko antaŭ eventuala aŭtomata renovigo de veturiloj
 
 STR_CONFIG_SETTING_ERRMSG_DURATION                              :Daŭro de erarmesaĝo: {STRING}
-STR_CONFIG_SETTING_ERRMSG_DURATION_VALUE                        :{COMMA} sekundo{P 0 "" j}
 
 STR_CONFIG_SETTING_HOVER_DELAY                                  :Montri ŝpruchelpilojn: {STRING}
 STR_CONFIG_SETTING_HOVER_DELAY_VALUE                            :Ŝvebu dum {COMMA} milisekundo{P 0 "" j}
@@ -1638,9 +1637,7 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Ne
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Fermu fenestron per dekstra klako: {STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :Fermas fenestron per dekstra klako ene de ĝi. Malebligas ŝpruchelpilon je dekstra klako!
-
-STR_CONFIG_SETTING_AUTOSAVE                                     :Aŭtomata konservado: {STRING}
-STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Elektu intervalon inter aŭtomataj konservadoj de la ludo
+###length 3
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Uzu la {STRING.n} datformon por nomoj de konservludoj.
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Dataranĝo en dosiernomoj de konservitaj ludoj
@@ -1668,7 +1665,7 @@ STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Ebligu uzadon d
 STR_CONFIG_SETTING_LOADING_INDICATORS                           :Uzu ŝarg-indikilojn: {STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS_HELPTEXT                  :Elektu ĉu ŝarĝ-indikiloj estas montrataj sub ŝarĝataj aŭ malŝarĝataj veturiloj
 
-STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :Montru horaron laŭ tikoj anstataŭ laŭ tagoj: {STRING}
+###length 3
 
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :Montru alvenojn kaj forirojn sur horaroj: {STRING}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :Montru antaŭvidatajn alven- kaj forir-tempojn en horaroj
@@ -1702,7 +1699,10 @@ STR_CONFIG_SETTING_SOUND_TICKER_HELPTEXT                        :Ludu sonon je r
 STR_CONFIG_SETTING_SOUND_NEWS                                   :Ĵurnalo: {STRING}
 STR_CONFIG_SETTING_SOUND_NEWS_HELPTEXT                          :Ludu sonon je montro de gazetoj
 
+###length 2
 STR_CONFIG_SETTING_SOUND_NEW_YEAR                               :Fine de la jaro: {STRING}
+
+###length 2
 STR_CONFIG_SETTING_SOUND_NEW_YEAR_HELPTEXT                      :Ludu sonon je la fino de jaro resumantan la rendimenton de la kompanio dum la jaro kompare al la antaŭa jaro
 
 STR_CONFIG_SETTING_SOUND_CONFIRM                                :Konstruado: {STRING}
@@ -1744,13 +1744,6 @@ STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT_HELPTEXT                  :Se tiu ĉi agor
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS                              :Malebligu ŝipojn por la komputilo: {STRING}
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS_HELPTEXT                     :Se tiu ĉi agordo estas aktiva, komputila ludanto ne povas konstrui ŝipojn
 
-STR_CONFIG_SETTING_AI_PROFILE                                   :Defaŭlta agorda profilo: {STRING}
-STR_CONFIG_SETTING_AI_PROFILE_HELPTEXT                          :Elektu kiun agordaron uzi por hazardaj AIoj aŭ por komencaj valoroj dum aldonado de nova AI aŭ ludoskripto
-###length 3
-STR_CONFIG_SETTING_AI_PROFILE_EASY                              :Facila
-STR_CONFIG_SETTING_AI_PROFILE_MEDIUM                            :Mezfacila
-STR_CONFIG_SETTING_AI_PROFILE_HARD                              :Malfacila
-
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER                            :Permesu ArtefaritajnIntelektojn en pluropaj ludoj: {STRING}
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :Permesu ke Artefarit-Inteligentaj (AI) komputilaj ludantoj partoprenu en pluropaj ludoj
 
@@ -1759,8 +1752,8 @@ STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :Kiom da memoro 
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Prizorgintervala procentaĵo: {STRING}
-
 STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Kiam tiu ĉi agordo estas aktiva, veturiloj klopodas iri al priservado kiam ilia fidindeco estas je certa procentaĵo malpli alta ol la maksimuma fidindeco.{}{}Ekzemple, se la maksimuma fidindeco de veturilo estas 90% kaj la priservintervalo estas 20%, la veturilo klopodos iri al priservado kiam ĝi atingas fidindecon de 72%.
+
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :Defaŭlta priservintervalo for trajnoj: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :Elektu la defaŭltan priservintervalon por novaj relveturiloj, se ne estas eksplicite agordita priservintervalo por la veturilo
 STR_CONFIG_SETTING_SERVINT_ROAD_VEHICLES                        :Defaŭlta priservintervalo por stratveturiloj: {STRING}
@@ -1775,6 +1768,7 @@ STR_CONFIG_SETTING_SERVINT_DISABLED                             :Malaktiva
 
 STR_CONFIG_SETTING_NOSERVICE                                    :Malŝaltu prizorgadon se rompiĝoj ne okazas: {STRING}
 STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Kiam tiu ĉi agordo estas aktiva, veturiloj kiuj ne povas panei ne estos priservataj
+
 
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Aktivigu vagonajn rapideclimojn: {STRING}
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :Kiam ebligita, ankaŭ uzu rapideco-limigojn de vagonoj por decidi la maksimuman rapidecon de trajno
@@ -1846,9 +1840,6 @@ STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Neniam
 STR_CONFIG_SETTING_ECONOMY_TYPE                                 :Tipo de ekonomio: {STRING}
 STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :En glata ekonomio, produktadkvantoj ŝanĝiĝas pli ofte, kaj je malpli multe. En frostigita ekonomio, ne ŝanĝiĝas produktadkvantoj kaj ne fermiĝas fabrikoj. Tiu ĉi agordo povas esti senefika se iu NewGRF provizas tipojn de fabrikoj.
 ###length 3
-
-STR_CONFIG_SETTING_ALLOW_SHARES                                 :Permesu aĉetadon de dividaĵoj en aliaj kompanioj: {STRING}
-
 STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :Originala
 STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :Glata
 STR_CONFIG_SETTING_ECONOMY_TYPE_FROZEN                          :Frostigita
@@ -1864,7 +1855,6 @@ STR_CONFIG_SETTING_SEMAPHORE_BUILD_BEFORE_DATE_HELPTEXT         :Elektu la jaron
 
 STR_CONFIG_SETTING_CYCLE_SIGNAL_TYPES                           :Iteraciu tra signaltipoj: {STRING}
 ###length 2
-STR_CONFIG_SETTING_CYCLE_SIGNAL_PBS                             :Nur vojrezervaj semaforoj
 STR_CONFIG_SETTING_CYCLE_SIGNAL_ALL                             :ĉiuj videblaj
 
 STR_CONFIG_SETTING_SIGNAL_GUI_MODE                              :Montru semaforajn tipojn: {STRING}
@@ -1956,6 +1946,8 @@ STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :Neniom
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Komenca urbgrandeca multobligo: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Averaĝa grandeco de urbegoj rilate al normalaj urboj je la komenco de la ludo
 
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL                    :Ĝisdatigu la distribuan grafeon {P 0:2 "ĉiun" "ĉiujn"} {STRING}{NBSP}{P 0:2 "sekundon" "sekundojn"}
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME                        :Uzu {STRING}{NBSP}sekundo{P 0:2 n jn} por rekalkulado de la distribua grafeo
 
 STR_CONFIG_SETTING_DISTRIBUTION_PAX                             :Distribua reĝimo por pasaĝeroj: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :"Simetria" signifas ke proksimume la sama nombro de pasaĝeroj iros de stacio A al stacio B kiel de B al A. "Malsimetria" signifas ke ajnaj nombroj de pasaĝeroj povas iri en ajnan direkton. "Permana" signifas ke ne estos aŭtomata distribuado de pasaĝeroj.
@@ -1980,13 +1972,14 @@ STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :Se vi agordas t
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Saturado de mallongaj vojoj antaŭ ol uzi altkapacitajn vojojn: {STRING}
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :Ofte ekzistas pluraj vojoj inter ajnaj du stacioj. La ŝarĝdistribua algoritmo unue saturos la plej mallongan vojon, poste uzos la duan plej mallongan vojon ĝis ĝi estos saturita, kaj tiel plu. Saturado estas determinita de takso de kapacito kaj planita uzado. Post kiam ĉiuj vojoj estas saturitaj, se ankoraŭ estas postulado, ĝi superŝutos ĉiujn vojojn, preferante la plej altkapacitajn. Tamen plej ofte la algoritmo malakurate taksos kapaciton. Per tiu ĉi agordo vi povas indiki ĝis kiu procentaĵo mallonga vojo devas esti saturita en la unua paŝo antaŭ ol elekti la sekvan pli longan. Agordu ĝin al malpli ol 100% por eviti superŝutitajn staciojn kaze de trotaksita kapacito.
 
-###length 4
-
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Rapidecunuoj (surtere): {STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_NAUTICAL         :Rapidecunuoj (surakve): {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_HELPTEXT         :Kiam ajn montriĝas rapideco en la uzantinterfaco, montru ĝin en la indikitaj unuoj
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_IMPERIAL         :Angla-usona sistemo (mejloj hore)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_METRIC           :Metra (km/h)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_SI               :SI-unuoj (m/s)
-STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_GAMEUNITS        :Ludunuoj (kaheloj tage)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_KNOTS            :Knotoj
+
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER                     :Unuoj de veturila povumo: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_HELPTEXT            :Kiam ajn montriĝas povumo de veturilo en la uzantinterfaco, montru ĝin en la indikitaj unuoj
 ###length 3
@@ -2022,30 +2015,30 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Angla-usona sis
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Metra (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI-unuoj (m)
 
-STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}Loka adaptado
-STR_CONFIG_SETTING_GRAPHICS                                     :{ORANGE}Grafiko
-STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Sonefektoj
-STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Interfaco
-STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}Ĝenerale
-STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}Vidujoj
-STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Konstruado
-STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}Novaĵoj / Konsilantoj
-STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Kompanio
-STR_CONFIG_SETTING_ACCOUNTING                                   :{ORANGE}Librotenado
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Veturiloj
-STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}Fiziko
-STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Navigado
-STR_CONFIG_SETTING_LIMITATIONS                                  :{ORANGE}Limigoj
-STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Katastrofoj / akcidentoj
-STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Mondgenerado
-STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Medio
-STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Lokaj estroj
-STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Urboj
-STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Industrioj
-STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Ŝarĝodistribuado
-STR_CONFIG_SETTING_AI                                           :{ORANGE}Konkurantoj
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Komputil-ludantoj
-STR_CONFIG_SETTING_NETWORK                                      :{ORANGE}Reto
+STR_CONFIG_SETTING_LOCALISATION                                 :Loka adaptado
+STR_CONFIG_SETTING_GRAPHICS                                     :Grafiko
+STR_CONFIG_SETTING_SOUND                                        :Sonefektoj
+STR_CONFIG_SETTING_INTERFACE                                    :Interfaco
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :Ĝenerale
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :Vidujoj
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :Konstruado
+STR_CONFIG_SETTING_ADVISORS                                     :Novaĵoj / Konsilantoj
+STR_CONFIG_SETTING_COMPANY                                      :Kompanio
+STR_CONFIG_SETTING_ACCOUNTING                                   :Librotenado
+STR_CONFIG_SETTING_VEHICLES                                     :Veturiloj
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :Fiziko
+STR_CONFIG_SETTING_VEHICLES_ROUTING                             :Navigado
+STR_CONFIG_SETTING_LIMITATIONS                                  :Limigoj
+STR_CONFIG_SETTING_ACCIDENTS                                    :Katastrofoj / akcidentoj
+STR_CONFIG_SETTING_GENWORLD                                     :Mondgenerado
+STR_CONFIG_SETTING_ENVIRONMENT                                  :Medio
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :Lokaj estroj
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :Urboj
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :Industrioj
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :Ŝarĝodistribuado
+STR_CONFIG_SETTING_AI                                           :Konkurantoj
+STR_CONFIG_SETTING_AI_NPC                                       :Komputil-ludantoj
+STR_CONFIG_SETTING_NETWORK                                      :Reto
 
 STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS                        :Padtrovilo por trajnoj: {STRING}
 STR_CONFIG_SETTING_PATHFINDER_FOR_ROAD_VEHICLES                 :Padtrovilo por stratveturiloj: {STRING}
@@ -2136,10 +2129,10 @@ STR_ABANDON_GAME_CAPTION                                        :{WHITE}Foriri d
 STR_ABANDON_GAME_QUERY                                          :{YELLOW}Ĉu vi certas ke vi volas foriri?
 STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Ĉu vi certas ke vi volas forlasi ĉi tiun scenaron?
 
+# Help window
+
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Filudaĵoj
-STR_CHEATS_TOOLTIP                                              :{BLACK}La kvadratetoj indikas ĉu vi jam uzis la filudaĵon antaŭe.
-STR_CHEATS_NOTE                                                 :{BLACK}Notu: ajna uzado de tiuj ĉi agordoj estos registritaj en la konservdosiero
 STR_CHEAT_MONEY                                                 :{LTBLUE}Altigu monkvanton per {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Ludanta kiel kompanio: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Magia forigilo (forviŝu industriojn, nemovebla objektoj): {ORANGE}{STRING}
@@ -2267,8 +2260,6 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION                        :{BLACK}Mapgrand
 STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION_TOOLTIP                :{BLACK}Mapgrandeco de la ludo{}Klaku por ordigi laŭ areo
 STR_NETWORK_SERVER_LIST_DATE_CAPTION                            :{BLACK}Dato
 STR_NETWORK_SERVER_LIST_DATE_CAPTION_TOOLTIP                    :{BLACK}Aktuala dato
-STR_NETWORK_SERVER_LIST_YEARS_CAPTION                           :{BLACK}Jaroj
-STR_NETWORK_SERVER_LIST_YEARS_CAPTION_TOOLTIP                   :{BLACK}Nombro de jaroj{}la ludo jam rulas
 STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}Lingvo, servila versio ktp.
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}Alklaku ludon el la listo por elekti ĝin
@@ -2379,26 +2370,35 @@ STR_NETWORK_CLIENT_LIST_NEW_COMPANY                             :(Nova kompanio)
 STR_NETWORK_CLIENT_LIST_NEW_COMPANY_TOOLTIP                     :{BLACK}Kreu novan kompanion kaj aliĝu al ĝi
 STR_NETWORK_CLIENT_LIST_PLAYER_ICON_SELF_TOOLTIP                :{BLACK}Tio ĉi estas vi
 STR_NETWORK_CLIENT_LIST_PLAYER_ICON_HOST_TOOLTIP                :{BLACK}Tiu ĉi estas la gastiganto de la ludo
+STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT                    :{BLACK}{NUM} kliento{P "" j} - {NUM}/{NUM} kompanio{P "" j}
+STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT_TOOLTIP            :{BLACK}La nombroj de ĉi-momente konektitaj klientoj, la nombro de kompanioj kaj la maksimuma nombro de kompanioj permesata de la serviladministranto
 
 # Matches ConnectionType
 ###length 5
-
-
-
 STR_NETWORK_CLIENT_LIST_SERVER_CONNECTION_TYPE_UNKNOWN          :{BLACK}Loka
 STR_NETWORK_CLIENT_LIST_SERVER_CONNECTION_TYPE_ISOLATED         :{RED}Foraj ludantoj ne povas konekti
 STR_NETWORK_CLIENT_LIST_SERVER_CONNECTION_TYPE_DIRECT           :{BLACK}Publika
 STR_NETWORK_CLIENT_LIST_SERVER_CONNECTION_TYPE_TURN             :{BLACK}Tra relajso
+
 STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_BAN                        :Forbaru
 STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_RESET                     :Forigi
+
 STR_NETWORK_CLIENT_LIST_ASK_CAPTION                             :{WHITE}Administra ago
 STR_NETWORK_CLIENT_LIST_ASK_CLIENT_BAN                          :{YELLOW}Ĉu vi certas ke vi volas forbari la ludanton '{STRING}'?
 STR_NETWORK_CLIENT_LIST_ASK_COMPANY_RESET                       :{YELLOW}Ĉu vi certas ke vi volas forigi la kompanion '{COMPANY}'?
+
 STR_NETWORK_ASK_RELAY_CAPTION                                   :{WHITE}Ĉu uzi relajson?
 STR_NETWORK_ASK_RELAY_TEXT                                      :{YELLOW}Malsukcesis starigi konekton inter vi kaj la servilo '{STRING}'.{}Ĉu vi volas uzi la relajson '{STRING}' por tiu ĉi sesio?
 STR_NETWORK_ASK_RELAY_NO                                        :{BLACK}Ne
 STR_NETWORK_ASK_RELAY_YES_ONCE                                  :{BLACK}Jes, ĉi-foje
 STR_NETWORK_ASK_RELAY_YES_ALWAYS                                :{BLACK}Jes, ne demandu denove
+
+STR_NETWORK_ASK_SURVEY_CAPTION                                  :Partopreni aŭtomatan sondadon?
+STR_NETWORK_ASK_SURVEY_TEXT                                     :Ĉu vi volas partopreni la aŭtomatan sondadon?{}OpenTTD sendos sondaĵon post foriro el ludo.{}Vi povas ŝanĝi tion ĉi iam ajn sub "Ludaj Opcioj".
+STR_NETWORK_ASK_SURVEY_PREVIEW                                  :Antaŭmontru sondaĵrezulton
+STR_NETWORK_ASK_SURVEY_LINK                                     :Pri sondado kaj privateco
+STR_NETWORK_ASK_SURVEY_NO                                       :Ne
+STR_NETWORK_ASK_SURVEY_YES                                      :Jes
 
 STR_NETWORK_SPECTATORS                                          :Spektantoj
 
@@ -2598,7 +2598,6 @@ STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Baskulig
 STR_TRANSPARENT_BRIDGES_TOOLTIP                                 :{BLACK}Baskuligi travideblecon de pontoj. Ctrl+Klaku por ŝlosi
 STR_TRANSPARENT_STRUCTURES_TOOLTIP                              :{BLACK}Baskuligi travideblecon de aĵoj kiel lumturoj kaj antenoj. Ctrl+Klaku por ŝlosi
 STR_TRANSPARENT_CATENARY_TOOLTIP                                :{BLACK}Baskuligi travideblecon de katenarion. Ctrl+Klaku por ŝlosi
-STR_TRANSPARENT_LOADING_TOOLTIP                                 :{BLACK}Baskuligi travideblecon de ŝarĝindikiloj. Ctrl+Klaku por ŝlosi
 STR_TRANSPARENT_INVISIBLE_TOOLTIP                               :{BLACK}Igu objektojn nevideblaj anstataŭ travideblaj
 
 # Linkgraph legend window
@@ -2614,9 +2613,7 @@ STR_LINKGRAPH_LEGEND_SATURATED                                  :{TINY_FONT}{BLA
 STR_LINKGRAPH_LEGEND_OVERLOADED                                 :{TINY_FONT}{BLACK}superŝutata
 
 # Linkgraph tooltip
-STR_LINKGRAPH_STATS_TOOLTIP                                     :{BLACK}{CARGO_LONG} transportenda ĉiumonate de {STATION} al {STATION} ({COMMA}% de la kapacito){STRING}
 STR_LINKGRAPH_STATS_TOOLTIP_RETURN_EXTENSION                    :{}{CARGO_LONG} transportenda reen ({COMMA}% de la kapacito)
-STR_LINKGRAPH_STATS_TOOLTIP_TIME_EXTENSION                      :{}Averaĝa veturtempo: {NUM}{NBSP}tago{P "" j}
 
 # Base for station construction window(s)
 STR_STATION_BUILD_COVERAGE_AREA_TITLE                           :{BLACK}Ŝarĝregiona marko
@@ -2626,7 +2623,6 @@ STR_STATION_BUILD_COVERAGE_AREA_OFF_TOOLTIP                     :{BLACK}Ne marku
 STR_STATION_BUILD_COVERAGE_AREA_ON_TOOLTIP                      :{BLACK}Marku ŝarĝregionon ĉe proponata loko
 STR_STATION_BUILD_ACCEPTS_CARGO                                 :{BLACK}Akceptiĝas: {GOLD}{CARGO_LIST}
 STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Provizoj: {GOLD}{CARGO_LIST}
-STR_STATION_BUILD_INFRASTRUCTURE_COST                           :{BLACK}Bontenada kosto: {GOLD}{CURRENCY_SHORT} jare
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Ligi stacion
@@ -2682,7 +2678,9 @@ STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Tiru por
 STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Elekti stacidomklason por montri.
 STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Elekti stacidomotipon por konstrui.
 
-STR_STATION_CLASS_DFLT                                          :Defaŭlta stacio
+STR_STATION_CLASS_DFLT                                          :Defaŭlta
+STR_STATION_CLASS_DFLT_STATION                                  :Defaŭlta stacio
+STR_STATION_CLASS_DFLT_ROADSTOP                                 :Defaŭlta vojhaltejo
 STR_STATION_CLASS_WAYP                                          :Vojpunktoj
 
 # Signal window
@@ -3138,7 +3136,6 @@ STR_MAPGEN_TOWN_NAME_LABEL                                      :{BLACK}Urbonomo
 STR_MAPGEN_TOWN_NAME_DROPDOWN_TOOLTIP                           :{BLACK}Elektu stilon de urbonomoj
 STR_MAPGEN_DATE                                                 :{BLACK}Dato:
 STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Kiom da industrioj:
-STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Landgenerilo:
 STR_MAPGEN_HEIGHTMAP_HEIGHT                                     :{BLACK}Plej alta pinto:
 STR_MAPGEN_HEIGHTMAP_HEIGHT_UP                                  :{BLACK}Pliigu la maksimuman altecon de la plej alta pinto sur la mapo je unu
 STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN                                :{BLACK}Malpliigu la maksimuman altecon de la plej alta pinto sur la mapo je unu
@@ -3334,7 +3331,8 @@ STR_NEWGRF_ERROR_MSG_INFO                                       :{SILVER}{STRING
 STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}Averto: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}Eraro: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Fatalo: {SILVER}{STRING}
-STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}Neriparebla NewGRF-eraro okazis:{}{STRING}
+STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}La NewGRF "{STRING}" respondis per neriparebla eraro:{}{STRING}
+STR_NEWGRF_ERROR_POPUP                                          :{WHITE}La NewGRF "{STRING}" respondis per eraro:{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} ne funkcios kun la versio de TTDPatch menciata de OpenTTD.
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} estas por la {2:STRING}-versio de TTD.
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} estas intencita por uzo kun {2:STRING}
@@ -3430,8 +3428,6 @@ STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} liverita
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (ankoraŭ bezonata)
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN} (liverita)
-STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}La urbo kreskas ĉiun {ORANGE}{COMMA}an{BLACK}{NBSP}tagon
-STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}La urbo kreskas ĉiun {ORANGE}{COMMA}an{BLACK}{NBSP}tagon (pagata)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}La urbo {RED}ne{BLACK} kreskas
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}Urba brulimo: {ORANGE}{COMMA}{BLACK}  maks: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Centri ĉefvidon ĉe la urbo. Stir+Klak por malfermi novan vidujon ĉe la urba loko.
@@ -3466,15 +3462,13 @@ STR_LOCAL_AUTHORITY_ACTION_STATUE_OF_COMPANY                    :Konstruu statuo
 STR_LOCAL_AUTHORITY_ACTION_NEW_BUILDINGS                        :Fondu novajn konstruaĵojn
 STR_LOCAL_AUTHORITY_ACTION_EXCLUSIVE_TRANSPORT                  :Aĉetu ekskluzivan transportrajton
 STR_LOCAL_AUTHORITY_ACTION_BRIBE                                :Subaĉetu la lokajn estrojn
+###next-name-looks-similar
 
-###length 8
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_SMALL_ADVERTISING            :{PUSH_COLOUR}{YELLOW}Komencu malgrandan lokan varbadkampanjon, por altiri pliajn pasaĝerojn kaj kargojn al viaj transportservoj.{}Portempe altigas staciajn pritaksojn en malgranda areo ĉirkaŭ la urbocentro.{}{POP_COLOUR}Kosto: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_MEDIUM_ADVERTISING           :{PUSH_COLOUR}{YELLOW}Komencu mezgrandan lokan varbadkampanjon, por altiri pliajn pasaĝerojn kaj kargojn al viaj transportservoj.{}Portempe altigas staciajn pritaksojn en mezgranda areo ĉirkaŭ la urbocentro.{}{POP_COLOUR}Kosto: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_LARGE_ADVERTISING            :{PUSH_COLOUR}{YELLOW}Komencu grandan lokan varbadkampanjon, por altiri pliajn pasaĝerojn kaj kargojn al viaj transportservoj.{}Portempe altigas staciajn pritaksojn en granda areo ĉirkaŭ la urbocentro.{}{POP_COLOUR}Kosto: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_ROAD_RECONSTRUCTION          :{PUSH_COLOUR}{YELLOW}Pagu rekonstruadon de la urba stratreto.{}Kaŭzos konsiderindan ĝenon al la trafiko por ĝis 6 monatoj.{}{POP_COLOUR}Kosto: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_STATUE_OF_COMPANY            :{PUSH_COLOUR}{YELLOW}Konstruu statuon honore al via kompanio.{}Porĉiame altigas staciajn pritaksojn en tiu ĉi urbo.{}{POP_COLOUR}Kosto: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_NEW_BUILDINGS                :{PUSH_COLOUR}{YELLOW}Pagu la konstruadon de novaj komercaj konstruaĵoj en la urbo.{}Portempe rapidigas la kreskadon de tiu ĉi urbo.{}{POP_COLOUR}Kosto: {CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT          :{PUSH_COLOUR}{YELLOW}Aĉetu ekskluzivajn transportrajtojn en la urbo por 1 jaro.{}La urbo nur permesos pasaĝerojn kaj kargojn uzi la staciojn de via entrepreno.{}{POP_COLOUR}Kosto: {CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{PUSH_COLOUR}{YELLOW}Subaĉetu la lokajn estrojn por pliigi vian rendimenton, riskante grandan punon je kaptiĝo.{}{POP_COLOUR}Kosto: {CURRENCY_LONG}
 
 # Goal window
@@ -3510,10 +3504,8 @@ STR_GOAL_QUESTION_BUTTON_CLOSE                                  :Fermu
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}Subvencioj
 STR_SUBSIDIES_OFFERED_TITLE                                     :{BLACK}Subvencioj haveblas por jenaj servoj:
-STR_SUBSIDIES_OFFERED_FROM_TO                                   :{ORANGE}{STRING} de {STRING} al {STRING}{YELLOW} (antaŭ {DATE_SHORT})
 STR_SUBSIDIES_NONE                                              :{ORANGE}- Neniu -
 STR_SUBSIDIES_SUBSIDISED_TITLE                                  :{BLACK}Servoj subvenciataj:
-STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}{STRING} de {STRING} al {STRING}{YELLOW} ({COMPANY}{YELLOW}, ĝis {DATE_SHORT})
 STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Klaku servon por centri vidpunkto ĉe la industrio/urbo. Ctrl+Klak por malfermi novan vidujon ĉe la loko
 
 # Story book window
@@ -3551,10 +3543,8 @@ STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPAN
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Takso
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Montru stacian takson
-
-
-STR_STATION_VIEW_SUPPLY_RATINGS_TITLE                           :{BLACK}Ĉiumonata provizo kaj loka pritakso:
 STR_STATION_VIEW_CARGO_SUPPLY_RATING                            :{WHITE}{STRING}: {YELLOW}{COMMA} / {STRING} ({COMMA}%)
+
 STR_STATION_VIEW_GROUP                                          :{BLACK}Grupigu laŭ
 STR_STATION_VIEW_WAITING_STATION                                :Stacio: Atendanta
 STR_STATION_VIEW_WAITING_AMOUNT                                 :Kvanto: Atendanta
@@ -3570,6 +3560,7 @@ STR_STATION_VIEW_FROM_HERE                                      :{GREEN}{CARGO_S
 STR_STATION_VIEW_VIA_HERE                                       :{GREEN}{CARGO_SHORT} haltos ĉe tiu ĉi stacio
 STR_STATION_VIEW_TO_HERE                                        :{GREEN}{CARGO_SHORT} al tiu ĉi stacio
 STR_STATION_VIEW_NONSTOP                                        :{YELLOW}{CARGO_SHORT} sen-halte
+
 STR_STATION_VIEW_GROUP_S_V_D                                    :Ekirpunkto-Tra-Celpunkto
 STR_STATION_VIEW_GROUP_S_D_V                                    :Ekirpunkto-Celpunkto-Tra
 STR_STATION_VIEW_GROUP_V_S_D                                    :Tra-Ekirpunkto-Celpunkto
@@ -3665,7 +3656,6 @@ STR_COMPANY_VIEW_AIRCRAFT                                       :{WHITE}{COMMA} 
 STR_COMPANY_VIEW_SHIPS                                          :{WHITE}{COMMA} ŝipo{P "" j}
 STR_COMPANY_VIEW_VEHICLES_NONE                                  :{WHITE}Neniu
 STR_COMPANY_VIEW_COMPANY_VALUE                                  :{GOLD}Kompania valoro: {WHITE}{CURRENCY_LONG}
-STR_COMPANY_VIEW_SHARES_OWNED_BY                                :{WHITE}({COMMA}% posedataj de {COMPANY})
 STR_COMPANY_VIEW_INFRASTRUCTURE                                 :{GOLD}Infrastrukturo:
 STR_COMPANY_VIEW_INFRASTRUCTURE_RAIL                            :{WHITE}{COMMA} fervojpeco{P "" j}
 STR_COMPANY_VIEW_INFRASTRUCTURE_ROAD                            :{WHITE}{COMMA} vojpeco{P "" j}
@@ -3696,11 +3686,6 @@ STR_COMPANY_VIEW_COMPANY_NAME_TOOLTIP                           :{BLACK}Ŝanĝu 
 STR_COMPANY_VIEW_PRESIDENT_NAME_BUTTON                          :{BLACK}Manaĝantnomo
 STR_COMPANY_VIEW_PRESIDENT_NAME_TOOLTIP                         :{BLACK}Ŝanĝu la nomon de la manaĝanto
 
-STR_COMPANY_VIEW_BUY_SHARE_BUTTON                               :{BLACK}Aĉetu 25%-an dividaĵon
-STR_COMPANY_VIEW_SELL_SHARE_BUTTON                              :{BLACK}Vendu 25%-an dividaĵon
-STR_COMPANY_VIEW_BUY_SHARE_TOOLTIP                              :{BLACK}Aĉetu 25%-an dividaĵon en ĉi tiu kompanio. Tenu la maljuskliga klavo por (kosto)taksi sen aĉeti dividaĵojn
-STR_COMPANY_VIEW_SELL_SHARE_TOOLTIP                             :{BLACK}Vendu 25%-an dividaĵon en ĉi tiu kompanio. Tenu la maljuskliga klavo por (enspezo)taksi sen vendi dividaĵojn
-
 STR_COMPANY_VIEW_COMPANY_NAME_QUERY_CAPTION                     :Kompania Nomo
 STR_COMPANY_VIEW_PRESIDENT_S_NAME_QUERY_CAPTION                 :Nomo de la Manaĝanto
 STR_COMPANY_VIEW_GIVE_MONEY_QUERY_CAPTION                       :Entajpu la monkvanton kiun vi volas doni
@@ -3719,7 +3704,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanaloj
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stacioj:
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATIONS                        :{WHITE}Staciaj kaheloj
 STR_COMPANY_INFRASTRUCTURE_VIEW_AIRPORTS                        :{WHITE}Flughavenoj
-STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENCY_LONG} jare
 
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industrioj
@@ -3776,6 +3760,8 @@ STR_VEHICLE_LIST_MANAGE_LIST_TOOLTIP                            :{BLACK}Sendu in
 STR_VEHICLE_LIST_REPLACE_VEHICLES                               :Anstataŭu veturilojn
 STR_VEHICLE_LIST_SEND_FOR_SERVICING                             :Sendu por Prizorgo
 STR_VEHICLE_LIST_PROFIT_THIS_YEAR_LAST_YEAR                     :{TINY_FONT}{BLACK}Gajno ĉi-jare: {CURRENCY_LONG} (pasintjare: {CURRENCY_LONG})
+STR_VEHICLE_LIST_CARGO                                          :[{CARGO_LIST}]
+STR_VEHICLE_LIST_NAME_AND_CARGO                                 :{STRING} {STRING}
 
 STR_VEHICLE_LIST_SEND_TRAIN_TO_DEPOT                            :Sendu al Garaĝo
 STR_VEHICLE_LIST_SEND_ROAD_VEHICLE_TO_DEPOT                     :Sendu al Garaĝo
@@ -3843,7 +3829,6 @@ STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Rapido: 
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}Rapido: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}Rapido sur oceano: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_CANAL                                   :{BLACK}Rapido sur kanalo/rivero: {GOLD}{VELOCITY}
-STR_PURCHASE_INFO_RUNNINGCOST                                   :{BLACK}Irkosto: {GOLD}po {CURRENCY_LONG} jare
 STR_PURCHASE_INFO_CAPACITY                                      :{BLACK}Kapablo: {GOLD}{CARGO_LONG} {STRING}
 STR_PURCHASE_INFO_REFITTABLE                                    :(transformebla)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Pripensite: {GOLD}{NUM}{BLACK} Vivlongo: {GOLD}{COMMA} jaro{P "" j}
@@ -4035,13 +4020,6 @@ STR_ENGINE_PREVIEW_TRAM_VEHICLE.n                               :tramvojan vetur
 STR_ENGINE_PREVIEW_AIRCRAFT                                     :aviadilo
 STR_ENGINE_PREVIEW_SHIP                                         :ŝipo
 
-STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kosto: {CURRENCY_LONG} Pezo: {WEIGHT_SHORT}{}Rapido: {VELOCITY}  Forto: {POWER}{}Irkosto: po {CURRENCY_LONG} jare{}Kapablo: {CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Kosto: {0:CURRENCY_LONG} Pezo: {1:WEIGHT_SHORT}{}Rapideco: {2:VELOCITY}  Povumo: {3:POWER}  Maks. trakcia forto.: {6:FORCE}{}Irkosto: {4:CURRENCY_LONG} jare{}Kapacito: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Kosto: {CURRENCY_LONG} Maks. Rapido: {VELOCITY}{}Kapacito: {CARGO_LONG}{}Irkosto: {CURRENCY_LONG}/jaro
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Kosto: {CURRENCY_LONG} Maks. rapideco: {VELOCITY}{}Tipo de aviadilo: {STRING}{}Kapacito: {CARGO_LONG}, {CARGO_LONG}{}Irkosto: {CURRENCY_LONG} jare
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Kosto: {CURRENCY_LONG} Maks. rapideco: {VELOCITY}{}Tipo de aviadilo: {STRING}{}Kapacito: {CARGO_LONG}{}Irkosto: {CURRENCY_LONG} jare
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST    :{BLACK}Kosto: {CURRENCY_LONG} Maks. rapideco: {VELOCITY}{}Tipo de aviadilo: {STRING} Atingdistanco: {COMMA} kaheloj{}Kapacito: {CARGO_LONG}, {CARGO_LONG}{}Irkosto: {CURRENCY_LONG} jare
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST        :{BLACK}Kosto: {CURRENCY_LONG} Maks. rapideco: {VELOCITY}{}Tipo de aviadilo: {STRING} Atingdistanco: {COMMA} kaheloj{}Kapacito: {CARGO_LONG}{}Irkosto: {CURRENCY_LONG} jare
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Anstataŭu {STRING.n} - {STRING}
@@ -4184,9 +4162,9 @@ STR_VEHICLE_DETAILS_ROAD_VEHICLE_RENAME                         :{BLACK}Nomi str
 STR_VEHICLE_DETAILS_SHIP_RENAME                                 :{BLACK}Nomu ŝipon
 STR_VEHICLE_DETAILS_AIRCRAFT_RENAME                             :{BLACK}Nomu aviadilon
 
-STR_VEHICLE_INFO_AGE_RUNNING_COST_YR                            :{BLACK}Aĝo: {LTBLUE}{STRING}{BLACK}   Irkosto: {LTBLUE}{CURRENCY_LONG}/jaro
 STR_VEHICLE_INFO_AGE                                            :{COMMA} jaro{P "" j} ({COMMA})
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} jaro{P "" j} ({COMMA})
+STR_VEHICLE_INFO_AGE_RUNNING_COST_YR                            :{BLACK}Aĝo: {LTBLUE}{STRING}{BLACK}   Irkosto: {LTBLUE}{CURRENCY_LONG}/jaro
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Maks. rapido: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Maks. rapideco: {LTBLUE}{VELOCITY} {BLACK}Tipo de aviadilo: {LTBLUE}{STRING}
@@ -4206,14 +4184,9 @@ STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Enhaveco
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Transigaj Kreditoj: {LTBLUE}{CURRENCY_LONG}
 
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Prizorga intervalo: {LTBLUE}{COMMA}{NBSP}tagoj{BLACK}   Plej malfrua prizorgo: {LTBLUE}{DATE_LONG}
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}Prizorga intervalo: {LTBLUE}{COMMA}%{BLACK}   Lasta prizorgo: {LTBLUE}{DATE_LONG}
-STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Multoblas prizorgintervalon po 10. Ctrl+klak multoblas prizorgintervalon po 5.
-STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Malpliigu prizorgintervalon po 10. Ctrl-klak malpliigas prizorgintervalon po 5
 
 STR_SERVICE_INTERVAL_DROPDOWN_TOOLTIP                           :{BLACK}Ŝanĝi la tipo de servon intervalon
 STR_VEHICLE_DETAILS_DEFAULT                                     :Defaŭlto
-STR_VEHICLE_DETAILS_DAYS                                        :Tagoj
 STR_VEHICLE_DETAILS_PERCENT                                     :Procentaĵo
 
 ###length VEHICLE_TYPES
@@ -4279,7 +4252,6 @@ STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Montri h
 
 STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Ordonlisto - klaku ordonon por elekti. Ctrl+Klak rulumas al la celstacio
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
-STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING}
 
 STR_ORDERS_END_OF_ORDERS                                        :- - Fino de Ordonoj - -
 STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - Fino de Kunhavitaj Ordonoj - -
@@ -4313,11 +4285,9 @@ STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}Elektu a
 STR_ORDER_DROP_REFIT_AUTO                                       :Malŝanĝa ŝarĝo
 STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Haveblaj ŝarĝoj
 
-STR_ORDER_SERVICE                                               :{BLACK}Priservo
 STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :Ĉiam iru.
 STR_ORDER_DROP_SERVICE_DEPOT                                    :Prizorgu se necesas.
 STR_ORDER_DROP_HALT_DEPOT                                       :Haltu.
-STR_ORDER_SERVICE_TOOLTIP                                       :{BLACK}Transsaltu tiun ĉi ordonon krom se priservo necesas
 
 
 # Conditional order variables, must follow order of OrderConditionVariable enum
@@ -4383,6 +4353,7 @@ STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT
 STR_ORDER_REFIT_ORDER                                           :(Readaptu por porti {STRING.n})
 STR_ORDER_REFIT_STOP_ORDER                                      :(Readaptu por porti {STRING.n} kaj haltu)
 STR_ORDER_STOP_ORDER                                            :(Haltu)
+
 
 STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
 STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(Ne eblas uzi la stacion){POP_COLOUR} {STRING} {STATION} {STRING}
@@ -4452,9 +4423,6 @@ STR_TIMETABLE_STAY_FOR_ESTIMATED                                :(haltu dum {STR
 STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(veturos dum {STRING}, sen horaro)
 STR_TIMETABLE_STAY_FOR                                          :kaj restu dum {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :kaj veturu dum {STRING}
-STR_TIMETABLE_DAYS                                              :{COMMA}{NBSP}tago{P "" j}
-STR_TIMETABLE_DAYS.n                                            :{COMMA}{NBSP}tago{P "" j}n
-STR_TIMETABLE_TICKS                                             :{COMMA}{NBSP}tiko{P "" j}
 
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}Plenumi ĉi tiun horaron postulos {STRING.n}
 STR_TIMETABLE_TOTAL_TIME_INCOMPLETE                             :{BLACK}Ĉi tio horaro postulos alemnaŭ {STRING} plenigi (ne ĉiu horarita)
@@ -4463,9 +4431,8 @@ STR_TIMETABLE_STATUS_ON_TIME                                    :{BLACK}Ĉi tiu 
 STR_TIMETABLE_STATUS_LATE                                       :{BLACK}Ĉi tiu veturilo nun malfruas je {STRING}
 STR_TIMETABLE_STATUS_EARLY                                      :{BLACK}Ĉi tiu veturilo nun fruas je {STRING}
 STR_TIMETABLE_STATUS_NOT_STARTED                                :{BLACK}Ĉi tiu horaro ankoraŭ ne komenciĝas.
-STR_TIMETABLE_STATUS_START_AT                                   :{BLACK}Ĉi tiu horaro komenciĝos je {STRING}
 
-STR_TIMETABLE_STARTING_DATE                                     :{BLACK}Komencodato
+
 
 STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}Ŝanĝu tempon
 STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}Ŝanĝu kiom da tempo devus postuli la markita ordono. Stir+Klak ŝanĝas la tempon por ĉiuj ordonoj
@@ -4489,8 +4456,6 @@ STR_TIMETABLE_EXPECTED                                          :{BLACK}Atendite
 STR_TIMETABLE_SCHEDULED                                         :{BLACK}Planite
 STR_TIMETABLE_EXPECTED_TOOLTIP                                  :{BLACK}Ŝalti inter atendite kaj planite
 
-STR_TIMETABLE_ARRIVAL_ABBREVIATION                              :A:
-STR_TIMETABLE_DEPARTURE_ABBREVIATION                            :F:
 
 
 # Date window (for timetable)
@@ -4532,7 +4497,9 @@ STR_AI_CONFIG_AILIST_TOOLTIP                                    :{BLACK}La AIoj 
 STR_AI_CONFIG_HUMAN_PLAYER                                      :Homa ludanto
 STR_AI_CONFIG_RANDOM_AI                                         :Hazarda AI
 STR_AI_CONFIG_NONE                                              :(neniu)
+STR_AI_CONFIG_NAME_VERSION                                      :{STRING} {YELLOW}v{NUM}
 STR_AI_CONFIG_MAX_COMPETITORS                                   :{LTBLUE}Maksimumo da konkurantoj: {ORANGE}{COMMA}
+STR_AI_CONFIG_COMPETITORS_INTERVAL                              :{LTBLUE}Intervalo inter fondado de konkuraj kompanioj: {ORANGE}{COMMA} minuto{P "" j}
 
 STR_AI_CONFIG_MOVE_UP                                           :{BLACK}Movi supren
 STR_AI_CONFIG_MOVE_UP_TOOLTIP                                   :{BLACK}Movi elektitan AI-on supren en la listo
@@ -4545,6 +4512,7 @@ STR_AI_CONFIG_AI                                                :{SILVER}AIj
 
 STR_AI_CONFIG_CHANGE_AI                                         :{BLACK}Elektu AIon
 STR_AI_CONFIG_CHANGE_GAMESCRIPT                                 :{BLACK}Elektu ludoskripton
+STR_AI_CONFIG_CHANGE_TOOLTIP                                    :{BLACK}Ŝarĝu alian skripton. Stir+Klak por montri ĉiujn haveblajn versiojn
 STR_AI_CONFIG_CONFIGURE                                         :{BLACK}Agordi
 STR_AI_CONFIG_CONFIGURE_TOOLTIP                                 :{BLACK}Agordi parametroj de la skripto
 
@@ -4571,8 +4539,9 @@ STR_SCREENSHOT_WORLD_SCREENSHOT                                 :{BLACK}Tutmapa 
 STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Altecmapa ekrankapto
 STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Ekrankapto de la mapeto
 
-# AI Parameters
+# Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
+STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :Ludoskripto
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}Fermi
 STR_AI_SETTINGS_RESET                                           :{BLACK}Reŝargo
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
@@ -4584,10 +4553,11 @@ STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Faldu te
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Vidi legumin
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Ŝanĝarĥivo
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licenco
-###length 3
+###length 5
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} legumin de {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING}-a ŝanĝarĥivo de {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING}-a licenco de {STRING}
+STR_TEXTFILE_SURVEY_RESULT_CAPTION                              :{WHITE}Antaŭmontro de sondaĵrezulto
 
 
 # Vehicle loading indicators
@@ -4712,9 +4682,6 @@ STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Ne povas
 STR_ERROR_CAN_T_GIVE_MONEY                                      :{WHITE}Ne eblas doni monon al tiu ĉi kompanio...
 STR_ERROR_CAN_T_BUY_COMPANY                                     :{WHITE}Ne povas aĉeti kompanion...
 STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS                      :{WHITE}Ne povas konstrui kompanian ĉefkonstruaĵon...
-STR_ERROR_CAN_T_BUY_25_SHARE_IN_THIS                            :{WHITE}Ne povas aĉeti 25%-an dividaĵon...
-STR_ERROR_CAN_T_SELL_25_SHARE_IN                                :{WHITE}Ne povas vendi 25%-an dividaĵon...
-STR_ERROR_PROTECTED                                             :{WHITE}Ĉi tiu kompanio ne sufiĉe aĝas por jam komerci dividaĵojn...
 
 # Town related errors
 STR_ERROR_CAN_T_GENERATE_TOWN                                   :{WHITE}Ne povas konstrui ajnan urbon
@@ -4725,7 +4692,6 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... tro 
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... tro proksime al alia urbo
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... tro da urboj
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... spaco mankas sur la mapo
-STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}La urbo ne konstruos stratojn. Vi povas ebligi stratkonstruadon per Avancitaj Agordoj->Ekonomio->Urboj
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Aktivas vojprilaborado
 STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Ne eblas forviŝi ĉi tiun urbon...{}Stacidomo aŭ garaĝo havas referencon al la urbo, aŭ ne eblas forviŝi kahelon posedatan de la urbo
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... ne jen estas konvenan lokon por statuo en la centro de ĉi tiu urbo
@@ -4832,6 +4798,8 @@ STR_ERROR_UNABLE_TO_FIND_ROUTE_TO                               :{WHITE}Ne povas
 STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT                            :{WHITE}Ne povas trovi lokan garaĝon
 
 STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :Malĝusta garaĝtipo
+
+# Depot unbunching related errors
 
 # Autoreplace related errors
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{WHITE}{VEHICLE} tro longas post anstataŭado
@@ -5022,6 +4990,19 @@ STR_ERROR_CAN_T_STOP_SHARING_ORDER_LIST                         :{WHITE}Ne povas
 STR_ERROR_CAN_T_COPY_ORDER_LIST                                 :{WHITE}Ne povas kopii ordonliston...
 STR_ERROR_TOO_FAR_FROM_PREVIOUS_DESTINATION                     :{WHITE}... tro for de la antaŭa destino
 STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... aviadilon ne havas sufiĉe da atingopovo
+
+# Extra messages which go on the third line of errors, explaining why orders failed
+STR_ERROR_NO_RAIL_STATION                                       :{WHITE}Mankas fervojstacio
+STR_ERROR_NO_BUS_STATION                                        :{WHITE}Mankas busstacio
+STR_ERROR_NO_TRUCK_STATION                                      :{WHITE}Mankas ŝarĝaŭta stacio
+STR_ERROR_NO_DOCK                                               :{WHITE}Mankas haveno
+STR_ERROR_NO_AIRPORT                                            :{WHITE}Mankas flughaveno/helikopterhaveno
+STR_ERROR_NO_STOP_COMPATIBLE_ROAD_TYPE                          :{WHITE}Mankas haltejoj kun kongrua vojtipo
+STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :{WHITE}Mankas haltejoj kun kongrua tipo de tramvojo
+STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :{WHITE}Mankas haltejoj taŭgaj por artikaj stratveturiloj.{}Artikaj stratveturiloj bezonas trairan haltejon, ne kortan haltejon
+STR_ERROR_AIRPORT_NO_PLANES                                     :{WHITE}Tiu ĉi aviadilo ne povas surteriĝi ĉe tiu ĉi helikopterhaveno
+STR_ERROR_AIRPORT_NO_HELICOPTERS                                :{WHITE}Tiu ĉi helikoptero ne povas surteriĝi ĉe tiu ĉi flughaveno
+STR_ERROR_NO_BUOY                                               :{WHITE}Mankas buo
 
 # Timetable related errors
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}Ne povas fari katalogon por veturilo...
@@ -5439,10 +5420,10 @@ STR_VEHICLE_NAME_AIRCRAFT_POWERNAUT_HELICOPTER                  :Helikoptero "Po
 
 ##id 0x8800
 # Formatting of some strings
-STR_FORMAT_DATE_TINY                                            :{STRING}-{STRING}-{NUM}
+STR_FORMAT_DATE_TINY                                            :{ZEROFILL_NUM}-{ZEROFILL_NUM}-{NUM}
 STR_FORMAT_DATE_SHORT                                           :{STRING} {NUM}
 STR_FORMAT_DATE_LONG                                            :{STRING} {STRING} {NUM}
-STR_FORMAT_DATE_ISO                                             :{2:NUM}-{1:STRING}-{0:STRING}
+STR_FORMAT_DATE_ISO                                             :{2:NUM}-{1:ZEROFILL_NUM}-{0:ZEROFILL_NUM}
 
 STR_FORMAT_COMPANY_NUM                                          :(Kompanio {COMMA})
 STR_FORMAT_GROUP_NAME                                           :Group {COMMA}
@@ -5507,52 +5488,32 @@ STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
 
+
 STR_JUST_CARGO                                                  :{CARGO_LONG}
+STR_JUST_RIGHT_ARROW                                            :{RIGHT_ARROW}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}
 STR_JUST_COMMA                                                  :{COMMA}
 STR_JUST_CURRENCY_SHORT                                         :{CURRENCY_SHORT}
 STR_JUST_CURRENCY_LONG                                          :{CURRENCY_LONG}
 STR_JUST_CARGO_LIST                                             :{CARGO_LIST}
+STR_JUST_DECIMAL                                                :{DECIMAL}
 STR_JUST_INT                                                    :{NUM}
 STR_JUST_DATE_TINY                                              :{DATE_TINY}
 STR_JUST_DATE_SHORT                                             :{DATE_SHORT}
 STR_JUST_DATE_LONG                                              :{DATE_LONG}
 STR_JUST_DATE_ISO                                               :{DATE_ISO}
 STR_JUST_STRING                                                 :{STRING}
+STR_JUST_STRING1                                                :{STRING}
 STR_JUST_STRING1.n                                              :{STRING.n}
+STR_JUST_STRING2                                                :{STRING}
 STR_JUST_STRING2.n                                              :{STRING.n}
 STR_JUST_STRING_STRING                                          :{STRING}{STRING}
 STR_JUST_RAW_STRING                                             :{STRING}
 STR_JUST_BIG_RAW_STRING                                         :{BIG_FONT}{STRING}
 
 # Slightly 'raw' stringcodes with colour or size
-STR_BLACK_COMMA                                                 :{BLACK}{COMMA}
-STR_TINY_BLACK_COMA                                             :{TINY_FONT}{BLACK}{COMMA}
-STR_TINY_COMMA                                                  :{TINY_FONT}{COMMA}
-STR_BLUE_COMMA                                                  :{BLUE}{COMMA}
-STR_RED_COMMA                                                   :{RED}{COMMA}
-STR_WHITE_COMMA                                                 :{WHITE}{COMMA}
-STR_TINY_BLACK_DECIMAL                                          :{TINY_FONT}{BLACK}{DECIMAL}
-STR_COMPANY_MONEY                                               :{WHITE}{CURRENCY_LONG}
-STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
-STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
-STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
-STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
-STR_TINY_GROUP                                                  :{TINY_FONT}{GROUP}
-STR_BLACK_INT                                                   :{BLACK}{NUM}
-STR_ORANGE_INT                                                  :{ORANGE}{NUM}
 STR_WHITE_SIGN                                                  :{WHITE}{SIGN}
-STR_TINY_BLACK_STATION                                          :{TINY_FONT}{BLACK}{STATION}
-STR_BLACK_STRING                                                :{BLACK}{STRING}
-STR_BLACK_RAW_STRING                                            :{BLACK}{STRING}
-STR_ORANGE_STRING                                               :{ORANGE}{STRING}
-STR_LTBLUE_STRING                                               :{LTBLUE}{STRING}
-STR_WHITE_STRING                                                :{WHITE}{STRING}
-STR_ORANGE_STRING1_WHITE                                        :{ORANGE}{STRING}{WHITE}
-STR_ORANGE_STRING1_LTBLUE                                       :{ORANGE}{STRING}{LTBLUE}
 STR_TINY_BLACK_HEIGHT                                           :{TINY_FONT}{BLACK}{HEIGHT}
-STR_TINY_BLACK_VEHICLE                                          :{TINY_FONT}{BLACK}{VEHICLE}
-STR_TINY_RIGHT_ARROW                                            :{TINY_FONT}{RIGHT_ARROW}
 
 STR_BLACK_1                                                     :{BLACK}1
 STR_BLACK_2                                                     :{BLACK}2

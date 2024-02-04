@@ -39,7 +39,7 @@ void DrawAircraftDetails(const Aircraft *v, const Rect &r)
 			SetDParam(2, u->value);
 			if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
 			DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
-			y += FONT_HEIGHT_NORMAL;
+			y += GetCharacterHeight(FS_NORMAL);
 
 			SetDParam(0, u->cargo_type);
 			SetDParam(1, u->cargo_cap);
@@ -47,7 +47,7 @@ void DrawAircraftDetails(const Aircraft *v, const Rect &r)
 			SetDParam(3, u->Next()->cargo_cap);
 			SetDParam(4, GetCargoSubtypeText(u));
 			DrawString(r.left, r.right, y, (u->Next()->cargo_cap != 0) ? STR_VEHICLE_INFO_CAPACITY_CAPACITY : STR_VEHICLE_INFO_CAPACITY);
-			y += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
+			y += GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal;
 		}
 
 		if (u->cargo_cap != 0) {
@@ -57,10 +57,10 @@ void DrawAircraftDetails(const Aircraft *v, const Rect &r)
 				/* Cargo names (fix pluralness) */
 				SetDParam(0, u->cargo_type);
 				SetDParam(1, cargo_count);
-				SetDParam(2, u->cargo.Source());
+				SetDParam(2, u->cargo.GetFirstStation());
 				DrawString(r.left, r.right, y, STR_VEHICLE_DETAILS_CARGO_FROM);
-				y += FONT_HEIGHT_NORMAL;
-				feeder_share += u->cargo.FeederShare();
+				y += GetCharacterHeight(FS_NORMAL);
+				feeder_share += u->cargo.GetFeederShare();
 			}
 		}
 	}

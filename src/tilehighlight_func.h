@@ -19,7 +19,7 @@
 void PlaceProc_DemolishArea(TileIndex tile);
 bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_tile, TileIndex end_tile);
 
-bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyle mode, ViewportDragDropSelectionProcess cm_process);
+bool HandlePlacePushButton(Window *w, WidgetID widget, CursorID cursor, HighLightStyle mode, ViewportDragDropSelectionProcess cm_process);
 void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Window *w, ViewportDragDropSelectionProcess cm_process);
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num, ViewportDragDropSelectionProcess cm_process);
 void ResetObjectToPlace();

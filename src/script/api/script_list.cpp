@@ -9,7 +9,6 @@
 
 #include "../../stdafx.h"
 #include "script_list.hpp"
-#include "script_controller.hpp"
 #include "../../debug.h"
 #include "../../script/squirrel.hpp"
 
@@ -22,18 +21,18 @@ class ScriptListSorter {
 protected:
 	ScriptList *list;       ///< The list that's being sorted.
 	bool has_no_more_items; ///< Whether we have more items to iterate over.
-	int64 item_next;        ///< The next item we will show.
+	SQInteger item_next;    ///< The next item we will show.
 
 public:
 	/**
 	 * Virtual dtor, needed to mute warnings.
 	 */
-	virtual ~ScriptListSorter() { }
+	virtual ~ScriptListSorter() = default;
 
 	/**
 	 * Get the first item of the sorter.
 	 */
-	virtual int64 Begin() = 0;
+	virtual SQInteger Begin() = 0;
 
 	/**
 	 * Stop iterating a sorter.
@@ -43,7 +42,7 @@ public:
 	/**
 	 * Get the next item of the sorter.
 	 */
-	virtual int64 Next() = 0;
+	virtual SQInteger Next() = 0;
 
 	/**
 	 * See if the sorter has reached the end.
@@ -56,7 +55,7 @@ public:
 	/**
 	 * Callback from the list if an item gets removed.
 	 */
-	virtual void Remove(int item) = 0;
+	virtual void Remove(SQInteger item) = 0;
 
 	/**
 	 * Attach the sorter to a new list. This assumes the content of the old list has been moved to
@@ -90,7 +89,7 @@ public:
 		this->End();
 	}
 
-	int64 Begin()
+	SQInteger Begin() override
 	{
 		if (this->list->buckets.empty()) return 0;
 		this->has_no_more_items = false;
@@ -100,12 +99,12 @@ public:
 		this->bucket_list_iter = this->bucket_list->begin();
 		this->item_next = *this->bucket_list_iter;
 
-		int64 item_current = this->item_next;
+		SQInteger item_current = this->item_next;
 		FindNext();
 		return item_current;
 	}
 
-	void End()
+	void End() override
 	{
 		this->bucket_list = nullptr;
 		this->has_no_more_items = true;
@@ -135,16 +134,16 @@ public:
 		this->item_next = *this->bucket_list_iter;
 	}
 
-	int64 Next()
+	SQInteger Next() override
 	{
 		if (this->IsEnd()) return 0;
 
-		int64 item_current = this->item_next;
+		SQInteger item_current = this->item_next;
 		FindNext();
 		return item_current;
 	}
 
-	void Remove(int item)
+	void Remove(SQInteger item) override
 	{
 		if (this->IsEnd()) return;
 
@@ -179,7 +178,7 @@ public:
 		this->End();
 	}
 
-	int64 Begin()
+	SQInteger Begin() override
 	{
 		if (this->list->buckets.empty()) return 0;
 		this->has_no_more_items = false;
@@ -194,12 +193,12 @@ public:
 		--this->bucket_list_iter;
 		this->item_next = *this->bucket_list_iter;
 
-		int64 item_current = this->item_next;
+		SQInteger item_current = this->item_next;
 		FindNext();
 		return item_current;
 	}
 
-	void End()
+	void End() override
 	{
 		this->bucket_list = nullptr;
 		this->has_no_more_items = true;
@@ -232,16 +231,16 @@ public:
 		this->item_next = *this->bucket_list_iter;
 	}
 
-	int64 Next()
+	SQInteger Next() override
 	{
 		if (this->IsEnd()) return 0;
 
-		int64 item_current = this->item_next;
+		SQInteger item_current = this->item_next;
 		FindNext();
 		return item_current;
 	}
 
-	void Remove(int item)
+	void Remove(SQInteger item) override
 	{
 		if (this->IsEnd()) return;
 
@@ -271,7 +270,7 @@ public:
 		this->End();
 	}
 
-	int64 Begin()
+	SQInteger Begin() override
 	{
 		if (this->list->items.empty()) return 0;
 		this->has_no_more_items = false;
@@ -279,12 +278,12 @@ public:
 		this->item_iter = this->list->items.begin();
 		this->item_next = (*this->item_iter).first;
 
-		int64 item_current = this->item_next;
+		SQInteger item_current = this->item_next;
 		FindNext();
 		return item_current;
 	}
 
-	void End()
+	void End() override
 	{
 		this->has_no_more_items = true;
 	}
@@ -302,16 +301,16 @@ public:
 		if (this->item_iter != this->list->items.end()) item_next = (*this->item_iter).first;
 	}
 
-	int64 Next()
+	SQInteger Next() override
 	{
 		if (this->IsEnd()) return 0;
 
-		int64 item_current = this->item_next;
+		SQInteger item_current = this->item_next;
 		FindNext();
 		return item_current;
 	}
 
-	void Remove(int item)
+	void Remove(SQInteger item) override
 	{
 		if (this->IsEnd()) return;
 
@@ -344,7 +343,7 @@ public:
 		this->End();
 	}
 
-	int64 Begin()
+	SQInteger Begin() override
 	{
 		if (this->list->items.empty()) return 0;
 		this->has_no_more_items = false;
@@ -353,12 +352,12 @@ public:
 		--this->item_iter;
 		this->item_next = (*this->item_iter).first;
 
-		int64 item_current = this->item_next;
+		SQInteger item_current = this->item_next;
 		FindNext();
 		return item_current;
 	}
 
-	void End()
+	void End() override
 	{
 		this->has_no_more_items = true;
 	}
@@ -381,16 +380,16 @@ public:
 		if (this->item_iter != this->list->items.end()) item_next = (*this->item_iter).first;
 	}
 
-	int64 Next()
+	SQInteger Next() override
 	{
 		if (this->IsEnd()) return 0;
 
-		int64 item_current = this->item_next;
+		SQInteger item_current = this->item_next;
 		FindNext();
 		return item_current;
 	}
 
-	void Remove(int item)
+	void Remove(SQInteger item) override
 	{
 		if (this->IsEnd()) return;
 
@@ -419,7 +418,7 @@ ScriptList::~ScriptList()
 	delete this->sorter;
 }
 
-bool ScriptList::HasItem(int64 item)
+bool ScriptList::HasItem(SQInteger item)
 {
 	return this->items.count(item) == 1;
 }
@@ -433,7 +432,7 @@ void ScriptList::Clear()
 	this->sorter->End();
 }
 
-void ScriptList::AddItem(int64 item, int64 value)
+void ScriptList::AddItem(SQInteger item, SQInteger value)
 {
 	this->modifications++;
 
@@ -443,14 +442,14 @@ void ScriptList::AddItem(int64 item, int64 value)
 	this->buckets[value].insert(item);
 }
 
-void ScriptList::RemoveItem(int64 item)
+void ScriptList::RemoveItem(SQInteger item)
 {
 	this->modifications++;
 
 	ScriptListMap::iterator item_iter = this->items.find(item);
 	if (item_iter == this->items.end()) return;
 
-	int64 value = item_iter->second;
+	SQInteger value = item_iter->second;
 
 	this->sorter->Remove(item);
 	ScriptListBucket::iterator bucket_iter = this->buckets.find(value);
@@ -460,13 +459,13 @@ void ScriptList::RemoveItem(int64 item)
 	this->items.erase(item_iter);
 }
 
-int64 ScriptList::Begin()
+SQInteger ScriptList::Begin()
 {
 	this->initialized = true;
 	return this->sorter->Begin();
 }
 
-int64 ScriptList::Next()
+SQInteger ScriptList::Next()
 {
 	if (!this->initialized) {
 		Debug(script, 0, "Next() is invalid as Begin() is never called");
@@ -489,25 +488,25 @@ bool ScriptList::IsEnd()
 	return this->sorter->IsEnd();
 }
 
-int32 ScriptList::Count()
+SQInteger ScriptList::Count()
 {
-	return (int32)this->items.size();
+	return this->items.size();
 }
 
-int64 ScriptList::GetValue(int64 item)
+SQInteger ScriptList::GetValue(SQInteger item)
 {
 	ScriptListMap::const_iterator item_iter = this->items.find(item);
 	return item_iter == this->items.end() ? 0 : item_iter->second;
 }
 
-bool ScriptList::SetValue(int64 item, int64 value)
+bool ScriptList::SetValue(SQInteger item, SQInteger value)
 {
 	this->modifications++;
 
 	ScriptListMap::iterator item_iter = this->items.find(item);
 	if (item_iter == this->items.end()) return false;
 
-	int64 value_old = item_iter->second;
+	SQInteger value_old = item_iter->second;
 	if (value_old == value) return true;
 
 	this->sorter->Remove(item);
@@ -564,9 +563,9 @@ void ScriptList::AddList(ScriptList *list)
 		this->modifications++;
 	} else {
 		ScriptListMap *list_items = &list->items;
-		for (ScriptListMap::iterator iter = list_items->begin(); iter != list_items->end(); iter++) {
-			this->AddItem((*iter).first);
-			this->SetValue((*iter).first, (*iter).second);
+		for (auto &it : *list_items) {
+			this->AddItem(it.first);
+			this->SetValue(it.first, it.second);
 		}
 	}
 }
@@ -586,7 +585,7 @@ void ScriptList::SwapList(ScriptList *list)
 	list->sorter->Retarget(list);
 }
 
-void ScriptList::RemoveAboveValue(int64 value)
+void ScriptList::RemoveAboveValue(SQInteger value)
 {
 	this->modifications++;
 
@@ -596,7 +595,7 @@ void ScriptList::RemoveAboveValue(int64 value)
 	}
 }
 
-void ScriptList::RemoveBelowValue(int64 value)
+void ScriptList::RemoveBelowValue(SQInteger value)
 {
 	this->modifications++;
 
@@ -606,7 +605,7 @@ void ScriptList::RemoveBelowValue(int64 value)
 	}
 }
 
-void ScriptList::RemoveBetweenValue(int64 start, int64 end)
+void ScriptList::RemoveBetweenValue(SQInteger start, SQInteger end)
 {
 	this->modifications++;
 
@@ -616,7 +615,7 @@ void ScriptList::RemoveBetweenValue(int64 start, int64 end)
 	}
 }
 
-void ScriptList::RemoveValue(int64 value)
+void ScriptList::RemoveValue(SQInteger value)
 {
 	this->modifications++;
 
@@ -626,7 +625,7 @@ void ScriptList::RemoveValue(int64 value)
 	}
 }
 
-void ScriptList::RemoveTop(int32 count)
+void ScriptList::RemoveTop(SQInteger count)
 {
 	this->modifications++;
 
@@ -663,7 +662,7 @@ void ScriptList::RemoveTop(int32 count)
 	}
 }
 
-void ScriptList::RemoveBottom(int32 count)
+void ScriptList::RemoveBottom(SQInteger count)
 {
 	this->modifications++;
 
@@ -714,7 +713,7 @@ void ScriptList::RemoveList(ScriptList *list)
 	}
 }
 
-void ScriptList::KeepAboveValue(int64 value)
+void ScriptList::KeepAboveValue(SQInteger value)
 {
 	this->modifications++;
 
@@ -724,7 +723,7 @@ void ScriptList::KeepAboveValue(int64 value)
 	}
 }
 
-void ScriptList::KeepBelowValue(int64 value)
+void ScriptList::KeepBelowValue(SQInteger value)
 {
 	this->modifications++;
 
@@ -734,7 +733,7 @@ void ScriptList::KeepBelowValue(int64 value)
 	}
 }
 
-void ScriptList::KeepBetweenValue(int64 start, int64 end)
+void ScriptList::KeepBetweenValue(SQInteger start, SQInteger end)
 {
 	this->modifications++;
 
@@ -744,7 +743,7 @@ void ScriptList::KeepBetweenValue(int64 start, int64 end)
 	}
 }
 
-void ScriptList::KeepValue(int64 value)
+void ScriptList::KeepValue(SQInteger value)
 {
 	this->modifications++;
 
@@ -754,14 +753,14 @@ void ScriptList::KeepValue(int64 value)
 	}
 }
 
-void ScriptList::KeepTop(int32 count)
+void ScriptList::KeepTop(SQInteger count)
 {
 	this->modifications++;
 
 	this->RemoveBottom(this->Count() - count);
 }
 
-void ScriptList::KeepBottom(int32 count)
+void ScriptList::KeepBottom(SQInteger count)
 {
 	this->modifications++;
 
@@ -866,6 +865,9 @@ SQInteger ScriptList::Valuate(HSQUIRRELVM vm)
 	bool backup_allow = ScriptObject::GetAllowDoCommand();
 	ScriptObject::SetAllowDoCommand(false);
 
+	/* Limit the total number of ops that can be consumed by a valuate operation */
+	SQOpsLimiter limiter(vm, MAX_VALUATE_OPS, "valuator function");
+
 	/* Push the function to call */
 	sq_push(vm, 2);
 
@@ -909,16 +911,6 @@ SQInteger ScriptList::Valuate(HSQUIRRELVM vm)
 				ScriptObject::SetAllowDoCommand(backup_allow);
 				return sq_throwerror(vm, "return value of valuator is not valid (not integer/bool)");
 			}
-		}
-
-		/* Kill the script when the valuator call takes way too long.
-		 * Triggered by nesting valuators, which then take billions of iterations. */
-		if (ScriptController::GetOpsTillSuspend() < -1000000) {
-			/* See below for explanation. The extra pop is the return value. */
-			sq_pop(vm, nparam + 4);
-
-			ScriptObject::SetAllowDoCommand(backup_allow);
-			return sq_throwerror(vm, "excessive CPU usage in valuator function");
 		}
 
 		/* Was something changed? */

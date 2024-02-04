@@ -14,8 +14,6 @@
 #include "strings_type.h"
 #include "table/strings.h"
 
-#include <vector>
-
 class LinkGraphOverlay;
 
 /**
@@ -33,7 +31,7 @@ struct Viewport {
 	int virtual_height;  ///< height << zoom
 
 	ZoomLevel zoom; ///< The zoom level of the viewport.
-	LinkGraphOverlay *overlay;
+	std::shared_ptr<LinkGraphOverlay> overlay;
 
 	std::vector<bool> dirty_blocks;
 	uint dirty_blocks_per_column;
@@ -67,10 +65,10 @@ private:
 
 /** Location information about a sign as seen on the viewport */
 struct ViewportSign {
-	int32 center;        ///< The center position of the sign
-	int32 top;           ///< The top of the sign
-	uint16 width_normal; ///< The width when not zoomed out (normal font)
-	uint16 width_small;  ///< The width when zoomed out (small font)
+	int32_t center;        ///< The center position of the sign
+	int32_t top;           ///< The top of the sign
+	uint16_t width_normal; ///< The width when not zoomed out (normal font)
+	uint16_t width_small;  ///< The width when zoomed out (small font)
 
 	void UpdatePosition(int center, int top, StringID str, StringID str_small = STR_NULL);
 	void MarkDirty(ZoomLevel maxzoom = ZOOM_LVL_MAX) const;
