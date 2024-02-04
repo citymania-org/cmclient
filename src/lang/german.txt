@@ -456,7 +456,6 @@ STR_MAP_MENU_MAP_OF_WORLD                                       :Weltkarte
 STR_MAP_MENU_EXTRA_VIEWPORT                                     :Zusatzansicht
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Frachtverbindungen
 STR_MAP_MENU_SIGN_LIST                                          :Schilderliste
-CM_STR_MAP_MENU_WATCH_COMPANY                                   :Firma beobachten
 
 # Town menu
 STR_TOWN_MENU_TOWN_DIRECTORY                                    :Städteverzeichnis
@@ -514,7 +513,6 @@ STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Alle Nachrichte
 
 # About menu
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Gebietsinformationen
-CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania-Serverlogin
 STR_ABOUT_MENU_HELP                                             :Hilfe u. Anleitungen
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Konsole öffnen/schließen
 STR_ABOUT_MENU_AI_DEBUG                                         :KI-/Skript-Debug
@@ -6079,3 +6077,4 @@ CM_STR_INDUSTRY_TYPE_WITH_ID                                    :{STRING} {SILVE
 CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania-Patchpack-Einstellungen
 
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Kosten
+CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania-Serverlogin

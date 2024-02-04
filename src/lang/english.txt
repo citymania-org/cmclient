@@ -468,12 +468,10 @@ STR_FILE_MENU_QUIT_GAME                                         :Abandon game
 STR_FILE_MENU_EXIT                                              :Exit
 
 # Map menu
-TODO length is gone
 STR_MAP_MENU_MAP_OF_WORLD                                       :Map of world
 STR_MAP_MENU_EXTRA_VIEWPORT                                     :Extra viewport
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Cargo flow legend
 STR_MAP_MENU_SIGN_LIST                                          :Sign list
-CM_STR_MAP_MENU_WATCH_COMPANY                                   :Watch Company
 
 # Town menu
 STR_TOWN_MENU_TOWN_DIRECTORY                                    :Town directory
@@ -530,9 +528,7 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Message history
 STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Delete all messages
 
 # About menu
-TODO length is gone
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Land area information
-CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania server login
 STR_ABOUT_MENU_HELP                                             :Help & manuals
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
@@ -6284,3 +6280,4 @@ CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania patch
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
 CM_STR_NO_BLUEPRINT_IN_SLOT                                     :{WHITE}No blueprint in slot {NUM}
+CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania-Serverlogin

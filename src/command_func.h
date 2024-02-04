@@ -17,7 +17,6 @@
 #include "core/backup_type.hpp"
 #include "misc/endian_buffer.hpp"
 #include "tile_map.h"
-#include "date_func.h"
 #include "core/random_func.hpp"  // CM for _random debug print
 extern uint32 _frame_counter;
 

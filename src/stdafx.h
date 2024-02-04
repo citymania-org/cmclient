@@ -408,4 +408,10 @@ inline void free(const void *ptr)
 #	define IGNORE_UNINITIALIZED_WARNING_STOP
 #endif
 
+/* CityMania code start */
+#define uint8 uint8_t
+#define uint16 uint16_t
+#define uint32 uint32_t
+/* CityMania code end */
+
 #endif /* STDAFX_H */
