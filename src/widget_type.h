@@ -471,6 +471,7 @@ public:
 
 	void Draw(const Window *w) override;
 	NWidgetCore *GetWidgetFromPos(int x, int y) override;
+	void FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets) override;  // CM (jgrpp)
 
 	/** Return whether the container is empty. */
 	inline bool IsEmpty() { return this->children.empty(); }

@@ -2258,9 +2258,7 @@ static void ResetCallback(Window *w, bool confirmed)
 {
 	if (confirmed) {
 		CompanyID company2 = (CompanyID)w->window_number;
-		char msg[128];
-		seprintf(msg, lastof(msg), "!reset %i", company2 + 1);
-		citymania::NetworkClientSendChatToServer(msg);
+		citymania::NetworkClientSendChatToServer(fmt::format("!reset {}", company2 + 1));
 	}
 }
 
@@ -2620,9 +2618,7 @@ struct CompanyWindow : Window
 				if (!_novarole) return;
 				CompanyID company2 = (CompanyID)this->window_number;
 				// this->query_widget = WID_C_MOD_COMPANY_JOIN;
-				char msg[128];
-				seprintf(msg, lastof(msg), "!move %i", company2 + 1);
-				citymania::NetworkClientSendChatToServer(msg);
+				citymania::NetworkClientSendChatToServer(fmt::format("!move {}", company2 + 1));
 				MarkWholeScreenDirty();
 				break;
 			}
@@ -2636,9 +2632,7 @@ struct CompanyWindow : Window
 			case WID_C_MOD_COMPANY_TOGGLE_LOCK: {
 				if (!_novarole) return;
 				CompanyID company2 = (CompanyID)this->window_number;
-				char msg[128];
-				seprintf(msg, lastof(msg), "!lockp %i", company2 + 1);
-				citymania::NetworkClientSendChatToServer(msg);
+				citymania::NetworkClientSendChatToServer(fmt::format("!lockp {}", company2 + 1));
 				MarkWholeScreenDirty();
 				break;
 			}

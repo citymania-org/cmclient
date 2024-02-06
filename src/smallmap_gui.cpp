@@ -640,7 +640,7 @@ static inline uint32 CM_GetSmallMapIMBAPixels(TileIndex tile, TileType t)
 			}
 			// if (IsClearGround(tile, CLEAR_SNOW))
 			// 	return _vegetation_clear_bits[GetClearGround(tile)];
-			FALLTHROUGH;
+			[[fallthrough]];
 
 		default:
 			const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
@@ -662,6 +662,7 @@ enum SmallMapType : byte {
 	SMT_ROUTES,
 	SMT_VEGETATION,
 	SMT_OWNER,
+	CM_SMT_IMBA,
 };
 DECLARE_ENUM_AS_ADDABLE(SmallMapType)
 
@@ -2088,6 +2089,6 @@ bool ScrollMainWindowTo(int x, int y, int z, bool instant)
  */
 Point GetSmallMapStationMiddle(const Window *w, const Station *st)
 {
-	TODO fix (this line was changed)
-	return static_cast<const SmallMapWindow *>(w)->GetStationMiddle(st);
+	// return static_cast<const SmallMapWindow *>(w)->GetStationMiddle(st);
+	return static_cast<const citymania::SmallMapWindow *>(w)->GetStationMiddle(st);
 }

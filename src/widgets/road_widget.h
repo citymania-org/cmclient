@@ -70,8 +70,6 @@ enum BuildRoadStationWidgets : WidgetID {
 	WID_BROS_SHOW_NEWST_TYPE,        ///< Display of selected stop type.
 	WID_BROS_NEWST_LIST,             ///< List with new road stops.
 	WID_BROS_NEWST_SCROLL,           ///< Scrollbar of the #WID_BROS_NEWST_LIST.
-	CM_WID_BROS_STATION_AUTO,     ///< Terminal station, autoselect entry.
-	CM_WID_BROS_STATION_XY_AUTO,  ///< Drive-through station, autoselect direction.
 };
 
 #endif /* WIDGETS_ROAD_WIDGET_H */

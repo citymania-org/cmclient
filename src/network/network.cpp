@@ -1203,7 +1203,7 @@ void NetworkGameLoop()
 		NetworkExecuteLocalCommandQueue();
 		if (citymania::_pause_countdown > 0 && --citymania::_pause_countdown == 0) Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, 1);
 
-		citymania::ExecuteFakeCommands(_date, _date_fract);
+		citymania::ExecuteFakeCommands(TimerGameTick::counter);
 
 		/* Then we make the frame */
 		StateGameLoop();

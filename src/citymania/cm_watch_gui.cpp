@@ -40,56 +40,55 @@ namespace citymania {
  * @return Horizontal container with butons columns.
  * @post \c *biggest_index contains the largest used index in the tree.
  */
-static NWidgetBase *MakeCompanyButtons(int *biggest_index)
-{
-	NWidgetHorizontal *widget_container_horiz = NULL;         // Storage for all cols.
-	NWidgetVertical *widget_container_company = NULL;         // Storage for company Col.
-	NWidgetVertical *widget_container_hasclient = NULL;       // Storage for Has Client Blot.
-	// NWidgetVertical *widget_container_activity = NULL;        // Storage for Activity Blot.
+// static static std::unique_ptr<NWidgetBase> MakeCompanyButtons()
+// {
+// 	NWidgetHorizontal *widget_container_horiz = NULL;
+// 	NWidgetVertical *widget_container_company = NULL;
+// 	NWidgetVertical *widget_container_hasclient = NULL;
 
-	widget_container_horiz = new NWidgetHorizontal( );
-	widget_container_company = new NWidgetVertical( );
-	widget_container_hasclient  = new NWidgetVertical( );
-	// widget_container_activity = new NWidgetVertical( );
+// 	auto widget_container_horiz = std::make_unique<NWidgetHorizontal>();  // Storage for all cols.
+// 	auto widget_container_company = std::make_unique<NWidgetVertical>();  // Storage for company Col.
+// 	auto widget_container_hasclient  = std::make_unique<NWidgetVertical>();  // Storage for Has Client Blot.
+// 	// NWidgetVertical *widget_container_activity = NULL;        // Storage for Activity Blot.
+// 	// widget_container_activity = new NWidgetVertical( );
 
-	Dimension company_sprite_size = GetSpriteSize( SPR_COMPANY_ICON );
-	company_sprite_size.width  += WidgetDimensions::scaled.matrix.Horizontal();
-	company_sprite_size.height += WidgetDimensions::scaled.matrix.Vertical() + 1; // 1 for the 'offset' of being pressed
+// 	Dimension company_sprite_size = GetSpriteSize( SPR_COMPANY_ICON );
+// 	company_sprite_size.width  += WidgetDimensions::scaled.matrix.Horizontal();
+// 	company_sprite_size.height += WidgetDimensions::scaled.matrix.Vertical() + 1; // 1 for the 'offset' of being pressed
 
-	Dimension blot_sprite_size = GetSpriteSize( SPR_BLOT );
-	blot_sprite_size.width  += WidgetDimensions::scaled.matrix.Horizontal();
-	blot_sprite_size.height += WidgetDimensions::scaled.matrix.Vertical() + 1; // 1 for the 'offset' of being pressed
+// 	Dimension blot_sprite_size = GetSpriteSize( SPR_BLOT );
+// 	blot_sprite_size.width  += WidgetDimensions::scaled.matrix.Horizontal();
+// 	blot_sprite_size.height += WidgetDimensions::scaled.matrix.Vertical() + 1; // 1 for the 'offset' of being pressed
 
 
-	for (int company_num = COMPANY_FIRST; company_num < MAX_COMPANIES; company_num++ ) {
-		/* Manage Company Buttons */
-		NWidgetBackground *company_panel = new NWidgetBackground( WWT_PANEL, COLOUR_GREY, EWW_PB_COMPANY_FIRST + company_num );
-		company_panel->SetMinimalSizeAbsolute( company_sprite_size.width, company_sprite_size.height );
-		company_panel->SetResize( 0, 0 );
-		company_panel->SetFill( 1, 0 );
-		company_panel->SetDataTip( 0x0, CM_STR_WATCH_CLICK_TO_WATCH_COMPANY );
-		widget_container_company->Add( company_panel );
+// 	for (int company_num = COMPANY_FIRST; company_num < MAX_COMPANIES; company_num++ ) {
+// 		/* Manage Company Buttons */
+// 		auto company_panel = std::make_unique<NWidgetBackground>( WWT_PANEL, COLOUR_GREY, EWW_PB_COMPANY_FIRST + company_num );
+// 		company_panel->SetMinimalSizeAbsolute(company_sprite_size.width, company_sprite_size.height);
+// 		company_panel->SetResize( 0, 0 );
+// 		company_panel->SetFill( 1, 0 );
+// 		company_panel->SetDataTip( 0x0, CM_STR_WATCH_CLICK_TO_WATCH_COMPANY );
+// 		widget_container_company->Add(std::move(company_panel));
 
-		/* Manage Has Client Blot */
+// 		/* Manage Has Client Blot */
 
-		NWidgetBackground *hasclient_panel = new NWidgetBackground( WWT_PANEL, COLOUR_GREY, EWW_HAS_CLIENT_FIRST + company_num );
-		company_panel->SetMinimalSizeAbsolute( blot_sprite_size.width, blot_sprite_size.height );
-		company_panel->SetResize( 0, 0 );
-		company_panel->SetFill( 1, 0 );
-		widget_container_hasclient->Add( hasclient_panel );
-	}
+// 		auto hasclient_panel = std::make_unique<NWidgetBackground>(WWT_PANEL, COLOUR_GREY, EWW_HAS_CLIENT_FIRST + company_num);
+// 		company_panel->SetMinimalSizeAbsolute( blot_sprite_size.width, blot_sprite_size.height );
+// 		company_panel->SetResize( 0, 0 );
+// 		company_panel->SetFill( 1, 0 );
+// 		widget_container_hasclient->Add(std::move(hasclient_panel));
+// 	}
 
-	/* Add the verticals widgets to the horizontal container */
-	widget_container_horiz->Add( widget_container_company );
-	widget_container_horiz->Add( widget_container_hasclient );
+// 	/* Add the verticals widgets to the horizontal container */
+// 	widget_container_horiz->Add(std::move(widget_container_company));
+// 	widget_container_horiz->Add(std::move(widget_container_hasclient));
 
-	/* return the horizontal widget container */
-	return widget_container_horiz;
-}
+// 	/* return the horizontal widget container */
+// 	return widget_container_horiz;
+// }
 
-static NWidgetBase *MakeCompanyButtons2(int *biggest_index)
-{
-	NWidgetHorizontal *widget_container_horiz = new NWidgetHorizontal();
+static std::unique_ptr<NWidgetBase> MakeCompanyButtons2() {
+	auto widget_container_horiz = std::make_unique<NWidgetHorizontal>();
 
 	Dimension company_sprite_size = GetSpriteSize(CM_SPR_COMPANY_ICON);
 	company_sprite_size.width  += WidgetDimensions::scaled.matrix.Horizontal();
@@ -97,12 +96,12 @@ static NWidgetBase *MakeCompanyButtons2(int *biggest_index)
 
 	// for (const Company *c : Company::Iterate()) {
 	for (int widnum = EWW_COMPANY_BEGIN; widnum < EWW_COMPANY_END; widnum++) {
-		NWidgetBackground *company_panel = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, widnum);
+		auto company_panel = std::make_unique<NWidgetBackground>(WWT_PANEL, COLOUR_GREY, widnum);
 		company_panel->SetMinimalSizeAbsolute(company_sprite_size.width, company_sprite_size.height);
 		company_panel->SetResize(1, 0);
 		company_panel->SetFill(1, 1);
 		company_panel->SetDataTip(0, CM_STR_WATCH_CLICK_TO_WATCH_COMPANY);
-		widget_container_horiz->Add(company_panel);
+		widget_container_horiz->Add(std::move(company_panel));
 	}
 
 	// auto filler = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, EWW_COMPANY_FILLER);
@@ -112,8 +111,6 @@ static NWidgetBase *MakeCompanyButtons2(int *biggest_index)
 	// filler->SetResize(0, 0);
 	// filler->SetDataTip(0, 0);
 	// widget_container_horiz->Add(filler);
-
-	*biggest_index = EWW_COMPANY_FILLER + 1;
 
 	return widget_container_horiz;
 }
@@ -162,11 +159,11 @@ static const NWidgetPart _nested_watch_company_widgets[] = {
 /**
  * Watch Company Window Descriptor
  */
-static WindowDesc _watch_company_desc(
+static WindowDesc _watch_company_desc(__FILE__, __LINE__,
 	WDP_AUTO, "watch_gui", 300, 257,
 	WC_WATCH_COMPANY, WC_NONE,
 	WDF_NO_FOCUS,
-	_nested_watch_company_widgets, lengthof( _nested_watch_company_widgets )
+	std::begin(_nested_watch_company_widgets), std::end( _nested_watch_company_widgets )
 );
 
 // admin version
@@ -226,11 +223,11 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 /**
  * Watch Company Window Descriptor
  */
-static WindowDesc _watch_company_descA(
+static WindowDesc _watch_company_descA(__FILE__, __LINE__,
 	WDP_AUTO, "watch_gui_client", 448, 256,
 	WC_WATCH_COMPANYA, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_watch_company_widgetsA, lengthof(_nested_watch_company_widgetsA)
+	std::begin(_nested_watch_company_widgetsA), std::end(_nested_watch_company_widgetsA)
 );
 
 static void ResetCallback(Window *w, bool confirmed)
@@ -238,9 +235,7 @@ static void ResetCallback(Window *w, bool confirmed)
 	if (confirmed) {
 		NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)w->window_number);
 		if (ci && ci->client_playas != INVALID_COMPANY) {
-			char msg[16];
-			seprintf(msg, lastof(msg), "!reset %i", ci->client_playas + 1);
-			NetworkClientSendChatToServer(msg);
+			NetworkClientSendChatToServer(fmt::format("!reset {}", ci->client_playas + 1));
 		}
 	}
 }
@@ -274,7 +269,7 @@ WatchCompany::WatchCompany(WindowDesc *desc, int window_number, CompanyID compan
 			this->company_count_client[i] = 0;
 		}
 
-		GetString( this->company_name, STR_JUST_NOTHING, lastof(this->company_name) );
+		this->company_name = GetString(STR_JUST_NOTHING);
 	}
 	/* Init the viewport area */
 	NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(EWW_WATCH);
@@ -424,7 +419,7 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 				this->watched_company = c->index;
 				this->LowerWidget(widget);
 				SetDParam(0, c->index);
-				GetString(this->company_name, STR_COMPANY_NAME, lastof(this->company_name));
+				this->company_name = GetString(STR_COMPANY_NAME);
 				this->ScrollToTile(c->last_build_coordinate);
 			}
 			this->owner = this->watched_company;
@@ -446,14 +441,14 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 			if (this->watched_company == (CompanyID)(widget - EWW_PB_COMPANY_FIRST)) {
 				/* Stop watching watched_company */
 				this->watched_company = INVALID_COMPANY;
-                                GetString( this->company_name, STR_JUST_NOTHING, lastof(this->company_name) );
+				this->company_name = GetString(STR_JUST_NOTHING);
 			} else {
 				/* Lower the new watched company button */
 				this->watched_company = (CompanyID)(widget - EWW_PB_COMPANY_FIRST);
 				this->LowerWidget(this->watched_company + EWW_PB_COMPANY_FIRST);
 				Company *c = Company::Get( this->watched_company );
 				SetDParam( 0, c->index );
-				GetString( this->company_name, STR_COMPANY_NAME, lastof(this->company_name) );
+				this->company_name = GetString(STR_COMPANY_NAME);
 
 				this->ScrollToTile( c->last_build_coordinate );
 			}
@@ -491,20 +486,16 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 				break;
 			case EWW_LOCK:
 			case EWW_UNLOCK:
-				seprintf(msg, lastof(msg), "!lockp %i", this->watched_company + 1);
-				NetworkClientSendChatToServer(msg);
+				NetworkClientSendChatToServer(fmt::format("!lockp {}", this->watched_company + 1));
 				break;
 			case EWW_KICK:
-				seprintf(msg, lastof(msg), "!kick %i", this->watched_client);
-				NetworkClientSendChatToServer(msg);
+				NetworkClientSendChatToServer(fmt::format("!kick {}", this->watched_client));
 				break;
 			case EWW_KICKC:
-				seprintf(msg, lastof(msg), "!move %i %i", this->watched_client, COMPANY_SPECTATOR);
-				NetworkClientSendChatToServer(msg);
+				NetworkClientSendChatToServer(fmt::format("!move {} {}", this->watched_client, COMPANY_SPECTATOR));
 				break;
 			case EWW_JOIN:
-				seprintf(msg, lastof(msg), "!move %i", this->watched_company + 1);
-				NetworkClientSendChatToServer(msg);
+				NetworkClientSendChatToServer(fmt::format("!move {}", this->watched_company + 1));
 				break;
 			case EWW_BAN:
 				this->query_widget = EWQ_BAN;
@@ -522,8 +513,7 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 				ShowNetworkChatQueryWindow(DESTTYPE_TEAM, this->watched_company);
 				break;
 			case EWW_CLIENTS:
-				seprintf(msg, lastof(msg), "!clients");
-				NetworkClientSendChatToServer(msg);
+				NetworkClientSendChatToServer("!clients");
 				break;
 			case EWW_COMPANYW:
 				if(this->watched_company != INVALID_COMPANY) ShowCompany(this->watched_company);
@@ -544,8 +534,7 @@ void WatchCompany::OnQueryTextFinished(char *str)
 	char msg[128];
 	switch (this->query_widget) {
 		case EWQ_BAN:
-			seprintf(msg, lastof(msg), "!ban %i %s", this->watched_client, str);
-			NetworkClientSendChatToServer(msg);
+			NetworkClientSendChatToServer(fmt::format("!ban {} {}", this->watched_client, str));
 			break;
 		default:
 			break;

@@ -1179,6 +1179,9 @@ void NWidgetContainer::FillWidgetLookup(WidgetLookup &widget_lookup)
 
 void NWidgetContainer::Draw(const Window *w)
 {
+	if (this->IsOutsideDrawArea()) return;
+	this->base_flags &= ~WBF_DIRTY;
+
 	for (const auto &child_wid : this->children) {
 		child_wid->Draw(w);
 	}
@@ -1196,6 +1199,19 @@ NWidgetCore *NWidgetContainer::GetWidgetFromPos(int x, int y)
 	}
 	return nullptr;
 }
+
+/* CityMania code start (copied from jgrpp) */
+void NWidgetContainer::FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets)
+{
+	if (this->base_flags & WBF_DIRTY) {
+		dirty_widgets.push_back(this);
+	} else {
+		for (const auto &child_wid : this->children) {
+			child_wid->FillDirtyWidgets(dirty_widgets);
+		}
+	}
+}
+/* CityMania code end */
 
 /**
  * Widgets stacked on top of each other.
@@ -1304,11 +1320,12 @@ void NWidgetStacked::FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets)
 		dirty_widgets.push_back(this);
 	} else {
 		int plane = 0;
-		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; plane++, child_wid = child_wid->next) {
+		for (const auto &child_wid : this->children) {
 			if (plane == this->shown_plane) {
 				child_wid->FillDirtyWidgets(dirty_widgets);
 				return;
 			}
+			plane++;
 		}
 	}
 }
@@ -1374,16 +1391,12 @@ void NWidgetPIPContainer::SetPIPRatio(uint8_t pip_ratio_pre, uint8_t pip_ratio_i
 	this->pip_ratio_post = pip_ratio_post;
 }
 
-TODO this goes into Draw
-	if (this->IsOutsideDrawArea()) return;
-	this->base_flags &= ~WBF_DIRTY;
-
 void NWidgetPIPContainer::FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets)
 {
 	if (this->base_flags & WBF_DIRTY) {
 		dirty_widgets.push_back(this);
 	} else {
-		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
+		for (const auto &child_wid : this->children) {
 			child_wid->FillDirtyWidgets(dirty_widgets);
 		}
 	}
@@ -1778,7 +1791,7 @@ void NWidgetSpacer::Draw(const Window *w)
 	}
 }
 
-void NWidgetSpacer::SetDirty(const Window *) const
+void NWidgetSpacer::SetDirty(Window *)
 {
 	/* Spacer widget never need repainting. */
 }

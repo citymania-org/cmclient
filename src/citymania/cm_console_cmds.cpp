@@ -10,7 +10,6 @@
 #include "../command_func.h"
 #include "../console_func.h"
 #include "../console_type.h"
-#include "../date_func.h"
 #include "../fileio_type.h"
 #include "../map_type.h"
 #include "../map_func.h"
@@ -122,9 +121,9 @@ bool ConTreeMap(byte argc, char *argv[]) {
         return true;
     }
 
-    for (TileIndex tile = 0; tile < MapSize(); tile++) {
-        auto mx = x - x * TileX(tile) / MapSizeX() - 1;
-        auto my = y * TileY(tile) / MapSizeY();
+    for (TileIndex tile = 0; tile < Map::Size(); tile++) {
+        auto mx = x - x * TileX(tile) / Map::SizeX() - 1;
+        auto my = y * TileY(tile) / Map::SizeY();
         auto t = map[mx + my * x];
         auto tree_count = std::min(t / 51, 4);
         // auto tree_growth = (uint)(t % 51) * 7 / 50;

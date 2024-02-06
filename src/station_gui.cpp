@@ -2150,7 +2150,7 @@ struct StationViewWindow : public Window {
 		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			const GoodsEntry *ge = &st->goods[cs->Index()];
 			if (!ge->HasRating()) continue;
-			ofs_y -= FONT_HEIGHT_NORMAL;
+			ofs_y -= GetCharacterHeight(FS_NORMAL);
 			if (ofs_y < 0) {
 				return citymania::ShowStationRatingTooltip(this, st, cs, close_cond);
 			}

@@ -926,7 +926,7 @@ int DrawVehiclePurchaseInfo(int left, int right, int y, EngineID engine_number, 
 		SetDParam(0, e->index);
 		SetDParam(1, e->grf_prop.local_id);
 		DrawString(left, right, y, CM_STR_PURCHASE_ENGINE_ID);
-		y += FONT_HEIGHT_NORMAL;
+		y += GetCharacterHeight(FS_NORMAL);
 	}
 
 	switch (e->type) {
@@ -1910,7 +1910,6 @@ struct BuildVehicleWindow : Window {
 		Hotkey('R', "cm_build_vehicle", WID_BV_BUILD),
 	}};
 };
-HotkeyList BuildVehicleWindow::hotkeys("build_vehicle", build_vehicle_hotkeys);
 
 static WindowDesc _build_vehicle_desc(__FILE__, __LINE__,
 	WDP_AUTO, "build_vehicle", 240, 268,

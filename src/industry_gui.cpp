@@ -330,10 +330,6 @@ static WindowDesc _build_industry_desc(__FILE__, __LINE__,
 class BuildIndustryWindow : public Window {
 	IndustryType selected_type;                 ///< industry corresponding to the above index
 
-	TODO is this even used
-	uint16 callback_timer;                      ///< timer counter for callback eventual verification
-	bool timer_enabled;                         ///< timer can be used
-
 	std::vector<IndustryType> list;             ///< List of industries.
 	bool enabled;                               ///< Availability state of the selected industry.
 	Scrollbar *vscroll;
@@ -376,7 +372,6 @@ class BuildIndustryWindow : public Window {
 		/* First industry type is selected if the current selection is invalid. */
 		if (this->selected_type == INVALID_INDUSTRYTYPE && !this->list.empty()) {
 			_cm_funding_type = this->selected_type = this->list[0];
-			TODO what is _cm_funding_type
 			citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 		}
 
@@ -837,25 +832,22 @@ public:
 		return Window::OnHotkey(hotkey);
 	}
 
-	static HotkeyList hotkeys;
+	/* CityMania code start */
+	static inline HotkeyList hotkeys{"cm_build_industry", {
+		Hotkey((uint16)0, "display_chain", WID_DPI_DISPLAY_WIDGET),
+		Hotkey((uint16)0, "build_button", WID_DPI_FUND_WIDGET),
+		Hotkey(CM_WKC_MOUSE_MIDDLE, "switch_layout", CM_HOTKEY_SWITCH_LAYOUT),
+	}};
+	/* CityMania code end */
 };
-
-static Hotkey build_industry_hotkeys[] = {
-	Hotkey((uint16)0, "display_chain", WID_DPI_DISPLAY_WIDGET),
-	Hotkey((uint16)0, "build_button", WID_DPI_FUND_WIDGET),
-	Hotkey(CM_WKC_MOUSE_MIDDLE, "cm_switch_layout", CM_HOTKEY_SWITCH_LAYOUT),
-	HOTKEY_LIST_END
-};
-
-HotkeyList BuildIndustryWindow::hotkeys("industry_fund_gui", build_industry_hotkeys);
 
 /** Window definition of the dynamic place industries gui */
-static WindowDesc _build_industry_desc(
+static WindowDesc _build_industry_desc(__FILE__, __LINE__,
 	WDP_AUTO, "build_industry", 170, 212,
 	WC_BUILD_INDUSTRY, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_build_industry_widgets, lengthof(_nested_build_industry_widgets),
-	&BuildIndustryWindow::hotkeys
+	std::begin(_nested_build_industry_widgets), std::end(_nested_build_industry_widgets),
+	&BuildIndustryWindow::hotkeys  // CM
 );
 
 
@@ -3213,11 +3205,10 @@ struct IndustryCargoesWindow : public Window {
 						continue;
 					}
 
-					TODO make list icon item
-					DropDownListParamStringItem *item = new DropDownListParamStringItem(CM_STR_CARGO_WITH_ID, cs->Index(), false);
-					item->SetParam(0, cs->name);
-					item->SetParam(1, cs->Index());
-					lst.emplace_back(item);
+					SetDParam(0, cs->name);
+					SetDParam(1, cs->Index());
+					auto s = GetString(CM_STR_CARGO_WITH_ID);
+					lst.push_back(std::make_unique<DropDownListIconItem>(d, cs->GetCargoIcon(), PAL_NONE, s, cs->Index(), false));
 				}
 				if (!lst.empty()) {
 					int selected = (this->ind_cargo >= NUM_INDUSTRYTYPES) ? (int)(this->ind_cargo - NUM_INDUSTRYTYPES) : -1;
@@ -3236,11 +3227,10 @@ struct IndustryCargoesWindow : public Window {
 						continue;
 					}
 
-					TODO make list icon item					
-					DropDownListParamStringItem *item = new DropDownListParamStringItem(CM_STR_INDUSTRY_TYPE_WITH_ID, ind, false);
-					item->SetParam(0, indsp->name);
-					item->SetParam(1, ind);
-					lst.emplace_back(item);
+					SetDParam(0, indsp->name);
+					SetDParam(1, ind);
+					auto s = GetString(CM_STR_INDUSTRY_TYPE_WITH_ID);
+					lst.push_back(std::make_unique<DropDownListStringItem>(s, ind, false));
 				}
 				if (!lst.empty()) {
 					int selected = (this->ind_cargo < NUM_INDUSTRYTYPES) ? (int)this->ind_cargo : -1;

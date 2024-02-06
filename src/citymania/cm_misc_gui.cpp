@@ -26,11 +26,11 @@ static const NWidgetPart _nested_land_info_widgets[] = {
     NWidget(WWT_PANEL, COLOUR_GREY, WID_LI_BACKGROUND), SetMinimalSize(64, 32), EndContainer(),
 };
 
-static WindowDesc _land_info_desc(
+static WindowDesc _land_info_desc(__FILE__, __LINE__,
     WDP_MANUAL, "land_info", 0, 0,
     WC_LAND_INFO, WC_NONE,
     0,
-    _nested_land_info_widgets, lengthof(_nested_land_info_widgets)
+    std::begin(_nested_land_info_widgets), std::end(_nested_land_info_widgets)
 );
 
 class LandInfoWindow : public Window {
@@ -43,7 +43,8 @@ class LandInfoWindow : public Window {
     static const uint LAND_INFO_LINE_BUFF_SIZE = 512;
 
 public:
-    char landinfo_data[LAND_INFO_LINE_END][LAND_INFO_LINE_BUFF_SIZE];
+    StringList  landinfo_data;    ///< Info lines to show.
+    std::string cargo_acceptance; ///< Centered multi-line string for cargo acceptance.
     TileIndex tile;
     TileIndex end_tile;  ///< For use in ruler(dragdrop) mode
 
@@ -58,7 +59,7 @@ public:
         return pt;
     }
 
-    void DrawWidget(const Rect &r, int widget) const override
+    void DrawWidget(const Rect &r, WidgetID widget) const override
     {
         if (widget != WID_LI_BACKGROUND) return;
 
@@ -68,43 +69,38 @@ public:
         GfxDrawLine(r.right, r.top,    r.right, r.bottom, PC_BLACK);
 
         Rect ir = r.Shrink(WidgetDimensions::scaled.frametext);
-        for (uint i = 0; i < LAND_INFO_CENTERED_LINES; i++) {
-            if (StrEmpty(this->landinfo_data[i])) break;
-
+        for (size_t i = 0; i < this->landinfo_data.size(); i++) {
             DrawString(ir, this->landinfo_data[i], i == 0 ? TC_LIGHT_BLUE : TC_FROMSTRING, SA_HOR_CENTER);
-            ir.top += FONT_HEIGHT_NORMAL + (i == 0 ? WidgetDimensions::scaled.vsep_wide : WidgetDimensions::scaled.vsep_normal);
+            ir.top += GetCharacterHeight(FS_NORMAL) + (i == 0 ? WidgetDimensions::scaled.vsep_wide : WidgetDimensions::scaled.vsep_normal);
         }
 
-        if (!StrEmpty(this->landinfo_data[LAND_INFO_MULTICENTER_LINE])) {
-            SetDParamStr(0, this->landinfo_data[LAND_INFO_MULTICENTER_LINE]);
+        if (!this->cargo_acceptance.empty()) {
+            SetDParamStr(0, this->cargo_acceptance);
             DrawStringMultiLine(ir, STR_JUST_RAW_STRING, TC_FROMSTRING, SA_CENTER);
         }
     }
 
-    void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
+    void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
     {
         if (widget != WID_LI_BACKGROUND) return;
 
         size->height = WidgetDimensions::scaled.frametext.Vertical();
-        for (uint i = 0; i < LAND_INFO_CENTERED_LINES; i++) {
-            if (StrEmpty(this->landinfo_data[i])) break;
-
+        for (size_t i = 0; i < this->landinfo_data.size(); i++) {
             uint width = GetStringBoundingBox(this->landinfo_data[i]).width + WidgetDimensions::scaled.frametext.Horizontal();
             size->width = std::max(size->width, width);
 
-            size->height += FONT_HEIGHT_NORMAL + (i == 0 ? WidgetDimensions::scaled.vsep_wide : WidgetDimensions::scaled.vsep_normal);
+            size->height += GetCharacterHeight(FS_NORMAL) + (i == 0 ? WidgetDimensions::scaled.vsep_wide : WidgetDimensions::scaled.vsep_normal);
         }
 
-        if (!StrEmpty(this->landinfo_data[LAND_INFO_MULTICENTER_LINE])) {
-            uint width = GetStringBoundingBox(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]).width + WidgetDimensions::scaled.frametext.Horizontal();
-            size->width = std::max(size->width, std::min<uint>(ScaleGUITrad(300), width));
-            SetDParamStr(0, this->landinfo_data[LAND_INFO_MULTICENTER_LINE]);
+        if (!this->cargo_acceptance.empty()) {
+            uint width = GetStringBoundingBox(this->cargo_acceptance).width + WidgetDimensions::scaled.frametext.Horizontal();
+            size->width = std::max(size->width, std::min(static_cast<uint>(ScaleGUITrad(300)), width));
+            SetDParamStr(0, cargo_acceptance);
             size->height += GetStringHeight(STR_JUST_RAW_STRING, size->width - WidgetDimensions::scaled.frametext.Horizontal());
         }
     }
 
-    LandInfoWindow(TileIndex tile, TileIndex end_tile=INVALID_TILE) :
-        Window(&_land_info_desc), tile(tile), end_tile(end_tile)
+    LandInfoWindow(Tile tile, Tile end_tile) : Window(&_land_info_desc), tile(tile), end_tile(end_tile)
     {
         this->InitNested();
         CLRBITS(this->flags, WF_WHITE_BORDER);
@@ -114,28 +110,28 @@ public:
 #else
 #   define LANDINFOD_LEVEL 1
 #endif
-        Debug(misc, LANDINFOD_LEVEL, "TILE: %#x (%i,%i)", tile, TileX(tile), TileY(tile));
-        Debug(misc, LANDINFOD_LEVEL, "type   = %#x", _m[tile].type);
-        Debug(misc, LANDINFOD_LEVEL, "height = %#x", _m[tile].height);
-        Debug(misc, LANDINFOD_LEVEL, "m1     = %#x", _m[tile].m1);
-        Debug(misc, LANDINFOD_LEVEL, "m2     = %#x", _m[tile].m2);
-        Debug(misc, LANDINFOD_LEVEL, "m3     = %#x", _m[tile].m3);
-        Debug(misc, LANDINFOD_LEVEL, "m4     = %#x", _m[tile].m4);
-        Debug(misc, LANDINFOD_LEVEL, "m5     = %#x", _m[tile].m5);
-        Debug(misc, LANDINFOD_LEVEL, "m6     = %#x", _me[tile].m6);
-        Debug(misc, LANDINFOD_LEVEL, "m7     = %#x", _me[tile].m7);
-        Debug(misc, LANDINFOD_LEVEL, "m8     = %#x", _me[tile].m8);
+        Debug(misc, LANDINFOD_LEVEL, "TILE: 0x{:x} ({},{})", (TileIndex)tile, TileX(tile), TileY(tile));
+        Debug(misc, LANDINFOD_LEVEL, "type   = 0x{:x}", tile.type());
+        Debug(misc, LANDINFOD_LEVEL, "height = 0x{:x}", tile.height());
+        Debug(misc, LANDINFOD_LEVEL, "m1     = 0x{:x}", tile.m1());
+        Debug(misc, LANDINFOD_LEVEL, "m2     = 0x{:x}", tile.m2());
+        Debug(misc, LANDINFOD_LEVEL, "m3     = 0x{:x}", tile.m3());
+        Debug(misc, LANDINFOD_LEVEL, "m4     = 0x{:x}", tile.m4());
+        Debug(misc, LANDINFOD_LEVEL, "m5     = 0x{:x}", tile.m5());
+        Debug(misc, LANDINFOD_LEVEL, "m6     = 0x{:x}", tile.m6());
+        Debug(misc, LANDINFOD_LEVEL, "m7     = 0x{:x}", tile.m7());
+        Debug(misc, LANDINFOD_LEVEL, "m8     = 0x{:x}", tile.m8());
 #undef LANDINFOD_LEVEL
     }
 
     void OnInit() override
     {
-        Town *t = ClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
+    Town *t = ClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
 
         /* Because build_date is not set yet in every TileDesc, we make sure it is empty */
         TileDesc td;
 
-        td.build_date = INVALID_DATE;
+        td.build_date = CalendarTime::INVALID_DATE;
 
         /* Most tiles have only one owner, but
          *  - drivethrough roadstops can be build on town owned roads (up to 2 owners) and
@@ -161,29 +157,27 @@ public:
         td.road_speed = 0;
         td.tramtype = STR_NULL;
         td.tram_speed = 0;
-        td.population = 0;
+        td.cm_population = 0;
 
         td.grf = nullptr;
 
-        CargoArray acceptance;
+        CargoArray acceptance{};
         AddAcceptedCargo(tile, acceptance, nullptr);
         GetTileDesc(tile, &td);
 
-        uint line_nr = 0;
+        this->landinfo_data.clear();
 
         /* Tiletype */
-        SetDParam(0, td.dparam[0]);
-        GetString(this->landinfo_data[line_nr], td.str, lastof(this->landinfo_data[line_nr]));
-        line_nr++;
+        SetDParam(0, td.dparam);
+        this->landinfo_data.push_back(GetString(td.str));
 
         /* Up to four owners */
         for (uint i = 0; i < 4; i++) {
             if (td.owner_type[i] == STR_NULL) continue;
 
             SetDParam(0, STR_LAND_AREA_INFORMATION_OWNER_N_A);
-            if (td.owner[i] != OWNER_NONE && td.owner[i] != OWNER_WATER) GetNameOfOwner(td.owner[i], tile);
-            GetString(this->landinfo_data[line_nr], td.owner_type[i], lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            if (td.owner[i] != OWNER_NONE && td.owner[i] != OWNER_WATER) SetDParamsForOwnedBy(td.owner[i], tile);
+            this->landinfo_data.push_back(GetString(td.owner_type[i]));
         }
 
         /* Cost to clear/revenue when cleared */
@@ -191,7 +185,7 @@ public:
         Company *c = Company::GetIfValid(_local_company);
         if (c != nullptr) {
             assert(_current_company == _local_company);
-            CommandCost costclear = ::Command<CMD_LANDSCAPE_CLEAR>::Do(DC_QUERY_COST, tile);
+            CommandCost costclear = Command<CMD_LANDSCAPE_CLEAR>::Do(DC_QUERY_COST, tile);
             if (costclear.Succeeded()) {
                 Money cost = costclear.GetCost();
                 if (cost < 0) {
@@ -203,20 +197,17 @@ public:
                 SetDParam(0, cost);
             }
         }
-        GetString(this->landinfo_data[line_nr], str, lastof(this->landinfo_data[line_nr]));
-        line_nr++;
+        this->landinfo_data.push_back(GetString(str));
 
         /* Location */
         std::stringstream tile_ss;
-        tile_ss << "0x" << std::setfill('0') << std::setw(4) << std::hex << std::uppercase << tile; // 0x%.4X
-        std::string tile_str = tile_ss.str(); // Can't pass it directly to SetDParamStr as the string is only a temporary and would be destructed before the GetString call.
+        tile_ss << "0x" << std::setfill('0') << std::setw(4) << std::hex << std::uppercase << tile.base(); // 0x%.4X
 
         SetDParam(0, TileX(tile));
         SetDParam(1, TileY(tile));
         SetDParam(2, GetTileZ(tile));
-        SetDParamStr(3, tile_str);
-        GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_LANDINFO_COORDS, lastof(this->landinfo_data[line_nr]));
-        line_nr++;
+        SetDParamStr(3, tile_ss.str());
+        this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_LANDINFO_COORDS));
 
         /* Local authority */
         SetDParam(0, STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE);
@@ -224,143 +215,130 @@ public:
             SetDParam(0, STR_TOWN_NAME);
             SetDParam(1, t->index);
         }
-        GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY, lastof(this->landinfo_data[line_nr]));
-        line_nr++;
+        this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY));
 
         /* Build date */
-        if (td.build_date != INVALID_DATE) {
+        if (td.build_date != CalendarTime::INVALID_DATE) {
             SetDParam(0, td.build_date);
-            GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_BUILD_DATE, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_BUILD_DATE));
         }
 
         /* Station class */
         if (td.station_class != STR_NULL) {
             SetDParam(0, td.station_class);
-            GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_STATION_CLASS, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_STATION_CLASS));
         }
 
         /* Station type name */
         if (td.station_name != STR_NULL) {
             SetDParam(0, td.station_name);
-            GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_STATION_TYPE, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_STATION_TYPE));
         }
 
         /* Airport class */
         if (td.airport_class != STR_NULL) {
             SetDParam(0, td.airport_class);
-            GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_AIRPORT_CLASS, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_AIRPORT_CLASS));
         }
 
         /* Airport name */
         if (td.airport_name != STR_NULL) {
             SetDParam(0, td.airport_name);
-            GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_AIRPORT_NAME, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_AIRPORT_NAME));
         }
 
         /* Airport tile name */
         if (td.airport_tile_name != STR_NULL) {
             SetDParam(0, td.airport_tile_name);
-            GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME));
         }
 
         /* Rail type name */
         if (td.railtype != STR_NULL) {
             SetDParam(0, td.railtype);
-            GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_RAIL_TYPE, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_RAIL_TYPE));
         }
 
         /* Rail speed limit */
         if (td.rail_speed != 0) {
-            SetDParam(0, td.rail_speed);
-            GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            SetDParam(0, PackVelocity(td.rail_speed, VEH_TRAIN));
+            this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT));
         }
 
         /* Road type name */
         if (td.roadtype != STR_NULL) {
             SetDParam(0, td.roadtype);
-            GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_ROAD_TYPE, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_ROAD_TYPE));
         }
 
         /* Road speed limit */
         if (td.road_speed != 0) {
-            SetDParam(0, td.road_speed);
-            GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            SetDParam(0, PackVelocity(td.road_speed, VEH_ROAD));
+            this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT));
         }
 
         /* Tram type name */
         if (td.tramtype != STR_NULL) {
             SetDParam(0, td.tramtype);
-            GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_TRAM_TYPE, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_TRAM_TYPE));
         }
 
         /* Tram speed limit */
         if (td.tram_speed != 0) {
-            SetDParam(0, td.tram_speed);
-            GetString(this->landinfo_data[line_nr], STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            SetDParam(0, PackVelocity(td.tram_speed, VEH_ROAD));
+            this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT));
         }
 
         /* NewGRF name */
         if (td.grf != nullptr) {
             SetDParamStr(0, td.grf);
-            GetString(this->landinfo_data[line_nr], STR_LAND_AREA_INFORMATION_NEWGRF_NAME, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+            this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_NEWGRF_NAME));
         }
 
-        /* House pop */
-        if (td.population != 0) {
-            SetDParam(0, td.population);
-            GetString(this->landinfo_data[line_nr], CM_STR_LAND_AREA_INFORMATION_POP, lastof(this->landinfo_data[line_nr]));
-            line_nr++;
+        /* CityMania code start (House pop) */
+        if (td.cm_population != 0) {
+            SetDParam(0, td.cm_population);
+            this->landinfo_data.push_back(GetString(CM_STR_LAND_AREA_INFORMATION_POP));
         }
-
-        assert(line_nr < LAND_INFO_CENTERED_LINES);
-
-        /* Mark last line empty */
-        this->landinfo_data[line_nr][0] = '\0';
+        /* CityMania code end */
 
         /* Cargo acceptance is displayed in a extra multiline */
-        char *strp = GetString(this->landinfo_data[LAND_INFO_MULTICENTER_LINE], STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED, lastof(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]));
-        bool found = false;
+        std::stringstream line;
+        line << GetString(STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED);
 
-        for (CargoID i = 0; i < NUM_CARGO; ++i) {
-            if (acceptance[i] > 0) {
+        bool found = false;
+        for (const CargoSpec *cs : _sorted_cargo_specs) {
+            CargoID cid = cs->Index();
+            if (acceptance[cid] > 0) {
                 /* Add a comma between each item. */
-                if (found) strp = strecpy(strp, ", ", lastof(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]));
+                if (found) line << ", ";
                 found = true;
 
                 /* If the accepted value is less than 8, show it in 1/8:ths */
-                if (acceptance[i] < 8) {
-                    SetDParam(0, acceptance[i]);
-                    SetDParam(1, CargoSpec::Get(i)->name);
-                    strp = GetString(strp, STR_LAND_AREA_INFORMATION_CARGO_EIGHTS, lastof(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]));
+                if (acceptance[cid] < 8) {
+                    SetDParam(0, acceptance[cid]);
+                    SetDParam(1, cs->name);
+                    line << GetString(STR_LAND_AREA_INFORMATION_CARGO_EIGHTS);
                 } else {
-                    strp = GetString(strp, CargoSpec::Get(i)->name, lastof(this->landinfo_data[LAND_INFO_MULTICENTER_LINE]));
+                    line << GetString(cs->name);
                 }
             }
         }
-        if (!found) this->landinfo_data[LAND_INFO_MULTICENTER_LINE][0] = '\0';
+        if (found) {
+            this->cargo_acceptance = line.str();
+        } else {
+            this->cargo_acceptance.clear();
+        }
     }
 
     bool IsNewGRFInspectable() const override
     {
-        return ::IsNewGRFInspectable(GetGrfSpecFeature(this->tile), this->tile);
+        return ::IsNewGRFInspectable(GetGrfSpecFeature(this->tile), this->tile.base());
     }
 
     void ShowNewGRFInspectWindow() const override
     {
-        ::ShowNewGRFInspectWindow(GetGrfSpecFeature(this->tile), this->tile);
+        ::ShowNewGRFInspectWindow(GetGrfSpecFeature(this->tile), this->tile.base());
     }
 
     /**
@@ -368,15 +346,12 @@ public:
      * @param data Information about the changed data.
      * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
      */
-    void OnInvalidateData(int data = 0, bool gui_scope = true) override
+    void OnInvalidateData([[maybe_unused]] int data = 0, [[maybe_unused]] bool gui_scope = true) override
     {
         if (!gui_scope) return;
-        switch (data) {
-            case 1:
-                /* ReInit, "debug" sprite might have changed */
-                this->ReInit();
-                break;
-        }
+
+        /* ReInit, "debug" sprite might have changed */
+        if (data == 1) this->ReInit();
     }
 };
 

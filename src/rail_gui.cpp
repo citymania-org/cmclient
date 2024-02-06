@@ -502,18 +502,6 @@ struct BuildRailToolbarWindow : Window {
 	}
 
 	/**
-	 * Some data on this window has become invalid.
-	 * @param data Information about the changed data.
-	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
-	 */
-	void OnInvalidateData(int data = 0, bool gui_scope = true) override
-	{
-		if (!gui_scope) return;
-
-		if (!CanBuildVehicleInfrastructure(VEH_TRAIN)) this->Close();
-	}
-
-	/**
 	 * Configures the rail toolbar for railtype given
 	 * @param railtype the railtype to display
 	 */
@@ -2174,14 +2162,12 @@ static void ShowSignalBuilder(Window *parent)
 }
 
 
-struct BuildRailDepotWindow : public PickerWindowBase {
-/* CityMania code start */
-public:
-	enum class Hotkey : int {
-		ROTATE,
-	};
-/* CityMania code end */
+enum BuildRailDepotWindowHotkeys {
+	BRDHK_ROTATE,
+};
 
+struct BuildRailDepotWindow : public PickerWindowBase {
+public:
 	BuildRailDepotWindow(WindowDesc *desc, Window *parent) : PickerWindowBase(desc, parent)
 	{
 		this->InitNested(TRANSPORT_RAIL);
@@ -2239,10 +2225,10 @@ public:
 	/* CityMania code start */
 	EventState OnHotkey(int hotkey) override
 	{
-		switch ((BuildRailDepotWindow::Hotkey)hotkey) {
+		switch (hotkey) {
 			/* Indicate to the OnClick that the action comes from a hotkey rather
 			 * then from a click and that the CTRL state should be ignored. */
-			case BuildRailDepotWindow::Hotkey::ROTATE:
+			case BRDHK_ROTATE:
 				if (_build_depot_direction < DIAGDIR_END) {
 					this->RaiseWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
 					_build_depot_direction = ChangeDiagDir(_build_depot_direction, DIAGDIRDIFF_90RIGHT);
@@ -2260,18 +2246,12 @@ public:
 		return ES_NOT_HANDLED;
 	}
 
-	static HotkeyList hotkeys;
+	/* CityMania code start */
+	static inline HotkeyList hotkeys {"cm_build_rail_depot", {
+		Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", BRDHK_ROTATE),
+	}};
 	/* CityMania code end */
 };
-
-/* CityMania code start */
-TODO needs to go in the window
-static Hotkey build_depot_hotkeys[] = {
-	Hotkey(CM_WKC_MOUSE_MIDDLE, "rotate", (int)BuildRailDepotWindow::Hotkey::ROTATE),
-	HOTKEY_LIST_END
-};
-HotkeyList BuildRailDepotWindow::hotkeys("cm_build_rail_depot", build_depot_hotkeys);
-/* CityMania code end */
 
 /** Nested widget definition of the build rail depot window */
 static constexpr NWidgetPart _nested_build_depot_widgets[] = {
@@ -2302,7 +2282,8 @@ static WindowDesc _build_depot_desc(__FILE__, __LINE__,
 	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
-	std::begin(_nested_build_depot_widgets), std::end(_nested_build_depot_widgets)
+	std::begin(_nested_build_depot_widgets), std::end(_nested_build_depot_widgets),
+	&BuildRailDepotWindow::hotkeys  // CM
 );
 
 static void ShowBuildTrainDepotPicker(Window *parent)

@@ -1526,7 +1526,7 @@ void DrawDirtyBlocks()
 			if (w->flags & WF_DIRTY) {
 				clear_overlays();
 				DrawOverlappedWindowFlags flags = DOWF_MARK_DIRTY;
-				if (unlikely(HasBit(_gfx_debug_flags, GDF_SHOW_WINDOW_DIRTY))) {
+				if (HasBit(_gfx_debug_flags, GDF_SHOW_WINDOW_DIRTY)) [[ unlikely ]] {
 					flags |= DOWF_SHOW_DEBUG;
 				}
 				DrawOverlappedWindowWithClipping(w, w->left, w->top, w->left + w->width, w->top + w->height, flags);
@@ -1537,7 +1537,7 @@ void DrawDirtyBlocks()
 					w->nested_root->FillDirtyWidgets(dirty_widgets);
 					for (NWidgetBase *widget : dirty_widgets) {
 						DrawOverlappedWindowFlags flags = DOWF_MARK_DIRTY;
-						if (unlikely(HasBit(_gfx_debug_flags, GDF_SHOW_WIDGET_DIRTY))) {
+						if (HasBit(_gfx_debug_flags, GDF_SHOW_WIDGET_DIRTY)) [[ unlikely ]] {
 							flags |= DOWF_SHOW_DEBUG;
 						}
 						DrawOverlappedWindowWithClipping(w, w->left + widget->pos_x, w->top + widget->pos_y, w->left + widget->pos_x + widget->current_x, w->top + widget->pos_y + widget->current_y, flags);
@@ -1566,7 +1566,7 @@ void DrawDirtyBlocks()
 					_dirty_viewport_disp_flags = w->viewport_widget->disp_flags;
 					TransparencyOptionBits to_backup = _transparency_opt;
 					if (_dirty_viewport_disp_flags & ND_NO_TRANSPARENCY) {
-						_transparency_opt &= (1 << TO_SIGNS) | (1 << TO_LOADING); // Disable all transparency, except textual stuff
+						_transparency_opt &= (1 << TO_SIGNS) | (1 << TO_TEXT); // Disable all transparency, except textual stuff
 					}
 
 					{
@@ -1670,7 +1670,7 @@ void DrawDirtyBlocks()
 		for (const Rect &r : _dirty_blocks) {
 			RedrawScreenRect(r.left, r.top, r.right, r.bottom);
 		}
-		if (unlikely(HasBit(_gfx_debug_flags, GDF_SHOW_RECT_DIRTY))) {
+		if (HasBit(_gfx_debug_flags, GDF_SHOW_RECT_DIRTY)) [[ unlikely ]] {
 			for (const Rect &r : _dirty_blocks) {
 				GfxFillRect(r.left, r.top, r.right, r.bottom, _string_colourmap[++_dirty_block_colour & 0xF], FILLRECT_CHECKER);
 			}

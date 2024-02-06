@@ -5,6 +5,7 @@
 #include "cm_base64.hpp"
 #include "cm_main.hpp"
 
+#include "../network/core/http.h" //HttpCallback
 #include "core/geometry_func.hpp" //maxdim
 #include "settings_type.h"
 #include "settings_func.h" //saveconfig
@@ -13,7 +14,6 @@
 #include "strings_func.h"
 #include "textbuf_gui.h"  //show query
 #include "network/network.h" //networking
-#include "network/core/tcp_http.h" //http connector
 #include "ini_type.h" //ini file
 #include "fileio_func.h" //personal dir
 #include "error.h" //error message
@@ -38,8 +38,8 @@ static const char * const NOVAPOLIS_IPV6_PRIMARY   = "2a02:2b88:2:1::1d73:1";
 static const char * const NOVAPOLIS_IPV4_SECONDARY = "89.111.65.225";
 static const char * const NOVAPOLIS_IPV6_SECONDARY = "fe80::20e:7fff:fe23:bee0";
 static const char * const NOVAPOLIS_STRING         = "CityMania";
-static const char * const NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken.php?user=%s&password=%s";
-static const char * const BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken-enc.php?user=%s&password=%s";
+static constexpr std::string_view NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken.php?user={}&password={}";
+static constexpr std::string_view BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken-enc.php?user={}&password={}";
 
 static const char * const NOVA_IP_ADDRESSES[] = {
 	NOVAPOLIS_IPV4_PRIMARY,
@@ -48,8 +48,8 @@ static const char * const NOVA_IP_ADDRESSES[] = {
 	NOVAPOLIS_IPV6_SECONDARY,
 };
 
-static const char * const CFG_LOGIN_FILE  = "citymania.cfg";
-static const char * const CFG_LOGIN_KEY   = "login";
+static const std::string CFG_LOGIN_FILE  = "citymania.cfg";
+static const std::string CFG_LOGIN_KEY   = "login";
 static const char * const NOVAPOLIS_LOGIN = "citymania_login";
 static const char * const NOVAPOLIS_PW    = "citymania_pw";
 static const char * const NICE_LOGIN      = "nice_login";
@@ -184,72 +184,59 @@ bool novahost() {
 	return _novahost;
 }
 
-void strtomd5(char * buf, char * bufend, int length){
-	uint8 digest[16];
-	Md5 checksum;
-	checksum.Append(buf, length);
-	checksum.Finish(digest);
-	md5sumToString(buf, bufend, digest);
-	strtolower(buf);
-}
+// void strtomd5(char * buf, char * bufend, int length){
+// 	MD5Hash digest;
+// 	Md5 checksum;
+// 	checksum.Append(buf, length);
+// 	checksum.Finish(digest);
+// 	md5sumToString(buf, bufend, digest);
+// 	strtolower(buf);
+// }
 
-void UrlEncode(char * buf, const char * buflast, const char * url){
-	while(*url != '\0' && buf < buflast){
-		if((*url >= '0' && *url <= '9') || (*url >= 'A' && *url <= 'Z') || (*url >= 'a' && *url <= 'z')
-			|| *url == '-' || *url == '_' || *url == '.' || *url == '~'
-		){
-			*buf++ = *url++;
-		}
-		else{
-			buf += seprintf(buf, buflast, "%%%02X", *url++);
-		}
-	}
-	*buf = '\0';
-}
+// void UrlEncode(char * buf, const char * buflast, const char * url){
+// 	while(*url != '\0' && buf < buflast){
+// 		if((*url >= '0' && *url <= '9') || (*url >= 'A' && *url <= 'Z') || (*url >= 'a' && *url <= 'z')
+// 			|| *url == '-' || *url == '_' || *url == '.' || *url == '~'
+// 		){
+// 			*buf++ = *url++;
+// 		}
+// 		else{
+// 			buf += seprintf(buf, buflast, "%%%02X", *url++);
+// 		}
+// 	}
+// 	*buf = '\0';
+// }
 
 
 //ini login hadling
 void IniLoginInitiate(){
-	static const char * const list_login[] = {
-		CFG_LOGIN_KEY,
-		NULL
-	};
-
 	if(_inilogin != NULL) return; //it was already set
-	_inilogin = new IniFile(list_login);
+	_inilogin = new IniFile({CFG_LOGIN_KEY});
 	_inilogin->LoadFromDisk(CFG_LOGIN_FILE, BASE_DIR);
 	IniReloadLogin();
 }
 
-std::string GetLoginItem(const char *itemname){
-	IniGroup *group = _inilogin->GetGroup(CFG_LOGIN_KEY);
-	if(group == NULL) return "";
-	IniItem *item = group->GetItem(itemname, true);
-	if(item == NULL) return "";
-	return item->value.value_or("");
+std::string GetLoginItem(const std::string& itemname){
+	IniGroup &group = _inilogin->GetOrCreateGroup(CFG_LOGIN_KEY);
+	IniItem &item = group.GetOrCreateItem(itemname);
+	return item.value.value_or("");
 }
 
 void IniReloadLogin(){
-	char str[MAX_COMMUNITY_STRING_LEN * 2];
 	for(int i = 0, len = lengthof(INI_LOGIN_KEYS); i < len; i++){
-		auto itemvalue = GetLoginItem(INI_LOGIN_KEYS[i]);
-		if (itemvalue.empty()){
-			GetString(str, CM_STR_LOGIN_WINDOW_NOT_SET, lastof(str));
+		auto str = GetLoginItem(INI_LOGIN_KEYS[i]);
+		if (str.empty()){
+			str = GetString(CM_STR_LOGIN_WINDOW_NOT_SET);
 		}
-		else{
-			strecpy(str, itemvalue.c_str(), lastof(str));
-		}
-		strecpy(_inilogindata[i], str, lastof(_inilogindata[i]));
+		strecpy(_inilogindata[i], str.c_str(), lastof(_inilogindata[i]));
 	}
 }
 
-void SetLoginItem(const char * itemname, const char * value){
-	IniGroup *group = _inilogin->GetGroup(CFG_LOGIN_KEY);
-	if(group == NULL) return;
-	IniItem *item = group->GetItem(itemname, true);
-	if(item == NULL) return;
-	item->SetValue(value);
-	_inilogin->SaveToDisk(str_fmt("%s%s", _personal_dir.c_str(), CFG_LOGIN_FILE));
+void SetLoginItem(const std::string& itemname, const std::string& value){
+	IniGroup &group = _inilogin->GetOrCreateGroup(CFG_LOGIN_KEY);
+	IniItem &item = group.GetOrCreateItem(itemname);
+	item.SetValue(value);
+	_inilogin->SaveToDisk(fmt::format("{}{}", _personal_dir, CFG_LOGIN_FILE));
 	IniReloadLogin();
 }
 
@@ -592,7 +579,7 @@ void ShowCommandsToolbar()
 // login window
 class GetHTTPContent: public HTTPCallback {
 public:
-	GetHTTPContent(char *uri): uri(uri) {
+	GetHTTPContent(const std::string &uri): uri{uri} {
 		this->proccessing = false;
 		this->buf_last = lastof(buf);
 	}
@@ -605,30 +592,30 @@ public:
 		NetworkHTTPSocketHandler::Connect(this->uri, this);
 	}
 
-	virtual void OnReceiveData(const char *data, size_t length) {
-		if (data == NULL) {
-			this->cursor = NULL;
+	void OnReceiveData(std::unique_ptr<char[]> data, size_t length) override {
+		if (data.get() == nullptr) {
+			this->cursor = nullptr;
 			this->LoginAlready();
-		}
-		else {
-			for(size_t i=0; i<length && this->cursor < this->buf_last; i++, data++, this->cursor++) {
-				*(this->cursor) = *data;
+		} else {
+			for(size_t i = 0; i < length && this->cursor < this->buf_last; i++, this->cursor++) {
+				*(this->cursor) = data.get()[i];
 			}
 			*(this->cursor) = '\0';
 		}
 	}
 
-	virtual void OnFailure() {
+	void OnFailure() override {
 		ShowErrorMessage(CM_STR_LOGIN_ERROR_SIGN_IN_FAILED, INVALID_STRING_ID, WL_ERROR);
+	}
+
+	bool IsCancelled() const override {
+		return false;
 	}
 
 	void LoginAlready(){
 		if(strlen(this->buf) == 4 && _networking){
-			char msg[32];
-			seprintf(msg, lastof(msg), "!login %s", this->buf);
-			NetworkClientSendChatToServer(msg);
-		}
-		else{
+			NetworkClientSendChatToServer(fmt::format("!login {}", this->buf));
+		} else{
 			ShowErrorMessage(CM_STR_LOGIN_ERROR_BAD_INPUT, INVALID_STRING_ID, WL_ERROR);
 		}
 		this->proccessing = false;
@@ -637,11 +624,10 @@ public:
 	virtual ~GetHTTPContent() {
 	}
 private:
-	NetworkHTTPContentConnecter *conn;
 	char buf[HTTPBUFLEN];
 	char *buf_last;
 	char *cursor;
-	char *uri;
+	std::string uri;
 };
 
 std::string urlencode(const std::string &s) {
@@ -674,19 +660,18 @@ std::string btpro_encode(const char *value) {
 
 //send login
 void AccountLogin(CommunityName community){
-	char uri[MAX_COMMUNITY_STRING_LEN * 2 + 32];
+	std::string uri;
 	switch(community){
 		case CITYMANIA:
-			seprintf(uri, lastof(uri), "!login %s %s", _inilogindata[NOVAPOLISUSER], _inilogindata[NOVAPOLISPW]);
-			NetworkClientSendChatToServer(uri);
+			NetworkClientSendChatToServer(fmt::format("!login {} {}", _inilogindata[NOVAPOLISUSER], _inilogindata[NOVAPOLISPW]));
 			return;
 		case NICE:
-			seprintf(uri, lastof(uri), NICE_HTTP_LOGIN, GetLoginItem(NICE_LOGIN).c_str(), GetLoginItem(NICE_PW).c_str());
+			uri = fmt::format("http://n-ice.org/openttd/gettoken.php?user={}&password={}", GetLoginItem(NICE_LOGIN), GetLoginItem(NICE_PW));
 			break;
 		case BTPRO: {
-			seprintf(uri, lastof(uri), BTPRO_HTTP_LOGIN,
-			         btpro_encode(GetLoginItem(BTPRO_LOGIN).c_str()).c_str(),
-			         btpro_encode(GetLoginItem(BTPRO_PW).c_str()).c_str());
+			uri = fmt::format(BTPRO_HTTP_LOGIN,
+			         btpro_encode(GetLoginItem(BTPRO_LOGIN).c_str()),
+			         btpro_encode(GetLoginItem(BTPRO_PW).c_str()));
 			break;
 		}
 		default:
@@ -764,7 +749,6 @@ struct LoginWindow : Window {
 	void OnQueryTextFinished(char * str)
 	{
 		if (str == NULL) return;
-		char item[128];
 		switch(this->query_widget){
 			case LQW_NOVAPOLIS_LOGIN: {
 				SetLoginItem(NOVAPOLIS_LOGIN, str);
@@ -777,10 +761,11 @@ struct LoginWindow : Window {
 			case LQW_NICE_LOGIN:
 			case LQW_NICE_PW:
 			case LQW_BTPRO_LOGIN:
-			case LQW_BTPRO_PW:
-				UrlEncode(item, lastof(item), str);
+			case LQW_BTPRO_PW: {
+				auto item = urlencode(str);
 				SetLoginItem(INI_LOGIN_KEYS[this->query_widget - 3], item); // - LWW_NICE_LOGIN + NICE_LOGIN
 				break;
+			}
 			default: return;
 		}
 		this->SetDirty();
@@ -843,17 +828,17 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _login_window_desc(
+static WindowDesc _login_window_desc(__FILE__, __LINE__,
 	WDP_CENTER, NULL, 0, 0,
-	WC_LOGIN_WINDOW, WC_NONE,
+	CM_WC_LOGIN_WINDOW, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_login_window_widgets, lengthof(_nested_login_window_widgets)
+	std::begin(_nested_login_window_widgets), std::end(_nested_login_window_widgets)
 );
 
 void ShowLoginWindow()
 {
 	IniLoginInitiate();
-	CloseWindowByClass(WC_LOGIN_WINDOW);
+	CloseWindowByClass(CM_WC_LOGIN_WINDOW);
 	AllocateWindowDescFront<LoginWindow>(&_login_window_desc, 0);
 }
 

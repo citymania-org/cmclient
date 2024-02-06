@@ -332,8 +332,7 @@ void NetworkExecuteLocalCommandQueue()
 		if (_frame_counter > cp->frame) {
 			/* If we reach here, it means for whatever reason, we've already executed
 			 * past the command we need to execute. */
-			TODO {} format?
-			FatalError("[net] Trying to execute a packet in the past! (frame=%u cmd_frame=%u cmd=%u)", (uint)_frame_counter, (uint)cp->frame, (uint)cp->cmd);
+			FatalError("[net] Trying to execute a packet in the past! (frame={} cmd_frame={} cmd={})", (uint)_frame_counter, (uint)cp->frame, (uint)cp->cmd);
 		}
 
 		/* We can execute this command */

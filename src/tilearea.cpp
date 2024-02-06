@@ -228,6 +228,27 @@ bool DiagonalTileArea::Contains(TileIndex tile) const
 	return (a >= start_a && a < end_a && b >= start_b && b < end_b);
 }
 
+/* CityMaina code start (for treedozer) */
+/**
+ * Returns an iterator to the beginning of the tile area.
+ * @return The DiagonalTileIterator.
+ */
+DiagonalTileIterator DiagonalTileArea::begin() const
+{
+	return DiagonalTileIterator(*this);
+}
+
+/**
+ * Returns an iterator to the end of the tile area.
+ * @return The DiagonalTileIterator.
+ */
+DiagonalTileIterator DiagonalTileArea::end() const
+{
+	return DiagonalTileIterator(DiagonalTileArea());
+}
+/* CityMaina code end */
+
+
 /**
  * Move ourselves to the next tile in the rectangle on the map.
  */

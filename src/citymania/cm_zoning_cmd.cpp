@@ -98,7 +98,7 @@ Town *CMClosestTownFromTile(TileIndex tile, uint threshold)
 
 				return town;
 			}
-			FALLTHROUGH;
+			[[ fallthrough ]];
 
 		case MP_HOUSE:
 			return Town::GetByTile(tile);
@@ -402,7 +402,7 @@ SpriteID GetTownZoneBorderColor(uint8 zone) {
 void DrawTileZoning(const TileInfo *ti) {
 
 	if(_zoning.outer == CHECKNOTHING && _zoning.inner == CHECKNOTHING) return; //nothing to do
-	if (_game_mode != GM_NORMAL || ti->tile >= MapSize() || IsTileType(ti->tile, MP_VOID)) return; //check invalid
+	if (_game_mode != GM_NORMAL || ti->tile >= Map::Size() || IsTileType(ti->tile, MP_VOID)) return; //check invalid
 	if (_zoning.outer != CHECKNOTHING){
 		if (_zoning.outer == CHECKTOWNZONES ||
 			    _zoning.outer == CHECKBULUNSER ||

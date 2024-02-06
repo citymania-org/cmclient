@@ -126,57 +126,50 @@ struct ZoningWindow : public Window {
 		return Window::OnHotkey(hotkey);
 	}
 
-	static HotkeyList hotkeys;
+	static EventState ZoningWindowGlobalHotkeys(int hotkey) {
+		EvaluationMode zoning = (EvaluationMode)(hotkey - ZTW_OUTER_FIRST); // +1:skip CHECKNOTHING
+		bool deselect = (_zoning.outer == zoning);
+		_zoning.outer = deselect ? CHECKNOTHING : zoning;
+		MarkWholeScreenDirty();
+		return ES_HANDLED;
+	}
+
+	static inline HotkeyList hotkeys{"zoning_gui", {
+		Hotkey(WKC_SHIFT | '1', "authority", ZTW_OUTER_FIRST + CHECKOPINION),
+		Hotkey(WKC_SHIFT | '2', "build_status", ZTW_OUTER_FIRST + CHECKBUILD),
+		Hotkey(WKC_SHIFT | '3', "station_catchment", ZTW_OUTER_FIRST + CHECKSTACATCH),
+		Hotkey(WKC_SHIFT | '4', "unserved_buildings", ZTW_OUTER_FIRST + CHECKBULUNSER),
+		Hotkey(WKC_SHIFT | '5', "unserved_industries", ZTW_OUTER_FIRST + CHECKINDUNSER),
+		Hotkey(WKC_SHIFT | '6', "town_zone", ZTW_OUTER_FIRST + CHECKTOWNZONES),
+		Hotkey(WKC_SHIFT | '7', "cb_acceptance", ZTW_OUTER_FIRST + CHECKCBACCEPTANCE),
+		Hotkey(WKC_SHIFT | '8', "cb_town_limit", ZTW_OUTER_FIRST + CHECKCBTOWNLIMIT),
+		Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + CHECKTOWNADZONES),
+		Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + CHECKTOWNGROWTHTILES),
+		Hotkey((uint16)0, "active_stations", ZTW_OUTER_FIRST + CHECKACTIVESTATIONS)
+	}, ZoningWindowGlobalHotkeys};
 };
-
-
-static EventState ZoningWindowGlobalHotkeys(int hotkey) {
-	EvaluationMode zoning = (EvaluationMode)(hotkey - ZTW_OUTER_FIRST); // +1:skip CHECKNOTHING
-	bool deselect = (_zoning.outer == zoning);
-	_zoning.outer = deselect ? CHECKNOTHING : zoning;
-	MarkWholeScreenDirty();
-	return ES_HANDLED;
-}
-
-static Hotkey zoning_hotkeys[] = {
-	Hotkey(WKC_SHIFT | '1', "authority", ZTW_OUTER_FIRST + CHECKOPINION),
-	Hotkey(WKC_SHIFT | '2', "build_status", ZTW_OUTER_FIRST + CHECKBUILD),
-	Hotkey(WKC_SHIFT | '3', "station_catchment", ZTW_OUTER_FIRST + CHECKSTACATCH),
-	Hotkey(WKC_SHIFT | '4', "unserved_buildings", ZTW_OUTER_FIRST + CHECKBULUNSER),
-	Hotkey(WKC_SHIFT | '5', "unserved_industries", ZTW_OUTER_FIRST + CHECKINDUNSER),
-	Hotkey(WKC_SHIFT | '6', "town_zone", ZTW_OUTER_FIRST + CHECKTOWNZONES),
-	Hotkey(WKC_SHIFT | '7', "cb_acceptance", ZTW_OUTER_FIRST + CHECKCBACCEPTANCE),
-	Hotkey(WKC_SHIFT | '8', "cb_town_limit", ZTW_OUTER_FIRST + CHECKCBTOWNLIMIT),
-	Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + CHECKTOWNADZONES),
-	Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + CHECKTOWNGROWTHTILES),
-	Hotkey((uint16)0, "active_stations", ZTW_OUTER_FIRST + CHECKACTIVESTATIONS),
-	HOTKEY_LIST_END
-};
-
-HotkeyList ZoningWindow::hotkeys("zoning_gui", zoning_hotkeys, ZoningWindowGlobalHotkeys);
 
 
 /** Construct the row containing the digit keys. */
-static NWidgetBase *MakeZoningButtons(int *biggest_index)
+static std::unique_ptr<NWidgetBase> MakeZoningButtons()
 {
-	NWidgetHorizontal *hor = new NWidgetHorizontal(NC_EQUALSIZE);
+	auto hor = std::make_unique<NWidgetHorizontal>(NC_EQUALSIZE);
 	int zone_types_size = lengthof(_zone_types);
 	hor->SetPadding(1, 1, 1, 1);
 
 	for(int i = 0; i < 2; i++){
-		NWidgetVertical *ver = new NWidgetVertical;
+		auto vert = std::make_unique<NWidgetVertical>();
 
 		int offset = (i == 0) ? ZTW_OUTER_FIRST : ZTW_INNER_FIRST;
 
 		for (int j = 0; j < zone_types_size; j++) {
-			NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, i==0 ? COLOUR_ORANGE : COLOUR_YELLOW, offset + j, NULL);
+			auto leaf = std::make_unique<NWidgetBackground>(WWT_PANEL, i==0 ? COLOUR_ORANGE : COLOUR_YELLOW, offset + j);
 			leaf->SetFill(1, 0);
 			leaf->SetPadding(0, 0, 0, 0);
-			ver->Add(leaf);
+			vert->Add(std::move(leaf));
 		}
-		hor->Add(ver);
+		hor->Add(std::move(vert));
 	}
-	*biggest_index = ZTW_INNER_END - 1;
 	return hor;
 }
 
@@ -192,11 +185,11 @@ static const NWidgetPart _nested_zoning_widgets[] = {
 	EndContainer()
 };
 
-static WindowDesc _zoning_desc (
+static WindowDesc _zoning_desc (__FILE__, __LINE__,
 	WDP_AUTO, NULL, 0, 0,
-	WC_ZONING_TOOLBAR, WC_NONE,
+	CM_WC_ZONING_TOOLBAR, WC_NONE,
 	0,
-	_nested_zoning_widgets, lengthof(_nested_zoning_widgets),
+	std::begin(_nested_zoning_widgets), std::end(_nested_zoning_widgets),
 	&ZoningWindow::hotkeys
 );
 

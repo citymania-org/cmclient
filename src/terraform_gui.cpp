@@ -153,7 +153,8 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 					Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 0);
 				}
 			} else {  // diagonal area
-				for (DiagonalTileIterator cur_tile{start_tile, end_tile}; cur_tile != INVALID_TILE; ++cur_tile) {
+				DiagonalTileArea diag_area{start_tile, end_tile};
+				for (auto cur_tile : diag_area) {
 					// same as above but with a different criteria for consecutive tiles
 					TileIndexDiffC tile_diff = TileIndexToTileIndexDiffC(cur_tile, prev_tile);
 					// if we're on a non-consecutive tile or we've hit a black-marked tile
@@ -410,69 +411,11 @@ struct TerraformToolbarWindow : Window {
 		Hotkey('I', "trees", WID_TT_PLANT_TREES),
 		Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
 		Hotkey('P', "placeobject", WID_TT_PLACE_OBJECT),
+		Hotkey('D' | WKC_CTRL | WKC_GLOBAL_HOTKEY, "cm_treedozer", WID_TT_DEMOLISH_TREES),
 	}, TerraformToolbarGlobalHotkeys};
 };
 
-<<<<<<< HEAD
-/**
- * Handler for global hotkeys of the TerraformToolbarWindow.
- * @param hotkey Hotkey
- * @return ES_HANDLED if hotkey was accepted.
- */
-static EventState TerraformToolbarGlobalHotkeys(int hotkey)
-{
-	if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
-	Window *w = ShowTerraformToolbar(nullptr);
-	if (w == nullptr) return ES_NOT_HANDLED;
-	return w->OnHotkey(hotkey);
-}
-
-static Hotkey terraform_hotkeys[] = {
-	Hotkey('Q' | WKC_GLOBAL_HOTKEY, "lower", WID_TT_LOWER_LAND),
-	Hotkey('W' | WKC_GLOBAL_HOTKEY, "raise", WID_TT_RAISE_LAND),
-	Hotkey('E' | WKC_GLOBAL_HOTKEY, "level", WID_TT_LEVEL_LAND),
-	Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_TT_DEMOLISH),
-	Hotkey('D' | WKC_CTRL | WKC_GLOBAL_HOTKEY, "treedozer", WID_TT_DEMOLISH_TREES),
-	Hotkey('U', "buyland", WID_TT_BUY_LAND),
-	Hotkey('I', "trees", WID_TT_PLANT_TREES),
-	Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
-	Hotkey('P', "placeobject", WID_TT_PLACE_OBJECT),
-	HOTKEY_LIST_END
-};
-HotkeyList TerraformToolbarWindow::hotkeys("terraform", terraform_hotkeys, TerraformToolbarGlobalHotkeys);
-
-static const NWidgetPart _nested_terraform_widgets[] = {
-||||||| 77ed90fc
-/**
- * Handler for global hotkeys of the TerraformToolbarWindow.
- * @param hotkey Hotkey
- * @return ES_HANDLED if hotkey was accepted.
- */
-static EventState TerraformToolbarGlobalHotkeys(int hotkey)
-{
-	if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
-	Window *w = ShowTerraformToolbar(nullptr);
-	if (w == nullptr) return ES_NOT_HANDLED;
-	return w->OnHotkey(hotkey);
-}
-
-static Hotkey terraform_hotkeys[] = {
-	Hotkey('Q' | WKC_GLOBAL_HOTKEY, "lower", WID_TT_LOWER_LAND),
-	Hotkey('W' | WKC_GLOBAL_HOTKEY, "raise", WID_TT_RAISE_LAND),
-	Hotkey('E' | WKC_GLOBAL_HOTKEY, "level", WID_TT_LEVEL_LAND),
-	Hotkey('D' | WKC_GLOBAL_HOTKEY, "dynamite", WID_TT_DEMOLISH),
-	Hotkey('U', "buyland", WID_TT_BUY_LAND),
-	Hotkey('I', "trees", WID_TT_PLANT_TREES),
-	Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
-	Hotkey('P', "placeobject", WID_TT_PLACE_OBJECT),
-	HOTKEY_LIST_END
-};
-HotkeyList TerraformToolbarWindow::hotkeys("terraform", terraform_hotkeys, TerraformToolbarGlobalHotkeys);
-
-static const NWidgetPart _nested_terraform_widgets[] = {
-=======
 static constexpr NWidgetPart _nested_terraform_widgets[] = {
->>>>>>> upstream/master
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_LANDSCAPING_TOOLBAR, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),

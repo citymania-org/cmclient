@@ -13,6 +13,7 @@
 #include "map_func.h"
 
 class OrthogonalTileIterator;
+class DiagonalTileIterator;
 
 /** Represents the covered area of e.g. a rail station */
 struct OrthogonalTileArea {
@@ -96,6 +97,12 @@ struct DiagonalTileArea {
 	}
 
 	bool Contains(TileIndex tile) const;
+
+	/* CityMaina code start (for treedozer) */
+	DiagonalTileIterator begin() const;
+
+	DiagonalTileIterator end() const;
+	/* CityMaina code end */
 };
 
 /** Shorthand for the much more common orthogonal tile area. */

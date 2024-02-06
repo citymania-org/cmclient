@@ -159,7 +159,7 @@ static void ShowHelp()
 	str.reserve(8192);
 
 	std::back_insert_iterator<std::string> output_iterator = std::back_inserter(str);
-	fmt::format_to(output_iterator, "OpenTTD {}\n", _openttd_revision);
+	fmt::format_to(output_iterator, "OpenTTD {} (CityMania Fork)\n", _openttd_revision);
 	str +=
 		"\n"
 		"\n"
@@ -672,7 +672,7 @@ int openttd_main(int argc, char *argv[])
 				return ret;
 			}
 			citymania::load_replay_commands(mgo.opt, [](auto error) {
-				fprintf(stderr, "%s\n", error.c_str());
+				fmt::print(stderr, "{}\n", error.c_str());
 			});
 			break;
 		}
@@ -1643,7 +1643,7 @@ void GameLoop()
 			 * We do this here, because it means that the network is really closed */
 			NetworkClientConnectGame(_settings_client.network.last_joined, COMPANY_SPECTATOR);
 		}
-		citymania::ExecuteFakeCommands(_date, _date_fract);
+		citymania::ExecuteFakeCommands(TimerGameTick::counter);
 		/* Singleplayer */
 		StateGameLoop();
 		citymania::CheckIntervalSave();

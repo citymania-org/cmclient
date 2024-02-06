@@ -455,7 +455,7 @@ struct NewGRFInspectWindow : Window {
 		const void *base_spec = nih->GetSpec(index);
 
 		uint i = 0;
-		this->DrawString(r, i++, "Industry type: %d", (int)((const Industry *)base)->type);
+		this->DrawString(r, i++, fmt::format("Industry type: {}", (int)((const Industry *)base)->type));
 		if (nif->variables != nullptr) {
 			this->DrawString(r, i++, "Variables:");
 			for (const NIVariable *niv = nif->variables; niv->name != nullptr; niv++) {

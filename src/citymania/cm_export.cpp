@@ -4,7 +4,6 @@
 
 #include "../cargotype.h"
 #include "../debug.h"
-#include "../date_func.h"
 #include "../house.h"
 #include "../gfx_func.h"
 #include "../gfx_type.h"
@@ -19,6 +18,7 @@
 #include "../table/strings.h"
 #include "../table/town_land.h"
 #include "../table/train_sprites.h"
+#include "../timer/timer_game_tick.h"
 #include "../viewport_sprite_sorter.h"
 #include "../viewport_type.h"
 #include "../window_func.h"
@@ -191,8 +191,8 @@ void WriteHouseSpecInfo(JsonWriter &j) {
     for (uint i = 0; i < NUM_HOUSES; i++) {
         const HouseSpec *hs = HouseSpec::Get(i);
         j.begin_dict();
-        j.kv("min_year", hs->min_year);
-        j.kv("max_year", hs->max_year);
+        j.kv("min_year", hs->min_year.base());
+        j.kv("max_year", hs->max_year.base());
         j.kv("population", hs->population);
         j.kv("removal_cost", hs->removal_cost);
         j.kv("name", hs->building_name);
@@ -364,11 +364,11 @@ extern ChildScreenSpriteToDrawVector &ViewportExportGetChildSprites();
 void ViewportExportJson(const Viewport *vp, int left, int top, int right, int bottom) {
     ViewportExportDrawBegin(vp, left, top, right, bottom);
 
-    auto fname = fmt::format("snaps/tick_{}.json", _tick_counter);
-    Debug(misc, 0, "Exporting tick {} into {} box ({},{})-({},{}) ", _tick_counter, fname, left, top, right, bottom);
+    auto fname = fmt::format("snaps/tick_{}.json", TimerGameTick::counter);
+    Debug(misc, 0, "Exporting tick {} into {} box ({},{})-({},{}) ", TimerGameTick::counter, fname, left, top, right, bottom);
     data_export::JsonWriter j(fname);
     j.begin_dict();
-    j.kv("tick", _tick_counter);
+    j.kv("tick", TimerGameTick::counter);
     j.begin_list_with_key("tile_sprites");
     for (auto &ts : ViewportExportGetTileSprites()) {
         j.begin_dict();
@@ -463,7 +463,7 @@ void ExportSprite(SpriteID sprite, SpriteType type) {
     std::ofstream f(fname, std::ios::binary);
     uint size;
     void *raw = GetRawSprite(sprite, type);
-    if (type == ST_RECOLOUR) size = 257;
+    if (type == SpriteType::Recolour) size = 257;
     else size = *(((size_t *)raw) - 1);
     f.write((char *)raw, size);
     exported.insert(sprite);
@@ -472,25 +472,25 @@ void ExportSprite(SpriteID sprite, SpriteType type) {
 void ExportSpriteAndPal(SpriteID img, SpriteID pal) {
     SpriteID real_sprite = GB(img, 0, SPRITE_WIDTH);
     if (HasBit(img, PALETTE_MODIFIER_TRANSPARENT)) {
-        ExportSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR);
-        ExportSprite(real_sprite, ST_NORMAL);
+        ExportSprite(GB(pal, 0, PALETTE_WIDTH), SpriteType::Recolour);
+        ExportSprite(real_sprite, SpriteType::Normal);
     } else if (pal != PAL_NONE) {
         if (HasBit(pal, PALETTE_TEXT_RECOLOUR)) {
             //SetColourRemap((TextColour)GB(pal, 0, PALETTE_WIDTH));
         } else {
-            ExportSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR);
+            ExportSprite(GB(pal, 0, PALETTE_WIDTH), SpriteType::Recolour);
         }
-        ExportSprite(real_sprite, ST_NORMAL);
+        ExportSprite(real_sprite, SpriteType::Normal);
     } else {
-        ExportSprite(real_sprite, ST_NORMAL);
+        ExportSprite(real_sprite, SpriteType::Normal);
     }
 }
 
 void ViewportExport(const Viewport *vp, int left, int top, int right, int bottom) {
     ViewportExportDrawBegin(vp, left, top, right, bottom);
 
-    auto fname = fmt::format("snaps/tick_{}.bin", _tick_counter);
-    Debug(misc, 0, "Exporting tick {} into {} box ({},{})-({},{}) ", _tick_counter, fname, left, top, right, bottom);
+    auto fname = fmt::format("snaps/tick_{}.bin", TimerGameTick::counter);
+    Debug(misc, 0, "Exporting tick {} into {} box ({},{})-({},{}) ", TimerGameTick::counter, fname, left, top, right, bottom);
     std::ofstream f(fname, std::ios::binary);
     auto &tile_sprites = ViewportExportGetTileSprites();
     uint64 n = tile_sprites.size();

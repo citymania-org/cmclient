@@ -198,8 +198,8 @@ up<Command> GetBlueprintCommand(TileIndex start, const Blueprint::Item &item) {
                 false,  // convert_signal
                 true,  // skip_existing_signals
                 false,  // ctrl_pressed
-                SIGTYPE_NORMAL,  // cycle_start
-                SIGTYPE_NORMAL,  // cycle_stop
+                SIGTYPE_BLOCK,  // cycle_start
+                SIGTYPE_BLOCK,  // cycle_stop
                 SIGNAL_POS_NUM[item.u.rail.signal.pos] +
                     (item.u.rail.signal.type <= SIGTYPE_LAST_NOPBS && !item.u.rail.signal.twoway ? 1 : 0),
                 false  // signals_copy
@@ -214,7 +214,7 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
     std::multimap<TileIndex, ObjectTileHighlight> res;
     if (tile == INVALID_TILE) return res;
     auto add_tile = [&res](TileIndex tile, const ObjectTileHighlight &ohl) {
-        if (tile >= MapSize()) return;
+        if (tile >= Map::Size()) return;
         res.emplace(tile, ohl);
     };
 
@@ -256,7 +256,8 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 add_tile(otile, ObjectTileHighlight::make_rail_depot(palette, o.u.rail.depot.ddir));
                 break;
             case Item::Type::RAIL_STATION_PART: {
-                auto layout_ptr = AllocaM(byte, (int)o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
+                std::vector<byte> layouts(o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
+                byte *layout_ptr = layouts.data();
                 GetStationLayout(layout_ptr, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len, nullptr);
                 if (palette == CM_PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
                     palette = CM_PALETTE_TINT_ORANGE_DEEP;
@@ -454,7 +455,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
                     }
                     case RAIL_TILE_SIGNALS:
                         BlueprintAddSignals(blueprint, tile, td);
-                        FALLTHROUGH;
+                        [[fallthrough]];
                     case RAIL_TILE_NORMAL:
                         BlueprintAddTracks(blueprint, tile, td, ta, track_tiles);
                         break;

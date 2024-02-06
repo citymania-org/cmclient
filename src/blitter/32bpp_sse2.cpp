@@ -20,7 +20,7 @@
 /** Instantiation of the SSE2 32bpp blitter factory. */
 static FBlitter_32bppSSE2 iFBlitter_32bppSSE2;
 
-Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::SpriteCollection *sprite, AllocatorProc *allocator, Blitter_32bppSimple *base_blitter)
+Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::SpriteCollection &sprite, AllocatorProc *allocator, Blitter_32bppSimple *base_blitter)
 {
 	/* First uint32_t of a line = the number of transparent pixels from the left.
 	 * Second uint32_t of a line = the number of transparent pixels from the right.

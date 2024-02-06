@@ -13,6 +13,7 @@
 #include "../network/network.h"
 #include "../network/network_base.h"
 #include "../network/network_func.h"
+#include "../sprite.h"
 #include "../strings_func.h"
 #include "../table/sprites.h"
 #include "../video/video_driver.hpp"
@@ -49,8 +50,7 @@ protected:
     bool drawn = false;
     bool dirty = true;
     PointDimension backup_box;
-    uint8 *backup = nullptr;
-    int backup_size = -1;
+    ReusableBuffer<uint8_t> backup;
     int padding;
     int line_height;
     int text_offset_y;
@@ -63,9 +63,9 @@ public:
     void UpdateSize() {
         this->padding = ScaleGUITrad(3);
         auto icon_size = GetSpriteSize(CM_SPR_COMPANY_ICON);
-        auto common_height = std::max<int>(icon_size.height, FONT_HEIGHT_NORMAL);
+        auto common_height = std::max<int>(icon_size.height, GetCharacterHeight(FS_NORMAL));
         this->line_height = common_height + this->padding;
-        this->text_offset_y = (common_height - FONT_HEIGHT_NORMAL) / 2;
+        this->text_offset_y = (common_height - GetCharacterHeight(FS_NORMAL)) / 2;
         this->icon_offset_y = (common_height - icon_size.height) / 2;
         this->box.height = this->padding;
         this->box.width = 0;
@@ -100,7 +100,7 @@ public:
         Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 
         /* Put our 'shot' back to the screen */
-        blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, box.x, box.y), this->backup, box.width, box.height);
+        blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, box.x, box.y), this->backup.GetBuffer(), box.width, box.height);
         /* And make sure it is updated next time */
         VideoDriver::GetInstance()->MakeDirty(box.x, box.y, box.width, box.height);
 
@@ -118,7 +118,7 @@ public:
 
         if (this->drawn) {
             /* Put our 'shot' back to the screen */
-            blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, this->backup_box.x, this->backup_box.y), this->backup, this->backup_box.width, this->backup_box.height);
+            blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, this->backup_box.x, this->backup_box.y), this->backup.GetBuffer(), this->backup_box.width, this->backup_box.height);
             /* And make sure it is updated next time */
             VideoDriver::GetInstance()->MakeDirty(this->backup_box.x, this->backup_box.y, this->backup_box.width, this->backup_box.height);
 
@@ -138,12 +138,8 @@ public:
                 this->box.y != this->backup_box.y ||
                 this->box.width != this->backup_box.width ||
                 this->box.height != this->backup_box.height) {
-            auto size = this->box.width * this->box.height * BlitterFactory::GetCurrentBlitter()->GetBytesPerPixel();
-            if (size > this->backup_size) {
-                this->backup  = ReallocT(this->backup, size);
-                this->backup_size = size;
-            }
-            blitter->CopyToBuffer(blitter->MoveTo(_screen.dst_ptr, this->box.x, this->box.y), this->backup, this->box.width, this->box.height);
+            uint8_t *buffer = this->backup.Allocate(BlitterFactory::GetCurrentBlitter()->BufferSize(this->box.width, this->box.height));
+            blitter->CopyToBuffer(blitter->MoveTo(_screen.dst_ptr, this->box.x, this->box.y), buffer, this->box.width, this->box.height);
             this->backup_box = this->box;
         }
 

@@ -562,16 +562,16 @@ void AfterLoadFindBTProCBInfo() {
 			if (s.empty() || s[0] == ';' || s[0] == '#' || s[0] == ' ' || s[0] == '\0') continue;
 			if (strncmp(s.c_str(), "STR_TOWN_CLAIMED_CARGOS", strlen("STR_TOWN_CLAIMED_CARGOS")) == 0 ||
 					strncmp(s.c_str(), "STR_TOWN_CARGOS_NEEDED_CB", strlen("STR_TOWN_CARGOS_NEEDED_CB")) == 0) {
-				pn = p - buf + seprintf(p, lastof(buf), "%X:", string_id);
+				pn = p - buf + fmt::format("{:X}:", string_id).length();
 				bool with_decay = (strncmp(s.c_str(), "STR_TOWN_CLAIMED_CARGOS_DECAY",
 					strlen("STR_TOWN_CLAIMED_CARGOS_DECAY")) == 0);
 				for (StoryPageElement *se : StoryPageElement::Iterate()) {
-					if (!se->text || strncmp(se->text, buf, pn) != 0) continue;
+					if (strncmp(se->text.c_str(), buf, pn) != 0) continue;
 					uint req, cargomask, from, decay=0;
 					if (with_decay) {
-						sscanf(se->text + pn, "%X:%X:%X:%X", &req, &cargomask, &from, &decay);
+						sscanf(se->text.c_str() + pn, "%X:%X:%X:%X", &req, &cargomask, &from, &decay);
 				 	} else {
-						sscanf(se->text + pn, "%X:%X:%X", &req, &cargomask, &from);
+						sscanf(se->text.c_str() + pn, "%X:%X:%X", &req, &cargomask, &from);
 					}
 					uint cargo_id = FindFirstBit(cargomask);
 					if (!CB_Enabled()) CB_SetCB(true);

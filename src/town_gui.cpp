@@ -371,26 +371,21 @@ public:
 		return ES_HANDLED;
 	}
 
-	static HotkeyList hotkeys;	
-
-	TODO
-	static Hotkey town_hotkeys[] = {
-	Hotkey((uint16)0, "small_advert", HK_SADVERT),
-	Hotkey((uint16)0, "medium_advert", HK_MADVERT),
-	Hotkey(WKC_CTRL | 'D', "large_advert", HK_LADVERT),
-	Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE),
-	Hotkey(WKC_CTRL | 'F', "fund_buildings", HK_FUND),
-	HOTKEY_LIST_END
-	};
-	HotkeyList TownAuthorityWindow::hotkeys("town_gui", town_hotkeys);
-
+	static inline HotkeyList hotkeys{"cm_town_authority", {
+		Hotkey((uint16)0, "small_advert", HK_SADVERT),
+		Hotkey((uint16)0, "medium_advert", HK_MADVERT),
+		Hotkey(WKC_CTRL | 'D', "large_advert", HK_LADVERT),
+		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE),
+		Hotkey(WKC_CTRL | 'F', "fund_buildings", HK_FUND)
+	}};
 };
 
 static WindowDesc _town_authority_desc(__FILE__, __LINE__,
 	WDP_AUTO, "view_town_authority", 317, 222,
 	WC_TOWN_AUTHORITY, WC_NONE,
 	0,
-	std::begin(_nested_town_authority_widgets), std::end(_nested_town_authority_widgets)
+	std::begin(_nested_town_authority_widgets), std::end(_nested_town_authority_widgets),
+	&TownAuthorityWindow::hotkeys
 );
 
 static void ShowTownAuthorityWindow(uint town)
@@ -483,7 +478,7 @@ public:
 			}
 		}
 
-		DrawExtraTownInfo(tr, this->town, FONT_HEIGHT_NORMAL, true); //CB
+		DrawExtraTownInfo(tr, this->town, GetCharacterHeight(FS_NORMAL), true);  // CM (CB)
 
 		bool first = true;
 		for (int i = TAE_BEGIN; i < TAE_END; i++) {
@@ -610,7 +605,7 @@ public:
 	uint GetDesiredInfoHeight(int width) const
 	{
 		uint aimed_height = static_cast<uint>(1 + CargoSpec::town_production_cargoes[TPE_PASSENGERS].size() + CargoSpec::town_production_cargoes[TPE_MAIL].size()) * GetCharacterHeight(FS_NORMAL);
-		TODO uint aimed_height = 3 -> 8 * FONT_HEIGHT_NORMAL;
+		aimed_height += 4 * GetCharacterHeight(FS_NORMAL);  // CM (extra town info)
 
 		bool first = true;
 		for (int i = TAE_BEGIN; i < TAE_END; i++) {
@@ -690,18 +685,13 @@ public:
 		this->SetDirty();
 	}};
 
-	static HotkeyList hotkeys;
+	static inline HotkeyList hotkeys{"cm_town_view", {
+		Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
+		Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
+		Hotkey((uint16)0, "cb_window", WID_TV_CB),
+		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),
+	}};
 };
-
-TODO
-static Hotkey town_window_hotkeys[] = {
-	Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
-	Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
-	Hotkey((uint16)0, "cb_window", WID_TV_CB),
-	Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),
-	HOTKEY_LIST_END
-};
-HotkeyList TownViewWindow::hotkeys("town_window", town_window_hotkeys);
 
 static constexpr NWidgetPart _nested_town_game_view_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -731,7 +721,8 @@ static WindowDesc _town_game_view_desc(__FILE__, __LINE__,
 	WDP_AUTO, "view_town", 260, TownViewWindow::WID_TV_HEIGHT_NORMAL,
 	WC_TOWN_VIEW, WC_NONE,
 	0,
-	std::begin(_nested_town_game_view_widgets), std::end(_nested_town_game_view_widgets)
+	std::begin(_nested_town_game_view_widgets), std::end(_nested_town_game_view_widgets),
+	&TownViewWindow::hotkeys
 );
 
 static constexpr NWidgetPart _nested_town_editor_view_widgets[] = {
@@ -865,20 +856,20 @@ private:
 	}
 
 	/** Sort by real population (default descending, as big towns are of the most interest). */
-	static bool TownRealPopulationSorter(const Town * const &a, const Town * const &b)
+	static bool TownRealPopulationSorter(const Town * const &a, const Town * const &b, const bool &order)
 	{
 		uint32 a_population = a->cm.real_population;
 		uint32 b_population = b->cm.real_population;
-		if (a_population == b_population) return TownDirectoryWindow::TownNameSorter(a, b);
+		if (a_population == b_population) return TownDirectoryWindow::TownNameSorter(a, b, order);
 		return a_population < b_population;
 	}
 
 	/** Sort by number of houses (default descending, as big towns are of the most interest). */
-	static bool TownHousesSorter(const Town * const &a, const Town * const &b)
+	static bool TownHousesSorter(const Town * const &a, const Town * const &b, const bool &order)
 	{
 		uint32 a_houses = a->cache.num_houses;
 		uint32 b_houses = b->cache.num_houses;
-		if (a_houses == b_houses) return TownDirectoryWindow::TownPopulationSorter(a, b);
+		if (a_houses == b_houses) return TownDirectoryWindow::TownPopulationSorter(a, b, order);
 		return a_houses < b_houses;
 	}
 
@@ -1598,7 +1589,7 @@ public:
 
 		switch(widget){
 			case WID_CB_DETAILS:
-				size->height = (FONT_HEIGHT_NORMAL + EXP_LINESPACE) * 5;
+				size->height = (GetCharacterHeight(FS_NORMAL) + EXP_LINESPACE) * 5;
 				break;
 			case WID_CB_GOALS: {
 				uint desired_height = 0;
@@ -1611,7 +1602,7 @@ public:
 					}
 				}
 				if (desired_height > 0)
-					size->height = desired_height * (FONT_HEIGHT_NORMAL + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
+					size->height = desired_height * (GetCharacterHeight(FS_NORMAL) + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
 				break;
 			}
 			case WID_CB_CARGO_NAME:
@@ -1626,7 +1617,7 @@ public:
 					if(CB_GetReq(cargo) > 0) desired_height++;
 				}
 				if (desired_height > 0)
-					size->height = desired_height * (FONT_HEIGHT_NORMAL + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
+					size->height = desired_height * (GetCharacterHeight(FS_NORMAL) + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
 				break;
 			}
 		}
@@ -1634,7 +1625,7 @@ public:
 
 	void DrawWidget(const Rect &r, int widget) const
 	{
-		static const uint EXP_LINESPACE  = FONT_HEIGHT_NORMAL + 2;
+		static const uint EXP_LINESPACE  = GetCharacterHeight(FS_NORMAL) + 2;
 		Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
 
 		switch(widget){
@@ -1643,13 +1634,13 @@ public:
 				if(this->town->cb.growth_state == TownGrowthState::GROWING)
 					DrawString(tr, CM_STR_TOWN_CB_GROWING);
 				else DrawString(tr, CM_STR_TOWN_CB_NOT_GROWING);
-				tr.top += FONT_HEIGHT_NORMAL;
+				tr.top += GetCharacterHeight(FS_NORMAL);
 
 				// population
 				SetDParam(0, this->town->cache.population);
 				SetDParam(1, this->town->cache.num_houses);
 				DrawString(tr, STR_TOWN_VIEW_POPULATION_HOUSES);
-				tr.top += FONT_HEIGHT_NORMAL;
+				tr.top += GetCharacterHeight(FS_NORMAL);
 
 				DrawExtraTownInfo(tr, this->town, EXP_LINESPACE, false);
 
@@ -1817,10 +1808,13 @@ public:
 		return ES_HANDLED;
 	}
 
-	static HotkeyList hotkeys;
+	static inline HotkeyList hotkeys{"cm_town_cb_view", {
+		Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
+		Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
+		Hotkey((uint16)0, "cb_window", WID_TV_CB),
+		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),
+	}};
 };
-
-HotkeyList CBTownWindow::hotkeys("town_gui", town_hotkeys);
 
 static const NWidgetPart _nested_cb_town_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -1883,11 +1877,11 @@ static const NWidgetPart _nested_cb_town_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _cb_town_desc(
+static WindowDesc _cb_town_desc(__FILE__, __LINE__,
 	WDP_AUTO, "cb_town", 160, 30,
-	WC_CB_TOWN, WC_NONE,
+	CM_WC_CB_TOWN, WC_NONE,
 	0,
-	_nested_cb_town_widgets, lengthof(_nested_cb_town_widgets),
+	std::begin(_nested_cb_town_widgets), std::end(_nested_cb_town_widgets),
 	&CBTownWindow::hotkeys
 );
 

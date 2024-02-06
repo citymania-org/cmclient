@@ -328,7 +328,7 @@ struct DepotWindow : Window {
 		} else {
 			/* Arrange unitnumber and flag vertically */
 			diff_x = 0;
-			diff_y = WidgetDimensions::scaled.matrix.top + GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal;
+			diff_y = WidgetDimensions::scaled.matrix.top + 'GetCharacterHeight(FS_NORMAL)' + WidgetDimensions::scaled.vsep_normal;
 		}
 
 		text = text.WithWidth(this->header_width - WidgetDimensions::scaled.hsep_normal, rtl).WithHeight(GetCharacterHeight(FS_NORMAL)).Indent(diff_x, rtl);
@@ -1116,16 +1116,12 @@ struct DepotWindow : Window {
 		return Window::OnHotkey(hotkey);
 	}
 
-	static HotkeyList hotkeys;
+	static inline HotkeyList hotkeys{"cm_depot_view", {
+		Hotkey(WKC_CTRL | 'F', "depot_go_all", WID_D_START_ALL),
+		Hotkey('R', "depot_build_vehicle", WID_D_BUILD),
+		Hotkey(WKC_NONE, "depot_clone_vehicle", WID_D_CLONE),
+	}};
 };
-
-static Hotkey depot_hotkeys[] = {
-	Hotkey(WKC_CTRL | 'F', "depot_go_all", WID_D_START_ALL),
-	Hotkey('R', "depot_build_vehicle", WID_D_BUILD),
-	Hotkey(WKC_NONE, "depot_clone_vehicle", WID_D_CLONE),
-	HOTKEY_LIST_END
-};
-HotkeyList DepotWindow::hotkeys("depot_gui", depot_hotkeys);
 
 static void DepotSellAllConfirmationCallback(Window *win, bool confirmed)
 {
@@ -1137,34 +1133,36 @@ static void DepotSellAllConfirmationCallback(Window *win, bool confirmed)
 	}
 }
 
-TODO depot Hotkeys
-
 static WindowDesc _train_depot_desc(__FILE__, __LINE__,
 	WDP_AUTO, "depot_train", 362, 123,
 	WC_VEHICLE_DEPOT, WC_NONE,
 	0,
-	std::begin(_nested_train_depot_widgets), std::end(_nested_train_depot_widgets)
+	std::begin(_nested_train_depot_widgets), std::end(_nested_train_depot_widgets),
+	&DepotWindow::hotkeys
 );
 
 static WindowDesc _road_depot_desc(__FILE__, __LINE__,
 	WDP_AUTO, "depot_roadveh", 316, 97,
 	WC_VEHICLE_DEPOT, WC_NONE,
 	0,
-	std::begin(_nested_train_depot_widgets), std::end(_nested_train_depot_widgets)
+	std::begin(_nested_train_depot_widgets), std::end(_nested_train_depot_widgets),
+	&DepotWindow::hotkeys
 );
 
 static WindowDesc _ship_depot_desc(__FILE__, __LINE__,
 	WDP_AUTO, "depot_ship", 306, 99,
 	WC_VEHICLE_DEPOT, WC_NONE,
 	0,
-	std::begin(_nested_train_depot_widgets), std::end(_nested_train_depot_widgets)
+	std::begin(_nested_train_depot_widgets), std::end(_nested_train_depot_widgets),
+	&DepotWindow::hotkeys
 );
 
 static WindowDesc _aircraft_depot_desc(__FILE__, __LINE__,
 	WDP_AUTO, "depot_aircraft", 332, 99,
 	WC_VEHICLE_DEPOT, WC_NONE,
 	0,
-	std::begin(_nested_train_depot_widgets), std::end(_nested_train_depot_widgets)
+	std::begin(_nested_train_depot_widgets), std::end(_nested_train_depot_widgets),
+	&DepotWindow::hotkeys
 );
 
 /**

@@ -431,9 +431,7 @@ Point LinkGraphOverlay::GetStationMiddle(const Station *st) const
 		return GetViewportStationMiddle(this->window->viewport, st);
 	} else {
 		/* assume this is a smallmap */
-		TODO fix GetSmallMapStationMiddle
 		return GetSmallMapStationMiddle(this->window, st);
-		return static_cast<const citymania::SmallMapWindow *>(this->window)->GetStationMiddle(st);
 	}
 }
 

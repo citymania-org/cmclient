@@ -9,15 +9,17 @@
 #include "../tree_map.h"
 #include "../viewport_func.h"
 #include "../town.h"
+#include "../blitter/factory.hpp"
+#include "../linkgraph/linkgraph_gui.h"
 #include "../tunnelbridge_map.h"
 #include "../core/endian_func.hpp"
 #include "../core/geometry_func.hpp"
+#include "../widgets/smallmap_widget.h"
 #include "../core/kdtree.hpp"
 #include "../vehicle_base.h"
 #include "../sound_func.h"
 #include "../window_func.h"
 #include "../company_base.h"
-#include "../guitimer_func.h"
 #include "../zoom_func.h"
 
 #include "../smallmap_gui.h"
@@ -238,7 +240,7 @@ uint _max_industry_outputs = 0;
 
 bool is_cached_industry(const Industry *ind) {
 	for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++)
-		if (ind->produced_cargo[i] != INVALID_CARGO)
+		if (ind->produced[i].cargo != INVALID_CARGO)
 			return true;
 	return false;
 }
@@ -248,7 +250,7 @@ MinimapIndustryKdtreeEntry get_industry_entry(const Industry *ind) {
 	auto y = TileY(ind->location.tile) * TILE_SIZE + ind->location.h * TILE_SIZE / 2;
 	uint num_outputs = 0;
 	for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++)
-		if (ind->produced_cargo[i] != INVALID_CARGO)
+		if (ind->produced[i].cargo != INVALID_CARGO)
 			num_outputs++;
 	_max_industry_outputs = std::max(_max_industry_outputs, num_outputs);
 	return {(int16)((y - x) / 8), (int16)((y + x) / 8), ind->index};
@@ -604,7 +606,7 @@ static inline uint32 GetSmallMapRoutesPixels(TileIndex tile, TileType t)
 				const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
 				return ApplyMask(cs->default_colour, &andor);
 			}
-			FALLTHROUGH;
+			[[ fallthrough ]];
 		}
 
 		default:
@@ -717,7 +719,7 @@ static inline uint32 CM_GetSmallMapIMBAPixels(TileIndex tile, TileType t)
 			}
 			// if (IsClearGround(tile, CLEAR_SNOW))
 			//  return _vegetation_clear_bits[GetClearGround(tile)];
-			FALLTHROUGH;
+			[[ fallthrough ]];
 
 		default:
 			const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
@@ -928,7 +930,7 @@ void SmallMapWindow::DrawSmallMapColumn(void *dst, uint xc, uint yc, int pitch, 
 	int hidden_mod = hidden_x % this->ui_zoom;
 	do {
 		/* Check if the tile (xc,yc) is within the map range */
-		if (xc >= MapMaxX() || yc >= MapMaxY()) continue;
+		if (xc >= Map::MaxX() || yc >= Map::MaxY()) continue;
 
 		/* Check if the dst pointer points to a pixel inside the screen buffer */
 		if (dst < _screen.dst_ptr) continue;
@@ -1035,8 +1037,8 @@ void SmallMapWindow::DrawIndustryProduction(const DrawPixelInfo *dpi) const
 
 			IconTextSizeHelper its{SPR_CARGO_COAL, WidgetDimensions::scaled.framerect};
 			for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++) {
-				if (ind->produced_cargo[i] == INVALID_CARGO) continue;
-				SetDParam(0, ind->last_month_production[i]);
+				if (ind->produced[i].cargo == INVALID_CARGO) continue;
+				SetDParam(0, ind->produced[i].history[LAST_MONTH].production);
 				its.add(STR_JUST_INT, FS_SMALL);
 			}
 			its.calculate();
@@ -1044,9 +1046,9 @@ void SmallMapWindow::DrawIndustryProduction(const DrawPixelInfo *dpi) const
 			auto [r, ir] = its.make_rects(pt.x, pt.y);
 	        GfxFillRect(r, PALETTE_TO_TRANSPARENT, FILLRECT_RECOLOUR);
 			for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++) {
-				if (ind->produced_cargo[i] == INVALID_CARGO) continue;
-				DrawSprite(CargoSpec::Get(ind->produced_cargo[i])->GetCargoIcon(), PAL_NONE, ir.left, ir.top + its.icon_ofs_y);
-				SetDParam(0, ind->last_month_production[i]);
+				if (ind->produced[i].cargo == INVALID_CARGO) continue;
+				DrawSprite(CargoSpec::Get(ind->produced[i].cargo)->GetCargoIcon(), PAL_NONE, ir.left, ir.top + its.icon_ofs_y);
+				SetDParam(0, ind->produced[i].history[LAST_MONTH].production);
 				DrawString(ir.left + its.text_ofs_x, ir.right, ir.top + its.text_ofs_y, STR_JUST_INT, TC_WHITE, SA_LEFT, false, FS_SMALL);
 				ir.top += its.line_height;
 			}
@@ -1063,12 +1065,12 @@ void SmallMapWindow::DrawTowns(const DrawPixelInfo *dpi) const
 	for (auto &[t, population, width] : this->town_cache.towns) {
 		Point pt = this->TileToPixel(TileX(t->xy) * TILE_SIZE, TileY(t->xy) * TILE_SIZE);
 		int x = pt.x - width / 2;
-		int y = pt.y - FONT_HEIGHT_SMALL / 2;
+		int y = pt.y - GetCharacterHeight(FS_SMALL) / 2;
 
 		/* Check if the town sign is within bounds */
 		if ((int)(x + width) > dpi->left &&
 				x < dpi->left + dpi->width &&
-				y + FONT_HEIGHT_SMALL > dpi->top &&
+				y + GetCharacterHeight(FS_SMALL) > dpi->top &&
 				y < dpi->top + dpi->height) {
 			if (this->map_type == CM_SMT_IMBA) {
 				/* And draw it. */
@@ -1230,7 +1232,7 @@ void SmallMapWindow::SetupWidgetData()
 }
 
 
-SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) : Window(desc), refresh(GUITimer(FORCE_REFRESH_PERIOD))
+SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) : Window(desc)
 {
 	_smallmap_industry_highlight = INVALID_INDUSTRYTYPE;
 	this->overlay = new LinkGraphOverlay(this, WID_SM_MAP, 0, this->GetOverlayCompanyMask(), 1);
@@ -1337,7 +1339,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 	}
 
 	/* Width of the legend blob. */
-	this->legend_width = (FONT_HEIGHT_SMALL - ScaleGUITrad(1)) * 8 / 5;
+	this->legend_width = (GetCharacterHeight(FS_SMALL) - ScaleGUITrad(1)) * 8 / 5;
 
 	/* The width of a column is the minimum width of all texts + the size of the blob + some spacing */
 	this->column_width = min_width + this->legend_width + WidgetDimensions::scaled.framerect.Horizontal();
@@ -1386,7 +1388,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 			uint number_of_rows = this->GetNumberRowsLegend(columns);
 			bool rtl = _current_text_dir == TD_RTL;
 			uint i = 0; // Row counter for industry legend.
-			uint row_height = FONT_HEIGHT_SMALL;
+			uint row_height = GetCharacterHeight(FS_SMALL);
 
 			int padding = WidgetDimensions::scaled.hsep_normal;
 
@@ -1433,11 +1435,11 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 						if (tbl->show_on_map && tbl->type == _smallmap_industry_highlight) {
 							legend_colour = _smallmap_industry_highlight_state ? PC_WHITE : PC_BLACK;
 						}
-						FALLTHROUGH;
+						[[ fallthrough ]];
 
 					case SMT_LINKSTATS:
 						SetDParam(0, tbl->legend);
-						FALLTHROUGH;
+						[[ fallthrough ]];
 
 					case SMT_OWNER:
 						if (this->map_type != SMT_OWNER || tbl->company != INVALID_COMPANY) {
@@ -1452,7 +1454,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 							}
 							break;
 						}
-						FALLTHROUGH;
+						[[ fallthrough ]];
 
 					default:
 						if (this->map_type == SMT_CONTOUR) SetDParam(0, tbl->height * TILE_HEIGHT_STEP);
@@ -1567,7 +1569,7 @@ void SmallMapWindow::SetOverlayCargoMask()
 int SmallMapWindow::GetPositionOnLegend(Point pt)
 {
 	const NWidgetBase *wi = this->GetWidget<NWidgetBase>(WID_SM_LEGEND);
-	uint line = (pt.y - wi->pos_y - WidgetDimensions::scaled.framerect.top) / FONT_HEIGHT_SMALL;
+	uint line = (pt.y - wi->pos_y - WidgetDimensions::scaled.framerect.top) / GetCharacterHeight(FS_SMALL);
 	uint columns = this->GetNumberColumnsLegend(wi->current_x);
 	uint number_of_rows = this->GetNumberRowsLegend(columns);
 	if (line >= number_of_rows) return -1;
@@ -1591,7 +1593,6 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 	}
 	if (new_highlight != _smallmap_industry_highlight) {
 		_smallmap_industry_highlight = new_highlight;
-		this->refresh.SetInterval(_smallmap_industry_highlight != INVALID_INDUSTRYTYPE ? BLINK_PERIOD : FORCE_REFRESH_PERIOD);
 		_smallmap_industry_highlight_state = true;
 		this->SetDirty();
 	}
@@ -1765,9 +1766,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 /* virtual */ void SmallMapWindow::OnRealtimeTick(uint delta_ms)
 {
 	/* Update the window every now and then */
-	if (!this->refresh.Elapsed(delta_ms)) return;
-
-	if (this->map_type == SMT_LINKSTATS) {
+	if (this->map_type == SmallMapWindow::SMT_LINKSTATS) {
 		uint32 company_mask = this->GetOverlayCompanyMask();
 		if (this->overlay->GetCompanyMask() != company_mask) {
 			this->overlay->SetCompanyMask(company_mask);
@@ -1777,17 +1776,50 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 	}
 	_smallmap_industry_highlight_state = !_smallmap_industry_highlight_state;
 
-	this->refresh.SetInterval(_smallmap_industry_highlight != INVALID_INDUSTRYTYPE ? BLINK_PERIOD : FORCE_REFRESH_PERIOD);
 	this->SetDirty();
 }
 
-/* virtual */ void SmallMapWindow::OnHundredthTick()
+// /* virtual */ void SmallMapWindow::OnHundredthTick()
+// {
+// 	if (this->show_towns) {
+// 		this->UpdateTownCache(true);
+// 		this->SetDirty();
+// 	}
+// }
+
+/** Update all the links on the map. */
+void SmallMapWindow::UpdateLinks()
 {
-	if (this->show_towns) {
-		this->UpdateTownCache(true);
-		this->SetDirty();
+	if (this->map_type == SMT_LINKSTATS) {
+		CompanyMask company_mask = this->GetOverlayCompanyMask();
+		if (this->overlay->GetCompanyMask() != company_mask) {
+			this->overlay->SetCompanyMask(company_mask);
+		} else {
+			this->overlay->SetDirty();
+		}
 	}
 }
+
+/** Blink the industries (if hover over an industry). */
+void SmallMapWindow::Blink()
+{
+	if (_smallmap_industry_highlight == INVALID_INDUSTRYTYPE) return;
+
+	_smallmap_industry_highlight_state = !_smallmap_industry_highlight_state;
+
+	this->UpdateLinks();
+	this->SetDirty();
+}
+
+/** Force a full refresh of the map. */
+void SmallMapWindow::ForceRefresh()
+{
+	if (_smallmap_industry_highlight != INVALID_INDUSTRYTYPE) return;
+
+	this->UpdateLinks();
+	this->SetDirty();
+}
+
 
 /* virtual */ void SmallMapWindow::OnScroll(Point delta)
 {
@@ -1883,7 +1915,7 @@ void SmallMapWindow::UpdateTownCache(bool force) {
 
 			this->town_cache.towns.push_back(std::make_tuple(t, t->cache.population, dim.width));
 		} else {
-			if (!IsSignVisible(rect, pt, t->cache.sign.width_small, FONT_HEIGHT_SMALL)) continue;
+			if (!IsSignVisible(rect, pt, t->cache.sign.width_small, GetCharacterHeight(FS_SMALL))) continue;
 			this->town_cache.towns.push_back(std::make_tuple(t, t->cache.population, t->cache.sign.width_small));
 		}
 	}
@@ -1909,13 +1941,14 @@ public:
 		this->smallmap_window = nullptr;
 	}
 
-	void SetupSmallestSize(Window *w, bool init_array) override
+	void SetupSmallestSize(Window *w) override
 	{
-		NWidgetBase *display = this->head;
-		NWidgetBase *bar = display->next;
+		assert(this->children.size() == 2);
+		NWidgetBase *display = this->children.front().get();
+		NWidgetBase *bar = this->children.back().get();
 
-		display->SetupSmallestSize(w, init_array);
-		bar->SetupSmallestSize(w, init_array);
+		display->SetupSmallestSize(w);
+		bar->SetupSmallestSize(w);
 
 		this->smallmap_window = dynamic_cast<SmallMapWindow *>(w);
 		assert(this->smallmap_window != nullptr);
@@ -1927,15 +1960,16 @@ public:
 		this->resize_y = std::min(display->resize_y, bar->resize_y);
 	}
 
-	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl) override
+	void AssignSizePosition(SizingType sizing, int x, int y, uint given_width, uint given_height, bool rtl) override
 	{
 		this->pos_x = x;
 		this->pos_y = y;
 		this->current_x = given_width;
 		this->current_y = given_height;
 
-		NWidgetBase *display = this->head;
-		NWidgetBase *bar = display->next;
+		assert(this->children.size() == 2);
+		NWidgetBase *display = this->children.front().get();
+		NWidgetBase *bar = this->children.back().get();
 
 		if (sizing == ST_SMALLEST) {
 			this->smallest_x = given_width;
@@ -1951,29 +1985,29 @@ public:
 		bar->AssignSizePosition(ST_RESIZE, x, y + display_height, given_width, bar_height, rtl);
 	}
 
-	NWidgetCore *GetWidgetFromPos(int x, int y) override
-	{
-		if (!IsInsideBS(x, this->pos_x, this->current_x) || !IsInsideBS(y, this->pos_y, this->current_y)) return nullptr;
-		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
-			NWidgetCore *widget = child_wid->GetWidgetFromPos(x, y);
-			if (widget != nullptr) return widget;
-		}
-		return nullptr;
-	}
+	// NWidgetCore *GetWidgetFromPos(int x, int y) override
+	// {
+	// 	if (!IsInsideBS(x, this->pos_x, this->current_x) || !IsInsideBS(y, this->pos_y, this->current_y)) return nullptr;
+	// 	for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
+	// 		NWidgetCore *widget = child_wid->GetWidgetFromPos(x, y);
+	// 		if (widget != nullptr) return widget;
+	// 	}
+	// 	return nullptr;
+	// }
 
-	void Draw(const Window *w) override
-	{
-		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->Draw(w);
-	}
+	// void Draw(const Window *w) override
+	// {
+	// 	for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->Draw(w);
+	// }
 
-	void FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets) override
-	{
-		if (this->base_flags & WBF_DIRTY) {
-			dirty_widgets.push_back(this);
-		} else {
-			for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->FillDirtyWidgets(dirty_widgets);
-		}
-	}
+	// void FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets) override
+	// {
+	// 	if (this->base_flags & WBF_DIRTY) {
+	// 		dirty_widgets.push_back(this);
+	// 	} else {
+	// 		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->FillDirtyWidgets(dirty_widgets);
+	// 	}
+	// }
 };
 
 /** Widget parts of the smallmap display. */
@@ -2025,12 +2059,12 @@ static const NWidgetPart _nested_smallmap_bar[] = {
 	EndContainer(),
 };
 
-static NWidgetBase *SmallMapDisplay(int *biggest_index)
+static std::unique_ptr<NWidgetBase> SmallMapDisplay()
 {
-	NWidgetContainer *map_display = new NWidgetSmallmapDisplay;
+	std::unique_ptr<NWidgetBase> map_display = std::make_unique<NWidgetSmallmapDisplay>();
 
-	MakeNWidgets(_nested_smallmap_display, lengthof(_nested_smallmap_display), biggest_index, map_display);
-	MakeNWidgets(_nested_smallmap_bar, lengthof(_nested_smallmap_bar), biggest_index, map_display);
+	map_display = MakeNWidgets(std::begin(_nested_smallmap_display), std::end(_nested_smallmap_display), std::move(map_display));
+	map_display = MakeNWidgets(std::begin(_nested_smallmap_bar), std::end(_nested_smallmap_bar), std::move(map_display));
 	return map_display;
 }
 
@@ -2061,11 +2095,11 @@ static const NWidgetPart _nested_smallmap_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _smallmap_desc(
+static WindowDesc _smallmap_desc(__FILE__, __LINE__,
 	WDP_AUTO, "smallmap", 484, 314,
 	WC_SMALLMAP, WC_NONE,
 	0,
-	_nested_smallmap_widgets, lengthof(_nested_smallmap_widgets)
+	std::begin(_nested_smallmap_widgets), std::end(_nested_smallmap_widgets)
 );
 
 /**

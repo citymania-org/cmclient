@@ -181,24 +181,7 @@ public:
 		} else {
 			std::for_each(std::begin(this->children), std::end(this->children), assign_position);
 		}
-		return nullptr;
 	}
-
-	/* CityMania code start */
-	TODO the heck is this even doing
-	void FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets) override
-	{
-		if (this->base_flags & WBF_DIRTY) {
-			dirty_widgets.push_back(this);
-		} else {
-			int i = 0;
-			for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
-				if (!this->visible[i++]) continue;
-				child_wid->FillDirtyWidgets(dirty_widgets);
-			}
-		}
-	}
-	/* CityMania code end */
 };
 
 class NetworkGameWindow : public Window {

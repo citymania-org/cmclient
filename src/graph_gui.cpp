@@ -150,7 +150,7 @@ static constexpr NWidgetPart _nested_graph_legend_widgets1[] = {
 	EndContainer(),
 };
 
-static constexpr NWidgetPart _nested_graph_legend_widgets[] = {
+static constexpr NWidgetPart _nested_graph_legend_widgets2[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG2),
 		NWidget(WWT_CAPTION, WINDOW_BG2), SetDataTip(STR_GRAPH_KEY_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -354,7 +354,7 @@ protected:
 		r.left   += ScaleGUITrad(9);
 		r.right  -= ScaleGUITrad(5);
 
-		int grid_size_y = std::max(ScaleGUITrad(MIN_GRID_PIXEL_SIZE), FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal);
+		int grid_size_y = std::max(ScaleGUITrad(MIN_GRID_PIXEL_SIZE), GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal);
 		/* Initial number of horizontal lines. */
 		int num_hori_lines = ScaleGUITrad(160) / grid_size_y;
 		/* For the rest of the height, the number of horizontal lines will increase more slowly. */
@@ -491,7 +491,7 @@ protected:
 					OverflowSafeInt64 datapoint = this->cost[i][j];
 
 					if (datapoint != INVALID_DATAPOINT) {
-						int mult_range = FindLastBit(x_axis_offset) + FindLastBit(abs(datapoint));
+						int mult_range = FindLastBit((uint)x_axis_offset) + FindLastBit((uint)abs(datapoint));
 						int reduce_range = std::max(mult_range - 31, 0);
 
 						if (datapoint < 0) {
@@ -738,14 +738,14 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 	bool show_cargo_colors;
 	uint64 excluded_cargo;
 
-	ExcludingCargoBaseGraphWindow(WindowDesc *desc, int widget, StringID format_str_y_axis, bool show_cargo_colors):
-			BaseGraphWindow(desc, widget, format_str_y_axis), show_cargo_colors{show_cargo_colors}
+	ExcludingCargoBaseGraphWindow(WindowDesc *desc, StringID format_str_y_axis, bool show_cargo_colors):
+			BaseGraphWindow(desc, format_str_y_axis), show_cargo_colors{show_cargo_colors}
 	{}
 
 	void OnInit() override
 	{
 		/* Width of the legend blob. */
-		this->legend_width = (FONT_HEIGHT_SMALL - ScaleGUITrad(1)) * 8 / 5;
+		this->legend_width = (GetCharacterHeight(FS_SMALL) - ScaleGUITrad(1)) * 8 / 5;
 	}
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
@@ -797,7 +797,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 			/* Redraw frame if lowered */
 			if (lowered) DrawFrameRect(line, COLOUR_BROWN, FR_LOWERED);
 
-			const Rect text = line.Shrink(WidgetDimensions::scaled.framerect).Translate(lowered ? WidgetDimensions::scaled.pressed : 0, lowered ? WidgetDimensions::scaled.pressed : 0);
+			const Rect text = line.Shrink(WidgetDimensions::scaled.framerect);
 
 			uint icon_offset = 0;
 			if (this->show_cargo_colors) {
@@ -825,7 +825,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		switch (widget) {
-			case WID_CPR_KEY_BUTTON:
+			case WID_GRAPH_KEY_BUTTON:
 				ShowGraphLegend();
 				break;
 
@@ -973,7 +973,7 @@ void ShowOperatingProfitGraph()
 
 struct IncomeGraphWindow : ExcludingCargoBaseGraphWindow {
 	IncomeGraphWindow(WindowDesc *desc, WindowNumber window_number) :
-			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT, false)
+			ExcludingCargoBaseGraphWindow(desc, STR_JUST_CURRENCY_SHORT, false)
 	{
 		this->num_on_x_axis = GRAPH_NUM_MONTHS;
 		this->num_vert_lines = GRAPH_NUM_MONTHS;
@@ -1068,18 +1068,18 @@ static const NWidgetPart _nested_income_graph_widgets2[] = {
 	EndContainer(),
 };
 
-static WindowDesc _income_graph_desc1(
+static WindowDesc _income_graph_desc1(__FILE__, __LINE__,
 	WDP_AUTO, "graph_income", 0, 0,
 	WC_INCOME_GRAPH, WC_NONE,
 	0,
-	_nested_income_graph_widgets1, lengthof(_nested_income_graph_widgets1)
+	std::begin(_nested_income_graph_widgets1), std::end(_nested_income_graph_widgets1)
 );
 
-static WindowDesc _income_graph_desc2(
+static WindowDesc _income_graph_desc2(__FILE__, __LINE__,
 	WDP_AUTO, "graph_income", 0, 0,
 	WC_INCOME_GRAPH, WC_NONE,
 	0,
-	_nested_income_graph_widgets2, lengthof(_nested_income_graph_widgets2)
+	std::begin(_nested_income_graph_widgets2), std::end(_nested_income_graph_widgets2)
 );
 
 void ShowIncomeGraph()
@@ -1093,7 +1093,7 @@ void ShowIncomeGraph()
 
 struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 	DeliveredCargoGraphWindow(WindowDesc *desc, WindowNumber window_number) :
-			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_COMMA, false)
+			ExcludingCargoBaseGraphWindow(desc, STR_JUST_COMMA, false)
 	{
 		this->num_on_x_axis = GRAPH_NUM_MONTHS;
 		this->num_vert_lines = GRAPH_NUM_MONTHS;
@@ -1104,7 +1104,6 @@ struct DeliveredCargoGraphWindow : ExcludingCargoBaseGraphWindow {
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_CPR_MATRIX_SCROLLBAR);
 		this->vscroll->SetCount(_sorted_standard_cargo_specs.size());
-		this->OnHundredthTick();
 		this->FinishInitNested(window_number);
 	}
 
@@ -1132,9 +1131,9 @@ static const NWidgetPart _nested_delivered_cargo_graph_widgets1[] = {
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG1),
 		NWidget(WWT_STICKYBOX, WINDOW_BG1),
 	EndContainer(),
-	NWidget(WWT_PANEL, WINDOW_BG1, WID_CPR_BACKGROUND),
+	NWidget(WWT_PANEL, WINDOW_BG1, WID_GRAPH_BACKGROUND),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_EMPTY, WINDOW_BG1, WID_CPR_GRAPH), SetMinimalSize(576, 128), SetFill(1, 1), SetResize(1, 1),
+			NWidget(WWT_EMPTY, WINDOW_BG1, WID_GRAPH_GRAPH), SetMinimalSize(576, 128), SetFill(1, 1), SetResize(1, 1),
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 4), SetFill(0, 0),
 				NWidget(WWT_PUSHTXTBTN, WINDOW_BG1, WID_CPR_ENABLE_CARGOES), SetDataTip(STR_GRAPH_CARGO_ENABLE_ALL, STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL), SetFill(1, 0),
@@ -1165,9 +1164,9 @@ static const NWidgetPart _nested_delivered_cargo_graph_widgets2[] = {
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG2),
 		NWidget(WWT_STICKYBOX, WINDOW_BG2),
 	EndContainer(),
-	NWidget(WWT_PANEL, WINDOW_BG2, WID_CPR_BACKGROUND),
+	NWidget(WWT_PANEL, WINDOW_BG2, WID_GRAPH_BACKGROUND),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_EMPTY, WINDOW_BG2, WID_CPR_GRAPH), SetMinimalSize(576, 128), SetFill(1, 1), SetResize(1, 1),
+			NWidget(WWT_EMPTY, WINDOW_BG2, WID_GRAPH_GRAPH), SetMinimalSize(576, 128), SetFill(1, 1), SetResize(1, 1),
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 4), SetFill(0, 0),
 				NWidget(WWT_PUSHTXTBTN, WINDOW_BG2, WID_CPR_ENABLE_CARGOES), SetDataTip(STR_GRAPH_CARGO_ENABLE_ALL, STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL), SetFill(1, 0),
@@ -1189,14 +1188,14 @@ static const NWidgetPart _nested_delivered_cargo_graph_widgets2[] = {
 	EndContainer(),
 };
 
-static WindowDesc _delivered_cargo_graph_desc1(
+static WindowDesc _delivered_cargo_graph_desc1(__FILE__, __LINE__,
 	WDP_AUTO, "graph_delivered_cargo", 0, 0,
 	WC_DELIVERED_CARGO, WC_NONE,
 	0,
 	std::begin(_nested_delivered_cargo_graph_widgets1), std::end(_nested_delivered_cargo_graph_widgets1)
 );
 
-static WindowDesc _delivered_cargo_graph_desc2(
+static WindowDesc _delivered_cargo_graph_desc2(__FILE__, __LINE__,
 	WDP_AUTO, "graph_delivered_cargo", 0, 0,
 	WC_DELIVERED_CARGO, WC_NONE,
 	0,
@@ -1247,7 +1246,7 @@ static const NWidgetPart _nested_performance_history_widgets1[] = {
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG1),
 		NWidget(WWT_STICKYBOX, WINDOW_BG1),
 	EndContainer(),
-	NWidget(WWT_PANEL, WINDOW_BG1, WID_PHG_BACKGROUND),
+	NWidget(WWT_PANEL, WINDOW_BG1, WID_GRAPH_BACKGROUND),
 		NWidget(NWID_VERTICAL),
 			NWidget(WWT_EMPTY, WINDOW_BG1, WID_GRAPH_GRAPH), SetMinimalSize(576, 224), SetFill(1, 1), SetResize(1, 1),
 			NWidget(NWID_HORIZONTAL),
@@ -1270,7 +1269,7 @@ static const NWidgetPart _nested_performance_history_widgets2[] = {
 		NWidget(WWT_DEFSIZEBOX, WINDOW_BG2),
 		NWidget(WWT_STICKYBOX, WINDOW_BG2),
 	EndContainer(),
-	NWidget(WWT_PANEL, WINDOW_BG2, WID_PHG_BACKGROUND),
+	NWidget(WWT_PANEL, WINDOW_BG2, WID_GRAPH_BACKGROUND),
 		NWidget(NWID_VERTICAL),
 			NWidget(WWT_EMPTY, WINDOW_BG2, WID_GRAPH_GRAPH), SetMinimalSize(576, 224), SetFill(1, 1), SetResize(1, 1),
 			NWidget(NWID_HORIZONTAL),
@@ -1282,14 +1281,14 @@ static const NWidgetPart _nested_performance_history_widgets2[] = {
 		EndContainer(),
 	EndContainer(),
 };
-static WindowDesc _performance_history_desc1(
+static WindowDesc _performance_history_desc1(__FILE__, __LINE__,
 	WDP_AUTO, "graph_performance", 0, 0,
 	WC_PERFORMANCE_HISTORY, WC_NONE,
 	0,
 	std::begin(_nested_performance_history_widgets1), std::end(_nested_performance_history_widgets1)
 );
 
-static WindowDesc _performance_history_desc2(
+static WindowDesc _performance_history_desc2(__FILE__, __LINE__,
 	WDP_AUTO, "graph_performance", 0, 0,
 	WC_PERFORMANCE_HISTORY, WC_NONE,
 	0,
@@ -1368,14 +1367,14 @@ static const NWidgetPart _nested_company_value_graph_widgets2[] = {
 	EndContainer(),
 };
 
-static WindowDesc _company_value_graph_desc1(
+static WindowDesc _company_value_graph_desc1(__FILE__, __LINE__,
 	WDP_AUTO, "graph_company_value", 0, 0,
 	WC_COMPANY_VALUE, WC_NONE,
 	0,
 	std::begin(_nested_company_value_graph_widgets1), std::end(_nested_company_value_graph_widgets1)
 );
 
-static WindowDesc _company_value_graph_desc2(
+static WindowDesc _company_value_graph_desc2(__FILE__, __LINE__,
 	WDP_AUTO, "graph_company_value", 0, 0,
 	WC_COMPANY_VALUE, WC_NONE,
 	0,
@@ -1393,7 +1392,7 @@ void ShowCompanyValueGraph()
 
 struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 	PaymentRatesGraphWindow(WindowDesc *desc, WindowNumber window_number) :
-			ExcludingCargoBaseGraphWindow(desc, WID_CPR_GRAPH, STR_JUST_CURRENCY_SHORT, true)
+			ExcludingCargoBaseGraphWindow(desc, STR_JUST_CURRENCY_SHORT, true)
 	{
 		this->num_on_x_axis = 24;
 		this->num_vert_lines = 24;
@@ -1570,7 +1569,7 @@ struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 			}
 			i++;
 		}
-		this->num_dataset = numd;
+		this->num_dataset = i;
 	}
 };
 
@@ -1654,14 +1653,14 @@ static WindowDesc _cargo_payment_rates_desc1(__FILE__, __LINE__,
 	WDP_AUTO, "graph_cargo_payment_rates", 0, 0,
 	WC_PAYMENT_RATES, WC_NONE,
 	0,
-	std::begin(_nested_cargo_payment_rates_widgets), std::end(_nested_cargo_payment_rates_widgets)
+	std::begin(_nested_cargo_payment_rates_widgets1), std::end(_nested_cargo_payment_rates_widgets1)
 );
 
 static WindowDesc _cargo_payment_rates_desc2(__FILE__, __LINE__,
 	WDP_AUTO, "graph_cargo_payment_rates", 0, 0,
 	WC_PAYMENT_RATES, WC_NONE,
 	0,
-	std::begin(_nested_cargo_payment_rates_widgets), std::end(_nested_cargo_payment_rates_widgets)
+	std::begin(_nested_cargo_payment_rates_widgets2), std::end(_nested_cargo_payment_rates_widgets2)
 );
 
 
@@ -1937,7 +1936,7 @@ std::unique_ptr<NWidgetBase> MakeCompanyButtonRowsGraphGUI()
 	return MakeCompanyButtonRows(WID_PRD_COMPANY_FIRST, WID_PRD_COMPANY_LAST, ChooseGraphColour(WINDOW_BG1, WINDOW_BG2), 8, STR_PERFORMANCE_DETAIL_SELECT_COMPANY_TOOLTIP);
 }
 
-static constexpr NWidgetPart _nested_performance_rating_detail_widgets[] = {
+static constexpr NWidgetPart _nested_performance_rating_detail_widgets1[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, WINDOW_BG1),
 		NWidget(WWT_CAPTION, WINDOW_BG1), SetDataTip(STR_PERFORMANCE_DETAIL, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -1963,14 +1962,14 @@ static constexpr NWidgetPart _nested_performance_rating_detail_widgets2[] = {
 	NWidgetFunction(MakePerformanceDetailPanels),
 };
 
-static WindowDesc _performance_rating_detail_desc1(
+static WindowDesc _performance_rating_detail_desc1(__FILE__, __LINE__,
 	WDP_AUTO, "league_details", 0, 0,
 	WC_PERFORMANCE_DETAIL, WC_NONE,
 	0,
 	std::begin(_nested_performance_rating_detail_widgets1), std::end(_nested_performance_rating_detail_widgets1)
 );
 
-static WindowDesc _performance_rating_detail_desc2(
+static WindowDesc _performance_rating_detail_desc2(__FILE__, __LINE__,
 	WDP_AUTO, "league_details", 0, 0,
 	WC_PERFORMANCE_DETAIL, WC_NONE,
 	0,

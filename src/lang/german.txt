@@ -6024,7 +6024,6 @@ CM_STR_CONFIG_SETTING_IMPROVED_STATION_JOIN                     :Verbesserte Ste
 CM_STR_CONFIG_SETTING_IMPROVED_STATION_JOIN_HELPTEXT            :Strg-Klick auf ein Stationsfeld anwenden, um eine Station zum verbinden an- oder abzuwählen. Strg-Klick auf das Stationsschild, falls die Station keine Felder hat. Für eine neue Station, Strg-Klick auf ein leeres Feld. Eine kürzlich gebaute Station ist automatisch zum Verbinden ausgewählt. {RED}Funktioniert nicht, falls das Verbinden von nicht direkt angrenzenden Stationen in den Einstellungen verboten ist.
 
 CM_STR_CONFIG_SETTING_VEHICLES_CTRL                             :{ORANGE}Steuerung & Aufträge
-CM_STR_CONFIG_SETTING_ORDER_SHORTCUTS                           :{ORANGE}Auftrag-Tastenkürzel
 CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                :"Umladen"-Aufträge sind standardmäßig "Nicht beladen": {STRING}
 CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                  :"Alles entladen"-Aufträge sind standardmäßig "Nicht beladen": {STRING}
 

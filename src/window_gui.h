@@ -316,7 +316,7 @@ public:
 
 	ViewportData *viewport;          ///< Pointer to viewport data, if present.
 	NWidgetViewport *viewport_widget; ///< Pointer to viewport widget, if present.
-	const NWidgetCore *nested_focus; ///< Currently focused nested widget, or \c nullptr if no nested widget has focus.
+	/* CM const */ NWidgetCore *nested_focus; ///< Currently focused nested widget, or \c nullptr if no nested widget has focus.
 	std::map<WidgetID, QueryString*> querystrings; ///< QueryString associated to WWT_EDITBOX widgets.
 	std::unique_ptr<NWidgetBase> nested_root; ///< Root of the nested tree.
 	WidgetLookup widget_lookup; ///< Indexed access to the nested widget tree. Do not access directly, use #Window::GetWidget() instead.
@@ -544,7 +544,7 @@ public:
 		(this->RaiseWidgetWhenLowered(widgets), ...);
 	}
 
-	void SetWidgetDirty(WidgetID widget_index) const;
+	void SetWidgetDirty(WidgetID widget_index) /* CM const */;
 
 	void DrawWidgets() const;
 	void DrawViewport() const;
@@ -555,8 +555,8 @@ public:
 	virtual void Close(int data = 0);
 	static void DeleteClosedWindows();
 
-	void SetDirty() const;
-	void SetDirtyAsBlocks();  TODO const?
+	void SetDirty();
+	void SetDirtyAsBlocks();
 	void ReInit(int rx = 0, int ry = 0, bool reposition = false);
 
 	/** Is window shaded currently? */
@@ -1086,7 +1086,7 @@ inline bool MayBeShown(const Window *w)
 {
 	/* If we're not modal, everything is okay. */
 	extern bool _in_modal_progress;
-	if (likely(!_in_modal_progress)) return true;
+	if (!_in_modal_progress) [[ likely ]] return true;
 
 	switch (w->window_class) {
 		case WC_MAIN_WINDOW:    ///< The background, i.e. the game.

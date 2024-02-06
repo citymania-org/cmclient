@@ -8,6 +8,7 @@
 #include "../company_func.h"
 #include "../company_base.h"
 #include "../table/strings.h"
+#include "../table/sprites.h"
 #include "../textbuf_gui.h"
 #include "../cargotype.h"
 #include "../zoom_func.h"
@@ -65,7 +66,7 @@ struct CargosWindow : Window {
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
 		Dimension icon_size = this->GetMaxIconSize();
-		int line_height = std::max(FONT_HEIGHT_NORMAL, (int)icon_size.height);
+		int line_height = std::max(GetCharacterHeight(FS_NORMAL), (int)icon_size.height);
 		int icon_space = icon_size.width + ScaleGUITrad(CT_ICON_MARGIN);
 		switch(widget) {
 			case WID_CT_HEADER_AMOUNT:
@@ -86,14 +87,14 @@ struct CargosWindow : Window {
 		switch(widget) {
 			case WID_CT_HEADER_AMOUNT:
 			case WID_CT_HEADER_INCOME:
-				size->height = FONT_HEIGHT_NORMAL;
+				size->height = GetCharacterHeight(FS_NORMAL);
 				break;
 			case WID_CT_HEADER_CARGO:
 				break;
 			case WID_CT_AMOUNT:
 			case WID_CT_INCOME:
 			case WID_CT_LIST: {
-				size->height = _sorted_standard_cargo_specs.size() * line_height + CT_LINESPACE + FONT_HEIGHT_NORMAL;
+				size->height = _sorted_standard_cargo_specs.size() * line_height + CT_LINESPACE + GetCharacterHeight(FS_NORMAL);
 				break;
 			}
 		}
@@ -117,9 +118,9 @@ struct CargosWindow : Window {
 		Money sum_cargo_income = 0;
 		int y = r.top;
 		Dimension max_icon_size = this->GetMaxIconSize();
-		int line_height = std::max(FONT_HEIGHT_NORMAL, (int)(max_icon_size.height));
+		int line_height = std::max(GetCharacterHeight(FS_NORMAL), (int)(max_icon_size.height));
 		int icon_space = max_icon_size.width + ScaleGUITrad(CT_ICON_MARGIN);
-		int text_y_ofs = (line_height - FONT_HEIGHT_NORMAL);
+		int text_y_ofs = (line_height - GetCharacterHeight(FS_NORMAL));
 
 		switch(widget){
 			case WID_CT_HEADER_CARGO:
@@ -210,11 +211,11 @@ static const NWidgetPart _nested_cargos_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _cargos_desc(
-	WDP_AUTO, NULL, 0, 0,
+static WindowDesc _cargos_desc(__FILE__, __LINE__,
+	WDP_AUTO, nullptr, 0, 0,
 	WC_CARGOS, WC_NONE,
 	WDF_CONSTRUCTION,
-	_nested_cargos_widgets, lengthof(_nested_cargos_widgets)
+	std::begin(_nested_cargos_widgets), std::end(_nested_cargos_widgets)
 );
 
 void ShowCompanyCargos(CompanyID company)

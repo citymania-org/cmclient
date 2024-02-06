@@ -63,8 +63,8 @@ protected:
 	CompanyID watched_company;                            // Company ID beeing watched.
 	int company_activity[MAX_COMPANIES];                  // int array for activity blot.
 	int company_count_client[MAX_COMPANIES];              // company client count.
-	char company_name[MAX_LENGTH_COMPANY_NAME_CHARS];     // company name for title display
-	char client_name[NETWORK_CLIENT_NAME_LENGTH];
+	std::string company_name;     // company name for title display
+	std::string client_name;
 
 	int watched_client;
 	WatchCompanyQuery query_widget;

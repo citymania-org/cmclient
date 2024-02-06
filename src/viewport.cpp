@@ -102,7 +102,6 @@
 /* CityMania code start */
 #include "math.h"
 #include "core/math_func.hpp"
-#include "core/smallvec_type.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_zoning.hpp"
@@ -1075,7 +1074,7 @@ static TileHighlightType GetTileHighlightType(TileIndex t)
 		if (_viewport_highlight_station->TileIsInCatchment(t)) return THT_BLUE;
 	}
 #endif
-	TODO should cm handle this?
+	// TODO CM should handle this too
 	if (_viewport_highlight_waypoint != nullptr) {
 		if (IsTileType(t, MP_STATION) && GetStationIndex(t) == _viewport_highlight_waypoint->index) return THT_BLUE;
 	}
@@ -2923,10 +2922,10 @@ void UpdateTileSelection()
  * @param str String to be displayed
  * @param paramcount number of params to deal with
  */
-static inline void ShowMeasurementTooltips(StringID str, uint paramcount)
+static inline void ShowMeasurementTooltips(StringID str, uint paramcount, TooltipCloseCondition close_cond = TCC_EXIT_VIEWPORT)
 {
 	// CM (why)? if (!_settings_client.gui.measure_tooltip) return;
-	GuiShowTooltips(_thd.GetCallbackWnd(), str, TCC_EXIT_VIEWPORT, paramcount);
+	GuiShowTooltips(_thd.GetCallbackWnd(), str, close_cond, paramcount);
 }
 
 static void HideMeasurementTooltips()
@@ -3186,6 +3185,7 @@ static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, Ti
 {
 	static const StringID measure_strings_length[] = {STR_NULL, STR_MEASURE_LENGTH, STR_MEASURE_LENGTH_HEIGHTDIFF};
 
+	uint paramcount = 0;
 	if (_settings_client.gui.measure_tooltip) {
 		uint distance = DistanceManhattan(start_tile, end_tile) + 1;
 		byte index = 0;
@@ -3200,11 +3200,11 @@ static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, Ti
 				distance = CeilDiv(distance, 2);
 			}
 
-			params[index++] = distance;
-			if (heightdiff != 0) params[index++] = heightdiff;
+			SetDParam(paramcount++, distance);
+			if (heightdiff != 0) SetDParam(paramcount++, heightdiff);
 		}
 
-		ShowMeasurementTooltips(measure_strings_length[index], index, params, close_cond);
+		ShowMeasurementTooltips(measure_strings_length[index], paramcount, close_cond);
 	}
 }
 
@@ -4264,8 +4264,8 @@ static LineSnapPoint LineSnapPointAtRailTrackEndpoint(TileIndex tile, DiagDirect
 	if (bidirectional) SetBit(ret.dirs, ReverseDir(DiagDirToDir(exit_dir)));
 
 	/* Add 45 degree rotated directions. */
-	ret.dirs |= ROR<uint8>(ret.dirs, DIRDIFF_45LEFT);
-	ret.dirs |= ROR<uint8>(ret.dirs, DIRDIFF_45RIGHT);
+	ret.dirs |= std::rotr<uint8>(ret.dirs, DIRDIFF_45LEFT);
+	ret.dirs |= std::rotr<uint8>(ret.dirs, DIRDIFF_45RIGHT);
 	return ret;
 }
 
@@ -4407,7 +4407,7 @@ static void SetRailSnapTile(TileIndex tile)
 
 	for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
 		auto point = LineSnapPointAtRailTrackEndpoint(tile, dir, false, NULL);
-		point.dirs = ROR<uint8>(point.dirs, DIRDIFF_REVERSE);
+		point.dirs = std::rotr<uint8>(point.dirs, DIRDIFF_REVERSE);
 		_tile_snap_points.push_back(point);
 	}
 }

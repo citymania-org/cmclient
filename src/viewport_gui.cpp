@@ -143,6 +143,7 @@ public:
 
 	virtual void OnMouseOver(Point pt, int widget)
 	{
+		extern void GuiPrepareTooltipsExtra(Window *parent);
 		if (pt.x != -1) GuiPrepareTooltipsExtra(this);
 	}
 };

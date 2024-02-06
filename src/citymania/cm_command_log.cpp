@@ -20,8 +20,7 @@ namespace citymania {
 
 
 struct FakeCommand {
-    Date date;
-    DateFract date_fract;
+    TimerGameTick::TickCounter counter;
     uint res;
     uint8 seed;
     uint16 client_id;
@@ -31,33 +30,29 @@ struct FakeCommand {
 static std::queue<FakeCommand> _fake_commands;
 bool _replay_started = false;
 
-bool DatePredate(Date date1, DateFract date_fract1, Date date2, DateFract date_fract2) {
-    return date1 < date2 || (date1 == date2 && date_fract1 < date_fract2);
-}
-
-void SkipFakeCommands(Date date, DateFract date_fract) {
+void SkipFakeCommands(TimerGameTick::TickCounter counter) {
     uint commands_skipped = 0;
 
-    while (!_fake_commands.empty() && DatePredate(_fake_commands.front().date, _fake_commands.front().date_fract, date, date_fract)) {
+    while (!_fake_commands.empty() && _fake_commands.front().counter < counter) {
         _fake_commands.pop();
         commands_skipped++;
     }
 
     if (commands_skipped) {
-        fprintf(stderr, "Skipped %u commands that predate the current date (%d/%hu)\n", commands_skipped, date, date_fract);
+        fprintf(stderr, "Skipped %u commands that predate the current counter (%lu)\n", commands_skipped, counter);
     }
 }
 
 extern CommandCost ExecuteCommand(CommandPacket *cp);
 
-void ExecuteFakeCommands(Date date, DateFract date_fract) {
+void ExecuteFakeCommands(TimerGameTick::TickCounter counter) {
     if (!_replay_started) {
-        SkipFakeCommands(_date, _date_fract);
+        SkipFakeCommands(counter);
         _replay_started = true;
     }
 
     auto backup_company = _current_company;
-    while (!_fake_commands.empty() && !DatePredate(date, date_fract, _fake_commands.front().date, _fake_commands.front().date_fract)) {
+    while (!_fake_commands.empty() && _fake_commands.front().counter <= counter) {
         auto &x = _fake_commands.front();
 
         fprintf(stderr, "Executing command: %s(%u) company=%u ... ", GetCommandName(x.cp.cmd), x.cp.cmd, x.cp.company);
@@ -85,9 +80,8 @@ void ExecuteFakeCommands(Date date, DateFract date_fract) {
             if (!res.Failed()) {
                 fprintf(stderr, "FAIL (Failing command succeeded)\n");
             } else if (res.GetErrorMessage() != INVALID_STRING_ID) {
-                char buf[DRAW_STRING_BUFFER];
-                GetString(buf, res.GetErrorMessage(), lastof(buf));
-                fprintf(stderr, "FAIL (Successful command failed: %s)\n", buf);
+                auto buf = GetString(res.GetErrorMessage());
+                fprintf(stderr, "FAIL (Successful command failed: %s)\n", buf.c_str());
             } else {
                 fprintf(stderr, "FAIL (Successful command failed)\n");
             }
@@ -181,9 +175,7 @@ void load_replay_commands(const std::string &filename, std::function<void(const 
     try {
         while (!bs.eof()) {
             FakeCommand fk;
-            auto date_full = bs.ReadBytes(4);
-            fk.date = date_full / DAY_TICKS;
-            fk.date_fract = date_full % DAY_TICKS;
+            fk.counter = bs.ReadBytes(4);
             fk.res = bs.ReadBytes(1);
             fk.seed = bs.ReadBytes(1);
             fk.cp.company = (Owner)bs.ReadBytes(1);

@@ -1150,7 +1150,7 @@ static Money DeliverGoods(int num_pieces, CargoID cargo_type, StationID dest, ui
 	if(CB_Enabled()){
 		if (_settings_game.citymania.cb.acceptance_range == 0 || (DistanceManhattan(st->town->xy, st->xy) <= _settings_game.citymania.cb.acceptance_range)) {
 			st->town->cb.delivered[cargo_type] += accepted_total;
-			InvalidateWindowData(WC_CB_TOWN, st->town->index);
+			InvalidateWindowData(CM_WC_CB_TOWN, st->town->index);
 		}
 	}
 

@@ -54,6 +54,15 @@ struct RailStationGUISettings {
 };
 extern RailStationGUISettings _railstation; //rail_gui.cpp
 
+struct RoadStopGUISettings {
+    DiagDirection orientation;
+
+    RoadStopClassID roadstop_class;
+    uint16_t roadstop_type;
+    uint16_t roadstop_count;
+};
+extern RoadStopGUISettings _roadstop_gui_settings;
+
 namespace citymania {
 
 StationBuildingStatus _station_building_status = StationBuildingStatus::NEW;
@@ -106,8 +115,8 @@ static void UpdateHiglightJoinArea(const Station *station) {
     TileArea ta(
         TileXY(std::max<int>(r.right - d, 0),
                std::max<int>(r.bottom - d, 0)),
-        TileXY(std::min<int>(r.left + d, MapSizeX() - 1),
-               std::min<int>(r.top + d, MapSizeY() - 1))
+        TileXY(std::min<int>(r.left + d, Map::SizeX() - 1),
+               std::min<int>(r.top + d, Map::SizeY() - 1))
     );
     if (_highlight_join_area.tile == ta.tile &&
         _highlight_join_area.w == ta.w &&
@@ -344,6 +353,8 @@ void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_t
 
     bool drive_through = (ddir >= DIAGDIR_END);
     if (drive_through) ddir = static_cast<DiagDirection>(ddir - DIAGDIR_END); // Adjust picker result to actual direction.
+    RoadStopClassID spec_class = _roadstop_gui_settings.roadstop_class;
+    uint16_t spec_index = _roadstop_gui_settings.roadstop_type;
 
     auto c = cmd::BuildRoadStop(
         ta.tile,
@@ -353,6 +364,8 @@ void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_t
         drive_through,
         static_cast<DiagDirection>(ddir),
         rt,
+        spec_class,
+        spec_index,
         INVALID_STATION,
         adjacent
     );
@@ -439,7 +452,7 @@ static void FindStationsAroundSelection(const TileArea &location)
     int x = TileX(location.tile);
     int y = TileY(location.tile);
 
-    TileArea ta(TileXY(std::max<int>(0, x - 1), std::max<int>(0, y - 1)), TileXY(std::min<int>(MapMaxX() - 1, x + location.w + 1), std::min<int>(MapMaxY() - 1, y + location.h + 1)));
+    TileArea ta(TileXY(std::max<int>(0, x - 1), std::max<int>(0, y - 1)), TileXY(std::min<int>(Map::MaxX() - 1, x + location.w + 1), std::min<int>(Map::MaxY() - 1, y + location.h + 1)));
 
     Station *adjacent = nullptr;
 
@@ -512,7 +525,7 @@ void AbortStationPlacement() {
 
 
 uint GetMonthlyFrom256Tick(uint amount) {
-    return ((amount * DAY_TICKS * 30) >> 8);
+    return ((amount * Ticks::DAY_TICKS * EconomyTime::DAYS_IN_ECONOMY_MONTH) >> 8);
 }
 
 uint GetAverageHouseProduction(byte amount) {
@@ -604,9 +617,9 @@ CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
         /* Skip industry with neutral station */
         if (i->neutral_station != nullptr && !_settings_game.station.serve_neutral_industries) continue;
 
-        for (uint j = 0; j < lengthof(i->produced_cargo); j++) {
-            CargoID cargo = i->produced_cargo[j];
-            if (cargo != CT_INVALID) produced[cargo] += ((uint)i->last_month_production[j]) << 8;
+        for (auto &p : i->produced) {
+            CargoID cargo = p.cargo;
+            if (cargo != CT_INVALID) produced[p.cargo] += ((uint)p.history[LAST_MONTH].production) << 8;
         }
     }
 
@@ -617,9 +630,7 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
     auto production = citymania::GetProductionAroundTiles(tile, w, h, rad);
 
     std::ostringstream s;
-    char buffer[DRAW_STRING_BUFFER];
-    GetString(buffer, CM_STR_STATION_BUILD_SUPPLIES, lastof(buffer));
-    s << buffer;
+    s << GetString(CM_STR_STATION_BUILD_SUPPLIES);
     bool first = true;
     for (CargoID i = 0; i < NUM_CARGO; i++) {
         switch (sct) {
@@ -634,8 +645,7 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
         SetDParam(0, i);
         SetDParam(1, production[i] >> 8);
         // GetString(buffer, CM_STR_STATION_BUILD_SUPPLIES_CARGO, lastof(buffer));
-        GetString(buffer, STR_JUST_CARGO, lastof(buffer));
-        s << buffer;
+        s << GetString(STR_JUST_CARGO);
     }
     return s.str();
 }

@@ -186,7 +186,7 @@ public:
 		td.road_speed = 0;
 		td.tramtype = STR_NULL;
 		td.tram_speed = 0;
- 		td.population = 0;
+ 		td.cm_population = 0;
 
 		td.grf = nullptr;
 
@@ -324,11 +324,12 @@ public:
 			this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_NEWGRF_NAME));
 		}
 
-		/* House pop */
-		if (td.population != 0) {
-			SetDParam(0, td.population);
+		/* CityMania code start (House pop) */
+		if (td.cm_population != 0) {
+			SetDParam(0, td.cm_population);
 			this->landinfo_data.push_back(GetString(CM_STR_LAND_AREA_INFORMATION_POP));
 		}
+		/* CityMania code end */
 
 		/* Cargo acceptance is displayed in a extra multiline */
 		std::stringstream line;
@@ -1288,6 +1289,6 @@ void GuiPrepareTooltipsExtra(Window *parent){
 	}
 	citymania::ShowLandInfo(INVALID_TILE);
 
-	if (tile >= MapSize()) tile = INVALID_TILE;
+	if (tile >= Map::Size()) tile = INVALID_TILE;
 	citymania::ShowLandTooltips(tile, parent);
 }

@@ -9,7 +9,7 @@
 
 #include "../stdafx.h"
 #include "../console_func.h"
-#include "../date_func.h"
+#include "../timer/timer_game_tick.h"
 #include "../gfx_func.h"
 #include "../blitter/factory.hpp"
 #include "../saveload/saveload.h"
@@ -52,13 +52,13 @@ void VideoDriver_Null::MainLoop()
 {
 	uint i;
 
-	uint16 old_tick;
+	TimerGameTick::TickCounter old_tick;
 	for (i = 0; i < this->ticks; ) {
-		old_tick = _tick_counter;
+		old_tick = TimerGameTick::counter;
 		::GameLoop();
 		::InputLoop();
 		::UpdateWindows();
-		if (old_tick != _tick_counter) i++;
+		if (old_tick != TimerGameTick::counter) i++;
 		else _pause_mode = PM_UNPAUSED;
 	}
 	IConsolePrint(CC_DEFAULT, "Null driver ran for {} tics, save: {}", this->ticks, this->savefile);

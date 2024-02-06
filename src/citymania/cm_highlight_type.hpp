@@ -4,6 +4,7 @@
 #include "../bridge.h"
 #include "../direction_type.h"
 #include "../map_func.h"
+#include "../newgrf_roadstop.h"
 #include "../road_type.h"
 #include "../signal_type.h"
 #include "../station_map.h"
@@ -130,6 +131,8 @@ public:
                 RoadType roadtype;
                 DiagDirection ddir;
                 bool is_truck;
+                RoadStopClassID spec_class;
+                uint16_t spec_index;
             } stop;
             struct {
                 RoadType roadtype;
@@ -143,7 +146,7 @@ public:
             IndustryType ind_type;
             byte ind_layout;
             TileIndexDiff tile_diff;
-            IndustryGfx gfx;
+            IndustryGfx gfx;  // TODO remove?
         } industry_tile;
         struct {
             uint32 number;
@@ -158,7 +161,7 @@ public:
     static ObjectTileHighlight make_rail_bridge_head(SpriteID palette, DiagDirection ddir, BridgeType type);
     static ObjectTileHighlight make_rail_tunnel_head(SpriteID palette, DiagDirection ddir);
 
-    static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck);
+    static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index);
     static ObjectTileHighlight make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir);
     static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
     static ObjectTileHighlight make_industry_tile(SpriteID palette, IndustryType ind_type, byte ind_layout, TileIndexDiff tile_diff, IndustryGfx gfx);
@@ -301,6 +304,8 @@ public:
     DiagDirection ddir = INVALID_DIAGDIR;
     RoadType roadtype = INVALID_ROADTYPE;
     bool is_truck = false;
+    RoadStopClassID road_stop_spec_class;
+    uint16_t road_stop_spec_index;
     int airport_type = 0;
     byte airport_layout = 0;
     sp<Blueprint> blueprint = nullptr;
@@ -324,7 +329,7 @@ public:
 
     static ObjectHighlight make_rail_depot(TileIndex tile, DiagDirection ddir);
     static ObjectHighlight make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis);
-    static ObjectHighlight make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck);
+    static ObjectHighlight make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index);
     static ObjectHighlight make_road_depot(TileIndex tile, RoadType roadtype, DiagDirection orientation);
     static ObjectHighlight make_airport(TileIndex start_tile, int airport_type, byte airport_layout);
     static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);

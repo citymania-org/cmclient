@@ -1109,16 +1109,15 @@ static CallBackFunction PlaceLandBlockInfo()
 
 static CallBackFunction ToolbarHelpClick(Window *w)
 {
-	TODO add citymania login
 	if (_settings_client.gui.newgrf_developer_tools) {
 		PopupMainToolbarMenu(w, _game_mode == GM_EDITOR ? (WidgetID)WID_TE_HELP : (WidgetID)WID_TN_HELP, {STR_ABOUT_MENU_LAND_BLOCK_INFO,
-				STR_ABOUT_MENU_HELP, STR_NULL, STR_ABOUT_MENU_TOGGLE_CONSOLE, STR_ABOUT_MENU_AI_DEBUG,
+				CM_STR_ABOUT_MENU_LOGIN_WINDOW, STR_ABOUT_MENU_HELP, STR_NULL, STR_ABOUT_MENU_TOGGLE_CONSOLE, STR_ABOUT_MENU_AI_DEBUG,
 				STR_ABOUT_MENU_SCREENSHOT, STR_ABOUT_MENU_SHOW_FRAMERATE, STR_ABOUT_MENU_ABOUT_OPENTTD,
 				STR_ABOUT_MENU_SPRITE_ALIGNER, STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES, STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS,
 				STR_ABOUT_MENU_TOGGLE_WIDGET_OUTLINES});
 	} else {
 		PopupMainToolbarMenu(w, _game_mode == GM_EDITOR ? (WidgetID)WID_TE_HELP : (WidgetID)WID_TN_HELP, {STR_ABOUT_MENU_LAND_BLOCK_INFO,
-				STR_ABOUT_MENU_HELP, STR_NULL, STR_ABOUT_MENU_TOGGLE_CONSOLE, STR_ABOUT_MENU_AI_DEBUG,
+				CM_STR_ABOUT_MENU_LOGIN_WINDOW, STR_ABOUT_MENU_HELP, STR_NULL, STR_ABOUT_MENU_TOGGLE_CONSOLE, STR_ABOUT_MENU_AI_DEBUG,
 				STR_ABOUT_MENU_SCREENSHOT, STR_ABOUT_MENU_SHOW_FRAMERATE, STR_ABOUT_MENU_ABOUT_OPENTTD});
 	}
 	return CBF_NONE;
@@ -1528,21 +1527,6 @@ public:
 		GfxFillRect(r, PC_DARK_RED, FILLRECT_CHECKER);
 
 		this->NWidgetContainer::Draw(w);
-	}
-
-
-	void FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets) override
-	{
-		if (this->base_flags & WBF_DIRTY) {
-			dirty_widgets.push_back(this);
-		} else {
-			for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
-				if (child_wid->type == NWID_SPACER) continue;
-				if (!this->visible[((NWidgetCore*)child_wid)->index]) continue;
-
-				child_wid->FillDirtyWidgets(dirty_widgets);
-			}
-		}
 	}
 
 	/**
@@ -2137,7 +2121,6 @@ struct MainToolbarWindow : Window {
 			case CM_MTHK_COMMANDS_GUI: if (_networking) { citymania::ShowCommandsToolbar(); } break;
 			case CM_MTHK_BUILD_HQ: if(_current_company != COMPANY_SPECTATOR){ cbf = BuildCompanyHQ(); } break;
 			case CM_MTHK_CARGOTABLE: if(_current_company != COMPANY_SPECTATOR){ citymania::ShowCompanyCargos(_current_company); } break;
-			case CM_MTHK_TREES: if(_current_company != COMPANY_SPECTATOR){ BuildTreesWindow(); } break;
 			case CM_MTHK_ZONING: citymania::ShowZoningToolbar(); break;
 			case CM_MTHK_LOGINWINDOW: citymania::ShowLoginWindow(); break;
 			case CM_MTHK_SETTINGS_ADV: ShowGameSettings(); break;
@@ -2260,7 +2243,6 @@ struct MainToolbarWindow : Window {
 		Hotkey(WKC_CTRL  | 'H', "cm_build_hq", CM_MTHK_BUILD_HQ),
 		Hotkey((uint16)0, "cm_commands_window", CM_MTHK_COMMANDS_GUI),
 		Hotkey(WKC_CTRL | WKC_F2, "cm_cargo_table", CM_MTHK_CARGOTABLE),
-		Hotkey('I', "cm_trees", CM_MTHK_TREES),  TODO is it different from MTHK_BUILD_TREES
 		Hotkey((uint16)0, "cm_zoning", CM_MTHK_ZONING),
 		Hotkey((uint16)0, "cm_login_window", CM_MTHK_LOGINWINDOW),
 		Hotkey((uint16)0, "cm_settings_advanced", CM_MTHK_SETTINGS_ADV),

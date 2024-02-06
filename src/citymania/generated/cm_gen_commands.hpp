@@ -35,6 +35,7 @@
 #include "../../town_cmd.h"
 #include "../../roadveh_cmd.h"
 #include "../../industry_cmd.h"
+#include "../../vehiclelist_cmd.h"
 #include "../../order_cmd.h"
 #include "../../misc_cmd.h"
 #include "../../engine_cmd.h"
@@ -63,10 +64,10 @@ public:
     TileIndex tile;
     StoryPageID page_id;
     StoryPageElementType type;
-    uint32 reference;
+    uint32_t reference;
     const std::string & text;
 
-    CreateStoryPageElement(TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32 reference, const std::string & text)
+    CreateStoryPageElement(TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32_t reference, const std::string & text)
         :tile{tile}, page_id{page_id}, type{type}, reference{reference}, text{text} {}
     ~CreateStoryPageElement() override {}
 
@@ -79,10 +80,10 @@ class UpdateStoryPageElement: public Command {
 public:
     TileIndex tile;
     StoryPageElementID page_element_id;
-    uint32 reference;
+    uint32_t reference;
     const std::string & text;
 
-    UpdateStoryPageElement(TileIndex tile, StoryPageElementID page_element_id, uint32 reference, const std::string & text)
+    UpdateStoryPageElement(TileIndex tile, StoryPageElementID page_element_id, uint32_t reference, const std::string & text)
         :tile{tile}, page_element_id{page_element_id}, reference{reference}, text{text} {}
     ~UpdateStoryPageElement() override {}
 
@@ -108,9 +109,9 @@ public:
 class SetStoryPageDate: public Command {
 public:
     StoryPageID page_id;
-    Date date;
+    TimerGameCalendar::Date date;
 
-    SetStoryPageDate(StoryPageID page_id, Date date)
+    SetStoryPageDate(StoryPageID page_id, TimerGameCalendar::Date date)
         :page_id{page_id}, date{date} {}
     ~SetStoryPageDate() override {}
 
@@ -180,11 +181,11 @@ public:
     byte width;
     byte height;
     StationClassID spec_class;
-    byte spec_index;
+    uint16_t spec_index;
     StationID station_to_join;
     bool adjacent;
 
-    BuildRailWaypoint(TileIndex start_tile, Axis axis, byte width, byte height, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
+    BuildRailWaypoint(TileIndex start_tile, Axis axis, byte width, byte height, StationClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
         :start_tile{start_tile}, axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildRailWaypoint() override {}
 
@@ -275,11 +276,11 @@ public:
     byte numtracks;
     byte plat_len;
     StationClassID spec_class;
-    byte spec_index;
+    uint16_t spec_index;
     StationID station_to_join;
     bool adjacent;
 
-    BuildRailStation(TileIndex tile_org, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
+    BuildRailStation(TileIndex tile_org, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
         :tile_org{tile_org}, rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildRailStation() override {}
 
@@ -306,17 +307,19 @@ public:
 class BuildRoadStop: public Command {
 public:
     TileIndex tile;
-    uint8 width;
-    uint8 length;
+    uint8_t width;
+    uint8_t length;
     RoadStopType stop_type;
     bool is_drive_through;
     DiagDirection ddir;
     RoadType rt;
+    RoadStopClassID spec_class;
+    uint16_t spec_index;
     StationID station_to_join;
     bool adjacent;
 
-    BuildRoadStop(TileIndex tile, uint8 width, uint8 length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, StationID station_to_join, bool adjacent)
-        :tile{tile}, width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    BuildRoadStop(TileIndex tile, uint8_t width, uint8_t length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, RoadStopClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
+        :tile{tile}, width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildRoadStop() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -327,12 +330,12 @@ public:
 class RemoveRoadStop: public Command {
 public:
     TileIndex tile;
-    uint8 width;
-    uint8 height;
+    uint8_t width;
+    uint8_t height;
     RoadStopType stop_type;
     bool remove_road;
 
-    RemoveRoadStop(TileIndex tile, uint8 width, uint8 height, RoadStopType stop_type, bool remove_road)
+    RemoveRoadStop(TileIndex tile, uint8_t width, uint8_t height, RoadStopType stop_type, bool remove_road)
         :tile{tile}, width{width}, height{height}, stop_type{stop_type}, remove_road{remove_road} {}
     ~RemoveRoadStop() override {}
 
@@ -397,6 +400,21 @@ public:
     Commands get_command() override;
 };
 
+class SetGoalDestination: public Command {
+public:
+    ::GoalID goal;
+    ::GoalType type;
+    ::GoalTypeID dest;
+
+    SetGoalDestination(::GoalID goal, ::GoalType type, ::GoalTypeID dest)
+        :goal{goal}, type{type}, dest{dest} {}
+    ~SetGoalDestination() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
 class SetGoalText: public Command {
 public:
     ::GoalID goal;
@@ -441,14 +459,14 @@ public:
 
 class GoalQuestion: public Command {
 public:
-    uint16 uniqueid;
-    uint16 target;
+    uint16_t uniqueid;
+    uint32_t target;
     bool is_client;
-    uint32 button_mask;
+    uint32_t button_mask;
     GoalQuestionType type;
     const std::string & text;
 
-    GoalQuestion(uint16 uniqueid, uint16 target, bool is_client, uint32 button_mask, GoalQuestionType type, const std::string & text)
+    GoalQuestion(uint16_t uniqueid, uint32_t target, bool is_client, uint32_t button_mask, GoalQuestionType type, const std::string & text)
         :uniqueid{uniqueid}, target{target}, is_client{is_client}, button_mask{button_mask}, type{type}, text{text} {}
     ~GoalQuestion() override {}
 
@@ -459,10 +477,10 @@ public:
 
 class GoalQuestionAnswer: public Command {
 public:
-    uint16 uniqueid;
-    uint8 button;
+    uint16_t uniqueid;
+    uint8_t button;
 
-    GoalQuestionAnswer(uint16 uniqueid, uint8 button)
+    GoalQuestionAnswer(uint16_t uniqueid, uint8_t button)
         :uniqueid{uniqueid}, button{button} {}
     ~GoalQuestionAnswer() override {}
 
@@ -474,9 +492,9 @@ public:
 class ChangeSetting: public Command {
 public:
     const std::string & name;
-    int32 value;
+    int32_t value;
 
-    ChangeSetting(const std::string & name, int32 value)
+    ChangeSetting(const std::string & name, int32_t value)
         :name{name}, value{value} {}
     ~ChangeSetting() override {}
 
@@ -488,9 +506,9 @@ public:
 class ChangeCompanySetting: public Command {
 public:
     const std::string & name;
-    int32 value;
+    int32_t value;
 
-    ChangeCompanySetting(const std::string & name, int32 value)
+    ChangeCompanySetting(const std::string & name, int32_t value)
         :name{name}, value{value} {}
     ~ChangeCompanySetting() override {}
 
@@ -504,10 +522,10 @@ public:
     NewsType type;
     NewsReferenceType reftype1;
     CompanyID company;
-    uint32 reference;
+    uint32_t reference;
     const std::string & text;
 
-    CustomNewsItem(NewsType type, NewsReferenceType reftype1, CompanyID company, uint32 reference, const std::string & text)
+    CustomNewsItem(NewsType type, NewsReferenceType reftype1, CompanyID company, uint32_t reference, const std::string & text)
         :type{type}, reftype1{reftype1}, company{company}, reference{reference}, text{text} {}
     ~CustomNewsItem() override {}
 
@@ -520,9 +538,9 @@ class BuildObject: public Command {
 public:
     TileIndex tile;
     ObjectType type;
-    uint8 view;
+    uint8_t view;
 
-    BuildObject(TileIndex tile, ObjectType type, uint8 view)
+    BuildObject(TileIndex tile, ObjectType type, uint8_t view)
         :tile{tile}, type{type}, view{view} {}
     ~BuildObject() override {}
 
@@ -536,10 +554,10 @@ public:
     TileIndex tile;
     TileIndex start_tile;
     ObjectType type;
-    uint8 view;
+    uint8_t view;
     bool diagonal;
 
-    BuildObjectArea(TileIndex tile, TileIndex start_tile, ObjectType type, uint8 view, bool diagonal)
+    BuildObjectArea(TileIndex tile, TileIndex start_tile, ObjectType type, uint8_t view, bool diagonal)
         :tile{tile}, start_tile{start_tile}, type{type}, view{view}, diagonal{diagonal} {}
     ~BuildObjectArea() override {}
 
@@ -676,38 +694,13 @@ public:
     Commands get_command() override;
 };
 
-class BuyShareInCompany: public Command {
-public:
-    CompanyID target_company;
-
-    BuyShareInCompany(CompanyID target_company)
-        :target_company{target_company} {}
-    ~BuyShareInCompany() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
-class SellShareInCompany: public Command {
-public:
-    CompanyID target_company;
-
-    SellShareInCompany(CompanyID target_company)
-        :target_company{target_company} {}
-    ~SellShareInCompany() override {}
-
-    bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
-    Commands get_command() override;
-};
-
 class BuyCompany: public Command {
 public:
     CompanyID target_company;
+    bool hostile_takeover;
 
-    BuyCompany(CompanyID target_company)
-        :target_company{target_company} {}
+    BuyCompany(CompanyID target_company, bool hostile_takeover)
+        :target_company{target_company}, hostile_takeover{hostile_takeover} {}
     ~BuyCompany() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -809,9 +802,9 @@ class ScrollViewport: public Command {
 public:
     TileIndex tile;
     ViewportScrollTarget target;
-    uint32 ref;
+    uint32_t ref;
 
-    ScrollViewport(TileIndex tile, ViewportScrollTarget target, uint32 ref)
+    ScrollViewport(TileIndex tile, ViewportScrollTarget target, uint32_t ref)
         :tile{tile}, target{target}, ref{ref} {}
     ~ScrollViewport() override {}
 
@@ -825,9 +818,9 @@ public:
     VehicleID veh;
     VehicleOrderID order_number;
     ModifyTimetableFlags mtf;
-    uint16 data;
+    uint16_t data;
 
-    ChangeTimetable(VehicleID veh, VehicleOrderID order_number, ModifyTimetableFlags mtf, uint16 data)
+    ChangeTimetable(VehicleID veh, VehicleOrderID order_number, ModifyTimetableFlags mtf, uint16_t data)
         :veh{veh}, order_number{order_number}, mtf{mtf}, data{data} {}
     ~ChangeTimetable() override {}
 
@@ -840,9 +833,9 @@ class BulkChangeTimetable: public Command {
 public:
     VehicleID veh;
     ModifyTimetableFlags mtf;
-    uint16 data;
+    uint16_t data;
 
-    BulkChangeTimetable(VehicleID veh, ModifyTimetableFlags mtf, uint16 data)
+    BulkChangeTimetable(VehicleID veh, ModifyTimetableFlags mtf, uint16_t data)
         :veh{veh}, mtf{mtf}, data{data} {}
     ~BulkChangeTimetable() override {}
 
@@ -854,9 +847,10 @@ public:
 class SetVehicleOnTime: public Command {
 public:
     VehicleID veh;
+    bool apply_to_group;
 
-    SetVehicleOnTime(VehicleID veh)
-        :veh{veh} {}
+    SetVehicleOnTime(VehicleID veh, bool apply_to_group)
+        :veh{veh}, apply_to_group{apply_to_group} {}
     ~SetVehicleOnTime() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -883,10 +877,10 @@ class SetTimetableStart: public Command {
 public:
     VehicleID veh_id;
     bool timetable_all;
-    Date start_date;
+    TimerGameTick::TickCounter start_tick;
 
-    SetTimetableStart(VehicleID veh_id, bool timetable_all, Date start_date)
-        :veh_id{veh_id}, timetable_all{timetable_all}, start_date{start_date} {}
+    SetTimetableStart(VehicleID veh_id, bool timetable_all, TimerGameTick::TickCounter start_tick)
+        :veh_id{veh_id}, timetable_all{timetable_all}, start_tick{start_tick} {}
     ~SetTimetableStart() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -928,14 +922,14 @@ public:
 class CreateLeagueTableElement: public Command {
 public:
     LeagueTableID table;
-    int64 rating;
+    int64_t rating;
     CompanyID company;
     const std::string & text;
     const std::string & score;
     LinkType link_type;
     LinkTargetID link_target;
 
-    CreateLeagueTableElement(LeagueTableID table, int64 rating, CompanyID company, const std::string & text, const std::string & score, LinkType link_type, LinkTargetID link_target)
+    CreateLeagueTableElement(LeagueTableID table, int64_t rating, CompanyID company, const std::string & text, const std::string & score, LinkType link_type, LinkTargetID link_target)
         :table{table}, rating{rating}, company{company}, text{text}, score{score}, link_type{link_type}, link_target{link_target} {}
     ~CreateLeagueTableElement() override {}
 
@@ -964,10 +958,10 @@ public:
 class UpdateLeagueTableElementScore: public Command {
 public:
     LeagueTableElementID element;
-    int64 rating;
+    int64_t rating;
     const std::string & score;
 
-    UpdateLeagueTableElementScore(LeagueTableElementID element, int64 rating, const std::string & score)
+    UpdateLeagueTableElementScore(LeagueTableElementID element, int64_t rating, const std::string & score)
         :element{element}, rating{rating}, score{score} {}
     ~UpdateLeagueTableElementScore() override {}
 
@@ -1059,9 +1053,9 @@ public:
     byte new_subtype;
     bool auto_refit;
     bool only_this;
-    uint8 num_vehicles;
+    uint8_t num_vehicles;
 
-    RefitVehicle(TileIndex location, VehicleID veh_id, CargoID new_cid, byte new_subtype, bool auto_refit, bool only_this, uint8 num_vehicles)
+    RefitVehicle(TileIndex location, VehicleID veh_id, CargoID new_cid, byte new_subtype, bool auto_refit, bool only_this, uint8_t num_vehicles)
         :location{location}, veh_id{veh_id}, new_cid{new_cid}, new_subtype{new_subtype}, auto_refit{auto_refit}, only_this{only_this}, num_vehicles{num_vehicles} {}
     ~RefitVehicle() override {}
 
@@ -1088,11 +1082,11 @@ public:
 class ChangeServiceInt: public Command {
 public:
     VehicleID veh_id;
-    uint16 serv_int;
+    uint16_t serv_int;
     bool is_custom;
     bool is_percent;
 
-    ChangeServiceInt(VehicleID veh_id, uint16 serv_int, bool is_custom, bool is_percent)
+    ChangeServiceInt(VehicleID veh_id, uint16_t serv_int, bool is_custom, bool is_percent)
         :veh_id{veh_id}, serv_int{serv_int}, is_custom{is_custom}, is_percent{is_percent} {}
     ~ChangeServiceInt() override {}
 
@@ -1323,10 +1317,10 @@ public:
     bool ctrl_pressed;
     SignalType cycle_start;
     SignalType cycle_stop;
-    uint8 num_dir_cycle;
+    uint8_t num_dir_cycle;
     byte signals_copy;
 
-    BuildSingleSignal(TileIndex tile, Track track, SignalType sigtype, SignalVariant sigvar, bool convert_signal, bool skip_existing_signals, bool ctrl_pressed, SignalType cycle_start, SignalType cycle_stop, uint8 num_dir_cycle, byte signals_copy)
+    BuildSingleSignal(TileIndex tile, Track track, SignalType sigtype, SignalVariant sigvar, bool convert_signal, bool skip_existing_signals, bool ctrl_pressed, SignalType cycle_start, SignalType cycle_stop, uint8_t num_dir_cycle, byte signals_copy)
         :tile{tile}, track{track}, sigtype{sigtype}, sigvar{sigvar}, convert_signal{convert_signal}, skip_existing_signals{skip_existing_signals}, ctrl_pressed{ctrl_pressed}, cycle_start{cycle_start}, cycle_stop{cycle_stop}, num_dir_cycle{num_dir_cycle}, signals_copy{signals_copy} {}
     ~BuildSingleSignal() override {}
 
@@ -1420,10 +1414,10 @@ public:
 
 class GiveMoney: public Command {
 public:
-    uint32 money;
+    Money money;
     CompanyID dest_company;
 
-    GiveMoney(uint32 money, CompanyID dest_company)
+    GiveMoney(Money money, CompanyID dest_company)
         :money{money}, dest_company{dest_company} {}
     ~GiveMoney() override {}
 
@@ -1522,10 +1516,10 @@ public:
     bool city;
     TownLayout layout;
     bool random_location;
-    uint32 townnameparts;
+    uint32_t townnameparts;
     const std::string & text;
 
-    FoundTown(TileIndex tile, TownSize size, bool city, TownLayout layout, bool random_location, uint32 townnameparts, const std::string & text)
+    FoundTown(TileIndex tile, TownSize size, bool city, TownLayout layout, bool random_location, uint32_t townnameparts, const std::string & text)
         :tile{tile}, size{size}, city{city}, layout{layout}, random_location{random_location}, townnameparts{townnameparts}, text{text} {}
     ~FoundTown() override {}
 
@@ -1552,9 +1546,9 @@ class DoTownAction: public Command {
 public:
     TileIndex location;
     TownID town_id;
-    uint8 action;
+    uint8_t action;
 
-    DoTownAction(TileIndex location, TownID town_id, uint8 action)
+    DoTownAction(TileIndex location, TownID town_id, uint8_t action)
         :location{location}, town_id{town_id}, action{action} {}
     ~DoTownAction() override {}
 
@@ -1566,9 +1560,9 @@ public:
 class TownGrowthRate: public Command {
 public:
     TownID town_id;
-    uint16 growth_rate;
+    uint16_t growth_rate;
 
-    TownGrowthRate(TownID town_id, uint16 growth_rate)
+    TownGrowthRate(TownID town_id, uint16_t growth_rate)
         :town_id{town_id}, growth_rate{growth_rate} {}
     ~TownGrowthRate() override {}
 
@@ -1581,9 +1575,9 @@ class TownRating: public Command {
 public:
     TownID town_id;
     CompanyID company_id;
-    int16 rating;
+    int16_t rating;
 
-    TownRating(TownID town_id, CompanyID company_id, int16 rating)
+    TownRating(TownID town_id, CompanyID company_id, int16_t rating)
         :town_id{town_id}, company_id{company_id}, rating{rating} {}
     ~TownRating() override {}
 
@@ -1595,11 +1589,11 @@ public:
 class TownCargoGoal: public Command {
 public:
     TownID town_id;
-    TownEffect te;
-    uint32 goal;
+    TownAcceptanceEffect tae;
+    uint32_t goal;
 
-    TownCargoGoal(TownID town_id, TownEffect te, uint32 goal)
-        :town_id{town_id}, te{te}, goal{goal} {}
+    TownCargoGoal(TownID town_id, TownAcceptanceEffect tae, uint32_t goal)
+        :town_id{town_id}, tae{tae}, goal{goal} {}
     ~TownCargoGoal() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1624,9 +1618,9 @@ public:
 class ExpandTown: public Command {
 public:
     TownID town_id;
-    uint32 grow_amount;
+    uint32_t grow_amount;
 
-    ExpandTown(TownID town_id, uint32 grow_amount)
+    ExpandTown(TownID town_id, uint32_t grow_amount)
         :town_id{town_id}, grow_amount{grow_amount} {}
     ~ExpandTown() override {}
 
@@ -1666,11 +1660,11 @@ class BuildIndustry: public Command {
 public:
     TileIndex tile;
     IndustryType it;
-    uint32 first_layout;
+    uint32_t first_layout;
     bool fund;
-    uint32 seed;
+    uint32_t seed;
 
-    BuildIndustry(TileIndex tile, IndustryType it, uint32 first_layout, bool fund, uint32 seed)
+    BuildIndustry(TileIndex tile, IndustryType it, uint32_t first_layout, bool fund, uint32_t seed)
         :tile{tile}, it{it}, first_layout{first_layout}, fund{fund}, seed{seed} {}
     ~BuildIndustry() override {}
 
@@ -1679,17 +1673,59 @@ public:
     Commands get_command() override;
 };
 
-class IndustryCtrl: public Command {
+class IndustrySetFlags: public Command {
 public:
     IndustryID ind_id;
-    IndustryAction action;
     IndustryControlFlags ctlflags;
+
+    IndustrySetFlags(IndustryID ind_id, IndustryControlFlags ctlflags)
+        :ind_id{ind_id}, ctlflags{ctlflags} {}
+    ~IndustrySetFlags() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class IndustrySetExclusivity: public Command {
+public:
+    IndustryID ind_id;
     Owner company_id;
+    bool consumer;
+
+    IndustrySetExclusivity(IndustryID ind_id, Owner company_id, bool consumer)
+        :ind_id{ind_id}, company_id{company_id}, consumer{consumer} {}
+    ~IndustrySetExclusivity() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class IndustrySetText: public Command {
+public:
+    IndustryID ind_id;
     const std::string & text;
 
-    IndustryCtrl(IndustryID ind_id, IndustryAction action, IndustryControlFlags ctlflags, Owner company_id, const std::string & text)
-        :ind_id{ind_id}, action{action}, ctlflags{ctlflags}, company_id{company_id}, text{text} {}
-    ~IndustryCtrl() override {}
+    IndustrySetText(IndustryID ind_id, const std::string & text)
+        :ind_id{ind_id}, text{text} {}
+    ~IndustrySetText() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class IndustrySetProduction: public Command {
+public:
+    IndustryID ind_id;
+    byte prod_level;
+    bool show_news;
+    const std::string & text;
+
+    IndustrySetProduction(IndustryID ind_id, byte prod_level, bool show_news, const std::string & text)
+        :ind_id{ind_id}, prod_level{prod_level}, show_news{show_news}, text{text} {}
+    ~IndustrySetProduction() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
@@ -1702,9 +1738,9 @@ public:
     VehicleID veh;
     VehicleOrderID sel_ord;
     ModifyOrderFlags mof;
-    uint16 data;
+    uint16_t data;
 
-    ModifyOrder(TileIndex location, VehicleID veh, VehicleOrderID sel_ord, ModifyOrderFlags mof, uint16 data)
+    ModifyOrder(TileIndex location, VehicleID veh, VehicleOrderID sel_ord, ModifyOrderFlags mof, uint16_t data)
         :location{location}, veh{veh}, sel_ord{sel_ord}, mof{mof}, data{data} {}
     ~ModifyOrder() override {}
 
@@ -1878,6 +1914,20 @@ public:
     Commands get_command() override;
 };
 
+class SetCompanyMaxLoan: public Command {
+public:
+    CompanyID company;
+    Money amount;
+
+    SetCompanyMaxLoan(CompanyID company, Money amount)
+        :company{company}, amount{amount} {}
+    ~SetCompanyMaxLoan() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
 class Pause: public Command {
 public:
     PauseMode mode;
@@ -2028,9 +2078,10 @@ public:
     GroupID group_id;
     VehicleID veh_id;
     bool add_shared;
+    const VehicleListIdentifier & vli;
 
-    AddVehicleGroup(GroupID group_id, VehicleID veh_id, bool add_shared)
-        :group_id{group_id}, veh_id{veh_id}, add_shared{add_shared} {}
+    AddVehicleGroup(GroupID group_id, VehicleID veh_id, bool add_shared, const VehicleListIdentifier & vli)
+        :group_id{group_id}, veh_id{veh_id}, add_shared{add_shared}, vli{vli} {}
     ~AddVehicleGroup() override {}
 
     bool _post(::CommandCallback * callback) override;

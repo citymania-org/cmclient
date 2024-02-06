@@ -6225,7 +6225,6 @@ CM_STR_CONFIG_SETTING_IMPROVED_STATION_JOIN                     :Use improved st
 CM_STR_CONFIG_SETTING_IMPROVED_STATION_JOIN_HELPTEXT            :Use Ctrl-click on station tile to select or deselect station to join. If station has no tiles Ctrl-click its sign. Ctrl-click empty tile for a new station. Also recently built station is automatically selected as a station to join. {RED}Doesn't work if joining stations not directly adjacent(distant join) is not allowed in settings.
 
 CM_STR_CONFIG_SETTING_VEHICLES_CTRL                             :{ORANGE}Controls & Orders
-CM_STR_CONFIG_SETTING_ORDER_SHORTCUTS                           :{ORANGE}Order's Shortcuts
 CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                :"Transfer" orders are "No Loading" by default: {STRING2}
 CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                  :"Unload all" orders are "No Loading" by default: {STRING2}
 

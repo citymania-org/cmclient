@@ -454,7 +454,7 @@ void Town::UpdateVirtCoord()
 	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeTown(this->index));
 
 	SetWindowDirty(WC_TOWN_VIEW, this->index);
-	SetWindowDirty(WC_CB_TOWN, this->index);
+	SetWindowDirty(CM_WC_CB_TOWN, this->index);
 }
 
 /** Update the virtual coords needed to draw the town sign for all towns. */
@@ -873,7 +873,7 @@ static void GetTileDesc_Town(TileIndex tile, TileDesc *td)
 	bool house_completed = IsHouseCompleted(tile);
 
 	td->str = hs->building_name;
-	td->population = hs->population;
+	td->cm_population = hs->population;
 
 	uint16_t callback_res = GetHouseCallback(CBID_HOUSE_CUSTOM_NAME, house_completed ? 1 : 0, 0, house, Town::GetByTile(tile), tile);
 	if (callback_res != CALLBACK_FAILED && callback_res != 0x400) {
@@ -932,27 +932,27 @@ bool TownNeedsFunding(Town *t) {
 		if (!is_growing)
 			return false;
 
-		if (do_powerfund && t->grow_counter > 2 * TOWN_GROWTH_TICKS)
+		if (do_powerfund && t->grow_counter > 2 * Ticks::TOWN_GROWTH_TICKS)
 			return true;
 
 		return (fund_regularly &&
 		        t->fund_buildings_months == 0 && (
-			     	t->growth_rate <= 2 * TOWN_GROWTH_TICKS ||
-                	t->grow_counter > 2 * TOWN_GROWTH_TICKS
+			     	t->growth_rate <= 2 * Ticks::TOWN_GROWTH_TICKS ||
+                	t->grow_counter > 2 * Ticks::TOWN_GROWTH_TICKS
                 ));
 	}
 
 	if (!is_growing)
 		return true;
 
-	if (do_powerfund && t->grow_counter > 2 * TOWN_GROWTH_TICKS)
+	if (do_powerfund && t->grow_counter > 2 * Ticks::TOWN_GROWTH_TICKS)
 		return true;
 
 	return (fund_regularly &&
 	        t->fund_buildings_months == 0 &&
-		    t->growth_rate >= TOWN_GROWTH_TICKS && (
-		    	t->growth_rate <= 2 * TOWN_GROWTH_TICKS ||
-            	t->grow_counter > 2 * TOWN_GROWTH_TICKS
+		    t->growth_rate >= Ticks::TOWN_GROWTH_TICKS && (
+		    	t->growth_rate <= 2 * Ticks::TOWN_GROWTH_TICKS ||
+            	t->grow_counter > 2 * Ticks::TOWN_GROWTH_TICKS
             ));
 }
 
@@ -964,16 +964,16 @@ static void DoRegularFunding(Town *t)
 	if (!TownNeedsFunding(t))
 		return;
 
-	/* never fund faster than every TOWN_GROWTH_TICKS */
-	if (_tick_counter < t->last_funding) {
-		if (UINT32_MAX - t->last_funding + _tick_counter < TOWN_GROWTH_TICKS) return;
-	} else if (_tick_counter - t->last_funding < TOWN_GROWTH_TICKS) return;
+	/* never fund faster than every Ticks::TOWN_GROWTH_TICKS */
+	if (TimerGameTick::counter < t->last_funding) {
+		if (UINT32_MAX - t->last_funding + TimerGameTick::counter < Ticks::TOWN_GROWTH_TICKS) return;
+	} else if (TimerGameTick::counter - t->last_funding < Ticks::TOWN_GROWTH_TICKS) return;
 
 	citymania::cmd::DoTownAction(t->xy, t->index, HK_FUND)
 		.no_estimate()
 		.as_company(_local_company)
 		.post();
-	t->last_funding = _tick_counter;
+	t->last_funding = TimerGameTick::counter;
 }
 
 static void DoRegularAdvertising(Town *t) {
@@ -1000,10 +1000,10 @@ static void DoRegularAdvertising(Town *t) {
 		return;
 
 	// don't advertise faster that once per 30 ticks
-	if (_tick_counter < t->last_advertisement) {
-		if (UINT32_MAX - t->last_advertisement + _tick_counter < 30) return;
-	} else if (_tick_counter - t->last_advertisement < 30) return;
-	t->last_advertisement = _tick_counter;
+	if (TimerGameTick::counter < t->last_advertisement) {
+		if (UINT32_MAX - t->last_advertisement + TimerGameTick::counter < 30) return;
+	} else if (TimerGameTick::counter - t->last_advertisement < 30) return;
+	t->last_advertisement = TimerGameTick::counter;
 
 	auto prev_rating = t->ad_ref_goods_entry->rating;
 	citymania::cmd::DoTownAction(t->xy, t->index, HK_LADVERT)
@@ -2134,16 +2134,17 @@ uint CB_GetFrom(CargoID cargo){
 uint CB_GetDecay(CargoID cargo){
 	return CBDECAY[cargo];
 }
+
 int CB_GetTownReq(uint population, uint req, uint from, bool from_non_important, bool prev_month)
 {
 	if (req > 0 && (population >= from || from_non_important)) {
 		uint leap = 0;
-		Month month = _cur_month;
+		auto month = TimerGameEconomy::month;
 		if (!prev_month) month++;
-		if(month == 2){
-			if((_cur_year % 4 == 0 && _cur_year % 100 != 0) || _cur_year % 400 == 0) leap = 1;
+		if(month == 1) {
+			if((TimerGameEconomy::year.base() % 4 == 0 && TimerGameEconomy::year.base() % 100 != 0) || TimerGameEconomy::year.base() % 400 == 0) leap = 1;
 		}
-		uint days_this_month = days_in_month[month] + leap;
+		uint days_this_month = days_in_month[month + 1] + leap;
 		// x cargo for 1000 people
 		return population * req * days_this_month / 31000; // 31 days divide by 1000 (pop)
 	}
@@ -3310,7 +3311,7 @@ CommandCost CmdTownGrowthRate(DoCommandFlag flags, TownID town_id, uint16_t grow
 		}
 		UpdateTownGrowth(t);
 		InvalidateWindowData(WC_TOWN_VIEW, town_id);
-		InvalidateWindowData(WC_CB_TOWN, town_id);
+		InvalidateWindowData(CM_WC_CB_TOWN, town_id);
 	}
 
 	return CommandCost();
@@ -3674,7 +3675,7 @@ static CommandCost TownActionFundBuildings(Town *t, DoCommandFlag flags)
 		t->grow_counter = std::min<uint16_t>(t->grow_counter, 2 * Ticks::TOWN_GROWTH_TICKS - (t->growth_rate - t->grow_counter) % Ticks::TOWN_GROWTH_TICKS);
 
 		SetWindowDirty(WC_TOWN_VIEW, t->index);
-		SetWindowDirty(WC_CB_TOWN, t->index);
+		SetWindowDirty(CM_WC_CB_TOWN, t->index);
 	}
 	return CommandCost();
 }
@@ -3977,7 +3978,7 @@ static void UpdateTownGrowth(Town *t)
 
 	ClrBit(t->flags, TOWN_IS_GROWING);
 	SetWindowDirty(WC_TOWN_VIEW, t->index);
-	SetWindowDirty(WC_CB_TOWN, t->index);
+	SetWindowDirty(CM_WC_CB_TOWN, t->index);
 	t->cm.growing_by_chance = false;
 
 	if (_settings_game.economy.town_growth_rate == 0 && t->fund_buildings_months == 0) return;
@@ -4002,7 +4003,7 @@ static void UpdateTownGrowth(Town *t)
 	if (HasBit(t->flags, TOWN_CUSTOM_GROWTH)) {
 		if (t->growth_rate != TOWN_GROWTH_RATE_NONE) SetBit(t->flags, TOWN_IS_GROWING);
 		SetWindowDirty(WC_TOWN_VIEW, t->index);
-		SetWindowDirty(WC_CB_TOWN, t->index);
+		SetWindowDirty(CM_WC_CB_TOWN, t->index);
 		return;
 	}
 
@@ -4013,7 +4014,7 @@ static void UpdateTownGrowth(Town *t)
 
 	SetBit(t->flags, TOWN_IS_GROWING);
 	SetWindowDirty(WC_TOWN_VIEW, t->index);
-	SetWindowDirty(WC_CB_TOWN, t->index);
+	SetWindowDirty(CM_WC_CB_TOWN, t->index);
 }
 
 /**
@@ -4241,7 +4242,7 @@ static IntervalTimer<TimerGameEconomy> _economy_towns_monthly({TimerGameEconomy:
 		/* CityMania code end */
 
 		SetWindowDirty(WC_TOWN_VIEW, t->index);
-		SetWindowDirty(WC_CB_TOWN, t->index);
+		SetWindowDirty(CM_WC_CB_TOWN, t->index);
 	}
 });
 

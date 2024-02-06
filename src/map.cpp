@@ -66,7 +66,7 @@ extern "C" _CRTIMP void __cdecl _assert(void *, void *, unsigned);
 	Tile::extended_tiles = CallocT<Tile::TileExtended>(Map::size);
 
 	AllocateWaterRegions();
-	citymania::AllocateZoningMap(_map_size);
+	citymania::AllocateZoningMap(Map::size);
 }
 
 

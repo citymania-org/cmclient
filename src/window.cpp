@@ -895,7 +895,7 @@ void DrawOverlappedWindow(Window *w, int left, int top, int right, int bottom, D
 	dp->dst_ptr = BlitterFactory::GetCurrentBlitter()->MoveTo(_screen.dst_ptr, left, top);
 	dp->zoom = ZOOM_LVL_NORMAL;
 	w->OnPaint();
-	if (unlikely(flags & DOWF_SHOW_DEBUG)) {
+	if (flags & DOWF_SHOW_DEBUG) [[ unlikely ]] {
 		extern void ViewportDrawDirtyBlocks();
 		ViewportDrawDirtyBlocks();
 	}
@@ -3567,7 +3567,7 @@ WindowPopup::WindowPopup(WindowDesc *desc, WindowPopupType t): Window(desc)
 				y = _cursor.pos.y - wid->pos_y + this->wpu_mod_y;
 				break;
 			}
-			FALLTHROUGH;  // suppress warning, no idea if it's actually correct
+			[[ fallthrough ]];  // suppress warning, no idea if it's actually correct
 		case WPUT_ORIGIN:
 		default:
 			x = _cursor.pos.x + this->wpu_mod_x;

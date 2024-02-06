@@ -28,11 +28,11 @@ static const NWidgetPart _nested_land_tooltips_widgets[] = {
     NWidget(WWT_PANEL, COLOUR_GREY, 0), SetMinimalSize(64, 32), EndContainer(),
 };
 
-static WindowDesc _land_tooltips_desc(
-    WDP_MANUAL, NULL, 0, 0,
+static WindowDesc _land_tooltips_desc(__FILE__, __LINE__,
+    WDP_MANUAL, nullptr, 0, 0,
     CM_WC_LAND_TOOLTIPS, WC_NONE,
     0,
-    _nested_land_tooltips_widgets, lengthof(_nested_land_tooltips_widgets)
+    std::begin(_nested_land_tooltips_widgets), std::end(_nested_land_tooltips_widgets)
 );
 
 
@@ -66,11 +66,11 @@ struct LandTooltipsWindow : public Window
     virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
     {
         uint icon_size = ScaleGUITrad(10);
-        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + WidgetDimensions::scaled.hsep_normal;
-        uint text_height = FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.hsep_normal;
+        uint line_height = std::max((uint)GetCharacterHeight(FS_NORMAL), icon_size) + WidgetDimensions::scaled.hsep_normal;
+        uint text_height = GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.hsep_normal;
         uint icons_width = icon_size * 3 + WidgetDimensions::scaled.vsep_normal;
         size->width = ScaleGUITrad(194);
-        size->height = FONT_HEIGHT_NORMAL;
+        size->height = GetCharacterHeight(FS_NORMAL);
         switch(this->tiletype) {
             case MP_HOUSE: {
                 const HouseSpec *hs = HouseSpec::Get((HouseID)this->objIndex);
@@ -89,15 +89,15 @@ struct LandTooltipsWindow : public Window
                 SetDParam(0, ind->index);
                 size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME).width, size->width);
 
-                for (CargoID i = 0; i < lengthof(ind->produced_cargo); i++) {
-                    if (ind->produced_cargo[i] == CT_INVALID) continue;
-                    const CargoSpec *cs = CargoSpec::Get(ind->produced_cargo[i]);
+                for (auto &p : ind->produced) {
+                    if (p.cargo == CT_INVALID) continue;
+                    const CargoSpec *cs = CargoSpec::Get(p.cargo);
                     if(cs == NULL) continue;
                     size->height += line_height;
                     SetDParam(0, cs->name);
                     SetDParam(1, cs->Index());
-                    SetDParam(2, ind->last_month_production[i]);
-                    SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
+                    SetDParam(2, p.history[LAST_MONTH].production);
+                    SetDParam(3, ToPercent8(p.history[LAST_MONTH].PctTransported()));
                     size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO).width + icons_width, size->width);
                 }
                 break;
@@ -132,10 +132,10 @@ struct LandTooltipsWindow : public Window
     virtual void DrawWidget(const Rect &r, int widget) const
     {
         uint icon_size = ScaleGUITrad(10);
-        uint line_height = std::max((uint)FONT_HEIGHT_NORMAL, icon_size) + WidgetDimensions::scaled.hsep_normal;
-        uint text_height = FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.hsep_normal;
+        uint line_height = std::max((uint)GetCharacterHeight(FS_NORMAL), icon_size) + WidgetDimensions::scaled.hsep_normal;
+        uint text_height = GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.hsep_normal;
         uint icons_width = icon_size * 3 + WidgetDimensions::scaled.vsep_normal;
-        uint text_ofs = (line_height - FONT_HEIGHT_NORMAL) >> 1;
+        uint text_ofs = (line_height - GetCharacterHeight(FS_NORMAL)) >> 1;
         uint icon_ofs = (line_height - icon_size) >> 1;
 
         GfxFillRect(r.left, r.top, r.right, r.top + WidgetDimensions::scaled.bevel.top - 1, PC_BLACK);
@@ -164,14 +164,14 @@ struct LandTooltipsWindow : public Window
                 DrawString(ir, CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME, TC_BLACK, SA_CENTER);
                 ir.top += text_height;
 
-                for (CargoID i = 0; i < lengthof(ind->produced_cargo); i++) {
-                    if (ind->produced_cargo[i] == CT_INVALID) continue;
-                    const CargoSpec *cs = CargoSpec::Get(ind->produced_cargo[i]);
+                for (auto &p : ind->produced) {
+                    if (p.cargo == CT_INVALID) continue;
+                    const CargoSpec *cs = CargoSpec::Get(p.cargo);
                     if(cs == NULL) continue;
                     SetDParam(0, cs->name);
                     SetDParam(1, cs->Index());
-                    SetDParam(2, ind->last_month_production[i]);
-                    SetDParam(3, ToPercent8(ind->last_month_pct_transported[i]));
+                    SetDParam(2, p.history[LAST_MONTH].production);
+                    SetDParam(3, ToPercent8(p.history[LAST_MONTH].PctTransported()));
 
                     this->DrawSpriteIcons(cs->GetCargoIcon(), ir.left, ir.top + icon_ofs);
                     DrawString(ir.left + icons_width, ir.right, ir.top + text_ofs, CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO);
@@ -264,11 +264,11 @@ static const NWidgetPart _nested_station_rating_tooltip_widgets[] = {
     NWidget(WWT_PANEL, COLOUR_GREY, 0), SetMinimalSize(64, 32), EndContainer(),
 };
 
-static WindowDesc _station_rating_tooltip_desc(
+static WindowDesc _station_rating_tooltip_desc(__FILE__, __LINE__,
     WDP_MANUAL, NULL, 0, 0,
     WC_STATION_RATING_TOOLTIP, WC_NONE,
     0,
-    _nested_station_rating_tooltip_widgets, lengthof(_nested_station_rating_tooltip_widgets)
+    std::begin(_nested_station_rating_tooltip_widgets), std::end(_nested_station_rating_tooltip_widgets)
 );
 
 static const int STATION_RATING_AGE[] = {0, 10, 20, 33};
@@ -285,12 +285,10 @@ struct StationRatingTooltipWindow : public Window
     const CargoSpec *cs;
     bool newgrf_rating_used;
 
-    static const uint RATING_TOOLTIP_LINE_BUFF_SIZE = 512;
-    static const uint RATING_TOOLTIP_MAX_LINES = 8;
     static const uint RATING_TOOLTIP_NEWGRF_INDENT = 20;
 
 public:
-    char data[RATING_TOOLTIP_MAX_LINES + 1][RATING_TOOLTIP_LINE_BUFF_SIZE];
+    std::vector<std::string> data;
 
     StationRatingTooltipWindow(Window *parent, const Station *st, const CargoSpec *cs, TooltipCloseCondition close_cond) : Window(&_station_rating_tooltip_desc)
     {
@@ -318,14 +316,12 @@ public:
     }
 
     void OnInit() override {
+        this->data.clear();
         const GoodsEntry *ge = &this->st->goods[this->cs->Index()];
 
         SetDParam(0, this->cs->name);
-        GetString(this->data[0], CM_STR_STATION_RATING_TOOLTIP_RATING_DETAILS, lastof(this->data[0]));
-        if (!ge->HasRating()) {
-            this->data[1][0] = '\0';
-            return;
-        }
+        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_RATING_DETAILS));
+        if (!ge->HasRating()) { return; }
 
         uint line_nr = 1;
         int total_rating = 0;
@@ -349,20 +345,16 @@ public:
 
                 SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_0 + (newgrf_rating <= 0 ? 0 : 1));
                 SetDParam(1, newgrf_rating);
-                GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING, lastof(this->data[line_nr]));
-                line_nr++;
+                this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING));
 
                 SetDParam(0, std::min<uint>(last_speed, 0xFF));
-                GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED, lastof(this->data[line_nr]));
-                line_nr++;
+                this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED));
 
                 SetDParam(0, std::min<uint>(ge->max_waiting_cargo, 0xFFFF));
-                GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS, lastof(this->data[line_nr]));
-                line_nr++;
+                this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS));
 
                 SetDParam(0, (std::min<uint>(ge->time_since_pickup, 0xFF) * 5 + 1) / 2);
-                GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME, lastof(this->data[line_nr]));
-                line_nr++;
+                this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME));
             }
         }
 
@@ -381,8 +373,7 @@ public:
             SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_WAITTIME_0 + waittime_stage);
             SetDParam(1, (ge->time_since_pickup * 5 + 1) / 2);
             SetDParam(2, this->RoundRating(STATION_RATING_WAITTIME[waittime_stage]));
-            GetString(this->data[line_nr], this->st->last_vehicle_type == VEH_SHIP ? CM_STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP : CM_STR_STATION_RATING_TOOLTIP_WAITTIME, lastof(this->data[line_nr]));
-            line_nr++;
+            this->data.push_back(GetString(this->st->last_vehicle_type == VEH_SHIP ? CM_STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP : CM_STR_STATION_RATING_TOOLTIP_WAITTIME));
 
             uint waitunits = ge->max_waiting_cargo;
             int waitunits_stage = 0;
@@ -397,8 +388,7 @@ public:
             SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_WAITUNITS_0 + waitunits_stage);
             SetDParam(1, ge->max_waiting_cargo);
             SetDParam(2, this->RoundRating(STATION_RATING_WAITUNITS[waitunits_stage]));
-            GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_WAITUNITS, lastof(this->data[line_nr]));
-            line_nr++;
+            this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_WAITUNITS));
 
             int b = ge->last_speed - 85;
             int r_speed = b >= 0 ? b >> 2 : 0;
@@ -414,8 +404,7 @@ public:
             SetDParam(0, ge->last_speed == 255 ? CM_STR_STATION_RATING_TOOLTIP_SPEED_MAX : CM_STR_STATION_RATING_TOOLTIP_SPEED_0 + r_speed / 11);
             SetDParam(1, ge->last_speed);
             SetDParam(2, r_speed_round);
-            GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_SPEED, lastof(this->data[line_nr]));
-            line_nr++;
+            this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_SPEED));
         }
 
         int age_stage = (ge->last_age >= 3 ? 0 : 3 - ge->last_age);
@@ -423,8 +412,7 @@ public:
         SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_AGE_0 + age_stage);
         SetDParam(1, ge->last_age);
         SetDParam(2, this->RoundRating(STATION_RATING_AGE[age_stage]));
-        GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_AGE, lastof(this->data[line_nr]));
-        line_nr++;
+        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_AGE));
 
         if (Company::IsValidID(st->owner) && HasBit(st->town->statues, st->owner)) {
             SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_STATUE_YES);
@@ -432,27 +420,21 @@ public:
         } else {
             SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_STATUE_NO);
         }
-        GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_STATUE, lastof(this->data[line_nr]));
-        line_nr++;
+        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_STATUE));
 
         SetDParam(0, ToPercent8(Clamp(total_rating, 0, 255)));
-        GetString(this->data[line_nr], CM_STR_STATION_RATING_TOOLTIP_TOTAL_RATING, lastof(this->data[line_nr]));
-        line_nr++;
-
-        this->data[line_nr][0] = '\0';
+        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_TOTAL_RATING));
     }
 
     void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
     {
         size->height = WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
-        for (uint i = 0; i <= RATING_TOOLTIP_MAX_LINES; i++) {
-            if (StrEmpty(this->data[i])) break;
-
+        for (uint i = 0; i < data.size(); i++) {
             uint width = GetStringBoundingBox(this->data[i]).width + WidgetDimensions::scaled.framerect.Horizontal() + WidgetDimensions::scaled.fullbevel.Horizontal();
             if (this->newgrf_rating_used && i >= 2 && i <= 4)
                 width += RATING_TOOLTIP_NEWGRF_INDENT;
             size->width = std::max(size->width, width);
-            size->height += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.hsep_normal;
+            size->height += GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.hsep_normal;
         }
         size->height -= WidgetDimensions::scaled.hsep_normal;
     }
@@ -467,12 +449,11 @@ public:
         auto ir = r.Shrink(WidgetDimensions::scaled.framerect).Shrink(WidgetDimensions::scaled.bevel);
 
         DrawString(ir, this->data[0], TC_LIGHT_BLUE, SA_CENTER);
-        ir.top += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
-        for (uint i = 1; i <= RATING_TOOLTIP_MAX_LINES; i++) {
-            if (StrEmpty(this->data[i])) break;
+        ir.top += GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal;
+        for (uint i = 1; i < data.size(); i++) {
             auto indent = (this->newgrf_rating_used && i >= 2 && i <= 4 ? RATING_TOOLTIP_NEWGRF_INDENT : 0);
             DrawString(ir.Indent(indent, _current_text_dir == TD_RTL), this->data[i], TC_BLACK);
-            ir.top += FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal;
+            ir.top += GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal;
         }
     }
 

@@ -997,7 +997,17 @@ struct GameOptionsWindow : Window {
 		}
 	}
 
-	static HotkeyList hotkeys;
+	static EventState GameOptionsWindowGlobalHotkeys(int hotkey) {
+		if (!ToggleFullScreen(!_fullscreen)) {
+			ShowErrorMessage(STR_ERROR_FULLSCREEN_FAILED, INVALID_STRING_ID, WL_ERROR);
+		}
+		return ES_HANDLED;
+	}
+
+	static inline HotkeyList hotkeys{"cm_game_options", {
+		Hotkey((uint16)0, "toggle_fullscreen", WID_GO_FULLSCREEN_BUTTON),
+	}, GameOptionsWindowGlobalHotkeys};
+
 };
 
 static constexpr NWidgetPart _nested_game_options_widgets[] = {
@@ -1175,26 +1185,12 @@ static constexpr NWidgetPart _nested_game_options_widgets[] = {
 	EndContainer(),
 };
 
-
-TODO
-static EventState GameOptionsWindowGlobalHotkeys(int hotkey) {
-	if (!ToggleFullScreen(!_fullscreen)) {
-		ShowErrorMessage(STR_ERROR_FULLSCREEN_FAILED, INVALID_STRING_ID, WL_ERROR);
-	}
-	return ES_HANDLED;
-}
-
-static Hotkey game_options_hotkeys[] = {
-	Hotkey((uint16)0, "toggle_fullscreen", WID_GO_FULLSCREEN_BUTTON),
-	HOTKEY_LIST_END
-};
-HotkeyList GameOptionsWindow::hotkeys("game_options", game_options_hotkeys, GameOptionsWindowGlobalHotkeys);
-
-static WindowDesc _game_options_desc(
+static WindowDesc _game_options_desc(__FILE__, __LINE__,
 	WDP_CENTER, "cm_game_options", 0, 0,
 	WC_GAME_OPTIONS, WC_NONE,
 	0,
-	std::begin(_nested_game_options_widgets), std::end(_nested_game_options_widgets)
+	std::begin(_nested_game_options_widgets), std::end(_nested_game_options_widgets),
+	&GameOptionsWindow::hotkeys
 );
 
 /** Open the game options window. */
@@ -2166,7 +2162,6 @@ static SettingsContainer &GetSettingsTree()
 				routing->Add(new SettingEntry("pf.pathfinder_for_roadvehs"));
 				routing->Add(new SettingEntry("pf.pathfinder_for_ships"));
 			}
-			TODO REMOVE CM_STR_CONFIG_SETTING_ORDER_SHORTCUTS
 			SettingsPage *orders = vehicles->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES_ORDERS));
 			{
 				orders->Add(new SettingEntry("gui.new_nonstop"));

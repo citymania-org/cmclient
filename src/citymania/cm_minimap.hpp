@@ -3,7 +3,12 @@
 
 #include "../smallmap_gui.h"
 #include "../core/endian_func.hpp"
+#include "../timer/timer.h"
+#include "../timer/timer_window.h"
+#include "../blitter/base.hpp"
+#include "../industry.h"
 
+extern CompanyID _local_company;
 
 namespace citymania {
 
@@ -51,6 +56,17 @@ void minimap_init_industries();
 
 class NWidgetSmallmapDisplay;
 
+struct LegendAndColour {
+    uint8_t colour;            ///< Colour of the item on the map.
+    StringID legend;           ///< String corresponding to the coloured item.
+    IndustryType type;         ///< Type of industry. Only valid for industry entries.
+    uint8_t height;            ///< Height in tiles. Only valid for height legend entries.
+    CompanyID company;         ///< Company to display. Only valid for company entries of the owner legend.
+    bool show_on_map;          ///< For filtering industries, if \c true, industry is shown on the map in colour.
+    bool end;                  ///< This is the end of the list.
+    bool col_break;            ///< Perform a column break and go further at the next column.
+};
+
 /** Class managing the smallmap window. */
 class SmallMapWindow : public Window {
 protected:
@@ -94,7 +110,6 @@ protected:
     int ui_zoom;        ///< Zoom level. Bigger number means more zoom-out (further away).
     int zoom = 1;        ///< Zoom level. Bigger number means more zoom-out (further away).
 
-    GUITimer refresh; ///< Refresh timer.
     LinkGraphOverlay *overlay;
 
     struct {
@@ -161,7 +176,7 @@ protected:
     inline uint GetLegendHeight(uint num_columns) const
     {
         return WidgetDimensions::scaled.framerect.Vertical() +
-                this->GetNumberRowsLegend(num_columns) * FONT_HEIGHT_SMALL;
+                this->GetNumberRowsLegend(num_columns) * GetCharacterHeight(FS_SMALL);
     }
 
     /**
@@ -174,6 +189,19 @@ protected:
         return Company::IsValidID(_local_company) ? 1U << _local_company : 0xffffffff;
     }
 
+    /** Blink the industries (if selected) on a regular interval. */
+    IntervalTimer<TimerWindow> blink_interval = {std::chrono::milliseconds(450), [this](auto) {
+        Blink();
+    }};
+
+    /** Update the whole map on a regular interval. */
+    IntervalTimer<TimerWindow> refresh_interval = {std::chrono::milliseconds(930), [this](auto) {
+        ForceRefresh();
+    }};
+
+    void UpdateLinks();
+    void Blink();
+    void ForceRefresh();
     void RebuildColourIndexIfNecessary();
     uint GetNumberRowsLegend(uint columns) const;
     void SelectLegendItem(int click_pos, LegendAndColour *legend, int end_legend_item, int begin_legend_item = 0);
@@ -216,7 +244,7 @@ public:
     bool OnRightClick(Point pt, int widget) override;
     void OnMouseWheel(int wheel) override;
     void OnRealtimeTick(uint delta_ms) override;
-    void OnHundredthTick() override;
+    // void OnHundredthTick() override;
     void OnScroll(Point delta) override;
     void OnMouseOver(Point pt, int widget) override;
 };
