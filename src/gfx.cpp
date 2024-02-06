@@ -101,8 +101,8 @@ void GfxScroll(int left, int top, int width, int height, int xo, int yo)
 
 	if (_cursor.visible) UndrawMouseCursor();
 
-	if (_networking) NetworkUndrawChatMessage();
 	if (_networking) citymania::UndrawClientList(left, top, left + width, top + height);
+	if (_networking) NetworkUndrawChatMessage();
 
 	blitter->ScrollBuffer(_screen.dst_ptr, left, top, width, height, xo, yo);
 	/* This part of the screen is now dirty. */
@@ -1412,8 +1412,8 @@ void RedrawScreenRect(int left, int top, int right, int bottom)
 		}
 	}
 
-	if (_networking) NetworkUndrawChatMessage();
 	if (_networking) citymania::UndrawClientList(left, top, right, bottom);
+	if (_networking) NetworkUndrawChatMessage();
 
 	DrawOverlappedWindowForAll(left, top, right, bottom);
 
@@ -1510,6 +1510,7 @@ void DrawDirtyBlocks()
 		auto clear_overlays = [&]() {
 			if (cleared_overlays) return;
 			if (_cursor.visible) UndrawMouseCursor();
+			if (_networking) citymania::UndrawClientList(0, 0, _screen.width, _screen.height);
 			if (_networking) NetworkUndrawChatMessage();
 			cleared_overlays = true;
 		};
