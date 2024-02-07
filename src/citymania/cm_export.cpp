@@ -3,16 +3,19 @@
 #include "cm_export.hpp"
 
 #include "../cargotype.h"
+#include "../house.h"  // NUM_HOUSES and HZ_* for _town_land.h
 #include "../gfx_func.h"
 #include "../gfx_type.h"
 #include "../engine_base.h"
-#include "../palette_func.h"  // CM _colour_gradient
+#include "../palette_func.h"  // _colour_gradient
 #include "../spritecache.h"
 #include "../strings_func.h"
 #include "../strings_type.h"
 #include "../table/palettes.h"
 #include "../table/sprites.h"
+#include "../table/strings.h"  // for town_land.h
 #include "../table/train_sprites.h"
+#include "../table/town_land.h"  // _town_draw_tile_data
 
 #include <iostream>
 #include <fstream>
@@ -139,6 +142,41 @@ public:
 #define JKV(j, field) j.kv(#field, field)
 
 void WriteHouseSpecInfo(JsonWriter &j) {
+    j.begin_list_with_key("house_specs");
+    for (uint i = 0; i < NUM_HOUSES; i++) {
+        const HouseSpec *hs = HouseSpec::Get(i);
+        j.begin_dict();
+        j.kv("min_year", hs->min_year.base());
+        j.kv("max_year", hs->max_year.base());
+        j.kv("population", hs->population);
+        j.kv("removal_cost", hs->removal_cost);
+        j.kv("name", hs->building_name);
+        j.kv("mail_generation", hs->mail_generation);
+        j.kv("flags", hs->building_flags);
+        j.kv("availability", hs->building_availability);
+        j.kv("enabled", hs->enabled);
+        j.end_dict();
+    }
+    j.end_list();
+    j.begin_list_with_key("house_draw_tile_data");
+    for (auto &d : _town_draw_tile_data) {
+        j.begin_dict();
+        j.kv("ground_sprite", d.ground.sprite);
+        j.kv("ground_pal", d.ground.pal);
+        j.kv("building_sprite", d.building.sprite);
+        j.kv("building_pal", d.building.pal);
+        j.kv("subtile_x", d.subtile_x);
+        j.kv("subtile_y", d.subtile_y);
+        j.kv("width", d.width);
+        j.kv("height", d.height);
+        j.kv("dz", d.dz);
+        j.kv("draw_proc", d.draw_proc);
+        j.end_dict();
+    }
+    j.end_list();
+}
+
+void WriteCargoSpecInfo(JsonWriter &j) {
     j.begin_list_with_key("cargo_specs");
     const CargoSpec *cs;
     char buffer[128];
@@ -267,6 +305,7 @@ void WriteEngineInfo(JsonWriter &j) {
 void ExportOpenttdData(const std::string &filename) {
     data_export::JsonWriter j(filename);
     data_export::WriteHouseSpecInfo(j);
+    data_export::WriteCargoSpecInfo(j);
     data_export::WritePaletteInfo(j);
     data_export::WriteEngineInfo(j);
 }
