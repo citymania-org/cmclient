@@ -241,7 +241,7 @@ static void GenericPlaceSignals(TileIndex tile)
 		Command<CMD_REMOVE_SINGLE_SIGNAL>::Post(STR_ERROR_CAN_T_REMOVE_SIGNALS_FROM, CcPlaySound_CONSTRUCTION_RAIL, tile, track);
 	} else {
 		/* Which signals should we cycle through? */
-		bool tile_has_signal = IsValidTrack(track) && HasSignalOnTrack(tile, track);
+		bool tile_has_signal = IsPlainRailTile(tile) && IsValidTrack(track) && HasSignalOnTrack(tile, track);
 		SignalType cur_signal_on_tile = tile_has_signal ? GetSignalType(tile, track) : _cur_signal_type;
 		SignalType cycle_start;
 		SignalType cycle_end;
@@ -1693,12 +1693,9 @@ private:
 
 	/**
 	 * Draw dynamic a signal-sprite in a button in the signal GUI
-	 * Draw the sprite +1px to the right and down if the button is lowered
-	 *
-	 * @param widget_index index of this widget in the window
 	 * @param image        the sprite to draw
 	 */
-	void DrawSignalSprite(const Rect &r, WidgetID widget_index, SpriteID image) const
+	void DrawSignalSprite(const Rect &r, SpriteID image) const
 	{
 		Point offset;
 		Dimension sprite_size = GetSpriteSize(image, &offset);
@@ -1707,9 +1704,7 @@ private:
 		int y = ir.top - sig_sprite_bottom_offset +
 				(ir.Height() + sig_sprite_size.height) / 2; // aligned to bottom
 
-		DrawSprite(image, PAL_NONE,
-				x + this->IsWidgetLowered(widget_index),
-				y + this->IsWidgetLowered(widget_index));
+		DrawSprite(image, PAL_NONE, x, y);
 	}
 
 	/** Show or hide buttons for non-path signals in the signal GUI */
@@ -1786,7 +1781,7 @@ public:
 			int var = SIG_SEMAPHORE - (widget - WID_BS_SEMAPHORE_NORM) / SIGTYPE_END; // SignalVariant order is reversed compared to the widgets.
 			SpriteID sprite = GetRailTypeInfo(_cur_railtype)->gui_sprites.signals[type][var][this->IsWidgetLowered(widget)];
 
-			this->DrawSignalSprite(r, widget, sprite);
+			this->DrawSignalSprite(r, sprite);
 		}
 	}
 

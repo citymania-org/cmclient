@@ -24,22 +24,22 @@ extern NetworkClientSocketPool _networkclientsocket_pool;
 /** Class for handling the server side of the game connection. */
 class ServerNetworkGameSocketHandler : public NetworkClientSocketPool::PoolItem<&_networkclientsocket_pool>, public NetworkGameSocketHandler, public TCPListenHandler<ServerNetworkGameSocketHandler, PACKET_SERVER_FULL, PACKET_SERVER_BANNED> {
 protected:
-	NetworkRecvStatus Receive_CLIENT_JOIN(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_GAME_INFO(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_GAME_PASSWORD(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_COMPANY_PASSWORD(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_GETMAP(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_MAP_OK(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_ACK(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_COMMAND(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_CHAT(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_SET_PASSWORD(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_SET_NAME(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_QUIT(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_ERROR(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_RCON(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_NEWGRFS_CHECKED(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_MOVE(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_JOIN(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_GAME_INFO(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_GAME_PASSWORD(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_COMPANY_PASSWORD(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_GETMAP(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_MAP_OK(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_ACK(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_COMMAND(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_CHAT(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_SET_PASSWORD(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_SET_NAME(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_QUIT(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_ERROR(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_RCON(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_NEWGRFS_CHECKED(Packet &p) override;
+	NetworkRecvStatus Receive_CLIENT_MOVE(Packet &p) override;
 
 	NetworkRecvStatus SendGameInfo();
 	NetworkRecvStatus SendNewGRFCheck();
@@ -67,10 +67,10 @@ public:
 	byte last_token;             ///< The last random token we did send to verify the client is listening
 	uint32_t last_token_frame;     ///< The last frame we received the right token
 	ClientStatus status;         ///< Status of this client
-	CommandQueue outgoing_queue; ///< The command-queue awaiting delivery
+	CommandQueue outgoing_queue; ///< The command-queue awaiting delivery; conceptually more a bucket to gather commands in, after which the whole bucket is sent to the client.
 	size_t receive_limit;        ///< Amount of bytes that we can receive at this moment
 
-	struct PacketWriter *savegame; ///< Writer used to write the savegame.
+	std::shared_ptr<struct PacketWriter> savegame; ///< Writer used to write the savegame.
 	NetworkAddress client_address; ///< IP-address of the client (so they can be banned)
 
 	citymania::SavePreset cm_preset; ///< Preset to use for the savegame
@@ -78,7 +78,7 @@ public:
 	ServerNetworkGameSocketHandler(SOCKET s);
 	~ServerNetworkGameSocketHandler();
 
-	Packet *ReceivePacket() override;
+	std::unique_ptr<Packet> ReceivePacket() override;
 	NetworkRecvStatus CloseConnection(NetworkRecvStatus status) override;
 	std::string GetClientName() const;
 
@@ -100,7 +100,7 @@ public:
 	NetworkRecvStatus SendJoin(ClientID client_id);
 	NetworkRecvStatus SendFrame();
 	NetworkRecvStatus SendSync();
-	NetworkRecvStatus SendCommand(const CommandPacket *cp);
+	NetworkRecvStatus SendCommand(const CommandPacket &cp);
 	NetworkRecvStatus SendCompanyUpdate();
 	NetworkRecvStatus SendConfigUpdate();
 

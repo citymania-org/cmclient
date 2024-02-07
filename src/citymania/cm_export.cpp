@@ -163,11 +163,12 @@ void WriteHouseSpecInfo(JsonWriter &j) {
         j.ks("quantifier", cs->quantifier);
         j.ks("abbrev", cs->abbrev);
 
+        auto label = cs->label.base();
         for (uint i = 0; i < sizeof(cs->label); i++) {
-            cargo_label[i] = GB(cs->label, (uint8_t)(sizeof(cs->label) - i - 1) * 8, 8);
+            cargo_label[i] = GB(label, (uint8_t)(sizeof(label) - i - 1) * 8, 8);
         }
-        cargo_label[sizeof(cs->label)] = '\0';
-        JKV(j, cs->label);
+        cargo_label[sizeof(label)] = '\0';
+        JKV(j, label);
         j.kv("label_str", cargo_label);
         j.end_dict();
     }
