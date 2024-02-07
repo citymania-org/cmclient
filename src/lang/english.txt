@@ -6280,3 +6280,10 @@ CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
 CM_STR_NO_BLUEPRINT_IN_SLOT                                     :{WHITE}No blueprint in slot {NUM}
 CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania-Serverlogin
+CM_STR_BUILD_INFO_OVERLAY_COST_OK                               :{WHITE}Cost: {CURRENCY_LONG}
+CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY                         :{RED}Cost: {CURRENCY_LONG}
+CM_STR_BUILD_INFO_OVERLAY_STATION_ACCEPTS                       :{WHITE}Accepts:
+CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES                      :{WHITE}Supplies:
+CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO                         :{WHITE}{CARGO_LONG}
+CM_STR_BUILD_INFO_OVERLAY_ERROR                                 :{RED}{STRING}
+CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN                         :{RED}Unknown Error!

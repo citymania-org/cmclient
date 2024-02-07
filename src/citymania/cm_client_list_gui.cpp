@@ -25,7 +25,7 @@
 
 namespace citymania {
 
-bool Intersects(PointDimension rect, Point pos, Point size) {
+static bool Intersects(PointDimension rect, Point pos, Point size) {
     return (
         pos.x + size.x >= rect.x &&
         pos.x <= rect.x + rect.width &&
@@ -34,7 +34,7 @@ bool Intersects(PointDimension rect, Point pos, Point size) {
     );
 }
 
-bool Intersects(PointDimension rect, int left, int top, int right, int bottom) {
+static bool Intersects(PointDimension rect, int left, int top, int right, int bottom) {
     return (
         right >= rect.x &&
         left <= rect.x + rect.width &&

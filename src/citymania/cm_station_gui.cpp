@@ -586,7 +586,7 @@ CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
         {36, 48, 64, 96, 196}
     };
 
-    CargoArray produced;
+    CargoArray produced{};
     std::set<IndustryID> industries;
     TileArea ta = TileArea(tile, w, h).Expand(rad);
 
@@ -617,9 +617,8 @@ CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
         /* Skip industry with neutral station */
         if (i->neutral_station != nullptr && !_settings_game.station.serve_neutral_industries) continue;
 
-        for (auto &p : i->produced) {
-            CargoID cargo = p.cargo;
-            if (cargo != CT_INVALID) produced[p.cargo] += ((uint)p.history[LAST_MONTH].production) << 8;
+        for (const auto &p : i->produced) {
+            if (IsValidCargoID(p.cargo)) produced[p.cargo] += ((uint)p.history[LAST_MONTH].production) << 8;
         }
     }
 
@@ -633,18 +632,17 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
     s << GetString(CM_STR_STATION_BUILD_SUPPLIES);
     bool first = true;
     for (CargoID i = 0; i < NUM_CARGO; i++) {
+        if (production[i] == 0) continue;
         switch (sct) {
             case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CC_PASSENGERS)) continue; break;
             case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CC_PASSENGERS)) continue; break;
             case SCT_ALL: break;
             default: NOT_REACHED();
         }
-        if (production[i] == 0) continue;
         if (!first) s << ", ";
         first = false;
         SetDParam(0, i);
         SetDParam(1, production[i] >> 8);
-        // GetString(buffer, CM_STR_STATION_BUILD_SUPPLIES_CARGO, lastof(buffer));
         s << GetString(STR_JUST_CARGO);
     }
     return s.str();

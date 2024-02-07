@@ -42,8 +42,8 @@
 /* CityMania code start */
 #include <limits>
 #include "window_gui.h"
-#include "citymania/cm_client_list_gui.hpp"
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_overlays.hpp"
 #include "citymania/cm_tooltips.hpp"
 /* CityMania code end */
 
@@ -3095,7 +3095,7 @@ void UpdateWindows()
 		/* Update viewport only if window is not shaded. */
 		if (w->viewport != nullptr && !w->IsShaded()) UpdateViewportPosition(w, delta_ms.count());
 	}
-	citymania::DrawClientList();
+	citymania::DrawOverlays();
 	NetworkDrawChatMessage();
 	/* Redraw mouse cursor in case it was hidden */
 	DrawMouseCursor();

@@ -33,7 +33,7 @@
 #include "table/sprites.h"
 #include "table/control_codes.h"
 
-#include "citymania/cm_client_list_gui.hpp"
+#include "citymania/cm_overlays.hpp"
 
 #include "safeguards.h"
 
@@ -101,7 +101,7 @@ void GfxScroll(int left, int top, int width, int height, int xo, int yo)
 
 	if (_cursor.visible) UndrawMouseCursor();
 
-	if (_networking) citymania::UndrawClientList(left, top, left + width, top + height);
+	citymania::UndrawOverlays(left, top, left + width, top + height);
 	if (_networking) NetworkUndrawChatMessage();
 
 	blitter->ScrollBuffer(_screen.dst_ptr, left, top, width, height, xo, yo);
@@ -1412,7 +1412,7 @@ void RedrawScreenRect(int left, int top, int right, int bottom)
 		}
 	}
 
-	if (_networking) citymania::UndrawClientList(left, top, right, bottom);
+	citymania::UndrawOverlays(left, top, right, bottom);
 	if (_networking) NetworkUndrawChatMessage();
 
 	DrawOverlappedWindowForAll(left, top, right, bottom);
@@ -1510,7 +1510,7 @@ void DrawDirtyBlocks()
 		auto clear_overlays = [&]() {
 			if (cleared_overlays) return;
 			if (_cursor.visible) UndrawMouseCursor();
-			if (_networking) citymania::UndrawClientList(0, 0, _screen.width, _screen.height);
+			citymania::UndrawOverlays(0, 0, _screen.width, _screen.height);
 			if (_networking) NetworkUndrawChatMessage();
 			cleared_overlays = true;
 		};

@@ -9,6 +9,7 @@
 #include "../signal_type.h"
 #include "../station_map.h"
 #include "../station_type.h"
+#include "../station_gui.h"  // StationCoverageType
 #include "../tile_cmd.h"
 #include "../tile_type.h"
 #include "../track_type.h"
@@ -318,6 +319,8 @@ protected:
     bool tiles_updated = false;
     std::multimap<TileIndex, ObjectTileHighlight> tiles;
     std::vector<DetachedHighlight> sprites = {};
+    std::vector<std::pair<SpriteID, std::string>> overlay_data = {};
+    // Point overlay_pos = {0, 0};
     void AddTile(TileIndex tile, ObjectTileHighlight &&oh);
     // void AddSprite(TileIndex tile, ObjectTileHighlight &&oh);
     void PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track);
@@ -342,7 +345,9 @@ public:
     void Draw(const TileInfo *ti);
     void DrawSelectionOverlay(DrawPixelInfo *dpi);
     void DrawOverlay(DrawPixelInfo *dpi);
+    void AddStationOverlayData(TileIndex tile, int w, int h, int rad,  StationCoverageType sct);
     void UpdateTiles();
+    void UpdateOverlay();
     void MarkDirty();
 };
 
