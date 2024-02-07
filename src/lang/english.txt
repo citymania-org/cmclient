@@ -4563,7 +4563,14 @@ STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :Always go
 STR_ORDER_DROP_SERVICE_DEPOT                                    :Service if needed
 STR_ORDER_DROP_HALT_DEPOT                                       :Stop
 STR_ORDER_DROP_UNBUNCH                                          :Unbunch
-STR_ORDER_DEPOT_ACTION_TOOLTIP                                  :{BLACK}Select the action to take at this depot
+
+# Depot action tooltips, one per vehicle type
+###length VEHICLE_TYPES
+STR_ORDER_TRAIN_DEPOT_ACTION_TOOLTIP                            :{BLACK}Select the action to take at this depot
+STR_ORDER_ROAD_DEPOT_ACTION_TOOLTIP                             :{BLACK}Select the action to take at this depot
+STR_ORDER_SHIP_DEPOT_ACTION_TOOLTIP                             :{BLACK}Select the action to take at this depot
+STR_ORDER_HANGAR_ACTION_TOOLTIP                                 :{BLACK}Select the action to take at this hangar
+###next-name-looks-similar
 
 STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}Vehicle data to base jumping on
 
@@ -5109,7 +5116,6 @@ STR_ERROR_UNBUNCHING_NO_FULL_LOAD                               :{WHITE}... cann
 STR_ERROR_UNBUNCHING_NO_UNBUNCHING_FULL_LOAD                    :{WHITE}... cannot unbunch a vehicle with a full load order
 STR_ERROR_UNBUNCHING_NO_CONDITIONAL                             :{WHITE}... cannot use conditional orders when vehicle has an unbunching order
 STR_ERROR_UNBUNCHING_NO_UNBUNCHING_CONDITIONAL                  :{WHITE}... cannot unbunch a vehicle with a conditional order
-STR_ERROR_UNBUNCHING_NO_SERVICE_IF_NEEDED                       :{WHITE}... vehicle must always visit the depot to unbunch there
 
 # Autoreplace related errors
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{WHITE}{VEHICLE} is too long after replacement

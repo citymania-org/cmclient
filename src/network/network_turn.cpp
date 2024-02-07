@@ -49,7 +49,7 @@ public:
 	}
 };
 
-bool ClientNetworkTurnSocketHandler::Receive_TURN_ERROR(Packet *)
+bool ClientNetworkTurnSocketHandler::Receive_TURN_ERROR(Packet &)
 {
 	Debug(net, 9, "Receive_TURN_ERROR()");
 
@@ -58,11 +58,11 @@ bool ClientNetworkTurnSocketHandler::Receive_TURN_ERROR(Packet *)
 	return false;
 }
 
-bool ClientNetworkTurnSocketHandler::Receive_TURN_CONNECTED(Packet *p)
+bool ClientNetworkTurnSocketHandler::Receive_TURN_CONNECTED(Packet &p)
 {
 	Debug(net, 9, "Receive_TURN_CONNECTED()");
 
-	std::string hostname = p->Recv_string(NETWORK_HOSTNAME_LENGTH);
+	std::string hostname = p.Recv_string(NETWORK_HOSTNAME_LENGTH);
 
 	/* Act like we no longer have a socket, as we are handing it over to the
 	 * game handler. */
@@ -100,11 +100,11 @@ void ClientNetworkTurnSocketHandler::Connect()
 {
 	auto turn_handler = std::make_unique<ClientNetworkTurnSocketHandler>(token, tracking_number, connection_string);
 
-	Packet *p = new Packet(PACKET_TURN_SERCLI_CONNECT);
+	auto p = std::make_unique<Packet>(PACKET_TURN_SERCLI_CONNECT);
 	p->Send_uint8(NETWORK_COORDINATOR_VERSION);
 	p->Send_string(ticket);
 
-	turn_handler->SendPacket(p);
+	turn_handler->SendPacket(std::move(p));
 
 	return turn_handler;
 }

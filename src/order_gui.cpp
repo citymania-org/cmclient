@@ -918,6 +918,9 @@ public:
 
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_O_SCROLLBAR);
+		if (NWidgetCore *nwid = this->GetWidget<NWidgetCore>(WID_O_DEPOT_ACTION); nwid != nullptr) {
+			nwid->tool_tip = STR_ORDER_TRAIN_DEPOT_ACTION_TOOLTIP + v->type;
+		}
 		this->FinishInitNested(v->index);
 
 		this->selected_order = -1;
@@ -1298,7 +1301,11 @@ public:
 			case WID_O_DEPOT_ACTION: {
 				VehicleOrderID sel = this->OrderGetSel();
 				const Order *order = this->vehicle->GetOrder(sel);
-				if (order == nullptr || !order->IsType(OT_GOTO_DEPOT)) break;
+				if (order == nullptr || !order->IsType(OT_GOTO_DEPOT)) {
+					/* We can't leave this param unset or the undefined behavior can cause a crash. */
+					SetDParam(0, STR_EMPTY);
+					break;
+				};
 
 				/* Select the current action selected in the dropdown. The flags don't match the dropdown so we can't just use an index. */
 				if (order->GetDepotOrderType() & ODTFB_SERVICE) {
@@ -1782,7 +1789,7 @@ static constexpr NWidgetPart _nested_orders_train_widgets[] = {
 					NWidget(NWID_BUTTON_DROPDOWN, COLOUR_GREY, WID_O_UNLOAD), SetMinimalSize(93, 12), SetFill(1, 0),
 															SetDataTip(STR_ORDER_TOGGLE_UNLOAD, STR_ORDER_TOOLTIP_UNLOAD), SetResize(1, 0),
 					NWidget(NWID_BUTTON_DROPDOWN, COLOUR_GREY, WID_O_DEPOT_ACTION), SetMinimalSize(93, 12), SetFill(1, 0),
-															SetDataTip(STR_JUST_STRING, STR_ORDER_DEPOT_ACTION_TOOLTIP), SetResize(1, 0),
+															SetDataTip(STR_JUST_STRING, STR_NULL), SetResize(1, 0),
 				EndContainer(),
 				NWidget(NWID_SELECTION, INVALID_COLOUR, WID_O_SEL_TOP_RIGHT),
 					NWidget(WWT_PANEL, COLOUR_GREY), SetMinimalSize(93, 12), SetFill(1, 0), SetResize(1, 0), EndContainer(),
@@ -1860,7 +1867,7 @@ static constexpr NWidgetPart _nested_orders_widgets[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_O_REFIT), SetMinimalSize(186, 12), SetFill(1, 0),
 													SetDataTip(STR_ORDER_REFIT, STR_ORDER_REFIT_TOOLTIP), SetResize(1, 0),
 				NWidget(NWID_BUTTON_DROPDOWN, COLOUR_GREY, WID_O_DEPOT_ACTION), SetMinimalSize(124, 12), SetFill(1, 0),
-													SetDataTip(STR_JUST_STRING, STR_ORDER_DEPOT_ACTION_TOOLTIP), SetResize(1, 0),
+													SetDataTip(STR_JUST_STRING, STR_NULL), SetResize(1, 0),
 			EndContainer(),
 
 			/* Buttons for setting a condition. */

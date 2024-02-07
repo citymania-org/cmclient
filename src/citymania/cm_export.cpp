@@ -4,19 +4,19 @@
 
 #include "../cargotype.h"
 #include "../debug.h"
-#include "../house.h"
+#include "../house.h"  // NUM_HOUSES and HZ_* for _town_land.h
 #include "../gfx_func.h"
 #include "../gfx_type.h"
 #include "../engine_base.h"
-#include "../palette_func.h"  // CM _colour_gradient
+#include "../palette_func.h"  // _colour_gradient
 #include "../screenshot.h"
 #include "../spritecache.h"
 #include "../strings_func.h"
 #include "../strings_type.h"
 #include "../table/palettes.h"
 #include "../table/sprites.h"
-#include "../table/strings.h"
-#include "../table/town_land.h"
+#include "../table/strings.h"  // for town_land.h
+#include "../table/town_land.h"  // _town_draw_tile_data
 #include "../table/train_sprites.h"
 #include "../timer/timer_game_tick.h"
 #include "../viewport_sprite_sorter.h"
@@ -246,11 +246,12 @@ void WriteCargoSpecInfo(JsonWriter &j) {
         j.ks("quantifier", cs->quantifier);
         j.ks("abbrev", cs->abbrev);
 
+        auto label = cs->label.base();
         for (uint i = 0; i < sizeof(cs->label); i++) {
-            cargo_label[i] = GB(cs->label, (uint8_t)(sizeof(cs->label) - i - 1) * 8, 8);
+            cargo_label[i] = GB(label, (uint8_t)(sizeof(label) - i - 1) * 8, 8);
         }
-        cargo_label[sizeof(cs->label)] = '\0';
-        JKV(j, cs->label);
+        cargo_label[sizeof(label)] = '\0';
+        JKV(j, label);
         j.kv("label_str", cargo_label);
         j.end_dict();
     }

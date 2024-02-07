@@ -426,8 +426,8 @@ struct SaveLoadFormat {
 	const char *name;                     ///< name of the compressor/decompressor (debug-only)
 	uint32_t tag;                           ///< the 4-letter tag by which it is identified in the savegame
 
-	LoadFilter *(*init_load)(LoadFilter *chain);                    ///< Constructor for the load filter.
-	SaveFilter *(*init_write)(SaveFilter *chain, byte compression); ///< Constructor for the save filter.
+	std::shared_ptr<LoadFilter> (*init_load)(std::shared_ptr<LoadFilter> chain); ///< Constructor for the load filter.
+	std::shared_ptr<SaveFilter> (*init_write)(std::shared_ptr<SaveFilter> chain, byte compression); ///< Constructor for the save filter.
 
 	CompressionMethod method;             ///< compression method used in this format
 	byte min_compression;                 ///< the minimum compression level of this format
@@ -458,8 +458,8 @@ void DoExitSave();
 
 void DoAutoOrNetsave(FiosNumberedSaveName &counter);
 
-SaveOrLoadResult SaveWithFilter(struct SaveFilter *writer, bool threaded, citymania::SavePreset preset);
-SaveOrLoadResult LoadWithFilter(struct LoadFilter *reader);
+SaveOrLoadResult SaveWithFilter(std::shared_ptr<struct SaveFilter> writer, bool threaded, citymania::SavePreset preset);
+SaveOrLoadResult LoadWithFilter(std::shared_ptr<struct LoadFilter> reader);
 
 typedef void AutolengthProc(void *arg);
 
