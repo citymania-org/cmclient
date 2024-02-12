@@ -13,8 +13,8 @@ namespace citymania {
 // void HandleCommandExecution(bool res, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, const std::string &text);
 void AddCommandCallback(const CommandPacket *cp);
 // void ExecuteCurrentCallback(const CommandCost &cost);
-void BeforeNetworkCommandExecution(const CommandPacket* cp);
-void AfterNetworkCommandExecution(const CommandPacket* cp);
+void BeforeNetworkCommandExecution(const CommandPacket &cp);
+void AfterNetworkCommandExecution(const CommandPacket &cp);
 
 void InitCommandQueue();
 void HandleNextClientFrame();

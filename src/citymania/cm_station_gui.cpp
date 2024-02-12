@@ -569,8 +569,18 @@ static void AddProducedCargo_Town(TileIndex tile, CargoArray &produced)
             produced[cargo] += GetMonthlyFrom256Tick((uint)GB(callback, 0, 8)) ;
         }
     } else {
-        produced[CT_PASSENGERS] += GetAverageHouseProduction(hs->population);
-        produced[CT_MAIL] += GetAverageHouseProduction(hs->mail_generation);
+        if (hs->population > 0) {
+            auto avg = GetAverageHouseProduction(hs->population);
+            for (const CargoSpec *cs : CargoSpec::town_production_cargoes[TPE_PASSENGERS]) {
+                produced[cs->Index()] += avg;
+            }
+        }
+        if (hs->mail_generation > 0) {
+            auto avg = GetAverageHouseProduction(hs->mail_generation);
+            for (const CargoSpec *cs : CargoSpec::town_production_cargoes[TPE_MAIL]) {
+                produced[cs->Index()] += avg;
+            }
+        }
     }
 }
 
@@ -602,8 +612,12 @@ CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
                 break;
             case MP_OBJECT:
                 if (IsObjectType(tile, OBJECT_HQ)) {
-                    produced[CT_PASSENGERS] += GetMonthlyFrom256Tick(HQ_AVG_POP[EconomyIsInRecession() ? 1 : 0][GetAnimationFrame(tile)]);
-                    produced[CT_MAIL] += GetMonthlyFrom256Tick(HQ_AVG_MAIL[EconomyIsInRecession() ? 1 : 0][GetAnimationFrame(tile)]);
+                    auto pax_avg = GetMonthlyFrom256Tick(HQ_AVG_POP[EconomyIsInRecession() ? 1 : 0][GetAnimationFrame(tile)]);
+                    auto mail_avg = GetMonthlyFrom256Tick(HQ_AVG_MAIL[EconomyIsInRecession() ? 1 : 0][GetAnimationFrame(tile)]);
+                    for (const CargoSpec *cs : CargoSpec::town_production_cargoes[TPE_PASSENGERS])
+                        produced[cs->Index()] += pax_avg;
+                    for (const CargoSpec *cs : CargoSpec::town_production_cargoes[TPE_MAIL])
+                        produced[cs->Index()] += mail_avg;
                 }
             default: break;
         }

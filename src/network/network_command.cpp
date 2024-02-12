@@ -284,7 +284,7 @@ namespace citymania {
 		size_t cb_index = FindCallbackIndex(cp->callback);
 		assert(cb_index < _callback_tuple_size);
 		assert(_cmd_dispatch[cp->cmd].Unpack[cb_index] != nullptr);
-		_cmd_dispatch[cp->cmd].Unpack[cb_index](cp);
+		_cmd_dispatch[cp->cmd].Unpack[cb_index](*cp);
 		return _command_execute_cost;
 	}
 }

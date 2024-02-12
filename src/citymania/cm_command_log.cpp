@@ -69,7 +69,7 @@ void ExecuteFakeCommands(TimerGameTick::TickCounter counter) {
 
             for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
                 if (cs->status >= NetworkClientSocket::STATUS_MAP) {
-                    cs->outgoing_queue.Append(&x.cp);
+                    cs->outgoing_queue.push_back(x.cp);
                 }
             }
         }

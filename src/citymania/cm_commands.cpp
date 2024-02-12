@@ -103,16 +103,16 @@ void ExecuteCurrentCallback(const CommandCost &cost) {
     }
 }
 
-void BeforeNetworkCommandExecution(const CommandPacket* cp) {
-    if (!cp->my_cmd) return;
-    size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->data);
-    Debug(misc, 5, "CM BeforeNetworkCommandExecution: cmd={} hash={}", cp->cmd, hash);
+void BeforeNetworkCommandExecution(const CommandPacket &cp) {
+    if (!cp.my_cmd) return;
+    size_t hash = GetCommandHash(cp.cmd, cp.company, cp.err_msg, cp.callback, cp.data);
+    Debug(misc, 5, "CM BeforeNetworkCommandExecution: cmd={} hash={}", cp.cmd, hash);
     while (!_callback_queue.empty() && _callback_queue.front().hash != hash) {
         Debug(misc, 0, "CM Dismissing command from callback queue: hash={}", _callback_queue.front().hash);
         _callback_queue.pop();
     }
     if (_callback_queue.empty()) {
-        Debug(misc, 0, "CM Received unexpected network command: cmd={}", cp->cmd);
+        Debug(misc, 0, "CM Received unexpected network command: cmd={}", cp.cmd);
         return;
     }
     auto &cbdata = _callback_queue.front();
@@ -122,8 +122,8 @@ void BeforeNetworkCommandExecution(const CommandPacket* cp) {
     return;
 }
 
-void AfterNetworkCommandExecution(const CommandPacket* cp) {
-    Debug(misc, 5, "AfterNetworkCommandExecution {}", cp->cmd);
+void AfterNetworkCommandExecution(const CommandPacket &cp) {
+    Debug(misc, 5, "AfterNetworkCommandExecution {}", cp.cmd);
     _current_callback = nullptr;
 }
 
@@ -191,7 +191,7 @@ uint GetCurrentQueueDelay() {
 
 void FlushCommandQueue() {
     while (!_outgoing_queue.empty() && CanSendCommand()) {
-        MyClient::SendCommand(&_outgoing_queue.front());
+        MyClient::SendCommand(_outgoing_queue.front());
         _outgoing_queue.pop();
         _commands_this_frame++;
     }
@@ -206,7 +206,7 @@ void HandleNextClientFrame() {
 void SendClientCommand(const CommandPacket *cp) {
     AddCommandCallback(cp);
     if (_outgoing_queue.empty() && CanSendCommand()) {
-        MyClient::SendCommand(cp);
+        MyClient::SendCommand(*cp);
         _commands_this_frame++;
         return;
     }
