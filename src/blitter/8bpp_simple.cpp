@@ -36,6 +36,7 @@ void Blitter_8bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoom
 			uint colour = 0;
 
 			switch (mode) {
+				case CM_BM_TINT_REMAP:
 				case BM_COLOUR_REMAP:
 				case BM_CRASH_REMAP:
 					colour = bp->remap[*src];

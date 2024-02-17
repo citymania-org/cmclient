@@ -175,33 +175,6 @@ public:
 
 		return rgb_max;
 	}
-
-	/* CM */
-	uint8 cm_mdict[64*64*64] = {0};
-	uint8 CM_GetMForRGB(uint8 r, uint8 g, uint8 b) {
-		if (r==0 && g==0 && b==0) return 0;
-		r &= 252; g &= 252; b &= 252;
-		auto key = (r << 10) | (g << 4) | (b >> 2);
-		auto m = this->cm_mdict[key];
-		if (m != 0) return m;
-		uint md = UINT_MAX;
-		for (uint8 i = 1; i < 0xc0; i++) {
-			auto c = this->LookupColourInPalette(i);
-			auto rmean = (int)c.r + (int)r;
-			auto dr = (int)c.r - (int)r;
-			auto dg = (int)c.g - (int)g;
-			auto db = (int)c.b - (int)b;
-			auto dist = (1020 + rmean) * dr * dr + 2040 * dg * dg + (1530 - rmean) * db * db;
-			// auto dist = r * r + g * g +  b * b;
-			if (dist < md) {
-				md = dist;
-				m = i;
-			}
-		}
-		this->cm_mdict[key] = m;
-		return m;
-	}
-
 };
 
 #endif /* BLITTER_32BPP_BASE_HPP */

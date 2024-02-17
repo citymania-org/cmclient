@@ -15,6 +15,8 @@
 
 #include "../table/sprites.h"
 
+#include "../citymania/cm_colour.hpp"
+
 #include "../safeguards.h"
 
 /** Instantiation of the 32bpp with animation blitter factory. */
@@ -103,6 +105,43 @@ inline void Blitter_32bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 			draw:;
 
 			switch (mode) {
+				case CM_BM_TINT_REMAP:
+					if (src_px->a == 255) {
+						do {
+							uint m = *src_n;
+							/* In case the m-channel is zero, do not remap this pixel in any way */
+							if (m == 0) {
+								*dst = citymania::Remap32RGB(src_px->r, src_px->g, src_px->b, remap);
+								*anim = 0;
+							} else {
+								uint r = remap[GB(m, 0, 8)];
+								*anim = r | (m & 0xFF00);
+								if (r != 0) *dst = this->AdjustBrightness(this->LookupColourInPalette(r), GB(m, 8, 8));
+							}
+							anim++;
+							dst++;
+							src_px++;
+							src_n++;
+						} while (--n != 0);
+					} else {
+						do {
+							uint m = *src_n;
+							if (m == 0) {
+								*dst = citymania::Remap32RGBANoCheck(src_px->r, src_px->g, src_px->b, src_px->a, *dst, remap);
+								*anim = 0;
+							} else {
+								uint r = remap[GB(m, 0, 8)];
+								*anim = 0;
+								if (r != 0) *dst = ComposeColourPANoCheck(this->AdjustBrightness(this->LookupColourInPalette(r), GB(m, 8, 8)), src_px->a, *dst);
+							}
+							anim++;
+							dst++;
+							src_px++;
+							src_n++;
+						} while (--n != 0);
+					}
+					break;
+
 				case BM_COLOUR_REMAP:
 					if (src_px->a == 255) {
 						do {
@@ -278,6 +317,7 @@ void Blitter_32bppAnim::Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomL
 		default: NOT_REACHED();
 		case BM_NORMAL:       Draw<BM_NORMAL>      (bp, zoom); return;
 		case BM_COLOUR_REMAP: Draw<BM_COLOUR_REMAP>(bp, zoom); return;
+		case CM_BM_TINT_REMAP: Draw<CM_BM_TINT_REMAP>(bp, zoom); return;
 		case BM_TRANSPARENT:  Draw<BM_TRANSPARENT> (bp, zoom); return;
 		case BM_TRANSPARENT_REMAP: Draw<BM_TRANSPARENT_REMAP>(bp, zoom); return;
 		case BM_CRASH_REMAP:  Draw<BM_CRASH_REMAP> (bp, zoom); return;

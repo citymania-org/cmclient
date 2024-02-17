@@ -14,6 +14,8 @@
 
 #include "../table/sprites.h"
 
+#include "../citymania/cm_colour.hpp"
+
 #include "../safeguards.h"
 
 /** Instantiation of the simple 32bpp blitter factory. */
@@ -37,6 +39,15 @@ void Blitter_32bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 
 		for (int x = 0; x < bp->width; x++) {
 			switch (mode) {
+				case CM_BM_TINT_REMAP:
+					/* In case the m-channel is zero, do not remap this pixel in any way */
+					if (src->m == 0) {
+						if (src->a != 0) *dst = citymania::Remap32RGBA(src->r, src->g, src->b, src->a, *dst, bp->remap);
+					} else {
+						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(this->AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
+					}
+					break;
+
 				case BM_COLOUR_REMAP:
 					/* In case the m-channel is zero, do not remap this pixel in any way */
 					if (src->m == 0) {
@@ -90,6 +101,7 @@ void Blitter_32bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 void Blitter_32bppSimple::DrawColourMappingRect(void *dst, int width, int height, PaletteID pal)
 {
 	Colour *udst = (Colour *)dst;
+
 	if (pal == PALETTE_TO_TRANSPARENT) {
 		do {
 			for (int i = 0; i != width; i++) {
@@ -133,8 +145,8 @@ Sprite *Blitter_32bppSimple::Encode(const SpriteLoader::SpriteCollection &sprite
 			dst[i].g = src->g;
 			dst[i].b = src->b;
 			dst[i].a = src->a;
-			dst[i].m = this->CM_GetMForRGB(src->r, src->g, src->b);
-			dst[i].v = DEFAULT_BRIGHTNESS;
+			dst[i].m = 0;
+			dst[i].v = 0;
 		} else {
 			/* Get brightest value */
 			uint8_t rgb_max = std::max({src->r, src->g, src->b});

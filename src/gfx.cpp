@@ -7,6 +7,7 @@
 
 /** @file gfx.cpp Handling of drawing text and other gfx related stuff. */
 
+#include "blitter/base.hpp"
 #include "stdafx.h"
 #include "gfx_layout.h"
 #include "progress.h"
@@ -978,6 +979,8 @@ static BlitterMode GetBlitterMode(PaletteID pal)
 		case PAL_NONE:          return BM_NORMAL;
 		case PALETTE_CRASH:     return BM_CRASH_REMAP;
 		case PALETTE_ALL_BLACK: return BM_BLACK_REMAP;
+		case CM_PALETTE_TINT_BASE ... (CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT - 1):
+			return CM_BM_TINT_REMAP;
 		default:                return BM_COLOUR_REMAP;
 	}
 }
