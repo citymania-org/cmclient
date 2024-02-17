@@ -17,49 +17,49 @@ g.add(grf.AlternativeSprites(
     grf.FileSprite(toolbar_png, 32, 0, 40, 40, zoom=grf.ZOOM_2X)
 ))
 
-sprite = lambda *args, **kw: g.add(grf.FileSprite(toolbar_png, *args, **kw))
-sprite2 = lambda x, y, w, h, x2, y2: g.add(grf.AlternativeSprites(grf.FileSprite(toolbar_png, x, y, w, h), grf.FileSprite(toolbar_png, x2, y2, w * 2, h * 2, zoom=grf.ZOOM_2X)))
-sprite( 0, 44, 12, 10)  # hq button icon
-sprite( 0, 55, 12, 10)  # watch button icon
+sprite = lambda name, *args, **kw: g.add(grf.FileSprite(toolbar_png, *args, name=name, **kw))
+sprite2 = lambda name, x, y, w, h, x2, y2: g.add(grf.AlternativeSprites(grf.FileSprite(toolbar_png, x, y, w, h, name=name), grf.FileSprite(toolbar_png, x2, y2, w * 2, h * 2, name=name + '_2x', zoom=grf.ZOOM_2X)))
+sprite('hq_icon', 0, 44, 12, 10)  # hq button icon
+sprite('watch_icon', 0, 55, 12, 10)  # watch button icon
 # sprite2(0, 55, 12, 10, 13, 55)  # watch button icon
 
-sprite(45, 67, 10, 10)  # host black
-sprite(45, 44, 10, 10)  # player black
+sprite('host_black', 45, 67, 10, 10)  # host black
+sprite('player_black', 45, 44, 10, 10)  # player black
 
-sprite2(85, 67, 11, 11, 97, 67)  # host white
-sprite2(85, 44, 11, 11, 97, 44)  # player white
+sprite2('host_white', 85, 67, 11, 11, 97, 67)  # host white
+sprite2('player_white', 85, 44, 11, 11, 97, 44)  # player white
 
-sprite2( 0, 82, 11, 11,  0, 94)  # competitor coloured
-sprite2(12, 82, 11, 11, 23, 94)  # host coloured
-sprite2(24, 82, 11, 11, 46, 94)  # player coloured
-sprite2(36, 82, 11, 11, 69, 94)  # company afk
-sprite2(48, 82, 11, 11, 92, 94)  # company locked
+sprite2('competitor_icon', 0, 82, 11, 11,  0, 94)  # competitor coloured
+sprite2('host_icon', 12, 82, 11, 11, 23, 94)  # host coloured
+sprite2('player_icon', 24, 82, 11, 11, 46, 94)  # player coloured
+sprite2('company_afk_icon', 36, 82, 11, 11, 69, 94)  # company afk
+sprite2('company_locked_icon', 48, 82, 11, 11, 92, 94)  # company locked
 
 
 innerhl_png = grf.ImageFile('sprites/innerhighlight00.png')
-sprite = lambda *args, **kw: g.add(grf.FileSprite(innerhl_png, *args, **kw))
-sprite( 18,   8, 64, 31, xofs=-31, yofs= 7)
-sprite( 98,   8, 64, 31, xofs=-31, yofs= 7)
-sprite(178,   8, 64, 23, xofs=-31, yofs= 7)
-sprite(258,   8, 64, 23, xofs=-31, yofs= 7)
-sprite(338,   8, 64, 31, xofs=-31, yofs= 7)
-sprite(418,   8, 64, 31, xofs=-31, yofs= 7)
-sprite(498,   8, 64, 23, xofs=-31, yofs= 7)
-sprite(578,   8, 64, 23, xofs=-31, yofs= 7)
-sprite(658,   8, 64, 39, xofs=-31, yofs=-1)
-sprite(  2,  72, 64, 39, xofs=-31, yofs=-1)
-sprite( 82,  72, 64, 31, xofs=-31, yofs=-1)
-sprite(162,  72, 64, 31, xofs=-31, yofs=-1)
-sprite(242,  72, 64, 39, xofs=-31, yofs=-1)
-sprite(322,  72, 64, 39, xofs=-31, yofs=-1)
-sprite(402,  72, 64, 31, xofs=-31, yofs=-1)
-sprite(482,  72, 64, 47, xofs=-31, yofs=-9)
-sprite(562,  72, 64, 15, xofs=-31, yofs= 7)
-sprite(642,  72, 64, 31, xofs=-31, yofs=-1)
-sprite(722,  72, 64, 31, xofs=-31, yofs=-1)
-sprite(  2, 136, 20, 14, xofs=  1, yofs= 5)
-sprite( 34, 136, 20, 20, xofs=  0, yofs= 0)
-sprite(185, 125, 18, 15, xofs= -8, yofs= 7)
+sprite = lambda name, *args, **kw: g.add(grf.FileSprite(innerhl_png, *args, name=name, **kw))
+sprite('inner_hl',  18,   8, 64, 31, xofs=-31, yofs= 7)
+sprite('inner_hl',  98,   8, 64, 31, xofs=-31, yofs= 7)
+sprite('inner_hl', 178,   8, 64, 23, xofs=-31, yofs= 7)
+sprite('inner_hl', 258,   8, 64, 23, xofs=-31, yofs= 7)
+sprite('inner_hl', 338,   8, 64, 31, xofs=-31, yofs= 7)
+sprite('inner_hl', 418,   8, 64, 31, xofs=-31, yofs= 7)
+sprite('inner_hl', 498,   8, 64, 23, xofs=-31, yofs= 7)
+sprite('inner_hl', 578,   8, 64, 23, xofs=-31, yofs= 7)
+sprite('inner_hl', 658,   8, 64, 39, xofs=-31, yofs=-1)
+sprite('inner_hl',   2,  72, 64, 39, xofs=-31, yofs=-1)
+sprite('inner_hl',  82,  72, 64, 31, xofs=-31, yofs=-1)
+sprite('inner_hl', 162,  72, 64, 31, xofs=-31, yofs=-1)
+sprite('inner_hl', 242,  72, 64, 39, xofs=-31, yofs=-1)
+sprite('inner_hl', 322,  72, 64, 39, xofs=-31, yofs=-1)
+sprite('inner_hl', 402,  72, 64, 31, xofs=-31, yofs=-1)
+sprite('inner_hl', 482,  72, 64, 47, xofs=-31, yofs=-9)
+sprite('inner_hl', 562,  72, 64, 15, xofs=-31, yofs= 7)
+sprite('inner_hl', 642,  72, 64, 31, xofs=-31, yofs=-1)
+sprite('inner_hl', 722,  72, 64, 31, xofs=-31, yofs=-1)
+sprite('inner_hl',   2, 136, 20, 14, xofs=  1, yofs= 5)
+sprite('inner_hl',  34, 136, 20, 20, xofs=  0, yofs= 0)
+sprite('inner_hl', 185, 125, 18, 15, xofs= -8, yofs= 7)
 
 #red
 g.add(grf.PaletteRemap([
@@ -146,8 +146,8 @@ y = SPRITE_MARGIN
 for p in TILEDATA:
     x = SPRITE_MARGIN
     _, _, w, h, xofs, yofs = p
-    for _ in range(1, 16 + 4):
-        g.add(grf.FileSprite(borderhl_png, x, y, w, h, xofs=xofs, yofs=yofs))
+    for i in range(1, 16 + 4):
+        g.add(grf.FileSprite(borderhl_png, x, y, w, h, xofs=xofs, yofs=yofs, name=f'border_hl_{i}'))
         x += SPRITE_MARGIN + w
 
     y += h + SPRITE_MARGIN
@@ -181,7 +181,17 @@ def gen_white_tint_contrast():
     return func
 
 
-remap = lambda f: g.add(grf.PaletteRemap.oklab_from_function(f, remap_water=True))
+def gen_oklab_tint(tint, ratio):
+    return lambda x: grf.oklab_blend(x, np.array(tint), ratio=ratio)
+
+
+# (0.5498, 0.17, 0.1)
+# (0.7433, 0.09, 0.15)
+# (0.7433, 0, 0.15)
+# (0.7418, -0.09, 0.15)
+
+
+remap = lambda f: g.add(grf.PaletteRemap.oklab_from_function(f, remap_range=grf.ALL_COLOURS))
 remap(gen_tint((1, 0, 0), 0.6))  # deep red tint
 remap(gen_tint((1, 0.5, 0), 0.65))  # deep orange tint
 remap(gen_tint((0, 1, 0), 0.65))  # deep green tint
@@ -189,8 +199,12 @@ remap(gen_tint((0, 1, 1), 0.65))  # deep cyan tint
 remap(gen_tint((1, 0, 0), 0.4))  # red tint
 remap(gen_tint((1, 0.5, 0), 0.4))  # orange tint
 remap(gen_tint((1.0, 1.0, 0), 0.4))  # yellow tint
+# remap(gen_oklab_tint((0.5498, 0.17, 0.1), 0.5))  # red tint
+# remap(gen_oklab_tint((0.7433, 0.09, 0.15), 0.5))  # orange tint
+# remap(gen_oklab_tint((0.7433, 0, 0.15), 0.5))  # yellow tint
 remap(gen_tint((1.0, 1.0, 0.5), 0.4))  # yellow white tint
 remap(gen_white_tint_contrast())  # white tint
+# remap(gen_oklab_tint((0.7418, -0.09, 0.15), 0.5))  # white tint
 remap(gen_tint((0, 1.0, 0), 0.4))  # green tint
 remap(gen_tint((0, 1.0, 1.0), 0.4))  # cyan tint
 remap(gen_tint((0.5, 1.0, 1.0), 0.4))  # cyan white tint
