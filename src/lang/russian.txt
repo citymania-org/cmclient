@@ -3,8 +3,8 @@
 ##isocode ru_RU
 ##plural 6
 ##textdir ltr
-##digitsep {NBSP}
-##digitsepcur {NBSP}
+##numberformat 00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000
+##numberabbreviations 3=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}тыс.|6=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}млн|9=00{NBSP}000{NBSP}000{NBSP}000{NBSP}млрд.|12=00{NBSP}000{NBSP}000{NBSP}трлн.|15=00{NBSP}000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ,
 ##winlangid 0x0419
 ##grflangid 0x07
@@ -285,7 +285,6 @@ STR_ABBREV_TOFFEE                                               :ИР
 STR_ABBREV_BATTERIES                                            :БТ
 STR_ABBREV_PLASTIC                                              :ПЛ
 STR_ABBREV_FIZZY_DRINKS                                         :ГЗ
-STR_ABBREV_NONE                                                 :НЕТ
 STR_ABBREV_ALL                                                  :Все
 
 # 'Mode' of transport for cargoes
@@ -511,16 +510,16 @@ STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}Уско
 STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}Настройки
 STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}Сохранение/загрузка игры; главное меню; выход
 STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Карта; окна просмотра; грузовые потоки; список меток
-STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Список городов
+STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Список существующих городов; основание новых
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Субсидии
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Список станций
-STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Информация о финансах компаний
+STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Информация о финансовом состоянии компаний
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Основная информация о компаниях
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}История компаний
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Список задач
 STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Графики различных показателей деятельности компаний и оплаты грузоперевозок
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Рейтинги компаний
-STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Список существующих предприятий; создание новых
+STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Открыть промышленный каталог, производственную цепочку или финансировать строительство новой промышленности
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}Списки поездов по компаниям. Ctrl+щелчок - показать/скрыть группы.
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_ROAD_VEHICLES       :{BLACK}Списки автомобильного транспорта по компаниям. Ctrl+щелчок - показать/скрыть группы.
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}Списки судов по компаниям. Ctrl+щелчок - показать/скрыть группы.
@@ -529,12 +528,12 @@ STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN                            :{BLACK}Приб
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT                           :{BLACK}Отдалить
 STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}Строительство железнодорожной инфраструктуры
 STR_TOOLBAR_TOOLTIP_BUILD_ROADS                                 :{BLACK}Строительство автомобильной инфраструктуры
-STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}Строительство трамвайных путей
+STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}Строительство трамвайной инфраструктуры
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}Строительство речной/морской инфраструктуры
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}Строительство аэропортов
-STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}Открыть панель ландшафта для изменения рельефа, посадки деревьев и т.д.
+STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}Панели изменения ландшафта, посадки деревьев, установка меток
 STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}Настройка звука и музыки
-STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}Показать последнее сообщение; настройки и удаление сообщений
+STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}Показать последнее сообщение, историю сообщений и их удаление
 STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Показать информацию о территории, о разработчиках игры; инструменты разработчика, снимки экрана
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}Переключить панели инструментов
 
@@ -546,12 +545,12 @@ STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD    :{BLACK}Нача
 STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD     :{BLACK}Начать игру на 1 год позже
 STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE                           :{BLACK}Нажмите, чтобы изменить год начала игры
 STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK}Показать карту, дополнительное окно просмотра, список меток, городов, предприятий
-STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Создание ландшафта
+STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Открыть меню ладшафта или создать новый мир
 STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Создание городов
 STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Создание предприятий
 STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Строительство автомобильной инфраструктуры
 STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}Строительство трамвайной инфраструктуры
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Посадить деревья.{}При нажатом Ctrl - выбор диагональной области.{}При нажатом Shift - оценка стоимости высадки.
+STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Посадить деревья. Ctrl+перетаскивание{NBSP}- выбор диагональной области. При нажатом Shift{NBSP}- оценка стоимости высадки.
 STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}Поставить метку
 STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Разместить объект. Ctrl+щелчок+перетаскивание - выбор диагональной области. При нажатом Shift - оценка стоимости строительства.
 
@@ -1095,6 +1094,8 @@ STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Графика
 STR_GAME_OPTIONS_TAB_GRAPHICS_TT                                :{BLACK}Настройки графики
 STR_GAME_OPTIONS_TAB_SOUND                                      :Звук
 STR_GAME_OPTIONS_TAB_SOUND_TT                                   :{BLACK}Настройки звука и музыки
+STR_GAME_OPTIONS_TAB_SOCIAL                                     :Социальный
+STR_GAME_OPTIONS_TAB_SOCIAL_TT                                  :Выберите настройки социальной интеграции
 
 STR_GAME_OPTIONS_VOLUME                                         :Громкость
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Звуковые эффекты
@@ -1260,9 +1261,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Обм�
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Повысить курс вашей валюты по отношению к фунту (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Снизить курс вашей валюты по отношению к фунту (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Установить курс вашей валюты по отношению к фунту (£)
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}Разделитель: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}Установить разделитель тысяч
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Префикс: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}Установить префикс вашей валюты
@@ -2073,7 +2071,7 @@ STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY                         :При пере
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY_HELPTEXT                :Настройка периодичности расстановки сигналов методом перетаскивания. Сигналы будут устанавливаться до первого встреченного препятствия (пересечения или другого сигнала).
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY_VALUE                   :{COMMA} клет{P ку ки ок}
 STR_CONFIG_SETTING_DRAG_SIGNALS_FIXED_DISTANCE                  :Равномерная расстановка сигналов при перетаскивании: {STRING}
-STR_CONFIG_SETTING_DRAG_SIGNALS_FIXED_DISTANCE_HELPTEXT         :Настройка расстановки сигналов с помощью перетаскивания. Если равномерная расстановка отключена, то сигналы дополнительно ставятся перед мостами, туннелями и после них. Если включена, то сигналы ставятся ровно на каждой N-й клетке.
+STR_CONFIG_SETTING_DRAG_SIGNALS_FIXED_DISTANCE_HELPTEXT         :Настройка расстановки сигналов с помощью Ctrl+перетаскивания. Если равномерная расстановка отключена, то сигналы дополнительно ставятся перед мостами, туннелями и после них. Если включена, то сигналы ставятся ровно на каждой N-й клетке.
 
 STR_CONFIG_SETTING_SEMAPHORE_BUILD_BEFORE_DATE                  :Строить семафоры старого стиля: до {STRING} года
 STR_CONFIG_SETTING_SEMAPHORE_BUILD_BEFORE_DATE_HELPTEXT         :Год, начиная с которого на железных дорогах начинают использоваться светофоры. До этого строятся семафоры (которые функционируют точно так же, только выглядят по-другому).
@@ -2355,7 +2353,7 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Детс
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Открыть окно с основными настройками игры
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Показать таблицу рекордов
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Ссылки на документацию и интернет-ресурсы
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Изменить расширенные настройки игры
+STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Расширенные настройки игры
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Открыть настройки NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Найти новый и обновлённый контент для загрузки
 STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Открыть настройки ИИ
@@ -2947,8 +2945,8 @@ STR_RAIL_TOOLBAR_MAGLEV_CONSTRUCTION_CAPTION                    :Магнитн�
 
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}Строительство железнодорожных путей. При нажатом Ctrl - удаление путей. При нажатом Shift - оценка стоимости работ.
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Строительство железнодорожных путей в автоматическом режиме. При нажатом Ctrl - удаление путей. При нажатом Shift - оценка стоимости работ.
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}Строительство депо (для приобретения и обслуживания поездов). При нажатом Shift - оценка стоимости строительства.
-STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}Установка на рельсах маршрутных точек. Нажатие Ctrl позволяет объединять точки. При нажатом Shift - оценка стоимости строительства.
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}Строительство депо (для приобретения и обслуживания поездов). Нажмите Shift, чтобы показать только стоимость строительства
+STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}Установка маршрутных точек на ж/д путях. Ctrl+щелчок по другой точке объединит их. При нажатом Shift{NBSP}- оценка стоимости строительства.
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}Строительство ж/д станций. Ctrl+щелчок - объединение новой станции с существующей. При нажатом Shift - оценка стоимости строительства.
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_SIGNALS                 :{BLACK}Установка сигналов на ж/д путях. Ctrl переключает семафоры/светофоры.{}Перетаскиванием можно строить сигналы с заданным интервалом. Ctrl+перетаскивание - строительство сигналов до ближайшей стрелки, сигнала или станции. При нажатом Shift - оценка стоимости строительства.
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_BRIDGE                  :{BLACK}Строительство железнодорожных мостов. При нажатом Shift - оценка стоимости строительства.
@@ -3041,8 +3039,8 @@ STR_ROAD_TOOLBAR_TRAM_CONSTRUCTION_CAPTION                      :{WHITE}Трам
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION                     :{BLACK}Строительство автомобильных дорог. При нажатом Ctrl - удаление дороги. При нажатом Shift - оценка стоимости работ.
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION                  :{BLACK}Строительство трамвайных путей. При нажатом Ctrl - их удаление. При нажатом Shift - оценка стоимости работ.
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD                         :{BLACK}Строительство автомобильных дорог в автоматическом режиме. При нажатом Ctrl - удаление дороги. При нажатом Shift - оценка стоимости работ.
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM                         :{BLACK}Строительство трамвайных путей в автоматическом режиме. При нажатом Ctrl - удаление путей. При нажатом Shift - оценка стоимости строительства.
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_VEHICLE_DEPOT               :{BLACK}Строительство гаражей (для приобретения и обслуживания автомобилей). При нажатом Shift - оценка стоимости строительства.
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM                         :{BLACK}Строительство трамвайных путей в автоматическом режиме. Ctrl+щелчок - удаление путей. При нажатом Shift - оценка стоимости строительства.
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_VEHICLE_DEPOT               :{BLACK}Строительство гаражей (для приобретения и обслуживания автомобилей). При нажатом Shift{NBSP}- оценка стоимости строительства.
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}Строительство трамвайных депо (для приобретения и обслуживания трамваев). При нажатом Shift - оценка стоимости строительства.
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_BUS_STATION                      :{BLACK}Строительство автобусных остановок. Ctrl+щелчок - объединение новой остановки с существующей. Shift+щелчок - оценка стоимости строительства.
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_PASSENGER_TRAM_STATION           :{BLACK}Строительство трамвайных остановок. Ctrl+щелчок - объединение новой остановки с существующей. Shift+щелчок - оценка стоимости строительства.
@@ -3056,7 +3054,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Стро
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Строительство/удаление автомобильных дорог и станций
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Строительство/удаление трамвайных путей и станций
 STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_ROAD                           :{BLACK}Реконструкция/изменение типа дорожного полотна. При нажатом Shift - оценка стоимости строительства.
-STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_TRAM                           :{BLACK}Реконструкция трамвайных путей. С нажатым Shift - оценка стоимости строительства.
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_TRAM                           :{BLACK}Реконструкция трамвайных путей. С нажатым Shift{NBSP}- оценка стоимости строительства.
 
 STR_ROAD_NAME_ROAD                                              :Автомобильная дорога
 STR_ROAD_NAME_TRAM                                              :Трамвайные пути
@@ -3084,9 +3082,9 @@ STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}Стро
 STR_WATERWAYS_TOOLBAR_BUILD_LOCKS_TOOLTIP                       :{BLACK}Строительство шлюзов. При нажатом Shift - оценка стоимости строительства.
 STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}Строительство доков (для приобретения и обслуживания судов). При нажатом Shift - оценка стоимости строительства.
 STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Строительство пристаней. Ctrl+щелчок - объединение новой станции с существующей. При нажатом Shift - оценка стоимости строительства.
-STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Буи помогают в навигации на больших расстояниях; используйте их как маршрутные точки. При нажатом Shift - оценка стоимости строительства.
+STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Буи помогают в навигации при длинных маршрутах; используйте их как маршрутные точки. При нажатом Shift{NBSP}- оценка стоимости строительства.
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Строительство акведуков. При нажатом Shift - оценка стоимости строительства.
-STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Создать канал.{}При зажатом Ctrl клетка на уровне моря наполняется водой.
+STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Построить канал. Ctrl+щелчок по клетке на уровне моря - заполнить её водой.
 STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Создание рек на карте. При нажатом Ctrl они создаются по диагонали.
 
 # Ship depot construction window
@@ -3911,15 +3909,20 @@ STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}След
 STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Неверная ссылка на достижение
 
 # Station list window
-STR_STATION_LIST_TOOLTIP                                        :{BLACK}Список станций - щелчок по названию показывает станцию в основном окне. Ctrl+щелчок показывает в дополнительном окне.
-STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE                        :{BLACK}Можно выбрать несколько вариантов, щёлкая по ним с нажатым Ctrl
+STR_STATION_LIST_TOOLTIP                                        :{BLACK}Список станций. Щелчок по названию показывает станцию в основном окне. Ctrl+щелчок показывает в дополнительном окне.
+STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE                        :{BLACK}Можно выбрать несколько вариантов, щёлкая по ним с зажатым Ctrl
 STR_STATION_LIST_CAPTION                                        :{WHITE}{COMPANY} - {COMMA} станци{P я и й}
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Нет -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Показать все станции
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}Выбрать все типы грузов
-STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}На станции нет грузов, ожидающих погрузки
+STR_STATION_LIST_CARGO_FILTER_ALL_AND_NO_RATING                 :Все станции
+STR_STATION_LIST_CARGO_FILTER_MULTIPLE                          :Несколько видов грузов
+STR_STATION_LIST_CARGO_FILTER_NO_CARGO_TYPES                    :Нет типа груза
+STR_STATION_LIST_CARGO_FILTER_ONLY_NO_RATING                    :Станции без рейтинга
+STR_STATION_LIST_CARGO_FILTER_SELECT_ALL                        :Выбрать все
+STR_STATION_LIST_CARGO_FILTER_NO_RATING                         :Без рейтинга
+STR_STATION_LIST_CARGO_FILTER_EXPAND                            :Показать ещё...
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -3987,7 +3990,7 @@ STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}Запр
 
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
-STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Показать точку пути в основном окне. Ctrl+щелчок - показать в дополнительном окне.
+STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Показать маршрутную точку в основном окне. Ctrl+щелчок{}NBSP- показать в дополнительном окне.
 STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Переименовать точку пути
 STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}Показать буй в основном окне. Ctrl+щелчок - показать в дополнительном окне.
 STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}Изменить название буя
@@ -4112,7 +4115,7 @@ STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUST
 STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} и ещё {NUM}...
-STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Список предприятий - щелчок по названию показывает предприятие в основном окне. Ctrl+щелчок показывает в дополнительном окне.
+STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Список предприятий. Щелчок по названию показывает предприятие в основном окне. Ctrl+щелчок показывает в дополнительном окне.
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}Принимаемый груз: {SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}Производимый груз: {SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :Любой
@@ -4123,7 +4126,7 @@ STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTR
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE                   :{BLACK}Произведено в прошлом месяце:
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MINUTE_TITLE                  :{BLACK}Произведено за минуту:
 STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_LONG}{STRING}{BLACK} ({COMMA}% перевезено)
-STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Показать предприятие в основном окне. Ctrl+щелчок - показать в дополнительном окне.
+STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Показать предприятие в основном окне. Ctrl+щелчок{NBSP}- показать в дополнительном окне.
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Производительность: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Предприятие скоро закрывается!
 
@@ -4513,18 +4516,18 @@ STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE
 
 ###length VEHICLE_TYPES
 STR_VEHICLE_VIEW_TRAIN_CENTER_TOOLTIP                           :{BLACK}Показать поезд в основном окне. Двойной щелчок - следить за ним в основном окне. Ctrl+щелчок - показать в дополнительном окне.
-STR_VEHICLE_VIEW_ROAD_VEHICLE_CENTER_TOOLTIP                    :{BLACK}Показать автомобиль в основном окне.{}Двойной щелчок - следить за ним в основном окне.{}Ctrl+щелчок - показать в дополнительном окне.
-STR_VEHICLE_VIEW_SHIP_CENTER_TOOLTIP                            :{BLACK}Показать судно в основном окне.{}Двойной щелчок - следить за ним в основном окне.{}Ctrl+щелчок - показать в дополнительном окне.
-STR_VEHICLE_VIEW_AIRCRAFT_CENTER_TOOLTIP                        :{BLACK}Показать воздушное судно в основном окне.{}Двойной щелчок - следить за ним в основном окне.{}Ctrl+щелчок - показать в дополнительном окне.
+STR_VEHICLE_VIEW_ROAD_VEHICLE_CENTER_TOOLTIP                    :{BLACK}Показать автомобиль в основном окне. Двойной щелчок{NBSP}- следить за ним в основном окне. Ctrl+щелчок{NBSP}- показать в дополнительном окне.
+STR_VEHICLE_VIEW_SHIP_CENTER_TOOLTIP                            :{BLACK}Показать судно в основном окне. Двойной щелчок{NBSP}- следить за ним в основном окне. Ctrl+щелчок{NBSP}- показать в дополнительном окне.
+STR_VEHICLE_VIEW_AIRCRAFT_CENTER_TOOLTIP                        :{BLACK}Показать воздушное судно в основном окне. Двойной щелчок{NBSP}- следить за ним в основном окне. Ctrl+щелчок{NBSP}- показать в дополнительном окне.
 
 ###length VEHICLE_TYPES
-STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Отправить поезд в депо. Ctrl+щелчок - провести техническое обслуживание.
-STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Отправить автомобиль в гараж. Ctrl+щелчок - только провести техническое обслуживание.
-STR_VEHICLE_VIEW_SHIP_SEND_TO_DEPOT_TOOLTIP                     :{BLACK}Отправить судно в док. Ctrl+щелчок - провести техническое обслуживание.
-STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}Отправить воздушное судно в ангар. Ctrl+щелчок - провести техническое обслуживание.
+STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Отправить поезд в депо. Ctrl+щелчок{NBSP}- провести техническое обслуживание.
+STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Отправить автомобиль в гараж. Ctrl+щелчок{NBSP}- провести техническое обслуживание.
+STR_VEHICLE_VIEW_SHIP_SEND_TO_DEPOT_TOOLTIP                     :{BLACK}Отправить судно в док. Ctrl+щелчок{NBSP}- провести техническое обслуживание.
+STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}Отправить воздушное судно в ангар. Ctrl+щелчок{NBSP}- провести техническое обслуживание.
 
 ###length VEHICLE_TYPES
-STR_VEHICLE_VIEW_CLONE_TRAIN_INFO                               :{BLACK}Создать копию состава. Ctrl+щелчок создаст поезд с общим маршрутом. Shift+щелчок - оценка стоимости покупки.
+STR_VEHICLE_VIEW_CLONE_TRAIN_INFO                               :{BLACK}Создать копию состава. Ctrl+щелчок создаст поезд с общим маршрутом. При нажатом Shift{NBSP}- оценка стоимости покупки.
 STR_VEHICLE_VIEW_CLONE_ROAD_VEHICLE_INFO                        :{BLACK}Создать копию автомобиля. Ctrl+щелчок создаст автомобиль с общим маршрутом. При нажатом Shift - оценка стоимости покупки.
 STR_VEHICLE_VIEW_CLONE_SHIP_INFO                                :{BLACK}Создать копию судна. Ctrl+щелчок создаст судно с общим маршрутом. При нажатом Shift - оценка стоимости покупки.
 STR_VEHICLE_VIEW_CLONE_AIRCRAFT_INFO                            :{BLACK}Создать копию воздушного судна. Ctrl+щелчок создаст копию с общим маршрутом. При нажатом Shift - оценка стоимости покупки.
@@ -4561,6 +4564,7 @@ STR_VEHICLE_VIEW_AIRCRAFT_STATUS_START_STOP_TOOLTIP             :{BLACK}Теку
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Разгрузка/Погрузка
 STR_VEHICLE_STATUS_LEAVING                                      :{LTBLUE}Отъезжает
+STR_VEHICLE_STATUS_WAITING_UNBUNCHING                           :{LTBLUE}Ожидание развязки
 STR_VEHICLE_STATUS_CRASHED                                      :{RED}Попал в аварию!
 STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}Поломка
 STR_VEHICLE_STATUS_STOPPED                                      :{RED}Остановлен
@@ -4574,6 +4578,7 @@ STR_VEHICLE_STATUS_NO_ORDERS_VEL                                :{LTBLUE}Нет 
 STR_VEHICLE_STATUS_HEADING_FOR_WAYPOINT_VEL                     :{LTBLUE}Идёт к {WAYPOINT}; {VELOCITY}
 STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_VEL                        :{ORANGE}Идёт в {DEPOT}; {VELOCITY}
 STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE}Идёт в {DEPOT} для ТО; {VELOCITY}
+STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_UNBUNCH_VEL                :{LTBLUE}Идёт в {DEPOT} для ТО и распред., {VELOCITY}
 
 STR_VEHICLE_STATUS_CANNOT_REACH_STATION_VEL                     :{LTBLUE}Нет пути до {STATION}, {VELOCITY}
 STR_VEHICLE_STATUS_CANNOT_REACH_WAYPOINT_VEL                    :{LTBLUE}Нет пути до {WAYPOINT}, {VELOCITY}
@@ -4702,7 +4707,7 @@ STR_ORDERS_CAPTION                                              :{WHITE}{VEHICLE
 STR_ORDERS_TIMETABLE_VIEW                                       :{BLACK}График
 STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Показать график движения
 
-STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Список заданий - щёлкните задание для выделения. Ctrl+щелчок - обзор станции назначения.
+STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Список заданий. Щёлкните по заданию для выделения. Ctrl+щелчок - показать пункт назначения.
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
 STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING} {STRING}
 
@@ -4741,9 +4746,14 @@ STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Доступн�
 STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :Всегда
 STR_ORDER_DROP_SERVICE_DEPOT                                    :Если требуется
 STR_ORDER_DROP_HALT_DEPOT                                       :Стоп
+STR_ORDER_DROP_UNBUNCH                                          :Распределить
 
 # Depot action tooltips, one per vehicle type
 ###length VEHICLE_TYPES
+STR_ORDER_TRAIN_DEPOT_ACTION_TOOLTIP                            :{BLACK}Выберите действие, которое нужно выполнить в этом депо
+STR_ORDER_ROAD_DEPOT_ACTION_TOOLTIP                             :{BLACK}Выберите действие, которое нужно выполнить в этом гараже
+STR_ORDER_SHIP_DEPOT_ACTION_TOOLTIP                             :{BLACK}Выберите действие, которое нужно выполнить в этом доке
+STR_ORDER_HANGAR_ACTION_TOOLTIP                                 :{BLACK}Выберите действие, которое нужно выполнить в этом ангаре
 ###next-name-looks-similar
 
 STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}Параметр транспорта для сравнения
@@ -4787,7 +4797,7 @@ STR_ORDER_GO_TO_NEAREST_DEPOT                                   :Идти к б�
 STR_ORDER_GO_TO_NEAREST_HANGAR                                  :Идти к ближайшему ангару
 STR_ORDER_CONDITIONAL                                           :Условный переход к заданию
 STR_ORDER_SHARE                                                 :Общий маршрут
-STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Вставить новое задание перед выделенным, либо в конец списка. Зажатый Ctrl добавляет на станциях «полную погрузку любым грузом», на точках пути - «без остановки», на депо - «прохождение ТО». «Общий маршрут» или Ctrl+щелчок создаст общий маршрут с ТС, на которое вы укажете. Щелчок по любому ТС скопирует его задания. Если в списке заданий есть депо, автоматическое ТО для этого ТС отключается.
+STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Вставить новое задание перед выделенным, либо в конец списка. Ctrl+щелчок по станции добавит задание «полная загрузка любым грузом», по маршрутной точке{NBSP}- инвертирует настройку «без остановки по умолчанию», по депо{NBSP}- «прохождение ТО». Щелчок по другому ТС скопирует его задания, Ctrl+щелчок{NBSP}- сделает маршрут общим. Если в списке заданий есть депо, автоматическое ТО для этого ТС отключается.
 
 STR_ORDERS_VEH_WITH_SHARED_ORDERS_LIST_TOOLTIP                  :{BLACK}Показать весь транспорт с общим маршрутом
 
@@ -4813,6 +4823,7 @@ STR_ORDER_REFIT_ORDER                                           :(Переобо
 STR_ORDER_REFIT_STOP_ORDER                                      :(Переоборуд. под {STRING.acc} и стоп)
 STR_ORDER_STOP_ORDER                                            :(Стоп)
 
+STR_ORDER_WAIT_TO_UNBUNCH                                       :(распределить)
 
 STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
 STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(Неверный тип){POP_COLOUR} {STRING} {STATION} {STRING}
@@ -4899,7 +4910,7 @@ STR_TIMETABLE_START_TOOLTIP                                     :{BLACK}Выбе
 STR_TIMETABLE_START_SECONDS_QUERY                               :Секунд до запуска графика
 
 STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}Изменить время
-STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}Изменить время исполнения выделенного задания. Ctrl+щелчок устанавливает время для всех заданий.
+STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}Изменить время, выделенное на выполнение указанного задания. Ctrl+щелчок устанавливает время для всех заданий.
 
 STR_TIMETABLE_CLEAR_TIME                                        :{BLACK}Сбросить время
 STR_TIMETABLE_CLEAR_TIME_TOOLTIP                                :{BLACK}Сбросить время в выделенном задании. Ctrl+щелчок - сбросить время во всех заданиях.
@@ -4951,9 +4962,9 @@ STR_AI_DEBUG_MATCH_CASE                                         :{BLACK}Реги
 STR_AI_DEBUG_MATCH_CASE_TOOLTIP                                 :{BLACK}Переключить проверку регистра при сравнении строк
 STR_AI_DEBUG_CONTINUE                                           :{BLACK}Продолжить
 STR_AI_DEBUG_CONTINUE_TOOLTIP                                   :{BLACK}Продолжить игру
-STR_AI_DEBUG_SELECT_AI_TOOLTIP                                  :{BLACK}Просмотрите выходные данные отладки этого AI. Ctrl-щелчок, чтобы открыть в новом окне
+STR_AI_DEBUG_SELECT_AI_TOOLTIP                                  :{BLACK}Просмотр диагностической информации этого модуля ИИ. Ctrl+щелчок откроет в новом окне.
 STR_AI_GAME_SCRIPT                                              :{BLACK}Игровой скрипт
-STR_AI_GAME_SCRIPT_TOOLTIP                                      :{BLACK}Проверьте журнал игровых сценариев. Ctrl-щелчок, чтобы открыть в новом окне
+STR_AI_GAME_SCRIPT_TOOLTIP                                      :{BLACK}Просмотр журнала игрового сценария. Ctrl+щелчок откроет в новом окне.
 
 STR_ERROR_AI_NO_AI_FOUND                                        :Не найдено подходящих модулей ИИ, поэтому конкуренты ничего делать не будут.{}Вы можете скачать модули ИИ через систему онлайн-контента.
 STR_ERROR_AI_PLEASE_REPORT_CRASH                                :{WHITE}Один из запущенных ИИ / скриптов завершил свою работу аварийно. Пожалуйста, сообщите об этом автору скрипта, приложив снимок окна отладки.
@@ -5284,6 +5295,11 @@ STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT                            :{WHITE}Нево
 STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :Неверный тип депо
 
 # Depot unbunching related errors
+STR_ERROR_UNBUNCHING_ONLY_ONE_ALLOWED                           :{WHITE}... допускается только одно задание с распределением по маршруту
+STR_ERROR_UNBUNCHING_NO_FULL_LOAD                               :{WHITE}... нельзя ждать полной загрузки, если в списке заданий есть «распределение»
+STR_ERROR_UNBUNCHING_NO_UNBUNCHING_FULL_LOAD                    :{WHITE}... нельзя равномерно распределить по маршруту транспортные средства с заданиями ожидания полной погрузки
+STR_ERROR_UNBUNCHING_NO_CONDITIONAL                             :{WHITE}... нельзя использовать условные задания, если в списке заданий есть «распределение»
+STR_ERROR_UNBUNCHING_NO_UNBUNCHING_CONDITIONAL                  :{WHITE}... нельзя равномерно распределить по маршруту транспортные средства с условными заданиями
 
 # Autoreplace related errors
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{WHITE}ТС «{VEHICLE}» слишком длинное после замены
@@ -6014,11 +6030,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
-STR_CURRENCY_SHORT_KILO                                         :{NBSP}тыс.
-STR_CURRENCY_SHORT_MEGA                                         :{NBSP}млн
-STR_CURRENCY_SHORT_GIGA                                         :{NBSP}млрд.
-STR_CURRENCY_SHORT_TERA                                         :{NBSP}трлн.
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_RIGHT_ARROW                                            :{RIGHT_ARROW}

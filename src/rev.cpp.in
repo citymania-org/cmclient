@@ -35,7 +35,7 @@ bool IsReleasedVersion()
  *
  * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "14.0-beta3";
+const char _openttd_revision[] = "14.0-RC1";
 
 /**
  * The text version of OpenTTD's build date.
@@ -48,7 +48,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
 /**
  * The git revision hash of this version.
  */
-const char _openttd_revision_hash[] = "b085f610e2a92eb78aee547f1345007e5c4d8baf";
+const char _openttd_revision_hash[] = "af5c38469e63621852309b02fdf280310df56451";
 
 /**
  * The year of this version.

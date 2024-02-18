@@ -3,8 +3,8 @@
 ##isocode el_GR
 ##plural 2
 ##textdir ltr
-##digitsep .
-##digitsepcur .
+##numberformat 00.000.000.000.000.000.000
+##numberabbreviations 3=00.000.000.000.000.000{NBSP}k|6=00.000.000.000.000{NBSP}m|9=00.000.000.000{NBSP}bn|12=00.000.000{NBSP}tn|15=00.000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ,
 ##winlangid 0x0408
 ##grflangid 0x1e
@@ -220,7 +220,6 @@ STR_ABBREV_TOFFEE                                               :ΚΒ
 STR_ABBREV_BATTERIES                                            :ΜΠ
 STR_ABBREV_PLASTIC                                              :ΠΛ
 STR_ABBREV_FIZZY_DRINKS                                         :ΑΨ
-STR_ABBREV_NONE                                                 :ΤΠ
 STR_ABBREV_ALL                                                  :ΟΛΑ
 
 # 'Mode' of transport for cargoes
@@ -1104,9 +1103,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Ισο�
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Μείωση του ποσού της ισοτιμίας σας για μία λίρα (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Αυξήστε το ποσό της ισοτιμίας σας για μία Λίρα (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Ρυθμίστε τη συναλλαγματική ισοτιμία του νομίσματος για μια λίρα (£)
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}Διαχωριστικό: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}Ορίστε το διαχωριστικό για το νόμισμά σας
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Πρόθεμα: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}Ορίστε το πρόθεμα για το νόμισμά σας
@@ -3601,8 +3597,6 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Κανένας -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Επιλογή όλων των εγκαταστάσεων
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}Επιλογή όλων των τύπων φορτίου (συμπεριλαμβανομένου φορτίου μη-αναμονής)
-STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}Κανένα εμπόρευμα κανενός τύπου δεν περιμένει
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -5572,7 +5566,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}

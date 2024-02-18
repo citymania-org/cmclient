@@ -2606,6 +2606,7 @@ static ChangeInfoResult TownHouseChangeInfo(uint hid, int numinfo, int prop, Byt
 						housespec->accepts_cargo[i] = INVALID_CARGO;
 						housespec->cargo_acceptance[i] = 0;
 					}
+					housespec->accepts_cargo_label[i] = CT_INVALID;
 				}
 				break;
 			}
@@ -2745,8 +2746,7 @@ static ChangeInfoResult GlobalVarChangeInfo(uint gvid, int numinfo, int prop, By
 				uint16_t options = buf->ReadWord();
 
 				if (curidx < CURRENCY_END) {
-					_currency_specs[curidx].separator.clear();
-					_currency_specs[curidx].separator.push_back(GB(options, 0, 8));
+					/* Ignore the thousands separator, as this is a translated thing. */
 					/* By specifying only one bit, we prevent errors,
 					 * since newgrf specs said that only 0 and 1 can be set for symbol_pos */
 					_currency_specs[curidx].symbol_pos = GB(options, 8, 1);
@@ -3342,6 +3342,7 @@ static ChangeInfoResult IndustrytilesChangeInfo(uint indtid, int numinfo, int pr
 						tsp->accepts_cargo[i] = INVALID_CARGO;
 						tsp->acceptance[i] = 0;
 					}
+					tsp->accepts_cargo_label[i] = CT_INVALID;
 				}
 				break;
 			}
@@ -3790,6 +3791,7 @@ static ChangeInfoResult IndustriesChangeInfo(uint indid, int numinfo, int prop, 
 					} else {
 						indsp->produced_cargo[i] = INVALID_CARGO;
 					}
+					indsp->produced_cargo_label[i] = CT_INVALID;
 				}
 				break;
 			}
@@ -3808,6 +3810,7 @@ static ChangeInfoResult IndustriesChangeInfo(uint indid, int numinfo, int prop, 
 					} else {
 						indsp->accepts_cargo[i] = INVALID_CARGO;
 					}
+					indsp->accepts_cargo_label[i] = CT_INVALID;
 				}
 				break;
 			}

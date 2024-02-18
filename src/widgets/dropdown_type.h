@@ -209,10 +209,12 @@ using DropDownListCheckedItem = DropDownCheck<DropDownString<DropDownListItem>>;
  */
 typedef std::vector<std::unique_ptr<const DropDownListItem>> DropDownList;
 
-void ShowDropDownListAt(Window *w, DropDownList &&list, int selected, WidgetID button, Rect wi_rect, Colours wi_colour, bool instant_close = false);
+void ShowDropDownListAt(Window *w, DropDownList &&list, int selected, WidgetID button, Rect wi_rect, Colours wi_colour, bool instant_close = false, bool persist = false);
 
-void ShowDropDownList(Window *w, DropDownList &&list, int selected, WidgetID button, uint width = 0, bool instant_close = false);
+void ShowDropDownList(Window *w, DropDownList &&list, int selected, WidgetID button, uint width = 0, bool instant_close = false, bool persist = false);
 
 Dimension GetDropDownListDimension(const DropDownList &list);
+
+void ReplaceDropDownList(Window *parent, DropDownList &&list);
 
 #endif /* WIDGETS_DROPDOWN_TYPE_H */

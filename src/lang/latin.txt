@@ -3,8 +3,8 @@
 ##isocode la_VA
 ##plural 0
 ##textdir ltr
-##digitsep {NBSP}
-##digitsepcur {NBSP}
+##numberformat 00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000
+##numberabbreviations 3=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}k|6=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}m|9=00{NBSP}000{NBSP}000{NBSP}000{NBSP}bn|12=00{NBSP}000{NBSP}000{NBSP}tn|15=00{NBSP}000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep .
 ##winlangid 0x0476
 ##grflangid 0x66
@@ -347,7 +347,6 @@ STR_ABBREV_TOFFEE                                               :ST
 STR_ABBREV_BATTERIES                                            :PE
 STR_ABBREV_PLASTIC                                              :PL
 STR_ABBREV_FIZZY_DRINKS                                         :PC
-STR_ABBREV_NONE                                                 :NO
 STR_ABBREV_ALL                                                  :OMN
 
 # 'Mode' of transport for cargoes
@@ -1140,9 +1139,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Collybu
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Minuere copiam nummi tui quae aequa est uni Librae Brittanicae (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Augere copiam nummi tui quae aequa est uni Librae Brittanicae (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Eligere collybum nummi tui
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}Symbolum separans: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}Eligere symbolum separans nummi tui
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Praefixum: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}Eligere praefixum nummi tui
@@ -3396,8 +3392,6 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Nullae -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Omnes eligere
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}Omnes onerum typos eligere (etiam onera non in ulla statione)
-STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}Nullum onus manens est
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -5386,7 +5380,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}

@@ -20,6 +20,7 @@
 #include "network/network_base.h"
 #include "network/network_admin.h"
 #include "ai/ai.hpp"
+#include "ai/ai_config.hpp"
 #include "company_manager_face.h"
 #include "window_func.h"
 #include "strings_func.h"
@@ -887,6 +888,11 @@ CommandCost CmdCompanyCtrl(DoCommandFlag flags, CompanyCtrlAction cca, CompanyID
 				break;
 			}
 
+			/* Send new companies, before potentially setting the password. Otherwise,
+			 * the password update could be sent when the company is not yet known. */
+			NetworkAdminCompanyNew(c);
+			NetworkServerNewCompany(c, ci);
+
 			/* This is the client (or non-dedicated server) who wants a new company */
 			if (client_id == _network_own_client_id) {
 				assert(_local_company == COMPANY_SPECTATOR);
@@ -905,8 +911,6 @@ CommandCost CmdCompanyCtrl(DoCommandFlag flags, CompanyCtrlAction cca, CompanyID
 
 				MarkWholeScreenDirty();
 			}
-
-			NetworkServerNewCompany(c, ci);
 			break;
 		}
 
@@ -922,7 +926,10 @@ CommandCost CmdCompanyCtrl(DoCommandFlag flags, CompanyCtrlAction cca, CompanyID
 			assert(company_id == INVALID_COMPANY || !Company::IsValidID(company_id));
 
 			Company *c = DoStartupNewCompany(true, company_id);
-			if (c != nullptr) NetworkServerNewCompany(c, nullptr);
+			if (c != nullptr) {
+				NetworkAdminCompanyNew(c);
+				NetworkServerNewCompany(c, nullptr);
+			}
 			break;
 		}
 

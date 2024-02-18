@@ -3,8 +3,8 @@
 ##isocode sk_SK
 ##plural 10
 ##textdir ltr
-##digitsep {NBSP}
-##digitsepcur {NBSP}
+##numberformat 00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000
+##numberabbreviations 3=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}k|6=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}m|9=00{NBSP}000{NBSP}000{NBSP}000{NBSP}bn|12=00{NBSP}000{NBSP}000{NBSP}tn|15=00{NBSP}000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ,
 ##winlangid 0x041b
 ##grflangid 0x16
@@ -223,7 +223,6 @@ STR_ABBREV_TOFFEE                                               :KR
 STR_ABBREV_BATTERIES                                            :BT
 STR_ABBREV_PLASTIC                                              :UM
 STR_ABBREV_FIZZY_DRINKS                                         :MA
-STR_ABBREV_NONE                                                 :NIC
 STR_ABBREV_ALL                                                  :VS.
 
 # 'Mode' of transport for cargoes
@@ -1117,9 +1116,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Kurz me
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Zníženie hodnoty vašej meny oproti jednej libre (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Zvýšenie hodnoty vašej meny oproti jednej libre (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Nastaviť kurz pre vašu menu oproti libre (£)
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}Oddeľovač: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}Nastaviť oddeľovač meny
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Predpona: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}Nastavit prefix pre vašu menu
@@ -3632,8 +3628,6 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Žiadne -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Označiť všetky možnosti
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}Označiť všetky druhy nákladu (vrátane nečakajúceho na prepravu)
-STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}Nečaká žiadny typ nákladu
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -5611,7 +5605,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_RIGHT_ARROW                                            :{RIGHT_ARROW}

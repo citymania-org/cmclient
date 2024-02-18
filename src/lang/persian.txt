@@ -3,8 +3,8 @@
 ##isocode fa_IR
 ##plural 0
 ##textdir rtl
-##digitsep ٬
-##digitsepcur ٬
+##numberformat 00٬000٬000٬000٬000٬000٬000
+##numberabbreviations 3=00٬000٬000٬000٬000٬000{NBSP}k|6=00٬000٬000٬000٬000{NBSP}m|9=00٬000٬000٬000{NBSP}bn|12=00٬000٬000{NBSP}tn|15=00٬000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ٫
 ##winlangid 0x0429
 ##grflangid 0x62
@@ -159,7 +159,6 @@ STR_ABBREV_TOFFEE                                               :آبنبات
 STR_ABBREV_BATTERIES                                            :BA
 STR_ABBREV_PLASTIC                                              :PL
 STR_ABBREV_FIZZY_DRINKS                                         :FZ
-STR_ABBREV_NONE                                                 :NO
 STR_ABBREV_ALL                                                  :همه
 
 # 'Mode' of transport for cargoes
@@ -935,9 +934,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}نرخ 
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}کم کردن ارزش واحد پول در ازای یک پوند (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}زیاد کردن ارزش واحد پول در ازای یک پوند (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}نرخ ارز واحد پول را در ازای یک پوند تنظیم کنید (£)
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}جدا کننده: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}حرف جداکننده را انتخاب کنید
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}پیشوند: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}پیشوند واحد پولتان را انتخاب کنید
@@ -2858,8 +2854,6 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- هیچکدام -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}انتخاب تمامی تسهیلات
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}انتخاب همه ی انواع محموله ها (شامل محموله های در انتظار)
-STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}هیچ نوع محموله در انتظار نیست
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -4234,7 +4228,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}
