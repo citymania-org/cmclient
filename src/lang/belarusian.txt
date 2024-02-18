@@ -3,8 +3,8 @@
 ##isocode be_BY
 ##plural 6
 ##textdir ltr
-##digitsep {NBSP}
-##digitsepcur {NBSP}
+##numberformat 00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000
+##numberabbreviations 3=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}k|6=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}m|9=00{NBSP}000{NBSP}000{NBSP}000{NBSP}bn|12=00{NBSP}000{NBSP}000{NBSP}tn|15=00{NBSP}000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ,
 ##winlangid 0x0423
 ##grflangid 0x10
@@ -472,7 +472,6 @@ STR_ABBREV_TOFFEE                                               :ІР
 STR_ABBREV_BATTERIES                                            :БА
 STR_ABBREV_PLASTIC                                              :ПЛ
 STR_ABBREV_FIZZY_DRINKS                                         :ГЗ
-STR_ABBREV_NONE                                                 :НЯМА
 STR_ABBREV_ALL                                                  :Усё
 
 # 'Mode' of transport for cargoes
@@ -1274,9 +1273,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Абм�
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Падвысіць курс вашае валюты ў адносінах да фунта (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Зьнізіць курс вашае валюты ў адносінах да фунта (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Усталяваць курс вашае валюты ў адносінах да фунта (£)
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}Разьдзяляльнік: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}Усталяваць разьдзяляльнік разрадаў (тысяч) для вашае валюты
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Прэфікс: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}Усталяваць прэфікс для вашае валюты
@@ -3590,8 +3586,6 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Няма -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Паказаць усе станцыі
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}Выбраць усе тыпы грузаў
-STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}На станцыі няма грузаў, якія чакаюць пагрузкі
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -5614,7 +5608,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}

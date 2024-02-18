@@ -375,7 +375,9 @@ enum SaveLoadVersion : uint16_t {
 	SLV_SHIP_ACCELERATION,                  ///< 329  PR#10734 Start using Vehicle's acceleration field for ships too.
 
 	SLV_MAX_LOAN_FOR_COMPANY,               ///< 330  PR#11224 Separate max loan for each company.
-	SLV_DEPOT_UNBUNCHING,                   ///< 330  PR#11945 Allow unbunching shared order vehicles at a depot.
+	SLV_DEPOT_UNBUNCHING,                   ///< 331  PR#11945 Allow unbunching shared order vehicles at a depot.
+	SLV_AI_LOCAL_CONFIG,                    ///< 332  PR#12003 Config of running AI is stored inside Company.
+	SLV_SCRIPT_RANDOMIZER,                  ///< 333  PR#12063 Save script randomizers.
 
 	SL_MAX_VERSION,                         ///< Highest possible saveload version
 };
@@ -750,10 +752,11 @@ struct SaveLoad {
  * to make that happen.
  */
 struct SaveLoadCompat {
-	std::string name;             ///< Name of the field.
-	uint16_t length;                ///< Length of the NULL field.
+	std::string name; ///< Name of the field.
+	VarTypes null_type; ///< The type associated with the NULL field; defaults to SLE_FILE_U8 to just count bytes.
+	uint16_t null_length; ///< Length of the NULL field.
 	SaveLoadVersion version_from; ///< Save/load the variable starting from this savegame version.
-	SaveLoadVersion version_to;   ///< Save/load the variable before this savegame version.
+	SaveLoadVersion version_to; ///< Save/load the variable before this savegame version.
 };
 
 /**
@@ -1218,18 +1221,26 @@ inline constexpr bool SlCheckVarSize(SaveLoadType cmd, VarType type, size_t leng
  * Field name where the real SaveLoad can be located.
  * @param name The name of the field.
  */
-#define SLC_VAR(name) {name, 0, SL_MIN_VERSION, SL_MAX_VERSION}
+#define SLC_VAR(name) {name, SLE_FILE_U8, 0, SL_MIN_VERSION, SL_MAX_VERSION}
 
 /**
  * Empty space in every savegame version.
- * @param length Length of the empty space.
+ * @param length Length of the empty space in bytes.
  * @param from   First savegame version that has the empty space.
  * @param to     Last savegame version that has the empty space.
  */
-#define SLC_NULL(length, from, to) {{}, length, from, to}
+#define SLC_NULL(length, from, to) {{}, SLE_FILE_U8, length, from, to}
+
+/**
+ * Empty space in every savegame version that was filled with a string.
+ * @param length Number of strings in the empty space.
+ * @param from   First savegame version that has the empty space.
+ * @param to     Last savegame version that has the empty space.
+ */
+#define SLC_NULL_STR(length, from, to) {{}, SLE_FILE_STRING, length, from, to}
 
 /** End marker of compat variables save or load. */
-#define SLC_END() {{}, 0, SL_MIN_VERSION, SL_MIN_VERSION}
+#define SLC_END() {{}, 0, 0, SL_MIN_VERSION, SL_MIN_VERSION}
 
 /**
  * Checks whether the savegame is below \a major.\a minor.

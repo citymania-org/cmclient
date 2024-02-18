@@ -3,8 +3,8 @@
 ##isocode zh_TW
 ##plural 1
 ##textdir ltr
-##digitsep ,
-##digitsepcur ,
+##numberformat 0000京0000兆0000億0000万0000
+##numberabbreviations 4=0000京0000兆0000億0000万|8=0000京0000兆0000億|12=0000京0000兆|16=0000京
 ##decimalsep .
 ##winlangid 0x0404
 ##grflangid 0x0c
@@ -159,7 +159,6 @@ STR_ABBREV_TOFFEE                                               :太
 STR_ABBREV_BATTERIES                                            :電
 STR_ABBREV_PLASTIC                                              :塑
 STR_ABBREV_FIZZY_DRINKS                                         :汽
-STR_ABBREV_NONE                                                 :無
 STR_ABBREV_ALL                                                  :全
 
 # 'Mode' of transport for cargoes
@@ -1053,9 +1052,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}匯率�
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}降低自訂幣值對 1 英鎊 (£) 的匯率
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}提升自訂幣值對 1 英鎊 (£) 的匯率
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}設定自訂幣值對 1 英鎊 (£) 的匯率
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}分隔符號：{ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}設定貨幣的分隔符
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}前置字：{ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}為你的貨幣指定前置字串
@@ -3588,8 +3584,6 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- 無 -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}選擇所有設施
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}選擇所有貨物種類 (包含沒在等待的貨物)
-STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}無任何貨物等候運送
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -5569,7 +5563,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_RIGHT_ARROW                                            :{RIGHT_ARROW}

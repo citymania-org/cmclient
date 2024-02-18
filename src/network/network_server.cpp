@@ -84,7 +84,6 @@ struct PacketWriter : SaveFilter {
 
 		/* This must all wait until the Destroy function is called. */
 
-		Debug(net, 0, "Destruct!");
 		this->packets.clear();
 		this->current = nullptr;
 	}
@@ -2207,9 +2206,6 @@ void NetworkServerNewCompany(const Company *c, NetworkClientInfo *ci)
 		NetworkUpdateClientInfo(ci->client_id);
 		Command<CMD_RENAME_PRESIDENT>::SendNet(STR_NULL, c->index, ci->client_name);
 	}
-
-	/* Announce new company on network. */
-	NetworkAdminCompanyInfo(c, true);
 
 	if (ci != nullptr) {
 		/* ci is nullptr when replaying, or for AIs. In neither case there is a client.

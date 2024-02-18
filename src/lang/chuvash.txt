@@ -3,8 +3,8 @@
 ##isocode cv_RU
 ##plural 0
 ##textdir ltr
-##digitsep {NBSP}
-##digitsepcur {NBSP}
+##numberformat 00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000
+##numberabbreviations 3=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}k|6=00{NBSP}000{NBSP}000{NBSP}000{NBSP}000{NBSP}m|9=00{NBSP}000{NBSP}000{NBSP}000{NBSP}bn|12=00{NBSP}000{NBSP}000{NBSP}tn|15=00{NBSP}000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ,
 ##winlangid 0x0419
 ##grflangid 0x0b
@@ -128,7 +128,6 @@ STR_ABBREV_TOFFEE                                               :КР
 STR_ABBREV_BATTERIES                                            :БТ
 STR_ABBREV_PLASTIC                                              :ПЛ
 STR_ABBREV_FIZZY_DRINKS                                         :ГШ
-STR_ABBREV_NONE                                                 :ҪУК
 STR_ABBREV_ALL                                                  :ПӖРМАЙ
 
 # 'Mode' of transport for cargoes
@@ -495,7 +494,6 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :расна
 
 
 # Custom currency window
-
 
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Префикс: {ORANGE}{STRING}
@@ -1811,7 +1809,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}

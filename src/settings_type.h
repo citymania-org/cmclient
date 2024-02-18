@@ -224,6 +224,10 @@ struct GUISettings {
 
 	bool   scale_bevels;                     ///< bevels are scaled with GUI scale.
 
+	std::string number_format; ///< formatting string for numbers (like "thousands" grouping)
+	std::string number_abbreviations; ///< mapping to number formats for different powers of ten/thresholds
+	std::string digit_decimal_separator; ///< decimal separator
+
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
 	 * @return whether the user has sufficient privileges to edit newgrfs in an existing game
@@ -267,9 +271,6 @@ struct LocaleSettings {
 	byte        units_volume;                     ///< unit system for volume
 	byte        units_force;                      ///< unit system for force
 	byte        units_height;                     ///< unit system for height
-	std::string digit_group_separator;            ///< thousand separator for non-currencies
-	std::string digit_group_separator_currency;   ///< thousand separator for currencies
-	std::string digit_decimal_separator;          ///< decimal separator
 };
 
 /** Settings related to news */
@@ -332,7 +333,6 @@ struct NetworkSettings {
 	uint8_t       min_active_clients;                       ///< minimum amount of active clients to unpause the game
 	bool        reload_cfg;                               ///< reload the config file before restarting
 	std::string last_joined;                              ///< Last joined server
-	bool        no_http_content_downloads;                ///< do not do content downloads over HTTP
 	UseRelayService use_relay_service;                    ///< Use relay service?
 	ParticipateSurvey participate_survey;                 ///< Participate in the automated survey
 };
