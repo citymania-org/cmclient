@@ -194,7 +194,7 @@ ToolRemoveMode RoadToolbar_GetRemoveMode(int widget) {
     switch(widget) {
         case WID_ROT_ROAD_X:
         case WID_ROT_ROAD_Y:
-        case CM_WID_ROT_AUTOROAD:
+        case WID_ROT_AUTOROAD:
             return ToolRemoveMode::MOD;
 
         case WID_ROT_BUS_STATION:
@@ -220,7 +220,7 @@ void RoadToolbar_UpdateOptionWidgetStatus(Window *w, int widget, bool remove_act
 
         case WID_ROT_ROAD_X:
         case WID_ROT_ROAD_Y:
-        case CM_WID_ROT_AUTOROAD:
+        case WID_ROT_AUTOROAD:
             if (is_road) w->SetWidgetDisabledState(WID_ROT_ONE_WAY, !w->IsWidgetLowered(widget));
             break;
 

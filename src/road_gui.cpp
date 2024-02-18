@@ -307,7 +307,7 @@ static bool RoadToolbar_CtrlChanged(Window *w)
 	if (w->IsWidgetDisabled(WID_ROT_REMOVE)) return false;
 
 	/* allow ctrl to switch remove mode only for these widgets */
-	for (WidgetID i = WID_ROT_ROAD_X; i <= CM_WID_ROT_AUTOROAD; i++) {
+	for (WidgetID i = WID_ROT_ROAD_X; i <= WID_ROT_AUTOROAD; i++) {
 		if (w->GetWidget<NWidgetCore>(i) && w->IsWidgetLowered(i)) {
 			ToggleRoadButton_Remove(w);
 			return true;
@@ -397,7 +397,7 @@ struct BuildRoadToolbarWindow : Window {
 	{
 		this->GetWidget<NWidgetCore>(WID_ROT_ROAD_X)->widget_data = rti->gui_sprites.build_x_road;
 		this->GetWidget<NWidgetCore>(WID_ROT_ROAD_Y)->widget_data = rti->gui_sprites.build_y_road;
-		this->GetWidget<NWidgetCore>(CM_WID_ROT_AUTOROAD)->widget_data = rti->gui_sprites.auto_road;
+		this->GetWidget<NWidgetCore>(WID_ROT_AUTOROAD)->widget_data = rti->gui_sprites.auto_road;
 		if (_game_mode != GM_EDITOR) {
 			this->GetWidget<NWidgetCore>(WID_ROT_DEPOT)->widget_data = rti->gui_sprites.build_depot;
 		}
@@ -461,7 +461,7 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_ROAD_X:
 			case WID_ROT_ROAD_Y:
-			case CM_WID_ROT_AUTOROAD:
+			case WID_ROT_AUTOROAD:
 				this->SetWidgetDisabledState(WID_ROT_REMOVE, !this->IsWidgetLowered(clicked_widget));
 				if (RoadTypeIsRoad(this->roadtype)) {
 					this->SetWidgetDisabledState(WID_ROT_ONE_WAY, !this->IsWidgetLowered(clicked_widget));
@@ -498,8 +498,8 @@ struct BuildRoadToolbarWindow : Window {
 				this->last_started_action = widget;
 				break;
 
-			case CM_WID_ROT_AUTOROAD:
-				HandlePlacePushButton(this, CM_WID_ROT_AUTOROAD, this->rti->cursor.autoroad, HT_RECT, DDSP_PLACE_AUTOROAD);
+			case WID_ROT_AUTOROAD:
+				HandlePlacePushButton(this, WID_ROT_AUTOROAD, this->rti->cursor.autoroad, HT_RECT, DDSP_PLACE_AUTOROAD);
 				this->last_started_action = widget;
 				break;
 
@@ -592,7 +592,7 @@ struct BuildRoadToolbarWindow : Window {
 				VpStartPlaceSizing(tile, VPM_FIX_X, DDSP_PLACE_ROAD_Y_DIR);
 				break;
 
-			case CM_WID_ROT_AUTOROAD:
+			case WID_ROT_AUTOROAD:
 				_place_road_dir = INVALID_AXIS;
 				_place_road_start_half_x = _tile_fract_coords.x >= 8;
 				_place_road_start_half_y = _tile_fract_coords.y >= 8;
@@ -819,7 +819,7 @@ struct BuildRoadToolbarWindow : Window {
 	static inline HotkeyList road_hotkeys{"roadtoolbar", {
 		Hotkey('1', "build_x", WID_ROT_ROAD_X),
 		Hotkey('2', "build_y", WID_ROT_ROAD_Y),
-		Hotkey('3', "cm_autoroad", CM_WID_ROT_AUTOROAD),
+		Hotkey('3', "autoroad", WID_ROT_AUTOROAD),
 		Hotkey('4', "demolish", WID_ROT_DEMOLISH),
 		Hotkey('5', "depot", WID_ROT_DEPOT),
 		Hotkey('6', "bus_station", WID_ROT_BUS_STATION),
@@ -834,7 +834,7 @@ struct BuildRoadToolbarWindow : Window {
 	static inline HotkeyList tram_hotkeys{"tramtoolbar", {
 		Hotkey('1', "build_x", WID_ROT_ROAD_X),
 		Hotkey('2', "build_y", WID_ROT_ROAD_Y),
-		Hotkey('3', "cm_autoroad", CM_WID_ROT_AUTOROAD),
+		Hotkey('3', "autoroad", WID_ROT_AUTOROAD),
 		Hotkey('4', "demolish", WID_ROT_DEMOLISH),
 		Hotkey('5', "depot", WID_ROT_DEPOT),
 		Hotkey('6', "bus_station", WID_ROT_BUS_STATION),
@@ -857,7 +857,7 @@ static constexpr NWidgetPart _nested_build_road_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_ROAD_X_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_ROAD_Y),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_ROAD_Y_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_ROT_AUTOROAD),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_AUTOROAD),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOROAD, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_DEMOLISH),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
@@ -900,7 +900,7 @@ static constexpr NWidgetPart _nested_build_tramway_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_TRAMWAY_X_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_ROAD_Y),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_TRAMWAY_Y_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_ROT_AUTOROAD),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_AUTOROAD),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOTRAM, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_DEMOLISH),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
@@ -959,7 +959,7 @@ static constexpr NWidgetPart _nested_build_road_scen_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_ROAD_X_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_ROAD_Y),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_ROAD_Y_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_ROT_AUTOROAD),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_AUTOROAD),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOROAD, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_DEMOLISH),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
@@ -996,7 +996,7 @@ static constexpr NWidgetPart _nested_build_tramway_scen_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_TRAMWAY_X_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_ROAD_Y),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_TRAMWAY_Y_DIR, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_ROT_AUTOROAD),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_AUTOROAD),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_AUTOTRAM, STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_ROT_DEMOLISH),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
