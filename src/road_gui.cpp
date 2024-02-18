@@ -67,7 +67,6 @@ static bool _place_road_end_half;
 /* CM static */ RoadType _cur_roadtype;
 
 /* CM static */ DiagDirection _road_depot_orientation;
-DiagDirection _road_station_picker_orientation;
 
 struct RoadStopGUISettings {
 	DiagDirection orientation;
@@ -1259,9 +1258,11 @@ public:
 		if (RoadTypeIsTram(_cur_roadtype) && _roadstop_gui_settings.orientation < DIAGDIR_END) {
 			_roadstop_gui_settings.orientation = DIAGDIR_END;
 		}
-		if (RoadTypeIsTram(_cur_roadtype) && _road_station_picker_orientation == (DiagDirection)(DIAGDIR_END + 2)) {
-			_road_station_picker_orientation = (DiagDirection)(DIAGDIR_END + 3);
+
+		if (RoadTypeIsTram(_cur_roadtype) && _roadstop_gui_settings.orientation == citymania::STATIONDIR_AUTO) {
+			_roadstop_gui_settings.orientation = citymania::STATIONDIR_AUTO_XY;
 		}
+
 		const RoadTypeInfo *rti = GetRoadTypeInfo(_cur_roadtype);
 		this->GetWidget<NWidgetCore>(WID_BROS_CAPTION)->widget_data = rti->strings.picker_title[rs];
 
@@ -1394,16 +1395,16 @@ public:
 		}
 
 		if (hotkey == CM_BROSHK_ROTATE) {
-			if (_road_station_picker_orientation < citymania::STATIONDIR_AUTO) {
-				this->RaiseWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
-				if (_road_station_picker_orientation < DIAGDIR_END) {
-					_road_station_picker_orientation = ChangeDiagDir(_road_station_picker_orientation, DIAGDIRDIFF_90RIGHT);
-				} else if (_road_station_picker_orientation == citymania::STATIONDIR_X) {
-					_road_station_picker_orientation = citymania::STATIONDIR_Y;
-				} else if (_road_station_picker_orientation == citymania::STATIONDIR_Y) {
-					_road_station_picker_orientation = citymania::STATIONDIR_X;
+			if (_roadstop_gui_settings.orientation < citymania::STATIONDIR_AUTO) {
+				this->RaiseWidget(_roadstop_gui_settings.orientation + WID_BROS_STATION_NE);
+				if (_roadstop_gui_settings.orientation < DIAGDIR_END) {
+					_roadstop_gui_settings.orientation = ChangeDiagDir(_roadstop_gui_settings.orientation, DIAGDIRDIFF_90RIGHT);
+				} else if (_roadstop_gui_settings.orientation == citymania::STATIONDIR_X) {
+					_roadstop_gui_settings.orientation = citymania::STATIONDIR_Y;
+				} else if (_roadstop_gui_settings.orientation == citymania::STATIONDIR_Y) {
+					_roadstop_gui_settings.orientation = citymania::STATIONDIR_X;
 				}
-				this->LowerWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
+				this->LowerWidget(_roadstop_gui_settings.orientation + WID_BROS_STATION_NE);
 			} else {
 				citymania::RotateAutodetection();
 			}

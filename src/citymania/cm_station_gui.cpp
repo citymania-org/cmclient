@@ -34,7 +34,6 @@
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
 
-extern DiagDirection _road_station_picker_orientation;
 extern bool CheckClickOnViewportSign(const Viewport *vp, int x, int y, const ViewportSign *sign);
 extern Rect ExpandRectWithViewportSignMargins(Rect r, ZoomLevel zoom);
 extern RoadBits FindRailsToConnect(TileIndex tile);

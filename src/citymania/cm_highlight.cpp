@@ -62,7 +62,6 @@ extern AirportClassID _selected_airport_class; ///< the currently visible airpor
 extern int _selected_airport_index;
 extern byte _selected_airport_layout;
 extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
-extern DiagDirection _road_station_picker_orientation;
 extern DiagDirection _road_depot_orientation;
 extern uint32 _realtime_tick;
 extern uint32 _cm_funding_layout;
@@ -1853,7 +1852,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
             if (_thd.select_proc == DDSP_BUILD_STATION)
                 _thd.cm_new = ObjectHighlight::make_rail_station(start_tile, end_tile, _railstation.orientation);
             else if (_thd.select_proc == DDSP_BUILD_BUSSTOP || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {
-                auto ddir = _road_station_picker_orientation;
+                auto ddir = _roadstop_gui_settings.orientation;
                 auto ta = TileArea(start_tile, end_tile);
                 if (pt.x != -1) {
                     if (ddir >= DIAGDIR_END && ddir < STATIONDIR_AUTO) {

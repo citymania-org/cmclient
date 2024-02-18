@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 
 #include "cm_main.hpp"
+#include "cm_command_type.hpp"
 #include "cm_hotkeys.hpp"
 #include "cm_minimap.hpp"
 
