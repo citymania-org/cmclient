@@ -90,7 +90,7 @@ struct LandTooltipsWindow : public Window
                 size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME).width, size->width);
 
                 for (auto &p : ind->produced) {
-                    if (p.cargo == CT_INVALID) continue;
+                    if (!IsValidCargoID(p.cargo)) continue;
                     const CargoSpec *cs = CargoSpec::Get(p.cargo);
                     if(cs == NULL) continue;
                     size->height += line_height;
@@ -165,7 +165,7 @@ struct LandTooltipsWindow : public Window
                 ir.top += text_height;
 
                 for (auto &p : ind->produced) {
-                    if (p.cargo == CT_INVALID) continue;
+                    if (!IsValidCargoID(p.cargo)) continue;
                     const CargoSpec *cs = CargoSpec::Get(p.cargo);
                     if(cs == NULL) continue;
                     SetDParam(0, cs->name);

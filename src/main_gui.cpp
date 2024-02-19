@@ -466,6 +466,13 @@ struct MainWindow : Window
 		return this->viewport->overlay->ShowTooltip(pt, close_cond);
 	}
 
+	void OnMouseOver(Point pt, [[maybe_unused]] int widget) override
+	{
+		extern void GuiPrepareTooltipsExtra(Window *parent);
+		if (_game_mode != GM_MENU && pt.x != -1) GuiPrepareTooltipsExtra(this);
+	}
+
+
 	/**
 	 * Some data on this window has become invalid.
 	 * @param data Information about the changed data.
