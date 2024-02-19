@@ -54,13 +54,13 @@ struct CargosWindow : Window {
 		SetDParam(1, (CompanyID)this->window_number);
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override {
+	void OnClick([[maybe_unused]] Point pt, int widget, [[maybe_unused]] int click_count) override {
 		if(widget != WID_CT_HEADER_CARGO) return;
 		this->cargoPeriod = (this->cargoPeriod == WID_CT_OPTION_CARGO_TOTAL) ? WID_CT_OPTION_CARGO_MONTH : WID_CT_OPTION_CARGO_TOTAL;
 		this->SetDirty();
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, [[maybe_unused]] const Dimension &padding, Dimension *fill, Dimension *resize) {
+	void UpdateWidgetSize(int widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override {
 		Dimension icon_size = this->GetMaxIconSize();
 		int line_height = std::max(GetCharacterHeight(FS_NORMAL), (int)icon_size.height);
 		int icon_space = icon_size.width + ScaleGUITrad(CT_ICON_MARGIN);
@@ -68,17 +68,15 @@ struct CargosWindow : Window {
 			case WID_CT_HEADER_AMOUNT:
 			case WID_CT_HEADER_INCOME:
 			case WID_CT_AMOUNT:
-			case WID_CT_INCOME: {
+			case WID_CT_INCOME:
 				break;
-			}
 			case WID_CT_HEADER_CARGO:
-			case WID_CT_LIST: {
+			case WID_CT_LIST:
                 for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					size->width = std::max(GetStringBoundingBox(cs->name).width + icon_space, size->width);
 				}
 				size->width = std::max(GetStringBoundingBox(CM_STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH).width, size->width);
 				break;
-			}
 		}
 		switch(widget) {
 			case WID_CT_HEADER_AMOUNT:
@@ -89,15 +87,15 @@ struct CargosWindow : Window {
 				break;
 			case WID_CT_AMOUNT:
 			case WID_CT_INCOME:
-			case WID_CT_LIST: {
+			case WID_CT_LIST:
 				size->height = _sorted_standard_cargo_specs.size() * line_height + CT_LINESPACE + GetCharacterHeight(FS_NORMAL);
 				break;
-			}
 		}
+		size->width += padding.width;
+		size->height += padding.height;
 	}
 
 	Dimension GetMaxIconSize() const {
-		const CargoSpec *cs;
 		Dimension size = {0, 0};
         for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			Dimension icon_size = GetSpriteSize(cs->GetCargoIcon());
@@ -107,8 +105,7 @@ struct CargosWindow : Window {
 		return size;
 	}
 
-	void DrawWidget(const Rect &r, int widget) const
-	{
+	void DrawWidget(const Rect &r, int widget) const override {
 		const Company *c = Company::Get((CompanyID)this->window_number);
 		uint32 sum_cargo_amount = 0;
 		Money sum_cargo_income = 0;
@@ -137,7 +134,7 @@ struct CargosWindow : Window {
 					           y + (line_height - (int)icon_size.height) / 2);
 
 					SetDParam(0, cs->name);
-					DrawString(r.left + icon_space, r.right, y + text_y_ofs, CM_STR_TOOLBAR_CARGOS_NAME);
+					DrawString(rect_x + icon_space, r.right, y + text_y_ofs, CM_STR_TOOLBAR_CARGOS_NAME);
 
 					y += line_height;
 				}

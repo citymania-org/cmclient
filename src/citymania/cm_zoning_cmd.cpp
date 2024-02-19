@@ -215,11 +215,7 @@ SpriteID TileZoneCheckBuildEvaluation(TileIndex tile, Owner owner) {
 //Detect whether a building is unserved by a station of owner.
 //return red if unserved, orange if only accepting, nothing if served or not a building
 SpriteID TileZoneCheckUnservedBuildingsEvaluation(TileIndex tile) {
-	CargoArray dat;
-
 	if (IsTileType (tile, MP_HOUSE))
-		//&& ( ( memset(&dat, 0, sizeof(dat)), AddAcceptedCargo(tile, dat, NULL), (dat[CT_MAIL] + dat[CT_PASSENGERS] > 0) )
-		//	|| ( memset(&dat, 0, sizeof(dat)), AddProducedCargo(tile, dat), (dat[CT_MAIL] + dat[CT_PASSENGERS] > 0) ) ) )
 	{
 		StationFinder stations(TileArea(tile, 1, 1));
 

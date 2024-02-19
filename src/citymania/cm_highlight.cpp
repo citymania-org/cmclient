@@ -354,7 +354,7 @@ void ObjectHighlight::AddTile(TileIndex tile, ObjectTileHighlight &&oh) {
     this->tiles.insert(std::make_pair(tile, std::move(oh)));
 }
 
-void ObjectHighlight::AddStationOverlayData(TileIndex tile, int w, int h, int rad, StationCoverageType sct) {
+void ObjectHighlight::AddStationOverlayData(int w, int h, int rad, StationCoverageType sct) {
     if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
     auto production = citymania::GetProductionAroundTiles(this->tile, w, h, rad);
     bool has_header = false;
@@ -444,7 +444,7 @@ void ObjectHighlight::UpdateTiles() {
                 tile_track += tile_delta ^ TileDiffXY(1, 1); // perpendicular to tile_delta
             } while (--numtracks);
 
-            this->AddStationOverlayData(this->tile, ta.w, ta.h, CA_TRAIN, SCT_ALL);
+            this->AddStationOverlayData(ta.w, ta.h, CA_TRAIN, SCT_ALL);
             break;
         }
         case Type::ROAD_STOP: {
@@ -468,7 +468,7 @@ void ObjectHighlight::UpdateTiles() {
             }
             auto sct = (this->is_truck ? SCT_NON_PASSENGERS_ONLY : SCT_PASSENGERS_ONLY);
             auto rad = (this->is_truck ? CA_BUS : CA_TRUCK);
-            this->AddStationOverlayData(this->tile, ta.w, ta.h, rad, sct);
+            this->AddStationOverlayData(ta.w, ta.h, rad, sct);
             break;
         }
 
@@ -502,7 +502,7 @@ void ObjectHighlight::UpdateTiles() {
             for (AirportTileTableIterator iter(as->table[this->airport_layout], this->tile); iter != INVALID_TILE; ++iter) {
                 this->AddTile(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx()));
             }
-            this->AddStationOverlayData(this->tile, w, h, as->catchment, SCT_ALL);
+            this->AddStationOverlayData(w, h, as->catchment, SCT_ALL);
             break;
         }
         case Type::BLUEPRINT:
@@ -630,7 +630,7 @@ void ObjectHighlight::UpdateOverlay() {
         return;
     }
     auto err = this->cost.GetErrorMessage();
-    auto extra_err = this->cost.GetExtraErrorMessage();
+    // auto extra_err = this->cost.GetExtraErrorMessage();
     bool no_money = (err == STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY);
     SetDParam(0, this->cost.GetCost());
     this->overlay_data.emplace_back(PAL_NONE, GetString(no_money ? CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY : CM_STR_BUILD_INFO_OVERLAY_COST_OK));
@@ -945,7 +945,7 @@ bool is_same_industry(TileIndex tile, Industry* ind) {
     return false;
 }
 
-uint32 GetNearbyIndustryTileInformation(byte parameter, TileIndex tile, Industry* ind, bool signed_offsets, bool grf_version8)
+uint32 GetNearbyIndustryTileInformation(byte parameter, TileIndex tile, [[maybe_unused]] Industry* ind, bool signed_offsets, bool grf_version8)
 {
     if (parameter != 0) tile = GetNearbyTile(parameter, tile, signed_offsets); // only perform if it is required
 
@@ -1062,7 +1062,6 @@ bool DrawNewIndustryTile(TileInfo *ti, Industry *i, IndustryGfx gfx, const Indus
     IndustryTilePreviewResolverObject object(gfx, ti->tile, i);
 
     const SpriteGroup *group = object.Resolve();
-    auto diff = TileIndexToTileIndexDiffC(ti->tile, i->location.tile);
     if (group == nullptr || group->type != SGT_TILELAYOUT) return false;
 
     /* Limit the building stage to the number of stages supplied. */
@@ -1344,19 +1343,18 @@ void ObjectHighlight::Draw(const TileInfo *ti) {
                 DrawTileSelectionRect(ti, oth.palette);
                 break;
             case ObjectTileHighlight::Type::NUMBERED_RECT: {
-                DrawTileSelectionRect(ti, oth.palette);
-                ViewportSign sign;
-                auto string_id = oth.u.numbered_rect.number ? CM_STR_LAYOUT_NUM : CM_STR_LAYOUT_RANDOM;
-
-                SetDParam(0, oth.u.numbered_rect.number);
-                std::string buffer = GetString(string_id);
-                auto bb = GetStringBoundingBox(buffer);
-                sign.width_normal = WidgetDimensions::scaled.fullbevel.left + Align(bb.width, 2) + WidgetDimensions::scaled.fullbevel.right;
-                Point pt = RemapCoords2(TileX(ti->tile) * TILE_SIZE + TILE_SIZE / 2, TileY(ti->tile) * TILE_SIZE + TILE_SIZE / 2);
-                sign.center = pt.x;
-                sign.top = pt.y - bb.height / 2;
-
                 // TODO NUMBERED_RECT should be used atm anyway
+                // DrawTileSelectionRect(ti, oth.palette);
+                // auto string_id = oth.u.numbered_rect.number ? CM_STR_LAYOUT_NUM : CM_STR_LAYOUT_RANDOM;
+                // SetDParam(0, oth.u.numbered_rect.number);
+                // std::string buffer = GetString(string_id);
+                // auto bb = GetStringBoundingBox(buffer);
+                // ViewportSign sign;
+                // sign.width_normal = WidgetDimensions::scaled.fullbevel.left + Align(bb.width, 2) + WidgetDimensions::scaled.fullbevel.right;
+                // Point pt = RemapCoords2(TileX(ti->tile) * TILE_SIZE + TILE_SIZE / 2, TileY(ti->tile) * TILE_SIZE + TILE_SIZE / 2);
+                // sign.center = pt.x;
+                // sign.top = pt.y - bb.height / 2;
+
                 // ViewportAddString(_cur_dpi, ZOOM_LVL_OUT_8X, &sign,
                 //                   string_id, STR_NULL, STR_NULL, oth.u.numbered_rect.number, 0, COLOUR_WHITE);
                 break;
@@ -1387,7 +1385,7 @@ bool Intersects(const Rect &rect, int left, int top, int right, int bottom) {
 }
 
 
-void ObjectHighlight::DrawSelectionOverlay(DrawPixelInfo *dpi) {
+void ObjectHighlight::DrawSelectionOverlay([[maybe_unused]] DrawPixelInfo *dpi) {
     for (auto &s : this->sprites) {
         DrawSpriteViewport(s.sprite_id, s.palette_id, s.pt.x, s.pt.y);
     }
@@ -1413,7 +1411,7 @@ void ObjectHighlight::DrawSelectionOverlay(DrawPixelInfo *dpi) {
     // }
 }
 
-void ObjectHighlight::DrawOverlay(DrawPixelInfo *dpi) {
+void ObjectHighlight::DrawOverlay([[maybe_unused]] DrawPixelInfo *dpi) {
     if (!this->cost.Succeeded()) return;
 }
 
@@ -1747,7 +1745,7 @@ void DrawTileZoning(const TileInfo *ti, const TileHighlight &th, TileType tile_t
     }
 }
 
-bool DrawTileSelection(const TileInfo *ti, const TileHighlightType &tht) {
+bool DrawTileSelection(const TileInfo *ti, [[maybe_unused]] const TileHighlightType &tht) {
     if (ti->tile == INVALID_TILE || IsTileType(ti->tile, MP_VOID)) return false;
     _thd.cm.Draw(ti);
 
@@ -1812,7 +1810,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     bool force_new = false;
     // fprintf(stderr, "UPDATE %d %d %d %d\n", tile, _thd.size.x, _thd.size.y, (int)((_thd.place_mode & HT_DRAG_MASK) == HT_RECT));
     if (_thd.place_mode == CM_HT_BLUEPRINT_PLACE) {
-        UpdateBlueprintTileSelection(pt, tile);
+        UpdateBlueprintTileSelection(tile);
         new_drawstyle = CM_HT_BLUEPRINT_PLACE;
     } else if (pt.x == -1) {
     } else if (_thd.make_square_red) {

@@ -3189,7 +3189,6 @@ static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, Ti
 	if (_settings_client.gui.measure_tooltip) {
 		uint distance = DistanceManhattan(start_tile, end_tile) + 1;
 		byte index = 0;
-		uint64 params[2];
 
 		if (show_single_tile_length || distance != 1) {
 			int heightdiff = CalcHeightdiff(style, distance, start_tile, end_tile);

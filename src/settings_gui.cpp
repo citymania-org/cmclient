@@ -1000,7 +1000,7 @@ struct GameOptionsWindow : Window {
 		}
 	}
 
-	static EventState GameOptionsWindowGlobalHotkeys(int hotkey) {
+	static EventState GameOptionsWindowGlobalHotkeys([[maybe_unused]] int hotkey) {
 		if (!ToggleFullScreen(!_fullscreen)) {
 			ShowErrorMessage(STR_ERROR_FULLSCREEN_FAILED, INVALID_STRING_ID, WL_ERROR);
 		}

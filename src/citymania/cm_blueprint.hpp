@@ -12,7 +12,7 @@ void ResetActiveBlueprint();
 void SetBlueprintHighlight(const TileInfo *ti, TileHighlight &th);
 
 
-void UpdateBlueprintTileSelection(Point pt, TileIndex tile);
+void UpdateBlueprintTileSelection(TileIndex tile);
 void BuildActiveBlueprint(TileIndex start);
 void RotateActiveBlueprint();
 void SaveBlueprint(uint slot);

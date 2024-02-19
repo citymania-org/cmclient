@@ -257,13 +257,11 @@ MinimapIndustryKdtreeEntry get_industry_entry(const Industry *ind) {
 }
 
 void minimap_add_industry(const Industry *ind) {
-	auto x = get_industry_entry(ind);
 	if (!is_cached_industry(ind)) return;
 	_minimap_industry_idx.Insert(get_industry_entry(ind));
 }
 
 void minimap_remove_industry(const Industry *ind) {
-	auto x = get_industry_entry(ind);
 	if (!is_cached_industry(ind)) return;
 	_minimap_industry_idx.Remove(get_industry_entry(ind));
 }

@@ -345,7 +345,7 @@ public:
     void Draw(const TileInfo *ti);
     void DrawSelectionOverlay(DrawPixelInfo *dpi);
     void DrawOverlay(DrawPixelInfo *dpi);
-    void AddStationOverlayData(TileIndex tile, int w, int h, int rad,  StationCoverageType sct);
+    void AddStationOverlayData(int w, int h, int rad,  StationCoverageType sct);
     void UpdateTiles();
     void UpdateOverlay();
     void MarkDirty();

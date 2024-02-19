@@ -625,7 +625,7 @@ uint32_t GetSmallMapOwnerPixels(TileIndex tile, TileType t, IncludeHeightmap inc
 
 static inline uint32 CM_GetSmallMapIMBAPixels(TileIndex tile, TileType t)
 {
-	const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+	// const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
 	switch (t) {
 		// case MP_TREES:
 		// 	if (GetTreeGround(tile) == TREE_GROUND_SNOW_DESERT || GetTreeGround(tile) == TREE_GROUND_ROUGH_SNOW) {

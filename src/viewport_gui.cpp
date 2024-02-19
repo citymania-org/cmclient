@@ -141,7 +141,7 @@ public:
 		HandleZoomMessage(this, this->viewport, WID_EV_ZOOM_IN, WID_EV_ZOOM_OUT);
 	}
 
-	virtual void OnMouseOver(Point pt, int widget)
+	void OnMouseOver(Point pt, [[maybe_unused]] int widget) override
 	{
 		extern void GuiPrepareTooltipsExtra(Window *parent);
 		if (pt.x != -1) GuiPrepareTooltipsExtra(this);

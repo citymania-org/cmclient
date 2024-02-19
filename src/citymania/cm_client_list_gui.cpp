@@ -25,14 +25,14 @@
 
 namespace citymania {
 
-static bool Intersects(PointDimension rect, Point pos, Point size) {
-    return (
-        pos.x + size.x >= rect.x &&
-        pos.x <= rect.x + rect.width &&
-        pos.y + size.y >= rect.y &&
-        pos.y <= rect.y + rect.height
-    );
-}
+// static bool Intersects(PointDimension rect, Point pos, Point size) {
+//     return (
+//         pos.x + size.x >= rect.x &&
+//         pos.x <= rect.x + rect.width &&
+//         pos.y + size.y >= rect.y &&
+//         pos.y <= rect.y + rect.height
+//     );
+// }
 
 static bool Intersects(PointDimension rect, int left, int top, int right, int bottom) {
     return (

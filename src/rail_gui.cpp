@@ -337,6 +337,7 @@ static void ToggleRailButton_Remove(Window *w)
  * @param w window the button belongs to
  * @return true iff the remove button was changed
  */
+[[maybe_unused]]
 static bool RailToolbar_CtrlChanged(Window *w)
 {
 	if (w->IsWidgetDisabled(WID_RAT_REMOVE)) return false;

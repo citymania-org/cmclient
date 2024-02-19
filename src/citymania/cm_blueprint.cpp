@@ -576,7 +576,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
     _active_blueprint = std::make_pair(start, blueprint);
 }
 
-void UpdateBlueprintTileSelection(Point pt, TileIndex tile) {
+void UpdateBlueprintTileSelection(TileIndex tile) {
     if (_active_blueprint.second == nullptr) {
         _thd.cm_new = ObjectHighlight{};
         return;
@@ -642,7 +642,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
     }
 
     if (last_rail != nullptr) {  // there can't be any signals if there are no rails
-        last_rail->with_callback([start, blueprint](bool res) {
+        last_rail->with_callback([start, blueprint]([[maybe_unused]] bool res) {
             for (auto &item : blueprint->items) {
                 if (item.type != Blueprint::Item::Type::RAIL_SIGNAL) continue;
                 auto cc = GetBlueprintCommand(start, item);

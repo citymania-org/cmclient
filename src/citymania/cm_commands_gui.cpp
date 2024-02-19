@@ -419,7 +419,7 @@ struct CommandsToolbarWindow : Window {
 		const CargoSpec *cs = _sorted_cargo_specs[widget - CTW_CARGO_FIRST];
 		bool rtl = _current_text_dir == TD_RTL;
 
-		/* Since the buttons have no text, no images,
+		/ * Since the buttons have no text, no images,
 		 * both the text and the coloured box have to be manually painted.
 		 * clk_dif will move one pixel down and one pixel to the right
 		 * when the button is clicked */ /*
@@ -452,7 +452,7 @@ struct CommandsToolbarWindow : Window {
 
 };
 
-/** Construct the row containing the digit keys. *//*
+/ ** Construct the row containing the digit keys. *//*
 static NWidgetBase *MakeCargoButtons(int *biggest_index)
 {
 	NWidgetVertical *ver = new NWidgetVertical;
@@ -695,7 +695,7 @@ struct LoginWindow : Window {
 		// if(!_novahost || !_networking) this->DisableWidget(LWW_NOVAPOLIS);
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch(widget){
 			case LWW_NOVAPOLIS_LOGIN:
@@ -719,7 +719,7 @@ struct LoginWindow : Window {
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick([[maybe_unused]] Point pt, int widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case LWW_NOVAPOLIS:
@@ -746,7 +746,7 @@ struct LoginWindow : Window {
 		}
 	}
 
-	void OnQueryTextFinished(char * str)
+	void OnQueryTextFinished(char * str) override
 	{
 		if (str == NULL) return;
 		switch(this->query_widget){

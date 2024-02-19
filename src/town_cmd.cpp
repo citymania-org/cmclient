@@ -2159,7 +2159,7 @@ uint CB_GetMaxTownStorage(Town *town, uint cargo) {
 	return CBREQ[cargo] > 0 ? (town->cache.population * CBREQ[cargo] * _cb_storage / 1000) : 0;
 }
 
-void CB_UpdateTownStorage(Town *t)
+void CB_UpdateTownStorage([[maybe_unused]] Town *t)
 {
 	// InvalidateWindowData(WC_CB_TOWN, t->index);
 	// t->growing = true;

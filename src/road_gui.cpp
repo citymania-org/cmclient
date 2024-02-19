@@ -302,6 +302,7 @@ static void ToggleRoadButton_Remove(Window *w)
  * @param w window the button belongs to
  * @return true iff the remove button was changed
  */
+[[maybe_unused]]
 static bool RoadToolbar_CtrlChanged(Window *w)
 {
 	if (w->IsWidgetDisabled(WID_ROT_REMOVE)) return false;
@@ -1113,9 +1114,9 @@ public:
 			 * then from a click and that the CTRL state should be ignored. */
 			case BRDHK_ROTATE:
 				if (_road_depot_orientation < DIAGDIR_END) {
-					this->RaiseWidget(_road_depot_orientation + WID_BROD_DEPOT_NE);
+					this->RaiseWidget(WID_BROD_DEPOT_NE + _road_depot_orientation);
 					_road_depot_orientation = ChangeDiagDir(_road_depot_orientation, DIAGDIRDIFF_90RIGHT);
-					this->LowerWidget(_road_depot_orientation + WID_BROD_DEPOT_NE);
+					this->LowerWidget(WID_BROD_DEPOT_NE + _road_depot_orientation);
 				} else {
 					citymania::RotateAutodetection();
 				}
@@ -1403,7 +1404,7 @@ public:
 
 		if (hotkey == CM_BROSHK_ROTATE) {
 			if (_roadstop_gui_settings.orientation < citymania::STATIONDIR_AUTO) {
-				this->RaiseWidget(_roadstop_gui_settings.orientation + WID_BROS_STATION_NE);
+				this->RaiseWidget(WID_BROS_STATION_NE + _roadstop_gui_settings.orientation);
 				if (_roadstop_gui_settings.orientation < DIAGDIR_END) {
 					_roadstop_gui_settings.orientation = ChangeDiagDir(_roadstop_gui_settings.orientation, DIAGDIRDIFF_90RIGHT);
 				} else if (_roadstop_gui_settings.orientation == citymania::STATIONDIR_X) {
@@ -1411,7 +1412,7 @@ public:
 				} else if (_roadstop_gui_settings.orientation == citymania::STATIONDIR_Y) {
 					_roadstop_gui_settings.orientation = citymania::STATIONDIR_X;
 				}
-				this->LowerWidget(_roadstop_gui_settings.orientation + WID_BROS_STATION_NE);
+				this->LowerWidget(WID_BROS_STATION_NE + _roadstop_gui_settings.orientation);
 			} else {
 				citymania::RotateAutodetection();
 			}
