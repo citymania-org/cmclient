@@ -3,8 +3,8 @@
 ##isocode sr_RS
 ##plural 6
 ##textdir ltr
-##digitsep .
-##digitsepcur .
+##numberformat 00.000.000.000.000.000.000
+##numberabbreviations 3=00.000.000.000.000.000{NBSP}k|6=00.000.000.000.000{NBSP}m|9=00.000.000.000{NBSP}bn|12=00.000.000{NBSP}tn|15=00.000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ,
 ##winlangid 0x7c1a
 ##grflangid 0x0d
@@ -347,7 +347,6 @@ STR_ABBREV_TOFFEE                                               :KA
 STR_ABBREV_BATTERIES                                            :BT
 STR_ABBREV_PLASTIC                                              :PL
 STR_ABBREV_FIZZY_DRINKS                                         :GP
-STR_ABBREV_NONE                                                 :NŠT
 STR_ABBREV_ALL                                                  :SVE
 
 # 'Mode' of transport for cargoes
@@ -1220,9 +1219,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Devizni
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Smanji vrednost svoje valute u odnosu na jednu funtu (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Povećaj vrednost svoje valute u odnosu na jednu funtu (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Postavi vrednost svoje valute u odnosu na jednu funtu (£)
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}Razdelnik: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}Postavi razdelnik za svoju valutu
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Prefiks: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}Postavi prefiks za svoju valutu
@@ -3739,8 +3735,6 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Prazno -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Odaberi sve objekte
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}Odaberi sve vrste tereta (uključujući i one bez tereta)
-STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}Nema tereta bilo koje vrste na čekanju
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -5720,7 +5714,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}

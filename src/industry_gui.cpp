@@ -893,6 +893,7 @@ class IndustryViewWindow : public Window
 		IL_RATE2,             ///< Production rate of cargo 2
 	};
 
+	Dimension cargo_icon_size; ///< Largest cargo icon dimension.
 	Editability editable;     ///< Mode for changing production
 	InfoLine editbox_line;    ///< The line clicked to open the edit box
 	InfoLine clicked_line;    ///< The line of the button that has been clicked
@@ -921,6 +922,7 @@ public:
 	{
 		/* This only used when the cheat to alter industry production is enabled */
 		this->cheat_line_height = std::max(SETTING_BUTTON_HEIGHT + WidgetDimensions::scaled.vsep_normal, GetCharacterHeight(FS_NORMAL));
+		this->cargo_icon_size = GetLargestCargoIconSize();
 	}
 
 	void OnPaint() override
@@ -936,6 +938,15 @@ public:
 			this->ReInit();
 			return;
 		}
+	}
+
+	void DrawCargoIcon(const Rect &r, CargoID cid) const
+	{
+		bool rtl = _current_text_dir == TD_RTL;
+		SpriteID icon = CargoSpec::Get(cid)->GetCargoIcon();
+		Dimension d = GetSpriteSize(icon);
+		Rect ir = r.WithWidth(this->cargo_icon_size.width, rtl).WithHeight(GetCharacterHeight(FS_NORMAL));
+		DrawSprite(icon, PAL_NONE, CenterBounds(ir.left, ir.right, d.width), CenterBounds(ir.top, ir.bottom, this->cargo_icon_size.height));
 	}
 
 	/**
@@ -957,6 +968,7 @@ public:
 			ir.top += GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_wide;
 		}
 
+		const int label_indent = WidgetDimensions::scaled.hsep_normal + this->cargo_icon_size.width;
 		bool stockpiling = HasBit(ind->callback_mask, CBM_IND_PRODUCTION_CARGO_ARRIVAL) || HasBit(ind->callback_mask, CBM_IND_PRODUCTION_256_TICKS);
 
 		for (const auto &a : i->accepted) {
@@ -967,6 +979,8 @@ public:
 				ir.top += GetCharacterHeight(FS_NORMAL);
 				first = false;
 			}
+
+			DrawCargoIcon(ir, a.cargo);
 
 			CargoSuffix suffix;
 			GetCargoSuffix(CARGOSUFFIX_IN, CST_VIEW, i, i->type, ind, a.cargo, &a - i->accepted.data(), suffix);
@@ -994,7 +1008,7 @@ public:
 				default:
 					NOT_REACHED();
 			}
-			DrawString(ir.Indent(WidgetDimensions::scaled.hsep_indent, rtl), str);
+			DrawString(ir.Indent(label_indent, rtl), str);
 			ir.top += GetCharacterHeight(FS_NORMAL);
 		}
 
@@ -1012,6 +1026,8 @@ public:
 				first = false;
 			}
 
+			DrawCargoIcon(ir, p.cargo);
+
 			CargoSuffix suffix;
 			GetCargoSuffix(CARGOSUFFIX_OUT, CST_VIEW, i, i->type, ind, p.cargo, &p - i->produced.data(), suffix);
 
@@ -1019,10 +1035,10 @@ public:
 			SetDParam(1, p.history[LAST_MONTH].production);
 			SetDParamStr(2, suffix.text);
 			SetDParam(3, ToPercent8(p.history[LAST_MONTH].PctTransported()));
-			DrawString(ir.Indent(WidgetDimensions::scaled.hsep_indent + (this->editable == EA_RATE ? SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_normal : 0), rtl).Translate(0, text_y_offset), STR_INDUSTRY_VIEW_TRANSPORTED);
+			DrawString(ir.Indent(label_indent + (this->editable == EA_RATE ? SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_normal : 0), rtl).Translate(0, text_y_offset), STR_INDUSTRY_VIEW_TRANSPORTED);
 			/* Let's put out those buttons.. */
 			if (this->editable == EA_RATE) {
-				DrawArrowButtons(ir.Indent(WidgetDimensions::scaled.hsep_indent, rtl).WithWidth(SETTING_BUTTON_WIDTH, rtl).left, ir.top + button_y_offset, COLOUR_YELLOW, (this->clicked_line == IL_RATE1 + (&p - i->produced.data())) ? this->clicked_button : 0,
+				DrawArrowButtons(ir.Indent(label_indent, rtl).WithWidth(SETTING_BUTTON_WIDTH, rtl).left, ir.top + button_y_offset, COLOUR_YELLOW, (this->clicked_line == IL_RATE1 + (&p - i->produced.data())) ? this->clicked_button : 0,
 						p.rate > 0, p.rate < 255);
 			}
 			ir.top += line_height;
@@ -1036,8 +1052,8 @@ public:
 			ir.top += WidgetDimensions::scaled.vsep_wide;
 			this->production_offset_y = ir.top;
 			SetDParam(0, RoundDivSU(i->prod_level * 100, PRODLEVEL_DEFAULT));
-			DrawString(ir.Indent(WidgetDimensions::scaled.hsep_indent + SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_normal, rtl).Translate(0, text_y_offset), STR_INDUSTRY_VIEW_PRODUCTION_LEVEL);
-			DrawArrowButtons(ir.Indent(WidgetDimensions::scaled.hsep_indent, rtl).WithWidth(SETTING_BUTTON_WIDTH, rtl).left, ir.top + button_y_offset, COLOUR_YELLOW, (this->clicked_line == IL_MULTIPLIER) ? this->clicked_button : 0,
+			DrawString(ir.Indent(label_indent + SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_normal, rtl).Translate(0, text_y_offset), STR_INDUSTRY_VIEW_PRODUCTION_LEVEL);
+			DrawArrowButtons(ir.Indent(label_indent, rtl).WithWidth(SETTING_BUTTON_WIDTH, rtl).left, ir.top + button_y_offset, COLOUR_YELLOW, (this->clicked_line == IL_MULTIPLIER) ? this->clicked_button : 0,
 					i->prod_level > PRODLEVEL_MINIMUM, i->prod_level < PRODLEVEL_MAXIMUM);
 			ir.top += line_height;
 		}
@@ -1115,7 +1131,7 @@ public:
 				if (line == IL_NONE) return;
 
 				bool rtl = _current_text_dir == TD_RTL;
-				Rect r = this->GetWidget<NWidgetBase>(widget)->GetCurrentRect().Shrink(WidgetDimensions::scaled.framerect).Indent(WidgetDimensions::scaled.hsep_indent, rtl);
+				Rect r = this->GetWidget<NWidgetBase>(widget)->GetCurrentRect().Shrink(WidgetDimensions::scaled.framerect).Indent(this->cargo_icon_size.width + WidgetDimensions::scaled.hsep_normal, rtl);
 
 				if (r.WithWidth(SETTING_BUTTON_WIDTH, rtl).Contains(pt)) {
 					/* Clicked buttons, decrease or increase production */
@@ -2074,6 +2090,9 @@ struct CargoesField {
 	static int industry_width;
 	static uint max_cargoes;
 
+	using Cargoes = uint16_t;
+	static_assert(std::numeric_limits<Cargoes>::digits >= MAX_CARGOES);
+
 	CargoesFieldType type; ///< Type of field.
 	union {
 		struct {
@@ -2083,10 +2102,10 @@ struct CargoesField {
 		} industry; ///< Industry data (for #CFT_INDUSTRY).
 		struct {
 			CargoID vertical_cargoes[MAX_CARGOES]; ///< Cargoes running from top to bottom (cargo ID or #INVALID_CARGO).
+			Cargoes supp_cargoes; ///< Cargoes in \c vertical_cargoes entering from the left.
+			Cargoes cust_cargoes; ///< Cargoes in \c vertical_cargoes leaving to the right.
 			uint8_t num_cargoes;                   ///< Number of cargoes.
-			CargoID supp_cargoes[MAX_CARGOES];     ///< Cargoes entering from the left (index in #vertical_cargoes, or #INVALID_CARGO).
 			uint8_t top_end;                       ///< Stop at the top of the vertical cargoes.
-			CargoID cust_cargoes[MAX_CARGOES];     ///< Cargoes leaving to the right (index in #vertical_cargoes, or #INVALID_CARGO).
 			uint8_t bottom_end;                    ///< Stop at the bottom of the vertical cargoes.
 		} cargo; ///< Cargo data (for #CFT_CARGO).
 		struct {
@@ -2140,11 +2159,11 @@ struct CargoesField {
 		if (column < 0) return -1;
 
 		if (producer) {
-			assert(!IsValidCargoID(this->u.cargo.supp_cargoes[column]));
-			this->u.cargo.supp_cargoes[column]  = column;
+			assert(!HasBit(this->u.cargo.supp_cargoes, column));
+			SetBit(this->u.cargo.supp_cargoes, column);
 		} else {
-			assert(!IsValidCargoID(this->u.cargo.cust_cargoes[column]));
-			this->u.cargo.cust_cargoes[column] = column;
+			assert(!HasBit(this->u.cargo.cust_cargoes, column));
+			SetBit(this->u.cargo.cust_cargoes, column);
 		}
 		return column;
 	}
@@ -2157,11 +2176,7 @@ struct CargoesField {
 	{
 		assert(this->type == CFT_CARGO);
 
-		for (uint i = 0; i < MAX_CARGOES; i++) {
-			if (IsValidCargoID(this->u.cargo.supp_cargoes[i])) return true;
-			if (IsValidCargoID(this->u.cargo.cust_cargoes[i])) return true;
-		}
-		return false;
+		return this->u.cargo.supp_cargoes != 0 || this->u.cargo.cust_cargoes != 0;
 	}
 
 	/**
@@ -2189,8 +2204,8 @@ struct CargoesField {
 		std::fill(insert, std::end(this->u.cargo.vertical_cargoes), INVALID_CARGO);
 		this->u.cargo.top_end = top_end;
 		this->u.cargo.bottom_end = bottom_end;
-		std::fill(std::begin(this->u.cargo.supp_cargoes), std::end(this->u.cargo.supp_cargoes), INVALID_CARGO);
-		std::fill(std::begin(this->u.cargo.cust_cargoes), std::end(this->u.cargo.cust_cargoes), INVALID_CARGO);
+		this->u.cargo.supp_cargoes = 0;
+		this->u.cargo.cust_cargoes = 0;
 	}
 
 	/**
@@ -2318,7 +2333,7 @@ struct CargoesField {
 					colpos += 1 + CargoesField::cargo_space.width;
 				}
 
-				const CargoID *hor_left, *hor_right;
+				Cargoes hor_left, hor_right;
 				if (_current_text_dir == TD_RTL) {
 					hor_left  = this->u.cargo.cust_cargoes;
 					hor_right = this->u.cargo.supp_cargoes;
@@ -2328,8 +2343,8 @@ struct CargoesField {
 				}
 				ypos += CargoesField::cargo_border.height + vert_inter_industry_space / 2 + (GetCharacterHeight(FS_NORMAL) - CargoesField::cargo_line.height) / 2;
 				for (uint i = 0; i < MAX_CARGOES; i++) {
-					if (IsValidCargoID(hor_left[i])) {
-						int col = hor_left[i];
+					if (HasBit(hor_left, i)) {
+						int col = i;
 						int dx = 0;
 						const CargoSpec *csp = CargoSpec::Get(this->u.cargo.vertical_cargoes[col]);
 						for (; col > 0; col--) {
@@ -2339,8 +2354,8 @@ struct CargoesField {
 						}
 						DrawHorConnection(xpos, cargo_base - dx, ypos, csp);
 					}
-					if (IsValidCargoID(hor_right[i])) {
-						int col = hor_right[i];
+					if (HasBit(hor_right, i)) {
+						int col = i;
 						int dx = 0;
 						const CargoSpec *csp = CargoSpec::Get(this->u.cargo.vertical_cargoes[col]);
 						for (; col < this->u.cargo.num_cargoes - 1; col++) {
@@ -2404,7 +2419,7 @@ struct CargoesField {
 
 		/* row = 0 -> at first horizontal row, row = 1 -> second horizontal row, 2 = 3rd horizontal row. */
 		if (col == 0) {
-			if (IsValidCargoID(this->u.cargo.supp_cargoes[row])) return this->u.cargo.vertical_cargoes[this->u.cargo.supp_cargoes[row]];
+			if (HasBit(this->u.cargo.supp_cargoes, row)) return this->u.cargo.vertical_cargoes[row];
 			if (left != nullptr) {
 				if (left->type == CFT_INDUSTRY) return left->u.industry.other_produced[row];
 				if (left->type == CFT_CARGO_LABEL && !left->u.cargo_label.left_align) return left->u.cargo_label.cargoes[row];
@@ -2412,7 +2427,7 @@ struct CargoesField {
 			return INVALID_CARGO;
 		}
 		if (col == this->u.cargo.num_cargoes) {
-			if (IsValidCargoID(this->u.cargo.cust_cargoes[row])) return this->u.cargo.vertical_cargoes[this->u.cargo.cust_cargoes[row]];
+			if (HasBit(this->u.cargo.cust_cargoes, row)) return this->u.cargo.vertical_cargoes[row];
 			if (right != nullptr) {
 				if (right->type == CFT_INDUSTRY) return right->u.industry.other_accepted[row];
 				if (right->type == CFT_CARGO_LABEL && right->u.cargo_label.left_align) return right->u.cargo_label.cargoes[row];
@@ -2424,11 +2439,11 @@ struct CargoesField {
 			 * Since the horizontal connection is made in the same order as the vertical list, the above condition
 			 * ensures we are left-below the main diagonal, thus at the supplying side.
 			 */
-			if (IsValidCargoID(this->u.cargo.supp_cargoes[row])) return this->u.cargo.vertical_cargoes[this->u.cargo.supp_cargoes[row]];
+			if (HasBit(this->u.cargo.supp_cargoes, row)) return this->u.cargo.vertical_cargoes[row];
 			return INVALID_CARGO;
 		}
 		/* Clicked at a customer connection. */
-		if (IsValidCargoID(this->u.cargo.cust_cargoes[row])) return this->u.cargo.vertical_cargoes[this->u.cargo.cust_cargoes[row]];
+		if (HasBit(this->u.cargo.cust_cargoes, row)) return this->u.cargo.vertical_cargoes[row];
 		return INVALID_CARGO;
 	}
 
@@ -2518,7 +2533,7 @@ struct CargoesRow {
 
 			/* Allocate other cargoes in the empty holes of the horizontal cargo connections. */
 			for (uint i = 0; i < CargoesField::max_cargoes && other_count > 0; i++) {
-				if (!IsValidCargoID(cargo_fld->u.cargo.supp_cargoes[i])) ind_fld->u.industry.other_produced[i] = others[--other_count];
+				if (HasBit(cargo_fld->u.cargo.supp_cargoes, i)) ind_fld->u.industry.other_produced[i] = others[--other_count];
 			}
 		} else {
 			/* Houses only display cargo that towns produce. */
@@ -2577,7 +2592,7 @@ struct CargoesRow {
 
 			/* Allocate other cargoes in the empty holes of the horizontal cargo connections. */
 			for (uint i = 0; i < CargoesField::max_cargoes && other_count > 0; i++) {
-				if (!IsValidCargoID(cargo_fld->u.cargo.cust_cargoes[i])) ind_fld->u.industry.other_accepted[i] = others[--other_count];
+				if (!HasBit(cargo_fld->u.cargo.cust_cargoes, i)) ind_fld->u.industry.other_accepted[i] = others[--other_count];
 			}
 		} else {
 			/* Houses only display what is demanded. */

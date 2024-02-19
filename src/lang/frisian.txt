@@ -3,8 +3,8 @@
 ##isocode fy_NL
 ##plural 0
 ##textdir ltr
-##digitsep .
-##digitsepcur .
+##numberformat 00.000.000.000.000.000.000
+##numberabbreviations 3=00.000.000.000.000.000{NBSP}k|6=00.000.000.000.000{NBSP}m|9=00.000.000.000{NBSP}bn|12=00.000.000{NBSP}tn|15=00.000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ,
 ##winlangid 0x0462
 ##grflangid 0x32
@@ -159,7 +159,6 @@ STR_ABBREV_TOFFEE                                               :TF
 STR_ABBREV_BATTERIES                                            :BA
 STR_ABBREV_PLASTIC                                              :PL
 STR_ABBREV_FIZZY_DRINKS                                         :FD
-STR_ABBREV_NONE                                                 :NE
 STR_ABBREV_ALL                                                  :AL
 
 # 'Mode' of transport for cargoes
@@ -957,9 +956,6 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Wikselk
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Ferleegje de wikselkoers fan jo faluta yn ferlyk mei de Britske Pûn (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Ferheegje de wikselkoers fan jo faluta yn ferlyk mei de Britske Pûn (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Stel de wikselkoers fan dyn faluta yn ferlyk mei de Britske Pûn (£)
-
-STR_CURRENCY_SEPARATOR                                          :{LTBLUE}Skiedingteken: {ORANGE}{STRING}
-STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}Stel it skiedingteken foar dyn faluta
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Foarheaksel: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}Stel it foarrinteken yn foar jo faluta
@@ -4719,7 +4715,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}

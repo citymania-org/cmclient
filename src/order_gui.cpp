@@ -273,6 +273,8 @@ static int DepotActionStringIndex(const Order *order)
 		return DA_STOP;
 	} else if (order->GetDepotOrderType() & ODTFB_SERVICE) {
 		return DA_SERVICE;
+	} else if (order->GetDepotActionType() & ODATFB_UNBUNCH) {
+		return DA_UNBUNCH;
 	} else {
 		return DA_ALWAYS_GO;
 	}
@@ -488,9 +490,18 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 				ODTFB_PART_OF_ORDERS,
 				(_settings_client.gui.new_nonstop && v->IsGroundVehicle()) ? ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS : ONSF_STOP_EVERYWHERE);
 
-		if (citymania::_fn_mod) order.SetDepotOrderType((OrderDepotTypeFlags)(order.GetDepotOrderType() ^ ODTFB_SERVICE));
-
-		return std::make_pair(order, FeederOrderMod::NONE);
+		if (citymania::_fn_mod) {
+			/* Don't allow a new unbunching order if we already have one. */
+			if (v->HasUnbunchingOrder()) {
+				ShowErrorMessage(STR_ERROR_CAN_T_INSERT_NEW_ORDER, STR_ERROR_UNBUNCHING_ONLY_ONE_ALLOWED, WL_ERROR);
+				/* Return an empty order to bail out. */
+				order.Free();
+				return order;
+			} else {
+				order.SetDepotActionType(ODATFB_UNBUNCH);
+			}
+		}
+		return order;
 	}
 
 	/* check rail waypoint */

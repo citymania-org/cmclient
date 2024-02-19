@@ -1699,6 +1699,7 @@ CommandCost RemoveFromRailBaseStation(TileArea ta, std::vector<T *> &affected_st
 		/* if we deleted the whole station, delete the train facility. */
 		if (st->train_station.tile == INVALID_TILE) {
 			st->facilities &= ~FACIL_TRAIN;
+			SetWindowClassesDirty(WC_VEHICLE_ORDERS);
 			SetWindowWidgetDirty(WC_STATION_VIEW, st->index, WID_SV_TRAINS);
 			MarkCatchmentTilesDirty();
 			st->UpdateVirtCoord();
@@ -2147,6 +2148,7 @@ static CommandCost RemoveRoadStop(TileIndex tile, DoCommandFlag flags, int repla
 			/* removed the only stop? */
 			if (*primary_stop == nullptr) {
 				st->facilities &= (is_truck ? ~FACIL_TRUCK_STOP : ~FACIL_BUS_STOP);
+				SetWindowClassesDirty(WC_VEHICLE_ORDERS);
 			}
 		} else {
 			/* tell the predecessor in the list to skip this stop */
@@ -2580,6 +2582,7 @@ static CommandCost RemoveAirport(TileIndex tile, DoCommandFlag flags)
 
 		st->airport.Clear();
 		st->facilities &= ~FACIL_AIRPORT;
+		SetWindowClassesDirty(WC_VEHICLE_ORDERS);
 
 		InvalidateWindowData(WC_STATION_VIEW, st->index, -1);
 
@@ -2834,6 +2837,7 @@ static CommandCost RemoveDock(TileIndex tile, DoCommandFlag flags)
 			st->ship_station.Clear();
 			st->docking_station.Clear();
 			st->facilities &= ~FACIL_DOCK;
+			SetWindowClassesDirty(WC_VEHICLE_ORDERS);
 		}
 
 		Company::Get(st->owner)->infrastructure.station -= 2;

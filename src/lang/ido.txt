@@ -3,8 +3,8 @@
 ##isocode io_IO
 ##plural 0
 ##textdir ltr
-##digitsep .
-##digitsepcur .
+##numberformat 00.000.000.000.000.000.000
+##numberabbreviations 3=00.000.000.000.000.000{NBSP}k|6=00.000.000.000.000{NBSP}m|9=00.000.000.000{NBSP}bn|12=00.000.000{NBSP}tn|15=00.000{NBSP}Qa|18=00{NBSP}Qi
 ##decimalsep ,
 ##winlangid 0x0000
 ##grflangid 0x06
@@ -158,7 +158,6 @@ STR_ABBREV_TOFFEE                                               :KR
 STR_ABBREV_BATTERIES                                            :BT
 STR_ABBREV_PLASTIC                                              :PL
 STR_ABBREV_FIZZY_DRINKS                                         :GD
-STR_ABBREV_NONE                                                 :NL
 STR_ABBREV_ALL                                                  :OMNA
 
 # 'Mode' of transport for cargoes
@@ -494,7 +493,6 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :altra
 
 
 # Custom currency window
-
 
 
 
@@ -1703,7 +1701,6 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
-
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}

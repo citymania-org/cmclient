@@ -255,7 +255,7 @@ enum OptionMenuEntries {
 	OME_AI_SETTINGS,
 	OME_GAMESCRIPT_SETTINGS,
 	OME_NEWGRFSETTINGS,
-	ONE_SANDBOX,
+	OME_SANDBOX,
 	CM_OME_ZONING,	
 	OME_TRANSPARENCIES,
 	OME_SHOW_TOWNNAMES,
@@ -288,8 +288,8 @@ static CallBackFunction ToolbarOptionsClick(Window *w)
 		list.push_back(std::make_unique<DropDownListStringItem>(STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS,  OME_GAMESCRIPT_SETTINGS, false));
 	}
 	list.push_back(std::make_unique<DropDownListStringItem>(STR_SETTINGS_MENU_NEWGRF_SETTINGS,          OME_NEWGRFSETTINGS, false));
-	if (_game_mode != GM_EDITOR) {
-		list.push_back(std::make_unique<DropDownListStringItem>(STR_SETTINGS_MENU_SANDBOX_OPTIONS,      ONE_SANDBOX, false));
+	if (_game_mode != GM_EDITOR && !_networking) {
+		list.push_back(std::make_unique<DropDownListStringItem>(STR_SETTINGS_MENU_SANDBOX_OPTIONS,      OME_SANDBOX, false));
 	}
 	list.push_back(std::make_unique<DropDownListStringItem>(CM_STR_SETTINGS_MENU_ZONING,     CM_OME_ZONING, false));
 	list.push_back(std::make_unique<DropDownListStringItem>(STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS,     OME_TRANSPARENCIES, false));
@@ -323,7 +323,7 @@ static CallBackFunction MenuClickSettings(int index)
 		case OME_AI_SETTINGS:          ShowAIConfigWindow();                            return CBF_NONE;
 		case OME_GAMESCRIPT_SETTINGS:  ShowGSConfigWindow();                            return CBF_NONE;
 		case OME_NEWGRFSETTINGS:       ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, &_grfconfig); return CBF_NONE;
-		case ONE_SANDBOX:              ShowCheatWindow();                               break;
+		case OME_SANDBOX:              ShowCheatWindow();                               break;
 		case CM_OME_ZONING:            citymania::ShowZoningToolbar();                  break;
 		case OME_TRANSPARENCIES:       ShowTransparencyToolbar();                       break;
 
