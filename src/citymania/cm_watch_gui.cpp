@@ -659,7 +659,7 @@ void WatchCompany::OnDoCommand(CompanyID company, TileIndex tile )
 /** Used to decrement the activity counter
  *
  */
-void WatchCompany::OnTick()
+void WatchCompany::OnRealtimeTick([[maybe_unused]] uint delta_ms)
 {
 	bool set_dirty = false;
 	for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {

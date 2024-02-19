@@ -42,29 +42,25 @@ void InvalidateCargosWindows(CompanyID cid)
 struct CargosWindow : Window {
 
 	CargoOption cargoPeriod;
-	CargosWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
-	{
+	CargosWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc) {
 		this->InitNested(window_number);
 		this->owner = (Owner)this->window_number;
 		this->cargoPeriod = WID_CT_OPTION_CARGO_TOTAL;
 	}
 
-	virtual void SetStringParameters(int widget) const
-	{
+	void SetStringParameters(int widget) const override {
 		if(widget != WID_CT_CAPTION) return;
 		SetDParam(0, (CompanyID)this->window_number);
 		SetDParam(1, (CompanyID)this->window_number);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
-	{
+	void OnClick(Point pt, int widget, int click_count) override {
 		if(widget != WID_CT_HEADER_CARGO) return;
 		this->cargoPeriod = (this->cargoPeriod == WID_CT_OPTION_CARGO_TOTAL) ? WID_CT_OPTION_CARGO_MONTH : WID_CT_OPTION_CARGO_TOTAL;
 		this->SetDirty();
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
-	{
+	void UpdateWidgetSize(int widget, Dimension *size, [[maybe_unused]] const Dimension &padding, Dimension *fill, Dimension *resize) {
 		Dimension icon_size = this->GetMaxIconSize();
 		int line_height = std::max(GetCharacterHeight(FS_NORMAL), (int)icon_size.height);
 		int icon_space = icon_size.width + ScaleGUITrad(CT_ICON_MARGIN);

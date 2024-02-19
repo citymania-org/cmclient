@@ -817,7 +817,7 @@ public:
 		this->SetDirty();
 	}
 
-	virtual EventState OnHotkey(int hotkey)
+	EventState OnHotkey(int hotkey) override
 	{
 		switch (hotkey) {
 			case CM_HOTKEY_SWITCH_LAYOUT:

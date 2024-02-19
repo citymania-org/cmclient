@@ -410,6 +410,4 @@ static inline T DivTowardsPositiveInf(T a, T b)
 
 /* CityMania code end */
 
-uint32 IntSqrt(uint32 num);
-
 #endif /* MATH_FUNC_HPP */

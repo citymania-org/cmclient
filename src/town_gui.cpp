@@ -283,7 +283,7 @@ public:
 		}
 	}
 
-	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension *size, const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_TA_ACTION_INFO: {
@@ -365,7 +365,7 @@ public:
 		}
 	}
 
-	virtual EventState OnHotkey(int hotkey)
+	EventState OnHotkey(int hotkey) override
 	{
 		TownExecuteAction(this->town, hotkey);
 		return ES_HANDLED;
@@ -670,7 +670,7 @@ public:
 		Command<CMD_RENAME_TOWN>::Post(STR_ERROR_CAN_T_RENAME_TOWN, this->window_number, str);
 	}
 
-	virtual EventState OnHotkey(int hotkey)
+	EventState OnHotkey(int hotkey) override
 	{
 		if(hotkey == WID_TV_CB) ShowCBTownWindow(this->window_number);
 		else if (hotkey == HK_STATUE + 0x80){
@@ -1510,7 +1510,7 @@ public:
 		if(HasBit(this->town->advertise_regularly, _local_company)) this->LowerWidget(WID_CB_ADVERT_REGULAR);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_CB_CENTER_VIEW:
@@ -1552,7 +1552,7 @@ public:
 		}
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
 		if (str != NULL) SetBit(this->town->advertise_regularly, _local_company);
 		else ClrBit(this->town->advertise_regularly, _local_company);
@@ -1566,7 +1566,7 @@ public:
 		this->town->ad_rating_goal = ((val << 8) + 255) / 101;
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		if (widget == WID_CB_CAPTION){
 			SetDParam(0, this->town->index);
@@ -1623,7 +1623,7 @@ public:
 		}
 	}
 
-	void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		static const uint EXP_LINESPACE  = GetCharacterHeight(FS_NORMAL) + 2;
 		Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
@@ -1788,7 +1788,7 @@ public:
 		/* Citybuilder things enabled*/
 	}
 
-	virtual void OnPaint() {
+	void OnPaint() override {
 		if (!this->IsShaded()) {
 			int plane = CB_Enabled() ? CBTWP_MP_CB : CBTWP_MP_GOALS;
 			NWidgetStacked *wi = this->GetWidget<NWidgetStacked>(WID_CB_SELECT_REQUIREMENTS);
@@ -1802,7 +1802,7 @@ public:
 	}
 
 
-	virtual EventState OnHotkey(int hotkey)
+	EventState OnHotkey(int hotkey) override
 	{
 		TownExecuteAction(this->town, hotkey);
 		return ES_HANDLED;

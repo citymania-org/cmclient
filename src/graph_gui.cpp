@@ -748,7 +748,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		this->legend_width = (GetCharacterHeight(FS_SMALL) - ScaleGUITrad(1)) * 8 / 5;
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_CPR_MATRIX) {
 			BaseGraphWindow::UpdateWidgetSize(widget, size, padding, fill, resize);
@@ -775,7 +775,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		fill->height = this->line_height;
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_CPR_MATRIX) {
 			BaseGraphWindow::DrawWidget(r, widget);
@@ -822,7 +822,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		InvalidateWindowData(WC_PAYMENT_RATES, 0);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick([[maybe_unused]] Point pt, [[maybe_unused]] int widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_GRAPH_KEY_BUTTON:
@@ -862,7 +862,7 @@ struct ExcludingCargoBaseGraphWindow : BaseGraphWindow {
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_CPR_MATRIX);
 	}

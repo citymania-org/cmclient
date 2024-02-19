@@ -86,7 +86,7 @@ Game::Game() {
         }
     });
 
-    this->events.listen<event::TownCachesRebuilt>(event::Slot::GAME, [this] (const event::TownCachesRebuilt &event) {
+    this->events.listen<event::TownCachesRebuilt>(event::Slot::GAME, [this] ([[maybe_unused]] const event::TownCachesRebuilt &event) {
         this->towns_growth_tiles.clear();
         this->towns_growth_tiles_last_month.clear();
         for (Town *town : Town::Iterate()) {

@@ -40,7 +40,7 @@ static void IConsoleHelp(const char *str)
     IConsolePrint(CC_WARNING, "- {}", str);
 }
 
-bool ConGameSpeed(byte argc, char *argv[]) {
+bool ConGameSpeed([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0 || argc > 2) {
         IConsoleHelp("Changes game speed. Usage: 'cmgamespeed [n]'");
         return true;
@@ -50,7 +50,7 @@ bool ConGameSpeed(byte argc, char *argv[]) {
     return true;
 }
 
-bool ConStep(byte argc, char *argv[]) {
+bool ConStep([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0 || argc > 2) {
         IConsoleHelp("Advances the game for a certain amount of ticks (default 1). Usage: 'cmstep [n]'");
         return true;
@@ -63,7 +63,7 @@ bool ConStep(byte argc, char *argv[]) {
     return true;
 }
 
-bool ConExport(byte argc, char *argv[]) {
+bool ConExport([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Exports various game data in json format to openttd.json file");
         return true;
@@ -75,7 +75,7 @@ bool ConExport(byte argc, char *argv[]) {
     return true;
 }
 
-bool ConTreeMap(byte argc, char *argv[]) {
+bool ConTreeMap([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Loads heighmap-like file and plants trees according to it, values 0-256 ore scaled to 0-4 trees.");
         IConsoleHelp("Usage: 'cmtreemap <file>'");
@@ -138,7 +138,7 @@ bool ConTreeMap(byte argc, char *argv[]) {
 
 extern void (*UpdateTownGrowthRate)(Town *t);
 
-bool ConResetTownGrowth(byte argc, char *argv[]) {
+bool ConResetTownGrowth([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Resets growth to normal for all towns.");
         IConsoleHelp("Usage: 'cmresettowngrowth'");
@@ -181,7 +181,7 @@ void SetReplaySaveInterval(uint32 interval) {
     if (_replay_save_interval) MakeReplaySave();
 }
 
-bool ConLoadCommands(byte argc, char *argv[]) {
+bool ConLoadCommands([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Loads a file with command queue to execute");
         IConsoleHelp("Usage: 'cmloadcommands <file>'");
@@ -198,17 +198,17 @@ bool ConLoadCommands(byte argc, char *argv[]) {
     return true;
 }
 
-bool ConStartRecord(byte argc, char *argv[]) {
+bool ConStartRecord([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     StartRecording();
     return true;
 }
 
-bool ConStopRecord(byte argc, char *argv[]) {
+bool ConStopRecord([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     StopRecording();
     return true;
 }
 
-bool ConGameStats(byte argc, char *argv[]) {
+bool ConGameStats([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     auto num_trains = 0u;
     auto num_rvs = 0u;
     auto num_ships = 0u;

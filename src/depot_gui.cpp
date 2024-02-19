@@ -328,7 +328,7 @@ struct DepotWindow : Window {
 		} else {
 			/* Arrange unitnumber and flag vertically */
 			diff_x = 0;
-			diff_y = WidgetDimensions::scaled.matrix.top + 'GetCharacterHeight(FS_NORMAL)' + WidgetDimensions::scaled.vsep_normal;
+			diff_y = WidgetDimensions::scaled.matrix.top + GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal;
 		}
 
 		text = text.WithWidth(this->header_width - WidgetDimensions::scaled.hsep_normal, rtl).WithHeight(GetCharacterHeight(FS_NORMAL)).Indent(diff_x, rtl);
@@ -1110,7 +1110,7 @@ struct DepotWindow : Window {
 		return (this->type == VEH_AIRCRAFT) ? ::GetStationIndex(this->window_number) : ::GetDepotIndex(this->window_number);
 	}
 
-	virtual EventState OnHotkey(int hotkey)
+	EventState OnHotkey(int hotkey) override
 	{
 		if (this->owner != _local_company) return ES_NOT_HANDLED;
 		return Window::OnHotkey(hotkey);

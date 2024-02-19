@@ -1369,9 +1369,9 @@ public:
 				break;
 
 			case CM_BRASHK_ROTATE:
-				this->RaiseWidget(_railstation.orientation + WID_BRAS_PLATFORM_DIR_X);
+				this->RaiseWidget(WID_BRAS_PLATFORM_DIR_X + _railstation.orientation);
 				_railstation.orientation = OtherAxis(_railstation.orientation);
-				this->LowerWidget(_railstation.orientation + WID_BRAS_PLATFORM_DIR_X);
+				this->LowerWidget(WID_BRAS_PLATFORM_DIR_X + _railstation.orientation);
 				this->SetDirty();
 				CloseWindowById(WC_SELECT_STATION, 0);
 				return ES_HANDLED;
@@ -2225,9 +2225,9 @@ public:
 			 * then from a click and that the CTRL state should be ignored. */
 			case BRDHK_ROTATE:
 				if (_build_depot_direction < DIAGDIR_END) {
-					this->RaiseWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
+					this->RaiseWidget(WID_BRAD_DEPOT_NE + _build_depot_direction);
 					_build_depot_direction = ChangeDiagDir(_build_depot_direction, DIAGDIRDIFF_90RIGHT);
-					this->LowerWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
+					this->LowerWidget(WID_BRAD_DEPOT_NE + _build_depot_direction);
 				} else {
 					citymania::RotateAutodetection();
 				}

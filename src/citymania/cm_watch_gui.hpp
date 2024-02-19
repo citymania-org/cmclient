@@ -76,16 +76,16 @@ protected:
 public:
 	WatchCompany(WindowDesc *desc, int window_number, CompanyID company_to_watch, int Wtype);
 
-	virtual void DrawWidget(const Rect &r, int widget) const;
-	virtual void OnClick(Point pt, int widget, int click_count);
-	virtual void OnResize();
-	virtual void OnScroll(Point delta);
-	virtual void OnMouseWheel(int wheel);
-	virtual void OnInvalidateData(int data, bool gui_scope);
-	virtual void SetStringParameters(int widget) const;
-	virtual void OnTick();
-	virtual void OnPaint();
-	virtual void OnQueryTextFinished(char *str);
+	void DrawWidget(const Rect &r, int widget) const override;
+	void OnClick(Point pt, int widget, int click_count) override;
+	void OnResize() override;
+	void OnScroll(Point delta) override;
+	void OnMouseWheel(int wheel) override;
+	void OnInvalidateData(int data, bool gui_scope) override;
+	void SetStringParameters(int widget) const override;
+	void OnRealtimeTick([[maybe_unused]] uint delta_ms) override;
+	void OnPaint() override;
+	void OnQueryTextFinished(char *str) override;
 
 	void OnDoCommand(CompanyID company, TileIndex tile);
 };
