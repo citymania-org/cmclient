@@ -491,7 +491,7 @@ struct SignWindow : Window, SignList {
 			case WID_QES_LOCATION: {
 				const Sign *si = Sign::Get(this->cur_sign);
 				TileIndex tile = TileVirtXY(si->x, si->y);
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowExtraViewportWindow(tile);
 				} else {
 					ScrollMainWindowToTile(tile);

@@ -32,6 +32,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 static ObjectClassID _selected_object_class; ///< Currently selected available object class.
@@ -553,7 +555,7 @@ public:
 		}
 		const ObjectSpec *spec = ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index);
 		Command<CMD_BUILD_OBJECT_AREA>::Post(STR_ERROR_CAN_T_BUILD_OBJECT, CcPlaySound_CONSTRUCTION_OTHER,
-			end_tile, start_tile, spec->Index(), _selected_object_view, (_ctrl_pressed ? true : false));
+			end_tile, start_tile, spec->Index(), _selected_object_view, (citymania::_fn_mod ? true : false));
 	}
 
 	void OnPlaceObjectAbort() override

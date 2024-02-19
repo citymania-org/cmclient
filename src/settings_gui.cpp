@@ -49,6 +49,8 @@
 #include "video/video_driver.hpp"
 #include "social_integration.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 
@@ -787,7 +789,7 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_GUI_SCALE:
 				if (ClickSliderWidget(this->GetWidget<NWidgetBase>(widget)->GetCurrentRect(), pt, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE, this->gui_scale)) {
-					if (!_ctrl_pressed) this->gui_scale = ((this->gui_scale + 12) / 25) * 25;
+					if (!citymania::_fn_mod) this->gui_scale = ((this->gui_scale + 12) / 25) * 25;
 					this->SetWidgetDirty(widget);
 				}
 

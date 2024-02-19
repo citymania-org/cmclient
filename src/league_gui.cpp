@@ -26,6 +26,8 @@
 #include "table/strings.h"
 #include "table/sprites.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 
@@ -246,7 +248,7 @@ static void HandleLinkClick(Link link)
 		default: NOT_REACHED();
 	}
 
-	if (_ctrl_pressed) {
+	if (citymania::_fn_mod) {
 		ShowExtraViewportWindow(xy);
 	} else {
 		ScrollMainWindowToTile(xy);

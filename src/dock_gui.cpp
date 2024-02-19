@@ -223,7 +223,7 @@ struct BuildDocksToolbarWindow : Window {
 					break;
 				}
 
-				bool adjacent = _ctrl_pressed;
+				bool adjacent = citymania::_fn_mod;
 				auto proc = [=](bool test, StationID to_join) -> bool {
 					if (test) {
 						return Command<CMD_BUILD_DOCK>::Do(CommandFlagsToDCFlags(GetCommandFlags<CMD_BUILD_DOCK>()), tile, INVALID_STATION, adjacent).Succeeded();

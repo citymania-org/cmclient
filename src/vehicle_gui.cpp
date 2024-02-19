@@ -2091,7 +2091,7 @@ public:
 						assert(vehgroup.NumVehicles() > 0);
 						if (!VehicleClicked(vehgroup)) {
 							const Vehicle *v = vehgroup.vehicles_begin[0];
-							if (_ctrl_pressed) {
+							if (citymania::_fn_mod) {
 								ShowOrdersWindow(v);
 							} else {
 								if (vehgroup.NumVehicles() == 1) {

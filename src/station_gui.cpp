@@ -181,9 +181,9 @@ void CheckRedrawWaypointCoverage(const Window *)
 {
 	/* Test if ctrl state changed */
 	static bool _last_ctrl_pressed;
-	if (_ctrl_pressed != _last_ctrl_pressed) {
+	if (citymania::_fn_mod != _last_ctrl_pressed) {
 		_thd.dirty = 0xff;
-		_last_ctrl_pressed = _ctrl_pressed;
+		_last_ctrl_pressed = citymania::_fn_mod;
 	}
 
 	if (_thd.dirty & 1) {

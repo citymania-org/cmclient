@@ -675,7 +675,7 @@ struct TimetableWindow : Window {
 					}
 				}
 
-				this->change_timetable_all = _ctrl_pressed && (order != nullptr);
+				this->change_timetable_all = citymania::_fn_mod && (order != nullptr);
 				ShowQueryString(current, STR_TIMETABLE_CHANGE_TIME, 31, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
 				break;
 			}
@@ -696,14 +696,14 @@ struct TimetableWindow : Window {
 					}
 				}
 
-				this->change_timetable_all = _ctrl_pressed && (order != nullptr);
+				this->change_timetable_all = citymania::_fn_mod && (order != nullptr);
 				ShowQueryString(current, STR_TIMETABLE_CHANGE_SPEED, 31, this, CS_NUMERAL, QSF_NONE);
 				break;
 			}
 
 			case WID_VT_CLEAR_TIME: { // Clear waiting time.
 				auto [order_id, mtf] = PackTimetableArgs(v, this->sel_index, false);
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					Command<CMD_BULK_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, 0);
 				} else {
 					Command<CMD_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, 0);
@@ -713,7 +713,7 @@ struct TimetableWindow : Window {
 
 			case WID_VT_CLEAR_SPEED: { // Clear max speed button.
 				auto [order_id, mtf] = PackTimetableArgs(v, this->sel_index, true);
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					Command<CMD_BULK_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, UINT16_MAX);
 				} else {
 					Command<CMD_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, UINT16_MAX);
@@ -722,7 +722,7 @@ struct TimetableWindow : Window {
 			}
 
 			case WID_VT_RESET_LATENESS: // Reset the vehicle's late counter.
-				Command<CMD_SET_VEHICLE_ON_TIME>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, _ctrl_pressed);
+				Command<CMD_SET_VEHICLE_ON_TIME>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, citymania::_fn_mod);
 				break;
 
 			case WID_VT_AUTOFILL: { // Autofill the timetable.

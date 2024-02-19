@@ -496,12 +496,12 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 				ShowErrorMessage(STR_ERROR_CAN_T_INSERT_NEW_ORDER, STR_ERROR_UNBUNCHING_ONLY_ONE_ALLOWED, WL_ERROR);
 				/* Return an empty order to bail out. */
 				order.Free();
-				return order;
+				return {order, FeederOrderMod::NONE};
 			} else {
 				order.SetDepotActionType(ODATFB_UNBUNCH);
 			}
 		}
-		return order;
+		return {order, FeederOrderMod::NONE};
 	}
 
 	/* check rail waypoint */
@@ -1689,7 +1689,7 @@ public:
 	 */
 	bool OnVehicleSelect(VehicleList::const_iterator begin, VehicleList::const_iterator end) override
 	{
-		bool share_order = _ctrl_pressed || this->goto_type == OPOS_SHARE;
+		bool share_order = citymania::_fn_mod || this->goto_type == OPOS_SHARE;
 		if (this->vehicle->GetNumOrders() != 0 && !share_order) return false;
 
 		if (!share_order) {

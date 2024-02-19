@@ -23,6 +23,8 @@
 #include "../script/script_gui.h"
 #include "table/strings.h"
 
+#include "../citymania/cm_hotkeys.hpp"
+
 #include "../safeguards.h"
 
 
@@ -242,7 +244,7 @@ struct AIConfigWindow : public Window {
 			case WID_AIC_LIST: { // Select a slot
 				this->selected_slot = (CompanyID)this->vscroll->GetScrolledRowFromWidget(pt.y, this, widget);
 				this->InvalidateData();
-				if (click_count > 1 && IsEditable(this->selected_slot)) ShowScriptListWindow((CompanyID)this->selected_slot, _ctrl_pressed);
+				if (click_count > 1 && IsEditable(this->selected_slot)) ShowScriptListWindow((CompanyID)this->selected_slot, citymania::_fn_mod);
 				break;
 			}
 
@@ -272,7 +274,7 @@ struct AIConfigWindow : public Window {
 			}
 
 			case WID_AIC_CHANGE:  // choose other AI
-				if (IsEditable(this->selected_slot)) ShowScriptListWindow((CompanyID)this->selected_slot, _ctrl_pressed);
+				if (IsEditable(this->selected_slot)) ShowScriptListWindow((CompanyID)this->selected_slot, citymania::_fn_mod);
 				break;
 
 			case WID_AIC_CONFIGURE: // change the settings for an AI

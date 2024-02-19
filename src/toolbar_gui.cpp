@@ -68,6 +68,7 @@
 #include "citymania/cm_cargo_table_gui.hpp"
 #include "citymania/cm_commands.hpp"
 #include "citymania/cm_commands_gui.hpp"
+#include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_locations.hpp"
 #include "citymania/cm_main.hpp"
 #include "citymania/cm_minimap.hpp"
@@ -1205,7 +1206,7 @@ static CallBackFunction MenuClickHelp(int index)
 		case  1: citymania::ShowLoginWindow();     break;
 		case  2: ShowHelpWindow();                 break;
 		case  3: IConsoleSwitch();                 break;
-		case  4: ShowScriptDebugWindow(INVALID_COMPANY, _ctrl_pressed); break;
+		case  4: ShowScriptDebugWindow(INVALID_COMPANY, citymania::_fn_mod); break;
 		case  5: ShowScreenshotWindow();           break;
 		case  6: ShowFramerateWindow();            break;
 		case  7: ShowAboutWindow();                break;

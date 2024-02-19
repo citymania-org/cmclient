@@ -44,8 +44,9 @@
 #include "viewport_func.h"
 #include "industry.h"
 
-#include "citymania/cm_tooltips.hpp"
+#include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_misc_gui.hpp"
+#include "citymania/cm_tooltips.hpp"
 
 #include "safeguards.h"
 
@@ -377,7 +378,7 @@ public:
 	{
 		switch (widget) {
 			case WID_LI_LOCATION:
-				if (_ctrl_pressed) {
+				if (citymania::_fn_mod) {
 					ShowExtraViewportWindow(this->tile);
 				} else {
 					ScrollMainWindowToTile(this->tile);

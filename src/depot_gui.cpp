@@ -909,7 +909,7 @@ struct DepotWindow : Window {
 	 */
 	bool OnVehicleSelect(VehicleList::const_iterator begin, VehicleList::const_iterator end) override
 	{
-		if (!_ctrl_pressed) {
+		if (!citymania::_fn_mod) {
 			/* If CTRL is not pressed: If all the vehicles in this list have the same orders, then copy orders */
 			if (AllEqual(begin, end, [](const Vehicle *v1, const Vehicle *v2) {
 				return VehiclesHaveSameEngineList(v1, v2);
