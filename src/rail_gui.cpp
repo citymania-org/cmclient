@@ -762,17 +762,21 @@ struct BuildRailToolbarWindow : Window {
 					return ES_HANDLED;
 				}
 				break;
-			case HOTKEY_BLUEPRINT_LOAD ... HOTKEY_BLUEPRINT_LOAD_END - 1:
-				if (citymania::LoadBlueprint(hotkey - HOTKEY_BLUEPRINT_LOAD)) {
-					ResetObjectToPlace();
-					SetObjectToPlace(SPR_CURSOR_RAIL_STATION, PAL_NONE, CM_HT_BLUEPRINT_PLACE, this->window_class, this->window_number, CM_DDSP_BLUEPRINT_AREA);
-					this->last_user_action = CM_WID_RAT_BLUEPRINT_PLACE;
+
+			default:
+				if (hotkey >= HOTKEY_BLUEPRINT_LOAD && hotkey < HOTKEY_BLUEPRINT_LOAD_END) {
+					if (citymania::LoadBlueprint(hotkey - HOTKEY_BLUEPRINT_LOAD)) {
+						ResetObjectToPlace();
+						SetObjectToPlace(SPR_CURSOR_RAIL_STATION, PAL_NONE, CM_HT_BLUEPRINT_PLACE, this->window_class, this->window_number, CM_DDSP_BLUEPRINT_AREA);
+						this->last_user_action = CM_WID_RAT_BLUEPRINT_PLACE;
+					}
+					return ES_HANDLED;
 				}
-				return ES_HANDLED;
-			case HOTKEY_BLUEPRINT_SAVE ... HOTKEY_BLUEPRINT_SAVE_END - 1:
-				citymania::SaveBlueprint(hotkey - HOTKEY_BLUEPRINT_SAVE);
-				ResetObjectToPlace();
-				return ES_HANDLED;
+				if (hotkey >= HOTKEY_BLUEPRINT_SAVE && hotkey < HOTKEY_BLUEPRINT_SAVE_END) {
+					citymania::SaveBlueprint(hotkey - HOTKEY_BLUEPRINT_SAVE);
+					ResetObjectToPlace();
+					return ES_HANDLED;
+				}
 		}
 
 		return Window::OnHotkey(hotkey);
