@@ -54,7 +54,8 @@ protected:
     int y = 0;
 
 public:
-	OverlayWindow() {}
+    OverlayWindow() {}
+	virtual ~OverlayWindow() {}
 
     void SetDirty() {
         this->dirty = true;
@@ -192,7 +193,7 @@ public:
             this->text_ofs_x = icon_dim.width + this->padding;
         return {
             text_dim.width + this->text_ofs_x,
-            data.size() * this->line_height - padding
+            (uint)data.size() * this->line_height - padding
         };
     }
 
@@ -225,6 +226,8 @@ class BuildInfoOverlay: public OverlayWindow {
 	BuildInfoOverlayData data;
     IconTextAligner aligner;
 public:
+    ~BuildInfoOverlay() override {}
+
 	void Show(int x, int y, BuildInfoOverlayData data) {
 		this->x = x;
 		this->y = y;
