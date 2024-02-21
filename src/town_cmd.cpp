@@ -2658,6 +2658,7 @@ bool GenerateTowns(TownLayout layout)
 
 	/* Build the town k-d tree again to make sure it's well balanced */
 	RebuildTownKdtree();
+	citymania::Emit(citymania::event::TownCachesRebuilt());
 
 	if (current_number != 0) return true;
 
