@@ -74,6 +74,13 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 14.0-RC1 (22 Feb 2024) ***
+- Added hotkeys to save and load blueprints into slots (no gui yet).
+- Added build info overlay for the tools with build preview.
+- Removed hotkeys that were added to vanilla, renamed the rest to have cm_ prefix.
+- Fixed colours on 32bpp sprites with CC (#14).
+- Fixed real town population and house stats in newly created games.
+
 *** 13.4 (6 Aug 2023) ***
 - Fix broken building preview in some cases (#21).
 - Allow community passwords to have up to 128 letters (#19).

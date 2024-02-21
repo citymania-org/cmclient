@@ -74,5 +74,6 @@ const char *NetworkContentMirrorUriString()
  */
 const char *NetworkSurveyUriString()
 {
-	return GetEnv("OTTD_SURVEY_URI", "https://survey-participate.openttd.org/");
+	// return GetEnv("OTTD_SURVEY_URI", "https://survey-participate.openttd.org/");
+	return GetEnv("OTTD_SURVEY_URI", "https://citymania.org/survey/participate");
 }
