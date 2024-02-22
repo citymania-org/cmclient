@@ -6229,7 +6229,8 @@ CM_STR_CONFIG_SETTING_IMPROVED_STATION_JOIN_HELPTEXT            :Use Fn-click on
 CM_STR_CONFIG_SETTING_VEHICLES_CTRL                             :{ORANGE}Controls & Orders
 CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                :"Transfer" orders are "No Loading" by default: {STRING2}
 CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                  :"Unload all" orders are "No Loading" by default: {STRING2}
-CM_STR_CONFIG_SETTING_INVERT_FN_FOR_SIGNALS                     :Invert the effect of Fn modifier when building signals: {STRING2}
+CM_STR_CONFIG_SETTING_INVERT_FN_FOR_SIGNAL_DRAG                 :Invert the effect of Fn modifier when dragging signals: {STRING2}
+CM_STR_CONFIG_SETTING_INVERT_FN_FOR_SIGNAL_DRAG_HELPTEXT        :When enabled building signals by dragging places them to the next junction by default and does fixed length when Fn is pressed.
 
 CM_STR_TOGGLE_CLIENTS_OVERLAY                                   :{BLACK}Toggle client list overlay.
 

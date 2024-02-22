@@ -2051,6 +2051,7 @@ static SettingsContainer &GetSettingsTree()
 				construction->Add(new SettingEntry("gui.cm_open_orders_for_new_vehicles"));
 				construction->Add(new SettingEntry("gui.cm_use_improved_station_join"));
 				construction->Add(new SettingEntry("gui.cm_enable_polyrail_terraform"));
+				construction->Add(new SettingEntry("gui.cm_invert_fn_for_signal_drag"));
 			}
 
 			interface->Add(new SettingEntry("gui.toolbar_pos"));

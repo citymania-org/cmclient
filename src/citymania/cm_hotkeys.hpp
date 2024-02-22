@@ -29,6 +29,7 @@ bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_cli
 void CountEffectiveAction();
 void ResetEffectiveActionCounter();
 std::pair<uint32, uint32> GetEPM();
+bool ChooseSignalDragBehaviour();
 
 } // namespace citymania
 

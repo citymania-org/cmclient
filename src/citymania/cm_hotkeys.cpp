@@ -272,5 +272,9 @@ bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_cli
     return remove_active;
 }
 
+bool ChooseSignalDragBehaviour() {
+    if (_settings_client.gui.cm_invert_fn_for_signal_drag) return !_fn_mod;
+    return _fn_mod;
+}
 
 } // namespace citymania
