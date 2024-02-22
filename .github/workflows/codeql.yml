@@ -43,6 +43,7 @@ jobs:
           liblzo2-dev \
           libsdl2-dev \
           zlib1g-dev \
+          libzstd-dev \
           # EOF
         echo "::endgroup::"
       env:
