@@ -829,7 +829,7 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 };
 
 static WindowDesc _login_window_desc(__FILE__, __LINE__,
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, "cm_login", 0, 0,
 	CM_WC_LOGIN_WINDOW, WC_NONE,
 	WDF_CONSTRUCTION,
 	std::begin(_nested_login_window_widgets), std::end(_nested_login_window_widgets)

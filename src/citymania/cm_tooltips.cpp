@@ -265,7 +265,7 @@ static const NWidgetPart _nested_station_rating_tooltip_widgets[] = {
 };
 
 static WindowDesc _station_rating_tooltip_desc(__FILE__, __LINE__,
-    WDP_MANUAL, NULL, 0, 0,
+    WDP_MANUAL, nullptr, 0, 0,
     WC_STATION_RATING_TOOLTIP, WC_NONE,
     0,
     std::begin(_nested_station_rating_tooltip_widgets), std::end(_nested_station_rating_tooltip_widgets)

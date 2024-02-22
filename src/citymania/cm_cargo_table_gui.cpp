@@ -205,7 +205,7 @@ static const NWidgetPart _nested_cargos_widgets[] = {
 };
 
 static WindowDesc _cargos_desc(__FILE__, __LINE__,
-	WDP_AUTO, nullptr, 0, 0,
+	WDP_AUTO, "cm_cargo_table", 0, 0,
 	WC_CARGOS, WC_NONE,
 	WDF_CONSTRUCTION,
 	std::begin(_nested_cargos_widgets), std::end(_nested_cargos_widgets)

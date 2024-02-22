@@ -160,10 +160,10 @@ static const NWidgetPart _nested_watch_company_widgets[] = {
  * Watch Company Window Descriptor
  */
 static WindowDesc _watch_company_desc(__FILE__, __LINE__,
-	WDP_AUTO, "watch_gui", 300, 257,
+	WDP_AUTO, "cm_watch_gui", 300, 257,
 	WC_WATCH_COMPANY, WC_NONE,
 	WDF_NO_FOCUS,
-	std::begin(_nested_watch_company_widgets), std::end( _nested_watch_company_widgets )
+	std::begin(_nested_watch_company_widgets), std::end( _nested_watch_company_widgets)
 );
 
 // admin version
@@ -663,9 +663,9 @@ void WatchCompany::OnRealtimeTick([[maybe_unused]] uint delta_ms)
 {
 	bool set_dirty = false;
 	for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {
-		if ( this->company_activity[i]>0 ) {
+		if (this->company_activity[i] > 0) {
 			this->company_activity[i]--;
-			if ( this->company_activity[i]==0 ) {
+			if (this->company_activity[i] == 0) {
 				set_dirty = true;
 			}
 		}

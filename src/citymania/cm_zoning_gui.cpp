@@ -186,7 +186,7 @@ static const NWidgetPart _nested_zoning_widgets[] = {
 };
 
 static WindowDesc _zoning_desc (__FILE__, __LINE__,
-	WDP_AUTO, NULL, 0, 0,
+	WDP_AUTO, "cm_zoning", 0, 0,
 	CM_WC_ZONING_TOOLBAR, WC_NONE,
 	0,
 	std::begin(_nested_zoning_widgets), std::end(_nested_zoning_widgets),

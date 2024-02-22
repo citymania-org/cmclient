@@ -27,7 +27,7 @@ static const NWidgetPart _nested_land_info_widgets[] = {
 };
 
 static WindowDesc _land_info_desc(__FILE__, __LINE__,
-    WDP_MANUAL, "land_info", 0, 0,
+    WDP_MANUAL, nullptr, 0, 0,
     WC_LAND_INFO, WC_NONE,
     0,
     std::begin(_nested_land_info_widgets), std::end(_nested_land_info_widgets)
