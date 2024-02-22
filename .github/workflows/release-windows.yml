@@ -60,9 +60,9 @@ jobs:
         choco install pandoc
         echo "::endgroup::"
 
-        echo "::group::Install breakpad dependencies"
-        cargo install dump_syms
-        echo "::endgroup::"
+        # echo "::group::Install breakpad dependencies"
+        # cargo install dump_syms
+        # echo "::endgroup::"
 
     - name: Install MSVC problem matcher
       uses: ammaraskar/msvc-problem-matcher@master
@@ -161,11 +161,11 @@ jobs:
       env:
         WINDOWS_CERTIFICATE_COMMON_NAME: ${{ secrets.WINDOWS_CERTIFICATE_COMMON_NAME }}
 
-    - name: Create breakpad symbols
-      shell: bash
-      run: |
-        cd build
-        dump_syms openttd.pdb --inlines --store symbols
+    # - name: Create breakpad symbols
+    #   shell: bash
+    #   run: |
+    #     cd build
+    #     dump_syms openttd.pdb --inlines --store symbols
 
     - name: Create bundles
       shell: bash
