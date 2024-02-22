@@ -179,9 +179,9 @@ jobs:
         mv bundles/*.zip $(ls bundles/*.zip | sed 's/openttd/citymania-client/')
         echo "::endgroup::"
         
-        echo "::group::Move PDB and exe to symbols"
-        PDB_FOLDER=$(find symbols -mindepth 2 -type d)
-        cp openttd.pdb ${PDB_FOLDER}/
+        # echo "::group::Move PDB and exe to symbols"
+        # PDB_FOLDER=$(find symbols -mindepth 2 -type d)
+        # cp openttd.pdb ${PDB_FOLDER}/
 
         EXE_FOLDER=symbols/openttd.exe/$(grep "INFO CODE_ID" symbols/*/*/openttd.sym | cut -d\  -f3)
         mkdir -p ${EXE_FOLDER}
