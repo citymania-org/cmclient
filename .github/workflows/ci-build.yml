@@ -90,12 +90,12 @@ jobs:
           compiler: gcc
           cxxcompiler: g++
           libraries: libsdl1.2-dev
-        - name: GCC - Dedicated
-          if: false  # TODO
-          compiler: gcc
-          cxxcompiler: g++
-          libraries: grfcodec
-          extra-cmake-parameters: -DOPTION_DEDICATED=ON -DCMAKE_CXX_FLAGS_INIT="-DRANDOM_DEBUG" -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON
+        # TODO
+        # - name: GCC - Dedicated
+        #   compiler: gcc
+        #   cxxcompiler: g++
+        #   libraries: grfcodec
+        #   extra-cmake-parameters: -DOPTION_DEDICATED=ON -DCMAKE_CXX_FLAGS_INIT="-DRANDOM_DEBUG" -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON
           # Compile without SDL / SDL2, as that should compile fine too.
 
     name: Linux (${{ matrix.name }})
