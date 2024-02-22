@@ -190,7 +190,8 @@ DEF_CONSOLE_HOOK(ConHookNewGRFDeveloperTool)
 			if (echo) IConsolePrint(CC_ERROR, "This command is only available in-game and in the editor.");
 			return CHR_DISALLOW;
 		}
-		return ConHookNoNetwork(echo);
+		return CHR_ALLOW;
+		// CM return ConHookNoNetwork(echo);
 	}
 	return CHR_HIDE;
 }
