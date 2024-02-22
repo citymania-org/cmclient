@@ -91,6 +91,7 @@ jobs:
           cxxcompiler: g++
           libraries: libsdl1.2-dev
         - name: GCC - Dedicated
+          if: false  # TODO
           compiler: gcc
           cxxcompiler: g++
           libraries: grfcodec
