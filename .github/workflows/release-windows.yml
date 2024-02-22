@@ -183,10 +183,10 @@ jobs:
         # PDB_FOLDER=$(find symbols -mindepth 2 -type d)
         # cp openttd.pdb ${PDB_FOLDER}/
 
-        EXE_FOLDER=symbols/openttd.exe/$(grep "INFO CODE_ID" symbols/*/*/openttd.sym | cut -d\  -f3)
-        mkdir -p ${EXE_FOLDER}
-        cp openttd.exe ${EXE_FOLDER}/
-        echo "::endgroup::"
+        # EXE_FOLDER=symbols/openttd.exe/$(grep "INFO CODE_ID" symbols/*/*/openttd.sym | cut -d\  -f3)
+        # mkdir -p ${EXE_FOLDER}
+        # cp openttd.exe ${EXE_FOLDER}/
+        # echo "::endgroup::"
 
         echo "::group::Cleanup"
         # Remove the sha256 files CPack generates; we will do this ourself at
