@@ -313,7 +313,7 @@ link_package(PNG TARGET PNG::PNG ENCOURAGED)
 link_package(ZLIB TARGET ZLIB::ZLIB ENCOURAGED)
 link_package(LIBLZMA TARGET LibLZMA::LibLZMA ENCOURAGED)
 link_package(LZO)
-link_package(ZSTD ENCOURAGED)
+# link_package(ZSTD ENCOURAGED)
 
 if(NOT WIN32 AND NOT EMSCRIPTEN)
     link_package(CURL ENCOURAGED)
