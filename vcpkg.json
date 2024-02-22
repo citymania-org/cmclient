@@ -48,10 +48,10 @@
     },
     {
       "name": "zlib"
-    }
+    },
     {
       "name": "zstd"
-    },
+    }
   ],
   "builtin-baseline": "94cf042e6b7713913a3b3150f3ca3d0f4550f7c4"
 }
