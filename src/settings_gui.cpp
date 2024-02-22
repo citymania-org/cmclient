@@ -999,18 +999,6 @@ struct GameOptionsWindow : Window {
 			this->SetWidgetDisabledState(WID_GO_BASE_MUSIC_TEXTFILE + tft, BaseMusic::GetUsedSet() == nullptr || !BaseMusic::GetUsedSet()->GetTextfile(tft).has_value());
 		}
 	}
-
-	static EventState GameOptionsWindowGlobalHotkeys([[maybe_unused]] int hotkey) {
-		if (!ToggleFullScreen(!_fullscreen)) {
-			ShowErrorMessage(STR_ERROR_FULLSCREEN_FAILED, INVALID_STRING_ID, WL_ERROR);
-		}
-		return ES_HANDLED;
-	}
-
-	static inline HotkeyList hotkeys{"cm_game_options", {
-		Hotkey((uint16)0, "toggle_fullscreen", WID_GO_FULLSCREEN_BUTTON),
-	}, GameOptionsWindowGlobalHotkeys};
-
 };
 
 static constexpr NWidgetPart _nested_game_options_widgets[] = {
@@ -1189,11 +1177,10 @@ static constexpr NWidgetPart _nested_game_options_widgets[] = {
 };
 
 static WindowDesc _game_options_desc(__FILE__, __LINE__,
-	WDP_CENTER, "cm_game_options", 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_GAME_OPTIONS, WC_NONE,
 	0,
-	std::begin(_nested_game_options_widgets), std::end(_nested_game_options_widgets),
-	&GameOptionsWindow::hotkeys
+	std::begin(_nested_game_options_widgets), std::end(_nested_game_options_widgets)
 );
 
 /** Open the game options window. */
