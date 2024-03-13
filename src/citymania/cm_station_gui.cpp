@@ -155,11 +155,28 @@ void OnStationTileSetChange(const Station *station, bool adding, StationType typ
     if (station == _viewport_highlight_station) MarkCoverageAreaDirty(_viewport_highlight_station);
 }
 
+void OnStationDeleted(const Station *station) {
+    if (_highlight_station_to_join == station) {
+        MarkCoverageAreaDirty(station);
+        _highlight_station_to_join = nullptr;
+    }
+}
+
 const Station *_last_built_station;
 void OnStationPartBuilt(const Station *station) {
     _last_built_station = station;
     CheckRedrawStationCoverage();
 }
+
+void OnStationRemoved(const Station *station) {
+    if (_last_built_station == station) _last_built_station = nullptr;
+    if (_station_to_join == station) {
+        // TODO MarkJoinHighlight
+        MarkCoverageAreaDirty(station);
+        _station_to_join = nullptr;
+    }
+}
+
 
 const Station *CheckClickOnDeadStationSign() {
     int x = _cursor.pos.x;

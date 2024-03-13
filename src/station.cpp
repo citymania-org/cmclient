@@ -30,6 +30,8 @@
 
 #include "table/strings.h"
 
+#include "citymania/cm_station_gui.hpp"
+
 #include "safeguards.h"
 
 /** The pool of stations. */
@@ -87,6 +89,8 @@ Station::Station(TileIndex tile) :
  */
 Station::~Station()
 {
+	citymania::OnStationRemoved(this);
+
 	for (Town *t : Town::Iterate()) {
 		// Using poiter comparison instead of cycling cargos
 		if (t->ad_ref_goods_entry >= this->goods &&

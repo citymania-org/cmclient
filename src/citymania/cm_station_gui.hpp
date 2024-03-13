@@ -27,6 +27,7 @@ enum class StationBuildingStatus {
 bool UseImprovedStationJoin();
 void OnStationTileSetChange(const Station *station, bool adding, StationType type);
 void OnStationPartBuilt(const Station *station);
+void OnStationRemoved(const Station *station);
 void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg);
 void HandleStationPlacement(TileIndex start, TileIndex end);
 void PlaceRail_Station(TileIndex tile);
