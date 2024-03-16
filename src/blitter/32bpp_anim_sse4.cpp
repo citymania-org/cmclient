@@ -16,6 +16,8 @@
 #include "32bpp_anim_sse4.hpp"
 #include "32bpp_sse_func.hpp"
 
+#include "../citymania/cm_colour.hpp"
+
 #include "../safeguards.h"
 
 /** Instantiation of the SSE4 32bpp blitter factory. */
@@ -332,6 +334,23 @@ bmcr_alpha_blend_single:
 				}
 				break;
 
+			case CM_BM_TINT_REMAP:
+				for (uint x = (uint) bp->width; x > 0; x--) {
+					if (src_mv->m == 0) {
+						if (src->a != 0) {
+							*dst = citymania::Remap32RGBA(src->r, src->g, src->b, src->a, *dst, remap);
+							*anim = 0;
+						}
+					} else {
+						uint r = remap[src_mv->m];
+						if (r != 0) *dst = ComposeColourPANoCheck(this->AdjustBrightness(this->LookupColourInPalette(r), src_mv->v), src->a, *dst);
+					}
+					src_mv++;
+					dst++;
+					src++;
+					anim++;
+				}
+				break;
 
 			case BM_CRASH_REMAP:
 				for (uint x = (uint) bp->width; x > 0; x--) {
@@ -427,6 +446,15 @@ bm_normal:
 			} else {
 				if (sprite_flags & SF_NO_ANIM) Draw<BM_COLOUR_REMAP, RM_WITH_MARGIN, BT_NONE, true, false>(bp, zoom);
 				else                           Draw<BM_COLOUR_REMAP, RM_WITH_MARGIN, BT_NONE, true, true>(bp, zoom);
+			}
+			break;
+		case CM_BM_TINT_REMAP:
+			if (bp->skip_left != 0 || bp->width <= MARGIN_REMAP_THRESHOLD) {
+				if (sprite_flags & SF_NO_ANIM) Draw<CM_BM_TINT_REMAP, RM_WITH_SKIP, BT_NONE, true, false>(bp, zoom);
+				else                           Draw<CM_BM_TINT_REMAP, RM_WITH_SKIP, BT_NONE, true, true>(bp, zoom);
+			} else {
+				if (sprite_flags & SF_NO_ANIM) Draw<CM_BM_TINT_REMAP, RM_WITH_MARGIN, BT_NONE, true, false>(bp, zoom);
+				else                           Draw<CM_BM_TINT_REMAP, RM_WITH_MARGIN, BT_NONE, true, true>(bp, zoom);
 			}
 			break;
 		case BM_TRANSPARENT:  Draw<BM_TRANSPARENT, RM_NONE, BT_NONE, true, true>(bp, zoom); return;
