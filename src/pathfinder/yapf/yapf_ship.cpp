@@ -172,28 +172,29 @@ public:
 		return 'w';
 	}
 
-	/** Returns a random trackdir that can be reached from the current tile/trackdir, or INVALID_TRACK if none is available. */
-	static Trackdir GetRandomFollowUpTrackdir(const Ship *v, TileIndex tile, Trackdir dir, bool include_90_degree_turns)
+	/** Returns a random tile/trackdir that can be reached from the current tile/trackdir, or tile/INVALID_TRACK if none is available. */
+	static std::pair<TileIndex, Trackdir> GetRandomFollowUpTileTrackdir(const Ship *v, TileIndex tile, Trackdir dir)
 	{
 		TrackFollower follower(v);
 		if (follower.Follow(tile, dir)) {
-			tile = follower.m_new_tile;
 			TrackdirBits dirs = follower.m_new_td_bits;
-			if (!include_90_degree_turns) dirs &= ~TrackdirCrossesTrackdirs(dir);
+			const TrackdirBits dirs_without_90_degree = dirs & ~TrackdirCrossesTrackdirs(dir);
+			if (dirs_without_90_degree != TRACKDIR_BIT_NONE) dirs = dirs_without_90_degree;
 			const int strip_amount = _random.Next(CountBits(dirs));
 			for (int s = 0; s < strip_amount; ++s) RemoveFirstTrackdir(&dirs);
-			return FindFirstTrackdir(dirs);
+			return { follower.m_new_tile, FindFirstTrackdir(dirs) };
 		}
-		return INVALID_TRACKDIR;
+		return { follower.m_new_tile, INVALID_TRACKDIR };
 	}
 
 	/** Creates a random path, avoids 90 degree turns. */
 	static Trackdir CreateRandomPath(const Ship *v, TileIndex tile, Trackdir dir, ShipPathCache &path_cache, int path_length)
 	{
+		std::pair<TileIndex, Trackdir> tile_dir = { tile, dir };
 		for (int i = 0; i < path_length; ++i) {
-			const Trackdir random_dir = GetRandomFollowUpTrackdir(v, tile, dir, false);
-			if (random_dir == INVALID_TRACKDIR) break;
-			path_cache.push_back(random_dir);
+			tile_dir = GetRandomFollowUpTileTrackdir(v, tile_dir.first, tile_dir.second);
+			if (tile_dir.second == INVALID_TRACKDIR) break;
+			path_cache.push_back(tile_dir.second);
 		}
 
 		if (path_cache.empty()) return INVALID_TRACKDIR;
@@ -252,21 +253,33 @@ public:
 			path_found = pf.FindPath(v);
 			Node *node = pf.GetBestNode();
 			if (attempt == 0 && !path_found) continue; // Try again with restricted search area.
-			if (!path_found || node == nullptr) GetRandomFollowUpTrackdir(v, src_tile, trackdir, true);
+			if (!path_found || node == nullptr) return GetRandomFollowUpTileTrackdir(v, src_tile, trackdir).second;
 
 			/* Return only the path within the current water region if an intermediate destination was returned. If not, cache the entire path
 			 * to the final destination tile. The low-level pathfinder might actually prefer a different docking tile in a nearby region. Without
 			 * caching the full path the ship can get stuck in a loop. */
 			const WaterRegionPatchDesc end_water_patch = GetWaterRegionPatchInfo(node->GetTile());
 			const WaterRegionPatchDesc start_water_patch = GetWaterRegionPatchInfo(tile);
+			assert(start_water_patch == high_level_path.front());
 			while (node->m_parent) {
 				const WaterRegionPatchDesc node_water_patch = GetWaterRegionPatchInfo(node->GetTile());
-				if (node_water_patch == start_water_patch || (!is_intermediate_destination && node_water_patch != end_water_patch)) {
+
+				const bool node_water_patch_on_high_level_path = std::find(high_level_path.begin(), high_level_path.end(), node_water_patch) != high_level_path.end();
+				const bool add_full_path = !is_intermediate_destination && node_water_patch != end_water_patch;
+
+				/* The cached path must always lead to a region patch that's on the high level path.
+				 * This is what can happen when that's not the case https://github.com/OpenTTD/OpenTTD/issues/12176. */
+				if (add_full_path || !node_water_patch_on_high_level_path || node_water_patch == start_water_patch) {
 					path_cache.push_front(node->GetTrackdir());
+				} else {
+					path_cache.clear();
 				}
 				node = node->m_parent;
 			}
-			assert(!path_cache.empty());
+
+			/* A empty path means we are already at the destination. The pathfinder shouldn't have been called at all.
+			 * Return a random reachable trackdir to hopefully nudge the ship out of this strange situation. */
+			if (path_cache.empty()) return GetRandomFollowUpTileTrackdir(v, src_tile, trackdir).second;
 
 			/* Take out the last trackdir as the result. */
 			const Trackdir result = path_cache.front();

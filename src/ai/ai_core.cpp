@@ -33,7 +33,7 @@
 	return !_networking || (_network_server && _settings_game.ai.ai_in_multiplayer);
 }
 
-/* static */ void AI::StartNew(CompanyID company, bool deviate)
+/* static */ void AI::StartNew(CompanyID company)
 {
 	assert(Company::IsValidID(company));
 
@@ -56,7 +56,6 @@
 		/* Load default data and store the name in the settings */
 		config->Change(info->GetName(), -1, false);
 	}
-	if (deviate) config->AddRandomDeviation(company);
 	config->AnchorUnchangeableSettings();
 
 	c->ai_info = info;
@@ -215,23 +214,28 @@
 			if (!_settings_game.ai_config[c]->ResetInfo(true)) {
 				Debug(script, 0, "After a reload, the AI by the name '{}' was no longer found, and removed from the list.", _settings_game.ai_config[c]->GetName());
 				_settings_game.ai_config[c]->Change(std::nullopt);
-				if (Company::IsValidAiID(c)) {
-					/* The code belonging to an already running AI was deleted. We can only do
-					 * one thing here to keep everything sane and that is kill the AI. After
-					 * killing the offending AI we start a random other one in it's place, just
-					 * like what would happen if the AI was missing during loading. */
-					AI::Stop(c);
-					AI::StartNew(c, false);
-				}
-			} else if (Company::IsValidAiID(c)) {
-				/* Update the reference in the Company struct. */
-				Company::Get(c)->ai_info = _settings_game.ai_config[c]->GetInfo();
 			}
 		}
+
 		if (_settings_newgame.ai_config[c] != nullptr && _settings_newgame.ai_config[c]->HasScript()) {
 			if (!_settings_newgame.ai_config[c]->ResetInfo(false)) {
 				Debug(script, 0, "After a reload, the AI by the name '{}' was no longer found, and removed from the list.", _settings_newgame.ai_config[c]->GetName());
 				_settings_newgame.ai_config[c]->Change(std::nullopt);
+			}
+		}
+
+		if (Company::IsValidAiID(c) && Company::Get(c)->ai_config != nullptr) {
+			AIConfig *config = Company::Get(c)->ai_config.get();
+			if (!config->ResetInfo(true)) {
+				/* The code belonging to an already running AI was deleted. We can only do
+				 * one thing here to keep everything sane and that is kill the AI. After
+				 * killing the offending AI we start a random other one in it's place, just
+				 * like what would happen if the AI was missing during loading. */
+				AI::Stop(c);
+				AI::StartNew(c);
+			} else {
+				/* Update the reference in the Company struct. */
+				Company::Get(c)->ai_info = config->GetInfo();
 			}
 		}
 	}
@@ -285,14 +289,18 @@
 {
 	if (!_networking || _network_server) {
 		Company *c = Company::GetIfValid(company);
-		assert(c != nullptr && c->ai_instance != nullptr);
+		assert(c != nullptr);
 
-		Backup<CompanyID> cur_company(_current_company, company, FILE_LINE);
-		c->ai_instance->Save();
-		cur_company.Restore();
-	} else {
-		AIInstance::SaveEmpty();
+		/* When doing emergency saving, an AI can be not fully initialised. */
+		if (c->ai_instance != nullptr) {
+			Backup<CompanyID> cur_company(_current_company, company, FILE_LINE);
+			c->ai_instance->Save();
+			cur_company.Restore();
+			return;
+		}
 	}
+
+	AIInstance::SaveEmpty();
 }
 
 /* static */ void AI::GetConsoleList(std::back_insert_iterator<std::string> &output_iterator, bool newest_only)

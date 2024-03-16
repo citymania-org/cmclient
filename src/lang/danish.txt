@@ -3,8 +3,8 @@
 ##isocode da_DK
 ##plural 0
 ##textdir ltr
-##numberformat 00.000.000.000.000.000.000
-##numberabbreviations 3=00.000.000.000.000.000{NBSP}k|6=00.000.000.000.000{NBSP}m|9=00.000.000.000{NBSP}bn|12=00.000.000{NBSP}tn|15=00.000{NBSP}Qa|18=00{NBSP}Qi
+##digitsep .
+##digitsepcur .
 ##decimalsep ,
 ##winlangid 0x0406
 ##grflangid 0x2d
@@ -289,7 +289,7 @@ STR_TOOLTIP_RESIZE                                              :{BLACK}Klik og 
 STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Skift mellem stort/lille vindue
 STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scrollbar - scroller listen op/ned
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scroll bar - flytter listen mod venstre/højre
-STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Nedriv bygninger osv. på et stykke land. Ctrl vælger arealet diagonalt. Shift skifter mellem at bygge og vise prisoverslag.
+STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}Nedriv bygninger osv. på et stykke land. Ctrl+klik vælger arealet diagonalt. Shift skifter mellem at bygge og vise prisoverslag.
 
 # Show engines button
 ###length VEHICLE_TYPES
@@ -361,7 +361,9 @@ STR_SORT_BY_POPULATION                                          :Indbyggertal
 STR_SORT_BY_RATING                                              :Bedømmelse
 STR_SORT_BY_NUM_VEHICLES                                        :Antal fartøjer
 STR_SORT_BY_TOTAL_PROFIT_LAST_YEAR                              :Samlet afkast sidste år
+STR_SORT_BY_TOTAL_PROFIT_LAST_PERIOD                            :Samlet resultat sidste periode
 STR_SORT_BY_TOTAL_PROFIT_THIS_YEAR                              :Samlet afkast dette år
+STR_SORT_BY_TOTAL_PROFIT_THIS_PERIOD                            :Samlet overskud i denne periode
 STR_SORT_BY_AVERAGE_PROFIT_LAST_YEAR                            :Gennemsnit afkast sidste år
 STR_SORT_BY_AVERAGE_PROFIT_LAST_PERIOD                          :Gennemsnitligt overskud sidste periode
 STR_SORT_BY_AVERAGE_PROFIT_THIS_YEAR                            :Gennemsnit afkast dette år
@@ -381,24 +383,24 @@ STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Sæt spi
 STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}Kør spillet hurtigere
 STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}Valgmuligheder og indstillinger
 STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}Gem spillet, forlad spillet, afslut
-STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Vis kort, ekstra viewport eller liste over skilte
-STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Vis byoversigten
-STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Vis tilskudsordninger
-STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Vis liste over selskabets stationer
-STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Vis selskabets finansinformation
-STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Vis generel selskabsinformation
+STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Vis kort, ekstra vindue, laststrøm eller liste over skilte
+STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Åben byoversigten
+STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Åben tilskudsordninger
+STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Åbn liste over virksomhedens stationer
+STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Åben selskabets finans informationer
+STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Åben generel selskabs information
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Vis historiebog
-STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Vis målliste
-STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Vis grafer
+STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Åben målliste
+STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Åben grafer
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Vis selskabsoversigten
 STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Finansiér opførelse af ny industri
-STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}Vis liste over selskabets tog. Ctrl+klik åbner/lukker guppe/køretøjs listen
-STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_ROAD_VEHICLES       :{BLACK}Vis liste over selskabets køretøjer. Ctrl-Klik åbner/lukker gruppe/køretøjslisten.
-STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}Vis liste over selskabets skibe. Ctrl-Klik åbner/lukker gruppe/køretøjslisten.
-STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_AIRCRAFT            :{BLACK}Vis liste over selskabets fly. Ctrl+Klik åbner gruppe/køretøjslisten.
+STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}Åben liste over selskabets tog. Ctrl+klik for at vise eller skjule køretøjsgrupper modsat den valgte indstilling
+STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_ROAD_VEHICLES       :{BLACK}Åben liste over virksomhedens vejkøretøjer. Ctrl+klik for at vise eller skjule køretøjsgrupper modsat den valgte indstilling
+STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}Åben liste over selskabets skibe. Ctrl+klik for at vise eller skjule køretøjsgrupper modsat den valgte indstilling
+STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_AIRCRAFT            :{BLACK}Åben liste over selskabets fly. Ctrl+klik for at vise eller skjule køretøjsgrupper modsat den valgte indstilling
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN                            :{BLACK}Zoom ind
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT                           :{BLACK}Zoom ud
-STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}Byg jernbanespor
+STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}Byg jernbaneinfrastruktur
 STR_TOOLBAR_TOOLTIP_BUILD_ROADS                                 :{BLACK}Byg veje
 STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}Byg sporveje
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}Byg havne
@@ -416,15 +418,15 @@ STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR                            :{YELLOW}Scenari
 STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD    :{BLACK}Flyt startdatoen 1 år tilbage
 STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD     :{BLACK}Flyt startdatoen 1 år frem
 STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE                           :{BLACK}Klik for at angive startdatoen
-STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK}Vis kortet, byoversigt
-STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Landskabsgenerering
-STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Bygenerering
-STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Industrigenerering
-STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Bygning af vej
-STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}Sporvejskonstruktion
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Plant træer. Ctrl vælger området diagonalt. Skift skifter bygning/viser omkostningsestimat
+STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK}Åbn kort, ekstra visnings af skilteliste eller by- eller brancheoversigt
+STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Åbn landskabsmenuen, eller generer en ny verden
+STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Byg eller generer by
+STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Byg eller generer industrier
+STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Byg vejinfrastruktur
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}Byg sporvejskonstruktion
+STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Plante træer. Ctrl+klik+træk for at markere området diagonalt. Tryk også på Shift for kun at vise omkostningsestimat
 STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}Placér skilt
-STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Placer objekt. Skift viser bygnings omkostningsestimat
+STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Placer objekt. Ctrl+klik+træk for at markere området diagonalt. Tryk også på Shift for kun at vise omkostningsestimat
 
 # Scenario editor file menu
 ###length 7
@@ -443,6 +445,7 @@ STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Indstillinger
 STR_SETTINGS_MENU_AI_SETTINGS                                   :AI indstillinger
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Indstillinger for spilscript
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF indstillinger
+STR_SETTINGS_MENU_SANDBOX_OPTIONS                               :Sandkasse muligheder
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Gennemsigtighedsvalg
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Bynavne vist
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Stationsnavne vist
@@ -1050,9 +1053,9 @@ STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Skalere 
 STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :{BLACK}Marker dette afkrydsningsfelt for at skalere facetter efter grænsefladestørrelse
 
 STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :{BLACK}Brug traditionel sprite-skrifttype
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Marker dette felt, hvis du foretrækker at bruge den traditionelle sprite-skrifttype med fast størrelse.
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Marker dette felt, hvis du foretrækker at bruge den traditionelle sprite-skrifttype med fast størrelse
 STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Anti-alias skrifttyper
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Marker dette felt for at skrifttyper, der kan ændres størrelse, kan udlignes.
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Marker dette felt for at skrifttyper, der kan ændres størrelse, kan udlignes
 
 STR_GAME_OPTIONS_GUI_SCALE_1X                                   :1x
 STR_GAME_OPTIONS_GUI_SCALE_2X                                   :2x
@@ -1113,6 +1116,9 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Kurs: {
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Reducer beløb i din valuta for et pund (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Forøg beløb i din valuta for et pund (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Sæt vekselkursen i din valuta for et pund (£)
+
+STR_CURRENCY_SEPARATOR                                          :{LTBLUE}Separator: {ORANGE}{STRING}
+STR_CURRENCY_SET_CUSTOM_CURRENCY_SEPARATOR_TOOLTIP              :{BLACK}Indstil separatoren for din valuta
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE}Præfiks: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK}Sæt præfiks-streng for din valuta
@@ -1268,10 +1274,10 @@ STR_CONFIG_SETTING_INFINITE_MONEY                               :Ubegrænset pen
 STR_CONFIG_SETTING_INFINITE_MONEY_HELPTEXT                      :Tillad ubegrænset forbrug og deaktiver virksomheders konkurs
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Maksimum startlån: {STRING}
-STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Maksimumbeløb et selskab kan låne (uden at tage inflation i betragtning)
+STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Det maksimale beløb en virksomhed kan låne (uden at tage højde for inflation). Hvis den er indstillet til "Intet lån", vil ingen penge være tilgængelige, medmindre de leveres af et spilscript eller indstillingen "Uendelige penge"
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_VALUE                   :{CURRENCY_LONG}
 ###setting-zero-is-special
-STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_DISABLED                :No loan {RED}Kræver, at Game Script leverer indledende midler
+STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_DISABLED                :Intet lån
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :Lånerente: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Lånerente; kontrollerer også inflationen hvis aktiveret
@@ -1352,10 +1358,10 @@ STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS                 :Skrånings stej
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS_HELPTEXT        :Stejlhed af skrå felter for vej køretøjer. Højere værdier gør det vanskeligere at bestige en bakke
 
 STR_CONFIG_SETTING_FORBID_90_DEG                                :Forbyd tog at dreje 90 grader: {STRING}
-STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90 graders drejninger forekommer når et vandret sporstykke er direkte efterfulgt af et lodret sporstykke på det tilstødende felt. Således drejer toget 90 grader når det passerer feltets kant, i stedet for de sædvanlige 45 grader for andre sporkombinationer.
+STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90 graders drejninger forekommer når et vandret sporstykke er direkte efterfulgt af et lodret sporstykke på det tilstødende felt. Således drejer toget 90 grader når det passerer feltets kant, i stedet for de sædvanlige 45 grader for andre sporkombinationer
 
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Tillad sammenkædning af stationer der ikke ligger direkte op ad hinanden: {STRING}
-STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Tillad at tilføje dele til en station uden direkte at berøre eksisterende dele. Ctrl+Klik for at sætte nye dele
+STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Tillad tilføjelse af dele til en station uden direkte at røre de eksisterende dele ved at Ctrl+klikke, mens du placerer de nye dele
 
 STR_CONFIG_SETTING_INFLATION                                    :Inflation: {STRING}
 STR_CONFIG_SETTING_INFLATION_HELPTEXT                           :Aktiver inflation i økonomien, hvor omkostningerne er lidt hurtigere stigende end betalinger
@@ -1464,7 +1470,7 @@ STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR                      :Foretrukken sel
 STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR_HELPTEXT             :Vælg den foretrukne farve egne selskaber skal starte med
 
 STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR_SECONDARY            :Startfirma sekundær farve: {STRING}
-STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR_SECONDARY_HELPTEXT   :Vælg startende sekundær farve for virksomheden, hvis du bruger en NewGRF, der aktiverer det.
+STR_CONFIG_SETTING_COMPANY_STARTING_COLOUR_SECONDARY_HELPTEXT   :Vælg startende sekundær farve for virksomheden, hvis du bruger en NewGRF, der aktiverer det
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Lufthavnenes levealder udløber aldrig: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :Aktiveres denne indstilling gøres at hver lufthavnstype forbliver tilgængelig for evigt efter dens indførelse
@@ -1488,22 +1494,22 @@ STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Køretøjernes 
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :Når aktiveret, forbliver alle biltyper tilgængelige for evigt efter indførelse
 
 STR_CONFIG_SETTING_TIMEKEEPING_UNITS                            :Tidtagning: {STRING}
-STR_CONFIG_SETTING_TIMEKEEPING_UNITS_HELPTEXT                   :Vælg spillets tidtagningsenheder. Dette kan ikke ændres senere.{}{}Kalenderbaseret er den klassiske OpenTTD-oplevelse, med et år bestående af 12 måneder, og hver måned har 28-31 dage.{}{}I vægur-baseret tid, køretøjsbevægelser, gods produktion, og økonomi er i stedet baseret på trin på et minut, hvilket er omtrent lige så lang tid, som en måned på 30 dage tager i kalenderbaseret tilstand. Disse er grupperet i 12-minutters perioder, svarende til et år i kalenderbaseret tilstand.{}{}I begge tilstande er der altid en klassisk kalender, som bruges til introduktionsdatoer for køretøjer, huse og anden infrastruktur.
+STR_CONFIG_SETTING_TIMEKEEPING_UNITS_HELPTEXT                   :Vælg spillets tidtagningsenheder. Dette kan ikke ændres senere.{}{}Kalenderbaseret er den klassiske OpenTTD-oplevelse, med et år bestående af 12 måneder, og hver måned har 28-31 dage.{}{}I Vægur-baseret tid, lastproduktion og økonomi er i stedet baseret på trin på et minut, hvilket er omtrent lige så lang tid, som en måned på 30 dage tager i kalenderbaseret tilstand. Disse er grupperet i 12-minutters perioder, svarende til et år i kalenderbaseret tilstand.{}{}I begge tilstande er der altid en klassisk kalender, som bruges til introduktionsdatoer for køretøjer, huse og anden infrastruktur
 ###length 2
 STR_CONFIG_SETTING_TIMEKEEPING_UNITS_CALENDAR                   :Kalender
 STR_CONFIG_SETTING_TIMEKEEPING_UNITS_WALLCLOCK                  :Vægur
 
 STR_CONFIG_SETTING_MINUTES_PER_YEAR                             :Minutter om året: {STRING}
-STR_CONFIG_SETTING_MINUTES_PER_YEAR_HELPTEXT                    :Vælg antallet af minutter i et kalenderår. Standard er 12 minutter. Indstil til 0 for at forhindre kalendertiden i at ændre sig. Denne indstilling påvirker ikke den økonomiske simulering af spillet og er kun tilgængelig, når du bruger vægurs tidtagning.
+STR_CONFIG_SETTING_MINUTES_PER_YEAR_HELPTEXT                    :Vælg antallet af minutter i et kalenderår. Standard er 12 minutter. Indstil til 0 for at forhindre kalendertiden i at ændre sig. Denne indstilling påvirker ikke den økonomiske simulering af spillet og er kun tilgængelig, når du bruger vægurs tidtagning
 
 STR_CONFIG_SETTING_MINUTES_PER_YEAR_VALUE                       :{NUM}
 ###setting-zero-is-special
 STR_CONFIG_SETTING_MINUTES_PER_YEAR_FROZEN                      :0 (kalendertid frosset)
 
 STR_CONFIG_SETTING_TOWN_CARGO_SCALE                             :Skala bygodsproduktion: {STRING}
-STR_CONFIG_SETTING_TOWN_CARGO_SCALE_HELPTEXT                    :Skaler byernes godsproduktion med denne procentdel.
+STR_CONFIG_SETTING_TOWN_CARGO_SCALE_HELPTEXT                    :Skaler byernes godsproduktion med denne procentdel
 STR_CONFIG_SETTING_INDUSTRY_CARGO_SCALE                         :Skaler industri gods produktion: {STRING}
-STR_CONFIG_SETTING_INDUSTRY_CARGO_SCALE_HELPTEXT                :Skaler industriens gods produktion med denne procentdel.
+STR_CONFIG_SETTING_INDUSTRY_CARGO_SCALE_HELPTEXT                :Skaler industriens gods produktion med denne procentdel
 STR_CONFIG_SETTING_CARGO_SCALE_VALUE                            :{NUM}%
 
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :Automatisk fornyelse af gamle køretøjer: {STRING}
@@ -1522,7 +1528,7 @@ STR_CONFIG_SETTING_ERRMSG_DURATION                              :Varighed af fej
 STR_CONFIG_SETTING_ERRMSG_DURATION_HELPTEXT                     :Varighed for visning fejlmeddelelser i en rød vindue. Bemærk, at nogle (kritisk) fejlmeddelelser ikke lukkes automatisk efter dette tidspunkt, men skal lukkes manuelt
 
 STR_CONFIG_SETTING_HOVER_DELAY                                  :Vis værktøjstip: {STRING}
-STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :Forsinkelse inden tooltips vises, når musen føres over nogle den grænseflade . Alternativt tooltips er bundet til den højre museknap, når denne værdi er sat til 0.
+STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :Forsinkelse inden tooltips vises, når musen føres over nogle den grænseflade . Alternativt tooltips er bundet til den højre museknap, når denne værdi er sat til 0
 STR_CONFIG_SETTING_HOVER_DELAY_VALUE                            :Hold markøren i {COMMA} sekund{P 0 "" er}
 ###setting-zero-is-special
 STR_CONFIG_SETTING_HOVER_DELAY_DISABLED                         :Højre klik
@@ -1534,8 +1540,8 @@ STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Linjetykkelse i
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Bredde af linjerne i graferne. En tynd linie er mere læsbar, en tykkere linje er nemmere at se og det er lettere at skelne mellem farverne
 
 STR_CONFIG_SETTING_SHOW_NEWGRF_NAME                             :Vis navn på NewGRF i byg fartøj vinduet: {STRING}
-STR_CONFIG_SETTING_SHOW_NEWGRF_NAME_HELPTEXT                    :Tilføjer en linje til byg fartøj vinduet som viser, hvilken NewGRF det valgte fartøj stammer fra.
-STR_CONFIG_SETTING_SHOW_CARGO_IN_LISTS                          :Vis de laster, køretøjerne kan bære i listevinduerne {STRING}
+STR_CONFIG_SETTING_SHOW_NEWGRF_NAME_HELPTEXT                    :Tilføjer en linje til byg fartøj vinduet som viser, hvilken NewGRF det valgte fartøj stammer fra
+STR_CONFIG_SETTING_SHOW_CARGO_IN_LISTS                          :Vis de laster, køretøjerne kan bære i listevinduerne: {STRING}
 STR_CONFIG_SETTING_SHOW_CARGO_IN_LISTS_HELPTEXT                 :Hvis det er aktiveret, vises køretøjets transportable last over det på køretøjslisterne
 
 STR_CONFIG_SETTING_LANDSCAPE                                    :Landskab: {STRING}
@@ -1554,13 +1560,13 @@ STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Industri tæthe
 STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :Angiv hvor mange industrier skal genereres og hvilket niveau der bevares i løbet af spillet
 
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Maksimal afstand fra kant til olieindustrier: {STRING}
-STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Grænse for hvor langt fra kortets kant olieraffinaderier kan blive bygget. På ø-kort sikrer dette at de er nær kysten. På kort større end 256 felter bliver denne værdi automatisk skaleret op.
+STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Grænse for hvor langt fra kortets kant olieraffinaderier kan blive bygget. På ø-kort sikrer dette at de er nær kysten. På kort større end 256 felter bliver denne værdi automatisk skaleret op
 
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Snelinjehøjden: {STRING}
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Vælg, i hvilken højde sneen starter i det subarktiske landskab. Sne påvirker også industriproduktion og byvækstkrav. Kan kun ændres via Scenario Editor eller på anden måde beregnes via "snedækning"
 
 STR_CONFIG_SETTING_SNOW_COVERAGE                                :Snedække: {STRING}
-STR_CONFIG_SETTING_SNOW_COVERAGE_HELPTEXT                       :Vælg den omtrentlige mængde sne på det subarktiske landskab. Sne påvirker også industriproduktion og byvækstkrav. Bruges kun under kortgenerering. Havniveau og kystfliser har aldrig sne.
+STR_CONFIG_SETTING_SNOW_COVERAGE_HELPTEXT                       :Vælg den omtrentlige mængde sne på det subarktiske landskab. Sne påvirker også industriproduktion og byvækstkrav. Bruges kun under kortgenerering. Havniveau og kystfliser har aldrig sne
 STR_CONFIG_SETTING_SNOW_COVERAGE_VALUE                          :{NUM}%
 
 STR_CONFIG_SETTING_DESERT_COVERAGE                              :Ørkendækning: {STRING}
@@ -1568,7 +1574,7 @@ STR_CONFIG_SETTING_DESERT_COVERAGE_HELPTEXT                     :Vælg den omtre
 STR_CONFIG_SETTING_DESERT_COVERAGE_VALUE                        :{NUM}%
 
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Tærrenets hårdhed (kun TerraGenesis) : {STRING}
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :Vælg formen og antallet af bakker. Glatte landskaber har færre, bredere bakker, mens barske landskaber har flere mindre bakker.
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :Vælg formen og antallet af bakker. Glatte landskaber har færre, bredere bakker, mens barske landskaber har flere mindre bakker
 ###length 4
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Meget blødt
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Blødt
@@ -1576,7 +1582,7 @@ STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Råt
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Meget råt
 
 STR_CONFIG_SETTING_VARIETY                                      :Forskelligheds fordeling: {STRING}
-STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :Vælg om kortet indeholder både bjerge og flade områder. Jo højere sorten er, jo flere højdeforskelle mellem bjergrige og flade områder.
+STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :Vælg om kortet indeholder både bjerge og flade områder. Jo højere sorten er, jo flere højdeforskelle mellem bjergrige og flade områder
 
 STR_CONFIG_SETTING_RIVER_AMOUNT                                 :Floder antal: {STRING}
 STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :Vælg, hvor mange floder at skabe
@@ -1623,7 +1629,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Mørkegrøn
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violet
 
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS                            :Overlejringsfarver til lastflow: {STRING}
-STR_CONFIG_SETTING_LINKGRAPH_COLOURS_HELPTEXT                   :Indstil det farveskema, der bruges til laststrømsoverlejringen.
+STR_CONFIG_SETTING_LINKGRAPH_COLOURS_HELPTEXT                   :Indstil det farveskema, der bruges til laststrøms overlejringen
 ###length 4
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREEN_TO_RED               :Grøn til rød (original)
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREEN_TO_BLUE              :Grøn til blå
@@ -1744,10 +1750,10 @@ STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS                     :Hold byggeværk
 STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS_HELPTEXT            :Hold bygnings-værktøjer til broer, tunneler, mv. åben efter brug
 
 STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS                          :Fjern automatisk signaler under jernbane-bygning: {STRING}
-STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS_HELPTEXT                 :Fjerner automatisk signaler under jernbane-bygning, hvis signalerne er i vejen. Bemærk at dette potentielt kan føre til togsammenstød.
+STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS_HELPTEXT                 :Fjerner automatisk signaler under jernbane-bygning, hvis signalerne er i vejen. Bemærk at dette potentielt kan føre til togsammenstød
 
 STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT                     :Hurtig kørsel hastighedsgrænse: {STRING}
-STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT_HELPTEXT            :Begrænser hvor hurtigt spillet kører, når hurtig kørsel er aktiveret. 0 = ingen grænse (så hurtigt som din computer er i stand til.) Værdier under 100% sænker spillets hastighed. Den øvre grænse afhænger af din computers specifikationer og kan variere afhængig af spillet.
+STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT_HELPTEXT            :Begrænser hvor hurtigt spillet kører, når hurtig kørsel er aktiveret. 0 = ingen grænse (så hurtigt som din computer er i stand til.) Værdier under 100% sænker spillets hastighed. Den øvre grænse afhænger af din computers specifikationer og kan variere afhængig af spillet
 STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT_VAL                 :{NUM}% normal simulationshastighed
 ###setting-zero-is-special
 STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT_ZERO                :Ingen grænse (så hurtigt din computer er i stand til)
@@ -1811,11 +1817,11 @@ STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :Tillad computer
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES                           :#opcodes før scriptet bliver stoppet: {STRING}
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES_HELPTEXT                  :Maximale nummer af udregninger et script kan eksekvere i en tur
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY                            :Maks hukommelsesforbrug per script: {STRING}
-STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :Hvor meget hukommelse et enkelt script må anvende før det bliver tvungent afbrudt. Det kan være nødvendigt at forøge dette for spil på store kort.
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :Hvor meget hukommelse et enkelt script må anvende før det bliver tvungent afbrudt. Det kan være nødvendigt at forøge dette for spil på store kort
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Service intervaller er i procent: {STRING}
-STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Når den er aktiveret, forsøger køretøjer at servicere, når deres pålidelighed falder med en given procentdel af den maksimale pålidelighed.Hvis f.eks. et køretøjs maksimale pålidelighed er 90 %, og serviceintervallet er 20 %, vil køretøjet forsøge at servicere, når den når 72 % pålidelighed.
+STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Når den er aktiveret, forsøger køretøjer at servicere, når deres pålidelighed falder med en given procentdel af den maksimale pålidelighed.{}{}Hvis f.eks. et køretøjs maksimale pålidelighed er 90 %, og serviceintervallet er 20 %, vil køretøjet forsøge at servicere, når den når 72 % pålidelighed
 
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :Standard vedligeholdelses interval for tog: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :Sæt serviceintervallets standardværdi for nye skinnekøretøjer.
@@ -1825,7 +1831,7 @@ STR_CONFIG_SETTING_SERVINT_AIRCRAFT                             :Standard servic
 STR_CONFIG_SETTING_SERVINT_AIRCRAFT_HELPTEXT                    :Sæt serviceintervallets standardværdi for nye fly.
 STR_CONFIG_SETTING_SERVINT_SHIPS                                :Standard serviceinterval for skibe: {STRING}
 STR_CONFIG_SETTING_SERVINT_SHIPS_HELPTEXT                       :Sæt serviceintervallets standardværdi for nye skibe.
-STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA} dag{P 0 "" e}/%
+STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA}{NBSP}dag{P 0 "" s}/Minute{P 0 "" r}/%
 ###setting-zero-is-special
 STR_CONFIG_SETTING_SERVINT_DISABLED                             :Deaktiveret
 
@@ -1833,7 +1839,7 @@ STR_CONFIG_SETTING_NOSERVICE                                    :Slå service fr
 STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Når tilladt, bliver køretøjer ikke serviceret, hvis de ikke kan bryde ned
 
 STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY               :Læsningshastighedsstraf for tog, der er længere end stationen: {STRING}
-STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY_HELPTEXT      :Når den er aktiveret, læsser et tog, der er for lange til stationen, langsommere end et tog, der passer til stationen. Denne indstilling påvirker ikke stifinding.
+STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY_HELPTEXT      :Når den er aktiveret, læsser et tog, der er for lange til stationen, langsommere end et tog, der passer til stationen. Denne indstilling påvirker ikke stifinding
 
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Aktiver hastighedsbegrænsning for vogne: {STRING}
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :Når tilladt, brug også fartgrænse på vogne, for at bestemme makshastigheden på tog
@@ -1898,13 +1904,13 @@ STR_CONFIG_SETTING_COLOURED_NEWS_YEAR_HELPTEXT                  :Året hvor nyhe
 STR_CONFIG_SETTING_STARTING_YEAR                                :Start dato: {STRING}
 
 STR_CONFIG_SETTING_ENDING_YEAR                                  :Slutår for pointoptælling: {STRING}
-STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :Årstal hvor spillet slutter pointoptælling. Ved slutningen af dette år bliver selskabets point optaget, og topresultater-skærmen bliver vist. Spillerne kan fortsætte med at spille efter dette.{}Hvis dette er før spillets start år, bliver topresultater-skærmen aldrig vist.
+STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :Årstal hvor spillet slutter pointoptælling. Ved slutningen af dette år bliver selskabets point optaget, og topresultater-skærmen bliver vist. Spillerne kan fortsætte med at spille efter dette.{}Hvis dette er før spillets start år, bliver topresultater-skærmen aldrig vist
 STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 ###setting-zero-is-special
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Aldrig
 
 STR_CONFIG_SETTING_ECONOMY_TYPE                                 :Økonomitype: {STRING}
-STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :Udjævnet økonomi ændrer produktionsniveauet oftere, og i mindre trin. Frossen økonomi forhindrer ændringer i produktionsniveauet og industrilukninger. Denne indstilling kan muligvis ikke have nogen effekt hvis industrityperne stammer fra en NewGRF.
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :Udjævnet økonomi ændrer produktionsniveauet oftere, og i mindre trin. Frossen økonomi forhindrer ændringer i produktionsniveauet og industrilukninger. Denne indstilling kan muligvis ikke have nogen effekt hvis industrityperne stammer fra en NewGRF
 ###length 3
 STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :Original
 STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :Udjævnet
@@ -1959,7 +1965,7 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :Tilladt
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Tilladt, tilpasset by-layout
 
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :Godsgenerering i byer: {STRING}
-STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Hvor meget gods der bliver produceret af byers bygninger, i forhold til byens samlede indbyggertal.{}Kvadratisk vækst: En by med dobbelt indbyggertal genererer fire gange så mange passagerer.{}Lineær vækst: En by med dobbelt indbyggertal genererer dobbelt så mange passagerer.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Hvor meget gods der bliver produceret af byers bygninger, i forhold til byens samlede indbyggertal.{}Kvadratisk vækst: En by med dobbelt indbyggertal genererer fire gange så mange passagerer.{}Lineær vækst: En by med dobbelt indbyggertal genererer dobbelt så mange passagerer
 ###length 2
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE_ORIGINAL                   :Kvadratisk (original)
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Lineær
@@ -2000,7 +2006,7 @@ STR_CONFIG_SETTING_ZOOM_LVL_OUT_4X                              :4x
 STR_CONFIG_SETTING_ZOOM_LVL_OUT_8X                              :8x
 
 STR_CONFIG_SETTING_SPRITE_ZOOM_MIN                              :Højeste sprite-opløsning der må anvendes: {STRING}
-STR_CONFIG_SETTING_SPRITE_ZOOM_MIN_HELPTEXT                     :Begrænser den maksimale opløsning for sprites. Denne begrænsning vil forhindre brug af højopløsningsgrafik selv når den er tilgængelig. Dette kan bevare en ensartet fremtoning af spillet når der er en blanding af GRF filer med og uden højopløsningsgrafik.
+STR_CONFIG_SETTING_SPRITE_ZOOM_MIN_HELPTEXT                     :Begrænser den maksimale opløsning for sprites. Denne begrænsning vil forhindre brug af højopløsningsgrafik selv når den er tilgængelig. Dette kan bevare en ensartet fremtoning af spillet når der er en blanding af GRF filer med og uden højopløsningsgrafik
 ###length 3
 STR_CONFIG_SETTING_SPRITE_ZOOM_LVL_MIN                          :4x
 STR_CONFIG_SETTING_SPRITE_ZOOM_LVL_IN_2X                        :2x
@@ -2024,33 +2030,33 @@ STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Startværdi for
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Gennemsnitlig størrelse af storbyer i forhold til normale byer ved start af spillet
 
 STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL                    :Opdater distributionsgraf hver {STRING}{NBSP}sekund{P 0:2 "" er}
-STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL_HELPTEXT           :Tid mellem efterfølgende genberegninger af linkgrafen. Hver genberegning beregner planerne for én komponent af grafen. Det betyder, at en værdi X for denne indstilling ikke betyder, at hele grafen vil blive opdateret hvert X sekund. Kun en komponent vil. Jo kortere du indstiller det, jo mere CPU-tid vil være nødvendigt for at beregne det. Jo længere du indstiller det, jo længere tid vil det tage, før godsfordelingen starter på nye ruter.
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL_HELPTEXT           :Tid mellem efterfølgende genberegninger af linkgrafen. Hver genberegning beregner planerne for én komponent af grafen. Det betyder, at en værdi X for denne indstilling ikke betyder, at hele grafen vil blive opdateret hvert X sekund. Kun en komponent vil. Jo kortere du indstiller det, jo mere CPU-tid vil være nødvendigt for at beregne det. Jo længere du indstiller det, jo længere tid vil det tage, før godsfordelingen starter på nye ruter
 STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME                        :Tag {STRING}{NBSP}sekund{P 0:2 "" er} til genberegning af fordelingsgraf
-STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME_HELPTEXT               :Tid det tager for hver genberegning af en linkgrafkomponent. Når en genberegning startes, dannes en tråd, som får lov til at køre i dette antal sekunder. Jo kortere du indstiller dette, jo mere sandsynligt er det, at tråden ikke er færdig, når den skal. Så stopper spillet, indtil det er ("lag"). Jo længere du indstiller det, jo længere tid tager det for distributionen at blive opdateret, når ruter ændres.
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME_HELPTEXT               :Tid det tager for hver genberegning af en linkgrafkomponent. Når en genberegning startes, dannes en tråd, som får lov til at køre i dette antal sekunder. Jo kortere du indstiller dette, jo mere sandsynligt er det, at tråden ikke er færdig, når den skal. Så stopper spillet, indtil det er ("lag"). Jo længere du indstiller det, jo længere tid tager det for distributionen at blive opdateret, når ruter ændres
 
 STR_CONFIG_SETTING_DISTRIBUTION_PAX                             :Distributionsmodel for passagerer: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :"Symmetrisk" betyder, at omtrent det samme antal passagerer vil gå fra en station A til en station B som fra B til A. "Asymmetrisk" betyder, at vilkårlige antal passagerer kan gå i begge retninger. "Manuel" betyder, at der ikke finder nogen automatisk distribution sted for passagerer.
+STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :"Symmetrisk" betyder, at omtrent det samme antal passagerer vil gå fra en station A til en station B som fra B til A. "Asymmetrisk" betyder, at vilkårlige antal passagerer kan gå i begge retninger. "Manuel" betyder, at der ikke finder nogen automatisk distribution sted for passagerer
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL                            :Distributionsmodel for post: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :"symmetrisk" betyder, at der sendes omtrent den samme mængde post fra en station A til en station B som fra B til A. "asymmetrisk" betyder, at vilkårlige mængder post kan sendes i begge retninger. "Manuel" betyder, at der ikke finder automatisk distribution sted for post.
+STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :"symmetrisk" betyder, at der sendes omtrent den samme mængde post fra en station A til en station B som fra B til A. "asymmetrisk" betyder, at vilkårlige mængder post kan sendes i begge retninger. "Manuel" betyder, at der ikke finder automatisk distribution sted for post
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :Distributionsmodel for PANSRET last-klasse: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :PANSRET last-klasse indeholder værdigenstande i tempereret, diamanter i det subtropiske eller guld i det subarktiske klima. NewGRF'er kan ændre det. "Symmetrisk" betyder, at omtrent den samme mængde af denne last vil blive sendt fra en station A til en station B som fra B til A. "Asymmetrisk" betyder, at vilkårlige mængder af denne last kan sendes i begge retninger. "Manuel" betyder, at der ikke finder nogen automatisk distribution sted for den pågældende last. Det anbefales at indstille dette til asymmetrisk eller manuel, når du spiller subarktisk eller subtropisk, da banker kun modtager gods i disse klimaer. For tempereret kan du også vælge symmetrisk, da banker sender værdigenstande tilbage til oprindelsesbanken.
+STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :PANSRET last-klasse indeholder værdigenstande i tempereret, diamanter i det subtropiske eller guld i det subarktiske klima. NewGRF'er kan ændre det. "Symmetrisk" betyder, at omtrent den samme mængde af denne last vil blive sendt fra en station A til en station B som fra B til A. "Asymmetrisk" betyder, at vilkårlige mængder af denne last kan sendes i begge retninger. "Manuel" betyder, at der ikke finder nogen automatisk distribution sted for den pågældende last. Det anbefales at indstille dette til asymmetrisk eller manuel, når du spiller subarktisk eller subtropisk, da banker kun modtager gods i disse klimaer. For tempereret kan du også vælge symmetrisk, da banker sender værdigenstande tilbage til oprindelsesbanken
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :Distributionsmodel for andre lastklasser: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"asymmetrisk" betyder, at vilkårlige mængder last kan sendes i begge retninger. "manuel" betyder, at der ikke finder nogen automatisk distribution sted for disse laster.
+STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"asymmetrisk" betyder, at vilkårlige mængder last kan sendes i begge retninger. "manuel" betyder, at der ikke finder nogen automatisk distribution sted for disse laster
 ###length 3
 STR_CONFIG_SETTING_DISTRIBUTION_MANUAL                          :manuel
 STR_CONFIG_SETTING_DISTRIBUTION_ASYMMETRIC                      :asymmetrisk
 STR_CONFIG_SETTING_DISTRIBUTION_SYMMETRIC                       :symmetrisk
 
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :Distributionsnøjagtighed: {STRING}
-STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :Jo højere du sætter denne indstilling, jo mere CPU-tid vil beregningen af forbindelsesgrafen tage. Hvis den tager for længe, kan du opleve lag. Hvis du derimod sætter indstillingen til en lav værdi, vil distributionen være unøjagtig, og du kan opleve last ikke blive sendt til de steder, du forventer.
+STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :Jo højere du sætter denne indstilling, jo mere CPU-tid vil beregningen af forbindelsesgrafen tage. Hvis den tager for længe, kan du opleve lag. Hvis du derimod sætter indstillingen til en lav værdi, vil distributionen være unøjagtig, og du kan opleve last ikke blive sendt til de steder, du forventer
 
 STR_CONFIG_SETTING_DEMAND_DISTANCE                              :Effekt af afstand på efterspørgsel: {STRING}
-STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Hvis du sætter denne indstilling til en værdi større end 0, vil afstanden mellem oprindelsesstation A for noget last og en mulig destination B have en effekt på mængden af last sendt fra A til B. Jo længere væk B er fra A, jo mindre last vil blive sendt. Jo højere du sætter denne indstilling, jo mindre last vil blive sendt til fjerne stationer, og jo mere last vil blive sendt til nærliggende stationer.
+STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Hvis du sætter denne indstilling til en værdi større end 0, vil afstanden mellem oprindelsesstation A for noget last og en mulig destination B have en effekt på mængden af last sendt fra A til B. Jo længere væk B er fra A, jo mindre last vil blive sendt. Jo højere du sætter denne indstilling, jo mindre last vil blive sendt til fjerne stationer, og jo mere last vil blive sendt til nærliggende stationer
 STR_CONFIG_SETTING_DEMAND_SIZE                                  :Mængde returnerende last for symmetrisk model: {STRING}
-STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :Ved at sætte denne indstilling til mindre end 100%, opfører den symmetriske distribution sig mere som den asymmetriske. Mindre last vil blive tvunget sendt tilbage hvis en bestemt mængde er blevet sendt til en station. Hvis du sætter denne indstilling til 0%, vil den symmetriske distribution opfører sig ligesom den asymmetriske.
+STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :Ved at sætte denne indstilling til mindre end 100%, opfører den symmetriske distribution sig mere som den asymmetriske. Mindre last vil blive tvunget sendt tilbage hvis en bestemt mængde er blevet sendt til en station. Hvis du sætter denne indstilling til 0%, vil den symmetriske distribution opfører sig ligesom den asymmetriske
 
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Mætning af korte veje før brug af veje med høj kapacitet: {STRING}
-STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :Der er ofte flere veje mellem to givne stationer. Cargodist vil mætte den korteste vej først, så bruge den næstkorteste vej indtil den er mættet, osv.. Mætning bestemmes af en vurdering af kapacitet og planlagt brug. Når den har mættet alle veje, og hvis der stadig er efterspørgsel tilbage, vil den overbelaste alle veje, og foretrække vejene med høj kapacitet. Det meste af tiden vil algoritmen dog ikke vurdere kapaciteten nøjagtigt. Denne indstilling giver dig mulighed for at bestemme op til hvilken procentdel en kortere vej skal være mættet i første omgang før den næste, længere vej vælges. Sæt denne indstilling til mindre end 100% for at undgå overfyldte stationer i tilfælde af overvurderet kapacitet.
+STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :Der er ofte flere veje mellem to givne stationer. Cargodist vil mætte den korteste vej først, så bruge den næstkorteste vej indtil den er mættet, osv.. Mætning bestemmes af en vurdering af kapacitet og planlagt brug. Når den har mættet alle veje, og hvis der stadig er efterspørgsel tilbage, vil den overbelaste alle veje, og foretrække vejene med høj kapacitet. Det meste af tiden vil algoritmen dog ikke vurdere kapaciteten nøjagtigt. Denne indstilling giver dig mulighed for at bestemme op til hvilken procentdel en kortere vej skal være mættet i første omgang før den næste, længere vej vælges. Sæt denne indstilling til mindre end 100% for at undgå overfyldte stationer i tilfælde af overvurderet kapacitet
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Hastighedsenheder: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_NAUTICAL         :Hastighedsenheder (nautisk): {STRING}
@@ -2196,14 +2202,14 @@ STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE                          :{BLACK}Vælg 's
 STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE                        :{BLACK}Vælg 'subtropisk' landskab
 STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Vælg 'legetøjsland' landskab
 
-STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Sæt spillet op
-STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Hvis topscoreliste
+STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Åbn spilmuligheder
+STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Åben topscoreliste
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Få adgang til dokumentation og online ressourcer
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Skærm indstillinger
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Vis NewGRF-indstillinger
+STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Åben indstillinger
+STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Åben NewGRF-indstillinger
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Tjek for nyt og opdateret indhold til download
-STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Vis AI indstillinger
-STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}Vis indstillinger for spilscript
+STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Åben AI indstillinger
+STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}Åben indstillinger for spilscript
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Afslut 'OpenTTD'
 
 STR_INTRO_BASESET                                               :{BLACK} Det aktuelt valgte base grafiksæt mangler {NUM} sprite {P "" s}. Se venligst efter opdateringer til basesættet.
@@ -2234,7 +2240,7 @@ STR_HELP_WINDOW_BUGTRACKER                                      :{BLACK}Anmeld e
 STR_HELP_WINDOW_COMMUNITY                                       :{BLACK}Fællesskab
 
 # Cheat window
-STR_CHEATS                                                      :{WHITE}Snydefunktioner
+STR_CHEATS                                                      :{WHITE}Sandkasse muligheder
 STR_CHEAT_MONEY                                                 :{LTBLUE}Forøg kassebeholdning med {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Spiller som firmaet: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Magisk bulldozer (nedriv ting, som normalt ikke kan fjernes): {ORANGE}{STRING}
@@ -2373,6 +2379,7 @@ STR_NETWORK_SERVER_LIST_DATE_CAPTION                            :{BLACK}Dato
 STR_NETWORK_SERVER_LIST_DATE_CAPTION_TOOLTIP                    :{BLACK}Aktuel dato
 STR_NETWORK_SERVER_LIST_PLAY_TIME_SHORT                         :{BLACK}{NUM}h {NUM}m
 STR_NETWORK_SERVER_LIST_PLAY_TIME_CAPTION                       :{BLACK}Spille tid
+STR_NETWORK_SERVER_LIST_PLAY_TIME_CAPTION_TOOLTIP               :{BLACK}Spillet tid, mens{} spillet ikke var sat på pause
 STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}Sprog, server version, osv.
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}Klik på et spil fra listen for at vælge det
@@ -2744,6 +2751,8 @@ STR_LINKGRAPH_LEGEND_SATURATED                                  :{TINY_FONT}{BLA
 STR_LINKGRAPH_LEGEND_OVERLOADED                                 :{TINY_FONT}{BLACK}overbelastet
 
 # Linkgraph tooltip
+STR_LINKGRAPH_STATS_TOOLTIP_MONTH                               :{BLACK}{CARGO_LONG} skal transporteres om måneden fra {STATION} til {STATION} ({COMMA}% af kapacitet){STRING}
+STR_LINKGRAPH_STATS_TOOLTIP_MINUTE                              :{BLACK}{CARGO_LONG} skal transporteres i minuttet fra {STATION} til {STATION} ({COMMA}% af kapacitet){STRING}
 STR_LINKGRAPH_STATS_TOOLTIP_RETURN_EXTENSION                    :{}{CARGO_LONG} transporteres tilbage ({COMMA}% of capacity)
 STR_LINKGRAPH_STATS_TOOLTIP_TIME_EXTENSION                      :{}Gennemsnitlig rejsetid: {UNITS_DAYS_OR_SECONDS}
 
@@ -2774,12 +2783,12 @@ STR_RAIL_TOOLBAR_ELRAIL_CONSTRUCTION_CAPTION                    :Elektrisk jernb
 STR_RAIL_TOOLBAR_MONORAIL_CONSTRUCTION_CAPTION                  :Monorailkonstruktion
 STR_RAIL_TOOLBAR_MAGLEV_CONSTRUCTION_CAPTION                    :Magnetskinnekonstruktion
 
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}Byg jernbane. Ctrl skifter mellem at bygge og fjerne elementer. Shift skifter mellem at bygge og vise prisoverslag.
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Byg jernbane med auto-jernbane-værktøj. Ctrl skifter mellem at bygge og fjerne elementer. Shift skifter mellem at bygge og vise prisoverslag.
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}Byg jernbanespor. Ctrl+klik skifter mellem at bygge og fjerne elementer. Shift skifter mellem at bygge og vise prisoverslag.
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Byg jernbane med auto-jernbane-værktøj. Ctrl+klik skifter mellem at bygge og fjerne elementer. Shift skifter mellem at bygge og vise prisoverslag.
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}Byg en remise (til køb og servicering af tog). Shift skifter mellem at bygge og vise prisoverslag.
 STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}Ombyg jernbane til rutepunkt. Ctrl muliggør sammenslutning af rutepunkt. Shift skifter mellem at bygge og vise prisoverslag.
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}Byg en banegård. Ctrl muliggør sammenslutning af stationer. Shift skifter mellem at bygge og vise prisoverslag.
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_SIGNALS                 :{BLACK}Byg signal på jernbane. Ctrl skifter semafor-/lyssignaler{}Hvis du trækker, opbygges signaler langs en lige jernbanestrækning. Ctrl bygger signaler op til næste vejkryds eller signal{}Ctrl+klik skifter til at åbne vinduet til valg af signal. Shift skifter mellem at bygge/vise omkostningsestimat
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}Byg en banegård. Ctrl+klik muliggør sammenslutning af stationer. Shift skifter mellem at bygge og vise prisoverslag.
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_SIGNALS                 :{BLACK}Byg signal på jernbane. Ctrl+klik for at bygge den alternative signalstil{}Klik+Træk for at udfylde den valgte sektion af skinnen med signaler med den valgte afstand. Ctrl+klik+træk for at fylde signaler op til næste vejkryds, station eller signal. Tryk også på Shift for kun at vise omkostningsestimat
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_BRIDGE                  :{BLACK}Byg jernbanebro. Shift skifter mellem at bygge og vise prisoverslag.
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TUNNEL                  :{BLACK}Byg jernbanetunnel. Shift skifter mellem at bygge og vise prisoverslag.
 STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR                :{BLACK}Skift mellem at bygge og fjerne jernbaneskinner, signaler, rutepunkter og stationer. Hold Ctrl nede for også at fjerne togspor fra rutepunkter og stationer.
@@ -2833,7 +2842,7 @@ STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP                          :{BLACK}Udgangss
 STR_BUILD_SIGNAL_ELECTRIC_COMBO_TOOLTIP                         :{BLACK}Kombi signal (elektrisk){}Kombi signalet fungerer både som indgangs- og udgangssignal. Dette muliggør opbygning af store forgreninger af signaler.
 STR_BUILD_SIGNAL_ELECTRIC_PBS_TOOLTIP                           :{BLACK}Togvejssignal (elektrisk){}Et togvejssignal tillader, at mere en et tog ad gangen kan køre inden for en signalblok, hvis toget kan reservere en togvej til et sikkert sted at stoppe. Togvejssignaler kan passeres fra bagsiden.
 STR_BUILD_SIGNAL_ELECTRIC_PBS_OWAY_TOOLTIP                      :{BLACK}Ensrettet togvejssignal (elektrisk){}Et togvejssignal tillader, at mere en et tog ad gangen kan køre inden for en signalblok, hvis toget kan reservere en togvej til et sikkert sted at stoppe. Ensrettede togvejssignaler kan ikke passeres fra bagsiden.
-STR_BUILD_SIGNAL_CONVERT_TOOLTIP                                :{BLACK}Signalombygning{}Når denne er valgt, vil klik på et eksisterende signal ombygge det til den valgte signaltype og -variant. Ctrl vil skifte den eksisterende signalvariant. Shift skifter mellem at bygge og vise prisoverslag.
+STR_BUILD_SIGNAL_CONVERT_TOOLTIP                                :{BLACK}Signalombygning{}Når denne er valgt, vil klik på et eksisterende signal ombygge det til den valgte signaltype og -variant. Ctrl+klik vil skifte den eksisterende signalvariant. Shift+klik skifter mellem at bygge og vise prisoverslag.
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP                   :{BLACK}Træk-og-slip signalafstand
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP          :{BLACK}Formindsk træk-og-slip signalafstand
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}Forøg træk-og-slip signalafstand
@@ -2860,15 +2869,15 @@ STR_BRIDGE_TUBULAR_SILICON                                      :Rørformet bro,
 STR_ROAD_TOOLBAR_ROAD_CONSTRUCTION_CAPTION                      :{WHITE}Vejkonstruktion
 STR_ROAD_TOOLBAR_TRAM_CONSTRUCTION_CAPTION                      :{WHITE}Sporvejskonstruktion
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_SECTION                     :{BLACK}Byg vejstrækning. Ctrl+klik for at fjerne vejafsnit. Tryk også på Shift for at vise omkostningsestimat
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION                  :{BLACK}Byg sporvej. Ctrl skifter mellem at bygge og fjerne elementer. Shift skifter mellem at bygge og vise prisoverslag.
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD                         :{BLACK}Byg vej med auto-vej-værktøjet. Ctrl skifter mellem at bygge og fjerne elementer. Shift skifter mellem at bygge og vise prisoverslag.
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM                         :{BLACK}Byg sporvej med auto-sporvej-værktøjet. Ctrl skifter mellem at muliggør at bygge og fjerne elementer. Shift skifter mellem at bygge og vise prisoverslag.
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION                  :{BLACK}Byg sporvej. Ctrl+klik skifter mellem at bygge og fjerne elementer. Shift skifter mellem at bygge og vise prisoverslag.
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD                         :{BLACK}Byg vejsektion ved hjælp af Autoroad-tilstand. Ctrl+klik for at fjerne vejafsnit. Tryk også på Shift for kun at vise omkostningsestimat
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM                         :{BLACK}Byg sporvognssektion ved hjælp af Autotram-tilstand. Ctrl+klik for at fjerne sporvejssektionen. Tryk også på Shift for kun at vise omkostningsestimat
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_VEHICLE_DEPOT               :{BLACK}Byg værksted (til køb og servicering af vejkøretøjer). Shift skifter mellem at bygge og vise prisoverslag.
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}Byg sporvognsremise (til køb og serviceing af sporvogne). Shift skifter mellem at bygge og vise prisoverslag.
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_BUS_STATION                      :{BLACK}Byg en rutebilstation. Ctrl muliggør sammenslutning af stationer. Shift skifter mellem at bygge og vise prisoverslag.
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_PASSENGER_TRAM_STATION           :{BLACK}Byg en passager-sporvognsstation. Ctrl muliggør sammenslutning af stationer. Shift skifter mellem at bygge og vise prisoverslag.
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRUCK_LOADING_BAY                :{BLACK}Byg lastbilstation. Ctrl gør det muligt at tilslutte stationer. Shift skifter mellem at bygge/vise omkostningsestimat
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_CARGO_TRAM_STATION               :{BLACK}Byg en fragt-sporvognsstation. Ctrl muliggør sammenslutning af stationer. Shift skifter mellem at bygge og vise prisoverslag.
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_BUS_STATION                      :{BLACK}Byg busstation. Ctrl+klik for at vælge en anden station at deltage i. Tryk også på Shift for kun at vise omkostningsestimat
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_PASSENGER_TRAM_STATION           :{BLACK}Byg en passager-sporvognsstation. Ctrl+klik muliggør sammenslutning af stationer. Shift skifter mellem at bygge og vise prisoverslag.
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRUCK_LOADING_BAY                :{BLACK}Byg lastbilstation. Ctrl+klik gør det muligt at tilslutte stationer. Shift skifter mellem at bygge/vise omkostningsestimat
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_CARGO_TRAM_STATION               :{BLACK}Byg godssporvognsstation. Ctrl+klik for at vælge en anden station at deltage i. Tryk også på Shift for kun at vise omkostningsestimat
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_ONE_WAY_ROAD                    :{BLACK}Aktiver/Deaktiver ensrettede veje
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_BRIDGE                      :{BLACK}Byg en bro. Shift skifter mellem at bygge og vise prisoverslag.
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_BRIDGE                   :{BLACK}Byg en sporvejsbro. Shift skifter mellem at bygge og vise prisoverslag.
@@ -2901,14 +2910,14 @@ STR_STATION_BUILD_CARGO_TRAM_ORIENTATION_TOOLTIP                :{BLACK}Vælg re
 # Waterways toolbar (last two for SE only)
 STR_WATERWAYS_TOOLBAR_CAPTION                                   :{WHITE}Bygning af vandveje
 STR_WATERWAYS_TOOLBAR_CAPTION_SE                                :{WHITE}Vandveje
-STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}Byg kanaler. Skift tasten vælger mellem byg og vis pris
+STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}Byg kanaler. Tryk på Shift for kun at vise omkostningsestimat
 STR_WATERWAYS_TOOLBAR_BUILD_LOCKS_TOOLTIP                       :{BLACK}Byg en sluse. Shift skifter mellem at bygge og vise prisoverslag.
 STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}Byg en skibsdok (til køb og servicering af skibe). Shift skifter mellem at bygge og vise prisoverslag.
 STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Byg en havn. Ctrl muliggør sammenslutning af stationer. Shift skifter mellem at bygge og vise prisoverslag.
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Placer en bøje, der kan bruges som yderligere navigationspunkt. Shift skifter mellem at bygge og vise prisoverslag.
-STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Byg akvædukt. Shift skifter mellem at bygge og vise prisoverslag.
-STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Definer vandområde.{}Lav en kanal, med mindre CTRL-tasten bruges ved havniveau, da omgivelserne i stedet vil blive oversvømmet
-STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Placér floder. Ctrl markerer området diagonalt.
+STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Byg akvædukt. Tryk også på Shift for kun at vise omkostningsestimat
+STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Lav en kanal, med mindre CTRL-tasten bruges ved havniveau, da omgivelserne i stedet vil blive oversvømmet
+STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Placér floder. Ctrl+klik markerer området diagonalt.
 
 # Ship depot construction window
 STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Retning af skibsdok
@@ -2946,14 +2955,14 @@ STR_STATION_BUILD_NOISE                                         :{BLACK}Generere
 
 # Landscaping toolbar
 STR_LANDSCAPING_TOOLBAR                                         :{WHITE}Landskabsværktøjer
-STR_LANDSCAPING_TOOLTIP_LOWER_A_CORNER_OF_LAND                  :{BLACK}Sænk punkter i landskabet. Ved trækning sænkes det først valgte hjørne, og udligner det valgte område til samme niveau. Ctrl vælger området diagonalt. Shift skifter mellem at bygge og vise prisoverslag.
-STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND                  :{BLACK}Hæv punkter i landskabet. Ved trækning hæves det først valgte hjørne, og resten af det valgte område udlignes til samme højde. Ctrl vælger området diagonalt. Shift skifter mellem at bygge og vise prisoverslag.
-STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Udjævn et område til en højde svarende til det først markerede hjørne. Ctrl vælger området diagonalt. Shift skifter mellem at bygge og vise prisoverslag.
+STR_LANDSCAPING_TOOLTIP_LOWER_A_CORNER_OF_LAND                  :{BLACK}Sænk et hjørne af jorden. Klik+træk for at sænke det første valgte hjørne og udjævne det valgte område til den nye hjørnehøjde. Ctrl+klik+træk for at markere området diagonalt. Tryk også på Shift for kun at vise omkostningsestimat
+STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND                  :{BLACK}Løft et hjørne af jorden. Klik+træk for at hæve det første valgte hjørne og udjævne det valgte område til den nye hjørnehøjde. Ctrl+klik+træk for at markere området diagonalt. Tryk også på Shift for kun at vise omkostningsestimat
+STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Udjævn et landområde til højden af det første valgte hjørne. Ctrl+klik+træk for at markere området diagonalt. Tryk også på Shift for kun at vise omkostningsestimat
 STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Køb land til fremtidig brug. Shift skifter mellem at bygge og vise prisoverslag.
 
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Objekt valg
-STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Vælg objektet der skal bygges. Shift skifter mellem at bygge og vise prisoverslag
+STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Vælg objekt, der skal bygges. Ctrl+klik+træk for at markere området diagonalt. Tryk også på Shift for kun at vise omkostningsestimat
 STR_OBJECT_BUILD_CLASS_TOOLTIP                                  :{BLACK}Vælg hvilken objekttype du vil bygge
 STR_OBJECT_BUILD_PREVIEW_TOOLTIP                                :{BLACK}Forvisning af objektet
 STR_OBJECT_BUILD_SIZE                                           :{BLACK}Størrelse: {GOLD}{NUM} x {NUM} felter
@@ -2969,9 +2978,9 @@ STR_TREES_RANDOM_TYPE_TOOLTIP                                   :{BLACK}Placer t
 STR_TREES_RANDOM_TREES_BUTTON                                   :{BLACK}Tilfældige træer
 STR_TREES_RANDOM_TREES_TOOLTIP                                  :{BLACK}Plant træer tilfældigt i landskabet
 STR_TREES_MODE_NORMAL_BUTTON                                    :{BLACK}Normal
-STR_TREES_MODE_NORMAL_TOOLTIP                                   :{BLACK}Plant individuelle træer ved at trække hen over landskabet.
+STR_TREES_MODE_NORMAL_TOOLTIP                                   :{BLACK}Plant individuelle træer ved at trække hen over landskabet
 STR_TREES_MODE_FOREST_SM_BUTTON                                 :{BLACK}Lund
-STR_TREES_MODE_FOREST_SM_TOOLTIP                                :{BLACK}Plant små skove ved at trække hen over landskabet.
+STR_TREES_MODE_FOREST_SM_TOOLTIP                                :{BLACK}Plant små skove ved at trække hen over landskabet
 STR_TREES_MODE_FOREST_LG_BUTTON                                 :{BLACK}Skov
 STR_TREES_MODE_FOREST_LG_TOOLTIP                                :{BLACK}Plant store skove ved at trække hen over landskabet
 
@@ -3187,11 +3196,11 @@ STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD 
 STR_FRAMERATE_CAPTION                                           :{WHITE}Billedhastighed
 STR_FRAMERATE_CAPTION_SMALL                                     :{STRING}{WHITE} ({DECIMAL}x)
 STR_FRAMERATE_RATE_GAMELOOP                                     :{BLACK}Simulationshastighed: {STRING}
-STR_FRAMERATE_RATE_GAMELOOP_TOOLTIP                             :{BLACK}Antal spil-trin simuleret i sekundet.
+STR_FRAMERATE_RATE_GAMELOOP_TOOLTIP                             :{BLACK}Antal spil-trin simuleret i sekundet
 STR_FRAMERATE_RATE_BLITTER                                      :{BLACK}Grafik hastighed: {STRING}
-STR_FRAMERATE_RATE_BLITTER_TOOLTIP                              :{BLACK}Antal billeder tegnet i sekundet.
+STR_FRAMERATE_RATE_BLITTER_TOOLTIP                              :{BLACK}Antal billeder tegnet i sekundet
 STR_FRAMERATE_SPEED_FACTOR                                      :{BLACK}Aktuel spilhastighedsfaktor: {DECIMAL}x
-STR_FRAMERATE_SPEED_FACTOR_TOOLTIP                              :{BLACK}Hvor hurtigt spillet aktuelt kører, i forhold til det forventede ved normal simulationshastighed.
+STR_FRAMERATE_SPEED_FACTOR_TOOLTIP                              :{BLACK}Hvor hurtigt spillet aktuelt kører, i forhold til det forventede ved normal simulationshastighed
 STR_FRAMERATE_CURRENT                                           :{WHITE}Aktuel
 STR_FRAMERATE_AVERAGE                                           :{WHITE}Gennemsnit
 STR_FRAMERATE_MEMORYUSE                                         :{WHITE}Hukommelse
@@ -3305,11 +3314,11 @@ STR_MAPGEN_VARIETY                                              :{BLACK}Varietet
 STR_MAPGEN_GENERATE                                             :{WHITE}Generer
 STR_MAPGEN_GENERATE_TOOLTIP                                     :{BLACK}Skab en verden og spil OpenTTD!
 STR_MAPGEN_NEWGRF_SETTINGS                                      :{BLACK}NewGRF indstillinger
-STR_MAPGEN_NEWGRF_SETTINGS_TOOLTIP                              :{BLACK}Vis indstillinger for NewGRF
+STR_MAPGEN_NEWGRF_SETTINGS_TOOLTIP                              :{BLACK}Åben indstillinger for NewGRF
 STR_MAPGEN_AI_SETTINGS                                          :{BLACK}AI indstillinger
-STR_MAPGEN_AI_SETTINGS_TOOLTIP                                  :{BLACK}Vis AI indstillinger
+STR_MAPGEN_AI_SETTINGS_TOOLTIP                                  :{BLACK}Åben AI indstillinger
 STR_MAPGEN_GS_SETTINGS                                          :{BLACK}Indstillinger for spilscript
-STR_MAPGEN_GS_SETTINGS_TOOLTIP                                  :{BLACK}Vis indstillinger for spilscript
+STR_MAPGEN_GS_SETTINGS_TOOLTIP                                  :{BLACK}Åben indstillinger for spilscript
 
 ###length 21
 STR_MAPGEN_TOWN_NAME_ORIGINAL_ENGLISH                           :Engelske
@@ -3615,7 +3624,7 @@ STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}By vokse
 STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}By vokser hver {ORANGE}{UNITS_DAYS_OR_SECONDS} (finansieret)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}Byen vokser {RED}ikke{BLACK}
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}Støjgrænse i byen: {ORANGE}{COMMA}{BLACK}  maks.: {ORANGE}{COMMA}
-STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Centrer skærmen over byens lokalitet. Ctrl+Klik åbner et nyt vindue ved byens lokalitet
+STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Centrer hovedvisningen på byens placering. Ctrl+klik for at åbne en ny visningsport på byplacering
 STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON                            :{BLACK}Myndigheder
 STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP                           :{BLACK}Vis information om de lokale myndigheder
 STR_TOWN_VIEW_RENAME_TOOLTIP                                    :{BLACK}Ændre navnet på byen
@@ -3720,7 +3729,7 @@ STR_STORY_BOOK_SPECTATOR_CAPTION                                :{WHITE}Global H
 STR_STORY_BOOK_SPECTATOR                                        :Global Historiebog
 STR_STORY_BOOK_TITLE                                            :{YELLOW}{STRING}
 STR_STORY_BOOK_GENERIC_PAGE_ITEM                                :Side {NUM}
-STR_STORY_BOOK_SEL_PAGE_TOOLTIP                                 :{BLACK}Gå til en bestemt side ved at vælge den i denne rulleliste.
+STR_STORY_BOOK_SEL_PAGE_TOOLTIP                                 :{BLACK}Gå til en bestemt side ved at vælge den i denne rulleliste
 STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Forrige
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Gå til forrige side
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Næste
@@ -3729,7 +3738,7 @@ STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Ugyldig m�
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Stationsnavne - klik på et navn for at centrere skærmen over stationen. Ctrl+Klik åbner et nyt vindue ved stationens lokalitet
-STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE                        :{BLACK}Hold Ctrl nede for at vælge mere end én ting
+STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE                        :{BLACK}Hold Ctrl+klik nede for at vælge mere end én ting
 STR_STATION_LIST_CAPTION                                        :{WHITE}{COMPANY} - {COMMA} Stationer
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
@@ -3943,6 +3952,7 @@ STR_INDUSTRY_DIRECTORY_FILTER_NONE                              :Ingen
 # Industry view
 STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTRY}
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE                   :{BLACK}Produktion sidste måned:
+STR_INDUSTRY_VIEW_PRODUCTION_LAST_MINUTE_TITLE                  :{BLACK}Produktion sidste minut:
 STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_LONG}{STRING}{BLACK} ({COMMA}% transporteret)
 STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Centrer skærmen over industriens lokalitet. Ctrl+Klik åbner et nyt vindue ved industriens lokalitet.
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Produktions niveauet: {YELLOW}{COMMA}%
@@ -4019,7 +4029,7 @@ STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klik for
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Slet den valgte gruppe
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}Omdøb den valgte gruppe
 STR_GROUP_LIVERY_TOOLTIP                                        :{BLACK}Skift farvetema for den valgte gruppe
-STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}Klik for at beskytte denne gruppe mod global auto-udskiftning Ctrl+klik beskytter også undergrupper.
+STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}Klik for at beskytte denne gruppe mod global auto-udskiftning Ctrl+klik beskytter også undergrupper
 
 STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}Slet gruppe
 STR_GROUP_DELETE_QUERY_TEXT                                     :{WHITE}Er du sikker på at du vil slette denne gruppe og eventuelle under grupper?
@@ -4087,7 +4097,7 @@ STR_CARGO_TYPE_FILTER_FREIGHT                                   :Fragt
 STR_CARGO_TYPE_FILTER_NONE                                      :Ingen
 
 ###length VEHICLE_TYPES
-STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Togvalgsliste - klik på et køretøj for mere information
+STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Valgliste for togkøretøjer. Klik på køretøjet for information. Ctrl+klik for at vise/skjule denne køretøjstype
 STR_BUY_VEHICLE_ROAD_VEHICLE_LIST_TOOLTIP                       :{BLACK}Liste over køretøjstyper - klik på køretøj for information
 STR_BUY_VEHICLE_SHIP_LIST_TOOLTIP                               :{BLACK}Skib valgliste. Klik på skib for information. Ctrl + Klik for at skifte skjule skibstypen
 STR_BUY_VEHICLE_AIRCRAFT_LIST_TOOLTIP                           :{BLACK}Luftfartøj valgliste. Klik på fly til orientering. Ctrl + Klik for at vise/skjule flytypen
@@ -4111,9 +4121,9 @@ STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Køb det
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Køb det markerede fly. Shift skifter mellem at købe og vise prisoverslag.
 
 ###length VEHICLE_TYPES
-STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}Køb og tilpas det markerede lokomotiv/togvogn. Shift+klik viser prisoverslag uden at købe
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}Køb og tilpas den fremhævede togvogn. Tryk også på Shift for kun at vise omkostningsestimat
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_TOOLTIP          :{BLACK}Køb og tilpas det markerede vejkøretøj. Shift+klik viser prisoverslag uden at købe
-STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_TOOLTIP                  :{BLACK}Køb og tilpas det markerede skib. Shift+klik viser prisoverslag uden at købe.
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_TOOLTIP                  :{BLACK}Køb og tilpas det fremhævede skib. Tryk også på Shift for kun at vise omkostningsestimat
 STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_TOOLTIP              :{BLACK}Køb og tilpas det markerede fly. Shift+klik viser prisoverslag uden at købe.
 
 ###length VEHICLE_TYPES
@@ -4164,7 +4174,7 @@ STR_DEPOT_VEHICLE_TOOLTIP_CHAIN                                 :{BLACK}{NUM} k�
 STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} ({CARGO_SHORT})
 
 ###length VEHICLE_TYPES
-STR_DEPOT_TRAIN_LIST_TOOLTIP                                    :{BLACK}Tog - højreklik på vogn/lokomotiv for information, træk for at tilføje til/fjerne fra togsættet. Hold Ctrl nede for at bruge funktionerne på hele den efterfølgende togkæde.
+STR_DEPOT_TRAIN_LIST_TOOLTIP                                    :{BLACK}Tog - træk køretøj med venstre-klik for at tilføje/fjerne fra tog, højreklik for information. Ctrl+klik for at anvende en af funktionerne på den følgende kæde
 STR_DEPOT_ROAD_VEHICLE_LIST_TOOLTIP                             :{BLACK}Køretøjer - højreklik på et køretøj for information
 STR_DEPOT_SHIP_LIST_TOOLTIP                                     :{BLACK}Skibe - højreklik på et skib for information
 STR_DEPOT_AIRCRAFT_LIST_TOOLTIP                                 :{BLACK}Fly - højreklik på et fly for information
@@ -4208,7 +4218,7 @@ STR_DEPOT_CLONE_AIRCRAFT                                        :{BLACK}Klon fly
 ###length VEHICLE_TYPES
 STR_DEPOT_CLONE_TRAIN_DEPOT_INFO                                :{BLACK}Dette vil købe en kopi af toget inklusiv alle vogne. Klik på denne knap og så på et tog indeni eller udenfor remisen. Ctrl-klik vil kopiere ordrer. Shift-klik vil vise prisoverslag.
 STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_INFO                         :{BLACK}Dette vil købe en kopi af køretøjet. Klik på denne knap og så på et køretøj indeni eller udenfor værkstedet. Ctrl-klik vil dele ordrer. Shift-klik viser anslået pris uden køb
-STR_DEPOT_CLONE_SHIP_DEPOT_INFO                                 :{BLACK}Dette vil købe en kopi af skibet. Klik på denne knap og så på et skib indeni eller udenfor dokken. Ctrl-klik vil dele ordrer. Shift-klik vil vise prisoverslag.
+STR_DEPOT_CLONE_SHIP_DEPOT_INFO                                 :{BLACK}Køb en kopi af et skib. Klik på denne knap og derefter på et skib i eller uden for depotet. Ctrl+klik for at dele ordrerne. Tryk også på Shift for kun at vise omkostningsestimat
 STR_DEPOT_CLONE_AIRCRAFT_INFO_HANGAR_WINDOW                     :{BLACK}Dette vil købe en kopi af et fly. Klik på denne knap og så på et fly indeni eller udenfor hangaren. Ctrl-klik vil dele ordrer. Shift-klik viser estimerede omkostninger uden at indkøbe
 
 ###length VEHICLE_TYPES
@@ -4330,13 +4340,13 @@ STR_VEHICLE_VIEW_AIRCRAFT_CENTER_TOOLTIP                        :{BLACK}Centrer 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Send toget til remise. CTRL+klik vil kun servicere
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Send køretøjet til værksted. CTRL+klik vil kun servicere
 STR_VEHICLE_VIEW_SHIP_SEND_TO_DEPOT_TOOLTIP                     :{BLACK}Send skibet til dok. CTRL+klik vil kun servicere
-STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}Send flyet til en hangar. CTRL+klik vil kun servicere
+STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}Send fly til hangar. Ctrl+klik for kun at servicer
 
 ###length VEHICLE_TYPES
 STR_VEHICLE_VIEW_CLONE_TRAIN_INFO                               :{BLACK}Dette vil købe en kopi af toget inklusiv alle vogne. Ctrl-klik vil dele ordrer. Shift-klik vil vise prisoverslag.
-STR_VEHICLE_VIEW_CLONE_ROAD_VEHICLE_INFO                        :{BLACK}Dette vil købe en kopi af vejkøretøjet. Ctrl-klik vil dele ordrer. Shift-klik vil vise prisoverslag.
+STR_VEHICLE_VIEW_CLONE_ROAD_VEHICLE_INFO                        :{BLACK}Køb en kopi af vejkøretøjet. Ctrl+klik for at dele ordrer. Tryk også på Shift for kun at vise omkostningsestimat
 STR_VEHICLE_VIEW_CLONE_SHIP_INFO                                :{BLACK}Dette vil købe en kopi af skibet. Ctrl-klik vil dele ordrer. Shift-klik vil vise prisoverslag.
-STR_VEHICLE_VIEW_CLONE_AIRCRAFT_INFO                            :{BLACK}Dette vil købe en kopi af et fly. Ctrl-klik vil dele ordrer. Shift-klik vil vise prisoverslag.
+STR_VEHICLE_VIEW_CLONE_AIRCRAFT_INFO                            :{BLACK}Køb en kopi af flyet. Ctrl+klik for at dele ordrer. Tryk også på Shift for kun at vise omkostningsestimat
 
 STR_VEHICLE_VIEW_TRAIN_IGNORE_SIGNAL_TOOLTIP                    :{BLACK}Tving toget til at fortsætte uden at vente på at signalet skifter til grønt
 STR_VEHICLE_VIEW_TRAIN_REVERSE_TOOLTIP                          :{BLACK}Vend retningen af toget
@@ -4370,25 +4380,26 @@ STR_VEHICLE_VIEW_AIRCRAFT_STATUS_START_STOP_TOOLTIP             :{BLACK}Flyets n
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Læsser / Aflæsser
 STR_VEHICLE_STATUS_LEAVING                                      :{LTBLUE}Forlader
+STR_VEHICLE_STATUS_WAITING_UNBUNCHING                           :{LTBLUE}Venter på at løsne (vogne)
 STR_VEHICLE_STATUS_CRASHED                                      :{RED}Forulykket!
 STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}Gået i stykker
 STR_VEHICLE_STATUS_STOPPED                                      :{RED}Stoppet
-STR_VEHICLE_STATUS_TRAIN_STOPPING_VEL                           :{RED}Stopper, {VELOCITY}
+STR_VEHICLE_STATUS_TRAIN_STOPPING_VEL                           :{RED}{VELOCITY} - Stopper
 STR_VEHICLE_STATUS_TRAIN_NO_POWER                               :{RED}Ingen strøm
 STR_VEHICLE_STATUS_TRAIN_STUCK                                  :{ORANGE}Afventer fri passage
 STR_VEHICLE_STATUS_AIRCRAFT_TOO_FAR                             :{ORANGE}For langt til næste destination
 
-STR_VEHICLE_STATUS_HEADING_FOR_STATION_VEL                      :{LTBLUE}Retning mod {STATION}, {VELOCITY}
-STR_VEHICLE_STATUS_NO_ORDERS_VEL                                :{LTBLUE}Ingen ordrer, {VELOCITY}
-STR_VEHICLE_STATUS_HEADING_FOR_WAYPOINT_VEL                     :{LTBLUE}Retning mod {WAYPOINT}, {VELOCITY}
-STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_VEL                        :{ORANGE}Retning mod {DEPOT}, {VELOCITY}
-STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE}Service ved {DEPOT}, {VELOCITY}
-STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_UNBUNCH_VEL                :{LTBLUE}Afsæt og service ved {DEPOT}, {VELOCITY}
+STR_VEHICLE_STATUS_HEADING_FOR_STATION_VEL                      :{LTBLUE}{1:VELOCITY} - Retning mod {0:STATION}
+STR_VEHICLE_STATUS_NO_ORDERS_VEL                                :{LTBLUE}{VELOCITY} - Ingen ordrer
+STR_VEHICLE_STATUS_HEADING_FOR_WAYPOINT_VEL                     :{LTBLUE}{1:VELOCITY} - Retning mod {0:WAYPOINT}
+STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_VEL                        :{ORANGE}{1:VELOCITY} - Retning mod {0:DEPOT}
+STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE}{1:VELOCITY} - Service ved {0:DEPOT}
+STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_UNBUNCH_VEL                :{LTBLUE}{1:VELOCITY} - Afsæt og service ved {0:DEPOT}
 
-STR_VEHICLE_STATUS_CANNOT_REACH_STATION_VEL                     :{LTBLUE}Kan ikke nå {STATION}, {VELOCITY}
-STR_VEHICLE_STATUS_CANNOT_REACH_WAYPOINT_VEL                    :{LTBLUE}Kan ikke nå {WAYPOINT}, {VELOCITY}
-STR_VEHICLE_STATUS_CANNOT_REACH_DEPOT_VEL                       :{ORANGE}Kan ikke nå {DEPOT}, {VELOCITY}
-STR_VEHICLE_STATUS_CANNOT_REACH_DEPOT_SERVICE_VEL               :{LTBLUE}Kan ikke nå {DEPOT}, {VELOCITY}
+STR_VEHICLE_STATUS_CANNOT_REACH_STATION_VEL                     :{LTBLUE}{1:VELOCITY} - Kan ikke nå {0:STATION}
+STR_VEHICLE_STATUS_CANNOT_REACH_WAYPOINT_VEL                    :{LTBLUE}{1:VELOCITY} - Kan ikke nå {0:WAYPOINT}
+STR_VEHICLE_STATUS_CANNOT_REACH_DEPOT_VEL                       :{ORANGE}{1:VELOCITY} - Kan ikke nå {0:DEPOT}
+STR_VEHICLE_STATUS_CANNOT_REACH_DEPOT_SERVICE_VEL               :{LTBLUE}{1:VELOCITY} - Kan ikke nå {0:DEPOT}
 
 # Vehicle stopped/started animations
 ###length 2
@@ -4447,6 +4458,7 @@ STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP_PERCENT :{BLACK}Reducer 
 
 STR_SERVICE_INTERVAL_DROPDOWN_TOOLTIP                           :{BLACK}Ændre serviceintervallets type
 STR_VEHICLE_DETAILS_DEFAULT                                     :Standard
+STR_VEHICLE_DETAILS_DAYS                                        :Dage
 STR_VEHICLE_DETAILS_MINUTES                                     :Minutter
 STR_VEHICLE_DETAILS_PERCENT                                     :Procent
 
@@ -4511,7 +4523,7 @@ STR_ORDERS_CAPTION                                              :{WHITE}{VEHICLE
 STR_ORDERS_TIMETABLE_VIEW                                       :{BLACK}Køreplan
 STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Skift til køreplan-visning
 
-STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Ordreliste - klik på en ordre for at markere den. CTRL-klik for at centrere skærmen over stationen
+STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Ordreliste - klik på en ordre for at fremhæve den. Ctrl+klik for at rulle til ordrens destination
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
 STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING} {STRING}
 
@@ -4550,9 +4562,11 @@ STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Tilgængelig la
 STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :Altid benyt
 STR_ORDER_DROP_SERVICE_DEPOT                                    :Service hvis nødvendigt
 STR_ORDER_DROP_HALT_DEPOT                                       :Stop
+STR_ORDER_DROP_UNBUNCH                                          :Ophæve bundtet
 
 # Depot action tooltips, one per vehicle type
 ###length VEHICLE_TYPES
+STR_ORDER_TRAIN_DEPOT_ACTION_TOOLTIP                            :{BLACK}Vælg den handling, der skal udføres på dette depot
 STR_ORDER_ROAD_DEPOT_ACTION_TOOLTIP                             :{BLACK}Vælg den handling, der skal udføres på dette depot
 STR_ORDER_SHIP_DEPOT_ACTION_TOOLTIP                             :{BLACK}Vælg den handling, der skal udføres på dette depot
 STR_ORDER_HANGAR_ACTION_TOOLTIP                                 :{BLACK}Vælg den handling, der skal udføres i denne hangar
@@ -4586,20 +4600,20 @@ STR_ORDER_CONDITIONAL_VALUE_TOOLTIP                             :{BLACK}Værdi d
 STR_ORDER_CONDITIONAL_VALUE_CAPT                                :{WHITE}Skriv værdi der sammenlignes med
 
 STR_ORDERS_SKIP_BUTTON                                          :{BLACK}Spring over
-STR_ORDERS_SKIP_TOOLTIP                                         :{BLACK}Spring over nuværende ordre og start næste. CTRL + klik springer til den valgte ordre
+STR_ORDERS_SKIP_TOOLTIP                                         :{BLACK}Spring over den aktuelle ordre, og start den næste. Ctrl+klik for at springe til den valgte rækkefølge
 
 STR_ORDERS_DELETE_BUTTON                                        :{BLACK}Slet
 STR_ORDERS_DELETE_TOOLTIP                                       :{BLACK}Slet den markerede ordre
 STR_ORDERS_DELETE_ALL_TOOLTIP                                   :{BLACK}Slet alle ordrer
 STR_ORDERS_STOP_SHARING_BUTTON                                  :{BLACK}Ophør med at dele
-STR_ORDERS_STOP_SHARING_TOOLTIP                                 :{BLACK}Ophør med at dele order-liste. Ctrl+klik sletter også ordrerne for dette fartøj.
+STR_ORDERS_STOP_SHARING_TOOLTIP                                 :{BLACK}Stop med at dele ordrelisten. Ctrl+klik for yderligere at slette alle ordrer for dette køretøj
 
 STR_ORDERS_GO_TO_BUTTON                                         :{BLACK}Gå til
 STR_ORDER_GO_TO_NEAREST_DEPOT                                   :Gå til nærmeste depot
 STR_ORDER_GO_TO_NEAREST_HANGAR                                  :Flyv til nærmeste hangar
 STR_ORDER_CONDITIONAL                                           :Betinget ordrespring
 STR_ORDER_SHARE                                                 :Del ordrer
-STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Indsæt en ny ordre før den markerede, eller i slutningen af ordrelisten. Ctrl laver stationsordrer med 'Vilkårlig fuld last', rutepunkt ordrer med 'Uden stop', og depotordrer med 'Service'. 'Deleordrer' eller Ctrl lader dette køretøj dele ordrer med det valgte køretøj. At klikke på et køretøj kopierer ordrer fra det pågældende køretøj. En depot ordre deaktiverer automatisk servicering af køretøjet
+STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Indsæt en ny rækkefølge før den fremhævede rækkefølge, eller tilføj til slutningen af listen. Ctrl+Klik på en station for 'fuld load any cargo', på et waypoint for at invertere 'non-stop by default'-indstillingen eller på et depot for 'unbunch'. Klik på et andet køretøj for at kopiere dets ordrer eller Ctrl+klik for at dele ordrer. En depotordre deaktiverer automatisk servicering af køretøjet
 
 STR_ORDERS_VEH_WITH_SHARED_ORDERS_LIST_TOOLTIP                  :{BLACK}Vis alle transportmidler, der deler denne ruteplan
 
@@ -4712,19 +4726,19 @@ STR_TIMETABLE_START_TOOLTIP                                     :{BLACK}Vælg, h
 STR_TIMETABLE_START_SECONDS_QUERY                               :Sekunder til tidsplanen starter
 
 STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}Ændre tid
-STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}Ændre den tid, som den fremhævede rækkefølge skal tage. Ctrl+Click angiver tidspunktet for alle ordrer
+STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}Ændre den tid, som den fremhævede rækkefølge skal tage. Ctrl+klik angiver tidspunktet for alle ordrer
 
 STR_TIMETABLE_CLEAR_TIME                                        :{BLACK}Nulstil tid
-STR_TIMETABLE_CLEAR_TIME_TOOLTIP                                :{BLACK}Nulstil tiden for den markerede ordre
+STR_TIMETABLE_CLEAR_TIME_TOOLTIP                                :{BLACK}Nulstil tiden for den markerede ordre. Ctrl+klik for at rydde tiden for alle ordrer
 
 STR_TIMETABLE_CHANGE_SPEED                                      :{BLACK}Ændr hastighedsbegrænsning
-STR_TIMETABLE_CHANGE_SPEED_TOOLTIP                              :{BLACK}Ændre den maksimale rejsehastighed for den fremhævede rækkefølge
+STR_TIMETABLE_CHANGE_SPEED_TOOLTIP                              :{BLACK}Skift den maksimale kørehastighed for den fremhævede rækkefølge. Ctrl+klik for at indstille hastigheden for alle ordrer
 
 STR_TIMETABLE_CLEAR_SPEED                                       :{BLACK}Nulstil hastighedsbegrænsning
-STR_TIMETABLE_CLEAR_SPEED_TOOLTIP                               :{BLACK}Nulstil den maksimale rejsehastighed for den markerede ordre
+STR_TIMETABLE_CLEAR_SPEED_TOOLTIP                               :{BLACK}Slet den maksimale kørehastighed for den fremhævede rækkefølge. Ctrl+klik for at rydde hastigheden for alle ordrer
 
 STR_TIMETABLE_RESET_LATENESS                                    :{BLACK}Nulstil forsinkelse
-STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}Nulstil forsinkelsestælleren, så køretøjet kommer til tiden
+STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}Nulstil forsinkelsestælleren, så køretøjet kommer til tiden. Ctrl+klik nulstiller hele gruppen, så det seneste køretøj kommer til tiden, og alle andre kommer tidligt
 
 STR_TIMETABLE_AUTOFILL                                          :{BLACK}Auto-udfyld
 STR_TIMETABLE_AUTOFILL_TOOLTIP                                  :{BLACK}Udfyld automatisk tidsplanen med tider for den næste tur (CTRL-klik for at forsøge at bevare ventetider)
@@ -4766,7 +4780,7 @@ STR_AI_DEBUG_CONTINUE                                           :{BLACK}Fortsæt
 STR_AI_DEBUG_CONTINUE_TOOLTIP                                   :{BLACK}Sæt spillet i gang, og start den kunstige intelligens igen
 STR_AI_DEBUG_SELECT_AI_TOOLTIP                                  :{BLACK}Se fejlretningsoutput af denne AI. Ctrl-klik for at åbne i et nyt vindue
 STR_AI_GAME_SCRIPT                                              :{BLACK}Spil Script
-STR_AI_GAME_SCRIPT_TOOLTIP                                      :{BLACK}Tjek SpilScript-loggen
+STR_AI_GAME_SCRIPT_TOOLTIP                                      :{BLACK}Tjek SpilScript-loggen. Ctrl+klik for at åbne i et nyt vindue
 
 STR_ERROR_AI_NO_AI_FOUND                                        :Ingen passende AI kan findes.{}Denne AI er en pladsholder, og vil ikke gøre noget.{} Du kan downloade indtil flere AI'er fra 'Online Indhold'-systemet.
 STR_ERROR_AI_PLEASE_REPORT_CRASH                                :{WHITE}En af de kørende scripts gik ned. Rapporter det venligst til script-udvikleren sammen med et skærmbillede af AI/spilscript-debugvinduet.
@@ -4829,8 +4843,6 @@ STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :Spil Script
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}Luk
 STR_AI_SETTINGS_RESET                                           :{BLACK}Nulstil
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
-STR_AI_SETTINGS_SETTING_DEVIATION                               :{STRING}: {ORANGE}[{STRING}, {STRING}]
-STR_AI_SETTINGS_JUST_DEVIATION                                  :[{STRING}, {STRING}]
 
 
 # Textfile window
@@ -5100,6 +5112,7 @@ STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :Forkert depotty
 STR_ERROR_UNBUNCHING_ONLY_ONE_ALLOWED                           :{WHITE}... kan kun have én opsamlingsordre
 STR_ERROR_UNBUNCHING_NO_FULL_LOAD                               :{WHITE}... kan ikke bruge ordrer om fuld last, når køretøjet har en opsamlingsordre
 STR_ERROR_UNBUNCHING_NO_UNBUNCHING_FULL_LOAD                    :{WHITE}... kan ikke pakke et køretøj op med fuld last
+STR_ERROR_UNBUNCHING_NO_CONDITIONAL                             :{WHITE}... kan ikke bruge betingede ordrer, når køretøjet har en opsamlingsordre
 STR_ERROR_UNBUNCHING_NO_UNBUNCHING_CONDITIONAL                  :{WHITE}... kan ikke pakke et køretøj op med en betinget ordre
 
 # Autoreplace related errors
@@ -5794,6 +5807,11 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
+
+STR_CURRENCY_SHORT_KILO                                         :{NBSP}k
+STR_CURRENCY_SHORT_MEGA                                         :{NBSP}m
+STR_CURRENCY_SHORT_GIGA                                         :{NBSP}bn
+STR_CURRENCY_SHORT_TERA                                         :{NBSP}tn
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_RIGHT_ARROW                                            :{RIGHT_ARROW}
