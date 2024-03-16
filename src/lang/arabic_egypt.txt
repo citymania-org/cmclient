@@ -3,8 +3,8 @@
 ##isocode ar_EG
 ##plural 1
 ##textdir rtl
-##numberformat 00٬000٬000٬000٬000٬000٬000
-##numberabbreviations 3=00٬000٬000٬000٬000٬000{NBSP}k|6=00٬000٬000٬000٬000{NBSP}m|9=00٬000٬000٬000{NBSP}bn|12=00٬000٬000{NBSP}tn|15=00٬000{NBSP}Qa|18=00{NBSP}Qi
+##digitsep ٬
+##digitsepcur ٬
 ##decimalsep ٫
 ##winlangid 0x0c01
 ##grflangid 0x14
@@ -1001,6 +1001,7 @@ STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}معا�
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK} £ قلل قيمة عملتك لكل جنية استرليني
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK} £ زد قيمة عملتك لكل جنية استرليني
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK} حدد قيمة الصرف لعملتك مقابل الجنية الاسترليني (£)
+
 
 STR_CURRENCY_PREFIX                                             :{LTBLUE} علامة العملة السابقة: {ORANGE}{STRING}
 STR_CURRENCY_SET_CUSTOM_CURRENCY_PREFIX_TOOLTIP                 :{BLACK} حدد الرمز الاستهلالي لعملتك
@@ -4932,6 +4933,7 @@ STR_STATION_NAME                                                :{STATION}
 STR_TOWN_NAME                                                   :{TOWN}
 STR_VEHICLE_NAME                                                :{VEHICLE}
 STR_WAYPOINT_NAME                                               :{WAYPOINT}
+
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}

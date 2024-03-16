@@ -53,6 +53,11 @@ jobs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
           core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite')
 
+    - name: Install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg ${{ runner.temp }}\vcpkg
+        ${{ runner.temp }}\vcpkg\bootstrap-vcpkg.bat -disableMetrics
+
     - name: Install dependencies
       shell: bash
       run: |
@@ -60,9 +65,9 @@ jobs:
         choco install pandoc
         echo "::endgroup::"
 
-        # echo "::group::Install breakpad dependencies"
-        # cargo install dump_syms
-        # echo "::endgroup::"
+        echo "::group::Install breakpad dependencies"
+        cargo install --locked dump_syms
+        echo "::endgroup::"
 
     - name: Install MSVC problem matcher
       uses: ammaraskar/msvc-problem-matcher@master
@@ -121,7 +126,7 @@ jobs:
         cmake ${GITHUB_WORKSPACE} \
           -GNinja \
           -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-windows-static \
-          -DCMAKE_TOOLCHAIN_FILE="c:\vcpkg\scripts\buildsystems\vcpkg.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="${{ runner.temp }}\vcpkg\scripts\buildsystems\vcpkg.cmake" \
           -DOPTION_USE_NSIS=ON \
           -DHOST_BINARY_DIR=${GITHUB_WORKSPACE}/build-host \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
@@ -147,7 +152,7 @@ jobs:
         cmake ${GITHUB_WORKSPACE} \
           -GNinja \
           -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-windows-static \
-          -DCMAKE_TOOLCHAIN_FILE="c:\vcpkg\scripts\buildsystems\vcpkg.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="${{ runner.temp }}\vcpkg\scripts\buildsystems\vcpkg.cmake" \
           -DHOST_BINARY_DIR=${GITHUB_WORKSPACE}/build-host \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DOPTION_SURVEY_KEY=${{ inputs.survey_key }} \
@@ -161,11 +166,11 @@ jobs:
       env:
         WINDOWS_CERTIFICATE_COMMON_NAME: ${{ secrets.WINDOWS_CERTIFICATE_COMMON_NAME }}
 
-    # - name: Create breakpad symbols
-    #   shell: bash
-    #   run: |
-    #     cd build
-    #     dump_syms openttd.pdb --inlines --store symbols
+    - name: Create breakpad symbols
+      shell: bash
+      run: |
+        cd build
+        dump_syms openttd.pdb --inlines --store symbols
 
     - name: Create bundles
       shell: bash
@@ -177,16 +182,15 @@ jobs:
 
         echo "::group::Rename bundles to citymania-client-*"
         mv bundles/*.zip $(ls bundles/*.zip | sed 's/openttd/citymania-client/')
-        echo "::endgroup::"
         
-        # echo "::group::Move PDB and exe to symbols"
-        # PDB_FOLDER=$(find symbols -mindepth 2 -type d)
-        # cp openttd.pdb ${PDB_FOLDER}/
+        echo "::group::Move PDB and exe to symbols"
+        PDB_FOLDER=$(find symbols -mindepth 2 -type d)
+        cp openttd.pdb ${PDB_FOLDER}/
 
-        # EXE_FOLDER=symbols/openttd.exe/$(grep "INFO CODE_ID" symbols/*/*/openttd.sym | cut -d\  -f3)
-        # mkdir -p ${EXE_FOLDER}
-        # cp openttd.exe ${EXE_FOLDER}/
-        # echo "::endgroup::"
+        EXE_FOLDER=symbols/openttd.exe/$(grep "INFO CODE_ID" symbols/*/*/openttd.sym | cut -d\  -f3)
+        mkdir -p ${EXE_FOLDER}
+        cp openttd.exe ${EXE_FOLDER}/
+        echo "::endgroup::"
 
         echo "::group::Cleanup"
         # Remove the sha256 files CPack generates; we will do this ourself at

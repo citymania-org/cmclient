@@ -846,6 +846,8 @@ void Vehicle::PreDestructor()
 		DeleteGroupHighlightOfVehicle(this);
 	}
 
+	Company::Get(this->owner)->freeunits[this->type].ReleaseID(this->unitnumber);
+
 	if (this->type == VEH_AIRCRAFT && this->IsPrimaryVehicle()) {
 		Aircraft *a = Aircraft::From(this);
 		Station *st = GetTargetAirportIfValid(a);
@@ -1418,15 +1420,24 @@ bool Vehicle::HandleBreakdown()
 }
 
 /**
+ * Update economy age of a vehicle.
+ * @param v Vehicle to update.
+ */
+void EconomyAgeVehicle(Vehicle *v)
+{
+	if (v->economy_age < EconomyTime::MAX_DATE) {
+		v->economy_age++;
+		if (v->IsPrimaryVehicle() && v->economy_age == VEHICLE_PROFIT_MIN_AGE + 1) GroupStatistics::VehicleReachedMinAge(v);
+	}
+}
+
+/**
  * Update age of a vehicle.
  * @param v Vehicle to update.
  */
 void AgeVehicle(Vehicle *v)
 {
-	if (v->age < CalendarTime::MAX_DATE) {
-		v->age++;
-		if (v->IsPrimaryVehicle() && v->age == VEHICLE_PROFIT_MIN_AGE + 1) GroupStatistics::VehicleReachedMinAge(v);
-	}
+	if (v->age < CalendarTime::MAX_DATE) v->age++;
 
 	if (!v->IsPrimaryVehicle() && (v->type != VEH_TRAIN || !Train::From(v)->IsEngine())) return;
 
@@ -1817,44 +1828,50 @@ VehicleEnterTileStatus VehicleEnterTile(Vehicle *v, TileIndex tile, int x, int y
 }
 
 /**
- * Initializes the structure. Vehicle unit numbers are supposed not to change after
- * struct initialization, except after each call to this->NextID() the returned value
- * is assigned to a vehicle.
- * @param type type of vehicle
- * @param owner owner of vehicles
+ * Find first unused unit number.
+ * This does not mark the unit number as used.
+ * @returns First unused unit number.
  */
-FreeUnitIDGenerator::FreeUnitIDGenerator(VehicleType type, CompanyID owner) : cache(nullptr), maxid(0), curid(0)
+UnitID FreeUnitIDGenerator::NextID() const
 {
-	/* Find maximum */
-	for (const Vehicle *v : Vehicle::Iterate()) {
-		if (v->type == type && v->owner == owner) {
-			this->maxid = std::max<UnitID>(this->maxid, v->unitnumber);
-		}
+	for (auto it = std::begin(this->used_bitmap); it != std::end(this->used_bitmap); ++it) {
+		BitmapStorage available = ~(*it);
+		if (available == 0) continue;
+		return static_cast<UnitID>(std::distance(std::begin(this->used_bitmap), it) * BITMAP_SIZE + FindFirstBit(available) + 1);
 	}
-
-	if (this->maxid == 0) return;
-
-	/* Reserving 'maxid + 2' because we need:
-	 * - space for the last item (with v->unitnumber == maxid)
-	 * - one free slot working as loop terminator in FreeUnitIDGenerator::NextID() */
-	this->cache = CallocT<bool>(this->maxid + 2);
-
-	/* Fill the cache */
-	for (const Vehicle *v : Vehicle::Iterate()) {
-		if (v->type == type && v->owner == owner) {
-			this->cache[v->unitnumber] = true;
-		}
-	}
+	return static_cast<UnitID>(this->used_bitmap.size() * BITMAP_SIZE + 1);
 }
 
-/** Returns next free UnitID. Supposes the last returned value was assigned to a vehicle. */
-UnitID FreeUnitIDGenerator::NextID()
+/**
+ * Use a unit number. If the unit number is not valid it is ignored.
+ * @param index Unit number to use.
+ * @returns Unit number used.
+ */
+UnitID FreeUnitIDGenerator::UseID(UnitID index)
 {
-	if (this->maxid <= this->curid) return ++this->curid;
+	if (index == 0 || index == UINT16_MAX) return index;
 
-	while (this->cache[++this->curid]) { } // it will stop, we reserved more space than needed
+	index--;
 
-	return this->curid;
+	size_t slot = index / BITMAP_SIZE;
+	if (slot >= this->used_bitmap.size()) this->used_bitmap.resize(slot + 1);
+	SetBit(this->used_bitmap[index / BITMAP_SIZE], index % BITMAP_SIZE);
+
+	return index + 1;
+}
+
+/**
+ * Release a unit number. If the unit number is not valid it is ignored.
+ * @param index Unit number to release.
+ */
+void FreeUnitIDGenerator::ReleaseID(UnitID index)
+{
+	if (index == 0 || index == UINT16_MAX) return;
+
+	index--;
+
+	assert(index / BITMAP_SIZE < this->used_bitmap.size());
+	ClrBit(this->used_bitmap[index / BITMAP_SIZE], index % BITMAP_SIZE);
 }
 
 /**
@@ -1877,9 +1894,7 @@ UnitID GetFreeUnitNumber(VehicleType type)
 	const Company *c = Company::Get(_current_company);
 	if (c->group_all[type].num_vehicle >= max_veh) return UINT16_MAX; // Currently already at the limit, no room to make a new one.
 
-	FreeUnitIDGenerator gen(type, _current_company);
-
-	return gen.NextID();
+	return c->freeunits[type].NextID();
 }
 
 
@@ -2422,6 +2437,30 @@ void Vehicle::HandleLoading(bool mode)
 }
 
 /**
+ * Check if the current vehicle has a full load order.
+ * @return true Iff this vehicle has a full load order.
+ */
+bool Vehicle::HasFullLoadOrder() const
+{
+	for (Order *o : this->Orders()) {
+		if (o->IsType(OT_GOTO_STATION) && o->GetLoadType() & (OLFB_FULL_LOAD | OLF_FULL_LOAD_ANY)) return true;
+	}
+	return false;
+}
+
+/**
+ * Check if the current vehicle has a conditional order.
+ * @return true Iff this vehicle has a conditional order.
+ */
+bool Vehicle::HasConditionalOrder() const
+{
+	for (Order *o : this->Orders()) {
+		if (o->IsType(OT_CONDITIONAL)) return true;
+	}
+	return false;
+}
+
+/**
  * Check if the current vehicle has an unbunching order.
  * @return true Iff this vehicle has an unbunching order.
  */
@@ -2434,10 +2473,27 @@ bool Vehicle::HasUnbunchingOrder() const
 }
 
 /**
+ * Check if the previous order is a depot unbunching order.
+ * @return true Iff the previous order is a depot order with the unbunch flag.
+ */
+static bool PreviousOrderIsUnbunching(const Vehicle *v)
+{
+	/* If we are headed for the first order, we must wrap around back to the last order. */
+	bool is_first_order = (v->GetOrder(v->cur_implicit_order_index) == v->GetFirstOrder());
+	Order *previous_order = (is_first_order) ? v->GetLastOrder() : v->GetOrder(v->cur_implicit_order_index - 1);
+
+	if (previous_order == nullptr || !previous_order->IsType(OT_GOTO_DEPOT)) return false;
+	return (previous_order->GetDepotActionType() & ODATFB_UNBUNCH) != 0;
+}
+
+/**
  * Leave an unbunching depot and calculate the next departure time for shared order vehicles.
  */
 void Vehicle::LeaveUnbunchingDepot()
 {
+	/* Don't do anything if this is not our unbunching order. */
+	if (!PreviousOrderIsUnbunching(this)) return;
+
 	/* Set the start point for this round trip time. */
 	this->depot_unbunching_last_departure = TimerGameTick::counter;
 
@@ -2489,13 +2545,8 @@ bool Vehicle::IsWaitingForUnbunching() const
 	/* Don't do anything if there aren't enough orders. */
 	if (this->GetNumOrders() <= 1) return false;
 
-	/*
-	 * Make sure this is the correct depot for unbunching.
-	 * If we are headed for the first order, we must wrap around back to the last order.
-	 */
-	bool is_first_order = (this->GetOrder(this->cur_real_order_index) == this->GetFirstOrder());
-	Order *previous_order = (is_first_order) ? this->GetLastOrder() : this->GetOrder(this->cur_real_order_index - 1);
-	if (previous_order == nullptr || !previous_order->IsType(OT_GOTO_DEPOT) || !(previous_order->GetDepotActionType() & ODATFB_UNBUNCH)) return false;
+	/* Don't do anything if this is not our unbunching order. */
+	if (!PreviousOrderIsUnbunching(this)) return false;
 
 	return (this->depot_unbunching_next_departure > TimerGameTick::counter);
 };
@@ -2949,7 +3000,7 @@ static IntervalTimer<TimerGameEconomy> _economy_vehicles_yearly({TimerGameEconom
 		if (v->IsPrimaryVehicle()) {
 			/* show warning if vehicle is not generating enough income last 2 years (corresponds to a red icon in the vehicle list) */
 			Money profit = v->GetDisplayProfitThisYear();
-			if (v->age >= 730 && profit < 0) {
+			if (v->economy_age >= VEHICLE_PROFIT_MIN_AGE && profit < 0) {
 				if (_settings_client.gui.vehicle_income_warn && v->owner == _local_company) {
 					SetDParam(0, v->index);
 					SetDParam(1, profit);

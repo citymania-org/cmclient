@@ -590,11 +590,11 @@ static void StartScripts()
 
 	/* Start the AIs. */
 	for (const Company *c : Company::Iterate()) {
-		if (Company::IsValidAiID(c->index)) AI::StartNew(c->index, false);
+		if (Company::IsValidAiID(c->index)) AI::StartNew(c->index);
 	}
 
 	/* Start the GameScript. */
-	Game::StartNew(false);
+	Game::StartNew();
 
 	ShowScriptDebugWindowIfScriptError();
 }
@@ -1813,6 +1813,11 @@ bool AfterLoadGame()
 		for (Order *order : Order::Iterate()) {
 			if (!order->IsType(OT_GOTO_DEPOT)) continue;
 			order->SetDepotActionType((OrderDepotActionFlags)(order->GetDepotActionType() >> 1));
+		}
+
+		for (Vehicle *v : Vehicle::Iterate()) {
+			if (!v->current_order.IsType(OT_GOTO_DEPOT)) continue;
+			v->current_order.SetDepotActionType((OrderDepotActionFlags)(v->current_order.GetDepotActionType() >> 1));
 		}
 	}
 

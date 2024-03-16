@@ -995,7 +995,7 @@ void Window::ReInit(int rx, int ry, bool reposition)
 		this->FindWindowPlacementAndResize(this->window_desc->GetDefaultWidth(), this->window_desc->GetDefaultHeight());
 	}
 
-	ResizeWindow(this, dx, dy);
+	ResizeWindow(this, dx, dy, true, false);
 	/* ResizeWindow() does this->SetDirty() already, no need to do it again here. */
 }
 
@@ -1459,8 +1459,8 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 		ResizeWindow(this, enlarge_x, enlarge_y);
 		/* ResizeWindow() calls this->OnResize(). */
 	} else {
-		/* Schedule OnResize; that way the scrollbars and matrices get initialized. */
-		this->ScheduleResize();
+		/* Always call OnResize; that way the scrollbars and matrices get initialized. */
+		this->OnResize();
 	}
 
 	int nx = this->left;
@@ -2038,7 +2038,7 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
  * @param delta_y Delta y-size of changed window
  * @param clamp_to_screen Whether to make sure the whole window stays visible
  */
-void ResizeWindow(Window *w, int delta_x, int delta_y, bool clamp_to_screen)
+void ResizeWindow(Window *w, int delta_x, int delta_y, bool clamp_to_screen, bool schedule_resize)
 {
 	if (delta_x != 0 || delta_y != 0) {
 		if (clamp_to_screen) {
@@ -2065,7 +2065,11 @@ void ResizeWindow(Window *w, int delta_x, int delta_y, bool clamp_to_screen)
 	EnsureVisibleCaption(w, w->left, w->top);
 
 	/* Schedule OnResize to make sure everything is initialised correctly if it needs to be. */
-	w->ScheduleResize();
+	if (schedule_resize) {
+		w->ScheduleResize();
+	} else {
+		w->OnResize();
+	}
 	w->SetDirty();
 
 	// TODO incapsulate into a function
