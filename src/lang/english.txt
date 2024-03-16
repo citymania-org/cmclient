@@ -6171,6 +6171,7 @@ CM_STR_CONFIG_SETTING_MODIFIER_NONE                             :None
 CM_STR_CONFIG_SETTING_MODIFIER_SHIFT                            :Shift
 CM_STR_CONFIG_SETTING_MODIFIER_CTRL                             :Ctrl
 CM_STR_CONFIG_SETTING_MODIFIER_ALT                              :Alt
+CM_STR_CONFIG_SETTING_MODIFIER_COMMAND                          :Command (on MacOS)
 
 CM_STR_CONFIG_SETTING_SHADED_TREES                              :Shaded trees: {STRING2}
 CM_STR_CONFIG_SETTING_SHADED_TREES_HELPTEXT                     :Change tree brightness depending on a slope. Enhances visual appeal of mountainous forests.

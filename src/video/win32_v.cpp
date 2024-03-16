@@ -888,7 +888,7 @@ void VideoDriver_Win32Base::InputLoop()
 	}
 
 	// CM if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
-	citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
+	citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed, false);
 }
 
 bool VideoDriver_Win32Base::PollEvent()

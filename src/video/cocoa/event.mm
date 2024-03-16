@@ -692,11 +692,12 @@ void VideoDriver_Cocoa::GameLoop()
 
 			bool old_ctrl_pressed = _ctrl_pressed;
 
-			_ctrl_pressed = !!(_current_mods & ( _settings_client.gui.right_mouse_btn_emulation != RMBE_CONTROL ? NSControlKeyMask : NSCommandKeyMask));
+			_ctrl_pressed = !!(_current_mods & NSControlKeyMask);
+			bool command_pressed = !!(_current_mods & NSCommandKeyMask);
 			_shift_pressed = !!(_current_mods & NSShiftKeyMask);
 
 			// CM if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
-			citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
+			citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed, command_pressed);
 
 			::GameLoop();
 

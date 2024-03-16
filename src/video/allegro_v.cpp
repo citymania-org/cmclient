@@ -481,7 +481,7 @@ void VideoDriver_Allegro::InputLoop()
 		(key[KEY_DOWN]  ? 8 : 0);
 
 		// CM if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
-		citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
+		citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed, false);
 }
 
 void VideoDriver_Allegro::MainLoop()

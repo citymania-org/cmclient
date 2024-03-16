@@ -477,14 +477,16 @@ void VideoDriver_Cocoa::InputLoop()
 
 	bool old_ctrl_pressed = _ctrl_pressed;
 
-	_ctrl_pressed = (cur_mods & ( _settings_client.gui.right_mouse_btn_emulation != RMBE_CONTROL ? NSEventModifierFlagControl : NSEventModifierFlagCommand)) != 0;
+	// _ctrl_pressed = (cur_mods & ( _settings_client.gui.right_mouse_btn_emulation != RMBE_CONTROL ? NSEventModifierFlagControl : NSEventModifierFlagCommand)) != 0;
+	bool command_pressed = (cur_mods & NSEventModifierFlagCommand) != 0;
+	_ctrl_pressed = (cur_mods & NSEventModifierFlagControl) != 0;
 	_alt_pressed = (cur_mods & NSEventModifierFlagOption) != 0;	
 	_shift_pressed = (cur_mods & NSEventModifierFlagShift) != 0;
 
 	this->fast_forward_key_pressed = _tab_is_down;
 
 	// if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
-	citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed);
+	citymania::UpdateModKeys(_shift_pressed, _ctrl_pressed, _alt_pressed, command_pressed);
 }
 
 /** Main game loop. */

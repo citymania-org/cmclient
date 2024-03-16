@@ -78,11 +78,12 @@ bool HasSeparateRemoveMod() {
     return (_settings_client.gui.cm_fn_mod != _settings_client.gui.cm_remove_mod);
 }
 
-void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed) {
+void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed, bool command_pressed) {
     bool mod_pressed[(size_t)ModKey::END] = {false};
     if (shift_pressed) mod_pressed[(size_t)ModKey::SHIFT] = true;
     if (ctrl_pressed) mod_pressed[(size_t)ModKey::CTRL] = true;
     if (alt_pressed) mod_pressed[(size_t)ModKey::ALT] = true;
+    if (command_pressed) mod_pressed[(size_t)ModKey::COMMAND] = true;
     bool fn_mod_prev = _fn_mod;
     bool remove_mod_prev = _remove_mod;
     _fn_mod = mod_pressed[(size_t)_settings_client.gui.cm_fn_mod];

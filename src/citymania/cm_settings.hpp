@@ -16,6 +16,7 @@ enum class ModKey : uint8 {
     SHIFT = 1,
     CTRL = 2,
     ALT = 3,
+    COMMAND = 4,
     END,
 };
 
