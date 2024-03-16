@@ -436,7 +436,7 @@ static const wchar_t _crash_desc[] =
 	L"A serious fault condition occurred in the game. The game will shut down.\n"
 	L"Please send crash.json.log, crash.dmp, and crash.sav to the developers.\n"
 	L"This will greatly help debugging.\n\n"
-	L"https://github.com/OpenTTD/OpenTTD/issues\n\n"
+	L"https://github.com/citymania-org/cmclient/issues\n\n"
 	L"%s\n%s\n%s\n%s\n";
 
 static const wchar_t * const _expand_texts[] = {L"S&how report >>", L"&Hide report <<" };

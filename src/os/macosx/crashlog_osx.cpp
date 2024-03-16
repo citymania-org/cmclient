@@ -126,7 +126,7 @@ public:
 		std::string message = fmt::format(
 				 "Please send crash.json.log, crash.dmp, and crash.sav to the developers. "
 				 "This will greatly help debugging.\n\n"
-				 "https://github.com/OpenTTD/OpenTTD/issues.\n\n"
+				 "https://github.com/citymania-org/cmclient/issues\n\n"
 				 "{}\n{}\n{}\n{}",
 				 this->crashlog_filename, this->crashdump_filename, this->savegame_filename, this->screenshot_filename);
 
