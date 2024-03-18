@@ -1,6 +1,7 @@
 #ifndef CMEXT_HOTKEYS_HPP
 #define CMEXT_HOTKEYS_HPP
 
+#include "../hotkeys.h"
 #include "../window_type.h"
 
 namespace citymania {
@@ -30,6 +31,7 @@ void CountEffectiveAction();
 void ResetEffectiveActionCounter();
 std::pair<uint32, uint32> GetEPM();
 bool ChooseSignalDragBehaviour();
+void CountHotkeyStats(const HotkeyList *list, int hotkey);
 
 } // namespace citymania
 

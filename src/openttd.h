@@ -14,6 +14,8 @@
 #include <chrono>
 #include "core/enum_type.hpp"
 
+#include "citymania/extensions/cmext_game_session_stats.hpp"
+
 /** Mode which defines the state of the game. */
 enum GameMode {
 	GM_MENU,
@@ -56,6 +58,7 @@ struct GameSessionStats {
 	std::chrono::steady_clock::time_point start_time; ///< Time when the current game was started.
 	std::string savegame_id; ///< Unique ID of the savegame.
 	std::optional<size_t> savegame_size; ///< Size of the last saved savegame in bytes, or std::nullopt if not saved yet.
+	citymania::ext::GameSessionStats cm;
 };
 
 extern GameMode _game_mode;

@@ -36,6 +36,8 @@
 
 #include "social_integration.h"
 
+#include "citymania/cm_survey.hpp"
+
 #ifdef WITH_ALLEGRO
 #	include <allegro.h>
 #endif /* WITH_ALLEGRO */
@@ -249,6 +251,7 @@ void SurveyGameSession(nlohmann::json &survey)
 	if (_game_session_stats.savegame_size.has_value()) {
 		survey["savegame_size"] = _game_session_stats.savegame_size.value();
 	}
+	citymania::SurveyGameSession(survey);
 }
 
 /**

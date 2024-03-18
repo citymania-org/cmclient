@@ -2624,7 +2624,10 @@ void HandleKeypress(uint keycode, char32_t key)
 		if (w->window_class == WC_MAIN_TOOLBAR) continue;
 		if (w->window_desc->hotkeys != nullptr) {
 			int hotkey = w->window_desc->hotkeys->CheckMatch(keycode);
-			if (hotkey >= 0 && w->OnHotkey(hotkey) == ES_HANDLED) return;
+			if (hotkey >= 0 && w->OnHotkey(hotkey) == ES_HANDLED) {
+				citymania::CountHotkeyStats(w->window_desc->hotkeys, hotkey);
+				return;
+			}
 		}
 		if (w->OnKeyPress(key, keycode) == ES_HANDLED) return;
 	}
@@ -2634,7 +2637,10 @@ void HandleKeypress(uint keycode, char32_t key)
 	if (w != nullptr) {
 		if (w->window_desc->hotkeys != nullptr) {
 			int hotkey = w->window_desc->hotkeys->CheckMatch(keycode);
-			if (hotkey >= 0 && w->OnHotkey(hotkey) == ES_HANDLED) return;
+			if (hotkey >= 0 && w->OnHotkey(hotkey) == ES_HANDLED) {
+				citymania::CountHotkeyStats(w->window_desc->hotkeys, hotkey);
+				return;
+			}
 		}
 		if (w->OnKeyPress(key, keycode) == ES_HANDLED) return;
 	}

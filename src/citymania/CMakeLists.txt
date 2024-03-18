@@ -52,6 +52,8 @@ add_files(
     cm_overlays.cpp
     cm_station_gui.hpp
     cm_station_gui.cpp
+    cm_survey.hpp
+    cm_survey.cpp
     cm_tooltips.hpp
     cm_tooltips.cpp
     cm_newgrf_revisions.hpp

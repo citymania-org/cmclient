@@ -533,6 +533,7 @@ int openttd_main(int argc, char *argv[])
 {
 	_game_session_stats.start_time = std::chrono::steady_clock::now();
 	_game_session_stats.savegame_size = std::nullopt;
+	_game_session_stats.cm = {};
 
 	std::string musicdriver;
 	std::string sounddriver;
@@ -1123,6 +1124,7 @@ void SwitchToMode(SwitchMode new_mode)
 	if (new_mode != SM_SAVE_GAME) {
 		_game_session_stats.start_time = std::chrono::steady_clock::now();
 		_game_session_stats.savegame_size = std::nullopt;
+		_game_session_stats.cm = {};
 	}
 
 	switch (new_mode) {

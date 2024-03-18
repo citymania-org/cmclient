@@ -46,6 +46,7 @@ struct HotkeyList {
 	int CheckMatch(uint16_t keycode, bool global_only = false) const;
 
 	GlobalHotkeyHandlerFunc global_hotkey_handler;
+	std::optional<std::pair<std::string, Hotkey>> CMGetHotkey(int hotkey) const;
 private:
 	const std::string ini_group;
 	std::vector<Hotkey> items;

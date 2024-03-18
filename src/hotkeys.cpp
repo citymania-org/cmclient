@@ -14,6 +14,8 @@
 #include "string_func.h"
 #include "window_gui.h"
 
+#include "citymania/cm_hotkeys.hpp"
+
 #include "safeguards.h"
 
 std::string _hotkeys_file;
@@ -308,6 +310,17 @@ HotkeyList::~HotkeyList()
 	_hotkey_lists->erase(std::find(_hotkey_lists->begin(), _hotkey_lists->end(), this));
 }
 
+/* CityMania code start */
+std::optional<std::pair<std::string, Hotkey>> HotkeyList::CMGetHotkey(int hotkey) const {
+	for (const Hotkey &h : this->items) {
+		if (h.num != hotkey) continue;
+		return {{this->ini_group, h}};
+	}
+	return std::nullopt;
+}
+/* CityMania code end */
+
+
 /**
  * Load HotkeyList from IniFile.
  * @param ini IniFile to load from.
@@ -392,7 +405,10 @@ void HandleGlobalHotkeys([[maybe_unused]] char32_t key, uint16_t keycode)
 		if (list->global_hotkey_handler == nullptr) continue;
 
 		int hotkey = list->CheckMatch(keycode, true);
-		if (hotkey >= 0 && (list->global_hotkey_handler(hotkey) == ES_HANDLED)) return;
+		if (hotkey >= 0 && (list->global_hotkey_handler(hotkey) == ES_HANDLED)) {
+			citymania::CountHotkeyStats(list, hotkey);
+			return;
+		}
 	}
 }
 

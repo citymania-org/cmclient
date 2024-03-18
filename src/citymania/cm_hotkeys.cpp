@@ -278,4 +278,11 @@ bool ChooseSignalDragBehaviour() {
     return _fn_mod;
 }
 
+void CountHotkeyStats(const HotkeyList *list, int hotkey) {
+    auto h = list->CMGetHotkey(hotkey);
+    if (!h) return;
+    auto key = fmt::format("{}.{}", h->first, h->second.name);
+    _game_session_stats.cm.hotkeys[key]++;
+}
+
 } // namespace citymania
