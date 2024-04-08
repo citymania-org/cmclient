@@ -9,6 +9,19 @@
 
 namespace citymania {
 
+struct EconomySettings {
+    bool cashback_for_extra_land_clear;
+    bool cashback_for_bridges_and_tunnels;
+    bool cashback_for_foundations;
+};
+
+struct LimitsSettings {
+    uint16_t max_airports; ///< maximum number of airports per company, 0=unlimited
+    bool disable_canals;
+    uint16_t min_distance_between_docks; ///< docks can be build only x tiles apart another, 0=disable check
+    uint8_t min_advertisement_action;  // minimum level of advertisement allowed
+};
+
 class CBRequirement {
 public:
     CargoID cargo_id;
@@ -26,19 +39,6 @@ public:
         :cargo_id{cargo_id}, from{from}, amount{amount}, decay{decay},
             index{index}, name{name}, has_storage{decay < 100} {}
 };
-
-struct EconomySettings {
-    bool cashback_for_extra_land_clear;
-    bool cashback_for_bridges_and_tunnels;
-    bool cashback_for_foundations;
-};
-
-struct LimitsSettings {
-    uint16_t max_airports; ///< maximum number of airports per company, 0=unlimited
-    bool disable_canals;
-    uint16_t min_distance_between_docks; ///< docks can be build only x tiles apart another, 0=disable check
-};
-
 
 struct CBSettings {
     uint8_t requirements_type;  // 0 - regular 1 - income-based requirements (new cb only)
