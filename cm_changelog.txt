@@ -74,6 +74,12 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 14.0-RC2 (19 Mar 2024) ***
+- Fix crash in station joining highlight
+- Fix highlight tinting not working without hardware acceleration.
+- Add an option to select Command key as a modifier on MacOS (#23).
+- Show cmclient issue tracker link instead of vanilla in crash reports (#26).
+
 *** 14.0-RC1 (22 Feb 2024) ***
 - Added hotkeys to save and load blueprints into slots (no gui yet).
 - Added build info overlay for the tools with build preview.
