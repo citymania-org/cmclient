@@ -750,6 +750,8 @@ public:
 
 	void ResetRefitCaps();
 
+	void ReleaseUnitNumber();
+
 	/**
 	 * Copy certain configurations and statistics of a vehicle after successful autoreplace/renew
 	 * The function shall copy everything that cannot be copied by a command (like orders / group etc),
@@ -760,6 +762,7 @@ public:
 	{
 		this->CopyConsistPropertiesFrom(src);
 
+		this->ReleaseUnitNumber();
 		this->unitnumber = src->unitnumber;
 
 		this->current_order = src->current_order;
@@ -787,6 +790,8 @@ public:
 	 * @return the location (tile) to aim for.
 	 */
 	virtual TileIndex GetOrderStationLocation([[maybe_unused]] StationID station) { return INVALID_TILE; }
+
+	virtual TileIndex GetCargoTile() const { return this->tile; }
 
 	/**
 	 * Find the closest depot for this vehicle and tell us the location,

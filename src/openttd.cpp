@@ -255,7 +255,7 @@ static void WriteSavegameInfo(const std::string &name)
 	message += "NewGRFs:\n";
 	if (_load_check_data.HasNewGrfs()) {
 		for (GRFConfig *c = _load_check_data.grfconfig; c != nullptr; c = c->next) {
-			fmt::format_to(std::back_inserter(message), "{:08X} {} {}\n", c->ident.grfid,
+			fmt::format_to(std::back_inserter(message), "{:08X} {} {}\n", BSWAP32(c->ident.grfid),
 				FormatArrayAsHex(HasBit(c->flags, GCF_COMPATIBLE) ? c->original_md5sum : c->ident.md5sum), c->filename);
 		}
 	}
@@ -643,7 +643,8 @@ int openttd_main(int argc, char *argv[])
 				return ret;
 			}
 
-			auto [_, title] = FiosGetSavegameListCallback(SLO_LOAD, mgo.opt, strrchr(mgo.opt, '.'));
+			std::string extension = std::filesystem::path(_file_to_saveload.name).extension().string();
+			auto [_, title] = FiosGetSavegameListCallback(SLO_LOAD, mgo.opt, extension);
 
 			_load_check_data.Clear();
 			SaveOrLoadResult res = SaveOrLoad(mgo.opt, SLO_CHECK, DFT_GAME_FILE, SAVE_DIR, false);
