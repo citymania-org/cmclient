@@ -6090,14 +6090,14 @@ CM_STR_TOWN_VIEW_GROWTH_RATE_CUSTOM                             :*
 CM_STR_TOWN_VIEW_GROWTH_TILES                                   :{BLACK}HS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}CS: {ORANGE}{COMMA}(+{COMMA})  {BLACK}HR: {ORANGE}{COMMA}(+{COMMA})
 CM_STR_TOWN_VIEW_REALPOP_RATE                                   :{BLACK}Планируемое население: {YELLOW}{COMMA}  {BLACK}Рейтинг: {YELLOW}{COMMA}
 CM_STR_TOWN_VIEW_HOUSE_STATE                                    :{BLACK}Houses: UC {ORANGE}{COMMA}  {BLACK}RTM: {ORANGE}{COMMA}  {BLACK}DTM: {ORANGE}{COMMA}
-CM_STR_CB_DISTANCE_CHECK                                        :CB зона приема: {STRING2}
+CM_STR_CB_DISTANCE_CHECK                                        :CB зона приема: {STRING}
 
 ###ADMIN
-CM_STR_WATCH_WINDOW_TITLE                                       :{WHITE}Слежение за {RAW_STRING}.
+CM_STR_WATCH_WINDOW_TITLE                                       :{WHITE}Слежение за {STRING}.
 CM_STR_WATCH_CLICK_TO_WATCH_COMPANY                             :{BLACK}Нажмите чтобы следить за действиями компании
 CM_STR_WATCH_CLICK_NEW_WINDOW                                   :{BLACK}Нажмите чтобы открыть новое окно слежения
 
-CM_STR_WATCH_WINDOW_TITLE_CLIENT                                :{WHITE}{RAW_STRING} в {RAW_STRING}({NUM}).
+CM_STR_WATCH_WINDOW_TITLE_CLIENT                                :{WHITE}{STRING} в {STRING}({NUM}).
 CM_STR_XI_KICK                                                  :{BLACK}Kick
 CM_STR_XI_KICKC                                                 :{BLACK}Kick from cp
 CM_STR_XI_BAN                                                   :{BLACK}Ban
@@ -6294,7 +6294,7 @@ CM_STR_TOWN_CB_CARGO_FROM_YES                                   :{YELLOW}{COMMA}
 CM_STR_TOWN_CB_CARGO_FROM_NOT                                   :{SILVER}{COMMA}
 
 #polyrail double click option
-CM_STR_CONFIG_SETTING_POLYRAIL_DOUBLECLICK_TOOLTIPS             :Разрешить завершать поли-рельс двойным кликом мыши{STRING2}
+CM_STR_CONFIG_SETTING_POLYRAIL_DOUBLECLICK_TOOLTIPS             :Разрешить завершать поли-рельс двойным кликом мыши{STRING}
 
 # Industry funding forbidden tiles
 CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE                      :{BLACK}Подветка закрытых зон
@@ -6308,19 +6308,19 @@ CM_STR_CB_GUI_TOWN_VIEW_TOOLTIP                                 :{BLACK}Откр
 
 CM_STR_CONFIG_SETTING_WARN_IF_RUNWAY_IS_TOO_SHORT               :Предупреждать если самолет направлен в аэропорт с недостаточно длинной взлетной полосой
 
-CM_STR_CONFIG_SETTING_POWERFUND_MONEY                           :Минимальное количество денег для супер-финансирования города: {STRING2}
-CM_STR_CONFIG_SETTING_POWERFUND_HOUSES                          :Максимальное количество домов до которого производится супер-финансирование: {STRING2}
+CM_STR_CONFIG_SETTING_POWERFUND_MONEY                           :Минимальное количество денег для супер-финансирования города: {STRING}
+CM_STR_CONFIG_SETTING_POWERFUND_HOUSES                          :Максимальное количество домов до которого производится супер-финансирование: {STRING}
 
 CM_STR_STATION_RATING_TOOLTIP_RATING_DETAILS                    :{STRING}Детальный рейниг
 CM_STR_STATION_RATING_TOOLTIP_TOTAL_RATING                      :Суммарный целевой рейтинг: {LTBLUE}{NUM}%
-CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING                     :Рейтинг заданный NewGRF: {STRING1} {BLACK}основаный на
+CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING                     :Рейтинг заданный NewGRF: {STRING} {BLACK}основаный на
 CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_0                   :{GOLD}{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_1                   :{LTBLUE}+{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED                      :Макс скорость последнего ТС: {LTBLUE}{VELOCITY}
 CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS                  :Единиц груза ожидает: {LTBLUE}{NUM}
 CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME                   :Время с последней загрузки: {LTBLUE}{NUM} days
 
-CM_STR_STATION_RATING_TOOLTIP_SPEED                             :Макс скорость последнего ТС (макс 17%): {STRING2}
+CM_STR_STATION_RATING_TOOLTIP_SPEED                             :Макс скорость последнего ТС (макс 17%): {STRING}
 CM_STR_STATION_RATING_TOOLTIP_SPEED_MAX                         :{GREEN}{VELOCITY} или более, +{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_SPEED_ZERO                        :{RED}{VELOCITY}, {NUM}%
 CM_STR_STATION_RATING_TOOLTIP_SPEED_0                           :{ORANGE}{VELOCITY}, +{NUM}%
@@ -6328,21 +6328,21 @@ CM_STR_STATION_RATING_TOOLTIP_SPEED_1                           :{GOLD}{VELOCITY
 CM_STR_STATION_RATING_TOOLTIP_SPEED_2                           :{YELLOW}{VELOCITY}, +{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_SPEED_3                           :{GREEN}{VELOCITY}, +{NUM}%
 
-CM_STR_STATION_RATING_TOOLTIP_AGE                               :Возраст последнего ТС (max 13%): {STRING2}
+CM_STR_STATION_RATING_TOOLTIP_AGE                               :Возраст последнего ТС (max 13%): {STRING}
 CM_STR_STATION_RATING_TOOLTIP_AGE_0                             :{ORANGE}{NUM} {P год года лет}, {NUM}%
 CM_STR_STATION_RATING_TOOLTIP_AGE_1                             :{GOLD}{NUM} {P год года лет}, +{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_AGE_2                             :{YELLOW}{NUM} {P год года лет}, +{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_AGE_3                             :{GREEN}{NUM} {P год года лет}, +{NUM}%
 
-CM_STR_STATION_RATING_TOOLTIP_WAITTIME                          :Время с последней загрузки (макс 51%): {STRING2}
-CM_STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP                     :Время с последней загрузки (макс 51%): {STRING2} (кораблем)
+CM_STR_STATION_RATING_TOOLTIP_WAITTIME                          :Время с последней загрузки (макс 51%): {STRING}
+CM_STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP                     :Время с последней загрузки (макс 51%): {STRING} (кораблем)
 CM_STR_STATION_RATING_TOOLTIP_WAITTIME_0                        :{RED}{NUM} {P день дня дней}, {NUM}%
 CM_STR_STATION_RATING_TOOLTIP_WAITTIME_1                        :{ORANGE}{NUM} {P день дня дней}, +{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_WAITTIME_2                        :{GOLD}{NUM} {P день дня дней}, +{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_WAITTIME_3                        :{YELLOW}{NUM} {P день дня дней}, +{NUM}%
 CM_STR_STATION_RATING_TOOLTIP_WAITTIME_4                        :{GREEN}{NUM} {P день дня дней}, +{NUM}%
 
-CM_STR_STATION_RATING_TOOLTIP_WAITUNITS                         :Units of cargo waiting (max 16%): {STRING2}
+CM_STR_STATION_RATING_TOOLTIP_WAITUNITS                         :Units of cargo waiting (max 16%): {STRING}
 CM_STR_STATION_RATING_TOOLTIP_WAITUNITS_0                       :{RED}{NUM}, {NUM}%
 CM_STR_STATION_RATING_TOOLTIP_WAITUNITS_1                       :{ORANGE}{NUM}, {NUM}%
 CM_STR_STATION_RATING_TOOLTIP_WAITUNITS_2                       :{GOLD}{NUM}, {NUM}%
@@ -6360,17 +6360,17 @@ CM_STR_STATION_BUILD_TOWN                                       :{BLACK}Горо
 CM_STR_STATION_BUILD_TOWN_LARGE                                 :{BLACK}Город: {GOLD}{TOWN} (Б)
 CM_STR_STATION_BUILD_TOWN_MEDIUM                                :{BLACK}Город: {GOLD}{TOWN} (С)
 CM_STR_STATION_BUILD_TOWN_SMALL                                 :{BLACK}Город: {GOLD}{TOWN} (М)
-CM_STR_CONFIG_SETTING_OPEN_VEHICLE_FOR_SHARED_CLONE             :Открывать окно ТС при копировании с общим маршрутом: {STRING2}
+CM_STR_CONFIG_SETTING_OPEN_VEHICLE_FOR_SHARED_CLONE             :Открывать окно ТС при копировании с общим маршрутом: {STRING}
 CM_STR_CONFIG_SETTING_OPEN_VEHICLE_FOR_SHARED_CLONE_HELPTEXT    :Открывать окно ТС при копировании с общим маршрутом (как оно происходит для копирования без общего маршрута)
-CM_STR_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES              :Открывать окно маршрута при покупке ТС: {STRING2}
+CM_STR_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES              :Открывать окно маршрута при покупке ТС: {STRING}
 CM_STR_CONFIG_SETTING_OPEN_ORDERS_FOR_NEW_VEHICLES_HELPTEXT     :Автоматически открывать окно маршрута вместе с окном ТС при покупке нового ТС
 CM_STR_PURCHASE_ENGINE_ID                                       :{BLACK}Engine ID: {GOLD}{NUM} {BLACK}ID(GRF): {GOLD}{NUM}
 CM_STR_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP                        :{BLACK}Объединенный режим показа предприятий на карте вместе с контурами земли и растительностью.
-CM_STR_CONFIG_SETTING_PAUSE_AFTER_LOAD                          :Ставить игру на паузу после загрузки: {STRING2}
+CM_STR_CONFIG_SETTING_PAUSE_AFTER_LOAD                          :Ставить игру на паузу после загрузки: {STRING}
 CM_STR_CONFIG_SETTING_PAUSE_AFTER_LOAD_HELPTEXT                 :Должна ли игра быть поставлена на паузу после загрузки (если она еще не на паузе). Полезно для отладки рассинхронизации.
-CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_HOUSES                  :Показывать подсказки при наведении на дома: {STRING2}
-CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_INDUSTRIES              :Показывать подсказки при наведении на предприятия: {STRING2}
-CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_STATIONS                :Показывать подсказки при наведении на станции: {STRING2}
+CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_HOUSES                  :Показывать подсказки при наведении на дома: {STRING}
+CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_INDUSTRIES              :Показывать подсказки при наведении на предприятия: {STRING}
+CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_STATIONS                :Показывать подсказки при наведении на станции: {STRING}
 CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_HOUSES_HELPTEXT         :Показывать подсказки при наведении на дома. {GOLD}(добавлено CityMania)
 CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_INDUSTRIES_HELPTEXT     :Показывать подсказки при наведении на предприятия. {GOLD}(добавлено CityMania)
 CM_STR_CONFIG_SETTING_LAND_TOOLTIPS_FOR_STATIONS_HELPTEXT       :Показывать подсказки при наведении на станции. {GOLD}(добавлено CityMania)
@@ -6383,11 +6383,11 @@ CM_STR_LAND_TOOLTIPS_STATION_CARGO                              :{WHITE}{STRING}
 
 CM_STR_LAND_AREA_INFORMATION_POP                                :{BLACK}Население: {LTBLUE}{NUM}
 
-CM_STR_CONFIG_SETTING_MODIFIER_FN                               :Клавиша-модификатор для дополнительных функций: {STRING2}
+CM_STR_CONFIG_SETTING_MODIFIER_FN                               :Клавиша-модификатор для дополнительных функций: {STRING}
 CM_STR_CONFIG_SETTING_MODIFIER_FN_HELPTEXT                      :Клавиша-модификатор для выполнения дополнительных функций.
-CM_STR_CONFIG_SETTING_MODIFIER_REMOVE                           :Клавиша-модификатор для удаления: {STRING2}
+CM_STR_CONFIG_SETTING_MODIFIER_REMOVE                           :Клавиша-модификатор для удаления: {STRING}
 CM_STR_CONFIG_SETTING_MODIFIER_REMOVE_HELPTEXT                  :Клавиша-модификатор для режима удаления на инструментах строительства.
-CM_STR_CONFIG_SETTING_MODIFIER_ESTIMATE                         :Клавиша-модификатор для оценки: {STRING2}
+CM_STR_CONFIG_SETTING_MODIFIER_ESTIMATE                         :Клавиша-модификатор для оценки: {STRING}
 CM_STR_CONFIG_SETTING_MODIFIER_ESTIMATE_HELPTEXT                :Клавиша-модификатор для режима оценки стоимости.
 CM_STR_CONFIG_SETTING_MODIFIER_NONE                             :Не назначена
 CM_STR_CONFIG_SETTING_MODIFIER_SHIFT                            :Shift
@@ -6395,19 +6395,19 @@ CM_STR_CONFIG_SETTING_MODIFIER_CTRL                             :Ctrl
 CM_STR_CONFIG_SETTING_MODIFIER_ALT                              :Alt
 CM_STR_CONFIG_SETTING_MODIFIER_COMMAND                          :Command (на MacOS)
 
-CM_STR_CONFIG_SETTING_SHADED_TREES                              :Затенение деревьев: {STRING2}
+CM_STR_CONFIG_SETTING_SHADED_TREES                              :Затенение деревьев: {STRING}
 CM_STR_CONFIG_SETTING_SHADED_TREES_HELPTEXT                     :Затемняет деревья в зависимости от ориентации склона. Улучшает визуальное представления гористой местности.
 CM_STR_CONFIG_SETTING_SHADED_TREES_OFF                          :Всегда выключено
 CM_STR_CONFIG_SETTING_SHADED_TREES_ON                           :Всегда включено
 CM_STR_CONFIG_SETTING_SHADED_TREES_SERVER                       :Как на сервере
 
-CM_STR_CONFIG_SETTING_SHOW_APM                                  :Показывать счетчик APM: {STRING2}
+CM_STR_CONFIG_SETTING_SHOW_APM                                  :Показывать счетчик APM: {STRING}
 CM_STR_CONFIG_SETTING_SHOW_APM_HELPTEXT                         :Добавляет счетчик APM (действий в минуту) на панель статуса.
 CM_STR_STATUSBAR_APM                                            :{WHITE}APM: {NUM} СРЕД: {NUM} ЛАГ: {NUM}
 
 CM_STR_STATION_BUILD_SUPPLIES                                   :{BLACK}Отправляется: {GOLD}
 
-CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND                          :Цвет фона графиков: {STRING2}
+CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND                          :Цвет фона графиков: {STRING}
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_HELPTEXT                 :Основной цвет фона для окон с графиками. Остальные связанные цвета изменяются в соответствии.
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK                    :Черный
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_GREY                     :Светло-серый
@@ -6428,7 +6428,7 @@ CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Change p
 CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT                    :{BLACK}Change username
 CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT                    :{BLACK}Change password
 CM_STR_LOGIN_WINDOW_SIGN_IN_HELPTEXT                            :{BLACK}Sign in (you must be on the correct community server)
-CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{RAW_STRING}
+CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{STRING}
 CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
 
 CM_STR_NETWORK_COMPANY_LIST_NEW_COMPANY                         :Новая компания
@@ -6436,12 +6436,12 @@ CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Стать зр
 
 CM_STR_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT                           :{BLACK}Чертежи рельсов (копировать-вставить)
 
-CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL                            :Ctrl+click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_SHIFT                           :Shift+click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL_SHIFT                      :Ctrl+Shift+lick: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT                             :Alt+Click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_SHIFT                       :Alt+Shift+click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_CTRL                        :Ctrl+Alt+click: {STRING2}
+CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL                            :Ctrl+click: {STRING}
+CM_STR_CONFIG_SETTING_ORDER_MOD_SHIFT                           :Shift+click: {STRING}
+CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL_SHIFT                      :Ctrl+Shift+lick: {STRING}
+CM_STR_CONFIG_SETTING_ORDER_MOD_ALT                             :Alt+Click: {STRING}
+CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_SHIFT                       :Alt+Shift+click: {STRING}
+CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_CTRL                        :Ctrl+Alt+click: {STRING}
 CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_NONE                     :ничего не делать
 CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FULL_LOAD_ANY            :Полная загрузка любым грузом
 CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_TRANSFER_CARGO           :Передать груз
@@ -6450,15 +6450,15 @@ CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_LOAD              :Загрузк�
 CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_UNLOAD            :Разгрузка фидера (заменяет последнее задание)
 CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_NO_LOAD                  :Ничего не загружать
 
-CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS                     :Оставлять инструмент строительства депо открытым после использования: {STRING2}
+CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS                     :Оставлять инструмент строительства депо открытым после использования: {STRING}
 CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS_HELPTEXT            :Оставлять инструмент строительства депо открытым после использования (поведение инвертируется нажанием Fn).
-CM_STR_CONFIG_SETTING_IMPROVED_STATION_JOIN                     :Использовать улучшенное управление объединением станций: {STRING2}
+CM_STR_CONFIG_SETTING_IMPROVED_STATION_JOIN                     :Использовать улучшенное управление объединением станций: {STRING}
 CM_STR_CONFIG_SETTING_IMPROVED_STATION_JOIN_HELPTEXT            :Используйте Fn-клик на клетке станции чтобы выбрать к какой станции присоединиться. Если у станции не осталось клеток, Fn-кликните на ее название. Fn-клик на пустой клетке построит новую станцию. Также недавно построенные станции автоматиски выбираются для присоединения. {RED}Эта функция не работает если объединение не примыкающих друг к другу станций выключено в настройках.
 
 CM_STR_CONFIG_SETTING_VEHICLES_CTRL                             :{ORANGE}Управление заданиями
-CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                :Задания "Передать" изпользуют "Без загрузки" по умолчанию: {STRING2}
-CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                  :Задания "Выгрузить все" изпозуют "Без загрузки" по умолчанию: {STRING2}
-CM_STR_CONFIG_SETTING_INVERT_FN_FOR_SIGNAL_DRAG                 :Инвертировать эффект клавиши-модификатора Fn при протаскивании сигналов: {STRING2}
+CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_TRANSFER                :Задания "Передать" изпользуют "Без загрузки" по умолчанию: {STRING}
+CM_STR_CONFIG_SETTING_AUTOSET_NOLOAD_ON_UNLOAD                  :Задания "Выгрузить все" изпозуют "Без загрузки" по умолчанию: {STRING}
+CM_STR_CONFIG_SETTING_INVERT_FN_FOR_SIGNAL_DRAG                 :Инвертировать эффект клавиши-модификатора Fn при протаскивании сигналов: {STRING}
 CM_STR_CONFIG_SETTING_INVERT_FN_FOR_SIGNAL_DRAG_HELPTEXT        :Если включено, при протаскивании сигналов строить их до следующего если Fn на нажат и фиксорованное расстояние если нажат.
 
 CM_STR_TOGGLE_CLIENTS_OVERLAY                                   :{BLACK}Переключить оверлей со списком клиентов.
