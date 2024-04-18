@@ -6289,7 +6289,7 @@ CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania patch
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
 CM_STR_NO_BLUEPRINT_IN_SLOT                                     :{WHITE}No blueprint in slot {NUM}
-CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania-Serverlogin
+CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania server login
 CM_STR_BUILD_INFO_OVERLAY_COST_OK                               :{WHITE}Cost: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY                         :{RED}Cost: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_STATION_ACCEPTS                       :{WHITE}Accepts:
@@ -6300,5 +6300,5 @@ CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN                         :{RED}Unknown Er
 
 CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID                         :{LTBLUE}{ENGINE} {BLACK}Built: {LTBLUE}{NUM}{BLACK} Value: {LTBLUE}{CURRENCY_LONG}{BLACK} ID: {LTBLUE}{NUM}
 
-CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE                       :Toolbar dropdowns activate on release: {STRING2}
-CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE_HELPTEXT              :Control whether the main toolbar dropdowns activate their default function when the mouse button is released. If not enabled then the dropdown menu will stay open so a selection can be made.
+CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE                    :Toolbar dropdowns activate on release: {STRING2}
+CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE_HELPTEXT           :Control whether the main toolbar dropdowns activate their default function when the mouse button is released. If not enabled then the dropdown menu will stay open so a selection can be made.

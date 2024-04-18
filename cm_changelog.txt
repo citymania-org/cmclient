@@ -73,6 +73,9 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+*** 14.0 ***
+- Added a setting to disable activate-on-release behaviour of toolbar dropdown buttons.
+- Added Russian translation.
 
 *** 14.0-RC2 (19 Mar 2024) ***
 - Fix crash in station joining highlight
