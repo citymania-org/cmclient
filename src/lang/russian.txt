@@ -6522,3 +6522,6 @@ CM_STR_BUILD_INFO_OVERLAY_ERROR                                 :{RED}{STRING}
 CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN                         :{RED}Неизвестная Ошибка!
 
 CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID                         :{LTBLUE}{ENGINE} {BLACK}Построен в {LTBLUE}{NUM} г.{BLACK} Стоимость: {LTBLUE}{CURRENCY_LONG}{BLACK} ID: {LTBLUE}{NUM}
+
+CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE                       :Активировать выпадающие меню при отпускании клавиши: {STRING2}
+CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE_HELPTEXT              :Контролирует, активируют ли выпадающие меню основной панели инструментов свою стандартную функцию при отпускании кнопки мыши. Если выключено, то выпадающее меню останется открытым, чтобы можно было сделать выбор.

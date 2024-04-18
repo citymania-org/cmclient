@@ -259,6 +259,7 @@ struct GUISettings {
 	bool cm_show_client_overlay;
 	bool cm_enable_polyrail_terraform;
 	bool cm_invert_fn_for_signal_drag;
+	bool cm_toolbar_dropdown_close;
 	/* CityMania code end */
 
 	/**

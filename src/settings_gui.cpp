@@ -2009,6 +2009,7 @@ static SettingsContainer &GetSettingsTree()
 				general->Add(new SettingEntry("gui.cm_remove_mod"));
 				general->Add(new SettingEntry("gui.cm_estimate_mod"));
 				general->Add(new SettingEntry("gui.cm_show_apm"));
+				general->Add(new SettingEntry("gui.cm_toolbar_dropdown_close"));
 			}
 
 			SettingsPage *viewports = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_VIEWPORTS));
