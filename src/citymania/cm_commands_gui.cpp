@@ -765,35 +765,22 @@ struct LoginWindow : Window {
 				SetLoginItem(INI_LOGIN_KEYS[this->query_widget - 3], item); // - LWW_NICE_LOGIN + NICE_LOGIN
 				break;
 			}
-            case LQW_NICE_PW:
-			{
-				 /*	FIXME: create and save the md5salt */
-                 Md5 password, salted_password;
-                 password.Append(str, strlen(str));
-                 uint8 digest[16];
-                 char hex_output[16 * 2 + 1];
-                 /* 1st ERROR: cannot convert argument 1 from uint8_t[16] to 'MD5HASH &' */
-                 /*
-                 password.Finish(digest);
-				 for (int di = 0; di < 16; ++di){
-					 // 2nd ERROR: seprintf
-                     seprintf(hex_output + di * 2,lastof(hex_output), "%02x",digest[di]);
-                 }
-                 char tobe_salted[4 + 16 * 2 + 6 + 1] = {0};
-				 //3rd ERROR: strecat
-                 strecat(tobe_salted, "nice", lastof(tobe_salted));
-                 strecat(tobe_salted + 4, hex_output,lastof(tobe_salted));
-                 strecat(tobe_salted + 4 + 16 * 2, "client",lastof(tobe_salted));
-                 assert(strlen(tobe_salted) == (sizeof(tobe_salted) - 1));
-                 salted_password.Append(tobe_salted,strlen(tobe_salted));
-                 salted_password.Finish(digest);
-                 for (int di = 0; di < 16; ++di){
-                     seprintf(hex_output + di * 2,lastof(hex_output), "%02x",digest[di]);
-                 }
-				 // Save the result to citymania.cfg
-                 SetLoginItem(NICE_PW, hex_output);
-				 */
-				 break;
+			case LQW_NICE_PW: {
+				Md5 password, salted_password;
+				MD5Hash digest;
+
+				password.Append(str, strlen(str));
+				password.Finish(digest);
+				auto first_pass = fmt::format("{:02x}", fmt::join(digest, ""));
+
+				auto tobe_salted = fmt::format("nice{}client", first_pass);
+				salted_password.Append(tobe_salted.c_str(),tobe_salted.length());
+				salted_password.Finish(digest);
+				auto second_pass = fmt::format("{:02x}", fmt::join(digest, ""));
+
+				// Save the result to citymania.cfg
+				SetLoginItem(NICE_PW, second_pass);
+				break;
 			}
 			default: return;
 		}
