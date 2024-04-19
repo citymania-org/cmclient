@@ -94,6 +94,8 @@ class ReplaceVehicleWindow : public Window {
 	RoadType sel_roadtype;        ///< Type of road selected. #INVALID_ROADTYPE to show all.
 	Scrollbar *vscroll[2];
 
+	uint cm_num_hidden_engines;
+
 	/**
 	 * Figure out if an engine should be added to a list.
 	 * @param e            The EngineID.
@@ -148,9 +150,10 @@ class ReplaceVehicleWindow : public Window {
 		byte side = draw_left ? 0 : 1;
 
 		GUIEngineList list;
+		this->cm_num_hidden_engines = 0;
 
 		for (const Engine *e : Engine::IterateType(type)) {
-			if (!draw_left && !this->show_hidden_engines && e->IsVariantHidden(_local_company)) continue;
+			// CM num_hidden if (!draw_left && !this->show_hidden_engines && e->IsVariantHidden(_local_company)) continue;
 			EngineID eid = e->index;
 			switch (type) {
 				case VEH_TRAIN:
@@ -175,6 +178,10 @@ class ReplaceVehicleWindow : public Window {
 				if (num_engines == 0 && EngineReplacementForCompany(Company::Get(_local_company), eid, this->sel_group) == INVALID_ENGINE) continue;
 			} else {
 				if (!CheckAutoreplaceValidity(this->sel_engine[0], eid, _local_company)) continue;
+				if (e->IsVariantHidden(_local_company)) {
+					this->cm_num_hidden_engines++;
+					if (!this->show_hidden_engines) continue;
+				}
 			}
 
 			list.emplace_back(eid, e->info.variant_id, (side == 0) ? EngineDisplayFlags::None : e->display_flags, 0);
@@ -306,7 +313,7 @@ public:
 		this->vscroll[1] = this->GetScrollbar(WID_RV_RIGHT_SCROLLBAR);
 
 		NWidgetCore *widget = this->GetWidget<NWidgetCore>(WID_RV_SHOW_HIDDEN_ENGINES);
-		widget->widget_data = STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN + vehicletype;
+		widget->widget_data = CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN + vehicletype;
 		widget->tool_tip    = STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP + vehicletype;
 		widget->SetLowered(this->show_hidden_engines);
 		this->FinishInitNested(vehicletype);
@@ -456,6 +463,10 @@ public:
 			case WID_RV_ROAD_TYPE_DROPDOWN:
 				SetDParam(0, this->sel_roadtype == INVALID_ROADTYPE ? STR_REPLACE_ALL_ROADTYPE : GetRoadTypeInfo(this->sel_roadtype)->strings.replace_text);
 				break;
+
+			case WID_RV_SHOW_HIDDEN_ENGINES:
+				SetDParam(0, this->cm_num_hidden_engines);
+				break;
 		}
 	}
 
@@ -501,7 +512,17 @@ public:
 
 	void OnPaint() override
 	{
-		if (this->engines[0].NeedRebuild() || this->engines[1].NeedRebuild()) this->GenerateLists();
+		/* CityMania code start */
+		//if (this->engines[0].NeedRebuild() || this->engines[1].NeedRebuild()) this->GenerateLists();
+		if (this->engines[0].NeedRebuild() || this->engines[1].NeedRebuild()) {
+			auto old_num_hidden_engines = this->cm_num_hidden_engines;
+			this->GenerateLists();
+			if (old_num_hidden_engines != this->cm_num_hidden_engines) {
+				this->ReInit();
+				return;
+			}
+		}
+		/* CityMania code end */
 
 		Company *c = Company::Get(_local_company);
 
@@ -764,7 +785,7 @@ static constexpr NWidgetPart _nested_replace_rail_vehicle_widgets[] = {
 				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_RV_SORT_DROPDOWN), SetResize(1, 0), SetFill(1, 1), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_RV_SHOW_HIDDEN_ENGINES), SetDataTip(STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN, STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_RV_SHOW_HIDDEN_ENGINES), SetDataTip(CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN, STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP),
 				NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0), SetFill(1, 1), EndContainer(),
 			EndContainer(),
 		EndContainer(),
@@ -825,7 +846,7 @@ static constexpr NWidgetPart _nested_replace_road_vehicle_widgets[] = {
 				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_RV_SORT_DROPDOWN), SetResize(1, 0), SetFill(1, 1), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_RV_SHOW_HIDDEN_ENGINES), SetDataTip(STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN, STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_RV_SHOW_HIDDEN_ENGINES), SetDataTip(CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN, STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP),
 				NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0), SetFill(1, 1), EndContainer(),
 			EndContainer(),
 		EndContainer(),
@@ -880,7 +901,7 @@ static constexpr NWidgetPart _nested_replace_vehicle_widgets[] = {
 				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_RV_SORT_DROPDOWN), SetResize(1, 0), SetFill(1, 1), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_RV_SHOW_HIDDEN_ENGINES), SetDataTip(STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN, STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_RV_SHOW_HIDDEN_ENGINES), SetDataTip(CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN, STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP),
 				NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0), SetFill(1, 1), EndContainer(),
 			EndContainer(),
 		EndContainer(),

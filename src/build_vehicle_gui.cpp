@@ -7,6 +7,7 @@
 
 /** @file build_vehicle_gui.cpp GUI for building vehicles. */
 
+#include "engine_type.h"
 #include "stdafx.h"
 #include "engine_base.h"
 #include "engine_func.h"
@@ -1150,6 +1151,7 @@ struct BuildVehicleWindow : Window {
 
 	StringFilter string_filter;                 ///< Filter for vehicle name
 	QueryString vehicle_editbox;                ///< Filter editbox
+	uint cm_num_hidden_engines;
 
 	void SetBuyVehicleText()
 	{
@@ -1200,7 +1202,10 @@ struct BuildVehicleWindow : Window {
 		this->descending_sort_order = _engine_sort_last_order[type];
 		this->show_hidden_engines   = _engine_sort_show_hidden_engines[type];
 
+		this->SetCargoFilterArray(); // CM
 		this->UpdateFilterByTile();
+		this->eng_list.ForceRebuild(); // CM
+		this->GenerateBuildList(); // CM Needs to be before FinishInitNested to calculate num_hidden_engines for SetStringParameters
 
 		this->CreateNestedTree();
 
@@ -1221,7 +1226,7 @@ struct BuildVehicleWindow : Window {
 		widget->tool_tip    = STR_BUY_VEHICLE_TRAIN_RENAME_TOOLTIP + type;
 
 		widget = this->GetWidget<NWidgetCore>(WID_BV_SHOW_HIDDEN_ENGINES);
-		widget->widget_data = STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN + type;
+		widget->widget_data = CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN + type;
 		widget->tool_tip    = STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP + type;
 		widget->SetLowered(this->show_hidden_engines);
 
@@ -1238,8 +1243,8 @@ struct BuildVehicleWindow : Window {
 
 		this->owner = (tile != INVALID_TILE) ? GetTileOwner(tile) : _local_company;
 
-		this->eng_list.ForceRebuild();
-		this->GenerateBuildList(); // generate the list, since we need it in the next line
+		// CM moved up this->eng_list.ForceRebuild();
+		// CM moved up this->GenerateBuildList(); // generate the list, since we need it in the next line
 
 		/* Select the first unshaded engine in the list as default when opening the window */
 		EngineID engine = INVALID_ENGINE;
@@ -1329,19 +1334,22 @@ struct BuildVehicleWindow : Window {
 		this->te.FillDefaultCapacities(e);
 	}
 
-	void OnInit() override
-	{
-		this->SetCargoFilterArray();
-	}
+	// CM calls this in constructor
+	// void OnInit() override
+	// {
+	// 	this->SetCargoFilterArray();
+	// }
 
 	/** Filter the engine list against the currently selected cargo filter */
-	void FilterEngineList()
+	EngineID FilterEngineList()
 	{
 		this->eng_list.Filter(this->cargo_filter_criteria);
 		if (0 == this->eng_list.size()) { // no engine passed through the filter, invalidate the previously selected engine
-			this->SelectEngine(INVALID_ENGINE);
+			// CM this->SelectEngine(INVALID_ENGINE);
+			return INVALID_ENGINE;
 		} else if (std::find(this->eng_list.begin(), this->eng_list.end(), this->sel_engine) == this->eng_list.end()) { // previously selected engine didn't pass the filter, select the first engine of the list
-			this->SelectEngine(this->eng_list[0].engine_id);
+			// CM this->SelectEngine(this->eng_list[0].engine_id);
+			return this->eng_list[0].engine_id;
 		}
 	}
 
@@ -1371,11 +1379,12 @@ struct BuildVehicleWindow : Window {
 	}
 
 	/* Figure out what train EngineIDs to put in the list */
-	void GenerateBuildTrainList(GUIEngineList &list)
+	EngineID GenerateBuildTrainList(GUIEngineList &list)
 	{
 		std::vector<EngineID> variants;
 		EngineID sel_id = INVALID_ENGINE;
 		size_t num_engines = 0;
+		this->cm_num_hidden_engines = 0;
 
 		list.clear();
 
@@ -1384,7 +1393,7 @@ struct BuildVehicleWindow : Window {
 		 * and if not, reset selection to INVALID_ENGINE. This could be the case
 		 * when engines become obsolete and are removed */
 		for (const Engine *e : Engine::IterateType(VEH_TRAIN)) {
-			if (!this->show_hidden_engines && e->IsVariantHidden(_local_company)) continue;
+			// CM for num_hidden / if (!this->show_hidden_engines && e->IsVariantHidden(_local_company)) continue;
 			EngineID eid = e->index;
 			const RailVehicleInfo *rvi = &e->u.rail;
 
@@ -1396,6 +1405,14 @@ struct BuildVehicleWindow : Window {
 
 			/* Filter by name or NewGRF extra text */
 			if (!FilterByText(e)) continue;
+
+			/* CityMania code start */
+			/* Note: needs to be the last check to calculate the number correctly */
+			if (e->IsVariantHidden(_local_company)) {
+				this->cm_num_hidden_engines++;
+				if (!this->show_hidden_engines) continue;
+			}
+			/* CityMania code end */
 
 			list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
 
@@ -1420,7 +1437,7 @@ struct BuildVehicleWindow : Window {
 			}
 		}
 
-		this->SelectEngine(sel_id);
+		// CM for num_hidden / this->SelectEngine(sel_id);
 
 		/* invalidate cached values for name sorter - engine names could change */
 		_last_engine[0] = _last_engine[1] = INVALID_ENGINE;
@@ -1435,17 +1452,20 @@ struct BuildVehicleWindow : Window {
 
 		/* and finally sort wagons */
 		EngList_SortPartial(list, _engine_sort_functions[0][this->sort_criteria], num_engines, list.size() - num_engines);
+
+		return sel_id; // CM
 	}
 
 	/* Figure out what road vehicle EngineIDs to put in the list */
 	void GenerateBuildRoadVehList()
 	{
-		EngineID sel_id = INVALID_ENGINE;
+		// CM num_hidden / EngineID sel_id = INVALID_ENGINE;
+		this->cm_num_hidden_engines = 0;
 
 		this->eng_list.clear();
 
 		for (const Engine *e : Engine::IterateType(VEH_ROAD)) {
-			if (!this->show_hidden_engines && e->IsVariantHidden(_local_company)) continue;
+			// CM num_hidden / if (!this->show_hidden_engines && e->IsVariantHidden(_local_company)) continue;
 			EngineID eid = e->index;
 			if (!IsEngineBuildable(eid, VEH_ROAD, _local_company)) continue;
 			if (this->filter.roadtype != INVALID_ROADTYPE && !HasPowerOnRoad(e->u.road.roadtype, this->filter.roadtype)) continue;
@@ -1453,17 +1473,25 @@ struct BuildVehicleWindow : Window {
 			/* Filter by name or NewGRF extra text */
 			if (!FilterByText(e)) continue;
 
-			this->eng_list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
+			/* CityMania code start */
+			// this->eng_list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
+			// if (eid == this->sel_engine) sel_id = eid;
+			/* Note: needs to be the last check to calculate the number correctly */
+			if (e->IsVariantHidden(_local_company)) {
+				this->cm_num_hidden_engines++;
+				if (!this->show_hidden_engines) continue;
+			}
 
-			if (eid == this->sel_engine) sel_id = eid;
+			this->eng_list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
+			/* CityMania code end */
 		}
-		this->SelectEngine(sel_id);
 	}
 
 	/* Figure out what ship EngineIDs to put in the list */
 	void GenerateBuildShipList()
 	{
-		EngineID sel_id = INVALID_ENGINE;
+		// CM EngineID sel_id = INVALID_ENGINE;
+		this->cm_num_hidden_engines = 0;
 		this->eng_list.clear();
 
 		for (const Engine *e : Engine::IterateType(VEH_SHIP)) {
@@ -1474,17 +1502,25 @@ struct BuildVehicleWindow : Window {
 			/* Filter by name or NewGRF extra text */
 			if (!FilterByText(e)) continue;
 
-			this->eng_list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
+			/* CityMania code start */
+			// this->eng_list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
+			// if (eid == this->sel_engine) sel_id = eid;
+			/* Note: needs to be the last check to calculate the number correctly */
+			if (e->IsVariantHidden(_local_company)) {
+				this->cm_num_hidden_engines++;
+				if (!this->show_hidden_engines) continue;
+			}
 
-			if (eid == this->sel_engine) sel_id = eid;
+			this->eng_list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
+			/* CityMania code end */
 		}
-		this->SelectEngine(sel_id);
 	}
 
 	/* Figure out what aircraft EngineIDs to put in the list */
 	void GenerateBuildAircraftList()
 	{
-		EngineID sel_id = INVALID_ENGINE;
+		// CM num_hidden / EngineID sel_id = INVALID_ENGINE;
+		this->cm_num_hidden_engines = 0;
 
 		this->eng_list.clear();
 
@@ -1504,18 +1540,23 @@ struct BuildVehicleWindow : Window {
 			/* Filter by name or NewGRF extra text */
 			if (!FilterByText(e)) continue;
 
+			/* CityMania code start */
+			// this->eng_list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
+			// if (eid == this->sel_engine) sel_id = eid;
+			/* Note: needs to be the last check to calculate the number correctly */
+			if (e->IsVariantHidden(_local_company)) {
+				this->cm_num_hidden_engines++;
+				if (!this->show_hidden_engines) continue;
+			}
+
 			this->eng_list.emplace_back(eid, e->info.variant_id, e->display_flags, 0);
-
-			if (eid == this->sel_engine) sel_id = eid;
-		}
-
-		this->SelectEngine(sel_id);
+			/* CityMania code end */		}
 	}
 
 	/* Generate the list of vehicles */
-	void GenerateBuildList()
+	EngineID GenerateBuildList()
 	{
-		if (!this->eng_list.NeedRebuild()) return;
+		if (!this->eng_list.NeedRebuild()) return this->sel_engine; // CM return
 
 		/* Update filter type in case the road/railtype of the depot got converted */
 		this->UpdateFilterByTile();
@@ -1523,15 +1564,16 @@ struct BuildVehicleWindow : Window {
 		this->eng_list.clear();
 
 		GUIEngineList list;
+		EngineID sel_id = INVALID_ENGINE;  // CM
 
 		switch (this->vehicle_type) {
 			default: NOT_REACHED();
 			case VEH_TRAIN:
-				this->GenerateBuildTrainList(list);
+				sel_id = this->GenerateBuildTrainList(list);  // CM
 				AddChildren(list, INVALID_ENGINE, 0);
 				this->eng_list.shrink_to_fit();
 				this->eng_list.RebuildDone();
-				return;
+				return sel_id;  // CM
 			case VEH_ROAD:
 				this->GenerateBuildRoadVehList();
 				break;
@@ -1543,7 +1585,7 @@ struct BuildVehicleWindow : Window {
 				break;
 		}
 
-		this->FilterEngineList();
+		sel_id = this->FilterEngineList();  // CM change
 
 		/* ensure primary engine of variant group is in list after filtering */
 		std::vector<EngineID> variants;
@@ -1569,6 +1611,8 @@ struct BuildVehicleWindow : Window {
 		AddChildren(list, INVALID_ENGINE, 0);
 		this->eng_list.shrink_to_fit();
 		this->eng_list.RebuildDone();
+
+		return sel_id;  // CM
 	}
 
 	DropDownList BuildCargoDropDownList() const
@@ -1748,6 +1792,10 @@ struct BuildVehicleWindow : Window {
 				}
 				break;
 			}
+
+			case WID_BV_SHOW_HIDDEN_ENGINES:
+				SetDParam(0, this->cm_num_hidden_engines);
+				break;
 		}
 	}
 
@@ -1816,8 +1864,20 @@ struct BuildVehicleWindow : Window {
 
 	void OnPaint() override
 	{
-		this->GenerateBuildList();
-		this->vscroll->SetCount(this->eng_list.size());
+		/* CityMania code start */
+		// this->GenerateBuildList();
+		// this->vscroll->SetCount(this->eng_list.size());
+		uint old_num_hidden_engines = this->cm_num_hidden_engines;
+		EngineID sel_id = this->GenerateBuildList();
+		if (sel_id != this->sel_engine) this->SelectEngine(sel_id);
+		if (old_num_hidden_engines != this->cm_num_hidden_engines) {
+			this->ReInit();
+			return;
+		}
+
+		this->vscroll->SetCount(
+		this->eng_list.size());
+		/* CityMania code end */
 
 		this->SetWidgetsDisabledState(this->sel_engine == INVALID_ENGINE, WID_BV_SHOW_HIDE, WID_BV_BUILD);
 

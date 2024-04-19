@@ -6302,3 +6302,9 @@ CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID                         :{LTBLUE}{ENGINE
 
 CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE                    :Toolbar dropdowns activate on release: {STRING2}
 CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE_HELPTEXT           :Control whether the main toolbar dropdowns activate their default function when the mouse button is released. If not enabled then the dropdown menu will stay open so a selection can be made.
+
+###length VEHICLE_TYPES
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Show hidden ({NUM})
