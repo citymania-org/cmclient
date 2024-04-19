@@ -2924,7 +2924,7 @@ void UpdateTileSelection()
  */
 static inline void ShowMeasurementTooltips(StringID str, uint paramcount, TooltipCloseCondition close_cond = TCC_EXIT_VIEWPORT)
 {
-	// CM (why)? if (!_settings_client.gui.measure_tooltip) return;
+	if (!_settings_client.gui.measure_tooltip) return;
 	GuiShowTooltips(_thd.GetCallbackWnd(), str, close_cond, paramcount);
 }
 
@@ -3185,7 +3185,6 @@ static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, Ti
 {
 	static const StringID measure_strings_length[] = {STR_NULL, STR_MEASURE_LENGTH, STR_MEASURE_LENGTH_HEIGHTDIFF};
 
-	uint paramcount = 0;
 	if (_settings_client.gui.measure_tooltip) {
 		uint distance = DistanceManhattan(start_tile, end_tile) + 1;
 		byte index = 0;
@@ -3199,11 +3198,11 @@ static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, Ti
 				distance = CeilDiv(distance, 2);
 			}
 
-			SetDParam(paramcount++, distance);
-			if (heightdiff != 0) SetDParam(paramcount++, heightdiff);
+			SetDParam(index++, distance);
+			if (heightdiff != 0) SetDParam(index++, heightdiff);
 		}
 
-		ShowMeasurementTooltips(measure_strings_length[index], paramcount, close_cond);
+		ShowMeasurementTooltips(measure_strings_length[index], index, close_cond);
 	}
 }
 

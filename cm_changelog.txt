@@ -74,6 +74,8 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 *** 14.0 ***
+- Fixed graphs with cargo selection.
+- Fixed measurement tooltips.
 - Added a setting to disable activate-on-release behaviour of toolbar dropdown buttons.
 - Added Russian translation.
 
