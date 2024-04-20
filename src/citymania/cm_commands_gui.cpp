@@ -38,7 +38,7 @@ static const char * const NOVAPOLIS_IPV6_PRIMARY   = "2a02:2b88:2:1::1d73:1";
 static const char * const NOVAPOLIS_IPV4_SECONDARY = "89.111.65.225";
 static const char * const NOVAPOLIS_IPV6_SECONDARY = "fe80::20e:7fff:fe23:bee0";
 static const char * const NOVAPOLIS_STRING         = "CityMania";
-static constexpr std::string_view NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken.php?user={}&password={}";
+static constexpr std::string_view NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken_md5salt.php?user={}&password={}";
 static constexpr std::string_view BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken-enc.php?user={}&password={}";
 
 static const char * const NOVA_IP_ADDRESSES[] = {
@@ -666,7 +666,7 @@ void AccountLogin(CommunityName community){
 			NetworkClientSendChatToServer(fmt::format("!login {} {}", _inilogindata[NOVAPOLISUSER], _inilogindata[NOVAPOLISPW]));
 			return;
 		case NICE:
-			uri = fmt::format("http://n-ice.org/openttd/gettoken.php?user={}&password={}", GetLoginItem(NICE_LOGIN), GetLoginItem(NICE_PW));
+			uri = fmt::format(NICE_HTTP_LOGIN, GetLoginItem(NICE_LOGIN), GetLoginItem(NICE_PW));
 			break;
 		case BTPRO: {
 			uri = fmt::format(BTPRO_HTTP_LOGIN,
@@ -759,11 +759,27 @@ struct LoginWindow : Window {
 				break;
 			}
 			case LQW_NICE_LOGIN:
-			case LQW_NICE_PW:
 			case LQW_BTPRO_LOGIN:
 			case LQW_BTPRO_PW: {
 				auto item = urlencode(str);
 				SetLoginItem(INI_LOGIN_KEYS[this->query_widget - 3], item); // - LWW_NICE_LOGIN + NICE_LOGIN
+				break;
+			}
+			case LQW_NICE_PW: {
+				Md5 password, salted_password;
+				MD5Hash digest;
+
+				password.Append(str, strlen(str));
+				password.Finish(digest);
+				auto first_pass = fmt::format("{:02x}", fmt::join(digest, ""));
+
+				auto tobe_salted = fmt::format("nice{}client", first_pass);
+				salted_password.Append(tobe_salted.c_str(),tobe_salted.length());
+				salted_password.Finish(digest);
+				auto second_pass = fmt::format("{:02x}", fmt::join(digest, ""));
+
+				// Save the result to citymania.cfg
+				SetLoginItem(NICE_PW, second_pass);
 				break;
 			}
 			default: return;
