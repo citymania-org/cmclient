@@ -10,6 +10,7 @@
 #include "../../station_cmd.h"
 #include "../../town_cmd.h"
 #include "../../tunnelbridge_cmd.h"
+#include "../../script/script_cmd.h"
 namespace citymania {
 namespace cmd {
 
@@ -42,7 +43,9 @@ static constexpr auto _callback_tuple = std::make_tuple(
     &CcBuildIndustry,
     &CcBuildBridge,
     &CcCreateGroup,
-    &CcAddVehicleNewGroup
+    &CcAddVehicleNewGroup,
+    &CcAI,
+    &CcGame
 );
 
 inline constexpr size_t _callback_tuple_size = std::tuple_size_v<decltype(_callback_tuple)>;
