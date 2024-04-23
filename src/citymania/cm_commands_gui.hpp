@@ -5,6 +5,7 @@ namespace citymania {
 
 void ShowCommandsToolbar();
 void ShowLoginWindow();
+void CheckCommunity();
 
 } // namespace citymania
 
