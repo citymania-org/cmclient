@@ -178,10 +178,7 @@ void WriteHouseSpecInfo(JsonWriter &j) {
 
 void WriteCargoSpecInfo(JsonWriter &j) {
     j.begin_list_with_key("cargo_specs");
-    const CargoSpec *cs;
-    char buffer[128];
     char cargo_label[16];
-    bool first = true;
     SetDParam(0, 123);
     for (const CargoSpec *cs : CargoSpec::Iterate()) {
         j.begin_dict();
@@ -242,12 +239,11 @@ void WritePaletteInfo(JsonWriter &j) {
         j.f << "]";
     }
     j.end_list();
-    const byte *remap = GetNonSprite(GB(PALETTE_TO_RED, 0, PALETTE_WIDTH), SpriteType::Recolour) + 1;
+    // const byte *remap = GetNonSprite(GB(PALETTE_TO_RED, 0, PALETTE_WIDTH), SpriteType::Recolour) + 1;
 }
 
 void WriteEngineInfo(JsonWriter &j) {
     j.begin_list_with_key("engines");
-    const Engine *e;
     for (const Engine *e : Engine::Iterate()) {
         if (e->type != VEH_TRAIN) continue;
         j.begin_dict();

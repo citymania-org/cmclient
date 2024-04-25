@@ -31,7 +31,7 @@ Game::Game() {
         this->towns_growth_tiles.clear();
     });
 
-    this->events.listen<event::TownBuilt>(event::Slot::GAME, [this] (const event::TownBuilt &event) {
+    this->events.listen<event::TownBuilt>(event::Slot::GAME, [] (const event::TownBuilt &event) {
         auto t = event.town;
         t->cm.hs_total = t->cm.hs_last_month = t->cm.hs_this_month = 0;
         t->cm.cs_total = t->cm.cs_last_month = t->cm.cs_this_month = 0;
@@ -68,13 +68,13 @@ Game::Game() {
         this->set_town_growth_tile(event.town, event.tile, TownGrowthTileState::NEW_HOUSE);
     });
 
-    this->events.listen<event::HouseCleared>(event::Slot::GAME, [this] (const event::HouseCleared &event) {
+    this->events.listen<event::HouseCleared>(event::Slot::GAME, [] (const event::HouseCleared &event) {
         if (!event.was_completed)
             event.town->cm.houses_constructing--;
         event.town->cm.real_population -= event.house_spec->population;
     });
 
-    this->events.listen<event::HouseCompleted>(event::Slot::GAME, [this] (const event::HouseCompleted &event) {
+    this->events.listen<event::HouseCompleted>(event::Slot::GAME, [] (const event::HouseCompleted &event) {
         event.town->cm.houses_constructing--;
     });
 
@@ -86,7 +86,7 @@ Game::Game() {
         }
     });
 
-    this->events.listen<event::TownCachesRebuilt>(event::Slot::GAME, [this] (const event::TownCachesRebuilt &event) {
+    this->events.listen<event::TownCachesRebuilt>(event::Slot::GAME, [this] (const event::TownCachesRebuilt&) {
         this->towns_growth_tiles.clear();
         this->towns_growth_tiles_last_month.clear();
         for (Town *town : Town::Iterate()) {
@@ -109,7 +109,7 @@ Game::Game() {
         }
     });
 
-    this->events.listen<event::CargoAccepted>(event::Slot::GAME, [this] (const event::CargoAccepted &event) {
+    this->events.listen<event::CargoAccepted>(event::Slot::GAME, [] (const event::CargoAccepted &event) {
         event.company->cur_economy.cm.cargo_income[event.cargo_type] += event.profit;
     });
 }
