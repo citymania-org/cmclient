@@ -41,6 +41,7 @@
 #include "../../engine_cmd.h"
 #include "../../tunnelbridge_cmd.h"
 #include "../../group_cmd.h"
+#include "../../script_cmd.h"
 
 namespace citymania {
 namespace cmd {

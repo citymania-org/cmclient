@@ -76,6 +76,7 @@ This is usable for any OpenTTD servers
 *** 14.0 ***
 - Fixed graphs with cargo selection.
 - Fixed measurement tooltips.
+- Fixed n-ice community login by Chucky and iSoSyS.
 - Show the number of hidden vehicles in buy and autoreplace windows.
 - Added a setting to disable activate-on-release behaviour of toolbar dropdown buttons.
 - Added Russian translation.
