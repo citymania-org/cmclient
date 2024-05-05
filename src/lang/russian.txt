@@ -2374,7 +2374,7 @@ STR_QUIT_NO                                                     :{BLACK}Нет
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}В главное меню
-STR_ABANDON_GAME_QUERY                                          :{YELLOW}Вы действительно хотите выйти из игры?
+STR_ABANDON_GAME_QUERY                                          :{YELLOW}Вы уверены, что хотите выйти из игры?
 STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Вы уверены, что хотите выйти из этого сценария?
 
 # Help window
@@ -3124,7 +3124,7 @@ STR_AIRPORT_CLASS_LARGE.nom                                     :Средний
 STR_AIRPORT_CLASS_HUB                                           :Большие аэропорты
 STR_AIRPORT_CLASS_HUB.nom                                       :Большой
 STR_AIRPORT_CLASS_HELIPORTS                                     :Вертолётные площадки
-STR_AIRPORT_CLASS_HELIPORTS.nom                                 :Вертолётный
+STR_AIRPORT_CLASS_HELIPORTS.nom                                 :Вертолётная
 
 STR_STATION_BUILD_NOISE                                         :{BLACK}Производимый шум: {GOLD}{COMMA}
 
@@ -3564,10 +3564,13 @@ STR_GENERATION_ABORT_MESSAGE                                    :{YELLOW}Вы д
 STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% готово
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Создание мира
+STR_GENERATION_LANDSCAPE_GENERATION                             :{BLACK}Создание ландшафта
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Создание рек
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Высадка лесов
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Создание объектов
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Расстановка декораций и камней
+STR_GENERATION_TOWN_GENERATION                                  :{BLACK}Создание городов
+STR_GENERATION_INDUSTRY_GENERATION                              :{BLACK}Создание предприятий
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Создание объектов
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Высадка лесов
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Настройка
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Подготовка к запуску...
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Выполняется скрипт
@@ -5465,6 +5468,11 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Все �
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Измените конфигурацию модуля NewGRF
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Нет доступных транспортных средств
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Начните игру не ранее {DATE_SHORT} либо подключите NewGRF, добавляющий транспортные средства, использовавшиеся в это время.
+
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL                    :{WHITE}Отсутствуют типы дорог, которые могла бы прокладывать городская администрация
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL_EXPLANATION        :{WHITE}Измените конфигурацию установленных модулей NewGRF
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET                       :{WHITE}Пока что отсутствуют типы дорог, которые могла бы прокладывать городская администрация
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET_EXPLANATION           :{WHITE}Установите дату начала игры не ранее {DATE_SHORT} или установите модуль NewGRF, добавляющий типы дорог, которые будут доступны администрациям городов на выбранную вами дату
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Невозможно игнорировать светофор. Опасно...

@@ -1682,6 +1682,17 @@ uint GetVehicleListHeight(VehicleType type, uint divisor)
 }
 
 /**
+ * Get width required for the formatted unit number display.
+ * @param digits Number of digits required for unit number.
+ * @return Required width in pixels.
+ */
+static int GetUnitNumberWidth(int digits)
+{
+	SetDParamMaxDigits(0, digits);
+	return GetStringBoundingBox(STR_JUST_COMMA).width;
+}
+
+/**
  * Draw all the vehicle list items.
  * @param selected_vehicle The vehicle that is to be highlighted.
  * @param line_height      Height of a single item line.
@@ -1693,7 +1704,7 @@ void BaseVehicleListWindow::DrawVehicleListItems(VehicleID selected_vehicle, int
 	bool rtl = _current_text_dir == TD_RTL;
 
 	Dimension profit = GetSpriteSize(SPR_PROFIT_LOT);
-	int text_offset = std::max<int>(profit.width, GetDigitWidth() * this->unitnumber_digits) + WidgetDimensions::scaled.hsep_normal;
+	int text_offset = std::max<int>(profit.width, GetUnitNumberWidth(this->unitnumber_digits)) + WidgetDimensions::scaled.hsep_normal;
 	Rect tr = ir.Indent(text_offset, rtl);
 
 	bool show_orderlist = this->vli.vtype >= VEH_SHIP;
@@ -3109,12 +3120,12 @@ public:
 			} else { // no train
 				str = STR_VEHICLE_STATUS_STOPPED;
 			}
+		} else if (v->IsInDepot() && v->IsWaitingForUnbunching()) {
+			str = STR_VEHICLE_STATUS_WAITING_UNBUNCHING;
 		} else if (v->type == VEH_TRAIN && HasBit(Train::From(v)->flags, VRF_TRAIN_STUCK) && !v->current_order.IsType(OT_LOADING)) {
 			str = STR_VEHICLE_STATUS_TRAIN_STUCK;
 		} else if (v->type == VEH_AIRCRAFT && HasBit(Aircraft::From(v)->flags, VAF_DEST_TOO_FAR) && !v->current_order.IsType(OT_LOADING)) {
 			str = STR_VEHICLE_STATUS_AIRCRAFT_TOO_FAR;
-		} else if (v->IsInDepot() && v->IsWaitingForUnbunching()) {
-			str = STR_VEHICLE_STATUS_WAITING_UNBUNCHING;
 		} else { // vehicle is in a "normal" state, show current order
 			if (mouse_over_start_stop) {
 				if (v->vehstatus & VS_STOPPED) {

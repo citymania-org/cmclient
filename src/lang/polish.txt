@@ -3769,11 +3769,14 @@ STR_GENERATION_ABORT_MESSAGE                                    :{YELLOW}Czy na 
 STR_GENERATION_PROGRESS                                         :{WHITE}Ukończono w {NUM}%
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Tworzenie świata
-STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Generator rzek
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Tworzenie drzew
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Tworzenie obiektów
+STR_GENERATION_LANDSCAPE_GENERATION                             :{BLACK}Tworzenie krajobrazu
+STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Tworzenie rzek
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Tworzenie terenów skalistych i nierówności
-STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Ustawianie gry
+STR_GENERATION_TOWN_GENERATION                                  :{BLACK}Tworzenie miast
+STR_GENERATION_INDUSTRY_GENERATION                              :{BLACK}Rozmieszczanie przedsiębiorstw
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Rozmieszczanie obiektów
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Rozmieszczanie drzew
+STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Konfigurowanie rozgrywki
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Uaktywnianie pól
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Uruchamianie skryptu
 STR_GENERATION_PREPARING_GAME                                   :{BLACK}Przygotowywanie gry
@@ -5664,6 +5667,11 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Żadne p
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Zmień konfigurację swoich NewGRF-ów
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Obecnie żaden pojazd nie jest dostępny
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Zacznij grę po {DATE_SHORT} albo użyj zestawu NewGRF, który zawiera wczesne pojazdy
+
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL                    :{WHITE}Brak dostępnych typów dróg miejskich
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL_EXPLANATION        :{WHITE}Zmień konfigurację NewGRF
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET                       :{WHITE}Brak jeszcze dostępnych typów dróg miejskich
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET_EXPLANATION           :{WHITE}Rozpocznij nową grę po {DATE_SHORT} roku lub użyj NewGRF, który umożliwia wczesne budowanie dróg miejskich
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Nie można przepuścić pociągu za sygnał, niebezpieczeństwo...
