@@ -2996,9 +2996,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% n
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Ustvarjanje sveta
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Ustvarjanje reke
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Ustvarjanje dreves
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Ustvarjanje zgradbe
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Generiranje grobih in skalnatih tal
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Ustvarjanje zgradbe
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Ustvarjanje dreves
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Nastavljanje igre
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Zagnano ponavljanje polj
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Poganjam skripto
@@ -4648,6 +4648,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Sploh ni
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Zamenjaj svojo NewGRF konfiguracijo
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Ni še vozil na razpolago.
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Začni novo igro po {DATE_SHORT} ali uporabi NewGRF, ki vsebuje zgodnja vozila
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Ni mogoče, da vlak v nevarnosti pelje mimo signalov...

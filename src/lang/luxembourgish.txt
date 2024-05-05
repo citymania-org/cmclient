@@ -3390,9 +3390,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% k
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Welt-Generatioun
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Generéiren vu Flëss
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Baam Generatioun
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objets-Generatioun
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Generatioun vu knubbelegem a stengege Land
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objets-Generatioun
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Baam Generatioun
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Spill gëtt opgestallt
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Felder-Verdeelung
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Lafende Script
@@ -5278,6 +5278,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Keng Gef
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Änner d'NewGRF Konfiguratioun
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Nach keng Gefierer verfügbar
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}En neit Spill no {DATE_SHORT} ufenken oder benotz en NewGRF den al Gefierer erlaabt
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Kann den Zuch net bei Gefor durch d'Signal schécken...

@@ -27,7 +27,7 @@ public:
 };
 
 class BitIStreamUnexpectedEnd: public std::exception {
-	const char* what() const throw() override {
+	const char* what() const noexcept override {
 		return "Unexpected end of bit input stream";
 	}
 };

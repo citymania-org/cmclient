@@ -3330,9 +3330,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% s
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Pembuatan Bentang Darat
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Pembuatan Sungai
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Membuat pepohonan
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Membuat objek tak bergerak
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Membersihan area
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Membuat objek tak bergerak
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Membuat pepohonan
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Mengatur permainan
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Menyiapkan area loop
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Menjalankan skrip
@@ -5163,6 +5163,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Tak satu
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Tukarkan konfigurasi NewGRF anda
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Belum ada kendaraan yang tersedia saat ini
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Mulai permainan baru setelah {DATE_SHORT} atau gunakan NewGRF yang menyediakan kendaraan awal
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Tidak dapat memaksa kereta melanggar sinyal pada saat bahaya...
