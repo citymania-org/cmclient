@@ -5,7 +5,7 @@
 
 namespace citymania {
 
-enum EvaluationMode {
+enum EvaluationMode : byte {
 	CHECKNOTHING = 0,
 	CHECKOPINION,  ///< Check the local authority's opinion.
 	CHECKBUILD,    ///< Check wither or not the player can build.
@@ -19,6 +19,7 @@ enum EvaluationMode {
 	CHECKTOWNADZONES,  ///< Town advertisement zone
 	CHECKTOWNGROWTHTILES, ///< Town growth tiles (new house, skipped/removed house)
 };
+DECLARE_ENUM_AS_ADDABLE(EvaluationMode)
 
 struct Zoning {
 	EvaluationMode inner;

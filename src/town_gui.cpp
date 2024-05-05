@@ -1510,7 +1510,7 @@ public:
 		if(HasBit(this->town->advertise_regularly, _local_company)) this->LowerWidget(WID_CB_ADVERT_REGULAR);
 	}
 
-	void OnClick(Point pt, int widget, int click_count) override
+	void OnClick([[maybe_unused]] Point pt, int widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_CB_CENTER_VIEW:
@@ -1582,8 +1582,7 @@ public:
 		return nullptr;
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
-	{
+	void UpdateWidgetSize(int widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override {
 		static const uint EXP_TOPPADDING = 5;
 		static const uint EXP_LINESPACE  = 2; // Amount of vertical space for a horizontal (sub-)total line.
 

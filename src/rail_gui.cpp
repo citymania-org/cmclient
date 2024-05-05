@@ -69,7 +69,6 @@ static bool _convert_signal_button;          ///< convert signal button in the s
 static SignalVariant _cur_signal_variant;    ///< set the signal variant (for signal GUI)
 static SignalType _cur_signal_type;          ///< set the signal type (for signal GUI)
 
-static const int HOTKEY_MASK        = 0x1000;
 static const int HOTKEY_POLYRAIL     = 0x1000;
 static const int HOTKEY_NEW_POLYRAIL = 0x1001;
 static const int HOTKEY_BLUEPRINT_ROTATE = 0x1002;

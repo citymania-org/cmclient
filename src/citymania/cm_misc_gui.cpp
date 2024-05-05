@@ -48,7 +48,7 @@ public:
     TileIndex tile;
     TileIndex end_tile;  ///< For use in ruler(dragdrop) mode
 
-    virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+    virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int /* window_number */) override
     {
         int scr_top = GetMainViewTop() + 2;
         int scr_bot = GetMainViewBottom() - 2;

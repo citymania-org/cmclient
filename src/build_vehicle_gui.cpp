@@ -1351,6 +1351,7 @@ struct BuildVehicleWindow : Window {
 			// CM this->SelectEngine(this->eng_list[0].engine_id);
 			return this->eng_list[0].engine_id;
 		}
+		return INVALID_ENGINE;
 	}
 
 	/** Filter a single engine */

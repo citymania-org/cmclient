@@ -1809,7 +1809,7 @@ NWidgetCore *NWidgetSpacer::GetWidgetFromPos(int, int)
 }
 
 /* CityMania code start (jgrpp viewport stuff) */
-void NWidgetSpacer::FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets)
+void NWidgetSpacer::FillDirtyWidgets(std::vector<NWidgetBase *> & /*dirty_widgets */)
 {
 	/* Spacer widget never need repainting. */
 }

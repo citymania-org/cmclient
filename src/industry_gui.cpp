@@ -57,7 +57,6 @@
 
 #include "safeguards.h"
 
-static const int CM_HOTKEY_MASK        = 0x1000;
 static const int CM_HOTKEY_SWITCH_LAYOUT = 0x1001;
 
 bool _ignore_restrictions;

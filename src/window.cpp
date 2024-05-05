@@ -3561,7 +3561,7 @@ WindowPopup::WindowPopup(WindowDesc *desc, WindowPopupType t): Window(desc)
  * @param window_number Unused.
  * @return The origin coordinate of the window.
  */
-/*virtual*/ Point WindowPopup::OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+/*virtual*/ Point WindowPopup::OnInitialPosition(int16 sm_width, int16 /* sm_height */, int /* window_number */)
 {
 	int x, y;
 

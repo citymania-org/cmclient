@@ -1586,7 +1586,7 @@ private:
 		ShowNetworkChatQueryWindow(DESTTYPE_CLIENT, client_id);
 	}
 
-	static void CMOnClickCompanyHQ(NetworkClientListWindow *w, Point pt, CompanyID company_id)
+	static void CMOnClickCompanyHQ(NetworkClientListWindow * /* w */, Point /* pt */, CompanyID company_id)
 	{
 		auto company = Company::GetIfValid(company_id);
 		if (company == nullptr || company->location_of_HQ == INVALID_TILE) return;
@@ -1594,7 +1594,7 @@ private:
 		else ScrollMainWindowToTile(company->location_of_HQ);
 	}
 
-	static void CMOnClickCompanyWatch(NetworkClientListWindow *w, Point pt, CompanyID company_id)
+	static void CMOnClickCompanyWatch(NetworkClientListWindow * /* w */, Point /* pt */, CompanyID company_id)
 	{
 		citymania::ShowWatchWindow(company_id, 0);
 	}
@@ -1846,7 +1846,6 @@ public:
 				/* CityMania code start */
 				// NOTE: needs to match company order in DrawWidget
 				if (button == nullptr) {
-					NWidgetBase *nwi = this->GetWidget<NWidgetBase>(widget);
 					int index = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_CL_MATRIX);
 					NetworkClientInfo *own_ci = NetworkClientInfo::GetByClientID(_network_own_client_id);
 					CompanyID client_playas = own_ci == nullptr ? COMPANY_SPECTATOR : own_ci->client_playas;

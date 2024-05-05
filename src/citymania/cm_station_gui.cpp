@@ -145,7 +145,7 @@ void SetHighlightStationToJoin(const Station *station, bool with_area) {
         MarkCoverageAreaDirty(_highlight_station_to_join);
 }
 
-void OnStationTileSetChange(const Station *station, bool adding, StationType type) {
+void OnStationTileSetChange(const Station *station, bool /* adding */, StationType /* type */) {
     if (station == _highlight_station_to_join) {
         if (_highlight_join_area.tile != INVALID_TILE)
             UpdateHiglightJoinArea(_station_to_join);
@@ -205,7 +205,7 @@ const Station *CheckClickOnDeadStationSign() {
     return last_st;
 }
 
-bool CheckStationJoin(TileIndex start_tile, TileIndex end_tile) {
+bool CheckStationJoin(TileIndex start_tile, TileIndex /* end_tile */) {
     if (citymania::_fn_mod) {
         if (IsTileType (start_tile, MP_STATION)) {
             citymania::SelectStationToJoin(Station::GetByTile(start_tile));
