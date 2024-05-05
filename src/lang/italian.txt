@@ -3431,9 +3431,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% c
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Generazione mondo
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Generazione fiumi
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Generazione alberi
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Generazione oggetti inamovibili
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Generazione aree brulle e rocciose
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Generazione oggetti inamovibili
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Generazione alberi
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Impostazione partita
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Generazione caselle del terreno
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Esecuzione script
@@ -5319,6 +5319,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Non sar√
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Cambiare i NewGRF configurati
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Non sono ancora disponibili veicoli
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Iniziare una nuova partita dopo il {DATE_SHORT} o utilizzare un NewGRF che fornisca veicoli a partire da date antecedenti
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Impossibile far passare al treno un segnale di pericolo...

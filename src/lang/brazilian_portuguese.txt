@@ -278,7 +278,7 @@ STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Escolher
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Escolher o critério de seleção
 STR_BUTTON_SORT_BY                                              :{BLACK}Ordenar por
 STR_BUTTON_CATCHMENT                                            :{BLACK}Cobertura
-STR_TOOLTIP_CATCHMENT                                           :{BLACK}Mostrar/Ocultar área de cobertura
+STR_TOOLTIP_CATCHMENT                                           :{BLACK}Mostrar área de cobertura
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Fechar janela
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Título da janela - arraste isto para mover a janela
@@ -446,7 +446,7 @@ STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Configurações
 STR_SETTINGS_MENU_AI_SETTINGS                                   :Configurações de IA
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Configurações de Script de Jogo
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Configurações de NewGRF
-STR_SETTINGS_MENU_SANDBOX_OPTIONS                               :Opções de trapaças
+STR_SETTINGS_MENU_SANDBOX_OPTIONS                               :Opções da sandbox
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Opções de transparência
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Mostrar nomes de localidades
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Mostrar nomes de estações
@@ -792,7 +792,7 @@ STR_SMALLMAP_LEGENDA_INDUSTRIES                                 :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLACK}Deserto
 STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLACK}Neve
 
-STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}Mostrar/Ocultar nomes das localidades no mapa
+STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}Mostrar nomes das localidades no mapa
 STR_SMALLMAP_CENTER                                             :{BLACK}Centralizar o minimapa na localização atual
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING} ({NUM})
 STR_SMALLMAP_LINKSTATS                                          :{TINY_FONT}{STRING}
@@ -803,7 +803,7 @@ STR_SMALLMAP_ENABLE_ALL                                         :{BLACK}Ativar t
 STR_SMALLMAP_SHOW_HEIGHT                                        :{BLACK}Mostrar altitudes
 STR_SMALLMAP_TOOLTIP_DISABLE_ALL_INDUSTRIES                     :{BLACK}Não mostrar indústrias no mapa
 STR_SMALLMAP_TOOLTIP_ENABLE_ALL_INDUSTRIES                      :{BLACK}Mostrar todas as indústrias no mapa
-STR_SMALLMAP_TOOLTIP_SHOW_HEIGHT                                :{BLACK}Mostrar/Ocultar mapa de altitudes
+STR_SMALLMAP_TOOLTIP_SHOW_HEIGHT                                :{BLACK}Mostrar mapa de altitudes
 STR_SMALLMAP_TOOLTIP_DISABLE_ALL_COMPANIES                      :{BLACK}Mostrar no mapa as propriedades que não pertencem às empresas
 STR_SMALLMAP_TOOLTIP_ENABLE_ALL_COMPANIES                       :{BLACK}Mostrar no mapa as propriedades de todas as empresas
 STR_SMALLMAP_TOOLTIP_DISABLE_ALL_CARGOS                         :{BLACK}Não mostrar as cargas no mapa
@@ -2169,7 +2169,7 @@ STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Falha ao
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}Erro nas configurações de vídeo...
 STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}... nenhuma GPU compatível encontrada. Aceleração por hardware desativada
-STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}... controlador gráfico (GPU) travou o jogo. Aceleração por hardware desativada
+STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}... controlador gráfico travou o jogo. Aceleração por hardware desativada
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -2241,7 +2241,7 @@ STR_HELP_WINDOW_BUGTRACKER                                      :{BLACK}Relatar 
 STR_HELP_WINDOW_COMMUNITY                                       :{BLACK}Comunidade
 
 # Cheat window
-STR_CHEATS                                                      :{WHITE}Trapaças
+STR_CHEATS                                                      :{WHITE}Opções da Sandbox
 STR_CHEAT_MONEY                                                 :{LTBLUE}Aumentar dinheiro em {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Jogando como empresa: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Escavadeira mágica (remove indústrias, objetos estáticos): {ORANGE}{STRING}
@@ -2322,7 +2322,7 @@ STR_FACE_FACECODE                                               :{BLACK}Número 
 STR_FACE_FACECODE_TOOLTIP                                       :{BLACK}Ver e/ou definir o número de face do presidente da empresa
 STR_FACE_FACECODE_CAPTION                                       :{WHITE}Ver e/ou definir número de face do presidente
 STR_FACE_FACECODE_SET                                           :{WHITE}Novo código de número de face foi definido
-STR_FACE_FACECODE_ERR                                           :{WHITE}Não foi possível alterar o número de face do presidente - deve ser um número entre 0 e 4,294,967,295!
+STR_FACE_FACECODE_ERR                                           :{WHITE}Não foi possível definir o número de face do presidente - deve ser um número entre 0 e 4,294,967,295!
 STR_FACE_SAVE                                                   :{BLACK}Salvar
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Salvar face favorita
 STR_FACE_SAVE_DONE                                              :{WHITE}Esta face será armazenada como sua favorita no arquivo de configuração do OpenTTD
@@ -2372,7 +2372,7 @@ STR_NETWORK_SERVER_LIST_GAME_NAME                               :{BLACK}Nome
 STR_NETWORK_SERVER_LIST_GAME_NAME_TOOLTIP                       :{BLACK}Nome do jogo
 STR_NETWORK_SERVER_LIST_GENERAL_ONLINE                          :{BLACK}{COMMA}/{COMMA} - {COMMA}/{COMMA}
 STR_NETWORK_SERVER_LIST_CLIENTS_CAPTION                         :{BLACK}Clientes
-STR_NETWORK_SERVER_LIST_CLIENTS_CAPTION_TOOLTIP                 :{BLACK}Clientes conectados / máx. clientes{}Empresas / máx. empresas
+STR_NETWORK_SERVER_LIST_CLIENTS_CAPTION_TOOLTIP                 :{BLACK}Clientes conectados / máx. clientes{}Empresas ativas / máx. empresas
 STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x{COMMA}
 STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION                        :{BLACK}Tamanho do mapa
 STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION_TOOLTIP                :{BLACK}Tamanho do mapa do jogo{}Clique para ordenar por área
@@ -2728,15 +2728,15 @@ STR_MISSING_GRAPHICS_ERROR_QUIT                                 :{BLACK}Sair do 
 
 # Transparency settings window
 STR_TRANSPARENCY_CAPTION                                        :{WHITE}Opções de Transparência
-STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Ativar/Desativar transparência para placas. Ctrl+Clique para travar
-STR_TRANSPARENT_TREES_TOOLTIP                                   :{BLACK}Ativar/Desativar transparência para árvores. Ctrl+Clique para travar
-STR_TRANSPARENT_HOUSES_TOOLTIP                                  :{BLACK}Ativar/Desativar transparência para casas. Ctrl+Clique para travar
-STR_TRANSPARENT_INDUSTRIES_TOOLTIP                              :{BLACK}Ativar/Desativar transparência para indústrias. Ctrl+Clique para travar
-STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Ativar/Desativar transparência para construções como estações, depósitos e pontos de controle. Ctrl+Clique para travar
-STR_TRANSPARENT_BRIDGES_TOOLTIP                                 :{BLACK}Ativar/Desativar transparência para pontes. Ctrl+Clique para travar
-STR_TRANSPARENT_STRUCTURES_TOOLTIP                              :{BLACK}Ativar/Desativar transparência para estruturas como faróis e antenas. Ctrl+Clique para travar
-STR_TRANSPARENT_CATENARY_TOOLTIP                                :{BLACK}Ativar/Desativar transparência para catenária. Ctrl+Clique para travar
-STR_TRANSPARENT_TEXT_TOOLTIP                                    :{BLACK}Ativar/Desativar transparência para textos de carregamento e custo/receita. Ctrl+Clique para travar
+STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Ativar transparência para placas. Ctrl+Clique para travar
+STR_TRANSPARENT_TREES_TOOLTIP                                   :{BLACK}Ativar transparência para árvores. Ctrl+Clique para travar
+STR_TRANSPARENT_HOUSES_TOOLTIP                                  :{BLACK}Ativar transparência para casas. Ctrl+Clique para travar
+STR_TRANSPARENT_INDUSTRIES_TOOLTIP                              :{BLACK}Ativar transparência para indústrias. Ctrl+Clique para travar
+STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Ativar transparência para construções como estações, depósitos e pontos de controle. Ctrl+Clique para travar
+STR_TRANSPARENT_BRIDGES_TOOLTIP                                 :{BLACK}Ativar transparência para pontes. Ctrl+Clique para travar
+STR_TRANSPARENT_STRUCTURES_TOOLTIP                              :{BLACK}Ativar transparência para estruturas como faróis e antenas. Ctrl+Clique para travar
+STR_TRANSPARENT_CATENARY_TOOLTIP                                :{BLACK}Ativar transparência para catenária. Ctrl+Clique para travar
+STR_TRANSPARENT_TEXT_TOOLTIP                                    :{BLACK}Ativar transparência para textos de carregamento e custo/receita. Ctrl+Clique para travar
 STR_TRANSPARENT_INVISIBLE_TOOLTIP                               :{BLACK}Definir objetos como invisíveis ao invés de transparentes
 
 # Linkgraph legend window
@@ -3390,10 +3390,13 @@ STR_GENERATION_ABORT_MESSAGE                                    :{YELLOW}Você q
 STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% completo
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Geração de mundo
+STR_GENERATION_LANDSCAPE_GENERATION                             :{BLACK}Geração de paisagem
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Geração de rios
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Geração de árvores
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Geração de objetos
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Geração de áreas irregulares e rochosas
+STR_GENERATION_TOWN_GENERATION                                  :{BLACK}Geração de localidades
+STR_GENERATION_INDUSTRY_GENERATION                              :{BLACK}Geração de indústrias
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Geração de objetos
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Geração de árvores
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Configurando o jogo
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Preparando o terreno
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Executando o script
@@ -3454,7 +3457,7 @@ STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Incompatí
 
 # NewGRF save preset window
 STR_SAVE_PRESET_CAPTION                                         :{WHITE}Salvar predefinição
-STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Lista de predefinições disponíveis, selecione uma para copiar o nome e usar na gravação abaixo
+STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Lista de predefinições disponíveis, selecione uma para usar o nome na gravação abaixo
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Introduza um nome para a predefinição
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Nome que está selecionado para salvar a predefinição
 STR_SAVE_PRESET_CANCEL                                          :{BLACK}Cancelar
@@ -3654,7 +3657,7 @@ STR_LOCAL_AUTHORITY_ACTION_MEDIUM_ADVERTISING_CAMPAIGN          :Campanha public
 STR_LOCAL_AUTHORITY_ACTION_LARGE_ADVERTISING_CAMPAIGN           :Campanha publicitária grande
 STR_LOCAL_AUTHORITY_ACTION_ROAD_RECONSTRUCTION                  :Financiar a reconstrução das estradas locais
 STR_LOCAL_AUTHORITY_ACTION_STATUE_OF_COMPANY                    :Construir estátua do proprietário da empresa
-STR_LOCAL_AUTHORITY_ACTION_NEW_BUILDINGS                        :Financiar novos edifícios
+STR_LOCAL_AUTHORITY_ACTION_NEW_BUILDINGS                        :Financiar novas construções
 STR_LOCAL_AUTHORITY_ACTION_EXCLUSIVE_TRANSPORT                  :Comprar direitos exclusivos de transporte
 STR_LOCAL_AUTHORITY_ACTION_BRIBE                                :Subornar a autoridade local
 ###next-name-looks-similar
@@ -4006,7 +4009,7 @@ STR_VEHICLE_LIST_SEND_AIRCRAFT_TO_HANGAR                        :Enviar para um 
 
 STR_VEHICLE_LIST_MASS_STOP_LIST_TOOLTIP                         :{BLACK}Clique para parar todos os veículos desta lista
 STR_VEHICLE_LIST_MASS_START_LIST_TOOLTIP                        :{BLACK}Clique para iniciar todos os veículos desta lista
-STR_VEHICLE_LIST_AVAILABLE_ENGINES_TOOLTIP                      :{BLACK}Ver a lista de modelos disponíveis para esta classe de veículo
+STR_VEHICLE_LIST_AVAILABLE_ENGINES_TOOLTIP                      :{BLACK}Ver lista de modelos disponíveis para esta classe de veículo
 
 STR_VEHICLE_LIST_SHARED_ORDERS_LIST_CAPTION                     :{WHITE}Ordens compartilhadas de {COMMA} Veículo{P "" s}
 
@@ -4254,11 +4257,11 @@ STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Mensagem
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Desenvolvemos um novo modelo de {STRING} - você gostaria de ter um ano de uso exclusivo deste veículo, para que possamos avaliar o desempenho dele antes de ser globalmente disponibilizado?
 
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=f}locomotiva ferroviária
-STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :{G=f}locomotiva ferroviária elétrica
+STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :{G=f}locomotiva elétrica
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :{G=f}locomotiva monotrilho
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :{G=f}locomotiva maglev
 
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=m}veículo rodoviário
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=m}veículo
 STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :{G=m}bonde
 
 STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=f}aeronave
@@ -4522,7 +4525,7 @@ STR_REFIT_AIRCRAFT_REFIT_TOOLTIP                                :{BLACK}Adaptar 
 # Order view
 STR_ORDERS_CAPTION                                              :{WHITE}{VEHICLE} (Ordens)
 STR_ORDERS_TIMETABLE_VIEW                                       :{BLACK}Horários
-STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Mudar para a visualização de horários
+STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Mudar para visualização de horários
 
 STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Lista de ordens - clique numa ordem para selecioná-la. Ctrl+Clique para mostrar o destino da ordem
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
@@ -4694,7 +4697,7 @@ STR_INVALID_ORDER                                               :{RED} (Ordem In
 # Time table window
 STR_TIMETABLE_TITLE                                             :{WHITE}{VEHICLE} (Horários)
 STR_TIMETABLE_ORDER_VIEW                                        :{BLACK}Ordens
-STR_TIMETABLE_ORDER_VIEW_TOOLTIP                                :{BLACK}Mudar para a visualização de ordens
+STR_TIMETABLE_ORDER_VIEW_TOOLTIP                                :{BLACK}Mudar para visualização de ordens
 
 STR_TIMETABLE_TOOLTIP                                           :{BLACK}Horários - clique numa ordem para selecioná-la
 
@@ -4739,7 +4742,7 @@ STR_TIMETABLE_CLEAR_SPEED                                       :{BLACK}Remover 
 STR_TIMETABLE_CLEAR_SPEED_TOOLTIP                               :{BLACK}Apagar a velocidade máxima de viagem da ordem selecionada. Ctrl+Clique para apagar a velocidade de todas as ordens
 
 STR_TIMETABLE_RESET_LATENESS                                    :{BLACK}Reiniciar Contador de Atrasos
-STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}Reiniciar o contador de atrasos para o veículo ficar pontual. Ctrl+Clique para reiniciar todo o grupo e, com isso, fazer o veículo mais atrasado ficar no horário e todos os outros ficarem adiantados
+STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}Reiniciar o contador de atrasos para o veículo ficar pontual. Ctrl+Clique para reiniciar todo o grupo e, com isso, fazer o veículo mais atrasado ficar pontual e todos os outros ficarem adiantados
 
 STR_TIMETABLE_AUTOFILL                                          :{BLACK}Preencher automaticamente
 STR_TIMETABLE_AUTOFILL_TOOLTIP                                  :{BLACK}Preencher o horário automaticamente com os valores da próxima viagem. Ctrl+Clique para tentar manter os tempos de espera
@@ -4914,8 +4917,8 @@ STR_ERROR_COULD_NOT_CREATE_TOWN                                 :{WHITE}Geraçã
 STR_ERROR_NO_TOWN_IN_SCENARIO                                   :{WHITE}... não existem localidades neste cenário
 
 STR_ERROR_PNGMAP                                                :{WHITE}Não foi possível carregar paisagem de PNG...
-STR_ERROR_PNGMAP_FILE_NOT_FOUND                                 :{WHITE}... arquivo não encontrado
-STR_ERROR_PNGMAP_IMAGE_TYPE                                     :{WHITE}... não foi possível converter o tipo de imagem. A imagem deve ser PNG de 8 ou 24-bit
+STR_ERROR_PNGMAP_FILE_NOT_FOUND                                 :{WHITE}... arquivo não foi encontrado
+STR_ERROR_PNGMAP_IMAGE_TYPE                                     :{WHITE}... não foi possível converter o tipo de imagem. A imagem precisa ser PNG de 8 ou 24-bit
 STR_ERROR_PNGMAP_MISC                                           :{WHITE}... alguma coisa deu errado (provavelmente arquivo corrompido)
 
 STR_ERROR_BMPMAP                                                :{WHITE}Não foi possível carregar paisagem de BMP...
@@ -4945,10 +4948,10 @@ STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}Mensage
 STR_ERROR_OFF_EDGE_OF_MAP                                       :{WHITE}Fora do mapa
 STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP                              :{WHITE}Muito perto da borda do mapa
 STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY                     :{WHITE}Dinheiro insuficiente - é necessário {CURRENCY_LONG}
-STR_ERROR_FLAT_LAND_REQUIRED                                    :{WHITE}O terreno deve ser plano
+STR_ERROR_FLAT_LAND_REQUIRED                                    :{WHITE}O terreno precisa ser plano
 STR_ERROR_LAND_SLOPED_IN_WRONG_DIRECTION                        :{WHITE}Terreno inclinado na direção errada
 STR_ERROR_CAN_T_DO_THIS                                         :{WHITE}Não é possível fazer isto...
-STR_ERROR_BUILDING_MUST_BE_DEMOLISHED                           :{WHITE}A construção deve ser demolida primeiro
+STR_ERROR_BUILDING_MUST_BE_DEMOLISHED                           :{WHITE}A construção precisa ser demolida primeiro
 STR_ERROR_CAN_T_CLEAR_THIS_AREA                                 :{WHITE}Não é possível limpar esta área...
 STR_ERROR_SITE_UNSUITABLE                                       :{WHITE}... local não adequado
 STR_ERROR_ALREADY_BUILT                                         :{WHITE}... já construído
@@ -5275,10 +5278,15 @@ STR_ERROR_VEHICLE_IS_DESTROYED                                  :{WHITE}... veí
 
 STR_ERROR_CAN_T_CLONE_VEHICLE_LIST                              :{WHITE}... nem todos os veículos são idênticos
 
-STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Não haverá veículos disponíveis
+STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Nenhum veículo estará disponível
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Modifique a sua configuração de NewGRF
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Não existem veículos disponíveis ainda
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Inicie um novo jogo depois de {DATE_SHORT} ou utilize um NewGRF que forneça veículos iniciais
+
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL                    :{WHITE}Nenhum tipo de estrada urbana está disponível
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL_EXPLANATION        :{WHITE}Modifique a sua configuração de NewGRF
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET                       :{WHITE}Não existem tipos de estrada urbana disponíveis ainda
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET_EXPLANATION           :{WHITE}Inicie um novo jogo depois de {DATE_SHORT} ou utilize um NewGRF que forneça estradas urbanas iniciais
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Não é possível fazer o trem passar o sinal em perigo...

@@ -319,5 +319,6 @@ inline uint16_t TownTicksToGameTicks(uint16_t ticks)
 
 
 RoadType GetTownRoadType();
+bool CheckTownRoadTypes();
 
 #endif /* TOWN_H */

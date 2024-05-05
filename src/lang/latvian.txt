@@ -3395,9 +3395,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% p
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Pasaules radīšana
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Upes radīšana
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Koka radīšana
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objekta radīšana
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Nelīdzena un akmeņaina apvidus radīšana
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objekta radīšana
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Koka radīšana
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Iestatīt spēli
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Skrejošs nosaukums
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Strādājošs skripts
@@ -5289,6 +5289,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Vispār 
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Mainiet jūsu NewGRF konfogurāciju
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Transportlīdzekļi vēl nav pieejami
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Sākt jaunu spēli pēc {DATE_SHORT} vai izmantot NewGRF, kas nodrošina agrīnus transporta līdzekļus
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Vilciens nevar šķērsot signālu briesmās...

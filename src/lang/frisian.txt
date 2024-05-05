@@ -2719,9 +2719,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% k
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Wrâldgeneraasje
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Riviergeneraasje
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Bostgeneraasje
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objekt meitsje
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Rûchtes en rotsen generearje
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objekt meitsje
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Bostgeneraasje
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Set spul klear
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Trochrint tegellus
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Fiert skript út
@@ -4207,6 +4207,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Hielenda
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Feroarje jo NewGRF-konfiguraasje
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Der binne noch gjin fiertugen beskikber
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Begjin in nij spul nei {DATE_SHORT} of brûk in NewGRF dy't earder fiertugen beskikber stelt
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Kin trein gjin sein foarby ride litte at dizze gefaar oanjout...
