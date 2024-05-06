@@ -6200,6 +6200,9 @@ CM_STR_LOGIN_ERROR_SIGN_IN_FAILED                               :{WHITE}Failed t
 CM_STR_LOGIN_ERROR_BAD_INPUT                                    :{WHITE}Bad username or password
 CM_STR_LOGIN_WINDOW_USERNAME                                    :{WHITE}Username:
 CM_STR_LOGIN_WINDOW_PASSWORD                                    :{WHITE}Password:
+CM_STR_LOGIN_WINDOW_ADMIN_LOGIN                                 :{BLACK}A-Login
+CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT                                :{BLACK}A-Logout
+CM_STR_LOGIN_WINDOW_ADMIN_PASSWORD                              :{WHITE}Admin:
 CM_STR_LOGIN_WINDOW_SET                                         :{WHITE}Set
 CM_STR_LOGIN_WINDOW_NOT_SET                                     :{WHITE}Not Set
 CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Change username
