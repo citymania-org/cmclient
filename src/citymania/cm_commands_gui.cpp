@@ -37,9 +37,7 @@ static const int MAX_COMMUNITY_STRING_LEN = 128;
 static constexpr std::string_view NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken_md5salt.php?user={}&password={}";
 static constexpr std::string_view BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken-enc.php?user={}&password={}";
 
-
-
-static const std::string CFG_LOGIN_FILE  = "citymania.cfg";
+static const std::string CFG_FILE  = "citymania.cfg";
 static const std::string CFG_LOGIN_KEY   = "login";
 static const std::string CFG_SERVER_KEY =  "server";
 static const char * const NOVAPOLIS_LOGIN = "citymania_login";
