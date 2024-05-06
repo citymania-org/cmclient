@@ -34,23 +34,12 @@ IniFile *_inilogin = NULL;
 static const int HTTPBUFLEN = 1024;
 static const int MAX_COMMUNITY_STRING_LEN = 128;
 
-// nova* stuff probabaly obsolete
-static const char * const NOVAPOLIS_IPV4_PRIMARY   = "188.165.194.77";
-static const char * const NOVAPOLIS_IPV6_PRIMARY   = "2a02:2b88:2:1::1d73:1";
-static const char * const NOVAPOLIS_IPV4_SECONDARY = "89.111.65.225";
-static const char * const NOVAPOLIS_IPV6_SECONDARY = "fe80::20e:7fff:fe23:bee0";
-static const char * const NOVAPOLIS_STRING         = "CityMania";
 static constexpr std::string_view NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken_md5salt.php?user={}&password={}";
 static constexpr std::string_view BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken-enc.php?user={}&password={}";
 
-static const char * const NOVA_IP_ADDRESSES[] = {
-	NOVAPOLIS_IPV4_PRIMARY,
-	NOVAPOLIS_IPV6_PRIMARY,
-	NOVAPOLIS_IPV4_SECONDARY,
-	NOVAPOLIS_IPV6_SECONDARY,
-};
 
-static const std::string CFG_FILE  = "citymania.cfg";
+
+static const std::string CFG_LOGIN_FILE  = "citymania.cfg";
 static const std::string CFG_LOGIN_KEY   = "login";
 static const std::string CFG_SERVER_KEY =  "server";
 static const char * const NOVAPOLIS_LOGIN = "citymania_login";

@@ -539,7 +539,7 @@ static inline uint32 GetSmallMapContoursPixels(TileIndex tile, TileType t)
  * @param t    Effective tile type of the tile (see #SmallMapWindow::GetTileColours).
  * @return The colour of tile in the small map in mode "Vehicles"
  */
-static inline uint32 GetSmallMapVehiclesPixels(TileIndex tile, TileType t)
+static inline uint32 GetSmallMapVehiclesPixels(TileIndex /* tile */, TileType t)
 {
 	const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
 	return ApplyMask(cs->default_colour, &_smallmap_vehicles_andor[t]);
@@ -1235,7 +1235,7 @@ SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) : Window(des
 	_smallmap_industry_highlight = INVALID_INDUSTRYTYPE;
 	this->overlay = new LinkGraphOverlay(this, WID_SM_MAP, 0, this->GetOverlayCompanyMask(), 1);
 	this->InitNested(window_number);
-	this->LowerWidget(this->map_type + WID_SM_CONTOUR);
+	this->LowerWidget(WID_SM_CONTOUR + this->map_type);
 
 	this->RebuildColourIndexIfNecessary();
 
@@ -1483,9 +1483,9 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
  */
 void SmallMapWindow::SwitchMapType(SmallMapType map_type)
 {
-	this->RaiseWidget(this->map_type + WID_SM_CONTOUR);
+	this->RaiseWidget(WID_SM_CONTOUR + this->map_type);
 	this->map_type = map_type;
-	this->LowerWidget(this->map_type + WID_SM_CONTOUR);
+	this->LowerWidget(WID_SM_CONTOUR + this->map_type);
 
 	this->SetupWidgetData();
 
@@ -1740,7 +1740,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 	this->SetDirty();
 }
 
-/* virtual */ bool SmallMapWindow::OnRightClick(Point pt, int widget)
+/* virtual */ bool SmallMapWindow::OnRightClick(Point /* pt */, int widget)
 {
 	if (widget != WID_SM_MAP || _scrolling_viewport) return false;
 
@@ -1761,10 +1761,10 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 	}
 }
 
-/* virtual */ void SmallMapWindow::OnRealtimeTick(uint delta_ms)
+/* virtual */ void SmallMapWindow::OnRealtimeTick(uint /* delta_ms */)
 {
 	/* Update the window every now and then */
-	if (this->map_type == SmallMapWindow::SMT_LINKSTATS) {
+	if (this->map_type == SMT_LINKSTATS) {
 		uint32 company_mask = this->GetOverlayCompanyMask();
 		if (this->overlay->GetCompanyMask() != company_mask) {
 			this->overlay->SetCompanyMask(company_mask);
@@ -1919,7 +1919,7 @@ void SmallMapWindow::UpdateTownCache(bool force) {
 	}
 }
 
-SmallMapWindow::SmallMapType SmallMapWindow::map_type = CM_SMT_IMBA;
+SmallMapType SmallMapWindow::map_type = CM_SMT_IMBA;
 bool SmallMapWindow::show_towns = true;
 int SmallMapWindow::map_height_limit = -1;
 

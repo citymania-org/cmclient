@@ -1284,7 +1284,7 @@ struct PaymentRatesGraphWindow : ExcludingCargoBaseGraphWindow {
 		this->UpdatePaymentRates();
 	}};
 
-	void UpdateStatistics(bool initialize) override {
+	void UpdateStatistics(bool) override {
 		this->UpdatePaymentRates();
 	}
 

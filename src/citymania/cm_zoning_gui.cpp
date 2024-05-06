@@ -57,11 +57,13 @@ struct ZoningWindow : public Window {
 		if(_zoning.inner != CHECKNOTHING) this->LowerWidget(ZTW_INNER_FIRST + _zoning.inner - 1);
 	}
 
-	virtual void OnPaint() {
+	void OnPaint() override
+	{
 		this->DrawWidgets();
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count) {
+	void OnClick(Point /* pt */, int widget, int /* click_count */) override
+	{
 		bool outer = true;
 		bool deselect = false;
 		EvaluationMode clicked;
@@ -84,7 +86,7 @@ struct ZoningWindow : public Window {
 		MarkWholeScreenDirty();
 	}
 
-	void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		StringID strid = STR_EMPTY;
 		if (widget >= ZTW_OUTER_FIRST && widget < ZTW_INNER_FIRST){
@@ -103,14 +105,16 @@ struct ZoningWindow : public Window {
 		DrawString(rtl ? r.left : x + clk_dif + 1, (rtl ? r.right + clk_dif : r.right), y + 1 + clk_dif, strid, TC_FROMSTRING, SA_LEFT);
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) {
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension * /* fill */, Dimension * /* resize */) override
+	{
 		if (widget >= ZTW_OUTER_FIRST && widget < ZTW_INNER_END){
 			size->width = this->maxwidth + padding.width + 8;
 			size->height = this->maxheight + 2;
 		}
 	}
 
-	void RaiseAllWidgets(bool outer){
+	void RaiseAllWidgets(bool outer)
+	{
 		byte start = outer ? ZTW_OUTER_FIRST : ZTW_INNER_FIRST;
 		byte end = outer ? ZTW_INNER_FIRST : ZTW_INNER_END;
 		for(byte i = start; i < end; i++){
@@ -121,7 +125,7 @@ struct ZoningWindow : public Window {
 		}
 	}
 
-	virtual EventState OnHotkey(int hotkey)
+	EventState OnHotkey(int hotkey) override
 	{
 		return Window::OnHotkey(hotkey);
 	}

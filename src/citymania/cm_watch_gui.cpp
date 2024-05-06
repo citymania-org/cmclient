@@ -404,14 +404,14 @@ void WatchCompany::OnMouseWheel( int wheel )
 	ZoomInOrOutToCursorWindow(wheel < 0, this);
 }
 
-void WatchCompany::OnClick(Point pt, int widget, int click_count)
+void WatchCompany::OnClick(Point /* pt */, int widget, int /* click_count */)
 {
 	/* Check which button is clicked */
 	if (IsInsideMM(widget, EWW_COMPANY_BEGIN, EWW_COMPANY_END)) {
 		/* Is it no on disable? */
 		if (!this->IsWidgetDisabled(widget)) {
 			if (this->watched_company != INVALID_COMPANY)
-				this->RaiseWidget(this->watched_company + EWW_COMPANY_BEGIN);
+				this->RaiseWidget(EWW_COMPANY_BEGIN + this->watched_company);
 			auto c = Company::GetIfValid((CompanyID)(widget - EWW_COMPANY_BEGIN));
 			if (c == nullptr || this->watched_company == c->index) {
 				this->watched_company = INVALID_COMPANY;
@@ -436,7 +436,7 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 		if (!this->IsWidgetDisabled(widget)) {
 			if (this->watched_company != INVALID_COMPANY) {
 				/* Raise the watched company button  */
-				this->RaiseWidget(this->watched_company + EWW_PB_COMPANY_FIRST);
+				this->RaiseWidget(EWW_PB_COMPANY_FIRST + this->watched_company);
 			}
 			if (this->watched_company == (CompanyID)(widget - EWW_PB_COMPANY_FIRST)) {
 				/* Stop watching watched_company */
@@ -445,7 +445,7 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 			} else {
 				/* Lower the new watched company button */
 				this->watched_company = (CompanyID)(widget - EWW_PB_COMPANY_FIRST);
-				this->LowerWidget(this->watched_company + EWW_PB_COMPANY_FIRST);
+				this->LowerWidget( EWW_PB_COMPANY_FIRST + this->watched_company);
 				Company *c = Company::Get( this->watched_company );
 				SetDParam( 0, c->index );
 				this->company_name = GetString(STR_COMPANY_NAME);
@@ -468,7 +468,6 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 		}
 	}
 	else {
-		char msg[128];
 		switch (widget) {
 			case EWW_ZOOMOUT: DoZoomInOutWindow(ZOOM_OUT, this); break;
 			case EWW_ZOOMIN: DoZoomInOutWindow(ZOOM_IN,  this); break;
@@ -531,7 +530,6 @@ void WatchCompany::OnClick(Point pt, int widget, int click_count)
 void WatchCompany::OnQueryTextFinished(char *str)
 {
 	if (str == NULL) return;
-	char msg[128];
 	switch (this->query_widget) {
 		case EWQ_BAN:
 			NetworkClientSendChatToServer(fmt::format("!ban {} {}", this->watched_client, str));
@@ -541,7 +539,7 @@ void WatchCompany::OnQueryTextFinished(char *str)
 	}
 }
 
-void WatchCompany::OnInvalidateData(int data, bool gui_scope)
+void WatchCompany::OnInvalidateData(int data, bool /* gui_scope */)
 {
 	if(this->Wtype == EWT_COMPANY){
 		/* Disable the companies who are not active */
@@ -583,13 +581,13 @@ void WatchCompany::OnInvalidateData(int data, bool gui_scope)
 
 		/* Disable the companies who are not active */
 		for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {
-			this->SetWidgetDisabledState(i + EWW_COMPANY_BEGIN, !Company::IsValidID(i));
+			this->SetWidgetDisabledState(EWW_COMPANY_BEGIN + i, !Company::IsValidID(i));
 		}
 
 		/* Check if the currently selected company is still active. */
 		if (this->watched_company != INVALID_COMPANY && !Company::IsValidID(this->watched_company)) {
 			/* Raise the widget for the previous selection. */
-			this->RaiseWidget(this->watched_company + EWW_COMPANY_BEGIN);
+			this->RaiseWidget(EWW_COMPANY_BEGIN + this->watched_company);
 			this->watched_company = INVALID_COMPANY;
 		}
 
@@ -602,7 +600,7 @@ void WatchCompany::OnInvalidateData(int data, bool gui_scope)
 
 		/* Make sure the widget is lowered */
 		if (this->watched_company != INVALID_COMPANY)
-			this->LowerWidget(this->watched_company + EWW_COMPANY_BEGIN);
+			this->LowerWidget(EWW_COMPANY_BEGIN + this->watched_company);
 	}
 	else if(this->Wtype == EWT_CLIENT){
 		if (data == 2) {
@@ -690,7 +688,7 @@ void ShowWatchWindow(CompanyID company_to_watch = INVALID_COMPANY, int type = EW
 	}
 }
 
-void UpdateWatching(CompanyID company, TileIndex tile) {
+void UpdateWatching(CompanyID /* company */, TileIndex tile) {
 	/* Send Tile Number to Watching Company Windows */
 	WatchCompany *wc;
 	for(int watching_window = 0; ; watching_window++){

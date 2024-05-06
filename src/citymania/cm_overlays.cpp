@@ -23,7 +23,7 @@
 
 namespace citymania {
 
-static bool Intersects(PointDimension rect, Point pos, Point size) {
+[[maybe_unused]] static bool Intersects(PointDimension rect, Point pos, Point size) {
     return (
         pos.x + size.x >= rect.x &&
         pos.x <= rect.x + rect.width &&
@@ -221,8 +221,6 @@ public:
 
 class BuildInfoOverlay: public OverlayWindow {
 	bool visible = false;
-	int line_height = 0;
-    int text_ofs_x = 0;
 	BuildInfoOverlayData data;
     IconTextAligner aligner;
 public:

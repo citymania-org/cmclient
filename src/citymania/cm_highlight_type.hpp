@@ -327,8 +327,8 @@ protected:
 
 public:
     ObjectHighlight(Type type = Type::NONE): type{type} {}
-    bool operator==(const ObjectHighlight& oh);
-    bool operator!=(const ObjectHighlight& oh);
+    bool operator==(const ObjectHighlight& oh) const;
+    bool operator!=(const ObjectHighlight& oh) const;
 
     static ObjectHighlight make_rail_depot(TileIndex tile, DiagDirection ddir);
     static ObjectHighlight make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis);

@@ -3448,9 +3448,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% v
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Maailma tekitamine
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Jõgede tekitamine
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Puude tekitamine
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objekti tekitamine
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Mägise ja kivise maa-ala tekitamine
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objekti tekitamine
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Puude tekitamine
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Mängu seadistamine
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Ruudustiku töötlemine
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Täitmisel olev skript
@@ -5337,6 +5337,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Ühtegi 
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Muuda NewGRF-i seadistust
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Sõidukeid ei ole veel saadaval
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Alusta mängu pärast {DATE_SHORT} või kasuta NewGRF-i, milles on varasemaid sõidukeid
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Rongi ei saa ohu korral sundida signaale eirama...

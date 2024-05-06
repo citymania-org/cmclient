@@ -3332,9 +3332,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% k
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Mondgenerado
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Rivergenerado
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Arba generado
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Nemoveblaĵa generado
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Generado de malglataj kaj rokaj regionoj
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Nemoveblaĵa generado
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Arba generado
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Agordante ludon
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Trakurante kvadratojn
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Ruligas la skripton
@@ -5144,6 +5144,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Neniuj v
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Ŝanĝu viajn NewGRF-agordojn
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Neniuj veturiloj dume haveblas
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Komencu novan ludon post {DATE_SHORT} aŭ uzu NewGRF-on kiu havebligas frutempajn veturilojn
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Ne povas igi vagonaron transiri signalon je danĝero...

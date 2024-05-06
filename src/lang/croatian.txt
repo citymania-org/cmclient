@@ -3081,9 +3081,9 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% g
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Izrada svijeta
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Generiranje rijeka
-STR_GENERATION_TREE_GENERATION                                  :{BLACK}Generiranje drveća
-STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Nepomično generiranje
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Generiranje grubog i stjenovitog područja
+STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Nepomično generiranje
+STR_GENERATION_TREE_GENERATION                                  :{BLACK}Generiranje drveća
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Pripremam igru
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Izvršavam tile-petlju
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Izvođenje skripte u tijeku
@@ -4815,6 +4815,7 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Neće bi
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Promijenite konfiguraciju NewGRF-a
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Još nema dostupnih vozila
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Pokreni novu igru nakon {DATE_SHORT} ili upotrijebi NewGRF koji daje vrlo rana vozila
+
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Nije moguće natjerati vlak da ignorira signale dok traje opasnost...

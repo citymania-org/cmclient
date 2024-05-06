@@ -37,6 +37,9 @@
 #include "../gfx_func.h"
 #include "../error.h"
 #include "../misc_cmd.h"
+#ifdef DEBUG_DUMP_COMMANDS
+#	include "../fileio_func.h"
+#endif
 #include <charconv>
 #include <sstream>
 #include <iomanip>
@@ -47,8 +50,11 @@
 #include "../safeguards.h"
 
 #ifdef DEBUG_DUMP_COMMANDS
-#include "../fileio_func.h"
-/** When running the server till the wait point, run as fast as we can! */
+/** Helper variable to make the dedicated server go fast until the (first) join.
+ * Used to load the desync debug logs, i.e. for reproducing a desync.
+ * There's basically no need to ever enable this, unless you really know what
+ * you are doing, i.e. debugging a desync.
+ * See docs/desync.md for details. */
 bool _ddc_fastforward = true;
 #endif /* DEBUG_DUMP_COMMANDS */
 
@@ -1105,6 +1111,16 @@ void NetworkGameLoop()
 				}
 			}
 
+			/* Skip all entries in the command-log till we caught up with the current game again. */
+			if (TimerGameEconomy::date > next_date || (TimerGameEconomy::date == next_date && TimerGameEconomy::date_fract > next_date_fract)) {
+				Debug(desync, 0, "Skipping to next command at {:08x}:{:02x}", next_date, next_date_fract);
+				if (cp != nullptr) {
+					delete cp;
+					cp = nullptr;
+				}
+				check_sync_state = false;
+			}
+
 			if (cp != nullptr || check_sync_state) break;
 
 			char buff[4096];
@@ -1164,7 +1180,8 @@ void NetworkGameLoop()
 				assert(ret == 4);
 				check_sync_state = true;
 			} else if (strncmp(p, "msg: ", 5) == 0 || strncmp(p, "client: ", 8) == 0 ||
-						strncmp(p, "load: ", 6) == 0 || strncmp(p, "save: ", 6) == 0) {
+						strncmp(p, "load: ", 6) == 0 || strncmp(p, "save: ", 6) == 0 ||
+						strncmp(p, "warning: ", 9) == 0) {
 				/* A message that is not very important to the log playback, but part of the log. */
 #ifndef DEBUG_FAILED_DUMP_COMMANDS
 			} else if (strncmp(p, "cmdf: ", 6) == 0) {

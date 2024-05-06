@@ -1954,6 +1954,9 @@ public:
 	}
 };
 
+#if 0
+CityMania has its own smallmap
+
 /** Widget parts of the smallmap display. */
 static constexpr NWidgetPart _nested_smallmap_display[] = {
 	NWidget(WWT_PANEL, COLOUR_BROWN, WID_SM_MAP_BORDER),
@@ -2038,9 +2041,6 @@ static constexpr NWidgetPart _nested_smallmap_widgets[] = {
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
 };
-
-#if 0
-CityMania has its own smallmap
 
 static WindowDesc _smallmap_desc(__FILE__, __LINE__,
 	WDP_AUTO, "smallmap", 484, 314,

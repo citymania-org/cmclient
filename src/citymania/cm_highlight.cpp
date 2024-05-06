@@ -223,7 +223,7 @@ ObjectTileHighlight ObjectTileHighlight::make_numbered_rect(SpriteID palette, ui
 }
 
 
-bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
+bool ObjectHighlight::operator==(const ObjectHighlight& oh) const {
     if (this->type != oh.type) return false;
     return (this->tile == oh.tile
             && this->end_tile == oh.end_tile
@@ -238,14 +238,9 @@ bool ObjectHighlight::operator==(const ObjectHighlight& oh) {
             && this->airport_type == oh.airport_type
             && this->airport_layout == oh.airport_layout
             && this->blueprint == oh.blueprint);
-    // switch (this->type) {
-    //     case Type::RAIL_DEPOT: return this->tile == oh.tile && this->ddir == oh.ddir;
-    //     default: return true;
-    // }
-    // return true;
 }
 
-bool ObjectHighlight::operator!=(const ObjectHighlight& oh) {
+bool ObjectHighlight::operator!=(const ObjectHighlight& oh) const {
     return !(*this == oh);
 }
 

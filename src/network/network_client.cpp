@@ -46,9 +46,6 @@
 /* This file handles all the client-commands */
 
 void SyncCMUser(const std::string &msg);
-// extern const std::map<std::string, uint32> OPENTTD_NEWGRF_VERSIONS;
-// extern const std::map<uint32, uint32> OPENTTD_RELEASE_REVISIONS;
-static const uint32 OPENTTD_NEWGRF_REVISION_MASK = (1 << 19) - 1;
 
 /** Read some packets, and when do use that data as initial load filter. */
 struct PacketReader : LoadFilter {

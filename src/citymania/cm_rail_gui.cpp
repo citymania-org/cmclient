@@ -41,8 +41,8 @@ static sp<Command> DoRailroadTrack(TileIndex start_tile, TileIndex end_tile, Rai
 }
 
 
-static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex end_tile, Track track, sp<Command> rail_cmd, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2, bool remove_mode) {
-    auto rail_callback = [rail_cmd, start_tile, end_tile, track, estimate=citymania::_estimate_mod](bool res) -> bool{
+static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex /* end_tile */, Track track, sp<Command> rail_cmd, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2, bool /* remove_mode */) {
+    auto rail_callback = [rail_cmd, start_tile, track, estimate=citymania::_estimate_mod](bool res) -> bool{
         if (rail_cmd->call(DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
                 _rail_track_endtile == INVALID_TILE) {
             if (!rail_cmd->post()) return false;
@@ -64,7 +64,7 @@ static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex en
     return cmd2.with_callback(rail_callback).post();
 }
 
-static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, RailType railtype, Track track, sp<Command> rail_cmd, bool remove_mode) {
+static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Track track, sp<Command> rail_cmd, bool remove_mode) {
     bool eq = (TileX(end_tile) - TileY(end_tile) == TileX(start_tile) - TileY(start_tile));
     bool ez = (TileX(end_tile) + TileY(end_tile) == TileX(start_tile) + TileY(start_tile));
     // StoreRailPlacementEndpoints(start_tile, end_tile, track, true);
@@ -160,7 +160,7 @@ void HandleAutodirPlacement(RailType railtype, bool remove_mode) {
         if (!cmd->post(CcPlaySound_CONSTRUCTION_RAIL)) return;
     } else if (_thd.cm_poly_terra) {
         Track trackstat = static_cast<Track>( _thd.drawstyle & HT_DIR_MASK); // 0..5
-        citymania::HandleAutodirTerraform(start_tile, end_tile, railtype, trackstat, std::move(cmd), remove_mode);
+        citymania::HandleAutodirTerraform(start_tile, end_tile, trackstat, std::move(cmd), remove_mode);
         return;
     } else if (cmd->call(DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
                 _rail_track_endtile == INVALID_TILE) {

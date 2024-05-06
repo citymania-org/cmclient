@@ -52,7 +52,7 @@ struct LandTooltipsWindow : public Window
 
     virtual ~LandTooltipsWindow() {}
 
-    virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+    Point OnInitialPosition(int16 sm_width, int16 sm_height, int /* window_number */) override
     {
         int scr_top = GetMainViewTop() + 2;
         int scr_bot = GetMainViewBottom() - 2;
@@ -63,7 +63,7 @@ struct LandTooltipsWindow : public Window
         return pt;
     }
 
-    virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+    void UpdateWidgetSize(int /* widget */, Dimension *size, const Dimension & /* padding */, Dimension * /* fill */, Dimension * /* resize */) override
     {
         uint icon_size = ScaleGUITrad(10);
         uint line_height = std::max((uint)GetCharacterHeight(FS_NORMAL), icon_size) + WidgetDimensions::scaled.hsep_normal;
@@ -129,7 +129,7 @@ struct LandTooltipsWindow : public Window
         size->height += WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
     }
 
-    virtual void DrawWidget(const Rect &r, int widget) const
+    void DrawWidget(const Rect &r, int /* widget */) const override
     {
         uint icon_size = ScaleGUITrad(10);
         uint line_height = std::max((uint)GetCharacterHeight(FS_NORMAL), icon_size) + WidgetDimensions::scaled.hsep_normal;
@@ -300,7 +300,7 @@ public:
         CLRBITS(this->flags, WF_WHITE_BORDER);
     }
 
-    Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number) override
+    Point OnInitialPosition(int16 sm_width, int16 sm_height, int /* window_number */) override
     {
         int scr_top = GetMainViewTop() + 2;
         int scr_bot = GetMainViewBottom() - 2;
@@ -323,7 +323,6 @@ public:
         this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_RATING_DETAILS));
         if (!ge->HasRating()) { return; }
 
-        uint line_nr = 1;
         int total_rating = 0;
 
         if (HasBit(cs->callback_mask, CBM_CARGO_STATION_RATING_CALC)) {
@@ -363,11 +362,10 @@ public:
             byte waittime = ge->time_since_pickup;
             if (this->st->last_vehicle_type == VEH_SHIP) waittime >>= 2;
             int waittime_stage = 0;
-            (waittime > 21) ||
-            (waittime_stage = 1, waittime > 12) ||
-            (waittime_stage = 2, waittime > 6) ||
-            (waittime_stage = 3, waittime > 3) ||
-            (waittime_stage = 4, true);
+            if (waittime <= 21) waittime_stage = 1;
+            if (waittime <= 12) waittime_stage = 2;
+            if (waittime <= 6) waittime_stage = 3;
+            if (waittime <= 3) waittime_stage = 4;
             total_rating += STATION_RATING_WAITTIME[waittime_stage];
 
             SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_WAITTIME_0 + waittime_stage);
@@ -375,14 +373,12 @@ public:
             SetDParam(2, this->RoundRating(STATION_RATING_WAITTIME[waittime_stage]));
             this->data.push_back(GetString(this->st->last_vehicle_type == VEH_SHIP ? CM_STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP : CM_STR_STATION_RATING_TOOLTIP_WAITTIME));
 
-            uint waitunits = ge->max_waiting_cargo;
             int waitunits_stage = 0;
-            (waitunits > 1500) ||
-            (waitunits_stage = 1, waitunits > 1000) ||
-            (waitunits_stage = 2, waitunits > 600) ||
-            (waitunits_stage = 3, waitunits > 300) ||
-            (waitunits_stage = 4, waitunits > 100) ||
-            (waitunits_stage = 5, true);
+            if (ge->max_waiting_cargo <= 1500) waitunits_stage = 1;
+            if (ge->max_waiting_cargo <= 1000) waitunits_stage = 2;
+            if (ge->max_waiting_cargo <= 600) waitunits_stage = 3;
+            if (ge->max_waiting_cargo <= 300) waitunits_stage = 4;
+            if (ge->max_waiting_cargo <= 100) waitunits_stage = 5;
             total_rating += STATION_RATING_WAITUNITS[waitunits_stage];
 
             SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_WAITUNITS_0 + waitunits_stage);
@@ -426,7 +422,7 @@ public:
         this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_TOTAL_RATING));
     }
 
-    void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
+    void UpdateWidgetSize(int /* widget */, Dimension *size, const Dimension & /* padding */, Dimension * /* fill */, Dimension * /* resize */) override
     {
         size->height = WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
         for (uint i = 0; i < data.size(); i++) {
@@ -439,7 +435,7 @@ public:
         size->height -= WidgetDimensions::scaled.hsep_normal;
     }
 
-    void DrawWidget(const Rect &r, int widget) const override
+    void DrawWidget(const Rect &r, int /* widget */) const override
     {
         GfxFillRect(r.left, r.top, r.right, r.top + WidgetDimensions::scaled.bevel.top - 1, PC_BLACK);
         GfxFillRect(r.left, r.bottom - WidgetDimensions::scaled.bevel.bottom + 1, r.right, r.bottom, PC_BLACK);
