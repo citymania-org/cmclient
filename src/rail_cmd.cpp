@@ -902,9 +902,8 @@ static CommandCost CmdRailTrackHelper(DoCommandFlag flags, TileIndex tile, TileI
 	bool had_success = false;
 	CommandCost last_error = CMD_ERROR;
 	for (;;) {
-		ret = remove ? Command<CMD_REMOVE_SINGLE_RAIL>::Do(flags, tile, TrackdirToTrack(trackdir)) : Command<CMD_BUILD_SINGLE_RAIL>::Do(flags, tile, railtype, TrackdirToTrack(trackdir), auto_remove_signals);
-
 		TileIndex last_endtile = _rail_track_endtile;  // CM
+		ret = remove ? Command<CMD_REMOVE_SINGLE_RAIL>::Do(flags, tile, TrackdirToTrack(trackdir)) : Command<CMD_BUILD_SINGLE_RAIL>::Do(flags, tile, railtype, TrackdirToTrack(trackdir), auto_remove_signals);
 		if (ret.Failed()) {
 			last_error = ret;
 			if (_rail_track_endtile == INVALID_TILE) _rail_track_endtile = last_endtile;  // CM
