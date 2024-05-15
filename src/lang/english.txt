@@ -6322,3 +6322,50 @@ CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Show 
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Show hidden ({NUM})
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Show hidden ({NUM})
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Show hidden ({NUM})
+
+### Admin Buttons ###
+STR_XI_COMPANY_ADMIN_CAPTION                                    :{WHITE}Admin buttons #{NUM}
+STR_XI_COMPANY_ADMIN_BUTTON			                            :{WHITE}Admin buttons
+STR_XI_LOCK                                                     :{BLACK}Lock
+STR_XI_LOCK_TOOLTIP                                             :{BLACK}Lock  Company. All players on it will be sent to spectators.
+STR_XI_UNLOCK                                                   :{BLACK}Unlock
+STR_XI_UNLOCK_TOOLTIP                                           :{BLACK}Unlock Company making possible player(s) joining it again.
+STR_XI_KNOWN                                                    :{BLACK}Known
+STR_XI_KNOWN_TOOLTIP                                            :{BLACK}Show the known player(s) of company.
+STR_XI_RESET_KNOWN                                              :{BLACK}Reset Known
+STR_XI_RESET_KNOWN_TOOLTIP                                      :{BLACK}Reset list of known players of company.
+STR_XI_MOVE_PLAYER_TO                                           :{BLACK}Move to ...
+STR_XI_MOVE_PLAYER_TO_TOOLTIP                                   :{BLACK}Move a player (number #.. or name) to company
+STR_XI_COMPANY_NEWSTICKET_BUTTON                                :{BLACK}News
+STR_XI_COMPANY_NEWSTICKET_BUTTON_TOOLTIP                        :{BLACK}Open a Newspapper message directed to Company
+STR_XI_COMPANY_NEWSTICKET_BUTTON_COMP                           :{BLACK}News (P. C.)
+STR_XI_COMPANY_NEWSTICKET_BUTTON_COMP_TOOLTIP                   :{BLACK}Open a Newspapper message only showed to Company
+STR_XI_SUSPEND                                                  :{BLACK}Suspend
+STR_XI_SUSPEND_TOOLTIP                                          :{BLACK}Suspend Company actions keeping player in the company.
+STR_XI_UNSUSPEND                                                :{BLACK}Unsuspend
+STR_XI_UNSUSPEND_TOOLTIP                                        :{BLACK}Unsuspend Company actions.
+STR_XI_EMPTY                                                    :{BLACK}Empty
+STR_XI_EMPTY_TOOLTIP                                            :{BLACK}Send players in company to Spectators.
+STR_XI_RESET                                                    :{BLACK}Reset
+STR_XI_RESET_TOOLTIP                                            :{BLACK}Reset the company. The company must be empty.
+STR_XI_RESET_SPEC                                               :{BLACK}Reset Spec
+STR_XI_RESET_SPEC_TOOLTIP                                       :{BLACK}Reset company and send player(s) to spectators.
+STR_XI_RESET_KICK                                               :{BLACK}Reset Kick
+STR_XI_RESET_KICK_TOOLTIP                                       :{BLACK}Reset company and Kick out of the game player(s) on it.
+STR_XI_RESET_TIMER_120                                          :{BLACK}Reset T. 2m
+STR_XI_RESET_TIMER_120_TOOLTIP                                  :{BLACK}Starts a timer to reset company when after 2 minutes countdown.
+STR_XI_RESET_TIMER                                              :{BLACK}Reset T....
+STR_XI_RESET_TIMER_TOOLTIP                                      :{BLACK}Starts a timer to reset company when time expire (time is Admin input).
+STR_XI_RESET_TIMER_VALUE                                        :{BLACK}Time to Reset (seconds):
+STR_XI_RESET_TIMER_CANCEL                                       :{BLACK}Cancel Reset
+STR_XI_RESET_TIMER_CANCEL_TOOLTIP                               :{BLACK}Cancel the Reset timer.
+STR_XI_AWARNING                                                 :{BLACK}Warning
+STR_XI_AWARNING_TOOLTIP                                         :{BLACK}Sends a Warning to company that an admin is trying to contact.
+STR_XI_RESET_COMP							                    :{BLACK}RESET Company
+STR_XI_RESET_COMP_SURE                                          :{WHITE}Sure to RESET this company?
+STR_XI_RESET_SPEC_SURE                                          :{WHITE}Sure to RESET this company, send players to SPECTATORS?
+STR_XI_RESET_KICK_SURE                                          :{WHITE}Sure to RESET this company, and KICK players on it?
+STR_XI_PLAYER_NEWSTICKET                                        :{BLACK}Type message as newspapper ticket to this Player
+STR_XI_COMPANY_NEWSTICKET                                       :{BLACK}Type message as newspapper ticket to this Company
+STR_XI_COMPANY_JOIN2                                            :{BLACK}A. Join
+STR_XI_COMPANY_JOIN2_TOOLTIP                                    :{BLACK}Join as an admin

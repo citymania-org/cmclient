@@ -732,6 +732,7 @@ enum WindowClass {
 	CM_WC_COMMAND_TOOLBAR,
 	CM_WC_LOGIN_WINDOW,
 	CM_WC_CB_TOWN,
+	CM_WC_ADMIN_COMPANY_BUTTONS,
 
 	WC_INVALID = 0xFFFF, ///< Invalid window.
 };

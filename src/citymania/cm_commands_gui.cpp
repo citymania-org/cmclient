@@ -157,6 +157,38 @@ enum LoginWindowQueryWidgets {
 	LQW_ADMIN_PW
 };
 
+enum AdminCompanyButtonsWidgets {
+	WID_AC_CAPTION,
+	WID_C_COMPANY_EMPTY,
+	WID_C_COMPANY_LOCK,
+	WID_C_COMPANY_UNLOCK,
+	WID_C_COMPANY_NEWSTICKET,
+	WID_C_COMPANY_NEWSTICKET_COMP,
+	WID_C_COMPANY_RESET,
+	WID_C_COMPANY_RESET_SPEC,
+	WID_C_COMPANY_RESET_KICK,
+	WID_C_COMPANY_KNOWN,
+	WID_C_COMPANY_RESET_KNOWN,
+	WID_C_COMPANY_MOVE_PLAYER,
+	WID_C_RESET_COMPANY_TIMER_120,
+	WID_C_RESET_COMPANY_TIMER,
+	WID_C_RESET_COMPANY_TIMER_CANCEL,
+	WID_C_COMPANY_SUSPEND,
+	WID_C_COMPANY_UNSUSPEND,
+	WID_C_COMPANY_AWARNING,
+	WID_C_COMPANY_JOIN2,
+	WID_C_COMPANY_LEAVE,
+	WID_C_COMPANY_CANCEL,
+	WID_C_COMPANY_CAPTION,
+};
+
+enum AdminCompanyButtonsQueryWidgets {
+	WID_CQ_RESET_COMPANY_TIMER,
+	WID_CQ_COMPANY_NEWSTICKET,
+	WID_CQ_COMPANY_NEWSTICKET_COMP,
+	WID_CQ_COMPANY_MOVE_PLAYER,
+};
+
 enum CommunityName {
 	CITYMANIA,
 	NICE,
@@ -179,10 +211,13 @@ char _inilogindata[9][MAX_COMMUNITY_STRING_LEN];
 
 void AccountLogin(CommunityName community);
 void IniReloadLogin();
+void ShowAdminCompanyButtons(int companyid = INVALID_COMPANY);
 
 bool novahost() {
 	return _novahost;
 }
+
+bool GetAdmin() { return _admin; }
 
 // void strtomd5(char * buf, char * bufend, int length){
 // 	MD5Hash digest;
@@ -209,7 +244,7 @@ bool novahost() {
 
 
 //ini login hadling
-void IniLoginInitiate(){
+void IniInitiate(){
 	if(_inilogin != NULL) return; //it was already set
 	_inilogin = new IniFile({CFG_LOGIN_KEY});
     _inilogin->LoadFromDisk(CFG_FILE, BASE_DIR);
@@ -256,8 +291,11 @@ void SetServerItem(const std::string &itemname, const std::string &value) {
     IniItem &item = group.GetOrCreateItem(itemname);
     item.SetValue(value);
     _inilogin->SaveToDisk(fmt::format("{}{}", _personal_dir, CFG_FILE));
-    //IniReloadLogin();
 }
+
+
+
+
 
 
 /** Commands toolbar window handler. */
@@ -708,12 +746,6 @@ struct LoginWindow : Window {
 	LoginWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
 	{
         if ((_community == 1) || (_community == 2) || (_community == 3))  this->InitNested(window_number);
-        //this->InitNested(window_number);
-		// if(_novahost || !_networking){
-		// 	this->DisableWidget(LWW_NICE);
-		// 	this->DisableWidget(LWW_BTPRO);
-		// }
-		// if(!_novahost || !_networking) this->DisableWidget(LWW_NOVAPOLIS);
 
 		//no need for citymania
 		if (_community == 3) {
@@ -762,7 +794,6 @@ struct LoginWindow : Window {
 				}
                 break;
 			}
-
 		}
 	}
 
@@ -858,6 +889,168 @@ struct LoginWindow : Window {
 		}
 		this->SetDirty();
 	}
+};
+
+struct AdminCompanyButtonsWindow : Window {
+	AdminCompanyButtonsQueryWidgets query_widget;
+    //CompanyID company;
+
+	AdminCompanyButtonsWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc) {
+
+		this->InitNested(window_number);
+
+		/* disable not supported buttons for n-ice */
+		if (GetServerItem(COMMUNITY) == "1") {
+            this->DisableWidget(WID_C_COMPANY_SUSPEND);
+            this->DisableWidget(WID_C_COMPANY_UNSUSPEND);
+            this->DisableWidget(WID_C_COMPANY_AWARNING);
+        }
+    }
+
+	static void CWCompanyResetCallback(Window* w, bool confirmed)
+	{
+		if (confirmed) NetworkClientSendChatToServer(fmt::format("!resetcompany {}",w->window_number));
+	}
+
+	static void CWCompanyResetSpecCallback(Window* w, bool confirmed)
+	{
+		if (confirmed) NetworkClientSendChatToServer(fmt::format("!resetcompanyspec {}",w->window_number));
+	}
+
+	static void CWCompanyResetKickCallback(Window* w, bool confirmed)
+	{
+		if (confirmed) NetworkClientSendChatToServer(fmt::format("!resetcompanykick {}",w->window_number));
+	}
+
+
+	virtual void OnClick(Point pt, int widget, int click_count)
+	{
+		if(!_networking) return;
+		int _company = this->window_number;
+		switch (widget) {
+			case WID_C_COMPANY_EMPTY:
+				NetworkClientSendChatToServer(fmt::format("!emptycompany {}",_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_RESET_KICK:
+				ShowQuery(STR_XI_RESET_COMP, STR_XI_RESET_KICK_SURE, this, CWCompanyResetKickCallback);
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_RESET_SPEC:
+				ShowQuery(STR_XI_RESET_COMP, STR_XI_RESET_SPEC_SURE, this, CWCompanyResetSpecCallback);
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_RESET:
+				ShowQuery(STR_XI_RESET_COMP, STR_XI_RESET_COMP_SURE, this, CWCompanyResetCallback);
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_RESET_COMPANY_TIMER:
+				this->query_widget = WID_CQ_RESET_COMPANY_TIMER;
+				SetDParam(0, _company);
+				ShowQueryString(STR_EMPTY, STR_XI_RESET_TIMER_VALUE, 25, this, CS_NUMERAL, QSF_NONE);
+				break;
+			case WID_C_RESET_COMPANY_TIMER_120:
+				NetworkClientSendChatToServer(fmt::format("!resetcompanytimer {} 120",_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_RESET_COMPANY_TIMER_CANCEL:
+				NetworkClientSendChatToServer(fmt::format("!cancelresetcompany {}",_company));
+				break;
+			case WID_C_COMPANY_LOCK:
+				NetworkClientSendChatToServer(fmt::format("!lockcompany {}",_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_UNLOCK:
+				NetworkClientSendChatToServer(fmt::format("!unlockcompany {}",_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_KNOWN:
+				NetworkClientSendChatToServer(fmt::format("!known {}",_company));
+				MarkWholeScreenDirty();
+				break;			
+			case WID_C_COMPANY_RESET_KNOWN:
+				NetworkClientSendChatToServer(fmt::format("!resetknown {}",_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_MOVE_PLAYER:
+				this->query_widget = WID_CQ_COMPANY_MOVE_PLAYER;
+				SetDParam(0, _company);
+				ShowQueryString(STR_EMPTY, STR_NETWORK_SERVER_LIST_PLAYER_NAME, 250, this, CS_ALPHANUMERAL, QSF_NONE);
+				break;
+			case WID_C_COMPANY_NEWSTICKET:
+				this->query_widget = WID_CQ_COMPANY_NEWSTICKET;
+				SetDParam(0, _company);
+				ShowQueryString(STR_EMPTY, STR_XI_PLAYER_NEWSTICKET, 250, this, CS_ALPHANUMERAL, QSF_NONE);
+				break;
+			case WID_C_COMPANY_NEWSTICKET_COMP:
+				this->query_widget = WID_CQ_COMPANY_NEWSTICKET_COMP;
+				SetDParam(0, _company);
+				ShowQueryString(STR_EMPTY, STR_XI_PLAYER_NEWSTICKET, 250, this, CS_ALPHANUMERAL, QSF_NONE);
+				break;
+			case WID_C_COMPANY_SUSPEND:
+				NetworkClientSendChatToServer(fmt::format("!suspend {}",_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_UNSUSPEND:
+				NetworkClientSendChatToServer(fmt::format("!unsuspend {}",_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_AWARNING:
+				NetworkClientSendChatToServer(fmt::format("!awarning {}",_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_JOIN2:
+				NetworkClientSendChatToServer(fmt::format("!move #{} {}",_network_own_client_id ,_company));
+				MarkWholeScreenDirty();
+				break;
+			case WID_C_COMPANY_LEAVE:
+				NetworkClientRequestMove(COMPANY_SPECTATOR);
+				break;
+			case WID_C_COMPANY_CANCEL:
+				this->Close();
+				break;
+		}
+	}
+
+	void SetStringParameters(WidgetID widget) const override
+	{
+		switch (widget) {
+			case WID_C_COMPANY_CAPTION:
+				SetDParam(0, this->window_number);
+				break;
+		}
+	}
+
+	void OnQueryTextFinished(char *str)
+	{
+		if (str == NULL) return;
+		switch (this->query_widget) {
+			default: NOT_REACHED();
+
+			case WID_CQ_RESET_COMPANY_TIMER:
+				NetworkClientSendChatToServer(fmt::format("!resetcompanytimer {} {}",this->window_number,str));
+				MarkWholeScreenDirty();
+				break;
+			case WID_CQ_COMPANY_NEWSTICKET: {
+                std::string buffer = GetString(STR_COMPANY_NAME); 
+				NetworkClientSendChatToServer(fmt::format("!news {}: {}", buffer, str));
+				MarkWholeScreenDirty();
+				break;
+			}
+			case WID_CQ_COMPANY_NEWSTICKET_COMP: {
+				std::string buffer = GetString(STR_COMPANY_NAME); 
+				NetworkClientSendChatToServer(fmt::format("!news {} {}", this->window_number, str));
+				MarkWholeScreenDirty();
+				break;
+			}
+			case WID_CQ_COMPANY_MOVE_PLAYER: {
+				NetworkClientSendChatToServer(fmt::format("!move #{} {}",str, this->window_number));
+				MarkWholeScreenDirty();
+				break;
+			}
+		}
+	}
+
 };
 
 static const NWidgetPart _nested_login_window_widgets[] = {
@@ -957,11 +1150,43 @@ static const NWidgetPart _nested_admin_window_widgets[] = {
 	EndContainer(),
 };
 
-
-
-
-
-
+static const NWidgetPart _nested_admin_company_window_widgets[] = {
+	NWidget(NWID_HORIZONTAL),
+		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
+		NWidget(WWT_CAPTION, COLOUR_RED, WID_C_COMPANY_CAPTION), SetDataTip(STR_XI_COMPANY_ADMIN_CAPTION, 0),
+		NWidget(WWT_STICKYBOX, COLOUR_GREY),
+	EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_GREY), SetFill(0, 1),
+		NWidget(NWID_HORIZONTAL),
+			NWidget(NWID_SPACER), SetMinimalSize(5, 0), SetFill(1, 0),
+			NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPIP(5, 3, 5),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_LOCK), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_LOCK, STR_XI_LOCK_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_UNLOCK), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_UNLOCK, STR_XI_UNLOCK_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_KNOWN), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_KNOWN, STR_XI_KNOWN_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_RESET_KNOWN), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_RESET_KNOWN, STR_XI_RESET_KNOWN_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_MOVE_PLAYER), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_MOVE_PLAYER_TO, STR_XI_MOVE_PLAYER_TO_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_NEWSTICKET_COMP), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_COMPANY_NEWSTICKET_BUTTON_COMP, STR_XI_COMPANY_NEWSTICKET_BUTTON_COMP_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_SUSPEND), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_SUSPEND, STR_XI_SUSPEND_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_UNSUSPEND), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_UNSUSPEND, STR_XI_UNSUSPEND_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_JOIN2),SetMinimalSize(10, 13), SetFill(1, 0),SetDataTip(STR_XI_COMPANY_JOIN2, STR_XI_COMPANY_JOIN2_TOOLTIP),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(5, 0), SetFill(1, 0),
+			NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPIP(5, 3, 5),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_EMPTY), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_EMPTY, STR_XI_EMPTY_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_RESET), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_RESET, STR_XI_RESET_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_RESET_SPEC), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_RESET_SPEC, STR_XI_RESET_SPEC_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_RESET_KICK), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_RESET_KICK, STR_XI_RESET_KICK_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_RESET_COMPANY_TIMER_120), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_RESET_TIMER_120, STR_XI_RESET_TIMER_120_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_RESET_COMPANY_TIMER), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_RESET_TIMER, STR_XI_RESET_TIMER_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_RESET_COMPANY_TIMER_CANCEL), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_RESET_TIMER_CANCEL, STR_XI_RESET_TIMER_CANCEL_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_AWARNING), SetMinimalSize(10, 13), SetFill(1, 0), SetDataTip(STR_XI_AWARNING, STR_XI_AWARNING_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_LEAVE),SetMinimalSize(10, 13), SetFill(1, 0),SetDataTip(STR_NETWORK_COMPANY_LIST_SPECTATE, STR_NETWORK_COMPANY_LIST_SPECTATE),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(5, 0), SetFill(1, 0),
+		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 5), SetFill(0, 1),
+	EndContainer(),
+};
 
 /* Identify the current community */
 void CheckCommunity() {
@@ -975,8 +1200,7 @@ void CheckCommunity() {
             SetServerItem(COMMUNITY, "2");
             // GetCommunityServerListText();
         }
-    } else if (_network_server_name.find("CityMania.org") !=
-               std::string::npos) {
+    } else if (_network_server_name.find("CityMania.org") != std::string::npos) {
         if (GetServerItem(COMMUNITY) != "3") {
             SetServerItem(COMMUNITY, "3");
             // GetCommunityServerListText();
@@ -992,7 +1216,7 @@ void CheckCommunity() {
 };
 
 void CheckAdmin(){
-
+    IniInitiate();
     if (GetLoginItem(ADMIN) == "1")
         _admin = true;
 };
@@ -1012,13 +1236,32 @@ static WindowDesc _admin_window_desc(__FILE__, __LINE__,
 	std::begin(_nested_admin_window_widgets), std::end(_nested_admin_window_widgets)
 );
 
+static WindowDesc _admin_company_buttons_desc(__FILE__, __LINE__,
+	WDP_AUTO, NULL, 0, 0,
+    CM_WC_ADMIN_COMPANY_BUTTONS, WC_NONE,
+	WDF_CONSTRUCTION,
+    std::begin(_nested_admin_company_window_widgets), std::end(_nested_admin_company_window_widgets)
+);
+
 void ShowLoginWindow() {
-    IniLoginInitiate();
+    IniInitiate();
     CheckCommunity();
     CheckAdmin();
     CloseWindowByClass(CM_WC_LOGIN_WINDOW);
     if (!_admin) AllocateWindowDescFront<LoginWindow>(&_login_window_desc, 0);
     else AllocateWindowDescFront<LoginWindow>(&_admin_window_desc, 0);
+};
+
+void ShowAdminCompanyButtons(int left, int top, int width, int company2) {
+    IniInitiate();
+    CheckCommunity();
+	if (!Company::IsValidID((CompanyID)(company2-1))) return;
+    Window *w;
+	CloseWindowById(CM_WC_ADMIN_COMPANY_BUTTONS, company2);
+    w = new AdminCompanyButtonsWindow(&_admin_company_buttons_desc, company2);
+    w->top = top;
+    w->left = left + width;
+    w->SetDirty();
 };
 
 } // namespace citymania
