@@ -2199,7 +2199,7 @@ static constexpr NWidgetPart _nested_company_widgets[] = {
 						EndContainer(),
 						/* Admin company buttons */
 						NWidget(NWID_SELECTION, INVALID_COLOUR, CM_WID_C_SELECT_ADMINBUTTONS),
-							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, CM_WID_C_ADMINBUTTONS), SetDataTip(STR_XI_COMPANY_ADMIN_BUTTON, STR_XI_COMPANY_ADMIN_BUTTON),
+							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, CM_WID_C_ADMINBUTTONS), SetDataTip(CM_STR_ACB_COMPANY_ADMIN_BUTTON, CM_STR_ACB_COMPANY_ADMIN_BUTTON),
 						EndContainer(),
 					EndContainer(),
 				EndContainer(),
@@ -2379,8 +2379,9 @@ struct CompanyWindow : Window
 				size->width += padding.width;
 				break;
 
+			/* Admin company buttons */
 			case CM_WID_C_ADMINBUTTONS:
-				size->width = std::max(size->width, GetStringBoundingBox(STR_XI_COMPANY_ADMIN_BUTTON).width);
+				size->width = std::max(size->width, GetStringBoundingBox(CM_STR_ACB_COMPANY_ADMIN_BUTTON).width);
 
 			case WID_C_HAS_PASSWORD:
 				if (_networking) *size = maxdim(*size, GetSpriteSize(SPR_LOCK));
