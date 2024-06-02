@@ -188,6 +188,11 @@ enum AdminCompanyButtonsQueryWidgets {
 	ACBQ_COMPANY_MOVE_PLAYER,
 };
 
+enum LastServerWidgets {
+	LSW_CAPTION,
+	LSW_BUTTON,
+};
+
 enum CommunityName {
 	CITYMANIA,
 	NICE,
@@ -1053,6 +1058,49 @@ struct AdminCompanyButtonsWindow : Window {
 
 };
 
+struct JoinLastServerWindow : Window {
+    // CompanyID company;
+
+    JoinLastServerWindow(WindowDesc *desc, WindowNumber window_number)
+        : Window(desc) {
+
+        this->InitNested(window_number);
+
+		if (_settings_client.network.last_joined == "")
+            this->DisableWidget(LSW_BUTTON);
+    }
+
+	virtual void OnClick([[maybe_unused]] Point pt, int widget,[[maybe_unused]] int click_count)
+	{
+        switch (widget) {
+            case LSW_BUTTON: {
+				std::string _server = _settings_client.network.last_joined;
+                if (_ctrl_pressed)
+                    NetworkClientConnectGame(_server, COMPANY_NEW_COMPANY);
+				else
+					NetworkClientConnectGame(_server, COMPANY_SPECTATOR);
+			}
+            break;
+        }
+	};
+
+	/*
+	void SetStringParameters(WidgetID widget) const override {
+            switch (widget) {
+            case LSW_BUTTON:
+                if (_server != "")
+                    SetDParam(0, STR_JUST_NOTHING);
+                else {
+                    SetDParam(0, STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST);
+                }
+                break;
+            }
+     };
+	 */
+};
+
+
+
 static const NWidgetPart _nested_login_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
@@ -1188,6 +1236,17 @@ static const NWidgetPart _nested_admin_company_window_widgets[] = {
 	EndContainer(),
 };
 
+static const NWidgetPart _nested_last_server_widgets[] = {
+	NWidget(WWT_PANEL, COLOUR_BROWN), SetFill(0, 1),
+		//NWidget(NWID_HORIZONTAL),
+		//	NWidget(WWT_CAPTION, COLOUR_BROWN, LSW_CAPTION), SetMinimalSize(322, 20), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_LAST_JOINED_SERVER, 0), SetFill(1, 1),
+		//EndContainer(),
+		NWidget(NWID_HORIZONTAL), SetPadding(4),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LSW_BUTTON), SetMinimalSize(322, 20), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST, 0), SetFill(1, 1),
+		EndContainer(),
+	EndContainer(),
+};
+
 /* Identify the current community */
 void CheckCommunity() {
     if (_network_server_name.find("n-ice.org") != std::string::npos) {
@@ -1243,6 +1302,12 @@ static WindowDesc _admin_company_buttons_desc(__FILE__, __LINE__,
     std::begin(_nested_admin_company_window_widgets), std::end(_nested_admin_company_window_widgets)
 );
 
+static WindowDesc _last_server_desc(__FILE__, __LINE__,
+	WDP_AUTO, NULL, 0, 0,
+	CM_LAST_SERVER,
+    WC_NONE, WDF_CONSTRUCTION, std::begin(_nested_last_server_widgets),
+    std::end(_nested_last_server_widgets));
+
 void ShowLoginWindow() {
     IniInitiate();
     CheckCommunity();
@@ -1263,5 +1328,14 @@ void ShowAdminCompanyButtons(int left, int top, int width, int company2) {
     w->left = left + width;
     w->SetDirty();
 };
+
+void JoinLastServer(int left, int top, int height) {
+    CloseWindowByClass(CM_LAST_SERVER);
+    Window *d;
+    d = new JoinLastServerWindow(&_last_server_desc, 0);
+    d->top = top + height;
+    d->left = left;
+}
+
 
 } // namespace citymania

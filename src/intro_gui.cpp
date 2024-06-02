@@ -41,6 +41,7 @@
 #include "table/sprites.h"
 
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_commands_gui.hpp"
 
 #include "safeguards.h"
 
@@ -190,6 +191,8 @@ struct SelectGameWindow : public Window {
 		this->cur_viewport_command_time = 0;
 		this->mouse_idle_time = 0;
 		this->mouse_idle_pos = _cursor.pos;
+
+		citymania::JoinLastServer(this->left, this->top, this->height);
 	}
 
 	void OnRealtimeTick(uint delta_ms) override

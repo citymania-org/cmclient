@@ -7,6 +7,7 @@ void ShowCommandsToolbar();
 void ShowLoginWindow();
 void CheckAdmin();
 void ShowAdminCompanyButtons(int left, int top, int width, int company2);
+void JoinLastServer(int left, int top, int height);
 
 bool GetAdmin();
 
