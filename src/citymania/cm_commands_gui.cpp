@@ -28,8 +28,14 @@
 namespace citymania {
 
 bool _novahost = true;
-bool _admin = false;
 IniFile *_inilogin = NULL;
+
+/* admin company buttons */
+bool _admin = false;
+int ACB_left = 0;
+int ACB_top = 0;
+int ACB_width = 0;
+int ACB_Location[3][15];
 
 static const int HTTPBUFLEN = 1024;
 static const int MAX_COMMUNITY_STRING_LEN = 128;
@@ -1197,12 +1203,12 @@ static const NWidgetPart _nested_admin_window_widgets[] = {
 		EndContainer(),
 	EndContainer(),
 };
-
+  
 static const NWidgetPart _nested_admin_company_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_RED, ACB_COMPANY_CAPTION), SetDataTip(CM_STR_ACB_COMPANY_ADMIN_CAPTION, 0),
-		NWidget(WWT_STICKYBOX, COLOUR_GREY),
+    NWidget(WWT_CAPTION,COLOUR_END, ACB_COMPANY_CAPTION),
+		SetDataTip(CM_STR_ACB_COMPANY_ADMIN_CAPTION, 0),
+		SetMinimalSize(10,17),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetFill(0, 1),
 		NWidget(NWID_HORIZONTAL),
@@ -1242,7 +1248,7 @@ static const NWidgetPart _nested_last_server_widgets[] = {
 		//	NWidget(WWT_CAPTION, COLOUR_BROWN, LSW_CAPTION), SetMinimalSize(322, 20), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_LAST_JOINED_SERVER, 0), SetFill(1, 1),
 		//EndContainer(),
 		NWidget(NWID_HORIZONTAL), SetPadding(4),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LSW_BUTTON), SetMinimalSize(322, 20), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST, 0), SetFill(1, 1),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LSW_BUTTON), SetMinimalSize(322, 20), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST, CM_STR_SCS_COMPANY_NEW_JOIN_TOOLTIP), SetFill(1, 1),
 		EndContainer(),
 	EndContainer(),
 };
@@ -1317,18 +1323,39 @@ void ShowLoginWindow() {
     else AllocateWindowDescFront<LoginWindow>(&_admin_window_desc, 0);
 };
 
-void ShowAdminCompanyButtons(int left, int top, int width, int company2) {
-    IniInitiate();
-    CheckCommunity();
+
+void ShowAdminCompanyButtons(int left, int top, int width, int company2, bool draw, bool redraw) {
+    //IniInitiate();
+    //CheckCommunity();
+    if (!draw) {
+        CloseWindowById(CM_WC_ADMIN_COMPANY_BUTTONS, company2);
+        /* clear for company */
+        ACB_Location[company2 - 1][0]=0;
+        ACB_Location[company2 - 1][1]=0;
+        ACB_Location[company2 - 1][2]=0;
+        return;
+    }
 	if (!Company::IsValidID((CompanyID)(company2-1))) return;
+        if ((left == ACB_Location[company2 - 1][0]) &&
+            (top == ACB_Location[company2 - 1][1]) &&
+            (width == ACB_Location[company2 - 1][2]) &&
+			(!redraw))
+            return;
+
+	/* set for company */
+    ACB_Location[company2 - 1][0] = left;
+    ACB_Location[company2 - 1][1] = top;
+    ACB_Location[company2 - 1][2] = width;
+
+    CloseWindowById(CM_WC_ADMIN_COMPANY_BUTTONS, company2);
     Window *w;
-	CloseWindowById(CM_WC_ADMIN_COMPANY_BUTTONS, company2);
     w = new AdminCompanyButtonsWindow(&_admin_company_buttons_desc, company2);
     w->top = top;
     w->left = left + width;
     w->SetDirty();
 };
 
+/* last server widget */
 void JoinLastServer(int left, int top, int height) {
     CloseWindowByClass(CM_LAST_SERVER);
     Window *d;

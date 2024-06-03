@@ -53,6 +53,8 @@
 
 #include "safeguards.h"
 
+/* Admin company buttons */
+bool Show_ACB[15];
 
 /** Company GUI constants. */
 static void DoSelectCompanyManagerFace(Window *parent);
@@ -2199,7 +2201,7 @@ static constexpr NWidgetPart _nested_company_widgets[] = {
 						EndContainer(),
 						/* Admin company buttons */
 						NWidget(NWID_SELECTION, INVALID_COLOUR, CM_WID_C_SELECT_ADMINBUTTONS),
-							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, CM_WID_C_ADMINBUTTONS), SetDataTip(CM_STR_ACB_COMPANY_ADMIN_BUTTON, CM_STR_ACB_COMPANY_ADMIN_BUTTON),
+							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, CM_WID_C_ADMINBUTTONS), SetDataTip(CM_STR_ACB_COMPANY_ADMIN_BUTTON, CM_STR_ACB_COMPANY_ADMIN_BUTTON_TOOLTIP),
 						EndContainer(),
 					EndContainer(),
 				EndContainer(),
@@ -2291,7 +2293,7 @@ struct CompanyWindow : Window
 			/* Button bar selection. */
 			reinit |= this->GetWidget<NWidgetStacked>(WID_C_SELECT_BUTTONS)->SetDisplayedPlane(local ? 0 : SZSP_NONE);
 
-			/* Admin company buttons */
+			/* Admin company buttons: show/hide admin menue button from param of citymania.cfg */
 			citymania::CheckAdmin();
 			reinit |= this->GetWidget<NWidgetStacked>(CM_WID_C_SELECT_ADMINBUTTONS)->SetDisplayedPlane(citymania::GetAdmin() ? 0 : SZSP_NONE);
 
@@ -2314,10 +2316,13 @@ struct CompanyWindow : Window
 
 			if (reinit) {
 				this->ReInit();
+                 /* Admin company buttons: recall buttons while join/leave company */
+				if (Show_ACB[this->window_number]) citymania::ShowAdminCompanyButtons(this->left, this->top, this->width, this->window_number + 1, Show_ACB[this->window_number], true);
 				return;
 			}
 		}
-
+        /* Admin company buttons: recall buttons while moving company window */
+        if (Show_ACB[this->window_number]) citymania::ShowAdminCompanyButtons(this->left, this->top, this->width, this->window_number + 1, Show_ACB[this->window_number], false);
 		this->DrawWidgets();
 	}
 
@@ -2605,11 +2610,12 @@ struct CompanyWindow : Window
 				MarkWholeScreenDirty();
 				break;
 			}
-            /* Admin company buttons */
-			case CM_WID_C_ADMINBUTTONS:
-			{
-                CompanyID company2 = (CompanyID)this->window_number;
-                citymania::ShowAdminCompanyButtons(this->left, this->top, this->width, company2+1);
+            /* Admin company buttons: show/hide buttons */
+			case CM_WID_C_ADMINBUTTONS: {
+				CompanyID company2 = (CompanyID)this->window_number;
+				if (!Show_ACB[company2]) Show_ACB[company2] = true;
+                else Show_ACB[company2] = false;
+                citymania::ShowAdminCompanyButtons(this->left, this->top, this->width,company2 + 1, Show_ACB[company2], false);
                 break;
 			}
 		}

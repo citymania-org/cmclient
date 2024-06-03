@@ -40,6 +40,7 @@
 #include "../citymania/cm_client_list_gui.hpp"
 #include "../citymania/cm_commands.hpp"
 #include "../citymania/cm_newgrf_revisions.hpp"
+#include "../citymania/cm_commands_gui.hpp" /* Admin company buttons */
 
 #include "../safeguards.h"
 
@@ -1325,7 +1326,8 @@ void NetworkClientsToSpectators(CompanyID cid)
 		NetworkTextMessage(NETWORK_ACTION_COMPANY_SPECTATOR, CC_DEFAULT, false, ci->client_name);
 		ci->client_playas = COMPANY_SPECTATOR;
 	}
-
+    /* Admin company buttons: delete window */
+	citymania::ShowAdminCompanyButtons(0, 0, 0, cid+1, false, false);
 	cur_company.Restore();
 }
 

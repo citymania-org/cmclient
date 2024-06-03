@@ -6326,6 +6326,7 @@ CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                     :{BLACK}Show hid
 ### Admin Company Buttons ###
 CM_STR_ACB_COMPANY_ADMIN_CAPTION                                :{WHITE}Admin buttons #{NUM}
 CM_STR_ACB_COMPANY_ADMIN_BUTTON			                        :{WHITE}Admin buttons
+CM_STR_ACB_COMPANY_ADMIN_BUTTON_TOOLTIP			                :{BLACK}Show / hide the admin buttons.
 CM_STR_ACB_LOCK                                                 :{BLACK}Lock
 CM_STR_ACB_LOCK_TOOLTIP                                         :{BLACK}Lock  Company. All players on it will be sent to spectators.
 CM_STR_ACB_UNLOCK                                               :{BLACK}Unlock
@@ -6369,3 +6370,6 @@ CM_STR_ACB_PLAYER_NEWSTICKET                                    :{BLACK}Type mes
 CM_STR_ACB_COMPANY_NEWSTICKET                                   :{BLACK}Type message as newspapper ticket to this Company
 CM_STR_ACB_COMPANY_JOIN2                                        :{BLACK}A. Join
 CM_STR_ACB_COMPANY_JOIN2_TOOLTIP                                :{BLACK}Join as an admin
+
+### Several command strings ###
+CM_STR_SCS_COMPANY_NEW_JOIN_TOOLTIP                             :Hold CTRL and click for joining with new company.
