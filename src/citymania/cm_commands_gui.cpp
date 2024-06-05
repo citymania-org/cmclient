@@ -37,6 +37,15 @@ int ACB_top = 0;
 int ACB_width = 0;
 int ACB_Location[3][15];
 
+/* server buttons */
+std::string _server_list_text; // list from http
+std::string _cc_address;  // current adddress
+std::string _cc_name;     // current name
+int _cc_porti;            // current port
+std::int8_t _fromlast = 0;
+int _left, _top, _height;
+int _servercount;  // how many servers
+
 static const int HTTPBUFLEN = 1024;
 static const int MAX_COMMUNITY_STRING_LEN = 128;
 
@@ -199,6 +208,18 @@ enum LastServerWidgets {
 	LSW_BUTTON,
 };
 
+enum ServerButtonsWidgets {
+    AC_SERVERS,
+    AC_SERVERS1,
+    WID_SB_SELECT_NICE,
+    WID_SB_SELECT_BTPRO,
+    WID_SB_SELECT_CITYMANIA,
+    WID_SB_SELECT_NONE,
+};
+
+enum ServerButtonsQueryWidgets {};
+
+
 enum CommunityName {
 	CITYMANIA,
 	NICE,
@@ -222,6 +243,9 @@ char _inilogindata[9][MAX_COMMUNITY_STRING_LEN];
 void AccountLogin(CommunityName community);
 void IniReloadLogin();
 void ShowAdminCompanyButtons(int companyid = INVALID_COMPANY);
+void ShowServerButtons(int left,int top, int height);
+void ReloadServerButtons();
+
 
 bool novahost() {
 	return _novahost;
@@ -645,6 +669,141 @@ void ShowCommandsToolbar()
 	// AllocateWindowDescFront<CommandsToolbarWindow>(&_commands_toolbar_desc, 0);
 }
 
+/* for server buttons */
+/** To handle Community Server list */
+class CommunityServerManager: public HTTPCallback {
+ public:
+	CommunityServerManager() {}
+
+	void initiateServerSequence(const std::string &uri) {
+        
+		this->cursor = this->buf;
+        this->buf_last = lastof(buf);
+		NetworkHTTPSocketHandler::Connect(uri, this);
+	}
+
+	void SaveServerString() {
+		_server_list_text += this->buf;
+        NetworkClientSendChatToServer("*** data has been saved.");
+        //if (buttons_shown)
+        //   ShowServers(_left, _top, _height);
+        ReloadServerButtons();
+	}
+
+	void inspectServerData() {
+		//IConsolePrint(CC_INFO, "INSPECTING DATA");
+		if (this->cursor - this->buf >= 4) {
+			this->SaveServerString();
+
+		} else {
+           NetworkClientSendChatToServer("*** no data has been received.");
+		}
+	}
+
+	void OnFailure() override {
+		//ShowErrorMessage(STR_XI_CONNECT_ERROR, INVALID_STRING_ID, WL_ERROR);
+        NetworkClientSendChatToServer("*** connection failed.");
+	}
+
+	bool IsCancelled() const override { return false; }
+
+	void OnReceiveData(std::unique_ptr<char[]> data, size_t length) override
+	{
+        
+		//extern void ShowSelectGameWindow();
+		//size_t i = length;
+
+		if (data.get() == nullptr)
+		{
+			//std::cout << "*** RECEIVED ALL HTTP DATA ***" << std::endl;
+
+			this->inspectServerData();
+
+			//CloseWindowByClass(WC_SELECT_GAME);
+            /* If we are still in the menu reopen it */
+			//if (_game_mode == GM_MENU) ShowSelectGameWindow();
+
+            this->cursor = nullptr;
+		} else {
+            for (size_t i = 0; i < length && this->cursor < this->buf_last; i++, this->cursor++) {
+				*(this->cursor) = data.get()[i];
+            }
+            *(this->cursor) = '\0';
+            //NetworkServerSendChat(STR_XI_CONNECT_FINISH, INVALID_STRING_ID, WL_ERROR);
+            NetworkClientSendChatToServer("*** data received");
+        }
+		
+	}
+
+ private:
+	//NetworkHTTPContentConnecter *conn;
+	char buf[4096];
+    char *buf_last;
+	char *cursor;
+};
+
+void CommunityServerManagerSend()
+{
+    std::int8_t _community = stoi(GetServerItem(COMMUNITY));
+    std::string uri;
+    // IConsolePrint(CC_INFO, "INITIATING LOGIN SEQUENCE");
+    if (_community == 1) {
+        uri = fmt::format("http://n-ice.org/openttd/serverlist.txt");
+    } else if (_community == 2) {
+        uri = fmt::format("https://openttd.btpro.nl/btproservers.txt");
+    }
+
+	static CommunityServerManager servermgr{};
+	servermgr.initiateServerSequence(uri);
+}
+
+void GetCommunityServerListText(){
+    std::int8_t _community = stoi(GetServerItem(COMMUNITY));
+	if(_fromlast == _community || _community == 0) return;
+	_fromlast = _community;
+	_server_list_text.clear();
+	CommunityServerManagerSend();
+}
+
+bool GetCommunityServer(int number, bool findonly) {
+	//IConsolePrintF(CC_INFO, "Buf: %s", _server_list_text.c_str());
+	if(_server_list_text.empty()) return false;
+    _cc_address = "";
+    _cc_name = "";
+
+    std::string server;
+    std::string port;
+
+	if(number < 10) {
+		server = fmt::format("SERVER0{}", number);
+        port = fmt::format("PORT0{}", number);
+	} else {
+		server = fmt::format("SERVER{}", number);
+		port = fmt::format("PORT{}", number);
+	}
+	size_t posaddress = _server_list_text.find(server);
+	size_t posport = _server_list_text.find(port);
+
+	if(posaddress != std::string::npos && posport != std::string::npos){
+		std::string saddress = _server_list_text.substr(posaddress + 10, _server_list_text.find(";", posaddress + 10) - posaddress - 10);
+		std::string sport = _server_list_text.substr(posport + 8, _server_list_text.find(";", posport + 8) - posport - 8);
+
+		//IConsolePrintF(CC_DEFAULT, "server: '%s'", saddress.c_str());
+		if(saddress.compare("DISABLED") == 0) return false;
+		else if(findonly) return true;
+
+		_cc_address = saddress;
+		_cc_porti = std::stoi(sport);
+
+		return true;
+	}
+	else if(findonly) return false;
+
+	ShowErrorMessage(CM_STR_SB_SERVER_LIST_ERROR_FILE, INVALID_STRING_ID,WL_ERROR);
+	return false;
+}
+/* end of serverbuttons */
+
 // login window
 class GetHTTPContent: public HTTPCallback {
 public:
@@ -764,7 +923,14 @@ struct LoginWindow : Window {
             this->DisableWidget(LWW_ADMIN_LOGOUT);
             this->DisableWidget(LWW_ADMIN_PW);
         }
+        
 	}
+
+	void DrawWidget(const Rect &r, WidgetID widget) const override
+	{
+            ShowServerButtons(this->left, this->top, this->height);
+	}
+
 
 	void SetStringParameters(int widget) const override
 	{
@@ -1105,6 +1271,175 @@ struct JoinLastServerWindow : Window {
 	 */
 };
 
+struct ServerButtonsWindow : Window {
+    ServerButtonsQueryWidgets query_widget;
+
+	std::int8_t _community = stoi(GetServerItem(COMMUNITY));
+
+    ServerButtonsWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc) {
+
+		this->InitNested(window_number);
+
+		if(_community == 1){
+            this->GetWidget<NWidgetCore>(WID_SB_SELECT_NICE)->colour = COLOUR_ORANGE;
+		}
+		else if(_community == 2){
+			this->GetWidget<NWidgetCore>(WID_SB_SELECT_BTPRO)->colour = COLOUR_ORANGE;
+		}
+		else if(_community == 3){
+			this->GetWidget<NWidgetCore>(WID_SB_SELECT_CITYMANIA)->colour = COLOUR_ORANGE;
+		}
+	}
+
+	virtual void OnClick([[maybe_unused]] Point pt, int widget, [[maybe_unused]] int click_count)
+	{
+		switch (widget) {
+            case WID_SB_SELECT_NICE: 
+                SetServerItem(COMMUNITY, "1");
+				GetCommunityServerListText();
+				break;
+            case WID_SB_SELECT_BTPRO: 
+                SetServerItem(COMMUNITY, "2");
+                GetCommunityServerListText();
+                break;
+            case WID_SB_SELECT_CITYMANIA: 
+                SetServerItem(COMMUNITY, "3");
+                //GetCommunityServerListText();
+                break;
+            default:
+                if (widget >= AC_SERVERS1) {
+                    /*get info of server from network.cpp and join*/
+                    if (GetCommunityServer(widget - AC_SERVERS1 + 1,false)) {
+                        if (_ctrl_pressed) {
+                            NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_NEW_COMPANY);
+                        } else {
+							NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_SPECTATOR);   
+                        }
+                    }
+                } else ShowErrorMessage(CM_STR_SB_SERVER_DISABLED, INVALID_STRING_ID, WL_ERROR);
+                break;
+		}
+	}
+
+	static void GetServerName(int number)
+	{
+        size_t poscount = _server_list_text.find("servercount");
+		//std::string scount = _server_list_text.substr(poscount + 11, _server_list_text.find(":", poscount + 11) - poscount - 11);
+		std::string scount = _server_list_text.substr(poscount + 12, 3);
+        _servercount = std::stoi(scount);
+
+		std::string name;
+		if (number < 10){
+			name = fmt::format("NAME0{}",number);
+		} else {
+			name = fmt::format("NAME{}",number);
+		}
+		std::string server;
+		if (number < 10){
+			server = fmt::format("SERVER0{}",number);
+		} else {
+			server = fmt::format("SERVER{}",number);
+		}
+		size_t posname = _server_list_text.find(name);
+		std::string sname = _server_list_text.substr(posname + 8, _server_list_text.find(";", posname + 8) - posname - 8);
+		
+		if (number > _servercount)
+                    _cc_name = "-";
+                else
+                    _cc_name = sname;
+	};
+
+	virtual void DrawWidget(const Rect &r, int widget) const override
+	{
+		std::string name;
+
+		switch (widget) {
+			case AC_SERVERS:
+				// do nothing
+				break;
+                        /*
+			default:
+				if(widget >= AC_SERVERS1){
+					if(widget - AC_SERVERS1 + 1 < 10){
+                        name = fmt::format("NAME0{}",widget - AC_SERVERS1 +1);
+					}
+					else {
+						name = fmt::format("NAME{}",widget - AC_SERVERS1 +1);
+					}
+					size_t posname = _server_list_text.find(name);
+					std::string sname = _server_list_text.substr(posname + 8, _server_list_text.find(";", posname + 8) - posname - 8);
+					_cc_name = sname;
+
+					SetDParamStr(0, _cc_name);
+					DrawString(r.left, r.right, r.top + 3, CM_STR_SB_NETWORK_DIRECT_JOIN_GAME, TC_FROMSTRING, SA_CENTER);
+				}
+				break;
+				*/
+		}
+	}
+};
+
+/* fix me */
+NWidgetBase *MakeServerButtons(int *biggest_index)
+{
+    std::int8_t _community = stoi(GetServerItem(COMMUNITY));
+	NWidgetVertical *ver = new NWidgetVertical;
+
+	if(_community == 0 || _server_list_text.empty()){
+		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, AC_SERVERS, NULL);
+		//ver->Add(leaf);
+		return ver;
+	}
+
+    /* check for disabled server from serverlist file */
+	int active = 0, aactive[50], s_max = 0;
+	if (_community == 1) s_max = 50; //for n-ice
+	if (_community == 2) s_max = 30; //for btpro
+	for (int i = 0; i < s_max; i++) {
+        aactive[i] = GetCommunityServer(i + 1, true) ? (i + 1) : 0; //server disabled?
+        active++;
+    }
+
+	NWidgetHorizontal *hor = new NWidgetHorizontal;
+	int i1 = 0, i2 = 0;
+	for (int i = 0; i < s_max; i++) {
+		if ((aactive[i] == 0) && (_community == 1)) continue; //hide button if disabled - for n-ice only
+		i2++;
+		if ((i1 == 5) || (i1 == 10) || (i1 == 15) || (i1 == 20) || (i1 == 25) || (i1 == 30) || (i1 == 35) || (i1 == 40) || (i1 == 45) || (i1 == 50)) {
+			i2=0;
+			NWidgetSpacer *spce = new NWidgetSpacer(3, 0);
+			spce->SetFill(1, 0);
+			//hor->Add(spce);
+			//ver->Add(hor);
+			NWidgetSpacer *spc = new NWidgetSpacer(0, 4);
+			spc->SetFill(1, 0);
+			//ver->Add(spc);
+			//hor = new NWidgetHorizontal();
+		}
+		NWidgetSpacer *spce = new NWidgetSpacer(3, 0);
+		spce->SetFill(1, 0);
+		//hor->Add(spce);
+		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_ORANGE, AC_SERVERS1 + i, NULL);
+		if(aactive[i] == 0) leaf->SetDisabled(true);
+		leaf->SetDataTip(CM_STR_SB_NETWORK_DIRECT_JOIN_GAME, CM_STR_SB_NETWORK_DIRECT_JOIN_GAME_TOOLTIP);
+		leaf->SetMinimalSize(90, 15);
+		//hor->Add(leaf);
+		i1++;
+	}
+
+	/* arrange buttons @ last line */
+	if (i2==0) i2=375;
+	if (i2==1) i2=282;
+	if (i2==2) i2=189;
+	if (i2==3) i2=96;
+	if (i2==4) i2=3;
+	NWidgetSpacer *spce = new NWidgetSpacer(i2, 0);
+	spce->SetFill(1, 0);
+	//hor->Add(spce);
+	//ver->Add(hor);
+	*biggest_index = AC_SERVERS1 - 1 + active;
+	return ver;
+}
 
 
 static const NWidgetPart _nested_login_window_widgets[] = {
@@ -1253,39 +1588,25 @@ static const NWidgetPart _nested_last_server_widgets[] = {
 	EndContainer(),
 };
 
-/* Identify the current community */
-void CheckCommunity() {
-    if (_network_server_name.find("n-ice.org") != std::string::npos) {
-        if (GetServerItem(COMMUNITY) != "1") {
-            SetServerItem(COMMUNITY, "1");
-            // GetCommunityServerListText();
-        }
-    } else if (_network_server_name.find("BTPro.nl") != std::string::npos) {
-        if (GetServerItem(COMMUNITY) != "2") {
-            SetServerItem(COMMUNITY, "2");
-            // GetCommunityServerListText();
-        }
-    } else if (_network_server_name.find("CityMania.org") != std::string::npos) {
-        if (GetServerItem(COMMUNITY) != "3") {
-            SetServerItem(COMMUNITY, "3");
-            // GetCommunityServerListText();
-        }
-    } else if (_network_server_name.find("reddit.com") != std::string::npos) {
-        if (GetServerItem(COMMUNITY) != "4") {
-            SetServerItem(COMMUNITY, "4");
-            // GetCommunityServerListText();
-        }
-    } else {  // Unknown Server
-        SetServerItem(COMMUNITY, "0");
-    }
+static const NWidgetPart _nested_server_buttons_window_widgets[] = {
+	NWidget(NWID_HORIZONTAL),
+		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
+		NWidget(WWT_CAPTION, COLOUR_BROWN), SetDataTip(CM_STR_SB_SERVER_LIST, 0),
+		NWidget(WWT_STICKYBOX, COLOUR_GREY),
+	EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_GREY), SetFill(0, 1),
+		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(5), SetPIP(0, 5, 0),
+ 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_NICE), SetMinimalSize(135, 13), SetDataTip(CM_STR_SB_SELECT_NICE, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_BTPRO), SetMinimalSize(135, 13), SetDataTip(CM_STR_SB_SELECT_BTPRO, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_CITYMANIA), SetMinimalSize(134, 13), SetDataTip(CM_STR_SB_SELECT_CITYMANIA, 0),
+ 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
+	/* fix me */
+		//NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+			//NWidgetFunction(MakeServerButtons),
+		//EndContainer(),
+    EndContainer(),
 };
-
-void CheckAdmin(){
-    IniInitiate();
-    if (GetLoginItem(ADMIN) == "1")
-        _admin = true;
-};
-
 
 static WindowDesc _login_window_desc(__FILE__, __LINE__,
 	WDP_CENTER, "cm_login", 0, 0,
@@ -1314,6 +1635,49 @@ static WindowDesc _last_server_desc(__FILE__, __LINE__,
     WC_NONE, WDF_CONSTRUCTION, std::begin(_nested_last_server_widgets),
     std::end(_nested_last_server_widgets));
 
+static WindowDesc _server_buttons_desc(__FILE__, __LINE__,
+	WDP_AUTO, NULL, 0, 0,
+    CM_WC_SERVER_BUTTONS, WC_NONE,
+	WDF_CONSTRUCTION, 
+    std::begin(_nested_server_buttons_window_widgets), std::end(_nested_server_buttons_window_widgets)
+);
+
+/* Identify the current community */
+void CheckCommunity() {
+    if (_network_server_name.find("n-ice.org") != std::string::npos) {
+        if (GetServerItem(COMMUNITY) != "1") {
+            SetServerItem(COMMUNITY, "1");
+            GetCommunityServerListText();
+        }
+    } else if (_network_server_name.find("BTPro.nl") != std::string::npos) {
+        if (GetServerItem(COMMUNITY) != "2") {
+            SetServerItem(COMMUNITY, "2");
+            GetCommunityServerListText();
+        }
+    } else if (_network_server_name.find("CityMania.org") !=
+               std::string::npos) {
+        if (GetServerItem(COMMUNITY) != "3") {
+            SetServerItem(COMMUNITY, "3");
+            // GetCommunityServerListText();
+        }
+    } else if (_network_server_name.find("reddit.com") != std::string::npos) {
+        if (GetServerItem(COMMUNITY) != "4") {
+            SetServerItem(COMMUNITY, "4");
+            // GetCommunityServerListText();
+        }
+    } else {  // Unknown Server
+        SetServerItem(COMMUNITY, "0");
+    }
+    if ((GetServerItem(COMMUNITY) == "1") || (GetServerItem(COMMUNITY) == "2"))
+        GetCommunityServerListText();
+};
+
+void CheckAdmin() {
+    IniInitiate();
+    if (GetLoginItem(ADMIN) == "1")
+        _admin = true;
+};
+
 void ShowLoginWindow() {
     IniInitiate();
     CheckCommunity();
@@ -1323,6 +1687,33 @@ void ShowLoginWindow() {
     else AllocateWindowDescFront<LoginWindow>(&_admin_window_desc, 0);
 };
 
+void ShowServerButtons(int left, int top, int height) {
+
+	_left = left;
+    _top = top;
+    _height = height;
+
+	IniInitiate();
+    if (_server_list_text.empty())
+        return;
+
+	/* create window at coordinates */
+    Window *b;
+	CloseWindowByClass(CM_WC_SERVER_BUTTONS);
+    b = new ServerButtonsWindow(&_server_buttons_desc, 0);
+    b->top = top+height;
+    b->left = left;
+    b->SetDirty();
+};
+
+void ReloadServerButtons() {
+	ShowServerButtons(_left, _top, _height);
+}
+
+void CreateCommunityServerList() {
+    IniInitiate();
+    CheckCommunity();
+};
 
 void ShowAdminCompanyButtons(int left, int top, int width, int company2, bool draw, bool redraw) {
     //IniInitiate();
