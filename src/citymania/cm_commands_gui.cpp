@@ -209,12 +209,11 @@ enum LastServerWidgets {
 };
 
 enum ServerButtonsWidgets {
-    AC_SERVERS,
-    AC_SERVERS1,
     WID_SB_SELECT_NICE,
     WID_SB_SELECT_BTPRO,
     WID_SB_SELECT_CITYMANIA,
     WID_SB_SELECT_NONE,
+    AC_SERVERS,
 };
 
 enum ServerButtonsQueryWidgets {};
@@ -676,7 +675,7 @@ class CommunityServerManager: public HTTPCallback {
 	CommunityServerManager() {}
 
 	void initiateServerSequence(const std::string &uri) {
-        
+
 		this->cursor = this->buf;
         this->buf_last = lastof(buf);
 		NetworkHTTPSocketHandler::Connect(uri, this);
@@ -709,7 +708,7 @@ class CommunityServerManager: public HTTPCallback {
 
 	void OnReceiveData(std::unique_ptr<char[]> data, size_t length) override
 	{
-        
+
 		//extern void ShowSelectGameWindow();
 		//size_t i = length;
 
@@ -732,7 +731,7 @@ class CommunityServerManager: public HTTPCallback {
             //NetworkServerSendChat(STR_XI_CONNECT_FINISH, INVALID_STRING_ID, WL_ERROR);
             NetworkClientSendChatToServer("*** data received");
         }
-		
+
 	}
 
  private:
@@ -923,7 +922,7 @@ struct LoginWindow : Window {
             this->DisableWidget(LWW_ADMIN_LOGOUT);
             this->DisableWidget(LWW_ADMIN_PW);
         }
-        
+
 	}
 
 	void DrawWidget(const Rect &r, WidgetID widget) const override
@@ -1024,8 +1023,8 @@ struct LoginWindow : Window {
 		switch(this->query_widget){
 			case LQW_USER_NAME: {
                 switch (_community) {
-                    case 1: SetLoginItem(NICE_LOGIN, str); break; 
-                    case 2: SetLoginItem(BTPRO_LOGIN, str); break; 
+                    case 1: SetLoginItem(NICE_LOGIN, str); break;
+                    case 2: SetLoginItem(BTPRO_LOGIN, str); break;
                     case 3: SetLoginItem(NOVAPOLIS_LOGIN, str); break;
 				}
 				break;
@@ -1049,8 +1048,8 @@ struct LoginWindow : Window {
 						SetLoginItem(NICE_PW, second_pass);
 						break;
 					}
-                    case 2: SetLoginItem(BTPRO_PW, str); break; 
-                    case 3: SetLoginItem(NOVAPOLIS_PW, str); break; 
+                    case 2: SetLoginItem(BTPRO_PW, str); break;
+                    case 3: SetLoginItem(NOVAPOLIS_PW, str); break;
 				}
                 break;
 			}
@@ -1144,7 +1143,7 @@ struct AdminCompanyButtonsWindow : Window {
 			case ACB_COMPANY_KNOWN:
 				NetworkClientSendChatToServer(fmt::format("!known {}",_company));
 				MarkWholeScreenDirty();
-				break;			
+				break;
 			case ACB_COMPANY_RESET_KNOWN:
 				NetworkClientSendChatToServer(fmt::format("!resetknown {}",_company));
 				MarkWholeScreenDirty();
@@ -1209,13 +1208,13 @@ struct AdminCompanyButtonsWindow : Window {
 				MarkWholeScreenDirty();
 				break;
 			case ACBQ_COMPANY_NEWSTICKET: {
-                std::string buffer = GetString(STR_COMPANY_NAME); 
+                std::string buffer = GetString(STR_COMPANY_NAME);
 				NetworkClientSendChatToServer(fmt::format("!news {}: {}", buffer, str));
 				MarkWholeScreenDirty();
 				break;
 			}
 			case ACBQ_COMPANY_NEWSTICKET_COMP: {
-				std::string buffer = GetString(STR_COMPANY_NAME); 
+				std::string buffer = GetString(STR_COMPANY_NAME);
 				NetworkClientSendChatToServer(fmt::format("!news {} {}", this->window_number, str));
 				MarkWholeScreenDirty();
 				break;
@@ -1294,26 +1293,26 @@ struct ServerButtonsWindow : Window {
 	virtual void OnClick([[maybe_unused]] Point pt, int widget, [[maybe_unused]] int click_count)
 	{
 		switch (widget) {
-            case WID_SB_SELECT_NICE: 
+            case WID_SB_SELECT_NICE:
                 SetServerItem(COMMUNITY, "1");
 				GetCommunityServerListText();
 				break;
-            case WID_SB_SELECT_BTPRO: 
+            case WID_SB_SELECT_BTPRO:
                 SetServerItem(COMMUNITY, "2");
                 GetCommunityServerListText();
                 break;
-            case WID_SB_SELECT_CITYMANIA: 
+            case WID_SB_SELECT_CITYMANIA:
                 SetServerItem(COMMUNITY, "3");
                 //GetCommunityServerListText();
                 break;
             default:
-                if (widget >= AC_SERVERS1) {
+                if (widget >= AC_SERVERS) {
                     /*get info of server from network.cpp and join*/
-                    if (GetCommunityServer(widget - AC_SERVERS1 + 1,false)) {
+                    if (GetCommunityServer(widget - AC_SERVERS + 1,false)) {
                         if (_ctrl_pressed) {
                             NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_NEW_COMPANY);
                         } else {
-							NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_SPECTATOR);   
+							NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_SPECTATOR);
                         }
                     }
                 } else ShowErrorMessage(CM_STR_SB_SERVER_DISABLED, INVALID_STRING_ID, WL_ERROR);
@@ -1342,7 +1341,7 @@ struct ServerButtonsWindow : Window {
 		}
 		size_t posname = _server_list_text.find(name);
 		std::string sname = _server_list_text.substr(posname + 8, _server_list_text.find(";", posname + 8) - posname - 8);
-		
+
 		if (number > _servercount)
                     _cc_name = "-";
                 else
@@ -1354,17 +1353,13 @@ struct ServerButtonsWindow : Window {
 		std::string name;
 
 		switch (widget) {
-			case AC_SERVERS:
-				// do nothing
-				break;
-                        /*
 			default:
-				if(widget >= AC_SERVERS1){
-					if(widget - AC_SERVERS1 + 1 < 10){
-                        name = fmt::format("NAME0{}",widget - AC_SERVERS1 +1);
+				if(widget >= AC_SERVERS){
+					if(widget - AC_SERVERS + 1 < 10){
+                        name = fmt::format("NAME0{}",widget - AC_SERVERS +1);
 					}
 					else {
-						name = fmt::format("NAME{}",widget - AC_SERVERS1 +1);
+						name = fmt::format("NAME{}",widget - AC_SERVERS +1);
 					}
 					size_t posname = _server_list_text.find(name);
 					std::string sname = _server_list_text.substr(posname + 8, _server_list_text.find(";", posname + 8) - posname - 8);
@@ -1374,20 +1369,19 @@ struct ServerButtonsWindow : Window {
 					DrawString(r.left, r.right, r.top + 3, CM_STR_SB_NETWORK_DIRECT_JOIN_GAME, TC_FROMSTRING, SA_CENTER);
 				}
 				break;
-				*/
 		}
 	}
 };
 
 /* fix me */
-NWidgetBase *MakeServerButtons(int *biggest_index)
+std::unique_ptr<NWidgetBase> MakeServerButtons()
 {
-    std::int8_t _community = stoi(GetServerItem(COMMUNITY));
-	NWidgetVertical *ver = new NWidgetVertical;
+	std::int8_t _community = stoi(GetServerItem(COMMUNITY));
+	auto ver = std::make_unique<NWidgetVertical>();
 
 	if(_community == 0 || _server_list_text.empty()){
-		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, AC_SERVERS, NULL);
-		//ver->Add(leaf);
+		auto leaf = std::make_unique<NWidgetBackground>(WWT_PANEL, COLOUR_GREY, AC_SERVERS);
+		ver->Add(std::move(leaf));
 		return ver;
 	}
 
@@ -1400,30 +1394,30 @@ NWidgetBase *MakeServerButtons(int *biggest_index)
         active++;
     }
 
-	NWidgetHorizontal *hor = new NWidgetHorizontal;
+	auto hor = std::make_unique<NWidgetHorizontal>();
 	int i1 = 0, i2 = 0;
 	for (int i = 0; i < s_max; i++) {
 		if ((aactive[i] == 0) && (_community == 1)) continue; //hide button if disabled - for n-ice only
 		i2++;
 		if ((i1 == 5) || (i1 == 10) || (i1 == 15) || (i1 == 20) || (i1 == 25) || (i1 == 30) || (i1 == 35) || (i1 == 40) || (i1 == 45) || (i1 == 50)) {
 			i2=0;
-			NWidgetSpacer *spce = new NWidgetSpacer(3, 0);
+			auto spce = std::make_unique<NWidgetSpacer>(3, 0);
 			spce->SetFill(1, 0);
-			//hor->Add(spce);
-			//ver->Add(hor);
-			NWidgetSpacer *spc = new NWidgetSpacer(0, 4);
+			hor->Add(std::move(spce));
+			ver->Add(std::move(hor));
+			auto spc = std::make_unique<NWidgetSpacer>(0, 4);
 			spc->SetFill(1, 0);
-			//ver->Add(spc);
-			//hor = new NWidgetHorizontal();
+			ver->Add(std::move(spc));
+			hor = std::make_unique<NWidgetHorizontal>();
 		}
-		NWidgetSpacer *spce = new NWidgetSpacer(3, 0);
+		auto spce = std::make_unique<NWidgetSpacer>(3, 0);
 		spce->SetFill(1, 0);
-		//hor->Add(spce);
-		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_ORANGE, AC_SERVERS1 + i, NULL);
+		hor->Add(std::move(spce));
+		auto leaf = std::make_unique<NWidgetBackground>(WWT_PANEL, COLOUR_ORANGE, AC_SERVERS + i);
 		if(aactive[i] == 0) leaf->SetDisabled(true);
 		leaf->SetDataTip(CM_STR_SB_NETWORK_DIRECT_JOIN_GAME, CM_STR_SB_NETWORK_DIRECT_JOIN_GAME_TOOLTIP);
 		leaf->SetMinimalSize(90, 15);
-		//hor->Add(leaf);
+		hor->Add(std::move(leaf));
 		i1++;
 	}
 
@@ -1433,11 +1427,10 @@ NWidgetBase *MakeServerButtons(int *biggest_index)
 	if (i2==2) i2=189;
 	if (i2==3) i2=96;
 	if (i2==4) i2=3;
-	NWidgetSpacer *spce = new NWidgetSpacer(i2, 0);
+	auto spce = std::make_unique<NWidgetSpacer>(i2, 0);
 	spce->SetFill(1, 0);
-	//hor->Add(spce);
-	//ver->Add(hor);
-	*biggest_index = AC_SERVERS1 - 1 + active;
+	hor->Add(std::move(spce));
+	ver->Add(std::move(hor));
 	return ver;
 }
 
@@ -1538,7 +1531,7 @@ static const NWidgetPart _nested_admin_window_widgets[] = {
 		EndContainer(),
 	EndContainer(),
 };
-  
+
 static const NWidgetPart _nested_admin_company_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
     NWidget(WWT_CAPTION,COLOUR_END, ACB_COMPANY_CAPTION),
@@ -1601,10 +1594,9 @@ static const NWidgetPart _nested_server_buttons_window_widgets[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_CITYMANIA), SetMinimalSize(134, 13), SetDataTip(CM_STR_SB_SELECT_CITYMANIA, 0),
  		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
-	/* fix me */
-		//NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-			//NWidgetFunction(MakeServerButtons),
-		//EndContainer(),
+		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+			NWidgetFunction(MakeServerButtons),
+		EndContainer(),
     EndContainer(),
 };
 
@@ -1638,7 +1630,7 @@ static WindowDesc _last_server_desc(__FILE__, __LINE__,
 static WindowDesc _server_buttons_desc(__FILE__, __LINE__,
 	WDP_AUTO, NULL, 0, 0,
     CM_WC_SERVER_BUTTONS, WC_NONE,
-	WDF_CONSTRUCTION, 
+	WDF_CONSTRUCTION,
     std::begin(_nested_server_buttons_window_widgets), std::end(_nested_server_buttons_window_widgets)
 );
 
