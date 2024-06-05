@@ -678,4 +678,15 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
     return s.str();
 }
 
+/* enable/disable catchment area with ctrl+click on a station */
+void ShowCatchmentByClick(StationID station)
+{
+	if (_viewport_highlight_station != nullptr) {
+		if (_viewport_highlight_station == Station::Get(station))
+			SetViewportCatchmentStation(Station::Get(station), false);
+		else SetViewportCatchmentStation(Station::Get(station), true);
+	}
+	else SetViewportCatchmentStation(Station::Get(station), true);
+}
+
 } // namespace citymania
