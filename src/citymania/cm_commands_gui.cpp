@@ -681,12 +681,10 @@ class CommunityServerManager: public HTTPCallback {
 		NetworkHTTPSocketHandler::Connect(uri, this);
 	}
 
-	void SaveServerString() {
+	void SaveServerString() const {
 		_server_list_text += this->buf;
         NetworkClientSendChatToServer("*** data has been saved.");
-        //if (buttons_shown)
-        //   ShowServers(_left, _top, _height);
-        ReloadServerButtons();
+        if (FindWindowByClass(CM_WC_LOGIN_WINDOW)) ReloadServerButtons();
 	}
 
 	void inspectServerData() {
@@ -925,9 +923,15 @@ struct LoginWindow : Window {
 
 	}
 
+    void Close([[maybe_unused]] int data) override {
+		CloseWindowByClass(CM_WC_SERVER_BUTTONS);
+		this->Window::Close();  
+    }
+
 	void DrawWidget(const Rect &r, WidgetID widget) const override
 	{
-            ShowServerButtons(this->left, this->top, this->height);
+        r; widget;
+		ShowServerButtons(this->left, this->top, this->height);
 	}
 
 
@@ -1353,6 +1357,7 @@ struct ServerButtonsWindow : Window {
 		std::string name;
 
 		switch (widget) {
+            case AC_SERVERS:
 			default:
 				if(widget >= AC_SERVERS){
 					if(widget - AC_SERVERS + 1 < 10){
@@ -1410,13 +1415,13 @@ std::unique_ptr<NWidgetBase> MakeServerButtons()
 			ver->Add(std::move(spc));
 			hor = std::make_unique<NWidgetHorizontal>();
 		}
-		auto spce = std::make_unique<NWidgetSpacer>(3, 0);
+		auto spce = std::make_unique<NWidgetSpacer>(4, 0);
 		spce->SetFill(1, 0);
 		hor->Add(std::move(spce));
 		auto leaf = std::make_unique<NWidgetBackground>(WWT_PANEL, COLOUR_ORANGE, AC_SERVERS + i);
 		if(aactive[i] == 0) leaf->SetDisabled(true);
 		leaf->SetDataTip(CM_STR_SB_NETWORK_DIRECT_JOIN_GAME, CM_STR_SB_NETWORK_DIRECT_JOIN_GAME_TOOLTIP);
-		leaf->SetMinimalSize(90, 15);
+		leaf->SetMinimalSize(79, 15);
 		hor->Add(std::move(leaf));
 		i1++;
 	}
@@ -1439,18 +1444,18 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(CM_STR_LOGIN_WINDOW_CAPTION, 0),
-		NWidget(WWT_STICKYBOX, COLOUR_GREY),
+		//NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0),
 		NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPadding(10),
 			//welcome
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-				NWidget(WWT_TEXT, COLOUR_BROWN, LWW_COMMUNITY), SetMinimalSize(100, 20), SetAlignment(SA_CENTER), SetDataTip(CM_STR_LOGIN_WINDOW_WELCOME, 0), SetFill(1, 1),
+				NWidget(WWT_TEXT, COLOUR_BROWN, LWW_COMMUNITY), SetMinimalSize(403, 20), SetAlignment(SA_CENTER), SetDataTip(CM_STR_LOGIN_WINDOW_WELCOME, 0), SetFill(1, 1),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 10),
 			//username and pw
 			NWidget(NWID_HORIZONTAL),
-				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
+				NWidget(NWID_SPACER), SetMinimalSize(55, 0),
 				NWidget(WWT_TEXT, COLOUR_BROWN, LWW_USERNAME), SetDataTip(CM_STR_LOGIN_WINDOW_USERNAME, 0),
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, LWW_USER_NAME), SetMinimalSize(100, 15), SetFill(1, 1),
@@ -1460,18 +1465,18 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, LWW_USER_PW), SetMinimalSize(50, 15), SetFill(1, 1),
 				SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT),
-				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
+				NWidget(NWID_SPACER), SetMinimalSize(55, 0),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 20),
 			//login and logout
             NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGIN), SetMinimalSize(40, 30), SetAlignment(SA_CENTER), SetFill(1, 1),
+				NWidget(NWID_SPACER), SetMinimalSize(85, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGIN), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
 				SetDataTip(CM_STR_TOOLBAR_COMMANDS_LOGIN_CAPTION, CM_STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGOUT), SetMinimalSize(40, 30), SetAlignment(SA_CENTER), SetFill(1, 1),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGOUT), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
 				SetDataTip(CM_STR_TOOLBAR_COMMANDS_LOGOUT_CAPTION, CM_STR_TOOLBAR_COMMANDS_LOGOUT_TOOLTIP),
-				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
+				NWidget(NWID_SPACER), SetMinimalSize(85, 0),
             EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 10),
 		EndContainer(),
@@ -1482,7 +1487,7 @@ static const NWidgetPart _nested_admin_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(CM_STR_LOGIN_WINDOW_CAPTION, 0),
-		NWidget(WWT_STICKYBOX, COLOUR_GREY),
+		//NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0),
 		NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPadding(10),
@@ -1514,16 +1519,16 @@ static const NWidgetPart _nested_admin_window_widgets[] = {
 			//login and logout
             NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGIN), SetMinimalSize(40, 30), SetAlignment(SA_CENTER), SetFill(1, 1),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGIN), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
 				SetDataTip(CM_STR_TOOLBAR_COMMANDS_LOGIN_CAPTION, CM_STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGOUT), SetMinimalSize(40, 30), SetAlignment(SA_CENTER), SetFill(1, 1),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGOUT), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
 				SetDataTip(CM_STR_TOOLBAR_COMMANDS_LOGOUT_CAPTION, CM_STR_TOOLBAR_COMMANDS_LOGOUT_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_ADMIN_LOGIN), SetMinimalSize(40, 30), SetAlignment(SA_CENTER), SetFill(1, 1),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_ADMIN_LOGIN), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
 				SetDataTip(CM_STR_LOGIN_WINDOW_ADMIN_LOGIN, CM_STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_ADMIN_LOGOUT), SetMinimalSize(40, 30), SetAlignment(SA_CENTER), SetFill(1, 1),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_ADMIN_LOGOUT), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
 				SetDataTip(CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT, CM_STR_TOOLBAR_COMMANDS_LOGOUT_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
             EndContainer(),
@@ -1582,21 +1587,22 @@ static const NWidgetPart _nested_last_server_widgets[] = {
 };
 
 static const NWidgetPart _nested_server_buttons_window_widgets[] = {
-	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_BROWN), SetDataTip(CM_STR_SB_SERVER_LIST, 0),
-		NWidget(WWT_STICKYBOX, COLOUR_GREY),
-	EndContainer(),
+	//NWidget(NWID_HORIZONTAL),
+		//NWidget(WWT_CLOSEBOX, COLOUR_GREY),
+		//NWidget(WWT_CAPTION, COLOUR_BROWN), SetDataTip(CM_STR_SB_SERVER_LIST, 0),
+		//NWidget(WWT_STICKYBOX, COLOUR_GREY),
+	//EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetFill(0, 1),
-		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(5), SetPIP(0, 5, 0),
- 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_NICE), SetMinimalSize(135, 13), SetDataTip(CM_STR_SB_SELECT_NICE, 0),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_BTPRO), SetMinimalSize(135, 13), SetDataTip(CM_STR_SB_SELECT_BTPRO, 0),
+		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(4), SetPIP(0, 7, 0),
+ 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_NICE), SetMinimalSize(134, 13), SetDataTip(CM_STR_SB_SELECT_NICE, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_BTPRO), SetMinimalSize(134, 13), SetDataTip(CM_STR_SB_SELECT_BTPRO, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_CITYMANIA), SetMinimalSize(134, 13), SetDataTip(CM_STR_SB_SELECT_CITYMANIA, 0),
  		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
 			NWidgetFunction(MakeServerButtons),
 		EndContainer(),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
     EndContainer(),
 };
 
