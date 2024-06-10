@@ -675,7 +675,6 @@ class CommunityServerManager: public HTTPCallback {
 	CommunityServerManager() {}
 
 	void initiateServerSequence(const std::string &uri) {
-
 		this->cursor = this->buf;
         this->buf_last = lastof(buf);
 		NetworkHTTPSocketHandler::Connect(uri, this);
@@ -683,57 +682,42 @@ class CommunityServerManager: public HTTPCallback {
 
 	void SaveServerString() const {
 		_server_list_text += this->buf;
-        NetworkClientSendChatToServer("*** data has been saved.");
+        //NetworkClientSendChatToServer("*** data has been saved.");
         if (FindWindowByClass(CM_WC_LOGIN_WINDOW)) ReloadServerButtons();
+		if (FindWindowByClass(WC_SELECT_GAME)) ReloadServerButtons();
 	}
 
 	void inspectServerData() {
-		//IConsolePrint(CC_INFO, "INSPECTING DATA");
-		if (this->cursor - this->buf >= 4) {
-			this->SaveServerString();
-
-		} else {
-           NetworkClientSendChatToServer("*** no data has been received.");
+		if (this->cursor - this->buf >= 4) this->SaveServerString();
+		else {
+			//NetworkClientSendChatToServer("*** no data has been received.");
 		}
 	}
 
 	void OnFailure() override {
-		//ShowErrorMessage(STR_XI_CONNECT_ERROR, INVALID_STRING_ID, WL_ERROR);
-        NetworkClientSendChatToServer("*** connection failed.");
+		ShowErrorMessage(CM_STR_SB_SERVER_LIST_UNREACHABLE, INVALID_STRING_ID,WL_ERROR);
+        //NetworkClientSendChatToServer("*** connection failed.");
 	}
 
 	bool IsCancelled() const override { return false; }
 
 	void OnReceiveData(std::unique_ptr<char[]> data, size_t length) override
 	{
-
-		//extern void ShowSelectGameWindow();
-		//size_t i = length;
-
 		if (data.get() == nullptr)
 		{
-			//std::cout << "*** RECEIVED ALL HTTP DATA ***" << std::endl;
-
 			this->inspectServerData();
-
-			//CloseWindowByClass(WC_SELECT_GAME);
-            /* If we are still in the menu reopen it */
-			//if (_game_mode == GM_MENU) ShowSelectGameWindow();
-
             this->cursor = nullptr;
 		} else {
             for (size_t i = 0; i < length && this->cursor < this->buf_last; i++, this->cursor++) {
 				*(this->cursor) = data.get()[i];
             }
             *(this->cursor) = '\0';
-            //NetworkServerSendChat(STR_XI_CONNECT_FINISH, INVALID_STRING_ID, WL_ERROR);
-            NetworkClientSendChatToServer("*** data received");
+            //NetworkClientSendChatToServer("*** data received");
         }
 
 	}
 
  private:
-	//NetworkHTTPContentConnecter *conn;
 	char buf[4096];
     char *buf_last;
 	char *cursor;
@@ -743,11 +727,13 @@ void CommunityServerManagerSend()
 {
     std::int8_t _community = stoi(GetServerItem(COMMUNITY));
     std::string uri;
-    // IConsolePrint(CC_INFO, "INITIATING LOGIN SEQUENCE");
+
     if (_community == 1) {
         uri = fmt::format("http://n-ice.org/openttd/serverlist.txt");
     } else if (_community == 2) {
         uri = fmt::format("https://openttd.btpro.nl/btproservers.txt");
+    } else if (_community == 3) {
+        uri = fmt::format("http://altseehof.de/openttd/citymaniaservers.txt");
     }
 
 	static CommunityServerManager servermgr{};
@@ -763,7 +749,7 @@ void GetCommunityServerListText(){
 }
 
 bool GetCommunityServer(int number, bool findonly) {
-	//IConsolePrintF(CC_INFO, "Buf: %s", _server_list_text.c_str());
+
 	if(_server_list_text.empty()) return false;
     _cc_address = "";
     _cc_name = "";
@@ -785,7 +771,6 @@ bool GetCommunityServer(int number, bool findonly) {
 		std::string saddress = _server_list_text.substr(posaddress + 10, _server_list_text.find(";", posaddress + 10) - posaddress - 10);
 		std::string sport = _server_list_text.substr(posport + 8, _server_list_text.find(";", posport + 8) - posport - 8);
 
-		//IConsolePrintF(CC_DEFAULT, "server: '%s'", saddress.c_str());
 		if(saddress.compare("DISABLED") == 0) return false;
 		else if(findonly) return true;
 
@@ -801,7 +786,7 @@ bool GetCommunityServer(int number, bool findonly) {
 }
 /* end of serverbuttons */
 
-// login window
+/* for login window */
 class GetHTTPContent: public HTTPCallback {
 public:
 	GetHTTPContent() {
@@ -904,7 +889,7 @@ void AccountLogin(CommunityName community){
 	login.InitiateLoginSequence(uri);
 }
 
-//login window
+/* login window */
 struct LoginWindow : Window {
 	LoginWindowQueryWidgets query_widget;
 
@@ -1012,7 +997,6 @@ struct LoginWindow : Window {
 						if(_networking) NetworkClientSendChatToServer(fmt::format("!alogin {} {}", _inilogindata[BTPROUSER], base64_decode(_inilogindata[BTPROADMINPW])));
 						break;
 					}
-					//case 3: if(/*_novahost && */_networking) AccountLogin(CITYMANIA); break;
 				}
 				break;
 			}
@@ -1061,7 +1045,6 @@ struct LoginWindow : Window {
 				switch (_community) {
 					case 1: SetLoginItem(NICE_ADMIN_PW, base64_encode((const unsigned char *)str, strlen(str))); break;
                     case 2: SetLoginItem(BTPRO_ADMIN_PW, base64_encode((const unsigned char *)str, strlen(str))); break;
-                    //case 3: SetLoginItem(NOVAPOLIS_PW, str); break;
 				}
                 break;
 			}
@@ -1073,7 +1056,6 @@ struct LoginWindow : Window {
 
 struct AdminCompanyButtonsWindow : Window {
 	AdminCompanyButtonsQueryWidgets query_widget;
-    //CompanyID company;
 
 	AdminCompanyButtonsWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc) {
 
@@ -1234,7 +1216,6 @@ struct AdminCompanyButtonsWindow : Window {
 };
 
 struct JoinLastServerWindow : Window {
-    // CompanyID company;
 
     JoinLastServerWindow(WindowDesc *desc, WindowNumber window_number)
         : Window(desc) {
@@ -1259,19 +1240,6 @@ struct JoinLastServerWindow : Window {
         }
 	};
 
-	/*
-	void SetStringParameters(WidgetID widget) const override {
-            switch (widget) {
-            case LSW_BUTTON:
-                if (_server != "")
-                    SetDParam(0, STR_JUST_NOTHING);
-                else {
-                    SetDParam(0, STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST);
-                }
-                break;
-            }
-     };
-	 */
 };
 
 struct ServerButtonsWindow : Window {
@@ -1307,11 +1275,10 @@ struct ServerButtonsWindow : Window {
                 break;
             case WID_SB_SELECT_CITYMANIA:
                 SetServerItem(COMMUNITY, "3");
-                //GetCommunityServerListText();
+                GetCommunityServerListText();
                 break;
             default:
                 if (widget >= AC_SERVERS) {
-                    /*get info of server from network.cpp and join*/
                     if (GetCommunityServer(widget - AC_SERVERS + 1,false)) {
                         if (_ctrl_pressed) {
                             NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_NEW_COMPANY);
@@ -1327,7 +1294,6 @@ struct ServerButtonsWindow : Window {
 	static void GetServerName(int number)
 	{
         size_t poscount = _server_list_text.find("servercount");
-		//std::string scount = _server_list_text.substr(poscount + 11, _server_list_text.find(":", poscount + 11) - poscount - 11);
 		std::string scount = _server_list_text.substr(poscount + 12, 3);
         _servercount = std::stoi(scount);
 
@@ -1394,6 +1360,7 @@ std::unique_ptr<NWidgetBase> MakeServerButtons()
 	int active = 0, aactive[50], s_max = 0;
 	if (_community == 1) s_max = 50; //for n-ice
 	if (_community == 2) s_max = 30; //for btpro
+    if (_community == 3) s_max = 10; //for citymania
 	for (int i = 0; i < s_max; i++) {
         aactive[i] = GetCommunityServer(i + 1, true) ? (i + 1) : 0; //server disabled?
         active++;
@@ -1420,7 +1387,7 @@ std::unique_ptr<NWidgetBase> MakeServerButtons()
 		hor->Add(std::move(spce));
 		auto leaf = std::make_unique<NWidgetBackground>(WWT_PANEL, COLOUR_ORANGE, AC_SERVERS + i);
 		if(aactive[i] == 0) leaf->SetDisabled(true);
-		leaf->SetDataTip(CM_STR_SB_NETWORK_DIRECT_JOIN_GAME, CM_STR_SB_NETWORK_DIRECT_JOIN_GAME_TOOLTIP);
+		leaf->SetDataTip(CM_STR_SB_NETWORK_DIRECT_JOIN_GAME, CM_STR_SB_NETWORK_DIRECT_JOIN_TOOLTIP);
 		leaf->SetMinimalSize(79, 15);
 		hor->Add(std::move(leaf));
 		i1++;
@@ -1442,11 +1409,10 @@ std::unique_ptr<NWidgetBase> MakeServerButtons()
 
 static const NWidgetPart _nested_login_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(CM_STR_LOGIN_WINDOW_CAPTION, 0),
-		//NWidget(WWT_STICKYBOX, COLOUR_GREY),
+		NWidget(WWT_CLOSEBOX, COLOUR_ORANGE),
+		NWidget(WWT_CAPTION, COLOUR_ORANGE), SetDataTip(CM_STR_LOGIN_WINDOW_CAPTION, 0),
 	EndContainer(),
-	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0),
+	NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0),
 		NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPadding(10),
 			//welcome
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
@@ -1485,11 +1451,10 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 
 static const NWidgetPart _nested_admin_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(CM_STR_LOGIN_WINDOW_CAPTION, 0),
-		//NWidget(WWT_STICKYBOX, COLOUR_GREY),
+		NWidget(WWT_CLOSEBOX, COLOUR_ORANGE),
+		NWidget(WWT_CAPTION, COLOUR_ORANGE), SetDataTip(CM_STR_LOGIN_WINDOW_CAPTION, 0),
 	EndContainer(),
-	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0),
+	NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0),
 		NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPadding(10),
 			//welcome
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
@@ -1577,22 +1542,16 @@ static const NWidgetPart _nested_admin_company_window_widgets[] = {
 
 static const NWidgetPart _nested_last_server_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_BROWN), SetFill(0, 1),
-		//NWidget(NWID_HORIZONTAL),
-		//	NWidget(WWT_CAPTION, COLOUR_BROWN, LSW_CAPTION), SetMinimalSize(322, 20), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_LAST_JOINED_SERVER, 0), SetFill(1, 1),
-		//EndContainer(),
 		NWidget(NWID_HORIZONTAL), SetPadding(4),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LSW_BUTTON), SetMinimalSize(322, 20), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST, CM_STR_SCS_COMPANY_NEW_JOIN_TOOLTIP), SetFill(1, 1),
+			NWidget(NWID_SPACER), SetMinimalSize(87, 0), SetFill(1, 0),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LSW_BUTTON), SetMinimalSize(241, 15), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST, CM_STR_SB_NETWORK_DIRECT_JOIN_TOOLTIP), SetFill(1, 1),
+			NWidget(NWID_SPACER), SetMinimalSize(87, 0), SetFill(1, 0),
 		EndContainer(),
 	EndContainer(),
 };
 
 static const NWidgetPart _nested_server_buttons_window_widgets[] = {
-	//NWidget(NWID_HORIZONTAL),
-		//NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		//NWidget(WWT_CAPTION, COLOUR_BROWN), SetDataTip(CM_STR_SB_SERVER_LIST, 0),
-		//NWidget(WWT_STICKYBOX, COLOUR_GREY),
-	//EndContainer(),
-	NWidget(WWT_PANEL, COLOUR_GREY), SetFill(0, 1),
+	NWidget(WWT_PANEL, COLOUR_BROWN), SetFill(0, 1),
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(4), SetPIP(0, 7, 0),
  				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_NICE), SetMinimalSize(134, 13), SetDataTip(CM_STR_SB_SELECT_NICE, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SB_SELECT_BTPRO), SetMinimalSize(134, 13), SetDataTip(CM_STR_SB_SELECT_BTPRO, 0),
@@ -1630,8 +1589,8 @@ static WindowDesc _admin_company_buttons_desc(__FILE__, __LINE__,
 static WindowDesc _last_server_desc(__FILE__, __LINE__,
 	WDP_AUTO, NULL, 0, 0,
 	CM_LAST_SERVER,
-    WC_NONE, WDF_CONSTRUCTION, std::begin(_nested_last_server_widgets),
-    std::end(_nested_last_server_widgets));
+    WC_NONE, WDF_CONSTRUCTION,
+	std::begin(_nested_last_server_widgets), std::end(_nested_last_server_widgets));
 
 static WindowDesc _server_buttons_desc(__FILE__, __LINE__,
 	WDP_AUTO, NULL, 0, 0,
@@ -1642,31 +1601,35 @@ static WindowDesc _server_buttons_desc(__FILE__, __LINE__,
 
 /* Identify the current community */
 void CheckCommunity() {
-    if (_network_server_name.find("n-ice.org") != std::string::npos) {
-        if (GetServerItem(COMMUNITY) != "1") {
-            SetServerItem(COMMUNITY, "1");
-            GetCommunityServerListText();
+    if (_networking) {
+        if (_network_server_name.find("n-ice.org") != std::string::npos) {
+            if (GetServerItem(COMMUNITY) != "1") {
+                SetServerItem(COMMUNITY, "1");
+                GetCommunityServerListText();
+            }
+        } else if (_network_server_name.find("BTPro.nl") != std::string::npos) {
+            if (GetServerItem(COMMUNITY) != "2") {
+                SetServerItem(COMMUNITY, "2");
+                GetCommunityServerListText();
+            }
+        } else if (_network_server_name.find("CityMania.org") !=
+                   std::string::npos) {
+            if (GetServerItem(COMMUNITY) != "3") {
+                SetServerItem(COMMUNITY, "3");
+                // GetCommunityServerListText();
+            }
+        } else if (_network_server_name.find("reddit.com") !=
+                   std::string::npos) {
+            if (GetServerItem(COMMUNITY) != "4") {
+                SetServerItem(COMMUNITY, "4");
+                // GetCommunityServerListText();
+            }
+        } else {  // Unknown Server
+            SetServerItem(COMMUNITY, "0");
         }
-    } else if (_network_server_name.find("BTPro.nl") != std::string::npos) {
-        if (GetServerItem(COMMUNITY) != "2") {
-            SetServerItem(COMMUNITY, "2");
-            GetCommunityServerListText();
-        }
-    } else if (_network_server_name.find("CityMania.org") !=
-               std::string::npos) {
-        if (GetServerItem(COMMUNITY) != "3") {
-            SetServerItem(COMMUNITY, "3");
-            // GetCommunityServerListText();
-        }
-    } else if (_network_server_name.find("reddit.com") != std::string::npos) {
-        if (GetServerItem(COMMUNITY) != "4") {
-            SetServerItem(COMMUNITY, "4");
-            // GetCommunityServerListText();
-        }
-    } else {  // Unknown Server
-        SetServerItem(COMMUNITY, "0");
     }
-    if ((GetServerItem(COMMUNITY) == "1") || (GetServerItem(COMMUNITY) == "2"))
+    /* for intro menue */
+    if ((GetServerItem(COMMUNITY) == "1") || (GetServerItem(COMMUNITY) == "2") || (GetServerItem(COMMUNITY) == "3"))
         GetCommunityServerListText();
 };
 
@@ -1714,8 +1677,6 @@ void CreateCommunityServerList() {
 };
 
 void ShowAdminCompanyButtons(int left, int top, int width, int company2, bool draw, bool redraw) {
-    //IniInitiate();
-    //CheckCommunity();
     if (!draw) {
         CloseWindowById(CM_WC_ADMIN_COMPANY_BUTTONS, company2);
         /* clear for company */
@@ -1731,7 +1692,7 @@ void ShowAdminCompanyButtons(int left, int top, int width, int company2, bool dr
 			(!redraw))
             return;
 
-	/* set for company */
+	/* save position of company window */
     ACB_Location[company2 - 1][0] = left;
     ACB_Location[company2 - 1][1] = top;
     ACB_Location[company2 - 1][2] = width;

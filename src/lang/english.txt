@@ -6200,7 +6200,7 @@ CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK                    :Black
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_GREY                     :Light grey
 
 # Community login window
-CM_STR_LOGIN_WINDOW_CAPTION                                     :{WHITE}Login Window
+CM_STR_LOGIN_WINDOW_CAPTION                                     :{BLACK}Login Window
 CM_STR_LOGIN_WINDOW_CITYMANIA                                   :{BLACK}CityMania
 CM_STR_LOGIN_WINDOW_NICE                                        :{BLACK}N-ice
 CM_STR_LOGIN_WINDOW_BTPRO                                       :{BLACK}BTPro
@@ -6371,11 +6371,7 @@ CM_STR_ACB_COMPANY_NEWSTICKET                                   :{BLACK}Type mes
 CM_STR_ACB_COMPANY_JOIN2                                        :{BLACK}A. Join
 CM_STR_ACB_COMPANY_JOIN2_TOOLTIP                                :{BLACK}Join as an admin
 
-### Several command strings ###
-CM_STR_SCS_COMPANY_NEW_JOIN_TOOLTIP                             :Hold CTRL and click for joining with new company.
-
 ### Server buttons ###
-CM_STR_SB_SERVER_LIST                                           :{BLACK}Server list
 CM_STR_SB_SELECT_NICE                                           :{BLACK}N-ice
 CM_STR_SB_SELECT_BTPRO                                          :{BLACK}BTPro
 CM_STR_SB_SELECT_CITYMANIA                                      :{BLACK}Citymania
@@ -6383,4 +6379,4 @@ CM_STR_SB_SERVER_LIST_UNREACHABLE                               :{WHITE}Couldn't
 CM_STR_SB_SERVER_DISABLED                                       :{WHITE}Server is Disabled / Offline
 CM_STR_SB_SERVER_LIST_ERROR_FILE                                :{WHITE}Error on getting servers file
 CM_STR_SB_NETWORK_DIRECT_JOIN_GAME                              :{BLACK}{RAW_STRING}
-CM_STR_SB_NETWORK_DIRECT_JOIN_GAME_TOOLTIP                      :{BLACK}Join server directly
+CM_STR_SB_NETWORK_DIRECT_JOIN_TOOLTIP                           :{BLACK}Hold CTRL and click for joining with new company.
