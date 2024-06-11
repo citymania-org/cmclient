@@ -241,7 +241,6 @@ char _inilogindata[9][MAX_COMMUNITY_STRING_LEN];
 
 void AccountLogin(CommunityName community);
 void IniReloadLogin();
-void ShowAdminCompanyButtons(int companyid = INVALID_COMPANY);
 void ShowServerButtons(int left,int top, int height);
 void ReloadServerButtons();
 
@@ -718,9 +717,9 @@ class CommunityServerManager: public HTTPCallback {
 	}
 
  private:
-	char buf[4096];
-    char *buf_last;
-	char *cursor;
+    char buf[4096]{};
+	char *buf_last{};
+    char *cursor{};
 };
 
 void CommunityServerManagerSend()
@@ -834,15 +833,15 @@ public:
 	virtual ~GetHTTPContent() {
 	}
 private:
-	char buf[HTTPBUFLEN];
-	char *buf_last;
-	char *cursor;
+	char buf[HTTPBUFLEN]{};
+	char *buf_last{};
+	char *cursor{};
 };
 
 std::string urlencode(const std::string &s) {
     static const char lookup[]= "0123456789abcdef";
     std::stringstream e;
-    for(int i=0, ix=s.length(); i<ix; i++)
+    for(int i=0, ix=(int)s.length(); i<ix; i++)
     {
         const char& c = s[i];
         if ( (48 <= c && c <= 57) ||//0-9
@@ -864,7 +863,7 @@ std::string urlencode(const std::string &s) {
 }
 
 std::string btpro_encode(const char *value) {
-	return urlencode(base64_encode((const unsigned char *)value, strlen(value)));
+	return urlencode(base64_encode((const unsigned char *)value, (int)strlen(value)));
 }
 
 //send login
@@ -891,7 +890,7 @@ void AccountLogin(CommunityName community){
 
 /* login window */
 struct LoginWindow : Window {
-	LoginWindowQueryWidgets query_widget;
+    LoginWindowQueryWidgets query_widget{};
 
 	std::int8_t _community = stoi(GetServerItem(COMMUNITY));
 
@@ -1043,8 +1042,8 @@ struct LoginWindow : Window {
 			}
 			case LQW_ADMIN_PW: {
 				switch (_community) {
-					case 1: SetLoginItem(NICE_ADMIN_PW, base64_encode((const unsigned char *)str, strlen(str))); break;
-                    case 2: SetLoginItem(BTPRO_ADMIN_PW, base64_encode((const unsigned char *)str, strlen(str))); break;
+					case 1: SetLoginItem(NICE_ADMIN_PW, base64_encode((const unsigned char *)str, (int)strlen(str))); break;
+                    case 2: SetLoginItem(BTPRO_ADMIN_PW, base64_encode((const unsigned char *)str, (int)strlen(str))); break;
 				}
                 break;
 			}
@@ -1055,7 +1054,7 @@ struct LoginWindow : Window {
 };
 
 struct AdminCompanyButtonsWindow : Window {
-	AdminCompanyButtonsQueryWidgets query_widget;
+    AdminCompanyButtonsQueryWidgets query_widget{};
 
 	AdminCompanyButtonsWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc) {
 
@@ -1243,7 +1242,7 @@ struct JoinLastServerWindow : Window {
 };
 
 struct ServerButtonsWindow : Window {
-    ServerButtonsQueryWidgets query_widget;
+    ServerButtonsQueryWidgets query_widget{};
 
 	std::int8_t _community = stoi(GetServerItem(COMMUNITY));
 
@@ -1357,7 +1356,7 @@ std::unique_ptr<NWidgetBase> MakeServerButtons()
 	}
 
     /* check for disabled server from serverlist file */
-	int active = 0, aactive[50], s_max = 0;
+        int active = 0, aactive[50]{}, s_max = 0;
 	if (_community == 1) s_max = 50; //for n-ice
 	if (_community == 2) s_max = 30; //for btpro
     if (_community == 3) s_max = 10; //for citymania
@@ -1616,7 +1615,7 @@ void CheckCommunity() {
                    std::string::npos) {
             if (GetServerItem(COMMUNITY) != "3") {
                 SetServerItem(COMMUNITY, "3");
-                // GetCommunityServerListText();
+                GetCommunityServerListText();
             }
         } else if (_network_server_name.find("reddit.com") !=
                    std::string::npos) {
