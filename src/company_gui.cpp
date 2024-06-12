@@ -2673,6 +2673,14 @@ struct CompanyWindow : Window
 			OnResize();
 		}
 	}
+
+	/* Admin company buttons: close window */
+	void Close([[maybe_unused]] int data) override
+	{
+         if (FindWindowById(CM_WC_ADMIN_COMPANY_BUTTONS,this->window_number+1))
+			CloseWindowById(CM_WC_ADMIN_COMPANY_BUTTONS,this->window_number+1);
+		this->Window::Close();  
+    }
 };
 
 static WindowDesc _company_desc(__FILE__, __LINE__,
