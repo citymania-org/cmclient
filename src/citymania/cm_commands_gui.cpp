@@ -24,7 +24,6 @@
 
 #include <sstream>
 
-
 namespace citymania {
 
 bool _novahost = true;
@@ -281,12 +280,8 @@ void IniInitiate(){
 	if(_inilogin != NULL) return; //it was already set
 	_inilogin = new IniFile({CFG_LOGIN_KEY});
     _inilogin->LoadFromDisk(CFG_FILE, BASE_DIR);
-    try {
-        IniReloadLogin();
-    }
-    catch (...){
-		return;
-    }
+    if (FileExists(_personal_dir + "/citymania.cfg"))
+		IniReloadLogin();
 }
 
 std::string GetLoginItem(const std::string& itemname){
@@ -1343,7 +1338,6 @@ struct ServerButtonsWindow : Window {
 	}
 };
 
-/* fix me */
 std::unique_ptr<NWidgetBase> MakeServerButtons()
 {
 	std::int8_t _community = stoi(GetServerItem(COMMUNITY));
@@ -1654,8 +1648,8 @@ void ShowServerButtons(int left, int top, int height) {
     _height = height;
 
 	IniInitiate();
-    if (_server_list_text.empty())
-        return;
+    if (!FileExists(_personal_dir + "/citymania.cfg"))
+		return;
 
 	/* create window at coordinates */
     Window *b;
