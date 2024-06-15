@@ -298,10 +298,9 @@ struct SelectGameWindow : public Window {
 				DrawStringMultiLine(r.left, r.right, r.top,  r.bottom, STR_INTRO_TRANSLATION, TC_FROMSTRING, SA_CENTER);
 				break;
 		}
-        /* last server widget */
+        /* last server widget & serverbuttons */
         citymania::CreateCommunityServerList();
         citymania::JoinLastServer(this->left, this->top, this->height);
-        citymania::ShowServerButtons(this->left, this->top, this->height + 28);
 	}
 
 	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
