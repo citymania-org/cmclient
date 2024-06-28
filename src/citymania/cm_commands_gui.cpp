@@ -1082,7 +1082,7 @@ struct AdminCompanyButtonsWindow : Window {
 
 	virtual void OnClick([[maybe_unused]] Point pt, int widget,[[maybe_unused]] int click_count)
 	{
-		if(!_networking) return;
+
 		int _company = this->window_number;
 		switch (widget) {
 			case ACB_COMPANY_EMPTY:
@@ -1157,7 +1157,7 @@ struct AdminCompanyButtonsWindow : Window {
 				MarkWholeScreenDirty();
 				break;
 			case ACB_COMPANY_JOIN2:
-				NetworkClientSendChatToServer(fmt::format("!move #{} {}",_network_own_client_id ,_company));
+				NetworkClientSendChatToServer(fmt::format("!move #{} {}",_network_own_client_id, _company));
 				MarkWholeScreenDirty();
 				break;
 			case ACB_COMPANY_LEAVE:
@@ -1424,12 +1424,12 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 				NWidget(WWT_TEXT, COLOUR_BROWN, LWW_USERNAME), SetDataTip(CM_STR_LOGIN_WINDOW_USERNAME, 0),
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, LWW_USER_NAME), SetMinimalSize(100, 15), SetFill(1, 1),
-				SetDataTip(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT),
+				SetDataTip(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_TOOLTIP),
                 NWidget(NWID_SPACER), SetMinimalSize(20, 0),
 				NWidget(WWT_TEXT, COLOUR_BROWN, LWW_PASSWORD), SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD, 0),
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, LWW_USER_PW), SetMinimalSize(50, 15), SetFill(1, 1),
-				SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT),
+				SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(45, 0),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 20),
@@ -1437,10 +1437,10 @@ static const NWidgetPart _nested_login_window_widgets[] = {
             NWidget(NWID_HORIZONTAL),
 				NWidget(NWID_SPACER), SetMinimalSize(105, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGIN), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
-				SetDataTip(CM_STR_TOOLBAR_COMMANDS_LOGIN_CAPTION, CM_STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP),
+				SetDataTip(CM_STR_LOGIN_WINDOW_LOGIN, CM_STR_LOGIN_WINDOW_LOGIN_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGOUT), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
-				SetDataTip(CM_STR_TOOLBAR_COMMANDS_LOGOUT_CAPTION, CM_STR_TOOLBAR_COMMANDS_LOGOUT_TOOLTIP),
+				SetDataTip(CM_STR_LOGIN_WINDOW_LOGOUT, CM_STR_LOGIN_WINDOW_LOGOUT_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(105, 0),
             EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 10),
@@ -1468,17 +1468,17 @@ static const NWidgetPart _nested_admin_window_widgets[] = {
 				NWidget(WWT_TEXT, COLOUR_BROWN, LWW_USERNAME), SetDataTip(CM_STR_LOGIN_WINDOW_USERNAME, 0),
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, LWW_USER_NAME), SetMinimalSize(100, 15), SetFill(1, 1),
-				SetDataTip(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT),
+				SetDataTip(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_TOOLTIP),
                 NWidget(NWID_SPACER), SetMinimalSize(10, 0),
 				NWidget(WWT_TEXT, COLOUR_BROWN, LWW_PASSWORD), SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD, 0),
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, LWW_USER_PW), SetMinimalSize(50, 15), SetFill(1, 1),
-				SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT),
+				SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
 				NWidget(WWT_TEXT, COLOUR_BROWN, LWW_ADMIN_PW), SetDataTip(CM_STR_LOGIN_WINDOW_ADMIN_PASSWORD, 0),
 				NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, LWW_ADMIN_PW), SetMinimalSize(50, 15), SetFill(1, 1),
-				SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT),
+				SetDataTip(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(15, 0),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 20),
@@ -1486,16 +1486,16 @@ static const NWidgetPart _nested_admin_window_widgets[] = {
             NWidget(NWID_HORIZONTAL),
 				NWidget(NWID_SPACER), SetMinimalSize(15, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGIN), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
-				SetDataTip(CM_STR_TOOLBAR_COMMANDS_LOGIN_CAPTION, CM_STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP),
+				SetDataTip(CM_STR_LOGIN_WINDOW_LOGIN, CM_STR_LOGIN_WINDOW_LOGIN_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_USER_LOGOUT), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
-				SetDataTip(CM_STR_TOOLBAR_COMMANDS_LOGOUT_CAPTION, CM_STR_TOOLBAR_COMMANDS_LOGOUT_TOOLTIP),
+				SetDataTip(CM_STR_LOGIN_WINDOW_LOGOUT, CM_STR_LOGIN_WINDOW_LOGOUT_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_ADMIN_LOGIN), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
-				SetDataTip(CM_STR_LOGIN_WINDOW_ADMIN_LOGIN, CM_STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP),
+				SetDataTip(CM_STR_LOGIN_WINDOW_ADMIN_LOGIN, CM_STR_LOGIN_WINDOW_ADMIN_LOGIN_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(10, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LWW_ADMIN_LOGOUT), SetMinimalSize(40, 20), SetAlignment(SA_CENTER), SetFill(1, 1),
-				SetDataTip(CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT, CM_STR_TOOLBAR_COMMANDS_LOGOUT_TOOLTIP),
+				SetDataTip(CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT, CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT_TOOLTIP),
 				NWidget(NWID_SPACER), SetMinimalSize(15, 0),
             EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(0, 10),
@@ -1545,7 +1545,7 @@ static const NWidgetPart _nested_last_server_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_BROWN), SetFill(0, 1),
 		NWidget(NWID_HORIZONTAL), SetPadding(WidgetDimensions::unscaled.sparse),
 			NWidget(NWID_SPACER), SetMinimalSize(81, 0), SetFill(1, 0),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LSW_BUTTON), SetMinimalSize(242, 15), SetAlignment(SA_CENTER), SetDataTip(STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST, CM_STR_SB_NETWORK_DIRECT_JOIN_TOOLTIP), SetFill(1, 1),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, LSW_BUTTON), SetMinimalSize(242, 15), SetAlignment(SA_CENTER), SetDataTip(CM_STR_SB_LAST_SERVER, CM_STR_SB_NETWORK_DIRECT_JOIN_TOOLTIP), SetFill(1, 1),
 			NWidget(NWID_SPACER), SetMinimalSize(81, 0), SetFill(1, 0),
 		EndContainer(),
 	EndContainer(),

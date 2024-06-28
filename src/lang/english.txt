@@ -6199,29 +6199,6 @@ CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_HELPTEXT                 :Main background
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK                    :Black
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_GREY                     :Light grey
 
-# Community login window
-CM_STR_LOGIN_WINDOW_CAPTION                                     :{BLACK}Login Window
-CM_STR_LOGIN_WINDOW_CITYMANIA                                   :{BLACK}CityMania
-CM_STR_LOGIN_WINDOW_NICE                                        :{BLACK}N-ice
-CM_STR_LOGIN_WINDOW_BTPRO                                       :{BLACK}BTPro
-CM_STR_LOGIN_ERROR_SIGN_IN_FAILED                               :{WHITE}Failed to connect
-CM_STR_LOGIN_ERROR_BAD_INPUT                                    :{WHITE}Bad username or password
-CM_STR_LOGIN_WINDOW_USERNAME                                    :{WHITE}Username:
-CM_STR_LOGIN_WINDOW_PASSWORD                                    :{WHITE}Password:
-CM_STR_LOGIN_WINDOW_ADMIN_LOGIN                                 :{BLACK}A-Login
-CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT                                :{BLACK}A-Logout
-CM_STR_LOGIN_WINDOW_ADMIN_PASSWORD                              :{WHITE}Admin:
-CM_STR_LOGIN_WINDOW_SET                                         :{WHITE}Set
-CM_STR_LOGIN_WINDOW_NOT_SET                                     :{WHITE}Not Set
-CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Change username
-CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Change password
-CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT                    :{BLACK}Change username
-CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT                    :{BLACK}Change password
-CM_STR_LOGIN_WINDOW_SIGN_IN_HELPTEXT                            :{BLACK}Sign in (you must be on the correct community server)
-CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{RAW_STRING}
-CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
-CM_STR_LOGIN_WINDOW_WELCOME                                     :{BLACK}Welcome  to  {STRING}  community !
-
 CM_STR_NETWORK_COMPANY_LIST_NEW_COMPANY                         :New company
 CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Spectate
 
@@ -6303,7 +6280,6 @@ CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania patch
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
 CM_STR_NO_BLUEPRINT_IN_SLOT                                     :{WHITE}No blueprint in slot {NUM}
-CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :Community tools
 CM_STR_BUILD_INFO_OVERLAY_COST_OK                               :{WHITE}Cost: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY                         :{RED}Cost: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_STATION_ACCEPTS                       :{WHITE}Accepts:
@@ -6323,10 +6299,38 @@ CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                 :{BLACK}Show hid
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                         :{BLACK}Show hidden ({NUM})
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                     :{BLACK}Show hidden ({NUM})
 
-### Admin Company Buttons ###
-CM_STR_ACB_COMPANY_ADMIN_CAPTION                                :{WHITE}Admin buttons #{NUM}
-CM_STR_ACB_COMPANY_ADMIN_BUTTON			                        :{WHITE}Admin buttons
-CM_STR_ACB_COMPANY_ADMIN_BUTTON_TOOLTIP			                :{BLACK}Show / hide the admin buttons.
+### Community login window
+CM_STR_LOGIN_WINDOW_CAPTION                                     :Login Window
+CM_STR_LOGIN_WINDOW_CITYMANIA                                   :{BLACK}CityMania
+CM_STR_LOGIN_WINDOW_NICE                                        :{BLACK}N-ice
+CM_STR_LOGIN_WINDOW_BTPRO                                       :{BLACK}BTPro
+CM_STR_LOGIN_ERROR_SIGN_IN_FAILED                               :{WHITE}Failed to connect
+CM_STR_LOGIN_ERROR_BAD_INPUT                                    :{WHITE}Bad username or password
+CM_STR_LOGIN_WINDOW_USERNAME                                    :{WHITE}Username:
+CM_STR_LOGIN_WINDOW_PASSWORD                                    :{WHITE}Password:
+CM_STR_LOGIN_WINDOW_LOGIN                                       :{BLACK}Login
+CM_STR_LOGIN_WINDOW_LOGIN_TOOLTIP                               :Send login to server
+CM_STR_LOGIN_WINDOW_LOGOUT                                      :{BLACK}Logout
+CM_STR_LOGIN_WINDOW_LOGOUT_TOOLTIP                              :Send logout to server
+CM_STR_LOGIN_WINDOW_ADMIN_LOGIN                                 :{BLACK}A-Login
+CM_STR_LOGIN_WINDOW_ADMIN_LOGIN_TOOLTIP                         :Send admin login to server
+CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT                                :{BLACK}A-Logout
+CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT_TOOLTIP                        :Send admin logout to server
+CM_STR_LOGIN_WINDOW_ADMIN_PASSWORD                              :{WHITE}Admin:
+CM_STR_LOGIN_WINDOW_SET                                         :{WHITE}Set
+CM_STR_LOGIN_WINDOW_NOT_SET                                     :{WHITE}Not Set
+CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Change username
+CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Change password
+CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_TOOLTIP                     :Enter your username here
+CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_TOOLTIP                     :Enter your password here
+CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{RAW_STRING}
+CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
+CM_STR_LOGIN_WINDOW_WELCOME                                     :{BLACK}Welcome  to  {STRING}  server !
+
+### Admin company buttons
+CM_STR_ACB_COMPANY_ADMIN_CAPTION                                :{WHITE}Admin commands #{NUM}
+CM_STR_ACB_COMPANY_ADMIN_BUTTON			                        :{WHITE}Admin commands
+CM_STR_ACB_COMPANY_ADMIN_BUTTON_TOOLTIP			                :{BLACK}Show / hide the admin commands.
 CM_STR_ACB_LOCK                                                 :{BLACK}Lock
 CM_STR_ACB_LOCK_TOOLTIP                                         :{BLACK}Lock  Company. All players on it will be sent to spectators.
 CM_STR_ACB_UNLOCK                                               :{BLACK}Unlock
@@ -6371,7 +6375,7 @@ CM_STR_ACB_COMPANY_NEWSTICKET                                   :{BLACK}Type mes
 CM_STR_ACB_COMPANY_JOIN2                                        :{BLACK}A. Join
 CM_STR_ACB_COMPANY_JOIN2_TOOLTIP                                :{BLACK}Join as an admin
 
-### Server buttons ###
+### Server buttons
 CM_STR_SB_SELECT_NICE                                           :{BLACK}N-ice
 CM_STR_SB_SELECT_BTPRO                                          :{BLACK}BTPro
 CM_STR_SB_SELECT_CITYMANIA                                      :{BLACK}Citymania
@@ -6380,3 +6384,4 @@ CM_STR_SB_SERVER_DISABLED                                       :{WHITE}Server i
 CM_STR_SB_SERVER_LIST_ERROR_FILE                                :{WHITE}Error on getting servers file
 CM_STR_SB_NETWORK_DIRECT_JOIN_GAME                              :{BLACK}{RAW_STRING}
 CM_STR_SB_NETWORK_DIRECT_JOIN_TOOLTIP                           :{BLACK}Hold CTRL and click for joining with new company.
+CM_STR_SB_LAST_SERVER                                           :{BLACK}Join the server you played last time
