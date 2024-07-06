@@ -1229,6 +1229,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CONFIG_UPDATE(P
 	_network_server_name = p.Recv_string(NETWORK_NAME_LENGTH);
 	SetWindowClassesDirty(WC_CLIENT_LIST);
     citymania::CreateCommunityServerList(); //@cm_commands_gui.cpp
+    CSleep(3 * MILLISECONDS_PER_TICK);
+    citymania::ShowLoginWindow(); //@cm_commands_gui.cpp
 	Debug(net, 9, "Client::Receive_SERVER_CONFIG_UPDATE(): max_companies={}", _network_server_max_companies);
 
 	return NETWORK_RECV_STATUS_OKAY;
