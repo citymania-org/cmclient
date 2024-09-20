@@ -6193,25 +6193,6 @@ CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_HELPTEXT                 :Haupt-Hintergru
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK                    :Schwarz
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_GREY                     :Hellgrau
 
-# Community login window
-CM_STR_LOGIN_WINDOW_CAPTION                                     :{WHITE}Login-Fenster
-CM_STR_LOGIN_WINDOW_CITYMANIA                                   :{BLACK}CityMania
-CM_STR_LOGIN_WINDOW_NICE                                        :{BLACK}N-ice
-CM_STR_LOGIN_WINDOW_BTPRO                                       :{BLACK}BTPro
-CM_STR_LOGIN_ERROR_SIGN_IN_FAILED                               :{WHITE}Verbindung fehlgeschlagen
-CM_STR_LOGIN_ERROR_BAD_INPUT                                    :{WHITE}Falscher Benutzername oder Passwort
-CM_STR_LOGIN_WINDOW_USERNAME                                    :{WHITE}Benutzername
-CM_STR_LOGIN_WINDOW_PASSWORD                                    :{WHITE}Passwort
-CM_STR_LOGIN_WINDOW_SET                                         :{WHITE}Gesetzt
-CM_STR_LOGIN_WINDOW_NOT_SET                                     :{WHITE}Nicht gesetzt
-CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Benutzernamen ändern
-CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Passwort ändern
-CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT                    :{BLACK}Benutzernamen ändern
-CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT                    :{BLACK}Passwort ändern
-CM_STR_LOGIN_WINDOW_SIGN_IN_HELPTEXT                            :{BLACK}Login abschicken (Sie müssen auf dem richtigen Community-Server sein)
-CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{STRING}
-CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
-
 CM_STR_NETWORK_COMPANY_LIST_NEW_COMPANY                         :Neue Firma
 CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Zuschauen
 
@@ -6289,4 +6270,90 @@ CM_STR_INDUSTRY_TYPE_WITH_ID                                    :{STRING} {SILVE
 CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania-Patchpack-Einstellungen
 
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Kosten
-CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania-Serverlogin
+
+### Community login window
+CM_STR_LOGIN_WINDOW_CAPTION                                     :Serveranmeldung
+CM_STR_LOGIN_WINDOW_CITYMANIA                                   :{BLACK}CityMania
+CM_STR_LOGIN_WINDOW_NICE                                        :{BLACK}N-ice
+CM_STR_LOGIN_WINDOW_BTPRO                                       :{BLACK}BTPro
+CM_STR_LOGIN_ERROR_SIGN_IN_FAILED                               :{WHITE}Verbindung fehlgeschlagen
+CM_STR_LOGIN_ERROR_BAD_INPUT                                    :{WHITE}Falscher Benutzername oder Passwort
+CM_STR_LOGIN_WINDOW_USERNAME                                    :{WHITE}Benutzername
+CM_STR_LOGIN_WINDOW_PASSWORD                                    :{WHITE}Passwort
+CM_STR_LOGIN_WINDOW_LOGIN                                       :{BLACK}Anmelden
+CM_STR_LOGIN_WINDOW_LOGIN_TOOLTIP                               :beim Server anmelden
+CM_STR_LOGIN_WINDOW_LOGOUT                                      :{BLACK}Abmelden
+CM_STR_LOGIN_WINDOW_LOGOUT_TOOLTIP                              :beim Server abmelden
+CM_STR_LOGIN_WINDOW_ADMIN_LOGIN                                 :{BLACK}A-Anmelden
+CM_STR_LOGIN_WINDOW_ADMIN_LOGIN_TOOLTIP                         :als Admin beim Server anmelden
+CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT                                :{BLACK}A-Abmelden
+CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT_TOOLTIP                        :als Admin beim Server abmelden
+CM_STR_LOGIN_WINDOW_ADMIN_PASSWORD                              :{WHITE}Admin:
+CM_STR_LOGIN_WINDOW_SET                                         :{WHITE}Gesetzt
+CM_STR_LOGIN_WINDOW_NOT_SET                                     :{WHITE}Nicht gesetzt
+CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Benutzernamen ändern
+CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Passwort ändern
+CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_TOOLTIP                     :{BLACK}Benutzernamen hier eingeben
+CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_TOOLTIP                     :{BLACK}Passwort hier eingeben
+CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{STRING}
+CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
+CM_STR_LOGIN_WINDOW_WELCOME                                     :{BLACK}Willkommen beim  {STRING}  Server !
+
+### Admin company buttons
+CM_STR_ACB_COMPANY_ADMIN_CAPTION                                :{WHITE}Adminbefehle #{NUM}
+CM_STR_ACB_COMPANY_ADMIN_BUTTON			                        :{WHITE}Adminbefehle
+CM_STR_ACB_COMPANY_ADMIN_BUTTON_TOOLTIP			                :{BLACK}Zeige / verstecke die Adminbefehle.
+CM_STR_ACB_LOCK                                                 :{BLACK}Lock
+CM_STR_ACB_LOCK_TOOLTIP                                         :{BLACK}Sperre eine Firma, alle Spiele werden Zuschauer.
+CM_STR_ACB_UNLOCK                                               :{BLACK}Unlock
+CM_STR_ACB_UNLOCK_TOOLTIP                                       :{BLACK}Entsperre eine Firma, Spieler können wieder beitreten.
+CM_STR_ACB_KNOWN                                                :{BLACK}Known
+CM_STR_ACB_KNOWN_TOOLTIP                                        :{BLACK}Zeige die Liste der bekannten Spieler der Firma.
+CM_STR_ACB_RESET_KNOWN                                          :{BLACK}Reset Known
+CM_STR_ACB_RESET_KNOWN_TOOLTIP                                  :{BLACK}Lösche die List der bekannten Spieler der Firma.
+CM_STR_ACB_MOVE_PLAYER_TO                                       :{BLACK}Move to ...
+CM_STR_ACB_MOVE_PLAYER_TO_TOOLTIP                               :{BLACK}Verschiebe Spieler (#123 oder Name) zur Firma
+CM_STR_ACB_COMPANY_NEWSTICKET_BUTTON                            :{BLACK}News
+CM_STR_ACB_COMPANY_NEWSTICKET_BUTTON_TOOLTIP                    :{BLACK}Erstelle eine Zeitungsnachricht mit den Namen der Firma.
+CM_STR_ACB_COMPANY_NEWSTICKET_BUTTON_COMP                       :{BLACK}News (P. C.)
+CM_STR_ACB_COMPANY_NEWSTICKET_BUTTON_COMP_TOOLTIP               :{BLACK}Erstelle eine Zeitungsnachricht nur für die Firma.
+CM_STR_ACB_SUSPEND                                              :{BLACK}Suspend
+CM_STR_ACB_SUSPEND_TOOLTIP                                      :{BLACK}Deaktiviere alle Handlungen der Firma.
+CM_STR_ACB_UNSUSPEND                                            :{BLACK}Unsuspend
+CM_STR_ACB_UNSUSPEND_TOOLTIP                                    :{BLACK}Aktiviere alle Handlungen der Firma.
+CM_STR_ACB_EMPTY                                                :{BLACK}Empty
+CM_STR_ACB_EMPTY_TOOLTIP                                        :{BLACK}Mache alle Spieler der Firma zu Zuschauer
+CM_STR_ACB_RESET                                                :{BLACK}Reset
+CM_STR_ACB_RESET_TOOLTIP                                        :{BLACK}Lösche die Firma. Es dürfen keine Spieler in der Firma sein.
+CM_STR_ACB_RESET_SPEC                                           :{BLACK}Reset Spec
+CM_STR_ACB_RESET_SPEC_TOOLTIP                                   :{BLACK}Lösche die Firma und mache alle Spieler zu Zuschauer.
+CM_STR_ACB_RESET_KICK                                           :{BLACK}Reset Kick
+CM_STR_ACB_RESET_KICK_TOOLTIP                                   :{BLACK}Lösche die Firma und kicke die Spieler aus den Server.
+CM_STR_ACB_RESET_TIMER_120                                      :{BLACK}Reset T. 2m
+CM_STR_ACB_RESET_TIMER_120_TOOLTIP                              :{BLACK}Starte einen Countdown über 2 Minuten für die Löschung der Firma.
+CM_STR_ACB_RESET_TIMER                                          :{BLACK}Reset T....
+CM_STR_ACB_RESET_TIMER_TOOLTIP                                  :{BLACK}Starte einen Countdown der eingebenen Minuten für die Löschung der Firma.
+CM_STR_ACB_RESET_TIMER_VALUE                                    :{BLACK}Time to Reset (seconds):
+CM_STR_ACB_RESET_TIMER_CANCEL                                   :{BLACK}Cancel Reset
+CM_STR_ACB_RESET_TIMER_CANCEL_TOOLTIP                           :{BLACK}Abbruch des Countdowns.
+CM_STR_ACB_AWARNING                                             :{BLACK}Warning
+CM_STR_ACB_AWARNING_TOOLTIP                                     :{BLACK}Sende eine Nachricht zum Spieler, dass ein Admin eine Antwort erwartet.
+CM_STR_ACB_RESET_COMP							                :{BLACK}RESET Company
+CM_STR_ACB_RESET_COMP_SURE                                      :{WHITE}Die Firma wirklich löschen?
+CM_STR_ACB_RESET_SPEC_SURE                                      :{WHITE}Die Firma wirklich löschen und alle Spieler zu Zuschauer machen?
+CM_STR_ACB_RESET_KICK_SURE                                      :{WHITE}Die Firma wirklich löschen und alle Spieler rauswerfen?
+CM_STR_ACB_PLAYER_NEWSTICKET                                    :{BLACK}Tippe die Nachricht an den Spieler ein
+CM_STR_ACB_COMPANY_NEWSTICKET                                   :{BLACK}Tippe die Nachricht an die Firma ein
+CM_STR_ACB_COMPANY_JOIN2                                        :{BLACK}A. Join
+CM_STR_ACB_COMPANY_JOIN2_TOOLTIP                                :{BLACK}als Admin anmelden
+
+### Server buttons
+CM_STR_SB_SELECT_NICE                                           :{BLACK}N-ice
+CM_STR_SB_SELECT_BTPRO                                          :{BLACK}BTPro
+CM_STR_SB_SELECT_CITYMANIA                                      :{BLACK}Citymania
+CM_STR_SB_SERVER_LIST_UNREACHABLE                               :{WHITE}Serverliste nicht erreichbar
+CM_STR_SB_SERVER_DISABLED                                       :{WHITE}Server ist nicht erreichbar
+CM_STR_SB_SERVER_LIST_ERROR_FILE                                :{WHITE}Fehler in der Serverliste
+CM_STR_SB_NETWORK_DIRECT_JOIN_GAME                              :{BLACK}{RAW_STRING}
+CM_STR_SB_NETWORK_DIRECT_JOIN_TOOLTIP                           :{BLACK}Halte STRG und klicke, um mit neuer Firma zu beginnen
+CM_STR_SB_LAST_SERVER                                           :{BLACK}Den zuletzt gespielten Server beitreten

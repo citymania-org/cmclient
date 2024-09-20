@@ -41,6 +41,7 @@
 #include "table/sprites.h"
 
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_commands_gui.hpp"
 
 #include "safeguards.h"
 
@@ -297,6 +298,9 @@ struct SelectGameWindow : public Window {
 				DrawStringMultiLine(r.left, r.right, r.top,  r.bottom, STR_INTRO_TRANSLATION, TC_FROMSTRING, SA_CENTER);
 				break;
 		}
+        /* last server widget & serverbuttons */
+        citymania::CreateCommunityServerList();
+        citymania::JoinLastServer(this->left, this->top, this->height);
 	}
 
 	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
@@ -452,7 +456,9 @@ static constexpr NWidgetPart _nested_select_game_widgets[] = {
 
 			/* 'Exit' button */
 			NWidget(NWID_HORIZONTAL), SetPIPRatio(1, 0, 1),
+				NWidget(NWID_SPACER), SetMinimalSize(138, 0), SetFill(1, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_EXIT), SetMinimalSize(128, 0), SetDataTip(STR_INTRO_QUIT, STR_INTRO_TOOLTIP_QUIT),
+				NWidget(NWID_SPACER), SetMinimalSize(138, 0), SetFill(1, 0),
 			EndContainer(),
 		EndContainer(),
 	EndContainer(),

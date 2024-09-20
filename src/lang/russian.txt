@@ -6420,25 +6420,6 @@ CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_HELPTEXT                 :Основно�
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK                    :Черный
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_GREY                     :Светло-серый
 
-# Community login window
-CM_STR_LOGIN_WINDOW_CAPTION                                     :{WHITE}Login Window
-CM_STR_LOGIN_WINDOW_CITYMANIA                                   :{BLACK}CityMania
-CM_STR_LOGIN_WINDOW_NICE                                        :{BLACK}N-ice
-CM_STR_LOGIN_WINDOW_BTPRO                                       :{BLACK}BTPro
-CM_STR_LOGIN_ERROR_SIGN_IN_FAILED                               :{WHITE}Failed to connect
-CM_STR_LOGIN_ERROR_BAD_INPUT                                    :{WHITE}Bad username or password
-CM_STR_LOGIN_WINDOW_USERNAME                                    :{WHITE}Username
-CM_STR_LOGIN_WINDOW_PASSWORD                                    :{WHITE}Password
-CM_STR_LOGIN_WINDOW_SET                                         :{WHITE}Set
-CM_STR_LOGIN_WINDOW_NOT_SET                                     :{WHITE}Not Set
-CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Change username
-CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Change password
-CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT                    :{BLACK}Change username
-CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT                    :{BLACK}Change password
-CM_STR_LOGIN_WINDOW_SIGN_IN_HELPTEXT                            :{BLACK}Sign in (you must be on the correct community server)
-CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{STRING}
-CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
-
 CM_STR_NETWORK_COMPANY_LIST_NEW_COMPANY                         :Новая компания
 CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Стать зрителем
 
@@ -6520,7 +6501,6 @@ CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :Настрой�
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Стоимость
 
 CM_STR_NO_BLUEPRINT_IN_SLOT                                     :{WHITE}Нет чертежа в слоте {NUM}
-CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :Аутентификация на сервере CityMania
 CM_STR_BUILD_INFO_OVERLAY_COST_OK                               :{WHITE}Стоимость: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY                         :{RED}Стоимость: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_STATION_ACCEPTS                       :{WHITE}Принимается:
@@ -6531,11 +6511,14 @@ CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN                         :{RED}Неизв
 
 CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID                         :{LTBLUE}{ENGINE} {BLACK}Построен в {LTBLUE}{NUM} г.{BLACK} Стоимость: {LTBLUE}{CURRENCY_LONG}{BLACK} ID: {LTBLUE}{NUM}
 
-CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE                       :Активировать выпадающие меню при отпускании клавиши: {STRING}
-CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE_HELPTEXT              :Контролирует, активируют ли выпадающие меню основной панели инструментов свою стандартную функцию при отпускании кнопки мыши. Если выключено, то выпадающее меню останется открытым, чтобы можно было сделать выбор.
+CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE                    :Активировать выпадающие меню при отпускании клавиши: {STRING}
+CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE_HELPTEXT           :Контролирует, активируют ли выпадающие меню основной панели инструментов свою стандартную функцию при отпускании кнопки мыши. Если выключено, то выпадающее меню останется открытым, чтобы можно было сделать выбор.
 
 ###length VEHICLE_TYPES
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Показать скрытые ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Показать скрытые ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Показать скрытые ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Показать скрытые ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                        :{BLACK}Показать скрытые ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                 :{BLACK}Показать скрытые ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                         :{BLACK}Показать скрытые ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                     :{BLACK}Показать скрытые ({NUM})
+
+### Community login window
+CM_STR_LOGIN_WINDOW_CAPTION                                     :Аутентификация на сервере

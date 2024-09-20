@@ -49,9 +49,12 @@
 
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_main.hpp"
+#include "citymania/cm_commands_gui.hpp"
 
 #include "safeguards.h"
 
+/* Admin company buttons */
+bool Show_ACB[15];
 
 /** Company GUI constants. */
 static void DoSelectCompanyManagerFace(Window *parent);
@@ -2196,6 +2199,10 @@ static constexpr NWidgetPart _nested_company_widgets[] = {
 							NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_C_RELOCATE_HQ), SetDataTip(STR_COMPANY_VIEW_RELOCATE_HQ, STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS),
 							NWidget(NWID_SPACER),
 						EndContainer(),
+						/* Admin company buttons */
+						NWidget(NWID_SELECTION, INVALID_COLOUR, CM_WID_C_SELECT_ADMINBUTTONS),
+							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, CM_WID_C_ADMINBUTTONS), SetDataTip(CM_STR_ACB_COMPANY_ADMIN_BUTTON, CM_STR_ACB_COMPANY_ADMIN_BUTTON_TOOLTIP),
+						EndContainer(),
 					EndContainer(),
 				EndContainer(),
 
@@ -2225,15 +2232,7 @@ static constexpr NWidgetPart _nested_company_widgets[] = {
 							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_PASSWORD), SetDataTip(STR_COMPANY_VIEW_PASSWORD, STR_COMPANY_VIEW_PASSWORD_TOOLTIP),
 							NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_COMPANY_JOIN), SetDataTip(STR_COMPANY_VIEW_JOIN, STR_COMPANY_VIEW_JOIN_TOOLTIP),
 						EndContainer(),
-						// NWidget(NWID_SELECTION, INVALID_COLOUR, WID_C_SELECT_MOD),
-						// 	NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetFill(0, 1),
-						// 	NWidget(NWID_VERTICAL), SetPIP(4, 2, 4),
-						// 		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_C_MOD_COMPANY_JOIN), SetFill(1, 0), SetDataTip(STR_MOD_COMPANY_JOIN_BUTTON, STR_NULL),
-						// 		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_C_MOD_COMPANY_TOGGLE_LOCK), SetFill(1, 0), SetDataTip(STR_MOD_TOGGLE_LOCK_BUTTON, STR_NULL),
-						// 		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_C_MOD_COMPANY_RESET), SetFill(1, 0), SetDataTip(STR_MOD_COMPANY_RESET_BUTTON, STR_NULL),
-						// 	EndContainer(),
-						// EndContainer(),
-				EndContainer(),
+					EndContainer(),
 				EndContainer(),
 			EndContainer(),
 		EndContainer(),
@@ -2257,14 +2256,6 @@ static const StringID _company_view_vehicle_count_strings[] = {
 /**
  * Window with general information about a company
  */
-static void ResetCallback(Window *w, bool confirmed)
-{
-	if (confirmed) {
-		CompanyID company2 = (CompanyID)w->window_number;
-		citymania::NetworkClientSendChatToServer(fmt::format("!reset {}", company2 + 1));
-	}
-}
-
 struct CompanyWindow : Window
 {
 	CompanyWidgets query_widget;
@@ -2302,6 +2293,10 @@ struct CompanyWindow : Window
 			/* Button bar selection. */
 			reinit |= this->GetWidget<NWidgetStacked>(WID_C_SELECT_BUTTONS)->SetDisplayedPlane(local ? 0 : SZSP_NONE);
 
+			/* Admin company buttons: show/hide admin menue button from param of citymania.cfg */
+			citymania::CheckAdmin();
+			reinit |= this->GetWidget<NWidgetStacked>(CM_WID_C_SELECT_ADMINBUTTONS)->SetDisplayedPlane(citymania::GetAdmin() ? 0 : SZSP_NONE);
+
 			/* Build HQ button handling. */
 			reinit |= this->GetWidget<NWidgetStacked>(WID_C_SELECT_VIEW_BUILD_HQ)->SetDisplayedPlane((local && c->location_of_HQ == INVALID_TILE) ? CWP_VB_BUILD : CWP_VB_VIEW);
 
@@ -2321,17 +2316,13 @@ struct CompanyWindow : Window
 
 			if (reinit) {
 				this->ReInit();
+                 /* Admin company buttons: recall buttons while join/leave company */
+				if (Show_ACB[this->window_number]) citymania::ShowAdminCompanyButtons(this->left, this->top, this->width, this->window_number + 1, Show_ACB[this->window_number], true);
 				return;
 			}
 		}
-
-		// if(!_networking) {
-		// 	this->SetWidgetDisabledState(CW_WIDGET_COMPANY_RESUME, true);
-		// 	this->SetWidgetDisabledState(CW_WIDGET_COMPANY_SUSPEND, true);
-		// 	this->SetWidgetDisabledState(CW_WIDGET_COMPANY_RESET, true);
-		// 	this->SetWidgetDisabledState(CW_WIDGET_COMPANY_JOIN2, true);
-		// }
-
+        /* Admin company buttons: recall buttons while moving company window */
+        if (Show_ACB[this->window_number]) citymania::ShowAdminCompanyButtons(this->left, this->top, this->width, this->window_number + 1, Show_ACB[this->window_number], false);
 		this->DrawWidgets();
 	}
 
@@ -2389,19 +2380,14 @@ struct CompanyWindow : Window
 				size->width = std::max(size->width, GetStringBoundingBox(STR_COMPANY_VIEW_GIVE_MONEY_BUTTON).width);
 				size->width = std::max(size->width, GetStringBoundingBox(STR_COMPANY_VIEW_HOSTILE_TAKEOVER_BUTTON).width);
 				size->width = std::max(size->width, GetStringBoundingBox(STR_COMPANY_VIEW_PASSWORD).width);
-				size->width = std::max(size->width, GetStringBoundingBox(STR_COMPANY_VIEW_JOIN).width);
+				
 				size->width += padding.width;
 				break;
 
-			// case CW_WIDGET_COMPANY_RESUME:
-			// case CW_WIDGET_COMPANY_SUSPEND:
-			// case CW_WIDGET_COMPANY_RESET:
-			// case CW_WIDGET_COMPANY_JOIN2:
-			// 	if(!_novarole){
-			// 		size->width = 0;
-			// 		size->height = 0;
-			// 	}
-			// 	break;
+			/* Admin company buttons */
+			case CM_WID_C_ADMINBUTTONS:
+				size->width = std::max(size->width, GetStringBoundingBox(CM_STR_ACB_COMPANY_ADMIN_BUTTON).width);
+
 			case WID_C_HAS_PASSWORD:
 				if (_networking) *size = maxdim(*size, GetSpriteSize(SPR_LOCK));
 				break;
@@ -2624,28 +2610,13 @@ struct CompanyWindow : Window
 				MarkWholeScreenDirty();
 				break;
 			}
-
-			case WID_C_MOD_COMPANY_JOIN: {
-				if (!_novarole) return;
+            /* Admin company buttons: show/hide buttons */
+			case CM_WID_C_ADMINBUTTONS: {
 				CompanyID company2 = (CompanyID)this->window_number;
-				// this->query_widget = WID_C_MOD_COMPANY_JOIN;
-				citymania::NetworkClientSendChatToServer(fmt::format("!move {}", company2 + 1));
-				MarkWholeScreenDirty();
-				break;
-			}
-			case WID_C_MOD_COMPANY_RESET: {
-				if (!_networking) return;
-				this->query_widget = WID_C_MOD_COMPANY_RESET;
-				ShowQuery(CM_STR_XI_RESET_CAPTION, CM_STR_XI_REALY_RESET, this, ResetCallback);
-				MarkWholeScreenDirty();
-				break;
-			}
-			case WID_C_MOD_COMPANY_TOGGLE_LOCK: {
-				if (!_novarole) return;
-				CompanyID company2 = (CompanyID)this->window_number;
-				citymania::NetworkClientSendChatToServer(fmt::format("!lockp {}", company2 + 1));
-				MarkWholeScreenDirty();
-				break;
+				if (!Show_ACB[company2]) Show_ACB[company2] = true;
+                else Show_ACB[company2] = false;
+                citymania::ShowAdminCompanyButtons(this->left, this->top, this->width,company2 + 1, Show_ACB[company2], false);
+                break;
 			}
 		}
 	}
@@ -2702,6 +2673,14 @@ struct CompanyWindow : Window
 			OnResize();
 		}
 	}
+
+	/* Admin company buttons: close window */
+	void Close([[maybe_unused]] int data) override
+	{
+         if (FindWindowById(CM_WC_ADMIN_COMPANY_BUTTONS,this->window_number+1))
+			CloseWindowById(CM_WC_ADMIN_COMPANY_BUTTONS,this->window_number+1);
+		this->Window::Close();  
+    }
 };
 
 static WindowDesc _company_desc(__FILE__, __LINE__,

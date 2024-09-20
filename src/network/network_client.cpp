@@ -40,6 +40,7 @@
 #include "../citymania/cm_client_list_gui.hpp"
 #include "../citymania/cm_commands.hpp"
 #include "../citymania/cm_newgrf_revisions.hpp"
+#include "../citymania/cm_commands_gui.hpp" /* Admin company buttons */
 
 #include "../safeguards.h"
 
@@ -1227,7 +1228,9 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CONFIG_UPDATE(P
 	_network_server_max_companies = p.Recv_uint8();
 	_network_server_name = p.Recv_string(NETWORK_NAME_LENGTH);
 	SetWindowClassesDirty(WC_CLIENT_LIST);
-
+    citymania::CreateCommunityServerList(); //@cm_commands_gui.cpp
+    CSleep(3 * MILLISECONDS_PER_TICK);
+    citymania::ShowLoginWindow(); //@cm_commands_gui.cpp
 	Debug(net, 9, "Client::Receive_SERVER_CONFIG_UPDATE(): max_companies={}", _network_server_max_companies);
 
 	return NETWORK_RECV_STATUS_OKAY;
@@ -1325,7 +1328,8 @@ void NetworkClientsToSpectators(CompanyID cid)
 		NetworkTextMessage(NETWORK_ACTION_COMPANY_SPECTATOR, CC_DEFAULT, false, ci->client_name);
 		ci->client_playas = COMPANY_SPECTATOR;
 	}
-
+    /* Admin company buttons: delete window */
+	citymania::ShowAdminCompanyButtons(0, 0, 0, cid+1, false, false);
 	cur_company.Restore();
 }
 

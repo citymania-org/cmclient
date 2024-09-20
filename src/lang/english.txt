@@ -5951,6 +5951,8 @@ CM_STR_TOOLBAR_COMMANDS_HINT_CAPTION                            :{BLACK}CB Hint
 CM_STR_TOOLBAR_COMMANDS_HINT_TOOLTIP                            :{BLACK}Send !hint command to server(Shows town demand in CB mode).
 CM_STR_TOOLBAR_COMMANDS_LOGIN_CAPTION                           :{BLACK}Login
 CM_STR_TOOLBAR_COMMANDS_LOGIN_TOOLTIP                           :{BLACK}Send !login command to server.
+CM_STR_TOOLBAR_COMMANDS_LOGOUT_CAPTION                          :{BLACK}Logout
+CM_STR_TOOLBAR_COMMANDS_LOGOUT_TOOLTIP                          :{BLACK}Send !logout command to server.
 CM_STR_TOOLBAR_COMMANDS_TIMELEFT_CAPTION                        :{BLACK}Timeleft
 CM_STR_TOOLBAR_COMMANDS_TIMELEFT_TOOLTIP                        :{BLACK}Send !timeleft command to server.
 CM_STR_TOOLBAR_COMMANDS_NS_CAPTION                              :{BLACK}CM{NUM}
@@ -6197,25 +6199,6 @@ CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_HELPTEXT                 :Main background
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_BLACK                    :Black
 CM_STR_CONFIG_SETTING_GRAPH_BACKGROUND_GREY                     :Light grey
 
-# Community login window
-CM_STR_LOGIN_WINDOW_CAPTION                                     :{WHITE}Login Window
-CM_STR_LOGIN_WINDOW_CITYMANIA                                   :{BLACK}CityMania
-CM_STR_LOGIN_WINDOW_NICE                                        :{BLACK}N-ice
-CM_STR_LOGIN_WINDOW_BTPRO                                       :{BLACK}BTPro
-CM_STR_LOGIN_ERROR_SIGN_IN_FAILED                               :{WHITE}Failed to connect
-CM_STR_LOGIN_ERROR_BAD_INPUT                                    :{WHITE}Bad username or password
-CM_STR_LOGIN_WINDOW_USERNAME                                    :{WHITE}Username
-CM_STR_LOGIN_WINDOW_PASSWORD                                    :{WHITE}Password
-CM_STR_LOGIN_WINDOW_SET                                         :{WHITE}Set
-CM_STR_LOGIN_WINDOW_NOT_SET                                     :{WHITE}Not Set
-CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Change username
-CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Change password
-CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_HELPTEXT                    :{BLACK}Change username
-CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_HELPTEXT                    :{BLACK}Change password
-CM_STR_LOGIN_WINDOW_SIGN_IN_HELPTEXT                            :{BLACK}Sign in (you must be on the correct community server)
-CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{RAW_STRING}
-CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
-
 CM_STR_NETWORK_COMPANY_LIST_NEW_COMPANY                         :New company
 CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Spectate
 
@@ -6297,7 +6280,6 @@ CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania patch
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
 CM_STR_NO_BLUEPRINT_IN_SLOT                                     :{WHITE}No blueprint in slot {NUM}
-CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania server login
 CM_STR_BUILD_INFO_OVERLAY_COST_OK                               :{WHITE}Cost: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY                         :{RED}Cost: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_STATION_ACCEPTS                       :{WHITE}Accepts:
@@ -6312,7 +6294,94 @@ CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE                    :Toolbar dropdow
 CM_STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_CLOSE_HELPTEXT           :Control whether the main toolbar dropdowns activate their default function when the mouse button is released. If not enabled then the dropdown menu will stay open so a selection can be made.
 
 ###length VEHICLE_TYPES
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Show hidden ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Show hidden ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Show hidden ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                        :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                 :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                         :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                     :{BLACK}Show hidden ({NUM})
+
+### Community login window
+CM_STR_LOGIN_WINDOW_CAPTION                                     :Login Window
+CM_STR_LOGIN_WINDOW_CITYMANIA                                   :{BLACK}CityMania
+CM_STR_LOGIN_WINDOW_NICE                                        :{BLACK}N-ice
+CM_STR_LOGIN_WINDOW_BTPRO                                       :{BLACK}BTPro
+CM_STR_LOGIN_ERROR_SIGN_IN_FAILED                               :{WHITE}Failed to connect
+CM_STR_LOGIN_ERROR_BAD_INPUT                                    :{WHITE}Bad username or password
+CM_STR_LOGIN_WINDOW_USERNAME                                    :{WHITE}Username:
+CM_STR_LOGIN_WINDOW_PASSWORD                                    :{WHITE}Password:
+CM_STR_LOGIN_WINDOW_LOGIN                                       :{BLACK}Login
+CM_STR_LOGIN_WINDOW_LOGIN_TOOLTIP                               :Send login to server
+CM_STR_LOGIN_WINDOW_LOGOUT                                      :{BLACK}Logout
+CM_STR_LOGIN_WINDOW_LOGOUT_TOOLTIP                              :Send logout to server
+CM_STR_LOGIN_WINDOW_ADMIN_LOGIN                                 :{BLACK}A-Login
+CM_STR_LOGIN_WINDOW_ADMIN_LOGIN_TOOLTIP                         :Send admin login to server
+CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT                                :{BLACK}A-Logout
+CM_STR_LOGIN_WINDOW_ADMIN_LOGOUT_TOOLTIP                        :Send admin logout to server
+CM_STR_LOGIN_WINDOW_ADMIN_PASSWORD                              :{WHITE}Admin:
+CM_STR_LOGIN_WINDOW_SET                                         :{WHITE}Set
+CM_STR_LOGIN_WINDOW_NOT_SET                                     :{WHITE}Not Set
+CM_STR_LOGIN_WINDOW_CHANGE_USERNAME                             :{WHITE}Change username
+CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD                             :{WHITE}Change password
+CM_STR_LOGIN_WINDOW_CHANGE_USERNAME_TOOLTIP                     :Enter your username here
+CM_STR_LOGIN_WINDOW_CHANGE_PASSWORD_TOOLTIP                     :Enter your password here
+CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY                            :{WHITE}{RAW_STRING}
+CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY                            :{WHITE}{STRING}
+CM_STR_LOGIN_WINDOW_WELCOME                                     :{BLACK}Welcome  to  {STRING}  server !
+
+### Admin company buttons
+CM_STR_ACB_COMPANY_ADMIN_CAPTION                                :{WHITE}Admin commands #{NUM}
+CM_STR_ACB_COMPANY_ADMIN_BUTTON			                        :{WHITE}Admin commands
+CM_STR_ACB_COMPANY_ADMIN_BUTTON_TOOLTIP			                :{BLACK}Show / hide the admin commands.
+CM_STR_ACB_LOCK                                                 :{BLACK}Lock
+CM_STR_ACB_LOCK_TOOLTIP                                         :{BLACK}Lock  Company. All players on it will be sent to spectators.
+CM_STR_ACB_UNLOCK                                               :{BLACK}Unlock
+CM_STR_ACB_UNLOCK_TOOLTIP                                       :{BLACK}Unlock Company making possible player(s) joining it again.
+CM_STR_ACB_KNOWN                                                :{BLACK}Known
+CM_STR_ACB_KNOWN_TOOLTIP                                        :{BLACK}Show the known player(s) of company.
+CM_STR_ACB_RESET_KNOWN                                          :{BLACK}Reset Known
+CM_STR_ACB_RESET_KNOWN_TOOLTIP                                  :{BLACK}Reset list of known players of company.
+CM_STR_ACB_MOVE_PLAYER_TO                                       :{BLACK}Move to ...
+CM_STR_ACB_MOVE_PLAYER_TO_TOOLTIP                               :{BLACK}Move a player (number #.. or name) to company
+CM_STR_ACB_COMPANY_NEWSTICKET_BUTTON                            :{BLACK}News
+CM_STR_ACB_COMPANY_NEWSTICKET_BUTTON_TOOLTIP                    :{BLACK}Open a Newspapper message directed to Company
+CM_STR_ACB_COMPANY_NEWSTICKET_BUTTON_COMP                       :{BLACK}News (P. C.)
+CM_STR_ACB_COMPANY_NEWSTICKET_BUTTON_COMP_TOOLTIP               :{BLACK}Open a Newspapper message only showed to Company
+CM_STR_ACB_SUSPEND                                              :{BLACK}Suspend
+CM_STR_ACB_SUSPEND_TOOLTIP                                      :{BLACK}Suspend Company actions keeping player in the company.
+CM_STR_ACB_UNSUSPEND                                            :{BLACK}Unsuspend
+CM_STR_ACB_UNSUSPEND_TOOLTIP                                    :{BLACK}Unsuspend Company actions.
+CM_STR_ACB_EMPTY                                                :{BLACK}Empty
+CM_STR_ACB_EMPTY_TOOLTIP                                        :{BLACK}Send players in company to Spectators.
+CM_STR_ACB_RESET                                                :{BLACK}Reset
+CM_STR_ACB_RESET_TOOLTIP                                        :{BLACK}Reset the company. The company must be empty.
+CM_STR_ACB_RESET_SPEC                                           :{BLACK}Reset Spec
+CM_STR_ACB_RESET_SPEC_TOOLTIP                                   :{BLACK}Reset company and send player(s) to spectators.
+CM_STR_ACB_RESET_KICK                                           :{BLACK}Reset Kick
+CM_STR_ACB_RESET_KICK_TOOLTIP                                   :{BLACK}Reset company and Kick out of the game player(s) on it.
+CM_STR_ACB_RESET_TIMER_120                                      :{BLACK}Reset T. 2m
+CM_STR_ACB_RESET_TIMER_120_TOOLTIP                              :{BLACK}Starts a timer to reset company when after 2 minutes countdown.
+CM_STR_ACB_RESET_TIMER                                          :{BLACK}Reset T....
+CM_STR_ACB_RESET_TIMER_TOOLTIP                                  :{BLACK}Starts a timer to reset company when time expire (time is Admin input).
+CM_STR_ACB_RESET_TIMER_VALUE                                    :{BLACK}Time to Reset (seconds):
+CM_STR_ACB_RESET_TIMER_CANCEL                                   :{BLACK}Cancel Reset
+CM_STR_ACB_RESET_TIMER_CANCEL_TOOLTIP                           :{BLACK}Cancel the Reset timer.
+CM_STR_ACB_AWARNING                                             :{BLACK}Warning
+CM_STR_ACB_AWARNING_TOOLTIP                                     :{BLACK}Sends a Warning to company that an admin is trying to contact.
+CM_STR_ACB_RESET_COMP							                :{BLACK}RESET Company
+CM_STR_ACB_RESET_COMP_SURE                                      :{WHITE}Sure to RESET this company?
+CM_STR_ACB_RESET_SPEC_SURE                                      :{WHITE}Sure to RESET this company, send players to SPECTATORS?
+CM_STR_ACB_RESET_KICK_SURE                                      :{WHITE}Sure to RESET this company, and KICK players on it?
+CM_STR_ACB_PLAYER_NEWSTICKET                                    :{BLACK}Type message as newspapper ticket to this Player
+CM_STR_ACB_COMPANY_NEWSTICKET                                   :{BLACK}Type message as newspapper ticket to this Company
+CM_STR_ACB_COMPANY_JOIN2                                        :{BLACK}A. Join
+CM_STR_ACB_COMPANY_JOIN2_TOOLTIP                                :{BLACK}Join as an admin
+
+### Server buttons
+CM_STR_SB_SELECT_NICE                                           :{BLACK}N-ice
+CM_STR_SB_SELECT_BTPRO                                          :{BLACK}BTPro
+CM_STR_SB_SELECT_CITYMANIA                                      :{BLACK}Citymania
+CM_STR_SB_SERVER_LIST_UNREACHABLE                               :{WHITE}Couldn't get server details
+CM_STR_SB_SERVER_DISABLED                                       :{WHITE}Server is Disabled / Offline
+CM_STR_SB_SERVER_LIST_ERROR_FILE                                :{WHITE}Error on getting servers file
+CM_STR_SB_NETWORK_DIRECT_JOIN_GAME                              :{BLACK}{RAW_STRING}
+CM_STR_SB_NETWORK_DIRECT_JOIN_TOOLTIP                           :{BLACK}Hold CTRL and click for joining with new company.
+CM_STR_SB_LAST_SERVER                                           :{BLACK}Join the server you played last time

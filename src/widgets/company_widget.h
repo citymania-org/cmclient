@@ -52,11 +52,8 @@ enum CompanyWidgets : WidgetID {
 	WID_C_COMPANY_PASSWORD,           ///< Button to set company password.
 	WID_C_COMPANY_JOIN,               ///< Button to join company.
 
-	WID_C_SELECT_MOD,
-	WID_C_SELECT_MOD_JOIN,
-	WID_C_MOD_COMPANY_JOIN,
-	WID_C_MOD_COMPANY_RESET,
-	WID_C_MOD_COMPANY_TOGGLE_LOCK,
+	CM_WID_C_SELECT_ADMINBUTTONS,
+	CM_WID_C_ADMINBUTTONS,
 };
 
 /** Widgets of the #CompanyFinancesWindow class. */

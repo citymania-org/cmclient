@@ -39,6 +39,7 @@ void SelectStationToJoin(const Station *station);
 void MarkCoverageHighlightDirty();
 bool CheckRedrawStationCoverage();
 void AbortStationPlacement();
+void ShowCatchmentByClick(StationID station);
 
 std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int rad, StationCoverageType sct);
 
