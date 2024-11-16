@@ -7,6 +7,7 @@
 
 /** @file rail_gui.cpp %File for dealing with rail construction user interface */
 
+#include "citymania/cm_highlight_type.hpp"
 #include "stdafx.h"
 #include "gui.h"
 #include "window_gui.h"
@@ -58,10 +59,11 @@
 /* CityMania code end */
 
 #include "safeguards.h"
+#include <memory>
 
 
 RailType _cur_railtype;               ///< Rail type of the current build-rail toolbar.
-static bool _remove_button_clicked;          ///< Flag whether 'remove' toggle-button is currently enabled
+extern bool _remove_button_clicked;          ///< Flag whether 'remove' toggle-button is currently enabled
 static bool _cm_invert_remove;                  ///< Invert remove mode on tools (when fn-clicked)
 /* CM static */ DiagDirection _build_depot_direction; ///< Currently selected depot direction
 static uint16_t _cur_waypoint_type;          ///< Currently selected waypoint type
@@ -79,15 +81,16 @@ static const int HOTKEY_BLUEPRINT_LOAD_END = 0x1030;
 static const int HOTKEY_BLUEPRINT_SAVE = 0x1030;
 static const int HOTKEY_BLUEPRINT_SAVE_END = 0x1040;
 
-struct RailStationGUISettings {
-	Axis orientation;                 ///< Currently selected rail station orientation
+// Moved to cm_station_gui.hpp
+// struct RailStationGUISettings {
+// 	Axis orientation;                 ///< Currently selected rail station orientation
 
-	bool newstations;                 ///< Are custom station definitions available?
-	StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-	uint16_t station_type;            ///< %Station type within the currently selected custom station class (if newstations is \c true )
-	uint16_t station_count;           ///< Number of custom stations (if newstations is \c true )
-};
-RailStationGUISettings _railstation; ///< Settings of the station builder GUI
+// 	bool newstations;                 ///< Are custom station definitions available?
+// 	StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
+// 	uint16_t station_type;            ///< %Station type within the currently selected custom station class (if newstations is \c true )
+// 	uint16_t station_count;           ///< Number of custom stations (if newstations is \c true )
+// };
+citymania::RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
 
 static void HandleStationPlacement(TileIndex start, TileIndex end);
@@ -214,7 +217,7 @@ static void PlaceRail_Station(TileIndex tile)
 		int h = _settings_client.gui.station_platlength;
 		if (!_railstation.orientation) Swap(w, h);
 
-		RailStationGUISettings params = _railstation;
+		citymania::RailStationGUISettings params = _railstation;
 		RailType rt = _cur_railtype;
 		byte numtracks = _settings_client.gui.station_numtracks;
 		byte platlength = _settings_client.gui.station_platlength;
@@ -677,12 +680,12 @@ struct BuildRailToolbarWindow : Window {
 					if (was_open) ResetObjectToPlace();
 					if (!was_open || dragdrop != _settings_client.gui.station_dragdrop) {
 						_settings_client.gui.station_dragdrop = dragdrop;
-						if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT, DDSP_BUILD_STATION))
+						if (citymania::HandleStationPlacePushButton(this, WID_RAT_BUILD_STATION, std::make_shared<citymania::RailStationPreview>()))
 							ShowStationBuilder(this);
 					}
 					this->last_user_action = WID_RAT_BUILD_STATION;
 				} else { /* button */
-					if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_RAIL_STATION, HT_RECT, DDSP_BUILD_STATION)) {
+					if (citymania::HandleStationPlacePushButton(this, WID_RAT_BUILD_STATION, std::make_shared<citymania::RailStationPreview>())) {
 						ShowStationBuilder(this);
 						this->last_user_action = WID_RAT_BUILD_STATION;
 					}
@@ -1131,7 +1134,7 @@ static void HandleStationPlacement(TileIndex start, TileIndex end)
 
 	if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
 
-	RailStationGUISettings params = _railstation;
+	citymania::RailStationGUISettings params = _railstation;
 	RailType rt = _cur_railtype;
 	bool adjacent = citymania::_fn_mod;
 

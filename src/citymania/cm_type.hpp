@@ -1,6 +1,9 @@
 #ifndef CMEXT_TYPE_HPP
 #define CMEXT_TYPE_HPP
 
+#include "../core/geometry_type.hpp"
+#include "../core/overflowsafe_type.hpp"
+
 #include <cstddef>
 #include <memory>
 #include <type_traits>
@@ -70,5 +73,27 @@ enum class ControllerType: uint8_t {
 };
 
 } // namespace citymania
+
+
+template <typename T>
+struct fmt::formatter<OverflowSafeInt<T>> {
+    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const OverflowSafeInt<T>& i, FormatContext& ctx) {
+        return fmt::format_to(ctx.out(), "{}", static_cast<T>(i));
+    }
+};
+
+template <>
+struct fmt::formatter<Point> {
+    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const Point& pt, FormatContext& ctx) {
+        return fmt::format_to(ctx.out(), "({},{})", pt.x, pt.y);
+    }
+};
+
 
 #endif

@@ -42,6 +42,7 @@
 /* CityMania code start */
 #include <limits>
 #include "window_gui.h"
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_overlays.hpp"
 #include "citymania/cm_tooltips.hpp"
@@ -2811,6 +2812,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	if (HandleActiveWidget()       == ES_HANDLED) return;
 	if (HandleViewportScroll()     == ES_HANDLED) return;
 
+	if (citymania::HandleMouseMove()) return;
 	HandleMouseOver();
 
 	bool scrollwheel_scrolling = _settings_client.gui.scrollwheel_scrolling == 1 && (_cursor.v_wheel != 0 || _cursor.h_wheel != 0);
@@ -2845,6 +2847,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		switch (click) {
 			case MC_DOUBLE_LEFT:
 			case MC_LEFT:
+				if (citymania::HandleMouseClick(vp, click == MC_DOUBLE_LEFT)) return;
 				if (HandleViewportClicked(vp, x, y, click == MC_DOUBLE_LEFT)) return;
 				if (!(w->flags & WF_DISABLE_VP_SCROLL) &&
 						_settings_client.gui.scroll_mode == VSM_MAP_LMB) {

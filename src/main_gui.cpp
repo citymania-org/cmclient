@@ -7,9 +7,12 @@
 
 /** @file main_gui.cpp Handling of the main viewport. */
 
+#include "3rdparty/fmt/core.h"
+#include "citymania/cm_highlight.hpp"
 #include "stdafx.h"
 #include "currency.h"
 #include "spritecache.h"
+#include "viewport_type.h"
 #include "window_gui.h"
 #include "window_func.h"
 #include "textbuf_gui.h"
@@ -50,6 +53,8 @@
 #include "debug.h"
 
 #include "citymania/cm_commands.hpp"
+#include "citymania/cm_highlight.hpp"
+#include "citymania/cm_station_gui.hpp"
 
 #include "safeguards.h"
 
@@ -76,6 +81,13 @@ bool HandlePlacePushButton(Window *w, WidgetID widget, CursorID cursor, HighLigh
 	}
 
 	SetObjectToPlace(cursor, PAL_NONE, mode, w->window_class, w->window_number, cm_process);
+	// if (cm_process == DDSP_BUILD_STATION) {
+	// 	if (citymania::UseImprovedStationJoin()) {
+	// 		citymania::SetActivePreview(std::make_unique<citymania::StationPreview>());
+	// 	} else {
+	// 		citymania::SetActivePreview(std::make_unique<citymania::VanillaStationPreview>());
+	// 	}
+	// }
 	w->LowerWidget(widget);
 	return true;
 }

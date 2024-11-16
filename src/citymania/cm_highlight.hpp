@@ -1,6 +1,7 @@
 #ifndef CITYMANIA_HIGHLIGHT_HPP
 #define CITYMANIA_HIGHLIGHT_HPP
 
+#include "cm_commands.hpp"
 #include "cm_highlight_type.hpp"
 
 #include "../core/enum_type.hpp"
@@ -55,6 +56,14 @@ PaletteID GetTreeShadePal(TileIndex tile);
 
 void RotateAutodetection();
 void ResetRotateAutodetection();
+
+void ResetActivePreview();
+void SetActivePreview(up<Preview> &&preview);
+void UpdateActivePreview();
+
+bool HandlePlacePushButton(Window *w, WidgetID widget, up<Preview> preview);
+bool HandleMouseMove();
+bool HandleMouseClick(Viewport *vp, bool double_click);
 
 }  // namespace citymania
 
