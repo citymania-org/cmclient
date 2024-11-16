@@ -16,10 +16,17 @@
 
 #include <map>
 #include <set>
+#include <type_traits>
+#include <unordered_set>
 #include <vector>
+
+#include "cm_command_type.hpp"
 
 
 namespace citymania {
+
+typedef std::function<up<Command>(TileIndex start_tile, TileIndex end_tile)> HighlightGenerator;
+
 
 enum ZoningBorder: uint8 {
     NONE = 0,
@@ -81,7 +88,7 @@ public:
 
 class ObjectTileHighlight {
 public:
-    enum class Type {
+    enum class Type : uint8_t {
         BEGIN = 0,
         RAIL_DEPOT = BEGIN,
         RAIL_TRACK,
@@ -97,6 +104,9 @@ public:
         POINT,
         RECT,
         NUMBERED_RECT,
+        BORDER,
+        TINT,
+        STRUCT_TINT,
         END,
     };
 
@@ -152,9 +162,11 @@ public:
         struct {
             uint32 number;
         } numbered_rect;
+        ZoningBorder border;
     } u;
 
     ObjectTileHighlight(Type type, SpriteID palette): type{type}, palette{palette} {}
+
     static ObjectTileHighlight make_rail_depot(SpriteID palette, DiagDirection ddir);
     static ObjectTileHighlight make_rail_track(SpriteID palette, Track track);
     static ObjectTileHighlight make_rail_station(SpriteID palette, Axis axis, byte section);
@@ -169,6 +181,12 @@ public:
     static ObjectTileHighlight make_point(SpriteID palette);
     static ObjectTileHighlight make_rect(SpriteID palette);
     static ObjectTileHighlight make_numbered_rect(SpriteID palette, uint32 number);
+    static ObjectTileHighlight make_border(SpriteID palette, ZoningBorder border);
+    static ObjectTileHighlight make_tint(SpriteID palette);
+    static ObjectTileHighlight make_struct_tint(SpriteID palette);
+
+    bool operator==(const ObjectTileHighlight &oh) const;
+    bool SetTileHighlight(TileHighlight &th, const TileInfo *ti) const;
 };
 
 
@@ -282,7 +300,7 @@ public:
 
 class ObjectHighlight {
 public:
-    enum class Type {
+    enum class Type : byte {
         NONE = 0,
         RAIL_DEPOT = 1,
         RAIL_STATION = 2,
@@ -351,6 +369,33 @@ public:
     void MarkDirty();
 };
 
+class Preview {
+public:
+    typedef std::map<TileIndex, std::vector<ObjectTileHighlight>> TileMap;
+    virtual ~Preview() {}
+    virtual void Update(Point pt, TileIndex tile) = 0;
+    virtual void HandleMouseMove() {};
+    virtual bool HandleMousePress() { return false; };
+    virtual void HandleMouseRelease() {};
+    virtual bool HandleMouseClick(Viewport* /* vp */, Point /* pt */, TileIndex /* tile */, bool /* double_click */) { return false; };
+    virtual TileMap GetTiles() = 0;
+    virtual CursorID GetCursor() = 0;
+    virtual void OnStationRemoved(const Station* /* station */) {};
+};
+
+// enum class ActiveHighlightState {
+//     None,
+//     Place,
+//     DragStart,
+//     DragStop,
+// };
+
+struct ActivePreview {
+    up<Preview> preview;
+    Preview::TileMap tiles;
+};
+
+extern ActivePreview _ap;
 
 }  // namespace citymania
 

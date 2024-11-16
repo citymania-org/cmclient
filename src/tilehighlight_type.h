@@ -10,6 +10,7 @@
 #ifndef TILEHIGHLIGHT_TYPE_H
 #define TILEHIGHLIGHT_TYPE_H
 
+#include "citymania/cm_command_type.hpp"
 #include "citymania/cm_highlight_type.hpp"
 
 #include "core/geometry_type.hpp"
@@ -89,6 +90,7 @@ struct TileHighlightData {
 	ViewportPlaceMethod select_method;            ///< The method which governs how tiles are selected.
 	ViewportDragDropSelectionProcess select_proc; ///< The procedure that has to be called when the selection is done.
 
+	// Old CM highilight
 	citymania::ObjectHighlight cm;
 	citymania::ObjectHighlight cm_new;
 	bool cm_poly_terra;

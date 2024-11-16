@@ -2200,7 +2200,7 @@ void MarkTileDirtyByTile(TileIndex tile, int bridge_level_offset, int tile_heigh
  *
  * @ingroup dirty
  */
-static void SetSelectionTilesDirty()
+/* CM static */ void SetSelectionTilesDirty()
 {
 	int x_size = _thd.size.x;
 	int y_size = _thd.size.y;
@@ -2915,6 +2915,8 @@ void UpdateTileSelection()
 		/* Draw the new tile selection? */
 		if ((new_drawstyle & HT_DRAG_MASK) != HT_NONE) SetSelectionTilesDirty();
 	}
+
+	citymania::UpdateActivePreview();
 }
 
 /**
@@ -3993,6 +3995,7 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
  */
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num, ViewportDragDropSelectionProcess cm_process)
 {
+	citymania::ResetActivePreview();
 	if (_thd.window_class != WC_INVALID) {
 		/* Undo clicking on button and drag & drop */
 		Window *w = _thd.GetCallbackWnd();
@@ -4043,6 +4046,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 void ResetObjectToPlace()
 {
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0, CM_DDSP_NONE);
+	citymania::ResetActivePreview();
 }
 
 Point GetViewportStationMiddle(const Viewport *vp, const Station *st)

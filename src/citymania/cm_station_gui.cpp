@@ -2,6 +2,8 @@
 
 #include "cm_station_gui.hpp"
 
+#include "cm_highlight.hpp"
+#include "cm_highlight_type.hpp"
 #include "cm_hotkeys.hpp"
 #include "cm_commands.hpp"
 
@@ -28,8 +30,13 @@
 #include "../window_gui.h"
 #include "../zoom_type.h"
 #include "../zoom_func.h"
+#include "cm_type.hpp"
+#include "generated/cm_gen_commands.hpp"
 
 #include <sstream>
+#include <unordered_set>
+
+bool _remove_button_clicked;  // replace vanilla static vars
 
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
@@ -42,6 +49,8 @@ extern AirportClassID _selected_airport_class;
 extern int _selected_airport_index;
 extern byte _selected_airport_layout;
 extern RailType _cur_railtype;  // rail_gui.cpp
+extern RoadType _cur_roadtype;  // road_gui.cpp
+extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
 struct RailStationGUISettings {
     Axis orientation;                 ///< Currently selected rail station orientation
@@ -65,18 +74,11 @@ extern RoadStopGUISettings _roadstop_gui_settings;
 namespace citymania {
 
 StationBuildingStatus _station_building_status = StationBuildingStatus::NEW;
-const Station *_station_to_join = nullptr;
 const Station *_highlight_station_to_join = nullptr;
 TileArea _highlight_join_area;
 
-// void SetStationTileSelectSize(int w, int h, int catchment) {
-//     _station_select.w = w;
-//     _station_select.h = h;
-//     _station_select.catchment = catchment;
-// }
-
 bool UseImprovedStationJoin() {
-    return _settings_client.gui.cm_use_improved_station_join && _settings_game.station.distant_join_stations;
+    return _settings_client.gui.cm_use_improved_station_join && _settings_game.station.distant_join_stations && _settings_game.station.adjacent_stations;
 }
 
 void SetStationBiildingStatus(StationBuildingStatus status) {
@@ -109,19 +111,19 @@ static void UpdateHiglightJoinArea(const Station *station) {
         _highlight_join_area.tile = INVALID_TILE;
         return;
     }
-    auto &r = _station_to_join->rect;
-    auto d = (int)_settings_game.station.station_spread - 1;
-    TileArea ta(
-        TileXY(std::max<int>(r.right - d, 0),
-               std::max<int>(r.bottom - d, 0)),
-        TileXY(std::min<int>(r.left + d, Map::SizeX() - 1),
-               std::min<int>(r.top + d, Map::SizeY() - 1))
-    );
-    if (_highlight_join_area.tile == ta.tile &&
-        _highlight_join_area.w == ta.w &&
-        _highlight_join_area.h == ta.h) return;
+    // auto &r = _station_to_join->rect;
+    // auto d = (int)_settings_game.station.station_spread - 1;
+    // TileArea ta(
+    //     TileXY(std::max<int>(r.right - d, 0),
+    //            std::max<int>(r.bottom - d, 0)),
+    //     TileXY(std::min<int>(r.left + d, Map::SizeX() - 1),
+    //            std::min<int>(r.top + d, Map::SizeY() - 1))
+    // );
+    // if (_highlight_join_area.tile == ta.tile &&
+    //     _highlight_join_area.w == ta.w &&
+    //     _highlight_join_area.h == ta.h) return;
     MarkTileAreaDirty(_highlight_join_area);
-    _highlight_join_area = ta;
+    // _highlight_join_area = ta;
     MarkTileAreaDirty(_highlight_join_area);
 }
 
@@ -147,8 +149,8 @@ void SetHighlightStationToJoin(const Station *station, bool with_area) {
 
 void OnStationTileSetChange(const Station *station, bool /* adding */, StationType /* type */) {
     if (station == _highlight_station_to_join) {
-        if (_highlight_join_area.tile != INVALID_TILE)
-            UpdateHiglightJoinArea(_station_to_join);
+        // if (_highlight_join_area.tile != INVALID_TILE)
+            // UpdateHiglightJoinArea(_station_to_join);
         if (_settings_client.gui.station_show_coverage)
             MarkCoverageAreaDirty(_highlight_station_to_join);
     }
@@ -166,15 +168,6 @@ const Station *_last_built_station;
 void OnStationPartBuilt(const Station *station) {
     _last_built_station = station;
     CheckRedrawStationCoverage();
-}
-
-void OnStationRemoved(const Station *station) {
-    if (_last_built_station == station) _last_built_station = nullptr;
-    if (_station_to_join == station) {
-        // TODO MarkJoinHighlight
-        MarkCoverageAreaDirty(station);
-        _station_to_join = nullptr;
-    }
 }
 
 
@@ -231,7 +224,7 @@ void JoinAndBuild(Tcommand command, Tcallback *callback) {
 
     command.with_callback([] (bool res)->bool {
         if (!res) return false;
-        _station_to_join = _last_built_station;
+        // _station_to_join = _last_built_station;
         return true;
     }).post(callback);
 }
@@ -318,7 +311,7 @@ DiagDirection AutodetectRoadObjectDirection(TileIndex tile, Point pt, RoadType r
     if (HasExactlyOneBit(bits)) {
         return RoadBitsToDiagDir(bits);
     }
-    if (bits == ROAD_NONE){
+    if (bits == ROAD_NONE) {
         bits = ROAD_ALL;
     }
     RoadBits frac_bits = DiagDirToRoadBits(TileFractCoordsToDiagDir(pt));
@@ -462,35 +455,6 @@ void PlaceAirport(TileIndex tile) {
     JoinAndBuild(c, CcBuildAirport);
 }
 
-static void FindStationsAroundSelection(const TileArea &location)
-{
-    /* Extended area by one tile */
-    int x = TileX(location.tile);
-    int y = TileY(location.tile);
-
-    TileArea ta(TileXY(std::max<int>(0, x - 1), std::max<int>(0, y - 1)), TileXY(std::min<int>(Map::MaxX() - 1, x + location.w + 1), std::min<int>(Map::MaxY() - 1, y + location.h + 1)));
-
-    Station *adjacent = nullptr;
-
-    /* Direct loop instead of FindStationsAroundTiles as we are not interested in catchment area */
-    for (auto tile : ta) {
-        if (IsTileType(tile, MP_STATION) && GetTileOwner(tile) == _local_company) {
-            Station *st = Station::GetByTile(tile);
-            if (st == nullptr) continue;
-
-            int tx = TileX(tile);
-            int ty = TileY(tile);
-            bool is_corner = ((tx == x - 1 || tx == x + location.w + 1) && (ty == y - 1 || ty == y + location.h + 1));
-
-            if (adjacent && is_corner) continue;
-            adjacent = st;
-            if (!is_corner) break;
-        }
-    }
-    SetHighlightStationToJoin(adjacent, false);
-    _station_building_status = (adjacent == nullptr ? StationBuildingStatus::NEW : StationBuildingStatus::JOIN);
-}
-
 bool CheckRedrawStationCoverage() {
     // static bool last_ctrl_pressed = false;
     static TileArea last_location;
@@ -512,30 +476,30 @@ bool CheckRedrawStationCoverage() {
         if (IsTileType(location.tile, MP_STATION) && GetTileOwner(location.tile) == _local_company)
             st = Station::GetByTile(location.tile);
 
-        SetHighlightStationToJoin(st, _station_to_join && st == _station_to_join);
+        // SetHighlightStationToJoin(st, _station_to_join && st == _station_to_join);
         _station_building_status = (st == nullptr ? StationBuildingStatus::NEW : StationBuildingStatus::JOIN);
     } else {
-        if (_station_to_join) {
-            SetHighlightStationToJoin(_station_to_join, true);
-            _station_building_status = StationBuildingStatus::JOIN;
-        } else {
-            FindStationsAroundSelection(location);
-        }
+        // if (_station_to_join) {
+        //     SetHighlightStationToJoin(_station_to_join, true);
+        //     _station_building_status = StationBuildingStatus::JOIN;
+        // } else {
+        //     FindStationsAroundSelection(location);
+        // }
     }
     return true;
 }
 
 
-void SelectStationToJoin(const Station *station) {
-    if (_station_to_join == station)
-        _station_to_join = nullptr;
-    else
-        _station_to_join = station;
+void SelectStationToJoin(const Station *) {
+    // if (_station_to_join == station)
+    //     _station_to_join = nullptr;
+    // else
+    //     _station_to_join = station;
     CheckRedrawStationCoverage();
 }
 
 void AbortStationPlacement() {
-    _station_to_join = nullptr;
+    // _station_to_join = nullptr;
     SetHighlightStationToJoin(nullptr, false);
 }
 
@@ -676,6 +640,556 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
         s << GetString(STR_JUST_CARGO);
     }
     return s.str();
+}
+
+
+//  ---- NEw code
+
+StationID _station_to_join = INVALID_STATION;
+std::chrono::time_point<std::chrono::system_clock> _station_to_join_selected;
+
+void OnStationRemoved(const Station *station) {
+    if (_last_built_station == station) _last_built_station = nullptr;
+    if (_station_to_join == station->index) {
+        _station_to_join = INVALID_STATION;
+    }
+    if (_ap.preview != nullptr) _ap.preview->OnStationRemoved(station);
+}
+
+static void AddAreaRectTiles(Preview::TileMap &tiles, TileArea area, SpriteID palette) {
+    if (area.w == 0 || area.h == 0) return;
+
+    if (area.w == 1 && area.h == 1) {
+        tiles[area.tile].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::FULL));
+        return;
+    }
+    auto sx = TileX(area.tile), sy = TileY(area.tile);
+    auto ex = sx + area.w - 1, ey = sy + area.h - 1;
+    // NOTE: Doesn't handle one-tile width/height separately but relies on border overlapping
+    tiles[TileXY(sx, sy)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT | ZoningBorder::TOP_RIGHT));
+    for (auto x = sx + 1; x < ex; x++)
+        tiles[TileXY(x, sy)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT));
+    tiles[TileXY(ex, sy)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT | ZoningBorder::BOTTOM_LEFT));
+    for (auto y = sy + 1; y < ey; y++) {
+        tiles[TileXY(sx, y)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_RIGHT));
+        for (auto x = sx + 1; x < ex; x++) {
+            tiles[TileXY(x, y)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::NONE));
+        }
+        tiles[TileXY(ex, y)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_LEFT));
+    }
+    tiles[TileXY(sx, ey)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_RIGHT | ZoningBorder::BOTTOM_RIGHT));
+    for (auto x = sx + 1; x < ex; x++)
+        tiles[TileXY(x, ey)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_RIGHT));
+    tiles[TileXY(ex, ey)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_LEFT | ZoningBorder::BOTTOM_RIGHT));
+}
+
+// copied from cm_blueprint.cpp
+template<typename Func>
+void IterateStation(TileIndex start_tile, Axis axis, byte numtracks, byte plat_len, Func visitor) {
+    auto plat_delta = (axis == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
+    auto track_delta = (axis == AXIS_Y ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
+    TileIndex tile_track = start_tile;
+    do {
+        TileIndex tile = tile_track;
+        int w = plat_len;
+        do {
+            visitor(tile);
+            tile += plat_delta;
+        } while (--w);
+        tile_track += track_delta;
+    } while (--numtracks);
+}
+
+void AddJoinAreaTiles(Preview::TileMap &tiles, StationID station_id) {
+    auto station = Station::GetIfValid(station_id);
+    if (station == nullptr) return;
+
+    auto &r = station->rect;
+    auto d = (int)_settings_game.station.station_spread - 1;
+    TileArea ta(
+        TileXY(std::max<int>(r.right - d, 0),
+               std::max<int>(r.bottom - d, 0)),
+        TileXY(std::min<int>(r.left + d, Map::SizeX() - 1),
+               std::min<int>(r.top + d, Map::SizeY() - 1))
+    );
+
+    AddAreaRectTiles(tiles, ta, CM_PALETTE_TINT_CYAN);
+}
+
+bool RailStationPreview::IsDragDrop() const {
+    return _settings_client.gui.station_dragdrop;
+}
+
+CursorID RailStationPreview::GetCursor() const {
+    return SPR_CURSOR_RAIL_STATION;
+}
+
+TileArea RailStationPreview::GetArea(bool remove_mode) const {
+    if (this->IsDragDrop() || remove_mode) return {this->GetStartTile(), this->cur_tile};
+
+    if (_railstation.orientation == AXIS_X) return {this->cur_tile, _settings_client.gui.station_platlength, _settings_client.gui.station_numtracks};
+    return {this->cur_tile, _settings_client.gui.station_numtracks, _settings_client.gui.station_platlength};
+}
+
+up<Command> RailStationPreview::GetCommand(bool adjacent, StationID join_to) const {
+    auto ta = this->GetArea(false);
+    auto start_tile = ta.tile;
+    auto numtracks = ta.w;
+    auto platlength = ta.h;
+    if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
+
+    auto res = make_up<cmd::BuildRailStation>(
+        start_tile,
+        _cur_railtype,
+        _railstation.orientation,
+        numtracks,
+        platlength,
+        _railstation.station_class,
+        _railstation.station_type,
+        join_to,
+        adjacent
+    );
+    res->with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
+    return res;
+}
+
+up<Command> RailStationPreview::GetRemoveCommand() const {
+    auto res = make_up<cmd::RemoveFromRailStation>(
+        this->GetStartTile(),
+        this->cur_tile,
+        !citymania::_fn_mod
+    );
+    res->with_error(STR_ERROR_CAN_T_REMOVE_PART_OF_STATION);
+    return res;
+}
+
+bool RailStationPreview::Execute(up<Command> cmd, bool remove_mode) const {
+    if (remove_mode) return cmd->post(&CcPlaySound_CONSTRUCTION_RAIL);
+    else return cmd->post(&CcStation);
+}
+
+void RailStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const {
+    auto cmd = this->GetCommand(true, NEW_STATION);
+    auto cmdt = dynamic_cast<cmd::BuildRailStation*>(cmd.get());
+    if (cmdt == nullptr) return;
+
+    if (palette == PAL_NONE) palette = cmd->test().Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP;
+
+    std::vector<byte> layouts(cmdt->numtracks * cmdt->plat_len);
+    byte *layout_ptr = layouts.data();
+    GetStationLayout(layout_ptr, cmdt->numtracks, cmdt->plat_len, nullptr);
+    IterateStation(cmdt->tile_org, cmdt->axis, cmdt->numtracks, cmdt->plat_len,
+        [&](TileIndex t) {
+            byte layout = *layout_ptr++;
+            tiles[t].push_back(ObjectTileHighlight::make_rail_station(palette, cmdt->axis, layout & ~1));
+        }
+    );
+}
+
+OverlayParams RailStationPreview::GetOverlayParams() const {
+    return {this->GetArea(false), CA_TRAIN, SCT_ALL};
+}
+
+bool RoadStationPreview::IsDragDrop() const {
+    return true;
+}
+
+CursorID RoadStationPreview::GetCursor() const {
+    return SPR_CURSOR_BUS_STATION;
+    // return SPR_CURSOR_TRUCK_STATION;
+}
+
+TileArea RoadStationPreview::GetArea(bool /* remove_mode */) const {
+    return {this->GetStartTile(), this->cur_tile};
+}
+
+extern DiagDirection AddAutodetectionRotation(DiagDirection ddir);  // cm_highlight.cpp
+
+void RoadStationPreview::Update(Point pt, TileIndex tile) {
+    if (pt.x == -1) return;
+
+    auto ddir = _roadstop_gui_settings.orientation;
+    auto area = this->GetArea(false);
+    if (ddir >= DIAGDIR_END && ddir < STATIONDIR_AUTO) {
+        // When placed on road autorotate anyway
+        if (ddir == STATIONDIR_X) {
+            if (!CheckDriveThroughRoadStopDirection(area, ROAD_X))
+                ddir = STATIONDIR_Y;
+        } else {
+            if (!CheckDriveThroughRoadStopDirection(area, ROAD_Y))
+                ddir = STATIONDIR_X;
+        }
+    } else if (ddir == STATIONDIR_AUTO) {
+        ddir = AddAutodetectionRotation(AutodetectRoadObjectDirection(tile, pt, _cur_roadtype));
+    } else if (ddir == STATIONDIR_AUTO_XY) {
+        ddir = AddAutodetectionRotation(AutodetectDriveThroughRoadStopDirection(area, pt, _cur_roadtype));
+    }
+    this->ddir = ddir;
+}
+
+up<Command> RoadStationPreview::GetCommand(bool adjacent, StationID join_to) const {
+    auto area = this->GetArea(false);
+    DiagDirection ddir = this->ddir;
+    bool drive_through = this->ddir >= DIAGDIR_END;
+    if (drive_through) ddir = static_cast<DiagDirection>(this->ddir - DIAGDIR_END); // Adjust picker result to actual direction.
+    RoadStopClassID spec_class = _roadstop_gui_settings.roadstop_class;
+    uint16_t spec_index = _roadstop_gui_settings.roadstop_type;
+
+    auto res = make_up<cmd::BuildRoadStop>(
+        area.tile,
+        area.w,
+        area.h,
+        this->stop_type,
+        drive_through,
+        ddir,
+        _cur_roadtype,
+        spec_class,
+        spec_index,
+        join_to,
+        adjacent
+    );
+
+    return res;
+}
+
+up<Command> RoadStationPreview::GetRemoveCommand() const {
+    auto area = this->GetArea(false);
+    auto res = make_up<cmd::RemoveRoadStop>(
+        area.tile,
+        area.w,
+        area.h,
+        this->stop_type,
+        citymania::_fn_mod
+    );
+    auto rti = GetRoadTypeInfo(_cur_roadtype);
+    res->with_error(rti->strings.err_remove_station[this->stop_type]);
+    return res;
+}
+
+bool RoadStationPreview::Execute(up<Command> cmd, bool remove_mode) const {
+    if (remove_mode) return cmd->post(&CcPlaySound_CONSTRUCTION_OTHER);
+    else return cmd->post(&CcRoadStop);
+}
+
+void RoadStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const {
+    auto cmd = this->GetCommand(true, NEW_STATION);
+    auto cmdt = dynamic_cast<cmd::BuildRoadStop*>(cmd.get());
+    if (cmdt == nullptr) return;
+
+    if (palette == PAL_NONE) palette = cmd->test().Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP;
+
+    for (TileIndex t : this->GetArea(false)) {
+        auto ddir = cmdt->ddir;
+        if (cmdt->is_drive_through) ddir = ddir + DIAGDIR_END;
+        tiles[t].push_back(ObjectTileHighlight::make_road_stop(
+            palette,
+            cmdt->rt,
+            ddir,
+            cmdt->stop_type == ROADSTOP_TRUCK,
+            cmdt->spec_class,
+            cmdt->spec_index
+        ));
+    }
+}
+
+OverlayParams RoadStationPreview::GetOverlayParams() const {
+    return {
+        this->GetArea(false),
+        this->stop_type == ROADSTOP_TRUCK ? CA_TRUCK : CA_BUS,
+        this->stop_type == ROADSTOP_TRUCK ? SCT_NON_PASSENGERS_ONLY : SCT_PASSENGERS_ONLY
+    };
+}
+
+void StationPreviewBase::AddAreaTiles(Preview::TileMap &tiles, bool add_current, bool show_join_area) {
+    Station *st_join = Station::GetIfValid(this->station_to_join);
+    std::set<TileIndex> join_area;
+
+    if (show_join_area && st_join != nullptr) {
+        AddJoinAreaTiles(tiles, st_join->index);
+        for (auto t : tiles) join_area.insert(t.first);
+    }
+
+    if (this->show_coverage && st_join != nullptr) {
+        // Add joining station coverage
+        for (auto t : st_join->catchment_tiles) {
+            auto pal = join_area.find(t) != join_area.end() ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
+            tiles[t].push_back(ObjectTileHighlight::make_tint(pal));
+        }
+    }
+
+    if (this->show_coverage && add_current) {
+        // Add current station coverage
+        auto rad = CA_UNMODIFIED;
+        if (_settings_game.station.modified_catchment) rad = CA_TRAIN;
+        auto area = this->type->GetArea(false);
+        area.Expand(rad);
+        area.ClampToMap();
+        for (auto t : area) {
+            auto pal = join_area.find(t) != join_area.end() ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
+            tiles[t].push_back(ObjectTileHighlight::make_tint(pal));
+        }
+    }
+
+    if (st_join != nullptr) {
+        TileArea ta(TileXY(st_join->rect.left, st_join->rect.top), TileXY(st_join->rect.right, st_join->rect.bottom));
+        for (TileIndex t : ta) {
+            if (!IsTileType(t, MP_STATION) || GetStationIndex(t) != st_join->index) continue;
+            tiles[t].push_back(ObjectTileHighlight::make_struct_tint(CM_PALETTE_TINT_BLUE));
+        }
+    }
+}
+
+void StationPreviewBase::Update(Point pt, TileIndex tile) {
+    if (tile != INVALID_TILE) this->type->cur_tile = tile;
+    this->show_coverage = _settings_client.gui.station_show_coverage;
+    this->adjacent_stations = _settings_game.station.adjacent_stations;
+    this->remove_mode = false;
+    if (_remove_button_clicked) {
+        this->remove_mode = true;
+        this->keep_rail = !_fn_mod;
+    } else if (!this->type->IsDragDrop()) {
+        this->type->start_tile = INVALID_TILE;
+    }
+    this->type->Update(pt, tile);
+}
+
+bool StationPreviewBase::HandleMousePress() {
+    if (!IsValidTile(this->type->cur_tile)) return false;
+
+    if (this->remove_mode || this->type->IsDragDrop()) {
+        this->type->start_tile = this->type->cur_tile;
+        return true;
+    }
+
+    this->Execute();
+    return true;
+}
+
+void StationPreviewBase::HandleMouseRelease() {
+    if (!IsValidTile(this->type->cur_tile)) return;
+
+    if (this->type->start_tile != INVALID_TILE) {
+        this->Execute();
+        this->type->start_tile = INVALID_TILE;
+    }
+}
+
+std::vector<std::pair<SpriteID, std::string>> StationPreviewBase::GetOverlayData() {
+    if (this->remove_mode) return {};
+
+    std::vector<std::pair<SpriteID, std::string>> res;
+    auto params = this->type->GetOverlayParams();
+
+    if (!_settings_game.station.modified_catchment) params.radius = CA_UNMODIFIED;
+    auto production = citymania::GetProductionAroundTiles(params.area.tile, params.area.w, params.area.h, params.radius);
+    bool has_header = false;
+    for (CargoID i = 0; i < NUM_CARGO; i++) {
+        if (production[i] == 0) continue;
+
+        switch (params.coverage_type) {
+            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_ALL: break;
+            default: NOT_REACHED();
+        }
+
+        const CargoSpec *cs = CargoSpec::Get(i);
+        if (cs == nullptr) continue;
+
+        if (!has_header) {
+            res.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES));
+            has_header = true;
+        }
+        SetDParam(0, i);
+        SetDParam(1, production[i] >> 8);
+        res.emplace_back(cs->GetCargoIcon(), GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO));
+    }
+    return res;
+}
+
+up<Command> StationPreviewBase::GetCommand(bool adjacent, StationID join_to) {
+    if (this->remove_mode) return this->type->GetRemoveCommand();
+    return this->type->GetCommand(adjacent, join_to);
+}
+
+Preview::TileMap VanillaStationPreview::GetTiles() {
+    Preview::TileMap tiles;
+
+    if (!IsValidTile(this->type->cur_tile)) return tiles;
+
+    if (this->remove_mode) {
+        AddAreaRectTiles(tiles, this->type->GetArea(true), CM_PALETTE_TINT_RED_DEEP);
+        return tiles;
+    }
+
+    this->AddAreaTiles(tiles, true, false);
+    this->type->AddPreviewTiles(tiles, this->palette);
+
+    return tiles;
+}
+
+void VanillaStationPreview::Update(Point pt, TileIndex tile) {
+    StationPreviewBase::Update(pt, tile);
+    this->palette = CM_PALETTE_TINT_WHITE;
+
+    if (this->remove_mode) return;
+    if (this->selected_station_to_join != INVALID_STATION) {
+        this->station_to_join = this->selected_station_to_join;
+        return;
+    }
+
+    if (!IsValidTile(this->type->cur_tile)) return;
+    this->station_to_join = INVALID_STATION;
+    auto area = this->type->GetArea(false);
+    area.Expand(1);
+    area.ClampToMap();
+    for (auto tile : area) {
+        if (IsTileType(tile, MP_STATION) && GetTileOwner(tile) == _local_company) {
+            Station *st = Station::GetByTile(tile);
+            if (st == nullptr || st->index == this->station_to_join) continue;
+            if (this->station_to_join != INVALID_STATION) {
+                this->station_to_join = INVALID_STATION;
+                this->palette = CM_PALETTE_TINT_YELLOW;
+                break;
+            }
+            this->station_to_join = st->index;
+            // TODO check for command to return multiple? but also check each to
+            // see if they can be built
+            // if (this->GetCommand(true, st->index)->test().Succeeded()) {
+            //     if (this->station_to_join != INVALID_STATION) {
+            //         this->station_to_join = INVALID_STATION;
+            //         this->palette = CM_PALETTE_TINT_YELLOW;
+            //         break;
+            //     } else this->station_to_join = st->index;
+            // }
+        }
+    }
+    if (this->station_to_join == INVALID_STATION && !this->GetCommand(true, NEW_STATION)->test().Succeeded())
+        this->palette = CM_PALETTE_TINT_RED_DEEP;
+}
+
+void VanillaStationPreview::Execute() {
+    if (this->remove_mode) {
+        this->type->Execute(this->type->GetRemoveCommand(), true);
+        return;
+    }
+    auto proc = [type=this->type](bool test, StationID to_join) -> bool {
+        auto cmd = type->GetCommand(_fn_mod, to_join);
+        if (test) return cmd->test().Succeeded();
+        return type->Execute(std::move(cmd), false);
+    };
+    ShowSelectStationIfNeeded(this->type->GetArea(false), proc);
+}
+
+void VanillaStationPreview::OnStationRemoved(const Station *station) {
+    if (this->station_to_join == station->index) this->station_to_join = INVALID_STATION;
+    if (this->selected_station_to_join == station->index) this->station_to_join = INVALID_STATION;
+}
+
+StationPreview::StationPreview(sp<PreviewStationType> type)
+    :StationPreviewBase{type}
+{
+    auto seconds_since_selected = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - _station_to_join_selected).count();
+    if (seconds_since_selected < 30) this->station_to_join = _station_to_join;
+    else this->station_to_join = INVALID_STATION;
+}
+
+StationPreview::~StationPreview() {
+    _station_to_join_selected = std::chrono::system_clock::now();
+}
+
+up<Command> StationPreview::GetCommand() {
+    if (this->select_mode) return nullptr;
+
+    auto res = StationPreviewBase::GetCommand(true, this->station_to_join);
+    if (this->remove_mode) return res;
+
+    res->with_callback([] (bool res) -> bool {
+        if (!res) return false;
+        if (_last_built_station == nullptr) return false;
+        _station_to_join = _last_built_station->index;
+        _station_to_join_selected = std::chrono::system_clock::now();
+        auto p = dynamic_cast<StationPreview*>(_ap.preview.get());
+        if (p == nullptr) return false;
+        p->station_to_join = _last_built_station->index;
+        return true;
+    });
+    return res;
+}
+
+Preview::TileMap StationPreview::GetTiles() {
+    Preview::TileMap tiles;
+
+    if (!IsValidTile(this->type->cur_tile)) return tiles;
+
+    if (this->remove_mode) {
+        AddAreaRectTiles(tiles, this->type->GetArea(true), CM_PALETTE_TINT_RED_DEEP);
+        return tiles;
+    }
+
+    this->AddAreaTiles(tiles, !this->select_mode, true);
+
+    if (this->select_mode) {
+        tiles[this->type->cur_tile].push_back(ObjectTileHighlight::make_border(CM_PALETTE_TINT_BLUE, ZoningBorder::FULL));
+        return tiles;
+    }
+
+    this->type->AddPreviewTiles(tiles, PAL_NONE);
+
+    return tiles;
+}
+
+void StationPreview::Update(Point pt, TileIndex tile) {
+    this->select_mode = false;
+    StationPreviewBase::Update(pt, tile);
+    if (!this->remove_mode && _fn_mod) {
+        this->select_mode = true;
+        this->type->start_tile = INVALID_TILE;
+    }
+}
+
+bool StationPreview::HandleMousePress() {
+    if (!IsValidTile(this->type->cur_tile)) return false;
+
+    if (this->select_mode) {
+        if (IsTileType(this->type->cur_tile, MP_STATION)) {
+            auto st = Station::GetByTile(this->type->cur_tile);
+            this->station_to_join = st->index;
+            _station_to_join = this->station_to_join;
+            _station_to_join_selected = std::chrono::system_clock::now();
+        } else {
+            this->station_to_join = INVALID_STATION;
+            _station_to_join = INVALID_STATION;
+        }
+        return true;
+    }
+
+    return StationPreviewBase::HandleMousePress();
+}
+
+void StationPreview::Execute() {
+    this->type->Execute(std::move(this->GetCommand()), this->remove_mode);
+}
+
+void StationPreview::OnStationRemoved(const Station *station) {
+    if (this->station_to_join == station->index) this->station_to_join = INVALID_STATION;
+}
+
+void SetSelectedStationToJoin(StationID station_id) {
+    auto p = dynamic_cast<VanillaStationPreview*>(_ap.preview.get());
+    if (p == nullptr) return;
+    p->selected_station_to_join = station_id;
+    UpdateActivePreview();
+}
+
+bool HandleStationPlacePushButton(Window *w, WidgetID widget, sp<PreviewStationType> type) {
+    up<Preview> preview;
+    if (citymania::UseImprovedStationJoin()) {
+        preview = make_up<StationPreview>(type);
+    } else {
+        preview = make_up<VanillaStationPreview>(type);
+    }
+    return citymania::HandlePlacePushButton(w, widget, std::move(preview));
 }
 
 } // namespace citymania

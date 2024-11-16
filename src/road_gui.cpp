@@ -56,7 +56,7 @@
 static void ShowRVStationPicker(Window *parent, RoadStopType rs);
 static void ShowRoadDepotPicker(Window *parent);
 
-static bool _remove_button_clicked;
+extern bool _remove_button_clicked;
 static bool _one_way_button_clicked;
 
 static Axis _place_road_dir;
@@ -517,15 +517,16 @@ struct BuildRoadToolbarWindow : Window {
 				}
 				break;
 
-			case WID_ROT_BUS_STATION:
-				if (HandlePlacePushButton(this, WID_ROT_BUS_STATION, SPR_CURSOR_BUS_STATION, HT_RECT, DDSP_BUILD_BUSSTOP)) {
+			case WID_ROT_BUS_STATION: {
+				if (citymania::HandleStationPlacePushButton(this, WID_ROT_BUS_STATION, std::make_shared<citymania::RoadStationPreview>(ROADSTOP_BUS))) {
 					ShowRVStationPicker(this, ROADSTOP_BUS);
 					this->last_started_action = widget;
 				}
 				break;
+			}
 
 			case WID_ROT_TRUCK_STATION:
-				if (HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, SPR_CURSOR_TRUCK_STATION, HT_RECT, DDSP_BUILD_TRUCKSTOP)) {
+				if (citymania::HandleStationPlacePushButton(this, WID_ROT_BUS_STATION, std::make_shared<citymania::RoadStationPreview>(ROADSTOP_TRUCK))) {
 					ShowRVStationPicker(this, ROADSTOP_TRUCK);
 					this->last_started_action = widget;
 				}

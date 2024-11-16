@@ -7,6 +7,7 @@
 
 /** @file station_gui.cpp The GUI for stations. */
 
+#include "station_type.h"
 #include "stdafx.h"
 #include "debug.h"
 #include "gui.h"
@@ -42,6 +43,7 @@
 #include "citymania/cm_tooltips.hpp"
 
 #include "safeguards.h"
+#include <type_traits>
 
 /**
  * Calculates and draws the accepted or supplied cargo around the selected tile(s)
@@ -2347,7 +2349,8 @@ struct SelectStationWindow : WindowPopup {
 
 	void Close([[maybe_unused]] int data = 0) override
 	{
-		SetViewportCatchmentSpecializedStation<T>(nullptr, true);
+		if constexpr (std::is_same_v<T, Waypoint *>) SetViewportCatchmentSpecializedStation<T>(nullptr, true);
+		else citymania::SetSelectedStationToJoin(INVALID_STATION);
 
 		_thd.freeze = false;
 		this->Window::Close();
@@ -2435,14 +2438,16 @@ struct SelectStationWindow : WindowPopup {
 	void OnMouseOver([[maybe_unused]] Point pt, WidgetID widget) override
 	{
 		if (widget != WID_JS_PANEL) {
-			SetViewportCatchmentSpecializedStation<T>(nullptr, true);
+			if constexpr (std::is_same_v<T, Waypoint *>) SetViewportCatchmentSpecializedStation<T>(nullptr, true);
+			else citymania::SetSelectedStationToJoin(INVALID_STATION);
 			return;
 		}
 
 		/* Show coverage area of station under cursor */
 		auto it = this->vscroll->GetScrolledItemFromWidget(_stations_nearby_list, pt.y, this, WID_JS_PANEL, WidgetDimensions::scaled.framerect.top);
 		const T *st = it == _stations_nearby_list.end() || *it == NEW_STATION ? nullptr : T::Get(*it);
-		SetViewportCatchmentSpecializedStation<T>(st, true);
+		if constexpr (std::is_same_v<T, Waypoint>) SetViewportCatchmentSpecializedStation<T>(st, true);
+		else citymania::SetSelectedStationToJoin(*it);
 	}
 };
 
@@ -2478,7 +2483,6 @@ static bool StationJoinerNeeded(TileArea ta, const StationPickerCmdProc &proc)
 
 	/* only show the popup, if we press ctrl */
 	if (!citymania::_fn_mod) return false;
-
 	/* Now check if we could build there */
 	if (!proc(true, INVALID_STATION)) return false;
 

@@ -4,9 +4,11 @@
 
 #include "cm_blueprint.hpp"
 #include "cm_commands.hpp"
+#include "cm_highlight_type.hpp"
 #include "cm_main.hpp"
 #include "cm_overlays.hpp"
 #include "cm_station_gui.hpp"
+#include "cm_type.hpp"
 #include "cm_zoning.hpp"
 
 #include "../core/math_func.hpp"
@@ -20,6 +22,7 @@
 #include "../newgrf_roadtype.h"
 #include "../newgrf_station.h"
 #include "../newgrf_industrytiles.h"
+#include "../sound_func.h"
 #include "../spritecache.h"
 #include "../strings_func.h"
 #include "../town.h"
@@ -29,21 +32,26 @@
 #include "../tilehighlight_func.h"
 #include "../viewport_func.h"
 #include "../window_gui.h"
+#include "../window_func.h"
 #include "../zoom_func.h"
 // #include "../zoning.h"
 #include "../table/airporttile_ids.h"
+#include "../table/animcursors.h"
 #include "../table/track_land.h"
 #include "../table/autorail.h"
 #include "../table/industry_land.h"
 #include "../debug.h"
+#include "generated/cm_gen_commands.hpp"
 #include "station_gui.h"
 #include "station_type.h"
 #include "table/sprites.h"
 #include "table/strings.h"
 #include "tile_type.h"
 
+#include <algorithm>
+#include <cstdint>
+#include <optional>
 #include <set>
-
 
 /** Enumeration of multi-part foundations */
 enum FoundationPart {
@@ -68,6 +76,7 @@ extern uint32 _cm_funding_layout;
 extern IndustryType _cm_funding_type;
 extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 extern void IndustryDrawTileLayout(const TileInfo *ti, const TileLayoutSpriteGroup *group, byte rnd_colour, byte stage);
+extern void SetSelectionTilesDirty();
 
 struct RailStationGUISettings {
     Axis orientation;                 ///< Currently selected rail station orientation
@@ -88,6 +97,72 @@ struct RoadStopGUISettings {
 };
 extern RoadStopGUISettings _roadstop_gui_settings;
 
+
+template <>
+struct std::hash<citymania::ObjectTileHighlight> {
+    std::size_t operator()(const citymania::ObjectTileHighlight &oh) const {
+        std::size_t h = std::hash<SpriteID>()(oh.palette);
+        h ^= hash<citymania::ObjectTileHighlight::Type>()(oh.type);
+        switch (oh.type) {
+            case citymania::ObjectTileHighlight::Type::RAIL_DEPOT:
+                h ^= std::hash<DiagDirection>()(oh.u.rail.depot.ddir);
+                break;
+            case citymania::ObjectTileHighlight::Type::RAIL_TRACK:
+                h ^= std::hash<Track>()(oh.u.rail.track);
+                break;
+            case citymania::ObjectTileHighlight::Type::RAIL_STATION:
+                h ^= hash<Axis>()(oh.u.rail.station.axis);
+                h ^= oh.u.rail.station.section;
+                break;
+            case citymania::ObjectTileHighlight::Type::RAIL_SIGNAL:
+                h ^= hash<uint>()(oh.u.rail.signal.pos);
+                h ^= hash<SignalType>()(oh.u.rail.signal.type);
+                h ^= hash<SignalVariant>()(oh.u.rail.signal.variant);
+                break;
+            case citymania::ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
+                h ^= hash<DiagDirection>()(oh.u.rail.bridge_head.ddir);
+                h ^= hash<uint32>()(oh.u.rail.bridge_head.other_end);
+                h ^= hash<BridgeType>()(oh.u.rail.bridge_head.type);
+                break;
+            case citymania::ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
+                h ^= hash<DiagDirection>()(oh.u.rail.tunnel_head.ddir);
+                break;
+            case citymania::ObjectTileHighlight::Type::ROAD_STOP:
+                h ^= hash<DiagDirection>()(oh.u.road.stop.ddir);
+                h ^= hash<RoadType>()(oh.u.road.stop.roadtype);
+                h ^= hash<bool>()(oh.u.road.stop.is_truck);
+                h ^= hash<RoadStopClassID>()(oh.u.road.stop.spec_class);
+                h ^= hash<uint16_t>()(oh.u.road.stop.spec_index);
+                break;
+            case citymania::ObjectTileHighlight::Type::ROAD_DEPOT:
+                h ^= hash<DiagDirection>()(oh.u.road.depot.ddir);
+                h ^= hash<RoadType>()(oh.u.road.depot.roadtype);
+                break;
+            case citymania::ObjectTileHighlight::Type::AIRPORT_TILE:
+                h ^= hash<StationGfx>()(oh.u.airport_tile.gfx);
+                break;
+            case citymania::ObjectTileHighlight::Type::INDUSTRY_TILE:
+                h ^= hash<IndustryGfx>()(oh.u.industry_tile.gfx);
+                h ^= hash<IndustryType>()(oh.u.industry_tile.ind_type);
+                h ^= oh.u.industry_tile.ind_layout;
+                h ^= hash<TileIndexDiff>()(oh.u.industry_tile.tile_diff);
+                break;
+            case citymania::ObjectTileHighlight::Type::NUMBERED_RECT:
+                h ^= hash<uint32>()(oh.u.numbered_rect.number);
+                break;
+            case citymania::ObjectTileHighlight::Type::BORDER:
+                h ^= hash<citymania::ZoningBorder>()(oh.u.border);
+                break;
+            case citymania::ObjectTileHighlight::Type::POINT:
+            case citymania::ObjectTileHighlight::Type::RECT:
+            case citymania::ObjectTileHighlight::Type::END:
+            case citymania::ObjectTileHighlight::Type::TINT:
+            case citymania::ObjectTileHighlight::Type::STRUCT_TINT:
+                break;
+        }
+        return h;
+    }
+};
 
 namespace citymania {
 extern CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad);
@@ -111,7 +186,7 @@ extern StationBuildingStatus _station_building_status;
 extern const Station *_station_to_join;
 extern const Station *_highlight_station_to_join;
 extern TileArea _highlight_join_area;
-
+extern bool _fn_mod;
 
 std::set<std::pair<uint32, const Town*>, std::greater<std::pair<uint32, const Town*>>> _town_cache;
 // struct {
@@ -222,6 +297,101 @@ ObjectTileHighlight ObjectTileHighlight::make_numbered_rect(SpriteID palette, ui
     return oh;
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_border(SpriteID palette, ZoningBorder border) {
+    auto oh = ObjectTileHighlight(Type::BORDER, palette);
+    oh.u.border = border;
+    return oh;
+}
+
+ObjectTileHighlight ObjectTileHighlight::make_tint(SpriteID palette) {
+    auto oh = ObjectTileHighlight(Type::TINT, palette);
+    return oh;
+}
+
+ObjectTileHighlight ObjectTileHighlight::make_struct_tint(SpriteID palette) {
+    auto oh = ObjectTileHighlight(Type::STRUCT_TINT, palette);
+    return oh;
+}
+
+bool ObjectTileHighlight::operator==(const ObjectTileHighlight &oh) const {
+    if (this->type != oh.type) return false;
+    if (this->palette != oh.palette) return false;
+    switch (this->type) {
+        case ObjectTileHighlight::Type::RAIL_DEPOT:
+            return this->u.rail.depot.ddir == oh.u.rail.depot.ddir;
+        case ObjectTileHighlight::Type::RAIL_TRACK:
+            return this->u.rail.track == oh.u.rail.track;
+        case ObjectTileHighlight::Type::RAIL_STATION:
+            return this->u.rail.station.axis == oh.u.rail.station.axis
+                && this->u.rail.station.section == oh.u.rail.station.section;
+        case ObjectTileHighlight::Type::RAIL_SIGNAL:
+            return this->u.rail.signal.pos == oh.u.rail.signal.pos
+                && this->u.rail.signal.type == oh.u.rail.signal.type
+                && this->u.rail.signal.variant == oh.u.rail.signal.variant;
+        case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
+            return this->u.rail.bridge_head.ddir == oh.u.rail.bridge_head.ddir
+                && this->u.rail.bridge_head.other_end == oh.u.rail.bridge_head.other_end
+                && this->u.rail.bridge_head.type == oh.u.rail.bridge_head.type;
+        case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
+            return this->u.rail.tunnel_head.ddir == oh.u.rail.tunnel_head.ddir;
+        case ObjectTileHighlight::Type::ROAD_STOP:
+            return this->u.road.stop.ddir == oh.u.road.stop.ddir
+                && this->u.road.stop.roadtype == oh.u.road.stop.roadtype
+                && this->u.road.stop.is_truck == oh.u.road.stop.is_truck
+                && this->u.road.stop.spec_class == oh.u.road.stop.spec_class
+                && this->u.road.stop.spec_index == oh.u.road.stop.spec_index;
+        case ObjectTileHighlight::Type::ROAD_DEPOT:
+            return this->u.road.depot.ddir == oh.u.road.depot.ddir
+                && this->u.road.depot.roadtype == oh.u.road.depot.roadtype;
+        case ObjectTileHighlight::Type::AIRPORT_TILE:
+            return this->u.airport_tile.gfx == oh.u.airport_tile.gfx;
+        case ObjectTileHighlight::Type::INDUSTRY_TILE:
+            return this->u.industry_tile.gfx == oh.u.industry_tile.gfx
+                && this->u.industry_tile.ind_type == oh.u.industry_tile.ind_type
+                && this->u.industry_tile.ind_layout == oh.u.industry_tile.ind_layout
+                && this->u.industry_tile.tile_diff == oh.u.industry_tile.tile_diff;
+        case ObjectTileHighlight::Type::NUMBERED_RECT:
+            return this->u.numbered_rect.number == oh.u.numbered_rect.number;
+        case Type::BORDER:
+            return this->u.border == oh.u.border;
+        case Type::POINT:
+        case Type::RECT:
+        case Type::END:
+        case Type::TINT:
+        case Type::STRUCT_TINT:
+            return true;
+    }
+    return true;
+}
+
+bool ObjectTileHighlight::SetTileHighlight(TileHighlight &th, const TileInfo *) const {
+    switch (this->type) {
+        case ObjectTileHighlight::Type::RAIL_DEPOT:
+        // case ObjectTileHighlight::Type::RAIL_TRACK:  Depot track shouldn't remove foundation
+        case ObjectTileHighlight::Type::RAIL_STATION:
+        case ObjectTileHighlight::Type::RAIL_SIGNAL:
+        case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
+        case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
+        case ObjectTileHighlight::Type::ROAD_STOP:
+        case ObjectTileHighlight::Type::ROAD_DEPOT:
+        case ObjectTileHighlight::Type::AIRPORT_TILE:
+        case ObjectTileHighlight::Type::INDUSTRY_TILE:
+            th.structure_pal = CM_PALETTE_HIDE_SPRITE;
+            th.highlight_ground_pal = th.highlight_structure_pal = this->palette;
+            return true;
+        case ObjectTileHighlight::Type::BORDER:
+        case ObjectTileHighlight::Type::TINT:
+            th.ground_pal = th.structure_pal = this->palette;
+            return true;
+        case ObjectTileHighlight::Type::STRUCT_TINT:
+            th.structure_pal = this->palette;
+            return true;
+
+        default:
+            break;
+    }
+    return false;
+}
 
 bool ObjectHighlight::operator==(const ObjectHighlight& oh) const {
     if (this->type != oh.type) return false;
@@ -239,6 +409,7 @@ bool ObjectHighlight::operator==(const ObjectHighlight& oh) const {
             && this->airport_layout == oh.airport_layout
             && this->blueprint == oh.blueprint);
 }
+
 
 bool ObjectHighlight::operator!=(const ObjectHighlight& oh) const {
     return !(*this == oh);
@@ -1268,95 +1439,100 @@ void DrawSelectionPoint(SpriteID palette, const TileInfo *ti) {
     DrawSelectionSprite(SPR_DOT, palette, ti, z, foundation_part);
 }
 
+void DrawBorderSprites(const TileInfo *ti, ZoningBorder border, SpriteID color) {
+    auto b = (uint8)border & 15;
+    auto tile_sprite = CM_SPR_BORDER_HIGHLIGHT_BASE + _tileh_to_sprite[ti->tileh] * 19;
+    if (b) {
+        DrawSelectionSprite(tile_sprite + b - 1, color, ti, 7, FOUNDATION_PART_NORMAL);
+    }
+    if (border & ZoningBorder::TOP_CORNER)
+        DrawSelectionSprite(tile_sprite + 15, color, ti, 7, FOUNDATION_PART_NORMAL);
+    if (border & ZoningBorder::RIGHT_CORNER)
+        DrawSelectionSprite(tile_sprite + 16, color, ti, 7, FOUNDATION_PART_NORMAL);
+    if (border & ZoningBorder::BOTTOM_CORNER)
+        DrawSelectionSprite(tile_sprite + 17, color, ti, 7, FOUNDATION_PART_NORMAL);
+    if (border & ZoningBorder::LEFT_CORNER)
+        DrawSelectionSprite(tile_sprite + 18, color, ti, 7, FOUNDATION_PART_NORMAL);
+}
+
 TileHighlight ObjectHighlight::GetTileHighlight(const TileInfo *ti) {
     TileHighlight th;
     auto range = this->tiles.equal_range(ti->tile);
     for (auto t = range.first; t != range.second; t++) {
-        auto &oth = t->second;
-        switch (oth.type) {
-            case ObjectTileHighlight::Type::RAIL_DEPOT:
-            // case ObjectTileHighlight::Type::RAIL_TRACK:  Depot track shouldn't remove foundation
-            case ObjectTileHighlight::Type::RAIL_STATION:
-            case ObjectTileHighlight::Type::RAIL_SIGNAL:
-            case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
-            case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
-            case ObjectTileHighlight::Type::ROAD_STOP:
-            case ObjectTileHighlight::Type::ROAD_DEPOT:
-            case ObjectTileHighlight::Type::AIRPORT_TILE:
-            case ObjectTileHighlight::Type::INDUSTRY_TILE:
-                th.structure_pal = CM_PALETTE_HIDE_SPRITE;
-                th.highlight_ground_pal = th.highlight_structure_pal = oth.palette;
-                break;
-
-            default:
-                break;
-        }
+        t->second.SetTileHighlight(th, ti);
     }
     return th;
+}
+
+static void DrawObjectTileHighlight(const TileInfo *ti, const ObjectTileHighlight &oth) {
+    switch (oth.type) {
+        case ObjectTileHighlight::Type::RAIL_DEPOT:
+            DrawTrainDepotSprite(oth.palette, ti, _cur_railtype, oth.u.rail.depot.ddir);
+            break;
+        case ObjectTileHighlight::Type::RAIL_TRACK: {
+            DrawAutorailSelection(ti, (HighLightStyle)oth.u.rail.track, GetSelectionColourByTint(oth.palette));
+            break;
+        }
+        case ObjectTileHighlight::Type::RAIL_STATION:
+            DrawTrainStationSprite(oth.palette, ti, _cur_railtype, oth.u.rail.station.axis, oth.u.rail.station.section);
+            break;
+        case ObjectTileHighlight::Type::RAIL_SIGNAL:
+            DrawSignal(oth.palette, ti, _cur_railtype, oth.u.rail.signal.pos, oth.u.rail.signal.type, oth.u.rail.signal.variant);
+            break;
+        case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
+            DrawBridgeHead(oth.palette, ti, _cur_railtype, oth.u.rail.bridge_head.ddir, oth.u.rail.bridge_head.type);
+            break;
+        case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
+            DrawTunnelHead(oth.palette, ti, _cur_railtype, oth.u.rail.tunnel_head.ddir);
+            break;
+        case ObjectTileHighlight::Type::ROAD_STOP:
+            DrawRoadStop(oth.palette, ti, oth.u.road.stop.roadtype, oth.u.road.stop.ddir, oth.u.road.stop.is_truck);
+            break;
+        case ObjectTileHighlight::Type::ROAD_DEPOT:
+            DrawRoadDepot(oth.palette, ti, oth.u.road.depot.roadtype, oth.u.road.depot.ddir);
+            break;
+        case ObjectTileHighlight::Type::AIRPORT_TILE:
+            DrawAirportTile(oth.palette, ti, oth.u.airport_tile.gfx);
+            break;
+        case ObjectTileHighlight::Type::INDUSTRY_TILE:
+            DrawIndustryTile(oth.palette, ti, oth.u.industry_tile.ind_type, oth.u.industry_tile.ind_layout, oth.u.industry_tile.gfx, oth.u.industry_tile.tile_diff);
+            break;
+        case ObjectTileHighlight::Type::POINT:
+            DrawSelectionPoint(oth.palette, ti);
+            break;
+        case ObjectTileHighlight::Type::RECT:
+            DrawTileSelectionRect(ti, oth.palette);
+            break;
+        case ObjectTileHighlight::Type::NUMBERED_RECT: {
+            // TODO NUMBERED_RECT should not be used atm anyway
+            // DrawTileSelectionRect(ti, oth.palette);
+            // auto string_id = oth.u.numbered_rect.number ? CM_STR_LAYOUT_NUM : CM_STR_LAYOUT_RANDOM;
+            // SetDParam(0, oth.u.numbered_rect.number);
+            // std::string buffer = GetString(string_id);
+            // auto bb = GetStringBoundingBox(buffer);
+            // ViewportSign sign;
+            // sign.width_normal = WidgetDimensions::scaled.fullbevel.left + Align(bb.width, 2) + WidgetDimensions::scaled.fullbevel.right;
+            // Point pt = RemapCoords2(TileX(ti->tile) * TILE_SIZE + TILE_SIZE / 2, TileY(ti->tile) * TILE_SIZE + TILE_SIZE / 2);
+            // sign.center = pt.x;
+            // sign.top = pt.y - bb.height / 2;
+
+            // ViewportAddString(_cur_dpi, ZOOM_LVL_OUT_8X, &sign,
+            //                   string_id, STR_NULL, STR_NULL, oth.u.numbered_rect.number, 0, COLOUR_WHITE);
+            break;
+        }
+        case ObjectTileHighlight::Type::BORDER: {
+            DrawBorderSprites(ti, oth.u.border, oth.palette);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 void ObjectHighlight::Draw(const TileInfo *ti) {
     auto range = this->tiles.equal_range(ti->tile);
     for (auto t = range.first; t != range.second; t++) {
-        auto &oth = t->second;
-        switch (oth.type) {
-            case ObjectTileHighlight::Type::RAIL_DEPOT:
-                DrawTrainDepotSprite(oth.palette, ti, _cur_railtype, oth.u.rail.depot.ddir);
-                break;
-            case ObjectTileHighlight::Type::RAIL_TRACK: {
-                DrawAutorailSelection(ti, (HighLightStyle)oth.u.rail.track, GetSelectionColourByTint(oth.palette));
-                break;
-            }
-            case ObjectTileHighlight::Type::RAIL_STATION:
-                DrawTrainStationSprite(oth.palette, ti, _cur_railtype, oth.u.rail.station.axis, oth.u.rail.station.section);
-                break;
-            case ObjectTileHighlight::Type::RAIL_SIGNAL:
-                DrawSignal(oth.palette, ti, _cur_railtype, oth.u.rail.signal.pos, oth.u.rail.signal.type, oth.u.rail.signal.variant);
-                break;
-            case ObjectTileHighlight::Type::RAIL_BRIDGE_HEAD:
-                DrawBridgeHead(oth.palette, ti, _cur_railtype, oth.u.rail.bridge_head.ddir, oth.u.rail.bridge_head.type);
-                break;
-            case ObjectTileHighlight::Type::RAIL_TUNNEL_HEAD:
-                DrawTunnelHead(oth.palette, ti, _cur_railtype, oth.u.rail.tunnel_head.ddir);
-                break;
-            case ObjectTileHighlight::Type::ROAD_STOP:
-                DrawRoadStop(oth.palette, ti, oth.u.road.stop.roadtype, oth.u.road.stop.ddir, oth.u.road.stop.is_truck);
-                break;
-            case ObjectTileHighlight::Type::ROAD_DEPOT:
-                DrawRoadDepot(oth.palette, ti, oth.u.road.depot.roadtype, oth.u.road.depot.ddir);
-                break;
-            case ObjectTileHighlight::Type::AIRPORT_TILE:
-                DrawAirportTile(oth.palette, ti, oth.u.airport_tile.gfx);
-                break;
-            case ObjectTileHighlight::Type::INDUSTRY_TILE:
-                DrawIndustryTile(oth.palette, ti, oth.u.industry_tile.ind_type, oth.u.industry_tile.ind_layout, oth.u.industry_tile.gfx, oth.u.industry_tile.tile_diff);
-                break;
-            case ObjectTileHighlight::Type::POINT:
-                DrawSelectionPoint(oth.palette, ti);
-                break;
-            case ObjectTileHighlight::Type::RECT:
-                DrawTileSelectionRect(ti, oth.palette);
-                break;
-            case ObjectTileHighlight::Type::NUMBERED_RECT: {
-                // TODO NUMBERED_RECT should be used atm anyway
-                // DrawTileSelectionRect(ti, oth.palette);
-                // auto string_id = oth.u.numbered_rect.number ? CM_STR_LAYOUT_NUM : CM_STR_LAYOUT_RANDOM;
-                // SetDParam(0, oth.u.numbered_rect.number);
-                // std::string buffer = GetString(string_id);
-                // auto bb = GetStringBoundingBox(buffer);
-                // ViewportSign sign;
-                // sign.width_normal = WidgetDimensions::scaled.fullbevel.left + Align(bb.width, 2) + WidgetDimensions::scaled.fullbevel.right;
-                // Point pt = RemapCoords2(TileX(ti->tile) * TILE_SIZE + TILE_SIZE / 2, TileY(ti->tile) * TILE_SIZE + TILE_SIZE / 2);
-                // sign.center = pt.x;
-                // sign.top = pt.y - bb.height / 2;
-
-                // ViewportAddString(_cur_dpi, ZOOM_LVL_OUT_8X, &sign,
-                //                   string_id, STR_NULL, STR_NULL, oth.u.numbered_rect.number, 0, COLOUR_WHITE);
-                break;
-            }
-            default:
-                break;
-        }
+        DrawObjectTileHighlight(ti, t->second);
     }
     // fprintf(stderr, "TILEH DRAW %d %d %d\n", ti->tile, (int)i, (int)this->tiles.size());
 }
@@ -1454,22 +1630,6 @@ bool CanBuildIndustryOnTileCached(IndustryType type, TileIndex tile) {
         return res;
     }
     return (_mz[tile.base()].industry_fund_result == 2);
-}
-
-void DrawBorderSprites(const TileInfo *ti, ZoningBorder border, SpriteID color) {
-    auto b = (uint8)border & 15;
-    auto tile_sprite = CM_SPR_BORDER_HIGHLIGHT_BASE + _tileh_to_sprite[ti->tileh] * 19;
-    if (b) {
-        DrawSelectionSprite(tile_sprite + b - 1, color, ti, 7, FOUNDATION_PART_NORMAL);
-    }
-    if (border & ZoningBorder::TOP_CORNER)
-        DrawSelectionSprite(tile_sprite + 15, color, ti, 7, FOUNDATION_PART_NORMAL);
-    if (border & ZoningBorder::RIGHT_CORNER)
-        DrawSelectionSprite(tile_sprite + 16, color, ti, 7, FOUNDATION_PART_NORMAL);
-    if (border & ZoningBorder::BOTTOM_CORNER)
-        DrawSelectionSprite(tile_sprite + 17, color, ti, 7, FOUNDATION_PART_NORMAL);
-    if (border & ZoningBorder::LEFT_CORNER)
-        DrawSelectionSprite(tile_sprite + 18, color, ti, 7, FOUNDATION_PART_NORMAL);
 }
 
 SpriteID GetIndustryZoningPalette(TileIndex tile) {
@@ -1622,7 +1782,16 @@ void CalcCBTownLimitBorder(TileHighlight &th, TileIndex tile, SpriteID border_pa
 }
 
 TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
-    TileHighlight th = _thd.cm.GetTileHighlight(ti);;
+    TileHighlight th;
+    auto it = _ap.tiles.find(ti->tile);
+    if (it != _ap.tiles.end()) {
+        for (auto &oth : it->second) {
+            oth.SetTileHighlight(th, ti);
+        }
+        return th;
+    }
+
+    th = _thd.cm.GetTileHighlight(ti);;
     if (ti->tile == INVALID_TILE || tile_type == MP_VOID) return th;
     if (_zoning.outer == CHECKTOWNZONES) {
         auto p = GetTownZoneBorder(ti->tile);
@@ -1742,6 +1911,15 @@ void DrawTileZoning(const TileInfo *ti, const TileHighlight &th, TileType tile_t
 
 bool DrawTileSelection(const TileInfo *ti, [[maybe_unused]] const TileHighlightType &tht) {
     if (ti->tile == INVALID_TILE || IsTileType(ti->tile, MP_VOID)) return false;
+
+    auto it = _ap.tiles.find(ti->tile);
+    if (it != _ap.tiles.end()) {
+        for (auto oth : it->second) {
+            DrawObjectTileHighlight(ti, oth);
+        }
+        return true;
+    }
+
     _thd.cm.Draw(ti);
 
     if (_thd.drawstyle == CM_HT_BLUEPRINT_PLACE) return true;
@@ -2063,5 +2241,133 @@ PaletteID GetTreeShadePal(TileIndex tile) {
             return PAL_NONE;
     }
 }
+
+ActivePreview _ap;
+
+static void ResetVanillaHighlight() {
+    if (_thd.window_class != WC_INVALID) {
+        /* Undo clicking on button and drag & drop */
+        Window *w = _thd.GetCallbackWnd();
+        /* Call the abort function, but set the window class to something
+         * that will never be used to avoid infinite loops. Setting it to
+         * the 'next' window class must not be done because recursion into
+         * this function might in some cases reset the newly set object to
+         * place or not properly reset the original selection. */
+        _thd.window_class = WC_INVALID;
+        if (w != nullptr) {
+            w->OnPlaceObjectAbort();
+            CloseWindowById(WC_TOOLTIPS, 0);
+        }
+    }
+
+    /* Mark the old selection dirty, in case the selection shape or colour changes */
+    if ((_thd.drawstyle & HT_DRAG_MASK) != HT_NONE) SetSelectionTilesDirty();
+
+    SetTileSelectSize(1, 1);
+
+    _thd.make_square_red = false;
+}
+
+void SetActivePreview(up<Preview> &&preview) {
+    ResetVanillaHighlight();
+    ResetActivePreview();
+    _ap.preview = std::move(preview);
+}
+
+void ResetActivePreview() {
+    for (auto &[t, l] : _ap.tiles) {
+        MarkTileDirtyByTile(t);
+    }
+    _ap.preview = nullptr;
+    _ap.tiles = {};
+}
+
+void UpdateActivePreview() {
+    if (_ap.preview == nullptr) return;
+    Point pt = GetTileBelowCursor();
+    auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
+    _ap.preview->Update(pt, tile);
+
+    auto tiles = _ap.preview->GetTiles();
+    for (auto it = _ap.tiles.begin(); it != _ap.tiles.end();) {
+        MarkTileDirtyByTile(it->first);
+        it = (tiles.find(it->first) == tiles.end() ? _ap.tiles.erase(it) : std::next(it));
+    }
+    for (auto &[t, l] : tiles) {
+        auto it = _ap.tiles.find(t);
+        if (it != _ap.tiles.end() && it->second == l)
+            continue;
+        _ap.tiles.insert_or_assign(it, t, l);
+        MarkTileDirtyByTile(t);
+    }
+}
+
+bool _prev_left_button_down = false;
+// const Window *_click_window = nullptr;
+bool _keep_mouse_click = false;
+// const Window *_keep_mouse_window;
+
+bool HandleMouseMove() {
+    bool changed = _left_button_down != _prev_left_button_down;
+    _prev_left_button_down = _left_button_down;
+    // Window *w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
+    bool released = !_left_button_down && changed && _keep_mouse_click;
+    if (!_left_button_down) _keep_mouse_click = false;
+
+    if (_ap.preview == nullptr) return false;
+    // Viewport *vp = IsPtInWindowViewport(w, );
+
+    auto pt = GetTileBelowCursor();
+    if (pt.x == -1) return false;
+    auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
+    _ap.preview->Update(pt, tile);
+    _ap.preview->HandleMouseMove();
+    if (_left_button_down) {
+        if (changed && _ap.preview->HandleMousePress()) {
+            _keep_mouse_click = true;
+        }
+        if (_keep_mouse_click) return true;
+    }
+    if (released) {
+        _ap.preview->HandleMouseRelease();
+    }
+    return false;
+}
+
+bool HandleMouseClick(Viewport *vp, bool double_click) {
+    if (_ap.preview == nullptr) return false;
+    auto pt = GetTileBelowCursor();
+    auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
+    _ap.preview->Update(pt, tile);
+    return _ap.preview->HandleMouseClick(vp, pt, tile, double_click);
+}
+
+bool HandlePlacePushButton(Window *w, WidgetID widget, up<Preview> preview) {
+    if (w->IsWidgetDisabled(widget)) return false;
+
+    if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+    w->SetDirty();
+
+    if (w->IsWidgetLowered(widget)) {
+        ResetObjectToPlace();
+        return false;
+    }
+
+    w->LowerWidget(widget);
+
+    auto icon = preview->GetCursor();
+    if ((icon & ANIMCURSOR_FLAG) != 0) {
+        SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
+    } else {
+        SetMouseCursor(icon, PAL_NONE);
+    }
+    citymania::SetActivePreview(std::move(preview));
+    _thd.window_class = w->window_class;
+    _thd.window_number = w->window_number;
+
+    return true;
+
+}
+
 
 }  // namespace citymania
