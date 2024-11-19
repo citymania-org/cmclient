@@ -138,6 +138,12 @@ struct std::hash<citymania::ObjectTileHighlight> {
                 h ^= hash<DiagDirection>()(oh.u.road.depot.ddir);
                 h ^= hash<RoadType>()(oh.u.road.depot.roadtype);
                 break;
+            case citymania::ObjectTileHighlight::Type::DOCK_SLOPE:
+                h ^= hash<DiagDirection>()(oh.u.dock_slope.ddir);
+                break;
+            case citymania::ObjectTileHighlight::Type::DOCK_FLAT:
+                h ^= hash<Axis>()(oh.u.dock_flat.axis);
+                break;
             case citymania::ObjectTileHighlight::Type::AIRPORT_TILE:
                 h ^= hash<StationGfx>()(oh.u.airport_tile.gfx);
                 break;
@@ -267,6 +273,18 @@ ObjectTileHighlight ObjectTileHighlight::make_road_depot(SpriteID palette, RoadT
     return oh;
 }
 
+ObjectTileHighlight ObjectTileHighlight::make_dock_slope(SpriteID palette, DiagDirection ddir) {
+    auto oh = ObjectTileHighlight(Type::DOCK_SLOPE, palette);
+    oh.u.dock_slope.ddir = ddir;
+    return oh;
+}
+
+ObjectTileHighlight ObjectTileHighlight::make_dock_flat(SpriteID palette, Axis axis) {
+    auto oh = ObjectTileHighlight(Type::DOCK_FLAT, palette);
+    oh.u.dock_flat.axis = axis;
+    return oh;
+}
+
 ObjectTileHighlight ObjectTileHighlight::make_airport_tile(SpriteID palette, StationGfx gfx) {
     auto oh = ObjectTileHighlight(Type::AIRPORT_TILE, palette);
     oh.u.airport_tile.gfx = gfx;
@@ -354,6 +372,10 @@ bool ObjectTileHighlight::operator==(const ObjectTileHighlight &oh) const {
             return this->u.numbered_rect.number == oh.u.numbered_rect.number;
         case Type::BORDER:
             return this->u.border == oh.u.border;
+        case ObjectTileHighlight::Type::DOCK_SLOPE:
+            return this->u.dock_slope.ddir == oh.u.dock_slope.ddir;
+        case ObjectTileHighlight::Type::DOCK_FLAT:
+            return this->u.dock_flat.axis == oh.u.dock_flat.axis;
         case Type::POINT:
         case Type::RECT:
         case Type::END:
@@ -376,6 +398,8 @@ bool ObjectTileHighlight::SetTileHighlight(TileHighlight &th, const TileInfo *) 
         case ObjectTileHighlight::Type::ROAD_DEPOT:
         case ObjectTileHighlight::Type::AIRPORT_TILE:
         case ObjectTileHighlight::Type::INDUSTRY_TILE:
+        case ObjectTileHighlight::Type::DOCK_SLOPE:
+        case ObjectTileHighlight::Type::DOCK_FLAT:
             th.structure_pal = CM_PALETTE_HIDE_SPRITE;
             th.highlight_ground_pal = th.highlight_structure_pal = this->palette;
             return true;
@@ -993,6 +1017,18 @@ void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagD
     // DrawRoadCatenary(ti);
 }
 
+void DrawDockSlope(SpriteID palette, const TileInfo *ti, DiagDirection ddir) {
+    uint image = (uint)ddir;
+    const DrawTileSprites *t = GetStationTileLayout(STATION_DOCK, image);
+    DrawRailTileSeq(ti, t, TO_INVALID, 0, 0, palette);
+}
+
+void DrawDockFlat(SpriteID palette, const TileInfo *ti, Axis axis) {
+    uint image = GFX_DOCK_BASE_WATER_PART + (uint)axis;
+    const DrawTileSprites *t = GetStationTileLayout(STATION_DOCK, image);
+    DrawRailTileSeq(ti, t, TO_INVALID, 0, 0, palette);
+}
+
 
 struct DrawRoadTileStruct {
     uint16 image;
@@ -1490,6 +1526,12 @@ static void DrawObjectTileHighlight(const TileInfo *ti, const ObjectTileHighligh
             break;
         case ObjectTileHighlight::Type::ROAD_DEPOT:
             DrawRoadDepot(oth.palette, ti, oth.u.road.depot.roadtype, oth.u.road.depot.ddir);
+            break;
+        case ObjectTileHighlight::Type::DOCK_SLOPE:
+            DrawDockSlope(oth.palette, ti, oth.u.dock_slope.ddir);
+            break;
+        case ObjectTileHighlight::Type::DOCK_FLAT:
+            DrawDockFlat(oth.palette, ti, oth.u.dock_flat.axis);
             break;
         case ObjectTileHighlight::Type::AIRPORT_TILE:
             DrawAirportTile(oth.palette, ti, oth.u.airport_tile.gfx);

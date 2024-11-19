@@ -900,6 +900,79 @@ OverlayParams RoadStationPreview::GetOverlayParams() const {
     };
 }
 
+bool DockPreview::IsDragDrop() const {
+    return false;
+}
+
+CursorID DockPreview::GetCursor() const {
+    return SPR_CURSOR_DOCK;
+}
+
+TileArea DockPreview::GetArea(bool /* remove_mode */) const {
+    auto tile = this->GetStartTile();
+    TileIndex tile_to = (this->ddir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(this->ddir)) : tile);
+    return {tile, tile_to};
+}
+
+void DockPreview::Update(Point pt, TileIndex tile) {
+    if (pt.x == -1) return;
+    this->ddir = GetInclinedSlopeDirection(GetTileSlope(tile));
+    if (this->ddir == INVALID_DIAGDIR) this->ddir = DIAGDIR_NE;
+    else this->ddir = ReverseDiagDir(this->ddir);
+}
+
+up<Command> DockPreview::GetCommand(bool adjacent, StationID join_to) const {
+    // STR_ERROR_CAN_T_BUILD_DOCK_HERE
+    return make_up<cmd::BuildDock>(
+        this->GetStartTile(),
+        join_to,
+        adjacent
+    );
+}
+
+up<Command> DockPreview::GetRemoveCommand() const {
+    return nullptr;
+}
+
+bool DockPreview::Execute(up<Command> cmd, bool remove_mode) const {
+    cmd->post(&CcBuildDocks);
+}
+
+void DockPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const {
+    auto t = this->GetStartTile();
+    tiles[t].push_back(ObjectTileHighlight::make_dock_slope(CM_PALETTE_TINT_WHITE, this->ddir));
+    t += TileOffsByDiagDir(this->ddir);
+    tiles[t].push_back(ObjectTileHighlight::make_dock_flat(CM_PALETTE_TINT_WHITE, DiagDirToAxis(this->ddir)));
+    // TODO
+    // auto cmd = this->GetCommand(true, NEW_STATION);
+    // auto cmdt = dynamic_cast<cmd::BuildRoadStop*>(cmd.get());
+    // if (cmdt == nullptr) return;
+
+    // if (palette == PAL_NONE) palette = cmd->test().Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP;
+
+    // for (TileIndex t : this->GetArea(false)) {
+    //     auto ddir = cmdt->ddir;
+    //     if (cmdt->is_drive_through) ddir = ddir + DIAGDIR_END;
+    //     tiles[t].push_back(ObjectTileHighlight::make_road_stop(
+    //         palette,
+    //         cmdt->rt,
+    //         ddir,
+    //         cmdt->stop_type == ROADSTOP_TRUCK,
+    //         cmdt->spec_class,
+    //         cmdt->spec_index
+    //     ));
+    // }
+}
+
+OverlayParams DockPreview::GetOverlayParams() const {
+    return {
+        this->GetArea(false),
+        CA_DOCK,
+        SCT_ALL
+    };
+}
+
+
 void StationPreviewBase::AddAreaTiles(Preview::TileMap &tiles, bool add_current, bool show_join_area) {
     Station *st_join = Station::GetIfValid(this->station_to_join);
     std::set<TileIndex> join_area;
