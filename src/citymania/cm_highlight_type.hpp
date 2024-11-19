@@ -98,6 +98,8 @@ public:
         RAIL_TUNNEL_HEAD,
         ROAD_STOP,
         ROAD_DEPOT,
+        DOCK_SLOPE,
+        DOCK_FLAT,
 
         AIRPORT_TILE,
         INDUSTRY_TILE,
@@ -162,6 +164,12 @@ public:
         struct {
             uint32 number;
         } numbered_rect;
+        struct {
+            DiagDirection ddir;
+        } dock_slope;
+        struct {
+            Axis axis;
+        } dock_flat;
         ZoningBorder border;
     } u;
 
@@ -176,7 +184,12 @@ public:
 
     static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index);
     static ObjectTileHighlight make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir);
+
+    static ObjectTileHighlight make_dock_slope(SpriteID palette, DiagDirection ddir);
+    static ObjectTileHighlight make_dock_flat(SpriteID palette, Axis axis);
+
     static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
+
     static ObjectTileHighlight make_industry_tile(SpriteID palette, IndustryType ind_type, byte ind_layout, TileIndexDiff tile_diff, IndustryGfx gfx);
     static ObjectTileHighlight make_point(SpriteID palette);
     static ObjectTileHighlight make_rect(SpriteID palette);

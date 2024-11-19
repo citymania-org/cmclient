@@ -111,7 +111,6 @@ public:
     RoadStationPreview(RoadStopType stop_type) :stop_type{stop_type} {}
     virtual ~RoadStationPreview() {};
 
-    // RailPreviewStation(RailStationGUISettings &settings) :settings{settings} {}
     bool IsDragDrop() const override;
     CursorID GetCursor() const override;
     TileArea GetArea(bool remove_mode) const override;
@@ -123,6 +122,24 @@ public:
     OverlayParams GetOverlayParams() const override;
 };
 
+class DockPreview : public PreviewStationType {
+protected:
+    DiagDirection ddir;
+
+public:
+    DockPreview() {}
+    virtual ~DockPreview() {};
+
+    bool IsDragDrop() const override;
+    CursorID GetCursor() const override;
+    TileArea GetArea(bool remove_mode) const override;
+    void Update(Point pt, TileIndex tile) override;
+    up<Command> GetCommand(bool adjacent, StationID join_to) const override;
+    up<Command> GetRemoveCommand() const override;
+    void AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const override;
+    bool Execute(up<Command> cmd, bool remove_mode) const override;
+    OverlayParams GetOverlayParams() const override;
+};
 
 class StationPreviewBase : public Preview {
 protected:

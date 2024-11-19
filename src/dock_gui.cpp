@@ -171,7 +171,11 @@ struct BuildDocksToolbarWindow : Window {
 				break;
 
 			case WID_DT_STATION: // Build station button
-				if (HandlePlacePushButton(this, WID_DT_STATION, SPR_CURSOR_DOCK, HT_SPECIAL, CM_DDSP_BUILD_DOCK)) ShowBuildDockStationPicker(this);
+				// if (HandlePlacePushButton(this, WID_DT_STATION, SPR_CURSOR_DOCK, HT_SPECIAL, CM_DDSP_BUILD_DOCK)) ShowBuildDockStationPicker(this);
+				if (citymania::HandleStationPlacePushButton(this, WID_DT_STATION, std::make_shared<citymania::DockPreview>())) {
+					ShowBuildDockStationPicker(this);
+				}
+
 				break;
 
 			case WID_DT_BUOY: // Build buoy button
