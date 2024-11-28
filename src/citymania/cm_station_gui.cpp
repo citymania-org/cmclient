@@ -911,7 +911,7 @@ CursorID DockPreview::GetCursor() const {
 
 TileArea DockPreview::GetArea(bool /* remove_mode */) const {
     auto tile = this->GetStartTile();
-    TileIndex tile_to = (this->ddir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(this->ddir)) : tile);
+    TileIndex tile_to = (this->ddir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, this->ddir) : tile);
     return {tile, tile_to};
 }
 
