@@ -81,15 +81,6 @@ static const int HOTKEY_BLUEPRINT_LOAD_END = 0x1030;
 static const int HOTKEY_BLUEPRINT_SAVE = 0x1030;
 static const int HOTKEY_BLUEPRINT_SAVE_END = 0x1040;
 
-// Moved to cm_station_gui.hpp
-// struct RailStationGUISettings {
-// 	Axis orientation;                 ///< Currently selected rail station orientation
-
-// 	bool newstations;                 ///< Are custom station definitions available?
-// 	StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-// 	uint16_t station_type;            ///< %Station type within the currently selected custom station class (if newstations is \c true )
-// 	uint16_t station_count;           ///< Number of custom stations (if newstations is \c true )
-// };
 citymania::RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
 
@@ -1041,7 +1032,7 @@ struct BuildRailToolbarWindow : Window {
 		Hotkey((uint16)0, "cm_blueprint_save_7", HOTKEY_BLUEPRINT_SAVE + 7),
 		Hotkey((uint16)0, "cm_blueprint_save_8", HOTKEY_BLUEPRINT_SAVE + 8),
 		Hotkey((uint16)0, "cm_blueprint_save_9", HOTKEY_BLUEPRINT_SAVE + 9),
-		Hotkey(CM_WKC_MOUSE_MIDDLE, "cm_blueprint_rotate", HOTKEY_BLUEPRINT_ROTATE),		
+		Hotkey(CM_WKC_MOUSE_MIDDLE, "cm_blueprint_rotate", HOTKEY_BLUEPRINT_ROTATE),
 	}, RailToolbarGlobalHotkeys};
 };
 

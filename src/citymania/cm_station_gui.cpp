@@ -51,16 +51,7 @@ extern byte _selected_airport_layout;
 extern RailType _cur_railtype;  // rail_gui.cpp
 extern RoadType _cur_roadtype;  // road_gui.cpp
 extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
-
-struct RailStationGUISettings {
-    Axis orientation;                 ///< Currently selected rail station orientation
-
-    bool newstations;                 ///< Are custom station definitions available?
-    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
-    byte station_count;               ///< Number of custom stations (if newstations is \c true )
-};
-extern RailStationGUISettings _railstation; //rail_gui.cpp
+extern citymania::RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
 struct RoadStopGUISettings {
     DiagDirection orientation;
@@ -945,7 +936,7 @@ up<Command> DockPreview::GetRemoveCommand() const {
 }
 
 bool DockPreview::Execute(up<Command> cmd, bool remove_mode) const {
-    cmd->post(&CcBuildDocks);
+    return cmd->post(&CcBuildDocks);
 }
 
 void DockPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const {
