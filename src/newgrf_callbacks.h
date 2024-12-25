@@ -38,8 +38,8 @@ enum CallbackID {
 	/** Determine whether a newstation should be made available to build. */
 	CBID_STATION_AVAILABILITY            = 0x13, // 8 bit callback
 
-	/** Choose a sprite layout to draw, instead of the standard 0-7 range. */
-	CBID_STATION_SPRITE_LAYOUT           = 0x14,
+	/** Choose a tile layout to draw, instead of the standard range. */
+	CBID_STATION_DRAW_TILE_LAYOUT        = 0x14,
 
 	/**
 	 * Refit capacity, the passed vehicle needs to have its ->cargo_type set to
@@ -93,7 +93,7 @@ enum CallbackID {
 	CBID_VEHICLE_ADDITIONAL_TEXT         = 0x23,
 
 	/** Called when building a station to customize the tile layout */
-	CBID_STATION_TILE_LAYOUT             = 0x24, // 15 bit callback
+	CBID_STATION_BUILD_TILE_LAYOUT       = 0x24, // 15 bit callback
 
 	/** Called for periodically starting or stopping the animation. */
 	CBID_INDTILE_ANIM_START_STOP         = 0x25, // 15 bit callback
@@ -285,6 +285,12 @@ enum CallbackID {
 
 	/** Called to determine probability during build. */
 	CBID_VEHICLE_BUILD_PROBABILITY       = 0x162, // 15 bit callback
+
+	/**
+	 * Called to get custom engine refit mask. Called once
+	 * for each defined cargo after all NewGRFs are loaded.
+	 */
+	CBID_VEHICLE_CUSTOM_REFIT            = 0x0163, // 15 bit callback
 };
 
 /**
@@ -301,6 +307,7 @@ enum VehicleCallbackMask {
 	CBM_VEHICLE_COLOUR_REMAP   = 6, ///< Change colour mapping of vehicle
 	CBM_VEHICLE_SOUND_EFFECT   = 7, ///< Vehicle uses custom sound effects
 	CBM_VEHICLE_NAME           = 8, ///< Engine name
+	CBM_VEHICLE_CUSTOM_REFIT   = 9, ///< Custom refit mask
 };
 
 /**
@@ -308,7 +315,7 @@ enum VehicleCallbackMask {
  */
 enum StationCallbackMask {
 	CBM_STATION_AVAIL                = 0, ///< Availability of station in construction window
-	CBM_STATION_SPRITE_LAYOUT        = 1, ///< Use callback to select a sprite layout to use
+	CBM_STATION_DRAW_TILE_LAYOUT     = 1, ///< Use callback to select a tile layout to use when drawing.
 	CBM_STATION_ANIMATION_NEXT_FRAME = 2, ///< Use a custom next frame callback
 	CBM_STATION_ANIMATION_SPEED      = 3, ///< Customize the animation speed of the station
 	CBM_STATION_SLOPE_CHECK          = 4, ///< Check slope of new station tiles

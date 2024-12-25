@@ -220,6 +220,7 @@ STR_UNITS_HEIGHT_SI                                             :{DECIMAL} m
 
 
 
+
 # Common window strings
 
 STR_BUTTON_SORT_BY                                              :{BLACK}Ordinas per
@@ -292,6 +293,7 @@ STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Pozez ob
 ###length 7
 STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 
+
 # Settings menu
 ###length 16
 STR_SETTINGS_MENU_FULL_DETAIL                                   :Plene detaloza
@@ -346,6 +348,7 @@ STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STR
 STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
 STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COMMA}
+
 
 
 
@@ -464,7 +467,7 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Ludo Sel
 
 
 
-###length 43
+###length 44
 
 
 # Autosave dropdown
@@ -473,6 +476,7 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Ludo Sel
 
 
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :altra
+
 
 
 
@@ -627,6 +631,7 @@ STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :normala
 ###length 2
 
 
+
 ###length 2
 
 
@@ -733,6 +738,8 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violkolora
 
 
 
+###length 3
+
 ###setting-zero-is-special
 
 
@@ -807,7 +814,6 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violkolora
 ###length 3
 
 
-###length 2
 
 
 # Config errors
@@ -882,8 +888,6 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 
 
 
-# Network set password
-
 # Network company info join/password
 
 # Network chat
@@ -893,7 +897,7 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 STR_NETWORK_ERROR_TOO_MANY_COMMANDS                             :{WHITE}Tu sendis tro multa imperi ad la servero
 
 
-###length 21
+###length 23
 STR_NETWORK_ERROR_CLIENT_TOO_MANY_COMMANDS                      :sendinta tro multa imperi
 
 # Network related errors
@@ -941,6 +945,9 @@ STR_STATION_BUILD_ACCEPTS_CARGO                                 :{BLACK}Aceptas:
 # Rail waypoint construction window
 
 # Rail station construction window
+
+
+
 
 
 
@@ -1057,6 +1064,8 @@ STR_MAPGEN_BY                                                   :{BLACK}*
 
 
 # Map generation progress
+
+
 
 # NewGRF settings
 
@@ -1356,12 +1365,7 @@ STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE}Servado
 
 
 # Vehicle stopped/started animations
-###length 2
-STR_VEHICLE_COMMAND_STOPPED_SMALL                               :{TINY_FONT}{RED}Haltinta
 STR_VEHICLE_COMMAND_STOPPED                                     :{RED}Haltinta
-
-###length 2
-STR_VEHICLE_COMMAND_STARTED_SMALL                               :{TINY_FONT}{GREEN}Komencinta
 STR_VEHICLE_COMMAND_STARTED                                     :{GREEN}Komencinta
 
 # Vehicle details

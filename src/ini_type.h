@@ -25,9 +25,9 @@ struct IniItem {
 	std::optional<std::string> value; ///< The value of this item
 	std::string comment;              ///< The comment associated with this item
 
-	IniItem(const std::string &name);
+	IniItem(std::string_view name);
 
-	void SetValue(const std::string_view value);
+	void SetValue(std::string_view value);
 };
 
 /** A group within an ini file. */
@@ -37,12 +37,12 @@ struct IniGroup {
 	std::string name;    ///< name of group
 	std::string comment; ///< comment for group
 
-	IniGroup(const std::string &name, IniGroupType type);
+	IniGroup(std::string_view name, IniGroupType type);
 
-	const IniItem *GetItem(const std::string &name) const;
-	IniItem &GetOrCreateItem(const std::string &name);
-	IniItem &CreateItem(const std::string &name);
-	void RemoveItem(const std::string &name);
+	const IniItem *GetItem(std::string_view name) const;
+	IniItem &GetOrCreateItem(std::string_view name);
+	IniItem &CreateItem(std::string_view name);
+	void RemoveItem(std::string_view name);
 	void Clear();
 };
 
@@ -56,13 +56,13 @@ struct IniLoadFile {
 	const IniGroupNameList seq_group_names;  ///< list of group names that are sequences.
 
 	IniLoadFile(const IniGroupNameList &list_group_names = {}, const IniGroupNameList &seq_group_names = {});
-	virtual ~IniLoadFile() { }
+	virtual ~IniLoadFile() = default;
 
-	const IniGroup *GetGroup(const std::string &name) const;
-	IniGroup *GetGroup(const std::string &name);
-	IniGroup &GetOrCreateGroup(const std::string &name);
-	IniGroup &CreateGroup(const std::string &name);
-	void RemoveGroup(const std::string &name);
+	const IniGroup *GetGroup(std::string_view name) const;
+	IniGroup *GetGroup(std::string_view name);
+	IniGroup &GetOrCreateGroup(std::string_view name);
+	IniGroup &CreateGroup(std::string_view name);
+	void RemoveGroup(std::string_view name);
 
 	void LoadFromDisk(const std::string &filename, Subdirectory subdir);
 
@@ -71,9 +71,9 @@ struct IniLoadFile {
 	 * @param filename Name of the INI file.
 	 * @param subdir The subdir to load the file from.
 	 * @param[out] size Size of the opened file.
-	 * @return File handle of the opened file, or \c nullptr.
+	 * @return File handle of the opened file, or \c std::nullopt.
 	 */
-	virtual FILE *OpenFile(const std::string &filename, Subdirectory subdir, size_t *size) = 0;
+	virtual std::optional<FileHandle> OpenFile(const std::string &filename, Subdirectory subdir, size_t *size) = 0;
 
 	/**
 	 * Report an error about the file contents.
@@ -90,7 +90,7 @@ struct IniFile : IniLoadFile {
 
 	bool SaveToDisk(const std::string &filename);
 
-	FILE *OpenFile(const std::string &filename, Subdirectory subdir, size_t *size) override;
+	std::optional<FileHandle> OpenFile(const std::string &filename, Subdirectory subdir, size_t *size) override;
 	void ReportFileError(const char * const pre, const char * const buffer, const char * const post) override;
 };
 

@@ -29,7 +29,7 @@
 #include "strings_func.h"
 #include "viewport_func.h"
 #include "window_func.h"
-#include "timer/timer_game_calendar.h"
+#include "timer/timer.h"
 #include "company_func.h"
 #include "gamelog.h"
 #include "ai/ai.hpp"
@@ -52,6 +52,24 @@
 
 /* scriptfile handling */
 static uint _script_current_depth; ///< Depth of scripts running (used to abort execution when #ConReturn is encountered).
+
+/* Scheduled execution handling. */
+static std::string _scheduled_monthly_script; ///< Script scheduled to execute by the 'schedule' console command (empty if no script is scheduled).
+
+/** Timer that runs every month of game time for the 'schedule' console command. */
+static IntervalTimer<TimerGameCalendar> _scheduled_monthly_timer = {{TimerGameCalendar::MONTH, TimerGameCalendar::Priority::NONE}, [](auto) {
+	if (_scheduled_monthly_script.empty()) {
+		return;
+	}
+
+	/* Clear the schedule before rather than after the script to allow the script to itself call
+	 * schedule without it getting immediately cleared. */
+	const std::string filename = _scheduled_monthly_script;
+	_scheduled_monthly_script.clear();
+
+	IConsolePrint(CC_DEFAULT, "Executing scheduled script file '{}'...", filename);
+	IConsoleCmdExec(std::string("exec") + " " + filename);
+}};
 
 /** File list storage for the console, for caching the last 'ls' command. */
 class ConsoleFileList : public FileList {
@@ -89,7 +107,7 @@ static ConsoleFileList _console_file_list_scenario{FT_SCENARIO, false}; ///< Fil
 static ConsoleFileList _console_file_list_heightmap{FT_HEIGHTMAP, false}; ///< File storage cache for heightmaps.
 
 /* console command defines */
-#define DEF_CONSOLE_CMD(function) static bool function([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[])
+#define DEF_CONSOLE_CMD(function) static bool function([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[])
 #define DEF_CONSOLE_HOOK(function) static ConsoleHookResult function(bool echo)
 
 
@@ -523,7 +541,7 @@ DEF_CONSOLE_CMD(ConRemove)
 	_console_file_list_savegame.ValidateFileList();
 	const FiosItem *item = _console_file_list_savegame.FindItem(file);
 	if (item != nullptr) {
-		if (unlink(item->name.c_str()) != 0) {
+		if (!FioRemove(item->name)) {
 			IConsolePrint(CC_ERROR, "Failed to delete '{}'.", item->name);
 		}
 	} else {
@@ -836,6 +854,7 @@ DEF_CONSOLE_CMD(ConRcon)
 	if (argc == 0) {
 		IConsolePrint(CC_HELP, "Remote control the server from another client. Usage: 'rcon <password> <command>'.");
 		IConsolePrint(CC_HELP, "Remember to enclose the command in quotes, otherwise only the first parameter is sent.");
+		IConsolePrint(CC_HELP, "When your client's public key is in the 'authorized keys' for 'rcon', the password is not checked and may be '*'.");
 		return true;
 	}
 
@@ -913,7 +932,7 @@ DEF_CONSOLE_CMD(ConClientNickChange)
 DEF_CONSOLE_CMD(ConJoinCompany)
 {
 	if (argc < 2) {
-		IConsolePrint(CC_HELP, "Request joining another company. Usage: 'join <company-id> [<password>]'.");
+		IConsolePrint(CC_HELP, "Request joining another company. Usage: 'join <company-id>'.");
 		IConsolePrint(CC_HELP, "For valid company-id see company list, use 255 for spectator.");
 		return true;
 	}
@@ -942,9 +961,8 @@ DEF_CONSOLE_CMD(ConJoinCompany)
 		return true;
 	}
 
-	/* Check if the company requires a password */
-	if (NetworkCompanyIsPassworded(company_id) && argc < 3) {
-		IConsolePrint(CC_ERROR, "Company {} requires a password to join.", company_id + 1);
+	if (!info->CanJoinCompany(company_id)) {
+		IConsolePrint(CC_ERROR, "You are not allowed to join this company.");
 		return true;
 	}
 
@@ -952,7 +970,7 @@ DEF_CONSOLE_CMD(ConJoinCompany)
 	if (_network_server) {
 		NetworkServerDoMove(CLIENT_ID_SERVER, company_id);
 	} else {
-		NetworkClientRequestMove(company_id, NetworkCompanyIsPassworded(company_id) ? argv[2] : "");
+		NetworkClientRequestMove(company_id);
 	}
 
 	return true;
@@ -1112,15 +1130,14 @@ DEF_CONSOLE_CMD(ConExec)
 
 	if (argc < 2) return false;
 
-	FILE *script_file = FioFOpenFile(argv[1], "r", BASE_DIR);
+	auto script_file = FioFOpenFile(argv[1], "r", BASE_DIR);
 
-	if (script_file == nullptr) {
+	if (!script_file.has_value()) {
 		if (argc == 2 || atoi(argv[2]) != 0) IConsolePrint(CC_ERROR, "Script file '{}' not found.", argv[1]);
 		return true;
 	}
 
 	if (_script_current_depth == 11) {
-		FioFCloseFile(script_file);
 		IConsolePrint(CC_ERROR, "Maximum 'exec' depth reached; script A is calling script B is calling script C ... more than 10 times.");
 		return true;
 	}
@@ -1129,7 +1146,7 @@ DEF_CONSOLE_CMD(ConExec)
 	uint script_depth = _script_current_depth;
 
 	char cmdline[ICON_CMDLN_SIZE];
-	while (fgets(cmdline, sizeof(cmdline), script_file) != nullptr) {
+	while (fgets(cmdline, sizeof(cmdline), *script_file) != nullptr) {
 		/* Remove newline characters from the executing script */
 		for (char *cmdptr = cmdline; *cmdptr != '\0'; cmdptr++) {
 			if (*cmdptr == '\n' || *cmdptr == '\r') {
@@ -1145,12 +1162,40 @@ DEF_CONSOLE_CMD(ConExec)
 		if (_script_current_depth == script_depth - 1) break;
 	}
 
-	if (ferror(script_file)) {
+	if (ferror(*script_file) != 0) {
 		IConsolePrint(CC_ERROR, "Encountered error while trying to read from script file '{}'.", argv[1]);
 	}
 
 	if (_script_current_depth == script_depth) _script_current_depth--;
-	FioFCloseFile(script_file);
+	return true;
+}
+
+DEF_CONSOLE_CMD(ConSchedule)
+{
+	if (argc < 3 || std::string_view(argv[1]) != "on-next-calendar-month") {
+		IConsolePrint(CC_HELP, "Schedule a local script to execute later. Usage: 'schedule on-next-calendar-month <script>'.");
+		return true;
+	}
+
+	/* Check if the file exists. It might still go away later, but helpful to show an error now. */
+	if (!FioCheckFileExists(argv[2], BASE_DIR)) {
+		IConsolePrint(CC_ERROR, "Script file '{}' not found.", argv[2]);
+		return true;
+	}
+
+	/* We only support a single script scheduled, so we tell the user what's happening if there was already one. */
+	const std::string_view filename = std::string_view(argv[2]);
+	if (!_scheduled_monthly_script.empty() && filename == _scheduled_monthly_script) {
+		IConsolePrint(CC_INFO, "Script file '{}' was already scheduled to execute at the start of next calendar month.", filename);
+	} else if (!_scheduled_monthly_script.empty() && filename != _scheduled_monthly_script) {
+		IConsolePrint(CC_INFO, "Script file '{}' scheduled to execute at the start of next calendar month, replacing the previously scheduled script file '{}'.", filename, _scheduled_monthly_script);
+	} else {
+		IConsolePrint(CC_INFO, "Script file '{}' scheduled to execute at the start of next calendar month.", filename);
+	}
+
+	/* Store the filename to be used by _schedule_timer on the start of next calendar month. */
+	_scheduled_monthly_script = filename;
+
 	return true;
 }
 
@@ -1175,7 +1220,7 @@ extern void ShowFramerateWindow();
 
 DEF_CONSOLE_CMD(ConScript)
 {
-	extern FILE *_iconsole_output_file;
+	extern std::optional<FileHandle> _iconsole_output_file;
 
 	if (argc == 0) {
 		IConsolePrint(CC_HELP, "Start or stop logging console output to a file. Usage: 'script <filename>'.");
@@ -1186,8 +1231,8 @@ DEF_CONSOLE_CMD(ConScript)
 	if (!CloseConsoleLogIfActive()) {
 		if (argc < 2) return false;
 
-		_iconsole_output_file = fopen(argv[1], "ab");
-		if (_iconsole_output_file == nullptr) {
+		_iconsole_output_file = FileHandle::Open(argv[1], "ab");
+		if (!_iconsole_output_file.has_value()) {
 			IConsolePrint(CC_ERROR, "Could not open console log file '{}'.", argv[1]);
 		} else {
 			IConsolePrint(CC_INFO, "Console log output started to '{}'.", argv[1]);
@@ -1828,13 +1873,6 @@ DEF_CONSOLE_CMD(ConCompanies)
 		SetDParam(0, c->index);
 		std::string company_name = GetString(STR_COMPANY_NAME);
 
-		const char *password_state = "";
-		if (c->is_ai) {
-			password_state = "AI";
-		} else if (_network_server) {
-			password_state = _network_company_states[c->index].password.empty() ? "unprotected" : "protected";
-		}
-
 		std::string colour = GetString(STR_COLOUR_DARK_BLUE + _company_colours[c->index]);
 		IConsolePrint(CC_INFO, "#:{}({}) Company Name: '{}'  Year Founded: {}  Money: {}  Loan: {}  Value: {}  (T:{}, R:{}, P:{}, S:{}) {}",
 			c->index + 1, colour, company_name,
@@ -1843,7 +1881,7 @@ DEF_CONSOLE_CMD(ConCompanies)
 			c->group_all[VEH_ROAD].num_vehicle,
 			c->group_all[VEH_AIRCRAFT].num_vehicle,
 			c->group_all[VEH_SHIP].num_vehicle,
-			password_state);
+			c->is_ai ? "AI" : "");
 	}
 
 	return true;
@@ -1914,52 +1952,140 @@ DEF_CONSOLE_CMD(ConSayClient)
 	return true;
 }
 
-DEF_CONSOLE_CMD(ConCompanyPassword)
-{
-	if (argc == 0) {
-		if (_network_dedicated) {
-			IConsolePrint(CC_HELP, "Change the password of a company. Usage: 'company_pw <company-no> \"<password>\".");
-		} else if (_network_server) {
-			IConsolePrint(CC_HELP, "Change the password of your or any other company. Usage: 'company_pw [<company-no>] \"<password>\"'.");
-		} else {
-			IConsolePrint(CC_HELP, "Change the password of your company. Usage: 'company_pw \"<password>\"'.");
-		}
+/** All the known authorized keys with their name. */
+static std::vector<std::pair<std::string_view, NetworkAuthorizedKeys *>> _console_cmd_authorized_keys{
+	{ "admin", &_settings_client.network.admin_authorized_keys },
+	{ "rcon", &_settings_client.network.rcon_authorized_keys },
+	{ "server", &_settings_client.network.server_authorized_keys },
+};
 
-		IConsolePrint(CC_HELP, "Use \"*\" to disable the password.");
+enum ConNetworkAuthorizedKeyAction {
+	CNAKA_LIST,
+	CNAKA_ADD,
+	CNAKA_REMOVE,
+};
+
+static void PerformNetworkAuthorizedKeyAction(std::string_view name, NetworkAuthorizedKeys *authorized_keys, ConNetworkAuthorizedKeyAction action, const std::string &authorized_key, CompanyID company = INVALID_COMPANY)
+{
+	switch (action) {
+		case CNAKA_LIST:
+			IConsolePrint(CC_WHITE, "The authorized keys for {} are:", name);
+			for (auto &ak : *authorized_keys) IConsolePrint(CC_INFO, "  {}", ak);
+			return;
+
+		case CNAKA_ADD:
+			if (authorized_keys->Contains(authorized_key)) {
+				IConsolePrint(CC_WARNING, "Not added {} to {} as it already exists.", authorized_key, name);
+				return;
+			}
+
+			if (company == INVALID_COMPANY) {
+				authorized_keys->Add(authorized_key);
+			} else {
+				AutoRestoreBackup backup(_current_company, company);
+				Command<CMD_COMPANY_ALLOW_LIST_CTRL>::Post(CALCA_ADD, authorized_key);
+			}
+			IConsolePrint(CC_INFO, "Added {} to {}.", authorized_key, name);
+			return;
+
+		case CNAKA_REMOVE:
+			if (!authorized_keys->Contains(authorized_key)) {
+				IConsolePrint(CC_WARNING, "Not removed {} from {} as it does not exist.", authorized_key, name);
+				return;
+			}
+
+			if (company == INVALID_COMPANY) {
+				authorized_keys->Remove(authorized_key);
+			} else {
+				AutoRestoreBackup backup(_current_company, company);
+				Command<CMD_COMPANY_ALLOW_LIST_CTRL>::Post(CALCA_REMOVE, authorized_key);
+			}
+			IConsolePrint(CC_INFO, "Removed {} from {}.", authorized_key, name);
+			return;
+	}
+}
+
+DEF_CONSOLE_CMD(ConNetworkAuthorizedKey)
+{
+	if (argc <= 2) {
+		IConsolePrint(CC_HELP, "List and update authorized keys. Usage: 'authorized_key list [type]|add [type] [key]|remove [type] [key]'.");
+		IConsolePrint(CC_HELP, "  list: list all the authorized keys of the given type.");
+		IConsolePrint(CC_HELP, "  add: add the given key to the authorized keys of the given type.");
+		IConsolePrint(CC_HELP, "  remove: remove the given key from the authorized keys of the given type; use 'all' to remove all authorized keys.");
+		IConsolePrint(CC_HELP, "Instead of a key, use 'client:<id>' to add/remove the key of that given client.");
+
+		std::string buffer;
+		for (auto [name, _] : _console_cmd_authorized_keys) fmt::format_to(std::back_inserter(buffer), ", {}", name);
+		IConsolePrint(CC_HELP, "The supported types are: all{} and company:<id>.", buffer);
 		return true;
 	}
 
-	CompanyID company_id;
-	std::string password;
-	const char *errormsg;
-
-	if (argc == 2) {
-		company_id = _local_company;
-		password = argv[1];
-		errormsg = "You have to own a company to make use of this command.";
-	} else if (argc == 3 && _network_server) {
-		company_id = (CompanyID)(atoi(argv[1]) - 1);
-		password = argv[2];
-		errormsg = "You have to specify the ID of a valid human controlled company.";
+	ConNetworkAuthorizedKeyAction action;
+	std::string_view action_string = argv[1];
+	if (StrEqualsIgnoreCase(action_string, "list")) {
+		action = CNAKA_LIST;
+	} else if (StrEqualsIgnoreCase(action_string, "add")) {
+		action = CNAKA_ADD;
+	} else if (StrEqualsIgnoreCase(action_string, "remove") || StrEqualsIgnoreCase(action_string, "delete")) {
+		action = CNAKA_REMOVE;
 	} else {
+		IConsolePrint(CC_WARNING, "No valid action was given.");
 		return false;
 	}
 
-	if (!Company::IsValidHumanID(company_id)) {
-		IConsolePrint(CC_ERROR, errormsg);
-		return false;
+	std::string authorized_key;
+	if (action != CNAKA_LIST) {
+		if (argc <= 3) {
+			IConsolePrint(CC_ERROR, "You must enter the key.");
+			return false;
+		}
+
+		authorized_key = argv[3];
+		if (StrStartsWithIgnoreCase(authorized_key, "client:")) {
+			std::string id_string(authorized_key.substr(7));
+			authorized_key = NetworkGetPublicKeyOfClient(static_cast<ClientID>(std::stoi(id_string)));
+			if (authorized_key.empty()) {
+				IConsolePrint(CC_ERROR, "You must enter a valid client id; see 'clients'.");
+				return false;
+			}
+		}
+
+		if (authorized_key.size() != NETWORK_PUBLIC_KEY_LENGTH - 1) {
+			IConsolePrint(CC_ERROR, "You must enter a valid authorized key.");
+			return false;
+		}
 	}
 
-	password = NetworkChangeCompanyPassword(company_id, password);
-
-	if (password.empty()) {
-		IConsolePrint(CC_INFO, "Company password cleared.");
-	} else {
-		IConsolePrint(CC_INFO, "Company password changed to '{}'.", password);
+	std::string_view type = argv[2];
+	if (StrEqualsIgnoreCase(type, "all")) {
+		for (auto [name, authorized_keys] : _console_cmd_authorized_keys) PerformNetworkAuthorizedKeyAction(name, authorized_keys, action, authorized_key);
+		for (Company *c : Company::Iterate()) PerformNetworkAuthorizedKeyAction(fmt::format("company:{}", c->index + 1), &c->allow_list, action, authorized_key, c->index);
+		return true;
 	}
 
-	return true;
+	if (StrStartsWithIgnoreCase(type, "company:")) {
+		std::string id_string(type.substr(8));
+		Company *c = Company::GetIfValid(std::stoi(id_string) - 1);
+		if (c == nullptr) {
+			IConsolePrint(CC_ERROR, "You must enter a valid company id; see 'companies'.");
+			return false;
+		}
+
+		PerformNetworkAuthorizedKeyAction(type, &c->allow_list, action, authorized_key, c->index);
+		return true;
+	}
+
+	for (auto [name, authorized_keys] : _console_cmd_authorized_keys) {
+		if (StrEqualsIgnoreCase(type, name)) continue;
+
+		PerformNetworkAuthorizedKeyAction(name, authorized_keys, action, authorized_key);
+		return true;
+	}
+
+	IConsolePrint(CC_WARNING, "No valid type was given.");
+	return false;
 }
+
 
 /* Content downloading only is available with ZLIB */
 #if defined(WITH_ZLIB)
@@ -1968,9 +2094,16 @@ DEF_CONSOLE_CMD(ConCompanyPassword)
 /** Resolve a string to a content type. */
 static ContentType StringToContentType(const char *str)
 {
-	static const char * const inv_lookup[] = { "", "base", "newgrf", "ai", "ailib", "scenario", "heightmap" };
-	for (uint i = 1 /* there is no type 0 */; i < lengthof(inv_lookup); i++) {
-		if (StrEqualsIgnoreCase(str, inv_lookup[i])) return (ContentType)i;
+	static const std::initializer_list<std::pair<std::string_view, ContentType>> content_types = {
+		{"base",      CONTENT_TYPE_BASE_GRAPHICS},
+		{"newgrf",    CONTENT_TYPE_NEWGRF},
+		{"ai",        CONTENT_TYPE_AI},
+		{"ailib",     CONTENT_TYPE_AI_LIBRARY},
+		{"scenario",  CONTENT_TYPE_SCENARIO},
+		{"heightmap", CONTENT_TYPE_HEIGHTMAP},
+	};
+	for (const auto &ct : content_types) {
+		if (StrEqualsIgnoreCase(str, ct.first)) return ct.second;
 	}
 	return CONTENT_TYPE_END;
 }
@@ -2098,10 +2231,14 @@ DEF_CONSOLE_CMD(ConFont)
 		IConsolePrint(CC_HELP, "Manage the fonts configuration.");
 		IConsolePrint(CC_HELP, "Usage 'font'.");
 		IConsolePrint(CC_HELP, "  Print out the fonts configuration.");
-		IConsolePrint(CC_HELP, "Usage 'font [medium|small|large|mono] [<name>] [<size>] [aa|noaa]'.");
+		IConsolePrint(CC_HELP, "  The \"Currently active\" configuration is the one actually in effect (after interface scaling and replacing unavailable fonts).");
+		IConsolePrint(CC_HELP, "  The \"Requested\" configuration is the one requested via console command or config file.");
+		IConsolePrint(CC_HELP, "Usage 'font [medium|small|large|mono] [<font name>] [<size>]'.");
 		IConsolePrint(CC_HELP, "  Change the configuration for a font.");
 		IConsolePrint(CC_HELP, "  Omitting an argument will keep the current value.");
-		IConsolePrint(CC_HELP, "  Set <name> to \"\" for the sprite font (size and aa have no effect on sprite font).");
+		IConsolePrint(CC_HELP, "  Set <font name> to \"\" for the default font. Note that <size> has no effect if the default font is in use, and fixed defaults are used instead.");
+		IConsolePrint(CC_HELP, "  If the sprite font is enabled in Game Options, it is used instead of the default font.");
+		IConsolePrint(CC_HELP, "  The <size> is automatically multiplied by the current interface scaling.");
 		return true;
 	}
 
@@ -2117,38 +2254,23 @@ DEF_CONSOLE_CMD(ConFont)
 		FontCacheSubSetting *setting = GetFontCacheSubSetting(argfs);
 		std::string font = setting->font;
 		uint size = setting->size;
-		bool aa = setting->aa;
+		uint v;
+		uint8_t arg_index = 2;
+		/* For <name> we want a string. */
 
-		byte arg_index = 2;
-		/* We may encounter "aa" or "noaa" but it must be the last argument. */
-		if (StrEqualsIgnoreCase(argv[arg_index], "aa") || StrEqualsIgnoreCase(argv[arg_index], "noaa")) {
-			aa = !StrStartsWithIgnoreCase(argv[arg_index++], "no");
-			if (argc > arg_index) return false;
-		} else {
-			/* For <name> we want a string. */
-			uint v;
-			if (!GetArgumentInteger(&v, argv[arg_index])) {
-				font = argv[arg_index++];
-			}
+		if (!GetArgumentInteger(&v, argv[arg_index])) {
+			font = argv[arg_index++];
 		}
 
 		if (argc > arg_index) {
 			/* For <size> we want a number. */
-			uint v;
 			if (GetArgumentInteger(&v, argv[arg_index])) {
 				size = v;
 				arg_index++;
 			}
 		}
 
-		if (argc > arg_index) {
-			/* Last argument must be "aa" or "noaa". */
-			if (!StrEqualsIgnoreCase(argv[arg_index], "aa") && !StrEqualsIgnoreCase(argv[arg_index], "noaa")) return false;
-			aa = !StrStartsWithIgnoreCase(argv[arg_index++], "no");
-			if (argc > arg_index) return false;
-		}
-
-		SetFont(argfs, font, size, aa);
+		SetFont(argfs, font, size);
 	}
 
 	for (FontSize fs = FS_BEGIN; fs < FS_END; fs++) {
@@ -2159,7 +2281,9 @@ DEF_CONSOLE_CMD(ConFont)
 			InitFontCache(fs == FS_MONO);
 			fc = FontCache::Get(fs);
 		}
-		IConsolePrint(CC_DEFAULT, "{}: \"{}\" {} {} [\"{}\" {} {}]", FontSizeToName(fs), fc->GetFontName(), fc->GetFontSize(), GetFontAAState(fs) ? "aa" : "noaa", setting->font, setting->size, setting->aa ? "aa" : "noaa");
+		IConsolePrint(CC_DEFAULT, "{} font:", FontSizeToName(fs));
+		IConsolePrint(CC_DEFAULT, "Currently active: \"{}\", size {}", fc->GetFontName(), fc->GetFontSize());
+		IConsolePrint(CC_DEFAULT, "Requested: \"{}\", size {}", setting->font, setting->size);
 	}
 
 	return true;
@@ -2330,7 +2454,7 @@ DEF_CONSOLE_CMD(ConNewGRFProfile)
 		IConsolePrint(CC_INFO, "Loaded GRF files:");
 		int i = 1;
 		for (GRFFile *grf : files) {
-			auto profiler = std::find_if(_newgrf_profilers.begin(), _newgrf_profilers.end(), [&](NewGRFProfiler &pr) { return pr.grffile == grf; });
+			auto profiler = std::ranges::find(_newgrf_profilers, grf, &NewGRFProfiler::grffile);
 			bool selected = profiler != _newgrf_profilers.end();
 			bool active = selected && profiler->active;
 			TextColour tc = active ? TC_LIGHT_BLUE : selected ? TC_GREEN : CC_INFO;
@@ -2372,8 +2496,7 @@ DEF_CONSOLE_CMD(ConNewGRFProfile)
 				continue;
 			}
 			GRFFile *grf = files[grfnum - 1];
-			auto pos = std::find_if(_newgrf_profilers.begin(), _newgrf_profilers.end(), [&](NewGRFProfiler &pr) { return pr.grffile == grf; });
-			if (pos != _newgrf_profilers.end()) _newgrf_profilers.erase(pos);
+			_newgrf_profilers.erase(std::ranges::find(_newgrf_profilers, grf, &NewGRFProfiler::grffile));
 		}
 		return true;
 	}
@@ -2465,6 +2588,22 @@ DEF_CONSOLE_CMD(ConFramerateWindow)
 	return true;
 }
 
+/**
+ * Format a label as a string.
+ * If all elements are visible ASCII (excluding space) then the label will be formatted as a string of 4 characters,
+ * otherwise it will be output as an 8-digit hexadecimal value.
+ * @param label Label to format.
+ * @return string representation of label.
+ **/
+static std::string FormatLabel(uint32_t label)
+{
+	if (std::isgraph(GB(label, 24, 8)) && std::isgraph(GB(label, 16, 8)) && std::isgraph(GB(label, 8, 8)) && std::isgraph(GB(label, 0, 8))) {
+		return fmt::format("{:c}{:c}{:c}{:c}", GB(label, 24, 8), GB(label, 16, 8), GB(label, 8, 8), GB(label, 0, 8));
+	}
+
+	return fmt::format("{:08X}", BSWAP32(label));
+}
+
 static void ConDumpRoadTypes()
 {
 	IConsolePrint(CC_DEFAULT, "  Flags:");
@@ -2484,10 +2623,10 @@ static void ConDumpRoadTypes()
 			grfid = grf->grfid;
 			grfs.emplace(grfid, grf);
 		}
-		IConsolePrint(CC_DEFAULT, "  {:02d} {} {:c}{:c}{:c}{:c}, Flags: {}{}{}{}{}, GRF: {:08X}, {}",
+		IConsolePrint(CC_DEFAULT, "  {:02d} {} {}, Flags: {}{}{}{}{}, GRF: {:08X}, {}",
 				(uint)rt,
 				RoadTypeIsTram(rt) ? "Tram" : "Road",
-				rti->label >> 24, rti->label >> 16, rti->label >> 8, rti->label,
+				FormatLabel(rti->label),
 				HasBit(rti->flags, ROTF_CATENARY)          ? 'c' : '-',
 				HasBit(rti->flags, ROTF_NO_LEVEL_CROSSING) ? 'l' : '-',
 				HasBit(rti->flags, ROTF_NO_HOUSES)         ? 'X' : '-',
@@ -2522,9 +2661,9 @@ static void ConDumpRailTypes()
 			grfid = grf->grfid;
 			grfs.emplace(grfid, grf);
 		}
-		IConsolePrint(CC_DEFAULT, "  {:02d} {:c}{:c}{:c}{:c}, Flags: {}{}{}{}{}{}, GRF: {:08X}, {}",
+		IConsolePrint(CC_DEFAULT, "  {:02d} {}, Flags: {}{}{}{}{}{}, GRF: {:08X}, {}",
 				(uint)rt,
-				rti->label >> 24, rti->label >> 16, rti->label >> 8, rti->label,
+				FormatLabel(rti->label),
 				HasBit(rti->flags, RTF_CATENARY)          ? 'c' : '-',
 				HasBit(rti->flags, RTF_NO_LEVEL_CROSSING) ? 'l' : '-',
 				HasBit(rti->flags, RTF_HIDDEN)            ? 'h' : '-',
@@ -2553,6 +2692,11 @@ static void ConDumpCargoTypes()
 	IConsolePrint(CC_DEFAULT, "    r = refrigerated");
 	IConsolePrint(CC_DEFAULT, "    h = hazardous");
 	IConsolePrint(CC_DEFAULT, "    c = covered/sheltered");
+	IConsolePrint(CC_DEFAULT, "    o = oversized");
+	IConsolePrint(CC_DEFAULT, "    d = powderized");
+	IConsolePrint(CC_DEFAULT, "    n = not pourable");
+	IConsolePrint(CC_DEFAULT, "    e = potable");
+	IConsolePrint(CC_DEFAULT, "    i = non-potable");
 	IConsolePrint(CC_DEFAULT, "    S = special");
 
 	std::map<uint32_t, const GRFFile *> grfs;
@@ -2564,10 +2708,10 @@ static void ConDumpCargoTypes()
 			grfid = grf->grfid;
 			grfs.emplace(grfid, grf);
 		}
-		IConsolePrint(CC_DEFAULT, "  {:02d} Bit: {:2d}, Label: {:c}{:c}{:c}{:c}, Callback mask: 0x{:02X}, Cargo class: {}{}{}{}{}{}{}{}{}{}{}, GRF: {:08X}, {}",
+		IConsolePrint(CC_DEFAULT, "  {:02d} Bit: {:2d}, Label: {}, Callback mask: 0x{:02X}, Cargo class: {}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}, GRF: {:08X}, {}",
 				spec->Index(),
 				spec->bitnum,
-				spec->label.base() >> 24, spec->label.base() >> 16, spec->label.base() >> 8, spec->label.base(),
+				FormatLabel(spec->label.base()),
 				spec->callback_mask,
 				(spec->classes & CC_PASSENGERS)   != 0 ? 'p' : '-',
 				(spec->classes & CC_MAIL)         != 0 ? 'm' : '-',
@@ -2579,6 +2723,11 @@ static void ConDumpCargoTypes()
 				(spec->classes & CC_REFRIGERATED) != 0 ? 'r' : '-',
 				(spec->classes & CC_HAZARDOUS)    != 0 ? 'h' : '-',
 				(spec->classes & CC_COVERED)      != 0 ? 'c' : '-',
+				(spec->classes & CC_OVERSIZED)    != 0 ? 'o' : '-',
+				(spec->classes & CC_POWDERIZED)   != 0 ? 'd' : '-',
+				(spec->classes & CC_NOT_POURABLE) != 0 ? 'n' : '-',
+				(spec->classes & CC_POTABLE)      != 0 ? 'e' : '-',
+				(spec->classes & CC_NON_POTABLE)  != 0 ? 'i' : '-',
 				(spec->classes & CC_SPECIAL)      != 0 ? 'S' : '-',
 				BSWAP32(grfid),
 				GetStringPtr(spec->name)
@@ -2627,6 +2776,7 @@ void IConsoleStdLibRegister()
 	IConsole::CmdRegister("echo",                    ConEcho);
 	IConsole::CmdRegister("echoc",                   ConEchoC);
 	IConsole::CmdRegister("exec",                    ConExec);
+	IConsole::CmdRegister("schedule",                ConSchedule);
 	IConsole::CmdRegister("exit",                    ConExit);
 	IConsole::CmdRegister("part",                    ConPart);
 	IConsole::CmdRegister("help",                    ConHelp);
@@ -2728,8 +2878,8 @@ void IConsoleStdLibRegister()
 	IConsole::CmdRegister("pause",                   ConPauseGame,        ConHookServerOrNoNetwork);
 	IConsole::CmdRegister("unpause",                 ConUnpauseGame,      ConHookServerOrNoNetwork);
 
-	IConsole::CmdRegister("company_pw",              ConCompanyPassword,  ConHookNeedNetwork);
-	IConsole::AliasRegister("company_password",      "company_pw %+");
+	IConsole::CmdRegister("authorized_key", ConNetworkAuthorizedKey, ConHookServerOnly);
+	IConsole::AliasRegister("ak", "authorized_key %+");
 
 	IConsole::AliasRegister("net_frame_freq",        "setting frame_freq %+");
 	IConsole::AliasRegister("net_sync_freq",         "setting sync_freq %+");
@@ -2746,7 +2896,6 @@ void IConsoleStdLibRegister()
 	IConsole::AliasRegister("pause_on_join",         "setting pause_on_join %+");
 	IConsole::AliasRegister("autoclean_companies",   "setting autoclean_companies %+");
 	IConsole::AliasRegister("autoclean_protected",   "setting autoclean_protected %+");
-	IConsole::AliasRegister("autoclean_unprotected", "setting autoclean_unprotected %+");
 	IConsole::AliasRegister("restart_game_year",     "setting restart_game_year %+");
 	IConsole::AliasRegister("min_players",           "setting min_active_clients %+");
 	IConsole::AliasRegister("reload_cfg",            "setting reload_cfg %+");

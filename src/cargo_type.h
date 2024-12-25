@@ -19,7 +19,7 @@ using CargoLabel = StrongType::Typedef<uint32_t, struct CargoLabelTag, StrongTyp
 /**
  * Cargo slots to indicate a cargo type within a game.
  */
-using CargoID = byte;
+using CargoID = uint8_t;
 
 /**
  * Available types of cargo
@@ -128,13 +128,13 @@ struct CargoArray : std::array<uint, NUM_CARGO> {
 	 */
 	inline uint GetCount() const
 	{
-		return std::count_if(this->begin(), this->end(), [](uint amount) { return amount != 0; });
+		return std::ranges::count_if(*this, [](uint amount) { return amount != 0; });
 	}
 };
 
 
 /** Types of cargo source and destination */
-enum class SourceType : byte {
+enum class SourceType : uint8_t {
 	Industry,     ///< Source/destination is an industry
 	Town,         ///< Source/destination is a town
 	Headquarters, ///< Source/destination are company headquarters

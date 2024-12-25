@@ -16,7 +16,7 @@ typedef uint16_t TownID;
 struct Town;
 
 /** Supported initial town sizes */
-enum TownSize : byte {
+enum TownSize : uint8_t {
 	TSZ_SMALL,  ///< Small town.
 	TSZ_MEDIUM, ///< Medium town.
 	TSZ_LARGE,  ///< Large town.
@@ -26,58 +26,57 @@ enum TownSize : byte {
 };
 DECLARE_ENUM_AS_ADDABLE(TownSize)
 
-enum Ratings {
-	/* These refer to the maximums, so Appalling is -1000 to -400
-	 * MAXIMUM RATINGS BOUNDARIES */
-	RATING_MINIMUM     = -1000,
-	RATING_APPALLING   =  -400,
-	RATING_VERYPOOR    =  -200,
-	RATING_POOR        =     0,
-	RATING_MEDIOCRE    =   200,
-	RATING_GOOD        =   400,
-	RATING_VERYGOOD    =   600,
-	RATING_EXCELLENT   =   800,
-	RATING_OUTSTANDING =  1000,         ///< OUTSTANDING
+/* These refer to the maximums, so Appalling is -1000 to -400
+ * MAXIMUM RATINGS BOUNDARIES */
+static constexpr int RATING_MINIMUM = -1000;
+static constexpr int RATING_APPALLING = -400;
+static constexpr int RATING_VERYPOOR = -200;
+static constexpr int RATING_POOR = 0;
+static constexpr int RATING_MEDIOCRE = 200;
+static constexpr int RATING_GOOD = 400;
+static constexpr int RATING_VERYGOOD = 600;
+static constexpr int RATING_EXCELLENT = 800;
+static constexpr int RATING_OUTSTANDING = 1000; ///< OUTSTANDING
 
-	RATING_MAXIMUM = RATING_OUTSTANDING,
+static constexpr int RATING_MAXIMUM = RATING_OUTSTANDING;
 
-	RATING_INITIAL = 500, ///< initial rating
+static constexpr int RATING_INITIAL = 500; ///< initial rating
 
-	/* RATINGS AFFECTING NUMBERS */
-	RATING_TREE_DOWN_STEP = -35,
-	RATING_TREE_MINIMUM   = RATING_MINIMUM,
-	RATING_TREE_UP_STEP   = 7,
-	RATING_TREE_MAXIMUM   = 220,
+/* RATINGS AFFECTING NUMBERS */
+static constexpr int RATING_TREE_DOWN_STEP = -35;
+static constexpr int RATING_TREE_MINIMUM = RATING_MINIMUM;
+static constexpr int RATING_TREE_UP_STEP = 7;
+static constexpr int RATING_TREE_MAXIMUM = 220;
 
-	RATING_GROWTH_UP_STEP    =   5, ///< when a town grows, all companies have rating increased a bit ...
-	RATING_GROWTH_MAXIMUM    = RATING_MEDIOCRE, ///< ... up to RATING_MEDIOCRE
-	RATING_STATION_UP_STEP   =  12, ///< when a town grows, company gains reputation for all well serviced stations ...
-	RATING_STATION_DOWN_STEP = -15, ///< ... but loses for badly serviced stations
+static constexpr int RATING_GROWTH_UP_STEP =  5; ///< when a town grows, all companies have rating increased a bit ...
+static constexpr int RATING_GROWTH_MAXIMUM = RATING_MEDIOCRE; ///< ... up to RATING_MEDIOCRE
+static constexpr int RATING_STATION_UP_STEP = 12; ///< when a town grows, company gains reputation for all well serviced stations ...
+static constexpr int RATING_STATION_DOWN_STEP = -15; ///< ... but loses for badly serviced stations
 
-	RATING_TUNNEL_BRIDGE_DOWN_STEP = -250, ///< penalty for removing town owned tunnel or bridge
-	RATING_TUNNEL_BRIDGE_MINIMUM   =    0, ///< minimum rating after removing tunnel or bridge
-	RATING_TUNNEL_BRIDGE_NEEDED_LENIENT    =            144, ///< rating needed, "Lenient" difficulty settings
-	RATING_TUNNEL_BRIDGE_NEEDED_NEUTRAL    =            208, ///< "Neutral"
-	RATING_TUNNEL_BRIDGE_NEEDED_HOSTILE    =            400, ///< "Hostile"
-	RATING_TUNNEL_BRIDGE_NEEDED_PERMISSIVE = RATING_MINIMUM, ///< "Permissive" (local authority disabled)
+static constexpr int RATING_TUNNEL_BRIDGE_UP_STEP = 50; ///< rating increase for improving a town-owned bridge
+static constexpr int RATING_TUNNEL_BRIDGE_DOWN_STEP = -250; ///< penalty for removing town owned tunnel or bridge
+static constexpr int RATING_TUNNEL_BRIDGE_MINIMUM = 0; ///< minimum rating after removing tunnel or bridge
+static constexpr int RATING_TUNNEL_BRIDGE_NEEDED_LENIENT = 144; ///< rating needed, "Lenient" difficulty settings
+static constexpr int RATING_TUNNEL_BRIDGE_NEEDED_NEUTRAL = 208; ///< "Neutral"
+static constexpr int RATING_TUNNEL_BRIDGE_NEEDED_HOSTILE = 400; ///< "Hostile"
+static constexpr int RATING_TUNNEL_BRIDGE_NEEDED_PERMISSIVE = RATING_MINIMUM; ///< "Permissive" (local authority disabled)
 
-	RATING_ROAD_DOWN_STEP_INNER =  -50, ///< removing a roadpiece in the middle
-	RATING_ROAD_DOWN_STEP_EDGE  =  -18, ///< removing a roadpiece at the edge
-	RATING_ROAD_MINIMUM         = -100, ///< minimum rating after removing town owned road
-	RATING_ROAD_NEEDED_LENIENT    =             16, ///< rating needed, "Lenient" difficulty settings
-	RATING_ROAD_NEEDED_NEUTRAL    =             64, ///< "Neutral"
-	RATING_ROAD_NEEDED_HOSTILE    =            112, ///< "Hostile"
-	RATING_ROAD_NEEDED_PERMISSIVE = RATING_MINIMUM, ///< "Permissive" (local authority disabled)
+static constexpr int RATING_ROAD_DOWN_STEP_INNER = -50; ///< removing a roadpiece in the middle
+static constexpr int RATING_ROAD_DOWN_STEP_EDGE  = -18; ///< removing a roadpiece at the edge
+static constexpr int RATING_ROAD_MINIMUM = -100; ///< minimum rating after removing town owned road
+static constexpr int RATING_ROAD_NEEDED_LENIENT = 16; ///< rating needed, "Lenient" difficulty settings
+static constexpr int RATING_ROAD_NEEDED_NEUTRAL = 64; ///< "Neutral"
+static constexpr int RATING_ROAD_NEEDED_HOSTILE = 112; ///< "Hostile"
+static constexpr int RATING_ROAD_NEEDED_PERMISSIVE = RATING_MINIMUM; ///< "Permissive" (local authority disabled)
 
-	RATING_HOUSE_MINIMUM  = RATING_MINIMUM,
+static constexpr int RATING_HOUSE_MINIMUM  = RATING_MINIMUM;
 
-	RATING_BRIBE_UP_STEP = 200,
-	RATING_BRIBE_MAXIMUM = 800,
-	RATING_BRIBE_DOWN_TO = -50        // XXX SHOULD BE SOMETHING LOWER?
-};
+static constexpr int RATING_BRIBE_UP_STEP = 200;
+static constexpr int RATING_BRIBE_MAXIMUM = 800;
+static constexpr int RATING_BRIBE_DOWN_TO = -50; // XXX SHOULD BE SOMETHING LOWER?
 
 /** Town Layouts. It needs to be 8bits, because we save and load it as such */
-enum TownLayout : byte {
+enum TownLayout : uint8_t {
 	TL_BEGIN = 0,
 	TL_ORIGINAL = 0,     ///< Original algorithm (min. 1 distance between roads)
 	TL_BETTER_ROADS,     ///< Extended original algorithm (min. 2 distance between roads)
@@ -91,7 +90,7 @@ enum TownLayout : byte {
 DECLARE_ENUM_AS_ADDABLE(TownLayout)
 
 /** Town founding setting values. It needs to be 8bits, because we save and load it as such */
-enum TownFounding : byte {
+enum TownFounding : uint8_t {
 	TF_BEGIN = 0,     ///< Used for iterations and limit testing
 	TF_FORBIDDEN = 0, ///< Forbidden
 	TF_ALLOWED,       ///< Allowed
@@ -100,7 +99,7 @@ enum TownFounding : byte {
 };
 
 /** Town cargo generation modes */
-enum TownCargoGenMode : byte {
+enum TownCargoGenMode : uint8_t {
 	TCGM_BEGIN = 0,
 	TCGM_ORIGINAL = 0,  ///< Original algorithm (quadratic cargo by population)
 	TCGM_BITCOUNT,      ///< Bit-counted algorithm (normal distribution from individual house population)

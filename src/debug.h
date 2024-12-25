@@ -34,7 +34,7 @@
  * @param level The maximum debug level this message should be shown at. When the debug level for this category is set lower, then the message will not be shown.
  * @param format_string The formatting string of the message.
  */
-#define Debug(category, level, format_string, ...) do { if ((level) == 0 || _debug_ ## category ## _level >= (level)) DebugPrint(#category, level, fmt::format(FMT_STRING(format_string), ## __VA_ARGS__)); } while (false)
+#define Debug(category, level, format_string, ...) do { if ((level) == 0 || _debug_ ## category ## _level >= (level)) DebugPrint(#category, level, fmt::format(FMT_STRING(format_string) __VA_OPT__(,) __VA_ARGS__)); } while (false)
 void DebugPrint(const char *category, int level, const std::string &message);
 
 extern int _debug_driver_level;
@@ -44,7 +44,6 @@ extern int _debug_misc_level;
 extern int _debug_net_level;
 extern int _debug_sprite_level;
 extern int _debug_oldloader_level;
-extern int _debug_npf_level;
 extern int _debug_yapf_level;
 extern int _debug_fontcache_level;
 extern int _debug_script_level;
@@ -59,9 +58,6 @@ extern int _debug_random_level;
 void DumpDebugFacilityNames(std::back_insert_iterator<std::string> &output_iterator);
 void SetDebugString(const char *s, void (*error_func)(const std::string &));
 std::string GetDebugString();
-
-/* Shorter form for passing filename and linenumber */
-#define FILE_LINE __FILE__, __LINE__
 
 /** TicToc profiling.
  * Usage:
@@ -97,7 +93,7 @@ struct TicToc {
 };
 
 void ShowInfoI(const std::string &str);
-#define ShowInfo(format_string, ...) ShowInfoI(fmt::format(FMT_STRING(format_string), ## __VA_ARGS__))
+#define ShowInfo(format_string, ...) ShowInfoI(fmt::format(FMT_STRING(format_string) __VA_OPT__(,) __VA_ARGS__))
 
 std::string GetLogPrefix(bool force = false);
 

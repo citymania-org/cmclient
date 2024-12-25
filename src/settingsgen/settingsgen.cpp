@@ -15,10 +15,7 @@
 #include "../core/mem_func.hpp"
 #include "../error_func.h"
 
-#if !defined(_WIN32) || defined(__CYGWIN__)
-#include <unistd.h>
-#include <sys/stat.h>
-#endif
+#include <filesystem>
 
 #include "../safeguards.h"
 
@@ -159,17 +156,17 @@ struct SettingsIniFile : IniLoadFile {
 	{
 	}
 
-	FILE *OpenFile(const std::string &filename, Subdirectory, size_t *size) override
+	std::optional<FileHandle> OpenFile(const std::string &filename, Subdirectory, size_t *size) override
 	{
 		/* Open the text file in binary mode to prevent end-of-line translations
 		 * done by ftell() and friends, as defined by K&R. */
-		FILE *in = fopen(filename.c_str(), "rb");
-		if (in == nullptr) return nullptr;
+		auto in = FileHandle::Open(filename, "rb");
+		if (!in.has_value()) return in;
 
-		fseek(in, 0L, SEEK_END);
-		*size = ftell(in);
+		fseek(*in, 0L, SEEK_END);
+		*size = ftell(*in);
+		fseek(*in, 0L, SEEK_SET); // Seek back to the start of the file.
 
-		fseek(in, 0L, SEEK_SET); // Seek back to the start of the file.
 		return in;
 	}
 
@@ -304,7 +301,7 @@ static void DumpSections(const IniLoadFile &ifile)
 	/* Output every group, using its name as template name. */
 	for (const IniGroup &grp : ifile.groups) {
 		/* Exclude special group names. */
-		if (std::find(std::begin(special_group_names), std::end(special_group_names), grp.name) != std::end(special_group_names)) continue;
+		if (std::ranges::find(special_group_names, grp.name) != std::end(special_group_names)) continue;
 
 		const IniItem *template_item = templates_grp->GetItem(grp.name); // Find template value.
 		if (template_item == nullptr || !template_item->value.has_value()) {
@@ -322,29 +319,27 @@ static void DumpSections(const IniLoadFile &ifile)
 }
 
 /**
- * Copy a file to the output.
- * @param fname Filename of file to copy.
+ * Append a file to the output stream.
+ * @param fname Filename of file to append.
  * @param out_fp Output stream to write to.
  */
-static void CopyFile(const char *fname, FILE *out_fp)
+static void AppendFile(const char *fname, FILE *out_fp)
 {
 	if (fname == nullptr) return;
 
-	FILE *in_fp = fopen(fname, "r");
-	if (in_fp == nullptr) {
+	auto in_fp = FileHandle::Open(fname, "r");
+	if (!in_fp.has_value()) {
 		FatalError("Cannot open file {} for copying", fname);
 	}
 
 	char buffer[4096];
 	size_t length;
 	do {
-		length = fread(buffer, 1, lengthof(buffer), in_fp);
+		length = fread(buffer, 1, lengthof(buffer), *in_fp);
 		if (fwrite(buffer, 1, length, out_fp) != length) {
 			FatalError("Cannot copy file");
 		}
 	} while (length == lengthof(buffer));
-
-	fclose(in_fp);
 }
 
 /**
@@ -355,12 +350,11 @@ static void CopyFile(const char *fname, FILE *out_fp)
  */
 static bool CompareFiles(const char *n1, const char *n2)
 {
-	FILE *f2 = fopen(n2, "rb");
-	if (f2 == nullptr) return false;
+	auto f2 = FileHandle::Open(n2, "rb");
+	if (!f2.has_value()) return false;
 
-	FILE *f1 = fopen(n1, "rb");
-	if (f1 == nullptr) {
-		fclose(f2);
+	auto f1 = FileHandle::Open(n1, "rb");
+	if (!f1.has_value()) {
 		FatalError("can't open {}", n1);
 	}
 
@@ -368,29 +362,24 @@ static bool CompareFiles(const char *n1, const char *n2)
 	do {
 		char b1[4096];
 		char b2[4096];
-		l1 = fread(b1, 1, sizeof(b1), f1);
-		l2 = fread(b2, 1, sizeof(b2), f2);
+		l1 = fread(b1, 1, sizeof(b1), *f1);
+		l2 = fread(b2, 1, sizeof(b2), *f2);
 
 		if (l1 != l2 || memcmp(b1, b2, l1) != 0) {
-			fclose(f2);
-			fclose(f1);
 			return false;
 		}
 	} while (l1 != 0);
 
-	fclose(f2);
-	fclose(f1);
 	return true;
 }
 
 /** Options of settingsgen. */
 static const OptionData _opts[] = {
-	  GETOPT_NOVAL(     'h', "--help"),
-	GETOPT_GENERAL('h', '?', nullptr, ODF_NO_VALUE),
-	  GETOPT_VALUE(     'o', "--output"),
-	  GETOPT_VALUE(     'b', "--before"),
-	  GETOPT_VALUE(     'a', "--after"),
-	GETOPT_END(),
+	{ .type = ODF_NO_VALUE, .id = 'h', .shortname = 'h', .longname = "--help" },
+	{ .type = ODF_NO_VALUE, .id = 'h', .shortname = '?' },
+	{ .type = ODF_HAS_VALUE, .id = 'o', .shortname = 'o', .longname = "--output" },
+	{ .type = ODF_HAS_VALUE, .id = 'b', .shortname = 'b', .longname = "--before" },
+	{ .type = ODF_HAS_VALUE, .id = 'a', .shortname = 'a', .longname = "--after" },
 };
 
 /**
@@ -436,7 +425,7 @@ int CDECL main(int argc, char *argv[])
 	const char *before_file = nullptr;
 	const char *after_file = nullptr;
 
-	GetOptData mgo(argc - 1, argv + 1, _opts);
+	GetOptData mgo(std::span(argv + 1, argc - 1), _opts);
 	for (;;) {
 		int i = mgo.GetOpt();
 		if (i == -1) break;
@@ -473,37 +462,49 @@ int CDECL main(int argc, char *argv[])
 	_stored_output.Clear();
 	_post_amble_output.Clear();
 
-	for (int i = 0; i < mgo.numleft; i++) ProcessIniFile(mgo.argv[i]);
+	for (auto &argument : mgo.arguments) ProcessIniFile(argument);
 
 	/* Write output. */
 	if (output_file == nullptr) {
-		CopyFile(before_file, stdout);
+		AppendFile(before_file, stdout);
 		_stored_output.Write(stdout);
 		_post_amble_output.Write(stdout);
-		CopyFile(after_file, stdout);
+		AppendFile(after_file, stdout);
 	} else {
 		static const char * const tmp_output = "tmp2.xxx";
 
-		FILE *fp = fopen(tmp_output, "w");
-		if (fp == nullptr) {
+		auto fp = FileHandle::Open(tmp_output, "w");
+		if (!fp.has_value()) {
 			FatalError("Cannot open file {}", tmp_output);
 		}
-		CopyFile(before_file, fp);
-		_stored_output.Write(fp);
-		_post_amble_output.Write(fp);
-		CopyFile(after_file, fp);
-		fclose(fp);
+		AppendFile(before_file, *fp);
+		_stored_output.Write(*fp);
+		_post_amble_output.Write(*fp);
+		AppendFile(after_file, *fp);
+		fp.reset();
 
+		std::error_code error_code;
 		if (CompareFiles(tmp_output, output_file)) {
 			/* Files are equal. tmp2.xxx is not needed. */
-			unlink(tmp_output);
+			std::filesystem::remove(tmp_output, error_code);
 		} else {
 			/* Rename tmp2.xxx to output file. */
-#if defined(_WIN32)
-			unlink(output_file);
-#endif
-			if (rename(tmp_output, output_file) == -1) FatalError("rename() failed");
+			std::filesystem::rename(tmp_output, output_file, error_code);
+			if (error_code) FatalError("rename({}, {}) failed: {}", tmp_output, output_file, error_code.message());
 		}
 	}
 	return 0;
+}
+
+/**
+ * Simplified FileHandle::Open which ignores OTTD2FS. Required as settingsgen does not include all of the fileio system.
+ * @param filename UTF-8 encoded filename to open.
+ * @param mode Mode to open file.
+ * @return FileHandle, or std::nullopt on failure.
+ */
+std::optional<FileHandle> FileHandle::Open(const std::string &filename, const std::string &mode)
+{
+	auto f = fopen(filename.c_str(), mode.c_str());
+	if (f == nullptr) return std::nullopt;
+	return FileHandle(f);
 }

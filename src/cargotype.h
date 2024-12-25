@@ -18,7 +18,7 @@
 #include "core/bitmath_func.hpp"
 
 /** Town growth effect when delivering cargo. */
-enum TownAcceptanceEffect : byte {
+enum TownAcceptanceEffect : uint8_t {
 	TAE_BEGIN = 0,
 	TAE_NONE = TAE_BEGIN, ///< Cargo has no effect.
 	TAE_PASSENGERS, ///< Cargo behaves passenger-like.
@@ -31,7 +31,7 @@ enum TownAcceptanceEffect : byte {
 };
 
 /** Town effect when producing cargo. */
-enum TownProductionEffect : byte {
+enum TownProductionEffect : uint8_t {
 	TPE_NONE, ///< Town will not produce this cargo type.
 	TPE_PASSENGERS, ///< Cargo behaves passenger-like for production.
 	TPE_MAIL, ///< Cargo behaves mail-like for production.
@@ -45,7 +45,7 @@ enum TownProductionEffect : byte {
 };
 
 /** Cargo classes. */
-enum CargoClass {
+enum CargoClass : uint16_t {
 	CC_NOAVAILABLE  = 0,       ///< No cargo class has been specified
 	CC_PASSENGERS   = 1 <<  0, ///< Passengers
 	CC_MAIL         = 1 <<  1, ///< Mail
@@ -57,29 +57,37 @@ enum CargoClass {
 	CC_REFRIGERATED = 1 <<  7, ///< Refrigerated cargo (Food, Fruit)
 	CC_HAZARDOUS    = 1 <<  8, ///< Hazardous cargo (Nuclear Fuel, Explosives, etc.)
 	CC_COVERED      = 1 <<  9, ///< Covered/Sheltered Freight (Transportation in Box Vans, Silo Wagons, etc.)
+	CC_OVERSIZED    = 1 << 10, ///< Oversized (stake/flatbed wagon)
+	CC_POWDERIZED   = 1 << 11, ///< Powderized, moist protected (powder/silo wagon)
+	CC_NOT_POURABLE = 1 << 12, ///< Not Pourable (open wagon, but not hopper wagon)
+	CC_POTABLE      = 1 << 13, ///< Potable / food / clean.
+	CC_NON_POTABLE  = 1 << 14, ///< Non-potable / non-food / dirty.
 	CC_SPECIAL      = 1 << 15, ///< Special bit used for livery refit tricks instead of normal cargoes.
 };
 
-static const byte INVALID_CARGO_BITNUM = 0xFF; ///< Constant representing invalid cargo
+/** Bitmask of cargo classes. */
+using CargoClasses = uint16_t;
+
+static const uint8_t INVALID_CARGO_BITNUM = 0xFF; ///< Constant representing invalid cargo
 
 static const uint TOWN_PRODUCTION_DIVISOR = 256;
 
 /** Specification of a cargo type. */
 struct CargoSpec {
 	CargoLabel label;                ///< Unique label of the cargo type.
-	uint8_t bitnum{INVALID_CARGO_BITNUM}; ///< Cargo bit number, is #INVALID_CARGO_BITNUM for a non-used spec.
+	uint8_t bitnum = INVALID_CARGO_BITNUM; ///< Cargo bit number, is #INVALID_CARGO_BITNUM for a non-used spec.
 	uint8_t legend_colour;
 	uint8_t rating_colour;
 	uint8_t weight;                    ///< Weight of a single unit of this cargo type in 1/16 ton (62.5 kg).
-	uint16_t multiplier{0x100}; ///< Capacity multiplier for vehicles. (8 fractional bits)
-	uint16_t classes;                  ///< Classes of this cargo type. @see CargoClass
+	uint16_t multiplier = 0x100; ///< Capacity multiplier for vehicles. (8 fractional bits)
+	CargoClasses classes; ///< Classes of this cargo type. @see CargoClass
 	int32_t initial_payment;           ///< Initial payment rate before inflation is applied.
 	uint8_t transit_periods[2];
 
 	bool is_freight;                 ///< Cargo type is considered to be freight (affects train freight multiplier).
 	TownAcceptanceEffect town_acceptance_effect; ///< The effect that delivering this cargo type has on towns. Also affects destination of subsidies.
-	TownProductionEffect town_production_effect{INVALID_TPE}; ///< The effect on town cargo production.
-	uint16_t town_production_multiplier{TOWN_PRODUCTION_DIVISOR}; ///< Town production multipler, if commanded by TownProductionEffect.
+	TownProductionEffect town_production_effect = INVALID_TPE; ///< The effect on town cargo production.
+	uint16_t town_production_multiplier = TOWN_PRODUCTION_DIVISOR; ///< Town production multipler, if commanded by TownProductionEffect.
 	uint8_t callback_mask;             ///< Bitmask of cargo callbacks that have to be called
 
 	StringID name;                   ///< Name of this type of cargo.
@@ -205,7 +213,8 @@ extern CargoTypes _standard_cargo_mask;
 void SetupCargoForClimate(LandscapeID l);
 bool IsDefaultCargo(CargoID cid);
 void BuildCargoLabelMap();
-CargoID GetCargoIDByBitnum(uint8_t bitnum);
+
+std::optional<std::string> BuildCargoAcceptanceString(const CargoArray &acceptance, StringID label);
 
 inline CargoID GetCargoIDByLabel(CargoLabel label)
 {

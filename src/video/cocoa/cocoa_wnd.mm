@@ -65,8 +65,6 @@ struct TouchBarButton {
 	SpriteID                 sprite;
 	MainToolbarHotkeys       hotkey;
 	NSString                *fallback_text;
-
-	bool operator ==(const NSTouchBarItemIdentifier other) const { return this->key == other; }
 };
 
 /* 9 items can be displayed on the touch bar when using default buttons. */
@@ -260,6 +258,18 @@ static NSImage *NSImageFromSprite(SpriteID sprite_id, ZoomLevel zoom)
 - (void)unregisterObserver
 {
 	[ [ NSNotificationCenter defaultCenter ] removeObserver:self ];
+}
+
+/**
+ * Indicates to AppKit that OpenTTD is compatible with secure state storage.
+ * Starting with macOS 12, macOS expects us to be better compatible with NSSecureCoding, as to prevent attacks through restorable storage.
+ * Starting with 14, macOS logs a warning if we don't implement this ourselves. Since OpenTTD does not (yet) make use of restorable state, we simply don't care what happens with it.
+ *
+ * Explained here: https://developer.apple.com/documentation/foundation/nssecurecoding
+ */
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication*) sender
+{
+	return YES;
 }
 @end
 
@@ -481,7 +491,7 @@ void CocoaDialog(const char *title, const char *message, const char *buttonLabel
 - (void)touchBarButtonAction:(id)sender
 {
 	NSButton *btn = (NSButton *)sender;
-	if (auto item = std::find(_touchbar_buttons.cbegin(), _touchbar_buttons.cend(), (NSTouchBarItemIdentifier)btn.identifier); item != _touchbar_buttons.cend()) {
+	if (auto item = std::ranges::find(_touchbar_buttons, (NSTouchBarItemIdentifier)btn.identifier, &TouchBarButton::key); item != _touchbar_buttons.end()) {
 		HandleToolbarHotkey(item->hotkey);
 	}
 }
@@ -507,8 +517,8 @@ void CocoaDialog(const char *title, const char *message, const char *buttonLabel
 
 - (nullable NSTouchBarItem *)touchBar:(NSTouchBar *)touchBar makeItemForIdentifier:(NSTouchBarItemIdentifier)identifier
 {
-	auto item = std::find(_touchbar_buttons.cbegin(), _touchbar_buttons.cend(), identifier);
-	assert(item != _touchbar_buttons.cend());
+	auto item = std::ranges::find(_touchbar_buttons, identifier, &TouchBarButton::key);
+	assert(item != _touchbar_buttons.end());
 
 	NSButton *button = [ NSButton buttonWithTitle:item->fallback_text target:self action:@selector(touchBarButtonAction:) ];
 	button.identifier = identifier;
@@ -528,8 +538,8 @@ void CocoaDialog(const char *title, const char *message, const char *buttonLabel
 
 	/* Re-create button images from OTTD sprites. */
 	for (NSTouchBarItemIdentifier ident in self.touchBar.itemIdentifiers) {
-		auto item = std::find(_touchbar_buttons.cbegin(), _touchbar_buttons.cend(), ident);
-		if (item == _touchbar_buttons.cend()) continue;
+		auto item = std::ranges::find(_touchbar_buttons, ident, &TouchBarButton::key);
+		if (item == _touchbar_buttons.end()) continue;
 
 		NSCustomTouchBarItem *tb_item = [ self.touchBar itemForIdentifier:ident ];
 		NSButton *button = tb_item.view;
@@ -753,8 +763,9 @@ void CocoaDialog(const char *title, const char *message, const char *buttonLabel
 		deltaY = [ event deltaY ] * 5;
 	}
 
-	_cursor.h_wheel -= (int)(deltaX * _settings_client.gui.scrollwheel_multiplier);
-	_cursor.v_wheel -= (int)(deltaY * _settings_client.gui.scrollwheel_multiplier);
+	_cursor.h_wheel -= static_cast<float>(deltaX * _settings_client.gui.scrollwheel_multiplier);
+	_cursor.v_wheel -= static_cast<float>(deltaY * _settings_client.gui.scrollwheel_multiplier);
+	_cursor.wheel_moved = true;
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event
@@ -789,7 +800,12 @@ void CocoaDialog(const char *title, const char *message, const char *buttonLabel
 		case QZ_LEFT:  SB(_dirkeys, 0, 1, down); break;
 		case QZ_RIGHT: SB(_dirkeys, 2, 1, down); break;
 
-		case QZ_TAB: _tab_is_down = down; break;
+		case QZ_TAB:
+			_tab_is_down = down;
+			if (down && EditBoxInGlobalFocus()) {
+				HandleKeypress(WKC_TAB, unicode);
+			}
+			break;
 
 		case QZ_RETURN:
 		case QZ_f:
@@ -813,7 +829,7 @@ void CocoaDialog(const char *title, const char *message, const char *buttonLabel
 	BOOL interpret_keys = YES;
 	if (down) {
 		/* Map keycode to OTTD code. */
-		auto vk = std::find_if(std::begin(_vk_mapping), std::end(_vk_mapping), [=](const CocoaVkMapping &m) { return m.vk_from == keycode; });
+		auto vk = std::ranges::find(_vk_mapping, keycode, &CocoaVkMapping::vk_from);
 		uint32_t pressed_key = vk != std::end(_vk_mapping) ? vk->map_to : 0;
 
 		if (modifiers & NSEventModifierFlagShift)   pressed_key |= WKC_SHIFT;

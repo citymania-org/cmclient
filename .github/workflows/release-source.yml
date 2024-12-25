@@ -18,7 +18,7 @@ jobs:
   source:
     name: Source
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     outputs:
       version: ${{ steps.metadata.outputs.version }}
@@ -127,7 +127,7 @@ jobs:
         fi
 
         mkdir -p build/bundles
-        cp .changelog build/bundles/changelog.txt
+        cp .changelog build/bundles/changelog.md
         cp .release_date build/bundles/released.txt
         cp README.md build/bundles/README.md
         echo "::endgroup::"

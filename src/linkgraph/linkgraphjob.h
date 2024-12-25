@@ -101,7 +101,7 @@ public:
 		 */
 		EdgeAnnotation &operator[](NodeID to)
 		{
-			auto it = std::find_if(this->edges.begin(), this->edges.end(), [=] (const EdgeAnnotation &e) { return e.base.dest_node == to; });
+			auto it = std::ranges::find_if(this->edges, [=] (const EdgeAnnotation &e) { return e.base.dest_node == to; });
 			assert(it != this->edges.end());
 			return *it;
 		}
@@ -113,7 +113,7 @@ public:
 		 */
 		const EdgeAnnotation &operator[](NodeID to) const
 		{
-			auto it = std::find_if(this->edges.begin(), this->edges.end(), [=] (const EdgeAnnotation &e) { return e.base.dest_node == to; });
+			auto it = std::ranges::find_if(this->edges, [=] (const EdgeAnnotation &e) { return e.base.dest_node == to; });
 			assert(it != this->edges.end());
 			return *it;
 		}
@@ -346,14 +346,12 @@ public:
 
 protected:
 
-	/**
+	/*
 	 * Some boundaries to clamp against in order to avoid integer overflows.
 	 */
-	enum PathCapacityBoundaries {
-		PATH_CAP_MULTIPLIER = 16,
-		PATH_CAP_MIN_FREE = (INT_MIN + 1) / PATH_CAP_MULTIPLIER,
-		PATH_CAP_MAX_FREE = (INT_MAX - 1) / PATH_CAP_MULTIPLIER
-	};
+	static constexpr int PATH_CAP_MULTIPLIER = 16;
+	static constexpr int PATH_CAP_MIN_FREE = (INT_MIN + 1) / PATH_CAP_MULTIPLIER;
+	static constexpr int PATH_CAP_MAX_FREE = (INT_MAX - 1) / PATH_CAP_MULTIPLIER;
 
 	uint distance;     ///< Sum(distance of all legs up to this one).
 	uint capacity;     ///< This capacity is min(capacity) fom all edges.

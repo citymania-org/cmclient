@@ -28,14 +28,14 @@ bool IsReleasedVersion()
  * - "<tag>", like "<major>.<minor>.<build>[-RC<rc>]",
  * - "<commitdate>-g<shorthash><modified>" in "master",
  * - "<commitdate>-<branch>-g<shorthash><modified>" in other branches, or
- * - "norev000", if the version is unknown.
+ * - "norev0000", if the version is unknown.
  *
  * The major, minor and build are the numbers that describe releases of
  * OpenTTD (like 0.5.3). "-RC" is used to flag release candidates.
  *
  * <modified> shows a "M", if the binary is made from modified source code.
  */
-const char _openttd_revision[] = "14.1";
+const char _openttd_revision[] = "15.0-beta1";
 
 /**
  * The text version of OpenTTD's build date.
@@ -48,7 +48,7 @@ const char _openttd_build_date[] = __DATE__ " " __TIME__;
 /**
  * The git revision hash of this version.
  */
-const char _openttd_revision_hash[] = "61342620bc4c0971b28b3578379b53d04d2f11f1";
+const char _openttd_revision_hash[] = "cd0e1fc47de2095cc0642d73ad5d42db35a63d43";
 
 /**
  * The year of this version.
@@ -63,21 +63,21 @@ const char _openttd_revision_year[] = "2024";
  * (compiling from sources without any version control software)
  * and 2 is for modified revision.
  */
-const byte _openttd_revision_modified = 0;
+const uint8_t _openttd_revision_modified = 0;
 
 /**
  * Indicate whether this is a tagged version.
  * If this is non-0, then _openttd_revision is the name of the tag,
  * and the version is likely a beta, release candidate, or real release.
  */
-const byte _openttd_revision_tagged = 1;
+const uint8_t _openttd_revision_tagged = 1;
 
 /**
  * To check compatibility of BaNaNaS content, this version string is used.
  * It should never contain things like "beta", but only the release version
  * we are compatible with.
  */
-const char _openttd_content_version[] = "14.0";
+const char _openttd_content_version[] = "15.0";
 
 /**
  * The NewGRF revision of OTTD:
@@ -95,4 +95,4 @@ const char _openttd_content_version[] = "14.0";
  * the "patch" part of the version. To make sure "1.11.0" is smaller than "12.0", we
  * have to adjust the major by 16.
  */
-const uint32_t _openttd_newgrf_version = (14 + 16) << 24 | 0 << 20 | 1 << 19 | 28004;
+const uint32_t _openttd_newgrf_version = (15 + 16) << 24 | 0 << 20 | 0 << 19 | 28004;

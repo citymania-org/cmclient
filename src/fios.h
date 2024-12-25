@@ -78,7 +78,7 @@ extern LoadCheckData _load_check_data;
 /** Deals with finding savegames */
 struct FiosItem {
 	FiosType type;
-	uint64_t mtime;
+	int64_t mtime;
 	std::string title;
 	std::string name;
 	bool operator< (const FiosItem &other) const;
@@ -107,6 +107,7 @@ void ShowSaveLoadDialog(AbstractFileType abstract_filetype, SaveLoadOperation fo
 void FiosGetSavegameList(SaveLoadOperation fop, bool show_dirs, FileList &file_list);
 void FiosGetScenarioList(SaveLoadOperation fop, bool show_dirs, FileList &file_list);
 void FiosGetHeightmapList(SaveLoadOperation fop, bool show_dirs, FileList &file_list);
+void FiosGetTownDataList(SaveLoadOperation fop, bool show_dirs, FileList &file_list);
 
 bool FiosBrowseTo(const FiosItem *item);
 

@@ -17,12 +17,10 @@
  * Base values for flight levels above ground level for 'normal' flight and holding patterns.
  * Due to speed and direction, the actual flight level may be higher.
  */
-enum AircraftFlyingAltitude {
-	AIRCRAFT_MIN_FLYING_ALTITUDE        = 120, ///< Minimum flying altitude above tile.
-	AIRCRAFT_MAX_FLYING_ALTITUDE        = 360, ///< Maximum flying altitude above tile.
-	PLANE_HOLD_MAX_FLYING_ALTITUDE      = 150, ///< holding flying altitude above tile of planes.
-	HELICOPTER_HOLD_MAX_FLYING_ALTITUDE = 184  ///< holding flying altitude above tile of helicopters.
-};
+static constexpr int AIRCRAFT_MIN_FLYING_ALTITUDE = 120; ///< Minimum flying altitude above tile.
+static constexpr int AIRCRAFT_MAX_FLYING_ALTITUDE = 360; ///< Maximum flying altitude above tile.
+static constexpr int PLANE_HOLD_MAX_FLYING_ALTITUDE = 150; ///< holding flying altitude above tile of planes.
+static constexpr int HELICOPTER_HOLD_MAX_FLYING_ALTITUDE = 184; ///< holding flying altitude above tile of helicopters.
 
 struct Aircraft;
 
@@ -73,14 +71,14 @@ struct AircraftCache {
  */
 struct Aircraft final : public SpecializedVehicle<Aircraft, VEH_AIRCRAFT> {
 	uint16_t crashed_counter;        ///< Timer for handling crash animations.
-	byte pos;                      ///< Next desired position of the aircraft.
-	byte previous_pos;             ///< Previous desired position of the aircraft.
+	uint8_t pos;                      ///< Next desired position of the aircraft.
+	uint8_t previous_pos;             ///< Previous desired position of the aircraft.
 	StationID targetairport;       ///< Airport to go to next.
-	byte state;                    ///< State of the airport. @see AirportMovementStates
+	uint8_t state;                    ///< State of the airport. @see AirportMovementStates
 	Direction last_direction;
-	byte number_consecutive_turns; ///< Protection to prevent the aircraft of making a lot of turns in order to reach a specific point.
-	byte turn_counter;             ///< Ticks between each turn to prevent > 45 degree turns.
-	byte flags;                    ///< Aircraft flags. @see AirVehicleFlags
+	uint8_t number_consecutive_turns; ///< Protection to prevent the aircraft of making a lot of turns in order to reach a specific point.
+	uint8_t turn_counter;             ///< Ticks between each turn to prevent > 45 degree turns.
+	uint8_t flags;                    ///< Aircraft flags. @see AirVehicleFlags
 
 	AircraftCache acache;
 

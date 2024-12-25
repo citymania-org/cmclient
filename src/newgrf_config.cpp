@@ -34,10 +34,7 @@
  * Create a new GRFConfig.
  * @param filename Set the filename of this GRFConfig to filename.
  */
-GRFConfig::GRFConfig(const std::string &filename) :
-	filename(filename), num_valid_params(ClampTo<uint8_t>(GRFConfig::param.size()))
-{
-}
+GRFConfig::GRFConfig(const std::string &filename) : filename(filename), num_valid_params(MAX_NUM_PARAMS) {}
 
 /**
  * Create a new GRFConfig that is a deep copy of an existing config.
@@ -57,19 +54,17 @@ GRFConfig::GRFConfig(const GRFConfig &config) :
 	flags(config.flags & ~(1 << GCF_COPY)),
 	status(config.status),
 	grf_bugs(config.grf_bugs),
-	param(config.param),
-	num_params(config.num_params),
 	num_valid_params(config.num_valid_params),
 	palette(config.palette),
+	has_param_defaults(config.has_param_defaults),
 	param_info(config.param_info),
-	has_param_defaults(config.has_param_defaults)
+	param(config.param)
 {
 }
 
-void GRFConfig::SetParams(const std::vector<uint32_t> &pars)
+void GRFConfig::SetParams(std::span<const uint32_t> pars)
 {
-	this->num_params = static_cast<uint8_t>(std::min(this->param.size(), pars.size()));
-	std::copy(pars.begin(), pars.begin() + this->num_params, this->param.begin());
+	this->param.assign(std::begin(pars), std::end(pars));
 }
 
 /**
@@ -86,7 +81,6 @@ bool GRFConfig::IsCompatible(uint32_t old_version) const
  */
 void GRFConfig::CopyParams(const GRFConfig &src)
 {
-	this->num_params = src.num_params;
 	this->param = src.param;
 }
 
@@ -122,14 +116,13 @@ const char *GRFConfig::GetURL() const
 /** Set the default value for all parameters as specified by action14. */
 void GRFConfig::SetParameterDefaults()
 {
-	this->num_params = 0;
-	this->param = {};
+	this->param.clear();
 
 	if (!this->has_param_defaults) return;
 
-	for (uint i = 0; i < this->param_info.size(); i++) {
-		if (!this->param_info[i]) continue;
-		this->param_info[i]->SetValue(this, this->param_info[i]->def_value);
+	for (const auto &info : this->param_info) {
+		if (!info.has_value()) continue;
+		this->SetValue(info.value(), info->def_value);
 	}
 }
 
@@ -176,49 +169,40 @@ GRFError::GRFError(StringID severity, StringID message) : message(message), seve
 }
 
 /**
- * Create a new empty GRFParameterInfo object.
- * @param nr The newgrf parameter that is changed.
- */
-GRFParameterInfo::GRFParameterInfo(uint nr) :
-	name(),
-	desc(),
-	type(PTYPE_UINT_ENUM),
-	min_value(0),
-	max_value(UINT32_MAX),
-	def_value(0),
-	param_nr(nr),
-	first_bit(0),
-	num_bit(32),
-	value_names(),
-	complete_labels(false)
-{}
-
-/**
- * Get the value of this user-changeable parameter from the given config.
- * @param config The GRFConfig to get the value from.
+ * Get the value of the given user-changeable parameter.
+ * @param info The grf parameter info to get the value for.
  * @return The value of this parameter.
  */
-uint32_t GRFParameterInfo::GetValue(struct GRFConfig *config) const
+uint32_t GRFConfig::GetValue(const GRFParameterInfo &info) const
 {
+	/* If the parameter is not set then it must be 0. */
+	if (info.param_nr >= std::size(this->param)) return 0;
+
 	/* GB doesn't work correctly with nbits == 32, so handle that case here. */
-	if (this->num_bit == 32) return config->param[this->param_nr];
-	return GB(config->param[this->param_nr], this->first_bit, this->num_bit);
+	if (info.num_bit == 32) return this->param[info.param_nr];
+
+	return GB(this->param[info.param_nr], info.first_bit, info.num_bit);
 }
 
 /**
- * Set the value of this user-changeable parameter in the given config.
- * @param config The GRFConfig to set the value in.
+ * Set the value of the given user-changeable parameter.
+ * @param info The grf parameter info to set the value for.
  * @param value The new value.
  */
-void GRFParameterInfo::SetValue(struct GRFConfig *config, uint32_t value)
+void GRFConfig::SetValue(const GRFParameterInfo &info, uint32_t value)
 {
+	value = Clamp(value, info.min_value, info.max_value);
+
+	/* Allocate the new parameter if it's not already present. */
+	if (info.param_nr >= std::size(this->param)) this->param.resize(info.param_nr + 1);
+
 	/* SB doesn't work correctly with nbits == 32, so handle that case here. */
-	if (this->num_bit == 32) {
-		config->param[this->param_nr] = value;
+	if (info.num_bit == 32) {
+		this->param[info.param_nr] = value;
 	} else {
-		SB(config->param[this->param_nr], this->first_bit, this->num_bit, value);
+		SB(this->param[info.param_nr], info.first_bit, info.num_bit, value);
 	}
-	config->num_params = std::max<uint>(config->num_params, this->param_nr + 1);
+
 	SetWindowDirty(WC_GAME_OPTIONS, WN_GAME_OPTIONS_NEWGRF_STATE);
 }
 
@@ -252,16 +236,16 @@ void UpdateNewGRFConfigPalette(int32_t)
  * @param f GRF.
  * @return Size of the data section or SIZE_MAX if the file has no separate data section.
  */
-size_t GRFGetSizeOfDataSection(FILE *f)
+size_t GRFGetSizeOfDataSection(FileHandle &f)
 {
-	extern const byte _grf_cont_v2_sig[];
+	extern const uint8_t _grf_cont_v2_sig[];
 	static const uint header_len = 14;
 
-	byte data[header_len];
+	uint8_t data[header_len];
 	if (fread(data, 1, header_len, f) == header_len) {
 		if (data[0] == 0 && data[1] == 0 && MemCmpT(data + 2, _grf_cont_v2_sig, 8) == 0) {
 			/* Valid container version 2, get data section size. */
-			size_t offset = ((size_t)data[13] << 24) | ((size_t)data[12] << 16) | ((size_t)data[11] << 8) | (size_t)data[10];
+			size_t offset = (static_cast<size_t>(data[13]) << 24) | (static_cast<size_t>(data[12]) << 16) | (static_cast<size_t>(data[11]) << 8) | static_cast<size_t>(data[10]);
 			if (offset >= 1 * 1024 * 1024 * 1024) {
 				Debug(grf, 0, "Unexpectedly large offset for NewGRF");
 				/* Having more than 1 GiB of data is very implausible. Mostly because then
@@ -284,31 +268,27 @@ size_t GRFGetSizeOfDataSection(FILE *f)
  */
 static bool CalcGRFMD5Sum(GRFConfig *config, Subdirectory subdir)
 {
-	FILE *f;
 	Md5 checksum;
 	uint8_t buffer[1024];
 	size_t len, size;
 
 	/* open the file */
-	f = FioFOpenFile(config->filename, "rb", subdir, &size);
-	if (f == nullptr) return false;
+	auto f = FioFOpenFile(config->filename, "rb", subdir, &size);
+	if (!f.has_value()) return false;
 
-	long start = ftell(f);
-	size = std::min(size, GRFGetSizeOfDataSection(f));
+	long start = ftell(*f);
+	size = std::min(size, GRFGetSizeOfDataSection(*f));
 
-	if (start < 0 || fseek(f, start, SEEK_SET) < 0) {
-		FioFCloseFile(f);
+	if (start < 0 || fseek(*f, start, SEEK_SET) < 0) {
 		return false;
 	}
 
 	/* calculate md5sum */
-	while ((len = fread(buffer, 1, (size > sizeof(buffer)) ? sizeof(buffer) : size, f)) != 0 && size != 0) {
+	while ((len = fread(buffer, 1, (size > sizeof(buffer)) ? sizeof(buffer) : size, *f)) != 0 && size != 0) {
 		size -= len;
 		checksum.Append(buffer, len);
 	}
 	checksum.Finish(config->ident.md5sum);
-
-	FioFCloseFile(f);
 
 	return true;
 }
@@ -729,9 +709,9 @@ GRFConfig *GetGRFConfig(uint32_t grfid, uint32_t mask)
 std::string GRFBuildParamList(const GRFConfig *c)
 {
 	std::string result;
-	for (uint i = 0; i < c->num_params; i++) {
+	for (const uint32_t &value : c->param) {
 		if (!result.empty()) result += ' ';
-		result += std::to_string(c->param[i]);
+		result += std::to_string(value);
 	}
 	return result;
 }

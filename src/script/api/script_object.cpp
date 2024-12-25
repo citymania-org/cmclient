@@ -25,6 +25,21 @@
 
 #include "../../safeguards.h"
 
+void SimpleCountedObject::Release()
+{
+	int32_t res = --this->ref_count;
+	assert(res >= 0);
+	if (res == 0) {
+		try {
+			this->FinalRelease(); // may throw, for example ScriptTest/ExecMode
+		} catch (...) {
+			delete this;
+			throw;
+		}
+		delete this;
+	}
+}
+
 /**
  * Get the storage associated with the current ScriptInstance.
  * @return The storage.
@@ -241,7 +256,7 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 
 /* static */ void ScriptObject::SetCallbackVariable(int index, int value)
 {
-	if ((size_t)index >= GetStorage()->callback_value.size()) GetStorage()->callback_value.resize(index + 1);
+	if (static_cast<size_t>(index) >= GetStorage()->callback_value.size()) GetStorage()->callback_value.resize(index + 1);
 	GetStorage()->callback_value[index] = value;
 }
 

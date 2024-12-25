@@ -6,16 +6,21 @@
  */
 
 /**
- * @file ai_changelog.hpp Lists all changes / additions to the API.
+ * @page ai_changelog Lists all changes / additions to the API.
  *
  * Only new / renamed / deleted api functions will be listed here. A list of
  * bug fixes can be found in the normal changelog. Note that removed API
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
- * \b 14.0
+ * \b 15.0
  *
  * This version is not yet released. The following changes are not set in stone yet.
+ *
+ * API additions:
+ * \li AIEventVehicleCrashed::GetVictims
+ *
+ * \b 14.0
  *
  * API additions:
  * \li AITown::ROAD_LAYOUT_RANDOM
@@ -454,4 +459,18 @@
  *
  * \b 0.7.0
  * \li First stable release with the NoAI framework.
+ */
+
+/**
+ * @mainpage
+ *
+ * What's new?
+ * \li \ref ai_changelog
+ *
+ * Main classes:
+ * \li \ref AIInfo
+ * \li \ref AIController
+ *
+ * Detail topics:
+ * \li \ref script_ids
  */
