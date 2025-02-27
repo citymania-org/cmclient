@@ -235,9 +235,12 @@ static const uint MAX_FRAMES     = 64;
 		CONTEXT ctx;
 		memcpy(&ctx, ep->ContextRecord, sizeof(ctx));
 
-		/* Allocate space for symbol info. */
-		char sym_info_raw[sizeof(IMAGEHLP_SYMBOL64) + MAX_SYMBOL_LEN - 1];
-		IMAGEHLP_SYMBOL64 *sym_info = (IMAGEHLP_SYMBOL64*)sym_info_raw;
+		/* Allocate space for symbol info.
+		 * The total initialised size must be sufficient for a null-terminating char at sym_info->Name[sym_info->MaxNameLength],
+		 * SymGetSymFromAddr64 is not required to write a null-terminating char.
+		 * sizeof(IMAGEHLP_SYMBOL64) includes at least one char of the Name buffer. */
+		std::array<char, sizeof(IMAGEHLP_SYMBOL64) + MAX_SYMBOL_LEN> sym_info_raw{};
+		IMAGEHLP_SYMBOL64 *sym_info = reinterpret_cast<IMAGEHLP_SYMBOL64*>(sym_info_raw.data());
 		sym_info->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
 		sym_info->MaxNameLength = MAX_SYMBOL_LEN;
 
@@ -469,7 +472,7 @@ static INT_PTR CALLBACK CrashDialogFunc(HWND wnd, UINT msg, WPARAM wParam, LPARA
 			std::string crashlog = CrashLogWindows::current->survey.dump(4);
 			size_t crashlog_length = crashlog.size() + 1;
 			/* Reserve extra space for LF to CRLF conversion. */
-			crashlog_length += std::count(crashlog.begin(), crashlog.end(), '\n');
+			crashlog_length += std::ranges::count(crashlog, '\n');
 
 			const size_t filename_count = 4;
 			const size_t filename_buf_length = MAX_PATH + 1;
@@ -504,14 +507,14 @@ static INT_PTR CALLBACK CrashDialogFunc(HWND wnd, UINT msg, WPARAM wParam, LPARA
 				crash_desc_buf,
 				crash_desc_buf_length,
 				_crash_desc,
-				convert_to_fs(CrashLogWindows::current->crashlog_filename,   filename_buf + filename_buf_length * 0, filename_buf_length),
-				convert_to_fs(CrashLogWindows::current->crashdump_filename,  filename_buf + filename_buf_length * 1, filename_buf_length),
-				convert_to_fs(CrashLogWindows::current->savegame_filename,   filename_buf + filename_buf_length * 2, filename_buf_length),
-				convert_to_fs(CrashLogWindows::current->screenshot_filename, filename_buf + filename_buf_length * 3, filename_buf_length)
+				convert_to_fs(CrashLogWindows::current->crashlog_filename,   {filename_buf + filename_buf_length * 0, filename_buf_length}),
+				convert_to_fs(CrashLogWindows::current->crashdump_filename,  {filename_buf + filename_buf_length * 1, filename_buf_length}),
+				convert_to_fs(CrashLogWindows::current->savegame_filename,   {filename_buf + filename_buf_length * 2, filename_buf_length}),
+				convert_to_fs(CrashLogWindows::current->screenshot_filename, {filename_buf + filename_buf_length * 3, filename_buf_length})
 			);
 
 			SetDlgItemText(wnd, 10, crash_desc_buf);
-			SetDlgItemText(wnd, 11, convert_to_fs(crashlog_dos_nl, crashlog_buf, crashlog_length));
+			SetDlgItemText(wnd, 11, convert_to_fs(crashlog_dos_nl, {crashlog_buf, crashlog_length}));
 			SendDlgItemMessage(wnd, 11, WM_SETFONT, (WPARAM)GetStockObject(ANSI_FIXED_FONT), FALSE);
 			SetWndSize(wnd, -1);
 		} return TRUE;

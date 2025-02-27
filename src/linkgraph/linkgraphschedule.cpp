@@ -86,9 +86,9 @@ void LinkGraphSchedule::JoinNext()
  */
 /* static */ void LinkGraphSchedule::Run(LinkGraphJob *job)
 {
-	for (uint i = 0; i < lengthof(instance.handlers); ++i) {
+	for (const auto &handler : instance.handlers) {
 		if (job->IsJobAborted()) return;
-		instance.handlers[i]->Run(*job);
+		handler->Run(*job);
 	}
 
 	/*
@@ -143,12 +143,12 @@ void LinkGraphSchedule::ShiftDates(TimerGameEconomy::Date interval)
  */
 LinkGraphSchedule::LinkGraphSchedule()
 {
-	this->handlers[0] = new InitHandler;
-	this->handlers[1] = new DemandHandler;
-	this->handlers[2] = new MCFHandler<MCF1stPass>;
-	this->handlers[3] = new FlowMapper(false);
-	this->handlers[4] = new MCFHandler<MCF2ndPass>;
-	this->handlers[5] = new FlowMapper(true);
+	this->handlers[0] = std::make_unique<InitHandler>();
+	this->handlers[1] = std::make_unique<DemandHandler>();
+	this->handlers[2] = std::make_unique<MCFHandler<MCF1stPass>>();
+	this->handlers[3] = std::make_unique<FlowMapper>(false);
+	this->handlers[4] = std::make_unique<MCFHandler<MCF2ndPass>>();
+	this->handlers[5] = std::make_unique<FlowMapper>(true);
 }
 
 /**
@@ -157,9 +157,6 @@ LinkGraphSchedule::LinkGraphSchedule()
 LinkGraphSchedule::~LinkGraphSchedule()
 {
 	this->Clear();
-	for (uint i = 0; i < lengthof(this->handlers); ++i) {
-		delete this->handlers[i];
-	}
 }
 
 /**

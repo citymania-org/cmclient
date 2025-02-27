@@ -20,7 +20,7 @@
 /**
  * Type of news.
  */
-enum NewsType : byte {
+enum NewsType : uint8_t {
 	NT_ARRIVAL_COMPANY, ///< First vehicle arrived for company
 	NT_ARRIVAL_OTHER,   ///< First vehicle arrived for competitor
 	NT_ACCIDENT,        ///< An accident or disaster has occurred
@@ -49,7 +49,7 @@ enum NewsType : byte {
  * You have to make sure, #ChangeVehicleNews catches the DParams of your message.
  * This is NOT ensured by the references.
  */
-enum NewsReferenceType : byte {
+enum NewsReferenceType : uint8_t {
 	NR_NONE,      ///< Empty reference
 	NR_TILE,      ///< Reference tile.     Scroll to tile when clicking on the news.
 	NR_VEHICLE,   ///< Reference vehicle.  Scroll to vehicle when clicking on the news. Delete news when vehicle is deleted.
@@ -99,7 +99,7 @@ enum NewsDisplay {
  */
 struct NewsTypeData {
 	const char * const name;    ///< Name
-	const byte age;             ///< Maximum age of news items (in days)
+	const uint8_t age;             ///< Maximum age of news items (in days)
 	const SoundFx sound;        ///< Sound
 
 	/**
@@ -108,7 +108,7 @@ struct NewsTypeData {
 	 * @param age The maximum age for these messages.
 	 * @param sound The sound to play.
 	 */
-	NewsTypeData(const char *name, byte age, SoundFx sound) :
+	NewsTypeData(const char *name, uint8_t age, SoundFx sound) :
 		name(name),
 		age(age),
 		sound(sound)
@@ -126,8 +126,6 @@ struct NewsAllocatedData {
 
 /** Information about a single item of news. */
 struct NewsItem {
-	NewsItem *prev;               ///< Previous news item
-	NewsItem *next;               ///< Next news item
 	StringID string_id;           ///< Message text
 	TimerGameCalendar::Date date; ///< Calendar date to show for the news
 	TimerGameEconomy::Date economy_date; ///< Economy date of the news item, never shown but used to calculate age
@@ -139,17 +137,11 @@ struct NewsItem {
 	uint32_t ref1;                  ///< Reference 1 to some object: Used for a possible viewport, scrolling after clicking on the news, and for deleting the news when the object is deleted.
 	uint32_t ref2;                  ///< Reference 2 to some object: Used for scrolling after clicking on the news, and for deleting the news when the object is deleted.
 
-	std::unique_ptr<const NewsAllocatedData> data; ///< Custom data for the news item that will be deallocated (deleted) when the news item has reached its end.
+	std::unique_ptr<NewsAllocatedData> data; ///< Custom data for the news item that will be deallocated (deleted) when the news item has reached its end.
 
-	std::vector<StringParameterBackup> params; ///< Parameters for string resolving.
+	std::vector<StringParameterData> params; ///< Parameters for string resolving.
 
-	NewsItem(StringID string_id, NewsType type, NewsFlag flags, NewsReferenceType reftype1, uint32_t ref1, NewsReferenceType reftype2, uint32_t ref2, const NewsAllocatedData *data);
-};
-
-/** Container for a single string to be passed as NewsAllocatedData. */
-struct NewsStringData : NewsAllocatedData {
-	std::string string; ///< The string to retain.
-	NewsStringData(const std::string &str) : string(str) {}
+	NewsItem(StringID string_id, NewsType type, NewsFlag flags, NewsReferenceType reftype1, uint32_t ref1, NewsReferenceType reftype2, uint32_t ref2, std::unique_ptr<NewsAllocatedData> &&data);
 };
 
 /**
@@ -168,5 +160,8 @@ struct CompanyNewsInformation : NewsAllocatedData {
 
 	CompanyNewsInformation(const struct Company *c, const struct Company *other = nullptr);
 };
+
+using NewsContainer = std::list<NewsItem>; ///< Container type for storing news items.
+using NewsIterator = NewsContainer::const_iterator; ///< Iterator type for news items.
 
 #endif /* NEWS_TYPE_H */

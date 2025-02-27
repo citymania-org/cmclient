@@ -9,7 +9,6 @@
 
 #include "../../stdafx.h"
 #include "../../ship.h"
-#include "../../industry.h"
 #include "../../vehicle_func.h"
 
 #include "yapf.hpp"
@@ -28,39 +27,39 @@ template <class Types>
 class CYapfDestinationTileWaterT
 {
 public:
-	typedef typename Types::Tpf Tpf;                     ///< the pathfinder class (derived from THIS class).
+	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class).
 	typedef typename Types::TrackFollower TrackFollower;
-	typedef typename Types::NodeList::Titem Node;        ///< this will be our node type.
-	typedef typename Node::Key Key;                      ///< key to hash tables.
+	typedef typename Types::NodeList::Item Node; ///< this will be our node type.
+	typedef typename Node::Key Key; ///< key to hash tables.
 
 protected:
-	TileIndex    m_destTile;
-	TrackdirBits m_destTrackdirs;
-	StationID    m_destStation;
+	TileIndex dest_tile;
+	TrackdirBits dest_trackdirs;
+	StationID dest_station;
 
-	bool                 m_has_intermediate_dest = false;
-	TileIndex            m_intermediate_dest_tile;
-	WaterRegionPatchDesc m_intermediate_dest_region_patch;
+	bool has_intermediate_dest = false;
+	TileIndex intermediate_dest_tile;
+	WaterRegionPatchDesc intermediate_dest_region_patch;
 
 public:
 	void SetDestination(const Ship *v)
 	{
 		if (v->current_order.IsType(OT_GOTO_STATION)) {
-			m_destStation = v->current_order.GetDestination();
-			m_destTile = CalcClosestStationTile(m_destStation, v->tile, STATION_DOCK);
-			m_destTrackdirs = INVALID_TRACKDIR_BIT;
+			this->dest_station = v->current_order.GetDestination();
+			this->dest_tile = CalcClosestStationTile(this->dest_station, v->tile, STATION_DOCK);
+			this->dest_trackdirs = INVALID_TRACKDIR_BIT;
 		} else {
-			m_destStation = INVALID_STATION;
-			m_destTile = v->dest_tile;
-			m_destTrackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(v->dest_tile, TRANSPORT_WATER, 0));
+			this->dest_station = INVALID_STATION;
+			this->dest_tile = v->dest_tile;
+			this->dest_trackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(v->dest_tile, TRANSPORT_WATER, 0));
 		}
 	}
 
 	void SetIntermediateDestination(const WaterRegionPatchDesc &water_region_patch)
 	{
-		m_has_intermediate_dest = true;
-		m_intermediate_dest_tile = GetWaterRegionCenterTile(water_region_patch);
-		m_intermediate_dest_region_patch = water_region_patch;
+		this->has_intermediate_dest = true;
+		this->intermediate_dest_tile = GetWaterRegionCenterTile(water_region_patch);
+		this->intermediate_dest_region_patch = water_region_patch;
 	}
 
 protected:
@@ -74,20 +73,20 @@ public:
 	/** Called by YAPF to detect if node ends in the desired destination. */
 	inline bool PfDetectDestination(Node &n)
 	{
-		return PfDetectDestinationTile(n.m_segment_last_tile, n.m_segment_last_td);
+		return this->PfDetectDestinationTile(n.segment_last_tile, n.segment_last_td);
 	}
 
 	inline bool PfDetectDestinationTile(TileIndex tile, Trackdir trackdir)
 	{
-		if (m_has_intermediate_dest) {
+		if (this->has_intermediate_dest) {
 			/* GetWaterRegionInfo is much faster than GetWaterRegionPatchInfo so we try that first. */
-			if (GetWaterRegionInfo(tile) != m_intermediate_dest_region_patch) return false;
-			return GetWaterRegionPatchInfo(tile) == m_intermediate_dest_region_patch;
+			if (GetWaterRegionInfo(tile) != this->intermediate_dest_region_patch) return false;
+			return GetWaterRegionPatchInfo(tile) == this->intermediate_dest_region_patch;
 		}
 
-		if (m_destStation != INVALID_STATION) return IsDockingTile(tile) && IsShipDestinationTile(tile, m_destStation);
+		if (this->dest_station != INVALID_STATION) return IsDockingTile(tile) && IsShipDestinationTile(tile, this->dest_station);
 
-		return tile == m_destTile && ((m_destTrackdirs & TrackdirToTrackdirBits(trackdir)) != TRACKDIR_BIT_NONE);
+		return tile == this->dest_tile && ((this->dest_trackdirs & TrackdirToTrackdirBits(trackdir)) != TRACKDIR_BIT_NONE);
 	}
 
 	/**
@@ -96,17 +95,17 @@ public:
 	 */
 	inline bool PfCalcEstimate(Node &n)
 	{
-		const TileIndex destination_tile = m_has_intermediate_dest ? m_intermediate_dest_tile : m_destTile;
+		const TileIndex destination_tile = this->has_intermediate_dest ? this->intermediate_dest_tile : this->dest_tile;
 
 		static const int dg_dir_to_x_offs[] = { -1, 0, 1, 0 };
 		static const int dg_dir_to_y_offs[] = { 0, 1, 0, -1 };
-		if (PfDetectDestination(n)) {
-			n.m_estimate = n.m_cost;
+		if (this->PfDetectDestination(n)) {
+			n.estimate = n.cost;
 			return true;
 		}
 
-		TileIndex tile = n.m_segment_last_tile;
-		DiagDirection exitdir = TrackdirToExitdir(n.m_segment_last_td);
+		TileIndex tile = n.segment_last_tile;
+		DiagDirection exitdir = TrackdirToExitdir(n.segment_last_td);
 		int x1 = 2 * TileX(tile) + dg_dir_to_x_offs[(int)exitdir];
 		int y1 = 2 * TileY(tile) + dg_dir_to_y_offs[(int)exitdir];
 		int x2 = 2 * TileX(destination_tile);
@@ -116,8 +115,8 @@ public:
 		int dmin = std::min(dx, dy);
 		int dxy = abs(dx - dy);
 		int d = dmin * YAPF_TILE_CORNER_LENGTH + (dxy - 1) * (YAPF_TILE_LENGTH / 2);
-		n.m_estimate = n.m_cost + d;
-		assert(n.m_estimate >= n.m_parent->m_estimate);
+		n.estimate = n.cost + d;
+		assert(n.estimate >= n.parent->estimate);
 		return true;
 	}
 };
@@ -127,10 +126,10 @@ template <class Types>
 class CYapfFollowShipT
 {
 public:
-	typedef typename Types::Tpf Tpf;                     ///< the pathfinder class (derived from THIS class).
+	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class).
 	typedef typename Types::TrackFollower TrackFollower;
-	typedef typename Types::NodeList::Titem Node;        ///< this will be our node type.
-	typedef typename Node::Key Key;                      ///< key to hash tables.
+	typedef typename Types::NodeList::Item Node; ///< this will be our node type.
+	typedef typename Node::Key Key; ///< key to hash tables.
 
 protected:
 	/** to access inherited path finder */
@@ -139,7 +138,7 @@ protected:
 		return *static_cast<Tpf*>(this);
 	}
 
-	std::vector<WaterRegionDesc> m_water_region_corridor;
+	std::vector<WaterRegionDesc> water_region_corridor;
 
 public:
 	/**
@@ -150,10 +149,9 @@ public:
 	inline void PfFollowNode(Node &old_node)
 	{
 		TrackFollower F(Yapf().GetVehicle());
-		if (F.Follow(old_node.m_key.m_tile, old_node.m_key.m_td)) {
-			if (m_water_region_corridor.empty()
-					|| std::find(m_water_region_corridor.begin(), m_water_region_corridor.end(),
-						GetWaterRegionInfo(F.m_new_tile)) != m_water_region_corridor.end()) {
+		if (F.Follow(old_node.key.tile, old_node.key.td)) {
+			if (this->water_region_corridor.empty()
+					|| std::ranges::find(this->water_region_corridor, GetWaterRegionInfo(F.new_tile)) != this->water_region_corridor.end()) {
 				Yapf().AddMultipleNodes(&old_node, F);
 			}
 		}
@@ -162,8 +160,8 @@ public:
 	/** Restricts the search by creating corridor or water regions through which the ship is allowed to travel. */
 	inline void RestrictSearch(const std::vector<WaterRegionPatchDesc> &path)
 	{
-		m_water_region_corridor.clear();
-		for (const WaterRegionPatchDesc &path_entry : path) m_water_region_corridor.push_back(path_entry);
+		this->water_region_corridor.clear();
+		for (const WaterRegionPatchDesc &path_entry : path) this->water_region_corridor.push_back(path_entry);
 	}
 
 	/** Return debug report character to identify the transportation type. */
@@ -185,12 +183,12 @@ public:
 	{
 		TrackFollower follower(v);
 		if (follower.Follow(tile, dir)) {
-			TrackdirBits dirs = follower.m_new_td_bits;
+			TrackdirBits dirs = follower.new_td_bits;
 			const TrackdirBits dirs_without_90_degree = dirs & ~TrackdirCrossesTrackdirs(dir);
 			if (dirs_without_90_degree != TRACKDIR_BIT_NONE) dirs = dirs_without_90_degree;
-			return { follower.m_new_tile, GetRandomTrackdir(dirs) };
+			return { follower.new_tile, GetRandomTrackdir(dirs) };
 		}
-		return { follower.m_new_tile, INVALID_TRACKDIR };
+		return { follower.new_tile, INVALID_TRACKDIR };
 	}
 
 	/** Creates a random path, avoids 90 degree turns. */
@@ -205,8 +203,11 @@ public:
 
 		if (path_cache.empty()) return INVALID_TRACKDIR;
 
-		const Trackdir result = path_cache.front();
-		path_cache.pop_front();
+		/* Reverse the path so we can take from the end. */
+		std::reverse(std::begin(path_cache), std::end(path_cache));
+
+		const Trackdir result = path_cache.back().trackdir;
+		path_cache.pop_back();
 		return result;
 	}
 
@@ -250,20 +251,20 @@ public:
 			const WaterRegionPatchDesc end_water_patch = GetWaterRegionPatchInfo(node->GetTile());
 			assert(GetWaterRegionPatchInfo(tile) == high_level_path.front());
 			const WaterRegionPatchDesc start_water_patch = high_level_path.front();
-			while (node->m_parent) {
+			while (node->parent) {
 				const WaterRegionPatchDesc node_water_patch = GetWaterRegionPatchInfo(node->GetTile());
 
-				const bool node_water_patch_on_high_level_path = std::find(high_level_path.begin(), high_level_path.end(), node_water_patch) != high_level_path.end();
+				const bool node_water_patch_on_high_level_path = std::ranges::find(high_level_path, node_water_patch) != high_level_path.end();
 				const bool add_full_path = !is_intermediate_destination && node_water_patch != end_water_patch;
 
 				/* The cached path must always lead to a region patch that's on the high level path.
 				 * This is what can happen when that's not the case https://github.com/OpenTTD/OpenTTD/issues/12176. */
 				if (add_full_path || !node_water_patch_on_high_level_path || node_water_patch == start_water_patch) {
-					path_cache.push_front(node->GetTrackdir());
+					path_cache.push_back(node->GetTrackdir());
 				} else {
 					path_cache.clear();
 				}
-				node = node->m_parent;
+				node = node->parent;
 			}
 			assert(node->GetTile() == v->tile);
 
@@ -279,8 +280,8 @@ public:
 			if (path_cache.empty()) return CreateRandomPath(v, path_cache, 1);
 
 			/* Take out the last trackdir as the result. */
-			const Trackdir result = path_cache.front();
-			path_cache.pop_front();
+			const Trackdir result = path_cache.back().trackdir;
+			path_cache.pop_back();
 
 			/* Clear path cache when in final water region patch. This is to allow ships to spread over different docking tiles dynamically. */
 			if (start_water_patch == end_water_patch) path_cache.clear();
@@ -327,10 +328,10 @@ template <class Types>
 class CYapfCostShipT
 {
 public:
-	typedef typename Types::Tpf Tpf;              ///< the pathfinder class (derived from THIS class).
+	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class).
 	typedef typename Types::TrackFollower TrackFollower;
-	typedef typename Types::NodeList::Titem Node; ///< this will be our node type.
-	typedef typename Node::Key Key;               ///< key to hash tables.
+	typedef typename Types::NodeList::Item Node; ///< this will be our node type.
+	typedef typename Node::Key Key; ///< key to hash tables.
 
 	/** to access inherited path finder */
 	Tpf &Yapf()
@@ -373,7 +374,7 @@ public:
 		/* Base tile cost depending on distance. */
 		int c = IsDiagonalTrackdir(n.GetTrackdir()) ? YAPF_TILE_LENGTH : YAPF_TILE_CORNER_LENGTH;
 		/* Additional penalty for curves. */
-		c += CurveCost(n.m_parent->GetTrackdir(), n.GetTrackdir());
+		c += this->CurveCost(n.parent->GetTrackdir(), n.GetTrackdir());
 
 		if (IsDockingTile(n.GetTile())) {
 			/* Check docking tile for occupancy. */
@@ -383,15 +384,15 @@ public:
 		}
 
 		/* Skipped tile cost for aqueducts. */
-		c += YAPF_TILE_LENGTH * tf->m_tiles_skipped;
+		c += YAPF_TILE_LENGTH * tf->tiles_skipped;
 
 		/* Ocean/canal speed penalty. */
 		const ShipVehicleInfo *svi = ShipVehInfo(Yapf().GetVehicle()->engine_type);
-		byte speed_frac = (GetEffectiveWaterClass(n.GetTile()) == WATER_CLASS_SEA) ? svi->ocean_speed_frac : svi->canal_speed_frac;
-		if (speed_frac > 0) c += YAPF_TILE_LENGTH * (1 + tf->m_tiles_skipped) * speed_frac / (256 - speed_frac);
+		uint8_t speed_frac = (GetEffectiveWaterClass(n.GetTile()) == WATER_CLASS_SEA) ? svi->ocean_speed_frac : svi->canal_speed_frac;
+		if (speed_frac > 0) c += YAPF_TILE_LENGTH * (1 + tf->tiles_skipped) * speed_frac / (256 - speed_frac);
 
 		/* Apply it. */
-		n.m_cost = n.m_parent->m_cost + c;
+		n.cost = n.parent->cost + c;
 		return true;
 	}
 };
@@ -420,7 +421,7 @@ struct CYapfShip_TypesT
 
 struct CYapfShip : CYapfT<CYapfShip_TypesT<CYapfShip, CFollowTrackWater, CShipNodeListExitDir > >
 {
-	explicit CYapfShip(int max_nodes) { m_max_search_nodes = max_nodes; }
+	explicit CYapfShip(int max_nodes) { this->max_search_nodes = max_nodes; }
 };
 
 /** Ship controller helper - path finder invoker. */

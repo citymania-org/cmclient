@@ -18,14 +18,11 @@
 #include "../landscape.h"
 #include "../subsidy_func.h"
 #include "../strings_func.h"
-#include "../tilematrix_type.hpp"
 
 #include "../citymania/cm_main.hpp"
 #include "../citymania/cm_saveload.hpp"
 
 #include "../safeguards.h"
-
-typedef TileMatrix<CargoTypes, 4> AcceptanceMatrix;
 
 /**
  * Rebuild all the cached variables of towns.
@@ -41,7 +38,7 @@ void RebuildTownCaches()
 		town->cache.num_houses = 0;
 	}
 
-	for (TileIndex t = 0; t < Map::Size(); t++) {
+	for (const auto t : Map::Iterate()) {
 		if (!IsTileType(t, MP_HOUSE)) continue;
 
 		HouseID house_id = GetHouseType(t);
@@ -50,7 +47,7 @@ void RebuildTownCaches()
 		if (IsHouseCompleted(t)) town->cache.population += HouseSpec::Get(house_id)->population;
 
 		/* Increase the number of houses for every house, but only once. */
-		if (GetHouseNorthPart(house_id) == 0) town->cache.num_houses++;
+		if (GetHouseNorthPart(house_id) == TileDiffXY(0, 0)) town->cache.num_houses++;
 	}
 
 	/* Update the population and num_house dependent values */
@@ -70,7 +67,7 @@ void RebuildTownCaches()
  */
 void UpdateHousesAndTowns()
 {
-	for (TileIndex t = 0; t < Map::Size(); t++) {
+	for (const auto t : Map::Iterate()) {
 		if (!IsTileType(t, MP_HOUSE)) continue;
 
 		HouseID house_id = GetCleanHouseType(t);
@@ -83,7 +80,7 @@ void UpdateHousesAndTowns()
 	}
 
 	/* Check for cases when a NewGRF has set a wrong house substitute type. */
-	for (TileIndex t = 0; t < Map::Size(); t++) {
+	for (const auto t : Map::Iterate()) {
 		if (!IsTileType(t, MP_HOUSE)) continue;
 
 		HouseID house_type = GetCleanHouseType(t);
@@ -178,7 +175,7 @@ public:
 
 	void Load(Town *t) const override
 	{
-		size_t length = IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH) ? (size_t)TAE_END : SlGetStructListLength(TAE_END);
+		size_t length = IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH) ? static_cast<size_t>(TAE_END) : SlGetStructListLength(TAE_END);
 		for (size_t i = 0; i < length; i++) {
 			SlObject(&t->received[i], this->GetLoadDescription());
 		}
@@ -186,6 +183,12 @@ public:
 };
 
 class SlTownAcceptanceMatrix : public DefaultSaveLoadHandler<SlTownAcceptanceMatrix, Town> {
+private:
+	/** Compatibility struct with just enough of TileMatrix to facilitate loading. */
+	struct AcceptanceMatrix {
+		TileArea area;
+		static const uint GRID = 4;
+	};
 public:
 	inline static const SaveLoad description[] = {
 		SLE_VAR(AcceptanceMatrix, area.tile, SLE_UINT32),
@@ -270,7 +273,7 @@ static const SaveLoad _town_desc[] = {
 	SLE_CONDVAR(Town, larger_town,           SLE_BOOL,                  SLV_56, SL_MAX_VERSION),
 	SLE_CONDVAR(Town, layout,                SLE_UINT8,                SLV_113, SL_MAX_VERSION),
 
-	SLE_CONDREFLIST(Town, psa_list,          REF_STORAGE,              SLV_161, SL_MAX_VERSION),
+	SLE_CONDREFVECTOR(Town, psa_list,        REF_STORAGE,              SLV_161, SL_MAX_VERSION),
 
 	SLEG_CONDSTRUCTLIST("supplied", SlTownSupplied,                    SLV_165, SL_MAX_VERSION),
 	SLEG_CONDSTRUCTLIST("received", SlTownReceived,                    SLV_165, SL_MAX_VERSION),

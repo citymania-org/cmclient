@@ -222,6 +222,7 @@ STR_UNITS_HEIGHT_SI                                             :{NBSP}{DECIMAL}
 
 
 
+
 # Common window strings
 STR_LIST_FILTER_OSKTITLE                                        :{BLACK} چھان کے الفاظ درج کیجیئے
 STR_LIST_FILTER_TOOLTIP                                         :{BLACK} فھرست کے چھان کے لیے کوئی حرف دیجیئے
@@ -365,6 +366,7 @@ STR_SCENEDIT_FILE_MENU_LOAD_HEIGHTMAP                           :اونچائی 
 STR_SCENEDIT_FILE_MENU_QUIT_EDITOR                              :مدیر بند کیجیئے
 STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :باہر نکلو
+
 
 # Settings menu
 ###length 16
@@ -537,6 +539,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK} سام�
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK} سامان کی ادائیگی کے مخطط پر کوئ بھی سامان نا دیکھئہے
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK} ظرزِ سامان مخطط تدویم کیجئیے
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK} کارکردگی کی تفصیلی درجہ بندی دکھائیے
 
@@ -823,7 +826,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}کرنس
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}کرنسی کی اکائی اختیار کریں
 
 
-###length 43
+###length 44
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :برطانوی پاونڈ
 STR_GAME_OPTIONS_CURRENCY_USD                                   :امریکی ڈالر
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :یورو
@@ -895,6 +898,7 @@ STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}بُنی
 STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}بُنیادی موسیقی سیٹ
 STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}بُنیادی موسیقی سیٹ اختیار کریں
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}بُنیادی موسیقی سیٹ کے بارے میں اضافی معلومات
+
 
 
 
@@ -1146,6 +1150,7 @@ STR_CONFIG_SETTING_ORDER_REVIEW_ON                              :تمام گاڑ
 STR_CONFIG_SETTING_WARN_INCOME_LESS                             :گاڑی کو نقصان کی صورت میں انتباہ کیجئیے: {STRING}
 ###length 2
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :گاڑیوں کی معیاد کبھی ختم نہ ہو: {STRING}
 
 ###length 2
@@ -1156,9 +1161,14 @@ STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :گاڑیوں ک
 
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :گاڑی پرانی ہونے کی صورت میں خودکار طریقے سے بدل دیں: {STRING}
 
+STR_CONFIG_SETTING_AUTORENEW_MONTHS                             :گاڑی کی زیادہ سے زیادہ عمر {STRING} ہونے پر خودکار تجدید کریں۔
+STR_CONFIG_SETTING_AUTORENEW_MONTHS_HELPTEXT                    :متعلقہ عمر جب کسی گاڑی کو خودکار تجدید کے لیے سمجھا جانا چاہیے۔
 ###length 2
+STR_CONFIG_SETTING_AUTORENEW_MONTHS_VALUE_BEFORE                :{COMMA} ماہ پہلے
+STR_CONFIG_SETTING_AUTORENEW_MONTHS_VALUE_AFTER                 :{COMMA} ماہ بعد
 
 STR_CONFIG_SETTING_AUTORENEW_MONEY                              :خودکار تبدیلی کے لئے ضروری کم سے کم رقم کو خودکار طریقے سے بدل دیں: {STRING}
+STR_CONFIG_SETTING_AUTORENEW_MONEY_HELPTEXT                     :گاڑیوں کی خودکار تجدید کرنے پر غور کرنے سے پہلے کم سے کم رقم جو بینک میں رہنی چاہیے۔
 
 
 ###setting-zero-is-special
@@ -1329,7 +1339,12 @@ STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES                           :اسکرپٹس 
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :مرمتی وقفے فیصد میں ہیں: {STRING}
 
+STR_CONFIG_SETTING_SERVINT_AIRCRAFT                             :ہوائی جہاز کے لیے طے شدہ مرمتی وقفہ: {STRING}
+STR_CONFIG_SETTING_SERVINT_AIRCRAFT_HELPTEXT                    :اگر گاڑی کے لیے کوئی واضح مرمتی وقفہ مقرر نہیں کیا گیا ہے تو نئے ہوائی جہاز کے لیے پہلے سے طے شدہ مرمتی وقفہ مقرر کریں
+###length 3
+
 ###setting-zero-is-special
+STR_CONFIG_SETTING_SERVINT_DISABLED                             :غیر فعال
 
 STR_CONFIG_SETTING_NOSERVICE                                    :گاڑیوں کی خرابی غیر فعال ہونے کی صورت میں مرمت بھی غیر فعال کر دیں: {STRING}
 
@@ -1468,13 +1483,7 @@ STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :صنعتیں
 STR_CONFIG_SETTING_AI                                           :مد مقابل
 STR_CONFIG_SETTING_AI_NPC                                       :کمپیوٹر کے کھلاڑی
 
-STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS                        :ریل گاڑیوں کے لئے راستہ ڈھونڈنے والا: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_ROAD_VEHICLES                 :گاڑیوں کا راستہ تلاش کرنے والا: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_SHIPS                         :بحری جہازوں کا راستہ تلاش کرنے والا: {STRING}
 STR_CONFIG_SETTING_REVERSE_AT_SIGNALS                           :اشاروں پر خودکار ریورس ہونا: {STRING}
-###length 2
-STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
-STR_CONFIG_SETTING_PATHFINDER_YAPF                              :YAPF {BLUE}(Recommended)
 
 STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}سیٹنگ کی ولیو بدلیں
 
@@ -1730,7 +1739,6 @@ STR_NETWORK_CONNECTING_SPECIAL_2                                :{BLACK}کمپن
 STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}رابطہ منقطع کریں
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}سرور محفوظ ہے۔ پاس ورڈ بتایہں
-STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}کمپنی محفوظ ہے۔ پاس ورڈ بتایہں
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :{WHITE}کلائینٹس کی فہرست
@@ -1740,25 +1748,16 @@ STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :{WHITE}کلائ
 # Matches ConnectionType
 ###length 5
 
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_RESET                     :مٹا دو
 
 
 
 
 STR_NETWORK_SPECTATORS                                          :ناظرین
 
-# Network set password
-STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}بتایا گیا پاس ورڈ محفوظ نہ کریں
-STR_COMPANY_PASSWORD_OK                                         :{BLACK}کمپنی کا نیا پاس ورڈ رکھیں
-STR_COMPANY_PASSWORD_CAPTION                                    :{WHITE}کمپنی کا پاس ورڈ
-STR_COMPANY_PASSWORD_MAKE_DEFAULT                               :{BLACK}پہلے سے مقرر شدہ کمپنی کا پاس ورڈ
-STR_COMPANY_PASSWORD_MAKE_DEFAULT_TOOLTIP                       :{BLACK}کمپنی کے پاس ورڈ کو تمام نئی کمپنیوں کے لئے پہلے سے مقرر شدہ سمجھیں
-
 # Network company info join/password
 STR_COMPANY_VIEW_JOIN                                           :{BLACK}شامل ہوں
 STR_COMPANY_VIEW_JOIN_TOOLTIP                                   :{BLACK}اس کمپنی کے طور پر کھیل میں شامل ہوں
-STR_COMPANY_VIEW_PASSWORD                                       :{BLACK}پاس ورڈ
-STR_COMPANY_VIEW_PASSWORD_TOOLTIP                               :{BLACK}اپنی کمپنی کو پاس ورڈ سے محفوظ بنائیں تاکہ غیر متعلقہ کھلاڑی اس میں شامل نہ ہو سکیں
-STR_COMPANY_VIEW_SET_PASSWORD                                   :{BLACK}کمپنی کا پاس ورڈ رکھیں
 
 # Network chat
 STR_NETWORK_CHAT_SEND                                           :{BLACK}بھیجیں
@@ -1797,7 +1796,7 @@ STR_NETWORK_ERROR_TIMEOUT_JOIN                                  :{WHITE}آپ ک�
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION            :{WHITE}ممکنہ طور پر کنکشن کا خاتمہ
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION                    :{WHITE}آخری {NUM} سیکنڈ{P "" وں} سے سرور سے کوئی معلومات نہیں ملیں
 
-###length 21
+###length 23
 STR_NETWORK_ERROR_CLIENT_GENERAL                                :عمومی خرابی
 STR_NETWORK_ERROR_CLIENT_DESYNC                                 :desync خرابی
 STR_NETWORK_ERROR_CLIENT_SAVEGAME                               :نقشہ لوڈ نہیں ہوسکا
@@ -1981,7 +1980,6 @@ STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}ریلو
 
 # Rail waypoint construction window
 STR_WAYPOINT_CAPTION                                            :{WHITE}گزرگاہ
-STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}گزرگاہ کی طرز منتخب کریں
 
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}ریلوے اسٹیشن منتخب کریں
@@ -1994,8 +1992,9 @@ STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}ریلو
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}کھینچ کر رکھ دیں
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}کھینچ کر رکھ کر اسٹیشن تعمیر کریں
 
-STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}دکھانے کے لئے ریلوے اسٹیشن کی قسم کا انتخاب کریں
-STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}تعمیر کے لئے اسٹیشن کی طرز منتخب کریں
+
+
+
 
 STR_STATION_CLASS_DFLT                                          :طے شدہ اسٹیشن
 STR_STATION_CLASS_WAYP                                          :گزرگاہیں
@@ -2112,8 +2111,6 @@ STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}مستق
 
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}چیز کا انتخاب
-STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}تعمیرکرنے کے لئے چیز منتخب کریں۔ Shift تعمیر/اندازاّ خرچے میں تدویم کرتا ہے۔
-STR_OBJECT_BUILD_CLASS_TOOLTIP                                  :{BLACK}تعمیر کرنے کے لئے چیز کی قسم کا انتخاب کریں
 STR_OBJECT_BUILD_PREVIEW_TOOLTIP                                :{BLACK}چیز کا جائزہ
 STR_OBJECT_BUILD_SIZE                                           :{BLACK}سائز: {GOLD}{NUM} x {NUM} ٹائلیں
 
@@ -2167,6 +2164,9 @@ STR_FOUND_TOWN_SELECT_LAYOUT_RANDOM                             :{G=f}{BLACK}ک�
 # Fund new industry window
 
 # Industry cargoes window
+STR_INDUSTRY_CARGOES_CARGO_CAPTION                              :{WHITE}کارگو چین - {STRING}
+STR_INDUSTRY_CARGOES_CUSTOMERS                                  :{WHITE}قبول کرنے والی صنعتیں۔
+STR_INDUSTRY_CARGOES_CARGO_TOOLTIP                              :{BLACK}{STRING}{}اس کے فروخت کنندہ اور گاہک کو دیکھنے کے لیے سامان پر کلک کریں۔
 
 # Land area window
 
@@ -2228,6 +2228,13 @@ STR_MAPGEN_TOWN_NAME_ITALIAN                                    :اِٹالین
 STR_MAPGEN_TOWN_NAME_CATALAN                                    :کاٹالن
 
 # Strings for map borders at game generation
+STR_MAPGEN_BORDER_TYPE                                          :{BLACK}نقشے کے کنارے:
+STR_MAPGEN_BORDER_TYPE_TOOLTIP                                  :{BLACK}کھیل کی دنیا کے بارڈرز کا انتخاب کریں۔
+STR_MAPGEN_BORDER_FREEFORM                                      :{BLACK}فری فارم
+STR_MAPGEN_BORDER_WATER                                         :{BLACK}پانی
+STR_MAPGEN_BORDER_RANDOM                                        :{BLACK}بے ترتیب
+STR_MAPGEN_BORDER_RANDOMIZE                                     :{BLACK}بے ترتیب
+STR_MAPGEN_BORDER_MANUAL                                        :{BLACK}دستی
 
 
 
@@ -2235,6 +2242,8 @@ STR_MAPGEN_TOWN_NAME_CATALAN                                    :کاٹالن
 
 
 # Map generation progress
+
+
 
 # NewGRF settings
 STR_NEWGRF_SETTINGS_INFO_TITLE                                  :{WHITE} تفصیلی NewGRF معلومات
@@ -2264,7 +2273,6 @@ STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_RAIL_TYPE                  :طرزِ ریل
 
 
 # Sprite aligner window
-STR_SPRITE_ALIGNER_CAPTION                                      :{WHITE} صف بندھی کے sprite {COMMA} ({STRING})
 STR_SPRITE_ALIGNER_NEXT_BUTTON                                  :{BLACK} اگلی sprite
 STR_SPRITE_ALIGNER_GOTO_BUTTON                                  :{BLACK} جایئے sprite تک
 STR_SPRITE_ALIGNER_GOTO_TOOLTIP                                 :{BLACK} جایئے sprite کی طرف۔ اگر sprite اصلی نھیں تو اگلی sprite کی طرف جائیے
@@ -2315,7 +2323,6 @@ STR_EDIT_SIGN_PREVIOUS_SIGN_TOOLTIP                             :{BLACK} پچھ�
 STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK} اشارے کا نام درج کیجیئے
 
 # Town directory window
-STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE} قصبے
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
 
 # Town view window
@@ -2347,6 +2354,7 @@ STR_GOAL_QUESTION_CAPTION_ERROR                                 :خرابی
 # Subsidies window
 
 # Story book window
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}غلط مقصد کا حوالہ
 
 # Station list window
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
@@ -2451,7 +2459,13 @@ STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}گروپ
 ###length VEHICLE_TYPES
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :نیا طیارہ
 
+STR_PURCHASE_INFO_CAPACITY                                      :{BLACK}گنجائش: {GOLD}{CARGO_LONG} {STRING}
+STR_PURCHASE_INFO_COST                                          :{BLACK}لاگت: {GOLD}{CURRENCY_LONG}
+STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}گنجائش: {GOLD}{CARGO_LONG}, {CARGO_LONG}
+STR_PURCHASE_INFO_ALL_TYPES                                     :تمام اقسام کا سامان
+STR_PURCHASE_INFO_ALL_BUT                                       :{CARGO_LIST} کے علاوہ سبھی
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}پہنچ: {GOLD}{COMMA} ٹائلیں
+STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}ہوائی جہاز کی قسم: {GOLD}{STRING}
 
 ###length 3
 
@@ -2575,12 +2589,7 @@ STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE} {DEPOT
 
 
 # Vehicle stopped/started animations
-###length 2
-STR_VEHICLE_COMMAND_STOPPED_SMALL                               :{TINY_FONT}{RED} روک دیا گیا
 STR_VEHICLE_COMMAND_STOPPED                                     :{RED} روک دیا گیا
-
-###length 2
-STR_VEHICLE_COMMAND_STARTED_SMALL                               :{TINY_FONT}{GREEN} شروع کر دیا گیا
 STR_VEHICLE_COMMAND_STARTED                                     :{GREEN} شروع کر دیا گیا
 
 # Vehicle details
@@ -2910,6 +2919,9 @@ STR_TOWN_BUILDING_NAME_CHURCH_1                                 :چرچ
 ##id 0x4800
 # industry names
 STR_INDUSTRY_NAME_POWER_STATION                                 :بجلی گھر
+STR_INDUSTRY_NAME_FARM                                          :کھیت
+STR_INDUSTRY_NAME_BANK                                          :بینک
+STR_INDUSTRY_NAME_BANK_TROPIC_ARCTIC                            :بینک
 
 ############ WARNING, using range 0x6000 for strings that are stored in the savegame
 ############ These strings may never get a new id, or savegames will break!
@@ -2931,6 +2943,7 @@ STR_SV_STNAME_WAYPOINT                                          :{STRING}
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MANLEY_MOREL_DMU_DIESEL      :مینلی-موریل DMU (ڈیزل)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_WIZZOWOW_Z99             :Wizzowow Z99
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COAL_CAR                  :کوئلے کا ٹرک
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_WIZZOWOW_ROCKETEER         :Wizzowow Rocketeer

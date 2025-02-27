@@ -21,7 +21,7 @@
 
 /** Container for all information about a text effect */
 struct TextEffect : public ViewportSign {
-	std::vector<StringParameterBackup> params; ///< Backup of string parameters
+	std::vector<StringParameterData> params; ///< Backup of string parameters
 	StringID string_id;  ///< String to draw for the text effect, if INVALID_STRING_ID then it's not valid
 	uint8_t duration;      ///< How long the text effect should stay, in ticks (applies only when mode == TE_RISING)
 	TextEffectMode mode; ///< Type of text effect
@@ -42,7 +42,7 @@ TextEffectID AddTextEffect(StringID msg, int center, int y, uint8_t duration, Te
 {
 	if (_game_mode == GM_MENU) return INVALID_TE_ID;
 
-	auto it = std::find_if(std::begin(_text_effects), std::end(_text_effects), [](const TextEffect &te) { return te.string_id == INVALID_STRING_ID; });
+	auto it = std::ranges::find(_text_effects, INVALID_STRING_ID, &TextEffect::string_id);
 	if (it == std::end(_text_effects)) {
 		/* _text_effects.size() is the maximum ID + 1 that has been allocated. We should not allocate INVALID_TE_ID or beyond. */
 		if (_text_effects.size() >= INVALID_TE_ID) return INVALID_TE_ID;
@@ -72,7 +72,7 @@ void UpdateTextEffect(TextEffectID te_id, StringID msg)
 	te.string_id = msg;
 	CopyOutDParam(te.params, 2);
 
-	te.UpdatePosition(te.center, te.top, te.string_id, te.string_id - 1);
+	te.UpdatePosition(te.center, te.top, te.string_id);
 }
 
 void UpdateAllTextEffectVirtCoords()
@@ -80,7 +80,7 @@ void UpdateAllTextEffectVirtCoords()
 	for (auto &te : _text_effects) {
 		if (te.string_id == INVALID_STRING_ID) continue;
 		CopyInDParam(te.params);
-		te.UpdatePosition(te.center, te.top, te.string_id, te.string_id - 1);
+		te.UpdatePosition(te.center, te.top, te.string_id);
 	}
 }
 
@@ -102,10 +102,10 @@ IntervalTimer<TimerWindow> move_all_text_effects_interval = {std::chrono::millis
 			continue;
 		}
 
-		te.MarkDirty(ZOOM_LVL_OUT_8X);
+		te.MarkDirty(ZOOM_LVL_TEXT_EFFECT);
 		te.duration -= count;
-		te.top -= count * ZOOM_LVL_BASE;
-		te.MarkDirty(ZOOM_LVL_OUT_8X);
+		te.top -= count * ZOOM_BASE;
+		te.MarkDirty(ZOOM_LVL_TEXT_EFFECT);
 	}
 }};
 
@@ -118,13 +118,13 @@ void InitTextEffects()
 void DrawTextEffects(DrawPixelInfo *dpi)
 {
 	/* Don't draw the text effects when zoomed out a lot */
-	if (dpi->zoom > ZOOM_LVL_OUT_8X) return;
+	if (dpi->zoom > ZOOM_LVL_TEXT_EFFECT) return;
 	if (IsTransparencySet(TO_TEXT)) return;
 	for (TextEffect &te : _text_effects) {
 		if (te.string_id == INVALID_STRING_ID) continue;
 		if (te.mode == TE_RISING || _settings_client.gui.loading_indicators) {
 			CopyInDParam(te.params);
-			ViewportAddString(dpi, ZOOM_LVL_OUT_8X, &te, te.string_id, te.string_id - 1, STR_NULL);
+			ViewportAddString(dpi, ZOOM_LVL_TEXT_EFFECT, &te, te.string_id, te.string_id, STR_NULL);
 		}
 	}
 }

@@ -50,34 +50,27 @@
  * Copies characters from one buffer to another.
  *
  * Copies the source string to the destination buffer with respect of the
- * terminating null-character and the last pointer to the last element in
- * the destination buffer. If the last pointer is set to nullptr no boundary
- * check is performed.
+ * terminating null-character and the size of the destination buffer.
  *
- * @note usage: strecpy(dst, src, lastof(dst));
- * @note lastof() applies only to fixed size arrays
+ * @note usage: strecpy(dst, src);
  *
  * @param dst The destination buffer
  * @param src The buffer containing the string to copy
- * @param last The pointer to the last element of the destination buffer
- * @return The pointer to the terminating null-character in the destination buffer
  */
-char *strecpy(char *dst, const char *src, const char *last)
+void strecpy(std::span<char> dst, std::string_view src)
 {
-	assert(dst <= last);
-	while (dst != last && *src != '\0') {
-		*dst++ = *src++;
-	}
-	*dst = '\0';
-
-	if (dst == last && *src != '\0') {
+	/* Ensure source string fits with NUL terminator; dst must be at least 1 character longer than src. */
+	if (std::empty(dst) || std::size(src) >= std::size(dst) - 1U) {
 #if defined(STRGEN) || defined(SETTINGSGEN)
 		FatalError("String too long for destination buffer");
 #else /* STRGEN || SETTINGSGEN */
 		Debug(misc, 0, "String too long for destination buffer");
+		src = src.substr(0, std::size(dst) - 1U);
 #endif /* STRGEN || SETTINGSGEN */
 	}
-	return dst;
+
+	auto it = std::copy(std::begin(src), std::end(src), std::begin(dst));
+	*it = '\0';
 }
 
 /**
@@ -85,7 +78,7 @@ char *strecpy(char *dst, const char *src, const char *last)
  * @param data Array to format
  * @return Converted string.
  */
-std::string FormatArrayAsHex(std::span<const byte> data)
+std::string FormatArrayAsHex(std::span<const uint8_t> data)
 {
 	std::string str;
 	str.reserve(data.size() * 2 + 1);
@@ -226,56 +219,35 @@ std::string StrMakeValid(std::string_view str, StringValidationSettings settings
 /**
  * Checks whether the given string is valid, i.e. contains only
  * valid (printable) characters and is properly terminated.
- * @param str  The string to validate.
- * @param last The last character of the string, i.e. the string
- *             must be terminated here or earlier.
+ * @note std::span is used instead of std::string_view as we are validating fixed-length string buffers, and
+ * std::string_view's constructor will assume a C-string that ends with a NUL terminator, which is one of the things
+ * we are checking.
+ * @param str Span of chars to validate.
  */
-bool StrValid(const char *str, const char *last)
+bool StrValid(std::span<const char> str)
 {
 	/* Assume the ABSOLUTE WORST to be in str as it comes from the outside. */
+	auto it = std::begin(str);
+	auto last = std::prev(std::end(str));
 
-	while (str <= last && *str != '\0') {
-		size_t len = Utf8EncodedCharLen(*str);
+	while (it <= last && *it != '\0') {
+		size_t len = Utf8EncodedCharLen(*it);
 		/* Encoded length is 0 if the character isn't known.
 		 * The length check is needed to prevent Utf8Decode to read
 		 * over the terminating '\0' if that happens to be placed
 		 * within the encoding of an UTF8 character. */
-		if (len == 0 || str + len > last) return false;
+		if (len == 0 || it + len > last) return false;
 
 		char32_t c;
-		len = Utf8Decode(&c, str);
+		len = Utf8Decode(&c, &*it);
 		if (!IsPrintable(c) || (c >= SCC_SPRITE_START && c <= SCC_SPRITE_END)) {
 			return false;
 		}
 
-		str += len;
+		it += len;
 	}
 
-	return *str == '\0';
-}
-
-/**
- * Trim the spaces from the begin of given string in place, i.e. the string buffer
- * that is passed will be modified whenever spaces exist in the given string.
- * When there are spaces at the begin, the whole string is moved forward.
- * @param str The string to perform the in place left trimming on.
- */
-static void StrLeftTrimInPlace(std::string &str)
-{
-	size_t pos = str.find_first_not_of(' ');
-	str.erase(0, pos);
-}
-
-/**
- * Trim the spaces from the end of given string in place, i.e. the string buffer
- * that is passed will be modified whenever spaces exist in the given string.
- * When there are spaces at the end, the '\0' will be moved forward.
- * @param str The string to perform the in place left trimming on.
- */
-static void StrRightTrimInPlace(std::string &str)
-{
-	size_t pos = str.find_last_not_of(' ');
-	if (pos != std::string::npos) str.erase(pos + 1);
+	return *it == '\0';
 }
 
 /**
@@ -287,8 +259,17 @@ static void StrRightTrimInPlace(std::string &str)
  */
 void StrTrimInPlace(std::string &str)
 {
-	StrLeftTrimInPlace(str);
-	StrRightTrimInPlace(str);
+	str = StrTrimView(str);
+}
+
+std::string_view StrTrimView(std::string_view str)
+{
+	size_t first_pos = str.find_first_not_of(' ');
+	if (first_pos == std::string::npos) {
+		return std::string_view{};
+	}
+	size_t last_pos = str.find_last_not_of(' ');
+	return str.substr(first_pos, last_pos - first_pos + 1);
 }
 
 /**
@@ -561,6 +542,22 @@ char *strcasestr(const char *haystack, const char *needle)
 #endif /* DEFINE_STRCASESTR */
 
 /**
+ * Test if a unicode character is considered garbage to be skipped.
+ * @param c Character to test.
+ * @returns true iff the character should be skipped.
+ */
+static bool IsGarbageCharacter(char32_t c)
+{
+	if (c >= '0' && c <= '9') return false;
+	if (c >= 'A' && c <= 'Z') return false;
+	if (c >= 'a' && c <= 'z') return false;
+	if (c >= SCC_CONTROL_START && c <= SCC_CONTROL_END) return true;
+	if (c >= 0xC0 && c <= 0x10FFFF) return false;
+
+	return true;
+}
+
+/**
  * Skip some of the 'garbage' in the string that we don't want to use
  * to sort on. This way the alphabetical sorting will work better as
  * we would be actually using those characters instead of some other
@@ -570,8 +567,15 @@ char *strcasestr(const char *haystack, const char *needle)
  */
 static std::string_view SkipGarbage(std::string_view str)
 {
-	while (!str.empty() && (str[0] < '0' || IsInsideMM(str[0], ';', '@' + 1) || IsInsideMM(str[0], '[', '`' + 1) || IsInsideMM(str[0], '{', '~' + 1))) str.remove_prefix(1);
-	return str;
+	auto first = std::begin(str);
+	auto last = std::end(str);
+	while (first < last) {
+		char32_t c;
+		size_t len = Utf8Decode(&c, &*first);
+		if (!IsGarbageCharacter(c)) break;
+		first += len;
+	}
+	return {first, last};
 }
 
 /**

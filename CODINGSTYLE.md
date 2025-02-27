@@ -157,7 +157,7 @@ enum SomeEnumeration {
 * Use curly braces and put the contained statements on their own lines (e.g., don't put them directly after the **if**).
 * Opening curly bracket **{** stays on the first line, closing curly bracket **}** gets a line to itself (except for the **}** preceding an **else**, which should be on the same line as the **else**).
 * When only a single statement is contained, the brackets can be omitted. In this case, put the single statement on the same line as the preceding keyword (**if**, **while**, etc.). Note that this is only allowed for if statements without an **else** clause.
-* All fall throughs must be documented, using a **FALLTHROUGH** define/macro.
+* Non-trivial fall throughs must be documented, using a `[[fallthrough]]` attribute.
 * The NOT_REACHED() macro can be used in default constructs that should never be reached.
 * Unconditional loops are written with **`for (;;) {`**
 
@@ -180,7 +180,7 @@ switch (a) {
 
 	case 1:
 		DoSomething();
-		FALLTHROUGH;
+		[[fallthrough]];
 
 	case 2:
 		DoMore();
@@ -191,7 +191,7 @@ switch (a) {
 		int r = 2;
 
 		DoEvenMore(a);
-		FALLTHROUGH;
+		[[fallthrough]];
 	}
 
 	case 4: {
@@ -248,11 +248,45 @@ Templates are a very powerful C++ tool, but they can easily confuse beginners. T
 * Templates are to be documented in a very clear and verbose manner. Never assume anything in the documentation.
 * the template keyword and the template layout get a separate line. typenames are either "T" or preceded by a "T", integers get a single capital letter or a descriptive name preceded by "T".
 ```c++
-template <typename T, typename Tsomething, int N, byte Tnumber_of_something>
+template <typename T, typename Tsomething, int N, uint8_t Tnumber_of_something>
 int Func();
 ```
 
 * If you are writing one or more template class in the dedicated header file, use file.hpp for its name instead of file.h. This will let others know that it is template library (includes also implementation), not just header with declarations.
+
+### Code Comment Vertical Alignment
+
+When adding code or comments to an existing formatted section, follow the existing style if possible without editing the preexisting lines.
+
+If your addition cannot be aligned with existing code, do not align the comments with anything and use only a single space between the code and the comment.
+
+Good:
+
+```c++
+enum Vehicle {
+	BUS,  ///< Take the bus.
++	CAR,  ///< Drive your car.
+	BIKE, ///< Ride your bike
++	TRAIN, ///< Catch the train.
+}
+```
+
+"Car" is shorter than Bike which allows you to easily align the new comment. "Train" is longer.  It is *NOT* desirable to change the vertical comment alignment of this enum.
+
+Bad:
+
+```c++
+enum Vehicle {
+-	BUS,  ///< Take the bus.
+-	BIKE, ///< Ride your bike
++	BUS,   ///< Take the bus.
++	CAR,   ///< Drive your car.
++	BIKE,  ///< Ride your bike
++	TRAIN, ///< Catch the train.
+}
+```
+
+OpenTTD used to vertically-align inline Doxygen comments as shown above. OpenTTD has since stopped strictly following this rule to keep diffs smaller and reduce pollution to the git blame history for non-functional changes.
 
 ### Other important rules
 * Put a space before and after binary operators: "a + b", "a == b", "a & b", "a <<= b", etc.. Exceptions are ".", "->" and "[]" (no spaces) and "," (just space after it).
@@ -448,7 +482,7 @@ Do not mention two keywords; if two apply, pick one that best represents the com
 
 The `<details>` part starts with a capital and does not end with a dot.
 Try to be descriptive to what the player will notice, not to what is actually being changed in the code.
-See `changelog.txt` for inspiration.
+See `changelog.md` for inspiration.
 
 To further structure the changelog, you can add components. Example are:
 * "Network" for network specific changes.

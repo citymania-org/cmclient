@@ -24,10 +24,10 @@ enum FloodingBehaviour {
 };
 
 FloodingBehaviour GetFloodingBehaviour(TileIndex tile);
+void ClearNeighbourNonFloodingStates(TileIndex tile);
 
 void TileLoop_Water(TileIndex tile);
 bool FloodHalftile(TileIndex t);
-void DoFloodTile(TileIndex target);
 
 void ConvertGroundTilesIntoWaterTiles();
 
@@ -38,7 +38,6 @@ void DrawShoreTile(Slope tileh);
 void MakeWaterKeepingClass(TileIndex tile, Owner o);
 void CheckForDockingTile(TileIndex t);
 
-bool RiverModifyDesertZone(TileIndex tile, void *data);
 void MakeRiverAndModifyDesertZoneAround(TileIndex tile);
 static const uint RIVER_OFFSET_DESERT_DISTANCE = 5; ///< Circular tile search radius to create non-desert around a river tile.
 

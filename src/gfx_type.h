@@ -11,6 +11,7 @@
 #define GFX_TYPE_H
 
 #include "core/endian_type.hpp"
+#include "core/enum_type.hpp"
 #include "core/geometry_type.hpp"
 #include "zoom_type.h"
 
@@ -108,7 +109,14 @@ enum WindowKeyCodes {
 struct AnimCursor {
 	static const CursorID LAST = MAX_UVALUE(CursorID);
 	CursorID sprite;   ///< Must be set to LAST_ANIM when it is the last sprite of the loop
-	byte display_time; ///< Amount of ticks this sprite will be shown
+	uint8_t display_time; ///< Amount of ticks this sprite will be shown
+};
+
+struct CursorSprite {
+	PalSpriteID image; ///< Image.
+	Point pos; ///< Relative position.
+
+	constexpr CursorSprite(SpriteID spr, PaletteID pal, int x, int y) : image({spr, pal}), pos({x, y}) {}
 };
 
 /** Collection of variables for cursor-display and -animation */
@@ -119,15 +127,13 @@ struct CursorVars {
 	int wheel;                    ///< mouse wheel movement
 	bool fix_at;                  ///< mouse is moving, but cursor is not (used for scrolling)
 
-	/* We need two different vars to keep track of how far the scrollwheel moved.
-	 * OSX uses this for scrolling around the map. */
-	int v_wheel;
-	int h_wheel;
+	/* 2D wheel scrolling for moving around the map */
+	bool wheel_moved;
+	float v_wheel;
+	float h_wheel;
 
 	/* Mouse appearance */
-	PalSpriteID sprite_seq[16];   ///< current image of cursor
-	Point sprite_pos[16];         ///< relative position of individual sprites
-	uint sprite_count;            ///< number of sprites to draw
+	std::vector<CursorSprite> sprites; ///< Sprites comprising cursor.
 	Point total_offs, total_size; ///< union of sprite properties
 
 	Point draw_pos, draw_size;    ///< position and size bounding-box for drawing
@@ -226,7 +232,7 @@ struct SubSprite {
 	int left, top, right, bottom;
 };
 
-enum Colours : byte {
+enum Colours : uint8_t {
 	COLOUR_BEGIN,
 	COLOUR_DARK_BLUE = COLOUR_BEGIN,
 	COLOUR_PALE_GREEN,
@@ -247,6 +253,7 @@ enum Colours : byte {
 	COLOUR_END,
 	INVALID_COLOUR = 0xFF,
 };
+DECLARE_POSTFIX_INCREMENT(Colours)
 DECLARE_ENUM_AS_ADDABLE(Colours)
 
 /** Colour of the strings, see _string_colourmap in table/string_colours.h or docs/ottd-colourtext-palette.png */
@@ -282,11 +289,9 @@ enum TextColour {
 };
 DECLARE_ENUM_AS_BIT_SET(TextColour)
 
-/** Defines a few values that are related to animations using palette changes */
-enum PaletteAnimationSizes {
-	PALETTE_ANIM_SIZE  = 28,   ///< number of animated colours
-	PALETTE_ANIM_START = 227,  ///< Index in  the _palettes array from which all animations are taking places (table/palettes.h)
-};
+/* A few values that are related to animations using palette changes */
+static constexpr uint8_t PALETTE_ANIM_SIZE = 28; ///< number of animated colours
+static constexpr uint8_t PALETTE_ANIM_START = 227; ///< Index in  the _palettes array from which all animations are taking places (table/palettes.h)
 
 /** Define the operation GfxFillRect performs */
 enum FillRectMode {
@@ -304,7 +309,7 @@ enum PaletteType {
 };
 
 /** Types of sprites that might be loaded */
-enum class SpriteType : byte {
+enum class SpriteType : uint8_t {
 	Normal   = 0,      ///< The most basic (normal) sprite
 	MapGen   = 1,      ///< Special sprite for the map generator
 	Font     = 2,      ///< A sprite used for fonts

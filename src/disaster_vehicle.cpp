@@ -63,7 +63,7 @@ static void DisasterClearSquare(TileIndex tile)
 	switch (GetTileType(tile)) {
 		case MP_RAILWAY:
 			if (Company::IsHumanID(GetTileOwner(tile)) && !IsRailDepot(tile)) {
-				Backup<CompanyID> cur_company(_current_company, OWNER_WATER, FILE_LINE);
+				Backup<CompanyID> cur_company(_current_company, OWNER_WATER);
 				Command<CMD_LANDSCAPE_CLEAR>::Do(DC_EXEC, tile);
 				cur_company.Restore();
 
@@ -73,7 +73,7 @@ static void DisasterClearSquare(TileIndex tile)
 			break;
 
 		case MP_HOUSE: {
-			Backup<CompanyID> cur_company(_current_company, OWNER_NONE, FILE_LINE);
+			Backup<CompanyID> cur_company(_current_company, OWNER_NONE);
 			Command<CMD_LANDSCAPE_CLEAR>::Do(DC_EXEC, tile);
 			cur_company.Restore();
 			break;
@@ -384,13 +384,13 @@ static bool DisasterTick_Ufo(DisasterVehicle *v)
 		if (z <= u->z_pos && (u->vehstatus & VS_HIDDEN) == 0) {
 			v->age++;
 			if (u->crashed_ctr == 0) {
-				u->Crash();
+				uint victims = u->Crash();
 				u->disaster_vehicle = INVALID_VEHICLE;
 
 				AddTileNewsItem(STR_NEWS_DISASTER_SMALL_UFO, NT_ACCIDENT, u->tile);
 
-				AI::NewEvent(u->owner, new ScriptEventVehicleCrashed(u->index, u->tile, ScriptEventVehicleCrashed::CRASH_RV_UFO));
-				Game::NewEvent(new ScriptEventVehicleCrashed(u->index, u->tile, ScriptEventVehicleCrashed::CRASH_RV_UFO));
+				AI::NewEvent(u->owner, new ScriptEventVehicleCrashed(u->index, u->tile, ScriptEventVehicleCrashed::CRASH_RV_UFO, victims));
+				Game::NewEvent(new ScriptEventVehicleCrashed(u->index, u->tile, ScriptEventVehicleCrashed::CRASH_RV_UFO, victims));
 			}
 		}
 
@@ -408,7 +408,7 @@ static bool DisasterTick_Ufo(DisasterVehicle *v)
 
 static void DestructIndustry(Industry *i)
 {
-	for (TileIndex tile = 0; tile != Map::Size(); tile++) {
+	for (const auto tile : Map::Iterate()) {
 		if (i->TileBelongsToIndustry(tile)) {
 			ResetIndustryConstructionStage(tile);
 			MarkTileDirtyByTile(tile);
@@ -925,16 +925,17 @@ static const Disaster _disasters[] = {
 
 static void DoDisaster()
 {
-	byte buf[lengthof(_disasters)];
+	std::vector<DisasterInitProc *> available_disasters;
 
-	byte j = 0;
-	for (size_t i = 0; i != lengthof(_disasters); i++) {
-		if (TimerGameCalendar::year >= _disasters[i].min_year && TimerGameCalendar::year < _disasters[i].max_year) buf[j++] = (byte)i;
+	for (auto &disaster : _disasters) {
+		if (TimerGameCalendar::year >= disaster.min_year && TimerGameCalendar::year < disaster.max_year) {
+			available_disasters.push_back(disaster.init_proc);
+		}
 	}
 
-	if (j == 0) return;
+	if (available_disasters.empty()) return;
 
-	_disasters[buf[RandomRange(j)]].init_proc();
+	available_disasters[RandomRange(static_cast<uint32_t>(available_disasters.size()))]();
 }
 
 

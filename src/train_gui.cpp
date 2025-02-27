@@ -76,7 +76,7 @@ static int HighlightDragPosition(int px, int max_width, int y, VehicleID selecti
 		int top = y - height / 2;
 		Rect r = {drag_hlight_left, top, drag_hlight_right, top + height - 1};
 		/* Sprite-scaling is used here as the area is from sprite size */
-		GfxFillRect(r.Shrink(ScaleSpriteTrad(1)), _colour_gradient[COLOUR_GREY][7]);
+		GfxFillRect(r.Shrink(ScaleSpriteTrad(1)), GetColourGradient(COLOUR_GREY, SHADE_LIGHTEST));
 	}
 
 	return drag_hlight_width;
@@ -105,6 +105,10 @@ void DrawTrainImage(const Train *v, const Rect &r, VehicleID selection, EngineIm
 
 	{
 		AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
+
+		bool do_overlays = ShowCargoIconOverlay();
+		/* List of overlays, only used if cargo icon overlays are enabled. */
+		static std::vector<CargoIconOverlay> overlays;
 
 		int px = rtl ? max_width + skip : -skip;
 		int y = r.Height() / 2;
@@ -143,7 +147,13 @@ void DrawTrainImage(const Train *v, const Rect &r, VehicleID selection, EngineIm
 				}
 			}
 
+			if (do_overlays) AddCargoIconOverlay(overlays, px, width, v);
 			px += rtl ? -width : width;
+		}
+
+		if (do_overlays) {
+			DrawCargoIconOverlays(overlays, y);
+			overlays.clear();
 		}
 
 		if (dragging && drag_at_end_of_train) {
@@ -277,7 +287,7 @@ static void GetCargoSummaryOfArticulatedVehicle(const Train *v, CargoSummary &su
 		new_item.subtype = GetCargoSubtypeText(v);
 		if (!IsValidCargoID(new_item.cargo) && new_item.subtype == STR_EMPTY) continue;
 
-		auto item = std::find(std::begin(summary), std::end(summary), new_item);
+		auto item = std::ranges::find(summary, new_item);
 		if (item == std::end(summary)) {
 			item = summary.emplace(std::end(summary));
 			item->cargo = new_item.cargo;
@@ -399,7 +409,7 @@ void DrawTrainDetails(const Train *v, const Rect &r, int vscroll_pos, uint16_t v
 				if (vscroll_pos <= 0 && vscroll_pos > -vscroll_cap) {
 					int py = r.top - line_height * vscroll_pos + text_y_offset;
 					if (i > 0 || separate_sprite_row) {
-						if (vscroll_pos != 0) GfxFillRect(r.left, py - WidgetDimensions::scaled.matrix.top - 1, r.right, py - WidgetDimensions::scaled.matrix.top, _colour_gradient[COLOUR_GREY][5]);
+						if (vscroll_pos != 0) GfxFillRect(r.left, py - WidgetDimensions::scaled.matrix.top - 1, r.right, py - WidgetDimensions::scaled.matrix.top, GetColourGradient(COLOUR_GREY, SHADE_LIGHT));
 					}
 					switch (det_tab) {
 						case TDW_TAB_CARGO:

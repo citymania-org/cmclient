@@ -35,7 +35,7 @@ static bool IsPossibleCrossing(const TileIndex tile, Axis ax)
 	return (IsTileType(tile, MP_RAILWAY) &&
 		GetRailTileType(tile) == RAIL_TILE_NORMAL &&
 		GetTrackBits(tile) == (ax == AXIS_X ? TRACK_BIT_Y : TRACK_BIT_X) &&
-		GetFoundationSlope(tile) == SLOPE_FLAT);
+		std::get<0>(GetFoundationSlope(tile)) == SLOPE_FLAT);
 }
 
 /**
@@ -253,6 +253,8 @@ RoadTypes GetRoadTypes(bool introduces)
  */
 RoadType GetRoadTypeByLabel(RoadTypeLabel label, bool allow_alternate_labels)
 {
+	if (label == 0) return INVALID_ROADTYPE;
+
 	/* Loop through each road type until the label is found */
 	for (RoadType r = ROADTYPE_BEGIN; r != ROADTYPE_END; r++) {
 		const RoadTypeInfo *rti = GetRoadTypeInfo(r);
@@ -263,7 +265,7 @@ RoadType GetRoadTypeByLabel(RoadTypeLabel label, bool allow_alternate_labels)
 		/* Test if any road type defines the label as an alternate. */
 		for (RoadType r = ROADTYPE_BEGIN; r != ROADTYPE_END; r++) {
 			const RoadTypeInfo *rti = GetRoadTypeInfo(r);
-			if (std::find(rti->alternate_labels.begin(), rti->alternate_labels.end(), label) != rti->alternate_labels.end()) return r;
+			if (std::ranges::find(rti->alternate_labels, label) != rti->alternate_labels.end()) return r;
 		}
 	}
 

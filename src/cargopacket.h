@@ -45,23 +45,23 @@ private:
 		int16_t y;
 	};
 
-	uint16_t count{0}; ///< The amount of cargo in this packet.
-	uint16_t periods_in_transit{0}; ///< Amount of cargo aging periods this packet has been in transit.
+	uint16_t count = 0; ///< The amount of cargo in this packet.
+	uint16_t periods_in_transit = 0; ///< Amount of cargo aging periods this packet has been in transit.
 
-	Money feeder_share{0}; ///< Value of feeder pickup to be paid for on delivery of cargo.
+	Money feeder_share = 0; ///< Value of feeder pickup to be paid for on delivery of cargo.
 
-	TileIndex source_xy{INVALID_TILE}; ///< The origin of the cargo.
+	TileIndex source_xy = INVALID_TILE; ///< The origin of the cargo.
 	Vector travelled{0, 0}; ///< If cargo is in station: the vector from the unload tile to the source tile. If in vehicle: an intermediate value.
 
-	SourceID source_id{INVALID_SOURCE}; ///< Index of industry/town/HQ, INVALID_SOURCE if unknown/invalid.
-	SourceType source_type{SourceType::Industry}; ///< Type of \c source_id.
+	SourceID source_id = INVALID_SOURCE; ///< Index of industry/town/HQ, INVALID_SOURCE if unknown/invalid.
+	SourceType source_type = SourceType::Industry; ///< Type of \c source_id.
 
 #ifdef WITH_ASSERT
-	bool in_vehicle{false}; ///< NOSAVE: Whether this cargo is in a vehicle or not.
+	bool in_vehicle = false; ///< NOSAVE: Whether this cargo is in a vehicle or not.
 #endif /* WITH_ASSERT */
 
-	StationID first_station{INVALID_STATION}; ///< The station where the cargo came from first.
-	StationID next_hop{INVALID_STATION}; ///< Station where the cargo wants to go next.
+	StationID first_station = INVALID_STATION; ///< The station where the cargo came from first.
+	StationID next_hop = INVALID_STATION; ///< Station where the cargo wants to go next.
 
 	/** The CargoList caches, thus needs to know about it. */
 	template <class Tinst, class Tcont> friend class CargoList;
@@ -478,7 +478,7 @@ public:
 
 	void InvalidateCache();
 
-	bool Stage(bool accepted, StationID current_station, StationIDStack next_station, uint8_t order_flags, const GoodsEntry *ge, CargoPayment *payment, TileIndex current_tile);
+	bool Stage(bool accepted, StationID current_station, StationIDStack next_station, uint8_t order_flags, const GoodsEntry *ge, CargoID cargo, CargoPayment *payment, TileIndex current_tile);
 
 	/**
 	 * Marks all cargo in the vehicle as to be kept. This is mostly useful for
@@ -498,7 +498,7 @@ public:
 	template<MoveToAction Tfrom, MoveToAction Tto>
 	uint Reassign(uint max_move);
 	uint Return(uint max_move, StationCargoList *dest, StationID next_station, TileIndex current_tile);
-	uint Unload(uint max_move, StationCargoList *dest, CargoPayment *payment, TileIndex current_tile);
+	uint Unload(uint max_move, StationCargoList *dest, CargoID cargo, CargoPayment *payment, TileIndex current_tile);
 	uint Shift(uint max_move, VehicleCargoList *dest);
 	uint Truncate(uint max_move = UINT_MAX);
 	uint Reroute(uint max_move, VehicleCargoList *dest, StationID avoid, StationID avoid2, const GoodsEntry *ge);

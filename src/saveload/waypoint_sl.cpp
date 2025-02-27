@@ -86,14 +86,9 @@ void MoveWaypointsToBaseStations()
 		/* As of version 17, we recalculate the custom graphic ID of waypoints
 		 * from the GRF ID / station index. */
 		for (OldWaypoint &wp : _old_waypoints) {
-			StationClass *stclass = StationClass::Get(STAT_CLASS_WAYP);
-			for (uint i = 0; i < stclass->GetSpecCount(); i++) {
-				const StationSpec *statspec = stclass->GetSpec(i);
-				if (statspec != nullptr && statspec->grf_prop.grffile->grfid == wp.grfid && statspec->grf_prop.local_id == wp.localidx) {
-					wp.spec = statspec;
-					break;
-				}
-			}
+			const auto specs = StationClass::Get(STAT_CLASS_WAYP)->Specs();
+			auto found = std::ranges::find_if(specs, [&wp](const StationSpec *spec) { return spec != nullptr && spec->grf_prop.grfid == wp.grfid && spec->grf_prop.local_id == wp.localidx; });
+			if (found != std::end(specs)) wp.spec = *found;
 		}
 	}
 
@@ -106,14 +101,16 @@ void MoveWaypointsToBaseStations()
 		 * the map array. If this is the case, try to locate the actual location in the map array */
 		if (!IsTileType(t, MP_RAILWAY) || GetRailTileType(t) != 2 /* RAIL_TILE_WAYPOINT */ || Tile(t).m2() != wp.index) {
 			Debug(sl, 0, "Found waypoint tile {} with invalid position", t);
-			for (t = 0; t < Map::Size(); t++) {
-				if (IsTileType(t, MP_RAILWAY) && GetRailTileType(t) == 2 /* RAIL_TILE_WAYPOINT */ && Tile(t).m2() == wp.index) {
-					Debug(sl, 0, "Found actual waypoint position at {}", t);
+			t = INVALID_TILE;
+			for (auto tile : Map::Iterate()) {
+				if (IsTileType(tile, MP_RAILWAY) && GetRailTileType(tile) == 2 /* RAIL_TILE_WAYPOINT */ && tile.m2() == wp.index) {
+					t = TileIndex(tile);
+					Debug(sl, 0, "Found actual waypoint position at {}", TileIndex(tile));
 					break;
 				}
 			}
 		}
-		if (t == Map::Size()) {
+		if (t == INVALID_TILE) {
 			SlErrorCorrupt("Waypoint with invalid tile");
 		}
 

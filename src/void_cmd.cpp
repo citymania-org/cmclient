@@ -29,8 +29,7 @@ static int GetSlopePixelZ_Void(TileIndex, uint x, uint y, bool)
 {
 	/* This function may be called on tiles outside the map, don't assume
 	 * that 'tile' is a valid tile index. See GetSlopePixelZOutsideMap. */
-	int z;
-	Slope tileh = GetTilePixelSlopeOutsideMap(x >> 4, y >> 4, &z);
+	auto [tileh, z] = GetTilePixelSlopeOutsideMap(x >> 4, y >> 4);
 
 	return z + GetPartialPixelZ(x & 0xF, y & 0xF, tileh);
 }
@@ -42,7 +41,7 @@ static Foundation GetFoundation_Void(TileIndex, Slope)
 
 static CommandCost ClearTile_Void(TileIndex, DoCommandFlag)
 {
-	return_cmd_error(STR_ERROR_OFF_EDGE_OF_MAP);
+	return CommandCost(STR_ERROR_OFF_EDGE_OF_MAP);
 }
 
 
@@ -70,7 +69,7 @@ static TrackStatus GetTileTrackStatus_Void(TileIndex, TransportType, uint, DiagD
 
 static CommandCost TerraformTile_Void(TileIndex, DoCommandFlag, int, Slope)
 {
-	return_cmd_error(STR_ERROR_OFF_EDGE_OF_MAP);
+	return CommandCost(STR_ERROR_OFF_EDGE_OF_MAP);
 }
 
 extern const TileTypeProcs _tile_type_void_procs = {

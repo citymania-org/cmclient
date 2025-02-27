@@ -26,12 +26,12 @@ static std::vector<HotkeyList*> *_hotkey_lists = nullptr;
 
 /** String representation of a keycode */
 struct KeycodeNames {
-	const char *name;       ///< Name of the keycode
+	const std::string_view name; ///< Name of the keycode
 	WindowKeyCodes keycode; ///< The keycode
 };
 
 /** Array of non-standard keycodes that can be used in the hotkeys config file. */
-static const KeycodeNames _keycode_to_name[] = {
+static const std::initializer_list<KeycodeNames> _keycode_to_name = {
 	{"SHIFT", WKC_SHIFT},
 	{"CTRL", WKC_CTRL},
 	{"ALT", WKC_ALT},
@@ -99,10 +99,10 @@ static uint16_t ParseCode(const char *start, const char *end)
 	assert(start <= end);
 	while (start < end && *start == ' ') start++;
 	while (end > start && *end == ' ') end--;
-	std::string_view str{start, (size_t)(end - start)};
-	for (uint i = 0; i < lengthof(_keycode_to_name); i++) {
-		if (StrEqualsIgnoreCase(str, _keycode_to_name[i].name)) {
-			return _keycode_to_name[i].keycode;
+	std::string_view str{start, end};
+	for (const auto &kn : _keycode_to_name) {
+		if (StrEqualsIgnoreCase(str, kn.name)) {
+			return kn.keycode;
 		}
 	}
 	if (end - start == 1) {
@@ -193,9 +193,9 @@ static std::string KeycodeToString(uint16_t keycode)
 	if (!str.empty()) str += "+";
 	keycode = keycode & ~WKC_SPECIAL_KEYS;
 
-	for (uint i = 0; i < lengthof(_keycode_to_name); i++) {
-		if (_keycode_to_name[i].keycode == keycode) {
-			str += _keycode_to_name[i].name;
+	for (const auto &kn : _keycode_to_name) {
+		if (kn.keycode == keycode) {
+			str += kn.name;
 			return str;
 		}
 	}
@@ -267,7 +267,7 @@ HotkeyList::HotkeyList(const std::string &ini_group, const std::vector<Hotkey> &
 
 HotkeyList::~HotkeyList()
 {
-	_hotkey_lists->erase(std::find(_hotkey_lists->begin(), _hotkey_lists->end(), this));
+	_hotkey_lists->erase(std::ranges::find(*_hotkey_lists, this));
 }
 
 /**

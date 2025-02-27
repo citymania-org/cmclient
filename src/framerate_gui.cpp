@@ -10,6 +10,7 @@
 #include "framerate_type.h"
 #include <chrono>
 #include "gfx_func.h"
+#include "newgrf_sound.h"
 #include "window_gui.h"
 #include "window_func.h"
 #include "table/sprites.h"
@@ -393,9 +394,7 @@ static constexpr NWidgetPart _framerate_window_widgets[] = {
 					NWidget(WWT_EMPTY, COLOUR_GREY, WID_FRW_TIMES_NAMES), SetScrollbar(WID_FRW_SCROLLBAR),
 					NWidget(WWT_EMPTY, COLOUR_GREY, WID_FRW_TIMES_CURRENT), SetScrollbar(WID_FRW_SCROLLBAR),
 					NWidget(WWT_EMPTY, COLOUR_GREY, WID_FRW_TIMES_AVERAGE), SetScrollbar(WID_FRW_SCROLLBAR),
-					NWidget(NWID_SELECTION, INVALID_COLOUR, WID_FRW_SEL_MEMORY),
-						NWidget(WWT_EMPTY, COLOUR_GREY, WID_FRW_ALLOCSIZE), SetScrollbar(WID_FRW_SCROLLBAR),
-					EndContainer(),
+					NWidget(WWT_EMPTY, COLOUR_GREY, WID_FRW_ALLOCSIZE), SetScrollbar(WID_FRW_SCROLLBAR),
 				EndContainer(),
 				NWidget(WWT_TEXT, COLOUR_GREY, WID_FRW_INFO_DATA_POINTS), SetDataTip(STR_FRAMERATE_DATA_POINTS, 0x0), SetFill(1, 0), SetResize(1, 0),
 			EndContainer(),
@@ -409,7 +408,6 @@ static constexpr NWidgetPart _framerate_window_widgets[] = {
 
 struct FramerateWindow : Window {
 	bool small;
-	bool showing_memory;
 	int num_active;
 	int num_displayed;
 
@@ -448,11 +446,10 @@ struct FramerateWindow : Window {
 
 	static constexpr int MIN_ELEMENTS = 5;      ///< smallest number of elements to display
 
-	FramerateWindow(WindowDesc *desc, WindowNumber number) : Window(desc)
+	FramerateWindow(WindowDesc &desc, WindowNumber number) : Window(desc)
 	{
 		this->InitNested(number);
 		this->small = this->IsShaded();
-		this->showing_memory = true;
 		this->UpdateData();
 		this->num_displayed = this->num_active;
 
@@ -480,7 +477,6 @@ struct FramerateWindow : Window {
 	void UpdateData()
 	{
 		double gl_rate = _pf_data[PFE_GAMELOOP].GetRate();
-		bool have_script = false;
 		this->rate_gameloop.SetRate(gl_rate, _pf_data[PFE_GAMELOOP].expected_rate);
 		this->speed_gameloop.SetRate(gl_rate / _pf_data[PFE_GAMELOOP].expected_rate, 1.0);
 		if (this->small) return; // in small mode, this is everything needed
@@ -493,14 +489,7 @@ struct FramerateWindow : Window {
 			this->times_longterm[e].SetTime(_pf_data[e].GetAverageDurationMilliseconds(NUM_FRAMERATE_POINTS), MILLISECONDS_PER_TICK);
 			if (_pf_data[e].num_valid > 0) {
 				new_active++;
-				if (e == PFE_GAMESCRIPT || e >= PFE_AI0) have_script = true;
 			}
-		}
-
-		if (this->showing_memory != have_script) {
-			NWidgetStacked *plane = this->GetWidget<NWidgetStacked>(WID_FRW_SEL_MEMORY);
-			plane->SetDisplayedPlane(have_script ? 0 : SZSP_VERTICAL);
-			this->showing_memory = have_script;
 		}
 
 		if (new_active != this->num_active) {
@@ -508,7 +497,6 @@ struct FramerateWindow : Window {
 			Scrollbar *sb = this->GetScrollbar(WID_FRW_SCROLLBAR);
 			sb->SetCount(this->num_active);
 			sb->SetCapacity(std::min(this->num_displayed, this->num_active));
-			this->ReInit();
 		}
 	}
 
@@ -540,32 +528,32 @@ struct FramerateWindow : Window {
 		}
 	}
 
-	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
 	{
 		switch (widget) {
 			case WID_FRW_RATE_GAMELOOP:
 				SetDParam(0, STR_FRAMERATE_FPS_GOOD);
-				SetDParam(1, 999999);
+				SetDParamMaxDigits(1, 6);
 				SetDParam(2, 2);
-				*size = GetStringBoundingBox(STR_FRAMERATE_RATE_GAMELOOP);
+				size = GetStringBoundingBox(STR_FRAMERATE_RATE_GAMELOOP);
 				break;
 			case WID_FRW_RATE_DRAWING:
 				SetDParam(0, STR_FRAMERATE_FPS_GOOD);
-				SetDParam(1, 999999);
+				SetDParamMaxDigits(1, 6);
 				SetDParam(2, 2);
-				*size = GetStringBoundingBox(STR_FRAMERATE_RATE_BLITTER);
+				size = GetStringBoundingBox(STR_FRAMERATE_RATE_BLITTER);
 				break;
 			case WID_FRW_RATE_FACTOR:
-				SetDParam(0, 999999);
+				SetDParamMaxDigits(0, 6);
 				SetDParam(1, 2);
-				*size = GetStringBoundingBox(STR_FRAMERATE_SPEED_FACTOR);
+				size = GetStringBoundingBox(STR_FRAMERATE_SPEED_FACTOR);
 				break;
 
 			case WID_FRW_TIMES_NAMES: {
-				size->width = 0;
-				size->height = GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal + MIN_ELEMENTS * GetCharacterHeight(FS_NORMAL);
-				resize->width = 0;
-				resize->height = GetCharacterHeight(FS_NORMAL);
+				size.width = 0;
+				size.height = GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal + MIN_ELEMENTS * GetCharacterHeight(FS_NORMAL);
+				resize.width = 0;
+				resize.height = GetCharacterHeight(FS_NORMAL);
 				for (PerformanceElement e : DISPLAY_ORDER_PFE) {
 					if (_pf_data[e].num_valid == 0) continue;
 					Dimension line_size;
@@ -576,7 +564,7 @@ struct FramerateWindow : Window {
 						SetDParamStr(1, GetAIName(e - PFE_AI0));
 						line_size = GetStringBoundingBox(STR_FRAMERATE_AI);
 					}
-					size->width = std::max(size->width, line_size.width);
+					size.width = std::max(size.width, line_size.width);
 				}
 				break;
 			}
@@ -584,14 +572,14 @@ struct FramerateWindow : Window {
 			case WID_FRW_TIMES_CURRENT:
 			case WID_FRW_TIMES_AVERAGE:
 			case WID_FRW_ALLOCSIZE: {
-				*size = GetStringBoundingBox(STR_FRAMERATE_CURRENT + (widget - WID_FRW_TIMES_CURRENT));
-				SetDParam(0, 999999);
+				size = GetStringBoundingBox(STR_FRAMERATE_CURRENT + (widget - WID_FRW_TIMES_CURRENT));
+				SetDParamMaxDigits(0, 6);
 				SetDParam(1, 2);
 				Dimension item_size = GetStringBoundingBox(STR_FRAMERATE_MS_GOOD);
-				size->width = std::max(size->width, item_size.width);
-				size->height += GetCharacterHeight(FS_NORMAL) * MIN_ELEMENTS + WidgetDimensions::scaled.vsep_normal;
-				resize->width = 0;
-				resize->height = GetCharacterHeight(FS_NORMAL);
+				size.width = std::max(size.width, item_size.width);
+				size.height += GetCharacterHeight(FS_NORMAL) * MIN_ELEMENTS + WidgetDimensions::scaled.vsep_normal;
+				resize.width = 0;
+				resize.height = GetCharacterHeight(FS_NORMAL);
 				break;
 			}
 		}
@@ -601,7 +589,7 @@ struct FramerateWindow : Window {
 	void DrawElementTimesColumn(const Rect &r, StringID heading_str, const CachedDecimal *values) const
 	{
 		const Scrollbar *sb = this->GetScrollbar(WID_FRW_SCROLLBAR);
-		uint16_t skip = sb->GetPosition();
+		int32_t skip = sb->GetPosition();
 		int drawable = this->num_displayed;
 		int y = r.top;
 		DrawString(r.left, r.right, y, heading_str, TC_FROMSTRING, SA_CENTER, true);
@@ -623,7 +611,7 @@ struct FramerateWindow : Window {
 	void DrawElementAllocationsColumn(const Rect &r) const
 	{
 		const Scrollbar *sb = this->GetScrollbar(WID_FRW_SCROLLBAR);
-		uint16_t skip = sb->GetPosition();
+		int32_t skip = sb->GetPosition();
 		int drawable = this->num_displayed;
 		int y = r.top;
 		DrawString(r.left, r.right, y, STR_FRAMERATE_MEMORYUSE, TC_FROMSTRING, SA_CENTER, true);
@@ -638,6 +626,12 @@ struct FramerateWindow : Window {
 				} else {
 					SetDParam(0, Company::Get(e - PFE_AI0)->ai_instance->GetAllocatedMemory());
 				}
+				DrawString(r.left, r.right, y, STR_FRAMERATE_BYTES_GOOD, TC_FROMSTRING, SA_RIGHT);
+				y += GetCharacterHeight(FS_NORMAL);
+				drawable--;
+				if (drawable == 0) break;
+			} else if (e == PFE_SOUND) {
+				SetDParam(0, GetSoundPoolAllocatedMemory());
 				DrawString(r.left, r.right, y, STR_FRAMERATE_BYTES_GOOD, TC_FROMSTRING, SA_RIGHT);
 				y += GetCharacterHeight(FS_NORMAL);
 				drawable--;
@@ -657,7 +651,7 @@ struct FramerateWindow : Window {
 			case WID_FRW_TIMES_NAMES: {
 				/* Render a column of titles for performance element names */
 				const Scrollbar *sb = this->GetScrollbar(WID_FRW_SCROLLBAR);
-				uint16_t skip = sb->GetPosition();
+				int32_t skip = sb->GetPosition();
 				int drawable = this->num_displayed;
 				int y = r.top + GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal; // first line contains headings in the value columns
 				for (PerformanceElement e : DISPLAY_ORDER_PFE) {
@@ -701,8 +695,8 @@ struct FramerateWindow : Window {
 			case WID_FRW_TIMES_AVERAGE: {
 				/* Open time graph windows when clicking detail measurement lines */
 				const Scrollbar *sb = this->GetScrollbar(WID_FRW_SCROLLBAR);
-				int line = sb->GetScrolledRowFromWidget(pt.y, this, widget, WidgetDimensions::scaled.vsep_normal + GetCharacterHeight(FS_NORMAL));
-				if (line != INT_MAX) {
+				int32_t line = sb->GetScrolledRowFromWidget(pt.y, this, widget, WidgetDimensions::scaled.vsep_normal + GetCharacterHeight(FS_NORMAL));
+				if (line != INT32_MAX) {
 					line++;
 					/* Find the visible line that was clicked */
 					for (PerformanceElement e : DISPLAY_ORDER_PFE) {
@@ -726,11 +720,11 @@ struct FramerateWindow : Window {
 	}
 };
 
-static WindowDesc _framerate_display_desc(__FILE__, __LINE__,
+static WindowDesc _framerate_display_desc(
 	WDP_AUTO, "framerate_display", 0, 0,
 	WC_FRAMERATE_DISPLAY, WC_NONE,
 	0,
-	std::begin(_framerate_window_widgets), std::end(_framerate_window_widgets)
+	_framerate_window_widgets
 );
 
 
@@ -755,7 +749,7 @@ struct FrametimeGraphWindow : Window {
 	PerformanceElement element; ///< what element this window renders graph for
 	Dimension graph_size;       ///< size of the main graph area (excluding axis labels)
 
-	FrametimeGraphWindow(WindowDesc *desc, WindowNumber number) : Window(desc)
+	FrametimeGraphWindow(WindowDesc &desc, WindowNumber number) : Window(desc)
 	{
 		this->element = (PerformanceElement)number;
 		this->horizontal_scale = 4;
@@ -780,7 +774,7 @@ struct FrametimeGraphWindow : Window {
 		}
 	}
 
-	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
 	{
 		if (widget == WID_FGW_GRAPH) {
 			SetDParam(0, 100);
@@ -792,10 +786,10 @@ struct FrametimeGraphWindow : Window {
 			graph_size.height = std::max(100u, 10 * (size_ms_label.height + 1));
 			/* Always 2:1 graph area */
 			graph_size.width = 2 * graph_size.height;
-			*size = graph_size;
+			size = graph_size;
 
-			size->width += size_ms_label.width + 2;
-			size->height += size_s_label.height + 2;
+			size.width += size_ms_label.width + 2;
+			size.height += size_s_label.height + 2;
 		}
 	}
 
@@ -810,22 +804,22 @@ struct FrametimeGraphWindow : Window {
 		/* Determine horizontal scale based on period covered by 60 points
 		 * (slightly less than 2 seconds at full game speed) */
 		struct ScaleDef { TimingMeasurement range; int scale; };
-		static const ScaleDef hscales[] = {
+		static const std::initializer_list<ScaleDef> hscales = {
 			{ TIMESTAMP_PRECISION * 120, 60 },
 			{ TIMESTAMP_PRECISION *  10, 20 },
 			{ TIMESTAMP_PRECISION *   5, 10 },
 			{ TIMESTAMP_PRECISION *   3,  4 },
 			{ TIMESTAMP_PRECISION *   1,  2 },
 		};
-		for (const ScaleDef *sc = hscales; sc < hscales + lengthof(hscales); sc++) {
-			if (range < sc->range) this->horizontal_scale = sc->scale;
+		for (const auto &sc : hscales) {
+			if (range < sc.range) this->horizontal_scale = sc.scale;
 		}
 	}
 
 	void SelectVerticalScale(TimingMeasurement range)
 	{
 		/* Determine vertical scale based on peak value (within the horizontal scale + a bit) */
-		static const TimingMeasurement vscales[] = {
+		static const std::initializer_list<TimingMeasurement> vscales = {
 			TIMESTAMP_PRECISION * 100,
 			TIMESTAMP_PRECISION * 10,
 			TIMESTAMP_PRECISION * 5,
@@ -836,8 +830,8 @@ struct FrametimeGraphWindow : Window {
 			TIMESTAMP_PRECISION / 50,
 			TIMESTAMP_PRECISION / 200,
 		};
-		for (const TimingMeasurement *sc = vscales; sc < vscales + lengthof(vscales); sc++) {
-			if (range < *sc) this->vertical_scale = (int)*sc;
+		for (const auto &sc : vscales) {
+			if (range < sc) this->vertical_scale = (int)sc;
 		}
 	}
 
@@ -1017,11 +1011,11 @@ struct FrametimeGraphWindow : Window {
 	}
 };
 
-static WindowDesc _frametime_graph_window_desc(__FILE__, __LINE__,
+static WindowDesc _frametime_graph_window_desc(
 	WDP_AUTO, "frametime_graph", 140, 90,
 	WC_FRAMETIME_GRAPH, WC_NONE,
 	0,
-	std::begin(_frametime_graph_window_widgets), std::end(_frametime_graph_window_widgets)
+	_frametime_graph_window_widgets
 );
 
 
@@ -1029,14 +1023,14 @@ static WindowDesc _frametime_graph_window_desc(__FILE__, __LINE__,
 /** Open the general framerate window */
 void ShowFramerateWindow()
 {
-	AllocateWindowDescFront<FramerateWindow>(&_framerate_display_desc, 0);
+	AllocateWindowDescFront<FramerateWindow>(_framerate_display_desc, 0);
 }
 
 /** Open a graph window for a performance element */
 void ShowFrametimeGraphWindow(PerformanceElement elem)
 {
 	if (elem < PFE_FIRST || elem >= PFE_MAX) return; // maybe warn?
-	AllocateWindowDescFront<FrametimeGraphWindow>(&_frametime_graph_window_desc, elem, true);
+	AllocateWindowDescFront<FrametimeGraphWindow>(_frametime_graph_window_desc, elem, true);
 }
 
 /** Print performance statistics to game console */
@@ -1048,7 +1042,7 @@ void ConPrintFramerate()
 
 	IConsolePrint(TC_SILVER, "Based on num. data points: {} {} {}", count1, count2, count3);
 
-	static const char *MEASUREMENT_NAMES[PFE_MAX] = {
+	static const std::array<std::string_view, PFE_MAX> MEASUREMENT_NAMES = {
 		"Game loop",
 		"  GL station ticks",
 		"  GL train ticks",
@@ -1066,15 +1060,13 @@ void ConPrintFramerate()
 	};
 	std::string ai_name_buf;
 
-	static const PerformanceElement rate_elements[] = { PFE_GAMELOOP, PFE_DRAWING, PFE_VIDEO };
-
 	bool printed_anything = false;
 
-	for (const PerformanceElement *e = rate_elements; e < rate_elements + lengthof(rate_elements); e++) {
-		auto &pf = _pf_data[*e];
+	for (const auto &e : { PFE_GAMELOOP, PFE_DRAWING, PFE_VIDEO }) {
+		auto &pf = _pf_data[e];
 		if (pf.num_valid == 0) continue;
 		IConsolePrint(TC_GREEN, "{} rate: {:.2f}fps  (expected: {:.2f}fps)",
-			MEASUREMENT_NAMES[*e],
+			MEASUREMENT_NAMES[e],
 			pf.GetRate(),
 			pf.expected_rate);
 		printed_anything = true;

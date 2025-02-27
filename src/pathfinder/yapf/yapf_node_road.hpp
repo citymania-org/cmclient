@@ -10,19 +10,24 @@
 #ifndef YAPF_NODE_ROAD_HPP
 #define YAPF_NODE_ROAD_HPP
 
+#include "../../tile_type.h"
+#include "../../track_type.h"
+#include "nodelist.hpp"
+#include "yapf_node.hpp"
+
 /** Yapf Node for road YAPF */
 template <class Tkey_>
 struct CYapfRoadNodeT : CYapfNodeT<Tkey_, CYapfRoadNodeT<Tkey_> > {
 	typedef CYapfNodeT<Tkey_, CYapfRoadNodeT<Tkey_> > base;
 
-	TileIndex m_segment_last_tile;
-	Trackdir  m_segment_last_td;
+	TileIndex segment_last_tile;
+	Trackdir segment_last_td;
 
 	void Set(CYapfRoadNodeT *parent, TileIndex tile, Trackdir td, bool is_choice)
 	{
-		base::Set(parent, tile, td, is_choice);
-		m_segment_last_tile = tile;
-		m_segment_last_td = td;
+		this->base::Set(parent, tile, td, is_choice);
+		this->segment_last_tile = tile;
+		this->segment_last_td = td;
 	}
 };
 
@@ -31,7 +36,7 @@ typedef CYapfRoadNodeT<CYapfNodeKeyExitDir>  CYapfRoadNodeExitDir;
 typedef CYapfRoadNodeT<CYapfNodeKeyTrackDir> CYapfRoadNodeTrackDir;
 
 /* Default NodeList types */
-typedef CNodeList_HashTableT<CYapfRoadNodeExitDir , 8, 10> CRoadNodeListExitDir;
-typedef CNodeList_HashTableT<CYapfRoadNodeTrackDir, 8, 10> CRoadNodeListTrackDir;
+typedef NodeList<CYapfRoadNodeExitDir , 8, 10> CRoadNodeListExitDir;
+typedef NodeList<CYapfRoadNodeTrackDir, 8, 10> CRoadNodeListTrackDir;
 
 #endif /* YAPF_NODE_ROAD_HPP */

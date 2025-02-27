@@ -12,7 +12,6 @@
 
 #include "strings_type.h"
 #include "core/alloc_type.hpp"
-#include "misc/countedptr.hpp"
 #include "fileio_type.h"
 #include "textfile_type.h"
 #include "newgrf_text.h"
@@ -117,7 +116,7 @@ struct GRFError {
 };
 
 /** The possible types of a newgrf parameter. */
-enum GRFParameterType {
+enum GRFParameterType : uint8_t {
 	PTYPE_UINT_ENUM, ///< The parameter allows a range of numbers, each of which can have a special name
 	PTYPE_BOOL,      ///< The parameter is either 0 or 1
 	PTYPE_END,       ///< Invalid parameter type
@@ -125,26 +124,36 @@ enum GRFParameterType {
 
 /** Information about one grf parameter. */
 struct GRFParameterInfo {
-	GRFParameterInfo(uint nr);
-	GRFTextList name;      ///< The name of this parameter
-	GRFTextList desc;      ///< The description of this parameter
-	GRFParameterType type; ///< The type of this parameter
-	uint32_t min_value;      ///< The minimal value this parameter can have
-	uint32_t max_value;      ///< The maximal value of this parameter
-	uint32_t def_value;      ///< Default value of this parameter
-	byte param_nr;         ///< GRF parameter to store content in
-	byte first_bit;        ///< First bit to use in the GRF parameter
-	byte num_bit;          ///< Number of bits to use for this parameter
-	std::map<uint32_t, GRFTextList> value_names; ///< Names for each value.
-	bool complete_labels;  ///< True if all values have a label.
+	/**
+	 * Create a new empty GRFParameterInfo object.
+	 * @param nr The newgrf parameter that is changed.
+	 */
+	explicit GRFParameterInfo(uint nr) : param_nr(nr) {}
 
-	uint32_t GetValue(struct GRFConfig *config) const;
-	void SetValue(struct GRFConfig *config, uint32_t value);
+	GRFTextList name = {}; ///< The name of this parameter
+	GRFTextList desc = {}; ///< The description of this parameter
+
+	uint32_t min_value = 0; ///< The minimal value this parameter can have
+	uint32_t max_value = UINT32_MAX; ///< The maximal value of this parameter
+	uint32_t def_value = 0; ///< Default value of this parameter
+
+	GRFParameterType type = PTYPE_UINT_ENUM; ///< The type of this parameter
+
+	uint8_t param_nr; ///< GRF parameter to store content in
+	uint8_t first_bit = 0; ///< First bit to use in the GRF parameter
+	uint8_t num_bit = 32; ///< Number of bits to use for this parameter
+
+	bool complete_labels = false; ///< True if all values have a label.
+
+	std::map<uint32_t, GRFTextList> value_names = {}; ///< Names for each value.
+
 	void Finalize();
 };
 
 /** Information about GRF, used in the game and (part of it) in savegames */
 struct GRFConfig : ZeroedMemoryAllocator {
+	static constexpr uint8_t MAX_NUM_PARAMS = 0x80;
+
 	GRFConfig(const std::string &filename = std::string{});
 	GRFConfig(const GRFConfig &config);
 
@@ -164,18 +173,20 @@ struct GRFConfig : ZeroedMemoryAllocator {
 	uint8_t flags; ///< NOSAVE: GCF_Flags, bitset
 	GRFStatus status; ///< NOSAVE: GRFStatus, enum
 	uint32_t grf_bugs; ///< NOSAVE: bugs in this GRF in this run, @see enum GRFBugs
-	std::array<uint32_t, 0x80> param; ///< GRF parameters
-	uint8_t num_params; ///< Number of used parameters
 	uint8_t num_valid_params; ///< NOSAVE: Number of valid parameters (action 0x14)
 	uint8_t palette; ///< GRFPalette, bitset
-	std::vector<std::optional<GRFParameterInfo>> param_info; ///< NOSAVE: extra information about the parameters
 	bool has_param_defaults; ///< NOSAVE: did this newgrf specify any defaults for it's parameters
+	std::vector<std::optional<GRFParameterInfo>> param_info; ///< NOSAVE: extra information about the parameters
+	std::vector<uint32_t> param; ///< GRF parameters
 
 	struct GRFConfig *next; ///< NOSAVE: Next item in the linked list
 
 	bool IsCompatible(uint32_t old_version) const;
-	void SetParams(const std::vector<uint32_t> &pars);
+	void SetParams(std::span<const uint32_t> pars);
 	void CopyParams(const GRFConfig &src);
+
+	uint32_t GetValue(const GRFParameterInfo &info) const;
+	void SetValue(const GRFParameterInfo &info, uint32_t value);
 
 	std::optional<std::string> GetTextfile(TextfileType type) const;
 	const char *GetName() const;
@@ -210,7 +221,7 @@ struct NewGRFScanCallback {
 	virtual void OnNewGRFsScanned() = 0;
 };
 
-size_t GRFGetSizeOfDataSection(FILE *f);
+size_t GRFGetSizeOfDataSection(FileHandle &f);
 
 void ScanNewGRFFiles(NewGRFScanCallback *callback);
 const GRFConfig *FindGRFConfig(uint32_t grfid, FindGRFConfigMode mode, const MD5Hash *md5sum = nullptr, uint32_t desired_version = 0);

@@ -19,7 +19,7 @@
 
 static OldPersistentStorage _old_ind_persistent_storage;
 
-class SlIndustryAccepted : public DefaultSaveLoadHandler<SlIndustryAccepted, Industry> {
+class SlIndustryAccepted : public VectorSaveLoadHandler<SlIndustryAccepted, Industry, Industry::AcceptedCargo, INDUSTRY_NUM_INPUTS> {
 public:
 	inline static const SaveLoad description[] = {
 		 SLE_VAR(Industry::AcceptedCargo, cargo, SLE_UINT8),
@@ -28,34 +28,20 @@ public:
 	};
 	inline const static SaveLoadCompatTable compat_description = _industry_accepts_sl_compat;
 
-	void Save(Industry *i) const override
+	std::vector<Industry::AcceptedCargo> &GetVector(Industry *i) const override { return i->accepted; }
+
+	/* Old array structure used by INDYChunkHandler for savegames before SLV_INDUSTRY_CARGO_REORGANISE. */
+	static inline std::array<CargoID, INDUSTRY_NUM_INPUTS> old_cargo;
+	static inline std::array<uint16_t, INDUSTRY_NUM_INPUTS> old_waiting;
+	static inline std::array<TimerGameEconomy::Date, INDUSTRY_NUM_INPUTS> old_last_accepted;
+
+	static void ResetOldStructure()
 	{
-		SlSetStructListLength(i->accepted.size());
-
-		for (auto &a : i->accepted) {
-			SlObject(&a, this->GetDescription());
-		}
+		SlIndustryAccepted::old_cargo.fill(INVALID_CARGO);
+		SlIndustryAccepted::old_waiting.fill(0);
+		SlIndustryAccepted::old_last_accepted.fill(0);
 	}
-
-	void Load(Industry *i) const override
-	{
-		size_t len = SlGetStructListLength(i->accepted.size());
-
-		for (auto &a : i->accepted) {
-			if (--len > i->accepted.size()) break; // unsigned so wraps after hitting zero.
-			SlObject(&a, this->GetDescription());
-		}
-	}
-
-	/* Old array structure used for savegames before SLV_INDUSTRY_CARGO_REORGANISE. */
-	static CargoID old_cargo[INDUSTRY_NUM_INPUTS];
-	static uint16_t old_waiting[INDUSTRY_NUM_INPUTS];
-	static TimerGameEconomy::Date old_last_accepted[INDUSTRY_NUM_INPUTS];
 };
-
-/* static */ CargoID SlIndustryAccepted::old_cargo[INDUSTRY_NUM_INPUTS];
-/* static */ uint16_t SlIndustryAccepted::old_waiting[INDUSTRY_NUM_INPUTS];
-/* static */ TimerGameEconomy::Date SlIndustryAccepted::old_last_accepted[INDUSTRY_NUM_INPUTS];
 
 class SlIndustryProducedHistory : public DefaultSaveLoadHandler<SlIndustryProducedHistory, Industry::ProducedCargo> {
 public:
@@ -91,7 +77,7 @@ public:
 	}
 };
 
-class SlIndustryProduced : public DefaultSaveLoadHandler<SlIndustryProduced, Industry> {
+class SlIndustryProduced : public VectorSaveLoadHandler<SlIndustryProduced, Industry, Industry::ProducedCargo, INDUSTRY_NUM_OUTPUTS> {
 public:
 	inline static const SaveLoad description[] = {
 		 SLE_VAR(Industry::ProducedCargo, cargo, SLE_UINT8),
@@ -101,42 +87,28 @@ public:
 	};
 	inline const static SaveLoadCompatTable compat_description = _industry_produced_sl_compat;
 
-	void Save(Industry *i) const override
+	std::vector<Industry::ProducedCargo> &GetVector(Industry *i) const override { return i->produced; }
+
+	/* Old array structure used by INDYChunkHandler for savegames before SLV_INDUSTRY_CARGO_REORGANISE. */
+	static inline std::array<CargoID, INDUSTRY_NUM_OUTPUTS> old_cargo;
+	static inline std::array<uint16_t, INDUSTRY_NUM_OUTPUTS> old_waiting;
+	static inline std::array<uint8_t, INDUSTRY_NUM_OUTPUTS> old_rate;
+	static inline std::array<uint16_t, INDUSTRY_NUM_OUTPUTS> old_this_month_production;
+	static inline std::array<uint16_t, INDUSTRY_NUM_OUTPUTS> old_this_month_transported;
+	static inline std::array<uint16_t, INDUSTRY_NUM_OUTPUTS> old_last_month_production;
+	static inline std::array<uint16_t, INDUSTRY_NUM_OUTPUTS> old_last_month_transported;
+
+	static void ResetOldStructure()
 	{
-		SlSetStructListLength(i->produced.size());
-
-		for (auto &p : i->produced) {
-			SlObject(&p, this->GetDescription());
-		}
+		SlIndustryProduced::old_cargo.fill(INVALID_CARGO);
+		SlIndustryProduced::old_waiting.fill(0);
+		SlIndustryProduced::old_rate.fill(0);
+		SlIndustryProduced::old_this_month_production.fill(0);
+		SlIndustryProduced::old_this_month_transported.fill(0);
+		SlIndustryProduced::old_last_month_production.fill(0);
+		SlIndustryProduced::old_this_month_production.fill(0);
 	}
-
-	void Load(Industry *i) const override
-	{
-		size_t len = SlGetStructListLength(i->produced.size());
-
-		for (auto &p : i->produced) {
-			if (--len > i->produced.size()) break; // unsigned so wraps after hitting zero.
-			SlObject(&p, this->GetDescription());
-		}
-	}
-
-	/* Old array structure used for savegames before SLV_INDUSTRY_CARGO_REORGANISE. */
-	static CargoID old_cargo[INDUSTRY_NUM_OUTPUTS];
-	static uint16_t old_waiting[INDUSTRY_NUM_OUTPUTS];
-	static uint8_t old_rate[INDUSTRY_NUM_OUTPUTS];
-	static uint16_t old_this_month_production[INDUSTRY_NUM_OUTPUTS];
-	static uint16_t old_this_month_transported[INDUSTRY_NUM_OUTPUTS];
-	static uint16_t old_last_month_production[INDUSTRY_NUM_OUTPUTS];
-	static uint16_t old_last_month_transported[INDUSTRY_NUM_OUTPUTS];
 };
-
-/* static */ CargoID SlIndustryProduced::old_cargo[INDUSTRY_NUM_OUTPUTS];
-/* static */ uint16_t SlIndustryProduced::old_waiting[INDUSTRY_NUM_OUTPUTS];
-/* static */ uint8_t SlIndustryProduced::old_rate[INDUSTRY_NUM_OUTPUTS];
-/* static */ uint16_t SlIndustryProduced::old_this_month_production[INDUSTRY_NUM_OUTPUTS];
-/* static */ uint16_t SlIndustryProduced::old_this_month_transported[INDUSTRY_NUM_OUTPUTS];
-/* static */ uint16_t SlIndustryProduced::old_last_month_production[INDUSTRY_NUM_OUTPUTS];
-/* static */ uint16_t SlIndustryProduced::old_last_month_transported[INDUSTRY_NUM_OUTPUTS];
 
 static const SaveLoad _industry_desc[] = {
 	SLE_CONDVAR(Industry, location.tile,              SLE_FILE_U16 | SLE_VAR_U32,  SL_MIN_VERSION, SLV_6),
@@ -145,25 +117,25 @@ static const SaveLoad _industry_desc[] = {
 	    SLE_VAR(Industry, location.h,                 SLE_FILE_U8 | SLE_VAR_U16),
 	    SLE_REF(Industry, town,                       REF_TOWN),
 	SLE_CONDREF(Industry, neutral_station,            REF_STATION,                SLV_SERVE_NEUTRAL_INDUSTRIES, SL_MAX_VERSION),
-	SLEG_CONDARR("produced_cargo",             SlIndustryProduced::old_cargo,                  SLE_UINT8,   2, SLV_78, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("produced_cargo",             SlIndustryProduced::old_cargo,                  SLE_UINT8,  16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
-	SLEG_CONDARR("incoming_cargo_waiting",     SlIndustryAccepted::old_waiting,                SLE_UINT16,  3, SLV_70, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("incoming_cargo_waiting",     SlIndustryAccepted::old_waiting,                SLE_UINT16, 16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
-	SLEG_CONDARR("produced_cargo_waiting",     SlIndustryProduced::old_waiting,                SLE_UINT16,  2, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("produced_cargo_waiting",     SlIndustryProduced::old_waiting,                SLE_UINT16, 16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
-	SLEG_CONDARR("production_rate",            SlIndustryProduced::old_rate,                   SLE_UINT8,   2, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("production_rate",            SlIndustryProduced::old_rate,                   SLE_UINT8,  16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
-	SLEG_CONDARR("accepts_cargo",              SlIndustryAccepted::old_cargo,                  SLE_UINT8,   3, SLV_78, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("accepts_cargo",              SlIndustryAccepted::old_cargo,                  SLE_UINT8,  16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("produced_cargo",             SlIndustryProduced::old_cargo,                  SLE_UINT8,  INDUSTRY_ORIGINAL_NUM_OUTPUTS, SLV_78, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("produced_cargo",             SlIndustryProduced::old_cargo,                  SLE_UINT8,  INDUSTRY_NUM_OUTPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("incoming_cargo_waiting",     SlIndustryAccepted::old_waiting,                SLE_UINT16, INDUSTRY_ORIGINAL_NUM_INPUTS, SLV_70, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("incoming_cargo_waiting",     SlIndustryAccepted::old_waiting,                SLE_UINT16, INDUSTRY_NUM_INPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("produced_cargo_waiting",     SlIndustryProduced::old_waiting,                SLE_UINT16, INDUSTRY_ORIGINAL_NUM_OUTPUTS, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("produced_cargo_waiting",     SlIndustryProduced::old_waiting,                SLE_UINT16, INDUSTRY_NUM_OUTPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("production_rate",            SlIndustryProduced::old_rate,                   SLE_UINT8,  INDUSTRY_ORIGINAL_NUM_OUTPUTS, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("production_rate",            SlIndustryProduced::old_rate,                   SLE_UINT8,  INDUSTRY_NUM_OUTPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("accepts_cargo",              SlIndustryAccepted::old_cargo,                  SLE_UINT8,  INDUSTRY_ORIGINAL_NUM_INPUTS, SLV_78, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("accepts_cargo",              SlIndustryAccepted::old_cargo,                  SLE_UINT8,  INDUSTRY_NUM_INPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
 	    SLE_VAR(Industry, prod_level,                 SLE_UINT8),
-	SLEG_CONDARR("this_month_production",      SlIndustryProduced::old_this_month_production,  SLE_UINT16,  2, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("this_month_production",      SlIndustryProduced::old_this_month_production,  SLE_UINT16, 16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
-	SLEG_CONDARR("this_month_transported",     SlIndustryProduced::old_this_month_transported, SLE_UINT16,  2, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("this_month_transported",     SlIndustryProduced::old_this_month_transported, SLE_UINT16, 16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
-	SLEG_CONDARR("last_month_production",      SlIndustryProduced::old_last_month_production,  SLE_UINT16,  2, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("last_month_production",      SlIndustryProduced::old_last_month_production,  SLE_UINT16, 16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
-	SLEG_CONDARR("last_month_transported",     SlIndustryProduced::old_last_month_transported, SLE_UINT16,  2, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
-	SLEG_CONDARR("last_month_transported",     SlIndustryProduced::old_last_month_transported, SLE_UINT16, 16, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("this_month_production",      SlIndustryProduced::old_this_month_production,  SLE_UINT16, INDUSTRY_ORIGINAL_NUM_OUTPUTS, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("this_month_production",      SlIndustryProduced::old_this_month_production,  SLE_UINT16, INDUSTRY_NUM_OUTPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("this_month_transported",     SlIndustryProduced::old_this_month_transported, SLE_UINT16, INDUSTRY_ORIGINAL_NUM_OUTPUTS, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("this_month_transported",     SlIndustryProduced::old_this_month_transported, SLE_UINT16, INDUSTRY_NUM_OUTPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("last_month_production",      SlIndustryProduced::old_last_month_production,  SLE_UINT16, INDUSTRY_ORIGINAL_NUM_OUTPUTS, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("last_month_production",      SlIndustryProduced::old_last_month_production,  SLE_UINT16, INDUSTRY_NUM_OUTPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
+	SLEG_CONDARR("last_month_transported",     SlIndustryProduced::old_last_month_transported, SLE_UINT16, INDUSTRY_ORIGINAL_NUM_OUTPUTS, SL_MIN_VERSION, SLV_EXTEND_INDUSTRY_CARGO_SLOTS),
+	SLEG_CONDARR("last_month_transported",     SlIndustryProduced::old_last_month_transported, SLE_UINT16, INDUSTRY_NUM_OUTPUTS, SLV_EXTEND_INDUSTRY_CARGO_SLOTS, SLV_INDUSTRY_CARGO_REORGANISE),
 
 	    SLE_VAR(Industry, counter,                    SLE_UINT16),
 
@@ -208,17 +180,19 @@ struct INDYChunkHandler : ChunkHandler {
 		}
 	}
 
-	void LoadMoveAcceptsProduced(Industry *i) const
+	void LoadMoveAcceptsProduced(Industry *i, uint inputs, uint outputs) const
 	{
-		for (uint j = 0; j != INDUSTRY_NUM_INPUTS; ++j) {
-			auto &a = i->accepted[j];
+		i->accepted.reserve(inputs);
+		for (uint j = 0; j != inputs; ++j) {
+			auto &a = i->accepted.emplace_back();
 			a.cargo = SlIndustryAccepted::old_cargo[j];
 			a.waiting = SlIndustryAccepted::old_waiting[j];
 			a.last_accepted = SlIndustryAccepted::old_last_accepted[j];
 		}
 
-		for (uint j = 0; j != INDUSTRY_NUM_OUTPUTS; ++j) {
-			auto &p = i->produced[j];
+		i->produced.reserve(outputs);
+		for (uint j = 0; j != outputs; ++j) {
+			auto &p = i->produced.emplace_back();
 			p.cargo = SlIndustryProduced::old_cargo[j];
 			p.waiting = SlIndustryProduced::old_waiting[j];
 			p.rate = SlIndustryProduced::old_rate[j];
@@ -235,7 +209,8 @@ struct INDYChunkHandler : ChunkHandler {
 
 		int index;
 
-		Industry::ResetIndustryCounts();
+		SlIndustryAccepted::ResetOldStructure();
+		SlIndustryProduced::ResetOldStructure();
 
 		while ((index = SlIterateArray()) != -1) {
 			Industry *i = new (index) Industry();
@@ -248,8 +223,12 @@ struct INDYChunkHandler : ChunkHandler {
 				i->psa = new PersistentStorage(0, 0, 0);
 				std::copy(std::begin(_old_ind_persistent_storage.storage), std::end(_old_ind_persistent_storage.storage), std::begin(i->psa->storage));
 			}
-			if (IsSavegameVersionBefore(SLV_INDUSTRY_CARGO_REORGANISE)) LoadMoveAcceptsProduced(i);
-			Industry::IncIndustryTypeCount(i->type);
+			if (IsSavegameVersionBefore(SLV_EXTEND_INDUSTRY_CARGO_SLOTS)) {
+				LoadMoveAcceptsProduced(i, INDUSTRY_ORIGINAL_NUM_INPUTS, INDUSTRY_ORIGINAL_NUM_OUTPUTS);
+			} else if (IsSavegameVersionBefore(SLV_INDUSTRY_CARGO_REORGANISE)) {
+				LoadMoveAcceptsProduced(i, INDUSTRY_NUM_INPUTS, INDUSTRY_NUM_OUTPUTS);
+			}
+			Industry::industries[i->type].push_back(i->index); // Assume savegame indices are sorted.
 		}
 	}
 

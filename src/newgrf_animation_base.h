@@ -19,8 +19,15 @@
 
 template <typename Tobj>
 struct TileAnimationFrameAnimationHelper {
-	static byte Get(Tobj *, TileIndex tile) { return GetAnimationFrame(tile); }
-	static void Set(Tobj *, TileIndex tile, byte frame) { SetAnimationFrame(tile, frame); }
+	static uint8_t Get(Tobj *, TileIndex tile) { return GetAnimationFrame(tile); }
+	static bool Set(Tobj *, TileIndex tile, uint8_t frame)
+	{
+		uint8_t prev_frame = GetAnimationFrame(tile);
+		if (prev_frame == frame) return false;
+
+		SetAnimationFrame(tile, frame);
+		return true;
+	}
 };
 
 /**
@@ -51,7 +58,7 @@ struct AnimationBase {
 		if (HasBit(spec->callback_mask, Tbase::cbm_animation_speed)) {
 			uint16_t callback = GetCallback(Tbase::cb_animation_speed, 0, 0, spec, obj, tile, extra_data);
 			if (callback != CALLBACK_FAILED) {
-				if (callback >= 0x100 && spec->grf_prop.grffile->grf_version >= 8) ErrorUnknownCallbackResult(spec->grf_prop.grffile->grfid, Tbase::cb_animation_speed, callback);
+				if (callback >= 0x100 && spec->grf_prop.grffile->grf_version >= 8) ErrorUnknownCallbackResult(spec->grf_prop.grfid, Tbase::cb_animation_speed, callback);
 				animation_speed = Clamp(callback & 0xFF, 0, 16);
 			}
 		}
@@ -105,8 +112,8 @@ struct AnimationBase {
 			}
 		}
 
-		Tframehelper::Set(obj, tile, frame);
-		MarkTileDirtyByTile(tile);
+		bool changed = Tframehelper::Set(obj, tile, frame);
+		if (changed) MarkTileDirtyByTile(tile);
 	}
 
 	/**
@@ -128,11 +135,11 @@ struct AnimationBase {
 
 		switch (callback & 0xFF) {
 			case 0xFD: /* Do nothing. */         break;
-			case 0xFE: AddAnimatedTile(tile);    break;
+			case 0xFE: AddAnimatedTile(tile, false); break;
 			case 0xFF: DeleteAnimatedTile(tile); break;
 			default:
-				Tframehelper::Set(obj, tile, callback);
-				AddAnimatedTile(tile);
+				bool changed = Tframehelper::Set(obj, tile, callback);
+				AddAnimatedTile(tile, changed);
 				break;
 		}
 

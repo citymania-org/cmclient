@@ -95,7 +95,7 @@ typedef CommandCost ClearTileProc(TileIndex tile, DoCommandFlag flags);
  * @param acceptance      Storage destination of the cargo acceptance in 1/8
  * @param always_accepted Bitmask of always accepted cargo types
  */
-typedef void AddAcceptedCargoProc(TileIndex tile, CargoArray &acceptance, CargoTypes *always_accepted);
+typedef void AddAcceptedCargoProc(TileIndex tile, CargoArray &acceptance, CargoTypes &always_accepted);
 
 /**
  * Tile callback function signature for obtaining a tile description
@@ -184,7 +184,7 @@ inline void AddAcceptedCargo(TileIndex tile, CargoArray &acceptance, CargoTypes 
 	AddAcceptedCargoProc *proc = _tile_type_procs[GetTileType(tile)]->add_accepted_cargo_proc;
 	if (proc == nullptr) return;
 	CargoTypes dummy = 0; // use dummy bitmask so there don't need to be several 'always_accepted != nullptr' checks
-	proc(tile, acceptance, always_accepted == nullptr ? &dummy : always_accepted);
+	proc(tile, acceptance, always_accepted == nullptr ? dummy : *always_accepted);
 }
 
 inline void AddProducedCargo(TileIndex tile, CargoArray &produced)
@@ -192,6 +192,16 @@ inline void AddProducedCargo(TileIndex tile, CargoArray &produced)
 	AddProducedCargoProc *proc = _tile_type_procs[GetTileType(tile)]->add_produced_cargo_proc;
 	if (proc == nullptr) return;
 	proc(tile, produced);
+}
+
+/**
+ * Test if a tile may be animated.
+ * @param tile Tile to test.
+ * @returns True iff the type of the tile has a handler for tile animation.
+ */
+inline bool MayAnimateTile(TileIndex tile)
+{
+	return _tile_type_procs[GetTileType(tile)]->animate_tile_proc != nullptr;
 }
 
 inline void AnimateTile(TileIndex tile)

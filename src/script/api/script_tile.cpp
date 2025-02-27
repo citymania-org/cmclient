@@ -199,8 +199,7 @@
 {
 	if (!::IsValidTile(tile) || !::IsValidCorner((::Corner)corner)) return -1;
 
-	int z;
-	::Slope slope = ::GetTileSlope(tile, &z);
+	auto [slope, z] = ::GetTileSlopeZ(tile);
 	return (z + ::GetSlopeZInCorner(slope, (::Corner)corner));
 }
 
@@ -210,7 +209,7 @@
 	if (::IsTileType(tile, MP_HOUSE)) return ScriptCompany::COMPANY_INVALID;
 	if (::IsTileType(tile, MP_INDUSTRY)) return ScriptCompany::COMPANY_INVALID;
 
-	return ScriptCompany::ResolveCompanyID((ScriptCompany::CompanyID)(byte)::GetTileOwner(tile));
+	return ScriptCompany::ResolveCompanyID((ScriptCompany::CompanyID)(uint8_t)::GetTileOwner(tile));
 }
 
 /* static */ bool ScriptTile::HasTransportType(TileIndex tile, TransportType transport_type)
@@ -298,7 +297,8 @@
 	EnforcePrecondition(false, ::IsValidTile(tile));
 	EnforcePrecondition(false, width >= 1 && width <= 20);
 	EnforcePrecondition(false, height >= 1 && height <= 20);
-	TileIndex end_tile = tile + ::TileDiffXY(width - 1, height - 1);
+	TileIndex end_tile = TileAddWrap(tile, width - 1, height - 1);
+	EnforcePrecondition(false, ::IsValidTile(end_tile));
 
 	return ScriptObject::Command<CMD_PLANT_TREE>::Do(tile, end_tile, TREE_INVALID, false);
 }

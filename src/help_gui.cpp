@@ -15,16 +15,16 @@
 #include "table/control_codes.h"
 #include "string_func.h"
 #include "openttd.h"
-
 #include "help_gui.h"
+
 #include "widgets/help_widget.h"
 #include "widgets/misc_widget.h"
 
 #include "safeguards.h"
 
 static const std::string README_FILENAME = "README.md";
-static const std::string CHANGELOG_FILENAME = "changelog.txt";
-static const std::string KNOWN_BUGS_FILENAME = "known-bugs.txt";
+static const std::string CHANGELOG_FILENAME = "changelog.md";
+static const std::string KNOWN_BUGS_FILENAME = "known-bugs.md";
 static const std::string LICENSE_FILENAME = "COPYING.md";
 
 static const std::string WEBSITE_LINK = "https://www.openttd.org/";
@@ -87,33 +87,30 @@ struct GameManualTextfileWindow : public TextfileWindow {
 		if (this->filename == CHANGELOG_FILENAME) {
 			this->link_anchors.clear();
 			this->AfterLoadChangelog();
-			if (this->GetWidget<NWidgetStacked>(WID_TF_SEL_JUMPLIST)->SetDisplayedPlane(this->jumplist.empty() ? SZSP_HORIZONTAL : 0)) this->ReInit();
-		} else {
-			this->TextfileWindow::AfterLoadText();
 		}
+		this->TextfileWindow::AfterLoadText();
 	}
 
 	/**
-	 * For changelog files, add a jumplist entry for each version.
+	 * For changelog files, truncate the file after CHANGELOG_VERSIONS_LIMIT versions.
 	 *
-	 * This is hardcoded and assumes "---" are used to separate versions.
+	 * This is hardcoded and assumes "###" is used to separate versions.
 	 */
 	void AfterLoadChangelog()
 	{
-		/* Look for lines beginning with ---, they indicate that the previous line was a release name. */
+		uint versions = 0;
+
+		/* Look for lines beginning with ###, they indicate a release name. */
 		for (size_t line_index = 0; line_index < this->lines.size(); ++line_index) {
 			const Line &line = this->lines[line_index];
-			if (line.text.find("---", 0) != 0) continue;
+			if (!line.text.starts_with("###")) continue;
 
-			if (this->jumplist.size() >= CHANGELOG_VERSIONS_LIMIT) {
+			if (versions >= CHANGELOG_VERSIONS_LIMIT) {
 				this->lines.resize(line_index - 2);
 				break;
 			}
 
-			/* Mark the version header with a colour, and add it to the jumplist. */
-			this->lines[line_index - 1].colour = TC_GOLD;
-			this->lines[line_index].colour = TC_GOLD;
-			this->jumplist.push_back(line_index - 1);
+			++versions;
 		}
 	}
 };
@@ -121,7 +118,7 @@ struct GameManualTextfileWindow : public TextfileWindow {
 /** Window class displaying the help window. */
 struct HelpWindow : public Window {
 
-	HelpWindow(WindowDesc *desc, WindowNumber number) : Window(desc)
+	HelpWindow(WindowDesc &desc, WindowNumber number) : Window(desc)
 	{
 		this->InitNested(number);
 
@@ -193,14 +190,14 @@ static constexpr NWidgetPart _nested_helpwin_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _helpwin_desc(__FILE__, __LINE__,
+static WindowDesc _helpwin_desc(
 	WDP_CENTER, nullptr, 0, 0,
 	WC_HELPWIN, WC_NONE,
 	0,
-	std::begin(_nested_helpwin_widgets), std::end(_nested_helpwin_widgets)
+	_nested_helpwin_widgets
 );
 
 void ShowHelpWindow()
 {
-	AllocateWindowDescFront<HelpWindow>(&_helpwin_desc, 0);
+	AllocateWindowDescFront<HelpWindow>(_helpwin_desc, 0);
 }

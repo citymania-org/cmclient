@@ -3,7 +3,7 @@
 
 namespace citymania {
 
-bool ConExport(byte argc, char *argv[]);
+bool ConExport(uint8_t argc, char *argv[]);
 
 } // namespace citymania
 

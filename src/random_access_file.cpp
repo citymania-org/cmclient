@@ -24,12 +24,17 @@
  */
 RandomAccessFile::RandomAccessFile(const std::string &filename, Subdirectory subdir) : filename(filename)
 {
-	this->file_handle = FioFOpenFile(filename, "rb", subdir);
-	if (this->file_handle == nullptr) UserError("Cannot open file '{}'", filename);
+	size_t file_size;
+	this->file_handle = FioFOpenFile(filename, "rb", subdir, &file_size);
+	if (!this->file_handle.has_value()) UserError("Cannot open file '{}'", filename);
 
 	/* When files are in a tar-file, the begin of the file might not be at 0. */
-	long pos = ftell(this->file_handle);
+	long pos = ftell(*this->file_handle);
 	if (pos < 0) UserError("Cannot read file '{}'", filename);
+
+	/* Make a note of start and end position for readers who check bounds. */
+	this->start_pos = pos;
+	this->end_pos = this->start_pos + file_size;
 
 	/* Store the filename without path and extension */
 	auto t = filename.rfind(PATHSEPCHAR);
@@ -37,15 +42,7 @@ RandomAccessFile::RandomAccessFile(const std::string &filename, Subdirectory sub
 	this->simplified_filename = name_without_path.substr(0, name_without_path.rfind('.'));
 	strtolower(this->simplified_filename);
 
-	this->SeekTo((size_t)pos, SEEK_SET);
-}
-
-/**
- * Close the file's file handle.
- */
-RandomAccessFile::~RandomAccessFile()
-{
-	fclose(this->file_handle);
+	this->SeekTo(static_cast<size_t>(pos), SEEK_SET);
 }
 
 /**
@@ -77,6 +74,15 @@ size_t RandomAccessFile::GetPos() const
 }
 
 /**
+ * Test if we have reached the end of the file.
+ * @return True iff the current position as at or after the end of the file.
+ */
+bool RandomAccessFile::AtEndOfFile() const
+{
+	return this->GetPos() >= this->GetEndPos();
+}
+
+/**
  * Seek in the current file.
  * @param pos New position.
  * @param mode Type of seek (\c SEEK_CUR means \a pos is relative to current position, \c SEEK_SET means \a pos is absolute).
@@ -86,7 +92,7 @@ void RandomAccessFile::SeekTo(size_t pos, int mode)
 	if (mode == SEEK_CUR) pos += this->GetPos();
 
 	this->pos = pos;
-	if (fseek(this->file_handle, this->pos, SEEK_SET) < 0) {
+	if (fseek(*this->file_handle, this->pos, SEEK_SET) < 0) {
 		Debug(misc, 0, "Seeking in {} failed", this->filename);
 	}
 
@@ -98,11 +104,11 @@ void RandomAccessFile::SeekTo(size_t pos, int mode)
  * Read a byte from the file.
  * @return Read byte.
  */
-byte RandomAccessFile::ReadByte()
+uint8_t RandomAccessFile::ReadByte()
 {
 	if (this->buffer == this->buffer_end) {
 		this->buffer = this->buffer_start;
-		size_t size = fread(this->buffer, 1, RandomAccessFile::BUFFER_SIZE, this->file_handle);
+		size_t size = fread(this->buffer, 1, RandomAccessFile::BUFFER_SIZE, *this->file_handle);
 		this->pos += size;
 		this->buffer_end = this->buffer_start + size;
 
@@ -117,7 +123,7 @@ byte RandomAccessFile::ReadByte()
  */
 uint16_t RandomAccessFile::ReadWord()
 {
-	byte b = this->ReadByte();
+	uint8_t b = this->ReadByte();
 	return (this->ReadByte() << 8) | b;
 }
 
@@ -138,8 +144,16 @@ uint32_t RandomAccessFile::ReadDword()
  */
 void RandomAccessFile::ReadBlock(void *ptr, size_t size)
 {
-	this->SeekTo(this->GetPos(), SEEK_SET);
-	this->pos += fread(ptr, 1, size, this->file_handle);
+	if (this->buffer != this->buffer_end) {
+		size_t to_copy = std::min<size_t>(size, this->buffer_end - this->buffer);
+		memcpy(ptr, this->buffer, to_copy);
+		this->buffer += to_copy;
+		size -= to_copy;
+		if (size == 0) return;
+		ptr = static_cast<char *>(ptr) + to_copy;
+	}
+
+	this->pos += fread(ptr, 1, size, *this->file_handle);
 }
 
 /**

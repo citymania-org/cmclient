@@ -61,6 +61,7 @@ inline StringID MakeStringID(StringTab tab, uint index)
 
 std::string GetString(StringID string);
 const char *GetStringPtr(StringID string);
+void AppendStringInPlace(std::string &result, StringID string);
 
 uint ConvertKmhishSpeedToDisplaySpeed(uint speed, VehicleType type);
 uint ConvertDisplaySpeedToKmhishSpeed(uint speed, VehicleType type);
@@ -98,9 +99,9 @@ void SetDParamStr(size_t n, const char *str);
 void SetDParamStr(size_t n, const std::string &str);
 void SetDParamStr(size_t n, std::string &&str);
 
-void CopyInDParam(const std::span<const StringParameterBackup> backup);
-void CopyOutDParam(std::vector<StringParameterBackup> &backup, size_t num);
-bool HaveDParamChanged(const std::vector<StringParameterBackup> &backup);
+void CopyInDParam(const std::span<const StringParameterData> backup);
+void CopyOutDParam(std::vector<StringParameterData> &backup, size_t num);
+bool HaveDParamChanged(const std::span<const StringParameterData> backup);
 
 uint64_t GetDParam(size_t n);
 
@@ -108,6 +109,7 @@ extern TextDirection _current_text_dir; ///< Text direction of the currently sel
 
 void InitializeLanguagePacks();
 const char *GetCurrentLanguageIsoCode();
+std::string_view GetListSeparator();
 
 /**
  * A searcher for missing glyphs.

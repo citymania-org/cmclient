@@ -26,27 +26,32 @@ class RandomAccessFile {
 	std::string filename;            ///< Full name of the file; relative path to subdir plus the extension of the file.
 	std::string simplified_filename; ///< Simplified lowecase name of the file; only the name, no path or extension.
 
-	FILE *file_handle;               ///< File handle of the open file.
+	std::optional<FileHandle> file_handle; ///< File handle of the open file.
 	size_t pos;                      ///< Position in the file of the end of the read buffer.
+	size_t start_pos; ///< Start position of file. May be non-zero if file is within a tar file.
+	size_t end_pos; ///< End position of file.
 
-	byte *buffer;                    ///< Current position within the local buffer.
-	byte *buffer_end;                ///< Last valid byte of buffer.
-	byte buffer_start[BUFFER_SIZE];  ///< Local buffer when read from file.
+	uint8_t *buffer;                    ///< Current position within the local buffer.
+	uint8_t *buffer_end;                ///< Last valid byte of buffer.
+	uint8_t buffer_start[BUFFER_SIZE];  ///< Local buffer when read from file.
 
 public:
 	RandomAccessFile(const std::string &filename, Subdirectory subdir);
 	RandomAccessFile(const RandomAccessFile&) = delete;
 	void operator=(const RandomAccessFile&) = delete;
 
-	virtual ~RandomAccessFile();
+	virtual ~RandomAccessFile() = default;
 
 	const std::string &GetFilename() const;
 	const std::string &GetSimplifiedFilename() const;
 
 	size_t GetPos() const;
+	size_t GetStartPos() const { return this->start_pos; }
+	size_t GetEndPos() const { return this->end_pos; }
 	void SeekTo(size_t pos, int mode);
+	bool AtEndOfFile() const;
 
-	byte ReadByte();
+	uint8_t ReadByte();
 	uint16_t ReadWord();
 	uint32_t ReadDword();
 

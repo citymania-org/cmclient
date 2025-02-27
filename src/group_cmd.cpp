@@ -350,8 +350,9 @@ std::tuple<CommandCost, GroupID> CmdCreateGroup(DoCommandFlag flags, VehicleType
 		g->vehicle_type = vt;
 		g->parent = INVALID_GROUP;
 
+		Company *c = Company::Get(g->owner);
+		g->number = c->freegroups.UseID(c->freegroups.NextID());
 		if (pg == nullptr) {
-			const Company *c = Company::Get(_current_company);
 			g->livery.colour1 = c->livery[LS_DEFAULT].colour1;
 			g->livery.colour2 = c->livery[LS_DEFAULT].colour2;
 			if (c->settings.renew_keep_length) SetBit(g->flags, GroupFlags::GF_REPLACE_WAGON_REMOVAL);
@@ -397,14 +398,15 @@ CommandCost CmdDeleteGroup(DoCommandFlag flags, GroupID group_id)
 		/* Update backupped orders if needed */
 		OrderBackup::ClearGroup(g->index);
 
-		/* If we set an autoreplace for the group we delete, remove it. */
-		if (_current_company < MAX_COMPANIES) {
-			Company *c;
+		if (g->owner < MAX_COMPANIES) {
+			Company *c = Company::Get(g->owner);
 
-			c = Company::Get(_current_company);
+			/* If we set an autoreplace for the group we delete, remove it. */
 			for (EngineRenew *er : EngineRenew::Iterate()) {
 				if (er->group_id == g->index) RemoveEngineReplacementForCompany(c, er->from, g->index, flags);
 			}
+
+			c->freegroups.ReleaseID(g->number);
 		}
 
 		VehicleType vt = g->vehicle_type;
@@ -460,7 +462,7 @@ CommandCost CmdAlterGroup(DoCommandFlag flags, AlterGroupMode mode, GroupID grou
 
 			/* Ensure request parent isn't child of group.
 			 * This is the only place that infinite loops are prevented. */
-			if (GroupIsInGroup(pg->index, g->index)) return_cmd_error(STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION);
+			if (GroupIsInGroup(pg->index, g->index)) return CommandCost(STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION);
 		}
 
 		if (flags & DC_EXEC) {
@@ -672,11 +674,11 @@ CommandCost CmdSetGroupLivery(DoCommandFlag flags, GroupID group_id, bool primar
 
 	if (flags & DC_EXEC) {
 		if (primary) {
-			SB(g->livery.in_use, 0, 1, colour != INVALID_COLOUR);
+			AssignBit(g->livery.in_use, 0, colour != INVALID_COLOUR);
 			if (colour == INVALID_COLOUR) colour = GetParentLivery(g)->colour1;
 			g->livery.colour1 = colour;
 		} else {
-			SB(g->livery.in_use, 1, 1, colour != INVALID_COLOUR);
+			AssignBit(g->livery.in_use, 1, colour != INVALID_COLOUR);
 			if (colour == INVALID_COLOUR) colour = GetParentLivery(g)->colour2;
 			g->livery.colour2 = colour;
 		}

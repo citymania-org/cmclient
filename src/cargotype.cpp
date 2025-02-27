@@ -19,6 +19,8 @@
 #include "table/strings.h"
 #include "table/cargo_const.h"
 
+#include <sstream>
+
 #include "safeguards.h"
 
 CargoSpec CargoSpec::array[NUM_CARGO];
@@ -42,6 +44,20 @@ CargoTypes _standard_cargo_mask;
 static std::vector<CargoLabel> _default_cargo_labels;
 
 /**
+ * Default cargo translation for upto version 7 NewGRFs.
+ * This maps the original 12 cargo slots to their original label. If a climate dependent cargo is not present it will
+ * map to CT_INVALID. For default cargoes this ends up as a 1:1 mapping via climate slot -> label -> cargo ID.
+ */
+static std::array<CargoLabel, 12> _climate_dependent_cargo_labels;
+
+/**
+ * Default cargo translation for version 8+ NewGRFs.
+ * This maps the 32 "bitnum" cargo slots to their original label. If a bitnum is not present it will
+ * map to CT_INVALID.
+ */
+static std::array<CargoLabel, 32> _climate_independent_cargo_labels;
+
+/**
  * Set up the default cargo types for the given landscape type.
  * @param l Landscape
  */
@@ -51,30 +67,37 @@ void SetupCargoForClimate(LandscapeID l)
 
 	_cargo_mask = 0;
 	_default_cargo_labels.clear();
+	_climate_dependent_cargo_labels.fill(CT_INVALID);
+	_climate_independent_cargo_labels.fill(CT_INVALID);
 
 	/* Copy from default cargo by label or index. */
 	auto insert = std::begin(CargoSpec::array);
 	for (const auto &cl : _default_climate_cargo[l]) {
 
-		/* Check if value is an index into the cargo table */
-		if (std::holds_alternative<int>(cl)) {
-			/* Copy the default cargo by index. */
-			*insert = _default_cargo[std::get<int>(cl)];
-		} else {
-			/* Search for label in default cargo types and copy if found. */
-			CargoLabel label = std::get<CargoLabel>(cl);
-			auto found = std::find_if(std::begin(_default_cargo), std::end(_default_cargo), [&label](const CargoSpec &cs) { return cs.label == label; });
-			if (found != std::end(_default_cargo)) {
-				*insert = *found;
-			} else {
+		struct visitor {
+			const CargoSpec &operator()(const int &index)
+			{
+				/* Copy the default cargo by index. */
+				return _default_cargo[index];
+			}
+			const CargoSpec &operator()(const CargoLabel &label)
+			{
+				/* Search for label in default cargo types and copy if found. */
+				auto found = std::ranges::find(_default_cargo, label, &CargoSpec::label);
+				if (found != std::end(_default_cargo)) return *found;
+
 				/* Index or label is invalid, this should not happen. */
 				NOT_REACHED();
 			}
-		}
+		};
+
+		*insert = std::visit(visitor{}, cl);
 
 		if (insert->IsValid()) {
 			SetBit(_cargo_mask, insert->Index());
 			_default_cargo_labels.push_back(insert->label);
+			_climate_dependent_cargo_labels[insert->Index()] = insert->label;
+			_climate_independent_cargo_labels[insert->bitnum] = insert->label;
 		}
 		++insert;
 	}
@@ -83,6 +106,24 @@ void SetupCargoForClimate(LandscapeID l)
 	std::fill(insert, std::end(CargoSpec::array), CargoSpec{});
 
 	BuildCargoLabelMap();
+}
+
+/**
+ * Get default climate-dependent cargo translation table for a NewGRF, used if the NewGRF does not provide its own.
+ * @return Default translation table for GRF version.
+ */
+std::span<const CargoLabel> GetClimateDependentCargoTranslationTable()
+{
+	return _climate_dependent_cargo_labels;
+}
+
+/**
+ * Get default climate-independent cargo translation table for a NewGRF, used if the NewGRF does not provide its own.
+ * @return Default translation table for GRF version.
+ */
+std::span<const CargoLabel> GetClimateIndependentCargoTranslationTable()
+{
+	return _climate_independent_cargo_labels;
 }
 
 /**
@@ -99,7 +140,7 @@ void BuildCargoLabelMap()
 		/* Label already exists, don't addd again. */
 		if (CargoSpec::label_map.count(cs.label) != 0) continue;
 
-		CargoSpec::label_map.insert(std::make_pair(cs.label, cs.Index()));
+		CargoSpec::label_map.emplace(cs.label, cs.Index());
 	}
 }
 
@@ -128,23 +169,6 @@ Dimension GetLargestCargoIconSize()
 		size = maxdim(size, GetSpriteSize(cs->GetCargoIcon()));
 	}
 	return size;
-}
-
-/**
- * Find the CargoID of a 'bitnum' value.
- * @param bitnum 'bitnum' to find.
- * @return First CargoID with the given bitnum, or #INVALID_CARGO if not found or if the provided \a bitnum is invalid.
- */
-CargoID GetCargoIDByBitnum(uint8_t bitnum)
-{
-	if (bitnum == INVALID_CARGO_BITNUM) return INVALID_CARGO;
-
-	for (const CargoSpec *cs : CargoSpec::Iterate()) {
-		if (cs->bitnum == bitnum) return cs->Index();
-	}
-
-	/* No matching label was found, so it is invalid */
-	return INVALID_CARGO;
 }
 
 /**
@@ -234,4 +258,42 @@ uint64_t CargoSpec::WeightOfNUnitsInTrain(uint32_t n) const
 {
 	if (this->is_freight) n *= _settings_game.vehicle.freight_trains;
 	return this->WeightOfNUnits(n);
+}
+
+/**
+ * Build comma-separated cargo acceptance string.
+ * @param acceptance CargoArray filled with accepted cargo.
+ * @param label Label to prefix cargo acceptance list.
+ * @return String of accepted cargo, or nullopt if no cargo is accepted.
+ */
+std::optional<std::string> BuildCargoAcceptanceString(const CargoArray &acceptance, StringID label)
+{
+	std::string_view list_separator = GetListSeparator();
+
+	/* Cargo acceptance is displayed in a extra multiline */
+	std::stringstream line;
+	line << GetString(label);
+
+	bool found = false;
+	for (const CargoSpec *cs : _sorted_cargo_specs) {
+		CargoID cid = cs->Index();
+		if (acceptance[cid] > 0) {
+			/* Add a comma between each item. */
+			if (found) line << list_separator;
+			found = true;
+
+			/* If the accepted value is less than 8, show it in 1/8:ths */
+			if (acceptance[cid] < 8) {
+				SetDParam(0, acceptance[cid]);
+				SetDParam(1, cs->name);
+				line << GetString(STR_LAND_AREA_INFORMATION_CARGO_EIGHTS);
+			} else {
+				line << GetString(cs->name);
+			}
+		}
+	}
+
+	if (found) return line.str();
+
+	return std::nullopt;
 }

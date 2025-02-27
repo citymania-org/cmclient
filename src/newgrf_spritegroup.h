@@ -33,7 +33,7 @@ inline uint32_t GetRegister(uint i)
 }
 
 /* List of different sprite group types */
-enum SpriteGroupType {
+enum SpriteGroupType : uint8_t {
 	SGT_REAL,
 	SGT_DETERMINISTIC,
 	SGT_RANDOMIZED,
@@ -67,7 +67,7 @@ public:
 	SpriteGroupType type;
 
 	virtual SpriteID GetResult() const { return 0; }
-	virtual byte GetNumResults() const { return 0; }
+	virtual uint8_t GetNumResults() const { return 0; }
 	virtual uint16_t GetCallbackResult() const { return CALLBACK_FAILED; }
 
 	static const SpriteGroup *Resolve(const SpriteGroup *group, ResolverObject &object, bool top_level = true);
@@ -94,7 +94,7 @@ protected:
 };
 
 /* Shared by deterministic and random groups. */
-enum VarSpriteGroupScope {
+enum VarSpriteGroupScope : uint8_t {
 	VSG_BEGIN,
 
 	VSG_SCOPE_SELF = VSG_BEGIN, ///< Resolved object itself
@@ -105,19 +105,19 @@ enum VarSpriteGroupScope {
 };
 DECLARE_POSTFIX_INCREMENT(VarSpriteGroupScope)
 
-enum DeterministicSpriteGroupSize {
+enum DeterministicSpriteGroupSize : uint8_t {
 	DSG_SIZE_BYTE,
 	DSG_SIZE_WORD,
 	DSG_SIZE_DWORD,
 };
 
-enum DeterministicSpriteGroupAdjustType {
+enum DeterministicSpriteGroupAdjustType : uint8_t {
 	DSGA_TYPE_NONE,
 	DSGA_TYPE_DIV,
 	DSGA_TYPE_MOD,
 };
 
-enum DeterministicSpriteGroupAdjustOperation {
+enum DeterministicSpriteGroupAdjustOperation : uint8_t {
 	DSGA_OP_ADD,  ///< a + b
 	DSGA_OP_SUB,  ///< a - b
 	DSGA_OP_SMIN, ///< (signed) min(a, b)
@@ -147,9 +147,9 @@ enum DeterministicSpriteGroupAdjustOperation {
 struct DeterministicSpriteGroupAdjust {
 	DeterministicSpriteGroupAdjustOperation operation;
 	DeterministicSpriteGroupAdjustType type;
-	byte variable;
-	byte parameter; ///< Used for variables between 0x60 and 0x7F inclusive.
-	byte shift_num;
+	uint8_t variable;
+	uint8_t parameter; ///< Used for variables between 0x60 and 0x7F inclusive.
+	uint8_t shift_num;
 	uint32_t and_mask;
 	uint32_t add_val;
 	uint32_t divmod_val;
@@ -182,7 +182,7 @@ protected:
 	const SpriteGroup *Resolve(ResolverObject &object) const override;
 };
 
-enum RandomizedSpriteGroupCompareMode {
+enum RandomizedSpriteGroupCompareMode : uint8_t {
 	RSG_CMP_ANY,
 	RSG_CMP_ALL,
 };
@@ -193,10 +193,10 @@ struct RandomizedSpriteGroup : SpriteGroup {
 	VarSpriteGroupScope var_scope;  ///< Take this object:
 
 	RandomizedSpriteGroupCompareMode cmp_mode; ///< Check for these triggers:
-	byte triggers;
-	byte count;
+	uint8_t triggers;
+	uint8_t count;
 
-	byte lowest_randbit; ///< Look for this in the per-object randomized bitmask:
+	uint8_t lowest_randbit; ///< Look for this in the per-object randomized bitmask:
 
 	std::vector<const SpriteGroup *> groups; ///< Take the group with appropriate index:
 
@@ -211,20 +211,8 @@ struct CallbackResultSpriteGroup : SpriteGroup {
 	/**
 	 * Creates a spritegroup representing a callback result
 	 * @param value The value that was used to represent this callback result
-	 * @param grf_version8 True, if we are dealing with a new NewGRF which uses GRF version >= 8.
 	 */
-	CallbackResultSpriteGroup(uint16_t value, bool grf_version8) :
-		SpriteGroup(SGT_CALLBACK),
-		result(value)
-	{
-		/* Old style callback results (only valid for version < 8) have the highest byte 0xFF so signify it is a callback result.
-		 * New style ones only have the highest bit set (allows 15-bit results, instead of just 8) */
-		if (!grf_version8 && (this->result >> 8) == 0xFF) {
-			this->result &= ~0xFF00;
-		} else {
-			this->result &= ~0x8000;
-		}
-	}
+	explicit CallbackResultSpriteGroup(uint16_t value) : SpriteGroup(SGT_CALLBACK), result(value) {}
 
 	uint16_t result;
 	uint16_t GetCallbackResult() const override { return this->result; }
@@ -240,17 +228,18 @@ struct ResultSpriteGroup : SpriteGroup {
 	 * @param num_sprites The number of sprites per set.
 	 * @return A spritegroup representing the sprite number result.
 	 */
-	ResultSpriteGroup(SpriteID sprite, byte num_sprites) :
+	ResultSpriteGroup(SpriteID sprite, uint8_t num_sprites) :
 		SpriteGroup(SGT_RESULT),
-		sprite(sprite),
-		num_sprites(num_sprites)
+		num_sprites(num_sprites),
+		sprite(sprite)
 	{
 	}
 
+	uint8_t num_sprites;
 	SpriteID sprite;
-	byte num_sprites;
+
 	SpriteID GetResult() const override { return this->sprite; }
-	byte GetNumResults() const override { return this->num_sprites; }
+	uint8_t GetNumResults() const override { return this->num_sprites; }
 };
 
 /**
@@ -294,7 +283,7 @@ struct ScopeResolver {
 	virtual uint32_t GetRandomBits() const;
 	virtual uint32_t GetTriggers() const;
 
-	virtual uint32_t GetVariable(byte variable, [[maybe_unused]] uint32_t parameter, bool *available) const;
+	virtual uint32_t GetVariable(uint8_t variable, [[maybe_unused]] uint32_t parameter, bool &available) const;
 	virtual void StorePSA(uint reg, int32_t value);
 };
 
@@ -356,7 +345,7 @@ struct ResolverObject {
 
 	virtual const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
 
-	virtual ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0);
+	virtual ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, uint8_t relative = 0);
 
 	/**
 	 * Returns the waiting triggers that did not trigger any rerandomisation.

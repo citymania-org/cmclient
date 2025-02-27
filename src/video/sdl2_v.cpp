@@ -65,7 +65,7 @@ static void FindResolutions()
 			SDL_GetDisplayMode(display, i, &mode);
 
 			if (mode.w < 640 || mode.h < 480) continue;
-			if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(mode.w, mode.h)) != _resolutions.end()) continue;
+			if (std::ranges::find(_resolutions, Dimension(mode.w, mode.h)) != _resolutions.end()) continue;
 			_resolutions.emplace_back(mode.w, mode.h);
 		}
 	}
@@ -84,7 +84,7 @@ static void GetAvailableVideoMode(uint *w, uint *h)
 	if (!_fullscreen || _resolutions.empty()) return;
 
 	/* Is the wanted mode among the available modes? */
-	if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(*w, *h)) != _resolutions.end()) return;
+	if (std::ranges::find(_resolutions, Dimension(*w, *h)) != _resolutions.end()) return;
 
 	/* Use the closest possible resolution */
 	uint best = 0;
@@ -240,18 +240,24 @@ std::vector<int> VideoDriver_SDL_Base::GetListOfMonitorRefreshRates()
 
 
 struct SDLVkMapping {
-	SDL_Keycode vk_from;
-	byte vk_count;
-	byte map_to;
-	bool unprintable;
+	const SDL_Keycode vk_from;
+	const uint8_t vk_count;
+	const uint8_t map_to;
+	const bool unprintable;
+
+	constexpr SDLVkMapping(SDL_Keycode vk_first, SDL_Keycode vk_last, uint8_t map_first, [[maybe_unused]] uint8_t map_last, bool unprintable)
+		: vk_from(vk_first), vk_count(vk_last - vk_first + 1), map_to(map_first), unprintable(unprintable)
+	{
+		assert((vk_last - vk_first) == (map_last - map_first));
+	}
 };
 
-#define AS(x, z) {x, 0, z, false}
-#define AM(x, y, z, w) {x, (byte)(y - x), z, false}
-#define AS_UP(x, z) {x, 0, z, true}
-#define AM_UP(x, y, z, w) {x, (byte)(y - x), z, true}
+#define AS(x, z) {x, x, z, z, false}
+#define AM(x, y, z, w) {x, y, z, w, false}
+#define AS_UP(x, z) {x, x, z, z, true}
+#define AM_UP(x, y, z, w) {x, y, z, w, true}
 
-static const SDLVkMapping _vk_mapping[] = {
+static constexpr SDLVkMapping _vk_mapping[] = {
 	/* Pageup stuff + up/down */
 	AS_UP(SDLK_PAGEUP,   WKC_PAGEUP),
 	AS_UP(SDLK_PAGEDOWN, WKC_PAGEDOWN),
@@ -315,14 +321,13 @@ static const SDLVkMapping _vk_mapping[] = {
 
 static uint ConvertSdlKeyIntoMy(SDL_Keysym *sym, char32_t *character)
 {
-	const SDLVkMapping *map;
 	uint key = 0;
 	bool unprintable = false;
 
-	for (map = _vk_mapping; map != endof(_vk_mapping); ++map) {
-		if ((uint)(sym->sym - map->vk_from) <= map->vk_count) {
-			key = sym->sym - map->vk_from + map->map_to;
-			unprintable = map->unprintable;
+	for (const auto &map : _vk_mapping) {
+		if (IsInsideBS(sym->sym, map.vk_from, map.vk_count)) {
+			key = sym->sym - map.vk_from + map.map_to;
+			unprintable = map.unprintable;
 			break;
 		}
 	}
@@ -355,12 +360,11 @@ static uint ConvertSdlKeyIntoMy(SDL_Keysym *sym, char32_t *character)
  */
 static uint ConvertSdlKeycodeIntoMy(SDL_Keycode kc)
 {
-	const SDLVkMapping *map;
 	uint key = 0;
 
-	for (map = _vk_mapping; map != endof(_vk_mapping); ++map) {
-		if ((uint)(kc - map->vk_from) <= map->vk_count) {
-			key = kc - map->vk_from + map->map_to;
+	for (const auto &map : _vk_mapping) {
+		if (IsInsideBS(kc, map.vk_from, map.vk_count)) {
+			key = kc - map.vk_from + map.map_to;
 			break;
 		}
 	}
@@ -400,13 +404,25 @@ bool VideoDriver_SDL_Base::PollEvent()
 			break;
 		}
 
-		case SDL_MOUSEWHEEL:
+		case SDL_MOUSEWHEEL: {
 			if (ev.wheel.y > 0) {
 				_cursor.wheel--;
 			} else if (ev.wheel.y < 0) {
 				_cursor.wheel++;
 			}
+
+			/* Handle 2D scrolling. */
+			const float SCROLL_BUILTIN_MULTIPLIER = 14.0f;
+#if SDL_VERSION_ATLEAST(2, 18, 0)
+			_cursor.v_wheel -= ev.wheel.preciseY * SCROLL_BUILTIN_MULTIPLIER * _settings_client.gui.scrollwheel_multiplier;
+			_cursor.h_wheel += ev.wheel.preciseX * SCROLL_BUILTIN_MULTIPLIER * _settings_client.gui.scrollwheel_multiplier;
+#else
+			_cursor.v_wheel -= static_cast<float>(ev.wheel.y * SCROLL_BUILTIN_MULTIPLIER * _settings_client.gui.scrollwheel_multiplier);
+			_cursor.h_wheel += static_cast<float>(ev.wheel.x * SCROLL_BUILTIN_MULTIPLIER * _settings_client.gui.scrollwheel_multiplier);
+#endif
+			_cursor.wheel_moved = true;
 			break;
+		}
 
 		case SDL_MOUSEBUTTONDOWN:
 			if (_rightclick_emulate && SDL_GetModState() & KMOD_CTRL) {
@@ -514,34 +530,47 @@ bool VideoDriver_SDL_Base::PollEvent()
 	return true;
 }
 
-static const char *InitializeSDL()
+static std::optional<std::string_view> InitializeSDL()
 {
 	/* Check if the video-driver is already initialized. */
-	if (SDL_WasInit(SDL_INIT_VIDEO) != 0) return nullptr;
+	if (SDL_WasInit(SDL_INIT_VIDEO) != 0) return std::nullopt;
 
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) return SDL_GetError();
-	return nullptr;
+	return std::nullopt;
 }
 
-const char *VideoDriver_SDL_Base::Initialize()
+std::optional<std::string_view> VideoDriver_SDL_Base::Initialize()
 {
 	this->UpdateAutoResolution();
 
-	const char *error = InitializeSDL();
-	if (error != nullptr) return error;
+	auto error = InitializeSDL();
+	if (error) return error;
 
 	FindResolutions();
 	Debug(driver, 2, "Resolution for display: {}x{}", _cur_resolution.width, _cur_resolution.height);
 
-	return nullptr;
+	return std::nullopt;
 }
 
-const char *VideoDriver_SDL_Base::Start(const StringList &param)
+std::optional<std::string_view> VideoDriver_SDL_Base::Start(const StringList &param)
 {
 	if (BlitterFactory::GetCurrentBlitter()->GetScreenDepth() == 0) return "Only real blitters supported";
 
-	const char *error = this->Initialize();
-	if (error != nullptr) return error;
+	auto error = this->Initialize();
+	if (error) return error;
+
+#ifdef SDL_HINT_MOUSE_AUTO_CAPTURE
+	if (GetDriverParamBool(param, "no_mouse_capture")) {
+		/* By default SDL captures the mouse, while a button is pressed.
+		 * This is annoying during debugging, when OpenTTD is suspended while the button was pressed.
+		 */
+		if (!SDL_SetHint(SDL_HINT_MOUSE_AUTO_CAPTURE, "0")) return SDL_GetError();
+	}
+#endif
+
+#ifdef SDL_HINT_APP_NAME
+	SDL_SetHint(SDL_HINT_APP_NAME, "OpenTTD");
+#endif
 
 	this->startup_display = FindStartupDisplay(GetDriverParamInt(param, "display", -1));
 
@@ -568,7 +597,7 @@ const char *VideoDriver_SDL_Base::Start(const StringList &param)
 	this->is_game_threaded = !GetDriverParamBool(param, "no_threads") && !GetDriverParamBool(param, "no_thread");
 #endif
 
-	return nullptr;
+	return std::nullopt;
 }
 
 void VideoDriver_SDL_Base::Stop()

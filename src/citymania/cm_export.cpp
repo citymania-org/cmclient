@@ -7,7 +7,7 @@
 #include "../gfx_func.h"
 #include "../gfx_type.h"
 #include "../engine_base.h"
-#include "../palette_func.h"  // _colour_gradient
+#include "../palette_func.h"  // GetColourGradient
 #include "../spritecache.h"
 #include "../strings_func.h"
 #include "../strings_type.h"
@@ -15,7 +15,7 @@
 #include "../table/sprites.h"
 #include "../table/strings.h"  // for town_land.h
 #include "../table/train_sprites.h"
-#include "../table/town_land.h"  // _town_draw_tile_data
+//#include "../table/town_land.h"  // _town_draw_tile_data
 
 #include <iostream>
 #include <fstream>
@@ -23,6 +23,8 @@
 #include <iomanip>
 
 #include "../safeguards.h"
+
+extern const DrawBuildingsTileStruct _town_draw_tile_data[(NEW_HOUSE_OFFSET) * 4 * 4];
 
 namespace citymania {
 
@@ -234,7 +236,7 @@ void WritePaletteInfo(JsonWriter &j) {
         j.f << std::endl << "[";
         for (auto k = 0; k < 8; k++) {
             if (k != 0) j.f << ", ";
-            j.f << (int)_colour_gradient[i][k] << " ";
+            j.f << (int)GetColourGradient((Colours)i, (ColourShade)k) << " ";
         }
         j.f << "]";
     }

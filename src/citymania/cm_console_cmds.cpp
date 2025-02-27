@@ -16,7 +16,7 @@ static void IConsoleHelp(const char *str)
     IConsolePrint(CC_WARNING, "- {}", str);
 }
 
-bool ConExport(byte argc, [[maybe_unused]] char *argv[]) {
+bool ConExport(uint8_t argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Exports various game data in json format to openttd.json file");
         return true;

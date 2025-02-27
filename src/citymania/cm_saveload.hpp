@@ -4,7 +4,12 @@
 #include "../saveload/saveload.h"
 #include "../town.h"
 
-#define CM_SLE_GENERAL(name, cmd, base, variable, type, length, from, to, extra) SaveLoad {name, cmd, type, length, from, to, cpp_sizeof(base, variable), [] (void *b, size_t) -> void * { assert(b != nullptr); return const_cast<void *>(static_cast<const void *>(std::addressof(static_cast<base *>(b)->variable))); }, extra, nullptr}
+#define CM_SLE_GENERAL(name, cmd, base, variable, type, length, from, to, extra) \
+    SaveLoad {name, cmd, type, length, from, to, [] (void *b, size_t) -> void * { \
+        static_assert(SlCheckVarSize(cmd, type, length, sizeof(static_cast<base *>(b)->variable))); \
+        assert(b != nullptr); \
+        return const_cast<void *>(static_cast<const void *>(std::addressof(static_cast<base *>(b)->variable))); \
+    }, extra, nullptr}
 #define CM_SLE_VAR(name, base, variable, type) CM_SLE_GENERAL(name, SL_VAR, base, variable, type, 0, SLV_TABLE_CHUNKS, SL_MAX_VERSION, 0)
 #define CM_SLE_VAR(name, base, variable, type) CM_SLE_GENERAL(name, SL_VAR, base, variable, type, 0, SLV_TABLE_CHUNKS, SL_MAX_VERSION, 0)
 #define CM_SLE_ARR(name, base, variable, type, length) CM_SLE_GENERAL(name, SL_ARR, base, variable, type, length, SLV_TABLE_CHUNKS, SL_MAX_VERSION, 0)

@@ -9,9 +9,12 @@
 
 #include "stdafx.h"
 #include "landscape.h"
+#include "sound_type.h"
+#include "soundloader_func.h"
 #include "mixer.h"
 #include "newgrf_sound.h"
 #include "random_access_file_type.h"
+#include "window_func.h"
 #include "window_gui.h"
 #include "vehicle_base.h"
 
@@ -21,7 +24,7 @@
 
 #include "safeguards.h"
 
-static SoundEntry _original_sounds[ORIGINAL_SAMPLE_COUNT];
+static std::array<SoundEntry, ORIGINAL_SAMPLE_COUNT> _original_sounds;
 
 static void OpenBankFile(const std::string &filename)
 {
@@ -31,17 +34,17 @@ static void OpenBankFile(const std::string &filename)
 	 */
 	static std::unique_ptr<RandomAccessFile> original_sound_file;
 
-	memset(_original_sounds, 0, sizeof(_original_sounds));
+	_original_sounds.fill({});
 
 	/* If there is no sound file (nosound set), don't load anything */
 	if (filename.empty()) return;
 
-	original_sound_file.reset(new RandomAccessFile(filename, BASESET_DIR));
+	original_sound_file = std::make_unique<RandomAccessFile>(filename, BASESET_DIR);
 	size_t pos = original_sound_file->GetPos();
 	uint count = original_sound_file->ReadDword();
 
 	/* The new format has the highest bit always set */
-	bool new_format = HasBit(count, 31);
+	auto source = HasBit(count, 31) ? SoundSource::BasesetNewFormat : SoundSource::BasesetOldFormat;
 	ClrBit(count, 31);
 	count /= 8;
 
@@ -56,101 +59,32 @@ static void OpenBankFile(const std::string &filename)
 
 	original_sound_file->SeekTo(pos, SEEK_SET);
 
-	for (uint i = 0; i != ORIGINAL_SAMPLE_COUNT; i++) {
-		_original_sounds[i].file = original_sound_file.get();
-		_original_sounds[i].file_offset = GB(original_sound_file->ReadDword(), 0, 31) + pos;
-		_original_sounds[i].file_size = original_sound_file->ReadDword();
-	}
-
-	for (uint i = 0; i != ORIGINAL_SAMPLE_COUNT; i++) {
-		SoundEntry *sound = &_original_sounds[i];
-		char name[255];
-
-		original_sound_file->SeekTo(sound->file_offset, SEEK_SET);
-
-		/* Check for special case, see else case */
-		original_sound_file->ReadBlock(name, original_sound_file->ReadByte()); // Read the name of the sound
-		if (new_format || strcmp(name, "Corrupt sound") != 0) {
-			original_sound_file->SeekTo(12, SEEK_CUR); // Skip past RIFF header
-
-			/* Read riff tags */
-			for (;;) {
-				uint32_t tag = original_sound_file->ReadDword();
-				uint32_t size = original_sound_file->ReadDword();
-
-				if (tag == ' tmf') {
-					original_sound_file->ReadWord();                          // wFormatTag
-					sound->channels = original_sound_file->ReadWord();        // wChannels
-					sound->rate     = original_sound_file->ReadDword();       // samples per second
-					if (!new_format) sound->rate = 11025;                      // seems like all old samples should be played at this rate.
-					original_sound_file->ReadDword();                         // avg bytes per second
-					original_sound_file->ReadWord();                          // alignment
-					sound->bits_per_sample = original_sound_file->ReadByte(); // bits per sample
-					original_sound_file->SeekTo(size - (2 + 2 + 4 + 4 + 2 + 1), SEEK_CUR);
-				} else if (tag == 'atad') {
-					sound->file_size = size;
-					sound->file = original_sound_file.get();
-					sound->file_offset = original_sound_file->GetPos();
-					break;
-				} else {
-					sound->file_size = 0;
-					break;
-				}
-			}
-		} else {
-			/*
-			 * Special case for the jackhammer sound
-			 * (name in sample.cat is "Corrupt sound")
-			 * It's no RIFF file, but raw PCM data
-			 */
-			sound->channels = 1;
-			sound->rate = 11025;
-			sound->bits_per_sample = 8;
-			sound->file = original_sound_file.get();
-			sound->file_offset = original_sound_file->GetPos();
-		}
+	/* Read sound file positions. */
+	for (auto &sound : _original_sounds) {
+		sound.file = original_sound_file.get();
+		sound.file_offset = GB(original_sound_file->ReadDword(), 0, 31) + pos;
+		sound.file_size = original_sound_file->ReadDword();
+		sound.source = source;
 	}
 }
 
-static bool SetBankSource(MixerChannel *mc, const SoundEntry *sound)
+static bool SetBankSource(MixerChannel *mc, SoundEntry *sound, SoundID sound_id)
 {
 	assert(sound != nullptr);
 
-	/* Check for valid sound size. */
-	if (sound->file_size == 0 || sound->file_size > ((size_t)-1) - 2) return false;
-
-	int8_t *mem = MallocT<int8_t>(sound->file_size + 2);
-	/* Add two extra bytes so rate conversion can read these
-	 * without reading out of its input buffer. */
-	mem[sound->file_size    ] = 0;
-	mem[sound->file_size + 1] = 0;
-
-	RandomAccessFile *file = sound->file;
-	file->SeekTo(sound->file_offset, SEEK_SET);
-	file->ReadBlock(mem, sound->file_size);
-
-	/* 16-bit PCM WAV files should be signed by default */
-	if (sound->bits_per_sample == 8) {
-		for (uint i = 0; i != sound->file_size; i++) {
-			mem[i] += -128; // Convert unsigned sound data to signed
+	if (sound->file != nullptr) {
+		if (!LoadSound(*sound, sound_id)) {
+			/* Mark as invalid. */
+			sound->file = nullptr;
+			return false;
 		}
+		sound->file = nullptr;
 	}
 
-#if TTD_ENDIAN == TTD_BIG_ENDIAN
-	if (sound->bits_per_sample == 16) {
-		uint num_samples = sound->file_size / 2;
-		int16_t *samples = (int16_t *)mem;
-		for (uint i = 0; i < num_samples; i++) {
-			samples[i] = BSWAP16(samples[i]);
-		}
-	}
-#endif
+	/* Check for valid sound. */
+	if (sound->data->empty()) return false;
 
-	assert(sound->bits_per_sample == 8 || sound->bits_per_sample == 16);
-	assert(sound->channels == 1);
-	assert(sound->file_size != 0 && sound->rate != 0);
-
-	MxSetChannelRawSrc(mc, mem, sound->file_size, sound->rate, sound->bits_per_sample == 16);
+	MxSetChannelRawSrc(mc, sound->data, sound->rate, sound->bits_per_sample == 16);
 
 	return true;
 }
@@ -161,6 +95,7 @@ void InitializeSound()
 	OpenBankFile(BaseSounds::GetUsedSet()->files->filename);
 }
 
+
 /* Low level sound player */
 static void StartSound(SoundID sound_id, float pan, uint volume)
 {
@@ -169,22 +104,16 @@ static void StartSound(SoundID sound_id, float pan, uint volume)
 	SoundEntry *sound = GetSound(sound_id);
 	if (sound == nullptr) return;
 
-	/* NewGRF sound that wasn't loaded yet? */
-	if (sound->rate == 0 && sound->file != nullptr) {
-		if (!LoadNewGRFSound(sound)) {
-			/* Mark as invalid. */
-			sound->file = nullptr;
-			return;
-		}
+	if (sound->rate == 0) {
+		/* If the sound's sample rate is not set then the sound needs to be loaded, but if the sound's file pointer
+		 * is empty then an attempt was already made to load the sound but it failed. We don't want to try again. */
+		if (sound->file == nullptr) return;
 	}
-
-	/* Empty sound? */
-	if (sound->rate == 0) return;
 
 	MixerChannel *mc = MxAllocateChannel();
 	if (mc == nullptr) return;
 
-	if (!SetBankSource(mc, sound)) return;
+	if (!SetBankSource(mc, sound, sound_id)) return;
 
 	/* Apply the sound effect's own volume. */
 	volume = sound->volume * volume;
@@ -194,10 +123,10 @@ static void StartSound(SoundID sound_id, float pan, uint volume)
 }
 
 
-static const byte _vol_factor_by_zoom[] = {255, 255, 255, 190, 134, 87};
+static const uint8_t _vol_factor_by_zoom[] = {255, 255, 255, 190, 134, 87};
 static_assert(lengthof(_vol_factor_by_zoom) == ZOOM_LVL_END);
 
-static const byte _sound_base_vol[] = {
+static const uint8_t _sound_base_vol[] = {
 	128,  90, 128, 128, 128, 128, 128, 128,
 	128,  90,  90, 128, 128, 128, 128, 128,
 	128, 128, 128,  80, 128, 128, 128, 128,
@@ -210,7 +139,7 @@ static const byte _sound_base_vol[] = {
 	 90,
 };
 
-static const byte _sound_idx[] = {
+static const uint8_t _sound_idx[] = {
 	 2,  3,  4,  5,  6,  7,  8,  9,
 	10, 11, 12, 13, 14, 15, 16, 17,
 	18, 19, 20, 21, 22, 23, 24, 25,
@@ -231,6 +160,36 @@ void SndCopyToPool()
 		sound[i].volume = _sound_base_vol[i];
 		sound[i].priority = 0;
 	}
+}
+
+/**
+ * Change the configured sound set and reset sounds.
+ * @param index Index of sound set to switch to.
+ */
+void ChangeSoundSet(int index)
+{
+	if (BaseSounds::GetIndexOfUsedSet() == index) return;
+
+	auto set = BaseSounds::GetSet(index);
+	BaseSounds::ini_set = set->name;
+	BaseSounds::SetSet(set);
+
+	MxCloseAllChannels();
+	InitializeSound();
+
+	/* Replace baseset sounds in the pool with the updated original sounds. This is safe to do as
+	 * any sound still playing holds its own shared_ptr to the sample data. */
+	for (uint i = 0; i < ORIGINAL_SAMPLE_COUNT; i++) {
+		SoundEntry *sound = GetSound(i);
+		/* GRF Container 0 means the sound comes from the baseset, and isn't overridden by NewGRF. */
+		if (sound == nullptr || sound->grf_container_ver != 0) continue;
+
+		*sound = _original_sounds[_sound_idx[i]];
+		sound->volume = _sound_base_vol[i];
+		sound->priority = 0;
+	}
+
+	InvalidateWindowData(WC_GAME_OPTIONS, WN_GAME_OPTIONS_GAME_OPTIONS, 0, true);
 }
 
 /**

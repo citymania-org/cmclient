@@ -9,6 +9,7 @@
 
 #include "stdafx.h"
 #include "debug.h"
+#include "newgrf_cargo.h"
 #include "newgrf_spritegroup.h"
 
 #include "safeguards.h"
@@ -78,21 +79,17 @@ uint16_t GetCargoCallback(CallbackID callback, uint32_t param1, uint32_t param2,
  */
 CargoID GetCargoTranslation(uint8_t cargo, const GRFFile *grffile, bool usebit)
 {
-	/* Pre-version 7 uses the 'climate dependent' ID in callbacks and properties, i.e. cargo is the cargo ID */
+	/* We can't use GetCargoTranslationTable here as the usebit flag changes behviour. */
+	/* Pre-version 7 uses the bitnum lookup from (standard in v8) instead of climate dependent in some places.. */
+	std::span<const CargoLabel> cargo_list;
 	if (grffile->grf_version < 7 && !usebit) {
-		if (cargo >= CargoSpec::GetArraySize() || !CargoSpec::Get(cargo)->IsValid()) return INVALID_CARGO;
-		return cargo;
-	}
-
-	/* Other cases use (possibly translated) cargobits */
-
-	if (!grffile->cargo_list.empty()) {
-		/* ...and the cargo is in bounds, then get the cargo ID for
-		 * the label */
-		if (cargo < grffile->cargo_list.size()) return GetCargoIDByLabel(grffile->cargo_list[cargo]);
+		cargo_list = GetClimateDependentCargoTranslationTable();
+	} else if (!grffile->cargo_list.empty()) {
+		cargo_list = grffile->cargo_list;
 	} else {
-		/* Else the cargo value is a 'climate independent' 'bitnum' */
-		return GetCargoIDByBitnum(cargo);
+		cargo_list = GetClimateIndependentCargoTranslationTable();
 	}
+
+	if (cargo < cargo_list.size()) return GetCargoIDByLabel(cargo_list[cargo]);
 	return INVALID_CARGO;
 }

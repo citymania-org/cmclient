@@ -31,8 +31,7 @@ int _cur_line;                        ///< The current line we're parsing in the
 int _errors, _warnings, _show_todo;
 LanguagePackHeader _lang;             ///< Header information about a language.
 
-static const ptrdiff_t MAX_COMMAND_PARAM_SIZE = 100; ///< Maximum size of every command block, not counting the name of the command itself
-static const CmdStruct *ParseCommandString(const char **str, char *param, int *argno, int *casei);
+static const CmdStruct *ParseCommandString(const char **str, std::string &param, int *argno, int *casei);
 
 /**
  * Create a new case.
@@ -135,7 +134,7 @@ uint StringData::Version() const
 		if (ls != nullptr) {
 			const CmdStruct *cs;
 			const char *s;
-			char buf[MAX_COMMAND_PARAM_SIZE];
+			std::string buf;
 			int argno;
 			int casei;
 
@@ -175,12 +174,12 @@ static ParsedCommandStruct _cur_pcs;
 static int _cur_argidx;
 
 /** The buffer for writing a single string. */
-struct Buffer : std::vector<byte> {
+struct Buffer : std::vector<uint8_t> {
 	/**
 	 * Convenience method for adding a byte.
 	 * @param value The value to add.
 	 */
-	void AppendByte(byte value)
+	void AppendByte(uint8_t value)
 	{
 		this->push_back(value);
 	}
@@ -317,8 +316,15 @@ static int TranslateArgumentIdx(int arg, int offset = 0);
 
 static void EmitWordList(Buffer *buffer, const std::vector<const char *> &words, uint nw)
 {
+	/* Maximum word length in bytes, excluding trailing NULL. */
+	constexpr uint MAX_WORD_LENGTH = UINT8_MAX - 2;
+
 	buffer->AppendByte(nw);
-	for (uint i = 0; i < nw; i++) buffer->AppendByte((byte)strlen(words[i]) + 1);
+	for (uint i = 0; i < nw; i++) {
+		size_t len = strlen(words[i]) + 1;
+		if (len >= UINT8_MAX) StrgenFatal("WordList {}/{} string '{}' too long, max bytes {}", i + 1, nw, words[i], MAX_WORD_LENGTH);
+		buffer->AppendByte(static_cast<uint8_t>(len));
+	}
 	for (uint i = 0; i < nw; i++) {
 		for (uint j = 0; words[i][j] != '\0'; j++) buffer->AppendByte(words[i][j]);
 		buffer->AppendByte(0);
@@ -420,8 +426,8 @@ void EmitGender(Buffer *buffer, char *buf, int)
 
 static const CmdStruct *FindCmd(const char *s, int len)
 {
-	for (const CmdStruct *cs = _cmd_structs; cs != endof(_cmd_structs); cs++) {
-		if (strncmp(cs->cmd, s, len) == 0 && cs->cmd[len] == '\0') return cs;
+	for (const auto &cs : _cmd_structs) {
+		if (strncmp(cs.cmd, s, len) == 0 && cs.cmd[len] == '\0') return &cs;
 	}
 	return nullptr;
 }
@@ -442,7 +448,7 @@ static uint ResolveCaseName(const char *str, size_t len)
 
 /* returns nullptr on eof
  * else returns command struct */
-static const CmdStruct *ParseCommandString(const char **str, char *param, int *argno, int *casei)
+static const CmdStruct *ParseCommandString(const char **str, std::string &param, int *argno, int *casei)
 {
 	const char *s = *str, *start;
 	char c;
@@ -507,11 +513,9 @@ static const CmdStruct *ParseCommandString(const char **str, char *param, int *a
 				StrgenError("Missing }} from command '{}'", start);
 				return nullptr;
 			}
-			if (s - start == MAX_COMMAND_PARAM_SIZE) FatalError("param command too long");
-			*param++ = c;
+			param += c;
 		}
 	}
-	*param = '\0';
 
 	*str = s;
 
@@ -532,7 +536,6 @@ StringReader::StringReader(StringData &data, const std::string &file, bool maste
 
 ParsedCommandStruct ExtractCommandString(const char *s, bool)
 {
-	char param[MAX_COMMAND_PARAM_SIZE];
 	int argno;
 	int argidx = 0;
 	int casei;
@@ -541,6 +544,7 @@ ParsedCommandStruct ExtractCommandString(const char *s, bool)
 
 	for (;;) {
 		/* read until next command from a. */
+		std::string param;
 		const CmdStruct *ar = ParseCommandString(&s, param, &argno, &casei);
 
 		if (ar == nullptr) break;
@@ -555,7 +559,7 @@ ParsedCommandStruct ExtractCommandString(const char *s, bool)
 
 			p.consuming_commands[argidx++] = ar;
 		} else if (!(ar->flags & C_DONTCOUNT)) { // Ignore some of them
-			p.non_consuming_commands.emplace_back(CmdPair{ar, param});
+			p.non_consuming_commands.emplace_back(CmdPair{ar, std::move(param)});
 		}
 	}
 
@@ -756,9 +760,9 @@ void StringReader::ParseFile()
 
 	/* For each new file we parse, reset the genders, and language codes. */
 	MemSetT(&_lang, 0);
-	strecpy(_lang.digit_group_separator, ",", lastof(_lang.digit_group_separator));
-	strecpy(_lang.digit_group_separator_currency, ",", lastof(_lang.digit_group_separator_currency));
-	strecpy(_lang.digit_decimal_separator, ".", lastof(_lang.digit_decimal_separator));
+	strecpy(_lang.digit_group_separator, ",");
+	strecpy(_lang.digit_group_separator_currency, ",");
+	strecpy(_lang.digit_decimal_separator, ".");
 
 	_cur_line = 1;
 	while (this->data.next_string_id < this->data.max_strings) {
@@ -835,7 +839,7 @@ static void PutCommandString(Buffer *buffer, const char *str)
 			continue;
 		}
 
-		char param[MAX_COMMAND_PARAM_SIZE];
+		std::string param;
 		int argno;
 		int casei;
 		const CmdStruct *cs = ParseCommandString(&str, param, &argno, &casei);
@@ -861,7 +865,7 @@ static void PutCommandString(Buffer *buffer, const char *str)
 			}
 		}
 
-		cs->proc(buffer, param, cs->value);
+		cs->proc(buffer, param.data(), cs->value);
 	}
 }
 
@@ -881,7 +885,7 @@ void LanguageWriter::WriteLength(uint length)
 		buffer[offs++] = (length >> 8) | 0xC0;
 	}
 	buffer[offs++] = length & 0xFF;
-	this->Write((byte*)buffer, offs);
+	this->Write((uint8_t*)buffer, offs);
 }
 
 /**
@@ -953,7 +957,7 @@ void LanguageWriter::WriteLang(const StringData &data)
 				 * <0x9E> <NUM CASES> <CASE1> <LEN1> <STRING1> <CASE2> <LEN2> <STRING2> <CASE3> <LEN3> <STRING3> <STRINGDEFAULT>
 				 * Each LEN is printed using 2 bytes in big endian order. */
 				buffer.AppendUtf8(SCC_SWITCH_CASE);
-				buffer.AppendByte((byte)ls->translated_cases.size());
+				buffer.AppendByte((uint8_t)ls->translated_cases.size());
 
 				/* Write each case */
 				for (const Case &c : ls->translated_cases) {
