@@ -5,7 +5,7 @@
 
 namespace citymania {
 
-enum EvaluationMode : byte {
+enum class EvaluationMode : uint8_t {
 	CHECKNOTHING = 0,
 	CHECKOPINION,  ///< Check the local authority's opinion.
 	CHECKBUILD,    ///< Check wither or not the player can build.

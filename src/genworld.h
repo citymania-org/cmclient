@@ -89,9 +89,10 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 void AbortGeneratingWorld();
 bool IsGeneratingWorldAborted();
 void HandleGeneratingWorldAbortion();
+void LoadTownData();
 
 /* genworld_gui.cpp */
-void SetNewLandscapeType(byte landscape);
+void SetNewLandscapeType(uint8_t landscape);
 void SetGeneratingWorldProgress(GenWorldProgress cls, uint total);
 void IncreaseGeneratingWorldProgress(GenWorldProgress cls);
 void PrepareGenerateWorldProgress();

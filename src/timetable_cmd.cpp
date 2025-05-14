@@ -167,13 +167,13 @@ CommandCost CmdChangeTimetable(DoCommandFlag flags, VehicleID veh, VehicleOrderI
 	if (wait_time != order->GetWaitTime()) {
 		switch (order->GetType()) {
 			case OT_GOTO_STATION:
-				if (order->GetNonStopType() & ONSF_NO_STOP_AT_DESTINATION_STATION) return_cmd_error(STR_ERROR_TIMETABLE_NOT_STOPPING_HERE);
+				if (order->GetNonStopType() & ONSF_NO_STOP_AT_DESTINATION_STATION) return CommandCost(STR_ERROR_TIMETABLE_NOT_STOPPING_HERE);
 				break;
 
 			case OT_CONDITIONAL:
 				break;
 
-			default: return_cmd_error(STR_ERROR_TIMETABLE_ONLY_WAIT_AT_STATIONS);
+			default: return CommandCost(STR_ERROR_TIMETABLE_ONLY_WAIT_AT_STATIONS);
 		}
 	}
 
@@ -519,7 +519,8 @@ void UpdateVehicleTimetable(Vehicle *v, bool travelling)
 	/* Before modifying waiting times, check whether we want to preserve bigger ones. */
 	if (!real_current_order->IsType(OT_CONDITIONAL) &&
 			(travelling || time_taken > real_current_order->GetWaitTime() || remeasure_wait_time)) {
-		/* Round up to the smallest unit of time commonly shown in the GUI (seconds) to avoid confusion.
+		/* Round up to the unit currently shown in the GUI for days and seconds.
+		 * Round up to seconds if currently used display style is ticks.
 		 * Players timetabling in Ticks can adjust later.
 		 * For trains/aircraft multiple movement cycles are done in one
 		 * tick. This makes it possible to leave the station and process
@@ -527,7 +528,8 @@ void UpdateVehicleTimetable(Vehicle *v, bool travelling)
 		 * the timetable entry like is done for road vehicles/ships.
 		 * Thus always make sure at least one tick is used between the
 		 * processing of different orders when filling the timetable. */
-		uint time_to_set = CeilDiv(std::max(time_taken, 1), Ticks::TICKS_PER_SECOND) * Ticks::TICKS_PER_SECOND;
+		uint factor = _settings_client.gui.timetable_mode == TimetableMode::Days ? Ticks::DAY_TICKS : Ticks::TICKS_PER_SECOND;
+		uint time_to_set = CeilDiv(std::max(time_taken, 1), factor) * factor;
 
 		if (travelling && (autofilling || !real_current_order->IsTravelTimetabled())) {
 			ChangeTimetable(v, v->cur_real_order_index, time_to_set, MTF_TRAVEL_TIME, autofilling);

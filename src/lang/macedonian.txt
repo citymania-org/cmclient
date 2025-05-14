@@ -221,6 +221,7 @@ STR_UNITS_HEIGHT_SI                                             :{DECIMAL} m
 
 
 
+
 # Common window strings
 STR_LIST_FILTER_OSKTITLE                                        :{BLACK}Внесете филтер низа
 STR_LIST_FILTER_TOOLTIP                                         :{BLACK}Внесете клучни зборови за филтрирање на списокот за
@@ -357,6 +358,7 @@ STR_SCENEDIT_FILE_MENU_LOAD_HEIGHTMAP                           :Вчитај в
 STR_SCENEDIT_FILE_MENU_QUIT_EDITOR                              :Напушти уредник
 STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Напушти
+
 
 # Settings menu
 ###length 16
@@ -528,6 +530,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Прик
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Покажи нема Товарот на товар плаќање стапки графикон
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Вклучи графикон за карго тип за вклучување / исклучување
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Прикажи детални перформанси рејтингот
 
@@ -762,11 +765,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Опци
 
 
 
-###length 43
+###length 44
 
 
 # Autosave dropdown
 ###length 5
+
 
 
 
@@ -912,6 +916,7 @@ STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Инфраст�
 ###length 2
 
 
+
 ###length 2
 
 
@@ -1020,6 +1025,8 @@ STR_CONFIG_SETTING_SOUND_VEHICLE                                :Возила: {
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES                           :#ОПкодови пред скрипти се суспендирани: {STRING}
 
 
+###length 3
+
 ###setting-zero-is-special
 
 
@@ -1122,7 +1129,6 @@ STR_CONFIG_SETTING_ZOOM_LVL_OUT_8X                              :8x
 ###length 3
 
 
-###length 2
 
 
 # Config errors
@@ -1215,8 +1221,6 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 
 
 
-# Network set password
-
 # Network company info join/password
 
 # Network chat
@@ -1226,7 +1230,7 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 STR_NETWORK_ERROR_TOO_MANY_COMMANDS                             :{WHITE}Ти беше испраќање премногу команди на серверот
 
 
-###length 21
+###length 23
 STR_NETWORK_ERROR_CLIENT_TOO_MANY_COMMANDS                      :испраќа премногу команди
 
 # Network related errors
@@ -1287,6 +1291,9 @@ STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Изгр
 
 
 
+
+
+
 # Signal window
 STR_BUILD_SIGNAL_ELECTRIC_ENTRY_TOOLTIP                         :{BLACK}Влез сигнализација (електрика){}Зелено е се додека има барем еден зелен излез-сигнал во продолжението на траката, во спротивно е црвено.
 STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP                          :{BLACK}Излез Сигнализација (електрика){}Се однесува на ист начин како блок-сигналот, но потребно е да ја има точната боја на влезен и комбо пресигнал.
@@ -1334,7 +1341,6 @@ STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND                  :{BLACK}Поди
 
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Избор на објект
-STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Одберете објект да се изгради
 STR_OBJECT_BUILD_PREVIEW_TOOLTIP                                :{BLACK}Преглед на објектот
 STR_OBJECT_BUILD_SIZE                                           :{BLACK}Големина: {GOLD}{NUM} x {NUM} плочки
 
@@ -1451,6 +1457,8 @@ STR_MAPGEN_BY                                                   :{BLACK}*
 # Map generation progress
 STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Цел на генерација
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Вклучување на скрипта
+
+
 
 # NewGRF settings
 STR_NEWGRF_SETTINGS_INFO_TITLE                                  :{WHITE} Детални НовGRF информации
@@ -1809,9 +1817,6 @@ STR_VEHICLE_STATUS_AIRCRAFT_TOO_FAR                             :{ORANGE}Пре�
 
 
 # Vehicle stopped/started animations
-###length 2
-
-###length 2
 
 # Vehicle details
 

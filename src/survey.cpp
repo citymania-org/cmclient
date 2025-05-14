@@ -170,7 +170,7 @@ void SurveySettings(nlohmann::json &survey, bool skip_if_default)
 	for (auto &table : GenericSettingTables()) {
 		SurveySettingsTable(survey, table, &_settings_game, skip_if_default);
 	}
-	SurveySettingsTable(survey, _currency_settings, &_custom_currency, skip_if_default);
+	SurveySettingsTable(survey, _currency_settings, &GetCustomCurrency(), skip_if_default);
 	SurveySettingsTable(survey, _company_settings, &_settings_client.company, skip_if_default);
 }
 
@@ -223,13 +223,8 @@ void SurveyOpenTTD(nlohmann::json &survey)
 			32
 #endif
 		;
-	survey["endian"] =
-#if (TTD_ENDIAN == TTD_LITTLE_ENDIAN)
-			"little"
-#else
-			"big"
-#endif
-		;
+	if constexpr (std::endian::native == std::endian::little) survey["endian"] = "little";
+	if constexpr (std::endian::native == std::endian::big) survey["endian"] = "big";
 	survey["dedicated_build"] =
 #ifdef DEDICATED
 			"yes"
@@ -263,7 +258,7 @@ void SurveyConfiguration(nlohmann::json &survey)
 {
 	survey["network"] = _networking ? (_network_server ? "server" : "client") : "no";
 	if (_current_language != nullptr) {
-		survey["language"]["filename"] = _current_language->file.filename().string();
+		survey["language"]["filename"] = FS2OTTD(_current_language->file.filename());
 		survey["language"]["name"] = _current_language->name;
 		survey["language"]["isocode"] = _current_language->isocode;
 	}
@@ -283,8 +278,8 @@ void SurveyConfiguration(nlohmann::json &survey)
 	if (BaseGraphics::GetUsedSet() != nullptr) {
 		survey["graphics_set"] = fmt::format("{}.{}", BaseGraphics::GetUsedSet()->name, BaseGraphics::GetUsedSet()->version);
 		const GRFConfig *extra_cfg = BaseGraphics::GetUsedSet()->GetExtraConfig();
-		if (extra_cfg != nullptr && extra_cfg->num_params > 0) {
-			survey["graphics_set_parameters"] = std::span<const uint32_t>(extra_cfg->param.data(), extra_cfg->num_params);
+		if (extra_cfg != nullptr && !extra_cfg->param.empty()) {
+			survey["graphics_set_parameters"] = std::span<const uint32_t>(extra_cfg->param);
 		} else {
 			survey["graphics_set_parameters"] = std::span<const uint32_t>();
 		}
@@ -380,7 +375,7 @@ void SurveyGrfs(nlohmann::json &survey)
 		if ((c->palette & GRFP_BLT_MASK) == GRFP_BLT_32BPP) grf["blitter"] = "32bpp";
 
 		grf["is_static"] = HasBit(c->flags, GCF_STATIC);
-		grf["parameters"] = std::span<const uint32_t>(c->param.data(), c->num_params);
+		grf["parameters"] = std::span<const uint32_t>(c->param);
 	}
 }
 

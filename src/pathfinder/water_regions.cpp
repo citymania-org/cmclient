@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "map_func.h"
 #include "water_regions.h"
-#include "map_func.h"
 #include "tilearea_type.h"
 #include "track_func.h"
 #include "transport_type.h"
@@ -24,7 +23,7 @@ using TWaterRegionTraversabilityBits = uint16_t;
 constexpr TWaterRegionPatchLabel FIRST_REGION_LABEL = 1;
 
 static_assert(sizeof(TWaterRegionTraversabilityBits) * 8 == WATER_REGION_EDGE_LENGTH);
-static_assert(sizeof(TWaterRegionPatchLabel) == sizeof(byte)); // Important for the hash calculation.
+static_assert(sizeof(TWaterRegionPatchLabel) == sizeof(uint8_t)); // Important for the hash calculation.
 
 static inline TrackBits GetWaterTracks(TileIndex tile) { return TrackStatusToTrackBits(GetTileTrackStatus(tile, TRANSPORT_WATER, 0)); }
 static inline bool IsAqueductTile(TileIndex tile) { return IsBridgeTile(tile) && GetTunnelBridgeTransportType(tile) == TRANSPORT_WATER; }
@@ -41,6 +40,18 @@ static inline TWaterRegionIndex GetWaterRegionIndex(TileIndex tile) { return Get
 using TWaterRegionPatchLabelArray = std::array<TWaterRegionPatchLabel, WATER_REGION_NUMBER_OF_TILES>;
 
 /**
+ * The data stored for each water region.
+ */
+class WaterRegionData {
+	friend class WaterRegion;
+
+	std::array<TWaterRegionTraversabilityBits, DIAGDIR_END> edge_traversability_bits{};
+	std::unique_ptr<TWaterRegionPatchLabelArray> tile_patch_labels; // Tile patch labels, this may be nullptr in the following trivial cases: region is invalid, region is only land (0 patches), region is only water (1 patch)
+	bool has_cross_region_aqueducts = false;
+	TWaterRegionPatchLabel number_of_patches = 0; // 0 = no water, 1 = one single patch of water, etc...
+};
+
+/**
  * Represents a square section of the map of a fixed size. Within this square individual unconnected patches of water are
  * identified using a Connected Component Labeling (CCL) algorithm. Note that all information stored in this class applies
  * only to tiles within the square section, there is no knowledge about the rest of the map. This makes it easy to invalidate
@@ -49,12 +60,8 @@ using TWaterRegionPatchLabelArray = std::array<TWaterRegionPatchLabel, WATER_REG
 class WaterRegion
 {
 private:
-	std::array<TWaterRegionTraversabilityBits, DIAGDIR_END> edge_traversability_bits{};
-	bool has_cross_region_aqueducts = false;
-	bool initialized = false;
-	TWaterRegionPatchLabel number_of_patches = 0; // 0 = no water, 1 = one single patch of water, etc...
+	WaterRegionData &data;
 	const OrthogonalTileArea tile_area;
-	std::unique_ptr<TWaterRegionPatchLabelArray> tile_patch_labels; ///< Tile patch labels, this may be nullptr in the following trivial cases: region is invalid, region is only land (0 patches), region is only water (1 patch)
 
 	/**
 	 * Returns the local index of the tile within the region. The N corner represents 0,
@@ -69,20 +76,13 @@ private:
 	}
 
 public:
-	WaterRegion(int region_x, int region_y)
-		: tile_area(TileXY(region_x * WATER_REGION_EDGE_LENGTH, region_y * WATER_REGION_EDGE_LENGTH), WATER_REGION_EDGE_LENGTH, WATER_REGION_EDGE_LENGTH)
+	WaterRegion(int region_x, int region_y, WaterRegionData &water_region_data)
+		: data(water_region_data)
+		, tile_area(TileXY(region_x * WATER_REGION_EDGE_LENGTH, region_y * WATER_REGION_EDGE_LENGTH), WATER_REGION_EDGE_LENGTH, WATER_REGION_EDGE_LENGTH)
 	{}
 
 	OrthogonalTileIterator begin() const { return this->tile_area.begin(); }
 	OrthogonalTileIterator end() const { return this->tile_area.end(); }
-
-	bool IsInitialized() const { return this->initialized; }
-
-	void Invalidate()
-	{
-		if (!IsInitialized()) Debug(map, 3, "Invalidated water region ({},{})", GetWaterRegionX(this->tile_area.tile), GetWaterRegionY(this->tile_area.tile));
-		this->initialized = false;
-	}
 
 	/**
 	 * Returns a set of bits indicating whether an edge tile on a particular side is traversable or not. These
@@ -91,18 +91,18 @@ public:
 	 * @param side Which side of the region we want to know the edge traversability of.
 	 * @returns A value holding the edge traversability bits.
 	 */
-	TWaterRegionTraversabilityBits GetEdgeTraversabilityBits(DiagDirection side) const { return edge_traversability_bits[side]; }
+	TWaterRegionTraversabilityBits GetEdgeTraversabilityBits(DiagDirection side) const { return this->data.edge_traversability_bits[side]; }
 
 	/**
 	 * @returns The amount of individual water patches present within the water region. A value of
 	 * 0 means there is no water present in the water region at all.
 	 */
-	int NumberOfPatches() const { return this->number_of_patches; }
+	int NumberOfPatches() const { return static_cast<int>(this->data.number_of_patches); }
 
 	/**
 	 * @returns Whether the water region contains aqueducts that cross the region boundaries.
 	 */
-	bool HasCrossRegionAqueducts() const { return this->has_cross_region_aqueducts; }
+	bool HasCrossRegionAqueducts() const { return this->data.has_cross_region_aqueducts; }
 
 	/**
 	 * Returns the patch label that was assigned to the tile.
@@ -112,10 +112,10 @@ public:
 	TWaterRegionPatchLabel GetLabel(TileIndex tile) const
 	{
 		assert(this->tile_area.Contains(tile));
-		if (this->tile_patch_labels == nullptr) {
-			return this->NumberOfPatches() == 0 ? INVALID_WATER_REGION_PATCH : 1;
+		if (this->data.tile_patch_labels == nullptr) {
+			return this->NumberOfPatches() == 0 ? INVALID_WATER_REGION_PATCH : FIRST_REGION_LABEL;
 		}
-		return (*this->tile_patch_labels)[GetLocalIndex(tile)];
+		return (*this->data.tile_patch_labels)[this->GetLocalIndex(tile)];
 	}
 
 	/**
@@ -125,22 +125,22 @@ public:
 	void ForceUpdate()
 	{
 		Debug(map, 3, "Updating water region ({},{})", GetWaterRegionX(this->tile_area.tile), GetWaterRegionY(this->tile_area.tile));
-		this->has_cross_region_aqueducts = false;
+		this->data.has_cross_region_aqueducts = false;
 
 		/* Acquire a tile patch label array if this region does not already have one */
-		if (this->tile_patch_labels == nullptr) {
-			this->tile_patch_labels = std::make_unique<TWaterRegionPatchLabelArray>();
+		if (this->data.tile_patch_labels == nullptr) {
+			this->data.tile_patch_labels = std::make_unique<TWaterRegionPatchLabelArray>();
 		}
 
-		this->tile_patch_labels->fill(INVALID_WATER_REGION_PATCH);
-		this->edge_traversability_bits.fill(0);
+		this->data.tile_patch_labels->fill(INVALID_WATER_REGION_PATCH);
+		this->data.edge_traversability_bits.fill(0);
 
-		TWaterRegionPatchLabel current_label = 1;
-		TWaterRegionPatchLabel highest_assigned_label = 0;
+		TWaterRegionPatchLabel current_label = FIRST_REGION_LABEL;
+		TWaterRegionPatchLabel highest_assigned_label = INVALID_WATER_REGION_PATCH;
 
 		/* Perform connected component labeling. This uses a flooding algorithm that expands until no
 		 * additional tiles can be added. Only tiles inside the water region are considered. */
-		for (const TileIndex start_tile : tile_area) {
+		for (const TileIndex start_tile : this->tile_area) {
 			static std::vector<TileIndex> tiles_to_check;
 			tiles_to_check.clear();
 			tiles_to_check.push_back(start_tile);
@@ -153,7 +153,7 @@ public:
 				const TrackdirBits valid_dirs = TrackBitsToTrackdirBits(GetWaterTracks(tile));
 				if (valid_dirs == TRACKDIR_BIT_NONE) continue;
 
-				TWaterRegionPatchLabel &tile_patch = (*this->tile_patch_labels)[GetLocalIndex(tile)];
+				TWaterRegionPatchLabel &tile_patch = (*this->data.tile_patch_labels)[this->GetLocalIndex(tile)];
 				if (tile_patch != INVALID_WATER_REGION_PATCH) continue;
 
 				tile_patch = current_label;
@@ -164,15 +164,15 @@ public:
 					/* By using a TrackFollower we "play by the same rules" as the actual ship pathfinder */
 					CFollowTrackWater ft;
 					if (ft.Follow(tile, dir)) {
-						if (this->tile_area.Contains(ft.m_new_tile)) {
-							tiles_to_check.push_back(ft.m_new_tile);
-						} else if (!ft.m_is_bridge) {
-							assert(DistanceManhattan(ft.m_new_tile, tile) == 1);
-							const auto side = DiagdirBetweenTiles(tile, ft.m_new_tile);
+						if (this->tile_area.Contains(ft.new_tile)) {
+							tiles_to_check.push_back(ft.new_tile);
+						} else if (!ft.is_bridge) {
+							assert(DistanceManhattan(ft.new_tile, tile) == 1);
+							const auto side = DiagdirBetweenTiles(tile, ft.new_tile);
 							const int local_x_or_y = DiagDirToAxis(side) == AXIS_X ? TileY(tile) - TileY(this->tile_area.tile) : TileX(tile) - TileX(this->tile_area.tile);
-							SetBit(this->edge_traversability_bits[side], local_x_or_y);
+							SetBit(this->data.edge_traversability_bits[side], local_x_or_y);
 						} else {
-							this->has_cross_region_aqueducts = true;
+							this->data.has_cross_region_aqueducts = true;
 						}
 					}
 				}
@@ -181,62 +181,52 @@ public:
 			if (increase_label) current_label++;
 		}
 
-		this->number_of_patches = highest_assigned_label;
-		this->initialized = true;
+		this->data.number_of_patches = highest_assigned_label;
 
-		if (this->number_of_patches == 0 || (this->number_of_patches == 1 &&
-				std::all_of(this->tile_patch_labels->begin(), this->tile_patch_labels->end(), [](TWaterRegionPatchLabel label) { return label == 1; }))) {
+		if (this->NumberOfPatches() == 0 || (this->NumberOfPatches() == 1 &&
+				std::all_of(this->data.tile_patch_labels->begin(), this->data.tile_patch_labels->end(), [](TWaterRegionPatchLabel label) { return label == FIRST_REGION_LABEL; }))) {
 			/* No need for patch storage: trivial cases */
-			this->tile_patch_labels.reset();
+			this->data.tile_patch_labels.reset();
 		}
-	}
-
-	/**
-	 * Updates the patch labels and other data, but only if the region is not yet initialized.
-	 */
-	inline void UpdateIfNotInitialized()
-	{
-		if (!this->initialized) ForceUpdate();
 	}
 
 	void PrintDebugInfo()
 	{
-		Debug(map, 9, "Water region {},{} labels and edge traversability = ...", GetWaterRegionX(tile_area.tile), GetWaterRegionY(tile_area.tile));
+		Debug(map, 9, "Water region {},{} labels and edge traversability = ...", GetWaterRegionX(this->tile_area.tile), GetWaterRegionY(this->tile_area.tile));
 
-		const size_t max_element_width = std::to_string(this->number_of_patches).size();
+		const size_t max_element_width = std::to_string(this->NumberOfPatches()).size();
 
-		std::array<int, 16> traversability_NW{0};
-		for (auto bitIndex : SetBitIterator(edge_traversability_bits[DIAGDIR_NW])) *(traversability_NW.rbegin() + bitIndex) = 1;
-		Debug(map, 9, "    {:{}}", fmt::join(traversability_NW, " "), max_element_width);
+		std::string traversability = fmt::format("{:0{}b}", this->GetEdgeTraversabilityBits(DIAGDIR_NW), WATER_REGION_EDGE_LENGTH);
+		Debug(map, 9, "    {:{}}", fmt::join(traversability, " "), max_element_width);
 		Debug(map, 9, "  +{:->{}}+", "", WATER_REGION_EDGE_LENGTH * (max_element_width + 1) + 1);
 
 		for (int y = 0; y < WATER_REGION_EDGE_LENGTH; ++y) {
 			std::string line{};
 			for (int x = 0; x < WATER_REGION_EDGE_LENGTH; ++x) {
-				const auto label = this->GetLabel(TILE_ADDXY(tile_area.tile, x, y));
+				const auto label = this->GetLabel(TileAddXY(this->tile_area.tile, x, y));
 				const std::string label_str = label == INVALID_WATER_REGION_PATCH ? "." : std::to_string(label);
 				line = fmt::format("{:{}}", label_str, max_element_width) + " " + line;
 			}
-			Debug(map, 9, "{} | {}| {}", GB(this->edge_traversability_bits[DIAGDIR_SW], y, 1), line, GB(this->edge_traversability_bits[DIAGDIR_NE], y, 1));
+			Debug(map, 9, "{} | {}| {}", GB(this->GetEdgeTraversabilityBits(DIAGDIR_SW), y, 1), line, GB(this->GetEdgeTraversabilityBits(DIAGDIR_NE), y, 1));
 		}
 
 		Debug(map, 9, "  +{:->{}}+", "", WATER_REGION_EDGE_LENGTH * (max_element_width + 1) + 1);
-		std::array<int, 16> traversability_SE{0};
-		for (auto bitIndex : SetBitIterator(edge_traversability_bits[DIAGDIR_SE])) *(traversability_SE.rbegin() + bitIndex) = 1;
-		Debug(map, 9, "    {:{}}", fmt::join(traversability_SE, " "), max_element_width);
+		traversability = fmt::format("{:0{}b}", this->GetEdgeTraversabilityBits(DIAGDIR_SE), WATER_REGION_EDGE_LENGTH);
+		Debug(map, 9, "    {:{}}", fmt::join(traversability, " "), max_element_width);
 	}
 };
 
-std::vector<WaterRegion> _water_regions;
+std::vector<WaterRegionData> _water_region_data;
+std::vector<bool> _is_water_region_valid;
 
-TileIndex GetTileIndexFromLocalCoordinate(int region_x, int region_y, int local_x, int local_y)
+static TileIndex GetTileIndexFromLocalCoordinate(int region_x, int region_y, int local_x, int local_y)
 {
 	assert(local_x >= 0 && local_x < WATER_REGION_EDGE_LENGTH);
 	assert(local_y >= 0 && local_y < WATER_REGION_EDGE_LENGTH);
 	return TileXY(WATER_REGION_EDGE_LENGTH * region_x + local_x, WATER_REGION_EDGE_LENGTH * region_y + local_y);
 }
 
-TileIndex GetEdgeTileCoordinate(int region_x, int region_y, DiagDirection side, int x_or_y)
+static TileIndex GetEdgeTileCoordinate(int region_x, int region_y, DiagDirection side, int x_or_y)
 {
 	assert(x_or_y >= 0 && x_or_y < WATER_REGION_EDGE_LENGTH);
 	switch (side) {
@@ -248,25 +238,27 @@ TileIndex GetEdgeTileCoordinate(int region_x, int region_y, DiagDirection side, 
 	}
 }
 
-WaterRegion &GetUpdatedWaterRegion(uint16_t region_x, uint16_t region_y)
+static WaterRegion GetUpdatedWaterRegion(uint16_t region_x, uint16_t region_y)
 {
-	WaterRegion &result = _water_regions[GetWaterRegionIndex(region_x, region_y)];
-	result.UpdateIfNotInitialized();
-	return result;
+	const TWaterRegionIndex index = GetWaterRegionIndex(region_x, region_y);
+	WaterRegion water_region(region_x, region_y, _water_region_data[index]);
+	if (!_is_water_region_valid[index]) {
+		water_region.ForceUpdate();
+		_is_water_region_valid[index] = true;
+	}
+	return water_region;
 }
 
-WaterRegion &GetUpdatedWaterRegion(TileIndex tile)
+static WaterRegion GetUpdatedWaterRegion(TileIndex tile)
 {
-	WaterRegion &result = _water_regions[GetWaterRegionIndex(tile)];
-	result.UpdateIfNotInitialized();
-	return result;
+	return GetUpdatedWaterRegion(GetWaterRegionX(tile), GetWaterRegionY(tile));
 }
 
 /**
  * Returns the index of the water region.
  * @param water_region The water region to return the index for.
  */
-TWaterRegionIndex GetWaterRegionIndex(const WaterRegionDesc &water_region)
+static TWaterRegionIndex GetWaterRegionIndex(const WaterRegionDesc &water_region)
 {
 	return GetWaterRegionIndex(water_region.x, water_region.y);
 }
@@ -305,8 +297,8 @@ WaterRegionDesc GetWaterRegionInfo(TileIndex tile)
  */
 WaterRegionPatchDesc GetWaterRegionPatchInfo(TileIndex tile)
 {
-	WaterRegion &region = GetUpdatedWaterRegion(tile);
-	return WaterRegionPatchDesc{ GetWaterRegionX(tile), GetWaterRegionY(tile), region.GetLabel(tile)};
+	const WaterRegion region = GetUpdatedWaterRegion(tile);
+	return WaterRegionPatchDesc{ GetWaterRegionX(tile), GetWaterRegionY(tile), region.GetLabel(tile) };
 }
 
 /**
@@ -316,15 +308,22 @@ WaterRegionPatchDesc GetWaterRegionPatchInfo(TileIndex tile)
 void InvalidateWaterRegion(TileIndex tile)
 {
 	if (!IsValidTile(tile)) return;
-	const int water_region_index = GetWaterRegionIndex(tile);
-	_water_regions[water_region_index].Invalidate();
+
+	auto invalidate_region = [](TileIndex tile) {
+		const TWaterRegionIndex water_region_index = GetWaterRegionIndex(tile);
+		if (!_is_water_region_valid[water_region_index]) Debug(map, 3, "Invalidated water region ({},{})", GetWaterRegionX(tile), GetWaterRegionY(tile));
+		_is_water_region_valid[water_region_index] = false;
+	};
+
+	invalidate_region(tile);
 
 	/* When updating the water region we look into the first tile of adjacent water regions to determine edge
 	 * traversability. This means that if we invalidate any region edge tiles we might also change the traversability
 	 * of the adjacent region. This code ensures the adjacent regions also get invalidated in such a case. */
 	for (DiagDirection side = DIAGDIR_BEGIN; side < DIAGDIR_END; side++) {
-		const int adjacent_region_index = GetWaterRegionIndex(TileAddByDiagDir(tile, side));
-		if (adjacent_region_index != water_region_index) _water_regions[adjacent_region_index].Invalidate();
+		const TileIndex adjacent_tile = AddTileIndexDiffCWrap(tile, TileIndexDiffCByDiagDir(side));
+		if (adjacent_tile == INVALID_TILE) continue;
+		if (GetWaterRegionIndex(adjacent_tile) != GetWaterRegionIndex(tile)) invalidate_region(adjacent_tile);
 	}
 }
 
@@ -339,7 +338,7 @@ static inline void VisitAdjacentWaterRegionPatchNeighbors(const WaterRegionPatch
 {
 	if (water_region_patch.label == INVALID_WATER_REGION_PATCH) return;
 
-	const WaterRegion &current_region = GetUpdatedWaterRegion(water_region_patch.x, water_region_patch.y);
+	const WaterRegion current_region = GetUpdatedWaterRegion(water_region_patch.x, water_region_patch.y);
 
 	const TileIndexDiffC offset = TileIndexDiffCByDiagDir(side);
 	const int nx = water_region_patch.x + offset.x;
@@ -347,7 +346,7 @@ static inline void VisitAdjacentWaterRegionPatchNeighbors(const WaterRegionPatch
 
 	if (nx < 0 || ny < 0 || nx >= GetWaterRegionMapSizeX() || ny >= GetWaterRegionMapSizeY()) return;
 
-	const WaterRegion &neighboring_region = GetUpdatedWaterRegion(nx, ny);
+	const WaterRegion neighboring_region = GetUpdatedWaterRegion(nx, ny);
 	const DiagDirection opposite_side = ReverseDiagDir(side);
 
 	/* Indicates via which local x or y coordinates (depends on the "side" parameter) we can cross over into the adjacent region. */
@@ -373,7 +372,7 @@ static inline void VisitAdjacentWaterRegionPatchNeighbors(const WaterRegionPatch
 		const TileIndex neighbor_edge_tile = GetEdgeTileCoordinate(nx, ny, opposite_side, x_or_y);
 		const TWaterRegionPatchLabel neighbor_label = neighboring_region.GetLabel(neighbor_edge_tile);
 		assert(neighbor_label != INVALID_WATER_REGION_PATCH);
-		if (std::find(unique_labels.begin(), unique_labels.end(), neighbor_label) == unique_labels.end()) unique_labels.push_back(neighbor_label);
+		if (std::ranges::find(unique_labels, neighbor_label) == unique_labels.end()) unique_labels.push_back(neighbor_label);
 	}
 	for (TWaterRegionPatchLabel unique_label : unique_labels) func(WaterRegionPatchDesc{ nx, ny, unique_label });
 }
@@ -388,7 +387,7 @@ void VisitWaterRegionPatchNeighbors(const WaterRegionPatchDesc &water_region_pat
 {
 	if (water_region_patch.label == INVALID_WATER_REGION_PATCH) return;
 
-	const WaterRegion &current_region = GetUpdatedWaterRegion(water_region_patch.x, water_region_patch.y);
+	const WaterRegion current_region = GetUpdatedWaterRegion(water_region_patch.x, water_region_patch.y);
 
 	/* Visit adjacent water region patches in each cardinal direction */
 	for (DiagDirection side = DIAGDIR_BEGIN; side < DIAGDIR_END; side++) VisitAdjacentWaterRegionPatchNeighbors(water_region_patch, side, callback);
@@ -409,16 +408,16 @@ void VisitWaterRegionPatchNeighbors(const WaterRegionPatchDesc &water_region_pat
  */
 void AllocateWaterRegions()
 {
-	_water_regions.clear();
-	_water_regions.reserve(static_cast<size_t>(GetWaterRegionMapSizeX()) * GetWaterRegionMapSizeY());
+	const int number_of_regions = GetWaterRegionMapSizeX() * GetWaterRegionMapSizeY();
+
+	_water_region_data.clear();
+	_water_region_data.resize(number_of_regions);
+
+	_is_water_region_valid.clear();
+	_is_water_region_valid.resize(number_of_regions, false);
 
 	Debug(map, 2, "Allocating {} x {} water regions", GetWaterRegionMapSizeX(), GetWaterRegionMapSizeY());
-
-	for (int region_y = 0; region_y < GetWaterRegionMapSizeY(); region_y++) {
-		for (int region_x = 0; region_x < GetWaterRegionMapSizeX(); region_x++) {
-			_water_regions.emplace_back(region_x, region_y);
-		}
-	}
+	assert(_is_water_region_valid.size() == _water_region_data.size());
 }
 
 void PrintWaterRegionDebugInfo(TileIndex tile)

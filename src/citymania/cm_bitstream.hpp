@@ -42,7 +42,7 @@ public:
 	uint32_t ReadBytes(uint amount);
 	uint64_t ReadBytes64(uint amount);
 	Money ReadMoney();
-	std::vector<byte> ReadData();
+	std::vector<uint8_t> ReadData();
 	bool eof() {
 		return this->i >= f.size();
 	}

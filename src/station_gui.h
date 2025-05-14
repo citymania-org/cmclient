@@ -26,11 +26,13 @@ enum StationCoverageType {
 int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageType sct, int rad, bool supplies);
 int DrawStationAuthorityText(int left, int right, int top);
 void CheckRedrawStationCoverage(/* CM const */ Window *w);
-void CheckRedrawWaypointCoverage(const Window *w);
+void CheckRedrawRailWaypointCoverage(const Window *w);
+void CheckRedrawRoadWaypointCoverage(const Window *w);
 
 using StationPickerCmdProc = std::function<bool(bool test, StationID to_join)>;
 
 void ShowSelectStationIfNeeded(TileArea ta, StationPickerCmdProc proc);
-void ShowSelectWaypointIfNeeded(TileArea ta, StationPickerCmdProc proc);
+void ShowSelectRailWaypointIfNeeded(TileArea ta, StationPickerCmdProc proc);
+void ShowSelectRoadWaypointIfNeeded(TileArea ta, StationPickerCmdProc proc);
 
 #endif /* STATION_GUI_H */

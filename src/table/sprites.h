@@ -307,8 +307,16 @@ static const uint16_t EMPTY_BOUNDING_BOX_SPRITE_COUNT = 1;
 static const SpriteID SPR_PALETTE_BASE = SPR_EMPTY_BOUNDING_BOX + EMPTY_BOUNDING_BOX_SPRITE_COUNT;
 static const uint16_t PALETTE_SPRITE_COUNT = 1;
 
+/** Road waypoint sprites. */
+static const SpriteID SPR_ROAD_WAYPOINTS_BASE = SPR_PALETTE_BASE + PALETTE_SPRITE_COUNT;
+static const SpriteID SPR_ROAD_WAYPOINT_Y_W   = SPR_ROAD_WAYPOINTS_BASE;
+static const SpriteID SPR_ROAD_WAYPOINT_Y_E   = SPR_ROAD_WAYPOINTS_BASE + 1;
+static const SpriteID SPR_ROAD_WAYPOINT_X_W   = SPR_ROAD_WAYPOINTS_BASE + 2;
+static const SpriteID SPR_ROAD_WAYPOINT_X_E   = SPR_ROAD_WAYPOINTS_BASE + 3;
+static const uint16_t ROAD_WAYPOINTS_SPRITE_COUNT = 4;
+
 /* CityMania extra sprites */
-static const SpriteID CM_SPR_CITYMANIA_BASE            = SPR_PALETTE_BASE + PALETTE_SPRITE_COUNT;
+static const SpriteID CM_SPR_CITYMANIA_BASE            = SPR_ROAD_WAYPOINTS_BASE + ROAD_WAYPOINTS_SPRITE_COUNT;
 static const SpriteID CM_SPR_RAIL_COPY_PASTE           = CM_SPR_CITYMANIA_BASE + 2;
 static const SpriteID CM_SPR_HQ                        = CM_SPR_CITYMANIA_BASE + 3;
 static const SpriteID CM_SPR_WATCH                     = CM_SPR_CITYMANIA_BASE + 4;
@@ -1567,19 +1575,18 @@ static const CursorID ANIMCURSOR_BUILDSIGNALS = ANIMCURSOR_FLAG | 4; ///< 1292 -
  * <li> PALETTE_SPRITE_WIDTH and PALETTE_SPRITE_START determine the position and number of
  * bits used for the recolouring process. For transparency, it must be 0x322.</li></ul>
  */
-enum SpriteSetup {
-	/* These bits are applied to sprite ID */
-	TRANSPARENT_BIT = 31,       ///< toggles transparency in the sprite
-	RECOLOUR_BIT = 30,          ///< toggles recolouring in the sprite
-	CUSTOM_BIT = 29,
-	OPAQUE_BIT = 28,
 
-	/* This bit is applied to palette ID */
-	PALETTE_TEXT_RECOLOUR = 31, ///< Set if palette is actually a magic text recolour
+/* These bits are applied to sprite ID */
+static constexpr uint8_t TRANSPARENT_BIT = 31; ///< toggles transparency in the sprite
+static constexpr uint8_t RECOLOUR_BIT = 30; ///< toggles recolouring in the sprite
+static constexpr uint8_t CUSTOM_BIT = 29;
+static constexpr uint8_t OPAQUE_BIT = 28;
 
-	PALETTE_WIDTH = 24,         ///< number of bits of the sprite containing the recolour palette
-	SPRITE_WIDTH = 24,          ///< number of bits for the sprite number
-};
+/* This bit is applied to palette ID */
+static constexpr uint8_t PALETTE_TEXT_RECOLOUR = 31; ///< Set if palette is actually a magic text recolour
+
+static constexpr uint8_t PALETTE_WIDTH = 24; ///< number of bits of the sprite containing the recolour palette
+static constexpr uint8_t SPRITE_WIDTH = 24; ///< number of bits for the sprite number
 
 /**
  * these masks change the colours of the palette for a sprite.
@@ -1589,25 +1596,21 @@ enum SpriteSetup {
  * @note Do not modify this enum. Alter SpriteSetup instead
  * @see SpriteSetup
  */
-enum Modifiers {
-	SPRITE_MODIFIER_CUSTOM_SPRITE = CUSTOM_BIT,      ///< Set when a sprite originates from an Action 1
-	SPRITE_MODIFIER_OPAQUE        = OPAQUE_BIT,      ///< Set when a sprite must not ever be displayed transparently
-	PALETTE_MODIFIER_TRANSPARENT  = TRANSPARENT_BIT, ///< when a sprite is to be displayed transparently, this bit needs to be set.
-	PALETTE_MODIFIER_COLOUR       = RECOLOUR_BIT,    ///< this bit is set when a recolouring process is in action
-};
+static constexpr uint8_t SPRITE_MODIFIER_CUSTOM_SPRITE = CUSTOM_BIT;      ///< Set when a sprite originates from an Action 1
+static constexpr uint8_t SPRITE_MODIFIER_OPAQUE        = OPAQUE_BIT;      ///< Set when a sprite must not ever be displayed transparently
+static constexpr uint8_t PALETTE_MODIFIER_TRANSPARENT  = TRANSPARENT_BIT; ///< when a sprite is to be displayed transparently, this bit needs to be set.
+static constexpr uint8_t PALETTE_MODIFIER_COLOUR       = RECOLOUR_BIT;    ///< this bit is set when a recolouring process is in action
 
 /**
  * Masks needed for sprite operations.
  * @note Do not modify this enum. Alter SpriteSetup instead
  * @see SpriteSetup
  */
-enum SpriteMasks {
-	MAX_SPRITES = 1U << SPRITE_WIDTH,      ///< Maximum number of sprites that can be loaded at a given time
-	SPRITE_MASK = MAX_SPRITES - 1,         ///< The mask to for the main sprite
+static constexpr uint32_t MAX_SPRITES = 1U << SPRITE_WIDTH; ///< Maximum number of sprites that can be loaded at a given time
+static constexpr uint32_t SPRITE_MASK = MAX_SPRITES - 1; ///< The mask to for the main sprite
 
-	MAX_PALETTES = 1U << PALETTE_WIDTH,
-	PALETTE_MASK = MAX_PALETTES - 1,       ///< The mask for the auxiliary sprite (the one that takes care of recolouring)
-};
+static constexpr uint32_t MAX_PALETTES = 1U << PALETTE_WIDTH;
+static constexpr uint32_t PALETTE_MASK = MAX_PALETTES - 1; ///< The mask for the auxiliary sprite (the one that takes care of recolouring)
 
 static_assert( (1U << TRANSPARENT_BIT & SPRITE_MASK) == 0 );
 static_assert( (1U << RECOLOUR_BIT & SPRITE_MASK) == 0 );

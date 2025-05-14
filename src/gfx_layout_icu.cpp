@@ -45,7 +45,7 @@ public:
 	std::vector<GlyphID> glyphs; ///< The glyphs of the run. Valid after Shape() is called.
 	std::vector<int> advance; ///< The advance (width) of the glyphs. Valid after Shape() is called.
 	std::vector<int> glyph_to_char; ///< The mapping from glyphs to characters. Valid after Shape() is called.
-	std::vector<Point> positions; ///< The positions of the glyphs. Valid after Shape() is called.
+	std::vector<ParagraphLayouter::Position> positions; ///< The positions of the glyphs. Valid after Shape() is called.
 	int total_advance = 0; ///< The total advance of the run. Valid after Shape() is called.
 
 	ICURun(int start, int length, UBiDiLevel level, UScriptCode script = USCRIPT_UNKNOWN, Font *font = nullptr) : start(start), length(length), level(level), script(script), font(font) {}
@@ -62,7 +62,7 @@ public:
 	class ICUVisualRun : public ParagraphLayouter::VisualRun {
 	private:
 		std::vector<GlyphID> glyphs;
-		std::vector<Point> positions;
+		std::vector<Position> positions;
 		std::vector<int> glyph_to_char;
 
 		int total_advance;
@@ -71,9 +71,9 @@ public:
 	public:
 		ICUVisualRun(const ICURun &run, int x);
 
-		const std::vector<GlyphID> &GetGlyphs() const override { return this->glyphs; }
-		const std::vector<Point> &GetPositions() const override { return this->positions; }
-		const std::vector<int> &GetGlyphToCharMap() const override { return this->glyph_to_char; }
+		std::span<const GlyphID> GetGlyphs() const override { return this->glyphs; }
+		std::span<const Position> GetPositions() const override { return this->positions; }
+		std::span<const int> GetGlyphToCharMap() const override { return this->glyph_to_char; }
 
 		const Font *GetFont() const override { return this->font; }
 		int GetLeading() const override { return this->font->fc->GetHeight(); }
@@ -104,7 +104,7 @@ private:
 	int partial_offset;
 
 public:
-	ICUParagraphLayout(std::vector<ICURun> &runs, UChar *buff, size_t buff_length) : runs(runs), buff(buff), buff_length(buff_length)
+	ICUParagraphLayout(std::vector<ICURun> &&runs, UChar *buff, size_t buff_length) : runs(std::move(runs)), buff(buff), buff_length(buff_length)
 	{
 		this->Reflow();
 	}
@@ -136,8 +136,8 @@ ICUParagraphLayout::ICUVisualRun::ICUVisualRun(const ICURun &run, int x) :
 	this->positions.reserve(run.positions.size());
 
 	/* Copy positions, moving x coordinate by x offset. */
-	for (const Point &pt : run.positions) {
-		this->positions.emplace_back(pt.x + x, pt.y);
+	for (const auto &pos : run.positions) {
+		this->positions.emplace_back(pos.left + x, pos.right + x, pos.top);
 	}
 }
 
@@ -151,7 +151,7 @@ void ICURun::Shape(UChar *buff, size_t buff_length)
 {
 	auto hbfont = hb_ft_font_create_referenced(*(static_cast<const FT_Face *>(font->fc->GetOSHandle())));
 	/* Match the flags with how we render the glyphs. */
-	hb_ft_font_set_load_flags(hbfont, GetFontAAState(this->font->fc->GetSize()) ? FT_LOAD_TARGET_NORMAL : FT_LOAD_TARGET_MONO);
+	hb_ft_font_set_load_flags(hbfont, GetFontAAState() ? FT_LOAD_TARGET_NORMAL : FT_LOAD_TARGET_MONO);
 
 	/* ICU buffer is in UTF-16. */
 	auto hbbuf = hb_buffer_create();
@@ -179,7 +179,7 @@ void ICURun::Shape(UChar *buff, size_t buff_length)
 	/* Reserve space, as we already know the size. */
 	this->glyphs.reserve(glyph_count);
 	this->glyph_to_char.reserve(glyph_count);
-	this->positions.reserve(glyph_count + 1);
+	this->positions.reserve(glyph_count);
 	this->advance.reserve(glyph_count);
 
 	/* Prepare the glyphs/position. ICUVisualRun will give the position an offset if needed. */
@@ -189,23 +189,19 @@ void ICURun::Shape(UChar *buff, size_t buff_length)
 
 		if (buff[glyph_info[i].cluster] >= SCC_SPRITE_START && buff[glyph_info[i].cluster] <= SCC_SPRITE_END && glyph_info[i].codepoint == 0) {
 			auto glyph = this->font->fc->MapCharToGlyph(buff[glyph_info[i].cluster]);
-
-			this->glyphs.push_back(glyph);
-			this->positions.emplace_back(advance, (this->font->fc->GetHeight() - ScaleSpriteTrad(FontCache::GetDefaultFontHeight(this->font->fc->GetSize()))) / 2); // Align sprite font to centre
 			x_advance = this->font->fc->GetGlyphWidth(glyph);
+			this->glyphs.push_back(glyph);
+			this->positions.emplace_back(advance, advance + x_advance - 1, (this->font->fc->GetHeight() - ScaleSpriteTrad(FontCache::GetDefaultFontHeight(this->font->fc->GetSize()))) / 2); // Align sprite font to centre
 		} else {
-			this->glyphs.push_back(glyph_info[i].codepoint);
-			this->positions.emplace_back(glyph_pos[i].x_offset / FONT_SCALE + advance, glyph_pos[i].y_offset / FONT_SCALE);
 			x_advance = glyph_pos[i].x_advance / FONT_SCALE;
+			this->glyphs.push_back(glyph_info[i].codepoint);
+			this->positions.emplace_back(glyph_pos[i].x_offset / FONT_SCALE + advance, glyph_pos[i].x_offset / FONT_SCALE + advance + x_advance - 1, glyph_pos[i].y_offset / FONT_SCALE);
 		}
 
 		this->glyph_to_char.push_back(glyph_info[i].cluster);
 		this->advance.push_back(x_advance);
 		advance += x_advance;
 	}
-
-	/* End-of-run position. */
-	this->positions.emplace_back(advance, 0);
 
 	/* Track the total advancement we made. */
 	this->total_advance = advance;
@@ -260,14 +256,14 @@ std::vector<ICURun> ItemizeBidi(UChar *buff, size_t length)
 	UErrorCode err = U_ZERO_ERROR;
 	ubidi_setPara(ubidi, buff, length, parLevel, nullptr, &err);
 	if (U_FAILURE(err)) {
-		Debug(fontcache, 0, "Failed to set paragraph: %s", u_errorName(err));
+		Debug(fontcache, 0, "Failed to set paragraph: {}", u_errorName(err));
 		ubidi_close(ubidi);
 		return std::vector<ICURun>();
 	}
 
 	int32_t count = ubidi_countRuns(ubidi, &err);
 	if (U_FAILURE(err)) {
-		Debug(fontcache, 0, "Failed to count runs: %s", u_errorName(err));
+		Debug(fontcache, 0, "Failed to count runs: {}", u_errorName(err));
 		ubidi_close(ubidi);
 		return std::vector<ICURun>();
 	}
@@ -284,7 +280,7 @@ std::vector<ICURun> ItemizeBidi(UChar *buff, size_t length)
 		UBiDiLevel level;
 		ubidi_getLogicalRun(ubidi, start_pos, &logical_pos, &level);
 
-		runs.emplace_back(ICURun(start_pos, logical_pos - start_pos, level));
+		runs.emplace_back(start_pos, logical_pos - start_pos, level);
 	}
 
 	assert(static_cast<size_t>(count) == runs.size());
@@ -315,7 +311,7 @@ std::vector<ICURun> ItemizeScript(UChar *buff, size_t length, std::vector<ICURun
 			int stop_pos = std::min(script_itemizer.getScriptEnd(), cur_run->start + cur_run->length);
 			assert(stop_pos - cur_pos > 0);
 
-			runs.push_back(ICURun(cur_pos, stop_pos - cur_pos, cur_run->level, script_itemizer.getScriptCode()));
+			runs.emplace_back(cur_pos, stop_pos - cur_pos, cur_run->level, script_itemizer.getScriptCode());
 
 			if (stop_pos == cur_run->start + cur_run->length) cur_run++;
 			cur_pos = stop_pos;
@@ -342,12 +338,12 @@ std::vector<ICURun> ItemizeStyle(std::vector<ICURun> &runs_current, FontMap &fon
 
 	int cur_pos = 0;
 	auto cur_run = runs_current.begin();
-	for (auto const &font_map : font_mapping) {
-		while (cur_pos < font_map.first && cur_run != runs_current.end()) {
-			int stop_pos = std::min(font_map.first, cur_run->start + cur_run->length);
+	for (auto const &[position, font] : font_mapping) {
+		while (cur_pos < position && cur_run != runs_current.end()) {
+			int stop_pos = std::min(position, cur_run->start + cur_run->length);
 			assert(stop_pos - cur_pos > 0);
 
-			runs.push_back(ICURun(cur_pos, stop_pos - cur_pos, cur_run->level, cur_run->script, font_map.second));
+			runs.emplace_back(cur_pos, stop_pos - cur_pos, cur_run->level, cur_run->script, font);
 
 			if (stop_pos == cur_run->start + cur_run->length) cur_run++;
 			cur_pos = stop_pos;
@@ -357,15 +353,15 @@ std::vector<ICURun> ItemizeStyle(std::vector<ICURun> &runs_current, FontMap &fon
 	return runs;
 }
 
-/* static */ ParagraphLayouter *ICUParagraphLayoutFactory::GetParagraphLayout(UChar *buff, UChar *buff_end, FontMap &font_mapping)
+/* static */ std::unique_ptr<ParagraphLayouter> ICUParagraphLayoutFactory::GetParagraphLayout(UChar *buff, UChar *buff_end, FontMap &font_mapping)
 {
 	size_t length = buff_end - buff;
 	/* Can't layout an empty string. */
 	if (length == 0) return nullptr;
 
 	/* Can't layout our in-built sprite fonts. */
-	for (auto const &pair : font_mapping) {
-		if (pair.second->fc->IsBuiltInFont()) return nullptr;
+	for (auto const &[position, font] : font_mapping) {
+		if (font->fc->IsBuiltInFont()) return nullptr;
 	}
 
 	auto runs = ItemizeBidi(buff, length);
@@ -378,7 +374,7 @@ std::vector<ICURun> ItemizeStyle(std::vector<ICURun> &runs_current, FontMap &fon
 		run.Shape(buff, length);
 	}
 
-	return new ICUParagraphLayout(runs, buff, length);
+	return std::make_unique<ICUParagraphLayout>(std::move(runs), buff, length);
 }
 
 /* static */ std::unique_ptr<icu::BreakIterator> ICUParagraphLayoutFactory::break_iterator;
@@ -465,9 +461,11 @@ std::unique_ptr<const ICUParagraphLayout::Line> ICUParagraphLayout::NextLine(int
 
 		/* See if there is a good breakpoint inside this run. */
 		int32_t break_pos = break_iterator->preceding(char_pos + 1);
-		if (break_pos != icu::BreakIterator::DONE && break_pos > overflow_run->start + this->partial_offset) {
+		auto overflow_run_start = overflow_run->start;
+		if (overflow_run == start_run) overflow_run_start += this->partial_offset;
+		if (break_pos != icu::BreakIterator::DONE && break_pos > overflow_run_start) {
 			/* There is a line-break inside this run that is suitable. */
-			new_partial_length = break_pos - overflow_run->start - this->partial_offset;
+			new_partial_length = break_pos - overflow_run_start;
 		} else if (overflow_run != start_run) {
 			/* There is no suitable line-break in this run, but it is also not
 			 * the only run on this line. So we remove the run. */
@@ -476,7 +474,7 @@ std::unique_ptr<const ICUParagraphLayout::Line> ICUParagraphLayout::NextLine(int
 			/* There is no suitable line-break and this is the only run on the
 			 * line. So we break at the cluster. This is not pretty, but the
 			 * best we can do. */
-			new_partial_length = char_pos - overflow_run->start - this->partial_offset;
+			new_partial_length = char_pos - overflow_run_start;
 		}
 	}
 
@@ -489,7 +487,7 @@ std::unique_ptr<const ICUParagraphLayout::Line> ICUParagraphLayout::NextLine(int
 	ubidi_reorderVisual(bidi_level.data(), bidi_level.size(), vis_to_log.data());
 
 	/* Create line. */
-	std::unique_ptr<ICULine> line(new ICULine());
+	std::unique_ptr<ICULine> line = std::make_unique<ICULine>();
 
 	int cur_pos = 0;
 	for (auto &i : vis_to_log) {
@@ -524,6 +522,7 @@ std::unique_ptr<const ICUParagraphLayout::Line> ICUParagraphLayout::NextLine(int
 
 	if (new_partial_length > 0) {
 		this->current_run = last_run - 1;
+		if (this->current_run != start_run) this->partial_offset = 0;
 		this->partial_offset += new_partial_length;
 	} else {
 		this->current_run = last_run;

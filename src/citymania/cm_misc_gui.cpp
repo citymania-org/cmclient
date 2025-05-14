@@ -26,11 +26,11 @@ static const NWidgetPart _nested_land_info_widgets[] = {
     NWidget(WWT_PANEL, COLOUR_GREY, WID_LI_BACKGROUND), SetMinimalSize(64, 32), EndContainer(),
 };
 
-static WindowDesc _land_info_desc(__FILE__, __LINE__,
+static WindowDesc _land_info_desc(
     WDP_MANUAL, nullptr, 0, 0,
     WC_LAND_INFO, WC_NONE,
     0,
-    std::begin(_nested_land_info_widgets), std::end(_nested_land_info_widgets)
+    _nested_land_info_widgets
 );
 
 class LandInfoWindow : public Window {
@@ -80,27 +80,27 @@ public:
         }
     }
 
-    void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
+    void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
     {
         if (widget != WID_LI_BACKGROUND) return;
 
-        size->height = WidgetDimensions::scaled.frametext.Vertical();
+        size.height = WidgetDimensions::scaled.frametext.Vertical();
         for (size_t i = 0; i < this->landinfo_data.size(); i++) {
             uint width = GetStringBoundingBox(this->landinfo_data[i]).width + WidgetDimensions::scaled.frametext.Horizontal();
-            size->width = std::max(size->width, width);
+            size.width = std::max(size.width, width);
 
-            size->height += GetCharacterHeight(FS_NORMAL) + (i == 0 ? WidgetDimensions::scaled.vsep_wide : WidgetDimensions::scaled.vsep_normal);
+            size.height += GetCharacterHeight(FS_NORMAL) + (i == 0 ? WidgetDimensions::scaled.vsep_wide : WidgetDimensions::scaled.vsep_normal);
         }
 
         if (!this->cargo_acceptance.empty()) {
             uint width = GetStringBoundingBox(this->cargo_acceptance).width + WidgetDimensions::scaled.frametext.Horizontal();
-            size->width = std::max(size->width, std::min(static_cast<uint>(ScaleGUITrad(300)), width));
+            size.width = std::max(size.width, std::min(static_cast<uint>(ScaleGUITrad(300)), width));
             SetDParamStr(0, cargo_acceptance);
-            size->height += GetStringHeight(STR_JUST_RAW_STRING, size->width - WidgetDimensions::scaled.frametext.Horizontal());
+            size.height += GetStringHeight(STR_JUST_RAW_STRING, size.width - WidgetDimensions::scaled.frametext.Horizontal());
         }
     }
 
-    LandInfoWindow(Tile tile, Tile end_tile) : Window(&_land_info_desc), tile(tile), end_tile(end_tile)
+    LandInfoWindow(Tile tile, Tile end_tile) : Window(_land_info_desc), tile(tile), end_tile(end_tile)
     {
         this->InitNested();
         CLRBITS(this->flags, WF_WHITE_BORDER);

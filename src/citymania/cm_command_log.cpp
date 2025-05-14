@@ -115,7 +115,7 @@ void load_replay_commands(const std::string &filename, std::function<void(const 
     }
 
     static const size_t CHUNK_SIZE = 128 * 1024;
-    static byte inbuf[CHUNK_SIZE];
+    static uint8_t inbuf[CHUNK_SIZE];
 
     lzma.next_in = NULL;
     lzma.avail_in = 0;

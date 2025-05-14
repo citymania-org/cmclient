@@ -180,8 +180,8 @@ static CommandQueue _local_execution_queue;
  */
 static size_t FindCallbackIndex(CommandCallback *callback)
 {
-	if (auto it = std::find(std::cbegin(_callback_table), std::cend(_callback_table), callback); it != std::cend(_callback_table)) {
-		return static_cast<size_t>(std::distance(std::cbegin(_callback_table), it));
+	if (auto it = std::ranges::find(_callback_table, callback); it != std::end(_callback_table)) {
+		return static_cast<size_t>(std::distance(std::begin(_callback_table), it));
 	}
 
 	return std::numeric_limits<size_t>::max();
@@ -386,7 +386,7 @@ const char *NetworkGameSocketHandler::ReceiveCommand(Packet &p, CommandPacket &c
 	cp.err_msg = p.Recv_uint16();
 	cp.data    = _cmd_dispatch[cp.cmd].Sanitize(p.Recv_buffer());
 
-	byte callback = p.Recv_uint8();
+	uint8_t callback = p.Recv_uint8();
 	if (callback >= _callback_table.size() || _cmd_dispatch[cp.cmd].Unpack[callback] == nullptr)  return "invalid callback";
 
 	cp.callback = _callback_table[callback];
@@ -458,7 +458,7 @@ template <class T>
 static inline void SanitizeSingleStringHelper([[maybe_unused]] CommandFlags cmd_flags, T &data)
 {
 	if constexpr (std::is_same_v<std::string, T>) {
-		data = StrMakeValid(data.substr(0, NETWORK_COMPANY_NAME_LENGTH), (!_network_server && cmd_flags & CMD_STR_CTRL) != 0 ? SVS_ALLOW_CONTROL_CODE | SVS_REPLACE_WITH_QUESTION_MARK : SVS_REPLACE_WITH_QUESTION_MARK);
+		data = StrMakeValid(data, (!_network_server && HasFlag(cmd_flags, CMD_STR_CTRL)) ? SVS_ALLOW_CONTROL_CODE | SVS_REPLACE_WITH_QUESTION_MARK : SVS_REPLACE_WITH_QUESTION_MARK);
 	}
 }
 

@@ -47,29 +47,24 @@ extern RoadBits FindRailsToConnect(TileIndex tile);
 extern ViewportSignKdtree _viewport_sign_kdtree;
 extern AirportClassID _selected_airport_class;
 extern int _selected_airport_index;
-extern byte _selected_airport_layout;
+extern uint8_t _selected_airport_layout;
 extern RailType _cur_railtype;  // rail_gui.cpp
 extern RoadType _cur_roadtype;  // road_gui.cpp
-extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
+extern void GetStationLayout(uint8_t *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
-struct RailStationGUISettings {
-    Axis orientation;                 ///< Currently selected rail station orientation
-
-    bool newstations;                 ///< Are custom station definitions available?
-    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
-    byte station_count;               ///< Number of custom stations (if newstations is \c true )
+struct StationPickerSelection {
+    StationClassID sel_class; ///< Selected station class.
+    uint16_t sel_type; ///< Selected station type within the class.
+    Axis axis; ///< Selected orientation of the station.
 };
-extern RailStationGUISettings _railstation; //rail_gui.cpp
+extern StationPickerSelection _station_gui; ///< Settings of the station picker.
 
-struct RoadStopGUISettings {
-    DiagDirection orientation;
-
-    RoadStopClassID roadstop_class;
-    uint16_t roadstop_type;
-    uint16_t roadstop_count;
+struct RoadStopPickerSelection {
+    RoadStopClassID sel_class; ///< Selected road stop class.
+    uint16_t sel_type; ///< Selected road stop type within the class.
+    DiagDirection orientation; ///< Selected orientation of the road stop.
 };
-extern RoadStopGUISettings _roadstop_gui_settings;
+extern RoadStopPickerSelection _roadstop_gui;
 
 namespace citymania {
 
@@ -78,17 +73,17 @@ const Station *_highlight_station_to_join = nullptr;
 TileArea _highlight_join_area;
 
 bool UseImprovedStationJoin() {
-    return _settings_client.gui.cm_use_improved_station_join && _settings_game.station.distant_join_stations && _settings_game.station.adjacent_stations;
+    return _settings_client.gui.cm_use_improved_station_join && _settings_game.station.distant_join_stations;
 }
 
 void SetStationBiildingStatus(StationBuildingStatus status) {
     _station_building_status = status;
 };
 
-static const int MAX_TILE_EXTENT_LEFT   = ZOOM_LVL_BASE * TILE_PIXELS;                     ///< Maximum left   extent of tile relative to north corner.
-static const int MAX_TILE_EXTENT_RIGHT  = ZOOM_LVL_BASE * TILE_PIXELS;                     ///< Maximum right  extent of tile relative to north corner.
-static const int MAX_TILE_EXTENT_TOP    = ZOOM_LVL_BASE * MAX_BUILDING_PIXELS;             ///< Maximum top    extent of tile relative to north corner (not considering bridges).
-static const int MAX_TILE_EXTENT_BOTTOM = ZOOM_LVL_BASE * (TILE_PIXELS + 2 * TILE_HEIGHT); ///< Maximum bottom extent of tile relative to north corner (worst case: #SLOPE_STEEP_N).
+static const int MAX_TILE_EXTENT_LEFT   = ZOOM_BASE * TILE_PIXELS;                     ///< Maximum left   extent of tile relative to north corner.
+static const int MAX_TILE_EXTENT_RIGHT  = ZOOM_BASE * TILE_PIXELS;                     ///< Maximum right  extent of tile relative to north corner.
+static const int MAX_TILE_EXTENT_TOP    = ZOOM_BASE * MAX_BUILDING_PIXELS;             ///< Maximum top    extent of tile relative to north corner (not considering bridges).
+static const int MAX_TILE_EXTENT_BOTTOM = ZOOM_BASE * (TILE_PIXELS + 2 * TILE_HEIGHT); ///< Maximum bottom extent of tile relative to north corner (worst case: #SLOPE_STEEP_N).
 
 void MarkTileAreaDirty(const TileArea &ta) {
     if (ta.tile == INVALID_TILE) return;
@@ -362,8 +357,8 @@ void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_t
 
     bool drive_through = (ddir >= DIAGDIR_END);
     if (drive_through) ddir = static_cast<DiagDirection>(ddir - DIAGDIR_END); // Adjust picker result to actual direction.
-    RoadStopClassID spec_class = _roadstop_gui_settings.roadstop_class;
-    uint16_t spec_index = _roadstop_gui_settings.roadstop_type;
+    RoadStopClassID spec_class = _roadstop_gui.sel_class;
+    uint16_t spec_index = _roadstop_gui.sel_type;
 
     auto c = cmd::BuildRoadStop(
         ta.tile,
@@ -390,16 +385,16 @@ void HandleStationPlacement(TileIndex start, TileIndex end)
     uint numtracks = ta.w;
     uint platlength = ta.h;
 
-    if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
+    if (_station_gui.axis == AXIS_X) Swap(numtracks, platlength);
 
     auto c = cmd::BuildRailStation(
         ta.tile,
         _cur_railtype,
-        _railstation.orientation,
+        _station_gui.axis,
         numtracks,
         platlength,
-        _railstation.station_class,
-        _railstation.station_type,
+        _station_gui.sel_class,
+        _station_gui.sel_type,
         INVALID_STATION,
         false
     );
@@ -412,11 +407,11 @@ void PlaceRail_Station(TileIndex tile) {
     auto c = cmd::BuildRailStation(
         tile,
         _cur_railtype,
-        _railstation.orientation,
+        _station_gui.axis,
         _settings_client.gui.station_numtracks,
         _settings_client.gui.station_platlength,
-        _railstation.station_class,
-        _railstation.station_type,
+        _station_gui.sel_class,
+        _station_gui.sel_type,
         INVALID_STATION,
         false
     );
@@ -441,8 +436,8 @@ void PlaceAirport(TileIndex tile) {
 
     if (_selected_airport_index == -1) return;
 
-    byte airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
-    byte layout = _selected_airport_layout;
+    uint8_t airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
+    uint8_t layout = _selected_airport_layout;
 
     auto c = cmd::BuildAirport(
         tile,
@@ -508,7 +503,7 @@ uint GetMonthlyFrom256Tick(uint amount) {
     return ((amount * Ticks::DAY_TICKS * EconomyTime::DAYS_IN_ECONOMY_MONTH) >> 8);
 }
 
-uint GetAverageHouseProduction(byte amount) {
+uint GetAverageHouseProduction(uint8_t amount) {
     static const uint AVG[2][256] = {
         {0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20, 22, 24, 27, 30, 33, 36, 39, 42, 45, 48, 52, 56, 60, 64, 68, 72, 76, 80, 85, 90, 95, 100, 105, 110, 115, 120, 126, 132, 138, 144, 150, 156, 162, 168, 175, 182, 189, 196, 203, 210, 217, 224, 232, 240, 248, 256, 264, 272, 280, 288, 297, 306, 315, 324, 333, 342, 351, 360, 370, 380, 390, 400, 410, 420, 430, 440, 451, 462, 473, 484, 495, 506, 517, 528, 540, 552, 564, 576, 588, 600, 612, 624, 637, 650, 663, 676, 689, 702, 715, 728, 742, 756, 770, 784, 798, 812, 826, 840, 855, 870, 885, 900, 915, 930, 945, 960, 976, 992, 1008, 1024, 1040, 1056, 1072, 1088, 1105, 1122, 1139, 1156, 1173, 1190, 1207, 1224, 1242, 1260, 1278, 1296, 1314, 1332, 1350, 1368, 1387, 1406, 1425, 1444, 1463, 1482, 1501, 1520, 1540, 1560, 1580, 1600, 1620, 1640, 1660, 1680, 1701, 1722, 1743, 1764, 1785, 1806, 1827, 1848, 1870, 1892, 1914, 1936, 1958, 1980, 2002, 2024, 2047, 2070, 2093, 2116, 2139, 2162, 2185, 2208, 2232, 2256, 2280, 2304, 2328, 2352, 2376, 2400, 2425, 2450, 2475, 2500, 2525, 2550, 2575, 2600, 2626, 2652, 2678, 2704, 2730, 2756, 2782, 2808, 2835, 2862, 2889, 2916, 2943, 2970, 2997, 3024, 3052, 3080, 3108, 3136, 3164, 3192, 3220, 3248, 3277, 3306, 3335, 3364, 3393, 3422, 3451, 3480, 3510, 3540, 3570, 3600, 3630, 3660, 3690, 3720, 3751, 3782, 3813, 3844, 3875, 3906, 3937, 3968, 4000, 4032, 4064, 4096, 4128, 4160, 4192},
         {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 165, 170, 175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225, 230, 235, 240, 246, 252, 258, 264, 270, 276, 282, 288, 294, 300, 306, 312, 318, 324, 330, 336, 343, 350, 357, 364, 371, 378, 385, 392, 399, 406, 413, 420, 427, 434, 441, 448, 456, 464, 472, 480, 488, 496, 504, 512, 520, 528, 536, 544, 552, 560, 568, 576, 585, 594, 603, 612, 621, 630, 639, 648, 657, 666, 675, 684, 693, 702, 711, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 891, 902, 913, 924, 935, 946, 957, 968, 979, 990, 1001, 1012, 1023, 1034, 1045, 1056, 1068, 1080, 1092, 1104, 1116, 1128, 1140, 1152, 1164, 1176, 1188, 1200, 1212, 1224, 1236, 1248, 1261, 1274, 1287, 1300, 1313, 1326, 1339, 1352, 1365, 1378, 1391, 1404, 1417, 1430, 1443, 1456, 1470, 1484, 1498, 1512, 1526, 1540, 1554, 1568, 1582, 1596, 1610, 1624, 1638, 1652, 1666, 1680, 1695, 1710, 1725, 1740, 1755, 1770, 1785, 1800, 1815, 1830, 1845, 1860, 1875, 1890, 1905, 1920, 1936, 1952, 1968, 1984, 2000, 2016, 2032, 2048, 2064, 2080, 2096, 2112, 2128, 2144, 2160}
@@ -685,7 +680,7 @@ static void AddAreaRectTiles(Preview::TileMap &tiles, TileArea area, SpriteID pa
 
 // copied from cm_blueprint.cpp
 template<typename Func>
-void IterateStation(TileIndex start_tile, Axis axis, byte numtracks, byte plat_len, Func visitor) {
+void IterateStation(TileIndex start_tile, Axis axis, uint8_t numtracks, uint8_t plat_len, Func visitor) {
     auto plat_delta = (axis == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
     auto track_delta = (axis == AXIS_Y ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
     TileIndex tile_track = start_tile;
@@ -727,7 +722,7 @@ CursorID RailStationPreview::GetCursor() const {
 TileArea RailStationPreview::GetArea(bool remove_mode) const {
     if (this->IsDragDrop() || remove_mode) return {this->GetStartTile(), this->cur_tile};
 
-    if (_railstation.orientation == AXIS_X) return {this->cur_tile, _settings_client.gui.station_platlength, _settings_client.gui.station_numtracks};
+    if (_station_gui.axis == AXIS_X) return {this->cur_tile, _settings_client.gui.station_platlength, _settings_client.gui.station_numtracks};
     return {this->cur_tile, _settings_client.gui.station_numtracks, _settings_client.gui.station_platlength};
 }
 
@@ -736,16 +731,16 @@ up<Command> RailStationPreview::GetCommand(bool adjacent, StationID join_to) con
     auto start_tile = ta.tile;
     auto numtracks = ta.w;
     auto platlength = ta.h;
-    if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
+    if (_station_gui.axis == AXIS_X) Swap(numtracks, platlength);
 
     auto res = make_up<cmd::BuildRailStation>(
         start_tile,
         _cur_railtype,
-        _railstation.orientation,
+        _station_gui.axis,
         numtracks,
         platlength,
-        _railstation.station_class,
-        _railstation.station_type,
+        _station_gui.sel_class,
+        _station_gui.sel_type,
         join_to,
         adjacent
     );
@@ -775,12 +770,12 @@ void RailStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palet
 
     if (palette == PAL_NONE) palette = cmd->test().Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP;
 
-    std::vector<byte> layouts(cmdt->numtracks * cmdt->plat_len);
-    byte *layout_ptr = layouts.data();
+    std::vector<uint8_t> layouts(cmdt->numtracks * cmdt->plat_len);
+    uint8_t *layout_ptr = layouts.data();
     GetStationLayout(layout_ptr, cmdt->numtracks, cmdt->plat_len, nullptr);
     IterateStation(cmdt->tile_org, cmdt->axis, cmdt->numtracks, cmdt->plat_len,
         [&](TileIndex t) {
-            byte layout = *layout_ptr++;
+            uint8_t layout = *layout_ptr++;
             tiles[t].push_back(ObjectTileHighlight::make_rail_station(palette, cmdt->axis, layout & ~1));
         }
     );
@@ -808,7 +803,7 @@ extern DiagDirection AddAutodetectionRotation(DiagDirection ddir);  // cm_highli
 void RoadStationPreview::Update(Point pt, TileIndex tile) {
     if (pt.x == -1) return;
 
-    auto ddir = _roadstop_gui_settings.orientation;
+    auto ddir = _roadstop_gui.orientation;
     auto area = this->GetArea(false);
     if (ddir >= DIAGDIR_END && ddir < STATIONDIR_AUTO) {
         // When placed on road autorotate anyway
@@ -832,8 +827,8 @@ up<Command> RoadStationPreview::GetCommand(bool adjacent, StationID join_to) con
     DiagDirection ddir = this->ddir;
     bool drive_through = this->ddir >= DIAGDIR_END;
     if (drive_through) ddir = static_cast<DiagDirection>(this->ddir - DIAGDIR_END); // Adjust picker result to actual direction.
-    RoadStopClassID spec_class = _roadstop_gui_settings.roadstop_class;
-    uint16_t spec_index = _roadstop_gui_settings.roadstop_type;
+    RoadStopClassID spec_class = _roadstop_gui.sel_class;
+    uint16_t spec_index = _roadstop_gui.sel_type;
 
     auto res = make_up<cmd::BuildRoadStop>(
         area.tile,
@@ -1015,7 +1010,6 @@ void StationPreviewBase::AddAreaTiles(Preview::TileMap &tiles, bool add_current,
 void StationPreviewBase::Update(Point pt, TileIndex tile) {
     if (tile != INVALID_TILE) this->type->cur_tile = tile;
     this->show_coverage = _settings_client.gui.station_show_coverage;
-    this->adjacent_stations = _settings_game.station.adjacent_stations;
     this->remove_mode = false;
     if (_remove_button_clicked) {
         this->remove_mode = true;

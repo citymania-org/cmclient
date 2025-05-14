@@ -19,15 +19,12 @@
 
 #include "../safeguards.h"
 
-struct RailStationGUISettings {
-    Axis orientation;                 ///< Currently selected rail station orientation
-
-    bool newstations;                 ///< Are custom station definitions available?
-    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
-    byte station_count;               ///< Number of custom stations (if newstations is \c true )
+struct StationPickerSelection {
+    StationClassID sel_class; ///< Selected station class.
+    uint16_t sel_type; ///< Selected station type within the class.
+    Axis axis; ///< Selected orientation of the station.
 };
-extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
+extern StationPickerSelection _station_gui; ///< Settings of the station picker.
 
 namespace citymania {
 
@@ -154,7 +151,7 @@ void RailToolbar_UpdateRemoveWidgetStatus(Window *w, int widget, bool remove_act
             if (!_settings_client.gui.station_dragdrop) {
                 int x = _settings_client.gui.station_numtracks;
                 int y = _settings_client.gui.station_platlength;
-                if (_railstation.orientation == 0) Swap(x, y);
+                if (_station_gui.axis == 0) Swap(x, y);
                 SetTileSelectSize(x, y);
             } else {
                 VpSetPlaceSizingLimit(_settings_game.station.station_spread);

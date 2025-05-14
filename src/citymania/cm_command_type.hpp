@@ -1,6 +1,7 @@
 #ifndef CM_COMMAND_TYPE_HPP
 #define CM_COMMAND_TYPE_HPP
 
+#include <cstdint>
 #include "../bridge.h"
 #include "../command_func.h"
 #include "../depot_type.h"
@@ -20,7 +21,7 @@
 #include "../track_type.h"
 #include "../vehiclelist.h"
 
-enum StationClassID : byte;
+enum StationClassID : uint16_t;
 
 namespace citymania {
 

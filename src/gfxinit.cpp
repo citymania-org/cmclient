@@ -30,7 +30,7 @@
 #include "table/landscape_sprite.h"
 
 /** Offsets for loading the different "replacement" sprites in the files. */
-static const SpriteID * const _landscape_spriteindexes[] = {
+static constexpr std::span<const std::pair<SpriteID, SpriteID>> _landscape_spriteindexes[] = {
 	_landscape_spriteindexes_arctic,
 	_landscape_spriteindexes_tropic,
 	_landscape_spriteindexes_toyland,
@@ -43,21 +43,21 @@ static const SpriteID * const _landscape_spriteindexes[] = {
  * @param needs_palette_remap Whether the colours in the GRF file need a palette remap.
  * @return The number of loaded sprites.
  */
-static uint LoadGrfFile(const std::string &filename, uint load_index, bool needs_palette_remap)
+static uint LoadGrfFile(const std::string &filename, SpriteID load_index, bool needs_palette_remap)
 {
-	uint load_index_org = load_index;
-	uint sprite_id = 0;
+	SpriteID load_index_org = load_index;
+	SpriteID sprite_id = 0;
 
 	SpriteFile &file = OpenCachedSpriteFile(filename, BASESET_DIR, needs_palette_remap);
 
 	Debug(sprite, 2, "Reading grf-file '{}'", filename);
 
-	byte container_ver = file.GetContainerVersion();
+	uint8_t container_ver = file.GetContainerVersion();
 	if (container_ver == 0) UserError("Base grf '{}' is corrupt", filename);
 	ReadGRFSpriteOffsets(file);
 	if (container_ver >= 2) {
 		/* Read compression. */
-		byte compression = file.ReadByte();
+		uint8_t compression = file.ReadByte();
 		if (compression != 0) UserError("Unsupported compression format");
 	}
 
@@ -80,32 +80,29 @@ static uint LoadGrfFile(const std::string &filename, uint load_index, bool needs
  * @param needs_palette_remap Whether the colours in the GRF file need a palette remap.
  * @return The number of loaded sprites.
  */
-static void LoadGrfFileIndexed(const std::string &filename, const SpriteID *index_tbl, bool needs_palette_remap)
+static void LoadGrfFileIndexed(const std::string &filename, std::span<const std::pair<SpriteID, SpriteID>> index_tbl, bool needs_palette_remap)
 {
-	uint start;
 	uint sprite_id = 0;
 
 	SpriteFile &file = OpenCachedSpriteFile(filename, BASESET_DIR, needs_palette_remap);
 
 	Debug(sprite, 2, "Reading indexed grf-file '{}'", filename);
 
-	byte container_ver = file.GetContainerVersion();
+	uint8_t container_ver = file.GetContainerVersion();
 	if (container_ver == 0) UserError("Base grf '{}' is corrupt", filename);
 	ReadGRFSpriteOffsets(file);
 	if (container_ver >= 2) {
 		/* Read compression. */
-		byte compression = file.ReadByte();
+		uint8_t compression = file.ReadByte();
 		if (compression != 0) UserError("Unsupported compression format");
 	}
 
-	while ((start = *index_tbl++) != END) {
-		uint end = *index_tbl++;
-
-		do {
-			[[maybe_unused]] bool b = LoadNextSprite(start, file, sprite_id);
+	for (const auto &pair : index_tbl) {
+		for (SpriteID load_index = pair.first; load_index <= pair.second; ++load_index) {
+			[[maybe_unused]] bool b = LoadNextSprite(load_index, file, sprite_id);
 			assert(b);
 			sprite_id++;
-		} while (++start <= end);
+		}
 	}
 }
 
@@ -127,9 +124,9 @@ void CheckExternalFiles()
 	if (used_set->GetNumInvalid() != 0) {
 		/* Not all files were loaded successfully, see which ones */
 		fmt::format_to(output_iterator, "Trying to load graphics set '{}', but it is incomplete. The game will probably not run correctly until you properly install this set or select another one. See section 4.1 of README.md.\n\nThe following files are corrupted or missing:\n", used_set->name);
-		for (uint i = 0; i < GraphicsSet::NUM_FILES; i++) {
-			MD5File::ChecksumResult res = GraphicsSet::CheckMD5(&used_set->files[i], BASESET_DIR);
-			if (res != MD5File::CR_MATCH) fmt::format_to(output_iterator, "\t{} is {} ({})\n", used_set->files[i].filename, res == MD5File::CR_MISMATCH ? "corrupt" : "missing", used_set->files[i].missing_warning);
+		for (const auto &file : used_set->files) {
+			MD5File::ChecksumResult res = GraphicsSet::CheckMD5(&file, BASESET_DIR);
+			if (res != MD5File::CR_MATCH) fmt::format_to(output_iterator, "\t{} is {} ({})\n", file.filename, res == MD5File::CR_MISMATCH ? "corrupt" : "missing", file.missing_warning);
 		}
 		fmt::format_to(output_iterator, "\n");
 	}
@@ -195,7 +192,7 @@ static void LoadSpriteTables()
 
 	/* Baseset extra graphics */
 	GRFConfig *extra = new GRFConfig(used_set->GetOrCreateExtraConfig());
-	if (extra->num_params == 0) extra->SetParameterDefaults();
+	if (extra->param.empty()) extra->SetParameterDefaults();
 	ClrBit(extra->flags, GCF_INIT_ONLY);
 
 	extra->next = top;
@@ -220,10 +217,10 @@ static void LoadSpriteTables()
 }
 
 
-static void RealChangeBlitter(const char *repl_blitter)
+static void RealChangeBlitter(const std::string_view repl_blitter)
 {
-	const char *cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
-	if (strcmp(cur_blitter, repl_blitter) == 0) return;
+	const std::string_view cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
+	if (cur_blitter == repl_blitter) return;
 
 	Debug(driver, 1, "Switching blitter from '{}' to '{}'... ", cur_blitter, repl_blitter);
 	Blitter *new_blitter = BlitterFactory::SelectBlitter(repl_blitter);
@@ -267,11 +264,11 @@ static bool SwitchNewGRFBlitter()
 		if (c->palette & GRFP_BLT_32BPP) depth_wanted_by_grf = 32;
 	}
 	/* We need a 32bpp blitter for font anti-alias. */
-	if (HasAntialiasedFonts()) depth_wanted_by_grf = 32;
+	if (GetFontAAState()) depth_wanted_by_grf = 32;
 
 	/* Search the best blitter. */
 	static const struct {
-		const char *name;
+		const std::string_view name;
 		uint animation; ///< 0: no support, 1: do support, 2: both
 		uint min_base_depth, max_base_depth, min_grf_depth, max_grf_depth;
 	} replacement_blitters[] = {
@@ -291,23 +288,22 @@ static bool SwitchNewGRFBlitter()
 	};
 
 	const bool animation_wanted = HasBit(_display_opt, DO_FULL_ANIMATION);
-	const char *cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
+	const std::string_view cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
 
-	for (uint i = 0; i < lengthof(replacement_blitters); i++) {
-		if (animation_wanted && (replacement_blitters[i].animation == 0)) continue;
-		if (!animation_wanted && (replacement_blitters[i].animation == 1)) continue;
+	for (const auto &replacement_blitter : replacement_blitters) {
+		if (animation_wanted && (replacement_blitter.animation == 0)) continue;
+		if (!animation_wanted && (replacement_blitter.animation == 1)) continue;
 
-		if (!IsInsideMM(depth_wanted_by_base, replacement_blitters[i].min_base_depth, replacement_blitters[i].max_base_depth + 1)) continue;
-		if (!IsInsideMM(depth_wanted_by_grf, replacement_blitters[i].min_grf_depth, replacement_blitters[i].max_grf_depth + 1)) continue;
-		const char *repl_blitter = replacement_blitters[i].name;
+		if (!IsInsideMM(depth_wanted_by_base, replacement_blitter.min_base_depth, replacement_blitter.max_base_depth + 1)) continue;
+		if (!IsInsideMM(depth_wanted_by_grf, replacement_blitter.min_grf_depth, replacement_blitter.max_grf_depth + 1)) continue;
 
-		if (strcmp(repl_blitter, cur_blitter) == 0) {
+		if (replacement_blitter.name == cur_blitter) {
 			return false;
 		}
-		if (BlitterFactory::GetBlitterFactory(repl_blitter) == nullptr) continue;
+		if (BlitterFactory::GetBlitterFactory(replacement_blitter.name) == nullptr) continue;
 
 		/* Inform the video driver we want to switch blitter as soon as possible. */
-		VideoDriver::GetInstance()->QueueOnMainThread(std::bind(&RealChangeBlitter, repl_blitter));
+		VideoDriver::GetInstance()->QueueOnMainThread(std::bind(&RealChangeBlitter, replacement_blitter.name));
 		break;
 	}
 
@@ -375,7 +371,7 @@ bool GraphicsSet::FillSetDetails(const IniFile &ini, const std::string &path, co
 GRFConfig &GraphicsSet::GetOrCreateExtraConfig() const
 {
 	if (!this->extra_cfg) {
-		this->extra_cfg.reset(new GRFConfig(this->files[GFT_EXTRA].filename));
+		this->extra_cfg = std::make_unique<GRFConfig>(this->files[GFT_EXTRA].filename);
 
 		/* We know the palette of the base set, so if the base NewGRF is not
 		 * setting one, use the palette of the base set and not the global
@@ -402,7 +398,7 @@ bool GraphicsSet::IsConfigurable() const
 void GraphicsSet::CopyCompatibleConfig(const GraphicsSet &src)
 {
 	const GRFConfig *src_cfg = src.GetExtraConfig();
-	if (src_cfg == nullptr || src_cfg->num_params == 0) return;
+	if (src_cfg == nullptr || src_cfg->param.empty()) return;
 	GRFConfig &dest_cfg = this->GetOrCreateExtraConfig();
 	if (dest_cfg.IsCompatible(src_cfg->version)) return;
 	dest_cfg.CopyParams(*src_cfg);
@@ -420,12 +416,10 @@ void GraphicsSet::CopyCompatibleConfig(const GraphicsSet &src)
 /* static */ MD5File::ChecksumResult GraphicsSet::CheckMD5(const MD5File *file, Subdirectory subdir)
 {
 	size_t size = 0;
-	FILE *f = FioFOpenFile(file->filename, "rb", subdir, &size);
-	if (f == nullptr) return MD5File::CR_NO_FILE;
+	auto f = FioFOpenFile(file->filename, "rb", subdir, &size);
+	if (!f.has_value()) return MD5File::CR_NO_FILE;
 
-	size_t max = GRFGetSizeOfDataSection(f);
-
-	FioFCloseFile(f);
+	size_t max = GRFGetSizeOfDataSection(*f);
 
 	return file->CheckMD5(subdir, max);
 }
@@ -443,9 +437,8 @@ void GraphicsSet::CopyCompatibleConfig(const GraphicsSet &src)
 MD5File::ChecksumResult MD5File::CheckMD5(Subdirectory subdir, size_t max_size) const
 {
 	size_t size;
-	FILE *f = FioFOpenFile(this->filename, "rb", subdir, &size);
-
-	if (f == nullptr) return CR_NO_FILE;
+	auto f = FioFOpenFile(this->filename, "rb", subdir, &size);
+	if (!f.has_value()) return CR_NO_FILE;
 
 	size = std::min(size, max_size);
 
@@ -454,12 +447,10 @@ MD5File::ChecksumResult MD5File::CheckMD5(Subdirectory subdir, size_t max_size) 
 	MD5Hash digest;
 	size_t len;
 
-	while ((len = fread(buffer, 1, (size > sizeof(buffer)) ? sizeof(buffer) : size, f)) != 0 && size != 0) {
+	while ((len = fread(buffer, 1, (size > sizeof(buffer)) ? sizeof(buffer) : size, *f)) != 0 && size != 0) {
 		size -= len;
 		checksum.Append(buffer, len);
 	}
-
-	FioFCloseFile(f);
 
 	checksum.Finish(digest);
 	return this->hash == digest ? CR_MATCH : CR_MISMATCH;

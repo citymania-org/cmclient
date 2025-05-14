@@ -15,8 +15,7 @@
 
 /** The data required to format and validate a single parameter of a string. */
 struct StringParameter {
-	uint64_t data; ///< The data of the parameter.
-	std::unique_ptr<std::string> string; ///< Copied string value, if it has any.
+	StringParameterData data; ///< The data of the parameter.
 	char32_t type; ///< The #StringControlCode to interpret this data with when it's the first parameter, otherwise '\0'.
 };
 
@@ -32,7 +31,7 @@ protected:
 		parameters(parameters)
 	{}
 
-	StringParameter *GetNextParameterPointer();
+	const StringParameter &GetNextParameterReference();
 
 public:
 	/**
@@ -92,8 +91,13 @@ public:
 	template <typename T>
 	T GetNextParameter()
 	{
-		auto ptr = GetNextParameterPointer();
-		return static_cast<T>(ptr->data);
+		struct visitor {
+			uint64_t operator()(const uint64_t &arg) { return arg; }
+			uint64_t operator()(const std::string &) { throw std::out_of_range("Attempt to read string parameter as integer"); }
+		};
+
+		const auto &param = GetNextParameterReference();
+		return static_cast<T>(std::visit(visitor{}, param.data));
 	}
 
 	/**
@@ -104,8 +108,13 @@ public:
 	 */
 	const char *GetNextParameterString()
 	{
-		auto ptr = GetNextParameterPointer();
-		return ptr->string != nullptr ? ptr->string->c_str() : nullptr;
+		struct visitor {
+			const char *operator()(const uint64_t &) { throw std::out_of_range("Attempt to read integer parameter as string"); }
+			const char *operator()(const std::string &arg) { return arg.c_str(); }
+		};
+
+		const auto &param = GetNextParameterReference();
+		return std::visit(visitor{}, param.data);
 	}
 
 	/**
@@ -146,11 +155,16 @@ public:
 		return this->parameters[offset].type;
 	}
 
+	void SetParam(size_t n, const StringParameterData &v)
+	{
+		assert(n < this->parameters.size());
+		this->parameters[n].data = v;
+	}
+
 	void SetParam(size_t n, uint64_t v)
 	{
 		assert(n < this->parameters.size());
 		this->parameters[n].data = v;
-		this->parameters[n].string.reset();
 	}
 
 	template <typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
@@ -162,8 +176,7 @@ public:
 	void SetParam(size_t n, const char *str)
 	{
 		assert(n < this->parameters.size());
-		this->parameters[n].data = 0;
-		this->parameters[n].string = std::make_unique<std::string>(str);
+		this->parameters[n].data = str;
 	}
 
 	void SetParam(size_t n, const std::string &str) { this->SetParam(n, str.c_str()); }
@@ -171,27 +184,13 @@ public:
 	void SetParam(size_t n, std::string &&str)
 	{
 		assert(n < this->parameters.size());
-		this->parameters[n].data = 0;
-		this->parameters[n].string = std::make_unique<std::string>(std::move(str));
+		this->parameters[n].data = std::move(str);
 	}
 
-	uint64_t GetParam(size_t n) const
+	const StringParameterData &GetParam(size_t n) const
 	{
 		assert(n < this->parameters.size());
-		assert(this->parameters[n].string == nullptr);
 		return this->parameters[n].data;
-	}
-
-	/**
-	 * Get the stored string of the parameter, or \c nullptr when there is none.
-	 * @param n The index into the parameters.
-	 * @return The stored string.
-	 */
-	const char *GetParamStr(size_t n) const
-	{
-		assert(n < this->parameters.size());
-		auto &param = this->parameters[n];
-		return param.string != nullptr ? param.string->c_str() : nullptr;
 	}
 };
 
@@ -259,8 +258,7 @@ public:
 
 	/**
 	 * Create the builder of an external buffer.
-	 * @param start The start location to write to.
-	 * @param last  The last location to write to.
+	 * @param string The string to write to.
 	 */
 	StringBuilder(std::string &string) : string(&string) {}
 
@@ -316,7 +314,6 @@ public:
 	/**
 	 * Remove the given amount of characters from the back of the string.
 	 * @param amount The amount of characters to remove.
-	 * @return true iff there was enough space and the character got added.
 	 */
 	void RemoveElementsFromBack(size_t amount)
 	{
@@ -350,6 +347,6 @@ void GenerateTownNameString(StringBuilder &builder, size_t lang, uint32_t seed);
 void GetTownName(StringBuilder &builder, const struct Town *t);
 void GRFTownNameGenerate(StringBuilder &builder, uint32_t grfid, uint16_t gen, uint32_t seed);
 
-uint RemapNewGRFStringControlCode(uint scc, const char **str, StringParameters &parameters, bool modify_parameters);
+char32_t RemapNewGRFStringControlCode(char32_t scc, const char **str, StringParameters &parameters, bool modify_parameters);
 
 #endif /* STRINGS_INTERNAL_H */

@@ -39,7 +39,6 @@ def read_language_file(filename, strings_found, errors):
     skip = SkipType.NONE
     length = 0
     common_prefix = ""
-    last_tiny_string = ""
 
     with open(filename) as fp:
         for line in fp.readlines():
@@ -115,18 +114,8 @@ def read_language_file(filename, strings_found, errors):
             strings_defined.append(name)
 
             if name.startswith('CM_'):
-                name = name[3:]
-            # If a string ends on _TINY or _SMALL, it can be the {TINY} variant.
-            # Check for this by some fuzzy matching.
-            if name.endswith(("_SMALL", "_TINY")):
-                last_tiny_string = name
-            elif last_tiny_string:
-                matching_name = "_".join(last_tiny_string.split("_")[:-1])
-                if name == matching_name:
-                    strings_found.add(last_tiny_string)
-            else:
-                last_tiny_string = ""
-
+                name = name[3:]            
+                
             if skip == SkipType.EXTERNAL:
                 strings_found.add(name)
                 skip = SkipType.LENGTH

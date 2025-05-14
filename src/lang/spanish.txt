@@ -267,6 +267,7 @@ STR_UNITS_MINUTES                                               :{NUM}{NBSP}minu
 STR_UNITS_YEARS                                                 :{NUM}{NBSP}año{P "" s}
 STR_UNITS_PERIODS                                               :{NUM}{NBSP}periodo{P "" s}
 
+
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Filtro:
 STR_LIST_FILTER_OSKTITLE                                        :{BLACK}Introduce texto para filtrar
@@ -309,7 +310,6 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Al activ
 STR_BUTTON_DEFAULT                                              :{BLACK}Por defecto
 STR_BUTTON_CANCEL                                               :{BLACK}Cancelar
 STR_BUTTON_OK                                                   :{BLACK}Aceptar
-STR_WARNING_PASSWORD_SECURITY                                   :{YELLOW}Advertencia: Los administradores del servidor podrían ser capaces de leer cualquier texto introducido aquí.
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :º1234567890'¡\qwertyuiop`+asdfghjklñ´ç<zxcvbnm,.- .
@@ -438,6 +438,7 @@ STR_SCENEDIT_FILE_MENU_LOAD_HEIGHTMAP                           :Cargar mapa de 
 STR_SCENEDIT_FILE_MENU_QUIT_EDITOR                              :Salir del editor de escenarios
 STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Salir
+
 
 # Settings menu
 ###length 16
@@ -624,6 +625,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Muestra 
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Oculta todos los tipos de carga en la gráfica de tarifas de pago de cargas
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Alterna entre mostrar/ocultar la gráfica para este tipo de carga
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Muestra detalles del nivel de desempeño
 
@@ -957,18 +959,13 @@ STR_GAME_OPTIONS_VOLUME                                         :Volumen
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Efectos de sonido
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Música
 
-STR_GAME_OPTIONS_VOLUME_0                                       :0%
-STR_GAME_OPTIONS_VOLUME_25                                      :25%
-STR_GAME_OPTIONS_VOLUME_50                                      :50%
-STR_GAME_OPTIONS_VOLUME_75                                      :75%
-STR_GAME_OPTIONS_VOLUME_100                                     :100%
 
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Unidad monetaria
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Selecciona la nnidad monetaria
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 43
+###length 44
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Libra británica
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dólar estadounidense
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -1012,6 +1009,7 @@ STR_GAME_OPTIONS_CURRENCY_INR                                   :Rupia india
 STR_GAME_OPTIONS_CURRENCY_IDR                                   :Rupia indonesia
 STR_GAME_OPTIONS_CURRENCY_MYR                                   :Ringgit malasio
 STR_GAME_OPTIONS_CURRENCY_LVL                                   :Lats letón
+STR_GAME_OPTIONS_CURRENCY_PTE                                   :Escudo portugués
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Autoguardado
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Selección del intervalo entre guardados automáticos del juego
@@ -1058,11 +1056,6 @@ STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Marca es
 STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Tipos de letra suavizadas
 STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Marca esta casilla para suavizar los tipos de letra escalables
 
-STR_GAME_OPTIONS_GUI_SCALE_1X                                   :1x
-STR_GAME_OPTIONS_GUI_SCALE_2X                                   :2x
-STR_GAME_OPTIONS_GUI_SCALE_3X                                   :3x
-STR_GAME_OPTIONS_GUI_SCALE_4X                                   :4x
-STR_GAME_OPTIONS_GUI_SCALE_5X                                   :5x
 
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Encuesta automática
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Participar en la encuesta automática
@@ -1090,6 +1083,7 @@ STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Informac
 STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Conjunto de música base
 STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Seleccionar conjunto de música base a usar
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Información adicional sobre el conjunto de música base
+
 
 STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :{LTBLUE}(no se han instalado "plugins" para integrar plataformas sociales)
 
@@ -1491,6 +1485,7 @@ STR_CONFIG_SETTING_WARN_INCOME_LESS                             :Avisar si las g
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :Si se activa, se muestra un mensaje cuando un vehículo no haya generado ningún beneficio durante un año
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT_PERIOD             :Si se activa, se muestra un mensaje cuando un vehículo no haya obtenido ningún beneficio durante un período dado
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Los vehículos nunca caducan: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :Si se activa, todos los modelos de vehículos permanecen disponibles para siempre una vez han sido introducidos
 
@@ -1832,7 +1827,8 @@ STR_CONFIG_SETTING_SERVINT_AIRCRAFT                             :Intervalo de ma
 STR_CONFIG_SETTING_SERVINT_AIRCRAFT_HELPTEXT                    :Fija el intervalo de mantenimiento por defecto para aeronaves nuevas, que se empleará si no se define un intervalo de forma explícita para ése vehículo
 STR_CONFIG_SETTING_SERVINT_SHIPS                                :Intervalo de mantenimiento por defecto para barcos: {STRING}
 STR_CONFIG_SETTING_SERVINT_SHIPS_HELPTEXT                       :Fija el intervalo de mantenimiento por defecto para barcos nuevos, que se empleará si no se define un intervalo de forma explícita para ése vehículo
-STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA}{NBSP}Día{P 0 "" s}/Minuto{P 0 "" s}/%
+###length 3
+
 ###setting-zero-is-special
 STR_CONFIG_SETTING_SERVINT_DISABLED                             :Deshabilitado
 
@@ -2132,17 +2128,8 @@ STR_CONFIG_SETTING_AI                                           :Competidores
 STR_CONFIG_SETTING_AI_NPC                                       :Jugadores del ordenador (IA)
 STR_CONFIG_SETTING_NETWORK                                      :Red
 
-STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS                        :Enrutador para trenes: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS_HELPTEXT               :Enrutador a emplear en trenes
-STR_CONFIG_SETTING_PATHFINDER_FOR_ROAD_VEHICLES                 :Enrutador para vehículos de carretera: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_ROAD_VEHICLES_HELPTEXT        :Enrutador a emplear en vehículos de carretera
-STR_CONFIG_SETTING_PATHFINDER_FOR_SHIPS                         :Enrutador para barcos: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_SHIPS_HELPTEXT                :Enrutador a emplear en barcos
 STR_CONFIG_SETTING_REVERSE_AT_SIGNALS                           :Cambio de sentido automático en señales: {STRING}
 STR_CONFIG_SETTING_REVERSE_AT_SIGNALS_HELPTEXT                  :Permite a los trenes darse la vuelta ante una señal, si han esperado durante un tiempo lo suficientemente largo
-###length 2
-STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
-STR_CONFIG_SETTING_PATHFINDER_YAPF                              :YAPF {BLUE}(Recomendado)
 
 STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}Cambiar valor de la opción
 
@@ -2461,7 +2448,6 @@ STR_NETWORK_CONNECTING_SPECIAL_2                                :{BLACK}Recibien
 STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Desconectar
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Servidor protegido. Introduce la contraseña
-STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Empresa protegida. Introduce la contraseña
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Jugadores en línea
@@ -2510,13 +2496,11 @@ STR_NETWORK_CLIENT_LIST_SERVER_CONNECTION_TYPE_TURN             :{BLACK}Vía ser
 STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_KICK                       :Expulsar
 STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_BAN                        :Prohibir el acceso
 STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_RESET                     :Eliminar
-STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_UNLOCK                    :Eliminar contraseña
 
 STR_NETWORK_CLIENT_LIST_ASK_CAPTION                             :{WHITE}Acción de administrador
 STR_NETWORK_CLIENT_LIST_ASK_CLIENT_KICK                         :{YELLOW}¿Estás seguro de que deseas expulsar al jugador '{STRING}'?
 STR_NETWORK_CLIENT_LIST_ASK_CLIENT_BAN                          :{YELLOW}¿Estás seguro de que deseas prohibir el acceso al jugador '{STRING}'?
 STR_NETWORK_CLIENT_LIST_ASK_COMPANY_RESET                       :{YELLOW}¿Estás seguro de que quieres eliminar la empresa '{COMPANY}'?
-STR_NETWORK_CLIENT_LIST_ASK_COMPANY_UNLOCK                      :{YELLOW}¿Estás seguro de que quieres eliminar la contraseña de la empresa '{COMPANY}'?
 
 STR_NETWORK_ASK_RELAY_CAPTION                                   :{WHITE}¿Utilizar servicio de transmisión?
 STR_NETWORK_ASK_RELAY_TEXT                                      :{YELLOW}La conexión con el servidor '{STRING}' ha fallado.{}¿Deseas transmitir esta conexión vía '{STRING}'?
@@ -2533,19 +2517,9 @@ STR_NETWORK_ASK_SURVEY_YES                                      :Sí
 
 STR_NETWORK_SPECTATORS                                          :Espectadores
 
-# Network set password
-STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}No guardar la contraseña introducida
-STR_COMPANY_PASSWORD_OK                                         :{BLACK}Asignar a la empresa una nueva contraseña
-STR_COMPANY_PASSWORD_CAPTION                                    :{WHITE}Contraseña de la empresa
-STR_COMPANY_PASSWORD_MAKE_DEFAULT                               :{BLACK}Contraseña por defecto de la empresa
-STR_COMPANY_PASSWORD_MAKE_DEFAULT_TOOLTIP                       :{BLACK}Usa la contraseña de esta empresa para el resto de nuevas empresas
-
 # Network company info join/password
 STR_COMPANY_VIEW_JOIN                                           :{BLACK}Unirse
 STR_COMPANY_VIEW_JOIN_TOOLTIP                                   :{BLACK}Unirse y jugar como esta empresa
-STR_COMPANY_VIEW_PASSWORD                                       :{BLACK}Contraseña
-STR_COMPANY_VIEW_PASSWORD_TOOLTIP                               :{BLACK}Protege tu empresa con una contraseña para evitar que usuarios no autorizados se unan a ella
-STR_COMPANY_VIEW_SET_PASSWORD                                   :{BLACK}Establecer contraseña de empresa
 
 # Network chat
 STR_NETWORK_CHAT_SEND                                           :{BLACK}Enviar
@@ -2574,6 +2548,7 @@ STR_NETWORK_ERROR_BAD_PLAYER_NAME                               :{WHITE}No se ha
 STR_NETWORK_ERROR_BAD_SERVER_NAME                               :{WHITE}No se ha establecido el nombre de tu servidor. El nombre se puede establecer en la parte superior de la ventana de Multijugador
 STR_NETWORK_ERROR_WRONG_REVISION                                :{WHITE}La versión de este cliente no corresponde con la versión del servidor
 STR_NETWORK_ERROR_WRONG_PASSWORD                                :{WHITE}Contraseña incorrecta
+STR_NETWORK_ERROR_NOT_ON_ALLOW_LIST                             :{WHITE}No estás en la lista de clientes permitidos
 STR_NETWORK_ERROR_SERVER_FULL                                   :{WHITE}El servidor está completo
 STR_NETWORK_ERROR_SERVER_BANNED                                 :{WHITE}Se ha prohibido tu acceso al servidor
 STR_NETWORK_ERROR_KICKED                                        :{WHITE}Has sido expulsado del servidor
@@ -2589,7 +2564,7 @@ STR_NETWORK_ERROR_INVALID_CLIENT_NAME                           :{WHITE}Tu nombr
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION            :{WHITE}Posible pérdida de conexión
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION                    :{WHITE}No se han recibido datos del servidor desde hace {NUM} segundo{P "" s}
 
-###length 21
+###length 23
 STR_NETWORK_ERROR_CLIENT_GENERAL                                :error general
 STR_NETWORK_ERROR_CLIENT_DESYNC                                 :error de desincronización
 STR_NETWORK_ERROR_CLIENT_SAVEGAME                               :no se puede cargar el mapa
@@ -2601,6 +2576,7 @@ STR_NETWORK_ERROR_CLIENT_NOT_EXPECTED                           :recibido paquet
 STR_NETWORK_ERROR_CLIENT_WRONG_REVISION                         :versión incorrecta
 STR_NETWORK_ERROR_CLIENT_NAME_IN_USE                            :nombre en uso
 STR_NETWORK_ERROR_CLIENT_WRONG_PASSWORD                         :contraseña incorrecta
+STR_NETWORK_ERROR_CLIENT_NOT_ON_ALLOW_LIST                      :no está en la lista de permitidos
 STR_NETWORK_ERROR_CLIENT_COMPANY_MISMATCH                       :empresa incorrecta en un DoCommand
 STR_NETWORK_ERROR_CLIENT_KICKED                                 :expulsado por el servidor
 STR_NETWORK_ERROR_CLIENT_CHEATER                                :ha intentado usar un truco
@@ -2806,7 +2782,6 @@ STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Seleccio
 
 # Rail waypoint construction window
 STR_WAYPOINT_CAPTION                                            :{WHITE}Punto de ruta
-STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Selecciona el tipo de punto de ruta
 
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}Selección de estación
@@ -2819,8 +2794,10 @@ STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Seleccio
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Arrastrar y soltar
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Construye una estación arrastrando y soltando
 
-STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Selecciona el tipo de estación a mostrar
-STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Selecciona el tipo de estación a construir
+STR_PICKER_MODE_ALL                                             :Todos
+
+
+
 
 STR_STATION_CLASS_DFLT                                          :Por defecto
 STR_STATION_CLASS_DFLT_STATION                                  :Estación por defecto
@@ -2963,8 +2940,6 @@ STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Compra e
 
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Selección de Objeto
-STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Selecciona el objeto a construir. Ctrl+clic+arrastrar permite seleccionar un área diagonalmente. Con Mayús sólo muestra una estimación del coste
-STR_OBJECT_BUILD_CLASS_TOOLTIP                                  :{BLACK}Selecciona el tipo de objeto a construir
 STR_OBJECT_BUILD_PREVIEW_TOOLTIP                                :{BLACK}Vista previa del objeto
 STR_OBJECT_BUILD_SIZE                                           :{BLACK}Tamaño: {GOLD}{NUM} x {NUM} casillas
 
@@ -3079,7 +3054,8 @@ STR_LAND_AREA_INFORMATION_TRAM_OWNER                            :{BLACK}Propieta
 STR_LAND_AREA_INFORMATION_RAIL_OWNER                            :{BLACK}Propietario del ferrocarril: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY                       :{BLACK}Autoridad local: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE                  :Ninguna
-STR_LAND_AREA_INFORMATION_LANDINFO_COORDS                       :{BLACK}Coordenadas: {LTBLUE}{NUM} x {NUM} x {NUM} ({STRING})
+STR_LAND_AREA_INFORMATION_LANDINFO_COORDS                       :{BLACK}Coordenadas: {LTBLUE}{NUM} x {NUM} x {NUM}
+STR_LAND_AREA_INFORMATION_LANDINFO_INDEX                        :{BLACK}Índice de la casilla: {LTBLUE}{NUM} ({HEX})
 STR_LAND_AREA_INFORMATION_BUILD_DATE                            :{BLACK}Construido/renovado: {LTBLUE}{DATE_LONG}
 STR_LAND_AREA_INFORMATION_STATION_CLASS                         :{BLACK}Clase de estación: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_STATION_TYPE                          :{BLACK}Tipo de estación: {LTBLUE}{STRING}
@@ -3399,6 +3375,8 @@ STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Ejecutar
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Script en funcionamiento
 STR_GENERATION_PREPARING_GAME                                   :{BLACK}Preparando juego
 
+
+
 # NewGRF settings
 STR_NEWGRF_SETTINGS_CAPTION                                     :{WHITE}Configuración de NewGRF
 STR_NEWGRF_SETTINGS_INFO_TITLE                                  :{WHITE}Información de NewGRF detallada
@@ -3485,7 +3463,9 @@ STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_ROAD_TYPE                  :Tipo de carrete
 STR_NEWGRF_INSPECT_QUERY_CAPTION                                :{WHITE}Parámetro de variable NewGRF 60+x (hexadecimal)
 
 # Sprite aligner window
-STR_SPRITE_ALIGNER_CAPTION                                      :{WHITE}Alinear sprite {COMMA} ({STRING})
+STR_SPRITE_ALIGNER_CAPTION_NO_ACTION                            :{WHITE}Alineando sprite: ({STRING}:{NUM})
+STR_SPRITE_ALIGNER_CAPTION_ACTIONA                              :{WHITE}Alineando sprite: Acción 0xA, {COMMA} ({STRING}:{NUM})
+STR_SPRITE_ALIGNER_CAPTION_ACTION5                              :{WHITE}Alineando sprite: Acción 0x5, tipo {HEX}, {COMMA} ({STRING}:{NUM})
 STR_SPRITE_ALIGNER_NEXT_BUTTON                                  :{BLACK}Siguiente sprite
 STR_SPRITE_ALIGNER_NEXT_TOOLTIP                                 :{BLACK}Va al siguiente sprite (ignorando pseudosprites, sprites recoloreados y sprites de fuente) y pasa del último al primer sprite
 STR_SPRITE_ALIGNER_GOTO_BUTTON                                  :{BLACK}Ir a sprite
@@ -3494,6 +3474,7 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Sprite a
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Salta al sprite anterior (ignorando pseudosprites, sprites recoloreados y sprites de fuente) y pasa del primer al último sprite
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Representa el sprite seleccionado. Su alineamiento es ignorado al dibujarlo
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Mover el sprite, cambiando los ajustes X e Y. Ctrl+clic mueve el sprite ocho unidades de una sola vez
+STR_SPRITE_ALIGNER_SPRITE                                       :{STRING}:{NUM}
 
 ###length 2
 STR_SPRITE_ALIGNER_CENTRE_OFFSET                                :{BLACK}Desviación (offset) centrada
@@ -3602,7 +3583,6 @@ STR_EDIT_SIGN_PREVIOUS_SIGN_TOOLTIP                             :{BLACK}Ir al le
 STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}Introduce un nombre para el letrero
 
 # Town directory window
-STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}Municipios
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- Ninguna -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
 STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{YELLOW} (Ciudad){BLACK} ({COMMA})
@@ -3936,7 +3916,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_YEAR                      :{WHITE}{CURRENC
 STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD                    :{WHITE}{CURRENCY_LONG}/periodo
 
 # Industry directory
-STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industrias
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ninguna -
 STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% transportado){BLACK}
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
@@ -4403,12 +4382,7 @@ STR_VEHICLE_STATUS_CANNOT_REACH_DEPOT_VEL                       :{ORANGE}{1:VELO
 STR_VEHICLE_STATUS_CANNOT_REACH_DEPOT_SERVICE_VEL               :{LTBLUE}{1:VELOCITY} - No se puede llegar a {0:DEPOT}
 
 # Vehicle stopped/started animations
-###length 2
-STR_VEHICLE_COMMAND_STOPPED_SMALL                               :{TINY_FONT}{RED}Detenido
 STR_VEHICLE_COMMAND_STOPPED                                     :{RED}Detenido
-
-###length 2
-STR_VEHICLE_COMMAND_STARTED_SMALL                               :{TINY_FONT}{GREEN}Arrancado
 STR_VEHICLE_COMMAND_STARTED                                     :{GREEN}Arrancado
 
 # Vehicle details
@@ -4869,25 +4843,16 @@ STR_TEXTFILE_GAME_MANUAL_CAPTION                                :{WHITE}Document
 
 
 # Vehicle loading indicators
-STR_PERCENT_UP_SMALL                                            :{TINY_FONT}{WHITE}{NUM}%{UP_ARROW}
 STR_PERCENT_UP                                                  :{WHITE}{NUM}%{UP_ARROW}
-STR_PERCENT_DOWN_SMALL                                          :{TINY_FONT}{WHITE}{NUM}%{DOWN_ARROW}
 STR_PERCENT_DOWN                                                :{WHITE}{NUM}%{DOWN_ARROW}
-STR_PERCENT_UP_DOWN_SMALL                                       :{TINY_FONT}{WHITE}{NUM}%{UP_ARROW}{DOWN_ARROW}
 STR_PERCENT_UP_DOWN                                             :{WHITE}{NUM}%{UP_ARROW}{DOWN_ARROW}
-STR_PERCENT_NONE_SMALL                                          :{TINY_FONT}{WHITE}{NUM}%
 STR_PERCENT_NONE                                                :{WHITE}{NUM}%
 
 # Income 'floats'
-STR_INCOME_FLOAT_COST_SMALL                                     :{TINY_FONT}{RED}Coste: {CURRENCY_LONG}
 STR_INCOME_FLOAT_COST                                           :{RED}Coste: {CURRENCY_LONG}
-STR_INCOME_FLOAT_INCOME_SMALL                                   :{TINY_FONT}{GREEN}Ingreso: {CURRENCY_LONG}
 STR_INCOME_FLOAT_INCOME                                         :{GREEN}Ingreso: {CURRENCY_LONG}
-STR_FEEDER_TINY                                                 :{TINY_FONT}{YELLOW}Transferir: {CURRENCY_LONG}
 STR_FEEDER                                                      :{YELLOW}Transferir: {CURRENCY_LONG}
-STR_FEEDER_INCOME_TINY                                          :{TINY_FONT}{YELLOW}Transferencia: {CURRENCY_LONG}{WHITE} / {GREEN}Beneficio: {CURRENCY_LONG}
 STR_FEEDER_INCOME                                               :{YELLOW}Transferencia: {CURRENCY_LONG}{WHITE} / {GREEN}Beneficio: {CURRENCY_LONG}
-STR_FEEDER_COST_TINY                                            :{TINY_FONT}{YELLOW}Transferencia: {CURRENCY_LONG}{WHITE} / {RED}Coste: {CURRENCY_LONG}
 STR_FEEDER_COST                                                 :{YELLOW}Transferencia: {CURRENCY_LONG}{WHITE} / {RED}Coste: {CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_COST                                      :{WHITE}Coste estimado: {CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_INCOME                                    :{WHITE}Ingreso estimado: {CURRENCY_LONG}
@@ -4896,9 +4861,9 @@ STR_MESSAGE_ESTIMATED_INCOME                                    :{WHITE}Ingreso 
 STR_ERROR_SAVE_STILL_IN_PROGRESS                                :{WHITE}El guardado está en progreso,{}¡por favor espera hasta que termine!
 STR_ERROR_AUTOSAVE_FAILED                                       :{WHITE}Error al autoguardar
 STR_ERROR_UNABLE_TO_READ_DRIVE                                  :{BLACK}No es posible leer la unidad
-STR_ERROR_GAME_SAVE_FAILED                                      :{WHITE}Error guardando partida{}{STRING}
+STR_ERROR_GAME_SAVE_FAILED                                      :{WHITE}Error al guardar la partida...
 STR_ERROR_UNABLE_TO_DELETE_FILE                                 :{WHITE}No es posible borrar el archivo
-STR_ERROR_GAME_LOAD_FAILED                                      :{WHITE}Carga de Partida Errónea{}{STRING}
+STR_ERROR_GAME_LOAD_FAILED                                      :{WHITE}Error al cargar la partida...
 STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR                   :Error interno: {STRING}
 STR_GAME_SAVELOAD_ERROR_BROKEN_SAVEGAME                         :Partida guardada corrupta - {STRING}
 STR_GAME_SAVELOAD_ERROR_TOO_NEW_SAVEGAME                        :La partida guardada ha sido realizada con una versión más nueva
@@ -5831,6 +5796,7 @@ STR_JUST_DATE_ISO                                               :{DATE_ISO}
 STR_JUST_STRING                                                 :{STRING}
 STR_JUST_STRING1                                                :{STRING}
 STR_JUST_STRING2                                                :{STRING}
+STR_JUST_STRING4                                                :{STRING}
 STR_JUST_STRING_STRING                                          :{STRING}{STRING}
 STR_JUST_RAW_STRING                                             :{STRING}
 STR_JUST_BIG_RAW_STRING                                         :{BIG_FONT}{STRING}

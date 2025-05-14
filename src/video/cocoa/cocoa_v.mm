@@ -124,7 +124,7 @@ void VideoDriver_Cocoa::Stop()
 }
 
 /** Common driver initialization. */
-const char *VideoDriver_Cocoa::Initialize()
+std::optional<std::string_view> VideoDriver_Cocoa::Initialize()
 {
 	if (!MacOSVersionIsAtLeast(10, 7, 0)) return "The Cocoa video driver requires Mac OS X 10.7 or later.";
 
@@ -132,12 +132,12 @@ const char *VideoDriver_Cocoa::Initialize()
 	_cocoa_video_started = true;
 
 	/* Don't create a window or enter fullscreen if we're just going to show a dialog. */
-	if (!CocoaSetupApplication()) return nullptr;
+	if (!CocoaSetupApplication()) return std::nullopt;
 
 	this->UpdateAutoResolution();
 	this->orig_res = _cur_resolution;
 
-	return nullptr;
+	return std::nullopt;
 }
 
 /**
@@ -595,10 +595,10 @@ VideoDriver_CocoaQuartz::VideoDriver_CocoaQuartz()
 	this->cgcontext     = nullptr;
 }
 
-const char *VideoDriver_CocoaQuartz::Start(const StringList &param)
+std::optional<std::string_view> VideoDriver_CocoaQuartz::Start(const StringList &param)
 {
-	const char *err = this->Initialize();
-	if (err != nullptr) return err;
+	auto err = this->Initialize();
+	if (err) return err;
 
 	int bpp = BlitterFactory::GetCurrentBlitter()->GetScreenDepth();
 	if (bpp != 8 && bpp != 32) {
@@ -621,7 +621,7 @@ const char *VideoDriver_CocoaQuartz::Start(const StringList &param)
 
 	this->is_game_threaded = !GetDriverParamBool(param, "no_threads") && !GetDriverParamBool(param, "no_thread");
 
-	return nullptr;
+	return std::nullopt;
 
 }
 

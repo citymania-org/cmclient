@@ -159,7 +159,9 @@ void UpdateAdjacentLevelCrossingTilesOnLevelCrossingRemoval(TileIndex tile, Axis
 void UpdateCompanyRoadInfrastructure(RoadType rt, Owner o, int count);
 
 struct TileInfo;
+enum Roadside : uint8_t;
 void DrawRoadOverlays(const TileInfo *ti, PaletteID pal, const RoadTypeInfo *road_rti, const RoadTypeInfo *tram_rit, uint road_offset, uint tram_offset, bool draw_underlay = true);
+void DrawRoadGroundSprites(const TileInfo *ti, RoadBits road, RoadBits tram, const RoadTypeInfo *road_rti, const RoadTypeInfo *tram_rti, Roadside roadside, bool snow_or_desert);
 
 bool CanConnectToRoad(TileIndex tile, RoadType rt, DiagDirection dir);
 

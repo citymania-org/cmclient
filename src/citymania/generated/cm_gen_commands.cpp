@@ -190,7 +190,7 @@ CommandCost StoryPageButton::_do(DoCommandFlag flags) {
 }
 
 Commands BuildRailWaypoint::get_command() { return CMD_BUILD_RAIL_WAYPOINT; }
-static constexpr auto _BuildRailWaypoint_dispatch = MakeDispatchTable<CMD_BUILD_RAIL_WAYPOINT, TileIndex, Axis, byte, byte, StationClassID, uint16_t, StationID, bool>();
+static constexpr auto _BuildRailWaypoint_dispatch = MakeDispatchTable<CMD_BUILD_RAIL_WAYPOINT, TileIndex, Axis, uint8_t, uint8_t, StationClassID, uint16_t, StationID, bool>();
 bool BuildRailWaypoint::_post(::CommandCallback *callback) {
     return _BuildRailWaypoint_dispatch[FindCallbackIndex(callback)](this->error, this->start_tile, this->axis, this->width, this->height, this->spec_class, this->spec_index, this->station_to_join, this->adjacent);
 }
@@ -205,6 +205,24 @@ bool RemoveFromRailWaypoint::_post(::CommandCallback *callback) {
 }
 CommandCost RemoveFromRailWaypoint::_do(DoCommandFlag flags) {
     return (::Command<CMD_REMOVE_FROM_RAIL_WAYPOINT>::Do(flags, start, end, keep_rail));
+}
+
+Commands BuildRoadWaypoint::get_command() { return CMD_BUILD_ROAD_WAYPOINT; }
+static constexpr auto _BuildRoadWaypoint_dispatch = MakeDispatchTable<CMD_BUILD_ROAD_WAYPOINT, TileIndex, Axis, uint8_t, uint8_t, RoadStopClassID, uint16_t, StationID, bool>();
+bool BuildRoadWaypoint::_post(::CommandCallback *callback) {
+    return _BuildRoadWaypoint_dispatch[FindCallbackIndex(callback)](this->error, this->start_tile, this->axis, this->width, this->height, this->spec_class, this->spec_index, this->station_to_join, this->adjacent);
+}
+CommandCost BuildRoadWaypoint::_do(DoCommandFlag flags) {
+    return (::Command<CMD_BUILD_ROAD_WAYPOINT>::Do(flags, start_tile, axis, width, height, spec_class, spec_index, station_to_join, adjacent));
+}
+
+Commands RemoveFromRoadWaypoint::get_command() { return CMD_REMOVE_FROM_ROAD_WAYPOINT; }
+static constexpr auto _RemoveFromRoadWaypoint_dispatch = MakeDispatchTable<CMD_REMOVE_FROM_ROAD_WAYPOINT, TileIndex, TileIndex>();
+bool RemoveFromRoadWaypoint::_post(::CommandCallback *callback) {
+    return _RemoveFromRoadWaypoint_dispatch[FindCallbackIndex(callback)](this->error, this->start, this->end);
+}
+CommandCost RemoveFromRoadWaypoint::_do(DoCommandFlag flags) {
+    return (::Command<CMD_REMOVE_FROM_ROAD_WAYPOINT>::Do(flags, start, end));
 }
 
 Commands BuildBuoy::get_command() { return CMD_BUILD_BUOY; }
@@ -226,7 +244,7 @@ CommandCost RenameWaypoint::_do(DoCommandFlag flags) {
 }
 
 Commands BuildAirport::get_command() { return CMD_BUILD_AIRPORT; }
-static constexpr auto _BuildAirport_dispatch = MakeDispatchTable<CMD_BUILD_AIRPORT, TileIndex, byte, byte, StationID, bool>();
+static constexpr auto _BuildAirport_dispatch = MakeDispatchTable<CMD_BUILD_AIRPORT, TileIndex, uint8_t, uint8_t, StationID, bool>();
 bool BuildAirport::_post(::CommandCallback *callback) {
     return _BuildAirport_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->airport_type, this->layout, this->station_to_join, this->adjacent);
 }
@@ -244,7 +262,7 @@ CommandCost BuildDock::_do(DoCommandFlag flags) {
 }
 
 Commands BuildRailStation::get_command() { return CMD_BUILD_RAIL_STATION; }
-static constexpr auto _BuildRailStation_dispatch = MakeDispatchTable<CMD_BUILD_RAIL_STATION, TileIndex, RailType, Axis, byte, byte, StationClassID, uint16_t, StationID, bool>();
+static constexpr auto _BuildRailStation_dispatch = MakeDispatchTable<CMD_BUILD_RAIL_STATION, TileIndex, RailType, Axis, uint8_t, uint8_t, StationClassID, uint16_t, StationID, bool>();
 bool BuildRailStation::_post(::CommandCallback *callback) {
     return _BuildRailStation_dispatch[FindCallbackIndex(callback)](this->error, this->tile_org, this->rt, this->axis, this->numtracks, this->plat_len, this->spec_class, this->spec_index, this->station_to_join, this->adjacent);
 }
@@ -604,7 +622,7 @@ CommandCost SetTimetableStart::_do(DoCommandFlag flags) {
 }
 
 Commands PlantTree::get_command() { return CMD_PLANT_TREE; }
-static constexpr auto _PlantTree_dispatch = MakeDispatchTable<CMD_PLANT_TREE, TileIndex, TileIndex, byte, bool>();
+static constexpr auto _PlantTree_dispatch = MakeDispatchTable<CMD_PLANT_TREE, TileIndex, TileIndex, uint8_t, bool>();
 bool PlantTree::_post(::CommandCallback *callback) {
     return _PlantTree_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->start_tile, this->tree_to_plant, this->diagonal);
 }
@@ -694,7 +712,7 @@ CommandCost SellVehicle::_do(DoCommandFlag flags) {
 }
 
 Commands RefitVehicle::get_command() { return CMD_REFIT_VEHICLE; }
-static constexpr auto _RefitVehicle_dispatch = MakeDispatchTable<CMD_REFIT_VEHICLE, TileIndex, VehicleID, CargoID, byte, bool, bool, uint8_t>();
+static constexpr auto _RefitVehicle_dispatch = MakeDispatchTable<CMD_REFIT_VEHICLE, TileIndex, VehicleID, CargoID, uint8_t, bool, bool, uint8_t>();
 bool RefitVehicle::_post(::CommandCallback *callback) {
     return _RefitVehicle_dispatch[FindCallbackIndex(callback)](this->error, this->location, this->veh_id, this->new_cid, this->new_subtype, this->auto_refit, this->only_this, this->num_vehicles);
 }
@@ -847,7 +865,7 @@ CommandCost BuildTrainDepot::_do(DoCommandFlag flags) {
 }
 
 Commands BuildSingleSignal::get_command() { return CMD_BUILD_SINGLE_SIGNAL; }
-static constexpr auto _BuildSingleSignal_dispatch = MakeDispatchTable<CMD_BUILD_SINGLE_SIGNAL, TileIndex, Track, SignalType, SignalVariant, bool, bool, bool, SignalType, SignalType, uint8_t, byte>();
+static constexpr auto _BuildSingleSignal_dispatch = MakeDispatchTable<CMD_BUILD_SINGLE_SIGNAL, TileIndex, Track, SignalType, SignalVariant, bool, bool, bool, SignalType, SignalType, uint8_t, uint8_t>();
 bool BuildSingleSignal::_post(::CommandCallback *callback) {
     return _BuildSingleSignal_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->track, this->sigtype, this->sigvar, this->convert_signal, this->skip_existing_signals, this->ctrl_pressed, this->cycle_start, this->cycle_stop, this->num_dir_cycle, this->signals_copy);
 }
@@ -874,7 +892,7 @@ CommandCost ConvertRail::_do(DoCommandFlag flags) {
 }
 
 Commands BuildSignalTrack::get_command() { return CMD_BUILD_SIGNAL_TRACK; }
-static constexpr auto _BuildSignalTrack_dispatch = MakeDispatchTable<CMD_BUILD_SIGNAL_TRACK, TileIndex, TileIndex, Track, SignalType, SignalVariant, bool, bool, bool, byte>();
+static constexpr auto _BuildSignalTrack_dispatch = MakeDispatchTable<CMD_BUILD_SIGNAL_TRACK, TileIndex, TileIndex, Track, SignalType, SignalVariant, bool, bool, bool, uint8_t>();
 bool BuildSignalTrack::_post(::CommandCallback *callback) {
     return _BuildSignalTrack_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->end_tile, this->track, this->sigtype, this->sigvar, this->mode, this->autofill, this->minimise_gaps, this->signal_density);
 }
@@ -898,6 +916,15 @@ bool CompanyCtrl::_post(::CommandCallback *callback) {
 }
 CommandCost CompanyCtrl::_do(DoCommandFlag flags) {
     return (::Command<CMD_COMPANY_CTRL>::Do(flags, cca, company_id, reason, client_id));
+}
+
+Commands CompanyAllowListCtrl::get_command() { return CMD_COMPANY_ALLOW_LIST_CTRL; }
+static constexpr auto _CompanyAllowListCtrl_dispatch = MakeDispatchTable<CMD_COMPANY_ALLOW_LIST_CTRL, CompanyAllowListCtrlAction, const std::string &>();
+bool CompanyAllowListCtrl::_post(::CommandCallback *callback) {
+    return _CompanyAllowListCtrl_dispatch[FindCallbackIndex(callback)](this->error, this->action, this->public_key);
+}
+CommandCost CompanyAllowListCtrl::_do(DoCommandFlag flags) {
+    return (::Command<CMD_COMPANY_ALLOW_LIST_CTRL>::Do(flags, action, public_key));
 }
 
 Commands GiveMoney::get_command() { return CMD_GIVE_MONEY; }
@@ -1044,6 +1071,15 @@ CommandCost DeleteTown::_do(DoCommandFlag flags) {
     return (::Command<CMD_DELETE_TOWN>::Do(flags, town_id));
 }
 
+Commands PlaceHouse::get_command() { return CMD_PLACE_HOUSE; }
+static constexpr auto _PlaceHouse_dispatch = MakeDispatchTable<CMD_PLACE_HOUSE, TileIndex, HouseID>();
+bool PlaceHouse::_post(::CommandCallback *callback) {
+    return _PlaceHouse_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->house);
+}
+CommandCost PlaceHouse::_do(DoCommandFlag flags) {
+    return (::Command<CMD_PLACE_HOUSE>::Do(flags, tile, house));
+}
+
 Commands TurnRoadVeh::get_command() { return CMD_TURN_ROADVEH; }
 static constexpr auto _TurnRoadVeh_dispatch = MakeDispatchTable<CMD_TURN_ROADVEH, TileIndex, VehicleID>();
 bool TurnRoadVeh::_post(::CommandCallback *callback) {
@@ -1090,7 +1126,7 @@ CommandCost IndustrySetText::_do(DoCommandFlag flags) {
 }
 
 Commands IndustrySetProduction::get_command() { return CMD_INDUSTRY_SET_PRODUCTION; }
-static constexpr auto _IndustrySetProduction_dispatch = MakeDispatchTable<CMD_INDUSTRY_SET_PRODUCTION, IndustryID, byte, bool, const std::string &>();
+static constexpr auto _IndustrySetProduction_dispatch = MakeDispatchTable<CMD_INDUSTRY_SET_PRODUCTION, IndustryID, uint8_t, bool, const std::string &>();
 bool IndustrySetProduction::_post(::CommandCallback *callback) {
     return _IndustrySetProduction_dispatch[FindCallbackIndex(callback)](this->error, this->ind_id, this->prod_level, this->show_news, this->text);
 }
@@ -1261,7 +1297,7 @@ CommandCost SetVehicleVisibility::_do(DoCommandFlag flags) {
 }
 
 Commands BuildBridge::get_command() { return CMD_BUILD_BRIDGE; }
-static constexpr auto _BuildBridge_dispatch = MakeDispatchTable<CMD_BUILD_BRIDGE, TileIndex, TileIndex, TransportType, BridgeType, byte>();
+static constexpr auto _BuildBridge_dispatch = MakeDispatchTable<CMD_BUILD_BRIDGE, TileIndex, TileIndex, TransportType, BridgeType, uint8_t>();
 bool BuildBridge::_post(::CommandCallback *callback) {
     return _BuildBridge_dispatch[FindCallbackIndex(callback)](this->error, this->tile_end, this->tile_start, this->transport_type, this->bridge_type, this->road_rail_type);
 }
@@ -1270,7 +1306,7 @@ CommandCost BuildBridge::_do(DoCommandFlag flags) {
 }
 
 Commands BuildTunnel::get_command() { return CMD_BUILD_TUNNEL; }
-static constexpr auto _BuildTunnel_dispatch = MakeDispatchTable<CMD_BUILD_TUNNEL, TileIndex, TransportType, byte>();
+static constexpr auto _BuildTunnel_dispatch = MakeDispatchTable<CMD_BUILD_TUNNEL, TileIndex, TransportType, uint8_t>();
 bool BuildTunnel::_post(::CommandCallback *callback) {
     return _BuildTunnel_dispatch[FindCallbackIndex(callback)](this->error, this->start_tile, this->transport_type, this->road_rail_type);
 }

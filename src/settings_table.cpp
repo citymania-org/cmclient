@@ -17,6 +17,7 @@
 #include "network/network_func.h"
 #include "network/core/config.h"
 #include "pathfinder/pathfinder_type.h"
+#include "pathfinder/aystar.h"
 #include "linkgraph/linkgraphschedule.h"
 #include "genworld.h"
 #include "train.h"
@@ -117,6 +118,28 @@ static void SettingsValueAbsolute(const IntSettingDesc &sd, uint first_param, in
 {
 	SetDParam(first_param, sd.str_val + ((value >= 0) ? 1 : 0));
 	SetDParam(first_param + 1, abs(value));
+}
+
+/** Service Interval Settings Default Value displays the correct units or as a percentage */
+static void ServiceIntervalSettingsValueText(const IntSettingDesc &sd, uint first_param, int32_t value)
+{
+	VehicleDefaultSettings *vds;
+	if (_game_mode == GM_MENU || !Company::IsValidID(_current_company)) {
+		vds = &_settings_client.company.vehicle;
+	} else {
+		vds = &Company::Get(_current_company)->settings.vehicle;
+	}
+
+	if (value == 0) {
+		SetDParam(first_param, sd.str_val + 3);
+	} else if (vds->servint_ispercent) {
+		SetDParam(first_param, sd.str_val + 2);
+	} else if (TimerGameEconomy::UsingWallclockUnits(_game_mode == GM_MENU)) {
+		SetDParam(first_param, sd.str_val + 1);
+	} else {
+		SetDParam(first_param, sd.str_val);
+	}
+	SetDParam(first_param + 1, value);
 }
 
 /** Reposition the main toolbar as the setting changed. */
@@ -241,6 +264,43 @@ static void UpdateServiceInterval(VehicleType type, int32_t new_value)
 	}
 
 	SetWindowClassesDirty(WC_VEHICLE_DETAILS);
+}
+
+/**
+ * Checks if the service intervals in the settings are specified as percentages and corrects the default value accordingly.
+ * @param new_value Contains the service interval's default value in days, or 50 (default in percentage).
+ */
+static int32_t GetDefaultServiceInterval(VehicleType type)
+{
+	VehicleDefaultSettings *vds;
+	if (_game_mode == GM_MENU || !Company::IsValidID(_current_company)) {
+		vds = &_settings_client.company.vehicle;
+	} else {
+		vds = &Company::Get(_current_company)->settings.vehicle;
+	}
+
+	int32_t new_value;
+	if (vds->servint_ispercent) {
+		new_value = DEF_SERVINT_PERCENT;
+	} else if (TimerGameEconomy::UsingWallclockUnits(_game_mode == GM_MENU)) {
+		switch (type) {
+			case VEH_TRAIN:    new_value = DEF_SERVINT_MINUTES_TRAINS; break;
+			case VEH_ROAD:     new_value = DEF_SERVINT_MINUTES_ROADVEH; break;
+			case VEH_AIRCRAFT: new_value = DEF_SERVINT_MINUTES_AIRCRAFT; break;
+			case VEH_SHIP:     new_value = DEF_SERVINT_MINUTES_SHIPS; break;
+			default: NOT_REACHED();
+		}
+	} else {
+		switch (type) {
+			case VEH_TRAIN:    new_value = DEF_SERVINT_DAYS_TRAINS; break;
+			case VEH_ROAD:     new_value = DEF_SERVINT_DAYS_ROADVEH; break;
+			case VEH_AIRCRAFT: new_value = DEF_SERVINT_DAYS_AIRCRAFT; break;
+			case VEH_SHIP:     new_value = DEF_SERVINT_DAYS_SHIPS; break;
+			default: NOT_REACHED();
+		}
+	}
+
+	return new_value;
 }
 
 static void TrainAccelerationModelChanged(int32_t)
@@ -476,7 +536,7 @@ static bool CheckMaxHeightLevel(int32_t &new_value)
 
 	/* Check if at least one mountain on the map is higher than the new value.
 	 * If yes, disallow the change. */
-	for (TileIndex t = 0; t < Map::Size(); t++) {
+	for (const auto t : Map::Iterate()) {
 		if ((int32_t)TileHeight(t) > new_value) {
 			ShowErrorMessage(STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN, INVALID_STRING_ID, WL_ERROR);
 			/* Return old, unchanged value */
@@ -499,13 +559,6 @@ static void MaxVehiclesChanged(int32_t)
 	MarkWholeScreenDirty();
 }
 
-static void InvalidateShipPathCache(int32_t)
-{
-	for (Ship *s : Ship::Iterate()) {
-		s->path.clear();
-	}
-}
-
 /**
  * Replace a passwords that are a literal asterisk with an empty string.
  * @param newval The new string value for this password field.
@@ -522,9 +575,10 @@ static void UpdateClientConfigValues()
 {
 	NetworkServerUpdateGameInfo();
 
+	InvalidateWindowData(WC_CLIENT_LIST, 0);
+
 	if (_network_server) {
 		NetworkServerSendConfigUpdate();
-		SetWindowClassesDirty(WC_CLIENT_LIST);
 	}
 }
 

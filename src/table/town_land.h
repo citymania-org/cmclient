@@ -24,7 +24,7 @@
 #define M(s1, p1, s2, p2, sx, sy, w, h, dz, p) { { s1, p1 }, { s2, p2 }, sx, sy, w, h, dz, p}
 
 /** structure of houses graphics*/
-static const DrawBuildingsTileStruct _town_draw_tile_data[] = {
+extern const DrawBuildingsTileStruct _town_draw_tile_data[] = {
 	M( SPR_FLAT_BARE_LAND,                   PAL_NONE,  0x58d,                   PAL_NONE,  0,  0, 14, 14,   8, 0),
 	M( SPR_FLAT_BARE_LAND,                   PAL_NONE,  0x58e,                   PAL_NONE,  0,  0, 14, 14,  60, 0),
 	M( SPR_FLAT_BARE_LAND,                   PAL_NONE,  0x58f,                   PAL_NONE,  0,  0, 14, 14,  60, 0),
@@ -1813,11 +1813,10 @@ static_assert(lengthof(_town_draw_tile_data) == (NEW_HOUSE_OFFSET) * 4 * 4);
 	{mnd, mxd, p, rc, bn, rr, mg, \
 	{ca1, ca2, ca3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, \
 	{INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO, INVALID_CARGO}, \
-	{cg1, cg2, cg3, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID, CT_INVALID}, \
 	bf, ba, true, GRFFileProps(INVALID_HOUSE_ID), 0, {COLOUR_BEGIN, COLOUR_BEGIN, COLOUR_BEGIN, COLOUR_BEGIN}, \
-	16, NO_EXTRA_FLAG, HOUSE_NO_CLASS, {0, 2, 0, 0}, 0, 0, 0}
+	16, NO_EXTRA_FLAG, HOUSE_NO_CLASS, {0, 2, 0, 0}, 0, 0, 0, {cg1, cg2, cg3}, }
 /** House specifications from original data */
-static const HouseSpec _original_house_specs[] = {
+extern const HouseSpec _original_house_specs[NEW_HOUSE_OFFSET] = {
 	/**
 	 *                                                                              remove_rating_decrease
 	 *                                                                              |    mail_generation

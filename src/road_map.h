@@ -393,7 +393,7 @@ inline bool HasCrossingReservation(Tile t)
 inline void SetCrossingReservation(Tile t, bool b)
 {
 	assert(IsLevelCrossingTile(t));
-	SB(t.m5(), 4, 1, b ? 1 : 0);
+	AssignBit(t.m5(), 4, b);
 }
 
 /**
@@ -428,7 +428,7 @@ inline bool IsCrossingBarred(Tile t)
 inline void SetCrossingBarred(Tile t, bool barred)
 {
 	assert(IsLevelCrossing(t));
-	SB(t.m5(), 5, 1, barred ? 1 : 0);
+	AssignBit(t.m5(), 5, barred);
 }
 
 /**
@@ -474,7 +474,7 @@ inline void ToggleSnow(Tile t)
 
 
 /** The possible road side decorations. */
-enum Roadside {
+enum Roadside : uint8_t {
 	ROADSIDE_BARREN           = 0, ///< Road on barren land
 	ROADSIDE_GRASS            = 1, ///< Road on grass
 	ROADSIDE_PAVED            = 2, ///< Road with paved sidewalks

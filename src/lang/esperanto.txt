@@ -349,6 +349,7 @@ STR_UNITS_YEARS                                                 :{NUM}{NBSP}jaro
 STR_UNITS_PERIODS                                               :{NUM}{NBSP}periodo{P "" j}
 STR_UNITS_PERIODS.n                                             :{NUM}{NBSP}periodo{P "" j}n
 
+
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Filtroteksto:
 STR_LIST_FILTER_OSKTITLE                                        :{BLACK}Entajpu filtrotekston.
@@ -391,7 +392,6 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Post akt
 STR_BUTTON_DEFAULT                                              :{BLACK}Normo
 STR_BUTTON_CANCEL                                               :{BLACK}Nuligu
 STR_BUTTON_OK                                                   :{BLACK}Bone
-STR_WARNING_PASSWORD_SECURITY                                   :{YELLOW}Atentu: La serviladministrantoj eventuale povas legi ajnan tekston entajpitan ĉi tie.
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :`1234567890-=\qwertyuiop[]asdfghjkl;'  zxcvbnm,./ .
@@ -454,6 +454,7 @@ STR_SORT_BY_AVERAGE_PROFIT_THIS_PERIOD                          :Averaĝa profit
 
 # Group by options for vehicle list
 STR_GROUP_BY_NONE                                               :Neniu
+STR_GROUP_BY_SHARED_ORDERS                                      :Kundividitaj mendoj
 
 # Order button in shared orders vehicle list
 STR_GOTO_ORDER_VIEW                                             :{BLACK}Itinero
@@ -519,12 +520,15 @@ STR_SCENEDIT_FILE_MENU_QUIT_EDITOR                              :Forlasi scenaro
 STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Forlasi
 
+
 # Settings menu
 ###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Ludaj agordoj
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Agordoj
+STR_SETTINGS_MENU_AI_SETTINGS                                   :AI agordoj
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Ludoskriptaj agordoj
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Agordoj de NewGRF
+STR_SETTINGS_MENU_SANDBOX_OPTIONS                               :Sablujaj agordoj
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Ebloj por travidebleco
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Urbonomoj montriĝas
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Stacionomoj montriĝas
@@ -698,6 +702,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Montru �
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Ne montru ŝarĝojn en la ŝarĝaj pagaj procentoj grafiko
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}(Mal)ŝaltu grafikon por ŝarĝo
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Montri detalaj rendimentpritaksoj
 
@@ -1018,18 +1023,13 @@ STR_GAME_OPTIONS_VOLUME                                         :Laŭteco
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Sonefektoj
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Muziko
 
-STR_GAME_OPTIONS_VOLUME_0                                       :0%
-STR_GAME_OPTIONS_VOLUME_25                                      :25%
-STR_GAME_OPTIONS_VOLUME_50                                      :50%
-STR_GAME_OPTIONS_VOLUME_75                                      :75%
-STR_GAME_OPTIONS_VOLUME_100                                     :100%
 
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Monunuoj
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Elekto de monunuoj
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 43
+###length 44
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Brita Pundo
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Usona Dolaro
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Eŭro
@@ -1073,6 +1073,7 @@ STR_GAME_OPTIONS_CURRENCY_INR                                   :Barata rupio
 STR_GAME_OPTIONS_CURRENCY_IDR                                   :Indonezia rupio
 STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malajzia ringito
 STR_GAME_OPTIONS_CURRENCY_LVL                                   :Latvaj Latoj
+STR_GAME_OPTIONS_CURRENCY_PTE                                   :Portugalaj Eskudoj
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Aŭtomata konservado
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Elektu intervalon inter aŭtomataj konservadoj de la ludo
@@ -1115,11 +1116,6 @@ STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Ŝaltu �
 STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Glatigu tiparojn
 STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Ŝaltu ĉi tiun kvadrateton por glatigi aligrandigeblajn tiparojn
 
-STR_GAME_OPTIONS_GUI_SCALE_1X                                   :1x
-STR_GAME_OPTIONS_GUI_SCALE_2X                                   :2x
-STR_GAME_OPTIONS_GUI_SCALE_3X                                   :3x
-STR_GAME_OPTIONS_GUI_SCALE_4X                                   :4x
-STR_GAME_OPTIONS_GUI_SCALE_5X                                   :5x
 
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Aŭtomata sondado
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Partopreni aŭtomatan sondadon
@@ -1147,6 +1143,7 @@ STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Aldonaj 
 STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Baza muzikaro.
 STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Elekti bazan muzikaron por uzi.
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Pluaj informoj pri la baza muzikaro.
+
 
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :{BLACK}Stato de la kromprogramo:
@@ -1523,6 +1520,7 @@ STR_CONFIG_SETTING_WARN_INCOME_LESS                             :Avertu se gajno
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :Kiam tiu ĉi agordo estas aktiva, aperas anonco kiam iu veturilo ne faris profiton dum jaro
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT_PERIOD             :Kiam tiu ĉi agordo estas aktiva, aperas anonco kiam iu veturilo ne faris profiton dum periodo
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Veturiloj neniam eluziĝas: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :Se tiu ĉi agordo estas aktiva, ĉiuj modeloj de veturiloj restos aĉeteblaj por ĉiam post ekhaveblo
 
@@ -1593,6 +1591,7 @@ STR_CONFIG_SETTING_DESERT_COVERAGE_HELPTEXT                     :Elektu la proks
 STR_CONFIG_SETTING_DESERT_COVERAGE_VALUE                        :{NUM}%
 
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Nereguleco de tereno: {STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :Elektu la formon kaj nombron da montetoj. Glataj pejzaĝoj havas pli malmultajn, pli larĝajn montetojn, dum malglataj pejzaĝoj havas pli multe, malgrandajn montetojn.
 ###length 4
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Tre Regule
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Regule
@@ -1840,7 +1839,8 @@ STR_CONFIG_SETTING_SERVINT_AIRCRAFT                             :Defaŭlta prise
 STR_CONFIG_SETTING_SERVINT_AIRCRAFT_HELPTEXT                    :Elektu la defaŭltan priservintervalon por novaj aviadiloj, se ne estas eksplicite agordita priservintervalo por la veturilo
 STR_CONFIG_SETTING_SERVINT_SHIPS                                :Defaŭlta priservintervalo por ŝipoj: {STRING}
 STR_CONFIG_SETTING_SERVINT_SHIPS_HELPTEXT                       :Elektu la defaŭltan priservintervalon por novaj ŝipoj, se ne estas eksplicite agordita priservintervalo por la veturilo
-STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA}{NBSP}tago{P 0 "" j}/minuto{P 0 "" j}/%
+###length 3
+
 ###setting-zero-is-special
 STR_CONFIG_SETTING_SERVINT_DISABLED                             :Malaktiva
 
@@ -2122,15 +2122,8 @@ STR_CONFIG_SETTING_AI                                           :Konkurantoj
 STR_CONFIG_SETTING_AI_NPC                                       :Komputil-ludantoj
 STR_CONFIG_SETTING_NETWORK                                      :Reto
 
-STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS                        :Padtrovilo por vagonaroj: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_ROAD_VEHICLES                 :Padtrovilo por stratveturiloj: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_ROAD_VEHICLES_HELPTEXT        :Padtrovilo uzota por stratveturiloj
-STR_CONFIG_SETTING_PATHFINDER_FOR_SHIPS                         :Padtrovilo por ŝipoj: {STRING}
 STR_CONFIG_SETTING_REVERSE_AT_SIGNALS                           :Aŭtomata dorsflankante ĉe signaloj: {STRING}
 STR_CONFIG_SETTING_REVERSE_AT_SIGNALS_HELPTEXT                  :Permesu al vagonaro turniĝi ĉe semaforo, se ĝi jam atendis dum longa tempo
-###length 2
-STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
-STR_CONFIG_SETTING_PATHFINDER_YAPF                              :YAPF {BLUE}(Rekomendite)
 
 STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}Ŝanĝu agord-valoron
 
@@ -2436,7 +2429,6 @@ STR_NETWORK_CONNECTING_SPECIAL_2                                :{BLACK}Kaptante
 STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Malkonektu
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Servilo estas protektata. Enigu pasvorton
-STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Kompanio estas protektata. Enigu pasvorton
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Enretaj ludantoj
@@ -2502,19 +2494,9 @@ STR_NETWORK_ASK_SURVEY_YES                                      :Jes
 
 STR_NETWORK_SPECTATORS                                          :Spektantoj
 
-# Network set password
-STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Ne konservu la pasvorton.
-STR_COMPANY_PASSWORD_OK                                         :{BLACK}Donu la novan pasvorton al la kompanio.
-STR_COMPANY_PASSWORD_CAPTION                                    :{WHITE}Kompania pasvorto
-STR_COMPANY_PASSWORD_MAKE_DEFAULT                               :{BLACK}Fari defaŭltan kompanipasvorton.
-STR_COMPANY_PASSWORD_MAKE_DEFAULT_TOOLTIP                       :{BLACK}Uzu ĉi tiun kompanipasvorton kiel defaŭlto por novaj kompanioj.
-
 # Network company info join/password
 STR_COMPANY_VIEW_JOIN                                           :{BLACK}Anigi
 STR_COMPANY_VIEW_JOIN_TOOLTIP                                   :{BLACK}Anigi kaj ludi kiel ĉi tiu kompanio.
-STR_COMPANY_VIEW_PASSWORD                                       :{BLACK}Pasvorto
-STR_COMPANY_VIEW_PASSWORD_TOOLTIP                               :{BLACK}Pasvorte protektu vian kompanion por eviti ke eksteruloj aliĝu
-STR_COMPANY_VIEW_SET_PASSWORD                                   :{BLACK}Agordu kompanian pasvorton
 
 # Network chat
 STR_NETWORK_CHAT_SEND                                           :{BLACK}Sendu
@@ -2554,7 +2536,7 @@ STR_NETWORK_ERROR_INVALID_CLIENT_NAME                           :{WHITE}Via luda
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION            :{WHITE}Ebla konektoperdo
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION                    :{WHITE}Ne alvenis datumoj de la servilo dum la pasinta{P 0 "" j} {NUM} sekundo{P 0 "" j}
 
-###length 21
+###length 23
 STR_NETWORK_ERROR_CLIENT_GENERAL                                :ĝenerala eraro
 STR_NETWORK_ERROR_CLIENT_DESYNC                                 :sensinkroneca eraro
 STR_NETWORK_ERROR_CLIENT_SAVEGAME                               :ne povis ŝarĝi mapon
@@ -2765,7 +2747,6 @@ STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Elekti d
 
 # Rail waypoint construction window
 STR_WAYPOINT_CAPTION                                            :{WHITE}Vojpunkto
-STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Elekti tipon de vojpunkto
 
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}Elekto de Stacidomo
@@ -2778,8 +2759,12 @@ STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Elektu l
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Tiru k metu
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Tiru por konstrui stacidomon
 
-STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Elekti stacidomklason por montri.
-STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Elekti stacidomotipon por konstrui.
+
+
+
+STR_HOUSE_PICKER_CLASS_ZONE1                                    :Rando
+STR_HOUSE_PICKER_CLASS_ZONE2                                    :Periferioj
+STR_HOUSE_PICKER_CLASS_ZONE3                                    :Eksteraj Antaŭurboj
 
 STR_STATION_CLASS_DFLT                                          :Defaŭlta
 STR_STATION_CLASS_DFLT_STATION                                  :Defaŭlta stacio
@@ -2914,8 +2899,6 @@ STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Aĉetu l
 
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Elekto de Objekto
-STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Elektu objekton por konstrui. La majuskliga klavo baskuligas inter konstrui/(kosto)taksi
-STR_OBJECT_BUILD_CLASS_TOOLTIP                                  :{BLACK}Elektu klason de la objekto konstrui
 STR_OBJECT_BUILD_PREVIEW_TOOLTIP                                :{BLACK}Antaŭvido de la objekto
 STR_OBJECT_BUILD_SIZE                                           :{BLACK}Grandeco: {GOLD}{NUM} x {NUM} kaheloj
 
@@ -3029,7 +3012,7 @@ STR_LAND_AREA_INFORMATION_TRAM_OWNER                            :{BLACK}Posedant
 STR_LAND_AREA_INFORMATION_RAIL_OWNER                            :{BLACK}Posedanto de fervojo: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY                       :{BLACK}Lokaj estroj: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE                  :Neniu
-STR_LAND_AREA_INFORMATION_LANDINFO_COORDS                       :{BLACK}Troviĝo: {LTBLUE}{NUM} x {NUM} x {NUM} ({STRING})
+STR_LAND_AREA_INFORMATION_LANDINFO_COORDS                       :{BLACK}Troviĝo: {LTBLUE}{NUM} x {NUM} x {NUM}
 STR_LAND_AREA_INFORMATION_BUILD_DATE                            :{BLACK}Kreite: {LTBLUE}{DATE_LONG}
 STR_LAND_AREA_INFORMATION_STATION_CLASS                         :{BLACK}Stacioklaso: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_STATION_TYPE                          :{BLACK}Staciotipo: {LTBLUE}{STRING}
@@ -3340,6 +3323,8 @@ STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Trakuran
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Ruligas la skripton
 STR_GENERATION_PREPARING_GAME                                   :{BLACK}Preparante ludon
 
+
+
 # NewGRF settings
 STR_NEWGRF_SETTINGS_CAPTION                                     :{WHITE}NewGRF-Agordoj
 STR_NEWGRF_SETTINGS_INFO_TITLE                                  :{WHITE}Detalaj informoj de NewGRF
@@ -3520,7 +3505,6 @@ STR_EDIT_SIGN_PREVIOUS_SIGN_TOOLTIP                             :{BLACK}Iri al l
 STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}Enigu nomon por la signo
 
 # Town directory window
-STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}Urboj
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}-Neniu -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
 STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{YELLOW} (Urbego){BLACK} ({COMMA})
@@ -3836,7 +3820,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_YEAR                      :{WHITE}{CURRENC
 STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD                    :{WHITE}{CURRENCY_LONG}/periodo
 
 # Industry directory
-STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industrioj
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Neniu -
 STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% transportiĝis){BLACK}
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
@@ -4292,12 +4275,7 @@ STR_VEHICLE_STATUS_CANNOT_REACH_DEPOT_VEL                       :{ORANGE}{1:VELO
 STR_VEHICLE_STATUS_CANNOT_REACH_DEPOT_SERVICE_VEL               :{LTBLUE}{1:VELOCITY} - Ne povas atingi {0:DEPOT}
 
 # Vehicle stopped/started animations
-###length 2
-STR_VEHICLE_COMMAND_STOPPED_SMALL                               :{TINY_FONT}{RED}Halta
 STR_VEHICLE_COMMAND_STOPPED                                     :{RED}Halta
-
-###length 2
-STR_VEHICLE_COMMAND_STARTED_SMALL                               :{TINY_FONT}{GREEN}Komenca
 STR_VEHICLE_COMMAND_STARTED                                     :{GREEN}Komenca
 
 # Vehicle details
@@ -4744,25 +4722,16 @@ STR_TEXTFILE_GAME_MANUAL_CAPTION                                :{WHITE}OpenTTD-
 
 
 # Vehicle loading indicators
-STR_PERCENT_UP_SMALL                                            :{TINY_FONT}{WHITE}{NUM}%{UP_ARROW}
 STR_PERCENT_UP                                                  :{WHITE}{NUM}%{UP_ARROW}
-STR_PERCENT_DOWN_SMALL                                          :{TINY_FONT}{WHITE}{NUM}%{DOWN_ARROW}
 STR_PERCENT_DOWN                                                :{WHITE}{NUM}%{DOWN_ARROW}
-STR_PERCENT_UP_DOWN_SMALL                                       :{TINY_FONT}{WHITE}{NUM}%{UP_ARROW}{DOWN_ARROW}
 STR_PERCENT_UP_DOWN                                             :{WHITE}{NUM}%{UP_ARROW}{DOWN_ARROW}
-STR_PERCENT_NONE_SMALL                                          :{TINY_FONT}{WHITE}{NUM}%
 STR_PERCENT_NONE                                                :{WHITE}{NUM}%
 
 # Income 'floats'
-STR_INCOME_FLOAT_COST_SMALL                                     :{TINY_FONT}{RED}Kosto: {CURRENCY_LONG}
 STR_INCOME_FLOAT_COST                                           :{RED}Kosto: {CURRENCY_LONG}
-STR_INCOME_FLOAT_INCOME_SMALL                                   :{TINY_FONT}{GREEN}Enspezo: {CURRENCY_LONG}
 STR_INCOME_FLOAT_INCOME                                         :{GREEN}Enspezo: {CURRENCY_LONG}
-STR_FEEDER_TINY                                                 :{TINY_FONT}{YELLOW}Transigo: {CURRENCY_LONG}
 STR_FEEDER                                                      :{YELLOW}Transigo: {CURRENCY_LONG}
-STR_FEEDER_INCOME_TINY                                          :{TINY_FONT}{YELLOW}Tradona: {CURRENCY_LONG}{WHITE} / {GREEN}Enspezo: {CURRENCY_LONG}
 STR_FEEDER_INCOME                                               :{YELLOW}Tradona: {CURRENCY_LONG}{WHITE} / {GREEN}Enspezo: {CURRENCY_LONG}
-STR_FEEDER_COST_TINY                                            :{TINY_FONT}{YELLOW}Tradona: {CURRENCY_LONG}{WHITE} / {RED}Kosta: {CURRENCY_LONG}
 STR_FEEDER_COST                                                 :{YELLOW}Tradona: {CURRENCY_LONG}{WHITE} / {RED}Kosto: {CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_COST                                      :{WHITE}Atendata Kosto: {CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_INCOME                                    :{WHITE}Atendata enspezo: {CURRENCY_LONG}
@@ -4771,9 +4740,7 @@ STR_MESSAGE_ESTIMATED_INCOME                                    :{WHITE}Atendata
 STR_ERROR_SAVE_STILL_IN_PROGRESS                                :{WHITE}Ankoraŭ konservas,{}bv atendi ĝis finiĝo!
 STR_ERROR_AUTOSAVE_FAILED                                       :{WHITE}Fiaskis aŭtomate konservi
 STR_ERROR_UNABLE_TO_READ_DRIVE                                  :{BLACK}Ne eblas legi diskon
-STR_ERROR_GAME_SAVE_FAILED                                      :{WHITE}Ludkonservado Fiaskis{}{STRING}
 STR_ERROR_UNABLE_TO_DELETE_FILE                                 :{WHITE}Ne eblas forviŝi dosieron
-STR_ERROR_GAME_LOAD_FAILED                                      :{WHITE}Ludŝarĝado Fiaskis{}{STRING}
 STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR                   :Interna eraro: {STRING}
 STR_GAME_SAVELOAD_ERROR_BROKEN_SAVEGAME                         :Rompa konservludo - {STRING}
 STR_GAME_SAVELOAD_ERROR_TOO_NEW_SAVEGAME                        :Tiu ĉi ludo estis konservita per pli nova versio

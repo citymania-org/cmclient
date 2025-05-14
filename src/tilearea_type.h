@@ -59,7 +59,7 @@ struct OrthogonalTileArea {
 	 */
 	TileIndex GetCenterTile() const
 	{
-		return TILE_ADDXY(this->tile, this->w / 2, this->h / 2);
+		return TileAddXY(this->tile, this->w / 2, this->h / 2);
 	}
 
 	OrthogonalTileIterator begin() const;
@@ -122,10 +122,7 @@ protected:
 	}
 
 public:
-	/** Some compilers really like this. */
-	virtual ~TileIterator()
-	{
-	}
+	virtual ~TileIterator() = default;
 
 	/**
 	 * Get the tile we are currently at.
@@ -225,7 +222,7 @@ public:
 			this->tile++;
 		} else if (--this->y > 0) {
 			this->x = this->w;
-			this->tile += TileDiffXY(1, 1) - this->w;
+			this->tile += TileDiffXY(1 - this->w, 1);
 		} else {
 			this->tile = INVALID_TILE;
 		}

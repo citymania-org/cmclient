@@ -11,6 +11,7 @@ macro(compile_flags)
 
         if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             add_compile_options(
+                /Zc:preprocessor # Needed for __VA_OPT__() in macros.
                 /MP # Enable multi-threaded compilation.
                 /FC # Display the full path of source code files passed to the compiler in diagnostics.
             )
@@ -56,6 +57,11 @@ macro(compile_flags)
             # This flag disables the broken optimisation to work around the bug
             add_compile_options(/d2ssa-rse-)
         endif()
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            add_compile_options(
+                -Wno-multichar
+            )
+        endif()
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
         add_compile_options(
             -W
@@ -75,12 +81,6 @@ macro(compile_flags)
 
             # We use 'ABCD' multichar for SaveLoad chunks identifiers
             -Wno-multichar
-
-            # Compilers complains about that we break strict-aliasing.
-            #  On most places we don't see how to fix it, and it doesn't
-            #  break anything. So disable strict-aliasing to make the
-            #  compiler all happy.
-            -fno-strict-aliasing
         )
 
         # Ninja processes the output so the output from the compiler

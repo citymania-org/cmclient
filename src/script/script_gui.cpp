@@ -15,9 +15,10 @@
 #include "../stringfilter_type.h"
 #include "../company_base.h"
 #include "../company_gui.h"
+#include "../dropdown_type.h"
+#include "../dropdown_func.h"
 #include "../window_func.h"
 #include "../network/network.h"
-#include "../widgets/dropdown_func.h"
 #include "../hotkeys.h"
 #include "../company_cmd.h"
 #include "../misc_cmd.h"
@@ -66,7 +67,7 @@ struct ScriptListWindow : public Window {
 	 * @param slot The company we're changing the Script for.
 	 * @param show_all Whether to show all available versions.
 	 */
-	ScriptListWindow(WindowDesc *desc, CompanyID slot, bool show_all) : Window(desc),
+	ScriptListWindow(WindowDesc &desc, CompanyID slot, bool show_all) : Window(desc),
 		slot(slot), show_all(show_all)
 	{
 		if (slot == OWNER_DEITY) {
@@ -104,15 +105,15 @@ struct ScriptListWindow : public Window {
 		SetDParam(0, (this->slot == OWNER_DEITY) ? STR_AI_LIST_CAPTION_GAMESCRIPT : STR_AI_LIST_CAPTION_AI);
 	}
 
-	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
 	{
 		if (widget != WID_SCRL_LIST) return;
 
 		this->line_height = GetCharacterHeight(FS_NORMAL) + padding.height;
 
-		resize->width = 1;
-		resize->height = this->line_height;
-		size->height = 5 * this->line_height;
+		resize.width = 1;
+		resize.height = this->line_height;
+		size.height = 5 * this->line_height;
 	}
 
 	void DrawWidget(const Rect &r, WidgetID widget) const override
@@ -263,11 +264,11 @@ static constexpr NWidgetPart _nested_script_list_widgets[] = {
 };
 
 /** Window definition for the ai list window. */
-static WindowDesc _script_list_desc(__FILE__, __LINE__,
+static WindowDesc _script_list_desc(
 	WDP_CENTER, "settings_script_list", 200, 234,
 	WC_SCRIPT_LIST, WC_NONE,
 	0,
-	std::begin(_nested_script_list_widgets), std::end(_nested_script_list_widgets)
+	_nested_script_list_widgets
 );
 
 /**
@@ -278,7 +279,7 @@ static WindowDesc _script_list_desc(__FILE__, __LINE__,
 void ShowScriptListWindow(CompanyID slot, bool show_all)
 {
 	CloseWindowByClass(WC_SCRIPT_LIST);
-	new ScriptListWindow(&_script_list_desc, slot, show_all);
+	new ScriptListWindow(_script_list_desc, slot, show_all);
 }
 
 
@@ -303,7 +304,7 @@ struct ScriptSettingsWindow : public Window {
 	 * @param desc The description of the window.
 	 * @param slot The company we're changing the settings for.
 	 */
-	ScriptSettingsWindow(WindowDesc *desc, CompanyID slot) : Window(desc),
+	ScriptSettingsWindow(WindowDesc &desc, CompanyID slot) : Window(desc),
 		slot(slot),
 		clicked_button(-1),
 		clicked_dropdown(false),
@@ -342,25 +343,20 @@ struct ScriptSettingsWindow : public Window {
 		SetDParam(0, (this->slot == OWNER_DEITY) ? STR_AI_SETTINGS_CAPTION_GAMESCRIPT : STR_AI_SETTINGS_CAPTION_AI);
 	}
 
-	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
 	{
 		if (widget != WID_SCRS_BACKGROUND) return;
 
 		this->line_height = std::max(SETTING_BUTTON_HEIGHT, GetCharacterHeight(FS_NORMAL)) + padding.height;
 
-		resize->width = 1;
-		resize->height = this->line_height;
-		size->height = 5 * this->line_height;
+		resize.width = 1;
+		resize.height = this->line_height;
+		size.height = 5 * this->line_height;
 	}
 
 	void DrawWidget(const Rect &r, WidgetID widget) const override
 	{
 		if (widget != WID_SCRS_BACKGROUND) return;
-
-		ScriptConfig *config = this->script_config;
-		VisibleSettingsList::const_iterator it = this->visible_settings.begin();
-		int i = 0;
-		for (; !this->vscroll->IsVisible(i); i++) it++;
 
 		Rect ir = r.Shrink(WidgetDimensions::scaled.framerect);
 		bool rtl = _current_text_dir == TD_RTL;
@@ -370,9 +366,11 @@ struct ScriptSettingsWindow : public Window {
 		int y = r.top;
 		int button_y_offset = (this->line_height - SETTING_BUTTON_HEIGHT) / 2;
 		int text_y_offset = (this->line_height - GetCharacterHeight(FS_NORMAL)) / 2;
-		for (; this->vscroll->IsVisible(i) && it != visible_settings.end(); i++, it++) {
+
+		const auto [first, last] = this->vscroll->GetVisibleRangeIterators(this->visible_settings);
+		for (auto it = first; it != last; ++it) {
 			const ScriptConfigItem &config_item = **it;
-			int current_value = config->GetSetting((config_item).name);
+			int current_value = this->script_config->GetSetting(config_item.name);
 			bool editable = this->IsEditableItem(config_item);
 
 			StringID str;
@@ -391,6 +389,7 @@ struct ScriptSettingsWindow : public Window {
 				DrawBoolButton(br.left, y + button_y_offset, current_value != 0, editable);
 				SetDParam(idx++, current_value == 0 ? STR_CONFIG_SETTING_OFF : STR_CONFIG_SETTING_ON);
 			} else {
+				int i = static_cast<int>(std::distance(std::begin(this->visible_settings), it));
 				if (config_item.complete_labels) {
 					DrawDropDownButton(br.left, y + button_y_offset, COLOUR_YELLOW, this->clicked_row == i && clicked_dropdown, editable);
 				} else {
@@ -469,7 +468,7 @@ struct ScriptSettingsWindow : public Window {
 
 							DropDownList list;
 							for (int i = config_item.min_value; i <= config_item.max_value; i++) {
-								list.push_back(std::make_unique<DropDownListStringItem>(config_item.labels.find(i)->second, i, false));
+								list.push_back(MakeDropDownListStringItem(config_item.labels.find(i)->second, i));
 							}
 
 							ShowDropDownListAt(this, std::move(list), old_val, WID_SCRS_SETTING_DROPDOWN, wi_rect, COLOUR_ORANGE);
@@ -516,10 +515,10 @@ struct ScriptSettingsWindow : public Window {
 		}
 	}
 
-	void OnQueryTextFinished(char *str) override
+	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
-		if (StrEmpty(str)) return;
-		int32_t value = atoi(str);
+		if (!str.has_value() || str->empty()) return;
+		int32_t value = atoi(str->c_str());
 
 		SetValue(value);
 	}
@@ -608,11 +607,11 @@ static constexpr NWidgetPart _nested_script_settings_widgets[] = {
 };
 
 /** Window definition for the Script settings window. */
-static WindowDesc _script_settings_desc(__FILE__, __LINE__,
+static WindowDesc _script_settings_desc(
 	WDP_CENTER, "settings_script", 500, 208,
 	WC_SCRIPT_SETTINGS, WC_NONE,
 	0,
-	std::begin(_nested_script_settings_widgets), std::end(_nested_script_settings_widgets)
+	_nested_script_settings_widgets
 );
 
 /**
@@ -623,7 +622,7 @@ void ShowScriptSettingsWindow(CompanyID slot)
 {
 	CloseWindowByClass(WC_SCRIPT_LIST);
 	CloseWindowByClass(WC_SCRIPT_SETTINGS);
-	new ScriptSettingsWindow(&_script_settings_desc, slot);
+	new ScriptSettingsWindow(_script_settings_desc, slot);
 }
 
 
@@ -780,7 +779,7 @@ struct ScriptDebugWindow : public Window {
 	 * @param desc The description of the window.
 	 * @param number The window number (actually unused).
 	 */
-	ScriptDebugWindow(WindowDesc *desc, WindowNumber number, Owner show_company) : Window(desc), break_editbox(MAX_BREAK_STR_STRING_LENGTH)
+	ScriptDebugWindow(WindowDesc &desc, WindowNumber number, Owner show_company) : Window(desc), break_editbox(MAX_BREAK_STR_STRING_LENGTH)
 	{
 		this->filter = ScriptDebugWindow::initial_state;
 		this->break_string_filter = {&this->filter.case_sensitive_break_check, false};
@@ -824,11 +823,11 @@ struct ScriptDebugWindow : public Window {
 		ScriptDebugWindow::initial_state = this->filter;
 	}
 
-	void UpdateWidgetSize(WidgetID widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override
+	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
 	{
 		if (widget == WID_SCRD_LOG_PANEL) {
-			resize->height = GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal;
-			size->height = 14 * resize->height + WidgetDimensions::scaled.framerect.Vertical();
+			resize.height = GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal;
+			size.height = 14 * resize.height + WidgetDimensions::scaled.framerect.Vertical();
 		}
 	}
 
@@ -899,7 +898,7 @@ struct ScriptDebugWindow : public Window {
 	{
 		if (this->filter.script_debug_company == INVALID_COMPANY) return;
 
-		ScriptLogTypes::LogData &log = this->GetLogData();
+		const ScriptLogTypes::LogData &log = this->GetLogData();
 		if (log.empty()) return;
 
 		Rect fr = r.Shrink(WidgetDimensions::scaled.framerect);
@@ -913,10 +912,11 @@ struct ScriptDebugWindow : public Window {
 
 		AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
 
-		fr.left -= this->hscroll->GetPosition();
+		fr = ScrollRect(fr, *this->hscroll, 1);
 
-		for (int i = this->vscroll->GetPosition(); this->vscroll->IsVisible(i) && (size_t)i < log.size(); i++) {
-			const ScriptLogTypes::LogLine &line = log[i];
+		auto [first, last] = this->vscroll->GetVisibleRangeIterators(log);
+		for (auto it = first; it != last; ++it) {
+			const ScriptLogTypes::LogLine &line = *it;
 
 			TextColour colour;
 			switch (line.type) {
@@ -929,7 +929,7 @@ struct ScriptDebugWindow : public Window {
 			}
 
 			/* Check if the current line should be highlighted */
-			if (i == this->highlight_row) {
+			if (std::distance(std::begin(log), it) == this->highlight_row) {
 				fr.bottom = fr.top + this->resize.step_height - 1;
 				GfxFillRect(fr, PC_BLACK);
 				if (colour == TC_BLACK) colour = TC_WHITE; // Make black text readable by inverting it to white.
@@ -1192,7 +1192,7 @@ struct ScriptDebugWindow : public Window {
 	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_SCRD_LOG_PANEL, WidgetDimensions::scaled.framerect.Vertical());
-		this->hscroll->SetCapacityFromWidget(this, WID_SCRD_LOG_PANEL);
+		this->hscroll->SetCapacityFromWidget(this, WID_SCRD_LOG_PANEL, WidgetDimensions::scaled.framerect.Horizontal());
 	}
 
 	/**
@@ -1268,7 +1268,7 @@ static constexpr NWidgetPart _nested_script_debug_widgets[] = {
 		/* Break string widgets */
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_SCRD_BREAK_STRING_WIDGETS),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_IMGBTN_2, COLOUR_GREY, WID_SCRD_BREAK_STR_ON_OFF_BTN), SetFill(0, 1), SetDataTip(SPR_FLAG_VEH_STOPPED, STR_AI_DEBUG_BREAK_STR_ON_OFF_TOOLTIP),
+				NWidget(WWT_IMGBTN_2, COLOUR_GREY, WID_SCRD_BREAK_STR_ON_OFF_BTN), SetAspect(WidgetDimensions::ASPECT_VEHICLE_FLAG), SetFill(0, 1), SetDataTip(SPR_FLAG_VEH_STOPPED, STR_AI_DEBUG_BREAK_STR_ON_OFF_TOOLTIP),
 				NWidget(WWT_PANEL, COLOUR_GREY),
 					NWidget(NWID_HORIZONTAL),
 						NWidget(WWT_LABEL, COLOUR_GREY), SetPadding(2, 2, 2, 4), SetDataTip(STR_AI_DEBUG_BREAK_ON_LABEL, 0x0),
@@ -1289,11 +1289,11 @@ EndContainer(),
 };
 
 /** Window definition for the Script debug window. */
-static WindowDesc _script_debug_desc(__FILE__, __LINE__,
+static WindowDesc _script_debug_desc(
 	WDP_AUTO, "script_debug", 600, 450,
 	WC_SCRIPT_DEBUG, WC_NONE,
 	0,
-	std::begin(_nested_script_debug_widgets), std::end(_nested_script_debug_widgets),
+	_nested_script_debug_widgets,
 	&ScriptDebugWindow::hotkeys
 );
 
@@ -1325,7 +1325,7 @@ Window *ShowScriptDebugWindow(CompanyID show_company, bool new_window)
 				return w;
 			}
 		}
-		return new ScriptDebugWindow(&_script_debug_desc, i, show_company);
+		return new ScriptDebugWindow(_script_debug_desc, i, show_company);
 	} else {
 		ShowErrorMessage(STR_ERROR_AI_DEBUG_SERVER_ONLY, INVALID_STRING_ID, WL_INFO);
 	}

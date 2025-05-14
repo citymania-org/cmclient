@@ -18,11 +18,6 @@
 
 #include "safeguards.h"
 
-#if defined(_MSC_VER)
-/* Why the hell is that not in all MSVC headers?? */
-extern "C" _CRTIMP void __cdecl _assert(void *, void *, unsigned);
-#endif
-
 /* static */ uint Map::log_x;     ///< 2^_map_log_x == _map_size_x
 /* static */ uint Map::log_y;     ///< 2^_map_log_y == _map_size_y
 /* static */ uint Map::size_x;    ///< Size of the map along the X
@@ -71,32 +66,18 @@ extern "C" _CRTIMP void __cdecl _assert(void *, void *, unsigned);
 
 
 #ifdef _DEBUG
-TileIndex TileAdd(TileIndex tile, TileIndexDiff add,
-	const char *exp, const char *file, int line)
+TileIndex TileAdd(TileIndex tile, TileIndexDiff offset)
 {
-	int dx;
-	int dy;
-	uint x;
-	uint y;
-
-	dx = add & Map::MaxX();
+	int dx = offset & Map::MaxX();
 	if (dx >= (int)Map::SizeX() / 2) dx -= Map::SizeX();
-	dy = (add - dx) / (int)Map::SizeX();
+	int dy = (offset - dx) / (int)Map::SizeX();
 
-	x = TileX(tile) + dx;
-	y = TileY(tile) + dy;
+	uint32_t x = TileX(tile) + dx;
+	uint32_t y = TileY(tile) + dy;
 
-	if (x >= Map::SizeX() || y >= Map::SizeY()) {
-		std::string message = fmt::format("TILE_ADD({}) when adding 0x{:04X} and 0x{:04X} failed",
-			exp, tile, add);
-#if !defined(_MSC_VER)
-		fmt::print(stderr, "{}:{} {}\n", file, line, message);
-#else
-		_assert(message.data(), (char*)file, line);
-#endif
-	}
-
-	assert(TileXY(x, y) == Map::WrapToMap(tile + add));
+	assert(x < Map::SizeX());
+	assert(y < Map::SizeY());
+	assert(TileXY(x, y) == Map::WrapToMap(tile + offset));
 
 	return TileXY(x, y);
 }
@@ -128,6 +109,12 @@ TileIndex TileAddWrap(TileIndex tile, int addx, int addy)
 
 	return TileXY(x, y);
 }
+
+/** 'Lookup table' for tile offsets given an Axis */
+extern const TileIndexDiffC _tileoffs_by_axis[] = {
+	{ 1,  0}, ///< AXIS_X
+	{ 0,  1}, ///< AXIS_Y
+};
 
 /** 'Lookup table' for tile offsets given a DiagDirection */
 extern const TileIndexDiffC _tileoffs_by_diagdir[] = {
@@ -382,7 +369,7 @@ uint GetClosestWaterDistance(TileIndex tile, bool water)
 
 	if (!water) {
 		/* no land found - is this a water-only map? */
-		for (TileIndex t = 0; t < Map::Size(); t++) {
+		for (const auto t : Map::Iterate()) {
 			if (!IsTileType(t, MP_VOID) && !IsTileType(t, MP_WATER)) return 0x1FF;
 		}
 	}

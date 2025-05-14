@@ -52,7 +52,7 @@ static constexpr NWidgetPart _nested_extra_viewport_widgets[] = {
 
 class ExtraViewportWindow : public Window {
 public:
-	ExtraViewportWindow(WindowDesc *desc, int window_number, TileIndex tile) : Window(desc)
+	ExtraViewportWindow(WindowDesc &desc, int window_number, TileIndex tile) : Window(desc)
 	{
 		this->InitNested(window_number);
 
@@ -124,7 +124,7 @@ public:
 
 	void OnMouseWheel(int wheel) override
 	{
-		if (_settings_client.gui.scrollwheel_scrolling != 2) {
+		if (_settings_client.gui.scrollwheel_scrolling != SWS_OFF) {
 			ZoomInOrOutToCursorWindow(wheel < 0, this);
 		}
 	}
@@ -148,11 +148,11 @@ public:
 	}
 };
 
-static WindowDesc _extra_viewport_desc(__FILE__, __LINE__,
+static WindowDesc _extra_viewport_desc(
 	WDP_AUTO, "extra_viewport", 300, 268,
 	WC_EXTRA_VIEWPORT, WC_NONE,
 	0,
-	std::begin(_nested_extra_viewport_widgets), std::end(_nested_extra_viewport_widgets)
+	_nested_extra_viewport_widgets
 );
 
 /**
@@ -166,7 +166,7 @@ void ShowExtraViewportWindow(TileIndex tile)
 	/* find next free window number for extra viewport */
 	while (FindWindowById(WC_EXTRA_VIEWPORT, i) != nullptr) i++;
 
-	new ExtraViewportWindow(&_extra_viewport_desc, i, tile);
+	new ExtraViewportWindow(_extra_viewport_desc, i, tile);
 }
 
 namespace citymania {
@@ -178,7 +178,7 @@ void ShowExtraViewportWindow(int x, int y, int /* z */)
 	/* find next free window number for extra viewport */
 	while (FindWindowById(WC_EXTRA_VIEWPORT, i) != nullptr) i++;
 
-	auto w = new ExtraViewportWindow(&_extra_viewport_desc, i, INVALID_TILE);
+	auto w = new ExtraViewportWindow(_extra_viewport_desc, i, INVALID_TILE);
 	if (w) ScrollWindowTo(x, y, 0, w);
 }
 

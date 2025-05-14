@@ -159,11 +159,11 @@ static const NWidgetPart _nested_watch_company_widgets[] = {
 /**
  * Watch Company Window Descriptor
  */
-static WindowDesc _watch_company_desc(__FILE__, __LINE__,
+static WindowDesc _watch_company_desc(
 	WDP_AUTO, "cm_watch_gui", 300, 257,
 	WC_WATCH_COMPANY, WC_NONE,
 	WDF_NO_FOCUS,
-	std::begin(_nested_watch_company_widgets), std::end( _nested_watch_company_widgets)
+	_nested_watch_company_widgets
 );
 
 // admin version
@@ -223,11 +223,11 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 /**
  * Watch Company Window Descriptor
  */
-static WindowDesc _watch_company_descA(__FILE__, __LINE__,
+static WindowDesc _watch_company_descA(
 	WDP_AUTO, "watch_gui_client", 448, 256,
 	WC_WATCH_COMPANYA, WC_NONE,
 	WDF_CONSTRUCTION,
-	std::begin(_nested_watch_company_widgetsA), std::end(_nested_watch_company_widgetsA)
+	_nested_watch_company_widgetsA
 );
 
 static void ResetCallback(Window *w, bool confirmed)
@@ -245,7 +245,7 @@ static void ResetCallback(Window *w, bool confirmed)
  * @param window_number The window number for the class
  * @param company_to_watch Company ID for watching a particular company
  */
-WatchCompany::WatchCompany(WindowDesc *desc, int window_number, CompanyID company_to_watch = INVALID_COMPANY, int Wtype = EWT_COMPANY) : Window(desc)
+WatchCompany::WatchCompany(WindowDesc &desc, int window_number, CompanyID company_to_watch = INVALID_COMPANY, int Wtype = EWT_COMPANY) : Window(desc)
 {
 	this->Wtype = Wtype;
 	if(this->Wtype == EWT_CLIENT){
@@ -527,12 +527,12 @@ void WatchCompany::OnClick(Point /* pt */, int widget, int /* click_count */)
 	}
 }
 
-void WatchCompany::OnQueryTextFinished(char *str)
+void WatchCompany::OnQueryTextFinished(std::optional<std::string> str)
 {
-	if (str == NULL) return;
+	if (!str.has_value()) return;
 	switch (this->query_widget) {
 		case EWQ_BAN:
-			NetworkClientSendChatToServer(fmt::format("!ban {} {}", this->watched_client, str));
+			NetworkClientSendChatToServer(fmt::format("!ban {} {}", this->watched_client, *str));
 			break;
 		default:
 			break;
@@ -676,15 +676,14 @@ void WatchCompany::OnRealtimeTick([[maybe_unused]] uint delta_ms)
 
 void ShowWatchWindow(CompanyID company_to_watch = INVALID_COMPANY, int type = EWT_COMPANY)
 {
-	if(type == EWT_COMPANY || !_novarole){
+	if(type == EWT_COMPANY) {
 		int i = 0;
 		/* find next free window number for watch viewport */
 		while (FindWindowById(WC_WATCH_COMPANY, i) != NULL) i++;
-		new WatchCompany(&_watch_company_desc, i, company_to_watch, type);
-	}
-	else if(type == EWT_CLIENT){
+		new WatchCompany(_watch_company_desc, i, company_to_watch, type);
+	} else if(type == EWT_CLIENT) {
 		if (BringWindowToFrontById(WC_WATCH_COMPANYA, company_to_watch)) return;
-		new WatchCompany(&_watch_company_descA, company_to_watch, company_to_watch, type);
+		new WatchCompany(_watch_company_descA, company_to_watch, company_to_watch, type);
 	}
 }
 

@@ -25,8 +25,10 @@
 
 template <typename T>
 struct BuildingCounts {
-	T id_count[NUM_HOUSES];
-	T class_count[HOUSE_CLASS_MAX];
+	std::vector<T> id_count;
+	std::vector<T> class_count;
+
+	auto operator<=>(const BuildingCounts &) const = default;
 };
 
 static const uint CUSTOM_TOWN_NUMBER_DIFFICULTY  = 4; ///< value for custom town number in difficulty settings
@@ -48,8 +50,10 @@ struct TownCache {
 	uint32_t population;                        ///< Current population of people
 	TrackedViewportSign sign;                 ///< Location of name sign, UpdateVirtCoord updates this
 	PartOfSubsidy part_of_subsidy;            ///< Is this town a source/destination of a subsidy?
-	uint32_t squared_town_zone_radius[HZB_END]; ///< UpdateTownRadius updates this given the house count
+	std::array<uint32_t, HZB_END> squared_town_zone_radius; ///< UpdateTownRadius updates this given the house count
 	BuildingCounts<uint16_t> building_counts;   ///< The number of each type of building in the town
+
+	auto operator<=>(const TownCache &) const = default;
 };
 
 enum class TownGrowthState: uint8 {
@@ -87,7 +91,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	std::string name;                ///< Custom town name. If empty, the town was not renamed and uses the generated name.
 	mutable std::string cached_name; ///< NOSAVE: Cache of the resolved name of the town, if not using a custom town name
 
-	byte flags;                    ///< See #TownFlags.
+	uint8_t flags;                    ///< See #TownFlags.
 
 	uint16_t noise_reached;          ///< level of noise that all the airports are generating
 
@@ -116,7 +120,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 
 	std::string text; ///< General text with additional information.
 
-	inline byte GetPercentTransported(CargoID cid) const
+	inline uint8_t GetPercentTransported(CargoID cid) const
 	{
 		if (!IsValidCargoID(cid)) return 0;
 		return this->supplied[cid].old_act * 256 / (this->supplied[cid].old_max + 1);
@@ -129,15 +133,15 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	uint16_t grow_counter;             ///< counter to count when to grow, value is smaller than or equal to growth_rate
 	uint16_t growth_rate;              ///< town growth rate
 
-	byte fund_buildings_months;      ///< fund buildings program in action?
-	byte road_build_months;          ///< fund road reconstruction in action?
+	uint8_t fund_buildings_months;      ///< fund buildings program in action?
+	uint8_t road_build_months;          ///< fund road reconstruction in action?
 
 	bool larger_town;                ///< if this is a larger town and should grow more quickly
 	TownLayout layout;               ///< town specific road layout
 
 	bool show_zone;                  ///< NOSAVE: mark town to show the local authority zone in the viewports
 
-	std::list<PersistentStorage *> psa_list;
+	std::vector<PersistentStorage *> psa_list;
 
 	citymania::ext::Town cm;
 
@@ -317,8 +321,9 @@ void SetTownRatingTestMode(bool mode);
 TownActions GetMaskOfTownActions(CompanyID cid, const Town *t);
 bool GenerateTowns(TownLayout layout);
 const CargoSpec *FindFirstCargoWithTownAcceptanceEffect(TownAcceptanceEffect effect);
+CargoArray GetAcceptedCargoOfHouse(const HouseSpec *hs);
 
-extern const byte _town_action_costs[TACT_COUNT];
+extern const uint8_t _town_action_costs[TACT_COUNT];
 
 /**
  * Set the default name for a depot/waypoint
@@ -396,5 +401,6 @@ inline uint16_t TownTicksToGameTicks(uint16_t ticks)
 
 RoadType GetTownRoadType();
 bool CheckTownRoadTypes();
+std::span<const DrawBuildingsTileStruct> GetTownDrawTileData();
 
 #endif /* TOWN_H */

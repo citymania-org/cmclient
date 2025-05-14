@@ -123,7 +123,7 @@ public:
             Track track;
             struct {
                 Axis axis;
-                byte section;
+                uint8_t section;
             } station;
             struct {
                 uint pos;
@@ -157,7 +157,7 @@ public:
         } airport_tile;
         struct {
             IndustryType ind_type;
-            byte ind_layout;
+            uint8_t ind_layout;
             TileIndexDiff tile_diff;
             IndustryGfx gfx;  // TODO remove?
         } industry_tile;
@@ -177,7 +177,7 @@ public:
 
     static ObjectTileHighlight make_rail_depot(SpriteID palette, DiagDirection ddir);
     static ObjectTileHighlight make_rail_track(SpriteID palette, Track track);
-    static ObjectTileHighlight make_rail_station(SpriteID palette, Axis axis, byte section);
+    static ObjectTileHighlight make_rail_station(SpriteID palette, Axis axis, uint8_t section);
     static ObjectTileHighlight make_rail_signal(SpriteID palette, uint pos, SignalType type, SignalVariant variant);
     static ObjectTileHighlight make_rail_bridge_head(SpriteID palette, DiagDirection ddir, BridgeType type);
     static ObjectTileHighlight make_rail_tunnel_head(SpriteID palette, DiagDirection ddir);
@@ -190,7 +190,7 @@ public:
 
     static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
 
-    static ObjectTileHighlight make_industry_tile(SpriteID palette, IndustryType ind_type, byte ind_layout, TileIndexDiff tile_diff, IndustryGfx gfx);
+    static ObjectTileHighlight make_industry_tile(SpriteID palette, IndustryType ind_type, uint8_t ind_layout, TileIndexDiff tile_diff, IndustryGfx gfx);
     static ObjectTileHighlight make_point(SpriteID palette);
     static ObjectTileHighlight make_rect(SpriteID palette);
     static ObjectTileHighlight make_numbered_rect(SpriteID palette, uint32 number);
@@ -257,8 +257,8 @@ public:
                 struct {
                     Axis axis;
                     StationID id;
-                    byte numtracks;
-                    byte plat_len;
+                    uint8_t numtracks;
+                    uint8_t plat_len;
                 } station_part;
                 struct {
                     uint pos;
@@ -313,7 +313,7 @@ public:
 
 class ObjectHighlight {
 public:
-    enum class Type : byte {
+    enum Type : uint8_t {
         NONE = 0,
         RAIL_DEPOT = 1,
         RAIL_STATION = 2,
@@ -339,7 +339,7 @@ public:
     RoadStopClassID road_stop_spec_class;
     uint16_t road_stop_spec_index;
     int airport_type = 0;
-    byte airport_layout = 0;
+    uint8_t airport_layout = 0;
     sp<Blueprint> blueprint = nullptr;
     IndustryType ind_type = INVALID_INDUSTRYTYPE;
     uint32 ind_layout = 0;
@@ -365,7 +365,7 @@ public:
     static ObjectHighlight make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis);
     static ObjectHighlight make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index);
     static ObjectHighlight make_road_depot(TileIndex tile, RoadType roadtype, DiagDirection orientation);
-    static ObjectHighlight make_airport(TileIndex start_tile, int airport_type, byte airport_layout);
+    static ObjectHighlight make_airport(TileIndex start_tile, int airport_type, uint8_t airport_layout);
     static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);
     static ObjectHighlight make_polyrail(TileIndex start_tile, TileIndex end_tile, Trackdir trackdir,
                                          TileIndex start_tile2, TileIndex end_tile2, Trackdir trackdir2);

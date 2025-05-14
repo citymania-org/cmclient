@@ -8,6 +8,7 @@
 /** @file engine.cpp Base for all engine handling. */
 
 #include "stdafx.h"
+#include "core/container_func.hpp"
 #include "company_func.h"
 #include "command_func.h"
 #include "news_func.h"
@@ -67,8 +68,6 @@ const uint8_t _engine_offsets[4] = {
 
 static_assert(lengthof(_orig_rail_vehicle_info) + lengthof(_orig_road_vehicle_info) + lengthof(_orig_ship_vehicle_info) + lengthof(_orig_aircraft_vehicle_info) == lengthof(_orig_engine_info));
 
-const uint EngineOverrideManager::NUM_DEFAULT_ENGINES = _engine_counts[VEH_TRAIN] + _engine_counts[VEH_ROAD] + _engine_counts[VEH_SHIP] + _engine_counts[VEH_AIRCRAFT];
-
 Engine::Engine(VehicleType type, EngineID base)
 {
 	this->type = type;
@@ -85,8 +84,9 @@ Engine::Engine(VehicleType type, EngineID base)
 		this->info.base_life = 0xFF;
 		/* Set road vehicle tractive effort to the default value */
 		if (type == VEH_ROAD) this->u.road.tractive_effort = 0x4C;
-		/* Aircraft must have INVALID_CARGO as default, as there is no property */
-		if (type == VEH_AIRCRAFT) this->info.cargo_type = INVALID_CARGO;
+		/* Aircraft must have CT_INVALID as default, as there is no property */
+		this->info.cargo_type = INVALID_CARGO;
+		this->info.cargo_label = (type == VEH_AIRCRAFT) ? CT_INVALID : CT_PASSENGERS;
 		/* Ships must have a non-zero acceleration. */
 		if (type == VEH_SHIP) this->u.ship.acceleration = 1;
 		/* Set visual effect to the default value */
@@ -508,14 +508,12 @@ bool Engine::IsVariantHidden(CompanyID c) const
  */
 void EngineOverrideManager::ResetToDefaultMapping()
 {
-	this->clear();
+	EngineID id = 0;
 	for (VehicleType type = VEH_TRAIN; type <= VEH_AIRCRAFT; type++) {
-		for (uint internal_id = 0; internal_id < _engine_counts[type]; internal_id++) {
-			EngineIDMapping &eid = this->emplace_back();
-			eid.type            = type;
-			eid.grfid           = INVALID_GRFID;
-			eid.internal_id     = internal_id;
-			eid.substitute_id   = internal_id;
+		auto &map = this->mappings[type];
+		map.clear();
+		for (uint internal_id = 0; internal_id < _engine_counts[type]; internal_id++, id++) {
+			map.emplace_back(INVALID_GRFID, internal_id, type, internal_id, id);
 		}
 	}
 }
@@ -531,14 +529,52 @@ void EngineOverrideManager::ResetToDefaultMapping()
  */
 EngineID EngineOverrideManager::GetID(VehicleType type, uint16_t grf_local_id, uint32_t grfid)
 {
-	EngineID index = 0;
-	for (const EngineIDMapping &eid : *this) {
-		if (eid.type == type && eid.grfid == grfid && eid.internal_id == grf_local_id) {
-			return index;
-		}
-		index++;
+	const auto &map = this->mappings[type];
+	const auto key = EngineIDMapping::Key(grfid, grf_local_id);
+	auto it = std::ranges::lower_bound(map, key, std::less{}, EngineIDMappingKeyProjection{});
+	if (it == std::end(map) || it->Key() != key) return INVALID_ENGINE;
+	return it->engine;
+}
+
+/**
+ * Look for an unreserved EngineID matching the local id, and reserve it if found.
+ * @param type Vehicle type
+ * @param grf_local_id The local id in the newgrf
+ * @param grfid The GrfID that defines the scope of grf_local_id.
+ *              If a newgrf overrides the engines of another newgrf, the "scope grfid" is the ID of the overridden newgrf.
+ *              If dynnamic_engines is disabled, all newgrf share the same ID scope identified by INVALID_GRFID.
+ * @param static_access Whether to actually reserve the EngineID.
+ * @return The engine ID if present and now reserved, or INVALID_ENGINE if not.
+ */
+EngineID EngineOverrideManager::UseUnreservedID(VehicleType type, uint16_t grf_local_id, uint32_t grfid, bool static_access)
+{
+	auto &map = _engine_mngr.mappings[type];
+	const auto key = EngineIDMapping::Key(INVALID_GRFID, grf_local_id);
+	auto it = std::ranges::lower_bound(map, key, std::less{}, EngineIDMappingKeyProjection{});
+	if (it == std::end(map) || it->Key() != key) return INVALID_ENGINE;
+
+	if (!static_access && grfid != INVALID_GRFID) {
+		/* Reserve the engine slot for the new grfid. */
+		it->grfid = grfid;
+
+		/* Relocate entry to its new position in the mapping list to keep it sorted. */
+		auto p = std::ranges::lower_bound(map, EngineIDMapping::Key(grfid, grf_local_id), std::less{}, EngineIDMappingKeyProjection{});
+		it = Slide(it, std::next(it), p).first;
 	}
-	return INVALID_ENGINE;
+
+	return it->engine;
+}
+
+void EngineOverrideManager::SetID(VehicleType type, uint16_t grf_local_id, uint32_t grfid, uint8_t substitute_id, EngineID engine)
+{
+	auto &map = this->mappings[type];
+	const auto key = EngineIDMapping::Key(grfid, grf_local_id);
+	auto it = std::ranges::lower_bound(map, key, std::less{}, EngineIDMappingKeyProjection{});
+	if (it == std::end(map) || it->Key() != key) {
+		map.emplace(it, grfid, grf_local_id, type, substitute_id, engine);
+	} else {
+		it->engine = engine;
+	}
 }
 
 /**
@@ -567,15 +603,15 @@ void SetupEngines()
 	CloseWindowByClass(WC_ENGINE_PREVIEW);
 	_engine_pool.CleanPool();
 
-	assert(_engine_mngr.size() >= _engine_mngr.NUM_DEFAULT_ENGINES);
-	[[maybe_unused]] uint index = 0;
-	for (const EngineIDMapping &eid : _engine_mngr) {
-		/* Assert is safe; there won't be more than 256 original vehicles
-		 * in any case, and we just cleaned the pool. */
-		assert(Engine::CanAllocateItem());
-		[[maybe_unused]] const Engine *e = new Engine(eid.type, eid.internal_id);
-		assert(e->index == index);
-		index++;
+	for (VehicleType type = VEH_BEGIN; type != VEH_COMPANY_END; type++) {
+		const auto &mapping = _engine_mngr.mappings[type];
+
+		/* Verify that the engine override manager has at least been set up with the default engines. */
+		assert(std::size(mapping) >= _engine_counts[type]);
+
+		for (const EngineIDMapping &eid : mapping) {
+			new (eid.engine) Engine(type, eid.internal_id);
+		}
 	}
 }
 
@@ -612,7 +648,7 @@ void CalcEngineReliability(Engine *e, bool new_month)
 {
 	/* Get source engine for reliability age. This is normally our engine unless variant reliability syncing is requested. */
 	Engine *re = e;
-	while (re->info.variant_id != INVALID_ENGINE && (re->info.extra_flags & ExtraEngineFlags::SyncReliability) != ExtraEngineFlags::None) {
+	while (re->info.variant_id != INVALID_ENGINE && HasFlag(re->info.extra_flags, ExtraEngineFlags::SyncReliability)) {
 		re = Engine::Get(re->info.variant_id);
 	}
 
@@ -714,7 +750,7 @@ void StartupOneEngine(Engine *e, const TimerGameCalendar::YearMonthDay &aging_ym
 
 	/* Get parent variant index for syncing reliability via random seed. */
 	const Engine *re = e;
-	while (re->info.variant_id != INVALID_ENGINE && (re->info.extra_flags & ExtraEngineFlags::SyncReliability) != ExtraEngineFlags::None) {
+	while (re->info.variant_id != INVALID_ENGINE && HasFlag(re->info.extra_flags, ExtraEngineFlags::SyncReliability)) {
 		re = Engine::Get(re->info.variant_id);
 	}
 
@@ -865,7 +901,7 @@ static void AcceptEnginePreview(EngineID eid, CompanyID company, int recursion_d
 
 	/* Find variants to be included in preview. */
 	for (Engine *ve : Engine::IterateType(e->type)) {
-		if (ve->index != eid && ve->info.variant_id == eid && (ve->info.extra_flags & ExtraEngineFlags::JoinPreview) != ExtraEngineFlags::None) {
+		if (ve->index != eid && ve->info.variant_id == eid && HasFlag(ve->info.extra_flags, ExtraEngineFlags::JoinPreview)) {
 			AcceptEnginePreview(ve->index, company, recursion_depth + 1);
 		}
 	}
@@ -987,7 +1023,7 @@ CommandCost CmdSetVehicleVisibility(DoCommandFlag flags, EngineID engine_id, boo
 	if (!IsEngineBuildable(e->index, e->type, _current_company)) return CMD_ERROR;
 
 	if ((flags & DC_EXEC) != 0) {
-		SB(e->company_hidden, _current_company, 1, hide ? 1 : 0);
+		AssignBit(e->company_hidden, _current_company, hide);
 		AddRemoveEngineFromAutoreplaceAndBuildWindows(e->type);
 	}
 
@@ -1092,7 +1128,7 @@ static void NewVehicleAvailable(Engine *e)
 	if (!IsVehicleTypeDisabled(e->type, true)) AI::BroadcastNewEvent(new ScriptEventEngineAvailable(index));
 
 	/* Only provide the "New Vehicle available" news paper entry, if engine can be built. */
-	if (!IsVehicleTypeDisabled(e->type, false) && (e->info.extra_flags & ExtraEngineFlags::NoNews) == ExtraEngineFlags::None) {
+	if (!IsVehicleTypeDisabled(e->type, false) && !HasFlag(e->info.extra_flags, ExtraEngineFlags::NoNews)) {
 		SetDParam(0, GetEngineCategoryName(index));
 		SetDParam(1, PackEngineNameDParam(index, EngineNameContext::PreviewNews));
 		AddNewsItem(STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE, NT_NEW_VEHICLES, NF_VEHICLE, NR_ENGINE, index);
@@ -1137,7 +1173,7 @@ void CalendarEnginesMonthlyLoop()
 				if (IsWagon(e->index)) continue;
 
 				/* Engine has no preview */
-				if ((e->info.extra_flags & ExtraEngineFlags::NoPreview) != ExtraEngineFlags::None) continue;
+				if (HasFlag(e->info.extra_flags, ExtraEngineFlags::NoPreview)) continue;
 
 				/* Show preview dialog to one of the companies. */
 				e->flags |= ENGINE_EXCLUSIVE_PREVIEW;
@@ -1190,7 +1226,7 @@ CommandCost CmdRenameEngine(DoCommandFlag flags, EngineID engine_id, const std::
 
 	if (!reset) {
 		if (Utf8StringLength(text) >= MAX_LENGTH_ENGINE_NAME_CHARS) return CMD_ERROR;
-		if (!IsUniqueEngineName(text)) return_cmd_error(STR_ERROR_NAME_MUST_BE_UNIQUE);
+		if (!IsUniqueEngineName(text)) return CommandCost(STR_ERROR_NAME_MUST_BE_UNIQUE);
 	}
 
 	if (flags & DC_EXEC) {

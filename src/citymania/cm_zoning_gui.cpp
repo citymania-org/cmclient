@@ -7,7 +7,7 @@
 #include "../strings_func.h"
 #include "../core/geometry_func.hpp"
 #include "../table/strings.h"
-#include "../widgets/dropdown_func.h"
+#include "../dropdown_func.h"
 
 #include "../safeguards.h"
 
@@ -41,7 +41,7 @@ struct ZoningWindow : public Window {
 	uint maxwidth;
 	uint maxheight;
 
-	ZoningWindow(WindowDesc *desc, int window_number) : Window(desc) {
+	ZoningWindow(WindowDesc &desc, int window_number) : Window(desc) {
 		Dimension dim;
 		this->maxwidth = 0;
 		this->maxheight = 0;
@@ -53,8 +53,8 @@ struct ZoningWindow : public Window {
 
 		this->InitNested(window_number);
 		this->InvalidateData();
-		if(_zoning.outer != CHECKNOTHING) this->LowerWidget(ZTW_OUTER_FIRST + _zoning.outer - 1); //-1:skip CHECKNOTHING
-		if(_zoning.inner != CHECKNOTHING) this->LowerWidget(ZTW_INNER_FIRST + _zoning.inner - 1);
+		if(_zoning.outer != EvaluationMode::CHECKNOTHING) this->LowerWidget(ZTW_OUTER_FIRST + _zoning.outer - 1); //-1:skip CHECKNOTHING
+		if(_zoning.inner != EvaluationMode::CHECKNOTHING) this->LowerWidget(ZTW_INNER_FIRST + _zoning.inner - 1);
 	}
 
 	void OnPaint() override
@@ -70,12 +70,12 @@ struct ZoningWindow : public Window {
 		if (widget >= ZTW_OUTER_FIRST && widget < ZTW_INNER_FIRST){
 			clicked = (EvaluationMode)(widget - ZTW_OUTER_FIRST + 1); //+1:skip CHECKNOTHING
 			deselect = _zoning.outer == clicked;
-			_zoning.outer = deselect ? CHECKNOTHING : clicked;
+			_zoning.outer = deselect ? EvaluationMode::CHECKNOTHING : clicked;
 		}
 		else if (widget >= ZTW_INNER_FIRST && widget < ZTW_INNER_END){
 			clicked = (EvaluationMode)(widget - ZTW_INNER_FIRST + 1);
 			deselect = _zoning.inner == clicked;
-			_zoning.inner = deselect ? CHECKNOTHING : clicked;
+			_zoning.inner = deselect ? EvaluationMode::CHECKNOTHING : clicked;
 			outer = false;
 		}
 		else return;
@@ -98,26 +98,26 @@ struct ZoningWindow : public Window {
 		else return;
 
 		bool rtl = _current_text_dir == TD_RTL;
-		byte clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
+		uint8_t clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
 		int x = r.left + WidgetDimensions::scaled.framerect.left;
 		int y = r.top;
 
 		DrawString(rtl ? r.left : x + clk_dif + 1, (rtl ? r.right + clk_dif : r.right), y + 1 + clk_dif, strid, TC_FROMSTRING, SA_LEFT);
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension * /* fill */, Dimension * /* resize */) override
+	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
 	{
 		if (widget >= ZTW_OUTER_FIRST && widget < ZTW_INNER_END){
-			size->width = this->maxwidth + padding.width + 8;
-			size->height = this->maxheight + 2;
+			size.width = this->maxwidth + padding.width + 8;
+			size.height = this->maxheight + 2;
 		}
 	}
 
 	void RaiseAllWidgets(bool outer)
 	{
-		byte start = outer ? ZTW_OUTER_FIRST : ZTW_INNER_FIRST;
-		byte end = outer ? ZTW_INNER_FIRST : ZTW_INNER_END;
-		for(byte i = start; i < end; i++){
+		uint8_t start = outer ? ZTW_OUTER_FIRST : ZTW_INNER_FIRST;
+		uint8_t end = outer ? ZTW_INNER_FIRST : ZTW_INNER_END;
+		for(uint8_t i = start; i < end; i++){
 			if(this->IsWidgetLowered(i)){
 				this->ToggleWidgetLoweredState(i);
 				break;
@@ -133,23 +133,23 @@ struct ZoningWindow : public Window {
 	static EventState ZoningWindowGlobalHotkeys(int hotkey) {
 		EvaluationMode zoning = (EvaluationMode)(hotkey - ZTW_OUTER_FIRST); // +1:skip CHECKNOTHING
 		bool deselect = (_zoning.outer == zoning);
-		_zoning.outer = deselect ? CHECKNOTHING : zoning;
+		_zoning.outer = deselect ? EvaluationMode::CHECKNOTHING : zoning;
 		MarkWholeScreenDirty();
 		return ES_HANDLED;
 	}
 
 	static inline HotkeyList hotkeys{"zoning_gui", {
-		Hotkey(WKC_SHIFT | '1', "authority", ZTW_OUTER_FIRST + CHECKOPINION),
-		Hotkey(WKC_SHIFT | '2', "build_status", ZTW_OUTER_FIRST + CHECKBUILD),
-		Hotkey(WKC_SHIFT | '3', "station_catchment", ZTW_OUTER_FIRST + CHECKSTACATCH),
-		Hotkey(WKC_SHIFT | '4', "unserved_buildings", ZTW_OUTER_FIRST + CHECKBULUNSER),
-		Hotkey(WKC_SHIFT | '5', "unserved_industries", ZTW_OUTER_FIRST + CHECKINDUNSER),
-		Hotkey(WKC_SHIFT | '6', "town_zone", ZTW_OUTER_FIRST + CHECKTOWNZONES),
-		Hotkey(WKC_SHIFT | '7', "cb_acceptance", ZTW_OUTER_FIRST + CHECKCBACCEPTANCE),
-		Hotkey(WKC_SHIFT | '8', "cb_town_limit", ZTW_OUTER_FIRST + CHECKCBTOWNLIMIT),
-		Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + CHECKTOWNADZONES),
-		Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + CHECKTOWNGROWTHTILES),
-		Hotkey((uint16)0, "active_stations", ZTW_OUTER_FIRST + CHECKACTIVESTATIONS)
+		Hotkey(WKC_SHIFT | '1', "authority", ZTW_OUTER_FIRST + EvaluationMode::CHECKOPINION),
+		Hotkey(WKC_SHIFT | '2', "build_status", ZTW_OUTER_FIRST + EvaluationMode::CHECKBUILD),
+		Hotkey(WKC_SHIFT | '3', "station_catchment", ZTW_OUTER_FIRST + EvaluationMode::CHECKSTACATCH),
+		Hotkey(WKC_SHIFT | '4', "unserved_buildings", ZTW_OUTER_FIRST + EvaluationMode::CHECKBULUNSER),
+		Hotkey(WKC_SHIFT | '5', "unserved_industries", ZTW_OUTER_FIRST + EvaluationMode::CHECKINDUNSER),
+		Hotkey(WKC_SHIFT | '6', "town_zone", ZTW_OUTER_FIRST + EvaluationMode::CHECKTOWNZONES),
+		Hotkey(WKC_SHIFT | '7', "cb_acceptance", ZTW_OUTER_FIRST + EvaluationMode::CHECKCBACCEPTANCE),
+		Hotkey(WKC_SHIFT | '8', "cb_town_limit", ZTW_OUTER_FIRST + EvaluationMode::CHECKCBTOWNLIMIT),
+		Hotkey(WKC_SHIFT | '9', "advertisement", ZTW_OUTER_FIRST + EvaluationMode::CHECKTOWNADZONES),
+		Hotkey(WKC_SHIFT | '0', "growth_tiles", ZTW_OUTER_FIRST + EvaluationMode::CHECKTOWNGROWTHTILES),
+		Hotkey((uint16)0, "active_stations", ZTW_OUTER_FIRST + EvaluationMode::CHECKACTIVESTATIONS)
 	}, ZoningWindowGlobalHotkeys};
 };
 
@@ -189,16 +189,16 @@ static const NWidgetPart _nested_zoning_widgets[] = {
 	EndContainer()
 };
 
-static WindowDesc _zoning_desc (__FILE__, __LINE__,
+static WindowDesc _zoning_desc (
 	WDP_AUTO, "cm_zoning", 0, 0,
 	CM_WC_ZONING_TOOLBAR, WC_NONE,
 	0,
-	std::begin(_nested_zoning_widgets), std::end(_nested_zoning_widgets),
+	_nested_zoning_widgets,
 	&ZoningWindow::hotkeys
 );
 
 void ShowZoningToolbar() {
-	AllocateWindowDescFront<ZoningWindow>(&_zoning_desc, 0);
+	AllocateWindowDescFront<ZoningWindow>(_zoning_desc, 0);
 }
 
 } // namespace citymania

@@ -10,12 +10,14 @@
 #include "../error.h"
 #include "../debug.h"
 #include "../direction_type.h"
+#include "../map_func.h"
 #include "../rail_map.h"
 #include "../station_cmd.h"
 #include "../station_map.h"
 #include "../station_base.h"
 #include "../strings_func.h"
 #include "../tilearea_type.h"
+#include "../tile_map.h"
 #include "../tunnelbridge_map.h"
 #include "../network/network.h"
 
@@ -23,18 +25,15 @@
 
 extern TileHighlightData _thd;
 extern RailType _cur_railtype;
-extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
+extern void GetStationLayout(uint8_t *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
 // from rail_gui.cpp
-struct RailStationGUISettings {
-    Axis orientation;                 ///< Currently selected rail station orientation
-
-    bool newstations;                 ///< Are custom station definitions available?
-    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
-    byte station_count;               ///< Number of custom stations (if newstations is \c true )
+struct StationPickerSelection {
+    StationClassID sel_class; ///< Selected station class.
+    uint16_t sel_type; ///< Selected station type within the class.
+    Axis axis; ///< Selected orientation of the station.
 };
-extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
+extern StationPickerSelection _station_gui; ///< Settings of the station picker.
 
 namespace citymania {
 
@@ -57,7 +56,7 @@ bool operator!=(const TileIndexDiffC &a, const TileIndexDiffC &b) {
 }
 
 template<typename Func>
-void IterateStation(TileIndex start_tile, Axis axis, byte numtracks, byte plat_len, Func visitor) {
+void IterateStation(TileIndex start_tile, Axis axis, uint8_t numtracks, uint8_t plat_len, Func visitor) {
     auto plat_delta = (axis == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
     auto track_delta = (axis == AXIS_Y ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
     TileIndex tile_track = start_tile;
@@ -92,11 +91,11 @@ void Blueprint::Add(TileIndex source_tile, Blueprint::Item item) {
             );
             break;
         case Item::Type::RAIL_BRIDGE:
-            this->source_tiles.insert(TILE_ADDXY(source_tile, item.u.rail.bridge.other_end.x, item.u.rail.bridge.other_end.y));
+            this->source_tiles.insert(TileAddXY(source_tile, item.u.rail.bridge.other_end.x, item.u.rail.bridge.other_end.y));
             this->source_tiles.insert(source_tile);
             break;
         case Item::Type::RAIL_TUNNEL:
-            this->source_tiles.insert(TILE_ADDXY(source_tile, item.u.rail.tunnel.other_end.x, item.u.rail.tunnel.other_end.y));
+            this->source_tiles.insert(TileAddXY(source_tile, item.u.rail.tunnel.other_end.x, item.u.rail.tunnel.other_end.y));
             this->source_tiles.insert(source_tile);
             break;
         case Item::Type::RAIL_DEPOT:
@@ -171,8 +170,8 @@ up<Command> GetBlueprintCommand(TileIndex start, const Blueprint::Item &item) {
                 item.u.rail.station_part.axis,
                 item.u.rail.station_part.numtracks,
                 item.u.rail.station_part.plat_len,
-                _railstation.station_class,
-                _railstation.station_type,
+                _station_gui.sel_class,
+                _station_gui.sel_type,
                 NEW_STATION,
                 true
             );
@@ -184,8 +183,8 @@ up<Command> GetBlueprintCommand(TileIndex start, const Blueprint::Item &item) {
                 AXIS_X,
                 1,
                 1,
-                _railstation.station_class,
-                _railstation.station_type,
+                _station_gui.sel_class,
+                _station_gui.sel_type,
                 NEW_STATION,
                 true
             );
@@ -256,14 +255,14 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 add_tile(otile, ObjectTileHighlight::make_rail_depot(palette, o.u.rail.depot.ddir));
                 break;
             case Item::Type::RAIL_STATION_PART: {
-                std::vector<byte> layouts(o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
-                byte *layout_ptr = layouts.data();
+                std::vector<uint8_t> layouts(o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
+                uint8_t *layout_ptr = layouts.data();
                 GetStationLayout(layout_ptr, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len, nullptr);
                 if (palette == CM_PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
                     palette = CM_PALETTE_TINT_ORANGE_DEEP;
                 IterateStation(otile, o.u.rail.station_part.axis, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len,
                     [&](TileIndex tile) {
-                        byte layout = *layout_ptr++;
+                        uint8_t layout = *layout_ptr++;
                         add_tile(tile, ObjectTileHighlight::make_rail_station(palette, o.u.rail.station_part.axis, layout & ~1));
                     }
                 );
@@ -534,7 +533,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
             auto cur_tile = tile;
             do {
                 plat_len++;
-                cur_tile = TILE_ADD(cur_tile, platform_delta);
+                cur_tile = TileAdd(cur_tile, platform_delta);
             } while (can_add_tile(cur_tile));
 
             auto numtracks = 0;
@@ -542,7 +541,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
             bool can_add = false;
             do {
                 numtracks++;
-                cur_tile = TILE_ADD(cur_tile, track_delta);
+                cur_tile = TileAdd(cur_tile, track_delta);
                 can_add = true;
                 auto plat_tile = cur_tile;
                 for (auto i = 0; i < plat_len; i++) {
@@ -550,7 +549,7 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
                         can_add = false;
                         break;
                     }
-                    plat_tile = TILE_ADD(plat_tile, platform_delta);
+                    plat_tile = TileAdd(plat_tile, platform_delta);
                 }
             } while (can_add);
 
@@ -559,9 +558,9 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
                 auto plat_tile = cur_tile;
                 for (auto j = 0; j < plat_len; j++) {
                     added_tiles.insert(plat_tile);
-                    plat_tile = TILE_ADD(plat_tile, platform_delta);
+                    plat_tile = TileAdd(plat_tile, platform_delta);
                 }
-                cur_tile = TILE_ADD(cur_tile, track_delta);
+                cur_tile = TileAdd(cur_tile, track_delta);
             }
 
             Blueprint::Item bi(Blueprint::Item::Type::RAIL_STATION_PART, TileIndexToTileIndexDiffC(tile, start));

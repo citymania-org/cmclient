@@ -231,6 +231,7 @@ STR_UNITS_HEIGHT_SI                                             :{DECIMAL}{NBSP}
 
 
 
+
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Filter string:
 STR_LIST_FILTER_OSKTITLE                                        :{BLACK}Sleutel filter string in
@@ -273,7 +274,6 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Deur hie
 STR_BUTTON_DEFAULT                                              :{BLACK}Gewone
 STR_BUTTON_CANCEL                                               :{BLACK}Kanselleer
 STR_BUTTON_OK                                                   :{BLACK}OK
-STR_WARNING_PASSWORD_SECURITY                                   :{YELLOW}Waarskuwing: bedieneradministrateurs kan moontlik die teks wat hier ingevoer is, lees.
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :`1234567890-=\qwertyuiop[]asdfghjkl;'  zxcvbnm,./ .
@@ -387,6 +387,7 @@ STR_SCENEDIT_FILE_MENU_LOAD_HEIGHTMAP                           :Laai reliëfkaa
 STR_SCENEDIT_FILE_MENU_QUIT_EDITOR                              :Verlaat redigeerder
 STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Verlaat
+
 
 # Settings menu
 ###length 16
@@ -565,6 +566,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Vertoon 
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Vertoon geen vragte op die vrag betalingskostes grafiek
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Skakel grafiek vir vrag tipe aan/af
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Vertoon breedvoerige prestasie graderings
 
@@ -869,7 +871,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Geldeenh
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Geld eendheid keuse
 
 
-###length 43
+###length 44
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Britse Pond
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Amerikaanse Dollar
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -948,6 +950,7 @@ STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Addision
 STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Basis musiek stel
 STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Kies die basis musiek stel om te gebruik
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Addisionele informasie oor die basis musiek stel
+
 
 
 
@@ -1305,6 +1308,7 @@ STR_CONFIG_SETTING_WARN_INCOME_LESS                             :Waarsku as 'n v
 ###length 2
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :As dit geaktiveer is, word daar 'n nuus boodskap gestuur wanneer, in 'n kalenderjaar, 'n voertuig nie wins gemaak het nie.
 
+
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Voertuie verval nooit nie: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :As dit geaktiveer is, sal voertuig modelle altyd beskikbaar bly, na die bekendstelling daarvan
 
@@ -1590,7 +1594,8 @@ STR_CONFIG_SETTING_SERVINT_AIRCRAFT                             :Standaard diens
 STR_CONFIG_SETTING_SERVINT_AIRCRAFT_HELPTEXT                    :Kies die standaard diensskedule vir nuwe vliegtuie as geen diensskedule aangedui is nie
 STR_CONFIG_SETTING_SERVINT_SHIPS                                :Standaard diens interval vir bote: {STRING}
 STR_CONFIG_SETTING_SERVINT_SHIPS_HELPTEXT                       :Kies die standaard diensskedule vir nuwe skepe as geen diensskedule aangedui is nie
-STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA}{NBSP}da{P g e}/%
+###length 3
+
 ###setting-zero-is-special
 STR_CONFIG_SETTING_SERVINT_DISABLED                             :Gedeaktiveer
 
@@ -1855,17 +1860,8 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :Vragverspreidin
 STR_CONFIG_SETTING_AI                                           :Mededingers
 STR_CONFIG_SETTING_AI_NPC                                       :Rekenaar spelers
 
-STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS                        :Padvinder vir treine: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_TRAINS_HELPTEXT               :Pad speurder om vir teine te gebruik
-STR_CONFIG_SETTING_PATHFINDER_FOR_ROAD_VEHICLES                 :Padvinder vir pad voertuie: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_ROAD_VEHICLES_HELPTEXT        :Pad speurder om vir pad vervoer te gebruik
-STR_CONFIG_SETTING_PATHFINDER_FOR_SHIPS                         :Padvinder vir skepe: {STRING}
-STR_CONFIG_SETTING_PATHFINDER_FOR_SHIPS_HELPTEXT                :Pad speurder om vir skepe te gebruik
 STR_CONFIG_SETTING_REVERSE_AT_SIGNALS                           :Outomatiese rigting verandering op seine: {STRING}
 STR_CONFIG_SETTING_REVERSE_AT_SIGNALS_HELPTEXT                  :Laat treine toe om agteruit te gaan by signale, as hulle daar lank gewag het
-###length 2
-STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
-STR_CONFIG_SETTING_PATHFINDER_YAPF                              :YAPF {BLUE}(Aanbevole)
 
 STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}Verander stel waarde
 
@@ -2135,7 +2131,6 @@ STR_NETWORK_CONNECTING_SPECIAL_2                                :{BLACK}Maatskap
 STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Loskoppel
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Verskaffer is beskerm. Voer wagwoord in
-STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Maatskappy is beskerm. Voer wagwoord in
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Klient Lys
@@ -2151,19 +2146,9 @@ STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Klient Lys
 
 STR_NETWORK_SPECTATORS                                          :Aanskouers
 
-# Network set password
-STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Moenie die ingesleutelde wagwoord bewaar nie
-STR_COMPANY_PASSWORD_OK                                         :{BLACK}Gee die maatskappy die nuwe wagwoord
-STR_COMPANY_PASSWORD_CAPTION                                    :{WHITE}Maatskappy wagwoord
-STR_COMPANY_PASSWORD_MAKE_DEFAULT                               :{BLACK}Voorbepaalde maatskappy wagwoord
-STR_COMPANY_PASSWORD_MAKE_DEFAULT_TOOLTIP                       :{BLACK}Gebruik die maatskapy wagwoord as die standaard vir nuwe maatskappye
-
 # Network company info join/password
 STR_COMPANY_VIEW_JOIN                                           :{BLACK}Bind
 STR_COMPANY_VIEW_JOIN_TOOLTIP                                   :{BLACK}Bind en speel as maatskapy
-STR_COMPANY_VIEW_PASSWORD                                       :{BLACK}Wagwoord
-STR_COMPANY_VIEW_PASSWORD_TOOLTIP                               :{BLACK}Beskerm maatskappy met wagwoord om te verhoed dat ongemagtigde spelers toegang verkry
-STR_COMPANY_VIEW_SET_PASSWORD                                   :{BLACK}Stel maatskappy wagwoord
 
 # Network chat
 STR_NETWORK_CHAT_SEND                                           :{BLACK}Stuur
@@ -2203,7 +2188,7 @@ STR_NETWORK_ERROR_TIMEOUT_JOIN                                  :{WHITE}Jou reke
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION            :{WHITE}Moontlike verbinding verlore
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION                    :{WHITE}Die laaste {NUM} seconde{P "" s} geen data het van die bediener gekom nie
 
-###length 21
+###length 23
 STR_NETWORK_ERROR_CLIENT_GENERAL                                :algemeen fout
 STR_NETWORK_ERROR_CLIENT_DESYNC                                 :desync fout
 STR_NETWORK_ERROR_CLIENT_SAVEGAME                               :kan nie kaart laai nie
@@ -2401,7 +2386,6 @@ STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Kies spo
 
 # Rail waypoint construction window
 STR_WAYPOINT_CAPTION                                            :{WHITE}Roetebaken
-STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Kies tipe roetebaken
 
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}Spoor Stasie Keuse
@@ -2414,8 +2398,9 @@ STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Kies tre
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Sleep & Drop
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Bou 'n stasie gebruikend sleep & drop
 
-STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Kies 'n stasie klas om te vertoon
-STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Kies die stasie tipe om te bou
+
+
+
 
 STR_STATION_CLASS_DFLT                                          :Verstek stasie
 STR_STATION_CLASS_WAYP                                          :Roetebakens
@@ -2550,8 +2535,6 @@ STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Koop gro
 
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Voorwerp Keuse
-STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Selekteer voorwerp om te bou. Shift skakel gebou/wys koste beraaming
-STR_OBJECT_BUILD_CLASS_TOOLTIP                                  :{BLACK}Kies klas van die voorwerp te bou
 STR_OBJECT_BUILD_PREVIEW_TOOLTIP                                :{BLACK}Voorskou van 'n voorwerp
 STR_OBJECT_BUILD_SIZE                                           :{BLACK}Grootte: {GOLD}{NUM} x {NUM} teels
 
@@ -2651,7 +2634,6 @@ STR_LAND_AREA_INFORMATION_TRAM_OWNER                            :{BLACK}Tremweg 
 STR_LAND_AREA_INFORMATION_RAIL_OWNER                            :{BLACK}Spoorweg eienaar: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY                       :{BLACK}Plaaslike raad: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE                  :Geen
-STR_LAND_AREA_INFORMATION_LANDINFO_COORDS                       :{BLACK}Koördinate: {LTBLUE}{NUM}x{NUM}x{NUM} ({STRING})
 STR_LAND_AREA_INFORMATION_BUILD_DATE                            :{BLACK}Gebou: {LTBLUE}{DATE_LONG}
 STR_LAND_AREA_INFORMATION_STATION_CLASS                         :{BLACK}Stasie klas: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_STATION_TYPE                          :{BLACK}Stasie tiepe: {LTBLUE}{STRING}
@@ -2921,6 +2903,8 @@ STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}Hardloop
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}Lopende skrif
 STR_GENERATION_PREPARING_GAME                                   :{BLACK}Voorbereiding speletjie
 
+
+
 # NewGRF settings
 STR_NEWGRF_SETTINGS_CAPTION                                     :{WHITE}NewGRF stellings
 STR_NEWGRF_SETTINGS_INFO_TITLE                                  :{WHITE}Gedetaileerde NewGRF inligting
@@ -3003,7 +2987,6 @@ STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_RAIL_TYPE                  :Spoor tipe
 STR_NEWGRF_INSPECT_QUERY_CAPTION                                :{WHITE}NewGRF veranderlike 60+x parameter (heksadesimaal)
 
 # Sprite aligner window
-STR_SPRITE_ALIGNER_CAPTION                                      :{WHITE}Belyn sprite {COMMA} ({STRING})
 STR_SPRITE_ALIGNER_NEXT_BUTTON                                  :{BLACK}Volgende sprite
 STR_SPRITE_ALIGNER_NEXT_TOOLTIP                                 :{BLACK}Gaan na die volgende "sprite", Ignoreer enige pseudo/her-kleur/font "sprites" en spring terug na die begin
 STR_SPRITE_ALIGNER_GOTO_BUTTON                                  :{BLACK}Gaan na sprite
@@ -3111,7 +3094,6 @@ STR_EDIT_SIGN_PREVIOUS_SIGN_TOOLTIP                             :{BLACK}Gaan na 
 STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}Tik 'n naam vir die teken in
 
 # Town directory window
-STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}Dorpe
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- Geen -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
 STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{YELLOW} (Stad){BLACK} ({COMMA})
@@ -3395,7 +3377,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_STATIONS                        :{WHITE}Stasiete
 STR_COMPANY_INFRASTRUCTURE_VIEW_AIRPORTS                        :{WHITE}Lughawens
 
 # Industry directory
-STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Nywerhede
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Geen -
 STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% vervoer){BLACK}
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
@@ -3817,12 +3798,7 @@ STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE}Diens b
 
 
 # Vehicle stopped/started animations
-###length 2
-STR_VEHICLE_COMMAND_STOPPED_SMALL                               :{TINY_FONT}{RED}Gestop
 STR_VEHICLE_COMMAND_STOPPED                                     :{RED}Gestop
-
-###length 2
-STR_VEHICLE_COMMAND_STARTED_SMALL                               :{TINY_FONT}{GREEN}Begin
 STR_VEHICLE_COMMAND_STARTED                                     :{GREEN}Begin
 
 # Vehicle details
@@ -4232,25 +4208,16 @@ STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING}
 
 
 # Vehicle loading indicators
-STR_PERCENT_UP_SMALL                                            :{TINY_FONT}{WHITE}{NUM}%{UP_ARROW}
 STR_PERCENT_UP                                                  :{WHITE}{NUM}%{UP_ARROW}
-STR_PERCENT_DOWN_SMALL                                          :{TINY_FONT}{WHITE}{NUM}%{DOWN_ARROW}
 STR_PERCENT_DOWN                                                :{WHITE}{NUM}%{DOWN_ARROW}
-STR_PERCENT_UP_DOWN_SMALL                                       :{TINY_FONT}{WHITE}{NUM}%{UP_ARROW}{DOWN_ARROW}
 STR_PERCENT_UP_DOWN                                             :{WHITE}{NUM}%{UP_ARROW}{DOWN_ARROW}
-STR_PERCENT_NONE_SMALL                                          :{TINY_FONT}{WHITE}{NUM}%
 STR_PERCENT_NONE                                                :{WHITE}{NUM}%
 
 # Income 'floats'
-STR_INCOME_FLOAT_COST_SMALL                                     :{TINY_FONT}{RED}Koste: {CURRENCY_LONG}
 STR_INCOME_FLOAT_COST                                           :{RED}Koste: {CURRENCY_LONG}
-STR_INCOME_FLOAT_INCOME_SMALL                                   :{TINY_FONT}{GREEN}Inkomste: {CURRENCY_LONG}
 STR_INCOME_FLOAT_INCOME                                         :{GREEN}Inkomste: {CURRENCY_LONG}
-STR_FEEDER_TINY                                                 :{TINY_FONT}{YELLOW}Oorplaas: {CURRENCY_LONG}
 STR_FEEDER                                                      :{YELLOW}Oordrag: {CURRENCY_LONG}
-STR_FEEDER_INCOME_TINY                                          :{TINY_FONT}{YELLOW}Oordrag: {CURRENCY_LONG}{WHITE} / {GREEN}Inkomste: {CURRENCY_LONG}
 STR_FEEDER_INCOME                                               :{YELLOW}Oordrag: {CURRENCY_LONG}{WHITE} / {GREEN}Inkomste: {CURRENCY_LONG}
-STR_FEEDER_COST_TINY                                            :{TINY_FONT}{YELLOW}Oordrag: {CURRENCY_LONG}{WHITE} / {RED}Koste: {CURRENCY_LONG}
 STR_FEEDER_COST                                                 :{YELLOW} Oordrag: {CURRENCY_LONG}{WHITE} / {RED}Koste: {CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_COST                                      :{WHITE}Beraamde Koste: {CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_INCOME                                    :{WHITE}Beraamde Inkomste: {CURRENCY_LONG}
@@ -4259,9 +4226,7 @@ STR_MESSAGE_ESTIMATED_INCOME                                    :{WHITE}Beraamde
 STR_ERROR_SAVE_STILL_IN_PROGRESS                                :{WHITE}Stoor van speletjie is nog besig,{}wag asb tot dit klaar is!
 STR_ERROR_AUTOSAVE_FAILED                                       :{WHITE}Outostoor het misluk
 STR_ERROR_UNABLE_TO_READ_DRIVE                                  :{BLACK}Kan nie skyf lees nie
-STR_ERROR_GAME_SAVE_FAILED                                      :{WHITE}Speletjie Spaar Misluk{}{STRING}
 STR_ERROR_UNABLE_TO_DELETE_FILE                                 :{WHITE}Kan nie lêer uitvee nie
-STR_ERROR_GAME_LOAD_FAILED                                      :{WHITE}Speletjie Laai Misluk{}{STRING}
 STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR                   :Interne fout: {STRING}
 STR_GAME_SAVELOAD_ERROR_BROKEN_SAVEGAME                         :Gebreekte gespaarde spel - {STRING}
 STR_GAME_SAVELOAD_ERROR_TOO_NEW_SAVEGAME                        :Spaarspeletjie is gemaak met nuwer uitgawe

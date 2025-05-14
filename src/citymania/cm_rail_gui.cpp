@@ -7,6 +7,7 @@
 
 #include "../rail_cmd.h"
 #include "../tilehighlight_func.h"
+#include "../tile_map.h"
 
 #include "../safeguards.h"
 
@@ -71,70 +72,70 @@ static bool HandleAutodirTerraform(TileIndex start_tile, TileIndex end_tile, Tra
     switch (_thd.cm_poly_dir) {
         case TRACKDIR_X_NE:
             return DoAutodirTerraform(false, start_tile, end_tile, track, std::move(rail_cmd),
-                TILE_ADDXY(start_tile, 1, 0), end_tile,
-                TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, 1), remove_mode);
+                TileAddXY(start_tile, 1, 0), end_tile,
+                TileAddXY(start_tile, 1, 1), TileAddXY(end_tile, 0, 1), remove_mode);
             break;
         case TRACKDIR_X_SW:
             return DoAutodirTerraform(false, start_tile, end_tile, track, std::move(rail_cmd),
-                start_tile, TILE_ADDXY(end_tile, 1, 0),
-                TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, 1), remove_mode);
+                start_tile, TileAddXY(end_tile, 1, 0),
+                TileAddXY(start_tile, 0, 1), TileAddXY(end_tile, 1, 1), remove_mode);
             break;
         case TRACKDIR_Y_SE:
             return DoAutodirTerraform(false, start_tile, end_tile, track, std::move(rail_cmd),
-                start_tile, TILE_ADDXY(end_tile, 0, 1),
-                TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, 1), remove_mode);
+                start_tile, TileAddXY(end_tile, 0, 1),
+                TileAddXY(start_tile, 1, 0), TileAddXY(end_tile, 1, 1), remove_mode);
             break;
         case TRACKDIR_Y_NW:
             return DoAutodirTerraform(false, start_tile, end_tile, track, std::move(rail_cmd),
-                TILE_ADDXY(start_tile, 0, 1), end_tile,
-                TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, 0), remove_mode);
+                TileAddXY(start_tile, 0, 1), end_tile,
+                TileAddXY(start_tile, 1, 1), TileAddXY(end_tile, 1, 0), remove_mode);
             break;
         case TRACKDIR_LEFT_N: {
             return DoAutodirTerraform(true, start_tile, end_tile, track, std::move(rail_cmd),
-                TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, eq, 0),
-                TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 0, !eq), remove_mode);
+                TileAddXY(start_tile, 1, 0), TileAddXY(end_tile, eq, 0),
+                TileAddXY(start_tile, 1, 1), TileAddXY(end_tile, 0, !eq), remove_mode);
             break;
         }
         case TRACKDIR_RIGHT_N: {
             return DoAutodirTerraform(true, start_tile, end_tile, track, std::move(rail_cmd),
-                TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 0, eq),
-                TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, !eq, 0), remove_mode);
+                TileAddXY(start_tile, 0, 1), TileAddXY(end_tile, 0, eq),
+                TileAddXY(start_tile, 1, 1), TileAddXY(end_tile, !eq, 0), remove_mode);
             break;
         }
         case TRACKDIR_LEFT_S: {
             return DoAutodirTerraform(true, start_tile, end_tile, track, std::move(rail_cmd),
-                TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 1, !eq),
-                start_tile, TILE_ADDXY(end_tile, eq, 1), remove_mode);
+                TileAddXY(start_tile, 1, 0), TileAddXY(end_tile, 1, !eq),
+                start_tile, TileAddXY(end_tile, eq, 1), remove_mode);
             break;
         }
         case TRACKDIR_RIGHT_S: {
             return DoAutodirTerraform(true, start_tile, end_tile, track, std::move(rail_cmd),
-                TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, !eq, 1),
-                start_tile, TILE_ADDXY(end_tile, 1, eq), remove_mode);
+                TileAddXY(start_tile, 0, 1), TileAddXY(end_tile, !eq, 1),
+                start_tile, TileAddXY(end_tile, 1, eq), remove_mode);
             break;
         }
         case TRACKDIR_UPPER_E: {
             return DoAutodirTerraform(true, start_tile, end_tile, track, std::move(rail_cmd),
-                start_tile, TILE_ADDXY(end_tile, 0, !ez),
-                TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, !ez, 1), remove_mode);
+                start_tile, TileAddXY(end_tile, 0, !ez),
+                TileAddXY(start_tile, 1, 0), TileAddXY(end_tile, !ez, 1), remove_mode);
             break;
         }
         case TRACKDIR_LOWER_E: {
             return DoAutodirTerraform(true, start_tile, end_tile, track, std::move(rail_cmd),
-                TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, ez, 1),
-                TILE_ADDXY(start_tile, 1, 0), TILE_ADDXY(end_tile, 0, ez), remove_mode);
+                TileAddXY(start_tile, 1, 1), TileAddXY(end_tile, ez, 1),
+                TileAddXY(start_tile, 1, 0), TileAddXY(end_tile, 0, ez), remove_mode);
             break;
         }
         case TRACKDIR_UPPER_W: {
             return DoAutodirTerraform(true, start_tile, end_tile, track, std::move(rail_cmd),
-                start_tile, TILE_ADDXY(end_tile, !ez, 0),
-                TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, 1, !ez), remove_mode);
+                start_tile, TileAddXY(end_tile, !ez, 0),
+                TileAddXY(start_tile, 0, 1), TileAddXY(end_tile, 1, !ez), remove_mode);
             break;
         }
         case TRACKDIR_LOWER_W: {
             return DoAutodirTerraform(true, start_tile, end_tile, track, std::move(rail_cmd),
-                TILE_ADDXY(start_tile, 1, 1), TILE_ADDXY(end_tile, 1, ez),
-                TILE_ADDXY(start_tile, 0, 1), TILE_ADDXY(end_tile, ez, 0), remove_mode);
+                TileAddXY(start_tile, 1, 1), TileAddXY(end_tile, 1, ez),
+                TileAddXY(start_tile, 0, 1), TileAddXY(end_tile, ez, 0), remove_mode);
             break;
         }
         default:

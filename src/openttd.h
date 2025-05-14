@@ -68,7 +68,7 @@ extern std::atomic<bool> _exit_game;
 extern bool _save_config;
 
 /** Modes of pausing we've got */
-enum PauseMode : byte {
+enum PauseMode : uint8_t {
 	PM_UNPAUSED              = 0,      ///< A normal unpaused game
 	PM_PAUSED_NORMAL         = 1 << 0, ///< A game normally paused
 	PM_PAUSED_SAVELOAD       = 1 << 1, ///< A game paused for saving/loading
@@ -91,7 +91,7 @@ namespace citymania { extern uint32 _pause_countdown; }
 void AskExitGame();
 void AskExitToGameMenu();
 
-int openttd_main(int argc, char *argv[]);
+int openttd_main(std::span<char * const> arguments);
 void StateGameLoop();
 void HandleExitGameRequest();
 

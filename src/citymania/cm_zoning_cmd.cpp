@@ -19,7 +19,7 @@
 
 namespace citymania {
 
-Zoning _zoning = {CHECKNOTHING, CHECKNOTHING};
+Zoning _zoning = {EvaluationMode::CHECKNOTHING, EvaluationMode::CHECKNOTHING};
 static const SpriteID INVALID_SPRITE_ID = UINT_MAX;
 //RED GREEN BLACK LIGHT_BLUE ORANGE WHITE YELLOW PURPLE
 
@@ -117,7 +117,7 @@ Town *CMClosestTownFromTile(TileIndex tile, uint threshold)
  * @param TileInfo ti
  *        the tile
  */
-const byte _tileh_to_sprite[32] = {
+const uint8_t _tileh_to_sprite[32] = {
 	0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 0,
 	0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18, 0,
 };
@@ -140,7 +140,7 @@ bool IsAreaWithinAcceptanceZoneOfStation(TileArea area) {
 	StationFinder morestations(TileArea(TileXY(TileX(area.tile) - catchment / 2, TileY(area.tile) - catchment / 2),
 		TileX(area.tile) + area.w + catchment, TileY(area.tile) + area.h + catchment));
 
-	for (Station *st: *morestations.GetStations()) {
+	for (Station *st: morestations.GetStations()) {
 		Rect rect = st->GetCatchmentRect();
 		return TileArea(TileXY(rect.left, rect.top), TileXY(rect.right, rect.bottom)).Intersects(area);
 	}
@@ -156,7 +156,7 @@ bool IsAreaWithinAcceptanceZoneOfStation(TileArea area) {
 bool IsTileWithinAcceptanceZoneOfStation(TileIndex tile) {
 	StationFinder morestations(TileArea(tile, 1, 1));
 
-	for (Station *st: *morestations.GetStations()) {
+	for (Station *st: morestations.GetStations()) {
 		if (st->TileIsInCatchment(tile))
 			return true;
 	}
@@ -219,7 +219,7 @@ SpriteID TileZoneCheckUnservedBuildingsEvaluation(TileIndex tile) {
 	{
 		StationFinder stations(TileArea(tile, 1, 1));
 
-		if (!stations.GetStations()->empty()) {
+		if (!stations.GetStations().empty()) {
 			return INVALID_SPRITE_ID;
 		}
 		return CM_SPR_PALETTE_ZONING_RED;
@@ -234,7 +234,7 @@ SpriteID TileZoneCheckUnservedIndustriesEvaluation(TileIndex tile) {
 		Industry *ind = Industry::GetByTile(tile);
 		StationFinder stations(ind->location);
 
-		if (!stations.GetStations()->empty()){
+		if (!stations.GetStations().empty()){
 			return INVALID_SPRITE_ID;
 		}
 
@@ -357,17 +357,17 @@ SpriteID TileZoneCheckActiveStations(TileIndex tile) {
  */
 SpriteID TileZoningSpriteEvaluation(TileIndex tile, Owner owner, EvaluationMode ev_mode) {
 	switch (ev_mode) {
-		case CHECKOPINION:     return TileZoneCheckOpinionEvaluation(tile, owner);
-		case CHECKBUILD:       return TileZoneCheckBuildEvaluation(tile, owner);
-		case CHECKSTACATCH:    return TileZoneCheckStationCatchmentEvaluation(tile);
-		case CHECKBULUNSER:    return TileZoneCheckUnservedBuildingsEvaluation(tile);
-		case CHECKINDUNSER:    return TileZoneCheckUnservedIndustriesEvaluation(tile);
-		case CHECKTOWNZONES:   return TileZoneCheckTownZones(tile);
-		case CHECKCBACCEPTANCE: return TileZoneCheckCBBorders(tile);
-		case CHECKCBTOWNLIMIT:   return TileZoneCheckNewCBBorders(tile);
-		case CHECKTOWNADZONES: return TileZoneCheckTownAdvertisementZones(tile);
-		case CHECKTOWNGROWTHTILES: return TileZoneCheckTownsGrowthTiles(tile);
-		case CHECKACTIVESTATIONS: return TileZoneCheckActiveStations(tile);
+		case EvaluationMode::CHECKOPINION:     return TileZoneCheckOpinionEvaluation(tile, owner);
+		case EvaluationMode::CHECKBUILD:       return TileZoneCheckBuildEvaluation(tile, owner);
+		case EvaluationMode::CHECKSTACATCH:    return TileZoneCheckStationCatchmentEvaluation(tile);
+		case EvaluationMode::CHECKBULUNSER:    return TileZoneCheckUnservedBuildingsEvaluation(tile);
+		case EvaluationMode::CHECKINDUNSER:    return TileZoneCheckUnservedIndustriesEvaluation(tile);
+		case EvaluationMode::CHECKTOWNZONES:   return TileZoneCheckTownZones(tile);
+		case EvaluationMode::CHECKCBACCEPTANCE: return TileZoneCheckCBBorders(tile);
+		case EvaluationMode::CHECKCBTOWNLIMIT:   return TileZoneCheckNewCBBorders(tile);
+		case EvaluationMode::CHECKTOWNADZONES: return TileZoneCheckTownAdvertisementZones(tile);
+		case EvaluationMode::CHECKTOWNGROWTHTILES: return TileZoneCheckTownsGrowthTiles(tile);
+		case EvaluationMode::CHECKACTIVESTATIONS: return TileZoneCheckActiveStations(tile);
 		default:               return INVALID_SPRITE_ID;
 	}
 }
@@ -397,24 +397,24 @@ SpriteID GetTownZoneBorderColor(uint8 zone) {
  */
 void DrawTileZoning(const TileInfo *ti) {
 
-	if(_zoning.outer == CHECKNOTHING && _zoning.inner == CHECKNOTHING) return; //nothing to do
+	if(_zoning.outer == EvaluationMode::CHECKNOTHING && _zoning.inner == EvaluationMode::CHECKNOTHING) return; //nothing to do
 	if (_game_mode != GM_NORMAL || ti->tile >= Map::Size() || IsTileType(ti->tile, MP_VOID)) return; //check invalid
-	if (_zoning.outer != CHECKNOTHING){
-		if (_zoning.outer == CHECKTOWNZONES ||
-			    _zoning.outer == CHECKBULUNSER ||
-			    _zoning.outer == CHECKINDUNSER ||
-			    _zoning.outer == CHECKTOWNADZONES ||
-				_zoning.outer == CHECKSTACATCH ||
-				_zoning.outer == CHECKCBACCEPTANCE ||
-				_zoning.outer == CHECKCBTOWNLIMIT ||
-				_zoning.outer == CHECKACTIVESTATIONS ||
-				_zoning.outer == CHECKTOWNGROWTHTILES) {
+	if (_zoning.outer != EvaluationMode::CHECKNOTHING){
+		if (_zoning.outer == EvaluationMode::CHECKTOWNZONES ||
+			    _zoning.outer == EvaluationMode::CHECKBULUNSER ||
+			    _zoning.outer == EvaluationMode::CHECKINDUNSER ||
+			    _zoning.outer == EvaluationMode::CHECKTOWNADZONES ||
+				_zoning.outer == EvaluationMode::CHECKSTACATCH ||
+				_zoning.outer == EvaluationMode::CHECKCBACCEPTANCE ||
+				_zoning.outer == EvaluationMode::CHECKCBTOWNLIMIT ||
+				_zoning.outer == EvaluationMode::CHECKACTIVESTATIONS ||
+				_zoning.outer == EvaluationMode::CHECKTOWNGROWTHTILES) {
 			// handled by citymania zoning
 		} else {
 			DrawZoningSprites(SPR_SELECT_TILE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.outer), ti);
 		}
 	}
-	if (_zoning.inner != CHECKNOTHING){
+	if (_zoning.inner != EvaluationMode::CHECKNOTHING){
 		DrawZoningSprites(CM_SPR_INNER_HIGHLIGHT_BASE, TileZoningSpriteEvaluation(ti->tile, _local_company, _zoning.inner), ti);
 	}
 }

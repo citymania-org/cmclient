@@ -21,6 +21,7 @@
 #include "../window_func.h"
 #include "../company_base.h"
 #include "../zoom_func.h"
+#include "../strings_func.h"
 
 #include "../smallmap_gui.h"
 
@@ -231,18 +232,17 @@ constexpr bool operator==(const MinimapIndustryKdtreeEntry &lhs, const MinimapIn
     return lhs.index == rhs.index;
 }
 
-inline int16 Kdtree_MinimapIndustryXYFunc(const MinimapIndustryKdtreeEntry &e, int dim) { return dim == 0 ? e.mx : e.my; }
-typedef Kdtree<MinimapIndustryKdtreeEntry, decltype(&Kdtree_MinimapIndustryXYFunc), int16, int> MinimapIndustryKdtree;
+struct Kdtree_MinimapIndustryXYFunc {
+    inline int16 operator()(const MinimapIndustryKdtreeEntry &e, int dim) { return dim == 0 ? e.mx : e.my; }
+};
 
+typedef Kdtree<MinimapIndustryKdtreeEntry, Kdtree_MinimapIndustryXYFunc, int16, int> MinimapIndustryKdtree;
 
-MinimapIndustryKdtree _minimap_industry_idx{Kdtree_MinimapIndustryXYFunc};
+MinimapIndustryKdtree _minimap_industry_idx;
 uint _max_industry_outputs = 0;
 
 bool is_cached_industry(const Industry *ind) {
-	for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++)
-		if (ind->produced[i].cargo != INVALID_CARGO)
-			return true;
-	return false;
+	return !ind->produced.empty();
 }
 
 MinimapIndustryKdtreeEntry get_industry_entry(const Industry *ind) {
@@ -444,7 +444,7 @@ void BuildOwnerLegend()
 
 	int i = NUM_NO_COMPANY_ENTRIES;
 	for (const Company *c : Company::Iterate()) {
-		_legend_land_owners[i].colour = _colour_gradient[c->colour][5];
+		_legend_land_owners[i].colour = GetColourGradient(c->colour, SHADE_LIGHT);
 		_legend_land_owners[i].company = c->index;
 		_legend_land_owners[i].show_on_map = true;
 		_legend_land_owners[i].col_break = false;
@@ -504,7 +504,7 @@ static const AndOr _smallmap_vehicles_andor[] = {
 };
 
 /** Mapping of tile type to importance of the tile (higher number means more interesting to show). */
-static const byte _tiletype_importance[] = {
+static const uint8_t _tiletype_importance[] = {
 	2, // MP_CLEAR
 	8, // MP_RAILWAY
 	7, // MP_ROAD
@@ -726,7 +726,7 @@ static inline uint32 CM_GetSmallMapIMBAPixels(TileIndex tile, TileType t)
 }
 
 /** Vehicle colours in #SMT_VEHICLES mode. Indexed by #VehicleType. */
-static const byte _vehicle_type_colours[6] = {
+static const uint8_t _vehicle_type_colours[6] = {
 	PC_RED, PC_YELLOW, PC_LIGHT_BLUE, PC_WHITE, PC_BLACK, PC_RED
 };
 
@@ -999,7 +999,7 @@ void SmallMapWindow::DrawVehicles(const DrawPixelInfo *dpi, Blitter *blitter) co
 		if (!IsInsideMM(y, -this->ui_zoom + 1, dpi->height)) continue; // y is out of bounds.
 
 		/* Calculate pointer to pixel and the colour */
-		byte colour = (this->map_type == SMT_VEHICLES) ? _vehicle_type_colours[v->type] : PC_WHITE;
+		uint8_t colour = (this->map_type == SMT_VEHICLES) ? _vehicle_type_colours[v->type] : PC_WHITE;
 
 		/* And draw either one or two pixels depending on clipping */
 		auto min_i = std::max(0, -y);
@@ -1230,7 +1230,7 @@ void SmallMapWindow::SetupWidgetData()
 }
 
 
-SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) : Window(desc)
+SmallMapWindow::SmallMapWindow(WindowDesc &desc, int window_number) : Window(desc)
 {
 	_smallmap_industry_highlight = INVALID_INDUSTRYTYPE;
 	this->overlay = new LinkGraphOverlay(this, WID_SM_MAP, 0, this->GetOverlayCompanyMask(), 1);
@@ -2061,8 +2061,8 @@ static std::unique_ptr<NWidgetBase> SmallMapDisplay()
 {
 	std::unique_ptr<NWidgetBase> map_display = std::make_unique<NWidgetSmallmapDisplay>();
 
-	map_display = MakeNWidgets(std::begin(_nested_smallmap_display), std::end(_nested_smallmap_display), std::move(map_display));
-	map_display = MakeNWidgets(std::begin(_nested_smallmap_bar), std::end(_nested_smallmap_bar), std::move(map_display));
+	map_display = MakeNWidgets(_nested_smallmap_display, std::move(map_display));
+	map_display = MakeNWidgets(_nested_smallmap_bar, std::move(map_display));
 	return map_display;
 }
 
@@ -2093,11 +2093,11 @@ static const NWidgetPart _nested_smallmap_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _smallmap_desc(__FILE__, __LINE__,
+static WindowDesc _smallmap_desc(
 	WDP_AUTO, "cm_minimap", 484, 314,
 	WC_SMALLMAP, WC_NONE,
 	0,
-	std::begin(_nested_smallmap_widgets), std::end(_nested_smallmap_widgets)
+	_nested_smallmap_widgets
 );
 
 /**
@@ -2105,7 +2105,7 @@ static WindowDesc _smallmap_desc(__FILE__, __LINE__,
  */
 void ShowSmallMap()
 {
-	AllocateWindowDescFront<SmallMapWindow>(&_smallmap_desc, 0);
+	AllocateWindowDescFront<SmallMapWindow>(_smallmap_desc, 0);
 }
 
 /**

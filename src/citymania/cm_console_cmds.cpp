@@ -26,7 +26,7 @@
 
 #include "../safeguards.h"
 
-bool ReadHeightMap(DetailedFileType dft, const char *filename, uint *x, uint *y, byte **map);
+bool ReadHeightMap(DetailedFileType dft, const char *filename, uint *x, uint *y, std::vector<uint8_t> *map);
 
 namespace citymania {
 
@@ -40,7 +40,7 @@ static void IConsoleHelp(const char *str)
     IConsolePrint(CC_WARNING, "- {}", str);
 }
 
-bool ConGameSpeed([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConGameSpeed([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0 || argc > 2) {
         IConsoleHelp("Changes game speed. Usage: 'cmgamespeed [n]'");
         return true;
@@ -50,7 +50,7 @@ bool ConGameSpeed([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     return true;
 }
 
-bool ConStep([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConStep([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0 || argc > 2) {
         IConsoleHelp("Advances the game for a certain amount of ticks (default 1). Usage: 'cmstep [n]'");
         return true;
@@ -63,7 +63,7 @@ bool ConStep([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     return true;
 }
 
-bool ConExport([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConExport([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Exports various game data in json format to openttd.json file");
         return true;
@@ -75,7 +75,7 @@ bool ConExport([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     return true;
 }
 
-bool ConTreeMap([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConTreeMap([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Loads heighmap-like file and plants trees according to it, values 0-256 ore scaled to 0-4 trees.");
         IConsoleHelp("Usage: 'cmtreemap <file>'");
@@ -114,10 +114,9 @@ bool ConTreeMap([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
     }
 
     uint x, y;
-    byte *map = nullptr;
+    std::vector<uint8_t> map;
 
     if (!ReadHeightMap(dft, filename.c_str(), &x, &y, &map)) {
-        free(map);
         return true;
     }
 
@@ -132,13 +131,12 @@ bool ConTreeMap([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
         }
     }
 
-    free(map);
     return true;
 }
 
 extern void (*UpdateTownGrowthRate)(Town *t);
 
-bool ConResetTownGrowth([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConResetTownGrowth([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Resets growth to normal for all towns.");
         IConsoleHelp("Usage: 'cmresettowngrowth'");
@@ -181,7 +179,7 @@ void SetReplaySaveInterval(uint32 interval) {
     if (_replay_save_interval) MakeReplaySave();
 }
 
-bool ConLoadCommands([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConLoadCommands([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     if (argc == 0) {
         IConsoleHelp("Loads a file with command queue to execute");
         IConsoleHelp("Usage: 'cmloadcommands <file>'");
@@ -198,17 +196,17 @@ bool ConLoadCommands([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) 
     return true;
 }
 
-bool ConStartRecord([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConStartRecord([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     StartRecording();
     return true;
 }
 
-bool ConStopRecord([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConStopRecord([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     StopRecording();
     return true;
 }
 
-bool ConGameStats([[maybe_unused]] byte argc, [[maybe_unused]] char *argv[]) {
+bool ConGameStats([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     auto num_trains = 0u;
     auto num_rvs = 0u;
     auto num_ships = 0u;

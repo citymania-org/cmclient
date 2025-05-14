@@ -74,7 +74,7 @@ protected:
 	void ScrollToTile( TileIndex tile );
 
 public:
-	WatchCompany(WindowDesc *desc, int window_number, CompanyID company_to_watch, int Wtype);
+	WatchCompany(WindowDesc &desc, int window_number, CompanyID company_to_watch, int Wtype);
 
 	void DrawWidget(const Rect &r, int widget) const override;
 	void OnClick(Point pt, int widget, int click_count) override;
@@ -85,7 +85,7 @@ public:
 	void SetStringParameters(int widget) const override;
 	void OnRealtimeTick([[maybe_unused]] uint delta_ms) override;
 	void OnPaint() override;
-	void OnQueryTextFinished(char *str) override;
+	void OnQueryTextFinished(std::optional<std::string> str) override;
 
 	void OnDoCommand(CompanyID company, TileIndex tile);
 };

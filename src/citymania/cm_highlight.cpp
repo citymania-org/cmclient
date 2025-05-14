@@ -68,35 +68,30 @@ extern RailType _cur_railtype;
 extern RoadType _cur_roadtype;
 extern AirportClassID _selected_airport_class; ///< the currently visible airport class
 extern int _selected_airport_index;
-extern byte _selected_airport_layout;
+extern uint8_t _selected_airport_layout;
 extern DiagDirection _build_depot_direction; ///< Currently selected depot direction
 extern DiagDirection _road_depot_orientation;
 extern uint32 _realtime_tick;
 extern uint32 _cm_funding_layout;
 extern IndustryType _cm_funding_type;
-extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
-extern void IndustryDrawTileLayout(const TileInfo *ti, const TileLayoutSpriteGroup *group, byte rnd_colour, byte stage);
+extern void GetStationLayout(uint8_t *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
+extern void IndustryDrawTileLayout(const TileInfo *ti, const TileLayoutSpriteGroup *group, uint8_t rnd_colour, uint8_t stage);
 extern void SetSelectionTilesDirty();
 
-struct RailStationGUISettings {
-    Axis orientation;                 ///< Currently selected rail station orientation
-
-    bool newstations;                 ///< Are custom station definitions available?
-    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
-    byte station_count;               ///< Number of custom stations (if newstations is \c true )
+struct RoadStopPickerSelection {
+    RoadStopClassID sel_class; ///< Selected road stop class.
+    uint16_t sel_type; ///< Selected road stop type within the class.
+    DiagDirection orientation; ///< Selected orientation of the road stop.
 };
-extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
-struct RoadStopGUISettings {
-    DiagDirection orientation;
+extern RoadStopPickerSelection _roadstop_gui;
 
-    RoadStopClassID roadstop_class;
-    uint16_t roadstop_type;
-    uint16_t roadstop_count;
+struct StationPickerSelection {
+    StationClassID sel_class; ///< Selected station class.
+    uint16_t sel_type; ///< Selected station type within the class.
+    Axis axis; ///< Selected orientation of the station.
 };
-extern RoadStopGUISettings _roadstop_gui_settings;
-
+extern StationPickerSelection _station_gui; ///< Settings of the station picker.
 
 template <>
 struct std::hash<citymania::ObjectTileHighlight> {
@@ -201,7 +196,7 @@ std::set<std::pair<uint32, const Town*>, std::greater<std::pair<uint32, const To
 //     int catchment;
 // } _station_select;
 
-const byte _tileh_to_sprite[32] = {
+const uint8_t _tileh_to_sprite[32] = {
     0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 0,
     0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18, 0,
 };
@@ -228,7 +223,7 @@ ObjectTileHighlight ObjectTileHighlight::make_rail_track(SpriteID palette, Track
     return oh;
 }
 
-ObjectTileHighlight ObjectTileHighlight::make_rail_station(SpriteID palette, Axis axis, byte section) {
+ObjectTileHighlight ObjectTileHighlight::make_rail_station(SpriteID palette, Axis axis, uint8_t section) {
     auto oh = ObjectTileHighlight(Type::RAIL_STATION, palette);
     oh.u.rail.station.axis = axis;
     oh.u.rail.station.section = section;
@@ -291,7 +286,7 @@ ObjectTileHighlight ObjectTileHighlight::make_airport_tile(SpriteID palette, Sta
     return oh;
 }
 
-ObjectTileHighlight ObjectTileHighlight::make_industry_tile(SpriteID palette, IndustryType ind_type, byte ind_layout, TileIndexDiff tile_diff, IndustryGfx gfx) {
+ObjectTileHighlight ObjectTileHighlight::make_industry_tile(SpriteID palette, IndustryType ind_type, uint8_t ind_layout, TileIndexDiff tile_diff, IndustryGfx gfx) {
     auto oh = ObjectTileHighlight(Type::INDUSTRY_TILE, palette);
     oh.u.industry_tile.tile_diff = tile_diff;
     oh.u.industry_tile.gfx = gfx;
@@ -475,7 +470,7 @@ ObjectHighlight ObjectHighlight::make_road_depot(TileIndex tile, RoadType roadty
     return oh;
 }
 
-ObjectHighlight ObjectHighlight::make_airport(TileIndex start_tile, int airport_type, byte airport_layout) {
+ObjectHighlight ObjectHighlight::make_airport(TileIndex start_tile, int airport_type, uint8_t airport_layout) {
     auto oh = ObjectHighlight{ObjectHighlight::Type::AIRPORT};
     oh.tile = start_tile;
     oh.airport_type = airport_type;
@@ -610,14 +605,14 @@ void ObjectHighlight::UpdateTiles() {
                 this->axis,
                 numtracks,
                 plat_len,
-                _railstation.station_class,
-                _railstation.station_type,
+                _station_gui.sel_class,
+                _station_gui.sel_type,
                 NEW_STATION,
                 true
             ).test();
             auto palette = (this->cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
-            std::vector<byte> layouts(numtracks * plat_len);
+            std::vector<uint8_t> layouts(numtracks * plat_len);
             auto layout_ptr = layouts.data();
             GetStationLayout(layout_ptr, numtracks, plat_len, nullptr); // TODO statspec
 
@@ -627,7 +622,7 @@ void ObjectHighlight::UpdateTiles() {
                 TileIndex tile = tile_track;
                 int w = plat_len;
                 do {
-                    byte layout = *layout_ptr++;
+                    uint8_t layout = *layout_ptr++;
                     this->AddTile(tile, ObjectTileHighlight::make_rail_station(palette, this->axis, layout & ~1));
                     tile += tile_delta;
                 } while (--w);
@@ -684,15 +679,13 @@ void ObjectHighlight::UpdateTiles() {
             auto palette = (this->cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
             const AirportSpec *as = AirportSpec::Get(this->airport_type);
-            if (!as->IsAvailable() || this->airport_layout >= as->num_table) break;
-            Direction rotation = as->rotation[this->airport_layout];
-            int w = as->size_x;
-            int h = as->size_y;
-            if (rotation == DIR_E || rotation == DIR_W) Swap(w, h);
-            for (AirportTileTableIterator iter(as->table[this->airport_layout], this->tile); iter != INVALID_TILE; ++iter) {
+            if (!as->IsAvailable() || this->airport_layout >= as->layouts.size()) break;
+            Direction rotation = as->layouts[this->airport_layout].rotation;
+            if (rotation == INVALID_DIR) break;
+            for (AirportTileTableIterator iter(as->layouts[this->airport_layout].tiles.data(), this->tile); iter != INVALID_TILE; ++iter) {
                 this->AddTile(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx()));
             }
-            this->AddStationOverlayData(w, h, as->catchment, SCT_ALL);
+            this->AddStationOverlayData(as->size_x, as->size_y, as->catchment, SCT_ALL);
             break;
         }
         case Type::BLUEPRINT:
@@ -938,7 +931,7 @@ void DrawTrainDepotSprite(SpriteID palette, const TileInfo *ti, RailType railtyp
     DrawRailTileSeq(ti, dts, TO_INVALID, offset, 0, palette);
 }
 
-void DrawTrainStationSprite(SpriteID palette, const TileInfo *ti, RailType railtype, Axis axis, byte section) {
+void DrawTrainStationSprite(SpriteID palette, const TileInfo *ti, RailType railtype, Axis axis, uint8_t section) {
     int32 total_offset = 0;
     const DrawTileSprites *t = GetStationTileLayout(STATION_RAIL, section + (axis == AXIS_X ? 0 : 1));
     const RailTypeInfo *rti = nullptr;
@@ -1031,9 +1024,9 @@ void DrawDockFlat(SpriteID palette, const TileInfo *ti, Axis axis) {
 
 
 struct DrawRoadTileStruct {
-    uint16 image;
-    byte subcoord_x;
-    byte subcoord_y;
+    uint16_t image;
+    uint8_t subcoord_x;
+    uint8_t subcoord_y;
 };
 
 #include "../table/road_land.h"
@@ -1147,7 +1140,7 @@ bool is_same_industry(TileIndex tile, Industry* ind) {
     return false;
 }
 
-uint32 GetNearbyIndustryTileInformation(byte parameter, TileIndex tile, [[maybe_unused]] Industry* ind, bool signed_offsets, bool grf_version8)
+uint32 GetNearbyIndustryTileInformation(uint8_t parameter, TileIndex tile, [[maybe_unused]] Industry* ind, bool signed_offsets, bool grf_version8)
 {
     if (parameter != 0) tile = GetNearbyTile(parameter, tile, signed_offsets); // only perform if it is required
 
@@ -1166,7 +1159,7 @@ struct IndustryTilePreviewScopeResolver : public IndustryTileScopeResolver {
     uint32 GetRandomBits() const override { return 0; };
     uint32 GetTriggers() const override { return 0; };
 
-    uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override {
+    uint32 GetVariable(uint8_t variable, uint32 parameter, bool &available) const override {
         // Debug(misc, 0, "TILE VAR {:X} requested", variable);
         switch (variable) {
             /* Construction state of the tile: a value between 0 and 3 */
@@ -1207,7 +1200,7 @@ struct IndustriesPreviewScopeResolver : public IndustriesScopeResolver {
 
     uint32 GetRandomBits() const override { return 0; };
     uint32 GetTriggers() const override { return 0; };
-    uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override {
+    uint32 GetVariable(uint8_t variable, uint32 parameter, bool &available) const override {
         // Debug(misc, 0, "UNDUSTRY VAR {:X} requested", variable);
         return IndustriesScopeResolver::GetVariable(variable, parameter, available);
     }
@@ -1234,7 +1227,7 @@ struct IndustryTilePreviewResolverObject : public ResolverObject {
         this->root_spritegroup = GetIndustryTileSpec(gfx)->grf_prop.spritegroup[0];
     }
 
-    ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override {
+    ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, uint8_t relative = 0) override {
         // Debug(misc, 0, "Scope requested {} {}", (int)scope, (int)relative);
         switch (scope) {
             case VSG_SCOPE_SELF: return &indtile_scope;
@@ -1273,7 +1266,7 @@ bool DrawNewIndustryTile(TileInfo *ti, Industry *i, IndustryGfx gfx, const Indus
     return true;
 }
 
-void DrawIndustryTile(SpriteID palette, const TileInfo *ti, IndustryType ind_type, byte ind_layout, IndustryGfx gfx, TileIndexDiff tile_diff) {
+void DrawIndustryTile(SpriteID palette, const TileInfo *ti, IndustryType ind_type, uint8_t ind_layout, IndustryGfx gfx, TileIndexDiff tile_diff) {
     static Industry ind;
     const IndustryTileSpec *indts = GetIndustryTileSpec(gfx);
     if (gfx >= NEW_INDUSTRYTILEOFFSET) {
@@ -1835,7 +1828,7 @@ TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
 
     th = _thd.cm.GetTileHighlight(ti);;
     if (ti->tile == INVALID_TILE || tile_type == MP_VOID) return th;
-    if (_zoning.outer == CHECKTOWNZONES) {
+    if (_zoning.outer == citymania::EvaluationMode::CHECKTOWNZONES) {
         auto p = GetTownZoneBorder(ti->tile);
         auto color = PAL_NONE;
         switch (p.second) {
@@ -1850,10 +1843,10 @@ TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
         th.ground_pal = th.structure_pal = GetTintBySelectionColour(color);
         if (CB_Enabled())
             CalcCBTownLimitBorder(th, ti->tile, CM_SPR_PALETTE_ZONING_RED, PAL_NONE);
-    } else if (_zoning.outer == CHECKSTACATCH) {
+    } else if (_zoning.outer == citymania::EvaluationMode::CHECKSTACATCH) {
         th.add_border(citymania::GetAnyStationCatchmentBorder(ti->tile),
                       CM_SPR_PALETTE_ZONING_LIGHT_BLUE);
-    } else if (_zoning.outer == CHECKTOWNGROWTHTILES) {
+    } else if (_zoning.outer == citymania::EvaluationMode::CHECKTOWNGROWTHTILES) {
         // if (tgt == TGTS_NEW_HOUSE) th.sprite = SPR_IMG_HOUSE_NEW;
         switch (_game->get_town_growth_tile(ti->tile)) {
             // case TGTS_CB_HOUSE_REMOVED_NOGROW:
@@ -1880,18 +1873,18 @@ TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
             default: th.selection = PAL_NONE;
         }
         if (th.selection) th.ground_pal = GetTintBySelectionColour(th.selection);
-    } else if (_zoning.outer == CHECKBULUNSER) {
+    } else if (_zoning.outer == citymania::EvaluationMode::CHECKBULUNSER) {
         if (IsTileType (ti->tile, MP_HOUSE)) {
             StationFinder stations(TileArea(ti->tile, 1, 1));
 
             // TODO check cargos
-            if (stations.GetStations()->empty())
+            if (stations.GetStations().empty())
                 th.ground_pal = th.structure_pal = CM_PALETTE_TINT_RED_DEEP;
         }
-    } else if (_zoning.outer == CHECKINDUNSER) {
+    } else if (_zoning.outer == citymania::EvaluationMode::CHECKINDUNSER) {
         auto pal = GetIndustryZoningPalette(ti->tile);
         if (pal) th.ground_pal = th.structure_pal = CM_PALETTE_TINT_RED_DEEP;
-    } else if (_zoning.outer == CHECKTOWNADZONES) {
+    } else if (_zoning.outer == citymania::EvaluationMode::CHECKTOWNADZONES) {
         auto getter = [](TileIndex t) { return _mz[t.base()].advertisement_zone; };
         auto b = CalcTileBorders(ti->tile, getter);
         const SpriteID pal[] = {PAL_NONE, CM_SPR_PALETTE_ZONING_YELLOW, CM_SPR_PALETTE_ZONING_ORANGE, CM_SPR_PALETTE_ZONING_RED};
@@ -1903,11 +1896,11 @@ TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
         }
         auto z = getter(check_tile);
         if (z) th.ground_pal = th.structure_pal = GetTintBySelectionColour(pal[z]);
-    } else if (_zoning.outer == CHECKCBACCEPTANCE) {
+    } else if (_zoning.outer == citymania::EvaluationMode::CHECKCBACCEPTANCE) {
         CalcCBAcceptanceBorders(th, ti->tile, CM_SPR_PALETTE_ZONING_WHITE, CM_PALETTE_TINT_WHITE);
-    } else if (_zoning.outer == CHECKCBTOWNLIMIT) {
+    } else if (_zoning.outer == citymania::EvaluationMode::CHECKCBTOWNLIMIT) {
         CalcCBTownLimitBorder(th, ti->tile, CM_SPR_PALETTE_ZONING_WHITE, CM_PALETTE_TINT_WHITE);
-    } else if (_zoning.outer == CHECKACTIVESTATIONS) {
+    } else if (_zoning.outer == citymania::EvaluationMode::CHECKACTIVESTATIONS) {
         auto getter = [](TileIndex t) {
             if (!IsTileType (t, MP_STATION)) return 0;
             Station *st = Station::GetByTile(t);
@@ -2063,9 +2056,9 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
                 std::min((_thd.new_pos.y + _thd.new_size.y) / TILE_SIZE, Map::SizeY()) - 1
             );
             if (_thd.select_proc == DDSP_BUILD_STATION)
-                _thd.cm_new = ObjectHighlight::make_rail_station(start_tile, end_tile, _railstation.orientation);
+                _thd.cm_new = ObjectHighlight::make_rail_station(start_tile, end_tile, _station_gui.axis);
             else if (_thd.select_proc == DDSP_BUILD_BUSSTOP || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {
-                auto ddir = _roadstop_gui_settings.orientation;
+                auto ddir = _roadstop_gui.orientation;
                 auto ta = TileArea(start_tile, end_tile);
                 if (pt.x != -1) {
                     if (ddir >= DIAGDIR_END && ddir < STATIONDIR_AUTO) {
@@ -2089,8 +2082,8 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
                     _cur_roadtype,
                     ddir,
                     _thd.select_proc == DDSP_BUILD_TRUCKSTOP,
-                    _roadstop_gui_settings.roadstop_class,
-                    _roadstop_gui_settings.roadstop_type
+                    _roadstop_gui.sel_class,
+                    _roadstop_gui.sel_type
                 );
             }
         }
@@ -2174,18 +2167,18 @@ void UpdateTownZoning(Town *town, uint32 prev_edge) {
         if (_mz[tile.base()].town_zone > group) {
             if (recalc) {
                 _mz[tile.base()].town_zone = GetAnyTownZone(tile);
-                if (_zoning.outer == CHECKTOWNZONES)
+                if (_zoning.outer == citymania::EvaluationMode::CHECKTOWNZONES)
                     MarkTileDirtyByTile(tile);
             }
         } else if (_mz[tile.base()].town_zone < group) {
             _mz[tile.base()].town_zone = group;
-            if (_zoning.outer == CHECKTOWNZONES)
+            if (_zoning.outer == citymania::EvaluationMode::CHECKTOWNZONES)
                 MarkTileDirtyByTile(tile);
         }
     }
 }
 
-void UpdateAdvertisementZoning(TileIndex center, uint radius, uint8 zone) {
+void UpdateAdvertisementZoning(TileIndex center, uint radius, uint8_t zone) {
     uint16 x1, y1, x2, y2;
     x1 = (uint16)std::max<int>(0, TileX(center) - radius);
     x2 = (uint16)std::min<int>(TileX(center) + radius + 1, Map::SizeX());
@@ -2227,11 +2220,9 @@ std::pair<ZoningBorder, uint8> GetTownZoneBorder(TileIndex tile) {
 ZoningBorder GetAnyStationCatchmentBorder(TileIndex tile) {
     ZoningBorder border = ZoningBorder::NONE;
     StationFinder morestations(TileArea(tile, 1, 1));
-    for (Station *st: *morestations.GetStations()) {
+    for (Station *st: morestations.GetStations()) {
         border |= CalcTileBorders(tile, [st](TileIndex t) {return st->TileIsInCatchment(t) ? 1 : 0; }).first;
     }
-    if (border & ZoningBorder::TOP_CORNER && border & (ZoningBorder::TOP_LEFT | ZoningBorder::TOP_RIGHT))
-        border &= ~ZoningBorder::TOP_CORNER;
     return border;
 }
 

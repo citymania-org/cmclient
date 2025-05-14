@@ -12,6 +12,7 @@
 #include "saveload.h"
 #include "compat/vehicle_sl_compat.h"
 
+#include "../debug.h"
 #include "../vehicle_func.h"
 #include "../train.h"
 #include "../roadveh.h"
@@ -249,10 +250,10 @@ static void CheckValidVehicles()
 	}
 }
 
-extern byte _age_cargo_skip_counter; // From misc_sl.cpp
+extern uint8_t _age_cargo_skip_counter; // From misc_sl.cpp
 
-/** Called after load to update coordinates */
-void AfterLoadVehicles(bool part_of_load)
+/** Called after load for phase 1 of vehicle initialisation */
+void AfterLoadVehiclesPhase1(bool part_of_load)
 {
 	for (Vehicle *v : Vehicle::Iterate()) {
 		/* Reinstate the previous pointer */
@@ -408,9 +409,13 @@ void AfterLoadVehicles(bool part_of_load)
 	}
 
 	CheckValidVehicles();
+}
 
+/** Called after load for phase 2 of vehicle initialisation */
+void AfterLoadVehiclesPhase2(bool part_of_load)
+{
 	for (Vehicle *v : Vehicle::Iterate()) {
-		assert(v->first != nullptr);
+		assert(v->First() != nullptr);
 
 		v->trip_occupancy = CalcPercentVehicleFilled(v, nullptr);
 
@@ -634,17 +639,7 @@ static Money  _cargo_feeder_share;
 
 class SlVehicleCommon : public DefaultSaveLoadHandler<SlVehicleCommon, Vehicle> {
 public:
-#if defined(_MSC_VER) && (_MSC_VER == 1915 || _MSC_VER == 1916)
-	/* This table access private members of other classes; they have this
-	 * class as friend. For MSVC CL 19.15 and 19.16 this doesn't work for
-	 * "inline static const", so we are forced to wrap the table in a
-	 * function. CL 19.16 is the latest for VS2017. */
-	inline static const SaveLoad description[] = {{}};
-	SaveLoadTable GetDescription() const override {
-#else
-	inline
-#endif
-	static const SaveLoad description[] = {
+	inline static const SaveLoad description[] = {
 		    SLE_VAR(Vehicle, subtype,               SLE_UINT8),
 
 		    SLE_REF(Vehicle, next,                  REF_VEHICLE_OLD),
@@ -773,10 +768,7 @@ public:
 		SLE_CONDVAR(Vehicle, depot_unbunching_next_departure, SLE_UINT64,        SLV_DEPOT_UNBUNCHING, SL_MAX_VERSION),
 		SLE_CONDVAR(Vehicle, round_trip_time,       SLE_INT32,                   SLV_DEPOT_UNBUNCHING, SL_MAX_VERSION),
 	};
-#if defined(_MSC_VER) && (_MSC_VER == 1915 || _MSC_VER == 1916)
-		return description;
-	}
-#endif
+
 	inline const static SaveLoadCompatTable compat_description = _vehicle_common_sl_compat;
 
 	void Save(Vehicle *v) const override
@@ -830,8 +822,23 @@ public:
 	}
 };
 
+class SlVehicleRoadVehPath : public VectorSaveLoadHandler<SlVehicleRoadVehPath, RoadVehicle, RoadVehPathElement> {
+public:
+	inline static const SaveLoad description[] = {
+		SLE_VAR(RoadVehPathElement, trackdir, SLE_UINT8),
+		SLE_VAR(RoadVehPathElement, tile, SLE_UINT32),
+	};
+	inline const static SaveLoadCompatTable compat_description = {};
+
+	std::vector<RoadVehPathElement> &GetVector(RoadVehicle *rv) const override { return rv->path; }
+};
+
 class SlVehicleRoadVeh : public DefaultSaveLoadHandler<SlVehicleRoadVeh, Vehicle> {
 public:
+	/* RoadVehicle path is stored in std::pair which cannot be directly saved. */
+	static inline std::vector<Trackdir> rv_path_td;
+	static inline std::vector<TileIndex> rv_path_tile;
+
 	inline static const SaveLoad description[] = {
 		  SLEG_STRUCT("common", SlVehicleCommon),
 		      SLE_VAR(RoadVehicle, state,                SLE_UINT8),
@@ -841,11 +848,31 @@ public:
 		      SLE_VAR(RoadVehicle, overtaking_ctr,       SLE_UINT8),
 		      SLE_VAR(RoadVehicle, crashed_ctr,          SLE_UINT16),
 		      SLE_VAR(RoadVehicle, reverse_ctr,          SLE_UINT8),
-		SLE_CONDDEQUE(RoadVehicle, path.td,              SLE_UINT8,                  SLV_ROADVEH_PATH_CACHE, SL_MAX_VERSION),
-		SLE_CONDDEQUE(RoadVehicle, path.tile,            SLE_UINT32,                 SLV_ROADVEH_PATH_CACHE, SL_MAX_VERSION),
+		SLEG_CONDVECTOR("path.td",   rv_path_td,         SLE_UINT8,                  SLV_ROADVEH_PATH_CACHE, SLV_PATH_CACHE_FORMAT),
+		SLEG_CONDVECTOR("path.tile", rv_path_tile,       SLE_UINT32,                 SLV_ROADVEH_PATH_CACHE, SLV_PATH_CACHE_FORMAT),
+		SLEG_CONDSTRUCTLIST("path", SlVehicleRoadVehPath, SLV_PATH_CACHE_FORMAT, SL_MAX_VERSION),
 		  SLE_CONDVAR(RoadVehicle, gv_flags,             SLE_UINT16,                 SLV_139, SL_MAX_VERSION),
 	};
 	inline const static SaveLoadCompatTable compat_description = _vehicle_roadveh_sl_compat;
+
+	static void ConvertPathCache(RoadVehicle &rv)
+	{
+		/* The two vectors should be the same size, but if not we can just ignore the cache and not cause more issues. */
+		if (rv_path_td.size() != rv_path_tile.size()) {
+			Debug(sl, 1, "Found RoadVehicle {} with invalid path cache, ignoring.", rv.index);
+			return;
+		}
+		size_t n = std::min(rv_path_td.size(), rv_path_tile.size());
+		if (n == 0) return;
+
+		rv.path.reserve(n);
+		for (size_t c = 0; c < n; ++c) {
+			rv.path.emplace_back(rv_path_td[c], rv_path_tile[c]);
+		}
+
+		/* Path cache is now taken from back instead of front, so needs reversing. */
+		std::reverse(std::begin(rv.path), std::end(rv.path));
+	}
 
 	void Save(Vehicle *v) const override
 	{
@@ -857,6 +884,9 @@ public:
 	{
 		if (v->type != VEH_ROAD) return;
 		SlObject(v, this->GetLoadDescription());
+		if (!IsSavegameVersionBefore(SLV_ROADVEH_PATH_CACHE) && IsSavegameVersionBefore(SLV_PATH_CACHE_FORMAT)) {
+			ConvertPathCache(*static_cast<RoadVehicle *>(v));
+		}
 	}
 
 	void FixPointers(Vehicle *v) const override
@@ -866,12 +896,25 @@ public:
 	}
 };
 
+class SlVehicleShipPath : public VectorSaveLoadHandler<SlVehicleShipPath, Ship, ShipPathElement> {
+public:
+	inline static const SaveLoad description[] = {
+		SLE_VAR(ShipPathElement, trackdir, SLE_UINT8),
+	};
+	inline const static SaveLoadCompatTable compat_description = {};
+
+	std::vector<ShipPathElement> &GetVector(Ship *s) const override { return s->path; }
+};
+
 class SlVehicleShip : public DefaultSaveLoadHandler<SlVehicleShip, Vehicle> {
 public:
+	static inline std::vector<Trackdir> ship_path_td;
+
 	inline static const SaveLoad description[] = {
 		  SLEG_STRUCT("common", SlVehicleCommon),
 		      SLE_VAR(Ship, state,                     SLE_UINT8),
-		SLE_CONDDEQUE(Ship, path,                      SLE_UINT8,                  SLV_SHIP_PATH_CACHE, SL_MAX_VERSION),
+		SLEG_CONDVECTOR("path", ship_path_td, SLE_UINT8, SLV_SHIP_PATH_CACHE, SLV_PATH_CACHE_FORMAT),
+		SLEG_CONDSTRUCTLIST("path", SlVehicleShipPath, SLV_PATH_CACHE_FORMAT, SL_MAX_VERSION),
 		  SLE_CONDVAR(Ship, rotation,                  SLE_UINT8,                  SLV_SHIP_ROTATION, SL_MAX_VERSION),
 	};
 	inline const static SaveLoadCompatTable compat_description = _vehicle_ship_sl_compat;
@@ -886,6 +929,12 @@ public:
 	{
 		if (v->type != VEH_SHIP) return;
 		SlObject(v, this->GetLoadDescription());
+
+		if (IsSavegameVersionBefore(SLV_PATH_CACHE_FORMAT)) {
+			/* Path cache is now taken from back instead of front, so needs reversing. */
+			Ship *s = static_cast<Ship *>(v);
+			std::transform(std::rbegin(ship_path_td), std::rend(ship_path_td), std::back_inserter(s->path), [](Trackdir trackdir) { return trackdir; });
+		}
 	}
 
 	void FixPointers(Vehicle *v) const override
@@ -982,17 +1031,7 @@ public:
 
 class SlVehicleDisaster : public DefaultSaveLoadHandler<SlVehicleDisaster, Vehicle> {
 public:
-#if defined(_MSC_VER) && (_MSC_VER == 1915 || _MSC_VER == 1916)
-	/* This table access private members of other classes; they have this
-	 * class as friend. For MSVC CL 19.15 and 19.16 this doesn't work for
-	 * "inline static const", so we are forced to wrap the table in a
-	 * function. CL 19.16 is the latest for VS2017. */
-	inline static const SaveLoad description[] = {{}};
-	SaveLoadTable GetDescription() const override {
-#else
-	inline
-#endif
-	static const SaveLoad description[] = {
+	inline static const SaveLoad description[] = {
 		    SLE_REF(Vehicle, next,                  REF_VEHICLE_OLD),
 
 		    SLE_VAR(Vehicle, subtype,               SLE_UINT8),
@@ -1026,10 +1065,7 @@ public:
 		SLE_CONDVAR(DisasterVehicle, big_ufo_destroyer_target,  SLE_UINT32,                 SLV_191, SL_MAX_VERSION),
 		SLE_CONDVAR(DisasterVehicle, flags,                     SLE_UINT8,                  SLV_194, SL_MAX_VERSION),
 	};
-#if defined(_MSC_VER) && (_MSC_VER == 1915 || _MSC_VER == 1916)
-		return description;
-	}
-#endif
+
 	inline const static SaveLoadCompatTable compat_description = _vehicle_disaster_sl_compat;
 
 	void Save(Vehicle *v) const override

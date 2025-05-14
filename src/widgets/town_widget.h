@@ -12,6 +12,7 @@
 
 /** Widgets of the #TownDirectoryWindow class. */
 enum TownDirectoryWidgets : WidgetID {
+	WID_TD_CAPTION, ///< Caption of the window.
 	WID_TD_SORT_ORDER,       ///< Direction of sort dropdown.
 	WID_TD_SORT_CRITERIA,    ///< Criteria of sort dropdown.
 	WID_TD_FILTER,           ///< Filter of name.
@@ -49,21 +50,30 @@ enum TownViewWidgets : WidgetID {
 /** Widgets of the #FoundTownWindow class. */
 enum TownFoundingWidgets : WidgetID {
 	WID_TF_NEW_TOWN,          ///< Create a new town.
+	WID_TF_TOWN_ACTION_SEL, ///< Container of town action buttons.
 	WID_TF_RANDOM_TOWN,       ///< Randomly place a town.
 	WID_TF_MANY_RANDOM_TOWNS, ///< Randomly place many towns.
+	WID_TF_LOAD_FROM_FILE,    ///< Load town data from file.
 	WID_TF_EXPAND_ALL_TOWNS,  ///< Make all towns grow slightly.
 	WID_TF_TOWN_NAME_EDITBOX, ///< Editor for the town name.
 	WID_TF_TOWN_NAME_RANDOM,  ///< Generate a random town name.
+	WID_TF_SIZE_SEL, ///< Container of town size buttons.
 	WID_TF_SIZE_SMALL,        ///< Selection for a small town.
 	WID_TF_SIZE_MEDIUM,       ///< Selection for a medium town.
 	WID_TF_SIZE_LARGE,        ///< Selection for a large town.
 	WID_TF_SIZE_RANDOM,       ///< Selection for a randomly sized town.
 	WID_TF_CITY,              ///< Selection for the town's city state.
+	WID_TF_ROAD_LAYOUT_SEL, ///< Container of town road layout buttons.
 	WID_TF_LAYOUT_ORIGINAL,   ///< Selection for the original town layout.
 	WID_TF_LAYOUT_BETTER,     ///< Selection for the better town layout.
 	WID_TF_LAYOUT_GRID2,      ///< Selection for the 2x2 grid town layout.
 	WID_TF_LAYOUT_GRID3,      ///< Selection for the 3x3 grid town layout.
 	WID_TF_LAYOUT_RANDOM,     ///< Selection for a randomly chosen town layout.
+};
+
+/** Widgets of the #BuildHouseWindow class. */
+enum BuildHouseWidgets : WidgetID {
+	WID_BH_INFO, ///< Information panel of selected house.
 };
 
 enum TownHK {

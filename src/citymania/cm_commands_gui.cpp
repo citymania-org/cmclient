@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 
 #include "cm_commands_gui.hpp"
 
@@ -20,6 +20,7 @@
 #include "debug.h"
 #include "window_func.h"
 #include "window_gui.h"
+#include "querystring_gui.h" // QueryString definition
 
 #include <sstream>
 
@@ -209,13 +210,13 @@ std::string GetLoginItem(const std::string& itemname){
 	return item.value.value_or("");
 }
 
-void IniReloadLogin(){
-	for(int i = 0, len = lengthof(INI_LOGIN_KEYS); i < len; i++){
+void IniReloadLogin() {
+	for (size_t i = 0; i < lengthof(INI_LOGIN_KEYS); i++) {
 		auto str = GetLoginItem(INI_LOGIN_KEYS[i]);
-		if (str.empty()){
+		if (str.empty()) {
 			str = GetString(CM_STR_LOGIN_WINDOW_NOT_SET);
 		}
-		strecpy(_inilogindata[i], str.c_str(), lastof(_inilogindata[i]));
+		strecpy(std::span(_inilogindata[i], lengthof(_inilogindata[i]) - 1), str);
 	}
 }
 
@@ -409,8 +410,8 @@ struct CommandsToolbarWindow : Window {
 		/ * Since the buttons have no text, no images,
 		 * both the text and the coloured box have to be manually painted.
 		 * clk_dif will move one pixel down and one pixel to the right
-		 * when the button is clicked */ /*
-		byte clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
+		 * when the button is clicked * /
+		uint8_t clk_dif = this->IsWidgetLowered(widget) ? 1 : 0;
 		int x = r.left + WidgetDimensions::scaled.framerect.left;
 		int y = r.top;
 
@@ -568,7 +569,7 @@ class GetHTTPContent: public HTTPCallback {
 public:
 	GetHTTPContent(const std::string &uri): uri{uri} {
 		this->proccessing = false;
-		this->buf_last = lastof(buf);
+		this->buf_last = buf + lengthof(buf) - 1;
 	}
 	bool proccessing;
 
@@ -669,11 +670,9 @@ void AccountLogin(CommunityName community){
 }
 
 //login window
-struct LoginWindow : Window {
-	LoginWindowQueryWidgets query_widget;
-
-	LoginWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
-	{
+class LoginWindow : public Window {
+public:
+	LoginWindow(WindowDesc &desc, WindowNumber window_number) : Window(desc) {
 		this->InitNested(window_number);
 		// if(_novahost || !_networking){
 		// 	this->DisableWidget(LWW_NICE);
@@ -733,22 +732,22 @@ struct LoginWindow : Window {
 		}
 	}
 
-	void OnQueryTextFinished(char * str) override
+	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
-		if (str == NULL) return;
+		if (!str.has_value()) return;
 		switch(this->query_widget){
 			case LQW_NOVAPOLIS_LOGIN: {
-				SetLoginItem(NOVAPOLIS_LOGIN, str);
+				SetLoginItem(NOVAPOLIS_LOGIN, str.value());
 				break;
 			}
 			case LQW_NOVAPOLIS_PW: {
-				SetLoginItem(NOVAPOLIS_PW, str);
+				SetLoginItem(NOVAPOLIS_PW, str.value());
 				break;
 			}
 			case LQW_NICE_LOGIN:
 			case LQW_BTPRO_LOGIN:
 			case LQW_BTPRO_PW: {
-				auto item = urlencode(str);
+				auto item = urlencode(str.value());
 				SetLoginItem(INI_LOGIN_KEYS[this->query_widget - 3], item); // - LWW_NICE_LOGIN + NICE_LOGIN
 				break;
 			}
@@ -756,7 +755,7 @@ struct LoginWindow : Window {
 				Md5 password, salted_password;
 				MD5Hash digest;
 
-				password.Append(str, strlen(str));
+				password.Append(str.value().c_str(), str.value().length());
 				password.Finish(digest);
 				auto first_pass = fmt::format("{:02x}", fmt::join(digest, ""));
 
@@ -773,6 +772,8 @@ struct LoginWindow : Window {
 		}
 		this->SetDirty();
 	}
+private:
+	LoginWindowQueryWidgets query_widget;
 };
 
 static const NWidgetPart _nested_login_window_widgets[] = {
@@ -831,18 +832,18 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _login_window_desc(__FILE__, __LINE__,
-	WDP_CENTER, "cm_login", 0, 0,
+static WindowDesc _login_window_desc(
+	WDP_CENTER, nullptr, 0, 0,
 	CM_WC_LOGIN_WINDOW, WC_NONE,
 	WDF_CONSTRUCTION,
-	std::begin(_nested_login_window_widgets), std::end(_nested_login_window_widgets)
+	std::span<const NWidgetPart>(_nested_login_window_widgets)
 );
 
 void ShowLoginWindow()
 {
 	IniLoginInitiate();
 	CloseWindowByClass(CM_WC_LOGIN_WINDOW);
-	AllocateWindowDescFront<LoginWindow>(&_login_window_desc, 0);
+	AllocateWindowDescFront<LoginWindow>(_login_window_desc, 0);
 }
 
 } // namespace citymania

@@ -19,20 +19,21 @@
 #include "../viewport_func.h"
 #include "../window_func.h"
 #include "../zoom_func.h"
+#include "../widgets/misc_widget.h"
 
 #include "../safeguards.h"
 
 namespace citymania {
 
 static const NWidgetPart _nested_land_tooltips_widgets[] = {
-    NWidget(WWT_PANEL, COLOUR_GREY, 0), SetMinimalSize(64, 32), EndContainer(),
+    NWidget(WWT_PANEL, COLOUR_GREY, WID_LI_BACKGROUND), SetMinimalSize(64, 32), EndContainer(),
 };
 
-static WindowDesc _land_tooltips_desc(__FILE__, __LINE__,
+static WindowDesc _land_tooltips_desc(
     WDP_MANUAL, nullptr, 0, 0,
     CM_WC_LAND_TOOLTIPS, WC_NONE,
     0,
-    std::begin(_nested_land_tooltips_widgets), std::end(_nested_land_tooltips_widgets)
+    _nested_land_tooltips_widgets
 );
 
 
@@ -41,7 +42,7 @@ struct LandTooltipsWindow : public Window
     TileType tiletype;
     uint16 objIndex;
 
-    LandTooltipsWindow(Window *parent, uint param) : Window(&_land_tooltips_desc)
+    LandTooltipsWindow(Window *parent, uint param) : Window(_land_tooltips_desc)
     {
         this->parent = parent;
         this->tiletype = (TileType)(param & 0xFFFF);
@@ -63,23 +64,25 @@ struct LandTooltipsWindow : public Window
         return pt;
     }
 
-    void UpdateWidgetSize(int /* widget */, Dimension *size, const Dimension & /* padding */, Dimension * /* fill */, Dimension * /* resize */) override
+    void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
     {
+        if (widget != WID_LI_BACKGROUND) return;
+
         uint icon_size = ScaleGUITrad(10);
         uint line_height = std::max((uint)GetCharacterHeight(FS_NORMAL), icon_size) + WidgetDimensions::scaled.hsep_normal;
         uint text_height = GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.hsep_normal;
         uint icons_width = icon_size * 3 + WidgetDimensions::scaled.vsep_normal;
-        size->width = ScaleGUITrad(194);
-        size->height = GetCharacterHeight(FS_NORMAL);
+        size.width = ScaleGUITrad(194);
+        size.height = GetCharacterHeight(FS_NORMAL);
         switch(this->tiletype) {
             case MP_HOUSE: {
                 const HouseSpec *hs = HouseSpec::Get((HouseID)this->objIndex);
                 if(hs == NULL) break;
                 SetDParam(0, hs->building_name);
-                size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_NAME).width, size->width);
-                size->height += text_height;
+                size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_NAME).width, size.width);
+                size.height += text_height;
                 SetDParam(0, hs->population);
-                size->width = std::max(size->width, GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_POPULATION).width);
+                size.width = std::max(size.width, GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_POPULATION).width);
                 break;
             }
             case MP_INDUSTRY: {
@@ -87,18 +90,18 @@ struct LandTooltipsWindow : public Window
                 if(ind == NULL) break;
 
                 SetDParam(0, ind->index);
-                size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME).width, size->width);
+                size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME).width, size.width);
 
                 for (auto &p : ind->produced) {
                     if (!IsValidCargoID(p.cargo)) continue;
                     const CargoSpec *cs = CargoSpec::Get(p.cargo);
                     if(cs == NULL) continue;
-                    size->height += line_height;
+                    size.height += line_height;
                     SetDParam(0, cs->name);
                     SetDParam(1, cs->Index());
                     SetDParam(2, p.history[LAST_MONTH].production);
                     SetDParam(3, ToPercent8(p.history[LAST_MONTH].PctTransported()));
-                    size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO).width + icons_width, size->width);
+                    size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO).width + icons_width, size.width);
                 }
                 break;
             }
@@ -107,17 +110,17 @@ struct LandTooltipsWindow : public Window
                 if(st == NULL) break;
 
                 SetDParam(0, st->index);
-                size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_STATION_NAME).width, size->width);
+                size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_STATION_NAME).width, size.width);
 
                 for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
                     int cargoid = cs->Index();
                     if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
-                        size->height += line_height;
+                        size.height += line_height;
                         SetDParam(0, cs->name);
                         SetDParam(1, cargoid);
                         SetDParam(2, st->goods[cargoid].cargo.TotalCount());
                         SetDParam(3, ToPercent8(st->goods[cargoid].rating));
-                        size->width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_STATION_CARGO).width + icons_width, size->width);
+                        size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_STATION_CARGO).width + icons_width, size.width);
                     }
                 }
                 break;
@@ -125,8 +128,8 @@ struct LandTooltipsWindow : public Window
             default:
                 break;
         }
-        size->width  += WidgetDimensions::scaled.framerect.Horizontal() + WidgetDimensions::scaled.fullbevel.Horizontal();
-        size->height += WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
+        size.width  += WidgetDimensions::scaled.framerect.Horizontal() + WidgetDimensions::scaled.fullbevel.Horizontal();
+        size.height += WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
     }
 
     void DrawWidget(const Rect &r, int /* widget */) const override
@@ -264,11 +267,11 @@ static const NWidgetPart _nested_station_rating_tooltip_widgets[] = {
     NWidget(WWT_PANEL, COLOUR_GREY, 0), SetMinimalSize(64, 32), EndContainer(),
 };
 
-static WindowDesc _station_rating_tooltip_desc(__FILE__, __LINE__,
+static WindowDesc _station_rating_tooltip_desc(
     WDP_MANUAL, nullptr, 0, 0,
     WC_STATION_RATING_TOOLTIP, WC_NONE,
     0,
-    std::begin(_nested_station_rating_tooltip_widgets), std::end(_nested_station_rating_tooltip_widgets)
+    _nested_station_rating_tooltip_widgets
 );
 
 static const int STATION_RATING_AGE[] = {0, 10, 20, 33};
@@ -290,7 +293,7 @@ struct StationRatingTooltipWindow : public Window
 public:
     std::vector<std::string> data;
 
-    StationRatingTooltipWindow(Window *parent, const Station *st, const CargoSpec *cs, TooltipCloseCondition close_cond) : Window(&_station_rating_tooltip_desc)
+    StationRatingTooltipWindow(Window *parent, const Station *st, const CargoSpec *cs, TooltipCloseCondition close_cond) : Window(_station_rating_tooltip_desc)
     {
         this->parent = parent;
         this->st = st;
@@ -359,7 +362,7 @@ public:
 
         if (!this->newgrf_rating_used) {
 
-            byte waittime = ge->time_since_pickup;
+            uint8_t waittime = ge->time_since_pickup;
             if (this->st->last_vehicle_type == VEH_SHIP) waittime >>= 2;
             int waittime_stage = 0;
             if (waittime <= 21) waittime_stage = 1;
@@ -422,17 +425,17 @@ public:
         this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_TOTAL_RATING));
     }
 
-    void UpdateWidgetSize(int /* widget */, Dimension *size, const Dimension & /* padding */, Dimension * /* fill */, Dimension * /* resize */) override
+    void UpdateWidgetSize(WidgetID /* widget */, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
     {
-        size->height = WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
+        size.height = WidgetDimensions::scaled.framerect.Vertical() + WidgetDimensions::scaled.fullbevel.Vertical();
         for (uint i = 0; i < data.size(); i++) {
             uint width = GetStringBoundingBox(this->data[i]).width + WidgetDimensions::scaled.framerect.Horizontal() + WidgetDimensions::scaled.fullbevel.Horizontal();
             if (this->newgrf_rating_used && i >= 2 && i <= 4)
                 width += RATING_TOOLTIP_NEWGRF_INDENT;
-            size->width = std::max(size->width, width);
-            size->height += GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.hsep_normal;
+            size.width = std::max(size.width, width);
+            size.height += GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.hsep_normal;
         }
-        size->height -= WidgetDimensions::scaled.hsep_normal;
+        size.height -= WidgetDimensions::scaled.hsep_normal;
     }
 
     void DrawWidget(const Rect &r, int /* widget */) const override

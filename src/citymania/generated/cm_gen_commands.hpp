@@ -179,14 +179,14 @@ class BuildRailWaypoint: public Command {
 public:
     TileIndex start_tile;
     Axis axis;
-    byte width;
-    byte height;
+    uint8_t width;
+    uint8_t height;
     StationClassID spec_class;
     uint16_t spec_index;
     StationID station_to_join;
     bool adjacent;
 
-    BuildRailWaypoint(TileIndex start_tile, Axis axis, byte width, byte height, StationClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
+    BuildRailWaypoint(TileIndex start_tile, Axis axis, uint8_t width, uint8_t height, StationClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
         :start_tile{start_tile}, axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildRailWaypoint() override {}
 
@@ -204,6 +204,40 @@ public:
     RemoveFromRailWaypoint(TileIndex start, TileIndex end, bool keep_rail)
         :start{start}, end{end}, keep_rail{keep_rail} {}
     ~RemoveFromRailWaypoint() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class BuildRoadWaypoint: public Command {
+public:
+    TileIndex start_tile;
+    Axis axis;
+    uint8_t width;
+    uint8_t height;
+    RoadStopClassID spec_class;
+    uint16_t spec_index;
+    StationID station_to_join;
+    bool adjacent;
+
+    BuildRoadWaypoint(TileIndex start_tile, Axis axis, uint8_t width, uint8_t height, RoadStopClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
+        :start_tile{start_tile}, axis{axis}, width{width}, height{height}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+    ~BuildRoadWaypoint() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class RemoveFromRoadWaypoint: public Command {
+public:
+    TileIndex start;
+    TileIndex end;
+
+    RemoveFromRoadWaypoint(TileIndex start, TileIndex end)
+        :start{start}, end{end} {}
+    ~RemoveFromRoadWaypoint() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
@@ -240,12 +274,12 @@ public:
 class BuildAirport: public Command {
 public:
     TileIndex tile;
-    byte airport_type;
-    byte layout;
+    uint8_t airport_type;
+    uint8_t layout;
     StationID station_to_join;
     bool adjacent;
 
-    BuildAirport(TileIndex tile, byte airport_type, byte layout, StationID station_to_join, bool adjacent)
+    BuildAirport(TileIndex tile, uint8_t airport_type, uint8_t layout, StationID station_to_join, bool adjacent)
         :tile{tile}, airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildAirport() override {}
 
@@ -274,14 +308,14 @@ public:
     TileIndex tile_org;
     RailType rt;
     Axis axis;
-    byte numtracks;
-    byte plat_len;
+    uint8_t numtracks;
+    uint8_t plat_len;
     StationClassID spec_class;
     uint16_t spec_index;
     StationID station_to_join;
     bool adjacent;
 
-    BuildRailStation(TileIndex tile_org, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
+    BuildRailStation(TileIndex tile_org, RailType rt, Axis axis, uint8_t numtracks, uint8_t plat_len, StationClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
         :tile_org{tile_org}, rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
     ~BuildRailStation() override {}
 
@@ -893,10 +927,10 @@ class PlantTree: public Command {
 public:
     TileIndex tile;
     TileIndex start_tile;
-    byte tree_to_plant;
+    uint8_t tree_to_plant;
     bool diagonal;
 
-    PlantTree(TileIndex tile, TileIndex start_tile, byte tree_to_plant, bool diagonal)
+    PlantTree(TileIndex tile, TileIndex start_tile, uint8_t tree_to_plant, bool diagonal)
         :tile{tile}, start_tile{start_tile}, tree_to_plant{tree_to_plant}, diagonal{diagonal} {}
     ~PlantTree() override {}
 
@@ -1051,12 +1085,12 @@ public:
     TileIndex location;
     VehicleID veh_id;
     CargoID new_cid;
-    byte new_subtype;
+    uint8_t new_subtype;
     bool auto_refit;
     bool only_this;
     uint8_t num_vehicles;
 
-    RefitVehicle(TileIndex location, VehicleID veh_id, CargoID new_cid, byte new_subtype, bool auto_refit, bool only_this, uint8_t num_vehicles)
+    RefitVehicle(TileIndex location, VehicleID veh_id, CargoID new_cid, uint8_t new_subtype, bool auto_refit, bool only_this, uint8_t num_vehicles)
         :location{location}, veh_id{veh_id}, new_cid{new_cid}, new_subtype{new_subtype}, auto_refit{auto_refit}, only_this{only_this}, num_vehicles{num_vehicles} {}
     ~RefitVehicle() override {}
 
@@ -1319,9 +1353,9 @@ public:
     SignalType cycle_start;
     SignalType cycle_stop;
     uint8_t num_dir_cycle;
-    byte signals_copy;
+    uint8_t signals_copy;
 
-    BuildSingleSignal(TileIndex tile, Track track, SignalType sigtype, SignalVariant sigvar, bool convert_signal, bool skip_existing_signals, bool ctrl_pressed, SignalType cycle_start, SignalType cycle_stop, uint8_t num_dir_cycle, byte signals_copy)
+    BuildSingleSignal(TileIndex tile, Track track, SignalType sigtype, SignalVariant sigvar, bool convert_signal, bool skip_existing_signals, bool ctrl_pressed, SignalType cycle_start, SignalType cycle_stop, uint8_t num_dir_cycle, uint8_t signals_copy)
         :tile{tile}, track{track}, sigtype{sigtype}, sigvar{sigvar}, convert_signal{convert_signal}, skip_existing_signals{skip_existing_signals}, ctrl_pressed{ctrl_pressed}, cycle_start{cycle_start}, cycle_stop{cycle_stop}, num_dir_cycle{num_dir_cycle}, signals_copy{signals_copy} {}
     ~BuildSingleSignal() override {}
 
@@ -1370,9 +1404,9 @@ public:
     bool mode;
     bool autofill;
     bool minimise_gaps;
-    byte signal_density;
+    uint8_t signal_density;
 
-    BuildSignalTrack(TileIndex tile, TileIndex end_tile, Track track, SignalType sigtype, SignalVariant sigvar, bool mode, bool autofill, bool minimise_gaps, byte signal_density)
+    BuildSignalTrack(TileIndex tile, TileIndex end_tile, Track track, SignalType sigtype, SignalVariant sigvar, bool mode, bool autofill, bool minimise_gaps, uint8_t signal_density)
         :tile{tile}, end_tile{end_tile}, track{track}, sigtype{sigtype}, sigvar{sigvar}, mode{mode}, autofill{autofill}, minimise_gaps{minimise_gaps}, signal_density{signal_density} {}
     ~BuildSignalTrack() override {}
 
@@ -1407,6 +1441,20 @@ public:
     CompanyCtrl(CompanyCtrlAction cca, CompanyID company_id, CompanyRemoveReason reason, ClientID client_id)
         :cca{cca}, company_id{company_id}, reason{reason}, client_id{client_id} {}
     ~CompanyCtrl() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
+class CompanyAllowListCtrl: public Command {
+public:
+    CompanyAllowListCtrlAction action;
+    const std::string & public_key;
+
+    CompanyAllowListCtrl(CompanyAllowListCtrlAction action, const std::string & public_key)
+        :action{action}, public_key{public_key} {}
+    ~CompanyAllowListCtrl() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlag flags) override;
@@ -1643,6 +1691,20 @@ public:
     Commands get_command() override;
 };
 
+class PlaceHouse: public Command {
+public:
+    TileIndex tile;
+    HouseID house;
+
+    PlaceHouse(TileIndex tile, HouseID house)
+        :tile{tile}, house{house} {}
+    ~PlaceHouse() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlag flags) override;
+    Commands get_command() override;
+};
+
 class TurnRoadVeh: public Command {
 public:
     TileIndex location;
@@ -1720,11 +1782,11 @@ public:
 class IndustrySetProduction: public Command {
 public:
     IndustryID ind_id;
-    byte prod_level;
+    uint8_t prod_level;
     bool show_news;
     const std::string & text;
 
-    IndustrySetProduction(IndustryID ind_id, byte prod_level, bool show_news, const std::string & text)
+    IndustrySetProduction(IndustryID ind_id, uint8_t prod_level, bool show_news, const std::string & text)
         :ind_id{ind_id}, prod_level{prod_level}, show_news{show_news}, text{text} {}
     ~IndustrySetProduction() override {}
 
@@ -2005,9 +2067,9 @@ public:
     TileIndex tile_start;
     TransportType transport_type;
     BridgeType bridge_type;
-    byte road_rail_type;
+    uint8_t road_rail_type;
 
-    BuildBridge(TileIndex tile_end, TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, byte road_rail_type)
+    BuildBridge(TileIndex tile_end, TileIndex tile_start, TransportType transport_type, BridgeType bridge_type, uint8_t road_rail_type)
         :tile_end{tile_end}, tile_start{tile_start}, transport_type{transport_type}, bridge_type{bridge_type}, road_rail_type{road_rail_type} {}
     ~BuildBridge() override {}
 
@@ -2020,9 +2082,9 @@ class BuildTunnel: public Command {
 public:
     TileIndex start_tile;
     TransportType transport_type;
-    byte road_rail_type;
+    uint8_t road_rail_type;
 
-    BuildTunnel(TileIndex start_tile, TransportType transport_type, byte road_rail_type)
+    BuildTunnel(TileIndex start_tile, TransportType transport_type, uint8_t road_rail_type)
         :start_tile{start_tile}, transport_type{transport_type}, road_rail_type{road_rail_type} {}
     ~BuildTunnel() override {}
 

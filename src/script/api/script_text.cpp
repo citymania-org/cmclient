@@ -20,13 +20,8 @@
 
 #include "../../safeguards.h"
 
-RawText::RawText(const std::string &text) : text(text)
-{
-}
 
-
-ScriptText::ScriptText(HSQUIRRELVM vm) :
-	ZeroedMemoryAllocator()
+ScriptText::ScriptText(HSQUIRRELVM vm)
 {
 	int nparam = sq_gettop(vm) - 1;
 	if (nparam < 1) {
@@ -173,7 +168,7 @@ std::string ScriptText::GetEncodedText()
 
 void ScriptText::_FillParamList(ParamList &params, ScriptTextList &seen_texts)
 {
-	if (std::find(seen_texts.begin(), seen_texts.end(), this) != seen_texts.end()) throw Script_FatalError(fmt::format("{}: Circular reference detected", GetGameStringName(this->string)));
+	if (std::ranges::find(seen_texts, this) != seen_texts.end()) throw Script_FatalError(fmt::format("{}: Circular reference detected", GetGameStringName(this->string)));
 	seen_texts.push_back(this);
 
 	for (int i = 0; i < this->paramc; i++) {
@@ -198,13 +193,21 @@ void ScriptText::ParamCheck::Encode(std::back_insert_iterator<std::string> &outp
 {
 	if (this->cmd == nullptr) this->cmd = cmd;
 	if (this->used) return;
-	if (std::holds_alternative<std::string>(*this->param)) fmt::format_to(output, ":\"{}\"", std::get<std::string>(*this->param));
-	if (std::holds_alternative<SQInteger>(*this->param)) fmt::format_to(output, ":{:X}", std::get<SQInteger>(*this->param));
-	if (std::holds_alternative<ScriptTextRef>(*this->param)) {
-		fmt::format_to(output, ":");
-		Utf8Encode(output, SCC_ENCODED);
-		fmt::format_to(output, "{:X}", std::get<ScriptTextRef>(*this->param)->string);
-	}
+
+	struct visitor {
+		std::back_insert_iterator<std::string> &output;
+
+		void operator()(const std::string &value) { fmt::format_to(this->output, ":\"{}\"", value); }
+		void operator()(const SQInteger &value) { fmt::format_to(this->output, ":{:X}", value); }
+		void operator()(const ScriptTextRef &value)
+		{
+			fmt::format_to(this->output, ":");
+			Utf8Encode(this->output, SCC_ENCODED);
+			fmt::format_to(this->output, "{:X}", value->string);
+		}
+	};
+
+	std::visit(visitor{output}, *this->param);
 	this->used = true;
 }
 

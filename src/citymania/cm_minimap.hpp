@@ -68,7 +68,7 @@ struct LegendAndColour {
 };
 
 /** Types of legends in the #WID_SM_LEGEND widget. */
-enum SmallMapType : byte {
+enum SmallMapType : uint8_t {
     SMT_CONTOUR,
     SMT_VEHICLES,
     SMT_INDUSTRY,
@@ -231,7 +231,7 @@ protected:
 public:
     friend class citymania::NWidgetSmallmapDisplay;
 
-    SmallMapWindow(WindowDesc *desc, int window_number);
+    SmallMapWindow(WindowDesc &desc, int window_number);
     virtual ~SmallMapWindow();
 
     void SmallMapCenterOnCurrentPos();

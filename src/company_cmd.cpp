@@ -20,6 +20,7 @@
 #include "network/network_base.h"
 #include "network/network_admin.h"
 #include "ai/ai.hpp"
+#include "ai/ai_instance.hpp"
 #include "ai/ai_config.hpp"
 #include "company_manager_face.h"
 #include "window_func.h"
@@ -34,11 +35,12 @@
 #include "game/game.hpp"
 #include "goal_base.h"
 #include "story_base.h"
-#include "widgets/statusbar_widget.h"
 #include "company_cmd.h"
 #include "timer/timer.h"
 #include "timer/timer_game_economy.h"
 #include "timer/timer_game_tick.h"
+
+#include "widgets/statusbar_widget.h"
 
 #include "table/strings.h"
 #include "cargo_type.h"
@@ -155,8 +157,8 @@ void SetLocalCompany(CompanyID new_company)
  */
 TextColour GetDrawStringCompanyColour(CompanyID company)
 {
-	if (!Company::IsValidID(company)) return (TextColour)_colour_gradient[COLOUR_WHITE][4] | TC_IS_PALETTE_COLOUR;
-	return (TextColour)_colour_gradient[_company_colours[company]][4] | TC_IS_PALETTE_COLOUR;
+	if (!Company::IsValidID(company)) return (TextColour)GetColourGradient(COLOUR_WHITE, SHADE_NORMAL) | TC_IS_PALETTE_COLOUR;
+	return (TextColour)GetColourGradient(_company_colours[company], SHADE_NORMAL) | TC_IS_PALETTE_COLOUR;
 }
 
 /**
@@ -307,10 +309,10 @@ void SubtractMoneyFromCompany(const CommandCost &cost)
 void SubtractMoneyFromCompanyFract(CompanyID company, const CommandCost &cst)
 {
 	Company *c = Company::Get(company);
-	byte m = c->money_fraction;
+	uint8_t m = c->money_fraction;
 	Money cost = cst.GetCost();
 
-	c->money_fraction = m - (byte)cost;
+	c->money_fraction = m - (uint8_t)cost;
 	cost >>= 8;
 	if (c->money_fraction > m) cost++;
 	if (cost != 0) SubtractMoneyFromAnyCompany(c, CommandCost(cst.GetExpensesType(), cost));
@@ -375,7 +377,7 @@ CommandCost CheckOwnership(Owner owner, TileIndex tile)
 	if (owner == _current_company) return CommandCost();
 
 	SetDParamsForOwnedBy(owner, tile);
-	return_cmd_error(STR_ERROR_OWNED_BY);
+	return CommandCost(STR_ERROR_OWNED_BY);
 }
 
 /**
@@ -395,7 +397,7 @@ CommandCost CheckTileOwnership(TileIndex tile)
 
 	/* no need to get the name of the owner unless we're the local company (saves some time) */
 	if (IsLocalCompany()) SetDParamsForOwnedBy(owner, tile);
-	return_cmd_error(STR_ERROR_OWNED_BY);
+	return CommandCost(STR_ERROR_OWNED_BY);
 }
 
 /**
@@ -433,12 +435,12 @@ set_name:;
 		MarkWholeScreenDirty();
 
 		if (c->is_ai) {
-			CompanyNewsInformation *cni = new CompanyNewsInformation(c);
+			auto cni = std::make_unique<CompanyNewsInformation>(c);
 			SetDParam(0, STR_NEWS_COMPANY_LAUNCH_TITLE);
 			SetDParam(1, STR_NEWS_COMPANY_LAUNCH_DESCRIPTION);
 			SetDParamStr(2, cni->company_name);
 			SetDParam(3, t->index);
-			AddNewsItem(STR_MESSAGE_NEWS_FORMAT, NT_COMPANY_INFO, NF_COMPANY, NR_TILE, c->last_build_coordinate.base(), NR_NONE, UINT32_MAX, cni);
+			AddNewsItem(STR_MESSAGE_NEWS_FORMAT, NT_COMPANY_INFO, NF_COMPANY, NR_TILE, c->last_build_coordinate.base(), NR_NONE, UINT32_MAX, std::move(cni));
 		}
 		return;
 	}
@@ -456,7 +458,7 @@ bad_town_name:;
 }
 
 /** Sorting weights for the company colours. */
-static const byte _colour_sort[COLOUR_END] = {2, 2, 3, 2, 3, 2, 3, 2, 3, 2, 2, 2, 3, 1, 1, 1};
+static const uint8_t _colour_sort[COLOUR_END] = {2, 2, 3, 2, 3, 2, 3, 2, 3, 2, 2, 2, 3, 1, 1, 1};
 /** Similar colours, so we can try to prevent same coloured companies. */
 static const Colours _similar_colour[COLOUR_END][2] = {
 	{ COLOUR_BLUE,       COLOUR_LIGHT_BLUE }, // COLOUR_DARK_BLUE
@@ -486,7 +488,7 @@ static Colours GenerateCompanyColour()
 	Colours colours[COLOUR_END];
 
 	/* Initialize array */
-	for (uint i = 0; i < COLOUR_END; i++) colours[i] = (Colours)i;
+	for (uint i = 0; i < COLOUR_END; i++) colours[i] = static_cast<Colours>(i);
 
 	/* And randomize it */
 	for (uint i = 0; i < 100; i++) {
@@ -615,6 +617,7 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY)
 	c->avail_railtypes = GetCompanyRailTypes(c->index);
 	c->avail_roadtypes = GetCompanyRoadTypes(c->index);
 	c->inaugurated_year = TimerGameEconomy::year;
+	c->inaugurated_year_calendar = TimerGameCalendar::year;
 
 	/* If starting a player company in singleplayer and a favorite company manager face is selected, choose it. Otherwise, use a random face.
 	 * In a network game, we'll choose the favorite face later in CmdCompanyCtrl to sync it to all clients. */
@@ -675,12 +678,12 @@ void InitializeCompanies()
 }
 
 /**
- * May company \a cbig buy company \a csmall?
+ * Can company \a cbig buy company \a csmall without exceeding vehicle limits?
  * @param cbig   Company buying \a csmall.
  * @param csmall Company getting bought.
  * @return Return \c true if it is allowed.
  */
-bool MayCompanyTakeOver(CompanyID cbig, CompanyID csmall)
+bool CheckTakeoverVehicleLimit(CompanyID cbig, CompanyID csmall)
 {
 	const Company *c1 = Company::Get(cbig);
 	const Company *c2 = Company::Get(csmall);
@@ -732,7 +735,7 @@ static void HandleBankruptcyTakeover(Company *c)
 		if (c2->bankrupt_asked == 0 && // Don't ask companies going bankrupt themselves
 				!HasBit(c->bankrupt_asked, c2->index) &&
 				best_performance < c2->old_economy[1].performance_history &&
-				MayCompanyTakeOver(c2->index, c->index)) {
+				CheckTakeoverVehicleLimit(c2->index, c->index)) {
 			best_performance = c2->old_economy[1].performance_history;
 			best = c2;
 		}
@@ -802,7 +805,7 @@ static IntervalTimer<TimerGameEconomy> _economy_companies_yearly({TimerGameEcono
 		/* Move expenses to previous years. */
 		std::rotate(std::rbegin(c->yearly_expenses), std::rbegin(c->yearly_expenses) + 1, std::rend(c->yearly_expenses));
 		c->yearly_expenses[0] = {};
-		SetWindowDirty(WC_FINANCES, c->index);
+		InvalidateWindowData(WC_FINANCES, c->index);
 	}
 
 	if (_settings_client.gui.show_finances && _local_company != COMPANY_SPECTATOR) {
@@ -897,8 +900,6 @@ CommandCost CmdCompanyCtrl(DoCommandFlag flags, CompanyCtrlAction cca, CompanyID
 				break;
 			}
 
-			/* Send new companies, before potentially setting the password. Otherwise,
-			 * the password update could be sent when the company is not yet known. */
 			NetworkAdminCompanyNew(c);
 			NetworkServerNewCompany(c, ci);
 
@@ -906,12 +907,13 @@ CommandCost CmdCompanyCtrl(DoCommandFlag flags, CompanyCtrlAction cca, CompanyID
 			if (client_id == _network_own_client_id) {
 				assert(_local_company == COMPANY_SPECTATOR);
 				SetLocalCompany(c->index);
-				if (!_settings_client.network.default_company_pass.empty()) {
-					NetworkChangeCompanyPassword(_local_company, _settings_client.network.default_company_pass);
-				}
 
-				/* In network games, we need to try setting the company manager face here to sync it to all clients.
-				 * If a favorite company manager face is selected, choose it. Otherwise, use a random face. */
+				/*
+				 * If a favorite company manager face is selected, choose it. Otherwise, use a random face.
+				 * Because this needs to be synchronised over the network, only the client knows
+				 * its configuration and we are currently in the execution of a command, we have
+				 * to circumvent the normal ::Post logic for commands and just send the command.
+				 */
 				if (_company_manager_face != 0) Command<CMD_SET_COMPANY_MANAGER_FACE>::SendNet(STR_NULL, c->index, _company_manager_face);
 
 				/* Now that we have a new company, broadcast our company settings to
@@ -954,13 +956,13 @@ CommandCost CmdCompanyCtrl(DoCommandFlag flags, CompanyCtrlAction cca, CompanyID
 
 			if (!(flags & DC_EXEC)) return CommandCost();
 
-			CompanyNewsInformation *cni = new CompanyNewsInformation(c);
+			auto cni = std::make_unique<CompanyNewsInformation>(c);
 
 			/* Show the bankrupt news */
 			SetDParam(0, STR_NEWS_COMPANY_BANKRUPT_TITLE);
 			SetDParam(1, STR_NEWS_COMPANY_BANKRUPT_DESCRIPTION);
 			SetDParamStr(2, cni->company_name);
-			AddCompanyNewsItem(STR_MESSAGE_NEWS_FORMAT, cni);
+			AddCompanyNewsItem(STR_MESSAGE_NEWS_FORMAT, std::move(cni));
 
 			/* Remove the company */
 			ChangeOwnershipOfCompanyItems(c->index, INVALID_OWNER);
@@ -984,6 +986,54 @@ CommandCost CmdCompanyCtrl(DoCommandFlag flags, CompanyCtrlAction cca, CompanyID
 	InvalidateWindowClassesData(WC_GAME_OPTIONS);
 	InvalidateWindowClassesData(WC_SCRIPT_SETTINGS);
 	InvalidateWindowClassesData(WC_SCRIPT_LIST);
+
+	return CommandCost();
+}
+
+static bool ExecuteAllowListCtrlAction(CompanyAllowListCtrlAction action, Company *c, const std::string &public_key)
+{
+	switch (action) {
+		case CALCA_ADD:
+			return c->allow_list.Add(public_key);
+
+		case CALCA_REMOVE:
+			return c->allow_list.Remove(public_key);
+
+		default:
+			NOT_REACHED();
+	}
+}
+
+/**
+ * Add or remove the given public key to the allow list of this company.
+ * @param flags Operation to perform.
+ * @param action The action to perform.
+ * @param public_key The public key of the client to add or remove.
+ * @return The cost of this operation or an error.
+ */
+CommandCost CmdCompanyAllowListCtrl(DoCommandFlag flags, CompanyAllowListCtrlAction action, const std::string &public_key)
+{
+	Company *c = Company::GetIfValid(_current_company);
+	if (c == nullptr) return CMD_ERROR;
+
+	/* The public key length includes the '\0'. */
+	if (public_key.size() != NETWORK_PUBLIC_KEY_LENGTH - 1) return CMD_ERROR;
+
+	switch (action) {
+		case CALCA_ADD:
+		case CALCA_REMOVE:
+			break;
+
+		default:
+			return CMD_ERROR;
+	}
+
+	if (flags & DC_EXEC) {
+		if (ExecuteAllowListCtrlAction(action, c, public_key)) {
+			InvalidateWindowData(WC_CLIENT_LIST, 0);
+			SetWindowDirty(WC_COMPANY, _current_company);
+		}
+	}
 
 	return CommandCost();
 }
@@ -1045,7 +1095,7 @@ CommandCost CmdSetCompanyColour(DoCommandFlag flags, LiveryScheme scheme, bool p
 
 	if (flags & DC_EXEC) {
 		if (primary) {
-			if (scheme != LS_DEFAULT) SB(c->livery[scheme].in_use, 0, 1, colour != INVALID_COLOUR);
+			if (scheme != LS_DEFAULT) AssignBit(c->livery[scheme].in_use, 0, colour != INVALID_COLOUR);
 			if (colour == INVALID_COLOUR) colour = c->livery[LS_DEFAULT].colour1;
 			c->livery[scheme].colour1 = colour;
 
@@ -1058,7 +1108,7 @@ CommandCost CmdSetCompanyColour(DoCommandFlag flags, LiveryScheme scheme, bool p
 				CompanyAdminUpdate(c);
 			}
 		} else {
-			if (scheme != LS_DEFAULT) SB(c->livery[scheme].in_use, 1, 1, colour != INVALID_COLOUR);
+			if (scheme != LS_DEFAULT) AssignBit(c->livery[scheme].in_use, 1, colour != INVALID_COLOUR);
 			if (colour == INVALID_COLOUR) colour = c->livery[LS_DEFAULT].colour2;
 			c->livery[scheme].colour2 = colour;
 
@@ -1132,7 +1182,7 @@ CommandCost CmdRenameCompany(DoCommandFlag flags, const std::string &text)
 
 	if (!reset) {
 		if (Utf8StringLength(text) >= MAX_LENGTH_COMPANY_NAME_CHARS) return CMD_ERROR;
-		if (!IsUniqueCompanyName(text)) return_cmd_error(STR_ERROR_NAME_MUST_BE_UNIQUE);
+		if (!IsUniqueCompanyName(text)) return CommandCost(STR_ERROR_NAME_MUST_BE_UNIQUE);
 	}
 
 	if (flags & DC_EXEC) {
@@ -1176,7 +1226,7 @@ CommandCost CmdRenamePresident(DoCommandFlag flags, const std::string &text)
 
 	if (!reset) {
 		if (Utf8StringLength(text) >= MAX_LENGTH_PRESIDENT_NAME_CHARS) return CMD_ERROR;
-		if (!IsUniquePresidentName(text)) return_cmd_error(STR_ERROR_NAME_MUST_BE_UNIQUE);
+		if (!IsUniquePresidentName(text)) return CommandCost(STR_ERROR_NAME_MUST_BE_UNIQUE);
 	}
 
 	if (flags & DC_EXEC) {
@@ -1262,12 +1312,12 @@ CommandCost CmdGiveMoney(DoCommandFlag flags, Money money, CompanyID dest_compan
 	CommandCost amount(EXPENSES_OTHER, std::min<Money>(money, 20000000LL));
 
 	/* You can only transfer funds that is in excess of your loan */
-	if (c->money - c->current_loan < amount.GetCost() || amount.GetCost() < 0) return_cmd_error(STR_ERROR_INSUFFICIENT_FUNDS);
+	if (c->money - c->current_loan < amount.GetCost() || amount.GetCost() < 0) return CommandCost(STR_ERROR_INSUFFICIENT_FUNDS);
 	if (!Company::IsValidID(dest_company)) return CMD_ERROR;
 
 	if (flags & DC_EXEC) {
 		/* Add money to company */
-		Backup<CompanyID> cur_company(_current_company, dest_company, FILE_LINE);
+		Backup<CompanyID> cur_company(_current_company, dest_company);
 		SubtractMoneyFromCompany(CommandCost(EXPENSES_OTHER, -amount.GetCost()));
 		cur_company.Restore();
 

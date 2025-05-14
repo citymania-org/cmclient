@@ -170,6 +170,7 @@ STR_UNITS_POWER_SI                                              :{DECIMAL}кВт
 
 
 
+
 # Common window strings
 
 
@@ -230,6 +231,7 @@ STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Объе
 ###length 7
 STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 STR_SCENEDIT_FILE_MENU_QUIT                                     :Вӗҫле
+
 
 # Settings menu
 ###length 16
@@ -343,6 +345,7 @@ STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COM
 
 
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 # Graph key window
@@ -459,7 +462,7 @@ STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Пӗлт
 
 
 
-###length 43
+###length 44
 STR_GAME_OPTIONS_CURRENCY_RUR                                   :Вырӑсла тенкӗ
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Хӑй управ
@@ -474,6 +477,7 @@ STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Тулл
 
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Экрана сӑнарлама пултарни
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :расна
+
 
 
 
@@ -638,6 +642,7 @@ STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :Аэропор�
 ###length 2
 
 
+
 ###length 2
 
 
@@ -752,6 +757,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 
 
+###length 3
+
 ###setting-zero-is-special
 
 
@@ -843,8 +850,6 @@ STR_CONFIG_SETTING_VEHICLES                                     :Ҫул-йӗр:
 STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :Хуласем
 STR_CONFIG_SETTING_AI                                           :Ӑмӑртуҫӑсем
 
-###length 2
-STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 
 
 # Config errors
@@ -997,8 +1002,6 @@ STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Вырн
 
 
 
-# Network set password
-
 # Network company info join/password
 
 # Network chat
@@ -1007,7 +1010,7 @@ STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Вырн
 # Network messages
 
 
-###length 21
+###length 23
 
 # Network related errors
 STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
@@ -1054,6 +1057,9 @@ STR_CONTENT_DETAIL_VERSION                                      :{SILVER}Вер�
 # Rail waypoint construction window
 
 # Rail station construction window
+
+
+
 
 
 
@@ -1218,6 +1224,8 @@ STR_MAPGEN_TOWN_NAME_CATALAN                                    :Катталу�
 
 # Map generation progress
 STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Объект туни
+
+
 
 # NewGRF settings
 
@@ -1484,9 +1492,6 @@ STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE
 
 
 # Vehicle stopped/started animations
-###length 2
-
-###length 2
 
 # Vehicle details
 

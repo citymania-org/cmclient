@@ -42,7 +42,7 @@ void InvalidateCargosWindows(CompanyID cid)
 struct CargosWindow : Window {
 
 	CargoOption cargoPeriod;
-	CargosWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc) {
+	CargosWindow(WindowDesc &desc, WindowNumber window_number) : Window(desc) {
 		this->InitNested(window_number);
 		this->owner = (Owner)this->window_number;
 		this->cargoPeriod = WID_CT_OPTION_CARGO_TOTAL;
@@ -60,7 +60,7 @@ struct CargosWindow : Window {
 		this->SetDirty();
 	}
 
-	void UpdateWidgetSize(int widget, Dimension *size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension *fill, [[maybe_unused]] Dimension *resize) override {
+	virtual void UpdateWidgetSize([[maybe_unused]] WidgetID widget, [[maybe_unused]] Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override {
 		Dimension icon_size = this->GetMaxIconSize();
 		int line_height = std::max(GetCharacterHeight(FS_NORMAL), (int)icon_size.height);
 		int icon_space = icon_size.width + ScaleGUITrad(CT_ICON_MARGIN);
@@ -72,32 +72,32 @@ struct CargosWindow : Window {
 				break;
 			case WID_CT_HEADER_CARGO:
 			case WID_CT_LIST:
-                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-					size->width = std::max(GetStringBoundingBox(cs->name).width + icon_space, size->width);
+				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
+					size.width = std::max(GetStringBoundingBox(cs->name).width + icon_space, size.width);
 				}
-				size->width = std::max(GetStringBoundingBox(CM_STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH).width, size->width);
+				size.width = std::max(GetStringBoundingBox(CM_STR_TOOLBAR_CARGOS_HEADER_TOTAL_MONTH).width, size.width);
 				break;
 		}
 		switch(widget) {
 			case WID_CT_HEADER_AMOUNT:
 			case WID_CT_HEADER_INCOME:
-				size->height = GetCharacterHeight(FS_NORMAL);
+				size.height = GetCharacterHeight(FS_NORMAL);
 				break;
 			case WID_CT_HEADER_CARGO:
 				break;
 			case WID_CT_AMOUNT:
 			case WID_CT_INCOME:
 			case WID_CT_LIST:
-				size->height = _sorted_standard_cargo_specs.size() * line_height + CT_LINESPACE + GetCharacterHeight(FS_NORMAL);
+				size.height = _sorted_standard_cargo_specs.size() * line_height + CT_LINESPACE + GetCharacterHeight(FS_NORMAL);
 				break;
 		}
-		size->width += padding.width;
-		size->height += padding.height;
+		size.width += padding.width;
+		size.height += padding.height;
 	}
 
 	Dimension GetMaxIconSize() const {
 		Dimension size = {0, 0};
-        for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			Dimension icon_size = GetSpriteSize(cs->GetCargoIcon());
 			size.width = std::max(size.width, icon_size.width);
 			size.height = std::max(size.height, icon_size.height);
@@ -127,7 +127,7 @@ struct CargosWindow : Window {
 
 			case WID_CT_LIST: {
 				int rect_x = r.left + WidgetDimensions::scaled.framerect.left;
-                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
+				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					Dimension icon_size = GetSpriteSize(cs->GetCargoIcon());
 					DrawSprite(cs->GetCargoIcon(), PAL_NONE,
 					           r.left + max_icon_size.width - icon_size.width,
@@ -148,7 +148,7 @@ struct CargosWindow : Window {
 				break;
 			}
 			case WID_CT_AMOUNT:
-                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
+				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					auto &economy = (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH ? c->old_economy[0] : c->cur_economy);
 					sum_cargo_amount += economy.delivered_cargo[cs->Index()];
 					SetDParam(0,  economy.delivered_cargo[cs->Index()]);
@@ -164,7 +164,7 @@ struct CargosWindow : Window {
 				break;
 
 			case WID_CT_INCOME:
-                for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
+				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					auto &economy = (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH ? c->old_economy[0] : c->cur_economy);
 
 					sum_cargo_income += economy.cm.cargo_income[cs->Index()];
@@ -204,17 +204,17 @@ static const NWidgetPart _nested_cargos_widgets[] = {
 	EndContainer(),
 };
 
-static WindowDesc _cargos_desc(__FILE__, __LINE__,
+static WindowDesc _cargos_desc(
 	WDP_AUTO, "cm_cargo_table", 0, 0,
 	WC_CARGOS, WC_NONE,
 	WDF_CONSTRUCTION,
-	std::begin(_nested_cargos_widgets), std::end(_nested_cargos_widgets)
+	_nested_cargos_widgets
 );
 
 void ShowCompanyCargos(CompanyID company)
 {
 	if (!Company::IsValidID(company)) return;
-	AllocateWindowDescFront<CargosWindow>(&_cargos_desc, company);
+	AllocateWindowDescFront<CargosWindow>(_cargos_desc, company);
 }
 
 } // namespace citymania

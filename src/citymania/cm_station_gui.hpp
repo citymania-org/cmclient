@@ -62,7 +62,7 @@ void SetSelectedStationToJoin(StationID station_id);
 
 struct OverlayParams {
     TileArea area;
-    CatchmentArea radius;
+    uint8_t radius;
     StationCoverageType coverage_type;
 };
 
@@ -146,7 +146,6 @@ protected:
     bool remove_mode = false;
     bool keep_rail = true;  // whether to keep rail in remove mode
     StationID station_to_join = INVALID_STATION;
-    bool adjacent_stations = false;
     bool show_coverage = true;
 
     void AddAreaTiles(Preview::TileMap &tiles, bool add_current, bool show_join_area);
