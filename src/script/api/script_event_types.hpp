@@ -13,6 +13,12 @@
 #include "script_event.hpp"
 #include "script_goal.hpp"
 #include "script_window.hpp"
+#include "../../engine_type.h"
+#include "../../industry_type.h"
+#include "../../station_type.h"
+#include "../../story_type.h"
+#include "../../subsidy_type.h"
+#include "../../vehicle_type.h"
 
 /**
  * Event Vehicle Crash, indicating a vehicle of yours is crashed.
@@ -39,13 +45,15 @@ public:
 	 * @param crash_site Where the vehicle crashed.
 	 * @param crash_reason The reason why the vehicle crashed.
 	 * @param victims The number of victims caused by the crash.
+	 * @param the ID of the company owning the crashed vehicle.
 	 */
-	ScriptEventVehicleCrashed(VehicleID vehicle, TileIndex crash_site, CrashReason crash_reason, uint victims) :
+	ScriptEventVehicleCrashed(VehicleID vehicle, TileIndex crash_site, CrashReason crash_reason, uint victims, ::CompanyID company) :
 		ScriptEvent(ET_VEHICLE_CRASHED),
 		crash_site(crash_site),
 		vehicle(vehicle),
 		crash_reason(crash_reason),
-		victims(victims)
+		victims(victims),
+		company(ScriptCompany::ToScriptCompanyID(company))
 	{}
 #endif /* DOXYGEN_API */
 
@@ -80,11 +88,18 @@ public:
 	 */
 	SQInteger GetVictims() { return this->victims; }
 
+	/**
+	 * Get the CompanyID of the company owning the vehicle
+	 * @return The company owning the vehicle
+	 */
+	ScriptCompany::CompanyID GetVehicleOwner() { return this->company; }
+
 private:
 	TileIndex crash_site;     ///< The location of the crash.
 	VehicleID vehicle;        ///< The crashed vehicle.
 	CrashReason crash_reason; ///< The reason for crashing.
-	uint victims; ///< The number of victims.
+	uint victims;             ///< The number of victims.
+	ScriptCompany::CompanyID company; ///< The company owning the vehicle.
 };
 
 /**
@@ -255,7 +270,7 @@ public:
 	 *  returns the first/main.
 	 * @return The cargo-type of the engine.
 	 */
-	CargoID GetCargoType();
+	CargoType GetCargoType();
 
 	/**
 	 * Get the capacity of the offered engine. In case it can transport multiple cargoes, it
@@ -325,7 +340,7 @@ public:
 	 */
 	ScriptEventCompanyNew(Owner owner) :
 		ScriptEvent(ET_COMPANY_NEW),
-		owner((ScriptCompany::CompanyID)owner)
+		owner(ScriptCompany::ToScriptCompanyID(owner))
 	{}
 #endif /* DOXYGEN_API */
 
@@ -347,6 +362,48 @@ private:
 };
 
 /**
+ * Event Company Renamed, indicating a company has changed name.
+ * @api ai game
+ */
+class ScriptEventCompanyRenamed : public ScriptEvent {
+public:
+#ifndef DOXYGEN_API
+	/**
+	 * @param owner The company that is renamed.
+	 */
+	ScriptEventCompanyRenamed(::CompanyID company, const std::string &new_name) :
+		ScriptEvent(ET_COMPANY_RENAMED),
+		company(ScriptCompany::ToScriptCompanyID(company)),
+		new_name(new_name)
+	{}
+#endif /* DOXYGEN_API */
+
+	/**
+	 * Convert an ScriptEvent to the real instance.
+	 * @param instance The instance to convert.
+	 * @return The converted instance.
+	 */
+	static ScriptEventCompanyRenamed *Convert(ScriptEvent *instance) { return static_cast<ScriptEventCompanyRenamed *>(instance); }
+
+	/**
+	 * Get the CompanyID of the company that has been renamed.
+	 * @return The CompanyID of the company.
+	 */
+	ScriptCompany::CompanyID GetCompanyID() { return this->company; }
+
+	/**
+	 * Get the new name of the company.
+	 * @return The new name of the company.
+	 */
+	std::optional<std::string> GetNewName() { return this->new_name; }
+
+private:
+
+	ScriptCompany::CompanyID company; ///< The company that was renamed.
+	std::string new_name; ///< The new name of the company.
+};
+
+/**
  * Event Company In Trouble, indicating a company is in trouble and might go
  *  bankrupt soon.
  * @api ai game
@@ -359,7 +416,7 @@ public:
 	 */
 	ScriptEventCompanyInTrouble(Owner owner) :
 		ScriptEvent(ET_COMPANY_IN_TROUBLE),
-		owner((ScriptCompany::CompanyID)owner)
+		owner(ScriptCompany::ToScriptCompanyID(owner))
 	{}
 #endif /* DOXYGEN_API */
 
@@ -393,7 +450,7 @@ public:
 	 */
 	ScriptEventCompanyAskMerger(Owner owner, Money value) :
 		ScriptEvent(ET_COMPANY_ASK_MERGER),
-		owner((ScriptCompany::CompanyID)owner),
+		owner(ScriptCompany::ToScriptCompanyID(owner)),
 		value(value)
 	{}
 #endif /* DOXYGEN_API */
@@ -444,8 +501,8 @@ public:
 	 */
 	ScriptEventCompanyMerger(Owner old_owner, Owner new_owner) :
 		ScriptEvent(ET_COMPANY_MERGER),
-		old_owner((ScriptCompany::CompanyID)old_owner),
-		new_owner((ScriptCompany::CompanyID)new_owner)
+		old_owner(ScriptCompany::ToScriptCompanyID(old_owner)),
+		new_owner(ScriptCompany::ToScriptCompanyID(new_owner))
 	{}
 #endif /* DOXYGEN_API */
 
@@ -488,7 +545,7 @@ public:
 	 */
 	ScriptEventCompanyBankrupt(Owner owner) :
 		ScriptEvent(ET_COMPANY_BANKRUPT),
-		owner((ScriptCompany::CompanyID)owner)
+		owner(ScriptCompany::ToScriptCompanyID(owner))
 	{}
 #endif /* DOXYGEN_API */
 
@@ -986,10 +1043,10 @@ public:
 	 * @param company The company that is replying.
 	 * @param button The button the company pressed.
 	 */
-	ScriptEventGoalQuestionAnswer(uint16_t uniqueid, ScriptCompany::CompanyID company, ScriptGoal::QuestionButton button) :
+	ScriptEventGoalQuestionAnswer(uint16_t uniqueid, ::CompanyID company, ScriptGoal::QuestionButton button) :
 		ScriptEvent(ET_GOAL_QUESTION_ANSWER),
 		uniqueid(uniqueid),
-		company(company),
+		company(ScriptCompany::ToScriptCompanyID(company)),
 		button(button)
 	{}
 #endif /* DOXYGEN_API */
@@ -1037,9 +1094,9 @@ public:
 	 * @param company The company.
 	 * @param town The town.
 	 */
-	ScriptEventCompanyTown(ScriptEventType event, ScriptCompany::CompanyID company, TownID town) :
+	ScriptEventCompanyTown(ScriptEventType event, ::CompanyID company, TownID town) :
 		ScriptEvent(event),
-		company(company),
+		company(ScriptCompany::ToScriptCompanyID(company)),
 		town(town)
 	{}
 #endif /* DOXYGEN_API */
@@ -1080,7 +1137,7 @@ public:
 	 * @param company The company.
 	 * @param town The town.
 	 */
-	ScriptEventExclusiveTransportRights(ScriptCompany::CompanyID company, TownID town) :
+	ScriptEventExclusiveTransportRights(::CompanyID company, TownID town) :
 		ScriptEventCompanyTown(ET_EXCLUSIVE_TRANSPORT_RIGHTS, company, town)
 	{}
 #endif /* DOXYGEN_API */
@@ -1105,7 +1162,7 @@ public:
 	 * @param company The company.
 	 * @param town The town.
 	 */
-	ScriptEventRoadReconstruction(ScriptCompany::CompanyID company, TownID town) :
+	ScriptEventRoadReconstruction(::CompanyID company, TownID town) :
 		ScriptEventCompanyTown(ET_ROAD_RECONSTRUCTION, company, town)
 	{}
 #endif /* DOXYGEN_API */
@@ -1172,9 +1229,9 @@ public:
 	 * @param page_id     Which page was the clicked button on.
 	 * @param element_id  Which button element was clicked.
 	 */
-	ScriptEventStoryPageButtonClick(CompanyID company_id, StoryPageID page_id, StoryPageElementID element_id) :
+	ScriptEventStoryPageButtonClick(::CompanyID company_id, StoryPageID page_id, StoryPageElementID element_id) :
 		ScriptEvent(ET_STORYPAGE_BUTTON_CLICK),
-		company_id((ScriptCompany::CompanyID)company_id),
+		company_id(ScriptCompany::ToScriptCompanyID(company_id)),
 		page_id(page_id),
 		element_id(element_id)
 	{}
@@ -1224,9 +1281,9 @@ public:
 	 * @param element_id  Which button element was used to select the tile.
 	 * @param tile_index  Which tile was selected by the player.
 	 */
-	ScriptEventStoryPageTileSelect(CompanyID company_id, StoryPageID page_id, StoryPageElementID element_id, TileIndex tile_index) :
+	ScriptEventStoryPageTileSelect(::CompanyID company_id, StoryPageID page_id, StoryPageElementID element_id, TileIndex tile_index) :
 		ScriptEvent(ET_STORYPAGE_TILE_SELECT),
-		company_id((ScriptCompany::CompanyID)company_id),
+		company_id(ScriptCompany::ToScriptCompanyID(company_id)),
 		page_id(page_id),
 		element_id(element_id),
 		tile_index(tile_index)
@@ -1284,9 +1341,9 @@ public:
 	 * @param element_id  Which button element was used to select the tile.
 	 * @param vehicle_id  Which vehicle was selected by the player.
 	 */
-	ScriptEventStoryPageVehicleSelect(CompanyID company_id, StoryPageID page_id, StoryPageElementID element_id, VehicleID vehicle_id) :
+	ScriptEventStoryPageVehicleSelect(::CompanyID company_id, StoryPageID page_id, StoryPageElementID element_id, VehicleID vehicle_id) :
 		ScriptEvent(ET_STORYPAGE_VEHICLE_SELECT),
-		company_id((ScriptCompany::CompanyID)company_id),
+		company_id(ScriptCompany::ToScriptCompanyID(company_id)),
 		page_id(page_id),
 		element_id(element_id),
 		vehicle_id(vehicle_id)
@@ -1329,6 +1386,50 @@ private:
 	StoryPageID page_id;
 	StoryPageElementID element_id;
 	VehicleID vehicle_id;
+};
+
+
+/**
+ * Event President Renamed, indicating a company's president's name has changed.
+ * This event is not sent to the company for who the president's name changed.
+ * @api ai game
+ */
+class ScriptEventPresidentRenamed : public ScriptEvent {
+public:
+#ifndef DOXYGEN_API
+	/**
+	 * @param company The company of the president.
+	 * @param new_name The new name of the president.
+	 */
+	ScriptEventPresidentRenamed(::CompanyID company, const std::string &new_name) :
+		ScriptEvent(ET_PRESIDENT_RENAMED),
+		company(ScriptCompany::ToScriptCompanyID(company)),
+		new_name(new_name)
+	{}
+#endif /* DOXYGEN_API */
+
+	/**
+	 * Convert an ScriptEvent to the real instance.
+	 * @param instance The instance to convert.
+	 * @return The converted instance.
+	 */
+	static ScriptEventPresidentRenamed *Convert(ScriptEvent *instance) { return static_cast<ScriptEventPresidentRenamed *>(instance); }
+
+	/**
+	 * Get the CompanyID of the company that got its president renamed.
+	 * @return The CompanyID of the company.
+	 */
+	ScriptCompany::CompanyID GetCompanyID() { return this->company; }
+
+	/**
+	 * Get the new name of the president.
+	 * @return The new name of the president.
+	 */
+	std::optional<std::string> GetNewName() { return this->new_name; }
+
+private:
+	ScriptCompany::CompanyID company; ///< The company of the renamed president.
+	std::string new_name; ///< The new name of the president.
 };
 
 #endif /* SCRIPT_EVENT_TYPES_HPP */

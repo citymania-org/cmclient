@@ -11,9 +11,11 @@
 #include "core/container_func.hpp"
 #include "debug.h"
 #include "newgrf_railtype.h"
+#include "newgrf_roadtype.h"
 #include "timer/timer_game_calendar.h"
 #include "depot_base.h"
 #include "town.h"
+#include "tunnelbridge_map.h"
 
 #include "safeguards.h"
 
@@ -32,6 +34,12 @@
 			case 0x42: return 0;
 			case 0x43: return TimerGameCalendar::date.base();
 			case 0x44: return HZB_TOWN_EDGE;
+			case 0x45: {
+				auto rt = GetRailTypeInfoIndex(this->rti);
+				uint8_t local = GetReverseRailTypeTranslation(rt, this->ro.grffile);
+				if (local == 0xFF) local = 0xFE;
+				return 0xFFFF | local << 16;
+			}
 		}
 	}
 
@@ -51,6 +59,8 @@
 			}
 			return t != nullptr ? GetTownRadiusGroup(t, this->tile) : HZB_TOWN_EDGE;
 		}
+		case 0x45:
+			return GetTrackTypes(this->tile, ro.grffile);
 	}
 
 	Debug(grf, 1, "Unhandled rail type tile variable 0x{:X}", variable);
@@ -173,4 +183,74 @@ uint8_t GetReverseRailTypeTranslation(RailType railtype, const GRFFile *grffile)
 
 	/* If not found, return as invalid */
 	return 0xFF;
+}
+
+std::vector<LabelObject<RailTypeLabel>> _railtype_list;
+
+/**
+ * Test if any saved rail type labels are different to the currently loaded
+ * rail types. Rail types stored in the map will be converted if necessary.
+ */
+void ConvertRailTypes()
+{
+	std::vector<RailType> railtype_conversion_map;
+	bool needs_conversion = false;
+
+	for (auto it = std::begin(_railtype_list); it != std::end(_railtype_list); ++it) {
+		RailType rt = GetRailTypeByLabel(it->label);
+		if (rt == INVALID_RAILTYPE) {
+			rt = RAILTYPE_RAIL;
+		}
+
+		railtype_conversion_map.push_back(rt);
+
+		/* Conversion is needed if the rail type is in a different position than the list. */
+		if (it->label != 0 && rt != std::distance(std::begin(_railtype_list), it)) needs_conversion = true;
+	}
+
+	if (!needs_conversion) return;
+
+	for (const auto t : Map::Iterate()) {
+		switch (GetTileType(t)) {
+			case MP_RAILWAY:
+				SetRailType(t, railtype_conversion_map[GetRailType(t)]);
+				break;
+
+			case MP_ROAD:
+				if (IsLevelCrossing(t)) {
+					SetRailType(t, railtype_conversion_map[GetRailType(t)]);
+				}
+				break;
+
+			case MP_STATION:
+				if (HasStationRail(t)) {
+					SetRailType(t, railtype_conversion_map[GetRailType(t)]);
+				}
+				break;
+
+			case MP_TUNNELBRIDGE:
+				if (GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL) {
+					SetRailType(t, railtype_conversion_map[GetRailType(t)]);
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+}
+
+/** Populate railtype label list with current values. */
+void SetCurrentRailTypeLabelList()
+{
+	_railtype_list.clear();
+
+	for (RailType rt = RAILTYPE_BEGIN; rt != RAILTYPE_END; rt++) {
+		_railtype_list.emplace_back(GetRailTypeInfo(rt)->label, 0);
+	}
+}
+
+void ClearRailTypeLabelList()
+{
+	_railtype_list.clear();
 }

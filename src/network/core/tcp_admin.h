@@ -70,7 +70,7 @@ enum PacketAdminType : uint8_t {
 };
 
 /** Status of an admin. */
-enum AdminStatus {
+enum AdminStatus : uint8_t {
 	ADMIN_STATUS_INACTIVE,      ///< The admin is not connected nor active.
 	ADMIN_STATUS_AUTHENTICATE,  ///< The admin is connected and working on authentication.
 	ADMIN_STATUS_ACTIVE,        ///< The admin is active.
@@ -78,7 +78,7 @@ enum AdminStatus {
 };
 
 /** Update types an admin can register a frequency for */
-enum AdminUpdateType {
+enum AdminUpdateType : uint8_t {
 	ADMIN_UPDATE_DATE,            ///< Updates about the date of the game.
 	ADMIN_UPDATE_CLIENT_INFO,     ///< Updates about the information of clients.
 	ADMIN_UPDATE_COMPANY_INFO,    ///< Updates about the generic information of companies.
@@ -93,19 +93,19 @@ enum AdminUpdateType {
 };
 
 /** Update frequencies an admin can register. */
-enum AdminUpdateFrequency {
-	ADMIN_FREQUENCY_POLL      = 0x01, ///< The admin can poll this.
-	ADMIN_FREQUENCY_DAILY     = 0x02, ///< The admin gets information about this on a daily basis.
-	ADMIN_FREQUENCY_WEEKLY    = 0x04, ///< The admin gets information about this on a weekly basis.
-	ADMIN_FREQUENCY_MONTHLY   = 0x08, ///< The admin gets information about this on a monthly basis.
-	ADMIN_FREQUENCY_QUARTERLY = 0x10, ///< The admin gets information about this on a quarterly basis.
-	ADMIN_FREQUENCY_ANUALLY   = 0x20, ///< The admin gets information about this on a yearly basis.
-	ADMIN_FREQUENCY_AUTOMATIC = 0x40, ///< The admin gets information about this when it changes.
+enum class AdminUpdateFrequency : uint8_t {
+	Poll, ///< The admin can poll this.
+	Daily, ///< The admin gets information about this on a daily basis.
+	Weekly, ///< The admin gets information about this on a weekly basis.
+	Monthly, ///< The admin gets information about this on a monthly basis.
+	Quarterly, ///< The admin gets information about this on a quarterly basis.
+	Annually, ///< The admin gets information about this on a yearly basis.
+	Automatic, ///< The admin gets information about this when it changes.
 };
-DECLARE_ENUM_AS_BIT_SET(AdminUpdateFrequency)
+using AdminUpdateFrequencies = EnumBitSet<AdminUpdateFrequency, uint8_t>;
 
 /** Reasons for removing a company - communicated to admins. */
-enum AdminCompanyRemoveReason {
+enum AdminCompanyRemoveReason : uint8_t {
 	ADMIN_CRR_MANUAL,    ///< The company is manually removed.
 	ADMIN_CRR_AUTOCLEAN, ///< The company is removed due to autoclean.
 	ADMIN_CRR_BANKRUPT,  ///< The company went belly-up.
@@ -116,9 +116,9 @@ enum AdminCompanyRemoveReason {
 /** Main socket handler for admin related connections. */
 class NetworkAdminSocketHandler : public NetworkTCPSocketHandler {
 protected:
-	std::string admin_name;    ///< Name of the admin.
-	std::string admin_version; ///< Version string of the admin.
-	AdminStatus status;        ///< Status of this admin.
+	std::string admin_name{}; ///< Name of the admin.
+	std::string admin_version{}; ///< Version string of the admin.
+	AdminStatus status = ADMIN_STATUS_INACTIVE; ///< Status of this admin.
 
 	NetworkRecvStatus ReceiveInvalidPacket(PacketAdminType type);
 
@@ -142,7 +142,7 @@ protected:
 	/**
 	 * Register updates to be sent at certain frequencies (as announced in the PROTOCOL packet):
 	 * uint16_t  Update type (see #AdminUpdateType). Note integer type - see "Certain Packet Information" in docs/admin_network.md.
-	 * uint16_t  Update frequency (see #AdminUpdateFrequency), setting #ADMIN_FREQUENCY_POLL is always ignored.
+	 * uint16_t  Update frequency (see #AdminUpdateFrequency), setting #AdminUpdateFrequency::Poll is always ignored.
 	 * @param p The packet that was just received.
 	 * @return The state the network should have.
 	 */
@@ -150,7 +150,7 @@ protected:
 
 	/**
 	 * Poll the server for certain updates, an invalid poll (e.g. not existent id) gets silently dropped:
-	 * uint8_t   #AdminUpdateType the server should answer for, only if #AdminUpdateFrequency #ADMIN_FREQUENCY_POLL is advertised in the PROTOCOL packet. Note integer type - see "Certain Packet Information" in docs/admin_network.md.
+	 * uint8_t   #AdminUpdateType the server should answer for, only if #AdminUpdateFrequency::Poll is advertised in the PROTOCOL packet. Note integer type - see "Certain Packet Information" in docs/admin_network.md.
 	 * uint32_t  ID relevant to the packet type, e.g.
 	 *          - the client ID for #ADMIN_UPDATE_CLIENT_INFO. Use UINT32_MAX to show all clients.
 	 *          - the company ID for #ADMIN_UPDATE_COMPANY_INFO. Use UINT32_MAX to show all companies.
@@ -174,7 +174,7 @@ protected:
 	 * Send chat from the external source:
 	 * string  Name of the source this message came from.
 	 * uint16_t  TextColour to use for the message.
-	 * string  Name of the user who sent the messsage.
+	 * string  Name of the user who sent the message.
 	 * string  Message.
 	 * @param p The packet that was just received.
 	 * @return The state the network should have.
@@ -542,7 +542,11 @@ protected:
 public:
 	NetworkRecvStatus CloseConnection(bool error = true) override;
 
-	NetworkAdminSocketHandler(SOCKET s);
+	/**
+	 * Create the admin handler for the given socket.
+	 * @param s The socket to communicate over.
+	 */
+	NetworkAdminSocketHandler(SOCKET s) : NetworkTCPSocketHandler(s) {}
 
 	NetworkRecvStatus ReceivePackets();
 

@@ -12,7 +12,8 @@
 
 #include "script_tile.hpp"
 #include "../squirrel_helper_type.hpp"
-#include "../../../road.h"
+#include "../../station_type.h"
+#include "../../road.h"
 
 /**
  * Class that handles all road related functions.
@@ -72,8 +73,8 @@ public:
 	 * Type of road station.
 	 */
 	enum RoadVehicleType {
-		ROADVEHTYPE_BUS,   ///< Build objects useable for busses and passenger trams
-		ROADVEHTYPE_TRUCK, ///< Build objects useable for trucks and cargo trams
+		ROADVEHTYPE_BUS,   ///< Build objects usable for busses and passenger trams
+		ROADVEHTYPE_TRUCK, ///< Build objects usable for trucks and cargo trams
 	};
 
 	/**
@@ -100,7 +101,7 @@ public:
 	 * @pre ScriptCargo::IsValidCargo(cargo_type).
 	 * @return The road vehicle type needed to transport the cargo.
 	 */
-	static RoadVehicleType GetRoadVehicleTypeForCargo(CargoID cargo_type);
+	static RoadVehicleType GetRoadVehicleTypeForCargo(CargoType cargo_type);
 
 	/**
 	 * Checks whether the given tile is actually a tile with road that can be

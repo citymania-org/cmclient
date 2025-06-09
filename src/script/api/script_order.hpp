@@ -57,9 +57,9 @@ public:
 		/** Never unload the vehicle; only for stations. Cannot be set when OF_UNLOAD, OF_TRANSFER or OF_NO_LOAD is set. */
 		OF_NO_UNLOAD         = 1 << 4,
 
-		/** Wt till the vehicle is fully loaded; only for stations. Cannot be set when OF_NO_LOAD is set. */
+		/** Wait till the vehicle is fully loaded; only for stations. Cannot be set when OF_NO_LOAD is set. */
 		OF_FULL_LOAD         = 2 << 5,
-		/** Wt till at least one cargo of the vehicle is fully loaded; only for stations. Cannot be set when OF_NO_LOAD is set. */
+		/** Wait till at least one cargo of the vehicle is fully loaded; only for stations. Cannot be set when OF_NO_LOAD is set. */
 		OF_FULL_LOAD_ANY     = 3 << 5,
 		/** Do not load any cargo; only for stations. Cannot be set when OF_NO_UNLOAD, OF_FULL_LOAD or OF_FULL_LOAD_ANY is set. */
 		OF_NO_LOAD           = 1 << 7,
@@ -348,7 +348,7 @@ public:
 	 *  in the orderlist, but they can be the current order of a vehicle.
 	 * @return The refit cargo of the order or CT_NO_REFIT if no refit is set.
 	 */
-	static CargoID GetOrderRefit(VehicleID vehicle_id, OrderPosition order_position);
+	static CargoType GetOrderRefit(VehicleID vehicle_id, OrderPosition order_position);
 
 	/**
 	 * Sets the OrderPosition to jump to if the check succeeds of the given order for the given vehicle.
@@ -427,7 +427,7 @@ public:
 	 * @game @pre ScriptCompanyMode::IsValid().
 	 * @return Whether the order has been/can be changed.
 	 */
-	static bool SetOrderRefit(VehicleID vehicle_id, OrderPosition order_position, CargoID refit_cargo);
+	static bool SetOrderRefit(VehicleID vehicle_id, OrderPosition order_position, CargoType refit_cargo);
 
 	/**
 	 * Appends an order to the end of the vehicle's order list.

@@ -41,25 +41,15 @@
 
 /** Read some packets, and when do use that data as initial load filter. */
 struct PacketReader : LoadFilter {
-	static const size_t CHUNK = 32 * 1024;  ///< 32 KiB chunks of memory.
+	using Buffer = std::deque<uint8_t>; ///< The underlying buffer type that's being use.
 
-	std::vector<uint8_t *> blocks;             ///< Buffer with blocks of allocated memory.
-	uint8_t *buf;                              ///< Buffer we're going to write to/read from.
-	uint8_t *bufe;                             ///< End of the buffer we write to/read from.
-	uint8_t **block;                           ///< The block we're reading from/writing to.
-	size_t written_bytes;                   ///< The total number of bytes we've written.
-	size_t read_bytes;                      ///< The total number of read bytes.
+	Buffer buffer; ///< Buffer with the raw save game data.
+	Buffer::const_iterator iterator; ///< Buffer we're going to write to/read from.
+	size_t read_bytes = 0; ///< The total number of read bytes.
 
 	/** Initialise everything. */
-	PacketReader() : LoadFilter(nullptr), buf(nullptr), bufe(nullptr), block(nullptr), written_bytes(0), read_bytes(0)
+	PacketReader() : LoadFilter(nullptr)
 	{
-	}
-
-	~PacketReader() override
-	{
-		for (auto p : this->blocks) {
-			free(p);
-		}
 	}
 
 	/**
@@ -71,9 +61,7 @@ struct PacketReader : LoadFilter {
 	 */
 	static inline ssize_t TransferOutMemCopy(PacketReader *destination, const char *source, size_t amount)
 	{
-		memcpy(destination->buf, source, amount);
-		destination->buf += amount;
-		destination->written_bytes += amount;
+		std::copy_n(source, amount, std::back_inserter(destination->buffer));
 		return amount;
 	}
 
@@ -84,47 +72,25 @@ struct PacketReader : LoadFilter {
 	void AddPacket(Packet &p)
 	{
 		assert(this->read_bytes == 0);
-		p.TransferOutWithLimit(TransferOutMemCopy, this->bufe - this->buf, this);
-
-		/* Did everything fit in the current chunk, then we're done. */
-		if (p.RemainingBytesToTransfer() == 0) return;
-
-		/* Allocate a new chunk and add the remaining data. */
-		this->blocks.push_back(this->buf = CallocT<uint8_t>(CHUNK));
-		this->bufe = this->buf + CHUNK;
-
-		p.TransferOutWithLimit(TransferOutMemCopy, this->bufe - this->buf, this);
+		p.TransferOut(TransferOutMemCopy, this);
 	}
 
 	size_t Read(uint8_t *rbuf, size_t size) override
 	{
 		/* Limit the amount to read to whatever we still have. */
-		size_t ret_size = size = std::min(this->written_bytes - this->read_bytes, size);
-		this->read_bytes += ret_size;
-		const uint8_t *rbufe = rbuf + ret_size;
+		size_t read_size = std::min(this->buffer.size() - this->read_bytes, size);
 
-		while (rbuf != rbufe) {
-			if (this->buf == this->bufe) {
-				this->buf = *this->block++;
-				this->bufe = this->buf + CHUNK;
-			}
+		std::copy_n(this->iterator, read_size, rbuf);
+		std::advance(this->iterator, read_size);
+		this->read_bytes += read_size;
 
-			size_t to_write = std::min(this->bufe - this->buf, rbufe - rbuf);
-			memcpy(rbuf, this->buf, to_write);
-			rbuf += to_write;
-			this->buf += to_write;
-		}
-
-		return ret_size;
+		return read_size;
 	}
 
 	void Reset() override
 	{
 		this->read_bytes = 0;
-
-		this->block = this->blocks.data();
-		this->buf   = *this->block++;
-		this->bufe  = this->buf + CHUNK;
+		this->iterator = this->buffer.cbegin();
 	}
 };
 
@@ -143,7 +109,7 @@ void ClientNetworkEmergencySave()
  * Create a new socket for the client side of the game connection.
  * @param s The socket to connect with.
  */
-ClientNetworkGameSocketHandler::ClientNetworkGameSocketHandler(SOCKET s, const std::string &connection_string) : NetworkGameSocketHandler(s), connection_string(connection_string), savegame(nullptr), status(STATUS_INACTIVE)
+ClientNetworkGameSocketHandler::ClientNetworkGameSocketHandler(SOCKET s, const std::string &connection_string) : NetworkGameSocketHandler(s), connection_string(connection_string)
 {
 	assert(ClientNetworkGameSocketHandler::my_client == nullptr);
 	ClientNetworkGameSocketHandler::my_client = this;
@@ -542,7 +508,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_FULL(Packet &)
 	Debug(net, 9, "Client::Receive_SERVER_FULL()");
 
 	/* We try to join a server which is full */
-	ShowErrorMessage(STR_NETWORK_ERROR_SERVER_FULL, INVALID_STRING_ID, WL_CRITICAL);
+	ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_SERVER_FULL), {}, WL_CRITICAL);
 
 	return NETWORK_RECV_STATUS_SERVER_FULL;
 }
@@ -552,7 +518,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_BANNED(Packet &
 	Debug(net, 9, "Client::Receive_SERVER_BANNED()");
 
 	/* We try to join a server where we are banned */
-	ShowErrorMessage(STR_NETWORK_ERROR_SERVER_BANNED, INVALID_STRING_ID, WL_CRITICAL);
+	ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_SERVER_BANNED), {}, WL_CRITICAL);
 
 	return NETWORK_RECV_STATUS_SERVER_BANNED;
 }
@@ -593,8 +559,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CLIENT_INFO(Pac
 		if (client_id == _network_own_client_id) SetLocalCompany(!Company::IsValidID(playas) ? COMPANY_SPECTATOR : playas);
 
 		ci->client_playas = playas;
-		ci->client_name = name;
-		ci->public_key = public_key;
+		ci->client_name = std::move(name);
+		ci->public_key = std::move(public_key);
 
 		InvalidateWindowData(WC_CLIENT_LIST, 0);
 
@@ -613,8 +579,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CLIENT_INFO(Pac
 	ci->client_playas = playas;
 	if (client_id == _network_own_client_id) this->SetInfo(ci);
 
-	ci->client_name = name;
-	ci->public_key = public_key;
+	ci->client_name = std::move(name);
+	ci->public_key = std::move(public_key);
 
 	InvalidateWindowData(WC_CLIENT_LIST, 0);
 
@@ -658,10 +624,11 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_ERROR(Packet &p
 	if (error < (ptrdiff_t)lengthof(network_error_strings)) err = network_error_strings[error];
 	/* In case of kicking a client, we assume there is a kick message in the packet if we can read one byte */
 	if (error == NETWORK_ERROR_KICKED && p.CanReadFromPacket(1)) {
-		SetDParamStr(0, p.Recv_string(NETWORK_CHAT_LENGTH));
-		ShowErrorMessage(err, STR_NETWORK_ERROR_KICK_MESSAGE, WL_CRITICAL);
+		ShowErrorMessage(GetEncodedString(err),
+			GetEncodedString(STR_NETWORK_ERROR_KICK_MESSAGE, p.Recv_string(NETWORK_CHAT_LENGTH)),
+			WL_CRITICAL);
 	} else {
-		ShowErrorMessage(err, INVALID_STRING_ID, WL_CRITICAL);
+		ShowErrorMessage(GetEncodedString(err), {}, WL_CRITICAL);
 	}
 
 	/* Perform an emergency save if we had already entered the game */
@@ -688,7 +655,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHECK_NEWGRFS(P
 		const GRFConfig *f = FindGRFConfig(c.grfid, FGCM_EXACT, &c.md5sum);
 		if (f == nullptr) {
 			/* We do not know this GRF, bail out of initialization */
-			Debug(grf, 0, "NewGRF {:08X} not found; checksum {}", BSWAP32(c.grfid), FormatArrayAsHex(c.md5sum));
+			Debug(grf, 0, "NewGRF {:08X} not found; checksum {}", std::byteswap(c.grfid), FormatArrayAsHex(c.md5sum));
 			ret = NETWORK_RECV_STATUS_NEWGRF_MISMATCH;
 		}
 	}
@@ -699,7 +666,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHECK_NEWGRFS(P
 	}
 
 	/* NewGRF mismatch, bail out */
-	ShowErrorMessage(STR_NETWORK_ERROR_NEWGRF_MISMATCH, INVALID_STRING_ID, WL_CRITICAL);
+	ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NEWGRF_MISMATCH), {}, WL_CRITICAL);
 	return ret;
 }
 
@@ -710,7 +677,7 @@ class ClientGamePasswordRequestHandler : public NetworkAuthenticationPasswordReq
 		if (!_network_join.server_password.empty()) {
 			request->Reply(_network_join.server_password);
 		} else {
-			ShowNetworkNeedPassword(request);
+			ShowNetworkNeedPassword(std::move(request));
 		}
 	}
 };
@@ -728,13 +695,13 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_AUTH_REQUEST(Pa
 				_settings_client.network.client_secret_key, _settings_client.network.client_public_key);
 	}
 	switch (this->authentication_handler->ReceiveRequest(p)) {
-		case NetworkAuthenticationClientHandler::READY_FOR_RESPONSE:
+		case NetworkAuthenticationClientHandler::RequestResult::ReadyForResponse:
 			return SendAuthResponse();
 
-		case NetworkAuthenticationClientHandler::AWAIT_USER_INPUT:
+		case NetworkAuthenticationClientHandler::RequestResult::AwaitUserInput:
 			return NETWORK_RECV_STATUS_OKAY;
 
-		case NetworkAuthenticationClientHandler::INVALID:
+		case NetworkAuthenticationClientHandler::RequestResult::Invalid:
 		default:
 			return NETWORK_RECV_STATUS_MALFORMED_PACKET;
 	}
@@ -833,7 +800,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DATA(Packet
 	/* We are still receiving data, put it to the file */
 	this->savegame->AddPacket(p);
 
-	_network_join_bytes = (uint32_t)this->savegame->written_bytes;
+	_network_join_bytes = static_cast<uint32_t>(this->savegame->buffer.size());
 	SetWindowDirty(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
 
 	return NETWORK_RECV_STATUS_OKAY;
@@ -865,7 +832,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 	this->last_packet = std::chrono::steady_clock::now();
 
 	if (!load_success) {
-		ShowErrorMessage(STR_NETWORK_ERROR_SAVEGAMEERROR, INVALID_STRING_ID, WL_CRITICAL);
+		ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_SAVEGAMEERROR), {}, WL_CRITICAL);
 		return NETWORK_RECV_STATUS_SAVEGAME;
 	}
 	/* If the savegame has successfully loaded, ALL windows have been removed,
@@ -891,7 +858,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 			Debug(net, 9, "Client::join_status = REGISTERING");
 			_network_join_status = NETWORK_JOIN_STATUS_REGISTERING;
 			ShowJoinStatusWindow();
-			Command<CMD_COMPANY_CTRL>::Post(CCA_NEW, INVALID_COMPANY, CRR_NONE, _network_own_client_id);
+			Command<CMD_COMPANY_CTRL>::Post(CCA_NEW, CompanyID::Invalid(), CRR_NONE, _network_own_client_id);
 		}
 	} else {
 		/* take control over an existing company */
@@ -969,7 +936,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_COMMAND(Packet 
 		return NETWORK_RECV_STATUS_MALFORMED_PACKET;
 	}
 
-	this->incoming_queue.push_back(cp);
+	this->incoming_queue.push_back(std::move(cp));
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -1004,9 +971,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CHAT(Packet &p)
 			/* For speaking to company, we need the company-name */
 			case NETWORK_ACTION_CHAT_COMPANY: {
 				StringID str = Company::IsValidID(ci_to->client_playas) ? STR_COMPANY_NAME : STR_NETWORK_SPECTATORS;
-				SetDParam(0, ci_to->client_playas);
 
-				name = GetString(str);
+				name = GetString(str, ci_to->client_playas);
 				ci = NetworkClientInfo::GetByClientID(_network_own_client_id);
 				break;
 			}
@@ -1038,7 +1004,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_EXTERNAL_CHAT(P
 
 	if (!IsValidConsoleColour(colour)) return NETWORK_RECV_STATUS_MALFORMED_PACKET;
 
-	NetworkTextMessage(NETWORK_ACTION_EXTERNAL_CHAT, colour, false, user, msg, 0, source);
+	NetworkTextMessage(NETWORK_ACTION_EXTERNAL_CHAT, colour, false, user, msg, source);
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -1109,7 +1075,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_SHUTDOWN(Packet
 	/* Only when we're trying to join we really
 	 * care about the server shutting down. */
 	if (this->status >= STATUS_JOIN) {
-		ShowErrorMessage(STR_NETWORK_MESSAGE_SERVER_SHUTDOWN, INVALID_STRING_ID, WL_CRITICAL);
+		ShowErrorMessage(GetEncodedString(STR_NETWORK_MESSAGE_SERVER_SHUTDOWN), {}, WL_CRITICAL);
 	}
 
 	if (this->status == STATUS_ACTIVE) ClientNetworkEmergencySave();
@@ -1128,7 +1094,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_NEWGAME(Packet 
 		 * Client ID modulo 16 + 1 (value 0 means no reconnect).
 		 * This way reconnects should be spread out a bit. */
 		_network_reconnect = _network_own_client_id % 16 + 1;
-		ShowErrorMessage(STR_NETWORK_MESSAGE_SERVER_REBOOT, INVALID_STRING_ID, WL_CRITICAL);
+		ShowErrorMessage(GetEncodedString(STR_NETWORK_MESSAGE_SERVER_REBOOT), {}, WL_CRITICAL);
 	}
 
 	if (this->status == STATUS_ACTIVE) ClientNetworkEmergencySave();
@@ -1220,8 +1186,10 @@ void ClientNetworkGameSocketHandler::CheckConnection()
 	if (std::chrono::duration_cast<std::chrono::seconds>(last_lag) == std::chrono::duration_cast<std::chrono::seconds>(lag)) return;
 
 	last_lag = lag;
-	SetDParam(0, std::chrono::duration_cast<std::chrono::seconds>(lag).count());
-	ShowErrorMessage(STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION, STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION, WL_INFO);
+	ShowErrorMessage(
+		GetEncodedString(STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION),
+		GetEncodedString(STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION, std::chrono::duration_cast<std::chrono::seconds>(lag).count()),
+		WL_INFO);
 }
 
 
@@ -1311,7 +1279,7 @@ bool NetworkValidateClientName(std::string &client_name)
 	StrTrimInPlace(client_name);
 	if (NetworkIsValidClientName(client_name)) return true;
 
-	ShowErrorMessage(STR_NETWORK_ERROR_BAD_PLAYER_NAME, INVALID_STRING_ID, WL_ERROR);
+	ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_BAD_PLAYER_NAME), {}, WL_ERROR);
 	return false;
 }
 
@@ -1345,7 +1313,7 @@ void NetworkUpdateClientName(const std::string &client_name)
 			std::string temporary_name = client_name;
 			if (NetworkMakeClientNameUnique(temporary_name)) {
 				NetworkTextMessage(NETWORK_ACTION_NAME_CHANGE, CC_DEFAULT, false, ci->client_name, temporary_name);
-				ci->client_name = temporary_name;
+				ci->client_name = std::move(temporary_name);
 				NetworkUpdateClientInfo(CLIENT_ID_SERVER);
 			}
 		}

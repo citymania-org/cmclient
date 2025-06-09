@@ -56,11 +56,11 @@ enum SQMetaMethod{
 
 struct SQRefCounted
 {
-	SQRefCounted() { _uiRef = 0; _weakref = nullptr; }
+	SQRefCounted() {}
 	virtual ~SQRefCounted();
 	SQWeakRef *GetWeakRef(SQObjectType type);
-	SQUnsignedInteger _uiRef;
-	struct SQWeakRef *_weakref;
+	SQUnsignedInteger _uiRef = 0;
+	struct SQWeakRef *_weakref = nullptr;
 	virtual void Release()=0;
 
 	/* Placement new/delete to prevent memory leaks if constructor throws an exception. */
@@ -79,7 +79,7 @@ struct SQRefCounted
 	inline void operator delete(void *) { NOT_REACHED(); }
 
 private:
-	size_t size;
+	size_t size = 0;
 };
 
 struct SQWeakRef : SQRefCounted
@@ -160,6 +160,14 @@ struct SQObjectPtr : public SQObject
 		_type=o._type;
 		_unVal=o._unVal;
 		__AddRef(_type,_unVal);
+	}
+	SQObjectPtr(SQObjectPtr &&o)
+	{
+		SQ_OBJECT_RAWINIT()
+		this->_type = OT_NULL;
+		this->_unVal.pUserPointer = nullptr;
+		std::swap(this->_type, o._type);
+		std::swap(this->_unVal, o._unVal);
 	}
 	SQObjectPtr(const SQObject &o)
 	{
@@ -328,6 +336,12 @@ struct SQObjectPtr : public SQObject
 		_type = obj._type;
 		__AddRef(_type,_unVal);
 		__Release(tOldType,unOldVal);
+		return *this;
+	}
+	inline SQObjectPtr& operator=(SQObjectPtr &&obj)
+	{
+		std::swap(this->_type, obj._type);
+		std::swap(this->_unVal, obj._unVal);
 		return *this;
 	}
 	inline SQObjectPtr& operator=(const SQObject& obj)

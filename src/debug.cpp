@@ -106,7 +106,7 @@ void DumpDebugFacilityNames(std::back_insert_iterator<std::string> &output_itera
  * @param level Debug category.
  * @param message The message to output.
  */
-void DebugPrint(const char *category, int level, const std::string &message)
+void DebugPrint(const char *category, int level, std::string &&message)
 {
 	if (strcmp(category, "desync") == 0 && level != 0) {
 		static auto f = FioFOpenFile("commands-out.log", "wb", AUTOSAVE_DIR);
@@ -128,7 +128,7 @@ void DebugPrint(const char *category, int level, const std::string &message)
 		if (_debug_remote_console.load()) {
 			/* Only add to the queue when there is at least one consumer of the data. */
 			std::lock_guard<std::mutex> lock(_debug_remote_console_mutex);
-			_debug_remote_console_queue.push_back({ category, message });
+			_debug_remote_console_queue.emplace_back(category, std::move(message));
 		}
 	}
 }
@@ -266,7 +266,7 @@ void DebugReconsiderSendRemoteMessages()
 	bool enable = _settings_client.gui.developer >= 2;
 
 	for (ServerNetworkAdminSocketHandler *as : ServerNetworkAdminSocketHandler::IterateActive()) {
-		if (as->update_frequency[ADMIN_UPDATE_CONSOLE] & ADMIN_FREQUENCY_AUTOMATIC) {
+		if (as->update_frequency[ADMIN_UPDATE_CONSOLE].Test(AdminUpdateFrequency::Automatic)) {
 			enable = true;
 			break;
 		}

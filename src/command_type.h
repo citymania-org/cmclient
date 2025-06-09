@@ -10,6 +10,7 @@
 #ifndef COMMAND_TYPE_H
 #define COMMAND_TYPE_H
 
+#include "company_type.h"
 #include "economy_type.h"
 #include "strings_type.h"
 #include "tile_type.h"
@@ -25,11 +26,9 @@ class CommandCost {
 	StringID message;                           ///< Warning message for when success is unset
 	ExpensesType expense_type;                  ///< the type of expence as shown on the finances view
 	bool success;                               ///< Whether the command went fine up to this moment
-	const GRFFile *textref_stack_grffile = nullptr; ///< NewGRF providing the #TextRefStack content.
-	uint textref_stack_size = 0; ///< Number of uint32_t values to put on the #TextRefStack for the error message.
+	Owner owner = CompanyID::Invalid(); ///< Originator owner of error.
 	StringID extra_message = INVALID_STRING_ID; ///< Additional warning message for when success is unset
-
-	static uint32_t textref_stack[16];
+	EncodedString encoded_message{}; ///< Encoded error message, used if the error message includes parameters.
 
 public:
 	/**
@@ -55,6 +54,42 @@ public:
 	 */
 	CommandCost(ExpensesType ex_t, const Money &cst) : cost(cst), message(INVALID_STRING_ID), expense_type(ex_t), success(true) {}
 
+	/**
+	 * Set the 'owner' (the originator) of this error message. This is used to show a company owner's face if you
+	 * attempt an action on something owned by other company.
+	 */
+	inline void SetErrorOwner(Owner owner)
+	{
+		this->owner = owner;
+	}
+
+	/**
+	 * Set the encoded message string. If set, this is used by the error message window instead of the error StringID,
+	 * to allow more information to be displayed to the local player.
+	 * @note Do not set an encoded message if the error is not for the local player, as it will never be seen.
+	 * @param message EncodedString message to set.
+	 */
+	void SetEncodedMessage(EncodedString &&message)
+	{
+		this->encoded_message = std::move(message);
+	}
+
+	/**
+	 * Get the last encoded error message.
+	 * @returns Reference to the encoded message.
+	 */
+	EncodedString &GetEncodedMessage()
+	{
+		return this->encoded_message;
+	}
+
+	/**
+	 * Get the originator owner for this error.
+	 */
+	inline CompanyID GetErrorOwner() const
+	{
+		return this->owner;
+	}
 
 	/**
 	 * Adds the given cost to the cost of the command.
@@ -65,7 +100,7 @@ public:
 		this->cost += cost;
 	}
 
-	void AddCost(const CommandCost &cmd_cost);
+	void AddCost(CommandCost &&cmd_cost);
 
 	/**
 	 * Multiplies the cost of the command by the given factor.
@@ -98,41 +133,12 @@ public:
 	 * Makes this #CommandCost behave like an error command.
 	 * @param message The error message.
 	 */
-	void MakeError(StringID message, StringID extra_message = INVALID_STRING_ID)
+	void MakeError(StringID message)
 	{
 		assert(message != INVALID_STRING_ID);
 		this->success = false;
 		this->message = message;
-		this->extra_message = extra_message;
-	}
-
-	void UseTextRefStack(const GRFFile *grffile, uint num_registers);
-
-	/**
-	 * Returns the NewGRF providing the #TextRefStack of the error message.
-	 * @return the NewGRF.
-	 */
-	const GRFFile *GetTextRefStackGRF() const
-	{
-		return this->textref_stack_grffile;
-	}
-
-	/**
-	 * Returns the number of uint32_t values for the #TextRefStack of the error message.
-	 * @return number of uint32_t values.
-	 */
-	uint GetTextRefStackSize() const
-	{
-		return this->textref_stack_size;
-	}
-
-	/**
-	 * Returns a pointer to the values for the #TextRefStack of the error message.
-	 * @return uint32_t values for the #TextRefStack
-	 */
-	const uint32_t *GetTextRefStack() const
-	{
-		return textref_stack;
+		this->extra_message = INVALID_STRING_ID;
 	}
 
 	/**
@@ -174,6 +180,9 @@ public:
 	}
 };
 
+CommandCost CommandCostWithParam(StringID str, uint64_t value);
+CommandCost CommandCostWithParam(StringID str, ConvertibleThroughBase auto value) { return CommandCostWithParam(str, value.base()); }
+
 /**
  * List of commands.
  *
@@ -184,7 +193,7 @@ public:
  *
  * @see _command_proc_table
  */
-enum Commands : uint16_t {
+enum Commands : uint8_t {
 	CMD_BUILD_RAILROAD_TRACK,         ///< build a rail track
 	CMD_REMOVE_RAILROAD_TRACK,        ///< remove a rail track
 	CMD_BUILD_SINGLE_RAIL,            ///< build a single rail track
@@ -371,46 +380,44 @@ enum Commands : uint16_t {
  *
  * This enums defines some flags which can be used for the commands.
  */
-enum DoCommandFlag {
-	DC_NONE                  = 0x000, ///< no flag is set
-	DC_EXEC                  = 0x001, ///< execute the given command
-	DC_AUTO                  = 0x002, ///< don't allow building on structures
-	DC_QUERY_COST            = 0x004, ///< query cost only,  don't build.
-	DC_NO_WATER              = 0x008, ///< don't allow building on water
-	// 0x010 is unused
-	DC_NO_TEST_TOWN_RATING   = 0x020, ///< town rating does not disallow you from building
-	DC_BANKRUPT              = 0x040, ///< company bankrupts, skip money check, skip vehicle on tile check in some cases
-	DC_AUTOREPLACE           = 0x080, ///< autoreplace/autorenew is in progress, this shall disable vehicle limits when building, and ignore certain restrictions when undoing things (like vehicle attach callback)
-	DC_NO_CARGO_CAP_CHECK    = 0x100, ///< when autoreplace/autorenew is in progress, this shall prevent truncating the amount of cargo in the vehicle to prevent testing the command to remove cargo
-	DC_ALL_TILES             = 0x200, ///< allow this command also on MP_VOID tiles
-	DC_NO_MODIFY_TOWN_RATING = 0x400, ///< do not change town rating
-	DC_FORCE_CLEAR_TILE      = 0x800, ///< do not only remove the object on the tile, but also clear any water left on it
+enum DoCommandFlag : uint8_t {
+	Execute, ///< execute the given command
+	Auto, ///< don't allow building on structures
+	QueryCost, ///< query cost only,  don't build.
+	NoWater, ///< don't allow building on water
+	NoTestTownRating, ///< town rating does not disallow you from building
+	Bankrupt, ///< company bankrupts, skip money check, skip vehicle on tile check in some cases
+	AutoReplace, ///< autoreplace/autorenew is in progress, this shall disable vehicle limits when building, and ignore certain restrictions when undoing things (like vehicle attach callback)
+	NoCargoCapacityCheck, ///< when autoreplace/autorenew is in progress, this shall prevent truncating the amount of cargo in the vehicle to prevent testing the command to remove cargo
+	AllTiles, ///< allow this command also on MP_VOID tiles
+	NoModifyTownRating, ///< do not change town rating
+	ForceClearTile, ///< do not only remove the object on the tile, but also clear any water left on it
 };
-DECLARE_ENUM_AS_BIT_SET(DoCommandFlag)
+using DoCommandFlags = EnumBitSet<DoCommandFlag, uint16_t>;
 
 /**
  * Command flags for the command table _command_proc_table.
  *
  * This enumeration defines flags for the _command_proc_table.
  */
-enum CommandFlags {
-	CMD_SERVER    = 0x001, ///< the command can only be initiated by the server
-	CMD_SPECTATOR = 0x002, ///< the command may be initiated by a spectator
-	CMD_OFFLINE   = 0x004, ///< the command cannot be executed in a multiplayer game; single-player only
-	CMD_AUTO      = 0x008, ///< set the DC_AUTO flag on this command
-	CMD_ALL_TILES = 0x010, ///< allow this command also on MP_VOID tiles
-	CMD_NO_TEST   = 0x020, ///< the command's output may differ between test and execute due to town rating changes etc.
-	CMD_NO_WATER  = 0x040, ///< set the DC_NO_WATER flag on this command
-	CMD_CLIENT_ID = 0x080, ///< set p2 with the ClientID of the sending client.
-	CMD_DEITY     = 0x100, ///< the command may be executed by COMPANY_DEITY
-	CMD_STR_CTRL  = 0x200, ///< the command's string may contain control strings
-	CMD_NO_EST    = 0x400, ///< the command is never estimated.
-	CMD_LOCATION  = 0x800, ///< the command has implicit location argument.
+enum class CommandFlag : uint8_t {
+	Server, ///< the command can only be initiated by the server
+	Spectator, ///< the command may be initiated by a spectator
+	Offline, ///< the command cannot be executed in a multiplayer game; single-player only
+	Auto, ///< set the DoCommandFlag::Auto flag on this command
+	AllTiles, ///< allow this command also on MP_VOID tiles
+	NoTest, ///< the command's output may differ between test and execute due to town rating changes etc.
+	NoWater, ///< set the DoCommandFlag::NoWater flag on this command
+	ClientID, ///< set p2 with the ClientID of the sending client.
+	Deity, ///< the command may be executed by COMPANY_DEITY
+	StrCtrl, ///< the command's string may contain control strings
+	NoEst, ///< the command is never estimated.
+	Location, ///< the command has implicit location argument.
 };
-DECLARE_ENUM_AS_BIT_SET(CommandFlags)
+using CommandFlags = EnumBitSet<CommandFlag, uint16_t>;
 
 /** Types of commands we have. */
-enum CommandType {
+enum CommandType : uint8_t {
 	CMDT_LANDSCAPE_CONSTRUCTION, ///< Construction and destruction of objects on the map.
 	CMDT_VEHICLE_CONSTRUCTION,   ///< Construction, modification (incl. refit) and destruction of vehicles.
 	CMDT_MONEY_MANAGEMENT,       ///< Management of money, i.e. loans.
@@ -425,7 +432,7 @@ enum CommandType {
 };
 
 /** Different command pause levels. */
-enum CommandPauseLevel {
+enum CommandPauseLevel : uint8_t {
 	CMDPL_NO_ACTIONS,      ///< No user actions may be executed.
 	CMDPL_NO_CONSTRUCTION, ///< No construction actions may be executed.
 	CMDPL_NO_LANDSCAPING,  ///< No landscaping actions may be executed.
@@ -435,14 +442,14 @@ enum CommandPauseLevel {
 
 template <typename T> struct CommandFunctionTraitHelper;
 template <typename... Targs>
-struct CommandFunctionTraitHelper<CommandCost(*)(DoCommandFlag, Targs...)> {
+struct CommandFunctionTraitHelper<CommandCost(*)(DoCommandFlags, Targs...)> {
 	using Args = std::tuple<std::decay_t<Targs>...>;
 	using RetTypes = void;
 	using CbArgs = Args;
 	using CbProcType = void(*)(Commands, const CommandCost &);
 };
 template <template <typename...> typename Tret, typename... Tretargs, typename... Targs>
-struct CommandFunctionTraitHelper<Tret<CommandCost, Tretargs...>(*)(DoCommandFlag, Targs...)> {
+struct CommandFunctionTraitHelper<Tret<CommandCost, Tretargs...>(*)(DoCommandFlags, Targs...)> {
 	using Args = std::tuple<std::decay_t<Targs>...>;
 	using RetTypes = std::tuple<std::decay_t<Tretargs>...>;
 	using CbArgs = std::tuple<std::decay_t<Tretargs>..., std::decay_t<Targs>...>;
@@ -453,7 +460,7 @@ struct CommandFunctionTraitHelper<Tret<CommandCost, Tretargs...>(*)(DoCommandFla
 template <Commands Tcmd> struct CommandTraits;
 
 #define DEF_CMD_TRAIT(cmd_, proc_, flags_, type_) \
-	template<> struct CommandTraits<cmd_> { \
+	template <> struct CommandTraits<cmd_> { \
 		using ProcType = decltype(&proc_); \
 		using Args = typename CommandFunctionTraitHelper<ProcType>::Args; \
 		using RetTypes = typename CommandFunctionTraitHelper<ProcType>::RetTypes; \
@@ -461,7 +468,7 @@ template <Commands Tcmd> struct CommandTraits;
 		using RetCallbackProc = typename CommandFunctionTraitHelper<ProcType>::CbProcType; \
 		static constexpr Commands cmd = cmd_; \
 		static constexpr auto &proc = proc_; \
-		static constexpr CommandFlags flags = (CommandFlags)(flags_); \
+		static constexpr CommandFlags flags = flags_; \
 		static constexpr CommandType type = type_; \
 		static inline constexpr const char *name = #proc_; \
 	};

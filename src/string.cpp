@@ -9,16 +9,13 @@
 
 #include "stdafx.h"
 #include "debug.h"
-#include "core/alloc_func.hpp"
 #include "core/math_func.hpp"
 #include "error_func.h"
 #include "string_func.h"
 #include "string_base.h"
+#include "core/utf8.hpp"
 
 #include "table/control_codes.h"
-
-#include <sstream>
-#include <iomanip>
 
 #ifdef _MSC_VER
 #	define strncasecmp strnicmp
@@ -90,6 +87,25 @@ std::string FormatArrayAsHex(std::span<const uint8_t> data)
 	return str;
 }
 
+/**
+ * Test if a character is (only) part of an encoded string.
+ * @param c Character to test.
+ * @returns True iff the character is an encoded string control code.
+ */
+static bool IsSccEncodedCode(char32_t c)
+{
+	switch (c) {
+		case SCC_RECORD_SEPARATOR:
+		case SCC_ENCODED:
+		case SCC_ENCODED_INTERNAL:
+		case SCC_ENCODED_NUMERIC:
+		case SCC_ENCODED_STRING:
+			return true;
+
+		default:
+			return false;
+	}
+}
 
 /**
  * Copies the valid (UTF-8) characters from \c str up to \c last to the \c dst.
@@ -140,25 +156,25 @@ static void StrMakeValid(T &dst, const char *str, const char *last, StringValida
 			continue;
 		}
 
-		if ((IsPrintable(c) && (c < SCC_SPRITE_START || c > SCC_SPRITE_END)) || ((settings & SVS_ALLOW_CONTROL_CODE) != 0 && c == SCC_ENCODED)) {
+		if ((IsPrintable(c) && (c < SCC_SPRITE_START || c > SCC_SPRITE_END)) || (settings.Test(StringValidationSetting::AllowControlCode) && IsSccEncodedCode(c))) {
 			/* Copy the character back. Even if dst is current the same as str
 			 * (i.e. no characters have been changed) this is quicker than
 			 * moving the pointers ahead by len */
 			do {
 				*dst++ = *str++;
 			} while (--len != 0);
-		} else if ((settings & SVS_ALLOW_NEWLINE) != 0 && c == '\n') {
+		} else if (settings.Test(StringValidationSetting::AllowNewline) && c == '\n') {
 			*dst++ = *str++;
 		} else {
-			if ((settings & SVS_ALLOW_NEWLINE) != 0 && c == '\r' && str[1] == '\n') {
+			if (settings.Test(StringValidationSetting::AllowNewline) && c == '\r' && str[1] == '\n') {
 				str += len;
 				continue;
 			}
 			str += len;
-			if ((settings & SVS_REPLACE_TAB_CR_NL_WITH_SPACE) != 0 && (c == '\r' || c == '\n' || c == '\t')) {
+			if (settings.Test(StringValidationSetting::ReplaceTabCrNlWithSpace) && (c == '\r' || c == '\n' || c == '\t')) {
 				/* Replace the tab, carriage return or newline with a space. */
 				*dst++ = ' ';
-			} else if ((settings & SVS_REPLACE_WITH_QUESTION_MARK) != 0) {
+			} else if (settings.Test(StringValidationSetting::ReplaceWithQuestionMark)) {
 				/* Replace the undesirable character with a question mark */
 				*dst++ = '?';
 			}
@@ -169,30 +185,35 @@ static void StrMakeValid(T &dst, const char *str, const char *last, StringValida
 }
 
 /**
- * Scans the string for invalid characters and replaces then with a
+ * Scans the string for invalid characters and replaces them with a
  * question mark '?' (if not ignored).
  * @param str The string to validate.
- * @param last The last valid character of str.
  * @param settings The settings for the string validation.
+ * @note The string must be properly NUL terminated.
  */
-void StrMakeValidInPlace(char *str, const char *last, StringValidationSettings settings)
+void StrMakeValidInPlace(char *str, StringValidationSettings settings)
 {
 	char *dst = str;
-	StrMakeValid(dst, str, last, settings);
+	StrMakeValid(dst, str, str + strlen(str), settings);
 	*dst = '\0';
 }
 
 /**
- * Scans the string for invalid characters and replaces then with a
+ * Scans the string for invalid characters and replaces them with a
  * question mark '?' (if not ignored).
- * Only use this function when you are sure the string ends with a '\0';
- * otherwise use StrMakeValidInPlace(str, last, settings) variant.
- * @param str The string (of which you are sure ends with '\0') to validate.
+ * @param str The string to validate.
+ * @param settings The settings for the string validation.
+ * @note The string must be properly NUL terminated.
  */
-void StrMakeValidInPlace(char *str, StringValidationSettings settings)
+void StrMakeValidInPlace(std::string &str, StringValidationSettings settings)
 {
-	/* We know it is '\0' terminated. */
-	StrMakeValidInPlace(str, str + strlen(str), settings);
+	if (str.empty()) return;
+
+	char *buf = str.data();
+	char *last = buf + str.size() - 1;
+	char *dst = buf;
+	StrMakeValid(dst, buf, last, settings);
+	str.erase(dst - buf, std::string::npos);
 }
 
 /**
@@ -351,17 +372,17 @@ bool StrEqualsIgnoreCase(const std::string_view str1, const std::string_view str
 }
 
 /**
- * Get the length of an UTF-8 encoded string in number of characters
- * and thus not the number of bytes that the encoded string contains.
- * @param s The string to get the length for.
- * @return The length of the string in characters.
+ * Checks if a string is contained in another string, while ignoring the case of the characters.
+ *
+ * @param str The string to search in.
+ * @param value The string to search for.
+ * @return True if a match was found.
  */
-size_t Utf8StringLength(const char *s)
+bool StrContainsIgnoreCase(const std::string_view str, const std::string_view value)
 {
-	size_t len = 0;
-	const char *t = s;
-	while (Utf8Consume(&t) != 0) len++;
-	return len;
+	CaseInsensitiveStringView ci_str{ str.data(), str.size() };
+	CaseInsensitiveStringView ci_value{ value.data(), value.size() };
+	return ci_str.find(ci_value) != ci_str.npos;
 }
 
 /**
@@ -370,9 +391,10 @@ size_t Utf8StringLength(const char *s)
  * @param s The string to get the length for.
  * @return The length of the string in characters.
  */
-size_t Utf8StringLength(const std::string &str)
+size_t Utf8StringLength(std::string_view str)
 {
-	return Utf8StringLength(str.c_str());
+	Utf8View view(str);
+	return std::distance(view.begin(), view.end());
 }
 
 bool strtolower(std::string &str, std::string::size_type offs)
@@ -448,99 +470,6 @@ size_t Utf8Decode(char32_t *c, const char *s)
 	return 1;
 }
 
-
-/**
- * Encode a unicode character and place it in the buffer.
- * @tparam T Type of the buffer.
- * @param buf Buffer to place character.
- * @param c   Unicode character to encode.
- * @return Number of characters in the encoded sequence.
- */
-template <class T>
-inline size_t Utf8Encode(T buf, char32_t c)
-{
-	if (c < 0x80) {
-		*buf = c;
-		return 1;
-	} else if (c < 0x800) {
-		*buf++ = 0xC0 + GB(c,  6, 5);
-		*buf   = 0x80 + GB(c,  0, 6);
-		return 2;
-	} else if (c < 0x10000) {
-		*buf++ = 0xE0 + GB(c, 12, 4);
-		*buf++ = 0x80 + GB(c,  6, 6);
-		*buf   = 0x80 + GB(c,  0, 6);
-		return 3;
-	} else if (c < 0x110000) {
-		*buf++ = 0xF0 + GB(c, 18, 3);
-		*buf++ = 0x80 + GB(c, 12, 6);
-		*buf++ = 0x80 + GB(c,  6, 6);
-		*buf   = 0x80 + GB(c,  0, 6);
-		return 4;
-	}
-
-	*buf = '?';
-	return 1;
-}
-
-size_t Utf8Encode(char *buf, char32_t c)
-{
-	return Utf8Encode<char *>(buf, c);
-}
-
-size_t Utf8Encode(std::ostreambuf_iterator<char> &buf, char32_t c)
-{
-	return Utf8Encode<std::ostreambuf_iterator<char> &>(buf, c);
-}
-
-size_t Utf8Encode(std::back_insert_iterator<std::string> &buf, char32_t c)
-{
-	return Utf8Encode<std::back_insert_iterator<std::string> &>(buf, c);
-}
-
-/**
- * Properly terminate an UTF8 string to some maximum length
- * @param s string to check if it needs additional trimming
- * @param maxlen the maximum length the buffer can have.
- * @return the new length in bytes of the string (eg. strlen(new_string))
- * @note maxlen is the string length _INCLUDING_ the terminating '\0'
- */
-size_t Utf8TrimString(char *s, size_t maxlen)
-{
-	size_t length = 0;
-
-	for (const char *ptr = strchr(s, '\0'); *s != '\0';) {
-		size_t len = Utf8EncodedCharLen(*s);
-		/* Silently ignore invalid UTF8 sequences, our only concern trimming */
-		if (len == 0) len = 1;
-
-		/* Take care when a hard cutoff was made for the string and
-		 * the last UTF8 sequence is invalid */
-		if (length + len >= maxlen || (s + len > ptr)) break;
-		s += len;
-		length += len;
-	}
-
-	*s = '\0';
-	return length;
-}
-
-#ifdef DEFINE_STRCASESTR
-char *strcasestr(const char *haystack, const char *needle)
-{
-	size_t hay_len = strlen(haystack);
-	size_t needle_len = strlen(needle);
-	while (hay_len >= needle_len) {
-		if (strncasecmp(haystack, needle, needle_len) == 0) return const_cast<char *>(haystack);
-
-		haystack++;
-		hay_len--;
-	}
-
-	return nullptr;
-}
-#endif /* DEFINE_STRCASESTR */
-
 /**
  * Test if a unicode character is considered garbage to be skipped.
  * @param c Character to test.
@@ -567,15 +496,11 @@ static bool IsGarbageCharacter(char32_t c)
  */
 static std::string_view SkipGarbage(std::string_view str)
 {
-	auto first = std::begin(str);
-	auto last = std::end(str);
-	while (first < last) {
-		char32_t c;
-		size_t len = Utf8Decode(&c, &*first);
-		if (!IsGarbageCharacter(c)) break;
-		first += len;
-	}
-	return {first, last};
+	Utf8View view(str);
+	auto it = view.begin();
+	const auto end = view.end();
+	while (it != end && IsGarbageCharacter(*it)) ++it;
+	return str.substr(it.GetByteOffset());
 }
 
 /**
@@ -794,10 +719,8 @@ public:
 		delete this->word_itr;
 	}
 
-	void SetString(const char *s) override
+	void SetString(std::string_view s) override
 	{
-		const char *string_base = s;
-
 		/* Unfortunately current ICU versions only provide rudimentary support
 		 * for word break iterators (especially for CJK languages) in combination
 		 * with UTF-8 input. As a work around we have to convert the input to
@@ -805,10 +728,10 @@ public:
 		this->utf16_str.clear();
 		this->utf16_to_utf8.clear();
 
-		while (*s != '\0') {
-			size_t idx = s - string_base;
-
-			char32_t c = Utf8Consume(&s);
+		Utf8View view(s);
+		for (auto it = view.begin(), end = view.end(); it != end; ++it) {
+			size_t idx = it.GetByteOffset();
+			char32_t c = *it;
 			if (c < 0x10000) {
 				this->utf16_str.push_back((UChar)c);
 			} else {
@@ -820,7 +743,7 @@ public:
 			this->utf16_to_utf8.push_back(idx);
 		}
 		this->utf16_str.push_back('\0');
-		this->utf16_to_utf8.push_back(s - string_base);
+		this->utf16_to_utf8.push_back(s.size());
 
 		UText text = UTEXT_INITIALIZER;
 		UErrorCode status = U_ZERO_ERROR;
@@ -924,60 +847,43 @@ public:
 /** Fallback simple string iterator. */
 class DefaultStringIterator : public StringIterator
 {
-	const char *string; ///< Current string.
-	size_t len;         ///< String length.
-	size_t cur_pos;     ///< Current iteration position.
+	Utf8View string; ///< Current string.
+	Utf8View::iterator cur_pos; //< Current iteration position.
 
 public:
-	DefaultStringIterator() : string(nullptr), len(0), cur_pos(0)
-	{
-	}
-
-	void SetString(const char *s) override
+	void SetString(std::string_view s) override
 	{
 		this->string = s;
-		this->len = strlen(s);
-		this->cur_pos = 0;
+		this->cur_pos = this->string.begin();
 	}
 
 	size_t SetCurPosition(size_t pos) override
 	{
-		assert(this->string != nullptr && pos <= this->len);
-		/* Sanitize in case we get a position inside an UTF-8 sequence. */
-		while (pos > 0 && IsUtf8Part(this->string[pos])) pos--;
-		return this->cur_pos = pos;
+		this->cur_pos = this->string.GetIterAtByte(pos);
+		return this->cur_pos.GetByteOffset();
 	}
 
 	size_t Next(IterType what) override
 	{
-		assert(this->string != nullptr);
-
+		const auto end = this->string.end();
 		/* Already at the end? */
-		if (this->cur_pos >= this->len) return END;
+		if (this->cur_pos >= end) return END;
 
 		switch (what) {
-			case ITER_CHARACTER: {
-				char32_t c;
-				this->cur_pos += Utf8Decode(&c, this->string + this->cur_pos);
-				return this->cur_pos;
-			}
+			case ITER_CHARACTER:
+				++this->cur_pos;
+				return this->cur_pos.GetByteOffset();
 
-			case ITER_WORD: {
-				char32_t c;
+			case ITER_WORD:
 				/* Consume current word. */
-				size_t offs = Utf8Decode(&c, this->string + this->cur_pos);
-				while (this->cur_pos < this->len && !IsWhitespace(c)) {
-					this->cur_pos += offs;
-					offs = Utf8Decode(&c, this->string + this->cur_pos);
+				while (this->cur_pos != end && !IsWhitespace(*this->cur_pos)) {
+					++this->cur_pos;
 				}
 				/* Consume whitespace to the next word. */
-				while (this->cur_pos < this->len && IsWhitespace(c)) {
-					this->cur_pos += offs;
-					offs = Utf8Decode(&c, this->string + this->cur_pos);
+				while (this->cur_pos != end && IsWhitespace(*this->cur_pos)) {
+					++this->cur_pos;
 				}
-
-				return this->cur_pos;
-			}
+				return this->cur_pos.GetByteOffset();
 
 			default:
 				NOT_REACHED();
@@ -988,33 +894,27 @@ public:
 
 	size_t Prev(IterType what) override
 	{
-		assert(this->string != nullptr);
-
+		const auto begin = this->string.begin();
 		/* Already at the beginning? */
-		if (this->cur_pos == 0) return END;
+		if (this->cur_pos == begin) return END;
 
 		switch (what) {
 			case ITER_CHARACTER:
-				return this->cur_pos = Utf8PrevChar(this->string + this->cur_pos) - this->string;
+				--this->cur_pos;
+				return this->cur_pos.GetByteOffset();
 
-			case ITER_WORD: {
-				const char *s = this->string + this->cur_pos;
-				char32_t c;
+			case ITER_WORD:
 				/* Consume preceding whitespace. */
 				do {
-					s = Utf8PrevChar(s);
-					Utf8Decode(&c, s);
-				} while (s > this->string && IsWhitespace(c));
+					--this->cur_pos;
+				} while (this->cur_pos != begin && IsWhitespace(*this->cur_pos));
 				/* Consume preceding word. */
-				while (s > this->string && !IsWhitespace(c)) {
-					s = Utf8PrevChar(s);
-					Utf8Decode(&c, s);
+				while (this->cur_pos != begin && !IsWhitespace(*this->cur_pos)) {
+					--this->cur_pos;
 				}
 				/* Move caret back to the beginning of the word. */
-				if (IsWhitespace(c)) Utf8Consume(&s);
-
-				return this->cur_pos = s - this->string;
-			}
+				if (IsWhitespace(*this->cur_pos)) ++this->cur_pos;
+				return this->cur_pos.GetByteOffset();
 
 			default:
 				NOT_REACHED();

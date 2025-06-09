@@ -8,16 +8,15 @@ if (NOT HOST_BINARY_DIR)
     set(sourcefiles
             strgen.cpp
             strgen_base.cpp
-            ../core/alloc_func.cpp
+            ../3rdparty/fmt/format.cc
             ../misc/getoptdata.cpp
             ../error.cpp
             ../string.cpp
+            ../core/string_builder.cpp
+            ../core/utf8.cpp
     )
     add_definitions(-DSTRGEN)
     add_executable(strgen ${sourcefiles})
-
-    include(Endian)
-    add_endian_definition()
 
     export(TARGETS strgen FILE ${CMAKE_BINARY_DIR}/strgen.cmake)
     add_dependencies(tools strgen)

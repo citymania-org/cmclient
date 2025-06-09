@@ -24,7 +24,7 @@ class LinkGraph;
  * Type of the pool for link graph components. Each station can be in at up to
  * 32 link graphs. So we allow for plenty of them to be created.
  */
-typedef Pool<LinkGraph, LinkGraphID, 32, 0xFFFF> LinkGraphPool;
+using LinkGraphPool = Pool<LinkGraph, LinkGraphID, 32>;
 /** The actual pool with link graphs. */
 extern LinkGraphPool _link_graph_pool;
 
@@ -40,12 +40,12 @@ public:
 	 * An edge in the link graph. Corresponds to a link between two stations.
 	 */
 	struct BaseEdge {
-		uint capacity;                 ///< Capacity of the link.
-		uint usage;                    ///< Usage of the link.
-		uint64_t travel_time_sum;        ///< Sum of the travel times of the link, in ticks.
-		TimerGameEconomy::Date last_unrestricted_update; ///< When the unrestricted part of the link was last updated.
-		TimerGameEconomy::Date last_restricted_update;   ///< When the restricted part of the link was last updated.
-		NodeID dest_node;              ///< Destination of the edge.
+		uint capacity = 0; ///< Capacity of the link.
+		uint usage = 0; ///< Usage of the link.
+		uint64_t travel_time_sum = 0; ///< Sum of the travel times of the link, in ticks.
+		TimerGameEconomy::Date last_unrestricted_update{}; ///< When the unrestricted part of the link was last updated.
+		TimerGameEconomy::Date last_restricted_update{}; ///< When the restricted part of the link was last updated.
+		NodeID dest_node = INVALID_NODE; ///< Destination of the edge.
 
 		BaseEdge(NodeID dest_node = INVALID_NODE);
 
@@ -61,7 +61,7 @@ public:
 		 */
 		TimerGameEconomy::Date LastUpdate() const { return std::max(this->last_unrestricted_update, this->last_restricted_update); }
 
-		void Update(uint capacity, uint usage, uint32_t time, EdgeUpdateMode mode);
+		void Update(uint capacity, uint usage, uint32_t time, EdgeUpdateModes modes);
 		void Restrict() { this->last_unrestricted_update = EconomyTime::INVALID_DATE; }
 		void Release() { this->last_restricted_update = EconomyTime::INVALID_DATE; }
 
@@ -88,15 +88,15 @@ public:
 	 * in a separate thread.
 	 */
 	struct BaseNode {
-		uint supply;             ///< Supply at the station.
-		uint demand;             ///< Acceptance at the station.
-		StationID station;       ///< Station ID.
-		TileIndex xy;            ///< Location of the station referred to by the node.
-		TimerGameEconomy::Date last_update;        ///< When the supply was last updated.
+		uint supply = 0; ///< Supply at the station.
+		uint demand = 0; ///< Acceptance at the station.
+		StationID station = StationID::Invalid(); ///< Station ID.
+		TileIndex xy = INVALID_TILE; ///< Location of the station referred to by the node.
+		TimerGameEconomy::Date last_update{}; ///< When the supply was last updated.
 
 		std::vector<BaseEdge> edges; ///< Sorted list of outgoing edges from this node.
 
-		BaseNode(TileIndex xy = INVALID_TILE, StationID st = INVALID_STATION, uint demand = 0);
+		BaseNode(TileIndex xy = INVALID_TILE, StationID st = StationID::Invalid(), uint demand = 0);
 
 		/**
 		 * Update the node's supply and set last_update to the current date.
@@ -126,8 +126,8 @@ public:
 			this->demand = demand;
 		}
 
-		void AddEdge(NodeID to, uint capacity, uint usage, uint32_t time, EdgeUpdateMode mode);
-		void UpdateEdge(NodeID to, uint capacity, uint usage, uint32_t time, EdgeUpdateMode mode);
+		void AddEdge(NodeID to, uint capacity, uint usage, uint32_t time, EdgeUpdateModes modes);
+		void UpdateEdge(NodeID to, uint capacity, uint usage, uint32_t time, EdgeUpdateModes modes);
 		void RemoveEdge(NodeID to);
 
 		/**
@@ -170,10 +170,10 @@ public:
 	static const uint MIN_TIMEOUT_DISTANCE = 32;
 
 	/** Number of days before deleting links served only by vehicles stopped in depot. */
-	static constexpr TimerGameEconomy::Date STALE_LINK_DEPOT_TIMEOUT = 1024;
+	static constexpr TimerGameEconomy::Date STALE_LINK_DEPOT_TIMEOUT{1024};
 
 	/** Minimum number of days between subsequent compressions of a LG. */
-	static constexpr TimerGameEconomy::Date COMPRESSION_INTERVAL = 256;
+	static constexpr TimerGameEconomy::Date COMPRESSION_INTERVAL{256};
 
 	/**
 	 * Scale a value from a link graph of age orig_age for usage in one of age
@@ -189,12 +189,12 @@ public:
 	}
 
 	/** Bare constructor, only for save/load. */
-	LinkGraph() : cargo(INVALID_CARGO), last_compression(0) {}
+	LinkGraph() {}
 	/**
 	 * Real constructor.
 	 * @param cargo Cargo the link graph is about.
 	 */
-	LinkGraph(CargoID cargo) : cargo(cargo), last_compression(TimerGameEconomy::date) {}
+	LinkGraph(CargoType cargo) : cargo(cargo), last_compression(TimerGameEconomy::date) {}
 
 	void Init(uint size);
 	void ShiftDates(TimerGameEconomy::Date interval);
@@ -236,10 +236,10 @@ public:
 	inline TimerGameEconomy::Date LastCompression() const { return this->last_compression; }
 
 	/**
-	 * Get the cargo ID this component's link graph refers to.
-	 * @return Cargo ID.
+	 * Get the cargo type this component's link graph refers to.
+	 * @return Cargo type.
 	 */
-	inline CargoID Cargo() const { return this->cargo; }
+	inline CargoType Cargo() const { return this->cargo; }
 
 	/**
 	 * Scale a value to its monthly equivalent, based on last compression.
@@ -261,9 +261,9 @@ protected:
 	friend class SlLinkgraphEdge;
 	friend class LinkGraphJob;
 
-	CargoID cargo;         ///< Cargo of this component's link graph.
-	TimerGameEconomy::Date last_compression; ///< Last time the capacities and supplies were compressed.
-	NodeVector nodes;      ///< Nodes in the component.
+	CargoType cargo = INVALID_CARGO; ///< Cargo of this component's link graph.
+	TimerGameEconomy::Date last_compression{}; ///< Last time the capacities and supplies were compressed.
+	NodeVector nodes{}; ///< Nodes in the component.
 };
 
 #endif /* LINKGRAPH_H */

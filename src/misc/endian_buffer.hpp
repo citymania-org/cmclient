@@ -12,9 +12,7 @@
 
 #include <string_view>
 #include "../core/bitmath_func.hpp"
-#include "../core/overflowsafe_type.hpp"
-
-struct StrongTypedefBase;
+#include "../strings_type.h"
 
 /**
  * Endian-aware buffer adapter that always writes values in little endian order.
@@ -32,12 +30,10 @@ public:
 	EndianBufferWriter(typename Titer::container_type &container) : buffer(std::back_inserter(container)) {}
 
 	EndianBufferWriter &operator <<(const std::string &data) { return *this << std::string_view{ data }; }
+	EndianBufferWriter &operator <<(const EncodedString &data) { return *this << data.string; }
 	EndianBufferWriter &operator <<(const char *data) { return *this << std::string_view{ data }; }
 	EndianBufferWriter &operator <<(std::string_view data) { this->Write(data); return *this; }
 	EndianBufferWriter &operator <<(bool data) { return *this << static_cast<uint8_t>(data ? 1 : 0); }
-
-	template <typename T>
-	EndianBufferWriter &operator <<(const OverflowSafeInt<T> &data) { return *this << static_cast<T>(data); };
 
 	template <typename... Targs>
 	EndianBufferWriter &operator <<(const std::tuple<Targs...> &data)
@@ -46,13 +42,29 @@ public:
 		return *this;
 	}
 
-	template <class T, std::enable_if_t<std::disjunction_v<std::negation<std::is_class<T>>, std::is_base_of<StrongTypedefBase, T>>, int> = 0>
+	template <typename... Targs>
+	EndianBufferWriter &operator <<(const std::variant<Targs...> &variant)
+	{
+		this->WriteVariant(variant);
+		return *this;
+	}
+
+	EndianBufferWriter &operator <<(const std::monostate &)
+	{
+		return *this;
+	}
+
+	EndianBufferWriter &operator <<(const ConvertibleThroughBase auto data)
+	{
+		this->Write(data.base());
+		return *this;
+	}
+
+	template <class T> requires (!std::is_class_v<T>)
 	EndianBufferWriter &operator <<(const T data)
 	{
 		if constexpr (std::is_enum_v<T>) {
 			this->Write(to_underlying(data));
-		} else if constexpr (std::is_base_of_v<StrongTypedefBase, T>) {
-			this->Write(data.base());
 		} else {
 			this->Write(data);
 		}
@@ -70,10 +82,25 @@ public:
 
 private:
 	/** Helper function to write a tuple to the buffer. */
-	template<class Ttuple, size_t... Tindices>
+	template <class Ttuple, size_t... Tindices>
 	void WriteTuple(const Ttuple &values, std::index_sequence<Tindices...>)
 	{
 		((*this << std::get<Tindices>(values)), ...);
+	}
+
+	template <typename T, std::size_t I = 0>
+	void WriteVariant(const T &variant )
+	{
+		if constexpr (I < std::variant_size_v<T>) {
+			if (I == variant.index()) {
+				static_assert(std::variant_size_v<T> < std::numeric_limits<uint8_t>::max());
+				this->Write(static_cast<uint8_t>(variant.index()));
+				*this << std::get<I>(variant);
+				return;
+			}
+
+			WriteVariant<T, I + 1>(variant);
+		}
 	}
 
 	/** Write overload for string values. */
@@ -128,10 +155,8 @@ public:
 	void rewind() { this->read_pos = 0; }
 
 	EndianBufferReader &operator >>(std::string &data) { data = this->ReadStr(); return *this; }
+	EndianBufferReader &operator >>(EncodedString &data) { data = EncodedString{this->ReadStr()}; return *this; }
 	EndianBufferReader &operator >>(bool &data) { data = this->Read<uint8_t>() != 0; return *this; }
-
-	template <typename T>
-	EndianBufferReader &operator >>(OverflowSafeInt<T> &data) { data = this->Read<T>(); return *this; };
 
 	template <typename... Targs>
 	EndianBufferReader &operator >>(std::tuple<Targs...> &data)
@@ -140,13 +165,30 @@ public:
 		return *this;
 	}
 
-	template <class T, std::enable_if_t<std::disjunction_v<std::negation<std::is_class<T>>, std::is_base_of<StrongTypedefBase, T>>, int> = 0>
+	template <typename... Targs>
+	EndianBufferReader &operator >>(std::variant<Targs...> &variant)
+	{
+		this->ReadVariant(this->Read<uint8_t>(), variant);
+		return *this;
+	}
+
+	EndianBufferReader &operator >>(const std::monostate &)
+	{
+		return *this;
+	}
+
+	template <ConvertibleThroughBase T>
+	EndianBufferReader &operator >>(T &data)
+	{
+		data = T{this->Read<typename T::BaseType>()};
+		return *this;
+	}
+
+	template <class T> requires (!std::is_class_v<T>)
 	EndianBufferReader &operator >>(T &data)
 	{
 		if constexpr (std::is_enum_v<T>) {
 			data = static_cast<T>(this->Read<std::underlying_type_t<T>>());
-		} else if constexpr (std::is_base_of_v<StrongTypedefBase, T>) {
-			data = this->Read<typename T::BaseType>();
 		} else {
 			data = this->Read<T>();
 		}
@@ -164,10 +206,25 @@ public:
 
 private:
 	/** Helper function to read a tuple from the buffer. */
-	template<class Ttuple, size_t... Tindices>
+	template <class Ttuple, size_t... Tindices>
 	void ReadTuple(Ttuple &values, std::index_sequence<Tindices...>)
 	{
 		((*this >> std::get<Tindices>(values)), ...);
+	}
+
+	template <typename T, std::size_t I = 0>
+	void ReadVariant(uint8_t index, T &variant)
+	{
+		if constexpr (I < std::variant_size_v<T>) {
+			if (I != index) {
+				ReadVariant<T, I + 1>(index, variant);
+				return;
+			}
+
+			std::variant_alternative_t<I, T> data;
+			*this >> data;
+			variant = data;
+		}
 	}
 
 	/** Read overload for string data. */

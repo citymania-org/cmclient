@@ -19,7 +19,7 @@
 #include "window_gui.h"
 #include "dropdown_type.h"
 
-typedef GUIList<const Vehicle*, std::nullptr_t, CargoID> GUIVehicleList;
+typedef GUIList<const Vehicle*, std::nullptr_t, CargoType> GUIVehicleList;
 
 struct GUIVehicleGroup {
 	VehicleList::const_iterator vehicles_begin;    ///< Pointer to beginning element of this vehicle group.
@@ -62,7 +62,7 @@ struct GUIVehicleGroup {
 	}
 };
 
-typedef GUIList<GUIVehicleGroup, std::nullptr_t, CargoID> GUIVehicleGroupList;
+typedef GUIList<GUIVehicleGroup, std::nullptr_t, CargoType> GUIVehicleGroupList;
 
 struct BaseVehicleListWindow : public Window {
 
@@ -73,22 +73,22 @@ struct BaseVehicleListWindow : public Window {
 		GB_END,
 	};
 
-	GroupBy grouping;                           ///< How we want to group the list.
-	VehicleList vehicles;                       ///< List of vehicles.  This is the buffer for `vehgroups` to point into; if this is structurally modified, `vehgroups` must be rebuilt.
-	GUIVehicleGroupList vehgroups;              ///< List of (groups of) vehicles.  This stores iterators of `vehicles`, and should be rebuilt if `vehicles` is structurally changed.
-	Listing *sorting;                           ///< Pointer to the vehicle type related sorting.
-	uint8_t unitnumber_digits;                     ///< The number of digits of the highest unit number.
-	Scrollbar *vscroll;
-	VehicleListIdentifier vli;                  ///< Identifier of the vehicle list we want to currently show.
-	VehicleID vehicle_sel;                      ///< Selected vehicle
-	CargoID cargo_filter_criteria;              ///< Selected cargo filter index
-	uint order_arrow_width;                     ///< Width of the arrow in the small order list.
-	CargoTypes used_cargoes;
+	GroupBy grouping{}; ///< How we want to group the list.
+	VehicleList vehicles{}; ///< List of vehicles.  This is the buffer for `vehgroups` to point into; if this is structurally modified, `vehgroups` must be rebuilt.
+	GUIVehicleGroupList vehgroups{}; ///< List of (groups of) vehicles.  This stores iterators of `vehicles`, and should be rebuilt if `vehicles` is structurally changed.
+	Listing *sorting = nullptr; ///< Pointer to the vehicle type related sorting.
+	uint8_t unitnumber_digits = 0; ///< The number of digits of the highest unit number.
+	Scrollbar *vscroll = nullptr;
+	VehicleListIdentifier vli{}; ///< Identifier of the vehicle list we want to currently show.
+	VehicleID vehicle_sel{}; ///< Selected vehicle
+	CargoType cargo_filter_criteria{}; ///< Selected cargo filter index
+	uint order_arrow_width = 0; ///< Width of the arrow in the small order list.
+	CargoTypes used_cargoes{};
 
 	typedef GUIVehicleGroupList::SortFunction VehicleGroupSortFunction;
 	typedef GUIVehicleList::SortFunction VehicleIndividualSortFunction;
 
-	enum ActionDropdownItem {
+	enum ActionDropdownItem : uint8_t {
 		ADI_REPLACE,
 		ADI_SERVICE,
 		ADI_DEPOT,
@@ -106,7 +106,7 @@ struct BaseVehicleListWindow : public Window {
 	static const std::initializer_list<VehicleGroupSortFunction * const> vehicle_group_none_sorter_funcs;
 	static const std::initializer_list<VehicleGroupSortFunction * const> vehicle_group_shared_orders_sorter_funcs;
 
-	BaseVehicleListWindow(WindowDesc &desc, WindowNumber wno);
+	BaseVehicleListWindow(WindowDesc &desc, const VehicleListIdentifier &vli);
 
 	void OnInit() override;
 
@@ -119,14 +119,14 @@ struct BaseVehicleListWindow : public Window {
 	void SetCargoFilter(uint8_t index);
 	void SetCargoFilterArray();
 	void FilterVehicleList();
-	StringID GetCargoFilterLabel(CargoID cid) const;
+	StringID GetCargoFilterLabel(CargoType cargo_type) const;
 	DropDownList BuildCargoDropDownList(bool full) const;
 	Dimension GetActionDropdownSize(bool show_autoreplace, bool show_group, bool show_create);
 	DropDownList BuildActionDropdownList(bool show_autoreplace, bool show_group, bool show_create);
 
-	std::span<const StringID> GetVehicleSorterNames();
+	std::span<const StringID> GetVehicleSorterNames() const;
 
-	std::span<VehicleGroupSortFunction * const> GetVehicleSorterFuncs()
+	std::span<VehicleGroupSortFunction * const> GetVehicleSorterFuncs() const
 	{
 		switch (this->grouping) {
 			case GB_NONE:
@@ -142,17 +142,17 @@ struct BaseVehicleListWindow : public Window {
 struct CargoIconOverlay {
 	int left;
 	int right;
-	CargoID cargo_type;
+	CargoType cargo_type;
 	uint cargo_cap;
 
-	constexpr CargoIconOverlay(int left, int right, CargoID cargo_type, uint cargo_cap)
+	constexpr CargoIconOverlay(int left, int right, CargoType cargo_type, uint cargo_cap)
 		: left(left), right(right), cargo_type(cargo_type), cargo_cap(cargo_cap)
 	{ }
 };
 
 bool ShowCargoIconOverlay();
 void AddCargoIconOverlay(std::vector<CargoIconOverlay> &overlays, int x, int width, const Vehicle *v);
-void DrawCargoIconOverlay(int x, int y, CargoID cid);
+void DrawCargoIconOverlay(int x, int y, CargoType cargo_type);
 void DrawCargoIconOverlays(std::span<const CargoIconOverlay> overlays, int y);
 
 uint GetVehicleListHeight(VehicleType type, uint divisor = 1);
@@ -163,8 +163,5 @@ struct Sorting {
 	Listing ship;
 	Listing train;
 };
-
-extern BaseVehicleListWindow::GroupBy _grouping[VLT_END][VEH_COMPANY_END];
-extern Sorting _sorting[BaseVehicleListWindow::GB_END];
 
 #endif /* VEHICLE_GUI_BASE_H */

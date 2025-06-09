@@ -20,6 +20,8 @@
 #include "group_cmd.h"
 #include "vehicle_func.h"
 
+#include "table/strings.h"
+
 #include "safeguards.h"
 
 OrderBackupPool _order_backup_pool("BackupOrder");
@@ -43,12 +45,8 @@ OrderBackup::~OrderBackup()
  * @param v    The vehicle to make a backup of.
  * @param user The user that is requesting the backup.
  */
-OrderBackup::OrderBackup(const Vehicle *v, uint32_t user)
+OrderBackup::OrderBackup(const Vehicle *v, uint32_t user) : user(user), tile(v->tile), group(v->group_id)
 {
-	this->user             = user;
-	this->tile             = v->tile;
-	this->group            = v->group_id;
-
 	this->CopyConsistPropertiesFrom(v);
 
 	/* If we have shared orders, store the vehicle we share the order with. */
@@ -76,7 +74,7 @@ void OrderBackup::DoRestore(Vehicle *v)
 {
 	/* If we had shared orders, recover that */
 	if (this->clone != nullptr) {
-		Command<CMD_CLONE_ORDER>::Do(DC_EXEC, CO_SHARE, v->index, this->clone->index);
+		Command<CMD_CLONE_ORDER>::Do(DoCommandFlag::Execute, CO_SHARE, v->index, this->clone->index);
 	} else if (this->orders != nullptr && OrderList::CanAllocateItem()) {
 		v->orders = new OrderList(this->orders, v);
 		this->orders = nullptr;
@@ -94,7 +92,7 @@ void OrderBackup::DoRestore(Vehicle *v)
 	if (v->cur_implicit_order_index >= v->GetNumOrders()) v->cur_implicit_order_index = v->cur_real_order_index;
 
 	/* Restore vehicle group */
-	Command<CMD_ADD_VEHICLE_GROUP>::Do(DC_EXEC, this->group, v->index, false, VehicleListIdentifier{});
+	Command<CMD_ADD_VEHICLE_GROUP>::Do(DoCommandFlag::Execute, this->group, v->index, false, VehicleListIdentifier{});
 }
 
 /**
@@ -151,10 +149,10 @@ void OrderBackup::DoRestore(Vehicle *v)
  * @param user_id User that had the OrderBackup.
  * @return The cost of this operation or an error.
  */
-CommandCost CmdClearOrderBackup(DoCommandFlag flags, TileIndex tile, ClientID user_id)
+CommandCost CmdClearOrderBackup(DoCommandFlags flags, TileIndex tile, ClientID user_id)
 {
 	/* No need to check anything. If the tile or user don't exist we just ignore it. */
-	if (flags & DC_EXEC) OrderBackup::ResetOfUser(tile == 0 ? INVALID_TILE : tile, user_id);
+	if (flags.Test(DoCommandFlag::Execute)) OrderBackup::ResetOfUser(tile == 0 ? INVALID_TILE : tile, user_id);
 
 	return CommandCost();
 }
@@ -173,7 +171,7 @@ CommandCost CmdClearOrderBackup(DoCommandFlag flags, TileIndex tile, ClientID us
 		/* If it's not a backup of us, ignore it. */
 		if (ob->user != user) continue;
 
-		Command<CMD_CLEAR_ORDER_BACKUP>::Post(0, static_cast<ClientID>(user));
+		Command<CMD_CLEAR_ORDER_BACKUP>::Post(TileIndex{}, static_cast<ClientID>(user));
 		return;
 	}
 }

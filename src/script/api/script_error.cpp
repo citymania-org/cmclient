@@ -25,12 +25,14 @@ ScriptError::ScriptErrorMapString ScriptError::error_map_string = ScriptError::S
 
 /* static */ std::optional<std::string> ScriptError::GetLastErrorString()
 {
-	return (*error_map_string.find(ScriptError::GetLastError())).second;
+	auto it = ScriptError::error_map_string.find(ScriptError::GetLastError());
+	assert(it != ScriptError::error_map_string.end());
+	return it->second;
 }
 
 /* static */ ScriptErrorType ScriptError::StringToError(StringID internal_string_id)
 {
-	uint index = GetStringIndex(internal_string_id);
+	StringIndexInTab index = GetStringIndex(internal_string_id);
 	switch (GetStringTab(internal_string_id)) {
 		case TEXT_TAB_NEWGRF_START:
 		case TEXT_TAB_GAMESCRIPT_START:

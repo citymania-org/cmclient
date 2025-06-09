@@ -52,7 +52,7 @@ public:
  * can only decrease or stay the same if you add more edges.
  */
 class CapacityAnnotation : public Path {
-	int cached_annotation;
+	int cached_annotation = 0;
 
 public:
 
@@ -134,7 +134,7 @@ private:
 	LinkGraphJob &job; ///< Link graph job we're working with.
 
 	/** Lookup table for getting NodeIDs from StationIDs. */
-	std::vector<NodeID> station_to_node;
+	ReferenceThroughBaseContainer<std::vector<NodeID>> station_to_node;
 
 	/** Current iterator in the shares map. */
 	FlowStat::SharesMap::const_iterator it;
@@ -253,7 +253,7 @@ bool CapacityAnnotation::IsBetter(const CapacityAnnotation *base, uint cap,
  * @param source_node Node where the algorithm starts.
  * @param paths Container for the paths to be calculated.
  */
-template<class Tannotation, class Tedge_iterator>
+template <class Tannotation, class Tedge_iterator>
 void MultiCommodityFlow::Dijkstra(NodeID source_node, PathVector &paths)
 {
 	typedef std::set<Tannotation *, typename Tannotation::Comparator> AnnoSet;
@@ -285,9 +285,9 @@ void MultiCommodityFlow::Dijkstra(NodeID source_node, PathVector &paths)
 			/* Prioritize the fastest route for passengers, mail and express cargo,
 			 * and the shortest route for other classes of cargo.
 			 * In-between stops are punished with a 1 tile or 1 day penalty. */
-			bool express = IsCargoInClass(this->job.Cargo(), CC_PASSENGERS) ||
-				IsCargoInClass(this->job.Cargo(), CC_MAIL) ||
-				IsCargoInClass(this->job.Cargo(), CC_EXPRESS);
+			bool express = IsCargoInClass(this->job.Cargo(), CargoClass::Passengers) ||
+				IsCargoInClass(this->job.Cargo(), CargoClass::Mail) ||
+				IsCargoInClass(this->job.Cargo(), CargoClass::Express);
 			uint distance = DistanceMaxPlusManhattan(this->job[from].base.xy, this->job[to].base.xy) + 1;
 			/* Compute a default travel time from the distance and an average speed of 1 tile/day. */
 			uint time = (edge.base.TravelTime() != 0) ? edge.base.TravelTime() + Ticks::DAY_TICKS : distance * Ticks::DAY_TICKS;

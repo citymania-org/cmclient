@@ -413,21 +413,21 @@ STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Arazi bi
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}Araç çubuklarını değiştir
 
 # Extra tooltips for the scenario editor toolbar
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SAVE_SCENARIO_LOAD_SCENARIO        :{BLACK}Senaryoyu kaydet, senaryoyu yükle, editörden çık, oyundan çık
+STR_SCENEDIT_TOOLBAR_SAVE_SCENARIO_LOAD_SCENARIO_TOOLTIP        :{BLACK}Senaryoyu kaydet, senaryoyu yükle, editörden çık, oyundan çık
 STR_SCENEDIT_TOOLBAR_OPENTTD                                    :{YELLOW}OpenTTD
 STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR                            :{YELLOW}Senaryo Düzenleyicisi
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD    :{BLACK}Başlangıç tarihini 1 yıl gerilet
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD     :{BLACK}Başlangıç tarihini 1 yıl ilerlet
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE                           :{BLACK}Başlangıç yılını girmek için tıklayın
-STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK}Haritayı, Ekstra görünüm alanını, Tabela listesini, veya Şehir veya Fabrika listesini açın
-STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Arazi inşaa menüsünü açın ya da yeni bir dünya oluşturun
-STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Şehir inşa edin ya da oluşturun
-STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Fabrika oluşturun ya da inşaa edin
-STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Karayolları inşaası
-STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK} Tramvay inşaası
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Ağaç dik. Ctrl + Sol Tık'a basılı tutarak sürüklerseniz çapraz olarak seçersiniz. Ayrıca Shift tuşuna basılı tutarsanız sadece maliyetini görüntülersiniz..
-STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}Tabela koy
-STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Nesneyi yerleştirin. Ctrl + Sol Tık'a basılı tutarak sürüklerseniz çapraz olarak seçersiniz. Ayrıca Shift tuşuna basılı tutarsanız sadece maliyetini görüntülersiniz.
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_BACKWARD_TOOLTIP    :{BLACK}Başlangıç tarihini 1 yıl gerilet
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_FORWARD_TOOLTIP     :{BLACK}Başlangıç tarihini 1 yıl ilerlet
+STR_SCENEDIT_TOOLBAR_SET_DATE_TOOLTIP                           :{BLACK}Başlangıç yılını girmek için tıklayın
+STR_SCENEDIT_TOOLBAR_DISPLAY_MAP_TOWN_DIRECTORY_TOOLTIP         :{BLACK}Haritayı, Ekstra görünüm alanını, Tabela listesini, veya Şehir veya Fabrika listesini açın
+STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION_TOOLTIP               :{BLACK}Arazi inşaa menüsünü açın ya da yeni bir dünya oluşturun
+STR_SCENEDIT_TOOLBAR_TOWN_GENERATION_TOOLTIP                    :{BLACK}Şehir inşa edin ya da oluşturun
+STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION_TOOLTIP                :{BLACK}Fabrika oluşturun ya da inşaa edin
+STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION_TOOLTIP                  :{BLACK}Karayolları inşaası
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION_TOOLTIP                  :{BLACK} Tramvay inşaası
+STR_SCENEDIT_TOOLBAR_PLANT_TREES_TOOLTIP                        :{BLACK}Ağaç dik. Ctrl + Sol Tık'a basılı tutarak sürüklerseniz çapraz olarak seçersiniz. Ayrıca Shift tuşuna basılı tutarsanız sadece maliyetini görüntülersiniz..
+STR_SCENEDIT_TOOLBAR_PLACE_SIGN_TOOLTIP                         :{BLACK}Tabela koy
+STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP                       :{BLACK}Nesneyi yerleştirin. Ctrl + Sol Tık'a basılı tutarak sürüklerseniz çapraz olarak seçersiniz. Ayrıca Shift tuşuna basılı tutarsanız sadece maliyetini görüntülersiniz.
 
 # Scenario editor file menu
 ###length 7
@@ -441,7 +441,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Oyundan Çık
 
 
 # Settings menu
-###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Seçenekler
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Ayarlar
 STR_SETTINGS_MENU_AI_SETTINGS                                   :YZ ayarları
@@ -795,7 +794,7 @@ STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLACK}Karlı
 
 STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}Harita üzerinde şehir isimlerini göster/gizle
-STR_SMALLMAP_CENTER                                             :{BLACK}Küçük haritayı mevcut konumda ortala
+STR_SMALLMAP_CENTER_TOOLTIP                                     :{BLACK}Küçük haritayı mevcut konumda ortala
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING} ({NUM})
 STR_SMALLMAP_LINKSTATS                                          :{TINY_FONT}{STRING}
 STR_SMALLMAP_COMPANY                                            :{TINY_FONT}{COMPANY}
@@ -803,6 +802,7 @@ STR_SMALLMAP_TOWN                                               :{TINY_FONT}{WHI
 STR_SMALLMAP_DISABLE_ALL                                        :{BLACK}Hepsini kapa
 STR_SMALLMAP_ENABLE_ALL                                         :{BLACK}Hepsini aç
 STR_SMALLMAP_SHOW_HEIGHT                                        :{BLACK}Yüksekliği göster
+STR_SMALLMAP_SHOW_INDUSTRY_NAMES                                :{BLACK}Fabrika isimlerini göster
 STR_SMALLMAP_TOOLTIP_DISABLE_ALL_INDUSTRIES                     :{BLACK}Haritada fabrika gösterme
 STR_SMALLMAP_TOOLTIP_ENABLE_ALL_INDUSTRIES                      :{BLACK}Haritada tüm fabrikaları göster
 STR_SMALLMAP_TOOLTIP_SHOW_HEIGHT                                :{BLACK}Yükseklik haritasının gösterimini aç/kapa
@@ -828,7 +828,6 @@ STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}En son h
 STR_MESSAGE_NEWS_FORMAT                                         :{STRING}  -  {STRING}
 
 STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Mesaj
-STR_NEWS_CUSTOM_ITEM                                            :{BIG_FONT}{BLACK}{STRING}
 
 STR_NEWS_FIRST_TRAIN_ARRIVAL                                    :{BIG_FONT}{BLACK}{} Halk {STATION} istasyonuna ilk gelen treni kutladı!
 STR_NEWS_FIRST_BUS_ARRIVAL                                      :{BIG_FONT}{BLACK}{} Halk {STATION} durağına ilk gelen otobüsü kutladı!
@@ -939,21 +938,21 @@ STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MINUTES                   :{BIG_FONT}{BLAC
 # Extra view window
 STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Görünüm {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}Görüş alanını değiştir
-STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}Ana görünümü bu pencereye kopyala
+STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TOOLTIP                        :{BLACK}Ana görünümü bu pencereye kopyala
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Ana görünümü değiştir
-STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}Bu görüş alanını ana görünüme kopyala
+STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Bu görüş alanını ana görünüme kopyala
 
 # Game options window
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Seçenekler
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Genel
-STR_GAME_OPTIONS_TAB_GENERAL_TT                                 :{BLACK}Genel ayarları seçin
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Genel ayarları seçin
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Grafikler
-STR_GAME_OPTIONS_TAB_GRAPHICS_TT                                :{BLACK}Grafik ayarlarını seçin
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Grafik ayarlarını seçin
 STR_GAME_OPTIONS_TAB_SOUND                                      :Ses
-STR_GAME_OPTIONS_TAB_SOUND_TT                                   :{BLACK}Ses ve müzik ayarlarını seçin
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Ses ve müzik ayarlarını seçin
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :Sosyal
-STR_GAME_OPTIONS_TAB_SOCIAL_TT                                  :{BLACK}Sosyal entegre ayarlarını seçin
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}Sosyal entegre ayarlarını seçin
 
 STR_GAME_OPTIONS_VOLUME                                         :Ses seviyesi
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Ses efektleri
@@ -965,7 +964,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Para bir
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 44
+###length 45
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Sterlin
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Amerikan Doları
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Avro
@@ -1907,7 +1906,9 @@ STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Asla
 
 STR_CONFIG_SETTING_ECONOMY_TYPE                                 :Ekonomi türü: {STRING}
+###length 2
 STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :Sorunsuz ekonomi, üretim değişikliklerini daha sık ve daha küçük adımlarla yapar. Donuk ekonomi, üretim değişikliklerini ve endüstri kapanışlarını durdurur. Sektör türleri bir NewGRF tarafından sağlanırsa bu ayarın hiçbir etkisi olmayabilir.
+
 ###length 3
 STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :Orijinal
 STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :Pürüzsüz
@@ -1960,6 +1961,8 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Bu seçeneği e
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Yasak
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :İzin verildi
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :İzin verildi, özel kasaba yerleşimi
+
+###length 3
 
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :Şehrin kargo üretimi: {STRING}
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Şehrin genel nüfusuna oranla, şehirlerdeki evler tarafından ne kadar kargo üretiliyor.{}Üstel büyüme: İki katı büyüklükteki bir şehir dört katı büyüklükte yolcuya sahip olur.{}Lineer büyüme: İki katı büyüklükteki bir şehir iki katı büyüklükte yolcuya sahip olur.
@@ -2314,9 +2317,9 @@ STR_FACE_SAVE                                                   :{BLACK}Kaydet
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Tercih edilen yüzü kaydet
 STR_FACE_SAVE_DONE                                              :{WHITE}Bu yüz OpenTTD ayar dosyasına favoriniz olarak kaydedilecek
 STR_FACE_EUROPEAN                                               :{BLACK}Avrupalı
-STR_FACE_SELECT_EUROPEAN                                        :{BLACK}Avrupalı yüz seç
+STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Avrupalı yüz seç
 STR_FACE_AFRICAN                                                :{BLACK}Afrikalı
-STR_FACE_SELECT_AFRICAN                                         :{BLACK}Siyah yüz seç
+STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Siyah yüz seç
 STR_FACE_YES                                                    :Evet
 STR_FACE_NO                                                     :Hayır
 STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Bıyık veya küpeyi etkinleştir
@@ -2372,7 +2375,7 @@ STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}Dil, sun
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}Seçmek için listeden bir oyun tıklayın
 STR_NETWORK_SERVER_LIST_LAST_JOINED_SERVER                      :{BLACK}En son katıldığınız sunucu:
-STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST                    :{BLACK}Son oynadığınız sunucuya katılmak için tıklayın
+STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST_TOOLTIP            :{BLACK}Son oynadığınız sunucuya katılmak için tıklayın
 
 STR_NETWORK_SERVER_LIST_GAME_INFO                               :{SILVER}OYUN BİLGİSİ
 STR_NETWORK_SERVER_LIST_CLIENTS                                 :{SILVER}İstemciler: {WHITE}{COMMA} / {COMMA} - {COMMA} / {COMMA}
@@ -2532,7 +2535,7 @@ STR_NETWORK_CHAT_TO_COMPANY                                     :[Takım] -> {ST
 STR_NETWORK_CHAT_CLIENT                                         :[Özel] {STRING}: {WHITE}{STRING}
 STR_NETWORK_CHAT_TO_CLIENT                                      :[Özel] -> {STRING}: {WHITE}{STRING}
 STR_NETWORK_CHAT_ALL                                            :[Herkes] {STRING}: {WHITE}{STRING}
-STR_NETWORK_CHAT_EXTERNAL                                       :[{3:STRING}] {0:STRING}: {WHITE}{1:STRING}
+STR_NETWORK_CHAT_EXTERNAL                                       :[{STRING}] {STRING}: {WHITE}{STRING}
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}Ağ sohbeti için yazı girin
 
 # Network messages
@@ -2576,6 +2579,7 @@ STR_NETWORK_ERROR_CLIENT_WRONG_REVISION                         :yanlış düzel
 STR_NETWORK_ERROR_CLIENT_NAME_IN_USE                            :isim kullanımda
 STR_NETWORK_ERROR_CLIENT_WRONG_PASSWORD                         :yanlış parola
 STR_NETWORK_ERROR_CLIENT_NOT_ON_ALLOW_LIST                      :izin verilenler listesinde değil
+STR_NETWORK_ERROR_CLIENT_NO_AUTHENTICATION_METHOD_AVAILABLE     :İstenilen kimlik doğrulama yöntemlerinden hiçbiri mevcut değil
 STR_NETWORK_ERROR_CLIENT_COMPANY_MISMATCH                       :DoCommand için yanlış company-id
 STR_NETWORK_ERROR_CLIENT_KICKED                                 :sunucu tarafından atıldı
 STR_NETWORK_ERROR_CLIENT_CHEATER                                :hile yapmaya çalıştı
@@ -2588,7 +2592,7 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :haritayı işle
 STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :Geçersiz ev sahibi ismi
 
 # Network related errors
-STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
+STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 ###length 12
 STR_NETWORK_SERVER_MESSAGE_GAME_PAUSED                          :Oyun duraklatıldı ({STRING})
@@ -2606,13 +2610,12 @@ STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH               :bağlantı graf
 
 STR_NETWORK_MESSAGE_CLIENT_LEAVING                              :ayrılıyor
 STR_NETWORK_MESSAGE_CLIENT_JOINED                               :*** {STRING} oyuna katıldı
-STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {0:STRING} oyuna katıldı (İstemci #{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {0:STRING} #{2:NUM} numaralı şirkete katıldı
+STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {STRING} oyuna katıldı (İstemci #{NUM})
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} izleyicilere katıldı
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {0:STRING} yeni bir şirket kurdu (#{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {0:STRING} oyunu terketti ({2:STRING})
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} yeni bir şirket kurdu (#{NUM})
+STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} oyunu terketti ({STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} adını {STRING} olarak değiştirdi
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} {1:STRING} adlı şirkete {2:CURRENCY_LONG} verdi
+STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} {2:STRING} adlı şirkete {1:CURRENCY_LONG} verdi
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Sunucu kapandı
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Sunucu baştan başlatılıyor...{}Lütfen bekleyin...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} atıldı. Sebep: ({STRING})
@@ -2793,8 +2796,32 @@ STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Tren ist
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Sürükle Bırak
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Sürükle bırak tekniğiyle istasyon kur
 
+STR_PICKER_MODE_ALL                                             :Tümü
+STR_PICKER_MODE_ALL_TOOLTIP                                     :Tüm kategorilerdeki öğelerin görüntülenmesini aç/kapat
+STR_PICKER_MODE_USED                                            :Kullanılmış
+STR_PICKER_MODE_USED_TOOLTIP                                    :Yalnızca mevcut öğeleri göstermeyi aç/kapat
+STR_PICKER_MODE_SAVED                                           :Kaydedildi
+STR_PICKER_MODE_SAVED_TOOLTIP                                   :Yalnızca kaydedilen öğeleri göstermeyi aç/kapat
 
+STR_PICKER_WAYPOINT_CLASS_TOOLTIP                               :Görüntülenecek bir yol noktası türünü seçin
+STR_PICKER_ROADSTOP_TRUCK_CLASS_TOOLTIP                         :Görüntülenecek bir kamyon istasyonu türünü seçin
+STR_PICKER_ROADSTOP_TRUCK_TYPE_TOOLTIP                          :İnşa edilecek bir tür kamyon istasyonu seçin. Kaydedilen öğelerde eklemek veya kaldırmak istiyorsanız Ctrl+Tık ile yapabilirsiniz.
 
+STR_HOUSE_PICKER_CAPTION                                        :Ev Seçimi
+STR_HOUSE_PICKER_NAME                                           :{BLACK}İsim: {ORANGE}{STRING}
+STR_HOUSE_PICKER_POPULATION                                     :{BLACK}Nüfus: {ORANGE}{NUM}
+STR_HOUSE_PICKER_YEARS                                          :{BLACK}Yıl: {ORANGE}{NUM}-{NUM} arası
+STR_HOUSE_PICKER_YEARS_ANY                                      :{BLACK}Yıl: {ORANGE}Her zaman
+STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}Yıl: {ORANGE}{NUM} tarihinden beri
+STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}Yıl: {ORANGE}{NUM} tarihine kadar
+STR_HOUSE_PICKER_SIZE                                           :{BLACK}Boyut: {ORANGE}{NUM}x{NUM} kare
+STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}Kabul edilen kargo: {ORANGE}
+
+STR_HOUSE_PICKER_CLASS_ZONE1                                    :Kenar
+STR_HOUSE_PICKER_CLASS_ZONE2                                    :Banliyöler
+STR_HOUSE_PICKER_CLASS_ZONE3                                    :Dış banliyöler
+STR_HOUSE_PICKER_CLASS_ZONE4                                    :İç banliyöler
+STR_HOUSE_PICKER_CLASS_ZONE5                                    :Şehir merkezi
 
 
 STR_STATION_CLASS_DFLT                                          :Varsayılan
@@ -2829,7 +2856,6 @@ STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}Köprü 
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}Köprü seçimi - tercih ettiğiniz köprüyü yapmak için tıklayın
 STR_SELECT_BRIDGE_INFO_NAME                                     :{GOLD}{STRING}
 STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED                           :{GOLD}{STRING},{} {VELOCITY}
-STR_SELECT_BRIDGE_INFO_NAME_COST                                :{GOLD}{0:STRING},{} {WHITE}{2:CURRENCY_LONG}
 STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED_COST                      :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
 STR_BRIDGE_NAME_SUSPENSION_STEEL                                :Çelik, Asma
 STR_BRIDGE_NAME_GIRDER_STEEL                                    :Çelik, Kirişli
@@ -2980,12 +3006,14 @@ STR_FOUND_TOWN_RANDOM_TOWN_BUTTON                               :{BLACK}Rastgele
 STR_FOUND_TOWN_RANDOM_TOWN_TOOLTIP                              :{BLACK}Rastgele bir yerde şehir kur
 STR_FOUND_TOWN_MANY_RANDOM_TOWNS                                :{BLACK}Birçok rastgele şehir
 STR_FOUND_TOWN_RANDOM_TOWNS_TOOLTIP                             :{BLACK}Haritayı rastgele şehirlerle doldur
+STR_FOUND_TOWN_LOAD_FROM_FILE                                   :{BLACK}Dosyadan yükle
+STR_FOUND_TOWN_LOAD_FROM_FILE_TOOLTIP                           :{BLACK}JSON dosyasından şehir verilerini içe aktar
 STR_FOUND_TOWN_EXPAND_ALL_TOWNS                                 :{BLACK}Tüm şehirleri genişlet
 STR_FOUND_TOWN_EXPAND_ALL_TOWNS_TOOLTIP                         :{BLACK}Tüm şehirleri birazcık büyüt
 
 STR_FOUND_TOWN_NAME_TITLE                                       :{YELLOW}Kasaba adı:
 STR_FOUND_TOWN_NAME_EDITOR_TITLE                                :{BLACK}Kasaba adı girin
-STR_FOUND_TOWN_NAME_EDITOR_HELP                                 :{BLACK}Kasaba adı girmek için tıklayın
+STR_FOUND_TOWN_NAME_EDITOR_TOOLTIP                              :{BLACK}Kasaba adı girmek için tıklayın
 STR_FOUND_TOWN_NAME_RANDOM_BUTTON                               :{BLACK}Rastgele isim
 STR_FOUND_TOWN_NAME_RANDOM_TOOLTIP                              :{BLACK}Yeni rastgele isim oluştur
 
@@ -2999,7 +3027,7 @@ STR_FOUND_TOWN_CITY                                             :{BLACK}Şehir
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Şehirler normal kasabalardan daha hızlı büyürler{}Ayarlara göre değişmekle birlikte, ilk kurulduklarında daha büyük olurlar.
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Kasaba yol yerleşimi:
-STR_FOUND_TOWN_SELECT_TOWN_ROAD_LAYOUT                          :{BLACK}Bu kasaba için kullanılacak yol yerleşimini seç
+STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Bu kasaba için kullanılacak yol yerleşimini seç
 STR_FOUND_TOWN_SELECT_LAYOUT_ORIGINAL                           :{BLACK}Özgün
 STR_FOUND_TOWN_SELECT_LAYOUT_BETTER_ROADS                       :{BLACK}Daha iyi yollar
 STR_FOUND_TOWN_SELECT_LAYOUT_2X2_GRID                           :{BLACK}2x2 şebeke
@@ -3076,7 +3104,6 @@ STR_LAI_CLEAR_DESCRIPTION_ROUGH_LAND                            :Engebeli arazi
 STR_LAI_CLEAR_DESCRIPTION_BARE_LAND                             :Çıplak arazi
 STR_LAI_CLEAR_DESCRIPTION_GRASS                                 :Çim
 STR_LAI_CLEAR_DESCRIPTION_FIELDS                                :Mera
-STR_LAI_CLEAR_DESCRIPTION_SNOW_COVERED_LAND                     :Karlı arazi
 STR_LAI_CLEAR_DESCRIPTION_DESERT                                :Çöl
 
 STR_LAI_RAIL_DESCRIPTION_TRACK                                  :Ray
@@ -3232,7 +3259,8 @@ STR_SAVELOAD_SAVE_SCENARIO                                      :{WHITE}Senaryoy
 STR_SAVELOAD_LOAD_SCENARIO                                      :{WHITE}Senaryoyu Yükle
 STR_SAVELOAD_LOAD_HEIGHTMAP                                     :{WHITE}Yükseklik haritası yükle
 STR_SAVELOAD_SAVE_HEIGHTMAP                                     :{WHITE}Yükseklik Haritasını Kaydet
-STR_SAVELOAD_HOME_BUTTON                                        :{BLACK}Şu anki varsayılan kayıt/yükleme dizinine gitmek için tıklayın
+STR_SAVELOAD_LOAD_TOWN_DATA                                     :{WHITE}Şehir verisi yükle
+STR_SAVELOAD_HOME_BUTTON_TOOLTIP                                :{BLACK}Şu anki varsayılan kayıt/yükleme dizinine gitmek için tıklayın
 STR_SAVELOAD_BYTES_FREE                                         :{BLACK}{BYTES} bos
 STR_SAVELOAD_LIST_TOOLTIP                                       :{BLACK}Sürücü, klasör ve kayıtli oyun listesi
 STR_SAVELOAD_EDITBOX_TOOLTIP                                    :{BLACK}Kaydetmek için kullanılacak dosya adı
@@ -3243,6 +3271,7 @@ STR_SAVELOAD_SAVE_TOOLTIP                                       :{BLACK}Oyunu se
 STR_SAVELOAD_LOAD_BUTTON                                        :{BLACK}Yükle
 STR_SAVELOAD_LOAD_TOOLTIP                                       :{BLACK}Seçili oyunu yükle
 STR_SAVELOAD_LOAD_HEIGHTMAP_TOOLTIP                             :{BLACK}Seçili yükseklik haritasını yükle
+STR_SAVELOAD_LOAD_TOWN_DATA_TOOLTIP                             :{BLACK}Seçili şehir verisini yükle
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Oyun Ayrıntıları
 STR_SAVELOAD_DETAIL_NOT_AVAILABLE                               :{BLACK}Mevcut bilgi yok
 STR_SAVELOAD_DETAIL_COMPANY_INDEX                               :{SILVER}{COMMA}: {WHITE}{STRING}
@@ -3270,15 +3299,15 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Fabrika 
 STR_MAPGEN_NUMBER_OF_INDUSTRIES_TOOLTIP                         :{BLACK}Fabrikaların yoğunluğunu seçin, veya özel bir sayı girin
 STR_MAPGEN_HEIGHTMAP_HEIGHT                                     :{BLACK}En yüksek tepe:
 STR_MAPGEN_HEIGHTMAP_HEIGHT_TOOLTIP                             :{BLACK}Oyunun oluşturmaya çalışacağı en yüksek zirve yüksekliğini seçin. Yükseklik deniz seviyesinden itibaren ölçülür.
-STR_MAPGEN_HEIGHTMAP_HEIGHT_UP                                  :{BLACK}Haritadaki en yüksek tepenin azami yüksekliğini 1 arttırın
-STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN                                :{BLACK}Haritadaki en yüksek tepenin azami yüksekliğini 1 düşürün
+STR_MAPGEN_HEIGHTMAP_HEIGHT_UP_TOOLTIP                          :{BLACK}Haritadaki en yüksek tepenin azami yüksekliğini 1 arttırın
+STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN_TOOLTIP                        :{BLACK}Haritadaki en yüksek tepenin azami yüksekliğini 1 düşürün
 STR_MAPGEN_SNOW_COVERAGE                                        :{BLACK}Kar örtüsü:
-STR_MAPGEN_SNOW_COVERAGE_UP                                     :{BLACK}Kar örtüsünü yüzde on arttır
-STR_MAPGEN_SNOW_COVERAGE_DOWN                                   :{BLACK}Kar örtüsünü yüzde on azalt
+STR_MAPGEN_SNOW_COVERAGE_UP_TOOLTIP                             :{BLACK}Kar örtüsünü yüzde on arttır
+STR_MAPGEN_SNOW_COVERAGE_DOWN_TOOLTIP                           :{BLACK}Kar örtüsünü yüzde on azalt
 STR_MAPGEN_SNOW_COVERAGE_TEXT                                   :{BLACK}%{NUM}
 STR_MAPGEN_DESERT_COVERAGE                                      :{BLACK}Çöl örtüsü:
-STR_MAPGEN_DESERT_COVERAGE_UP                                   :{BLACK}Çöl örtüsünü yüzde on arttır
-STR_MAPGEN_DESERT_COVERAGE_DOWN                                 :{BLACK}Çöl örtüsünü yüzde on azalt
+STR_MAPGEN_DESERT_COVERAGE_UP_TOOLTIP                           :{BLACK}Çöl örtüsünü yüzde on arttır
+STR_MAPGEN_DESERT_COVERAGE_DOWN_TOOLTIP                         :{BLACK}Çöl örtüsünü yüzde on azalt
 STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}%{NUM}
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Arazi türü:
 STR_MAPGEN_SEA_LEVEL                                            :{BLACK}Deniz seviyesi:
@@ -3351,8 +3380,8 @@ STR_SE_MAPGEN_FLAT_WORLD_TOOLTIP                                :{BLACK}Düzlük
 STR_SE_MAPGEN_RANDOM_LAND                                       :{WHITE}Rastgele alan
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT                                 :{BLACK}Düzlüğün Yüksekliği:
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_TOOLTIP                         :{BLACK}Arazinin deniz seviyesinden yüksekliğini seçin
-STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_DOWN                            :{BLACK}Düzlüğü bir alçalt
-STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_UP                              :{BLACK}Düzlüğün yüksekliğini bir arttır
+STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_DOWN_TOOLTIP                    :{BLACK}Düzlüğü bir alçalt
+STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_UP_TOOLTIP                      :{BLACK}Düzlüğün yüksekliğini bir arttır
 
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_QUERY_CAPT                      :{WHITE}Düzlüğün yüksekliğini değiştir
 
@@ -3465,6 +3494,8 @@ STR_NEWGRF_INSPECT_QUERY_CAPTION                                :{WHITE}NewGRF d
 
 # Sprite aligner window
 STR_SPRITE_ALIGNER_CAPTION_NO_ACTION                            :{WHITE}Hizalanan Görüntü: ({STRING}:{NUM})
+STR_SPRITE_ALIGNER_CAPTION_ACTIONA                              :{WHITE}Hizalanan Görüntü: Hareket 0xA, {COMMA} ({STRING}:{NUM})
+STR_SPRITE_ALIGNER_CAPTION_ACTION5                              :{WHITE}Hizalanan Görüntü: Hareket 0x5, tür {HEX}, {COMMA} ({STRING}:{NUM})
 STR_SPRITE_ALIGNER_NEXT_BUTTON                                  :{BLACK}Sonraki nesne
 STR_SPRITE_ALIGNER_NEXT_TOOLTIP                                 :{BLACK}Tüm sahte/yeniden renklendirme/yazı tipi nesnelerini ve sondaki nesneden atlayarak bir sonraki normal nesneye geç
 STR_SPRITE_ALIGNER_GOTO_BUTTON                                  :{BLACK}Nesneye git
@@ -3473,6 +3504,7 @@ STR_SPRITE_ALIGNER_PREVIOUS_BUTTON                              :{BLACK}Önceki 
 STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP                             :{BLACK}Tüm sahte/yeniden renklendirme/yazı tipi nesnelerini ve baştaki sargıyı atlayarak bir önceki normal nesneye geç
 STR_SPRITE_ALIGNER_SPRITE_TOOLTIP                               :{BLACK}Seçili nesnenin mevcut gösterimi. Bu nesneyi çizerken hizalama ihmal edilir
 STR_SPRITE_ALIGNER_MOVE_TOOLTIP                                 :{BLACK}Nesneyi X ve Y ofsetlerini değiştirerek gezdir. Ctrl+Tıklama ile nesneleri bir kerede sekiz birim kaydır
+STR_SPRITE_ALIGNER_SPRITE                                       :{STRING}:{NUM}
 
 ###length 2
 STR_SPRITE_ALIGNER_CENTRE_OFFSET                                :{BLACK}Ofset ortalandı
@@ -3565,7 +3597,6 @@ STR_INVALID_VEHICLE                                             :<geçersiz ara�
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}NewGRF'ler taranıyor
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}NewGRF'ler taranıyor. Sayıya bağlı olarak bu işlem biraz zaman alabilir...
 STR_NEWGRF_SCAN_STATUS                                          :{BLACK}{1:NUM} NewGRF'den tahminen {0:NUM} NewGRF tarandı
-STR_NEWGRF_SCAN_ARCHIVES                                        :Arşivler taranıyor
 
 # Sign list window
 STR_SIGN_LIST_CAPTION                                           :{WHITE}Tabela Listesi - {COMMA} Tabela
@@ -3717,12 +3748,12 @@ STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Geçersiz 
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}İstasyon isimleri - gitmek için istasyon ismini tıklayın. Ctrl + Sol Tıklama istasyonun olduğu yere ait bir görünüm penceresi açar.
-STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE                        :{BLACK}Birden fazla nesne seçmek için Ctrl+Sol tıklayın
+STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE_TOOLTIP                :{BLACK}Birden fazla nesne seçmek için Ctrl+Sol tıklayın
 STR_STATION_LIST_CAPTION                                        :{WHITE}{COMPANY} - {COMMA} İstasyon
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Yok -
-STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Tüm türleri seç
+STR_STATION_LIST_SELECT_ALL_FACILITIES_TOOLTIP                  :{BLACK}Tüm türleri seç
 STR_STATION_LIST_CARGO_FILTER_ALL_AND_NO_RATING                 :Tüm kargo tipleri ve derecelendirme yok
 STR_STATION_LIST_CARGO_FILTER_MULTIPLE                          :Birden fazla kargo tipleri
 STR_STATION_LIST_CARGO_FILTER_NO_CARGO_TYPES                    :Kargo tipi bulunmuyor
@@ -3800,7 +3831,7 @@ STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOIN
 STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Ana görünümü güzergaha ortala. Ctrl+Sol tık ile güzegahın konumunu gösteren yeni bir pencere açabilirsiniz
 STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Ara nokta adını değiştir
 STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}Ana görünümü şamandıra(duba) konumuna ortala. Ctrl + Sol Tıklama şamandıranın olduğu yere ait bir görünüm penceresi açar.
-STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}Şamandıra adını değiştir
+STR_BUOY_VIEW_RENAME_TOOLTIP                                    :{BLACK}Şamandıra adını değiştir
 
 STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Yerimi adını değiştir
 
@@ -3854,6 +3885,7 @@ STR_COMPANY_VIEW_CAPTION                                        :{WHITE}{COMPANY
 STR_COMPANY_VIEW_PRESIDENT_MANAGER_TITLE                        :{WHITE}{PRESIDENT_NAME}{}{GOLD}(Yönetici)
 
 STR_COMPANY_VIEW_INAUGURATED_TITLE                              :{GOLD}Kuruluş: {WHITE}{NUM}
+STR_COMPANY_VIEW_INAUGURATED_TITLE_WALLCLOCK                    :{GOLD}Kuruluş: {WHITE}{NUM} (period {NUM})
 STR_COMPANY_VIEW_COLOUR_SCHEME_TITLE                            :{GOLD}Renk:
 STR_COMPANY_VIEW_VEHICLES_TITLE                                 :{GOLD}Araçlar:
 STR_COMPANY_VIEW_TRAINS                                         :{WHITE}{COMMA} tren
@@ -3875,7 +3907,7 @@ STR_COMPANY_VIEW_BUILD_HQ_TOOLTIP                               :{BLACK}Şirket 
 STR_COMPANY_VIEW_VIEW_HQ_BUTTON                                 :{BLACK}Binaya Bak
 STR_COMPANY_VIEW_VIEW_HQ_TOOLTIP                                :{BLACK}Şirket binasını gör
 STR_COMPANY_VIEW_RELOCATE_HQ                                    :{BLACK}Binayı Taşı
-STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS                  :{BLACK}Şirket değerinin %1'i karşılığında şirket ana ofisinin yerini değiştir. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
+STR_COMPANY_VIEW_RELOCATE_HQ_TOOLTIP                            :{BLACK}Şirket değerinin %1'i karşılığında şirket ana ofisinin yerini değiştir. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
 STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}Ayrıntılar
 STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}Ayrıntılı altyapı sayılarını göster
 STR_COMPANY_VIEW_GIVE_MONEY_BUTTON                              :{BLACK}Para ver
@@ -3921,7 +3953,7 @@ STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUST
 STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} ve {NUM} daha...
-STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Fabrika adları - görüntüyü fabrikada merkezlemek için adına tıklayın. Ctrl + Sol Tıklama Fabrikanın olduğu yere ait bir görünüm penceresi açar.
+STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}Fabrika adları - görüntüyü fabrikada merkezlemek için adına tıklayın. Ctrl + Sol Tıklama Fabrikanın olduğu yere ait bir görünüm penceresi açar.
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}Kabul edilen kargo: {SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}Üretilmiş kargo: {SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :Tüm kargo tipleri
@@ -3941,8 +3973,6 @@ STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}Üretile
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :, {STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Gereken:
-STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{0:STRING}{BLACK}{3:STRING}
-STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} bekliyor{STRING}
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Üretimi değiştir (8'in katı, 2040'a kadar)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Üretim seviyesini değiştir (yüzde olarak, %800'e kadar)
@@ -4194,10 +4224,10 @@ STR_DEPOT_CLONE_SHIP                                            :{BLACK}Gemiyi k
 STR_DEPOT_CLONE_AIRCRAFT                                        :{BLACK}Uçağı kopyala
 
 ###length VEHICLE_TYPES
-STR_DEPOT_CLONE_TRAIN_DEPOT_INFO                                :{BLACK}Tüm vagonlarla birlikte treni kopyalar. Önce bu düğmeye sonra da garın içindeki veya dışındaki bir trene tıklayın.  Ctrl+ Sol tık yaparsanız kopyalanan tren ile aynı emirleri paylaşır. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
-STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_INFO                         :{BLACK}Karayolu aracının bir kopyasını yapar. Önce bu düğmeye sonra da garın içindeki veya dışındaki bir araca tıklayın. Ctrl+ Sol Tıklama talimatları paylaştırır. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
-STR_DEPOT_CLONE_SHIP_DEPOT_INFO                                 :{BLACK}Geminin bir kopyasını oluşturun. Önce bu düğmeye sonra da tersanenin içindeki veya dışındaki bir gemiye tıklayın. Ctrl+ Sol tık yaparsanız kopyalanan gemi aynı emirleri paylaşır. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
-STR_DEPOT_CLONE_AIRCRAFT_INFO_HANGAR_WINDOW                     :{BLACK}Uçağın bir kopyasını oluşturur. Önce bu düğmeye sonra da hangarın içindeki veya dışındaki bir uçaga tıklayın. Ctrl+ Sol tık yaparsanız kopyalanan uçak ile aynı emirleri paylaşır. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
+STR_DEPOT_CLONE_TRAIN_DEPOT_TOOLTIP                             :{BLACK}Tüm vagonlarla birlikte treni kopyalar. Önce bu düğmeye sonra da garın içindeki veya dışındaki bir trene tıklayın.  Ctrl+ Sol tık yaparsanız kopyalanan tren ile aynı emirleri paylaşır. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
+STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_TOOLTIP                      :{BLACK}Karayolu aracının bir kopyasını yapar. Önce bu düğmeye sonra da garın içindeki veya dışındaki bir araca tıklayın. Ctrl+ Sol Tıklama talimatları paylaştırır. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
+STR_DEPOT_CLONE_SHIP_DEPOT_TOOLTIP                              :{BLACK}Geminin bir kopyasını oluşturun. Önce bu düğmeye sonra da tersanenin içindeki veya dışındaki bir gemiye tıklayın. Ctrl+ Sol tık yaparsanız kopyalanan gemi aynı emirleri paylaşır. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
+STR_DEPOT_CLONE_AIRCRAFT_HANGAR_TOOLTIP                         :{BLACK}Uçağın bir kopyasını oluşturur. Önce bu düğmeye sonra da hangarın içindeki veya dışındaki bir uçaga tıklayın. Ctrl+ Sol tık yaparsanız kopyalanan uçak ile aynı emirleri paylaşır. Shift'e basılı tutarak tıklarsanız sadece maliyetini gösterir.
 
 ###length VEHICLE_TYPES
 STR_DEPOT_TRAIN_LOCATION_TOOLTIP                                :{BLACK}Tren garını göster. Ctrl + Sol Tıklama garın olduğu yere ait bir görünüm penceresi açar.
@@ -4241,8 +4271,6 @@ STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :Tramvay aracı
 STR_ENGINE_PREVIEW_AIRCRAFT                                     :uçak
 STR_ENGINE_PREVIEW_SHIP                                         :gemi
 
-STR_ENGINE_PREVIEW_TEXT3                                        :{BLACK}{STRING}{}{5:STRING}{}{STRING}
-STR_ENGINE_PREVIEW_TEXT4                                        :{BLACK}{STRING}{}{STRING}{}{STRING}{}{STRING}
 STR_ENGINE_PREVIEW_COST_WEIGHT                                  :Maliyet: {CURRENCY_LONG}  Ağırlık: {WEIGHT_SHORT}
 STR_ENGINE_PREVIEW_COST_MAX_SPEED                               :Maliyet: {CURRENCY_LONG}  Maksimum Hız: {VELOCITY}
 STR_ENGINE_PREVIEW_SPEED_POWER                                  :Hız: {VELOCITY}  Güç: {POWER}
@@ -4268,31 +4296,31 @@ STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :Karayolu taşı
 STR_REPLACE_VEHICLE_SHIP                                        :Gemi
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :Uçak
 
-STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK}Değiştirilecek türü seçin
-STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK}Değiştirilecek türün yerine geçecek türü seçin
+STR_REPLACE_LEFT_ARRAY_TOOLTIP                                  :{BLACK}Değiştirilecek türü seçin
+STR_REPLACE_RIGHT_ARRAY_TOOLTIP                                 :{BLACK}Değiştirilecek türün yerine geçecek türü seçin
 
 STR_REPLACE_VEHICLES_START                                      :{BLACK}Araçları Değiştirmeye Başla
 STR_REPLACE_VEHICLES_NOW                                        :Tüm araçları hemen değiştir
 STR_REPLACE_VEHICLES_WHEN_OLD                                   :Yalnız eski araçları değiştir
-STR_REPLACE_HELP_START_BUTTON                                   :{BLACK}Değiştirme işlemini başlatmak için basın
+STR_REPLACE_START_BUTTON_TOOLTIP                                :{BLACK}Değiştirme işlemini başlatmak için basın
 STR_REPLACE_NOT_REPLACING                                       :{BLACK}Değiştirilmiyor
 STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED                      :{BLACK}Hiç Araç Seçilmedi
 STR_REPLACE_REPLACING_WHEN_OLD                                  :{ENGINE} eskidiğinde
 STR_REPLACE_VEHICLES_STOP                                       :{BLACK}Araçları değiştirmeyi durdur
-STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}Değiştirme işlemini durdurmak için basın
+STR_REPLACE_STOP_BUTTON_TOOLTIP                                 :{BLACK}Değiştirme işlemini durdurmak için basın
 
-STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Lokomotif ve vagon değişimi pencereleri arasında geçiş yap.
+STR_REPLACE_ENGINE_WAGON_SELECT_TOOLTIP                         :{BLACK}Lokomotif ve vagon değişimi pencereleri arasında geçiş yap.
 STR_REPLACE_ENGINES                                             :Lokomotifler
 STR_REPLACE_WAGONS                                              :Vagon
 STR_REPLACE_ALL_RAILTYPE                                        :Tüm demiryolu araçları
 STR_REPLACE_ALL_ROADTYPE                                        :Tüm karayolu araçları
 
 ###length 2
-STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Lokomatiflerini değiştireceğiniz ray türünü seçin
-STR_REPLACE_HELP_ROADTYPE                                       :{BLACK}Motorlarını değiştirmek istediğin yol tipini seç
+STR_REPLACE_RAILTYPE_TOOLTIP                                    :{BLACK}Lokomatiflerini değiştireceğiniz ray türünü seçin
+STR_REPLACE_ROADTYPE_TOOLTIP                                    :{BLACK}Motorlarını değiştirmek istediğin yol tipini seç
 ###next-name-looks-similar
 
-STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Soldaki değiştiriliyorsa neyle değiştirildiğini göster
+STR_REPLACE_REPLACE_INFO_TAB_TOOLTIP                            :{BLACK}Soldaki değiştiriliyorsa neyle değiştirildiğini göster
 STR_REPLACE_RAIL_VEHICLES                                       :Demiryolu Araçları
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektrikli Trenler
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monoray Araçları
@@ -4302,7 +4330,7 @@ STR_REPLACE_ROAD_VEHICLES                                       :Yol Araçları
 STR_REPLACE_TRAM_VEHICLES                                       :Tramvay Araçları
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vagon kaldırma ({STRING}): {ORANGE}{STRING}
-STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Otomatik yenilemede tren boyutunun artması gerekiyorsa vagonları kaldır (en önden başlayarak yeterli sayıda vagon silinir)
+STR_REPLACE_REMOVE_WAGON_TOOLTIP                                :{BLACK}Otomatik yenilemede tren boyutunun artması gerekiyorsa vagonları kaldır (en önden başlayarak yeterli sayıda vagon silinir)
 STR_REPLACE_REMOVE_WAGON_GROUP_HELP                             :{STRING}. Alt gruplara da uygulamak için Ctrl+Tıkla
 
 # Vehicle view
@@ -4411,8 +4439,8 @@ STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Güvenil
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}Üretim: {LTBLUE}{NUM}{BLACK} Değer: {LTBLUE}{CURRENCY_LONG}
 STR_VEHICLE_INFO_NO_CAPACITY                                    :{BLACK}Kapasite: {LTBLUE}Yok{STRING}
-STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}Kapasite: {LTBLUE}{0:CARGO_LONG}{3:STRING}
-STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}Kapasite: {LTBLUE}{0:CARGO_LONG}{3:STRING} (x{4:NUM})
+STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}Kapasite: {LTBLUE}{CARGO_LONG}{STRING}
+STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}Kapasite: {LTBLUE}{CARGO_LONG}{STRING} (x{NUM})
 STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Kapasite: {LTBLUE}{CARGO_LONG}, {CARGO_LONG}{STRING}
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Aktarma Maliyeti: {LTBLUE}{CURRENCY_LONG}
@@ -4498,7 +4526,6 @@ STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Zaman ta
 
 STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Talimat listesi - seçmek için komutu tıklayın. CTRL + Sol tıklama istasyona kaydırır
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
-STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING} {STRING}
 
 STR_ORDERS_END_OF_ORDERS                                        :- - Talimatların Sonu - -
 STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - Paylaşılmış talimat sonu - -
@@ -4597,15 +4624,12 @@ STR_ORDER_GO_NON_STOP_TO_WAYPOINT                               :{WAYPOINT} üze
 STR_ORDER_SERVICE_AT                                            :Burada bakıma gir
 STR_ORDER_SERVICE_NON_STOP_AT                                   :Durmaksızın bakıma gir
 
-STR_ORDER_NEAREST_DEPOT                                         :en yakın
-STR_ORDER_NEAREST_HANGAR                                        :en yakın Hangar
 ###length 3
 STR_ORDER_TRAIN_DEPOT                                           :Tren Garajı
 STR_ORDER_ROAD_VEHICLE_DEPOT                                    :Karayolu Garajı
 STR_ORDER_SHIP_DEPOT                                            :Tersane
 ###next-name-looks-similar
 
-STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
 STR_ORDER_REFIT_ORDER                                           :(Moifiye ile > {STRING})
@@ -4614,8 +4638,8 @@ STR_ORDER_STOP_ORDER                                            :(Dur)
 
 STR_ORDER_WAIT_TO_UNBUNCH                                       :(gruptan ayrılmayı bekle)
 
-STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
-STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(İstasyon kullanılamıyor){POP_COLOUR} {STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION}
+STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(İstasyon kullanılamıyor){POP_COLOUR} {STRING} {STATION}
 
 STR_ORDER_IMPLICIT                                              :(Otomatik)
 
@@ -4695,7 +4719,6 @@ STR_TIMETABLE_STATUS_START_IN_SECONDS                           :{BLACK}Bu zaman
 
 STR_TIMETABLE_START                                             :{BLACK}Zaman Çizelgesini Başlat
 STR_TIMETABLE_START_TOOLTIP                                     :{BLACK}Bu zaman çizelgesinin ne zaman başlayacağını seçin. Verilen emir tamamen zaman çizelgesine uygunsa, Ctrl + Sol Tıkladığınızda zaman çizelgesinin başlangıç saatini bütün araçlar arasında eşit olarak dağıtır.
-
 STR_TIMETABLE_START_SECONDS_QUERY                               :Zaman çizelgesinin başlamasına saniyeler kaldı
 
 STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}Zamanı değiştir
@@ -4810,7 +4833,6 @@ STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Yüksekl
 STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Küçük harita ekran görüntüsü
 
 # Script Parameters
-STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametreler
 STR_AI_SETTINGS_CAPTION_AI                                      :YZ
 STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :Oyun Betiği
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}Kapat
@@ -4900,7 +4922,6 @@ STR_ERROR_SCREENSHOT_FAILED                                     :{WHITE}Ekran g�
 
 # Error message titles
 STR_ERROR_MESSAGE_CAPTION                                       :{YELLOW}Mesaj
-STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}Mesaj (gönderen {STRING})
 
 # Generic construction errors
 STR_ERROR_OFF_EDGE_OF_MAP                                       :{WHITE}Harita kenarında
@@ -4919,7 +4940,6 @@ STR_ERROR_TERRAFORM_LIMIT_REACHED                               :{WHITE}... yery
 STR_ERROR_CLEARING_LIMIT_REACHED                                :{WHITE}... kare temizleme sınırına ulaştınız
 STR_ERROR_TREE_PLANT_LIMIT_REACHED                              :{WHITE}... ağaç dikme sınırına ulaştınız
 STR_ERROR_NAME_MUST_BE_UNIQUE                                   :{WHITE}İsim daha önce kullanılmamış olmalı
-STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}yolda {1:STRING} var
 STR_ERROR_NOT_ALLOWED_WHILE_PAUSED                              :{WHITE}Oyun duraklatılmışken izin verilmiyor
 
 # Local authority errors
@@ -5228,6 +5248,10 @@ STR_ERROR_CAN_T_SELL_TRAIN                                      :{WHITE}Tren sat
 STR_ERROR_CAN_T_SELL_ROAD_VEHICLE                               :{WHITE}Karayolu aracı satılamıyor...
 STR_ERROR_CAN_T_SELL_SHIP                                       :{WHITE}Gemi satılamaz...
 STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}Uçak satılamıyor...
+
+###length VEHICLE_TYPES
+
+###length VEHICLE_TYPES
 
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}Oyunda çok fazla araç var
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Servis aralığı değiştirilemiyor...
@@ -5755,18 +5779,7 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :İzleyici, {1:S
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
-STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
-STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
-STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
-
-STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
-STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
-
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
-STR_VIEWPORT_STATION_TINY                                       :{TINY_FONT}{STATION}
-
-STR_VIEWPORT_WAYPOINT                                           :{WAYPOINT}
-STR_VIEWPORT_WAYPOINT_TINY                                      :{TINY_FONT}{WAYPOINT}
 
 # Simple strings to get specific types of data
 STR_COMPANY_NAME                                                :{COMPANY}
@@ -5803,7 +5816,6 @@ STR_JUST_DATE_LONG                                              :{DATE_LONG}
 STR_JUST_DATE_ISO                                               :{DATE_ISO}
 STR_JUST_STRING                                                 :{STRING}
 STR_JUST_STRING1                                                :{STRING}
-STR_JUST_STRING2                                                :{STRING}
 STR_JUST_STRING_STRING                                          :{STRING}{STRING}
 STR_JUST_RAW_STRING                                             :{STRING}
 STR_JUST_BIG_RAW_STRING                                         :{BIG_FONT}{STRING}
@@ -5827,3 +5839,4 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+

@@ -59,13 +59,13 @@ void RemoveAllEngineReplacement(EngineRenewList *erl)
  * @param engine Engine type to be replaced.
  * @param group The group related to this replacement.
  * @param[out] replace_when_old Set to true if the replacement should be done when old.
- * @return The engine type to replace with, or INVALID_ENGINE if no
+ * @return The engine type to replace with, or EngineID::Invalid() if no
  * replacement is in the list.
  */
 EngineID EngineReplacement(EngineRenewList erl, EngineID engine, GroupID group, bool *replace_when_old)
 {
 	const EngineRenew *er = GetEngineReplacement(erl, engine, group);
-	if (er == nullptr && (group == DEFAULT_GROUP || (Group::IsValidID(group) && !HasBit(Group::Get(group)->flags, GroupFlags::GF_REPLACE_PROTECTION)))) {
+	if (er == nullptr && (group == DEFAULT_GROUP || (Group::IsValidID(group) && !Group::Get(group)->flags.Test(GroupFlag::ReplaceProtection)))) {
 		/* We didn't find anything useful in the vehicle's own group so we will try ALL_GROUP */
 		er = GetEngineReplacement(erl, engine, ALL_GROUP);
 	}
@@ -81,7 +81,7 @@ EngineID EngineReplacement(EngineRenewList erl, EngineID engine, GroupID group, 
 			*replace_when_old = er->replace_when_old;
 		}
 	}
-	return er == nullptr ? INVALID_ENGINE : er->to;
+	return er == nullptr ? EngineID::Invalid() : er->to;
 }
 
 /**
@@ -94,12 +94,12 @@ EngineID EngineReplacement(EngineRenewList erl, EngineID engine, GroupID group, 
  * @param flags The calling command flags.
  * @return 0 on success, CMD_ERROR on failure.
  */
-CommandCost AddEngineReplacement(EngineRenewList *erl, EngineID old_engine, EngineID new_engine, GroupID group, bool replace_when_old, DoCommandFlag flags)
+CommandCost AddEngineReplacement(EngineRenewList *erl, EngineID old_engine, EngineID new_engine, GroupID group, bool replace_when_old, DoCommandFlags flags)
 {
 	/* Check if the old vehicle is already in the list */
 	EngineRenew *er = GetEngineReplacement(*erl, old_engine, group);
 	if (er != nullptr) {
-		if (flags & DC_EXEC) {
+		if (flags.Test(DoCommandFlag::Execute)) {
 			er->to = new_engine;
 			er->replace_when_old = replace_when_old;
 		}
@@ -108,14 +108,9 @@ CommandCost AddEngineReplacement(EngineRenewList *erl, EngineID old_engine, Engi
 
 	if (!EngineRenew::CanAllocateItem()) return CMD_ERROR;
 
-	if (flags & DC_EXEC) {
-		er = new EngineRenew(old_engine, new_engine);
-		er->group_id = group;
-		er->replace_when_old = replace_when_old;
-
+	if (flags.Test(DoCommandFlag::Execute)) {
 		/* Insert before the first element */
-		er->next = (EngineRenew *)(*erl);
-		*erl = (EngineRenewList)er;
+		*erl = new EngineRenew(old_engine, new_engine, group, replace_when_old, *erl);
 	}
 
 	return CommandCost();
@@ -129,14 +124,14 @@ CommandCost AddEngineReplacement(EngineRenewList *erl, EngineID old_engine, Engi
  * @param flags The calling command flags.
  * @return 0 on success, CMD_ERROR on failure.
  */
-CommandCost RemoveEngineReplacement(EngineRenewList *erl, EngineID engine, GroupID group, DoCommandFlag flags)
+CommandCost RemoveEngineReplacement(EngineRenewList *erl, EngineID engine, GroupID group, DoCommandFlags flags)
 {
 	EngineRenew *er = (EngineRenew *)(*erl);
 	EngineRenew *prev = nullptr;
 
 	while (er != nullptr) {
 		if (er->from == engine && er->group_id == group) {
-			if (flags & DC_EXEC) {
+			if (flags.Test(DoCommandFlag::Execute)) {
 				if (prev == nullptr) { // First element
 					/* The second becomes the new first element */
 					*erl = (EngineRenewList)er->next;

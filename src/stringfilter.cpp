@@ -8,9 +8,10 @@
 /** @file stringfilter.cpp Searching and filtering using a stringterm. */
 
 #include "stdafx.h"
-#include "core/alloc_func.hpp"
 #include "string_func.h"
 #include "strings_func.h"
+#include "core/utf8.hpp"
+#include "core/string_builder.hpp"
 #include "stringfilter_type.h"
 #include "gfx_func.h"
 
@@ -25,34 +26,26 @@ static const char32_t STATE_QUOTE2 = '"';
  * Set the term to filter on.
  * @param str Filter term
  */
-void StringFilter::SetFilterTerm(const char *str)
+void StringFilter::SetFilterTerm(std::string_view str)
 {
 	this->word_index.clear();
 	this->word_index.shrink_to_fit();
 	this->word_matches = 0;
-	free(this->filter_buffer);
-
-	assert(str != nullptr);
-
-	char *dest = MallocT<char>(strlen(str) + 1);
-	this->filter_buffer = dest;
 
 	char32_t state = STATE_WHITESPACE;
-	const char *pos = str;
-	WordState *word = nullptr;
-	size_t len;
-	for (;; pos += len) {
-		char32_t c;
-		len = Utf8Decode(&c, pos);
+	std::string word;
+	StringBuilder builder(word);
+	auto add_word = [this, &word]() {
+		if (!word.empty()) this->word_index.emplace_back(std::move(word), false);
+		word.clear();
+	};
 
-		if (c == 0 || (state == STATE_WORD && IsWhitespace(c))) {
+	for (char32_t c : Utf8View(str)) {
+		if (state == STATE_WORD && IsWhitespace(c)) {
 			/* Finish word */
-			if (word != nullptr) {
-				*(dest++) = '\0';
-				word = nullptr;
-			}
+			add_word();
 			state = STATE_WHITESPACE;
-			if (c != 0) continue; else break;
+			continue;
 		}
 
 		if (state == STATE_WHITESPACE) {
@@ -74,22 +67,11 @@ void StringFilter::SetFilterTerm(const char *str)
 		}
 
 		/* Add to word */
-		if (word == nullptr) {
-			word = &this->word_index.emplace_back(WordState{ dest, false });
-		}
-
-		memcpy(dest, pos, len);
-		dest += len;
+		builder.PutUtf8(c);
 	}
-}
 
-/**
- * Set the term to filter on.
- * @param str Filter term
- */
-void StringFilter::SetFilterTerm(const std::string &str)
-{
-	this->SetFilterTerm(str.c_str());
+	/* Add the last word of the string. */
+	add_word();
 }
 
 /**
@@ -111,50 +93,22 @@ void StringFilter::ResetState()
  *
  * @param str Another line from the item.
  */
-void StringFilter::AddLine(const char *str)
+void StringFilter::AddLine(std::string_view str)
 {
-	if (str == nullptr) return;
-
 	bool match_case = this->case_sensitive != nullptr && *this->case_sensitive;
 	for (WordState &ws : this->word_index) {
 		if (!ws.match) {
 			if (this->locale_aware) {
-				if (match_case ? StrNaturalContains(str, ws.start) : StrNaturalContainsIgnoreCase(str, ws.start)) {
+				if (match_case ? StrNaturalContains(str, ws.word) : StrNaturalContainsIgnoreCase(str, ws.word)) {
 					ws.match = true;
 					this->word_matches++;
 				}
 			} else {
-				if ((match_case ? strstr(str, ws.start) : strcasestr(str, ws.start)) != nullptr) {
+				if (match_case ? str.find(ws.word) != str.npos : StrContainsIgnoreCase(str, ws.word)) {
 					ws.match = true;
 					this->word_matches++;
 				}
 			}
 		}
 	}
-}
-
-/**
- * Pass another text line from the current item to the filter.
- *
- * You can call this multiple times for a single item, if the filter shall apply to multiple things.
- * Before processing the next item you have to call ResetState().
- *
- * @param str Another line from the item.
- */
-void StringFilter::AddLine(const std::string &str)
-{
-	AddLine(str.c_str());
-}
-
-/**
- * Pass another text line from the current item to the filter.
- *
- * You can call this multiple times for a single item, if the filter shall apply to multiple things.
- * Before processing the next item you have to call ResetState().
- *
- * @param str Another line from the item.
- */
-void StringFilter::AddLine(StringID str)
-{
-	AddLine(GetString(str));
 }

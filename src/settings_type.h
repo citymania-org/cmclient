@@ -35,7 +35,7 @@ const size_t MAX_SLE_INT32 = INT32_MAX;
 const size_t MAX_SLE_INT = INT_MAX;
 
 /** Settings profiles and highscore tables. */
-enum SettingsProfile {
+enum SettingsProfile : uint8_t {
 	SP_BEGIN = 0,
 	SP_EASY = SP_BEGIN,                       ///< Easy difficulty.
 	SP_MEDIUM,                                ///< Medium difficulty.
@@ -51,7 +51,7 @@ enum SettingsProfile {
 };
 
 /** Available industry map generation densities. */
-enum IndustryDensity {
+enum IndustryDensity : uint8_t {
 	ID_FUND_ONLY, ///< The game does not build industries.
 	ID_MINIMAL,   ///< Start with just the industries that must be present.
 	ID_VERY_LOW,  ///< Very few industries at game start.
@@ -91,6 +91,13 @@ enum RightClickClose : uint8_t {
 	RCC_YES_EXCEPT_STICKY,
 };
 
+/** Possible values for "place_houses" setting. */
+enum PlaceHouses : uint8_t {
+	PH_FORBIDDEN = 0,
+	PH_ALLOWED,
+	PH_ALLOWED_CONSTRUCTED,
+};
+
 /** Settings related to the difficulty of the game */
 struct DifficultySettings {
 	uint8_t competitor_start_time;            ///< Unused value, used to load old savegames.
@@ -118,7 +125,7 @@ struct DifficultySettings {
 };
 
 /** Settings relating to viewport/smallmap scrolling. */
-enum ViewportScrollMode {
+enum ViewportScrollMode : uint8_t {
 	VSM_VIEWPORT_RMB_FIXED, ///< Viewport moves with mouse movement on holding right mouse button, cursor position is fixed.
 	VSM_MAP_RMB_FIXED,      ///< Map moves with mouse movement on holding right mouse button, cursor position is fixed.
 	VSM_MAP_RMB,            ///< Map moves with mouse movement on holding right mouse button, cursor moves.
@@ -127,7 +134,7 @@ enum ViewportScrollMode {
 };
 
 /** Settings related to scroll wheel behavior. */
-enum ScrollWheelScrollingSetting {
+enum ScrollWheelScrollingSetting : uint8_t {
 	SWS_ZOOM_MAP = 0,       ///< Scroll wheel zooms the map.
 	SWS_SCROLL_MAP = 1,     ///< Scroll wheel scrolls the map.
 	SWS_OFF = 2             ///< Scroll wheel has no effect.
@@ -365,8 +372,8 @@ struct GameCreationSettings {
 	uint8_t heightmap_rotation;               ///< rotation director for the heightmap
 	uint8_t se_flat_world_height;             ///< land height a flat world gets in SE
 	uint8_t town_name;                        ///< the town name generator used for town names
-	uint8_t landscape;                        ///< the landscape we're currently in
-	uint8_t water_borders;                    ///< bitset of the borders that are water
+	LandscapeType landscape;                        ///< the landscape we're currently in
+	BorderFlags water_borders;                    ///< bitset of the borders that are water
 	uint16_t custom_town_number;               ///< manually entered number of towns
 	uint16_t custom_industry_number;           ///< manually entered number of industries
 	uint8_t variety;                          ///< variety level applied to TGP
@@ -529,6 +536,7 @@ struct EconomySettings {
 	TownCargoGenMode town_cargogen_mode;     ///< algorithm for generating cargo from houses, @see TownCargoGenMode
 	bool   allow_town_roads;                 ///< towns are allowed to build roads (always allowed when generating world / in SE)
 	TownFounding found_town;                 ///< town founding.
+	PlaceHouses place_houses;                ///< players are allowed to place town houses.
 	bool   station_noise_level;              ///< build new airports when the town noise level is still within accepted limits
 	uint16_t town_noise_population[4];         ///< population to base decision on noise evaluation (@see town_council_tolerance)
 	bool   allow_town_level_crossings;       ///< towns are allowed to build level crossings
@@ -551,11 +559,11 @@ struct LinkGraphSettings {
 	uint8_t demand_distance;                  ///< influence of distance between stations on the demand function
 	uint8_t short_path_saturation;            ///< percentage up to which short paths are saturated before saturating most capacious paths
 
-	inline DistributionType GetDistributionType(CargoID cargo) const
+	inline DistributionType GetDistributionType(CargoType cargo) const
 	{
-		if (IsCargoInClass(cargo, CC_PASSENGERS)) return this->distribution_pax;
-		if (IsCargoInClass(cargo, CC_MAIL)) return this->distribution_mail;
-		if (IsCargoInClass(cargo, CC_ARMOURED)) return this->distribution_armoured;
+		if (IsCargoInClass(cargo, CargoClass::Passengers)) return this->distribution_pax;
+		if (IsCargoInClass(cargo, CargoClass::Mail)) return this->distribution_mail;
+		if (IsCargoInClass(cargo, CargoClass::Armoured)) return this->distribution_armoured;
 		return this->distribution_default;
 	}
 };
@@ -571,20 +579,33 @@ struct StationSettings {
 
 /** Default settings for vehicles. */
 struct VehicleDefaultSettings {
-	bool   servint_ispercent;                ///< service intervals are in percents
-	uint16_t servint_trains;                   ///< service interval for trains
-	uint16_t servint_roadveh;                  ///< service interval for road vehicles
-	uint16_t servint_aircraft;                 ///< service interval for aircraft
-	uint16_t servint_ships;                    ///< service interval for ships
+	bool   servint_ispercent = false; ///< service intervals are in percents
+	uint16_t servint_trains = 0; ///< service interval for trains
+	uint16_t servint_roadveh = 0; ///< service interval for road vehicles
+	uint16_t servint_aircraft = 0; ///< service interval for aircraft
+	uint16_t servint_ships = 0; ///< service interval for ships
 };
 
 /** Settings that can be set per company. */
 struct CompanySettings {
-	bool engine_renew;                       ///< is autorenew enabled
-	int16_t engine_renew_months;               ///< months before/after the maximum vehicle age a vehicle should be renewed
-	uint32_t engine_renew_money;               ///< minimum amount of money before autorenew is used
-	bool renew_keep_length;                  ///< sell some wagons if after autoreplace the train is longer than before
-	VehicleDefaultSettings vehicle;          ///< default settings for vehicles
+	bool engine_renew = false; ///< is autorenew enabled
+	int16_t engine_renew_months = 0; ///< months before/after the maximum vehicle age a vehicle should be renewed
+	uint32_t engine_renew_money = 0; ///< minimum amount of money before autorenew is used
+	bool renew_keep_length = false; ///< sell some wagons if after autoreplace the train is longer than before
+	VehicleDefaultSettings vehicle{}; ///< default settings for vehicles
+};
+
+/** Container for AI and Game script configuration. */
+struct ScriptConfigSettings
+{
+	ReferenceThroughBaseContainer<std::array<std::unique_ptr<class AIConfig>, MAX_COMPANIES>> ai; ///< settings per company
+	std::unique_ptr<class GameConfig> game; ///< settings for gamescript
+
+	ScriptConfigSettings();
+	~ScriptConfigSettings();
+
+	ScriptConfigSettings(const ScriptConfigSettings &other);
+	ScriptConfigSettings &operator=(const ScriptConfigSettings &other);
 };
 
 /** All settings together for the game. */
@@ -594,8 +615,7 @@ struct GameSettings {
 	ConstructionSettings construction;       ///< construction of things in-game
 	AISettings           ai;                 ///< what may the AI do?
 	ScriptSettings       script;             ///< settings for scripts
-	class AIConfig      *ai_config[MAX_COMPANIES]; ///< settings per company
-	class GameConfig    *game_config;        ///< settings for gamescript
+	ScriptConfigSettings script_config;      ///< AI and Gamescript configuration.
 	PathfinderSettings   pf;                 ///< settings for all pathfinders
 	OrderSettings        order;              ///< settings related to orders
 	VehicleSettings      vehicle;            ///< options for vehicles

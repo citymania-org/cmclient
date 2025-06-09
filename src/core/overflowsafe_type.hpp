@@ -35,6 +35,8 @@ private:
 	/** The non-overflow safe backend to store the value in. */
 	T m_value;
 public:
+	using BaseType = T;
+
 	constexpr OverflowSafeInt() : m_value(0) { }
 
 	constexpr OverflowSafeInt(const OverflowSafeInt &other) : m_value(other.m_value) { }
@@ -160,24 +162,18 @@ public:
 
 	/* Operators for (in)equality when comparing overflow safe ints. */
 	inline constexpr bool operator == (const OverflowSafeInt& other) const { return this->m_value == other.m_value; }
-	inline constexpr bool operator != (const OverflowSafeInt& other) const { return !(*this == other); }
-	inline constexpr bool operator >  (const OverflowSafeInt& other) const { return this->m_value > other.m_value; }
-	inline constexpr bool operator >= (const OverflowSafeInt& other) const { return this->m_value >= other.m_value; }
-	inline constexpr bool operator <  (const OverflowSafeInt& other) const { return !(*this >= other); }
-	inline constexpr bool operator <= (const OverflowSafeInt& other) const { return !(*this > other); }
+	inline constexpr auto operator <=>(const OverflowSafeInt& other) const { return this->m_value <=> other.m_value; }
 
 	/* Operators for (in)equality when comparing non-overflow safe ints. */
 	inline constexpr bool operator == (const int other) const { return this->m_value == other; }
-	inline constexpr bool operator != (const int other) const { return !(*this == other); }
-	inline constexpr bool operator >  (const int other) const { return this->m_value > other; }
-	inline constexpr bool operator >= (const int other) const { return this->m_value >= other; }
-	inline constexpr bool operator <  (const int other) const { return !(*this >= other); }
-	inline constexpr bool operator <= (const int other) const { return !(*this > other); }
+	inline constexpr auto operator <=>(const int other) const { return this->m_value <=> other; }
 
 	inline constexpr operator T () const { return this->m_value; }
 
 	static inline constexpr OverflowSafeInt<T> max() { return T_MAX; }
 	static inline constexpr OverflowSafeInt<T> min() { return T_MIN; }
+
+	BaseType base() const noexcept { return this->m_value; }
 };
 
 

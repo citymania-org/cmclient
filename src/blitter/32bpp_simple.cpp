@@ -37,40 +37,40 @@ void Blitter_32bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 
 		for (int x = 0; x < bp->width; x++) {
 			switch (mode) {
-				case BM_COLOUR_REMAP:
+				case BlitterMode::ColourRemap:
 					/* In case the m-channel is zero, do not remap this pixel in any way */
 					if (src->m == 0) {
 						if (src->a != 0) *dst = ComposeColourRGBA(src->r, src->g, src->b, src->a, *dst);
 					} else {
-						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(this->AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
+						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
 					}
 					break;
 
-				case BM_CRASH_REMAP:
+				case BlitterMode::CrashRemap:
 					if (src->m == 0) {
 						if (src->a != 0) {
 							uint8_t g = MakeDark(src->r, src->g, src->b);
 							*dst = ComposeColourRGBA(g, g, g, src->a, *dst);
 						}
 					} else {
-						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(this->AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
+						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
 					}
 					break;
 
-				case BM_BLACK_REMAP:
+				case BlitterMode::BlackRemap:
 					if (src->a != 0) {
 						*dst = Colour(0, 0, 0);
 					}
 					break;
 
-				case BM_TRANSPARENT:
+				case BlitterMode::Transparent:
 					/* Make the current colour a bit more black, so it looks like this image is transparent */
 					if (src->a != 0) {
 						*dst = MakeTransparent(*dst, 192);
 					}
 					break;
 
-				case BM_TRANSPARENT_REMAP:
+				case BlitterMode::TransparentRemap:
 					/* Apply custom transparency remap. */
 					if (src->a != 0) {
 						*dst = this->LookupColourInPalette(bp->remap[GetNearestColourIndex(*dst)]);
@@ -145,7 +145,7 @@ Sprite *Blitter_32bppSimple::Encode(const SpriteLoader::SpriteCollection &sprite
 			dst[i].v = rgb_max;
 
 			/* Pre-convert the mapping channel to a RGB value */
-			Colour colour = this->AdjustBrightness(this->LookupColourInPalette(src->m), dst[i].v);
+			Colour colour = AdjustBrightness(this->LookupColourInPalette(src->m), dst[i].v);
 			dst[i].r = colour.r;
 			dst[i].g = colour.g;
 			dst[i].b = colour.b;

@@ -25,13 +25,14 @@ static const uint SQUIRREL_MAX_DEPTH = 25; ///< The maximum recursive depth for 
 class ScriptInstance {
 private:
 	/** The type of the data that follows in the savegame. */
-	enum SQSaveLoadType {
+	enum SQSaveLoadType : uint8_t {
 		SQSL_INT             = 0x00, ///< The following data is an integer.
 		SQSL_STRING          = 0x01, ///< The following data is an string.
 		SQSL_ARRAY           = 0x02, ///< The following data is an array.
 		SQSL_TABLE           = 0x03, ///< The following data is an table.
 		SQSL_BOOL            = 0x04, ///< The following data is a boolean.
 		SQSL_NULL            = 0x05, ///< A null variable.
+		SQSL_INSTANCE        = 0x06, ///< The following data is an instance.
 		SQSL_ARRAY_TABLE_END = 0xFF, ///< Marks the end of an array or table, no data follows.
 	};
 
@@ -251,8 +252,8 @@ public:
 	void ReleaseSQObject(HSQOBJECT *obj);
 
 protected:
-	class Squirrel *engine;               ///< A wrapper around the squirrel vm.
-	std::string versionAPI;               ///< Current API used by this script.
+	class Squirrel *engine = nullptr; ///< A wrapper around the squirrel vm.
+	std::string api_version{}; ///< Current API used by this script.
 
 	/**
 	 * Register all API functions to the VM.
@@ -261,11 +262,11 @@ protected:
 
 	/**
 	 * Load squirrel scripts to emulate an older API.
-	 * @param api_version: API version to load scripts for
-	 * @param dir Subdirectory to find the scripts in
-	 * @return true iff script loading should proceed
+	 * @param dir Subdirectory to find the scripts in.
+	 * @param api_versions List of available versions of the script type.
+	 * @return true iff script loading should proceed.
 	 */
-	bool LoadCompatibilityScripts(const std::string &api_version, Subdirectory dir);
+	bool LoadCompatibilityScripts(Subdirectory dir, std::span<const std::string_view> api_versions);
 
 	/**
 	 * Tell the script it died.
@@ -283,24 +284,32 @@ protected:
 	virtual void LoadDummyScript() = 0;
 
 private:
-	class ScriptController *controller;   ///< The script main class.
-	class ScriptStorage *storage;         ///< Some global information for each running script.
-	SQObject *instance;                   ///< Squirrel-pointer to the script main class.
+	class ScriptController *controller = nullptr; ///< The script main class.
+	class ScriptStorage *storage = nullptr; ///< Some global information for each running script.
+	SQObject *instance = nullptr; ///< Squirrel-pointer to the script main class.
 
-	bool is_started;                      ///< Is the scripts constructor executed?
-	bool is_dead;                         ///< True if the script has been stopped.
-	bool is_save_data_on_stack;           ///< Is the save data still on the squirrel stack?
-	int suspend;                          ///< The amount of ticks to suspend this script before it's allowed to continue.
-	bool is_paused;                       ///< Is the script paused? (a paused script will not be executed until unpaused)
-	bool in_shutdown;                     ///< Is this instance currently being destructed?
-	Script_SuspendCallbackProc *callback; ///< Callback that should be called in the next tick the script runs.
-	size_t last_allocated_memory;         ///< Last known allocated memory value (for display for crashed scripts)
+	bool is_started = false; ///< Is the scripts constructor executed?
+	bool is_dead = false; ///< True if the script has been stopped.
+	bool is_save_data_on_stack = false; ///< Is the save data still on the squirrel stack?
+	int suspend = 0; ///< The amount of ticks to suspend this script before it's allowed to continue.
+	bool is_paused = false; ///< Is the script paused? (a paused script will not be executed until unpaused)
+	bool in_shutdown = false; ///< Is this instance currently being destructed?
+	Script_SuspendCallbackProc *callback = nullptr; ///< Callback that should be called in the next tick the script runs.
+	size_t last_allocated_memory = 0; ///< Last known allocated memory value (for display for crashed scripts)
 
 	/**
 	 * Call the script Load function if it exists and data was loaded
 	 *  from a savegame.
 	 */
 	bool CallLoad();
+
+	/**
+	 * Load squirrel script for a specific version to emulate an older API.
+	 * @param api_version: API version to load scripts for.
+	 * @param dir Subdirectory to find the scripts in.
+	 * @return true iff script loading should proceed.
+	 */
+	bool LoadCompatibilityScript(std::string_view api_version, Subdirectory dir);
 
 	/**
 	 * Save one object (int / string / array / table) to the savegame.

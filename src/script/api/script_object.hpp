@@ -84,6 +84,22 @@ protected:
 		static ScriptInstance *active;  ///< The global current active instance.
 	};
 
+	/**
+	 * Save this object.
+	 * Must push 2 elements on the stack:
+	 *  - the name (classname without "Script") of the object (OT_STRING)
+	 *  - the data for the object (any supported types)
+	 * @return True iff saving this type is supported.
+	 */
+	virtual bool SaveObject(HSQUIRRELVM) { return false; }
+
+	/**
+	 * Load this object.
+	 * The data for the object must be pushed on the stack before the call.
+	 * @return True iff loading this type is supported.
+	 */
+	virtual bool LoadObject(HSQUIRRELVM) { return false; }
+
 public:
 	/**
 	 * Store the latest result of a DoCommand per company.
@@ -116,7 +132,7 @@ public:
 	static void InitializeRandomizers();
 
 protected:
-	template<Commands TCmd, typename T> struct ScriptDoCommandHelper;
+	template <Commands TCmd, typename T> struct ScriptDoCommandHelper;
 
 	/**
 	 * Templated wrapper that exposes the command parameter arguments
@@ -126,7 +142,7 @@ protected:
 	 * @tparam Targs The command parameter types.
 	 */
 	template <Commands Tcmd, typename Tret, typename... Targs>
-	struct ScriptDoCommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...)> {
+	struct ScriptDoCommandHelper<Tcmd, Tret(*)(DoCommandFlags, Targs...)> {
 		static bool Do(Script_SuspendCallbackProc *callback, Targs... args)
 		{
 			return Execute(callback, std::forward_as_tuple(args...));
@@ -269,21 +285,21 @@ protected:
 	 *  information about.
 	 * @param company The new company.
 	 */
-	static void SetCompany(CompanyID company);
+	static void SetCompany(::CompanyID company);
 
 	/**
 	 * Get the current company we are executing commands for or
 	 *  requesting information about.
 	 * @return The current company.
 	 */
-	static CompanyID GetCompany();
+	static ::CompanyID GetCompany();
 
 	/**
 	 * Get the root company, the company that the script really
 	 *  runs under / for.
 	 * @return The root company.
 	 */
-	static CompanyID GetRootCompany();
+	static ::CompanyID GetRootCompany();
 
 	/**
 	 * Set the cost of the last command.
@@ -320,17 +336,13 @@ protected:
 	 */
 	static ScriptLogTypes::LogData &GetLogData();
 
-	/**
-	 * Get an allocated string with all control codes stripped off.
-	 */
-	static std::string GetString(StringID string);
-
 private:
 	/* Helper functions for DoCommand. */
 	static std::tuple<bool, bool, bool, bool> DoCommandPrep();
 	static bool DoCommandProcessResult(const CommandCost &res, Script_SuspendCallbackProc *callback, bool estimate_only, bool asynchronous);
 	static CommandCallbackData *GetDoCommandCallback();
-	static Randomizer random_states[OWNER_END]; ///< Random states for each of the scripts (game script uses OWNER_DEITY)
+	using RandomizerArray = ReferenceThroughBaseContainer<std::array<Randomizer, OWNER_END.base()>>;
+	static RandomizerArray random_states; ///< Random states for each of the scripts (game script uses OWNER_DEITY)
 };
 
 namespace ScriptObjectInternal {
@@ -341,12 +353,12 @@ namespace ScriptObjectInternal {
 		if constexpr (std::is_same_v<std::string, T>) {
 			/* The string must be valid, i.e. not contain special codes. Since some
 			 * can be made with GSText, make sure the control codes are removed. */
-			data = ::StrMakeValid(data, SVS_NONE);
+			::StrMakeValidInPlace(data, {});
 		}
 	}
 
 	/** Helper function to perform validation on command data strings. */
-	template<class Ttuple, size_t... Tindices>
+	template <class Ttuple, size_t... Tindices>
 	static inline void SanitizeStringsHelper(Ttuple &values, std::index_sequence<Tindices...>)
 	{
 		((SanitizeSingleStringHelper(std::get<Tindices>(values))), ...);
@@ -362,7 +374,7 @@ namespace ScriptObjectInternal {
 	}
 
 	/** Set all invalid ClientID's to the proper value. */
-	template<class Ttuple, size_t... Tindices>
+	template <class Ttuple, size_t... Tindices>
 	static inline void SetClientIds(Ttuple &values, std::index_sequence<Tindices...>)
 	{
 		((SetClientIdHelper(std::get<Tindices>(values))), ...);
@@ -377,12 +389,12 @@ namespace ScriptObjectInternal {
 }
 
 template <Commands Tcmd, typename Tret, typename... Targs>
-bool ScriptObject::ScriptDoCommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...)>::Execute(Script_SuspendCallbackProc *callback, std::tuple<Targs...> args)
+bool ScriptObject::ScriptDoCommandHelper<Tcmd, Tret(*)(DoCommandFlags, Targs...)>::Execute(Script_SuspendCallbackProc *callback, std::tuple<Targs...> args)
 {
 	auto [err, estimate_only, asynchronous, networking] = ScriptObject::DoCommandPrep();
 	if (err) return false;
 
-	if ((::GetCommandFlags<Tcmd>() & CMD_STR_CTRL) == 0) {
+	if (!::GetCommandFlags<Tcmd>().Test(CommandFlag::StrCtrl)) {
 		ScriptObjectInternal::SanitizeStringsHelper(args, std::index_sequence_for<Targs...>{});
 	}
 
@@ -392,16 +404,16 @@ bool ScriptObject::ScriptDoCommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...)>
 	}
 
 	/* Do not even think about executing out-of-bounds tile-commands. */
-	if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && (GetCommandFlags<Tcmd>() & CMD_ALL_TILES) == 0))) return false;
+	if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && !GetCommandFlags<Tcmd>().Test(CommandFlag::AllTiles)))) return false;
 
 	/* Only set ClientID parameters when the command does not come from the network. */
-	if constexpr ((::GetCommandFlags<Tcmd>() & CMD_CLIENT_ID) != 0) ScriptObjectInternal::SetClientIds(args, std::index_sequence_for<Targs...>{});
+	if constexpr (::GetCommandFlags<Tcmd>().Test(CommandFlag::ClientID)) ScriptObjectInternal::SetClientIds(args, std::index_sequence_for<Targs...>{});
 
 	/* Store the command for command callback validation. */
 	if (!estimate_only && networking) ScriptObject::SetLastCommand(EndianBufferWriter<CommandDataBuffer>::FromValue(args), Tcmd);
 
 	/* Try to perform the command. */
-	Tret res = ::Command<Tcmd>::Unsafe((StringID)0, networking ? ScriptObject::GetDoCommandCallback() : nullptr, false, estimate_only, tile, args);
+	Tret res = ::Command<Tcmd>::Unsafe((StringID)0, (!asynchronous && networking) ? ScriptObject::GetDoCommandCallback() : nullptr, false, estimate_only, tile, args);
 
 	if constexpr (std::is_same_v<Tret, CommandCost>) {
 		return ScriptObject::DoCommandProcessResult(res, callback, estimate_only, asynchronous);

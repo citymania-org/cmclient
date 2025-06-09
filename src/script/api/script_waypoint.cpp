@@ -24,8 +24,7 @@
 
 /* static */ StationID ScriptWaypoint::GetWaypointID(TileIndex tile)
 {
-	if (!ScriptRail::IsRailWaypointTile(tile) && !ScriptMarine::IsBuoyTile(tile)) return STATION_INVALID;
-
+	if (!::IsValidTile(tile) || !::IsTileType(tile, MP_STATION) || ::Waypoint::GetByTile(tile) == nullptr) return StationID::Invalid();
 	return ::GetStationIndex(tile);
 }
 
@@ -34,5 +33,5 @@
 	if (!IsValidWaypoint(waypoint_id)) return false;
 	if (!HasExactlyOneBit(waypoint_type)) return false;
 
-	return (::Waypoint::Get(waypoint_id)->facilities & static_cast<StationFacility>(waypoint_type)) != 0;
+	return ::Waypoint::Get(waypoint_id)->facilities.Any(static_cast<StationFacilities>(waypoint_type));
 }

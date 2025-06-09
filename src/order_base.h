@@ -20,8 +20,8 @@
 #include "timer/timer_game_tick.h"
 #include "saveload/saveload.h"
 
-typedef Pool<Order, OrderID, 256, 0xFF0000> OrderPool;
-typedef Pool<OrderList, OrderListID, 128, 64000> OrderListPool;
+using OrderPool = Pool<Order, OrderID, 256>;
+using OrderListPool = Pool<OrderList, OrderListID, 128>;
 extern OrderPool _order_pool;
 extern OrderListPool _orderlist_pool;
 
@@ -47,9 +47,9 @@ private:
 
 	uint8_t type = 0; ///< The type of order + non-stop flags
 	uint8_t flags = 0; ///< Load/unload types, depot order/action types.
-	DestinationID dest = 0; ///< The destination of the order.
+	DestinationID dest{}; ///< The destination of the order.
 
-	CargoID refit_cargo = CARGO_NO_REFIT; ///< Refit CargoID
+	CargoType refit_cargo = CARGO_NO_REFIT; ///< Refit CargoType
 
 	uint16_t wait_time = 0; ///< How long in ticks to wait at the destination.
 	uint16_t travel_time = 0; ///< How long in ticks the journey to this destination should take.
@@ -78,7 +78,7 @@ public:
 	void Free();
 
 	void MakeGoToStation(StationID destination);
-	void MakeGoToDepot(DepotID destination, OrderDepotTypeFlags order, OrderNonStopFlags non_stop_type = ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS, OrderDepotActionFlags action = ODATF_SERVICE_ONLY, CargoID cargo = CARGO_NO_REFIT);
+	void MakeGoToDepot(DestinationID destination, OrderDepotTypeFlags order, OrderNonStopFlags non_stop_type = ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS, OrderDepotActionFlags action = ODATF_SERVICE_ONLY, CargoType cargo = CARGO_NO_REFIT);
 	void MakeGoToWaypoint(StationID destination);
 	void MakeLoading(bool ordered);
 	void MakeLeaveStation();
@@ -128,9 +128,9 @@ public:
 	 * @pre IsType(OT_GOTO_DEPOT) || IsType(OT_GOTO_STATION)
 	 * @return the cargo type.
 	 */
-	inline CargoID GetRefitCargo() const { return this->refit_cargo; }
+	inline CargoType GetRefitCargo() const { return this->refit_cargo; }
 
-	void SetRefit(CargoID cargo);
+	void SetRefit(CargoType cargo);
 
 	/** How must the consist be loaded? */
 	inline OrderLoadFlags GetLoadType() const { return (OrderLoadFlags)GB(this->flags, 4, 3); }
@@ -145,13 +145,13 @@ public:
 	/** What are we going to do when in the depot. */
 	inline OrderDepotActionFlags GetDepotActionType() const { return (OrderDepotActionFlags)GB(this->flags, 3, 4); }
 	/** What variable do we have to compare? */
-	inline OrderConditionVariable GetConditionVariable() const { return (OrderConditionVariable)GB(this->dest, 11, 5); }
+	inline OrderConditionVariable GetConditionVariable() const { return static_cast<OrderConditionVariable>(GB(this->dest.value, 11, 5)); }
 	/** What is the comparator to use? */
 	inline OrderConditionComparator GetConditionComparator() const { return (OrderConditionComparator)GB(this->type, 5, 3); }
 	/** Get the order to skip to. */
 	inline VehicleOrderID GetConditionSkipToOrder() const { return this->flags; }
 	/** Get the value to base the skip on. */
-	inline uint16_t GetConditionValue() const { return GB(this->dest, 0, 11); }
+	inline uint16_t GetConditionValue() const { return GB(this->dest.value, 0, 11); }
 
 	/** Set how the consist must be loaded. */
 	inline void SetLoadType(OrderLoadFlags load_type) { SB(this->flags, 4, 3, load_type); }
@@ -166,13 +166,13 @@ public:
 	/** Set what we are going to do in the depot. */
 	inline void SetDepotActionType(OrderDepotActionFlags depot_service_type) { SB(this->flags, 3, 4, depot_service_type); }
 	/** Set variable we have to compare. */
-	inline void SetConditionVariable(OrderConditionVariable condition_variable) { SB(this->dest, 11, 5, condition_variable); }
+	inline void SetConditionVariable(OrderConditionVariable condition_variable) { SB(this->dest.value, 11, 5, condition_variable); }
 	/** Set the comparator to use. */
 	inline void SetConditionComparator(OrderConditionComparator condition_comparator) { SB(this->type, 5, 3, condition_comparator); }
 	/** Get the order to skip to. */
 	inline void SetConditionSkipToOrder(VehicleOrderID order_id) { this->flags = order_id; }
 	/** Set the value to base the skip on. */
-	inline void SetConditionValue(uint16_t value) { SB(this->dest, 0, 11, value); }
+	inline void SetConditionValue(uint16_t value) { SB(this->dest.value, 0, 11, value); }
 
 	/* As conditional orders write their "skip to" order all over the flags, we cannot check the
 	 * flags to find out if timetabling is enabled. However, as conditional orders are never
@@ -244,7 +244,6 @@ public:
 	void AssignOrder(const Order &other);
 	bool Equals(const Order &other) const;
 
-	uint32_t Pack() const;
 	uint16_t MapOldOrder() const;
 	void ConvertFromOldSavegame();
 };
@@ -261,20 +260,18 @@ private:
 	friend void AfterLoadVehiclesPhase1(bool part_of_load); ///< For instantiating the shared vehicle chain
 	friend SaveLoadTable GetOrderListDescription(); ///< Saving and loading of order lists.
 
-	VehicleOrderID num_orders;        ///< NOSAVE: How many orders there are in the list.
-	VehicleOrderID num_manual_orders; ///< NOSAVE: How many manually added orders are there in the list.
-	uint num_vehicles;                ///< NOSAVE: Number of vehicles that share this order list.
-	Vehicle *first_shared;            ///< NOSAVE: pointer to the first vehicle in the shared order chain.
-	Order *first;                     ///< First order of the order list.
+	VehicleOrderID num_orders = INVALID_VEH_ORDER_ID; ///< NOSAVE: How many orders there are in the list.
+	VehicleOrderID num_manual_orders = 0; ///< NOSAVE: How many manually added orders are there in the list.
+	uint num_vehicles = 0; ///< NOSAVE: Number of vehicles that share this order list.
+	Vehicle *first_shared = nullptr; ///< NOSAVE: pointer to the first vehicle in the shared order chain.
+	Order *first = nullptr; ///< First order of the order list.
 
-	TimerGameTick::Ticks timetable_duration;         ///< NOSAVE: Total timetabled duration of the order list.
-	TimerGameTick::Ticks total_duration;             ///< NOSAVE: Total (timetabled or not) duration of the order list.
+	TimerGameTick::Ticks timetable_duration{}; ///< NOSAVE: Total timetabled duration of the order list.
+	TimerGameTick::Ticks total_duration{}; ///< NOSAVE: Total (timetabled or not) duration of the order list.
 
 public:
 	/** Default constructor producing an invalid order list. */
-	OrderList(VehicleOrderID num_orders = INVALID_VEH_ORDER_ID)
-		: num_orders(num_orders), num_manual_orders(0), num_vehicles(0), first_shared(nullptr), first(nullptr),
-		  timetable_duration(0), total_duration(0) { }
+	OrderList(VehicleOrderID num_orders = INVALID_VEH_ORDER_ID) : num_orders(num_orders) { }
 
 	/**
 	 * Create an order list with the given order chain for the given vehicle.

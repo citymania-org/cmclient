@@ -45,8 +45,8 @@
 {
 	if (!IsValidIndustryType(industry_type)) return false;
 
-	if (_settings_game.game_creation.landscape != LT_TEMPERATE) return true;
-	return (::GetIndustrySpec(industry_type)->behaviour & INDUSTRYBEH_DONT_INCR_PROD) == 0;
+	if (_settings_game.game_creation.landscape != LandscapeType::Temperate) return true;
+	return !::GetIndustrySpec(industry_type)->behaviour.Test(IndustryBehaviour::DontIncrProd);
 }
 
 /* static */ Money ScriptIndustryType::GetConstructionCost(IndustryType industry_type)
@@ -61,7 +61,7 @@
 {
 	if (!IsValidIndustryType(industry_type)) return std::nullopt;
 
-	return GetString(::GetIndustrySpec(industry_type)->name);
+	return ::StrMakeValid(::GetString(::GetIndustrySpec(industry_type)->name));
 }
 
 /* static */ ScriptList *ScriptIndustryType::GetProducedCargo(IndustryType industry_type)
@@ -71,8 +71,8 @@
 	const IndustrySpec *ins = ::GetIndustrySpec(industry_type);
 
 	ScriptList *list = new ScriptList();
-	for (const CargoID &c : ins->produced_cargo) {
-		if (::IsValidCargoID(c)) list->AddItem(c);
+	for (const CargoType &cargo : ins->produced_cargo) {
+		if (::IsValidCargoType(cargo)) list->AddItem(cargo);
 	}
 
 	return list;
@@ -85,8 +85,8 @@
 	const IndustrySpec *ins = ::GetIndustrySpec(industry_type);
 
 	ScriptList *list = new ScriptList();
-	for (const CargoID &c : ins->accepts_cargo) {
-		if (::IsValidCargoID(c)) list->AddItem(c);
+	for (const CargoType &cargo : ins->accepts_cargo) {
+		if (::IsValidCargoType(cargo)) list->AddItem(cargo);
 	}
 
 	return list;
@@ -134,34 +134,34 @@
 	EnforcePrecondition(false, CanProspectIndustry(industry_type));
 
 	uint32_t seed = ScriptBase::Rand();
-	return ScriptObject::Command<CMD_BUILD_INDUSTRY>::Do(0, industry_type, 0, false, seed);
+	return ScriptObject::Command<CMD_BUILD_INDUSTRY>::Do(TileIndex{}, industry_type, 0, false, seed);
 }
 
 /* static */ bool ScriptIndustryType::IsBuiltOnWater(IndustryType industry_type)
 {
 	if (!IsValidIndustryType(industry_type)) return false;
 
-	return (::GetIndustrySpec(industry_type)->behaviour & INDUSTRYBEH_BUILT_ONWATER) != 0;
+	return ::GetIndustrySpec(industry_type)->behaviour.Test(IndustryBehaviour::BuiltOnWater);
 }
 
 /* static */ bool ScriptIndustryType::HasHeliport(IndustryType industry_type)
 {
 	if (!IsValidIndustryType(industry_type)) return false;
 
-	return (::GetIndustrySpec(industry_type)->behaviour & INDUSTRYBEH_AI_AIRSHIP_ROUTES) != 0;
+	return ::GetIndustrySpec(industry_type)->behaviour.Test(IndustryBehaviour::AIAirShipRoutes);
 }
 
 /* static */ bool ScriptIndustryType::HasDock(IndustryType industry_type)
 {
 	if (!IsValidIndustryType(industry_type)) return false;
 
-	return (::GetIndustrySpec(industry_type)->behaviour & INDUSTRYBEH_AI_AIRSHIP_ROUTES) != 0;
+	return ::GetIndustrySpec(industry_type)->behaviour.Test(IndustryBehaviour::AIAirShipRoutes);
 }
 
 /* static */ IndustryType ScriptIndustryType::ResolveNewGRFID(SQInteger grfid, SQInteger grf_local_id)
 {
-	EnforcePrecondition(INVALID_INDUSTRYTYPE, IsInsideBS(grf_local_id, 0x00, NUM_INDUSTRYTYPES_PER_GRF));
+	EnforcePrecondition(IT_INVALID, IsInsideBS(grf_local_id, 0x00, NUM_INDUSTRYTYPES_PER_GRF));
 
-	grfid = BSWAP32(GB(grfid, 0, 32)); // Match people's expectations.
+	grfid = std::byteswap(GB(grfid, 0, 32)); // Match people's expectations.
 	return _industry_mngr.GetID(grf_local_id, grfid);
 }

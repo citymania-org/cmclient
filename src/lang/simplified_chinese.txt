@@ -301,10 +301,10 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}显示�
 STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}显示隐藏载具
 
 ###length VEHICLE_TYPES
-STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP                   :{BLACK}如启用此按键，被隐藏的铁路列车也会被显示出来
-STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE_TOOLTIP            :{BLACK}如启用此按键，被隐藏的路面车辆也会被显示出来
-STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP_TOOLTIP                    :{BLACK}如启用此按键，被隐藏的船舶也会被显示出来
-STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}如启用此按键，被隐藏的飞机也会被显示出来
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP                   :{BLACK}启用时将显示已隐藏的机车或车厢
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE_TOOLTIP            :{BLACK}启用时将显示已隐藏的路面车辆
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP_TOOLTIP                    :{BLACK}启用时将显示已隐藏的船舶
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}启用时将显示已隐藏的飞机
 
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}默认
@@ -337,26 +337,26 @@ STR_SORT_BY_PROFIT_THIS_YEAR                                    :今年损益
 STR_SORT_BY_PROFIT_THIS_PERIOD                                  :本期损益
 STR_SORT_BY_AGE                                                 :年龄
 STR_SORT_BY_RELIABILITY                                         :可靠性
-STR_SORT_BY_TOTAL_CAPACITY_PER_CARGOTYPE                        :每种货物的总装载能力
+STR_SORT_BY_TOTAL_CAPACITY_PER_CARGOTYPE                        :总容量，依货物种类排序
 STR_SORT_BY_MAX_SPEED                                           :最大速度
 STR_SORT_BY_MODEL                                               :型号
 STR_SORT_BY_VALUE                                               :价值
 STR_SORT_BY_LENGTH                                              :长度
-STR_SORT_BY_LIFE_TIME                                           :剩余寿命年限
+STR_SORT_BY_LIFE_TIME                                           :剩余年限
 STR_SORT_BY_TIMETABLE_DELAY                                     :晚点
 STR_SORT_BY_FACILITY                                            :车站类型
 STR_SORT_BY_WAITING_TOTAL                                       :等候中的货物总量
 STR_SORT_BY_WAITING_AVAILABLE                                   :等候中的可运载货物总量
 STR_SORT_BY_RATING_MAX                                          :车站中最高的货物评价
 STR_SORT_BY_RATING_MIN                                          :车站中最低的货物评价
-STR_SORT_BY_ENGINE_ID                                           :引擎编号
+STR_SORT_BY_ENGINE_ID                                           :引擎编号（默认）
 STR_SORT_BY_COST                                                :售价
 STR_SORT_BY_POWER                                               :功率
 STR_SORT_BY_TRACTIVE_EFFORT                                     :牵引力
 STR_SORT_BY_INTRO_DATE                                          :面世日期
 STR_SORT_BY_RUNNING_COST                                        :运行费用
-STR_SORT_BY_POWER_VS_RUNNING_COST                               :功率/运行费用 比值
-STR_SORT_BY_CARGO_CAPACITY                                      :运载能力
+STR_SORT_BY_POWER_VS_RUNNING_COST                               :功率/运行费用
+STR_SORT_BY_CARGO_CAPACITY                                      :货物容量
 STR_SORT_BY_RANGE                                               :航行距离
 STR_SORT_BY_POPULATION                                          :人口
 STR_SORT_BY_RATING                                              :评价
@@ -375,7 +375,7 @@ STR_GROUP_BY_NONE                                               :无
 STR_GROUP_BY_SHARED_ORDERS                                      :共享调度计划
 
 # Order button in shared orders vehicle list
-STR_GOTO_ORDER_VIEW                                             :{BLACK}命令
+STR_GOTO_ORDER_VIEW                                             :{BLACK}调度计划
 STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}打开调度计划视图
 
 # Tooltips for the main toolbar
@@ -413,21 +413,21 @@ STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}查询�
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}切换工具栏
 
 # Extra tooltips for the scenario editor toolbar
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SAVE_SCENARIO_LOAD_SCENARIO        :{BLACK}保存场景，读取场景，放弃场景，退出
+STR_SCENEDIT_TOOLBAR_SAVE_SCENARIO_LOAD_SCENARIO_TOOLTIP        :{BLACK}保存场景、读取场景、放弃场景、退出
 STR_SCENEDIT_TOOLBAR_OPENTTD                                    :{YELLOW}OpenTTD
 STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR                            :{YELLOW}场景编辑器
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD    :{BLACK}将开始年份向前调整 1 年
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD     :{BLACK}将开始年份向后调整 1 年
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE                           :{BLACK}点击输入开始年份
-STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK}显示地图、视点、标志、城镇或工业菜单
-STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}修改或生成地形
-STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}城镇生成
-STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}建造或生成工业
-STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}建设公路设施
-STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}建设电车设施
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}种植树木。按住 <Ctrl> 以沿对角线建造。按住 <Shift> 键以显示预计费用
-STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}放置标志
-STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}放置物件。按住 <Ctrl> 以沿对角线放置，按住 <Shift> 以显示预计费用
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_BACKWARD_TOOLTIP    :{BLACK}将开始年份向前调整 1 年
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_FORWARD_TOOLTIP     :{BLACK}将开始年份向后调整 1 年
+STR_SCENEDIT_TOOLBAR_SET_DATE_TOOLTIP                           :{BLACK}点击输入开始年份
+STR_SCENEDIT_TOOLBAR_DISPLAY_MAP_TOWN_DIRECTORY_TOOLTIP         :{BLACK}显示地图、视点、标志、城镇或工业菜单
+STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION_TOOLTIP               :{BLACK}修改或生成地形
+STR_SCENEDIT_TOOLBAR_TOWN_GENERATION_TOOLTIP                    :{BLACK}城镇生成
+STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION_TOOLTIP                :{BLACK}建造或生成工业
+STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION_TOOLTIP                  :{BLACK}建设公路设施
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION_TOOLTIP                  :{BLACK}建设电车设施
+STR_SCENEDIT_TOOLBAR_PLANT_TREES_TOOLTIP                        :{BLACK}种植树木。按住 <Ctrl> 以沿对角线建造。按住 <Shift> 键以显示预计费用
+STR_SCENEDIT_TOOLBAR_PLACE_SIGN_TOOLTIP                         :{BLACK}放置标志
+STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP                       :{BLACK}放置物件。按住 <Ctrl> 以沿对角线放置，按住 <Shift> 以显示预计费用
 
 # Scenario editor file menu
 ###length 7
@@ -443,7 +443,6 @@ STR_SCENEDIT_TOWN_MENU_BUILD_TOWN                               :生成城镇
 STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :放置房屋
 
 # Settings menu
-###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :游戏选项
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :设置
 STR_SETTINGS_MENU_AI_SETTINGS                                   :AI 设置
@@ -453,6 +452,12 @@ STR_SETTINGS_MENU_SANDBOX_OPTIONS                               :沙盒选项
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :透明选项
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :显示城镇名称
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :显示车站名称
+STR_SETTINGS_MENU_STATION_NAMES_TRAIN                           :火车站
+STR_SETTINGS_MENU_STATION_NAMES_LORRY                           :货车站
+STR_SETTINGS_MENU_STATION_NAMES_BUS                             :汽车站
+STR_SETTINGS_MENU_STATION_NAMES_SHIP                            :码头
+STR_SETTINGS_MENU_STATION_NAMES_PLANE                           :机场
+STR_SETTINGS_MENU_STATION_NAMES_GHOST                           :无类型
 STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :显示路点
 STR_SETTINGS_MENU_SIGNS_DISPLAYED                               :显示标志
 STR_SETTINGS_MENU_SHOW_COMPETITOR_SIGNS                         :显示其他公司放置的标志
@@ -676,7 +681,7 @@ STR_PERFORMANCE_DETAIL_TOTAL                                    :{BLACK}总表�
 
 STR_PERFORMANCE_DETAIL_VEHICLES_TOOLTIP_YEARS                   :{BLACK}去年盈利的载具数量，包括公路载具、列车、船舶和飞机
 STR_PERFORMANCE_DETAIL_VEHICLES_TOOLTIP_PERIODS                 :上期盈利的载具数量，包括公路载具、列车、船舶和飞机
-STR_PERFORMANCE_DETAIL_STATIONS_TOOLTIP                         :{BLACK}最近仍然使用的车站组件数量。车站的每个组件（火车站、公交站、机场）即使是连接成为一个车站，也会被独立计数
+STR_PERFORMANCE_DETAIL_STATIONS_TOOLTIP                         :{BLACK}活跃车站数量。同一车站若包含多种交通站台仍将分别计数
 STR_PERFORMANCE_DETAIL_MIN_PROFIT_TOOLTIP_YEARS                 :{BLACK}收入最低的载具的利润（只考虑年龄超过两年的载具）
 STR_PERFORMANCE_DETAIL_MIN_PROFIT_TOOLTIP_PERIODS               :{BLACK}收入最低的载具的损益（只计算年龄超过两年的载具）
 STR_PERFORMANCE_DETAIL_MIN_INCOME_TOOLTIP                       :{BLACK}在过去 12 个季度中{}利润最少的季度的现金收入
@@ -700,7 +705,7 @@ STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLA
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
-STR_MUSIC_TITLE_NOMUSIC                                         :{TINY_FONT}{DKGREEN}没有可用的音乐包
+STR_MUSIC_TITLE_NOMUSIC                                         :{TINY_FONT}{DKGREEN}没有可用的音乐
 STR_MUSIC_TITLE_NAME                                            :{TINY_FONT}{DKGREEN}"{STRING}"
 STR_MUSIC_TRACK                                                 :{TINY_FONT}{BLACK}音轨
 STR_MUSIC_XTITLE                                                :{TINY_FONT}{BLACK}乐曲主题
@@ -760,12 +765,12 @@ STR_SMALLMAP_TYPE_VEGETATION                                    :植被
 STR_SMALLMAP_TYPE_OWNERS                                        :所有者
 
 STR_SMALLMAP_TOOLTIP_SHOW_LAND_CONTOURS_ON_MAP                  :{BLACK}在地图上显示等高线
-STR_SMALLMAP_TOOLTIP_SHOW_VEHICLES_ON_MAP                       :{BLACK}显示地图上的载具
+STR_SMALLMAP_TOOLTIP_SHOW_VEHICLES_ON_MAP                       :{BLACK}在地图上显示载具
 STR_SMALLMAP_TOOLTIP_SHOW_INDUSTRIES_ON_MAP                     :{BLACK}在地图上显示工业
 STR_SMALLMAP_TOOLTIP_SHOW_LINK_STATS_ON_MAP                     :{BLACK}在地图上显示客货流
 STR_SMALLMAP_TOOLTIP_SHOW_TRANSPORT_ROUTES_ON                   :{BLACK}在地图上显示运输路线
 STR_SMALLMAP_TOOLTIP_SHOW_VEGETATION_ON_MAP                     :{BLACK}在地图上显示植被分布
-STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP                    :{BLACK}在地图上显示各公司所属
+STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP                    :{BLACK}在地图上显示土地所有人
 STR_SMALLMAP_TOOLTIP_INDUSTRY_SELECTION                         :{BLACK}点选一种工业以切换是否显示。按住 <Ctrl> 键单击以显示选中的工业种类且隐藏其他所有工业种类。再次按住 <Ctrl> 键点击以显示所有工业种类
 STR_SMALLMAP_TOOLTIP_COMPANY_SELECTION                          :{BLACK}点选一间公司以切换是否显示其属性。按住 <Ctrl> 键单击以显示选中的公司且隐藏其他所有公司。再次按住 <Ctrl> 键点击以显示所有公司
 STR_SMALLMAP_TOOLTIP_CARGO_SELECTION                            :{BLACK}点选一种货物以切换是否显示其属性。按住 <Ctrl> 键单击以显示选中的货物且隐藏其他所有货物。再次按住 <Ctrl> 键点击以显示所有货物
@@ -801,7 +806,7 @@ STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLACK}雪地
 
 STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}切换城镇名称
-STR_SMALLMAP_CENTER                                             :{BLACK}在地图中心点显示当前位置
+STR_SMALLMAP_CENTER_TOOLTIP                                     :{BLACK}在地图中心点显示当前位置
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING}（{NUM}）
 STR_SMALLMAP_LINKSTATS                                          :{TINY_FONT}{STRING}
 STR_SMALLMAP_COMPANY                                            :{TINY_FONT}{COMPANY}
@@ -816,14 +821,14 @@ STR_SMALLMAP_TOOLTIP_SHOW_HEIGHT                                :{BLACK}切换�
 STR_SMALLMAP_TOOLTIP_SHOW_INDUSTRY_NAMES                        :{BLACK}切换工业名称
 STR_SMALLMAP_TOOLTIP_DISABLE_ALL_COMPANIES                      :{BLACK}在地图上不显示任何公司
 STR_SMALLMAP_TOOLTIP_ENABLE_ALL_COMPANIES                       :{BLACK}在地图上显示所有公司
-STR_SMALLMAP_TOOLTIP_DISABLE_ALL_CARGOS                         :{BLACK}地图上不显示客货流
-STR_SMALLMAP_TOOLTIP_ENABLE_ALL_CARGOS                          :{BLACK}地图上显示所有客货流
+STR_SMALLMAP_TOOLTIP_DISABLE_ALL_CARGOS                         :{BLACK}在地图上不显示任何客货流
+STR_SMALLMAP_TOOLTIP_ENABLE_ALL_CARGOS                          :{BLACK}在地图上显示所有客货流
 
 # Status bar messages
 STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS                            :{BLACK}显示最后一条消息或新闻
 STR_STATUSBAR_COMPANY_NAME                                      :{SILVER}- -  {COMPANY}  - -
 STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  已暂停  * *
-STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}* *  已暂停（等待货物分配图更新） * *
+STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}* *  已暂停（等待客货流更新） * *
 STR_STATUSBAR_AUTOSAVE                                          :{RED}自动保存
 STR_STATUSBAR_SAVING_GAME                                       :{RED}* *  保存游戏中  * *
 
@@ -836,7 +841,6 @@ STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}最新�
 STR_MESSAGE_NEWS_FORMAT                                         :{STRING}  -  {STRING}
 
 STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}消息
-STR_NEWS_CUSTOM_ITEM                                            :{BIG_FONT}{BLACK}{STRING}
 
 STR_NEWS_FIRST_TRAIN_ARRIVAL                                    :{BIG_FONT}{BLACK}市民举行庆祝仪式……{}首列火车抵达 {STATION}！
 STR_NEWS_FIRST_BUS_ARRIVAL                                      :{BIG_FONT}{BLACK}市民举行庆祝仪式……{}首辆巴士抵达 {STATION}！
@@ -902,7 +906,7 @@ STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE
 ###next-name-looks-similar
 
 # Order review system / warnings
-STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} 的调度计划太少
+STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} 的命令太少
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE}的调度计划中有无效调度命令
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} 有重复调度命令
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE}的调度计划有无效的车站
@@ -915,7 +919,7 @@ STR_NEWS_TRAIN_IS_STUCK                                         :{WHITE}{VEHICLE
 STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE} 无法找到路线
 STR_NEWS_VEHICLE_UNPROFITABLE_YEAR                              :{WHITE}{VEHICLE} 的去年损益为 {CURRENCY_LONG}
 STR_NEWS_VEHICLE_UNPROFITABLE_PERIOD                            :{WHITE}{VEHICLE} 上期的损益为 {CURRENCY_LONG}
-STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE} 由于航程过远，航班无法到达
+STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE} 由于距离过远而无法到达目的地
 
 STR_NEWS_ORDER_REFIT_FAILED                                     :{WHITE}适配调度计划失败，已终止 {VEHICLE}
 STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}无法自动更新 {VEHICLE}{}{STRING}
@@ -929,14 +933,14 @@ STR_NEWS_SHOW_VEHICLE_GROUP_TOOLTIP                             :{BLACK}打开�
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_LIST                   :{WHITE}{STATION}不再接受：{CARGO_LIST}
 STR_NEWS_STATION_NOW_ACCEPTS_CARGO_LIST                         :{WHITE}{STATION}现在接受：{CARGO_LIST}
 
-STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}财政补贴项目到期：{}{}将 {STRING} 从 {STRING} 运送到 {STRING} 将不再获得财政补贴
-STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}财政补贴项目流标：{}{}将 {STRING} 从 {STRING} 运送到 {STRING} 将不是财政补贴项目
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}财政补贴项目招标：{}{}第一个将 {STRING} 从 {STRING} 运送到 {STRING} 的公司将获得地方政府为期 {UNITS_YEARS_OR_MINUTES} 的财政补贴！
+STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}财政补贴项目到期：{}{}将{STRING}从 {STRING} 运送到 {STRING} 将不再获得财政补贴
+STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}财政补贴项目流标：{}{}将{STRING}从 {STRING} 运送到 {STRING} 将不是财政补贴项目
+STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}财政补贴项目招标：{}{}第一个将{STRING}从 {STRING} 运送到 {STRING} 的公司将获得地方政府为期 {UNITS_YEARS_OR_MINUTES}的财政补贴！
 ###length 4
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} 获得财政补贴！{}{}今后 {4:UNITS_YEARS_OR_MINUTES} 中将 {1:STRING} 从 {2:STRING} 运送到 {3:STRING} 将获得 50% 的额外报酬！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING} 获得财政补贴！{}{}今后 {4:UNITS_YEARS_OR_MINUTES} 中将 {1:STRING} 从 {2:STRING} 运送到 {3:STRING} 将获得双倍的报酬！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING} 获得财政补贴！{}{}今后 {4:UNITS_YEARS_OR_MINUTES} 中将 {1:STRING} 从 {2:STRING} 运送到 {3:STRING} 将获得三倍的报酬！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} 获得财政补贴！{}{}今后 {4:UNITS_YEARS_OR_MINUTES} 中将 {1:STRING} 从 {2:STRING} 运送到 {3:STRING} 将获得四倍的报酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} 获得财政补贴！{}{}今后 {4:UNITS_YEARS_OR_MINUTES}中将 {1:STRING}从 {2:STRING} 运送到 {3:STRING} 将获得 50% 的额外报酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING} 获得财政补贴！{}{}今后 {4:UNITS_YEARS_OR_MINUTES}中将 {1:STRING}从 {2:STRING} 运送到 {3:STRING} 将获得双倍的报酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING} 获得财政补贴！{}{}今后 {4:UNITS_YEARS_OR_MINUTES}中将 {1:STRING}从 {2:STRING} 运送到 {3:STRING} 将获得三倍的报酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} 获得财政补贴！{}{}今后 {4:UNITS_YEARS_OR_MINUTES}中将 {1:STRING}从 {2:STRING} 运送到 {3:STRING} 将获得四倍的报酬！
 
 STR_NEWS_ROAD_REBUILDING_MONTHS                                 :{BIG_FONT}{BLACK}{TOWN}的混乱交通！{}{}由{STRING}资助的道路重建计划将给驾车者带来长达 6 个月的堵塞！
 STR_NEWS_ROAD_REBUILDING_MINUTES                                :{BIG_FONT}{BLACK}{TOWN}的混乱交通！{}{}由{STRING}资助的道路重建计划将给驾车者带来长达 6 分钟的堵塞！
@@ -947,21 +951,21 @@ STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MINUTES                   :{BIG_FONT}{BLAC
 # Extra view window
 STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}视点 {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}将主视角复制到视点
-STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}将额外视点移动到屏幕中心的位置
+STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TOOLTIP                        :{BLACK}将额外视点移动到屏幕中心的位置
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}移动主视角到该视点
-STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}将主视角移动到额外视点的位置
+STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}将主视角移动到额外视点的位置
 
 # Game options window
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}游戏选项
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :通用
-STR_GAME_OPTIONS_TAB_GENERAL_TT                                 :{BLACK}通用设置
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}通用设置
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :图像
-STR_GAME_OPTIONS_TAB_GRAPHICS_TT                                :{BLACK}图像设置
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}图像设置
 STR_GAME_OPTIONS_TAB_SOUND                                      :音效
-STR_GAME_OPTIONS_TAB_SOUND_TT                                   :{BLACK}声音设置
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}声音设置
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :社交
-STR_GAME_OPTIONS_TAB_SOCIAL_TT                                  :{BLACK}选择社交插件设置
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}选择社交插件设置
 
 STR_GAME_OPTIONS_VOLUME                                         :音量
 STR_GAME_OPTIONS_SFX_VOLUME                                     :音效
@@ -974,7 +978,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}货币�
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING}（{STRING}）
 
-###length 44
+###length 45
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :英镑
 STR_GAME_OPTIONS_CURRENCY_USD                                   :美元
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :欧元
@@ -1019,6 +1023,7 @@ STR_GAME_OPTIONS_CURRENCY_IDR                                   :印尼盾
 STR_GAME_OPTIONS_CURRENCY_MYR                                   :马来西亚林吉特
 STR_GAME_OPTIONS_CURRENCY_LVL                                   :拉脱维亚拉特
 STR_GAME_OPTIONS_CURRENCY_PTE                                   :葡萄牙埃斯库多
+STR_GAME_OPTIONS_CURRENCY_UAH                                   :乌克兰格里夫纳
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}自动保存
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}选择自动保存的周期
@@ -1033,7 +1038,7 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :每 120 分钟
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}语言
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}选择界面语言
-STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING}（完成了 {NUM}%）
+STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING}（已完成 {NUM}%）
 
 STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}全屏幕
 STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}选择此项可以在全屏幕模式下进行 OpenTTD 游戏
@@ -1212,7 +1217,7 @@ STR_CITY_APPROVAL_TOLERANT                                      :隐忍
 STR_CITY_APPROVAL_HOSTILE                                       :对立
 STR_CITY_APPROVAL_PERMISSIVE                                    :放任（所有行为均不受影响）
 
-STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}无合适的 AI 可用……{}你可以在线下载各种 AI
+STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}无合适的 AI 可用……{}{}可以使用“线上拓展内容”功能下载新的 AI
 
 # Settings tree window
 STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}设置
@@ -1287,7 +1292,7 @@ STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_VALUE                   :{CURRENCY_LONG}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_DISABLED                :无贷款
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :贷款利率：{STRING}
-STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :贷款利率；如果通货膨胀启用，将同时影响通货膨胀率
+STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :贷款利率。启用通货膨胀时将同时影响通货膨胀率
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :运营费用：{STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :设置载具的营运与维护成本水平
@@ -1339,7 +1344,7 @@ STR_CONFIG_SETTING_CATCHMENT                                    :允许更真实
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :启用时不同类型的车站和机场有不同的客源范围
 
 STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES                     :公司私有车站可以服务自带车站的工业设施：{STRING}
-STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES_HELPTEXT            :启用后，自带车站的工业设施（如钻井平台）也可以被临近的公司私有车站服务。禁用后，这些工业设施只能被它们自带的车站服务。任何临近的公司车站将不能服务它们，工业设施自有车站也不会提供除本工业设施的产品以外的其他产品
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES_HELPTEXT            :启用后，公司车站可以为附近自带车站的工业（如钻井平台）提供服务。禁用后，这些工业只能由其自带的车站提供服务，并且自带车站不会为除了所属工业之外的其他设施提供任何服务
 
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :允许拆除更多的城市桥隧道路：{STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :启用时更容易拆除城市自有的设施和建筑
@@ -1410,11 +1415,11 @@ STR_CONFIG_SETTING_SHOWFINANCES_PERIOD                          :在周期末显
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :“打开”时，在年底显示财务报表窗口，方便查看公司财务状况
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT_PERIOD                 :如果启用，财务窗口会在每期结束时弹出，以便于检查公司的财务状况
 
-STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :新的调度命令默认为“不停车”：{STRING}
-STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT_HELPTEXT                  :在正常情况下，载具会停靠经过的所有车站。如果启用此选项，载具只会停靠指令上的目的地并跳过其他车站。请注意：本设置仅改变新指令的生成方式，玩家仍可手动更改指令，使载具停靠沿途的其他车站
+STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :设定命令时默认选择“直达”命令：{STRING}
+STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT_HELPTEXT                  :在正常情况下，载具会停靠经过的所有车站。如果启用此选项，载具只会停靠命令上的目的地并跳过其他车站。请注意：本设置仅改变新命令的产生方式，玩家仍可手动更改命令，使载具停靠沿途的其他车站
 
-STR_CONFIG_SETTING_STOP_LOCATION                                :列车新指令默认停靠于站台{STRING}位置
-STR_CONFIG_SETTING_STOP_LOCATION_HELPTEXT                       :预设列车在车站内停靠的位置。“近端”指进入车站一端；“中间”指站台中央；“远端”指远离车站进入一端。请注意本设置仅改变新指令的默认值。列车在车站内的停靠位置仍然可以通过点击指令文本手动设置
+STR_CONFIG_SETTING_STOP_LOCATION                                :列车调度计划中新命令默认停靠于站台{STRING}位置
+STR_CONFIG_SETTING_STOP_LOCATION_HELPTEXT                       :预设列车在车站内停靠的位置。“近端”指进入车站一端；“中间”指站台中央；“远端”指远离车站进入一端。请注意：本设置仅改变新命令的产生方式，列车在车站内的停靠位置仍然可以通过点击命令文本手动设置
 ###length 3
 STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :近端
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :中间
@@ -1430,13 +1435,13 @@ STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :每个视角
 
 STR_CONFIG_SETTING_BRIBE                                        :允许贿赂地方政府：{STRING}
 ###length 2
-STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :“打开”时，允许贿赂地方政府，如果被发现，在该城市将被限制经营活动六个月
-STR_CONFIG_SETTING_BRIBE_HELPTEXT_MINUTES                       :允许公司尝试贿赂当地镇政府。如果贿赂被发现，公司在该城市将被限制经营活动 6 分钟
+STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :允许公司尝试贿赂地方政府。如果贿赂被发现，将限制公司在该城市经营活动 6 个月
+STR_CONFIG_SETTING_BRIBE_HELPTEXT_MINUTES                       :允许公司尝试贿赂地方政府。如果贿赂被发现，将限制公司在该城市经营活动 6 分钟
 
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :允许买断经营权：{STRING}
 ###length 2
-STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :如果一家公司购买了一座城镇的独家经营权，其他公司在此城镇的车站在十二个月之内将不会收到任何货物与旅客
-STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT_MINUTES             :如果一家公司购买了一座城镇的独家经营权，其他公司在此城镇的车站在 12 分钟之内将不会收到任何货物与旅客
+STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :如果一家公司购买一座城镇的独家经营权，其他公司在此城镇的车站在十二个月之内将不会收到任何货物与旅客
+STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT_MINUTES             :如果一家公司购买一座城镇的独家经营权，其他公司在此城镇的车站在 12 分钟之内将不会收到任何货物与旅客
 
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS                         :允许资助城镇建设：{STRING}
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS_HELPTEXT                :“打开”时，允许公司提供资助新建房屋
@@ -1483,7 +1488,7 @@ STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :总允许建设
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :“打开”此选项，每种类型机场出现后一直是可用的
 
 STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            :当列车无法找到路线时提示：{STRING}
-STR_CONFIG_SETTING_WARN_LOST_VEHICLE_HELPTEXT                   :启用时将在载具无法到达指令目的地时提示
+STR_CONFIG_SETTING_WARN_LOST_VEHICLE_HELPTEXT                   :启用时将在载具无法到达命令目的地时提示
 
 STR_CONFIG_SETTING_ORDER_REVIEW                                 :检查载具调度计划：{STRING}
 STR_CONFIG_SETTING_ORDER_REVIEW_HELPTEXT                        :启用时系统会定时检查载具的调度计划，并在检测到明显异常的时候提示
@@ -1494,7 +1499,7 @@ STR_CONFIG_SETTING_ORDER_REVIEW_ON                              :检查所有载
 
 STR_CONFIG_SETTING_WARN_INCOME_LESS                             :若线路亏损时发出提示：{STRING}
 ###length 2
-STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :“打开”，当一辆车在一年内总体亏损，发出提示
+STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT                    :启用时，若某载具在一年内总体亏损，发出提示
 STR_CONFIG_SETTING_WARN_INCOME_LESS_HELPTEXT_PERIOD             :启用时，若某载具在一周期内总体亏损，发出提示
 
 STR_CONFIG_SETTING_WARN_OLD_VEHICLE                             :载具老化时发出提示：{STRING}
@@ -1510,7 +1515,7 @@ STR_CONFIG_SETTING_TIMEKEEPING_UNITS_CALENDAR                   :日历
 STR_CONFIG_SETTING_TIMEKEEPING_UNITS_WALLCLOCK                  :挂钟
 
 STR_CONFIG_SETTING_MINUTES_PER_YEAR                             :一年分钟数：{STRING}
-STR_CONFIG_SETTING_MINUTES_PER_YEAR_HELPTEXT                    :选择在挂钟模式下一年所对应的时间长度。默认为 12 分钟；设置为 0 则日期不会变化。增加一年的长度会使新载具、房屋和其他基础设施的发明时间被推迟；此选项不会影响载具速度或经济模拟，但会影响通货膨胀。此选项仅在使用挂钟模式时有效
+STR_CONFIG_SETTING_MINUTES_PER_YEAR_HELPTEXT                    :选择在挂钟模式下一年所对应的时间长度。默认为 12 分钟；设置为 0 则日期不会变化。增加一年的长度会推迟载具、房屋和其他基础设施的研发时间；此选项不会影响载具速度或经济模拟，但会影响通货膨胀。此选项仅在使用挂钟模式时可用
 
 STR_CONFIG_SETTING_MINUTES_PER_YEAR_VALUE                       :{NUM}
 ###setting-zero-is-special
@@ -1523,10 +1528,10 @@ STR_CONFIG_SETTING_INDUSTRY_CARGO_SCALE_HELPTEXT                :按此比例扩
 STR_CONFIG_SETTING_CARGO_SCALE_VALUE                            :{NUM}%
 
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :载具到达使用年限时自动更新：{STRING}
-STR_CONFIG_SETTING_AUTORENEW_VEHICLE_HELPTEXT                   :启用时，所有符合更换条件的载具在进入车库时会被自动更新
+STR_CONFIG_SETTING_AUTORENEW_VEHICLE_HELPTEXT                   :启用时，会在符合更换条件的载具进入车库时自动更新载具
 
-STR_CONFIG_SETTING_AUTORENEW_MONTHS                             :自动替换年龄到达使用期限{STRING}的载具
-STR_CONFIG_SETTING_AUTORENEW_MONTHS_HELPTEXT                    :如果载具距离使用期限的时间小于等于指定值，则载具进入车库时便会被自动替换
+STR_CONFIG_SETTING_AUTORENEW_MONTHS                             :自动更新年龄到达使用期限{STRING}的载具
+STR_CONFIG_SETTING_AUTORENEW_MONTHS_HELPTEXT                    :如果载具距离使用期限的时间小于或等于指定值，则会在载具进入车库时自动更新载具
 ###length 2
 STR_CONFIG_SETTING_AUTORENEW_MONTHS_VALUE_BEFORE                :前 {COMMA} 个月
 STR_CONFIG_SETTING_AUTORENEW_MONTHS_VALUE_AFTER                 :后 {COMMA} 个月
@@ -1628,7 +1633,7 @@ STR_CONFIG_SETTING_STATION_SPREAD_HELPTEXT                      :设置车站的
 STR_CONFIG_SETTING_SERVICEATHELIPAD                             :直升机在降落平台自动维护：{STRING}
 STR_CONFIG_SETTING_SERVICEATHELIPAD_HELPTEXT                    :直升飞机在降落平台自动维护，即使机场没有机库
 
-STR_CONFIG_SETTING_LINK_TERRAFORM_TOOLBAR                       :链接地形工具栏与铁路 / 公路 / 船只 / 机场工具栏：{STRING}
+STR_CONFIG_SETTING_LINK_TERRAFORM_TOOLBAR                       :链接地形工具栏与铁路、公路、船只、机场工具栏：{STRING}
 STR_CONFIG_SETTING_LINK_TERRAFORM_TOOLBAR_HELPTEXT              :设定否在开启建设交通设施的工具栏时同时开启地形工具栏
 
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR                         :缩略地图颜色选择：{STRING}
@@ -1660,7 +1665,7 @@ STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :设置在缩略
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :建设时显示测量数据：{STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :建设时显示距离格数和地形高差
 
-STR_CONFIG_SETTING_LIVERIES                                     :显示公司自订涂装：{STRING}
+STR_CONFIG_SETTING_LIVERIES                                     :显示公司自定义涂装：{STRING}
 STR_CONFIG_SETTING_LIVERIES_HELPTEXT                            :设置是否允许为个别载具种类指定配色，而不是为公司的所有载具指定同一种配色
 ###length 3
 STR_CONFIG_SETTING_LIVERIES_NONE                                :不显示
@@ -1717,7 +1722,7 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :英式时间（
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :国际格式（2008-12-31）
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :开始新游戏时自动暂停：{STRING}
-STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :“打开”时，为了让玩家有时间研究地图，开启新游戏自动暂停游戏
+STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :启用时，游戏会在开始时自动暂停，方便玩家详细研究地图
 
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL                          :暂停时允许：{STRING}
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_HELPTEXT                 :选择游戏暂停时可以进行哪些操作
@@ -1730,7 +1735,7 @@ STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_ACTIONS              :所有操作
 STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :使用高级载具列表：{STRING}
 STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :允许使用高级载具列表，方便进行分组操作
 
-STR_CONFIG_SETTING_LOADING_INDICATORS                           :使用装货进度指示：{STRING}
+STR_CONFIG_SETTING_LOADING_INDICATORS                           :使用装载进度指示：{STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS_HELPTEXT                  :选择是否在载具上方显示装卸货物进度
 
 STR_CONFIG_SETTING_TIMETABLE_MODE                               :时刻表使用的时间单位：{STRING}
@@ -1760,7 +1765,7 @@ STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS                     :建造工具使
 STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS_HELPTEXT            :“打开”时在桥梁、隧道等建造工具使用后保持选中，方便继续使用
 
 STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS                          :建造铁路时自动移除信号灯：{STRING}
-STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS_HELPTEXT                 :建造铁路时自动移除路过的信号灯。注意，这可能导致火车事故
+STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS_HELPTEXT                 :自动移除轨道铺设路径上的信号。请注意，移除信号可能导致列车事故
 
 STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT                     :快进速度上限：{STRING}
 STR_CONFIG_SETTING_FAST_FORWARD_SPEED_LIMIT_HELPTEXT            :限制快进时的最大速度。0 = 无限制（即电脑性能允许的最快速度）。低于 100% 的值将使游戏变慢。游戏速度上限取决于计算机的配置，并可能随游戏当前状态浮动
@@ -1918,20 +1923,23 @@ STR_CONFIG_SETTING_COLOURED_NEWS_YEAR_HELPTEXT                  :从这一年开
 STR_CONFIG_SETTING_STARTING_YEAR                                :开始年份：{STRING}
 
 STR_CONFIG_SETTING_ENDING_YEAR                                  :结束计分年份：{STRING}
-STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :游戏结束计分的年份。在这一年的年底，公司的分数将被记录，并展示高分榜；在此之后玩家仍可继续游戏。{}如果该年份早于游戏开始年份，则高分榜将不会展示
+STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :游戏结束计分的年份。公司的分数将在这一年的年底被记录，同时展示高分榜。在此之后玩家仍可继续游戏。{}如果该年份早于游戏开始年份，则高分榜将不会展示
 STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 ###setting-zero-is-special
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :从不
 
 STR_CONFIG_SETTING_ECONOMY_TYPE                                 :经济类型：{STRING}
-STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :平滑经济产生更小幅度更频繁的产量变动。冻结经济停止产量变动和工业倒闭。该设置可能对 NewGRF 提供的工业不起作用
+###length 2
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :平滑经济产生更小幅度更频繁的产量变动。冻结经济停止产量变动和工业倒闭。该设置可能对 NewGRF 提供的工业不起作用。{}{}即使冻结经济时，工业每分钟产量仍可能会变化，因为工业生产按照固定间隔，间隔并不完全对应分钟
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT_PERIOD                 :平滑经济产生更小幅度更频繁的产量变动。冻结经济停止产量变动和工业倒闭。该设置可能对 NewGRF 提供的工业不起作用。{}{}即使冻结经济时，工业每分钟产量仍可能会变化，因为工业生产按照固定间隔，间隔并不完全对应分钟。
+
 ###length 3
 STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :原版
 STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :平滑
 STR_CONFIG_SETTING_ECONOMY_TYPE_FROZEN                          :冻结
 
-STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :联运账面收入百分比：{STRING}
-STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :设定在多程联运时，载具换班时前一程载具所占总收入的百分比。此选项允许更有效地控制收入
+STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :转运账面收入比例：{STRING}
+STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :设定进行转运的载具在卸载被转运的货物时，获得的收入占总运费的百分比。此选项让玩家更有效地控制收入分配方式
 
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY                         :拖动时每隔 {STRING} 设置一个信号
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY_HELPTEXT                :设置以拖动的方式建设时，自动放置信号灯时的间距，将以该间距放置信号灯，直到碰到障碍（信号灯，分支）
@@ -1969,7 +1977,7 @@ STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS                   :允许城镇建
 STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS_HELPTEXT          :“打开”时允许城镇建设平交道口
 
 STR_CONFIG_SETTING_NOISE_LEVEL                                  :允许城镇限制机场噪音：{STRING}
-STR_CONFIG_SETTING_NOISE_LEVEL_HELPTEXT                         :允许城镇基于城镇人口、机场大小和距离控制机场噪音。“关闭”时，每个城市只允许建设两座机场，除非地方政府态度被设为“放任”
+STR_CONFIG_SETTING_NOISE_LEVEL_HELPTEXT                         :允许城镇基于城镇人口、机场大小和距离控制机场噪音。禁用此设置时，每座城镇只允许建设两座机场，除非将地方政府态度设为“放任”
 
 STR_CONFIG_SETTING_TOWN_FOUNDING                                :在游戏中建立城镇：{STRING}
 STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :“打开”本选项时，允许玩家在游戏中创建新城镇
@@ -1977,6 +1985,13 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :“打开”本
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :禁止
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :允许
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :允许，自定义城镇布局
+
+STR_CONFIG_SETTING_HOUSE_PLACER                                 :在城镇中单独建设房屋：{STRING}
+STR_CONFIG_SETTING_HOUSE_PLACER_HELPTEXT                        :启用此选项以允许玩家在城镇内手动设置房屋
+###length 3
+STR_CONFIG_SETTING_HOUSE_PLACER_FORBIDDEN                       :禁止
+STR_CONFIG_SETTING_HOUSE_PLACER_ALLOWED                         :允许
+STR_CONFIG_SETTING_HOUSE_PLACER_FULLY_CONSTRUCTED               :允许，完全建成
 
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :城镇货物生成：{STRING}
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :城镇建筑的客货产出与人口的关系。{}平方增长：城镇人口规模增长为原来的两倍时旅客的生成量为原来的四倍。{}线性增长：城镇人口规模增长为原来的两倍时旅客的生成量为原来的两倍
@@ -1988,7 +2003,7 @@ STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :树木自动生
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :控制游戏内树木的生长。此选项可能会影响一些依赖树木的工业，例如伐木场
 ###length 4
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_SPREAD               :生长但不扩散 {RED}（损坏伐木场）
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_RAINFOREST       :仅在雨林扩散
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_RAINFOREST       :仅在雨林生长与扩散
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_ALL              :生长并四处扩散
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_GROWTH_NO_SPREAD     :不生长，不扩散 {RED}（损坏伐木场）
 
@@ -2005,7 +2020,7 @@ STR_CONFIG_SETTING_SOFT_LIMIT                                   :窗口数量上
 STR_CONFIG_SETTING_SOFT_LIMIT_HELPTEXT                          :设定窗口数量上限。超出此限值时游戏会自动关闭最早打开的窗口。已固定的窗口不受此项限制
 STR_CONFIG_SETTING_SOFT_LIMIT_VALUE                             :{COMMA}
 ###setting-zero-is-special
-STR_CONFIG_SETTING_SOFT_LIMIT_DISABLED                          :关闭
+STR_CONFIG_SETTING_SOFT_LIMIT_DISABLED                          :禁用
 
 STR_CONFIG_SETTING_ZOOM_MIN                                     :最大视角放大倍数：{STRING}
 STR_CONFIG_SETTING_ZOOM_MIN_HELPTEXT                            :画面的最大放大倍数，注意：提高放大倍数增加内存需求
@@ -2043,10 +2058,10 @@ STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :没有
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :初始都市规模因子：{STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :游戏开局时，城市的平均规模相对于普通城镇的比值
 
-STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL                    :每 {STRING}更新货物分配图
-STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL_HELPTEXT           :两次连结图的重新计算间隔。每次重新计算会计算图中一个部分的计划。这意味着填入的值 X 不意味着整张图会每 X 秒更新一次，只有其中的一部分会被更新。此设定赋值越小，则更多的 CPU 时间会被用来重新计算。此设定赋值越大，则在线路改变时货物再分配所需时间会变长
-STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME                        :在货物分配的重新计算上花费 {STRING}
-STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME_HELPTEXT               :每一个连结图的重新计算时间。当一次重新计算开始，一个线程会被允许运行这个秒数。此设定赋值越小，则线程无法按时结束的可能性越大，从而导致游戏运行延迟。此设定赋值越大，则在线路改变时货物再分配所需时间会变长
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL                    :每 {STRING}更新客货流
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL_HELPTEXT           :重新计算客货流的周期。由于重新计算时仅会计算部分客货流，此处设定的数值并不代表所有客货流会按照此周期更新。设定赋值越小，重新计算客货流所需的 CPU 时间越多；设定赋值越大，线路改变时货物再分配所需时间越长
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME                        :客货流计算限时：{STRING}
+STR_CONFIG_SETTING_LINKGRAPH_RECALC_TIME_HELPTEXT               :重新计算客货流的时间上限。开始计算时，游戏会产生一个线程。产生的线程至多允许运行设定的秒数。设定赋值越小，线程无法按时结束的可能性越大，从而导致游戏运行延迟。设定赋值越大，则在线路改变时货物再分配所需时间会变长
 
 STR_CONFIG_SETTING_DISTRIBUTION_PAX                             :旅客分配方式：{STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :假设有交通路线连接甲、乙两站。“对称”指甲站往乙站的旅客数量与乙站往甲站的旅客数量大致相同。“不对称”指任何一站往另一站的旅客数量皆由系统随意决定。“手动”指系统不会自动分配旅客的目的地
@@ -2062,18 +2077,18 @@ STR_CONFIG_SETTING_DISTRIBUTION_ASYMMETRIC                      :不对称
 STR_CONFIG_SETTING_DISTRIBUTION_SYMMETRIC                       :对称
 
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :分配精确度：{STRING}
-STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :此设定赋值越大，則运算连结图所需的处理器时间越长，您可能会因此见到游戏运行延迟。如果此设定赋值越小，则货物分配的准确度越低，而您可能会发现部份货物沒有被送往您预期它们会到达的目的地
+STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :设置值越大，客货流计算所需的 CPU 时间就越长。花费时间过长可能导致延迟。设置值越小，客货流准确率越低，部分货物可能不会送到预期的目的地
 
 STR_CONFIG_SETTING_DEMAND_DISTANCE                              :距离对需求的影晌：{STRING}
 STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :如果此设定赋值大于 0，则始发站与可能的目的站间的距离会影响该路线获分派货物的数量。某目的站距离始发站越远，获分派的货物越少。此设定的赋值越大，越多货物会被派往较近的站
 STR_CONFIG_SETTING_DEMAND_SIZE                                  :在对称模式下产生的返程货物比例：{STRING}
-STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :如果把此设定赋一个少于 100% 的值，则到达某站的货物不会全部被送回始发站。{}如果此设定被赋值为 0%，則“对称”模式的表现跟“不对称”模式完全一样
+STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :将本设置定于 100% 以下时，到达某站的货物不会全部被送回始发站。{}“对称”与“不对称”模式在本设置为 0% 时表现一致
 
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :如果最短路径的饱和度超过{STRING}，把货物改派往容量较大的路径
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :在两个给定的站点之间常会有多条不同的路径。货物分配算法会优先使用最短的路径，在其饱和后再使用第二短的路径，依此类推。路径的饱和度是用运载容量和计划使用量估算的。在所有路径都饱和的时候，算法会向所有路径超额装载货物，优先使用容量较高的路径。但是在多数场合算法无法准确计算容量。此设定允许您设定在较短的路径的饱和度达到设定值之后再装载下一条路径。将此值设定为小于 100%，就可避免因过量估算容量而导致的站点超载
 
-STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :速度单位（陆地）：{STRING}
-STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_NAUTICAL         :速度单位（航海）：{STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :陆地速度单位：{STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_NAUTICAL         :航海速度单位：{STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_HELPTEXT         :在界面上以所选择的单位表示速度
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_IMPERIAL         :英制（英里/小时）
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_METRIC           :公制（千米/小时）
@@ -2130,7 +2145,7 @@ STR_CONFIG_SETTING_ACCOUNTING                                   :财务管理
 STR_CONFIG_SETTING_VEHICLES                                     :载具
 STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :物理
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :经由
-STR_CONFIG_SETTING_VEHICLES_ORDERS                              :调度命令
+STR_CONFIG_SETTING_VEHICLES_ORDERS                              :调度计划
 STR_CONFIG_SETTING_LIMITATIONS                                  :限制
 STR_CONFIG_SETTING_ACCIDENTS                                    :灾难/事故
 STR_CONFIG_SETTING_GENWORLD                                     :地图生成
@@ -2153,17 +2168,17 @@ STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}改变�
 # Config errors
 STR_CONFIG_ERROR                                                :{WHITE}配置文件错误……
 STR_CONFIG_ERROR_ARRAY                                          :{WHITE}……函数错误“{STRING}”
-STR_CONFIG_ERROR_INVALID_VALUE                                  :{WHITE}……对“{STRING}”设置了错误值“{STRING}”
+STR_CONFIG_ERROR_INVALID_VALUE                                  :{WHITE}……“{STRING}”不是“{STRING}”的有效值
 STR_CONFIG_ERROR_TRAILING_CHARACTERS                            :{WHITE}……有多余字符在设定的结尾处“{STRING}”
-STR_CONFIG_ERROR_DUPLICATE_GRFID                                :{WHITE}……忽略 NewGRF“{STRING}”：重复的 GRF ID“{STRING}”
-STR_CONFIG_ERROR_INVALID_GRF                                    :{WHITE}……忽略了无效的 NewGRF“{STRING}”：{STRING}
+STR_CONFIG_ERROR_DUPLICATE_GRFID                                :{WHITE}……正忽略 NewGRF“{STRING}”：重复的 GRF ID “{STRING}”
+STR_CONFIG_ERROR_INVALID_GRF                                    :{WHITE}……正忽略无效的 NewGRF“{STRING}”：{STRING}
 STR_CONFIG_ERROR_INVALID_GRF_NOT_FOUND                          :未找到
 STR_CONFIG_ERROR_INVALID_GRF_UNSAFE                             :静态使用时不安全
 STR_CONFIG_ERROR_INVALID_GRF_SYSTEM                             :系统 NewGRF
 STR_CONFIG_ERROR_INVALID_GRF_INCOMPATIBLE                       :与当前版本 OpenTTD 不兼容
 STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN                            :未知
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL             :{WHITE}……压缩等级“{STRING}”无效
-STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}……存档格式“{STRING}”不适用。请转换成“{STRING}”
+STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}……本版本不支持存档格式“{STRING}”，现改用“{STRING}”格式
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}……禁用基础图形设置“{STRING}”：未找到
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}……禁用基础音效设置“{STRING}”：未找到
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}……禁用基础音乐设置“{STRING}”：未找到
@@ -2173,7 +2188,7 @@ STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}无法�
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}图形设置错误……
 STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}……找不到合适的 GPU。硬件加速已禁用
-STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}……GPU 使游戏崩溃了。硬件加速已禁用
+STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}……GPU 驱动程序导致游戏崩溃。硬件加速已禁用
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -2190,7 +2205,7 @@ STR_INTRO_HIGHSCORE                                             :{BLACK}高分�
 STR_INTRO_HELP                                                  :{BLACK}帮助和指南
 STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}设置
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF 设置
-STR_INTRO_ONLINE_CONTENT                                        :{BLACK}在线查找扩展包
+STR_INTRO_ONLINE_CONTENT                                        :{BLACK}线上拓展内容
 STR_INTRO_AI_SETTINGS                                           :{BLACK}AI 设置
 STR_INTRO_GAMESCRIPT_SETTINGS                                   :{BLACK}游戏脚本设置
 STR_INTRO_QUIT                                                  :{BLACK}退出
@@ -2212,13 +2227,13 @@ STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}显示�
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}获取说明和在线资源
 STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}显示设置
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}显示 NewGRF 设定
-STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}连接服务器并查找扩展包
+STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}检查有无最新或可更新的内容可供下载
 STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}显示 AI 设置
 STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}显示游戏脚本设置
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}退出 OpenTTD
 
 STR_INTRO_BASESET                                               :{BLACK}当前选定的基础图形组缺少 {NUM} 个贴图。请检查基础图形组有无更新。
-STR_INTRO_TRANSLATION                                           :{BLACK}简体中文翻译缺失了 {NUM} 条字符串。请注册成为翻译人员以帮助开发 OpenTTD。{}详见 readme.txt。
+STR_INTRO_TRANSLATION                                           :{BLACK}简体中文翻译缺失了 {NUM} 条字符串。请注册成为翻译人员以帮助开发 OpenTTD。详见 readme.txt。
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}退出
@@ -2239,6 +2254,7 @@ STR_HELP_WINDOW_README                                          :{BLACK}查看�
 STR_HELP_WINDOW_CHANGELOG                                       :{BLACK}更新日志
 STR_HELP_WINDOW_KNOWN_BUGS                                      :{BLACK}已知漏洞
 STR_HELP_WINDOW_LICENSE                                         :{BLACK}许可证
+STR_HELP_WINDOW_FONTS                                           :{BLACK}字体
 STR_HELP_WINDOW_MAIN_WEBSITE                                    :{BLACK}OpenTTD
 STR_HELP_WINDOW_MANUAL_WIKI                                     :{BLACK}手册 / 百科
 STR_HELP_WINDOW_BUGTRACKER                                      :{BLACK}反馈游戏漏洞
@@ -2249,13 +2265,13 @@ STR_CHEATS                                                      :{WHITE}沙盒�
 STR_CHEAT_MONEY                                                 :{LTBLUE}增加现金 {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}作为{ORANGE}公司 {COMMA} {LTBLUE}进行游戏
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}神奇推土机（清除工业设施和其他不可移除物）：{ORANGE}{STRING}
-STR_CHEAT_CROSSINGTUNNELS                                       :{LTBLUE}隧道可以相交：{ORANGE}{STRING}
+STR_CHEAT_CROSSINGTUNNELS                                       :{LTBLUE}允许隧道相交：{ORANGE}{STRING}
 STR_CHEAT_NO_JETCRASH                                           :{LTBLUE}喷气式飞机不会（经常）在小机场坠毁：{ORANGE}{STRING}
 STR_CHEAT_EDIT_MAX_HL                                           :{LTBLUE}修改最高地面高度：{ORANGE}{NUM}
 STR_CHEAT_EDIT_MAX_HL_QUERY_CAPT                                :{WHITE}修改地图上山丘的最高高度
 STR_CHEAT_CHANGE_DATE                                           :{LTBLUE}改变日期：{ORANGE}{DATE_SHORT}
 STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}改变当前年份
-STR_CHEAT_SETUP_PROD                                            :{LTBLUE}开启可调整产量模式：{ORANGE}{STRING}
+STR_CHEAT_SETUP_PROD                                            :{LTBLUE}允许修改产量：{ORANGE}{STRING}
 STR_CHEAT_STATION_RATING                                        :{LTBLUE}车站评价固定为 100%：{ORANGE}{STRING}
 
 # Livery window
@@ -2331,9 +2347,9 @@ STR_FACE_SAVE                                                   :{BLACK}储存�
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}储存喜好的头像
 STR_FACE_SAVE_DONE                                              :{WHITE}该头像将作为你的喜好储存至 OpenTTD 配置文件中
 STR_FACE_EUROPEAN                                               :{BLACK}欧洲人
-STR_FACE_SELECT_EUROPEAN                                        :{BLACK}使用欧洲人面孔
+STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}使用欧洲人面孔
 STR_FACE_AFRICAN                                                :{BLACK}非洲人
-STR_FACE_SELECT_AFRICAN                                         :{BLACK}使用非洲人面孔
+STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}使用非洲人面孔
 STR_FACE_YES                                                    :是
 STR_FACE_NO                                                     :否
 STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}是否有胡子或耳环
@@ -2344,7 +2360,7 @@ STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}选择�
 STR_FACE_EYECOLOUR                                              :眼睛
 STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}选择眼睛颜色
 STR_FACE_GLASSES                                                :眼镜
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}是否有 眼镜
+STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}增加眼镜
 STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}选择眼镜
 STR_FACE_NOSE                                                   :鼻子
 STR_FACE_NOSE_TOOLTIP                                           :{BLACK}选择鼻子
@@ -2389,14 +2405,14 @@ STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}服务�
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}点击列表中的服务器可以选定它
 STR_NETWORK_SERVER_LIST_LAST_JOINED_SERVER                      :{BLACK}上一次加入的服务器：
-STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST                    :{BLACK}点击选择您上次加入的服务器
+STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST_TOOLTIP            :{BLACK}点击选择您上次加入的服务器
 
 STR_NETWORK_SERVER_LIST_GAME_INFO                               :{SILVER}游戏信息
-STR_NETWORK_SERVER_LIST_CLIENTS                                 :{SILVER}客户端：{WHITE}{COMMA} / {COMMA} - {COMMA} / {COMMA}
+STR_NETWORK_SERVER_LIST_CLIENTS                                 :{SILVER}客户端： {WHITE}{COMMA} / {COMMA} - {COMMA} / {COMMA}
 STR_NETWORK_SERVER_LIST_LANDSCAPE                               :{SILVER}场景类型：{WHITE}{STRING}
 STR_NETWORK_SERVER_LIST_MAP_SIZE                                :{SILVER}地图尺寸：{WHITE}{COMMA}×{COMMA}
 STR_NETWORK_SERVER_LIST_SERVER_VERSION                          :{SILVER}游戏版本：{WHITE}{STRING}
-STR_NETWORK_SERVER_LIST_SERVER_ADDRESS                          :{SILVER}该服 IP：{WHITE}{STRING}
+STR_NETWORK_SERVER_LIST_SERVER_ADDRESS                          :{SILVER}该服地址：{WHITE}{STRING}
 STR_NETWORK_SERVER_LIST_INVITE_CODE                             :{SILVER}邀请代码：{WHITE}{STRING}
 STR_NETWORK_SERVER_LIST_START_DATE                              :{SILVER}开始日期：{WHITE}{DATE_SHORT}
 STR_NETWORK_SERVER_LIST_CURRENT_DATE                            :{SILVER}当前日期：{WHITE}{DATE_SHORT}
@@ -2408,7 +2424,7 @@ STR_NETWORK_SERVER_LIST_SERVER_FULL                             :{SILVER}服务�
 STR_NETWORK_SERVER_LIST_SERVER_BANNED                           :{SILVER}您已被该服务器封禁
 STR_NETWORK_SERVER_LIST_SERVER_TOO_OLD                          :{SILVER}服务器版本太旧
 STR_NETWORK_SERVER_LIST_VERSION_MISMATCH                        :{SILVER}版本不匹配
-STR_NETWORK_SERVER_LIST_GRF_MISMATCH                            :{SILVER}NEWGRF 不匹配
+STR_NETWORK_SERVER_LIST_GRF_MISMATCH                            :{SILVER}NewGRF 不匹配
 
 STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}加入游戏
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}刷新服务器
@@ -2432,7 +2448,7 @@ STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}开始�
 STR_NETWORK_START_SERVER_NEW_GAME_NAME                          :{BLACK}游戏名称：
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}游戏名称将显示在其他玩家的联机游戏界面中
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}设置密码：
-STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}如果不希望你的游戏被外人加入，请设置一个密码
+STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}如果不希望其他玩家加入游戏，请设置一个密码
 
 STR_NETWORK_START_SERVER_VISIBILITY_LABEL                       :{BLACK}可见度
 STR_NETWORK_START_SERVER_VISIBILITY_TOOLTIP                     :{BLACK}其他玩家能否在公开列表中查看你的服务器
@@ -2550,7 +2566,7 @@ STR_NETWORK_CHAT_TO_COMPANY                                     :[团队] {STRIN
 STR_NETWORK_CHAT_CLIENT                                         :[私聊] {STRING}：{WHITE}{STRING}
 STR_NETWORK_CHAT_TO_CLIENT                                      :[私聊] {STRING}：{WHITE}{STRING}
 STR_NETWORK_CHAT_ALL                                            :[全体] {STRING}：{WHITE}{STRING}
-STR_NETWORK_CHAT_EXTERNAL                                       :[{3:STRING}] {0:STRING}：{WHITE}{1:STRING}
+STR_NETWORK_CHAT_EXTERNAL                                       :[{STRING}] {STRING}：{WHITE}{STRING}
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}请输入联机聊天内容
 
 # Network messages
@@ -2572,7 +2588,7 @@ STR_NETWORK_ERROR_SERVER_BANNED                                 :{WHITE}您已�
 STR_NETWORK_ERROR_KICKED                                        :{WHITE}您已被踢出服务器
 STR_NETWORK_ERROR_KICK_MESSAGE                                  :{WHITE}原因：{STRING}
 STR_NETWORK_ERROR_CHEATER                                       :{WHITE}此服务器不允许作弊
-STR_NETWORK_ERROR_TOO_MANY_COMMANDS                             :{WHITE}您向服务器发送操作指令过于频繁
+STR_NETWORK_ERROR_TOO_MANY_COMMANDS                             :{WHITE}您向服务器发送操作命令过于频繁
 STR_NETWORK_ERROR_TIMEOUT_PASSWORD                              :{WHITE}输入密码超时
 STR_NETWORK_ERROR_TIMEOUT_COMPUTER                              :{WHITE}您的计算机联网超时
 STR_NETWORK_ERROR_TIMEOUT_MAP                                   :{WHITE}您的计算机下载地图用时过长
@@ -2590,9 +2606,9 @@ STR_NETWORK_ERROR_CLIENT_CONNECTION_LOST                        :连接丢失
 STR_NETWORK_ERROR_CLIENT_PROTOCOL_ERROR                         :套接字错误
 STR_NETWORK_ERROR_CLIENT_NEWGRF_MISMATCH                        :NewGRF 不匹配
 STR_NETWORK_ERROR_CLIENT_NOT_AUTHORIZED                         :没有授权
-STR_NETWORK_ERROR_CLIENT_NOT_EXPECTED                           :收到异常数据包
+STR_NETWORK_ERROR_CLIENT_NOT_EXPECTED                           :收到无效或未预期的数据包
 STR_NETWORK_ERROR_CLIENT_WRONG_REVISION                         :错误的版本
-STR_NETWORK_ERROR_CLIENT_NAME_IN_USE                            :已经有人用这个名字了
+STR_NETWORK_ERROR_CLIENT_NAME_IN_USE                            :已有人使用相同名称
 STR_NETWORK_ERROR_CLIENT_WRONG_PASSWORD                         :错误的密码
 STR_NETWORK_ERROR_CLIENT_NOT_ON_ALLOW_LIST                      :不在白名单内
 STR_NETWORK_ERROR_CLIENT_NO_AUTHENTICATION_METHOD_AVAILABLE     :已请求的验证方式均不可用
@@ -2600,7 +2616,7 @@ STR_NETWORK_ERROR_CLIENT_COMPANY_MISMATCH                       :错误的公司
 STR_NETWORK_ERROR_CLIENT_KICKED                                 :被服务器踢出
 STR_NETWORK_ERROR_CLIENT_CHEATER                                :正在尝试作弊
 STR_NETWORK_ERROR_CLIENT_SERVER_FULL                            :服务器满员
-STR_NETWORK_ERROR_CLIENT_TOO_MANY_COMMANDS                      :操作指令过于频繁
+STR_NETWORK_ERROR_CLIENT_TOO_MANY_COMMANDS                      :操作命令过于频繁
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_PASSWORD                       :没有在规定时间内收到密码
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_COMPUTER                       :超时
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_MAP                            :下载地图用时过长
@@ -2608,51 +2624,51 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :处理地图用
 STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :非法客户端名称
 
 # Network related errors
-STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
+STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 ###length 12
 STR_NETWORK_SERVER_MESSAGE_GAME_PAUSED                          :游戏暂停（{STRING}）
-STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_1                  :游戏仍然暂停（{STRING}）
-STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_2                  :游戏仍然暂停（{STRING}，{STRING}）
-STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_3                  :游戏仍然暂停（{STRING}，{STRING}，{STRING}）
+STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_1                  :游戏暂停中（{STRING}）
+STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_2                  :游戏暂停中（{STRING}，{STRING}）
+STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_3                  :游戏暂停中（{STRING}，{STRING}，{STRING}）
 STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_4                  :游戏暂停中（{STRING}，{STRING}，{STRING}，{STRING}）
-STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_5                  :游戏仍然暂停（{STRING}，{STRING}，{STRING}，{STRING}，{STRING}）
+STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_5                  :游戏暂停中（{STRING}，{STRING}，{STRING}，{STRING}，{STRING}）
 STR_NETWORK_SERVER_MESSAGE_GAME_UNPAUSED                        :游戏取消暂停（{STRING}）
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_NOT_ENOUGH_PLAYERS       :玩家数
-STR_NETWORK_SERVER_MESSAGE_GAME_REASON_CONNECTING_CLIENTS       :连接客户端
+STR_NETWORK_SERVER_MESSAGE_GAME_REASON_CONNECTING_CLIENTS       :正连接客户端
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_MANUAL                   :手动
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_GAME_SCRIPT              :游戏脚本
-STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH               :等待货物分配图更新
+STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH               :等待客货流更新
 
 STR_NETWORK_MESSAGE_CLIENT_LEAVING                              :离开
 STR_NETWORK_MESSAGE_CLIENT_JOINED                               :*** {STRING} 已加入游戏
-STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {0:STRING} 加入了游戏（Client #{2:NUM}）
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {0:STRING} 已加入 #{2:NUM} 公司
+STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {STRING} 加入了游戏（Client #{NUM}）
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {STRING} 已加入 {STRING}
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} 已作为观众加入
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {0:STRING} 成立了新公司（#{2:NUM}）
-STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {0:STRING} 已离开游戏（{2:STRING}）
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} 成立了新公司（#{NUM}）
+STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} 已离开游戏（{STRING}）
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} 已更改姓名为 {STRING}
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} 给予 {1:STRING} {2:CURRENCY_LONG}
-STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}服务器关闭了进程
-STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}服务器正在重新启动……{}请稍等……
+STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} 给予 {2:STRING} {1:CURRENCY_LONG}
+STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}服务器已关闭会话
+STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}服务器正在重新启动……{}{}请稍等……
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} 被踢出服务器。原因：（{STRING}）
 
 STR_NETWORK_ERROR_COORDINATOR_REGISTRATION_FAILED               :{WHITE}服务器注册失败
-STR_NETWORK_ERROR_COORDINATOR_REUSE_OF_INVITE_CODE              :{WHITE}另一个设置了同样邀请码的服务器已经注册。切换到“本地”游戏模式。
+STR_NETWORK_ERROR_COORDINATOR_REUSE_OF_INVITE_CODE              :{WHITE}已有其他服务器使用同样的邀请码注册。正切换到“本地”游戏模式。
 STR_NETWORK_ERROR_COORDINATOR_ISOLATED                          :{WHITE}您的服务器不允许远程连接
 STR_NETWORK_ERROR_COORDINATOR_ISOLATED_DETAIL                   :{BLACK}其他玩家将无法连接你的服务器
 
 # Content downloading window
-STR_CONTENT_TITLE                                               :{WHITE}下载内容
+STR_CONTENT_TITLE                                               :{WHITE}线上拓展内容
 STR_CONTENT_TYPE_CAPTION                                        :{BLACK}类型
-STR_CONTENT_TYPE_CAPTION_TOOLTIP                                :{BLACK}扩展包类型
+STR_CONTENT_TYPE_CAPTION_TOOLTIP                                :{BLACK}内容种类
 STR_CONTENT_NAME_CAPTION                                        :{BLACK}名称
 STR_CONTENT_NAME_CAPTION_TOOLTIP                                :{BLACK}内容名称
 STR_CONTENT_MATRIX_TOOLTIP                                      :{BLACK}单击一行以查看详情{}单击复选框选择下载
 STR_CONTENT_SELECT_ALL_CAPTION                                  :{BLACK}全选
-STR_CONTENT_SELECT_ALL_CAPTION_TOOLTIP                          :{BLACK}选定所有扩展包
+STR_CONTENT_SELECT_ALL_CAPTION_TOOLTIP                          :{BLACK}标记下载所有内容
 STR_CONTENT_SELECT_UPDATES_CAPTION                              :{BLACK}选择升级
-STR_CONTENT_SELECT_UPDATES_CAPTION_TOOLTIP                      :{BLACK}更新所有已下载的扩展包
+STR_CONTENT_SELECT_UPDATES_CAPTION_TOOLTIP                      :{BLACK}标记下载所有更新内容
 STR_CONTENT_UNSELECT_ALL_CAPTION                                :{BLACK}取消全选
 STR_CONTENT_UNSELECT_ALL_CAPTION_TOOLTIP                        :{BLACK}取消全部选择
 STR_CONTENT_SEARCH_EXTERNAL                                     :{BLACK}在外部网站搜索
@@ -2661,20 +2677,20 @@ STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER_CAPTION                  :{WHITE}正在�
 STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER                          :{WHITE}在外部网站下载内容的规则及条款可能跟 OpenTTD 引用的规则及条款不同。{}您需要参照有关网站以取得在 OpenTTD 安装有关内容的资讯。{}您要继续吗？
 STR_CONTENT_FILTER_TITLE                                        :{BLACK}标签/名称过滤器
 STR_CONTENT_OPEN_URL                                            :{BLACK}主页
-STR_CONTENT_OPEN_URL_TOOLTIP                                    :{BLACK}打开该扩展包主页
+STR_CONTENT_OPEN_URL_TOOLTIP                                    :{BLACK}访问此项目的网站
 STR_CONTENT_DOWNLOAD_CAPTION                                    :{BLACK}下载
 STR_CONTENT_DOWNLOAD_CAPTION_TOOLTIP                            :{BLACK}下载选定的内容
 STR_CONTENT_TOTAL_DOWNLOAD_SIZE                                 :{SILVER}总计下载大小：{WHITE}{BYTES}
-STR_CONTENT_DETAIL_TITLE                                        :{SILVER}扩展包信息
+STR_CONTENT_DETAIL_TITLE                                        :{SILVER}内容信息
 
 ###length 5
-STR_CONTENT_DETAIL_SUBTITLE_UNSELECTED                          :{SILVER}您尚未选择下载该扩展包
-STR_CONTENT_DETAIL_SUBTITLE_SELECTED                            :{SILVER}您已选择需要下载的扩展包
-STR_CONTENT_DETAIL_SUBTITLE_AUTOSELECTED                        :{SILVER}此依存组件已被选择下载
-STR_CONTENT_DETAIL_SUBTITLE_ALREADY_HERE                        :{SILVER}您已经下载过该扩展包
-STR_CONTENT_DETAIL_SUBTITLE_DOES_NOT_EXIST                      :{SILVER}该扩展包无法识别，OpenTTD 无法下载该扩展包
+STR_CONTENT_DETAIL_SUBTITLE_UNSELECTED                          :{SILVER}您尚未选择下载此项目
+STR_CONTENT_DETAIL_SUBTITLE_SELECTED                            :{SILVER}您已经选择下载此项目
+STR_CONTENT_DETAIL_SUBTITLE_AUTOSELECTED                        :{SILVER}已自动选择下载此依赖项目
+STR_CONTENT_DETAIL_SUBTITLE_ALREADY_HERE                        :{SILVER}您已经下载过此项目
+STR_CONTENT_DETAIL_SUBTITLE_DOES_NOT_EXIST                      :{SILVER}此未知内容无法于 OpenTTD 中下载
 
-STR_CONTENT_DETAIL_UPDATE                                       :{SILVER}该扩展包将会替换到当前使用的 {STRING}
+STR_CONTENT_DETAIL_UPDATE                                       :{SILVER}这是现有 {STRING} 的替代版本
 STR_CONTENT_DETAIL_NAME                                         :{SILVER}名称：{WHITE}{STRING}
 STR_CONTENT_DETAIL_VERSION                                      :{SILVER}版本：{WHITE}{STRING}
 STR_CONTENT_DETAIL_DESCRIPTION                                  :{SILVER}描述：{WHITE}{STRING}
@@ -2710,7 +2726,7 @@ STR_CONTENT_DOWNLOAD_PROGRESS_SIZE                              :{WHITE}已下�
 STR_CONTENT_ERROR_COULD_NOT_CONNECT                             :{WHITE}无法链接到下载服务器……
 STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD                            :{WHITE}下载失败……
 STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD_FILE_NOT_WRITABLE          :{WHITE}……文件无法写入
-STR_CONTENT_ERROR_COULD_NOT_EXTRACT                             :{WHITE}无法解压该扩展包
+STR_CONTENT_ERROR_COULD_NOT_EXTRACT                             :{WHITE}无法解压已下载的文件
 
 STR_MISSING_GRAPHICS_SET_CAPTION                                :{WHITE}缺失图形组
 STR_MISSING_GRAPHICS_SET_MESSAGE                                :{BLACK}OpenTTD 需要基础图形组用以绘制界面。您是否希望 OpenTTD 下载并安装以下图形组？
@@ -2747,9 +2763,9 @@ STR_LINKGRAPH_LEGEND_SATURATED                                  :{TINY_FONT}{BLA
 STR_LINKGRAPH_LEGEND_OVERLOADED                                 :{TINY_FONT}{BLACK}超载
 
 # Linkgraph tooltip
-STR_LINKGRAPH_STATS_TOOLTIP_MONTH                               :{BLACK}每月有 {CARGO_LONG} 需从 {STATION} 运至 {STATION} （运载能力的 {COMMA}%）{STRING}
-STR_LINKGRAPH_STATS_TOOLTIP_MINUTE                              :{BLACK}每分钟有 {CARGO_LONG} 需从 {STATION} 运至 {STATION} （运载能力的 {COMMA}%）{STRING}
-STR_LINKGRAPH_STATS_TOOLTIP_RETURN_EXTENSION                    :{}有{CARGO_LONG}要运回（运载能力的 {COMMA}%）
+STR_LINKGRAPH_STATS_TOOLTIP_MONTH                               :{BLACK}每月有 {CARGO_LONG} 需从 {STATION} 运至 {STATION} （容量的 {COMMA}%）{STRING}
+STR_LINKGRAPH_STATS_TOOLTIP_MINUTE                              :{BLACK}每分钟有 {CARGO_LONG} 需从 {STATION} 运至 {STATION} （容量的 {COMMA}%）{STRING}
+STR_LINKGRAPH_STATS_TOOLTIP_RETURN_EXTENSION                    :{}有{CARGO_LONG}要运回（容量的 {COMMA}%）
 STR_LINKGRAPH_STATS_TOOLTIP_TIME_EXTENSION                      :{}平均行驶时间：{UNITS_DAYS_OR_SECONDS}
 
 # Base for station construction window(s)
@@ -2771,7 +2787,7 @@ STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}合并�
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}建造分体路点
 
 # Generic toolbar
-STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}由于没有可使用此类设施的载具，此设施已被禁用
+STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}由于没有可使用此类设施的载具，已禁用此设施
 
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :铁路建设
@@ -2787,7 +2803,7 @@ STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}建设�
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_SIGNALS                 :{BLACK}建设铁路信号。建造时按住 <Ctrl> 键切换信号灯的风格样式。{}建造时拖拽可以在拖拽区间内按照设定的信号间距均匀建造信号灯。按住 <Ctrl> 键拖拽以按设定的信号灯建造至下一个交叉点 / 车站 / 信号灯。按住 <Shift> 以显示预计费用
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_BRIDGE                  :{BLACK}建设铁路桥梁。按住 <Shift> 键显示预计费用
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TUNNEL                  :{BLACK}建设铁路隧道。按住 <Shift> 键以显示预计费用
-STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR                :{BLACK}切换建筑 / 拆除铁轨、信号机、路点以及车站。按住 <Ctrl> 键点选以同时移除路点及车站中的铁轨
+STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR                :{BLACK}切换建设或拆除铁轨、信号机、路点以及车站。按住 <Ctrl> 键点选以同时移除路点及车站中的铁轨
 STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL                           :{BLACK}转换或升级铁路类型。按住 <Shift> 键单击以显示预计费用
 
 STR_RAIL_NAME_RAILROAD                                          :铁路
@@ -2842,12 +2858,18 @@ STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}可用�
 STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}可用年份：{ORANGE}至 {NUM} 年前可用
 STR_HOUSE_PICKER_SIZE                                           :{BLACK}大小：{ORANGE}{NUM}×{NUM} 格
 STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}接受货物：{ORANGE}
+STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}产出货物：{ORANGE}{CARGO_LIST}
 
 STR_HOUSE_PICKER_CLASS_ZONE1                                    :城镇边缘
 STR_HOUSE_PICKER_CLASS_ZONE2                                    :郊区边缘
 STR_HOUSE_PICKER_CLASS_ZONE3                                    :外郊区
 STR_HOUSE_PICKER_CLASS_ZONE4                                    :内郊区
 STR_HOUSE_PICKER_CLASS_ZONE5                                    :城镇中心
+
+STR_HOUSE_PICKER_PROTECT_TITLE                                  :防止升级
+STR_HOUSE_PICKER_PROTECT_TOOLTIP                                :选择是否保护房屋以防止房屋随着城镇发展被替换
+STR_HOUSE_PICKER_PROTECT_OFF                                    :关闭
+STR_HOUSE_PICKER_PROTECT_ON                                     :开启
 
 STR_STATION_CLASS_DFLT                                          :默认
 STR_STATION_CLASS_DFLT_STATION                                  :默认车站
@@ -2881,7 +2903,7 @@ STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}选择�
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}选择桥梁 - 点击选择桥梁进行建设
 STR_SELECT_BRIDGE_INFO_NAME                                     :{GOLD}{STRING}
 STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED                           :{GOLD}{STRING}，{} {VELOCITY}
-STR_SELECT_BRIDGE_INFO_NAME_COST                                :{GOLD}{0:STRING}，{} {WHITE}{2:CURRENCY_LONG}
+STR_SELECT_BRIDGE_INFO_NAME_COST                                :{GOLD}{STRING}，{} {WHITE}{CURRENCY_LONG}
 STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED_COST                      :{GOLD}{STRING}，{} {VELOCITY} {WHITE}{CURRENCY_LONG}
 STR_BRIDGE_NAME_SUSPENSION_STEEL                                :钢制悬索桥
 STR_BRIDGE_NAME_GIRDER_STEEL                                    :钢制桁桥
@@ -2913,8 +2935,8 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_BRIDGE                      :{BLACK}建设�
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_BRIDGE                   :{BLACK}建设电车桥梁。按住 <Shift> 键以显示预计费用
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}建设公路隧道。按住 <Shift> 键以显示预计费用
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}建设电车隧道。按住 <Shift> 键以显示预计费用
-STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}建设/拆除 公路
-STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}建设/拆除 电车轨道
+STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}切换建设或拆除公路
+STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}切换建设或拆除电车轨道
 STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_ROAD                           :{BLACK}转换或升级道路类型。按住 <Shift> 键单击以显示预计费用
 STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_TRAM                           :{BLACK}转换或升级电车轨道类型。按住 <Shift> 键单击以显示预计费用
 
@@ -2940,7 +2962,7 @@ STR_STATION_BUILD_CARGO_TRAM_ORIENTATION_TOOLTIP                :{BLACK}选择�
 # Waterways toolbar (last two for SE only)
 STR_WATERWAYS_TOOLBAR_CAPTION                                   :{WHITE}水运建设
 STR_WATERWAYS_TOOLBAR_CAPTION_SE                                :{WHITE}水运
-STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}修建运河。按住 <Shift> 键点选以显示预计费用
+STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}修建运河。按住 <Ctrl> 键以沿对角线操作，按住 <Shift> 键点选以显示预计费用
 STR_WATERWAYS_TOOLBAR_BUILD_LOCKS_TOOLTIP                       :{BLACK}建设船闸。按住 <Shift> 键点选以显示预计费用
 STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}建造船坞（可以购买或维护船只），按住 <Shift> 键以显示预计费用
 STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}建造码头。按住 <Ctrl> 键操作以合并车站，按住 <Shift> 键操作以显示预计费用
@@ -3041,7 +3063,7 @@ STR_FOUND_TOWN_EXPAND_ALL_TOWNS_TOOLTIP                         :{BLACK}使所�
 
 STR_FOUND_TOWN_NAME_TITLE                                       :{YELLOW}城镇名称：
 STR_FOUND_TOWN_NAME_EDITOR_TITLE                                :{BLACK}输入城镇名称
-STR_FOUND_TOWN_NAME_EDITOR_HELP                                 :{BLACK}点击这里输入城镇名称
+STR_FOUND_TOWN_NAME_EDITOR_TOOLTIP                              :{BLACK}点击这里输入城镇名称
 STR_FOUND_TOWN_NAME_RANDOM_BUTTON                               :{BLACK}随机名称
 STR_FOUND_TOWN_NAME_RANDOM_TOOLTIP                              :{BLACK}重新随机生成城镇名称
 
@@ -3055,7 +3077,7 @@ STR_FOUND_TOWN_CITY                                             :{BLACK}都市
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}都市增长速度高于一般城镇{}它们建立时规模更大
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}城镇道路布局：
-STR_FOUND_TOWN_SELECT_TOWN_ROAD_LAYOUT                          :{BLACK}为此城镇选择使用的道路布局
+STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}为此城镇选择使用的道路布局
 STR_FOUND_TOWN_SELECT_LAYOUT_ORIGINAL                           :{BLACK}原版
 STR_FOUND_TOWN_SELECT_LAYOUT_BETTER_ROADS                       :{BLACK}改良
 STR_FOUND_TOWN_SELECT_LAYOUT_2X2_GRID                           :{BLACK}2×2 网格
@@ -3125,6 +3147,8 @@ STR_LANG_AREA_INFORMATION_TRAM_TYPE                             :{BLACK}电车�
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}轨道限速：{LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}道路限速：{LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT                      :{BLACK}电车限速：{LTBLUE}{VELOCITY}
+STR_LAND_AREA_INFORMATION_TOWN_CAN_UPGRADE                      :{BLACK}城镇可以升级：{LTBLUE}是
+STR_LAND_AREA_INFORMATION_TOWN_CANNOT_UPGRADE                   :{BLACK}城镇可以升级：{LTBLUE}否
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :岩石
@@ -3132,10 +3156,12 @@ STR_LAI_CLEAR_DESCRIPTION_ROUGH_LAND                            :荒地
 STR_LAI_CLEAR_DESCRIPTION_BARE_LAND                             :土地
 STR_LAI_CLEAR_DESCRIPTION_GRASS                                 :草地
 STR_LAI_CLEAR_DESCRIPTION_FIELDS                                :田地
-STR_LAI_CLEAR_DESCRIPTION_SNOW_COVERED_LAND                     :雪地
 STR_LAI_CLEAR_DESCRIPTION_DESERT                                :沙漠
+STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROCKS                           :积雪岩石
+STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROUGH_LAND                      :积雪荒地
+STR_LAI_CLEAR_DESCRIPTION_SNOWY_GRASS                           :积雪草地
 
-STR_LAI_RAIL_DESCRIPTION_TRACK                                  :铁路 轨道
+STR_LAI_RAIL_DESCRIPTION_TRACK                                  :铁路轨道
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_SIGNALS              :有通过信号灯的铁路轨道
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRESIGNALS                  :有入口信号灯的铁路轨道
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXITSIGNALS                 :有出口信号灯的铁路轨道
@@ -3254,7 +3280,7 @@ STR_FRAMERATE_GL_ROADVEHS                                       :{BLACK}  道路
 STR_FRAMERATE_GL_SHIPS                                          :{BLACK}  船只耗时：
 STR_FRAMERATE_GL_AIRCRAFT                                       :{BLACK}  飞机耗时：
 STR_FRAMERATE_GL_LANDSCAPE                                      :{BLACK}  世界耗时：
-STR_FRAMERATE_GL_LINKGRAPH                                      :{BLACK}  货物分配图延时：
+STR_FRAMERATE_GL_LINKGRAPH                                      :{BLACK}  客货流延时：
 STR_FRAMERATE_DRAWING                                           :{BLACK}图形渲染：
 STR_FRAMERATE_DRAWING_VIEWPORTS                                 :{BLACK}  辅助视点：
 STR_FRAMERATE_VIDEO                                             :{BLACK}视频输出：
@@ -3271,7 +3297,7 @@ STR_FRAMETIME_CAPTION_GL_ROADVEHS                               :道路车辆耗
 STR_FRAMETIME_CAPTION_GL_SHIPS                                  :船只耗时
 STR_FRAMETIME_CAPTION_GL_AIRCRAFT                               :飞机耗时
 STR_FRAMETIME_CAPTION_GL_LANDSCAPE                              :世界耗时
-STR_FRAMETIME_CAPTION_GL_LINKGRAPH                              :货物分配图延时
+STR_FRAMETIME_CAPTION_GL_LINKGRAPH                              :客货流延时
 STR_FRAMETIME_CAPTION_DRAWING                                   :图形渲染
 STR_FRAMETIME_CAPTION_DRAWING_VIEWPORTS                         :世界视点渲染
 STR_FRAMETIME_CAPTION_VIDEO                                     :视频输出
@@ -3289,7 +3315,7 @@ STR_SAVELOAD_LOAD_SCENARIO                                      :{WHITE}读取�
 STR_SAVELOAD_LOAD_HEIGHTMAP                                     :{WHITE}读取地形图
 STR_SAVELOAD_SAVE_HEIGHTMAP                                     :{WHITE}保存高度图
 STR_SAVELOAD_LOAD_TOWN_DATA                                     :{WHITE}加载城镇数据
-STR_SAVELOAD_HOME_BUTTON                                        :{BLACK}点击这里返回默认的游戏存档目录
+STR_SAVELOAD_HOME_BUTTON_TOOLTIP                                :{BLACK}点击这里返回默认的游戏存档目录
 STR_SAVELOAD_BYTES_FREE                                         :{BLACK}{BYTES} 可用
 STR_SAVELOAD_LIST_TOOLTIP                                       :{BLACK}驱动器、目录和游戏存档列表
 STR_SAVELOAD_EDITBOX_TOOLTIP                                    :{BLACK}保存当前游戏用的存档名字
@@ -3328,15 +3354,15 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}工业�
 STR_MAPGEN_NUMBER_OF_INDUSTRIES_TOOLTIP                         :{BLACK}选择工业密度，或者输入一个自定义数字
 STR_MAPGEN_HEIGHTMAP_HEIGHT                                     :{BLACK}最高峰：
 STR_MAPGEN_HEIGHTMAP_HEIGHT_TOOLTIP                             :{BLACK}选择游戏地图中最高峰的海拔，以海平面为原点计
-STR_MAPGEN_HEIGHTMAP_HEIGHT_UP                                  :{BLACK}提高最高峰的最大高度一格
-STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN                                :{BLACK}降低最高峰的最大高度一格
+STR_MAPGEN_HEIGHTMAP_HEIGHT_UP_TOOLTIP                          :{BLACK}提高最高峰的最大高度一格
+STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN_TOOLTIP                        :{BLACK}降低最高峰的最大高度一格
 STR_MAPGEN_SNOW_COVERAGE                                        :{BLACK}雪地比率：
-STR_MAPGEN_SNOW_COVERAGE_UP                                     :{BLACK}将雪地比率增加 10%
-STR_MAPGEN_SNOW_COVERAGE_DOWN                                   :{BLACK}将雪地比率减少 10%
+STR_MAPGEN_SNOW_COVERAGE_UP_TOOLTIP                             :{BLACK}将雪地比率增加 10%
+STR_MAPGEN_SNOW_COVERAGE_DOWN_TOOLTIP                           :{BLACK}将雪地比率减少 10%
 STR_MAPGEN_SNOW_COVERAGE_TEXT                                   :{BLACK}{NUM}%
 STR_MAPGEN_DESERT_COVERAGE                                      :{BLACK}沙漠比率：
-STR_MAPGEN_DESERT_COVERAGE_UP                                   :{BLACK}将沙漠比率增加 10%
-STR_MAPGEN_DESERT_COVERAGE_DOWN                                 :{BLACK}将沙漠比率减少 10%
+STR_MAPGEN_DESERT_COVERAGE_UP_TOOLTIP                           :{BLACK}将沙漠比率增加 10%
+STR_MAPGEN_DESERT_COVERAGE_DOWN_TOOLTIP                         :{BLACK}将沙漠比率减少 10%
 STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}{NUM}%
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}地形特点：
 STR_MAPGEN_SEA_LEVEL                                            :{BLACK}海洋面积：
@@ -3409,8 +3435,8 @@ STR_SE_MAPGEN_FLAT_WORLD_TOOLTIP                                :{BLACK}生成�
 STR_SE_MAPGEN_RANDOM_LAND                                       :{WHITE}随机地面
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT                                 :{BLACK}地面高度：
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_TOOLTIP                         :{BLACK}选择地面海拔高度
-STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_DOWN                            :{BLACK}提升地面高度
-STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_UP                              :{BLACK}降低地面高度
+STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_DOWN_TOOLTIP                    :{BLACK}提升地面高度
+STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_UP_TOOLTIP                      :{BLACK}降低地面高度
 
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_QUERY_CAPT                      :{WHITE}改变地面的高度
 
@@ -3464,7 +3490,7 @@ STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}将选�
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}下移
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}将选定的 NewGRF 文件向下移动
 STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}更新
-STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}更新当前已安装的扩展包
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}更新当前已应用的 NewGRF
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}已经安装的 NewGRF 文件列表{}点击可以改变参数
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}设置参数
@@ -3473,8 +3499,8 @@ STR_NEWGRF_SETTINGS_TOGGLE_PALETTE                              :{BLACK}切换�
 STR_NEWGRF_SETTINGS_TOGGLE_PALETTE_TOOLTIP                      :{BLACK}切换选定 GRF 的调色盘。{}如果该 GRF 在游戏中看起来是一片粉色，您可以尝试调整此项以解决问题
 STR_NEWGRF_SETTINGS_APPLY_CHANGES                               :{BLACK}应用
 
-STR_NEWGRF_SETTINGS_FIND_MISSING_CONTENT_BUTTON                 :{BLACK}在线查找缺失的扩展包
-STR_NEWGRF_SETTINGS_FIND_MISSING_CONTENT_TOOLTIP                :{BLACK}看看您需要的扩展包是否能在线找到
+STR_NEWGRF_SETTINGS_FIND_MISSING_CONTENT_BUTTON                 :{BLACK}在线查找缺失的内容
+STR_NEWGRF_SETTINGS_FIND_MISSING_CONTENT_TOOLTIP                :{BLACK}检查是否可以在线下载缺失的内容
 
 STR_NEWGRF_SETTINGS_FILENAME                                    :{BLACK}文件名：{SILVER}{STRING}
 STR_NEWGRF_SETTINGS_GRF_ID                                      :{BLACK}GRF ID：{SILVER}{STRING}
@@ -3519,7 +3545,7 @@ STR_NEWGRF_INSPECT_CAPTION                                      :{WHITE}检查 -
 STR_NEWGRF_INSPECT_PARENT_BUTTON                                :{BLACK}Parent
 STR_NEWGRF_INSPECT_PARENT_TOOLTIP                               :{BLACK}检查该对象的 Parent scope
 
-STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT                            :{STRING} 于 {HEX}
+STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT                            :于 {1:HEX} 的{0:STRING}
 STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_OBJECT                     :物件
 STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_RAIL_TYPE                  :铁路类型
 STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_ROAD_TYPE                  :道路类型
@@ -3569,7 +3595,7 @@ STR_NEWGRF_ERROR_INVALID_PARAMETER                              :{1:STRING} 具�
 STR_NEWGRF_ERROR_LOAD_BEFORE                                    :{1:STRING} 必须在 {2:STRING} 之前加载
 STR_NEWGRF_ERROR_LOAD_AFTER                                     :{1:STRING} 必须在 {2:STRING} 后加载
 STR_NEWGRF_ERROR_OTTD_VERSION_NUMBER                            :{1:STRING} 需要 OpenTTD {2:STRING} 或更高版本
-STR_NEWGRF_ERROR_AFTER_TRANSLATED_FILE                          :被设计为可翻译的 GRF 文件
+STR_NEWGRF_ERROR_AFTER_TRANSLATED_FILE                          :GRF 文件翻译后出现错误
 STR_NEWGRF_ERROR_TOO_MANY_NEWGRFS_LOADED                        :加载的 NewGRF 太多
 STR_NEWGRF_ERROR_STATIC_GRF_CAUSES_DESYNC                       :载入 {1:STRING} 为静态 NewGRF 时载入 {2:STRING} 可能造成同步错误
 STR_NEWGRF_ERROR_UNEXPECTED_SPRITE                              :未预期的 sprite（sprite {3:NUM}）
@@ -3593,7 +3619,7 @@ STR_NEWGRF_COMPATIBLE_LOADED                                    :{ORANGE}未找�
 STR_NEWGRF_TOO_MANY_NEWGRFS                                     :{WHITE}加入的 NewGRF 文件达到上限，不能再新增
 
 STR_NEWGRF_COMPATIBLE_LOAD_WARNING                              :{WHITE}已为缺失的文件载入兼容的 GRF
-STR_NEWGRF_DISABLED_WARNING                                     :{WHITE}缺失的 GRF 文件已经被禁用
+STR_NEWGRF_DISABLED_WARNING                                     :{WHITE}已禁用缺失的 GRF 文件
 STR_NEWGRF_UNPAUSE_WARNING_TITLE                                :{YELLOW}无法找到 GRF 文件
 STR_NEWGRF_UNPAUSE_WARNING                                      :{WHITE}取消暂停可能造成 OpenTTD 游戏错误，请不要将向开发人员报告接下来可能出现的错误情形。{}确定要取消暂停吗？
 
@@ -3605,17 +3631,17 @@ STR_NEWGRF_LIST_COMPATIBLE                                      :{YELLOW}找到�
 STR_NEWGRF_LIST_MISSING                                         :{RED}缺失文件
 
 # NewGRF 'it's broken' warnings
-STR_NEWGRF_BROKEN                                               :{WHITE}NewGRF“{0:STRING}”的行为可能造成同步错误或是崩溃
-STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}{1:ENGINE}机车车厢的状态没在车库内发生变动
-STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}“{1:ENGINE}” 不在车库内却发生长度变动
-STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}它会在“{1:ENGINE}”在机厂外或不在接受改装时改変其运载能力
+STR_NEWGRF_BROKEN                                               :{WHITE}NewGRF“{PUSH_COLOUR}{0:STRING}{POP_COLOUR}”的行为可能造成同步错误或崩溃
+STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}它于“{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}”不在车库内时改变了动力车厢状态
+STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}它于“{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}”不在车库内时改変了列车长度
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}它于“{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}”不在车库内或不在改装时改変了容量
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}{1:COMPANY} 所拥有的列车 {0:VEHICLE} 长度无效。这个错误可能是由 NewGRF 导致的。游戏可能会无法同步或崩溃
 
-STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF“{STRING}”的信息不正确
-STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}购买“{1:ENGINE}”后，将造成货物/运费的参数与购买列表不符，这将有可能造成自动更新/购买不成功
-STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}“{1:STRING}”产生了一个死循环
-STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}回调函数 {1:HEX} 返回了一个未知/错误的结果 {2:HEX}
-STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}“{1:STRING}”返回了错误的货物类型。位于产品回调函数 {2:HEX} 处
+STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF“{PUSH_COLOUR}{STRING}{POP_COLOUR}”提供了错误的信息
+STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}购买列表中“{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}”的货物/改装信息与购买后的信息不同。这可能会导致自动更新或自动替换时无法正确改装此载具
+STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}“{PUSH_COLOUR}{1:STRING}{POP_COLOUR}”在生产回调函数中产生了一个死循环
+STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}回调函数 {1:HEX} 返回了一个未知/错误的结果：{2:HEX}
+STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}“{PUSH_COLOUR}{1:STRING}{POP_COLOUR}”返回了错误的货物类型。位于生产回调函数 {2:HEX} 处
 
 # 'User removed essential NewGRFs'-placeholders for stuff without specs
 STR_NEWGRF_INVALID_CARGO                                        :<无效货物>
@@ -3631,7 +3657,6 @@ STR_INVALID_VEHICLE                                             :<无效载具>
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}正在扫描 NewGRF
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}正在扫描 NewGRF。这可能需要一些时间，取决于其数量……
 STR_NEWGRF_SCAN_STATUS                                          :{BLACK}已扫描 {NUM} 个 NewGRF，预计 NewGRF 总数为 {NUM}
-STR_NEWGRF_SCAN_ARCHIVES                                        :正在扫描压缩包
 
 # Sign list window
 STR_SIGN_LIST_CAPTION                                           :{WHITE}标志列表 - {COMMA} 个标志
@@ -3759,10 +3784,10 @@ STR_GOAL_QUESTION_BUTTON_CLOSE                                  :关闭
 # Subsidies window
 STR_SUBSIDIES_CAPTION                                           :{WHITE}财政补贴项目
 STR_SUBSIDIES_OFFERED_TITLE                                     :{BLACK}尚未中标的项目：
-STR_SUBSIDIES_OFFERED_FROM_TO                                   :{ORANGE}将{STRING}从{STRING}运至{STRING}{YELLOW}（{STRING}）
+STR_SUBSIDIES_OFFERED_FROM_TO                                   :{ORANGE}将{STRING}从 {STRING} 运至 {STRING}{YELLOW}（{STRING}）
 STR_SUBSIDIES_NONE                                              :{ORANGE}没有
 STR_SUBSIDIES_SUBSIDISED_TITLE                                  :{BLACK}已经中标的项目：
-STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}将 {STRING} 从 {STRING} 运送到 {STRING}{YELLOW}（{COMPANY}{YELLOW}，{STRING}）
+STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}将{STRING}从 {STRING} 运送到 {STRING}{YELLOW}（{COMPANY}{YELLOW}，{STRING}）
 STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}将屏幕中心移动到当前工业或城镇的位置。按住 <Ctrl> 键点选会在新视点中显示目标位置
 STR_SUBSIDIES_OFFERED_EXPIRY_DATE                               :在 {DATE_SHORT} 之前
 STR_SUBSIDIES_OFFERED_EXPIRY_TIME                               :剩余时间：{UNITS_MONTHS_OR_MINUTES}
@@ -3784,12 +3809,12 @@ STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}无效的�
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}车站名称 - 点选名称以将屏幕中心移动到车站的位置。按住 <Ctrl> 键点选会在新视点中显示车站位置
-STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE                        :{BLACK}按住 <Ctrl> 键点选以选择多个项目
+STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE_TOOLTIP                :{BLACK}按住 <Ctrl> 键点选以选择多个项目
 STR_STATION_LIST_CAPTION                                        :{WHITE}{COMPANY} - 车站 {COMMA} 座
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- 没有 -
-STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}选择所有设施
+STR_STATION_LIST_SELECT_ALL_FACILITIES_TOOLTIP                  :{BLACK}选择所有设施
 STR_STATION_LIST_CARGO_FILTER_ALL_AND_NO_RATING                 :所有货物类型与无评价
 STR_STATION_LIST_CARGO_FILTER_MULTIPLE                          :多种货物类型
 STR_STATION_LIST_CARGO_FILTER_NO_CARGO_TYPES                    :无货物类型
@@ -3801,14 +3826,14 @@ STR_STATION_LIST_CARGO_FILTER_EXPAND                            :显示更多…
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
 STR_STATION_VIEW_WAITING_CARGO                                  :{WHITE}{CARGO_LONG}
-STR_STATION_VIEW_RESERVED                                       :{YELLOW}（{CARGO_SHORT} 等待装货）
+STR_STATION_VIEW_RESERVED                                       :{YELLOW}（已预留装载 {CARGO_SHORT}）
 
 STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}接受
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}显示接受的货物列表
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}接受：{WHITE}{CARGO_LIST}
 
 STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}这个车站在这个镇里享有独家经营权
-STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} 购买了本城镇专属经营权
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} 已购买本城镇专属经营权
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}评价
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}显示车站评价
@@ -3867,7 +3892,7 @@ STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOIN
 STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}将屏幕中心移动到路点所在的位置。按住 <Ctrl> 单击会在新视点中显示路点
 STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}修改路点名
 STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}将屏幕中心移动到浮标所在的位置。按住 <Ctrl> 单击会在新视点中显示目标位置
-STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}修改浮标名
+STR_BUOY_VIEW_RENAME_TOOLTIP                                    :{BLACK}修改浮标名
 
 STR_EDIT_WAYPOINT_NAME                                          :{WHITE}编辑路点名称
 
@@ -3943,7 +3968,7 @@ STR_COMPANY_VIEW_BUILD_HQ_TOOLTIP                               :{BLACK}建立�
 STR_COMPANY_VIEW_VIEW_HQ_BUTTON                                 :{BLACK}查看总部
 STR_COMPANY_VIEW_VIEW_HQ_TOOLTIP                                :{BLACK}查看公司总部
 STR_COMPANY_VIEW_RELOCATE_HQ                                    :{BLACK}重置总部
-STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS                  :{BLACK}以公司市值 1% 的代价重建总部，按住 <Shift> 键单击可以显示所需资金
+STR_COMPANY_VIEW_RELOCATE_HQ_TOOLTIP                            :{BLACK}以公司市值 1% 的代价重建总部，按住 <Shift> 键单击可以显示所需资金
 STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}基建详情
 STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}显示详细的设施情况
 STR_COMPANY_VIEW_GIVE_MONEY_BUTTON                              :{BLACK}给予资金
@@ -3990,7 +4015,7 @@ STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUST
 STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}、{STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}、{STRING}、{STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}、{STRING}、{STRING}……（尚有 {NUM} 个未显示）
-STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}工业名称 - 点选名称以将屏幕中心移动到当前工业的位置。按住 <Ctrl> 键点选会在新视点中显示工业位置
+STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}工业名称 - 点选名称以将屏幕中心移动到当前工业的位置。按住 <Ctrl> 键点选会在新视点中显示工业位置
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}接受货物：{SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}产出货物：{SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :所有货物类型
@@ -4012,8 +4037,10 @@ STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}产出�
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :，{STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}需要：
-STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{0:STRING}{BLACK}{3:STRING}
-STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}：库存 {CARGO_SHORT} {STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_SUFFIX                           :{YELLOW}{0:STRING}{BLACK}{3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT_SUFFIX                    :{YELLOW}{0:STRING}{BLACK}：库存 {1:CARGO_SHORT} {3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_NOSUFFIX                         :{YELLOW}{0:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT_NOSUFFIX                  :{YELLOW}{0:STRING}{BLACK}：库存 {1:CARGO_SHORT}
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}改变产量
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}修改产量（百分比，最高为 800%）
@@ -4038,7 +4065,7 @@ STR_VEHICLE_LIST_AVAILABLE_SHIPS                                :可用的船只
 STR_VEHICLE_LIST_AVAILABLE_AIRCRAFT                             :可用的飞机
 
 STR_VEHICLE_LIST_MANAGE_LIST                                    :{BLACK}管理列表
-STR_VEHICLE_LIST_MANAGE_LIST_TOOLTIP                            :{BLACK}向列表中所有载具发出指令
+STR_VEHICLE_LIST_MANAGE_LIST_TOOLTIP                            :{BLACK}向列表中所有载具发出命令
 STR_VEHICLE_LIST_REPLACE_VEHICLES                               :替换载具
 STR_VEHICLE_LIST_SEND_FOR_SERVICING                             :进行维护
 STR_VEHICLE_LIST_CREATE_GROUP                                   :创建分组
@@ -4116,11 +4143,11 @@ STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}售价�
 STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}售价：{GOLD}{CURRENCY_LONG}{BLACK}（改装花费：{GOLD}{CURRENCY_LONG}{BLACK}）重量：{GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}速度：{GOLD}{VELOCITY}{BLACK} 功率：{GOLD}{POWER}
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}速度：{GOLD}{VELOCITY}
-STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}在海洋上的速度：{GOLD}{VELOCITY}
-STR_PURCHASE_INFO_SPEED_CANAL                                   :{BLACK}在河流上的速度：{GOLD}{VELOCITY}
+STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}海上速度：{GOLD}{VELOCITY}
+STR_PURCHASE_INFO_SPEED_CANAL                                   :{BLACK}运河、河流速度：{GOLD}{VELOCITY}
 STR_PURCHASE_INFO_RUNNINGCOST_YEAR                              :{BLACK}运行费用：{GOLD}{CURRENCY_LONG}/年
 STR_PURCHASE_INFO_RUNNINGCOST_PERIOD                            :{BLACK}运行费用：{GOLD}{CURRENCY_LONG}/周期
-STR_PURCHASE_INFO_CAPACITY                                      :{BLACK}运载能力：{GOLD}{CARGO_LONG} {STRING}
+STR_PURCHASE_INFO_CAPACITY                                      :{BLACK}容量：{GOLD}{CARGO_LONG} {STRING}
 STR_PURCHASE_INFO_REFITTABLE                                    :（可改装）
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}设计日期：{GOLD}{NUM}{BLACK} 寿命：{GOLD}{COMMA} 年
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}最大可靠性：{GOLD}{COMMA}%
@@ -4129,13 +4156,13 @@ STR_PURCHASE_INFO_COST_REFIT                                    :{BLACK}售价�
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}重量：{GOLD}{WEIGHT_SHORT}（{WEIGHT_SHORT}）
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}售价：{GOLD}{CURRENCY_LONG}{BLACK} 速度：{GOLD}{VELOCITY}
 STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}售价：{GOLD}{CURRENCY_LONG}{BLACK}（改装费用：{GOLD}{CURRENCY_LONG}{BLACK}）速度：{GOLD}{VELOCITY}
-STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}运载能力：{GOLD}{CARGO_LONG}、{CARGO_LONG}
+STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}容量：{GOLD}{CARGO_LONG}、{CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}功率：{GOLD}+{POWER}{BLACK} 重量：{GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}可改装为：{GOLD}{STRING}
 STR_PURCHASE_INFO_ALL_TYPES                                     :所有类型
 STR_PURCHASE_INFO_NONE                                          :无
 STR_PURCHASE_INFO_ENGINES_ONLY                                  :仅机车
-STR_PURCHASE_INFO_ALL_BUT                                       :所有货物但 {CARGO_LIST} 除外
+STR_PURCHASE_INFO_ALL_BUT                                       :所有货物（{CARGO_LIST}除外）
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}最大牵引力：{GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}航行距离：{GOLD}{COMMA} 格
 STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}飞机类型：{GOLD}{STRING}
@@ -4152,7 +4179,7 @@ STR_BUY_VEHICLE_SHIP_LIST_TOOLTIP                               :{BLACK}船舶�
 STR_BUY_VEHICLE_AIRCRAFT_LIST_TOOLTIP                           :{BLACK}飞机选择列表。点击载具以展示信息。按住 <Ctrl> 键点选以显示 / 隐藏当前载具
 
 ###length VEHICLE_TYPES
-STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_BUTTON                        :{BLACK}购买车头/车厢
+STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_BUTTON                        :{BLACK}购买机车或车厢
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}购买汽车
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}购买船只
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}购买飞机
@@ -4167,7 +4194,7 @@ STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}购买�
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}购买选定的列车，按住 <Shift> 键单击以显示预计费用
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}购买选定的汽车，按住 <Shift> 键单击以显示预计费用
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}购买选定的船只，按住 <Shift> 键单击以显示预计费用
-STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}购买选定的飞机。按住 <Shift> 键单击以显示预计费用
+STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}购买选定的飞机，按住 <Shift> 键单击以显示预计费用
 
 ###length VEHICLE_TYPES
 STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}购买并改装选定的列车。按住 <Shift> 键单击可以显示所需资金
@@ -4179,7 +4206,7 @@ STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_TOOLTIP              :{BLACK}购买�
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}重命名
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}重命名
 STR_BUY_VEHICLE_SHIP_RENAME_BUTTON                              :{BLACK}重命名
-STR_BUY_VEHICLE_AIRCRAFT_RENAME_BUTTON                          :{BLACK}重命名飞机
+STR_BUY_VEHICLE_AIRCRAFT_RENAME_BUTTON                          :{BLACK}重命名
 
 ###length VEHICLE_TYPES
 STR_BUY_VEHICLE_TRAIN_RENAME_TOOLTIP                            :{BLACK}重命名列车型号
@@ -4206,7 +4233,7 @@ STR_BUY_VEHICLE_SHIP_HIDE_SHOW_TOGGLE_TOOLTIP                   :{BLACK}切换�
 STR_BUY_VEHICLE_AIRCRAFT_HIDE_SHOW_TOGGLE_TOOLTIP               :{BLACK}切换是否显示飞机类型
 
 ###length VEHICLE_TYPES
-STR_QUERY_RENAME_TRAIN_TYPE_CAPTION                             :{WHITE}重新命名列车类型
+STR_QUERY_RENAME_TRAIN_TYPE_CAPTION                             :{WHITE}重命名列车型号
 STR_QUERY_RENAME_ROAD_VEHICLE_TYPE_CAPTION                      :{WHITE}重命名汽车型号
 STR_QUERY_RENAME_SHIP_TYPE_CAPTION                              :{WHITE}重命名船只型号
 STR_QUERY_RENAME_AIRCRAFT_TYPE_CAPTION                          :{WHITE}重命名飞机型号
@@ -4241,10 +4268,10 @@ STR_DEPOT_SELL_ALL_BUTTON_SHIP_TOOLTIP                          :{BLACK}出售�
 STR_DEPOT_SELL_ALL_BUTTON_AIRCRAFT_TOOLTIP                      :{BLACK}出售机库中的所有飞机
 
 ###length VEHICLE_TYPES
-STR_DEPOT_AUTOREPLACE_TRAIN_TOOLTIP                             :{BLACK}自动更新车库中的所有列车
-STR_DEPOT_AUTOREPLACE_ROAD_VEHICLE_TOOLTIP                      :{BLACK}自动更新车库中的所有汽车
-STR_DEPOT_AUTOREPLACE_SHIP_TOOLTIP                              :{BLACK}自动更新船坞中的所有船只
-STR_DEPOT_AUTOREPLACE_AIRCRAFT_TOOLTIP                          :{BLACK}自动更新机库中的所有飞机
+STR_DEPOT_AUTOREPLACE_TRAIN_TOOLTIP                             :{BLACK}自动替换车库中的所有列车
+STR_DEPOT_AUTOREPLACE_ROAD_VEHICLE_TOOLTIP                      :{BLACK}自动替换车库中的所有汽车
+STR_DEPOT_AUTOREPLACE_SHIP_TOOLTIP                              :{BLACK}自动替换船坞中的所有船只
+STR_DEPOT_AUTOREPLACE_AIRCRAFT_TOOLTIP                          :{BLACK}自动替换机库中的所有飞机
 
 ###length VEHICLE_TYPES
 STR_DEPOT_TRAIN_NEW_VEHICLES_BUTTON                             :{BLACK}购买列车
@@ -4265,10 +4292,10 @@ STR_DEPOT_CLONE_SHIP                                            :{BLACK}克隆�
 STR_DEPOT_CLONE_AIRCRAFT                                        :{BLACK}克隆飞机
 
 ###length VEHICLE_TYPES
-STR_DEPOT_CLONE_TRAIN_DEPOT_INFO                                :{BLACK}复制火车。点击此按钮然后再点击任意一列在车库内或车库外的火车以复制购买。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
-STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_INFO                         :{BLACK}复制汽车。点击此按钮然后再点击任意一辆在车库内或车库外的载具以复制购买。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
-STR_DEPOT_CLONE_SHIP_DEPOT_INFO                                 :{BLACK}复制船只。点击此按钮然后再点击任意一辆在车库内或车库外的载具以复制购买。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
-STR_DEPOT_CLONE_AIRCRAFT_INFO_HANGAR_WINDOW                     :{BLACK}复制飞机。点击此按钮然后再点击任意一辆在车库内或车库外的载具以复制购买。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
+STR_DEPOT_CLONE_TRAIN_DEPOT_TOOLTIP                             :{BLACK}复制火车。点击此按钮然后再点击任意一列在车库内或车库外的火车以复制购买。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
+STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_TOOLTIP                      :{BLACK}复制汽车。点击此按钮然后再点击任意一辆在车库内或车库外的载具以复制购买。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
+STR_DEPOT_CLONE_SHIP_DEPOT_TOOLTIP                              :{BLACK}复制船只。点击此按钮然后再点击任意一辆在车库内或车库外的载具以复制购买。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
+STR_DEPOT_CLONE_AIRCRAFT_HANGAR_TOOLTIP                         :{BLACK}复制飞机。点击此按钮然后再点击任意一辆在车库内或车库外的载具以复制购买。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
 
 ###length VEHICLE_TYPES
 STR_DEPOT_TRAIN_LOCATION_TOOLTIP                                :{BLACK}将屏幕中心移动到列车车库所在的位置。按住 <Ctrl> 单击会在新视点中显示列车车库位置
@@ -4299,7 +4326,7 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}你将�
 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}来自供货商的消息
-STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}我们新近设计了一款{STRING}{}您愿意在产品正式上市前试用一年吗？
+STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}我们新近设计了一款{STRING}{}您愿意在产品正式上市前独家试用一年，以便我们在正式上市前观察它的表现吗？
 
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :铁路机车
 STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :电气化铁路机车
@@ -4312,8 +4339,6 @@ STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :电车
 STR_ENGINE_PREVIEW_AIRCRAFT                                     :飞机
 STR_ENGINE_PREVIEW_SHIP                                         :船舶
 
-STR_ENGINE_PREVIEW_TEXT3                                        :{BLACK}{STRING}{}{5:STRING}{}{STRING}
-STR_ENGINE_PREVIEW_TEXT4                                        :{BLACK}{STRING}{}{STRING}{}{STRING}{}{STRING}
 STR_ENGINE_PREVIEW_COST_WEIGHT                                  :售价：{CURRENCY_LONG} 重量：{WEIGHT_SHORT}
 STR_ENGINE_PREVIEW_COST_MAX_SPEED                               :售价：{CURRENCY_LONG}  最大速度：{VELOCITY}
 STR_ENGINE_PREVIEW_SPEED_POWER                                  :速度：{VELOCITY} 功率：{POWER}
@@ -4322,8 +4347,8 @@ STR_ENGINE_PREVIEW_TYPE                                         :飞机类型：
 STR_ENGINE_PREVIEW_TYPE_RANGE                                   :飞机类别：{STRING}   航程：{COMMA} 格
 STR_ENGINE_PREVIEW_RUNCOST_YEAR                                 :运行费用：{CURRENCY_LONG}/年
 STR_ENGINE_PREVIEW_RUNCOST_PERIOD                               :运行费用：{CURRENCY_LONG}/周期
-STR_ENGINE_PREVIEW_CAPACITY                                     :装载量：{CARGO_LONG}
-STR_ENGINE_PREVIEW_CAPACITY_2                                   :装载量：{CARGO_LONG}、{CARGO_LONG}
+STR_ENGINE_PREVIEW_CAPACITY                                     :容量：{CARGO_LONG}
+STR_ENGINE_PREVIEW_CAPACITY_2                                   :容量：{CARGO_LONG}、{CARGO_LONG}
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}更新 {STRING} - {STRING}
@@ -4339,31 +4364,31 @@ STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :汽车
 STR_REPLACE_VEHICLE_SHIP                                        :船只
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :飞机
 
-STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK}选择要替换的载具类型
-STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK}选择用来替换左侧选定载具的新载具
+STR_REPLACE_LEFT_ARRAY_TOOLTIP                                  :{BLACK}选择要替换的载具类型
+STR_REPLACE_RIGHT_ARRAY_TOOLTIP                                 :{BLACK}选择用来替换左侧选定载具的新载具
 
 STR_REPLACE_VEHICLES_START                                      :{BLACK}开始更新
 STR_REPLACE_VEHICLES_NOW                                        :立刻替换所有载具
 STR_REPLACE_VEHICLES_WHEN_OLD                                   :只替换旧的
-STR_REPLACE_HELP_START_BUTTON                                   :{BLACK}按下以开始将左侧选定的载具替换为右侧指定的载具
+STR_REPLACE_START_BUTTON_TOOLTIP                                :{BLACK}按下以开始将左侧选定的载具替换为右侧指定的载具
 STR_REPLACE_NOT_REPLACING                                       :{BLACK}没有更新
 STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED                      :{BLACK}请选择要更新的对象
 STR_REPLACE_REPLACING_WHEN_OLD                                  :{ENGINE} 变老旧时
 STR_REPLACE_VEHICLES_STOP                                       :{BLACK}停止更新
-STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}按下以停止替换左侧指定的载具
+STR_REPLACE_STOP_BUTTON_TOOLTIP                                 :{BLACK}按下以停止替换左侧指定的载具
 
-STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}可以切换 机车/挂车 替换项目
+STR_REPLACE_ENGINE_WAGON_SELECT_TOOLTIP                         :{BLACK}在机车及车厢替换窗口间切换
 STR_REPLACE_ENGINES                                             :机车
 STR_REPLACE_WAGONS                                              :挂车
 STR_REPLACE_ALL_RAILTYPE                                        :所有铁路载具
 STR_REPLACE_ALL_ROADTYPE                                        :所有道路载具
 
 ###length 2
-STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}选择更新载具的对应铁路类型
-STR_REPLACE_HELP_ROADTYPE                                       :{BLACK}选择更新载具的对应道路类型
+STR_REPLACE_RAILTYPE_TOOLTIP                                    :{BLACK}选择更新载具的对应铁路类型
+STR_REPLACE_ROADTYPE_TOOLTIP                                    :{BLACK}选择更新载具的对应道路类型
 ###next-name-looks-similar
 
-STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}显示用来替换左侧选定载具的新载具
+STR_REPLACE_REPLACE_INFO_TAB_TOOLTIP                            :{BLACK}显示用来替换左侧选定载具的新载具
 STR_REPLACE_RAIL_VEHICLES                                       :普通列车
 STR_REPLACE_ELRAIL_VEHICLES                                     :电力机车
 STR_REPLACE_MONORAIL_VEHICLES                                   :单轨列车
@@ -4373,7 +4398,7 @@ STR_REPLACE_ROAD_VEHICLES                                       :路面交通工
 STR_REPLACE_TRAM_VEHICLES                                       :电车
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}移除车厢（{STRING}）：{ORANGE}{STRING}
-STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}如果替换会使列车更长。则从列车前方开始自动移除车厢以维持目前长度
+STR_REPLACE_REMOVE_WAGON_TOOLTIP                                :{BLACK}如果替换会使列车更长。则从列车前方开始自动移除车厢以维持目前长度
 STR_REPLACE_REMOVE_WAGON_GROUP_HELP                             :{STRING}。按住 <Ctrl> 键点击以套用至所有子分组
 
 # Vehicle view
@@ -4392,15 +4417,15 @@ STR_VEHICLE_VIEW_SHIP_SEND_TO_DEPOT_TOOLTIP                     :{BLACK}命令�
 STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}命令飞机前往机库。按住 <Ctrl> 键操作以仅作维护
 
 ###length VEHICLE_TYPES
-STR_VEHICLE_VIEW_CLONE_TRAIN_INFO                               :{BLACK}复制这列火车。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
-STR_VEHICLE_VIEW_CLONE_ROAD_VEHICLE_INFO                        :{BLACK}复制这辆汽车。按住 <Ctrl> 键单击以共享调度计划，按住 <Shift> 键单击以显示预计费用
-STR_VEHICLE_VIEW_CLONE_SHIP_INFO                                :{BLACK}复制这条船只。按住 <Ctrl> 键单击以共享调度计划，按住 <Shift> 键单击以显示所需资金
+STR_VEHICLE_VIEW_CLONE_TRAIN_INFO                               :{BLACK}复制火车。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
+STR_VEHICLE_VIEW_CLONE_ROAD_VEHICLE_INFO                        :{BLACK}复制汽车。按住 <Ctrl> 键单击以共享调度计划，按住 <Shift> 键单击以显示预计费用
+STR_VEHICLE_VIEW_CLONE_SHIP_INFO                                :{BLACK}复制船只。按住 <Ctrl> 键单击以共享调度计划，按住 <Shift> 键单击以显示所需资金
 STR_VEHICLE_VIEW_CLONE_AIRCRAFT_INFO                            :{BLACK}复制飞机。按住 <Ctrl> 键单击以共享调度计划。按住 <Shift> 键单击以显示预计费用
 
 STR_VEHICLE_VIEW_TRAIN_IGNORE_SIGNAL_TOOLTIP                    :{BLACK}命令列车强行通过信号
 STR_VEHICLE_VIEW_TRAIN_REVERSE_TOOLTIP                          :{BLACK}命令列车调头
 STR_VEHICLE_VIEW_ROAD_VEHICLE_REVERSE_TOOLTIP                   :{BLACK}强制汽车掉头
-STR_VEHICLE_VIEW_ORDER_LOCATION_TOOLTIP                         :{BLACK}将屏幕中心移动到指令目的地所在的位置。按住 <Ctrl> 单击会在新视点中显示目标位置
+STR_VEHICLE_VIEW_ORDER_LOCATION_TOOLTIP                         :{BLACK}将屏幕中心移动到命令目的地所在的位置。按住 <Ctrl> 单击会在新视点中显示目标位置
 
 ###length VEHICLE_TYPES
 STR_VEHICLE_VIEW_TRAIN_REFIT_TOOLTIP                            :{BLACK}改装列车以装载另一类型的货物
@@ -4421,15 +4446,15 @@ STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}显示�
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}显示飞机的详情
 
 ###length VEHICLE_TYPES
-STR_VEHICLE_VIEW_TRAIN_STATUS_START_STOP_TOOLTIP                :{BLACK}当前列车动作 - 点击以 停止/启动 列车
-STR_VEHICLE_VIEW_ROAD_VEHICLE_STATUS_START_STOP_TOOLTIP         :{BLACK}当前载具操作 - 点击以停止/启动载具
-STR_VEHICLE_VIEW_SHIP_STATE_STATUS_STOP_TOOLTIP                 :{BLACK}当前船只动作 - 点击以 停止/启动 船只
-STR_VEHICLE_VIEW_AIRCRAFT_STATUS_START_STOP_TOOLTIP             :{BLACK}当前飞机动作 - 点击以 停止/启动 飞机
+STR_VEHICLE_VIEW_TRAIN_STATUS_START_STOP_TOOLTIP                :{BLACK}当前列车状态 - 点击以停止或启动列车
+STR_VEHICLE_VIEW_ROAD_VEHICLE_STATUS_START_STOP_TOOLTIP         :{BLACK}当前载具状态 - 点击以停止或启动载具
+STR_VEHICLE_VIEW_SHIP_STATE_STATUS_STOP_TOOLTIP                 :{BLACK}当前船舶状态 - 点击以停止或启动船舶
+STR_VEHICLE_VIEW_AIRCRAFT_STATUS_START_STOP_TOOLTIP             :{BLACK}当前飞机状态 - 点击以停止或启动飞机
 
 # Messages in the start stop button in the vehicle view
-STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}装载/卸货
+STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}正在装卸货物
 STR_VEHICLE_STATUS_LEAVING                                      :{LTBLUE}发车
-STR_VEHICLE_STATUS_WAITING_UNBUNCHING                           :{LTBLUE}等待班次均匀发车时间
+STR_VEHICLE_STATUS_WAITING_UNBUNCHING                           :{LTBLUE}等待调节班次发车时间
 STR_VEHICLE_STATUS_CRASHED                                      :{RED}已撞毁！
 STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}抛锚
 STR_VEHICLE_STATUS_STOPPED                                      :{RED}停运
@@ -4439,10 +4464,10 @@ STR_VEHICLE_STATUS_TRAIN_STUCK                                  :{ORANGE}等待�
 STR_VEHICLE_STATUS_AIRCRAFT_TOO_FAR                             :{ORANGE}距离下一目的地过远
 
 STR_VEHICLE_STATUS_HEADING_FOR_STATION_VEL                      :{LTBLUE}{1:VELOCITY} - 正前往 {0:STATION}
-STR_VEHICLE_STATUS_NO_ORDERS_VEL                                :{LTBLUE}{VELOCITY} - 没有目标
+STR_VEHICLE_STATUS_NO_ORDERS_VEL                                :{LTBLUE}{VELOCITY} - 没有调度计划
 STR_VEHICLE_STATUS_HEADING_FOR_WAYPOINT_VEL                     :{LTBLUE}{1:VELOCITY} - 正前往 {0:WAYPOINT}
 STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_VEL                        :{ORANGE}{1:VELOCITY} - 正前往 {0:DEPOT}
-STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE}{1:VELOCITY} - 正在前往 {0:DEPOT} 以进行维护
+STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE}{1:VELOCITY} - 正前往 {0:DEPOT} 以进行维护
 STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_UNBUNCH_VEL                :{LTBLUE}{1:VELOCITY} - 正前往 {0:DEPOT} 以维护与调节班次
 
 STR_VEHICLE_STATUS_CANNOT_REACH_STATION_VEL                     :{LTBLUE}{1:VELOCITY} - 无法前往 {0:STATION}
@@ -4481,12 +4506,12 @@ STR_VEHICLE_INFO_PROFIT_THIS_PERIOD_LAST_PERIOD_MIN_PERFORMANCE :{BLACK}本期�
 STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}可靠性：{LTBLUE}{COMMA}%  {BLACK}上次维护后抛锚的次数：{LTBLUE}{COMMA}
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}建造年份：{LTBLUE}{NUM}{BLACK} 价值：{LTBLUE}{CURRENCY_LONG}
-STR_VEHICLE_INFO_NO_CAPACITY                                    :{BLACK}运载能力：{LTBLUE}无{STRING}
-STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}运载能力：{LTBLUE}{0:CARGO_LONG}{3:STRING}
-STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}运载能力：{LTBLUE}{0:CARGO_LONG}{3:STRING}（×{4:NUM}）
-STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}运载能力：{LTBLUE}{CARGO_LONG}，{CARGO_LONG}{STRING}
+STR_VEHICLE_INFO_NO_CAPACITY                                    :{BLACK}容量：{LTBLUE}无{STRING}
+STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}容量：{LTBLUE}{CARGO_LONG}{STRING}
+STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}容量：{LTBLUE}{CARGO_LONG}{STRING}（×{NUM}）
+STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}容量：{LTBLUE}{CARGO_LONG}，{CARGO_LONG}{STRING}
 
-STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}联运账面收入：{LTBLUE}{CURRENCY_LONG}
+STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}转运账面收入：{LTBLUE}{CURRENCY_LONG}
 
 STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}每 {LTBLUE}{COMMA}{NBSP}天进行维护{BLACK}   上次维护日期：{LTBLUE}{STRING}
 STR_VEHICLE_DETAILS_SERVICING_INTERVAL_MINUTES                  :{BLACK}维护间隔：{LTBLUE}{COMMA}{NBSP}分钟{BLACK} {STRING}
@@ -4516,7 +4541,7 @@ STR_QUERY_RENAME_AIRCRAFT_CAPTION                               :{WHITE}命名�
 STR_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE                :{LTBLUE}{ENGINE}{BLACK}   建造年份：{LTBLUE}{NUM}{BLACK} 价值：{LTBLUE}{CURRENCY_LONG}
 STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE                           :{LTBLUE}{ENGINE}{BLACK}   价值：{LTBLUE}{CURRENCY_LONG}
 
-STR_VEHICLE_DETAILS_TRAIN_TOTAL_CAPACITY_TEXT                   :{BLACK}全车的装载能力为：
+STR_VEHICLE_DETAILS_TRAIN_TOTAL_CAPACITY_TEXT                   :{BLACK}列车总容量：
 STR_VEHICLE_DETAILS_TRAIN_TOTAL_CAPACITY                        :{LTBLUE}{CARGO_LONG}（{CARGO_SHORT}）
 STR_VEHICLE_DETAILS_TRAIN_TOTAL_CAPACITY_MULT                   :{LTBLUE}{CARGO_LONG}（{CARGO_SHORT}）（×{NUM}）
 
@@ -4528,20 +4553,20 @@ STR_VEHICLE_DETAIL_TAB_CARGO                                    :{BLACK}货物
 STR_VEHICLE_DETAILS_TRAIN_CARGO_TOOLTIP                         :{BLACK}显示运载货物的详情
 STR_VEHICLE_DETAIL_TAB_INFORMATION                              :{BLACK}信息
 STR_VEHICLE_DETAILS_TRAIN_INFORMATION_TOOLTIP                   :{BLACK}显示列车的性能参数
-STR_VEHICLE_DETAIL_TAB_CAPACITIES                               :{BLACK}运载能力
-STR_VEHICLE_DETAILS_TRAIN_CAPACITIES_TOOLTIP                    :{BLACK}显示列车的运载能力
+STR_VEHICLE_DETAIL_TAB_CAPACITIES                               :{BLACK}容量
+STR_VEHICLE_DETAILS_TRAIN_CAPACITIES_TOOLTIP                    :{BLACK}显示机车与车厢的容量
 STR_VEHICLE_DETAIL_TAB_TOTAL_CARGO                              :{BLACK}全部货物
-STR_VEHICLE_DETAILS_TRAIN_TOTAL_CARGO_TOOLTIP                   :{BLACK}根据不同的挂车种类显示相应的总运力
+STR_VEHICLE_DETAILS_TRAIN_TOTAL_CARGO_TOOLTIP                   :{BLACK}显示列车的总容量，依货物分类
 
-STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}运力：{LTBLUE}
+STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}容量：{LTBLUE}
 
 # Vehicle refit
 STR_REFIT_CAPTION                                               :{WHITE}{VEHICLE}（改装）
 STR_REFIT_TITLE                                                 :{GOLD}选择要运输的货物类型：
-STR_REFIT_NEW_CAPACITY_COST_OF_REFIT                            :{BLACK}新的装载能力：{GOLD}{CARGO_LONG}{}{BLACK}改装费用：{RED}{CURRENCY_LONG}
-STR_REFIT_NEW_CAPACITY_INCOME_FROM_REFIT                        :{BLACK}新装载量：{GOLD}{CARGO_LONG}{}{BLACK}改装后收入：{GREEN}{CURRENCY_LONG}
+STR_REFIT_NEW_CAPACITY_COST_OF_REFIT                            :{BLACK}新容量：{GOLD}{CARGO_LONG}{}{BLACK}改装费用：{RED}{CURRENCY_LONG}
+STR_REFIT_NEW_CAPACITY_INCOME_FROM_REFIT                        :{BLACK}新容量：{GOLD}{CARGO_LONG}{}{BLACK}改装后收入：{GREEN}{CURRENCY_LONG}
 STR_REFIT_NEW_CAPACITY_COST_OF_AIRCRAFT_REFIT                   :{BLACK}新的运载类型：{GOLD}{CARGO_LONG}，{GOLD}{CARGO_LONG}{}{BLACK}改装所需：{RED}{CURRENCY_LONG}
-STR_REFIT_NEW_CAPACITY_INCOME_FROM_AIRCRAFT_REFIT               :{BLACK}新装载量：{GOLD}{CARGO_LONG}，{GOLD}{CARGO_LONG}{}{BLACK}改装后收入：{GREEN}{CURRENCY_LONG}
+STR_REFIT_NEW_CAPACITY_INCOME_FROM_AIRCRAFT_REFIT               :{BLACK}新容量：{GOLD}{CARGO_LONG}，{GOLD}{CARGO_LONG}{}{BLACK}改装后收入：{GREEN}{CURRENCY_LONG}
 STR_REFIT_SELECT_VEHICLES_TOOLTIP                               :{BLACK}选择改装的车厢。按 <Ctrl> 键拖曳以选择多节车厢。点选空白的区域以选择整列列车。按 <Ctrl> 键选择车厢以选择该车厢及其之后的车厢
 
 ###length VEHICLE_TYPES
@@ -4567,46 +4592,45 @@ STR_ORDERS_CAPTION                                              :{WHITE}{VEHICLE
 STR_ORDERS_TIMETABLE_VIEW                                       :{BLACK}时刻表
 STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}切换到时刻表视图
 
-STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}调度列表 - 点击命令以选定命令。按 <Ctrl> 键操作以跳至命令目标在地图上的位置
+STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}调度计划 - 点击以选择命令，按 <Ctrl> 键操作以跳至命令目标在地图上的位置
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
-STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING} {STRING}
 
-STR_ORDERS_END_OF_ORDERS                                        :-- 调度计划结束 --
+STR_ORDERS_END_OF_ORDERS                                        :- - 调度计划结束 - -
 STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - 共享调度计划结束 - -
 
 # Order bottom buttons
-STR_ORDER_NON_STOP                                              :{BLACK}不停车
+STR_ORDER_NON_STOP                                              :{BLACK}直达
 STR_ORDER_GO_TO                                                 :前往
-STR_ORDER_GO_NON_STOP_TO                                        :不停车前往
+STR_ORDER_GO_NON_STOP_TO                                        :直达
 STR_ORDER_GO_VIA                                                :经由
-STR_ORDER_GO_NON_STOP_VIA                                       :经由（不停车）
-STR_ORDER_TOOLTIP_NON_STOP                                      :{BLACK}修改当前指令在车站的停靠措施
+STR_ORDER_GO_NON_STOP_VIA                                       :直达经由
+STR_ORDER_TOOLTIP_NON_STOP                                      :{BLACK}修改当前命令在车站的停靠措施
 
-STR_ORDER_TOGGLE_FULL_LOAD                                      :{BLACK}装满任意货物
-STR_ORDER_DROP_LOAD_IF_POSSIBLE                                 :若有的话就装载
-STR_ORDER_DROP_FULL_LOAD_ALL                                    :装满所有货物
-STR_ORDER_DROP_FULL_LOAD_ANY                                    :装满任意货物
+STR_ORDER_TOGGLE_FULL_LOAD                                      :{BLACK}满载任一货物
+STR_ORDER_DROP_LOAD_IF_POSSIBLE                                 :若有则装载
+STR_ORDER_DROP_FULL_LOAD_ALL                                    :满载所有货物
+STR_ORDER_DROP_FULL_LOAD_ANY                                    :满载任一货物
 STR_ORDER_DROP_NO_LOADING                                       :不装载
-STR_ORDER_TOOLTIP_FULL_LOAD                                     :{BLACK}修改当前指令在车站的装载措施
+STR_ORDER_TOOLTIP_FULL_LOAD                                     :{BLACK}修改当前命令在车站的装载措施
 
-STR_ORDER_TOGGLE_UNLOAD                                         :{BLACK}卸载全部
-STR_ORDER_DROP_UNLOAD_IF_ACCEPTED                               :若接受的话就卸载
-STR_ORDER_DROP_UNLOAD                                           :卸载全部
-STR_ORDER_DROP_TRANSFER                                         :联运
+STR_ORDER_TOGGLE_UNLOAD                                         :{BLACK}全部卸载
+STR_ORDER_DROP_UNLOAD_IF_ACCEPTED                               :若接受则卸载
+STR_ORDER_DROP_UNLOAD                                           :全部卸载
+STR_ORDER_DROP_TRANSFER                                         :转运
 STR_ORDER_DROP_NO_UNLOADING                                     :不卸载
-STR_ORDER_TOOLTIP_UNLOAD                                        :{BLACK}修改当前指令在车站的卸载措施
+STR_ORDER_TOOLTIP_UNLOAD                                        :{BLACK}修改当前命令在车站的卸载措施
 
 STR_ORDER_REFIT                                                 :{BLACK}改装
-STR_ORDER_REFIT_TOOLTIP                                         :{BLACK}选择载具在执行指令时改装为运载何种货物。按住 <Ctrl> 键单击以移除改装指令
+STR_ORDER_REFIT_TOOLTIP                                         :{BLACK}选择载具在执行命令时改装为运载何种货物。按住 <Ctrl> 键单击以移除改装命令
 STR_ORDER_REFIT_AUTO                                            :{BLACK}自动改装
-STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}选择载具在执行指令时改装为运载何种货物。按住 <Ctrl> 键单击以移除改装指令。自动改装仅在载具支持时进行
+STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}选择载具在执行命令时改装为运载何种货物。按住 <Ctrl> 键单击以移除改装命令。自动改装仅在载具支持时进行
 STR_ORDER_DROP_REFIT_AUTO                                       :固定货物
-STR_ORDER_DROP_REFIT_AUTO_ANY                                   :可用类型
+STR_ORDER_DROP_REFIT_AUTO_ANY                                   :可用货物
 
-STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :一直前进
+STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :直达车库
 STR_ORDER_DROP_SERVICE_DEPOT                                    :若需要则维护
 STR_ORDER_DROP_HALT_DEPOT                                       :停留
-STR_ORDER_DROP_UNBUNCH                                          :班次均匀
+STR_ORDER_DROP_UNBUNCH                                          :自动调节班次
 
 # Depot action tooltips, one per vehicle type
 ###length VEHICLE_TYPES
@@ -4616,17 +4640,17 @@ STR_ORDER_SHIP_DEPOT_ACTION_TOOLTIP                             :{BLACK}选择�
 STR_ORDER_HANGAR_ACTION_TOOLTIP                                 :{BLACK}选择在此机库采取的措施
 ###next-name-looks-similar
 
-STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}条件性指令的依据
+STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}条件性命令的条件
 
 # Conditional order variables, must follow order of OrderConditionVariable enum
 ###length 8
 STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE                           :装载进度
 STR_ORDER_CONDITIONAL_RELIABILITY                               :可靠性
 STR_ORDER_CONDITIONAL_MAX_SPEED                                 :最大速度
-STR_ORDER_CONDITIONAL_AGE                                       :寿命（年）
+STR_ORDER_CONDITIONAL_AGE                                       :年龄（年）
 STR_ORDER_CONDITIONAL_REQUIRES_SERVICE                          :需要维护
 STR_ORDER_CONDITIONAL_UNCONDITIONALLY                           :总是
-STR_ORDER_CONDITIONAL_REMAINING_LIFETIME                        :剩余寿命年限（年）
+STR_ORDER_CONDITIONAL_REMAINING_LIFETIME                        :剩余年限（年）
 STR_ORDER_CONDITIONAL_MAX_RELIABILITY                           :最大可靠度
 ###next-name-looks-similar
 
@@ -4647,84 +4671,83 @@ STR_ORDERS_SKIP_BUTTON                                          :{BLACK}跳过
 STR_ORDERS_SKIP_TOOLTIP                                         :{BLACK}跳过当前命令并执行下一条命令。按 <Ctrl> 键操作以直接跳至选定的命令
 
 STR_ORDERS_DELETE_BUTTON                                        :{BLACK}删除
-STR_ORDERS_DELETE_TOOLTIP                                       :{BLACK}删除高亮的调度命令
-STR_ORDERS_DELETE_ALL_TOOLTIP                                   :{BLACK}删除全部调度
+STR_ORDERS_DELETE_TOOLTIP                                       :{BLACK}删除选定的命令
+STR_ORDERS_DELETE_ALL_TOOLTIP                                   :{BLACK}删除全部命令
 STR_ORDERS_STOP_SHARING_BUTTON                                  :{BLACK}退出共享调度计划
 STR_ORDERS_STOP_SHARING_TOOLTIP                                 :{BLACK}退出共享调度计划。按 <Ctrl> 键单击可以同时清除此载具的调度计划
 
 STR_ORDERS_GO_TO_BUTTON                                         :{BLACK}前往
 STR_ORDER_GO_TO_NEAREST_DEPOT                                   :前往最近的车库
 STR_ORDER_GO_TO_NEAREST_HANGAR                                  :前往最近的机库
-STR_ORDER_CONDITIONAL                                           :条件性命令跳过
+STR_ORDER_CONDITIONAL                                           :条件式跳过命令
 STR_ORDER_SHARE                                                 :共享调度计划
-STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}在选定的指令前插入新指令，或者添加新指令至计划末尾。按 <Ctrl> 键点选车站、路点或车库以分别应用“满载任意一种货物”、“不停车前往”以及“班次均匀”。点击另一辆载具以复制其调度计划，按住 <Ctrl> 点选则可共享调度计划。如果调度计划上有任何指令涉及车库，则该载具不会自行维护
+STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}在选定的命令前插入新命令，或者添加新命令至计划末尾。按 <Ctrl> 键点选车站、路点或车库以分别应用“满载任一货物”、“直达”以及“自动调节班次”。点击另一辆载具以复制其调度计划，按住 <Ctrl> 点选则可共享调度计划。如果调度计划上有任何命令涉及车库，则该载具不会自行维护
 
 STR_ORDERS_VEH_WITH_SHARED_ORDERS_LIST_TOOLTIP                  :{BLACK}显示所有共享此调度计划的载具
 
 # String parts to build the order string
 STR_ORDER_GO_TO_WAYPOINT                                        :经过 {WAYPOINT}
-STR_ORDER_GO_NON_STOP_TO_WAYPOINT                               :经过（不停）{WAYPOINT}
+STR_ORDER_GO_NON_STOP_TO_WAYPOINT                               :直达经由 {WAYPOINT}
 
 STR_ORDER_SERVICE_AT                                            :前往维护
-STR_ORDER_SERVICE_NON_STOP_AT                                   :直接前往维护
+STR_ORDER_SERVICE_NON_STOP_AT                                   :直达维护
 
-STR_ORDER_NEAREST_DEPOT                                         :最近的车库
-STR_ORDER_NEAREST_HANGAR                                        :最近的机库
 ###length 3
 STR_ORDER_TRAIN_DEPOT                                           :火车车库
 STR_ORDER_ROAD_VEHICLE_DEPOT                                    :汽车车库
 STR_ORDER_SHIP_DEPOT                                            :船坞
 ###next-name-looks-similar
 
-STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
+STR_ORDER_GO_TO_NEAREST_HANGAR_FORMAT                           :{STRING}最近的机库
+STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING}最近的{STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
-STR_ORDER_REFIT_ORDER                                           :（改装为 {STRING}）
-STR_ORDER_REFIT_STOP_ORDER                                      :（改装为{STRING}并停留）
-STR_ORDER_STOP_ORDER                                            :（停留）
+STR_ORDER_REFIT_ORDER                                           :（改装为{STRING}）
+STR_ORDER_REFIT_STOP_ORDER                                      :（改装为{STRING}并停止）
+STR_ORDER_STOP_ORDER                                            :（停止）
 
-STR_ORDER_WAIT_TO_UNBUNCH                                       :（班次均匀）
+STR_ORDER_WAIT_TO_UNBUNCH                                       :（等待调节班次）
 
-STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
-STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}（不能使用车站）{POP_COLOUR} {STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION}
+STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}（不能使用车站）{POP_COLOUR} {STRING} {STATION}
 
 STR_ORDER_IMPLICIT                                              :（自动）
 
-STR_ORDER_FULL_LOAD                                             :（装满全部货物）
-STR_ORDER_FULL_LOAD_ANY                                         :（装满任意货物后离开）
+STR_ORDER_FULL_LOAD                                             :（等待满载）
+STR_ORDER_FULL_LOAD_ANY                                         :（等待任一货物满载）
 STR_ORDER_NO_LOAD                                               :（不装载）
-STR_ORDER_UNLOAD                                                :（卸载并若有就装货）
-STR_ORDER_UNLOAD_FULL_LOAD                                      :（卸载并等待全部装满）
-STR_ORDER_UNLOAD_FULL_LOAD_ANY                                  :（卸载并装满任意货物离开）
-STR_ORDER_UNLOAD_NO_LOAD                                        :（卸载并空车离开）
-STR_ORDER_TRANSFER                                              :（联运并若有就装货）
-STR_ORDER_TRANSFER_FULL_LOAD                                    :（联运并等待全部装满）
-STR_ORDER_TRANSFER_FULL_LOAD_ANY                                :（联运并装满任意货物离开）
-STR_ORDER_TRANSFER_NO_LOAD                                      :（联运并空车离开）
-STR_ORDER_NO_UNLOAD                                             :（不卸载并若有就装货）
-STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :（不卸载并等待全部货物装满）
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :（不卸货并装满任意货物离开）
-STR_ORDER_NO_UNLOAD_NO_LOAD                                     :（不卸货也不装货）
+STR_ORDER_UNLOAD                                                :（卸载，装载）
+STR_ORDER_UNLOAD_FULL_LOAD                                      :（卸载，等待满载）
+STR_ORDER_UNLOAD_FULL_LOAD_ANY                                  :（卸载，等待任一货物满载）
+STR_ORDER_UNLOAD_NO_LOAD                                        :（卸载，空车离开）
+STR_ORDER_TRANSFER                                              :（转运，装载）
+STR_ORDER_TRANSFER_FULL_LOAD                                    :（转运，等待满载）
+STR_ORDER_TRANSFER_FULL_LOAD_ANY                                :（转运，等待任一货物满载）
+STR_ORDER_TRANSFER_NO_LOAD                                      :（转运，空车离开）
+STR_ORDER_NO_UNLOAD                                             :（不卸载，装载）
+STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :（不卸载，等待满载）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :（不卸载，等待任一货物满载）
+STR_ORDER_NO_UNLOAD_NO_LOAD                                     :（不卸载，不装载）
 
-STR_ORDER_AUTO_REFIT                                            :（自动改装为运载 {STRING}）
-STR_ORDER_FULL_LOAD_REFIT                                       :（装满所有货物，允许自动改装为运载 {STRING}）
-STR_ORDER_FULL_LOAD_ANY_REFIT                                   :（装满任意货物，允许自动改装为运载 {STRING}）
-STR_ORDER_UNLOAD_REFIT                                          :（卸货且装载，允许自动改装为运载 {STRING}）
-STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :（卸货且装满所有货物，允许自动改装为运载 {STRING}）
-STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :（卸货且装满任意货物，允许自动改装为运载 {STRING}）
-STR_ORDER_TRANSFER_REFIT                                        :（联运且装载，允许自动改装为运载 {STRING}）
-STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :（联运且装满所有货物，允许自动改装为运载 {STRING}）
-STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :（联运且装满任意货物，允许自动改装为运载 {STRING}）
-STR_ORDER_NO_UNLOAD_REFIT                                       :（不卸货且装载，允许自动改装为运载 {STRING}）
-STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :（不卸货且装满所有货物，允许自动改装为运载 {STRING}）
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :（不卸货且装满任意货物，允许自动改装为运载 {STRING}）
+STR_ORDER_AUTO_REFIT                                            :（改装为运载{STRING}）
+STR_ORDER_FULL_LOAD_REFIT                                       :（改装为运载{STRING}后等待满载）
+STR_ORDER_FULL_LOAD_ANY_REFIT                                   :（改装为运载{STRING}后等待任一货物满载）
+STR_ORDER_UNLOAD_REFIT                                          :（卸载，改装为运载{STRING}后装载）
+STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :（卸载，改装为运载{STRING}后等待满载）
+STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :（卸载，改装为运载{STRING}后等待任一货物满载）
+STR_ORDER_TRANSFER_REFIT                                        :（转运，改装为运载{STRING}后装载）
+STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :（转运，改装为运载{STRING}后等待满载）
+STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :（转运，改装为运载{STRING}后等待任一货物满载）
+STR_ORDER_NO_UNLOAD_REFIT                                       :（不卸载，改装为运载{STRING}后装载）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :（不卸载，改装为运载{STRING}后等待满载）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :（不卸载，改装为运载{STRING}后等待任一货物满载）
 
-STR_ORDER_AUTO_REFIT_ANY                                        :可用类型
+STR_ORDER_AUTO_REFIT_ANY                                        :可用货物
 
 ###length 3
-STR_ORDER_STOP_LOCATION_NEAR_END                                :[近端]
-STR_ORDER_STOP_LOCATION_MIDDLE                                  :[中间]
-STR_ORDER_STOP_LOCATION_FAR_END                                 :[远端]
+STR_ORDER_STOP_LOCATION_NEAR_END                                :{SPACE}[近端]
+STR_ORDER_STOP_LOCATION_MIDDLE                                  :{SPACE}[中间]
+STR_ORDER_STOP_LOCATION_FAR_END                                 :{SPACE}[远端]
 
 STR_ORDER_OUT_OF_RANGE                                          :{RED}（下一个目的地距离过远）
 
@@ -4732,26 +4755,26 @@ STR_ORDER_CONDITIONAL_UNCONDITIONAL                             :跳至 #{COMMA}
 STR_ORDER_CONDITIONAL_NUM                                       :跳至 #{COMMA} [如果{STRING}{STRING}{COMMA}]
 STR_ORDER_CONDITIONAL_TRUE_FALSE                                :跳至 #{COMMA} [如果{STRING}{STRING}]
 
-STR_INVALID_ORDER                                               :{RED}（非法的调度计划）
+STR_INVALID_ORDER                                               :{RED}（无效命令）
 
 # Time table window
 STR_TIMETABLE_TITLE                                             :{WHITE}{VEHICLE}（时刻表）
 STR_TIMETABLE_ORDER_VIEW                                        :{BLACK}命令
 STR_TIMETABLE_ORDER_VIEW_TOOLTIP                                :{BLACK}切换到调度计划视图
 
-STR_TIMETABLE_TOOLTIP                                           :{BLACK}时刻表 - 单击一个命令以选定
+STR_TIMETABLE_TOOLTIP                                           :{BLACK}时刻表 - 单击选择一条命令
 
 STR_TIMETABLE_NO_TRAVEL                                         :原地待命
-STR_TIMETABLE_NOT_TIMETABLEABLE                                 :行驶（自动；由下个手动指令指定时间）
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :行驶（无时刻表）
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :限速 {2:VELOCITY}（无时刻表）
-STR_TIMETABLE_TRAVEL_FOR                                        :途中行驶 {STRING}
-STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :开往{STRING} ，限速为 {VELOCITY}
-STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :行驶（{STRING}，无时刻表）
+STR_TIMETABLE_NOT_TIMETABLEABLE                                 :行驶（自动；由下个手动命令指定时间）
+STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :行驶（未指定时间）
+STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :限速 {2:VELOCITY}（未指定时间）
+STR_TIMETABLE_TRAVEL_FOR                                        :行驶 {STRING}
+STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :行驶 {STRING}，限速 {VELOCITY}
+STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :行驶（{STRING}，未指定时间）
 STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :前往 {STRING}，以最大速度 {VELOCITY}
-STR_TIMETABLE_STAY_FOR_ESTIMATED                                :（停靠 {STRING}，无时刻表）
-STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :（驶往 {STRING}，无时刻表）
-STR_TIMETABLE_STAY_FOR                                          :并且停留 {STRING}
+STR_TIMETABLE_STAY_FOR_ESTIMATED                                :（等候 {STRING}，未指定时间）
+STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :（驶往 {STRING}，未指定时间）
+STR_TIMETABLE_STAY_FOR                                          :，停留 {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :并行驶{STRING}
 
 STR_TIMETABLE_APPROX_TIME                                       :{BLACK}完成该时刻表大约需要 {STRING}
@@ -4767,23 +4790,24 @@ STR_TIMETABLE_STATUS_START_IN_SECONDS                           :{BLACK}本时�
 
 STR_TIMETABLE_START                                             :{BLACK}开始时刻表
 STR_TIMETABLE_START_TOOLTIP                                     :{BLACK}选择此时刻表开始的时间。如果调度计划有完善的时刻表，则按住 <Ctrl> 键单击会根据它们的相对顺序均匀分配共享此调度计划的所有载具的出发时间
-
 STR_TIMETABLE_START_SECONDS_QUERY                               :直至时刻表开始的秒数
 
-STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}改变时间
+STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}修改时间
 STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}修改选定命令设定的时间。按住 <Ctrl> 键操作以修改所有命令的限时
+STR_TIMETABLE_CHANGE_TIME_QUERY                                 :修改时间
 
 STR_TIMETABLE_CLEAR_TIME                                        :{BLACK}清除时间
 STR_TIMETABLE_CLEAR_TIME_TOOLTIP                                :{BLACK}清除选定命令设定的时间。按住 <Ctrl> 键操作以清除所有命令的限时
 
-STR_TIMETABLE_CHANGE_SPEED                                      :{BLACK}更改限速
+STR_TIMETABLE_CHANGE_SPEED                                      :{BLACK}修改限速
 STR_TIMETABLE_CHANGE_SPEED_TOOLTIP                              :{BLACK}修改选定命令设定的限速。按住 <Ctrl> 键操作以修改所有命令的限速
+STR_TIMETABLE_CHANGE_SPEED_QUERY                                :修改限速
 
 STR_TIMETABLE_CLEAR_SPEED                                       :{BLACK}取消限速
 STR_TIMETABLE_CLEAR_SPEED_TOOLTIP                               :{BLACK}清除选定命令设定的限速。按住 <Ctrl> 键操作以清除所有命令的限速
 
 STR_TIMETABLE_RESET_LATENESS                                    :{BLACK}清除晚点计数器
-STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}重置晚点计数器以使载具准点。按 <Ctrl> 键操作以重置全组计数器以使晚点最多的载具被视为准点而其他被视为早点
+STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}将记录的晚点时间归零，以使载具准点。按 <Ctrl> 键操作以重置全组时间，使晚点最多的载具被视为准点，而其他被视为早点
 
 STR_TIMETABLE_AUTOFILL                                          :{BLACK}自动填充
 STR_TIMETABLE_AUTOFILL_TOOLTIP                                  :{BLACK}根据下一次运行的时间自动填充时刻表。按住 <Ctrl> 键单击可保持等候时间
@@ -4815,7 +4839,7 @@ STR_AI_DEBUG_SETTINGS                                           :{BLACK}AI 设�
 STR_AI_DEBUG_SETTINGS_TOOLTIP                                   :{BLACK}修改 AI 设置
 STR_AI_DEBUG_RELOAD                                             :{BLACK}重载 AI
 STR_AI_DEBUG_RELOAD_TOOLTIP                                     :{BLACK}关闭 AI 并重启 AI
-STR_AI_DEBUG_BREAK_STR_ON_OFF_TOOLTIP                           :{BLACK}启用／停用 当 AI 记录信息符合断点字符串时中断执行的功能
+STR_AI_DEBUG_BREAK_STR_ON_OFF_TOOLTIP                           :{BLACK}启用或停用当 AI 记录信息符合断点字符串时中断执行的功能
 STR_AI_DEBUG_BREAK_ON_LABEL                                     :{BLACK}中断点：
 STR_AI_DEBUG_BREAK_STR_OSKTITLE                                 :{BLACK}中断点
 STR_AI_DEBUG_BREAK_STR_TOOLTIP                                  :{BLACK}当 AI 记录信息与该字符串相符时暂停游戏
@@ -4827,8 +4851,8 @@ STR_AI_DEBUG_SELECT_AI_TOOLTIP                                  :{BLACK}查看�
 STR_AI_GAME_SCRIPT                                              :{BLACK}游戏脚本
 STR_AI_GAME_SCRIPT_TOOLTIP                                      :{BLACK}检查游戏脚本日志。按住 <Ctrl> 操作以打开新窗口
 
-STR_ERROR_AI_NO_AI_FOUND                                        :找不到可用的 AI。{}本 AI 是一个演示 AI，并不会在游戏中做任何动作，{}您可以通过“在线查找扩展包”功能下载新的 AI
-STR_ERROR_AI_PLEASE_REPORT_CRASH                                :{WHITE}您使用的一个 AI 崩溃了。请附上一张 AI 调试窗口的截图，将此错误通报 AI 作者
+STR_ERROR_AI_NO_AI_FOUND                                        :找不到可用的 AI。{}本 AI 是一个演示 AI 且没有任何效果。{}您可以通过“线上拓展内容”功能下载新的 AI
+STR_ERROR_AI_PLEASE_REPORT_CRASH                                :{WHITE}正在运行中的一个 AI 或游戏脚本发生错误。请将此问题回报给脚本作者，并附上一张“AI/游戏脚本调试”窗口的截图
 STR_ERROR_AI_DEBUG_SERVER_ONLY                                  :{YELLOW}AI 调试窗口只对服务器可用
 
 # AI configuration window
@@ -4866,7 +4890,7 @@ STR_AI_LIST_TOOLTIP                                             :{BLACK}点击�
 
 STR_AI_LIST_AUTHOR                                              :{LTBLUE}作者：{ORANGE}{STRING}
 STR_AI_LIST_VERSION                                             :{LTBLUE}版本：{ORANGE}{NUM}
-STR_AI_LIST_URL                                                 :{LTBLUE}URL：{ORANGE}{STRING}
+STR_AI_LIST_URL                                                 :{LTBLUE}链接：{ORANGE}{STRING}
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}接受
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}选择高亮的 AI
@@ -4882,9 +4906,8 @@ STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}高度�
 STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}小地图截图
 
 # Script Parameters
-STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} 参数
 STR_AI_SETTINGS_CAPTION_AI                                      :{WHITE}AI 参数
-STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :游戏脚本
+STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :{WHITE}游戏脚本参数
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}关闭
 STR_AI_SETTINGS_RESET                                           :{BLACK}重设
 STR_AI_SETTINGS_SETTING                                         :{STRING}：{ORANGE}{STRING}
@@ -4921,9 +4944,9 @@ STR_PERCENT_NONE                                                :{WHITE}{NUM}%
 # Income 'floats'
 STR_INCOME_FLOAT_COST                                           :{RED}支出：{CURRENCY_LONG}
 STR_INCOME_FLOAT_INCOME                                         :{GREEN}收入：{CURRENCY_LONG}
-STR_FEEDER                                                      :{YELLOW}联运：{CURRENCY_LONG}
-STR_FEEDER_INCOME                                               :{YELLOW}联运：{CURRENCY_LONG}{WHITE} / {GREEN}收入：{CURRENCY_LONG}
-STR_FEEDER_COST                                                 :{YELLOW}联运：{CURRENCY_LONG}{WHITE} / {RED}支出：{CURRENCY_LONG}
+STR_FEEDER                                                      :{YELLOW}转运：{CURRENCY_LONG}
+STR_FEEDER_INCOME                                               :{YELLOW}转运：{CURRENCY_LONG}{WHITE} / {GREEN}收入：{CURRENCY_LONG}
+STR_FEEDER_COST                                                 :{YELLOW}转运：{CURRENCY_LONG}{WHITE} / {RED}支出：{CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_COST                                      :{WHITE}预计费用：{CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_INCOME                                    :{WHITE}预计收入：{CURRENCY_LONG}
 
@@ -4942,43 +4965,43 @@ STR_GAME_SAVELOAD_ERROR_FILE_NOT_WRITEABLE                      :文件无法写
 STR_GAME_SAVELOAD_ERROR_DATA_INTEGRITY_CHECK_FAILED             :数据完整性检查失败
 STR_GAME_SAVELOAD_ERROR_PATCHPACK                               :该存档是来自修改版的游戏
 STR_GAME_SAVELOAD_NOT_AVAILABLE                                 :<不可用>
-STR_WARNING_LOADGAME_REMOVED_TRAMS                              :{WHITE}游戏已保存为无电车版。所有电车已被去除
+STR_WARNING_LOADGAME_REMOVED_TRAMS                              :{WHITE}此存档版本不支持路面电车，已移除所有路面电车
 
 # Map generation messages
-STR_ERROR_COULD_NOT_CREATE_TOWN                                 :{WHITE}生成场景失败……{}……无合适地点建设城镇
+STR_ERROR_COULD_NOT_CREATE_TOWN                                 :{WHITE}地图生成失败……{}{}……无合适地点建设城镇
 STR_ERROR_NO_TOWN_IN_SCENARIO                                   :{WHITE}当前场景中没有城镇……
 
 STR_ERROR_PNGMAP                                                :{WHITE}无法从 PNG 文件中读取场景……
 STR_ERROR_PNGMAP_FILE_NOT_FOUND                                 :{WHITE}……文件未找到
 STR_ERROR_PNGMAP_IMAGE_TYPE                                     :{WHITE}……不能转换图像格式{}请使用 8 位或 24 位 PNG 格式图片
-STR_ERROR_PNGMAP_MISC                                           :{WHITE}……似乎出现了错误{}（可能是损坏的文件等）
+STR_ERROR_PNGMAP_MISC                                           :{WHITE}……似乎出现了错误（可能是损坏的文件等）
 
 STR_ERROR_BMPMAP                                                :{WHITE}无法从 BMP 文件中读取场景……
 STR_ERROR_BMPMAP_IMAGE_TYPE                                     :{WHITE}……不能转换图像格式
 
-STR_ERROR_HEIGHTMAP_TOO_LARGE                                   :{WHITE}……图像太大了
+STR_ERROR_HEIGHTMAP_TOO_LARGE                                   :{WHITE}……图像过大
 
 STR_WARNING_HEIGHTMAP_SCALE_CAPTION                             :{WHITE}缩放警告
 STR_WARNING_HEIGHTMAP_SCALE_MESSAGE                             :{YELLOW}不推荐将源图片过度放缩，是否继续生成？
 
 # Soundset messages
-STR_WARNING_FALLBACK_SOUNDSET                                   :{WHITE}只找到一个备用音效库；若您需要正式版音效，请通过在线扩展包下载安装音效库
+STR_WARNING_FALLBACK_SOUNDSET                                   :{WHITE}只找到一个备用音效包；若您需要正式版音效，请通过线上拓展下载系统安装音效包
 
 # Screenshot related messages
 STR_WARNING_SCREENSHOT_SIZE_CAPTION                             :{WHITE}超大截图
 STR_WARNING_SCREENSHOT_SIZE_MESSAGE                             :{YELLOW}屏幕截图需要 {COMMA} × {COMMA} 像素。截图将需要一段时间。确认继续截图？
 
-STR_MESSAGE_HEIGHTMAP_SUCCESSFULLY                              :{WHITE}高度图已经被成功保存为“{STRING}”。最高峰高度是 {NUM}
-STR_MESSAGE_SCREENSHOT_SUCCESSFULLY                             :{WHITE}屏幕截图已经被成功保存为{} “{STRING}”
+STR_MESSAGE_HEIGHTMAP_SUCCESSFULLY                              :{WHITE}成功保存高度图为“{STRING}”。最高峰高度是 {NUM}
+STR_MESSAGE_SCREENSHOT_SUCCESSFULLY                             :{WHITE}成功保存屏幕截图为“{STRING}”
 STR_ERROR_SCREENSHOT_FAILED                                     :{WHITE}屏幕截图失败！
 
 # Error message titles
 STR_ERROR_MESSAGE_CAPTION                                       :{YELLOW}消息
-STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}来自 {STRING} 的消息
+STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}来自 {COMPANY} 的消息
 
 # Generic construction errors
 STR_ERROR_OFF_EDGE_OF_MAP                                       :{WHITE}超过地图边界
-STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP                              :{WHITE}距离地图边界过近
+STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP                              :{WHITE}距离地图边缘过近
 STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY                     :{WHITE}资金不足 - 需要 {CURRENCY_LONG}
 STR_ERROR_FLAT_LAND_REQUIRED                                    :{WHITE}需要平坦的地面
 STR_ERROR_LAND_SLOPED_IN_WRONG_DIRECTION                        :{WHITE}土地倾斜的方向不对
@@ -4986,31 +5009,31 @@ STR_ERROR_CAN_T_DO_THIS                                         :{WHITE}不能�
 STR_ERROR_BUILDING_MUST_BE_DEMOLISHED                           :{WHITE}必须先摧毁建筑
 STR_ERROR_CAN_T_CLEAR_THIS_AREA                                 :{WHITE}无法清除这个区域……
 STR_ERROR_SITE_UNSUITABLE                                       :{WHITE}……地点不合适
-STR_ERROR_ALREADY_BUILT                                         :{WHITE}……已经建好了
-STR_ERROR_OWNED_BY                                              :{WHITE}……所有者是 {STRING}
+STR_ERROR_ALREADY_BUILT                                         :{WHITE}……已经建成
+STR_ERROR_OWNED_BY                                              :{WHITE}……由 {STRING} 所有
 STR_ERROR_AREA_IS_OWNED_BY_ANOTHER                              :{WHITE}……此区域由另一公司所有
 STR_ERROR_TERRAFORM_LIMIT_REACHED                               :{WHITE}……已达地形限制
 STR_ERROR_CLEARING_LIMIT_REACHED                                :{WHITE}……已达地块清理限制
 STR_ERROR_TREE_PLANT_LIMIT_REACHED                              :{WHITE}……已经达最大植树量
 STR_ERROR_NAME_MUST_BE_UNIQUE                                   :{WHITE}名称重复！请重新命名
-STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}被 {1:STRING} 挡住
+STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}被 {STRING} 挡住
 STR_ERROR_NOT_ALLOWED_WHILE_PAUSED                              :{WHITE}暂停时不能进行此操作
 
 # Local authority errors
 STR_ERROR_LOCAL_AUTHORITY_REFUSES_TO_ALLOW_THIS                 :{WHITE}{TOWN} 地方政府不批准此操作……
 STR_ERROR_LOCAL_AUTHORITY_REFUSES_AIRPORT                       :{WHITE}{TOWN}地方政府{}不同意在本市范围内再兴建一座机场
 STR_ERROR_LOCAL_AUTHORITY_REFUSES_NOISE                         :{WHITE}{TOWN} 考虑到噪音控制，地方当局拒绝修建机场
-STR_ERROR_BRIBE_FAILED                                          :{WHITE}您的贿赂行动被当地检察机关发现，赃款均已没收，您在本市评价已降为最低
+STR_ERROR_BRIBE_FAILED                                          :{WHITE}当地检察机关发现了你的贿赂行动
 
 # Levelling errors
 STR_ERROR_CAN_T_RAISE_LAND_HERE                                 :{WHITE}不能提高这里的地面……
 STR_ERROR_CAN_T_LOWER_LAND_HERE                                 :{WHITE}不能降低这里的地面……
 STR_ERROR_CAN_T_LEVEL_LAND_HERE                                 :{WHITE}无法在此处变更地形……
 STR_ERROR_EXCAVATION_WOULD_DAMAGE                               :{WHITE}挖掘将破坏隧道
-STR_ERROR_ALREADY_AT_SEA_LEVEL                                  :{WHITE}……已经是海平面了
-STR_ERROR_TOO_HIGH                                              :{WHITE}……太高了
-STR_ERROR_ALREADY_LEVELLED                                      :{WHITE}……已经平了
-STR_ERROR_BRIDGE_TOO_HIGH_AFTER_LOWER_LAND                      :{WHITE}这样的话，在它上面的桥梁会太高
+STR_ERROR_ALREADY_AT_SEA_LEVEL                                  :{WHITE}……已到海平面
+STR_ERROR_TOO_HIGH                                              :{WHITE}……太高
+STR_ERROR_ALREADY_LEVELLED                                      :{WHITE}……已经平整
+STR_ERROR_BRIDGE_TOO_HIGH_AFTER_LOWER_LAND                      :{WHITE}于地形上的桥梁会过高
 
 # Company related errors
 STR_ERROR_CAN_T_CHANGE_COMPANY_NAME                             :{WHITE}无法修改公司名称……
@@ -5018,7 +5041,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}不能�
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}……最大贷款额度是{CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}无法借更多钱……
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}……没有要偿还的贷款了
+STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}……没有要偿还的贷款
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}……需要{CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}不能偿还贷款……
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}不能给予银行贷款……
@@ -5031,12 +5054,12 @@ STR_ERROR_CAN_T_GENERATE_TOWN                                   :{WHITE}无法�
 STR_ERROR_CAN_T_RENAME_TOWN                                     :{WHITE}不能重命名城镇……
 STR_ERROR_CAN_T_FOUND_TOWN_HERE                                 :{WHITE}不能在这里建设城镇……
 STR_ERROR_CAN_T_EXPAND_TOWN                                     :{WHITE}无法扩展城镇……
-STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}……太靠近地图边缘了
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}……太靠近另一个城镇了
-STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}……城镇太多了
-STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}……地图上没有多余的地方了
+STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}……距离地图边缘过近
+STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}……距离另一城镇过近
+STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}……已有太多城镇
+STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}……地图没有足够空间
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}正在进行道路工程
-STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}无法删除城镇……{}城镇范围内还有车站、车库或无法移除的区块
+STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}无法删除城镇……{}{}城镇范围内尚有车站、车库或无法移除的区块
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}……城市中心没有合适的地方放置公司塑像
 STR_ERROR_CAN_T_BUILD_HOUSE                                     :{WHITE}不能建造房屋……
 
@@ -5055,12 +5078,12 @@ STR_ERROR_CAN_ONLY_BE_BUILT_IN_DESERT                           :{WHITE}……�
 STR_ERROR_CAN_ONLY_BE_BUILT_IN_TOWNS                            :{WHITE}……只能在城镇中建设（在房屋上建设）
 STR_ERROR_CAN_ONLY_BE_BUILT_NEAR_TOWN_CENTER                    :{WHITE}……只能在城市中心附近建造
 STR_ERROR_CAN_ONLY_BE_BUILT_IN_LOW_AREAS                        :{WHITE}……只能在低海拔区域建设
-STR_ERROR_CAN_ONLY_BE_POSITIONED                                :{WHITE}……只能被放置在地图边缘
+STR_ERROR_CAN_ONLY_BE_POSITIONED                                :{WHITE}……只能放置在地图边缘
 STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :{WHITE}……林场只能设置在雪线以上的地方
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :{WHITE}……只能在雪线以上建造
 STR_ERROR_CAN_ONLY_BE_BUILT_BELOW_SNOW_LINE                     :{WHITE}……只能在雪线以下建造
 
-STR_ERROR_PROSPECTING_WAS_UNLUCKY                               :{WHITE}由于运气不好，勘探失败了；请再试一次
+STR_ERROR_PROSPECTING_WAS_UNLUCKY                               :{WHITE}勘探由于运气不好而失败；请再试一次
 STR_ERROR_NO_SUITABLE_PLACES_FOR_PROSPECTING                    :{WHITE}没有合适的地方勘探这种工业
 STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES                     :{WHITE}没有合适的地方建设“{STRING}”工业
 STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION         :{WHITE}请更改参数以生成较好的场景
@@ -5085,7 +5108,7 @@ STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}汽车�
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}距离另一码头过近
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}距离另一机场过近
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}不能重命名车站……
-STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}……城镇所有的道路
+STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}……道路由城镇所有
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}……道路方向不对
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}……途中型车站不能建在转角处
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}……不能在岔路口修建过路型站台
@@ -5117,12 +5140,12 @@ STR_ERROR_CAN_T_BUILD_ROAD_WAYPOINT                             :{WHITE}不能�
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}不能将浮标放置在这里……
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}不能更改路点名称……
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}不能从这里拆除路点……
-STR_ERROR_CAN_T_REMOVE_ROAD_WAYPOINT                            :{WHITE}不能移除这里的道路路点……
+STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}不能拆除此处的铁路路点……
+STR_ERROR_CAN_T_REMOVE_ROAD_WAYPOINT                            :{WHITE}不能拆除此处的道路路点……
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}必须先拆除铁路路点
 STR_ERROR_MUST_REMOVE_ROADWAYPOINT_FIRST                        :{WHITE}必须先拆除道路路点
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}……指定的位置有浮标
-STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}……浮标正在被其他公司使用
+STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}……其他公司正在使用此浮标！
 
 # Depot related errors
 STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT                               :{WHITE}不能在这里建设列车车库……
@@ -5151,31 +5174,31 @@ STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT                            :{WHITE}在附�
 STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :车库类型错误
 
 # Depot unbunching related errors
-STR_ERROR_UNBUNCHING_ONLY_ONE_ALLOWED                           :{WHITE}……载具只能有一项班次均匀命令
-STR_ERROR_UNBUNCHING_NO_FULL_LOAD                               :{WHITE}……不能对有班次均匀的载具应用满载命令
-STR_ERROR_UNBUNCHING_NO_UNBUNCHING_FULL_LOAD                    :{WHITE}……不能对有满载命令的载具应用班次均匀
-STR_ERROR_UNBUNCHING_NO_CONDITIONAL                             :{WHITE}……不能对有班次均匀的载具应用条件性命令
-STR_ERROR_UNBUNCHING_NO_UNBUNCHING_CONDITIONAL                  :{WHITE}……不能对有条件性命令的载具应用班次均匀
+STR_ERROR_UNBUNCHING_ONLY_ONE_ALLOWED                           :{WHITE}……载具只能有一项自动调节班次命令
+STR_ERROR_UNBUNCHING_NO_FULL_LOAD                               :{WHITE}……不能对有自动调节班次命令的载具应用满载命令
+STR_ERROR_UNBUNCHING_NO_UNBUNCHING_FULL_LOAD                    :{WHITE}……不能对有满载命令的载具应用自动调节班次
+STR_ERROR_UNBUNCHING_NO_CONDITIONAL                             :{WHITE}……不能对有自动调节班次命令的载具应用条件性命令
+STR_ERROR_UNBUNCHING_NO_UNBUNCHING_CONDITIONAL                  :{WHITE}……不能对有条件性命令的载具应用自动调节班次
 
 # Autoreplace related errors
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{WHITE}{VEHICLE}在更新后总长会过长
 STR_ERROR_AUTOREPLACE_NOTHING_TO_DO                             :{WHITE}当前没有应用自动替换/自动更新规则
 STR_ERROR_AUTOREPLACE_MONEY_LIMIT                               :（现金不够）
 STR_ERROR_AUTOREPLACE_INCOMPATIBLE_CARGO                        :{WHITE}新载具无法运输 {STRING}
-STR_ERROR_AUTOREPLACE_INCOMPATIBLE_REFIT                        :{WHITE}新载具无法在调度指令 {NUM} 时改装
+STR_ERROR_AUTOREPLACE_INCOMPATIBLE_REFIT                        :{WHITE}新载具无法在调度命令 #{NUM} 时改装
 
 # Rail construction errors
 STR_ERROR_IMPOSSIBLE_TRACK_COMBINATION                          :{WHITE}不可能的轨道组合
 STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}必须先拆除信号灯
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}没有合适的轨道
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}必须先拆除轨道
-STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}这是单行道或这条路被堵死了
+STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}道路为单行道或道路已封闭
 STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}该轨道类型不允许建设平交道
 STR_ERROR_CROSSING_DISALLOWED_ROAD                              :该道路类型不允许建设平交道
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}不能在这里设置信号灯……
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}不能在这里铺设轨道……
-STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}不能从这里拆除轨道……
-STR_ERROR_CAN_T_REMOVE_SIGNALS_FROM                             :{WHITE}不能从这里拆除信号灯……
+STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}不能拆除此处的轨道……
+STR_ERROR_CAN_T_REMOVE_SIGNALS_FROM                             :{WHITE}不能移除此处的信号灯……
 STR_ERROR_SIGNAL_CAN_T_CONVERT_SIGNALS_HERE                     :{WHITE}无法转换此处的信号灯……
 STR_ERROR_THERE_IS_NO_RAILROAD_TRACK                            :{WHITE}……这里没有铁路
 STR_ERROR_THERE_ARE_NO_SIGNALS                                  :{WHITE}……这里没有信号灯
@@ -5209,7 +5232,7 @@ STR_ERROR_MUST_DEMOLISH_CANAL_FIRST                             :{WHITE}请先�
 STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE                             :{WHITE}无法在此建设渡槽……
 
 # Tree related errors
-STR_ERROR_TREE_ALREADY_HERE                                     :{WHITE}……此处已经有树木了
+STR_ERROR_TREE_ALREADY_HERE                                     :{WHITE}……此处已有树木
 STR_ERROR_TREE_WRONG_TERRAIN_FOR_TREE_TYPE                      :{WHITE}……树木种类与地形不符
 STR_ERROR_CAN_T_PLANT_TREE_HERE                                 :{WHITE}不能在这里植树……
 
@@ -5218,10 +5241,10 @@ STR_ERROR_CAN_T_BUILD_BRIDGE_HERE                               :{WHITE}不能�
 STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST                            :{WHITE}必须先拆除桥梁
 STR_ERROR_CAN_T_START_AND_END_ON                                :{WHITE}起止点不能相同
 STR_ERROR_BRIDGEHEADS_NOT_SAME_HEIGHT                           :{WHITE}桥梁起止点不在同一水平高度
-STR_ERROR_BRIDGE_TOO_LOW_FOR_TERRAIN                            :{WHITE}桥梁对于现有地形来说位置太低了
-STR_ERROR_BRIDGE_TOO_HIGH_FOR_TERRAIN                           :{WHITE}这桥梁对这个地形而言太高了
+STR_ERROR_BRIDGE_TOO_LOW_FOR_TERRAIN                            :{WHITE}桥梁太接近地面
+STR_ERROR_BRIDGE_TOO_HIGH_FOR_TERRAIN                           :{WHITE}桥梁对于此种地形而言太高
 STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}起止两端必须在一条线上
-STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}……桥的两端必须都位于地面上
+STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}……桥梁两端必须都位于地面上
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}……桥梁太长
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}桥梁终点将越出地图
 
@@ -5248,36 +5271,36 @@ STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}无法�
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}无法删除分组……
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}无法重命名分组……
 STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}无法移动分组……
-STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION                      :{WHITE}……组从属关系不能出现自环
-STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}无法从该组移除所有载具……
-STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}无法添加载具到该组……
-STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}无法添加共享指令的载具到该组……
+STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION                      :{WHITE}……分组结构不能出现循环
+STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}无法从分组移除所有载具……
+STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}无法向分组中添加载具……
+STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}无法向分组中添加共享调度计划的载具……
 
 # Generic vehicle errors
 
 ###length VEHICLE_TYPES
-STR_ERROR_TRAIN_IN_THE_WAY                                      :{WHITE}指定位置有列车
+STR_ERROR_TRAIN_IN_THE_WAY                                      :{WHITE}指定的位置有列车
 STR_ERROR_ROAD_VEHICLE_IN_THE_WAY                               :{WHITE}指定的位置有汽车
-STR_ERROR_SHIP_IN_THE_WAY                                       :{WHITE}前方有另一艘船只……
-STR_ERROR_AIRCRAFT_IN_THE_WAY                                   :{WHITE}指定位置有飞机
+STR_ERROR_SHIP_IN_THE_WAY                                       :{WHITE}指定的位置有船只
+STR_ERROR_AIRCRAFT_IN_THE_WAY                                   :{WHITE}指定的位置有飞机
 
 ###length VEHICLE_TYPES
 STR_ERROR_RAIL_VEHICLE_NOT_AVAILABLE                            :{WHITE}列车不可用
-STR_ERROR_ROAD_VEHICLE_NOT_AVAILABLE                            :{WHITE}载具已经停产
+STR_ERROR_ROAD_VEHICLE_NOT_AVAILABLE                            :{WHITE}车辆不可用
 STR_ERROR_SHIP_NOT_AVAILABLE                                    :{WHITE}船只不可用
 STR_ERROR_AIRCRAFT_NOT_AVAILABLE                                :{WHITE}飞机不可用
 
 ###length VEHICLE_TYPES
-STR_ERROR_CAN_T_REFIT_TRAIN                                     :{WHITE}不能改造列车……
+STR_ERROR_CAN_T_REFIT_TRAIN                                     :{WHITE}不能改装列车……
 STR_ERROR_CAN_T_REFIT_ROAD_VEHICLE                              :{WHITE}不能改装汽车……
 STR_ERROR_CAN_T_REFIT_SHIP                                      :{WHITE}不能改装船只……
 STR_ERROR_CAN_T_REFIT_AIRCRAFT                                  :{WHITE}不能改装飞机……
 
 ###length VEHICLE_TYPES
-STR_ERROR_CAN_T_RENAME_TRAIN                                    :{WHITE}不能给列车命名……
+STR_ERROR_CAN_T_RENAME_TRAIN                                    :{WHITE}不能命名列车……
 STR_ERROR_CAN_T_RENAME_ROAD_VEHICLE                             :{WHITE}不能命名汽车……
 STR_ERROR_CAN_T_RENAME_SHIP                                     :{WHITE}不能命名船只……
-STR_ERROR_CAN_T_RENAME_AIRCRAFT                                 :{WHITE}不能为飞机命名……
+STR_ERROR_CAN_T_RENAME_AIRCRAFT                                 :{WHITE}不能命名飞机……
 
 ###length VEHICLE_TYPES
 STR_ERROR_CAN_T_STOP_START_TRAIN                                :{WHITE}不能停止/启动列车……
@@ -5301,13 +5324,25 @@ STR_ERROR_CAN_T_BUY_AIRCRAFT                                    :{WHITE}不能�
 STR_ERROR_CAN_T_RENAME_TRAIN_TYPE                               :{WHITE}不能重命名列车型号……
 STR_ERROR_CAN_T_RENAME_ROAD_VEHICLE_TYPE                        :{WHITE}不能重命名汽车型号……
 STR_ERROR_CAN_T_RENAME_SHIP_TYPE                                :{WHITE}不能重命名船只型号……
-STR_ERROR_CAN_T_RENAME_AIRCRAFT_TYPE                            :{WHITE}不能重命名飞机信号……
+STR_ERROR_CAN_T_RENAME_AIRCRAFT_TYPE                            :{WHITE}不能重命名飞机型号……
 
 ###length VEHICLE_TYPES
 STR_ERROR_CAN_T_SELL_TRAIN                                      :{WHITE}不能出售列车……
 STR_ERROR_CAN_T_SELL_ROAD_VEHICLE                               :{WHITE}不能出售汽车……
 STR_ERROR_CAN_T_SELL_SHIP                                       :{WHITE}不能出售船只……
 STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}不能出售飞机……
+
+###length VEHICLE_TYPES
+STR_ERROR_CAN_T_SELL_ALL_TRAIN                                  :{WHITE}无法出售所有列车……
+STR_ERROR_CAN_T_SELL_ALL_ROAD_VEHICLE                           :{WHITE}无法出售所有汽车……
+STR_ERROR_CAN_T_SELL_ALL_SHIP                                   :{WHITE}无法出售所有船只……
+STR_ERROR_CAN_T_SELL_ALL_AIRCRAFT                               :{WHITE}无法出售所有飞机……
+
+###length VEHICLE_TYPES
+STR_ERROR_CAN_T_AUTOREPLACE_TRAIN                               :{WHITE}无法自动替换列车……
+STR_ERROR_CAN_T_AUTOREPLACE_ROAD_VEHICLE                        :{WHITE}无法自动替换汽车……
+STR_ERROR_CAN_T_AUTOREPLACE_SHIP                                :{WHITE}无法自动替换船只……
+STR_ERROR_CAN_T_AUTOREPLACE_AIRCRAFT                            :{WHITE}无法自动替换飞机……
 
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}游戏中的载具过多
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}不能改变维护周期……
@@ -5329,15 +5364,15 @@ STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET_EXPLANATION           :{WHITE}在 {DAT
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}无法让列车通过处于危险状态的信号灯……
 STR_ERROR_CAN_T_REVERSE_DIRECTION_TRAIN                         :{WHITE}不能命令列车调头……
-STR_ERROR_TRAIN_START_NO_POWER                                  :没有接触网！
+STR_ERROR_TRAIN_START_NO_POWER                                  :列车没有动力
 
 STR_ERROR_CAN_T_MAKE_ROAD_VEHICLE_TURN                          :{WHITE}车辆无法调头……
 
 STR_ERROR_AIRCRAFT_IS_IN_FLIGHT                                 :{WHITE}飞机正在飞行
 
 # Order related errors
-STR_ERROR_NO_MORE_SPACE_FOR_ORDERS                              :{WHITE}没有多余的调度计划的位置了
-STR_ERROR_TOO_MANY_ORDERS                                       :{WHITE}调度计划过多
+STR_ERROR_NO_MORE_SPACE_FOR_ORDERS                              :{WHITE}无法新增命令
+STR_ERROR_TOO_MANY_ORDERS                                       :{WHITE}命令太多
 STR_ERROR_CAN_T_INSERT_NEW_ORDER                                :{WHITE}不能插入新的调度计划……
 STR_ERROR_CAN_T_DELETE_THIS_ORDER                               :{WHITE}不能删除调度计划……
 STR_ERROR_CAN_T_MODIFY_THIS_ORDER                               :{WHITE}不能执行这个命令……
@@ -5379,7 +5414,7 @@ STR_ERROR_TIMETABLE_INCOMPLETE                                  :{WHITE}……�
 STR_ERROR_TIMETABLE_NOT_STARTED                                 :{WHITE}……时刻表尚未开始
 
 # Sign related errors
-STR_ERROR_TOO_MANY_SIGNS                                        :{WHITE}……标志太多了
+STR_ERROR_TOO_MANY_SIGNS                                        :{WHITE}……已有太多标志
 STR_ERROR_CAN_T_PLACE_SIGN_HERE                                 :{WHITE}不能在这里放置标志……
 STR_ERROR_CAN_T_CHANGE_SIGN_NAME                                :{WHITE}不能更改标志的名称……
 STR_ERROR_CAN_T_DELETE_SIGN                                     :{WHITE}无法删除标记……
@@ -5396,7 +5431,7 @@ STR_BASEGRAPHICS_WIN_DESCRIPTION                                :运输大亨 Wi
 STR_BASESOUNDS_DOS_DESCRIPTION                                  :运输大亨 DOS 豪华版原版音效包。
 STR_BASESOUNDS_WIN_DESCRIPTION                                  :Transport Tycoon Deluxe Windows（运输大亨 Windows 豪华版）的原版音效包。
 STR_BASESOUNDS_NONE_DESCRIPTION                                 :一个空的音效包。
-STR_BASEMUSIC_WIN_DESCRIPTION                                   :Transport Tycoon Deluxe（运输大亨 Windows 豪华版）的原版音乐包
+STR_BASEMUSIC_WIN_DESCRIPTION                                   :Transport Tycoon Deluxe（运输大亨 Windows 豪华版）的原版音乐包。
 STR_BASEMUSIC_DOS_DESCRIPTION                                   :运输大亨 DOS 豪华版原版音乐。
 STR_BASEMUSIC_TTO_DESCRIPTION                                   :原版运输大亨（DOS 版及地图编辑器扩展）音乐。
 STR_BASEMUSIC_NONE_DESCRIPTION                                  :一个没有实际内容的音乐包。
@@ -5823,23 +5858,12 @@ STR_DEFAULT_SIGN_NAME                                           :标志
 STR_COMPANY_SOMEONE                                             :某人
 
 STR_SAVEGAME_DURATION_REALTIME                                  :{NUM} 时 {NUM} 分
-STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}，{STRING}
+STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STRING}
 STR_SAVEGAME_NAME_SPECTATOR                                     :观众，{1:STRING}
 
 # Viewport strings
-STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN}（{COMMA}）
-STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
-STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
-STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
-
-STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
-STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
-
+STR_VIEWPORT_TOWN_POP                                           :{TOWN}（{COMMA}）
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
-STR_VIEWPORT_STATION_TINY                                       :{TINY_FONT}{STATION}
-
-STR_VIEWPORT_WAYPOINT                                           :{WAYPOINT}
-STR_VIEWPORT_WAYPOINT_TINY                                      :{TINY_FONT}{WAYPOINT}
 
 # Simple strings to get specific types of data
 STR_COMPANY_NAME                                                :{COMPANY}
@@ -5876,8 +5900,6 @@ STR_JUST_DATE_LONG                                              :{DATE_LONG}
 STR_JUST_DATE_ISO                                               :{DATE_ISO}
 STR_JUST_STRING                                                 :{STRING}
 STR_JUST_STRING1                                                :{STRING}
-STR_JUST_STRING2                                                :{STRING}
-STR_JUST_STRING4                                                :{STRING}
 STR_JUST_STRING_STRING                                          :{STRING}{STRING}
 STR_JUST_RAW_STRING                                             :{STRING}
 STR_JUST_BIG_RAW_STRING                                         :{BIG_FONT}{STRING}
@@ -5901,3 +5923,5 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING}（{VELOCITY}）
+
+STR_BADGE_NAME_LIST                                             :{STRING}：{GOLD}{STRING}

@@ -5,4 +5,4 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-GSLog.Info("13 API compatibility in effect.");
+/* This file contains code to downgrade the API from 14 to 13. */

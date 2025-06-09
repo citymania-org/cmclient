@@ -17,14 +17,14 @@ class ServerNetworkGameSocketHandler;
 /** Make the code look slightly nicer/simpler. */
 typedef ServerNetworkGameSocketHandler NetworkClientSocket;
 /** Pool with all client sockets. */
-typedef Pool<NetworkClientSocket, ClientIndex, 8, MAX_CLIENT_SLOTS, PT_NCLIENT> NetworkClientSocketPool;
+using NetworkClientSocketPool = Pool<NetworkClientSocket, ClientPoolID, 8, PoolType::NetworkClient>;
 extern NetworkClientSocketPool _networkclientsocket_pool;
 
 /** Class for handling the server side of the game connection. */
 class ServerNetworkGameSocketHandler : public NetworkClientSocketPool::PoolItem<&_networkclientsocket_pool>, public NetworkGameSocketHandler, public TCPListenHandler<ServerNetworkGameSocketHandler, PACKET_SERVER_FULL, PACKET_SERVER_BANNED> {
 protected:
-	std::unique_ptr<class NetworkAuthenticationServerHandler> authentication_handler; ///< The handler for the authentication.
-	std::string peer_public_key; ///< The public key of our client.
+	std::unique_ptr<class NetworkAuthenticationServerHandler> authentication_handler = nullptr; ///< The handler for the authentication.
+	std::string peer_public_key{}; ///< The public key of our client.
 
 	NetworkRecvStatus Receive_CLIENT_JOIN(Packet &p) override;
 	NetworkRecvStatus Receive_CLIENT_IDENTIFY(Packet &p) override;
@@ -50,7 +50,7 @@ protected:
 
 public:
 	/** Status of a client */
-	enum ClientStatus {
+	enum ClientStatus : uint8_t {
 		STATUS_INACTIVE,      ///< The client is not connected nor active.
 		STATUS_AUTH_GAME,     ///< The client is authorizing with game (server) password.
 		STATUS_IDENTIFY,      ///< The client is identifying itself.
@@ -64,15 +64,15 @@ public:
 		STATUS_END,           ///< Must ALWAYS be on the end of this list!! (period).
 	};
 
-	uint8_t lag_test;               ///< Byte used for lag-testing the client
-	uint8_t last_token;             ///< The last random token we did send to verify the client is listening
-	uint32_t last_token_frame;     ///< The last frame we received the right token
-	ClientStatus status;         ///< Status of this client
-	CommandQueue outgoing_queue; ///< The command-queue awaiting delivery; conceptually more a bucket to gather commands in, after which the whole bucket is sent to the client.
-	size_t receive_limit;        ///< Amount of bytes that we can receive at this moment
+	uint8_t lag_test = 0; ///< Byte used for lag-testing the client
+	uint8_t last_token = 0; ///< The last random token we did send to verify the client is listening
+	uint32_t last_token_frame = 0; ///< The last frame we received the right token
+	ClientStatus status = STATUS_INACTIVE; ///< Status of this client
+	CommandQueue outgoing_queue{}; ///< The command-queue awaiting delivery; conceptually more a bucket to gather commands in, after which the whole bucket is sent to the client.
+	size_t receive_limit = 0; ///< Amount of bytes that we can receive at this moment
 
-	std::shared_ptr<struct PacketWriter> savegame; ///< Writer used to write the savegame.
-	NetworkAddress client_address; ///< IP-address of the client (so they can be banned)
+	std::shared_ptr<struct PacketWriter> savegame = nullptr; ///< Writer used to write the savegame.
+	NetworkAddress client_address{}; ///< IP-address of the client (so they can be banned)
 
 	ServerNetworkGameSocketHandler(SOCKET s);
 	~ServerNetworkGameSocketHandler();

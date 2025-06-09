@@ -15,6 +15,9 @@
 #include "../ai/ai.hpp"
 #include "../game/game.hpp"
 #include "../base_media_base.h"
+#include "../base_media_graphics.h"
+#include "../base_media_music.h"
+#include "../base_media_sounds.h"
 #include "../openttd.h"
 #include "../sortlist_type.h"
 #include "../stringfilter_type.h"
@@ -39,7 +42,7 @@ static bool _accepted_external_search = false;
 
 /** Window for displaying the textfile of an item in the content list. */
 struct ContentTextfileWindow : public TextfileWindow {
-	const ContentInfo *ci; ///< View the textfile of this ContentInfo.
+	const ContentInfo *ci = nullptr; ///< View the textfile of this ContentInfo.
 
 	ContentTextfileWindow(TextfileType file_type, const ContentInfo *ci) : TextfileWindow(file_type), ci(ci)
 	{
@@ -66,12 +69,13 @@ struct ContentTextfileWindow : public TextfileWindow {
 		}
 	}
 
-	void SetStringParameters(WidgetID widget) const override
+	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
 	{
 		if (widget == WID_TF_CAPTION) {
-			SetDParam(0, this->GetTypeString());
-			SetDParamStr(1, this->ci->name);
+			return GetString(stringid, this->GetTypeString(), this->ci->name);
 		}
+
+		return this->Window::GetWidgetString(widget, stringid);
 	}
 };
 
@@ -83,12 +87,12 @@ void ShowContentTextfileWindow(TextfileType file_type, const ContentInfo *ci)
 
 /** Nested widgets for the download window. */
 static constexpr NWidgetPart _nested_network_content_download_status_window_widgets[] = {
-	NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_CONTENT_DOWNLOAD_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+	NWidget(WWT_CAPTION, COLOUR_GREY), SetStringTip(STR_CONTENT_DOWNLOAD_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0), SetPadding(WidgetDimensions::unscaled.modalpopup),
 			NWidget(WWT_EMPTY, INVALID_COLOUR, WID_NCDS_PROGRESS_BAR), SetFill(1, 0),
 			NWidget(WWT_EMPTY, INVALID_COLOUR, WID_NCDS_PROGRESS_TEXT), SetFill(1, 0), SetMinimalSize(350, 0),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCDS_CANCELOK), SetDataTip(STR_BUTTON_CANCEL, STR_NULL), SetFill(1, 0),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCDS_CANCELOK), SetStringTip(STR_BUTTON_CANCEL), SetFill(1, 0),
 		EndContainer(),
 	EndContainer(),
 };
@@ -97,12 +101,11 @@ static constexpr NWidgetPart _nested_network_content_download_status_window_widg
 static WindowDesc _network_content_download_status_window_desc(
 	WDP_CENTER, nullptr, 0, 0,
 	WC_NETWORK_STATUS_WINDOW, WC_NONE,
-	WDF_MODAL,
+	WindowDefaultFlag::Modal,
 	_nested_network_content_download_status_window_widgets
 );
 
-BaseNetworkContentDownloadStatusWindow::BaseNetworkContentDownloadStatusWindow(WindowDesc &desc) :
-		Window(desc), downloaded_bytes(0), downloaded_files(0), cur_id(UINT32_MAX)
+BaseNetworkContentDownloadStatusWindow::BaseNetworkContentDownloadStatusWindow(WindowDesc &desc) : Window(desc)
 {
 	_network_content_client.AddCallback(this);
 	_network_content_client.DownloadSelectedContent(this->total_files, this->total_bytes);
@@ -119,15 +122,14 @@ void BaseNetworkContentDownloadStatusWindow::Close([[maybe_unused]] int data)
 void BaseNetworkContentDownloadStatusWindow::UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize)
 {
 	switch (widget) {
-		case WID_NCDS_PROGRESS_BAR:
-			SetDParamMaxDigits(0, 8);
-			SetDParamMaxDigits(1, 8);
-			SetDParamMaxDigits(2, 8);
-			size = GetStringBoundingBox(STR_CONTENT_DOWNLOAD_PROGRESS_SIZE);
+		case WID_NCDS_PROGRESS_BAR: {
+			auto max_value = GetParamMaxDigits(8);
+			size = GetStringBoundingBox(GetString(STR_CONTENT_DOWNLOAD_PROGRESS_SIZE, max_value, max_value, max_value));
 			/* We need some spacing for the 'border' */
 			size.height += WidgetDimensions::scaled.frametext.Horizontal();
 			size.width  += WidgetDimensions::scaled.frametext.Vertical();
 			break;
+		}
 
 		case WID_NCDS_PROGRESS_TEXT:
 			size.height = GetCharacterHeight(FS_NORMAL) * 2 + WidgetDimensions::scaled.vsep_normal;
@@ -140,39 +142,34 @@ void BaseNetworkContentDownloadStatusWindow::DrawWidget(const Rect &r, WidgetID 
 	switch (widget) {
 		case WID_NCDS_PROGRESS_BAR: {
 			/* Draw the % complete with a bar and a text */
-			DrawFrameRect(r, COLOUR_GREY, FR_BORDERONLY | FR_LOWERED);
+			DrawFrameRect(r, COLOUR_GREY, {FrameFlag::BorderOnly, FrameFlag::Lowered});
 			Rect ir = r.Shrink(WidgetDimensions::scaled.bevel);
-			DrawFrameRect(ir.WithWidth((uint64_t)ir.Width() * this->downloaded_bytes / this->total_bytes, _current_text_dir == TD_RTL), COLOUR_MAUVE, FR_NONE);
-			SetDParam(0, this->downloaded_bytes);
-			SetDParam(1, this->total_bytes);
-			SetDParam(2, this->downloaded_bytes * 100LL / this->total_bytes);
-			DrawString(ir.left, ir.right, CenterBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)), STR_CONTENT_DOWNLOAD_PROGRESS_SIZE, TC_FROMSTRING, SA_HOR_CENTER);
+			DrawFrameRect(ir.WithWidth((uint64_t)ir.Width() * this->downloaded_bytes / this->total_bytes, _current_text_dir == TD_RTL), COLOUR_MAUVE, {});
+			DrawString(ir.left, ir.right, CenterBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)),
+				GetString(STR_CONTENT_DOWNLOAD_PROGRESS_SIZE, this->downloaded_bytes, this->total_bytes, this->downloaded_bytes * 100LL / this->total_bytes),
+				TC_FROMSTRING, SA_HOR_CENTER);
 			break;
 		}
 
-		case WID_NCDS_PROGRESS_TEXT: {
-			StringID str;
+		case WID_NCDS_PROGRESS_TEXT:
 			if (this->downloaded_bytes == this->total_bytes) {
-				str = STR_CONTENT_DOWNLOAD_COMPLETE;
+				DrawStringMultiLine(r, STR_CONTENT_DOWNLOAD_COMPLETE, TC_FROMSTRING, SA_CENTER);
 			} else if (!this->name.empty()) {
-				SetDParamStr(0, this->name);
-				SetDParam(1, this->downloaded_files);
-				SetDParam(2, this->total_files);
-				str = STR_CONTENT_DOWNLOAD_FILE;
+				DrawStringMultiLine(r,
+					GetString(STR_CONTENT_DOWNLOAD_FILE, this->name, this->downloaded_files, this->total_files),
+					TC_FROMSTRING, SA_CENTER);
 			} else {
-				str = STR_CONTENT_DOWNLOAD_INITIALISE;
+				DrawStringMultiLine(r, STR_CONTENT_DOWNLOAD_INITIALISE, TC_FROMSTRING, SA_CENTER);
 			}
-			DrawStringMultiLine(r, str, TC_FROMSTRING, SA_CENTER);
 			break;
-		}
 	}
 }
 
-void BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(const ContentInfo *ci, int bytes)
+void BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(const ContentInfo &ci, int bytes)
 {
-	if (ci->id != this->cur_id) {
-		this->name = ci->filename;
-		this->cur_id = ci->id;
+	if (ci.id != this->cur_id) {
+		this->name = ci.filename;
+		this->cur_id = ci.id;
 		this->downloaded_files++;
 	}
 
@@ -190,7 +187,7 @@ void BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(const ContentInf
 /** Window for showing the download status of content */
 struct NetworkContentDownloadStatusWindow : public BaseNetworkContentDownloadStatusWindow {
 private:
-	std::vector<ContentType> receivedTypes;     ///< Types we received so we can update their cache
+	std::vector<ContentType> receivedTypes{}; ///< Types we received so we can update their cache
 
 public:
 	/**
@@ -204,7 +201,7 @@ public:
 
 	void Close([[maybe_unused]] int data = 0) override
 	{
-		TarScanner::Mode mode = TarScanner::NONE;
+		TarScanner::Modes modes{};
 		for (auto ctype : this->receivedTypes) {
 			switch (ctype) {
 				case CONTENT_TYPE_AI:
@@ -219,7 +216,7 @@ public:
 				case CONTENT_TYPE_BASE_GRAPHICS:
 				case CONTENT_TYPE_BASE_SOUNDS:
 				case CONTENT_TYPE_BASE_MUSIC:
-					mode |= TarScanner::BASESET;
+					modes.Set(TarScanner::Mode::Baseset);
 					break;
 
 				case CONTENT_TYPE_NEWGRF:
@@ -228,7 +225,7 @@ public:
 
 				case CONTENT_TYPE_SCENARIO:
 				case CONTENT_TYPE_HEIGHTMAP:
-					mode |= TarScanner::SCENARIO;
+					modes.Set(TarScanner::Mode::Scenario);
 					break;
 
 				default:
@@ -236,7 +233,7 @@ public:
 			}
 		}
 
-		TarScanner::DoScan(mode);
+		TarScanner::DoScan(modes);
 
 		/* Tell all the backends about what we've downloaded */
 		for (auto ctype : this->receivedTypes) {
@@ -301,14 +298,14 @@ public:
 		}
 	}
 
-	void OnDownloadProgress(const ContentInfo *ci, int bytes) override
+	void OnDownloadProgress(const ContentInfo &ci, int bytes) override
 	{
 		BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(ci, bytes);
-		include(this->receivedTypes, ci->type);
+		include(this->receivedTypes, ci.type);
 
 		/* When downloading is finished change cancel in ok */
 		if (this->downloaded_bytes == this->total_bytes) {
-			this->GetWidget<NWidgetCore>(WID_NCDS_CANCELOK)->widget_data = STR_BUTTON_OK;
+			this->GetWidget<NWidgetCore>(WID_NCDS_CANCELOK)->SetString(STR_BUTTON_OK);
 		}
 	}
 };
@@ -320,8 +317,8 @@ struct ContentListFilterData {
 };
 
 /** Filter criteria for NetworkContentListWindow. */
-enum ContentListFilterCriteria {
-	CONTENT_FILTER_TEXT = 0,        ///< Filter by query sting
+enum ContentListFilterCriteria : uint8_t {
+	CONTENT_FILTER_TEXT = 0,        ///< Filter by query string
 	CONTENT_FILTER_TYPE_OR_SELECTED,///< Filter by being of displayed type or selected for download
 };
 
@@ -336,16 +333,16 @@ class NetworkContentListWindow : public Window, ContentCallback {
 	static Filtering last_filtering; ///< The last filtering setting.
 	static const std::initializer_list<GUIContentList::SortFunction * const> sorter_funcs;   ///< Sorter functions
 	static const std::initializer_list<GUIContentList::FilterFunction * const> filter_funcs; ///< Filter functions.
-	GUIContentList content;      ///< List with content
-	bool auto_select;            ///< Automatically select all content when the meta-data becomes available
-	ContentListFilterData filter_data; ///< Filter for content list
-	QueryString filter_editbox;  ///< Filter editbox;
-	Dimension checkbox_size;     ///< Size of checkbox/"blot" sprite
+	GUIContentList content{}; ///< List with content
+	bool auto_select = false; ///< Automatically select all content when the meta-data becomes available
+	ContentListFilterData filter_data{}; ///< Filter for content list
+	QueryString filter_editbox; ///< Filter editbox;
+	Dimension checkbox_size{}; ///< Size of checkbox/"blot" sprite
 
-	const ContentInfo *selected; ///< The selected content info
-	int list_pos;                ///< Our position in the list
-	uint filesize_sum;           ///< The sum of all selected file sizes
-	Scrollbar *vscroll;          ///< Cache of the vertical scrollbar
+	const ContentInfo *selected = nullptr; ///< The selected content info
+	int list_pos = 0; ///< Our position in the list
+	uint filesize_sum = 0; ///< The sum of all selected file sizes
+	Scrollbar *vscroll = nullptr; ///< Cache of the vertical scrollbar
 
 	static std::string content_type_strs[CONTENT_TYPE_END]; ///< Cached strings for all content types.
 
@@ -373,7 +370,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 			url += "do=searchtext&q=";
 
 			/* Escape search term */
-			for (const char *search = this->filter_editbox.text.buf; *search != '\0'; search++) {
+			for (const char *search = this->filter_editbox.text.GetText(); *search != '\0'; search++) {
 				/* Remove quotes */
 				if (*search == '\'' || *search == '"') continue;
 
@@ -413,9 +410,9 @@ class NetworkContentListWindow : public Window, ContentCallback {
 
 		bool all_available = true;
 
-		for (ConstContentIterator iter = _network_content_client.Begin(); iter != _network_content_client.End(); iter++) {
-			if ((*iter)->state == ContentInfo::DOES_NOT_EXIST) all_available = false;
-			this->content.push_back(*iter);
+		for (const ContentInfo &ci : _network_content_client.Info()) {
+			if (ci.state == ContentInfo::DOES_NOT_EXIST) all_available = false;
+			this->content.push_back(&ci);
 		}
 
 		this->SetWidgetDisabledState(WID_NCL_SEARCH_EXTERNAL, this->auto_select && all_available);
@@ -545,9 +542,7 @@ public:
 	NetworkContentListWindow(WindowDesc &desc, bool select_all, const std::bitset<CONTENT_TYPE_END> &types) :
 			Window(desc),
 			auto_select(select_all),
-			filter_editbox(EDITBOX_MAX_SIZE),
-			selected(nullptr),
-			list_pos(0)
+			filter_editbox(EDITBOX_MAX_SIZE)
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_NCL_SCROLLBAR);
@@ -697,8 +692,7 @@ public:
 		DrawString(hr.left, hr.right, hr.top, STR_CONTENT_DETAIL_TITLE, TC_FROMSTRING, SA_HOR_CENTER);
 
 		/* Draw the total download size */
-		SetDParam(0, this->filesize_sum);
-		DrawString(tr.left, tr.right, tr.bottom - GetCharacterHeight(FS_NORMAL) + 1, STR_CONTENT_TOTAL_DOWNLOAD_SIZE);
+		DrawString(tr.left, tr.right, tr.bottom - GetCharacterHeight(FS_NORMAL) + 1, GetString(STR_CONTENT_TOTAL_DOWNLOAD_SIZE, this->filesize_sum));
 
 		if (this->selected == nullptr) return;
 
@@ -709,35 +703,28 @@ public:
 		tr.bottom -= GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_wide;
 
 		if (this->selected->upgrade) {
-			SetDParam(0, STR_CONTENT_TYPE_BASE_GRAPHICS + this->selected->type - CONTENT_TYPE_BASE_GRAPHICS);
-			tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_UPDATE);
+			tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_UPDATE, STR_CONTENT_TYPE_BASE_GRAPHICS + this->selected->type - CONTENT_TYPE_BASE_GRAPHICS));
 			tr.top += WidgetDimensions::scaled.vsep_wide;
 		}
 
-		SetDParamStr(0, this->selected->name);
-		tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_NAME);
+		tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_NAME, this->selected->name));
 
 		if (!this->selected->version.empty()) {
-			SetDParamStr(0, this->selected->version);
-			tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_VERSION);
+			tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_VERSION, this->selected->version));
 		}
 
 		if (!this->selected->description.empty()) {
-			SetDParamStr(0, this->selected->description);
-			tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_DESCRIPTION);
+			tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_DESCRIPTION, this->selected->description));
 		}
 
 		if (!this->selected->url.empty()) {
-			SetDParamStr(0, this->selected->url);
-			tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_URL);
+			tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_URL, this->selected->url));
 		}
 
-		SetDParam(0, STR_CONTENT_TYPE_BASE_GRAPHICS + this->selected->type - CONTENT_TYPE_BASE_GRAPHICS);
-		tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_TYPE);
+		tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_TYPE, STR_CONTENT_TYPE_BASE_GRAPHICS + this->selected->type - CONTENT_TYPE_BASE_GRAPHICS));
 
 		tr.top += WidgetDimensions::scaled.vsep_wide;
-		SetDParam(0, this->selected->filesize);
-		tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_FILESIZE);
+		tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_FILESIZE, this->selected->filesize));
 
 		std::string_view list_separator = GetListSeparator();
 		if (!this->selected->dependencies.empty()) {
@@ -745,18 +732,15 @@ public:
 			std::string buf;
 			for (auto &cid : this->selected->dependencies) {
 				/* Try to find the dependency */
-				ConstContentIterator iter = _network_content_client.Begin();
-				for (; iter != _network_content_client.End(); iter++) {
-					const ContentInfo *ci = *iter;
-					if (ci->id != cid) continue;
+				for (const ContentInfo &ci : _network_content_client.Info()) {
+					if (ci.id != cid) continue;
 
 					if (!buf.empty()) buf += list_separator;
-					buf += (*iter)->name;
+					buf += ci.name;
 					break;
 				}
 			}
-			SetDParamStr(0, buf);
-			tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_DEPENDENCIES);
+			tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_DEPENDENCIES, std::move(buf)));
 		}
 
 		if (!this->selected->tags.empty()) {
@@ -766,8 +750,7 @@ public:
 				if (!buf.empty()) buf += list_separator;
 				buf += tag;
 			}
-			SetDParamStr(0, buf);
-			tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_TAGS);
+			tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_TAGS, std::move(buf)));
 		}
 
 		if (this->selected->IsSelected()) {
@@ -783,8 +766,7 @@ public:
 				buf += ci->name;
 			}
 			if (!buf.empty()) {
-				SetDParamStr(0, buf);
-				tr.top = DrawStringMultiLine(tr, STR_CONTENT_DETAIL_SELECTED_BECAUSE_OF);
+				tr.top = DrawStringMultiLine(tr, GetString(STR_CONTENT_DETAIL_SELECTED_BECAUSE_OF, std::move(buf)));
 			}
 		}
 	}
@@ -808,7 +790,7 @@ public:
 
 				const NWidgetBase *checkbox = this->GetWidget<NWidgetBase>(WID_NCL_CHECKBOX);
 				if (click_count > 1 || IsInsideBS(pt.x, checkbox->pos_x, checkbox->current_x)) {
-					_network_content_client.ToggleSelectedState(this->selected);
+					_network_content_client.ToggleSelectedState(*this->selected);
 					this->content.ForceResort();
 					this->content.ForceRebuild();
 				}
@@ -869,7 +851,10 @@ public:
 				if (_accepted_external_search) {
 					this->OpenExternalSearch();
 				} else {
-					ShowQuery(STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER_CAPTION, STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER, this, ExternalSearchDisclaimerCallback);
+					ShowQuery(
+						GetEncodedString(STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER_CAPTION),
+						GetEncodedString(STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER),
+						this, ExternalSearchDisclaimerCallback);
 				}
 				break;
 		}
@@ -883,7 +868,7 @@ public:
 				case WKC_RETURN:
 					if (keycode == WKC_RETURN || !IsWidgetFocused(WID_NCL_FILTER)) {
 						if (this->selected != nullptr) {
-							_network_content_client.ToggleSelectedState(this->selected);
+							_network_content_client.ToggleSelectedState(*this->selected);
 							this->content.ForceResort();
 							this->InvalidateData();
 						}
@@ -926,7 +911,7 @@ public:
 	void OnEditboxChanged(WidgetID wid) override
 	{
 		if (wid == WID_NCL_FILTER) {
-			this->filter_data.string_filter.SetFilterTerm(this->filter_editbox.text.buf);
+			this->filter_data.string_filter.SetFilterTerm(this->filter_editbox.text.GetText());
 			this->UpdateFilterState();
 			this->content.ForceRebuild();
 			this->InvalidateData();
@@ -938,9 +923,9 @@ public:
 		this->vscroll->SetCapacityFromWidget(this, WID_NCL_MATRIX);
 	}
 
-	void OnReceiveContentInfo(const ContentInfo *rci) override
+	void OnReceiveContentInfo(const ContentInfo &rci) override
 	{
-		if (this->auto_select && !rci->IsSelected()) _network_content_client.ToggleSelectedState(rci);
+		if (this->auto_select && !rci.IsSelected()) _network_content_client.ToggleSelectedState(rci);
 		this->content.ForceRebuild();
 		this->InvalidateData(0, false);
 	}
@@ -954,7 +939,7 @@ public:
 	void OnConnect(bool success) override
 	{
 		if (!success) {
-			ShowErrorMessage(STR_CONTENT_ERROR_COULD_NOT_CONNECT, INVALID_STRING_ID, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_CONTENT_ERROR_COULD_NOT_CONNECT), {}, WL_ERROR);
 			this->Close();
 			return;
 		}
@@ -1003,7 +988,7 @@ public:
 			this->SetWidgetDisabledState(WID_NCL_TEXTFILE + tft, this->selected == nullptr || this->selected->state != ContentInfo::ALREADY_HERE || !this->selected->GetTextfile(tft).has_value());
 		}
 
-		this->GetWidget<NWidgetCore>(WID_NCL_CANCEL)->widget_data = this->filesize_sum == 0 ? STR_AI_SETTINGS_CLOSE : STR_AI_LIST_CANCEL;
+		this->GetWidget<NWidgetCore>(WID_NCL_CANCEL)->SetString(this->filesize_sum == 0 ? STR_AI_SETTINGS_CLOSE : STR_AI_LIST_CANCEL);
 	}
 };
 
@@ -1037,43 +1022,43 @@ void BuildContentTypeStringList()
 static constexpr NWidgetPart _nested_network_content_list_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_LIGHT_BLUE),
-		NWidget(WWT_CAPTION, COLOUR_LIGHT_BLUE), SetDataTip(STR_CONTENT_TITLE, STR_NULL),
+		NWidget(WWT_CAPTION, COLOUR_LIGHT_BLUE), SetStringTip(STR_CONTENT_TITLE),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_LIGHT_BLUE),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_LIGHT_BLUE, WID_NCL_BACKGROUND),
 		NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0), SetPadding(WidgetDimensions::unscaled.sparse_resize),
 			/* Top */
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
-				NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NCL_FILTER_CAPT), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_CONTENT_FILTER_TITLE, STR_NULL), SetAlignment(SA_RIGHT | SA_VERT_CENTER),
+			NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
+				NWidget(WWT_TEXT, INVALID_COLOUR, WID_NCL_FILTER_CAPT), SetFill(1, 0), SetResize(1, 0), SetStringTip(STR_CONTENT_FILTER_TITLE), SetAlignment(SA_RIGHT | SA_VERT_CENTER),
 				NWidget(WWT_EDITBOX, COLOUR_LIGHT_BLUE, WID_NCL_FILTER), SetFill(1, 0), SetResize(1, 0),
-						SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
+						SetStringTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
 			EndContainer(),
 			/* Lists and info. */
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
+			NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
 				/* Left side. */
 				NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_sparse, 0),
 					NWidget(NWID_HORIZONTAL),
 						NWidget(NWID_VERTICAL),
 							NWidget(NWID_HORIZONTAL),
-								NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_CHECKBOX), SetDataTip(STR_EMPTY, STR_NULL),
+								NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_CHECKBOX), SetStringTip(STR_EMPTY),
 								NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TYPE),
-										SetDataTip(STR_CONTENT_TYPE_CAPTION, STR_CONTENT_TYPE_CAPTION_TOOLTIP),
+										SetStringTip(STR_CONTENT_TYPE_CAPTION, STR_CONTENT_TYPE_CAPTION_TOOLTIP),
 								NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_NAME), SetResize(1, 0), SetFill(1, 0),
-										SetDataTip(STR_CONTENT_NAME_CAPTION, STR_CONTENT_NAME_CAPTION_TOOLTIP),
+										SetStringTip(STR_CONTENT_NAME_CAPTION, STR_CONTENT_NAME_CAPTION_TOOLTIP),
 							EndContainer(),
 							NWidget(WWT_MATRIX, COLOUR_LIGHT_BLUE, WID_NCL_MATRIX), SetResize(1, 1), SetFill(1, 1), SetScrollbar(WID_NCL_SCROLLBAR), SetMatrixDataTip(1, 0, STR_CONTENT_MATRIX_TOOLTIP),
 						EndContainer(),
 						NWidget(NWID_VSCROLLBAR, COLOUR_LIGHT_BLUE, WID_NCL_SCROLLBAR),
 					EndContainer(),
-					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
+					NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
 						NWidget(NWID_SELECTION, INVALID_COLOUR, WID_NCL_SEL_ALL_UPDATE),
 							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_SELECT_UPDATE), SetResize(1, 0), SetFill(1, 0),
-									SetDataTip(STR_CONTENT_SELECT_UPDATES_CAPTION, STR_CONTENT_SELECT_UPDATES_CAPTION_TOOLTIP),
+									SetStringTip(STR_CONTENT_SELECT_UPDATES_CAPTION, STR_CONTENT_SELECT_UPDATES_CAPTION_TOOLTIP),
 							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_SELECT_ALL), SetResize(1, 0), SetFill(1, 0),
-									SetDataTip(STR_CONTENT_SELECT_ALL_CAPTION, STR_CONTENT_SELECT_ALL_CAPTION_TOOLTIP),
+									SetStringTip(STR_CONTENT_SELECT_ALL_CAPTION, STR_CONTENT_SELECT_ALL_CAPTION_TOOLTIP),
 						EndContainer(),
 						NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_UNSELECT), SetResize(1, 0), SetFill(1, 0),
-									SetDataTip(STR_CONTENT_UNSELECT_ALL_CAPTION, STR_CONTENT_UNSELECT_ALL_CAPTION_TOOLTIP),
+									SetStringTip(STR_CONTENT_UNSELECT_ALL_CAPTION, STR_CONTENT_UNSELECT_ALL_CAPTION_TOOLTIP),
 					EndContainer(),
 				EndContainer(),
 				/* Right side. */
@@ -1081,33 +1066,33 @@ static constexpr NWidgetPart _nested_network_content_list_widgets[] = {
 					NWidget(WWT_PANEL, COLOUR_LIGHT_BLUE, WID_NCL_DETAILS), SetResize(1, 1), SetFill(1, 1),
 					EndContainer(),
 					NWidget(NWID_VERTICAL),
-						NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_OPEN_URL), SetResize(1, 0), SetFill(1, 0), SetDataTip(STR_CONTENT_OPEN_URL, STR_CONTENT_OPEN_URL_TOOLTIP),
-							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_TEXTFILE_VIEW_README_TOOLTIP),
+						NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize),
+							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_OPEN_URL), SetResize(1, 0), SetFill(1, 0), SetStringTip(STR_CONTENT_OPEN_URL, STR_CONTENT_OPEN_URL_TOOLTIP),
+							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetStringTip(STR_TEXTFILE_VIEW_README, STR_TEXTFILE_VIEW_README_TOOLTIP),
 						EndContainer(),
-						NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_TEXTFILE_VIEW_CHANGELOG_TOOLTIP),
-							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_TEXTFILE_VIEW_LICENCE_TOOLTIP),
+						NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize),
+							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0), SetStringTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_TEXTFILE_VIEW_CHANGELOG_TOOLTIP),
+							NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0), SetStringTip(STR_TEXTFILE_VIEW_LICENCE, STR_TEXTFILE_VIEW_LICENCE_TOOLTIP),
 						EndContainer(),
 					EndContainer(),
 				EndContainer(),
 			EndContainer(),
 			/* Bottom. */
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
+			NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_SEARCH_EXTERNAL), SetResize(1, 0), SetFill(1, 0),
-						SetDataTip(STR_CONTENT_SEARCH_EXTERNAL, STR_CONTENT_SEARCH_EXTERNAL_TOOLTIP),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
+						SetStringTip(STR_CONTENT_SEARCH_EXTERNAL, STR_CONTENT_SEARCH_EXTERNAL_TOOLTIP),
+				NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
 					NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_CANCEL), SetResize(1, 0), SetFill(1, 0),
-							SetDataTip(STR_BUTTON_CANCEL, STR_NULL),
+							SetStringTip(STR_BUTTON_CANCEL),
 					NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_DOWNLOAD), SetResize(1, 0), SetFill(1, 0),
-							SetDataTip(STR_CONTENT_DOWNLOAD_CAPTION, STR_CONTENT_DOWNLOAD_CAPTION_TOOLTIP),
+							SetStringTip(STR_CONTENT_DOWNLOAD_CAPTION, STR_CONTENT_DOWNLOAD_CAPTION_TOOLTIP),
 				EndContainer(),
 			EndContainer(),
 		EndContainer(),
 		/* Resize button. */
 		NWidget(NWID_HORIZONTAL),
 			NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
-			NWidget(WWT_RESIZEBOX, COLOUR_LIGHT_BLUE), SetDataTip(RWV_HIDE_BEVEL, STR_TOOLTIP_RESIZE),
+			NWidget(WWT_RESIZEBOX, COLOUR_LIGHT_BLUE), SetResizeWidgetTypeTip(RWV_HIDE_BEVEL, STR_TOOLTIP_RESIZE),
 		EndContainer(),
 	EndContainer(),
 };
@@ -1116,7 +1101,7 @@ static constexpr NWidgetPart _nested_network_content_list_widgets[] = {
 static WindowDesc _network_content_list_desc(
 	WDP_CENTER, "list_content", 630, 460,
 	WC_NETWORK_WINDOW, WC_NONE,
-	0,
+	{},
 	_nested_network_content_list_widgets
 );
 
@@ -1147,10 +1132,9 @@ void ShowNetworkContentListWindow(ContentVector *cv, ContentType type1, ContentT
 	CloseWindowById(WC_NETWORK_WINDOW, WN_NETWORK_WINDOW_CONTENT_LIST);
 	new NetworkContentListWindow(_network_content_list_desc, cv != nullptr, types);
 #else
-	ShowErrorMessage(STR_CONTENT_NO_ZLIB, STR_CONTENT_NO_ZLIB_SUB, WL_ERROR);
-	/* Connection failed... clean up the mess */
-	if (cv != nullptr) {
-		for (ContentInfo *ci : *cv) delete ci;
-	}
+	ShowErrorMessage(
+		GetEncodedString(STR_CONTENT_NO_ZLIB),
+		GetEncodedString(STR_CONTENT_NO_ZLIB_SUB),
+		WL_ERROR);
 #endif /* WITH_ZLIB */
 }

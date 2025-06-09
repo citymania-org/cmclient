@@ -17,6 +17,7 @@ add_subdirectory(linkgraph)
 add_subdirectory(misc)
 add_subdirectory(music)
 add_subdirectory(network)
+add_subdirectory(newgrf)
 add_subdirectory(os)
 add_subdirectory(pathfinder)
 add_subdirectory(saveload)
@@ -37,6 +38,11 @@ add_files(
     gfx_layout_icu.cpp
     gfx_layout_icu.h
     CONDITION ICU_i18n_FOUND AND HARFBUZZ_FOUND
+)
+
+add_files(
+    screenshot_png.cpp
+    CONDITION PNG_FOUND
 )
 
 add_files(
@@ -73,6 +79,9 @@ add_files(
     base_consist.h
     base_media_base.h
     base_media_func.h
+    base_media_graphics.h
+    base_media_music.h
+    base_media_sounds.h
     base_station_base.h
     bitmap_type.h
     bmp.cpp
@@ -268,6 +277,9 @@ add_files(
     newgrf_airporttiles.h
     newgrf_animation_base.h
     newgrf_animation_type.h
+    newgrf_badge.cpp
+    newgrf_badge.h
+    newgrf_badge_type.h
     newgrf_callbacks.h
     newgrf_canal.cpp
     newgrf_canal.h
@@ -381,10 +393,15 @@ add_files(
     roadveh_cmd.h
     roadveh_gui.cpp
     safeguards.h
+    screenshot_bmp.cpp
     screenshot_gui.cpp
     screenshot_gui.h
     screenshot.cpp
     screenshot.h
+    screenshot_type.h
+    screenshot_pcx.cpp
+    settingentry_gui.cpp
+    settingentry_gui.h
     settings.cpp
     settings_cmd.h
     settings_func.h
@@ -427,6 +444,7 @@ add_files(
     soundloader_type.h
     soundloader_raw.cpp
     soundloader_wav.cpp
+    source_type.h
     sprite.cpp
     sprite.h
     spritecache.cpp

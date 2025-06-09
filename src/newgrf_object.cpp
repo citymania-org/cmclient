@@ -12,8 +12,8 @@
 #include "company_func.h"
 #include "debug.h"
 #include "genworld.h"
+#include "newgrf_badge.h"
 #include "newgrf_object.h"
-#include "newgrf_class_func.h"
 #include "newgrf_sound.h"
 #include "object_base.h"
 #include "object_map.h"
@@ -22,6 +22,10 @@
 #include "town.h"
 #include "water.h"
 #include "newgrf_animation_base.h"
+
+#include "table/strings.h"
+
+#include "newgrf_class_func.h"
 
 #include "safeguards.h"
 
@@ -73,8 +77,8 @@ size_t ObjectSpec::Count()
  */
 bool ObjectSpec::IsEverAvailable() const
 {
-	return this->IsEnabled() && HasBit(this->climate, _settings_game.game_creation.landscape) &&
-			(this->flags & ((_game_mode != GM_EDITOR && !_generating_world) ? OBJECT_FLAG_ONLY_IN_SCENEDIT : OBJECT_FLAG_ONLY_IN_GAME)) == 0;
+	return this->IsEnabled() && this->climate.Test(_settings_game.game_creation.landscape) &&
+			!this->flags.Test((_game_mode != GM_EDITOR && !_generating_world) ? ObjectFlag::OnlyInScenedit : ObjectFlag::OnlyInGame);
 }
 
 /**
@@ -281,10 +285,12 @@ static uint32_t GetCountAndDistanceOfClosestInstance(uint8_t local_id, uint32_t 
 			case 0x42: return TimerGameCalendar::date.base();
 
 			/* Object founder information */
-			case 0x44: return _current_company;
+			case 0x44: return _current_company.base();
 
 			/* Object view */
 			case 0x48: return this->view;
+
+			case 0x7A: return GetBadgeVariableResult(*this->ro.grffile, this->spec->badges, parameter);
 
 			/*
 			 * Disallow the rest:
@@ -322,12 +328,12 @@ static uint32_t GetCountAndDistanceOfClosestInstance(uint8_t local_id, uint32_t 
 		case 0x43: return GetAnimationFrame(this->tile);
 
 		/* Object founder information */
-		case 0x44: return GetTileOwner(this->tile);
+		case 0x44: return GetTileOwner(this->tile).base();
 
 		/* Get town zone and Manhattan distance of closest town */
 		case 0x45: return GetTownRadiusGroup(t, this->tile) << 16 | ClampTo<uint16_t>(DistanceManhattan(this->tile, t->xy));
 
-		/* Get square of Euclidian distance of closest town */
+		/* Get square of Euclidean distance of closest town */
 		case 0x46: return DistanceSquare(this->tile, t->xy);
 
 		/* Object colour */
@@ -346,7 +352,7 @@ static uint32_t GetCountAndDistanceOfClosestInstance(uint8_t local_id, uint32_t 
 		}
 
 		/* Land info of nearby tiles */
-		case 0x62: return GetNearbyObjectTileInformation(parameter, this->tile, this->obj == nullptr ? INVALID_OBJECT : this->obj->index, this->ro.grffile->grf_version >= 8);
+		case 0x62: return GetNearbyObjectTileInformation(parameter, this->tile, this->obj == nullptr ? ObjectID::Invalid() : this->obj->index, this->ro.grffile->grf_version >= 8);
 
 		/* Animation counter of nearby tile */
 		case 0x63: {
@@ -356,6 +362,8 @@ static uint32_t GetCountAndDistanceOfClosestInstance(uint8_t local_id, uint32_t 
 
 		/* Count of object, distance of closest instance */
 		case 0x64: return GetCountAndDistanceOfClosestInstance(parameter, this->ro.grffile->grfid, this->tile, this->obj);
+
+		case 0x7A: return GetBadgeVariableResult(*this->ro.grffile, this->spec->badges, parameter);
 	}
 
 unhandled:
@@ -378,8 +386,8 @@ ObjectResolverObject::ObjectResolverObject(const ObjectSpec *spec, Object *obj, 
 		CallbackID callback, uint32_t param1, uint32_t param2)
 	: ResolverObject(spec->grf_prop.grffile, callback, param1, param2), object_scope(*this, obj, spec, tile, view)
 {
-	this->root_spritegroup = (obj == nullptr && spec->grf_prop.spritegroup[OBJECT_SPRITE_GROUP_PURCHASE] != nullptr) ?
-			spec->grf_prop.spritegroup[OBJECT_SPRITE_GROUP_PURCHASE] : spec->grf_prop.spritegroup[OBJECT_SPRITE_GROUP_DEFAULT];
+	this->root_spritegroup = (obj == nullptr) ? spec->grf_prop.GetSpriteGroup(OBJECT_SPRITE_GROUP_PURCHASE) : nullptr;
+	if (this->root_spritegroup == nullptr) this->root_spritegroup = spec->grf_prop.GetSpriteGroup(OBJECT_SPRITE_GROUP_DEFAULT);
 }
 
 /**
@@ -438,7 +446,7 @@ uint16_t GetObjectCallback(CallbackID callback, uint32_t param1, uint32_t param2
 static void DrawTileLayout(const TileInfo *ti, const TileLayoutSpriteGroup *group, const ObjectSpec *spec)
 {
 	const DrawTileSprites *dts = group->ProcessRegisters(nullptr);
-	PaletteID palette = ((spec->flags & OBJECT_FLAG_2CC_COLOUR) ? SPR_2CCMAP_BASE : PALETTE_RECOLOUR_START) + Object::GetByTile(ti->tile)->colour;
+	PaletteID palette = (spec->flags.Test(ObjectFlag::Uses2CC) ? SPR_2CCMAP_BASE : PALETTE_RECOLOUR_START) + Object::GetByTile(ti->tile)->colour;
 
 	SpriteID image = dts->ground.sprite;
 	PaletteID pal  = dts->ground.pal;
@@ -446,7 +454,7 @@ static void DrawTileLayout(const TileInfo *ti, const TileLayoutSpriteGroup *grou
 	if (GB(image, 0, SPRITE_WIDTH) != 0) {
 		/* If the ground sprite is the default flat water sprite, draw also canal/river borders
 		 * Do not do this if the tile's WaterClass is 'land'. */
-		if ((image == SPR_FLAT_WATER_TILE || spec->flags & OBJECT_FLAG_DRAW_WATER) && IsTileOnWater(ti->tile)) {
+		if ((image == SPR_FLAT_WATER_TILE || spec->flags.Test(ObjectFlag::DrawWater)) && IsTileOnWater(ti->tile)) {
 			DrawWaterClassGround(ti);
 		} else {
 			DrawGroundSprite(image, GroundSpritePaletteTransform(image, pal, palette));
@@ -490,15 +498,15 @@ void DrawNewObjectTileInGUI(int x, int y, const ObjectSpec *spec, uint8_t view)
 	PaletteID palette;
 	if (Company::IsValidID(_local_company)) {
 		/* Get the colours of our company! */
-		if (spec->flags & OBJECT_FLAG_2CC_COLOUR) {
-			const Livery *l = Company::Get(_local_company)->livery;
-			palette = SPR_2CCMAP_BASE + l->colour1 + l->colour2 * 16;
+		if (spec->flags.Test(ObjectFlag::Uses2CC)) {
+			const Livery &l = Company::Get(_local_company)->livery[0];
+			palette = SPR_2CCMAP_BASE + l.colour1 + l.colour2 * 16;
 		} else {
 			palette = COMPANY_SPRITE_COLOUR(_local_company);
 		}
 	} else {
 		/* There's no company, so just take the base palette. */
-		palette = (spec->flags & OBJECT_FLAG_2CC_COLOUR) ? SPR_2CCMAP_BASE : PALETTE_RECOLOUR_START;
+		palette = spec->flags.Test(ObjectFlag::Uses2CC) ? SPR_2CCMAP_BASE : PALETTE_RECOLOUR_START;
 	}
 
 	SpriteID image = dts->ground.sprite;
@@ -531,8 +539,8 @@ struct ObjectAnimationBase : public AnimationBase<ObjectAnimationBase, ObjectSpe
 	static const CallbackID cb_animation_speed      = CBID_OBJECT_ANIMATION_SPEED;
 	static const CallbackID cb_animation_next_frame = CBID_OBJECT_ANIMATION_NEXT_FRAME;
 
-	static const ObjectCallbackMask cbm_animation_speed      = CBM_OBJ_ANIMATION_SPEED;
-	static const ObjectCallbackMask cbm_animation_next_frame = CBM_OBJ_ANIMATION_NEXT_FRAME;
+	static const ObjectCallbackMask cbm_animation_speed      = ObjectCallbackMask::AnimationSpeed;
+	static const ObjectCallbackMask cbm_animation_next_frame = ObjectCallbackMask::AnimationNextFrame;
 };
 
 /**
@@ -542,9 +550,9 @@ struct ObjectAnimationBase : public AnimationBase<ObjectAnimationBase, ObjectSpe
 void AnimateNewObjectTile(TileIndex tile)
 {
 	const ObjectSpec *spec = ObjectSpec::GetByTile(tile);
-	if (spec == nullptr || !(spec->flags & OBJECT_FLAG_ANIMATION)) return;
+	if (spec == nullptr || !spec->flags.Test(ObjectFlag::Animation)) return;
 
-	ObjectAnimationBase::AnimateTile(spec, Object::GetByTile(tile), tile, (spec->flags & OBJECT_FLAG_ANIM_RANDOM_BITS) != 0);
+	ObjectAnimationBase::AnimateTile(spec, Object::GetByTile(tile), tile, spec->flags.Test(ObjectFlag::AnimRandomBits));
 }
 
 /**

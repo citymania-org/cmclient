@@ -29,9 +29,7 @@
 
 #include "opengl.h"
 #include "../core/geometry_func.hpp"
-#include "../core/mem_func.hpp"
 #include "../core/math_func.hpp"
-#include "../core/mem_func.hpp"
 #include "../gfx_func.h"
 #include "../debug.h"
 #include "../blitter/factory.hpp"
@@ -1077,15 +1075,25 @@ void OpenGLBackend::DrawMouseCursor()
 	for (const auto &cs : this->cursor_sprites) {
 		/* Sprites are cached by PopulateCursorCache(). */
 		if (this->cursor_cache.Contains(cs.image.sprite)) {
-			Sprite *spr = this->cursor_cache.Get(cs.image.sprite);
+			OpenGLSprite *spr = this->cursor_cache.Get(cs.image.sprite);
 
-			this->RenderOglSprite((OpenGLSprite *)spr->data, cs.image.pal,
+			this->RenderOglSprite(spr, cs.image.pal,
 					this->cursor_pos.x + cs.pos.x + UnScaleByZoom(spr->x_offs, ZOOM_LVL_GUI),
 					this->cursor_pos.y + cs.pos.y + UnScaleByZoom(spr->y_offs, ZOOM_LVL_GUI),
 					ZOOM_LVL_GUI);
 		}
 	}
 }
+
+class OpenGLSpriteAllocator : public SpriteAllocator {
+public:
+	LRUCache<SpriteID, OpenGLSprite> &lru;
+	SpriteID sprite;
+
+	OpenGLSpriteAllocator(LRUCache<SpriteID, OpenGLSprite> &lru, SpriteID sprite) : lru(lru), sprite(sprite) {}
+protected:
+	void *AllocatePtr(size_t) override { NOT_REACHED(); }
+};
 
 void OpenGLBackend::PopulateCursorCache()
 {
@@ -1105,13 +1113,8 @@ void OpenGLBackend::PopulateCursorCache()
 		this->cursor_sprites.emplace_back(sc);
 
 		if (!this->cursor_cache.Contains(sc.image.sprite)) {
-			SimpleSpriteAllocator allocator;
-			Sprite *old = this->cursor_cache.Insert(sc.image.sprite, static_cast<Sprite *>(GetRawSprite(sc.image.sprite, SpriteType::Normal, &allocator, this)));
-			if (old != nullptr) {
-				OpenGLSprite *gl_sprite = (OpenGLSprite *)old->data;
-				gl_sprite->~OpenGLSprite();
-				free(old);
-			}
+			OpenGLSpriteAllocator allocator(this->cursor_cache, sc.image.sprite);
+			GetRawSprite(sc.image.sprite, SpriteType::Normal, &allocator, this);
 		}
 	}
 }
@@ -1121,12 +1124,7 @@ void OpenGLBackend::PopulateCursorCache()
  */
 void OpenGLBackend::InternalClearCursorCache()
 {
-	Sprite *sp;
-	while ((sp = this->cursor_cache.Pop()) != nullptr) {
-		OpenGLSprite *sprite = (OpenGLSprite *)sp->data;
-		sprite->~OpenGLSprite();
-		free(sp);
-	}
+	this->cursor_cache.Clear();
 }
 
 /**
@@ -1157,7 +1155,7 @@ void *OpenGLBackend::GetVideoBuffer()
 		this->vid_buffer = _glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
 	} else if (this->vid_buffer == nullptr) {
 		_glBindBuffer(GL_PIXEL_UNPACK_BUFFER, this->vid_pbo);
-		this->vid_buffer = _glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, _screen.pitch * _screen.height * BlitterFactory::GetCurrentBlitter()->GetScreenDepth() / 8, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+		this->vid_buffer = _glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, static_cast<GLsizeiptr>(_screen.pitch) * _screen.height * BlitterFactory::GetCurrentBlitter()->GetScreenDepth() / 8, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	}
 
 	return this->vid_buffer;
@@ -1260,23 +1258,11 @@ void OpenGLBackend::ReleaseAnimBuffer(const Rect &update_rect)
 
 /* virtual */ Sprite *OpenGLBackend::Encode(const SpriteLoader::SpriteCollection &sprite, SpriteAllocator &allocator)
 {
-	/* Allocate and construct sprite data. */
-	Sprite *dest_sprite = allocator.Allocate<Sprite>(sizeof(*dest_sprite) + sizeof(OpenGLSprite));
+	/* This encoding is only called for mouse cursors. We don't need real sprites but OpenGLSprites to show as cursor. These need to be put in the LRU cache. */
+	OpenGLSpriteAllocator &gl_allocator = static_cast<OpenGLSpriteAllocator&>(allocator);
+	gl_allocator.lru.Insert(gl_allocator.sprite, std::make_unique<OpenGLSprite>(sprite));
 
-	OpenGLSprite *gl_sprite = (OpenGLSprite *)dest_sprite->data;
-	new (gl_sprite) OpenGLSprite(sprite[ZOOM_LVL_MIN].width, sprite[ZOOM_LVL_MIN].height, sprite[ZOOM_LVL_MIN].type == SpriteType::Font ? 1 : ZOOM_LVL_END, sprite[ZOOM_LVL_MIN].colours);
-
-	/* Upload texture data. */
-	for (int i = 0; i < (sprite[ZOOM_LVL_MIN].type == SpriteType::Font ? 1 : ZOOM_LVL_END); i++) {
-		gl_sprite->Update(sprite[i].width, sprite[i].height, i, sprite[i].data);
-	}
-
-	dest_sprite->height = sprite[ZOOM_LVL_MIN].height;
-	dest_sprite->width  = sprite[ZOOM_LVL_MIN].width;
-	dest_sprite->x_offs = sprite[ZOOM_LVL_MIN].x_offs;
-	dest_sprite->y_offs = sprite[ZOOM_LVL_MIN].y_offs;
-
-	return dest_sprite;
+	return nullptr;
 }
 
 /**
@@ -1327,7 +1313,7 @@ void OpenGLBackend::RenderOglSprite(OpenGLSprite *gl_sprite, PaletteID pal, int 
 }
 
 
-/* static */ GLuint OpenGLSprite::dummy_tex[] = { 0, 0 };
+/* static */ std::array<GLuint, OpenGLSprite::NUM_TEX> OpenGLSprite::dummy_tex{};
 /* static */ GLuint OpenGLSprite::pal_identity = 0;
 /* static */ GLuint OpenGLSprite::pal_tex = 0;
 /* static */ GLuint OpenGLSprite::pal_pbo = 0;
@@ -1338,7 +1324,7 @@ void OpenGLBackend::RenderOglSprite(OpenGLSprite *gl_sprite, PaletteID pal, int 
  */
 /* static */ bool OpenGLSprite::Create()
 {
-	_glGenTextures(NUM_TEX, OpenGLSprite::dummy_tex);
+	_glGenTextures(NUM_TEX, OpenGLSprite::dummy_tex.data());
 
 	for (int t = TEX_RGBA; t < NUM_TEX; t++) {
 		_glBindTexture(GL_TEXTURE_2D, OpenGLSprite::dummy_tex[t]);
@@ -1399,7 +1385,7 @@ void OpenGLBackend::RenderOglSprite(OpenGLSprite *gl_sprite, PaletteID pal, int 
 /** Free all common resources for sprite rendering. */
 /* static */ void OpenGLSprite::Destroy()
 {
-	_glDeleteTextures(NUM_TEX, OpenGLSprite::dummy_tex);
+	_glDeleteTextures(NUM_TEX, OpenGLSprite::dummy_tex.data());
 	_glDeleteTextures(1, &OpenGLSprite::pal_identity);
 	_glDeleteTextures(1, &OpenGLSprite::pal_tex);
 	if (_glDeleteBuffers != nullptr) _glDeleteBuffers(1, &OpenGLSprite::pal_pbo);
@@ -1407,27 +1393,23 @@ void OpenGLBackend::RenderOglSprite(OpenGLSprite *gl_sprite, PaletteID pal, int 
 
 /**
  * Create an OpenGL sprite with a palette remap part.
- * @param width Width of the top-level texture.
- * @param height Height of the top-level texture.
- * @param levels Number of mip-map levels.
- * @param components Indicates which sprite components are used.
+ * @param sprite The sprite to create the OpenGL sprite for
  */
-OpenGLSprite::OpenGLSprite(uint width, uint height, uint levels, SpriteColourComponent components)
+OpenGLSprite::OpenGLSprite(const SpriteLoader::SpriteCollection &sprite) :
+	dim(sprite[ZOOM_LVL_MIN].width, sprite[ZOOM_LVL_MIN].height), x_offs(sprite[ZOOM_LVL_MIN].x_offs), y_offs(sprite[ZOOM_LVL_MIN].y_offs)
 {
+	int levels = sprite[ZOOM_LVL_MIN].type == SpriteType::Font ? 1 : ZOOM_LVL_END;
 	assert(levels > 0);
 	(void)_glGetError();
 
-	this->dim.width = width;
-	this->dim.height = height;
-
-	MemSetT(this->tex, 0, NUM_TEX);
+	this->tex = {};
 	_glActiveTexture(GL_TEXTURE0);
 	_glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
 	for (int t = TEX_RGBA; t < NUM_TEX; t++) {
 		/* Sprite component present? */
-		if (t == TEX_RGBA && components == SCC_PAL) continue;
-		if (t == TEX_REMAP && (components & SCC_PAL) != SCC_PAL) continue;
+		if (t == TEX_RGBA && sprite[ZOOM_LVL_MIN].colours == SpriteComponent::Palette) continue;
+		if (t == TEX_REMAP && !sprite[ZOOM_LVL_MIN].colours.Test(SpriteComponent::Palette)) continue;
 
 		/* Allocate texture. */
 		_glGenTextures(1, &this->tex[t]);
@@ -1440,7 +1422,7 @@ OpenGLSprite::OpenGLSprite(uint width, uint height, uint levels, SpriteColourCom
 		_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		/* Set size. */
-		for (uint i = 0, w = width, h = height; i < levels; i++, w /= 2, h /= 2) {
+		for (int i = 0, w = this->dim.width, h = this->dim.height; i < levels; i++, w /= 2, h /= 2) {
 			assert(w * h != 0);
 			if (t == TEX_REMAP) {
 				_glTexImage2D(GL_TEXTURE_2D, i, GL_R8, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
@@ -1450,12 +1432,17 @@ OpenGLSprite::OpenGLSprite(uint width, uint height, uint levels, SpriteColourCom
 		}
 	}
 
+	/* Upload texture data. */
+	for (int i = 0; i < (sprite[ZOOM_LVL_MIN].type == SpriteType::Font ? 1 : ZOOM_LVL_END); i++) {
+		this->Update(sprite[i].width, sprite[i].height, i, sprite[i].data);
+	}
+
 	assert(_glGetError() == GL_NO_ERROR);
 }
 
 OpenGLSprite::~OpenGLSprite()
 {
-	_glDeleteTextures(NUM_TEX, this->tex);
+	_glDeleteTextures(NUM_TEX, this->tex.data());
 }
 
 /**

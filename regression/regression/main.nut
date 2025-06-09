@@ -265,15 +265,15 @@ function Regression::Bridge()
 	print("  Valid Bridges:        " + j);
 
 	print("  IsBridgeTile():       " + AIBridge.IsBridgeTile(33160));
-	print("  GetBridgeID():        " + AIBridge.GetBridgeID(33160));
+	print("  GetBridgeType():      " + AIBridge.GetBridgeType(33160));
 	print("  RemoveBridge():       " + AIBridge.RemoveBridge(33155));
 	print("  GetLastErrorString(): " + AIError.GetLastErrorString());
 	print("  GetOtherBridgeEnd():  " + AIBridge.GetOtherBridgeEnd(33160));
 	print("  BuildBridge():        " + AIBridge.BuildBridge(AIVehicle.VT_ROAD, 5, 33160, 33155));
 	print("  IsBridgeTile():       " + AIBridge.IsBridgeTile(33160));
-	print("  GetBridgeID():        " + AIBridge.GetBridgeID(33160));
+	print("  GetBridgeType():      " + AIBridge.GetBridgeType(33160));
 	print("  IsBridgeTile():       " + AIBridge.IsBridgeTile(33155));
-	print("  GetBridgeID():        " + AIBridge.GetBridgeID(33155));
+	print("  GetBridgeType():      " + AIBridge.GetBridgeType(33155));
 	print("  GetOtherBridgeEnd():  " + AIBridge.GetOtherBridgeEnd(33160));
 	print("  BuildBridge():        " + AIBridge.BuildBridge(AIVehicle.VT_ROAD, 5, 33160, 33155));
 	print("  GetLastErrorString(): " + AIError.GetLastErrorString());
@@ -2033,6 +2033,20 @@ function Regression::Start()
 				local c = AIEventVehicleWaitingInDepot.Convert(e);
 				print("      EventName:         VehicleWaitingInDepot");
 				print("      VehicleID:         " + c.GetVehicleID());
+			} break;
+
+			case AIEvent.ET_COMPANY_RENAMED: {
+				local c = AIEventCompanyRenamed.Convert(e);
+				print("      EventName:         CompanyRenamed");
+				print("      CompanyID:         " + c.GetCompanyID());
+				print("      CompanyName:       " + c.GetNewName());
+			} break;
+
+			case AIEvent.ET_PRESIDENT_RENAMED: {
+				local c = AIEventPresidentRenamed.Convert(e);
+				print("      EventName:         PresidentRenamed");
+				print("      CompanyID:         " + c.GetCompanyID());
+				print("      PresidentName:     " + c.GetNewName());
 			} break;
 
 			default:

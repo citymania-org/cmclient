@@ -21,7 +21,6 @@
 #include "../progress.h"
 #include "../core/random_func.hpp"
 #include "../core/math_func.hpp"
-#include "../core/mem_func.hpp"
 #include "../core/geometry_func.hpp"
 #include "../fileio_func.h"
 #include "../framerate_type.h"
@@ -42,7 +41,7 @@
 
 static FVideoDriver_SDL_OpenGL iFVideoDriver_SDL_OpenGL;
 
-/** Platform-specific callback to get an OpenGL funtion pointer. */
+/** Platform-specific callback to get an OpenGL function pointer. */
 static OGLProc GetOGLProcAddressCallback(const char *proc)
 {
 	return reinterpret_cast<OGLProc>(SDL_GL_GetProcAddress(proc));
@@ -144,7 +143,7 @@ bool VideoDriver_SDL_OpenGL::AllocateBackingStore(int w, int h, bool force)
 
 	w = std::max(w, 64);
 	h = std::max(h, 64);
-	MemSetT(&this->dirty_rect, 0);
+	this->dirty_rect = {};
 
 	bool res = OpenGLBackend::Get()->Resize(w, h, force);
 	SDL_GL_SwapWindow(this->sdl_window);
@@ -167,7 +166,7 @@ void VideoDriver_SDL_OpenGL::ReleaseVideoPointer()
 {
 	if (this->anim_buffer != nullptr) OpenGLBackend::Get()->ReleaseAnimBuffer(this->dirty_rect);
 	OpenGLBackend::Get()->ReleaseVideoBuffer(this->dirty_rect);
-	MemSetT(&this->dirty_rect, 0);
+	this->dirty_rect = {};
 	this->anim_buffer = nullptr;
 }
 
@@ -180,7 +179,7 @@ void VideoDriver_SDL_OpenGL::Paint()
 
 		/* Always push a changed palette to OpenGL. */
 		OpenGLBackend::Get()->UpdatePalette(this->local_palette.palette, this->local_palette.first_dirty, this->local_palette.count_dirty);
-		if (blitter->UsePaletteAnimation() == Blitter::PALETTE_ANIMATION_BLITTER) {
+		if (blitter->UsePaletteAnimation() == Blitter::PaletteAnimation::Blitter) {
 			blitter->PaletteAnimate(this->local_palette);
 		}
 

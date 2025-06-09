@@ -14,11 +14,11 @@
 #include "strings_type.h"
 #include "table/control_codes.h"
 
-StringID AddGRFString(uint32_t grfid, uint16_t stringid, uint8_t langid, bool new_scheme, bool allow_newlines, std::string_view text_to_add, StringID def_string);
-StringID GetGRFStringID(uint32_t grfid, StringID stringid);
-const char *GetGRFStringFromGRFText(const GRFTextList &text_list);
-const char *GetGRFStringFromGRFText(const GRFTextWrapper &text);
-const char *GetGRFStringPtr(uint32_t stringid);
+StringID AddGRFString(uint32_t grfid, GRFStringID stringid, uint8_t langid, bool new_scheme, bool allow_newlines, std::string_view text_to_add, StringID def_string);
+StringID GetGRFStringID(uint32_t grfid, GRFStringID stringid);
+std::optional<std::string_view> GetGRFStringFromGRFText(const GRFTextList &text_list);
+std::optional<std::string_view> GetGRFStringFromGRFText(const GRFTextWrapper &text);
+std::string_view GetGRFStringPtr(StringIndexInTab stringid);
 void CleanUpStrings();
 void SetCurrentGrfLangID(uint8_t language_id);
 std::string TranslateTTDPatchCodes(uint32_t grfid, uint8_t language_id, bool allow_newlines, std::string_view str, StringControlCode byte80 = SCC_NEWGRF_PRINT_WORD_STRING_ID);
@@ -28,10 +28,7 @@ void AddGRFTextToList(GRFTextWrapper &list, std::string_view text_to_add);
 
 bool CheckGrfLangID(uint8_t lang_id, uint8_t grf_version);
 
-void StartTextRefStackUsage(const struct GRFFile *grffile, uint8_t numEntries, const uint32_t *values = nullptr);
-void StopTextRefStackUsage();
-bool UsingNewGRFTextStack();
-struct TextRefStack *CreateTextRefStackBackup();
-void RestoreTextRefStackBackup(struct TextRefStack *backup);
+std::vector<StringParameter> GetGRFSringTextStackParameters(const struct GRFFile *grffile, StringID stringid, uint8_t num_entries);
+std::string GetGRFStringWithTextStack(const struct GRFFile *grffile, GRFStringID grfstringid, uint8_t num_entries);
 
 #endif /* NEWGRF_TEXT_H */

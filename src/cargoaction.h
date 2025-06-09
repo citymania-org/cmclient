@@ -16,7 +16,7 @@
  * Abstract action of removing cargo from a vehicle or a station.
  * @tparam Tsource CargoList subclass to remove cargo from.
  */
-template<class Tsource>
+template <class Tsource>
 class CargoRemoval {
 protected:
 	Tsource *source; ///< Source of the cargo.
@@ -40,9 +40,9 @@ class CargoDelivery : public CargoRemoval<VehicleCargoList> {
 protected:
 	TileIndex current_tile; ///< Current tile cargo delivery is happening.
 	CargoPayment *payment; ///< Payment object where payments will be registered.
-	CargoID cargo; ///< The cargo type of the cargo.
+	CargoType cargo; ///< The cargo type of the cargo.
 public:
-	CargoDelivery(VehicleCargoList *source, uint max_move, CargoID cargo, CargoPayment *payment, TileIndex current_tile) :
+	CargoDelivery(VehicleCargoList *source, uint max_move, CargoType cargo, CargoPayment *payment, TileIndex current_tile) :
 			CargoRemoval<VehicleCargoList>(source, max_move), current_tile(current_tile), payment(payment), cargo(cargo) {}
 	bool operator()(CargoPacket *cp);
 };
@@ -52,7 +52,7 @@ public:
  * @tparam Tsource CargoList subclass to remove cargo from.
  * @tparam Tdest CargoList subclass to add cargo to.
  */
-template<class Tsource, class Tdest>
+template <class Tsource, class Tdest>
 class CargoMovement {
 protected:
 	Tsource *source;    ///< Source of the cargo.
@@ -117,7 +117,7 @@ public:
 };
 
 /** Action of rerouting cargo between different cargo lists and/or next hops. */
-template<class Tlist>
+template <class Tlist>
 class CargoReroute : public CargoMovement<Tlist, Tlist> {
 protected:
 	StationID avoid;

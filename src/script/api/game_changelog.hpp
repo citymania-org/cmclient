@@ -19,6 +19,19 @@
  *
  * API additions:
  * \li GSEventVehicleCrashed::GetVictims
+ * \li GSEventVehicleCrashed::GetVehicleOwner
+ * \li GSEventCompanyRenamed
+ * \li GSEventPresidentRenamed
+ * \li GSCargo::CC_OVERSIZED
+ * \li GSCargo::CC_POWDERIZED
+ * \li GSCargo::CC_NON_POURABLE
+ * \li GSCargo::CC_POTABLE
+ * \li GSCargo::CC_NON_POTABLE
+ *
+ * Other changes:
+ * \li GSBridge::GetBridgeID renamed to GSBridge::GetBridgeType
+ * \li GSWaypoint::GetWaypointID now returns the StationID of any type of waypoint
+ * \li GSList instances can now be saved
  *
  * \b 14.0
  *
@@ -287,7 +300,7 @@
  * \li GSEngine::IsValidEngine and GSEngine::IsBuildable when outside GSCompanyMode scope
  * \li GSEventExclusiveTransportRights
  * \li GSEventRoadReconstruction
- * \li GSNews::NT_ACCIDENT, GSNews::NT_COMPANY_INFO, GSNews::NT_ADVICE, GSNews::NT_ACCEPTANCE
+ * \li GSNews::NewsType::Accident, GSNews::NewsType::CompanyInfo, GSNews::NewsType::Advice, GSNews::NewsType::Acceptance
  * \li GSIndustryType::IsProcessingIndustry
  * \li GSStation::IsAirportClosed
  * \li GSStation::OpenCloseAirport

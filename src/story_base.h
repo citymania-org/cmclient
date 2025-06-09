@@ -12,13 +12,14 @@
 
 #include "company_type.h"
 #include "story_type.h"
+#include "strings_type.h"
 #include "timer/timer_game_calendar.h"
 #include "gfx_type.h"
 #include "vehicle_type.h"
 #include "core/pool_type.hpp"
 
-typedef Pool<StoryPageElement, StoryPageElementID, 64, 64000> StoryPageElementPool;
-typedef Pool<StoryPage, StoryPageID, 64, 64000> StoryPagePool;
+using StoryPageElementPool = Pool<StoryPageElement, StoryPageElementID, 64>;
+using StoryPagePool = Pool<StoryPage, StoryPageID, 64>;
 extern StoryPageElementPool _story_page_element_pool;
 extern StoryPagePool _story_page_pool;
 extern uint32_t _story_page_element_next_sort_value;
@@ -33,7 +34,7 @@ enum StoryPageElementType : uint8_t {
 	SPET_GOAL,           ///< An element that references a goal.
 	SPET_BUTTON_PUSH,    ///< A push button that triggers an immediate event.
 	SPET_BUTTON_TILE,    ///< A button that allows the player to select a tile, and triggers an event with the tile.
-	SPET_BUTTON_VEHICLE, ///< A button that allows the player to select a vehicle, and triggers an event wih the vehicle.
+	SPET_BUTTON_VEHICLE, ///< A button that allows the player to select a vehicle, and triggers an event with the vehicle.
 	SPET_END,
 	INVALID_SPET = 0xFF,
 };
@@ -120,7 +121,7 @@ inline bool IsValidStoryPageButtonCursor(StoryPageButtonCursor cursor)
 
 /** Helper to construct packed "id" values for button-type StoryPageElement */
 struct StoryPageButtonData {
-	uint32_t referenced_id;
+	uint32_t referenced_id = 0;
 
 	void SetColour(Colours button_colour);
 	void SetFlags(StoryPageButtonFlags flags);
@@ -142,48 +143,42 @@ struct StoryPageButtonData {
  * page content. Each element only contain one type of content.
  **/
 struct StoryPageElement : StoryPageElementPool::PoolItem<&_story_page_element_pool> {
-	uint32_t sort_value;         ///< A number that increases for every created story page element. Used for sorting. The id of a story page element is the pool index.
-	StoryPageID page;          ///< Id of the page which the page element belongs to
-	StoryPageElementType type; ///< Type of page element
+	uint32_t sort_value = 0; ///< A number that increases for every created story page element. Used for sorting. The id of a story page element is the pool index.
+	StoryPageID page{}; ///< Id of the page which the page element belongs to
+	StoryPageElementType type{}; ///< Type of page element
 
-	uint32_t referenced_id;      ///< Id of referenced object (location, goal etc.)
-	std::string text;          ///< Static content text of page element
+	uint32_t referenced_id = 0; ///< Id of referenced object (location, goal etc.)
+	EncodedString text{}; ///< Static content text of page element
 
 	/**
 	 * We need an (empty) constructor so struct isn't zeroed (as C++ standard states)
 	 */
-	inline StoryPageElement() { }
+	StoryPageElement() { }
+	StoryPageElement(uint32_t sort_value, StoryPageElementType type, StoryPageID page) :
+		sort_value(sort_value), page(page), type(type) { }
 
 	/**
 	 * (Empty) destructor has to be defined else operator delete might be called with nullptr parameter
 	 */
-	inline ~StoryPageElement() { }
+	~StoryPageElement() { }
 };
 
 /** Struct about stories, current and completed */
 struct StoryPage : StoryPagePool::PoolItem<&_story_page_pool> {
-	uint32_t sort_value;            ///< A number that increases for every created story page. Used for sorting. The id of a story page is the pool index.
-	TimerGameCalendar::Date date; ///< Date when the page was created.
-	CompanyID company;            ///< StoryPage is for a specific company; INVALID_COMPANY if it is global
+	uint32_t sort_value = 0; ///< A number that increases for every created story page. Used for sorting. The id of a story page is the pool index.
+	TimerGameCalendar::Date date{}; ///< Date when the page was created.
+	CompanyID company = CompanyID::Invalid(); ///< StoryPage is for a specific company; CompanyID::Invalid() if it is global
 
-	std::string title;            ///< Title of story page
+	EncodedString title; ///< Title of story page
 
 	/**
 	 * We need an (empty) constructor so struct isn't zeroed (as C++ standard states)
 	 */
-	inline StoryPage() { }
+	StoryPage() { }
+	StoryPage(uint32_t sort_value, TimerGameCalendar::Date date, CompanyID company, const EncodedString &title) :
+		sort_value(sort_value), date(date), company(company), title(title) {}
 
-	/**
-	 * (Empty) destructor has to be defined else operator delete might be called with nullptr parameter
-	 */
-	inline ~StoryPage()
-	{
-		if (!this->CleaningPool()) {
-			for (StoryPageElement *spe : StoryPageElement::Iterate()) {
-				if (spe->page == this->index) delete spe;
-			}
-		}
-	}
+	~StoryPage();
 };
 
 #endif /* STORY_BASE_H */

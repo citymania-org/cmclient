@@ -22,14 +22,10 @@
  */
 static bool CheckAPIVersion(const std::string &api_version)
 {
-	static const std::set<std::string> versions = { "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10", "1.11", "12", "13", "14", "15" };
-	return versions.find(api_version) != versions.end();
+	return std::ranges::find(GameInfo::ApiVersions, api_version) != std::end(GameInfo::ApiVersions);
 }
 
-#if defined(_WIN32)
-#undef GetClassName
-#endif /* _WIN32 */
-template <> const char *GetClassName<GameInfo, ScriptType::GS>() { return "GSInfo"; }
+template <> SQInteger PushClassName<GameInfo, ScriptType::GS>(HSQUIRRELVM vm) { sq_pushstring(vm, "GSInfo", -1); return 1; }
 
 /* static */ void GameInfo::RegisterAPI(Squirrel *engine)
 {
@@ -39,11 +35,11 @@ template <> const char *GetClassName<GameInfo, ScriptType::GS>() { return "GSInf
 	SQGSInfo.AddConstructor<void (GameInfo::*)(), 1>(engine, "x");
 	SQGSInfo.DefSQAdvancedMethod(engine, &GameInfo::AddSetting, "AddSetting");
 	SQGSInfo.DefSQAdvancedMethod(engine, &GameInfo::AddLabels, "AddLabels");
-	SQGSInfo.DefSQConst(engine, SCRIPTCONFIG_NONE, "CONFIG_NONE");
-	SQGSInfo.DefSQConst(engine, SCRIPTCONFIG_NONE, "CONFIG_RANDOM"); // Deprecated, mapped to NONE.
-	SQGSInfo.DefSQConst(engine, SCRIPTCONFIG_BOOLEAN, "CONFIG_BOOLEAN");
-	SQGSInfo.DefSQConst(engine, SCRIPTCONFIG_INGAME, "CONFIG_INGAME");
-	SQGSInfo.DefSQConst(engine, SCRIPTCONFIG_DEVELOPER, "CONFIG_DEVELOPER");
+	SQGSInfo.DefSQConst(engine, ScriptConfigFlags{}.base(), "CONFIG_NONE");
+	SQGSInfo.DefSQConst(engine, ScriptConfigFlags{}.base(), "CONFIG_RANDOM"); // Deprecated, mapped to NONE.
+	SQGSInfo.DefSQConst(engine, ScriptConfigFlags{ScriptConfigFlag::Boolean}.base(), "CONFIG_BOOLEAN");
+	SQGSInfo.DefSQConst(engine, ScriptConfigFlags{ScriptConfigFlag::InGame}.base(), "CONFIG_INGAME");
+	SQGSInfo.DefSQConst(engine, ScriptConfigFlags{ScriptConfigFlag::Developer}.base(), "CONFIG_DEVELOPER");
 
 	SQGSInfo.PostRegister(engine);
 	engine->AddMethod("RegisterGS", &GameInfo::Constructor, 2, "tx");

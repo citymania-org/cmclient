@@ -92,8 +92,8 @@ private:
 class VideoDriver_CocoaQuartz : public VideoDriver_Cocoa {
 private:
 	int buffer_depth;     ///< Colour depth of used frame buffer
-	void *pixel_buffer;   ///< used for direct pixel access
-	void *window_buffer;  ///< Colour translation from palette to screen
+	std::unique_ptr<uint8_t[]> pixel_buffer; ///< used for direct pixel access
+	std::unique_ptr<uint32_t[]> window_buffer; ///< Colour translation from palette to screen
 
 	int window_width;     ///< Current window width in pixel
 	int window_height;    ///< Current window height in pixel
@@ -123,13 +123,13 @@ protected:
 
 	NSView *AllocateDrawView() override;
 
-	void *GetVideoPointer() override { return this->buffer_depth == 8 ? this->pixel_buffer : this->window_buffer; }
+	void *GetVideoPointer() override { return this->buffer_depth == 8 ? static_cast<void *>(this->pixel_buffer.get()) : static_cast<void *>(this->window_buffer.get()); }
 };
 
 class FVideoDriver_CocoaQuartz : public DriverFactoryBase {
 public:
 	FVideoDriver_CocoaQuartz() : DriverFactoryBase(Driver::DT_VIDEO, 8, "cocoa", "Cocoa Video Driver") {}
-	Driver *CreateInstance() const override { return new VideoDriver_CocoaQuartz(); }
+	std::unique_ptr<Driver> CreateInstance() const override { return std::make_unique<VideoDriver_CocoaQuartz>(); }
 };
 
 #endif /* VIDEO_COCOA_H */

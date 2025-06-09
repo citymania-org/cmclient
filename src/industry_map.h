@@ -19,7 +19,7 @@
  * They all are pointing toward array _industry_draw_tile_data, in table/industry_land.h
  * How to calculate the correct position ? GFXid << 2 | IndustryStage (0 to 3)
  */
-enum IndustryGraphics {
+enum IndustryGraphics : uint8_t {
 	GFX_COAL_MINE_TOWER_NOT_ANIMATED   =   0,
 	GFX_COAL_MINE_TOWER_ANIMATED       =   1,
 	GFX_POWERPLANT_CHIMNEY             =   8,
@@ -63,7 +63,7 @@ enum IndustryGraphics {
 inline IndustryID GetIndustryIndex(Tile t)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
-	return t.m2();
+	return static_cast<IndustryID>(t.m2());
 }
 
 /**
@@ -180,7 +180,7 @@ inline void SetIndustryConstructionCounter(Tile tile, uint8_t value)
 /**
  * Reset the construction stage counter of the industry,
  * as well as the completion bit.
- * In fact, it is the same as restarting construction frmo ground up
+ * In fact, it is the same as restarting construction from the ground up.
  * @param tile the tile to query
  * @pre IsTileType(tile, MP_INDUSTRY)
  */
@@ -279,7 +279,7 @@ inline void MakeIndustry(Tile t, IndustryID index, IndustryGfx gfx, uint8_t rand
 {
 	SetTileType(t, MP_INDUSTRY);
 	t.m1() = 0;
-	t.m2() = index;
+	t.m2() = index.base();
 	SetIndustryRandomBits(t, random); // m3
 	t.m4() = 0;
 	SetIndustryGfx(t, gfx); // m5, part of m6

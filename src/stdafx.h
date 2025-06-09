@@ -11,12 +11,9 @@
 #define STDAFX_H
 
 #if defined(_WIN32)
-	/* MinGW defaults to Windows 7 if none of these are set, and they must be set before any MinGW header is included */
-#	define NTDDI_VERSION NTDDI_WINXP // Windows XP
-#	define _WIN32_WINNT 0x501        // Windows XP
-#	define _WIN32_WINDOWS 0x501      // Windows XP
-#	define WINVER 0x0501             // Windows XP
-#	define _WIN32_IE_ 0x0600         // 6.0 (XP+)
+	/* Minimum supported version is Windows 7. */
+#	define NTDDI_VERSION NTDDI_WIN7
+#	define _WIN32_WINNT 0x0601 // _WIN32_WINNT_WIN7
 #endif
 
 #ifdef _MSC_VER
@@ -84,12 +81,6 @@
 #if defined(__GNUC__) || (defined(__clang__) && !defined(_MSC_VER))
 #	define CDECL
 #endif /* __GNUC__ || __clang__ */
-
-#if __GNUC__ > 11 || (__GNUC__ == 11 && __GNUC_MINOR__ >= 1)
-#      define NOACCESS(args) __attribute__ ((access (none, args)))
-#else
-#      define NOACCESS(args)
-#endif
 
 #if defined(_WIN32)
 #	define WIN32_LEAN_AND_MEAN     // Exclude rarely-used stuff from Windows headers
@@ -197,7 +188,7 @@
 
 /*
  * When making a (pure) debug build, the compiler will by default disable
- * inlining of functions. This has a detremental effect on the performance of
+ * inlining of functions. This has a detrimental effect on the performance of
  * debug builds, especially when more and more trivial (wrapper) functions get
  * added to the code base.
  * Take for example the savegame called "Wentbourne", when running this game
@@ -301,9 +292,6 @@ char (&ArraySizeHelper(T (&array)[N]))[N];
 #	define GNU_TARGET(x)
 #endif /* __GNUC__ || __clang__ */
 
-/* For the FMT library we only want to use the headers, not link to some library. */
-#define FMT_HEADER_ONLY
-
 [[noreturn]] void NOT_REACHED(const std::source_location location = std::source_location::current());
 [[noreturn]] void AssertFailedError(const char *expression, const std::source_location location = std::source_location::current());
 
@@ -326,21 +314,6 @@ char (&ArraySizeHelper(T (&array)[N]))[N];
 	/* If all else fails, hardcode something :( */
 #	define MAX_PATH 260
 #endif
-
-/**
- * Version of the standard free that accepts const pointers.
- * @param ptr The data to free.
- */
-inline void free(const void *ptr)
-{
-	free(const_cast<void *>(ptr));
-}
-
-/**
- * The largest value that can be entered in a variable
- * @param type the type of the variable
- */
-#define MAX_UVALUE(type) (static_cast<type>(~static_cast<type>(0)))
 
 #if defined(_MSC_VER) && !defined(_DEBUG)
 #	define IGNORE_UNINITIALIZED_WARNING_START __pragma(warning(push)) __pragma(warning(disable:4700))

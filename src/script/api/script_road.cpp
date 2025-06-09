@@ -15,12 +15,13 @@
 #include "../../landscape_cmd.h"
 #include "../../road_cmd.h"
 #include "../../station_cmd.h"
+#include "../../strings_func.h"
 #include "../../newgrf_roadstop.h"
 #include "../../script/squirrel_helper_type.hpp"
 
 #include "../../safeguards.h"
 
-/* static */ ScriptRoad::RoadVehicleType ScriptRoad::GetRoadVehicleTypeForCargo(CargoID cargo_type)
+/* static */ ScriptRoad::RoadVehicleType ScriptRoad::GetRoadVehicleTypeForCargo(CargoType cargo_type)
 {
 	return ScriptCargo::HasCargoClass(cargo_type, ScriptCargo::CC_PASSENGERS) ? ROADVEHTYPE_BUS : ROADVEHTYPE_TRUCK;
 }
@@ -29,7 +30,7 @@
 {
 	if (!IsRoadTypeAvailable(road_type)) return std::nullopt;
 
-	return GetString(GetRoadTypeInfo((::RoadType)road_type)->strings.name);
+	return ::StrMakeValid(::GetString(GetRoadTypeInfo((::RoadType)road_type)->strings.name));
 }
 
 /* static */ bool ScriptRoad::IsRoadTile(TileIndex tile)
@@ -46,7 +47,7 @@
 	if (!IsRoadTypeAvailable(GetCurrentRoadType())) return false;
 
 	return ::IsTileType(tile, MP_ROAD) && ::GetRoadTileType(tile) == ROAD_TILE_DEPOT &&
-			HasBit(::GetPresentRoadTypes(tile), (::RoadType)GetCurrentRoadType());
+			::GetPresentRoadTypes(tile).Test(::RoadType(GetCurrentRoadType()));
 }
 
 /* static */ bool ScriptRoad::IsRoadStationTile(TileIndex tile)
@@ -54,7 +55,7 @@
 	if (!::IsValidTile(tile)) return false;
 	if (!IsRoadTypeAvailable(GetCurrentRoadType())) return false;
 
-	return ::IsStationRoadStopTile(tile) && HasBit(::GetPresentRoadTypes(tile), (::RoadType)GetCurrentRoadType());
+	return ::IsStationRoadStopTile(tile) && ::GetPresentRoadTypes(tile).Test(::RoadType(GetCurrentRoadType()));
 }
 
 /* static */ bool ScriptRoad::IsDriveThroughRoadStationTile(TileIndex tile)
@@ -62,7 +63,7 @@
 	if (!::IsValidTile(tile)) return false;
 	if (!IsRoadTypeAvailable(GetCurrentRoadType())) return false;
 
-	return ::IsDriveThroughStopTile(tile) && HasBit(::GetPresentRoadTypes(tile), (::RoadType)GetCurrentRoadType());
+	return ::IsDriveThroughStopTile(tile) && ::GetPresentRoadTypes(tile).Test(::RoadType(GetCurrentRoadType()));
 }
 
 /* static */ bool ScriptRoad::IsRoadTypeAvailable(RoadType road_type)
@@ -100,7 +101,7 @@
 {
 	if (!ScriptMap::IsValidTile(tile)) return false;
 	if (!IsRoadTypeAvailable(road_type)) return false;
-	return ::MayHaveRoad(tile) && HasBit(::GetPresentRoadTypes(tile), (::RoadType)road_type);
+	return ::MayHaveRoad(tile) && ::GetPresentRoadTypes(tile).Test(::RoadType(road_type));
 }
 
 /* static */ bool ScriptRoad::AreRoadTilesConnected(TileIndex t1, TileIndex t2)
@@ -110,7 +111,7 @@
 	if (!IsRoadTypeAvailable(GetCurrentRoadType())) return false;
 
 	/* Tiles not neighbouring */
-	if ((abs((int)::TileX(t1) - (int)::TileX(t2)) + abs((int)::TileY(t1) - (int)::TileY(t2))) != 1) return false;
+	if (::DistanceManhattan(t1, t2) != 1) return false;
 
 	RoadTramType rtt = ::GetRoadTramType(ScriptObject::GetRoadType());
 	RoadBits r1 = ::GetAnyRoadBits(t1, rtt); // TODO
@@ -131,7 +132,7 @@
 	EnforcePrecondition(false, ::IsValidTile(end_tile));
 	EnforcePrecondition(false, IsRoadTypeAvailable(road_type));
 
-	return ScriptObject::Command<CMD_CONVERT_ROAD>::Do(start_tile, end_tile, (::RoadType)road_type);
+	return ScriptObject::Command<CMD_CONVERT_ROAD>::Do(start_tile, end_tile, (::RoadType)road_type, false);
 }
 
 /* Helper functions for ScriptRoad::CanBuildConnectedRoadParts(). */
@@ -460,7 +461,7 @@ static std::optional<RoadPartOrientation> ToRoadPartOrientation(const TileIndex 
 static bool NeighbourHasReachableRoad(::RoadType rt, TileIndex start_tile, DiagDirection neighbour)
 {
 	TileIndex neighbour_tile = ::TileAddByDiagDir(start_tile, neighbour);
-	if (!HasBit(::GetPresentRoadTypes(neighbour_tile), rt)) return false;
+	if (!::GetPresentRoadTypes(neighbour_tile).Test(rt)) return false;
 
 	switch (::GetTileType(neighbour_tile)) {
 		case MP_ROAD:
@@ -578,8 +579,8 @@ static bool NeighbourHasReachableRoad(::RoadType rt, TileIndex start_tile, DiagD
 	EnforcePrecondition(false, IsRoadTypeAvailable(GetCurrentRoadType()));
 
 	DiagDirection entrance_dir = DiagdirBetweenTiles(tile, front);
-	RoadStopType stop_type = road_veh_type == ROADVEHTYPE_TRUCK ? ROADSTOP_TRUCK : ROADSTOP_BUS;
-	StationID to_join = ScriptStation::IsValidStation(station_id) ? station_id : INVALID_STATION;
+	RoadStopType stop_type = road_veh_type == ROADVEHTYPE_TRUCK ? RoadStopType::Truck : RoadStopType::Bus;
+	StationID to_join = ScriptStation::IsValidStation(station_id) ? station_id : StationID::Invalid();
 	return ScriptObject::Command<CMD_BUILD_ROAD_STOP>::Do(tile, 1, 1, stop_type, drive_through, entrance_dir, ScriptObject::GetRoadType(), ROADSTOP_CLASS_DFLT, 0, to_join, station_id != ScriptStation::STATION_JOIN_ADJACENT);
 }
 

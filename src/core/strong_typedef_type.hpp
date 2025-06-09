@@ -12,9 +12,6 @@
 
 #include "../3rdparty/fmt/format.h"
 
-/** Non-templated base for #StrongType::Typedef for use with type trait queries. */
-struct StrongTypedefBase {};
-
 namespace StrongType {
 	/**
 	 * Mix-in which makes the new Typedef comparable with itself and its base type.
@@ -25,20 +22,8 @@ namespace StrongType {
 			friend constexpr bool operator ==(const TType &lhs, const TType &rhs) { return lhs.value == rhs.value; }
 			friend constexpr bool operator ==(const TType &lhs, const TBaseType &rhs) { return lhs.value == rhs; }
 
-			friend constexpr bool operator !=(const TType &lhs, const TType &rhs) { return lhs.value != rhs.value; }
-			friend constexpr bool operator !=(const TType &lhs, const TBaseType &rhs) { return lhs.value != rhs; }
-
-			friend constexpr bool operator <=(const TType &lhs, const TType &rhs) { return lhs.value <= rhs.value; }
-			friend constexpr bool operator <=(const TType &lhs, const TBaseType &rhs) { return lhs.value <= rhs; }
-
-			friend constexpr bool operator <(const TType &lhs, const TType &rhs) { return lhs.value < rhs.value; }
-			friend constexpr bool operator <(const TType &lhs, const TBaseType &rhs) { return lhs.value < rhs; }
-
-			friend constexpr bool operator >=(const TType &lhs, const TType &rhs) { return lhs.value >= rhs.value; }
-			friend constexpr bool operator >=(const TType &lhs, const TBaseType &rhs) { return lhs.value >= rhs; }
-
-			friend constexpr bool operator >(const TType &lhs, const TType &rhs) { return lhs.value > rhs.value; }
-			friend constexpr bool operator >(const TType &lhs, const TBaseType &rhs) { return lhs.value > rhs; }
+			friend constexpr auto operator <=>(const TType &lhs, const TType &rhs) { return lhs.value <=> rhs.value; }
+			friend constexpr auto operator <=>(const TType &lhs, const TBaseType &rhs) { return lhs.value <=> rhs; }
 		};
 	};
 
@@ -58,12 +43,12 @@ namespace StrongType {
 			friend constexpr TType operator --(TType &lhs, int) { TType res = lhs; lhs.value--; return res; }
 
 			friend constexpr TType &operator +=(TType &lhs, const TType &rhs) { lhs.value += rhs.value; return lhs; }
-			friend constexpr TType operator +(const TType &lhs, const TType &rhs) { return TType{ lhs.value + rhs.value }; }
-			friend constexpr TType operator +(const TType &lhs, const TBaseType &rhs) { return TType{ lhs.value + rhs }; }
+			friend constexpr TType operator +(const TType &lhs, const TType &rhs) { return TType(lhs.value + rhs.value); }
+			friend constexpr TType operator +(const TType &lhs, const TBaseType &rhs) { return TType(lhs.value + rhs); }
 
 			friend constexpr TType &operator -=(TType &lhs, const TType &rhs) { lhs.value -= rhs.value; return lhs; }
-			friend constexpr TType operator -(const TType &lhs, const TType &rhs) { return TType{ lhs.value - rhs.value }; }
-			friend constexpr TType operator -(const TType &lhs, const TBaseType &rhs) { return TType{ lhs.value - rhs }; }
+			friend constexpr TType operator -(const TType &lhs, const TType &rhs) { return TType(lhs.value - rhs.value); }
+			friend constexpr TType operator -(const TType &lhs, const TBaseType &rhs) { return TType(lhs.value - rhs); }
 
 			/* For most new types, the rest of the operators make no sense. For example,
 			 * what does it actually mean to multiply a Year with a value. Or to do a
@@ -120,15 +105,10 @@ namespace StrongType {
 		template <typename TType, typename TBaseType>
 		struct mixin {
 			friend constexpr bool operator ==(const TType &lhs, TCompatibleType rhs) { return lhs.value == static_cast<TBaseType>(rhs); }
-			friend constexpr bool operator !=(const TType &lhs, TCompatibleType rhs) { return lhs.value != static_cast<TBaseType>(rhs); }
+			friend constexpr auto operator <=>(const TType &lhs, TCompatibleType rhs) { return lhs.value <=> static_cast<TBaseType>(rhs); }
 
-			friend constexpr bool operator <=(const TType &lhs, TCompatibleType rhs) { return lhs.value <= static_cast<TBaseType>(rhs); }
-			friend constexpr bool operator <(const TType &lhs, TCompatibleType rhs) { return lhs.value < static_cast<TBaseType>(rhs); }
-			friend constexpr bool operator >=(const TType &lhs, TCompatibleType rhs) { return lhs.value >= static_cast<TBaseType>(rhs); }
-			friend constexpr bool operator >(const TType &lhs, TCompatibleType rhs) { return lhs.value > static_cast<TBaseType>(rhs); }
-
-			friend constexpr TType operator +(const TType &lhs, TCompatibleType rhs) { return { static_cast<TBaseType>(lhs.value + rhs) }; }
-			friend constexpr TType operator -(const TType &lhs, TCompatibleType rhs) { return { static_cast<TBaseType>(lhs.value - rhs) }; }
+			friend constexpr TType operator +(const TType &lhs, TCompatibleType rhs) { return TType(lhs.value + rhs); }
+			friend constexpr TType operator -(const TType &lhs, TCompatibleType rhs) { return TType(lhs.value - rhs); }
 		};
 	};
 
@@ -136,32 +116,31 @@ namespace StrongType {
 	 * Templated helper to make a type-safe 'typedef' representing a single POD value.
 	 * A normal 'typedef' is not distinct from its base type and will be treated as
 	 * identical in many contexts. This class provides a distinct type that can still
-	 * be assign from and compared to values of its base type.
+	 * be assigned from and compared to values of its base type.
 	 *
 	 * Example usage:
 	 *
-	 *   using MyType = StrongType::Typedef<int, struct MyTypeTag, StrongType::Explicit, StrongType::Compare, StrongType::Integer>;
+	 *   using MyType = StrongType::Typedef<int, struct MyTypeTag, StrongType::Compare, StrongType::Integer>;
 	 *
 	 * @tparam TBaseType Type of the derived class (i.e. the concrete usage of this class).
 	 * @tparam TTag An unique struct to keep types of the same TBaseType distinct.
 	 * @tparam TProperties A list of mixins to add to the class.
 	 */
 	template <typename TBaseType, typename TTag, typename... TProperties>
-	struct EMPTY_BASES Typedef : public StrongTypedefBase, public TProperties::template mixin<Typedef<TBaseType, TTag, TProperties...>, TBaseType>... {
+	struct EMPTY_BASES Typedef : public TProperties::template mixin<Typedef<TBaseType, TTag, TProperties...>, TBaseType>... {
 		using BaseType = TBaseType;
 
 		constexpr Typedef() = default;
 		constexpr Typedef(const Typedef &) = default;
 		constexpr Typedef(Typedef &&) = default;
 
-		constexpr Typedef(const TBaseType &value) : value(value) {}
+		explicit constexpr Typedef(const TBaseType &value) : value(value) {}
 
 		constexpr Typedef &operator =(const Typedef &rhs) { this->value = rhs.value; return *this; }
 		constexpr Typedef &operator =(Typedef &&rhs) { this->value = std::move(rhs.value); return *this; }
-		constexpr Typedef &operator =(const TBaseType &rhs) { this->value = rhs; return *this; }
 
 		/* Only allow conversion to BaseType via method. */
-		constexpr TBaseType base() const { return this->value; }
+		constexpr TBaseType base() const noexcept { return this->value; }
 
 		/* Only allow TProperties classes access to the internal value. Everyone else needs to call .base(). */
 		friend struct Compare;

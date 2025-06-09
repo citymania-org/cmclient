@@ -16,7 +16,7 @@
 
 #include "../../safeguards.h"
 
-constexpr int DIRECT_NEIGHBOR_COST = 100;
+constexpr int DIRECT_NEIGHBOUR_COST = 100;
 constexpr int NODES_PER_REGION = 4;
 constexpr int MAX_NUMBER_OF_NODES = 65536;
 
@@ -35,7 +35,7 @@ struct CYapfRegionPatchNodeKey {
 
 inline uint ManhattanDistance(const CYapfRegionPatchNodeKey &a, const CYapfRegionPatchNodeKey &b)
 {
-	return (std::abs(a.water_region_patch.x - b.water_region_patch.x) + std::abs(a.water_region_patch.y - b.water_region_patch.y)) * DIRECT_NEIGHBOR_COST;
+	return (std::abs(a.water_region_patch.x - b.water_region_patch.x) + std::abs(a.water_region_patch.y - b.water_region_patch.y)) * DIRECT_NEIGHBOUR_COST;
 }
 
 /** Yapf Node for water regions. */
@@ -90,7 +90,7 @@ public:
 	void AddOrigin(const WaterRegionPatchDesc &water_region_patch)
 	{
 		if (water_region_patch.label == INVALID_WATER_REGION_PATCH) return;
-		if (!HasOrigin(water_region_patch)) this->origin_keys.push_back(CYapfRegionPatchNodeKey{ water_region_patch });
+		if (!HasOrigin(water_region_patch)) this->origin_keys.emplace_back(water_region_patch);
 	}
 
 	bool HasOrigin(const WaterRegionPatchDesc &water_region_patch)
@@ -164,13 +164,13 @@ protected:
 public:
 	inline void PfFollowNode(Node &old_node)
 	{
-		TVisitWaterRegionPatchCallBack visitFunc = [&](const WaterRegionPatchDesc &water_region_patch)
+		TVisitWaterRegionPatchCallBack visit_func = [&](const WaterRegionPatchDesc &water_region_patch)
 		{
 			Node &node = Yapf().CreateNewNode();
 			node.Set(&old_node, water_region_patch);
 			Yapf().AddNewNode(node, TrackFollower{});
 		};
-		VisitWaterRegionPatchNeighbors(old_node.key.water_region_patch, visitFunc);
+		VisitWaterRegionPatchNeighbours(old_node.key.water_region_patch, visit_func);
 	}
 
 	inline char TransportTypeChar() const { return '^'; }
@@ -185,10 +185,10 @@ public:
 		pf.SetDestination(start_water_region_patch);
 
 		if (v->current_order.IsType(OT_GOTO_STATION)) {
-			DestinationID station_id = v->current_order.GetDestination();
+			StationID station_id = v->current_order.GetDestination().ToStationID();
 			const BaseStation *station = BaseStation::Get(station_id);
 			TileArea tile_area;
-			station->GetTileArea(&tile_area, STATION_DOCK);
+			station->GetTileArea(&tile_area, StationType::Dock);
 			for (const auto &tile : tile_area) {
 				if (IsDockingTile(tile) && IsShipDestinationTile(tile, station_id)) {
 					pf.AddOrigin(GetWaterRegionPatchInfo(tile));
@@ -238,7 +238,7 @@ public:
 	/**
 	 * Called by YAPF to calculate the cost from the origin to the given node.
 	 * Calculates only the cost of given node, adds it to the parent node cost
-	 * and stores the result into Node::m_cost member.
+	 * and stores the result into Node::cost member.
 	 */
 	inline bool PfCalcCost(Node &n, const TrackFollower *)
 	{

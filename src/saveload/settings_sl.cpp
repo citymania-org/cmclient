@@ -14,6 +14,7 @@
 
 #include "../settings_type.h"
 #include "../settings_table.h"
+#include "../settings_internal.h"
 #include "../network/network.h"
 #include "../fios.h"
 
@@ -79,12 +80,12 @@ static std::vector<SaveLoad> GetSettingsDesc(const SettingTable &settings, bool 
 	std::vector<SaveLoad> saveloads;
 	for (auto &desc : settings) {
 		const SettingDesc *sd = GetSettingDesc(desc);
-		if (sd->flags & SF_NOT_IN_SAVE) continue;
+		if (sd->flags.Test(SettingFlag::NotInSave)) continue;
 
-		if (is_loading && (sd->flags & SF_NO_NETWORK_SYNC) && _networking && !_network_server) {
+		if (is_loading && sd->flags.Test(SettingFlag::NoNetworkSync) && _networking && !_network_server) {
 			if (IsSavegameVersionBefore(SLV_TABLE_CHUNKS)) {
 				/* We don't want to read this setting, so we do need to skip over it. */
-				saveloads.push_back({sd->GetName(), sd->save.cmd, GetVarFileType(sd->save.conv) | SLE_VAR_NULL, sd->save.length, sd->save.version_from, sd->save.version_to, nullptr, 0, nullptr});
+				saveloads.emplace_back(sd->GetName(), sd->save.cmd, GetVarFileType(sd->save.conv) | SLE_VAR_NULL, sd->save.length, sd->save.version_from, sd->save.version_to, nullptr, 0, nullptr);
 			}
 			continue;
 		}
@@ -112,8 +113,8 @@ static void LoadSettings(const SettingTable &settings, void *object, const SaveL
 	/* Ensure all IntSettings are valid (min/max could have changed between versions etc). */
 	for (auto &desc : settings) {
 		const SettingDesc *sd = GetSettingDesc(desc);
-		if (sd->flags & SF_NOT_IN_SAVE) continue;
-		if ((sd->flags & SF_NO_NETWORK_SYNC) && _networking && !_network_server) continue;
+		if (sd->flags.Test(SettingFlag::NotInSave)) continue;
+		if (sd->flags.Test(SettingFlag::NoNetworkSync) && _networking && !_network_server) continue;
 		if (!SlIsObjectCurrentlyValid(sd->save.version_from, sd->save.version_to)) continue;
 
 		if (sd->IsIntSetting()) {
@@ -156,61 +157,23 @@ struct OPTSChunkHandler : ChunkHandler {
 struct PATSChunkHandler : ChunkHandler {
 	PATSChunkHandler() : ChunkHandler('PATS', CH_TABLE) {}
 
-	/**
-	 * Create a single table with all settings that should be stored/loaded
-	 * in the savegame.
-	 */
-	SettingTable GetSettingTable() const
-	{
-		static const SettingTable saveload_settings_tables[] = {
-			_difficulty_settings,
-			_economy_settings,
-			_game_settings,
-			_linkgraph_settings,
-			_locale_settings,
-			_pathfinding_settings,
-			_script_settings,
-			_world_settings,
-		};
-		static std::vector<SettingVariant> settings_table;
-
-		if (settings_table.empty()) {
-			for (auto &saveload_settings_table : saveload_settings_tables) {
-				for (auto &saveload_setting : saveload_settings_table) {
-					settings_table.push_back(saveload_setting);
-				}
-			}
-		}
-
-		return settings_table;
-	}
-
 	void Load() const override
 	{
-		const auto settings_table = this->GetSettingTable();
-
-		/* Reset all settings to their default, so any settings missing in the savegame
-		 * are their default, and not "value of last game". AfterLoad might still fix
-		 * up values to become non-default, depending on the saveload version. */
-		for (auto &desc : settings_table) {
-			const SettingDesc *sd = GetSettingDesc(desc);
-			if (sd->flags & SF_NOT_IN_SAVE) continue;
-			if ((sd->flags & SF_NO_NETWORK_SYNC) && _networking && !_network_server) continue;
-
-			sd->ResetToDefault(&_settings_game);
-		}
-
-		LoadSettings(settings_table, &_settings_game, _settings_sl_compat);
+		LoadSettings(GetSaveLoadSettingTable(), &_settings_game, _settings_sl_compat);
 	}
 
 	void LoadCheck(size_t) const override
 	{
-		LoadSettings(this->GetSettingTable(), &_load_check_data.settings, _settings_sl_compat);
+		GameSettings settings{};
+		LoadSettings(GetSaveLoadSettingTable(), &settings, _settings_sl_compat);
+		/* We're only interested in landscape and starting year. */
+		_load_check_data.landscape = settings.game_creation.landscape;
+		_load_check_data.starting_year = settings.game_creation.starting_year;
 	}
 
 	void Save() const override
 	{
-		SaveSettings(this->GetSettingTable(), &_settings_game);
+		SaveSettings(GetSaveLoadSettingTable(), &_settings_game);
 	}
 };
 

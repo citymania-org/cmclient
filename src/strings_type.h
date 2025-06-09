@@ -10,6 +10,9 @@
 #ifndef STRINGS_TYPE_H
 #define STRINGS_TYPE_H
 
+#include "core/convertible_through_base.hpp"
+#include "core/strong_typedef_type.hpp"
+
 /**
  * Numeric value that represents a string, independent of the selected language.
  */
@@ -19,13 +22,13 @@ static const int MAX_CHAR_LENGTH        = 4;      ///< Max. length of UTF-8 enco
 static const uint MAX_LANG              = 0x7F;   ///< Maximum number of languages supported by the game, and the NewGRF specs
 
 /** Directions a text can go to */
-enum TextDirection {
+enum TextDirection : uint8_t {
 	TD_LTR, ///< Text is written left-to-right by default
 	TD_RTL, ///< Text is written right-to-left by default
 };
 
 /** StringTabs to group StringIDs */
-enum StringTab {
+enum StringTab : uint8_t {
 	/* Tabs 0..1 for regular strings */
 	TEXT_TAB_TOWN             =  4,
 	TEXT_TAB_INDUSTRY         =  9,
@@ -40,6 +43,9 @@ enum StringTab {
 	TEXT_TAB_NEWGRF_START     = 64, ///< Start of NewGRF supplied strings.
 };
 
+/** The index/offset of a string within a #StringTab. */
+using StringIndexInTab = StrongType::Typedef<uint32_t, struct StringIndexInTabTag, StrongType::Compare, StrongType::Integer>;
+
 /** Number of bits for the StringIndex within a StringTab */
 static const uint TAB_SIZE_BITS       = 11;
 /** Number of strings per StringTab */
@@ -51,43 +57,68 @@ static const uint TAB_SIZE_GAMESCRIPT = TAB_SIZE * 32;
 /** Number of strings for NewGRFs */
 static const uint TAB_SIZE_NEWGRF     = TAB_SIZE * 256;
 
-/** Special string constants */
-enum SpecialStrings {
+/** The number of builtin generators for town names. */
+static constexpr uint32_t BUILTIN_TOWNNAME_GENERATOR_COUNT = 21;
 
-	/* special strings for town names. the town name is generated dynamically on request. */
-	SPECSTR_TOWNNAME_START     = 0x20C0,
-	SPECSTR_TOWNNAME_ENGLISH   = SPECSTR_TOWNNAME_START,
-	SPECSTR_TOWNNAME_FRENCH,
-	SPECSTR_TOWNNAME_GERMAN,
-	SPECSTR_TOWNNAME_AMERICAN,
-	SPECSTR_TOWNNAME_LATIN,
-	SPECSTR_TOWNNAME_SILLY,
-	SPECSTR_TOWNNAME_SWEDISH,
-	SPECSTR_TOWNNAME_DUTCH,
-	SPECSTR_TOWNNAME_FINNISH,
-	SPECSTR_TOWNNAME_POLISH,
-	SPECSTR_TOWNNAME_SLOVAK,
-	SPECSTR_TOWNNAME_NORWEGIAN,
-	SPECSTR_TOWNNAME_HUNGARIAN,
-	SPECSTR_TOWNNAME_AUSTRIAN,
-	SPECSTR_TOWNNAME_ROMANIAN,
-	SPECSTR_TOWNNAME_CZECH,
-	SPECSTR_TOWNNAME_SWISS,
-	SPECSTR_TOWNNAME_DANISH,
-	SPECSTR_TOWNNAME_TURKISH,
-	SPECSTR_TOWNNAME_ITALIAN,
-	SPECSTR_TOWNNAME_CATALAN,
-	SPECSTR_TOWNNAME_LAST      = SPECSTR_TOWNNAME_CATALAN,
+/** Special strings for town names. The town name is generated dynamically on request. */
+static constexpr StringID SPECSTR_TOWNNAME_START = 0x20C0;
+static constexpr StringID SPECSTR_TOWNNAME_END = SPECSTR_TOWNNAME_START + BUILTIN_TOWNNAME_GENERATOR_COUNT;
 
-	/* special strings for company names on the form "TownName transport". */
-	SPECSTR_COMPANY_NAME_START = 0x70EA,
-	SPECSTR_COMPANY_NAME_LAST  = SPECSTR_COMPANY_NAME_START + SPECSTR_TOWNNAME_LAST - SPECSTR_TOWNNAME_START,
+/** Special strings for company names on the form "TownName transport". */
+static constexpr StringID SPECSTR_COMPANY_NAME_START = 0x70EA;
+static constexpr StringID SPECSTR_COMPANY_NAME_END = SPECSTR_COMPANY_NAME_START + BUILTIN_TOWNNAME_GENERATOR_COUNT;
 
-	SPECSTR_SILLY_NAME         = 0x70E5,
-	SPECSTR_ANDCO_NAME         = 0x70E6,
-	SPECSTR_PRESIDENT_NAME     = 0x70E7,
+static constexpr StringID SPECSTR_SILLY_NAME = 0x70E5; ///< Special string for silly company names.
+static constexpr StringID SPECSTR_ANDCO_NAME = 0x70E6; ///< Special string for Surname & Co company names.
+static constexpr StringID SPECSTR_PRESIDENT_NAME = 0x70E7; ///< Special string for the president's name.
+
+using StringParameterData = std::variant<std::monostate, uint64_t, std::string>;
+
+/** The data required to format and validate a single parameter of a string. */
+struct StringParameter {
+	StringParameterData data; ///< The data of the parameter.
+	char32_t type; ///< The #StringControlCode to interpret this data with when it's the first parameter, otherwise '\0'.
+
+	StringParameter() = default;
+	inline StringParameter(StringParameterData &&data) : data(std::move(data)), type(0) {}
+
+	inline StringParameter(const std::monostate &data) : data(data), type(0) {}
+	inline StringParameter(uint64_t data) : data(data), type(0) {}
+
+	inline StringParameter(const char *data) : data(std::string{data}), type(0) {}
+	inline StringParameter(std::string &&data) : data(std::move(data)), type(0) {}
+	inline StringParameter(const std::string &data) : data(data), type(0) {}
+
+	inline StringParameter(const ConvertibleThroughBase auto &data) : data(static_cast<uint64_t>(data.base())), type(0) {}
 };
 
-using StringParameterData = std::variant<uint64_t, std::string>;
+/**
+ * Container for an encoded string, created by GetEncodedString.
+ */
+class EncodedString {
+public:
+	EncodedString() = default;
+
+	auto operator<=>(const EncodedString &) const = default;
+
+	std::string GetDecodedString() const;
+	EncodedString ReplaceParam(size_t param, StringParameter &&value) const;
+
+	inline void clear() { this->string.clear(); }
+	inline bool empty() const { return this->string.empty(); }
+
+private:
+	std::string string; ///< The encoded string.
+
+	/* An EncodedString can only be created by GetEncodedStringWithArgs(). */
+	explicit EncodedString(std::string &&string) : string(std::move(string)) {}
+
+	friend EncodedString GetEncodedStringWithArgs(StringID str, std::span<const StringParameter> params);
+
+	template <typename Tcont, typename Titer>
+	friend class EndianBufferWriter;
+	friend class EndianBufferReader;
+	friend class ScriptText;
+};
 
 #endif /* STRINGS_TYPE_H */

@@ -57,8 +57,8 @@
 	 * needs manual action to continue. */
 	ShowScriptDebugWindow(ScriptObject::GetRootCompany());
 
-	if ((_pause_mode & PM_PAUSED_NORMAL) == PM_UNPAUSED) {
-		ScriptObject::Command<CMD_PAUSE>::Do(PM_PAUSED_NORMAL, true);
+	if (!_pause_mode.Test(PauseMode::Normal)) {
+		ScriptObject::Command<CMD_PAUSE>::Do(PauseMode::Normal, true);
 	}
 }
 
@@ -67,7 +67,7 @@
 	ScriptLog::Log(error_msg ? ScriptLogTypes::LOG_SQ_ERROR : ScriptLogTypes::LOG_SQ_INFO, message);
 }
 
-ScriptController::ScriptController(CompanyID company) :
+ScriptController::ScriptController(::CompanyID company) :
 	ticks(0),
 	loaded_library_count(0)
 {

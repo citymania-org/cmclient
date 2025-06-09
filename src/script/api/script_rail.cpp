@@ -28,7 +28,7 @@
 {
 	if (!IsRailTypeAvailable(rail_type)) return std::nullopt;
 
-	return GetString(GetRailTypeInfo((::RailType)rail_type)->strings.menu_text);
+	return ::StrMakeValid(::GetString(GetRailTypeInfo((::RailType)rail_type)->strings.menu_text));
 }
 
 /* static */ bool ScriptRail::IsRailTile(TileIndex tile)
@@ -159,10 +159,10 @@
 	EnforcePrecondition(false, station_id == ScriptStation::STATION_NEW || station_id == ScriptStation::STATION_JOIN_ADJACENT || ScriptStation::IsValidStation(station_id));
 
 	bool adjacent = station_id != ScriptStation::STATION_JOIN_ADJACENT;
-	return ScriptObject::Command<CMD_BUILD_RAIL_STATION>::Do(tile, (::RailType)GetCurrentRailType(), direction == RAILTRACK_NW_SE ? AXIS_Y : AXIS_X, num_platforms, platform_length, STAT_CLASS_DFLT, 0, ScriptStation::IsValidStation(station_id) ? station_id : INVALID_STATION, adjacent);
+	return ScriptObject::Command<CMD_BUILD_RAIL_STATION>::Do(tile, (::RailType)GetCurrentRailType(), direction == RAILTRACK_NW_SE ? AXIS_Y : AXIS_X, num_platforms, platform_length, STAT_CLASS_DFLT, 0, ScriptStation::IsValidStation(station_id) ? station_id : StationID::Invalid(), adjacent);
 }
 
-/* static */ bool ScriptRail::BuildNewGRFRailStation(TileIndex tile, RailTrack direction, SQInteger num_platforms, SQInteger platform_length, StationID station_id, CargoID cargo_id, IndustryType source_industry, IndustryType goal_industry, SQInteger distance, bool source_station)
+/* static */ bool ScriptRail::BuildNewGRFRailStation(TileIndex tile, RailTrack direction, SQInteger num_platforms, SQInteger platform_length, StationID station_id, CargoType cargo_type, IndustryType source_industry, IndustryType goal_industry, SQInteger distance, bool source_station)
 {
 	EnforceCompanyModeValid(false);
 	EnforcePrecondition(false, ::IsValidTile(tile));
@@ -171,14 +171,14 @@
 	EnforcePrecondition(false, platform_length > 0 && platform_length <= 0xFF);
 	EnforcePrecondition(false, IsRailTypeAvailable(GetCurrentRailType()));
 	EnforcePrecondition(false, station_id == ScriptStation::STATION_NEW || station_id == ScriptStation::STATION_JOIN_ADJACENT || ScriptStation::IsValidStation(station_id));
-	EnforcePrecondition(false, ScriptCargo::IsValidCargo(cargo_id));
+	EnforcePrecondition(false, ScriptCargo::IsValidCargo(cargo_type));
 	EnforcePrecondition(false, source_industry == ScriptIndustryType::INDUSTRYTYPE_UNKNOWN || source_industry == ScriptIndustryType::INDUSTRYTYPE_TOWN || ScriptIndustryType::IsValidIndustryType(source_industry));
 	EnforcePrecondition(false, goal_industry   == ScriptIndustryType::INDUSTRYTYPE_UNKNOWN || goal_industry   == ScriptIndustryType::INDUSTRYTYPE_TOWN || ScriptIndustryType::IsValidIndustryType(goal_industry));
 
 	const GRFFile *file;
 	uint16_t res = GetAiPurchaseCallbackResult(
 		GSF_STATIONS,
-		cargo_id,
+		cargo_type,
 		0,
 		source_industry,
 		goal_industry,
@@ -191,7 +191,7 @@
 
 	Axis axis = direction == RAILTRACK_NW_SE ? AXIS_Y : AXIS_X;
 	bool adjacent = station_id != ScriptStation::STATION_JOIN_ADJACENT;
-	StationID to_join = ScriptStation::IsValidStation(station_id) ? station_id : INVALID_STATION;
+	StationID to_join = ScriptStation::IsValidStation(station_id) ? station_id : StationID::Invalid();
 	if (res != CALLBACK_FAILED) {
 		const StationSpec *spec = StationClass::GetByGrf(file->grfid, res);
 		if (spec == nullptr) {
@@ -213,7 +213,7 @@
 	EnforcePrecondition(false, GetRailTracks(tile) == RAILTRACK_NE_SW || GetRailTracks(tile) == RAILTRACK_NW_SE);
 	EnforcePrecondition(false, IsRailTypeAvailable(GetCurrentRailType()));
 
-	return ScriptObject::Command<CMD_BUILD_RAIL_WAYPOINT>::Do(tile, GetRailTracks(tile) == RAILTRACK_NE_SW ? AXIS_X : AXIS_Y, 1, 1, STAT_CLASS_WAYP, 0, INVALID_STATION, false);
+	return ScriptObject::Command<CMD_BUILD_RAIL_WAYPOINT>::Do(tile, GetRailTracks(tile) == RAILTRACK_NE_SW ? AXIS_X : AXIS_Y, 1, 1, STAT_CLASS_WAYP, 0, StationID::Invalid(), false);
 }
 
 /* static */ bool ScriptRail::RemoveRailWaypointTileRectangle(TileIndex tile, TileIndex tile2, bool keep_rail)
@@ -272,7 +272,7 @@
 	if (!IsRailTile(tile)) return false;
 	if (from == to || ScriptMap::DistanceManhattan(from, tile) != 1 || ScriptMap::DistanceManhattan(tile, to) != 1) return false;
 
-	if (to < from) ::Swap(from, to);
+	if (to < from) std::swap(from, to);
 
 	if (tile - from == 1) {
 		if (to - tile == 1) return (GetRailTracks(tile) & RAILTRACK_NE_SW) != 0;

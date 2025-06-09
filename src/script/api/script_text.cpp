@@ -20,6 +20,10 @@
 
 #include "../../safeguards.h"
 
+EncodedString RawText::GetEncodedText()
+{
+	return ::GetEncodedString(STR_JUST_RAW_STRING, this->text);
+}
 
 ScriptText::ScriptText(HSQUIRRELVM vm)
 {
@@ -33,7 +37,7 @@ ScriptText::ScriptText(HSQUIRRELVM vm)
 	if (SQ_FAILED(sq_getinteger(vm, 2, &sqstring))) {
 		throw sq_throwerror(vm, "First argument must be a valid StringID");
 	}
-	this->string = sqstring;
+	this->string = StringIndexInTab(sqstring);
 
 	/* The rest of the parameters must be arguments. */
 	for (int i = 0; i < nparam - 1; i++) {
@@ -153,17 +157,17 @@ SQInteger ScriptText::_set(HSQUIRRELVM vm)
 	return this->_SetParam(k, vm);
 }
 
-std::string ScriptText::GetEncodedText()
+EncodedString ScriptText::GetEncodedText()
 {
 	ScriptTextList seen_texts;
 	ParamList params;
 	int param_count = 0;
 	std::string result;
-	auto output = std::back_inserter(result);
+	StringBuilder builder(result);
 	this->_FillParamList(params, seen_texts);
-	this->_GetEncodedText(output, param_count, params, true);
+	this->_GetEncodedText(builder, param_count, params, true);
 	if (param_count > SCRIPT_TEXT_MAX_PARAMETERS) throw Script_FatalError(fmt::format("{}: Too many parameters", GetGameStringName(this->string)));
-	return result;
+	return ::EncodedString{std::move(result)};
 }
 
 void ScriptText::_FillParamList(ParamList &params, ScriptTextList &seen_texts)
@@ -185,39 +189,50 @@ void ScriptText::_FillParamList(ParamList &params, ScriptTextList &seen_texts)
 		static Param dummy = 0;
 		int nb_extra = SCRIPT_TEXT_MAX_PARAMETERS - (int)params.size();
 		for (int i = 0; i < nb_extra; i++)
-			params.emplace_back(-1, i, &dummy);
+			params.emplace_back(StringIndexInTab(-1), i, &dummy);
 	}
 }
 
-void ScriptText::ParamCheck::Encode(std::back_insert_iterator<std::string> &output, const char *cmd)
+void ScriptText::ParamCheck::Encode(StringBuilder &builder, std::string_view cmd)
 {
-	if (this->cmd == nullptr) this->cmd = cmd;
+	if (this->cmd.empty()) this->cmd = cmd;
 	if (this->used) return;
 
 	struct visitor {
-		std::back_insert_iterator<std::string> &output;
+		StringBuilder &builder;
 
-		void operator()(const std::string &value) { fmt::format_to(this->output, ":\"{}\"", value); }
-		void operator()(const SQInteger &value) { fmt::format_to(this->output, ":{:X}", value); }
+		void operator()(std::string value)
+		{
+			this->builder.PutUtf8(SCC_ENCODED_STRING);
+			StrMakeValidInPlace(value, {StringValidationSetting::ReplaceWithQuestionMark, StringValidationSetting::AllowNewline, StringValidationSetting::ReplaceTabCrNlWithSpace});
+			this->builder.Put(value);
+		}
+
+		void operator()(const SQInteger &value)
+		{
+			this->builder.PutUtf8(SCC_ENCODED_NUMERIC);
+			this->builder.PutIntegerBase(value, 16);
+		}
+
 		void operator()(const ScriptTextRef &value)
 		{
-			fmt::format_to(this->output, ":");
-			Utf8Encode(this->output, SCC_ENCODED);
-			fmt::format_to(this->output, "{:X}", value->string);
+			this->builder.PutUtf8(SCC_ENCODED);
+			this->builder.PutIntegerBase(value->string.base(), 16);
 		}
 	};
 
-	std::visit(visitor{output}, *this->param);
+	builder.PutUtf8(SCC_RECORD_SEPARATOR);
+	std::visit(visitor{builder}, *this->param);
 	this->used = true;
 }
 
-void ScriptText::_GetEncodedText(std::back_insert_iterator<std::string> &output, int &param_count, ParamSpan args, bool first)
+void ScriptText::_GetEncodedText(StringBuilder &builder, int &param_count, ParamSpan args, bool first)
 {
 	const std::string &name = GetGameStringName(this->string);
 
 	if (first) {
-		Utf8Encode(output, SCC_ENCODED);
-		fmt::format_to(output, "{:X}", this->string);
+		builder.PutUtf8(SCC_ENCODED);
+		builder.PutIntegerBase(this->string.base(), 16);
 	}
 
 	const StringParams &params = GetGameStringParams(this->string);
@@ -241,7 +256,7 @@ void ScriptText::_GetEncodedText(std::back_insert_iterator<std::string> &output,
 				case StringParam::RAW_STRING:
 				{
 					ParamCheck &p = *get_next_arg();
-					p.Encode(output, cur_param.cmd);
+					p.Encode(builder, cur_param.cmd);
 					if (p.cmd != cur_param.cmd) throw 1;
 					if (!std::holds_alternative<std::string>(*p.param)) ScriptLog::Error(fmt::format("{}({}): {{{}}} expects a raw string", name, param_count + 1, cur_param.cmd));
 					break;
@@ -250,7 +265,7 @@ void ScriptText::_GetEncodedText(std::back_insert_iterator<std::string> &output,
 				case StringParam::STRING:
 				{
 					ParamCheck &p = *get_next_arg();
-					p.Encode(output, cur_param.cmd);
+					p.Encode(builder, cur_param.cmd);
 					if (p.cmd != cur_param.cmd) throw 1;
 					if (!std::holds_alternative<ScriptTextRef>(*p.param)) {
 						ScriptLog::Error(fmt::format("{}({}): {{{}}} expects a GSText", name, param_count + 1, cur_param.cmd));
@@ -259,11 +274,13 @@ void ScriptText::_GetEncodedText(std::back_insert_iterator<std::string> &output,
 					}
 					int count = 0;
 					ScriptTextRef &ref = std::get<ScriptTextRef>(*p.param);
-					ref->_GetEncodedText(output, count, args.subspan(idx), false);
+					ref->_GetEncodedText(builder, count, args.subspan(idx), false);
 					if (++count != cur_param.consumes) {
 						ScriptLog::Warning(fmt::format("{}({}): {{{}}} expects {} to be consumed, but {} consumes {}", name, param_count + 1, cur_param.cmd, cur_param.consumes - 1, GetGameStringName(ref->string), count - 1));
 						/* Fill missing params if needed. */
-						for (int i = count; i < cur_param.consumes; i++) fmt::format_to(output, ":0");
+						for (int i = count; i < cur_param.consumes; i++) {
+							builder.PutUtf8(SCC_RECORD_SEPARATOR);
+						}
 					}
 					skip_args(cur_param.consumes - 1);
 					break;
@@ -272,7 +289,7 @@ void ScriptText::_GetEncodedText(std::back_insert_iterator<std::string> &output,
 				default:
 					for (int i = 0; i < cur_param.consumes; i++) {
 						ParamCheck &p = *get_next_arg();
-						p.Encode(output, i == 0 ? cur_param.cmd : nullptr);
+						p.Encode(builder, i == 0 ? cur_param.cmd : "");
 						if (i == 0 && p.cmd != cur_param.cmd) throw 1;
 						if (!std::holds_alternative<SQInteger>(*p.param)) ScriptLog::Error(fmt::format("{}({}): {{{}}} expects an integer", name, param_count + i + 1, cur_param.cmd));
 					}
@@ -288,6 +305,5 @@ void ScriptText::_GetEncodedText(std::back_insert_iterator<std::string> &output,
 
 const std::string Text::GetDecodedText()
 {
-	::SetDParamStr(0, this->GetEncodedText());
-	return ::GetString(STR_JUST_RAW_STRING);
+	return this->GetEncodedText().GetDecodedString();
 }

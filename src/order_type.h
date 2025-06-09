@@ -11,19 +11,35 @@
 #define ORDER_TYPE_H
 
 #include "core/enum_type.hpp"
+#include "depot_type.h"
+#include "core/pool_type.hpp"
+#include "station_type.h"
 
 typedef uint8_t VehicleOrderID;  ///< The index of an order within its current vehicle (not pool related)
-typedef uint32_t OrderID;
-typedef uint16_t OrderListID;
-typedef uint16_t DestinationID;
+using OrderID = PoolID<uint32_t, struct OrderIDTag, 0xFF0000, 0xFFFFFF>;
+using OrderListID = PoolID<uint16_t, struct OrderListIDTag, 64000, 0xFFFF>;
+
+struct DestinationID {
+	using BaseType = uint16_t;
+	BaseType value = 0;
+
+	explicit DestinationID() = default;
+	constexpr DestinationID(size_t index) : value(static_cast<BaseType>(index)) {}
+	constexpr DestinationID(DepotID depot) : value(depot.base()) {}
+	constexpr DestinationID(StationID station) : value(station.base()) {}
+
+	constexpr DepotID ToDepotID() const noexcept { return static_cast<DepotID>(this->value); }
+	constexpr StationID ToStationID() const noexcept { return static_cast<StationID>(this->value); }
+	constexpr BaseType base() const noexcept { return this->value; }
+
+	constexpr bool operator ==(const DestinationID &destination) const { return this->value == destination.value; }
+	constexpr bool operator ==(const StationID &station) const { return this->value == station; }
+};
 
 /** Invalid vehicle order index (sentinel) */
 static const VehicleOrderID INVALID_VEH_ORDER_ID = 0xFF;
 /** Last valid VehicleOrderID. */
 static const VehicleOrderID MAX_VEH_ORDER_ID     = INVALID_VEH_ORDER_ID - 1;
-
-/** Invalid order (sentinel) */
-static const OrderID INVALID_ORDER = 0xFFFFFF;
 
 /**
  * Maximum number of orders in implicit-only lists before we start searching
@@ -49,7 +65,7 @@ enum OrderType : uint8_t {
 /**
  * Flags related to the unloading order.
  */
-enum OrderUnloadFlags {
+enum OrderUnloadFlags : uint8_t {
 	OUF_UNLOAD_IF_POSSIBLE = 0,      ///< Unload all cargo that the station accepts.
 	OUFB_UNLOAD            = 1 << 0, ///< Force unloading all cargo onto the platform, possibly not getting paid.
 	OUFB_TRANSFER          = 1 << 1, ///< Transfer all cargo onto the platform.
@@ -59,7 +75,7 @@ enum OrderUnloadFlags {
 /**
  * Flags related to the loading order.
  */
-enum OrderLoadFlags {
+enum OrderLoadFlags : uint8_t {
 	OLF_LOAD_IF_POSSIBLE = 0,      ///< Load as long as there is cargo that fits in the train.
 	OLFB_FULL_LOAD       = 1 << 1, ///< Full load all cargoes of the consist.
 	OLF_FULL_LOAD_ANY    = 3,      ///< Full load a single cargo of the consist.
@@ -69,7 +85,7 @@ enum OrderLoadFlags {
 /**
  * Non-stop order flags.
  */
-enum OrderNonStopFlags {
+enum OrderNonStopFlags : uint8_t {
 	ONSF_STOP_EVERYWHERE                  = 0, ///< The vehicle will stop at any station it passes and the destination.
 	ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS = 1, ///< The vehicle will not stop at any stations it passes except the destination.
 	ONSF_NO_STOP_AT_DESTINATION_STATION   = 2, ///< The vehicle will stop at any station it passes except the destination.
@@ -80,7 +96,7 @@ enum OrderNonStopFlags {
 /**
  * Where to stop the trains.
  */
-enum OrderStopLocation {
+enum OrderStopLocation : uint8_t {
 	OSL_PLATFORM_NEAR_END = 0, ///< Stop at the near end of the platform
 	OSL_PLATFORM_MIDDLE   = 1, ///< Stop at the middle of the platform
 	OSL_PLATFORM_FAR_END  = 2, ///< Stop at the far end of the platform
@@ -90,7 +106,7 @@ enum OrderStopLocation {
 /**
  * Reasons that could cause us to go to the depot.
  */
-enum OrderDepotTypeFlags {
+enum OrderDepotTypeFlags : uint8_t {
 	ODTF_MANUAL          = 0,      ///< Manually initiated order.
 	ODTFB_SERVICE        = 1 << 0, ///< This depot order is because of the servicing limit.
 	ODTFB_PART_OF_ORDERS = 1 << 1, ///< This depot order is because of a regular order.
@@ -99,7 +115,7 @@ enum OrderDepotTypeFlags {
 /**
  * Actions that can be performed when the vehicle enters the depot.
  */
-enum OrderDepotActionFlags {
+enum OrderDepotActionFlags : uint8_t {
 	ODATF_SERVICE_ONLY   = 0,      ///< Only service the vehicle.
 	ODATFB_HALT          = 1 << 0, ///< Service the vehicle and then halt it.
 	ODATFB_NEAREST_DEPOT = 1 << 1, ///< Send the vehicle to the nearest depot.
@@ -110,7 +126,7 @@ DECLARE_ENUM_AS_BIT_SET(OrderDepotActionFlags)
 /**
  * Variables (of a vehicle) to 'cause' skipping on.
  */
-enum OrderConditionVariable {
+enum OrderConditionVariable : uint8_t {
 	OCV_LOAD_PERCENTAGE,    ///< Skip based on the amount of load
 	OCV_RELIABILITY,        ///< Skip based on the reliability
 	OCV_MAX_SPEED,          ///< Skip based on the maximum speed
@@ -125,7 +141,7 @@ enum OrderConditionVariable {
 /**
  * Comparator for the skip reasoning.
  */
-enum OrderConditionComparator {
+enum OrderConditionComparator : uint8_t {
 	OCC_EQUALS,      ///< Skip if both values are equal
 	OCC_NOT_EQUALS,  ///< Skip if both values are not equal
 	OCC_LESS_THAN,   ///< Skip if the value is less than the limit
@@ -157,7 +173,7 @@ enum ModifyOrderFlags : uint8_t {
 /**
  * Depot action to switch to when doing a #MOF_DEPOT_ACTION.
  */
-enum OrderDepotAction {
+enum OrderDepotAction : uint8_t {
 	DA_ALWAYS_GO, ///< Always go to the depot
 	DA_SERVICE,   ///< Service only if needed
 	DA_STOP,      ///< Go to the depot and stop there

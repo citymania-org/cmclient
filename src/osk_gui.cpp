@@ -27,7 +27,7 @@
 std::string _keyboard_opt[2];
 static char32_t _keyboard[2][OSK_KEYBOARD_ENTRIES];
 
-enum KeyStateBits {
+enum KeyStateBits : uint8_t {
 	KEYS_NONE,
 	KEYS_SHIFT,
 	KEYS_CAPS
@@ -35,12 +35,12 @@ enum KeyStateBits {
 static uint8_t _keystate = KEYS_NONE;
 
 struct OskWindow : public Window {
-	StringID caption;      ///< the caption for this window.
-	QueryString *qs;       ///< text-input
-	WidgetID text_btn;     ///< widget number of parent's text field
-	Textbuf *text;         ///< pointer to parent's textbuffer (to update caret position)
-	std::string orig_str;  ///< Original string.
-	bool shift;            ///< Is the shift effectively pressed?
+	StringID caption{}; ///< the caption for this window.
+	QueryString *qs = nullptr; ///< text-input
+	WidgetID text_btn{}; ///< widget number of parent's text field
+	Textbuf *text = nullptr; ///< pointer to parent's textbuffer (to update caret position)
+	std::string orig_str{}; ///< Original string.
+	bool shift = false; ///< Is the shift effectively pressed?
 
 	OskWindow(WindowDesc &desc, Window *parent, WidgetID button) : Window(desc)
 	{
@@ -52,13 +52,13 @@ struct OskWindow : public Window {
 
 		assert(parent->querystrings.count(button) != 0);
 		this->qs         = parent->querystrings.find(button)->second;
-		this->caption = (par_wid->widget_data != STR_NULL) ? par_wid->widget_data : this->qs->caption;
+		this->caption = (par_wid->GetString() != STR_NULL) ? par_wid->GetString() : this->qs->caption;
 		this->text_btn   = button;
 		this->text       = &this->qs->text;
 		this->querystrings[WID_OSK_TEXT] = this->qs;
 
 		/* make a copy in case we need to reset later */
-		this->orig_str = this->qs->text.buf;
+		this->orig_str = this->qs->text.GetText();
 
 		this->InitNested(0);
 		this->SetFocusedWidget(WID_OSK_TEXT);
@@ -88,9 +88,11 @@ struct OskWindow : public Window {
 		this->SetWidgetLoweredState(WID_OSK_CAPS, HasBit(_keystate, KEYS_CAPS));
 	}
 
-	void SetStringParameters(WidgetID widget) const override
+	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
 	{
-		if (widget == WID_OSK_CAPTION) SetDParam(0, this->caption);
+		if (widget == WID_OSK_CAPTION) return GetString(this->caption);
+
+		return this->Window::GetWidgetString(widget, stringid);
 	}
 
 	void DrawWidget(const Rect &r, WidgetID widget) const override
@@ -157,7 +159,7 @@ struct OskWindow : public Window {
 				break;
 
 			case WID_OSK_OK:
-				if (!this->qs->orig.has_value() || this->qs->text.buf != this->qs->orig) {
+				if (!this->qs->orig.has_value() || this->qs->text.GetText() != this->qs->orig) {
 					/* pass information by simulating a button press on parent window */
 					if (this->qs->ok_button >= 0) {
 						this->parent->OnClick(pt, this->qs->ok_button, 1);
@@ -222,7 +224,7 @@ static const int KEY_PADDING = 6;     // Vertical padding for remaining key rows
  * @param widdata Data value of the key widget.
  * @note Key width is measured in 1/2 keys to allow for 1/2 key shifting between rows.
  */
-static void AddKey(std::unique_ptr<NWidgetHorizontal> &hor, int pad_y, int num_half, WidgetType widtype, WidgetID widnum, uint16_t widdata)
+static void AddKey(std::unique_ptr<NWidgetHorizontal> &hor, int pad_y, int num_half, WidgetType widtype, WidgetID widnum, const WidgetData &widdata)
 {
 	int key_width = HALF_KEY_WIDTH + (INTER_KEY_SPACE + HALF_KEY_WIDTH) * (num_half - 1);
 
@@ -244,9 +246,9 @@ static std::unique_ptr<NWidgetBase> MakeTopKeys()
 	auto hor = std::make_unique<NWidgetHorizontal>();
 	hor->SetPIP(0, INTER_KEY_SPACE, 0);
 
-	AddKey(hor, TOP_KEY_PADDING, 6 * 2, WWT_TEXTBTN,    WID_OSK_CANCEL,    STR_BUTTON_CANCEL);
-	AddKey(hor, TOP_KEY_PADDING, 6 * 2, WWT_TEXTBTN,    WID_OSK_OK,        STR_BUTTON_OK    );
-	AddKey(hor, TOP_KEY_PADDING, 2 * 2, WWT_PUSHIMGBTN, WID_OSK_BACKSPACE, SPR_OSK_BACKSPACE);
+	AddKey(hor, TOP_KEY_PADDING, 6 * 2, WWT_TEXTBTN,    WID_OSK_CANCEL,    WidgetData{.string = STR_BUTTON_CANCEL});
+	AddKey(hor, TOP_KEY_PADDING, 6 * 2, WWT_TEXTBTN,    WID_OSK_OK,        WidgetData{.string = STR_BUTTON_OK});
+	AddKey(hor, TOP_KEY_PADDING, 2 * 2, WWT_PUSHIMGBTN, WID_OSK_BACKSPACE, WidgetData{.sprite = SPR_OSK_BACKSPACE});
 	return hor;
 }
 
@@ -257,7 +259,7 @@ static std::unique_ptr<NWidgetBase> MakeNumberKeys()
 	hor->SetPIP(0, INTER_KEY_SPACE, 0);
 
 	for (WidgetID widnum = WID_OSK_NUMBERS_FIRST; widnum <= WID_OSK_NUMBERS_LAST; widnum++) {
-		AddKey(hor, KEY_PADDING, 2, WWT_PUSHBTN, widnum, 0x0);
+		AddKey(hor, KEY_PADDING, 2, WWT_PUSHBTN, widnum, {});
 	}
 	return hor;
 }
@@ -268,11 +270,11 @@ static std::unique_ptr<NWidgetBase> MakeQwertyKeys()
 	std::unique_ptr<NWidgetHorizontal> hor = std::make_unique<NWidgetHorizontalLTR>();
 	hor->SetPIP(0, INTER_KEY_SPACE, 0);
 
-	AddKey(hor, KEY_PADDING, 3, WWT_PUSHIMGBTN, WID_OSK_SPECIAL, SPR_OSK_SPECIAL);
+	AddKey(hor, KEY_PADDING, 3, WWT_PUSHIMGBTN, WID_OSK_SPECIAL, WidgetData{.sprite = SPR_OSK_SPECIAL});
 	for (WidgetID widnum = WID_OSK_QWERTY_FIRST; widnum <= WID_OSK_QWERTY_LAST; widnum++) {
-		AddKey(hor, KEY_PADDING, 2, WWT_PUSHBTN, widnum, 0x0);
+		AddKey(hor, KEY_PADDING, 2, WWT_PUSHBTN, widnum, {});
 	}
-	AddKey(hor, KEY_PADDING, 1, NWID_SPACER, 0, 0);
+	AddKey(hor, KEY_PADDING, 1, NWID_SPACER, 0, {});
 	return hor;
 }
 
@@ -282,9 +284,9 @@ static std::unique_ptr<NWidgetBase> MakeAsdfgKeys()
 	std::unique_ptr<NWidgetHorizontal> hor = std::make_unique<NWidgetHorizontalLTR>();
 	hor->SetPIP(0, INTER_KEY_SPACE, 0);
 
-	AddKey(hor, KEY_PADDING, 4, WWT_IMGBTN, WID_OSK_CAPS, SPR_OSK_CAPS);
+	AddKey(hor, KEY_PADDING, 4, WWT_IMGBTN, WID_OSK_CAPS, WidgetData{.sprite = SPR_OSK_CAPS});
 	for (WidgetID widnum = WID_OSK_ASDFG_FIRST; widnum <= WID_OSK_ASDFG_LAST; widnum++) {
-		AddKey(hor, KEY_PADDING, 2, WWT_PUSHBTN, widnum, 0x0);
+		AddKey(hor, KEY_PADDING, 2, WWT_PUSHBTN, widnum, {});
 	}
 	return hor;
 }
@@ -295,11 +297,11 @@ static std::unique_ptr<NWidgetBase> MakeZxcvbKeys()
 	std::unique_ptr<NWidgetHorizontal> hor = std::make_unique<NWidgetHorizontalLTR>();
 	hor->SetPIP(0, INTER_KEY_SPACE, 0);
 
-	AddKey(hor, KEY_PADDING, 3, WWT_IMGBTN, WID_OSK_SHIFT, SPR_OSK_SHIFT);
+	AddKey(hor, KEY_PADDING, 3, WWT_IMGBTN, WID_OSK_SHIFT, WidgetData{.sprite = SPR_OSK_SHIFT});
 	for (WidgetID widnum = WID_OSK_ZXCVB_FIRST; widnum <= WID_OSK_ZXCVB_LAST; widnum++) {
-		AddKey(hor, KEY_PADDING, 2, WWT_PUSHBTN, widnum, 0x0);
+		AddKey(hor, KEY_PADDING, 2, WWT_PUSHBTN, widnum, {});
 	}
-	AddKey(hor, KEY_PADDING, 1, NWID_SPACER, 0, 0);
+	AddKey(hor, KEY_PADDING, 1, NWID_SPACER, 0, {});
 	return hor;
 }
 
@@ -309,17 +311,17 @@ static std::unique_ptr<NWidgetBase> MakeSpacebarKeys()
 	auto hor = std::make_unique<NWidgetHorizontal>();
 	hor->SetPIP(0, INTER_KEY_SPACE, 0);
 
-	AddKey(hor, KEY_PADDING,  8, NWID_SPACER, 0, 0);
-	AddKey(hor, KEY_PADDING, 13, WWT_PUSHTXTBTN, WID_OSK_SPACE, STR_EMPTY);
-	AddKey(hor, KEY_PADDING,  3, NWID_SPACER, 0, 0);
-	AddKey(hor, KEY_PADDING,  2, WWT_PUSHIMGBTN, WID_OSK_LEFT,  SPR_OSK_LEFT);
-	AddKey(hor, KEY_PADDING,  2, WWT_PUSHIMGBTN, WID_OSK_RIGHT, SPR_OSK_RIGHT);
+	AddKey(hor, KEY_PADDING,  8, NWID_SPACER, 0, {});
+	AddKey(hor, KEY_PADDING, 13, WWT_PUSHTXTBTN, WID_OSK_SPACE, WidgetData{.string = STR_EMPTY});
+	AddKey(hor, KEY_PADDING,  3, NWID_SPACER, 0, {});
+	AddKey(hor, KEY_PADDING,  2, WWT_PUSHIMGBTN, WID_OSK_LEFT,  WidgetData{.sprite = SPR_OSK_LEFT});
+	AddKey(hor, KEY_PADDING,  2, WWT_PUSHIMGBTN, WID_OSK_RIGHT, WidgetData{.sprite = SPR_OSK_RIGHT});
 	return hor;
 }
 
 
 static constexpr NWidgetPart _nested_osk_widgets[] = {
-	NWidget(WWT_CAPTION, COLOUR_GREY, WID_OSK_CAPTION), SetDataTip(STR_JUST_STRING, STR_NULL), SetTextStyle(TC_WHITE),
+	NWidget(WWT_CAPTION, COLOUR_GREY, WID_OSK_CAPTION), SetTextStyle(TC_WHITE),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(WWT_EDITBOX, COLOUR_GREY, WID_OSK_TEXT), SetMinimalSize(252, 0), SetPadding(2, 2, 2, 2),
 	EndContainer(),
@@ -338,7 +340,7 @@ static constexpr NWidgetPart _nested_osk_widgets[] = {
 static WindowDesc _osk_desc(
 	WDP_CENTER, nullptr, 0, 0,
 	WC_OSK, WC_NONE,
-	0,
+	{},
 	_nested_osk_widgets
 );
 
@@ -412,7 +414,7 @@ void UpdateOSKOriginalText(const Window *parent, WidgetID button)
 	OskWindow *osk = dynamic_cast<OskWindow *>(FindWindowById(WC_OSK, 0));
 	if (osk == nullptr || osk->parent != parent || osk->text_btn != button) return;
 
-	osk->orig_str = osk->qs->text.buf;
+	osk->orig_str = osk->qs->text.GetText();
 
 	osk->SetDirty();
 }

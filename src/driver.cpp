@@ -13,11 +13,12 @@
 #include "error_func.h"
 #include "sound/sound_driver.hpp"
 #include "music/music_driver.hpp"
+#include "strings_func.h"
 #include "video/video_driver.hpp"
 #include "string_func.h"
-#include "table/strings.h"
 #include "fileio_func.h"
-#include <sstream>
+
+#include "table/strings.h"
 
 #include "safeguards.h"
 
@@ -128,8 +129,8 @@ bool DriverFactoryBase::SelectDriverImpl(const std::string &name, Driver::Type t
 						Debug(driver, 1, "Probing {} driver '{}' skipped due to earlier crash", GetDriverTypeName(type), d->name);
 
 						_video_hw_accel = false;
-						ErrorMessageData msg(STR_VIDEO_DRIVER_ERROR, STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH, true);
-						ScheduleErrorMessage(msg);
+						ErrorMessageData msg(GetEncodedString(STR_VIDEO_DRIVER_ERROR), GetEncodedString(STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH), true);
+						ScheduleErrorMessage(std::move(msg));
 						continue;
 					}
 
@@ -137,25 +138,23 @@ bool DriverFactoryBase::SelectDriverImpl(const std::string &name, Driver::Type t
 					FioFOpenFile(HWACCELERATION_TEST_FILE, "w", BASE_DIR);
 				}
 
-				Driver *oldd = *GetActiveDriver(type);
-				Driver *newd = d->CreateInstance();
-				*GetActiveDriver(type) = newd;
+				/* Keep old driver in case we need to switch back, or may still need to process an OS callback. */
+				auto oldd = std::move(GetActiveDriver(type));
+				GetActiveDriver(type) = d->CreateInstance();
 
-				auto err = newd->Start({});
+				auto err = GetActiveDriver(type)->Start({});
 				if (!err) {
 					Debug(driver, 1, "Successfully probed {} driver '{}'", GetDriverTypeName(type), d->name);
-					delete oldd;
 					return true;
 				}
 
-				*GetActiveDriver(type) = oldd;
+				GetActiveDriver(type) = std::move(oldd);
 				Debug(driver, 1, "Probing {} driver '{}' failed with error: {}", GetDriverTypeName(type), d->name, *err);
-				delete newd;
 
 				if (type == Driver::DT_VIDEO && _video_hw_accel && d->UsesHardwareAcceleration()) {
 					_video_hw_accel = false;
-					ErrorMessageData msg(STR_VIDEO_DRIVER_ERROR, STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION, true);
-					ScheduleErrorMessage(msg);
+					ErrorMessageData msg(GetEncodedString(STR_VIDEO_DRIVER_ERROR), GetEncodedString(STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION), true);
+					ScheduleErrorMessage(std::move(msg));
 				}
 			}
 		}
@@ -183,17 +182,14 @@ bool DriverFactoryBase::SelectDriverImpl(const std::string &name, Driver::Type t
 			if (!StrEqualsIgnoreCase(dname, d->name)) continue;
 
 			/* Found our driver, let's try it */
-			Driver *newd = d->CreateInstance();
-
+			auto newd = d->CreateInstance();
 			auto err = newd->Start(parms);
 			if (err) {
-				delete newd;
 				UserError("Unable to load driver '{}'. The error was: {}", d->name, *err);
 			}
 
 			Debug(driver, 1, "Successfully loaded {} driver '{}'", GetDriverTypeName(type), d->name);
-			delete *GetActiveDriver(type);
-			*GetActiveDriver(type) = newd;
+			GetActiveDriver(type) = std::move(newd);
 			return true;
 		}
 		UserError("No such {} driver: {}\n", GetDriverTypeName(type), dname);

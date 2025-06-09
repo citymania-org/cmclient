@@ -24,6 +24,7 @@
 #include "../../roadveh_cmd.h"
 #include "../../train_cmd.h"
 #include "../../vehicle_cmd.h"
+
 #include "table/strings.h"
 
 #include "../../safeguards.h"
@@ -46,7 +47,7 @@
 {
 	if (!IsValidVehicle(vehicle_id)) return ScriptCompany::COMPANY_INVALID;
 
-	return static_cast<ScriptCompany::CompanyID>((int)::Vehicle::Get(vehicle_id)->owner);
+	return ScriptCompany::ToScriptCompanyID(::Vehicle::Get(vehicle_id)->owner);
 }
 
 /* static */ SQInteger ScriptVehicle::GetNumWagons(VehicleID vehicle_id)
@@ -71,11 +72,11 @@
 	return v->IsGroundVehicle() ? v->GetGroundVehicleCache()->cached_total_length : -1;
 }
 
-/* static */ VehicleID ScriptVehicle::_BuildVehicleInternal(TileIndex depot, EngineID engine_id, CargoID cargo)
+/* static */ VehicleID ScriptVehicle::_BuildVehicleInternal(TileIndex depot, EngineID engine_id, CargoType cargo)
 {
 	EnforceCompanyModeValid(VEHICLE_INVALID);
 	EnforcePrecondition(VEHICLE_INVALID, ScriptEngine::IsBuildable(engine_id));
-	EnforcePrecondition(VEHICLE_INVALID, !::IsValidCargoID(cargo) || ScriptCargo::IsValidCargo(cargo));
+	EnforcePrecondition(VEHICLE_INVALID, !::IsValidCargoType(cargo) || ScriptCargo::IsValidCargo(cargo));
 
 	::VehicleType type = ::Engine::Get(engine_id)->type;
 
@@ -84,7 +85,7 @@
 	if (!ScriptObject::Command<CMD_BUILD_VEHICLE>::Do(&ScriptInstance::DoCommandReturnVehicleID, depot, engine_id, true, cargo, INVALID_CLIENT_ID)) return VEHICLE_INVALID;
 
 	/* In case of test-mode, we return VehicleID 0 */
-	return 0;
+	return VehicleID::Begin();
 }
 
 /* static */ VehicleID ScriptVehicle::BuildVehicle(TileIndex depot, EngineID engine_id)
@@ -92,39 +93,39 @@
 	return _BuildVehicleInternal(depot, engine_id, INVALID_CARGO);
 }
 
-/* static */ VehicleID ScriptVehicle::BuildVehicleWithRefit(TileIndex depot, EngineID engine_id, CargoID cargo)
+/* static */ VehicleID ScriptVehicle::BuildVehicleWithRefit(TileIndex depot, EngineID engine_id, CargoType cargo)
 {
 	EnforcePrecondition(VEHICLE_INVALID, ScriptCargo::IsValidCargo(cargo));
 	return _BuildVehicleInternal(depot, engine_id, cargo);
 }
 
-/* static */ SQInteger ScriptVehicle::GetBuildWithRefitCapacity(TileIndex depot, EngineID engine_id, CargoID cargo)
+/* static */ SQInteger ScriptVehicle::GetBuildWithRefitCapacity(TileIndex depot, EngineID engine_id, CargoType cargo)
 {
 	if (!ScriptEngine::IsBuildable(engine_id)) return -1;
 	if (!ScriptCargo::IsValidCargo(cargo)) return -1;
 
-	auto [res, veh_id, refit_capacity, refit_mail, cargo_capacities] = ::Command<CMD_BUILD_VEHICLE>::Do(DC_QUERY_COST, depot, engine_id, true, cargo, INVALID_CLIENT_ID);
+	auto [res, veh_id, refit_capacity, refit_mail, cargo_capacities] = ::Command<CMD_BUILD_VEHICLE>::Do(DoCommandFlag::QueryCost, depot, engine_id, true, cargo, INVALID_CLIENT_ID);
 	return res.Succeeded() ? refit_capacity : -1;
 }
 
 /* static */ VehicleID ScriptVehicle::CloneVehicle(TileIndex depot, VehicleID vehicle_id, bool share_orders)
 {
-	EnforceCompanyModeValid(false);
-	EnforcePrecondition(false, IsPrimaryVehicle(vehicle_id));
+	EnforceCompanyModeValid(VEHICLE_INVALID);
+	EnforcePrecondition(VEHICLE_INVALID, IsPrimaryVehicle(vehicle_id));
 
 	if (!ScriptObject::Command<CMD_CLONE_VEHICLE>::Do(&ScriptInstance::DoCommandReturnVehicleID, depot, vehicle_id, share_orders)) return VEHICLE_INVALID;
 
 	/* In case of test-mode, we return VehicleID 0 */
-	return 0;
+	return VehicleID::Begin();
 }
 
 /* static */ bool ScriptVehicle::_MoveWagonInternal(VehicleID source_vehicle_id, SQInteger source_wagon, bool move_attached_wagons, SQInteger dest_vehicle_id, SQInteger dest_wagon)
 {
 	EnforceCompanyModeValid(false);
 	EnforcePrecondition(false, IsValidVehicle(source_vehicle_id) && source_wagon < GetNumWagons(source_vehicle_id));
-	EnforcePrecondition(false, dest_vehicle_id == -1 || (IsValidVehicle(dest_vehicle_id) && dest_wagon < GetNumWagons(dest_vehicle_id)));
+	EnforcePrecondition(false, dest_vehicle_id == -1 || (IsValidVehicle(static_cast<VehicleID>(dest_vehicle_id)) && dest_wagon < GetNumWagons(static_cast<VehicleID>(dest_vehicle_id))));
 	EnforcePrecondition(false, ::Vehicle::Get(source_vehicle_id)->type == VEH_TRAIN);
-	EnforcePrecondition(false, dest_vehicle_id == -1 || ::Vehicle::Get(dest_vehicle_id)->type == VEH_TRAIN);
+	EnforcePrecondition(false, dest_vehicle_id == -1 || ::Vehicle::Get(static_cast<VehicleID>(dest_vehicle_id))->type == VEH_TRAIN);
 
 	const Train *v = ::Train::Get(source_vehicle_id);
 	while (source_wagon-- > 0) v = v->GetNextUnit();
@@ -134,7 +135,7 @@
 		while (dest_wagon-- > 0) w = w->GetNextUnit();
 	}
 
-	return ScriptObject::Command<CMD_MOVE_RAIL_VEHICLE>::Do(v->index, w == nullptr ? ::INVALID_VEHICLE : w->index, move_attached_wagons);
+	return ScriptObject::Command<CMD_MOVE_RAIL_VEHICLE>::Do(v->index, w == nullptr ? VehicleID::Invalid() : w->index, move_attached_wagons);
 }
 
 /* static */ bool ScriptVehicle::MoveWagon(VehicleID source_vehicle_id, SQInteger source_wagon, SQInteger dest_vehicle_id, SQInteger dest_wagon)
@@ -147,16 +148,16 @@
 	return _MoveWagonInternal(source_vehicle_id, source_wagon, true, dest_vehicle_id, dest_wagon);
 }
 
-/* static */ SQInteger ScriptVehicle::GetRefitCapacity(VehicleID vehicle_id, CargoID cargo)
+/* static */ SQInteger ScriptVehicle::GetRefitCapacity(VehicleID vehicle_id, CargoType cargo)
 {
 	if (!IsValidVehicle(vehicle_id)) return -1;
 	if (!ScriptCargo::IsValidCargo(cargo)) return -1;
 
-	auto [res, refit_capacity, refit_mail, cargo_capacities] = ::Command<CMD_REFIT_VEHICLE>::Do(DC_QUERY_COST, vehicle_id, cargo, 0, false, false, 0);
+	auto [res, refit_capacity, refit_mail, cargo_capacities] = ::Command<CMD_REFIT_VEHICLE>::Do(DoCommandFlag::QueryCost, vehicle_id, cargo, 0, false, false, 0);
 	return res.Succeeded() ? refit_capacity : -1;
 }
 
-/* static */ bool ScriptVehicle::RefitVehicle(VehicleID vehicle_id, CargoID cargo)
+/* static */ bool ScriptVehicle::RefitVehicle(VehicleID vehicle_id, CargoType cargo)
 {
 	EnforceCompanyModeValid(false);
 	EnforcePrecondition(false, IsValidVehicle(vehicle_id) && ScriptCargo::IsValidCargo(cargo));
@@ -201,7 +202,7 @@
 	EnforceCompanyModeValid(false);
 	EnforcePrecondition(false, IsPrimaryVehicle(vehicle_id));
 
-	return ScriptObject::Command<CMD_SEND_VEHICLE_TO_DEPOT>::Do(vehicle_id, DepotCommand::None, {});
+	return ScriptObject::Command<CMD_SEND_VEHICLE_TO_DEPOT>::Do(vehicle_id, DepotCommandFlags{}, {});
 }
 
 /* static */ bool ScriptVehicle::SendVehicleToDepotForServicing(VehicleID vehicle_id)
@@ -209,7 +210,7 @@
 	EnforceCompanyModeValid(false);
 	EnforcePrecondition(false, IsPrimaryVehicle(vehicle_id));
 
-	return ScriptObject::Command<CMD_SEND_VEHICLE_TO_DEPOT>::Do(vehicle_id, DepotCommand::Service, {});
+	return ScriptObject::Command<CMD_SEND_VEHICLE_TO_DEPOT>::Do(vehicle_id, DepotCommandFlag::Service, {});
 }
 
 /* static */ bool ScriptVehicle::IsInDepot(VehicleID vehicle_id)
@@ -275,15 +276,15 @@
 
 /* static */ EngineID ScriptVehicle::GetEngineType(VehicleID vehicle_id)
 {
-	if (!IsValidVehicle(vehicle_id)) return INVALID_ENGINE;
+	if (!IsValidVehicle(vehicle_id)) return ::EngineID::Invalid();
 
 	return ::Vehicle::Get(vehicle_id)->engine_type;
 }
 
 /* static */ EngineID ScriptVehicle::GetWagonEngineType(VehicleID vehicle_id, SQInteger wagon)
 {
-	if (!IsValidVehicle(vehicle_id)) return INVALID_ENGINE;
-	if (wagon >= GetNumWagons(vehicle_id)) return INVALID_ENGINE;
+	if (!IsValidVehicle(vehicle_id)) return ::EngineID::Invalid();
+	if (wagon >= GetNumWagons(vehicle_id)) return ::EngineID::Invalid();
 
 	const Vehicle *v = ::Vehicle::Get(vehicle_id);
 	if (v->type == VEH_TRAIN) {
@@ -303,8 +304,7 @@
 {
 	if (!IsPrimaryVehicle(vehicle_id)) return std::nullopt;
 
-	::SetDParam(0, vehicle_id);
-	return GetString(STR_VEHICLE_NAME);
+	return ::StrMakeValid(::GetString(STR_VEHICLE_NAME, vehicle_id));
 }
 
 /* static */ SQInteger ScriptVehicle::GetAge(VehicleID vehicle_id)
@@ -345,7 +345,7 @@
 	if (!IsPrimaryVehicle(vehicle_id)) return -1;
 
 	const ::Vehicle *v = ::Vehicle::Get(vehicle_id);
-	return (v->vehstatus & (::VS_STOPPED | ::VS_CRASHED)) == 0 ? v->GetDisplaySpeed() : 0; // km-ish/h
+	return !v->vehstatus.Any({::VehState::Stopped, ::VehState::Crashed}) ? v->GetDisplaySpeed() : 0; // km-ish/h
 }
 
 /* static */ ScriptVehicle::VehicleState ScriptVehicle::GetState(VehicleID vehicle_id)
@@ -353,12 +353,12 @@
 	if (!IsValidVehicle(vehicle_id)) return ScriptVehicle::VS_INVALID;
 
 	const Vehicle *v = ::Vehicle::Get(vehicle_id);
-	uint8_t vehstatus = v->vehstatus;
+	VehStates vehstatus = v->vehstatus;
 
-	if (vehstatus & ::VS_CRASHED) return ScriptVehicle::VS_CRASHED;
+	if (vehstatus.Test(::VehState::Crashed)) return ScriptVehicle::VS_CRASHED;
 	if (v->breakdown_ctr != 0) return ScriptVehicle::VS_BROKEN;
 	if (v->IsStoppedInDepot()) return ScriptVehicle::VS_IN_DEPOT;
-	if (vehstatus & ::VS_STOPPED) return ScriptVehicle::VS_STOPPED;
+	if (vehstatus.Test(::VehState::Stopped)) return ScriptVehicle::VS_STOPPED;
 	if (v->current_order.IsType(OT_LOADING)) return ScriptVehicle::VS_AT_STATION;
 	return ScriptVehicle::VS_RUNNING;
 }
@@ -412,7 +412,7 @@
 	return (ScriptRoad::RoadType)(int)(::RoadVehicle::Get(vehicle_id))->roadtype;
 }
 
-/* static */ SQInteger ScriptVehicle::GetCapacity(VehicleID vehicle_id, CargoID cargo)
+/* static */ SQInteger ScriptVehicle::GetCapacity(VehicleID vehicle_id, CargoType cargo)
 {
 	if (!IsValidVehicle(vehicle_id)) return -1;
 	if (!ScriptCargo::IsValidCargo(cargo)) return -1;
@@ -425,7 +425,7 @@
 	return amount;
 }
 
-/* static */ SQInteger ScriptVehicle::GetCargoLoad(VehicleID vehicle_id, CargoID cargo)
+/* static */ SQInteger ScriptVehicle::GetCargoLoad(VehicleID vehicle_id, CargoType cargo)
 {
 	if (!IsValidVehicle(vehicle_id)) return -1;
 	if (!ScriptCargo::IsValidCargo(cargo)) return -1;

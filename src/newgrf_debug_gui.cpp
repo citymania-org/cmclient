@@ -32,6 +32,7 @@
 #include "newgrf_act5.h"
 #include "newgrf_airport.h"
 #include "newgrf_airporttiles.h"
+#include "newgrf_badge.h"
 #include "newgrf_debug.h"
 #include "newgrf_object.h"
 #include "newgrf_spritegroup.h"
@@ -73,11 +74,13 @@ static inline uint GetInspectWindowNumber(GrfSpecFeature feature, uint index)
 	return (feature << 24) | index;
 }
 
+static inline uint GetInspectWindowNumber(GrfSpecFeature feature, ConvertibleThroughBase auto index) { return GetInspectWindowNumber(feature, index.base()); }
+
 /**
  * The type of a property to show. This is used to
  * provide an appropriate representation in the GUI.
  */
-enum NIType {
+enum NIType : uint8_t {
 	NIT_INT,   ///< The property is a simple integer
 	NIT_CARGO, ///< The property is a cargo
 };
@@ -86,7 +89,7 @@ typedef const void *NIOffsetProc(const void *b);
 
 /** Representation of the data from a NewGRF property. */
 struct NIProperty {
-	const char *name;          ///< A (human readable) name for the property
+	std::string_view name;          ///< A (human readable) name for the property
 	NIOffsetProc *offset_proc; ///< Callback proc to get the actual variable address in memory
 	uint8_t read_size;            ///< Number of bytes (i.e. byte, word, dword etc)
 	uint8_t prop;                 ///< The number of the property
@@ -99,18 +102,27 @@ struct NIProperty {
  * information on when they actually apply.
  */
 struct NICallback {
-	const char *name;          ///< The human readable name of the callback
+	std::string_view name;          ///< The human readable name of the callback
 	NIOffsetProc *offset_proc; ///< Callback proc to get the actual variable address in memory
 	uint8_t read_size;            ///< The number of bytes (i.e. byte, word, dword etc) to read
-	uint8_t cb_bit;               ///< The bit that needs to be set for this callback to be enabled
+	std::variant<
+		std::monostate,
+		VehicleCallbackMask,
+		StationCallbackMask,
+		RoadStopCallbackMask,
+		HouseCallbackMask,
+		CanalCallbackMask,
+		CargoCallbackMask,
+		IndustryCallbackMask,
+		IndustryTileCallbackMask,
+		ObjectCallbackMask,
+		AirportTileCallbackMask> cb_bit; ///< The bit that needs to be set for this callback to be enabled
 	uint16_t cb_id;              ///< The number of the callback
 };
-/** Mask to show no bit needs to be enabled for the callback. */
-static const int CBM_NO_BIT = UINT8_MAX;
 
 /** Representation on the NewGRF variables. */
 struct NIVariable {
-	const char *name;
+	std::string_view name;
 	uint8_t var;
 };
 
@@ -149,10 +161,10 @@ public:
 	virtual const void *GetSpec(uint index) const = 0;
 
 	/**
-	 * Set the string parameters to write the right data for a STRINGn.
-	 * @param index the index to get the string parameters for.
+	 * Get the name of this item.
+	 * @param index the index to get the name for.
 	 */
-	virtual void SetStringParameters(uint index) const = 0;
+	virtual std::string GetName(uint index) const = 0;
 
 	/**
 	 * Get the GRFID of the file that includes this item.
@@ -160,6 +172,13 @@ public:
 	 * @return GRFID of the item. 0 means that the item is not inspectable.
 	 */
 	virtual uint32_t GetGRFID(uint index) const = 0;
+
+	/**
+	 * Get the list of badges of this item.
+	 * @param index index to check.
+	 * @return List of badges of the item.
+	 */
+	virtual std::span<const BadgeID> GetBadges(uint index) const = 0;
 
 	/**
 	 * Resolve (action2) variable for a given index.
@@ -190,42 +209,15 @@ public:
 	{
 		return {};
 	}
-
-protected:
-	/**
-	 * Helper to make setting the strings easier.
-	 * @param string the string to actually draw.
-	 * @param index  the (instance) index for the string.
-	 */
-	void SetSimpleStringParameters(StringID string, uint32_t index) const
-	{
-		SetDParam(0, string);
-		SetDParam(1, index);
-	}
-
-
-	/**
-	 * Helper to make setting the strings easier for objects at a specific tile.
-	 * @param string the string to draw the object's name
-	 * @param index  the (instance) index for the string.
-	 * @param tile   the tile the object is at
-	 */
-	void SetObjectAtStringParameters(StringID string, uint32_t index, TileIndex tile) const
-	{
-		SetDParam(0, STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT);
-		SetDParam(1, string);
-		SetDParam(2, index);
-		SetDParam(3, tile);
-	}
 };
 
 
 /** Container for all information for a given feature. */
 struct NIFeature {
-	const NIProperty *properties; ///< The properties associated with this feature.
-	const NICallback *callbacks;  ///< The callbacks associated with this feature.
-	const NIVariable *variables;  ///< The variables associated with this feature.
-	const NIHelper   *helper;     ///< The class container all helper functions.
+	std::span<const NIProperty> properties; ///< The properties associated with this feature.
+	std::span<const NICallback> callbacks; ///< The callbacks associated with this feature.
+	std::span<const NIVariable> variables; ///< The variables associated with this feature.
+	std::unique_ptr<const NIHelper> helper; ///< The class container all helper functions.
 };
 
 /* Load all the NewGRF debug data; externalised as it is just a huge bunch of tables. */
@@ -258,9 +250,9 @@ static inline const NIFeature *GetFeature(uint window_number)
  * @pre GetFeature(window_number) != nullptr
  * @return the NIHelper
  */
-static inline const NIHelper *GetFeatureHelper(uint window_number)
+static inline const NIHelper &GetFeatureHelper(uint window_number)
 {
-	return GetFeature(window_number)->helper;
+	return *GetFeature(window_number)->helper;
 }
 
 /** Window used for inspecting NewGRFs. */
@@ -269,15 +261,15 @@ struct NewGRFInspectWindow : Window {
 	static uint32_t var60params[GSF_FAKE_END][0x20];
 
 	/** GRFID of the caller of this window, 0 if it has no caller. */
-	uint32_t caller_grfid;
+	uint32_t caller_grfid = 0;
 
 	/** For ground vehicles: Index in vehicle chain. */
-	uint chain_index;
+	uint chain_index = 0;
 
 	/** The currently edited parameter, to update the right one. */
-	uint8_t current_edit_param;
+	uint8_t current_edit_param = 0;
 
-	Scrollbar *vscroll;
+	Scrollbar *vscroll = nullptr;
 
 	/**
 	 * Check whether the given variable has a parameter.
@@ -319,7 +311,7 @@ struct NewGRFInspectWindow : Window {
 			assert(this->HasChainIndex());
 			const Vehicle *v = Vehicle::Get(index);
 			v = v->Move(this->chain_index);
-			if (v != nullptr) index = v->index;
+			if (v != nullptr) index = v->index.base();
 		}
 		return index;
 	}
@@ -345,16 +337,16 @@ struct NewGRFInspectWindow : Window {
 		this->FinishInitNested(wno);
 
 		this->vscroll->SetCount(0);
-		this->SetWidgetDisabledState(WID_NGRFI_PARENT, GetFeatureHelper(this->window_number)->GetParent(this->GetFeatureIndex()) == UINT32_MAX);
+		this->SetWidgetDisabledState(WID_NGRFI_PARENT, GetFeatureHelper(this->window_number).GetParent(this->GetFeatureIndex()) == UINT32_MAX);
 
 		this->OnInvalidateData(0, true);
 	}
 
-	void SetStringParameters(WidgetID widget) const override
+	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
 	{
-		if (widget != WID_NGRFI_CAPTION) return;
+		if (widget != WID_NGRFI_CAPTION) return this->Window::GetWidgetString(widget, stringid);
 
-		GetFeatureHelper(this->window_number)->SetStringParameters(this->GetFeatureIndex());
+		return GetFeatureHelper(this->window_number).GetName(this->GetFeatureIndex());
 	}
 
 	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
@@ -421,13 +413,22 @@ struct NewGRFInspectWindow : Window {
 		GrfSpecFeature f = GetFeatureNum(this->window_number);
 		int h = GetVehicleImageCellSize((VehicleType)(VEH_TRAIN + (f - GSF_TRAINS)), EIT_IN_DEPOT).height;
 		int y = CenterBounds(br.top, br.bottom, h);
-		DrawVehicleImage(v->First(), br, INVALID_VEHICLE, EIT_IN_DETAILS, skip);
+		DrawVehicleImage(v->First(), br, VehicleID::Invalid(), EIT_IN_DETAILS, skip);
 
 		/* Highlight the articulated part (this is different to the whole-vehicle highlighting of DrawVehicleImage */
 		if (_current_text_dir == TD_RTL) {
-			DrawFrameRect(r.right - sel_end + skip, y, r.right - sel_start + skip, y + h, COLOUR_WHITE, FR_BORDERONLY);
+			DrawFrameRect(r.right - sel_end + skip, y, r.right - sel_start + skip, y + h, COLOUR_WHITE, FrameFlag::BorderOnly);
 		} else {
-			DrawFrameRect(r.left + sel_start - skip, y, r.left + sel_end - skip, y + h, COLOUR_WHITE, FR_BORDERONLY);
+			DrawFrameRect(r.left + sel_start - skip, y, r.left + sel_end - skip, y + h, COLOUR_WHITE, FrameFlag::BorderOnly);
+		}
+	}
+
+	std::string GetPropertyString(const NIProperty &nip, uint value) const
+	{
+		switch (nip.type) {
+			case NIT_INT: return GetString(STR_JUST_INT, value);
+			case NIT_CARGO: return GetString(IsValidCargoType(value) ? CargoSpec::Get(value)->name : STR_QUANTITY_N_A);
+			default: NOT_REACHED();
 		}
 	}
 
@@ -439,32 +440,32 @@ struct NewGRFInspectWindow : Window {
 	{
 		uint index = this->GetFeatureIndex();
 		const NIFeature *nif  = GetFeature(this->window_number);
-		const NIHelper *nih   = nif->helper;
-		const void *base      = nih->GetInstance(index);
-		const void *base_spec = nih->GetSpec(index);
+		const NIHelper &nih   = *nif->helper;
+		const void *base      = nih.GetInstance(index);
+		const void *base_spec = nih.GetSpec(index);
 
 		uint i = 0;
-		if (nif->variables != nullptr) {
+		if (!nif->variables.empty()) {
 			this->DrawString(r, i++, "Variables:");
-			for (const NIVariable *niv = nif->variables; niv->name != nullptr; niv++) {
+			for (const NIVariable &niv : nif->variables) {
 				bool avail = true;
-				uint param = HasVariableParameter(niv->var) ? NewGRFInspectWindow::var60params[GetFeatureNum(this->window_number)][niv->var - 0x60] : 0;
-				uint value = nih->Resolve(index, niv->var, param, avail);
+				uint param = HasVariableParameter(niv.var) ? NewGRFInspectWindow::var60params[GetFeatureNum(this->window_number)][niv.var - 0x60] : 0;
+				uint value = nih.Resolve(index, niv.var, param, avail);
 
 				if (!avail) continue;
 
-				if (HasVariableParameter(niv->var)) {
-					this->DrawString(r, i++, fmt::format("  {:02x}[{:02x}]: {:08x} ({})", niv->var, param, value, niv->name));
+				if (HasVariableParameter(niv.var)) {
+					this->DrawString(r, i++, fmt::format("  {:02x}[{:02x}]: {:08x} ({})", niv.var, param, value, niv.name));
 				} else {
-					this->DrawString(r, i++, fmt::format("  {:02x}: {:08x} ({})", niv->var, value, niv->name));
+					this->DrawString(r, i++, fmt::format("  {:02x}: {:08x} ({})", niv.var, value, niv.name));
 				}
 			}
 		}
 
-		auto psa = nih->GetPSA(index, this->caller_grfid);
+		auto psa = nih.GetPSA(index, this->caller_grfid);
 		if (!psa.empty()) {
-			if (nih->PSAWithParameter()) {
-				this->DrawString(r, i++, fmt::format("Persistent storage [{:08X}]:", BSWAP32(this->caller_grfid)));
+			if (nih.PSAWithParameter()) {
+				this->DrawString(r, i++, fmt::format("Persistent storage [{:08X}]:", std::byteswap(this->caller_grfid)));
 			} else {
 				this->DrawString(r, i++, "Persistent storage:");
 			}
@@ -474,54 +475,64 @@ struct NewGRFInspectWindow : Window {
 			}
 		}
 
-		if (nif->properties != nullptr) {
+		auto badges = nih.GetBadges(index);
+		if (!badges.empty()) {
+			this->DrawString(r, i++, "Badges:");
+			for (const BadgeID &badge_index : badges) {
+				const Badge *badge = GetBadge(badge_index);
+				this->DrawString(r, i++, fmt::format("  {}: {}", StrMakeValid(badge->label), GetString(badge->name)));
+			}
+		}
+
+		if (!nif->properties.empty()) {
 			this->DrawString(r, i++, "Properties:");
-			for (const NIProperty *nip = nif->properties; nip->name != nullptr; nip++) {
-				const void *ptr = nip->offset_proc(base);
+			for (const NIProperty &nip : nif->properties) {
+				const void *ptr = nip.offset_proc(base);
 				uint value;
-				switch (nip->read_size) {
+				switch (nip.read_size) {
 					case 1: value = *(const uint8_t  *)ptr; break;
 					case 2: value = *(const uint16_t *)ptr; break;
 					case 4: value = *(const uint32_t *)ptr; break;
 					default: NOT_REACHED();
 				}
 
-				StringID string;
-				SetDParam(0, value);
-				switch (nip->type) {
-					case NIT_INT:
-						string = STR_JUST_INT;
-						break;
-
-					case NIT_CARGO:
-						string = IsValidCargoID(value) ? CargoSpec::Get(value)->name : STR_QUANTITY_N_A;
-						break;
-
-					default:
-						NOT_REACHED();
-				}
-
-				this->DrawString(r, i++, fmt::format("  {:02x}: {} ({})", nip->prop, GetString(string), nip->name));
+				this->DrawString(r, i++, fmt::format("  {:02x}: {} ({})", nip.prop, this->GetPropertyString(nip, value), nip.name));
 			}
 		}
 
-		if (nif->callbacks != nullptr) {
+		if (!nif->callbacks.empty()) {
 			this->DrawString(r, i++, "Callbacks:");
-			for (const NICallback *nic = nif->callbacks; nic->name != nullptr; nic++) {
-				if (nic->cb_bit != CBM_NO_BIT) {
-					const void *ptr = nic->offset_proc(base_spec);
+			for (const NICallback &nic : nif->callbacks) {
+				if (!std::holds_alternative<std::monostate>(nic.cb_bit)) {
+					const void *ptr = nic.offset_proc(base_spec);
 					uint value;
-					switch (nic->read_size) {
+					switch (nic.read_size) {
 						case 1: value = *(const uint8_t  *)ptr; break;
 						case 2: value = *(const uint16_t *)ptr; break;
 						case 4: value = *(const uint32_t *)ptr; break;
 						default: NOT_REACHED();
 					}
 
-					if (!HasBit(value, nic->cb_bit)) continue;
-					this->DrawString(r, i++, fmt::format("  {:03x}: {}", nic->cb_id, nic->name));
+					struct visitor {
+						uint value;
+
+						bool operator()(const std::monostate &) { return false; }
+						bool operator()(const VehicleCallbackMask &bit) { return static_cast<VehicleCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const StationCallbackMask &bit) { return static_cast<StationCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const RoadStopCallbackMask &bit) { return static_cast<RoadStopCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const HouseCallbackMask &bit) { return static_cast<HouseCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const CanalCallbackMask &bit) { return static_cast<CanalCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const CargoCallbackMask &bit) { return static_cast<CargoCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const IndustryCallbackMask &bit) { return static_cast<IndustryCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const IndustryTileCallbackMask &bit) { return static_cast<IndustryTileCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const ObjectCallbackMask &bit) { return static_cast<ObjectCallbackMasks>(this->value).Test(bit); }
+						bool operator()(const AirportTileCallbackMask &bit) { return static_cast<AirportTileCallbackMasks>(this->value).Test(bit); }
+					};
+
+					if (!std::visit(visitor{value}, nic.cb_bit)) continue;
+					this->DrawString(r, i++, fmt::format("  {:03x}: {}", nic.cb_id, nic.name));
 				} else {
-					this->DrawString(r, i++, fmt::format("  {:03x}: {} (unmasked)", nic->cb_id, nic->name));
+					this->DrawString(r, i++, fmt::format("  {:03x}: {} (unmasked)", nic.cb_id, nic.name));
 				}
 			}
 		}
@@ -549,9 +560,9 @@ struct NewGRFInspectWindow : Window {
 	{
 		switch (widget) {
 			case WID_NGRFI_PARENT: {
-				const NIHelper *nih   = GetFeatureHelper(this->window_number);
-				uint index = nih->GetParent(this->GetFeatureIndex());
-				::ShowNewGRFInspectWindow(GetFeatureNum(index), ::GetFeatureIndex(index), nih->GetGRFID(this->GetFeatureIndex()));
+				const NIHelper &nih = GetFeatureHelper(this->window_number);
+				uint index = nih.GetParent(this->GetFeatureIndex());
+				::ShowNewGRFInspectWindow(GetFeatureNum(index), ::GetFeatureIndex(index), nih.GetGRFID(this->GetFeatureIndex()));
 				break;
 			}
 
@@ -576,20 +587,20 @@ struct NewGRFInspectWindow : Window {
 			case WID_NGRFI_MAINPANEL: {
 				/* Does this feature have variables? */
 				const NIFeature *nif  = GetFeature(this->window_number);
-				if (nif->variables == nullptr) return;
+				if (nif->variables.empty()) return;
 
 				/* Get the line, make sure it's within the boundaries. */
 				int32_t line = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_NGRFI_MAINPANEL, WidgetDimensions::scaled.frametext.top);
 				if (line == INT32_MAX) return;
 
 				/* Find the variable related to the line */
-				for (const NIVariable *niv = nif->variables; niv->name != nullptr; niv++, line--) {
-					if (line != 1) continue; // 1 because of the "Variables:" line
+				for (const NIVariable &niv : nif->variables) {
+					if (--line != 0) continue; // 0 because of the "Variables:" line
 
-					if (!HasVariableParameter(niv->var)) break;
+					if (!HasVariableParameter(niv.var)) break;
 
-					this->current_edit_param = niv->var;
-					ShowQueryString(STR_EMPTY, STR_NEWGRF_INSPECT_QUERY_CAPTION, 9, this, CS_HEXADECIMAL, QSF_NONE);
+					this->current_edit_param = niv.var;
+					ShowQueryString({}, STR_NEWGRF_INSPECT_QUERY_CAPTION, 9, this, CS_HEXADECIMAL, {});
 				}
 			}
 		}
@@ -630,16 +641,16 @@ struct NewGRFInspectWindow : Window {
 static constexpr NWidgetPart _nested_newgrf_inspect_chain_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, WID_NGRFI_CAPTION), SetDataTip(STR_NEWGRF_INSPECT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, WID_NGRFI_CAPTION), SetStringTip(STR_NEWGRF_INSPECT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_PUSHARROWBTN, COLOUR_GREY, WID_NGRFI_VEH_PREV), SetDataTip(AWV_DECREASE, STR_NULL),
-			NWidget(WWT_PUSHARROWBTN, COLOUR_GREY, WID_NGRFI_VEH_NEXT), SetDataTip(AWV_INCREASE, STR_NULL),
-			NWidget(WWT_EMPTY, COLOUR_GREY, WID_NGRFI_VEH_CHAIN), SetFill(1, 0), SetResize(1, 0),
+			NWidget(WWT_PUSHARROWBTN, COLOUR_GREY, WID_NGRFI_VEH_PREV), SetArrowWidgetTypeTip(AWV_DECREASE),
+			NWidget(WWT_PUSHARROWBTN, COLOUR_GREY, WID_NGRFI_VEH_NEXT), SetArrowWidgetTypeTip(AWV_INCREASE),
+			NWidget(WWT_EMPTY, INVALID_COLOUR, WID_NGRFI_VEH_CHAIN), SetFill(1, 0), SetResize(1, 0),
 		EndContainer(),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
@@ -654,8 +665,8 @@ static constexpr NWidgetPart _nested_newgrf_inspect_chain_widgets[] = {
 static constexpr NWidgetPart _nested_newgrf_inspect_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, WID_NGRFI_CAPTION), SetDataTip(STR_NEWGRF_INSPECT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_NGRFI_PARENT), SetDataTip(STR_NEWGRF_INSPECT_PARENT_BUTTON, STR_NEWGRF_INSPECT_PARENT_TOOLTIP),
+		NWidget(WWT_CAPTION, COLOUR_GREY, WID_NGRFI_CAPTION), SetStringTip(STR_NEWGRF_INSPECT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_NGRFI_PARENT), SetStringTip(STR_NEWGRF_INSPECT_PARENT_BUTTON, STR_NEWGRF_INSPECT_PARENT_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
@@ -672,14 +683,14 @@ static constexpr NWidgetPart _nested_newgrf_inspect_widgets[] = {
 static WindowDesc _newgrf_inspect_chain_desc(
 	WDP_AUTO, "newgrf_inspect_chain", 400, 300,
 	WC_NEWGRF_INSPECT, WC_NONE,
-	0,
+	{},
 	_nested_newgrf_inspect_chain_widgets
 );
 
 static WindowDesc _newgrf_inspect_desc(
 	WDP_AUTO, "newgrf_inspect", 400, 300,
 	WC_NEWGRF_INSPECT, WC_NONE,
-	0,
+	{},
 	_nested_newgrf_inspect_widgets
 );
 
@@ -698,7 +709,7 @@ void ShowNewGRFInspectWindow(GrfSpecFeature feature, uint index, const uint32_t 
 
 	WindowNumber wno = GetInspectWindowNumber(feature, index);
 	WindowDesc &desc = (feature == GSF_TRAINS || feature == GSF_ROADVEHICLES) ? _newgrf_inspect_chain_desc : _newgrf_inspect_desc;
-	NewGRFInspectWindow *w = AllocateWindowDescFront<NewGRFInspectWindow>(desc, wno, true);
+	NewGRFInspectWindow *w = AllocateWindowDescFront<NewGRFInspectWindow, true>(desc, wno);
 	w->SetCallerGRFID(grfid);
 }
 
@@ -772,10 +783,10 @@ GrfSpecFeature GetGrfSpecFeature(TileIndex tile)
 
 		case MP_STATION:
 			switch (GetStationType(tile)) {
-				case STATION_RAIL:    return GSF_STATIONS;
-				case STATION_AIRPORT: return GSF_AIRPORTTILES;
-				case STATION_BUS:     return GSF_ROADSTOPS;
-				case STATION_TRUCK:   return GSF_ROADSTOPS;
+				case StationType::Rail:    return GSF_STATIONS;
+				case StationType::Airport: return GSF_AIRPORTTILES;
+				case StationType::Bus:     return GSF_ROADSTOPS;
+				case StationType::Truck:   return GSF_ROADSTOPS;
 				default:              return GSF_INVALID;
 			}
 	}
@@ -802,11 +813,11 @@ GrfSpecFeature GetGrfSpecFeature(VehicleType type)
 
 /** Window used for aligning sprites. */
 struct SpriteAlignerWindow : Window {
-	typedef std::pair<int16_t, int16_t> XyOffs;    ///< Pair for x and y offsets of the sprite before alignment. First value contains the x offset, second value y offset.
+	typedef std::pair<int16_t, int16_t> XyOffs; ///< Pair for x and y offsets of the sprite before alignment. First value contains the x offset, second value y offset.
 
-	SpriteID current_sprite;                   ///< The currently shown sprite.
-	Scrollbar *vscroll;
-	std::map<SpriteID, XyOffs> offs_start_map; ///< Mapping of starting offsets for the sprites which have been aligned in the sprite aligner window.
+	SpriteID current_sprite{}; ///< The currently shown sprite.
+	Scrollbar *vscroll = nullptr;
+	std::map<SpriteID, XyOffs> offs_start_map{}; ///< Mapping of starting offsets for the sprites which have been aligned in the sprite aligner window.
 
 	static inline ZoomLevel zoom = ZOOM_LVL_END;
 	static bool centre;
@@ -834,33 +845,30 @@ struct SpriteAlignerWindow : Window {
 		this->InvalidateData(0, true);
 	}
 
-	void SetStringParameters(WidgetID widget) const override
+	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
 	{
 		const Sprite *spr = GetSprite(this->current_sprite, SpriteType::Normal);
 		switch (widget) {
 			case WID_SA_CAPTION:
 				if (this->act5_type != nullptr) {
-					SetDParam(0, STR_SPRITE_ALIGNER_CAPTION_ACTION5);
-					SetDParam(1, this->act5_type - GetAction5Types().data());
-					SetDParam(2, this->current_sprite - this->act5_type->sprite_base);
-					SetDParamStr(3, GetOriginFile(this->current_sprite)->GetSimplifiedFilename());
-					SetDParam(4, GetSpriteLocalID(this->current_sprite));
-				} else if (this->current_sprite < SPR_OPENTTD_BASE) {
-					SetDParam(0, STR_SPRITE_ALIGNER_CAPTION_ACTIONA);
-					SetDParam(1, this->current_sprite);
-					SetDParamStr(2, GetOriginFile(this->current_sprite)->GetSimplifiedFilename());
-					SetDParam(3, GetSpriteLocalID(this->current_sprite));
-				} else {
-					SetDParam(0, STR_SPRITE_ALIGNER_CAPTION_NO_ACTION);
-					SetDParamStr(1, GetOriginFile(this->current_sprite)->GetSimplifiedFilename());
-					SetDParam(2, GetSpriteLocalID(this->current_sprite));
+					return GetString(STR_SPRITE_ALIGNER_CAPTION_ACTION5,
+						this->act5_type - GetAction5Types().data(),
+						this->current_sprite - this->act5_type->sprite_base,
+						GetOriginFile(this->current_sprite)->GetSimplifiedFilename(),
+						GetSpriteLocalID(this->current_sprite));
 				}
-				break;
+				if (this->current_sprite < SPR_OPENTTD_BASE) {
+					return GetString(STR_SPRITE_ALIGNER_CAPTION_ACTIONA,
+						this->current_sprite,
+						GetOriginFile(this->current_sprite)->GetSimplifiedFilename(),
+						GetSpriteLocalID(this->current_sprite));
+				}
+				return GetString(STR_SPRITE_ALIGNER_CAPTION_NO_ACTION,
+					GetOriginFile(this->current_sprite)->GetSimplifiedFilename(),
+					GetSpriteLocalID(this->current_sprite));
 
 			case WID_SA_OFFSETS_ABS:
-				SetDParam(0, UnScaleByZoom(spr->x_offs, SpriteAlignerWindow::zoom));
-				SetDParam(1, UnScaleByZoom(spr->y_offs, SpriteAlignerWindow::zoom));
-				break;
+				return GetString(STR_SPRITE_ALIGNER_OFFSETS_ABS, UnScaleByZoom(spr->x_offs, SpriteAlignerWindow::zoom), UnScaleByZoom(spr->y_offs, SpriteAlignerWindow::zoom));
 
 			case WID_SA_OFFSETS_REL: {
 				/* Relative offset is new absolute offset - starting absolute offset.
@@ -868,17 +876,16 @@ struct SpriteAlignerWindow : Window {
 				 */
 				const auto key_offs_pair = this->offs_start_map.find(this->current_sprite);
 				if (key_offs_pair != this->offs_start_map.end()) {
-					SetDParam(0, UnScaleByZoom(spr->x_offs - key_offs_pair->second.first, SpriteAlignerWindow::zoom));
-					SetDParam(1, UnScaleByZoom(spr->y_offs - key_offs_pair->second.second, SpriteAlignerWindow::zoom));
-				} else {
-					SetDParam(0, 0);
-					SetDParam(1, 0);
+					return GetString(STR_SPRITE_ALIGNER_OFFSETS_REL,
+						UnScaleByZoom(spr->x_offs - key_offs_pair->second.first, SpriteAlignerWindow::zoom),
+						UnScaleByZoom(spr->y_offs - key_offs_pair->second.second, SpriteAlignerWindow::zoom));
 				}
-				break;
+
+				return GetString(STR_SPRITE_ALIGNER_OFFSETS_REL, 0, 0);
 			}
 
 			default:
-				break;
+				return this->Window::GetWidgetString(widget, stringid);
 		}
 	}
 
@@ -892,9 +899,7 @@ struct SpriteAlignerWindow : Window {
 			case WID_SA_LIST: {
 				Dimension d = {};
 				for (const auto &spritefile : GetCachedSpriteFiles()) {
-					SetDParamStr(0, spritefile->GetSimplifiedFilename());
-					SetDParamMaxDigits(1, 6);
-					d = maxdim(d, GetStringBoundingBox(STR_SPRITE_ALIGNER_SPRITE));
+					d = maxdim(d, GetStringBoundingBox(GetString(STR_SPRITE_ALIGNER_SPRITE, spritefile->GetSimplifiedFilename(), GetParamMaxDigits(6))));
 				}
 				size.width = d.width + padding.width;
 				resize.height = GetCharacterHeight(FS_NORMAL) + padding.height;
@@ -956,12 +961,9 @@ struct SpriteAlignerWindow : Window {
 				for (auto it = first; it != last; ++it) {
 					const SpriteFile *file = GetOriginFile(*it);
 					if (file == nullptr) {
-						SetDParam(0, *it);
-						DrawString(ir, STR_JUST_COMMA, *it == this->current_sprite ? TC_WHITE : (TC_GREY | TC_NO_SHADE), SA_RIGHT | SA_FORCE);
+						DrawString(ir, GetString(STR_JUST_COMMA, *it), *it == this->current_sprite ? TC_WHITE : (TC_GREY | TC_NO_SHADE), SA_RIGHT | SA_FORCE);
 					} else {
-						SetDParamStr(0, file->GetSimplifiedFilename());
-						SetDParam(1, GetSpriteLocalID(*it));
-						DrawString(ir, STR_SPRITE_ALIGNER_SPRITE, *it == this->current_sprite ? TC_WHITE : TC_BLACK);
+						DrawString(ir, GetString(STR_SPRITE_ALIGNER_SPRITE, file->GetSimplifiedFilename(), GetSpriteLocalID(*it)), *it == this->current_sprite ? TC_WHITE : TC_BLACK);
 					}
 					ir.top += step_size;
 				}
@@ -982,7 +984,7 @@ struct SpriteAlignerWindow : Window {
 				break;
 
 			case WID_SA_GOTO:
-				ShowQueryString(STR_EMPTY, STR_SPRITE_ALIGNER_GOTO_CAPTION, 7, this, CS_NUMERAL, QSF_NONE);
+				ShowQueryString({}, STR_SPRITE_ALIGNER_GOTO_CAPTION, 7, this, CS_NUMERAL, {});
 				break;
 
 			case WID_SA_NEXT:
@@ -1133,69 +1135,69 @@ bool SpriteAlignerWindow::crosshair = true;
 static constexpr NWidgetPart _nested_sprite_aligner_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, WID_SA_CAPTION), SetDataTip(STR_JUST_STRING4, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, WID_SA_CAPTION),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0), SetPadding(WidgetDimensions::unscaled.sparse_resize),
 			NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_sparse, 0),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SA_PREVIOUS), SetDataTip(STR_SPRITE_ALIGNER_PREVIOUS_BUTTON, STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SA_GOTO), SetDataTip(STR_SPRITE_ALIGNER_GOTO_BUTTON, STR_SPRITE_ALIGNER_GOTO_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SA_NEXT), SetDataTip(STR_SPRITE_ALIGNER_NEXT_BUTTON, STR_SPRITE_ALIGNER_NEXT_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
+				NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SA_PREVIOUS), SetStringTip(STR_SPRITE_ALIGNER_PREVIOUS_BUTTON, STR_SPRITE_ALIGNER_PREVIOUS_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SA_GOTO), SetStringTip(STR_SPRITE_ALIGNER_GOTO_BUTTON, STR_SPRITE_ALIGNER_GOTO_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SA_NEXT), SetStringTip(STR_SPRITE_ALIGNER_NEXT_BUTTON, STR_SPRITE_ALIGNER_NEXT_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
 				EndContainer(),
 				NWidget(NWID_HORIZONTAL),
 					NWidget(NWID_SPACER), SetFill(1, 1), SetResize(1, 0),
-					NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_SA_UP), SetDataTip(SPR_ARROW_UP, STR_SPRITE_ALIGNER_MOVE_TOOLTIP), SetResize(0, 0), SetMinimalSize(11, 11),
+					NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_SA_UP), SetSpriteTip(SPR_ARROW_UP, STR_SPRITE_ALIGNER_MOVE_TOOLTIP), SetResize(0, 0), SetMinimalSize(11, 11),
 					NWidget(NWID_SPACER), SetFill(1, 1), SetResize(1, 0),
 				EndContainer(),
 				NWidget(NWID_HORIZONTAL_LTR), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
 					NWidget(NWID_VERTICAL),
 						NWidget(NWID_SPACER), SetFill(1, 1), SetResize(0, 1),
-						NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_SA_LEFT), SetDataTip(SPR_ARROW_LEFT, STR_SPRITE_ALIGNER_MOVE_TOOLTIP), SetResize(0, 0), SetMinimalSize(11, 11),
+						NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_SA_LEFT), SetSpriteTip(SPR_ARROW_LEFT, STR_SPRITE_ALIGNER_MOVE_TOOLTIP), SetResize(0, 0), SetMinimalSize(11, 11),
 						NWidget(NWID_SPACER), SetFill(1, 1), SetResize(0, 1),
 					EndContainer(),
-					NWidget(WWT_PANEL, COLOUR_DARK_BLUE, WID_SA_SPRITE), SetDataTip(STR_NULL, STR_SPRITE_ALIGNER_SPRITE_TOOLTIP), SetResize(1, 1), SetFill(1, 1),
+					NWidget(WWT_PANEL, COLOUR_DARK_BLUE, WID_SA_SPRITE), SetToolTip(STR_SPRITE_ALIGNER_SPRITE_TOOLTIP), SetResize(1, 1), SetFill(1, 1),
 					EndContainer(),
 					NWidget(NWID_VERTICAL),
 						NWidget(NWID_SPACER), SetFill(1, 1), SetResize(0, 1),
-						NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_SA_RIGHT), SetDataTip(SPR_ARROW_RIGHT, STR_SPRITE_ALIGNER_MOVE_TOOLTIP), SetResize(0, 0), SetMinimalSize(11, 11),
+						NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_SA_RIGHT), SetSpriteTip(SPR_ARROW_RIGHT, STR_SPRITE_ALIGNER_MOVE_TOOLTIP), SetResize(0, 0), SetMinimalSize(11, 11),
 						NWidget(NWID_SPACER), SetFill(1, 1), SetResize(0, 1),
 					EndContainer(),
 				EndContainer(),
 				NWidget(NWID_HORIZONTAL),
 					NWidget(NWID_SPACER), SetFill(1, 1), SetResize(1, 0),
-					NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_SA_DOWN), SetDataTip(SPR_ARROW_DOWN, STR_SPRITE_ALIGNER_MOVE_TOOLTIP), SetResize(0, 0), SetMinimalSize(11, 11),
+					NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_SA_DOWN), SetSpriteTip(SPR_ARROW_DOWN, STR_SPRITE_ALIGNER_MOVE_TOOLTIP), SetResize(0, 0), SetMinimalSize(11, 11),
 					NWidget(NWID_SPACER), SetFill(1, 1), SetResize(1, 0),
 				EndContainer(),
-				NWidget(WWT_LABEL, COLOUR_GREY, WID_SA_OFFSETS_ABS), SetDataTip(STR_SPRITE_ALIGNER_OFFSETS_ABS, STR_NULL), SetFill(1, 0), SetResize(1, 0),
-				NWidget(WWT_LABEL, COLOUR_GREY, WID_SA_OFFSETS_REL), SetDataTip(STR_SPRITE_ALIGNER_OFFSETS_REL, STR_NULL), SetFill(1, 0), SetResize(1, 0),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0),
-					NWidget(WWT_TEXTBTN_2, COLOUR_GREY, WID_SA_CENTRE), SetDataTip(STR_SPRITE_ALIGNER_CENTRE_OFFSET, STR_NULL), SetFill(1, 0), SetResize(1, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SA_RESET_REL), SetDataTip(STR_SPRITE_ALIGNER_RESET_BUTTON, STR_SPRITE_ALIGNER_RESET_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
-					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_CROSSHAIR), SetDataTip(STR_SPRITE_ALIGNER_CROSSHAIR, STR_NULL), SetFill(1, 0), SetResize(1, 0),
+				NWidget(WWT_LABEL, INVALID_COLOUR, WID_SA_OFFSETS_ABS), SetFill(1, 0), SetResize(1, 0),
+				NWidget(WWT_LABEL, INVALID_COLOUR, WID_SA_OFFSETS_REL), SetFill(1, 0), SetResize(1, 0),
+				NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0),
+					NWidget(WWT_TEXTBTN_2, COLOUR_GREY, WID_SA_CENTRE), SetStringTip(STR_SPRITE_ALIGNER_CENTRE_OFFSET), SetFill(1, 0), SetResize(1, 0),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SA_RESET_REL), SetStringTip(STR_SPRITE_ALIGNER_RESET_BUTTON, STR_SPRITE_ALIGNER_RESET_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_CROSSHAIR), SetStringTip(STR_SPRITE_ALIGNER_CROSSHAIR), SetFill(1, 0), SetResize(1, 0),
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_sparse, 0),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_PICKER), SetDataTip(STR_SPRITE_ALIGNER_PICKER_BUTTON, STR_SPRITE_ALIGNER_PICKER_TOOLTIP), SetFill(1, 0),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_PICKER), SetStringTip(STR_SPRITE_ALIGNER_PICKER_BUTTON, STR_SPRITE_ALIGNER_PICKER_TOOLTIP), SetFill(1, 0),
 				NWidget(NWID_HORIZONTAL),
-					NWidget(WWT_MATRIX, COLOUR_GREY, WID_SA_LIST), SetResize(1, 1), SetMatrixDataTip(1, 0, STR_NULL), SetFill(1, 1), SetScrollbar(WID_SA_SCROLLBAR),
+					NWidget(WWT_MATRIX, COLOUR_GREY, WID_SA_LIST), SetResize(1, 1), SetMatrixDataTip(1, 0), SetFill(1, 1), SetScrollbar(WID_SA_SCROLLBAR),
 					NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_SA_SCROLLBAR),
 				EndContainer(),
 				NWidget(NWID_VERTICAL),
-					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_IN_4X), SetDataTip(STR_CONFIG_SETTING_ZOOM_LVL_MIN, STR_NULL), SetFill(1, 0),
-					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_IN_2X), SetDataTip(STR_CONFIG_SETTING_ZOOM_LVL_IN_2X, STR_NULL), SetFill(1, 0),
-					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_NORMAL), SetDataTip(STR_CONFIG_SETTING_ZOOM_LVL_NORMAL, STR_NULL), SetFill(1, 0),
-					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_OUT_2X), SetDataTip(STR_CONFIG_SETTING_ZOOM_LVL_OUT_2X, STR_NULL), SetFill(1, 0),
-					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_OUT_4X), SetDataTip(STR_CONFIG_SETTING_ZOOM_LVL_OUT_4X, STR_NULL), SetFill(1, 0),
-					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_OUT_8X), SetDataTip(STR_CONFIG_SETTING_ZOOM_LVL_OUT_8X, STR_NULL), SetFill(1, 0),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_IN_4X), SetStringTip(STR_CONFIG_SETTING_ZOOM_LVL_MIN), SetFill(1, 0),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_IN_2X), SetStringTip(STR_CONFIG_SETTING_ZOOM_LVL_IN_2X), SetFill(1, 0),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_NORMAL), SetStringTip(STR_CONFIG_SETTING_ZOOM_LVL_NORMAL), SetFill(1, 0),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_OUT_2X), SetStringTip(STR_CONFIG_SETTING_ZOOM_LVL_OUT_2X), SetFill(1, 0),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_OUT_4X), SetStringTip(STR_CONFIG_SETTING_ZOOM_LVL_OUT_4X), SetFill(1, 0),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SA_ZOOM + ZOOM_LVL_OUT_8X), SetStringTip(STR_CONFIG_SETTING_ZOOM_LVL_OUT_8X), SetFill(1, 0),
 				EndContainer(),
 			EndContainer(),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL),
 			NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
-			NWidget(WWT_RESIZEBOX, COLOUR_GREY), SetDataTip(RWV_HIDE_BEVEL, STR_TOOLTIP_RESIZE),
+			NWidget(WWT_RESIZEBOX, COLOUR_GREY), SetResizeWidgetTypeTip(RWV_HIDE_BEVEL, STR_TOOLTIP_RESIZE),
 		EndContainer(),
 	EndContainer(),
 };
@@ -1203,7 +1205,7 @@ static constexpr NWidgetPart _nested_sprite_aligner_widgets[] = {
 static WindowDesc _sprite_aligner_desc(
 	WDP_AUTO, "sprite_aligner", 400, 300,
 	WC_SPRITE_ALIGNER, WC_NONE,
-	0,
+	{},
 	_nested_sprite_aligner_widgets
 );
 

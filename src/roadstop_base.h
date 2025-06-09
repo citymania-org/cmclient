@@ -15,12 +15,12 @@
 #include "core/bitmath_func.hpp"
 #include "vehicle_type.h"
 
-typedef Pool<RoadStop, RoadStopID, 32, 64000> RoadStopPool;
+using RoadStopPool = Pool<RoadStop, RoadStopID, 32>;
 extern RoadStopPool _roadstop_pool;
 
 /** A Stop for a Road Vehicle */
 struct RoadStop : RoadStopPool::PoolItem<&_roadstop_pool> {
-	enum RoadStopStatusFlags {
+	enum RoadStopStatusFlags : uint8_t {
 		RSSFB_BAY0_FREE  = 0, ///< Non-zero when bay 0 is free
 		RSSFB_BAY1_FREE  = 1, ///< Non-zero when bay 1 is free
 		RSSFB_BASE_ENTRY = 6, ///< Non-zero when the entries on this road stop are the primary, i.e. the ones to delete
@@ -32,14 +32,14 @@ struct RoadStop : RoadStopPool::PoolItem<&_roadstop_pool> {
 	/** Container for each entry point of a drive through road stop */
 	struct Entry {
 	private:
-		int length;      ///< The length of the stop in tile 'units'
-		int occupied;    ///< The amount of occupied stop in tile 'units'
+		int length = 0; ///< The length of the stop in tile 'units'
+		int occupied = 0; ///< The amount of occupied stop in tile 'units'
 
 	public:
 		friend struct RoadStop; ///< Oh yeah, the road stop may play with me.
 
 		/** Create an entry */
-		Entry() : length(0), occupied(0) {}
+		Entry() {}
 
 		/**
 		 * Get the length of this drive through stop.
@@ -65,9 +65,9 @@ struct RoadStop : RoadStopPool::PoolItem<&_roadstop_pool> {
 		void Rebuild(const RoadStop *rs, int side = -1);
 	};
 
-	uint8_t status; ///< Current status of the Stop, @see RoadStopSatusFlag. Access using *Bay and *Busy functions.
-	TileIndex xy; ///< Position on the map
-	RoadStop *next; ///< Next stop of the given type at this station
+	uint8_t status = 0; ///< Current status of the Stop, @see RoadStopSatusFlag. Access using *Bay and *Busy functions.
+	TileIndex xy = INVALID_TILE; ///< Position on the map
+	RoadStop *next = nullptr; ///< Next stop of the given type at this station
 
 	/** Initializes a RoadStop */
 	inline RoadStop(TileIndex tile = INVALID_TILE) :
@@ -148,8 +148,8 @@ struct RoadStop : RoadStopPool::PoolItem<&_roadstop_pool> {
 	static bool IsDriveThroughRoadStopContinuation(TileIndex rs, TileIndex next);
 
 private:
-	Entry *east; ///< The vehicles that entered from the east
-	Entry *west; ///< The vehicles that entered from the west
+	Entry *east = nullptr; ///< The vehicles that entered from the east
+	Entry *west = nullptr; ///< The vehicles that entered from the west
 
 	/**
 	 * Allocates a bay

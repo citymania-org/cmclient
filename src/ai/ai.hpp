@@ -103,7 +103,7 @@ public:
 	/**
 	 * Broadcast a new event to all active AIs.
 	 */
-	static void BroadcastNewEvent(ScriptEvent *event, CompanyID skip_company = MAX_COMPANIES);
+	static void BroadcastNewEvent(ScriptEvent *event, CompanyID skip_company = CompanyID::Invalid());
 
 	/**
 	 * Save data from an AI to a savegame.
@@ -135,12 +135,12 @@ public:
 	static AIScannerLibrary *GetScannerLibrary();
 
 	/** Wrapper function for AIScanner::HasAI */
-	static bool HasAI(const struct ContentInfo *ci, bool md5sum);
-	static bool HasAILibrary(const ContentInfo *ci, bool md5sum);
+	static bool HasAI(const ContentInfo &ci, bool md5sum);
+	static bool HasAILibrary(const ContentInfo &ci, bool md5sum);
 private:
-	static uint frame_counter;                      ///< Tick counter for the AI code
-	static class AIScannerInfo *scanner_info;       ///< ScriptScanner instance that is used to find AIs
-	static class AIScannerLibrary *scanner_library; ///< ScriptScanner instance that is used to find AI Libraries
+	static uint frame_counter; ///< Tick counter for the AI code
+	static std::unique_ptr<AIScannerInfo> scanner_info; ///< ScriptScanner instance that is used to find AIs
+	static std::unique_ptr<AIScannerLibrary> scanner_library; ///< ScriptScanner instance that is used to find AI Libraries
 };
 
 #endif /* AI_HPP */

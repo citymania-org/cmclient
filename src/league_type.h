@@ -10,6 +10,8 @@
 #ifndef LEAGUE_TYPE_H
 #define LEAGUE_TYPE_H
 
+#include "core/pool_type.hpp"
+
 /** Types of the possible link targets. */
 enum LinkType : uint8_t {
 	LT_NONE = 0,         ///< No link
@@ -23,18 +25,17 @@ enum LinkType : uint8_t {
 typedef uint32_t LinkTargetID; ///< Contains either tile, industry ID, town ID, story page ID or company ID
 
 struct Link {
-	LinkType type;
-	LinkTargetID target;
-	Link(LinkType type, LinkTargetID target): type{type}, target{target} {}
-	Link(): Link(LT_NONE, 0) {}
+	LinkType type = LT_NONE;
+	LinkTargetID target = 0;
+
+	Link() {}
+	Link(LinkType type, LinkTargetID target) : type{type}, target{target} {}
 };
 
-typedef uint8_t LeagueTableID; ///< ID of a league table
+using LeagueTableID = PoolID<uint8_t, struct LeagueTableIDTag, 255, 0xFF>; ///< ID of a league table
 struct LeagueTable;
-static const LeagueTableID INVALID_LEAGUE_TABLE = 0xFF; ///< Invalid/unknown index of LeagueTable
 
-typedef uint16_t LeagueTableElementID; ///< ID of a league table element
+using LeagueTableElementID = PoolID<uint16_t, struct LeagueTableElementIDTag, 64000, 0xFFFF>; ///< ID of a league table
 struct LeagueTableElement;
-static const LeagueTableElementID INVALID_LEAGUE_TABLE_ELEMENT = 0xFFFF; ///< Invalid/unknown index of LeagueTableElement
 
 #endif /* LEAGUE_TYPE_H */

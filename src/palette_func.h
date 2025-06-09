@@ -21,10 +21,39 @@ bool CopyPalette(Palette &local_palette, bool force_copy = false);
 void GfxInitPalettes();
 
 uint8_t GetNearestColourIndex(uint8_t r, uint8_t g, uint8_t b);
+uint8_t GetNearestColourReshadeIndex(uint8_t b);
 
 inline uint8_t GetNearestColourIndex(const Colour colour)
 {
 	return GetNearestColourIndex(colour.r, colour.g, colour.b);
+}
+
+static constexpr int DEFAULT_BRIGHTNESS = 128;
+
+Colour ReallyAdjustBrightness(Colour colour, int brightness);
+
+static inline Colour AdjustBrightness(Colour colour, uint8_t brightness)
+{
+	/* Shortcut for normal brightness */
+	if (brightness == DEFAULT_BRIGHTNESS) return colour;
+
+	return ReallyAdjustBrightness(colour, brightness);
+}
+
+/**
+ * Get the brightness of a colour.
+ * This uses the maximum value of R, G or B channel, instead of perceptual brightness.
+ * @param colour Colour to get the brightness of.
+ * @returns Brightness of colour.
+ */
+static inline uint8_t GetColourBrightness(Colour colour)
+{
+	uint8_t rgb_max = std::max(colour.r, std::max(colour.g, colour.b));
+
+	/* Black pixel (8bpp or old 32bpp image), so use default value */
+	if (rgb_max == 0) rgb_max = DEFAULT_BRIGHTNESS;
+
+	return rgb_max;
 }
 
 /**
@@ -52,7 +81,7 @@ enum ColourShade : uint8_t {
 	SHADE_LIGHTEREST,
 	SHADE_END,
 };
-DECLARE_POSTFIX_INCREMENT(ColourShade)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(ColourShade)
 
 uint8_t GetColourGradient(Colours colour, ColourShade shade);
 void SetColourGradient(Colours colour, ColourShade shade, uint8_t palette_colour);

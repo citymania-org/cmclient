@@ -39,16 +39,16 @@ static Foundation GetFoundation_Void(TileIndex, Slope)
 	return FOUNDATION_NONE;
 }
 
-static CommandCost ClearTile_Void(TileIndex, DoCommandFlag)
+static CommandCost ClearTile_Void(TileIndex, DoCommandFlags)
 {
 	return CommandCost(STR_ERROR_OFF_EDGE_OF_MAP);
 }
 
 
-static void GetTileDesc_Void(TileIndex, TileDesc *td)
+static void GetTileDesc_Void(TileIndex, TileDesc &td)
 {
-	td->str = STR_EMPTY;
-	td->owner[0] = OWNER_NONE;
+	td.str = STR_EMPTY;
+	td.owner[0] = OWNER_NONE;
 }
 
 static void TileLoop_Void(TileIndex tile)
@@ -67,7 +67,7 @@ static TrackStatus GetTileTrackStatus_Void(TileIndex, TransportType, uint, DiagD
 	return 0;
 }
 
-static CommandCost TerraformTile_Void(TileIndex, DoCommandFlag, int, Slope)
+static CommandCost TerraformTile_Void(TileIndex, DoCommandFlags, int, Slope)
 {
 	return CommandCost(STR_ERROR_OFF_EDGE_OF_MAP);
 }

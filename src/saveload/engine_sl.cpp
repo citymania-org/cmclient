@@ -41,39 +41,14 @@ static const SaveLoad _engine_desc[] = {
 	SLE_CONDSSTR(Engine, name,                SLE_STR,                    SLV_84, SL_MAX_VERSION),
 };
 
-static std::vector<Engine*> _temp_engine;
-
-/**
- * Allocate an Engine structure, but not using the pools.
- * The allocated Engine must be freed using FreeEngine;
- * @return Allocated engine.
- */
-static Engine *CallocEngine()
-{
-	uint8_t *zero = CallocT<uint8_t>(sizeof(Engine));
-	Engine *engine = new (zero) Engine();
-	return engine;
-}
-
-/**
- * Deallocate an Engine constructed by CallocEngine.
- * @param e Engine to free.
- */
-static void FreeEngine(Engine *e)
-{
-	if (e != nullptr) {
-		e->~Engine();
-		free(e);
-	}
-}
+static ReferenceThroughBaseContainer<std::vector<Engine>> _temp_engine;
 
 Engine *GetTempDataEngine(EngineID index)
 {
 	if (index < _temp_engine.size()) {
-		return _temp_engine[index];
+		return &_temp_engine[index];
 	} else if (index == _temp_engine.size()) {
-		_temp_engine.push_back(CallocEngine());
-		return _temp_engine[index];
+		return &_temp_engine.emplace_back();
 	} else {
 		NOT_REACHED();
 	}
@@ -101,15 +76,15 @@ struct ENGNChunkHandler : ChunkHandler {
 		 * engine pool after processing NewGRFs by CopyTempEngineData(). */
 		int index;
 		while ((index = SlIterateArray()) != -1) {
-			Engine *e = GetTempDataEngine(index);
+			Engine *e = GetTempDataEngine(static_cast<EngineID>(index));
 			SlObject(e, slt);
 
 			if (IsSavegameVersionBefore(SLV_179)) {
 				/* preview_company_rank was replaced with preview_company and preview_asked.
 				 * Just cancel any previews. */
-				e->flags &= ~4; // ENGINE_OFFER_WINDOW_OPEN
-				e->preview_company = INVALID_COMPANY;
-				e->preview_asked = MAX_UVALUE(CompanyMask);
+				e->flags.Reset(EngineFlag{2}); // ENGINE_OFFER_WINDOW_OPEN
+				e->preview_company = CompanyID::Invalid();
+				e->preview_asked.Set();
 			}
 		}
 	}
@@ -148,11 +123,8 @@ void CopyTempEngineData()
 
 void ResetTempEngineData()
 {
-	/* Get rid of temporary data */
-	for (std::vector<Engine*>::iterator it = _temp_engine.begin(); it != _temp_engine.end(); ++it) {
-		FreeEngine(*it);
-	}
 	_temp_engine.clear();
+	_temp_engine.shrink_to_fit();
 }
 
 struct ENGSChunkHandler : ChunkHandler {
@@ -162,12 +134,12 @@ struct ENGSChunkHandler : ChunkHandler {
 	{
 		/* Load old separate String ID list into a temporary array. This
 		 * was always 256 entries. */
-		StringID names[256];
+		ReferenceThroughBaseContainer<std::array<StringID, 256>> names{};
 
-		SlCopy(names, lengthof(names), SLE_STRINGID);
+		SlCopy(names.data(), std::size(names), SLE_STRINGID);
 
 		/* Copy each string into the temporary engine array. */
-		for (EngineID engine = 0; engine < lengthof(names); engine++) {
+		for (EngineID engine = EngineID::Begin(); engine < std::size(names); ++engine) {
 			Engine *e = GetTempDataEngine(engine);
 			e->name = CopyFromOldName(names[engine]);
 		}
@@ -221,7 +193,7 @@ struct EIDSChunkHandler : ChunkHandler {
 		while ((index = SlIterateArray()) != -1) {
 			EngineIDMapping eid;
 			SlObject(&eid, slt);
-			_engine_mngr.SetID(eid.type, eid.internal_id, eid.grfid, eid.substitute_id, index);
+			_engine_mngr.SetID(eid.type, eid.internal_id, eid.grfid, eid.substitute_id, static_cast<EngineID>(index));
 		}
 	}
 };

@@ -17,7 +17,7 @@
 struct SpriteGroup;
 
 /** AI events for asking the NewGRF for information. */
-enum AIConstructionEvent {
+enum AIConstructionEvent : uint8_t {
 	AICE_TRAIN_CHECK_RAIL_ENGINE     = 0x00, ///< Check if we should build an engine
 	AICE_TRAIN_CHECK_ELRAIL_ENGINE   = 0x01, ///< Check if we should build an engine
 	AICE_TRAIN_CHECK_MONORAIL_ENGINE = 0x02, ///< Check if we should build an engine
@@ -47,14 +47,14 @@ static const IndustryType IT_AI_TOWN    = 0xFF; ///< The AI actually wants to tr
 void ResetGenericCallbacks();
 void AddGenericCallback(uint8_t feature, const GRFFile *file, const SpriteGroup *group);
 
-uint16_t GetAiPurchaseCallbackResult(uint8_t feature, CargoID cargo_type, uint8_t default_selection, IndustryType src_industry, IndustryType dst_industry, uint8_t distance, AIConstructionEvent event, uint8_t count, uint8_t station_size, const GRFFile **file);
+uint16_t GetAiPurchaseCallbackResult(uint8_t feature, CargoType cargo_type, uint8_t default_selection, IndustryType src_industry, IndustryType dst_industry, uint8_t distance, AIConstructionEvent event, uint8_t count, uint8_t station_size, const GRFFile **file);
 void AmbientSoundEffectCallback(TileIndex tile);
 
 /** Play an ambient sound effect for an empty tile. */
 inline void AmbientSoundEffect(TileIndex tile)
 {
 	/* Only run callback if enabled. */
-	if (!HasGrfMiscBit(GMB_AMBIENT_SOUND_CALLBACK)) return;
+	if (!HasGrfMiscBit(GrfMiscBit::AmbientSoundCallback)) return;
 
 	AmbientSoundEffectCallback(tile);
 }

@@ -10,8 +10,10 @@
 #ifndef GAME_TEXT_HPP
 #define GAME_TEXT_HPP
 
+#include "../strings_type.h"
+
 struct StringParam {
-	enum ParamType {
+	enum ParamType : uint8_t {
 		UNUSED,
 		RAW_STRING,
 		STRING,
@@ -20,23 +22,23 @@ struct StringParam {
 
 	ParamType type;
 	uint8_t consumes;
-	const char *cmd;
+	std::string_view cmd;
 
-	StringParam(ParamType type, uint8_t consumes, const char *cmd) : type(type), consumes(consumes), cmd(cmd) {}
+	StringParam(ParamType type, uint8_t consumes, std::string_view cmd = {}) : type(type), consumes(consumes), cmd(cmd) {}
 };
 using StringParams = std::vector<StringParam>;
 using StringParamsList = std::vector<StringParams>;
 
-const char *GetGameStringPtr(uint id);
-const StringParams &GetGameStringParams(uint id);
-const std::string &GetGameStringName(uint id);
+std::string_view GetGameStringPtr(StringIndexInTab id);
+const StringParams &GetGameStringParams(StringIndexInTab id);
+const std::string &GetGameStringName(StringIndexInTab id);
 void RegisterGameTranslation(class Squirrel *engine);
 void ReconsiderGameScriptLanguage();
 
 /** Container for the raw (unencoded) language strings of a language. */
 struct LanguageStrings {
 	std::string language; ///< Name of the language (base filename). Empty string if invalid.
-	StringList  lines;    ///< The lines of the file to pass into the parser/encoder.
+	ReferenceThroughBaseContainer<StringList> lines; ///< The lines of the file to pass into the parser/encoder.
 
 	LanguageStrings() {}
 	LanguageStrings(const std::string &lang) : language(lang) {}
@@ -53,8 +55,8 @@ struct GameStrings {
 
 	std::vector<LanguageStrings> raw_strings;      ///< The raw strings per language, first must be English/the master language!.
 	std::vector<LanguageStrings> compiled_strings; ///< The compiled strings per language, first must be English/the master language!.
-	StringList string_names;                       ///< The names of the compiled strings.
-	StringParamsList string_params;                ///< The parameters for the strings.
+	ReferenceThroughBaseContainer<StringList> string_names; ///< The names of the compiled strings.
+	ReferenceThroughBaseContainer<StringParamsList> string_params; ///< The parameters for the strings.
 
 	void Compile();
 

@@ -109,7 +109,7 @@ public:
 	/**
 	 * Called by YAPF to calculate the cost from the origin to the given node.
 	 *  Calculates only the cost of given node, adds it to the parent node cost
-	 *  and stores the result into Node::m_cost member
+	 *  and stores the result into Node::cost member
 	 */
 	inline bool PfCalcCost(Node &n, const TrackFollower *)
 	{
@@ -211,7 +211,7 @@ public:
 
 	/**
 	 * Called by YAPF to calculate cost estimate. Calculates distance to the destination
-	 *  adds it to the actual cost from origin and stores the sum to the Node::m_estimate
+	 *  adds it to the actual cost from origin and stores the sum to the Node::estimate
 	 */
 	inline bool PfCalcEstimate(Node &n)
 	{
@@ -241,19 +241,19 @@ public:
 	void SetDestination(const RoadVehicle *v)
 	{
 		if (v->current_order.IsType(OT_GOTO_STATION)) {
-			this->dest_station = v->current_order.GetDestination();
-			this->station_type = v->IsBus() ? STATION_BUS : STATION_TRUCK;
+			this->dest_station = v->current_order.GetDestination().ToStationID();
+			this->station_type = v->IsBus() ? StationType::Bus : StationType::Truck;
 			this->dest_tile = CalcClosestStationTile(this->dest_station, v->tile, this->station_type);
 			this->non_artic = !v->HasArticulatedPart();
 			this->dest_trackdirs = INVALID_TRACKDIR_BIT;
 		} else if (v->current_order.IsType(OT_GOTO_WAYPOINT)) {
-			this->dest_station = v->current_order.GetDestination();
-			this->station_type = STATION_ROADWAYPOINT;
+			this->dest_station = v->current_order.GetDestination().ToStationID();
+			this->station_type = StationType::RoadWaypoint;
 			this->dest_tile = CalcClosestStationTile(this->dest_station, v->tile, this->station_type);
 			this->non_artic = !v->HasArticulatedPart();
 			this->dest_trackdirs = INVALID_TRACKDIR_BIT;
 		} else {
-			this->dest_station = INVALID_STATION;
+			this->dest_station = StationID::Invalid();
 			this->dest_tile = v->dest_tile;
 			this->dest_trackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(v->dest_tile, TRANSPORT_ROAD, GetRoadTramType(v->roadtype)));
 		}
@@ -261,7 +261,7 @@ public:
 
 	const Station *GetDestinationStation() const
 	{
-		return this->dest_station != INVALID_STATION ? Station::GetIfValid(this->dest_station) : nullptr;
+		return this->dest_station != StationID::Invalid() ? Station::GetIfValid(this->dest_station) : nullptr;
 	}
 
 protected:
@@ -280,7 +280,7 @@ public:
 
 	inline bool PfDetectDestinationTile(TileIndex tile, Trackdir trackdir)
 	{
-		if (this->dest_station != INVALID_STATION) {
+		if (this->dest_station != StationID::Invalid()) {
 			return IsTileType(tile, MP_STATION) &&
 				GetStationIndex(tile) == this->dest_station &&
 				(this->station_type == GetStationType(tile)) &&
@@ -292,7 +292,7 @@ public:
 
 	/**
 	 * Called by YAPF to calculate cost estimate. Calculates distance to the destination
-	 *  adds it to the actual cost from origin and stores the sum to the Node::m_estimate
+	 *  adds it to the actual cost from origin and stores the sum to the Node::estimate
 	 */
 	inline bool PfCalcEstimate(Node &n)
 	{
@@ -391,22 +391,22 @@ public:
 
 		/* if path not found - return INVALID_TRACKDIR */
 		Trackdir next_trackdir = INVALID_TRACKDIR;
-		Node *pNode = Yapf().GetBestNode();
-		if (pNode != nullptr) {
+		Node *node = Yapf().GetBestNode();
+		if (node != nullptr) {
 			uint steps = 0;
-			for (Node *n = pNode; n->parent != nullptr; n = n->parent) steps++;
+			for (Node *n = node; n->parent != nullptr; n = n->parent) steps++;
 
 			/* path was found or at least suggested
 			 * walk through the path back to its origin */
-			while (pNode->parent != nullptr) {
+			while (node->parent != nullptr) {
 				steps--;
-				if (pNode->GetIsChoice() && steps < YAPF_ROADVEH_PATH_CACHE_SEGMENTS) {
-					path_cache.emplace_back(pNode->GetTrackdir(), pNode->GetTile());
+				if (node->GetIsChoice() && steps < YAPF_ROADVEH_PATH_CACHE_SEGMENTS) {
+					path_cache.emplace_back(node->GetTrackdir(), node->GetTile());
 				}
-				pNode = pNode->parent;
+				node = node->parent;
 			}
 			/* return trackdir from the best origin node (one of start nodes) */
-			Node &best_next_node = *pNode;
+			Node &best_next_node = *node;
 			assert(best_next_node.GetTile() == tile);
 			next_trackdir = best_next_node.GetTrackdir();
 
@@ -449,11 +449,11 @@ public:
 		/* find the best path */
 		if (!Yapf().FindPath(v)) return dist;
 
-		Node *pNode = Yapf().GetBestNode();
-		if (pNode != nullptr) {
+		Node *node = Yapf().GetBestNode();
+		if (node != nullptr) {
 			/* path was found
 			 * get the path cost estimate */
-			dist = pNode->GetCostEstimate();
+			dist = node->GetCostEstimate();
 		}
 
 		return dist;

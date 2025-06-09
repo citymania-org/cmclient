@@ -1696,7 +1696,7 @@ static const char * const _name_czech_real[] = {
  * with cloning this for your own language. */
 
 /* Sing., pl. */
-enum CzechGender {
+enum CzechGender : uint8_t {
 	CZG_SMASC,
 	CZG_SFEM,
 	CZG_SNEUT,
@@ -1709,42 +1709,40 @@ enum CzechGender {
 	CZG_NFREE
 };
 
-enum CzechPattern {
+enum CzechPattern : uint8_t {
 	CZP_JARNI,
 	CZP_MLADY,
 	CZP_PRIVL
 };
 
-/* [CzechGender][CzechPattern] - replaces the last character of the adjective
- * by this.
- * XXX: [CZG_SMASC][CZP_PRIVL] needs special handling: -ovX -> -uv. */
+/* [CzechGender][CzechPattern] - suffixes for adjectives */
 static const char * const _name_czech_patmod[][3] = {
-	/* CZG_SMASC */ { "\u00ed", "\u00fd", "X" },
-	/* CZG_SFEM */  { "\u00ed", "\u00e1", "a" },
-	/* CZG_SNEUT */ { "\u00ed", "\u00e9", "o" },
-	/* CZG_PMASC */ { "\u00ed", "\u00e9", "y" },
-	/* CZG_PFEM */  { "\u00ed", "\u00e9", "y" },
-	/* CZG_PNEUT */ { "\u00ed", "\u00e1", "a" }
+	/* CZG_SMASC */ { "\u00ed", "\u00fd", "uv" },
+	/* CZG_SFEM */  { "\u00ed", "\u00e1", "ova" },
+	/* CZG_SNEUT */ { "\u00ed", "\u00e9", "ovo" },
+	/* CZG_PMASC */ { "\u00ed", "\u00e9", "ovy" },
+	/* CZG_PFEM */  { "\u00ed", "\u00e9", "ovy" },
+	/* CZG_PNEUT */ { "\u00ed", "\u00e1", "ova" }
 };
 
 /* This way the substantive can choose only some adjectives/endings:
  * At least one of these flags must be satisfied: */
-enum CzechAllow {
+enum CzechAllow : uint8_t {
 	CZA_SHORT = 1,
 	CZA_MIDDLE = 2,
 	CZA_LONG = 4,
-	CZA_ALL = ~0
+	CZA_ALL = CZA_SHORT | CZA_MIDDLE | CZA_LONG,
 };
 
 DECLARE_ENUM_AS_BIT_SET(CzechAllow)
 
 /* All these flags must be satisfied (in the stem->others direction): */
-enum CzechChoose {
+enum CzechChoose : uint8_t {
 	CZC_NONE = 0, // No requirements.
 	CZC_COLOR = 1,
 	CZC_POSTFIX = 2, // Matched if postfix was inserted.
 	CZC_NOPOSTFIX = 4, // Matched if no postfix was inserted.
-	CZC_ANY = ~0
+	CZC_ANY = CZC_COLOR | CZC_POSTFIX | CZC_NOPOSTFIX,
 };
 
 DECLARE_ENUM_AS_BIT_SET(CzechChoose)
@@ -1764,54 +1762,54 @@ struct CzechNameAdj {
 
 /* Some of items which should be common are doubled. */
 static const CzechNameAdj _name_czech_adj[] = {
-	{ CZP_JARNI, CZC_ANY, "Horn\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "Horn\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "Doln\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "Doln\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "P\u0159edn\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "Zadn\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "Kosteln\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "Havran\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "\u0158\u00ed\u010dn\u00ed" },
-	{ CZP_JARNI, CZC_ANY, "Jezern\u00ed" },
-	{ CZP_MLADY, CZC_ANY, "Velk\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Velk\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Mal\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Mal\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Vysok\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "\u010cesk\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Moravsk\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Slov\u00e1ck\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Slezsk\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Uhersk\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Star\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Star\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Nov\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Nov\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Mlad\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Kr\u00e1lovsk\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Kamenn\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Cihlov\u00fd" },
-	{ CZP_MLADY, CZC_ANY, "Divn\u00fd" },
-	{ CZP_MLADY, CZC_COLOR, "\u010cerven\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "\u010cerven\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "\u010cerven\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "Zelen\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "\u017dlut\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "Siv\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "\u0160ed\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "B\u00edl\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "B\u00edl\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "Modr\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "R\u016f\u017eov\u00e1" },
-	{ CZP_MLADY, CZC_COLOR, "\u010cern\u00e1" },
-	{ CZP_PRIVL, CZC_ANY, "Kr\u00e1lova" },
-	{ CZP_PRIVL, CZC_ANY, "Janova" },
-	{ CZP_PRIVL, CZC_ANY, "Karlova" },
-	{ CZP_PRIVL, CZC_ANY, "Kry\u0161tofova" },
-	{ CZP_PRIVL, CZC_ANY, "Ji\u0159\u00edkova" },
-	{ CZP_PRIVL, CZC_ANY, "Petrova" },
-	{ CZP_PRIVL, CZC_ANY, "Sudovo" },
+	{ CZP_JARNI, CZC_ANY, "Horn" },
+	{ CZP_JARNI, CZC_ANY, "Horn" },
+	{ CZP_JARNI, CZC_ANY, "Doln" },
+	{ CZP_JARNI, CZC_ANY, "Doln" },
+	{ CZP_JARNI, CZC_ANY, "P\u0159edn" },
+	{ CZP_JARNI, CZC_ANY, "Zadn" },
+	{ CZP_JARNI, CZC_ANY, "Kosteln" },
+	{ CZP_JARNI, CZC_ANY, "Havran" },
+	{ CZP_JARNI, CZC_ANY, "\u0158\u00ed\u010dn" },
+	{ CZP_JARNI, CZC_ANY, "Jezern" },
+	{ CZP_MLADY, CZC_ANY, "Velk" },
+	{ CZP_MLADY, CZC_ANY, "Velk" },
+	{ CZP_MLADY, CZC_ANY, "Mal" },
+	{ CZP_MLADY, CZC_ANY, "Mal" },
+	{ CZP_MLADY, CZC_ANY, "Vysok" },
+	{ CZP_MLADY, CZC_ANY, "\u010cesk" },
+	{ CZP_MLADY, CZC_ANY, "Moravsk" },
+	{ CZP_MLADY, CZC_ANY, "Slov\u00e1ck" },
+	{ CZP_MLADY, CZC_ANY, "Slezsk" },
+	{ CZP_MLADY, CZC_ANY, "Uhersk" },
+	{ CZP_MLADY, CZC_ANY, "Star" },
+	{ CZP_MLADY, CZC_ANY, "Star" },
+	{ CZP_MLADY, CZC_ANY, "Nov" },
+	{ CZP_MLADY, CZC_ANY, "Nov" },
+	{ CZP_MLADY, CZC_ANY, "Mlad" },
+	{ CZP_MLADY, CZC_ANY, "Kr\u00e1lovsk" },
+	{ CZP_MLADY, CZC_ANY, "Kamenn" },
+	{ CZP_MLADY, CZC_ANY, "Cihlov" },
+	{ CZP_MLADY, CZC_ANY, "Divn" },
+	{ CZP_MLADY, CZC_COLOR, "\u010cerven" },
+	{ CZP_MLADY, CZC_COLOR, "\u010cerven" },
+	{ CZP_MLADY, CZC_COLOR, "\u010cerven" },
+	{ CZP_MLADY, CZC_COLOR, "Zelen" },
+	{ CZP_MLADY, CZC_COLOR, "\u017dlut" },
+	{ CZP_MLADY, CZC_COLOR, "Siv" },
+	{ CZP_MLADY, CZC_COLOR, "\u0160ed" },
+	{ CZP_MLADY, CZC_COLOR, "B\u00edl" },
+	{ CZP_MLADY, CZC_COLOR, "B\u00edl" },
+	{ CZP_MLADY, CZC_COLOR, "Modr" },
+	{ CZP_MLADY, CZC_COLOR, "R\u016f\u017eov" },
+	{ CZP_MLADY, CZC_COLOR, "\u010cern" },
+	{ CZP_PRIVL, CZC_ANY, "Kr\u00e1l" },
+	{ CZP_PRIVL, CZC_ANY, "Jan" },
+	{ CZP_PRIVL, CZC_ANY, "Karl" },
+	{ CZP_PRIVL, CZC_ANY, "Kry\u0161tof" },
+	{ CZP_PRIVL, CZC_ANY, "Ji\u0159\u00edk" },
+	{ CZP_PRIVL, CZC_ANY, "Petr" },
+	{ CZP_PRIVL, CZC_ANY, "Sud" },
 };
 
 /* Considered a stem for choose/allow matching purposes. */

@@ -108,9 +108,9 @@ const FiosItem *FileList::FindItem(const std::string_view file)
 	}
 
 	/* If no name matches, try to parse it as number */
-	char *endptr;
-	int i = std::strtol(file.data(), &endptr, 10);
-	if (file.data() == endptr || *endptr != '\0') i = -1;
+	int i;
+	const char *endptr = std::from_chars(file.data(), file.data() + file.size(), i, 10).ptr;
+	if (file.data() == endptr || endptr != file.data() + file.size()) i = -1;
 
 	if (IsInsideMM(i, 0, this->size())) return &this->at(i);
 
@@ -339,8 +339,7 @@ static void FiosGetFileList(SaveLoadOperation fop, bool show_dirs, FiosGetTypeAn
 			fios.type = FIOS_TYPE_PARENT;
 			fios.mtime = 0;
 			fios.name = "..";
-			SetDParamStr(0, "..");
-			fios.title = GetString(STR_SAVELOAD_PARENT_DIRECTORY);
+			fios.title = GetString(STR_SAVELOAD_PARENT_DIRECTORY, "..");
 			sort_start = file_list.size();
 		}
 
@@ -354,8 +353,7 @@ static void FiosGetFileList(SaveLoadOperation fop, bool show_dirs, FiosGetTypeAn
 			fios.type = FIOS_TYPE_DIR;
 			fios.mtime = 0;
 			fios.name = FS2OTTD(dir_entry.path().filename());
-			SetDParamStr(0, fios.name + PATHSEP);
-			fios.title = GetString(STR_SAVELOAD_DIRECTORY);
+			fios.title = GetString(STR_SAVELOAD_DIRECTORY, fios.name + PATHSEP);
 		}
 
 		/* Sort the subdirs always by name, ascending, remember user-sorting order */
@@ -398,7 +396,7 @@ static std::string GetFileTitle(const std::string &file, Subdirectory subdir)
 	size_t read = fread(title, 1, lengthof(title), *f);
 
 	assert(read <= lengthof(title));
-	return StrMakeValid({title, read});
+	return StrMakeValid(std::string_view{title, read});
 }
 
 /**
@@ -618,11 +616,6 @@ struct ScenarioIdentifier {
 	{
 		return this->scenid == other.scenid && this->md5sum == other.md5sum;
 	}
-
-	bool operator != (const ScenarioIdentifier &other) const
-	{
-		return !(*this == other);
-	}
 };
 
 /**
@@ -687,13 +680,13 @@ static ScenarioScanner _scanner;
  * @param md5sum Whether to look at the md5sum or the id.
  * @return The filename of the file, else \c nullptr.
  */
-const char *FindScenario(const ContentInfo *ci, bool md5sum)
+const char *FindScenario(const ContentInfo &ci, bool md5sum)
 {
 	_scanner.Scan(false);
 
 	for (ScenarioIdentifier &id : _scanner) {
-		if (md5sum ? (id.md5sum == ci->md5sum)
-		           : (id.scenid == ci->unique_id)) {
+		if (md5sum ? (id.md5sum == ci.md5sum)
+		           : (id.scenid == ci.unique_id)) {
 			return id.filename.c_str();
 		}
 	}
@@ -707,7 +700,7 @@ const char *FindScenario(const ContentInfo *ci, bool md5sum)
  * @param md5sum Whether to look at the md5sum or the id.
  * @return True iff we've got the scenario.
  */
-bool HasScenario(const ContentInfo *ci, bool md5sum)
+bool HasScenario(const ContentInfo &ci, bool md5sum)
 {
 	return (FindScenario(ci, md5sum) != nullptr);
 }

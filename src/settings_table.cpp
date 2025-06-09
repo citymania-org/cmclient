@@ -39,6 +39,8 @@
 #include "music/music_driver.hpp"
 #include "blitter/factory.hpp"
 #include "base_media_base.h"
+#include "base_media_music.h"
+#include "base_media_sounds.h"
 #include "ai/ai_config.hpp"
 #include "ai/ai.hpp"
 #include "game/game_config.hpp"
@@ -96,7 +98,7 @@ static StringID SettingHelpWallclock(const IntSettingDesc &sd)
 }
 
 /** Setting values for velocity unit localisation */
-static void SettingsValueVelocityUnit(const IntSettingDesc &, uint first_param, int32_t value)
+static std::pair<StringParameter, StringParameter> SettingsValueVelocityUnit(const IntSettingDesc &, int32_t value)
 {
 	StringID val;
 	switch (value) {
@@ -107,18 +109,17 @@ static void SettingsValueVelocityUnit(const IntSettingDesc &, uint first_param, 
 		case 4: val = STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_KNOTS; break;
 		default: NOT_REACHED();
 	}
-	SetDParam(first_param, val);
+	return {val, {}};
 }
 
 /** A negative value has another string (the one after "strval"). */
-static void SettingsValueAbsolute(const IntSettingDesc &sd, uint first_param, int32_t value)
+static std::pair<StringParameter, StringParameter> SettingsValueAbsolute(const IntSettingDesc &sd, int32_t value)
 {
-	SetDParam(first_param, sd.str_val + ((value >= 0) ? 1 : 0));
-	SetDParam(first_param + 1, abs(value));
+	return {sd.str_val + ((value >= 0) ? 1 : 0), abs(value)};
 }
 
 /** Service Interval Settings Default Value displays the correct units or as a percentage */
-static void ServiceIntervalSettingsValueText(const IntSettingDesc &sd, uint first_param, int32_t value)
+static std::pair<StringParameter, StringParameter>  ServiceIntervalSettingsValueText(const IntSettingDesc &sd, int32_t value)
 {
 	VehicleDefaultSettings *vds;
 	if (_game_mode == GM_MENU || !Company::IsValidID(_current_company)) {
@@ -127,16 +128,17 @@ static void ServiceIntervalSettingsValueText(const IntSettingDesc &sd, uint firs
 		vds = &Company::Get(_current_company)->settings.vehicle;
 	}
 
+	StringID str;
 	if (value == 0) {
-		SetDParam(first_param, sd.str_val + 3);
+		str = sd.str_val + 3;
 	} else if (vds->servint_ispercent) {
-		SetDParam(first_param, sd.str_val + 2);
+		str = sd.str_val + 2;
 	} else if (TimerGameEconomy::UsingWallclockUnits(_game_mode == GM_MENU)) {
-		SetDParam(first_param, sd.str_val + 1);
+		str = sd.str_val + 1;
 	} else {
-		SetDParam(first_param, sd.str_val);
+		str = sd.str_val;
 	}
-	SetDParam(first_param + 1, value);
+	return {str, value};
 }
 
 /** Reposition the main toolbar as the setting changed. */
@@ -247,7 +249,7 @@ static bool CanUpdateServiceInterval(VehicleType, int32_t &new_value)
 
 	/* Test if the interval is valid */
 	int32_t interval = GetServiceIntervalClamped(new_value, vds->servint_ispercent);
-	return interval == new_value;
+	return new_value == 0 || interval == new_value;
 }
 
 static void UpdateServiceInterval(VehicleType type, int32_t new_value)
@@ -265,9 +267,8 @@ static void UpdateServiceInterval(VehicleType type, int32_t new_value)
 
 /**
  * Checks if the service intervals in the settings are specified as percentages and corrects the default value accordingly.
- * @param new_value Contains the service interval's default value in days, or 50 (default in percentage).
  */
-static int32_t GetDefaultServiceInterval(VehicleType type)
+static int32_t GetDefaultServiceInterval(const IntSettingDesc &sd, VehicleType type)
 {
 	VehicleDefaultSettings *vds;
 	if (_game_mode == GM_MENU || !Company::IsValidID(_current_company)) {
@@ -276,28 +277,37 @@ static int32_t GetDefaultServiceInterval(VehicleType type)
 		vds = &Company::Get(_current_company)->settings.vehicle;
 	}
 
-	int32_t new_value;
-	if (vds->servint_ispercent) {
-		new_value = DEF_SERVINT_PERCENT;
-	} else if (TimerGameEconomy::UsingWallclockUnits(_game_mode == GM_MENU)) {
+	if (vds->servint_ispercent) return DEF_SERVINT_PERCENT;
+
+	if (TimerGameEconomy::UsingWallclockUnits(_game_mode == GM_MENU)) {
 		switch (type) {
-			case VEH_TRAIN:    new_value = DEF_SERVINT_MINUTES_TRAINS; break;
-			case VEH_ROAD:     new_value = DEF_SERVINT_MINUTES_ROADVEH; break;
-			case VEH_AIRCRAFT: new_value = DEF_SERVINT_MINUTES_AIRCRAFT; break;
-			case VEH_SHIP:     new_value = DEF_SERVINT_MINUTES_SHIPS; break;
-			default: NOT_REACHED();
-		}
-	} else {
-		switch (type) {
-			case VEH_TRAIN:    new_value = DEF_SERVINT_DAYS_TRAINS; break;
-			case VEH_ROAD:     new_value = DEF_SERVINT_DAYS_ROADVEH; break;
-			case VEH_AIRCRAFT: new_value = DEF_SERVINT_DAYS_AIRCRAFT; break;
-			case VEH_SHIP:     new_value = DEF_SERVINT_DAYS_SHIPS; break;
+			case VEH_TRAIN:    return DEF_SERVINT_MINUTES_TRAINS;
+			case VEH_ROAD:     return DEF_SERVINT_MINUTES_ROADVEH;
+			case VEH_AIRCRAFT: return DEF_SERVINT_MINUTES_AIRCRAFT;
+			case VEH_SHIP:     return DEF_SERVINT_MINUTES_SHIPS;
 			default: NOT_REACHED();
 		}
 	}
 
-	return new_value;
+	return sd.def;
+}
+
+static std::tuple<int32_t, uint32_t> GetServiceIntervalRange(const IntSettingDesc &)
+{
+	VehicleDefaultSettings *vds;
+	if (_game_mode == GM_MENU || !Company::IsValidID(_current_company)) {
+		vds = &_settings_client.company.vehicle;
+	} else {
+		vds = &Company::Get(_current_company)->settings.vehicle;
+	}
+
+	if (vds->servint_ispercent) return { MIN_SERVINT_PERCENT, MAX_SERVINT_PERCENT };
+
+	if (TimerGameEconomy::UsingWallclockUnits(_game_mode == GM_MENU)) {
+		return { MIN_SERVINT_MINUTES, MAX_SERVINT_MINUTES };
+	}
+
+	return { MIN_SERVINT_DAYS, MAX_SERVINT_DAYS };
 }
 
 static void TrainAccelerationModelChanged(int32_t)
@@ -413,7 +423,7 @@ static void MaxNoAIsChange(int32_t)
 	if (GetGameSettings().difficulty.max_no_competitors != 0 &&
 			AI::GetInfoList()->empty() &&
 			(!_networking || _network_server)) {
-		ShowErrorMessage(STR_WARNING_NO_SUITABLE_AI, INVALID_STRING_ID, WL_CRITICAL);
+		ShowErrorMessage(GetEncodedString(STR_WARNING_NO_SUITABLE_AI), {}, WL_CRITICAL);
 	}
 
 	InvalidateWindowClassesData(WC_GAME_OPTIONS, 0);
@@ -449,39 +459,39 @@ static bool CheckFreeformEdges(int32_t &new_value)
 		for (Ship *s : Ship::Iterate()) {
 			/* Check if there is a ship on the northern border. */
 			if (TileX(s->tile) == 0 || TileY(s->tile) == 0) {
-				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_EMPTY, INVALID_STRING_ID, WL_ERROR);
+				ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_EDGES_NOT_EMPTY), {}, WL_ERROR);
 				return false;
 			}
 		}
 		for (const BaseStation *st : BaseStation::Iterate()) {
 			/* Check if there is a non-deleted buoy on the northern border. */
 			if (st->IsInUse() && (TileX(st->xy) == 0 || TileY(st->xy) == 0)) {
-				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_EMPTY, INVALID_STRING_ID, WL_ERROR);
+				ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_EDGES_NOT_EMPTY), {}, WL_ERROR);
 				return false;
 			}
 		}
 	} else {
 		for (uint i = 0; i < Map::MaxX(); i++) {
 			if (TileHeight(TileXY(i, 1)) != 0) {
-				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_WATER, INVALID_STRING_ID, WL_ERROR);
+				ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_EDGES_NOT_WATER), {}, WL_ERROR);
 				return false;
 			}
 		}
 		for (uint i = 1; i < Map::MaxX(); i++) {
 			if (!IsTileType(TileXY(i, Map::MaxY() - 1), MP_WATER) || TileHeight(TileXY(1, Map::MaxY())) != 0) {
-				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_WATER, INVALID_STRING_ID, WL_ERROR);
+				ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_EDGES_NOT_WATER), {}, WL_ERROR);
 				return false;
 			}
 		}
 		for (uint i = 0; i < Map::MaxY(); i++) {
 			if (TileHeight(TileXY(1, i)) != 0) {
-				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_WATER, INVALID_STRING_ID, WL_ERROR);
+				ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_EDGES_NOT_WATER), {}, WL_ERROR);
 				return false;
 			}
 		}
 		for (uint i = 1; i < Map::MaxY(); i++) {
 			if (!IsTileType(TileXY(Map::MaxX() - 1, i), MP_WATER) || TileHeight(TileXY(Map::MaxX(), i)) != 0) {
-				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_WATER, INVALID_STRING_ID, WL_ERROR);
+				ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_EDGES_NOT_WATER), {}, WL_ERROR);
 				return false;
 			}
 		}
@@ -519,7 +529,7 @@ static bool CheckDynamicEngines(int32_t &)
 	if (_game_mode == GM_MENU) return true;
 
 	if (!EngineOverrideManager::ResetToCurrentNewGRFConfig()) {
-		ShowErrorMessage(STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES, INVALID_STRING_ID, WL_ERROR);
+		ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES), {}, WL_ERROR);
 		return false;
 	}
 
@@ -535,7 +545,7 @@ static bool CheckMaxHeightLevel(int32_t &new_value)
 	 * If yes, disallow the change. */
 	for (const auto t : Map::Iterate()) {
 		if ((int32_t)TileHeight(t) > new_value) {
-			ShowErrorMessage(STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN, INVALID_STRING_ID, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN), {}, WL_ERROR);
 			/* Return old, unchanged value */
 			return false;
 		}
@@ -604,11 +614,11 @@ static void ChangeTimekeepingUnits(int32_t)
 
 		if (TimerGameEconomy::UsingWallclockUnits()) {
 			/* If the new mode is wallclock units, set the economy year back to 1. */
-			new_economy_date = TimerGameEconomy::ConvertYMDToDate(1, 0, 1);
+			new_economy_date = TimerGameEconomy::ConvertYMDToDate(TimerGameEconomy::Year{1}, 0, 1);
 			new_economy_date_fract = 0;
 		} else {
 			/* If the new mode is calendar units, sync the economy year with the calendar year. */
-			new_economy_date = TimerGameCalendar::date.base();
+			new_economy_date = TimerGameEconomy::Date{TimerGameCalendar::date.base()};
 			new_economy_date_fract = TimerGameCalendar::date_fract;
 		}
 
@@ -650,8 +660,10 @@ static void ChangeMinutesPerYear(int32_t new_value)
 	 * This can only happen in the menu, since the pre_cb ensures this setting can only be changed there, or if we're already using wallclock units.
 	 */
 	if (_game_mode == GM_MENU && (_settings_newgame.economy.minutes_per_calendar_year != CalendarTime::DEF_MINUTES_PER_YEAR)) {
-		_settings_newgame.economy.timekeeping_units = TKU_WALLCLOCK;
-		InvalidateWindowClassesData(WC_GAME_OPTIONS, 0);
+		if (_settings_newgame.economy.timekeeping_units != TKU_WALLCLOCK) {
+			_settings_newgame.economy.timekeeping_units = TKU_WALLCLOCK;
+			ChangeTimekeepingUnits(TKU_WALLCLOCK);
+		}
 	}
 }
 

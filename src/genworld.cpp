@@ -37,9 +37,13 @@
 #include "error.h"
 #include "game/game.hpp"
 #include "game/game_instance.hpp"
+#include "newgrf_railtype.h"
+#include "newgrf_roadtype.h"
 #include "string_func.h"
 #include "thread.h"
 #include "tgp.h"
+
+#include "table/strings.h"
 
 #include "safeguards.h"
 
@@ -55,13 +59,16 @@ void StartupDisasters();
 
 void InitializeGame(uint size_x, uint size_y, bool reset_date, bool reset_settings);
 
-/**
- * Please only use this variable in genworld.h and genworld.cpp and
- *  nowhere else. For speed improvements we need it to be global, but
- *  in no way the meaning of it is to use it anywhere else besides
- *  in the genworld.h and genworld.cpp!
- */
-GenWorldInfo _gw;
+/** Properties of current genworld process */
+struct GenWorldInfo {
+	static inline bool abort;            ///< Whether to abort the thread ASAP
+	static inline GenWorldMode mode;     ///< What mode are we making a world in
+	static inline CompanyID lc;          ///< The local_company before generating
+	static inline uint size_x;           ///< X-size of the map
+	static inline uint size_y;           ///< Y-size of the map
+	static inline GWDoneProc *proc;      ///< Proc that is called when done (can be nullptr)
+	static inline GWAbortProc *abortp;   ///< Proc that is called when aborting (can be nullptr)
+};
 
 /** Whether we are generating the map or not. */
 bool _generating_world;
@@ -77,8 +84,8 @@ static void CleanupGeneration()
 
 	SetMouseCursorBusy(false);
 	SetModalProgress(false);
-	_gw.proc     = nullptr;
-	_gw.abortp   = nullptr;
+	GenWorldInfo::proc     = nullptr;
+	GenWorldInfo::abortp   = nullptr;
 
 	CloseWindowByClass(WC_MODAL_PROGRESS);
 	ShowFirstError();
@@ -115,8 +122,8 @@ static void _GenerateWorld()
 		bool landscape_generated = false;
 
 		/* Don't generate landscape items when in the scenario editor. */
-		if (_gw.mode != GWM_EMPTY) {
-			landscape_generated = GenerateLandscape(_gw.mode);
+		if (GenWorldInfo::mode != GWM_EMPTY) {
+			landscape_generated = GenerateLandscape(GenWorldInfo::mode);
 		}
 
 		if (!landscape_generated) {
@@ -159,8 +166,10 @@ static void _GenerateWorld()
 		StartupDisasters();
 		_generating_world = false;
 
+		Game::StartNew();
+
 		/* No need to run the tile loop in the scenario editor. */
-		if (_gw.mode != GWM_EMPTY) {
+		if (GenWorldInfo::mode != GWM_EMPTY) {
 			uint i;
 
 			SetGeneratingWorldProgress(GWP_RUNTILELOOP, 0x500);
@@ -171,8 +180,6 @@ static void _GenerateWorld()
 			}
 
 			if (_game_mode != GM_EDITOR) {
-				Game::StartNew();
-
 				if (Game::GetInstance() != nullptr) {
 					SetGeneratingWorldProgress(GWP_RUNSCRIPT, 2500);
 					_generating_world = true;
@@ -190,13 +197,13 @@ static void _GenerateWorld()
 
 		ResetObjectToPlace();
 		_cur_company.Trash();
-		_current_company = _local_company = _gw.lc;
+		_current_company = _local_company = GenWorldInfo::lc;
 		/* Show all vital windows again, because we have hidden them. */
 		if (_game_mode != GM_MENU) ShowVitalWindows();
 
 		SetGeneratingWorldProgress(GWP_GAME_START, 1);
 		/* Call any callback */
-		if (_gw.proc != nullptr) _gw.proc();
+		if (GenWorldInfo::proc != nullptr) GenWorldInfo::proc();
 		IncreaseGeneratingWorldProgress(GWP_GAME_START);
 
 		CleanupGeneration();
@@ -233,7 +240,7 @@ static void _GenerateWorld()
  */
 void GenerateWorldSetCallback(GWDoneProc *proc)
 {
-	_gw.proc = proc;
+	GenWorldInfo::proc = proc;
 }
 
 /**
@@ -243,7 +250,7 @@ void GenerateWorldSetCallback(GWDoneProc *proc)
  */
 void GenerateWorldSetAbortCallback(GWAbortProc *proc)
 {
-	_gw.abortp = proc;
+	GenWorldInfo::abortp = proc;
 }
 
 /**
@@ -251,7 +258,7 @@ void GenerateWorldSetAbortCallback(GWAbortProc *proc)
  */
 void AbortGeneratingWorld()
 {
-	_gw.abort = true;
+	GenWorldInfo::abort = true;
 }
 
 /**
@@ -260,7 +267,7 @@ void AbortGeneratingWorld()
  */
 bool IsGeneratingWorldAborted()
 {
-	return _gw.abort || _exit_game;
+	return GenWorldInfo::abort || _exit_game;
 }
 
 /**
@@ -271,7 +278,7 @@ void HandleGeneratingWorldAbortion()
 	/* Clean up - in SE create an empty map, otherwise, go to intro menu */
 	_switch_mode = (_game_mode == GM_EDITOR) ? SM_EDITOR : SM_MENU;
 
-	if (_gw.abortp != nullptr) _gw.abortp();
+	if (GenWorldInfo::abortp != nullptr) GenWorldInfo::abortp();
 
 	throw AbortGenerateWorldSignal();
 }
@@ -286,26 +293,26 @@ void HandleGeneratingWorldAbortion()
 void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_settings)
 {
 	if (HasModalProgress()) return;
-	_gw.mode   = mode;
-	_gw.size_x = size_x;
-	_gw.size_y = size_y;
+	GenWorldInfo::mode   = mode;
+	GenWorldInfo::size_x = size_x;
+	GenWorldInfo::size_y = size_y;
 	SetModalProgress(true);
-	_gw.abort  = false;
-	_gw.abortp = nullptr;
-	_gw.lc     = _local_company;
+	GenWorldInfo::abort  = false;
+	GenWorldInfo::abortp = nullptr;
+	GenWorldInfo::lc     = _local_company;
 
 	/* This disables some commands and stuff */
 	SetLocalCompany(COMPANY_SPECTATOR);
 
-	InitializeGame(_gw.size_x, _gw.size_y, true, reset_settings);
+	InitializeGame(GenWorldInfo::size_x, GenWorldInfo::size_y, true, reset_settings);
 	PrepareGenerateWorldProgress();
 
 	if (_settings_game.construction.map_height_limit == 0) {
 		uint estimated_height = 0;
 
-		if (_gw.mode == GWM_EMPTY && _game_mode != GM_MENU) {
+		if (GenWorldInfo::mode == GWM_EMPTY && _game_mode != GM_MENU) {
 			estimated_height = _settings_game.game_creation.se_flat_world_height;
-		} else if (_gw.mode == GWM_HEIGHTMAP) {
+		} else if (GenWorldInfo::mode == GWM_HEIGHTMAP) {
 			estimated_height = _settings_game.game_creation.heightmap_height;
 		} else if (_settings_game.game_creation.land_generator == LG_TERRAGENESIS) {
 			estimated_height = GetEstimationTGPMapHeight();
@@ -320,6 +327,8 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 
 	/* Load the right landscape stuff, and the NewGRFs! */
 	GfxLoadSprites();
+	SetCurrentRailTypeLabelList();
+	SetCurrentRoadTypeLabelList();
 	InitializeBuildingCounts();
 	LoadStringWidthTable();
 
@@ -361,12 +370,12 @@ struct ExternalTownData {
 static bool TryFoundTownNearby(TileIndex tile, void *user_data)
 {
 	ExternalTownData &town = *static_cast<ExternalTownData *>(user_data);
-	std::tuple<CommandCost, Money, TownID> result = Command<CMD_FOUND_TOWN>::Do(DC_EXEC, tile, TSZ_SMALL, town.is_city, _settings_game.economy.town_layout, false, 0, town.name);
+	std::tuple<CommandCost, Money, TownID> result = Command<CMD_FOUND_TOWN>::Do(DoCommandFlag::Execute, tile, TSZ_SMALL, town.is_city, _settings_game.economy.town_layout, false, 0, town.name);
 
 	TownID id = std::get<TownID>(result);
 
 	/* Check if the command failed. */
-	if (id == INVALID_TOWN) return false;
+	if (id == TownID::Invalid()) return false;
 
 	/* The command succeeded, send the ID back through user_data. */
 	town.town_id = id;
@@ -383,7 +392,8 @@ void LoadTownData()
 	auto f = FioFOpenFile(_file_to_saveload.name, "rb", HEIGHTMAP_DIR, &filesize);
 
 	if (!f.has_value()) {
-		ShowErrorMessage(STR_TOWN_DATA_ERROR_LOAD_FAILED, STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY, WL_ERROR);
+		ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_LOAD_FAILED),
+			GetEncodedString(STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY), WL_ERROR);
 		return;
 	}
 
@@ -391,7 +401,8 @@ void LoadTownData()
 	size_t len = fread(text.data(), filesize, 1, *f);
 	f.reset();
 	if (len != 1) {
-		ShowErrorMessage(STR_TOWN_DATA_ERROR_LOAD_FAILED, STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY, WL_ERROR);
+		ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_LOAD_FAILED),
+			GetEncodedString(STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY), WL_ERROR);
 		return;
 	}
 
@@ -400,13 +411,13 @@ void LoadTownData()
 	try {
 		town_data = nlohmann::json::parse(text);
 	} catch (nlohmann::json::exception &) {
-		ShowErrorMessage(STR_TOWN_DATA_ERROR_LOAD_FAILED, STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY, WL_ERROR);
+		ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_LOAD_FAILED), GetEncodedString(STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY), WL_ERROR);
 		return;
 	}
 
 	/* Check for JSON formatting errors with the array of towns. */
 	if (!town_data.is_array()) {
-		ShowErrorMessage(STR_TOWN_DATA_ERROR_LOAD_FAILED, STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY, WL_ERROR);
+		ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_LOAD_FAILED), GetEncodedString(STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY), WL_ERROR);
 		return;
 	}
 
@@ -419,14 +430,14 @@ void LoadTownData()
 
 		/* Ensure JSON is formatted properly. */
 		if (!feature.is_object()) {
-			ShowErrorMessage(STR_TOWN_DATA_ERROR_LOAD_FAILED, STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_LOAD_FAILED), GetEncodedString(STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY), WL_ERROR);
 			return;
 		}
 
 		/* Check to ensure all fields exist and are of the correct type.
 		 * If the town name is formatted wrong, all we can do is give a general warning. */
 		if (!feature.contains("name") || !feature.at("name").is_string()) {
-			ShowErrorMessage(STR_TOWN_DATA_ERROR_LOAD_FAILED, STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_LOAD_FAILED), GetEncodedString(STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY), WL_ERROR);
 			return;
 		}
 
@@ -436,8 +447,8 @@ void LoadTownData()
 				!feature.contains("x") || !feature.at("x").is_number() ||
 				!feature.contains("y") || !feature.at("y").is_number()) {
 			feature.at("name").get_to(town.name);
-			SetDParamStr(0, town.name);
-			ShowErrorMessage(STR_TOWN_DATA_ERROR_LOAD_FAILED, STR_TOWN_DATA_ERROR_TOWN_FORMATTED_INCORRECTLY, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_LOAD_FAILED),
+				GetEncodedString(STR_TOWN_DATA_ERROR_TOWN_FORMATTED_INCORRECTLY, town.name), WL_ERROR);
 			return;
 		}
 
@@ -452,8 +463,8 @@ void LoadTownData()
 
 		/* Check for improper coordinates and warn the player. */
 		if (town.x_proportion <= 0.0f || town.y_proportion <= 0.0f || town.x_proportion >= 1.0f || town.y_proportion >= 1.0f) {
-			SetDParamStr(0, town.name);
-			ShowErrorMessage(STR_TOWN_DATA_ERROR_LOAD_FAILED, STR_TOWN_DATA_ERROR_BAD_COORDINATE, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_LOAD_FAILED),
+				GetEncodedString(STR_TOWN_DATA_ERROR_BAD_COORDINATE, town.name), WL_ERROR);
 			return;
 		}
 
@@ -489,8 +500,7 @@ void LoadTownData()
 
 	/* If we couldn't found a town (or multiple), display a message to the player with the number of failed towns. */
 	if (failed_towns > 0) {
-		SetDParam(0, failed_towns);
-		ShowErrorMessage(STR_TOWN_DATA_ERROR_FAILED_TO_FOUND_TOWN, INVALID_STRING_ID, WL_WARNING);
+		ShowErrorMessage(GetEncodedString(STR_TOWN_DATA_ERROR_FAILED_TO_FOUND_TOWN, failed_towns), {}, WL_WARNING);
 	}
 
 	/* Now that we've created the towns, let's grow them to their target populations. */

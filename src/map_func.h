@@ -30,13 +30,13 @@ private:
 	 * Look at docs/landscape.html for the exact meaning of the members.
 	 */
 	struct TileBase {
-		uint8_t   type;   ///< The type (bits 4..7), bridges (2..3), rainforest/desert (0..1)
-		uint8_t   height; ///< The height of the northern corner.
-		uint16_t m2;     ///< Primarily used for indices to towns, industries and stations
-		uint8_t   m1;     ///< Primarily used for ownership information
-		uint8_t   m3;     ///< General purpose
-		uint8_t   m4;     ///< General purpose
-		uint8_t   m5;     ///< General purpose
+		uint8_t type = 0; ///< The type (bits 4..7), bridges (2..3), rainforest/desert (0..1)
+		uint8_t height = 0; ///< The height of the northern corner.
+		uint16_t m2 = 0; ///< Primarily used for indices to towns, industries and stations
+		uint8_t m1 = 0; ///< Primarily used for ownership information
+		uint8_t m3 = 0; ///< General purpose
+		uint8_t m4 = 0; ///< General purpose
+		uint8_t m5 = 0; ///< General purpose
 	};
 
 	static_assert(sizeof(TileBase) == 8);
@@ -46,13 +46,13 @@ private:
 	 * Look at docs/landscape.html for the exact meaning of the members.
 	 */
 	struct TileExtended {
-		uint8_t m6;   ///< General purpose
-		uint8_t m7;   ///< Primarily used for newgrf support
-		uint16_t m8; ///< General purpose
+		uint8_t m6 = 0; ///< General purpose
+		uint8_t m7 = 0; ///< Primarily used for newgrf support
+		uint16_t m8 = 0; ///< General purpose
 	};
 
-	static TileBase *base_tiles;         ///< Pointer to the tile-array.
-	static TileExtended *extended_tiles; ///< Pointer to the extended tile-array.
+	static std::unique_ptr<TileBase[]> base_tiles; ///< Pointer to the tile-array.
+	static std::unique_ptr<TileExtended[]> extended_tiles; ///< Pointer to the extended tile-array.
 
 	TileIndex tile; ///< The tile to access the map data for.
 
@@ -72,12 +72,12 @@ public:
 	/**
 	 * Implicit conversion to the TileIndex.
 	 */
-	debug_inline constexpr operator TileIndex() const { return tile; }
+	debug_inline constexpr operator TileIndex() const { return this->tile; }
 
 	/**
 	 * Implicit conversion to the uint for bounds checking.
 	 */
-	debug_inline constexpr operator uint() const { return tile.base(); }
+	debug_inline constexpr operator uint() const { return this->tile.base(); }
 
 	/**
 	 * The type (bits 4..7), bridges (2..3), rainforest/desert (0..1)
@@ -88,7 +88,7 @@ public:
 	 */
 	debug_inline uint8_t &type()
 	{
-		return base_tiles[tile.base()].type;
+		return base_tiles[this->tile.base()].type;
 	}
 
 	/**
@@ -100,7 +100,7 @@ public:
 	 */
 	debug_inline uint8_t &height()
 	{
-		return base_tiles[tile.base()].height;
+		return base_tiles[this->tile.base()].height;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public:
 	 */
 	debug_inline uint8_t &m1()
 	{
-		return base_tiles[tile.base()].m1;
+		return base_tiles[this->tile.base()].m1;
 	}
 
 	/**
@@ -124,7 +124,7 @@ public:
 	 */
 	debug_inline uint16_t &m2()
 	{
-		return base_tiles[tile.base()].m2;
+		return base_tiles[this->tile.base()].m2;
 	}
 
 	/**
@@ -136,7 +136,7 @@ public:
 	 */
 	debug_inline uint8_t &m3()
 	{
-		return base_tiles[tile.base()].m3;
+		return base_tiles[this->tile.base()].m3;
 	}
 
 	/**
@@ -148,7 +148,7 @@ public:
 	 */
 	debug_inline uint8_t &m4()
 	{
-		return base_tiles[tile.base()].m4;
+		return base_tiles[this->tile.base()].m4;
 	}
 
 	/**
@@ -160,7 +160,7 @@ public:
 	 */
 	debug_inline uint8_t &m5()
 	{
-		return base_tiles[tile.base()].m5;
+		return base_tiles[this->tile.base()].m5;
 	}
 
 	/**
@@ -172,7 +172,7 @@ public:
 	 */
 	debug_inline uint8_t &m6()
 	{
-		return extended_tiles[tile.base()].m6;
+		return extended_tiles[this->tile.base()].m6;
 	}
 
 	/**
@@ -184,7 +184,7 @@ public:
 	 */
 	debug_inline uint8_t &m7()
 	{
-		return extended_tiles[tile.base()].m7;
+		return extended_tiles[this->tile.base()].m7;
 	}
 
 	/**
@@ -196,7 +196,7 @@ public:
 	 */
 	debug_inline uint16_t &m8()
 	{
-		return extended_tiles[tile.base()].m8;
+		return extended_tiles[this->tile.base()].m8;
 	}
 };
 
@@ -217,7 +217,6 @@ private:
 
 		explicit Iterator(TileIndex index) : index(index) {}
 		bool operator==(const Iterator &other) const { return this->index == other.index; }
-		bool operator!=(const Iterator &other) const { return !(*this == other); }
 		Tile operator*() const { return this->index; }
 		Iterator & operator++() { this->index++; return *this; }
 	private:
@@ -228,8 +227,8 @@ private:
 	 * Iterable ensemble of all Tiles
 	 */
 	struct IterateWrapper {
-		Iterator begin() { return Iterator(0); }
-		Iterator end() { return Iterator(Map::Size()); }
+		Iterator begin() { return Iterator(TileIndex{}); }
+		Iterator end() { return Iterator(TileIndex{Map::Size()}); }
 		bool empty() { return false; }
 	};
 
@@ -316,7 +315,7 @@ public:
 	 */
 	static inline TileIndex WrapToMap(TileIndex tile)
 	{
-		return tile.base() & Map::tile_mask;
+		return TileIndex{tile.base() & Map::tile_mask};
 	}
 
 	/**
@@ -372,7 +371,7 @@ public:
  */
 debug_inline static TileIndex TileXY(uint x, uint y)
 {
-	return (y << Map::LogX()) + x;
+	return TileIndex{(y << Map::LogX()) + x};
 }
 
 /**
@@ -403,7 +402,7 @@ inline TileIndexDiff TileDiffXY(int x, int y)
  */
 debug_inline static TileIndex TileVirtXY(uint x, uint y)
 {
-	return (y >> 4 << Map::LogX()) + (x >> 4);
+	return TileIndex{(y >> 4 << Map::LogX()) + (x >> 4)};
 }
 
 
@@ -442,6 +441,9 @@ inline TileIndexDiff ToTileIndexDiff(TileIndexDiffC tidc)
 	return TileDiffXY(tidc.x, tidc.y);
 }
 
+/* Helper functions to provide explicit +=/-= operators for TileIndex and TileIndexDiff. */
+constexpr TileIndex &operator+=(TileIndex &tile, TileIndexDiff offset) { tile = tile + TileIndex(offset); return tile; }
+constexpr TileIndex &operator-=(TileIndex &tile, TileIndexDiff offset) { tile = tile - TileIndex(offset); return tile; }
 
 /**
  * Adds a given offset to a tile.
@@ -537,7 +539,7 @@ inline TileIndexDiffC TileIndexToTileIndexDiffC(TileIndex tile_a, TileIndex tile
 
 /* Functions to calculate distances */
 uint DistanceManhattan(TileIndex, TileIndex); ///< also known as L1-Norm. Is the shortest distance one could go over diagonal tracks (or roads)
-uint DistanceSquare(TileIndex, TileIndex); ///< euclidian- or L2-Norm squared
+uint DistanceSquare(TileIndex, TileIndex); ///< Euclidean- or L2-Norm squared
 uint DistanceMax(TileIndex, TileIndex); ///< also known as L-Infinity-Norm
 uint DistanceMaxPlusManhattan(TileIndex, TileIndex); ///< Max + Manhattan
 uint DistanceFromEdge(TileIndex); ///< shortest distance from any edge of the map
@@ -649,7 +651,7 @@ bool CircularTileSearch(TileIndex *tile, uint radius, uint w, uint h, TestTileOn
  */
 inline TileIndex RandomTileSeed(uint32_t r)
 {
-	return Map::WrapToMap(r);
+	return Map::WrapToMap(TileIndex{r});
 }
 
 /**
