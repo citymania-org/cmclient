@@ -44,7 +44,8 @@
 		 * station */
 		for (Station *st : Station::Iterate()) {
 			for (GoodsEntry &ge : st->goods) {
-				const StationCargoPacketMap *packets = ge.cargo.Packets();
+				if (!ge.HasData()) continue;
+				const StationCargoPacketMap *packets = ge.GetData().cargo.Packets();
 				for (StationCargoList::ConstIterator it(packets->begin()); it != packets->end(); it++) {
 					CargoPacket *cp = *it;
 					cp->source_xy = Station::IsValidID(cp->first_station) ? Station::Get(cp->first_station)->xy : st->xy;
@@ -54,9 +55,9 @@
 	}
 
 	if (IsSavegameVersionBefore(SLV_120)) {
-		/* CargoPacket's source should be either INVALID_STATION or a valid station */
+		/* CargoPacket's source should be either StationID::Invalid() or a valid station */
 		for (CargoPacket *cp : CargoPacket::Iterate()) {
-			if (!Station::IsValidID(cp->first_station)) cp->first_station = INVALID_STATION;
+			if (!Station::IsValidID(cp->first_station)) cp->first_station = StationID::Invalid();
 		}
 	}
 
@@ -67,7 +68,10 @@
 		for (Vehicle *v : Vehicle::Iterate()) v->cargo.InvalidateCache();
 
 		for (Station *st : Station::Iterate()) {
-			for (GoodsEntry &ge : st->goods) ge.cargo.InvalidateCache();
+			for (GoodsEntry &ge : st->goods) {
+				if (!ge.HasData()) continue;
+				ge.GetData().cargo.InvalidateCache();
+			}
 		}
 	}
 
@@ -80,7 +84,9 @@
 		/* Update the cargo-traveled in stations as if they arrived from the source tile. */
 		for (Station *st : Station::Iterate()) {
 			for (GoodsEntry &ge : st->goods) {
-				for (auto it = ge.cargo.Packets()->begin(); it != ge.cargo.Packets()->end(); ++it) {
+				if (!ge.HasData()) continue;
+				StationCargoList &cargo_list = ge.GetData().cargo;
+				for (auto it = cargo_list.Packets()->begin(); it != cargo_list.Packets()->end(); ++it) {
 					for (CargoPacket *cp : it->second) {
 						if (cp->source_xy != INVALID_TILE && cp->source_xy != st->xy) {
 							cp->travelled.x = TileX(cp->source_xy) - TileX(st->xy);
@@ -128,8 +134,8 @@ SaveLoadTable GetCargoPacketDesc()
 		SLE_CONDVARNAME(CargoPacket, periods_in_transit, "days_in_transit", SLE_UINT16, SLV_MORE_CARGO_AGE, SLV_PERIODS_IN_TRANSIT_RENAME),
 		SLE_CONDVAR(CargoPacket, periods_in_transit, SLE_UINT16, SLV_PERIODS_IN_TRANSIT_RENAME, SL_MAX_VERSION),
 		SLE_VAR(CargoPacket, feeder_share,    SLE_INT64),
-		SLE_CONDVAR(CargoPacket, source_type,     SLE_UINT8,  SLV_125, SL_MAX_VERSION),
-		SLE_CONDVAR(CargoPacket, source_id,       SLE_UINT16, SLV_125, SL_MAX_VERSION),
+		SLE_CONDVARNAME(CargoPacket, source.type, "source_type", SLE_UINT8, SLV_125, SL_MAX_VERSION),
+		SLE_CONDVARNAME(CargoPacket, source.id, "source_id", SLE_UINT16, SLV_125, SL_MAX_VERSION),
 		SLE_CONDVAR(CargoPacket, travelled.x, SLE_INT16, SLV_CARGO_TRAVELLED, SL_MAX_VERSION),
 		SLE_CONDVAR(CargoPacket, travelled.y, SLE_INT16, SLV_CARGO_TRAVELLED, SL_MAX_VERSION),
 	};
@@ -156,7 +162,7 @@ struct CAPAChunkHandler : ChunkHandler {
 		int index;
 
 		while ((index = SlIterateArray()) != -1) {
-			CargoPacket *cp = new (index) CargoPacket();
+			CargoPacket *cp = new (CargoPacketID(index)) CargoPacket();
 			SlObject(cp, slt);
 		}
 	}

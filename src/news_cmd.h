@@ -10,12 +10,12 @@
 #ifndef NEWS_CMD_H
 #define NEWS_CMD_H
 
-#include "command_type.h"
+#include "command_func.h"
 #include "company_type.h"
-#include "news_type.h"
+#include "news_func.h"
 
-CommandCost CmdCustomNewsItem(DoCommandFlag flags, NewsType type, NewsReferenceType reftype1, CompanyID company, uint32_t reference, const std::string &text);
+CommandCost CmdCustomNewsItem(DoCommandFlags flags, NewsType type, CompanyID company, NewsReference reference, const EncodedString &text);
 
-DEF_CMD_TRAIT(CMD_CUSTOM_NEWS_ITEM, CmdCustomNewsItem, CMD_STR_CTRL | CMD_DEITY, CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_CUSTOM_NEWS_ITEM, CmdCustomNewsItem, CommandFlags({CommandFlag::StrCtrl, CommandFlag::Deity}), CMDT_OTHER_MANAGEMENT)
 
 #endif /* NEWS_CMD_H */

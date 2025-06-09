@@ -14,13 +14,13 @@
 #include "../spriteloader/spriteloader.hpp"
 
 /** The modes of blitting we can do. */
-enum BlitterMode {
-	BM_NORMAL,       ///< Perform the simple blitting.
-	BM_COLOUR_REMAP, ///< Perform a colour remapping.
-	BM_TRANSPARENT,  ///< Perform transparency darkening remapping.
-	BM_TRANSPARENT_REMAP, ///< Perform transparency colour remapping.
-	BM_CRASH_REMAP,  ///< Perform a crash remapping.
-	BM_BLACK_REMAP,  ///< Perform remapping to a completely blackened sprite
+enum class BlitterMode : uint8_t {
+	Normal, ///< Perform the simple blitting.
+	ColourRemap, ///< Perform a colour remapping.
+	Transparent, ///< Perform transparency darkening remapping.
+	TransparentRemap, ///< Perform transparency colour remapping.
+	CrashRemap, ///< Perform a crash remapping.
+	BlackRemap, ///< Perform remapping to a completely blackened sprite
 };
 
 /**
@@ -47,10 +47,10 @@ public:
 	};
 
 	/** Types of palette animation. */
-	enum PaletteAnimation {
-		PALETTE_ANIMATION_NONE,           ///< No palette animation
-		PALETTE_ANIMATION_VIDEO_BACKEND,  ///< Palette animation should be done by video backend (8bpp only!)
-		PALETTE_ANIMATION_BLITTER,        ///< The blitter takes care of the palette animation
+	enum class PaletteAnimation : uint8_t {
+		None, ///< No palette animation
+		VideoBackend, ///< Palette animation should be done by video backend (8bpp only!)
+		Blitter, ///< The blitter takes care of the palette animation
 	};
 
 	/**

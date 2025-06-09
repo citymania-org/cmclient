@@ -49,10 +49,10 @@ struct Dimension {
 
 /** Padding dimensions to apply to each side of a Rect. */
 struct RectPadding {
-	uint8_t left;
-	uint8_t top;
-	uint8_t right;
-	uint8_t bottom;
+	uint8_t left = 0;
+	uint8_t top = 0;
+	uint8_t right = 0;
+	uint8_t bottom = 0;
 
 	static const RectPadding zero;
 
@@ -73,10 +73,10 @@ inline const RectPadding RectPadding::zero{};
 
 /** Specification of a rectangle with absolute coordinates of all edges */
 struct Rect {
-	int left;
-	int top;
-	int right;
-	int bottom;
+	int left = 0;
+	int top = 0;
+	int right = 0;
+	int bottom = 0;
 
 	/**
 	 * Get width of Rect.
@@ -232,10 +232,10 @@ struct Rect {
  * (relative) width/height
  */
 struct PointDimension {
-	int x;
-	int y;
-	int width;
-	int height;
+	int x = 0;
+	int y = 0;
+	int width = 0;
+	int height = 0;
 };
 
 #endif /* GEOMETRY_TYPE_HPP */

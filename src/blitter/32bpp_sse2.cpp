@@ -35,8 +35,7 @@ Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::SpriteCollection &spri
 	}
 
 	/* Calculate sizes and allocate. */
-	SpriteData sd;
-	memset(&sd, 0, sizeof(sd));
+	SpriteData sd{};
 	uint all_sprites_size = 0;
 	for (ZoomLevel z = zoom_min; z <= zoom_max; z++) {
 		const SpriteLoader::Sprite *src_sprite = &sprite[z];
@@ -81,7 +80,7 @@ Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::SpriteCollection &spri
 
 						/* Get brightest value (or default brightness if it's a black pixel). */
 						const uint8_t rgb_max = std::max({src->r, src->g, src->b});
-						dst_mv->v = (rgb_max == 0) ? Blitter_32bppBase::DEFAULT_BRIGHTNESS : rgb_max;
+						dst_mv->v = (rgb_max == 0) ? DEFAULT_BRIGHTNESS : rgb_max;
 
 						/* Pre-convert the mapping channel to a RGB value. */
 						const Colour colour = AdjustBrightneSSE(Blitter_32bppBase::LookupColourInPalette(src->m), dst_mv->v);
@@ -92,7 +91,7 @@ Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::SpriteCollection &spri
 						dst_rgba->r = src->r;
 						dst_rgba->g = src->g;
 						dst_rgba->b = src->b;
-						dst_mv->v = Blitter_32bppBase::DEFAULT_BRIGHTNESS;
+						dst_mv->v = DEFAULT_BRIGHTNESS;
 					}
 				} else {
 					dst_rgba->data = 0;
@@ -129,10 +128,10 @@ Sprite *Blitter_32bppSSE_Base::Encode(const SpriteLoader::SpriteCollection &spri
 	}
 
 	/* Store sprite flags. */
-	sd.flags = SF_NONE;
-	if (has_translucency) sd.flags |= SF_TRANSLUCENT;
-	if (!has_remap) sd.flags |= SF_NO_REMAP;
-	if (!has_anim) sd.flags |= SF_NO_ANIM;
+	sd.flags = {};
+	if (has_translucency) sd.flags.Set(SpriteFlag::Translucent);
+	if (!has_remap) sd.flags.Set(SpriteFlag::NoRemap);
+	if (!has_anim) sd.flags.Set(SpriteFlag::NoAnim);
 	memcpy(dst_sprite->data, &sd, sizeof(SpriteData));
 
 	return dst_sprite;

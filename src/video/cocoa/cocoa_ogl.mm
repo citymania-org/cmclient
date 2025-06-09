@@ -48,7 +48,7 @@ static Palette _local_palette; ///< Current palette to use for drawing.
  * Read http://developer.apple.com/releasenotes/Cocoa/Objective-C++.html for more information.
  */
 
-/** Platform-specific callback to get an OpenGL funtion pointer. */
+/** Platform-specific callback to get an OpenGL function pointer. */
 static OGLProc GetOGLProcAddressCallback(const char *proc)
 {
 	static void *dl = nullptr;
@@ -321,7 +321,7 @@ void VideoDriver_CocoaOpenGL::Paint()
 		/* Always push a changed palette to OpenGL. */
 		CGLSetCurrentContext(this->gl_context);
 		OpenGLBackend::Get()->UpdatePalette(_local_palette.palette, _local_palette.first_dirty, _local_palette.count_dirty);
-		if (blitter->UsePaletteAnimation() == Blitter::PALETTE_ANIMATION_BLITTER) {
+		if (blitter->UsePaletteAnimation() == Blitter::PaletteAnimation::Blitter) {
 			blitter->PaletteAnimate(_local_palette);
 		}
 	}

@@ -25,7 +25,7 @@ static constexpr int HELICOPTER_HOLD_MAX_FLYING_ALTITUDE = 184; ///< holding fly
 struct Aircraft;
 
 /** An aircraft can be one of those types. */
-enum AircraftSubType {
+enum AircraftSubType : uint8_t {
 	AIR_HELICOPTER = 0, ///< an helicopter
 	AIR_AIRCRAFT   = 2, ///< an airplane
 	AIR_SHADOW     = 4, ///< shadow of the aircraft
@@ -33,7 +33,7 @@ enum AircraftSubType {
 };
 
 /** Flags for air vehicles; shared with disaster vehicles. */
-enum AirVehicleFlags {
+enum AirVehicleFlags : uint8_t {
 	VAF_DEST_TOO_FAR             = 0, ///< Next destination is too far away.
 
 	/* The next two flags are to prevent stair climbing of the aircraft. The idea is that the aircraft
@@ -62,25 +62,25 @@ int GetAircraftFlightLevel(T *v, bool takeoff = false);
 
 /** Variables that are cached to improve performance and such. */
 struct AircraftCache {
-	uint32_t cached_max_range_sqr;   ///< Cached squared maximum range.
-	uint16_t cached_max_range;       ///< Cached maximum range.
+	uint32_t cached_max_range_sqr = 0; ///< Cached squared maximum range.
+	uint16_t cached_max_range = 0; ///< Cached maximum range.
 };
 
 /**
  * Aircraft, helicopters, rotors and their shadows belong to this class.
  */
 struct Aircraft final : public SpecializedVehicle<Aircraft, VEH_AIRCRAFT> {
-	uint16_t crashed_counter;        ///< Timer for handling crash animations.
-	uint8_t pos;                      ///< Next desired position of the aircraft.
-	uint8_t previous_pos;             ///< Previous desired position of the aircraft.
-	StationID targetairport;       ///< Airport to go to next.
-	uint8_t state;                    ///< State of the airport. @see AirportMovementStates
-	Direction last_direction;
-	uint8_t number_consecutive_turns; ///< Protection to prevent the aircraft of making a lot of turns in order to reach a specific point.
-	uint8_t turn_counter;             ///< Ticks between each turn to prevent > 45 degree turns.
-	uint8_t flags;                    ///< Aircraft flags. @see AirVehicleFlags
+	uint16_t crashed_counter = 0; ///< Timer for handling crash animations.
+	uint8_t pos = 0; ///< Next desired position of the aircraft.
+	uint8_t previous_pos = 0; ///< Previous desired position of the aircraft.
+	StationID targetairport = StationID::Invalid(); ///< Airport to go to next.
+	uint8_t state = 0; ///< State of the airport. @see AirportMovementStates
+	Direction last_direction = INVALID_DIR;
+	uint8_t number_consecutive_turns = 0; ///< Protection to prevent the aircraft of making a lot of turns in order to reach a specific point.
+	uint8_t turn_counter = 0; ///< Ticks between each turn to prevent > 45 degree turns.
+	uint8_t flags = 0; ///< Aircraft flags. @see AirVehicleFlags
 
-	AircraftCache acache;
+	AircraftCache acache{};
 
 	/** We don't want GCC to zero our struct! It already is zeroed and has an index! */
 	Aircraft() : SpecializedVehicleBase() {}
@@ -101,7 +101,7 @@ struct Aircraft final : public SpecializedVehicle<Aircraft, VEH_AIRCRAFT> {
 	bool IsInDepot() const override
 	{
 		assert(this->IsPrimaryVehicle());
-		return (this->vehstatus & VS_HIDDEN) != 0 && IsHangarTile(this->tile);
+		return this->vehstatus.Test(VehState::Hidden) && IsHangarTile(this->tile);
 	}
 
 	bool Tick() override;

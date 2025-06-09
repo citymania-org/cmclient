@@ -5,15 +5,14 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-AILog.Info("12 API compatibility in effect.");
+/* This file contains code to downgrade the API from 13 to 12. */
 
-/* 13 really checks RoadType against RoadType */
-AIRoad._HasRoadType <- AIRoad.HasRoadType;
+AIRoad.HasRoadTypeCompat12 <- AIRoad.HasRoadType;
 AIRoad.HasRoadType <- function(tile, road_type)
 {
 	local list = AIRoadTypeList(AIRoad.GetRoadTramType(road_type));
 	foreach (rt, _ in list) {
-		if (AIRoad._HasRoadType(tile, rt)) {
+		if (AIRoad.HasRoadTypeCompat12(tile, rt)) {
 			return true;
 		}
 	}

@@ -22,7 +22,7 @@ struct Sprite {
 	uint8_t data[];   ///< Sprite data.
 };
 
-enum SpriteCacheCtrlFlags {
+enum SpriteCacheCtrlFlags : uint8_t {
 	SCCF_ALLOW_ZOOM_MIN_1X_PAL    = 0, ///< Allow use of sprite min zoom setting at 1x in palette mode.
 	SCCF_ALLOW_ZOOM_MIN_1X_32BPP  = 1, ///< Allow use of sprite min zoom setting at 1x in 32bpp mode.
 	SCCF_ALLOW_ZOOM_MIN_2X_PAL    = 2, ///< Allow use of sprite min zoom setting at 2x in palette mode.
@@ -30,12 +30,6 @@ enum SpriteCacheCtrlFlags {
 };
 
 extern uint _sprite_cache_size;
-
-/** SpriteAllocate that uses malloc to allocate memory. */
-class SimpleSpriteAllocator : public SpriteAllocator {
-protected:
-	void *AllocatePtr(size_t size) override;
-};
 
 /** SpriteAllocator that allocates memory via a unique_ptr array. */
 class UniquePtrSpriteAllocator : public SpriteAllocator {
@@ -52,7 +46,7 @@ SpriteType GetSpriteType(SpriteID sprite);
 SpriteFile *GetOriginFile(SpriteID sprite);
 uint32_t GetSpriteLocalID(SpriteID sprite);
 uint GetSpriteCountForFile(const std::string &filename, SpriteID begin, SpriteID end);
-uint GetMaxSpriteID();
+SpriteID GetMaxSpriteID();
 
 
 inline const Sprite *GetSprite(SpriteID sprite, SpriteType type)

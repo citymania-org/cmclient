@@ -150,23 +150,14 @@ public:
 	{
 		return const_cast<NetworkAddress*>(this)->CompareTo(address) == 0;
 	}
-	/**
-	 * Compare the address of this class with the address of another.
-	 * @param address the other address.
-	 * @return true if both do not match.
-	 */
-	bool operator != (NetworkAddress address) const
-	{
-		return const_cast<NetworkAddress*>(this)->CompareTo(address) != 0;
-	}
 
 	/**
 	 * Compare the address of this class with the address of another.
 	 * @param address the other address.
 	 */
-	bool operator < (NetworkAddress &address)
+	auto operator <=>(NetworkAddress &address)
 	{
-		return this->CompareTo(address) < 0;
+		return this->CompareTo(address) <=> 0;
 	}
 
 	void Listen(int socktype, SocketList *sockets);
@@ -183,7 +174,7 @@ public:
  *
  * Sorting will prefer entries at the top of this list above ones at the bottom.
  */
-enum ServerAddressType {
+enum ServerAddressType : uint8_t {
 	SERVER_ADDRESS_DIRECT,      ///< Server-address is based on an hostname:port.
 	SERVER_ADDRESS_INVITE_CODE, ///< Server-address is based on an invite code.
 };

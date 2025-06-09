@@ -21,10 +21,9 @@ static const int TILE_HEIGHT_STEP = 50; ///< One Z unit tile height difference i
 
 void SetSelectionRed(bool);
 
-void DeleteWindowViewport(Window *w);
 void InitializeWindowViewport(Window *w, int x, int y, int width, int height, std::variant<TileIndex, VehicleID> focus, ZoomLevel zoom);
 Viewport *IsPtInWindowViewport(const Window *w, int x, int y);
-Point TranslateXYToTileCoord(const Viewport *vp, int x, int y, bool clamp_to_map = true);
+Point TranslateXYToTileCoord(const Viewport &vp, int x, int y, bool clamp_to_map = true);
 Point GetTileBelowCursor();
 void UpdateViewportPosition(Window *w, uint32_t delta_ms);
 
@@ -35,7 +34,7 @@ void ZoomInOrOutToCursorWindow(bool in, Window * w);
 void ConstrainAllViewportsZoom();
 Point GetTileZoomCenterWindow(bool in, Window * w);
 void FixTitleGameZoom(int zoom_adjust = 0);
-void HandleZoomMessage(Window *w, const Viewport *vp, WidgetID widget_zoom_in, WidgetID widget_zoom_out);
+void HandleZoomMessage(Window *w, const Viewport &vp, WidgetID widget_zoom_in, WidgetID widget_zoom_out);
 
 /**
  * Zoom a viewport as far as possible in the given direction.
@@ -54,18 +53,18 @@ void DrawGroundSprite(SpriteID image, PaletteID pal, const SubSprite *sub = null
 void DrawGroundSpriteAt(SpriteID image, PaletteID pal, int32_t x, int32_t y, int z, const SubSprite *sub = nullptr, int extra_offs_x = 0, int extra_offs_y = 0);
 void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int w, int h, int dz, int z, bool transparent = false, int bb_offset_x = 0, int bb_offset_y = 0, int bb_offset_z = 0, const SubSprite *sub = nullptr);
 void AddChildSpriteScreen(SpriteID image, PaletteID pal, int x, int y, bool transparent = false, const SubSprite *sub = nullptr, bool scale = true, bool relative = true);
-void ViewportAddString(const DrawPixelInfo *dpi, ZoomLevel small_from, const ViewportSign *sign, StringID string_normal, StringID string_small, StringID string_small_shadow, Colours colour = INVALID_COLOUR);
+std::string *ViewportAddString(const DrawPixelInfo *dpi, const ViewportSign *sign, ViewportStringFlags flags, Colours colour);
 
 
 void StartSpriteCombine();
 void EndSpriteCombine();
 
-bool HandleViewportClicked(const Viewport *vp, int x, int y);
+bool HandleViewportClicked(const Viewport &vp, int x, int y);
 void SetRedErrorSquare(TileIndex tile);
 void SetTileSelectSize(int w, int h);
 void SetTileSelectBigSize(int ox, int oy, int sx, int sy);
 
-void ViewportDoDraw(const Viewport *vp, int left, int top, int right, int bottom);
+void ViewportDoDraw(const Viewport &vp, int left, int top, int right, int bottom);
 
 bool ScrollWindowToTile(TileIndex tile, Window *w, bool instant = false);
 bool ScrollWindowTo(int x, int y, int z, Window *w, bool instant = false);
@@ -93,7 +92,7 @@ inline void MarkTileDirtyByTile(TileIndex tile, int bridge_level_offset = 0)
 	MarkTileDirtyByTile(tile, bridge_level_offset, TileHeight(tile));
 }
 
-Point GetViewportStationMiddle(const Viewport *vp, const Station *st);
+Point GetViewportStationMiddle(const Viewport &vp, const Station *st);
 
 struct Station;
 struct Waypoint;
@@ -104,16 +103,16 @@ void SetViewportCatchmentWaypoint(const Waypoint *wp, bool sel);
 void SetViewportCatchmentTown(const Town *t, bool sel);
 void MarkCatchmentTilesDirty();
 
-template<class T>
+template <class T>
 void SetViewportCatchmentSpecializedStation(const T *st, bool sel);
 
-template<>
+template <>
 inline void SetViewportCatchmentSpecializedStation(const Station *st, bool sel)
 {
 	SetViewportCatchmentStation(st, sel);
 }
 
-template<>
+template <>
 inline void SetViewportCatchmentSpecializedStation(const Waypoint *st, bool sel)
 {
 	SetViewportCatchmentWaypoint(st, sel);

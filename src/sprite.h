@@ -23,25 +23,13 @@
 
 /** A tile child sprite and palette to draw for stations etc, with 3D bounding box */
 struct DrawTileSeqStruct {
-	int8_t delta_x; ///< \c 0x80 is sequence terminator
-	int8_t delta_y;
-	int8_t delta_z; ///< \c 0x80 identifies child sprites
-	uint8_t size_x;
-	uint8_t size_y;
-	uint8_t size_z;
-	PalSpriteID image;
-
-	/** Make this struct a sequence terminator. */
-	void MakeTerminator()
-	{
-		this->delta_x = (int8_t)0x80;
-	}
-
-	/** Check whether this is a sequence terminator. */
-	bool IsTerminator() const
-	{
-		return (uint8_t)this->delta_x == 0x80;
-	}
+	int8_t delta_x = 0;
+	int8_t delta_y = 0;
+	int8_t delta_z = 0; ///< \c 0x80 identifies child sprites
+	uint8_t size_x = 0;
+	uint8_t size_y = 0;
+	uint8_t size_z = 0;
+	PalSpriteID image{};
 
 	/** Check whether this is a parent sprite with a boundingbox. */
 	bool IsParentSprite() const
@@ -52,12 +40,33 @@ struct DrawTileSeqStruct {
 
 /**
  * Ground palette sprite of a tile, together with its sprite layout.
- * This struct is used for static sprite layouts in the code.
+ * For static sprite layouts see #DrawTileSpriteSpan.
  * For allocated ones from NewGRF see #NewGRFSpriteLayout.
  */
 struct DrawTileSprites {
-	PalSpriteID ground;           ///< Palette and sprite for the ground
-	const DrawTileSeqStruct *seq; ///< Array of child sprites. Terminated with a terminator entry
+	PalSpriteID ground{}; ///< Palette and sprite for the ground
+
+	DrawTileSprites(PalSpriteID ground) : ground(ground) {}
+	DrawTileSprites() = default;
+
+	virtual ~DrawTileSprites() = default;
+	virtual std::span<const DrawTileSeqStruct> GetSequence() const = 0;
+};
+
+/**
+ * Ground palette sprite of a tile, together with its sprite layout.
+ * This struct is used for static sprite layouts in the code.
+ * For allocated ones from NewGRF see #NewGRFSpriteLayout.
+ */
+struct DrawTileSpriteSpan : DrawTileSprites {
+	std::span<const DrawTileSeqStruct> seq; ///< Child sprites,
+
+	template <size_t N>
+	DrawTileSpriteSpan(PalSpriteID ground, const DrawTileSeqStruct (&seq)[N]) : DrawTileSprites(ground), seq(std::begin(seq), std::end(seq)) {}
+	DrawTileSpriteSpan(PalSpriteID ground) : DrawTileSprites(ground) {};
+	DrawTileSpriteSpan() = default;
+
+	std::span<const DrawTileSeqStruct> GetSequence() const override { return this->seq; }
 };
 
 /**
@@ -74,9 +83,6 @@ struct DrawBuildingsTileStruct {
 	uint8_t dz;
 	uint8_t draw_proc;  // this allows to specify a special drawing procedure.
 };
-
-/** Iterate through all DrawTileSeqStructs in DrawTileSprites. */
-#define foreach_draw_tile_seq(idx, list) for (idx = list; !idx->IsTerminator(); idx++)
 
 void DrawCommonTileSeq(const struct TileInfo *ti, const DrawTileSprites *dts, TransparencyOption to, int32_t orig_offset, uint32_t newgrf_offset, PaletteID default_palette, bool child_offset_is_unsigned);
 void DrawCommonTileSeqInGUI(int x, int y, const DrawTileSprites *dts, int32_t orig_offset, uint32_t newgrf_offset, PaletteID default_palette, bool child_offset_is_unsigned);
@@ -138,7 +144,7 @@ inline void DrawNewGRFTileSeqInGUI(int x, int y, const DrawTileSprites *dts, uin
 /**
  * Applies PALETTE_MODIFIER_TRANSPARENT and PALETTE_MODIFIER_COLOUR to a palette entry of a sprite layout entry
  * @note for ground sprites use #GroundSpritePaletteTransform
- * @note Not useable for OTTD internal spritelayouts from table/xxx_land.h as PALETTE_MODIFIER_TRANSPARENT is only set
+ * @note Not usable for OTTD internal spritelayouts from table/xxx_land.h as PALETTE_MODIFIER_TRANSPARENT is only set
  *       when to use the default palette.
  *
  * @param image The sprite to draw
@@ -157,7 +163,7 @@ inline PaletteID SpriteLayoutPaletteTransform(SpriteID image, PaletteID pal, Pal
 
 /**
  * Applies PALETTE_MODIFIER_COLOUR to a palette entry of a ground sprite
- * @note Not useable for OTTD internal spritelayouts from table/xxx_land.h as PALETTE_MODIFIER_TRANSPARENT is only set
+ * @note Not usable for OTTD internal spritelayouts from table/xxx_land.h as PALETTE_MODIFIER_TRANSPARENT is only set
  *       when to use the default palette.
  *
  * @param image The sprite to draw

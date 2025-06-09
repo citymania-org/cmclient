@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "dropdown_type.h"
 #include "dropdown_func.h"
-#include "dropdown_common_type.h"
 #include "strings_func.h"
 #include "timer/timer.h"
 #include "timer/timer_window.h"
@@ -19,6 +18,10 @@
 #include "zoom_func.h"
 
 #include "widgets/dropdown_widget.h"
+
+#include "table/strings.h"
+
+#include "dropdown_common_type.h"
 
 #include "safeguards.h"
 
@@ -29,27 +32,27 @@ std::unique_ptr<DropDownListItem> MakeDropDownListDividerItem()
 
 std::unique_ptr<DropDownListItem> MakeDropDownListStringItem(StringID str, int value, bool masked, bool shaded)
 {
-	return std::make_unique<DropDownListStringItem>(str, value, masked, shaded);
+	return MakeDropDownListStringItem(GetString(str), value, masked, shaded);
 }
 
-std::unique_ptr<DropDownListItem> MakeDropDownListStringItem(const std::string &str, int value, bool masked, bool shaded)
+std::unique_ptr<DropDownListItem> MakeDropDownListStringItem(std::string &&str, int value, bool masked, bool shaded)
 {
-	return std::make_unique<DropDownListStringItem>(str, value, masked, shaded);
+	return std::make_unique<DropDownListStringItem>(std::move(str), value, masked, shaded);
 }
 
 std::unique_ptr<DropDownListItem> MakeDropDownListIconItem(SpriteID sprite, PaletteID palette, StringID str, int value, bool masked, bool shaded)
 {
-	return std::make_unique<DropDownListIconItem>(sprite, palette, str, value, masked, shaded);
+	return std::make_unique<DropDownListIconItem>(sprite, palette, GetString(str), value, masked, shaded);
 }
 
 std::unique_ptr<DropDownListItem> MakeDropDownListIconItem(const Dimension &dim, SpriteID sprite, PaletteID palette, StringID str, int value, bool masked, bool shaded)
 {
-	return std::make_unique<DropDownListIconItem>(dim, sprite, palette, str, value, masked, shaded);
+	return std::make_unique<DropDownListIconItem>(dim, sprite, palette, GetString(str), value, masked, shaded);
 }
 
-std::unique_ptr<DropDownListItem> MakeDropDownListCheckedItem(bool checked, StringID str, int value, bool masked, bool shaded)
+std::unique_ptr<DropDownListItem> MakeDropDownListCheckedItem(bool checked, StringID str, int value, bool masked, bool shaded, uint indent)
 {
-	return std::make_unique<DropDownListCheckedItem>(checked, str, value, masked, shaded);
+	return std::make_unique<DropDownListCheckedItem>(indent, checked, GetString(str), value, masked, shaded);
 }
 
 static constexpr NWidgetPart _nested_dropdown_menu_widgets[] = {
@@ -64,25 +67,25 @@ static constexpr NWidgetPart _nested_dropdown_menu_widgets[] = {
 static WindowDesc _dropdown_desc(
 	WDP_MANUAL, nullptr, 0, 0,
 	WC_DROPDOWN_MENU, WC_NONE,
-	WDF_NO_FOCUS,
+	WindowDefaultFlag::NoFocus,
 	_nested_dropdown_menu_widgets
 );
 
 /** Drop-down menu window */
 struct DropdownWindow : Window {
-	WidgetID parent_button;       ///< Parent widget number where the window is dropped from.
-	Rect wi_rect;                 ///< Rect of the button that opened the dropdown.
-	DropDownList list;            ///< List with dropdown menu items.
-	int selected_result;          ///< Result value of the selected item in the list.
-	uint8_t click_delay = 0;         ///< Timer to delay selection.
+	WidgetID parent_button{}; ///< Parent widget number where the window is dropped from.
+	Rect wi_rect{}; ///< Rect of the button that opened the dropdown.
+	DropDownList list{}; ///< List with dropdown menu items.
+	int selected_result = 0; ///< Result value of the selected item in the list.
+	uint8_t click_delay = 0; ///< Timer to delay selection.
 	bool drag_mode = true;
-	bool instant_close;           ///< Close the window when the mouse button is raised.
-	bool persist;                 ///< Persist dropdown menu.
-	int scrolling = 0;            ///< If non-zero, auto-scroll the item list (one time).
-	Point position;               ///< Position of the topleft corner of the window.
-	Scrollbar *vscroll;
+	bool instant_close = false; ///< Close the window when the mouse button is raised.
+	bool persist = false; ///< Persist dropdown menu.
+	int scrolling = 0; ///< If non-zero, auto-scroll the item list (one time).
+	Point position{}; ///< Position of the topleft corner of the window.
+	Scrollbar *vscroll = nullptr;
 
-	Dimension items_dim; ///< Calculated cropped and padded dimension for the items widget.
+	Dimension items_dim{}; ///< Calculated cropped and padded dimension for the items widget.
 
 	/**
 	 * Create a dropdown menu.
@@ -116,7 +119,7 @@ struct DropdownWindow : Window {
 		this->UpdateSizeAndPosition();
 
 		this->FinishInitNested(0);
-		CLRBITS(this->flags, WF_WHITE_BORDER);
+		this->flags.Reset(WindowFlag::WhiteBorder);
 	}
 
 	void Close([[maybe_unused]] int data = 0) override
@@ -132,7 +135,7 @@ struct DropdownWindow : Window {
 
 		/* Set flag on parent widget to indicate that we have just closed. */
 		NWidgetCore *nwc = this->parent->GetWidget<NWidgetCore>(this->parent_button);
-		if (nwc != nullptr) SetBit(nwc->disp_flags, NDB_DROPDOWN_CLOSED);
+		if (nwc != nullptr) nwc->disp_flags.Set(NWidgetDisplayFlag::DropdownClosed);
 	}
 
 	void OnFocusLost(bool closing) override
@@ -410,7 +413,7 @@ void ShowDropDownList(Window *w, DropDownList &&list, int selected, WidgetID but
 	Colours wi_colour = nwi->colour;
 
 	if ((nwi->type & WWT_MASK) == NWID_BUTTON_DROPDOWN) {
-		nwi->disp_flags |= ND_DROPDOWN_ACTIVE;
+		nwi->disp_flags.Set(NWidgetDisplayFlag::DropdownActive);
 	} else {
 		nwi->SetLowered(true);
 	}

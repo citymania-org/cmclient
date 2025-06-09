@@ -10,7 +10,6 @@
 #include "../stdafx.h"
 #include "../debug.h"
 #include "../string_func.h"
-#include "../core/alloc_func.hpp"
 #include "../sound/sound_driver.hpp"
 #include "../video/video_driver.hpp"
 #include "../gfx_func.h"
@@ -24,6 +23,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/stat.h>
+
+#include "table/strings.h"
 
 #include "../safeguards.h"
 

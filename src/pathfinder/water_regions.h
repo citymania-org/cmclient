@@ -10,8 +10,8 @@
 #ifndef WATER_REGIONS_H
 #define WATER_REGIONS_H
 
-#include "tile_type.h"
-#include "map_func.h"
+#include "../tile_type.h"
+#include "../map_func.h"
 
 using TWaterRegionPatchLabel = uint8_t;
 using TWaterRegionIndex = uint;
@@ -30,7 +30,6 @@ struct WaterRegionPatchDesc
 	TWaterRegionPatchLabel label; ///< Unique label identifying the patch within the region
 
 	bool operator==(const WaterRegionPatchDesc &other) const { return x == other.x && y == other.y && label == other.label; }
-	bool operator!=(const WaterRegionPatchDesc &other) const { return !(*this == other); }
 };
 
 
@@ -46,7 +45,6 @@ struct WaterRegionDesc
 	WaterRegionDesc(const WaterRegionPatchDesc &water_region_patch) : x(water_region_patch.x), y(water_region_patch.y) {}
 
 	bool operator==(const WaterRegionDesc &other) const { return x == other.x && y == other.y; }
-	bool operator!=(const WaterRegionDesc &other) const { return !(*this == other); }
 };
 
 int CalculateWaterRegionPatchHash(const WaterRegionPatchDesc &water_region_patch);
@@ -59,7 +57,7 @@ WaterRegionPatchDesc GetWaterRegionPatchInfo(TileIndex tile);
 void InvalidateWaterRegion(TileIndex tile);
 
 using TVisitWaterRegionPatchCallBack = std::function<void(const WaterRegionPatchDesc &)>;
-void VisitWaterRegionPatchNeighbors(const WaterRegionPatchDesc &water_region_patch, TVisitWaterRegionPatchCallBack &callback);
+void VisitWaterRegionPatchNeighbours(const WaterRegionPatchDesc &water_region_patch, TVisitWaterRegionPatchCallBack &callback);
 
 void AllocateWaterRegions();
 

@@ -14,6 +14,7 @@
 #include "gfx_type.h"
 #include "gfx_func.h"
 #include "string_func.h"
+#include "core/string_builder.hpp"
 #include "textfile_gui.h"
 #include "dropdown_type.h"
 #include "dropdown_func.h"
@@ -42,10 +43,10 @@
 static constexpr NWidgetPart _nested_textfile_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_MAUVE),
-		NWidget(WWT_PUSHARROWBTN, COLOUR_MAUVE, WID_TF_NAVBACK), SetFill(0, 1), SetMinimalSize(15, 1), SetDataTip(AWV_DECREASE, STR_TEXTFILE_NAVBACK_TOOLTIP),
-		NWidget(WWT_PUSHARROWBTN, COLOUR_MAUVE, WID_TF_NAVFORWARD), SetFill(0, 1), SetMinimalSize(15, 1), SetDataTip(AWV_INCREASE, STR_TEXTFILE_NAVFORWARD_TOOLTIP),
-		NWidget(WWT_CAPTION, COLOUR_MAUVE, WID_TF_CAPTION), SetDataTip(STR_NULL, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_TEXTBTN, COLOUR_MAUVE, WID_TF_WRAPTEXT), SetDataTip(STR_TEXTFILE_WRAP_TEXT, STR_TEXTFILE_WRAP_TEXT_TOOLTIP),
+		NWidget(WWT_PUSHARROWBTN, COLOUR_MAUVE, WID_TF_NAVBACK), SetFill(0, 1), SetMinimalSize(15, 1), SetArrowWidgetTypeTip(AWV_DECREASE, STR_TEXTFILE_NAVBACK_TOOLTIP),
+		NWidget(WWT_PUSHARROWBTN, COLOUR_MAUVE, WID_TF_NAVFORWARD), SetFill(0, 1), SetMinimalSize(15, 1), SetArrowWidgetTypeTip(AWV_INCREASE, STR_TEXTFILE_NAVFORWARD_TOOLTIP),
+		NWidget(WWT_CAPTION, COLOUR_MAUVE, WID_TF_CAPTION), SetToolTip(STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_TEXTBTN, COLOUR_MAUVE, WID_TF_WRAPTEXT), SetStringTip(STR_TEXTFILE_WRAP_TEXT, STR_TEXTFILE_WRAP_TEXT_TOOLTIP),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_MAUVE),
 	EndContainer(),
 	NWidget(NWID_SELECTION, INVALID_COLOUR, WID_TF_SEL_JUMPLIST),
@@ -55,7 +56,7 @@ static constexpr NWidgetPart _nested_textfile_widgets[] = {
 				NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetMinimalTextLines(2, 0, FS_MONO),
 				NWidget(NWID_VERTICAL),
 					NWidget(NWID_SPACER), SetFill(1, 1), SetResize(1, 0),
-					NWidget(WWT_DROPDOWN, COLOUR_MAUVE, WID_TF_JUMPLIST), SetDataTip(STR_TEXTFILE_JUMPLIST, STR_TEXTFILE_JUMPLIST_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
+					NWidget(WWT_DROPDOWN, COLOUR_MAUVE, WID_TF_JUMPLIST), SetStringTip(STR_TEXTFILE_JUMPLIST, STR_TEXTFILE_JUMPLIST_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
 					NWidget(NWID_SPACER), SetFill(1, 1), SetResize(1, 0),
 				EndContainer(),
 			EndContainer(),
@@ -78,7 +79,7 @@ static constexpr NWidgetPart _nested_textfile_widgets[] = {
 static WindowDesc _textfile_desc(
 	WDP_CENTER, "textfile", 630, 460,
 	WC_TEXTFILE, WC_NONE,
-	0,
+	{},
 	_nested_textfile_widgets
 );
 
@@ -93,7 +94,7 @@ void TextfileWindow::ConstructWindow()
 	this->CreateNestedTree();
 	this->vscroll = this->GetScrollbar(WID_TF_VSCROLLBAR);
 	this->hscroll = this->GetScrollbar(WID_TF_HSCROLLBAR);
-	this->GetWidget<NWidgetCore>(WID_TF_CAPTION)->SetDataTip(STR_TEXTFILE_README_CAPTION + this->file_type, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS);
+	this->GetWidget<NWidgetCore>(WID_TF_CAPTION)->SetStringTip(STR_TEXTFILE_README_CAPTION + this->file_type, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS);
 	this->GetWidget<NWidgetStacked>(WID_TF_SEL_JUMPLIST)->SetDisplayedPlane(SZSP_HORIZONTAL);
 	this->FinishInitNested(this->file_type);
 
@@ -167,7 +168,7 @@ void TextfileWindow::SetupScrollbars(bool force_reflow)
 static const std::regex _markdown_link_regex{"\\[(.+?)\\]\\((.+?)\\)", std::regex_constants::ECMAScript | std::regex_constants::optimize};
 
 /** Types of link we support in markdown files. */
-enum class HyperlinkType {
+enum class HyperlinkType : uint8_t {
 	Internal, ///< Internal link, or "anchor" in HTML language.
 	Web,      ///< Link to an external website.
 	File,     ///< Link to a local file.
@@ -245,16 +246,13 @@ void TextfileWindow::FindHyperlinksInMarkdown(Line &line, size_t line_index)
 {
 	std::string::const_iterator last_match_end = line.text.cbegin();
 	std::string fixed_line;
-	char ccbuf[5];
+	StringBuilder builder(fixed_line);
 
 	std::sregex_iterator matcher{ line.text.cbegin(), line.text.cend(), _markdown_link_regex};
 	while (matcher != std::sregex_iterator()) {
 		std::smatch match = *matcher;
 
-		Hyperlink link;
-		link.line = line_index;
-		link.destination = match[2].str();
-		this->links.push_back(link);
+		Hyperlink &link = this->links.emplace_back(line_index, 0, 0, match[2].str());
 
 		HyperlinkType link_type = ClassifyHyperlink(link.destination, this->trusted);
 		StringControlCode link_colour;
@@ -276,13 +274,13 @@ void TextfileWindow::FindHyperlinksInMarkdown(Line &line, size_t line_index)
 
 		if (link_colour != SCC_CONTROL_END) {
 			/* Format the link to look like a link. */
-			fixed_line += std::string(last_match_end, match[0].first);
-			this->links.back().begin = fixed_line.length();
-			fixed_line += std::string(ccbuf, Utf8Encode(ccbuf, SCC_PUSH_COLOUR));
-			fixed_line += std::string(ccbuf, Utf8Encode(ccbuf, link_colour));
-			fixed_line += match[1].str();
-			this->links.back().end = fixed_line.length();
-			fixed_line += std::string(ccbuf, Utf8Encode(ccbuf, SCC_POP_COLOUR));
+			builder += std::string_view(last_match_end, match[0].first);
+			link.begin = fixed_line.length();
+			builder.PutUtf8(SCC_PUSH_COLOUR);
+			builder.PutUtf8(link_colour);
+			builder += match[1].str();
+			link.end = fixed_line.length();
+			builder.PutUtf8(SCC_POP_COLOUR);
 			last_match_end = match[0].second;
 		}
 
@@ -295,17 +293,17 @@ void TextfileWindow::FindHyperlinksInMarkdown(Line &line, size_t line_index)
 	fixed_line += std::string(last_match_end, line.text.cend());
 
 	/* Overwrite original line text with "fixed" line text. */
-	line.text = fixed_line;
+	line.text = std::move(fixed_line);
 }
 
 /**
- * Check if the user clicked on a hyperlink, and handle it if so.
- *
- * @param pt The loation the user clicked.
+ * Get the hyperlink at the given position.
+ * @param pt The point to check.
+ * @returns The hyperlink at the given position, or nullptr if there is no hyperlink.
  */
-void TextfileWindow::CheckHyperlinkClick(Point pt)
+const TextfileWindow::Hyperlink *TextfileWindow::GetHyperlink(Point pt) const
 {
-	if (this->links.empty()) return;
+	if (this->links.empty()) return nullptr;
 
 	/* Which line was clicked. */
 	const int clicked_row = this->GetRowFromWidget(pt.y, WID_TF_BACKGROUND, WidgetDimensions::scaled.frametext.top, GetCharacterHeight(FS_MONO)) + this->GetScrollbar(WID_TF_VSCROLLBAR)->GetPosition();
@@ -313,7 +311,7 @@ void TextfileWindow::CheckHyperlinkClick(Point pt)
 	size_t subline;
 	if (IsWidgetLowered(WID_TF_WRAPTEXT)) {
 		auto it = std::ranges::find_if(this->lines, [clicked_row](const Line &l) { return l.top <= clicked_row && l.bottom > clicked_row; });
-		if (it == this->lines.cend()) return;
+		if (it == this->lines.cend()) return nullptr;
 		line_index = it - this->lines.cbegin();
 		subline = clicked_row - it->top;
 		Debug(misc, 4, "TextfileWindow check hyperlink: clicked_row={}, line_index={}, line.top={}, subline={}", clicked_row, line_index, it->top, subline);
@@ -323,29 +321,30 @@ void TextfileWindow::CheckHyperlinkClick(Point pt)
 	}
 
 	/* Find hyperlinks in this line. */
-	std::vector<Hyperlink> found_links;
+	std::vector<const Hyperlink *> found_links;
 	for (const auto &link : this->links) {
-		if (link.line == line_index) found_links.push_back(link);
+		if (link.line == line_index) found_links.push_back(&link);
 	}
-	if (found_links.empty()) return;
+	if (found_links.empty()) return nullptr;
 
 	/* Build line layout to figure out character position that was clicked. */
 	uint window_width = IsWidgetLowered(WID_TF_WRAPTEXT) ? this->GetWidget<NWidgetCore>(WID_TF_BACKGROUND)->current_x - WidgetDimensions::scaled.frametext.Horizontal() : INT_MAX;
 	Layouter layout(this->lines[line_index].text, window_width, FS_MONO);
 	assert(subline < layout.size());
 	ptrdiff_t char_index = layout.GetCharAtPosition(pt.x - WidgetDimensions::scaled.frametext.left, subline);
-	if (char_index < 0) return;
+	if (char_index < 0) return nullptr;
 	Debug(misc, 4, "TextfileWindow check hyperlink click: line={}, subline={}, char_index={}", line_index, subline, (int)char_index);
 
 	/* Found character index in line, check if any links are at that position. */
-	for (const auto &link : found_links) {
-		Debug(misc, 4, "Checking link from char {} to {}", link.begin, link.end);
-		if (static_cast<size_t>(char_index) >= link.begin && static_cast<size_t>(char_index) < link.end) {
-			Debug(misc, 4, "Activating link with destination: {}", link.destination);
-			this->OnHyperlinkClick(link);
-			return;
+	for (const Hyperlink *link : found_links) {
+		Debug(misc, 4, "Checking link from char {} to {}", link->begin, link->end);
+		if (static_cast<size_t>(char_index) >= link->begin && static_cast<size_t>(char_index) < link->end) {
+			Debug(misc, 4, "Returning link with destination: {}", link->destination);
+			return link;
 		}
 	}
+
+	return nullptr;
 }
 
 /**
@@ -357,7 +356,7 @@ void TextfileWindow::AppendHistory(const std::string &filepath)
 {
 	this->history.erase(this->history.begin() + this->history_pos + 1, this->history.end());
 	this->UpdateHistoryScrollpos();
-	this->history.push_back(HistoryEntry{ filepath, 0 });
+	this->history.emplace_back(filepath, 0);
 	this->EnableWidget(WID_TF_NAVBACK);
 	this->DisableWidget(WID_TF_NAVFORWARD);
 	this->history_pos = this->history.size() - 1;
@@ -518,7 +517,7 @@ void TextfileWindow::AfterLoadMarkdown()
 		if (!line.text.empty() && line.text[0] == '#') {
 			this->jumplist.push_back(line_index);
 			this->lines[line_index].colour = TC_GOLD;
-			this->link_anchors.emplace_back(Hyperlink{ line_index, 0, 0, MakeAnchorSlug(line.text) });
+			this->link_anchors.emplace_back(line_index, 0, 0, MakeAnchorSlug(line.text));
 		}
 	}
 }
@@ -534,8 +533,7 @@ void TextfileWindow::AfterLoadMarkdown()
 		case WID_TF_JUMPLIST: {
 			DropDownList list;
 			for (size_t line : this->jumplist) {
-				SetDParamStr(0, this->lines[line].text);
-				list.push_back(MakeDropDownListStringItem(STR_TEXTFILE_JUMPLIST_ITEM, (int)line));
+				list.push_back(MakeDropDownListStringItem(GetString(STR_TEXTFILE_JUMPLIST_ITEM, this->lines[line].text), (int)line));
 			}
 			ShowDropDownList(this, std::move(list), -1, widget);
 			break;
@@ -549,10 +547,24 @@ void TextfileWindow::AfterLoadMarkdown()
 			this->NavigateHistory(+1);
 			break;
 
-		case WID_TF_BACKGROUND:
-			this->CheckHyperlinkClick(pt);
+		case WID_TF_BACKGROUND: {
+			const Hyperlink *link = this->GetHyperlink(pt);
+			if (link != nullptr) this->OnHyperlinkClick(*link);
 			break;
+		}
 	}
+}
+
+/* virtual */ bool TextfileWindow::OnTooltip([[maybe_unused]] Point pt, WidgetID widget, TooltipCloseCondition close_cond)
+{
+	if (widget != WID_TF_BACKGROUND) return false;
+
+	const Hyperlink *link = this->GetHyperlink(pt);
+	if (link == nullptr) return false;
+
+	GuiShowTooltips(this, GetEncodedString(STR_JUST_RAW_STRING, link->destination), close_cond);
+
+	return true;
 }
 
 /* virtual */ void TextfileWindow::DrawWidget(const Rect &r, WidgetID widget) const
@@ -680,7 +692,7 @@ static std::vector<char> Gunzip(std::span<char> input)
 		 * inflate is out of output space - allocate more */
 		z.avail_out += BLOCKSIZE;
 		output.resize(output.size() + BLOCKSIZE);
-		z.next_out = reinterpret_cast<Bytef *>(&*output.end() - z.avail_out);
+		z.next_out = reinterpret_cast<Bytef *>(output.data() + output.size() - z.avail_out);
 		res = inflate(&z, Z_FINISH);
 	}
 
@@ -718,7 +730,7 @@ static std::vector<char> Xunzip(std::span<char> input)
 		 * inflate is out of output space - allocate more */
 		z.avail_out += BLOCKSIZE;
 		output.resize(output.size() + BLOCKSIZE);
-		z.next_out = reinterpret_cast<uint8_t *>(&*output.end() - z.avail_out);
+		z.next_out = reinterpret_cast<uint8_t *>(output.data() + output.size() - z.avail_out);
 		res = lzma_code(&z, LZMA_FINISH);
 	}
 
@@ -777,7 +789,7 @@ static std::vector<char> Xunzip(std::span<char> input)
 	this->filepath = textfile;
 	this->filename = this->filepath.substr(this->filepath.find_last_of(PATHSEP) + 1);
 	/* If it's the first file being loaded, add to history. */
-	if (this->history.empty()) this->history.push_back(HistoryEntry{ this->filepath, 0 });
+	if (this->history.empty()) this->history.emplace_back(this->filepath, 0);
 
 	/* Process the loaded text into lines, and do any further parsing needed. */
 	this->LoadText(sv_buf);
@@ -792,7 +804,7 @@ static std::vector<char> Xunzip(std::span<char> input)
  */
 void TextfileWindow::LoadText(std::string_view buf)
 {
-	std::string text = StrMakeValid(buf, SVS_REPLACE_WITH_QUESTION_MARK | SVS_ALLOW_NEWLINE | SVS_REPLACE_TAB_CR_NL_WITH_SPACE);
+	std::string text = StrMakeValid(buf, {StringValidationSetting::ReplaceWithQuestionMark, StringValidationSetting::AllowNewline, StringValidationSetting::ReplaceTabCrNlWithSpace});
 	this->lines.clear();
 
 	/* Split the string on newlines. */

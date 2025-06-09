@@ -161,7 +161,7 @@ inline void Scaler::SetDemands(LinkGraphJob &job, NodeID from_id, NodeID to_id, 
  * @param job Job to calculate the demands for.
  * @tparam Tscaler Scaler to be used for scaling demands.
  */
-template<class Tscaler>
+template <class Tscaler>
 void DemandCalculator::CalcDemand(LinkGraphJob &job, Tscaler scaler)
 {
 	NodeList supplies;
@@ -263,7 +263,7 @@ DemandCalculator::DemandCalculator(LinkGraphJob &job) :
 	base_distance(IntSqrt(DistanceMaxPlusManhattan(TileXY(0,0), TileXY(Map::MaxX(), Map::MaxY()))))
 {
 	const LinkGraphSettings &settings = job.Settings();
-	CargoID cargo = job.Cargo();
+	CargoType cargo = job.Cargo();
 
 	this->accuracy = settings.accuracy;
 	this->mod_dist = settings.demand_distance;

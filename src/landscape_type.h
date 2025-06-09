@@ -10,27 +10,31 @@
 #ifndef LANDSCAPE_TYPE_H
 #define LANDSCAPE_TYPE_H
 
-typedef uint8_t LandscapeID; ///< Landscape type. @see LandscapeType
+#include "core/enum_type.hpp"
 
 /** Landscape types */
-enum LandscapeType {
-	LT_TEMPERATE  = 0,
-	LT_ARCTIC     = 1,
-	LT_TROPIC     = 2,
-	LT_TOYLAND    = 3,
-
-	NUM_LANDSCAPE = 4,
+enum class LandscapeType : uint8_t {
+	Temperate = 0,
+	Arctic    = 1,
+	Tropic    = 2,
+	Toyland   = 3,
 };
+using LandscapeTypes = EnumBitSet<LandscapeType, uint8_t>;
+
+static constexpr uint NUM_LANDSCAPE = 4;
 
 /**
  * For storing the water borders which shall be retained.
  */
-enum Borders {
-	BORDER_NE = 0,
-	BORDER_SE = 1,
-	BORDER_SW = 2,
-	BORDER_NW = 3,
-	BORDERS_RANDOM = 16,
+enum class BorderFlag : uint8_t {
+	NorthEast, ///< Border on North East.
+	SouthEast, ///< Border on South East.
+	SouthWest, ///< Border on South West.
+	NorthWest, ///< Border on North West.
+	Random, ///< Randomise borders.
 };
+using BorderFlags = EnumBitSet<BorderFlag, uint8_t>;
+
+static constexpr BorderFlags BORDERFLAGS_ALL = BorderFlags{BorderFlag::NorthEast, BorderFlag::SouthEast, BorderFlag::SouthWest, BorderFlag::NorthWest}; ///< Border on all sides.
 
 #endif /* LANDSCAPE_TYPE_H */

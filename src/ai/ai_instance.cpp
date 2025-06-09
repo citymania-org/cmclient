@@ -10,6 +10,8 @@
 #include "../stdafx.h"
 #include "../debug.h"
 #include "../error.h"
+#include "../company_base.h"
+#include "../company_func.h"
 
 #include "../script/squirrel_class.hpp"
 
@@ -22,14 +24,13 @@
 #include "ai_info.hpp"
 #include "ai_instance.hpp"
 
+#include "table/strings.h"
+
 /* Manually include the Text glue. */
 #include "../script/api/template/template_text.hpp.sq"
 
 /* Convert all AI related classes to Squirrel data. */
 #include "../script/api/ai/ai_includes.hpp"
-
-#include "../company_base.h"
-#include "../company_func.h"
 
 #include "../safeguards.h"
 
@@ -39,7 +40,7 @@ AIInstance::AIInstance() :
 
 void AIInstance::Initialize(AIInfo *info)
 {
-	this->versionAPI = info->GetAPIVersion();
+	this->api_version = info->GetAPIVersion();
 
 	/* Register the AIController (including the "import" command) */
 	SQAIController_Register(this->engine);
@@ -54,7 +55,7 @@ void AIInstance::RegisterAPI()
 	/* Register all classes */
 	SQAI_RegisterAll(this->engine);
 
-	if (!this->LoadCompatibilityScripts(this->versionAPI, AI_DIR)) this->Died();
+	if (!this->LoadCompatibilityScripts(AI_DIR, AIInfo::ApiVersions)) this->Died();
 }
 
 void AIInstance::Died()
@@ -71,7 +72,7 @@ void AIInstance::Died()
 
 	const AIInfo *info = AIConfig::GetConfig(_current_company)->GetInfo();
 	if (info != nullptr) {
-		ShowErrorMessage(STR_ERROR_AI_PLEASE_REPORT_CRASH, INVALID_STRING_ID, WL_WARNING);
+		ShowErrorMessage(GetEncodedString(STR_ERROR_AI_PLEASE_REPORT_CRASH), {}, WL_WARNING);
 
 		if (!info->GetURL().empty()) {
 			ScriptLog::Info("Please report the error to the following URL:");

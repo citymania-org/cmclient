@@ -50,7 +50,7 @@ TimerGameEconomy::DateFract TimerGameEconomy::date_fract = {};
 
 	/* If we're using wallclock units, economy months have 30 days and an economy year has 360 days. */
 	TimerGameEconomy::YearMonthDay ymd;
-	ymd.year = date.base() / EconomyTime::DAYS_IN_ECONOMY_YEAR;
+	ymd.year = Year{date.base() / EconomyTime::DAYS_IN_ECONOMY_YEAR};
 	ymd.month = (date.base() % EconomyTime::DAYS_IN_ECONOMY_YEAR) / EconomyTime::DAYS_IN_ECONOMY_MONTH;
 	ymd.day = (date.base() % EconomyTime::DAYS_IN_ECONOMY_MONTH) + 1;
 	return ymd;
@@ -70,7 +70,7 @@ TimerGameEconomy::DateFract TimerGameEconomy::date_fract = {};
 
 	/* If we're using wallclock units, economy months have 30 days and an economy year has 360 days. */
 	const int total_months = (year.base() * EconomyTime::MONTHS_IN_YEAR) + month;
-	return (total_months * EconomyTime::DAYS_IN_ECONOMY_MONTH) + day - 1; // Day is 1-indexed but Date is 0-indexed, hence the - 1.
+	return TimerGameEconomy::Date{(total_months * EconomyTime::DAYS_IN_ECONOMY_MONTH) + day - 1}; // Day is 1-indexed but Date is 0-indexed, hence the - 1.
 }
 
 /**
@@ -101,7 +101,7 @@ TimerGameEconomy::DateFract TimerGameEconomy::date_fract = {};
 	return (_settings_game.economy.timekeeping_units == TKU_WALLCLOCK);
 }
 
-template<>
+template <>
 void IntervalTimer<TimerGameEconomy>::Elapsed(TimerGameEconomy::TElapsed trigger)
 {
 	if (trigger == this->period.trigger) {
@@ -109,7 +109,7 @@ void IntervalTimer<TimerGameEconomy>::Elapsed(TimerGameEconomy::TElapsed trigger
 	}
 }
 
-template<>
+template <>
 void TimeoutTimer<TimerGameEconomy>::Elapsed(TimerGameEconomy::TElapsed trigger)
 {
 	if (this->fired) return;
@@ -120,7 +120,7 @@ void TimeoutTimer<TimerGameEconomy>::Elapsed(TimerGameEconomy::TElapsed trigger)
 	}
 }
 
-template<>
+template <>
 bool TimerManager<TimerGameEconomy>::Elapsed([[maybe_unused]] TimerGameEconomy::TElapsed delta)
 {
 	assert(delta == 1);
@@ -179,20 +179,18 @@ bool TimerManager<TimerGameEconomy>::Elapsed([[maybe_unused]] TimerGameEconomy::
 
 	/* check if we reached the maximum year, decrement dates by a year */
 	if (TimerGameEconomy::year == EconomyTime::MAX_YEAR + 1) {
-		int days_this_year;
-
 		TimerGameEconomy::year--;
-		days_this_year = TimerGameEconomy::IsLeapYear(TimerGameEconomy::year) ? EconomyTime::DAYS_IN_LEAP_YEAR : EconomyTime::DAYS_IN_YEAR;
-		TimerGameEconomy::date -= days_this_year;
-		for (Vehicle *v : Vehicle::Iterate()) v->ShiftDates(-days_this_year);
-		for (LinkGraph *lg : LinkGraph::Iterate()) lg->ShiftDates(-days_this_year);
+		int days_this_year = TimerGameEconomy::IsLeapYear(TimerGameEconomy::year) ? EconomyTime::DAYS_IN_LEAP_YEAR : EconomyTime::DAYS_IN_YEAR;
+		TimerGameEconomy::date -= TimerGameEconomy::Date{days_this_year};
+		for (Vehicle *v : Vehicle::Iterate()) v->ShiftDates(TimerGameEconomy::Date{-days_this_year});
+		for (LinkGraph *lg : LinkGraph::Iterate()) lg->ShiftDates(TimerGameEconomy::Date{-days_this_year});
 	}
 
 	return true;
 }
 
 #ifdef WITH_ASSERT
-template<>
+template <>
 void TimerManager<TimerGameEconomy>::Validate(TimerGameEconomy::TPeriod period)
 {
 	if (period.priority == TimerGameEconomy::Priority::NONE) return;

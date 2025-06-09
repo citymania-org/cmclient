@@ -15,6 +15,7 @@
 #include "../network_internal.h"
 #include "../../debug.h"
 #include "../../error.h"
+#include "../../strings_func.h"
 
 #include "table/strings.h"
 
@@ -26,12 +27,8 @@ static std::vector<std::unique_ptr<NetworkGameSocketHandler>> _deferred_deletion
  * Create a new socket for the game connection.
  * @param s The socket to connect with.
  */
-NetworkGameSocketHandler::NetworkGameSocketHandler(SOCKET s) : info(nullptr), client_id(INVALID_CLIENT_ID),
-		last_frame(_frame_counter), last_frame_server(_frame_counter)
-{
-	this->sock = s;
-	this->last_packet = std::chrono::steady_clock::now();
-}
+NetworkGameSocketHandler::NetworkGameSocketHandler(SOCKET s) : NetworkTCPSocketHandler(s),
+		last_frame(_frame_counter), last_frame_server(_frame_counter), last_packet(std::chrono::steady_clock::now()) {}
 
 /**
  * Functions to help ReceivePacket/SendPacket a bit
@@ -47,7 +44,7 @@ NetworkRecvStatus NetworkGameSocketHandler::CloseConnection(bool)
 		ClientNetworkEmergencySave();
 		_switch_mode = SM_MENU;
 		_networking = false;
-		ShowErrorMessage(STR_NETWORK_ERROR_LOSTCONNECTION, INVALID_STRING_ID, WL_CRITICAL);
+		ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_LOSTCONNECTION), {}, WL_CRITICAL);
 
 		return this->CloseConnection(NETWORK_RECV_STATUS_CLIENT_QUIT);
 	}

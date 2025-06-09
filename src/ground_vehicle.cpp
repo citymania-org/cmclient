@@ -60,7 +60,7 @@ void GroundVehicle<T, Type>::PowerChanged()
 	max_te /= 256;  // Tractive effort is a [0-255] coefficient.
 	if (this->gcache.cached_power != total_power || this->gcache.cached_max_te != max_te) {
 		/* Stop the vehicle if it has no power. */
-		if (total_power == 0) this->vehstatus |= VS_STOPPED;
+		if (total_power == 0) this->vehstatus.Set(VehState::Stopped);
 
 		this->gcache.cached_power = total_power;
 		this->gcache.cached_max_te = max_te;
@@ -110,7 +110,7 @@ int GroundVehicle<T, Type>::GetAcceleration() const
 	int64_t speed = v->GetCurrentSpeed(); // [km/h-ish]
 
 	/* Weight is stored in tonnes. */
-	int32_t mass = this->gcache.cached_weight;
+	int64_t mass = this->gcache.cached_weight;
 
 	/* Power is stored in HP, we need it in watts.
 	 * Each vehicle can have U16 power, 128 vehicles, HP -> watt
@@ -149,7 +149,7 @@ int GroundVehicle<T, Type>::GetAcceleration() const
 	AccelStatus mode = v->GetAccelerationStatus();
 
 	const int max_te = this->gcache.cached_max_te; // [N]
-	/* Constructued from power, with need to multiply by 18 and assuming
+	/* Constructed from power, with need to multiply by 18 and assuming
 	 * low speed, it needs to be a 64 bit integer too. */
 	int64_t force;
 	if (speed > 0) {

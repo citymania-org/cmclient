@@ -18,7 +18,7 @@
 #include "widgets/vehicle_widget.h"
 
 /** What is the status of our acceleration? */
-enum AccelStatus {
+enum AccelStatus : uint8_t {
 	AS_ACCEL, ///< We want to go faster, if possible of course.
 	AS_BRAKE, ///< We want to stop.
 };
@@ -29,29 +29,29 @@ enum AccelStatus {
  */
 struct GroundVehicleCache {
 	/* Cached acceleration values, recalculated when the cargo on a vehicle changes (in addition to the conditions below) */
-	uint32_t cached_weight;           ///< Total weight of the consist (valid only for the first engine).
-	uint32_t cached_slope_resistance; ///< Resistance caused by weight when this vehicle part is at a slope.
-	uint32_t cached_max_te;           ///< Maximum tractive effort of consist (valid only for the first engine).
-	uint16_t cached_axle_resistance;  ///< Resistance caused by the axles of the vehicle (valid only for the first engine).
+	uint32_t cached_weight = 0; ///< Total weight of the consist (valid only for the first engine).
+	uint32_t cached_slope_resistance = 0; ///< Resistance caused by weight when this vehicle part is at a slope.
+	uint32_t cached_max_te = 0; ///< Maximum tractive effort of consist (valid only for the first engine).
+	uint16_t cached_axle_resistance = 0; ///< Resistance caused by the axles of the vehicle (valid only for the first engine).
 
 	/* Cached acceleration values, recalculated on load and each time a vehicle is added to/removed from the consist. */
-	uint16_t cached_max_track_speed;  ///< Maximum consist speed (in internal units) limited by track type (valid only for the first engine).
-	uint32_t cached_power;            ///< Total power of the consist (valid only for the first engine).
-	uint32_t cached_air_drag;         ///< Air drag coefficient of the vehicle (valid only for the first engine).
+	uint16_t cached_max_track_speed = 0; ///< Maximum consist speed (in internal units) limited by track type (valid only for the first engine).
+	uint32_t cached_power = 0; ///< Total power of the consist (valid only for the first engine).
+	uint32_t cached_air_drag = 0; ///< Air drag coefficient of the vehicle (valid only for the first engine).
 
 	/* Cached NewGRF values, recalculated on load and each time a vehicle is added to/removed from the consist. */
-	uint16_t cached_total_length;     ///< Length of the whole vehicle (valid only for the first engine).
-	EngineID first_engine;          ///< Cached EngineID of the front vehicle. INVALID_ENGINE for the front vehicle itself.
-	uint8_t cached_veh_length;        ///< Length of this vehicle in units of 1/VEHICLE_LENGTH of normal length. It is cached because this can be set by a callback.
+	uint16_t cached_total_length = 0; ///< Length of the whole vehicle (valid only for the first engine).
+	EngineID first_engine = EngineID::Invalid(); ///< Cached EngineID of the front vehicle. EngineID::Invalid() for the front vehicle itself.
+	uint8_t cached_veh_length = 0; ///< Length of this vehicle in units of 1/VEHICLE_LENGTH of normal length. It is cached because this can be set by a callback.
 
 	/* Cached UI information. */
-	uint16_t last_speed;              ///< The last speed we did display, so we only have to redraw when this changes.
+	uint16_t last_speed = 0; ///< The last speed we did display, so we only have to redraw when this changes.
 
 	auto operator<=>(const GroundVehicleCache &) const = default;
 };
 
 /** Ground vehicle flags. */
-enum GroundVehicleFlags {
+enum GroundVehicleFlags : uint8_t {
 	GVF_GOINGUP_BIT              = 0,  ///< Vehicle is currently going uphill. (Cached track information for acceleration)
 	GVF_GOINGDOWN_BIT            = 1,  ///< Vehicle is currently going downhill. (Cached track information for acceleration)
 	GVF_SUPPRESS_IMPLICIT_ORDERS = 2,  ///< Disable insertion and removal of automatic orders until the vehicle completes the real order.
@@ -80,8 +80,8 @@ enum GroundVehicleFlags {
  */
 template <class T, VehicleType Type>
 struct GroundVehicle : public SpecializedVehicle<T, Type> {
-	GroundVehicleCache gcache; ///< Cache of often calculated values.
-	uint16_t gv_flags;           ///< @see GroundVehicleFlags.
+	GroundVehicleCache gcache{}; ///< Cache of often calculated values.
+	uint16_t gv_flags = 0; ///< @see GroundVehicleFlags.
 
 	typedef GroundVehicle<T, Type> GroundVehicleBase; ///< Our type
 

@@ -19,6 +19,7 @@
 #include "../../articulated_vehicles.h"
 #include "../../engine_cmd.h"
 #include "../../timer/timer_game_calendar.h"
+
 #include "table/strings.h"
 
 #include "../../safeguards.h"
@@ -31,7 +32,7 @@
 
 	/* AIs have only access to engines they can purchase or still have in use.
 	 * Deity has access to all engined that will be or were available ever. */
-	CompanyID company = ScriptObject::GetCompany();
+	::CompanyID company = ScriptObject::GetCompany();
 	return ScriptCompanyMode::IsDeity() || ::IsEngineBuildable(engine_id, e->type, company) || ::Company::Get(company)->group_all[e->type].GetNumEngines(engine_id) > 0;
 }
 
@@ -46,11 +47,10 @@
 {
 	if (!IsValidEngine(engine_id)) return std::nullopt;
 
-	::SetDParam(0, engine_id);
-	return GetString(STR_ENGINE_NAME);
+	return ::StrMakeValid(::GetString(STR_ENGINE_NAME, engine_id));
 }
 
-/* static */ CargoID ScriptEngine::GetCargoType(EngineID engine_id)
+/* static */ CargoType ScriptEngine::GetCargoType(EngineID engine_id)
 {
 	if (!IsValidEngine(engine_id)) return INVALID_CARGO;
 
@@ -59,24 +59,24 @@
 	auto it = std::max_element(std::cbegin(cap), std::cend(cap));
 	if (*it == 0) return INVALID_CARGO;
 
-	return CargoID(std::distance(std::cbegin(cap), it));
+	return CargoType(std::distance(std::cbegin(cap), it));
 }
 
-/* static */ bool ScriptEngine::CanRefitCargo(EngineID engine_id, CargoID cargo_id)
+/* static */ bool ScriptEngine::CanRefitCargo(EngineID engine_id, CargoType cargo_type)
 {
 	if (!IsValidEngine(engine_id)) return false;
-	if (!ScriptCargo::IsValidCargo(cargo_id)) return false;
+	if (!ScriptCargo::IsValidCargo(cargo_type)) return false;
 
-	return HasBit(::GetUnionOfArticulatedRefitMasks(engine_id, true), cargo_id);
+	return HasBit(::GetUnionOfArticulatedRefitMasks(engine_id, true), cargo_type);
 }
 
-/* static */ bool ScriptEngine::CanPullCargo(EngineID engine_id, CargoID cargo_id)
+/* static */ bool ScriptEngine::CanPullCargo(EngineID engine_id, CargoType cargo_type)
 {
 	if (!IsValidEngine(engine_id)) return false;
 	if (GetVehicleType(engine_id) != ScriptVehicle::VT_RAIL) return false;
-	if (!ScriptCargo::IsValidCargo(cargo_id)) return false;
+	if (!ScriptCargo::IsValidCargo(cargo_type)) return false;
 
-	return (::RailVehInfo(engine_id)->ai_passenger_only != 1) || ScriptCargo::HasCargoClass(cargo_id, ScriptCargo::CC_PASSENGERS);
+	return (::RailVehInfo(engine_id)->ai_passenger_only != 1) || ScriptCargo::HasCargoClass(cargo_type, ScriptCargo::CC_PASSENGERS);
 }
 
 
@@ -277,7 +277,7 @@
 	EnforcePrecondition(false, IsValidEngine(engine_id));
 	EnforcePrecondition(false, company != ScriptCompany::COMPANY_INVALID);
 
-	return ScriptObject::Command<CMD_ENGINE_CTRL>::Do(engine_id, (::CompanyID)company, true);
+	return ScriptObject::Command<CMD_ENGINE_CTRL>::Do(engine_id, ScriptCompany::FromScriptCompanyID(company), true);
 }
 
 /* static */ bool ScriptEngine::DisableForCompany(EngineID engine_id, ScriptCompany::CompanyID company)
@@ -288,5 +288,5 @@
 	EnforcePrecondition(false, IsValidEngine(engine_id));
 	EnforcePrecondition(false, company != ScriptCompany::COMPANY_INVALID);
 
-	return ScriptObject::Command<CMD_ENGINE_CTRL>::Do(engine_id, (::CompanyID)company, false);
+	return ScriptObject::Command<CMD_ENGINE_CTRL>::Do(engine_id, ScriptCompany::FromScriptCompanyID(company), false);
 }

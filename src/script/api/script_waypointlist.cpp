@@ -20,10 +20,10 @@ ScriptWaypointList::ScriptWaypointList(ScriptWaypoint::WaypointType waypoint_typ
 	EnforceDeityOrCompanyModeValid_Void();
 
 	bool is_deity = ScriptCompanyMode::IsDeity();
-	CompanyID owner = ScriptObject::GetCompany();
+	::CompanyID owner = ScriptObject::GetCompany();
 	ScriptList::FillList<Waypoint>(this,
 		[is_deity, owner, waypoint_type](const Waypoint *wp) {
-			return (is_deity || wp->owner == owner || wp->owner == OWNER_NONE) && (wp->facilities & static_cast<StationFacility>(waypoint_type)) != 0;
+			return (is_deity || wp->owner == owner || wp->owner == OWNER_NONE) && wp->facilities.Any(static_cast<StationFacilities>(waypoint_type));
 		}
 	);
 }
@@ -35,6 +35,6 @@ ScriptWaypointList_Vehicle::ScriptWaypointList_Vehicle(VehicleID vehicle_id)
 	const Vehicle *v = ::Vehicle::Get(vehicle_id);
 
 	for (const Order *o = v->GetFirstOrder(); o != nullptr; o = o->next) {
-		if (o->IsType(OT_GOTO_WAYPOINT)) this->AddItem(o->GetDestination());
+		if (o->IsType(OT_GOTO_WAYPOINT)) this->AddItem(o->GetDestination().ToStationID().base());
 	}
 }

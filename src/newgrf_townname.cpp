@@ -14,7 +14,6 @@
 
 #include "stdafx.h"
 #include "newgrf_townname.h"
-#include "core/alloc_func.hpp"
 #include "string_func.h"
 #include "strings_internal.h"
 
@@ -119,6 +118,6 @@ uint16_t GetGRFTownNameType(uint16_t gen)
 		if (gen < t.styles.size()) return gen;
 		gen -= static_cast<uint16_t>(t.styles.size());
 	}
-	/* Fallback to english original */
-	return SPECSTR_TOWNNAME_ENGLISH;
+	/* Fallback to the first built in town name (English). */
+	return SPECSTR_TOWNNAME_START;
 }

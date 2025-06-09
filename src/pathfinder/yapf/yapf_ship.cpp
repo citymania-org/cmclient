@@ -45,11 +45,11 @@ public:
 	void SetDestination(const Ship *v)
 	{
 		if (v->current_order.IsType(OT_GOTO_STATION)) {
-			this->dest_station = v->current_order.GetDestination();
-			this->dest_tile = CalcClosestStationTile(this->dest_station, v->tile, STATION_DOCK);
+			this->dest_station = v->current_order.GetDestination().ToStationID();
+			this->dest_tile = CalcClosestStationTile(this->dest_station, v->tile, StationType::Dock);
 			this->dest_trackdirs = INVALID_TRACKDIR_BIT;
 		} else {
-			this->dest_station = INVALID_STATION;
+			this->dest_station = StationID::Invalid();
 			this->dest_tile = v->dest_tile;
 			this->dest_trackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(v->dest_tile, TRANSPORT_WATER, 0));
 		}
@@ -84,14 +84,14 @@ public:
 			return GetWaterRegionPatchInfo(tile) == this->intermediate_dest_region_patch;
 		}
 
-		if (this->dest_station != INVALID_STATION) return IsDockingTile(tile) && IsShipDestinationTile(tile, this->dest_station);
+		if (this->dest_station != StationID::Invalid()) return IsDockingTile(tile) && IsShipDestinationTile(tile, this->dest_station);
 
 		return tile == this->dest_tile && ((this->dest_trackdirs & TrackdirToTrackdirBits(trackdir)) != TRACKDIR_BIT_NONE);
 	}
 
 	/**
 	 * Called by YAPF to calculate cost estimate. Calculates distance to the destination
-	 * adds it to the actual cost from origin and stores the sum to the Node::m_estimate.
+	 * adds it to the actual cost from origin and stores the sum to the Node::estimate.
 	 */
 	inline bool PfCalcEstimate(Node &n)
 	{
@@ -289,7 +289,7 @@ public:
 			return result;
 		}
 
-		return INVALID_TRACKDIR;
+		NOT_REACHED();
 	}
 
 	/**
@@ -359,7 +359,7 @@ public:
 	{
 		uint *count = (uint*)data;
 		/* Ignore other vehicles (aircraft) and ships inside depot. */
-		if (v->type == VEH_SHIP && (v->vehstatus & VS_HIDDEN) == 0) (*count)++;
+		if (v->type == VEH_SHIP && !v->vehstatus.Test(VehState::Hidden)) (*count)++;
 
 		return nullptr;
 	}
@@ -367,7 +367,7 @@ public:
 	/**
 	 * Called by YAPF to calculate the cost from the origin to the given node.
 	 * Calculates only the cost of given node, adds it to the parent node cost
-	 * and stores the result into Node::m_cost member.
+	 * and stores the result into Node::cost member.
 	 */
 	inline bool PfCalcCost(Node &n, const TrackFollower *tf)
 	{

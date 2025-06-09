@@ -11,9 +11,10 @@
 #define VEHICLE_TYPE_H
 
 #include "core/enum_type.hpp"
+#include "core/pool_type.hpp"
 
 /** The type all our vehicle IDs have. */
-typedef uint32_t VehicleID;
+using VehicleID = PoolID<uint32_t, struct VehicleIDTag, 0xFF000, 0xFFFFF>;
 
 static const int GROUND_ACCELERATION = 9800; ///< Acceleration due to gravity, 9.8 m/s^2
 
@@ -34,7 +35,7 @@ enum VehicleType : uint8_t {
 	VEH_END,
 	VEH_INVALID = 0xFF,           ///< Non-existing type of vehicle.
 };
-DECLARE_POSTFIX_INCREMENT(VehicleType)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(VehicleType)
 DECLARE_ENUM_AS_ADDABLE(VehicleType)
 
 struct Vehicle;
@@ -46,22 +47,17 @@ struct EffectVehicle;
 struct DisasterVehicle;
 
 /** Base vehicle class. */
-struct BaseVehicle
-{
-	VehicleType type; ///< Type of vehicle
+struct BaseVehicle {
+	VehicleType type = VEH_INVALID; ///< Type of vehicle
 };
-
-static const VehicleID INVALID_VEHICLE = 0xFFFFF; ///< Constant representing a non-existing vehicle.
 
 /** Flags for goto depot commands. */
-enum class DepotCommand : uint8_t {
-	None         = 0,         ///< No special flags.
-	Service      = (1U << 0), ///< The vehicle will leave the depot right after arrival (service only)
-	MassSend     = (1U << 1), ///< Tells that it's a mass send to depot command (type in VLW flag)
-	DontCancel   = (1U << 2), ///< Don't cancel current goto depot command if any
-	LocateHangar = (1U << 3), ///< Find another airport if the target one lacks a hangar
+enum class DepotCommandFlag : uint8_t {
+	Service, ///< The vehicle will leave the depot right after arrival (service only)
+	MassSend, ///< Tells that it's a mass send to depot command (type in VLW flag)
+	DontCancel, ///< Don't cancel current goto depot command if any
 };
-DECLARE_ENUM_AS_BIT_SET(DepotCommand)
+using DepotCommandFlags = EnumBitSet<DepotCommandFlag, uint8_t>;
 
 static const uint MAX_LENGTH_VEHICLE_NAME_CHARS = 32; ///< The maximum length of a vehicle name in characters including '\0'
 
@@ -69,13 +65,13 @@ static const uint MAX_LENGTH_VEHICLE_NAME_CHARS = 32; ///< The maximum length of
 static const uint VEHICLE_LENGTH = 8;
 
 /** Vehicle acceleration models. */
-enum AccelerationModel {
+enum AccelerationModel : uint8_t {
 	AM_ORIGINAL,
 	AM_REALISTIC,
 };
 
 /** Visualisation contexts of vehicles and engines. */
-enum EngineImageType {
+enum EngineImageType : uint8_t {
 	EIT_ON_MAP     = 0x00,  ///< Vehicle drawn in viewport.
 	EIT_IN_DEPOT   = 0x10,  ///< Vehicle drawn in depot.
 	EIT_IN_DETAILS = 0x11,  ///< Vehicle drawn in vehicle details, refit window, ...

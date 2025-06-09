@@ -14,16 +14,16 @@
 #include "settings_type.h"
 #include "strings_type.h"
 
-static constexpr TimerGameCalendar::Year CF_NOEURO = 0; ///< Currency never switches to the Euro (as far as known).
-static constexpr TimerGameCalendar::Year CF_ISEURO = 1; ///< Currency _is_ the Euro.
-static constexpr TimerGameCalendar::Year MIN_EURO_YEAR = 2000; ///< The earliest year custom currencies may switch to the Euro.
+static constexpr TimerGameCalendar::Year CF_NOEURO{0}; ///< Currency never switches to the Euro (as far as known).
+static constexpr TimerGameCalendar::Year CF_ISEURO{1}; ///< Currency _is_ the Euro.
+static constexpr TimerGameCalendar::Year MIN_EURO_YEAR{2000}; ///< The earliest year custom currencies may switch to the Euro.
 
 /**
  * This enum gives the currencies a unique id which must be maintained for
  * savegame compatibility and in order to refer to them quickly, especially
  * for referencing the custom one.
  */
-enum Currencies {
+enum Currencies : uint8_t {
 	CURRENCY_GBP,       ///< British Pound
 	CURRENCY_USD,       ///< US Dollar
 	CURRENCY_EUR,       ///< Euro
@@ -68,6 +68,7 @@ enum Currencies {
 	CURRENCY_MYR,       ///< Malaysian Ringgit
 	CURRENCY_LVL,       ///< Latvian Lats
 	CURRENCY_PTE,       ///< Portuguese Escudo
+	CURRENCY_UAH,       ///< Ukrainian Hryvnia
 	CURRENCY_END,       ///< always the last item
 };
 

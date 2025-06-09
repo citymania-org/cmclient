@@ -17,9 +17,8 @@
 #include "../goal_type.h"
 #include "../story_type.h"
 
+#include "script_types.hpp"
 #include "script_log_types.hpp"
-
-#include "table/strings.h"
 
 /**
  * The callback function for Mode-classes.
@@ -49,7 +48,7 @@ private:
 
 	CommandCost costs;               ///< The costs the script is tracking.
 	Money last_cost;                 ///< The last cost of the command.
-	uint last_error;                 ///< The last error of the command.
+	ScriptErrorType last_error{}; ///< The last error of the command.
 	bool last_command_res;           ///< The last result of the command.
 
 	CommandDataBuffer last_data;     ///< The last data passed to a command.
@@ -76,7 +75,6 @@ public:
 		allow_do_command  (true),
 		/* costs (can't be set) */
 		last_cost         (0),
-		last_error        (STR_NULL),
 		last_command_res  (true),
 		last_cmd          (CMD_END),
 		/* calback_value (can't be set) */

@@ -13,18 +13,11 @@
 #include "window_type.h"
 #include "company_type.h"
 #include "core/geometry_type.hpp"
-#include "core/strong_typedef_type.hpp"
 
 Window *FindWindowById(WindowClass cls, WindowNumber number);
 Window *FindWindowByClass(WindowClass cls);
 Window *GetMainWindow();
 void ChangeWindowOwner(Owner old_owner, Owner new_owner);
-
-template<typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-Window *FindWindowById(WindowClass cls, T number)
-{
-	return FindWindowById(cls, number.base());
-}
 
 void ResizeWindow(Window *w, int x, int y, bool clamp_to_screen = true, bool schedule_resize = true);
 int PositionMainToolbar(Window *w);
@@ -42,13 +35,9 @@ void SetupColoursAndInitialWindow();
 void InputLoop();
 
 void InvalidateWindowData(WindowClass cls, WindowNumber number, int data = 0, bool gui_scope = false);
+void InvalidateWindowData(WindowClass cls, WindowNumber number, ConvertibleThroughBase auto data, bool gui_scope = false) { InvalidateWindowData(cls, number, data.base(), gui_scope); }
 void InvalidateWindowClassesData(WindowClass cls, int data = 0, bool gui_scope = false);
-
-template<typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-void InvalidateWindowData(WindowClass cls, T number, int data = 0, bool gui_scope = false)
-{
-	InvalidateWindowData(cls, number.base(), data, gui_scope);
-}
+void InvalidateWindowClassesData(WindowClass cls, ConvertibleThroughBase auto data, bool gui_scope = false) { InvalidateWindowClassesData(cls, data.base(), gui_scope); }
 
 void CloseNonVitalWindows();
 void CloseAllNonVitalWindows();
@@ -67,20 +56,8 @@ void SetWindowWidgetDirty(WindowClass cls, WindowNumber number, WidgetID widget_
 void SetWindowDirty(WindowClass cls, WindowNumber number);
 void SetWindowClassesDirty(WindowClass cls);
 
-template<typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-void SetWindowDirty(WindowClass cls, T number)
-{
-	SetWindowDirty(cls, number.base());
-}
-
 void CloseWindowById(WindowClass cls, WindowNumber number, bool force = true, int data = 0);
 void CloseWindowByClass(WindowClass cls, int data = 0);
-
-template<typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-void CloseWindowById(WindowClass cls, T number, bool force = true, int data = 0)
-{
-	CloseWindowById(cls, number.base(), force, data);
-}
 
 bool EditBoxInGlobalFocus();
 bool FocusedWindowIsConsole();

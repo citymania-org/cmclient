@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.17)
 
 #
 # Runs a single regressoion test
@@ -87,12 +87,7 @@ set(ERROR NO)
 list(LENGTH REGRESSION_EXPECTED REGRESSION_EXPECTED_LENGTH)
 
 # Compare the output
-foreach(RESULT IN LISTS REGRESSION_RESULT)
-    unset(EXPECTED)
-    if(ARGC LESS REGRESSION_EXPECTED_LENGTH)
-        list(GET REGRESSION_EXPECTED ${ARGC} EXPECTED)
-    endif()
-
+foreach(RESULT EXPECTED IN ZIP_LISTS REGRESSION_RESULT REGRESSION_EXPECTED)
     math(EXPR ARGC "${ARGC} + 1")
 
     if(NOT RESULT STREQUAL EXPECTED)

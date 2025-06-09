@@ -22,12 +22,12 @@ public:
 	void SetDestination(const Train *v, bool override_rail_type = false)
 	{
 		this->compatible_railtypes = v->compatible_railtypes;
-		if (override_rail_type) this->compatible_railtypes |= GetRailTypeInfo(v->railtype)->compatible_railtypes;
+		if (override_rail_type) this->compatible_railtypes.Set(GetRailTypeInfo(v->railtype)->compatible_railtypes);
 	}
 
 	bool IsCompatibleRailType(RailType rt)
 	{
-		return HasBit(this->compatible_railtypes, rt);
+		return this->compatible_railtypes.Test(rt);
 	}
 
 	RailTypes GetCompatibleRailTypes() const
@@ -135,7 +135,7 @@ public:
 		this->any_depot = false;
 		switch (v->current_order.GetType()) {
 			case OT_GOTO_WAYPOINT:
-				if (!Waypoint::Get(v->current_order.GetDestination())->IsSingleTile()) {
+				if (!Waypoint::Get(v->current_order.GetDestination().ToStationID())->IsSingleTile()) {
 					/* In case of 'complex' waypoints we need to do a look
 					 * ahead. This look ahead messes a bit about, which
 					 * means that it 'corrupts' the cache. To prevent this
@@ -146,8 +146,8 @@ public:
 				[[fallthrough]];
 
 			case OT_GOTO_STATION:
-				this->dest_tile = CalcClosestStationTile(v->current_order.GetDestination(), v->tile, v->current_order.IsType(OT_GOTO_STATION) ? STATION_RAIL : STATION_WAYPOINT);
-				this->dest_station_id = v->current_order.GetDestination();
+				this->dest_tile = CalcClosestStationTile(v->current_order.GetDestination().ToStationID(), v->tile, v->current_order.IsType(OT_GOTO_STATION) ? StationType::Rail : StationType::RailWaypoint);
+				this->dest_station_id = v->current_order.GetDestination().ToStationID();
 				this->dest_trackdirs = INVALID_TRACKDIR_BIT;
 				break;
 
@@ -159,7 +159,7 @@ public:
 
 			default:
 				this->dest_tile = v->dest_tile;
-				this->dest_station_id = INVALID_STATION;
+				this->dest_station_id = StationID::Invalid();
 				this->dest_trackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(v->dest_tile, TRANSPORT_RAIL, 0));
 				break;
 		}
@@ -175,7 +175,7 @@ public:
 	/** Called by YAPF to detect if node ends in the desired destination */
 	inline bool PfDetectDestination(TileIndex tile, Trackdir td)
 	{
-		if (this->dest_station_id != INVALID_STATION) {
+		if (this->dest_station_id != StationID::Invalid()) {
 			return HasStationTileRail(tile)
 				&& (GetStationIndex(tile) == this->dest_station_id)
 				&& (GetRailStationTrack(tile) == TrackdirToTrack(td));

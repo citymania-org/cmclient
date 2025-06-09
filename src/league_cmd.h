@@ -14,16 +14,16 @@
 #include "command_type.h"
 #include "company_type.h"
 
-std::tuple<CommandCost, LeagueTableID> CmdCreateLeagueTable(DoCommandFlag flags, const std::string &title, const std::string &header, const std::string &footer);
-std::tuple<CommandCost, LeagueTableElementID> CmdCreateLeagueTableElement(DoCommandFlag flags, LeagueTableID table, int64_t rating, CompanyID company, const std::string &text, const std::string &score, LinkType link_type, LinkTargetID link_target);
-CommandCost CmdUpdateLeagueTableElementData(DoCommandFlag flags, LeagueTableElementID element, CompanyID company, const std::string &text, LinkType link_type, LinkTargetID link_target);
-CommandCost CmdUpdateLeagueTableElementScore(DoCommandFlag flags, LeagueTableElementID element, int64_t rating, const std::string &score);
-CommandCost CmdRemoveLeagueTableElement(DoCommandFlag flags, LeagueTableElementID element);
+std::tuple<CommandCost, LeagueTableID> CmdCreateLeagueTable(DoCommandFlags flags, const EncodedString &title, const EncodedString &header, const EncodedString &footer);
+std::tuple<CommandCost, LeagueTableElementID> CmdCreateLeagueTableElement(DoCommandFlags flags, LeagueTableID table, int64_t rating, CompanyID company, const EncodedString &text, const EncodedString &score, LinkType link_type, LinkTargetID link_target);
+CommandCost CmdUpdateLeagueTableElementData(DoCommandFlags flags, LeagueTableElementID element, CompanyID company, const EncodedString &text, LinkType link_type, LinkTargetID link_target);
+CommandCost CmdUpdateLeagueTableElementScore(DoCommandFlags flags, LeagueTableElementID element, int64_t rating, const EncodedString &score);
+CommandCost CmdRemoveLeagueTableElement(DoCommandFlags flags, LeagueTableElementID element);
 
-DEF_CMD_TRAIT(CMD_CREATE_LEAGUE_TABLE, CmdCreateLeagueTable, CMD_DEITY | CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_CREATE_LEAGUE_TABLE_ELEMENT, CmdCreateLeagueTableElement, CMD_DEITY | CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_UPDATE_LEAGUE_TABLE_ELEMENT_DATA, CmdUpdateLeagueTableElementData, CMD_DEITY | CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_UPDATE_LEAGUE_TABLE_ELEMENT_SCORE, CmdUpdateLeagueTableElementScore, CMD_DEITY | CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_REMOVE_LEAGUE_TABLE_ELEMENT, CmdRemoveLeagueTableElement, CMD_DEITY, CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_CREATE_LEAGUE_TABLE, CmdCreateLeagueTable, CommandFlags({CommandFlag::Deity, CommandFlag::StrCtrl}), CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_CREATE_LEAGUE_TABLE_ELEMENT, CmdCreateLeagueTableElement, CommandFlags({CommandFlag::Deity, CommandFlag::StrCtrl}), CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_UPDATE_LEAGUE_TABLE_ELEMENT_DATA, CmdUpdateLeagueTableElementData, CommandFlags({CommandFlag::Deity, CommandFlag::StrCtrl}), CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_UPDATE_LEAGUE_TABLE_ELEMENT_SCORE, CmdUpdateLeagueTableElementScore, CommandFlags({CommandFlag::Deity, CommandFlag::StrCtrl}), CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_REMOVE_LEAGUE_TABLE_ELEMENT, CmdRemoveLeagueTableElement, CommandFlag::Deity, CMDT_OTHER_MANAGEMENT)
 
 #endif /* LEAGUE_CMD_H */

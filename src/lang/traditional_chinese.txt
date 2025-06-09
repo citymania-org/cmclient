@@ -375,8 +375,8 @@ STR_GROUP_BY_NONE                                               :無
 STR_GROUP_BY_SHARED_ORDERS                                      :共享指令
 
 # Order button in shared orders vehicle list
-STR_GOTO_ORDER_VIEW                                             :{BLACK}指令
-STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}打開調度規劃視窗
+STR_GOTO_ORDER_VIEW                                             :{BLACK}指令清單
+STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}開啟指令清單視窗
 
 # Tooltips for the main toolbar
 ###length 31
@@ -384,7 +384,7 @@ STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}暫停�
 STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}快轉遊戲
 STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}選項和設定
 STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}儲存遊戲、載入遊戲、放棄遊戲、離開
-STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}開啟地圖、額外視野、貨物流或標誌清單
+STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}開啟地圖、新增檢視視窗、貨物流或標誌清單
 STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}開啟市鎮名單或建立市鎮
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}開啟補助項目
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}開啟各公司車站清單
@@ -401,7 +401,7 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}開啟�
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_AIRCRAFT            :{BLACK}開啟公司擁有的飛機名單。按住 <Ctrl> 點選可顯示或隱藏飛機群組
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN                            :{BLACK}放大
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT                           :{BLACK}縮小
-STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}鋪設鐵路設施
+STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}鋪設鐵道設施
 STR_TOOLBAR_TOOLTIP_BUILD_ROADS                                 :{BLACK}鋪設道路設施
 STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}鋪設電車路軌設施
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}興建水運設施
@@ -413,21 +413,21 @@ STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}開啟�
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}切換工具列
 
 # Extra tooltips for the scenario editor toolbar
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SAVE_SCENARIO_LOAD_SCENARIO        :{BLACK}儲存場景、載入場景、離開編輯器、結束
+STR_SCENEDIT_TOOLBAR_SAVE_SCENARIO_LOAD_SCENARIO_TOOLTIP        :{BLACK}儲存場景、載入場景、離開編輯器、結束
 STR_SCENEDIT_TOOLBAR_OPENTTD                                    :{YELLOW}OpenTTD
 STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR                            :{YELLOW}場景編輯器
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD    :{BLACK}將開始時間往前 1 年
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD     :{BLACK}將開始時間往後 1 年
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE                           :{BLACK}點選可輸入開始年份
-STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK}開啟地圖、額外視野、標誌清單、市鎮或工業目錄
-STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}修改或產生地形
-STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}建立或產生市鎮
-STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}建立或產生工業
-STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}鋪設道路設施
-STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}鋪設電車路軌設施
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}植樹。按住 <Ctrl> 以對角線選擇區域。按住 <Shift> 可顯示預估成本
-STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}放置標誌
-STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}放置物件。按住 <Ctrl> 以對角線選擇區域。按住 <Shift> 可顯示預估成本
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_BACKWARD_TOOLTIP    :{BLACK}將開始時間往前 1 年
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_FORWARD_TOOLTIP     :{BLACK}將開始時間往後 1 年
+STR_SCENEDIT_TOOLBAR_SET_DATE_TOOLTIP                           :{BLACK}點選可輸入開始年份
+STR_SCENEDIT_TOOLBAR_DISPLAY_MAP_TOWN_DIRECTORY_TOOLTIP         :{BLACK}開啟地圖、新增檢視視窗、標誌清單、市鎮或工業目錄
+STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION_TOOLTIP               :{BLACK}修改或產生地形
+STR_SCENEDIT_TOOLBAR_TOWN_GENERATION_TOOLTIP                    :{BLACK}建立或產生市鎮
+STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION_TOOLTIP                :{BLACK}建立或產生工業
+STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION_TOOLTIP                  :{BLACK}鋪設道路設施
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION_TOOLTIP                  :{BLACK}鋪設電車路軌設施
+STR_SCENEDIT_TOOLBAR_PLANT_TREES_TOOLTIP                        :{BLACK}植樹。按住 <Ctrl> 以對角線選擇區域。按住 <Shift> 可顯示預估成本
+STR_SCENEDIT_TOOLBAR_PLACE_SIGN_TOOLTIP                         :{BLACK}放置標誌
+STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP                       :{BLACK}放置物件。按住 <Ctrl> 以對角線選擇區域。按住 <Shift> 可顯示預估成本
 
 # Scenario editor file menu
 ###length 7
@@ -443,7 +443,6 @@ STR_SCENEDIT_TOWN_MENU_BUILD_TOWN                               :生成市鎮
 STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :設置房屋
 
 # Settings menu
-###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :遊戲選項
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :設定
 STR_SETTINGS_MENU_AI_SETTINGS                                   :AI 設定
@@ -453,12 +452,18 @@ STR_SETTINGS_MENU_SANDBOX_OPTIONS                               :沙盒選項
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :透明度選項
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :顯示市鎮名稱
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :顯示車站／機場／碼頭名稱
+STR_SETTINGS_MENU_STATION_NAMES_TRAIN                           :鐵道車站
+STR_SETTINGS_MENU_STATION_NAMES_LORRY                           :貨運站
+STR_SETTINGS_MENU_STATION_NAMES_BUS                             :公車站
+STR_SETTINGS_MENU_STATION_NAMES_SHIP                            :碼頭
+STR_SETTINGS_MENU_STATION_NAMES_PLANE                           :機場
+STR_SETTINGS_MENU_STATION_NAMES_GHOST                           :廢置
 STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :顯示號誌站名稱
 STR_SETTINGS_MENU_SIGNS_DISPLAYED                               :顯示標誌
-STR_SETTINGS_MENU_SHOW_COMPETITOR_SIGNS                         :顯示競手對手的標誌和車站名稱
+STR_SETTINGS_MENU_SHOW_COMPETITOR_SIGNS                         :顯示競爭對手的標誌和車站名稱
 STR_SETTINGS_MENU_FULL_ANIMATION                                :完整動畫
 STR_SETTINGS_MENU_FULL_DETAIL                                   :完整細節
-STR_SETTINGS_MENU_TRANSPARENT_BUILDINGS                         :視野穿透建築物
+STR_SETTINGS_MENU_TRANSPARENT_BUILDINGS                         :透明建築物
 STR_SETTINGS_MENU_TRANSPARENT_SIGNS                             :半透明標籤
 
 # File menu
@@ -469,7 +474,7 @@ STR_FILE_MENU_EXIT                                              :離開
 
 # Map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :世界地圖
-STR_MAP_MENU_EXTRA_VIEWPORT                                     :打開新視野
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :新增檢視視窗
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :貨物流程索引
 STR_MAP_MENU_SIGN_LIST                                          :標誌清單
 
@@ -499,8 +504,8 @@ STR_INDUSTRY_MENU_INDUSTRY_CHAIN                                :產業鍊
 STR_INDUSTRY_MENU_FUND_NEW_INDUSTRY                             :投資成立工廠
 
 # URailway construction menu
-STR_RAIL_MENU_RAILROAD_CONSTRUCTION                             :鋪設鐵軌
-STR_RAIL_MENU_ELRAIL_CONSTRUCTION                               :鋪設電氣化鐵路
+STR_RAIL_MENU_RAILROAD_CONSTRUCTION                             :鋪設鐵道
+STR_RAIL_MENU_ELRAIL_CONSTRUCTION                               :鋪設電氣化鐵道
 STR_RAIL_MENU_MONORAIL_CONSTRUCTION                             :鋪設單軌
 STR_RAIL_MENU_MAGLEV_CONSTRUCTION                               :鋪設磁浮軌
 
@@ -531,7 +536,7 @@ STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :刪除所有訊
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :土地資訊
 STR_ABOUT_MENU_HELP                                             :幫助和手冊
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :切換主控台
-STR_ABOUT_MENU_AI_DEBUG                                         :AI/遊戲腳本除錯
+STR_ABOUT_MENU_AI_DEBUG                                         :AI／遊戲腳本除錯
 STR_ABOUT_MENU_SCREENSHOT                                       :擷取畫面
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :顯示幀率
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :關於「OpenTTD」
@@ -771,7 +776,7 @@ STR_SMALLMAP_TOOLTIP_COMPANY_SELECTION                          :{BLACK}點選�
 STR_SMALLMAP_TOOLTIP_CARGO_SELECTION                            :{BLACK}點選一種貨物以切換是否顯示其屬性。{}按住Ctrl鍵點選貨物以顯示該貨物的屬性而隱藏其他貨物；再次按住Ctrl鍵點選則顯示所有貨物
 
 STR_SMALLMAP_LEGENDA_ROADS                                      :{TINY_FONT}{BLACK}道路
-STR_SMALLMAP_LEGENDA_RAILROADS                                  :{TINY_FONT}{BLACK}鐵路
+STR_SMALLMAP_LEGENDA_RAILROADS                                  :{TINY_FONT}{BLACK}鐵道
 STR_SMALLMAP_LEGENDA_STATIONS_AIRPORTS_DOCKS                    :{TINY_FONT}{BLACK}車站／機場／碼頭
 STR_SMALLMAP_LEGENDA_BUILDINGS_INDUSTRIES                       :{TINY_FONT}{BLACK}建築／工業
 STR_SMALLMAP_LEGENDA_VEHICLES                                   :{TINY_FONT}{BLACK}車輛
@@ -786,7 +791,7 @@ STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY                          :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_BUS_STATION                                :{TINY_FONT}{BLACK}公車站
 STR_SMALLMAP_LEGENDA_AIRPORT_HELIPORT                           :{TINY_FONT}{BLACK}機場／直昇機場
 STR_SMALLMAP_LEGENDA_DOCK                                       :{TINY_FONT}{BLACK}碼頭
-STR_SMALLMAP_LEGENDA_ROUGH_LAND                                 :{TINY_FONT}{BLACK}泥地
+STR_SMALLMAP_LEGENDA_ROUGH_LAND                                 :{TINY_FONT}{BLACK}荒地
 STR_SMALLMAP_LEGENDA_GRASS_LAND                                 :{TINY_FONT}{BLACK}草地
 STR_SMALLMAP_LEGENDA_BARE_LAND                                  :{TINY_FONT}{BLACK}荒地
 STR_SMALLMAP_LEGENDA_RAINFOREST                                 :{TINY_FONT}{BLACK}雨林
@@ -801,7 +806,7 @@ STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLACK}雪地
 
 STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}切換市鎮名稱顯示
-STR_SMALLMAP_CENTER                                             :{BLACK}將小地圖移到目前地點
+STR_SMALLMAP_CENTER_TOOLTIP                                     :{BLACK}將小地圖移到目前地點
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING} ({NUM})
 STR_SMALLMAP_LINKSTATS                                          :{TINY_FONT}{STRING}
 STR_SMALLMAP_COMPANY                                            :{TINY_FONT}{COMPANY}
@@ -833,10 +838,9 @@ STR_STATUSBAR_INFINITE_MONEY                                    :{WHITE}（無�
 # News message history
 STR_MESSAGE_HISTORY                                             :{WHITE}訊息記錄
 STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}列出最近的新聞內容
-STR_MESSAGE_NEWS_FORMAT                                         :{STRING}  -  {STRING}
+STR_MESSAGE_NEWS_FORMAT                                         :{STRING} - {STRING}
 
 STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}訊息
-STR_NEWS_CUSTOM_ITEM                                            :{BIG_FONT}{BLACK}{STRING}
 
 STR_NEWS_FIRST_TRAIN_ARRIVAL                                    :{BIG_FONT}{BLACK}市民慶賀 . . .{}首輛列車抵達 {STATION}！
 STR_NEWS_FIRST_BUS_ARRIVAL                                      :{BIG_FONT}{BLACK}市民慶賀 . . .{}首輛公車抵達 {STATION}！
@@ -902,7 +906,7 @@ STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE
 ###next-name-looks-similar
 
 # Order review system / warnings
-STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} 的調度任務太少
+STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} 的指令太少
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} 有錯誤的計劃指令
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} 有重複的指令
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} 有無法到達的車站
@@ -929,39 +933,39 @@ STR_NEWS_SHOW_VEHICLE_GROUP_TOOLTIP                             :{BLACK}打開�
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_LIST                   :{WHITE}{STATION}不再接受：{CARGO_LIST}
 STR_NEWS_STATION_NOW_ACCEPTS_CARGO_LIST                         :{WHITE}{STATION}現正接受︰{CARGO_LIST}
 
-STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}補助過期：{}{}將 {STRING} 從 {STRING} 運到 {STRING} 現在起不再提供補助
-STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}補助結束：{}{}將 {STRING} 從 {STRING} 運到 {STRING} 的服務不再提供補助
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}提供補助：{}{}首先將 {STRING} 從 {STRING} 運到 {STRING} 的公司將得到地方政府為期 {UNITS_YEARS_OR_MINUTES} 的補助！
+STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}財務補助項目到期：{}{}將 {STRING} 從 {STRING} 運到 {STRING} 將不再獲得財務補助
+STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}財務補助項目流標：{}{}將 {STRING} 從 {STRING} 運到 {STRING} 的項目將不再提供財務補助
+STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}財務補助項目招標：{}{}首先將 {STRING} 從 {STRING} 運到 {STRING} 的公司將獲取地方政府為期 {UNITS_YEARS_OR_MINUTES} 的財務補助！
 ###length 4
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} 獲得補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 從 {2:STRING} 運到 {3:STRING} 的服務可收到額外 50% 的運費補助！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING} 獲得補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 從 {2:STRING} 運到 {3:STRING} 的服務可收到雙倍運費補助！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING} 獲得補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 從 {2:STRING} 運到 {3:STRING} 的服務可收到三倍運費補助！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} 獲得補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 從 {2:STRING} 運到 {3:STRING} 的服務可收到四倍運費補助！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} 獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 從 {2:STRING} 運到 {3:STRING} 的服務項目將獲取額外 50% 的報酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING} 獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 從 {2:STRING} 運到 {3:STRING} 的服務項目將獲取雙倍的報酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING} 獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 從 {2:STRING} 運到 {3:STRING} 的服務項目將獲取三倍的報酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} 獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 從 {2:STRING} 運到 {3:STRING} 的服務項目將獲取四倍的報酬！
 
 STR_NEWS_ROAD_REBUILDING_MONTHS                                 :{BIG_FONT}{BLACK}在{TOWN}內出現交通混亂！{}{}由{STRING}贊助的道路重建計劃將為駕駛者帶來多達 6 個月的阻塞苦楚！
 STR_NEWS_ROAD_REBUILDING_MINUTES                                :{BIG_FONT}{BLACK}在{TOWN}內出現交通混亂！{}{}由{STRING}贊助的道路重建計劃將為駕駛者帶來多達 6 分鐘的阻塞苦楚！
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}運輸大亨!
-STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MONTHS                    :{BIG_FONT}{BLACK}{TOWN} 地方政府與 {STRING} 簽署了為期一年的專屬運輸權！
-STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MINUTES                   :{BIG_FONT}{BLACK}{TOWN} 地方政府與 {STRING} 簽署了 12 分鐘專屬運輸權！
+STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MONTHS                    :{BIG_FONT}{BLACK}{TOWN} 地方政府與 {STRING} 簽署了為期一年的專屬營運權合約！
+STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MINUTES                   :{BIG_FONT}{BLACK}{TOWN} 地方政府與 {STRING} 簽署了 12 分鐘專屬營運權合約！
 
 # Extra view window
-STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}視野 {COMMA}
-STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}複製至本視野
-STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}將主視野的位置複製到此視窗
-STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}貼上至主視野
-STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}將主視野位置移到此視窗的中央位置
+STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}檢視 {COMMA}
+STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}複製至本視窗
+STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TOOLTIP                        :{BLACK}將主畫面的位置複製到此視窗
+STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}貼上至主畫面
+STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}將主畫面位置移到此視窗的中央位置
 
 # Game options window
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}遊戲選項
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :基本
-STR_GAME_OPTIONS_TAB_GENERAL_TT                                 :{BLACK}選擇基本設定
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}選擇基本設定
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :圖形集
-STR_GAME_OPTIONS_TAB_GRAPHICS_TT                                :{BLACK}選擇圖形設定
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}選擇圖形設定
 STR_GAME_OPTIONS_TAB_SOUND                                      :音效
-STR_GAME_OPTIONS_TAB_SOUND_TT                                   :{BLACK}選擇音效及音樂設定
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}選擇音效及音樂設定
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :社交
-STR_GAME_OPTIONS_TAB_SOCIAL_TT                                  :{BLACK}選擇社交插件設定
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}選擇社交插件設定
 
 STR_GAME_OPTIONS_VOLUME                                         :音量
 STR_GAME_OPTIONS_SFX_VOLUME                                     :音效
@@ -974,7 +978,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}選擇�
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 44
+###length 45
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :英鎊
 STR_GAME_OPTIONS_CURRENCY_USD                                   :美元
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :歐元
@@ -1019,6 +1023,7 @@ STR_GAME_OPTIONS_CURRENCY_IDR                                   :印尼盾
 STR_GAME_OPTIONS_CURRENCY_MYR                                   :馬來西亞令吉
 STR_GAME_OPTIONS_CURRENCY_LVL                                   :拉脫維亞勒斯
 STR_GAME_OPTIONS_CURRENCY_PTE                                   :葡萄牙埃斯庫多
+STR_GAME_OPTIONS_CURRENCY_UAH                                   :烏克蘭赫里夫尼亞
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}自動存檔
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}選擇自動存檔頻率
@@ -1033,7 +1038,7 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :每120分鐘
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}語言
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}選擇要用的介面語言
-STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} (已完成{NUM}%)
+STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING}（已完成 {NUM} ％）
 
 STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}全螢幕
 STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}勾選即可在全螢幕下玩 OpenTTD
@@ -1050,7 +1055,7 @@ STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}修改�
 STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}垂直同步
 STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}勾選此方框以啟用垂直同步 (V-SYNC)。此項設定將會在遊戲重啟後套用。只有在硬體加速存在時可用
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}使用中的驅動程式: {STRING}
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}使用中的驅動程式：{STRING}
 
 STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}界面大小
 STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}拖曳滑動以設定界面大小。 按住 <Ctrl> 以調整至非整數之倍數
@@ -1073,7 +1078,7 @@ STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}在啟�
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}關於問卷和隱私
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}這將會開啟瀏覽器給提供更多自動調查的資訊
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}預覽調查結果
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}顯示目前運行的遊戲調查結果
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}顯示現正執行的遊戲調查結果
 
 STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}圖形
 
@@ -1103,9 +1108,9 @@ STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{BLACK}{STRING}
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :{BLACK}平台︰
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :{BLACK}擴充功能狀態︰
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}正在運行
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}正在執行
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_FAILED                     :{RED}初始化失敗
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_PLATFORM_NOT_RUNNING       :{ORANGE}{STRING} 未運行
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_PLATFORM_NOT_RUNNING       :{ORANGE}{STRING} 未執行
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_UNLOADED                   :{RED}未載入
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_DUPLICATE                  :{RED}擴充功能重複
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_UNSUPPORTED_API            :{RED}不支援的版本
@@ -1212,7 +1217,7 @@ STR_CITY_APPROVAL_TOLERANT                                      :能忍受
 STR_CITY_APPROVAL_HOSTILE                                       :抱敵意
 STR_CITY_APPROVAL_PERMISSIVE                                    :放任（所有行為均不受影響）
 
-STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}無適合的 AI 可使用...{}您可以從「線上內容」系統中下載各種 AI。
+STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}無適合的 AI 可供使用……{}{}您可以使用「線上擴充內容」功能下載更多的 AI
 
 # Settings tree window
 STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}顯示設定
@@ -1277,7 +1282,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :靠右
 
 STR_CONFIG_SETTING_SECONDS_VALUE                                :{COMMA}{NBSP}秒
 
-STR_CONFIG_SETTING_INFINITE_MONEY                               :無限資金: {STRING}
+STR_CONFIG_SETTING_INFINITE_MONEY                               :無限資金：{STRING}
 STR_CONFIG_SETTING_INFINITE_MONEY_HELPTEXT                      :允許無限支出和防止公司倒閉
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :最大貸款額：{STRING}
@@ -1289,7 +1294,7 @@ STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_DISABLED                :無貸款
 STR_CONFIG_SETTING_INTEREST_RATE                                :息率：{STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :設定貸款息率。如啟用了通貨膨脹的設定，則此設定同時決定通脹率。
 
-STR_CONFIG_SETTING_RUNNING_COSTS                                :營運成本： {STRING}
+STR_CONFIG_SETTING_RUNNING_COSTS                                :營運成本：{STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :設定車輛的營運與維護成本水平。
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :建造速度：{STRING}
@@ -1341,7 +1346,7 @@ STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :使車站和機
 STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES                     :公司車站可以為自帶車站的工業設施提供服務：{STRING}
 STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES_HELPTEXT            :啟用後，公司車站可以為附近自帶車站的工業設施(如油井)提供服務。禁用後，這些工業設施只能由其自帶的車站提供服務，並且這些車站不會提供除了該工業設施以外的產品
 
-STR_CONFIG_SETTING_EXTRADYNAMITE                                :可移除更多市鎮所有的道路、橋樑及隧道：{STRING}
+STR_CONFIG_SETTING_EXTRADYNAMITE                                :允許移除更多市鎮擁有的道路、橋樑及隧道：{STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :使玩家更容易地移除市鎮擁有的基礎建設和建築物。
 
 STR_CONFIG_SETTING_TRAIN_LENGTH                                 :列車長度上限：{STRING}
@@ -1420,26 +1425,26 @@ STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :近端
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :中間
 STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :遠端
 
-STR_CONFIG_SETTING_AUTOSCROLL                                   :滑鼠在視窗邊緣時移動視窗：{STRING}
-STR_CONFIG_SETTING_AUTOSCROLL_HELPTEXT                          :如啟用此選項，額外視野的畫面會在游標接近其視窗邊緣時捲動。
+STR_CONFIG_SETTING_AUTOSCROLL                                   :滑鼠在視窗邊緣時移動畫面：{STRING}
+STR_CONFIG_SETTING_AUTOSCROLL_HELPTEXT                          :啟用後，檢視視窗的畫面會在游標接近其視窗邊緣時捲動
 ###length 4
 STR_CONFIG_SETTING_AUTOSCROLL_DISABLED                          :停用
-STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT_FULLSCREEN          :主視野，僅限全螢幕模式
-STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT                     :主視野
-STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :所有視野
+STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT_FULLSCREEN          :主畫面，僅限全螢幕模式
+STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT                     :主畫面
+STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :所有畫面視窗
 
 STR_CONFIG_SETTING_BRIBE                                        :可向地方政府行賄：{STRING}
 ###length 2
 STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :容許公司嘗試賄賂地方政府。如果賄賂行為被調查員揭發，公司在往後六個月內無法接觸有關地方政府。
 STR_CONFIG_SETTING_BRIBE_HELPTEXT_MINUTES                       :容許公司嘗試賄賂地方政府。如果賄賂行為被調查員揭發，公司將在往後 6 分鐘內無法接觸有關地方政府。
 
-STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :允許購買市鎮的專屬運輸權：{STRING}
+STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :允許購買市鎮的專屬營運權：{STRING}
 ###length 2
-STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :如果一所公司購買了一個市鎮的專屬運輸權，其他公司在該市鎮的車站將在十二個月之內不會收到任何貨物與乘客
-STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT_MINUTES             :如果一所公司購買了一個市鎮的專屬運輸權，其他公司在該市鎮的車站將在 12 分鐘之內不會收到任何貨物與乘客
+STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :如果一所公司購買了一個市鎮的專屬營運權，其他公司在該市鎮的車站將在十二個月之內不會收到任何貨物與乘客
+STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT_MINUTES             :如果一所公司購買了一個市鎮的專屬營運權，其他公司在該市鎮的車站將在 12 分鐘之內不會收到任何貨物與乘客
 
-STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS                         :容許資助市鎮建設：{STRING}
-STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS_HELPTEXT                :容許公司出資供市鎮建造新樓房。
+STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS                         :允許資助市鎮建設：{STRING}
+STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS_HELPTEXT                :允許公司提供資助給市鎮興建新房屋
 
 STR_CONFIG_SETTING_ALLOW_FUND_ROAD                              :允許挹注資金到地方道路重建：{STRING}
 STR_CONFIG_SETTING_ALLOW_FUND_ROAD_HELPTEXT                     :容許公司出資供市鎮重建市內道路，以干擾市內的路面交通服務。
@@ -1461,13 +1466,13 @@ STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :無
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :減少
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :正常
 
-STR_CONFIG_SETTING_CROSSING_WITH_COMPETITOR                     :可在競爭對手所有的道路或鐵路上建造平交道：{STRING}
-STR_CONFIG_SETTING_CROSSING_WITH_COMPETITOR_HELPTEXT            :可在競爭對手擁有的道路或鐵路上建設平交道
+STR_CONFIG_SETTING_CROSSING_WITH_COMPETITOR                     :允許在競爭對手擁有的道路或鐵道上建設平交道：{STRING}
+STR_CONFIG_SETTING_CROSSING_WITH_COMPETITOR_HELPTEXT            :啟用時，可在競爭對手擁有的道路或鐵道上建設平交道
 
-STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :可在市鎮擁有的道路上建設路邊車站︰{STRING}
-STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :可在市鎮擁有的道路上建設直通型車站
-STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :可在競爭對手所有的道路上建設路邊車站：{STRING}
-STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD_HELPTEXT             :可在競爭對手擁有的道路上建設直通型車站
+STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :允許在市鎮擁有的道路上建設直通型車站：{STRING}
+STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :啟用時，可在市鎮擁有的道路上建設直通型車站
+STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :允許在競爭對手擁有的道路上建設直通型車站：{STRING}
+STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD_HELPTEXT             :啟用時，可在競爭對手擁有的道路上建設直通型車站
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}當有車輛正在運行時不能修改此設定。
 
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :基礎建設維護：{STRING}
@@ -1575,7 +1580,7 @@ STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :僅於地圖邊
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :雪線高度：{STRING}
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :選擇在寒帶氣候中的雪線高度。雪量會影響工業生成與城市擴張要求。只能在場景編輯器中修改或由"雪量覆蓋率"計算得到
 
-STR_CONFIG_SETTING_SNOW_COVERAGE                                :積雪覆蓋率: {STRING}
+STR_CONFIG_SETTING_SNOW_COVERAGE                                :積雪覆蓋率：{STRING}
 STR_CONFIG_SETTING_SNOW_COVERAGE_HELPTEXT                       :選擇在寒帶氣候中的大致雪量。雪量會影響工業生成與市鎮擴張要求。只在地圖生成時有效。海平面以上一格的土地永遠不會下雪
 STR_CONFIG_SETTING_SNOW_COVERAGE_VALUE                          :{NUM}%
 
@@ -1628,7 +1633,7 @@ STR_CONFIG_SETTING_STATION_SPREAD_HELPTEXT                      :車站單一方
 STR_CONFIG_SETTING_SERVICEATHELIPAD                             :直升機於直升機坪自動維修：{STRING}
 STR_CONFIG_SETTING_SERVICEATHELIPAD_HELPTEXT                    :使直升機在著地時自動維修，即使該直升機場或機場沒有維修設施亦然。
 
-STR_CONFIG_SETTING_LINK_TERRAFORM_TOOLBAR                       :地形工具列與鐵軌／道路／水道／機場建設合併：{STRING}
+STR_CONFIG_SETTING_LINK_TERRAFORM_TOOLBAR                       :地形工具列與鐵道／道路／水道／機場建設合併：{STRING}
 STR_CONFIG_SETTING_LINK_TERRAFORM_TOOLBAR_HELPTEXT              :設定是否在開啟建設交通設施的工具列時，同時開啟地形工具列。
 
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR                         :小地圖要顯示的地形顏色：{STRING}
@@ -1646,16 +1651,16 @@ STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREEN_TO_BLUE              :將綠色換為
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREY_TO_RED                :灰色至紅色
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREYSCALE                  :灰階
 
-STR_CONFIG_SETTING_SCROLLMODE                                   :視野捲動方式：{STRING}
+STR_CONFIG_SETTING_SCROLLMODE                                   :畫面捲動方式：{STRING}
 STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :捲動地圖時的行為。「滑鼠位置鎖定」選項不適用於所有平台系統，例如基於網頁的版本、觸控螢幕、帶有 Wayland 的 Linux 等
 ###length 4
-STR_CONFIG_SETTING_SCROLLMODE_DEFAULT                           :使用右鍵移動視角，固定滑鼠游標的位置
+STR_CONFIG_SETTING_SCROLLMODE_DEFAULT                           :使用右鍵移動畫面，固定滑鼠游標的位置
 STR_CONFIG_SETTING_SCROLLMODE_RMB_LOCKED                        :使用右鍵移動地圖，固定滑鼠游標的位置
 STR_CONFIG_SETTING_SCROLLMODE_RMB                               :使用右鍵移動地圖
 STR_CONFIG_SETTING_SCROLLMODE_LMB                               :使用左鍵移動地圖
 
-STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :視野平滑移動：{STRING}
-STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :設定在小地圖中點選一個位置時，主視野的顯示反應。如啟用此選項，影像會移動直至到達點選的位置；否則影像會直接跳到點選的位置。
+STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :畫面平滑移動：{STRING}
+STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :設定在小地圖中點選一個位置時，主畫面的顯示反應。如啟用此選項，影像會移動直至到達點選的位置；否則影像會直接跳到點選的位置。
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :使用某些建設工具時顯示度量提示：{STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :當點選建造工具後拖曳滑鼠時，是否顯示兩端的方格距離及高度差異。
@@ -1717,7 +1722,7 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :短格式 (31-1
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :國際格式 (2008-12-31)
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :自動在開始新遊戲時暫停：{STRING}
-STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :如啟用此選項，遊戲在開始時會自動暫停，方便玩家詳細觀察地圖。
+STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :如啟用此選項，遊戲在開始時會自動暫停，方便玩家詳細觀察地圖
 
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL                          :暫停時允許：{STRING}
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_HELPTEXT                 :選擇遊戲暫停時可以進行的動作。
@@ -1746,7 +1751,7 @@ STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :在時刻表上
 STR_CONFIG_SETTING_QUICKGOTO                                    :快速建立車輛指令：{STRING}
 STR_CONFIG_SETTING_QUICKGOTO_HELPTEXT                           :設定是否在打開指令視窗時自動選取「前往」按鈕。
 
-STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE                            :預設的鐵軌種類 (將在新遊戲／載入遊戲時生效)：{STRING}
+STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE                            :預設的軌道類型（將在新遊戲或載入遊戲時生效）：{STRING}
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_HELPTEXT                   :設定開始新遊戲或載入遊戲後預設選擇的軌道種類。「最先可用的軌道」指最早出現而可用的軌道種類；「最新可用的軌道」指最後出現而可用的軌道種類；「最常用的軌道」指遊戲中使用最多的軌道種類。
 ###length 3
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_FIRST                      :最先可用的軌道
@@ -1809,16 +1814,16 @@ STR_CONFIG_SETTING_MAX_AIRCRAFT_HELPTEXT                        :每所公司擁
 STR_CONFIG_SETTING_MAX_SHIPS                                    :公司可擁有最大船舶數量：{STRING}
 STR_CONFIG_SETTING_MAX_SHIPS_HELPTEXT                           :每所公司擁有的船舶數量上限。
 
-STR_CONFIG_SETTING_AI_BUILDS_TRAINS                             :不允許電腦使用鐵路：{STRING}
+STR_CONFIG_SETTING_AI_BUILDS_TRAINS                             :禁止電腦使用鐵道：{STRING}
 STR_CONFIG_SETTING_AI_BUILDS_TRAINS_HELPTEXT                    :如啟用此選項，電腦玩家將無法建造列車。
 
-STR_CONFIG_SETTING_AI_BUILDS_ROAD_VEHICLES                      :不允許電腦使用車輛：{STRING}
+STR_CONFIG_SETTING_AI_BUILDS_ROAD_VEHICLES                      :禁止電腦使用道路車輛：{STRING}
 STR_CONFIG_SETTING_AI_BUILDS_ROAD_VEHICLES_HELPTEXT             :如啟用此選項，電腦玩家將無法建造公路車輛 (包括電車)。
 
-STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT                           :不允許電腦使用飛機：{STRING}
+STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT                           :禁止電腦使用飛機：{STRING}
 STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT_HELPTEXT                  :如啟用此選項，電腦玩家將無法建造飛機。
 
-STR_CONFIG_SETTING_AI_BUILDS_SHIPS                              :不允許電腦使用船舶：{STRING}
+STR_CONFIG_SETTING_AI_BUILDS_SHIPS                              :禁止電腦使用船舶：{STRING}
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS_HELPTEXT                     :如啟用此選項，電腦玩家將無法建造船舶。
 
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER                            :多人遊戲中允許電腦 AI 加入：{STRING}
@@ -1826,7 +1831,7 @@ STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :容許 AI 電�
 
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES                           :不令腳本代碼停運的最大代碼數量：{STRING}
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES_HELPTEXT                  :設定每個計算循環之中，每一句代碼最多可進行多少個計算步驟。
-STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY                            :每個腳本的記憶體上限: {STRING}
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY                            :每個腳本的記憶體上限：{STRING}
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :單一腳本可使用的最大記憶體量。在遊玩大型地圖時可能需要增加
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
@@ -1858,7 +1863,7 @@ STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY_HELPTEXT      :啟用後，對
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :開啟列車車廂速限：{STRING}
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :如啟用此選項，無動力車廂的限速會影響列車的最高速度。
 
-STR_CONFIG_SETTING_DISABLE_ELRAILS                              :停用電氣化鐵路：{STRING}
+STR_CONFIG_SETTING_DISABLE_ELRAILS                              :停用電氣化鐵道：{STRING}
 STR_CONFIG_SETTING_DISABLE_ELRAILS_HELPTEXT                     :如啟用此選項，電動列車可於普通軌道上行走，毋須鋪設電氣化軌道。
 
 STR_CONFIG_SETTING_NEWS_ARRIVAL_FIRST_VEHICLE_OWN               :首部車輛抵達玩家的車站：{STRING}
@@ -1870,7 +1875,7 @@ STR_CONFIG_SETTING_NEWS_ARRIVAL_FIRST_VEHICLE_OTHER_HELPTEXT    :當對手設立
 STR_CONFIG_SETTING_NEWS_ACCIDENTS_DISASTERS                     :事故／災難：{STRING}
 STR_CONFIG_SETTING_NEWS_ACCIDENTS_DISASTERS_HELPTEXT            :當事故或災難發生時顯示報紙訊息。
 
-STR_CONFIG_SETTING_NEWS_ACCIDENT_OTHER                          :競爭對手的載具事故: {STRING}
+STR_CONFIG_SETTING_NEWS_ACCIDENT_OTHER                          :競爭對手的載具事故：{STRING}
 STR_CONFIG_SETTING_NEWS_ACCIDENT_OTHER_HELPTEXT                 :顯示有關競爭對手車輛事故的報紙。
 
 STR_CONFIG_SETTING_NEWS_COMPANY_INFORMATION                     :公司資訊：{STRING}
@@ -1880,7 +1885,7 @@ STR_CONFIG_SETTING_NEWS_INDUSTRY_OPEN                           :工業開業：
 STR_CONFIG_SETTING_NEWS_INDUSTRY_OPEN_HELPTEXT                  :當有新工業開張時顯示報紙訊息。
 
 STR_CONFIG_SETTING_NEWS_INDUSTRY_CLOSE                          :關閉工業：{STRING}
-STR_CONFIG_SETTING_NEWS_INDUSTRY_CLOSE_HELPTEXT                 :當工業設施關閉時顯示報紙訊息。
+STR_CONFIG_SETTING_NEWS_INDUSTRY_CLOSE_HELPTEXT                 :當工業設施關閉時顯示報紙報導訊息
 
 STR_CONFIG_SETTING_NEWS_ECONOMY_CHANGES                         :經濟變動：{STRING}
 STR_CONFIG_SETTING_NEWS_ECONOMY_CHANGES_HELPTEXT                :顯示關於經濟總體變動的報紙訊息。
@@ -1924,7 +1929,10 @@ STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :永不
 
 STR_CONFIG_SETTING_ECONOMY_TYPE                                 :經濟類型：{STRING}
-STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :平滑經濟使得產量變化更容易發生，且每次變化的幅度降低。凍結經濟使產量不會改變，並且工業不會倒閉。此設置可能對NewGRF 提供的工業類型無效
+###length 2
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :平滑經濟使得產量變化更容易發生，且每次變化的幅度會降低。凍結經濟使產量不會改變，並且工業不會倒閉。此設置可能對 NewGRF 所提供的工業類型無效。{}{} 即使凍結經濟時，每月的工業產量可能仍會有所不同，因為工業生產是按固定間隔發生的，與月份並不完全對應
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT_PERIOD                 :平滑經濟使得產量變化更容易發生，且每次變化的幅度會降低。凍結經濟使產量不會改變，並且工業不會倒閉。此設置可能對 NewGRF 所提供的工業類型無效。{}{} 即使凍結經濟時，每分鐘的工業產量可能仍會有所不同，因為工業生產是按固定間隔發生的，與分鐘並不完全對應
+
 ###length 3
 STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :原版
 STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :平滑
@@ -1978,6 +1986,13 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :禁止
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :允許
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :允許，可自訂市鎮道路配置
 
+STR_CONFIG_SETTING_HOUSE_PLACER                                 :在市鎮設置獨立房屋：{STRING}
+STR_CONFIG_SETTING_HOUSE_PLACER_HELPTEXT                        :啟用此選項以允許玩家在市鎮手動設置房屋
+###length 3
+STR_CONFIG_SETTING_HOUSE_PLACER_FORBIDDEN                       :禁止
+STR_CONFIG_SETTING_HOUSE_PLACER_ALLOWED                         :允許
+STR_CONFIG_SETTING_HOUSE_PLACER_FULLY_CONSTRUCTED               :允許，完全建成
+
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :城鎮貨物生成：{STRING}
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :貨物的產出速度取決於城市中的房屋，與城市的總人口數相關。{}二次方：兩倍人口的都市產出四倍量的貨物{}線性：兩倍人口的都市產出兩倍量的貨物
 ###length 2
@@ -1988,7 +2003,7 @@ STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :遊戲中產生
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :控制遊戲內是否隨意種植樹木。此選項可能會影響一些依賴樹木的工業 (例如熱帶氣候的伐木場)。
 ###length 4
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_SPREAD               :生長但不擴散{RED}（令伐木場失效）
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_RAINFOREST       :在所有地方生長但只在雨林中擴散
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_RAINFOREST       :僅在雨林生長與擴散
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_ALL              :在任意地點皆可生長與擴散
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_GROWTH_NO_SPREAD     :不生長，亦不擴散{RED}（令伐木場失效）
 
@@ -2008,9 +2023,9 @@ STR_CONFIG_SETTING_SOFT_LIMIT_VALUE                             :{COMMA}
 STR_CONFIG_SETTING_SOFT_LIMIT_DISABLED                          :停用
 
 STR_CONFIG_SETTING_ZOOM_MIN                                     :最高放大倍數：{STRING}
-STR_CONFIG_SETTING_ZOOM_MIN_HELPTEXT                            :定義視野可達到的最高放大倍數。請注意：較高的值需要較多記憶體以保持遊戲運行暢順。
+STR_CONFIG_SETTING_ZOOM_MIN_HELPTEXT                            :畫面的最高放大倍數。注意：提高放大倍數會增加記憶體需求
 STR_CONFIG_SETTING_ZOOM_MAX                                     :最遠縮小倍數：{STRING}
-STR_CONFIG_SETTING_ZOOM_MAX_HELPTEXT                            :定義視野可達到的最高縮小倍數。請注意：較高的值可能會令遊戲速度變慢。
+STR_CONFIG_SETTING_ZOOM_MAX_HELPTEXT                            :畫面的最高縮小倍數，過度的縮放等級會令遊戲速度變慢
 ###length 6
 STR_CONFIG_SETTING_ZOOM_LVL_MIN                                 :4x
 STR_CONFIG_SETTING_ZOOM_LVL_IN_2X                               :2x
@@ -2019,7 +2034,7 @@ STR_CONFIG_SETTING_ZOOM_LVL_OUT_2X                              :2x
 STR_CONFIG_SETTING_ZOOM_LVL_OUT_4X                              :4x
 STR_CONFIG_SETTING_ZOOM_LVL_OUT_8X                              :8x
 
-STR_CONFIG_SETTING_SPRITE_ZOOM_MIN                              :貼圖的最高解析度: {STRING}
+STR_CONFIG_SETTING_SPRITE_ZOOM_MIN                              :貼圖的最高解析度：{STRING}
 STR_CONFIG_SETTING_SPRITE_ZOOM_MIN_HELPTEXT                     :設定貼圖的最高解析度。即使有更高解析度的貼圖可用，系統仍會避免使用這些貼圖。這將有助於混用高低解析度貼圖的 GRF 檔案時，保持遊戲畫面的一致性
 ###length 3
 STR_CONFIG_SETTING_SPRITE_ZOOM_LVL_MIN                          :4x
@@ -2130,7 +2145,7 @@ STR_CONFIG_SETTING_ACCOUNTING                                   :財務
 STR_CONFIG_SETTING_VEHICLES                                     :車輛
 STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :物理
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :路線
-STR_CONFIG_SETTING_VEHICLES_ORDERS                              :調度指令
+STR_CONFIG_SETTING_VEHICLES_ORDERS                              :指令清單
 STR_CONFIG_SETTING_LIMITATIONS                                  :遊戲限制
 STR_CONFIG_SETTING_ACCIDENTS                                    :災難／事故
 STR_CONFIG_SETTING_GENWORLD                                     :地圖的產生
@@ -2153,27 +2168,27 @@ STR_CONFIG_SETTING_QUERY_CAPTION                                :{WHITE}修改�
 # Config errors
 STR_CONFIG_ERROR                                                :{WHITE}讀取或更新設定檔時出錯
 STR_CONFIG_ERROR_ARRAY                                          :{WHITE}... 處理陣列 '{STRING}' 時出錯
-STR_CONFIG_ERROR_INVALID_VALUE                                  :{WHITE}... '{STRING}' 不是 '{STRING}' 的有效值
+STR_CONFIG_ERROR_INVALID_VALUE                                  :{WHITE}……「 {STRING} 」不是「 {STRING} 」的有效值
 STR_CONFIG_ERROR_TRAILING_CHARACTERS                            :{WHITE}... 在設定 '{STRING}' 的末尾有殘餘字句
-STR_CONFIG_ERROR_DUPLICATE_GRFID                                :{WHITE}... 正在忽略 NewGRF 套件 '{STRING}'：此套件的 GRF 識別碼與 '{STRING}' 的 GRF 識別碼相同
-STR_CONFIG_ERROR_INVALID_GRF                                    :{WHITE}... 正在忽略無效的 NewGRF 套件 '{STRING}'：{STRING}
+STR_CONFIG_ERROR_DUPLICATE_GRFID                                :{WHITE}……正在忽略 NewGRF 套件「 {STRING} 」：此套件的 GRF 識別碼與「 {STRING} 」的 GRF 識別碼相同
+STR_CONFIG_ERROR_INVALID_GRF                                    :{WHITE}……正在忽略無效的 NewGRF 套件「 {STRING} 」：{STRING}
 STR_CONFIG_ERROR_INVALID_GRF_NOT_FOUND                          :找不到
 STR_CONFIG_ERROR_INVALID_GRF_UNSAFE                             :此套件被標記為「不安全」，不能載入為靜態 NewGRF
 STR_CONFIG_ERROR_INVALID_GRF_SYSTEM                             :系統 NewGRF
-STR_CONFIG_ERROR_INVALID_GRF_INCOMPATIBLE                       :與此版本的OpenTTD不相容
+STR_CONFIG_ERROR_INVALID_GRF_INCOMPATIBLE                       :與此版本的 OpenTTD 不相容
 STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN                            :不明
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL             :{WHITE}... 無效的壓縮層級值 '{STRING}'
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... 本版本不支援存檔格式 '{STRING}'，現改用 '{STRING}' 格式
-STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... 正在忽略 '{STRING}' 基本圖形集：找不到檔案
-STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... 正在忽略 '{STRING}' 基本音效集：找不到檔案
-STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... 正在忽略 '{STRING}' 基本音樂集：找不到檔案
+STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}……正在忽略「 {STRING} 」基本圖形集：找不到檔案
+STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}……正在忽略「 {STRING} 」基本音效集：找不到檔案
+STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}……正在忽略「 {STRING} 」基本音樂集：找不到檔案
 STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}記憶體不足
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}無法編配{BYTES}作為子畫面快取。子畫面快取的大小已降至{BYTES}。OpenTTD的效能會受到影響。請嘗試停用32bpp圖形及／或減少放大倍數，以減低記憶體要求
+STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}無法編配 {BYTES} 作為子畫面快取。子畫面快取的大小已降至 {BYTES} 。 OpenTTD的效能會受到影響。請嘗試停用 32bpp 圖形及／或減少放大倍數，以減低記憶體要求
 
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}圖像設定錯誤...
-STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}...找不到相容的顯示卡裝置，硬體加速已被停用
-STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}……GPU驅動程式導致遊戲崩潰。硬體加速已停用
+STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}……找不到相容的顯示卡裝置。硬體加速已被停用
+STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}……GPU 驅動程式導致遊戲崩潰。硬體加速已被停用
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -2190,7 +2205,7 @@ STR_INTRO_HIGHSCORE                                             :{BLACK}積分�
 STR_INTRO_HELP                                                  :{BLACK}幫助和手冊
 STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}設定
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF 設定
-STR_INTRO_ONLINE_CONTENT                                        :{BLACK}檢查線上內容
+STR_INTRO_ONLINE_CONTENT                                        :{BLACK}線上擴充內容
 STR_INTRO_AI_SETTINGS                                           :{BLACK}AI 設定
 STR_INTRO_GAMESCRIPT_SETTINGS                                   :{BLACK}遊戲腳本設定
 STR_INTRO_QUIT                                                  :{BLACK}離開
@@ -2217,8 +2232,8 @@ STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}開啟 A
 STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}開啟遊戲腳本設定
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}離開「OpenTTD」
 
-STR_INTRO_BASESET                                               :{BLACK}目前圖形設定缺少 {NUM}個貼圖。 請確認基礎貼圖組是否有更新。
-STR_INTRO_TRANSLATION                                           :{BLACK}此段翻譯缺了{NUM}字串。請成為OpenTTD的翻譯員以讓本遊戲更完整。詳情請參閱readme.txt。
+STR_INTRO_BASESET                                               :{BLACK}目前所選的基本圖形集缺少了 {NUM} 張貼圖。請確認基本圖形集是否有更新。
+STR_INTRO_TRANSLATION                                           :{BLACK}繁體中文翻譯欠缺了 {NUM} 行字串。請申請成為 OpenTTD 的翻譯員以讓本遊戲更完善。詳情請參閱 readme.txt。
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}離開
@@ -2239,6 +2254,7 @@ STR_HELP_WINDOW_README                                          :{BLACK}Readme
 STR_HELP_WINDOW_CHANGELOG                                       :{BLACK}修訂紀錄
 STR_HELP_WINDOW_KNOWN_BUGS                                      :{BLACK}已知漏洞
 STR_HELP_WINDOW_LICENSE                                         :{BLACK}許可協議
+STR_HELP_WINDOW_FONTS                                           :{BLACK}字體
 STR_HELP_WINDOW_MAIN_WEBSITE                                    :{BLACK}OpenTTD
 STR_HELP_WINDOW_MANUAL_WIKI                                     :{BLACK}手冊／維基
 STR_HELP_WINDOW_BUGTRACKER                                      :{BLACK}回報漏洞
@@ -2248,15 +2264,15 @@ STR_HELP_WINDOW_COMMUNITY                                       :{BLACK}社區
 STR_CHEATS                                                      :{WHITE}沙盒選項
 STR_CHEAT_MONEY                                                 :{LTBLUE}增加金錢：{CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}切換玩家操控的公司：{ORANGE}{COMMA}
-STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}神奇推土機 (可摧毀工業、無法移除的物件)：{ORANGE}{STRING}
-STR_CHEAT_CROSSINGTUNNELS                                       :{LTBLUE}允許隧道互相交叉：{ORANGE}{STRING}
+STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}神奇推土機（可摧毀工業設施及無法移除的物件）：{ORANGE}{STRING}
+STR_CHEAT_CROSSINGTUNNELS                                       :{LTBLUE}允許隧道相交：{ORANGE}{STRING}
 STR_CHEAT_NO_JETCRASH                                           :{LTBLUE}噴射機不會 (經常) 在小機場墜毀：{ORANGE} {STRING}
 STR_CHEAT_EDIT_MAX_HL                                           :{LTBLUE}修改地圖最高高度：{ORANGE}{NUM}
 STR_CHEAT_EDIT_MAX_HL_QUERY_CAPT                                :{WHITE}修改地圖上山丘的最高高度
 STR_CHEAT_CHANGE_DATE                                           :{LTBLUE}修改日期：{ORANGE} {DATE_SHORT}
 STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}變更目前年份
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}允許修改產量：{ORANGE}{STRING}
-STR_CHEAT_STATION_RATING                                        :{LTBLUE}車站評價固定為 100%︰{ORANGE}{STRING}
+STR_CHEAT_STATION_RATING                                        :{LTBLUE}車站評價固定為 100%：{ORANGE}{STRING}
 
 # Livery window
 STR_LIVERY_CAPTION                                              :{WHITE}{COMPANY} 的配色
@@ -2283,15 +2299,15 @@ STR_LIVERY_DEFAULT                                              :預設配色
 STR_LIVERY_STEAM                                                :蒸汽機車
 STR_LIVERY_DIESEL                                               :柴油車頭
 STR_LIVERY_ELECTRIC                                             :電力車頭
-STR_LIVERY_MONORAIL                                             :單軌鐵路機車
+STR_LIVERY_MONORAIL                                             :單軌鐵道機車
 STR_LIVERY_MAGLEV                                               :磁浮機車
 STR_LIVERY_DMU                                                  :柴聯車組
 STR_LIVERY_EMU                                                  :電聯車組
-STR_LIVERY_PASSENGER_WAGON_STEAM                                :載客車廂 (蒸汽列車)
-STR_LIVERY_PASSENGER_WAGON_DIESEL                               :載客車廂 (柴油列車)
-STR_LIVERY_PASSENGER_WAGON_ELECTRIC                             :載客車廂 (電動列車)
-STR_LIVERY_PASSENGER_WAGON_MONORAIL                             :載客車廂 (單軌)
-STR_LIVERY_PASSENGER_WAGON_MAGLEV                               :載客車廂 (磁浮)
+STR_LIVERY_PASSENGER_WAGON_STEAM                                :客運機車（蒸汽）
+STR_LIVERY_PASSENGER_WAGON_DIESEL                               :客運機車（柴油機）
+STR_LIVERY_PASSENGER_WAGON_ELECTRIC                             :客運機車（電力）
+STR_LIVERY_PASSENGER_WAGON_MONORAIL                             :客運機車（單軌）
+STR_LIVERY_PASSENGER_WAGON_MAGLEV                               :客運機車（磁浮）
 STR_LIVERY_FREIGHT_WAGON                                        :載貨車廂
 STR_LIVERY_BUS                                                  :公車
 STR_LIVERY_TRUCK                                                :載貨卡車
@@ -2331,9 +2347,9 @@ STR_FACE_SAVE                                                   :{BLACK}儲存
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}儲存喜愛臉孔
 STR_FACE_SAVE_DONE                                              :{WHITE}這將被當成您喜愛的臉孔存入 OpenTTD 設定檔
 STR_FACE_EUROPEAN                                               :{BLACK}歐洲人
-STR_FACE_SELECT_EUROPEAN                                        :{BLACK}選擇歐洲人臉孔
+STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}選擇歐洲人臉孔
 STR_FACE_AFRICAN                                                :{BLACK}非洲人
-STR_FACE_SELECT_AFRICAN                                         :{BLACK}選擇非洲人臉孔
+STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}選擇非洲人臉孔
 STR_FACE_YES                                                    :確定
 STR_FACE_NO                                                     :取消
 STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}增加鬍鬚或耳飾
@@ -2389,7 +2405,7 @@ STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}伺服�
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}點選清單內的伺服器即可選擇遊戲
 STR_NETWORK_SERVER_LIST_LAST_JOINED_SERVER                      :{BLACK}最後加入的伺服器：
-STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST                    :{BLACK}點選您上次最後加入的伺服器
+STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST_TOOLTIP            :{BLACK}點選您上次最後加入的伺服器
 
 STR_NETWORK_SERVER_LIST_GAME_INFO                               :{SILVER}遊戲資訊
 STR_NETWORK_SERVER_LIST_CLIENTS                                 :{SILVER}用戶端：{WHITE}{COMMA} / {COMMA} - {COMMA} / {COMMA}
@@ -2400,7 +2416,7 @@ STR_NETWORK_SERVER_LIST_SERVER_ADDRESS                          :{SILVER}伺服�
 STR_NETWORK_SERVER_LIST_INVITE_CODE                             :{SILVER}邀請碼:{WHITE}{STRING}
 STR_NETWORK_SERVER_LIST_START_DATE                              :{SILVER}開始日期：{WHITE}{DATE_SHORT}
 STR_NETWORK_SERVER_LIST_CURRENT_DATE                            :{SILVER}目前日期：{WHITE}{DATE_SHORT}
-STR_NETWORK_SERVER_LIST_PLAY_TIME                               :{SILVER}遊戲經過時間: {WHITE}{NUM}小時 {NUM}分鐘
+STR_NETWORK_SERVER_LIST_PLAY_TIME                               :{SILVER}遊戲經過時間：{WHITE}{NUM} 小時 {NUM} 分鐘
 STR_NETWORK_SERVER_LIST_GAMESCRIPT                              :{SILVER}遊戲腳本：{WHITE}{STRING} (v{NUM})
 STR_NETWORK_SERVER_LIST_PASSWORD                                :{SILVER}受密碼保護！
 STR_NETWORK_SERVER_LIST_SERVER_OFFLINE                          :{SILVER}伺服器離線
@@ -2500,7 +2516,7 @@ STR_NETWORK_CLIENT_LIST_NEW_COMPANY                             :（新公司）
 STR_NETWORK_CLIENT_LIST_NEW_COMPANY_TOOLTIP                     :{BLACK}創立並加入一個新公司
 STR_NETWORK_CLIENT_LIST_PLAYER_ICON_SELF_TOOLTIP                :{BLACK}這是你
 STR_NETWORK_CLIENT_LIST_PLAYER_ICON_HOST_TOOLTIP                :{BLACK}這是遊戲的主持端
-STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT                    :{BLACK}{NUM}個用戶端 {NUM}/{NUM}所公司
+STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT                    :{BLACK}{NUM} 個用戶端 {NUM}/{NUM} 所公司
 STR_NETWORK_CLIENT_LIST_CLIENT_COMPANY_COUNT_TOOLTIP            :{BLACK}目前已連線客戶端的數量、公司數量，以及伺服器管理員所允許的最大公司數量
 
 # Matches ConnectionType
@@ -2516,12 +2532,12 @@ STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_BAN                        :停權
 STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_RESET                     :刪除
 
 STR_NETWORK_CLIENT_LIST_ASK_CAPTION                             :{WHITE}管理員指令
-STR_NETWORK_CLIENT_LIST_ASK_CLIENT_KICK                         :{YELLOW}你確定要踢出玩家 '{STRING}' 嗎?
-STR_NETWORK_CLIENT_LIST_ASK_CLIENT_BAN                          :{YELLOW}你確定要將玩家 '{STRING}' 列入黑名單嗎?
+STR_NETWORK_CLIENT_LIST_ASK_CLIENT_KICK                         :{YELLOW}你確定要踢出名為 {STRING} 的玩家嗎？
+STR_NETWORK_CLIENT_LIST_ASK_CLIENT_BAN                          :{YELLOW}你確定要將名為 {STRING} 的玩家列入黑名單嗎？
 STR_NETWORK_CLIENT_LIST_ASK_COMPANY_RESET                       :{YELLOW}你確定要刪除「{COMPANY}」公司嗎？
 
 STR_NETWORK_ASK_RELAY_CAPTION                                   :{WHITE}是否使用中繼伺服器?
-STR_NETWORK_ASK_RELAY_TEXT                                      :{YELLOW}無法與伺服器 '{STRING}'連結.{}是否要透過中繼伺服 '{STRING}'進行連結?
+STR_NETWORK_ASK_RELAY_TEXT                                      :{YELLOW}您無法與伺服器「 {STRING} 」進行連線。{}您是否要透過使用中繼伺服器「 {STRING} 」進行連線？
 STR_NETWORK_ASK_RELAY_NO                                        :{BLACK}否
 STR_NETWORK_ASK_RELAY_YES_ONCE                                  :{BLACK}是，僅此一次
 STR_NETWORK_ASK_RELAY_YES_ALWAYS                                :{BLACK}是，且不再詢問
@@ -2550,7 +2566,7 @@ STR_NETWORK_CHAT_TO_COMPANY                                     :[團隊] 給 {S
 STR_NETWORK_CHAT_CLIENT                                         :[私人] {STRING}：{WHITE}{STRING}
 STR_NETWORK_CHAT_TO_CLIENT                                      :[私人] 給 {STRING}：{WHITE}{STRING}
 STR_NETWORK_CHAT_ALL                                            :[全員] {STRING}：{WHITE}{STRING}
-STR_NETWORK_CHAT_EXTERNAL                                       :[{3:STRING}] {0:STRING}: {WHITE}{1:STRING}
+STR_NETWORK_CHAT_EXTERNAL                                       :[{STRING}] {STRING}: {WHITE}{STRING}
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}輸入要聊天的文字
 
 # Network messages
@@ -2608,7 +2624,7 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :處理地圖需
 STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :無效的使用者端名稱
 
 # Network related errors
-STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
+STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 ###length 12
 STR_NETWORK_SERVER_MESSAGE_GAME_PAUSED                          :遊戲暫停中 ({STRING})
@@ -2626,24 +2642,24 @@ STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH               :等待連結圖
 
 STR_NETWORK_MESSAGE_CLIENT_LEAVING                              :離開中
 STR_NETWORK_MESSAGE_CLIENT_JOINED                               :*** {STRING} 已加入遊戲
-STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {0:STRING} 已加入此遊戲 (用戶端 #{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {0:STRING} 已加入公司 #{2:NUM}
+STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {STRING} 已加入此遊戲 (用戶端 #{NUM})
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {STRING} 已加入 {STRING}
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} 已加入為觀眾
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {0:STRING} 已建立新公司 (#{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {0:STRING} 已離開遊戲 ({2:STRING})
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} 已建立新公司 (#{NUM})
+STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} 已離開遊戲 ({STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} 已修改其名稱為 {STRING}
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} 付給{1:STRING} {2:CURRENCY_LONG}
+STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} 付給{2:STRING} {1:CURRENCY_LONG}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}伺服器關閉連線
-STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}伺服器重新啟動中...{}請稍候...
+STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}伺服器重新啟動中……{}{}請稍候……
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} 已被踢出。原因：({STRING})
 
 STR_NETWORK_ERROR_COORDINATOR_REGISTRATION_FAILED               :{WHITE}伺服器註冊失敗
-STR_NETWORK_ERROR_COORDINATOR_REUSE_OF_INVITE_CODE              :{WHITE}已有另一個伺服器以同樣的邀請碼進行註冊。點擊"本地"以改變遊戲模式
+STR_NETWORK_ERROR_COORDINATOR_REUSE_OF_INVITE_CODE              :{WHITE}已有另一個伺服器以同樣的邀請碼進行註冊。正切換到『本地』遊戲模式。
 STR_NETWORK_ERROR_COORDINATOR_ISOLATED                          :{WHITE}你的伺服器不接受遠端連線
 STR_NETWORK_ERROR_COORDINATOR_ISOLATED_DETAIL                   :{WHITE}其他玩家將無法連線到你的伺服器
 
 # Content downloading window
-STR_CONTENT_TITLE                                               :{WHITE}內容下載中
+STR_CONTENT_TITLE                                               :{WHITE}線上擴充內容
 STR_CONTENT_TYPE_CAPTION                                        :{BLACK}種類
 STR_CONTENT_TYPE_CAPTION_TOOLTIP                                :{BLACK}內容種類
 STR_CONTENT_NAME_CAPTION                                        :{BLACK}名稱
@@ -2774,30 +2790,30 @@ STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}建立�
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}此設施已被禁用，因為沒有任何此設施可用的載具
 
 # Rail construction toolbar
-STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :鋪設鐵路
-STR_RAIL_TOOLBAR_ELRAIL_CONSTRUCTION_CAPTION                    :鋪設電氣化鐵路
+STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :鋪設鐵道
+STR_RAIL_TOOLBAR_ELRAIL_CONSTRUCTION_CAPTION                    :鋪設電氣化鐵道
 STR_RAIL_TOOLBAR_MONORAIL_CONSTRUCTION_CAPTION                  :鋪設單軌
 STR_RAIL_TOOLBAR_MAGLEV_CONSTRUCTION_CAPTION                    :鋪設磁浮軌
 
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}鋪設鐵路。按住 <Ctrl> 點選可拆除鐵路。按住 <Shift> 則可顯示預估成本
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}以自動模式鋪設鐵路。按住 <Ctrl> 點選可拆除鐵路。按住 <Shift> 則可顯示預估成本
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}興建鐵路機廠 (用來購置及維修列車)。按住 <Shift> 則可顯示預估成本
-STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}設立鐵路號誌站。按住 <Ctrl> 點選合併號誌站。按住 <Shift> 點選可顯示預估成本
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}鋪設鐵道。按住 <Ctrl> 點選可拆除鐵道。按住 <Shift> 則可顯示預估成本
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}以自動模式鋪設鐵道。按住 <Ctrl> 點選可拆除鐵道。按住 <Shift> 則可顯示預估成本
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}興建鐵道機廠（用來購置及維護列車）。按住 <Shift> 則可顯示預估成本
+STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}設立鐵道號誌站。按住 <Ctrl> 點選合併號誌站。按住 <Shift> 點選可顯示預估成本
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}興建火車站。按住 <Ctrl> 點選可興建相鄰車站。按住 <Shift> 則可顯示預估成本
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_SIGNALS                 :{BLACK}建造鐵路號誌。建造時按住 <Ctrl> 鍵以對號誌套用不同風格樣式。{}建造時拖曳以在拖曳區間內依照設定的間距均勻建造號誌。按住 <Ctrl> 鍵拖曳以按設定的間距建造號誌至下一個岔路 / 車站 / 號誌。按住 <Shift> 以顯示預計費用
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_BRIDGE                  :{BLACK}興建鐵路橋樑。按住 <Shift> 可顯示預估成本
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TUNNEL                  :{BLACK}挖掘鐵路隧道。按住 <Shift> 可顯示預估成本
-STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR                :{BLACK}切換興建／移除鐵路、號誌、號誌站及車站。 按住 <Ctrl> 點選可同時移除號誌站及車站中的軌道
-STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL                           :{BLACK}轉換或升級鐵路種類。按住 <Shift> 點選則可顯示預估成本
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_SIGNALS                 :{BLACK}建造鐵道號誌。建造時按住 <Ctrl> 鍵以對號誌套用不同風格樣式。{}建造時拖曳以在拖曳區間內依照設定的間距均勻建造號誌。按住 <Ctrl> 鍵拖曳以按設定的間距建造號誌至下一個岔路或車站又或號誌。按住 <Shift> 以顯示預計費用
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_BRIDGE                  :{BLACK}興建鐵道橋樑。按住 <Shift> 可顯示預估成本
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TUNNEL                  :{BLACK}挖掘鐵道隧道。按住 <Shift> 可顯示預估成本
+STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR                :{BLACK}切換興建或移除鐵道、號誌、號誌站及車站。 按住 <Ctrl> 點選可同時移除號誌站及車站中的軌道
+STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL                           :{BLACK}轉換或升級鐵道類型。按住 <Shift> 點選則可顯示預估成本
 
-STR_RAIL_NAME_RAILROAD                                          :鐵路
-STR_RAIL_NAME_ELRAIL                                            :電氣化鐵路
-STR_RAIL_NAME_MONORAIL                                          :單軌鐵路
-STR_RAIL_NAME_MAGLEV                                            :磁浮鐵路
+STR_RAIL_NAME_RAILROAD                                          :鐵道
+STR_RAIL_NAME_ELRAIL                                            :電氣化鐵道
+STR_RAIL_NAME_MONORAIL                                          :單軌鐵道
+STR_RAIL_NAME_MAGLEV                                            :磁浮鐵道
 
 # Rail depot construction window
-STR_BUILD_DEPOT_TRAIN_ORIENTATION_CAPTION                       :{WHITE}鐵路機廠方向
-STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}選擇鐵路機廠方向
+STR_BUILD_DEPOT_TRAIN_ORIENTATION_CAPTION                       :{WHITE}鐵道機廠方向
+STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}選擇鐵道機廠的方向
 
 # Rail waypoint construction window
 STR_WAYPOINT_CAPTION                                            :{WHITE}號誌站
@@ -2841,13 +2857,19 @@ STR_HOUSE_PICKER_YEARS_ANY                                      :{BLACK}可用�
 STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}可用年份：{ORANGE}自 {NUM} 年起可用
 STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}可用年份：{ORANGE}至 {NUM} 年前可用
 STR_HOUSE_PICKER_SIZE                                           :{BLACK}大小：{ORANGE}{NUM}x{NUM} 格
-STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}接受貨物： {ORANGE}
+STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}接受貨物：{ORANGE}
+STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}產出的貨物：{ORANGE}{CARGO_LIST}
 
 STR_HOUSE_PICKER_CLASS_ZONE1                                    :市鎮邊緣
 STR_HOUSE_PICKER_CLASS_ZONE2                                    :郊區邊緣
 STR_HOUSE_PICKER_CLASS_ZONE3                                    :遠郊
 STR_HOUSE_PICKER_CLASS_ZONE4                                    :近郊
 STR_HOUSE_PICKER_CLASS_ZONE5                                    :市鎮中心
+
+STR_HOUSE_PICKER_PROTECT_TITLE                                  :防止升級
+STR_HOUSE_PICKER_PROTECT_TOOLTIP                                :選擇是否要保護房屋以免房屋隨著市鎮的發展而被替換
+STR_HOUSE_PICKER_PROTECT_OFF                                    :關閉
+STR_HOUSE_PICKER_PROTECT_ON                                     :開啟
 
 STR_STATION_CLASS_DFLT                                          :預設
 STR_STATION_CLASS_DFLT_STATION                                  :預設車站
@@ -2876,21 +2898,21 @@ STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP          :{BLACK}減少 (
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}增加 (拉遠)
 
 # Bridge selection window
-STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}選擇鐵路橋樑
+STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}選擇鐵道橋樑
 STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}選擇道路橋樑
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}選擇橋樑 - 點選想建的橋樑即可建造
 STR_SELECT_BRIDGE_INFO_NAME                                     :{GOLD}{STRING}
 STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED                           :{GOLD}{STRING},{} {VELOCITY}
-STR_SELECT_BRIDGE_INFO_NAME_COST                                :{GOLD}{0:STRING},{} {WHITE}{2:CURRENCY_LONG}
+STR_SELECT_BRIDGE_INFO_NAME_COST                                :{GOLD}{STRING}，{} {WHITE}{CURRENCY_LONG}
 STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED_COST                      :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
-STR_BRIDGE_NAME_SUSPENSION_STEEL                                :吊橋，鋼製
-STR_BRIDGE_NAME_GIRDER_STEEL                                    :桁橋，鋼製
-STR_BRIDGE_NAME_CANTILEVER_STEEL                                :懸臂橋，鋼製
-STR_BRIDGE_NAME_SUSPENSION_CONCRETE                             :吊橋，水泥製
+STR_BRIDGE_NAME_SUSPENSION_STEEL                                :鋼製吊橋
+STR_BRIDGE_NAME_GIRDER_STEEL                                    :鋼製桁橋
+STR_BRIDGE_NAME_CANTILEVER_STEEL                                :鋼製懸臂橋
+STR_BRIDGE_NAME_SUSPENSION_CONCRETE                             :混凝土吊橋
 STR_BRIDGE_NAME_WOODEN                                          :木橋
-STR_BRIDGE_NAME_CONCRETE                                        :水泥橋
-STR_BRIDGE_NAME_TUBULAR_STEEL                                   :管橋，鋼製
-STR_BRIDGE_TUBULAR_SILICON                                      :管橋，玻璃纖維製
+STR_BRIDGE_NAME_CONCRETE                                        :混凝土橋
+STR_BRIDGE_NAME_TUBULAR_STEEL                                   :鋼製管狀橋
+STR_BRIDGE_TUBULAR_SILICON                                      :玻璃纖維管狀橋
 
 
 # Road construction toolbar
@@ -2909,7 +2931,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_PASSENGER_TRAM_STATION           :{BLACK}興建�
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRUCK_LOADING_BAY                :{BLACK}興建貨運站。按住 <Ctrl> 點選可興建相鄰車站。按住 <Shift> 則可顯示預估成本
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_CARGO_TRAM_STATION               :{BLACK}興建載貨電車站。按住 <Ctrl> 可興建相鄰車站。按住 <Shift> 可顯示預估興建的費用
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_ONE_WAY_ROAD                    :{BLACK}切換單行道／雙向道
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_BRIDGE                      :{BLACK}興建公路橋樑。按住 <Shift> 點選可顯示預估費用
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_BRIDGE                      :{BLACK}興建道路橋樑。按住 <Shift> 點選可顯示預估費用
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_BRIDGE                   :{BLACK}架設電車橋樑。按住 <Shift> 可顯示預估的建造費用
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}挖掘道路隧道。按住 <Shift> 點選可顯示預估的建造費用
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}挖掘電車隧道。按住 <Shift> 可顯示預估的建造費用
@@ -2940,7 +2962,7 @@ STR_STATION_BUILD_CARGO_TRAM_ORIENTATION_TOOLTIP                :{BLACK}選擇�
 # Waterways toolbar (last two for SE only)
 STR_WATERWAYS_TOOLBAR_CAPTION                                   :{WHITE}興建水道
 STR_WATERWAYS_TOOLBAR_CAPTION_SE                                :{WHITE}水道
-STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}開鑿運河。按住 <Shift> 可顯示成本預估。
+STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}開鑿運河。按住 <Ctrl> 以對角線選擇區域。按住 <Shift> 可顯示成本預估。
 STR_WATERWAYS_TOOLBAR_BUILD_LOCKS_TOOLTIP                       :{BLACK}興建水閘。按住 <Shift> 可顯示預估的興建費用
 STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}興建船塢 (用以購買及維護船舶)。按住 <Shift> 則可顯示預估成本
 STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}興建碼頭。按住 <Ctrl> 可興建相鄰車站，按住 <Shift> 可顯示預估的興建費用
@@ -3041,7 +3063,7 @@ STR_FOUND_TOWN_EXPAND_ALL_TOWNS_TOOLTIP                         :{BLACK}讓所�
 
 STR_FOUND_TOWN_NAME_TITLE                                       :{YELLOW}市鎮名稱：
 STR_FOUND_TOWN_NAME_EDITOR_TITLE                                :{BLACK}輸入市鎮名稱
-STR_FOUND_TOWN_NAME_EDITOR_HELP                                 :{BLACK}點選輸入市鎮名稱
+STR_FOUND_TOWN_NAME_EDITOR_TOOLTIP                              :{BLACK}點選輸入市鎮名稱
 STR_FOUND_TOWN_NAME_RANDOM_BUTTON                               :{BLACK}隨機名稱
 STR_FOUND_TOWN_NAME_RANDOM_TOOLTIP                              :{BLACK}產生新隨機名稱
 
@@ -3055,7 +3077,7 @@ STR_FOUND_TOWN_CITY                                             :{BLACK}城市
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}城市比普通城鎮成長的更快{}你可以從進階設定中調整城市的初始規模
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}市鎮道路配置：
-STR_FOUND_TOWN_SELECT_TOWN_ROAD_LAYOUT                          :{BLACK}選擇這個市鎮使用的道路配置
+STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}選擇這個市鎮使用的道路配置
 STR_FOUND_TOWN_SELECT_LAYOUT_ORIGINAL                           :{BLACK}原版
 STR_FOUND_TOWN_SELECT_LAYOUT_BETTER_ROADS                       :{BLACK}較佳規劃
 STR_FOUND_TOWN_SELECT_LAYOUT_2X2_GRID                           :{BLACK}２x２網格
@@ -3097,7 +3119,7 @@ STR_INDUSTRY_CARGOES_SELECT_INDUSTRY_TOOLTIP                    :{BLACK}選擇�
 
 # Land area window
 STR_LAND_AREA_INFORMATION_CAPTION                               :{WHITE}土地資訊
-STR_LAND_AREA_INFORMATION_LOCATION_TOOLTIP                      :{BLACK}將區塊置於畫面中央。 按住 <Ctrl> 點選可於區塊位置開啟新視窗視野
+STR_LAND_AREA_INFORMATION_LOCATION_TOOLTIP                      :{BLACK}將區塊置於畫面正中央。按住 <Ctrl> 點選可於區塊位置開啟新檢視視窗
 STR_LAND_AREA_INFORMATION_COST_TO_CLEAR_N_A                     :{BLACK}整地費用：{LTBLUE}不適用
 STR_LAND_AREA_INFORMATION_COST_TO_CLEAR                         :{BLACK}整地費用：{RED}{CURRENCY_LONG}
 STR_LAND_AREA_INFORMATION_REVENUE_WHEN_CLEARED                  :{BLACK}清除時獲得收入：{LTBLUE}{CURRENCY_LONG}
@@ -3105,7 +3127,7 @@ STR_LAND_AREA_INFORMATION_OWNER_N_A                             :不適用
 STR_LAND_AREA_INFORMATION_OWNER                                 :{BLACK}所有人：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_ROAD_OWNER                            :{BLACK}道路所有者：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_TRAM_OWNER                            :{BLACK}電車軌所有者：{LTBLUE}{STRING}
-STR_LAND_AREA_INFORMATION_RAIL_OWNER                            :{BLACK}鐵路所有者：{LTBLUE}{STRING}
+STR_LAND_AREA_INFORMATION_RAIL_OWNER                            :{BLACK}鐵道擁有權：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY                       :{BLACK}地方政府：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE                  :無
 STR_LAND_AREA_INFORMATION_LANDINFO_COORDS                       :{BLACK}座標：{LTBLUE}{NUM} x {NUM} x {NUM}
@@ -3119,51 +3141,55 @@ STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME                      :{BLACK}機場�
 STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}接受貨物：{LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
-STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}鐵軌類型：{LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}軌道類型：{LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}道路類型：{LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_TRAM_TYPE                             :{BLACK}電車型號：{LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}軌道速度限制：{LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}道路速度限制：{LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT                      :{BLACK}電車速度限制：{LTBLUE}{VELOCITY}
+STR_LAND_AREA_INFORMATION_TOWN_CAN_UPGRADE                      :{BLACK}市鎮可升級：{LTBLUE}可以
+STR_LAND_AREA_INFORMATION_TOWN_CANNOT_UPGRADE                   :{BLACK}市鎮可升級：{LTBLUE}不可
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :石頭
-STR_LAI_CLEAR_DESCRIPTION_ROUGH_LAND                            :粗地
+STR_LAI_CLEAR_DESCRIPTION_ROUGH_LAND                            :荒地
 STR_LAI_CLEAR_DESCRIPTION_BARE_LAND                             :裸地
 STR_LAI_CLEAR_DESCRIPTION_GRASS                                 :草地
 STR_LAI_CLEAR_DESCRIPTION_FIELDS                                :田地
-STR_LAI_CLEAR_DESCRIPTION_SNOW_COVERED_LAND                     :覆雪地
 STR_LAI_CLEAR_DESCRIPTION_DESERT                                :沙漠
+STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROCKS                           :積雪岩石
+STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROUGH_LAND                      :積雪荒地
+STR_LAI_CLEAR_DESCRIPTION_SNOWY_GRASS                           :積雪草地
 
-STR_LAI_RAIL_DESCRIPTION_TRACK                                  :鐵路 鐵軌
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_SIGNALS              :設有閉塞號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRESIGNALS                  :設有預警號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXITSIGNALS                 :設有出口號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBOSIGNALS                :設有預警-出口複合號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBSSIGNALS                  :設有路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NOENTRYSIGNALS              :設有單向路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PRESIGNALS           :設有閉塞與預警號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_EXITSIGNALS          :設有閉塞與出口號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_COMBOSIGNALS         :設有閉塞與複合號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PBSSIGNALS           :設有閉塞與路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_NOENTRYSIGNALS       :設有閉塞與單向路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_EXITSIGNALS             :分別設有預警與出口號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_COMBOSIGNALS            :分別設有預警與複合號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_PBSSIGNALS              :設有預警與路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_NOENTRYSIGNALS          :設有預警與單向路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_COMBOSIGNALS           :分別設有出口與複合號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_PBSSIGNALS             :設有出口與路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_NOENTRYSIGNALS         :設有出口與單向路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_PBSSIGNALS            :設有複合與路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_NOENTRYSIGNALS        :設有複合與單向路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_NOENTRYSIGNALS          :分別設有一般路徑與單向路徑號誌的鐵路軌道
-STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :鐵路機廠
+STR_LAI_RAIL_DESCRIPTION_TRACK                                  :鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_SIGNALS              :設有閉塞號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRESIGNALS                  :設有預警號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXITSIGNALS                 :設有出口號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBOSIGNALS                :設有預警-出口複合號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBSSIGNALS                  :設有路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NOENTRYSIGNALS              :設有單向路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PRESIGNALS           :設有閉塞與預警號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_EXITSIGNALS          :設有閉塞與出口號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_COMBOSIGNALS         :設有閉塞與複合號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PBSSIGNALS           :設有閉塞與路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_NOENTRYSIGNALS       :設有閉塞與單向路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_EXITSIGNALS             :分別設有預警與出口號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_COMBOSIGNALS            :分別設有預警與複合號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_PBSSIGNALS              :設有預警與路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_NOENTRYSIGNALS          :設有預警與單向路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_COMBOSIGNALS           :分別設有出口與複合號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_PBSSIGNALS             :設有出口與路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_NOENTRYSIGNALS         :設有出口與單向路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_PBSSIGNALS            :設有複合與路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_NOENTRYSIGNALS        :設有複合與單向路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_NOENTRYSIGNALS          :分別設有一般路徑與單向路徑號誌的鐵道軌道
+STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :鐵道機廠
 
 STR_LAI_ROAD_DESCRIPTION_ROAD                                   :公路
 STR_LAI_ROAD_DESCRIPTION_ROAD_WITH_STREETLIGHTS                 :有路燈的公路
 STR_LAI_ROAD_DESCRIPTION_TREE_LINED_ROAD                        :有行道樹的公路
 STR_LAI_ROAD_DESCRIPTION_ROAD_VEHICLE_DEPOT                     :車廠
-STR_LAI_ROAD_DESCRIPTION_ROAD_RAIL_LEVEL_CROSSING               :公路／鐵路平交道
+STR_LAI_ROAD_DESCRIPTION_ROAD_RAIL_LEVEL_CROSSING               :道路鐵道平交道
 STR_LAI_ROAD_DESCRIPTION_TRAMWAY                                :電車
 
 # Houses come directly from their building names
@@ -3191,24 +3217,24 @@ STR_LAI_WATER_DESCRIPTION_SHIP_DEPOT                            :船塢
 
 # Industries come directly from their industry names
 
-STR_LAI_TUNNEL_DESCRIPTION_RAILROAD                             :鐵路隧道
+STR_LAI_TUNNEL_DESCRIPTION_RAILROAD                             :鐵道隧道
 STR_LAI_TUNNEL_DESCRIPTION_ROAD                                 :公路隧道
 
-STR_LAI_BRIDGE_DESCRIPTION_RAIL_SUSPENSION_STEEL                :鐵路鋼吊橋
-STR_LAI_BRIDGE_DESCRIPTION_RAIL_GIRDER_STEEL                    :鐵路鋼桁橋
-STR_LAI_BRIDGE_DESCRIPTION_RAIL_CANTILEVER_STEEL                :鐵路鋼懸臂橋
-STR_LAI_BRIDGE_DESCRIPTION_RAIL_SUSPENSION_CONCRETE             :鐵路鋼筋混凝土吊橋
-STR_LAI_BRIDGE_DESCRIPTION_RAIL_WOODEN                          :鐵路木橋
-STR_LAI_BRIDGE_DESCRIPTION_RAIL_CONCRETE                        :鐵路水泥橋
-STR_LAI_BRIDGE_DESCRIPTION_RAIL_TUBULAR_STEEL                   :鐵路管橋
+STR_LAI_BRIDGE_DESCRIPTION_RAIL_SUSPENSION_STEEL                :鋼製鐵道吊橋
+STR_LAI_BRIDGE_DESCRIPTION_RAIL_GIRDER_STEEL                    :鋼製鐵道桁橋
+STR_LAI_BRIDGE_DESCRIPTION_RAIL_CANTILEVER_STEEL                :鋼製懸臂鐵道橋
+STR_LAI_BRIDGE_DESCRIPTION_RAIL_SUSPENSION_CONCRETE             :鋼筋混凝土鐵道吊橋
+STR_LAI_BRIDGE_DESCRIPTION_RAIL_WOODEN                          :木製鐵道橋
+STR_LAI_BRIDGE_DESCRIPTION_RAIL_CONCRETE                        :混凝土鐵道橋
+STR_LAI_BRIDGE_DESCRIPTION_RAIL_TUBULAR_STEEL                   :管狀鐵道橋
 
-STR_LAI_BRIDGE_DESCRIPTION_ROAD_SUSPENSION_STEEL                :公路鋼吊橋
-STR_LAI_BRIDGE_DESCRIPTION_ROAD_GIRDER_STEEL                    :公路鋼桁橋
-STR_LAI_BRIDGE_DESCRIPTION_ROAD_CANTILEVER_STEEL                :公路鋼懸臂橋
-STR_LAI_BRIDGE_DESCRIPTION_ROAD_SUSPENSION_CONCRETE             :公路鋼筋混凝土吊橋
-STR_LAI_BRIDGE_DESCRIPTION_ROAD_WOODEN                          :公路木橋
-STR_LAI_BRIDGE_DESCRIPTION_ROAD_CONCRETE                        :公路水泥橋
-STR_LAI_BRIDGE_DESCRIPTION_ROAD_TUBULAR_STEEL                   :公路管橋
+STR_LAI_BRIDGE_DESCRIPTION_ROAD_SUSPENSION_STEEL                :鋼製道路吊橋
+STR_LAI_BRIDGE_DESCRIPTION_ROAD_GIRDER_STEEL                    :鋼製道路桁橋
+STR_LAI_BRIDGE_DESCRIPTION_ROAD_CANTILEVER_STEEL                :鋼製懸臂道路橋
+STR_LAI_BRIDGE_DESCRIPTION_ROAD_SUSPENSION_CONCRETE             :鋼筋混凝土道路吊橋
+STR_LAI_BRIDGE_DESCRIPTION_ROAD_WOODEN                          :木製道路橋
+STR_LAI_BRIDGE_DESCRIPTION_ROAD_CONCRETE                        :混凝土道路橋
+STR_LAI_BRIDGE_DESCRIPTION_ROAD_TUBULAR_STEEL                   :管狀道路橋
 
 STR_LAI_BRIDGE_DESCRIPTION_AQUEDUCT                             :水道橋
 
@@ -3230,7 +3256,7 @@ STR_FRAMERATE_RATE_GAMELOOP                                     :{BLACK}模擬�
 STR_FRAMERATE_RATE_GAMELOOP_TOOLTIP                             :{BLACK}每秒模擬的遊戲刻數
 STR_FRAMERATE_RATE_BLITTER                                      :{BLACK}畫面幀數：{STRING}
 STR_FRAMERATE_RATE_BLITTER_TOOLTIP                              :{BLACK}每秒圖形彩現的幀數
-STR_FRAMERATE_SPEED_FACTOR                                      :{BLACK}目前遊戲速度: {DECIMAL}x
+STR_FRAMERATE_SPEED_FACTOR                                      :{BLACK}目前遊戲速度：{DECIMAL}x
 STR_FRAMERATE_SPEED_FACTOR_TOOLTIP                              :{BLACK}相對於標準速度的當前遊戲速度
 STR_FRAMERATE_CURRENT                                           :{WHITE}目前
 STR_FRAMERATE_AVERAGE                                           :{WHITE}平均
@@ -3258,7 +3284,7 @@ STR_FRAMERATE_GL_LINKGRAPH                                      :{BLACK} 貨物�
 STR_FRAMERATE_DRAWING                                           :{BLACK}圖形彩現：
 STR_FRAMERATE_DRAWING_VIEWPORTS                                 :{BLACK} 世界視角
 STR_FRAMERATE_VIDEO                                             :{BLACK}影像輸出
-STR_FRAMERATE_SOUND                                             :{BLACK}混音:
+STR_FRAMERATE_SOUND                                             :{BLACK}混音：
 STR_FRAMERATE_ALLSCRIPTS                                        :{BLACK} GS/AI 總計：
 STR_FRAMERATE_GAMESCRIPT                                        :{BLACK} 遊戲腳本：
 STR_FRAMERATE_AI                                                :{BLACK}   AI {NUM} {STRING}
@@ -3289,7 +3315,7 @@ STR_SAVELOAD_LOAD_SCENARIO                                      :{WHITE}載入�
 STR_SAVELOAD_LOAD_HEIGHTMAP                                     :{WHITE}載入高度圖
 STR_SAVELOAD_SAVE_HEIGHTMAP                                     :{WHITE}儲存高度圖
 STR_SAVELOAD_LOAD_TOWN_DATA                                     :{WHITE}載入市鎮數據
-STR_SAVELOAD_HOME_BUTTON                                        :{BLACK}點選這裡跳到預設儲存目錄
+STR_SAVELOAD_HOME_BUTTON_TOOLTIP                                :{BLACK}點選這裡跳到預設儲存目錄
 STR_SAVELOAD_BYTES_FREE                                         :{BLACK}空間尚有 {BYTES}
 STR_SAVELOAD_LIST_TOOLTIP                                       :{BLACK}列出磁碟、目錄與遊戲存檔
 STR_SAVELOAD_EDITBOX_TOOLTIP                                    :{BLACK}目前選定的存檔名稱
@@ -3328,15 +3354,15 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}工業�
 STR_MAPGEN_NUMBER_OF_INDUSTRIES_TOOLTIP                         :{BLACK}選擇工業密度，或輸入自訂數字
 STR_MAPGEN_HEIGHTMAP_HEIGHT                                     :{BLACK}最高峰：
 STR_MAPGEN_HEIGHTMAP_HEIGHT_TOOLTIP                             :{BLACK}選擇遊戲版圖內最高峰的海拔，以海平面為基準計算
-STR_MAPGEN_HEIGHTMAP_HEIGHT_UP                                  :{BLACK}將地圖上最高峰的最大高度增加1
-STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN                                :{BLACK}將地圖上最高峰的最大高度減少1
+STR_MAPGEN_HEIGHTMAP_HEIGHT_UP_TOOLTIP                          :{BLACK}將地圖上最高峰的最大高度增加1
+STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN_TOOLTIP                        :{BLACK}將地圖上最高峰的最大高度減少1
 STR_MAPGEN_SNOW_COVERAGE                                        :{BLACK}雪地覆蓋率:
-STR_MAPGEN_SNOW_COVERAGE_UP                                     :{BLACK}將雪地覆蓋率提高10%
-STR_MAPGEN_SNOW_COVERAGE_DOWN                                   :{BLACK}將雪地覆蓋率降低10%
+STR_MAPGEN_SNOW_COVERAGE_UP_TOOLTIP                             :{BLACK}將雪地覆蓋率提高10%
+STR_MAPGEN_SNOW_COVERAGE_DOWN_TOOLTIP                           :{BLACK}將雪地覆蓋率降低10%
 STR_MAPGEN_SNOW_COVERAGE_TEXT                                   :{BLACK}{NUM}%
 STR_MAPGEN_DESERT_COVERAGE                                      :{BLACK}沙漠覆蓋率:
-STR_MAPGEN_DESERT_COVERAGE_UP                                   :{BLACK}將沙漠覆蓋率提高10%
-STR_MAPGEN_DESERT_COVERAGE_DOWN                                 :{BLACK}將沙漠覆蓋率降低10%
+STR_MAPGEN_DESERT_COVERAGE_UP_TOOLTIP                           :{BLACK}將沙漠覆蓋率提高10%
+STR_MAPGEN_DESERT_COVERAGE_DOWN_TOOLTIP                         :{BLACK}將沙漠覆蓋率降低10%
 STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}{NUM}%
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}地形種類：
 STR_MAPGEN_SEA_LEVEL                                            :{BLACK}海平面：
@@ -3409,8 +3435,8 @@ STR_SE_MAPGEN_FLAT_WORLD_TOOLTIP                                :{BLACK}產生�
 STR_SE_MAPGEN_RANDOM_LAND                                       :{WHITE}隨機產生地形
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT                                 :{BLACK}平地高度：
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_TOOLTIP                         :{BLACK}選擇地面海拔高度
-STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_DOWN                            :{BLACK}將平地高度下移一層
-STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_UP                              :{BLACK}將平地高度上移一層
+STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_DOWN_TOOLTIP                    :{BLACK}將平地高度下移一層
+STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_UP_TOOLTIP                      :{BLACK}將平地高度上移一層
 
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_QUERY_CAPT                      :{WHITE}修改平地高度
 
@@ -3424,14 +3450,14 @@ STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / 
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}產生世界
 STR_GENERATION_LANDSCAPE_GENERATION                             :{BLACK}景觀生成
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}產生河流
-STR_GENERATION_CLEARING_TILES                                   :{BLACK}產生粗地與岩石區域
+STR_GENERATION_CLEARING_TILES                                   :{BLACK}產生荒地與岩石地貌
 STR_GENERATION_TOWN_GENERATION                                  :{BLACK}市鎮生成
 STR_GENERATION_INDUSTRY_GENERATION                              :{BLACK}工業生成
 STR_GENERATION_OBJECT_GENERATION                                :{BLACK}無法移動
 STR_GENERATION_TREE_GENERATION                                  :{BLACK}產生樹木
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}設定遊戲
 STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}執行單格迴圈中
-STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}正在運行腳本
+STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}正在執行腳本
 STR_GENERATION_PREPARING_GAME                                   :{BLACK}準備遊戲中
 
 STR_TOWN_DATA_ERROR_LOAD_FAILED                                 :{WHITE}市鎮資料載入失敗
@@ -3492,7 +3518,7 @@ STR_NEWGRF_SETTINGS_PARAMETER_NONE                              :無
 STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}沒有相關資訊
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}找不到符合的檔案
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}停用
-STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}與此版本的OpenTTD不相容
+STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}與此版本的 OpenTTD 不相容
 
 # NewGRF save preset window
 STR_SAVE_PRESET_CAPTION                                         :{WHITE}儲存設定值
@@ -3521,7 +3547,7 @@ STR_NEWGRF_INSPECT_PARENT_TOOLTIP                               :{BLACK}檢查�
 
 STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT                            :{STRING} 於 {HEX}
 STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_OBJECT                     :物件
-STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_RAIL_TYPE                  :鐵路種類
+STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_RAIL_TYPE                  :軌道類型
 STR_NEWGRF_INSPECT_CAPTION_OBJECT_AT_ROAD_TYPE                  :道路類型
 
 STR_NEWGRF_INSPECT_QUERY_CAPTION                                :{WHITE}NewGRF variable 60+x 參數（16 進位）
@@ -3560,8 +3586,8 @@ STR_NEWGRF_ERROR_MSG_INFO                                       :{SILVER}{STRING
 STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}警告：{SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}錯誤：{SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}嚴重錯誤：{SILVER}{STRING}
-STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}發生嚴重 NewGRF "{STRING}" 錯誤的處理方式：{}{STRING}
-STR_NEWGRF_ERROR_POPUP                                          :{WHITE}發生NewGRF "{STRING}" 錯誤:{}{STRING}
+STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}NewGRF『 {STRING} 』發生了嚴重錯誤：{}{STRING}
+STR_NEWGRF_ERROR_POPUP                                          :{WHITE}NewGRF『 {STRING} 』發生了一個錯誤：{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} 跟由 OpenTTD 回報的 TTDPatch 版本不合
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} 只適合用於 TTD 版本 {2:STRING}。
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} 必須跟 {2:STRING} 一起使用
@@ -3605,17 +3631,17 @@ STR_NEWGRF_LIST_COMPATIBLE                                      :{YELLOW}發現�
 STR_NEWGRF_LIST_MISSING                                         :{RED}缺少檔案
 
 # NewGRF 'it's broken' warnings
-STR_NEWGRF_BROKEN                                               :{WHITE}NewGRF '{0:STRING}' 的行為可能會造成失去同步或當機
-STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}'{1:ENGINE}' 不在機廠內卻發生動力車廂列車狀態的變動。
-STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}'{1:ENGINE}' 不在機廠內卻發生列車長度的變動。
-STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}它會在 '{1:ENGINE}' 在機廠外或不在接受改裝時改變其運載量
-STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}'{1:COMPANY}' 所擁有的列車 '{0:VEHICLE}' 長度無效。 這個錯誤可能是 NewGRFs 有問題所致，遊戲可能會無法同步或當機
+STR_NEWGRF_BROKEN                                               :{WHITE}NewGRF「 {PUSH_COLOUR}{0:STRING}{POP_COLOUR} 」的行為可能會造成同步失敗或當機
+STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內卻發生動力車廂列車狀態的變動
+STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內卻發生列車長度的變動
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內或不在改裝時卻發生列車運載量的變動
+STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}{1:COMPANY} 所擁有的列車 {0:VEHICLE} 長度無效。 這個錯誤可能是由 NewGRF 導致的，遊戲可能會無法同步或當機
 
-STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{0:STRING}' 提供了錯誤的資訊。
-STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}購買清單中 '{1:ENGINE}' 的貨物/改裝資訊和購買後的資訊不同。 這可能會導致自動更新/取代時無法正確的改裝該車輛。
-STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}{1:STRING}會導致產量 Callback 時發生無窮迴圈的錯誤。
-STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}回調程序 {1:HEX} 返回預料之外或無效的結果：{2:HEX}
-STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}'{1:STRING}'  產品回傳函數:{2:HEX} ，回傳了錯誤的貨物類型
+STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF「 {PUSH_COLOUR}{0:STRING}{POP_COLOUR} 」提供了錯誤的資訊
+STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}購買清單中「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」的貨物或改裝資訊與購買後的資訊不同。這可能會導致自動更新或自動替換時無法正確的改裝該車輛
+STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}「 {PUSH_COLOUR}{1:STRING}{POP_COLOUR} 」會導致生產回傳函數陷入無限循環的錯誤
+STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}回傳函數 {1:HEX} 回傳了一個未知或無效的結果：{2:HEX}
+STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}「 {PUSH_COLOUR}{1:STRING}{POP_COLOUR} 」產品回傳函數：{2:HEX} ，回傳了錯誤的貨物類型
 
 # 'User removed essential NewGRFs'-placeholders for stuff without specs
 STR_NEWGRF_INVALID_CARGO                                        :<無效貨物>
@@ -3631,7 +3657,6 @@ STR_INVALID_VEHICLE                                             :<不明車輛>
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}正在掃描 NewGRF 套件
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}正在掃描 NewGRF 套件。如 NewGRF 套件較多，可能需要較長時間完成...
 STR_NEWGRF_SCAN_STATUS                                          :{BLACK}估計共有 {1:NUM} 個 NewGRF 套件，現已掃描 {0:NUM} 個...
-STR_NEWGRF_SCAN_ARCHIVES                                        :審視檔案中
 
 # Sign list window
 STR_SIGN_LIST_CAPTION                                           :{WHITE}標誌清單 - 標誌 {COMMA} 個
@@ -3640,7 +3665,7 @@ STR_SIGN_LIST_MATCH_CASE_TOOLTIP                                :{BLACK}切換�
 
 # Sign window
 STR_EDIT_SIGN_CAPTION                                           :{WHITE}編輯標誌文字
-STR_EDIT_SIGN_LOCATION_TOOLTIP                                  :{BLACK}將號誌置於畫面中央。按住 <Ctrl> 點選可於號誌位置開啟新視窗視野
+STR_EDIT_SIGN_LOCATION_TOOLTIP                                  :{BLACK}將號誌置於畫面正中央。按住 <Ctrl> 點選可於號誌位置開啟新檢視視窗
 STR_EDIT_SIGN_NEXT_SIGN_TOOLTIP                                 :{BLACK}前往下個標誌
 STR_EDIT_SIGN_PREVIOUS_SIGN_TOOLTIP                             :{BLACK}前往上個標誌
 
@@ -3651,7 +3676,7 @@ STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}市鎮�
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- 無 -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
 STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{YELLOW} (城市){BLACK} ({COMMA})
-STR_TOWN_DIRECTORY_LIST_TOOLTIP                                 :{BLACK}市鎮名稱 - 點選名稱可將市鎮置於畫面中央。按住 <Ctrl> 點選可於市鎮位置開啟新視窗視野
+STR_TOWN_DIRECTORY_LIST_TOOLTIP                                 :{BLACK}市鎮名稱 - 點選名稱可將市鎮置於畫面正中央。按住 <Ctrl> 點選可於市鎮位置開啟新檢視視窗
 STR_TOWN_POPULATION                                             :{BLACK}世界人口：{COMMA}
 
 # Town view window
@@ -3670,7 +3695,7 @@ STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}該市�
 STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}該市鎮每隔 {ORANGE}{UNITS_DAYS_OR_SECONDS}{BLACK}擴張一次（正接受資助）
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}市鎮{RED}不在{BLACK}成長
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}市鎮噪音限制：{ORANGE}{COMMA}{BLACK}  最大：{ORANGE}{COMMA}
-STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}將市鎮置於畫面中央。按住 <Ctrl> 點選可於市鎮位置開啟新視窗視野
+STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}將市鎮置於畫面正中央。按住 <Ctrl> 點選可於市鎮位置開啟新檢視視窗
 STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON                            :{BLACK}地方政府
 STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP                           :{BLACK}顯示地方政府資訊
 STR_TOWN_VIEW_RENAME_TOOLTIP                                    :{BLACK}修改市鎮名稱
@@ -3700,7 +3725,7 @@ STR_LOCAL_AUTHORITY_ACTION_LARGE_ADVERTISING_CAMPAIGN           :大型廣告活
 STR_LOCAL_AUTHORITY_ACTION_ROAD_RECONSTRUCTION                  :出資重建當地道路
 STR_LOCAL_AUTHORITY_ACTION_STATUE_OF_COMPANY                    :建造公司所有人的雕像
 STR_LOCAL_AUTHORITY_ACTION_NEW_BUILDINGS                        :資助市鎮建設
-STR_LOCAL_AUTHORITY_ACTION_EXCLUSIVE_TRANSPORT                  :購買專屬運輸權
+STR_LOCAL_AUTHORITY_ACTION_EXCLUSIVE_TRANSPORT                  :購買專屬營運權
 STR_LOCAL_AUTHORITY_ACTION_BRIBE                                :向地方政府行賄
 ###next-name-looks-similar
 
@@ -3711,9 +3736,9 @@ STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_ROAD_RECONSTRUCTION_MONTHS   :{PUSH_COLOUR}{Y
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_ROAD_RECONSTRUCTION_MINUTES  :{PUSH_COLOUR}{YELLOW}贊助市鎮道路網絡重建。{}這將會使到市鎮的交通阻塞 6 分鐘。{}{POP_COLOUR}費用︰{CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_STATUE_OF_COMPANY            :{PUSH_COLOUR}{YELLOW}建造雕像紀念您的公司。{}使城鎮範圍內的車站獲得永久的評分增益。{}{POP_COLOUR}費用：{CURRENCY_LONG}
 STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_NEW_BUILDINGS                :{PUSH_COLOUR}{YELLOW}出資協助市鎮建造新的商業建築。{}使城鎮獲得暫時性的成長速度增益。{}{POP_COLOUR}費用：{CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT_MONTHS   :{PUSH_COLOUR}{YELLOW}購買本市鎮 12 個月的專屬運輸權。{}市政府將不許乘客和貨物使用競爭對手的車站。如競爭對手成功賄賂則本合約將被取消。{}{POP_COLOUR}費用︰{CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT_MINUTES  :{PUSH_COLOUR}{YELLOW}購買本市鎮 12 分鐘的專屬運輸權。{}市政府將不許乘客和貨物使用競爭對手的車站。如競爭對手成功賄賂則本合約將被取消。{}{POP_COLOUR}費用︰{CURRENCY_LONG}
-STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{PUSH_COLOUR}{YELLOW}賄賂地方政府以提高您的評級並終止競爭對手的專屬運輸權，如果被發現，將面臨嚴厲處罰的風險。{}{POP_COLOUR}費用：{CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT_MONTHS   :{PUSH_COLOUR}{YELLOW}購買該市鎮 12 個月的專屬營運權。{}市政府將不許乘客和貨物使用其他公司的車站。但如果競爭對手成功賄賂則該合約將被取消。{}{POP_COLOUR}費用：{CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_EXCLUSIVE_TRANSPORT_MINUTES  :{PUSH_COLOUR}{YELLOW}購買該市鎮 12 分鐘的專屬營運權。{}市政府將不許乘客和貨物使用其他公司的車站。但如果競爭對手成功賄賂則該合約將被取消。{}{POP_COLOUR}費用：{CURRENCY_LONG}
+STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{PUSH_COLOUR}{YELLOW}賄賂地方政府以提高您的評級並終止競爭對手的專屬營運權，但如果被發現，將面臨嚴厲處罰的風險。{}{POP_COLOUR}費用：{CURRENCY_LONG}
 
 # Goal window
 STR_GOALS_CAPTION                                               :{WHITE}{COMPANY} 遊戲目標
@@ -3727,7 +3752,7 @@ STR_GOALS_TEXT                                                  :{ORANGE}{STRING
 STR_GOALS_NONE                                                  :{ORANGE}- 當前無目標 -
 STR_GOALS_PROGRESS                                              :{ORANGE}{STRING}
 STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
-STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}點選目標可將有關工業或市鎮或是方格置於畫面中央。按下 <Ctrl> 點選目標可於有關工業或市鎮或是方格位置開啟新視窗視野
+STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}點選目標可將有關工業或市鎮又或是方格置於畫面正中央。按下 <Ctrl> 點選目標可於有關工業或市鎮又或是方格位置開啟新檢視視窗
 
 # Goal question window
 STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}問題
@@ -3762,8 +3787,8 @@ STR_SUBSIDIES_OFFERED_TITLE                                     :{BLACK}提供�
 STR_SUBSIDIES_OFFERED_FROM_TO                                   :{ORANGE}將 {STRING} 從 {STRING} 運到 {STRING}{YELLOW}（{STRING}）
 STR_SUBSIDIES_NONE                                              :{ORANGE}- 無 -
 STR_SUBSIDIES_SUBSIDISED_TITLE                                  :{BLACK}已獲補助的服務：
-STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}將 {STRING} 從 {STRING} 運到 {STRING}{YELLOW} ({COMPANY}{YELLOW}，{STRING})
-STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}點選運送服務可將工業或市鎮置於畫面中央。按住 <Ctrl> 點選可於工業或市鎮位置開啟新視窗視野
+STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}將 {STRING} 從 {STRING} 運到 {STRING}{YELLOW}（{COMPANY}{YELLOW}，{STRING}）
+STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}點選當前的工業或市鎮可將畫面置於正中央。按住 <Ctrl> 點選可於工業或市鎮位置開啟新檢視視窗
 STR_SUBSIDIES_OFFERED_EXPIRY_DATE                               :在 {DATE_SHORT} 之前
 STR_SUBSIDIES_OFFERED_EXPIRY_TIME                               :剩餘時間︰{UNITS_MONTHS_OR_MINUTES}
 STR_SUBSIDIES_SUBSIDISED_EXPIRY_DATE                            :直到{DATE_SHORT}
@@ -3783,13 +3808,13 @@ STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}前往�
 STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}無效的目標參照
 
 # Station list window
-STR_STATION_LIST_TOOLTIP                                        :{BLACK}車站名稱 - 點選名稱可將車站置於畫面中央。按住 <Ctrl> 點選可於車站位置開啟新視窗視野
-STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE                        :{BLACK}按住 <Ctrl> 點選可選擇多個項目
+STR_STATION_LIST_TOOLTIP                                        :{BLACK}車站名稱 - 點選名稱可將車站置於畫面正中央。按住 <Ctrl> 點選可於車站位置開啟新檢視視窗
+STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE_TOOLTIP                :{BLACK}按住 <Ctrl> 點選可選擇多個項目
 STR_STATION_LIST_CAPTION                                        :{WHITE}{COMPANY} - 車站 {COMMA} 座
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- 無 -
-STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}選擇所有設施
+STR_STATION_LIST_SELECT_ALL_FACILITIES_TOOLTIP                  :{BLACK}選擇所有設施
 STR_STATION_LIST_CARGO_FILTER_ALL_AND_NO_RATING                 :所有貨物種類和沒有評價
 STR_STATION_LIST_CARGO_FILTER_MULTIPLE                          :多種貨物類型
 STR_STATION_LIST_CARGO_FILTER_NO_CARGO_TYPES                    :無貨物種類
@@ -3807,8 +3832,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}接受�
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}顯示接受的貨物種類
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}接受：{WHITE}{CARGO_LIST}
 
-STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}此車站享有所屬市鎮的專屬運輸權
-STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK}已購買此市鎮的專屬運輸權
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}此車站享有所屬市鎮的專屬營運權
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} 已購買該市鎮的專屬營運權
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}評價
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}顯示車站評價
@@ -3849,7 +3874,7 @@ STR_CARGO_RATING_VERY_GOOD                                      :十分不錯
 STR_CARGO_RATING_EXCELLENT                                      :極佳
 STR_CARGO_RATING_OUTSTANDING                                    :傑出
 
-STR_STATION_VIEW_CENTER_TOOLTIP                                 :{BLACK}將車站置於畫面中央。按住 <Ctrl> 點選可於車站位置開啟新視窗視野
+STR_STATION_VIEW_CENTER_TOOLTIP                                 :{BLACK}將車站置於畫面正中央。按住 <Ctrl> 點選可於車站位置開啟新檢視視窗
 STR_STATION_VIEW_RENAME_TOOLTIP                                 :{BLACK}修改車站名稱
 
 STR_STATION_VIEW_SCHEDULED_TRAINS_TOOLTIP                       :{BLACK}顯示所有指令內包含這個車站的列車
@@ -3864,10 +3889,10 @@ STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}防止�
 
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
-STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}將號誌站置於畫面中央。 按住 <Ctrl> 點選可於號誌站位置開啟新視窗視野
+STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}將號誌站置於畫面正中央。按住 <Ctrl> 點選可於號誌站位置開啟新檢視視窗
 STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}修改號誌站名稱
-STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}將浮標置於畫面中央。按住 <Ctrl> 點選可於浮標位置開啟新視窗視野
-STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}修改浮標名稱
+STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}將浮標置於畫面正中央。按住 <Ctrl> 點選可於浮標位置開啟新檢視視窗
+STR_BUOY_VIEW_RENAME_TOOLTIP                                    :{BLACK}修改浮標名稱
 
 STR_EDIT_WAYPOINT_NAME                                          :{WHITE}編輯號誌站名稱
 
@@ -3886,7 +3911,7 @@ STR_FINANCES_CAPITAL_EXPENSES_TITLE                             :{WHITE}資本�
 ###length 13
 STR_FINANCES_SECTION_CONSTRUCTION                               :{GOLD}建造
 STR_FINANCES_SECTION_NEW_VEHICLES                               :{GOLD}購置新車輛
-STR_FINANCES_SECTION_TRAIN_RUNNING_COSTS                        :{GOLD}鐵路列車
+STR_FINANCES_SECTION_TRAIN_RUNNING_COSTS                        :{GOLD}鐵道
 STR_FINANCES_SECTION_ROAD_VEHICLE_RUNNING_COSTS                 :{GOLD}公路車輛
 STR_FINANCES_SECTION_AIRCRAFT_RUNNING_COSTS                     :{GOLD}飛機營運成本
 STR_FINANCES_SECTION_SHIP_RUNNING_COSTS                         :{GOLD}船舶
@@ -3906,7 +3931,7 @@ STR_FINANCES_PROFIT                                             :{WHITE}盈利
 STR_FINANCES_BANK_BALANCE_TITLE                                 :{WHITE}銀行餘額
 STR_FINANCES_OWN_FUNDS_TITLE                                    :{WHITE}自有資金
 STR_FINANCES_LOAN_TITLE                                         :{WHITE}貸款
-STR_FINANCES_INTEREST_RATE                                      :{WHITE}貸款利息: {BLACK}{NUM}%
+STR_FINANCES_INTEREST_RATE                                      :{WHITE}貸款利息：{BLACK}{NUM}％
 STR_FINANCES_MAX_LOAN                                           :{WHITE}貸款上限：{BLACK}{CURRENCY_LONG}
 STR_FINANCES_TOTAL_CURRENCY                                     :{BLACK}{CURRENCY_LONG}
 STR_FINANCES_BANK_BALANCE                                       :{WHITE}{CURRENCY_LONG}
@@ -3931,7 +3956,7 @@ STR_COMPANY_VIEW_SHIPS                                          :{WHITE}船舶 {
 STR_COMPANY_VIEW_VEHICLES_NONE                                  :{WHITE}無
 STR_COMPANY_VIEW_COMPANY_VALUE                                  :{GOLD}公司市值：{WHITE}{CURRENCY_LONG}
 STR_COMPANY_VIEW_INFRASTRUCTURE                                 :{GOLD}基礎建設：
-STR_COMPANY_VIEW_INFRASTRUCTURE_RAIL                            :{WHITE}{COMMA} 鐵路區塊
+STR_COMPANY_VIEW_INFRASTRUCTURE_RAIL                            :{WHITE}{COMMA} 鐵道區塊
 STR_COMPANY_VIEW_INFRASTRUCTURE_ROAD                            :{WHITE}{COMMA} 道路區塊
 STR_COMPANY_VIEW_INFRASTRUCTURE_WATER                           :{WHITE}{COMMA} 格水道或海運設施
 STR_COMPANY_VIEW_INFRASTRUCTURE_STATION                         :{WHITE}{COMMA} 格車站設施
@@ -3943,7 +3968,7 @@ STR_COMPANY_VIEW_BUILD_HQ_TOOLTIP                               :{BLACK}建造�
 STR_COMPANY_VIEW_VIEW_HQ_BUTTON                                 :{BLACK}檢視總部
 STR_COMPANY_VIEW_VIEW_HQ_TOOLTIP                                :{BLACK}檢視公司總部
 STR_COMPANY_VIEW_RELOCATE_HQ                                    :{BLACK}搬移總部
-STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS                  :{BLACK}以公司總值的 1% 在其他地方建造新公司總部。按住 <Shift> 點選則只會顯示預估的建造費用
+STR_COMPANY_VIEW_RELOCATE_HQ_TOOLTIP                            :{BLACK}以公司總值的 1% 在其他地方建造新公司總部。按住 <Shift> 點選則只會顯示預估的建造費用
 STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}詳情
 STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}顯示基礎建設數目的詳細資料
 STR_COMPANY_VIEW_GIVE_MONEY_BUTTON                              :{BLACK}給予資金
@@ -3969,7 +3994,7 @@ STR_BUY_COMPANY_HOSTILE_TAKEOVER                                :{WHITE}在對 {
 
 # Company infrastructure window
 STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY} 的基礎建設
-STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}鐵路區塊：
+STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}鐵道區塊：
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}號誌
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}道路區塊：
 STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}電車設施:
@@ -3990,9 +4015,9 @@ STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUST
 STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}、{STRING}、{STRING}……（尚有 {NUM} 個未顯示）
-STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}工業名稱 - 點選名稱可將工業置於畫面中央。按住 <Ctrl> 點選可於工業位置開啟新視窗視野
+STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}工業名稱 - 點選名稱可將工業置於畫面正中央。按住 <Ctrl> 點選可於工業位置開啟新檢視視窗
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}接受貨物：{SILVER}{STRING}
-STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}產出的貨物: {SILVER}{STRING}
+STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}產出的貨物：{SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :所有貨物種類
 STR_INDUSTRY_DIRECTORY_FILTER_NONE                              :無
 
@@ -4001,19 +4026,21 @@ STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTR
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE                   :{BLACK}上月產量：
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MINUTE_TITLE                  :{BLACK}上分鐘產量︰
 STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_LONG}{STRING}{BLACK} (運送了 {COMMA}%)
-STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}將工業置於畫面中央。按住 <Ctrl> 點選可於工業位置開啟新視窗視野
+STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}將工業置於畫面正中央。按住 <Ctrl> 點選可於工業位置開啟新檢視視窗
 STR_INDUSTRY_VIEW_PRODUCTION_GRAPH                              :{BLACK}產量圖表
 STR_INDUSTRY_VIEW_PRODUCTION_GRAPH_TOOLTIP                      :{BLACK}顯示工業產量歷史圖表
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}產出等級：{YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}該工業已宣佈關閉！
 
 STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}需要：{YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}產出: {YELLOW}{STRING}{STRING}
+STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}產出：{YELLOW}{STRING}{STRING}
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :，{STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}需要:
-STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{0:STRING}{BLACK}{3:STRING}
-STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} 等待中{STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_SUFFIX                           :{YELLOW}{0:STRING}{BLACK}{3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT_SUFFIX                    :{YELLOW}{0:STRING}{BLACK}：庫存 {1:CARGO_SHORT} {3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_NOSUFFIX                         :{YELLOW}{0:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT_NOSUFFIX                  :{YELLOW}{0:STRING}{BLACK}：庫存 {1:CARGO_SHORT}
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}修改產量 (以 8 為倍數增減，最大為 2040)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}變更產出等級 (百分比，最高可到800%)
@@ -4097,20 +4124,20 @@ STR_GROUP_OCCUPANCY_VALUE                                       :{NUM}%
 
 # Build vehicle window
 ###length 4
-STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :新購鐵路列車
-STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :新購電氣化列車
-STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :新購單軌車輛
-STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :新購磁浮車輛
+STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :購買鐵道列車
+STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :購買電氣化列車
+STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :購買單軌列車
+STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :購買磁浮列車
 
-STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :新購車輛
-STR_BUY_VEHICLE_TRAM_VEHICLE_CAPTION                            :新電車車輛
+STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :購買車輛
+STR_BUY_VEHICLE_TRAM_VEHICLE_CAPTION                            :購買電車
 
 # Vehicle availability
 ###length VEHICLE_TYPES
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :新購鐵路列車
-STR_BUY_VEHICLE_ROAD_VEHICLE_ALL_CAPTION                        :新購車輛
-STR_BUY_VEHICLE_SHIP_CAPTION                                    :新購船舶
-STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :新購飛機
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :購買鐵道列車
+STR_BUY_VEHICLE_ROAD_VEHICLE_ALL_CAPTION                        :購買車輛
+STR_BUY_VEHICLE_SHIP_CAPTION                                    :購買船舶
+STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :購買飛機
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}費用：{GOLD}{CURRENCY_LONG}{BLACK} 載重：{GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}費用：{GOLD}{CURRENCY_LONG}{BLACK} (改裝費用：{GOLD}{CURRENCY_LONG}{BLACK}) 載重：{GOLD}{WEIGHT_SHORT}
@@ -4131,7 +4158,7 @@ STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}費用�
 STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}費用：{GOLD}{CURRENCY_LONG}{BLACK}（改裝費用：{GOLD}{CURRENCY_LONG}{BLACK}）速度：{GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}容量：{GOLD}{CARGO_LONG}，{CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}動力車廂：{GOLD}+{POWER}{BLACK} 載重：{GOLD}+{WEIGHT_SHORT}
-STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}可改裝成：{GOLD}{STRING}
+STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}可改裝為：{GOLD}{STRING}
 STR_PURCHASE_INFO_ALL_TYPES                                     :所有貨物種類
 STR_PURCHASE_INFO_NONE                                          :無
 STR_PURCHASE_INFO_ENGINES_ONLY                                  :僅機車頭
@@ -4265,16 +4292,16 @@ STR_DEPOT_CLONE_SHIP                                            :{BLACK}複製�
 STR_DEPOT_CLONE_AIRCRAFT                                        :{BLACK}複製飛機
 
 ###length VEHICLE_TYPES
-STR_DEPOT_CLONE_TRAIN_DEPOT_INFO                                :{BLACK}購買一列相同的列車，包含所有車廂。按下按鈕之後再點選機廠內或外的列車。按住 <Ctrl> 點選可共享指令。按住 <Shift> 則可顯示預估成本
-STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_INFO                         :{BLACK}購買一部相同的車輛。按下此鈕之後再點選車廠內或外的車輛。按住 <Ctrl> 點選可共享指令。按住 <Shift> 則可顯示預估成本
-STR_DEPOT_CLONE_SHIP_DEPOT_INFO                                 :{BLACK}購買一艘相同的船舶。按下按鈕之後再點選船塢內或外的船舶。按住 <Ctrl> 點選可共享指令。按住 <Shift> 則可顯示預估成本
-STR_DEPOT_CLONE_AIRCRAFT_INFO_HANGAR_WINDOW                     :{BLACK}購買一架相同的飛機。按下此鈕之後再點選機棚內或外的飛機。按住 <Ctrl> 點選可共享指令。按住 <Shift> 則可顯示預估成本
+STR_DEPOT_CLONE_TRAIN_DEPOT_TOOLTIP                             :{BLACK}購買一列相同的列車，包含所有車廂。按下按鈕之後再點選機廠內或外的列車。按住 <Ctrl> 點選可共享指令。按住 <Shift> 則可顯示預估成本
+STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_TOOLTIP                      :{BLACK}購買一部相同的車輛。按下此鈕之後再點選車廠內或外的車輛。按住 <Ctrl> 點選可共享指令。按住 <Shift> 則可顯示預估成本
+STR_DEPOT_CLONE_SHIP_DEPOT_TOOLTIP                              :{BLACK}購買一艘相同的船舶。按下按鈕之後再點選船塢內或外的船舶。按住 <Ctrl> 點選可共享指令。按住 <Shift> 則可顯示預估成本
+STR_DEPOT_CLONE_AIRCRAFT_HANGAR_TOOLTIP                         :{BLACK}購買一架相同的飛機。按下此鈕之後再點選機棚內或外的飛機。按住 <Ctrl> 點選可共享指令。按住 <Shift> 則可顯示預估成本
 
 ###length VEHICLE_TYPES
-STR_DEPOT_TRAIN_LOCATION_TOOLTIP                                :{BLACK}將鐵路機廠置於畫面中央。按住 <Ctrl> 點選可於鐵路機廠位置開啟新視窗視野
-STR_DEPOT_ROAD_VEHICLE_LOCATION_TOOLTIP                         :{BLACK}將車廠置於畫面中央。按住 <Ctrl> 點選可於車廠位置開啟新視窗視野
-STR_DEPOT_SHIP_LOCATION_TOOLTIP                                 :{BLACK}將船塢置於畫面中央。按住 <Ctrl> 點選可於船塢位置開啟新視窗視野
-STR_DEPOT_AIRCRAFT_LOCATION_TOOLTIP                             :{BLACK}將機棚置於畫面中央。按住 <Ctrl> 點選可於機棚位置開啟新視窗視野
+STR_DEPOT_TRAIN_LOCATION_TOOLTIP                                :{BLACK}將鐵道機廠置於畫面正中央。按住 <Ctrl> 點選可於鐵道機廠位置開啟新檢視視窗
+STR_DEPOT_ROAD_VEHICLE_LOCATION_TOOLTIP                         :{BLACK}將車廠置於畫面正中央。按住 <Ctrl> 點選可於車廠位置開啟新檢視視窗
+STR_DEPOT_SHIP_LOCATION_TOOLTIP                                 :{BLACK}將船塢置於畫面正中央。按住 <Ctrl> 點選可於船塢位置開啟新檢視視窗
+STR_DEPOT_AIRCRAFT_LOCATION_TOOLTIP                             :{BLACK}將機棚置於畫面正中央。按住 <Ctrl> 點選可於機棚位置開啟新檢視視窗
 
 ###length VEHICLE_TYPES
 STR_DEPOT_VEHICLE_ORDER_LIST_TRAIN_TOOLTIP                      :{BLACK}取得所有指令內有這個機廠的列車
@@ -4299,12 +4326,12 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}您正�
 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}車輛製造商的訊息
-STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}我們剛設計了一種新{STRING} - 您有興趣獨家使用它一年，讓我們在正式上市之前先 觀察它的表現嗎？
+STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}我們剛設計了一款新的{STRING}{}您願意在產品正式上市前獨家使用它一年，讓我們在正式上市前觀察它的表現嗎？
 
-STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :鐵路機車頭
-STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :電氣化機車頭
-STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :單軌機車頭
-STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :磁浮機車頭
+STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :鐵道機車
+STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :電氣化鐵道機車
+STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :單軌機車
+STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :磁浮機車
 
 STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :車輛
 STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :電車車輛
@@ -4312,8 +4339,6 @@ STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :電車車輛
 STR_ENGINE_PREVIEW_AIRCRAFT                                     :飛機
 STR_ENGINE_PREVIEW_SHIP                                         :船舶
 
-STR_ENGINE_PREVIEW_TEXT3                                        :{BLACK}{STRING}{}{5:STRING}{}{STRING}
-STR_ENGINE_PREVIEW_TEXT4                                        :{BLACK}{STRING}{}{STRING}{}{STRING}{}{STRING}
 STR_ENGINE_PREVIEW_COST_WEIGHT                                  :費用：{CURRENCY_LONG} 重量：{WEIGHT_SHORT}
 STR_ENGINE_PREVIEW_COST_MAX_SPEED                               :費用：{CURRENCY_LONG}  最高速度：{VELOCITY}
 STR_ENGINE_PREVIEW_SPEED_POWER                                  :速度：{VELOCITY} 功率：{POWER}
@@ -4339,31 +4364,31 @@ STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :車輛
 STR_REPLACE_VEHICLE_SHIP                                        :船舶
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :飛機
 
-STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK}選擇要替換的車頭種類
-STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK}選擇您想替換左方選定車頭的新車頭種類
+STR_REPLACE_LEFT_ARRAY_TOOLTIP                                  :{BLACK}選擇要替換的車頭種類
+STR_REPLACE_RIGHT_ARRAY_TOOLTIP                                 :{BLACK}選擇您想替換左方選定車頭的新車頭種類
 
 STR_REPLACE_VEHICLES_START                                      :{BLACK}開始替換車輛
 STR_REPLACE_VEHICLES_NOW                                        :立刻替換所有車輛
 STR_REPLACE_VEHICLES_WHEN_OLD                                   :僅替換老舊的車輛
-STR_REPLACE_HELP_START_BUTTON                                   :{BLACK}按下之後就會開始將左方選定的車頭替換成右方指定的車頭
+STR_REPLACE_START_BUTTON_TOOLTIP                                :{BLACK}按下之後就會開始將左方選定的車頭替換成右方指定的車頭
 STR_REPLACE_NOT_REPLACING                                       :{BLACK}不替換
 STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED                      :{BLACK}未選擇任何車輛
 STR_REPLACE_REPLACING_WHEN_OLD                                  :{ENGINE} 老舊時
 STR_REPLACE_VEHICLES_STOP                                       :{BLACK}停止替換車輛
-STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}按下之後會停止替換左方指定的車頭
+STR_REPLACE_STOP_BUTTON_TOOLTIP                                 :{BLACK}按下之後會停止替換左方指定的車頭
 
-STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}在車頭及車廂替換畫面間切換。
+STR_REPLACE_ENGINE_WAGON_SELECT_TOOLTIP                         :{BLACK}在車頭及車廂替換畫面間切換。
 STR_REPLACE_ENGINES                                             :車頭
 STR_REPLACE_WAGONS                                              :車廂
-STR_REPLACE_ALL_RAILTYPE                                        :所有鐵路車輛
+STR_REPLACE_ALL_RAILTYPE                                        :所有鐵道車輛
 STR_REPLACE_ALL_ROADTYPE                                        :所有公路車輛
 
 ###length 2
-STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}選擇您要替換機車頭的軌道種類
-STR_REPLACE_HELP_ROADTYPE                                       :{BLACK}選擇您要替換車輛的道路類型
+STR_REPLACE_RAILTYPE_TOOLTIP                                    :{BLACK}選擇您要替換機車頭的軌道種類
+STR_REPLACE_ROADTYPE_TOOLTIP                                    :{BLACK}選擇您要替換車輛的道路類型
 ###next-name-looks-similar
 
-STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}顯示左方的車頭要替換成哪種車頭
+STR_REPLACE_REPLACE_INFO_TAB_TOOLTIP                            :{BLACK}顯示左方的車頭要替換成哪種車頭
 STR_REPLACE_RAIL_VEHICLES                                       :列車
 STR_REPLACE_ELRAIL_VEHICLES                                     :電氣化列車
 STR_REPLACE_MONORAIL_VEHICLES                                   :單軌列車
@@ -4373,17 +4398,17 @@ STR_REPLACE_ROAD_VEHICLES                                       :車輛
 STR_REPLACE_TRAM_VEHICLES                                       :電車車輛
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}移除車廂 ({STRING})：{ORANGE}{STRING}
-STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}如果替換後的車廂較長的話，讓自動替換功能移除多餘的車廂 (從頭開始) 以便維持列車長度
+STR_REPLACE_REMOVE_WAGON_TOOLTIP                                :{BLACK}如果替換後的車廂較長的話，讓自動替換功能移除多餘的車廂 (從頭開始) 以便維持列車長度
 STR_REPLACE_REMOVE_WAGON_GROUP_HELP                             :{STRING}. 按住Ctrl並點擊以套用到所有子群組
 
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
 ###length VEHICLE_TYPES
-STR_VEHICLE_VIEW_TRAIN_CENTER_TOOLTIP                           :{BLACK}將列車置於畫面中央。雙擊將會使視野跟隨列車。按住 <Ctrl> 點選可於列車開啟新視窗視野
-STR_VEHICLE_VIEW_ROAD_VEHICLE_CENTER_TOOLTIP                    :{BLACK}將車輛置於畫面中央。雙擊將會使視野跟隨車輛。按住 <Ctrl> 點選可於車輛位置開啟新視窗視野
-STR_VEHICLE_VIEW_SHIP_CENTER_TOOLTIP                            :{BLACK}將船舶置於畫面中央。雙擊將會使視野跟隨船舶。按住 <Ctrl> 點選可於船舶位置開啟新視窗視野
-STR_VEHICLE_VIEW_AIRCRAFT_CENTER_TOOLTIP                        :{BLACK}將飛機置於畫面中央。雙擊將會使視野跟隨飛機。按住 <Ctrl> 點選可於飛機位置開啟新視窗視野
+STR_VEHICLE_VIEW_TRAIN_CENTER_TOOLTIP                           :{BLACK}將列車置於畫面正中央。雙擊將會使主畫面跟隨列車。按住 <Ctrl> 點選可於列車開啟新檢視視窗
+STR_VEHICLE_VIEW_ROAD_VEHICLE_CENTER_TOOLTIP                    :{BLACK}將車輛置於畫面正中央。雙擊將會使主畫面跟隨車輛。按住 <Ctrl> 點選可於車輛位置開啟新檢視視窗
+STR_VEHICLE_VIEW_SHIP_CENTER_TOOLTIP                            :{BLACK}將船舶置於畫面正中央。雙擊將會使主畫面跟隨船舶。按住 <Ctrl> 點選可於船舶位置開啟新檢視視窗
+STR_VEHICLE_VIEW_AIRCRAFT_CENTER_TOOLTIP                        :{BLACK}將飛機置於畫面正中央。雙擊將會使主畫面跟隨飛機。按住 <Ctrl> 點選可於飛機位置開啟新檢視視窗
 
 ###length VEHICLE_TYPES
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}將列車送回機廠，按住 <Ctrt> 點選機廠則只做維護
@@ -4400,7 +4425,7 @@ STR_VEHICLE_VIEW_CLONE_AIRCRAFT_INFO                            :{BLACK}購買�
 STR_VEHICLE_VIEW_TRAIN_IGNORE_SIGNAL_TOOLTIP                    :{BLACK}強制列車前進，不等待號誌允許
 STR_VEHICLE_VIEW_TRAIN_REVERSE_TOOLTIP                          :{BLACK}倒轉列車方向
 STR_VEHICLE_VIEW_ROAD_VEHICLE_REVERSE_TOOLTIP                   :{BLACK}強制車輛掉頭
-STR_VEHICLE_VIEW_ORDER_LOCATION_TOOLTIP                         :{BLACK}將指令終點置於畫面中央。 按住 <Ctrl> 點選可於指令終點位置開啟新視窗視野
+STR_VEHICLE_VIEW_ORDER_LOCATION_TOOLTIP                         :{BLACK}將任務目的地置於畫面正中央。按住 <Ctrl> 點選可於任務目標位置開啟新檢視視窗
 
 ###length VEHICLE_TYPES
 STR_VEHICLE_VIEW_TRAIN_REFIT_TOOLTIP                            :{BLACK}改裝列車以運輸不同的貨物種類
@@ -4439,7 +4464,7 @@ STR_VEHICLE_STATUS_TRAIN_STUCK                                  :{ORANGE}正在�
 STR_VEHICLE_STATUS_AIRCRAFT_TOO_FAR                             :{ORANGE}與下個目的地相距太遠
 
 STR_VEHICLE_STATUS_HEADING_FOR_STATION_VEL                      :{LTBLUE}{1:VELOCITY} - 正前往 {0:STATION}
-STR_VEHICLE_STATUS_NO_ORDERS_VEL                                :{LTBLUE}{VELOCITY} - 沒有指令
+STR_VEHICLE_STATUS_NO_ORDERS_VEL                                :{LTBLUE}{VELOCITY} - 沒有指令清單
 STR_VEHICLE_STATUS_HEADING_FOR_WAYPOINT_VEL                     :{LTBLUE}{1:VELOCITY} - 正前往 {0:WAYPOINT}
 STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_VEL                        :{ORANGE}{1:VELOCITY} - 正前往 {0:DEPOT}
 STR_VEHICLE_STATUS_HEADING_FOR_DEPOT_SERVICE_VEL                :{LTBLUE}{1:VELOCITY} - 正前往 {0:DEPOT} 以進行維護
@@ -4482,14 +4507,14 @@ STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}可靠�
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}興建於：{LTBLUE}{NUM}{BLACK} 價值：{LTBLUE}{CURRENCY_LONG}
 STR_VEHICLE_INFO_NO_CAPACITY                                    :{BLACK}容量：{LTBLUE}無{STRING}
-STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}容量：{LTBLUE}{0:CARGO_LONG}{3:STRING}
-STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}容量：{LTBLUE}{0:CARGO_LONG}{3:STRING} (x{4:NUM})
+STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}容量：{LTBLUE}{CARGO_LONG}{STRING}
+STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}容量：{LTBLUE}{CARGO_LONG}{STRING} (x{NUM})
 STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}容量：{LTBLUE}{CARGO_LONG}，{CARGO_LONG}{STRING}
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}轉運潛在收入：{LTBLUE}{CURRENCY_LONG}
 
 STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}每隔 {LTBLUE}{COMMA}{NBSP}天進行維護{BLACK} 上次維護日期：{LTBLUE}{STRING}
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_MINUTES                  :{BLACK}維護間隔：{LTBLUE}{COMMA}{NBSP}分鐘{BLACK} {STRING}
+STR_VEHICLE_DETAILS_SERVICING_INTERVAL_MINUTES                  :{BLACK}維護區間：{LTBLUE}{COMMA}{NBSP}分鐘{BLACK} {STRING}
 STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}維護間隔：{LTBLUE}{COMMA}%{BLACK} {STRING}
 STR_VEHICLE_DETAILS_LAST_SERVICE_DATE                           :上次維護︰{LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_LAST_SERVICE_MINUTES_AGO                    :上次維護︰{LTBLUE}{NUM} 分鐘前
@@ -4567,9 +4592,8 @@ STR_ORDERS_CAPTION                                              :{WHITE}{VEHICLE
 STR_ORDERS_TIMETABLE_VIEW                                       :{BLACK}時刻表
 STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}切換至時刻表檢視模式
 
-STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}指令清單 - 點選可選擇該指令，按住 <Ctrl> 點選可跳到指令車站位置
+STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}指令清單 - 點選可選擇指令，按住 <Ctrl> 點選可跳到指令目標在地圖上的位置
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
-STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING} {STRING}
 
 STR_ORDERS_END_OF_ORDERS                                        :- - 指令結束 - -
 STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - 共享指令結束 - -
@@ -4668,63 +4692,62 @@ STR_ORDER_GO_NON_STOP_TO_WAYPOINT                               :前往 {WAYPOIN
 STR_ORDER_SERVICE_AT                                            :前往維護
 STR_ORDER_SERVICE_NON_STOP_AT                                   :直接前往維護
 
-STR_ORDER_NEAREST_DEPOT                                         :最近的
-STR_ORDER_NEAREST_HANGAR                                        :最近的機棚
 ###length 3
 STR_ORDER_TRAIN_DEPOT                                           :機廠
 STR_ORDER_ROAD_VEHICLE_DEPOT                                    :車庫
 STR_ORDER_SHIP_DEPOT                                            :船塢
 ###next-name-looks-similar
 
-STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
+STR_ORDER_GO_TO_NEAREST_HANGAR_FORMAT                           :{STRING}最近的機棚
+STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} 最近的 {STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
-STR_ORDER_REFIT_ORDER                                           :(改裝成 {STRING})
-STR_ORDER_REFIT_STOP_ORDER                                      :(裝載 {STRING} 並停止)
-STR_ORDER_STOP_ORDER                                            :(停止)
+STR_ORDER_REFIT_ORDER                                           :（改裝為 {STRING}）
+STR_ORDER_REFIT_STOP_ORDER                                      :（改裝為 {STRING} 並停止）
+STR_ORDER_STOP_ORDER                                            :（停止）
 
 STR_ORDER_WAIT_TO_UNBUNCH                                       :（等候調節班次）
 
-STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
-STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(不能使用車站){POP_COLOUR} {STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION}
+STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(不能使用車站){POP_COLOUR} {STRING} {STATION}
 
-STR_ORDER_IMPLICIT                                              :(內含)
+STR_ORDER_IMPLICIT                                              :（自動）
 
-STR_ORDER_FULL_LOAD                                             :(滿載)
-STR_ORDER_FULL_LOAD_ANY                                         :(滿載任一種類客貨)
-STR_ORDER_NO_LOAD                                               :(不裝載)
-STR_ORDER_UNLOAD                                                :(卸載後裝載客貨)
-STR_ORDER_UNLOAD_FULL_LOAD                                      :(卸載後等待滿載)
-STR_ORDER_UNLOAD_FULL_LOAD_ANY                                  :(卸載後等待任一種類滿載)
-STR_ORDER_UNLOAD_NO_LOAD                                        :(卸載後空車離開)
-STR_ORDER_TRANSFER                                              :(轉運且載客貨)
-STR_ORDER_TRANSFER_FULL_LOAD                                    :(轉運且等待滿載)
-STR_ORDER_TRANSFER_FULL_LOAD_ANY                                :(轉運且等待任一種類滿載)
-STR_ORDER_TRANSFER_NO_LOAD                                      :(轉運後空車離開)
-STR_ORDER_NO_UNLOAD                                             :(不卸載且裝載)
-STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :(不卸載且等待滿載)
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :(不卸載且等待任一種類滿載)
-STR_ORDER_NO_UNLOAD_NO_LOAD                                     :(沒有卸載也沒有裝載)
+STR_ORDER_FULL_LOAD                                             :（等候滿載）
+STR_ORDER_FULL_LOAD_ANY                                         :（滿載任一種類客貨）
+STR_ORDER_NO_LOAD                                               :（不裝載）
+STR_ORDER_UNLOAD                                                :（卸載後裝載客貨）
+STR_ORDER_UNLOAD_FULL_LOAD                                      :（卸載後等候滿載）
+STR_ORDER_UNLOAD_FULL_LOAD_ANY                                  :（卸載後等候任一種類滿載）
+STR_ORDER_UNLOAD_NO_LOAD                                        :（卸載後空車離開）
+STR_ORDER_TRANSFER                                              :（轉運且載客貨）
+STR_ORDER_TRANSFER_FULL_LOAD                                    :（轉運且等候滿載）
+STR_ORDER_TRANSFER_FULL_LOAD_ANY                                :（轉運且等候任一種類滿載）
+STR_ORDER_TRANSFER_NO_LOAD                                      :（轉運後空車離開）
+STR_ORDER_NO_UNLOAD                                             :（不卸載且裝載）
+STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :（不卸載且等候滿載）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :（不卸載且等候任一種類滿載）
+STR_ORDER_NO_UNLOAD_NO_LOAD                                     :（不卸載也不裝載）
 
-STR_ORDER_AUTO_REFIT                                            :(自動改裝為運載 {STRING})
-STR_ORDER_FULL_LOAD_REFIT                                       :(自動改裝為運載 {STRING} 且等候滿載)
-STR_ORDER_FULL_LOAD_ANY_REFIT                                   :(自動改裝為運載 {STRING} 且等候滿載任一種客貨)
-STR_ORDER_UNLOAD_REFIT                                          :(卸載後改裝為運載 {STRING} 然後裝載客貨)
-STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :(卸載後改裝為運載 {STRING} 然後等候滿載)
-STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :(卸載後改裝為運載 {STRING} 然後等候滿載任一種客貨)
-STR_ORDER_TRANSFER_REFIT                                        :(轉運後改裝為運載 {STRING} 然後裝載客貨)
-STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :(轉運後改裝為運載 {STRING} 然後等候滿載)
-STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :(轉運後改裝為運載 {STRING} 然後等候滿載任一種客貨)
-STR_ORDER_NO_UNLOAD_REFIT                                       :(不卸載，改裝為運載 {STRING} 然後裝載客貨)
-STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :(不卸載，改裝為運載 {STRING} 然後等候滿載)
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :(不卸載，改裝為運載 {STRING} 然後等候滿載任一種客貨)
+STR_ORDER_AUTO_REFIT                                            :（自動改裝為運載 {STRING}）
+STR_ORDER_FULL_LOAD_REFIT                                       :（自動改裝為運載 {STRING} 且等候滿載）
+STR_ORDER_FULL_LOAD_ANY_REFIT                                   :（自動改裝為運載 {STRING} 且等候滿載任一種客貨）
+STR_ORDER_UNLOAD_REFIT                                          :（卸載後改裝為運載 {STRING} 然後裝載客貨）
+STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :（卸載後改裝為運載 {STRING} 然後等候滿載）
+STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :（卸載後改裝為運載 {STRING} 然後等候滿載任一種客貨）
+STR_ORDER_TRANSFER_REFIT                                        :（轉運後改裝為運載 {STRING} 然後裝載客貨）
+STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :（轉運後改裝為運載 {STRING} 然後等候滿載）
+STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :（轉運後改裝為運載 {STRING} 然後等候滿載任一種客貨）
+STR_ORDER_NO_UNLOAD_REFIT                                       :（不卸載且改裝為運載 {STRING} 然後裝載客貨）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :（不卸載且改裝為運載 {STRING} 然後等候滿載）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :（不卸載且改裝為運載 {STRING} 然後等候滿載任一種客貨）
 
 STR_ORDER_AUTO_REFIT_ANY                                        :可用貨物
 
 ###length 3
-STR_ORDER_STOP_LOCATION_NEAR_END                                :[近端]
-STR_ORDER_STOP_LOCATION_MIDDLE                                  :[中間]
-STR_ORDER_STOP_LOCATION_FAR_END                                 :[遠端]
+STR_ORDER_STOP_LOCATION_NEAR_END                                :［近端］
+STR_ORDER_STOP_LOCATION_MIDDLE                                  :［中間］
+STR_ORDER_STOP_LOCATION_FAR_END                                 :［遠端］
 
 STR_ORDER_OUT_OF_RANGE                                          :{RED}（下一目的地的距離過遠）
 
@@ -4742,17 +4765,17 @@ STR_TIMETABLE_ORDER_VIEW_TOOLTIP                                :{BLACK}切到�
 STR_TIMETABLE_TOOLTIP                                           :{BLACK}時刻表 - 點選一個指令可以標示
 
 STR_TIMETABLE_NO_TRAVEL                                         :原地待命
-STR_TIMETABLE_NOT_TIMETABLEABLE                                 :運行（自動；由下個手動指令排程）
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :運行中 (未指定時間)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :以不超過 {2:VELOCITY} 的速度運行 (未指定時間)
-STR_TIMETABLE_TRAVEL_FOR                                        :運行需時 {STRING}
-STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :以不超過 {1:VELOCITY} 的速度運行 {0:STRING}
-STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :運行 {STRING} (未指定時間)
-STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :運行 {STRING} (速度不超過 {VELOCITY}，未指定時間)
-STR_TIMETABLE_STAY_FOR_ESTIMATED                                :等待 {STRING} (未指定時間)
-STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(運行 {STRING} ，未指定時間)
+STR_TIMETABLE_NOT_TIMETABLEABLE                                 :行駛（自動；由下個手動指令排程）
+STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :行駛（無時刻表）
+STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :限速 {2:VELOCITY} 行駛（無時刻表）
+STR_TIMETABLE_TRAVEL_FOR                                        :行駛需時 {STRING}
+STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :行駛 {STRING} ，限速 {VELOCITY}
+STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :開往（{STRING} ，無時刻表）
+STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :開往（{STRING} ，無時刻表）以最高速度 {VELOCITY}
+STR_TIMETABLE_STAY_FOR_ESTIMATED                                :（等候 {STRING} ，無時刻表）
+STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :（開往 {STRING} ，無時刻表）
 STR_TIMETABLE_STAY_FOR                                          :並等待 {STRING}
-STR_TIMETABLE_AND_TRAVEL_FOR                                    :並運行 {STRING}
+STR_TIMETABLE_AND_TRAVEL_FOR                                    :並開往 {STRING}
 
 STR_TIMETABLE_APPROX_TIME                                       :{BLACK}此時刻表跑完全程大約需時 {STRING}
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}此時刻表跑完全程需時 {STRING}
@@ -4767,17 +4790,18 @@ STR_TIMETABLE_STATUS_START_IN_SECONDS                           :{BLACK}本時�
 
 STR_TIMETABLE_START                                             :{BLACK}開始時刻表
 STR_TIMETABLE_START_TOOLTIP                                     :{BLACK}選擇此時刻表的開始時間。如果已完成排定時刻表的調度指令，則按住 <Ctrl> 點選會根據這些相應的次序均勻分配共享此調度指令的所有車輛的出發時間
-
 STR_TIMETABLE_START_SECONDS_QUERY                               :距離時刻表開始還有的秒數
 
-STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}修改時刻
+STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}修改時間
 STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}修改選取指令所需的時間。按住 <Ctrl> 點選可設定所有指令的時間
+STR_TIMETABLE_CHANGE_TIME_QUERY                                 :修改時間
 
 STR_TIMETABLE_CLEAR_TIME                                        :{BLACK}清除時刻表
 STR_TIMETABLE_CLEAR_TIME_TOOLTIP                                :{BLACK}移除目前選定指令所設定的時間。按住 <Ctrl> 點選可移除所有指令的時間
 
 STR_TIMETABLE_CHANGE_SPEED                                      :{BLACK}修改速度限制
 STR_TIMETABLE_CHANGE_SPEED_TOOLTIP                              :{BLACK}修改選取指令所設定的最高速度。按住 <Ctrl> 點選可設定所有指令的速度
+STR_TIMETABLE_CHANGE_SPEED_QUERY                                :修改速度限制
 
 STR_TIMETABLE_CLEAR_SPEED                                       :{BLACK}清除速度限制
 STR_TIMETABLE_CLEAR_SPEED_TOOLTIP                               :{BLACK}移除選取指令所設定的最高速度。按住 <Ctrl> 點選可移除所有指令的速度
@@ -4808,7 +4832,7 @@ STR_DATE_YEAR_TOOLTIP                                           :{BLACK}選擇�
 
 
 # AI debug window
-STR_AI_DEBUG                                                    :{WHITE}AI/遊戲腳本除錯
+STR_AI_DEBUG                                                    :{WHITE}AI／遊戲腳本除錯
 STR_AI_DEBUG_NAME_AND_VERSION                                   :{BLACK}{STRING} (v{NUM})
 STR_AI_DEBUG_NAME_TOOLTIP                                       :{BLACK}腳本名稱
 STR_AI_DEBUG_SETTINGS                                           :{BLACK}設定
@@ -4827,9 +4851,9 @@ STR_AI_DEBUG_SELECT_AI_TOOLTIP                                  :{BLACK}檢視�
 STR_AI_GAME_SCRIPT                                              :{BLACK}遊戲腳本
 STR_AI_GAME_SCRIPT_TOOLTIP                                      :{BLACK}檢查遊戲腳本日誌。按住 <Ctrl> 點選以開啟新視窗
 
-STR_ERROR_AI_NO_AI_FOUND                                        :找不到適合的 AI 可以載入。{}此 AI 是虛擬 AI，沒有任何效果。{}您可以透過「線上內容」系統下載更多 AI。
-STR_ERROR_AI_PLEASE_REPORT_CRASH                                :{WHITE}正在運行中的其中一個 AI 發生錯誤。請打開「AI 除錯」視窗後擷取螢幕圖片，將此問題回報給 AI 作者。
-STR_ERROR_AI_DEBUG_SERVER_ONLY                                  :{YELLOW}AI/只可於伺服器打開遊戲腳本除錯視窗
+STR_ERROR_AI_NO_AI_FOUND                                        :找不到適合的 AI 可供使用。{}此 AI 是虛擬 AI 並且沒有任何功能。{}您可以使用「線上擴充內容」功能下載更多的 AI
+STR_ERROR_AI_PLEASE_REPORT_CRASH                                :{WHITE}正在執行中的一個 AI 或遊戲腳本發生錯誤。請開啟「AI／遊戲腳本除錯」視窗後擷取螢幕畫面後，將此問題連同該圖片附件回報給腳本作者
+STR_ERROR_AI_DEBUG_SERVER_ONLY                                  :{YELLOW}只可於伺服器開啟AI／遊戲腳本除錯視窗
 
 # AI configuration window
 STR_AI_CONFIG_CAPTION_AI                                        :{WHITE}AI設定
@@ -4841,7 +4865,7 @@ STR_AI_CONFIG_RANDOM_AI                                         :隨機 AI
 STR_AI_CONFIG_NONE                                              :(無)
 STR_AI_CONFIG_NAME_VERSION                                      :{STRING} {YELLOW}v{NUM}
 STR_AI_CONFIG_MAX_COMPETITORS                                   :{LTBLUE}競爭對手數目上限：{ORANGE}{COMMA}
-STR_AI_CONFIG_COMPETITORS_INTERVAL                              :{LTBLUE}競爭對手建立公司間隔：{ORANGE}{COMMA}分鐘
+STR_AI_CONFIG_COMPETITORS_INTERVAL                              :{LTBLUE}競爭對手建立公司的區間：{ORANGE}{COMMA} 分鐘
 
 STR_AI_CONFIG_MOVE_UP                                           :{BLACK}向上移
 STR_AI_CONFIG_MOVE_UP_TOOLTIP                                   :{BLACK}向上移動所選的 AI
@@ -4854,7 +4878,7 @@ STR_AI_CONFIG_AI                                                :{SILVER}AI
 
 STR_AI_CONFIG_CHANGE_AI                                         :{BLACK}選擇 AI
 STR_AI_CONFIG_CHANGE_GAMESCRIPT                                 :{BLACK}選擇遊戲腳本
-STR_AI_CONFIG_CHANGE_TOOLTIP                                    :{BLACK}載入另一腳本。按住 Ctrl 可顯示所有可用版本。
+STR_AI_CONFIG_CHANGE_TOOLTIP                                    :{BLACK}載入另一腳本。按住 <Ctrl> 點選可顯示所有可用版本
 STR_AI_CONFIG_CONFIGURE                                         :{BLACK}組態設定
 STR_AI_CONFIG_CONFIGURE_TOOLTIP                                 :{BLACK}設定腳本的參數
 
@@ -4876,15 +4900,14 @@ STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}不改�
 STR_SCREENSHOT_CAPTION                                          :{WHITE}螢幕截圖
 STR_SCREENSHOT_SCREENSHOT                                       :{BLACK}普通截圖
 STR_SCREENSHOT_ZOOMIN_SCREENSHOT                                :{BLACK}完整放大截圖
-STR_SCREENSHOT_DEFAULTZOOM_SCREENSHOT                           :{BLACK}預設視野截圖
+STR_SCREENSHOT_DEFAULTZOOM_SCREENSHOT                           :{BLACK}預設縮放比例截圖
 STR_SCREENSHOT_WORLD_SCREENSHOT                                 :{BLACK}截圖整張地圖
 STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}高度圖截圖
 STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}小地圖截圖
 
 # Script Parameters
-STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} 參數
-STR_AI_SETTINGS_CAPTION_AI                                      :AI 參數
-STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :遊戲腳本
+STR_AI_SETTINGS_CAPTION_AI                                      :{WHITE}AI 參數
+STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :{WHITE}遊戲腳本參數
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}關閉
 STR_AI_SETTINGS_RESET                                           :{BLACK}重設
 STR_AI_SETTINGS_SETTING                                         :{STRING}：{ORANGE}{STRING}
@@ -4945,13 +4968,13 @@ STR_GAME_SAVELOAD_NOT_AVAILABLE                                 :<無法使用>
 STR_WARNING_LOADGAME_REMOVED_TRAMS                              :{WHITE}此存檔版本不支援路面電車，已移除所有路面電車
 
 # Map generation messages
-STR_ERROR_COULD_NOT_CREATE_TOWN                                 :{WHITE}地圖產生失敗...{}..無適當地點可興建市鎮
+STR_ERROR_COULD_NOT_CREATE_TOWN                                 :{WHITE}地圖產生失敗……{}{}……無適當地點可興建市鎮
 STR_ERROR_NO_TOWN_IN_SCENARIO                                   :{WHITE}... 這個地圖沒有市鎮
 
 STR_ERROR_PNGMAP                                                :{WHITE}無法從 PNG 檔載入地形...
 STR_ERROR_PNGMAP_FILE_NOT_FOUND                                 :{WHITE}... 找不到檔案
 STR_ERROR_PNGMAP_IMAGE_TYPE                                     :{WHITE}... 無法轉換影像格式，需要 8 或 24-bit PNG 影像
-STR_ERROR_PNGMAP_MISC                                           :{WHITE}... 出現一點狀況，抱歉 (或許是檔案損毀)
+STR_ERROR_PNGMAP_MISC                                           :{WHITE}……抱歉，出現一點狀況（或許是檔案損毀）
 
 STR_ERROR_BMPMAP                                                :{WHITE}無法從 BMP 檔載入地形...
 STR_ERROR_BMPMAP_IMAGE_TYPE                                     :{WHITE}... 無法轉換影像格式
@@ -4968,13 +4991,13 @@ STR_WARNING_FALLBACK_SOUNDSET                                   :{WHITE}只找�
 STR_WARNING_SCREENSHOT_SIZE_CAPTION                             :{WHITE}巨大截圖
 STR_WARNING_SCREENSHOT_SIZE_MESSAGE                             :{YELLOW}這幀截圖的解像度將是 {COMMA} x {COMMA} 像素。要繪製這幀截圖需要一點時間，您要繼續嗎？
 
-STR_MESSAGE_HEIGHTMAP_SUCCESSFULLY                              :{WHITE}高度圖已被存為 '{STRING}'. 最高峰高度是 {NUM}
+STR_MESSAGE_HEIGHTMAP_SUCCESSFULLY                              :{WHITE}高度圖已被存為「{STRING}」。最高峰高度是 {NUM}
 STR_MESSAGE_SCREENSHOT_SUCCESSFULLY                             :{WHITE}畫面擷取成功並存為「{STRING}」
 STR_ERROR_SCREENSHOT_FAILED                                     :{WHITE}畫面擷取失敗！
 
 # Error message titles
 STR_ERROR_MESSAGE_CAPTION                                       :{YELLOW}訊息
-STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}來自 {STRING} 的訊息
+STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}來自 {COMPANY} 的訊息
 
 # Generic construction errors
 STR_ERROR_OFF_EDGE_OF_MAP                                       :{WHITE}超過地圖邊緣
@@ -4986,14 +5009,14 @@ STR_ERROR_CAN_T_DO_THIS                                         :{WHITE}不能�
 STR_ERROR_BUILDING_MUST_BE_DEMOLISHED                           :{WHITE}必須先摧毀建築物
 STR_ERROR_CAN_T_CLEAR_THIS_AREA                                 :{WHITE}不能清除這個地段...
 STR_ERROR_SITE_UNSUITABLE                                       :{WHITE}... 地點不適合
-STR_ERROR_ALREADY_BUILT                                         :{WHITE}... 已經建了
-STR_ERROR_OWNED_BY                                              :{WHITE}... 所有者是 {STRING}
-STR_ERROR_AREA_IS_OWNED_BY_ANOTHER                              :{WHITE}... 此區域屬於其他公司所有
-STR_ERROR_TERRAFORM_LIMIT_REACHED                               :{WHITE}... 已達地形的限制
-STR_ERROR_CLEARING_LIMIT_REACHED                                :{WHITE}... 已達區塊清除的限制
-STR_ERROR_TREE_PLANT_LIMIT_REACHED                              :{WHITE}... 已達植樹的限制
+STR_ERROR_ALREADY_BUILT                                         :{WHITE}……經已建成
+STR_ERROR_OWNED_BY                                              :{WHITE}……由 {STRING} 所擁有
+STR_ERROR_AREA_IS_OWNED_BY_ANOTHER                              :{WHITE}……此區域屬於其他公司所有
+STR_ERROR_TERRAFORM_LIMIT_REACHED                               :{WHITE}……已達地形的限制
+STR_ERROR_CLEARING_LIMIT_REACHED                                :{WHITE}……已達區塊清除的上限
+STR_ERROR_TREE_PLANT_LIMIT_REACHED                              :{WHITE}……已達植樹量的上限
 STR_ERROR_NAME_MUST_BE_UNIQUE                                   :{WHITE}名稱必須是唯一的
-STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}被 {1:STRING} 擋住
+STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}被 {STRING} 擋住
 STR_ERROR_NOT_ALLOWED_WHILE_PAUSED                              :{WHITE}當暫停時不允許這樣做
 
 # Local authority errors
@@ -5007,10 +5030,10 @@ STR_ERROR_CAN_T_RAISE_LAND_HERE                                 :{WHITE}無法�
 STR_ERROR_CAN_T_LOWER_LAND_HERE                                 :{WHITE}無法降低土地...
 STR_ERROR_CAN_T_LEVEL_LAND_HERE                                 :{WHITE}無法修改此處地形...
 STR_ERROR_EXCAVATION_WOULD_DAMAGE                               :{WHITE}挖掘工作會摧毀隧道
-STR_ERROR_ALREADY_AT_SEA_LEVEL                                  :{WHITE}已到海平面
+STR_ERROR_ALREADY_AT_SEA_LEVEL                                  :{WHITE}……已達海平面
 STR_ERROR_TOO_HIGH                                              :{WHITE}... 太高
-STR_ERROR_ALREADY_LEVELLED                                      :{WHITE}... 已經平了
-STR_ERROR_BRIDGE_TOO_HIGH_AFTER_LOWER_LAND                      :{WHITE}這樣做的話，在它上面的橋樑會太高
+STR_ERROR_ALREADY_LEVELLED                                      :{WHITE}……經已平整
+STR_ERROR_BRIDGE_TOO_HIGH_AFTER_LOWER_LAND                      :{WHITE}在此地形上的橋樑會過高。
 
 # Company related errors
 STR_ERROR_CAN_T_CHANGE_COMPANY_NAME                             :{WHITE}無法修改公司名稱...
@@ -5031,22 +5054,22 @@ STR_ERROR_CAN_T_GENERATE_TOWN                                   :{WHITE}無法�
 STR_ERROR_CAN_T_RENAME_TOWN                                     :{WHITE}無法修改市鎮名稱...
 STR_ERROR_CAN_T_FOUND_TOWN_HERE                                 :{WHITE}不能在此建造市鎮...
 STR_ERROR_CAN_T_EXPAND_TOWN                                     :{WHITE}無法擴展市鎮...
-STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... 太接近地圖邊緣
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... 太接近另一個市鎮
+STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}……太接近地圖邊緣
+STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}……太接近另一個市鎮
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... 已有太多市鎮
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... 地圖沒有足夠空間
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}道路施工中
-STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}無法刪除此市鎮...{}市鎮範圍內還有車站或機廠或無法移除的區塊
+STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}無法刪除該市鎮……{}{}市鎮範圍內還有車站或機廠或無法移除的區塊
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... 市中心沒有適合的空間建造雕像
 STR_ERROR_CAN_T_BUILD_HOUSE                                     :{WHITE}無法興建房屋…
 
 # Industry related errors
-STR_ERROR_TOO_MANY_INDUSTRIES                                   :{WHITE}... 已有太多工業
+STR_ERROR_TOO_MANY_INDUSTRIES                                   :{WHITE}……太多所工業
 STR_ERROR_CAN_T_GENERATE_INDUSTRIES                             :{WHITE}無法產生工業...
-STR_ERROR_CAN_T_BUILD_HERE                                      :{WHITE}無法在此建造 {STRING} ...
+STR_ERROR_CAN_T_BUILD_HERE                                      :{WHITE}無法在此建造 {STRING} ……
 STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY                         :{WHITE}無法在此新建這種工業...
 STR_ERROR_CAN_T_PROSPECT_INDUSTRY                               :{WHITE}無法勘探工業...
-STR_ERROR_INDUSTRY_TOO_CLOSE                                    :{WHITE}... 太接近另一個工業
+STR_ERROR_INDUSTRY_TOO_CLOSE                                    :{WHITE}……太接近另一所工業
 STR_ERROR_MUST_FOUND_TOWN_FIRST                                 :{WHITE}... 應先建造市鎮
 STR_ERROR_ONLY_ONE_ALLOWED_PER_TOWN                             :{WHITE}... 每個市鎮僅允許一個
 STR_ERROR_CAN_ONLY_BE_BUILT_IN_TOWNS_WITH_POPULATION_OF_1200    :{WHITE}... 只能在市鎮人口超過 1200 人的地方建造
@@ -5071,8 +5094,8 @@ STR_ERROR_CAN_T_BUILD_BUS_STATION                               :{WHITE}無法�
 STR_ERROR_CAN_T_BUILD_TRUCK_STATION                             :{WHITE}無法興建貨運站...
 STR_ERROR_CAN_T_BUILD_PASSENGER_TRAM_STATION                    :{WHITE}無法興建電車站...
 STR_ERROR_CAN_T_BUILD_CARGO_TRAM_STATION                        :{WHITE}無法興建載貨電車站...
-STR_ERROR_CAN_T_BUILD_DOCK_HERE                                 :{WHITE}無法在此興建碼頭...
-STR_ERROR_CAN_T_BUILD_AIRPORT_HERE                              :{WHITE}無法在此興建機場...
+STR_ERROR_CAN_T_BUILD_DOCK_HERE                                 :{WHITE}無法在此興建碼頭……
+STR_ERROR_CAN_T_BUILD_AIRPORT_HERE                              :{WHITE}無法在此興建機場……
 
 STR_ERROR_ADJOINS_MORE_THAN_ONE_EXISTING                        :{WHITE}鄰接超過一個現有車站／載貨區
 STR_ERROR_STATION_TOO_SPREAD_OUT                                :{WHITE}... 車站範圍太大
@@ -5112,23 +5135,23 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}必須�
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}太接近多個已存在的號誌站
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}太接近另一個號誌站
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}無法在此興建列車號誌站...
-STR_ERROR_CAN_T_BUILD_ROAD_WAYPOINT                             :{WHITE}無法在此興建道路號誌站...
+STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}無法在此興建鐵道號誌站……
+STR_ERROR_CAN_T_BUILD_ROAD_WAYPOINT                             :{WHITE}無法在此興建道路號誌站……
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}無法在此放置浮標...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}無法修改號誌站名稱...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}無法移除列車號誌站...
-STR_ERROR_CAN_T_REMOVE_ROAD_WAYPOINT                            :{WHITE}無法移除道路號誌站...
-STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}必須先移除鐵路號誌站
+STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}無法移除此處的鐵道號誌站……
+STR_ERROR_CAN_T_REMOVE_ROAD_WAYPOINT                            :{WHITE}無法移除此處的道路號誌站……
+STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}必須先移除鐵道號誌站
 STR_ERROR_MUST_REMOVE_ROADWAYPOINT_FIRST                        :{WHITE}必須先移除道路號誌站
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... 被浮標擋住
-STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... 浮標正被其他公司使用！
+STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}……浮標正被其他公司使用！
 
 # Depot related errors
-STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT                               :{WHITE}無法在此興建鐵路機廠...
-STR_ERROR_CAN_T_BUILD_ROAD_DEPOT                                :{WHITE}無法在此興建車廠...
-STR_ERROR_CAN_T_BUILD_TRAM_DEPOT                                :{WHITE}無法在此興建電車機廠...
-STR_ERROR_CAN_T_BUILD_SHIP_DEPOT                                :{WHITE}無法在此建造船塢...
+STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT                               :{WHITE}無法在此興建鐵道機廠……
+STR_ERROR_CAN_T_BUILD_ROAD_DEPOT                                :{WHITE}無法在此興建車廠……
+STR_ERROR_CAN_T_BUILD_TRAM_DEPOT                                :{WHITE}無法在此興建電車機廠……
+STR_ERROR_CAN_T_BUILD_SHIP_DEPOT                                :{WHITE}無法在此建造船塢……
 
 STR_ERROR_CAN_T_RENAME_DEPOT                                    :{WHITE}無法修改機廠名稱...
 
@@ -5167,17 +5190,17 @@ STR_ERROR_AUTOREPLACE_INCOMPATIBLE_REFIT                        :{WHITE}新載�
 # Rail construction errors
 STR_ERROR_IMPOSSIBLE_TRACK_COMBINATION                          :{WHITE}不合理的軌道組合
 STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}必須先移除號誌
-STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}沒有適合的鐵軌
-STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}必須先移除鐵路
+STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}沒有適合的軌道
+STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}必須先移除鐵道
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}道路是單行道或已封閉
 STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}這種軌道不能建設平交道
 STR_ERROR_CROSSING_DISALLOWED_ROAD                              :{WHITE}這種道路不能建設平交道
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}無法在此興建號誌...
-STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}無法在此鋪設鐵路...
-STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}不能從這邊移除鐵路...
-STR_ERROR_CAN_T_REMOVE_SIGNALS_FROM                             :{WHITE}不能從這邊移除號誌...
+STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}無法在此鋪設鐵道……
+STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}無法移除此處的鐵道……
+STR_ERROR_CAN_T_REMOVE_SIGNALS_FROM                             :{WHITE}無法移除此處的號誌……
 STR_ERROR_SIGNAL_CAN_T_CONVERT_SIGNALS_HERE                     :{WHITE}無法轉換這裡的號誌...
-STR_ERROR_THERE_IS_NO_RAILROAD_TRACK                            :{WHITE}... 這裡沒有鐵軌
+STR_ERROR_THERE_IS_NO_RAILROAD_TRACK                            :{WHITE}……這裡沒有鐵道
 STR_ERROR_THERE_ARE_NO_SIGNALS                                  :{WHITE}... 這裡沒有號誌
 
 STR_ERROR_CAN_T_CONVERT_RAIL                                    :{WHITE}無法在此轉換軌道種類...
@@ -5185,10 +5208,10 @@ STR_ERROR_CAN_T_CONVERT_RAIL                                    :{WHITE}無法�
 # Road construction errors
 STR_ERROR_MUST_REMOVE_ROAD_FIRST                                :{WHITE}必須先移除道路
 STR_ERROR_ONEWAY_ROADS_CAN_T_HAVE_JUNCTION                      :{WHITE}... 單行道不能有交叉路口
-STR_ERROR_CAN_T_BUILD_ROAD_HERE                                 :{WHITE}無法在此鋪設道路...
+STR_ERROR_CAN_T_BUILD_ROAD_HERE                                 :{WHITE}無法在此鋪設道路……
 STR_ERROR_CAN_T_BUILD_TRAMWAY_HERE                              :{WHITE}無法在此鋪設電車路軌…
-STR_ERROR_CAN_T_REMOVE_ROAD_FROM                                :{WHITE}不能從此移除道路...
-STR_ERROR_CAN_T_REMOVE_TRAMWAY_FROM                             :{WHITE}無法移除此處的電車軌...
+STR_ERROR_CAN_T_REMOVE_ROAD_FROM                                :{WHITE}無法移除此處的道路……
+STR_ERROR_CAN_T_REMOVE_TRAMWAY_FROM                             :{WHITE}無法移除此處的電車軌道……
 STR_ERROR_THERE_IS_NO_ROAD                                      :{WHITE}... 這裡沒有道路
 STR_ERROR_THERE_IS_NO_TRAMWAY                                   :{WHITE}... 這裡沒有電車軌
 STR_ERROR_CAN_T_CONVERT_ROAD                                    :{WHITE}無法轉換此處的道路類型...
@@ -5197,7 +5220,7 @@ STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}沒有�
 STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}沒有合適的電車軌道
 
 # Waterway construction errors
-STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}無法在此興建運河...
+STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}無法在此興建運河……
 STR_ERROR_CAN_T_BUILD_LOCKS                                     :{WHITE}無法在此興建水閘...
 STR_ERROR_CAN_T_PLACE_RIVERS                                    :{WHITE}無法在此開鑿河流...
 STR_ERROR_MUST_BE_BUILT_ON_WATER                                :{WHITE}... 必須建在水域上
@@ -5206,15 +5229,15 @@ STR_ERROR_CAN_T_BUILD_ON_SEA                                    :{WHITE}... 不�
 STR_ERROR_CAN_T_BUILD_ON_CANAL                                  :{WHITE}... 不能建在運河上
 STR_ERROR_CAN_T_BUILD_ON_RIVER                                  :{WHITE}... 不能建在河流上
 STR_ERROR_MUST_DEMOLISH_CANAL_FIRST                             :{WHITE}必須先移除運河
-STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE                             :{WHITE}無法興建水道橋...
+STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE                             :{WHITE}無法在此興建水道橋……
 
 # Tree related errors
-STR_ERROR_TREE_ALREADY_HERE                                     :{WHITE}... 這邊已經有樹了
+STR_ERROR_TREE_ALREADY_HERE                                     :{WHITE}……這裡已有樹木
 STR_ERROR_TREE_WRONG_TERRAIN_FOR_TREE_TYPE                      :{WHITE}... 樹木種類與該地形不符
 STR_ERROR_CAN_T_PLANT_TREE_HERE                                 :{WHITE}不能在這邊植樹...
 
 # Bridge related errors
-STR_ERROR_CAN_T_BUILD_BRIDGE_HERE                               :{WHITE}無法在此建造橋樑...
+STR_ERROR_CAN_T_BUILD_BRIDGE_HERE                               :{WHITE}無法在此建造橋樑……
 STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST                            :{WHITE}必須先摧毀橋樑
 STR_ERROR_CAN_T_START_AND_END_ON                                :{WHITE}開始與結束的位置必須不同
 STR_ERROR_BRIDGEHEADS_NOT_SAME_HEIGHT                           :{WHITE}橋樑兩端不在同個海拔
@@ -5235,13 +5258,13 @@ STR_ERROR_UNABLE_TO_EXCAVATE_LAND                               :{WHITE}無法�
 STR_ERROR_TUNNEL_TOO_LONG                                       :{WHITE}... 隧道過長
 
 # Object related errors
-STR_ERROR_TOO_MANY_OBJECTS                                      :{WHITE}... 已有太多物件
+STR_ERROR_TOO_MANY_OBJECTS                                      :{WHITE}……已有太多物件
 STR_ERROR_CAN_T_BUILD_OBJECT                                    :{WHITE}無法建立物件...
 STR_ERROR_OBJECT_IN_THE_WAY                                     :{WHITE}被東西擋住
 STR_ERROR_COMPANY_HEADQUARTERS_IN                               :{WHITE}... 被公司總部擋住
 STR_ERROR_CAN_T_PURCHASE_THIS_LAND                              :{WHITE}不能購買這塊土地...
-STR_ERROR_YOU_ALREADY_OWN_IT                                    :{WHITE}... 您已經擁有了！
-STR_ERROR_BUILD_OBJECT_LIMIT_REACHED                            :{WHITE}...已達物件建造之上限
+STR_ERROR_YOU_ALREADY_OWN_IT                                    :{WHITE}……您經已擁有該區塊！
+STR_ERROR_BUILD_OBJECT_LIMIT_REACHED                            :{WHITE}……已達物件建造的上限
 
 # Group related errors
 STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}無法建立群組...
@@ -5309,10 +5332,22 @@ STR_ERROR_CAN_T_SELL_ROAD_VEHICLE                               :{WHITE}無法�
 STR_ERROR_CAN_T_SELL_SHIP                                       :{WHITE}無法出售船舶...
 STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}無法出售飛機...
 
+###length VEHICLE_TYPES
+STR_ERROR_CAN_T_SELL_ALL_TRAIN                                  :{WHITE}無法出售所有列車……
+STR_ERROR_CAN_T_SELL_ALL_ROAD_VEHICLE                           :{WHITE}無法出售所有車輛……
+STR_ERROR_CAN_T_SELL_ALL_SHIP                                   :{WHITE}無法出售所有船舶……
+STR_ERROR_CAN_T_SELL_ALL_AIRCRAFT                               :{WHITE}無法出售所有飛機……
+
+###length VEHICLE_TYPES
+STR_ERROR_CAN_T_AUTOREPLACE_TRAIN                               :{WHITE}無法自動替換列車……
+STR_ERROR_CAN_T_AUTOREPLACE_ROAD_VEHICLE                        :{WHITE}無法自動替換車輛……
+STR_ERROR_CAN_T_AUTOREPLACE_SHIP                                :{WHITE}無法自動替換船舶……
+STR_ERROR_CAN_T_AUTOREPLACE_AIRCRAFT                            :{WHITE}無法自動替換飛機……
+
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}遊戲中已有太多車輛
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}不能更改檢修週期...
 
-STR_ERROR_VEHICLE_IS_DESTROYED                                  :{WHITE}... 車輛已被摧毀
+STR_ERROR_VEHICLE_IS_DESTROYED                                  :{WHITE}……車輛已被撞毀
 
 STR_ERROR_CAN_T_CLONE_VEHICLE_LIST                              :{WHITE}...車輛並非全部相同
 
@@ -5367,7 +5402,7 @@ STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :{WHITE}沒有�
 STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :{WHITE}沒有適合聯結式公路車的停車站.{}聯結式公路車需要通過式的停車站，而非港式的停車站
 STR_ERROR_AIRPORT_NO_PLANES                                     :{WHITE}這架飛機不能降落在這個直昇機場
 STR_ERROR_AIRPORT_NO_HELICOPTERS                                :{WHITE}這架直昇機不能降落在這個機場
-STR_ERROR_NO_RAIL_WAYPOINT                                      :{WHITE}沒有鐵路路點
+STR_ERROR_NO_RAIL_WAYPOINT                                      :{WHITE}沒有鐵道號誌站
 STR_ERROR_NO_ROAD_WAYPOINT                                      :{WHITE}沒有道路號誌站
 STR_ERROR_NO_BUOY                                               :{WHITE}沒有浮標
 
@@ -5375,8 +5410,8 @@ STR_ERROR_NO_BUOY                                               :{WHITE}沒有�
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}無法為車輛加入時刻表...
 STR_ERROR_TIMETABLE_ONLY_WAIT_AT_STATIONS                       :{WHITE}車輛只能在車站停靠等候
 STR_ERROR_TIMETABLE_NOT_STOPPING_HERE                           :{WHITE}此車輛不會停靠此站
-STR_ERROR_TIMETABLE_INCOMPLETE                                  :{WHITE}... 時刻表並不完整
-STR_ERROR_TIMETABLE_NOT_STARTED                                 :… 時刻表尚未開始
+STR_ERROR_TIMETABLE_INCOMPLETE                                  :{WHITE}……時刻表並不完整
+STR_ERROR_TIMETABLE_NOT_STARTED                                 :{WHITE}……時刻表尚未開始
 
 # Sign related errors
 STR_ERROR_TOO_MANY_SIGNS                                        :{WHITE}... 已有太多標誌
@@ -5550,8 +5585,8 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_SH_30_ELECTRIC               :SH '30' (電力
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_SH_40_ELECTRIC               :SH '40' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_T_I_M_ELECTRIC               :'T.I.M.' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_ASIASTAR_ELECTRIC            :'AsiaStar' (電力)
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PASSENGER_CAR                 :載客車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_MAIL_VAN                      :郵件車廂
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PASSENGER_CAR                 :客運車廂
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_MAIL_VAN                      :郵務車廂
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COAL_CAR                      :煤炭車
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_OIL_TANKER                    :油罐車
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_LIVESTOCK_VAN                 :家畜車
@@ -5580,8 +5615,8 @@ STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PLASTIC_TRUCK                 :塑膠車
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_X2001_ELECTRIC           :'X2001' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_MILLENNIUM_Z1_ELECTRIC   :'Millennium Z1' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_WIZZOWOW_Z99             :Wizzowow Z99
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :載客車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_MAIL_VAN                  :郵件車廂
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :客運車廂
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_MAIL_VAN                  :郵務車廂
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COAL_CAR                  :煤斗車
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_OIL_TANKER                :油罐車
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_LIVESTOCK_VAN             :家畜車
@@ -5612,8 +5647,8 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV2_CYCLOPS_ELECTRIC      :Lev2 'Cyclops' 
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV3_PEGASUS_ELECTRIC      :Lev3 'Pegasus' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV4_CHIMAERA_ELECTRIC     :Lev4 'Chimaera' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_WIZZOWOW_ROCKETEER         :Wizzowow Rocketeer
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :載客車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_MAIL_VAN                    :郵件車廂
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :客運車廂
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_MAIL_VAN                    :郵務車廂
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COAL_CAR                    :煤斗車
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_OIL_TANKER                  :油罐車
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_LIVESTOCK_VAN               :家畜車
@@ -5807,8 +5842,8 @@ STR_FORMAT_WAYPOINT_NAME                                        :{TOWN} 號誌�
 STR_FORMAT_WAYPOINT_NAME_SERIAL                                 :{TOWN} 第 {COMMA} 號誌站
 
 ###length 6
-STR_FORMAT_DEPOT_NAME_TRAIN                                     :{TOWN} 鐵路機廠
-STR_FORMAT_DEPOT_NAME_TRAIN_SERIAL                              :{TOWN} 鐵路機廠 #{COMMA}
+STR_FORMAT_DEPOT_NAME_TRAIN                                     :{TOWN} 鐵道機廠
+STR_FORMAT_DEPOT_NAME_TRAIN_SERIAL                              :{TOWN} 鐵道機廠 #{COMMA}
 STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE                              :{TOWN} 車廠
 STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE_SERIAL                       :{TOWN} 車廠 #{COMMA}
 STR_FORMAT_DEPOT_NAME_SHIP                                      :{TOWN} 船塢
@@ -5827,19 +5862,8 @@ STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STR
 STR_SAVEGAME_NAME_SPECTATOR                                     :觀眾，{1:STRING}
 
 # Viewport strings
-STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
-STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
-STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
-STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
-
-STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
-STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
-
+STR_VIEWPORT_TOWN_POP                                           :{TOWN} （ {COMMA} ）
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
-STR_VIEWPORT_STATION_TINY                                       :{TINY_FONT}{STATION}
-
-STR_VIEWPORT_WAYPOINT                                           :{WAYPOINT}
-STR_VIEWPORT_WAYPOINT_TINY                                      :{TINY_FONT}{WAYPOINT}
 
 # Simple strings to get specific types of data
 STR_COMPANY_NAME                                                :{COMPANY}
@@ -5876,8 +5900,6 @@ STR_JUST_DATE_LONG                                              :{DATE_LONG}
 STR_JUST_DATE_ISO                                               :{DATE_ISO}
 STR_JUST_STRING                                                 :{STRING}
 STR_JUST_STRING1                                                :{STRING}
-STR_JUST_STRING2                                                :{STRING}
-STR_JUST_STRING4                                                :{STRING}
 STR_JUST_STRING_STRING                                          :{STRING}{STRING}
 STR_JUST_RAW_STRING                                             :{STRING}
 STR_JUST_BIG_RAW_STRING                                         :{BIG_FONT}{STRING}
@@ -5901,3 +5923,5 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+
+STR_BADGE_NAME_LIST                                             :{STRING}：{GOLD}{STRING}

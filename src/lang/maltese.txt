@@ -275,7 +275,6 @@ STR_SCENEDIT_FILE_MENU_SEPARATOR                                :
 
 
 # Settings menu
-###length 16
 
 # File menu
 
@@ -401,7 +400,7 @@ STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE
 
 
 
-###length 44
+###length 45
 
 
 # Autosave dropdown
@@ -698,6 +697,8 @@ STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Ippermetti l-uz
 
 ###setting-zero-is-special
 
+###length 2
+
 ###length 3
 
 
@@ -710,6 +711,8 @@ STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Ippermetti l-uz
 ###length 5
 
 
+
+###length 3
 
 ###length 3
 
@@ -831,7 +834,7 @@ STR_NETWORK_ERROR_CLIENT_NAME_IN_USE                            :isem diġa qed 
 STR_NETWORK_ERROR_CLIENT_WRONG_PASSWORD                         :password ħażin
 
 # Network related errors
-STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
+STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 ###length 12
 
@@ -874,6 +877,7 @@ STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
 # Rail waypoint construction window
 
 # Rail station construction window
+
 
 
 
@@ -1294,12 +1298,11 @@ STR_ORDERS_DELETE_ALL_TOOLTIP                                   :{BLACK}Hassar l
 ###length 3
 ###next-name-looks-similar
 
-STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
 
 
-STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION}
 
 STR_ORDER_IMPLICIT                                              :(Awtomatiku)
 
@@ -1319,7 +1322,6 @@ STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Патуваа�
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :патуваат за {STRING} со најмногу {VELOCITY}
 
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}Din l-iskeda ser iddum {STRING} biex titlesta
-
 
 
 
@@ -1467,6 +1469,10 @@ STR_ERROR_CAN_T_SELL_TRAIN                                      :{WHITE}Ma tista
 STR_ERROR_CAN_T_SELL_ROAD_VEHICLE                               :{WHITE}Ma tistax tbigħ din il-karozza...
 STR_ERROR_CAN_T_SELL_SHIP                                       :{WHITE}Ma tistax tbigħ dan il-vapur...
 STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}Ma tistax tbigħ dan l-ajruplan...
+
+###length VEHICLE_TYPES
+
+###length VEHICLE_TYPES
 
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}Hemm wisq vetturi fil-logħba
 
@@ -1726,18 +1732,7 @@ STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STR
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
-STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
-STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
-STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
-
-STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
-STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
-
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
-STR_VIEWPORT_STATION_TINY                                       :{TINY_FONT}{STATION}
-
-STR_VIEWPORT_WAYPOINT                                           :{WAYPOINT}
-STR_VIEWPORT_WAYPOINT_TINY                                      :{TINY_FONT}{WAYPOINT}
 
 # Simple strings to get specific types of data
 STR_COMPANY_NAME                                                :{COMPANY}
@@ -1788,3 +1783,4 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+

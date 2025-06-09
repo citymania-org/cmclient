@@ -21,21 +21,32 @@ void strecpy(std::span<char> dst, std::string_view src);
 
 std::string FormatArrayAsHex(std::span<const uint8_t> data);
 
-void StrMakeValidInPlace(char *str, const char *last, StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK) NOACCESS(2);
-[[nodiscard]] std::string StrMakeValid(std::string_view str, StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK);
-void StrMakeValidInPlace(char *str, StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK);
+void StrMakeValidInPlace(char *str, StringValidationSettings settings = StringValidationSetting::ReplaceWithQuestionMark);
+void StrMakeValidInPlace(std::string &str, StringValidationSettings settings = StringValidationSetting::ReplaceWithQuestionMark);
+
+[[nodiscard]] std::string StrMakeValid(std::string_view str, StringValidationSettings settings = StringValidationSetting::ReplaceWithQuestionMark);
+[[nodiscard]] inline std::string StrMakeValid(const char *str, StringValidationSettings settings = StringValidationSetting::ReplaceWithQuestionMark)
+{
+	return StrMakeValid(std::string_view(str), settings);
+}
+[[nodiscard]] inline std::string StrMakeValid(std::string &&str, StringValidationSettings settings = StringValidationSetting::ReplaceWithQuestionMark)
+{
+	StrMakeValidInPlace(str, settings);
+	return std::move(str);
+}
 
 bool strtolower(std::string &str, std::string::size_type offs = 0);
 
 [[nodiscard]] bool StrValid(std::span<const char> str);
 void StrTrimInPlace(std::string &str);
-std::string_view StrTrimView(std::string_view str);
+[[nodiscard]] std::string_view StrTrimView(std::string_view str);
 
 [[nodiscard]] bool StrStartsWithIgnoreCase(std::string_view str, const std::string_view prefix);
 [[nodiscard]] bool StrEndsWithIgnoreCase(std::string_view str, const std::string_view suffix);
 
 [[nodiscard]] int StrCompareIgnoreCase(const std::string_view str1, const std::string_view str2);
 [[nodiscard]] bool StrEqualsIgnoreCase(const std::string_view str1, const std::string_view str2);
+[[nodiscard]] bool StrContainsIgnoreCase(const std::string_view str, const std::string_view value);
 [[nodiscard]] int StrNaturalCompare(std::string_view s1, std::string_view s2, bool ignore_garbage_at_front = false);
 [[nodiscard]] bool StrNaturalContains(const std::string_view str, const std::string_view value);
 [[nodiscard]] bool StrNaturalContainsIgnoreCase(const std::string_view str, const std::string_view value);
@@ -76,11 +87,9 @@ inline size_t ttd_strnlen(const char *str, size_t maxlen)
 bool IsValidChar(char32_t key, CharSetFilter afilter);
 
 size_t Utf8Decode(char32_t *c, const char *s);
-size_t Utf8Encode(char *buf, char32_t c);
-size_t Utf8Encode(std::ostreambuf_iterator<char> &buf, char32_t c);
-size_t Utf8Encode(std::back_insert_iterator<std::string> &buf, char32_t c);
-size_t Utf8TrimString(char *s, size_t maxlen);
-
+/* std::string_view::iterator might be char *, in which case we do not want this templated variant to be taken. */
+template <typename T> requires (!std::is_same_v<T, char *> && (std::is_same_v<std::string_view::iterator, T> || std::is_same_v<std::string::iterator, T>))
+inline size_t Utf8Decode(char32_t *c, T &s) { return Utf8Decode(c, &*s); }
 
 inline char32_t Utf8Consume(const char **s)
 {
@@ -96,23 +105,6 @@ inline char32_t Utf8Consume(Titr &s)
 	s += Utf8Decode(&c, &*s);
 	return c;
 }
-
-/**
- * Return the length of a UTF-8 encoded character.
- * @param c Unicode character.
- * @return Length of UTF-8 encoding for character.
- */
-inline int8_t Utf8CharLen(char32_t c)
-{
-	if (c < 0x80)       return 1;
-	if (c < 0x800)      return 2;
-	if (c < 0x10000)    return 3;
-	if (c < 0x110000)   return 4;
-
-	/* Invalid valid, we encode as a '?' */
-	return 1;
-}
-
 
 /**
  * Return the length of an UTF-8 encoded value based on a single char. This
@@ -139,29 +131,7 @@ inline bool IsUtf8Part(char c)
 	return GB(c, 6, 2) == 2;
 }
 
-/**
- * Retrieve the previous UNICODE character in an UTF-8 encoded string.
- * @param s char pointer pointing to (the first char of) the next character
- * @return a pointer in 's' to the previous UNICODE character's first byte
- * @note The function should not be used to determine the length of the previous
- * encoded char because it might be an invalid/corrupt start-sequence
- */
-inline char *Utf8PrevChar(char *s)
-{
-	char *ret = s;
-	while (IsUtf8Part(*--ret)) {}
-	return ret;
-}
-
-inline const char *Utf8PrevChar(const char *s)
-{
-	const char *ret = s;
-	while (IsUtf8Part(*--ret)) {}
-	return ret;
-}
-
-size_t Utf8StringLength(const char *s);
-size_t Utf8StringLength(const std::string &str);
+size_t Utf8StringLength(std::string_view str);
 
 /**
  * Is the given character a lead surrogate code point?
@@ -255,13 +225,5 @@ inline bool IsWhitespace(char32_t c)
 #if defined(__NetBSD__) || defined(__FreeBSD__)
 #include <sys/param.h>
 #endif
-
-/* strcasestr is available for _GNU_SOURCE, BSD and some Apple */
-#if defined(_GNU_SOURCE) || (defined(__BSD_VISIBLE) && __BSD_VISIBLE) || (defined(__APPLE__) && (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))) || defined(_NETBSD_SOURCE)
-#	undef DEFINE_STRCASESTR
-#else
-#	define DEFINE_STRCASESTR
-char *strcasestr(const char *haystack, const char *needle);
-#endif /* strcasestr is available */
 
 #endif /* STRING_FUNC_H */

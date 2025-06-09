@@ -130,14 +130,14 @@
 {
 	if (!::IsValidTile(tile)) return false;
 
-	return (::IsTileType(tile, MP_CLEAR) && ::GetRawClearGround(tile) == ::CLEAR_ROCKS);
+	return (::IsTileType(tile, MP_CLEAR) && ::GetClearGround(tile) == ::CLEAR_ROCKS);
 }
 
 /* static */ bool ScriptTile::IsRoughTile(TileIndex tile)
 {
 	if (!::IsValidTile(tile)) return false;
 
-	return (::IsTileType(tile, MP_CLEAR) && ::GetRawClearGround(tile) == ::CLEAR_ROUGH);
+	return (::IsTileType(tile, MP_CLEAR) && ::GetClearGround(tile) == ::CLEAR_ROUGH);
 }
 
 /* static */ bool ScriptTile::IsSnowTile(TileIndex tile)
@@ -209,7 +209,7 @@
 	if (::IsTileType(tile, MP_HOUSE)) return ScriptCompany::COMPANY_INVALID;
 	if (::IsTileType(tile, MP_INDUSTRY)) return ScriptCompany::COMPANY_INVALID;
 
-	return ScriptCompany::ResolveCompanyID((ScriptCompany::CompanyID)(uint8_t)::GetTileOwner(tile));
+	return ScriptCompany::ResolveCompanyID(ScriptCompany::ToScriptCompanyID(::GetTileOwner(tile)));
 }
 
 /* static */ bool ScriptTile::HasTransportType(TileIndex tile, TransportType transport_type)
@@ -224,7 +224,7 @@
 	}
 }
 
-/* static */ SQInteger ScriptTile::GetCargoAcceptance(TileIndex tile, CargoID cargo_type, SQInteger width, SQInteger height, SQInteger radius)
+/* static */ SQInteger ScriptTile::GetCargoAcceptance(TileIndex tile, CargoType cargo_type, SQInteger width, SQInteger height, SQInteger radius)
 {
 	if (!::IsValidTile(tile) || width <= 0 || height <= 0 || radius < 0 || !ScriptCargo::IsValidCargo(cargo_type)) return -1;
 
@@ -232,7 +232,7 @@
 	return acceptance[cargo_type];
 }
 
-/* static */ SQInteger ScriptTile::GetCargoProduction(TileIndex tile, CargoID cargo_type, SQInteger width, SQInteger height, SQInteger radius)
+/* static */ SQInteger ScriptTile::GetCargoProduction(TileIndex tile, CargoType cargo_type, SQInteger width, SQInteger height, SQInteger radius)
 {
 	if (!::IsValidTile(tile) || width <= 0 || height <= 0 || radius < 0 || !ScriptCargo::IsValidCargo(cargo_type)) return -1;
 
@@ -310,20 +310,20 @@
 
 /* static */ TownID ScriptTile::GetTownAuthority(TileIndex tile)
 {
-	if (!::IsValidTile(tile)) return INVALID_TOWN;
+	if (!::IsValidTile(tile)) return TownID::Invalid();
 
 	Town *town = ::ClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
-	if (town == nullptr) return INVALID_TOWN;
+	if (town == nullptr) return TownID::Invalid();
 
 	return town->index;
 }
 
 /* static */ TownID ScriptTile::GetClosestTown(TileIndex tile)
 {
-	if (!::IsValidTile(tile)) return INVALID_TOWN;
+	if (!::IsValidTile(tile)) return TownID::Invalid();
 
 	Town *town = ::ClosestTownFromTile(tile, UINT_MAX);
-	if (town == nullptr) return INVALID_TOWN;
+	if (town == nullptr) return TownID::Invalid();
 
 	return town->index;
 }

@@ -5,11 +5,13 @@ if (NOT HOST_BINARY_DIR)
 
     set(sourcefiles
             settingsgen.cpp
-            ../core/alloc_func.cpp
+            ../3rdparty/fmt/format.cc
             ../misc/getoptdata.cpp
             ../error.cpp
             ../ini_load.cpp
             ../string.cpp
+            ../core/string_builder.cpp
+            ../core/utf8.cpp
     )
     add_definitions(-DSETTINGSGEN)
     add_executable(settingsgen ${sourcefiles})

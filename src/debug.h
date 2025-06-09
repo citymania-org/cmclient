@@ -29,13 +29,13 @@
  */
 
 /**
- * Ouptut a line of debugging information.
+ * Output a line of debugging information.
  * @param category The category of debug information.
  * @param level The maximum debug level this message should be shown at. When the debug level for this category is set lower, then the message will not be shown.
  * @param format_string The formatting string of the message.
  */
 #define Debug(category, level, format_string, ...) do { if ((level) == 0 || _debug_ ## category ## _level >= (level)) DebugPrint(#category, level, fmt::format(FMT_STRING(format_string) __VA_OPT__(,) __VA_ARGS__)); } while (false)
-void DebugPrint(const char *category, int level, const std::string &message);
+void DebugPrint(const char *category, int level, std::string &&message);
 
 extern int _debug_driver_level;
 extern int _debug_grf_level;

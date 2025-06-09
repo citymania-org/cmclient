@@ -91,11 +91,11 @@ struct NGRFChunkHandler : ChunkHandler {
 
 		int index = 0;
 
-		for (GRFConfig *c = _grfconfig; c != nullptr; c = c->next) {
-			if (HasBit(c->flags, GCF_STATIC) || HasBit(c->flags, GCF_INIT_ONLY)) continue;
+		for (const auto &c : _grfconfig) {
+			if (c->flags.Any({GRFConfigFlag::Static, GRFConfigFlag::InitOnly})) continue;
 			this->SaveParameters(*c);
 			SlSetArrayIndex(index++);
-			SlObject(c, description);
+			SlObject(c.get(), description);
 		}
 	}
 
@@ -106,17 +106,17 @@ struct NGRFChunkHandler : ChunkHandler {
 		config.param.assign(std::begin(param), last);
 	}
 
-	void LoadCommon(GRFConfig *&grfconfig) const
+	void LoadCommon(GRFConfigList &grfconfig) const
 	{
 		const std::vector<SaveLoad> slt = SlCompatTableHeader(description, _grfconfig_sl_compat);
 
-		ClearGRFConfigList(&grfconfig);
+		ClearGRFConfigList(grfconfig);
 		while (SlIterateArray() != -1) {
-			GRFConfig *c = new GRFConfig();
-			SlObject(c, slt);
+			auto c = std::make_unique<GRFConfig>();
+			SlObject(c.get(), slt);
 			if (IsSavegameVersionBefore(SLV_101)) c->SetSuitablePalette();
 			this->LoadParameters(*c);
-			AppendToGRFConfigList(&grfconfig, c);
+			AppendToGRFConfigList(grfconfig, std::move(c));
 		}
 	}
 
@@ -126,13 +126,13 @@ struct NGRFChunkHandler : ChunkHandler {
 
 		if (_game_mode == GM_MENU) {
 			/* Intro game must not have NewGRF. */
-			if (_grfconfig != nullptr) SlErrorCorrupt("The intro game must not use NewGRF");
+			if (!_grfconfig.empty()) SlErrorCorrupt("The intro game must not use NewGRF");
 
 			/* Activate intro NewGRFs (townnames) */
 			ResetGRFConfig(false);
 		} else {
 			/* Append static NewGRF configuration */
-			AppendStaticGRFConfigs(&_grfconfig);
+			AppendStaticGRFConfigs(_grfconfig);
 		}
 	}
 

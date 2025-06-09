@@ -17,29 +17,29 @@
 #include "vehiclelist_cmd.h"
 #include "cargo_type.h"
 
-std::tuple<CommandCost, VehicleID, uint, uint16_t, CargoArray> CmdBuildVehicle(DoCommandFlag flags, TileIndex tile, EngineID eid, bool use_free_vehicles, CargoID cargo, ClientID client_id);
-CommandCost CmdSellVehicle(DoCommandFlag flags, VehicleID v_id, bool sell_chain, bool backup_order, ClientID client_id);
-std::tuple<CommandCost, uint, uint16_t, CargoArray> CmdRefitVehicle(DoCommandFlag flags, VehicleID veh_id, CargoID new_cid, uint8_t new_subtype, bool auto_refit, bool only_this, uint8_t num_vehicles);
-CommandCost CmdSendVehicleToDepot(DoCommandFlag flags, VehicleID veh_id, DepotCommand depot_cmd, const VehicleListIdentifier &vli);
-CommandCost CmdChangeServiceInt(DoCommandFlag flags, VehicleID veh_id, uint16_t serv_int, bool is_custom, bool is_percent);
-CommandCost CmdRenameVehicle(DoCommandFlag flags, VehicleID veh_id, const std::string &text);
-std::tuple<CommandCost, VehicleID> CmdCloneVehicle(DoCommandFlag flags, TileIndex tile, VehicleID veh_id, bool share_orders);
-CommandCost CmdStartStopVehicle(DoCommandFlag flags, VehicleID veh_id, bool evaluate_startstop_cb);
-CommandCost CmdMassStartStopVehicle(DoCommandFlag flags, TileIndex tile, bool do_start, bool vehicle_list_window, const VehicleListIdentifier &vli);
-CommandCost CmdDepotSellAllVehicles(DoCommandFlag flags, TileIndex tile, VehicleType vehicle_type);
-CommandCost CmdDepotMassAutoReplace(DoCommandFlag flags, TileIndex tile, VehicleType vehicle_type);
+std::tuple<CommandCost, VehicleID, uint, uint16_t, CargoArray> CmdBuildVehicle(DoCommandFlags flags, TileIndex tile, EngineID eid, bool use_free_vehicles, CargoType cargo, ClientID client_id);
+CommandCost CmdSellVehicle(DoCommandFlags flags, VehicleID v_id, bool sell_chain, bool backup_order, ClientID client_id);
+std::tuple<CommandCost, uint, uint16_t, CargoArray> CmdRefitVehicle(DoCommandFlags flags, VehicleID veh_id, CargoType new_cargo_type, uint8_t new_subtype, bool auto_refit, bool only_this, uint8_t num_vehicles);
+CommandCost CmdSendVehicleToDepot(DoCommandFlags flags, VehicleID veh_id, DepotCommandFlags depot_cmd, const VehicleListIdentifier &vli);
+CommandCost CmdChangeServiceInt(DoCommandFlags flags, VehicleID veh_id, uint16_t serv_int, bool is_custom, bool is_percent);
+CommandCost CmdRenameVehicle(DoCommandFlags flags, VehicleID veh_id, const std::string &text);
+std::tuple<CommandCost, VehicleID> CmdCloneVehicle(DoCommandFlags flags, TileIndex tile, VehicleID veh_id, bool share_orders);
+CommandCost CmdStartStopVehicle(DoCommandFlags flags, VehicleID veh_id, bool evaluate_startstop_cb);
+CommandCost CmdMassStartStopVehicle(DoCommandFlags flags, TileIndex tile, bool do_start, bool vehicle_list_window, const VehicleListIdentifier &vli);
+CommandCost CmdDepotSellAllVehicles(DoCommandFlags flags, TileIndex tile, VehicleType vehicle_type);
+CommandCost CmdDepotMassAutoReplace(DoCommandFlags flags, TileIndex tile, VehicleType vehicle_type);
 
-DEF_CMD_TRAIT(CMD_BUILD_VEHICLE,           CmdBuildVehicle,         CMD_CLIENT_ID,                CMDT_VEHICLE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_SELL_VEHICLE,            CmdSellVehicle,          CMD_CLIENT_ID | CMD_LOCATION, CMDT_VEHICLE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_REFIT_VEHICLE,           CmdRefitVehicle,         CMD_LOCATION,                 CMDT_VEHICLE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_SEND_VEHICLE_TO_DEPOT,   CmdSendVehicleToDepot,   0,                            CMDT_VEHICLE_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_CHANGE_SERVICE_INT,      CmdChangeServiceInt,     0,                            CMDT_VEHICLE_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_RENAME_VEHICLE,          CmdRenameVehicle,        0,                            CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_CLONE_VEHICLE,           CmdCloneVehicle,         CMD_NO_TEST,                  CMDT_VEHICLE_CONSTRUCTION) // NewGRF callbacks influence building and refitting making it impossible to correctly estimate the cost
-DEF_CMD_TRAIT(CMD_START_STOP_VEHICLE,      CmdStartStopVehicle,     CMD_LOCATION,                 CMDT_VEHICLE_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_MASS_START_STOP,         CmdMassStartStopVehicle, 0,                            CMDT_VEHICLE_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_DEPOT_SELL_ALL_VEHICLES, CmdDepotSellAllVehicles, 0,                            CMDT_VEHICLE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_DEPOT_MASS_AUTOREPLACE,  CmdDepotMassAutoReplace, 0,                            CMDT_VEHICLE_CONSTRUCTION)
+DEF_CMD_TRAIT(CMD_BUILD_VEHICLE,           CmdBuildVehicle,         CommandFlag::ClientID,                CMDT_VEHICLE_CONSTRUCTION)
+DEF_CMD_TRAIT(CMD_SELL_VEHICLE,            CmdSellVehicle,          CommandFlags({CommandFlag::ClientID, CommandFlag::Location}), CMDT_VEHICLE_CONSTRUCTION)
+DEF_CMD_TRAIT(CMD_REFIT_VEHICLE,           CmdRefitVehicle,         CommandFlag::Location,                 CMDT_VEHICLE_CONSTRUCTION)
+DEF_CMD_TRAIT(CMD_SEND_VEHICLE_TO_DEPOT,   CmdSendVehicleToDepot,   {},                            CMDT_VEHICLE_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_CHANGE_SERVICE_INT,      CmdChangeServiceInt,     {},                            CMDT_VEHICLE_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_RENAME_VEHICLE,          CmdRenameVehicle,        {},                            CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_CLONE_VEHICLE,           CmdCloneVehicle,         CommandFlag::NoTest,                  CMDT_VEHICLE_CONSTRUCTION) // NewGRF callbacks influence building and refitting making it impossible to correctly estimate the cost
+DEF_CMD_TRAIT(CMD_START_STOP_VEHICLE,      CmdStartStopVehicle,     CommandFlag::Location,                 CMDT_VEHICLE_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_MASS_START_STOP,         CmdMassStartStopVehicle, {},                            CMDT_VEHICLE_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_DEPOT_SELL_ALL_VEHICLES, CmdDepotSellAllVehicles, {},                            CMDT_VEHICLE_CONSTRUCTION)
+DEF_CMD_TRAIT(CMD_DEPOT_MASS_AUTOREPLACE,  CmdDepotMassAutoReplace, {},                            CMDT_VEHICLE_CONSTRUCTION)
 
 void CcBuildPrimaryVehicle(Commands cmd, const CommandCost &result, VehicleID new_veh_id, uint, uint16_t, CargoArray);
 void CcStartStopVehicle(Commands cmd, const CommandCost &result, VehicleID veh_id, bool);

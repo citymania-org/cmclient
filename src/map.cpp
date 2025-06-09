@@ -9,7 +9,6 @@
 
 #include "stdafx.h"
 #include "debug.h"
-#include "core/alloc_func.hpp"
 #include "water_map.h"
 #include "error_func.h"
 #include "string_func.h"
@@ -24,8 +23,8 @@
 /* static */ uint Map::size;      ///< The number of tiles on the map
 /* static */ uint Map::tile_mask; ///< _map_size - 1 (to mask the mapsize)
 
-/* static */ Tile::TileBase *Tile::base_tiles = nullptr;         ///< Base tiles of the map
-/* static */ Tile::TileExtended *Tile::extended_tiles = nullptr; ///< Extended tiles of the map
+/* static */ std::unique_ptr<Tile::TileBase[]> Tile::base_tiles; ///< Base tiles of the map
+/* static */ std::unique_ptr<Tile::TileExtended[]> Tile::extended_tiles; ///< Extended tiles of the map
 
 
 /**
@@ -53,11 +52,8 @@
 	Map::size = size_x * size_y;
 	Map::tile_mask = Map::size - 1;
 
-	free(Tile::base_tiles);
-	free(Tile::extended_tiles);
-
-	Tile::base_tiles = CallocT<Tile::TileBase>(Map::size);
-	Tile::extended_tiles = CallocT<Tile::TileExtended>(Map::size);
+	Tile::base_tiles = std::make_unique<Tile::TileBase[]>(Map::size);
+	Tile::extended_tiles = std::make_unique<Tile::TileExtended[]>(Map::size);
 
 	AllocateWaterRegions();
 }
@@ -155,7 +151,7 @@ uint DistanceManhattan(TileIndex t0, TileIndex t1)
  * Gets the 'Square' distance between the two given tiles.
  * The 'Square' distance is the square of the shortest (straight line)
  * distance between the two tiles.
- * Also known as euclidian- or L2-Norm squared.
+ * Also known as Euclidean- or L2-Norm squared.
  * @param t0 the start tile
  * @param t1 the end tile
  * @return the distance

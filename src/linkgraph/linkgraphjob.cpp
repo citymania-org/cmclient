@@ -37,9 +37,7 @@ LinkGraphJob::LinkGraphJob(const LinkGraph &orig) :
 		 * This is on purpose. */
 		link_graph(orig),
 		settings(_settings_game.linkgraph),
-		join_date(TimerGameEconomy::date + (_settings_game.linkgraph.recalc_time / EconomyTime::SECONDS_PER_DAY)),
-		job_completed(false),
-		job_aborted(false)
+		join_date(TimerGameEconomy::date + (_settings_game.linkgraph.recalc_time / EconomyTime::SECONDS_PER_DAY))
 {
 }
 
@@ -50,7 +48,7 @@ LinkGraphJob::LinkGraphJob(const LinkGraph &orig) :
 void LinkGraphJob::EraseFlows(NodeID from)
 {
 	for (NodeID node_id = 0; node_id < this->Size(); ++node_id) {
-		(*this)[node_id].flows.erase(from);
+		(*this)[node_id].flows.erase(StationID{from});
 	}
 }
 
@@ -122,6 +120,7 @@ LinkGraphJob::~LinkGraphJob()
 
 		LinkGraph *lg = LinkGraph::Get(ge.link_graph);
 		FlowStatMap &flows = from.flows;
+		FlowStatMap &geflows = ge.GetOrCreateData().flows;
 
 		for (const auto &edge : from.edges) {
 			if (edge.Flow() == 0) continue;
@@ -137,7 +136,7 @@ LinkGraphJob::~LinkGraphJob()
 				/* Delete old flows for source stations which have been deleted
 				 * from the new flows. This avoids flow cycles between old and
 				 * new flows. */
-				while (!erased.IsEmpty()) ge.flows.erase(erased.Pop());
+				while (!erased.IsEmpty()) geflows.erase(StationID{erased.Pop()});
 			} else if ((*lg)[node_id][dest_id].last_unrestricted_update == EconomyTime::INVALID_DATE) {
 				/* Edge is fully restricted. */
 				flows.RestrictFlows(to);
@@ -148,16 +147,16 @@ LinkGraphJob::~LinkGraphJob()
 		 * really delete them as we could then end up with unroutable cargo
 		 * somewhere. Do delete them and also reroute relevant cargo if
 		 * automatic distribution has been turned off for that cargo. */
-		for (FlowStatMap::iterator it(ge.flows.begin()); it != ge.flows.end();) {
+		for (FlowStatMap::iterator it(geflows.begin()); it != geflows.end();) {
 			FlowStatMap::iterator new_it = flows.find(it->first);
 			if (new_it == flows.end()) {
 				if (_settings_game.linkgraph.GetDistributionType(this->Cargo()) != DT_MANUAL) {
 					it->second.Invalidate();
 					++it;
 				} else {
-					FlowStat shares(INVALID_STATION, 1);
+					FlowStat shares(StationID::Invalid(), 1);
 					it->second.SwapShares(shares);
-					ge.flows.erase(it++);
+					geflows.erase(it++);
 					for (FlowStat::SharesMap::const_iterator shares_it(shares.GetShares()->begin());
 							shares_it != shares.GetShares()->end(); ++shares_it) {
 						RerouteCargo(st, this->Cargo(), shares_it->second, st->index);
@@ -169,7 +168,8 @@ LinkGraphJob::~LinkGraphJob()
 				++it;
 			}
 		}
-		ge.flows.insert(flows.begin(), flows.end());
+		geflows.insert(flows.begin(), flows.end());
+		if (ge.GetData().IsEmpty()) ge.ClearData();
 		InvalidateWindowData(WC_STATION_VIEW, st->index, this->Cargo());
 	}
 }

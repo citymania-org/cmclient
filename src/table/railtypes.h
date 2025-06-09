@@ -60,10 +60,10 @@ static const RailTypeInfo _original_railtypes[] = {
 		SPR_RAIL_SNOW_OFFSET,
 
 		/* Powered railtypes */
-		RAILTYPES_RAIL | RAILTYPES_ELECTRIC,
+		{RAILTYPE_RAIL, RAILTYPE_ELECTRIC},
 
 		/* Compatible railtypes */
-		RAILTYPES_RAIL | RAILTYPES_ELECTRIC,
+		{RAILTYPE_RAIL, RAILTYPE_ELECTRIC},
 
 		/* bridge offset */
 		0,
@@ -75,7 +75,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		0,
 
 		/* flags */
-		RTFB_NONE,
+		{},
 
 		/* cost multiplier */
 		8,
@@ -102,16 +102,17 @@ static const RailTypeInfo _original_railtypes[] = {
 		CalendarTime::INVALID_DATE,
 
 		/* railtypes required for this to be introduced */
-		RAILTYPES_NONE,
+		{},
 
 		/* introduction rail types */
-		RAILTYPES_RAIL,
+		{RAILTYPE_RAIL},
 
 		/* sort order */
 		0 << 4 | 7,
 
 		{ nullptr },
 		{ nullptr },
+		{},
 	},
 
 	/** Electrified railway */
@@ -161,10 +162,10 @@ static const RailTypeInfo _original_railtypes[] = {
 		SPR_RAIL_SNOW_OFFSET,
 
 		/* Powered railtypes */
-		RAILTYPES_ELECTRIC,
+		{RAILTYPE_ELECTRIC},
 
 		/* Compatible railtypes */
-		RAILTYPES_ELECTRIC | RAILTYPES_RAIL,
+		{RAILTYPE_RAIL, RAILTYPE_ELECTRIC},
 
 		/* bridge offset */
 		0,
@@ -176,7 +177,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		0,
 
 		/* flags */
-		RTFB_CATENARY,
+		{RailTypeFlag::Catenary},
 
 		/* cost multiplier */
 		12,
@@ -203,16 +204,17 @@ static const RailTypeInfo _original_railtypes[] = {
 		CalendarTime::INVALID_DATE,
 
 		/* railtypes required for this to be introduced */
-		RAILTYPES_NONE,
+		{},
 
 		/* introduction rail types */
-		RAILTYPES_ELECTRIC,
+		{RAILTYPE_ELECTRIC},
 
 		/* sort order */
 		1 << 4 | 7,
 
 		{ nullptr },
 		{ nullptr },
+		{},
 	},
 
 	/** Monorail */
@@ -258,10 +260,10 @@ static const RailTypeInfo _original_railtypes[] = {
 		SPR_MONO_SNOW_OFFSET,
 
 		/* Powered railtypes */
-		RAILTYPES_MONO,
+		{RAILTYPE_MONO},
 
 		/* Compatible Railtypes */
-		RAILTYPES_MONO,
+		{RAILTYPE_MONO},
 
 		/* bridge offset */
 		16,
@@ -273,7 +275,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		1,
 
 		/* flags */
-		RTFB_NONE,
+		{},
 
 		/* cost multiplier */
 		16,
@@ -300,16 +302,17 @@ static const RailTypeInfo _original_railtypes[] = {
 		CalendarTime::INVALID_DATE,
 
 		/* railtypes required for this to be introduced */
-		RAILTYPES_NONE,
+		{},
 
 		/* introduction rail types */
-		RAILTYPES_MONO,
+		{RAILTYPE_MONO},
 
 		/* sort order */
 		2 << 4 | 7,
 
 		{ nullptr },
 		{ nullptr },
+		{},
 	},
 
 	/** Maglev */
@@ -355,10 +358,10 @@ static const RailTypeInfo _original_railtypes[] = {
 		SPR_MGLV_SNOW_OFFSET,
 
 		/* Powered railtypes */
-		RAILTYPES_MAGLEV,
+		{RAILTYPE_MAGLEV},
 
 		/* Compatible Railtypes */
-		RAILTYPES_MAGLEV,
+		{RAILTYPE_MAGLEV},
 
 		/* bridge offset */
 		24,
@@ -370,7 +373,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		2,
 
 		/* flags */
-		RTFB_NONE,
+		{},
 
 		/* cost multiplier */
 		24,
@@ -397,16 +400,17 @@ static const RailTypeInfo _original_railtypes[] = {
 		CalendarTime::INVALID_DATE,
 
 		/* railtypes required for this to be introduced */
-		RAILTYPES_NONE,
+		{},
 
 		/* introduction rail types */
-		RAILTYPES_MAGLEV,
+		{RAILTYPE_MAGLEV},
 
 		/* sort order */
 		3 << 4 | 7,
 
 		{ nullptr },
 		{ nullptr },
+		{},
 	},
 };
 

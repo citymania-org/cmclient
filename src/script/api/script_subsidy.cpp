@@ -31,23 +31,26 @@
 	return ::Subsidy::Get(subsidy_id)->IsAwarded();
 }
 
-/* static */ bool ScriptSubsidy::Create(CargoID cargo_type, SubsidyParticipantType from_type, SQInteger from_id, SubsidyParticipantType to_type, SQInteger to_id)
+/* static */ bool ScriptSubsidy::Create(CargoType cargo_type, SubsidyParticipantType from_type, SQInteger from_id, SubsidyParticipantType to_type, SQInteger to_id)
 {
 	EnforceDeityMode(false);
 	EnforcePrecondition(false, ScriptCargo::IsValidCargo(cargo_type));
 	EnforcePrecondition(false, from_type == SPT_INDUSTRY || from_type == SPT_TOWN);
 	EnforcePrecondition(false, to_type == SPT_INDUSTRY || to_type == SPT_TOWN);
-	EnforcePrecondition(false, (from_type == SPT_INDUSTRY && ScriptIndustry::IsValidIndustry(from_id)) || (from_type == SPT_TOWN && ScriptTown::IsValidTown(from_id)));
-	EnforcePrecondition(false, (to_type == SPT_INDUSTRY && ScriptIndustry::IsValidIndustry(to_id)) || (to_type == SPT_TOWN && ScriptTown::IsValidTown(to_id)));
+	EnforcePrecondition(false, (from_type == SPT_INDUSTRY && ScriptIndustry::IsValidIndustry(static_cast<IndustryID>(from_id))) || (from_type == SPT_TOWN && ScriptTown::IsValidTown(static_cast<TownID>(from_id))));
+	EnforcePrecondition(false, (to_type == SPT_INDUSTRY && ScriptIndustry::IsValidIndustry(static_cast<IndustryID>(to_id))) || (to_type == SPT_TOWN && ScriptTown::IsValidTown(static_cast<TownID>(to_id))));
 
-	return ScriptObject::Command<CMD_CREATE_SUBSIDY>::Do(cargo_type, (::SourceType)from_type, from_id, (::SourceType)to_type, to_id);
+	Source from{static_cast<SourceID>(from_id), static_cast<SourceType>(from_type)};
+	Source to{static_cast<SourceID>(to_id), static_cast<SourceType>(to_type)};
+
+	return ScriptObject::Command<CMD_CREATE_SUBSIDY>::Do(cargo_type, from, to);
 }
 
 /* static */ ScriptCompany::CompanyID ScriptSubsidy::GetAwardedTo(SubsidyID subsidy_id)
 {
 	if (!IsAwarded(subsidy_id)) return ScriptCompany::COMPANY_INVALID;
 
-	return (ScriptCompany::CompanyID)((uint8_t)::Subsidy::Get(subsidy_id)->awarded);
+	return ScriptCompany::ToScriptCompanyID(::Subsidy::Get(subsidy_id)->awarded);
 }
 
 /* static */ ScriptDate::Date ScriptSubsidy::GetExpireDate(SubsidyID subsidy_id)
@@ -57,13 +60,13 @@
 	TimerGameEconomy::YearMonthDay ymd = TimerGameEconomy::ConvertDateToYMD(TimerGameEconomy::date);
 	ymd.day = 1;
 	auto m = ymd.month + ::Subsidy::Get(subsidy_id)->remaining;
-	ymd.month = (m - 1) % 12 + 1;
-	ymd.year += (m - 1) / 12;
+	ymd.month = m % 12;
+	ymd.year += TimerGameEconomy::Year{m / 12};
 
 	return (ScriptDate::Date)TimerGameEconomy::ConvertYMDToDate(ymd.year, ymd.month, ymd.day).base();
 }
 
-/* static */ CargoID ScriptSubsidy::GetCargoType(SubsidyID subsidy_id)
+/* static */ CargoType ScriptSubsidy::GetCargoType(SubsidyID subsidy_id)
 {
 	if (!IsValidSubsidy(subsidy_id)) return INVALID_CARGO;
 
@@ -74,26 +77,26 @@
 {
 	if (!IsValidSubsidy(subsidy_id)) return SPT_INVALID;
 
-	return (SubsidyParticipantType)(uint)::Subsidy::Get(subsidy_id)->src_type;
+	return static_cast<SubsidyParticipantType>(::Subsidy::Get(subsidy_id)->src.type);
 }
 
 /* static */ SQInteger ScriptSubsidy::GetSourceIndex(SubsidyID subsidy_id)
 {
-	if (!IsValidSubsidy(subsidy_id)) return INVALID_SOURCE;
+	if (!IsValidSubsidy(subsidy_id)) return Source::Invalid;
 
-	return ::Subsidy::Get(subsidy_id)->src;
+	return ::Subsidy::Get(subsidy_id)->src.id;
 }
 
 /* static */ ScriptSubsidy::SubsidyParticipantType ScriptSubsidy::GetDestinationType(SubsidyID subsidy_id)
 {
 	if (!IsValidSubsidy(subsidy_id)) return SPT_INVALID;
 
-	return (SubsidyParticipantType)(uint)::Subsidy::Get(subsidy_id)->dst_type;
+	return static_cast<SubsidyParticipantType>(::Subsidy::Get(subsidy_id)->dst.type);
 }
 
 /* static */ SQInteger ScriptSubsidy::GetDestinationIndex(SubsidyID subsidy_id)
 {
-	if (!IsValidSubsidy(subsidy_id)) return INVALID_SOURCE;
+	if (!IsValidSubsidy(subsidy_id)) return Source::Invalid;
 
-	return ::Subsidy::Get(subsidy_id)->dst;
+	return ::Subsidy::Get(subsidy_id)->dst.id;
 }

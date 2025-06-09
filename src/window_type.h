@@ -10,6 +10,8 @@
 #ifndef WINDOW_TYPE_H
 #define WINDOW_TYPE_H
 
+#include "core/convertible_through_base.hpp"
+
 /**
  * Widget ID.
  * Even though the ID is signed, actual IDs must be non-negative.
@@ -18,7 +20,7 @@
 using WidgetID = int;
 
 /** %Window numbers. */
-enum WindowNumberEnum {
+enum WindowNumberEnum : uint8_t {
 	WN_GAME_OPTIONS_AI = 0,          ///< AI settings.
 	WN_GAME_OPTIONS_GS,              ///< GS settings.
 	WN_GAME_OPTIONS_ABOUT,           ///< About window.
@@ -41,7 +43,7 @@ enum WindowNumberEnum {
 };
 
 /** %Window classes. */
-enum WindowClass {
+enum WindowClass : uint16_t {
 	WC_NONE, ///< No window, redirects to WC_MAIN_WINDOW.
 
 	/**
@@ -725,7 +727,7 @@ enum WindowClass {
 };
 
 /** Data value for #Window::OnInvalidateData() of windows with class #WC_GAME_OPTIONS. */
-enum GameOptionsInvalidationData {
+enum GameOptionsInvalidationData : uint8_t {
 	GOID_DEFAULT = 0,
 	GOID_NEWGRF_RESCANNED,       ///< NewGRFs were just rescanned.
 	GOID_NEWGRF_CURRENT_LOADED,  ///< The current list of active NewGRF has been loaded.
@@ -736,11 +738,38 @@ enum GameOptionsInvalidationData {
 
 struct Window;
 
-/** Number to differentiate different windows of the same class */
-typedef int32_t WindowNumber;
+/**
+ * Number to differentiate different windows of the same class. This number generally
+ * implicitly passes some information, e.g. the TileIndex or Company associated with
+ * the window. To ease this use, the window number is lenient with what it accepts and
+ * broad with what it returns.
+ *
+ * Anything that converts into a number and ConvertibleThroughBase types will be accepted.
+ * When it's being used it returns int32_t or any other type when that's specifically
+ * requested, e.g. `VehicleType type = window_number` or `GetEngineListHeight(window_number)`
+ * in which the returned value will be a `VehicleType`.
+ */
+struct WindowNumber {
+private:
+	int32_t value = 0;
+public:
+	WindowNumber() = default;
+	WindowNumber(int32_t value) : value(value) {}
+	WindowNumber(ConvertibleThroughBase auto value) : value(value.base()) {}
+
+	/* Automatically convert to int32_t. */
+	operator int32_t() const { return value; }
+
+	/* Automatically convert to any other type that might be requested. */
+	template <typename T> requires (std::is_enum_v<T> || std::is_class_v<T>)
+	operator T() const { return static_cast<T>(value); };
+
+	constexpr bool operator==(const std::integral auto &rhs) const { return this->value == static_cast<int32_t>(rhs); }
+	constexpr bool operator==(const ConvertibleThroughBase auto &rhs) const { return this->value == static_cast<int32_t>(rhs.base()); }
+};
 
 /** State of handling an event. */
-enum EventState {
+enum EventState : uint8_t {
 	ES_HANDLED,     ///< The passed event is handled.
 	ES_NOT_HANDLED, ///< The passed event is not handled.
 };

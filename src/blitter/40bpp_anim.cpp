@@ -113,7 +113,7 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 	assert(VideoDriver::GetInstance()->GetAnimBuffer() != nullptr);
 	uint8_t *anim = VideoDriver::GetInstance()->GetAnimBuffer() + ((uint32_t *)bp->dst - (uint32_t *)_screen.dst_ptr) + bp->top * bp->pitch + bp->left;
 
-	/* store so we don't have to access it via bp everytime (compiler assumes pointer aliasing) */
+	/* store so we don't have to access it via bp every time (compiler assumes pointer aliasing) */
 	const uint8_t *remap = bp->remap;
 
 	for (int y = 0; y < bp->height; y++) {
@@ -181,14 +181,14 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 			draw:;
 
 			switch (mode) {
-				case BM_COLOUR_REMAP:
-				case BM_CRASH_REMAP:
+				case BlitterMode::ColourRemap:
+				case BlitterMode::CrashRemap:
 					if (src_px->a == 255) {
 						do {
 							uint8_t m = GB(*src_n, 0, 8);
 							/* In case the m-channel is zero, only apply the crash remap by darkening the RGB colour. */
 							if (m == 0) {
-								*dst = mode == BM_CRASH_REMAP ? this->MakeDark(*src_px) : *src_px;
+								*dst = mode == BlitterMode::CrashRemap ? this->MakeDark(*src_px) : *src_px;
 								*anim = 0;
 							} else {
 								uint r = remap[m];
@@ -207,7 +207,7 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 							uint8_t m = GB(*src_n, 0, 8);
 							Colour b = this->RealizeBlendedColour(*anim, *dst);
 							if (m == 0) {
-								Colour c = mode == BM_CRASH_REMAP ? this->MakeDark(*src_px) : *src_px;
+								Colour c = mode == BlitterMode::CrashRemap ? this->MakeDark(*src_px) : *src_px;
 								*dst = this->ComposeColourRGBANoCheck(c.r, c.g, c.b, src_px->a, b);
 								*anim = 0;
 							} else {
@@ -225,7 +225,7 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 					}
 					break;
 
-				case BM_BLACK_REMAP:
+				case BlitterMode::BlackRemap:
 					do {
 						*anim++ = 0;
 						*dst++ = _black_colour;
@@ -234,7 +234,7 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 					} while (--n != 0);
 					break;
 
-				case BM_TRANSPARENT:
+				case BlitterMode::Transparent:
 					/* Make the current colour a bit more black, so it looks like this image is transparent */
 					src_n += n;
 					if (src_px->a == 255) {
@@ -243,7 +243,7 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 							/* If the anim buffer contains a color value, the image composition will
 							 * only look at the RGB brightness value. As such, we can simply darken the
 							 * RGB value to darken the anim color. */
-							Colour b = *anim != 0 ? Colour(this->GetColourBrightness(*dst), 0, 0) : *dst;
+							Colour b = *anim != 0 ? Colour(GetColourBrightness(*dst), 0, 0) : *dst;
 							*dst = this->MakeTransparent(b, 3, 4);
 							anim++;
 							dst++;
@@ -260,7 +260,7 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 					}
 					break;
 
-				case BM_TRANSPARENT_REMAP:
+				case BlitterMode::TransparentRemap:
 					/* Apply custom transparency remap. */
 					src_n += n;
 					if (src_px->a != 0) {
@@ -339,12 +339,12 @@ void Blitter_40bppAnim::Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomL
 
 	switch (mode) {
 		default: NOT_REACHED();
-		case BM_NORMAL:       Draw<BM_NORMAL>      (bp, zoom); return;
-		case BM_COLOUR_REMAP: Draw<BM_COLOUR_REMAP>(bp, zoom); return;
-		case BM_TRANSPARENT:  Draw<BM_TRANSPARENT> (bp, zoom); return;
-		case BM_TRANSPARENT_REMAP: Draw<BM_TRANSPARENT_REMAP>(bp, zoom); return;
-		case BM_CRASH_REMAP:  Draw<BM_CRASH_REMAP> (bp, zoom); return;
-		case BM_BLACK_REMAP:  Draw<BM_BLACK_REMAP> (bp, zoom); return;
+		case BlitterMode::Normal: Draw<BlitterMode::Normal>(bp, zoom); return;
+		case BlitterMode::ColourRemap: Draw<BlitterMode::ColourRemap>(bp, zoom); return;
+		case BlitterMode::Transparent: Draw<BlitterMode::Transparent>(bp, zoom); return;
+		case BlitterMode::TransparentRemap: Draw<BlitterMode::TransparentRemap>(bp, zoom); return;
+		case BlitterMode::CrashRemap: Draw<BlitterMode::CrashRemap>(bp, zoom); return;
+		case BlitterMode::BlackRemap: Draw<BlitterMode::BlackRemap>(bp, zoom); return;
 	}
 }
 
@@ -365,7 +365,7 @@ void Blitter_40bppAnim::DrawColourMappingRect(void *dst, int width, int height, 
 		 * RGB value to darken the anim color. */
 		do {
 			for (int i = 0; i != width; i++) {
-				Colour b = *anim != 0 ? Colour(this->GetColourBrightness(*udst), 0, 0) : *udst;
+				Colour b = *anim != 0 ? Colour(GetColourBrightness(*udst), 0, 0) : *udst;
 				*udst = MakeTransparent(b, 154);
 				udst++;
 				anim++;
@@ -528,7 +528,7 @@ size_t Blitter_40bppAnim::BufferSize(uint width, uint height)
 
 Blitter::PaletteAnimation Blitter_40bppAnim::UsePaletteAnimation()
 {
-	return Blitter::PALETTE_ANIMATION_VIDEO_BACKEND;
+	return Blitter::PaletteAnimation::VideoBackend;
 }
 
 bool Blitter_40bppAnim::NeedsAnimationBuffer()

@@ -5,7 +5,8 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-AILog.Info("0.7 API compatibility in effect:");
+/* This file contains code to downgrade the API from 1.0 to 0.7. */
+
 AILog.Info(" - AITown::GetLastMonthProduction's behaviour has slightly changed.");
 AILog.Info(" - AISubsidy::GetDestination returns STATION_INVALID for awarded subsidies.");
 AILog.Info(" - AISubsidy::GetSource returns STATION_INVALID for awarded subsidies.");
@@ -95,158 +96,158 @@ AIEngine.IsValidEngine <- function(engine_id)
 	return AIEngine.IsBuildable(engine_id);
 }
 
-AIEngine._GetName <- AIEngine.GetName;
+AIEngine.GetNameCompat0_7 <- AIEngine.GetName;
 AIEngine.GetName <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return null;
-	return AIEngine._GetName(engine_id);
+	return AIEngine.GetNameCompat0_7(engine_id);
 }
 
-AIEngine._GetCargoType <- AIEngine.GetCargoType;
+AIEngine.GetCargoTypeCompat0_7 <- AIEngine.GetCargoType;
 AIEngine.GetCargoType <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return 255;
-	return AIEngine._GetCargoType(engine_id);
+	return AIEngine.GetCargoTypeCompat0_7(engine_id);
 }
 
-AIEngine._CanRefitCargo <- AIEngine.CanRefitCargo;
+AIEngine.CanRefitCargoCompat0_7 <- AIEngine.CanRefitCargo;
 AIEngine.CanRefitCargo <- function(engine_id, cargo_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return false;
-	return AIEngine._CanRefitCargo(engine_id, cargo_id);
+	return AIEngine.CanRefitCargoCompat0_7(engine_id, cargo_id);
 }
 
-AIEngine._CanPullCargo <- AIEngine.CanPullCargo;
+AIEngine.CanPullCargoCompat0_7 <- AIEngine.CanPullCargo;
 AIEngine.CanPullCargo <- function(engine_id, cargo_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return false;
-	return AIEngine._CanPullCargo(engine_id, cargo_id);
+	return AIEngine.CanPullCargoCompat0_7(engine_id, cargo_id);
 }
 
-AIEngine._GetCapacity <- AIEngine.GetCapacity;
+AIEngine.GetCapacityCompat0_7 <- AIEngine.GetCapacity;
 AIEngine.GetCapacity <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetCapacity(engine_id);
+	return AIEngine.GetCapacityCompat0_7(engine_id);
 }
 
-AIEngine._GetReliability <- AIEngine.GetReliability;
+AIEngine.GetReliabilityCompat0_7 <- AIEngine.GetReliability;
 AIEngine.GetReliability <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetReliability(engine_id);
+	return AIEngine.GetReliabilityCompat0_7(engine_id);
 }
 
-AIEngine._GetMaxSpeed <- AIEngine.GetMaxSpeed;
+AIEngine.GetMaxSpeedCompat0_7 <- AIEngine.GetMaxSpeed;
 AIEngine.GetMaxSpeed <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetMaxSpeed(engine_id);
+	return AIEngine.GetMaxSpeedCompat0_7(engine_id);
 }
 
-AIEngine._GetPrice <- AIEngine.GetPrice;
+AIEngine.GetPriceCompat0_7 <- AIEngine.GetPrice;
 AIEngine.GetPrice <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetPrice(engine_id);
+	return AIEngine.GetPriceCompat0_7(engine_id);
 }
 
-AIEngine._GetMaxAge <- AIEngine.GetMaxAge;
+AIEngine.GetMaxAgeCompat0_7 <- AIEngine.GetMaxAge;
 AIEngine.GetMaxAge <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetMaxAge(engine_id);
+	return AIEngine.GetMaxAgeCompat0_7(engine_id);
 }
 
-AIEngine._GetRunningCost <- AIEngine.GetRunningCost;
+AIEngine.GetRunningCostCompat0_7 <- AIEngine.GetRunningCost;
 AIEngine.GetRunningCost <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetRunningCost(engine_id);
+	return AIEngine.GetRunningCostCompat0_7(engine_id);
 }
 
-AIEngine._GetPower <- AIEngine.GetPower;
+AIEngine.GetPowerCompat0_7 <- AIEngine.GetPower;
 AIEngine.GetPower <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetPower(engine_id);
+	return AIEngine.GetPowerCompat0_7(engine_id);
 }
 
-AIEngine._GetWeight <- AIEngine.GetWeight;
+AIEngine.GetWeightCompat0_7 <- AIEngine.GetWeight;
 AIEngine.GetWeight <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetWeight(engine_id);
+	return AIEngine.GetWeightCompat0_7(engine_id);
 }
 
-AIEngine._GetMaxTractiveEffort <- AIEngine.GetMaxTractiveEffort;
+AIEngine.GetMaxTractiveEffortCompat0_7 <- AIEngine.GetMaxTractiveEffort;
 AIEngine.GetMaxTractiveEffort <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetMaxTractiveEffort(engine_id);
+	return AIEngine.GetMaxTractiveEffortCompat0_7(engine_id);
 }
 
-AIEngine._GetDesignDate <- AIEngine.GetDesignDate;
+AIEngine.GetDesignDateCompat0_7 <- AIEngine.GetDesignDate;
 AIEngine.GetDesignDate <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetDesignDate(engine_id);
+	return AIEngine.GetDesignDateCompat0_7(engine_id);
 }
 
-AIEngine._GetVehicleType <- AIEngine.GetVehicleType;
+AIEngine.GetVehicleTypeCompat0_7 <- AIEngine.GetVehicleType;
 AIEngine.GetVehicleType <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return AIVehicle.VT_INVALID;
-	return AIEngine._GetVehicleType(engine_id);
+	return AIEngine.GetVehicleTypeCompat0_7(engine_id);
 }
 
-AIEngine._IsWagon <- AIEngine.IsWagon;
+AIEngine.IsWagonCompat0_7 <- AIEngine.IsWagon;
 AIEngine.IsWagon <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return false;
-	return AIEngine._IsWagon(engine_id);
+	return AIEngine.IsWagonCompat0_7(engine_id);
 }
 
-AIEngine._CanRunOnRail <- AIEngine.CanRunOnRail;
+AIEngine.CanRunOnRailCompat0_7 <- AIEngine.CanRunOnRail;
 AIEngine.CanRunOnRail <- function(engine_id, track_rail_type)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return false;
-	return AIEngine._CanRunOnRail(engine_id, track_rail_type);
+	return AIEngine.CanRunOnRailCompat0_7(engine_id, track_rail_type);
 }
 
-AIEngine._HasPowerOnRail <- AIEngine.HasPowerOnRail;
+AIEngine.HasPowerOnRailCompat0_7 <- AIEngine.HasPowerOnRail;
 AIEngine.HasPowerOnRail <- function(engine_id, track_rail_type)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return false;
-	return AIEngine._HasPowerOnRail(engine_id, track_rail_type);
+	return AIEngine.HasPowerOnRailCompat0_7(engine_id, track_rail_type);
 }
 
-AIEngine._GetRoadType <- AIEngine.GetRoadType;
+AIEngine.GetRoadTypeCompat0_7 <- AIEngine.GetRoadType;
 AIEngine.GetRoadType <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return AIRoad.ROADTYPE_INVALID;
-	return AIEngine._GetRoadType(engine_id);
+	return AIEngine.GetRoadTypeCompat0_7(engine_id);
 }
 
-AIEngine._GetRailType <- AIEngine.GetRailType;
+AIEngine.GetRailTypeCompat0_7 <- AIEngine.GetRailType;
 AIEngine.GetRailType <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return AIRail.RAILTYPE_INVALID;
-	return AIEngine._GetRailType(engine_id);
+	return AIEngine.GetRailTypeCompat0_7(engine_id);
 }
 
-AIEngine._IsArticulated <- AIEngine.IsArticulated;
+AIEngine.IsArticulatedCompat0_7 <- AIEngine.IsArticulated;
 AIEngine.IsArticulated <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return false;
-	return AIEngine._IsArticulated(engine_id);
+	return AIEngine.IsArticulatedCompat0_7(engine_id);
 }
 
-AIEngine._GetPlaneType <- AIEngine.GetPlaneType;
+AIEngine.GetPlaneTypeCompat0_7 <- AIEngine.GetPlaneType;
 AIEngine.GetPlaneType <- function(engine_id)
 {
 	if (!AIEngine.IsBuildable(engine_id)) return -1;
-	return AIEngine._GetPlaneType(engine_id);
+	return AIEngine.GetPlaneTypeCompat0_7(engine_id);
 }
 
 _AIWaypointList <- AIWaypointList;
@@ -255,140 +256,4 @@ class AIWaypointList extends _AIWaypointList {
 	{
 		::_AIWaypointList.constructor(AIWaypoint.WAYPOINT_RAIL);
 	}
-}
-
-AIRoad._BuildRoadStation <- AIRoad.BuildRoadStation;
-AIRoad.BuildRoadStation <- function(tile, front, road_veh_type, station_id)
-{
-	if (AIRoad.IsRoadStationTile(tile) && AICompany.IsMine(AITile.GetOwner(tile))) return false;
-
-	return AIRoad._BuildRoadStation(tile, front, road_veh_type, station_id);
-}
-
-AIRoad._BuildDriveThroughRoadStation <- AIRoad.BuildDriveThroughRoadStation;
-AIRoad.BuildDriveThroughRoadStation <- function(tile, front, road_veh_type, station_id)
-{
-	if (AIRoad.IsRoadStationTile(tile) && AICompany.IsMine(AITile.GetOwner(tile))) return false;
-
-	return AIRoad._BuildDriveThroughRoadStation(tile, front, road_veh_type, station_id);
-}
-
-AIBridgeList.HasNext <-
-AIBridgeList_Length.HasNext <-
-AICargoList.HasNext <-
-AICargoList_IndustryAccepting.HasNext <-
-AICargoList_IndustryProducing.HasNext <-
-AIDepotList.HasNext <-
-AIEngineList.HasNext <-
-AIGroupList.HasNext <-
-AIIndustryList.HasNext <-
-AIIndustryList_CargoAccepting.HasNext <-
-AIIndustryList_CargoProducing.HasNext <-
-AIIndustryTypeList.HasNext <-
-AIList.HasNext <-
-AIRailTypeList.HasNext <-
-AISignList.HasNext <-
-AIStationList.HasNext <-
-AIStationList_Vehicle.HasNext <-
-AISubsidyList.HasNext <-
-AITileList.HasNext <-
-AITileList_IndustryAccepting.HasNext <-
-AITileList_IndustryProducing.HasNext <-
-AITileList_StationType.HasNext <-
-AITownList.HasNext <-
-AIVehicleList.HasNext <-
-AIVehicleList_DefaultGroup.HasNext <-
-AIVehicleList_Group.HasNext <-
-AIVehicleList_SharedOrders.HasNext <-
-AIVehicleList_Station.HasNext <-
-AIWaypointList.HasNext <-
-AIWaypointList_Vehicle.HasNext <-
-function()
-{
-	return !this.IsEnd();
-}
-
-AIIndustry._IsCargoAccepted <- AIIndustry.IsCargoAccepted;
-AIIndustry.IsCargoAccepted <- function(industry_id, cargo_id)
-{
-	return AIIndustry._IsCargoAccepted(industry_id, cargo_id) != AIIndustry.CAS_NOT_ACCEPTED;
-}
-
-AIAbstractList <- AIList;
-
-AIList.ChangeItem <- AIList.SetValue;
-
-AIRail.ERR_NONUNIFORM_STATIONS_DISABLED <- 0xFFFF;
-
-AICompany.GetCompanyValue <- function(company)
-{
-	return AICompany.GetQuarterlyCompanyValue(company, AICompany.CURRENT_QUARTER);
-}
-
-AITown.GetLastMonthTransported <- AITown.GetLastMonthSupplied;
-
-AIEvent.AI_ET_INVALID <- AIEvent.ET_INVALID;
-AIEvent.AI_ET_TEST <- AIEvent.ET_TEST;
-AIEvent.AI_ET_SUBSIDY_OFFER <- AIEvent.ET_SUBSIDY_OFFER;
-AIEvent.AI_ET_SUBSIDY_OFFER_EXPIRED <- AIEvent.ET_SUBSIDY_OFFER_EXPIRED;
-AIEvent.AI_ET_SUBSIDY_AWARDED <- AIEvent.ET_SUBSIDY_AWARDED;
-AIEvent.AI_ET_SUBSIDY_EXPIRED <- AIEvent.ET_SUBSIDY_EXPIRED;
-AIEvent.AI_ET_ENGINE_PREVIEW <- AIEvent.ET_ENGINE_PREVIEW;
-AIEvent.AI_ET_COMPANY_NEW <- AIEvent.ET_COMPANY_NEW;
-AIEvent.AI_ET_COMPANY_IN_TROUBLE <- AIEvent.ET_COMPANY_IN_TROUBLE;
-AIEvent.AI_ET_COMPANY_MERGER <- AIEvent.ET_COMPANY_MERGER;
-AIEvent.AI_ET_COMPANY_BANKRUPT <- AIEvent.ET_COMPANY_BANKRUPT;
-AIEvent.AI_ET_VEHICLE_CRASHED <- AIEvent.ET_VEHICLE_CRASHED;
-AIEvent.AI_ET_VEHICLE_LOST <- AIEvent.ET_VEHICLE_LOST;
-AIEvent.AI_ET_VEHICLE_WAITING_IN_DEPOT <- AIEvent.ET_VEHICLE_WAITING_IN_DEPOT;
-AIEvent.AI_ET_VEHICLE_UNPROFITABLE <- AIEvent.ET_VEHICLE_UNPROFITABLE;
-AIEvent.AI_ET_INDUSTRY_OPEN <- AIEvent.ET_INDUSTRY_OPEN;
-AIEvent.AI_ET_INDUSTRY_CLOSE <- AIEvent.ET_INDUSTRY_CLOSE;
-AIEvent.AI_ET_ENGINE_AVAILABLE <- AIEvent.ET_ENGINE_AVAILABLE;
-AIEvent.AI_ET_STATION_FIRST_VEHICLE <- AIEvent.ET_STATION_FIRST_VEHICLE;
-AIEvent.AI_ET_DISASTER_ZEPPELINER_CRASHED <- AIEvent.ET_DISASTER_ZEPPELINER_CRASHED;
-AIEvent.AI_ET_DISASTER_ZEPPELINER_CLEARED <- AIEvent.ET_DISASTER_ZEPPELINER_CLEARED;
-AIOrder.AIOF_NONE <- AIOrder.OF_NONE
-AIOrder.AIOF_NON_STOP_INTERMEDIATE <- AIOrder.OF_NON_STOP_INTERMEDIATE
-AIOrder.AIOF_NON_STOP_DESTINATION <- AIOrder.OF_NON_STOP_DESTINATION
-AIOrder.AIOF_UNLOAD <- AIOrder.OF_UNLOAD
-AIOrder.AIOF_TRANSFER <- AIOrder.OF_TRANSFER
-AIOrder.AIOF_NO_UNLOAD <- AIOrder.OF_NO_UNLOAD
-AIOrder.AIOF_FULL_LOAD <- AIOrder.OF_FULL_LOAD
-AIOrder.AIOF_FULL_LOAD_ANY <- AIOrder.OF_FULL_LOAD_ANY
-AIOrder.AIOF_NO_LOAD <- AIOrder.OF_NO_LOAD
-AIOrder.AIOF_SERVICE_IF_NEEDED <- AIOrder.OF_SERVICE_IF_NEEDED
-AIOrder.AIOF_STOP_IN_DEPOT <- AIOrder.OF_STOP_IN_DEPOT
-AIOrder.AIOF_GOTO_NEAREST_DEPOT <- AIOrder.OF_GOTO_NEAREST_DEPOT
-AIOrder.AIOF_NON_STOP_FLAGS <- AIOrder.OF_NON_STOP_FLAGS
-AIOrder.AIOF_UNLOAD_FLAGS <- AIOrder.OF_UNLOAD_FLAGS
-AIOrder.AIOF_LOAD_FLAGS <- AIOrder.OF_LOAD_FLAGS
-AIOrder.AIOF_DEPOT_FLAGS <- AIOrder.OF_DEPOT_FLAGS
-AIOrder.AIOF_INVALID <- AIOrder.OF_INVALID
-
-/* 1.9 adds a vehicle type parameter. */
-AIBridge._GetName <- AIBridge.GetName;
-AIBridge.GetName <- function(bridge_id)
-{
-	return AIBridge._GetName(bridge_id, AIVehicle.VT_RAIL);
-}
-
-/* 1.9 adds parent_group_id to CreateGroup function */
-AIGroup._CreateGroup <- AIGroup.CreateGroup;
-AIGroup.CreateGroup <- function(vehicle_type)
-{
-	return AIGroup._CreateGroup(vehicle_type, AIGroup.GROUP_INVALID);
-}
-
-/* 13 really checks RoadType against RoadType */
-AIRoad._HasRoadType <- AIRoad.HasRoadType;
-AIRoad.HasRoadType <- function(tile, road_type)
-{
-	local list = AIRoadTypeList(AIRoad.GetRoadTramType(road_type));
-	foreach (rt, _ in list) {
-		if (AIRoad._HasRoadType(tile, rt)) {
-			return true;
-		}
-	}
-	return false;
 }

@@ -10,7 +10,6 @@
 #include "../../stdafx.h"
 #include "script_log_types.hpp"
 #include "script_log.hpp"
-#include "../../core/alloc_func.hpp"
 #include "../../debug.h"
 #include "../../window_func.h"
 #include "../../string_func.h"
@@ -57,6 +56,6 @@
 	}
 
 	/* Also still print to debug window */
-	Debug(script, level, "[{}] [{}] {}", (uint)ScriptObject::GetRootCompany(), logc, line.text);
+	Debug(script, level, "[{}] [{}] {}", ScriptObject::GetRootCompany(), logc, line.text);
 	InvalidateWindowClassesData(WC_SCRIPT_DEBUG, ScriptObject::GetRootCompany());
 }

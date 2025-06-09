@@ -48,9 +48,9 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
 {
 	if (!IsValidTile(tile)) return ROAD_NONE;
 	for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
-		const TileIndex neighbor_tile = TileAddByDiagDir(tile, dir);
+		const TileIndex neighbour_tile = TileAddByDiagDir(tile, dir);
 
-		/* Get the Roadbit pointing to the neighbor_tile */
+		/* Get the Roadbit pointing to the neighbour_tile */
 		const RoadBits target_rb = DiagDirToRoadBits(dir);
 
 		/* If the roadbit is in the current plan */
@@ -58,8 +58,8 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
 			bool connective = false;
 			const RoadBits mirrored_rb = MirrorRoadBits(target_rb);
 
-			if (IsValidTile(neighbor_tile)) {
-				switch (GetTileType(neighbor_tile)) {
+			if (IsValidTile(neighbour_tile)) {
+				switch (GetTileType(neighbour_tile)) {
 					/* Always connective ones */
 					case MP_CLEAR: case MP_TREES:
 						connective = true;
@@ -69,24 +69,24 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
 					case MP_TUNNELBRIDGE:
 					case MP_STATION:
 					case MP_ROAD:
-						if (IsNormalRoadTile(neighbor_tile)) {
+						if (IsNormalRoadTile(neighbour_tile)) {
 							/* Always connective */
 							connective = true;
 						} else {
-							const RoadBits neighbor_rb = GetAnyRoadBits(neighbor_tile, RTT_ROAD) | GetAnyRoadBits(neighbor_tile, RTT_TRAM);
+							const RoadBits neighbour_rb = GetAnyRoadBits(neighbour_tile, RTT_ROAD) | GetAnyRoadBits(neighbour_tile, RTT_TRAM);
 
 							/* Accept only connective tiles */
-							connective = (neighbor_rb & mirrored_rb) != ROAD_NONE;
+							connective = (neighbour_rb & mirrored_rb) != ROAD_NONE;
 						}
 						break;
 
 					case MP_RAILWAY:
-						connective = IsPossibleCrossing(neighbor_tile, DiagDirToAxis(dir));
+						connective = IsPossibleCrossing(neighbour_tile, DiagDirToAxis(dir));
 						break;
 
 					case MP_WATER:
 						/* Check for real water tile */
-						connective = !IsWater(neighbor_tile);
+						connective = !IsWater(neighbour_tile);
 						break;
 
 					/* The definitely not connective ones */
@@ -94,7 +94,7 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
 				}
 			}
 
-			/* If the neighbor tile is inconnective, remove the planned road connection to it */
+			/* If the neighbour tile is inconnective, remove the planned road connection to it */
 			if (!connective) org_rb ^= target_rb;
 		}
 	}
@@ -122,17 +122,14 @@ bool HasRoadTypeAvail(const CompanyID company, RoadType roadtype)
 		 * The GS under deity mode, as well as anybody in the editor builds roads that are
 		 * owned by towns. So if a town may build it, it should be buildable by them too.
 		 */
-		return (rti->flags & ROTFB_HIDDEN) == 0 || (rti->flags & ROTFB_TOWN_BUILD) != 0;
+		return !rti->flags.Test( RoadTypeFlag::Hidden) || rti->flags.Test( RoadTypeFlag::TownBuild);
 	} else {
 		const Company *c = Company::GetIfValid(company);
 		if (c == nullptr) return false;
-		return HasBit(c->avail_roadtypes & ~_roadtypes_hidden_mask, roadtype);
+		RoadTypes avail = c->avail_roadtypes;
+		avail.Reset(_roadtypes_hidden_mask);
+		return avail.Test(roadtype);
 	}
-}
-
-static RoadTypes GetMaskForRoadTramType(RoadTramType rtt)
-{
-	return rtt == RTT_TRAM ? _roadtypes_type : ~_roadtypes_type;
 }
 
 /**
@@ -142,7 +139,9 @@ static RoadTypes GetMaskForRoadTramType(RoadTramType rtt)
  */
 bool HasAnyRoadTypesAvail(CompanyID company, RoadTramType rtt)
 {
-	return (Company::Get(company)->avail_roadtypes & ~_roadtypes_hidden_mask & GetMaskForRoadTramType(rtt)) != ROADTYPES_NONE;
+	RoadTypes avail = Company::Get(company)->avail_roadtypes;
+	avail.Reset(_roadtypes_hidden_mask);
+	return avail.Any(GetMaskForRoadTramType(rtt));
 }
 
 /**
@@ -182,7 +181,7 @@ RoadTypes AddDateIntroducedRoadTypes(RoadTypes current, TimerGameCalendar::Date 
 		RoadTypes required = rti->introduction_required_roadtypes;
 		if ((rts & required) != required) continue;
 
-		rts |= rti->introduces_roadtypes;
+		rts.Set(rti->introduces_roadtypes);
 	}
 
 	/* When we added roadtypes we need to run this method again; the added
@@ -198,19 +197,19 @@ RoadTypes AddDateIntroducedRoadTypes(RoadTypes current, TimerGameCalendar::Date 
  */
 RoadTypes GetCompanyRoadTypes(CompanyID company, bool introduces)
 {
-	RoadTypes rts = ROADTYPES_NONE;
+	RoadTypes rts{};
 
 	for (const Engine *e : Engine::IterateType(VEH_ROAD)) {
 		const EngineInfo *ei = &e->info;
 
-		if (HasBit(ei->climates, _settings_game.game_creation.landscape) &&
-				(HasBit(e->company_avail, company) || TimerGameCalendar::date >= e->intro_date + CalendarTime::DAYS_IN_YEAR)) {
+		if (ei->climates.Test(_settings_game.game_creation.landscape) &&
+				(e->company_avail.Test(company) || TimerGameCalendar::date >= e->intro_date + CalendarTime::DAYS_IN_YEAR)) {
 			const RoadVehicleInfo *rvi = &e->u.road;
 			assert(rvi->roadtype < ROADTYPE_END);
 			if (introduces) {
-				rts |= GetRoadTypeInfo(rvi->roadtype)->introduces_roadtypes;
+				rts.Set(GetRoadTypeInfo(rvi->roadtype)->introduces_roadtypes);
 			} else {
-				SetBit(rts, rvi->roadtype);
+				rts.Set(rvi->roadtype);
 			}
 		}
 	}
@@ -226,18 +225,18 @@ RoadTypes GetCompanyRoadTypes(CompanyID company, bool introduces)
  */
 RoadTypes GetRoadTypes(bool introduces)
 {
-	RoadTypes rts = ROADTYPES_NONE;
+	RoadTypes rts{};
 
 	for (const Engine *e : Engine::IterateType(VEH_ROAD)) {
 		const EngineInfo *ei = &e->info;
-		if (!HasBit(ei->climates, _settings_game.game_creation.landscape)) continue;
+		if (!ei->climates.Test(_settings_game.game_creation.landscape)) continue;
 
 		const RoadVehicleInfo *rvi = &e->u.road;
 		assert(rvi->roadtype < ROADTYPE_END);
 		if (introduces) {
-			rts |= GetRoadTypeInfo(rvi->roadtype)->introduces_roadtypes;
+			rts.Set(GetRoadTypeInfo(rvi->roadtype)->introduces_roadtypes);
 		} else {
-			SetBit(rts, rvi->roadtype);
+			rts.Set(rvi->roadtype);
 		}
 	}
 

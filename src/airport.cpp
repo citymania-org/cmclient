@@ -9,6 +9,7 @@
 
 #include "stdafx.h"
 #include "station_base.h"
+
 #include "table/strings.h"
 #include "table/airport_movement.h"
 #include "table/airporttile_ids.h"
@@ -35,7 +36,7 @@
  * @param short_strip Airport has a short land/take-off strip.
  */
 #define AIRPORT(name, num_helipads, short_strip) \
-	AIRPORT_GENERIC(name, _airport_terminal_ ## name, num_helipads, AirportFTAClass::ALL | (short_strip ? AirportFTAClass::SHORT_STRIP : (AirportFTAClass::Flags)0), 0)
+	AIRPORT_GENERIC(name, _airport_terminal_ ## name, num_helipads, AirportFTAClass::Flags({AirportFTAClass::Flag::Airplanes, AirportFTAClass::Flag::Helicopters}) | (short_strip ? AirportFTAClass::Flags{AirportFTAClass::Flag::ShortStrip} : AirportFTAClass::Flags{}), 0)
 
 /**
  * Define a heliport.
@@ -44,7 +45,7 @@
  * @param delta_z Height of the airport above the land.
  */
 #define HELIPORT(name, num_helipads, delta_z) \
-	AIRPORT_GENERIC(name, nullptr, num_helipads, AirportFTAClass::HELICOPTERS, delta_z)
+	AIRPORT_GENERIC(name, nullptr, num_helipads, AirportFTAClass::Flag::Helicopters, delta_z)
 
 AIRPORT(country, 0, true)
 AIRPORT(city, 0, false)
@@ -56,7 +57,7 @@ HELIPORT(helidepot, 1, 0)
 AIRPORT(intercontinental, 2, false)
 HELIPORT(helistation, 3, 0)
 HELIPORT(oilrig, 1, 54)
-AIRPORT_GENERIC(dummy, nullptr, 0, AirportFTAClass::ALL, 0)
+AIRPORT_GENERIC(dummy, nullptr, 0, AirportFTAClass::Flags({AirportFTAClass::Flag::Airplanes, AirportFTAClass::Flag::Helicopters}), 0)
 
 #undef HELIPORT
 #undef AIRPORT
@@ -66,7 +67,7 @@ AIRPORT_GENERIC(dummy, nullptr, 0, AirportFTAClass::ALL, 0)
 
 
 static uint16_t AirportGetNofElements(const AirportFTAbuildup *apFA);
-static AirportFTA *AirportBuildAutomata(uint nofelements, const AirportFTAbuildup *apFA);
+static void AirportBuildAutomata(std::vector<AirportFTA> &layout, uint8_t nofelements, const AirportFTAbuildup *apFA);
 
 
 /**
@@ -80,7 +81,7 @@ static AirportFTA *AirportBuildAutomata(uint nofelements, const AirportFTAbuildu
 AirportMovingData RotateAirportMovingData(const AirportMovingData *orig, Direction rotation, uint num_tiles_x, uint num_tiles_y)
 {
 	AirportMovingData amd;
-	amd.flag = orig->flag;
+	amd.flags = orig->flags;
 	amd.direction = ChangeDir(orig->direction, (DirDiff)rotation);
 	switch (rotation) {
 		case DIR_N:
@@ -126,20 +127,7 @@ AirportFTAClass::AirportFTAClass(
 	delta_z(delta_z_)
 {
 	/* Build the state machine itself */
-	this->layout = AirportBuildAutomata(this->nofelements, apFA);
-}
-
-AirportFTAClass::~AirportFTAClass()
-{
-	for (uint i = 0; i < nofelements; i++) {
-		AirportFTA *current = layout[i].next;
-		while (current != nullptr) {
-			AirportFTA *next = current->next;
-			free(current);
-			current = next;
-		}
-	}
-	free(layout);
+	AirportBuildAutomata(this->layout, this->nofelements, apFA);
 }
 
 /**
@@ -162,41 +150,32 @@ static uint16_t AirportGetNofElements(const AirportFTAbuildup *apFA)
 	return nofelements;
 }
 
+AirportFTA::AirportFTA(const AirportFTAbuildup &buildup) : blocks(buildup.blocks), position(buildup.position), next_position(buildup.next), heading(buildup.heading)
+{
+}
+
 /**
  * Construct the FTA given a description.
+ * @param layout The vector to write the automata to.
  * @param nofelements The number of elements in the FTA.
  * @param apFA The description of the FTA.
- * @return The FTA describing the airport.
  */
-static AirportFTA *AirportBuildAutomata(uint nofelements, const AirportFTAbuildup *apFA)
+static void AirportBuildAutomata(std::vector<AirportFTA> &layout, uint8_t nofelements, const AirportFTAbuildup *apFA)
 {
-	AirportFTA *FAutomata = MallocT<AirportFTA>(nofelements);
 	uint16_t internalcounter = 0;
 
+	layout.reserve(nofelements);
 	for (uint i = 0; i < nofelements; i++) {
-		AirportFTA *current = &FAutomata[i];
-		current->position      = apFA[internalcounter].position;
-		current->heading       = apFA[internalcounter].heading;
-		current->block         = apFA[internalcounter].block;
-		current->next_position = apFA[internalcounter].next;
+		AirportFTA *current = &layout.emplace_back(apFA[internalcounter]);
 
 		/* outgoing nodes from the same position, create linked list */
 		while (current->position == apFA[internalcounter + 1].position) {
-			AirportFTA *newNode = MallocT<AirportFTA>(1);
-
-			newNode->position      = apFA[internalcounter + 1].position;
-			newNode->heading       = apFA[internalcounter + 1].heading;
-			newNode->block         = apFA[internalcounter + 1].block;
-			newNode->next_position = apFA[internalcounter + 1].next;
-			/* create link */
-			current->next = newNode;
-			current = current->next;
+			current->next = std::make_unique<AirportFTA>(apFA[internalcounter + 1]);
+			current = current->next.get();
 			internalcounter++;
 		}
-		current->next = nullptr;
 		internalcounter++;
 	}
-	return FAutomata;
 }
 
 /**

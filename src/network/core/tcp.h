@@ -20,7 +20,7 @@
 #include <thread>
 
 /** The states of sending the packets. */
-enum SendPacketsState {
+enum SendPacketsState : uint8_t {
 	SPS_CLOSED,      ///< The connection got closed.
 	SPS_NONE_SENT,   ///< The buffer is still full, so no (parts of) packets could be sent.
 	SPS_PARTLY_SENT, ///< The packets are partly sent; there are more packets to be sent in the queue.
@@ -30,13 +30,13 @@ enum SendPacketsState {
 /** Base socket handler for all TCP sockets */
 class NetworkTCPSocketHandler : public NetworkSocketHandler {
 private:
-	std::deque<std::unique_ptr<Packet>> packet_queue; ///< Packets that are awaiting delivery. Cannot be std::queue as that does not have a clear() function.
-	std::unique_ptr<Packet> packet_recv; ///< Partially received packet
+	std::deque<std::unique_ptr<Packet>> packet_queue{}; ///< Packets that are awaiting delivery. Cannot be std::queue as that does not have a clear() function.
+	std::unique_ptr<Packet> packet_recv = nullptr; ///< Partially received packet
 
 	void EmptyPacketQueue();
 public:
-	SOCKET sock;              ///< The socket currently connected to
-	bool writable;            ///< Can we write to this socket?
+	SOCKET sock = INVALID_SOCKET; ///< The socket currently connected to
+	bool writable = false; ///< Can we write to this socket?
 
 	/**
 	 * Whether this socket is currently bound to a socket.
@@ -60,7 +60,11 @@ public:
 	 */
 	bool HasSendQueue() { return !this->packet_queue.empty(); }
 
-	NetworkTCPSocketHandler(SOCKET s = INVALID_SOCKET);
+	/**
+	 * Construct a socket handler for a TCP connection.
+	 * @param s The just opened TCP connection.
+	 */
+	NetworkTCPSocketHandler(SOCKET s = INVALID_SOCKET) : sock(s) {}
 	~NetworkTCPSocketHandler();
 };
 
@@ -76,7 +80,7 @@ private:
 	 * game-thread, and not at another random time where we might not have the
 	 * lock on the game-state.
 	 */
-	enum class Status {
+	enum class Status : uint8_t {
 		Init,       ///< TCPConnecter is created but resolving hasn't started.
 		Resolving,  ///< The hostname is being resolved (threaded).
 		Failure,    ///< Resolving failed.

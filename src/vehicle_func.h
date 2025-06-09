@@ -25,7 +25,7 @@
 #define IS_CUSTOM_FIRSTHEAD_SPRITE(x) (x == 0xFD)
 #define IS_CUSTOM_SECONDHEAD_SPRITE(x) (x == 0xFE)
 
-static const TimerGameEconomy::Date VEHICLE_PROFIT_MIN_AGE = CalendarTime::DAYS_IN_YEAR * 2; ///< Only vehicles older than this have a meaningful profit.
+static const TimerGameEconomy::Date VEHICLE_PROFIT_MIN_AGE{CalendarTime::DAYS_IN_YEAR * 2}; ///< Only vehicles older than this have a meaningful profit.
 static const Money VEHICLE_PROFIT_THRESHOLD = 10000;        ///< Threshold for a vehicle to be considered making good profit.
 
 /**
@@ -53,11 +53,11 @@ void VehicleLengthChanged(const Vehicle *u);
 void ResetVehicleHash();
 void ResetVehicleColourMap();
 
-uint8_t GetBestFittingSubType(Vehicle *v_from, Vehicle *v_for, CargoID dest_cargo_type);
+uint8_t GetBestFittingSubType(Vehicle *v_from, Vehicle *v_for, CargoType dest_cargo_type);
 
 void ViewportAddVehicles(DrawPixelInfo *dpi);
 
-void ShowNewGrfVehicleError(EngineID engine, StringID part1, StringID part2, GRFBugs bug_type, bool critical);
+void ShowNewGrfVehicleError(EngineID engine, StringID part1, StringID part2, GRFBug bug_type, bool critical);
 CommandCost TunnelBridgeIsFree(TileIndex tile, TileIndex endtile, const Vehicle *ignore = nullptr);
 
 void DecreaseVehicleValue(Vehicle *v);
@@ -111,6 +111,8 @@ SpriteID GetVehiclePalette(const Vehicle *v);
 
 extern const StringID _veh_build_msg_table[];
 extern const StringID _veh_sell_msg_table[];
+extern const StringID _veh_sell_all_msg_table[];
+extern const StringID _veh_autoreplace_msg_table[];
 extern const StringID _veh_refit_msg_table[];
 extern const StringID _send_to_depot_msg_table[];
 
@@ -133,6 +135,16 @@ inline StringID GetCmdSellVehMsg(VehicleType type)
 inline StringID GetCmdSellVehMsg(const BaseVehicle *v)
 {
 	return GetCmdSellVehMsg(v->type);
+}
+
+inline StringID GetCmdSellAllVehMsg(VehicleType type)
+{
+	return _veh_sell_all_msg_table[type];
+}
+
+inline StringID GetCmdAutoreplaceVehMsg(VehicleType type)
+{
+	return _veh_autoreplace_msg_table[type];
 }
 
 inline StringID GetCmdRefitVehMsg(VehicleType type)

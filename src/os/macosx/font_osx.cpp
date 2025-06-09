@@ -22,9 +22,9 @@
 
 #include "../../table/control_codes.h"
 
-#include "safeguards.h"
+#include "../../safeguards.h"
 
-bool SetFallbackFont(FontCacheSettings *settings, const std::string &language_isocode, int, MissingGlyphSearcher *callback)
+bool SetFallbackFont(FontCacheSettings *settings, const std::string &language_isocode, MissingGlyphSearcher *callback)
 {
 	/* Determine fallback font using CoreText. This uses the language isocode
 	 * to find a suitable font. CoreText is available from 10.5 onwards. */
@@ -231,7 +231,8 @@ const Sprite *CoreTextFontCache::InternalGetGlyph(GlyphID key, bool use_aa)
 	SpriteLoader::Sprite &sprite = spritecollection[ZOOM_LVL_MIN];
 	sprite.AllocateData(ZOOM_LVL_MIN, width * height);
 	sprite.type = SpriteType::Font;
-	sprite.colours = (use_aa ? SCC_PAL | SCC_ALPHA : SCC_PAL);
+	sprite.colours = SpriteComponent::Palette;
+	if (use_aa) sprite.colours.Set(SpriteComponent::Alpha);
 	sprite.width = width;
 	sprite.height = height;
 	sprite.x_offs = (int16_t)std::round(CGRectGetMinX(bounds));

@@ -36,7 +36,7 @@ enum Direction : uint8_t {
 };
 
 /** Allow incrementing of Direction variables */
-DECLARE_POSTFIX_INCREMENT(Direction)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(Direction)
 
 /**
  * Enumeration for the difference between two directions.
@@ -55,7 +55,7 @@ DECLARE_POSTFIX_INCREMENT(Direction)
  *       modulo DIR_END or use the #ChangeDirDiff(DirDiff, DirDiff) function.
  * @see ChangeDirDiff(DirDiff, DirDiff)
  */
-enum DirDiff {
+enum DirDiff : uint8_t {
 	DIRDIFF_SAME    = 0,    ///< Both directions faces to the same direction
 	DIRDIFF_45RIGHT = 1,    ///< Angle of 45 degrees right
 	DIRDIFF_90RIGHT = 2,    ///< Angle of 90 degrees right
@@ -79,7 +79,7 @@ enum DiagDirection : uint8_t {
 	DIAGDIR_END,            ///< Used for iterations
 	INVALID_DIAGDIR = 0xFF, ///< Flag for an invalid DiagDirection
 };
-DECLARE_POSTFIX_INCREMENT(DiagDirection)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(DiagDirection)
 DECLARE_ENUM_AS_ADDABLE(DiagDirection)
 
 /**
@@ -92,7 +92,7 @@ DECLARE_ENUM_AS_ADDABLE(DiagDirection)
  *
  * @see DirDiff
  */
-enum DiagDirDiff {
+enum DiagDirDiff : uint8_t {
 	DIAGDIRDIFF_BEGIN   = 0,        ///< Used for iterations
 	DIAGDIRDIFF_SAME    = 0,        ///< Same directions
 	DIAGDIRDIFF_90RIGHT = 1,        ///< 90 degrees right
@@ -102,7 +102,7 @@ enum DiagDirDiff {
 };
 
 /** Allow incrementing of DiagDirDiff variables */
-DECLARE_POSTFIX_INCREMENT(DiagDirDiff)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(DiagDirDiff)
 
 
 /**

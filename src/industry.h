@@ -20,10 +20,10 @@
 #include "timer/timer_game_economy.h"
 
 
-typedef Pool<Industry, IndustryID, 64, 64000> IndustryPool;
+typedef Pool<Industry, IndustryID, 64> IndustryPool;
 extern IndustryPool _industry_pool;
 
-static const TimerGameEconomy::Year PROCESSING_INDUSTRY_ABANDONMENT_YEARS = 5; ///< If a processing industry doesn't produce for this many consecutive economy years, it may close.
+static const TimerGameEconomy::Year PROCESSING_INDUSTRY_ABANDONMENT_YEARS{5}; ///< If a processing industry doesn't produce for this many consecutive economy years, it may close.
 
 /*
  * Production level maximum, minimum and default values.
@@ -39,23 +39,20 @@ static constexpr uint8_t PRODLEVEL_MAXIMUM = 0x80; ///< the industry is running 
  * Flags to control/override the behaviour of an industry.
  * These flags are controlled by game scripts.
  */
-enum IndustryControlFlags : uint8_t {
-	/** No flags in effect */
-	INDCTL_NONE                   = 0,
+enum class IndustryControlFlag : uint8_t {
 	/** When industry production change is evaluated, rolls to decrease are ignored. */
-	INDCTL_NO_PRODUCTION_DECREASE = 1 << 0,
+	NoProductionDecrease = 0,
 	/** When industry production change is evaluated, rolls to increase are ignored. */
-	INDCTL_NO_PRODUCTION_INCREASE = 1 << 1,
+	NoProductionIncrease = 1,
 	/**
 	 * Industry can not close regardless of production level or time since last delivery.
 	 * This does not prevent a closure already announced. */
-	INDCTL_NO_CLOSURE             = 1 << 2,
+	NoClosure = 2,
 	/** Indicates that the production level of the industry is externally controlled. */
-	INDCTL_EXTERNAL_PROD_LEVEL    = 1 << 3,
-	/** Mask of all flags set */
-	INDCTL_MASK = INDCTL_NO_PRODUCTION_DECREASE | INDCTL_NO_PRODUCTION_INCREASE | INDCTL_NO_CLOSURE | INDCTL_EXTERNAL_PROD_LEVEL,
+	ExternalProdLevel = 3,
+	End,
 };
-DECLARE_ENUM_AS_BIT_SET(IndustryControlFlags);
+using IndustryControlFlags = EnumBitSet<IndustryControlFlag, uint8_t, IndustryControlFlag::End>;
 
 static const int THIS_MONTH = 0;
 static const int LAST_MONTH = 1;
@@ -65,8 +62,8 @@ static const int LAST_MONTH = 1;
  */
 struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	struct ProducedHistory {
-		uint16_t production; ///< Total produced
-		uint16_t transported; ///< Total transported
+		uint16_t production = 0; ///< Total produced
+		uint16_t transported = 0; ///< Total transported
 
 		uint8_t PctTransported() const
 		{
@@ -76,51 +73,51 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	};
 
 	struct ProducedCargo {
-		CargoID cargo; ///< Cargo type
-		uint16_t waiting; ///< Amount of cargo produced
-		uint8_t rate; ///< Production rate
-		std::array<ProducedHistory, 25> history; ///< History of cargo produced and transported for this month and 24 previous months
+		CargoType cargo = 0; ///< Cargo type
+		uint16_t waiting = 0; ///< Amount of cargo produced
+		uint8_t rate = 0; ///< Production rate
+		std::array<ProducedHistory, 25> history{}; ///< History of cargo produced and transported for this month and 24 previous months
 	};
 
 	struct AcceptedCargo {
-		CargoID cargo; ///< Cargo type
-		uint16_t waiting; ///< Amount of cargo waiting to processed
-		TimerGameEconomy::Date last_accepted; ///< Last day cargo was accepted by this industry
+		CargoType cargo = 0; ///< Cargo type
+		uint16_t waiting = 0; ///< Amount of cargo waiting to processed
+		TimerGameEconomy::Date last_accepted{}; ///< Last day cargo was accepted by this industry
 	};
 
 	using ProducedCargoes = std::vector<ProducedCargo>;
 	using AcceptedCargoes = std::vector<AcceptedCargo>;
 
-	TileArea location;                                     ///< Location of the industry
-	Town *town;                                            ///< Nearest town
-	Station *neutral_station;                              ///< Associated neutral station
-	ProducedCargoes produced; ///< produced cargo slots
-	AcceptedCargoes accepted; ///< accepted cargo slots
-	uint8_t prod_level;                                       ///< general production level
-	uint16_t counter;                                        ///< used for animation and/or production (if available cargo)
+	TileArea location{INVALID_TILE, 0, 0}; ///< Location of the industry
+	Town *town = nullptr; ///< Nearest town
+	Station *neutral_station = nullptr; ///< Associated neutral station
+	ProducedCargoes produced{}; ///< produced cargo slots
+	AcceptedCargoes accepted{}; ///< accepted cargo slots
+	uint8_t prod_level = 0; ///< general production level
+	uint16_t counter = 0; ///< used for animation and/or production (if available cargo)
 
-	IndustryType type;             ///< type of industry.
-	Owner owner;                   ///< owner of the industry.  Which SHOULD always be (imho) OWNER_NONE
-	Colours random_colour;         ///< randomized colour of the industry, for display purpose
-	TimerGameEconomy::Year last_prod_year; ///< last economy year of production
-	uint8_t was_cargo_delivered;      ///< flag that indicate this has been the closest industry chosen for cargo delivery by a station. see DeliverGoodsToIndustry
-	IndustryControlFlags ctlflags; ///< flags overriding standard behaviours
+	IndustryType type = 0; ///< type of industry.
+	Owner owner = INVALID_OWNER; ///< owner of the industry.  Which SHOULD always be (imho) OWNER_NONE
+	Colours random_colour = COLOUR_BEGIN; ///< randomized colour of the industry, for display purpose
+	TimerGameEconomy::Year last_prod_year{}; ///< last economy year of production
+	uint8_t was_cargo_delivered = 0; ///< flag that indicate this has been the closest industry chosen for cargo delivery by a station. see DeliverGoodsToIndustry
+	IndustryControlFlags ctlflags{}; ///< flags overriding standard behaviours
 
-	PartOfSubsidy part_of_subsidy; ///< NOSAVE: is this industry a source/destination of a subsidy?
-	StationList stations_near;     ///< NOSAVE: List of nearby stations.
-	mutable std::string cached_name; ///< NOSAVE: Cache of the resolved name of the industry
+	PartsOfSubsidy part_of_subsidy{}; ///< NOSAVE: is this industry a source/destination of a subsidy?
+	StationList stations_near{}; ///< NOSAVE: List of nearby stations.
+	mutable std::string cached_name{}; ///< NOSAVE: Cache of the resolved name of the industry
 
-	Owner founder;                 ///< Founder of the industry
-	TimerGameCalendar::Date construction_date; ///< Date of the construction of the industry
-	uint8_t construction_type;       ///< Way the industry was constructed (@see IndustryConstructionType)
-	uint8_t selected_layout;          ///< Which tile layout was used when creating the industry
-	Owner exclusive_supplier;      ///< Which company has exclusive rights to deliver cargo (INVALID_OWNER = anyone)
-	Owner exclusive_consumer;      ///< Which company has exclusive rights to take cargo (INVALID_OWNER = anyone)
-	std::string text;              ///< General text with additional information.
+	Owner founder = INVALID_OWNER; ///< Founder of the industry
+	TimerGameCalendar::Date construction_date{}; ///< Date of the construction of the industry
+	uint8_t construction_type = 0; ///< Way the industry was constructed (@see IndustryConstructionType)
+	uint8_t selected_layout = 0; ///< Which tile layout was used when creating the industry
+	Owner exclusive_supplier = INVALID_OWNER; ///< Which company has exclusive rights to deliver cargo (INVALID_OWNER = anyone)
+	Owner exclusive_consumer = INVALID_OWNER; ///< Which company has exclusive rights to take cargo (INVALID_OWNER = anyone)
+	EncodedString text{}; ///< General text with additional information.
 
-	uint16_t random;                 ///< Random value used for randomisation of all kinds of things
+	uint16_t random = 0; ///< Random value used for randomisation of all kinds of things
 
-	PersistentStorage *psa;        ///< Persistent storage for NewGRF industries.
+	PersistentStorage *psa = nullptr; ///< Persistent storage for NewGRF industries.
 
 	Industry(TileIndex tile = INVALID_TILE) : location(tile, 0, 0) {}
 	~Industry();
@@ -161,45 +158,45 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 
 	/**
 	 * Get produced cargo slot for a specific cargo type.
-	 * @param cargo CargoID to find.
+	 * @param cargo CargoType to find.
 	 * @return Iterator pointing to produced cargo slot if it exists, or the end iterator.
 	 */
-	inline ProducedCargoes::iterator GetCargoProduced(CargoID cargo)
+	inline ProducedCargoes::iterator GetCargoProduced(CargoType cargo)
 	{
-		if (!IsValidCargoID(cargo)) return std::end(this->produced);
+		if (!IsValidCargoType(cargo)) return std::end(this->produced);
 		return std::ranges::find(this->produced, cargo, &ProducedCargo::cargo);
 	}
 
 	/**
 	 * Get produced cargo slot for a specific cargo type (const-variant).
-	 * @param cargo CargoID to find.
+	 * @param cargo CargoType to find.
 	 * @return Iterator pointing to produced cargo slot if it exists, or the end iterator.
 	 */
-	inline ProducedCargoes::const_iterator GetCargoProduced(CargoID cargo) const
+	inline ProducedCargoes::const_iterator GetCargoProduced(CargoType cargo) const
 	{
-		if (!IsValidCargoID(cargo)) return std::end(this->produced);
+		if (!IsValidCargoType(cargo)) return std::end(this->produced);
 		return std::ranges::find(this->produced, cargo, &ProducedCargo::cargo);
 	}
 
 	/**
 	 * Get accepted cargo slot for a specific cargo type.
-	 * @param cargo CargoID to find.
+	 * @param cargo CargoType to find.
 	 * @return Iterator pointing to accepted cargo slot if it exists, or the end iterator.
 	 */
-	inline AcceptedCargoes::iterator GetCargoAccepted(CargoID cargo)
+	inline AcceptedCargoes::iterator GetCargoAccepted(CargoType cargo)
 	{
-		if (!IsValidCargoID(cargo)) return std::end(this->accepted);
+		if (!IsValidCargoType(cargo)) return std::end(this->accepted);
 		return std::ranges::find(this->accepted, cargo, &AcceptedCargo::cargo);
 	}
 
 	/**
 	 * Get accepted cargo slot for a specific cargo type (const-variant).
-	 * @param cargo CargoID to find.
+	 * @param cargo CargoType to find.
 	 * @return Iterator pointing to accepted cargo slot if it exists, or the end iterator.
 	 */
-	inline AcceptedCargoes::const_iterator GetCargoAccepted(CargoID cargo) const
+	inline AcceptedCargoes::const_iterator GetCargoAccepted(CargoType cargo) const
 	{
-		if (!IsValidCargoID(cargo)) return std::end(this->accepted);
+		if (!IsValidCargoType(cargo)) return std::end(this->accepted);
 		return std::ranges::find(this->accepted, cargo, &AcceptedCargo::cargo);
 	}
 
@@ -207,27 +204,27 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	 * Test if this industry accepts any cargo.
 	 * @return true iff the industry accepts any cargo.
 	 */
-	bool IsCargoAccepted() const { return std::any_of(std::begin(this->accepted), std::end(this->accepted), [](const auto &a) { return IsValidCargoID(a.cargo); }); }
+	bool IsCargoAccepted() const { return std::any_of(std::begin(this->accepted), std::end(this->accepted), [](const auto &a) { return IsValidCargoType(a.cargo); }); }
 
 	/**
 	 * Test if this industry produces any cargo.
 	 * @return true iff the industry produces any cargo.
 	 */
-	bool IsCargoProduced() const { return std::any_of(std::begin(this->produced), std::end(this->produced), [](const auto &p) { return IsValidCargoID(p.cargo); }); }
+	bool IsCargoProduced() const { return std::any_of(std::begin(this->produced), std::end(this->produced), [](const auto &p) { return IsValidCargoType(p.cargo); }); }
 
 	/**
 	 * Test if this industry accepts a specific cargo.
 	 * @param cargo Cargo type to test.
 	 * @return true iff the industry accepts the given cargo type.
 	 */
-	bool IsCargoAccepted(CargoID cargo) const { return std::any_of(std::begin(this->accepted), std::end(this->accepted), [&cargo](const auto &a) { return a.cargo == cargo; }); }
+	bool IsCargoAccepted(CargoType cargo) const { return std::any_of(std::begin(this->accepted), std::end(this->accepted), [&cargo](const auto &a) { return a.cargo == cargo; }); }
 
 	/**
 	 * Test if this industry produces a specific cargo.
 	 * @param cargo Cargo type to test.
 	 * @return true iff the industry produces the given cargo types.
 	 */
-	bool IsCargoProduced(CargoID cargo) const { return std::any_of(std::begin(this->produced), std::end(this->produced), [&cargo](const auto &p) { return p.cargo == cargo; }); }
+	bool IsCargoProduced(CargoType cargo) const { return std::any_of(std::begin(this->produced), std::end(this->produced), [&cargo](const auto &p) { return p.cargo == cargo; }); }
 
 	/**
 	 * Get the industry of the given tile
@@ -306,7 +303,7 @@ extern IndustryBuildData _industry_builder;
 
 
 /** Special values for the industry list window for the data parameter of #InvalidateWindowData. */
-enum IndustryDirectoryInvalidateWindowData {
+enum IndustryDirectoryInvalidateWindowData : uint8_t {
 	IDIWD_FORCE_REBUILD,
 	IDIWD_PRODUCTION_CHANGE,
 	IDIWD_FORCE_RESORT,

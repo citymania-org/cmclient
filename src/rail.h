@@ -14,39 +14,30 @@
 #include "track_type.h"
 #include "gfx_type.h"
 #include "core/bitmath_func.hpp"
+#include "core/enum_type.hpp"
 #include "economy_func.h"
 #include "slope_type.h"
 #include "strings_type.h"
 #include "timer/timer_game_calendar.h"
 #include "signal_type.h"
 #include "settings_type.h"
+#include "newgrf_badge_type.h"
 
 /** Railtype flag bit numbers. */
-enum RailTypeFlag {
-	RTF_CATENARY          = 0,                           ///< Bit number for drawing a catenary.
-	RTF_NO_LEVEL_CROSSING = 1,                           ///< Bit number for disallowing level crossings.
-	RTF_HIDDEN            = 2,                           ///< Bit number for hiding from selection.
-	RTF_NO_SPRITE_COMBINE = 3,                           ///< Bit number for using non-combined junctions.
-	RTF_ALLOW_90DEG       = 4,                           ///< Bit number for always allowed 90 degree turns, regardless of setting.
-	RTF_DISALLOW_90DEG    = 5,                           ///< Bit number for never allowed 90 degree turns, regardless of setting.
+enum class RailTypeFlag : uint8_t {
+	Catenary        = 0, ///< Bit number for drawing a catenary.
+	NoLevelCrossing = 1, ///< Bit number for disallowing level crossings.
+	Hidden          = 2, ///< Bit number for hiding from selection.
+	NoSpriteCombine = 3, ///< Bit number for using non-combined junctions.
+	Allow90Deg      = 4, ///< Bit number for always allowed 90 degree turns, regardless of setting.
+	Disallow90Deg   = 5, ///< Bit number for never allowed 90 degree turns, regardless of setting.
 };
-
-/** Railtype flags. */
-enum RailTypeFlags : uint8_t {
-	RTFB_NONE              = 0,                          ///< All flags cleared.
-	RTFB_CATENARY          = 1 << RTF_CATENARY,          ///< Value for drawing a catenary.
-	RTFB_NO_LEVEL_CROSSING = 1 << RTF_NO_LEVEL_CROSSING, ///< Value for disallowing level crossings.
-	RTFB_HIDDEN            = 1 << RTF_HIDDEN,            ///< Value for hiding from selection.
-	RTFB_NO_SPRITE_COMBINE = 1 << RTF_NO_SPRITE_COMBINE, ///< Value for using non-combined junctions.
-	RTFB_ALLOW_90DEG       = 1 << RTF_ALLOW_90DEG,       ///< Value for always allowed 90 degree turns, regardless of setting.
-	RTFB_DISALLOW_90DEG    = 1 << RTF_DISALLOW_90DEG,    ///< Value for never allowed 90 degree turns, regardless of setting.
-};
-DECLARE_ENUM_AS_BIT_SET(RailTypeFlags)
+using RailTypeFlags = EnumBitSet<RailTypeFlag, uint8_t>;
 
 struct SpriteGroup;
 
 /** Sprite groups for a railtype. */
-enum RailTypeSpriteGroup {
+enum RailTypeSpriteGroup : uint8_t {
 	RTSG_CURSORS,     ///< Cursor and toolbar icon images
 	RTSG_OVERLAY,     ///< Images for overlaying track
 	RTSG_GROUND,      ///< Main group of ground images
@@ -67,7 +58,7 @@ enum RailTypeSpriteGroup {
  * Offsets for sprites within an overlay/underlay set.
  * These are the same for overlay and underlay sprites.
  */
-enum RailTrackOffset {
+enum RailTrackOffset : uint8_t {
 	RTO_X,            ///< Piece of rail in X direction
 	RTO_Y,            ///< Piece of rail in Y direction
 	RTO_N,            ///< Piece of rail in northern corner
@@ -89,7 +80,7 @@ enum RailTrackOffset {
 /**
  * Offsets for sprites within a bridge surface overlay set.
  */
-enum RailTrackBridgeOffset {
+enum RailTrackBridgeOffset : uint8_t {
 	RTBO_X,     ///< Piece of rail in X direction
 	RTBO_Y,     ///< Piece of rail in Y direction
 	RTBO_SLOPE, ///< Sloped rail pieces, in order NE, SE, SW, NW
@@ -99,7 +90,7 @@ enum RailTrackBridgeOffset {
  * Offsets from base sprite for fence sprites. These are in the order of
  *  the sprites in the original data files.
  */
-enum RailFenceOffset {
+enum RailFenceOffset : uint8_t {
 	RFO_FLAT_X_NW,     //!< Slope FLAT, Track X,     Fence NW
 	RFO_FLAT_Y_NE,     //!< Slope FLAT, Track Y,     Fence NE
 	RFO_FLAT_LEFT,     //!< Slope FLAT, Track LEFT,  Fence E
@@ -280,6 +271,8 @@ public:
 	 */
 	const SpriteGroup *group[RTSG_END];
 
+	std::vector<BadgeID> badges;
+
 	inline bool UsesOverlay() const
 	{
 		return this->group[RTSG_GROUND] != nullptr;
@@ -312,6 +305,19 @@ inline const RailTypeInfo *GetRailTypeInfo(RailType railtype)
 }
 
 /**
+ * Returns the railtype for a Railtype information.
+ * @param rti Pointer to static RailTypeInfo
+ * @return Railtype in static railtype definitions
+ */
+inline RailType GetRailTypeInfoIndex(const RailTypeInfo *rti)
+{
+	extern RailTypeInfo _railtypes[RAILTYPE_END];
+	size_t index = rti - _railtypes;
+	assert(index < RAILTYPE_END && rti == _railtypes + index);
+	return static_cast<RailType>(index);
+}
+
+/**
  * Checks if an engine of the given RailType can drive on a tile with a given
  * RailType. This would normally just be an equality check, but for electric
  * rails (which also support non-electric engines).
@@ -321,7 +327,7 @@ inline const RailTypeInfo *GetRailTypeInfo(RailType railtype)
  */
 inline bool IsCompatibleRail(RailType enginetype, RailType tiletype)
 {
-	return HasBit(GetRailTypeInfo(enginetype)->compatible_railtypes, tiletype);
+	return GetRailTypeInfo(enginetype)->compatible_railtypes.Test(tiletype);
 }
 
 /**
@@ -334,7 +340,7 @@ inline bool IsCompatibleRail(RailType enginetype, RailType tiletype)
  */
 inline bool HasPowerOnRail(RailType enginetype, RailType tiletype)
 {
-	return HasBit(GetRailTypeInfo(enginetype)->powered_railtypes, tiletype);
+	return GetRailTypeInfo(enginetype)->powered_railtypes.Test(tiletype);
 }
 
 /**
@@ -344,7 +350,7 @@ inline bool HasPowerOnRail(RailType enginetype, RailType tiletype)
  */
 inline bool RailNoLevelCrossings(RailType rt)
 {
-	return HasBit(GetRailTypeInfo(rt)->flags, RTF_NO_LEVEL_CROSSING);
+	return GetRailTypeInfo(rt)->flags.Test(RailTypeFlag::NoLevelCrossing);
 }
 
 /**
@@ -361,8 +367,8 @@ inline bool Rail90DegTurnDisallowed(RailType rt1, RailType rt2, bool def = _sett
 	const RailTypeInfo *rti1 = GetRailTypeInfo(rt1);
 	const RailTypeInfo *rti2 = GetRailTypeInfo(rt2);
 
-	bool rt1_90deg = HasBit(rti1->flags, RTF_DISALLOW_90DEG) || (!HasBit(rti1->flags, RTF_ALLOW_90DEG) && def);
-	bool rt2_90deg = HasBit(rti2->flags, RTF_DISALLOW_90DEG) || (!HasBit(rti2->flags, RTF_ALLOW_90DEG) && def);
+	bool rt1_90deg = rti1->flags.Test(RailTypeFlag::Disallow90Deg) || (!rti1->flags.Test(RailTypeFlag::Allow90Deg) && def);
+	bool rt2_90deg = rti2->flags.Test(RailTypeFlag::Disallow90Deg) || (!rti2->flags.Test(RailTypeFlag::Allow90Deg) && def);
 
 	return rt1_90deg || rt2_90deg;
 }

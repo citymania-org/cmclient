@@ -19,7 +19,7 @@
 
 
 /** Special values for save-load window for the data parameter of #InvalidateWindowData. */
-enum SaveLoadInvalidateWindowData {
+enum SaveLoadInvalidateWindowData : uint8_t {
 	SLIWD_RESCAN_FILES,          ///< Rescan all files (when changed directory, ...)
 	SLIWD_SELECTION_CHANGES,     ///< File selection has changed (user click, ...)
 	SLIWD_FILTER_CHANGES,        ///< The filename filter has changed (via the editbox)
@@ -31,26 +31,25 @@ using CompanyPropertiesMap = std::map<uint, std::unique_ptr<CompanyProperties>>;
  * Container for loading in mode SL_LOAD_CHECK.
  */
 struct LoadCheckData {
-	bool checkable;     ///< True if the savegame could be checked by SL_LOAD_CHECK. (Old savegames are not checkable.)
-	StringID error;     ///< Error message from loading. INVALID_STRING_ID if no error.
-	std::string error_msg; ///< Data to pass to SetDParamStr when displaying #error.
+	bool checkable = false; ///< True if the savegame could be checked by SL_LOAD_CHECK. (Old savegames are not checkable.)
+	StringID error{}; ///< Error message from loading. INVALID_STRING_ID if no error.
+	std::string error_msg{}; ///< Data to pass to string parameters when displaying #error.
 
-	uint32_t map_size_x, map_size_y;
-	TimerGameCalendar::Date current_date;
+	uint32_t map_size_x = 0;
+	uint32_t map_size_y = 0;
+	TimerGameCalendar::Date current_date{};
 
-	GameSettings settings;
+	LandscapeType landscape{}; ///< Landscape type.
+	TimerGameCalendar::Year starting_year{}; ///< Starting date.
 
-	CompanyPropertiesMap companies;               ///< Company information.
+	CompanyPropertiesMap companies{}; ///< Company information.
 
-	GRFConfig *grfconfig;                         ///< NewGrf configuration from save.
-	GRFListCompatibility grf_compatibility;       ///< Summary state of NewGrfs, whether missing files or only compatible found.
+	GRFConfigList grfconfig{}; ///< NewGrf configuration from save.
+	GRFListCompatibility grf_compatibility = GLC_NOT_FOUND; ///< Summary state of NewGrfs, whether missing files or only compatible found.
 
-	Gamelog gamelog; ///< Gamelog actions
+	Gamelog gamelog{}; ///< Gamelog actions
 
-	LoadCheckData() : grfconfig(nullptr),
-			grf_compatibility(GLC_NOT_FOUND)
-	{
-	}
+	LoadCheckData() {}
 
 	/**
 	 * Check whether loading the game resulted in errors.
@@ -67,7 +66,7 @@ struct LoadCheckData {
 	 */
 	bool HasNewGrfs()
 	{
-		return this->checkable && this->error == INVALID_STRING_ID && this->grfconfig != nullptr;
+		return this->checkable && this->error == INVALID_STRING_ID && !this->grfconfig.empty();
 	}
 
 	void Clear();
@@ -91,7 +90,7 @@ public:
 	const FiosItem *FindItem(const std::string_view file);
 };
 
-enum SortingBits {
+enum SortingBits : uint8_t {
 	SORT_ASCENDING  = 0,
 	SORT_DESCENDING = 1,
 	SORT_BY_DATE    = 0,
@@ -122,7 +121,7 @@ std::tuple<FiosType, std::string> FiosGetScenarioListCallback(SaveLoadOperation 
 std::tuple<FiosType, std::string> FiosGetHeightmapListCallback(SaveLoadOperation fop, const std::string &file, const std::string_view ext);
 
 void ScanScenarios();
-const char *FindScenario(const ContentInfo *ci, bool md5sum);
+const char *FindScenario(const ContentInfo &ci, bool md5sum);
 
 /**
  * A savegame name automatically numbered.
