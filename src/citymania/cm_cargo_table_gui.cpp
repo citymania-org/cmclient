@@ -12,7 +12,7 @@
 #include "../textbuf_gui.h"
 #include "../cargotype.h"
 #include "../zoom_func.h"
-#include "../widgets/dropdown_type.h"
+#include "../dropdown_type.h"
 
 #include "../widgets/cargo_table_widget.h"
 
