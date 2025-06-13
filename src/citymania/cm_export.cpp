@@ -271,7 +271,7 @@ void WriteEngineInfo(JsonWriter &j) {
             j.begin_dict_with_key("rail");
             JKV(j, rvi->image_index);
             JKV(j, rvi->railveh_type);
-            JKV(j, rvi->railtype);
+            JKV(j, rvi->railtypes.base());
             JKV(j, rvi->max_speed);
             JKV(j, rvi->power);
             JKV(j, rvi->weight);
