@@ -12,8 +12,7 @@
 
 #include "command_type.h"
 #include "economy_type.h"
-
-enum PauseMode : uint8_t;
+#include "openttd.h"
 
 enum class LoanCommand : uint8_t {
 	Interval,
@@ -21,18 +20,18 @@ enum class LoanCommand : uint8_t {
 	Amount,
 };
 
-CommandCost CmdMoneyCheat(DoCommandFlag flags, Money amount);
-CommandCost CmdChangeBankBalance(DoCommandFlag flags, TileIndex tile, Money delta, CompanyID company, ExpensesType expenses_type);
-CommandCost CmdIncreaseLoan(DoCommandFlag flags, LoanCommand cmd, Money amount);
-CommandCost CmdDecreaseLoan(DoCommandFlag flags, LoanCommand cmd, Money amount);
-CommandCost CmdSetCompanyMaxLoan(DoCommandFlag flags, CompanyID company, Money amount);
-CommandCost CmdPause(DoCommandFlag flags, PauseMode mode, bool pause);
+CommandCost CmdMoneyCheat(DoCommandFlags flags, Money amount);
+CommandCost CmdChangeBankBalance(DoCommandFlags flags, TileIndex tile, Money delta, CompanyID company, ExpensesType expenses_type);
+CommandCost CmdIncreaseLoan(DoCommandFlags flags, LoanCommand cmd, Money amount);
+CommandCost CmdDecreaseLoan(DoCommandFlags flags, LoanCommand cmd, Money amount);
+CommandCost CmdSetCompanyMaxLoan(DoCommandFlags flags, CompanyID company, Money amount);
+CommandCost CmdPause(DoCommandFlags flags, PauseMode mode, bool pause);
 
-DEF_CMD_TRAIT(CMD_MONEY_CHEAT,          CmdMoneyCheat,        CMD_OFFLINE,             CMDT_CHEAT)
-DEF_CMD_TRAIT(CMD_CHANGE_BANK_BALANCE,  CmdChangeBankBalance, CMD_DEITY,               CMDT_MONEY_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_INCREASE_LOAN,        CmdIncreaseLoan,      0,                       CMDT_MONEY_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_DECREASE_LOAN,        CmdDecreaseLoan,      0,                       CMDT_MONEY_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_SET_COMPANY_MAX_LOAN, CmdSetCompanyMaxLoan, CMD_DEITY,               CMDT_MONEY_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_PAUSE,                CmdPause,             CMD_SERVER | CMD_NO_EST, CMDT_SERVER_SETTING)
+DEF_CMD_TRAIT(CMD_MONEY_CHEAT,          CmdMoneyCheat,        CommandFlags({CommandFlag::Offline, CommandFlag::NoEst}), CMDT_CHEAT)
+DEF_CMD_TRAIT(CMD_CHANGE_BANK_BALANCE,  CmdChangeBankBalance, CommandFlag::Deity,               CMDT_MONEY_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_INCREASE_LOAN,        CmdIncreaseLoan,      {},                       CMDT_MONEY_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_DECREASE_LOAN,        CmdDecreaseLoan,      {},                       CMDT_MONEY_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_SET_COMPANY_MAX_LOAN, CmdSetCompanyMaxLoan, CommandFlag::Deity,               CMDT_MONEY_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_PAUSE,                CmdPause,             CommandFlags({CommandFlag::Server, CommandFlag::NoEst}), CMDT_SERVER_SETTING)
 
 #endif /* MISC_CMD_H */

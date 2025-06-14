@@ -17,12 +17,12 @@
 #include "safeguards.h"
 
 /**
- * Pack a VehicleListIdentifier in a single uint32.
- * @return The packed identifier.
+ * Pack a VehicleListIdentifier in 32 bits so it can be used as unique WindowNumber.
+ * @return The window number.
  */
-uint32_t VehicleListIdentifier::Pack() const
+WindowNumber VehicleListIdentifier::ToWindowNumber() const
 {
-	uint8_t c = this->company == OWNER_NONE ? 0xF : (uint8_t)this->company;
+	uint8_t c = this->company == OWNER_NONE ? 0xF : this->company.base();
 	assert(c             < (1 <<  4));
 	assert(this->vtype   < (1 <<  2));
 	assert(this->index   < (1 << 20));
@@ -30,34 +30,6 @@ uint32_t VehicleListIdentifier::Pack() const
 	static_assert(VLT_END <= (1 <<  3));
 
 	return c << 28 | this->type << 23 | this->vtype << 26 | this->index;
-}
-
-/**
- * Unpack a VehicleListIdentifier from a single uint32.
- * @param data The data to unpack.
- * @return true iff the data was valid (enough).
- */
-bool VehicleListIdentifier::UnpackIfValid(uint32_t data)
-{
-	uint8_t c        = GB(data, 28, 4);
-	this->company = c == 0xF ? OWNER_NONE : (CompanyID)c;
-	this->type    = (VehicleListType)GB(data, 23, 3);
-	this->vtype   = (VehicleType)GB(data, 26, 2);
-	this->index   = GB(data, 0, 20);
-
-	return this->type < VLT_END;
-}
-
-/**
- * Decode a packed vehicle list identifier into a new one.
- * @param data The data to unpack.
- */
-/* static */ VehicleListIdentifier VehicleListIdentifier::UnPack(uint32_t data)
-{
-	VehicleListIdentifier result;
-	[[maybe_unused]] bool ret = result.UnpackIfValid(data);
-	assert(ret);
-	return result;
 }
 
 /** Data for building a depot vehicle list. */
@@ -124,14 +96,14 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 		case VL_STATION_LIST:
 			FindVehiclesWithOrder(
 				[&vli](const Vehicle *v) { return v->type == vli.vtype; },
-				[&vli](const Order *order) { return (order->IsType(OT_GOTO_STATION) || order->IsType(OT_GOTO_WAYPOINT) || order->IsType(OT_IMPLICIT)) && order->GetDestination() == vli.index; },
+				[&vli](const Order *order) { return (order->IsType(OT_GOTO_STATION) || order->IsType(OT_GOTO_WAYPOINT) || order->IsType(OT_IMPLICIT)) && order->GetDestination() == vli.ToStationID(); },
 				[&list](const Vehicle *v) { list->push_back(v); }
 			);
 			break;
 
 		case VL_SHARED_ORDERS: {
 			/* Add all vehicles from this vehicle's shared order list */
-			const Vehicle *v = Vehicle::GetIfValid(vli.index);
+			const Vehicle *v = Vehicle::GetIfValid(vli.ToVehicleID());
 			if (v == nullptr || v->type != vli.vtype || !v->IsPrimaryVehicle()) return false;
 
 			for (; v != nullptr; v = v->NextShared()) {
@@ -141,10 +113,10 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 		}
 
 		case VL_GROUP_LIST:
-			if (vli.index != ALL_GROUP) {
+			if (vli.ToGroupID() != ALL_GROUP) {
 				for (const Vehicle *v : Vehicle::Iterate()) {
 					if (v->type == vli.vtype && v->IsPrimaryVehicle() &&
-							v->owner == vli.company && GroupIsInGroup(v->group_id, vli.index)) {
+							v->owner == vli.company && GroupIsInGroup(v->group_id, vli.ToGroupID())) {
 						list->push_back(v);
 					}
 				}
@@ -163,7 +135,7 @@ bool GenerateVehicleSortList(VehicleList *list, const VehicleListIdentifier &vli
 		case VL_DEPOT_LIST:
 			FindVehiclesWithOrder(
 				[&vli](const Vehicle *v) { return v->type == vli.vtype; },
-				[&vli](const Order *order) { return order->IsType(OT_GOTO_DEPOT) && !(order->GetDepotActionType() & ODATFB_NEAREST_DEPOT) && order->GetDestination() == vli.index; },
+				[&vli](const Order *order) { return order->IsType(OT_GOTO_DEPOT) && !(order->GetDepotActionType() & ODATFB_NEAREST_DEPOT) && order->GetDestination() == vli.ToDestinationID(); },
 				[&list](const Vehicle *v) { list->push_back(v); }
 			);
 			break;

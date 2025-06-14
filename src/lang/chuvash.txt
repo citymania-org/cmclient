@@ -225,7 +225,7 @@ STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}Аэро
 
 # Extra tooltips for the scenario editor toolbar
 STR_SCENEDIT_TOOLBAR_OPENTTD                                    :{YELLOW}OpenTTD
-STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Объект вырӑнӗ
+STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP                       :{BLACK}Объект вырӑнӗ
 
 # Scenario editor file menu
 ###length 7
@@ -234,7 +234,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Вӗҫле
 
 
 # Settings menu
-###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Вӑййи майлаштару
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF майлаштару
 
@@ -462,7 +461,7 @@ STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Пӗлт
 
 
 
-###length 44
+###length 45
 STR_GAME_OPTIONS_CURRENCY_RUR                                   :Вырӑсла тенкӗ
 
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Хӑй управ
@@ -789,6 +788,8 @@ STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :Тулли
 
 ###setting-zero-is-special
 
+###length 2
+
 ###length 3
 
 
@@ -804,6 +805,8 @@ STR_CONFIG_SETTING_TOWN_LAYOUT_2X2_GRID                         :2x2
 STR_CONFIG_SETTING_TOWN_LAYOUT_3X3_GRID                         :3x3
 
 
+
+###length 3
 
 ###length 3
 
@@ -1013,7 +1016,7 @@ STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Вырн
 ###length 23
 
 # Network related errors
-STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
+STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 ###length 12
 
@@ -1057,6 +1060,7 @@ STR_CONTENT_DETAIL_VERSION                                      :{SILVER}Вер�
 # Rail waypoint construction window
 
 # Rail station construction window
+
 
 
 
@@ -1553,12 +1557,11 @@ STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
 ###length 3
 ###next-name-looks-similar
 
-STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
 
 
-STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION}
 
 
 
@@ -1570,7 +1573,6 @@ STR_ORDER_GO_TO_STATION                                         :{STRING} {STATI
 
 
 # Time table window
-
 
 
 
@@ -1710,6 +1712,10 @@ STR_ERROR_OBJECT_IN_THE_WAY                                     :{WHITE}Ҫул �
 
 ###length VEHICLE_TYPES
 
+###length VEHICLE_TYPES
+
+###length VEHICLE_TYPES
+
 
 
 
@@ -1790,18 +1796,7 @@ STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STR
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
-STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
-STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
-STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
-
-STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
-STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
-
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
-STR_VIEWPORT_STATION_TINY                                       :{TINY_FONT}{STATION}
-
-STR_VIEWPORT_WAYPOINT                                           :{WAYPOINT}
-STR_VIEWPORT_WAYPOINT_TINY                                      :{TINY_FONT}{WAYPOINT}
 
 # Simple strings to get specific types of data
 STR_COMPANY_NAME                                                :{COMPANY}
@@ -1852,3 +1847,4 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+

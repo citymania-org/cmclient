@@ -15,16 +15,17 @@
 #include "station_type.h"
 #include "order_type.h"
 #include "cargo_type.h"
+#include "source_type.h"
 #include "vehicle_type.h"
 #include "core/multimap.hpp"
 #include "saveload/saveload.h"
 
 /** Unique identifier for a single cargo packet. */
-typedef uint32_t CargoPacketID;
+using CargoPacketID = PoolID<uint32_t, struct CargoPacketIDTag, 0xFFF000, 0xFFFFFF>;
 struct CargoPacket;
 
 /** Type of the pool for cargo packets for a little over 16 million packets. */
-typedef Pool<CargoPacket, CargoPacketID, 1024, 0xFFF000, PT_NORMAL, true, false> CargoPacketPool;
+using CargoPacketPool = Pool<CargoPacket, CargoPacketID, 1024, PoolType::Normal, true>;
 /** The actual pool with cargo packets. */
 extern CargoPacketPool _cargopacket_pool;
 
@@ -53,15 +54,14 @@ private:
 	TileIndex source_xy = INVALID_TILE; ///< The origin of the cargo.
 	Vector travelled{0, 0}; ///< If cargo is in station: the vector from the unload tile to the source tile. If in vehicle: an intermediate value.
 
-	SourceID source_id = INVALID_SOURCE; ///< Index of industry/town/HQ, INVALID_SOURCE if unknown/invalid.
-	SourceType source_type = SourceType::Industry; ///< Type of \c source_id.
+	Source source{Source::Invalid, SourceType::Industry}; ///< Source of the cargo
 
 #ifdef WITH_ASSERT
 	bool in_vehicle = false; ///< NOSAVE: Whether this cargo is in a vehicle or not.
 #endif /* WITH_ASSERT */
 
-	StationID first_station = INVALID_STATION; ///< The station where the cargo came from first.
-	StationID next_hop = INVALID_STATION; ///< Station where the cargo wants to go next.
+	StationID first_station = StationID::Invalid(); ///< The station where the cargo came from first.
+	StationID next_hop = StationID::Invalid(); ///< Station where the cargo wants to go next.
 
 	/** The CargoList caches, thus needs to know about it. */
 	template <class Tinst, class Tcont> friend class CargoList;
@@ -74,7 +74,7 @@ public:
 	static const uint16_t MAX_COUNT = UINT16_MAX;
 
 	CargoPacket();
-	CargoPacket(StationID first_station, uint16_t count, SourceType source_type, SourceID source_id);
+	CargoPacket(StationID first_station, uint16_t count, Source source);
 	CargoPacket(uint16_t count, uint16_t periods_in_transit, StationID first_station, TileIndex source_xy, Money feeder_share);
 	CargoPacket(uint16_t count, Money feeder_share, CargoPacket &original);
 
@@ -184,7 +184,7 @@ public:
 	/**
 	 * Gets the number of cargo aging periods this cargo has been in transit.
 	 * By default a period is 2.5 days (CARGO_AGING_TICKS = 185 ticks), however
-	 * vehicle NewGRFs can overide the length of the cargo aging period. The
+	 * vehicle NewGRFs can override the length of the cargo aging period. The
 	 * value is capped at UINT16_MAX.
 	 * @return Length this cargo has been in transit.
 	 */
@@ -194,21 +194,12 @@ public:
 	}
 
 	/**
-	 * Gets the type of the cargo's source. industry, town or head quarter.
-	 * @return Source type.
+	 * Gets the source of the packet for subsidy purposes.
+	 * @return The source.
 	 */
-	inline SourceType GetSourceType() const
+	inline Source GetSource() const
 	{
-		return this->source_type;
-	}
-
-	/**
-	 * Gets the ID of the cargo's source. An IndustryID, TownID or CompanyID.
-	 * @return Source ID.
-	 */
-	inline SourceID GetSourceID() const
-	{
-		return this->source_id;
+		return this->source;
 	}
 
 	/**
@@ -270,7 +261,7 @@ public:
 		return this->next_hop;
 	}
 
-	static void InvalidateAllFrom(SourceType src_type, SourceID src);
+	static void InvalidateAllFrom(Source src);
 	static void InvalidateAllFrom(StationID sid);
 	static void AfterLoad();
 };
@@ -292,7 +283,7 @@ public:
 	typedef typename Tcont::const_reverse_iterator ConstReverseIterator;
 
 	/** Kind of actions that could be done with packets on move. */
-	enum MoveToAction {
+	enum MoveToAction : uint8_t {
 		MTA_BEGIN = 0,
 		MTA_TRANSFER = 0, ///< Transfer the cargo to the station.
 		MTA_DELIVER,      ///< Deliver the cargo to some town or industry.
@@ -303,10 +294,10 @@ public:
 	};
 
 protected:
-	uint count;                   ///< Cache for the number of cargo entities.
-	uint64_t cargo_periods_in_transit; ///< Cache for the sum of number of cargo aging periods in transit of each entity; comparable to man-hours.
+	uint count = 0; ///< Cache for the number of cargo entities.
+	uint64_t cargo_periods_in_transit = 0; ///< Cache for the sum of number of cargo aging periods in transit of each entity; comparable to man-hours.
 
-	Tcont packets;              ///< The cargo packets in this list.
+	Tcont packets{}; ///< The cargo packets in this list.
 
 	void AddToCache(const CargoPacket *cp);
 
@@ -356,10 +347,10 @@ protected:
 	Money feeder_share;                     ///< Cache for the feeder share.
 	uint action_counts[NUM_MOVE_TO_ACTION]; ///< Counts of cargo to be transferred, delivered, kept and loaded.
 
-	template<class Taction>
+	template <class Taction>
 	void ShiftCargo(Taction action);
 
-	template<class Taction>
+	template <class Taction>
 	void PopCargo(Taction action);
 
 	/**
@@ -393,7 +384,7 @@ public:
 	friend class CargoShift;
 	friend class CargoTransfer;
 	friend class CargoDelivery;
-	template<class Tsource>
+	template <class Tsource>
 	friend class CargoRemoval;
 	friend class CargoReturn;
 	friend class VehicleCargoReroute;
@@ -404,7 +395,7 @@ public:
 	 */
 	inline StationID GetFirstStation() const
 	{
-		return this->count == 0 ? INVALID_STATION : this->packets.front()->first_station;
+		return this->count == 0 ? StationID::Invalid() : this->packets.front()->first_station;
 	}
 
 	/**
@@ -478,7 +469,7 @@ public:
 
 	void InvalidateCache();
 
-	bool Stage(bool accepted, StationID current_station, StationIDStack next_station, uint8_t order_flags, const GoodsEntry *ge, CargoID cargo, CargoPayment *payment, TileIndex current_tile);
+	bool Stage(bool accepted, StationID current_station, StationIDStack next_station, uint8_t order_flags, const GoodsEntry *ge, CargoType cargo, CargoPayment *payment, TileIndex current_tile);
 
 	/**
 	 * Marks all cargo in the vehicle as to be kept. This is mostly useful for
@@ -495,10 +486,10 @@ public:
 	 * amount of cargo to be moved. Second parameter is destination (if
 	 * applicable), return value is amount of cargo actually moved. */
 
-	template<MoveToAction Tfrom, MoveToAction Tto>
+	template <MoveToAction Tfrom, MoveToAction Tto>
 	uint Reassign(uint max_move);
 	uint Return(uint max_move, StationCargoList *dest, StationID next_station, TileIndex current_tile);
-	uint Unload(uint max_move, StationCargoList *dest, CargoID cargo, CargoPayment *payment, TileIndex current_tile);
+	uint Unload(uint max_move, StationCargoList *dest, CargoType cargo, CargoPayment *payment, TileIndex current_tile);
 	uint Shift(uint max_move, VehicleCargoList *dest);
 	uint Truncate(uint max_move = UINT_MAX);
 	uint Reroute(uint max_move, VehicleCargoList *dest, StationID avoid, StationID avoid2, const GoodsEntry *ge);
@@ -514,9 +505,8 @@ public:
 	{
 		return cp1->source_xy == cp2->source_xy &&
 				cp1->periods_in_transit == cp2->periods_in_transit &&
-				cp1->source_type == cp2->source_type &&
 				cp1->first_station == cp2->first_station &&
-				cp1->source_id == cp2->source_id;
+				cp1->source == cp2->source;
 	}
 };
 
@@ -541,18 +531,18 @@ public:
 
 	friend class CargoLoad;
 	friend class CargoTransfer;
-	template<class Tsource>
+	template <class Tsource>
 	friend class CargoRemoval;
 	friend class CargoReservation;
 	friend class CargoReturn;
 	friend class StationCargoReroute;
 
-	static void InvalidateAllFrom(SourceType src_type, SourceID src);
+	static void InvalidateAllFrom(Source src);
 
-	template<class Taction>
+	template <class Taction>
 	bool ShiftCargo(Taction &action, StationID next);
 
-	template<class Taction>
+	template <class Taction>
 	uint ShiftCargo(Taction action, StationIDStack next, bool include_invalid);
 
 	void Append(CargoPacket *cp, StationID next);
@@ -565,10 +555,10 @@ public:
 	inline bool HasCargoFor(StationIDStack next) const
 	{
 		while (!next.IsEmpty()) {
-			if (this->packets.find(next.Pop()) != this->packets.end()) return true;
+			if (this->packets.find(StationID{next.Pop()}) != this->packets.end()) return true;
 		}
-		/* Packets for INVALID_STATION can go anywhere. */
-		return this->packets.find(INVALID_STATION) != this->packets.end();
+		/* Packets for StationID::Invalid() can go anywhere. */
+		return this->packets.find(StationID::Invalid()) != this->packets.end();
 	}
 
 	/**
@@ -577,7 +567,7 @@ public:
 	 */
 	inline StationID GetFirstStation() const
 	{
-		return this->count == 0 ? INVALID_STATION : this->packets.begin()->second.front()->first_station;
+		return this->count == 0 ? StationID::Invalid() : this->packets.begin()->second.front()->first_station;
 	}
 
 	/**
@@ -629,9 +619,8 @@ public:
 	{
 		return cp1->source_xy == cp2->source_xy &&
 				cp1->periods_in_transit == cp2->periods_in_transit &&
-				cp1->source_type == cp2->source_type &&
 				cp1->first_station == cp2->first_station &&
-				cp1->source_id == cp2->source_id;
+				cp1->source == cp2->source;
 	}
 };
 

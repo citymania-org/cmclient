@@ -15,24 +15,24 @@
 #include "story_type.h"
 #include "vehicle_type.h"
 
-std::tuple<CommandCost, StoryPageID> CmdCreateStoryPage(DoCommandFlag flags, CompanyID company, const std::string &text);
-std::tuple<CommandCost, StoryPageElementID> CmdCreateStoryPageElement(DoCommandFlag flags, TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32_t reference, const std::string &text);
-CommandCost CmdUpdateStoryPageElement(DoCommandFlag flags, TileIndex tile, StoryPageElementID page_element_id, uint32_t reference, const std::string &text);
-CommandCost CmdSetStoryPageTitle(DoCommandFlag flags, StoryPageID page_id, const std::string &text);
-CommandCost CmdSetStoryPageDate(DoCommandFlag flags, StoryPageID page_id, TimerGameCalendar::Date date);
-CommandCost CmdShowStoryPage(DoCommandFlag flags, StoryPageID page_id);
-CommandCost CmdRemoveStoryPage(DoCommandFlag flags, StoryPageID page_id);
-CommandCost CmdRemoveStoryPageElement(DoCommandFlag flags, StoryPageElementID page_element_id);
-CommandCost CmdStoryPageButton(DoCommandFlag flags, TileIndex tile, StoryPageElementID page_element_id, VehicleID reference);
+std::tuple<CommandCost, StoryPageID> CmdCreateStoryPage(DoCommandFlags flags, CompanyID company, const EncodedString &text);
+std::tuple<CommandCost, StoryPageElementID> CmdCreateStoryPageElement(DoCommandFlags flags, TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32_t reference, const EncodedString &text);
+CommandCost CmdUpdateStoryPageElement(DoCommandFlags flags, TileIndex tile, StoryPageElementID page_element_id, uint32_t reference, const EncodedString &text);
+CommandCost CmdSetStoryPageTitle(DoCommandFlags flags, StoryPageID page_id, const EncodedString &text);
+CommandCost CmdSetStoryPageDate(DoCommandFlags flags, StoryPageID page_id, TimerGameCalendar::Date date);
+CommandCost CmdShowStoryPage(DoCommandFlags flags, StoryPageID page_id);
+CommandCost CmdRemoveStoryPage(DoCommandFlags flags, StoryPageID page_id);
+CommandCost CmdRemoveStoryPageElement(DoCommandFlags flags, StoryPageElementID page_element_id);
+CommandCost CmdStoryPageButton(DoCommandFlags flags, TileIndex tile, StoryPageElementID page_element_id, VehicleID reference);
 
-DEF_CMD_TRAIT(CMD_CREATE_STORY_PAGE,         CmdCreateStoryPage,        CMD_DEITY | CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_CREATE_STORY_PAGE_ELEMENT, CmdCreateStoryPageElement, CMD_DEITY | CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_UPDATE_STORY_PAGE_ELEMENT, CmdUpdateStoryPageElement, CMD_DEITY | CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_SET_STORY_PAGE_TITLE,      CmdSetStoryPageTitle,      CMD_DEITY | CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_SET_STORY_PAGE_DATE,       CmdSetStoryPageDate,       CMD_DEITY,                CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_SHOW_STORY_PAGE,           CmdShowStoryPage,          CMD_DEITY,                CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_REMOVE_STORY_PAGE,         CmdRemoveStoryPage,        CMD_DEITY,                CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_REMOVE_STORY_PAGE_ELEMENT, CmdRemoveStoryPageElement, CMD_DEITY,                CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_STORY_PAGE_BUTTON,         CmdStoryPageButton,        CMD_DEITY,                CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_CREATE_STORY_PAGE,         CmdCreateStoryPage,        CommandFlags({CommandFlag::Deity, CommandFlag::StrCtrl}), CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_CREATE_STORY_PAGE_ELEMENT, CmdCreateStoryPageElement, CommandFlags({CommandFlag::Deity, CommandFlag::StrCtrl}), CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_UPDATE_STORY_PAGE_ELEMENT, CmdUpdateStoryPageElement, CommandFlags({CommandFlag::Deity, CommandFlag::StrCtrl}), CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_SET_STORY_PAGE_TITLE,      CmdSetStoryPageTitle,      CommandFlags({CommandFlag::Deity, CommandFlag::StrCtrl}), CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_SET_STORY_PAGE_DATE,       CmdSetStoryPageDate,       CommandFlag::Deity, CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_SHOW_STORY_PAGE,           CmdShowStoryPage,          CommandFlag::Deity, CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_REMOVE_STORY_PAGE,         CmdRemoveStoryPage,        CommandFlag::Deity, CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_REMOVE_STORY_PAGE_ELEMENT, CmdRemoveStoryPageElement, CommandFlag::Deity, CMDT_OTHER_MANAGEMENT)
+DEF_CMD_TRAIT(CMD_STORY_PAGE_BUTTON,         CmdStoryPageButton,        CommandFlag::Deity, CMDT_OTHER_MANAGEMENT)
 
 #endif /* STORY_CMD_H */

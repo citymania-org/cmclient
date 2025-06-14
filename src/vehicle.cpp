@@ -191,7 +191,7 @@ bool Vehicle::NeedsServicing() const
 {
 	/* Stopped or crashed vehicles will not move, as such making unmovable
 	 * vehicles to go for service is lame. */
-	if (this->vehstatus & (VS_STOPPED | VS_CRASHED)) return false;
+	if (this->vehstatus.Any({VehState::Stopped, VehState::Crashed})) return false;
 
 	/* Are we ready for the next service cycle? */
 	const Company *c = Company::Get(this->owner);
@@ -227,7 +227,7 @@ bool Vehicle::NeedsServicing() const
 		EngineID new_engine = EngineReplacementForCompany(c, v->engine_type, v->group_id, &replace_when_old);
 
 		/* Check engine availability */
-		if (new_engine == INVALID_ENGINE || !HasBit(Engine::Get(new_engine)->company_avail, v->owner)) continue;
+		if (new_engine == EngineID::Invalid() || !Engine::Get(new_engine)->company_avail.Test(v->owner)) continue;
 		/* Is the vehicle old if we are not always replacing? */
 		if (replace_when_old && !v->NeedsAutorenewing(c, false)) continue;
 
@@ -236,7 +236,7 @@ bool Vehicle::NeedsServicing() const
 		GetArticulatedRefitMasks(new_engine, true, &union_mask, &available_cargo_types);
 		/* Is there anything to refit? */
 		if (union_mask != 0) {
-			CargoID cargo_type;
+			CargoType cargo_type;
 			CargoTypes cargo_mask = GetCargoTypesOfArticulatedVehicle(v, &cargo_type);
 			if (!HasAtMostOneBit(cargo_mask)) {
 				CargoTypes new_engine_default_cargoes = GetCargoTypesOfArticulatedParts(new_engine);
@@ -247,7 +247,7 @@ bool Vehicle::NeedsServicing() const
 				/* engine_type is already a mixed cargo type which matches the incoming vehicle by default, no refit required */
 			} else {
 				/* Did the old vehicle carry anything? */
-				if (IsValidCargoID(cargo_type)) {
+				if (IsValidCargoType(cargo_type)) {
 					/* We can't refit the vehicle to carry the cargo we want */
 					if (!HasBit(available_cargo_types, cargo_type)) continue;
 				}
@@ -279,17 +279,17 @@ bool Vehicle::NeedsAutomaticServicing() const
 
 uint Vehicle::Crash(bool)
 {
-	assert((this->vehstatus & VS_CRASHED) == 0);
+	assert(!this->vehstatus.Test(VehState::Crashed));
 	assert(this->Previous() == nullptr); // IsPrimaryVehicle fails for free-wagon-chains
 
 	uint pass = 0;
 	/* Stop the vehicle. */
-	if (this->IsPrimaryVehicle()) this->vehstatus |= VS_STOPPED;
+	if (this->IsPrimaryVehicle()) this->vehstatus.Set(VehState::Stopped);
 	/* crash all wagons, and count passengers */
 	for (Vehicle *v = this; v != nullptr; v = v->Next()) {
 		/* We do not transfer reserver cargo back, so TotalCount() instead of StoredCount() */
-		if (IsCargoInClass(v->cargo_type, CC_PASSENGERS)) pass += v->cargo.TotalCount();
-		v->vehstatus |= VS_CRASHED;
+		if (IsCargoInClass(v->cargo_type, CargoClass::Passengers)) pass += v->cargo.TotalCount();
+		v->vehstatus.Set(VehState::Crashed);
 		v->MarkAllViewportsDirty();
 	}
 
@@ -314,7 +314,7 @@ uint Vehicle::Crash(bool)
  * @param bug_type Flag to check and set in grfconfig
  * @param critical Shall the "OpenTTD might crash"-message be shown when the player tries to unpause?
  */
-void ShowNewGrfVehicleError(EngineID engine, StringID part1, StringID part2, GRFBugs bug_type, bool critical)
+void ShowNewGrfVehicleError(EngineID engine, StringID part1, StringID part2, GRFBug bug_type, bool critical)
 {
 	const Engine *e = Engine::Get(engine);
 	GRFConfig *grfconfig = GetGRFConfig(e->GetGRFID());
@@ -322,20 +322,17 @@ void ShowNewGrfVehicleError(EngineID engine, StringID part1, StringID part2, GRF
 	/* Missing GRF. Nothing useful can be done in this situation. */
 	if (grfconfig == nullptr) return;
 
-	if (!HasBit(grfconfig->grf_bugs, bug_type)) {
-		SetBit(grfconfig->grf_bugs, bug_type);
-		SetDParamStr(0, grfconfig->GetName());
-		SetDParam(1, engine);
-		ShowErrorMessage(part1, part2, WL_CRITICAL);
-		if (!_networking) Command<CMD_PAUSE>::Do(DC_EXEC, critical ? PM_PAUSED_ERROR : PM_PAUSED_NORMAL, true);
+	if (!grfconfig->grf_bugs.Test(bug_type)) {
+		grfconfig->grf_bugs.Set(bug_type);
+		ShowErrorMessage(GetEncodedString(part1, grfconfig->GetName()),
+			GetEncodedString(part2, std::monostate{}, engine), WL_CRITICAL);
+		if (!_networking) Command<CMD_PAUSE>::Do(DoCommandFlag::Execute, critical ? PauseMode::Error : PauseMode::Normal, true);
 	}
 
 	/* debug output */
-	SetDParamStr(0, grfconfig->GetName());
-	Debug(grf, 0, "{}", StrMakeValid(GetString(part1)));
+	Debug(grf, 0, "{}", StrMakeValid(GetString(part1, grfconfig->GetName())));
 
-	SetDParam(1, engine);
-	Debug(grf, 0, "{}", StrMakeValid(GetString(part2)));
+	Debug(grf, 0, "{}", StrMakeValid(GetString(part2, std::monostate{}, engine)));
 }
 
 /**
@@ -349,8 +346,8 @@ void VehicleLengthChanged(const Vehicle *u)
 	const Engine *engine = u->GetEngine();
 	uint32_t grfid = engine->grf_prop.grfid;
 	GRFConfig *grfconfig = GetGRFConfig(grfid);
-	if (_gamelog.GRFBugReverse(grfid, engine->grf_prop.local_id) || !HasBit(grfconfig->grf_bugs, GBUG_VEH_LENGTH)) {
-		ShowNewGrfVehicleError(u->engine_type, STR_NEWGRF_BROKEN, STR_NEWGRF_BROKEN_VEHICLE_LENGTH, GBUG_VEH_LENGTH, true);
+	if (_gamelog.GRFBugReverse(grfid, engine->grf_prop.local_id) || !grfconfig->grf_bugs.Test(GRFBug::VehLength)) {
+		ShowNewGrfVehicleError(u->engine_type, STR_NEWGRF_BROKEN, STR_NEWGRF_BROKEN_VEHICLE_LENGTH, GRFBug::VehLength, true);
 	}
 }
 
@@ -368,8 +365,8 @@ Vehicle::Vehicle(VehicleType type)
 	this->first              = this;
 	this->colourmap          = PAL_NONE;
 	this->cargo_age_counter  = 1;
-	this->last_station_visited = INVALID_STATION;
-	this->last_loading_station = INVALID_STATION;
+	this->last_station_visited = StationID::Invalid();
+	this->last_loading_station = StationID::Invalid();
 }
 
 /* Size of the hash, 6 = 64 x 64, 7 = 128 x 128. Larger sizes will (in theory) reduce hash
@@ -384,7 +381,7 @@ const int TOTAL_HASH_MASK = TOTAL_HASH_SIZE - 1;
  * Profiling results show that 0 is fastest. */
 const int HASH_RES = 0;
 
-static Vehicle *_vehicle_tile_hash[TOTAL_HASH_SIZE];
+static std::array<Vehicle *, TOTAL_HASH_SIZE> _vehicle_tile_hash{};
 
 static Vehicle *VehicleFromTileHash(int xl, int yl, int xu, int yu, void *data, VehicleFromPosProc *proc, bool find_first)
 {
@@ -649,7 +646,7 @@ static void UpdateVehicleTileHash(Vehicle *v, bool remove)
 	v->hash_tile_current = new_hash;
 }
 
-static Vehicle *_vehicle_viewport_hash[1 << (GEN_HASHX_BITS + GEN_HASHY_BITS)];
+static std::array<Vehicle *, 1 << (GEN_HASHX_BITS + GEN_HASHY_BITS)> _vehicle_viewport_hash{};
 
 static void UpdateVehicleViewportHash(Vehicle *v, int x, int y, int old_x, int old_y)
 {
@@ -678,8 +675,8 @@ static void UpdateVehicleViewportHash(Vehicle *v, int x, int y, int old_x, int o
 void ResetVehicleHash()
 {
 	for (Vehicle *v : Vehicle::Iterate()) { v->hash_tile_current = nullptr; }
-	memset(_vehicle_viewport_hash, 0, sizeof(_vehicle_viewport_hash));
-	memset(_vehicle_tile_hash, 0, sizeof(_vehicle_tile_hash));
+	_vehicle_viewport_hash.fill(nullptr);
+	_vehicle_tile_hash.fill(nullptr);
 }
 
 void ResetVehicleColourMap()
@@ -772,7 +769,7 @@ uint32_t Vehicle::GetGRFID() const
 /**
  * Shift all dates by given interval.
  * This is useful if the date has been modified with the cheat menu.
- * @param interval Number of days to be added or substracted.
+ * @param interval Number of days to be added or subtracted.
  */
 void Vehicle::ShiftDates(TimerGameEconomy::Date interval)
 {
@@ -792,22 +789,22 @@ void Vehicle::HandlePathfindingResult(bool path_found)
 {
 	if (path_found) {
 		/* Route found, is the vehicle marked with "lost" flag? */
-		if (!HasBit(this->vehicle_flags, VF_PATHFINDER_LOST)) return;
+		if (!this->vehicle_flags.Test(VehicleFlag::PathfinderLost)) return;
 
 		/* Clear the flag as the PF's problem was solved. */
-		ClrBit(this->vehicle_flags, VF_PATHFINDER_LOST);
+		this->vehicle_flags.Reset(VehicleFlag::PathfinderLost);
 		SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
 		InvalidateWindowClassesData(GetWindowClassForVehicleType(this->type));
 		/* Delete the news item. */
-		DeleteVehicleNews(this->index, STR_NEWS_VEHICLE_IS_LOST);
+		DeleteVehicleNews(this->index, AdviceType::VehicleLost);
 		return;
 	}
 
 	/* Were we already lost? */
-	if (HasBit(this->vehicle_flags, VF_PATHFINDER_LOST)) return;
+	if (this->vehicle_flags.Test(VehicleFlag::PathfinderLost)) return;
 
 	/* It is first time the problem occurred, set the "lost" flag. */
-	SetBit(this->vehicle_flags, VF_PATHFINDER_LOST);
+	this->vehicle_flags.Set(VehicleFlag::PathfinderLost);
 	SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
 	InvalidateWindowClassesData(GetWindowClassForVehicleType(this->type));
 
@@ -817,8 +814,7 @@ void Vehicle::HandlePathfindingResult(bool path_found)
 	/* Notify user about the event. */
 	AI::NewEvent(this->owner, new ScriptEventVehicleLost(this->index));
 	if (_settings_client.gui.lost_vehicle_warn && this->owner == _local_company) {
-		SetDParam(0, this->index);
-		AddVehicleAdviceNewsItem(STR_NEWS_VEHICLE_IS_LOST, this->index);
+		AddVehicleAdviceNewsItem(AdviceType::VehicleLost, GetEncodedString(STR_NEWS_VEHICLE_IS_LOST, this->index), this->index);
 	}
 }
 
@@ -832,7 +828,7 @@ void Vehicle::PreDestructor()
 		st->loading_vehicles.remove(this);
 
 		HideFillingPercent(&this->fill_percent_te_id);
-		this->CancelReservation(INVALID_STATION, st);
+		this->CancelReservation(StationID::Invalid(), st);
 		delete this->cargo_payment;
 		assert(this->cargo_payment == nullptr); // cleared by ~CargoPayment
 	}
@@ -852,20 +848,20 @@ void Vehicle::PreDestructor()
 		Aircraft *a = Aircraft::From(this);
 		Station *st = GetTargetAirportIfValid(a);
 		if (st != nullptr) {
-			const AirportFTA *layout = st->airport.GetFTA()->layout;
-			CLRBITS(st->airport.flags, layout[a->previous_pos].block | layout[a->pos].block);
+			const auto &layout = st->airport.GetFTA()->layout;
+			st->airport.blocks.Reset(layout[a->previous_pos].blocks | layout[a->pos].blocks);
 		}
 	}
 
 
 	if (this->type == VEH_ROAD && this->IsPrimaryVehicle()) {
 		RoadVehicle *v = RoadVehicle::From(this);
-		if (!(v->vehstatus & VS_CRASHED) && IsInsideMM(v->state, RVSB_IN_DT_ROAD_STOP, RVSB_IN_DT_ROAD_STOP_END)) {
+		if (!v->vehstatus.Test(VehState::Crashed) && IsInsideMM(v->state, RVSB_IN_DT_ROAD_STOP, RVSB_IN_DT_ROAD_STOP_END)) {
 			/* Leave the drive through roadstop, when you have not already left it. */
 			RoadStop::GetByTile(v->tile, GetRoadStopType(v->tile))->Leave(v);
 		}
 
-		if (v->disaster_vehicle != INVALID_VEHICLE) ReleaseDisasterVehicle(v->disaster_vehicle);
+		if (v->disaster_vehicle != VehicleID::Invalid()) ReleaseDisasterVehicle(v->disaster_vehicle);
 	}
 
 	if (this->Previous() == nullptr) {
@@ -899,7 +895,7 @@ Vehicle::~Vehicle()
 
 	/* sometimes, eg. for disaster vehicles, when company bankrupts, when removing crashed/flooded vehicles,
 	 * it may happen that vehicle chain is deleted when visible */
-	if (!(this->vehstatus & VS_HIDDEN)) this->MarkAllViewportsDirty();
+	if (!this->vehstatus.Test(VehState::Hidden)) this->MarkAllViewportsDirty();
 
 	Vehicle *v = this->Next();
 	this->SetNext(nullptr);
@@ -909,7 +905,7 @@ Vehicle::~Vehicle()
 	UpdateVehicleTileHash(this, true);
 	UpdateVehicleViewportHash(this, INVALID_COORD, 0, this->sprite_cache.old_coord.left, this->sprite_cache.old_coord.top);
 	if (this->type != VEH_EFFECT) {
-		DeleteVehicleNews(this->index, INVALID_STRING_ID);
+		DeleteVehicleNews(this->index);
 		DeleteNewGRFInspectWindow(GetGrfSpecFeature(this->type), this->index);
 	}
 }
@@ -921,14 +917,14 @@ Vehicle::~Vehicle()
 void VehicleEnteredDepotThisTick(Vehicle *v)
 {
 	/* Vehicle should stop in the depot if it was in 'stopping' state */
-	_vehicles_to_autoreplace[v->index] = !(v->vehstatus & VS_STOPPED);
+	_vehicles_to_autoreplace[v->index] = !v->vehstatus.Test(VehState::Stopped);
 
 	/* We ALWAYS set the stopped state. Even when the vehicle does not plan on
 	 * stopping in the depot, so we stop it to ensure that it will not reserve
 	 * the path out of the depot before we might autoreplace it to a different
 	 * engine. The new engine would not own the reserved path we store that we
 	 * stopped the vehicle, so autoreplace can start it again */
-	v->vehstatus |= VS_STOPPED;
+	v->vehstatus.Set(VehState::Stopped);
 }
 
 /**
@@ -997,7 +993,7 @@ void CallVehicleTicks()
 	PerformanceAccumulator::Reset(PFE_GL_AIRCRAFT);
 
 	for (Vehicle *v : Vehicle::Iterate()) {
-		[[maybe_unused]] size_t vehicle_index = v->index;
+		[[maybe_unused]] VehicleID vehicle_index = v->index;
 
 		/* Vehicle could be deleted in this tick */
 		if (!v->Tick()) {
@@ -1025,13 +1021,13 @@ void CallVehicleTicks()
 				}
 
 				/* Do not play any sound when crashed */
-				if (front->vehstatus & VS_CRASHED) continue;
+				if (front->vehstatus.Test(VehState::Crashed)) continue;
 
 				/* Do not play any sound when in depot or tunnel */
-				if (v->vehstatus & VS_HIDDEN) continue;
+				if (v->vehstatus.Test(VehState::Hidden)) continue;
 
 				/* Do not play any sound when stopped */
-				if ((front->vehstatus & VS_STOPPED) && (front->type != VEH_TRAIN || front->cur_speed == 0)) continue;
+				if (front->vehstatus.Test(VehState::Stopped) && (front->type != VEH_TRAIN || front->cur_speed == 0)) continue;
 
 				/* Update motion counter for animation purposes. */
 				v->motion_counter += front->cur_speed;
@@ -1060,7 +1056,7 @@ void CallVehicleTicks()
 				/* Play an alternating running sound every 16 ticks */
 				if (GB(v->tick_counter, 0, 4) == 0) {
 					/* Play running sound when speed > 0 and not braking */
-					bool running = (front->cur_speed > 0) && !(front->vehstatus & (VS_STOPPED | VS_TRAIN_SLOWING));
+					bool running = (front->cur_speed > 0) && !front->vehstatus.Any({VehState::Stopped, VehState::TrainSlowing});
 					PlayVehicleSound(v, running ? VSE_RUNNING_16 : VSE_STOPPED_16);
 				}
 
@@ -1078,7 +1074,7 @@ void CallVehicleTicks()
 		/* Start vehicle if we stopped them in VehicleEnteredDepotThisTick()
 		 * We need to stop them between VehicleEnteredDepotThisTick() and here or we risk that
 		 * they are already leaving the depot again before being replaced. */
-		if (it.second) v->vehstatus &= ~VS_STOPPED;
+		if (it.second) v->vehstatus.Reset(VehState::Stopped);
 
 		/* Store the position of the effect as the vehicle pointer will become invalid later */
 		int x = v->x_pos;
@@ -1087,7 +1083,7 @@ void CallVehicleTicks()
 
 		const Company *c = Company::Get(_current_company);
 		SubtractMoneyFromCompany(CommandCost(EXPENSES_NEW_VEHICLES, (Money)c->settings.engine_renew_money));
-		CommandCost res = Command<CMD_AUTOREPLACE_VEHICLE>::Do(DC_EXEC, v->index);
+		CommandCost res = Command<CMD_AUTOREPLACE_VEHICLE>::Do(DoCommandFlag::Execute, v->index);
 		SubtractMoneyFromCompany(CommandCost(EXPENSES_NEW_VEHICLES, -(Money)c->settings.engine_renew_money));
 
 		if (!IsLocalCompany()) continue;
@@ -1102,16 +1098,14 @@ void CallVehicleTicks()
 
 		if (error_message == STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY) error_message = STR_ERROR_AUTOREPLACE_MONEY_LIMIT;
 
-		StringID message;
+		EncodedString headline;
 		if (error_message == STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT) {
-			message = error_message;
+			headline = GetEncodedString(error_message, v->index);
 		} else {
-			message = STR_NEWS_VEHICLE_AUTORENEW_FAILED;
+			headline = GetEncodedString(STR_NEWS_VEHICLE_AUTORENEW_FAILED, v->index, error_message, std::monostate{});
 		}
 
-		SetDParam(0, v->index);
-		SetDParam(1, error_message);
-		AddVehicleAdviceNewsItem(message, v->index);
+		AddVehicleAdviceNewsItem(AdviceType::AutorenewFailed, std::move(headline), v->index);
 	}
 
 	cur_company.Restore();
@@ -1125,10 +1119,10 @@ static void DoDrawVehicle(const Vehicle *v)
 {
 	PaletteID pal = PAL_NONE;
 
-	if (v->vehstatus & VS_DEFPAL) pal = (v->vehstatus & VS_CRASHED) ? PALETTE_CRASH : GetVehiclePalette(v);
+	if (v->vehstatus.Test(VehState::DefaultPalette)) pal = v->vehstatus.Test(VehState::Crashed) ? PALETTE_CRASH : GetVehiclePalette(v);
 
 	/* Check whether the vehicle shall be transparent due to the game state */
-	bool shadowed = (v->vehstatus & VS_SHADOW) != 0;
+	bool shadowed = v->vehstatus.Test(VehState::Shadow);
 
 	if (v->type == VEH_EFFECT) {
 		/* Check whether the vehicle shall be transparent/invisible due to GUI settings.
@@ -1140,7 +1134,7 @@ static void DoDrawVehicle(const Vehicle *v)
 	StartSpriteCombine();
 	for (uint i = 0; i < v->sprite_cache.sprite_seq.count; ++i) {
 		PaletteID pal2 = v->sprite_cache.sprite_seq.seq[i].pal;
-		if (!pal2 || (v->vehstatus & VS_CRASHED)) pal2 = pal;
+		if (!pal2 || v->vehstatus.Test(VehState::Crashed)) pal2 = pal;
 		AddSortableSpriteToDraw(v->sprite_cache.sprite_seq.seq[i].sprite, pal2, v->x_pos + v->x_offs, v->y_pos + v->y_offs,
 			v->x_extent, v->y_extent, v->z_extent, v->z_pos, shadowed, v->x_bb_offs, v->y_bb_offs);
 	}
@@ -1191,7 +1185,7 @@ void ViewportAddVehicles(DrawPixelInfo *dpi)
 
 			while (v != nullptr) {
 
-				if (!(v->vehstatus & VS_HIDDEN) &&
+				if (!v->vehstatus.Test(VehState::Hidden) &&
 					l <= v->coord.right + xb &&
 					t <= v->coord.bottom + yb &&
 					r >= v->coord.left - xb &&
@@ -1246,15 +1240,17 @@ void ViewportAddVehicles(DrawPixelInfo *dpi)
  * @param y  Y coordinate in the viewport.
  * @return Closest vehicle, or \c nullptr if none found.
  */
-Vehicle *CheckClickOnVehicle(const Viewport *vp, int x, int y)
+Vehicle *CheckClickOnVehicle(const Viewport &vp, int x, int y)
 {
 	Vehicle *found = nullptr;
 	uint dist, best_dist = UINT_MAX;
 
-	if ((uint)(x -= vp->left) >= (uint)vp->width || (uint)(y -= vp->top) >= (uint)vp->height) return nullptr;
+	x -= vp.left;
+	y -= vp.top;
+	if (!IsInsideMM(x, 0, vp.width) || !IsInsideMM(y, 0, vp.height)) return nullptr;
 
-	x = ScaleByZoom(x, vp->zoom) + vp->virtual_left;
-	y = ScaleByZoom(y, vp->zoom) + vp->virtual_top;
+	x = ScaleByZoom(x, vp.zoom) + vp.virtual_left;
+	y = ScaleByZoom(y, vp.zoom) + vp.virtual_top;
 
 	/* Border size of MAX_VEHICLE_PIXEL_xy */
 	const int xb = MAX_VEHICLE_PIXEL_X * ZOOM_BASE;
@@ -1271,7 +1267,7 @@ Vehicle *CheckClickOnVehicle(const Viewport *vp, int x, int y)
 			Vehicle *v = _vehicle_viewport_hash[hx + hy]; // already masked & 0xFFF
 
 			while (v != nullptr) {
-				if ((v->vehstatus & (VS_HIDDEN | VS_UNCLICKABLE)) == 0 &&
+				if (!v->vehstatus.Any({VehState::Hidden, VehState::Unclickable}) &&
 					x >= v->coord.left && x <= v->coord.right &&
 					y >= v->coord.top && y <= v->coord.bottom) {
 
@@ -1327,7 +1323,7 @@ void CheckVehicleBreakdown(Vehicle *v)
 		if ((rel_old >> 8) != (rel >> 8)) SetWindowDirty(WC_VEHICLE_DETAILS, v->index);
 	}
 
-	if (v->breakdown_ctr != 0 || (v->vehstatus & VS_STOPPED) ||
+	if (v->breakdown_ctr != 0 || v->vehstatus.Test(VehState::Stopped) ||
 			_settings_game.difficulty.vehicle_breakdowns < 1 ||
 			v->cur_speed < 5 || _game_mode == GM_MENU) {
 		return;
@@ -1381,18 +1377,18 @@ bool Vehicle::HandleBreakdown()
 
 			if (this->type == VEH_AIRCRAFT) {
 				/* Aircraft just need this flag, the rest is handled elsewhere */
-				this->vehstatus |= VS_AIRCRAFT_BROKEN;
+				this->vehstatus.Set(VehState::AircraftBroken);
 			} else {
 				this->cur_speed = 0;
 
 				if (!PlayVehicleSound(this, VSE_BREAKDOWN)) {
 					bool train_or_ship = this->type == VEH_TRAIN || this->type == VEH_SHIP;
-					SndPlayVehicleFx((_settings_game.game_creation.landscape != LT_TOYLAND) ?
+					SndPlayVehicleFx((_settings_game.game_creation.landscape != LandscapeType::Toyland) ?
 						(train_or_ship ? SND_10_BREAKDOWN_TRAIN_SHIP : SND_0F_BREAKDOWN_ROADVEHICLE) :
 						(train_or_ship ? SND_3A_BREAKDOWN_TRAIN_SHIP_TOYLAND : SND_35_BREAKDOWN_ROADVEHICLE_TOYLAND), this);
 				}
 
-				if (!(this->vehstatus & VS_HIDDEN) && !HasBit(EngInfo(this->engine_type)->misc_flags, EF_NO_BREAKDOWN_SMOKE)) {
+				if (!this->vehstatus.Test(VehState::Hidden) && !EngInfo(this->engine_type)->misc_flags.Test(EngineMiscFlag::NoBreakdownSmoke)) {
 					EffectVehicle *u = CreateEffectVehicleRel(this, 4, 4, 5, EV_BREAKDOWN_SMOKE);
 					if (u != nullptr) u->animation_state = this->breakdown_delay * 2;
 				}
@@ -1447,7 +1443,7 @@ void AgeVehicle(Vehicle *v)
 
 	auto age = v->age - v->max_age;
 	for (int32_t i = 0; i <= 4; i++) {
-		if (age == TimerGameCalendar::DateAtStartOfYear(i)) {
+		if (age == TimerGameCalendar::DateAtStartOfYear(TimerGameCalendar::Year{i})) {
 			v->reliability_spd_dec <<= 1;
 			break;
 		}
@@ -1459,27 +1455,26 @@ void AgeVehicle(Vehicle *v)
 	if (!_settings_client.gui.old_vehicle_warn) return;
 
 	/* Don't warn about vehicles which are non-primary (e.g., part of an articulated vehicle), don't belong to us, are crashed, or are stopped */
-	if (v->Previous() != nullptr || v->owner != _local_company || (v->vehstatus & VS_CRASHED) != 0 || (v->vehstatus & VS_STOPPED) != 0) return;
+	if (v->Previous() != nullptr || v->owner != _local_company || v->vehstatus.Any({VehState::Crashed, VehState::Stopped})) return;
 
 	const Company *c = Company::Get(v->owner);
 	/* Don't warn if a renew is active */
-	if (c->settings.engine_renew && v->GetEngine()->company_avail != 0) return;
+	if (c->settings.engine_renew && v->GetEngine()->company_avail.Any()) return;
 	/* Don't warn if a replacement is active */
 	if (EngineHasReplacementForCompany(c, v->engine_type, v->group_id)) return;
 
 	StringID str;
-	if (age == TimerGameCalendar::DateAtStartOfYear(-1)) {
+	if (age == TimerGameCalendar::DateAtStartOfYear(TimerGameCalendar::Year{-1})) {
 		str = STR_NEWS_VEHICLE_IS_GETTING_OLD;
-	} else if (age == TimerGameCalendar::DateAtStartOfYear(0)) {
+	} else if (age == TimerGameCalendar::DateAtStartOfYear(TimerGameCalendar::Year{0})) {
 		str = STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD;
-	} else if (age > TimerGameCalendar::DateAtStartOfYear(0) && (age.base() % CalendarTime::DAYS_IN_LEAP_YEAR) == 0) {
+	} else if (age > TimerGameCalendar::DateAtStartOfYear(TimerGameCalendar::Year{0}) && (age.base() % CalendarTime::DAYS_IN_LEAP_YEAR) == 0) {
 		str = STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD_AND;
 	} else {
 		return;
 	}
 
-	SetDParam(0, v->index);
-	AddVehicleAdviceNewsItem(str, v->index);
+	AddVehicleAdviceNewsItem(AdviceType::VehicleOld, GetEncodedString(str, v->index), v->index);
 }
 
 /**
@@ -1513,10 +1508,10 @@ uint8_t CalcPercentVehicleFilled(const Vehicle *front, StringID *colour)
 		count += v->cargo.StoredCount();
 		max += v->cargo_cap;
 		if (v->cargo_cap != 0 && colour != nullptr) {
-			unloading += HasBit(v->vehicle_flags, VF_CARGO_UNLOADING) ? 1 : 0;
+			unloading += v->vehicle_flags.Test(VehicleFlag::CargoUnloading) ? 1 : 0;
 			loading |= !order_no_load &&
 					(order_full_load || st->goods[v->cargo_type].HasRating()) &&
-					!HasBit(front->vehicle_flags, VF_LOADING_FINISHED) && !HasBit(front->vehicle_flags, VF_STOP_LOADING);
+					!front->vehicle_flags.Test(VehicleFlag::LoadingFinished) && !front->vehicle_flags.Test(VehicleFlag::StopLoading);
 			cars++;
 		}
 	}
@@ -1600,7 +1595,7 @@ void VehicleEnterDepot(Vehicle *v)
 	}
 	SetWindowDirty(WC_VEHICLE_DEPOT, v->tile);
 
-	v->vehstatus |= VS_HIDDEN;
+	v->vehstatus.Set(VehState::Hidden);
 	v->cur_speed = 0;
 
 	VehicleServiceInDepot(v);
@@ -1627,15 +1622,14 @@ void VehicleEnterDepot(Vehicle *v)
 
 		if (v->current_order.IsRefit()) {
 			Backup<CompanyID> cur_company(_current_company, v->owner);
-			CommandCost cost = std::get<0>(Command<CMD_REFIT_VEHICLE>::Do(DC_EXEC, v->index, v->current_order.GetRefitCargo(), 0xFF, false, false, 0));
+			CommandCost cost = std::get<0>(Command<CMD_REFIT_VEHICLE>::Do(DoCommandFlag::Execute, v->index, v->current_order.GetRefitCargo(), 0xFF, false, false, 0));
 			cur_company.Restore();
 
 			if (cost.Failed()) {
 				_vehicles_to_autoreplace[v->index] = false;
 				if (v->owner == _local_company) {
 					/* Notify the user that we stopped the vehicle */
-					SetDParam(0, v->index);
-					AddVehicleAdviceNewsItem(STR_NEWS_ORDER_REFIT_FAILED, v->index);
+					AddVehicleAdviceNewsItem(AdviceType::RefitFailed, GetEncodedString(STR_NEWS_ORDER_REFIT_FAILED, v->index), v->index);
 				}
 			} else if (cost.GetCost() != 0) {
 				v->profit_this_year -= cost.GetCost() << 8;
@@ -1657,15 +1651,14 @@ void VehicleEnterDepot(Vehicle *v)
 			/* Invalidate last_loading_station. As the link from the station
 			 * before the stop to the station after the stop can't be predicted
 			 * we shouldn't construct it when the vehicle visits the next stop. */
-			v->last_loading_station = INVALID_STATION;
+			v->last_loading_station = StationID::Invalid();
 
 			/* Clear unbunching data. */
 			v->ResetDepotUnbunching();
 
 			/* Announce that the vehicle is waiting to players and AIs. */
 			if (v->owner == _local_company) {
-				SetDParam(0, v->index);
-				AddVehicleAdviceNewsItem(STR_NEWS_TRAIN_IS_WAITING + v->type, v->index);
+				AddVehicleAdviceNewsItem(AdviceType::VehicleWaiting, GetEncodedString(STR_NEWS_TRAIN_IS_WAITING + v->type, v->index), v->index);
 			}
 			AI::NewEvent(v->owner, new ScriptEventVehicleWaitingInDepot(v->index));
 		}
@@ -1946,7 +1939,7 @@ bool CanBuildVehicleInfrastructure(VehicleType type, uint8_t subtype)
 		/* Can we actually build the vehicle type? */
 		for (const Engine *e : Engine::IterateType(type)) {
 			if (type == VEH_ROAD && GetRoadTramType(e->u.road.roadtype) != (RoadTramType)subtype) continue;
-			if (HasBit(e->company_avail, _local_company)) return true;
+			if (e->company_avail.Test(_local_company)) return true;
 		}
 		return false;
 	}
@@ -1964,18 +1957,18 @@ bool CanBuildVehicleInfrastructure(VehicleType type, uint8_t subtype)
 /**
  * Determines the #LiveryScheme for a vehicle.
  * @param engine_type Engine of the vehicle.
- * @param parent_engine_type Engine of the front vehicle, #INVALID_ENGINE if vehicle is at front itself.
+ * @param parent_engine_type Engine of the front vehicle, #EngineID::Invalid() if vehicle is at front itself.
  * @param v the vehicle, \c nullptr if in purchase list etc.
  * @return livery scheme to use.
  */
 LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_type, const Vehicle *v)
 {
-	CargoID cargo_type = v == nullptr ? INVALID_CARGO : v->cargo_type;
+	CargoType cargo_type = v == nullptr ? INVALID_CARGO : v->cargo_type;
 	const Engine *e = Engine::Get(engine_type);
 	switch (e->type) {
 		default: NOT_REACHED();
 		case VEH_TRAIN:
-			if (v != nullptr && parent_engine_type != INVALID_ENGINE && (UsesWagonOverride(v) || (v->IsArticulatedPart() && e->u.rail.railveh_type != RAILVEH_WAGON))) {
+			if (v != nullptr && parent_engine_type != EngineID::Invalid() && (UsesWagonOverride(v) || (v->IsArticulatedPart() && e->u.rail.railveh_type != RAILVEH_WAGON))) {
 				/* Wagonoverrides use the colour scheme of the front engine.
 				 * Articulated parts use the colour scheme of the first part. (Not supported for articulated wagons) */
 				engine_type = parent_engine_type;
@@ -1983,15 +1976,15 @@ LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_
 				/* Note: Luckily cargo_type is not needed for engines */
 			}
 
-			if (!IsValidCargoID(cargo_type)) cargo_type = e->GetDefaultCargoType();
-			if (!IsValidCargoID(cargo_type)) cargo_type = GetCargoIDByLabel(CT_GOODS); // The vehicle does not carry anything, let's pick some freight cargo
-			assert(IsValidCargoID(cargo_type));
+			if (!IsValidCargoType(cargo_type)) cargo_type = e->GetDefaultCargoType();
+			if (!IsValidCargoType(cargo_type)) cargo_type = GetCargoTypeByLabel(CT_GOODS); // The vehicle does not carry anything, let's pick some freight cargo
+			assert(IsValidCargoType(cargo_type));
 			if (e->u.rail.railveh_type == RAILVEH_WAGON) {
 				if (!CargoSpec::Get(cargo_type)->is_freight) {
-					if (parent_engine_type == INVALID_ENGINE) {
+					if (parent_engine_type == EngineID::Invalid()) {
 						return LS_PASSENGER_WAGON_STEAM;
 					} else {
-						bool is_mu = HasBit(EngInfo(parent_engine_type)->misc_flags, EF_RAIL_IS_MU);
+						bool is_mu = EngInfo(parent_engine_type)->misc_flags.Test(EngineMiscFlag::RailIsMU);
 						switch (RailVehInfo(parent_engine_type)->engclass) {
 							default: NOT_REACHED();
 							case EC_STEAM:    return LS_PASSENGER_WAGON_STEAM;
@@ -2005,7 +1998,7 @@ LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_
 					return LS_FREIGHT_WAGON;
 				}
 			} else {
-				bool is_mu = HasBit(e->info.misc_flags, EF_RAIL_IS_MU);
+				bool is_mu = e->info.misc_flags.Test(EngineMiscFlag::RailIsMU);
 
 				switch (e->u.rail.engclass) {
 					default: NOT_REACHED();
@@ -2019,29 +2012,29 @@ LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_
 
 		case VEH_ROAD:
 			/* Always use the livery of the front */
-			if (v != nullptr && parent_engine_type != INVALID_ENGINE) {
+			if (v != nullptr && parent_engine_type != EngineID::Invalid()) {
 				engine_type = parent_engine_type;
 				e = Engine::Get(engine_type);
 				cargo_type = v->First()->cargo_type;
 			}
-			if (!IsValidCargoID(cargo_type)) cargo_type = e->GetDefaultCargoType();
-			if (!IsValidCargoID(cargo_type)) cargo_type = GetCargoIDByLabel(CT_GOODS); // The vehicle does not carry anything, let's pick some freight cargo
-			assert(IsValidCargoID(cargo_type));
+			if (!IsValidCargoType(cargo_type)) cargo_type = e->GetDefaultCargoType();
+			if (!IsValidCargoType(cargo_type)) cargo_type = GetCargoTypeByLabel(CT_GOODS); // The vehicle does not carry anything, let's pick some freight cargo
+			assert(IsValidCargoType(cargo_type));
 
 			/* Important: Use Tram Flag of front part. Luckily engine_type refers to the front part here. */
-			if (HasBit(e->info.misc_flags, EF_ROAD_TRAM)) {
+			if (e->info.misc_flags.Test(EngineMiscFlag::RoadIsTram)) {
 				/* Tram */
-				return IsCargoInClass(cargo_type, CC_PASSENGERS) ? LS_PASSENGER_TRAM : LS_FREIGHT_TRAM;
+				return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LS_PASSENGER_TRAM : LS_FREIGHT_TRAM;
 			} else {
 				/* Bus or truck */
-				return IsCargoInClass(cargo_type, CC_PASSENGERS) ? LS_BUS : LS_TRUCK;
+				return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LS_BUS : LS_TRUCK;
 			}
 
 		case VEH_SHIP:
-			if (!IsValidCargoID(cargo_type)) cargo_type = e->GetDefaultCargoType();
-			if (!IsValidCargoID(cargo_type)) cargo_type = GetCargoIDByLabel(CT_GOODS); // The vehicle does not carry anything, let's pick some freight cargo
-			assert(IsValidCargoID(cargo_type));
-			return IsCargoInClass(cargo_type, CC_PASSENGERS) ? LS_PASSENGER_SHIP : LS_FREIGHT_SHIP;
+			if (!IsValidCargoType(cargo_type)) cargo_type = e->GetDefaultCargoType();
+			if (!IsValidCargoType(cargo_type)) cargo_type = GetCargoTypeByLabel(CT_GOODS); // The vehicle does not carry anything, let's pick some freight cargo
+			assert(IsValidCargoType(cargo_type));
+			return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LS_PASSENGER_SHIP : LS_FREIGHT_SHIP;
 
 		case VEH_AIRCRAFT:
 			switch (e->u.air.subtype) {
@@ -2057,7 +2050,7 @@ LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_
  * Determines the livery for a vehicle.
  * @param engine_type EngineID of the vehicle
  * @param company Owner of the vehicle
- * @param parent_engine_type EngineID of the front vehicle. INVALID_VEHICLE if vehicle is at front itself.
+ * @param parent_engine_type EngineID of the front vehicle. VehicleID::Invalid() if vehicle is at front itself.
  * @param v the vehicle. nullptr if in purchase list etc.
  * @param livery_setting The livery settings to use for acquiring the livery information.
  * @return livery to use
@@ -2072,7 +2065,7 @@ const Livery *GetEngineLivery(EngineID engine_type, CompanyID company, EngineID 
 			const Group *g = Group::GetIfValid(v->First()->group_id);
 			if (g != nullptr) {
 				/* Traverse parents until we find a livery or reach the top */
-				while (g->livery.in_use == 0 && g->parent != INVALID_GROUP) {
+				while (g->livery.in_use == 0 && g->parent != GroupID::Invalid()) {
 					g = Group::Get(g->parent);
 				}
 				if (g->livery.in_use != 0) return &g->livery;
@@ -2101,7 +2094,7 @@ static PaletteID GetEngineColourMap(EngineID engine_type, CompanyID company, Eng
 	const Engine *e = Engine::Get(engine_type);
 
 	/* Check if we should use the colour map callback */
-	if (HasBit(e->info.callback_mask, CBM_VEHICLE_COLOUR_REMAP)) {
+	if (e->info.callback_mask.Test(VehicleCallbackMask::ColourRemap)) {
 		uint16_t callback = GetVehicleCallback(CBID_VEHICLE_COLOUR_MAPPING, 0, 0, engine_type, v);
 		/* Failure means "use the default two-colour" */
 		if (callback != CALLBACK_FAILED) {
@@ -2117,7 +2110,7 @@ static PaletteID GetEngineColourMap(EngineID engine_type, CompanyID company, Eng
 		}
 	}
 
-	bool twocc = HasBit(e->info.misc_flags, EF_USES_2CC);
+	bool twocc = e->info.misc_flags.Test(EngineMiscFlag::Uses2CC);
 
 	if (map == PAL_NONE) map = twocc ? (PaletteID)SPR_2CCMAP_BASE : (PaletteID)PALETTE_RECOLOUR_START;
 
@@ -2142,7 +2135,7 @@ static PaletteID GetEngineColourMap(EngineID engine_type, CompanyID company, Eng
  */
 PaletteID GetEnginePalette(EngineID engine_type, CompanyID company)
 {
-	return GetEngineColourMap(engine_type, company, INVALID_ENGINE, nullptr);
+	return GetEngineColourMap(engine_type, company, EngineID::Invalid(), nullptr);
 }
 
 /**
@@ -2156,7 +2149,7 @@ PaletteID GetVehiclePalette(const Vehicle *v)
 		return GetEngineColourMap(v->engine_type, v->owner, v->GetGroundVehicleCache()->first_engine, v);
 	}
 
-	return GetEngineColourMap(v->engine_type, v->owner, INVALID_ENGINE, v);
+	return GetEngineColourMap(v->engine_type, v->owner, EngineID::Invalid(), v);
 }
 
 /**
@@ -2308,7 +2301,7 @@ void Vehicle::BeginLoading()
 		this->current_order.MakeLoading(false);
 	}
 
-	if (this->last_loading_station != INVALID_STATION &&
+	if (this->last_loading_station != StationID::Invalid() &&
 			this->last_loading_station != this->last_station_visited &&
 			((this->current_order.GetLoadType() & OLFB_NO_LOAD) == 0 ||
 			(this->current_order.GetUnloadType() & OUFB_NO_UNLOAD) == 0)) {
@@ -2338,7 +2331,7 @@ void Vehicle::CancelReservation(StationID next, Station *st)
 		VehicleCargoList &cargo = v->cargo;
 		if (cargo.ActionCount(VehicleCargoList::MTA_LOAD) > 0) {
 			Debug(misc, 1, "cancelling cargo reservation");
-			cargo.Return(UINT_MAX, &st->goods[v->cargo_type].cargo, next, v->tile);
+			cargo.Return(UINT_MAX, &st->goods[v->cargo_type].GetOrCreateData().cargo, next, v->tile);
 		}
 		cargo.KeepAll();
 	}
@@ -2360,7 +2353,7 @@ void Vehicle::LeaveStation()
 
 	if ((this->current_order.GetLoadType() & OLFB_NO_LOAD) == 0 ||
 			(this->current_order.GetUnloadType() & OUFB_NO_UNLOAD) == 0) {
-		if (this->current_order.CanLeaveWithCargo(this->last_loading_station != INVALID_STATION)) {
+		if (this->current_order.CanLeaveWithCargo(this->last_loading_station != StationID::Invalid())) {
 			/* Refresh next hop stats to make sure we've done that at least once
 			 * during the stop and that refit_cap == cargo_cap for each vehicle in
 			 * the consist. */
@@ -2373,19 +2366,19 @@ void Vehicle::LeaveStation()
 		} else {
 			/* if the vehicle couldn't load and had to unload or transfer everything
 			 * set the last loading station to invalid as it will leave empty. */
-			this->last_loading_station = INVALID_STATION;
+			this->last_loading_station = StationID::Invalid();
 		}
 	}
 
 	this->current_order.MakeLeaveStation();
 	Station *st = Station::Get(this->last_station_visited);
-	this->CancelReservation(INVALID_STATION, st);
+	this->CancelReservation(StationID::Invalid(), st);
 	st->loading_vehicles.remove(this);
 
 	HideFillingPercent(&this->fill_percent_te_id);
 	trip_occupancy = CalcPercentVehicleFilled(this, nullptr);
 
-	if (this->type == VEH_TRAIN && !(this->vehstatus & VS_CRASHED)) {
+	if (this->type == VEH_TRAIN && !this->vehstatus.Test(VehState::Crashed)) {
 		/* Trigger station animation (trains only) */
 		if (IsTileType(this->tile, MP_STATION)) {
 			TriggerStationRandomisation(st, this->tile, SRT_TRAIN_DEPARTS);
@@ -2394,7 +2387,7 @@ void Vehicle::LeaveStation()
 
 		SetBit(Train::From(this)->flags, VRF_LEAVING_STATION);
 	}
-	if (this->type == VEH_ROAD && !(this->vehstatus & VS_CRASHED)) {
+	if (this->type == VEH_ROAD && !this->vehstatus.Test(VehState::Crashed)) {
 		/* Trigger road stop animation */
 		if (IsStationRoadStopTile(this->tile)) {
 			TriggerRoadStopRandomisation(st, this->tile, RSRT_VEH_DEPARTS);
@@ -2435,7 +2428,7 @@ void Vehicle::HandleLoading(bool mode)
 			TimerGameTick::Ticks wait_time = std::max(this->current_order.GetTimetabledWait() - this->lateness_counter, 0);
 
 			/* Not the first call for this tick, or still loading */
-			if (mode || !HasBit(this->vehicle_flags, VF_LOADING_FINISHED) || this->current_order_time < wait_time) return;
+			if (mode || !this->vehicle_flags.Test(VehicleFlag::LoadingFinished) || this->current_order_time < wait_time) return;
 
 			this->PlayLeaveStationSound();
 
@@ -2531,7 +2524,7 @@ void Vehicle::LeaveUnbunchingDepot()
 	Vehicle *u = this->FirstShared();
 	for (; u != nullptr; u = u->NextShared()) {
 		/* Ignore vehicles that are manually stopped or crashed. */
-		if (u->vehstatus & (VS_STOPPED | VS_CRASHED)) continue;
+		if (u->vehstatus.Any({VehState::Stopped, VehState::Crashed})) continue;
 
 		num_vehicles++;
 		total_travel_time += u->round_trip_time;
@@ -2548,7 +2541,7 @@ void Vehicle::LeaveUnbunchingDepot()
 	u = this->FirstShared();
 	for (; u != nullptr; u = u->NextShared()) {
 		/* Ignore vehicles that are manually stopped or crashed. */
-		if (u->vehstatus & (VS_STOPPED | VS_CRASHED)) continue;
+		if (u->vehstatus.Any({VehState::Stopped, VehState::Crashed})) continue;
 
 		u->depot_unbunching_next_departure = next_departure;
 		SetWindowDirty(WC_VEHICLE_VIEW, u->index);
@@ -2581,24 +2574,24 @@ bool Vehicle::IsWaitingForUnbunching() const
  * @param command the command to execute.
  * @return the cost of the depot action.
  */
-CommandCost Vehicle::SendToDepot(DoCommandFlag flags, DepotCommand command)
+CommandCost Vehicle::SendToDepot(DoCommandFlags flags, DepotCommandFlags command)
 {
 	CommandCost ret = CheckOwnership(this->owner);
 	if (ret.Failed()) return ret;
 
-	if (this->vehstatus & VS_CRASHED) return CMD_ERROR;
+	if (this->vehstatus.Test(VehState::Crashed)) return CMD_ERROR;
 	if (this->IsStoppedInDepot()) return CMD_ERROR;
 
 	/* No matter why we're headed to the depot, unbunching data is no longer valid. */
-	if (flags & DC_EXEC) this->ResetDepotUnbunching();
+	if (flags.Test(DoCommandFlag::Execute)) this->ResetDepotUnbunching();
 
 	if (this->current_order.IsType(OT_GOTO_DEPOT)) {
 		bool halt_in_depot = (this->current_order.GetDepotActionType() & ODATFB_HALT) != 0;
-		if (HasFlag(command, DepotCommand::Service) == halt_in_depot) {
+		if (command.Test(DepotCommandFlag::Service) == halt_in_depot) {
 			/* We called with a different DEPOT_SERVICE setting.
 			 * Now we change the setting to apply the new one and let the vehicle head for the same depot.
 			 * Note: the if is (true for requesting service == true for ordered to stop in depot)          */
-			if (flags & DC_EXEC) {
+			if (flags.Test(DoCommandFlag::Execute)) {
 				this->current_order.SetDepotOrderType(ODTF_MANUAL);
 				this->current_order.SetDepotActionType(halt_in_depot ? ODATF_SERVICE_ONLY : ODATFB_HALT);
 				SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
@@ -2606,8 +2599,8 @@ CommandCost Vehicle::SendToDepot(DoCommandFlag flags, DepotCommand command)
 			return CommandCost();
 		}
 
-		if (HasFlag(command, DepotCommand::DontCancel)) return CMD_ERROR; // Requested no cancellation of depot orders
-		if (flags & DC_EXEC) {
+		if (command.Test(DepotCommandFlag::DontCancel)) return CMD_ERROR; // Requested no cancellation of depot orders
+		if (flags.Test(DoCommandFlag::Execute)) {
 			/* If the orders to 'goto depot' are in the orders list (forced servicing),
 			 * then skip to the next order; effectively cancelling this forced service */
 			if (this->current_order.GetDepotOrderType() & ODTFB_PART_OF_ORDERS) this->IncrementRealOrderIndex();
@@ -2623,11 +2616,11 @@ CommandCost Vehicle::SendToDepot(DoCommandFlag flags, DepotCommand command)
 		return CommandCost();
 	}
 
-	ClosestDepot closestDepot = this->FindClosestDepot();
+	ClosestDepot closest_depot = this->FindClosestDepot();
 	static const StringID no_depot[] = {STR_ERROR_UNABLE_TO_FIND_ROUTE_TO, STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT, STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT, STR_ERROR_CAN_T_SEND_AIRCRAFT_TO_HANGAR};
-	if (!closestDepot.found) return CommandCost(no_depot[this->type]);
+	if (!closest_depot.found) return CommandCost(no_depot[this->type]);
 
-	if (flags & DC_EXEC) {
+	if (flags.Test(DoCommandFlag::Execute)) {
 		if (this->current_order.IsType(OT_LOADING)) this->LeaveStation();
 
 		if (this->IsGroundVehicle() && this->GetNumManualOrders() > 0) {
@@ -2635,19 +2628,19 @@ CommandCost Vehicle::SendToDepot(DoCommandFlag flags, DepotCommand command)
 			SetBit(gv_flags, GVF_SUPPRESS_IMPLICIT_ORDERS);
 		}
 
-		this->SetDestTile(closestDepot.location);
-		this->current_order.MakeGoToDepot(closestDepot.destination, ODTF_MANUAL);
-		if (!HasFlag(command, DepotCommand::Service)) this->current_order.SetDepotActionType(ODATFB_HALT);
+		this->SetDestTile(closest_depot.location);
+		this->current_order.MakeGoToDepot(closest_depot.destination.ToDepotID(), ODTF_MANUAL);
+		if (!command.Test(DepotCommandFlag::Service)) this->current_order.SetDepotActionType(ODATFB_HALT);
 		SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
 
 		/* If there is no depot in front and the train is not already reversing, reverse automatically (trains only) */
-		if (this->type == VEH_TRAIN && (closestDepot.reverse ^ HasBit(Train::From(this)->flags, VRF_REVERSING))) {
-			Command<CMD_REVERSE_TRAIN_DIRECTION>::Do(DC_EXEC, this->index, false);
+		if (this->type == VEH_TRAIN && (closest_depot.reverse ^ HasBit(Train::From(this)->flags, VRF_REVERSING))) {
+			Command<CMD_REVERSE_TRAIN_DIRECTION>::Do(DoCommandFlag::Execute, this->index, false);
 		}
 
 		if (this->type == VEH_AIRCRAFT) {
 			Aircraft *a = Aircraft::From(this);
-			if (a->state == FLYING && a->targetairport != closestDepot.destination) {
+			if (a->state == FLYING && a->targetairport != closest_depot.destination) {
 				/* The aircraft is now heading for a different hangar than the next in the orders */
 				AircraftNextAirportPos_and_Order(a);
 			}
@@ -2677,7 +2670,7 @@ void Vehicle::UpdateVisualEffect(bool allow_power_change)
 	}
 
 	/* Check powered wagon / visual effect callback */
-	if (HasBit(e->info.callback_mask, CBM_VEHICLE_VISUAL_EFFECT)) {
+	if (e->info.callback_mask.Test(VehicleCallbackMask::VisualEffect)) {
 		uint16_t callback = GetVehicleCallback(CBID_VEHICLE_VISUAL_EFFECT, 0, 0, this->engine_type, this);
 
 		if (callback != CALLBACK_FAILED) {
@@ -2718,7 +2711,7 @@ void Vehicle::UpdateVisualEffect(bool allow_power_change)
 
 	if (!allow_power_change && powered_before != HasBit(this->vcache.cached_vis_effect, VE_DISABLE_WAGON_POWER)) {
 		ToggleBit(this->vcache.cached_vis_effect, VE_DISABLE_WAGON_POWER);
-		ShowNewGrfVehicleError(this->engine_type, STR_NEWGRF_BROKEN, STR_NEWGRF_BROKEN_POWERED_WAGON, GBUG_VEH_POWERED_WAGON, false);
+		ShowNewGrfVehicleError(this->engine_type, STR_NEWGRF_BROKEN, STR_NEWGRF_BROKEN_POWERED_WAGON, GRFBug::VehPoweredWagon, false);
 	}
 }
 
@@ -2796,7 +2789,7 @@ void Vehicle::ShowVisualEffect() const
 	 * - the vehicle is moving very slowly
 	 */
 	if (_settings_game.vehicle.smoke_amount == 0 ||
-			this->vehstatus & (VS_TRAIN_SLOWING | VS_STOPPED) ||
+			this->vehstatus.Any({VehState::TrainSlowing, VehState::Stopped}) ||
 			this->cur_speed < 2) {
 		return;
 	}
@@ -2843,7 +2836,7 @@ void Vehicle::ShowVisualEffect() const
 		 * - The vehicle is on a tunnel tile
 		 * - The vehicle is a train engine that is currently unpowered */
 		if (effect_model == VESM_NONE ||
-				v->vehstatus & VS_HIDDEN ||
+				v->vehstatus.Test(VehState::Hidden) ||
 				IsBridgeAbove(v->tile) ||
 				IsDepotTile(v->tile) ||
 				IsTunnelTile(v->tile) ||
@@ -3006,12 +2999,12 @@ void Vehicle::RemoveFromShared()
 
 	if (this->orders->GetNumVehicles() == 1) {
 		/* When there is only one vehicle, remove the shared order list window. */
-		CloseWindowById(GetWindowClassForVehicleType(this->type), vli.Pack());
+		CloseWindowById(GetWindowClassForVehicleType(this->type), vli.ToWindowNumber());
 		InvalidateVehicleOrder(this->FirstShared(), VIWD_MODIFY_ORDERS);
 	} else if (were_first) {
 		/* If we were the first one, update to the new first one.
 		 * Note: FirstShared() is already the new first */
-		InvalidateWindowData(GetWindowClassForVehicleType(this->type), vli.Pack(), this->FirstShared()->index | (1U << 31));
+		InvalidateWindowData(GetWindowClassForVehicleType(this->type), vli.ToWindowNumber(), this->FirstShared()->index.base() | (1U << 31));
 	}
 
 	this->next_shared     = nullptr;
@@ -3026,10 +3019,8 @@ static IntervalTimer<TimerGameEconomy> _economy_vehicles_yearly({TimerGameEconom
 			Money profit = v->GetDisplayProfitThisYear();
 			if (v->economy_age >= VEHICLE_PROFIT_MIN_AGE && profit < 0) {
 				if (_settings_client.gui.vehicle_income_warn && v->owner == _local_company) {
-					SetDParam(0, v->index);
-					SetDParam(1, profit);
-					AddVehicleAdviceNewsItem(
-						TimerGameEconomy::UsingWallclockUnits() ? STR_NEWS_VEHICLE_UNPROFITABLE_PERIOD : STR_NEWS_VEHICLE_UNPROFITABLE_YEAR,
+					AddVehicleAdviceNewsItem(AdviceType::VehicleUnprofitable,
+						GetEncodedString(TimerGameEconomy::UsingWallclockUnits() ? STR_NEWS_VEHICLE_UNPROFITABLE_PERIOD : STR_NEWS_VEHICLE_UNPROFITABLE_YEAR, v->index, profit),
 						v->index);
 				}
 				AI::NewEvent(v->owner, new ScriptEventVehicleUnprofitable(v->index));
@@ -3063,20 +3054,20 @@ bool CanVehicleUseStation(EngineID engine_type, const Station *st)
 
 	switch (e->type) {
 		case VEH_TRAIN:
-			return (st->facilities & FACIL_TRAIN) != 0;
+			return st->facilities.Test(StationFacility::Train);
 
 		case VEH_ROAD:
 			/* For road vehicles we need the vehicle to know whether it can actually
 			 * use the station, but if it doesn't have facilities for RVs it is
 			 * certainly not possible that the station can be used. */
-			return (st->facilities & (FACIL_BUS_STOP | FACIL_TRUCK_STOP)) != 0;
+			return st->facilities.Any({StationFacility::BusStop, StationFacility::TruckStop});
 
 		case VEH_SHIP:
-			return (st->facilities & FACIL_DOCK) != 0;
+			return st->facilities.Test(StationFacility::Dock);
 
 		case VEH_AIRCRAFT:
-			return (st->facilities & FACIL_AIRPORT) != 0 &&
-					(st->airport.GetFTA()->flags & (e->u.air.subtype & AIR_CTOL ? AirportFTAClass::AIRPLANES : AirportFTAClass::HELICOPTERS)) != 0;
+			return st->facilities.Test(StationFacility::Airport) &&
+					st->airport.GetFTA()->flags.Test(e->u.air.subtype & AIR_CTOL ? AirportFTAClass::Flag::Airplanes : AirportFTAClass::Flag::Helicopters);
 
 		default:
 			return false;
@@ -3110,7 +3101,7 @@ StringID GetVehicleCannotUseStationReason(const Vehicle *v, const Station *st)
 
 		case VEH_ROAD: {
 			const RoadVehicle *rv = RoadVehicle::From(v);
-			RoadStop *rs = st->GetPrimaryRoadStop(rv->IsBus() ? ROADSTOP_BUS : ROADSTOP_TRUCK);
+			RoadStop *rs = st->GetPrimaryRoadStop(rv->IsBus() ? RoadStopType::Bus : RoadStopType::Truck);
 
 			StringID err = rv->IsBus() ? STR_ERROR_NO_BUS_STATION : STR_ERROR_NO_TRUCK_STATION;
 
@@ -3136,7 +3127,7 @@ StringID GetVehicleCannotUseStationReason(const Vehicle *v, const Station *st)
 			return STR_ERROR_NO_DOCK;
 
 		case VEH_AIRCRAFT:
-			if ((st->facilities & FACIL_AIRPORT) == 0) return STR_ERROR_NO_AIRPORT;
+			if (!st->facilities.Test(StationFacility::Airport)) return STR_ERROR_NO_AIRPORT;
 			if (v->GetEngine()->u.air.subtype & AIR_CTOL) {
 				return STR_ERROR_AIRPORT_NO_PLANES;
 			} else {

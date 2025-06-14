@@ -38,14 +38,14 @@ public:
 	static_assert(sizeof(MapValue) == 2);
 
 	/** Helper for creating specialised functions for specific optimisations. */
-	enum ReadMode {
+	enum ReadMode : uint8_t {
 		RM_WITH_SKIP,   ///< Use normal code for skipping empty pixels.
 		RM_WITH_MARGIN, ///< Use cached number of empty pixels at begin and end of line to reduce work.
 		RM_NONE,        ///< No specialisation.
 	};
 
 	/** Helper for creating specialised functions for the case where the sprite width is odd or even. */
-	enum BlockType {
+	enum BlockType : uint8_t {
 		BT_EVEN, ///< An even number of pixels in the width; no need for a special case for the last pixel.
 		BT_ODD,  ///< An odd number of pixels in the width; special case for the last pixel.
 		BT_NONE, ///< No specialisation for either case.
@@ -56,30 +56,29 @@ public:
 	 *  - calculations (alpha blending),
 	 *  - heavy branching (remap lookups and animation buffer handling).
 	 */
-	enum SpriteFlags {
-		SF_NONE        = 0,
-		SF_TRANSLUCENT = 1 << 1, ///< The sprite has at least 1 translucent pixel.
-		SF_NO_REMAP    = 1 << 2, ///< The sprite has no remappable colour pixel.
-		SF_NO_ANIM     = 1 << 3, ///< The sprite has no palette animated pixel.
+	enum class SpriteFlag : uint8_t {
+		Translucent, ///< The sprite has at least 1 translucent pixel.
+		NoRemap, ///< The sprite has no remappable colour pixel.
+		NoAnim, ///< The sprite has no palette animated pixel.
 	};
+
+	using SpriteFlags = EnumBitSet<SpriteFlag, uint8_t>;
 
 	/** Data stored about a (single) sprite. */
 	struct SpriteInfo {
-		uint32_t sprite_offset;    ///< The offset to the sprite data.
-		uint32_t mv_offset;        ///< The offset to the map value data.
-		uint16_t sprite_line_size; ///< The size of a single line (pitch).
-		uint16_t sprite_width;     ///< The width of the sprite.
+		uint32_t sprite_offset = 0;    ///< The offset to the sprite data.
+		uint32_t mv_offset = 0;        ///< The offset to the map value data.
+		uint16_t sprite_line_size = 0; ///< The size of a single line (pitch).
+		uint16_t sprite_width = 0;     ///< The width of the sprite.
 	};
 	struct SpriteData {
-		SpriteFlags flags;
-		SpriteInfo infos[ZOOM_LVL_END];
+		SpriteFlags flags{};
+		std::array<SpriteInfo, ZOOM_LVL_END> infos{};
 		uint8_t data[]; ///< Data, all zoomlevels.
 	};
 
 	Sprite *Encode(const SpriteLoader::SpriteCollection &sprite, SpriteAllocator &allocator);
 };
-
-DECLARE_ENUM_AS_BIT_SET(Blitter_32bppSSE_Base::SpriteFlags);
 
 /** The SSE2 32 bpp blitter (without palette animation). */
 class Blitter_32bppSSE2 : public Blitter_32bppSimple, public Blitter_32bppSSE_Base {
@@ -99,7 +98,7 @@ public:
 class FBlitter_32bppSSE2 : public BlitterFactory {
 public:
 	FBlitter_32bppSSE2() : BlitterFactory("32bpp-sse2", "32bpp SSE2 Blitter (no palette animation)", HasCPUIDFlag(1, 3, 26)) {}
-	Blitter *CreateInstance() override { return new Blitter_32bppSSE2(); }
+	std::unique_ptr<Blitter> CreateInstance() override { return std::make_unique<Blitter_32bppSSE2>(); }
 };
 
 #endif /* WITH_SSE */

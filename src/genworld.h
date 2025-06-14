@@ -11,10 +11,11 @@
 #define GENWORLD_H
 
 #include "company_type.h"
+#include "landscape_type.h"
 #include <thread>
 
 /** Constants related to world generation */
-enum LandscapeGenerator {
+enum LandscapeGenerator : uint8_t {
 	/* Order of these enums has to be the same as in lang/english.txt
 	 * Otherwise you will get inconsistent behaviour. */
 	LG_ORIGINAL     = 0,  ///< The original landscape generator
@@ -24,7 +25,7 @@ enum LandscapeGenerator {
 static const uint32_t GENERATE_NEW_SEED = UINT32_MAX; ///< Create a new random seed
 
 /** Modes for GenerateWorld */
-enum GenWorldMode {
+enum GenWorldMode : uint8_t {
 	GWM_NEWGAME   = 0, ///< Generate a map for a new game
 	GWM_EMPTY     = 1, ///< Generate an empty map (sea-level)
 	GWM_RANDOM    = 2, ///< Generate a random map for SE
@@ -32,7 +33,7 @@ enum GenWorldMode {
 };
 
 /** Smoothness presets. */
-enum TgenSmoothness {
+enum TgenSmoothness : uint8_t {
 	TGEN_SMOOTHNESS_BEGIN,      ///< First smoothness value.
 	TGEN_SMOOTHNESS_VERY_SMOOTH = TGEN_SMOOTHNESS_BEGIN, ///< Smoothness preset 'very smooth'.
 	TGEN_SMOOTHNESS_SMOOTH,     ///< Smoothness preset 'smooth'.
@@ -48,25 +49,16 @@ static const uint CUSTOM_SEA_LEVEL_NUMBER_DIFFICULTY = 4; ///< Value for custom 
 static const uint CUSTOM_SEA_LEVEL_MIN_PERCENTAGE = 1;    ///< Minimum percentage a user can specify for custom sea level.
 static const uint CUSTOM_SEA_LEVEL_MAX_PERCENTAGE = 90;   ///< Maximum percentage a user can specify for custom sea level.
 
+static constexpr uint MAP_HEIGHT_LIMIT_ORIGINAL = 15; ///< Original map height limit.
+
 static const uint MAP_HEIGHT_LIMIT_AUTO_MINIMUM = 30; ///< When map height limit is auto, make this the lowest possible map height limit.
-static const uint MAP_HEIGHT_LIMIT_AUTO_CEILING_ROOM = 15; ///< When map height limit is auto, the map height limit will be the higest peak plus this value.
+static const uint MAP_HEIGHT_LIMIT_AUTO_CEILING_ROOM = 15; ///< When map height limit is auto, the map height limit will be the highest peak plus this value.
 
 typedef void GWDoneProc();  ///< Procedure called when the genworld process finishes
 typedef void GWAbortProc(); ///< Called when genworld is aborted
 
-/** Properties of current genworld process */
-struct GenWorldInfo {
-	bool abort;            ///< Whether to abort the thread ASAP
-	GenWorldMode mode;     ///< What mode are we making a world in
-	CompanyID lc;          ///< The local_company before generating
-	uint size_x;           ///< X-size of the map
-	uint size_y;           ///< Y-size of the map
-	GWDoneProc *proc;      ///< Proc that is called when done (can be nullptr)
-	GWAbortProc *abortp;   ///< Proc that is called when aborting (can be nullptr)
-};
-
 /** Current stage of world generation process */
-enum GenWorldProgress {
+enum GenWorldProgress : uint8_t {
 	GWP_MAP_INIT,    ///< Initialize/allocate the map, start economy
 	GWP_LANDSCAPE,   ///< Create the landscape
 	GWP_RIVER,       ///< Create the rivers
@@ -92,7 +84,7 @@ void HandleGeneratingWorldAbortion();
 void LoadTownData();
 
 /* genworld_gui.cpp */
-void SetNewLandscapeType(uint8_t landscape);
+void SetNewLandscapeType(LandscapeType landscape);
 void SetGeneratingWorldProgress(GenWorldProgress cls, uint total);
 void IncreaseGeneratingWorldProgress(GenWorldProgress cls);
 void PrepareGenerateWorldProgress();

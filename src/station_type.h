@@ -10,11 +10,15 @@
 #ifndef STATION_TYPE_H
 #define STATION_TYPE_H
 
+#include "core/pool_type.hpp"
 #include "core/smallstack_type.hpp"
 #include "tilearea_type.h"
 
-typedef uint16_t StationID;
-typedef uint16_t RoadStopID;
+using StationID = PoolID<uint16_t, struct StationIDTag, 64000, 0xFFFF>;
+static constexpr StationID NEW_STATION{0xFFFD};
+static constexpr StationID ADJACENT_STATION{0xFFFE};
+
+using RoadStopID = PoolID<uint16_t, struct RoadStopIDTag, 64000, 0xFFFF>;
 
 struct BaseStation;
 struct Station;
@@ -22,43 +26,42 @@ struct RoadStop;
 struct StationSpec;
 struct Waypoint;
 
-static const StationID NEW_STATION = 0xFFFE;
-static const StationID INVALID_STATION = 0xFFFF;
-
-typedef SmallStack<StationID, StationID, INVALID_STATION, 8, 0xFFFD> StationIDStack;
+using StationIDStack = SmallStack<StationID::BaseType, StationID::BaseType, StationID::Invalid().base(), 8, StationID::End().base()>;
 
 /** Station types */
-enum StationType : uint8_t {
-	STATION_RAIL,
-	STATION_AIRPORT,
-	STATION_TRUCK,
-	STATION_BUS,
-	STATION_OILRIG,
-	STATION_DOCK,
-	STATION_BUOY,
-	STATION_WAYPOINT,
-	STATION_ROADWAYPOINT,
-	STATION_END,
+enum class StationType : uint8_t {
+	Rail,
+	Airport,
+	Truck,
+	Bus,
+	Oilrig,
+	Dock,
+	Buoy,
+	RailWaypoint,
+	RoadWaypoint,
+	End,
 };
 
 /** Types of RoadStops */
-enum RoadStopType : uint8_t {
-	ROADSTOP_BUS,    ///< A standard stop for buses
-	ROADSTOP_TRUCK,  ///< A standard stop for trucks
-	ROADSTOP_END,    ///< End of valid types
+enum class RoadStopType : uint8_t {
+	Bus, ///< A standard stop for buses
+	Truck, ///< A standard stop for trucks
+	End, ///< End of valid types
 };
 
 /** The facilities a station might be having */
-enum StationFacility : uint8_t {
-	FACIL_NONE       = 0,      ///< The station has no facilities at all
-	FACIL_TRAIN      = 1 << 0, ///< Station with train station
-	FACIL_TRUCK_STOP = 1 << 1, ///< Station with truck stops
-	FACIL_BUS_STOP   = 1 << 2, ///< Station with bus stops
-	FACIL_AIRPORT    = 1 << 3, ///< Station with an airport
-	FACIL_DOCK       = 1 << 4, ///< Station with a dock
-	FACIL_WAYPOINT   = 1 << 7, ///< Station is a waypoint
+enum class StationFacility : uint8_t {
+	Train     = 0, ///< Station with train station
+	TruckStop = 1, ///< Station with truck stops
+	BusStop   = 2, ///< Station with bus stops
+	Airport   = 3, ///< Station with an airport
+	Dock      = 4, ///< Station with a dock
+	Waypoint  = 7, ///< Station is a waypoint
 };
-DECLARE_ENUM_AS_BIT_SET(StationFacility)
+using StationFacilities = EnumBitSet<StationFacility, uint8_t>;
+
+/** Fake 'facility' to allow toggling display of recently-removed station signs. */
+static constexpr StationFacility STATION_FACILITY_GHOST{6};
 
 /** The vehicles that may have visited a station */
 enum StationHadVehicleOfType : uint8_t {

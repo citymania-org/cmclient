@@ -10,6 +10,7 @@
 #ifndef PICKER_GUI_H
 #define PICKER_GUI_H
 
+#include "newgrf_badge.h"
 #include "querystring_gui.h"
 #include "sortlist_type.h"
 #include "stringfilter_type.h"
@@ -41,6 +42,7 @@ public:
 
 	virtual void Close(int) { }
 
+	virtual GrfSpecFeature GetFeature() const = 0;
 	/** Should picker class/type selection be enabled? */
 	virtual bool IsActive() const = 0;
 	/** Are there multiple classes to chose from? */
@@ -72,6 +74,8 @@ public:
 	virtual PickerItem GetPickerItem(int cls_id, int id) const = 0;
 	/** Get the item of a type. */
 	virtual StringID GetTypeName(int cls_id, int id) const = 0;
+	/** Get the item of a type. */
+	virtual std::span<const BadgeID> GetTypeBadges(int cls_id, int id) const = 0;
 	/** Test if an item is currently buildable. */
 	virtual bool IsTypeAvailable(int cls_id, int id) const = 0;
 	/** Draw preview image of an item. */
@@ -140,6 +144,7 @@ public:
 
 struct PickerFilterData : StringFilter {
 	const PickerCallbacks *callbacks; ///< Callbacks for filter functions to access to callbacks.
+	std::optional<BadgeTextFilter> btf;
 };
 
 using PickerClassList = GUIList<int, std::nullptr_t, PickerFilterData &>; ///< GUIList holding classes to display.
@@ -147,18 +152,21 @@ using PickerTypeList = GUIList<PickerItem, std::nullptr_t, PickerFilterData &>; 
 
 class PickerWindow : public PickerWindowBase {
 public:
-	enum PickerFilterModes {
+	enum PickerFilterModes : uint8_t {
 		PFM_ALL = 0, ///< Show all classes.
 		PFM_USED = 1, ///< Show used types.
 		PFM_SAVED = 2, ///< Show saved types.
 	};
 
-	enum PickerFilterInvalidation {
-		PFI_CLASS = 1U << 0, ///< Refresh the class list.
-		PFI_TYPE = 1U << 1, ///< Refresh the type list.
-		PFI_POSITION = 1U << 2, ///< Update scroll positions.
-		PFI_VALIDATE = 1U << 3, ///< Validate selected item.
+	enum class PickerInvalidation : uint8_t {
+		Class, ///< Refresh the class list.
+		Type, ///< Refresh the type list.
+		Position, ///< Update scroll positions.
+		Validate, ///< Validate selected item.
 	};
+	using PickerInvalidations = EnumBitSet<PickerInvalidation, uint8_t>;
+
+	static constexpr PickerInvalidations PICKER_INVALIDATION_ALL{PickerInvalidation::Class, PickerInvalidation::Type, PickerInvalidation::Position, PickerInvalidation::Validate};
 
 	static const int PREVIEW_WIDTH = 64; ///< Width of each preview button.
 	static const int PREVIEW_HEIGHT = 48; ///< Height of each preview button.
@@ -171,6 +179,7 @@ public:
 	bool has_type_picker = false; ///< Set if this window has a type picker 'component'.
 
 	PickerWindow(WindowDesc &desc, Window *parent, int window_number, PickerCallbacks &callbacks);
+	void OnInit() override;
 	void Close(int data = 0) override;
 	void UpdateWidgetSize(WidgetID widget, Dimension &size, const Dimension &padding, Dimension &fill, Dimension &resize) override;
 	void DrawWidget(const Rect &r, WidgetID widget) const override;
@@ -181,10 +190,12 @@ public:
 	void OnEditboxChanged(WidgetID wid) override;
 
 	/** Enum referring to the Hotkeys in the picker window */
-	enum PickerClassWindowHotkeys {
+	enum PickerClassWindowHotkeys : int32_t {
 		PCWHK_FOCUS_FILTER_BOX, ///< Focus the edit box for editing the filter string
 		CM_PCWHK_ROTATE,
 	};
+
+	void InvalidateData(PickerInvalidations data) { this->Window::InvalidateData(data.base()); }
 
 protected:
 	void ConstructWindow();
@@ -209,6 +220,8 @@ private:
 	void BuildPickerTypeList();
 	void EnsureSelectedTypeIsValid();
 	void EnsureSelectedTypeIsVisible();
+
+	GUIBadgeClasses badge_classes;
 
 	IntervalTimer<TimerGameCalendar> yearly_interval = {{TimerGameCalendar::YEAR, TimerGameCalendar::Priority::NONE}, [this](auto) {
 		this->SetDirty();

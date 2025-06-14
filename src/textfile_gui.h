@@ -19,12 +19,13 @@ std::optional<std::string> GetTextfile(TextfileType type, Subdirectory dir, cons
 
 /** Window for displaying a textfile */
 struct TextfileWindow : public Window, MissingGlyphSearcher {
-	TextfileType file_type;          ///< Type of textfile to view.
-	Scrollbar *vscroll;              ///< Vertical scrollbar.
-	Scrollbar *hscroll;              ///< Horizontal scrollbar.
+	TextfileType file_type{}; ///< Type of textfile to view.
+	Scrollbar *vscroll = nullptr; ///< Vertical scrollbar.
+	Scrollbar *hscroll = nullptr; ///< Horizontal scrollbar.
 
 	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override;
 	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override;
+	bool OnTooltip([[maybe_unused]] Point pt, WidgetID widget, TooltipCloseCondition close_cond) override;
 	void DrawWidget(const Rect &r, WidgetID widget) const override;
 	void OnResize() override;
 	void OnInvalidateData(int data = 0, bool gui_scope = true) override;
@@ -54,10 +55,10 @@ protected:
 	};
 
 	struct Hyperlink {
-		size_t line;             ///< Which line the link is on.
-		size_t begin;            ///< Character position on line the link begins.
-		size_t end;              ///< Character position on line the link end.
-		std::string destination; ///< Destination for the link.
+		size_t line = 0; ///< Which line the link is on.
+		size_t begin = 0; ///< Character position on line the link begins.
+		size_t end = 0; ///< Character position on line the link end.
+		std::string destination{}; ///< Destination for the link.
 	};
 
 	struct HistoryEntry {
@@ -65,16 +66,16 @@ protected:
 		int scrollpos;           ///< Scrolling position the file was at at navigation time.
 	};
 
-	std::string filename{};              ///< Filename of the textfile.
-	std::string filepath{};              ///< Full path to the filename.
+	std::string filename{}; ///< Filename of the textfile.
+	std::string filepath{}; ///< Full path to the filename.
 
-	std::vector<Line> lines;             ///< #text, split into lines in a table with lines.
-	std::vector<size_t> jumplist;        ///< Table of contents list, line numbers.
-	std::vector<Hyperlink> links;        ///< Clickable links in lines.
-	std::vector<Hyperlink> link_anchors; ///< Anchor names of headings that can be linked to.
-	std::vector<HistoryEntry> history;   ///< Browsing history in this window.
-	size_t history_pos = 0;              ///< Position in browsing history (for forward movement).
-	bool trusted = false;                ///< Whether the content is trusted (read: not from content like NewGRFs, etc).
+	std::vector<Line> lines{}; ///< #text, split into lines in a table with lines.
+	std::vector<size_t> jumplist{}; ///< Table of contents list, line numbers.
+	std::vector<Hyperlink> links{}; ///< Clickable links in lines.
+	std::vector<Hyperlink> link_anchors{}; ///< Anchor names of headings that can be linked to.
+	std::vector<HistoryEntry> history{}; ///< Browsing history in this window.
+	size_t history_pos = 0; ///< Position in browsing history (for forward movement).
+	bool trusted = false; ///< Whether the content is trusted (read: not from content like NewGRFs, etc).
 
 	void LoadText(std::string_view buf);
 	void FindHyperlinksInMarkdown(Line &line, size_t line_index);
@@ -97,13 +98,13 @@ protected:
 	void NavigateHistory(int delta);
 
 private:
-	uint search_iterator = 0;     ///< Iterator for the font check search.
-	uint max_length = 0;          ///< Maximum length of unwrapped text line.
+	uint search_iterator = 0; ///< Iterator for the font check search.
+	uint max_length = 0; ///< Maximum length of unwrapped text line.
 
 	uint ReflowContent();
 	uint GetContentHeight();
 	void SetupScrollbars(bool force_reflow);
-	void CheckHyperlinkClick(Point pt);
+	const Hyperlink *GetHyperlink(Point pt) const;
 
 	void AfterLoadMarkdown();
 };

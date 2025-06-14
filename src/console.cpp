@@ -40,7 +40,7 @@ void IConsoleInit()
 {
 	_iconsole_output_file = std::nullopt;
 	_redirect_console_to_client = INVALID_CLIENT_ID;
-	_redirect_console_to_admin  = INVALID_ADMIN_ID;
+	_redirect_console_to_admin  = AdminID::Invalid();
 
 	IConsoleGUIInit();
 
@@ -96,14 +96,14 @@ void IConsolePrint(TextColour colour_code, const std::string &string)
 		return;
 	}
 
-	if (_redirect_console_to_admin != INVALID_ADMIN_ID) {
+	if (_redirect_console_to_admin != AdminID::Invalid()) {
 		NetworkServerSendAdminRcon(_redirect_console_to_admin, colour_code, string);
 		return;
 	}
 
 	/* Create a copy of the string, strip it of colours and invalid
 	 * characters and (when applicable) assign it to the console buffer */
-	std::string str = StrMakeValid(string, SVS_NONE);
+	std::string str = StrMakeValid(string, {});
 
 	if (_network_dedicated) {
 		NetworkAdminConsole("console", str);

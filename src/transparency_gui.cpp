@@ -26,6 +26,7 @@ TransparencyOptionBits _transparency_opt;  ///< The bits that should be transpar
 TransparencyOptionBits _transparency_lock; ///< Prevent these bits from flipping with X.
 TransparencyOptionBits _invisibility_opt;  ///< The bits that should be invisible.
 uint8_t _display_opt; ///< What do we want to draw/do?
+StationFacilities _facility_display_opt; ///< What station facilities to draw.
 
 class TransparenciesWindow : public Window
 {
@@ -64,7 +65,7 @@ public:
 
 					const Rect wr = this->GetWidget<NWidgetBase>(i)->GetCurrentRect().Shrink(WidgetDimensions::scaled.fullbevel);
 					DrawFrameRect(wr.left, fr.top, wr.right, fr.bottom, COLOUR_PALE_GREEN,
-							HasBit(_invisibility_opt, i - WID_TT_BEGIN) ? FR_LOWERED : FR_NONE);
+							HasBit(_invisibility_opt, i - WID_TT_BEGIN) ? FrameFlag::Lowered : FrameFlags{});
 				}
 				break;
 			}
@@ -130,30 +131,30 @@ public:
 static constexpr NWidgetPart _nested_transparency_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
-		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_TRANSPARENCY_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_TRANSPARENCY_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_STICKYBOX, COLOUR_DARK_GREEN),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_SIGNS), SetMinimalSize(22, 22), SetFill(0, 1), SetDataTip(SPR_IMG_SIGN, STR_TRANSPARENT_SIGNS_TOOLTIP),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_TREES), SetMinimalSize(22, 22), SetFill(0, 1), SetDataTip(SPR_IMG_PLANTTREES, STR_TRANSPARENT_TREES_TOOLTIP),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_HOUSES), SetMinimalSize(22, 22), SetFill(0, 1), SetDataTip(SPR_IMG_TOWN, STR_TRANSPARENT_HOUSES_TOOLTIP),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_INDUSTRIES), SetMinimalSize(22, 22), SetFill(0, 1), SetDataTip(SPR_IMG_INDUSTRY, STR_TRANSPARENT_INDUSTRIES_TOOLTIP),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_BUILDINGS), SetMinimalSize(22, 22), SetFill(0, 1), SetDataTip(SPR_IMG_COMPANY_LIST, STR_TRANSPARENT_BUILDINGS_TOOLTIP),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_BRIDGES), SetMinimalSize(43, 22), SetFill(0, 1), SetDataTip(SPR_IMG_BRIDGE, STR_TRANSPARENT_BRIDGES_TOOLTIP),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_STRUCTURES), SetMinimalSize(22, 22), SetFill(0, 1), SetDataTip(SPR_IMG_TRANSMITTER, STR_TRANSPARENT_STRUCTURES_TOOLTIP),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_CATENARY), SetMinimalSize(22, 22), SetFill(0, 1), SetDataTip(SPR_BUILD_X_ELRAIL, STR_TRANSPARENT_CATENARY_TOOLTIP),
-		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_TEXT), SetMinimalSize(22, 22), SetFill(0, 1), SetDataTip(SPR_IMG_TRAINLIST, STR_TRANSPARENT_TEXT_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_SIGNS), SetMinimalSize(22, 22), SetFill(0, 1), SetSpriteTip(SPR_IMG_SIGN, STR_TRANSPARENT_SIGNS_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_TREES), SetMinimalSize(22, 22), SetFill(0, 1), SetSpriteTip(SPR_IMG_PLANTTREES, STR_TRANSPARENT_TREES_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_HOUSES), SetMinimalSize(22, 22), SetFill(0, 1), SetSpriteTip(SPR_IMG_TOWN, STR_TRANSPARENT_HOUSES_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_INDUSTRIES), SetMinimalSize(22, 22), SetFill(0, 1), SetSpriteTip(SPR_IMG_INDUSTRY, STR_TRANSPARENT_INDUSTRIES_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_BUILDINGS), SetMinimalSize(22, 22), SetFill(0, 1), SetSpriteTip(SPR_IMG_COMPANY_LIST, STR_TRANSPARENT_BUILDINGS_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_BRIDGES), SetMinimalSize(43, 22), SetFill(0, 1), SetSpriteTip(SPR_IMG_BRIDGE, STR_TRANSPARENT_BRIDGES_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_STRUCTURES), SetMinimalSize(22, 22), SetFill(0, 1), SetSpriteTip(SPR_IMG_TRANSMITTER, STR_TRANSPARENT_STRUCTURES_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_CATENARY), SetMinimalSize(22, 22), SetFill(0, 1), SetSpriteTip(SPR_BUILD_X_ELRAIL, STR_TRANSPARENT_CATENARY_TOOLTIP),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_TEXT), SetMinimalSize(22, 22), SetFill(0, 1), SetSpriteTip(SPR_IMG_TRAINLIST, STR_TRANSPARENT_TEXT_TOOLTIP),
 		NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetFill(1, 1), EndContainer(),
 	EndContainer(),
 	/* Panel with 'invisibility' buttons. */
-	NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_TT_BUTTONS), SetMinimalSize(219, 13), SetDataTip(0x0, STR_TRANSPARENT_INVISIBLE_TOOLTIP),
+	NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_TT_BUTTONS), SetMinimalSize(219, 13), SetToolTip(STR_TRANSPARENT_INVISIBLE_TOOLTIP),
 	EndContainer(),
 };
 
 static WindowDesc _transparency_desc(
 	WDP_MANUAL, "toolbar_transparency", 0, 0,
 	WC_TRANSPARENCY_TOOLBAR, WC_NONE,
-	0,
+	{},
 	_nested_transparency_widgets
 );
 

@@ -342,20 +342,20 @@ STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}زمین
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK} ٹول بآر منتقل کیجیئے
 
 # Extra tooltips for the scenario editor toolbar
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SAVE_SCENARIO_LOAD_SCENARIO        :{BLACK} منظر محفوظ کیجئے، منظر کھولیں، منظر دست بردار کیجیئے، منظر چھوڑیئے
+STR_SCENEDIT_TOOLBAR_SAVE_SCENARIO_LOAD_SCENARIO_TOOLTIP        :{BLACK} منظر محفوظ کیجئے، منظر کھولیں، منظر دست بردار کیجیئے، منظر چھوڑیئے
 STR_SCENEDIT_TOOLBAR_OPENTTD                                    :{YELLOW}OpenTTD
 STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR                            :{YELLOW} منظر نامھ
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD    :{BLACK}شروع کرنے کی تاریخ کو ایک سال پیچھے کرو
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD     :{BLACK}شروع کرنے کی تاریخ کو ایک سال آگے کرو
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE                           :{BLACK} کلک کر کے ابتدائی سال درج کیجیئے
-STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK} نقشھ، کتبِ قصبات
-STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK} منظر تخلیق
-STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK} قصبھ تخلیق
-STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK} صنعت تخلیق
-STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK} سڑک کی تعمیر
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK} درخت لگایئے۔ Shift تعپیر/اندازاً خرچے میں تدویم کرتا ھے
-STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK} اشارھ لگایئے
-STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK} چیز لگایئے۔ Shift تعپیر/اندازاً خرچے میں تدویم کرتا ھے
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_BACKWARD_TOOLTIP    :{BLACK}شروع کرنے کی تاریخ کو ایک سال پیچھے کرو
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_FORWARD_TOOLTIP     :{BLACK}شروع کرنے کی تاریخ کو ایک سال آگے کرو
+STR_SCENEDIT_TOOLBAR_SET_DATE_TOOLTIP                           :{BLACK} کلک کر کے ابتدائی سال درج کیجیئے
+STR_SCENEDIT_TOOLBAR_DISPLAY_MAP_TOWN_DIRECTORY_TOOLTIP         :{BLACK} نقشھ، کتبِ قصبات
+STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION_TOOLTIP               :{BLACK} منظر تخلیق
+STR_SCENEDIT_TOOLBAR_TOWN_GENERATION_TOOLTIP                    :{BLACK} قصبھ تخلیق
+STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION_TOOLTIP                :{BLACK} صنعت تخلیق
+STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION_TOOLTIP                  :{BLACK} سڑک کی تعمیر
+STR_SCENEDIT_TOOLBAR_PLANT_TREES_TOOLTIP                        :{BLACK} درخت لگایئے۔ Shift تعپیر/اندازاً خرچے میں تدویم کرتا ھے
+STR_SCENEDIT_TOOLBAR_PLACE_SIGN_TOOLTIP                         :{BLACK} اشارھ لگایئے
+STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP                       :{BLACK} چیز لگایئے۔ Shift تعپیر/اندازاً خرچے میں تدویم کرتا ھے
 
 # Scenario editor file menu
 ###length 7
@@ -369,7 +369,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :باہر نکل
 
 
 # Settings menu
-###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :کھیل کے اختیارات
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF اختیارات
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Transparency کے اختیارات
@@ -691,7 +690,7 @@ STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLACK}برف
 
 STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}نقشے پر شہروں کے ناموں کی تدویم کیجئیے
-STR_SMALLMAP_CENTER                                             :{BLACK}موجودہ جگہ پر چھوٹا نقشہ درمیان سے دیکھیں
+STR_SMALLMAP_CENTER_TOOLTIP                                     :{BLACK}موجودہ جگہ پر چھوٹا نقشہ درمیان سے دیکھیں
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING} ({NUM})
 STR_SMALLMAP_COMPANY                                            :{TINY_FONT}{COMPANY}
 STR_SMALLMAP_TOWN                                               :{TINY_FONT}{WHITE}{TOWN}
@@ -718,7 +717,6 @@ STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}حالی
 STR_MESSAGE_NEWS_FORMAT                                         :{STRING}  -  {STRING}
 
 STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}پیغام
-STR_NEWS_CUSTOM_ITEM                                            :{BIG_FONT}{BLACK}{STRING}
 
 STR_NEWS_FIRST_TRAIN_ARRIVAL                                    :{BIG_FONT}{BLACK}شہریوں کا جشن ۔ ۔ ۔{}پہلی ریل گاڑی {STATION} پر پہنچی
 STR_NEWS_FIRST_BUS_ARRIVAL                                      :{BIG_FONT}{BLACK}شہریوں کا جشن ۔ ۔ ۔{}پہلی لاری {STATION} پر پہنچی
@@ -812,9 +810,9 @@ STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLAC
 # Extra view window
 STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}دہکھنے والی کھڑکی {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}دہکھنے والی کھڑکی کی نقل
-STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}بنیادی منظر میں نظر آنے والی جگہ کو دیکھنے والی کھڑکی میں نقل کریں
+STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TOOLTIP                        :{BLACK}بنیادی منظر میں نظر آنے والی جگہ کو دیکھنے والی کھڑکی میں نقل کریں
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}دہکھنے والی کھڑکی سے نقل کریں
-STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}دیکھنے والی کھڑکی میں نظر آنے والی جگہ کو بنیادی منظر میں نقل کریں
+STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}دیکھنے والی کھڑکی میں نظر آنے والی جگہ کو بنیادی منظر میں نقل کریں
 
 # Game options window
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}کھیل کے اختیارات
@@ -826,7 +824,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}کرنس
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}کرنسی کی اکائی اختیار کریں
 
 
-###length 44
+###length 45
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :برطانوی پاونڈ
 STR_GAME_OPTIONS_CURRENCY_USD                                   :امریکی ڈالر
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :یورو
@@ -1393,6 +1391,8 @@ STR_CONFIG_SETTING_STARTING_YEAR                                :شروعاتی 
 
 ###setting-zero-is-special
 
+###length 2
+
 ###length 3
 
 
@@ -1423,6 +1423,8 @@ STR_CONFIG_SETTING_TOWN_FOUNDING                                :کھیل میں
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :ممنوع
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :اجازت ہے
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :اپنی مرضی کے شہر کے پھیلاو کی اجازت ہے
+
+###length 3
 
 ###length 2
 
@@ -1623,9 +1625,9 @@ STR_FACE_SAVE                                                   :{BLACK}بچائ
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}پسندیدہ چہرہ بچائیں
 STR_FACE_SAVE_DONE                                              :{WHITE}یہ چہرہ آپ کے پسندیدہ چہرے کے طور پر OpenTTD configuration file میں محفوظ کر لیا جائے گا
 STR_FACE_EUROPEAN                                               :{BLACK}یورپئین
-STR_FACE_SELECT_EUROPEAN                                        :{BLACK}یورپئین چہرہ چنئے
+STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}یورپئین چہرہ چنئے
 STR_FACE_AFRICAN                                                :{BLACK}افریقی
-STR_FACE_SELECT_AFRICAN                                         :{BLACK}افریقی چہرہ چنئے
+STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}افریقی چہرہ چنئے
 STR_FACE_YES                                                    :ہاں
 STR_FACE_NO                                                     :نہیں
 STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}مونچھیں یا کان کی بالیاں فعال کریں
@@ -1675,7 +1677,7 @@ STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}Language
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}فہرست میں سے ایک کھیل کو چُننے کے لئے ایک پر کلک کریں
 STR_NETWORK_SERVER_LIST_LAST_JOINED_SERVER                      :{BLACK}آپ کا پچھلی مرتبہ اختیار کیا ہُوا سرور:
-STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST                    :{BLACK}اپنے چھلی مرتبہ اختیار شدہ سرور کو منتخب کرنے کے لئے کلک کریں
+STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST_TOOLTIP            :{BLACK}اپنے چھلی مرتبہ اختیار شدہ سرور کو منتخب کرنے کے لئے کلک کریں
 
 STR_NETWORK_SERVER_LIST_GAME_INFO                               :{SILVER}کھیل کی معلومات
 STR_NETWORK_SERVER_LIST_CLIENTS                                 :{SILVER}Clients: {WHITE}{COMMA} / {COMMA} - {COMMA} / {COMMA}
@@ -1819,7 +1821,7 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_MAP                            :نقشہ ڈاو
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :نقشہ پر کام کرنے میں بہت دیر لگی
 
 # Network related errors
-STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
+STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 ###length 12
 STR_NETWORK_SERVER_MESSAGE_GAME_PAUSED                          :کھیل رکا ہوا ہے۔ ({STRING})
@@ -1835,11 +1837,10 @@ STR_NETWORK_SERVER_MESSAGE_GAME_REASON_GAME_SCRIPT              :کھیل کا �
 
 STR_NETWORK_MESSAGE_CLIENT_LEAVING                              :چھوڑ رہا ہوں
 STR_NETWORK_MESSAGE_CLIENT_JOINED                               :*** {STRING} کھیل میں شامل ہوا ہے
-STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {STRING} کھیل میں شامل ہوا ہے (Client #{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {STRING} کمپنی میں شامل ہوا #{2:NUM}
+STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** {STRING} کھیل میں شامل ہوا ہے (Client #{NUM})
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} ناظرین میں شامل ہوا
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} نے نئی کمپنی شروع کی ہے (#{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} نے کھیل چھوڑ دیا ہے ({2:STRING})
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} نے نئی کمپنی شروع کی ہے (#{NUM})
+STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} نے کھیل چھوڑ دیا ہے ({STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} نے اپنا نام بدل کر {STRING} رکھ لیا ہے
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}سرور نے سیشن بند کر دیا
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}سرور دوبارہ سے سٹارٹ ہو رہا ہے - - -{}برائے مہربانی انتظار فرمائیے ۔ ۔ ۔
@@ -1991,6 +1992,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}پلیٹ
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}ریلوے اسٹیشن کی لمبائی منتخب کریں
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}کھینچ کر رکھ دیں
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}کھینچ کر رکھ کر اسٹیشن تعمیر کریں
+
 
 
 
@@ -2156,7 +2158,7 @@ STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}شہر �
 STR_FOUND_TOWN_CITY                                             :{BLACK}شہر
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}شہر کی سڑکوں کا پھیلائو:
-STR_FOUND_TOWN_SELECT_TOWN_ROAD_LAYOUT                          :{BLACK}اس شہر کیلئے سڑکوں کا بھیلائو منتخب کرو
+STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}اس شہر کیلئے سڑکوں کا بھیلائو منتخب کرو
 STR_FOUND_TOWN_SELECT_LAYOUT_ORIGINAL                           :{BLACK}اصلی
 STR_FOUND_TOWN_SELECT_LAYOUT_BETTER_ROADS                       :{BLACK}بہتر سڑکیں
 STR_FOUND_TOWN_SELECT_LAYOUT_RANDOM                             :{G=f}{BLACK}کوئٰ سی
@@ -2359,7 +2361,7 @@ STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}غلط م�
 # Station list window
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
-STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}تمام سہولتوں کا انتخاب کرو
+STR_STATION_LIST_SELECT_ALL_FACILITIES_TOOLTIP                  :{BLACK}تمام سہولتوں کا انتخاب کرو
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -2652,12 +2654,11 @@ STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
 ###length 3
 ###next-name-looks-similar
 
-STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
 
 
-STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION}
 
 
 
@@ -2674,7 +2675,6 @@ STR_ORDER_OUT_OF_RANGE                                          :{RED} (اگلا
 
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :زیادہ سے زیادہ {2:VELOCITY} رفتار پر سفر کریں (بغیر اوقات کے)
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :{STRING} کے لئے زیادہ سے زیادہ {VELOCITY} رفتار پر سفر کریں
-
 
 
 
@@ -2758,7 +2758,6 @@ STR_ERROR_ALREADY_BUILT                                         :{WHITE}...تع�
 STR_ERROR_OWNED_BY                                              :{WHITE}۔۔۔ یھ {STRING} کی ملکیت ھے
 STR_ERROR_AREA_IS_OWNED_BY_ANOTHER                              :{WHITE}۔۔۔ رقبھ کسی اور کمپنی کی ملکیت ھے
 STR_ERROR_NAME_MUST_BE_UNIQUE                                   :{WHITE} نام منفرد ھونا چاھیے
-STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}{1:STRING} راستے میں ھے
 
 # Local authority errors
 STR_ERROR_LOCAL_AUTHORITY_REFUSES_TO_ALLOW_THIS                 :{WHITE}{TOWN} مقامی حکومت اس کی اجازت نھیں دیتی
@@ -2883,6 +2882,10 @@ STR_ERROR_CAN_T_BUY_AIRCRAFT                                    :{WHITE}ھوائ
 
 ###length VEHICLE_TYPES
 STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}ھوائی جہاز فروخت نہیں کر سکتے
+
+###length VEHICLE_TYPES
+
+###length VEHICLE_TYPES
 
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}کھیل میں بہت زیادہ سواریاں
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}مرمت کا دورانیہ تبدیل نہین کرسکتے
@@ -3126,18 +3129,7 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :تماشائی,
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
-STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
-STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
-STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
-
-STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
-STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
-
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
-STR_VIEWPORT_STATION_TINY                                       :{TINY_FONT}{STATION}
-
-STR_VIEWPORT_WAYPOINT                                           :{WAYPOINT}
-STR_VIEWPORT_WAYPOINT_TINY                                      :{TINY_FONT}{WAYPOINT}
 
 # Simple strings to get specific types of data
 STR_COMPANY_NAME                                                :{COMPANY}
@@ -3189,3 +3181,4 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :({STRING} ({VELOCITY}
+

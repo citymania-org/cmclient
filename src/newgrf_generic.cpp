@@ -19,7 +19,7 @@
 
 /** Scope resolver for generic objects and properties. */
 struct GenericScopeResolver : public ScopeResolver {
-	CargoID cargo_type;
+	CargoType cargo_type;
 	uint8_t default_selection;
 	uint8_t src_industry;        ///< Source industry substitute type. 0xFF for "town", 0xFE for "unknown".
 	uint8_t dst_industry;        ///< Destination industry substitute type. 0xFF for "town", 0xFE for "unknown".
@@ -203,20 +203,20 @@ static uint16_t GetGenericCallbackResult(uint8_t feature, ResolverObject &object
  * @param[out] file Optionally returns the GRFFile which made the final decision for the callback result. May be nullptr if not required.
  * @return callback value if successful or CALLBACK_FAILED
  */
-uint16_t GetAiPurchaseCallbackResult(uint8_t feature, CargoID cargo_type, uint8_t default_selection, IndustryType src_industry, IndustryType dst_industry, uint8_t distance, AIConstructionEvent event, uint8_t count, uint8_t station_size, const GRFFile **file)
+uint16_t GetAiPurchaseCallbackResult(uint8_t feature, CargoType cargo_type, uint8_t default_selection, IndustryType src_industry, IndustryType dst_industry, uint8_t distance, AIConstructionEvent event, uint8_t count, uint8_t station_size, const GRFFile **file)
 {
 	GenericResolverObject object(true, CBID_GENERIC_AI_PURCHASE_SELECTION);
 
 	if (src_industry != IT_AI_UNKNOWN && src_industry != IT_AI_TOWN) {
 		const IndustrySpec *is = GetIndustrySpec(src_industry);
 		/* If this is no original industry, use the substitute type */
-		if (is->grf_prop.subst_id != INVALID_INDUSTRYTYPE) src_industry = is->grf_prop.subst_id;
+		if (is->grf_prop.subst_id != IT_INVALID) src_industry = is->grf_prop.subst_id;
 	}
 
 	if (dst_industry != IT_AI_UNKNOWN && dst_industry != IT_AI_TOWN) {
 		const IndustrySpec *is = GetIndustrySpec(dst_industry);
 		/* If this is no original industry, use the substitute type */
-		if (is->grf_prop.subst_id != INVALID_INDUSTRYTYPE) dst_industry = is->grf_prop.subst_id;
+		if (is->grf_prop.subst_id != IT_INVALID) dst_industry = is->grf_prop.subst_id;
 	}
 
 	object.generic_scope.cargo_type        = cargo_type;

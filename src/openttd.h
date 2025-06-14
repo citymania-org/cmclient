@@ -17,7 +17,7 @@
 #include "citymania/extensions/cmext_game_session_stats.hpp"
 
 /** Mode which defines the state of the game. */
-enum GameMode {
+enum GameMode : uint8_t {
 	GM_MENU,
 	GM_NORMAL,
 	GM_EDITOR,
@@ -25,7 +25,7 @@ enum GameMode {
 };
 
 /** Mode which defines what mode we're switching to. */
-enum SwitchMode {
+enum SwitchMode : uint8_t {
 	SM_NONE,
 	SM_NEWGAME,           ///< New Game --> 'Random game'.
 	SM_RESTARTGAME,       ///< Restart --> 'Random game' with current settings.
@@ -44,7 +44,7 @@ enum SwitchMode {
 };
 
 /** Display Options */
-enum DisplayOptions {
+enum DisplayOptions : uint8_t {
 	DO_SHOW_TOWN_NAMES     = 0, ///< Display town names.
 	DO_SHOW_STATION_NAMES  = 1, ///< Display station names.
 	DO_SHOW_SIGNS          = 2, ///< Display signs.
@@ -68,24 +68,20 @@ extern std::atomic<bool> _exit_game;
 extern bool _save_config;
 
 /** Modes of pausing we've got */
-enum PauseMode : uint8_t {
-	PM_UNPAUSED              = 0,      ///< A normal unpaused game
-	PM_PAUSED_NORMAL         = 1 << 0, ///< A game normally paused
-	PM_PAUSED_SAVELOAD       = 1 << 1, ///< A game paused for saving/loading
-	PM_PAUSED_JOIN           = 1 << 2, ///< A game paused for 'pause_on_join'
-	PM_PAUSED_ERROR          = 1 << 3, ///< A game paused because a (critical) error
-	PM_PAUSED_ACTIVE_CLIENTS = 1 << 4, ///< A game paused for 'min_active_clients'
-	PM_PAUSED_GAME_SCRIPT    = 1 << 5, ///< A game paused by a game script
-	PM_PAUSED_LINK_GRAPH     = 1 << 6, ///< A game paused due to the link graph schedule lagging
-	PM_COMMAND_DURING_PAUSE  = 1 << 7, ///< A game paused, and a command executed during the pause; resets on autosave
-
-	/** Pause mode bits when paused for network reasons. */
-	PMB_PAUSED_NETWORK = PM_PAUSED_ACTIVE_CLIENTS | PM_PAUSED_JOIN,
+enum class PauseMode : uint8_t {
+	Normal             = 0, ///< A game normally paused
+	SaveLoad           = 1, ///< A game paused for saving/loading
+	Join               = 2, ///< A game paused for 'pause_on_join'
+	Error              = 3, ///< A game paused because a (critical) error
+	ActiveClients      = 4, ///< A game paused for 'min_active_clients'
+	GameScript         = 5, ///< A game paused by a game script
+	LinkGraph          = 6, ///< A game paused due to the link graph schedule lagging
+	CommandDuringPause = 7, ///< A game paused, and a command executed during the pause; resets on autosave
 };
-DECLARE_ENUM_AS_BIT_SET(PauseMode)
+using PauseModes = EnumBitSet<PauseMode, uint8_t>;
 
 /** The current pause mode */
-extern PauseMode _pause_mode;
+extern PauseModes _pause_mode;
 namespace citymania { extern uint32 _pause_countdown; }
 
 void AskExitGame();

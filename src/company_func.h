@@ -17,8 +17,7 @@
 
 bool CheckTakeoverVehicleLimit(CompanyID cbig, CompanyID small);
 void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner);
-static const int OWNED_BY_OWNER_IN_PARAMETERS_OFFSET = 2; ///< The index in the parameters for the owner information.
-void SetDParamsForOwnedBy(Owner owner, TileIndex tile);
+std::array<StringParameter, 2> GetParamsForOwnedBy(Owner owner, TileIndex tile);
 void SetLocalCompany(CompanyID new_company);
 void ShowBuyCompanyDialog(CompanyID company, bool hostile_takeover);
 void CompanyAdminUpdate(const Company *company);
@@ -31,13 +30,13 @@ Money GetAvailableMoneyForCommand();
 bool CheckCompanyHasMoney(CommandCost &cost);
 void SubtractMoneyFromCompany(const CommandCost &cost);
 void SubtractMoneyFromCompanyFract(CompanyID company, const CommandCost &cost);
-CommandCost CheckOwnership(Owner owner, TileIndex tile = 0U);
+CommandCost CheckOwnership(Owner owner, TileIndex tile = {});
 CommandCost CheckTileOwnership(TileIndex tile);
 
 extern CompanyID _local_company;
 extern CompanyID _current_company;
 
-extern Colours _company_colours[MAX_COMPANIES];
+extern ReferenceThroughBaseContainer<std::array<Colours, MAX_COMPANIES>> _company_colours;
 extern CompanyManagerFace _company_manager_face;
 
 /**

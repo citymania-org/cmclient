@@ -10,11 +10,15 @@
 #include "stdafx.h"
 #include "debug.h"
 #include "timer/timer_game_calendar.h"
+#include "newgrf_badge.h"
 #include "newgrf_spritegroup.h"
 #include "newgrf_text.h"
 #include "station_base.h"
-#include "newgrf_class_func.h"
 #include "town.h"
+
+#include "table/strings.h"
+
+#include "newgrf_class_func.h"
 
 #include "safeguards.h"
 
@@ -62,7 +66,7 @@ AirportSpec AirportSpec::specs[NUM_AIRPORTS]; ///< Airport specifications.
 		if (subst_id == AT_INVALID) return as;
 		as = &AirportSpec::specs[subst_id];
 	}
-	if (as->grf_prop.override != AT_INVALID) return &AirportSpec::specs[as->grf_prop.override];
+	if (as->grf_prop.override_id != AT_INVALID) return &AirportSpec::specs[as->grf_prop.override_id];
 	return as;
 }
 
@@ -99,7 +103,7 @@ bool AirportSpec::IsWithinMapBounds(uint8_t table, TileIndex tile) const
 
 	uint8_t w = this->size_x;
 	uint8_t h = this->size_y;
-	if (this->layouts[table].rotation == DIR_E || this->layouts[table].rotation == DIR_W) Swap(w, h);
+	if (this->layouts[table].rotation == DIR_E || this->layouts[table].rotation == DIR_W) std::swap(w, h);
 
 	return TileX(tile) + w < Map::SizeX() &&
 		TileY(tile) + h < Map::SizeY();
@@ -147,7 +151,7 @@ void AirportOverrideManager::SetEntitySpec(AirportSpec *as)
 
 		if (this->entity_overrides[i] != as->grf_prop.local_id || this->grfid_overrides[i] != as->grf_prop.grfid) continue;
 
-		overridden_as->grf_prop.override = airport_id;
+		overridden_as->grf_prop.override_id = airport_id;
 		overridden_as->enabled = false;
 		this->entity_overrides[i] = this->invalid_id;
 		this->grfid_overrides[i] = 0;
@@ -158,6 +162,8 @@ void AirportOverrideManager::SetEntitySpec(AirportSpec *as)
 {
 	switch (variable) {
 		case 0x40: return this->layout;
+
+		case 0x7A: return GetBadgeVariableResult(*this->ro.grffile, this->spec->badges, parameter);
 	}
 
 	if (this->st == nullptr) {
@@ -169,7 +175,7 @@ void AirportOverrideManager::SetEntitySpec(AirportSpec *as)
 		/* Get a variable from the persistent storage */
 		case 0x7C: return (this->st->airport.psa != nullptr) ? this->st->airport.psa->GetValue(parameter) : 0;
 
-		case 0xF0: return this->st->facilities;
+		case 0xF0: return this->st->facilities.base();
 		case 0xFA: return ClampTo<uint16_t>(this->st->build_date - CalendarTime::DAYS_TILL_ORIGINAL_BASE_YEAR);
 	}
 
@@ -246,7 +252,7 @@ AirportResolverObject::AirportResolverObject(TileIndex tile, Station *st, const 
 		CallbackID callback, uint32_t param1, uint32_t param2)
 	: ResolverObject(spec->grf_prop.grffile, callback, param1, param2), airport_scope(*this, tile, st, spec, layout)
 {
-	this->root_spritegroup = spec->grf_prop.spritegroup[0];
+	this->root_spritegroup = spec->grf_prop.GetSpriteGroup();
 }
 
 SpriteID GetCustomAirportSprite(const AirportSpec *as, uint8_t layout)
@@ -281,5 +287,5 @@ StringID GetAirportTextCallback(const AirportSpec *as, uint8_t layout, uint16_t 
 		return STR_UNDEFINED;
 	}
 
-	return GetGRFStringID(as->grf_prop.grfid, 0xD000 + cb_res);
+	return GetGRFStringID(as->grf_prop.grfid, GRFSTR_MISC_GRF_TEXT + cb_res);
 }

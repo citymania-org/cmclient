@@ -21,6 +21,9 @@
 #include "gui.h"
 
 #include "base_media_base.h"
+#include "base_media_graphics.h"
+#include "base_media_music.h"
+#include "base_media_sounds.h"
 #include "saveload/saveload.h"
 #include "company_cmd.h"
 #include "company_func.h"
@@ -88,6 +91,8 @@
 
 #include <system_error>
 
+#include "table/strings.h"
+
 #include "safeguards.h"
 
 #ifdef __EMSCRIPTEN__
@@ -102,7 +107,7 @@ void CallWindowGameTickEvent();
 bool HandleBootstrap();
 
 extern void CheckCaches();
-extern Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY);
+extern Company *DoStartupNewCompany(bool is_ai, CompanyID company = CompanyID::Invalid());
 extern void OSOpenBrowser(const std::string &url);
 extern void ShowOSErrorBox(const char *buf, bool system);
 extern std::string _config_file;
@@ -251,9 +256,9 @@ static void WriteSavegameInfo(const std::string &name)
 
 	message += "NewGRFs:\n";
 	if (_load_check_data.HasNewGrfs()) {
-		for (GRFConfig *c = _load_check_data.grfconfig; c != nullptr; c = c->next) {
-			fmt::format_to(std::back_inserter(message), "{:08X} {} {}\n", BSWAP32(c->ident.grfid),
-				FormatArrayAsHex(HasBit(c->flags, GCF_COMPATIBLE) ? c->original_md5sum : c->ident.md5sum), c->filename);
+		for (const auto &c : _load_check_data.grfconfig) {
+			fmt::format_to(std::back_inserter(message), "{:08X} {} {}\n", std::byteswap(c->ident.grfid),
+				FormatArrayAsHex(c->flags.Test(GRFConfigFlag::Compatible) ? c->original_md5sum : c->ident.md5sum), c->filename);
 		}
 	}
 
@@ -338,11 +343,11 @@ static void LoadIntroGame(bool load_newgrfs = true)
 		GenerateWorld(GWM_EMPTY, 64, 64); // if failed loading, make empty world.
 		SetLocalCompany(COMPANY_SPECTATOR);
 	} else {
-		SetLocalCompany(COMPANY_FIRST);
+		SetLocalCompany(CompanyID::Begin());
 	}
 
 	FixTitleGameZoom();
-	_pause_mode = PM_UNPAUSED;
+	_pause_mode = {};
 	citymania::_pause_countdown = 0;
 	_cursor.fix_at = false;
 
@@ -353,30 +358,15 @@ static void LoadIntroGame(bool load_newgrfs = true)
 
 void MakeNewgameSettingsLive()
 {
-	for (CompanyID c = COMPANY_FIRST; c < MAX_COMPANIES; c++) {
-		if (_settings_game.ai_config[c] != nullptr) {
-			delete _settings_game.ai_config[c];
-		}
+	for (CompanyID c = CompanyID::Begin(); c < MAX_COMPANIES; ++c) {
+		_settings_game.script_config.ai[c].reset();
 	}
-	if (_settings_game.game_config != nullptr) {
-		delete _settings_game.game_config;
-	}
+	_settings_game.script_config.game.reset();
 
 	/* Copy newgame settings to active settings.
 	 * Also initialise old settings needed for savegame conversion. */
 	_settings_game = _settings_newgame;
 	_old_vds = _settings_client.company.vehicle;
-
-	for (CompanyID c = COMPANY_FIRST; c < MAX_COMPANIES; c++) {
-		_settings_game.ai_config[c] = nullptr;
-		if (_settings_newgame.ai_config[c] != nullptr) {
-			_settings_game.ai_config[c] = new AIConfig(_settings_newgame.ai_config[c]);
-		}
-	}
-	_settings_game.game_config = nullptr;
-	if (_settings_newgame.game_config != nullptr) {
-		_settings_game.game_config = new GameConfig(_settings_newgame.game_config);
-	}
 }
 
 void OpenBrowser(const std::string &url)
@@ -411,7 +401,7 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 	{
 		ResetGRFConfig(false);
 
-		TarScanner::DoScan(TarScanner::SCENARIO);
+		TarScanner::DoScan(TarScanner::Mode::Scenario);
 
 		AI::Initialize();
 		Game::Initialize();
@@ -496,15 +486,16 @@ static std::vector<OptionData> CreateOptions()
 	std::vector<OptionData> options;
 	/* Options that require a parameter. */
 	for (char c : "GIMSbcmnpqrstvCT") options.push_back({ .type = ODF_HAS_VALUE, .id = c, .shortname = c });
-#if !defined(_WIN32)
-	options.push_back({ .type = ODF_HAS_VALUE, .id = 'f', .shortname = 'f' });
-#endif
 
 	/* Options with an optional parameter. */
 	for (char c : "Ddg") options.push_back({ .type = ODF_OPTIONAL_VALUE, .id = c, .shortname = c });
 
 	/* Options without a parameter. */
 	for (char c : "QXehx") options.push_back({ .type = ODF_NO_VALUE, .id = c, .shortname = c });
+#if !defined(_WIN32)
+	options.push_back({ .type = ODF_NO_VALUE, .id = 'f', .shortname = 'f' });
+#endif
+
 	return options;
 }
 
@@ -570,7 +561,7 @@ int openttd_main(std::span<char * const> arguments)
 			scanner->join_server_password = mgo.opt;
 			break;
 		case 'r': ParseResolution(&resolution, mgo.opt); break;
-		case 't': scanner->startyear = atoi(mgo.opt); break;
+		case 't': scanner->startyear = TimerGameCalendar::Year(atoi(mgo.opt)); break;
 		case 'd': {
 #if defined(_WIN32)
 				CreateConsole();
@@ -634,8 +625,7 @@ int openttd_main(std::span<char * const> arguments)
 				fmt::print(stderr, "Failed to open savegame\n");
 				if (_load_check_data.HasErrors()) {
 					InitializeLanguagePacks(); // A language pack is needed for GetString()
-					SetDParamStr(0, _load_check_data.error_msg);
-					fmt::print(stderr, "{}\n", GetString(_load_check_data.error));
+					fmt::print(stderr, "{}\n", GetString(_load_check_data.error, _load_check_data.error_msg));
 				}
 				return ret;
 			}
@@ -681,7 +671,7 @@ int openttd_main(std::span<char * const> arguments)
 		 * The next two functions are needed to list the graphics sets. We can't do them earlier
 		 * because then we cannot show it on the debug console as that hasn't been configured yet. */
 		DeterminePaths(arguments[0], only_local_path);
-		TarScanner::DoScan(TarScanner::BASESET);
+		TarScanner::DoScan(TarScanner::Mode::Baseset);
 		BaseGraphics::FindSets();
 		BaseSounds::FindSets();
 		BaseMusic::FindSets();
@@ -690,7 +680,7 @@ int openttd_main(std::span<char * const> arguments)
 	}
 
 	DeterminePaths(arguments[0], only_local_path);
-	TarScanner::DoScan(TarScanner::BASESET);
+	TarScanner::DoScan(TarScanner::Mode::Baseset);
 
 	if (dedicated) Debug(net, 3, "Starting dedicated server, version {}", _openttd_revision);
 	if (_dedicated_forks && !dedicated) _dedicated_forks = false;
@@ -749,8 +739,7 @@ int openttd_main(std::span<char * const> arguments)
 	if (!valid_graphics_set) {
 		BaseGraphics::SetSet(nullptr);
 
-		ErrorMessageData msg(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND);
-		msg.SetDParamStr(0, graphics_set);
+		ErrorMessageData msg(GetEncodedString(STR_CONFIG_ERROR), GetEncodedString(STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND, graphics_set));
 		ScheduleErrorMessage(msg);
 	}
 
@@ -797,17 +786,13 @@ int openttd_main(std::span<char * const> arguments)
 
 	VideoDriver::GetInstance()->ClaimMousePointer();
 
-	/* initialize screenshot formats */
-	InitializeScreenshotFormats();
-
 	BaseSounds::FindSets();
 	if (sounds_set.empty() && !BaseSounds::ini_set.empty()) sounds_set = BaseSounds::ini_set;
 	if (!BaseSounds::SetSetByName(sounds_set)) {
 		if (sounds_set.empty() || !BaseSounds::SetSet({})) {
 			UserError("Failed to find a sounds set. Please acquire a sounds set for OpenTTD. See section 1.4 of README.md.");
 		} else {
-			ErrorMessageData msg(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND);
-			msg.SetDParamStr(0, sounds_set);
+			ErrorMessageData msg(GetEncodedString(STR_CONFIG_ERROR), GetEncodedString(STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND, sounds_set));
 			ScheduleErrorMessage(msg);
 		}
 	}
@@ -818,8 +803,7 @@ int openttd_main(std::span<char * const> arguments)
 		if (music_set.empty() || !BaseMusic::SetSet({})) {
 			UserError("Failed to find a music set. Please acquire a music set for OpenTTD. See section 1.4 of README.md.");
 		} else {
-			ErrorMessageData msg(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND);
-			msg.SetDParamStr(0, music_set);
+			ErrorMessageData msg(GetEncodedString(STR_CONFIG_ERROR), GetEncodedString(STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND, music_set));
 			ScheduleErrorMessage(msg);
 		}
 	}
@@ -892,23 +876,21 @@ static void MakeNewGameDone()
 	/* In a dedicated server, the server does not play */
 	if (!VideoDriver::GetInstance()->HasGUI()) {
 		OnStartGame(true);
-		if (_settings_client.gui.pause_on_newgame) Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, true);
+		if (_settings_client.gui.pause_on_newgame) Command<CMD_PAUSE>::Post(PauseMode::Normal, true);
 		return;
 	}
 
 	/* Create a single company */
 	DoStartupNewCompany(false);
 
-	Company *c = Company::Get(COMPANY_FIRST);
+	Company *c = Company::Get(CompanyID::Begin());
 	c->settings = _settings_client.company;
 
 	/* Overwrite color from settings if needed
 	 * COLOUR_END corresponds to Random colour */
 
 	if (_settings_client.gui.starting_colour != COLOUR_END) {
-		c->colour = _settings_client.gui.starting_colour;
-		ResetCompanyLivery(c);
-		_company_colours[c->index] = c->colour;
+		Command<CMD_SET_COMPANY_COLOUR>::Post(LS_DEFAULT, true, _settings_client.gui.starting_colour);
 	}
 
 	if (_settings_client.gui.starting_colour_secondary != COLOUR_END && HasBit(_loaded_newgrf_features.used_liveries, LS_DEFAULT)) {
@@ -920,7 +902,7 @@ static void MakeNewGameDone()
 	InitializeRailGUI();
 	InitializeRoadGUI();
 
-	if (_settings_client.gui.pause_on_newgame) Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, true);
+	if (_settings_client.gui.pause_on_newgame) Command<CMD_PAUSE>::Post(PauseMode::Normal, true);
 
 	CheckEngines();
 	CheckIndustries();
@@ -979,7 +961,7 @@ bool SafeLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileTy
 
 	_game_mode = newgm;
 
-	SaveOrLoadResult result = (lf == nullptr) ? SaveOrLoad(filename, fop, dft, subdir) : LoadWithFilter(lf);
+	SaveOrLoadResult result = (lf == nullptr) ? SaveOrLoad(filename, fop, dft, subdir) : LoadWithFilter(std::move(lf));
 	if (result == SL_OK) return true;
 
 	if (_network_dedicated && ogm == GM_MENU) {
@@ -1143,7 +1125,7 @@ void SwitchToMode(SwitchMode new_mode)
 				}
 				OnStartGame(_network_dedicated);
 				/* Decrease pause counter (was increased from opening load dialog) */
-				Command<CMD_PAUSE>::Post(PM_PAUSED_SAVELOAD, false);
+				Command<CMD_PAUSE>::Post(PauseMode::SaveLoad, false);
 			}
 
 			UpdateSocialIntegration(GM_NORMAL);
@@ -1176,7 +1158,7 @@ void SwitchToMode(SwitchMode new_mode)
 				GenerateSavegameId();
 				_settings_newgame.game_creation.starting_year = TimerGameCalendar::year;
 				/* Cancel the saveload pausing */
-				Command<CMD_PAUSE>::Post(PM_PAUSED_SAVELOAD, false);
+				Command<CMD_PAUSE>::Post(PauseMode::SaveLoad, false);
 			} else {
 				ShowErrorMessage(GetSaveLoadErrorType(), GetSaveLoadErrorMessage(), WL_CRITICAL);
 			}
@@ -1195,7 +1177,7 @@ void SwitchToMode(SwitchMode new_mode)
 		case SM_MENU: // Switch to game intro menu
 			LoadIntroGame();
 			if (BaseSounds::ini_set.empty() && BaseSounds::GetUsedSet()->fallback && SoundDriver::GetInstance()->HasOutput()) {
-				ShowErrorMessage(STR_WARNING_FALLBACK_SOUNDSET, INVALID_STRING_ID, WL_CRITICAL);
+				ShowErrorMessage(GetEncodedString(STR_WARNING_FALLBACK_SOUNDSET), {}, WL_CRITICAL);
 				BaseSounds::ini_set = BaseSounds::GetUsedSet()->name;
 			}
 			if (_settings_client.network.participate_survey == PS_ASK) {
@@ -1249,7 +1231,7 @@ void StateGameLoop()
 	}
 
 	/* Don't execute the state loop during pause or when modal windows are open. */
-	if (_pause_mode != PM_UNPAUSED || HasModalProgress()) {
+	if (_pause_mode.Any() || HasModalProgress()) {
 		PerformanceMeasurer::Paused(PFE_GAMELOOP);
 		PerformanceMeasurer::Paused(PFE_GL_ECONOMY);
 		PerformanceMeasurer::Paused(PFE_GL_TRAINS);
@@ -1260,7 +1242,7 @@ void StateGameLoop()
 
 		if (!HasModalProgress()) UpdateLandscapingLimits();
 #ifndef DEBUG_DUMP_COMMANDS
-		Game::GameLoop();
+		if (_game_mode == GM_NORMAL) Game::GameLoop();
 #endif
 		return;
 	}
@@ -1334,7 +1316,7 @@ static IntervalTimer<TimerGameRealtime> _autosave_interval({std::chrono::millise
 {
 	/* We reset the command-during-pause mode here, so we don't continue
 	 * to make auto-saves when nothing more is changing. */
-	_pause_mode &= ~PM_COMMAND_DURING_PAUSE;
+	_pause_mode.Reset(PauseMode::CommandDuringPause);
 
 	_do_autosave = true;
 	SetWindowDirty(WC_STATUS_BAR, 0);
@@ -1434,7 +1416,7 @@ void GameLoop()
 		citymania::CheckIntervalSave();
 	}
 
-	if (!_pause_mode && HasBit(_display_opt, DO_FULL_ANIMATION)) DoPaletteAnimations();
+	if (_pause_mode.None() && HasBit(_display_opt, DO_FULL_ANIMATION)) DoPaletteAnimations();
 
 	SoundDriver::GetInstance()->MainLoop();
 	MusicLoop();

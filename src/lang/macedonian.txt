@@ -334,20 +334,20 @@ STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Инфо
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}Исклучете алатки
 
 # Extra tooltips for the scenario editor toolbar
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SAVE_SCENARIO_LOAD_SCENARIO        :{BLACK}Зачувај сценарио, оптоварување сценарио, сценарио напушти уредник, да престанам
+STR_SCENEDIT_TOOLBAR_SAVE_SCENARIO_LOAD_SCENARIO_TOOLTIP        :{BLACK}Зачувај сценарио, оптоварување сценарио, сценарио напушти уредник, да престанам
 STR_SCENEDIT_TOOLBAR_OPENTTD                                    :{YELLOW}OpenTTD
 STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR                            :{YELLOW}Сценарио Едитор
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD    :{BLACK}Поместување на датум назад една година
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD     :{BLACK}Поместување на датум напред една година
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE                           :{BLACK}Кликни за да влезат на почеток година
-STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK}Прикажи мапа, именик на градови
-STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Генерирање на терен
-STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Генерирање на градови
-STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Генерирање на индустрии
-STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Конструирање на патишта
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Насадат дрвја. Shift опција да изберете објект / покажува проценка на трошоците
-STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}место знак
-STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Место објект
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_BACKWARD_TOOLTIP    :{BLACK}Поместување на датум назад една година
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_FORWARD_TOOLTIP     :{BLACK}Поместување на датум напред една година
+STR_SCENEDIT_TOOLBAR_SET_DATE_TOOLTIP                           :{BLACK}Кликни за да влезат на почеток година
+STR_SCENEDIT_TOOLBAR_DISPLAY_MAP_TOWN_DIRECTORY_TOOLTIP         :{BLACK}Прикажи мапа, именик на градови
+STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION_TOOLTIP               :{BLACK}Генерирање на терен
+STR_SCENEDIT_TOOLBAR_TOWN_GENERATION_TOOLTIP                    :{BLACK}Генерирање на градови
+STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION_TOOLTIP                :{BLACK}Генерирање на индустрии
+STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION_TOOLTIP                  :{BLACK}Конструирање на патишта
+STR_SCENEDIT_TOOLBAR_PLANT_TREES_TOOLTIP                        :{BLACK}Насадат дрвја. Shift опција да изберете објект / покажува проценка на трошоците
+STR_SCENEDIT_TOOLBAR_PLACE_SIGN_TOOLTIP                         :{BLACK}место знак
+STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP                       :{BLACK}Место објект
 
 # Scenario editor file menu
 ###length 7
@@ -361,7 +361,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Напушти
 
 
 # Settings menu
-###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :игра опции
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF подесувања
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :транспарентност опции
@@ -686,7 +685,7 @@ STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLACK}Снег
 
 STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}Вклучи/исклучи ги имињата на градовите на мапата
-STR_SMALLMAP_CENTER                                             :{BLACK}Центар мали мапата на тековната позиција
+STR_SMALLMAP_CENTER_TOOLTIP                                     :{BLACK}Центар мали мапата на тековната позиција
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING} ({NUM})
 STR_SMALLMAP_COMPANY                                            :{TINY_FONT}{COMPANY}
 STR_SMALLMAP_TOWN                                               :{TINY_FONT}{WHITE}{TOWN}
@@ -713,7 +712,6 @@ STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Лист
 STR_MESSAGE_NEWS_FORMAT                                         :{STRING}  -  {STRING}
 
 STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Порака
-STR_NEWS_CUSTOM_ITEM                                            :{BIG_FONT}{BLACK}{STRING}
 
 STR_NEWS_FIRST_TRAIN_ARRIVAL                                    :{BIG_FONT}{BLACK}Граѓаните го слават. . .{}Првиот воз пристигнува во {STATION}!
 STR_NEWS_FIRST_BUS_ARRIVAL                                      :{BIG_FONT}{BLACK}граѓаните го слават . . .{}Прво автобус пристигнува во {STATION}!
@@ -765,7 +763,7 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Опци
 
 
 
-###length 44
+###length 45
 
 
 # Autosave dropdown
@@ -1071,6 +1069,8 @@ STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :целосна
 
 ###setting-zero-is-special
 
+###length 2
+
 ###length 3
 
 
@@ -1084,6 +1084,8 @@ STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :целосна
 
 STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS                   :Градови смеете да изгради ниво премини: {STRING}
 
+
+###length 3
 
 ###length 3
 
@@ -1234,7 +1236,7 @@ STR_NETWORK_ERROR_TOO_MANY_COMMANDS                             :{WHITE}Ти б�
 STR_NETWORK_ERROR_CLIENT_TOO_MANY_COMMANDS                      :испраќа премногу команди
 
 # Network related errors
-STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
+STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 ###length 12
 STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_4                  :Игра уште пауза ({STRING}, {STRING}, {STRING}, {STRING})
@@ -1288,6 +1290,7 @@ STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Изгр
 # Rail waypoint construction window
 
 # Rail station construction window
+
 
 
 
@@ -1577,7 +1580,7 @@ STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}Клик
 # Station list window
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
-STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Избери ги сите објекти
+STR_STATION_LIST_SELECT_ALL_FACILITIES_TOOLTIP                  :{BLACK}Избери ги сите објекти
 
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
@@ -1900,12 +1903,11 @@ STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
 ###length 3
 ###next-name-looks-similar
 
-STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
 
 
-STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION}
 
 
 
@@ -1918,7 +1920,6 @@ STR_ORDER_OUT_OF_RANGE                                          :{RED} (След
 
 
 # Time table window
-
 
 
 
@@ -1994,7 +1995,6 @@ STR_ERROR_BMPMAP_IMAGE_TYPE                                     :{WHITE}... мо
 
 # Error message titles
 STR_ERROR_MESSAGE_CAPTION                                       :{YELLOW}Порака
-STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}Порака од {STRING}
 
 # Generic construction errors
 STR_ERROR_OFF_EDGE_OF_MAP                                       :{WHITE}Надвор од работ на мапата
@@ -2005,7 +2005,6 @@ STR_ERROR_CAN_T_DO_THIS                                         :{WHITE}Ова �
 STR_ERROR_CAN_T_CLEAR_THIS_AREA                                 :{WHITE}Не може да се исчисти оваа област...
 STR_ERROR_SITE_UNSUITABLE                                       :{WHITE}... несоодветно место
 STR_ERROR_OWNED_BY                                              :{WHITE}... во сопственост на {STRING}
-STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}{1:STRING} во начинот на
 
 # Local authority errors
 
@@ -2115,6 +2114,10 @@ STR_ERROR_CAN_T_RENAME_AIRCRAFT_TYPE                            :{WHITE}Не м�
 ###length VEHICLE_TYPES
 STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}Не може да се продаде авионот...
 
+###length VEHICLE_TYPES
+
+###length VEHICLE_TYPES
+
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}Има премногу возила во играта
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Не може да се смени интервалот за сервисирање...
 
@@ -2200,18 +2203,7 @@ STR_COMPANY_SOMEONE                                             :некој
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
-STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
-STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
-STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
-
-STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
-STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
-
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
-STR_VIEWPORT_STATION_TINY                                       :{TINY_FONT}{STATION}
-
-STR_VIEWPORT_WAYPOINT                                           :{WAYPOINT}
-STR_VIEWPORT_WAYPOINT_TINY                                      :{TINY_FONT}{WAYPOINT}
 
 # Simple strings to get specific types of data
 STR_COMPANY_NAME                                                :{COMPANY}
@@ -2262,3 +2254,4 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+

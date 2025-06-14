@@ -18,6 +18,7 @@
 #include "saveload/saveload.h"
 #include "screenshot.h"
 #include "network/network_survey.h"
+#include "news_func.h"
 #include "news_gui.h"
 #include "fileio_func.h"
 #include "fileio_type.h"
@@ -58,9 +59,10 @@ static void SurveyRecentNews(nlohmann::json &json)
 	int i = 0;
 	for (const auto &news : GetNews()) {
 		TimerGameCalendar::YearMonthDay ymd = TimerGameCalendar::ConvertDateToYMD(news.date);
-		json.push_back(fmt::format("({}-{:02}-{:02}) StringID: {}, Type: {}, Ref1: {}, {}, Ref2: {}, {}",
-		               ymd.year, ymd.month + 1, ymd.day, news.string_id, news.type,
-		               news.reftype1, news.ref1, news.reftype2, news.ref2));
+		json.push_back(fmt::format("({}-{:02}-{:02}) String: {}, Type: {}, Ref1: {}, {}, Ref2: {}, {}",
+		               ymd.year, ymd.month + 1, ymd.day, news.GetStatusText(), news.type,
+		               news.ref1.index(), SerialiseNewsReference(news.ref1),
+		               news.ref2.index(), SerialiseNewsReference(news.ref2)));
 		if (++i > 32) break;
 	}
 }
@@ -134,8 +136,8 @@ void CrashLog::FillCrashLog()
 
 	{
 		auto &game = this->survey["game"];
-		game["local_company"] = _local_company;
-		game["current_company"] = _current_company;
+		game["local_company"] = _local_company.base();
+		game["current_company"] = _current_company.base();
 
 		if (!this->TryExecute("timers", [&game]() { SurveyTimers(game["timers"]); return true; })) {
 			game["libraries"] = "crashed while gathering information";
@@ -247,7 +249,7 @@ bool CrashLog::WriteScreenshot()
 	if (_screen.width < 1 || _screen.height < 1 || _screen.dst_ptr == nullptr) return false;
 
 	std::string filename = this->CreateFileName("", false);
-	bool res = MakeScreenshot(SC_CRASHLOG, filename);
+	bool res = MakeScreenshot(SC_CRASHLOG, std::move(filename));
 	if (res) this->screenshot_filename = _full_screenshot_path;
 	return res;
 }

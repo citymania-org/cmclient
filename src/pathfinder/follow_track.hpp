@@ -27,7 +27,7 @@
 template <TransportType Ttr_type_, typename VehicleType, bool T90deg_turns_allowed_ = true, bool Tmask_reserved_tracks = false>
 struct CFollowTrackT
 {
-	enum ErrorCode {
+	enum ErrorCode : uint8_t {
 		EC_NONE,
 		EC_OWNER,
 		EC_RAIL_ROAD_TYPE,
@@ -333,7 +333,7 @@ protected:
 		/* rail transport is possible only on compatible rail types */
 		if (IsRailTT()) {
 			RailType rail_type = GetTileRailType(this->new_tile);
-			if (!HasBit(this->railtypes, rail_type)) {
+			if (!this->railtypes.Test(rail_type)) {
 				/* incompatible rail type */
 				this->err = EC_RAIL_ROAD_TYPE;
 				return false;
@@ -344,7 +344,7 @@ protected:
 		if (IsRoadTT()) {
 			const RoadVehicle *v = RoadVehicle::From(this->veh);
 			RoadType roadtype = GetRoadType(this->new_tile, GetRoadTramType(v->roadtype));
-			if (!HasBit(v->compatible_roadtypes, roadtype)) {
+			if (!v->compatible_roadtypes.Test(roadtype)) {
 				/* incompatible road type */
 				this->err = EC_RAIL_ROAD_TYPE;
 				return false;

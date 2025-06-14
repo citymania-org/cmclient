@@ -12,12 +12,7 @@
 
 #include "strings_func.h"
 #include "string_func.h"
-
-/** The data required to format and validate a single parameter of a string. */
-struct StringParameter {
-	StringParameterData data; ///< The data of the parameter.
-	char32_t type; ///< The #StringControlCode to interpret this data with when it's the first parameter, otherwise '\0'.
-};
+#include "core/string_builder.hpp"
 
 class StringParameters {
 protected:
@@ -26,10 +21,6 @@ protected:
 
 	size_t offset = 0; ///< Current offset in the parameters span.
 	char32_t next_type = 0; ///< The type of the next data that is retrieved.
-
-	StringParameters(std::span<StringParameter> parameters = {}) :
-		parameters(parameters)
-	{}
 
 	const StringParameter &GetNextParameterReference();
 
@@ -43,7 +34,8 @@ public:
 		parameters(parent.parameters.subspan(parent.offset, size))
 	{}
 
-	void PrepareForNextRun();
+	StringParameters(std::span<StringParameter> parameters = {}) : parameters(parameters) {}
+
 	void SetTypeOfNextParameter(char32_t type) { this->next_type = type; }
 
 	/**
@@ -88,16 +80,29 @@ public:
 	 * will be read.
 	 * @return The next parameter's value.
 	 */
-	template <typename T>
-	T GetNextParameter()
+	uint64_t GetNextParameter()
 	{
 		struct visitor {
+			uint64_t operator()(const std::monostate &) { throw std::out_of_range("Attempt to read uninitialised parameter as integer"); }
 			uint64_t operator()(const uint64_t &arg) { return arg; }
 			uint64_t operator()(const std::string &) { throw std::out_of_range("Attempt to read string parameter as integer"); }
 		};
 
-		const auto &param = GetNextParameterReference();
-		return static_cast<T>(std::visit(visitor{}, param.data));
+		const auto &param = this->GetNextParameterReference();
+		return std::visit(visitor{}, param.data);
+	}
+
+	/**
+	 * Get the next parameter from our parameters.
+	 * This updates the offset, so the next time this is called the next parameter
+	 * will be read.
+	 * @tparam T The return type of the parameter.
+	 * @return The next parameter's value.
+	 */
+	template <typename T>
+	T GetNextParameter()
+	{
+		return static_cast<T>(this->GetNextParameter());
 	}
 
 	/**
@@ -109,18 +114,19 @@ public:
 	const char *GetNextParameterString()
 	{
 		struct visitor {
+			const char *operator()(const std::monostate &) { throw std::out_of_range("Attempt to read uninitialised parameter as string"); }
 			const char *operator()(const uint64_t &) { throw std::out_of_range("Attempt to read integer parameter as string"); }
 			const char *operator()(const std::string &arg) { return arg.c_str(); }
 		};
 
-		const auto &param = GetNextParameterReference();
+		const auto &param = this->GetNextParameterReference();
 		return std::visit(visitor{}, param.data);
 	}
 
 	/**
 	 * Get a new instance of StringParameters that is a "range" into the
 	 * remaining existing parameters. Upon destruction the offset in the parent
-	 * is not updated. However, calls to SetDParam do update the parameters.
+	 * is not updated. However, calls to SetParam do update the parameters.
 	 *
 	 * The returned StringParameters must not outlive this StringParameters.
 	 * @return A "range" of the string parameters.
@@ -130,7 +136,7 @@ public:
 	/**
 	 * Get a new instance of StringParameters that is a "range" into the
 	 * remaining existing parameters from the given offset. Upon destruction the
-	 * offset in the parent is not updated. However, calls to SetDParam do
+	 * offset in the parent is not updated. However, calls to SetParam do
 	 * update the parameters.
 	 *
 	 * The returned StringParameters must not outlive this StringParameters.
@@ -146,6 +152,12 @@ public:
 	size_t GetDataLeft() const
 	{
 		return this->parameters.size() - this->offset;
+	}
+
+	/** Return the number of parameters. */
+	size_t GetNumParameters() const
+	{
+		return this->parameters.size();
 	}
 
 	/** Get the type of a specific element. */
@@ -167,8 +179,7 @@ public:
 		this->parameters[n].data = v;
 	}
 
-	template <typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-	void SetParam(size_t n, T v)
+	void SetParam(size_t n, ConvertibleThroughBase auto v)
 	{
 		SetParam(n, v.base());
 	}
@@ -194,152 +205,8 @@ public:
 	}
 };
 
-/**
- * Extension of StringParameters with its own statically sized buffer for
- * the parameters.
- */
-template <size_t N>
-class ArrayStringParameters : public StringParameters {
-	std::array<StringParameter, N> params{}; ///< The actual parameters
-
-public:
-	ArrayStringParameters()
-	{
-		this->parameters = std::span(params.data(), params.size());
-	}
-
-	ArrayStringParameters(ArrayStringParameters&& other) noexcept
-	{
-		*this = std::move(other);
-	}
-
-	ArrayStringParameters& operator=(ArrayStringParameters &&other) noexcept
-	{
-		this->offset = other.offset;
-		this->next_type = other.next_type;
-		this->params = std::move(other.params);
-		this->parameters = std::span(params.data(), params.size());
-		return *this;
-	}
-
-	ArrayStringParameters(const ArrayStringParameters &other) = delete;
-	ArrayStringParameters& operator=(const ArrayStringParameters &other) = delete;
-};
-
-/**
- * Helper to create the StringParameters with its own buffer with the given
- * parameter values.
- * @param args The parameters to set for the to be created StringParameters.
- * @return The constructed StringParameters.
- */
-template <typename... Args>
-static auto MakeParameters(const Args&... args)
-{
-	ArrayStringParameters<sizeof...(args)> parameters;
-	size_t index = 0;
-	(parameters.SetParam(index++, std::forward<const Args&>(args)), ...);
-	return parameters;
-}
-
-/**
- * Equivalent to the std::back_insert_iterator in function, with some
- * convenience helpers for string concatenation.
- */
-class StringBuilder {
-	std::string *string;
-
-public:
-	/* Required type for this to be an output_iterator; mimics std::back_insert_iterator. */
-	using value_type = void;
-	using difference_type = void;
-	using iterator_category = std::output_iterator_tag;
-	using pointer = void;
-	using reference = void;
-
-	/**
-	 * Create the builder of an external buffer.
-	 * @param string The string to write to.
-	 */
-	StringBuilder(std::string &string) : string(&string) {}
-
-	/* Required operators for this to be an output_iterator; mimics std::back_insert_iterator, which has no-ops. */
-	StringBuilder &operator++() { return *this; }
-	StringBuilder operator++(int) { return *this; }
-	StringBuilder &operator*() { return *this; }
-
-	/**
-	 * Operator to add a character to the end of the buffer. Like the back
-	 * insert iterators this also increases the position of the end of the
-	 * buffer.
-	 * @param value The character to add.
-	 * @return Reference to this inserter.
-	 */
-	StringBuilder &operator=(const char value)
-	{
-		return this->operator+=(value);
-	}
-
-	/**
-	 * Operator to add a character to the end of the buffer.
-	 * @param value The character to add.
-	 * @return Reference to this inserter.
-	 */
-	StringBuilder &operator+=(const char value)
-	{
-		this->string->push_back(value);
-		return *this;
-	}
-
-	/**
-	 * Operator to append the given string to the output buffer.
-	 * @param str The string to add.
-	 * @return Reference to this inserter.
-	 */
-	StringBuilder &operator+=(std::string_view str)
-	{
-		*this->string += str;
-		return *this;
-	}
-
-	/**
-	 * Encode the given Utf8 character into the output buffer.
-	 * @param c The character to encode.
-	 */
-	void Utf8Encode(char32_t c)
-	{
-		auto iterator = std::back_inserter(*this->string);
-		::Utf8Encode(iterator, c);
-	}
-
-	/**
-	 * Remove the given amount of characters from the back of the string.
-	 * @param amount The amount of characters to remove.
-	 */
-	void RemoveElementsFromBack(size_t amount)
-	{
-		this->string->erase(this->string->size() - std::min(amount, this->string->size()));
-	}
-
-	/**
-	 * Get the current index in the string.
-	 * @return The index.
-	 */
-	size_t CurrentIndex()
-	{
-		return this->string->size();
-	}
-
-	/**
-	 * Get the reference to the character at the given index.
-	 * @return The reference to the character.
-	 */
-	char &operator[](size_t index)
-	{
-		return (*this->string)[index];
-	}
-};
-
 void GetStringWithArgs(StringBuilder &builder, StringID string, StringParameters &args, uint case_index = 0, bool game_script = false);
+void GetStringWithArgs(StringBuilder &builder, StringID string, std::span<StringParameter> params, uint case_index = 0, bool game_script = false);
 std::string GetStringWithArgs(StringID string, StringParameters &args);
 
 /* Do not leak the StringBuilder to everywhere. */
@@ -347,6 +214,6 @@ void GenerateTownNameString(StringBuilder &builder, size_t lang, uint32_t seed);
 void GetTownName(StringBuilder &builder, const struct Town *t);
 void GRFTownNameGenerate(StringBuilder &builder, uint32_t grfid, uint16_t gen, uint32_t seed);
 
-char32_t RemapNewGRFStringControlCode(char32_t scc, const char **str, StringParameters &parameters, bool modify_parameters);
+char32_t RemapNewGRFStringControlCode(char32_t scc, const char **str);
 
 #endif /* STRINGS_INTERNAL_H */

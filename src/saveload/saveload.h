@@ -396,12 +396,17 @@ enum SaveLoadVersion : uint16_t {
 	SLV_PATH_CACHE_FORMAT,                  ///< 346  PR#12345 Vehicle path cache format changed.
 	SLV_ANIMATED_TILE_STATE_IN_MAP,         ///< 347  PR#13082 Animated tile state saved for improved performance.
 	SLV_INCREASE_HOUSE_LIMIT,               ///< 348  PR#12288 Increase house limit to 4096.
+	SLV_COMPANY_INAUGURATED_PERIOD_V2,      ///< 349  PR#13448 Fix savegame storage for company inaugurated year in wallclock mode.
+
+	SLV_ENCODED_STRING_FORMAT,              ///< 350  PR#13499 Encoded String format changed.
+	SLV_PROTECT_PLACED_HOUSES,              ///< 351  PR#13270 Houses individually placed by players can be protected from town/AI removal.
+	SLV_SCRIPT_SAVE_INSTANCES,              ///< 352  PR#13556 Scripts are allowed to save instances.
 
 	SL_MAX_VERSION,                         ///< Highest possible saveload version
 };
 
 /** Save or load result codes. */
-enum SaveOrLoadResult {
+enum SaveOrLoadResult : uint8_t {
 	SL_OK     = 0, ///< completed successfully
 	SL_ERROR  = 1, ///< error that was caught before internal structures were modified
 	SL_REINIT = 2, ///< error that was caught in the middle of updating game state, need to clear it. (can only happen during load)
@@ -421,7 +426,7 @@ struct FileToSaveLoad {
 };
 
 /** Types of save games. */
-enum SavegameType {
+enum SavegameType : uint8_t {
 	SGT_TTD,    ///< TTD  savegame (can be detected incorrectly)
 	SGT_TTDP1,  ///< TTDP savegame ( -//- ) (data at NW border)
 	SGT_TTDP2,  ///< TTDP savegame in new format (data at SE border)
@@ -470,8 +475,8 @@ extern FileToSaveLoad _file_to_saveload;
 
 std::string GenerateDefaultSaveName();
 void SetSaveLoadError(StringID str);
-StringID GetSaveLoadErrorType();
-StringID GetSaveLoadErrorMessage();
+EncodedString GetSaveLoadErrorType();
+EncodedString GetSaveLoadErrorMessage();
 SaveOrLoadResult SaveOrLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded = true);
 void WaitTillSaved();
 void ProcessAsyncSaveFinish();
@@ -485,7 +490,7 @@ SaveOrLoadResult LoadWithFilter(std::shared_ptr<struct LoadFilter> reader);
 typedef void AutolengthProc(int);
 
 /** Type of a chunk. */
-enum ChunkType {
+enum ChunkType : uint8_t {
 	CH_RIFF = 0,
 	CH_ARRAY = 1,
 	CH_SPARSE_ARRAY = 2,
@@ -634,7 +639,7 @@ public:
 };
 
 /** Type of reference (#SLE_REF, #SLE_CONDREF). */
-enum SLRefType {
+enum SLRefType : uint8_t {
 	REF_ORDER          =  0, ///< Load/save a reference to an order.
 	REF_VEHICLE        =  1, ///< Load/save a reference to a vehicle.
 	REF_STATION        =  2, ///< Load/save a reference to a station.
@@ -657,7 +662,7 @@ enum SLRefType {
  * the first 8 bits (0-3 SLE_FILE, 4-7 SLE_VAR).
  * Bits 8-15 are reserved for various flags as explained below
  */
-enum VarTypes {
+enum VarTypes : uint16_t {
 	/* 4 bits allocated a maximum of 16 types for NumberType.
 	 * NOTE: the SLE_FILE_NNN values are stored in the savegame! */
 	SLE_FILE_END      =  0, ///< Used to mark end-of-header in tables.
@@ -1352,6 +1357,7 @@ int64_t ReadValue(const void *ptr, VarType conv);
 void WriteValue(void *ptr, VarType conv, int64_t val);
 
 void SlSetArrayIndex(uint index);
+static void SlSetArrayIndex(const ConvertibleThroughBase auto &index) { SlSetArrayIndex(index.base()); }
 int SlIterateArray();
 
 void SlSetStructListLength(size_t length);
@@ -1364,6 +1370,7 @@ size_t SlCalcObjMemberLength(const void *object, const SaveLoad &sld);
 size_t SlCalcObjLength(const void *object, const SaveLoadTable &slt);
 
 uint8_t SlReadByte();
+void SlReadString(std::string &str, size_t length);
 void SlWriteByte(uint8_t b);
 
 void SlGlobList(const SaveLoadTable &slt);

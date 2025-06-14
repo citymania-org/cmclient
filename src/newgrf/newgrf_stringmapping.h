@@ -5,18 +5,16 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @file endian_type.hpp Definition of various endian-dependant macros. */
+/** @file newgrf_stringmapping.h NewGRF string mapping definition. */
 
-#ifndef ENDIAN_TYPE_HPP
-#define ENDIAN_TYPE_HPP
+#ifndef NEWGRF_STRINGMAPPING_H
+#define NEWGRF_STRINGMAPPING_H
 
-/** Little endian builds use this for TTD_ENDIAN. */
-#define TTD_LITTLE_ENDIAN 0
-/** Big endian builds use this for TTD_ENDIAN. */
-#define TTD_BIG_ENDIAN 1
+#include "../strings_type.h"
+#include "../newgrf_text_type.h"
 
-#if !defined(TTD_ENDIAN)
-#	error "TTD_ENDIAN is not defined; please set it to either TTD_LITTLE_ENDIAN or TTD_BIG_ENDIAN"
-#endif /* !TTD_ENDIAN */
+void AddStringForMapping(GRFStringID source, std::function<void(StringID)> &&func);
+void AddStringForMapping(GRFStringID source, StringID *target);
+void FinaliseStringMapping();
 
-#endif /* ENDIAN_TYPE_HPP */
+#endif /* NEWGRF_STRINGMAPPING_H */

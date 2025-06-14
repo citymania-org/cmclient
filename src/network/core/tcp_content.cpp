@@ -13,10 +13,15 @@
 #include "../../textfile_gui.h"
 #include "../../newgrf_config.h"
 #include "../../base_media_base.h"
+#include "../../base_media_graphics.h"
+#include "../../base_media_music.h"
+#include "../../base_media_sounds.h"
 #include "../../ai/ai.hpp"
 #include "../../game/game.hpp"
 #include "../../fios.h"
 #include "tcp_content.h"
+
+#include "table/strings.h"
 
 #include "../../safeguards.h"
 
@@ -58,34 +63,34 @@ std::optional<std::string> ContentInfo::GetTextfile(TextfileType type) const
 	switch (this->type) {
 		default: NOT_REACHED();
 		case CONTENT_TYPE_AI:
-			tmp = AI::GetScannerInfo()->FindMainScript(this, true);
+			tmp = AI::GetScannerInfo()->FindMainScript(*this, true);
 			break;
 		case CONTENT_TYPE_AI_LIBRARY:
-			tmp = AI::GetScannerLibrary()->FindMainScript(this, true);
+			tmp = AI::GetScannerLibrary()->FindMainScript(*this, true);
 			break;
 		case CONTENT_TYPE_GAME:
-			tmp = Game::GetScannerInfo()->FindMainScript(this, true);
+			tmp = Game::GetScannerInfo()->FindMainScript(*this, true);
 			break;
 		case CONTENT_TYPE_GAME_LIBRARY:
-			tmp = Game::GetScannerLibrary()->FindMainScript(this, true);
+			tmp = Game::GetScannerLibrary()->FindMainScript(*this, true);
 			break;
 		case CONTENT_TYPE_NEWGRF: {
-			const GRFConfig *gc = FindGRFConfig(BSWAP32(this->unique_id), FGCM_EXACT, &this->md5sum);
+			const GRFConfig *gc = FindGRFConfig(std::byteswap(this->unique_id), FGCM_EXACT, &this->md5sum);
 			tmp = gc != nullptr ? gc->filename.c_str() : nullptr;
 			break;
 		}
 		case CONTENT_TYPE_BASE_GRAPHICS:
-			tmp = TryGetBaseSetFile(this, true, BaseGraphics::GetAvailableSets());
+			tmp = TryGetBaseSetFile(*this, true, BaseGraphics::GetAvailableSets());
 			break;
 		case CONTENT_TYPE_BASE_SOUNDS:
-			tmp = TryGetBaseSetFile(this, true, BaseSounds::GetAvailableSets());
+			tmp = TryGetBaseSetFile(*this, true, BaseSounds::GetAvailableSets());
 			break;
 		case CONTENT_TYPE_BASE_MUSIC:
-			tmp = TryGetBaseSetFile(this, true, BaseMusic::GetAvailableSets());
+			tmp = TryGetBaseSetFile(*this, true, BaseMusic::GetAvailableSets());
 			break;
 		case CONTENT_TYPE_SCENARIO:
 		case CONTENT_TYPE_HEIGHTMAP:
-			tmp = FindScenario(this, true);
+			tmp = FindScenario(*this, true);
 			break;
 	}
 	if (tmp == nullptr) return std::nullopt;
@@ -142,7 +147,7 @@ bool NetworkContentSocketHandler::ReceivePackets()
 	 * As a result, we simple handle an arbitrary number of packets in one cycle,
 	 * and let the rest be handled in subsequent cycles. These are ran, almost,
 	 * immediately after this cycle so in speed it does not matter much, except
-	 * that the user inferface will appear better responding.
+	 * that the user interface will appear better responding.
 	 *
 	 * What arbitrary number to choose is the ultimate question though.
 	 */

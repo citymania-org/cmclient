@@ -86,8 +86,8 @@ public:
 			/* Edge data is now a simple vector and not any kind of matrix. */
 			size_t size = SlGetStructListLength(UINT16_MAX);
 			for (size_t i = 0; i < size; i++) {
-				bn->edges.emplace_back();
-				SlObject(&bn->edges.back(), this->GetLoadDescription());
+				auto &edge = bn->edges.emplace_back();
+				SlObject(&edge, this->GetLoadDescription());
 			}
 		}
 	}
@@ -277,7 +277,7 @@ struct LGRPChunkHandler : ChunkHandler {
 
 		int index;
 		while ((index = SlIterateArray()) != -1) {
-			LinkGraph *lg = new (index) LinkGraph();
+			LinkGraph *lg = new (LinkGraphID(index)) LinkGraph();
 			SlObject(lg, slt);
 		}
 	}
@@ -305,7 +305,7 @@ struct LGRJChunkHandler : ChunkHandler {
 
 		int index;
 		while ((index = SlIterateArray()) != -1) {
-			LinkGraphJob *lgj = new (index) LinkGraphJob();
+			LinkGraphJob *lgj = new (LinkGraphJobID(index)) LinkGraphJob();
 			SlObject(lgj, slt);
 		}
 	}

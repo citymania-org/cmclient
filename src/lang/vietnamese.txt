@@ -413,21 +413,21 @@ STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Thông t
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}Chuyển thanh công cụ
 
 # Extra tooltips for the scenario editor toolbar
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SAVE_SCENARIO_LOAD_SCENARIO        :{BLACK}Lưu, nạp màn chơi kịch bản, thoát trình chỉnh sửa màn chơi, thoát chương trình
+STR_SCENEDIT_TOOLBAR_SAVE_SCENARIO_LOAD_SCENARIO_TOOLTIP        :{BLACK}Lưu, nạp màn chơi kịch bản, thoát trình chỉnh sửa màn chơi, thoát chương trình
 STR_SCENEDIT_TOOLBAR_OPENTTD                                    :{YELLOW}OpenTTD
 STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR                            :{YELLOW}Biên Tập Màn Chơi Kịch Bản
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD    :{BLACK}Chuyển ngày bắt đầu về phía sau 1 năm
-STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD     :{BLACK}Chuyển ngày bắt đầu về phía trước 1 năm
-STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE                           :{BLACK}Nháy vào để nhập năm bắt đầu ván chơi
-STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY         :{BLACK}Hiển thị bản đồ, thư mục thị trấn, danh mục nhãn, hoặc chỉ mục đô thị, nhà máy
-STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Mở menu địa hình hoặc tạo một thế giới
-STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Xây dựng hoặc khởi tạo đô thị
-STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Xây dụng hoặc kiến tạo nhà máy
-STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Xây dựng đường
-STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}Xây dựng hạ tầng xe điện
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Trồng cây. Ctrl + Click + kéo chọn vùng theo đường chéo. Shift bật tắt hiển thị ước tính chi phí
-STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}Tạo bảng ký hiệu
-STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Đặt đối tượng. Ctrl để chọn khu vực theo đường chéo. Shift để xem chi phí dự tính
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_BACKWARD_TOOLTIP    :{BLACK}Chuyển ngày bắt đầu về phía sau 1 năm
+STR_SCENEDIT_TOOLBAR_MOVE_THE_STARTING_DATE_FORWARD_TOOLTIP     :{BLACK}Chuyển ngày bắt đầu về phía trước 1 năm
+STR_SCENEDIT_TOOLBAR_SET_DATE_TOOLTIP                           :{BLACK}Nháy vào để nhập năm bắt đầu ván chơi
+STR_SCENEDIT_TOOLBAR_DISPLAY_MAP_TOWN_DIRECTORY_TOOLTIP         :{BLACK}Hiển thị bản đồ, thư mục thị trấn, danh mục nhãn, hoặc chỉ mục đô thị, nhà máy
+STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION_TOOLTIP               :{BLACK}Mở menu địa hình hoặc tạo một thế giới
+STR_SCENEDIT_TOOLBAR_TOWN_GENERATION_TOOLTIP                    :{BLACK}Xây dựng hoặc khởi tạo đô thị
+STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION_TOOLTIP                :{BLACK}Xây dụng hoặc kiến tạo nhà máy
+STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION_TOOLTIP                  :{BLACK}Xây dựng đường
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION_TOOLTIP                  :{BLACK}Xây dựng hạ tầng xe điện
+STR_SCENEDIT_TOOLBAR_PLANT_TREES_TOOLTIP                        :{BLACK}Trồng cây. Ctrl + Click + kéo chọn vùng theo đường chéo. Shift bật tắt hiển thị ước tính chi phí
+STR_SCENEDIT_TOOLBAR_PLACE_SIGN_TOOLTIP                         :{BLACK}Tạo bảng ký hiệu
+STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP                       :{BLACK}Đặt đối tượng. Ctrl để chọn khu vực theo đường chéo. Shift để xem chi phí dự tính
 
 # Scenario editor file menu
 ###length 7
@@ -443,7 +443,6 @@ STR_SCENEDIT_TOWN_MENU_BUILD_TOWN                               :Khởi tạo đ
 STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :Sắp xếp nhà
 
 # Settings menu
-###length 16
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Cấu hình trò chơi
 STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Thiết Lập
 STR_SETTINGS_MENU_AI_SETTINGS                                   :Thiết lập AI
@@ -531,7 +530,7 @@ STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Xoá tất cả
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Thông tin vùng đất
 STR_ABOUT_MENU_HELP                                             :Trợ Giúp & Hướng Dẫn
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Bật/tắt bảng lệnh
-STR_ABOUT_MENU_AI_DEBUG                                         :Gỡ rối AI / tập lệnh trò chơi
+STR_ABOUT_MENU_AI_DEBUG                                         :Gỡ rối AI / Game script
 STR_ABOUT_MENU_SCREENSHOT                                       :Ảnh chụp màn hình
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Hiển thị tốc độ khung hình
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Giới thiệu 'OpenTTD'
@@ -801,7 +800,7 @@ STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLACK}Tuyết
 
 STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}Bật/tắt tên thị trấn trên bản đồ
-STR_SMALLMAP_CENTER                                             :{BLACK}Xem bản đồ nhỏ này ở cửa sổ lớn
+STR_SMALLMAP_CENTER_TOOLTIP                                     :{BLACK}Xem bản đồ nhỏ này ở cửa sổ lớn
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING} ({NUM})
 STR_SMALLMAP_LINKSTATS                                          :{TINY_FONT}{STRING}
 STR_SMALLMAP_COMPANY                                            :{TINY_FONT}{COMPANY}
@@ -836,7 +835,6 @@ STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}Danh sá
 STR_MESSAGE_NEWS_FORMAT                                         :{STRING}  -  {STRING}
 
 STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Thông Điệp
-STR_NEWS_CUSTOM_ITEM                                            :{BIG_FONT}{BLACK}{STRING}
 
 STR_NEWS_FIRST_TRAIN_ARRIVAL                                    :{BIG_FONT}{BLACK}Người dân chào đón . . .{}Tàu hoả đầu tiên đến {STATION}!
 STR_NEWS_FIRST_BUS_ARRIVAL                                      :{BIG_FONT}{BLACK}Người dân chào đón . . .{}Xe buýt đầu tiên đến {STATION}!
@@ -947,21 +945,21 @@ STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MINUTES                   :{BIG_FONT}{BLAC
 # Extra view window
 STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Cửa sổ {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}Đổi khung nhìn
-STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}Nhìn vị trí này ở cửa sổ lớn chính
+STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TOOLTIP                        :{BLACK}Nhìn vị trí này ở cửa sổ lớn chính
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Chuyển về cửa sổ chính
-STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}Sao chép vị trí từ cửa sổ này về cửa sổ lớn
+STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Sao chép vị trí từ cửa sổ này về cửa sổ lớn
 
 # Game options window
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Cấu Hình Trò Chơi
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Tổng quát
-STR_GAME_OPTIONS_TAB_GENERAL_TT                                 :{BLACK}Điều chỉnh thiết lập tổng quát
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Điều chỉnh thiết lập tổng quát
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Đồ họa
-STR_GAME_OPTIONS_TAB_GRAPHICS_TT                                :{BLACK}Điều chỉnh thiết lập đồ họa
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Điều chỉnh thiết lập đồ họa
 STR_GAME_OPTIONS_TAB_SOUND                                      :Âm thanh
-STR_GAME_OPTIONS_TAB_SOUND_TT                                   :{BLACK}Lựa chọn thiết lập cho âm thanh và nhạc
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Lựa chọn thiết lập cho âm thanh và nhạc
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :Xã hội
-STR_GAME_OPTIONS_TAB_SOCIAL_TT                                  :{BLACK}Chọn thiết lập các tích hợp xã hội
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}Chọn thiết lập các tích hợp xã hội
 
 STR_GAME_OPTIONS_VOLUME                                         :Âm lượng
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Hiệu ứng âm thanh
@@ -974,7 +972,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Lựa ch
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 44
+###length 45
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Bảng Anh
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Đô-la Mỹ
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -1924,7 +1922,10 @@ STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Không bao giờ
 
 STR_CONFIG_SETTING_ECONOMY_TYPE                                 :Nền kinh tế: {STRING}
-STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :Nền kinh tế vận hành trơn tru sẽ có nhiều thay đổi về mặt sản xuất, ở từng bước nhỏ. Nền kinh tế đóng băng sẽ không có thay đổi về mặt sản xuất và nhà máy sẽ không đóng cửa. Thiết lập này có thể không có tác dụng nếu các loại hình công nghiệp được cung cấp bởi NewGRF
+###length 2
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :Kinh tế mượt mà (Smooth economy) làm thay đổi sản lượng thường xuyên hơn và theo từng bước nhỏ. Kinh tế đóng băng (Frozen economy) ngừng mọi thay đổi sản lượng và ngăn việc đóng cửa các ngành công nghiệp. Thiết lập này có thể không có hiệu lực nếu loại hình công nghiệp được cung cấp bởi NewGRF.{}{}Sản lượng ngành công nghiệp mỗi tháng vẫn có thể thay đổi khi nền kinh tế bị đóng băng, do sản lượng được kích hoạt ở các khoảng thời gian cố định, không hoàn toàn khớp với các tháng thực tế
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT_PERIOD                 :Kinh tế mượt mà (Smooth economy) làm thay đổi sản lượng thường xuyên hơn và theo từng bước nhỏ. Kinh tế đóng băng (Frozen economy) ngừng mọi thay đổi sản lượng và ngăn việc đóng cửa các ngành công nghiệp. Thiết lập này có thể không có hiệu lực nếu loại hình công nghiệp được cung cấp bởi NewGRF.{}{}Sản lượng ngành công nghiệp mỗi phút vẫn có thể thay đổi khi nền kinh tế bị đóng băng, do sản lượng được kích hoạt ở các khoảng thời gian cố định, không hoàn toàn khớp với các phút thực tế
+
 ###length 3
 STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :Nguyên gốc
 STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :Vận hành trơn tru
@@ -1977,6 +1978,9 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Bật tùy ch�
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :không cho phép
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :cho phép
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :cho phép, tùy chọn bố trí đô thị
+
+STR_CONFIG_SETTING_HOUSE_PLACER_HELPTEXT                        :Bật tùy chọn này cho phép người chơi đặt nhà cửa bằng tay
+###length 3
 
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :Nhu cầu vận chuyển hàng đô thị: {STRING}
 STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Lượng hàng hoá cần vận chuyển ở trong đô thị, tỉ lệ với tổng dân số của độ thị.{}Tăng tỉ lệ bình phương: một đô thị to gấp 2 sẽ tăng 4 lần số hành khách.{}Tăng tỉ lệ thuận: một đô thị tăng gấp 2 sẽ tăng gấp 2 lần số hành khách
@@ -2239,6 +2243,7 @@ STR_HELP_WINDOW_README                                          :{BLACK}Readme
 STR_HELP_WINDOW_CHANGELOG                                       :{BLACK}Lịch sử thay đổi
 STR_HELP_WINDOW_KNOWN_BUGS                                      :{BLACK}Các lỗi đã biết
 STR_HELP_WINDOW_LICENSE                                         :{BLACK}Giấy phép
+STR_HELP_WINDOW_FONTS                                           :{BLACK}Phông chữ
 STR_HELP_WINDOW_MAIN_WEBSITE                                    :{BLACK}OpenTTD
 STR_HELP_WINDOW_MANUAL_WIKI                                     :{BLACK}Hướng dẫn / Wiki
 STR_HELP_WINDOW_BUGTRACKER                                      :{BLACK}Báo cáo lỗi
@@ -2331,9 +2336,9 @@ STR_FACE_SAVE                                                   :{BLACK}Lưu
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Lưu gương mặt yêu thích
 STR_FACE_SAVE_DONE                                              :{WHITE}Gương mặt yêu thích này sẽ được lưu lại trong tập tin cấu hình OpenTTD .
 STR_FACE_EUROPEAN                                               :{BLACK}Châu Âu
-STR_FACE_SELECT_EUROPEAN                                        :{BLACK}Chọn khuôn mặt Châu Âu
+STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Chọn khuôn mặt Châu Âu
 STR_FACE_AFRICAN                                                :{BLACK}Châu Phi
-STR_FACE_SELECT_AFRICAN                                         :{BLACK}Chọn khuôn mặt Châu Phi
+STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Chọn khuôn mặt Châu Phi
 STR_FACE_YES                                                    :Đồng ý
 STR_FACE_NO                                                     :Không
 STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Chọn ria mép hoặc bông tai
@@ -2389,7 +2394,7 @@ STR_NETWORK_SERVER_LIST_INFO_ICONS_TOOLTIP                      :{BLACK}Thông t
 
 STR_NETWORK_SERVER_LIST_CLICK_GAME_TO_SELECT                    :{BLACK}Chọn một game trong danh sách
 STR_NETWORK_SERVER_LIST_LAST_JOINED_SERVER                      :{BLACK}Server bạn đã vào lần trước:
-STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST                    :{BLACK}Chọn server bạn đã chơi lần trước
+STR_NETWORK_SERVER_LIST_CLICK_TO_SELECT_LAST_TOOLTIP            :{BLACK}Chọn server bạn đã chơi lần trước
 
 STR_NETWORK_SERVER_LIST_GAME_INFO                               :{SILVER}THÔNG TIN VÁN CHƠI
 STR_NETWORK_SERVER_LIST_CLIENTS                                 :{SILVER}Máy trạm: {WHITE}{COMMA} / {COMMA} - {COMMA} / {COMMA}
@@ -2550,7 +2555,7 @@ STR_NETWORK_CHAT_TO_COMPANY                                     :[Nhóm] tới {
 STR_NETWORK_CHAT_CLIENT                                         :[Riêng] {STRING}: {WHITE}{STRING}
 STR_NETWORK_CHAT_TO_CLIENT                                      :[Riêng] Tới {STRING}: {WHITE}{STRING}
 STR_NETWORK_CHAT_ALL                                            :[Chung] {STRING}: {WHITE}{STRING}
-STR_NETWORK_CHAT_EXTERNAL                                       :[{3:STRING}] {0:STRING}: {WHITE}{1:STRING}
+STR_NETWORK_CHAT_EXTERNAL                                       :[{STRING}] {STRING}: {WHITE}{STRING}
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}Nhập thông điệp tán gẫu
 
 # Network messages
@@ -2608,7 +2613,7 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :xử lý bản 
 STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :tên client không đúng
 
 # Network related errors
-STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
+STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 ###length 12
 STR_NETWORK_SERVER_MESSAGE_GAME_PAUSED                          :Ván chơi tạm dừng ({STRING})
@@ -2626,13 +2631,13 @@ STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH               :đợi cập nh
 
 STR_NETWORK_MESSAGE_CLIENT_LEAVING                              :ra khỏi ván
 STR_NETWORK_MESSAGE_CLIENT_JOINED                               :*** Máy trạm {STRING} gia nhập ván chơi
-STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** Máy trạm {0:STRING} đã vào trò chơi (Máy trạm #{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {0:STRING} đã gia nhập công ty #{2:NUM}
+STR_NETWORK_MESSAGE_CLIENT_JOINED_ID                            :*** Máy trạm {STRING} đã vào trò chơi (Máy trạm #{NUM})
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_JOIN                         :*** {STRING} đã gia nhập {STRING}
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} vào xem ván chơi
-STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {0:STRING} khai trương công ty mới (#{2:NUM})
-STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {0:STRING} rời bỏ ván chơi ({2:STRING})
+STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} khai trương công ty mới (#{NUM})
+STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} rời bỏ ván chơi ({STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} đã đổi tên thành {STRING}
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} tặng {2:CURRENCY_LONG} cho {1:STRING}
+STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} tặng {CURRENCY_LONG} cho {STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Server kết thúc phiên
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Server khởi động lại...{}Xin chờ...
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} đã bị đá khỏi ván chơi. Lý do: ({STRING})
@@ -2643,7 +2648,7 @@ STR_NETWORK_ERROR_COORDINATOR_ISOLATED                          :{WHITE}Server c
 STR_NETWORK_ERROR_COORDINATOR_ISOLATED_DETAIL                   :{WHITE}Những người chơi khác sẽ không kết nối được vào server của bạn
 
 # Content downloading window
-STR_CONTENT_TITLE                                               :{WHITE}Đang tải nội dung
+STR_CONTENT_TITLE                                               :{WHITE}Nội Dung Trực Tuyến
 STR_CONTENT_TYPE_CAPTION                                        :{BLACK}Kiểu
 STR_CONTENT_TYPE_CAPTION_TOOLTIP                                :{BLACK}Loại nội dung
 STR_CONTENT_NAME_CAPTION                                        :{BLACK}Tên
@@ -2849,6 +2854,7 @@ STR_HOUSE_PICKER_CLASS_ZONE3                                    :Phía ngoài ng
 STR_HOUSE_PICKER_CLASS_ZONE4                                    :Phía trong ngoại ô
 STR_HOUSE_PICKER_CLASS_ZONE5                                    :Nội thành
 
+
 STR_STATION_CLASS_DFLT                                          :Mặc định
 STR_STATION_CLASS_DFLT_STATION                                  :Trạm mặc định
 STR_STATION_CLASS_DFLT_ROADSTOP                                 :Điểm dừng trên đường mặc định
@@ -2881,7 +2887,7 @@ STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}Chọn L
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}Chọn cầu - chọn loại cầu bạn muốn xây dựng
 STR_SELECT_BRIDGE_INFO_NAME                                     :{GOLD}{STRING}
 STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED                           :{GOLD}{STRING},{} {VELOCITY}
-STR_SELECT_BRIDGE_INFO_NAME_COST                                :{GOLD}{0:STRING},{} {WHITE}{2:CURRENCY_LONG}
+STR_SELECT_BRIDGE_INFO_NAME_COST                                :{GOLD}{STRING},{} {WHITE}{CURRENCY_LONG}
 STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED_COST                      :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
 STR_BRIDGE_NAME_SUSPENSION_STEEL                                :Cầu treo thép
 STR_BRIDGE_NAME_GIRDER_STEEL                                    :Cầu dầm thép
@@ -2940,7 +2946,7 @@ STR_STATION_BUILD_CARGO_TRAM_ORIENTATION_TOOLTIP                :{BLACK}Chọn h
 # Waterways toolbar (last two for SE only)
 STR_WATERWAYS_TOOLBAR_CAPTION                                   :{WHITE}Xây Đường Thủy
 STR_WATERWAYS_TOOLBAR_CAPTION_SE                                :{WHITE}Đường Thủy
-STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}Xây kênh đào. Shift để hiện chi phí dự tính
+STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}Xây kênh đào. Ctrl+Click+Drag để chọn khu vực theo đường chéo. Shift để hiện chi phí dự tính
 STR_WATERWAYS_TOOLBAR_BUILD_LOCKS_TOOLTIP                       :{BLACK}Xây cửa kênh. Shift để xem chi phí dự tính
 STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}Xây xưởng tàu thuỷ (để mua và bảo trì tàu thuỷ). Shift để xem chi phí dự tính
 STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Xây cảng tàu. Ctrl để nối các cảng. Shift+Click để xem chi phí dự tính
@@ -3041,7 +3047,7 @@ STR_FOUND_TOWN_EXPAND_ALL_TOWNS_TOOLTIP                         :{BLACK}Làm cho
 
 STR_FOUND_TOWN_NAME_TITLE                                       :{YELLOW}Tên thị trấn:
 STR_FOUND_TOWN_NAME_EDITOR_TITLE                                :{BLACK}Nhập tên thị trấn
-STR_FOUND_TOWN_NAME_EDITOR_HELP                                 :{BLACK}Click để nhập tên thị trấn
+STR_FOUND_TOWN_NAME_EDITOR_TOOLTIP                              :{BLACK}Click để nhập tên thị trấn
 STR_FOUND_TOWN_NAME_RANDOM_BUTTON                               :{BLACK}Tên ngẫu nhiên
 STR_FOUND_TOWN_NAME_RANDOM_TOOLTIP                              :{BLACK}Tạo một tên ngẫu nhiên
 
@@ -3055,7 +3061,7 @@ STR_FOUND_TOWN_CITY                                             :{BLACK}Đô th�
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Thành phố phát triển nhanh hơn thị trấn{}Tuỳ thuộc thiết lập, chúng lớn hơn khi khai sinh
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Quy hoạch đường đô thị:
-STR_FOUND_TOWN_SELECT_TOWN_ROAD_LAYOUT                          :{BLACK}Chọn để quy hoạch đường bộ trong đô thị
+STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Chọn để quy hoạch đường bộ trong đô thị
 STR_FOUND_TOWN_SELECT_LAYOUT_ORIGINAL                           :{BLACK}Nguyên bản
 STR_FOUND_TOWN_SELECT_LAYOUT_BETTER_ROADS                       :{BLACK}Nhiều đường hơn
 STR_FOUND_TOWN_SELECT_LAYOUT_2X2_GRID                           :{BLACK}lưới 2x2
@@ -3132,7 +3138,6 @@ STR_LAI_CLEAR_DESCRIPTION_ROUGH_LAND                            :Đất gồ gh�
 STR_LAI_CLEAR_DESCRIPTION_BARE_LAND                             :Đất trống
 STR_LAI_CLEAR_DESCRIPTION_GRASS                                 :Bãi cỏ
 STR_LAI_CLEAR_DESCRIPTION_FIELDS                                :Cánh đồng
-STR_LAI_CLEAR_DESCRIPTION_SNOW_COVERED_LAND                     :Đất tuyết phủ
 STR_LAI_CLEAR_DESCRIPTION_DESERT                                :Hoang mạc
 
 STR_LAI_RAIL_DESCRIPTION_TRACK                                  :Đường ray
@@ -3289,7 +3294,7 @@ STR_SAVELOAD_LOAD_SCENARIO                                      :{WHITE}Nạp m�
 STR_SAVELOAD_LOAD_HEIGHTMAP                                     :{WHITE}Nạp bản đồ địa hình
 STR_SAVELOAD_SAVE_HEIGHTMAP                                     :{WHITE}Lưu bản đồ địa hình
 STR_SAVELOAD_LOAD_TOWN_DATA                                     :{WHITE}Nạp Dữ Liệu Đô Thị
-STR_SAVELOAD_HOME_BUTTON                                        :{BLACK}Nháy vào đây để tới thư mục mặc định hiện thời để nạp/lưu
+STR_SAVELOAD_HOME_BUTTON_TOOLTIP                                :{BLACK}Nháy vào đây để tới thư mục mặc định hiện thời để nạp/lưu
 STR_SAVELOAD_BYTES_FREE                                         :{BLACK}{BYTES} còn trống
 STR_SAVELOAD_LIST_TOOLTIP                                       :{BLACK}Danh mục các ổ đĩa, thư mục và file lưu ván chơi (saved-game)
 STR_SAVELOAD_EDITBOX_TOOLTIP                                    :{BLACK}Tên đã chọn của ván chơi lưu
@@ -3328,15 +3333,15 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Số lư
 STR_MAPGEN_NUMBER_OF_INDUSTRIES_TOOLTIP                         :Chọn độ dày đặc của nhà máy, hoặc nhập một số tự chọn
 STR_MAPGEN_HEIGHTMAP_HEIGHT                                     :{BLACK}Độ cao đỉnh cao nhất:
 STR_MAPGEN_HEIGHTMAP_HEIGHT_TOOLTIP                             :{BLACK}Chọn mức độ cao nhất mà trò chơi có thể tạo ra, đo đạc và nâng lên trên mực được biển
-STR_MAPGEN_HEIGHTMAP_HEIGHT_UP                                  :{BLACK}Tăng chiều cao tối đa của đỉnh cao nhất lên một đơn vị
-STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN                                :{BLACK}Giảm độ cao tối đa của đỉnh cao nhất trên bản đồ một đơn vị
+STR_MAPGEN_HEIGHTMAP_HEIGHT_UP_TOOLTIP                          :{BLACK}Tăng chiều cao tối đa của đỉnh cao nhất lên một đơn vị
+STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN_TOOLTIP                        :{BLACK}Giảm độ cao tối đa của đỉnh cao nhất trên bản đồ một đơn vị
 STR_MAPGEN_SNOW_COVERAGE                                        :{BLACK}Độ phủ địa hình tuyết:
-STR_MAPGEN_SNOW_COVERAGE_UP                                     :{BLACK}Tăng độ phủ địa hình tuyết lên mười phần trăm
-STR_MAPGEN_SNOW_COVERAGE_DOWN                                   :{BLACK}Giảm độ phủ của tuyết đi mười phần trăm
+STR_MAPGEN_SNOW_COVERAGE_UP_TOOLTIP                             :{BLACK}Tăng độ phủ địa hình tuyết lên mười phần trăm
+STR_MAPGEN_SNOW_COVERAGE_DOWN_TOOLTIP                           :{BLACK}Giảm độ phủ của tuyết đi mười phần trăm
 STR_MAPGEN_SNOW_COVERAGE_TEXT                                   :{BLACK}{NUM}%
 STR_MAPGEN_DESERT_COVERAGE                                      :{BLACK}Độ phủ sa mạc:
-STR_MAPGEN_DESERT_COVERAGE_UP                                   :{BLACK}Tăng độ phủ sa mạc lên mười phần trăm
-STR_MAPGEN_DESERT_COVERAGE_DOWN                                 :{BLACK}Giảm độ phủ sa mạc đi mười phần trăm
+STR_MAPGEN_DESERT_COVERAGE_UP_TOOLTIP                           :{BLACK}Tăng độ phủ sa mạc lên mười phần trăm
+STR_MAPGEN_DESERT_COVERAGE_DOWN_TOOLTIP                         :{BLACK}Giảm độ phủ sa mạc đi mười phần trăm
 STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}{NUM}%
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Kiểu nền đất:
 STR_MAPGEN_SEA_LEVEL                                            :{BLACK}Mực nước biển:
@@ -3409,8 +3414,8 @@ STR_SE_MAPGEN_FLAT_WORLD_TOOLTIP                                :{BLACK}Tạo ra
 STR_SE_MAPGEN_RANDOM_LAND                                       :{WHITE}Nền đất ngẫu nhiên
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT                                 :{BLACK}Độ cao của đồng bằng:
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_TOOLTIP                         :{BLACK}Chọn độ cao của đất so với mực nước biển
-STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_DOWN                            :{BLACK}Hạ độ cao của đồng bằng xuống một
-STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_UP                              :{BLACK}Nâng độ cao của đồng bằng lên một
+STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_DOWN_TOOLTIP                    :{BLACK}Hạ độ cao của đồng bằng xuống một
+STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_UP_TOOLTIP                      :{BLACK}Nâng độ cao của đồng bằng lên một
 
 STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_QUERY_CAPT                      :{WHITE}Thay đổi độ cao của đồng bằng
 
@@ -3631,7 +3636,6 @@ STR_INVALID_VEHICLE                                             :<p.tiện bất
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Đang Quét NewGRF
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}Đang quét các NewGRF. Thời gian hoàn tất phụ thuộc vào số lượng hiện có...
 STR_NEWGRF_SCAN_STATUS                                          :{BLACK}Đã quét được {NUM} NewGRF trong tổng số {NUM} NewGRF dự tính
-STR_NEWGRF_SCAN_ARCHIVES                                        :Đang quét tập tin nén
 
 # Sign list window
 STR_SIGN_LIST_CAPTION                                           :{WHITE}Danh Sách Biển Hiệu - {COMMA} Biển Hiệu
@@ -3784,12 +3788,12 @@ STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Tham chi�
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Tên ga, bến, cảng - nháy vào tên để xem vị trí nhà ga,bến, cảng. Ctrl+Click mở cửa sổ mới để xem
-STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE                        :{BLACK}Giữ nút Ctrl để chọn nhiều mục
+STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE_TOOLTIP                :{BLACK}Giữ nút Ctrl để chọn nhiều mục
 STR_STATION_LIST_CAPTION                                        :{WHITE}{COMPANY} - {COMMA} Ga, bến, cảng
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Không -
-STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Chọn tất cả phương tiện
+STR_STATION_LIST_SELECT_ALL_FACILITIES_TOOLTIP                  :{BLACK}Chọn tất cả phương tiện
 STR_STATION_LIST_CARGO_FILTER_ALL_AND_NO_RATING                 :Tất cả các loại chuyển chở và không có đánh giá
 STR_STATION_LIST_CARGO_FILTER_MULTIPLE                          :Nhiều kiểu hàng hoá
 STR_STATION_LIST_CARGO_FILTER_NO_CARGO_TYPES                    :Không có chủng loại vận tải
@@ -3867,7 +3871,7 @@ STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOIN
 STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Xem vị trí của điểm mốc. Ctrl+Click để mở cửa sổ mới cho điểm mốc
 STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Đổi tên điểm mốc
 STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}Xem vị trí phao hàng hải. Ctrl+Click mở cửa sổ mới vị trí phao
-STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}Đổi tên phao
+STR_BUOY_VIEW_RENAME_TOOLTIP                                    :{BLACK}Đổi tên phao
 
 STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Sửa tên điểm mốc
 
@@ -3943,7 +3947,7 @@ STR_COMPANY_VIEW_BUILD_HQ_TOOLTIP                               :{BLACK}Xây d�
 STR_COMPANY_VIEW_VIEW_HQ_BUTTON                                 :{BLACK}Xem trụ sở
 STR_COMPANY_VIEW_VIEW_HQ_TOOLTIP                                :{BLACK}Xem khung cảnh trụ sở công ty
 STR_COMPANY_VIEW_RELOCATE_HQ                                    :{BLACK}Chuyển trụ sở
-STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS                  :{BLACK}Chuyển trụ sở công ty đi nơi khác sẽ cần chi phí là 1% giá trị công ty. . Shift để xem chi phí dự tính
+STR_COMPANY_VIEW_RELOCATE_HQ_TOOLTIP                            :{BLACK}Chuyển trụ sở công ty đi nơi khác sẽ cần chi phí là 1% giá trị công ty. . Shift để xem chi phí dự tính
 STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}Chi tiết
 STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}Xem chi tiết thống kê hạ tầng
 STR_COMPANY_VIEW_GIVE_MONEY_BUTTON                              :{BLACK}Tặng tiền
@@ -3990,7 +3994,7 @@ STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUST
 STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} và hơn {NUM}...
-STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Tên các nhà máy - nháy vào tên để xem vị trí nhà máy. Ctrl+Click mở cửa sổ mới để xem
+STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}Tên các nhà máy - nháy vào tên để xem vị trí nhà máy. Ctrl+Click mở cửa sổ mới để xem
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}Chấp nhận hàng hóa: {SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}Hàng hóa cung cấp: {SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :Tất cả hàng hóa
@@ -4012,8 +4016,6 @@ STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}Sản l�
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :, {STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Cần cung cấp:
-STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{0:STRING}{BLACK}{3:STRING}
-STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} đang chờ{STRING}
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Thay đổi sản lượng (bội số của 8, max 2040)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Thay đổi mức sản lượng (theo phần trăm, cao nhất 800%)
@@ -4265,10 +4267,10 @@ STR_DEPOT_CLONE_SHIP                                            :{BLACK}Tạo t�
 STR_DEPOT_CLONE_AIRCRAFT                                        :{BLACK}Tạo máy bay giống hệt
 
 ###length VEHICLE_TYPES
-STR_DEPOT_CLONE_TRAIN_DEPOT_INFO                                :{BLACK}Thao tác này mua một đoàn tàu giống hệt tàu cũ, gồm cả đầu máy và toa xe. Click vào nút này, sau đó click vào một đoàn tàu ngoài hoặc trong ga. Ctrl+Click để tạo tàu mới chia sẻ lộ trình. Shift+Click để xem giá mua dự tính
-STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_INFO                         :{BLACK}Thao tác này mua xe giống hệt xe cũ.Click vào nút này để thực hiện thao tác đối với xe trong xưởng hoặc ngoài xưởng. Ctrl+Click để chia sẻ lộ trình. Shift để xem giá mua ước tính
-STR_DEPOT_CLONE_SHIP_DEPOT_INFO                                 :{BLACK}Thao tác này mua tàu thuỷ giống hệt tàu thuỷ cũ, gồm cả loại hàng chuyên chở. Ctrl+Click để tạo tàu thuỷ chia sẻ lộ trình. Shift+Click để xem giá mua dự tính
-STR_DEPOT_CLONE_AIRCRAFT_INFO_HANGAR_WINDOW                     :{BLACK}Thao tác này mua máy bay giống hệt máy bay cũ, gồm cả loại hàng chuyên chở. Ctrl+Click để tạo máy bay chia sẻ lộ trình. Shift để xem giá mua dự tính
+STR_DEPOT_CLONE_TRAIN_DEPOT_TOOLTIP                             :{BLACK}Thao tác này mua một đoàn tàu giống hệt tàu cũ, gồm cả đầu máy và toa xe. Click vào nút này, sau đó click vào một đoàn tàu ngoài hoặc trong ga. Ctrl+Click để tạo tàu mới chia sẻ lộ trình. Shift+Click để xem giá mua dự tính
+STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_TOOLTIP                      :{BLACK}Thao tác này mua xe giống hệt xe cũ.Click vào nút này để thực hiện thao tác đối với xe trong xưởng hoặc ngoài xưởng. Ctrl+Click để chia sẻ lộ trình. Shift để xem giá mua ước tính
+STR_DEPOT_CLONE_SHIP_DEPOT_TOOLTIP                              :{BLACK}Thao tác này mua tàu thuỷ giống hệt tàu thuỷ cũ, gồm cả loại hàng chuyên chở. Ctrl+Click để tạo tàu thuỷ chia sẻ lộ trình. Shift+Click để xem giá mua dự tính
+STR_DEPOT_CLONE_AIRCRAFT_HANGAR_TOOLTIP                         :{BLACK}Thao tác này mua máy bay giống hệt máy bay cũ, gồm cả loại hàng chuyên chở. Ctrl+Click để tạo máy bay chia sẻ lộ trình. Shift để xem giá mua dự tính
 
 ###length VEHICLE_TYPES
 STR_DEPOT_TRAIN_LOCATION_TOOLTIP                                :{BLACK}Xem trung tâm của xưởng tàu hoả. Ctrl+Click mở cửa sổ mới để xem vị trí xưởng tàu
@@ -4312,8 +4314,6 @@ STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :toa xe điện
 STR_ENGINE_PREVIEW_AIRCRAFT                                     :máy bay
 STR_ENGINE_PREVIEW_SHIP                                         :tàu thuỷ
 
-STR_ENGINE_PREVIEW_TEXT3                                        :{BLACK}{STRING}{}{5:STRING}{}{STRING}
-STR_ENGINE_PREVIEW_TEXT4                                        :{BLACK}{STRING}{}{STRING}{}{STRING}{}{STRING}
 STR_ENGINE_PREVIEW_COST_WEIGHT                                  :Chi phí: {CURRENCY_LONG}  Trọng lượng: {WEIGHT_SHORT}
 STR_ENGINE_PREVIEW_COST_MAX_SPEED                               :Chi phí: {CURRENCY_LONG}  Tốc độ tối đa: {VELOCITY}
 STR_ENGINE_PREVIEW_SPEED_POWER                                  :Tốc độ: {VELOCITY}  Công suất: {POWER}
@@ -4339,31 +4339,31 @@ STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :Xe cộ
 STR_REPLACE_VEHICLE_SHIP                                        :Tàu thủy
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :Máy bay
 
-STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK}Lựa chọn đầu máy để thay thế
-STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK}Lựa chọn đầu máy mới để thay thế đầu máy đã chọn
+STR_REPLACE_LEFT_ARRAY_TOOLTIP                                  :{BLACK}Lựa chọn đầu máy để thay thế
+STR_REPLACE_RIGHT_ARRAY_TOOLTIP                                 :{BLACK}Lựa chọn đầu máy mới để thay thế đầu máy đã chọn
 
 STR_REPLACE_VEHICLES_START                                      :{BLACK}Bắt đầu thay thế
 STR_REPLACE_VEHICLES_NOW                                        :Thay thế ngay tất cả các phương tiện
 STR_REPLACE_VEHICLES_WHEN_OLD                                   :Chỉ thay thế các phương tiện cũ
-STR_REPLACE_HELP_START_BUTTON                                   :{BLACK}Bấm để bắt đầu thay thế đầu máy đã chọn bởi loại mới chọn
+STR_REPLACE_START_BUTTON_TOOLTIP                                :{BLACK}Bấm để bắt đầu thay thế đầu máy đã chọn bởi loại mới chọn
 STR_REPLACE_NOT_REPLACING                                       :{BLACK}Không thay thế
 STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED                      :{BLACK}Chưa chọn đầu máy
 STR_REPLACE_REPLACING_WHEN_OLD                                  :{ENGINE} khi đã cũ
 STR_REPLACE_VEHICLES_STOP                                       :{BLACK}Ngừng thay thế phương tiện
-STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}Bấm để ngừng việc thay thế kiểu đầu máy đã chọn
+STR_REPLACE_STOP_BUTTON_TOOLTIP                                 :{BLACK}Bấm để ngừng việc thay thế kiểu đầu máy đã chọn
 
-STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Chuyển qua lại cửa sổ thay thế đầu máy và toa xe
+STR_REPLACE_ENGINE_WAGON_SELECT_TOOLTIP                         :{BLACK}Chuyển qua lại cửa sổ thay thế đầu máy và toa xe
 STR_REPLACE_ENGINES                                             :Đầu máy
 STR_REPLACE_WAGONS                                              :Toa xe
 STR_REPLACE_ALL_RAILTYPE                                        :Tất cả toa xe đầu máy
 STR_REPLACE_ALL_ROADTYPE                                        :Tất cả các xe
 
 ###length 2
-STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Chọn kiểu đường ray bạn muốn thay thế
-STR_REPLACE_HELP_ROADTYPE                                       :{BLACK}Chọn loại đường bạn muốn thay đổi động cơ xe
+STR_REPLACE_RAILTYPE_TOOLTIP                                    :{BLACK}Chọn kiểu đường ray bạn muốn thay thế
+STR_REPLACE_ROADTYPE_TOOLTIP                                    :{BLACK}Chọn loại đường bạn muốn thay đổi động cơ xe
 ###next-name-looks-similar
 
-STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Hiện thị đầu máy nào đang được thay thế, nếu có
+STR_REPLACE_REPLACE_INFO_TAB_TOOLTIP                            :{BLACK}Hiện thị đầu máy nào đang được thay thế, nếu có
 STR_REPLACE_RAIL_VEHICLES                                       :Đầu máy/toa tàu hoả
 STR_REPLACE_ELRAIL_VEHICLES                                     :Đầu máy/toa xe điện
 STR_REPLACE_MONORAIL_VEHICLES                                   :Đầu máy ray đơn
@@ -4373,7 +4373,7 @@ STR_REPLACE_ROAD_VEHICLES                                       :Xe Cộ
 STR_REPLACE_TRAM_VEHICLES                                       :Các xe điện
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Xoá bỏ toa xe ({STRING}): {ORANGE}{STRING}
-STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Tự động thay thế sẽ giữ nguyên độ dài đoàn tàu bằng cách bỏ bớt toa xe (bỏ từ phía đầu), nếu như việc thay thế đầu máy làm đoàn tàu dài hơn.
+STR_REPLACE_REMOVE_WAGON_TOOLTIP                                :{BLACK}Tự động thay thế sẽ giữ nguyên độ dài đoàn tàu bằng cách bỏ bớt toa xe (bỏ từ phía đầu), nếu như việc thay thế đầu máy làm đoàn tàu dài hơn.
 STR_REPLACE_REMOVE_WAGON_GROUP_HELP                             :{STRING}. Ctrl+Click để áp dụng cho nhóm con
 
 # Vehicle view
@@ -4482,8 +4482,8 @@ STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Độ ti
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}Mua lúc: {LTBLUE}{NUM}{BLACK} Giá trị: {LTBLUE}{CURRENCY_LONG}
 STR_VEHICLE_INFO_NO_CAPACITY                                    :{BLACK}Sức chứa: {LTBLUE}Không{STRING}
-STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}Sức chứa: {LTBLUE}{0:CARGO_LONG}{3:STRING}
-STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}Sức chứa: {LTBLUE}{0:CARGO_LONG}{3:STRING} (x{4:NUM})
+STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}Sức chứa: {LTBLUE}{CARGO_LONG}{STRING}
+STR_VEHICLE_INFO_CAPACITY_MULT                                  :{BLACK}Sức chứa: {LTBLUE}{CARGO_LONG}{STRING} (x{NUM})
 STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Sức chứa: {LTBLUE}{CARGO_LONG}, {CARGO_LONG}{STRING}
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Cước trung chuyển: {LTBLUE}{CURRENCY_LONG}
@@ -4569,7 +4569,6 @@ STR_ORDERS_TIMETABLE_VIEW_TOOLTIP                               :{BLACK}Lịch t
 
 STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Lịch trình - click để tô sáng một thứ tự nào đó. Ctr+Click để nhảy đến nhà ga tương ứng
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
-STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING} {STRING}
 
 STR_ORDERS_END_OF_ORDERS                                        :- - Kết thúc lộ trình - -
 STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - Kết thúc lộ trình chia sẻ - -
@@ -4668,15 +4667,13 @@ STR_ORDER_GO_NON_STOP_TO_WAYPOINT                               :Đi suốt qua 
 STR_ORDER_SERVICE_AT                                            :Bảo trì tại
 STR_ORDER_SERVICE_NON_STOP_AT                                   :Đi bảo trì ngay tại
 
-STR_ORDER_NEAREST_DEPOT                                         :nơi gần nhất
-STR_ORDER_NEAREST_HANGAR                                        :xưởng tại sân bay gần nhất
 ###length 3
 STR_ORDER_TRAIN_DEPOT                                           :Xưởng tàu hoả
 STR_ORDER_ROAD_VEHICLE_DEPOT                                    :Xưởng xe
 STR_ORDER_SHIP_DEPOT                                            :Xưởng tàu thuỷ
 ###next-name-looks-similar
 
-STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{0:STRING} {2:STRING} {1:STRING}
+STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} gần {STRING} nhất
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
 STR_ORDER_REFIT_ORDER                                           :(Cải biến thành {STRING})
@@ -4685,8 +4682,8 @@ STR_ORDER_STOP_ORDER                                            :(Dừng)
 
 STR_ORDER_WAIT_TO_UNBUNCH                                       :(Chờ để gỡ gộp)
 
-STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
-STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(Không thể sử dụng trạm){POP_COLOUR} {STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION}
+STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(Không thể sử dụng trạm){POP_COLOUR} {STRING} {STATION}
 
 STR_ORDER_IMPLICIT                                              :(Chạy ngầm)
 
@@ -4767,7 +4764,6 @@ STR_TIMETABLE_STATUS_START_IN_SECONDS                           :{BLACK}Lịch t
 
 STR_TIMETABLE_START                                             :{BLACK}Khởi động bảng biểu
 STR_TIMETABLE_START_TOOLTIP                                     :{BLACK}Lựa chọn cho bảng thời gian khi nào bắt đầu. Ctrl+Click để chia đều từ lúc bắt đầu cho tất cả phương tiện đang chia sẻ lịch trình này theo thứ tự tương đối của chúng, nếu như lịch trình đã hoàn tất một bảng thời gian.
-
 STR_TIMETABLE_START_SECONDS_QUERY                               :Số giây cho đến khi lịch trình bắt đầu
 
 STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}Đổi thời gian
@@ -4833,8 +4829,8 @@ STR_ERROR_AI_DEBUG_SERVER_ONLY                                  :{YELLOW}Cửa s
 
 # AI configuration window
 STR_AI_CONFIG_CAPTION_AI                                        :{WHITE}Cấu hình AI
-STR_AI_CONFIG_CAPTION_GAMESCRIPT                                :{WHITE}Cấu Hình Tập Lệnh Trò Chơi
-STR_AI_CONFIG_GAMELIST_TOOLTIP                                  :{BLACK}Các Tập Lệnh Trò Chơi sẽ được chạy trong ván chơi tiếp theo
+STR_AI_CONFIG_CAPTION_GAMESCRIPT                                :{WHITE}Cấu Hình Game Script
+STR_AI_CONFIG_GAMELIST_TOOLTIP                                  :{BLACK}Các Game Script sẽ được chạy trong ván chơi tiếp theo
 STR_AI_CONFIG_AILIST_TOOLTIP                                    :{BLACK}Các AIs sẽ được chạy trong ván chơi tiếp theo
 STR_AI_CONFIG_HUMAN_PLAYER                                      :Nhân vật người
 STR_AI_CONFIG_RANDOM_AI                                         :AI ngẫu nhiên
@@ -4848,12 +4844,12 @@ STR_AI_CONFIG_MOVE_UP_TOOLTIP                                   :{BLACK}Di chuy�
 STR_AI_CONFIG_MOVE_DOWN                                         :{BLACK}Di Chuyển Xuống
 STR_AI_CONFIG_MOVE_DOWN_TOOLTIP                                 :{BLACK}Di chuyển AI xuống dưới danh sách
 
-STR_AI_CONFIG_GAMESCRIPT                                        :{SILVER}Tập Lệnh Trò Chơi
+STR_AI_CONFIG_GAMESCRIPT                                        :{SILVER}Game Script
 STR_AI_CONFIG_GAMESCRIPT_PARAM                                  :{SILVER}Tham số
 STR_AI_CONFIG_AI                                                :{SILVER}AIs
 
 STR_AI_CONFIG_CHANGE_AI                                         :{BLACK}Chọn AI
-STR_AI_CONFIG_CHANGE_GAMESCRIPT                                 :{BLACK}Chọn Tập Lệnh Trò Chơi
+STR_AI_CONFIG_CHANGE_GAMESCRIPT                                 :{BLACK}Chọn Game Script
 STR_AI_CONFIG_CHANGE_TOOLTIP                                    :{BLACK}Chạy tập lệnh khác. Ctrl+Click để hiển thị những phiên bản sẵn có
 STR_AI_CONFIG_CONFIGURE                                         :{BLACK}Tham Số
 STR_AI_CONFIG_CONFIGURE_TOOLTIP                                 :{BLACK}Cấu hình tham số cho AI
@@ -4882,9 +4878,8 @@ STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Chụp b
 STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Chụp màn hình bản đồ nhỏ
 
 # Script Parameters
-STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Tham số
-STR_AI_SETTINGS_CAPTION_AI                                      :AI
-STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :Tập Lệnh Trò Chơi
+STR_AI_SETTINGS_CAPTION_AI                                      :{WHITE}Tham Số AI
+STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :{WHITE}Tham Số Game Script
 STR_AI_SETTINGS_CLOSE                                           :{BLACK}Đóng
 STR_AI_SETTINGS_RESET                                           :{BLACK}Thiết Lập Lại
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
@@ -4974,7 +4969,7 @@ STR_ERROR_SCREENSHOT_FAILED                                     :{WHITE}Chụp m
 
 # Error message titles
 STR_ERROR_MESSAGE_CAPTION                                       :{YELLOW}Thông Điệp
-STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}Tin nhắn từ {STRING}
+STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}Tin nhắn từ {COMPANY}
 
 # Generic construction errors
 STR_ERROR_OFF_EDGE_OF_MAP                                       :{WHITE}Vượt qua giới hạn bản đồ
@@ -4993,7 +4988,7 @@ STR_ERROR_TERRAFORM_LIMIT_REACHED                               :{WHITE}... gi�
 STR_ERROR_CLEARING_LIMIT_REACHED                                :{WHITE}... giới hạn xoá ô đã tới
 STR_ERROR_TREE_PLANT_LIMIT_REACHED                              :{WHITE}... số cây trồng đã tới giới hạn
 STR_ERROR_NAME_MUST_BE_UNIQUE                                   :{WHITE}Tên phải không trùng lặp
-STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}{1:STRING} đang trên đường.
+STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}{STRING} đang chắn đường
 STR_ERROR_NOT_ALLOWED_WHILE_PAUSED                              :{WHITE}Không cho phép trong khi dừng
 
 # Local authority errors
@@ -5308,6 +5303,10 @@ STR_ERROR_CAN_T_SELL_TRAIN                                      :{WHITE}Không t
 STR_ERROR_CAN_T_SELL_ROAD_VEHICLE                               :{WHITE}Không thể bán xe...
 STR_ERROR_CAN_T_SELL_SHIP                                       :{WHITE}Không thể bán tàu thuỷ...
 STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}Không thể bán máy bay...
+
+###length VEHICLE_TYPES
+
+###length VEHICLE_TYPES
 
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}Quá nhiều phương tiện trong trò chơi
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Không thể thay đổi tần suất bảo trì...
@@ -5827,19 +5826,8 @@ STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STR
 STR_SAVEGAME_NAME_SPECTATOR                                     :Tham quan, {1:STRING}
 
 # Viewport strings
-STR_VIEWPORT_TOWN_POP                                           :{WHITE}{TOWN} ({COMMA})
-STR_VIEWPORT_TOWN                                               :{WHITE}{TOWN}
-STR_VIEWPORT_TOWN_TINY_BLACK                                    :{TINY_FONT}{BLACK}{TOWN}
-STR_VIEWPORT_TOWN_TINY_WHITE                                    :{TINY_FONT}{WHITE}{TOWN}
-
-STR_VIEWPORT_SIGN_SMALL_BLACK                                   :{TINY_FONT}{BLACK}{SIGN}
-STR_VIEWPORT_SIGN_SMALL_WHITE                                   :{TINY_FONT}{WHITE}{SIGN}
-
+STR_VIEWPORT_TOWN_POP                                           :{TOWN} ({COMMA})
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
-STR_VIEWPORT_STATION_TINY                                       :{TINY_FONT}{STATION}
-
-STR_VIEWPORT_WAYPOINT                                           :{WAYPOINT}
-STR_VIEWPORT_WAYPOINT_TINY                                      :{TINY_FONT}{WAYPOINT}
 
 # Simple strings to get specific types of data
 STR_COMPANY_NAME                                                :{COMPANY}
@@ -5876,8 +5864,6 @@ STR_JUST_DATE_LONG                                              :{DATE_LONG}
 STR_JUST_DATE_ISO                                               :{DATE_ISO}
 STR_JUST_STRING                                                 :{STRING}
 STR_JUST_STRING1                                                :{STRING}
-STR_JUST_STRING2                                                :{STRING}
-STR_JUST_STRING4                                                :{STRING}
 STR_JUST_STRING_STRING                                          :{STRING}{STRING}
 STR_JUST_RAW_STRING                                             :{STRING}
 STR_JUST_BIG_RAW_STRING                                         :{BIG_FONT}{STRING}
@@ -5901,3 +5887,5 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+
+STR_BADGE_NAME_LIST                                             :{STRING}: {GOLD}{STRING}

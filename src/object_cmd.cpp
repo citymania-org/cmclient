@@ -90,26 +90,21 @@ void BuildObject(ObjectType type, TileIndex tile, CompanyID owner, Town *town, u
 	const ObjectSpec *spec = ObjectSpec::Get(type);
 
 	TileArea ta(tile, GB(spec->size, HasBit(view, 0) ? 4 : 0, 4), GB(spec->size, HasBit(view, 0) ? 0 : 4, 4));
-	Object *o = new Object();
-	o->type          = type;
-	o->location      = ta;
-	o->town          = town == nullptr ? CalcClosestTownFromTile(tile) : town;
-	o->build_date    = TimerGameCalendar::date;
-	o->view          = view;
+	Object *o = new Object(type, town == nullptr ? CalcClosestTownFromTile(tile) : town, ta, TimerGameCalendar::date, view);
 
 	/* If nothing owns the object, the colour will be random. Otherwise
 	 * get the colour from the company's livery settings. */
 	if (owner == OWNER_NONE) {
 		o->colour = Random();
 	} else {
-		const Livery *l = Company::Get(owner)->livery;
-		o->colour = l->colour1 + l->colour2 * 16;
+		const Livery &l = Company::Get(owner)->livery[0];
+		o->colour = l.colour1 + l.colour2 * 16;
 	}
 
 	/* If the object wants only one colour, then give it that colour. */
-	if ((spec->flags & OBJECT_FLAG_2CC_COLOUR) == 0) o->colour &= 0xF;
+	if (!spec->flags.Test(ObjectFlag::Uses2CC)) o->colour &= 0xF;
 
-	if (HasBit(spec->callback_mask, CBM_OBJ_COLOUR)) {
+	if (spec->callback_mask.Test(ObjectCallbackMask::Colour)) {
 		uint16_t res = GetObjectCallback(CBID_OBJECT_COLOUR, o->colour, 0, spec, o, tile);
 		if (res != CALLBACK_FAILED) {
 			if (res >= 0x100) ErrorUnknownCallbackResult(spec->grf_prop.grfid, CBID_OBJECT_COLOUR, res);
@@ -135,7 +130,7 @@ void BuildObject(ObjectType type, TileIndex tile, CompanyID owner, Town *town, u
 	}
 
 	Object::IncTypeCount(type);
-	if (spec->flags & OBJECT_FLAG_ANIMATION) TriggerObjectAnimation(o, OAT_BUILT, spec);
+	if (spec->flags.Test(ObjectFlag::Animation)) TriggerObjectAnimation(o, OAT_BUILT, spec);
 }
 
 /**
@@ -189,15 +184,15 @@ void UpdateObjectColours(const Company *c)
 
 		const ObjectSpec *spec = ObjectSpec::GetByTile(obj->location.tile);
 		/* Using the object colour callback, so not using company colour. */
-		if (HasBit(spec->callback_mask, CBM_OBJ_COLOUR)) continue;
+		if (spec->callback_mask.Test(ObjectCallbackMask::Colour)) continue;
 
-		const Livery *l = c->livery;
-		obj->colour = ((spec->flags & OBJECT_FLAG_2CC_COLOUR) ? (l->colour2 * 16) : 0) + l->colour1;
+		const Livery &l = c->livery[0];
+		obj->colour = (spec->flags.Test(ObjectFlag::Uses2CC) ? (l.colour2 * 16) : 0) + l.colour1;
 	}
 }
 
 extern CommandCost CheckBuildableTile(TileIndex tile, uint invalid_dirs, int &allowed_z, bool allow_steep, bool check_bridge);
-static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags);
+static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlags flags);
 
 /**
  * Build an object object
@@ -207,7 +202,7 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags);
  * @param view the view for the object
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type, uint8_t view)
+CommandCost CmdBuildObject(DoCommandFlags flags, TileIndex tile, ObjectType type, uint8_t view)
 {
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 
@@ -216,8 +211,8 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
 	if (_game_mode == GM_NORMAL && !spec->IsAvailable() && !_generating_world) return CMD_ERROR;
 	if ((_game_mode == GM_EDITOR || _generating_world) && !spec->WasEverAvailable()) return CMD_ERROR;
 
-	if ((spec->flags & OBJECT_FLAG_ONLY_IN_SCENEDIT) != 0 && ((!_generating_world && _game_mode != GM_EDITOR) || _current_company != OWNER_NONE)) return CMD_ERROR;
-	if ((spec->flags & OBJECT_FLAG_ONLY_IN_GAME) != 0 && (_generating_world || _game_mode != GM_NORMAL || _current_company > MAX_COMPANIES)) return CMD_ERROR;
+	if (spec->flags.Test(ObjectFlag::OnlyInScenedit) && ((!_generating_world && _game_mode != GM_EDITOR) || _current_company != OWNER_NONE)) return CMD_ERROR;
+	if (spec->flags.Test(ObjectFlag::OnlyInGame) && (_generating_world || _game_mode != GM_NORMAL || _current_company > MAX_COMPANIES)) return CMD_ERROR;
 	if (view >= spec->views) return CMD_ERROR;
 
 	if (!Object::CanAllocateItem()) return CommandCost(STR_ERROR_TOO_MANY_OBJECTS);
@@ -237,15 +232,15 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
 		/* Check the surface to build on. At this time we can't actually execute the
 		 * the CLEAR_TILE commands since the newgrf callback later on can check
 		 * some information about the tiles. */
-		bool allow_water = (spec->flags & (OBJECT_FLAG_BUILT_ON_WATER | OBJECT_FLAG_NOT_ON_LAND)) != 0;
-		bool allow_ground = (spec->flags & OBJECT_FLAG_NOT_ON_LAND) == 0;
+		bool allow_water = spec->flags.Any({ObjectFlag::BuiltOnWater, ObjectFlag::NotOnLand});
+		bool allow_ground = !spec->flags.Test(ObjectFlag::NotOnLand);
 		for (TileIndex t : ta) {
 			if (HasTileWaterGround(t)) {
 				if (!allow_water) return CommandCost(STR_ERROR_CAN_T_BUILD_ON_WATER);
 				if (!IsWaterTile(t)) {
 					/* Normal water tiles don't have to be cleared. For all other tile types clear
 					 * the tile but leave the water. */
-					cost.AddCost(Command<CMD_LANDSCAPE_CLEAR>::Do(flags & ~DC_NO_WATER & ~DC_EXEC, t));
+					cost.AddCost(Command<CMD_LANDSCAPE_CLEAR>::Do(DoCommandFlags{flags}.Reset(DoCommandFlag::NoWater).Reset(DoCommandFlag::Execute), t));
 				} else {
 					/* Can't build on water owned by another company. */
 					Owner o = GetTileOwner(t);
@@ -263,7 +258,7 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
 						IsTileType(t, MP_OBJECT) &&
 						IsTileOwner(t, _current_company) &&
 						IsObjectType(t, OBJECT_HQ))) {
-					cost.AddCost(Command<CMD_LANDSCAPE_CLEAR>::Do(flags & ~DC_EXEC, t));
+					cost.AddCost(Command<CMD_LANDSCAPE_CLEAR>::Do(DoCommandFlags{flags}.Reset(DoCommandFlag::Execute), t));
 				}
 			}
 		}
@@ -274,7 +269,7 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
 
 		for (TileIndex t : ta) {
 			uint16_t callback = CALLBACK_FAILED;
-			if (HasBit(spec->callback_mask, CBM_OBJ_SLOPE_CHECK)) {
+			if (spec->callback_mask.Test(ObjectCallbackMask::SlopeCheck)) {
 				TileIndex diff = t - tile;
 				callback = GetObjectCallback(CBID_OBJECT_LAND_SLOPE_CHECK, GetTileSlope(t), TileY(diff) << 4 | TileX(diff), spec, nullptr, t, view);
 			}
@@ -289,16 +284,16 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
 			}
 		}
 
-		if (flags & DC_EXEC) {
+		if (flags.Test(DoCommandFlag::Execute)) {
 			/* This is basically a copy of the loop above with the exception that we now
 			 * execute the commands and don't check for errors, since that's already done. */
 			for (TileIndex t : ta) {
 				if (HasTileWaterGround(t)) {
 					if (!IsWaterTile(t)) {
-						Command<CMD_LANDSCAPE_CLEAR>::Do((flags & ~DC_NO_WATER) | DC_NO_MODIFY_TOWN_RATING, t);
+						Command<CMD_LANDSCAPE_CLEAR>::Do(DoCommandFlags{flags}.Reset(DoCommandFlag::NoWater).Set(DoCommandFlag::NoModifyTownRating), t);
 					}
 				} else {
-					Command<CMD_LANDSCAPE_CLEAR>::Do(flags | DC_NO_MODIFY_TOWN_RATING, t);
+					Command<CMD_LANDSCAPE_CLEAR>::Do(flags | DoCommandFlag::NoModifyTownRating, t);
 				}
 			}
 		}
@@ -308,7 +303,7 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
 	/* Finally do a check for bridges. */
 	for (TileIndex t : ta) {
 		if (IsBridgeAbove(t) && (
-				!(spec->flags & OBJECT_FLAG_ALLOW_UNDER_BRIDGE) ||
+				!spec->flags.Test(ObjectFlag::AllowUnderBridge) ||
 				(GetTileMaxZ(t) + spec->height >= GetBridgeHeight(GetSouthernBridgeEnd(t))))) {
 			return CommandCost(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
 		}
@@ -341,7 +336,7 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
 				_current_company = c->index;
 			}
 
-			if (flags & DC_EXEC) {
+			if (flags.Test(DoCommandFlag::Execute)) {
 				hq_score = UpdateCompanyRatingAndValue(c, false);
 				c->location_of_HQ = tile;
 				SetWindowDirty(WC_COMPANY, c->index);
@@ -365,7 +360,7 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
 		return CommandCost(STR_ERROR_BUILD_OBJECT_LIMIT_REACHED);
 	}
 
-	if (flags & DC_EXEC) {
+	if (flags.Test(DoCommandFlag::Execute)) {
 		BuildObject(type, tile, _current_company == OWNER_DEITY ? OWNER_NONE : _current_company, nullptr, view);
 
 		/* Make sure the HQ starts at the right size. */
@@ -389,7 +384,7 @@ CommandCost CmdBuildObject(DoCommandFlag flags, TileIndex tile, ObjectType type,
  * @param diagonal Whether to use the Orthogonal (0) or Diagonal (1) iterator.
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildObjectArea(DoCommandFlag flags, TileIndex tile, TileIndex start_tile, ObjectType type, uint8_t view, bool diagonal)
+CommandCost CmdBuildObjectArea(DoCommandFlags flags, TileIndex tile, TileIndex start_tile, ObjectType type, uint8_t view, bool diagonal)
 {
 	if (start_tile >= Map::Size()) return CMD_ERROR;
 
@@ -410,25 +405,25 @@ CommandCost CmdBuildObjectArea(DoCommandFlag flags, TileIndex tile, TileIndex st
 	std::unique_ptr<TileIterator> iter = TileIterator::Create(tile, start_tile, diagonal);
 	for (; *iter != INVALID_TILE; ++(*iter)) {
 		TileIndex t = *iter;
-		CommandCost ret = Command<CMD_BUILD_OBJECT>::Do(flags & ~DC_EXEC, t, type, view);
+		CommandCost ret = Command<CMD_BUILD_OBJECT>::Do(DoCommandFlags{flags}.Reset(DoCommandFlag::Execute), t, type, view);
 
 		/* If we've reached the limit, stop building (or testing). */
 		if (c != nullptr && limit-- <= 0) break;
 
 		if (ret.Failed()) {
-			last_error = ret;
+			last_error = std::move(ret);
 			continue;
 		}
 
 		had_success = true;
-		if (flags & DC_EXEC) {
+		if (flags.Test(DoCommandFlag::Execute)) {
 			money -= ret.GetCost();
 
 			/* If we run out of money, stop building. */
 			if (ret.GetCost() > 0 && money < 0) break;
 			Command<CMD_BUILD_OBJECT>::Do(flags, t, type, view);
 		}
-		cost.AddCost(ret);
+		cost.AddCost(ret.GetCost());
 	}
 
 	return had_success ? cost : last_error;
@@ -444,7 +439,7 @@ static void DrawTile_Object(TileInfo *ti)
 	/* Fall back for when the object doesn't exist anymore. */
 	if (!spec->IsEnabled()) type = OBJECT_TRANSMITTER;
 
-	if ((spec->flags & OBJECT_FLAG_HAS_NO_FOUNDATION) == 0) DrawFoundation(ti, GetFoundation_Object(ti->tile, ti->tileh));
+	if (!spec->flags.Test(ObjectFlag::HasNoFoundation)) DrawFoundation(ti, GetFoundation_Object(ti->tile, ti->tileh));
 
 	if (type < NEW_OBJECT_OFFSET) {
 		const DrawTileSprites *dts = nullptr;
@@ -458,7 +453,7 @@ static void DrawTile_Object(TileInfo *ti)
 			dts = &_objects[type];
 		}
 
-		if (spec->flags & OBJECT_FLAG_HAS_NO_FOUNDATION) {
+		if (spec->flags.Test(ObjectFlag::HasNoFoundation)) {
 			/* If an object has no foundation, but tries to draw a (flat) ground
 			 * type... we have to be nice and convert that for them. */
 			switch (dts->ground.sprite) {
@@ -473,13 +468,12 @@ static void DrawTile_Object(TileInfo *ti)
 		}
 
 		if (!IsInvisibilitySet(TO_STRUCTURES)) {
-			const DrawTileSeqStruct *dtss;
-			foreach_draw_tile_seq(dtss, dts->seq) {
+			for (const DrawTileSeqStruct &dtss : dts->GetSequence()) {
 				AddSortableSpriteToDraw(
-					dtss->image.sprite, palette,
-					ti->x + dtss->delta_x, ti->y + dtss->delta_y,
-					dtss->size_x, dtss->size_y,
-					dtss->size_z, ti->z + dtss->delta_z,
+					dtss.image.sprite, palette,
+					ti->x + dtss.delta_x, ti->y + dtss.delta_y,
+					dtss.size_x, dtss.size_y,
+					dtss.size_z, ti->z + dtss.delta_z,
 					IsTransparencySet(TO_STRUCTURES)
 				);
 			}
@@ -540,7 +534,7 @@ ClearedObjectArea *FindClearedObject(TileIndex tile)
 	return nullptr;
 }
 
-static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags)
+static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlags flags)
 {
 	/* Get to the northern most tile. */
 	Object *o = Object::GetByTile(tile);
@@ -550,28 +544,28 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags)
 	const ObjectSpec *spec = ObjectSpec::Get(type);
 
 	CommandCost cost(EXPENSES_CONSTRUCTION, spec->GetClearCost() * ta.w * ta.h / 5);
-	if (spec->flags & OBJECT_FLAG_CLEAR_INCOME) cost.MultiplyCost(-1); // They get an income!
+	if (spec->flags.Test(ObjectFlag::ClearIncome)) cost.MultiplyCost(-1); // They get an income!
 
 	/* Towns can't remove any objects. */
 	if (_current_company == OWNER_TOWN) return CMD_ERROR;
 
 	/* Water can remove everything! */
 	if (_current_company != OWNER_WATER) {
-		if ((flags & DC_NO_WATER) && IsTileOnWater(tile)) {
+		if (flags.Test(DoCommandFlag::NoWater) && IsTileOnWater(tile)) {
 			/* There is water under the object, treat it as water tile. */
 			return CommandCost(STR_ERROR_CAN_T_BUILD_ON_WATER);
-		} else if (!(spec->flags & OBJECT_FLAG_AUTOREMOVE) && (flags & DC_AUTO)) {
+		} else if (!spec->flags.Test(ObjectFlag::Autoremove) && flags.Test(DoCommandFlag::Auto)) {
 			/* No automatic removal by overbuilding stuff. */
 			return CommandCost(type == OBJECT_HQ ? STR_ERROR_COMPANY_HEADQUARTERS_IN : STR_ERROR_OBJECT_IN_THE_WAY);
 		} else if (_game_mode == GM_EDITOR) {
 			/* No further limitations for the editor. */
 		} else if (GetTileOwner(tile) == OWNER_NONE) {
 			/* Owned by nobody and unremovable, so we can only remove it with brute force! */
-			if (!_cheats.magic_bulldozer.value && (spec->flags & OBJECT_FLAG_CANNOT_REMOVE) != 0) return CMD_ERROR;
+			if (!_cheats.magic_bulldozer.value && spec->flags.Test(ObjectFlag::CannotRemove)) return CMD_ERROR;
 		} else if (CheckTileOwnership(tile).Failed()) {
 			/* We don't own it!. */
 			return CommandCost(STR_ERROR_OWNED_BY);
-		} else if ((spec->flags & OBJECT_FLAG_CANNOT_REMOVE) != 0 && (spec->flags & OBJECT_FLAG_AUTOREMOVE) == 0) {
+		} else if (spec->flags.All({ObjectFlag::CannotRemove, ObjectFlag::Autoremove})) {
 			/* In the game editor or with cheats we can remove, otherwise we can't. */
 			if (!_cheats.magic_bulldozer.value) {
 				if (type == OBJECT_HQ) return CommandCost(STR_ERROR_COMPANY_HEADQUARTERS_IN);
@@ -581,7 +575,7 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags)
 			/* Removing with the cheat costs more in TTDPatch / the specs. */
 			cost.MultiplyCost(25);
 		}
-	} else if ((spec->flags & (OBJECT_FLAG_BUILT_ON_WATER | OBJECT_FLAG_NOT_ON_LAND)) != 0) {
+	} else if (spec->flags.Any({ObjectFlag::BuiltOnWater, ObjectFlag::NotOnLand})) {
 		/* Water can't remove objects that are buildable on water. */
 		return CMD_ERROR;
 	}
@@ -589,10 +583,10 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags)
 	switch (type) {
 		case OBJECT_HQ: {
 			Company *c = Company::Get(GetTileOwner(tile));
-			if (flags & DC_EXEC) {
+			if (flags.Test(DoCommandFlag::Execute)) {
 				c->location_of_HQ = INVALID_TILE; // reset HQ position
 				SetWindowDirty(WC_COMPANY, c->index);
-				CargoPacket::InvalidateAllFrom(SourceType::Headquarters, c->index);
+				CargoPacket::InvalidateAllFrom({c->index, SourceType::Headquarters});
 			}
 
 			/* cost of relocating company is 1% of company value */
@@ -601,9 +595,9 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags)
 		}
 
 		case OBJECT_STATUE:
-			if (flags & DC_EXEC) {
+			if (flags.Test(DoCommandFlag::Execute)) {
 				Town *town = o->town;
-				ClrBit(town->statues, GetTileOwner(tile));
+				town->statues.Reset(GetTileOwner(tile));
 				SetWindowDirty(WC_TOWN_AUTHORITY, town->index);
 			}
 			break;
@@ -612,9 +606,9 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags)
 			break;
 	}
 
-	_cleared_object_areas.push_back({tile, ta});
+	_cleared_object_areas.emplace_back(tile, ta);
 
-	if (flags & DC_EXEC) ReallyClearObjectTile(o);
+	if (flags.Test(DoCommandFlag::Execute)) ReallyClearObjectTile(o);
 
 	return cost;
 }
@@ -631,8 +625,8 @@ static void AddAcceptedCargo_Object(TileIndex tile, CargoArray &acceptance, Carg
 
 	/* Top town building generates 10, so to make HQ interesting, the top
 	 * type makes 20. */
-	CargoID pass = GetCargoIDByLabel(CT_PASSENGERS);
-	if (IsValidCargoID(pass)) {
+	CargoType pass = GetCargoTypeByLabel(CT_PASSENGERS);
+	if (IsValidCargoType(pass)) {
 		acceptance[pass] += std::max(1U, level);
 		SetBit(always_accepted, pass);
 	}
@@ -641,8 +635,8 @@ static void AddAcceptedCargo_Object(TileIndex tile, CargoArray &acceptance, Carg
 	 * proportion passengers:mail is different because such a huge
 	 * commercial building generates unusually high amount of mail
 	 * correspondence per physical visitor. */
-	CargoID mail = GetCargoIDByLabel(CT_MAIL);
-	if (IsValidCargoID(mail)) {
+	CargoType mail = GetCargoTypeByLabel(CT_MAIL);
+	if (IsValidCargoType(mail)) {
 		acceptance[mail] += std::max(1U, level / 2);
 		SetBit(always_accepted, mail);
 	}
@@ -652,29 +646,29 @@ static void AddProducedCargo_Object(TileIndex tile, CargoArray &produced)
 {
 	if (!IsObjectType(tile, OBJECT_HQ)) return;
 
-	CargoID pass = GetCargoIDByLabel(CT_PASSENGERS);
-	if (IsValidCargoID(pass)) produced[pass]++;
-	CargoID mail = GetCargoIDByLabel(CT_MAIL);
-	if (IsValidCargoID(mail)) produced[mail]++;
+	CargoType pass = GetCargoTypeByLabel(CT_PASSENGERS);
+	if (IsValidCargoType(pass)) produced[pass]++;
+	CargoType mail = GetCargoTypeByLabel(CT_MAIL);
+	if (IsValidCargoType(mail)) produced[mail]++;
 }
 
 
-static void GetTileDesc_Object(TileIndex tile, TileDesc *td)
+static void GetTileDesc_Object(TileIndex tile, TileDesc &td)
 {
 	const ObjectSpec *spec = ObjectSpec::GetByTile(tile);
-	td->str = spec->name;
-	td->owner[0] = GetTileOwner(tile);
-	td->build_date = Object::GetByTile(tile)->build_date;
+	td.str = spec->name;
+	td.owner[0] = GetTileOwner(tile);
+	td.build_date = Object::GetByTile(tile)->build_date;
 
 	if (spec->grf_prop.HasGrfFile()) {
-		td->grf = GetGRFConfig(spec->grf_prop.grfid)->GetName();
+		td.grf = GetGRFConfig(spec->grf_prop.grfid)->GetName();
 	}
 }
 
 static void TileLoop_Object(TileIndex tile)
 {
 	const ObjectSpec *spec = ObjectSpec::GetByTile(tile);
-	if (spec->flags & OBJECT_FLAG_ANIMATION) {
+	if (spec->flags.Test(ObjectFlag::Animation)) {
 		Object *o = Object::GetByTile(tile);
 		TriggerObjectTileAnimation(o, tile, OAT_TILELOOP, spec);
 		if (o->location.tile == tile) TriggerObjectAnimation(o, OAT_256_TICKS, spec);
@@ -695,8 +689,8 @@ static void TileLoop_Object(TileIndex tile)
 
 	uint r = Random();
 	/* Top town buildings generate 250, so the top HQ type makes 256. */
-	CargoID pass = GetCargoIDByLabel(CT_PASSENGERS);
-	if (IsValidCargoID(pass) && GB(r, 0, 8) < (256 / 4 / (6 - level))) {
+	CargoType pass = GetCargoTypeByLabel(CT_PASSENGERS);
+	if (IsValidCargoType(pass) && GB(r, 0, 8) < (256 / 4 / (6 - level))) {
 		uint amt = GB(r, 0, 8) / 8 / 4 + 1;
 
 		/* Production is halved during recessions. */
@@ -705,14 +699,14 @@ static void TileLoop_Object(TileIndex tile)
 		/* Scale by cargo scale setting. */
 		amt = ScaleByCargoScale(amt, true);
 
-		MoveGoodsToStation(pass, amt, SourceType::Headquarters, GetTileOwner(tile), stations.GetStations());
+		MoveGoodsToStation(pass, amt, {GetTileOwner(tile), SourceType::Headquarters}, stations.GetStations());
 	}
 
 	/* Top town building generates 90, HQ can make up to 196. The
 	 * proportion passengers:mail is about the same as in the acceptance
 	 * equations. */
-	 CargoID mail = GetCargoIDByLabel(CT_MAIL);
-	if (IsValidCargoID(mail) && GB(r, 8, 8) < (196 / 4 / (6 - level))) {
+	CargoType mail = GetCargoTypeByLabel(CT_MAIL);
+	if (IsValidCargoType(mail) && GB(r, 8, 8) < (196 / 4 / (6 - level))) {
 		uint amt = GB(r, 8, 8) / 8 / 4 + 1;
 
 		/* Production is halved during recessions. */
@@ -721,7 +715,7 @@ static void TileLoop_Object(TileIndex tile)
 		/* Scale by cargo scale setting. */
 		amt = ScaleByCargoScale(amt, true);
 
-		MoveGoodsToStation(mail, amt, SourceType::Headquarters, GetTileOwner(tile), stations.GetStations());
+		MoveGoodsToStation(mail, amt, {GetTileOwner(tile), SourceType::Headquarters}, stations.GetStations());
 	}
 }
 
@@ -841,12 +835,12 @@ void GenerateObjects()
 		uint16_t amount = spec.generate_amount;
 
 		/* Scale by map size */
-		if ((spec.flags & OBJECT_FLAG_SCALE_BY_WATER) && _settings_game.construction.freeform_edges) {
+		if (spec.flags.Test(ObjectFlag::ScaleByWater) && _settings_game.construction.freeform_edges) {
 			/* Scale the amount of lighthouses with the amount of land at the borders.
 			 * The -6 is because the top borders are MP_VOID (-2) and all corners
 			 * are counted twice (-4). */
 			amount = Map::ScaleBySize1D(amount * num_water_tiles) / (2 * Map::MaxY() + 2 * Map::MaxX() - 6);
-		} else if (spec.flags & OBJECT_FLAG_SCALE_BY_WATER) {
+		} else if (spec.flags.Test(ObjectFlag::ScaleByWater)) {
 			amount = Map::ScaleBySize1D(amount);
 		} else {
 			amount = Map::ScaleBySize(amount);
@@ -865,7 +859,7 @@ void GenerateObjects()
 
 				default:
 					uint8_t view = RandomRange(spec.views);
-					if (CmdBuildObject(DC_EXEC | DC_AUTO | DC_NO_TEST_TOWN_RATING | DC_NO_MODIFY_TOWN_RATING, RandomTile(), spec.Index(), view).Succeeded()) amount--;
+					if (CmdBuildObject({DoCommandFlag::Execute, DoCommandFlag::Auto, DoCommandFlag::NoTestTownRating, DoCommandFlag::NoModifyTownRating}, RandomTile(), spec.Index(), view).Succeeded()) amount--;
 					break;
 			}
 		}
@@ -888,10 +882,10 @@ static void ChangeTileOwner_Object(TileIndex tile, Owner old_owner, Owner new_ow
 		}
 	} else if (type == OBJECT_STATUE) {
 		Town *t = Object::GetByTile(tile)->town;
-		ClrBit(t->statues, old_owner);
-		if (new_owner != INVALID_OWNER && !HasBit(t->statues, new_owner)) {
+		t->statues.Reset(old_owner);
+		if (new_owner != INVALID_OWNER && !t->statues.Test(new_owner)) {
 			/* Transfer ownership to the new company */
-			SetBit(t->statues, new_owner);
+			t->statues.Set(new_owner);
 			SetTileOwner(tile, new_owner);
 		} else {
 			do_clear = true;
@@ -909,7 +903,7 @@ static void ChangeTileOwner_Object(TileIndex tile, Owner old_owner, Owner new_ow
 	}
 }
 
-static CommandCost TerraformTile_Object(TileIndex tile, DoCommandFlag flags, int z_new, Slope tileh_new)
+static CommandCost TerraformTile_Object(TileIndex tile, DoCommandFlags flags, int z_new, Slope tileh_new)
 {
 	ObjectType type = GetObjectType(tile);
 
@@ -930,7 +924,7 @@ static CommandCost TerraformTile_Object(TileIndex tile, DoCommandFlag flags, int
 			const ObjectSpec *spec = ObjectSpec::Get(type);
 
 			/* Call callback 'disable autosloping for objects'. */
-			if (HasBit(spec->callback_mask, CBM_OBJ_AUTOSLOPE)) {
+			if (spec->callback_mask.Test(ObjectCallbackMask::Autoslope)) {
 				/* If the callback fails, allow autoslope. */
 				uint16_t res = GetObjectCallback(CBID_OBJECT_AUTOSLOPE, 0, 0, spec, Object::GetByTile(tile), tile);
 				if (res == CALLBACK_FAILED || !ConvertBooleanCallback(spec->grf_prop.grffile, CBID_OBJECT_AUTOSLOPE, res)) return CommandCost(EXPENSES_CONSTRUCTION, _price[PR_BUILD_FOUNDATION]);

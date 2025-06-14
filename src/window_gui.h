@@ -23,15 +23,13 @@
 /**
  * Flags to describe the look of the frame
  */
-enum FrameFlags {
-	FR_NONE         =  0,
-	FR_TRANSPARENT  =  1 << 0,  ///< Makes the background transparent if set
-	FR_BORDERONLY   =  1 << 4,  ///< Draw border only, no background
-	FR_LOWERED      =  1 << 5,  ///< If set the frame is lowered and the background colour brighter (ie. buttons when pressed)
-	FR_DARKENED     =  1 << 6,  ///< If set the background is darker, allows for lowered frames with normal background colour when used with FR_LOWERED (ie. dropdown boxes)
+enum class FrameFlag : uint8_t {
+	Transparent, ///< Makes the background transparent if set
+	BorderOnly, ///< Draw border only, no background
+	Lowered, ///< If set the frame is lowered and the background colour brighter (ie. buttons when pressed)
+	Darkened, ///< If set the background is darker, allows for lowered frames with normal background colour when used with FrameFlag::Lowered (ie. dropdown boxes)
 };
-
-DECLARE_ENUM_AS_BIT_SET(FrameFlags)
+using FrameFlags = EnumBitSet<FrameFlag, uint8_t>;
 
 class WidgetDimensions {
 public:
@@ -64,7 +62,7 @@ public:
 	int vsep_wide;            ///< Wide vertical spacing.
 	int hsep_normal;          ///< Normal horizontal spacing.
 	int hsep_wide;            ///< Wide horizontal spacing.
-	int hsep_indent;          ///< Width of identation for tree layouts.
+	int hsep_indent;          ///< Width of indentation for tree layouts.
 
 	static const WidgetDimensions unscaled; ///< Unscaled widget dimensions.
 	static WidgetDimensions scaled;         ///< Widget dimensions scaled for current zoom level.
@@ -135,7 +133,7 @@ inline void DrawFrameRect(const Rect &r, Colours colour, FrameFlags flags)
 	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, flags);
 }
 
-void DrawCaption(const Rect &r, Colours colour, Owner owner, TextColour text_colour, StringID str, StringAlignment align, FontSize fs);
+void DrawCaption(const Rect &r, Colours colour, Owner owner, TextColour text_colour, std::string_view str, StringAlignment align, FontSize fs);
 
 /* window.cpp */
 using WindowList = std::list<Window *>;
@@ -144,12 +142,23 @@ extern Window *_focused_window;
 
 
 /** How do we the window to be placed? */
-enum WindowPosition {
+enum WindowPosition : uint8_t {
 	WDP_MANUAL,        ///< Manually align the window (so no automatic location finding)
 	WDP_AUTO,          ///< Find a place automatically
 	WDP_CENTER,        ///< Center the window
 	WDP_ALIGN_TOOLBAR, ///< Align toward the toolbar
 };
+
+/**
+ * Window default widget/window handling flags
+ */
+enum class WindowDefaultFlag : uint8_t {
+	Construction, ///< This window is used for construction; close it whenever changing company.
+	Modal, ///< The window is a modal child of some other window, meaning the parent is 'inactive'
+	NoFocus, ///< This window won't get focus/make any other window lose focus when click
+	NoClose, ///< This window can't be interactively closed
+};
+using WindowDefaultFlags = EnumBitSet<WindowDefaultFlag, uint8_t>;
 
 Point GetToolbarAlignedWindowPosition(int window_width);
 
@@ -158,27 +167,27 @@ struct HotkeyList;
 /**
  * High level window description
  */
-struct WindowDesc : ZeroedMemoryAllocator {
+struct WindowDesc {
 
 	WindowDesc(WindowPosition default_pos, const char *ini_key, int16_t def_width_trad, int16_t def_height_trad,
-			WindowClass window_class, WindowClass parent_class, uint32_t flags,
+			WindowClass window_class, WindowClass parent_class, WindowDefaultFlags flags,
 			const std::span<const NWidgetPart> nwid_parts, HotkeyList *hotkeys = nullptr,
 			const std::source_location location = std::source_location::current());
 
 	~WindowDesc();
 
 	const std::source_location source_location; ///< Source location of this definition
-	WindowPosition default_pos;    ///< Preferred position of the window. @see WindowPosition()
-	WindowClass cls;               ///< Class of the window, @see WindowClass.
-	WindowClass parent_cls;        ///< Class of the parent window. @see WindowClass
-	const char *ini_key;           ///< Key to store window defaults in openttd.cfg. \c nullptr if nothing shall be stored.
-	uint32_t flags;                  ///< Flags. @see WindowDefaultFlag
+	const WindowPosition default_pos; ///< Preferred position of the window. @see WindowPosition()
+	const WindowClass cls; ///< Class of the window, @see WindowClass.
+	const WindowClass parent_cls; ///< Class of the parent window. @see WindowClass
+	const char *ini_key; ///< Key to store window defaults in openttd.cfg. \c nullptr if nothing shall be stored.
+	const WindowDefaultFlags flags; ///< Flags. @see WindowDefaultFlag
 	const std::span<const NWidgetPart> nwid_parts; ///< Span of nested widget parts describing the window.
-	HotkeyList *hotkeys;           ///< Hotkeys for the window.
+	const HotkeyList *hotkeys; ///< Hotkeys for the window.
 
-	bool pref_sticky;              ///< Preferred stickyness.
-	int16_t pref_width;              ///< User-preferred width of the window. Zero if unset.
-	int16_t pref_height;             ///< User-preferred height of the window. Zero if unset.
+	bool pref_sticky = false; ///< Preferred stickyness.
+	int16_t pref_width = 0; ///< User-preferred width of the window. Zero if unset.
+	int16_t pref_height = 0; ///< User-preferred height of the window. Zero if unset.
 
 	int16_t GetDefaultWidth() const;
 	int16_t GetDefaultHeight() const;
@@ -187,8 +196,8 @@ struct WindowDesc : ZeroedMemoryAllocator {
 	static void SaveToConfig();
 
 private:
-	int16_t default_width_trad;      ///< Preferred initial width of the window (pixels at 1x zoom).
-	int16_t default_height_trad;     ///< Preferred initial height of the window (pixels at 1x zoom).
+	const int16_t default_width_trad; ///< Preferred initial width of the window (pixels at 1x zoom).
+	const int16_t default_height_trad; ///< Preferred initial height of the window (pixels at 1x zoom).
 
 	/**
 	 * Delete copy constructor to prevent compilers from
@@ -196,16 +205,6 @@ private:
 	 */
 	WindowDesc(const WindowDesc &) = delete;
 	WindowDesc& operator=(const WindowDesc &) = delete;
-};
-
-/**
- * Window default widget/window handling flags
- */
-enum WindowDefaultFlag {
-	WDF_CONSTRUCTION    =   1 << 0, ///< This window is used for construction; close it whenever changing company.
-	WDF_MODAL           =   1 << 1, ///< The window is a modal child of some other window, meaning the parent is 'inactive'
-	WDF_NO_FOCUS        =   1 << 2, ///< This window won't get focus/make any other window lose focus when click
-	WDF_NO_CLOSE        =   1 << 3, ///< This window can't be interactively closed
 };
 
 /**
@@ -217,7 +216,7 @@ struct ResizeInfo {
 };
 
 /** State of a sort direction button. */
-enum SortButtonState {
+enum SortButtonState : uint8_t {
 	SBS_OFF,  ///< Do not sort (with this button).
 	SBS_DOWN, ///< Sort ascending.
 	SBS_UP,   ///< Sort descending.
@@ -226,46 +225,48 @@ enum SortButtonState {
 /**
  * Window flags.
  */
-enum WindowFlags : uint16 {
-	WF_TIMEOUT           = 1 <<  0, ///< Window timeout counter.
+enum class WindowFlag : uint8_t {
+	Timeout,          ///< Window timeout counter.
 
-	WF_DRAGGING          = 1 <<  3, ///< Window is being dragged.
-	WF_SIZING_RIGHT      = 1 <<  4, ///< Window is being resized towards the right.
-	WF_SIZING_LEFT       = 1 <<  5, ///< Window is being resized towards the left.
-	WF_SIZING            = WF_SIZING_RIGHT | WF_SIZING_LEFT, ///< Window is being resized.
-	WF_STICKY            = 1 <<  6, ///< Window is made sticky by user
-	WF_DISABLE_VP_SCROLL = 1 <<  7, ///< Window does not do autoscroll, @see HandleAutoscroll().
-	WF_WHITE_BORDER      = 1 <<  8, ///< Window white border counter bit mask.
-	WF_HIGHLIGHTED       = 1 <<  9, ///< Window has a widget that has a highlight.
-	WF_CENTERED          = 1 << 10, ///< Window is centered and shall stay centered after ReInit.
-	WF_DIRTY             = 1 << 11, ///< Whole window is dirty, and requires repainting.
-	WF_WIDGETS_DIRTY     = 1 << 12, ///< One or more widgets are dirty, and require repainting.
-	WF_DRAG_DIRTIED      = 1 << 13, ///< The window has already been marked dirty as blocks as part of the current drag operation
+	Dragging,         ///< Window is being dragged.
+	SizingRight,      ///< Window is being resized towards the right.
+	SizingLeft,       ///< Window is being resized towards the left.
+
+	Sticky,           ///< Window is made sticky by user
+	DisableVpScroll,  ///< Window does not do autoscroll, @see HandleAutoscroll().
+	WhiteBorder,      ///< Window white border counter bit mask.
+	Highlighted,      ///< Window has a widget that has a highlight.
+	Centred,          ///< Window is centered and shall stay centered after ReInit.
+	CMDirty, ///< Whole window is dirty, and requires repainting. (jgrpp viewports)
+	CMWidgetsDirty, ///< One or more widgets are dirty, and require repainting. (jgrpp viewports)
+	CMDragDirtied, ///< The window has already been marked dirty as blocks as part of the current drag operation (jgrpp viewports)
 };
-DECLARE_ENUM_AS_BIT_SET(WindowFlags)
+using WindowFlags = EnumBitSet<WindowFlag, uint16_t>;
 
-static const int TIMEOUT_DURATION = 7; ///< The initial timeout value for WF_TIMEOUT.
-static const int WHITE_BORDER_DURATION = 3; ///< The initial timeout value for WF_WHITE_BORDER.
+static const int TIMEOUT_DURATION = 7; ///< The initial timeout value for WindowFlag::Timeout.
+static const int WHITE_BORDER_DURATION = 3; ///< The initial timeout value for WindowFlag::WhiteBorder.
 
 /**
  * Data structure for a window viewport.
  * A viewport is either following a vehicle (its id in then in #follow_vehicle), or it aims to display a specific
- * location #dest_scrollpos_x, #dest_scrollpos_y (#follow_vehicle is then #INVALID_VEHICLE).
+ * location #dest_scrollpos_x, #dest_scrollpos_y (#follow_vehicle is then #VehicleID::Invalid()).
  * The actual location being shown is #scrollpos_x, #scrollpos_y.
  * @see InitializeViewport(), UpdateViewportPosition(), UpdateViewportCoordinates().
  */
 struct ViewportData : Viewport {
-	VehicleID follow_vehicle; ///< VehicleID to follow if following a vehicle, #INVALID_VEHICLE otherwise.
+	VehicleID follow_vehicle; ///< VehicleID to follow if following a vehicle, #VehicleID::Invalid() otherwise.
 	int32_t scrollpos_x;        ///< Currently shown x coordinate (virtual screen coordinate of topleft corner of the viewport).
 	int32_t scrollpos_y;        ///< Currently shown y coordinate (virtual screen coordinate of topleft corner of the viewport).
 	int32_t dest_scrollpos_x;   ///< Current destination x coordinate to display (virtual screen coordinate of topleft corner of the viewport).
 	int32_t dest_scrollpos_y;   ///< Current destination y coordinate to display (virtual screen coordinate of topleft corner of the viewport).
+
+	void CancelFollow(const Window &viewport_window);
 };
 
 struct QueryString;
 
 /* misc_gui.cpp */
-enum TooltipCloseCondition {
+enum TooltipCloseCondition : uint8_t {
 	TCC_RIGHT_CLICK,
 	TCC_HOVER,
 	TCC_NONE,
@@ -275,7 +276,7 @@ enum TooltipCloseCondition {
 /**
  * Data structure for an opened window
  */
-struct Window : ZeroedMemoryAllocator {
+struct Window {
 private:
 	static std::vector<Window *> closed_windows;
 
@@ -284,8 +285,8 @@ protected:
 	void InitializePositionSize(int x, int y, int min_width, int min_height);
 	virtual void FindWindowPlacementAndResize(int def_width, int def_height);
 
-	std::vector<int> scheduled_invalidation_data;  ///< Data of scheduled OnInvalidateData() calls.
-	bool scheduled_resize; ///< Set if window has been resized.
+	std::vector<int> scheduled_invalidation_data{}; ///< Data of scheduled OnInvalidateData() calls.
+	bool scheduled_resize = false; ///< Set if window has been resized.
 
 	/* Protected to prevent deletion anywhere outside Window::DeleteClosedWindows(). */
 	virtual ~Window();
@@ -301,38 +302,38 @@ public:
 	 */
 	inline void *operator new[](size_t size) = delete;
 
-	WindowDesc &window_desc;    ///< Window description
-	WindowFlags flags;          ///< Window flags
-	WindowClass window_class;   ///< Window class
-	WindowNumber window_number; ///< Window number within the window class
+	WindowDesc &window_desc; ///< Window description
+	WindowFlags flags{}; ///< Window flags
+	WindowClass window_class{}; ///< Window class
+	WindowNumber window_number = 0; ///< Window number within the window class
 
-	int scale; ///< Scale of this window -- used to determine how to resize.
+	int scale = 0; ///< Scale of this window -- used to determine how to resize.
 
-	uint8_t timeout_timer;      ///< Timer value of the WF_TIMEOUT for flags.
-	uint8_t white_border_timer; ///< Timer value of the WF_WHITE_BORDER for flags.
+	uint8_t timeout_timer = 0; ///< Timer value of the WindowFlag::Timeout for flags.
+	uint8_t white_border_timer = 0; ///< Timer value of the WindowFlag::WhiteBorder for flags.
 
-	int left;   ///< x position of left edge of the window
-	int top;    ///< y position of top edge of the window
-	int width;  ///< width of the window (number of pixels to the right in x direction)
-	int height; ///< Height of the window (number of pixels down in y direction)
+	int left = 0; ///< x position of left edge of the window
+	int top = 0; ///< y position of top edge of the window
+	int width = 0; ///< width of the window (number of pixels to the right in x direction)
+	int height = 0; ///< Height of the window (number of pixels down in y direction)
 
-	ResizeInfo resize;  ///< Resize information
+	ResizeInfo resize{}; ///< Resize information
 
-	Owner owner;        ///< The owner of the content shown in this window. Company colour is acquired from this variable.
+	Owner owner = INVALID_OWNER; ///< The owner of the content shown in this window. Company colour is acquired from this variable.
 
-	ViewportData *viewport;          ///< Pointer to viewport data, if present.
-	NWidgetViewport *viewport_widget; ///< Pointer to viewport widget, if present.
-	/* CM const */ NWidgetCore *nested_focus; ///< Currently focused nested widget, or \c nullptr if no nested widget has focus.
-	std::map<WidgetID, QueryString*> querystrings; ///< QueryString associated to WWT_EDITBOX widgets.
-	std::unique_ptr<NWidgetBase> nested_root; ///< Root of the nested tree.
-	WidgetLookup widget_lookup; ///< Indexed access to the nested widget tree. Do not access directly, use #Window::GetWidget() instead.
-	NWidgetStacked *shade_select;    ///< Selection widget (#NWID_SELECTION) to use for shading the window. If \c nullptr, window cannot shade.
-	Dimension unshaded_size;         ///< Last known unshaded size (only valid while shaded).
+	std::unique_ptr<ViewportData> viewport; ///< Pointer to viewport data, if present.
+	NWidgetViewport *cm_viewport_widget; ///< Pointer to viewport widget, if present.
+	/* CM const */ NWidgetCore *nested_focus = nullptr; ///< Currently focused nested widget, or \c nullptr if no nested widget has focus.
+	std::map<WidgetID, QueryString*> querystrings{}; ///< QueryString associated to WWT_EDITBOX widgets.
+	std::unique_ptr<NWidgetBase> nested_root{}; ///< Root of the nested tree.
+	WidgetLookup widget_lookup{}; ///< Indexed access to the nested widget tree. Do not access directly, use #Window::GetWidget() instead.
+	NWidgetStacked *shade_select = nullptr; ///< Selection widget (#NWID_SELECTION) to use for shading the window. If \c nullptr, window cannot shade.
+	Dimension unshaded_size{}; ///< Last known unshaded size (only valid while shaded).
 
-	WidgetID mouse_capture_widget;   ///< ID of current mouse capture widget (e.g. dragged scrollbar). -1 if no widget has mouse capture.
+	WidgetID mouse_capture_widget = -1; ///< ID of current mouse capture widget (e.g. dragged scrollbar). -1 if no widget has mouse capture.
 
-	Window *parent;                  ///< Parent window.
-	WindowList::iterator z_position;
+	Window *parent = nullptr; ///< Parent window.
+	WindowList::iterator z_position{};
 
 	template <class NWID>
 	inline const NWID *GetWidget(WidgetID widnum) const;
@@ -355,18 +356,12 @@ public:
 	void CreateNestedTree();
 	void FinishInitNested(WindowNumber window_number = 0);
 
-	template<typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-	void FinishInitNested(T number)
-	{
-		this->FinishInitNested(number.base());
-	}
-
 	/**
 	 * Set the timeout flag of the window and initiate the timer.
 	 */
 	inline void SetTimeout()
 	{
-		this->flags |= WF_TIMEOUT;
+		this->flags.Set(WindowFlag::Timeout);
 		this->timeout_timer = TIMEOUT_DURATION;
 	}
 
@@ -375,7 +370,7 @@ public:
 	 */
 	inline void SetWhiteBorder()
 	{
-		this->flags |= WF_WHITE_BORDER;
+		this->flags.Set(WindowFlag::WhiteBorder);
 		this->white_border_timer = WHITE_BORDER_DURATION;
 	}
 
@@ -431,7 +426,7 @@ public:
 	 */
 	inline bool IsWidgetFocused(WidgetID widget_index) const
 	{
-		return this->nested_focus != nullptr && this->nested_focus->index == widget_index;
+		return this->nested_focus != nullptr && this->nested_focus->GetIndex() == widget_index;
 	}
 
 	/**
@@ -523,7 +518,7 @@ public:
 	 * @param disab_stat status to use ie: disabled = true, enabled = false
 	 * @param widgets list of widgets
 	 */
-	template<typename... Args>
+	template <typename... Args>
 	void SetWidgetsDisabledState(bool disab_stat, Args... widgets)
 	{
 		(SetWidgetDisabledState(widgets, disab_stat), ...);
@@ -534,7 +529,7 @@ public:
 	 * @param lowered_stat status to use ie: lowered = true, raised = false
 	 * @param widgets list of widgets
 	 */
-	template<typename... Args>
+	template <typename... Args>
 	void SetWidgetsLoweredState(bool lowered_stat, Args... widgets)
 	{
 		(SetWidgetLoweredState(widgets, lowered_stat), ...);
@@ -544,7 +539,7 @@ public:
 	 * Raises the widgets and sets widgets dirty that are lowered.
 	 * @param widgets list of widgets
 	 */
-	template<typename... Args>
+	template <typename... Args>
 	void RaiseWidgetsWhenLowered(Args... widgets)
 	{
 		(this->RaiseWidgetWhenLowered(widgets), ...);
@@ -631,12 +626,14 @@ public:
 	virtual void UpdateWidgetSize([[maybe_unused]] WidgetID widget, [[maybe_unused]] Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) {}
 
 	/**
-	 * Initialize string parameters for a widget.
-	 * Calls to this function are made during initialization to measure the size (that is as part of #InitNested()), during drawing,
+	 * Get the raw string for a widget.
+	 * Calls to this function are also made during initialization to measure the size (that is as part of #InitNested()), during drawing,
 	 * and while re-initializing the window. Only for widgets that render text initializing is requested.
-	 * @param widget  Widget number.
+	 * @param widget Widget number.
+	 * @param stringid StringID assigned to widget.
+	 * @returns raw string to display.
 	 */
-	virtual void SetStringParameters([[maybe_unused]] WidgetID widget) const {}
+	virtual std::string GetWidgetString([[maybe_unused]] WidgetID widget, StringID stringid) const;
 
 	/**
 	 * The window has gained focus.
@@ -887,7 +884,6 @@ public:
 		explicit WindowIterator(const Window *w) : it(w->z_position) {}
 
 		bool operator==(const WindowIterator &other) const { return this->it == other.it; }
-		bool operator!=(const WindowIterator &other) const { return !(*this == other); }
 		Window * operator*() const { return *this->it; }
 		WindowIterator & operator++() { this->Next(); this->Validate(); return *this; }
 
@@ -915,7 +911,7 @@ public:
 
 	/**
 	 * Iterable ensemble of all valid Windows
-	 * @tparam Tfront Wether we iterate from front
+	 * @tparam Tfront Whether we iterate from front
 	 */
 	template <bool Tfront>
 	struct AllWindows {
@@ -1005,31 +1001,26 @@ public:
 Window *BringWindowToFrontById(WindowClass cls, WindowNumber number);
 Window *FindWindowFromPt(int x, int y);
 
-template<typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-Window *BringWindowToFrontById(WindowClass cls, T number)
-{
-	return BringWindowToFrontById(cls, number.base());
-}
-
 /**
  * Open a new window.
- * @tparam Wcls %Window class to use if the window does not exist.
+ * @tparam Twindow %Window class to use if the window does not exist.
+ * @tparam Treturn_existing If set, also return the window if it already existed.
  * @param desc The pointer to the WindowDesc to be created
  * @param window_number the window number of the new window
- * @param return_existing If set, also return the window if it already existed.
- * @return %Window pointer of the newly created window, or the existing one if \a return_existing is set, or \c nullptr.
+ * @param extra_arguments optional extra arguments to pass to the window's constructor.
+ * @return %Window pointer of the newly created window, or the existing one if \a Treturn_existing is set, or \c nullptr.
  */
-template <typename Wcls>
-Wcls *AllocateWindowDescFront(WindowDesc &desc, int window_number, bool return_existing = false)
+template <typename Twindow, bool Treturn_existing = false, typename... Targs>
+Twindow *AllocateWindowDescFront(WindowDesc &desc, WindowNumber window_number, Targs... extra_arguments)
 {
-	Wcls *w = static_cast<Wcls *>(BringWindowToFrontById(desc.cls, window_number));
-	if (w != nullptr) return return_existing ? w : nullptr;
-	return new Wcls(desc, window_number);
+	Twindow *w = static_cast<Twindow *>(BringWindowToFrontById(desc.cls, window_number));
+	if (w != nullptr) return Treturn_existing ? w : nullptr;
+	return new Twindow(desc, window_number, std::forward<Targs>(extra_arguments)...);
 }
 
 void RelocateAllWindows(int neww, int newh);
 
-void GuiShowTooltips(Window *parent, StringID str, TooltipCloseCondition close_tooltip, uint paramcount = 0);
+void GuiShowTooltips(Window *parent, EncodedString &&text, TooltipCloseCondition close_tooltip);
 
 /* widget.cpp */
 WidgetID GetWidgetFromPos(const Window *w, int x, int y);
@@ -1044,7 +1035,7 @@ extern bool _scrolling_viewport;
 extern bool _mouse_hovering;
 
 /** Mouse modes. */
-enum SpecialMouseMode {
+enum SpecialMouseMode : uint8_t {
 	WSM_NONE,     ///< No special mouse mode.
 	WSM_DRAGDROP, ///< Drag&drop an object.
 	WSM_SIZING,   ///< Sizing mode.

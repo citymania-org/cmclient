@@ -167,8 +167,8 @@ static const Depot *FindClosestShipDepot(const Vehicle *v, uint max_distance)
 		const WaterRegionPatchDesc current_node = patches_to_search.front();
 		patches_to_search.pop_front();
 
-		/* Add neighbors of the current patch to the search queue. */
-		TVisitWaterRegionPatchCallBack visitFunc = [&](const WaterRegionPatchDesc &water_region_patch) {
+		/* Add neighbours of the current patch to the search queue. */
+		TVisitWaterRegionPatchCallBack visit_func = [&](const WaterRegionPatchDesc &water_region_patch) {
 			/* Note that we check the max distance per axis, not the total distance. */
 			if (std::abs(water_region_patch.x - start_patch.x) > max_region_distance ||
 					std::abs(water_region_patch.y - start_patch.y) > max_region_distance) return;
@@ -180,7 +180,7 @@ static const Depot *FindClosestShipDepot(const Vehicle *v, uint max_distance)
 			}
 		};
 
-		VisitWaterRegionPatchNeighbors(current_node, visitFunc);
+		VisitWaterRegionPatchNeighbours(current_node, visit_func);
 	}
 
 	/* Step 2: Find the closest depot within the reachable Water Region Patches. */
@@ -287,7 +287,7 @@ void Ship::OnNewEconomyDay()
 
 Trackdir Ship::GetVehicleTrackdir() const
 {
-	if (this->vehstatus & VS_CRASHED) return INVALID_TRACKDIR;
+	if (this->vehstatus.Test(VehState::Crashed)) return INVALID_TRACKDIR;
 
 	if (this->IsInDepot()) {
 		/* We'll assume the ship is facing outwards */
@@ -317,14 +317,14 @@ void Ship::PlayLeaveStationSound(bool force) const
 
 TileIndex Ship::GetOrderStationLocation(StationID station)
 {
-	if (station == this->last_station_visited) this->last_station_visited = INVALID_STATION;
+	if (station == this->last_station_visited) this->last_station_visited = StationID::Invalid();
 
 	const Station *st = Station::Get(station);
 	if (CanVehicleUseStation(this, st)) {
 		return st->xy;
 	} else {
 		this->IncrementRealOrderIndex();
-		return 0;
+		return TileIndex{};
 	}
 }
 
@@ -420,7 +420,7 @@ static bool CheckShipLeaveDepot(Ship *v)
 	}
 
 	v->state = AxisToTrackBits(axis);
-	v->vehstatus &= ~VS_HIDDEN;
+	v->vehstatus.Reset(VehState::Hidden);
 
 	v->cur_speed = 0;
 	v->UpdateViewport(true, true);
@@ -471,10 +471,9 @@ static void ShipArrivesAt(const Vehicle *v, Station *st)
 	if (!(st->had_vehicle_of_type & HVOT_SHIP)) {
 		st->had_vehicle_of_type |= HVOT_SHIP;
 
-		SetDParam(0, st->index);
 		AddVehicleNewsItem(
-			STR_NEWS_FIRST_SHIP_ARRIVAL,
-			(v->owner == _local_company) ? NT_ARRIVAL_COMPANY : NT_ARRIVAL_OTHER,
+			GetEncodedString(STR_NEWS_FIRST_SHIP_ARRIVAL, st->index),
+			(v->owner == _local_company) ? NewsType::ArrivalCompany : NewsType::ArrivalOther,
 			v->index,
 			st->index
 		);
@@ -703,7 +702,7 @@ static void ShipController(Ship *v)
 
 	if (v->HandleBreakdown()) return;
 
-	if (v->vehstatus & VS_STOPPED) return;
+	if (v->vehstatus.Test(VehState::Stopped)) return;
 
 	if (ProcessOrders(v) && CheckReverseShip(v)) return ReverseShip(v);
 
@@ -773,10 +772,10 @@ static void ShipController(Ship *v)
 							}
 						} else if (v->current_order.IsType(OT_GOTO_STATION) && IsDockingTile(gp.new_tile)) {
 							/* Process station in the orderlist. */
-							Station *st = Station::Get(v->current_order.GetDestination());
+							Station *st = Station::Get(v->current_order.GetDestination().ToStationID());
 							if (st->docking_station.Contains(gp.new_tile) && IsShipDestinationTile(gp.new_tile, st->index)) {
 								v->last_station_visited = st->index;
-								if (st->facilities & FACIL_DOCK) { // ugly, ugly workaround for problem with ships able to drop off cargo at wrong stations
+								if (st->facilities.Test(StationFacility::Dock)) { // ugly, ugly workaround for problem with ships able to drop off cargo at wrong stations
 									ShipArrivesAt(v, st);
 									v->BeginLoading();
 								} else { // leave stations without docks right away
@@ -848,7 +847,7 @@ static void ShipController(Ship *v)
 				v->x_pos = gp.x;
 				v->y_pos = gp.y;
 				v->UpdatePosition();
-				if ((v->vehstatus & VS_HIDDEN) == 0) v->Vehicle::UpdateViewport(true);
+				if (!v->vehstatus.Test(VehState::Hidden)) v->Vehicle::UpdateViewport(true);
 				continue;
 			}
 
@@ -870,7 +869,7 @@ bool Ship::Tick()
 {
 	// PerformanceAccumulator framerate(PFE_GL_SHIPS);
 
-	if (!(this->vehstatus & VS_STOPPED)) this->running_ticks++;
+	if (!this->vehstatus.Test(VehState::Stopped)) this->running_ticks++;
 
 	ShipController(this);
 
@@ -892,10 +891,10 @@ void Ship::SetDestTile(TileIndex tile)
  * @param[out] ret the vehicle that has been built.
  * @return the cost of this operation or an error.
  */
-CommandCost CmdBuildShip(DoCommandFlag flags, TileIndex tile, const Engine *e, Vehicle **ret)
+CommandCost CmdBuildShip(DoCommandFlags flags, TileIndex tile, const Engine *e, Vehicle **ret)
 {
 	tile = GetShipDepotNorthTile(tile);
-	if (flags & DC_EXEC) {
+	if (flags.Test(DoCommandFlag::Execute)) {
 		int x;
 		int y;
 
@@ -912,17 +911,22 @@ CommandCost CmdBuildShip(DoCommandFlag flags, TileIndex tile, const Engine *e, V
 		v->y_pos = y;
 		v->z_pos = GetSlopePixelZ(x, y);
 
+		v->direction = DiagDirToDir(GetShipDepotDirection(tile));
+
+		/* UpdateDeltaXY() requires rotation to be initialised as well. */
+		v->rotation = v->direction;
 		v->UpdateDeltaXY();
-		v->vehstatus = VS_HIDDEN | VS_STOPPED | VS_DEFPAL;
+
+		v->vehstatus = {VehState::Hidden, VehState::Stopped, VehState::DefaultPalette};
 
 		v->spritenum = svi->image_index;
 		v->cargo_type = e->GetDefaultCargoType();
-		assert(IsValidCargoID(v->cargo_type));
+		assert(IsValidCargoType(v->cargo_type));
 		v->cargo_cap = svi->capacity;
 		v->refit_cap = 0;
 
-		v->last_station_visited = INVALID_STATION;
-		v->last_loading_station = INVALID_STATION;
+		v->last_station_visited = StationID::Invalid();
+		v->last_loading_station = StationID::Invalid();
 		v->engine_type = e->index;
 
 		v->reliability = e->reliability;
@@ -941,7 +945,7 @@ CommandCost CmdBuildShip(DoCommandFlag flags, TileIndex tile, const Engine *e, V
 		v->acceleration = svi->acceleration;
 		v->UpdateCache();
 
-		if (e->flags & ENGINE_EXCLUSIVE_PREVIEW) SetBit(v->vehicle_flags, VF_BUILT_AS_PROTOTYPE);
+		if (e->flags.Test(EngineFlag::ExclusivePreview)) v->vehicle_flags.Set(VehicleFlag::BuiltAsPrototype);
 		v->SetServiceIntervalIsPercent(Company::Get(_current_company)->settings.vehicle.servint_ispercent);
 
 		v->InvalidateNewGRFCacheOfChain();

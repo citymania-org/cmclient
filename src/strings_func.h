@@ -14,7 +14,7 @@
 #include "string_type.h"
 #include "gfx_type.h"
 #include "core/bitmath_func.hpp"
-#include "core/strong_typedef_type.hpp"
+#include "core/convertible_through_base.hpp"
 #include "vehicle_type.h"
 
 /**
@@ -35,18 +35,18 @@ inline StringTab GetStringTab(StringID str)
  * @param str String identifier
  * @return StringIndex from \a str
  */
-inline uint GetStringIndex(StringID str)
+inline StringIndexInTab GetStringIndex(StringID str)
 {
-	return str - (GetStringTab(str) << TAB_SIZE_BITS);
+	return StringIndexInTab{str - (GetStringTab(str) << TAB_SIZE_BITS)};
 }
 
 /**
  * Create a StringID
  * @param tab StringTab
- * @param index StringIndex
+ * @param index Index of the string within the given tab.
  * @return StringID composed from \a tab and \a index
  */
-inline StringID MakeStringID(StringTab tab, uint index)
+inline StringID MakeStringID(StringTab tab, StringIndexInTab index)
 {
 	if (tab == TEXT_TAB_NEWGRF_START) {
 		assert(index < TAB_SIZE_NEWGRF);
@@ -56,12 +56,23 @@ inline StringID MakeStringID(StringTab tab, uint index)
 		assert(tab < TEXT_TAB_END);
 		assert(index < TAB_SIZE);
 	}
-	return (tab << TAB_SIZE_BITS) + index;
+	return (tab << TAB_SIZE_BITS) + index.base();
 }
 
+/**
+ * Prepare the string parameters for the next formatting run, resetting the type information.
+ * This is only necessary if parameters are reused for multiple format runs.
+ */
+static inline void PrepareArgsForNextRun(std::span<StringParameter> args)
+{
+	for (auto &param : args) param.type = 0;
+}
+
+std::string GetStringWithArgs(StringID string, std::span<StringParameter> args);
 std::string GetString(StringID string);
-const char *GetStringPtr(StringID string);
+std::string_view GetStringPtr(StringID string);
 void AppendStringInPlace(std::string &result, StringID string);
+void AppendStringWithArgsInPlace(std::string &result, StringID string, std::span<StringParameter> params);
 
 uint ConvertKmhishSpeedToDisplaySpeed(uint speed, VehicleType type);
 uint ConvertDisplaySpeedToKmhishSpeed(uint speed, VehicleType type);
@@ -70,7 +81,7 @@ uint ConvertDisplaySpeedToKmhishSpeed(uint speed, VehicleType type);
  * Pack velocity and vehicle type for use with SCC_VELOCITY string parameter.
  * @param speed Display speed for parameter.
  * @param type Type of vehicle for parameter.
- * @return Bit-packed velocity and vehicle type, for use with SetDParam().
+ * @return Bit-packed velocity and vehicle type, for use with string parameters.
  */
 inline int64_t PackVelocity(uint speed, VehicleType type)
 {
@@ -79,37 +90,67 @@ inline int64_t PackVelocity(uint speed, VehicleType type)
 	return speed | (static_cast<uint64_t>(type) << 56);
 }
 
-void SetDParam(size_t n, uint64_t v);
-void SetDParamMaxValue(size_t n, uint64_t max_value, uint min_count = 0, FontSize size = FS_NORMAL);
-void SetDParamMaxDigits(size_t n, uint count, FontSize size = FS_NORMAL);
-
-template <typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-void SetDParam(size_t n, T v)
-{
-	SetDParam(n, v.base());
-}
-
-template <typename T, std::enable_if_t<std::is_base_of<StrongTypedefBase, T>::value, int> = 0>
-void SetDParamMaxValue(size_t n, T max_value, uint min_count = 0, FontSize size = FS_NORMAL)
-{
-	SetDParamMaxValue(n, max_value.base(), min_count, size);
-}
-
-void SetDParamStr(size_t n, const char *str);
-void SetDParamStr(size_t n, const std::string &str);
-void SetDParamStr(size_t n, std::string &&str);
-
-void CopyInDParam(const std::span<const StringParameterData> backup);
-void CopyOutDParam(std::vector<StringParameterData> &backup, size_t num);
-bool HaveDParamChanged(const std::span<const StringParameterData> backup);
-
-uint64_t GetDParam(size_t n);
+uint64_t GetParamMaxValue(uint64_t max_value, uint min_count = 0, FontSize size = FS_NORMAL);
+uint64_t GetParamMaxDigits(uint count, FontSize size = FS_NORMAL);
 
 extern TextDirection _current_text_dir; ///< Text direction of the currently selected language
 
 void InitializeLanguagePacks();
 const char *GetCurrentLanguageIsoCode();
 std::string_view GetListSeparator();
+
+/**
+ * Helper to create the StringParameters with its own buffer with the given
+ * parameter values.
+ * @param args The parameters to set for the to be created StringParameters.
+ * @return The constructed StringParameters.
+ */
+template <typename... Args>
+auto MakeParameters(Args &&... args)
+{
+	return std::array<StringParameter, sizeof...(args)>({std::forward<StringParameter>(args)...});
+}
+
+/**
+ * Get a parsed string with most special stringcodes replaced by the string parameters.
+ * @param string String ID to format.
+ * @param args The parameters to set.
+ * @return The parsed string.
+ */
+template <typename... Args>
+std::string GetString(StringID string, Args &&... args)
+{
+	auto params = MakeParameters(std::forward<Args &&>(args)...);
+	return GetStringWithArgs(string, params);
+}
+
+EncodedString GetEncodedString(StringID str);
+EncodedString GetEncodedStringWithArgs(StringID str, std::span<const StringParameter> params);
+
+/**
+ * Encode a string with no parameters into an encoded string, if the string id is valid.
+ * @note the return encoded string will be empty if the string id is not valid.
+ * @param str String to encode.
+ * @returns an EncodedString.
+ */
+static inline EncodedString GetEncodedStringIfValid(StringID str)
+{
+	if (str == INVALID_STRING_ID) return {};
+	return GetEncodedString(str);
+}
+
+/**
+ * Get an encoded string with parameters.
+ * @param string String ID to encode.
+ * @param args The parameters to set.
+ * @return The encoded string.
+ */
+template <typename... Args>
+EncodedString GetEncodedString(StringID string, const Args&... args)
+{
+	auto params = MakeParameters(std::forward<const Args&>(args)...);
+	return GetEncodedStringWithArgs(string, params);
+}
 
 /**
  * A searcher for missing glyphs.

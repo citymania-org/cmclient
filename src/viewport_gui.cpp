@@ -26,7 +26,7 @@
 static constexpr NWidgetPart _nested_extra_viewport_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, WID_EV_CAPTION), SetDataTip(STR_EXTRA_VIEWPORT_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, WID_EV_CAPTION),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
@@ -35,13 +35,13 @@ static constexpr NWidgetPart _nested_extra_viewport_widgets[] = {
 		NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_EV_VIEWPORT), SetPadding(2, 2, 2, 2), SetResize(1, 1), SetFill(1, 1),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_EV_ZOOM_IN), SetDataTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN),
-		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_EV_ZOOM_OUT), SetDataTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT),
-		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_EV_ZOOM_IN), SetSpriteTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_EV_ZOOM_OUT), SetSpriteTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT),
+		NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_EV_MAIN_TO_VIEW), SetFill(1, 1), SetResize(1, 0),
-										SetDataTip(STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW, STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT),
+										SetStringTip(STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW, STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_EV_VIEW_TO_MAIN), SetFill(1, 1), SetResize(1, 0),
-										SetDataTip(STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN, STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT),
+										SetStringTip(STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN, STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TOOLTIP),
 		EndContainer(),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
@@ -61,13 +61,15 @@ public:
 		if (_settings_client.gui.zoom_min == viewport->zoom) this->DisableWidget(WID_EV_ZOOM_IN);
 	}
 
-	void SetStringParameters(WidgetID widget) const override
+	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
 	{
 		switch (widget) {
 			case WID_EV_CAPTION:
 				/* set the number in the title bar */
-				SetDParam(0, this->window_number + 1);
-				break;
+				return GetString(STR_EXTRA_VIEWPORT_TITLE, this->window_number + 1);
+
+			default:
+				return this->Window::GetWidgetString(widget, stringid);
 		}
 	}
 
@@ -85,7 +87,7 @@ public:
 				/* set this view to same location. Based on the center, adjusting for zoom */
 				w->viewport->dest_scrollpos_x =  x - (w->viewport->virtual_width -  this->viewport->virtual_width) / 2;
 				w->viewport->dest_scrollpos_y =  y - (w->viewport->virtual_height - this->viewport->virtual_height) / 2;
-				w->viewport->follow_vehicle   = INVALID_VEHICLE;
+				w->viewport->follow_vehicle   = VehicleID::Invalid();
 				break;
 			}
 
@@ -138,7 +140,7 @@ public:
 	{
 		if (!gui_scope) return;
 		/* Only handle zoom message if intended for us (msg ZOOM_IN/ZOOM_OUT) */
-		HandleZoomMessage(this, this->viewport, WID_EV_ZOOM_IN, WID_EV_ZOOM_OUT);
+		HandleZoomMessage(this, *this->viewport, WID_EV_ZOOM_IN, WID_EV_ZOOM_OUT);
 	}
 
 	void OnMouseOver(Point pt, [[maybe_unused]] int widget) override
@@ -151,7 +153,7 @@ public:
 static WindowDesc _extra_viewport_desc(
 	WDP_AUTO, "extra_viewport", 300, 268,
 	WC_EXTRA_VIEWPORT, WC_NONE,
-	0,
+	{},
 	_nested_extra_viewport_widgets
 );
 

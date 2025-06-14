@@ -41,12 +41,11 @@
 #include "road.h"
 #include "rail.h"
 #include "game/game.hpp"
-#include "table/strings.h"
 #include "3rdparty/fmt/chrono.h"
 #include "company_cmd.h"
 #include "misc_cmd.h"
 
-#include <sstream>
+#include "table/strings.h"
 
 #include "citymania/cm_console_cmds.hpp"
 
@@ -337,9 +336,9 @@ DEF_CONSOLE_CMD(ConZoomToLevel)
 					IConsolePrint(CC_ERROR, "Current client settings do not allow zooming out beyond level {}.", _settings_client.gui.zoom_max);
 				} else {
 					Window *w = GetMainWindow();
-					Viewport *vp = w->viewport;
-					while (vp->zoom > level) DoZoomInOutWindow(ZOOM_IN, w);
-					while (vp->zoom < level) DoZoomInOutWindow(ZOOM_OUT, w);
+					Viewport &vp = *w->viewport;
+					while (vp.zoom > level) DoZoomInOutWindow(ZOOM_IN, w);
+					while (vp.zoom < level) DoZoomInOutWindow(ZOOM_OUT, w);
 				}
 				return true;
 			}
@@ -816,8 +815,8 @@ DEF_CONSOLE_CMD(ConPauseGame)
 		return true;
 	}
 
-	if ((_pause_mode & PM_PAUSED_NORMAL) == PM_UNPAUSED) {
-		Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, true);
+	if (!_pause_mode.Test(PauseMode::Normal)) {
+		Command<CMD_PAUSE>::Post(PauseMode::Normal, true);
 		if (!_networking) IConsolePrint(CC_DEFAULT, "Game paused.");
 	} else {
 		IConsolePrint(CC_DEFAULT, "Game is already paused.");
@@ -838,12 +837,12 @@ DEF_CONSOLE_CMD(ConUnpauseGame)
 		return true;
 	}
 
-	if ((_pause_mode & PM_PAUSED_NORMAL) != PM_UNPAUSED) {
-		Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, false);
+	if (_pause_mode.Test(PauseMode::Normal)) {
+		Command<CMD_PAUSE>::Post(PauseMode::Normal, false);
 		if (!_networking) IConsolePrint(CC_DEFAULT, "Game unpaused.");
-	} else if ((_pause_mode & PM_PAUSED_ERROR) != PM_UNPAUSED) {
+	} else if (_pause_mode.Test(PauseMode::Error)) {
 		IConsolePrint(CC_DEFAULT, "Game is in error state and cannot be unpaused via console.");
-	} else if (_pause_mode != PM_UNPAUSED) {
+	} else if (_pause_mode.Any()) {
 		IConsolePrint(CC_DEFAULT, "Game cannot be unpaused manually; disable pause_on_join/min_active_clients.");
 	} else {
 		IConsolePrint(CC_DEFAULT, "Game is already unpaused.");
@@ -1085,13 +1084,13 @@ DEF_CONSOLE_CMD(ConNetworkReconnect)
 	}
 
 	CompanyID playas = (argc >= 2) ? (CompanyID)atoi(argv[1]) : COMPANY_SPECTATOR;
-	switch (playas) {
+	switch (playas.base()) {
 		case 0: playas = COMPANY_NEW_COMPANY; break;
-		case COMPANY_SPECTATOR: /* nothing to do */ break;
+		case COMPANY_SPECTATOR.base(): /* nothing to do */ break;
 		default:
 			/* From a user pov 0 is a new company, internally it's different and all
 			 * companies are offset by one to ease up on users (eg companies 1-8 not 0-7) */
-			if (playas < COMPANY_FIRST + 1 || playas > MAX_COMPANIES + 1) return false;
+			if (playas < CompanyID::Begin() + 1 || playas > MAX_COMPANIES + 1) return false;
 			break;
 	}
 
@@ -1217,7 +1216,7 @@ DEF_CONSOLE_CMD(ConReturn)
  *  default console commands
  ******************************/
 extern bool CloseConsoleLogIfActive();
-extern const std::vector<GRFFile *> &GetAllGRFFiles();
+extern std::span<const GRFFile> GetAllGRFFiles();
 extern void ConPrintFramerate(); // framerate_gui.cpp
 extern void ShowFramerateWindow();
 
@@ -1454,7 +1453,7 @@ DEF_CONSOLE_CMD(ConStartAI)
 	}
 
 	/* Start a new AI company */
-	Command<CMD_COMPANY_CTRL>::Post(CCA_NEW_AI, INVALID_COMPANY, CRR_NONE, INVALID_CLIENT_ID);
+	Command<CMD_COMPANY_CTRL>::Post(CCA_NEW_AI, CompanyID::Invalid(), CRR_NONE, INVALID_CLIENT_ID);
 
 	return true;
 }
@@ -1715,7 +1714,7 @@ DEF_CONSOLE_CMD(ConScreenShot)
 		return false;
 	}
 
-	MakeScreenshot(type, name, width, height);
+	MakeScreenshot(type, std::move(name), width, height);
 	return true;
 }
 
@@ -1873,8 +1872,7 @@ DEF_CONSOLE_CMD(ConCompanies)
 
 	for (const Company *c : Company::Iterate()) {
 		/* Grab the company name */
-		SetDParam(0, c->index);
-		std::string company_name = GetString(STR_COMPANY_NAME);
+		std::string company_name = GetString(STR_COMPANY_NAME, c->index);
 
 		std::string colour = GetString(STR_COLOUR_DARK_BLUE + _company_colours[c->index]);
 		IConsolePrint(CC_INFO, "#:{}({}) Company Name: '{}'  Year Founded: {}  Money: {}  Loan: {}  Value: {}  (T:{}, R:{}, P:{}, S:{}) {}",
@@ -1902,7 +1900,7 @@ DEF_CONSOLE_CMD(ConSay)
 	if (!_network_server) {
 		NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 /* param does not matter */, argv[1]);
 	} else {
-		bool from_admin = (_redirect_console_to_admin < INVALID_ADMIN_ID);
+		bool from_admin = (_redirect_console_to_admin < AdminID::Invalid());
 		NetworkServerSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0, argv[1], CLIENT_ID_SERVER, from_admin);
 	}
 
@@ -1926,10 +1924,10 @@ DEF_CONSOLE_CMD(ConSayCompany)
 	}
 
 	if (!_network_server) {
-		NetworkClientSendChat(NETWORK_ACTION_CHAT_COMPANY, DESTTYPE_TEAM, company_id, argv[2]);
+		NetworkClientSendChat(NETWORK_ACTION_CHAT_COMPANY, DESTTYPE_TEAM, company_id.base(), argv[2]);
 	} else {
-		bool from_admin = (_redirect_console_to_admin < INVALID_ADMIN_ID);
-		NetworkServerSendChat(NETWORK_ACTION_CHAT_COMPANY, DESTTYPE_TEAM, company_id, argv[2], CLIENT_ID_SERVER, from_admin);
+		bool from_admin = (_redirect_console_to_admin < AdminID::Invalid());
+		NetworkServerSendChat(NETWORK_ACTION_CHAT_COMPANY, DESTTYPE_TEAM, company_id.base(), argv[2], CLIENT_ID_SERVER, from_admin);
 	}
 
 	return true;
@@ -1948,7 +1946,7 @@ DEF_CONSOLE_CMD(ConSayClient)
 	if (!_network_server) {
 		NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, atoi(argv[1]), argv[2]);
 	} else {
-		bool from_admin = (_redirect_console_to_admin < INVALID_ADMIN_ID);
+		bool from_admin = (_redirect_console_to_admin < AdminID::Invalid());
 		NetworkServerSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, atoi(argv[1]), argv[2], CLIENT_ID_SERVER, from_admin);
 	}
 
@@ -1962,13 +1960,13 @@ static std::vector<std::pair<std::string_view, NetworkAuthorizedKeys *>> _consol
 	{ "server", &_settings_client.network.server_authorized_keys },
 };
 
-enum ConNetworkAuthorizedKeyAction {
+enum ConNetworkAuthorizedKeyAction : uint8_t {
 	CNAKA_LIST,
 	CNAKA_ADD,
 	CNAKA_REMOVE,
 };
 
-static void PerformNetworkAuthorizedKeyAction(std::string_view name, NetworkAuthorizedKeys *authorized_keys, ConNetworkAuthorizedKeyAction action, const std::string &authorized_key, CompanyID company = INVALID_COMPANY)
+static void PerformNetworkAuthorizedKeyAction(std::string_view name, NetworkAuthorizedKeys *authorized_keys, ConNetworkAuthorizedKeyAction action, const std::string &authorized_key, CompanyID company = CompanyID::Invalid())
 {
 	switch (action) {
 		case CNAKA_LIST:
@@ -1982,7 +1980,7 @@ static void PerformNetworkAuthorizedKeyAction(std::string_view name, NetworkAuth
 				return;
 			}
 
-			if (company == INVALID_COMPANY) {
+			if (company == CompanyID::Invalid()) {
 				authorized_keys->Add(authorized_key);
 			} else {
 				AutoRestoreBackup backup(_current_company, company);
@@ -1997,7 +1995,7 @@ static void PerformNetworkAuthorizedKeyAction(std::string_view name, NetworkAuth
 				return;
 			}
 
-			if (company == INVALID_COMPANY) {
+			if (company == CompanyID::Invalid()) {
 				authorized_keys->Remove(authorized_key);
 			} else {
 				AutoRestoreBackup backup(_current_company, company);
@@ -2133,14 +2131,14 @@ struct ConsoleContentCallback : public ContentCallback {
  * Outputs content state information to console
  * @param ci the content info
  */
-static void OutputContentState(const ContentInfo *const ci)
+static void OutputContentState(const ContentInfo &ci)
 {
 	static const char * const types[] = { "Base graphics", "NewGRF", "AI", "AI library", "Scenario", "Heightmap", "Base sound", "Base music", "Game script", "GS library" };
 	static_assert(lengthof(types) == CONTENT_TYPE_END - CONTENT_TYPE_BEGIN);
 	static const char * const states[] = { "Not selected", "Selected", "Dep Selected", "Installed", "Unknown" };
 	static const TextColour state_to_colour[] = { CC_COMMAND, CC_INFO, CC_INFO, CC_WHITE, CC_ERROR };
 
-	IConsolePrint(state_to_colour[ci->state], "{}, {}, {}, {}, {:08X}, {}", ci->id, types[ci->type - 1], states[ci->state], ci->name, ci->unique_id, FormatArrayAsHex(ci->md5sum));
+	IConsolePrint(state_to_colour[ci.state], "{}, {}, {}, {}, {:08X}, {}", ci.id, types[ci.type - 1], states[ci.state], ci.name, ci.unique_id, FormatArrayAsHex(ci.md5sum));
 }
 
 DEF_CONSOLE_CMD(ConContent)
@@ -2176,9 +2174,9 @@ DEF_CONSOLE_CMD(ConContent)
 		if (argc <= 2) {
 			/* List selected content */
 			IConsolePrint(CC_WHITE, "id, type, state, name");
-			for (ConstContentIterator iter = _network_content_client.Begin(); iter != _network_content_client.End(); iter++) {
-				if ((*iter)->state != ContentInfo::SELECTED && (*iter)->state != ContentInfo::AUTOSELECTED) continue;
-				OutputContentState(*iter);
+			for (const ContentInfo &ci : _network_content_client.Info()) {
+				if (ci.state != ContentInfo::SELECTED && ci.state != ContentInfo::AUTOSELECTED) continue;
+				OutputContentState(ci);
 			}
 		} else if (StrEqualsIgnoreCase(argv[2], "all")) {
 			/* The intention of this function was that you could download
@@ -2209,9 +2207,9 @@ DEF_CONSOLE_CMD(ConContent)
 
 	if (StrEqualsIgnoreCase(argv[1], "state")) {
 		IConsolePrint(CC_WHITE, "id, type, state, name");
-		for (ConstContentIterator iter = _network_content_client.Begin(); iter != _network_content_client.End(); iter++) {
-			if (argc > 2 && strcasestr((*iter)->name.c_str(), argv[2]) == nullptr) continue;
-			OutputContentState(*iter);
+		for (const ContentInfo &ci : _network_content_client.Info()) {
+			if (argc > 2 && !StrContainsIgnoreCase(ci.name, argv[2])) continue;
+			OutputContentState(ci);
 		}
 		return true;
 	}
@@ -2450,19 +2448,19 @@ DEF_CONSOLE_CMD(ConNewGRFProfile)
 		return true;
 	}
 
-	const std::vector<GRFFile *> &files = GetAllGRFFiles();
+	std::span<const GRFFile> files = GetAllGRFFiles();
 
 	/* "list" sub-command */
 	if (argc == 1 || StrStartsWithIgnoreCase(argv[1], "lis")) {
 		IConsolePrint(CC_INFO, "Loaded GRF files:");
 		int i = 1;
-		for (GRFFile *grf : files) {
-			auto profiler = std::ranges::find(_newgrf_profilers, grf, &NewGRFProfiler::grffile);
+		for (const auto &grf : files) {
+			auto profiler = std::ranges::find(_newgrf_profilers, &grf, &NewGRFProfiler::grffile);
 			bool selected = profiler != _newgrf_profilers.end();
 			bool active = selected && profiler->active;
 			TextColour tc = active ? TC_LIGHT_BLUE : selected ? TC_GREEN : CC_INFO;
 			const char *statustext = active ? " (active)" : selected ? " (selected)" : "";
-			IConsolePrint(tc, "{}: [{:08X}] {}{}", i, BSWAP32(grf->grfid), grf->filename, statustext);
+			IConsolePrint(tc, "{}: [{:08X}] {}{}", i, std::byteswap(grf.grfid), grf.filename, statustext);
 			i++;
 		}
 		return true;
@@ -2476,9 +2474,9 @@ DEF_CONSOLE_CMD(ConNewGRFProfile)
 				IConsolePrint(CC_WARNING, "GRF number {} out of range, not added.", grfnum);
 				continue;
 			}
-			GRFFile *grf = files[grfnum - 1];
+			const GRFFile *grf = &files[grfnum - 1];
 			if (std::any_of(_newgrf_profilers.begin(), _newgrf_profilers.end(), [&](NewGRFProfiler &pr) { return pr.grffile == grf; })) {
-				IConsolePrint(CC_WARNING, "GRF number {} [{:08X}] is already selected for profiling.", grfnum, BSWAP32(grf->grfid));
+				IConsolePrint(CC_WARNING, "GRF number {} [{:08X}] is already selected for profiling.", grfnum, std::byteswap(grf->grfid));
 				continue;
 			}
 			_newgrf_profilers.emplace_back(grf);
@@ -2498,7 +2496,7 @@ DEF_CONSOLE_CMD(ConNewGRFProfile)
 				IConsolePrint(CC_WARNING, "GRF number {} out of range, not removing.", grfnum);
 				continue;
 			}
-			GRFFile *grf = files[grfnum - 1];
+			const GRFFile *grf = &files[grfnum - 1];
 			_newgrf_profilers.erase(std::ranges::find(_newgrf_profilers, grf, &NewGRFProfiler::grffile));
 		}
 		return true;
@@ -2514,7 +2512,7 @@ DEF_CONSOLE_CMD(ConNewGRFProfile)
 				started++;
 
 				if (!grfids.empty()) grfids += ", ";
-				fmt::format_to(std::back_inserter(grfids), "[{:08X}]", BSWAP32(pr.grffile->grfid));
+				fmt::format_to(std::back_inserter(grfids), "[{:08X}]", std::byteswap(pr.grffile->grfid));
 			}
 		}
 		if (started > 0) {
@@ -2604,7 +2602,7 @@ static std::string FormatLabel(uint32_t label)
 		return fmt::format("{:c}{:c}{:c}{:c}", GB(label, 24, 8), GB(label, 16, 8), GB(label, 8, 8), GB(label, 0, 8));
 	}
 
-	return fmt::format("{:08X}", BSWAP32(label));
+	return fmt::format("{:08X}", std::byteswap(label));
 }
 
 static void ConDumpRoadTypes()
@@ -2630,17 +2628,17 @@ static void ConDumpRoadTypes()
 				(uint)rt,
 				RoadTypeIsTram(rt) ? "Tram" : "Road",
 				FormatLabel(rti->label),
-				HasBit(rti->flags, ROTF_CATENARY)          ? 'c' : '-',
-				HasBit(rti->flags, ROTF_NO_LEVEL_CROSSING) ? 'l' : '-',
-				HasBit(rti->flags, ROTF_NO_HOUSES)         ? 'X' : '-',
-				HasBit(rti->flags, ROTF_HIDDEN)            ? 'h' : '-',
-				HasBit(rti->flags, ROTF_TOWN_BUILD)        ? 'T' : '-',
-				BSWAP32(grfid),
+				rti->flags.Test(RoadTypeFlag::Catenary)        ? 'c' : '-',
+				rti->flags.Test(RoadTypeFlag::NoLevelCrossing) ? 'l' : '-',
+				rti->flags.Test(RoadTypeFlag::NoHouses)        ? 'X' : '-',
+				rti->flags.Test(RoadTypeFlag::Hidden)          ? 'h' : '-',
+				rti->flags.Test(RoadTypeFlag::TownBuild)       ? 'T' : '-',
+				std::byteswap(grfid),
 				GetStringPtr(rti->strings.name)
 		);
 	}
 	for (const auto &grf : grfs) {
-		IConsolePrint(CC_DEFAULT, "  GRF: {:08X} = {}", BSWAP32(grf.first), grf.second->filename);
+		IConsolePrint(CC_DEFAULT, "  GRF: {:08X} = {}", std::byteswap(grf.first), grf.second->filename);
 	}
 }
 
@@ -2667,18 +2665,18 @@ static void ConDumpRailTypes()
 		IConsolePrint(CC_DEFAULT, "  {:02d} {}, Flags: {}{}{}{}{}{}, GRF: {:08X}, {}",
 				(uint)rt,
 				FormatLabel(rti->label),
-				HasBit(rti->flags, RTF_CATENARY)          ? 'c' : '-',
-				HasBit(rti->flags, RTF_NO_LEVEL_CROSSING) ? 'l' : '-',
-				HasBit(rti->flags, RTF_HIDDEN)            ? 'h' : '-',
-				HasBit(rti->flags, RTF_NO_SPRITE_COMBINE) ? 's' : '-',
-				HasBit(rti->flags, RTF_ALLOW_90DEG)       ? 'a' : '-',
-				HasBit(rti->flags, RTF_DISALLOW_90DEG)    ? 'd' : '-',
-				BSWAP32(grfid),
+				rti->flags.Test(RailTypeFlag::Catenary)        ? 'c' : '-',
+				rti->flags.Test(RailTypeFlag::NoLevelCrossing) ? 'l' : '-',
+				rti->flags.Test(RailTypeFlag::Hidden)          ? 'h' : '-',
+				rti->flags.Test(RailTypeFlag::NoSpriteCombine) ? 's' : '-',
+				rti->flags.Test(RailTypeFlag::Allow90Deg)      ? 'a' : '-',
+				rti->flags.Test(RailTypeFlag::Disallow90Deg)   ? 'd' : '-',
+				std::byteswap(grfid),
 				GetStringPtr(rti->strings.name)
 		);
 	}
 	for (const auto &grf : grfs) {
-		IConsolePrint(CC_DEFAULT, "  GRF: {:08X} = {}", BSWAP32(grf.first), grf.second->filename);
+		IConsolePrint(CC_DEFAULT, "  GRF: {:08X} = {}", std::byteswap(grf.first), grf.second->filename);
 	}
 }
 
@@ -2704,7 +2702,6 @@ static void ConDumpCargoTypes()
 
 	std::map<uint32_t, const GRFFile *> grfs;
 	for (const CargoSpec *spec : CargoSpec::Iterate()) {
-		if (!spec->IsValid()) continue;
 		uint32_t grfid = 0;
 		const GRFFile *grf = spec->grffile;
 		if (grf != nullptr) {
@@ -2715,29 +2712,29 @@ static void ConDumpCargoTypes()
 				spec->Index(),
 				spec->bitnum,
 				FormatLabel(spec->label.base()),
-				spec->callback_mask,
-				(spec->classes & CC_PASSENGERS)   != 0 ? 'p' : '-',
-				(spec->classes & CC_MAIL)         != 0 ? 'm' : '-',
-				(spec->classes & CC_EXPRESS)      != 0 ? 'x' : '-',
-				(spec->classes & CC_ARMOURED)     != 0 ? 'a' : '-',
-				(spec->classes & CC_BULK)         != 0 ? 'b' : '-',
-				(spec->classes & CC_PIECE_GOODS)  != 0 ? 'g' : '-',
-				(spec->classes & CC_LIQUID)       != 0 ? 'l' : '-',
-				(spec->classes & CC_REFRIGERATED) != 0 ? 'r' : '-',
-				(spec->classes & CC_HAZARDOUS)    != 0 ? 'h' : '-',
-				(spec->classes & CC_COVERED)      != 0 ? 'c' : '-',
-				(spec->classes & CC_OVERSIZED)    != 0 ? 'o' : '-',
-				(spec->classes & CC_POWDERIZED)   != 0 ? 'd' : '-',
-				(spec->classes & CC_NOT_POURABLE) != 0 ? 'n' : '-',
-				(spec->classes & CC_POTABLE)      != 0 ? 'e' : '-',
-				(spec->classes & CC_NON_POTABLE)  != 0 ? 'i' : '-',
-				(spec->classes & CC_SPECIAL)      != 0 ? 'S' : '-',
-				BSWAP32(grfid),
+				spec->callback_mask.base(),
+				spec->classes.Test(CargoClass::Passengers)   ? 'p' : '-',
+				spec->classes.Test(CargoClass::Mail)         ? 'm' : '-',
+				spec->classes.Test(CargoClass::Express)      ? 'x' : '-',
+				spec->classes.Test(CargoClass::Armoured)     ? 'a' : '-',
+				spec->classes.Test(CargoClass::Bulk)         ? 'b' : '-',
+				spec->classes.Test(CargoClass::PieceGoods)   ? 'g' : '-',
+				spec->classes.Test(CargoClass::Liquid)       ? 'l' : '-',
+				spec->classes.Test(CargoClass::Refrigerated) ? 'r' : '-',
+				spec->classes.Test(CargoClass::Hazardous)    ? 'h' : '-',
+				spec->classes.Test(CargoClass::Covered)      ? 'c' : '-',
+				spec->classes.Test(CargoClass::Oversized)    ? 'o' : '-',
+				spec->classes.Test(CargoClass::Powderized)   ? 'd' : '-',
+				spec->classes.Test(CargoClass::NotPourable)  ? 'n' : '-',
+				spec->classes.Test(CargoClass::Potable)      ? 'e' : '-',
+				spec->classes.Test(CargoClass::NonPotable)   ? 'i' : '-',
+				spec->classes.Test(CargoClass::Special)      ? 'S' : '-',
+				std::byteswap(grfid),
 				GetStringPtr(spec->name)
 		);
 	}
 	for (const auto &grf : grfs) {
-		IConsolePrint(CC_DEFAULT, "  GRF: {:08X} = {}", BSWAP32(grf.first), grf.second->filename);
+		IConsolePrint(CC_DEFAULT, "  GRF: {:08X} = {}", std::byteswap(grf.first), grf.second->filename);
 	}
 }
 

@@ -13,17 +13,71 @@
 #include "enum_type.hpp"
 
 /** Various types of a pool. */
-enum PoolType {
-	PT_NONE    = 0x00, ///< No pool is selected.
-	PT_NORMAL  = 0x01, ///< Normal pool containing game objects.
-	PT_NCLIENT = 0x02, ///< Network client pools.
-	PT_NADMIN  = 0x04, ///< Network admin pool.
-	PT_DATA    = 0x08, ///< NewGRF or other data, that is not reset together with normal pools.
-	PT_ALL     = 0x0F, ///< All pool types.
+enum class PoolType : uint8_t {
+	Normal, ///< Normal pool containing game objects.
+	NetworkClient, ///< Network client pools.
+	NetworkAdmin, ///< Network admin pool.
+	Data, ///< NewGRF or other data, that is not reset together with normal pools.
 };
-DECLARE_ENUM_AS_BIT_SET(PoolType)
+using PoolTypes = EnumBitSet<PoolType, uint8_t>;
+static constexpr PoolTypes PT_ALL = {PoolType::Normal, PoolType::NetworkClient, PoolType::NetworkAdmin, PoolType::Data};
 
 typedef std::vector<struct PoolBase *> PoolVector; ///< Vector of pointers to PoolBase
+
+/** Non-templated base for #PoolID for use with type trait queries. */
+struct PoolIDBase {};
+
+/**
+ * Templated helper to make a PoolID a single POD value.
+ *
+ * Example usage:
+ *
+ *   using MyType = PoolID<int, struct MyTypeTag, 16, 0xFF>;
+ *
+ * @tparam TBaseType Type of the derived class (i.e. the concrete usage of this class).
+ * @tparam TTag An unique struct to keep types of the same TBaseType distinct.
+ * @tparam TEnd The PoolID at the end of the pool (equivalent to size).
+ * @tparam TInvalid The PoolID denoting an invalid value.
+ */
+template <typename TBaseType, typename TTag, TBaseType TEnd, TBaseType TInvalid>
+struct EMPTY_BASES PoolID : PoolIDBase {
+	using BaseType = TBaseType;
+
+	constexpr PoolID() = default;
+	constexpr PoolID(const PoolID &) = default;
+	constexpr PoolID(PoolID &&) = default;
+
+	explicit constexpr PoolID(const TBaseType &value) : value(value) {}
+
+	constexpr PoolID &operator =(const PoolID &rhs) { this->value = rhs.value; return *this; }
+	constexpr PoolID &operator =(PoolID &&rhs) { this->value = std::move(rhs.value); return *this; }
+
+	/* Only allow conversion to BaseType via method. */
+	constexpr TBaseType base() const noexcept { return this->value; }
+
+	static constexpr PoolID Begin() { return PoolID{}; }
+	static constexpr PoolID End() { return PoolID{static_cast<TBaseType>(TEnd)}; }
+	static constexpr PoolID Invalid() { return PoolID{static_cast<TBaseType>(TInvalid)}; }
+
+	constexpr auto operator++() { ++this->value; return this; }
+	constexpr auto operator+(const std::integral auto &val) const { return this->value + val; }
+	constexpr auto operator-(const std::integral auto &val) const { return this->value - val; }
+	constexpr auto operator%(const std::integral auto &val) const { return this->value % val; }
+
+	constexpr bool operator==(const PoolID<TBaseType, TTag, TEnd, TInvalid> &rhs) const { return this->value == rhs.value; }
+	constexpr auto operator<=>(const PoolID<TBaseType, TTag, TEnd, TInvalid> &rhs) const { return this->value <=> rhs.value; }
+
+	constexpr bool operator==(const size_t &rhs) const { return this->value == rhs; }
+	constexpr auto operator<=>(const size_t &rhs) const { return this->value <=> rhs; }
+private:
+	/* Do not explicitly initialize. */
+	TBaseType value;
+};
+
+template <typename T> requires std::is_base_of_v<PoolIDBase, T>
+constexpr auto operator+(const std::integral auto &val, const T &pool_id) { return pool_id + val; }
+template <typename Te, typename Tp> requires std::is_enum_v<Te> && std::is_base_of_v<PoolIDBase, Tp>
+constexpr auto operator+(const Te &val, const Tp &pool_id) { return pool_id + to_underlying(val); }
 
 /** Base class for base of all pools. */
 struct PoolBase {
@@ -39,7 +93,7 @@ struct PoolBase {
 		return pools;
 	}
 
-	static void Clean(PoolType);
+	static void Clean(PoolTypes);
 
 	/**
 	 * Constructor registers this object in the pool vector.
@@ -70,37 +124,33 @@ private:
  * @tparam Titem        Type of the class/struct that is going to be pooled
  * @tparam Tindex       Type of the index for this pool
  * @tparam Tgrowth_step Size of growths; if the pool is full increase the size by this amount
- * @tparam Tmax_size    Maximum size of the pool
  * @tparam Tpool_type   Type of this pool
- * @tparam Tcache       Whether to perform 'alloc' caching, i.e. don't actually free/malloc just reuse the memory
- * @tparam Tzero        Whether to zero the memory
+ * @tparam Tcache       Whether to perform 'alloc' caching, i.e. don't actually deallocated/allocate just reuse the memory
  * @warning when Tcache is enabled *all* instances of this pool's item must be of the same size.
  */
-template <class Titem, typename Tindex, size_t Tgrowth_step, size_t Tmax_size, PoolType Tpool_type = PT_NORMAL, bool Tcache = false, bool Tzero = true>
+template <class Titem, typename Tindex, size_t Tgrowth_step, PoolType Tpool_type = PoolType::Normal, bool Tcache = false>
+requires std::is_base_of_v<PoolIDBase, Tindex>
 struct Pool : PoolBase {
-	/* Ensure the highest possible index, i.e. Tmax_size -1, is within the bounds of Tindex. */
-	static_assert(Tmax_size - 1 <= MAX_UVALUE(Tindex));
-
-	static constexpr size_t MAX_SIZE = Tmax_size; ///< Make template parameter accessible from outside
+public:
+	static constexpr size_t MAX_SIZE = Tindex::End().base(); ///< Make template parameter accessible from outside
 
 	using BitmapStorage = size_t;
 	static constexpr size_t BITMAP_SIZE = std::numeric_limits<BitmapStorage>::digits;
 
-	const char * const name; ///< Name of this pool
+	const char * const name = nullptr; ///< Name of this pool
 
-	size_t size;         ///< Current allocated size
-	size_t first_free;   ///< No item with index lower than this is free (doesn't say anything about this one!)
-	size_t first_unused; ///< This and all higher indexes are free (doesn't say anything about first_unused-1 !)
-	size_t items;        ///< Number of used indexes (non-nullptr)
+	size_t first_free = 0; ///< No item with index lower than this is free (doesn't say anything about this one!)
+	size_t first_unused = 0; ///< This and all higher indexes are free (doesn't say anything about first_unused-1 !)
+	size_t items = 0; ///< Number of used indexes (non-nullptr)
 #ifdef WITH_ASSERT
-	size_t checked;      ///< Number of items we checked for
+	size_t checked = 0; ///< Number of items we checked for
 #endif /* WITH_ASSERT */
-	bool cleaning;       ///< True if cleaning pool (deleting all items)
+	bool cleaning = false; ///< True if cleaning pool (deleting all items)
 
-	Titem **data;        ///< Pointer to array of pointers to Titem
-	std::vector<BitmapStorage> used_bitmap; ///< Bitmap of used indices.
+	std::vector<Titem *> data{}; ///< Pointers to Titem
+	std::vector<BitmapStorage> used_bitmap{}; ///< Bitmap of used indices.
 
-	Pool(const char *name);
+	Pool(const char *name) : PoolBase(Tpool_type), name(name) {}
 	void CleanPool() override;
 
 	/**
@@ -132,7 +182,7 @@ struct Pool : PoolBase {
 	 */
 	inline bool CanAllocate(size_t n = 1)
 	{
-		bool ret = this->items <= Tmax_size - n;
+		bool ret = this->items <= MAX_SIZE - n;
 #ifdef WITH_ASSERT
 		this->checked = ret ? n : 0;
 #endif /* WITH_ASSERT */
@@ -157,7 +207,6 @@ struct Pool : PoolBase {
 		};
 
 		bool operator==(const PoolIterator &other) const { return this->index == other.index; }
-		bool operator!=(const PoolIterator &other) const { return !(*this == other); }
 		T * operator*() const { return T::Get(this->index); }
 		PoolIterator & operator++() { this->index++; this->ValidateIndex(); return *this; }
 
@@ -201,7 +250,6 @@ struct Pool : PoolBase {
 		};
 
 		bool operator==(const PoolIteratorFiltered &other) const { return this->index == other.index; }
-		bool operator!=(const PoolIteratorFiltered &other) const { return !(*this == other); }
 		T * operator*() const { return T::Get(this->index); }
 		PoolIteratorFiltered & operator++() { this->index++; this->ValidateIndex(); return *this; }
 
@@ -233,12 +281,12 @@ struct Pool : PoolBase {
 	 * Base class for all PoolItems
 	 * @tparam Tpool The pool this item is going to be part of
 	 */
-	template <struct Pool<Titem, Tindex, Tgrowth_step, Tmax_size, Tpool_type, Tcache, Tzero> *Tpool>
+	template <struct Pool<Titem, Tindex, Tgrowth_step, Tpool_type, Tcache> *Tpool>
 	struct PoolItem {
 		Tindex index; ///< Index of this pool item
 
 		/** Type of the pool this item is going to be part of */
-		typedef struct Pool<Titem, Tindex, Tgrowth_step, Tmax_size, Tpool_type, Tcache, Tzero> Pool;
+		typedef struct Pool<Titem, Tindex, Tgrowth_step, Tpool_type, Tcache> Pool;
 
 		/**
 		 * Allocates space for new Titem
@@ -256,12 +304,12 @@ struct Pool : PoolBase {
 		 * @param p memory to free
 		 * @note the item has to be allocated in the pool!
 		 */
-		inline void operator delete(void *p)
+		inline void operator delete(void *p, size_t size)
 		{
 			if (p == nullptr) return;
 			Titem *pn = static_cast<Titem *>(p);
-			assert(pn == Tpool->Get(pn->index));
-			Tpool->FreeItem(pn->index);
+			assert(pn == Tpool->Get(Pool::GetRawIndex(pn->index)));
+			Tpool->FreeItem(size, Pool::GetRawIndex(pn->index));
 		}
 
 		/**
@@ -272,9 +320,9 @@ struct Pool : PoolBase {
 		 * @note can never fail (return nullptr), use CanAllocate() to check first!
 		 * @pre index has to be unused! Else it will crash
 		 */
-		inline void *operator new(size_t size, size_t index)
+		inline void *operator new(size_t size, Tindex index)
 		{
-			return Tpool->GetNew(size, index);
+			return Tpool->GetNew(size, index.base());
 		}
 
 		/**
@@ -325,9 +373,9 @@ struct Pool : PoolBase {
 		 * @param index index to examine
 		 * @return true if PoolItem::Get(index) will return non-nullptr pointer
 		 */
-		static inline bool IsValidID(size_t index)
+		static inline bool IsValidID(auto index)
 		{
-			return Tpool->IsValidID(index);
+			return Tpool->IsValidID(GetRawIndex(index));
 		}
 
 		/**
@@ -336,9 +384,9 @@ struct Pool : PoolBase {
 		 * @return pointer to Titem
 		 * @pre index < this->first_unused
 		 */
-		static inline Titem *Get(size_t index)
+		static inline Titem *Get(auto index)
 		{
-			return Tpool->Get(index);
+			return Tpool->Get(GetRawIndex(index));
 		}
 
 		/**
@@ -347,9 +395,9 @@ struct Pool : PoolBase {
 		 * @return pointer to Titem
 		 * @note returns nullptr for invalid index
 		 */
-		static inline Titem *GetIfValid(size_t index)
+		static inline Titem *GetIfValid(auto index)
 		{
-			return index < Tpool->first_unused ? Tpool->Get(index) : nullptr;
+			return GetRawIndex(index) < Tpool->first_unused ? Tpool->Get(GetRawIndex(index)) : nullptr;
 		}
 
 		/**
@@ -389,7 +437,7 @@ struct Pool : PoolBase {
 	};
 
 private:
-	static const size_t NO_FREE_ITEM = MAX_UVALUE(size_t); ///< Constant to indicate we can't allocate any more items
+	static const size_t NO_FREE_ITEM = std::numeric_limits<size_t>::max(); ///< Constant to indicate we can't allocate any more items
 
 	/**
 	 * Helper struct to cache 'freed' PoolItems so we
@@ -401,7 +449,8 @@ private:
 	};
 
 	/** Cache of freed pointers */
-	AllocCache *alloc_cache;
+	AllocCache *alloc_cache = nullptr;
+	std::allocator<uint8_t> allocator{};
 
 	void *AllocateItem(size_t size, size_t index);
 	void ResizeFor(size_t index);
@@ -410,7 +459,11 @@ private:
 	void *GetNew(size_t size);
 	void *GetNew(size_t size, size_t index);
 
-	void FreeItem(size_t index);
+	void FreeItem(size_t size, size_t index);
+
+	static constexpr size_t GetRawIndex(size_t index) { return index; }
+	template <typename T> requires std::is_base_of_v<PoolIDBase, T>
+	static constexpr size_t GetRawIndex(const T &index) { return index.base(); }
 };
 
 #endif /* POOL_TYPE_HPP */

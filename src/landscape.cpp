@@ -93,7 +93,7 @@ static const uint TILE_UPDATE_FREQUENCY = 1 << TILE_UPDATE_FREQUENCY_LOG;  ///< 
  * @ingroup SnowLineGroup
  * @see GetSnowLine() GameCreationSettings
  */
-static SnowLine *_snow_line = nullptr;
+static std::unique_ptr<SnowLine> _snow_line;
 
 /**
  * Map 2D viewport or smallmap coordinate to 3D world or tile coordinate.
@@ -260,7 +260,7 @@ uint GetPartialPixelZ(int x, int y, Slope corners)
 		case SLOPE_S: return x + y >= (int)TILE_SIZE ? (1 + x + y - TILE_SIZE) >> 1 : 0;
 		case SLOPE_W: return x >= y                  ? (x - y)                 >> 1 : 0;
 
-		/* Two corners next to eachother are up. */
+		/* Two corners next to each other are up. */
 		case SLOPE_NE: return (TILE_SIZE - x) >> 1;
 		case SLOPE_SE: return (y + 1) >> 1;
 		case SLOPE_SW: return (x + 1) >> 1;
@@ -442,9 +442,9 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 	if (!HasFoundationNE(ti->tile, slope, z)) sprite_block += 2;
 
 	/* Use the original slope sprites if NW and NE borders should be visible */
-	SpriteID leveled_base = (sprite_block == 0 ? (int)SPR_FOUNDATION_BASE : (SPR_SLOPES_VIRTUAL_BASE + sprite_block * SPR_TRKFOUND_BLOCK_SIZE));
-	SpriteID inclined_base = SPR_SLOPES_VIRTUAL_BASE + SPR_SLOPES_INCLINED_OFFSET + sprite_block * SPR_TRKFOUND_BLOCK_SIZE;
-	SpriteID halftile_base = SPR_HALFTILE_FOUNDATION_BASE + sprite_block * SPR_HALFTILE_BLOCK_SIZE;
+	SpriteID leveled_base = (sprite_block == 0 ? (int)SPR_FOUNDATION_BASE : (SPR_SLOPES_VIRTUAL_BASE + sprite_block * TRKFOUND_BLOCK_SIZE));
+	SpriteID inclined_base = SPR_SLOPES_VIRTUAL_BASE + SLOPES_INCLINED_OFFSET + sprite_block * TRKFOUND_BLOCK_SIZE;
+	SpriteID halftile_base = SPR_HALFTILE_FOUNDATION_BASE + sprite_block * HALFTILE_BLOCK_SIZE;
 
 	if (IsSteepSlope(ti->tileh)) {
 		if (!IsNonContinuousFoundation(f)) {
@@ -567,7 +567,7 @@ void ChangeTileOwner(TileIndex tile, Owner old_owner, Owner new_owner)
 	_tile_type_procs[GetTileType(tile)]->change_tile_owner_proc(tile, old_owner, new_owner);
 }
 
-void GetTileDesc(TileIndex tile, TileDesc *td)
+void GetTileDesc(TileIndex tile, TileDesc &td)
 {
 	_tile_type_procs[GetTileType(tile)]->get_tile_desc_proc(tile, td);
 }
@@ -584,21 +584,12 @@ bool IsSnowLineSet()
 
 /**
  * Set a variable snow line, as loaded from a newgrf file.
- * @param table the 12 * 32 byte table containing the snowline for each day
+ * @param snow_line The new snow line configuration.
  * @ingroup SnowLineGroup
  */
-void SetSnowLine(uint8_t table[SNOW_LINE_MONTHS][SNOW_LINE_DAYS])
+void SetSnowLine(std::unique_ptr<SnowLine> &&snow_line)
 {
-	_snow_line = CallocT<SnowLine>(1);
-	_snow_line->lowest_value = 0xFF;
-	memcpy(_snow_line->table, table, sizeof(_snow_line->table));
-
-	for (uint i = 0; i < SNOW_LINE_MONTHS; i++) {
-		for (uint j = 0; j < SNOW_LINE_DAYS; j++) {
-			_snow_line->highest_value = std::max(_snow_line->highest_value, table[i][j]);
-			_snow_line->lowest_value = std::min(_snow_line->lowest_value, table[i][j]);
-		}
-	}
+	_snow_line = std::move(snow_line);
 }
 
 /**
@@ -640,7 +631,6 @@ uint8_t LowestSnowLine()
  */
 void ClearSnowLine()
 {
-	free(_snow_line);
 	_snow_line = nullptr;
 }
 
@@ -650,18 +640,18 @@ void ClearSnowLine()
  * @param tile tile to clear
  * @return the cost of this operation or an error
  */
-CommandCost CmdLandscapeClear(DoCommandFlag flags, TileIndex tile)
+CommandCost CmdLandscapeClear(DoCommandFlags flags, TileIndex tile)
 {
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 	bool do_clear = false;
 	/* Test for stuff which results in water when cleared. Then add the cost to also clear the water. */
-	if ((flags & DC_FORCE_CLEAR_TILE) && HasTileWaterClass(tile) && IsTileOnWater(tile) && !IsWaterTile(tile) && !IsCoastTile(tile)) {
-		if ((flags & DC_AUTO) && GetWaterClass(tile) == WATER_CLASS_CANAL) return CommandCost(STR_ERROR_MUST_DEMOLISH_CANAL_FIRST);
+	if (flags.Test(DoCommandFlag::ForceClearTile) && HasTileWaterClass(tile) && IsTileOnWater(tile) && !IsWaterTile(tile) && !IsCoastTile(tile)) {
+		if (flags.Test(DoCommandFlag::Auto) && GetWaterClass(tile) == WATER_CLASS_CANAL) return CommandCost(STR_ERROR_MUST_DEMOLISH_CANAL_FIRST);
 		do_clear = true;
 		cost.AddCost(GetWaterClass(tile) == WATER_CLASS_CANAL ? _price[PR_CLEAR_CANAL] : _price[PR_CLEAR_WATER]);
 	}
 
-	Company *c = (flags & (DC_AUTO | DC_BANKRUPT)) ? nullptr : Company::GetIfValid(_current_company);
+	Company *c = flags.Any({DoCommandFlag::Auto, DoCommandFlag::Bankrupt}) ? nullptr : Company::GetIfValid(_current_company);
 	if (c != nullptr && (int)GB(c->clear_limit, 16, 16) < 1) {
 		return CommandCost(STR_ERROR_CLEARING_LIMIT_REACHED);
 	}
@@ -676,14 +666,14 @@ CommandCost CmdLandscapeClear(DoCommandFlag flags, TileIndex tile)
 		 * However, we need to check stuff, which is not the same for all object tiles. (e.g. being on water or not) */
 
 		/* If a object is removed, it leaves either bare land or water. */
-		if ((flags & DC_NO_WATER) && HasTileWaterClass(tile) && IsTileOnWater(tile)) {
+		if (flags.Test(DoCommandFlag::NoWater) && HasTileWaterClass(tile) && IsTileOnWater(tile)) {
 			return CommandCost(STR_ERROR_CAN_T_BUILD_ON_WATER);
 		}
 	} else {
 		cost.AddCost(_tile_type_procs[GetTileType(tile)]->clear_tile_proc(tile, flags));
 	}
 
-	if (flags & DC_EXEC) {
+	if (flags.Test(DoCommandFlag::Execute)) {
 		if (c != nullptr) c->clear_limit -= 1 << 16;
 		if (do_clear) {
 			if (IsWaterTile(tile) && IsCanal(tile)) {
@@ -708,7 +698,7 @@ CommandCost CmdLandscapeClear(DoCommandFlag flags, TileIndex tile)
  * @param diagonal Whether to use the Orthogonal (false) or Diagonal (true) iterator.
  * @return the cost of this operation or an error
  */
-std::tuple<CommandCost, Money> CmdClearArea(DoCommandFlag flags, TileIndex tile, TileIndex start_tile, bool diagonal)
+std::tuple<CommandCost, Money> CmdClearArea(DoCommandFlags flags, TileIndex tile, TileIndex start_tile, bool diagonal)
 {
 	if (start_tile >= Map::Size()) return { CMD_ERROR, 0 };
 
@@ -717,17 +707,17 @@ std::tuple<CommandCost, Money> CmdClearArea(DoCommandFlag flags, TileIndex tile,
 	CommandCost last_error = CMD_ERROR;
 	bool had_success = false;
 
-	const Company *c = (flags & (DC_AUTO | DC_BANKRUPT)) ? nullptr : Company::GetIfValid(_current_company);
+	const Company *c = flags.Any({DoCommandFlag::Auto, DoCommandFlag::Bankrupt}) ? nullptr : Company::GetIfValid(_current_company);
 	int limit = (c == nullptr ? INT32_MAX : GB(c->clear_limit, 16, 16));
 
-	if (tile != start_tile) flags |= DC_FORCE_CLEAR_TILE;
+	if (tile != start_tile) flags.Set(DoCommandFlag::ForceClearTile);
 
 	std::unique_ptr<TileIterator> iter = TileIterator::Create(tile, start_tile, diagonal);
 	for (; *iter != INVALID_TILE; ++(*iter)) {
 		TileIndex t = *iter;
-		CommandCost ret = Command<CMD_LANDSCAPE_CLEAR>::Do(flags & ~DC_EXEC, t);
+		CommandCost ret = Command<CMD_LANDSCAPE_CLEAR>::Do(DoCommandFlags{flags}.Reset(DoCommandFlag::Execute), t);
 		if (ret.Failed()) {
-			last_error = ret;
+			last_error = std::move(ret);
 
 			/* We may not clear more tiles. */
 			if (c != nullptr && GB(c->clear_limit, 16, 16) < 1) break;
@@ -735,7 +725,7 @@ std::tuple<CommandCost, Money> CmdClearArea(DoCommandFlag flags, TileIndex tile,
 		}
 
 		had_success = true;
-		if (flags & DC_EXEC) {
+		if (flags.Test(DoCommandFlag::Execute)) {
 			money -= ret.GetCost();
 			if (ret.GetCost() > 0 && money < 0) {
 				return { cost, ret.GetCost() };
@@ -744,7 +734,7 @@ std::tuple<CommandCost, Money> CmdClearArea(DoCommandFlag flags, TileIndex tile,
 
 			/* draw explosion animation...
 			 * Disable explosions when game is paused. Looks silly and blocks the view. */
-			if ((t == tile || t == start_tile) && _pause_mode == PM_UNPAUSED) {
+			if ((t == tile || t == start_tile) && _pause_mode.None()) {
 				/* big explosion in two corners, or small explosion for single tiles */
 				CreateEffectVehicleAbove(TileX(t) * TILE_SIZE + TILE_SIZE / 2, TileY(t) * TILE_SIZE + TILE_SIZE / 2, 2,
 					TileX(tile) == TileX(start_tile) && TileY(tile) == TileY(start_tile) ? EV_EXPLOSION_SMALL : EV_EXPLOSION_LARGE
@@ -754,7 +744,7 @@ std::tuple<CommandCost, Money> CmdClearArea(DoCommandFlag flags, TileIndex tile,
 			/* When we're at the clearing limit we better bail (unneed) testing as well. */
 			if (ret.GetCost() != 0 && --limit <= 0) break;
 		}
-		cost.AddCost(ret);
+		cost.AddCost(ret.GetCost());
 	}
 
 	return { had_success ? cost : last_error, 0 };
@@ -792,7 +782,7 @@ void RunTileLoop()
 
 	/* Manually update tile 0 every TILE_UPDATE_FREQUENCY ticks - the LFSR never iterates over it itself.  */
 	if (TimerGameTick::counter % TILE_UPDATE_FREQUENCY == 0) {
-		_tile_type_procs[GetTileType(0)]->tile_loop_proc(0);
+		_tile_type_procs[GetTileType(0)]->tile_loop_proc(TileIndex{});
 		count--;
 	}
 
@@ -800,7 +790,7 @@ void RunTileLoop()
 		_tile_type_procs[GetTileType(tile)]->tile_loop_proc(tile);
 
 		/* Get the next tile in sequence using a Galois LFSR. */
-		tile = (tile.base() >> 1) ^ (-(int32_t)(tile.base() & 1) & feedback);
+		tile = TileIndex{(tile.base() >> 1) ^ (-(int32_t)(tile.base() & 1) & feedback)};
 	}
 
 	_cur_tileloop_tile = tile;
@@ -844,7 +834,7 @@ static void GenerateTerrain(int type, uint flag)
 	uint w = templ->width;
 	uint h = templ->height;
 
-	if (DiagDirToAxis(direction) == AXIS_Y) Swap(w, h);
+	if (DiagDirToAxis(direction) == AXIS_Y) std::swap(w, h);
 
 	const uint8_t *p = templ->data;
 
@@ -894,7 +884,7 @@ static void GenerateTerrain(int type, uint flag)
 				for (uint w_cur = w; w_cur != 0; --w_cur) {
 					if (GB(*p, 0, 4) >= TileHeight(tile_cur)) SetTileHeight(tile_cur, GB(*p, 0, 4));
 					p++;
-					tile_cur++;
+					tile_cur += TileDiffXY(1, 0);
 				}
 				tile += TileDiffXY(0, 1);
 			} while (--h != 0);
@@ -921,7 +911,7 @@ static void GenerateTerrain(int type, uint flag)
 				for (uint w_cur = w; w_cur != 0; --w_cur) {
 					if (GB(*p, 0, 4) >= TileHeight(tile_cur)) SetTileHeight(tile_cur, GB(*p, 0, 4));
 					p++;
-					tile_cur--;
+					tile_cur -= TileDiffXY(1, 0);
 				}
 				tile += TileDiffXY(0, 1);
 			} while (--h != 0);
@@ -992,18 +982,18 @@ static void CreateDesertOrRainForest(uint desert_tropic_line)
  */
 static bool FindSpring(TileIndex tile, void *)
 {
-	int referenceHeight;
-	if (!IsTileFlat(tile, &referenceHeight) || IsWaterTile(tile)) return false;
+	int reference_height;
+	if (!IsTileFlat(tile, &reference_height) || IsWaterTile(tile)) return false;
 
 	/* In the tropics rivers start in the rainforest. */
-	if (_settings_game.game_creation.landscape == LT_TROPIC && GetTropicZone(tile) != TROPICZONE_RAINFOREST) return false;
+	if (_settings_game.game_creation.landscape == LandscapeType::Tropic && GetTropicZone(tile) != TROPICZONE_RAINFOREST) return false;
 
 	/* Are there enough higher tiles to warrant a 'spring'? */
 	uint num = 0;
 	for (int dx = -1; dx <= 1; dx++) {
 		for (int dy = -1; dy <= 1; dy++) {
 			TileIndex t = TileAddWrap(tile, dx, dy);
-			if (t != INVALID_TILE && GetTileMaxZ(t) > referenceHeight) num++;
+			if (t != INVALID_TILE && GetTileMaxZ(t) > reference_height) num++;
 		}
 	}
 
@@ -1013,7 +1003,7 @@ static bool FindSpring(TileIndex tile, void *)
 	for (int dx = -16; dx <= 16; dx++) {
 		for (int dy = -16; dy <= 16; dy++) {
 			TileIndex t = TileAddWrap(tile, dx, dy);
-			if (t != INVALID_TILE && GetTileMaxZ(t) > referenceHeight + 2) return false;
+			if (t != INVALID_TILE && GetTileMaxZ(t) > reference_height + 2) return false;
 		}
 	}
 
@@ -1028,13 +1018,13 @@ static bool FindSpring(TileIndex tile, void *)
  */
 static bool MakeLake(TileIndex tile, void *user_data)
 {
-	uint height = *(uint*)user_data;
-	if (!IsValidTile(tile) || TileHeight(tile) != height || !IsTileFlat(tile)) return false;
-	if (_settings_game.game_creation.landscape == LT_TROPIC && GetTropicZone(tile) == TROPICZONE_DESERT) return false;
+	uint height_lake = *static_cast<uint *>(user_data);
+	if (!IsValidTile(tile) || TileHeight(tile) != height_lake || !IsTileFlat(tile)) return false;
+	if (_settings_game.game_creation.landscape == LandscapeType::Tropic && GetTropicZone(tile) == TROPICZONE_DESERT) return false;
 
 	for (DiagDirection d = DIAGDIR_BEGIN; d < DIAGDIR_END; d++) {
-		TileIndex t2 = tile + TileOffsByDiagDir(d);
-		if (IsWaterTile(t2)) {
+		TileIndex t = tile + TileOffsByDiagDir(d);
+		if (IsWaterTile(t)) {
 			MakeRiverAndModifyDesertZoneAround(tile);
 			return false;
 		}
@@ -1046,10 +1036,10 @@ static bool MakeLake(TileIndex tile, void *user_data)
 /**
  * Widen a river by expanding into adjacent tiles via circular tile search.
  * @param tile The tile to try expanding the river into.
- * @param data The tile to try surrounding the river around.
+ * @param user_data The tile to try surrounding the river around.
  * @return Always false, so it continues searching.
  */
-static bool RiverMakeWider(TileIndex tile, void *data)
+static bool RiverMakeWider(TileIndex tile, void *user_data)
 {
 	/* Don't expand into void tiles. */
 	if (!IsValidTile(tile)) return false;
@@ -1060,7 +1050,7 @@ static bool RiverMakeWider(TileIndex tile, void *data)
 	/* If the tile is at height 0 after terraforming but the ocean hasn't flooded yet, don't build river. */
 	if (GetTileMaxZ(tile) == 0) return false;
 
-	TileIndex origin_tile = *(TileIndex *)data;
+	TileIndex origin_tile = *static_cast<TileIndex *>(user_data);
 	Slope cur_slope = GetTileSlope(tile);
 	Slope desired_slope = GetTileSlope(origin_tile); // Initialize matching the origin tile as a shortcut if no terraforming is needed.
 
@@ -1116,7 +1106,7 @@ static bool RiverMakeWider(TileIndex tile, void *data)
 				TileIndex other_tile = TileAddByDiagDir(tile, d);
 				if (IsInclinedSlope(GetTileSlope(other_tile)) && IsWaterTile(other_tile)) return false;
 			}
-			Command<CMD_TERRAFORM_LAND>::Do(DC_EXEC | DC_AUTO, tile, ComplementSlope(cur_slope), true);
+			Command<CMD_TERRAFORM_LAND>::Do({DoCommandFlag::Execute, DoCommandFlag::Auto}, tile, ComplementSlope(cur_slope), true);
 
 		/* If the river is descending and the adjacent tile has either one or three corners raised, we want to make it match the slope. */
 		} else if (IsInclinedSlope(desired_slope)) {
@@ -1137,14 +1127,14 @@ static bool RiverMakeWider(TileIndex tile, void *data)
 			/* Lower unwanted corners first. If only one corner is raised, no corners need lowering. */
 			if (!IsSlopeWithOneCornerRaised(cur_slope)) {
 				to_change = to_change & ComplementSlope(desired_slope);
-				Command<CMD_TERRAFORM_LAND>::Do(DC_EXEC | DC_AUTO, tile, to_change, false);
+				Command<CMD_TERRAFORM_LAND>::Do({DoCommandFlag::Execute, DoCommandFlag::Auto}, tile, to_change, false);
 			}
 
 			/* Now check the match and raise any corners needed. */
 			cur_slope = GetTileSlope(tile);
 			if (cur_slope != desired_slope && IsSlopeWithOneCornerRaised(cur_slope)) {
 				to_change = cur_slope ^ desired_slope;
-				Command<CMD_TERRAFORM_LAND>::Do(DC_EXEC | DC_AUTO, tile, to_change, true);
+				Command<CMD_TERRAFORM_LAND>::Do({DoCommandFlag::Execute, DoCommandFlag::Auto}, tile, to_change, true);
 			}
 		}
 		/* Update cur_slope after possibly terraforming. */
@@ -1200,14 +1190,21 @@ static bool FlowsDown(TileIndex begin, TileIndex end)
 {
 	assert(DistanceManhattan(begin, end) == 1);
 
-	auto [slopeBegin, heightBegin] = GetTileSlopeZ(begin);
-	auto [slopeEnd, heightEnd] = GetTileSlopeZ(end);
+	auto [slope_end, height_end] = GetTileSlopeZ(end);
 
-	return heightEnd <= heightBegin &&
-			/* Slope either is inclined or flat; rivers don't support other slopes. */
-			(slopeEnd == SLOPE_FLAT || IsInclinedSlope(slopeEnd)) &&
-			/* Slope continues, then it must be lower... or either end must be flat. */
-			((slopeEnd == slopeBegin && heightEnd < heightBegin) || slopeEnd == SLOPE_FLAT || slopeBegin == SLOPE_FLAT);
+	/* Slope either is inclined or flat; rivers don't support other slopes. */
+	if (slope_end != SLOPE_FLAT && !IsInclinedSlope(slope_end)) return false;
+
+	auto [slope_begin, height_begin] = GetTileSlopeZ(begin);
+
+	/* It can't flow uphill. */
+	if (height_end > height_begin) return false;
+
+	/* Slope continues, then it must be lower... */
+	if (slope_end == slope_begin && height_end < height_begin) return true;
+
+	/* ... or either end must be flat. */
+	return slope_end == SLOPE_FLAT || slope_begin == SLOPE_FLAT;
 }
 
 /** Parameters for river generation to pass as AyStar user data. */
@@ -1219,7 +1216,7 @@ struct River_UserData {
 /* AyStar callback for checking whether we reached our destination. */
 static AyStarStatus River_EndNodeCheck(const AyStar *aystar, const PathNode *current)
 {
-	return current->GetTile() == *(TileIndex*)aystar->user_target ? AyStarStatus::FoundEndNode : AyStarStatus::Done;
+	return current->GetTile() == *static_cast<TileIndex *>(aystar->user_target) ? AyStarStatus::FoundEndNode : AyStarStatus::Done;
 }
 
 /* AyStar callback for getting the cost of the current node. */
@@ -1231,7 +1228,7 @@ static int32_t River_CalculateG(AyStar *, AyStarNode *, PathNode *)
 /* AyStar callback for getting the estimated cost to the destination. */
 static int32_t River_CalculateH(AyStar *aystar, AyStarNode *current, PathNode *)
 {
-	return DistanceManhattan(*(TileIndex*)aystar->user_target, current->tile);
+	return DistanceManhattan(*static_cast<TileIndex *>(aystar->user_target), current->tile);
 }
 
 /* AyStar callback for getting the neighbouring nodes of the given node. */
@@ -1241,10 +1238,10 @@ static void River_GetNeighbours(AyStar *aystar, PathNode *current)
 
 	aystar->neighbours.clear();
 	for (DiagDirection d = DIAGDIR_BEGIN; d < DIAGDIR_END; d++) {
-		TileIndex t2 = tile + TileOffsByDiagDir(d);
-		if (IsValidTile(t2) && FlowsDown(tile, t2)) {
+		TileIndex t = tile + TileOffsByDiagDir(d);
+		if (IsValidTile(t) && FlowsDown(tile, t)) {
 			auto &neighbour = aystar->neighbours.emplace_back();
-			neighbour.tile = t2;
+			neighbour.tile = t;
 			neighbour.td = INVALID_TRACKDIR;
 		}
 	}
@@ -1253,11 +1250,10 @@ static void River_GetNeighbours(AyStar *aystar, PathNode *current)
 /* AyStar callback when an route has been found. */
 static void River_FoundEndNode(AyStar *aystar, PathNode *current)
 {
-	River_UserData *data = (River_UserData *)aystar->user_data;
+	River_UserData *data = static_cast<River_UserData *>(aystar->user_data);
 
 	/* First, build the river without worrying about its width. */
-	uint cur_pos = 0;
-	for (PathNode *path = current->parent; path != nullptr; path = path->parent, cur_pos++) {
+	for (PathNode *path = current->parent; path != nullptr; path = path->parent) {
 		TileIndex tile = path->GetTile();
 		if (!IsWaterTile(tile)) {
 			MakeRiverAndModifyDesertZoneAround(tile);
@@ -1269,18 +1265,15 @@ static void River_FoundEndNode(AyStar *aystar, PathNode *current)
 	 */
 	if (_settings_game.game_creation.land_generator != LG_ORIGINAL && data->main_river) {
 		const uint long_river_length = _settings_game.game_creation.min_river_length * 4;
-		uint current_river_length;
-		uint radius;
 
-		cur_pos = 0;
-		for (PathNode *path = current->parent; path != nullptr; path = path->parent, cur_pos++) {
+		for (PathNode *path = current->parent; path != nullptr; path = path->parent) {
 			TileIndex tile = path->GetTile();
 
 			/* Check if we should widen river depending on how far we are away from the source. */
-			current_river_length = DistanceManhattan(data->spring, tile);
-			radius = std::min(3u, (current_river_length / (long_river_length / 3u)) + 1u);
+			uint current_river_length = DistanceManhattan(data->spring, tile);
+			uint radius = std::min(3u, (current_river_length / (long_river_length / 3u)) + 1u);
 
-			if (radius > 1) CircularTileSearch(&tile, radius, RiverMakeWider, (void *)&path->key.tile);
+			if (radius > 1) CircularTileSearch(&tile, radius, RiverMakeWider, &path->key.tile);
 		}
 	}
 }
@@ -1321,17 +1314,14 @@ static void BuildRiver(TileIndex begin, TileIndex end, TileIndex spring, bool ma
  */
 static std::tuple<bool, bool> FlowRiver(TileIndex spring, TileIndex begin, uint min_river_length)
 {
-#	define SET_MARK(x) marks.insert(x)
-#	define IS_MARKED(x) (marks.find(x) != marks.end())
-
-	uint height = TileHeight(begin);
+	uint height_begin = TileHeight(begin);
 
 	if (IsWaterTile(begin)) {
 		return { DistanceManhattan(spring, begin) > min_river_length, GetTileZ(begin) == 0 };
 	}
 
 	std::set<TileIndex> marks;
-	SET_MARK(begin);
+	marks.insert(begin);
 
 	/* Breadth first search for the closest tile we can flow down to. */
 	std::list<TileIndex> queue;
@@ -1344,18 +1334,18 @@ static std::tuple<bool, bool> FlowRiver(TileIndex spring, TileIndex begin, uint 
 		end = queue.front();
 		queue.pop_front();
 
-		uint height2 = TileHeight(end);
-		if (IsTileFlat(end) && (height2 < height || (height2 == height && IsWaterTile(end)))) {
+		uint height_end = TileHeight(end);
+		if (IsTileFlat(end) && (height_end < height_begin || (height_end == height_begin && IsWaterTile(end)))) {
 			found = true;
 			break;
 		}
 
 		for (DiagDirection d = DIAGDIR_BEGIN; d < DIAGDIR_END; d++) {
-			TileIndex t2 = end + TileOffsByDiagDir(d);
-			if (IsValidTile(t2) && !IS_MARKED(t2) && FlowsDown(end, t2)) {
-				SET_MARK(t2);
+			TileIndex t = end + TileOffsByDiagDir(d);
+			if (IsValidTile(t) && !marks.contains(t) && FlowsDown(end, t)) {
+				marks.insert(t);
 				count++;
-				queue.push_back(t2);
+				queue.push_back(t);
 			}
 		}
 	} while (!queue.empty());
@@ -1368,26 +1358,26 @@ static std::tuple<bool, bool> FlowRiver(TileIndex spring, TileIndex begin, uint 
 		/* Maybe we can make a lake. Find the Nth of the considered tiles. */
 		std::set<TileIndex>::const_iterator cit = marks.cbegin();
 		std::advance(cit, RandomRange(count - 1));
-		TileIndex lakeCenter = *cit;
+		TileIndex lake_centre = *cit;
 
-		if (IsValidTile(lakeCenter) &&
+		if (IsValidTile(lake_centre) &&
 				/* A river, or lake, can only be built on flat slopes. */
-				IsTileFlat(lakeCenter) &&
+				IsTileFlat(lake_centre) &&
 				/* We want the lake to be built at the height of the river. */
-				TileHeight(begin) == TileHeight(lakeCenter) &&
+				TileHeight(begin) == TileHeight(lake_centre) &&
 				/* We don't want the lake at the entry of the valley. */
-				lakeCenter != begin &&
+				lake_centre != begin &&
 				/* We don't want lakes in the desert. */
-				(_settings_game.game_creation.landscape != LT_TROPIC || GetTropicZone(lakeCenter) != TROPICZONE_DESERT) &&
+				(_settings_game.game_creation.landscape != LandscapeType::Tropic || GetTropicZone(lake_centre) != TROPICZONE_DESERT) &&
 				/* We only want a lake if the river is long enough. */
-				DistanceManhattan(spring, lakeCenter) > min_river_length) {
-			end = lakeCenter;
-			MakeRiverAndModifyDesertZoneAround(lakeCenter);
+				DistanceManhattan(spring, lake_centre) > min_river_length) {
+			end = lake_centre;
+			MakeRiverAndModifyDesertZoneAround(lake_centre);
 			uint range = RandomRange(8) + 3;
-			CircularTileSearch(&lakeCenter, range, MakeLake, &height);
+			CircularTileSearch(&lake_centre, range, MakeLake, &height_begin);
 			/* Call the search a second time so artefacts from going circular in one direction get (mostly) hidden. */
-			lakeCenter = end;
-			CircularTileSearch(&lakeCenter, range, MakeLake, &height);
+			lake_centre = end;
+			CircularTileSearch(&lake_centre, range, MakeLake, &height_begin);
 			found = true;
 		}
 	}
@@ -1443,7 +1433,7 @@ static void CreateRivers()
  * Calculate what height would be needed to cover N% of the landmass.
  *
  * The function allows both snow and desert/tropic line to be calculated. It
- * tries to find the closests height which covers N% of the landmass; it can
+ * tries to find the closest height which covers N% of the landmass; it can
  * be below or above it.
  *
  * Tropic has a mechanism where water and tropic tiles in mountains grow
@@ -1458,13 +1448,6 @@ static void CreateRivers()
  */
 static uint CalculateCoverageLine(uint coverage, uint edge_multiplier)
 {
-	const DiagDirection neighbour_dir[] = {
-		DIAGDIR_NE,
-		DIAGDIR_SE,
-		DIAGDIR_SW,
-		DIAGDIR_NW,
-	};
-
 	/* Histogram of how many tiles per height level exist. */
 	std::array<int, MAX_TILE_HEIGHT + 1> histogram = {};
 	/* Histogram of how many neighbour tiles are lower than the tiles of the height level. */
@@ -1477,7 +1460,7 @@ static uint CalculateCoverageLine(uint coverage, uint edge_multiplier)
 
 		if (edge_multiplier != 0) {
 			/* Check if any of our neighbours is below us. */
-			for (auto dir : neighbour_dir) {
+			for (DiagDirection dir = DIAGDIR_BEGIN; dir != DIAGDIR_END; dir++) {
 				TileIndex neighbour_tile = AddTileIndexDiffCWrap(tile, TileIndexDiffCByDiagDir(dir));
 				if (IsValidTile(neighbour_tile) && TileHeight(neighbour_tile) < h) {
 					edge_histogram[h]++;
@@ -1552,11 +1535,11 @@ bool GenerateLandscape(uint8_t mode)
 {
 	/* Number of steps of landscape generation */
 	static constexpr uint GLS_HEIGHTMAP = 3; ///< Loading a heightmap
-	static constexpr uint GLS_TERRAGENESIS = 5; ///< Terragenesis generator
+	static constexpr uint GLS_TERRAGENESIS = 4; ///< Terragenesis generator
 	static constexpr uint GLS_ORIGINAL = 2; ///< Original generator
 	static constexpr uint GLS_TROPIC = 12; ///< Extra steps needed for tropic landscape
 	static constexpr uint GLS_OTHER = 0; ///< Extra steps for other landscapes
-	uint steps = (_settings_game.game_creation.landscape == LT_TROPIC) ? GLS_TROPIC : GLS_OTHER;
+	uint steps = (_settings_game.game_creation.landscape == LandscapeType::Tropic) ? GLS_TROPIC : GLS_OTHER;
 
 	if (mode == GWM_HEIGHTMAP) {
 		SetGeneratingWorldProgress(GWP_LANDSCAPE, steps + GLS_HEIGHTMAP);
@@ -1574,7 +1557,7 @@ bool GenerateLandscape(uint8_t mode)
 			for (uint y = 0; y < Map::SizeY(); y++) MakeVoid(TileXY(0, y));
 		}
 		switch (_settings_game.game_creation.landscape) {
-			case LT_ARCTIC: {
+			case LandscapeType::Arctic: {
 				uint32_t r = Random();
 
 				for (uint i = Map::ScaleBySize(GB(r, 0, 7) + 950); i != 0; --i) {
@@ -1588,7 +1571,7 @@ bool GenerateLandscape(uint8_t mode)
 				break;
 			}
 
-			case LT_TROPIC: {
+			case LandscapeType::Tropic: {
 				uint32_t r = Random();
 
 				for (uint i = Map::ScaleBySize(GB(r, 0, 7) + 170); i != 0; --i) {
@@ -1633,11 +1616,11 @@ bool GenerateLandscape(uint8_t mode)
 	IncreaseGeneratingWorldProgress(GWP_LANDSCAPE);
 
 	switch (_settings_game.game_creation.landscape) {
-		case LT_ARCTIC:
+		case LandscapeType::Arctic:
 			CalculateSnowLine();
 			break;
 
-		case LT_TROPIC: {
+		case LandscapeType::Tropic: {
 			uint desert_tropic_line = CalculateDesertLine();
 			CreateDesertOrRainForest(desert_tropic_line);
 			break;

@@ -166,7 +166,7 @@ void UpdateOldAircraft()
 {
 	/* set airport_flags to 0 for all airports just to be sure */
 	for (Station *st : Station::Iterate()) {
-		st->airport.flags = 0; // reset airport
+		st->airport.blocks = {}; // reset airport
 	}
 
 	for (Aircraft *a : Aircraft::Iterate()) {
@@ -174,13 +174,13 @@ void UpdateOldAircraft()
 		 * skip those */
 		if (a->IsNormalAircraft()) {
 			/* airplane in terminal stopped doesn't hurt anyone, so goto next */
-			if ((a->vehstatus & VS_STOPPED) && a->state == 0) {
+			if (a->vehstatus.Test(VehState::Stopped) && a->state == 0) {
 				a->state = HANGAR;
 				continue;
 			}
 
 			AircraftLeaveHangar(a, a->direction); // make airplane visible if it was in a depot for example
-			a->vehstatus &= ~VS_STOPPED; // make airplane moving
+			a->vehstatus.Reset(VehState::Stopped); // make airplane moving
 			UpdateAircraftCache(a);
 			a->cur_speed = a->vcache.cached_max_speed; // so aircraft don't have zero speed while in air
 			if (!a->current_order.IsType(OT_GOTO_STATION) && !a->current_order.IsType(OT_GOTO_DEPOT)) {
@@ -190,7 +190,7 @@ void UpdateOldAircraft()
 			a->state = FLYING;
 			AircraftNextAirportPos_and_Order(a); // move it to the entry point of the airport
 			GetNewVehiclePosResult gp = GetNewVehiclePos(a);
-			a->tile = 0; // aircraft in air is tile=0
+			a->tile = TileIndex{}; // aircraft in air is tile=0
 
 			/* correct speed of helicopter-rotors */
 			if (a->subtype == AIR_HELICOPTER) a->Next()->Next()->cur_speed = 32;
@@ -225,7 +225,7 @@ void UpdateOldAircraft()
 static void CheckValidVehicles()
 {
 	size_t total_engines = Engine::GetPoolSize();
-	EngineID first_engine[4] = { INVALID_ENGINE, INVALID_ENGINE, INVALID_ENGINE, INVALID_ENGINE };
+	EngineID first_engine[4] = { EngineID::Invalid(), EngineID::Invalid(), EngineID::Invalid(), EngineID::Invalid() };
 
 	for (const Engine *e : Engine::IterateType(VEH_TRAIN)) { first_engine[VEH_TRAIN] = e->index; break; }
 	for (const Engine *e : Engine::IterateType(VEH_ROAD)) { first_engine[VEH_ROAD] = e->index; break; }
@@ -262,7 +262,7 @@ void AfterLoadVehiclesPhase1(bool part_of_load)
 
 		if (part_of_load) v->fill_percent_te_id = INVALID_TE_ID;
 		v->first = nullptr;
-		if (v->IsGroundVehicle()) v->GetGroundVehicleCache()->first_engine = INVALID_ENGINE;
+		if (v->IsGroundVehicle()) v->GetGroundVehicleCache()->first_engine = EngineID::Invalid();
 	}
 
 	/* AfterLoadVehicles may also be called in case of NewGRF reload, in this
@@ -396,14 +396,14 @@ void AfterLoadVehiclesPhase1(bool part_of_load)
 				/* If the start date is 0, the vehicle is not waiting to start and can be ignored. */
 				if (v->timetable_start == 0) continue;
 
-				v->timetable_start = GetStartTickFromDate(v->timetable_start);
+				v->timetable_start = GetStartTickFromDate(TimerGameEconomy::Date(v->timetable_start));
 			}
 		}
 
 		if (IsSavegameVersionBefore(SLV_VEHICLE_ECONOMY_AGE)) {
 			/* Set vehicle economy age based on calendar age. */
 			for (Vehicle *v : Vehicle::Iterate()) {
-				v->economy_age = v->age.base();
+				v->economy_age = TimerGameEconomy::Date{v->age.base()};
 			}
 		}
 	}
@@ -465,7 +465,7 @@ void AfterLoadVehiclesPhase2(bool part_of_load)
 			if (v->type == VEH_TRAIN) {
 				Train *t = Train::From(v);
 				if (!t->IsFrontEngine()) {
-					if (t->IsEngine()) t->vehstatus |= VS_STOPPED;
+					if (t->IsEngine()) t->vehstatus.Set(VehState::Stopped);
 					/* cur_speed is now relevant for non-front parts - nonzero breaks
 					 * moving-wagons-inside-depot- and autoreplace- code */
 					t->cur_speed = 0;
@@ -473,7 +473,7 @@ void AfterLoadVehiclesPhase2(bool part_of_load)
 			}
 			/* trains weren't stopping gradually in old OTTD versions (and TTO/TTD)
 			 * other vehicle types didn't have zero speed while stopped (even in 'recent' OTTD versions) */
-			if ((v->vehstatus & VS_STOPPED) && (v->type != VEH_TRAIN || IsSavegameVersionBefore(SLV_2, 1))) {
+			if (v->vehstatus.Test(VehState::Stopped) && (v->type != VEH_TRAIN || IsSavegameVersionBefore(SLV_2, 1))) {
 				v->cur_speed = 0;
 			}
 		}
@@ -515,7 +515,7 @@ void AfterLoadVehiclesPhase2(bool part_of_load)
 					RoadVehicle *u = RoadVehicle::GetIfValid(v->dest_tile.base());
 					if (u != nullptr && u->IsFrontEngine()) {
 						/* Delete UFO targetting a vehicle which is already a target. */
-						if (u->disaster_vehicle != INVALID_VEHICLE && u->disaster_vehicle != dv->index) {
+						if (u->disaster_vehicle != VehicleID::Invalid() && u->disaster_vehicle != dv->index) {
 							delete v;
 							continue;
 						} else {
@@ -556,7 +556,7 @@ void FixupTrainLengths()
 			 * so we need to move all vehicles forward to cover the difference to the
 			 * old center, otherwise wagon spacing in trains would be broken upon load. */
 			for (Train *u = Train::From(v); u != nullptr; u = u->Next()) {
-				if (u->track == TRACK_BIT_DEPOT || (u->vehstatus & VS_CRASHED)) continue;
+				if (u->track == TRACK_BIT_DEPOT || u->vehstatus.Test(VehState::Crashed)) continue;
 
 				Train *next = u->Next();
 
@@ -617,7 +617,7 @@ void FixupTrainLengths()
 					int d = TicksToLeaveDepot(u);
 					if (d <= 0) {
 						/* Next vehicle should have left the depot already, show it and pull forward. */
-						next->vehstatus &= ~VS_HIDDEN;
+						next->vehstatus.Reset(VehState::Hidden);
 						next->track = TrackToTrackBits(GetRailDepotTrack(next->tile));
 						for (int i = 0; i >= d; i--) TrainController(next, nullptr);
 					}
@@ -631,8 +631,8 @@ void FixupTrainLengths()
 }
 
 static uint8_t  _cargo_periods;
-static uint16_t _cargo_source;
-static uint32_t _cargo_source_xy;
+static StationID _cargo_source;
+static TileIndex _cargo_source_xy;
 static uint16_t _cargo_count;
 static uint16_t _cargo_paid_for;
 static Money  _cargo_feeder_share;
@@ -1124,12 +1124,12 @@ struct VEHSChunkHandler : ChunkHandler {
 			VehicleType vtype = (VehicleType)SlReadByte();
 
 			switch (vtype) {
-				case VEH_TRAIN:    v = new (index) Train();           break;
-				case VEH_ROAD:     v = new (index) RoadVehicle();     break;
-				case VEH_SHIP:     v = new (index) Ship();            break;
-				case VEH_AIRCRAFT: v = new (index) Aircraft();        break;
-				case VEH_EFFECT:   v = new (index) EffectVehicle();   break;
-				case VEH_DISASTER: v = new (index) DisasterVehicle(); break;
+				case VEH_TRAIN:    v = new (VehicleID(index)) Train();           break;
+				case VEH_ROAD:     v = new (VehicleID(index)) RoadVehicle();     break;
+				case VEH_SHIP:     v = new (VehicleID(index)) Ship();            break;
+				case VEH_AIRCRAFT: v = new (VehicleID(index)) Aircraft();        break;
+				case VEH_EFFECT:   v = new (VehicleID(index)) EffectVehicle();   break;
+				case VEH_DISASTER: v = new (VehicleID(index)) DisasterVehicle(); break;
 				case VEH_INVALID: // Savegame shouldn't contain invalid vehicles
 				default: SlErrorCorrupt("Invalid vehicle type");
 			}
@@ -1144,10 +1144,10 @@ struct VEHSChunkHandler : ChunkHandler {
 
 			/* Old savegames used 'last_station_visited = 0xFF' */
 			if (IsSavegameVersionBefore(SLV_5) && v->last_station_visited == 0xFF) {
-				v->last_station_visited = INVALID_STATION;
+				v->last_station_visited = StationID::Invalid();
 			}
 
-			if (IsSavegameVersionBefore(SLV_182)) v->last_loading_station = INVALID_STATION;
+			if (IsSavegameVersionBefore(SLV_182)) v->last_loading_station = StationID::Invalid();
 
 			if (IsSavegameVersionBefore(SLV_5)) {
 				/* Convert the current_order.type (which is a mix of type and flags, because

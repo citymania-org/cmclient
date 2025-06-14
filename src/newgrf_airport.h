@@ -12,6 +12,7 @@
 
 #include "airport.h"
 #include "timer/timer_game_calendar.h"
+#include "newgrf_badge_type.h"
 #include "newgrf_class.h"
 #include "newgrf_commons.h"
 #include "newgrf_spritegroup.h"
@@ -67,7 +68,7 @@ public:
 };
 
 /** List of default airport classes. */
-enum AirportClassID {
+enum AirportClassID : uint8_t {
 	APC_BEGIN     = 0,  ///< Lowest valid airport class id
 	APC_SMALL     = 0,  ///< id for small airports class
 	APC_LARGE,          ///< id for large airports class
@@ -77,10 +78,10 @@ enum AirportClassID {
 };
 
 /** Allow incrementing of AirportClassID variables */
-DECLARE_POSTFIX_INCREMENT(AirportClassID)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(AirportClassID)
 
 /** TTDP airport types. Used to map our types to TTDPatch's */
-enum TTDPAirportType {
+enum TTDPAirportType : uint8_t {
 	ATP_TTDP_SMALL,    ///< Same as AT_SMALL
 	ATP_TTDP_LARGE,    ///< Same as AT_LARGE
 	ATP_TTDP_HELIPORT, ///< Same as AT_HELIPORT
@@ -119,6 +120,7 @@ struct AirportSpec : NewGRFSpecBase<AirportClassID> {
 	/* Newgrf data */
 	bool enabled;                          ///< Entity still available (by default true). Newgrf can disable it, though.
 	struct GRFFileProps grf_prop;          ///< Properties related to the grf file.
+	std::vector<BadgeID> badges;
 
 	static const AirportSpec *Get(uint8_t type);
 	static AirportSpec *GetWithoutOverride(uint8_t type);

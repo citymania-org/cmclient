@@ -26,8 +26,6 @@ INSTANTIATE_POOL_METHODS(CargoPacket)
  */
 CargoPacket::CargoPacket()
 {
-	this->source_type = SourceType::Industry;
-	this->source_id   = INVALID_SOURCE;
 }
 
 /**
@@ -35,14 +33,12 @@ CargoPacket::CargoPacket()
  *
  * @param first_station Source station of the packet.
  * @param count         Number of cargo entities to put in this packet.
- * @param source_type   'Type' of source the packet comes from (for subsidies).
- * @param source_id     Actual source of the packet (for subsidies).
+ * @param source        Source of the packet (for subsidies).
  * @pre count != 0
  */
-CargoPacket::CargoPacket(StationID first_station,uint16_t count, SourceType source_type, SourceID source_id) :
+CargoPacket::CargoPacket(StationID first_station,uint16_t count, Source source) :
 		count(count),
-		source_id(source_id),
-		source_type(source_type),
+		source(source),
 		first_station(first_station)
 {
 	assert(count != 0);
@@ -80,8 +76,7 @@ CargoPacket::CargoPacket(uint16_t count, Money feeder_share, CargoPacket &origin
 		feeder_share(feeder_share),
 		source_xy(original.source_xy),
 		travelled(original.travelled),
-		source_id(original.source_id),
-		source_type(original.source_type),
+		source(original.source),
 #ifdef WITH_ASSERT
 		in_vehicle(original.in_vehicle),
 #endif /* WITH_ASSERT */
@@ -134,21 +129,21 @@ void CargoPacket::Reduce(uint count)
  * @param src_type Type of source.
  * @param src Index of source.
  */
-/* static */ void CargoPacket::InvalidateAllFrom(SourceType src_type, SourceID src)
+/* static */ void CargoPacket::InvalidateAllFrom(Source src)
 {
 	for (CargoPacket *cp : CargoPacket::Iterate()) {
-		if (cp->source_type == src_type && cp->source_id == src) cp->source_id = INVALID_SOURCE;
+		if (cp->source == src) cp->source.MakeInvalid();
 	}
 }
 
 /**
- * Invalidates (sets source to INVALID_STATION) all cargo packets from given station.
+ * Invalidates (sets source to StationID::Invalid()) all cargo packets from given station.
  * @param sid Station that gets removed.
  */
 /* static */ void CargoPacket::InvalidateAllFrom(StationID sid)
 {
 	for (CargoPacket *cp : CargoPacket::Iterate()) {
-		if (cp->first_station == sid) cp->first_station = INVALID_STATION;
+		if (cp->first_station == sid) cp->first_station = StationID::Invalid();
 	}
 }
 
@@ -291,7 +286,7 @@ void VehicleCargoList::Append(CargoPacket *cp, MoveToAction action)
  *                 will be kept and the loop will be aborted.
  * @param action Action instance to be applied.
  */
-template<class Taction>
+template <class Taction>
 void VehicleCargoList::ShiftCargo(Taction action)
 {
 	Iterator it(this->packets.begin());
@@ -313,7 +308,7 @@ void VehicleCargoList::ShiftCargo(Taction action)
  *                 will be kept and the loop will be aborted.
  * @param action Action instance to be applied.
  */
-template<class Taction>
+template <class Taction>
 void VehicleCargoList::PopCargo(Taction action)
 {
 	if (this->packets.empty()) return;
@@ -411,11 +406,11 @@ void VehicleCargoList::AgeCargo()
 /* static */ VehicleCargoList::MoveToAction VehicleCargoList::ChooseAction(const CargoPacket *cp, StationID cargo_next,
 		StationID current_station, bool accepted, StationIDStack next_station)
 {
-	if (cargo_next == INVALID_STATION) {
+	if (cargo_next == StationID::Invalid()) {
 		return (accepted && cp->first_station != current_station) ? MTA_DELIVER : MTA_KEEP;
 	} else if (cargo_next == current_station) {
 		return MTA_DELIVER;
-	} else if (next_station.Contains(cargo_next)) {
+	} else if (next_station.Contains(cargo_next.base())) {
 		return MTA_KEEP;
 	} else {
 		return MTA_TRANSFER;
@@ -437,7 +432,7 @@ void VehicleCargoList::AgeCargo()
  * @param current_tile Current tile the cargo handling is happening on.
  * return If any cargo will be unloaded.
  */
-bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationIDStack next_station, uint8_t order_flags, const GoodsEntry *ge, CargoID cargo, CargoPayment *payment, TileIndex current_tile)
+bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationIDStack next_station, uint8_t order_flags, const GoodsEntry *ge, CargoType cargo, CargoPayment *payment, TileIndex current_tile)
 {
 	this->AssertCountConsistency();
 	assert(this->action_counts[MTA_LOAD] == 0);
@@ -445,6 +440,9 @@ bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID
 	Iterator deliver = this->packets.end();
 	Iterator it = this->packets.begin();
 	uint sum = 0;
+
+	static const FlowStatMap EMPTY_FLOW_STAT_MAP = {};
+	const FlowStatMap &flows = ge->HasData() ? ge->GetData().flows : EMPTY_FLOW_STAT_MAP;
 
 	bool force_keep = (order_flags & OUFB_NO_UNLOAD) != 0;
 	bool force_unload = (order_flags & OUFB_UNLOAD) != 0;
@@ -454,7 +452,7 @@ bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID
 		CargoPacket *cp = *it;
 
 		this->packets.erase(it++);
-		StationID cargo_next = INVALID_STATION;
+		StationID cargo_next = StationID::Invalid();
 		MoveToAction action = MTA_LOAD;
 		if (force_keep) {
 			action = MTA_KEEP;
@@ -464,18 +462,18 @@ bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID
 			action = MTA_TRANSFER;
 			/* We cannot send the cargo to any of the possible next hops and
 			 * also not to the current station. */
-			FlowStatMap::const_iterator flow_it(ge->flows.find(cp->first_station));
-			if (flow_it == ge->flows.end()) {
-				cargo_next = INVALID_STATION;
+			FlowStatMap::const_iterator flow_it(flows.find(cp->first_station));
+			if (flow_it == flows.end()) {
+				cargo_next = StationID::Invalid();
 			} else {
 				FlowStat new_shares = flow_it->second;
 				new_shares.ChangeShare(current_station, INT_MIN);
 				StationIDStack excluded = next_station;
 				while (!excluded.IsEmpty() && !new_shares.GetShares()->empty()) {
-					new_shares.ChangeShare(excluded.Pop(), INT_MIN);
+					new_shares.ChangeShare(StationID{excluded.Pop()}, INT_MIN);
 				}
 				if (new_shares.GetShares()->empty()) {
-					cargo_next = INVALID_STATION;
+					cargo_next = StationID::Invalid();
 				} else {
 					cargo_next = new_shares.GetVia();
 				}
@@ -483,13 +481,13 @@ bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID
 		} else {
 			/* Rewrite an invalid source station to some random other one to
 			 * avoid keeping the cargo in the vehicle forever. */
-			if (cp->first_station == INVALID_STATION && !ge->flows.empty()) {
-				cp->first_station = ge->flows.begin()->first;
+			if (cp->first_station == StationID::Invalid() && !flows.empty()) {
+				cp->first_station = flows.begin()->first;
 			}
 			bool restricted = false;
-			FlowStatMap::const_iterator flow_it(ge->flows.find(cp->first_station));
-			if (flow_it == ge->flows.end()) {
-				cargo_next = INVALID_STATION;
+			FlowStatMap::const_iterator flow_it(flows.find(cp->first_station));
+			if (flow_it == flows.end()) {
+				cargo_next = StationID::Invalid();
 			} else {
 				cargo_next = flow_it->second.GetViaWithRestricted(restricted);
 			}
@@ -547,7 +545,7 @@ void VehicleCargoList::InvalidateCache()
  * @param max_move Maximum amount of cargo to reassign.
  * @return Amount of cargo actually reassigned.
  */
-template<VehicleCargoList::MoveToAction Tfrom, VehicleCargoList::MoveToAction Tto>
+template <VehicleCargoList::MoveToAction Tfrom, VehicleCargoList::MoveToAction Tto>
 uint VehicleCargoList::Reassign(uint max_move)
 {
 	static_assert(Tfrom != MTA_TRANSFER && Tto != MTA_TRANSFER);
@@ -564,7 +562,7 @@ uint VehicleCargoList::Reassign(uint max_move)
  * @param max_move Maximum amount of cargo to reassign.
  * @return Amount of cargo actually reassigned.
  */
-template<>
+template <>
 uint VehicleCargoList::Reassign<VehicleCargoList::MTA_DELIVER, VehicleCargoList::MTA_TRANSFER>(uint max_move)
 {
 	max_move = std::min(this->action_counts[MTA_DELIVER], max_move);
@@ -579,7 +577,7 @@ uint VehicleCargoList::Reassign<VehicleCargoList::MTA_DELIVER, VehicleCargoList:
 			sum -= cp_split->Count();
 			this->packets.insert(it, cp_split);
 		}
-		cp->next_hop = INVALID_STATION;
+		cp->next_hop = StationID::Invalid();
 	}
 
 	this->action_counts[MTA_DELIVER] -= max_move;
@@ -625,7 +623,7 @@ uint VehicleCargoList::Shift(uint max_move, VehicleCargoList *dest)
  * @param current_tile Current tile the cargo handling is happening on.
  * @return Amount of cargo actually unloaded.
  */
-uint VehicleCargoList::Unload(uint max_move, StationCargoList *dest, CargoID cargo, CargoPayment *payment, TileIndex current_tile)
+uint VehicleCargoList::Unload(uint max_move, StationCargoList *dest, CargoType cargo, CargoPayment *payment, TileIndex current_tile)
 {
 	uint moved = 0;
 	if (this->action_counts[MTA_TRANSFER] > 0) {
@@ -736,7 +734,7 @@ bool StationCargoList::ShiftCargo(Taction &action, StationID next)
  *                 will be kept and the loop will be aborted.
  * @param action Action instance to be applied.
  * @param next Next hop the cargo wants to visit.
- * @param include_invalid If cargo from the INVALID_STATION list should be
+ * @param include_invalid If cargo from the StationID::Invalid() list should be
  *                        used if necessary.
  * @return Amount of cargo actually moved.
  */
@@ -745,11 +743,11 @@ uint StationCargoList::ShiftCargo(Taction action, StationIDStack next, bool incl
 {
 	uint max_move = action.MaxMove();
 	while (!next.IsEmpty()) {
-		this->ShiftCargo(action, next.Pop());
+		this->ShiftCargo(action, StationID{next.Pop()});
 		if (action.MaxMove() == 0) break;
 	}
 	if (include_invalid && action.MaxMove() > 0) {
-		this->ShiftCargo(action, INVALID_STATION);
+		this->ShiftCargo(action, StationID::Invalid());
 	}
 	return max_move - action.MaxMove();
 }
@@ -855,7 +853,7 @@ uint StationCargoList::Load(uint max_move, VehicleCargoList *dest, StationIDStac
  */
 uint StationCargoList::Reroute(uint max_move, StationCargoList *dest, StationID avoid, StationID avoid2, const GoodsEntry *ge)
 {
-	return this->ShiftCargo(StationCargoReroute(this, dest, max_move, avoid, avoid2, ge), avoid, false);
+	return this->ShiftCargo(StationCargoReroute(this, dest, max_move, avoid, avoid2, ge), avoid.base(), false);
 }
 
 /*

@@ -9,9 +9,11 @@
 
 #include "stdafx.h"
 #include "core/backup_type.hpp"
+#include "company_func.h"
 #include "gui.h"
 #include "hotkeys.h"
 #include "ini_type.h"
+#include "newgrf_badge.h"
 #include "picker_gui.h"
 #include "querystring_gui.h"
 #include "settings_type.h"
@@ -30,6 +32,7 @@
 #include "widgets/picker_widget.h"
 
 #include "table/sprites.h"
+#include "table/strings.h"
 
 #include <charconv>
 
@@ -97,7 +100,7 @@ static void PickerSaveConfig(IniFile &ini, const PickerCallbacks &callbacks)
 	group.Clear();
 
 	for (const PickerItem &item : callbacks.saved) {
-		std::string key = fmt::format("{:08X}|{}", BSWAP32(item.grfid), item.local_id);
+		std::string key = fmt::format("{:08X}|{}", std::byteswap(item.grfid), item.local_id);
 		group.CreateItem(key);
 	}
 }
@@ -145,6 +148,8 @@ static bool TypeIDSorter(PickerItem const &a, PickerItem const &b)
 /** Filter types by class name. */
 static bool TypeTagNameFilter(PickerItem const *item, PickerFilterData &filter)
 {
+	if (filter.btf.has_value() && filter.btf->Filter(filter.callbacks->GetTypeBadges(item->class_index, item->index))) return true;
+
 	filter.ResetState();
 	filter.AddLine(GetString(filter.callbacks->GetTypeName(item->class_index, item->index)));
 	return filter.GetState();
@@ -170,14 +175,14 @@ void PickerWindow::ConstructWindow()
 	this->CreateNestedTree();
 
 	/* Test if pickers should be active.*/
-	bool isActive = this->callbacks.IsActive();
+	bool is_active = this->callbacks.IsActive();
 
 	/* Functionality depends on widgets being present, not window class. */
-	this->has_class_picker = isActive && this->GetWidget<NWidgetBase>(WID_PW_CLASS_LIST) != nullptr && this->callbacks.HasClassChoice();
-	this->has_type_picker = isActive && this->GetWidget<NWidgetBase>(WID_PW_TYPE_MATRIX) != nullptr;
+	this->has_class_picker = is_active && this->GetWidget<NWidgetBase>(WID_PW_CLASS_LIST) != nullptr && this->callbacks.HasClassChoice();
+	this->has_type_picker = is_active && this->GetWidget<NWidgetBase>(WID_PW_TYPE_MATRIX) != nullptr;
 
 	if (this->has_class_picker) {
-		this->GetWidget<NWidgetCore>(WID_PW_CLASS_LIST)->tool_tip = this->callbacks.GetClassTooltip();
+		this->GetWidget<NWidgetCore>(WID_PW_CLASS_LIST)->SetToolTip(this->callbacks.GetClassTooltip());
 
 		this->querystrings[WID_PW_CLASS_FILTER] = &this->class_editbox;
 	} else {
@@ -189,7 +194,7 @@ void PickerWindow::ConstructWindow()
 	}
 
 	this->class_editbox.cancel_button = QueryString::ACTION_CLEAR;
-	this->class_string_filter.SetFilterTerm(this->class_editbox.text.buf);
+	this->class_string_filter.SetFilterTerm(this->class_editbox.text.GetText());
 	this->class_string_filter.callbacks = &this->callbacks;
 
 	this->classes.SetListing(this->callbacks.class_last_sorting);
@@ -209,7 +214,7 @@ void PickerWindow::ConstructWindow()
 
 		SetWidgetDisabledState(WID_PW_MODE_ALL, !this->callbacks.HasClassChoice());
 
-		this->GetWidget<NWidgetCore>(WID_PW_TYPE_ITEM)->tool_tip = this->callbacks.GetTypeTooltip();
+		this->GetWidget<NWidgetCore>(WID_PW_TYPE_ITEM)->SetToolTip(this->callbacks.GetTypeTooltip());
 
 		auto *matrix = this->GetWidget<NWidgetMatrix>(WID_PW_TYPE_MATRIX);
 		matrix->SetScrollbar(this->GetScrollbar(WID_PW_TYPE_SCROLL));
@@ -224,7 +229,7 @@ void PickerWindow::ConstructWindow()
 	}
 
 	this->type_editbox.cancel_button = QueryString::ACTION_CLEAR;
-	this->type_string_filter.SetFilterTerm(this->type_editbox.text.buf);
+	this->type_string_filter.SetFilterTerm(this->type_editbox.text.GetText());
 	this->type_string_filter.callbacks = &this->callbacks;
 
 	this->types.SetListing(this->callbacks.type_last_sorting);
@@ -234,7 +239,12 @@ void PickerWindow::ConstructWindow()
 
 	this->FinishInitNested(this->window_number);
 
-	this->InvalidateData(PFI_CLASS | PFI_TYPE | PFI_POSITION | PFI_VALIDATE);
+	this->InvalidateData(PICKER_INVALIDATION_ALL);
+}
+
+void PickerWindow::OnInit()
+{
+	this->badge_classes = GUIBadgeClasses(this->callbacks.GetFeature());
 }
 
 void PickerWindow::Close(int data)
@@ -301,6 +311,12 @@ void PickerWindow::DrawWidget(const Rect &r, WidgetID widget) const
 				int y = (ir.Height() + ScaleSpriteTrad(PREVIEW_HEIGHT)) / 2 - ScaleSpriteTrad(PREVIEW_BOTTOM);
 
 				this->callbacks.DrawType(x, y, item.class_index, item.index);
+
+				int by = ir.Height() - ScaleGUITrad(12);
+
+				GrfSpecFeature feature = this->callbacks.GetFeature();
+				DrawBadgeColumn({0, by, ir.Width() - 1, ir.Height() - 1}, 0, this->badge_classes, this->callbacks.GetTypeBadges(item.class_index, item.index), feature, std::nullopt, PAL_NONE);
+
 				if (this->callbacks.saved.contains(item)) {
 					DrawSprite(SPR_BLOT, PALETTE_TO_YELLOW, 0, 0);
 				}
@@ -340,7 +356,7 @@ void PickerWindow::OnClick(Point pt, WidgetID widget, int)
 			if (this->callbacks.GetSelectedClass() != *it || HasBit(this->callbacks.mode, PFM_ALL)) {
 				ClrBit(this->callbacks.mode, PFM_ALL); // Disable showing all.
 				this->callbacks.SetSelectedClass(*it);
-				this->InvalidateData(PFI_TYPE | PFI_POSITION | PFI_VALIDATE);
+				this->InvalidateData({PickerInvalidation::Type, PickerInvalidation::Position, PickerInvalidation::Validate});
 			}
 			if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 			CloseWindowById(WC_SELECT_STATION, 0);
@@ -355,7 +371,7 @@ void PickerWindow::OnClick(Point pt, WidgetID widget, int)
 				/* Enabling used or saved filters automatically enables all. */
 				SetBit(this->callbacks.mode, PFM_ALL);
 			}
-			this->InvalidateData(PFI_CLASS | PFI_TYPE | PFI_POSITION);
+			this->InvalidateData({PickerInvalidation::Class, PickerInvalidation::Type, PickerInvalidation::Position});
 			break;
 
 		/* Type Picker */
@@ -371,14 +387,14 @@ void PickerWindow::OnClick(Point pt, WidgetID widget, int)
 				} else {
 					this->callbacks.saved.erase(it);
 				}
-				this->InvalidateData(PFI_TYPE);
+				this->InvalidateData(PickerInvalidation::Type);
 				break;
 			}
 
 			if (this->callbacks.IsTypeAvailable(item.class_index, item.index)) {
 				this->callbacks.SetSelectedClass(item.class_index);
 				this->callbacks.SetSelectedType(item.index);
-				this->InvalidateData(PFI_POSITION);
+				this->InvalidateData(PickerInvalidation::Position);
 			}
 			if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 			CloseWindowById(WC_SELECT_STATION, 0);
@@ -391,16 +407,17 @@ void PickerWindow::OnInvalidateData(int data, bool gui_scope)
 {
 	if (!gui_scope) return;
 
-	if ((data & PFI_CLASS) != 0) this->classes.ForceRebuild();
-	if ((data & PFI_TYPE) != 0) this->types.ForceRebuild();
+	PickerInvalidations pi(data);
+	if (pi.Test(PickerInvalidation::Class)) this->classes.ForceRebuild();
+	if (pi.Test(PickerInvalidation::Type)) this->types.ForceRebuild();
 
 	this->BuildPickerClassList();
-	if ((data & PFI_VALIDATE) != 0) this->EnsureSelectedClassIsValid();
-	if ((data & PFI_POSITION) != 0) this->EnsureSelectedClassIsVisible();
+	if (pi.Test(PickerInvalidation::Validate)) this->EnsureSelectedClassIsValid();
+	if (pi.Test(PickerInvalidation::Position)) this->EnsureSelectedClassIsVisible();
 
 	this->BuildPickerTypeList();
-	if ((data & PFI_VALIDATE) != 0) this->EnsureSelectedTypeIsValid();
-	if ((data & PFI_POSITION) != 0) this->EnsureSelectedTypeIsVisible();
+	if (pi.Test(PickerInvalidation::Validate)) this->EnsureSelectedTypeIsValid();
+	if (pi.Test(PickerInvalidation::Position)) this->EnsureSelectedTypeIsVisible();
 
 	if (this->has_type_picker) {
 		SetWidgetLoweredState(WID_PW_MODE_ALL, HasBit(this->callbacks.mode, PFM_ALL));
@@ -414,9 +431,9 @@ EventState PickerWindow::OnHotkey(int hotkey)
 	switch (hotkey) {
 		case PCWHK_FOCUS_FILTER_BOX:
 			/* Cycle between the two edit boxes. */
-			if (this->has_type_picker && (this->nested_focus == nullptr || this->nested_focus->index != WID_PW_TYPE_FILTER)) {
+			if (this->has_type_picker && (this->nested_focus == nullptr || this->nested_focus->GetIndex() != WID_PW_TYPE_FILTER)) {
 				this->SetFocusedWidget(WID_PW_TYPE_FILTER);
-			} else if (this->has_class_picker && (this->nested_focus == nullptr || this->nested_focus->index != WID_PW_CLASS_FILTER)) {
+			} else if (this->has_class_picker && (this->nested_focus == nullptr || this->nested_focus->GetIndex() != WID_PW_CLASS_FILTER)) {
 				this->SetFocusedWidget(WID_PW_CLASS_FILTER);
 			}
 			SetFocusedWindow(this);
@@ -435,15 +452,20 @@ void PickerWindow::OnEditboxChanged(WidgetID wid)
 {
 	switch (wid) {
 		case WID_PW_CLASS_FILTER:
-			this->class_string_filter.SetFilterTerm(this->class_editbox.text.buf);
+			this->class_string_filter.SetFilterTerm(this->class_editbox.text.GetText());
 			this->classes.SetFilterState(!class_string_filter.IsEmpty());
-			this->InvalidateData(PFI_CLASS);
+			this->InvalidateData(PickerInvalidation::Class);
 			break;
 
 		case WID_PW_TYPE_FILTER:
-			this->type_string_filter.SetFilterTerm(this->type_editbox.text.buf);
+			this->type_string_filter.SetFilterTerm(this->type_editbox.text.GetText());
+			if (!type_string_filter.IsEmpty()) {
+				this->type_string_filter.btf.emplace(this->type_string_filter, this->callbacks.GetFeature());
+			} else {
+				this->type_string_filter.btf.reset();
+			}
 			this->types.SetFilterState(!type_string_filter.IsEmpty());
-			this->InvalidateData(PFI_TYPE);
+			this->InvalidateData(PickerInvalidation::Type);
 			break;
 
 		default:
@@ -517,7 +539,7 @@ void PickerWindow::RefreshUsedTypeList()
 
 	this->callbacks.used.clear();
 	this->callbacks.FillUsedItems(this->callbacks.used);
-	this->InvalidateData(PFI_TYPE);
+	this->InvalidateData(PickerInvalidation::Type);
 }
 
 /** Builds the filter list of types. */
@@ -630,12 +652,12 @@ std::unique_ptr<NWidgetBase> MakePickerClassWidgets()
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_PW_CLASS_SEL),
 			NWidget(NWID_VERTICAL),
 				NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
-					NWidget(WWT_EDITBOX, COLOUR_DARK_GREEN, WID_PW_CLASS_FILTER), SetMinimalSize(144, 0), SetPadding(2), SetFill(1, 0), SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
+					NWidget(WWT_EDITBOX, COLOUR_DARK_GREEN, WID_PW_CLASS_FILTER), SetMinimalSize(144, 0), SetPadding(2), SetFill(1, 0), SetStringTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
 				EndContainer(),
 				NWidget(NWID_HORIZONTAL),
 					NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
 						NWidget(WWT_MATRIX, COLOUR_GREY, WID_PW_CLASS_LIST), SetFill(1, 1), SetResize(1, 1), SetPadding(WidgetDimensions::unscaled.picker),
-								SetMatrixDataTip(1, 0, STR_NULL), SetScrollbar(WID_PW_CLASS_SCROLL),
+								SetMatrixDataTip(1, 0), SetScrollbar(WID_PW_CLASS_SCROLL),
 					EndContainer(),
 					NWidget(NWID_VSCROLLBAR, COLOUR_DARK_GREEN, WID_PW_CLASS_SCROLL),
 				EndContainer(),
@@ -653,12 +675,12 @@ std::unique_ptr<NWidgetBase> MakePickerTypeWidgets()
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_PW_TYPE_SEL),
 			NWidget(NWID_VERTICAL),
 				NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
-					NWidget(WWT_EDITBOX, COLOUR_DARK_GREEN, WID_PW_TYPE_FILTER), SetPadding(2), SetResize(1, 0), SetFill(1, 0), SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
+					NWidget(WWT_EDITBOX, COLOUR_DARK_GREEN, WID_PW_TYPE_FILTER), SetPadding(2), SetResize(1, 0), SetFill(1, 0), SetStringTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
 				EndContainer(),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					NWidget(WWT_TEXTBTN, COLOUR_DARK_GREEN, WID_PW_MODE_ALL), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_PICKER_MODE_ALL, STR_PICKER_MODE_ALL_TOOLTIP),
-					NWidget(WWT_TEXTBTN, COLOUR_DARK_GREEN, WID_PW_MODE_USED), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_PICKER_MODE_USED, STR_PICKER_MODE_USED_TOOLTIP),
-					NWidget(WWT_TEXTBTN, COLOUR_DARK_GREEN, WID_PW_MODE_SAVED), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_PICKER_MODE_SAVED, STR_PICKER_MODE_SAVED_TOOLTIP),
+				NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize),
+					NWidget(WWT_TEXTBTN, COLOUR_DARK_GREEN, WID_PW_MODE_ALL), SetFill(1, 0), SetResize(1, 0), SetStringTip(STR_PICKER_MODE_ALL, STR_PICKER_MODE_ALL_TOOLTIP),
+					NWidget(WWT_TEXTBTN, COLOUR_DARK_GREEN, WID_PW_MODE_USED), SetFill(1, 0), SetResize(1, 0), SetStringTip(STR_PICKER_MODE_USED, STR_PICKER_MODE_USED_TOOLTIP),
+					NWidget(WWT_TEXTBTN, COLOUR_DARK_GREEN, WID_PW_MODE_SAVED), SetFill(1, 0), SetResize(1, 0), SetStringTip(STR_PICKER_MODE_SAVED, STR_PICKER_MODE_SAVED_TOOLTIP),
 				EndContainer(),
 				NWidget(NWID_HORIZONTAL),
 					NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetScrollbar(WID_PW_TYPE_SCROLL),
@@ -680,4 +702,14 @@ std::unique_ptr<NWidgetBase> MakePickerTypeWidgets()
 	};
 
 	return MakeNWidgets(picker_type_widgets, nullptr);
+}
+
+void InvalidateAllPickerWindows()
+{
+	InvalidateWindowClassesData(WC_BUS_STATION, PickerWindow::PICKER_INVALIDATION_ALL);
+	InvalidateWindowClassesData(WC_TRUCK_STATION, PickerWindow::PICKER_INVALIDATION_ALL);
+	InvalidateWindowClassesData(WC_SELECT_STATION, PickerWindow::PICKER_INVALIDATION_ALL);
+	InvalidateWindowClassesData(WC_BUILD_WAYPOINT, PickerWindow::PICKER_INVALIDATION_ALL);
+	InvalidateWindowClassesData(WC_BUILD_OBJECT, PickerWindow::PICKER_INVALIDATION_ALL);
+	InvalidateWindowClassesData(WC_BUILD_HOUSE, PickerWindow::PICKER_INVALIDATION_ALL);
 }

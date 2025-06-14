@@ -21,6 +21,8 @@
 #include "game_text.hpp"
 #include "game.hpp"
 
+#include "table/strings.h"
+
 /* Convert all Game related classes to Squirrel data. */
 #include "../script/api/game/game_includes.hpp"
 
@@ -33,7 +35,7 @@ GameInstance::GameInstance() :
 
 void GameInstance::Initialize(GameInfo *info)
 {
-	this->versionAPI = info->GetAPIVersion();
+	this->api_version = info->GetAPIVersion();
 
 	/* Register the GameController */
 	SQGSController_Register(this->engine);
@@ -50,7 +52,7 @@ void GameInstance::RegisterAPI()
 
 	RegisterGameTranslation(this->engine);
 
-	if (!this->LoadCompatibilityScripts(this->versionAPI, GAME_DIR)) this->Died();
+	if (!this->LoadCompatibilityScripts(GAME_DIR, GameInfo::ApiVersions)) this->Died();
 }
 
 int GameInstance::GetSetting(const std::string &name)
@@ -74,7 +76,7 @@ void GameInstance::Died()
 
 	const GameInfo *info = Game::GetInfo();
 	if (info != nullptr) {
-		ShowErrorMessage(STR_ERROR_AI_PLEASE_REPORT_CRASH, INVALID_STRING_ID, WL_WARNING);
+		ShowErrorMessage(GetEncodedString(STR_ERROR_AI_PLEASE_REPORT_CRASH), {}, WL_WARNING);
 
 		if (!info->GetURL().empty()) {
 			ScriptLog::Info("Please report the error to the following URL:");
@@ -92,8 +94,8 @@ void GameInstance::Died()
  */
 void CcGame(Commands cmd, const CommandCost &result, const CommandDataBuffer &data, CommandDataBuffer result_data)
 {
-	if (Game::GetGameInstance()->DoCommandCallback(result, data, std::move(result_data), cmd)) {
-		Game::GetGameInstance()->Continue();
+	if (Game::GetInstance()->DoCommandCallback(result, data, std::move(result_data), cmd)) {
+		Game::GetInstance()->Continue();
 	}
 }
 

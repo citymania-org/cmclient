@@ -217,8 +217,7 @@ void NetworkDrawChatMessage()
 	int string_height = 0;
 	for (auto &cmsg : _chatmsg_list) {
 		if (!show_all && cmsg.remove_time < now) continue;
-		SetDParamStr(0, cmsg.message);
-		string_height += GetStringLineCount(STR_JUST_RAW_STRING, width - 1) * GetCharacterHeight(FS_NORMAL) + NETWORK_CHAT_LINE_SPACING;
+		string_height += GetStringLineCount(GetString(STR_JUST_RAW_STRING, cmsg.message), width - 1) * GetCharacterHeight(FS_NORMAL) + NETWORK_CHAT_LINE_SPACING;
 	}
 
 	string_height = std::min<uint>(string_height, MAX_CHAT_MESSAGES * (GetCharacterHeight(FS_NORMAL) + NETWORK_CHAT_LINE_SPACING));
@@ -277,8 +276,7 @@ private:
 		}
 		for (const Town *t : Town::Iterate()) {
 			/* Get the town-name via the string-system */
-			SetDParam(0, t->index);
-			std::string town_name = GetString(STR_TOWN_NAME);
+			std::string town_name = GetString(STR_TOWN_NAME, t->index);
 			if (town_name.starts_with(query)) {
 				suggestions.push_back(std::move(town_name));
 			}
@@ -299,8 +297,8 @@ private:
 
 /** Window to enter the chat message in. */
 struct NetworkChatWindow : public Window {
-	DestType dtype;       ///< The type of destination.
-	int dest;             ///< The identifier of the destination.
+	DestType dtype{}; ///< The type of destination.
+	int dest = 0; ///< The identifier of the destination.
 	QueryString message_editbox; ///< Message editbox.
 	NetworkChatAutoCompletion chat_tab_completion; ///< Holds the state and logic of auto-completion of player names and towns on Tab press.
 
@@ -311,23 +309,13 @@ struct NetworkChatWindow : public Window {
 	 * @param dest The actual destination index.
 	 */
 	NetworkChatWindow(WindowDesc &desc, DestType type, int dest)
-			: Window(desc), message_editbox(NETWORK_CHAT_LENGTH), chat_tab_completion(&message_editbox.text)
+			: Window(desc), dtype(type), dest(dest), message_editbox(NETWORK_CHAT_LENGTH), chat_tab_completion(&message_editbox.text)
 	{
-		this->dtype   = type;
-		this->dest    = dest;
 		this->querystrings[WID_NC_TEXTBOX] = &this->message_editbox;
 		this->message_editbox.cancel_button = WID_NC_CLOSE;
 		this->message_editbox.ok_button = WID_NC_SENDBUTTON;
 
-		static const StringID chat_captions[] = {
-			STR_NETWORK_CHAT_ALL_CAPTION,
-			STR_NETWORK_CHAT_COMPANY_CAPTION,
-			STR_NETWORK_CHAT_CLIENT_CAPTION
-		};
-		assert((uint)this->dtype < lengthof(chat_captions));
-
 		this->CreateNestedTree();
-		this->GetWidget<NWidgetCore>(WID_NC_DESTINATION)->widget_data = chat_captions[this->dtype];
 		this->FinishInitNested(type);
 
 		this->SetFocusedWidget(WID_NC_TEXTBOX);
@@ -363,20 +351,29 @@ struct NetworkChatWindow : public Window {
 		return pt;
 	}
 
-	void SetStringParameters(WidgetID widget) const override
+	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
 	{
-		if (widget != WID_NC_DESTINATION) return;
+		if (widget != WID_NC_DESTINATION) return this->Window::GetWidgetString(widget, stringid);
+
+		static const StringID chat_captions[] = {
+			STR_NETWORK_CHAT_ALL_CAPTION,
+			STR_NETWORK_CHAT_COMPANY_CAPTION,
+			STR_NETWORK_CHAT_CLIENT_CAPTION
+		};
+		assert((uint)this->dtype < lengthof(chat_captions));
 
 		if (this->dtype == DESTTYPE_CLIENT) {
-			SetDParamStr(0, NetworkClientInfo::GetByClientID((ClientID)this->dest)->client_name);
+			return GetString(STR_NETWORK_CHAT_CLIENT_CAPTION, NetworkClientInfo::GetByClientID((ClientID)this->dest)->client_name);
 		}
+
+		return GetString(chat_captions[this->dtype]);
 	}
 
 	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
 			case WID_NC_SENDBUTTON: /* Send */
-				SendChat(this->message_editbox.text.buf, this->dtype, this->dest);
+				SendChat(this->message_editbox.text.GetText(), this->dtype, this->dest);
 				[[fallthrough]];
 
 			case WID_NC_CLOSE: /* Cancel */
@@ -419,10 +416,10 @@ static constexpr NWidgetPart _nested_chat_window_widgets[] = {
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY, WID_NC_CLOSE),
 		NWidget(WWT_PANEL, COLOUR_GREY, WID_NC_BACKGROUND),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXT, COLOUR_GREY, WID_NC_DESTINATION), SetMinimalSize(62, 12), SetPadding(1, 0, 1, 0), SetAlignment(SA_VERT_CENTER | SA_RIGHT), SetDataTip(STR_NULL, STR_NULL),
+				NWidget(WWT_TEXT, INVALID_COLOUR, WID_NC_DESTINATION), SetMinimalSize(62, 12), SetPadding(1, 0, 1, 0), SetAlignment(SA_VERT_CENTER | SA_RIGHT),
 				NWidget(WWT_EDITBOX, COLOUR_GREY, WID_NC_TEXTBOX), SetMinimalSize(100, 0), SetPadding(1, 0, 1, 0), SetResize(1, 0),
-																	SetDataTip(STR_NETWORK_CHAT_OSKTITLE, STR_NULL),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_NC_SENDBUTTON), SetMinimalSize(62, 12), SetPadding(1, 0, 1, 0), SetDataTip(STR_NETWORK_CHAT_SEND, STR_NULL),
+																	SetStringTip(STR_NETWORK_CHAT_OSKTITLE),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_NC_SENDBUTTON), SetMinimalSize(62, 12), SetPadding(1, 0, 1, 0), SetStringTip(STR_NETWORK_CHAT_SEND),
 			EndContainer(),
 		EndContainer(),
 	EndContainer(),
@@ -432,7 +429,7 @@ static constexpr NWidgetPart _nested_chat_window_widgets[] = {
 static WindowDesc _chat_window_desc(
 	WDP_MANUAL, nullptr, 0, 0,
 	WC_SEND_NETWORK_MSG, WC_NONE,
-	0,
+	{},
 	_nested_chat_window_widgets
 );
 

@@ -65,11 +65,6 @@ public:
 	static void NewEvent(class ScriptEvent *event);
 
 	/**
-	 * Get the current GameScript instance.
-	 */
-	static class GameInstance *GetGameInstance() { return Game::instance; }
-
-	/**
 	 * Get the current GameInfo.
 	 */
 	static class GameInfo *GetInfo() { return Game::info; }
@@ -98,22 +93,27 @@ public:
 	/**
 	 * Get the current active instance.
 	 */
-	static class GameInstance *GetInstance() { return Game::instance; }
+	static class GameInstance *GetInstance() { return Game::instance.get(); }
+
+	/**
+	 * Reset the current active instance.
+	 */
+	static void ResetInstance();
 
 	/** Wrapper function for GameScanner::HasGame */
-	static bool HasGame(const struct ContentInfo *ci, bool md5sum);
-	static bool HasGameLibrary(const ContentInfo *ci, bool md5sum);
+	static bool HasGame(const ContentInfo &ci, bool md5sum);
+	static bool HasGameLibrary(const ContentInfo &ci, bool md5sum);
 	/** Gets the ScriptScanner instance that is used to find Game scripts */
 	static GameScannerInfo *GetScannerInfo();
 	/** Gets the ScriptScanner instance that is used to find Game Libraries */
 	static GameScannerLibrary *GetScannerLibrary();
 
 private:
-	static uint frame_counter;                        ///< Tick counter for the Game code.
-	static class GameInstance *instance;              ///< Instance to the current active Game.
-	static class GameScannerInfo *scanner_info;       ///< Scanner for Game scripts.
-	static class GameScannerLibrary *scanner_library; ///< Scanner for GS Libraries.
-	static class GameInfo *info;                      ///< Current selected GameInfo.
+	static uint frame_counter; ///< Tick counter for the Game code.
+	static std::unique_ptr<GameInstance> instance; ///< Instance to the current active Game.
+	static std::unique_ptr<GameScannerInfo> scanner_info; ///< Scanner for Game scripts.
+	static std::unique_ptr<GameScannerLibrary> scanner_library; ///< Scanner for GS Libraries.
+	static GameInfo *info; ///< Current selected GameInfo.
 };
 
 #endif /* GAME_HPP */

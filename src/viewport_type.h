@@ -10,11 +10,20 @@
 #ifndef VIEWPORT_TYPE_H
 #define VIEWPORT_TYPE_H
 
+#include "core/enum_type.hpp"
 #include "zoom_type.h"
-#include "strings_type.h"
-#include "table/strings.h"
 
 class LinkGraphOverlay;
+
+/** Flags to control how Viewport Strings are rendered. */
+enum class ViewportStringFlag : uint8_t {
+	Small, ///< Draw using the small font.
+	Shadow, ///< Draw an extra text shadow. Should only be used with ViewportStringFlag::Small, as normal font already has a shadow.
+	ColourRect, ///< Draw a colour rect around the sign.
+	TransparentRect, ///< Draw a transparent rect around the sign.
+	TextColour, ///< Draw text in colour.
+};
+using ViewportStringFlags = EnumBitSet<ViewportStringFlag, uint8_t>;
 
 /**
  * Data structure for viewport, display of a part of the world
@@ -65,20 +74,20 @@ private:
 
 /** Location information about a sign as seen on the viewport */
 struct ViewportSign {
-	int32_t center;        ///< The center position of the sign
-	int32_t top;           ///< The top of the sign
-	uint16_t width_normal; ///< The width when not zoomed out (normal font)
-	uint16_t width_small;  ///< The width when zoomed out (small font)
+	int32_t center = 0; ///< The center position of the sign
+	int32_t top = 0; ///< The top of the sign
+	uint16_t width_normal = 0; ///< The width when not zoomed out (normal font)
+	uint16_t width_small = 0; ///< The width when zoomed out (small font)
 
 	auto operator<=>(const ViewportSign &) const = default;
 
-	void UpdatePosition(int center, int top, StringID str, StringID str_small = STR_NULL);
+	void UpdatePosition(int center, int top, std::string_view str, std::string_view str_small = {});
 	void MarkDirty(ZoomLevel maxzoom = ZOOM_LVL_MAX) const;
 };
 
 /** Specialised ViewportSign that tracks whether it is valid for entering into a Kdtree */
 struct TrackedViewportSign : ViewportSign {
-	bool kdtree_valid; ///< Are the sign data valid for use with the _viewport_sign_kdtree?
+	bool kdtree_valid = false; ///< Are the sign data valid for use with the _viewport_sign_kdtree?
 
 	auto operator<=>(const TrackedViewportSign &) const = default;
 
@@ -86,15 +95,10 @@ struct TrackedViewportSign : ViewportSign {
 	 * Update the position of the viewport sign.
 	 * Note that this function hides the base class function.
 	 */
-	void UpdatePosition(int center, int top, StringID str, StringID str_small = STR_NULL)
+	void UpdatePosition(int center, int top, std::string_view str, std::string_view str_small = {})
 	{
 		this->kdtree_valid = true;
 		this->ViewportSign::UpdatePosition(center, top, str, str_small);
-	}
-
-
-	TrackedViewportSign() : kdtree_valid{ false }
-	{
 	}
 };
 
@@ -102,7 +106,7 @@ struct TrackedViewportSign : ViewportSign {
  * Directions of zooming.
  * @see DoZoomInOutWindow
  */
-enum ZoomStateChange {
+enum ZoomStateChange : uint8_t {
 	ZOOM_IN   = 0, ///< Zoom in (get more detailed view).
 	ZOOM_OUT  = 1, ///< Zoom out (get helicopter view).
 	ZOOM_NONE = 2, ///< Hack, used to update the button status.
@@ -118,7 +122,7 @@ static const uint BB_HEIGHT_UNDER_BRIDGE = 6; ///< Everything that can be built 
 static const uint BB_Z_SEPARATOR         = 7; ///< Separates the bridge/tunnel from the things under/above it.
 
 /** Viewport place method (type of highlighted area and placed objects) */
-enum ViewportPlaceMethod {
+enum ViewportPlaceMethod : uint8_t {
 	VPM_X_OR_Y          =    0, ///< drag in X or Y direction
 	VPM_FIX_X           =    1, ///< drag only in X axis
 	VPM_FIX_Y           =    2, ///< drag only in Y axis
@@ -137,7 +141,7 @@ DECLARE_ENUM_AS_BIT_SET(ViewportPlaceMethod)
  * Drag and drop selection process, or, what to do with an area of land when
  * you've selected it.
  */
-enum ViewportDragDropSelectionProcess {
+enum ViewportDragDropSelectionProcess : uint8_t {
 	CM_DDSP_NONE,			   ///< CM Nothing is being built
 	DDSP_DEMOLISH_AREA,        ///< Clear area
 	DDSP_DEMOLISH_TREES,       ///< Clear trees

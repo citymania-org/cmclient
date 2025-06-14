@@ -12,65 +12,66 @@
 
 #include "engine_type.h"
 #include "vehicle_type.h"
+#include "core/enum_type.hpp"
 #include "core/pool_type.hpp"
 #include "newgrf_commons.h"
 #include "timer/timer_game_calendar.h"
 
 struct WagonOverride {
 	std::vector<EngineID> engines;
-	CargoID cargo;
+	CargoType cargo;
 	const SpriteGroup *group;
 };
 
 /** Flags used client-side in the purchase/autorenew engine list. */
-enum class EngineDisplayFlags : uint8_t {
-	None        = 0,         ///< No flag set.
-	HasVariants = (1U << 0), ///< Set if engine has variants.
-	IsFolded    = (1U << 1), ///< Set if display of variants should be folded (hidden).
-	Shaded      = (1U << 2), ///< Set if engine should be masked.
+enum class EngineDisplayFlag : uint8_t {
+	HasVariants, ///< Set if engine has variants.
+	IsFolded, ///< Set if display of variants should be folded (hidden).
+	Shaded, ///< Set if engine should be masked.
 };
-DECLARE_ENUM_AS_BIT_SET(EngineDisplayFlags)
 
-typedef Pool<Engine, EngineID, 64, 64000> EnginePool;
+using EngineDisplayFlags = EnumBitSet<EngineDisplayFlag, uint8_t>;
+
+typedef Pool<Engine, EngineID, 64> EnginePool;
 extern EnginePool _engine_pool;
 
 struct Engine : EnginePool::PoolItem<&_engine_pool> {
-	CompanyMask company_avail;  ///< Bit for each company whether the engine is available for that company.
-	CompanyMask company_hidden; ///< Bit for each company whether the engine is normally hidden in the build gui for that company.
-	CompanyMask preview_asked;  ///< Bit for each company which has already been offered a preview.
+	CompanyMask company_avail{}; ///< Bit for each company whether the engine is available for that company.
+	CompanyMask company_hidden{}; ///< Bit for each company whether the engine is normally hidden in the build gui for that company.
+	CompanyMask preview_asked{}; ///< Bit for each company which has already been offered a preview.
 
-	std::string name;           ///< Custom name of engine.
+	std::string name{}; ///< Custom name of engine.
 
-	TimerGameCalendar::Date intro_date; ///< Date of introduction of the engine.
-	int32_t age;                  ///< Age of the engine in months.
+	TimerGameCalendar::Date intro_date{}; ///< Date of introduction of the engine.
+	int32_t age = 0; ///< Age of the engine in months.
 
-	uint16_t reliability;         ///< Current reliability of the engine.
-	uint16_t reliability_spd_dec; ///< Speed of reliability decay between services (per day).
-	uint16_t reliability_start;   ///< Initial reliability of the engine.
-	uint16_t reliability_max;     ///< Maximal reliability of the engine.
-	uint16_t reliability_final;   ///< Final reliability of the engine.
-	uint16_t duration_phase_1;    ///< First reliability phase in months, increasing reliability from #reliability_start to #reliability_max.
-	uint16_t duration_phase_2;    ///< Second reliability phase in months, keeping #reliability_max.
-	uint16_t duration_phase_3;    ///< Third reliability phase in months, decaying to #reliability_final.
-	uint8_t flags;                 ///< Flags of the engine. @see EngineFlags
+	uint16_t reliability = 0; ///< Current reliability of the engine.
+	uint16_t reliability_spd_dec = 0; ///< Speed of reliability decay between services (per day).
+	uint16_t reliability_start = 0; ///< Initial reliability of the engine.
+	uint16_t reliability_max = 0; ///< Maximal reliability of the engine.
+	uint16_t reliability_final = 0; ///< Final reliability of the engine.
+	uint16_t duration_phase_1 = 0; ///< First reliability phase in months, increasing reliability from #reliability_start to #reliability_max.
+	uint16_t duration_phase_2 = 0; ///< Second reliability phase in months, keeping #reliability_max.
+	uint16_t duration_phase_3 = 0; ///< Third reliability phase in months, decaying to #reliability_final.
+	EngineFlags flags{}; ///< Flags of the engine. @see EngineFlags
 
-	CompanyID preview_company;  ///< Company which is currently being offered a preview \c INVALID_COMPANY means no company.
-	uint8_t preview_wait;          ///< Daily countdown timer for timeout of offering the engine to the #preview_company company.
-	uint8_t original_image_index; ///< Original vehicle image index, thus the image index of the overridden vehicle
-	VehicleType type;           ///< %Vehicle type, ie #VEH_ROAD, #VEH_TRAIN, etc.
+	CompanyID preview_company = CompanyID::Invalid();  ///< Company which is currently being offered a preview \c CompanyID::Invalid() means no company.
+	uint8_t preview_wait = 0; ///< Daily countdown timer for timeout of offering the engine to the #preview_company company.
+	uint8_t original_image_index = 0; ///< Original vehicle image index, thus the image index of the overridden vehicle
+	VehicleType type = VEH_INVALID; ///< %Vehicle type, ie #VEH_ROAD, #VEH_TRAIN, etc.
 
-	EngineDisplayFlags display_flags; ///< NOSAVE client-side-only display flags for build engine list.
-	EngineID display_last_variant;    ///< NOSAVE client-side-only last variant selected.
-	EngineInfo info;
+	EngineDisplayFlags display_flags{}; ///< NOSAVE client-side-only display flags for build engine list.
+	EngineID display_last_variant = EngineID::Invalid(); ///< NOSAVE client-side-only last variant selected.
+	EngineInfo info{};
 
 	union {
 		RailVehicleInfo rail;
 		RoadVehicleInfo road;
 		ShipVehicleInfo ship;
 		AircraftVehicleInfo air;
-	} u;
+	} u{};
 
-	uint16_t list_position;
+	uint16_t list_position = 0;
 
 	/* NewGRF related data */
 	/**
@@ -79,11 +80,12 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 	 * Used for obtaining the sprite offset of custom sprites, and for
 	 * evaluating callbacks.
 	 */
-	GRFFilePropsBase<NUM_CARGO + 2> grf_prop;
-	std::vector<WagonOverride> overrides;
+	VariableGRFFileProps grf_prop{};
+	std::vector<WagonOverride> overrides{};
+	std::vector<BadgeID> badges{};
 
 	Engine() {}
-	Engine(VehicleType type, EngineID base);
+	Engine(VehicleType type, uint16_t local_id);
 	bool IsEnabled() const;
 
 	/**
@@ -97,7 +99,7 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 	 * @return The default cargo type.
 	 * @see CanCarryCargo
 	 */
-	CargoID GetDefaultCargoType() const
+	CargoType GetDefaultCargoType() const
 	{
 		return this->info.cargo_type;
 	}
@@ -139,7 +141,7 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 	 */
 	inline bool IsHidden(CompanyID c) const
 	{
-		return c < MAX_COMPANIES && HasBit(this->company_hidden, c);
+		return c < MAX_COMPANIES && this->company_hidden.Test(c);
 	}
 
 	/**
@@ -148,7 +150,7 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 	 */
 	const Engine *GetDisplayVariant() const
 	{
-		if (this->display_last_variant == this->index || this->display_last_variant == INVALID_ENGINE) return this;
+		if (this->display_last_variant == this->index || this->display_last_variant == EngineID::Invalid()) return this;
 		return Engine::Get(this->display_last_variant);
 	}
 
@@ -194,11 +196,11 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 };
 
 struct EngineIDMapping {
-	uint32_t grfid; ///< The GRF ID of the file the entity belongs to
-	uint16_t internal_id; ///< The internal ID within the GRF file
-	VehicleType type; ///< The engine type
-	uint8_t substitute_id; ///< The (original) entity ID to use if this GRF is not available (currently not used)
-	EngineID engine;
+	uint32_t grfid = 0; ///< The GRF ID of the file the entity belongs to
+	uint16_t internal_id = 0; ///< The internal ID within the GRF file
+	VehicleType type{}; ///< The engine type
+	uint8_t substitute_id = 0; ///< The (original) entity ID to use if this GRF is not available (currently not used)
+	EngineID engine{};
 
 	static inline uint64_t Key(uint32_t grfid, uint16_t internal_id) { return static_cast<uint64_t>(grfid) << 32 | internal_id; }
 
@@ -211,7 +213,7 @@ struct EngineIDMapping {
 
 /** Projection to get a unique key of an EngineIDMapping, used for sorting in EngineOverrideManager. */
 struct EngineIDMappingKeyProjection {
-	inline size_t operator()(const EngineIDMapping &eid) const { return eid.Key(); }
+	inline uint64_t operator()(const EngineIDMapping &eid) const { return eid.Key(); }
 };
 
 /**

@@ -23,10 +23,14 @@
 #include "../window_func.h"
 #include "../framerate_type.h"
 #include "../library_loader.h"
+#include "../core/utf8.hpp"
 #include "win32_v.h"
 #include <windows.h>
 #include <imm.h>
 #include <versionhelpers.h>
+#if defined(_MSC_VER) && defined(NTDDI_WIN10_RS4)
+#include <winrt/Windows.UI.ViewManagement.h>
+#endif
 
 #include "../citymania/cm_hotkeys.hpp"
 
@@ -366,17 +370,19 @@ static LRESULT HandleIMEComposition(HWND hwnd, WPARAM wParam, LPARAM lParam)
 
 				/* Convert caret position from bytes in the input string to a position in the UTF-8 encoded string. */
 				LONG caret_bytes = ImmGetCompositionString(hIMC, GCS_CURSORPOS, nullptr, 0);
-				const char *caret = utf8_buf;
-				for (const wchar_t *c = str.c_str(); *c != '\0' && *caret != '\0' && caret_bytes > 0; c++, caret_bytes--) {
+				Utf8View view(utf8_buf);
+				auto caret = view.begin();
+				const auto end = view.end();
+				for (const wchar_t *c = str.c_str(); *c != '\0' && caret != end && caret_bytes > 0; c++, caret_bytes--) {
 					/* Skip DBCS lead bytes or leading surrogates. */
 					if (Utf16IsLeadSurrogate(*c)) {
 						c++;
 						caret_bytes--;
 					}
-					Utf8Consume(&caret);
+					++caret;
 				}
 
-				HandleTextInput(utf8_buf, true, caret);
+				HandleTextInput(utf8_buf, true, utf8_buf + caret.GetByteOffset());
 			} else {
 				HandleTextInput(nullptr, true);
 			}
@@ -399,10 +405,65 @@ static void CancelIMEComposition(HWND hwnd)
 	HandleTextInput(nullptr, true);
 }
 
+static bool IsDarkModeEnabled()
+{
+	/* Only build if SDK is Windows 10 1803 or later. */
+#if defined(_MSC_VER) && defined(NTDDI_WIN10_RS4)
+	if (IsWindows10OrGreater()) {
+		try {
+			/*
+			 * The official documented way to find out if the system is running in dark mode is to
+			 * check the brightness of the current theme's colour.
+			 * See: https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/ui/apply-windows-themes#know-when-dark-mode-is-enabled
+			 *
+			 * There are other variants floating around on the Internet, but they all rely on internal,
+			 * undocumented Windows functions that may or may not work in the future.
+			 */
+			winrt::Windows::UI::ViewManagement::UISettings settings;
+			auto foreground = settings.GetColorValue(winrt::Windows::UI::ViewManagement::UIColorType::Foreground);
+
+			/* If the Foreground colour is a light colour, the system is running in dark mode. */
+			return ((5 * foreground.G) + (2 * foreground.R) + foreground.B) > (8 * 128);
+		} catch (...) {
+			/* Some kind of error, like a too old Windows version. Just return false. */
+			return false;
+		}
+	}
+#endif /* defined(_MSC_VER) && defined(NTDDI_WIN10_RS4) */
+
+	return false;
+}
+
+static void SetDarkModeForWindow(HWND hWnd, bool dark_mode)
+{
+	/* Only build if SDK is Windows 10+. */
+#if defined(NTDDI_WIN10)
+	if (!IsWindows10OrGreater()) return;
+
+	/* This function is documented, but not supported on all Windows 10/11 SDK builds. For this
+	 * reason, the code uses dynamic loading and ignores any errors for a best-effort result. */
+	static LibraryLoader _dwmapi("dwmapi.dll");
+	typedef HRESULT(WINAPI *PFNDWMSETWINDOWATTRIBUTE)(HWND, DWORD, LPCVOID, DWORD);
+	static PFNDWMSETWINDOWATTRIBUTE DwmSetWindowAttribute = _dwmapi.GetFunction("DwmSetWindowAttribute");
+
+	if (DwmSetWindowAttribute != nullptr) {
+		/* Contrary to the published documentation, DWMWA_USE_IMMERSIVE_DARK_MODE does not change the
+		 * window chrome according to the current theme, but forces it to either light or dark mode.
+		 * As such, the set value has to depend on the current theming mode.*/
+		BOOL value = dark_mode ? TRUE : FALSE;
+		if (DwmSetWindowAttribute(hWnd, 20 /* DWMWA_USE_IMMERSIVE_DARK_MODE */, &value, sizeof(value)) != S_OK) {
+			DwmSetWindowAttribute(hWnd, 19 /* DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 */, &value, sizeof(value)); // Ignore errors. It works or it doesn't.
+		}
+	}
+#endif /* defined(NTDDI_WIN10) */
+}
+
 LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	static uint32_t keycode = 0;
 	static bool console = false;
+
+	const float SCROLL_BUILTIN_MULTIPLIER = 14.0f / WHEEL_DELTA;
 
 	VideoDriver_Win32Base *video_driver = (VideoDriver_Win32Base *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
@@ -412,6 +473,14 @@ LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			_cursor.in_window = false; // Win32 has mouse tracking.
 			SetCompositionPos(hwnd);
 			_imm_props = ImmGetProperty(GetKeyboardLayout(0), IGP_PROPERTY);
+
+			/* Enable dark mode theming for window chrome. */
+			SetDarkModeForWindow(hwnd, IsDarkModeEnabled());
+			break;
+
+		case WM_SETTINGCHANGE:
+			/* Synchronize dark mode theming state. */
+			SetDarkModeForWindow(hwnd, IsDarkModeEnabled());
 			break;
 
 		case WM_PAINT: {
@@ -722,6 +791,9 @@ LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 #if !defined(WM_MOUSEWHEEL)
 # define WM_MOUSEWHEEL 0x020A
 #endif  /* WM_MOUSEWHEEL */
+#if !defined(WM_MOUSEHWHEEL)
+# define WM_MOUSEHWHEEL 0x020E
+#endif  /* WM_MOUSEHWHEEL */
 #if !defined(GET_WHEEL_DELTA_WPARAM)
 # define GET_WHEEL_DELTA_WPARAM(wparam) ((short)HIWORD(wparam))
 #endif  /* GET_WHEEL_DELTA_WPARAM */
@@ -734,6 +806,18 @@ LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			} else if (delta > 0) {
 				_cursor.wheel--;
 			}
+
+			_cursor.v_wheel -= static_cast<float>(delta) * SCROLL_BUILTIN_MULTIPLIER * _settings_client.gui.scrollwheel_multiplier;
+			_cursor.wheel_moved = true;
+			HandleMouseEvents();
+			return 0;
+		}
+
+		case WM_MOUSEHWHEEL: {
+			int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+			_cursor.h_wheel += static_cast<float>(delta) * SCROLL_BUILTIN_MULTIPLIER * _settings_client.gui.scrollwheel_multiplier;
+			_cursor.wheel_moved = true;
 			HandleMouseEvents();
 			return 0;
 		}
@@ -1181,16 +1265,16 @@ void VideoDriver_Win32GDI::Paint()
 		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 
 		switch (blitter->UsePaletteAnimation()) {
-			case Blitter::PALETTE_ANIMATION_VIDEO_BACKEND:
+			case Blitter::PaletteAnimation::VideoBackend:
 				this->UpdatePalette(dc2, _local_palette.first_dirty, _local_palette.count_dirty);
 				break;
 
-			case Blitter::PALETTE_ANIMATION_BLITTER: {
+			case Blitter::PaletteAnimation::Blitter: {
 				blitter->PaletteAnimate(_local_palette);
 				break;
 			}
 
-			case Blitter::PALETTE_ANIMATION_NONE:
+			case Blitter::PaletteAnimation::None:
 				break;
 
 			default:
@@ -1525,7 +1609,7 @@ void VideoDriver_Win32OpenGL::Paint()
 
 		/* Always push a changed palette to OpenGL. */
 		OpenGLBackend::Get()->UpdatePalette(_local_palette.palette, _local_palette.first_dirty, _local_palette.count_dirty);
-		if (blitter->UsePaletteAnimation() == Blitter::PALETTE_ANIMATION_BLITTER) {
+		if (blitter->UsePaletteAnimation() == Blitter::PaletteAnimation::Blitter) {
 			blitter->PaletteAnimate(_local_palette);
 		}
 

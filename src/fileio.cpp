@@ -25,7 +25,6 @@
 #endif
 #include <charconv>
 #include <sys/stat.h>
-#include <sstream>
 #include <filesystem>
 
 #include "safeguards.h"
@@ -53,6 +52,7 @@ static const char * const _subdirs[] = {
 	"game" PATHSEP "library" PATHSEP,
 	"screenshot" PATHSEP,
 	"social_integration" PATHSEP,
+	"docs" PATHSEP,
 };
 static_assert(lengthof(_subdirs) == NUM_SUBDIRS);
 
@@ -258,8 +258,7 @@ std::optional<FileHandle> FioFOpenFile(const std::string &filename, const char *
 		/* Resolve ".." */
 		std::istringstream ss(resolved_name);
 		std::vector<std::string> tokens;
-		std::string token;
-		while (std::getline(ss, token, PATHSEPCHAR)) {
+		for (std::string token; std::getline(ss, token, PATHSEPCHAR); /* nothing */) {
 			if (token == "..") {
 				if (tokens.size() < 2) return std::nullopt;
 				tokens.pop_back();
@@ -381,26 +380,26 @@ uint TarScanner::DoScan(Subdirectory sd)
 	return num;
 }
 
-/* static */ uint TarScanner::DoScan(TarScanner::Mode mode)
+/* static */ uint TarScanner::DoScan(TarScanner::Modes modes)
 {
 	Debug(misc, 2, "Scanning for tars");
 	TarScanner fs;
 	uint num = 0;
-	if (mode & TarScanner::BASESET) {
+	if (modes.Test(TarScanner::Mode::Baseset)) {
 		num += fs.DoScan(BASESET_DIR);
 	}
-	if (mode & TarScanner::NEWGRF) {
+	if (modes.Test(TarScanner::Mode::NewGRF)) {
 		num += fs.DoScan(NEWGRF_DIR);
 	}
-	if (mode & TarScanner::AI) {
+	if (modes.Test(TarScanner::Mode::AI)) {
 		num += fs.DoScan(AI_DIR);
 		num += fs.DoScan(AI_LIBRARY_DIR);
 	}
-	if (mode & TarScanner::GAME) {
+	if (modes.Test(TarScanner::Mode::Game)) {
 		num += fs.DoScan(GAME_DIR);
 		num += fs.DoScan(GAME_LIBRARY_DIR);
 	}
-	if (mode & TarScanner::SCENARIO) {
+	if (modes.Test(TarScanner::Mode::Scenario)) {
 		num += fs.DoScan(SCENARIO_DIR);
 		num += fs.DoScan(HEIGHTMAP_DIR);
 	}
@@ -425,7 +424,7 @@ bool TarScanner::AddFile(Subdirectory sd, const std::string &filename)
  * header contains garbage and is malicious. So, we cannot rely on the string
  * being properly terminated.
  * As such, do not use strlen to determine the actual length (explicitly or
- * implictly via the std::string constructor), but pass the buffer bounds
+ * implicitly via the std::string constructor), but pass the buffer bounds
  * explicitly.
  * @param buffer The buffer to read from.
  * @return The string data.
@@ -558,7 +557,7 @@ bool TarScanner::AddFile(const std::string &filename, size_t, [[maybe_unused]] c
 
 				/* Store the first directory name we detect */
 				Debug(misc, 6, "Found dir in tar: {}", name);
-				if (_tar_list[this->subdir][filename].empty()) _tar_list[this->subdir][filename] = name;
+				if (_tar_list[this->subdir][filename].empty()) _tar_list[this->subdir][filename] = std::move(name);
 				break;
 
 			default:
@@ -783,7 +782,7 @@ void DetermineBasePaths(const char *exe)
 	_searchpaths[SP_PERSONAL_DIR].clear();
 #else
 	if (!homedir.empty()) {
-		tmp = homedir;
+		tmp = std::move(homedir);
 		tmp += PATHSEP;
 		tmp += PERSONAL_DIR;
 		AppendPathSeparator(tmp);
@@ -855,7 +854,7 @@ void DetermineBasePaths(const char *exe)
 #else
 	tmp = GLOBAL_DATA_DIR;
 	AppendPathSeparator(tmp);
-	_searchpaths[SP_INSTALLATION_DIR] = tmp;
+	_searchpaths[SP_INSTALLATION_DIR] = std::move(tmp);
 #endif
 #ifdef WITH_COCOA
 extern void CocoaSetApplicationBundleDir();
@@ -882,7 +881,7 @@ void DeterminePaths(const char *exe, bool only_local_path)
 
 #ifdef USE_XDG
 	std::string config_home;
-	const std::string homedir = GetHomeDir();
+	std::string homedir = GetHomeDir();
 	const char *xdg_config_home = std::getenv("XDG_CONFIG_HOME");
 	if (xdg_config_home != nullptr) {
 		config_home = xdg_config_home;
@@ -890,7 +889,7 @@ void DeterminePaths(const char *exe, bool only_local_path)
 		config_home += PERSONAL_DIR[0] == '.' ? &PERSONAL_DIR[1] : PERSONAL_DIR;
 	} else if (!homedir.empty()) {
 		/* Defaults to ~/.config */
-		config_home = homedir;
+		config_home = std::move(homedir);
 		config_home += PATHSEP ".config" PATHSEP;
 		config_home += PERSONAL_DIR[0] == '.' ? &PERSONAL_DIR[1] : PERSONAL_DIR;
 	}
@@ -910,7 +909,7 @@ void DeterminePaths(const char *exe, bool only_local_path)
 		if (!personal_dir.empty()) {
 			auto end = personal_dir.find_last_of(PATHSEPCHAR);
 			if (end != std::string::npos) personal_dir.erase(end + 1);
-			config_dir = personal_dir;
+			config_dir = std::move(personal_dir);
 		} else {
 #ifdef USE_XDG
 			/* No previous configuration file found. Use the configuration folder from XDG. */

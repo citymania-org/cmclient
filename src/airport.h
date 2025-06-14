@@ -25,7 +25,7 @@ static const uint NEW_AIRPORTTILE_OFFSET = 74;               ///< offset of firs
 static const uint INVALID_AIRPORTTILE    = NUM_AIRPORTTILES; ///< id for an invalid airport tile
 
 /** Airport types */
-enum AirportTypes {
+enum AirportTypes : uint8_t {
 	AT_SMALL           =   0, ///< Small airport.
 	AT_LARGE           =   1, ///< Large airport.
 	AT_HELIPORT        =   2, ///< Heli port.
@@ -44,20 +44,22 @@ enum AirportTypes {
 };
 
 /** Flags for airport movement data. */
-enum AirportMovingDataFlags {
-	AMED_NOSPDCLAMP = 1 << 0, ///< No speed restrictions.
-	AMED_TAKEOFF    = 1 << 1, ///< Takeoff movement.
-	AMED_SLOWTURN   = 1 << 2, ///< Turn slowly (mostly used in the air).
-	AMED_LAND       = 1 << 3, ///< Landing onto landing strip.
-	AMED_EXACTPOS   = 1 << 4, ///< Go exactly to the destination coordinates.
-	AMED_BRAKE      = 1 << 5, ///< Taxiing at the airport.
-	AMED_HELI_RAISE = 1 << 6, ///< Helicopter take-off.
-	AMED_HELI_LOWER = 1 << 7, ///< Helicopter landing.
-	AMED_HOLD       = 1 << 8, ///< Holding pattern movement (above the airport).
+enum AirportMovingDataFlag : uint8_t {
+	NoSpeedClamp, ///< No speed restrictions.
+	Takeoff, ///< Takeoff movement.
+	SlowTurn, ///< Turn slowly (mostly used in the air).
+	Land, ///< Landing onto landing strip.
+	ExactPosition, ///< Go exactly to the destination coordinates.
+	Brake, ///< Taxiing at the airport.
+	HeliRaise, ///< Helicopter take-off.
+	HeliLower, ///< Helicopter landing.
+	Hold, ///< Holding pattern movement (above the airport).
 };
 
+using AirportMovingDataFlags = EnumBitSet<AirportMovingDataFlag, uint16_t>;
+
 /** Movement States on Airports (headings target) */
-enum AirportMovementStates {
+enum AirportMovementStates : uint8_t {
 	TO_ALL         =   0, ///< Go in this direction for every target.
 	HANGAR         =   1, ///< Heading for hangar.
 	TERM1          =   2, ///< Heading for terminal 1.
@@ -85,53 +87,55 @@ enum AirportMovementStates {
 };
 
 /** Movement Blocks on Airports blocks (eg_airport_flags). */
-static const uint64_t
-	TERM1_block              = 1ULL <<  0, ///< Block belonging to terminal 1.
-	TERM2_block              = 1ULL <<  1, ///< Block belonging to terminal 2.
-	TERM3_block              = 1ULL <<  2, ///< Block belonging to terminal 3.
-	TERM4_block              = 1ULL <<  3, ///< Block belonging to terminal 4.
-	TERM5_block              = 1ULL <<  4, ///< Block belonging to terminal 5.
-	TERM6_block              = 1ULL <<  5, ///< Block belonging to terminal 6.
-	HELIPAD1_block           = 1ULL <<  6, ///< Block belonging to helipad 1.
-	HELIPAD2_block           = 1ULL <<  7, ///< Block belonging to helipad 2.
-	RUNWAY_IN_OUT_block      = 1ULL <<  8,
-	RUNWAY_IN_block          = 1ULL <<  8,
-	AIRPORT_BUSY_block       = 1ULL <<  8,
-	RUNWAY_OUT_block         = 1ULL <<  9,
-	TAXIWAY_BUSY_block       = 1ULL << 10,
-	OUT_WAY_block            = 1ULL << 11,
-	IN_WAY_block             = 1ULL << 12,
-	AIRPORT_ENTRANCE_block   = 1ULL << 13,
-	TERM_GROUP1_block        = 1ULL << 14,
-	TERM_GROUP2_block        = 1ULL << 15,
-	HANGAR2_AREA_block       = 1ULL << 16,
-	TERM_GROUP2_ENTER1_block = 1ULL << 17,
-	TERM_GROUP2_ENTER2_block = 1ULL << 18,
-	TERM_GROUP2_EXIT1_block  = 1ULL << 19,
-	TERM_GROUP2_EXIT2_block  = 1ULL << 20,
-	PRE_HELIPAD_block        = 1ULL << 21,
+enum class AirportBlock : uint8_t {
+	Term1            =  0, ///< Block belonging to terminal 1.
+	Term2            =  1, ///< Block belonging to terminal 2.
+	Term3            =  2, ///< Block belonging to terminal 3.
+	Term4            =  3, ///< Block belonging to terminal 4.
+	Term5            =  4, ///< Block belonging to terminal 5.
+	Term6            =  5, ///< Block belonging to terminal 6.
+	Helipad1         =  6, ///< Block belonging to helipad 1.
+	Helipad2         =  7, ///< Block belonging to helipad 2.
+	RunwayInOut      =  8,
+	RunwayIn         =  8,
+	AirportBusy      =  8,
+	RunwayOut        =  9,
+	TaxiwayBusy      = 10,
+	OutWay           = 11,
+	InWay            = 12,
+	AirportEntrance  = 13,
+	TermGroup1       = 14,
+	TermGroup2       = 15,
+	Hangar2Area      = 16,
+	TermGroup2Enter1 = 17,
+	TermGroup2Enter2 = 18,
+	TermGroup2Exit1  = 19,
+	TermGroup2Exit2  = 20,
+	PreHelipad       = 21,
 
 	/* blocks for new airports */
-	TERM7_block              = 1ULL << 22, ///< Block belonging to terminal 7.
-	TERM8_block              = 1ULL << 23, ///< Block belonging to terminal 8.
-	HELIPAD3_block           = 1ULL << 24, ///< Block belonging to helipad 3.
-	HANGAR1_AREA_block       = 1ULL << 26,
-	OUT_WAY2_block           = 1ULL << 27,
-	IN_WAY2_block            = 1ULL << 28,
-	RUNWAY_IN2_block         = 1ULL << 29,
-	RUNWAY_OUT2_block        = 1ULL << 10, ///< @note re-uses #TAXIWAY_BUSY_block
-	HELIPAD_GROUP_block      = 1ULL << 13, ///< @note re-uses #AIRPORT_ENTRANCE_block
-	OUT_WAY_block2           = 1ULL << 31,
+	Term7            = 22, ///< Block belonging to terminal 7.
+	Term8            = 23, ///< Block belonging to terminal 8.
+	Helipad3         = 24, ///< Block belonging to helipad 3.
+	Hangar1Area      = 26,
+	OutWay2          = 27,
+	InWay2           = 28,
+	RunwayIn2        = 29,
+	RunwayOut2       = 10, ///< @note re-uses #AirportBlock::TaxiwayBusy
+	HelipadGroup     = 13, ///< @note re-uses #AirportBlock::AirportEntrance
+	OutWay3          = 31,
 	/* end of new blocks */
 
-	NOTHING_block            = 1ULL << 30,
-	AIRPORT_CLOSED_block     = 1ULL << 63; ///< Dummy block for indicating a closed airport.
+	Nothing          = 30,
+	AirportClosed    = 63, ///< Dummy block for indicating a closed airport.
+};
+using AirportBlocks = EnumBitSet<AirportBlock, uint64_t>;
 
 /** A single location on an airport where aircraft can move to. */
 struct AirportMovingData {
 	int16_t x;             ///< x-coordinate of the destination.
 	int16_t y;             ///< y-coordinate of the destination.
-	uint16_t flag;         ///< special flags when moving towards the destination.
+	AirportMovingDataFlags flags; ///< special flags when moving towards the destination.
 	Direction direction; ///< Direction to turn the aircraft after reaching the destination.
 };
 
@@ -139,16 +143,27 @@ AirportMovingData RotateAirportMovingData(const AirportMovingData *orig, Directi
 
 struct AirportFTAbuildup;
 
+/** Internal structure used in openttd - Finite sTate mAchine --> FTA */
+struct AirportFTA {
+	AirportFTA(const AirportFTAbuildup&);
+
+	std::unique_ptr<AirportFTA> next; ///< possible extra movement choices from this position
+	AirportBlocks blocks; ///< bitmap of blocks that could be reserved
+	uint8_t position; ///< the position that an airplane is at
+	uint8_t next_position; ///< next position from this position
+	uint8_t heading; ///< heading (current orders), guiding an airplane to its target on an airport
+};
+
 /** Finite sTate mAchine (FTA) of an airport. */
 struct AirportFTAClass {
 public:
 	/** Bitmask of airport flags. */
-	enum Flags {
-		AIRPLANES   = 0x1,                     ///< Can planes land on this airport type?
-		HELICOPTERS = 0x2,                     ///< Can helicopters land on this airport type?
-		ALL         = AIRPLANES | HELICOPTERS, ///< Mask to check for both planes and helicopters.
-		SHORT_STRIP = 0x4,                     ///< This airport has a short landing strip, dangerous for fast aircraft.
+	enum class Flag : uint8_t {
+		Airplanes   = 0, ///< Can planes land on this airport type?
+		Helicopters = 1, ///< Can helicopters land on this airport type?
+		ShortStrip  = 2, ///< This airport has a short landing strip, dangerous for fast aircraft.
 	};
+	using Flags = EnumBitSet<Flag, uint8_t>;
 
 	AirportFTAClass(
 		const AirportMovingData *moving_data,
@@ -159,8 +174,6 @@ public:
 		const AirportFTAbuildup *apFA,
 		uint8_t delta_z
 	);
-
-	~AirportFTAClass();
 
 	/**
 	 * Get movement data at a position.
@@ -174,7 +187,7 @@ public:
 	}
 
 	const AirportMovingData *moving_data; ///< Movement data.
-	struct AirportFTA *layout;            ///< state machine for airport
+	std::vector<AirportFTA> layout; ///< state machine for airport
 	const uint8_t *terminals;                ///< %Array with the number of terminal groups, followed by the number of terminals in each group.
 	const uint8_t num_helipads;              ///< Number of helipads on this airport. When 0 helicopters will go to normal terminals.
 	Flags flags;                          ///< Flags for this airport type.
@@ -183,17 +196,6 @@ public:
 	uint8_t delta_z;                         ///< Z adjustment for helicopter pads
 };
 
-DECLARE_ENUM_AS_BIT_SET(AirportFTAClass::Flags)
-
-
-/** Internal structure used in openttd - Finite sTate mAchine --> FTA */
-struct AirportFTA {
-	AirportFTA *next;        ///< possible extra movement choices from this position
-	uint64_t block;            ///< 64 bit blocks (st->airport.flags), should be enough for the most complex airports
-	uint8_t position;           ///< the position that an airplane is at
-	uint8_t next_position;      ///< next position from this position
-	uint8_t heading;            ///< heading (current orders), guiding an airplane to its target on an airport
-};
 
 const AirportFTAClass *GetAirport(const uint8_t airport_type);
 uint8_t GetVehiclePosOnBuild(TileIndex hangar_tile);

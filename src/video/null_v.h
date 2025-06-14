@@ -15,7 +15,7 @@
 /** The null video driver. */
 class VideoDriver_Null : public VideoDriver {
 private:
-	uint ticks; ///< Amount of ticks to run.
+	uint ticks = 0; ///< Amount of ticks to run.
 	std::string savefile;
 
 public:
@@ -38,7 +38,7 @@ public:
 class FVideoDriver_Null : public DriverFactoryBase {
 public:
 	FVideoDriver_Null() : DriverFactoryBase(Driver::DT_VIDEO, 0, "null", "Null Video Driver") {}
-	Driver *CreateInstance() const override { return new VideoDriver_Null(); }
+	std::unique_ptr<Driver> CreateInstance() const override { return std::make_unique<VideoDriver_Null>(); }
 };
 
 #endif /* VIDEO_NULL_H */

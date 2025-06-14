@@ -15,7 +15,6 @@
 #include "palette_func.h"
 #include "string_func.h"
 #include "strings_func.h"
-#include "table/strings.h"
 #include "window_gui.h"
 
 /**
@@ -55,16 +54,9 @@ class DropDownString : public TBase {
 	Dimension dim; ///< Dimensions of string.
 public:
 	template <typename... Args>
-	explicit DropDownString(StringID string, Args&&... args) : TBase(std::forward<Args>(args)...)
+	explicit DropDownString(std::string &&string, Args&&... args) : TBase(std::forward<Args>(args)...)
 	{
-		this->SetString(GetString(string));
-	}
-
-	template <typename... Args>
-	explicit DropDownString(const std::string &string, Args&&... args) : TBase(std::forward<Args>(args)...)
-	{
-		SetDParamStr(0, string);
-		this->SetString(GetString(STR_JUST_RAW_STRING));
+		this->SetString(std::move(string));
 	}
 
 	void SetString(std::string &&string)
@@ -169,10 +161,31 @@ public:
 	}
 };
 
+/**
+ * Drop down indent component.
+ * @tparam TBase Base component.
+ * @tparam TEnd Position indent at end if true, or start if false.
+ */
+template <class TBase, bool TEnd = false>
+class DropDownIndent : public TBase {
+	uint indent;
+public:
+	template <typename... Args>
+	explicit DropDownIndent(uint indent, Args&&... args) : TBase(std::forward<Args>(args)...), indent(indent) {}
+
+	uint Width() const override { return this->indent * WidgetDimensions::scaled.hsep_indent + this->TBase::Width(); }
+
+	void Draw(const Rect &full, const Rect &r, bool sel, Colours bg_colour) const override
+	{
+		bool rtl = TEnd ^ (_current_text_dir == TD_RTL);
+		this->TBase::Draw(full, r.Indent(this->indent * WidgetDimensions::scaled.hsep_indent, rtl), sel, bg_colour);
+	}
+};
+
 /* Commonly used drop down list items. */
 using DropDownListDividerItem = DropDownDivider<DropDownListItem>;
 using DropDownListStringItem = DropDownString<DropDownListItem>;
 using DropDownListIconItem = DropDownIcon<DropDownString<DropDownListItem>>;
-using DropDownListCheckedItem = DropDownCheck<DropDownString<DropDownListItem>>;
+using DropDownListCheckedItem = DropDownIndent<DropDownCheck<DropDownString<DropDownListItem>>>;
 
 #endif /* DROPDOWN_COMMON_TYPE_H */

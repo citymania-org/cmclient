@@ -11,9 +11,10 @@
 #define SQUIRREL_HPP
 
 #include <squirrel.h>
+#include "../core/convertible_through_base.hpp"
 
 /** The type of script we're working with, i.e. for who is it? */
-enum class ScriptType {
+enum class ScriptType : uint8_t {
 	AI, ///< The script is for AI scripts.
 	GS, ///< The script is for Game scripts.
 };
@@ -22,6 +23,7 @@ struct ScriptAllocator;
 
 class Squirrel {
 	friend class ScriptAllocatorScope;
+	friend class ScriptInstance;
 
 private:
 	typedef void (SQPrintFunc)(bool error_msg, const std::string &message);
@@ -110,6 +112,8 @@ public:
 	 */
 	void AddConst(const char *var_name, uint value) { this->AddConst(var_name, (int)value); }
 
+	void AddConst(const char *var_name, const ConvertibleThroughBase auto &value) { this->AddConst(var_name, static_cast<int>(value.base())); }
+
 	/**
 	 * Adds a const to the stack. Depending on the current state this means
 	 *  either a const to a class or to the global space.
@@ -152,6 +156,7 @@ public:
 	void InsertResult(bool result);
 	void InsertResult(int result);
 	void InsertResult(uint result) { this->InsertResult((int)result); }
+	void InsertResult(ConvertibleThroughBase auto result) { this->InsertResult(static_cast<int>(result.base())); }
 
 	/**
 	 * Call a method of an instance, in various flavors.
@@ -190,7 +195,7 @@ public:
 	 * @note This will only work just after a function-call from within Squirrel
 	 *  to your C++ function.
 	 */
-	static bool GetRealInstance(HSQUIRRELVM vm, SQUserPointer *ptr) { return SQ_SUCCEEDED(sq_getinstanceup(vm, 1, ptr, nullptr)); }
+	static SQUserPointer GetRealInstance(HSQUIRRELVM vm, int index, const char *tag);
 
 	/**
 	 * Get the Squirrel-instance pointer.

@@ -12,6 +12,7 @@
 #include "gfx_layout.h"
 #include "string_func.h"
 #include "strings_func.h"
+#include "core/utf8.hpp"
 #include "debug.h"
 
 #include "table/control_codes.h"
@@ -63,26 +64,23 @@ Font::Font(FontSize size, TextColour colour) :
 template <typename T>
 static inline void GetLayouter(Layouter::LineCacheItem &line, std::string_view str, FontState &state)
 {
-	free(line.buffer);
+	typename T::CharType *buff_begin = new typename T::CharType[str.size() + 1];
+	/* Move ownership of buff_begin into the Buffer/unique_ptr. */
+	line.buffer = Layouter::LineCacheItem::Buffer(buff_begin, [](void *p) { delete[] reinterpret_cast<T::CharType *>(p); });
 
-	typename T::CharType *buff_begin = MallocT<typename T::CharType>(str.size() + 1);
 	const typename T::CharType *buffer_last = buff_begin + str.size() + 1;
 	typename T::CharType *buff = buff_begin;
 	FontMap &font_mapping = line.runs;
 	Font *f = Layouter::GetFont(state.fontsize, state.cur_colour);
 
-	line.buffer = buff_begin;
 	font_mapping.clear();
-
-	auto cur = str.begin();
 
 	/*
 	 * Go through the whole string while adding Font instances to the font map
 	 * whenever the font changes, and convert the wide characters into a format
 	 * usable by ParagraphLayout.
 	 */
-	for (; buff < buffer_last && cur != str.end();) {
-		char32_t c = Utf8Consume(cur);
+	for (char32_t c : Utf8View(str)) {
 		if (c == '\0' || c == '\n') {
 			/* Caller should already have filtered out these characters. */
 			NOT_REACHED();
@@ -102,6 +100,7 @@ static inline void GetLayouter(Layouter::LineCacheItem &line, std::string_view s
 			 * needed for RTL languages which need more proper shaping support. */
 			if (!T::SUPPORTS_RTL && IsTextDirectionChar(c)) continue;
 			buff += T::AppendToBuffer(buff, buffer_last, c);
+			if (buff >= buffer_last) break;
 			continue;
 		}
 
@@ -147,7 +146,7 @@ Layouter::Layouter(std::string_view str, int maxw, FontSize fontsize) : string(s
 			if (line.layout == nullptr) {
 				GetLayouter<ICUParagraphLayoutFactory>(line, str_line, state);
 				if (line.layout == nullptr) {
-					state = old_state;
+					state = std::move(old_state);
 				}
 			}
 #endif
@@ -156,7 +155,7 @@ Layouter::Layouter(std::string_view str, int maxw, FontSize fontsize) : string(s
 			if (line.layout == nullptr) {
 				GetLayouter<UniscribeParagraphLayoutFactory>(line, str_line, state);
 				if (line.layout == nullptr) {
-					state = old_state;
+					state = std::move(old_state);
 				}
 			}
 #endif
@@ -165,7 +164,7 @@ Layouter::Layouter(std::string_view str, int maxw, FontSize fontsize) : string(s
 			if (line.layout == nullptr) {
 				GetLayouter<CoreTextParagraphLayoutFactory>(line, str_line, state);
 				if (line.layout == nullptr) {
-					state = old_state;
+					state = std::move(old_state);
 				}
 			}
 #endif
@@ -235,23 +234,27 @@ ParagraphLayouter::Position Layouter::GetCharPosition(std::string_view::const_it
 		return p;
 	}
 
+	/* Initial position, returned if character not found. */
+	const ParagraphLayouter::Position initial_position = Point{_current_text_dir == TD_LTR ? 0 : line->GetWidth(), 0};
+
 	/* Find the code point index which corresponds to the char
 	 * pointer into our UTF-8 source string. */
 	size_t index = 0;
-	auto str = this->string.begin();
-	while (str < ch) {
-		char32_t c = Utf8Consume(str);
-		if (!IsConsumedFormattingCode(c)) index += line->GetInternalCharLength(c);
+	{
+		Utf8View view(this->string);
+		const size_t offset = ch - this->string.begin();
+		const auto pos = view.GetIterAtByte(offset);
+
+		/* We couldn't find the code point index. */
+		if (pos.GetByteOffset() != offset) return initial_position;
+
+		for (auto it = view.begin(); it < pos; ++it) {
+			char32_t c = *it;
+			if (!IsConsumedFormattingCode(c)) index += line->GetInternalCharLength(c);
+		}
 	}
 
-	/* Initial position, returned if character not found. */
-	const ParagraphLayouter::Position initial_position = Point{_current_text_dir == TD_LTR ? 0 : line->GetWidth(), 0};
 	const ParagraphLayouter::Position *position = &initial_position;
-
-	/* We couldn't find the code point index. */
-	if (str != ch) return *position;
-
-	/* Valid character. */
 
 	/* Scan all runs until we've found our code point index. */
 	size_t best_index = SIZE_MAX;
@@ -311,10 +314,11 @@ ptrdiff_t Layouter::GetCharAtPosition(int x, size_t line_index) const
 				size_t index = charmap[i];
 
 				size_t cur_idx = 0;
-				for (auto str = this->string.begin(); str != this->string.end();) {
-					if (cur_idx == index) return str - this->string.begin();
+				Utf8View view(this->string);
+				for (auto it = view.begin(), end = view.end(); it != end; ++it) {
+					if (cur_idx == index) return it.GetByteOffset();
 
-					char32_t c = Utf8Consume(str);
+					char32_t c = *it;
 					if (!IsConsumedFormattingCode(c)) cur_idx += line->GetInternalCharLength(c);
 				}
 			}

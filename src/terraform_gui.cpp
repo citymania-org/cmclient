@@ -215,18 +215,13 @@ void PlaceProc_DemolishArea(TileIndex tile)
 
 /** Terra form toolbar managing class. */
 struct TerraformToolbarWindow : Window {
-	int last_user_action; ///< Last started user action.
+	int last_user_action = INVALID_WID_TT; ///< Last started user action.
 
 	TerraformToolbarWindow(WindowDesc &desc, WindowNumber window_number) : Window(desc)
 	{
 		/* This is needed as we like to have the tree available on OnInit. */
 		this->CreateNestedTree();
 		this->FinishInitNested(window_number);
-		this->last_user_action = INVALID_WID_TT;
-	}
-
-	~TerraformToolbarWindow()
-	{
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
@@ -419,32 +414,32 @@ struct TerraformToolbarWindow : Window {
 static constexpr NWidgetPart _nested_terraform_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
-		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_LANDSCAPING_TOOLBAR, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_LANDSCAPING_TOOLBAR, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_STICKYBOX, COLOUR_DARK_GREEN),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_LOWER_LAND), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_TERRAFORM_DOWN, STR_LANDSCAPING_TOOLTIP_LOWER_A_CORNER_OF_LAND),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_TERRAFORM_DOWN, STR_LANDSCAPING_TOOLTIP_LOWER_A_CORNER_OF_LAND),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_RAISE_LAND), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_TERRAFORM_UP, STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_TERRAFORM_UP, STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_LEVEL_LAND), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_LEVEL_LAND, STR_LANDSCAPING_LEVEL_LAND_TOOLTIP),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_LEVEL_LAND, STR_LANDSCAPING_LEVEL_LAND_TOOLTIP),
 
 		NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetMinimalSize(4, 22), EndContainer(),
 
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_DEMOLISH), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
-        NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_DEMOLISH_TREES), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_DYNAMITE, CM_STR_TOOLTIP_DEMOLISH_TREES),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
+        NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_TT_DEMOLISH_TREES), SetMinimalSize(22, 22),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_DYNAMITE, CM_STR_TOOLTIP_DEMOLISH_TREES),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_BUY_LAND), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_BUY_LAND, STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_BUY_LAND, STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_DARK_GREEN, WID_TT_PLANT_TREES), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_PLANTTREES, STR_SCENEDIT_TOOLBAR_PLANT_TREES),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_PLANTTREES, STR_SCENEDIT_TOOLBAR_PLANT_TREES_TOOLTIP),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_TT_PLACE_SIGN), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_SIGN, STR_SCENEDIT_TOOLBAR_PLACE_SIGN),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_SIGN, STR_SCENEDIT_TOOLBAR_PLACE_SIGN_TOOLTIP),
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_TT_SHOW_PLACE_OBJECT),
 			NWidget(WWT_PUSHIMGBTN, COLOUR_DARK_GREEN, WID_TT_PLACE_OBJECT), SetMinimalSize(22, 22),
-								SetFill(0, 1), SetDataTip(SPR_IMG_TRANSMITTER, STR_SCENEDIT_TOOLBAR_PLACE_OBJECT),
+								SetFill(0, 1), SetSpriteTip(SPR_IMG_TRANSMITTER, STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP),
 		EndContainer(),
 	EndContainer(),
 };
@@ -452,7 +447,7 @@ static constexpr NWidgetPart _nested_terraform_widgets[] = {
 static WindowDesc _terraform_desc(
 	WDP_MANUAL, "toolbar_landscape", 0, 0,
 	WC_SCEN_LAND_GEN, WC_NONE,
-	WDF_CONSTRUCTION,
+	WindowDefaultFlag::Construction,
 	_nested_terraform_widgets,
 	&TerraformToolbarWindow::hotkeys
 );
@@ -550,7 +545,7 @@ static const int8_t _multi_terraform_coords[][2] = {
 static constexpr NWidgetPart _nested_scen_edit_land_gen_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
-		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetDataTip(STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_SHADEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_STICKYBOX, COLOUR_DARK_GREEN),
 	EndContainer(),
@@ -558,41 +553,41 @@ static constexpr NWidgetPart _nested_scen_edit_land_gen_widgets[] = {
 		NWidget(NWID_HORIZONTAL), SetPadding(2, 2, 7, 2),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_DEMOLISH), SetMinimalSize(22, 22),
-										SetFill(0, 1), SetDataTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
+										SetFill(0, 1), SetSpriteTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
 			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_LOWER_LAND), SetMinimalSize(22, 22),
-										SetFill(0, 1), SetDataTip(SPR_IMG_TERRAFORM_DOWN, STR_LANDSCAPING_TOOLTIP_LOWER_A_CORNER_OF_LAND),
+										SetFill(0, 1), SetSpriteTip(SPR_IMG_TERRAFORM_DOWN, STR_LANDSCAPING_TOOLTIP_LOWER_A_CORNER_OF_LAND),
 			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_RAISE_LAND), SetMinimalSize(22, 22),
-										SetFill(0, 1), SetDataTip(SPR_IMG_TERRAFORM_UP, STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND),
+										SetFill(0, 1), SetSpriteTip(SPR_IMG_TERRAFORM_UP, STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND),
 			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_LEVEL_LAND), SetMinimalSize(22, 22),
-										SetFill(0, 1), SetDataTip(SPR_IMG_LEVEL_LAND, STR_LANDSCAPING_LEVEL_LAND_TOOLTIP),
+										SetFill(0, 1), SetSpriteTip(SPR_IMG_LEVEL_LAND, STR_LANDSCAPING_LEVEL_LAND_TOOLTIP),
 			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_PLACE_ROCKS), SetMinimalSize(22, 22),
-										SetFill(0, 1), SetDataTip(SPR_IMG_ROCKS, STR_TERRAFORM_TOOLTIP_PLACE_ROCKY_AREAS_ON_LANDSCAPE),
+										SetFill(0, 1), SetSpriteTip(SPR_IMG_ROCKS, STR_TERRAFORM_TOOLTIP_PLACE_ROCKY_AREAS_ON_LANDSCAPE),
 			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_ETT_SHOW_PLACE_DESERT),
 				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_PLACE_DESERT), SetMinimalSize(22, 22),
-											SetFill(0, 1), SetDataTip(SPR_IMG_DESERT, STR_TERRAFORM_TOOLTIP_DEFINE_DESERT_AREA),
+											SetFill(0, 1), SetSpriteTip(SPR_IMG_DESERT, STR_TERRAFORM_TOOLTIP_DEFINE_DESERT_AREA),
 			EndContainer(),
 			NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_ETT_PLACE_OBJECT), SetMinimalSize(23, 22),
-										SetFill(0, 1), SetDataTip(SPR_IMG_TRANSMITTER, STR_SCENEDIT_TOOLBAR_PLACE_OBJECT),
+										SetFill(0, 1), SetSpriteTip(SPR_IMG_TRANSMITTER, STR_SCENEDIT_TOOLBAR_PLACE_OBJECT_TOOLTIP),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL),
 			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_EMPTY, COLOUR_DARK_GREEN, WID_ETT_DOTS), SetMinimalSize(59, 31), SetDataTip(STR_EMPTY, STR_NULL),
+			NWidget(WWT_EMPTY, INVALID_COLOUR, WID_ETT_DOTS), SetMinimalSize(59, 31), SetStringTip(STR_EMPTY),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetFill(0, 1),
-				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_INCREASE_SIZE), SetMinimalSize(12, 12), SetDataTip(SPR_ARROW_UP, STR_TERRAFORM_TOOLTIP_INCREASE_SIZE_OF_LAND_AREA),
+				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_INCREASE_SIZE), SetMinimalSize(12, 12), SetSpriteTip(SPR_ARROW_UP, STR_TERRAFORM_TOOLTIP_INCREASE_SIZE_OF_LAND_AREA),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 1),
-				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_DECREASE_SIZE), SetMinimalSize(12, 12), SetDataTip(SPR_ARROW_DOWN, STR_TERRAFORM_TOOLTIP_DECREASE_SIZE_OF_LAND_AREA),
+				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_ETT_DECREASE_SIZE), SetMinimalSize(12, 12), SetSpriteTip(SPR_ARROW_DOWN, STR_TERRAFORM_TOOLTIP_DECREASE_SIZE_OF_LAND_AREA),
 				NWidget(NWID_SPACER), SetFill(0, 1),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(2, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 6),
 		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_ETT_NEW_SCENARIO), SetMinimalSize(160, 12),
-								SetFill(1, 0), SetDataTip(STR_TERRAFORM_SE_NEW_WORLD, STR_TERRAFORM_TOOLTIP_GENERATE_RANDOM_LAND), SetPadding(0, 2, 0, 2),
+								SetFill(1, 0), SetStringTip(STR_TERRAFORM_SE_NEW_WORLD, STR_TERRAFORM_TOOLTIP_GENERATE_RANDOM_LAND), SetPadding(0, 2, 0, 2),
 		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_ETT_RESET_LANDSCAPE), SetMinimalSize(160, 12),
-								SetFill(1, 0), SetDataTip(STR_TERRAFORM_RESET_LANDSCAPE, STR_TERRAFORM_RESET_LANDSCAPE_TOOLTIP), SetPadding(1, 2, 2, 2),
+								SetFill(1, 0), SetStringTip(STR_TERRAFORM_RESET_LANDSCAPE, STR_TERRAFORM_RESET_LANDSCAPE_TOOLTIP), SetPadding(1, 2, 2, 2),
 	EndContainer(),
 };
 
@@ -618,7 +613,7 @@ static void ResetLandscapeConfirmationCallback(Window *, bool confirmed)
 		/* Delete all station signs */
 		for (BaseStation *st : BaseStation::Iterate()) {
 			/* There can be buoys, remove them */
-			if (IsBuoyTile(st->xy)) Command<CMD_LANDSCAPE_CLEAR>::Do(DC_EXEC | DC_BANKRUPT, st->xy);
+			if (IsBuoyTile(st->xy)) Command<CMD_LANDSCAPE_CLEAR>::Do({DoCommandFlag::Execute, DoCommandFlag::Bankrupt}, st->xy);
 			if (!st->IsInUse()) delete st;
 		}
 
@@ -631,15 +626,14 @@ static void ResetLandscapeConfirmationCallback(Window *, bool confirmed)
 
 /** Landscape generation window handler in the scenario editor. */
 struct ScenarioEditorLandscapeGenerationWindow : Window {
-	int last_user_action; ///< Last started user action.
+	int last_user_action = INVALID_WID_ETT; ///< Last started user action.
 
 	ScenarioEditorLandscapeGenerationWindow(WindowDesc &desc, WindowNumber window_number) : Window(desc)
 	{
 		this->CreateNestedTree();
 		NWidgetStacked *show_desert = this->GetWidget<NWidgetStacked>(WID_ETT_SHOW_PLACE_DESERT);
-		show_desert->SetDisplayedPlane(_settings_game.game_creation.landscape == LT_TROPIC ? 0 : SZSP_NONE);
+		show_desert->SetDisplayedPlane(_settings_game.game_creation.landscape == LandscapeType::Tropic ? 0 : SZSP_NONE);
 		this->FinishInitNested(window_number);
-		this->last_user_action = INVALID_WID_ETT;
 	}
 
 	void OnPaint() override
@@ -735,7 +729,10 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 				break;
 
 			case WID_ETT_RESET_LANDSCAPE: // Reset landscape
-				ShowQuery(STR_QUERY_RESET_LANDSCAPE_CAPTION, STR_RESET_LANDSCAPE_CONFIRMATION_TEXT, nullptr, ResetLandscapeConfirmationCallback);
+				ShowQuery(
+					GetEncodedString(STR_QUERY_RESET_LANDSCAPE_CAPTION),
+					GetEncodedString(STR_RESET_LANDSCAPE_CONFIRMATION_TEXT),
+					nullptr, ResetLandscapeConfirmationCallback);
 				break;
 
 			default: NOT_REACHED();
@@ -836,7 +833,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 static WindowDesc _scen_edit_land_gen_desc(
 	WDP_AUTO, "toolbar_landscape_scen", 0, 0,
 	WC_SCEN_LAND_GEN, WC_NONE,
-	WDF_CONSTRUCTION,
+	WindowDefaultFlag::Construction,
 	_nested_scen_edit_land_gen_widgets,
 	&ScenarioEditorLandscapeGenerationWindow::hotkeys
 );

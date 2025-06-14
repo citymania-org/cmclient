@@ -54,12 +54,12 @@ constexpr CommandFlags GetCommandFlags()
  * @param cmd_flags Flags from GetCommandFlags
  * @return flags for DoCommand
  */
-static constexpr inline DoCommandFlag CommandFlagsToDCFlags(CommandFlags cmd_flags)
+static constexpr inline DoCommandFlags CommandFlagsToDCFlags(CommandFlags cmd_flags)
 {
-	DoCommandFlag flags = DC_NONE;
-	if (cmd_flags & CMD_NO_WATER) flags |= DC_NO_WATER;
-	if (cmd_flags & CMD_AUTO) flags |= DC_AUTO;
-	if (cmd_flags & CMD_ALL_TILES) flags |= DC_ALL_TILES;
+	DoCommandFlags flags = {};
+	if (cmd_flags.Test(CommandFlag::NoWater)) flags.Set(DoCommandFlag::NoWater);
+	if (cmd_flags.Test(CommandFlag::Auto)) flags.Set(DoCommandFlag::Auto);
+	if (cmd_flags.Test(CommandFlag::AllTiles)) flags.Set(DoCommandFlag::AllTiles);
 	return flags;
 }
 
@@ -89,14 +89,14 @@ private:
 #	define SILENCE_GCC_FUNCTION_POINTER_CAST
 #endif
 
-template<Commands TCmd, typename T, bool THasTile> struct CommandHelper;
+template <Commands TCmd, typename T, bool THasTile> struct CommandHelper;
 
 class CommandHelperBase {
 protected:
 	static void InternalDoBefore(bool top_level, bool test);
-	static void InternalDoAfter(CommandCost &res, DoCommandFlag flags, bool top_level, bool test);
+	static void InternalDoAfter(CommandCost &res, DoCommandFlags flags, bool top_level, bool test);
 	static std::tuple<bool, bool, bool> InternalPostBefore(Commands cmd, CommandFlags flags, TileIndex tile, StringID err_message, bool network_command);
-	static void InternalPostResult(const CommandCost &res, TileIndex tile, bool estimate_only, bool only_sending, StringID err_message, bool my_cmd);
+	static void InternalPostResult(CommandCost &res, TileIndex tile, bool estimate_only, bool only_sending, StringID err_message, bool my_cmd);
 	static bool InternalExecutePrepTest(CommandFlags cmd_flags, TileIndex tile, Backup<CompanyID> &cur_company);
 	static std::tuple<bool, bool, bool> InternalExecuteValidateTestAndPrepExec(CommandCost &res, CommandFlags cmd_flags, bool estimate_only, bool network_command, Backup<CompanyID> &cur_company);
 	static CommandCost InternalExecuteProcessResult(Commands cmd, CommandFlags cmd_flags, const CommandCost &res_test, const CommandCost &res_exec, Money extra_cash, TileIndex tile, Backup<CompanyID> &cur_company);
@@ -111,7 +111,7 @@ protected:
  * @tparam Targs The command parameter types.
  */
 template <Commands Tcmd, typename Tret, typename... Targs>
-struct CommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...), true> : protected CommandHelperBase {
+struct CommandHelper<Tcmd, Tret(*)(DoCommandFlags, Targs...), true> : protected CommandHelperBase {
 private:
 	/** Extract the \c CommandCost from a command proc result. */
 	static inline CommandCost &ExtractCommandCost(Tret &ret)
@@ -145,23 +145,23 @@ public:
 	 * @see CommandProc
 	 * @return the cost
 	 */
-	static Tret Do(DoCommandFlag flags, Targs... args)
+	static Tret Do(DoCommandFlags flags, Targs... args)
 	{
 		if constexpr (std::is_same_v<TileIndex, std::tuple_element_t<0, std::tuple<Targs...>>>) {
 			/* Do not even think about executing out-of-bounds tile-commands. */
 			TileIndex tile = std::get<0>(std::make_tuple(args...));
-			if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && (flags & DC_ALL_TILES) == 0))) return MakeResult(CMD_ERROR);
+			if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && !flags.Test(DoCommandFlag::AllTiles)))) return MakeResult(CMD_ERROR);
 		}
 
 		RecursiveCommandCounter counter{};
 
 		/* Only execute the test call if it's toplevel, or we're not execing. */
-		if (counter.IsTopLevel() || !(flags & DC_EXEC)) {
+		if (counter.IsTopLevel() || !flags.Test(DoCommandFlag::Execute)) {
 			InternalDoBefore(counter.IsTopLevel(), true);
-			Tret res = CommandTraits<Tcmd>::proc(flags & ~DC_EXEC, args...);
+			Tret res = CommandTraits<Tcmd>::proc(DoCommandFlags{flags}.Reset(DoCommandFlag::Execute), args...);
 			InternalDoAfter(ExtractCommandCost(res), flags, counter.IsTopLevel(), true); // Can modify res.
 
-			if (ExtractCommandCost(res).Failed() || !(flags & DC_EXEC)) return res;
+			if (ExtractCommandCost(res).Failed() || !flags.Test(DoCommandFlag::Execute)) return res;
 		}
 
 		/* Execute the command here. All cost-relevant functions set the expenses type
@@ -264,7 +264,7 @@ protected:
 	}
 
 	/** Set all invalid ClientID's to the proper value. */
-	template<class Ttuple, size_t... Tindices>
+	template <class Ttuple, size_t... Tindices>
 	static inline void SetClientIds(Ttuple &values, std::index_sequence<Tindices...>)
 	{
 		((SetClientIdHelper(std::get<Tindices>(values))), ...);
@@ -293,13 +293,13 @@ protected:
 	static bool InternalPost(StringID err_message, Tcallback *callback, bool my_cmd, bool network_command, TileIndex tile, std::tuple<Targs...> args)
 	{
 		/* Do not even think about executing out-of-bounds tile-commands. */
-		if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && (GetCommandFlags<Tcmd>() & CMD_ALL_TILES) == 0))) return false;
+		if (tile != 0 && (tile >= Map::Size() || (!IsValidTile(tile) && !GetCommandFlags<Tcmd>().Test(CommandFlag::AllTiles)))) return false;
 
 		auto [err, estimate_only, only_sending] = InternalPostBefore(Tcmd, GetCommandFlags<Tcmd>(), tile, err_message, network_command);
 		if (err) return false;
 
 		/* Only set client IDs when the command does not come from the network. */
-		if (!network_command && GetCommandFlags<Tcmd>() & CMD_CLIENT_ID) SetClientIds(args, std::index_sequence_for<Targs...>{});
+		if (!network_command && GetCommandFlags<Tcmd>().Test(CommandFlag::ClientID)) SetClientIds(args, std::index_sequence_for<Targs...>{});
 
 		Tret res = Execute(err_message, reinterpret_cast<CommandCallback *>(reinterpret_cast<void(*)()>(callback)), my_cmd, estimate_only, network_command, tile, args);
 		InternalPostResult(ExtractCommandCost(res), tile, estimate_only, only_sending, err_message, my_cmd);
@@ -345,13 +345,13 @@ protected:
 	}
 
 	/** Check if all ClientID arguments are set to valid values. */
-	template<class Ttuple, size_t... Tindices>
+	template <class Ttuple, size_t... Tindices>
 	static inline bool AllClientIdsSet(Ttuple &values, std::index_sequence<Tindices...>)
 	{
 		return (ClientIdIsSet(std::get<Tindices>(values)) && ...);
 	}
 
-	template<class Ttuple>
+	template <class Ttuple>
 	static inline Money ExtractAdditionalMoney([[maybe_unused]] Ttuple &values)
 	{
 		if constexpr (std::is_same_v<std::tuple_element_t<1, Tret>, Money>) {
@@ -370,7 +370,7 @@ protected:
 		/* Command flags are used internally */
 		constexpr CommandFlags cmd_flags = GetCommandFlags<Tcmd>();
 
-		if constexpr ((cmd_flags & CMD_CLIENT_ID) != 0) {
+		if constexpr (cmd_flags.Test(CommandFlag::ClientID)) {
 			/* Make sure arguments are properly set to a ClientID also when processing external commands. */
 			assert(AllClientIdsSet(args, std::index_sequence_for<Targs...>{}));
 		}
@@ -382,7 +382,7 @@ protected:
 		}
 
 		/* Test the command. */
-		DoCommandFlag flags = CommandFlagsToDCFlags(cmd_flags);
+		DoCommandFlags flags = CommandFlagsToDCFlags(cmd_flags);
 		Tret res = std::apply(CommandTraits<Tcmd>::proc, std::tuple_cat(std::make_tuple(flags), args));
 
 		auto [exit_test, desync_log, send_net] = InternalExecuteValidateTestAndPrepExec(ExtractCommandCost(res), cmd_flags, estimate_only, network_command, cur_company);
@@ -409,7 +409,7 @@ protected:
 
 		// Debug(misc, 0, "EXEC {}/{} {} {}({}) seed={} company={} tile={}", _date, _date_fract, _frame_counter, GetCommandName(Tcmd), Tcmd, _random.state[0] & 0xFF, (int)_current_company, tile);
 		/* Actually try and execute the command. */
-		Tret res2 = std::apply(CommandTraits<Tcmd>::proc, std::tuple_cat(std::make_tuple(flags | DC_EXEC), args));
+		Tret res2 = std::apply(CommandTraits<Tcmd>::proc, std::tuple_cat(std::make_tuple(flags | DoCommandFlag::Execute), args));
 
 		/* Convention: If the second result element is of type Money,
 		 * this is the additional cash required for the command. */
@@ -435,7 +435,7 @@ protected:
  * @tparam Targs The command parameter types.
  */
 template <Commands Tcmd, typename Tret, typename... Targs>
-struct CommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...), false> : CommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...), true>
+struct CommandHelper<Tcmd, Tret(*)(DoCommandFlags, Targs...), false> : CommandHelper<Tcmd, Tret(*)(DoCommandFlags, Targs...), true>
 {
 	/* Do not allow Post without explicit location. */
 	static inline bool Post(StringID err_message, Targs... args) = delete;
@@ -478,7 +478,7 @@ struct CommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...), false> : CommandHel
 	template <typename Tcallback>
 	static inline bool Post(StringID err_message, Tcallback *callback, TileIndex location, Targs... args)
 	{
-		return CommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...), true>::InternalPost(err_message, callback, true, false, location, std::forward_as_tuple(args...));
+		return CommandHelper<Tcmd, Tret(*)(DoCommandFlags, Targs...), true>::InternalPost(err_message, callback, true, false, location, std::forward_as_tuple(args...));
 	}
 };
 
@@ -487,6 +487,6 @@ struct CommandHelper<Tcmd, Tret(*)(DoCommandFlag, Targs...), false> : CommandHel
 #endif
 
 template <Commands Tcmd>
-using Command = CommandHelper<Tcmd, typename CommandTraits<Tcmd>::ProcType, (GetCommandFlags<Tcmd>() & CMD_LOCATION) == 0>;
+using Command = CommandHelper<Tcmd, typename CommandTraits<Tcmd>::ProcType, !GetCommandFlags<Tcmd>().Test(CommandFlag::Location)>;
 
 #endif /* COMMAND_FUNC_H */

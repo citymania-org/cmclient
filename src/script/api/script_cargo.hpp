@@ -25,16 +25,21 @@ public:
 	 */
 	enum CargoClass {
 		/* Note: these values represent part of the in-game CargoClass enum */
-		CC_PASSENGERS   = ::CC_PASSENGERS,   ///< Passengers. Cargoes of this class appear at bus stops. Cargoes not of this class appear at truck stops.
-		CC_MAIL         = ::CC_MAIL,         ///< Mail
-		CC_EXPRESS      = ::CC_EXPRESS,      ///< Express cargo (Goods, Food, Candy, but also possible for passengers)
-		CC_ARMOURED     = ::CC_ARMOURED,     ///< Armoured cargo (Valuables, Gold, Diamonds)
-		CC_BULK         = ::CC_BULK,         ///< Bulk cargo (Coal, Grain etc., Ores, Fruit)
-		CC_PIECE_GOODS  = ::CC_PIECE_GOODS,  ///< Piece goods (Livestock, Wood, Steel, Paper)
-		CC_LIQUID       = ::CC_LIQUID,       ///< Liquids (Oil, Water, Rubber)
-		CC_REFRIGERATED = ::CC_REFRIGERATED, ///< Refrigerated cargo (Food, Fruit)
-		CC_HAZARDOUS    = ::CC_HAZARDOUS,    ///< Hazardous cargo (Nuclear Fuel, Explosives, etc.)
-		CC_COVERED      = ::CC_COVERED,      ///< Covered/Sheltered Freight (Transportation in Box Vans, Silo Wagons, etc.)
+		CC_PASSENGERS   = ::CargoClasses{::CargoClass::Passengers}.base(),   ///< Passengers. Cargoes of this class appear at bus stops. Cargoes not of this class appear at truck stops.
+		CC_MAIL         = ::CargoClasses{::CargoClass::Mail}.base(),         ///< Mail
+		CC_EXPRESS      = ::CargoClasses{::CargoClass::Express}.base(),      ///< Express cargo (Goods, Food, Candy, but also possible for passengers)
+		CC_ARMOURED     = ::CargoClasses{::CargoClass::Armoured}.base(),     ///< Armoured cargo (Valuables, Gold, Diamonds)
+		CC_BULK         = ::CargoClasses{::CargoClass::Bulk}.base(),         ///< Bulk cargo (Coal, Grain etc., Ores, Fruit)
+		CC_PIECE_GOODS  = ::CargoClasses{::CargoClass::PieceGoods}.base(),   ///< Piece goods (Livestock, Wood, Steel, Paper)
+		CC_LIQUID       = ::CargoClasses{::CargoClass::Liquid}.base(),       ///< Liquids (Oil, Water, Rubber)
+		CC_REFRIGERATED = ::CargoClasses{::CargoClass::Refrigerated}.base(), ///< Refrigerated cargo (Food, Fruit)
+		CC_HAZARDOUS    = ::CargoClasses{::CargoClass::Hazardous}.base(),    ///< Hazardous cargo (Nuclear Fuel, Explosives, etc.)
+		CC_COVERED      = ::CargoClasses{::CargoClass::Covered}.base(),      ///< Covered/Sheltered Freight (Transportation in Box Vans, Silo Wagons, etc.)
+		CC_OVERSIZED    = ::CargoClasses{::CargoClass::Oversized}.base(),    ///< Oversized (stake/flatbed wagon)
+		CC_POWDERIZED   = ::CargoClasses{::CargoClass::Powderized}.base(),   ///< Powderized, moist protected (powder/silo wagon)
+		CC_NON_POURABLE = ::CargoClasses{::CargoClass::NotPourable}.base(),  ///< Non-pourable (open wagon, but not hopper wagon)
+		CC_POTABLE      = ::CargoClasses{::CargoClass::Potable}.base(),      ///< Potable / food / clean.
+		CC_NON_POTABLE  = ::CargoClasses{::CargoClass::NonPotable}.base(),   ///< Non-potable / non-food / dirty.
 	};
 
 	/**
@@ -53,7 +58,7 @@ public:
 	/**
 	 * Special cargo types.
 	 */
-	enum SpecialCargoID {
+	enum SpecialCargoType {
 		/* Note: these values represent part of the in-game CargoTypes enum */
 		CT_AUTO_REFIT = ::CARGO_AUTO_REFIT, ///< Automatically choose cargo type when doing auto-refitting.
 		CT_NO_REFIT   = ::CARGO_NO_REFIT, ///< Do not refit cargo of a vehicle.
@@ -75,7 +80,7 @@ public:
 	 * @param cargo_type The cargo to check.
 	 * @return True if and only if the cargo type is valid.
 	 */
-	static bool IsValidCargo(CargoID cargo_type);
+	static bool IsValidCargo(CargoType cargo_type);
 
 	/**
 	 * Checks whether the given town effect type is valid.
@@ -90,7 +95,7 @@ public:
 	 * @pre IsValidCargo(cargo_type).
 	 * @return The name of the cargo type.
 	 */
-	static std::optional<std::string> GetName(CargoID cargo_type);
+	static std::optional<std::string> GetName(CargoType cargo_type);
 
 	/**
 	 * Gets the string representation of the cargo label.
@@ -107,7 +112,7 @@ public:
 	 *  - In other words: Only use the cargo label, if you know more about the behaviour
 	 *    of a specific cargo from a specific industry set, than the API methods can tell you.
 	 */
-	static std::optional<std::string> GetCargoLabel(CargoID cargo_type);
+	static std::optional<std::string> GetCargoLabel(CargoType cargo_type);
 
 	/**
 	 * Checks whether the give cargo is a freight or not.
@@ -117,7 +122,7 @@ public:
 	 * @pre ScriptCargo::IsValidCargo(cargo_type).
 	 * @return True if and only if the cargo is freight.
 	 */
-	static bool IsFreight(CargoID cargo_type);
+	static bool IsFreight(CargoType cargo_type);
 
 	/**
 	 * Check if this cargo is in the requested cargo class.
@@ -126,7 +131,7 @@ public:
 	 * @param cargo_class The class to check for.
 	 * @return True if and only if the cargo is in the cargo class.
 	 */
-	static bool HasCargoClass(CargoID cargo_type, CargoClass cargo_class);
+	static bool HasCargoClass(CargoType cargo_type, CargoClass cargo_class);
 
 	/**
 	 * Get the effect this cargo has on a town.
@@ -134,7 +139,7 @@ public:
 	 * @pre ScriptCargo::IsValidCargo(cargo_type).
 	 * @return The effect this cargo has on a town, or TE_NONE if it has no effect.
 	 */
-	static TownEffect GetTownEffect(CargoID cargo_type);
+	static TownEffect GetTownEffect(CargoType cargo_type);
 
 	/**
 	 * Get the income for transporting a piece of cargo over the
@@ -147,14 +152,14 @@ public:
 	 *                        The max value of this variable is 637. Any value higher returns the same as 637 would.
 	 * @return The amount of money that would be earned by this trip.
 	 */
-	static Money GetCargoIncome(CargoID cargo_type, SQInteger distance, SQInteger days_in_transit);
+	static Money GetCargoIncome(CargoType cargo_type, SQInteger distance, SQInteger days_in_transit);
 
 	/**
 	 * Get the cargo distribution type for a cargo.
 	 * @param cargo_type The cargo to check on.
 	 * @return The cargo distribution type for the given cargo.
 	 */
-	static DistributionType GetDistributionType(CargoID cargo_type);
+	static DistributionType GetDistributionType(CargoType cargo_type);
 
 	/**
 	 * Get the weight in tonnes for the given amount of
@@ -165,7 +170,7 @@ public:
 	 * @pre ScriptCargo::IsValidCargo(cargo_type).
 	 * @return The weight in tonnes for that quantity of cargo.
 	 */
-	static SQInteger GetWeight(CargoID cargo_type, SQInteger amount);
+	static SQInteger GetWeight(CargoType cargo_type, SQInteger amount);
 };
 
 #endif /* SCRIPT_CARGO_HPP */

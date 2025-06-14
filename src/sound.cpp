@@ -17,10 +17,8 @@
 #include "window_func.h"
 #include "window_gui.h"
 #include "vehicle_base.h"
-
-/* The type of set we're replacing */
-#define SET_TYPE "sounds"
 #include "base_media_func.h"
+#include "base_media_sounds.h"
 
 #include "safeguards.h"
 
@@ -92,7 +90,7 @@ static bool SetBankSource(MixerChannel *mc, SoundEntry *sound, SoundID sound_id)
 void InitializeSound()
 {
 	Debug(misc, 1, "Loading sound effects...");
-	OpenBankFile(BaseSounds::GetUsedSet()->files->filename);
+	OpenBankFile(BaseSounds::GetUsedSet()->files[0].filename);
 }
 
 
@@ -205,19 +203,19 @@ static void SndPlayScreenCoordFx(SoundID sound, int left, int right, int top, in
 {
 	/* Iterate from back, so that main viewport is checked first */
 	for (const Window *w : Window::IterateFromBack()) {
-		const Viewport *vp = w->viewport;
+		if (w->viewport == nullptr) continue;
 
-		if (vp != nullptr &&
-				left < vp->virtual_left + vp->virtual_width && right > vp->virtual_left &&
-				top < vp->virtual_top + vp->virtual_height && bottom > vp->virtual_top) {
-			int screen_x = (left + right) / 2 - vp->virtual_left;
-			int width = (vp->virtual_width == 0 ? 1 : vp->virtual_width);
+		const Viewport &vp = *w->viewport;
+		if (left < vp.virtual_left + vp.virtual_width && right > vp.virtual_left &&
+				top < vp.virtual_top + vp.virtual_height && bottom > vp.virtual_top) {
+			int screen_x = (left + right) / 2 - vp.virtual_left;
+			int width = (vp.virtual_width == 0 ? 1 : vp.virtual_width);
 			float panning = (float)screen_x / width;
 
 			StartSound(
 				sound,
 				panning,
-				_vol_factor_by_zoom[vp->zoom]
+				_vol_factor_by_zoom[vp.zoom]
 			);
 			return;
 		}
@@ -249,28 +247,28 @@ void SndPlayFx(SoundID sound)
 	StartSound(sound, 0.5, UINT8_MAX);
 }
 
-INSTANTIATE_BASE_MEDIA_METHODS(BaseMedia<SoundsSet>, SoundsSet)
-
 /** Names corresponding to the sound set's files */
-static const char * const _sound_file_names[] = { "samples" };
+static const std::string_view _sound_file_names[] = { "samples" };
 
+template <>
+/* static */ std::span<const std::string_view> BaseSet<SoundsSet>::GetFilenames()
+{
+	return _sound_file_names;
+}
 
-template <class T, size_t Tnum_files, bool Tsearch_in_tars>
-/* static */ const char * const *BaseSet<T, Tnum_files, Tsearch_in_tars>::file_names = _sound_file_names;
-
-template <class Tbase_set>
-/* static */ const char *BaseMedia<Tbase_set>::GetExtension()
+template <>
+/* static */ const char *BaseMedia<SoundsSet>::GetExtension()
 {
 	return ".obs"; // OpenTTD Base Sounds
 }
 
-template <class Tbase_set>
-/* static */ bool BaseMedia<Tbase_set>::DetermineBestSet()
+template <>
+/* static */ bool BaseMedia<SoundsSet>::DetermineBestSet()
 {
-	if (BaseMedia<Tbase_set>::used_set != nullptr) return true;
+	if (BaseMedia<SoundsSet>::used_set != nullptr) return true;
 
-	const Tbase_set *best = nullptr;
-	for (const Tbase_set *c = BaseMedia<Tbase_set>::available_sets; c != nullptr; c = c->next) {
+	const SoundsSet *best = nullptr;
+	for (const SoundsSet *c = BaseMedia<SoundsSet>::available_sets; c != nullptr; c = c->next) {
 		/* Skip unusable sets */
 		if (c->GetNumMissing() != 0) continue;
 
@@ -283,7 +281,8 @@ template <class Tbase_set>
 		}
 	}
 
-	BaseMedia<Tbase_set>::used_set = best;
-	return BaseMedia<Tbase_set>::used_set != nullptr;
+	BaseMedia<SoundsSet>::used_set = best;
+	return BaseMedia<SoundsSet>::used_set != nullptr;
 }
 
+template class BaseMedia<SoundsSet>;

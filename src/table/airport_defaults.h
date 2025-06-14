@@ -10,7 +10,7 @@
 #ifndef AIRPORT_DEFAULTS_H
 #define AIRPORT_DEFAULTS_H
 
-#include "timer/timer_game_calendar.h"
+#include "../timer/timer_game_calendar.h"
 
 /**
  * Definition of an airport tiles layout.
@@ -378,7 +378,7 @@ static const std::initializer_list<AirportTileLayout> _tile_table_helistation = 
 
 /** General AirportSpec definition. */
 #define AS_GENERIC(fsm, layouts, depots, size_x, size_y, noise, catchment, min_year, max_year, maint_cost, ttdpatch_type, class_id, name, preview, enabled) \
-	{{class_id, 0}, fsm, layouts, depots, size_x, size_y, noise, catchment, min_year, max_year, name, ttdpatch_type, preview, maint_cost, enabled, GRFFileProps(AT_INVALID)}
+	{{class_id, 0}, fsm, layouts, depots, size_x, size_y, noise, catchment, TimerGameCalendar::Year{min_year}, TimerGameCalendar::Year{max_year}, name, ttdpatch_type, preview, maint_cost, enabled, GRFFileProps(AT_INVALID), {}}
 
 /** AirportSpec definition for airports without any depot. */
 #define AS_ND(ap_name, size_x, size_y, min_year, max_year, catchment, noise, maint_cost, ttdpatch_type, class_id, name, preview) \

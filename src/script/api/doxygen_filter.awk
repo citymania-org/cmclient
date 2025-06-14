@@ -84,9 +84,6 @@ BEGIN {
 			api_selected = "false"
 		}
 		public = "false"
-		cls_param[0] = ""
-		cls_param[1] = 1
-		cls_param[2] = "x"
 		cls_in_api = api_selected
 		api_selected = ""
 		cls = $2
@@ -211,7 +208,7 @@ BEGIN {
 }
 
 # Maybe the end of the class, if so we can start with the Squirrel export pretty soon
-/};/ {
+/^[ 	]*};/ {
 	comment_buffer = ""
 	cls_level--
 	if (cls_level != 0) {
@@ -258,7 +255,7 @@ BEGIN {
 }
 
 # Add a const (non-enum) value
-/^[ 	]*static const \w+ \w+ = [^;]+;/ {
+/^[ 	]*static const(expr)? \w+ \w+ = [^;]+;/ {
 	if (api_selected == "") api_selected = cls_in_api
 	if (api_selected == "false") {
 		api_selected = ""
@@ -275,8 +272,10 @@ BEGIN {
 /^.*\(.*\).*$/ {
 	if (cls_level != 1) next
 	if (!match($0, ";")) {
-		gsub(/ :$/, ";")
-		skip_function_body = "true"
+		if (!match($0, "}$")) {
+			skip_function_body = "true"
+		}
+		gsub(/ :.*$/, ";")
 	}
 	if (match($0, "~")) {
 		if (api_selected != "") {

@@ -16,35 +16,39 @@
 #include "landscape_type.h"
 #include "cargo_type.h"
 #include "newgrf_animation_type.h"
+#include "newgrf_badge_type.h"
+#include "newgrf_callbacks.h"
 #include "newgrf_commons.h"
 
 /** Available types of industry lifetimes. */
-enum IndustryLifeType {
-	INDUSTRYLIFE_BLACK_HOLE =      0, ///< Like power plants and banks
-	INDUSTRYLIFE_EXTRACTIVE = 1 << 0, ///< Like mines
-	INDUSTRYLIFE_ORGANIC    = 1 << 1, ///< Like forests
-	INDUSTRYLIFE_PROCESSING = 1 << 2, ///< Like factories
+enum class IndustryLifeType : uint8_t {
+	Extractive = 0, ///< Like mines
+	Organic = 1, ///< Like forests
+	Processing = 2, ///< Like factories
 };
+using IndustryLifeTypes = EnumBitSet<IndustryLifeType, uint8_t>;
+
+static constexpr IndustryLifeTypes INDUSTRYLIFE_BLACK_HOLE{}; ///< Like power plants and banks
 
 /**
  * Available procedures to check whether an industry may build at a given location.
  * @see CheckNewIndustryProc, _check_new_industry_procs[]
  */
-enum CheckProc {
+enum CheckProc : uint8_t {
 	CHECK_NOTHING,    ///< Always succeeds.
 	CHECK_FOREST,     ///< %Industry should be build above snow-line in arctic climate.
 	CHECK_REFINERY,   ///< %Industry should be positioned near edge of the map.
 	CHECK_FARM,       ///< %Industry should be below snow-line in arctic.
 	CHECK_PLANTATION, ///< %Industry should NOT be in the desert.
 	CHECK_WATER,      ///< %Industry should be in the desert.
-	CHECK_LUMBERMILL, ///< %Industry should be in the rain forest.
+	CHECK_LUMBERMILL, ///< %Industry should be in the rainforest.
 	CHECK_BUBBLEGEN,  ///< %Industry should be in low land.
 	CHECK_OIL_RIG,    ///< Industries at sea should be positioned near edge of the map.
 	CHECK_END,        ///< End marker of the industry check procedures.
 };
 
 /** How was the industry created */
-enum IndustryConstructionType {
+enum IndustryConstructionType : uint8_t {
 	ICT_UNKNOWN,          ///< in previous game version or without newindustries activated
 	ICT_NORMAL_GAMEPLAY,  ///< either by user or random creation process
 	ICT_MAP_GENERATION,   ///< during random map creation
@@ -52,39 +56,37 @@ enum IndustryConstructionType {
 };
 
 /** Various industry behaviours mostly to represent original TTD specialities */
-enum IndustryBehaviour {
-	INDUSTRYBEH_NONE                  =      0,
-	INDUSTRYBEH_PLANT_FIELDS          = 1 << 0,  ///< periodically plants fields around itself (temp and arctic farms)
-	INDUSTRYBEH_CUT_TREES             = 1 << 1,  ///< cuts trees and produce first output cargo from them (lumber mill)
-	INDUSTRYBEH_BUILT_ONWATER         = 1 << 2,  ///< is built on water (oil rig)
-	INDUSTRYBEH_TOWN1200_MORE         = 1 << 3,  ///< can only be built in towns larger than 1200 inhabitants (temperate bank)
-	INDUSTRYBEH_ONLY_INTOWN           = 1 << 4,  ///< can only be built in towns (arctic/tropic banks, water tower)
-	INDUSTRYBEH_ONLY_NEARTOWN         = 1 << 5,  ///< is always built near towns (toy shop)
-	INDUSTRYBEH_PLANT_ON_BUILT        = 1 << 6,  ///< Fields are planted around when built (all farms)
-	INDUSTRYBEH_DONT_INCR_PROD        = 1 << 7,  ///< do not increase production (oil wells) in the temperate climate
-	INDUSTRYBEH_BEFORE_1950           = 1 << 8,  ///< can only be built before 1950 (oil wells)
-	INDUSTRYBEH_AFTER_1960            = 1 << 9,  ///< can only be built after 1960 (oil rigs)
-	INDUSTRYBEH_AI_AIRSHIP_ROUTES     = 1 << 10, ///< ai will attempt to establish air/ship routes to this industry (oil rig)
-	INDUSTRYBEH_AIRPLANE_ATTACKS      = 1 << 11, ///< can be exploded by a military airplane (oil refinery)
-	INDUSTRYBEH_CHOPPER_ATTACKS       = 1 << 12, ///< can be exploded by a military helicopter (factory)
-	INDUSTRYBEH_CAN_SUBSIDENCE        = 1 << 13, ///< can cause a subsidence (coal mine, shaft that collapses)
+enum class IndustryBehaviour : uint8_t {
+	PlantFields = 0, ///< periodically plants fields around itself (temp and arctic farms)
+	CutTrees = 1, ///< cuts trees and produce first output cargo from them (lumber mill)
+	BuiltOnWater = 2, ///< is built on water (oil rig)
+	Town1200More = 3, ///< can only be built in towns larger than 1200 inhabitants (temperate bank)
+	OnlyInTown = 4, ///< can only be built in towns (arctic/tropic banks, water tower)
+	OnlyNearTown = 5, ///< is always built near towns (toy shop)
+	PlantOnBuild = 6, ///< Fields are planted around when built (all farms)
+	DontIncrProd = 7, ///< do not increase production (oil wells) in the temperate climate
+	Before1950 = 8, ///< can only be built before 1950 (oil wells)
+	After1960 = 9, ///< can only be built after 1960 (oil rigs)
+	AIAirShipRoutes = 10, ///< ai will attempt to establish air/ship routes to this industry (oil rig)
+	AirplaneAttacks = 11, ///< can be exploded by a military airplane (oil refinery)
+	ChopperAttacks = 12, ///< can be exploded by a military helicopter (factory)
+	CanSubsidence = 13, ///< can cause a subsidence (coal mine, shaft that collapses)
 	/* The following flags are only used for newindustries and do no represent any normal behaviour */
-	INDUSTRYBEH_PROD_MULTI_HNDLING    = 1 << 14, ///< Automatic production multiplier handling
-	INDUSTRYBEH_PRODCALLBACK_RANDOM   = 1 << 15, ///< Production callback needs random bits in var 10
-	INDUSTRYBEH_NOBUILT_MAPCREATION   = 1 << 16, ///< Do not force one instance of this type to appear on map generation
-	INDUSTRYBEH_CANCLOSE_LASTINSTANCE = 1 << 17, ///< Allow closing down the last instance of this type
-	INDUSTRYBEH_CARGOTYPES_UNLIMITED  = 1 << 18, ///< Allow produced/accepted cargoes callbacks to supply more than 2 and 3 types
-	INDUSTRYBEH_NO_PAX_PROD_CLAMP     = 1 << 19, ///< Do not clamp production of passengers. (smooth economy only)
+	ProdMultiHandling = 14, ///< Automatic production multiplier handling
+	ProdCallbackRandom = 15, ///< Production callback needs random bits in var 10
+	NoBuildMapCreation = 16, ///< Do not force one instance of this type to appear on map generation
+	CanCloseLastInstance = 17, ///< Allow closing down the last instance of this type
+	CargoTypesUnlimited = 18, ///< Allow produced/accepted cargoes callbacks to supply more than 2 and 3 types
+	NoPaxProdClamp = 19, ///< Do not clamp production of passengers. (smooth economy only)
 };
-DECLARE_ENUM_AS_BIT_SET(IndustryBehaviour)
+using IndustryBehaviours = EnumBitSet<IndustryBehaviour, uint32_t>;
 
 /** Flags for miscellaneous industry tile specialities */
-enum IndustryTileSpecialFlags {
-	INDTILE_SPECIAL_NONE                  = 0,
-	INDTILE_SPECIAL_NEXTFRAME_RANDOMBITS  = 1 << 0, ///< Callback 0x26 needs random bits
-	INDTILE_SPECIAL_ACCEPTS_ALL_CARGO     = 1 << 1, ///< Tile always accepts all cargoes the associated industry accepts
+enum class IndustryTileSpecialFlag : uint8_t {
+	NextFrameRandomBits = 0, ///< Callback 0x26 needs random bits
+	AcceptsAllCargo = 1, ///< Tile always accepts all cargoes the associated industry accepts
 };
-DECLARE_ENUM_AS_BIT_SET(IndustryTileSpecialFlags)
+using IndustryTileSpecialFlags = EnumBitSet<IndustryTileSpecialFlag, uint8_t>;
 
 /** Definition of one tile in an industry tile layout */
 struct IndustryTileLayoutTile {
@@ -105,18 +107,18 @@ struct IndustrySpec {
 	uint32_t prospecting_chance;                  ///< Chance prospecting succeeds
 	IndustryType conflicting[3];                ///< Industries this industry cannot be close to
 	uint8_t check_proc;                            ///< Index to a procedure to check for conflicting circumstances
-	std::array<CargoID, INDUSTRY_NUM_OUTPUTS> produced_cargo;
+	std::array<CargoType, INDUSTRY_NUM_OUTPUTS> produced_cargo;
 	uint8_t production_rate[INDUSTRY_NUM_OUTPUTS];
 	/**
 	 * minimum amount of cargo transported to the stations.
 	 * If the waiting cargo is less than this number, no cargo is moved to it.
 	 */
 	uint8_t minimal_cargo;
-	std::array<CargoID, INDUSTRY_NUM_INPUTS> accepts_cargo; ///< 16 accepted cargoes.
+	std::array<CargoType, INDUSTRY_NUM_INPUTS> accepts_cargo; ///< 16 accepted cargoes.
 	uint16_t input_cargo_multiplier[INDUSTRY_NUM_INPUTS][INDUSTRY_NUM_OUTPUTS]; ///< Input cargo multipliers (multiply amount of incoming cargo for the produced cargoes)
-	IndustryLifeType life_type;                 ///< This is also known as Industry production flag, in newgrf specs
-	uint8_t climate_availability;                  ///< Bitmask, giving landscape enums as bit position
-	IndustryBehaviour behaviour;                ///< How this industry will behave, and how others entities can use it
+	IndustryLifeTypes life_type;                 ///< This is also known as Industry production flag, in newgrf specs
+	LandscapeTypes climate_availability; ///< Bitmask, giving landscape enums as bit position
+	IndustryBehaviours behaviour;                ///< How this industry will behave, and how others entities can use it
 	uint8_t map_colour;                            ///< colour used for the small map
 	StringID name;                              ///< Displayed name of the industry
 	StringID new_industry_text;                 ///< Message appearing when the industry is built
@@ -127,10 +129,11 @@ struct IndustrySpec {
 	uint8_t appear_ingame[NUM_LANDSCAPE];          ///< Probability of appearance in game
 	uint8_t appear_creation[NUM_LANDSCAPE];        ///< Probability of appearance during map creation
 	/* Newgrf data */
-	uint16_t callback_mask;                       ///< Bitmask of industry callbacks that have to be called
+	IndustryCallbackMasks callback_mask;                       ///< Bitmask of industry callbacks that have to be called
 	bool enabled;                               ///< entity still available (by default true).newgrf can disable it, though
 	GRFFileProps grf_prop;                      ///< properties related to the grf file
 	std::vector<uint8_t> random_sounds; ///< Random sounds;
+	std::vector<BadgeID> badges;
 
 	std::array<std::variant<CargoLabel, MixedCargoType>, INDUSTRY_ORIGINAL_NUM_OUTPUTS> produced_cargo_label; ///< Cargo labels of produced cargo for default industries.
 	std::array<std::variant<CargoLabel, MixedCargoType>, INDUSTRY_ORIGINAL_NUM_INPUTS> accepts_cargo_label; ///< Cargo labels of accepted cargo for default industries.
@@ -147,7 +150,7 @@ struct IndustrySpec {
  * @note A tile can at most accept 3 types of cargo, even if an industry as a whole can accept more types.
  */
 struct IndustryTileSpec {
-	std::array<CargoID, INDUSTRY_NUM_INPUTS> accepts_cargo; ///< Cargo accepted by this tile
+	std::array<CargoType, INDUSTRY_NUM_INPUTS> accepts_cargo; ///< Cargo accepted by this tile
 	std::array<int8_t, INDUSTRY_NUM_INPUTS> acceptance; ///< Level of acceptance per cargo type (signed, may be negative!)
 	Slope slopes_refused;                 ///< slope pattern on which this tile cannot be built
 	uint8_t anim_production;                 ///< Animation frame to start when goods are produced
@@ -158,11 +161,12 @@ struct IndustryTileSpec {
 	 */
 	bool anim_state;
 	/* Newgrf data */
-	uint8_t callback_mask;                  ///< Bitmask of industry tile callbacks that have to be called
+	IndustryTileCallbackMasks callback_mask;                  ///< Bitmask of industry tile callbacks that have to be called
 	AnimationInfo animation;              ///< Information about the animation (is it looping, how many loops etc)
 	IndustryTileSpecialFlags special_flags; ///< Bitmask of extra flags used by the tile
 	bool enabled;                         ///< entity still available (by default true).newgrf can disable it, though
 	GRFFileProps grf_prop;                ///< properties related to the grf file
+	std::vector<BadgeID> badges;
 
 	std::array<std::variant<CargoLabel, MixedCargoType>, INDUSTRY_ORIGINAL_NUM_INPUTS> accepts_cargo_label; ///< Cargo labels of accepted cargo for default industry tiles.
 };
@@ -194,14 +198,12 @@ inline IndustryGfx GetTranslatedIndustryTileID(IndustryGfx gfx)
 	 * will never be assigned as a tile index and is only required in order to do some
 	 * tests while building the industry (as in WATER REQUIRED */
 	if (gfx != 0xFF) {
-		assert(gfx < INVALID_INDUSTRYTILE);
+		assert(gfx < NUM_INDUSTRYTILES);
 		const IndustryTileSpec *it = &_industry_tile_specs[gfx];
-		return it->grf_prop.override == INVALID_INDUSTRYTILE ? gfx : it->grf_prop.override;
+		return it->grf_prop.override_id == INVALID_INDUSTRYTILE ? gfx : it->grf_prop.override_id;
 	} else {
 		return gfx;
 	}
 }
-
-static const uint8_t IT_INVALID = 255;
 
 #endif /* INDUSTRYTYPE_H */

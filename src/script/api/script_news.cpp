@@ -20,25 +20,35 @@
 
 #include "../../safeguards.h"
 
+static NewsReference CreateReference(ScriptNews::NewsReferenceType ref_type, SQInteger reference)
+{
+	switch (ref_type) {
+		case ScriptNews::NR_NONE: return {};
+		case ScriptNews::NR_TILE: return ::TileIndex(reference);
+		case ScriptNews::NR_STATION: return static_cast<StationID>(reference);
+		case ScriptNews::NR_INDUSTRY: return static_cast<IndustryID>(reference);
+		case ScriptNews::NR_TOWN: return static_cast<TownID>(reference);
+		default: NOT_REACHED();
+	}
+}
+
 /* static */ bool ScriptNews::Create(NewsType type, Text *text, ScriptCompany::CompanyID company, NewsReferenceType ref_type, SQInteger reference)
 {
 	ScriptObjectRef counter(text);
 
 	EnforceDeityMode(false);
 	EnforcePrecondition(false, text != nullptr);
-	std::string encoded = text->GetEncodedText();
+	EncodedString encoded = text->GetEncodedText();
 	EnforcePreconditionEncodedText(false, encoded);
 	EnforcePrecondition(false, type == NT_ECONOMY || type == NT_SUBSIDIES || type == NT_GENERAL);
 	EnforcePrecondition(false, company == ScriptCompany::COMPANY_INVALID || ScriptCompany::ResolveCompanyID(company) != ScriptCompany::COMPANY_INVALID);
 	EnforcePrecondition(false, (ref_type == NR_NONE) ||
-	                           (ref_type == NR_TILE     && ScriptMap::IsValidTile(reference)) ||
-	                           (ref_type == NR_STATION  && ScriptStation::IsValidStation(reference)) ||
-	                           (ref_type == NR_INDUSTRY && ScriptIndustry::IsValidIndustry(reference)) ||
-	                           (ref_type == NR_TOWN     && ScriptTown::IsValidTown(reference)));
+	                           (ref_type == NR_TILE     && ScriptMap::IsValidTile(::TileIndex(reference))) ||
+	                           (ref_type == NR_STATION  && ScriptStation::IsValidStation(static_cast<StationID>(reference))) ||
+	                           (ref_type == NR_INDUSTRY && ScriptIndustry::IsValidIndustry(static_cast<IndustryID>(reference))) ||
+	                           (ref_type == NR_TOWN     && ScriptTown::IsValidTown(static_cast<TownID>(reference))));
 
-	uint8_t c = company;
-	if (company == ScriptCompany::COMPANY_INVALID) c = INVALID_COMPANY;
+	::CompanyID c = ScriptCompany::FromScriptCompanyID(company);
 
-	if (ref_type == NR_NONE) reference = 0;
-	return ScriptObject::Command<CMD_CUSTOM_NEWS_ITEM>::Do((::NewsType)type, (::NewsReferenceType)ref_type, (::CompanyID)c, reference, encoded);
+	return ScriptObject::Command<CMD_CUSTOM_NEWS_ITEM>::Do((::NewsType)type, c, CreateReference(ref_type, reference), encoded);
 }

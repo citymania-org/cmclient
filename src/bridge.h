@@ -19,7 +19,7 @@
  * which is used to determine the proper sprite table to use
  * while drawing a given bridge part.
  */
-enum BridgePieces {
+enum BridgePieces : uint8_t {
 	BRIDGE_PIECE_NORTH = 0,
 	BRIDGE_PIECE_SOUTH,
 	BRIDGE_PIECE_INNER_NORTH,
@@ -30,7 +30,7 @@ enum BridgePieces {
 	NUM_BRIDGE_PIECES,
 };
 
-DECLARE_POSTFIX_INCREMENT(BridgePieces)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(BridgePieces)
 
 static const uint MAX_BRIDGES = 13; ///< Maximal number of available bridge specs.
 constexpr uint SPRITES_PER_BRIDGE_PIECE = 32; ///< Number of sprites there are per bridge piece.
@@ -50,7 +50,7 @@ struct BridgeSpec {
 	PaletteID pal;                      ///< the palette which is used in the GUI
 	StringID material;                  ///< the string that contains the bridge description
 	StringID transport_name[2];         ///< description of the bridge, when built for road or rail
-	PalSpriteID **sprite_table;         ///< table of sprites for drawing the bridge
+	std::vector<std::vector<PalSpriteID>> sprite_table; ///< table of sprites for drawing the bridge
 	uint8_t flags;                         ///< bit 0 set: disable drawing of far pillars.
 };
 
@@ -72,7 +72,7 @@ inline const BridgeSpec *GetBridgeSpec(BridgeType i)
 
 void DrawBridgeMiddle(const TileInfo *ti);
 
-CommandCost CheckBridgeAvailability(BridgeType bridge_type, uint bridge_len, DoCommandFlag flags = DC_NONE);
+CommandCost CheckBridgeAvailability(BridgeType bridge_type, uint bridge_len, DoCommandFlags flags = {});
 int CalcBridgeLenCostFactor(int x);
 
 void ResetBridges();

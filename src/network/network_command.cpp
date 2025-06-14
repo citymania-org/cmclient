@@ -214,7 +214,7 @@ void NetworkSendCommand(Commands cmd, StringID err_message, CommandCallback *cal
 		c.frame = _frame_counter_max + 1;
 		c.my_cmd = true;
 
-		_local_wait_queue.push_back(c);
+		_local_wait_queue.push_back(std::move(c));
 		citymania::AddCommandCallback(&c);
 		return;
 	}
@@ -345,7 +345,7 @@ static void DistributeQueue(CommandQueue &queue, const NetworkClientSocket *owne
 	/* Not technically the most performant way, but consider clients rarely click more than once per tick. */
 	for (auto cp = queue.begin(); cp != queue.end(); /* removing some items */) {
 		/* Do not distribute commands when paused and the command is not allowed while paused. */
-		if (_pause_mode != PM_UNPAUSED && !IsCommandAllowedWhilePaused(cp->cmd)) {
+		if (_pause_mode.Any() && !IsCommandAllowedWhilePaused(cp->cmd)) {
 			++cp;
 			continue;
 		}
@@ -382,7 +382,7 @@ const char *NetworkGameSocketHandler::ReceiveCommand(Packet &p, CommandPacket &c
 	cp.company = (CompanyID)p.Recv_uint8();
 	cp.cmd     = static_cast<Commands>(p.Recv_uint16());
 	if (!IsValidCommand(cp.cmd))               return "invalid command";
-	if (GetCommandFlags(cp.cmd) & CMD_OFFLINE) return "single-player only command";
+	if (GetCommandFlags(cp.cmd).Test(CommandFlag::Offline)) return "single-player only command";
 	cp.err_msg = p.Recv_uint16();
 	cp.data    = _cmd_dispatch[cp.cmd].Sanitize(p.Recv_buffer());
 
@@ -423,7 +423,7 @@ static inline void SetClientIdHelper(T &data, [[maybe_unused]] ClientID client_i
 }
 
 /** Set all invalid ClientID's to the proper value. */
-template<class Ttuple, size_t... Tindices>
+template <class Ttuple, size_t... Tindices>
 static inline void SetClientIds(Ttuple &values, ClientID client_id, std::index_sequence<Tindices...>)
 {
 	((SetClientIdHelper(std::get<Tindices>(values), client_id)), ...);
@@ -458,12 +458,16 @@ template <class T>
 static inline void SanitizeSingleStringHelper([[maybe_unused]] CommandFlags cmd_flags, T &data)
 {
 	if constexpr (std::is_same_v<std::string, T>) {
-		data = StrMakeValid(data, (!_network_server && HasFlag(cmd_flags, CMD_STR_CTRL)) ? SVS_ALLOW_CONTROL_CODE | SVS_REPLACE_WITH_QUESTION_MARK : SVS_REPLACE_WITH_QUESTION_MARK);
+		if (!_network_server && cmd_flags.Test(CommandFlag::StrCtrl)) {
+			StrMakeValidInPlace(data, {StringValidationSetting::AllowControlCode, StringValidationSetting::ReplaceWithQuestionMark});
+		} else {
+			StrMakeValidInPlace(data, {StringValidationSetting::ReplaceWithQuestionMark});
+		}
 	}
 }
 
 /** Helper function to perform validation on command data strings. */
-template<class Ttuple, size_t... Tindices>
+template <class Ttuple, size_t... Tindices>
 static inline void SanitizeStringsHelper(CommandFlags cmd_flags, Ttuple &values, std::index_sequence<Tindices...>)
 {
 	((SanitizeSingleStringHelper(cmd_flags, std::get<Tindices>(values))), ...);

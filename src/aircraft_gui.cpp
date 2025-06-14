@@ -34,19 +34,18 @@ void DrawAircraftDetails(const Aircraft *v, const Rect &r)
 	int y = r.top;
 	for (const Aircraft *u = v; u != nullptr; u = u->Next()) {
 		if (u->IsNormalAircraft()) {
-			SetDParam(0, PackEngineNameDParam(u->engine_type, EngineNameContext::VehicleDetails));
-			SetDParam(1, u->build_year);
-			SetDParam(2, u->value);
-			if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
-			DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
+			if (_settings_client.gui.newgrf_developer_tools) {
+				DrawString(r.left, r.right, y, GetString(CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID, PackEngineNameDParam(u->engine_type, EngineNameContext::VehicleDetails), u->build_year, u->value, v->index));
+			} else {
+				DrawString(r.left, r.right, y, GetString(STR_VEHICLE_INFO_BUILT_VALUE, PackEngineNameDParam(u->engine_type, EngineNameContext::VehicleDetails), u->build_year, u->value));
+			}
 			y += GetCharacterHeight(FS_NORMAL);
 
-			SetDParam(0, u->cargo_type);
-			SetDParam(1, u->cargo_cap);
-			SetDParam(2, u->Next()->cargo_type);
-			SetDParam(3, u->Next()->cargo_cap);
-			SetDParam(4, GetCargoSubtypeText(u));
-			DrawString(r.left, r.right, y, (u->Next()->cargo_cap != 0) ? STR_VEHICLE_INFO_CAPACITY_CAPACITY : STR_VEHICLE_INFO_CAPACITY);
+			if (u->Next()->cargo_cap != 0) {
+				DrawString(r.left, r.right, y, GetString(STR_VEHICLE_INFO_CAPACITY_CAPACITY, u->cargo_type, u->cargo_cap, u->Next()->cargo_type, u->Next()->cargo_cap, GetCargoSubtypeText(u)));
+			} else {
+				DrawString(r.left, r.right, y, GetString(STR_VEHICLE_INFO_CAPACITY, u->cargo_type, u->cargo_cap, GetCargoSubtypeText(u)));
+			}
 			y += GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_normal;
 		}
 
@@ -55,10 +54,7 @@ void DrawAircraftDetails(const Aircraft *v, const Rect &r)
 
 			if (cargo_count != 0) {
 				/* Cargo names (fix pluralness) */
-				SetDParam(0, u->cargo_type);
-				SetDParam(1, cargo_count);
-				SetDParam(2, u->cargo.GetFirstStation());
-				DrawString(r.left, r.right, y, STR_VEHICLE_DETAILS_CARGO_FROM);
+				DrawString(r.left, r.right, y, GetString(STR_VEHICLE_DETAILS_CARGO_FROM, u->cargo_type, cargo_count, u->cargo.GetFirstStation()));
 				y += GetCharacterHeight(FS_NORMAL);
 				feeder_share += u->cargo.GetFeederShare();
 			}
@@ -66,8 +62,7 @@ void DrawAircraftDetails(const Aircraft *v, const Rect &r)
 	}
 
 	y += WidgetDimensions::scaled.vsep_normal;
-	SetDParam(0, feeder_share);
-	DrawString(r.left, r.right, y, STR_VEHICLE_INFO_FEEDER_CARGO_VALUE);
+	DrawString(r.left, r.right, y, GetString(STR_VEHICLE_INFO_FEEDER_CARGO_VALUE, feeder_share));
 }
 
 
@@ -96,8 +91,8 @@ void DrawAircraftImage(const Vehicle *v, const Rect &r, VehicleID selection, Eng
 
 	int heli_offs = 0;
 
-	PaletteID pal = (v->vehstatus & VS_CRASHED) ? PALETTE_CRASH : GetVehiclePalette(v);
-	seq.Draw(x, y, pal, (v->vehstatus & VS_CRASHED) != 0);
+	PaletteID pal = v->vehstatus.Test(VehState::Crashed) ? PALETTE_CRASH : GetVehiclePalette(v);
+	seq.Draw(x, y, pal, v->vehstatus.Test(VehState::Crashed));
 
 	/* Aircraft can store cargo in their shadow, show this if present. */
 	const Vehicle *u = v->Next();
@@ -121,6 +116,6 @@ void DrawAircraftImage(const Vehicle *v, const Rect &r, VehicleID selection, Eng
 		x += x_offs;
 		y += UnScaleGUI(rect.top) - heli_offs;
 		Rect hr = {x, y, x + width - 1, y + UnScaleGUI(rect.Height()) + heli_offs - 1};
-		DrawFrameRect(hr.Expand(WidgetDimensions::scaled.bevel), COLOUR_WHITE, FR_BORDERONLY);
+		DrawFrameRect(hr.Expand(WidgetDimensions::scaled.bevel), COLOUR_WHITE, FrameFlag::BorderOnly);
 	}
 }

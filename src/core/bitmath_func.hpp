@@ -124,18 +124,6 @@ constexpr T SetBit(T &x, const uint8_t y)
 }
 
 /**
- * Sets several bits in a variable.
- *
- * This macro sets several bits in a variable. The bits to set are provided
- * by a value. The new value is also returned.
- *
- * @param x The variable to set some bits
- * @param y The value with set bits for setting them in the variable
- * @return The new value of x
- */
-#define SETBITS(x, y) ((x) |= (y))
-
-/**
  * Clears a bit in a variable.
  *
  * This function clears a bit in a variable. The variable is
@@ -315,7 +303,6 @@ struct SetBitIterator {
 		{
 			return this->bitset == other.bitset;
 		}
-		bool operator!=(const Iterator &other) const { return !(*this == other); }
 		Tbitpos operator*() const { return this->bitpos; }
 		Iterator & operator++() { this->Next(); this->Validate(); return *this; }
 
@@ -344,42 +331,20 @@ private:
 	Tbitset bitset;
 };
 
-#if defined(__APPLE__)
-	/* Make endian swapping use Apple's macros to increase speed
-	 * (since it will use hardware swapping if available).
-	 * Even though they should return uint16_t and uint32_t, we get
-	 * warnings if we don't cast those (why?) */
-#	define BSWAP32(x) (static_cast<uint32_t>(CFSwapInt32(x)))
-#	define BSWAP16(x) (static_cast<uint16_t>(CFSwapInt16(x)))
-#elif defined(_MSC_VER)
-	/* MSVC has intrinsics for swapping, resulting in faster code */
-#	define BSWAP32(x) (_byteswap_ulong(x))
-#	define BSWAP16(x) (_byteswap_ushort(x))
-#else
+namespace std {
 	/**
-	 * Perform a 32 bits endianness bitswap on x.
+	 * Custom implementation of std::byteswap; remove once we build with C++23.
+	 * Perform an endianness bitswap on x.
 	 * @param x the variable to bitswap
 	 * @return the bitswapped value.
 	 */
-	static inline uint32_t BSWAP32(uint32_t x)
+	template <typename T>
+	[[nodiscard]] constexpr enable_if_t<is_integral_v<T>, T> byteswap(T x) noexcept
 	{
-#if !defined(__ICC) && defined(__GNUC__) && ((__GNUC__ > 4) || ((__GNUC__ == 4)  && __GNUC_MINOR__ >= 3))
-		/* GCC >= 4.3 provides a builtin, resulting in faster code */
-		return static_cast<uint32_t>(__builtin_bswap32(static_cast<int32_t>(x)));
-#else
-		return ((x >> 24) & 0xFF) | ((x >> 8) & 0xFF00) | ((x << 8) & 0xFF0000) | ((x << 24) & 0xFF000000);
-#endif /* defined(__GNUC__) */
+		if constexpr (sizeof(T) == 1) return x;
+		if constexpr (sizeof(T) == 2) return (x >> 8) | (x << 8);
+		if constexpr (sizeof(T) == 4) return ((x >> 24) & 0xFF) | ((x >> 8) & 0xFF00) | ((x << 8) & 0xFF0000) | ((x << 24) & 0xFF000000);
 	}
-
-	/**
-	 * Perform a 16 bits endianness bitswap on x.
-	 * @param x the variable to bitswap
-	 * @return the bitswapped value.
-	 */
-	static inline uint16_t BSWAP16(uint16_t x)
-	{
-		return (x >> 8) | (x << 8);
-	}
-#endif /* __APPLE__ */
+}
 
 #endif /* BITMATH_FUNC_HPP */

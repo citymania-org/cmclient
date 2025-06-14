@@ -12,6 +12,7 @@
 
 #include "core/overflowsafe_type.hpp"
 #include "core/enum_type.hpp"
+#include "core/pool_type.hpp"
 
 typedef OverflowSafeInt64 Money;
 
@@ -57,7 +58,7 @@ struct Economy {
 };
 
 /** Score categories in the detailed performance rating. */
-enum ScoreID {
+enum ScoreID : uint8_t {
 	SCORE_BEGIN      = 0,
 	SCORE_VEHICLES   = 0,
 	SCORE_STATIONS   = 1,
@@ -71,10 +72,15 @@ enum ScoreID {
 	SCORE_TOTAL      = 9,  ///< This must always be the last entry
 	SCORE_END        = 10, ///< How many scores are there..
 
-	SCORE_MAX = 1000,      ///< The max score that can be in the performance history
-	/* the scores together of score_info is allowed to be more! */
+
 };
-DECLARE_POSTFIX_INCREMENT(ScoreID)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(ScoreID)
+
+/**
+ * The max score that can be in the performance history.
+ * The scores together of score_info is allowed to be more!
+ */
+static constexpr int SCORE_MAX = 1000;
 
 /** Data structure for storing how the score is computed for a single score id. */
 struct ScoreInfo {
@@ -163,10 +169,10 @@ enum Price : uint8_t {
 	PR_END,
 	INVALID_PRICE = 0xFF
 };
-DECLARE_POSTFIX_INCREMENT(Price)
+DECLARE_INCREMENT_DECREMENT_OPERATORS(Price)
 
 typedef Money Prices[PR_END]; ///< Prices of everything. @see Price
-typedef int8_t PriceMultipliers[PR_END];
+using PriceMultipliers = std::array<int8_t, PR_END>;
 
 /** Types of expenses. */
 enum ExpensesType : uint8_t {
@@ -195,7 +201,7 @@ using Expenses = std::array<Money, EXPENSES_END>;
 /**
  * Categories of a price bases.
  */
-enum PriceCategory {
+enum PriceCategory : uint8_t {
 	PCAT_NONE,         ///< Not affected by difficulty settings
 	PCAT_RUNNING,      ///< Price is affected by "vehicle running cost" difficulty setting
 	PCAT_CONSTRUCTION, ///< Price is affected by "construction cost" difficulty setting
@@ -249,6 +255,6 @@ static const uint ROAD_STOP_TRACKBIT_FACTOR = 2;
 static const uint LOCK_DEPOT_TILE_FACTOR = 2;
 
 struct CargoPayment;
-typedef uint32_t CargoPaymentID;
+using CargoPaymentID = PoolID<uint32_t, struct CargoPaymentIDTag, 0xFF000, 0xFFFFF>;
 
 #endif /* ECONOMY_TYPE_H */

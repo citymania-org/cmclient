@@ -102,7 +102,7 @@ void AfterLoadCompanyStats()
 
 	/* Collect airport count. */
 	for (const Station *st : Station::Iterate()) {
-		if ((st->facilities & FACIL_AIRPORT) && Company::IsValidID(st->owner)) {
+		if (st->facilities.Test(StationFacility::Airport) && Company::IsValidID(st->owner)) {
 			Company::Get(st->owner)->infrastructure.airport++;
 		}
 	}
@@ -144,17 +144,17 @@ void AfterLoadCompanyStats()
 
 			case MP_STATION:
 				c = Company::GetIfValid(GetTileOwner(tile));
-				if (c != nullptr && GetStationType(tile) != STATION_AIRPORT && !IsBuoy(tile)) c->infrastructure.station++;
+				if (c != nullptr && GetStationType(tile) != StationType::Airport && !IsBuoy(tile)) c->infrastructure.station++;
 
 				switch (GetStationType(tile)) {
-					case STATION_RAIL:
-					case STATION_WAYPOINT:
+					case StationType::Rail:
+					case StationType::RailWaypoint:
 						if (c != nullptr && !IsStationTileBlocked(tile)) c->infrastructure.rail[GetRailType(tile)]++;
 						break;
 
-					case STATION_BUS:
-					case STATION_TRUCK:
-					case STATION_ROADWAYPOINT: {
+					case StationType::Bus:
+					case StationType::Truck:
+					case StationType::RoadWaypoint: {
 						/* Iterate all present road types as each can have a different owner. */
 						for (RoadTramType rtt : _roadtramtypes) {
 							RoadType rt = GetRoadType(tile, rtt);
@@ -165,8 +165,8 @@ void AfterLoadCompanyStats()
 						break;
 					}
 
-					case STATION_DOCK:
-					case STATION_BUOY:
+					case StationType::Dock:
+					case StationType::Buoy:
 						if (GetWaterClass(tile) == WATER_CLASS_CANAL) {
 							if (c != nullptr) c->infrastructure.water++;
 						}
@@ -372,7 +372,7 @@ public:
 		if (!IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH)) {
 			c->num_valid_stat_ent = (uint8_t)SlGetStructListLength(UINT8_MAX);
 		}
-		if (c->num_valid_stat_ent > lengthof(c->old_economy)) SlErrorCorrupt("Too many old economy entries");
+		if (c->num_valid_stat_ent > std::size(c->old_economy)) SlErrorCorrupt("Too many old economy entries");
 
 		for (int i = 0; i < c->num_valid_stat_ent; i++) {
 			SlObject(&c->old_economy[i], this->GetLoadDescription());
@@ -495,6 +495,7 @@ static const SaveLoad _company_desc[] = {
 	SLE_CONDVAR(CompanyProperties, last_build_coordinate, SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
 	SLE_CONDVAR(CompanyProperties, inaugurated_year,      SLE_FILE_U8  | SLE_VAR_I32,  SL_MIN_VERSION, SLV_31),
 	SLE_CONDVAR(CompanyProperties, inaugurated_year,      SLE_INT32,                  SLV_31, SL_MAX_VERSION),
+	SLE_CONDVAR(CompanyProperties, inaugurated_year_calendar, SLE_INT32,               SLV_COMPANY_INAUGURATED_PERIOD_V2, SL_MAX_VERSION),
 
 	SLE_CONDVAR(CompanyProperties, num_valid_stat_ent,    SLE_UINT8,                   SL_MIN_VERSION, SLV_SAVELOAD_LIST_LENGTH),
 
@@ -542,7 +543,7 @@ struct PLYRChunkHandler : ChunkHandler {
 
 		int index;
 		while ((index = SlIterateArray()) != -1) {
-			Company *c = new (index) Company();
+			Company *c = new (CompanyID(index)) Company();
 			SlObject(c, slt);
 			_company_colours[index] = c->colour;
 		}
@@ -569,7 +570,7 @@ struct PLYRChunkHandler : ChunkHandler {
 				}
 			}
 
-			if (cprops->name.empty() && !IsInsideMM(cprops->name_1, SPECSTR_COMPANY_NAME_START, SPECSTR_COMPANY_NAME_LAST + 1) &&
+			if (cprops->name.empty() && !IsInsideMM(cprops->name_1, SPECSTR_COMPANY_NAME_START, SPECSTR_COMPANY_NAME_END) &&
 				cprops->name_1 != STR_GAME_SAVELOAD_NOT_AVAILABLE && cprops->name_1 != STR_SV_UNNAMED &&
 				cprops->name_1 != SPECSTR_ANDCO_NAME && cprops->name_1 != SPECSTR_PRESIDENT_NAME &&
 				cprops->name_1 != SPECSTR_SILLY_NAME) {
