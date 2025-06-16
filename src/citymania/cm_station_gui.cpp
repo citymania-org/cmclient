@@ -953,7 +953,7 @@ void StationPreviewBase::AddAreaTiles(HighlightMap &hlmap, bool add_current, boo
     std::set<TileIndex> coverage_area;
 
     if (show_join_area && st_join != nullptr) {
-        hlmap.AddTileAreaWithBorder(GetStationJoinArea(st_join->index), CM_PALETTE_TINT_CYAN);
+        hlmap.AddTileArea(GetStationJoinArea(st_join->index), CM_PALETTE_TINT_CYAN);
         // FIXME hlmap can already have stuff
         for (auto t : hlmap.GetAllTiles()) join_area.insert(t);
     }
@@ -979,6 +979,10 @@ void StationPreviewBase::AddAreaTiles(HighlightMap &hlmap, bool add_current, boo
             hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
             coverage_area.insert(t);
         }
+    }
+
+    if (this->show_coverage) {
+        hlmap.AddTilesBorder(coverage_area, CM_PALETTE_TINT_WHITE);
     }
 
     if (st_join != nullptr) {
