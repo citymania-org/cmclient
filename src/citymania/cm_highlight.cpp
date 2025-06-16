@@ -403,7 +403,6 @@ bool ObjectTileHighlight::SetTileHighlight(TileHighlight &th, const TileInfo *) 
             th.structure_pal = CM_PALETTE_HIDE_SPRITE;
             th.highlight_ground_pal = th.highlight_structure_pal = this->palette;
             return true;
-        case ObjectTileHighlight::Type::BORDER:
         case ObjectTileHighlight::Type::TINT:
             th.ground_pal = th.structure_pal = this->palette;
             return true;
@@ -869,6 +868,35 @@ void ObjectHighlight::MarkDirty() {
     // fprintf(stderr, "E\n");
 }
 
+
+template <typename F>
+uint8 Get(uint32 x, uint32 y, F getter) {
+    if (x >= Map::SizeX() || y >= Map::SizeY()) return 0;
+    return getter(TileXY(x, y));
+}
+
+template <typename F>
+std::pair<ZoningBorder, uint8> CalcTileBorders(TileIndex tile, F getter) {
+    auto x = TileX(tile), y = TileY(tile);
+    ZoningBorder res = ZoningBorder::NONE;
+    auto z = getter(tile);
+    if (z == 0)
+        return std::make_pair(res, 0);
+    auto tr = Get(x - 1, y, getter);
+    auto tl = Get(x, y - 1, getter);
+    auto bl = Get(x + 1, y, getter);
+    auto br = Get(x, y + 1, getter);
+    if (tr < z) res |= ZoningBorder::TOP_RIGHT;
+    if (tl < z) res |= ZoningBorder::TOP_LEFT;
+    if (bl < z) res |= ZoningBorder::BOTTOM_LEFT;
+    if (br < z) res |= ZoningBorder::BOTTOM_RIGHT;
+    if (tr == z && tl == z && Get(x - 1, y - 1, getter) < z) res |= ZoningBorder::TOP_CORNER;
+    if (tr == z && br == z && Get(x - 1, y + 1, getter) < z) res |= ZoningBorder::RIGHT_CORNER;
+    if (br == z && bl == z && Get(x + 1, y + 1, getter) < z) res |= ZoningBorder::BOTTOM_CORNER;
+    if (tl == z && bl == z && Get(x + 1, y - 1, getter) < z) res |= ZoningBorder::LEFT_CORNER;
+    return std::make_pair(res, z);
+}
+
 const HighlightMap::MapType &HighlightMap::GetMap() const {
     return this->map;
 }
@@ -921,9 +949,10 @@ void HighlightMap::AddTileArea(const TileArea &area, SpriteID palette) {
     }
 }
 
-
 void HighlightMap::AddTileAreaWithBorder(const TileArea &area, SpriteID palette) {
     if (area.w == 0 || area.h == 0) return;
+
+    this->AddTileArea(area, palette);
 
     auto sx = TileX(area.tile), sy = TileY(area.tile);
     auto ex = sx + area.w - 1, ey = sy + area.h - 1;
@@ -950,8 +979,15 @@ void HighlightMap::AddTileAreaWithBorder(const TileArea &area, SpriteID palette)
     this->Add(TileXY(ex, ey), ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_LEFT | ZoningBorder::BOTTOM_RIGHT));
 }
 
-
-
+void HighlightMap::AddTilesBorder(const std::set<TileIndex> &tiles, SpriteID palette) {
+    for (auto t : tiles) {
+        auto b = CalcTileBorders(t, [&tiles](TileIndex t) {
+            return tiles.find(t) == tiles.end() ? 0 : 1;
+        });
+        if (b.first != ZoningBorder::NONE)
+            this->Add(t, ObjectTileHighlight::make_border(palette, b.first));
+    }
+}
 
 SpriteID GetTintBySelectionColour(SpriteID colour, bool deep=false) {
     switch(colour) {
@@ -1709,34 +1745,6 @@ void ObjectHighlight::DrawSelectionOverlay([[maybe_unused]] DrawPixelInfo *dpi) 
 
 void ObjectHighlight::DrawOverlay([[maybe_unused]] DrawPixelInfo *dpi) {
     if (!this->cost.Succeeded()) return;
-}
-
-template <typename F>
-uint8 Get(uint32 x, uint32 y, F getter) {
-    if (x >= Map::SizeX() || y >= Map::SizeY()) return 0;
-    return getter(TileXY(x, y));
-}
-
-template <typename F>
-std::pair<ZoningBorder, uint8> CalcTileBorders(TileIndex tile, F getter) {
-    auto x = TileX(tile), y = TileY(tile);
-    ZoningBorder res = ZoningBorder::NONE;
-    auto z = getter(tile);
-    if (z == 0)
-        return std::make_pair(res, 0);
-    auto tr = Get(x - 1, y, getter);
-    auto tl = Get(x, y - 1, getter);
-    auto bl = Get(x + 1, y, getter);
-    auto br = Get(x, y + 1, getter);
-    if (tr < z) res |= ZoningBorder::TOP_RIGHT;
-    if (tl < z) res |= ZoningBorder::TOP_LEFT;
-    if (bl < z) res |= ZoningBorder::BOTTOM_LEFT;
-    if (br < z) res |= ZoningBorder::BOTTOM_RIGHT;
-    if (tr == z && tl == z && Get(x - 1, y - 1, getter) < z) res |= ZoningBorder::TOP_CORNER;
-    if (tr == z && br == z && Get(x - 1, y + 1, getter) < z) res |= ZoningBorder::RIGHT_CORNER;
-    if (br == z && bl == z && Get(x + 1, y + 1, getter) < z) res |= ZoningBorder::BOTTOM_CORNER;
-    if (tl == z && bl == z && Get(x + 1, y - 1, getter) < z) res |= ZoningBorder::LEFT_CORNER;
-    return std::make_pair(res, z);
 }
 
 static uint8 _industry_highlight_hash = 0;

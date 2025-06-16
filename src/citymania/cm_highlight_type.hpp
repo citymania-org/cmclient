@@ -400,6 +400,7 @@ public:
     std::vector<TileIndex> UpdateWithMap(const HighlightMap &update);
     void AddTileArea(const TileArea &area, SpriteID palette);
     void AddTileAreaWithBorder(const TileArea &area, SpriteID palette);
+    void AddTilesBorder(const std::set<TileIndex> &tiles, SpriteID palette);
 };
 
 class Preview {
