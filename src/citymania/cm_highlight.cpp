@@ -860,6 +860,89 @@ void ObjectHighlight::MarkDirty() {
     // fprintf(stderr, "E\n");
 }
 
+const HighlightMap::MapType &HighlightMap::GetMap() const {
+    return this->map;
+}
+
+void HighlightMap::Add(TileIndex tile, ObjectTileHighlight oth) {
+    this->map[tile].push_back(oth);
+}
+
+bool HighlightMap::Contains(TileIndex tile) const {
+    return this->map.find(tile) != this->map.end();
+}
+
+std::optional<std::reference_wrapper<const std::vector<ObjectTileHighlight>>>
+        HighlightMap::GetForTile(TileIndex tile) const {
+    auto it = this->map.find(tile);
+    if (it == this->map.end()) return std::nullopt;
+    return it->second;
+}
+
+HighlightMap::MapTypeKeys HighlightMap::GetAllTiles() const {
+    return std::views::keys(this->map);
+}
+
+std::vector<TileIndex> HighlightMap::UpdateWithMap(const HighlightMap &update) {
+    std::vector<TileIndex> tiles_changed;
+    for (auto it = this->map.begin(); it != this->map.end();) {
+        tiles_changed.push_back(it->first);
+        it = (update.Contains(it->first) ? std::next(it) : this->map.erase(it));
+    }
+    for (auto &[t, l] : update.GetMap()) {
+        auto it = this->map.find(t);
+        if (it != this->map.end() && it->second == l)
+            continue;
+        this->map.insert_or_assign(it, t, l);
+        tiles_changed.push_back(t);
+    }
+    return tiles_changed;
+}
+
+void HighlightMap::AddTileArea(const TileArea &area, SpriteID palette) {
+    if (area.w == 0 || area.h == 0) return;
+
+    auto sx = TileX(area.tile), sy = TileY(area.tile);
+    auto ex = sx + area.w - 1, ey = sy + area.h - 1;
+
+    for (auto y = sy; y <= ey; y++) {
+        for (auto x = sx; x <= ex; x++) {
+            this->Add(TileXY(x, y), ObjectTileHighlight::make_tint(palette));
+        }
+    }
+}
+
+
+void HighlightMap::AddTileAreaWithBorder(const TileArea &area, SpriteID palette) {
+    if (area.w == 0 || area.h == 0) return;
+
+    auto sx = TileX(area.tile), sy = TileY(area.tile);
+    auto ex = sx + area.w - 1, ey = sy + area.h - 1;
+
+    if (area.w == 1 && area.h == 1) {
+        this->Add(area.tile, ObjectTileHighlight::make_border(palette, ZoningBorder::FULL));
+        return;
+    }
+    // NOTE: Doesn't handle one-tile width/height separately but relies on border overlapping
+    this->Add(TileXY(sx, sy), ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT | ZoningBorder::TOP_RIGHT));
+    for (auto x = sx + 1; x < ex; x++)
+        this->Add(TileXY(x, sy), ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT));
+    this->Add(TileXY(ex, sy), ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT | ZoningBorder::BOTTOM_LEFT));
+    for (auto y = sy + 1; y < ey; y++) {
+        this->Add(TileXY(sx, y), ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_RIGHT));
+        for (auto x = sx + 1; x < ex; x++) {
+            this->Add(TileXY(x, y), ObjectTileHighlight::make_border(palette, ZoningBorder::NONE));
+        }
+        this->Add(TileXY(ex, y), ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_LEFT));
+    }
+    this->Add(TileXY(sx, ey), ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_RIGHT | ZoningBorder::BOTTOM_RIGHT));
+    for (auto x = sx + 1; x < ex; x++)
+        this->Add(TileXY(x, ey), ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_RIGHT));
+    this->Add(TileXY(ex, ey), ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_LEFT | ZoningBorder::BOTTOM_RIGHT));
+}
+
+
+
 
 SpriteID GetTintBySelectionColour(SpriteID colour, bool deep=false) {
     switch(colour) {
@@ -1816,9 +1899,10 @@ void CalcCBTownLimitBorder(TileHighlight &th, TileIndex tile, SpriteID border_pa
 
 TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
     TileHighlight th;
-    auto it = _ap.tiles.find(ti->tile);
-    if (it != _ap.tiles.end()) {
-        for (auto &oth : it->second) {
+
+    auto hl = _ap.tiles.GetForTile(ti->tile);
+    if (hl.has_value()) {
+        for (auto &oth : hl.value().get()) {
             oth.SetTileHighlight(th, ti);
         }
         return th;
@@ -1945,9 +2029,9 @@ void DrawTileZoning(const TileInfo *ti, const TileHighlight &th, TileType tile_t
 bool DrawTileSelection(const TileInfo *ti, [[maybe_unused]] const TileHighlightType &tht) {
     if (ti->tile == INVALID_TILE || IsTileType(ti->tile, MP_VOID)) return false;
 
-    auto it = _ap.tiles.find(ti->tile);
-    if (it != _ap.tiles.end()) {
-        for (auto oth : it->second) {
+    auto hl = _ap.tiles.GetForTile(ti->tile);
+    if (hl.has_value()) {
+        for (auto &oth : hl.value().get()) {
             DrawObjectTileHighlight(ti, oth);
         }
         return true;
@@ -2308,7 +2392,7 @@ void SetActivePreview(up<Preview> &&preview) {
 }
 
 void ResetActivePreview() {
-    for (auto &[t, l] : _ap.tiles) {
+    for (auto t : _ap.tiles.GetAllTiles()) {
         MarkTileDirtyByTile(t);
     }
     _ap.preview = nullptr;
@@ -2321,18 +2405,9 @@ void UpdateActivePreview() {
     auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
     _ap.preview->Update(pt, tile);
 
-    auto tiles = _ap.preview->GetTiles();
-    for (auto it = _ap.tiles.begin(); it != _ap.tiles.end();) {
-        MarkTileDirtyByTile(it->first);
-        it = (tiles.find(it->first) == tiles.end() ? _ap.tiles.erase(it) : std::next(it));
-    }
-    for (auto &[t, l] : tiles) {
-        auto it = _ap.tiles.find(t);
-        if (it != _ap.tiles.end() && it->second == l)
-            continue;
-        _ap.tiles.insert_or_assign(it, t, l);
+    auto tiles_changed = _ap.tiles.UpdateWithMap(_ap.preview->GetHighlightMap());
+    for (auto t : tiles_changed)
         MarkTileDirtyByTile(t);
-    }
 }
 
 bool _prev_left_button_down = false;

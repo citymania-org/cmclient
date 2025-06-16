@@ -82,7 +82,7 @@ public:
     virtual void Update(Point /* pt */, TileIndex /* tile */) {};
     virtual up<Command> GetCommand(bool adjacent, StationID join_to) const =0;
     virtual up<Command> GetRemoveCommand() const =0;
-    virtual void AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const =0;
+    virtual void AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const =0;
     virtual bool Execute(up<Command> cmd, bool remove_mode) const =0;
     virtual OverlayParams GetOverlayParams() const =0;
 };
@@ -97,7 +97,7 @@ public:
     TileArea GetArea(bool remove_mode) const override;
     up<Command> GetCommand(bool adjacent, StationID join_to) const override;
     up<Command> GetRemoveCommand() const override;
-    void AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const override;
+    void AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const override;
     bool Execute(up<Command> cmd, bool remove_mode) const override;
     OverlayParams GetOverlayParams() const override;
 };
@@ -117,7 +117,7 @@ public:
     void Update(Point pt, TileIndex tile) override;
     up<Command> GetCommand(bool adjacent, StationID join_to) const override;
     up<Command> GetRemoveCommand() const override;
-    void AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const override;
+    void AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const override;
     bool Execute(up<Command> cmd, bool remove_mode) const override;
     OverlayParams GetOverlayParams() const override;
 };
@@ -136,7 +136,7 @@ public:
     void Update(Point pt, TileIndex tile) override;
     up<Command> GetCommand(bool adjacent, StationID join_to) const override;
     up<Command> GetRemoveCommand() const override;
-    void AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const override;
+    void AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const override;
     bool Execute(up<Command> cmd, bool remove_mode) const override;
     OverlayParams GetOverlayParams() const override;
 };
@@ -150,10 +150,10 @@ protected:
     bool adjacent_stations = false;
     bool show_coverage = true;
 
-    void AddAreaTiles(Preview::TileMap &tiles, bool add_current, bool show_join_area);
+    void AddAreaTiles(HighlightMap &hlmap, bool add_current, bool show_join_area);
     virtual void Execute() = 0;
     up<Command> GetCommand(bool adjacent, StationID join_to);
-    void AddStationPreview(Preview::TileMap &tiles, SpriteID palette);
+    void AddStationPreview(HighlightMap &hlmap, SpriteID palette);
 
 public:
     StationPreviewBase(sp<PreviewStationType> type) :type{type} {};
@@ -178,7 +178,7 @@ public:
     virtual ~VanillaStationPreview() {};
     void Update(Point pt, TileIndex tile) override;
 
-    Preview::TileMap GetTiles() override;
+    HighlightMap GetHighlightMap() override;
     void OnStationRemoved(const Station *station) override;
 };
 
@@ -196,7 +196,7 @@ public:
     void Update(Point pt, TileIndex tile) override;
     bool HandleMousePress() override;
 
-    Preview::TileMap GetTiles() override;
+    HighlightMap GetHighlightMap() override;
     void OnStationRemoved(const Station *station) override;
 };
 
