@@ -772,7 +772,7 @@ protected:
 	}
 
 	/** Blink the industries (if selected) on a regular interval. */
-	IntervalTimer<TimerWindow> blink_interval = {std::chrono::milliseconds(450), [this](auto) {
+	IntervalTimer<TimerWindow> blink_interval = {TIMER_BLINK_INTERVAL, [this](auto) {
 		Blink();
 	}};
 
