@@ -656,33 +656,6 @@ void OnStationRemoved(const Station *station) {
     if (_ap.preview != nullptr) _ap.preview->OnStationRemoved(station);
 }
 
-static void AddAreaRectTiles(Preview::TileMap &tiles, TileArea area, SpriteID palette) {
-    if (area.w == 0 || area.h == 0) return;
-
-    if (area.w == 1 && area.h == 1) {
-        tiles[area.tile].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::FULL));
-        return;
-    }
-    auto sx = TileX(area.tile), sy = TileY(area.tile);
-    auto ex = sx + area.w - 1, ey = sy + area.h - 1;
-    // NOTE: Doesn't handle one-tile width/height separately but relies on border overlapping
-    tiles[TileXY(sx, sy)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT | ZoningBorder::TOP_RIGHT));
-    for (auto x = sx + 1; x < ex; x++)
-        tiles[TileXY(x, sy)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT));
-    tiles[TileXY(ex, sy)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_LEFT | ZoningBorder::BOTTOM_LEFT));
-    for (auto y = sy + 1; y < ey; y++) {
-        tiles[TileXY(sx, y)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_RIGHT));
-        for (auto x = sx + 1; x < ex; x++) {
-            tiles[TileXY(x, y)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::NONE));
-        }
-        tiles[TileXY(ex, y)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_LEFT));
-    }
-    tiles[TileXY(sx, ey)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::TOP_RIGHT | ZoningBorder::BOTTOM_RIGHT));
-    for (auto x = sx + 1; x < ex; x++)
-        tiles[TileXY(x, ey)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_RIGHT));
-    tiles[TileXY(ex, ey)].push_back(ObjectTileHighlight::make_border(palette, ZoningBorder::BOTTOM_LEFT | ZoningBorder::BOTTOM_RIGHT));
-}
-
 // copied from cm_blueprint.cpp
 template<typename Func>
 void IterateStation(TileIndex start_tile, Axis axis, byte numtracks, byte plat_len, Func visitor) {
@@ -700,9 +673,10 @@ void IterateStation(TileIndex start_tile, Axis axis, byte numtracks, byte plat_l
     } while (--numtracks);
 }
 
-void AddJoinAreaTiles(Preview::TileMap &tiles, StationID station_id) {
+
+TileArea GetStationJoinArea(StationID station_id) {
     auto station = Station::GetIfValid(station_id);
-    if (station == nullptr) return;
+    if (station == nullptr) return {};
 
     auto &r = station->rect;
     auto d = (int)_settings_game.station.station_spread - 1;
@@ -713,7 +687,7 @@ void AddJoinAreaTiles(Preview::TileMap &tiles, StationID station_id) {
                std::min<int>(r.top + d, Map::SizeY() - 1))
     );
 
-    AddAreaRectTiles(tiles, ta, CM_PALETTE_TINT_CYAN);
+    return ta;
 }
 
 bool RailStationPreview::IsDragDrop() const {
@@ -768,7 +742,7 @@ bool RailStationPreview::Execute(up<Command> cmd, bool remove_mode) const {
     else return cmd->post(&CcStation);
 }
 
-void RailStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const {
+void RailStationPreview::AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const {
     auto cmd = this->GetCommand(true, NEW_STATION);
     auto cmdt = dynamic_cast<cmd::BuildRailStation*>(cmd.get());
     if (cmdt == nullptr) return;
@@ -781,7 +755,7 @@ void RailStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palet
     IterateStation(cmdt->tile_org, cmdt->axis, cmdt->numtracks, cmdt->plat_len,
         [&](TileIndex t) {
             byte layout = *layout_ptr++;
-            tiles[t].push_back(ObjectTileHighlight::make_rail_station(palette, cmdt->axis, layout & ~1));
+            hlmap.Add(t, ObjectTileHighlight::make_rail_station(palette, cmdt->axis, layout & ~1));
         }
     );
 }
@@ -871,7 +845,7 @@ bool RoadStationPreview::Execute(up<Command> cmd, bool remove_mode) const {
     else return cmd->post(&CcRoadStop);
 }
 
-void RoadStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const {
+void RoadStationPreview::AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const {
     auto cmd = this->GetCommand(true, NEW_STATION);
     auto cmdt = dynamic_cast<cmd::BuildRoadStop*>(cmd.get());
     if (cmdt == nullptr) return;
@@ -881,7 +855,7 @@ void RoadStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palet
     for (TileIndex t : this->GetArea(false)) {
         auto ddir = cmdt->ddir;
         if (cmdt->is_drive_through) ddir = ddir + DIAGDIR_END;
-        tiles[t].push_back(ObjectTileHighlight::make_road_stop(
+        hlmap.Add(t, ObjectTileHighlight::make_road_stop(
             palette,
             cmdt->rt,
             ddir,
@@ -938,11 +912,11 @@ bool DockPreview::Execute(up<Command> cmd, bool remove_mode) const {
     cmd->post(&CcBuildDocks);
 }
 
-void DockPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) const {
+void DockPreview::AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const {
     auto t = this->GetStartTile();
-    tiles[t].push_back(ObjectTileHighlight::make_dock_slope(CM_PALETTE_TINT_WHITE, this->ddir));
+    hlmap.Add(t, ObjectTileHighlight::make_dock_slope(CM_PALETTE_TINT_WHITE, this->ddir));
     t += TileOffsByDiagDir(this->ddir);
-    tiles[t].push_back(ObjectTileHighlight::make_dock_flat(CM_PALETTE_TINT_WHITE, DiagDirToAxis(this->ddir)));
+    hlmap.Add(t, ObjectTileHighlight::make_dock_flat(CM_PALETTE_TINT_WHITE, DiagDirToAxis(this->ddir)));
     // TODO
     // auto cmd = this->GetCommand(true, NEW_STATION);
     // auto cmdt = dynamic_cast<cmd::BuildRoadStop*>(cmd.get());
@@ -953,7 +927,7 @@ void DockPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palette) con
     // for (TileIndex t : this->GetArea(false)) {
     //     auto ddir = cmdt->ddir;
     //     if (cmdt->is_drive_through) ddir = ddir + DIAGDIR_END;
-    //     tiles[t].push_back(ObjectTileHighlight::make_road_stop(
+    //     hlmap.Add(t, ObjectTileHighlight::make_road_stop(
     //         palette,
     //         cmdt->rt,
     //         ddir,
@@ -972,21 +946,23 @@ OverlayParams DockPreview::GetOverlayParams() const {
     };
 }
 
-
-void StationPreviewBase::AddAreaTiles(Preview::TileMap &tiles, bool add_current, bool show_join_area) {
+void StationPreviewBase::AddAreaTiles(HighlightMap &hlmap, bool add_current, bool show_join_area) {
     Station *st_join = Station::GetIfValid(this->station_to_join);
     std::set<TileIndex> join_area;
+    std::set<TileIndex> coverage_area;
 
     if (show_join_area && st_join != nullptr) {
-        AddJoinAreaTiles(tiles, st_join->index);
-        for (auto t : tiles) join_area.insert(t.first);
+        hlmap.AddTileAreaWithBorder(GetStationJoinArea(st_join->index), CM_PALETTE_TINT_CYAN);
+        // FIXME hlmap can already have stuff
+        for (auto t : hlmap.GetAllTiles()) join_area.insert(t);
     }
 
     if (this->show_coverage && st_join != nullptr) {
         // Add joining station coverage
         for (auto t : st_join->catchment_tiles) {
             auto pal = join_area.find(t) != join_area.end() ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
-            tiles[t].push_back(ObjectTileHighlight::make_tint(pal));
+            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
+            coverage_area.insert(t);
         }
     }
 
@@ -999,7 +975,8 @@ void StationPreviewBase::AddAreaTiles(Preview::TileMap &tiles, bool add_current,
         area.ClampToMap();
         for (auto t : area) {
             auto pal = join_area.find(t) != join_area.end() ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
-            tiles[t].push_back(ObjectTileHighlight::make_tint(pal));
+            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
+            coverage_area.insert(t);
         }
     }
 
@@ -1007,7 +984,7 @@ void StationPreviewBase::AddAreaTiles(Preview::TileMap &tiles, bool add_current,
         TileArea ta(TileXY(st_join->rect.left, st_join->rect.top), TileXY(st_join->rect.right, st_join->rect.bottom));
         for (TileIndex t : ta) {
             if (!IsTileType(t, MP_STATION) || GetStationIndex(t) != st_join->index) continue;
-            tiles[t].push_back(ObjectTileHighlight::make_struct_tint(CM_PALETTE_TINT_BLUE));
+            hlmap.Add(t, ObjectTileHighlight::make_struct_tint(CM_PALETTE_TINT_BLUE));
         }
     }
 }
@@ -1085,20 +1062,20 @@ up<Command> StationPreviewBase::GetCommand(bool adjacent, StationID join_to) {
     return this->type->GetCommand(adjacent, join_to);
 }
 
-Preview::TileMap VanillaStationPreview::GetTiles() {
-    Preview::TileMap tiles;
+HighlightMap VanillaStationPreview::GetHighlightMap() {
+    HighlightMap hlmap;
 
-    if (!IsValidTile(this->type->cur_tile)) return tiles;
+    if (!IsValidTile(this->type->cur_tile)) return hlmap;
 
     if (this->remove_mode) {
-        AddAreaRectTiles(tiles, this->type->GetArea(true), CM_PALETTE_TINT_RED_DEEP);
-        return tiles;
+        hlmap.AddTileAreaWithBorder(this->type->GetArea(true), CM_PALETTE_TINT_RED_DEEP);
+        return hlmap;
     }
 
-    this->AddAreaTiles(tiles, true, false);
-    this->type->AddPreviewTiles(tiles, this->palette);
+    this->AddAreaTiles(hlmap, true, false);
+    this->type->AddPreviewTiles(hlmap, this->palette);
 
-    return tiles;
+    return hlmap;
 }
 
 void VanillaStationPreview::Update(Point pt, TileIndex tile) {
@@ -1190,26 +1167,26 @@ up<Command> StationPreview::GetCommand() {
     return res;
 }
 
-Preview::TileMap StationPreview::GetTiles() {
-    Preview::TileMap tiles;
+HighlightMap StationPreview::GetHighlightMap() {
+    HighlightMap hlmap;
 
-    if (!IsValidTile(this->type->cur_tile)) return tiles;
+    if (!IsValidTile(this->type->cur_tile)) return hlmap;
 
     if (this->remove_mode) {
-        AddAreaRectTiles(tiles, this->type->GetArea(true), CM_PALETTE_TINT_RED_DEEP);
-        return tiles;
+        hlmap.AddTileAreaWithBorder(this->type->GetArea(true), CM_PALETTE_TINT_RED_DEEP);
+        return hlmap;
     }
 
-    this->AddAreaTiles(tiles, !this->select_mode, true);
+    this->AddAreaTiles(hlmap, !this->select_mode, true);
 
     if (this->select_mode) {
-        tiles[this->type->cur_tile].push_back(ObjectTileHighlight::make_border(CM_PALETTE_TINT_BLUE, ZoningBorder::FULL));
-        return tiles;
+        hlmap.Add(this->type->cur_tile, ObjectTileHighlight::make_border(CM_PALETTE_TINT_BLUE, ZoningBorder::FULL));
+        return hlmap;
     }
 
-    this->type->AddPreviewTiles(tiles, PAL_NONE);
+    this->type->AddPreviewTiles(hlmap, PAL_NONE);
 
-    return tiles;
+    return hlmap;
 }
 
 void StationPreview::Update(Point pt, TileIndex tile) {
@@ -1241,7 +1218,7 @@ bool StationPreview::HandleMousePress() {
 }
 
 void StationPreview::Execute() {
-    this->type->Execute(std::move(this->GetCommand()), this->remove_mode);
+    this->type->Execute(this->GetCommand(), this->remove_mode);
 }
 
 void StationPreview::OnStationRemoved(const Station *station) {

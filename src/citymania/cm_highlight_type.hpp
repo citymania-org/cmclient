@@ -15,7 +15,9 @@
 #include "../track_type.h"
 
 #include <map>
+#include <optional>
 #include <set>
+#include <ranges>
 #include <type_traits>
 #include <unordered_set>
 #include <vector>
@@ -382,16 +384,33 @@ public:
     void MarkDirty();
 };
 
+
+class HighlightMap {
+public:
+    typedef std::map<TileIndex, std::vector<ObjectTileHighlight>> MapType;
+    typedef decltype(std::views::keys(std::declval<const MapType &>())) MapTypeKeys;
+protected:
+    MapType map;
+public:
+    const MapType &GetMap() const;
+    void Add(TileIndex tile, ObjectTileHighlight oth);
+    bool Contains(TileIndex tile) const;
+    std::optional<std::reference_wrapper<const std::vector<ObjectTileHighlight>>> GetForTile(TileIndex tile) const;
+    MapTypeKeys GetAllTiles() const;
+    std::vector<TileIndex> UpdateWithMap(const HighlightMap &update);
+    void AddTileArea(const TileArea &area, SpriteID palette);
+    void AddTileAreaWithBorder(const TileArea &area, SpriteID palette);
+};
+
 class Preview {
 public:
-    typedef std::map<TileIndex, std::vector<ObjectTileHighlight>> TileMap;
     virtual ~Preview() {}
     virtual void Update(Point pt, TileIndex tile) = 0;
     virtual void HandleMouseMove() {};
     virtual bool HandleMousePress() { return false; };
     virtual void HandleMouseRelease() {};
     virtual bool HandleMouseClick(Viewport* /* vp */, Point /* pt */, TileIndex /* tile */, bool /* double_click */) { return false; };
-    virtual TileMap GetTiles() = 0;
+    virtual HighlightMap GetHighlightMap() = 0;
     virtual CursorID GetCursor() = 0;
     virtual void OnStationRemoved(const Station* /* station */) {};
 };
@@ -405,7 +424,7 @@ public:
 
 struct ActivePreview {
     up<Preview> preview;
-    Preview::TileMap tiles;
+    HighlightMap tiles;
 };
 
 extern ActivePreview _ap;
