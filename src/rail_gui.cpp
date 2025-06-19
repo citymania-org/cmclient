@@ -672,11 +672,13 @@ struct BuildRailToolbarWindow : Window {
 					if (!was_open || dragdrop != _settings_client.gui.station_dragdrop) {
 						_settings_client.gui.station_dragdrop = dragdrop;
 						if (citymania::HandleStationPlacePushButton(this, WID_RAT_BUILD_STATION, std::make_shared<citymania::RailStationPreview>()))
+						// if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_BRIDGE, HT_RECT, DDSP_BUILD_STATION))
 							ShowStationBuilder(this);
 					}
 					this->last_user_action = WID_RAT_BUILD_STATION;
 				} else { /* button */
 					if (citymania::HandleStationPlacePushButton(this, WID_RAT_BUILD_STATION, std::make_shared<citymania::RailStationPreview>())) {
+					// if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_BRIDGE, HT_RECT, DDSP_BUILD_STATION)) {
 						ShowStationBuilder(this);
 						this->last_user_action = WID_RAT_BUILD_STATION;
 					}
