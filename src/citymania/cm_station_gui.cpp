@@ -33,6 +33,8 @@
 #include "cm_type.hpp"
 #include "generated/cm_gen_commands.hpp"
 
+#include <cstdio>
+#include <optional>
 #include <sstream>
 #include <unordered_set>
 
@@ -619,7 +621,11 @@ CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
     return produced;
 }
 
-std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int rad, StationCoverageType sct) {
+std::optional<std::string> GetStationCoverageAreaText(TileIndex tile, int w, int h, int rad, StationCoverageType sct, bool supplies) {
+    auto sp = dynamic_cast<StationPreviewBase *>(GetActivePreview().get());
+    if (sp != nullptr)
+        return sp->GetStationCoverageAreaText(rad, sct, supplies);
+    if (!supplies) return std::nullopt;
     auto production = citymania::GetProductionAroundTiles(tile, w, h, rad);
 
     std::ostringstream s;
@@ -909,7 +915,7 @@ up<Command> DockPreview::GetRemoveCommand() const {
 }
 
 bool DockPreview::Execute(up<Command> cmd, bool remove_mode) const {
-    cmd->post(&CcBuildDocks);
+    return cmd->post(&CcBuildDocks);
 }
 
 void DockPreview::AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const {
@@ -1026,6 +1032,32 @@ void StationPreviewBase::HandleMouseRelease() {
         this->Execute();
         this->type->start_tile = INVALID_TILE;
     }
+}
+
+std::optional<std::string> StationPreviewBase::GetStationCoverageAreaText(int rad, StationCoverageType sct, bool supplies) {
+    auto params = this->type->GetOverlayParams();
+    if (params.area.tile == INVALID_TILE) return std::nullopt;
+
+    CargoArray cargoes;
+    if (supplies) {
+        cargoes = ::GetProductionAroundTiles(params.area.tile, params.area.w, params.area.h, params.radius);
+    } else {
+        cargoes = ::GetAcceptanceAroundTiles(params.area.tile, params.area.w, params.area.h, params.radius);
+    }
+
+    CargoTypes cargo_mask = 0;
+    /* Convert cargo counts to a set of cargo bits, and draw the result. */
+    for (CargoID i = 0; i < NUM_CARGO; i++) {
+        switch (sct) {
+            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_ALL: break;
+            default: NOT_REACHED();
+        }
+        if (cargoes[i] >= (supplies ? 1U : 8U)) SetBit(cargo_mask, i);
+    }
+    SetDParam(0, cargo_mask);
+    return GetString(supplies ? STR_STATION_BUILD_SUPPLIES_CARGO : STR_STATION_BUILD_ACCEPTS_CARGO);
 }
 
 std::vector<std::pair<SpriteID, std::string>> StationPreviewBase::GetOverlayData() {

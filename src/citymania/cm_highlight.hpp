@@ -60,6 +60,8 @@ void ResetRotateAutodetection();
 void ResetActivePreview();
 void SetActivePreview(up<Preview> &&preview);
 void UpdateActivePreview();
+const up<Preview> &GetActivePreview();
+
 
 bool HandlePlacePushButton(Window *w, WidgetID widget, up<Preview> preview);
 bool HandleMouseMove();

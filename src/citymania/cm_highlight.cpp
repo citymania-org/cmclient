@@ -2416,6 +2416,11 @@ void ResetActivePreview() {
     _ap.tiles = {};
 }
 
+const up<Preview> &GetActivePreview() {
+    return _ap.preview;
+}
+
+
 void UpdateActivePreview() {
     if (_ap.preview == nullptr) return;
     Point pt = GetTileBelowCursor();

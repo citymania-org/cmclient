@@ -51,7 +51,7 @@ void MarkCoverageHighlightDirty();
 bool CheckRedrawStationCoverage();
 void AbortStationPlacement();
 
-std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int rad, StationCoverageType sct);
+std::optional<std::string> GetStationCoverageAreaText(TileIndex tile, int w, int h, int rad, StationCoverageType sct, bool supplies);
 
 bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r);
 DiagDirection AutodetectRoadObjectDirection(TileIndex tile, Point pt, RoadType roadtype);
@@ -160,6 +160,7 @@ public:
     void Update(Point pt, TileIndex tile) override;
     bool HandleMousePress() override;
     void HandleMouseRelease() override;
+    std::optional<std::string> GetStationCoverageAreaText(int rad, StationCoverageType sct, bool supplies);
     std::vector<std::pair<SpriteID, std::string>> GetOverlayData();
 };
 
