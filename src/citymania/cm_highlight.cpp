@@ -179,7 +179,6 @@ struct TileZoning {
 static TileZoning *_mz = nullptr;
 static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
 
-extern StationBuildingStatus _station_building_status;
 extern const Station *_station_to_join;
 extern const Station *_highlight_station_to_join;
 extern TileArea _highlight_join_area;
@@ -500,6 +499,13 @@ ObjectHighlight ObjectHighlight::make_industry(TileIndex tile, IndustryType ind_
     return oh;
 }
 
+ObjectHighlight ObjectHighlight::make_dock(TileIndex tile, DiagDirection orientation) {
+	auto oh = ObjectHighlight{ObjectHighlight::Type::DOCK};
+    oh.tile = tile;
+    oh.ddir = orientation;
+	return oh;
+}
+
 /**
  * Try to add an additional rail-track at the entrance of a depot
  * @param tile  Tile to use for adding the rail-track
@@ -552,12 +558,12 @@ void ObjectHighlight::AddStationOverlayData(int w, int h, int rad, StationCovera
         if (cs == nullptr) continue;
 
         if (!has_header) {
-            this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES));
+            this->overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES));
             has_header = true;
         }
         SetDParam(0, i);
         SetDParam(1, production[i] >> 8);
-        this->overlay_data.emplace_back(cs->GetCargoIcon(), GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO));
+        this->overlay_data.emplace_back(1, cs->GetCargoIcon(), GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO));
     }
 }
 
@@ -793,6 +799,20 @@ void ObjectHighlight::UpdateTiles() {
             }
             break;
         }
+        case Type::DOCK: {
+            this->cost = cmd::BuildDock(
+                this->tile,
+                NEW_STATION,
+                true
+            ).test();
+            auto palette = (cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            this->AddTile(this->tile, ObjectTileHighlight::make_dock_slope(palette, this->ddir));
+            if (this->ddir != INVALID_DIAGDIR) {
+                TileIndex tile_to = TileAddByDiagDir(this->tile, this->ddir);
+                this->AddTile(tile_to, ObjectTileHighlight::make_dock_flat(palette, DiagDirToAxis(this->ddir)));
+            }
+            break;
+        }
         default:
             NOT_REACHED();
     }
@@ -809,11 +829,12 @@ void ObjectHighlight::UpdateOverlay() {
         HideBuildInfoOverlay();
         return;
     }
+
     auto err = this->cost.GetErrorMessage();
     // auto extra_err = this->cost.GetExtraErrorMessage();
     bool no_money = (err == STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY);
     SetDParam(0, this->cost.GetCost());
-    this->overlay_data.emplace_back(PAL_NONE, GetString(no_money ? CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY : CM_STR_BUILD_INFO_OVERLAY_COST_OK));
+    this->overlay_data.emplace_back(0, PAL_NONE, GetString(no_money ? CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY : CM_STR_BUILD_INFO_OVERLAY_COST_OK));
     // if (this->cost.Failed() && err != STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY) {
     //     if (err == INVALID_STRING_ID) {
     //         this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN));
@@ -1610,6 +1631,44 @@ TileHighlight ObjectHighlight::GetTileHighlight(const TileInfo *ti) {
     return th;
 }
 
+HighlightMap ObjectHighlight::GetHighlightMap(SpriteID palette) {
+    // TODO remove the need to convert (maybe replace HighlightMap with multimap?)
+    HighlightMap res;
+    for (auto &[tile, oth] : this->tiles) {
+        auto othp = oth;
+        othp.palette = palette;
+        res.Add(tile, othp);
+    }
+    return res;
+}
+
+std::optional<TileArea> ObjectHighlight::GetArea() {
+    switch(this->type) {
+        case Type::NONE:
+        case Type::BLUEPRINT:
+        case Type::POLYRAIL:
+        case Type::INDUSTRY:
+            return std::nullopt;
+        case Type::RAIL_DEPOT:
+        case Type::ROAD_DEPOT:
+            return TileArea{this->tile, 1, 1};
+        case Type::RAIL_STATION:
+        case Type::ROAD_STOP:
+            return TileArea{this->tile, this->end_tile};
+        case Type::AIRPORT: {
+            const AirportSpec *as = AirportSpec::Get(this->airport_type);
+            if (!as->IsAvailable() || this->airport_layout >= as->num_table) return std::nullopt;
+            return TileArea{this->tile, as->size_x, as->size_y};
+        }
+        case Type::DOCK: {
+            if (this->ddir == INVALID_DIAGDIR) return std::nullopt;
+            return TileArea{this->tile, TileAddByDiagDir(this->tile, this->ddir)};
+        }
+        default:
+            NOT_REACHED();
+    }
+}
+
 static void DrawObjectTileHighlight(const TileInfo *ti, const ObjectTileHighlight &oth) {
     switch (oth.type) {
         case ObjectTileHighlight::Type::RAIL_DEPOT:
@@ -1908,7 +1967,7 @@ void CalcCBTownLimitBorder(TileHighlight &th, TileIndex tile, SpriteID border_pa
 TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
     TileHighlight th;
 
-    auto hl = _ap.tiles.GetForTile(ti->tile);
+    auto hl = _at.tiles.GetForTile(ti->tile);
     if (hl.has_value()) {
         for (auto &oth : hl.value().get()) {
             oth.SetTileHighlight(th, ti);
@@ -2037,7 +2096,7 @@ void DrawTileZoning(const TileInfo *ti, const TileHighlight &th, TileType tile_t
 bool DrawTileSelection(const TileInfo *ti, [[maybe_unused]] const TileHighlightType &tht) {
     if (ti->tile == INVALID_TILE || IsTileType(ti->tile, MP_VOID)) return false;
 
-    auto hl = _ap.tiles.GetForTile(ti->tile);
+    auto hl = _at.tiles.GetForTile(ti->tile);
     if (hl.has_value()) {
         for (auto &oth : hl.value().get()) {
             DrawObjectTileHighlight(ti, oth);
@@ -2367,7 +2426,8 @@ PaletteID GetTreeShadePal(TileIndex tile) {
     }
 }
 
-ActivePreview _ap;
+ActiveTool _at;
+
 
 static void ResetVanillaHighlight() {
     if (_thd.window_class != WC_INVALID) {
@@ -2393,34 +2453,81 @@ static void ResetVanillaHighlight() {
     _thd.make_square_red = false;
 }
 
-void SetActivePreview(up<Preview> &&preview) {
+void SetActiveTool(up<Tool> &&tool) {
     ResetVanillaHighlight();
-    ResetActivePreview();
-    _ap.preview = std::move(preview);
+    ResetActiveTool();
+    _at.tool = std::move(tool);
 }
 
-void ResetActivePreview() {
-    for (auto t : _ap.tiles.GetAllTiles()) {
+void ResetActiveTool() {
+    for (auto t : _at.tiles.GetAllTiles()) {
         MarkTileDirtyByTile(t);
     }
-    _ap.preview = nullptr;
-    _ap.tiles = {};
+    _at.tool = nullptr;
+    _at.tiles = {};
 }
 
-const up<Preview> &GetActivePreview() {
-    return _ap.preview;
+const up<Tool> &GetActiveTool() {
+    return _at.tool;
 }
 
 
-void UpdateActivePreview() {
-    if (_ap.preview == nullptr) return;
+void UpdateActiveTool() {
     Point pt = GetTileBelowCursor();
     auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
-    _ap.preview->Update(pt, tile);
 
-    auto tiles_changed = _ap.tiles.UpdateWithMap(_ap.preview->GetHighlightMap());
+    ToolGUIInfo info;
+    if (citymania::StationBuildTool::active_highlight.has_value()) {
+        info = GetSelectedStationGUIInfo();
+    } else if (_at.tool != nullptr) {
+        _at.tool->Update(pt, tile);
+        info = _at.tool->GetGUIInfo();
+    }
+    auto [hlmap, overlay_data, cost] = info;
+    auto tiles_changed = _at.tiles.UpdateWithMap(hlmap);
     for (auto t : tiles_changed)
         MarkTileDirtyByTile(t);
+
+    if (cost.GetExpensesType() != INVALID_EXPENSES || cost.GetErrorMessage() != INVALID_STRING_ID) {
+        // Add CommandCost info
+        auto err = cost.GetErrorMessage();
+        if (cost.Succeeded()) {
+            auto money = cost.GetCost();
+            if (money != 0) {
+                SetDParam(0, money);
+                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_COST_OK));
+            }
+        } else if (err == STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY) {
+            SetDParam(0, cost.GetCost());
+            overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY));
+        } else {
+            if (err == INVALID_STRING_ID) {
+                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN));
+            } else {
+                SetDParam(0, err);
+                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR));
+            }
+            auto extra_err = cost.GetExtraErrorMessage();
+            if (extra_err != INVALID_STRING_ID) {
+                SetDParam(0, extra_err);
+                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR));
+            }
+        }
+    }
+
+    /* Update overlay */
+    if (overlay_data.size() > 0) {
+        auto w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
+        if (w == nullptr) { HideBuildInfoOverlay(); return; }
+        auto vp = IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y);
+        if (vp == nullptr) { HideBuildInfoOverlay(); return; }
+        Point pto = RemapCoords2(TileX(tile) * TILE_SIZE, TileY(tile) * TILE_SIZE);
+        pto.x = UnScaleByZoom(pto.x - vp->virtual_left, vp->zoom) + vp->left;
+        pto.y = UnScaleByZoom(pto.y - vp->virtual_top, vp->zoom) + vp->top;
+        ShowBuildInfoOverlay(pto.x, pto.y, overlay_data);
+    } else {
+        HideBuildInfoOverlay();
+    }
 }
 
 bool _prev_left_button_down = false;
@@ -2435,35 +2542,35 @@ bool HandleMouseMove() {
     bool released = !_left_button_down && changed && _keep_mouse_click;
     if (!_left_button_down) _keep_mouse_click = false;
 
-    if (_ap.preview == nullptr) return false;
+    if (_at.tool == nullptr) return false;
     // Viewport *vp = IsPtInWindowViewport(w, );
 
     auto pt = GetTileBelowCursor();
     if (pt.x == -1) return false;
     auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
-    _ap.preview->Update(pt, tile);
-    _ap.preview->HandleMouseMove();
+    _at.tool->Update(pt, tile);
+    _at.tool->HandleMouseMove();
     if (_left_button_down) {
-        if (changed && _ap.preview->HandleMousePress()) {
+        if (changed && _at.tool->HandleMousePress()) {
             _keep_mouse_click = true;
         }
         if (_keep_mouse_click) return true;
     }
     if (released) {
-        _ap.preview->HandleMouseRelease();
+        _at.tool->HandleMouseRelease();
     }
     return false;
 }
 
 bool HandleMouseClick(Viewport *vp, bool double_click) {
-    if (_ap.preview == nullptr) return false;
+    if (_at.tool == nullptr) return false;
     auto pt = GetTileBelowCursor();
     auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
-    _ap.preview->Update(pt, tile);
-    return _ap.preview->HandleMouseClick(vp, pt, tile, double_click);
+    _at.tool->Update(pt, tile);
+    return _at.tool->HandleMouseClick(vp, pt, tile, double_click);
 }
 
-bool HandlePlacePushButton(Window *w, WidgetID widget, up<Preview> preview) {
+bool HandlePlacePushButton(Window *w, WidgetID widget, up<Tool> tool) {
     if (w->IsWidgetDisabled(widget)) return false;
 
     if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
@@ -2476,19 +2583,18 @@ bool HandlePlacePushButton(Window *w, WidgetID widget, up<Preview> preview) {
 
     w->LowerWidget(widget);
 
-    auto icon = preview->GetCursor();
+    auto icon = tool->GetCursor();
     if ((icon & ANIMCURSOR_FLAG) != 0) {
         SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
     } else {
         SetMouseCursor(icon, PAL_NONE);
     }
-    citymania::SetActivePreview(std::move(preview));
+    citymania::SetActiveTool(std::move(tool));
     _thd.window_class = w->window_class;
     _thd.window_number = w->window_number;
 
     return true;
 
 }
-
 
 }  // namespace citymania

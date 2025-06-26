@@ -52,6 +52,7 @@
 #include "citymania/cm_station_gui.hpp"
 
 #include "safeguards.h"
+#include <memory>
 
 static void ShowRVStationPicker(Window *parent, RoadStopType rs);
 static void ShowRoadDepotPicker(Window *parent);
@@ -220,11 +221,7 @@ void CcRoadStop(Commands, const CommandCost &result, TileIndex tile, uint8_t wid
  */
 static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg)
 {
-	if (citymania::UseImprovedStationJoin()) {
-		citymania::PlaceRoadStop(start_tile, end_tile, stop_type, adjacent, rt, err_msg);
-		return;
-	}
-
+	NOT_REACHED(); // CityMania uses tools
 	TileArea ta(start_tile, end_tile);
 	assert(_thd.cm.type == citymania::ObjectHighlight::Type::ROAD_STOP);
 	// DiagDirection ddir = _roadstop_gui_settings.orientation;
@@ -518,7 +515,8 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_BUS_STATION: {
-				if (citymania::HandleStationPlacePushButton(this, WID_ROT_BUS_STATION, std::make_shared<citymania::RoadStationPreview>(ROADSTOP_BUS))) {
+				if (citymania::HandlePlacePushButton(this, WID_ROT_BUS_STATION, std::make_unique<citymania::RoadStopBuildTool>(ROADSTOP_BUS))) {
+				// if (HandlePlacePushButton(this, WID_ROT_BUS_STATION, SPR_CURSOR_BUS_STATION, HT_RECT, DDSP_BUILD_BUSSTOP)) {
 					ShowRVStationPicker(this, ROADSTOP_BUS);
 					this->last_started_action = widget;
 					if (!this->IsWidgetLowered(WID_ROT_BUS_STATION))this->ToggleWidgetLoweredState(WID_ROT_BUS_STATION);
@@ -527,7 +525,8 @@ struct BuildRoadToolbarWindow : Window {
 			}
 
 			case WID_ROT_TRUCK_STATION:
-				if (citymania::HandleStationPlacePushButton(this, WID_ROT_TRUCK_STATION, std::make_shared<citymania::RoadStationPreview>(ROADSTOP_TRUCK))) {
+				if (citymania::HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, std::make_unique<citymania::RoadStopBuildTool>(ROADSTOP_TRUCK))) {
+				// if (HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, SPR_CURSOR_TRUCK_STATION, HT_RECT, DDSP_BUILD_TRUCKSTOP)) {
 					ShowRVStationPicker(this, ROADSTOP_TRUCK);
 					this->last_started_action = widget;
 					if (!this->IsWidgetLowered(WID_ROT_TRUCK_STATION)) this->ToggleWidgetLoweredState(WID_ROT_TRUCK_STATION);
@@ -662,8 +661,8 @@ struct BuildRoadToolbarWindow : Window {
 		CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
 		CloseWindowById(WC_SELECT_STATION, 0);
 		CloseWindowByClass(WC_BUILD_BRIDGE);
-		
-		citymania::AbortStationPlacement();		
+
+		citymania::AbortStationPlacement();
 	}
 
 	void OnPlaceDrag(ViewportPlaceMethod select_method, [[maybe_unused]] ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt) override
@@ -1178,7 +1177,7 @@ static void ShowRoadDepotPicker(Window *parent)
 /** Enum referring to the Hotkeys in the build road stop window */
 enum BuildRoadStopHotkeys {
 	BROSHK_FOCUS_FILTER_BOX, ///< Focus the edit box for editing the filter string
-	CM_BROSHK_ROTATE, 
+	CM_BROSHK_ROTATE,
 };
 
 struct BuildRoadStationWindow : public PickerWindowBase {
@@ -1799,7 +1798,7 @@ static constexpr NWidgetPart _nested_road_station_picker_widgets[] = {
 							NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
 								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
 								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
-							EndContainer(),							
+							EndContainer(),
 						EndContainer(),
 						NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BROS_SHOW_NEWST_TYPE_SEL),
 							NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_SHOW_NEWST_TYPE), SetMinimalSize(144, 8), SetDataTip(STR_JUST_STRING, STR_NULL), SetTextStyle(TC_ORANGE), SetFill(1, 0),

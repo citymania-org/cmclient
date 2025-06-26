@@ -24,6 +24,17 @@ FILES = [
     'script/script_cmd.h',
 ]
 
+BASE_CLASS = {
+    'BuildDock': 'StationBuildCommand',
+    'BuildRailStation': 'StationBuildCommand',
+    'BuildAirport': 'StationBuildCommand',
+    'BuildRoadStop': 'StationBuildCommand',
+}
+
+BASE_FIELDS = {
+    'StationBuildCommand': ['station_to_join', 'adjacent'],
+}
+
 BASE_DIR = Path(__file__).parent
 OUTPUT = BASE_DIR / 'src/citymania/generated/cm_gen_commands'
 GLOBAL_TYPES = set(('GoalType', 'GoalTypeID', 'GoalID'))
@@ -245,13 +256,20 @@ def run():
         )
         for cmd in commands:
             name = cmd['name']
-            args_list = ', '.join(f'{at} {an}' for at, an in cmd['args'])
-            args_init = ', '.join(f'{an}{{{an}}}' for _, an in cmd['args'])
+            base_class = BASE_CLASS.get(name, 'Command')
+            base_fields = BASE_FIELDS.get(base_class, [])
             f.write(
-                f'class {name}: public Command {{\n'
+                f'class {name}: public {base_class} {{\n'
                 f'public:\n'
             )
+            args_list = ', '.join(f'{at} {an}' for at, an in cmd['args'])
+            args_init = ', '.join(f'{an}{{{an}}}' for _, an in cmd['args'] if an not in base_fields)
+            if base_fields:
+                base_joined = ', '.join(base_fields)
+                args_init = f'{base_class}{{{base_joined}}}, ' + args_init
             for at, an in cmd['args']:
+                if an in base_fields:
+                    continue
                 f.write(f'    {at} {an};\n')
             f.write(f'\n')
             if args_init:

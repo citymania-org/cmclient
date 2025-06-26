@@ -62,7 +62,7 @@ public:
     }
 
     void UpdateSize() {
-        this->padding = ScaleGUITrad(3);
+        this->padding = ScaleGUITrad(5);
         auto dim = this->GetContentDimension();
         this->box.width = dim.width + 2 * this->padding;
         this->box.height = dim.height + 2 * this->padding;
@@ -181,8 +181,9 @@ public:
 
         Dimension text_dim{0, 0};
         Dimension icon_dim{0, 0};
-        for (const auto &[icon, s] : data) {
+        for (const auto &[indent, icon, s] : data) {
             text_dim = maxdim(text_dim, GetStringBoundingBox(s));
+            text_dim.width += WidgetDimensions::scaled.hsep_indent * indent;
             if (icon != PAL_NONE)
                 icon_dim = maxdim(icon_dim, GetSpriteSize(icon));
         }
@@ -192,25 +193,26 @@ public:
         if (icon_dim.width > 0)
             this->text_ofs_x = icon_dim.width + this->padding;
         return {
-            text_dim.width + this->text_ofs_x,
+            std::min<uint>(text_dim.width + this->text_ofs_x, ScaleGUITrad(500)),
             (uint)data.size() * this->line_height - padding
         };
     }
 
-    std::pair<Point, Rect> GetPositions(Rect rect, int row, SpriteID icon) {
+    std::pair<Point, Rect> GetPositions(Rect rect, int row, uint indent, SpriteID icon) {
         auto icon_height = this->max_height;
         auto ofs_x = 0;
+        int ind = WidgetDimensions::scaled.hsep_indent * indent;
         if (icon != PAL_NONE) {
             icon_height = GetSpriteSize(icon).height;
             ofs_x = this->text_ofs_x;
         }
         return {
             {
-                rect.left,
+                rect.left + ind,
                 rect.top + row * this->line_height + (this->max_height - icon_height) / 2,
             },
             {
-                rect.left + ofs_x,
+                rect.left + ofs_x + ind,
                 rect.top + row * this->line_height + this->text_ofs_y,
                 rect.right,
                 rect.bottom
@@ -227,6 +229,11 @@ public:
     ~BuildInfoOverlay() override {}
 
 	void Show(int x, int y, BuildInfoOverlayData data) {
+        if (data.size() == 0) {
+            this->visible = false;
+            return;
+        }
+        if (this->visible && this->x == x && this->y == y && this->data == data) return;
 		this->x = x;
 		this->y = y;
 		this->data = data;
@@ -248,9 +255,8 @@ public:
 
     void DrawContent(Rect rect) override {
         int row = 0;
-    	for (const auto &[icon, s] : this->data) {
-            auto [ipos, srect] = this->aligner.GetPositions(rect, row, icon);
-
+    	for (const auto &[indent, icon, s] : this->data) {
+            auto [ipos, srect] = this->aligner.GetPositions(rect, row, indent, icon);
             DrawString(srect.left, srect.right, srect.top, s);
             if (icon != PAL_NONE)
                 DrawSprite(icon, PAL_NONE, ipos.x, ipos.y);

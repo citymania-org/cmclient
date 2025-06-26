@@ -237,16 +237,14 @@ public:
     Commands get_command() override;
 };
 
-class BuildAirport: public Command {
+class BuildAirport: public StationBuildCommand {
 public:
     TileIndex tile;
     byte airport_type;
     byte layout;
-    StationID station_to_join;
-    bool adjacent;
 
     BuildAirport(TileIndex tile, byte airport_type, byte layout, StationID station_to_join, bool adjacent)
-        :tile{tile}, airport_type{airport_type}, layout{layout}, station_to_join{station_to_join}, adjacent{adjacent} {}
+        :StationBuildCommand{station_to_join, adjacent}, tile{tile}, airport_type{airport_type}, layout{layout} {}
     ~BuildAirport() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -254,14 +252,12 @@ public:
     Commands get_command() override;
 };
 
-class BuildDock: public Command {
+class BuildDock: public StationBuildCommand {
 public:
     TileIndex tile;
-    StationID station_to_join;
-    bool adjacent;
 
     BuildDock(TileIndex tile, StationID station_to_join, bool adjacent)
-        :tile{tile}, station_to_join{station_to_join}, adjacent{adjacent} {}
+        :StationBuildCommand{station_to_join, adjacent}, tile{tile} {}
     ~BuildDock() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -269,7 +265,7 @@ public:
     Commands get_command() override;
 };
 
-class BuildRailStation: public Command {
+class BuildRailStation: public StationBuildCommand {
 public:
     TileIndex tile_org;
     RailType rt;
@@ -278,11 +274,9 @@ public:
     byte plat_len;
     StationClassID spec_class;
     uint16_t spec_index;
-    StationID station_to_join;
-    bool adjacent;
 
     BuildRailStation(TileIndex tile_org, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
-        :tile_org{tile_org}, rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+        :StationBuildCommand{station_to_join, adjacent}, tile_org{tile_org}, rt{rt}, axis{axis}, numtracks{numtracks}, plat_len{plat_len}, spec_class{spec_class}, spec_index{spec_index} {}
     ~BuildRailStation() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -305,7 +299,7 @@ public:
     Commands get_command() override;
 };
 
-class BuildRoadStop: public Command {
+class BuildRoadStop: public StationBuildCommand {
 public:
     TileIndex tile;
     uint8_t width;
@@ -316,11 +310,9 @@ public:
     RoadType rt;
     RoadStopClassID spec_class;
     uint16_t spec_index;
-    StationID station_to_join;
-    bool adjacent;
 
     BuildRoadStop(TileIndex tile, uint8_t width, uint8_t length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, RoadStopClassID spec_class, uint16_t spec_index, StationID station_to_join, bool adjacent)
-        :tile{tile}, width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, spec_class{spec_class}, spec_index{spec_index}, station_to_join{station_to_join}, adjacent{adjacent} {}
+        :StationBuildCommand{station_to_join, adjacent}, tile{tile}, width{width}, length{length}, stop_type{stop_type}, is_drive_through{is_drive_through}, ddir{ddir}, rt{rt}, spec_class{spec_class}, spec_index{spec_index} {}
     ~BuildRoadStop() override {}
 
     bool _post(::CommandCallback * callback) override;
