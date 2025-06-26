@@ -6298,13 +6298,26 @@ CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
 CM_STR_NO_BLUEPRINT_IN_SLOT                                     :{WHITE}No blueprint in slot {NUM}
 CM_STR_ABOUT_MENU_LOGIN_WINDOW                                  :CityMania server login
-CM_STR_BUILD_INFO_OVERLAY_COST_OK                               :{WHITE}Cost: {CURRENCY_LONG}
+CM_STR_BUILD_INFO_OVERLAY_COST_OK                               :{GREEN}Cost: {CURRENCY_LONG}
 CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY                         :{RED}Cost: {CURRENCY_LONG}
-CM_STR_BUILD_INFO_OVERLAY_STATION_ACCEPTS                       :{WHITE}Accepts:
+CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO_PARTIAL					:{SILVER}{CARGO_LIST}({NUM}/8)
+CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO_FULL					:{GOLD}{CARGO_LIST}({NUM}/8)
+CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO					        :{GOLD}{CARGO_LIST}
+CM_STR_BULID_INFO_OVERLAY_ACCEPTS                               :{WHITE}Accepts: {GOLD}{RAW_STRING}
 CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES                      :{WHITE}Supplies:
-CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO                         :{WHITE}{CARGO_LONG}
-CM_STR_BUILD_INFO_OVERLAY_ERROR                                 :{RED}{STRING}
+CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO                         :{GOLD}{CARGO_LONG}
+CM_STR_BUILD_INFO_OVERLAY_ERROR                                 :{RED}Error: {STRING}
 CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN                         :{RED}Unknown Error!
+CM_STR_BULID_INFO_OVERLAY_JOIN_STATION                          :{LTBLUE}Join {STATION}
+CM_STR_BULID_INFO_OVERLAY_NEW_STATION                           :{GOLD}New station
+CM_STR_BULID_INFO_OVERLAY_TOWN_NONE                             :{WHITE}Town: {GOLD}None
+CM_STR_BULID_INFO_OVERLAY_TOWN_ALLOWS                           :{WHITE}Town: {GREEN}{TOWN}[{NUM}], {STRING}
+CM_STR_BULID_INFO_OVERLAY_TOWN_DENIES							:{WHITE}Town: {RED}{TOWN}[{NUM}], {STRING}
+CM_STR_BULID_INFO_OVERLAY_TOWN_NO_ADS                           :{WHITE}no ad zone
+CM_STR_BULID_INFO_OVERLAY_TOWN_L_ADS                            :{GOLD}large {WHITE}ad zone
+CM_STR_BULID_INFO_OVERLAY_TOWN_M_ADS                            :{GOLD}medium {WHITE}ad zone
+CM_STR_BULID_INFO_OVERLAY_TOWN_S_ADS                            :{GOLD}small {WHITE}ad zone
+CM_STR_BULID_INFO_OVERLAY_STATION_SIZE                          :{WHITE}Size: {GOLD}{NUM}x{NUM}
 
 CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID                         :{LTBLUE}{ENGINE} {BLACK}Built: {LTBLUE}{NUM}{BLACK} Value: {LTBLUE}{CURRENCY_LONG}{BLACK} ID: {LTBLUE}{NUM}
 
@@ -6316,3 +6329,4 @@ CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Show 
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Show hidden ({NUM})
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Show hidden ({NUM})
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Show hidden ({NUM})
+

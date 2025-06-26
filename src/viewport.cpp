@@ -243,7 +243,7 @@ static Point MapXYZToViewport(const Viewport *vp, int x, int y, int z)
 }
 
 void DeleteWindowViewport(Window *w)
-{	
+{
 	delete w->viewport;
 	w->viewport = nullptr;
 }
@@ -2916,7 +2916,7 @@ void UpdateTileSelection()
 		if ((new_drawstyle & HT_DRAG_MASK) != HT_NONE) SetSelectionTilesDirty();
 	}
 
-	citymania::UpdateActivePreview();
+	citymania::UpdateActiveTool();
 }
 
 /**
@@ -3645,7 +3645,7 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 
 	/* CityMania code start */
 	_thd.dir2 = HT_DIR_END;
-	ShowLengthMeasurement(b, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));	
+	ShowLengthMeasurement(b, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 	/* CityMania code end */
 }
 
@@ -3826,7 +3826,7 @@ calc_heightdiff_single_direction:;
 
 				ShowMeasurementTooltips(measure_strings_length[index], index);
 			}
-			#endif 
+			#endif
 			/* With current code passing a HT_LINE style to calculate the height
 			 * difference is enough. However if/when a point-tool is created
 			 * with this method, function should be called with new_style (below)
@@ -3995,7 +3995,7 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
  */
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num, ViewportDragDropSelectionProcess cm_process)
 {
-	citymania::ResetActivePreview();
+	citymania::ResetActiveTool();
 	if (_thd.window_class != WC_INVALID) {
 		/* Undo clicking on button and drag & drop */
 		Window *w = _thd.GetCallbackWnd();
@@ -4046,7 +4046,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 void ResetObjectToPlace()
 {
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0, CM_DDSP_NONE);
-	citymania::ResetActivePreview();
+	citymania::ResetActiveTool();
 }
 
 Point GetViewportStationMiddle(const Viewport *vp, const Station *st)

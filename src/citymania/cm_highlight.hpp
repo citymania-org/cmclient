@@ -57,13 +57,13 @@ PaletteID GetTreeShadePal(TileIndex tile);
 void RotateAutodetection();
 void ResetRotateAutodetection();
 
-void ResetActivePreview();
-void SetActivePreview(up<Preview> &&preview);
-void UpdateActivePreview();
-const up<Preview> &GetActivePreview();
+void ResetActiveTool();
+void SetActiveTool(up<Tool> &&tool);
+void UpdateActiveTool();
+const up<Tool> &GetActiveTool();
 
 
-bool HandlePlacePushButton(Window *w, WidgetID widget, up<Preview> preview);
+bool HandlePlacePushButton(Window *w, WidgetID widget, up<Tool> tool);
 bool HandleMouseMove();
 bool HandleMouseClick(Viewport *vp, bool double_click);
 

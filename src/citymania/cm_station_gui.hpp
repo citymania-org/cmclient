@@ -1,6 +1,7 @@
 #ifndef CM_STATION_GUI_HPP
 #define CM_STATION_GUI_HPP
 
+#include "cm_command_type.hpp"
 #include "cm_highlight_type.hpp"
 
 #include "../core/geometry_type.hpp"
@@ -8,6 +9,9 @@
 #include "../road_type.h"
 #include "../station_gui.h"
 #include "../station_type.h"
+
+#include <concepts>
+#include <optional>
 
 namespace citymania {
 
@@ -26,29 +30,15 @@ struct RailStationGUISettings {
     uint16_t station_count;           ///< Number of custom stations (if newstations is \c true )
 };
 
-enum class StationBuildingStatus {
-    IMPOSSIBLE = 0,
-    QUERY = 1,
-    JOIN = 2,
-    NEW = 3,
-};
-
-// void SetStationBiildingStatus(StationBuildingStatus status);
 // void SetStationTileSelectSize(int w, int h, int catchment);
 bool UseImprovedStationJoin();
 void OnStationTileSetChange(const Station *station, bool adding, StationType type);
 void OnStationPartBuilt(const Station *station);
 void OnStationRemoved(const Station *station);
-void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg);
-void HandleStationPlacement(TileIndex start, TileIndex end);
-void PlaceRail_Station(TileIndex tile);
-void PlaceDock(TileIndex tile, TileIndex tile_to);
-void PlaceAirport(TileIndex tile);
 
-void SelectStationToJoin(const Station *station);
+// void SelectStationToJoin(const Station *station);
 // const Station *GetStationToJoin();
 void MarkCoverageHighlightDirty();
-bool CheckRedrawStationCoverage();
 void AbortStationPlacement();
 
 std::optional<std::string> GetStationCoverageAreaText(TileIndex tile, int w, int h, int rad, StationCoverageType sct, bool supplies);
@@ -58,6 +48,7 @@ DiagDirection AutodetectRoadObjectDirection(TileIndex tile, Point pt, RoadType r
 DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area, Point pt, RoadType roadtype);
 DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt);
 void SetSelectedStationToJoin(StationID station_id);
+void ResetJoinStationHighlight();
 
 
 struct OverlayParams {
@@ -66,144 +57,305 @@ struct OverlayParams {
     StationCoverageType coverage_type;
 };
 
-
-class PreviewStationType {
+// Remove action classes
+class RemoveHandler {
 public:
+    virtual ~RemoveHandler() = default;
+    virtual up<Command> GetCommand(TileArea area) = 0;
+    virtual bool Execute(TileArea area) = 0;
+};
+template<typename Handler>
+concept ImplementsRemoveHandler = std::derived_from<Handler, RemoveHandler>;
+
+template<ImplementsRemoveHandler Handler>
+class RemoveAction : public Action {
+private:
+    Handler handler;
     TileIndex start_tile = INVALID_TILE;
     TileIndex cur_tile = INVALID_TILE;
-
-    virtual ~PreviewStationType() {};
-
-    TileIndex GetStartTile() const { return start_tile == INVALID_TILE ? cur_tile : start_tile; }
-    virtual bool IsDragDrop() const { return true; };
-    virtual CursorID GetCursor() const =0;
-    virtual TileArea GetArea(bool remove_mode) const =0;
-    virtual void Update(Point /* pt */, TileIndex /* tile */) {};
-    virtual up<Command> GetCommand(bool adjacent, StationID join_to) const =0;
-    virtual up<Command> GetRemoveCommand() const =0;
-    virtual void AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const =0;
-    virtual bool Execute(up<Command> cmd, bool remove_mode) const =0;
-    virtual OverlayParams GetOverlayParams() const =0;
-};
-
-class RailStationPreview : public PreviewStationType {
 public:
-    virtual ~RailStationPreview() {};
-
-    // RailPreviewStation(RailStationGUISettings &settings) :settings{settings} {}
-    bool IsDragDrop() const override;
-    CursorID GetCursor() const override;
-    TileArea GetArea(bool remove_mode) const override;
-    up<Command> GetCommand(bool adjacent, StationID join_to) const override;
-    up<Command> GetRemoveCommand() const override;
-    void AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const override;
-    bool Execute(up<Command> cmd, bool remove_mode) const override;
-    OverlayParams GetOverlayParams() const override;
-};
-
-class RoadStationPreview : public PreviewStationType {
-protected:
-    DiagDirection ddir;
-    RoadStopType stop_type;
-
-public:
-    RoadStationPreview(RoadStopType stop_type) :stop_type{stop_type} {}
-    virtual ~RoadStationPreview() {};
-
-    bool IsDragDrop() const override;
-    CursorID GetCursor() const override;
-    TileArea GetArea(bool remove_mode) const override;
+    RemoveAction(const Handler &handler) : handler{handler} {}
+    ~RemoveAction() override = default;
     void Update(Point pt, TileIndex tile) override;
-    up<Command> GetCommand(bool adjacent, StationID join_to) const override;
-    up<Command> GetRemoveCommand() const override;
-    void AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const override;
-    bool Execute(up<Command> cmd, bool remove_mode) const override;
-    OverlayParams GetOverlayParams() const override;
+    std::optional<TileArea> GetArea() const override;
+    bool HandleMousePress() override;
+    void HandleMouseRelease() override;
+    ToolGUIInfo GetGUIInfo() override;
+    void OnStationRemoved(const Station *) override;
 };
 
-class DockPreview : public PreviewStationType {
-protected:
-    DiagDirection ddir;
 
+// StationSelect classes
+class StationSelectHandler {
 public:
-    DockPreview() {}
-    virtual ~DockPreview() {};
-
-    bool IsDragDrop() const override;
-    CursorID GetCursor() const override;
-    TileArea GetArea(bool remove_mode) const override;
-    void Update(Point pt, TileIndex tile) override;
-    up<Command> GetCommand(bool adjacent, StationID join_to) const override;
-    up<Command> GetRemoveCommand() const override;
-    void AddPreviewTiles(HighlightMap &hlmap, SpriteID palette) const override;
-    bool Execute(up<Command> cmd, bool remove_mode) const override;
-    OverlayParams GetOverlayParams() const override;
+    virtual ~StationSelectHandler() = default;
+    virtual void SelectStationToJoin(StationID station_id) = 0;
 };
+template<typename Handler>
+concept ImplementsStationSelectHandler = std::derived_from<Handler, StationSelectHandler>;
 
-class StationPreviewBase : public Preview {
-protected:
-    sp<PreviewStationType> type;
-    bool remove_mode = false;
-    bool keep_rail = true;  // whether to keep rail in remove mode
-    StationID station_to_join = INVALID_STATION;
-    bool adjacent_stations = false;
-    bool show_coverage = true;
-
-    void AddAreaTiles(HighlightMap &hlmap, bool add_current, bool show_join_area);
-    virtual void Execute() = 0;
-    up<Command> GetCommand(bool adjacent, StationID join_to);
-    void AddStationPreview(HighlightMap &hlmap, SpriteID palette);
-
+template<ImplementsStationSelectHandler Handler>
+class StationSelectAction : public Action {
+private:
+    Handler handler;
+    TileIndex cur_tile = INVALID_TILE;
+    StationID selected_station = INVALID_STATION;
 public:
-    StationPreviewBase(sp<PreviewStationType> type) :type{type} {};
-    CursorID GetCursor() override { return this->type->GetCursor(); };
+    StationSelectAction(const Handler &handler) : handler{handler} {}
+    ~StationSelectAction() override = default;
     void Update(Point pt, TileIndex tile) override;
     bool HandleMousePress() override;
     void HandleMouseRelease() override;
-    std::optional<std::string> GetStationCoverageAreaText(int rad, StationCoverageType sct, bool supplies);
-    std::vector<std::pair<SpriteID, std::string>> GetOverlayData();
-};
-
-
-class VanillaStationPreview : public StationPreviewBase {
-protected:
-    SpriteID palette;
-
-    void Execute() override;
-
-public:
-    StationID selected_station_to_join = INVALID_STATION;
-
-    VanillaStationPreview(sp<PreviewStationType> type) :StationPreviewBase{type} {};
-    virtual ~VanillaStationPreview() {};
-    void Update(Point pt, TileIndex tile) override;
-
-    HighlightMap GetHighlightMap() override;
+    ToolGUIInfo GetGUIInfo() override;
     void OnStationRemoved(const Station *station) override;
 };
 
-
-class StationPreview : public StationPreviewBase {
-protected:
-    bool select_mode = false;
-
-    void Execute() override;
-    up<Command> GetCommand();
-
+// PlacementAction
+class PlacementAction : public Action {
 public:
-    StationPreview(sp<PreviewStationType> type);
-    virtual ~StationPreview();
+    ~PlacementAction() override = default;
+    ToolGUIInfo PrepareGUIInfo(std::optional<ObjectHighlight> ohl, up<Command> cmd, StationCoverageType sct, uint rad);
+};
+
+// SizedPlacement classes
+class SizedPlacementHandler {
+public:
+    virtual ~SizedPlacementHandler() = default;
+    virtual up<Command> GetCommand(TileIndex tile, StationID to_join) = 0;
+    virtual bool Execute(TileIndex tile) = 0;
+    virtual std::optional<ObjectHighlight> GetObjectHighlight(TileIndex tile) = 0;
+    virtual std::pair<StationCoverageType, uint> GetCatchmentParams() = 0;
+};
+template<typename Handler>
+concept ImplementsSizedPlacementHandler = std::derived_from<Handler, SizedPlacementHandler>;
+
+template<ImplementsSizedPlacementHandler Handler>
+class SizedPlacementAction : public PlacementAction {
+private:
+    Handler handler;
+    TileIndex cur_tile = INVALID_TILE;
+public:
+    SizedPlacementAction(const Handler &handler) : handler{handler} {}
+    ~SizedPlacementAction() override = default;
     void Update(Point pt, TileIndex tile) override;
+    std::optional<TileArea> GetArea() const override { return std::nullopt; };
     bool HandleMousePress() override;
-
-    HighlightMap GetHighlightMap() override;
-    void OnStationRemoved(const Station *station) override;
+    void HandleMouseRelease() override;
+    ToolGUIInfo GetGUIInfo() override;
+    void OnStationRemoved(const Station *) override;
 };
 
-// SPR_CURSOR_BUS_STATION SPR_CURSOR_TRUCK_STATION
+// DragNDropPlacement classes
+class DragNDropPlacementHandler {
+public:
+    virtual ~DragNDropPlacementHandler() = default;
+    virtual up<Command> GetCommand(TileArea area, StationID to_join) = 0;
+    virtual bool Execute(TileArea area) = 0;
+    virtual std::optional<ObjectHighlight> GetObjectHighlight(TileArea area) = 0;
+    virtual std::pair<StationCoverageType, uint> GetCatchmentParams() = 0;
+};
+template<typename Handler>
+concept ImplementsDragNDropPlacementHandler = std::derived_from<Handler, DragNDropPlacementHandler>;
 
-bool HandleStationPlacePushButton(Window *w, WidgetID widget, sp<PreviewStationType> type);
+template<ImplementsDragNDropPlacementHandler Handler>
+class DragNDropPlacementAction : public PlacementAction {
+private:
+    TileIndex start_tile = INVALID_TILE;
+    TileIndex cur_tile = INVALID_TILE;
+    Handler handler;
+public:
+    DragNDropPlacementAction(const Handler &handler) :handler{handler} {};
+    ~DragNDropPlacementAction() override = default;
+    void Update(Point pt, TileIndex tile) override;
+    std::optional<TileArea> GetArea() const override;
+    bool HandleMousePress() override;
+    void HandleMouseRelease() override;
+    ToolGUIInfo GetGUIInfo() override;
+    void OnStationRemoved(const Station *) override;
+};
 
+class StationBuildTool : public Tool {
+public:
+    static StationID station_to_join;
+    static StationID current_selected_station;
+    static std::optional<ObjectHighlight> active_highlight;
+
+    class StationSelectHandler : public citymania::StationSelectHandler {
+    public:
+        StationBuildTool &tool;
+        StationSelectHandler(StationBuildTool &tool) : tool(tool) {}
+        ~StationSelectHandler() {}
+        void SelectStationToJoin(StationID station_id) override { this->tool.SelectStationToJoin(station_id); };
+    };
+
+    ~StationBuildTool() override = default;
+    void SelectStationToJoin(StationID station_id) { StationBuildTool::station_to_join = station_id; };
+    ToolGUIInfo GetGUIInfo() override {
+        if (!this->action) return {};
+        return this->action->GetGUIInfo();
+    }
+    void OnStationRemoved(const Station *station) override {
+        if (this->action) this->action->OnStationRemoved(station);
+    }
+protected:
+    template<typename Thandler, typename Tcallback, typename Targ>
+    bool ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg);
+};
+
+// RailStationBuildTool
+class RailStationBuildTool : public StationBuildTool {
+private:
+    class RemoveHandler : public citymania::RemoveHandler {
+    public:
+        RailStationBuildTool &tool;
+        RemoveHandler(RailStationBuildTool &tool) : tool(tool) {}
+        ~RemoveHandler() override = default;
+        up<Command> GetCommand(TileArea area) override;
+        bool Execute(TileArea area) override;
+    };
+
+    class SizedPlacementHandler : public citymania::SizedPlacementHandler {
+    public:
+        RailStationBuildTool &tool;
+        SizedPlacementHandler(RailStationBuildTool &tool) : tool(tool) {}
+        ~SizedPlacementHandler() override  = default;
+        up<Command> GetCommand(TileIndex tile, StationID to_join) override;
+        bool Execute(TileIndex tile) override;
+        std::optional<ObjectHighlight> GetObjectHighlight(TileIndex tile) override;
+        std::pair<StationCoverageType, uint> GetCatchmentParams() override { return {this->tool.GetCatchmentParams()}; };
+    };
+
+    class DragNDropPlacementHandler: public citymania::DragNDropPlacementHandler {
+    public:
+        RailStationBuildTool &tool;
+        DragNDropPlacementHandler(RailStationBuildTool &tool) :tool{tool} {}
+        ~DragNDropPlacementHandler() override  = default;
+        up<Command> GetCommand(TileArea area, StationID to_join) override;
+        bool Execute(TileArea area) override;
+        std::optional<ObjectHighlight> GetObjectHighlight(TileArea area) override;
+        std::pair<StationCoverageType, uint> GetCatchmentParams() override { return {this->tool.GetCatchmentParams()}; };
+    };
+
+    std::optional<ObjectHighlight> GetStationObjectHighlight(TileIndex start_tile, TileIndex end_tile) const;
+    std::pair<StationCoverageType, uint> GetCatchmentParams() { return {SCT_ALL, CA_TRAIN}; };
+
+public:
+    RailStationBuildTool();
+    ~RailStationBuildTool() override = default;
+    void Update(Point pt, TileIndex tile) override;
+    CursorID GetCursor() override;
+private:
+    enum class Mode { REMOVE, SELECT, DRAGDROP, SIZED };
+    Mode mode;
+};
+
+// RoadStopBuildTool
+class RoadStopBuildTool : public StationBuildTool {
+private:
+    class RemoveHandler : public citymania::RemoveHandler {
+    public:
+        RoadStopBuildTool &tool;
+        RemoveHandler(RoadStopBuildTool &tool) : tool(tool) {}
+        ~RemoveHandler() override = default;
+        up<Command> GetCommand(TileArea area) override;
+        bool Execute(TileArea area) override;
+    };
+
+    class DragNDropPlacementHandler: public citymania::DragNDropPlacementHandler {
+    public:
+        RoadStopBuildTool &tool;
+        DragNDropPlacementHandler(RoadStopBuildTool &tool) :tool{tool} {}
+        ~DragNDropPlacementHandler() override  = default;
+        up<Command> GetCommand(TileArea area, StationID to_join) override;
+        bool Execute(TileArea area) override;
+        std::optional<ObjectHighlight> GetObjectHighlight(TileArea area) override;
+        std::pair<StationCoverageType, uint> GetCatchmentParams() override { return this->tool.GetCatchmentParams(); };
+    };
+
+    std::pair<StationCoverageType, uint>  GetCatchmentParams() {
+        if (this->stop_type == ROADSTOP_BUS) return {SCT_PASSENGERS_ONLY, CA_BUS};
+        else return {SCT_NON_PASSENGERS_ONLY, CA_TRUCK};
+    };
+public:
+    RoadStopBuildTool(RoadStopType stop_type);
+    ~RoadStopBuildTool() override = default;
+    void Update(Point pt, TileIndex tile) override;
+    CursorID GetCursor() override;
+private:
+    enum class Mode { REMOVE, SELECT, DRAGDROP };
+    Mode mode;
+    RoadStopType stop_type;
+    DiagDirection ddir = DIAGDIR_NE;
+};
+
+// --- DockBuildTool ---
+class DockBuildTool : public StationBuildTool {
+private:
+    class RemoveHandler : public citymania::RemoveHandler {
+    public:
+        DockBuildTool &tool;
+        RemoveHandler(DockBuildTool &tool) : tool(tool) {}
+        ~RemoveHandler() override = default;
+        up<Command> GetCommand(TileArea area) override;
+        bool Execute(TileArea area) override;
+    };
+
+    class SizedPlacementHandler : public citymania::SizedPlacementHandler {
+    public:
+        DockBuildTool &tool;
+        SizedPlacementHandler(DockBuildTool &tool) : tool(tool) {}
+        ~SizedPlacementHandler() override = default;
+        up<Command> GetCommand(TileIndex tile, StationID to_join) override;
+        bool Execute(TileIndex tile) override;
+        std::optional<ObjectHighlight> GetObjectHighlight(TileIndex tile) override;
+        std::pair<StationCoverageType, uint> GetCatchmentParams() override { return {SCT_ALL, CA_DOCK}; };
+    };
+
+public:
+    DockBuildTool();
+	~DockBuildTool() override = default;
+    void Update(Point pt, TileIndex tile) override;
+    CursorID GetCursor() override;
+private:
+    enum class Mode { REMOVE, SELECT, SIZED };
+    Mode mode;
+    DiagDirection ddir;
+};
+
+// --- AirportBuildTool ---
+class AirportBuildTool : public StationBuildTool {
+private:
+    class RemoveHandler : public citymania::RemoveHandler {
+    public:
+        AirportBuildTool &tool;
+        RemoveHandler(AirportBuildTool &tool) : tool(tool) {}
+        ~RemoveHandler() override = default;
+        up<Command> GetCommand(TileArea area) override;
+        bool Execute(TileArea area) override;
+    };
+
+    class SizedPlacementHandler : public citymania::SizedPlacementHandler {
+    public:
+        AirportBuildTool &tool;
+        SizedPlacementHandler(AirportBuildTool &tool) : tool(tool) {}
+        ~SizedPlacementHandler() override = default;
+        up<Command> GetCommand(TileIndex tile, StationID to_join) override;
+        bool Execute(TileIndex tile) override;
+        std::optional<ObjectHighlight> GetObjectHighlight(TileIndex tile) override;
+        std::pair<StationCoverageType, uint> GetCatchmentParams() override;
+    };
+
+public:
+    AirportBuildTool();
+    ~AirportBuildTool() override = default;
+    void Update(Point pt, TileIndex tile) override;
+    CursorID GetCursor() override;
+private:
+    enum class Mode { REMOVE, SELECT, SIZED };
+    Mode mode;
+};
+
+ToolGUIInfo GetSelectedStationGUIInfo();
 
 } // namespace citymania
 

@@ -59,13 +59,6 @@ int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageTyp
 {
 	TileIndex tile = TileVirtXY(_thd.pos.x, _thd.pos.y);
 
-	/* CityMania code begin */
-	auto s = citymania::GetStationCoverageAreaText(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad, sct, supplies);
-	if (s.has_value()) {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, s.value());
-	}
-	/* CityMania code end */
-
 	CargoTypes cargo_mask = 0;
 	if (_thd.drawstyle == HT_RECT && tile < Map::Size()) {
 		CargoArray cargoes;
@@ -156,14 +149,9 @@ void FindStationsAroundSelection()
  */
 void CheckRedrawStationCoverage(Window *w)
 {
-	/* CityMania code begin */
-	if (citymania::UseImprovedStationJoin()) {
-		if (citymania::CheckRedrawStationCoverage()) w->SetDirty();
-		return;
-	}
-	/* CityMania code end */
-
 	/* Test if ctrl state changed */
+	/* CityMania uses tools and handles redraws differently
+
 	static bool _last_fn_pressed;
 	if (citymania::_fn_mod != _last_fn_pressed) {
 		_thd.dirty = 0xff;
@@ -178,6 +166,7 @@ void CheckRedrawStationCoverage(Window *w)
 			FindStationsAroundSelection<Station>();
 		}
 	}
+	*/
 }
 
 void CheckRedrawWaypointCoverage(const Window *)
@@ -2351,7 +2340,7 @@ struct SelectStationWindow : WindowPopup {
 	void Close([[maybe_unused]] int data = 0) override
 	{
 		if constexpr (std::is_same_v<T, Waypoint *>) SetViewportCatchmentSpecializedStation<T>(nullptr, true);
-		else citymania::SetSelectedStationToJoin(INVALID_STATION);
+		else citymania::ResetJoinStationHighlight();
 
 		_thd.freeze = false;
 		this->Window::Close();
@@ -2448,7 +2437,7 @@ struct SelectStationWindow : WindowPopup {
 		auto it = this->vscroll->GetScrolledItemFromWidget(_stations_nearby_list, pt.y, this, WID_JS_PANEL, WidgetDimensions::scaled.framerect.top);
 		const T *st = it == _stations_nearby_list.end() || *it == NEW_STATION ? nullptr : T::Get(*it);
 		if constexpr (std::is_same_v<T, Waypoint>) SetViewportCatchmentSpecializedStation<T>(st, true);
-		else citymania::SetSelectedStationToJoin(*it);
+		else citymania::SetSelectedStationToJoin(st ? st->index : INVALID_STATION);
 	}
 };
 

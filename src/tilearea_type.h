@@ -11,6 +11,7 @@
 #define TILEAREA_TYPE_H
 
 #include "map_func.h"
+#include "tile_type.h"
 
 class OrthogonalTileIterator;
 class DiagonalTileIterator;
@@ -60,6 +61,12 @@ struct OrthogonalTileArea {
 	TileIndex GetCenterTile() const
 	{
 		return TILE_ADDXY(this->tile, this->w / 2, this->h / 2);
+	}
+
+	TileIndex CMGetEndTile() const
+	{
+		if (this->w == 0 || this->h == 0 || this->tile == INVALID_TILE) return INVALID_TILE;
+		return TILE_ADDXY(this->tile, this->w - 1, this->h - 1);
 	}
 
 	OrthogonalTileIterator begin() const;
