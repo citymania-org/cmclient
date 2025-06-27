@@ -91,7 +91,7 @@ namespace citymania {
 
 size_t GetCommandHash(Commands cmd, CompanyID company_id, StringID err_msg, ::CommandCallback callback, const CommandDataBuffer &data) {
     size_t res = 0;
-    hash_combine(res, cmd, (uint16)company_id, err_msg, callback, data);
+    hash_combine(res, cmd, company_id.base(), err_msg, callback, data);
     return res;
 }
 

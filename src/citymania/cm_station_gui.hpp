@@ -145,7 +145,7 @@ protected:
     sp<PreviewStationType> type;
     bool remove_mode = false;
     bool keep_rail = true;  // whether to keep rail in remove mode
-    StationID station_to_join = INVALID_STATION;
+    StationID station_to_join = StationID::Invalid();
     bool show_coverage = true;
 
     void AddAreaTiles(Preview::TileMap &tiles, bool add_current, bool show_join_area);
@@ -170,7 +170,7 @@ protected:
     void Execute() override;
 
 public:
-    StationID selected_station_to_join = INVALID_STATION;
+    StationID selected_station_to_join = StationID::Invalid();
 
     VanillaStationPreview(sp<PreviewStationType> type) :StationPreviewBase{type} {};
     virtual ~VanillaStationPreview() {};

@@ -107,8 +107,8 @@ public:
 	inline void clear() { this->string.clear(); }
 	inline bool empty() const { return this->string.empty(); }
 
+	std::string string; ///< The encoded string. CM: make public
 private:
-	std::string string; ///< The encoded string.
 
 	/* An EncodedString can only be created by GetEncodedStringWithArgs(). */
 	explicit EncodedString(std::string &&string) : string(std::move(string)) {}

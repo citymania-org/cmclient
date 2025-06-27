@@ -70,8 +70,7 @@ public:
         this->box.height = this->padding;
         this->box.width = 0;
         for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
-            SetDParamStr(0, ci->client_name);
-            this->box.width = std::max<int>(this->box.width, GetStringBoundingBox(STR_JUST_RAW_STRING).width);
+            this->box.width = std::max<int>(this->box.width, GetStringBoundingBox(ci->client_name).width);
             this->box.height += this->line_height;
         }
         this->box.width += this->padding * 3 + icon_size.width;
@@ -176,11 +175,10 @@ public:
         std::sort(clients.begin(), clients.end());
         for (const auto &[playas, name, style] : clients) {
             auto [colour, icon] = STYLES[style];
-            SetDParamStr(0, name);
             // auto colour = TC_SILVER;
             // if (ci->client_id == _network_own_client_id) colour = TC_WHITE;
             // if (ci->client_id == CLIENT_ID_SERVER) colour = TC_ORANGE;
-            DrawString(text_left, text_right, y + this->text_offset_y, STR_JUST_RAW_STRING, colour);
+            DrawString(text_left, text_right, y + this->text_offset_y, name, colour);
 
             if (icon != PAL_NONE) DrawSprite(icon, COMPANY_SPRITE_COLOUR(playas), x, y + this->icon_offset_y);
                 // DrawCompanyIcon(playas, x, y + this->icon_offset_y);

@@ -32,7 +32,7 @@ static const NWidgetPart _nested_land_tooltips_widgets[] = {
 static WindowDesc _land_tooltips_desc(
     WDP_MANUAL, nullptr, 0, 0,
     CM_WC_LAND_TOOLTIPS, WC_NONE,
-    0,
+    {},
     _nested_land_tooltips_widgets
 );
 
@@ -48,7 +48,8 @@ struct LandTooltipsWindow : public Window
         this->tiletype = (TileType)(param & 0xFFFF);
         this->objIndex = (uint16)((param >> 16) & 0xFFFF);
         this->InitNested();
-        CLRBITS(this->flags, WF_WHITE_BORDER);
+        this->flags.Reset(WindowFlag::WhiteBorder);
+
     }
 
     virtual ~LandTooltipsWindow() {}
@@ -78,30 +79,29 @@ struct LandTooltipsWindow : public Window
             case MP_HOUSE: {
                 const HouseSpec *hs = HouseSpec::Get((HouseID)this->objIndex);
                 if(hs == NULL) break;
-                SetDParam(0, hs->building_name);
-                size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_NAME).width, size.width);
+                size.width = std::max(GetStringBoundingBox(GetString(CM_STR_LAND_TOOLTIPS_HOUSE_NAME, hs->building_name)).width, size.width);
                 size.height += text_height;
-                SetDParam(0, hs->population);
-                size.width = std::max(size.width, GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_HOUSE_POPULATION).width);
+                size.width = std::max(size.width, GetStringBoundingBox(GetString(CM_STR_LAND_TOOLTIPS_HOUSE_POPULATION, hs->population)).width);
                 break;
             }
             case MP_INDUSTRY: {
                 const Industry *ind = Industry::GetIfValid((IndustryID)this->objIndex);
                 if(ind == NULL) break;
 
-                SetDParam(0, ind->index);
-                size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME).width, size.width);
+                size.width = std::max(GetStringBoundingBox(GetString(CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME, ind->index)).width, size.width);
 
                 for (auto &p : ind->produced) {
-                    if (!IsValidCargoID(p.cargo)) continue;
                     const CargoSpec *cs = CargoSpec::Get(p.cargo);
                     if(cs == NULL) continue;
                     size.height += line_height;
-                    SetDParam(0, cs->name);
-                    SetDParam(1, cs->Index());
-                    SetDParam(2, p.history[LAST_MONTH].production);
-                    SetDParam(3, ToPercent8(p.history[LAST_MONTH].PctTransported()));
-                    size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO).width + icons_width, size.width);
+                    auto str = GetString(
+                        CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO,
+                        cs->name,
+                        cs->Index(),
+                        p.history[LAST_MONTH].production,
+                        ToPercent8(p.history[LAST_MONTH].PctTransported())
+                    );
+                    size.width = std::max(GetStringBoundingBox(str).width + icons_width, size.width);
                 }
                 break;
             }
@@ -109,17 +109,20 @@ struct LandTooltipsWindow : public Window
                 const Station *st = Station::GetIfValid((StationID)this->objIndex);
                 if(st == NULL) break;
 
-                SetDParam(0, st->index);
-                size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_STATION_NAME).width, size.width);
+                size.width = std::max(GetStringBoundingBox(GetString(CM_STR_LAND_TOOLTIPS_STATION_NAME, st->index)).width, size.width);
 
                 for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-                    int cargoid = cs->Index();
-                    if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
+                    auto cargoid = cs->Index();
+                    auto &ge = st->goods[cargoid];
+                    if (ge.HasRating() && ge.HasData()) {
                         size.height += line_height;
-                        SetDParam(0, cs->name);
-                        SetDParam(1, cargoid);
-                        SetDParam(2, st->goods[cargoid].cargo.TotalCount());
-                        SetDParam(3, ToPercent8(st->goods[cargoid].rating));
+                        auto str = GetString(
+                            CM_STR_LAND_TOOLTIPS_STATION_CARGO,
+                            cs->name,
+                            cargoid,
+                            ge.GetData().cargo.TotalCount(),
+                            ToPercent8(ge.rating)
+                        );
                         size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_STATION_CARGO).width + icons_width, size.width);
                     }
                 }
@@ -150,56 +153,57 @@ struct LandTooltipsWindow : public Window
         switch(this->tiletype) {
             case MP_HOUSE: {
                 const HouseSpec *hs = HouseSpec::Get((HouseID)this->objIndex);
-                if(hs == NULL) break;
+                if(hs == nullptr) break;
 
-                SetDParam(0, hs->building_name);
-                DrawString(ir, CM_STR_LAND_TOOLTIPS_HOUSE_NAME, TC_BLACK, SA_CENTER);
+                DrawString(ir, GetString(CM_STR_LAND_TOOLTIPS_HOUSE_NAME, hs->building_name), TC_BLACK, SA_CENTER);
                 ir.top += text_height;
-                SetDParam(0, hs->population);
-                DrawString(ir, CM_STR_LAND_TOOLTIPS_HOUSE_POPULATION, TC_BLACK, SA_CENTER);
+                DrawString(ir, GetString(CM_STR_LAND_TOOLTIPS_HOUSE_POPULATION, hs->population), TC_BLACK, SA_CENTER);
                 break;
             }
             case MP_INDUSTRY: {
                 const Industry *ind = Industry::GetIfValid((IndustryID)this->objIndex);
-                if(ind == NULL) break;
+                if(ind == nullptr) break;
 
-                SetDParam(0, ind->index);
-                DrawString(ir, CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME, TC_BLACK, SA_CENTER);
+                DrawString(ir, GetString(CM_STR_LAND_TOOLTIPS_INDUSTRY_NAME, ind->index), TC_BLACK, SA_CENTER);
                 ir.top += text_height;
 
                 for (auto &p : ind->produced) {
-                    if (!IsValidCargoID(p.cargo)) continue;
                     const CargoSpec *cs = CargoSpec::Get(p.cargo);
-                    if(cs == NULL) continue;
-                    SetDParam(0, cs->name);
-                    SetDParam(1, cs->Index());
-                    SetDParam(2, p.history[LAST_MONTH].production);
-                    SetDParam(3, ToPercent8(p.history[LAST_MONTH].PctTransported()));
-
+                    if(cs == nullptr) continue;
+                    auto str = GetString(
+                        CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO,
+                        cs->name,
+                        cs->Index(),
+                        p.history[LAST_MONTH].production,
+                        ToPercent8(p.history[LAST_MONTH].PctTransported())
+                    );
                     this->DrawSpriteIcons(cs->GetCargoIcon(), ir.left, ir.top + icon_ofs);
-                    DrawString(ir.left + icons_width, ir.right, ir.top + text_ofs, CM_STR_LAND_TOOLTIPS_INDUSTRY_CARGO);
+                    DrawString(ir.left + icons_width, ir.right, ir.top + text_ofs, str);
                     ir.top += line_height;
                 }
                 break;
             }
             case MP_STATION: {
                 const Station *st = Station::GetIfValid((StationID)this->objIndex);
-                if(st == NULL) break;
+                if(st == nullptr) break;
 
-                SetDParam(0, st->index);
-                DrawString(ir, CM_STR_LAND_TOOLTIPS_STATION_NAME, TC_BLACK, SA_CENTER);
+                DrawString(ir, GetString(CM_STR_LAND_TOOLTIPS_STATION_NAME, st->index), TC_BLACK, SA_CENTER);
                 ir.top += text_height;
 
                 for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-                    int cargoid = cs->Index();
-                    if (HasBit(st->goods[cargoid].status, GoodsEntry::GES_RATING)) {
-                        SetDParam(0, cs->name);
-                        SetDParam(1, cargoid);
-                        SetDParam(2, st->goods[cargoid].cargo.TotalCount());
-                        SetDParam(3, ToPercent8(st->goods[cargoid].rating));
+                    auto cargoid = cs->Index();
+                    auto &ge = st->goods[cargoid];
+                    if (ge.HasRating() && ge.HasData()) {
+                        auto str = GetString(
+                            CM_STR_LAND_TOOLTIPS_STATION_CARGO,
+                            cs->name,
+                            cargoid,
+                            ge.GetData().cargo.TotalCount(),
+                            ToPercent8(ge.rating)
+                        );
 
                         this->DrawSpriteIcons(cs->GetCargoIcon(), ir.left, ir.top + icon_ofs);
-                        DrawString(ir.left + icons_width, ir.right, ir.top + text_ofs, CM_STR_LAND_TOOLTIPS_STATION_CARGO);
+                        DrawString(ir.left + icons_width, ir.right, ir.top + text_ofs, str);
                         ir.top += line_height;
                     }
                 }
@@ -242,7 +246,7 @@ void ShowLandTooltips(TileIndex tile, Window *parent) {
             if (_settings_client.gui.cm_land_tooltips_for_industries) {
                 const Industry *ind = Industry::GetByTile(tile);
                 // if(ind->produced_cargo[0] == CT_INVALID && ind->produced_cargo[1] == CT_INVALID) return;
-                param = ((ind->index & 0xFFFF) << 16) | MP_INDUSTRY;
+                param = ((ind->index.base() & 0xFFFF) << 16) | MP_INDUSTRY;
             }
             break;
         }
@@ -250,7 +254,7 @@ void ShowLandTooltips(TileIndex tile, Window *parent) {
             if (_settings_client.gui.cm_land_tooltips_for_stations) {
                 if (IsRailWaypoint(tile) || HasTileWaterGround(tile)) break;
                 const Station *st = Station::GetByTile(tile);
-                param |= ((st->index & 0xFFFF) << 16) | MP_STATION;
+                param |= ((st->index.base() & 0xFFFF) << 16) | MP_STATION;
                 break;
             }
         }
@@ -270,7 +274,7 @@ static const NWidgetPart _nested_station_rating_tooltip_widgets[] = {
 static WindowDesc _station_rating_tooltip_desc(
     WDP_MANUAL, nullptr, 0, 0,
     WC_STATION_RATING_TOOLTIP, WC_NONE,
-    0,
+    {},
     _nested_station_rating_tooltip_widgets
 );
 
@@ -300,7 +304,7 @@ public:
         this->cs = cs;
         this->close_cond = close_cond;
         this->InitNested();
-        CLRBITS(this->flags, WF_WHITE_BORDER);
+        this->flags.Reset(WindowFlag::WhiteBorder);
     }
 
     Point OnInitialPosition(int16 sm_width, int16 sm_height, int /* window_number */) override
@@ -322,13 +326,12 @@ public:
         this->data.clear();
         const GoodsEntry *ge = &this->st->goods[this->cs->Index()];
 
-        SetDParam(0, this->cs->name);
-        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_RATING_DETAILS));
+        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_RATING_DETAILS, this->cs->name));
         if (!ge->HasRating()) { return; }
 
         int total_rating = 0;
 
-        if (HasBit(cs->callback_mask, CBM_CARGO_STATION_RATING_CALC)) {
+        if (cs->callback_mask.Test(CargoCallbackMask::StationRatingCalc)) {
             uint last_speed = ge->HasVehicleEverTriedLoading() ? ge->last_speed : 0xFF;
 
             uint32 var18 = std::min<uint32>(ge->time_since_pickup, 0xFF) | (std::min<uint32>(ge->max_waiting_cargo, 0xFFFF) << 8) | (std::min<uint32>(last_speed, 0xFF) << 24);
@@ -345,18 +348,24 @@ public:
                 total_rating += newgrf_rating;
                 newgrf_rating = this->RoundRating(newgrf_rating);
 
-                SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_0 + (newgrf_rating <= 0 ? 0 : 1));
-                SetDParam(1, newgrf_rating);
-                this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING));
+                this->data.push_back(GetString(
+                    CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING,
+                    CM_STR_STATION_RATING_TOOLTIP_NEWGRF_RATING_0 + (newgrf_rating <= 0 ? 0 : 1),
+                    newgrf_rating
+                ));
 
-                SetDParam(0, std::min<uint>(last_speed, 0xFF));
-                this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED));
-
-                SetDParam(0, std::min<uint>(ge->max_waiting_cargo, 0xFFFF));
-                this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS));
-
-                SetDParam(0, (std::min<uint>(ge->time_since_pickup, 0xFF) * 5 + 1) / 2);
-                this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME));
+                this->data.push_back(GetString(
+                    CM_STR_STATION_RATING_TOOLTIP_NEWGRF_SPEED,
+                    std::min<uint>(last_speed, 0xFF)
+                ));
+                this->data.push_back(GetString(
+                    CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITUNITS,
+                    std::min<uint>(ge->max_waiting_cargo, 0xFFFF)
+                ));
+                this->data.push_back(GetString(
+                    CM_STR_STATION_RATING_TOOLTIP_NEWGRF_WAITTIME,
+                    (std::min<uint>(ge->time_since_pickup, 0xFF) * 5 + 1) / 2
+                ));
             }
         }
 
@@ -371,10 +380,12 @@ public:
             if (waittime <= 3) waittime_stage = 4;
             total_rating += STATION_RATING_WAITTIME[waittime_stage];
 
-            SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_WAITTIME_0 + waittime_stage);
-            SetDParam(1, (ge->time_since_pickup * 5 + 1) / 2);
-            SetDParam(2, this->RoundRating(STATION_RATING_WAITTIME[waittime_stage]));
-            this->data.push_back(GetString(this->st->last_vehicle_type == VEH_SHIP ? CM_STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP : CM_STR_STATION_RATING_TOOLTIP_WAITTIME));
+            this->data.push_back(GetString(
+                this->st->last_vehicle_type == VEH_SHIP ? CM_STR_STATION_RATING_TOOLTIP_WAITTIME_SHIP : CM_STR_STATION_RATING_TOOLTIP_WAITTIME,
+                CM_STR_STATION_RATING_TOOLTIP_WAITTIME_0 + waittime_stage,
+                (ge->time_since_pickup * 5 + 1) / 2,
+                this->RoundRating(STATION_RATING_WAITTIME[waittime_stage])
+            ));
 
             int waitunits_stage = 0;
             if (ge->max_waiting_cargo <= 1500) waitunits_stage = 1;
@@ -384,45 +395,52 @@ public:
             if (ge->max_waiting_cargo <= 100) waitunits_stage = 5;
             total_rating += STATION_RATING_WAITUNITS[waitunits_stage];
 
-            SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_WAITUNITS_0 + waitunits_stage);
-            SetDParam(1, ge->max_waiting_cargo);
-            SetDParam(2, this->RoundRating(STATION_RATING_WAITUNITS[waitunits_stage]));
-            this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_WAITUNITS));
+            this->data.push_back(GetString(
+                CM_STR_STATION_RATING_TOOLTIP_WAITUNITS,
+                CM_STR_STATION_RATING_TOOLTIP_WAITUNITS_0 + waitunits_stage,
+                ge->max_waiting_cargo,
+                this->RoundRating(STATION_RATING_WAITUNITS[waitunits_stage])
+            ));
 
             int b = ge->last_speed - 85;
             int r_speed = b >= 0 ? b >> 2 : 0;
             int r_speed_round = this->RoundRating(r_speed);
             total_rating += r_speed;
+            StringID speed_str;
             if (ge->last_speed == 255) {
-                SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_SPEED_MAX);
+                speed_str = CM_STR_STATION_RATING_TOOLTIP_SPEED_MAX;
             } else if (r_speed_round == 0) {
-                SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_SPEED_ZERO);
+                speed_str = CM_STR_STATION_RATING_TOOLTIP_SPEED_ZERO;
             } else {
-                SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_SPEED_0 + r_speed / 11);
+                speed_str = CM_STR_STATION_RATING_TOOLTIP_SPEED_0 + r_speed / 11;
             }
-            SetDParam(0, ge->last_speed == 255 ? CM_STR_STATION_RATING_TOOLTIP_SPEED_MAX : CM_STR_STATION_RATING_TOOLTIP_SPEED_0 + r_speed / 11);
-            SetDParam(1, ge->last_speed);
-            SetDParam(2, r_speed_round);
-            this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_SPEED));
+            this->data.push_back(GetString(
+                CM_STR_STATION_RATING_TOOLTIP_SPEED,
+                speed_str,
+                ge->last_speed,
+                r_speed_round
+            ));
         }
 
         int age_stage = (ge->last_age >= 3 ? 0 : 3 - ge->last_age);
         total_rating += STATION_RATING_AGE[age_stage];
-        SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_AGE_0 + age_stage);
-        SetDParam(1, ge->last_age);
-        SetDParam(2, this->RoundRating(STATION_RATING_AGE[age_stage]));
-        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_AGE));
+        this->data.push_back(GetString(
+            CM_STR_STATION_RATING_TOOLTIP_AGE,
+            CM_STR_STATION_RATING_TOOLTIP_AGE_0 + age_stage,
+            ge->last_age,
+            this->RoundRating(STATION_RATING_AGE[age_stage])
+        ));
 
-        if (Company::IsValidID(st->owner) && HasBit(st->town->statues, st->owner)) {
-            SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_STATUE_YES);
+        StringID statue_str;
+        if (Company::IsValidID(st->owner) && st->town->statues.Test(st->owner)) {
+            statue_str = CM_STR_STATION_RATING_TOOLTIP_STATUE_YES;
             total_rating += 26;
         } else {
-            SetDParam(0, CM_STR_STATION_RATING_TOOLTIP_STATUE_NO);
+            statue_str = CM_STR_STATION_RATING_TOOLTIP_STATUE_NO;
         }
-        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_STATUE));
+        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_STATUE, statue_str));
 
-        SetDParam(0, ToPercent8(Clamp(total_rating, 0, 255)));
-        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_TOTAL_RATING));
+        this->data.push_back(GetString(CM_STR_STATION_RATING_TOOLTIP_TOTAL_RATING, ToPercent8(Clamp(total_rating, 0, 255))));
     }
 
     void UpdateWidgetSize(WidgetID /* widget */, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override

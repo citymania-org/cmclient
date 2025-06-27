@@ -49,14 +49,14 @@ namespace cmd {
 class CreateStoryPage: public Command {
 public:
     CompanyID company;
-    const std::string & text;
+    const EncodedString & text;
 
-    CreateStoryPage(CompanyID company, const std::string & text)
+    CreateStoryPage(CompanyID company, const EncodedString & text)
         :company{company}, text{text} {}
     ~CreateStoryPage() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -66,14 +66,14 @@ public:
     StoryPageID page_id;
     StoryPageElementType type;
     uint32_t reference;
-    const std::string & text;
+    const EncodedString & text;
 
-    CreateStoryPageElement(TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32_t reference, const std::string & text)
+    CreateStoryPageElement(TileIndex tile, StoryPageID page_id, StoryPageElementType type, uint32_t reference, const EncodedString & text)
         :tile{tile}, page_id{page_id}, type{type}, reference{reference}, text{text} {}
     ~CreateStoryPageElement() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -82,28 +82,28 @@ public:
     TileIndex tile;
     StoryPageElementID page_element_id;
     uint32_t reference;
-    const std::string & text;
+    const EncodedString & text;
 
-    UpdateStoryPageElement(TileIndex tile, StoryPageElementID page_element_id, uint32_t reference, const std::string & text)
+    UpdateStoryPageElement(TileIndex tile, StoryPageElementID page_element_id, uint32_t reference, const EncodedString & text)
         :tile{tile}, page_element_id{page_element_id}, reference{reference}, text{text} {}
     ~UpdateStoryPageElement() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class SetStoryPageTitle: public Command {
 public:
     StoryPageID page_id;
-    const std::string & text;
+    const EncodedString & text;
 
-    SetStoryPageTitle(StoryPageID page_id, const std::string & text)
+    SetStoryPageTitle(StoryPageID page_id, const EncodedString & text)
         :page_id{page_id}, text{text} {}
     ~SetStoryPageTitle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -117,7 +117,7 @@ public:
     ~SetStoryPageDate() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -130,7 +130,7 @@ public:
     ~ShowStoryPage() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -143,7 +143,7 @@ public:
     ~RemoveStoryPage() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -156,7 +156,7 @@ public:
     ~RemoveStoryPageElement() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -171,7 +171,7 @@ public:
     ~StoryPageButton() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -191,7 +191,7 @@ public:
     ~BuildRailWaypoint() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -206,7 +206,7 @@ public:
     ~RemoveFromRailWaypoint() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -226,7 +226,7 @@ public:
     ~BuildRoadWaypoint() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -240,7 +240,7 @@ public:
     ~RemoveFromRoadWaypoint() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -253,7 +253,7 @@ public:
     ~BuildBuoy() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -267,7 +267,7 @@ public:
     ~RenameWaypoint() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -284,7 +284,7 @@ public:
     ~BuildAirport() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -299,7 +299,7 @@ public:
     ~BuildDock() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -320,7 +320,7 @@ public:
     ~BuildRailStation() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -335,7 +335,7 @@ public:
     ~RemoveFromRailStation() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -358,7 +358,7 @@ public:
     ~BuildRoadStop() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -375,7 +375,7 @@ public:
     ~RemoveRoadStop() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -389,7 +389,7 @@ public:
     ~RenameStation() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -402,7 +402,7 @@ public:
     ~OpenCloseAirport() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -411,14 +411,14 @@ public:
     CompanyID company;
     ::GoalType type;
     ::GoalTypeID dest;
-    const std::string & text;
+    const EncodedString & text;
 
-    CreateGoal(CompanyID company, ::GoalType type, ::GoalTypeID dest, const std::string & text)
+    CreateGoal(CompanyID company, ::GoalType type, ::GoalTypeID dest, const EncodedString & text)
         :company{company}, type{type}, dest{dest}, text{text} {}
     ~CreateGoal() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -431,7 +431,7 @@ public:
     ~RemoveGoal() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -446,35 +446,35 @@ public:
     ~SetGoalDestination() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class SetGoalText: public Command {
 public:
     ::GoalID goal;
-    const std::string & text;
+    const EncodedString & text;
 
-    SetGoalText(::GoalID goal, const std::string & text)
+    SetGoalText(::GoalID goal, const EncodedString & text)
         :goal{goal}, text{text} {}
     ~SetGoalText() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class SetGoalProgress: public Command {
 public:
     ::GoalID goal;
-    const std::string & text;
+    const EncodedString & text;
 
-    SetGoalProgress(::GoalID goal, const std::string & text)
+    SetGoalProgress(::GoalID goal, const EncodedString & text)
         :goal{goal}, text{text} {}
     ~SetGoalProgress() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -488,7 +488,7 @@ public:
     ~SetGoalCompleted() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -499,14 +499,14 @@ public:
     bool is_client;
     uint32_t button_mask;
     GoalQuestionType type;
-    const std::string & text;
+    const EncodedString & text;
 
-    GoalQuestion(uint16_t uniqueid, uint32_t target, bool is_client, uint32_t button_mask, GoalQuestionType type, const std::string & text)
+    GoalQuestion(uint16_t uniqueid, uint32_t target, bool is_client, uint32_t button_mask, GoalQuestionType type, const EncodedString & text)
         :uniqueid{uniqueid}, target{target}, is_client{is_client}, button_mask{button_mask}, type{type}, text{text} {}
     ~GoalQuestion() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -520,7 +520,7 @@ public:
     ~GoalQuestionAnswer() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -534,7 +534,7 @@ public:
     ~ChangeSetting() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -548,24 +548,23 @@ public:
     ~ChangeCompanySetting() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class CustomNewsItem: public Command {
 public:
     NewsType type;
-    NewsReferenceType reftype1;
     CompanyID company;
-    uint32_t reference;
-    const std::string & text;
+    NewsReference reference;
+    const EncodedString & text;
 
-    CustomNewsItem(NewsType type, NewsReferenceType reftype1, CompanyID company, uint32_t reference, const std::string & text)
-        :type{type}, reftype1{reftype1}, company{company}, reference{reference}, text{text} {}
+    CustomNewsItem(NewsType type, CompanyID company, NewsReference reference, const EncodedString & text)
+        :type{type}, company{company}, reference{reference}, text{text} {}
     ~CustomNewsItem() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -580,7 +579,7 @@ public:
     ~BuildObject() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -597,7 +596,7 @@ public:
     ~BuildObjectArea() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -611,7 +610,7 @@ public:
     ~BuildShipDepot() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -627,7 +626,7 @@ public:
     ~BuildCanal() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -640,7 +639,7 @@ public:
     ~BuildLock() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -660,7 +659,7 @@ public:
     ~BuildLongRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -678,7 +677,7 @@ public:
     ~RemoveLongRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -695,7 +694,7 @@ public:
     ~BuildRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -710,7 +709,7 @@ public:
     ~BuildRoadDepot() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -719,13 +718,14 @@ public:
     TileIndex tile;
     TileIndex area_start;
     RoadType to_type;
+    bool diagonal;
 
-    ConvertRoad(TileIndex tile, TileIndex area_start, RoadType to_type)
-        :tile{tile}, area_start{area_start}, to_type{to_type} {}
+    ConvertRoad(TileIndex tile, TileIndex area_start, RoadType to_type, bool diagonal)
+        :tile{tile}, area_start{area_start}, to_type{to_type}, diagonal{diagonal} {}
     ~ConvertRoad() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -739,7 +739,7 @@ public:
     ~BuyCompany() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -752,7 +752,7 @@ public:
     ~LandscapeClear() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -767,7 +767,7 @@ public:
     ~ClearArea() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -783,7 +783,7 @@ public:
     ~MoveRailVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -797,7 +797,7 @@ public:
     ~ForceTrainProceed() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -812,24 +812,22 @@ public:
     ~ReverseTrainDirection() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class CreateSubsidy: public Command {
 public:
-    CargoID cid;
-    SourceType src_type;
-    SourceID src;
-    SourceType dst_type;
-    SourceID dst;
+    CargoType cargo_type;
+    Source src;
+    Source dst;
 
-    CreateSubsidy(CargoID cid, SourceType src_type, SourceID src, SourceType dst_type, SourceID dst)
-        :cid{cid}, src_type{src_type}, src{src}, dst_type{dst_type}, dst{dst} {}
+    CreateSubsidy(CargoType cargo_type, Source src, Source dst)
+        :cargo_type{cargo_type}, src{src}, dst{dst} {}
     ~CreateSubsidy() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -844,7 +842,7 @@ public:
     ~ScrollViewport() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -860,7 +858,7 @@ public:
     ~ChangeTimetable() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -875,7 +873,7 @@ public:
     ~BulkChangeTimetable() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -889,7 +887,7 @@ public:
     ~SetVehicleOnTime() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -904,7 +902,7 @@ public:
     ~AutofillTimetable() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -919,7 +917,7 @@ public:
     ~SetTimetableStart() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -935,22 +933,22 @@ public:
     ~PlantTree() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class CreateLeagueTable: public Command {
 public:
-    const std::string & title;
-    const std::string & header;
-    const std::string & footer;
+    const EncodedString & title;
+    const EncodedString & header;
+    const EncodedString & footer;
 
-    CreateLeagueTable(const std::string & title, const std::string & header, const std::string & footer)
+    CreateLeagueTable(const EncodedString & title, const EncodedString & header, const EncodedString & footer)
         :title{title}, header{header}, footer{footer} {}
     ~CreateLeagueTable() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -959,17 +957,17 @@ public:
     LeagueTableID table;
     int64_t rating;
     CompanyID company;
-    const std::string & text;
-    const std::string & score;
+    const EncodedString & text;
+    const EncodedString & score;
     LinkType link_type;
     LinkTargetID link_target;
 
-    CreateLeagueTableElement(LeagueTableID table, int64_t rating, CompanyID company, const std::string & text, const std::string & score, LinkType link_type, LinkTargetID link_target)
+    CreateLeagueTableElement(LeagueTableID table, int64_t rating, CompanyID company, const EncodedString & text, const EncodedString & score, LinkType link_type, LinkTargetID link_target)
         :table{table}, rating{rating}, company{company}, text{text}, score{score}, link_type{link_type}, link_target{link_target} {}
     ~CreateLeagueTableElement() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -977,16 +975,16 @@ class UpdateLeagueTableElementData: public Command {
 public:
     LeagueTableElementID element;
     CompanyID company;
-    const std::string & text;
+    const EncodedString & text;
     LinkType link_type;
     LinkTargetID link_target;
 
-    UpdateLeagueTableElementData(LeagueTableElementID element, CompanyID company, const std::string & text, LinkType link_type, LinkTargetID link_target)
+    UpdateLeagueTableElementData(LeagueTableElementID element, CompanyID company, const EncodedString & text, LinkType link_type, LinkTargetID link_target)
         :element{element}, company{company}, text{text}, link_type{link_type}, link_target{link_target} {}
     ~UpdateLeagueTableElementData() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -994,14 +992,14 @@ class UpdateLeagueTableElementScore: public Command {
 public:
     LeagueTableElementID element;
     int64_t rating;
-    const std::string & score;
+    const EncodedString & score;
 
-    UpdateLeagueTableElementScore(LeagueTableElementID element, int64_t rating, const std::string & score)
+    UpdateLeagueTableElementScore(LeagueTableElementID element, int64_t rating, const EncodedString & score)
         :element{element}, rating{rating}, score{score} {}
     ~UpdateLeagueTableElementScore() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1014,7 +1012,7 @@ public:
     ~RemoveLeagueTableElement() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1028,7 +1026,7 @@ public:
     ~PlaceSign() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1042,7 +1040,7 @@ public:
     ~RenameSign() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1051,15 +1049,15 @@ public:
     TileIndex tile;
     EngineID eid;
     bool use_free_vehicles;
-    CargoID cargo;
+    CargoType cargo;
     ClientID client_id;
 
-    BuildVehicle(TileIndex tile, EngineID eid, bool use_free_vehicles, CargoID cargo, ClientID client_id)
+    BuildVehicle(TileIndex tile, EngineID eid, bool use_free_vehicles, CargoType cargo, ClientID client_id)
         :tile{tile}, eid{eid}, use_free_vehicles{use_free_vehicles}, cargo{cargo}, client_id{client_id} {}
     ~BuildVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1076,7 +1074,7 @@ public:
     ~SellVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1084,33 +1082,33 @@ class RefitVehicle: public Command {
 public:
     TileIndex location;
     VehicleID veh_id;
-    CargoID new_cid;
+    CargoType new_cargo_type;
     uint8_t new_subtype;
     bool auto_refit;
     bool only_this;
     uint8_t num_vehicles;
 
-    RefitVehicle(TileIndex location, VehicleID veh_id, CargoID new_cid, uint8_t new_subtype, bool auto_refit, bool only_this, uint8_t num_vehicles)
-        :location{location}, veh_id{veh_id}, new_cid{new_cid}, new_subtype{new_subtype}, auto_refit{auto_refit}, only_this{only_this}, num_vehicles{num_vehicles} {}
+    RefitVehicle(TileIndex location, VehicleID veh_id, CargoType new_cargo_type, uint8_t new_subtype, bool auto_refit, bool only_this, uint8_t num_vehicles)
+        :location{location}, veh_id{veh_id}, new_cargo_type{new_cargo_type}, new_subtype{new_subtype}, auto_refit{auto_refit}, only_this{only_this}, num_vehicles{num_vehicles} {}
     ~RefitVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class SendVehicleToDepot: public Command {
 public:
     VehicleID veh_id;
-    DepotCommand depot_cmd;
+    DepotCommandFlags depot_cmd;
     const VehicleListIdentifier & vli;
 
-    SendVehicleToDepot(VehicleID veh_id, DepotCommand depot_cmd, const VehicleListIdentifier & vli)
+    SendVehicleToDepot(VehicleID veh_id, DepotCommandFlags depot_cmd, const VehicleListIdentifier & vli)
         :veh_id{veh_id}, depot_cmd{depot_cmd}, vli{vli} {}
     ~SendVehicleToDepot() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1126,7 +1124,7 @@ public:
     ~ChangeServiceInt() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1140,7 +1138,7 @@ public:
     ~RenameVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1155,7 +1153,7 @@ public:
     ~CloneVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1170,7 +1168,7 @@ public:
     ~StartStopVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1186,7 +1184,7 @@ public:
     ~MassStartStopVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1200,7 +1198,7 @@ public:
     ~DepotSellAllVehicles() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1214,7 +1212,7 @@ public:
     ~DepotMassAutoReplace() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1229,7 +1227,7 @@ public:
     ~TerraformLand() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1245,7 +1243,7 @@ public:
     ~LevelLand() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1259,7 +1257,7 @@ public:
     ~RenameDepot() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1277,7 +1275,7 @@ public:
     ~BuildRailroadTrack() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1292,7 +1290,7 @@ public:
     ~RemoveRailroadTrack() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1308,7 +1306,7 @@ public:
     ~BuildSingleRail() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1322,7 +1320,7 @@ public:
     ~RemoveSingleRail() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1337,7 +1335,7 @@ public:
     ~BuildTrainDepot() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1360,7 +1358,7 @@ public:
     ~BuildSingleSignal() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1374,7 +1372,7 @@ public:
     ~RemoveSingleSignal() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1390,7 +1388,7 @@ public:
     ~ConvertRail() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1411,7 +1409,7 @@ public:
     ~BuildSignalTrack() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1427,7 +1425,7 @@ public:
     ~RemoveSignalTrack() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1443,7 +1441,7 @@ public:
     ~CompanyCtrl() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1457,7 +1455,7 @@ public:
     ~CompanyAllowListCtrl() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1471,7 +1469,7 @@ public:
     ~GiveMoney() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1484,7 +1482,7 @@ public:
     ~RenameCompany() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1497,7 +1495,7 @@ public:
     ~RenamePresident() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1510,7 +1508,7 @@ public:
     ~SetCompanyManagerFace() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1525,7 +1523,7 @@ public:
     ~SetCompanyColour() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1538,7 +1536,7 @@ public:
     ~AutoreplaceVehicle() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1554,7 +1552,7 @@ public:
     ~SetAutoReplace() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1573,7 +1571,7 @@ public:
     ~FoundTown() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1587,7 +1585,7 @@ public:
     ~RenameTown() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1595,14 +1593,14 @@ class DoTownAction: public Command {
 public:
     TileIndex location;
     TownID town_id;
-    uint8_t action;
+    TownAction action;
 
-    DoTownAction(TileIndex location, TownID town_id, uint8_t action)
+    DoTownAction(TileIndex location, TownID town_id, TownAction action)
         :location{location}, town_id{town_id}, action{action} {}
     ~DoTownAction() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1616,7 +1614,7 @@ public:
     ~TownGrowthRate() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1631,7 +1629,7 @@ public:
     ~TownRating() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1646,21 +1644,21 @@ public:
     ~TownCargoGoal() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class TownSetText: public Command {
 public:
     TownID town_id;
-    const std::string & text;
+    const EncodedString & text;
 
-    TownSetText(TownID town_id, const std::string & text)
+    TownSetText(TownID town_id, const EncodedString & text)
         :town_id{town_id}, text{text} {}
     ~TownSetText() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1674,7 +1672,7 @@ public:
     ~ExpandTown() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1687,7 +1685,7 @@ public:
     ~DeleteTown() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1695,13 +1693,14 @@ class PlaceHouse: public Command {
 public:
     TileIndex tile;
     HouseID house;
+    bool house_protected;
 
-    PlaceHouse(TileIndex tile, HouseID house)
-        :tile{tile}, house{house} {}
+    PlaceHouse(TileIndex tile, HouseID house, bool house_protected)
+        :tile{tile}, house{house}, house_protected{house_protected} {}
     ~PlaceHouse() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1715,7 +1714,7 @@ public:
     ~TurnRoadVeh() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1732,7 +1731,7 @@ public:
     ~BuildIndustry() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1746,7 +1745,7 @@ public:
     ~IndustrySetFlags() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1761,21 +1760,21 @@ public:
     ~IndustrySetExclusivity() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class IndustrySetText: public Command {
 public:
     IndustryID ind_id;
-    const std::string & text;
+    const EncodedString & text;
 
-    IndustrySetText(IndustryID ind_id, const std::string & text)
+    IndustrySetText(IndustryID ind_id, const EncodedString & text)
         :ind_id{ind_id}, text{text} {}
     ~IndustrySetText() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1784,14 +1783,14 @@ public:
     IndustryID ind_id;
     uint8_t prod_level;
     bool show_news;
-    const std::string & text;
+    const EncodedString & text;
 
-    IndustrySetProduction(IndustryID ind_id, uint8_t prod_level, bool show_news, const std::string & text)
+    IndustrySetProduction(IndustryID ind_id, uint8_t prod_level, bool show_news, const EncodedString & text)
         :ind_id{ind_id}, prod_level{prod_level}, show_news{show_news}, text{text} {}
     ~IndustrySetProduction() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1808,7 +1807,7 @@ public:
     ~ModifyOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1823,7 +1822,7 @@ public:
     ~SkipToOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1838,7 +1837,7 @@ public:
     ~DeleteOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1854,7 +1853,7 @@ public:
     ~InsertOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1863,14 +1862,14 @@ public:
     TileIndex location;
     VehicleID veh;
     VehicleOrderID order_number;
-    CargoID cargo;
+    CargoType cargo;
 
-    OrderRefit(TileIndex location, VehicleID veh, VehicleOrderID order_number, CargoID cargo)
+    OrderRefit(TileIndex location, VehicleID veh, VehicleOrderID order_number, CargoType cargo)
         :location{location}, veh{veh}, order_number{order_number}, cargo{cargo} {}
     ~OrderRefit() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1886,7 +1885,7 @@ public:
     ~CloneOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1902,7 +1901,7 @@ public:
     ~MoveOrder() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1916,7 +1915,7 @@ public:
     ~ClearOrderBackup() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1929,7 +1928,7 @@ public:
     ~MoneyCheat() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1945,7 +1944,7 @@ public:
     ~ChangeBankBalance() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1959,7 +1958,7 @@ public:
     ~IncreaseLoan() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1973,7 +1972,7 @@ public:
     ~DecreaseLoan() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -1987,7 +1986,7 @@ public:
     ~SetCompanyMaxLoan() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2001,7 +2000,7 @@ public:
     ~Pause() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2014,7 +2013,7 @@ public:
     ~WantEnginePreview() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2029,7 +2028,7 @@ public:
     ~EngineCtrl() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2043,7 +2042,7 @@ public:
     ~RenameEngine() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2057,7 +2056,7 @@ public:
     ~SetVehicleVisibility() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2074,7 +2073,7 @@ public:
     ~BuildBridge() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2089,7 +2088,7 @@ public:
     ~BuildTunnel() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2103,7 +2102,7 @@ public:
     ~CreateGroup() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2119,7 +2118,7 @@ public:
     ~AlterGroup() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2132,7 +2131,7 @@ public:
     ~DeleteGroup() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2148,7 +2147,7 @@ public:
     ~AddVehicleGroup() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2162,7 +2161,7 @@ public:
     ~AddSharedVehicleGroup() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2175,23 +2174,23 @@ public:
     ~RemoveAllVehiclesGroup() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
 class SetGroupFlag: public Command {
 public:
     GroupID group_id;
-    GroupFlags flag;
+    GroupFlag flag;
     bool value;
     bool recursive;
 
-    SetGroupFlag(GroupID group_id, GroupFlags flag, bool value, bool recursive)
+    SetGroupFlag(GroupID group_id, GroupFlag flag, bool value, bool recursive)
         :group_id{group_id}, flag{flag}, value{value}, recursive{recursive} {}
     ~SetGroupFlag() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 
@@ -2206,7 +2205,7 @@ public:
     ~SetGroupLivery() override {}
 
     bool _post(::CommandCallback * callback) override;
-    CommandCost _do(DoCommandFlag flags) override;
+    CommandCost _do(DoCommandFlags flags) override;
     Commands get_command() override;
 };
 

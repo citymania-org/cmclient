@@ -61,7 +61,7 @@ void VideoDriver_Null::MainLoop()
 		::InputLoop();
 		::UpdateWindows();
 		if (old_tick != TimerGameTick::counter) i++;
-		else _pause_mode = PM_UNPAUSED;
+		else _pause_mode = {};
 	}
 	IConsolePrint(CC_DEFAULT, "Null driver ran for {} tics, save: {}", this->ticks, this->savefile);
 	if (!this->savefile.empty()) {

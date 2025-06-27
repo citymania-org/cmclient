@@ -334,7 +334,7 @@ bmcr_alpha_blend_single:
 				}
 				break;
 
-			case CM_BM_TINT_REMAP:
+			case BlitterMode::CMTintRemap:
 				for (uint x = (uint) bp->width; x > 0; x--) {
 					if (src_mv->m == 0) {
 						if (src->a != 0) {
@@ -343,7 +343,7 @@ bmcr_alpha_blend_single:
 						}
 					} else {
 						uint r = remap[src_mv->m];
-						if (r != 0) *dst = ComposeColourPANoCheck(this->AdjustBrightness(this->LookupColourInPalette(r), src_mv->v), src->a, *dst);
+						if (r != 0) *dst = ComposeColourPANoCheck(AdjustBrightness(this->LookupColourInPalette(r), src_mv->v), src->a, *dst);
 					}
 					src_mv++;
 					dst++;
@@ -450,11 +450,11 @@ bm_normal:
 			break;
 		case BlitterMode::CMTintRemap:
 			if (bp->skip_left != 0 || bp->width <= MARGIN_REMAP_THRESHOLD) {
-				if (sprite_flags & SF_NO_ANIM) Draw<BlitterMode::CMTintRemap, RM_WITH_SKIP, BT_NONE, true, false>(bp, zoom);
-				else                           Draw<BlitterMode::CMTintRemap, RM_WITH_SKIP, BT_NONE, true, true>(bp, zoom);
+				if (sprite_flags.Test(SpriteFlag::NoAnim)) Draw<BlitterMode::CMTintRemap, RM_WITH_SKIP, BT_NONE, true, false>(bp, zoom);
+				else                                       Draw<BlitterMode::CMTintRemap, RM_WITH_SKIP, BT_NONE, true, true>(bp, zoom);
 			} else {
-				if (sprite_flags & SF_NO_ANIM) Draw<BlitterMode::CMTintRemap, RM_WITH_MARGIN, BT_NONE, true, false>(bp, zoom);
-				else                           Draw<BlitterMode::CMTintRemap, RM_WITH_MARGIN, BT_NONE, true, true>(bp, zoom);
+				if (sprite_flags.Test(SpriteFlag::NoAnim)) Draw<BlitterMode::CMTintRemap, RM_WITH_MARGIN, BT_NONE, true, false>(bp, zoom);
+				else                                       Draw<BlitterMode::CMTintRemap, RM_WITH_MARGIN, BT_NONE, true, true>(bp, zoom);
 			}
 			break;
 		case BlitterMode::Transparent: Draw<BlitterMode::Transparent, RM_NONE, BT_NONE, true, true>(bp, zoom); return;

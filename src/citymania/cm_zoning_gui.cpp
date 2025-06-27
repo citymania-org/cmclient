@@ -157,7 +157,7 @@ struct ZoningWindow : public Window {
 /** Construct the row containing the digit keys. */
 static std::unique_ptr<NWidgetBase> MakeZoningButtons()
 {
-	auto hor = std::make_unique<NWidgetHorizontal>(NC_EQUALSIZE);
+	auto hor = std::make_unique<NWidgetHorizontal>(NWidContainerFlag::EqualSize);
 	int zone_types_size = lengthof(_zone_types);
 	hor->SetPadding(1, 1, 1, 1);
 
@@ -180,7 +180,7 @@ static std::unique_ptr<NWidgetBase> MakeZoningButtons()
 static const NWidgetPart _nested_zoning_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, ZTW_CAPTION), SetDataTip(CM_STR_ZONING_TOOLBAR, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, ZTW_CAPTION), SetStringTip(CM_STR_ZONING_TOOLBAR, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
@@ -192,7 +192,7 @@ static const NWidgetPart _nested_zoning_widgets[] = {
 static WindowDesc _zoning_desc (
 	WDP_AUTO, "cm_zoning", 0, 0,
 	CM_WC_ZONING_TOOLBAR, WC_NONE,
-	0,
+	{},
 	_nested_zoning_widgets,
 	&ZoningWindow::hotkeys
 );

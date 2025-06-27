@@ -54,28 +54,6 @@ struct TownCache {
 	auto operator<=>(const TownCache &) const = default;
 };
 
-enum class TownGrowthState: uint8 {
-    NOT_GROWING = 0,
-    GROWING = 1,
-    SHRINKING = 2,
-};
-
-struct CBTownInfo {
-	uint32 pax_delivered;
-	uint32 mail_delivered;
-	uint32 pax_delivered_last_month;
-	uint32 mail_delivered_last_month;
-	TownGrowthState growth_state;
-	uint8 shrink_effeciency;
-	uint16 shrink_rate;
-	uint16 shrink_counter;
-	uint32 stored[NUM_CARGO];
-	uint32 delivered[NUM_CARGO];
-	uint32 required[NUM_CARGO];
-	uint32 delivered_last_month[NUM_CARGO];
-	uint32 required_last_month[NUM_CARGO];
-};
-
 /** Town data structure. */
 struct Town : TownPool::PoolItem<&_town_pool> {
 	TileIndex xy = INVALID_TILE; ///< town center tile
@@ -107,16 +85,6 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	std::array<uint32_t, NUM_TAE> goal{}; ///< Amount of cargo required for the town to grow.
 
 	EncodedString text{}; ///< General text with additional information.
-
-	StringID cm_town_label;                ///< Label dependent on _local_company rating.
-	CBTownInfo cm_cb;
-	CompanyMask cm_fund_regularly;          ///< funds buildings regularly when previous fund ends
-	CompanyMask cm_do_powerfund;            ///< funds buildings when grow counter is maximal (results in fastest funding possible)
-	uint32 cm_last_funding = 0;             ///< when town was funded the last time
-	CompanyMask cm_advertise_regularly;     ///< advertised regularly to keep stations rating on desired value
-	uint32 cm_last_advertisement = 0;
-	uint8 cm_ad_rating_goal;                ///< value to keep rating at (for regular advertisement) (0..255)
-	const GoodsEntry *cm_ad_ref_goods_entry;      ///< poiter to goods entry of some station, used to check rating for regular advertisement
 
 	inline uint8_t GetPercentTransported(CargoType cargo_type) const
 	{
@@ -160,24 +128,13 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	//FORCEINLINE StringID Label() const{
 	StringID Label() const{
 		if (!_settings_client.gui.population_in_label)
-			return STR_VIEWPORT_TOWN;
+			return STR_TOWN_NAME;
 		if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
 			// FIXME rating colour
-			return CM_STR_VIEWPORT_TOWN_POP_VERY_POOR_RATING + this->town_label;
+			return CM_STR_VIEWPORT_TOWN_POP_VERY_POOR_RATING + this->cm.town_label;
 		}
 		else {
 			return STR_VIEWPORT_TOWN_POP;
-		}
-	}
-
-	/* Returns the correct town small label, based on rating. */
-	//FORCEINLINE StringID SmallLabel() const{
-	StringID SmallLabel() const{
-		if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
-			return CM_STR_VIEWPORT_TOWN_TINY_VERY_POOR_RATING + this->town_label;
-		}
-		else {
-			return STR_VIEWPORT_TOWN_TINY_WHITE;
 		}
 	}
 
@@ -277,14 +234,13 @@ bool CB_Enabled();
 void CB_SetCB(bool cb);
 uint CB_GetStorage();
 void CB_SetStorage(uint storage);
-void CB_SetRequirements(CargoID cargo, uint req, uint from, uint decay);
+void CB_SetRequirements(CargoType cargo_type, uint req, uint from, uint decay);
 void CB_ResetRequirements();
-uint CB_GetReq(CargoID cargo);
-uint CB_GetFrom(CargoID cargo);
-uint CB_GetDecay(CargoID cargo);
+uint CB_GetReq(CargoType cargo_type);
+uint CB_GetFrom(CargoType cargo_type);
+uint CB_GetDecay(CargoType cargo_type);
 int CB_GetTownReq(uint population, uint req, uint from, bool from_non_important, bool prev_month = false);
 uint CB_GetMaxTownStorage(Town *town, uint cargo);
-bool TownExecuteAction(const Town *town, uint action);
 
 /** Town actions of a company. */
 enum class TownAction : uint8_t {

@@ -1436,7 +1436,7 @@ void RedrawScreenRect(int left, int top, int right, int bottom)
 
 static std::vector<Rect> _dirty_viewport_occlusions;
 static const Viewport *_dirty_viewport;
-static NWidgetDisplay _dirty_viewport_disp_flags;
+static NWidgetDisplayFlags _dirty_viewport_disp_flags;
 
 static void DrawDirtyViewport(uint occlusion, int left, int top, int right, int bottom)
 {
@@ -1480,12 +1480,12 @@ static void DrawDirtyViewport(uint occlusion, int left, int top, int right, int 
 	if (_game_mode == GM_MENU) {
 		RedrawScreenRect(left, top, right, bottom);
 	} else {
-		extern void ViewportDrawChk(const Viewport *vp, int left, int top, int right, int bottom);
-		ViewportDrawChk(_dirty_viewport, left, top, right, bottom);
+		extern void ViewportDrawChk(const Viewport &vp, int left, int top, int right, int bottom);
+		ViewportDrawChk(*_dirty_viewport, left, top, right, bottom);
 
-		if (_dirty_viewport_disp_flags & (ND_SHADE_GREY | ND_SHADE_DIMMED)) {
+		if (_dirty_viewport_disp_flags.Any({NWidgetDisplayFlag::ShadeGrey, NWidgetDisplayFlag::ShadeDimmed})) {
 			GfxFillRect(left, top, right - 1, bottom - 1,
-					(_dirty_viewport_disp_flags & ND_SHADE_DIMMED) ? PALETTE_TO_TRANSPARENT : PALETTE_NEWSPAPER, FILLRECT_RECOLOUR);
+					(_dirty_viewport_disp_flags.Test(NWidgetDisplayFlag::ShadeDimmed)) ? PALETTE_TO_TRANSPARENT : PALETTE_NEWSPAPER, FILLRECT_RECOLOUR);
 		}
 		VideoDriver::GetInstance()->MakeDirty(left, top, right - left, bottom - top);
 	}
@@ -1516,7 +1516,7 @@ void DrawDirtyBlocks()
 	if (_whole_screen_dirty) {
 		RedrawScreenRect(0, 0, _screen.width, _screen.height);
 		for (Window *w : Window::IterateFromBack()) {
-			w->flags &= ~(WF_DIRTY | WF_WIDGETS_DIRTY | WF_DRAG_DIRTIED);
+			w->flags.Reset({WindowFlag::CMDirty, WindowFlag::CMWidgetsDirty, WindowFlag::CMDragDirtied});
 		}
 		_whole_screen_dirty = false;
 	} else {
@@ -1533,20 +1533,20 @@ void DrawDirtyBlocks()
 		Backup dpi_backup(_cur_dpi, &bk);
 
 		for (Window *w : Window::IterateFromBack()) {
-			w->flags &= ~WF_DRAG_DIRTIED;
+			w->flags.Reset(WindowFlag::CMDragDirtied);
 			if (!MayBeShown(w)) continue;
 
 			if (w->viewport != nullptr) w->viewport->is_drawn = false;
 
-			if (w->flags & WF_DIRTY) {
+			if (w->flags.Test(WindowFlag::CMDirty)) {
 				clear_overlays();
 				DrawOverlappedWindowFlags flags = DOWF_MARK_DIRTY;
 				if (HasBit(_gfx_debug_flags, GDF_SHOW_WINDOW_DIRTY)) [[ unlikely ]] {
 					flags |= DOWF_SHOW_DEBUG;
 				}
 				DrawOverlappedWindowWithClipping(w, w->left, w->top, w->left + w->width, w->top + w->height, flags);
-				w->flags &= ~(WF_DIRTY | WF_WIDGETS_DIRTY);
-			} else if (w->flags & WF_WIDGETS_DIRTY) {
+				w->flags.Reset({WindowFlag::CMDirty, WindowFlag::CMWidgetsDirty});
+			} else if (w->flags.Test(WindowFlag::CMWidgetsDirty)) {
 				if (w->nested_root != nullptr) {
 					clear_overlays();
 					w->nested_root->FillDirtyWidgets(dirty_widgets);
@@ -1559,11 +1559,11 @@ void DrawDirtyBlocks()
 					}
 					dirty_widgets.clear();
 				}
-				w->flags &= ~WF_WIDGETS_DIRTY;
+				w->flags.Reset(WindowFlag::CMWidgetsDirty);
 			}
 
 			if (w->viewport != nullptr && !w->IsShaded()) {
-				Viewport *vp = w->viewport;
+				auto &vp = w->viewport;
 				if (vp->is_drawn) {
 					vp->ClearDirty();
 				} else if (vp->is_dirty) {
@@ -1577,10 +1577,10 @@ void DrawDirtyBlocks()
 					_cur_dpi->dst_ptr = _screen.dst_ptr;
 					_cur_dpi->zoom = ZOOM_LVL_NORMAL;
 
-					_dirty_viewport = vp;
-					_dirty_viewport_disp_flags = w->viewport_widget->disp_flags;
+					_dirty_viewport = vp.get();
+					_dirty_viewport_disp_flags = w->cm_viewport_widget->disp_flags;
 					TransparencyOptionBits to_backup = _transparency_opt;
-					if (_dirty_viewport_disp_flags & ND_NO_TRANSPARENCY) {
+					if (_dirty_viewport_disp_flags.Test(NWidgetDisplayFlag::NoTransparency)) {
 						_transparency_opt &= (1 << TO_SIGNS) | (1 << TO_TEXT); // Disable all transparency, except textual stuff
 					}
 

@@ -83,22 +83,20 @@ Town *CMClosestTownFromTile(TileIndex tile, uint threshold)
 
 			if (!HasTownOwnedRoad(tile)) {
 				TownID tid = GetTownIndex(tile);
+				Town *town = Town::GetIfValid(tid);
 
-				if (tid == (TownID)INVALID_TOWN) {
+				if (town == nullptr) {
 					/* in the case we are generating "many random towns", this value may be INVALID_TOWN */
 					if (_generating_world) return CalcClosestTownFromTile(tile, threshold);
 					assert(Town::GetNumItems() == 0);
-					return NULL;
+					return nullptr;
 				}
 
-				assert(Town::IsValidID(tid));
-				Town *town = Town::Get(tid);
-
-				if (DistanceManhattan(tile, town->xy) >= threshold) town = NULL;
+				if (DistanceManhattan(tile, town->xy) >= threshold) town = nullptr;
 
 				return town;
 			}
-			[[ fallthrough ]];
+			[[fallthrough]];
 
 		case MP_HOUSE:
 			return Town::GetByTile(tile);
@@ -168,7 +166,7 @@ SpriteID TileZoneCheckOpinionEvaluation(TileIndex tile, Owner owner) {
 	Town *town = CMClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
 
 	if (town == NULL) return INVALID_SPRITE_ID; // no town
-	else if (HasBit(town->have_ratings, owner)) {  // good : bad
+	else if (town->have_ratings.Test(owner)) {  // good : bad
 		int16 rating = town->ratings[owner];
 		if(rating <= RATING_APPALLING) return CM_SPR_PALETTE_ZONING_RED;
 		if(rating <= RATING_POOR) return CM_SPR_PALETTE_ZONING_ORANGE;

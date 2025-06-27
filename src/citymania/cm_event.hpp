@@ -80,25 +80,24 @@ struct CompanyEvent {
 
 struct CargoDeliveredToIndustry {
     Industry *industry;
-    CargoID cargo_type;
+    CargoType cargo_type;
     uint amount;
     const Station *station;
 };
 
 struct CargoDeliveredToUnknown {
-    CargoID cargo_type;
+    CargoType cargo_type;
     uint amount;
     const Station *station;
 };
 
 struct CargoAccepted {
     Company *company;
-    CargoID cargo_type;
+    CargoType cargo_type;
     uint amount;
     const Station *station;
     Money profit;
-    SourceType src_type;
-    SourceID src;
+    Source src;
 };
 
 struct CompanyMoneyChanged {

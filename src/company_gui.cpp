@@ -2542,7 +2542,7 @@ struct CompanyWindow : Window
 			case WID_C_MOD_COMPANY_RESET: {
 				if (!_networking) return;
 				this->query_widget = WID_C_MOD_COMPANY_RESET;
-				ShowQuery(CM_STR_XI_RESET_CAPTION, CM_STR_XI_REALY_RESET, this, ResetCallback);
+				ShowQuery(GetEncodedString(CM_STR_XI_RESET_CAPTION), GetEncodedString(CM_STR_XI_REALY_RESET), this, ResetCallback);
 				MarkWholeScreenDirty();
 				break;
 			}

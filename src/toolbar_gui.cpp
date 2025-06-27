@@ -620,10 +620,8 @@ static CallBackFunction ToolbarWatchClick(Window *w)
 
 static CallBackFunction MenuClickWatch(int index)
 {
-	if(Company::IsValidID((CompanyID)index)){
-		citymania::ShowWatchWindow((CompanyID)index, 0);
-	}
-	else citymania::ShowWatchWindow(INVALID_COMPANY, 0);
+	if (Company::IsValidID((CompanyID)index)) citymania::ShowWatchWindow((CompanyID)index, 0);
+	else citymania::ShowWatchWindow(CompanyID::Invalid(), 0);
 	return CBF_NONE;
 }
 
@@ -651,9 +649,9 @@ static CallBackFunction MenuClickCompany(int index)
 
 			case CTMN_NEW_COMPANY:
 				if (_network_server) {
-					Command<CMD_COMPANY_CTRL>::Post(CCA_NEW, INVALID_COMPANY, CRR_NONE, _network_own_client_id);
+					Command<CMD_COMPANY_CTRL>::Post(CCA_NEW, CompanyID::Invalid(), CRR_NONE, _network_own_client_id);
 				} else {
-					Command<CMD_COMPANY_CTRL>::SendNet(STR_NULL, _local_company, CCA_NEW, INVALID_COMPANY, CRR_NONE, INVALID_CLIENT_ID);
+					Command<CMD_COMPANY_CTRL>::SendNet(STR_NULL, _local_company, CCA_NEW, CompanyID::Invalid(), CRR_NONE, INVALID_CLIENT_ID);
 				}
 				return CBF_NONE;
 
@@ -2176,7 +2174,7 @@ struct MainToolbarWindow : Window {
 			case CM_MTHK_ZONING: citymania::ShowZoningToolbar(); break;
 			case CM_MTHK_LOGINWINDOW: citymania::ShowLoginWindow(); break;
 			case CM_MTHK_SETTINGS_ADV: ShowGameSettings(); break;
-			case CM_MTHK_NEWGRF: ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, &_grfconfig); break;
+			case CM_MTHK_NEWGRF: ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, _grfconfig); break;
 			case CM_MTHK_SMALLMAP_TOGGLE: citymania::ToggleSmallMap(); break;
 			default: return citymania::HandleToolbarHotkey(hotkey);
 		}

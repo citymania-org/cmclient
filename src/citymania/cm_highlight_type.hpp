@@ -341,7 +341,7 @@ public:
     int airport_type = 0;
     uint8_t airport_layout = 0;
     sp<Blueprint> blueprint = nullptr;
-    IndustryType ind_type = INVALID_INDUSTRYTYPE;
+    IndustryType ind_type = IT_INVALID;
     uint32 ind_layout = 0;
     CommandCost cost;
     Dimension overlay_dim;

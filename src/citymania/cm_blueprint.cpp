@@ -629,7 +629,7 @@ void BuildBlueprint(sp<Blueprint> &blueprint, TileIndex start) {
                         scmd.station_to_join = station_id;
                         scmd.post();
                     }
-                    if (!sign_part) ::Command<CMD_REMOVE_FROM_RAIL_STATION>::Post(tile, 0, false);
+                    if (!sign_part) ::Command<CMD_REMOVE_FROM_RAIL_STATION>::Post(tile, (TileIndex)0, false);
                     return true;
                 }
                 ).post();
@@ -672,8 +672,7 @@ bool LoadBlueprint(uint slot) {
     if (slot >= MAX_BLUEPRINT_SLOTS) return false;
     _active_blueprint = {INVALID_TILE, _blueprint_slots[slot]};
     if (_active_blueprint.second == nullptr) {
-        SetDParam(0, slot);
-        ShowErrorMessage(CM_STR_NO_BLUEPRINT_IN_SLOT, INVALID_STRING_ID, WL_ERROR);
+        ShowErrorMessage(GetEncodedString(CM_STR_NO_BLUEPRINT_IN_SLOT, slot), {}, WL_ERROR);
     }
     return _active_blueprint.second != nullptr;
 }

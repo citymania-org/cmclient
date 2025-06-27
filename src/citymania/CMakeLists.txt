@@ -56,6 +56,8 @@ add_files(
     cm_survey.cpp
     cm_tooltips.hpp
     cm_tooltips.cpp
+    cm_town_gui.hpp
+    cm_town_gui.cpp
     cm_newgrf_revisions.hpp
     cm_watch_gui.hpp
     cm_watch_gui.cpp

@@ -229,11 +229,11 @@ static void TrainDetailsInfoTab(const Vehicle *v, int left, int right, int y)
 {
 	std::string str;
 	if (RailVehInfo(v->engine_type)->railveh_type == RAILVEH_WAGON) {
-		str = GetString(STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->value);
-		FIXME if (_settings_client.gui.newgrf_developer_tools) SetDParam(2, v->index);  // CM
+		if (_settings_client.gui.developer < 1) str = GetString(STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->value);
+		else str = GetString(CM_STR_VEHICLE_DETAILS_TRAIN_WAGON_VALUE_WITH_ID, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->value, v->index);
 	} else {
-		FIXME if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
-		str = GetString(STR_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->build_year, v->value);
+		if (_settings_client.gui.developer < 1) str = GetString(STR_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->build_year, v->value);
+		else str = GetString(CM_STR_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE_WITH_ID, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->build_year, v->value, v->index);
 	}
 	DrawString(left, right, y, str);
 }

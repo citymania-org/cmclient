@@ -39,6 +39,7 @@
 #include "smallmap_gui.h"
 #include "dropdown_type.h"
 #include "clear_map.h"
+#include "window_gui.h"
 #include "zoom_func.h"
 #include "industry_cmd.h"
 #include "graph_gui.h"
@@ -65,7 +66,7 @@ static const int CM_HOTKEY_SWITCH_LAYOUT = 0x1001;
 uint32 _cm_funding_layout;
 IndustryType _cm_funding_type;
 
-bool _ignore_restrictions;
+bool _ignore_industry_restrictions;
 std::bitset<NUM_INDUSTRYTYPES> _displayed_industries; ///< Communication from the industry chain window to the smallmap window about what industries to display.
 
 /** Cargo suffix type (for which window is it requested) */
@@ -294,15 +295,15 @@ static constexpr NWidgetPart _nested_build_industry_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetResize(1, 0),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
-			NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(140, 14), SetDataTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE, STR_NULL),
+			NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(140, 14), SetStringTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_DPI_FT_OFF), SetMinimalSize(60, 12),
-											SetDataTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF, CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF_TOOLTIP),
+											SetStringTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF, CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF_TOOLTIP),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_DPI_FT_ON), SetMinimalSize(60, 12),
-											SetDataTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON, CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON_TOOLTIP),
+											SetStringTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON, CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON_TOOLTIP),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
@@ -378,7 +379,7 @@ class BuildIndustryWindow : public Window {
 
 		this->vscroll->SetCount(this->list.size());
 
-		this->funding_enabled = (_game_mode == GM_EDITOR || Company::IsValidID(_local_company));  // CM
+		this->cm_funding_enabled = (_game_mode == GM_EDITOR || Company::IsValidID(_local_company));  // CM
 	}
 
 	/** Update status of the fund and display-chain widgets. */
@@ -432,9 +433,9 @@ class BuildIndustryWindow : public Window {
 public:
 	BuildIndustryWindow(WindowDesc &desc) : Window(desc)
 	{
-		FIXME move to constructor?
 		_cm_funding_type = IT_INVALID;
-		_cm_funding_layout = 0; 
+		_cm_funding_layout = 0;
+
 		this->cm_funding_enabled = false;
 
 		this->CreateNestedTree();
@@ -450,7 +451,7 @@ public:
 
 	~BuildIndustryWindow()
 	{
-		citymania::SetIndustryForbiddenTilesHighlight(INVALID_INDUSTRYTYPE);
+		citymania::SetIndustryForbiddenTilesHighlight(IT_INVALID);
 	}
 
 	void OnInit() override
@@ -834,7 +835,7 @@ public:
 	{
 		switch (hotkey) {
 			case CM_HOTKEY_SWITCH_LAYOUT:
-				if (this->selected_type != INVALID_INDUSTRYTYPE && _thd.select_proc == CM_DDSP_FUND_INDUSTRY) {
+				if (this->selected_type != IT_INVALID && _thd.select_proc == CM_DDSP_FUND_INDUSTRY) {
 					const IndustrySpec *indspec = GetIndustrySpec(this->selected_type);
 					size_t num_layouts = indspec->layouts.size();
 					MarkTileDirtyByTile(TileVirtXY(_thd.pos.x, _thd.pos.y)); // redraw tile selection
@@ -858,7 +859,7 @@ public:
 static WindowDesc _build_industry_desc(
 	WDP_AUTO, "build_industry", 170, 212,
 	WC_BUILD_INDUSTRY, WC_NONE,
-	WDF_CONSTRUCTION,
+	WindowDefaultFlag::Construction,
 	_nested_build_industry_widgets,
 	&BuildIndustryWindow::hotkeys  // CM
 );
@@ -3199,14 +3200,13 @@ struct IndustryCargoesWindow : public Window {
 				DropDownList lst;
 				Dimension d = GetLargestCargoIconSize();
 				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-					if (_settings_client.gui.developer < 1) {
-						lst.push_back(MakeDropDownListIconItem(d, cs->GetCargoIcon(), PAL_NONE, cs->name, cs->Index()));
-						continue;
-					}
+					std::string cargo_str;
+					if (_settings_client.gui.developer >= 1)
+						cargo_str = GetString(CM_STR_CARGO_WITH_ID, cs->name, cs->Index());
+					else
+						cargo_str = GetString(cs->name);
 
-					SetDParam(0, cs->name);
-					SetDParam(1, cs->Index());
-					lst.push_back(MakeDropDownListIconItem(d, cs->GetCargoIcon(), PAL_NONE, CM_STR_CARGO_WITH_ID, cs->Index()));
+					lst.push_back(CMMakeDropDownListIconItem(d, cs->GetCargoIcon(), PAL_NONE, std::move(cargo_str), cs->Index()));
 				}
 				if (!lst.empty()) {
 					int selected = (this->ind_cargo >= NUM_INDUSTRYTYPES) ? (int)(this->ind_cargo - NUM_INDUSTRYTYPES) : -1;
@@ -3220,15 +3220,14 @@ struct IndustryCargoesWindow : public Window {
 				for (IndustryType ind : _sorted_industry_types) {
 					const IndustrySpec *indsp = GetIndustrySpec(ind);
 					if (!indsp->enabled) continue;
-					if (_settings_client.gui.developer < 1) {
-						lst.push_back(MakeDropDownListStringItem(indsp->name, ind, false));
-						continue;
-					}
 
-					SetDParam(0, indsp->name);
-					SetDParam(1, ind);
-					auto s = GetString(CM_STR_INDUSTRY_TYPE_WITH_ID);
-					lst.push_back(MakeDropDownListStringItem(s, ind, false));
+					std::string indsp_str;
+					if (_settings_client.gui.developer >= 1)
+						indsp_str = GetString(CM_STR_INDUSTRY_TYPE_WITH_ID, indsp->name, ind);
+					else
+						indsp_str = GetString(indsp->name);
+
+					lst.push_back(MakeDropDownListStringItem(std::move(indsp_str), ind, false));
 				}
 				if (!lst.empty()) {
 					int selected = (this->ind_cargo < NUM_INDUSTRYTYPES) ? (int)this->ind_cargo : -1;

@@ -17,7 +17,29 @@ enum class TownGrowthTileState : uint8_t {
 
 typedef std::map<TileIndex, TownGrowthTileState> TownsGrowthTilesIndex;
 
+enum class TownGrowthState: uint8 {
+    NOT_GROWING = 0,
+    GROWING = 1,
+    SHRINKING = 2,
+};
+
 namespace ext {
+
+struct CBTownInfo {
+    uint32_t pax_delivered;
+    uint32_t mail_delivered;
+    uint32_t pax_delivered_last_month;
+    uint32_t mail_delivered_last_month;
+    TownGrowthState growth_state;
+    uint8_t shrink_effeciency;
+    uint16_t shrink_rate;
+    uint16_t shrink_counter;
+    uint32_t stored[NUM_CARGO];
+    uint32_t delivered[NUM_CARGO];
+    uint32_t required[NUM_CARGO];
+    uint32_t delivered_last_month[NUM_CARGO];
+    uint32_t required_last_month[NUM_CARGO];
+};
 
 class Town {
 public:
@@ -40,6 +62,16 @@ public:
 
     TownsGrowthTilesIndex growth_tiles_last_month;
     TownsGrowthTilesIndex growth_tiles;
+    CBTownInfo cb;
+    std::optional<std::pair<StationID, CargoType>> ad_ref_goods_entry;      ///< poiter to goods entry of some station, used to check rating for regular advertisement
+
+    int town_label;                ///< Label dependent on _local_company rating.
+    CompanyMask fund_regularly;          ///< funds buildings regularly when previous fund ends
+    CompanyMask do_powerfund;            ///< funds buildings when grow counter is maximal (results in fastest funding possible)
+    uint32 last_funding = 0;             ///< when town was funded the last time
+    CompanyMask advertise_regularly;     ///< advertised regularly to keep stations rating on desired value
+    uint32 last_advertisement = 0;
+    uint8 ad_rating_goal;                ///< value to keep rating at (for regular advertisement) (0..255)
 };
 
 } // namespace ext

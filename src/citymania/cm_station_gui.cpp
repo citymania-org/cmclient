@@ -41,7 +41,7 @@ bool _remove_button_clicked;  // replace vanilla static vars
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
 
-extern bool CheckClickOnViewportSign(const Viewport *vp, int x, int y, const ViewportSign *sign);
+extern bool CheckClickOnViewportSign(const Viewport &vp, int x, int y, const ViewportSign *sign);
 extern Rect ExpandRectWithViewportSignMargins(Rect r, ZoomLevel zoom);
 extern RoadBits FindRailsToConnect(TileIndex tile);
 extern ViewportSignKdtree _viewport_sign_kdtree;
@@ -185,10 +185,10 @@ const Station *CheckClickOnDeadStationSign() {
     const Station *last_st = nullptr;
     _viewport_sign_kdtree.FindContained(search_rect.left, search_rect.top, search_rect.right, search_rect.bottom, [&](const ViewportSignKdtreeItem & item) {
         if (item.type != ViewportSignKdtreeItem::VKI_STATION) return;
-        auto st = Station::Get(item.id.station);
+        auto st = Station::Get(std::get<StationID>(item.id));
         if (st->IsInUse()) return;
         if (_local_company != st->owner) return;
-        if (CheckClickOnViewportSign(vp, x, y, &st->sign)) last_st = st;
+        if (CheckClickOnViewportSign(*vp, x, y, &st->sign)) last_st = st;
     });
     return last_st;
 }
@@ -212,7 +212,7 @@ template <typename Tcommand, typename Tcallback>
 void JoinAndBuild(Tcommand command, Tcallback *callback) {
     auto join_to = _highlight_station_to_join;
     command.adjacent = (citymania::_fn_mod || join_to);
-    command.station_to_join = INVALID_STATION;
+    command.station_to_join = StationID::Invalid();
 
     if (citymania::_fn_mod) command.station_to_join = NEW_STATION;
     else if (join_to) command.station_to_join = join_to->index;
@@ -370,7 +370,7 @@ void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_t
         rt,
         spec_class,
         spec_index,
-        INVALID_STATION,
+        StationID::Invalid(),
         adjacent
     );
     c.with_error(err_msg);
@@ -385,7 +385,7 @@ void HandleStationPlacement(TileIndex start, TileIndex end)
     uint numtracks = ta.w;
     uint platlength = ta.h;
 
-    if (_station_gui.axis == AXIS_X) Swap(numtracks, platlength);
+    if (_station_gui.axis == AXIS_X) std::swap(numtracks, platlength);
 
     auto c = cmd::BuildRailStation(
         ta.tile,
@@ -395,7 +395,7 @@ void HandleStationPlacement(TileIndex start, TileIndex end)
         platlength,
         _station_gui.sel_class,
         _station_gui.sel_type,
-        INVALID_STATION,
+        StationID::Invalid(),
         false
     );
     c.with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
@@ -412,7 +412,7 @@ void PlaceRail_Station(TileIndex tile) {
         _settings_client.gui.station_platlength,
         _station_gui.sel_class,
         _station_gui.sel_type,
-        INVALID_STATION,
+        StationID::Invalid(),
         false
     );
     c.with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
@@ -424,7 +424,7 @@ void PlaceDock(TileIndex tile, TileIndex tile_to) {
 
     auto c = cmd::BuildDock(
         tile,
-        INVALID_STATION,
+        StationID::Invalid(),
         false
     );
     c.with_error(STR_ERROR_CAN_T_BUILD_DOCK_HERE);
@@ -443,7 +443,7 @@ void PlaceAirport(TileIndex tile) {
         tile,
         airport_type,
         layout,
-        INVALID_STATION,
+        StationID::Invalid(),
         false
     );
     c.with_error(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE);
@@ -532,13 +532,13 @@ static void AddProducedCargo_Town(TileIndex tile, CargoArray &produced)
     const HouseSpec *hs = HouseSpec::Get(house_id);
     Town *t = Town::GetByTile(tile);
 
-    if (HasBit(hs->callback_mask, CBM_HOUSE_PRODUCE_CARGO)) {
+    if (hs->callback_mask.Test(HouseCallbackMask::ProduceCargo)) {
         for (uint i = 0; i < 256; i++) {
             uint16 callback = GetHouseCallback(CBID_HOUSE_PRODUCE_CARGO, i, 0, house_id, t, tile);
 
             if (callback == CALLBACK_FAILED || callback == CALLBACK_HOUSEPRODCARGO_END) break;
 
-            CargoID cargo = GetCargoTranslation(GB(callback, 8, 7), hs->grf_prop.grffile);
+            CargoType cargo = GetCargoTranslation(GB(callback, 8, 7), hs->grf_prop.grffile);
 
             if (cargo == CT_INVALID) continue;
             produced[cargo] += GetMonthlyFrom256Tick((uint)GB(callback, 0, 8)) ;
@@ -607,7 +607,7 @@ CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad)
         if (i->neutral_station != nullptr && !_settings_game.station.serve_neutral_industries) continue;
 
         for (const auto &p : i->produced) {
-            if (IsValidCargoID(p.cargo)) produced[p.cargo] += ((uint)p.history[LAST_MONTH].production) << 8;
+            if (IsValidCargoType(p.cargo)) produced[p.cargo] += ((uint)p.history[LAST_MONTH].production) << 8;
         }
     }
 
@@ -620,19 +620,17 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
     std::ostringstream s;
     s << GetString(CM_STR_STATION_BUILD_SUPPLIES);
     bool first = true;
-    for (CargoID i = 0; i < NUM_CARGO; i++) {
+    for (CargoType i = 0; i < NUM_CARGO; i++) {
         if (production[i] == 0) continue;
         switch (sct) {
-            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CC_PASSENGERS)) continue; break;
-            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CargoClass::Passengers)) continue; break;
+            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CargoClass::Passengers)) continue; break;
             case SCT_ALL: break;
             default: NOT_REACHED();
         }
         if (!first) s << ", ";
         first = false;
-        SetDParam(0, i);
-        SetDParam(1, production[i] >> 8);
-        s << GetString(STR_JUST_CARGO);
+        s << GetString(STR_JUST_CARGO, i, production[i] >> 8);
     }
     return s.str();
 }
@@ -640,13 +638,13 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
 
 //  ---- NEw code
 
-StationID _station_to_join = INVALID_STATION;
+StationID _station_to_join = StationID::Invalid();
 std::chrono::time_point<std::chrono::system_clock> _station_to_join_selected;
 
 void OnStationRemoved(const Station *station) {
     if (_last_built_station == station) _last_built_station = nullptr;
     if (_station_to_join == station->index) {
-        _station_to_join = INVALID_STATION;
+        _station_to_join = StationID::Invalid();
     }
     if (_ap.preview != nullptr) _ap.preview->OnStationRemoved(station);
 }
@@ -731,7 +729,7 @@ up<Command> RailStationPreview::GetCommand(bool adjacent, StationID join_to) con
     auto start_tile = ta.tile;
     auto numtracks = ta.w;
     auto platlength = ta.h;
-    if (_station_gui.axis == AXIS_X) Swap(numtracks, platlength);
+    if (_station_gui.axis == AXIS_X) std::swap(numtracks, platlength);
 
     auto res = make_up<cmd::BuildRailStation>(
         start_tile,
@@ -857,7 +855,7 @@ up<Command> RoadStationPreview::GetRemoveCommand() const {
         citymania::_fn_mod
     );
     auto rti = GetRoadTypeInfo(_cur_roadtype);
-    res->with_error(rti->strings.err_remove_station[this->stop_type]);
+    // res->with_error(rti->strings.err_remove_station[this->stop_type]);
     return res;
 }
 
@@ -880,7 +878,7 @@ void RoadStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palet
             palette,
             cmdt->rt,
             ddir,
-            cmdt->stop_type == ROADSTOP_TRUCK,
+            cmdt->stop_type == RoadStopType::Truck,
             cmdt->spec_class,
             cmdt->spec_index
         ));
@@ -890,8 +888,8 @@ void RoadStationPreview::AddPreviewTiles(Preview::TileMap &tiles, SpriteID palet
 OverlayParams RoadStationPreview::GetOverlayParams() const {
     return {
         this->GetArea(false),
-        this->stop_type == ROADSTOP_TRUCK ? CA_TRUCK : CA_BUS,
-        this->stop_type == ROADSTOP_TRUCK ? SCT_NON_PASSENGERS_ONLY : SCT_PASSENGERS_ONLY
+        this->stop_type == RoadStopType::Truck ? CA_TRUCK : CA_BUS,
+        this->stop_type == RoadStopType::Truck ? SCT_NON_PASSENGERS_ONLY : SCT_PASSENGERS_ONLY
     };
 }
 
@@ -1050,12 +1048,12 @@ std::vector<std::pair<SpriteID, std::string>> StationPreviewBase::GetOverlayData
     if (!_settings_game.station.modified_catchment) params.radius = CA_UNMODIFIED;
     auto production = citymania::GetProductionAroundTiles(params.area.tile, params.area.w, params.area.h, params.radius);
     bool has_header = false;
-    for (CargoID i = 0; i < NUM_CARGO; i++) {
+    for (CargoType i = 0; i < NUM_CARGO; i++) {
         if (production[i] == 0) continue;
 
         switch (params.coverage_type) {
-            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CC_PASSENGERS)) continue; break;
-            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CargoClass::Passengers)) continue; break;
+            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CargoClass::Passengers)) continue; break;
             case SCT_ALL: break;
             default: NOT_REACHED();
         }
@@ -1067,9 +1065,8 @@ std::vector<std::pair<SpriteID, std::string>> StationPreviewBase::GetOverlayData
             res.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES));
             has_header = true;
         }
-        SetDParam(0, i);
-        SetDParam(1, production[i] >> 8);
-        res.emplace_back(cs->GetCargoIcon(), GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO));
+        res.emplace_back(cs->GetCargoIcon(),
+            GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO, i, production[i] >> 8));
     }
     return res;
 }
@@ -1100,13 +1097,13 @@ void VanillaStationPreview::Update(Point pt, TileIndex tile) {
     this->palette = CM_PALETTE_TINT_WHITE;
 
     if (this->remove_mode) return;
-    if (this->selected_station_to_join != INVALID_STATION) {
+    if (this->selected_station_to_join != StationID::Invalid()) {
         this->station_to_join = this->selected_station_to_join;
         return;
     }
 
     if (!IsValidTile(this->type->cur_tile)) return;
-    this->station_to_join = INVALID_STATION;
+    this->station_to_join = StationID::Invalid();
     auto area = this->type->GetArea(false);
     area.Expand(1);
     area.ClampToMap();
@@ -1114,8 +1111,8 @@ void VanillaStationPreview::Update(Point pt, TileIndex tile) {
         if (IsTileType(tile, MP_STATION) && GetTileOwner(tile) == _local_company) {
             Station *st = Station::GetByTile(tile);
             if (st == nullptr || st->index == this->station_to_join) continue;
-            if (this->station_to_join != INVALID_STATION) {
-                this->station_to_join = INVALID_STATION;
+            if (this->station_to_join != StationID::Invalid()) {
+                this->station_to_join = StationID::Invalid();
                 this->palette = CM_PALETTE_TINT_YELLOW;
                 break;
             }
@@ -1123,15 +1120,15 @@ void VanillaStationPreview::Update(Point pt, TileIndex tile) {
             // TODO check for command to return multiple? but also check each to
             // see if they can be built
             // if (this->GetCommand(true, st->index)->test().Succeeded()) {
-            //     if (this->station_to_join != INVALID_STATION) {
-            //         this->station_to_join = INVALID_STATION;
+            //     if (this->station_to_join != StationID::Invalid()) {
+            //         this->station_to_join = StationID::Invalid();
             //         this->palette = CM_PALETTE_TINT_YELLOW;
             //         break;
             //     } else this->station_to_join = st->index;
             // }
         }
     }
-    if (this->station_to_join == INVALID_STATION && !this->GetCommand(true, NEW_STATION)->test().Succeeded())
+    if (this->station_to_join == StationID::Invalid() && !this->GetCommand(true, NEW_STATION)->test().Succeeded())
         this->palette = CM_PALETTE_TINT_RED_DEEP;
 }
 
@@ -1149,8 +1146,8 @@ void VanillaStationPreview::Execute() {
 }
 
 void VanillaStationPreview::OnStationRemoved(const Station *station) {
-    if (this->station_to_join == station->index) this->station_to_join = INVALID_STATION;
-    if (this->selected_station_to_join == station->index) this->station_to_join = INVALID_STATION;
+    if (this->station_to_join == station->index) this->station_to_join = StationID::Invalid();
+    if (this->selected_station_to_join == station->index) this->station_to_join = StationID::Invalid();
 }
 
 StationPreview::StationPreview(sp<PreviewStationType> type)
@@ -1158,7 +1155,7 @@ StationPreview::StationPreview(sp<PreviewStationType> type)
 {
     auto seconds_since_selected = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - _station_to_join_selected).count();
     if (seconds_since_selected < 30) this->station_to_join = _station_to_join;
-    else this->station_to_join = INVALID_STATION;
+    else this->station_to_join = StationID::Invalid();
 }
 
 StationPreview::~StationPreview() {
@@ -1225,8 +1222,8 @@ bool StationPreview::HandleMousePress() {
             _station_to_join = this->station_to_join;
             _station_to_join_selected = std::chrono::system_clock::now();
         } else {
-            this->station_to_join = INVALID_STATION;
-            _station_to_join = INVALID_STATION;
+            this->station_to_join = StationID::Invalid();
+            _station_to_join = StationID::Invalid();
         }
         return true;
     }
@@ -1239,7 +1236,7 @@ void StationPreview::Execute() {
 }
 
 void StationPreview::OnStationRemoved(const Station *station) {
-    if (this->station_to_join == station->index) this->station_to_join = INVALID_STATION;
+    if (this->station_to_join == station->index) this->station_to_join = StationID::Invalid();
 }
 
 void SetSelectedStationToJoin(StationID station_id) {

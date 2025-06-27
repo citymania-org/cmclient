@@ -427,7 +427,7 @@ CommandCost CmdBuildSingleRail(DoCommandFlags flags, TileIndex tile, RailType ra
 {
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 
-	_rail_track_endtile = INVALID_TILE; // CM
+	_cm_rail_track_endtile = INVALID_TILE; // CM
 
 	if (!ValParamRailType(railtype) || !ValParamTrackOrientation(track)) return CMD_ERROR;
 
@@ -446,7 +446,7 @@ CommandCost CmdBuildSingleRail(DoCommandFlags flags, TileIndex tile, RailType ra
 			ret = CheckTrackCombination(tile, trackbit);
 			if (ret.Succeeded()) ret = EnsureNoTrainOnTrack(tile, track);
 			if (ret.Failed()) {
-				if (ret.GetErrorMessage() == STR_ERROR_ALREADY_BUILT) _rail_track_endtile = tile;
+				if (ret.GetErrorMessage() == STR_ERROR_ALREADY_BUILT) _cm_rail_track_endtile = tile;
 				return ret;
 			}
 
@@ -565,7 +565,7 @@ CommandCost CmdBuildSingleRail(DoCommandFlags flags, TileIndex tile, RailType ra
 			}
 
 			if (IsLevelCrossing(tile) && GetCrossingRailBits(tile) == trackbit) {
-				_rail_track_endtile = tile;
+				_cm_rail_track_endtile = tile;
 				return CommandCost(STR_ERROR_ALREADY_BUILT);
 			}
 			[[fallthrough]];
@@ -608,7 +608,7 @@ CommandCost CmdBuildSingleRail(DoCommandFlags flags, TileIndex tile, RailType ra
 	}
 
 	cost.AddCost(RailBuildCost(railtype));
-	_rail_track_endtile = tile;
+	_cm_rail_track_endtile = tile;
 	return cost;
 }
 
@@ -624,7 +624,7 @@ CommandCost CmdRemoveSingleRail(DoCommandFlags flags, TileIndex tile, Track trac
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 	bool crossing = false;
 
-	_rail_track_endtile = INVALID_TILE;
+	_cm_rail_track_endtile = INVALID_TILE;
 
 	if (!ValParamTrackOrientation(track)) return CMD_ERROR;
 	TrackBits trackbit = TrackToTrackBits(track);
@@ -757,7 +757,7 @@ CommandCost CmdRemoveSingleRail(DoCommandFlags flags, TileIndex tile, Track trac
 		if (v != nullptr) TryPathReserve(v, true);
 	}
 
-	_rail_track_endtile = tile;
+	_cm_rail_track_endtile = tile;
 	return cost;
 }
 
@@ -906,7 +906,7 @@ static CommandCost CmdRailTrackHelper(DoCommandFlags flags, TileIndex tile, Tile
 
 		if (ret.Failed()) {
 			last_error = std::move(ret);
-			if (_rail_track_endtile == INVALID_TILE) _cm_rail_track_endtile = last_endtile;  // CM
+			if (_cm_rail_track_endtile == INVALID_TILE) _cm_rail_track_endtile = last_endtile;  // CM
 			if (last_error.GetErrorMessage() != STR_ERROR_ALREADY_BUILT && !remove) {
 				if (fail_on_obstacle) return last_error;
 				if (had_success) break; // Keep going if we haven't constructed any rail yet, skipping the start of the drag

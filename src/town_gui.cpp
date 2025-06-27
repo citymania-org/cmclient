@@ -56,27 +56,11 @@
 #include <list>
 #include "console_func.h"
 
-#include "citymania/cm_commands.hpp"
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_town_gui.hpp"
 /* CityMania end */
 
 #include "safeguards.h"
-
-struct CargoX {
-	int id;
-	int from;
-};
-void ShowCBTownWindow(uint town);
-static void DrawExtraTownInfo (Rect &r, Town *town, uint line, bool show_house_states_info=false);
-
-bool TownExecuteAction(const Town *town, uint action){
-	if(!(action == HK_STATUE && HasBit(town->statues, _current_company))){ //don't built statue when there is one
-		return citymania::cmd::DoTownAction(town->xy, town->index, action)
-			.with_error(STR_ERROR_CAN_T_DO_THIS)
-			.post();
-	}
-	return false;
-}
 
 TownKdtree _town_local_authority_kdtree{};
 
@@ -231,7 +215,7 @@ public:
 				}
 
 				int rating = this->town->ratings[c->index];
-				DrawString(text.left, text.right, text.top + text_y_offset, GetString(CM_STR_LOCAL_AUTHORITY_COMPANY_RATING, c->index, c->index, GetRatingString(rating), this->town->ratings[c->index]));
+				DrawString(text.left, text.right, text.top + text_y_offset, GetString(CM_STR_LOCAL_AUTHORITY_COMPANY_RATING_NUM, c->index, c->index, GetRatingString(rating), this->town->ratings[c->index]));
 				text.top += this->resize.step_height;
 			}
 		}
@@ -373,7 +357,14 @@ public:
 
 	EventState OnHotkey(int hotkey) override
 	{
-		TownExecuteAction(this->town, hotkey);
+		switch(hotkey) {
+			case HK_SADVERT: citymania::TownExecuteAction(this->town, TownAction::AdvertiseSmall); break;
+			case HK_MADVERT: citymania::TownExecuteAction(this->town, TownAction::AdvertiseMedium); break;
+			case HK_LADVERT: citymania::TownExecuteAction(this->town, TownAction::AdvertiseLarge); break;
+			case HK_STATUE: citymania::TownExecuteAction(this->town, TownAction::BuildStatue); break;
+			case HK_FUND: citymania::TownExecuteAction(this->town, TownAction::FundBuildings); break;
+			default: NOT_REACHED();
+		}
 		return ES_HANDLED;
 	}
 
@@ -391,10 +382,10 @@ static WindowDesc _town_authority_desc(
 	WC_TOWN_AUTHORITY, WC_NONE,
 	{},
 	_nested_town_authority_widgets,
-	TownAuthorityWindow::hotkeys
+	&TownAuthorityWindow::hotkeys
 );
 
-static void ShowTownAuthorityWindow(uint town)
+/* CM static */ void ShowTownAuthorityWindow(uint town)
 {
 	AllocateWindowDescFront<TownAuthorityWindow>(_town_authority_desc, town);
 }
@@ -471,7 +462,7 @@ public:
 			}
 		}
 
-		DrawExtraTownInfo(tr, this->town, GetCharacterHeight(FS_NORMAL), true);  // CM (CB)
+		citymania::DrawExtraTownInfo(tr, this->town, GetCharacterHeight(FS_NORMAL), true);  // CM (CB)
 
 		bool first = true;
 		for (int i = TAE_BEGIN; i < TAE_END; i++) {
@@ -563,7 +554,7 @@ public:
 
 			case WID_TV_CB:
 				// if(_networking)
-				ShowCBTownWindow(this->window_number);
+				citymania::ShowCBTownWindow((TownID)this->window_number);
 				break;
 
 			case WID_TV_DELETE: // delete town - only available on Scenario editor
@@ -661,9 +652,9 @@ public:
 
 	EventState OnHotkey(int hotkey) override
 	{
-		if(hotkey == WID_TV_CB) ShowCBTownWindow(this->window_number);
-		else if (hotkey == HK_STATUE + 0x80){
-			TownExecuteAction(this->town, HK_STATUE);
+		if(hotkey == WID_TV_CB) citymania::ShowCBTownWindow(this->window_number);
+		else if (hotkey == HK_STATUE + 0x80) { // TODO fix to proper hotkey
+			citymania::TownExecuteAction(this->town, TownAction::BuildStatue);
 			return ES_NOT_HANDLED;
 		}
 		return Window::OnHotkey(hotkey);
@@ -678,7 +669,7 @@ public:
 		Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
 		Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
 		Hotkey((uint16)0, "cb_window", WID_TV_CB),
-		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),
+		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),  // TODO make a proper hotkey
 	}};
 };
 
@@ -909,27 +900,22 @@ public:
 	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
 	{
 		switch (widget) {
-			case WID_TD_CAPTION:
-				return GetString(STR_TOWN_DIRECTORY_CAPTION, this->vscroll->GetCount(), Town::GetNumItems());
-
-			case WID_TD_WORLD_POPULATION:
-				return GetString(STR_TOWN_POPULATION, GetWorldPopulation());
-
-			case WID_TD_SORT_CRITERIA:
-				return GetString(TownDirectoryWindow::sorter_names[this->towns.SortType()]);
-
-			case TDW_CAPTION_TEXT: {
-				FIXME
+			case WID_TD_CAPTION: {
+			// 	return GetString(STR_TOWN_DIRECTORY_CAPTION, this->vscroll->GetCount(), Town::GetNumItems());
 				uint16 town_number = 0;
 				uint16 city_number = 0;
 				for (Town *t : Town::Iterate()) {
 					if(t->larger_town) city_number++;
 					town_number++;
 				}
-				SetDParam(0, city_number);
-				SetDParam(1, town_number);
-				break;
+				return GetString(CM_STR_TOWN_DIRECTORY_CAPTION_EXTRA, city_number, town_number);
 			}
+
+			case WID_TD_WORLD_POPULATION:
+				return GetString(STR_TOWN_POPULATION, GetWorldPopulation());
+
+			case WID_TD_SORT_CRITERIA:
+				return GetString(TownDirectoryWindow::sorter_names[this->towns.SortType()]);
 
 			default:
 				return this->Window::GetWidgetString(widget, stringid);
@@ -941,9 +927,15 @@ public:
 	 * @param t Town to draw.
 	 * @return The string to use.
 	 */
-	static std::string GetTownString(const Town *t, uint64_t population)
+	static std::string GetTownString(const Town *t, uint64_t population, uint64_t cm_real_population, uint64_t cm_num_houses)
 	{
-		return GetString(t->larger_town ? STR_TOWN_DIRECTORY_CITY : STR_TOWN_DIRECTORY_TOWN, t->index, population);
+		return GetString(
+			t->larger_town ? CM_STR_TOWN_DIRECTORY_CITY_COLOUR : CM_STR_TOWN_DIRECTORY_TOWN_COLOUR,
+			t->index,
+			population,
+			cm_real_population,
+			cm_num_houses
+		);
 	}
 
 	void DrawWidget(const Rect &r, WidgetID widget) const override
@@ -980,9 +972,7 @@ public:
 						if (t->ratings[_local_company] > RATING_GOOD)     icon = SPR_TOWN_RATING_GOOD;
 						DrawSprite(icon, PAL_NONE, icon_x, tr.top + (this->resize.step_height - icon_size.height) / 2);
 					}
-					FIXME different colours
-					DrawString(tr.left, tr.right, tr.top + (this->resize.step_height - GetCharacterHeight(FS_NORMAL)) / 2, t->larger_town ? CM_STR_TOWN_DIRECTORY_CITY_COLOUR : CM_STR_TOWN_DIRECTORY_TOWN_COLOUR);
-					DrawString(tr.left, tr.right, tr.top + (this->resize.step_height - GetCharacterHeight(FS_NORMAL)) / 2, GetTownString(t, t->cache.population));
+					DrawString(tr.left, tr.right, tr.top + (this->resize.step_height - GetCharacterHeight(FS_NORMAL)) / 2, GetTownString(t, t->cache.population, t->cm.real_population, t->cache.num_houses));
 
 					tr.top += this->resize.step_height;
 				}
@@ -1010,14 +1000,14 @@ public:
 			}
 			case WID_TD_LIST: {
 				Dimension d = GetStringBoundingBox(STR_TOWN_DIRECTORY_NONE);
-				uint64_t max_value = GetParamMaxDigits(8);
+				uint64_t max_pop_value = GetParamMaxDigits(8);
+				uint64_t max_houses_value = GetParamMaxDigits(5);
 				for (uint i = 0; i < this->towns.size(); i++) {
 					const Town *t = this->towns[i];
 
 					assert(t != nullptr);
 
-					FIXME (CM_STR_TOWN_DIRECTORY_TOWN_COLOUR)
-					d = maxdim(d, GetStringBoundingBox(GetTownString(t, max_value, GetParamMaxDigits(5))));
+					d = maxdim(d, GetStringBoundingBox(GetTownString(t, max_pop_value, max_pop_value, max_houses_value)));
 				}
 				Dimension icon_size = GetSpriteSize(SPR_TOWN_RATING_GOOD);
 				d.width += icon_size.width + 2;
@@ -1969,455 +1959,4 @@ void ShowBuildHousePicker(Window *parent)
 {
 	if (BringWindowToFrontById(WC_BUILD_HOUSE, 0)) return;
 	new BuildHouseWindow(_build_house_desc, parent);
-}
-
-
-//CB
-static void DrawExtraTownInfo (Rect &r, Town *town, uint line, bool show_house_states_info) {
-	//real pop and rating
-	SetDParam(0, town->cm.real_population);
-	SetDParam(1, town->ratings[_current_company]);
-	DrawString(r, CM_STR_TOWN_VIEW_REALPOP_RATE);
-	r.top += line;
-	//town stats
-	// int grow_rate = 0;
-	// if(town->growth_rate == TOWN_GROW_RATE_CUSTOM_NONE) grow_rate = 0;
-	// else grow_rate = TownTicksToDays((town->growth_rate & ~TOWN_GROW_RATE_CUSTOM) + 1);
-
-	SetDParam(0, town->growth_rate);
-	SetDParam(1, HasBit(town->flags, TOWN_CUSTOM_GROWTH) ? CM_STR_TOWN_VIEW_GROWTH_RATE_CUSTOM : STR_EMPTY);
-	// SetDParam(2, town->grow_counter < 16000 ? TownTicksToDays(town->grow_counter + 1) : -1);
-	SetDParam(2, town->grow_counter);
-	SetDParam(3, town->time_until_rebuild);
-	SetDParam(4, HasBit(town->flags, TOWN_IS_GROWING) ? 1 : 0);
-	SetDParam(5, town->fund_buildings_months);
-	DrawString(r, CM_STR_TOWN_VIEW_GROWTH);
-	r.top += line;
-
-	if (show_house_states_info) {
-		SetDParam(0, town->cm.houses_constructing);
-		SetDParam(1, town->cm.houses_reconstructed_last_month);
-		SetDParam(2, town->cm.houses_demolished_last_month);
-		DrawString(r, CM_STR_TOWN_VIEW_HOUSE_STATE);
-		r.top += line;
-	}
-
-	///houses stats
-	SetDParam(0, town->cm.hs_total);
-	SetDParam(1, town->cm.hs_last_month);
-	SetDParam(2, town->cm.cs_total);
-	SetDParam(3, town->cm.cs_last_month);
-	SetDParam(4, town->cm.hr_total);
-	SetDParam(5, town->cm.hr_last_month);
-	DrawString(r, CM_STR_TOWN_VIEW_GROWTH_TILES);
-	r.top += line;
-}
-
-bool CB_sortCargoesByFrom(CargoX first, CargoX second){
-	return (first.from < second.from) ? true : false;
-}
-
-struct CBTownWindow : Window {
-private:
-	Town *town;
-	std::list<CargoX> cargoes;
-
-	enum CBTownWindowPlanes {
-		CBTWP_MP_GOALS = 0,
-		CBTWP_MP_CB,
-	};
-
-public:
-	CBTownWindow(WindowDesc &desc, WindowNumber window_number) : Window(desc)
-	{
-		for (uint i = 0; i < NUM_CARGO ; i++) {
-			CargoX c;
-			c.id = i;
-			c.from = CB_GetFrom(i);
-			this->cargoes.push_back(c);
-		}
-		cargoes.sort(CB_sortCargoesByFrom);
-		this->town = Town::Get(window_number);
-		this->InitNested(window_number);
-
-		if(HasBit(this->town->fund_regularly, _local_company)) this->LowerWidget(WID_CB_FUND_REGULAR);
-		if(HasBit(this->town->do_powerfund, _local_company)) this->LowerWidget(WID_CB_POWERFUND);
-		if(HasBit(this->town->advertise_regularly, _local_company)) this->LowerWidget(WID_CB_ADVERT_REGULAR);
-	}
-
-	void OnClick([[maybe_unused]] Point pt, int widget, [[maybe_unused]] int click_count) override
-	{
-		switch (widget) {
-			case WID_CB_CENTER_VIEW:
-				if (citymania::_fn_mod) {
-					ShowExtraViewportWindow(this->town->xy);
-				} else {
-					ScrollMainWindowToTile(this->town->xy);
-				}
-				break;
-			case WID_CB_ADVERT:
-				TownExecuteAction(this->town, HK_LADVERT);
-				break;
-			case WID_CB_FUND:
-				TownExecuteAction(this->town, HK_FUND);
-				break;
-			case WID_CB_FUND_REGULAR:
-				ToggleBit(this->town->fund_regularly, _local_company);
-				this->SetWidgetLoweredState(widget, HasBit(this->town->fund_regularly, _local_company));
-				this->SetWidgetDirty(widget);
-				break;
-			case WID_CB_POWERFUND:
-				ToggleBit(this->town->do_powerfund, _local_company);
-				this->SetWidgetLoweredState(widget, HasBit(this->town->do_powerfund, _local_company));
-				this->SetWidgetDirty(widget);
-				break;
-			case WID_CB_ADVERT_REGULAR:
-				if (!this->town->advertise_regularly) {
-					SetDParam(0, ToPercent8(this->town->ad_rating_goal));
-					ShowQueryString(STR_JUST_INT, CM_STR_CB_ADVERT_REGULAR_RATING_TO_KEEP,
-					                4, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
-				} else this->OnQueryTextFinished(std::nullopt);
-				break;
-			case WID_CB_TOWN_VIEW: // Town view window
-				ShowTownViewWindow(this->window_number);
-				break;
-			case WID_CB_SHOW_AUTHORITY: // town authority
-				ShowTownAuthorityWindow(this->window_number);
-				break;
-		}
-	}
-
-	void OnQueryTextFinished(std::optional<std::string> str) override
-	{
-		if (!str.has_value()) SetBit(this->town->advertise_regularly, _local_company);
-		else ClrBit(this->town->advertise_regularly, _local_company);
-		this->town->ad_ref_goods_entry = NULL;
-		this->SetWidgetLoweredState(WID_CB_ADVERT_REGULAR, HasBit(this->town->advertise_regularly, _local_company));
-		this->SetWidgetDirty(WID_CB_ADVERT_REGULAR);
-
-		if (!str.has_value()) return;
-		uint val = Clamp(str->empty()? 0 : strtol(str->c_str(), NULL, 10), 1, 100);
-		this->town->ad_rating_goal = ((val << 8) + 255) / 101;
-	}
-
-	void SetStringParameters(int widget) const override
-	{
-		if (widget == WID_CB_CAPTION){
-			SetDParam(0, this->town->index);
-		}
-	}
-
-	const Company *GetCompany() const {
-		for (Company *c : Company::Iterate()) {
-			if (c->location_of_HQ != INVALID_TILE
-			    	&& DistanceMax(c->location_of_HQ, this->town->xy) < 11)
-				return c;
-		}
-		return nullptr;
-	}
-
-	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override {
-		static const uint EXP_TOPPADDING = 5;
-		static const uint EXP_LINESPACE  = 2; // Amount of vertical space for a horizontal (sub-)total line.
-
-		switch(widget){
-			case WID_CB_DETAILS:
-				size.height = (GetCharacterHeight(FS_NORMAL) + EXP_LINESPACE) * 5;
-				break;
-			case WID_CB_GOALS: {
-				uint desired_height = 0;
-				auto company = GetCompany();
-				if (company) {
-					for(const Goal *g : Goal::Iterate()) {
-						if (g->company == company->index) {
-							desired_height++;
-						}
-					}
-				}
-				if (desired_height > 0)
-					size.height = desired_height * (GetCharacterHeight(FS_NORMAL) + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
-				break;
-			}
-			case WID_CB_CARGO_NAME:
-			case WID_CB_CARGO_AMOUNT:
-			case WID_CB_CARGO_REQ:
-			case WID_CB_CARGO_STORE:
-			case WID_CB_CARGO_STORE_PCT:
-			case WID_CB_CARGO_FROM:
-			case WID_CB_CARGO_PREVIOUS: {
-				uint desired_height = 0;
-				for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++){
-					if(CB_GetReq(cargo) > 0) desired_height++;
-				}
-				if (desired_height > 0)
-					size.height = desired_height * (GetCharacterHeight(FS_NORMAL) + EXP_LINESPACE) + EXP_TOPPADDING - EXP_LINESPACE;
-				break;
-			}
-		}
-	}
-
-	void DrawWidget(const Rect &r, int widget) const override
-	{
-		static const uint EXP_LINESPACE  = GetCharacterHeight(FS_NORMAL) + 2;
-		Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
-
-		switch(widget){
-			case WID_CB_DETAILS:{
-				// growing
-				if(this->town->cb.growth_state == TownGrowthState::GROWING)
-					DrawString(tr, CM_STR_TOWN_CB_GROWING);
-				else DrawString(tr, CM_STR_TOWN_CB_NOT_GROWING);
-				tr.top += GetCharacterHeight(FS_NORMAL);
-
-				// population
-				SetDParam(0, this->town->cache.population);
-				SetDParam(1, this->town->cache.num_houses);
-				DrawString(tr, STR_TOWN_VIEW_POPULATION_HOUSES);
-				tr.top += GetCharacterHeight(FS_NORMAL);
-
-				DrawExtraTownInfo(tr, this->town, EXP_LINESPACE, false);
-
-				// regular funding
-				if(this->town->fund_regularly != 0){
-					DrawString(tr, CM_STR_CB_FUNDED_REGULARLY);
-					tr.top += EXP_LINESPACE;
-				}
-				break;
-			}
-			case WID_CB_GOALS: {
-				auto company = GetCompany();
-				if (!company) break;
-				for(const Goal *g : Goal::Iterate()) {
-					if (g->company != company->index)
-						continue;
-					SetDParamStr(0, g->text);
-					DrawString(tr, STR_GOALS_TEXT);
-					tr.top += EXP_LINESPACE;
-				}
-				break;
-			}
-			/* Citybuilder things*/
-			case WID_CB_CARGO_NAME:
-			case WID_CB_CARGO_AMOUNT:
-			case WID_CB_CARGO_REQ:
-			case WID_CB_CARGO_STORE:
-			case WID_CB_CARGO_STORE_PCT:
-			case WID_CB_CARGO_FROM:
-			case WID_CB_CARGO_PREVIOUS: {
-				if (this->town->larger_town) break;
-				uint delivered;
-				uint requirements;
-				uint from;
-				StringID string_to_draw;
-
-				//for cycle
-				std::list<CargoX> cargoes2 = this->cargoes;
-				std::list<CargoX>::iterator it2;
-				for (it2 = cargoes2.begin(); it2 != cargoes2.end(); ++it2) {
-					CargoX cargox;
-					cargox = *it2;
-					if (it2 == cargoes2.begin()) { // header
-						// FIXME rtl support
-						DrawString(tr.Shrink(ScaleGUITrad(14), 0, 0, 0),
-							(CM_STR_TOWN_GROWTH_HEADER_CARGO + widget - WID_CB_CARGO_NAME), TC_FROMSTRING,
-							(widget == WID_CB_CARGO_NAME) ? SA_LEFT : SA_RIGHT);
-
-						tr.top += EXP_LINESPACE;
-					}
-
-					const CargoSpec *cargos = CargoSpec::Get(cargox.id);
-					//cargo needed?
-					if (!cargos->IsValid() || CB_GetReq(cargos->Index()) == 0) continue;
-
-					from = CB_GetFrom(cargos->Index());
-					switch(widget) {
-						case WID_CB_CARGO_NAME: {
-							// FIXME scaling
-							GfxFillRect(tr.left, tr.top + 1, tr.left + 8, tr.top + 6, 0);
-							GfxFillRect(tr.left + 1, tr.top + 2, tr.left + 7, tr.top + 5, cargos->legend_colour);
-
-							SetDParam(0, cargos->name);
-							DrawString(tr.Shrink(ScaleGUITrad(14), 0, 0, 0), CM_STR_TOWN_CB_CARGO_NAME);
-							break;
-						}
-						case WID_CB_CARGO_AMOUNT: {
-							delivered = this->town->cb.delivered[cargos->Index()];
-							requirements = CB_GetTownReq(this->town->cache.population, CB_GetReq(cargos->Index()), from, true);
-							SetDParam(0, delivered);
-
-							//when required
-							if (this->town->cache.population >= from) {
-								if((delivered + (uint)this->town->cb.stored[cargos->Index()]) >= requirements) string_to_draw = CM_STR_TOWN_CB_CARGO_AMOUNT_GOOD;
-								else string_to_draw = CM_STR_TOWN_CB_CARGO_AMOUNT_BAD;
-							}
-							//when not required -> all faded
-							else string_to_draw = CM_STR_TOWN_CB_CARGO_AMOUNT_NOT;
-
-							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
-							break;
-						}
-						case WID_CB_CARGO_REQ: {
-							requirements = CB_GetTownReq(this->town->cache.population, CB_GetReq(cargos->Index()), from, true);
-							SetDParam(0, requirements);
-							 //when required
-							string_to_draw = (this->town->cache.population >= from) ? CM_STR_TOWN_CB_CARGO_REQ_YES : CM_STR_TOWN_CB_CARGO_REQ_NOT;
-							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
-							break;
-						}
-						case WID_CB_CARGO_PREVIOUS: {
-							requirements = CB_GetTownReq(this->town->cache.population, CB_GetReq(cargos->Index()), from, true);
-							SetDParam(0, this->town->cb.delivered_last_month[cargos->Index()]);
-							if (this->town->cache.population >= from){
-								// if (this->town->delivered_enough[cargos->Index()]) {
-									string_to_draw = (this->town->cb.delivered_last_month[cargos->Index()] >= requirements) ? CM_STR_TOWN_CB_CARGO_PREVIOUS_YES : CM_STR_TOWN_CB_CARGO_PREVIOUS_EDGE;
-								// }
-								// else string_to_draw = STR_TOWN_CB_CARGO_PREVIOUS_BAD;
-							}
-							else string_to_draw = CM_STR_TOWN_CB_CARGO_PREVIOUS_NOT;
-
-							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
-							break;
-						}
-						case WID_CB_CARGO_STORE: {
-							SetDParam(0, this->town->cb.stored[cargos->Index()]);
-							if (CB_GetDecay(cargos->Index()) == 100) string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_DECAY;  //when 100% decay
-							else {
-								if (this->town->cache.population >= from) string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_YES;  //when required
-								else string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_NOT;
-							}
-
-							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
-							break;
-						}
-						case WID_CB_CARGO_STORE_PCT: {
-							uint max_storage = CB_GetMaxTownStorage(this->town, cargos->Index());
-							if (CB_GetDecay(cargos->Index()) == 100 || !max_storage) string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_DECAY;  //when 100% decay
-							else {
-								SetDParam(0, 100 * this->town->cb.stored[cargos->Index()] / max_storage);
-								if (this->town->cache.population >= from) string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_PCT_YES;  //when required
-								else string_to_draw = CM_STR_TOWN_CB_CARGO_STORE_PCT_NOT;
-							}
-
-							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
-							break;
-						}
-						case WID_CB_CARGO_FROM: {
-							SetDParam(0, from);
-							string_to_draw = (this->town->cache.population >= from) ? CM_STR_TOWN_CB_CARGO_FROM_YES : CM_STR_TOWN_CB_CARGO_FROM_NOT; //when required
-
-							DrawString(tr, string_to_draw, TC_FROMSTRING, SA_RIGHT);
-							break;
-						}
-						//last case
-					}
-					//switch
-					tr.top += EXP_LINESPACE;
-					//cargo needed?
-				}
-				//for cycle
-			}
-			break;
-		}
-		/* Citybuilder things enabled*/
-	}
-
-	void OnPaint() override {
-		if (!this->IsShaded()) {
-			int plane = CB_Enabled() ? CBTWP_MP_CB : CBTWP_MP_GOALS;
-			NWidgetStacked *wi = this->GetWidget<NWidgetStacked>(WID_CB_SELECT_REQUIREMENTS);
-			if (plane != wi->shown_plane) {
-				wi->SetDisplayedPlane(plane);
-				this->InvalidateData();
-				return;
-			}
-		}
-		this->DrawWidgets();
-	}
-
-
-	EventState OnHotkey(int hotkey) override
-	{
-		TownExecuteAction(this->town, hotkey);
-		return ES_HANDLED;
-	}
-
-	static inline HotkeyList hotkeys{"cm_town_cb_view", {
-		Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
-		Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
-		Hotkey((uint16)0, "cb_window", WID_TV_CB),
-		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),
-	}};
-};
-
-static const NWidgetPart _nested_cb_town_widgets[] = {
-	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
-		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_CB_CAPTION), SetDataTip(CM_STR_TOWN_VIEW_CB_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_CB_CENTER_VIEW), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, STR_TOWN_VIEW_CENTER_TOOLTIP),
-		NWidget(WWT_SHADEBOX, COLOUR_BROWN),
-		NWidget(WWT_DEFSIZEBOX, COLOUR_BROWN),
-		NWidget(WWT_STICKYBOX, COLOUR_BROWN),
-	EndContainer(),
-	NWidget(WWT_PANEL, COLOUR_BROWN),
-		NWidget(NWID_VERTICAL),
-			NWidget(NWID_SPACER), SetMinimalSize(0, 5),  SetResize(1, 0), SetFill(1, 0),
-			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_DETAILS), SetMinimalSize(66, 0), SetResize(1, 0), SetFill(1, 0),
-				NWidget(NWID_VERTICAL),
-					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_ADVERT),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_LARGE_ADVERTISING_CAMPAIGN, 0),
-						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_FUND),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_NEW_BUILDINGS, 0),
-						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
-					EndContainer(),
-					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_ADVERT_REGULAR),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_ADVERT_REGULAR, CM_STR_CB_ADVERT_REGULAR_TT),
- 						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_FUND_REGULAR),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_FUND_REGULAR, CM_STR_CB_FUND_REGULAR_TT),
-						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
-					EndContainer(),
-					NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-  						NWidget(NWID_SPACER), SetMinimalSize(33, 0), SetFill(1, 0),
-  						NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_CB_POWERFUND),SetMinimalSize(33, 12),SetFill(1, 0), SetDataTip(CM_STR_CB_POWERFUND, CM_STR_CB_POWERFUND_TT),
-						NWidget(NWID_SPACER), SetMinimalSize(4, 0),
-					EndContainer(),
-				EndContainer(),
-			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(0, 5),  SetResize(1, 0), SetFill(1, 0),
-			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_CB_SELECT_REQUIREMENTS),
-				NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_GOALS),SetMinimalSize(50 + 35 + 35 + 40 + 35 + 30, 0), SetResize(1, 0), SetFill(1, 0),
-				NWidget(NWID_HORIZONTAL),
-					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_NAME),SetMinimalSize(50, 0), SetResize(0, 0), SetFill(1, 0),
-					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_AMOUNT),SetMinimalSize(35, 0), SetResize(1, 0), SetFill(0, 0),
-					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_REQ),SetMinimalSize(35, 0), SetResize(1, 0), SetFill(0, 0),
-					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_PREVIOUS),SetMinimalSize(40, 0),  SetResize(1, 0), SetFill(0, 0),
-					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_STORE),SetMinimalSize(35, 0), SetResize(1, 0), SetFill(0, 0),
-					NWidget(WWT_EMPTY, COLOUR_BROWN, WID_CB_CARGO_STORE_PCT),SetMinimalSize(30, 0), SetResize(1, 0), SetFill(0, 0),
-				EndContainer(),
-			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetResize(1, 0), SetFill(1, 1),
-		EndContainer(),
-	EndContainer(),
-	NWidget(NWID_HORIZONTAL),
-		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_TOWN_VIEW), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(CM_STR_CB_GUI_TOWN_VIEW_BUTTON, CM_STR_CB_GUI_TOWN_VIEW_TOOLTIP),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CB_SHOW_AUTHORITY), SetMinimalSize(40, 12), SetFill(1, 1), SetResize(1, 0), SetDataTip(STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON, STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP),
-		EndContainer(),
-		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
-	EndContainer(),
-};
-
-static WindowDesc _cb_town_desc(
-	WDP_AUTO, "cm_town_cb", 160, 30,
-	CM_WC_CB_TOWN, WC_NONE,
-	0,
-	_nested_cb_town_widgets,
-	&CBTownWindow::hotkeys
-);
-
-void ShowCBTownWindow(uint town) {
-	AllocateWindowDescFront<CBTownWindow>(_cb_town_desc, town);
 }

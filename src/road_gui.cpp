@@ -7,6 +7,7 @@
 
 /** @file road_gui.cpp GUI for building roads. */
 
+#include "station_type.h"
 #include "stdafx.h"
 #include "gui.h"
 #include "window_gui.h"
@@ -562,14 +563,14 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_BUS_STATION:
-				if (citymania::HandleStationPlacePushButton(this, WID_ROT_BUS_STATION, std::make_shared<citymania::RoadStationPreview>(ROADSTOP_BUS))) {
+				if (citymania::HandleStationPlacePushButton(this, WID_ROT_BUS_STATION, std::make_shared<citymania::RoadStationPreview>(RoadStopType::Bus))) {
 					ShowRVStationPicker(this, RoadStopType::Bus);
 					this->last_started_action = widget;
 				}
 				break;
 
 			case WID_ROT_TRUCK_STATION:
-				if (citymania::HandleStationPlacePushButton(this, WID_ROT_TRUCK_STATION, std::make_shared<citymania::RoadStationPreview>(ROADSTOP_TRUCK))) {
+				if (citymania::HandleStationPlacePushButton(this, WID_ROT_TRUCK_STATION, std::make_shared<citymania::RoadStationPreview>(RoadStopType::Truck))) {
 					ShowRVStationPicker(this, RoadStopType::Truck);
 					this->last_started_action = widget;
 				}
@@ -1241,9 +1242,9 @@ static constexpr NWidgetPart _nested_build_road_depot_widgets[] = {
 					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_SE), SetFill(0, 0), SetToolTip(STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
 				EndContainer(),
 			EndContainer(),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROD_DEPOT_AUTO), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROD_DEPOT_AUTO), SetStringTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
 		EndContainer(),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROD_DEPOT_AUTO), SetToolTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROD_DEPOT_AUTO), SetStringTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
 	EndContainer(),
 };
 
@@ -1252,7 +1253,7 @@ static WindowDesc _build_road_depot_desc(
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WindowDefaultFlag::Construction,
 	_nested_build_road_depot_widgets,
-	BuildRoadDepotWindow::hotkeys
+	&BuildRoadDepotWindow::hotkeys
 );
 
 static void ShowRoadDepotPicker(Window *parent)
@@ -1418,13 +1419,15 @@ public:
 
 		for (WidgetID i = RoadTypeIsTram(_cur_roadtype) ? WID_BROS_STATION_X : WID_BROS_STATION_NE; i < WID_BROS_LT_OFF; i++) {
 			this->GetWidget<NWidgetCore>(i)->SetToolTip(rti->strings.picker_tooltip[to_underlying(rs)]);
+		}
+
 		if (RoadTypeIsTram(_cur_roadtype)) {
-			this->GetWidget<NWidgetCore>(WID_BROS_STATION_X).SetToolTip(rti->strings.picker_tooltip[rs]);
-			this->GetWidget<NWidgetCore>(WID_BROS_STATION_Y).SetToolTip(rti->strings.picker_tooltip[rs]);
-			this->GetWidget<NWidgetCore>(CM_WID_BROS_STATION_XY_AUTO).SetToolTip(rti->strings.picker_tooltip[rs]);
+			this->GetWidget<NWidgetCore>(WID_BROS_STATION_X)->SetToolTip(rti->strings.picker_tooltip[to_underlying(rs)]);
+			this->GetWidget<NWidgetCore>(WID_BROS_STATION_Y)->SetToolTip(rti->strings.picker_tooltip[to_underlying(rs)]);
+			this->GetWidget<NWidgetCore>(CM_WID_BROS_STATION_XY_AUTO)->SetToolTip(rti->strings.picker_tooltip[to_underlying(rs)]);
 		} else {
 			for (WidgetID i = WID_BROS_STATION_NE; i < WID_BROS_LT_OFF; i++) {
-				this->GetWidget<NWidgetCore>(i).SetToolTip(rti->strings.picker_tooltip[rs]);
+				this->GetWidget<NWidgetCore>(i)->SetToolTip(rti->strings.picker_tooltip[to_underlying(rs)]);
 			}
 		}
 
@@ -1664,8 +1667,8 @@ static constexpr NWidgetPart _nested_road_station_picker_widgets[] = {
 								NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y), SetFill(0, 0), EndContainer(),
 							EndContainer(),
 							NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
-								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
-								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetStringTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetStringTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
 							EndContainer(),							
 						EndContainer(),
 						/* 2-orientation plane. */

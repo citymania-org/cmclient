@@ -7,6 +7,7 @@
 
 /** @file openttd.cpp Functions related to starting OpenTTD. */
 
+#include "openttd.h"
 #include "stdafx.h"
 
 #include "blitter/factory.hpp"
@@ -1304,7 +1305,7 @@ void StateGameLoop()
 	}
 
 	if (citymania::_pause_countdown > 0 && --citymania::_pause_countdown == 0) {
-		_pause_mode = PM_PAUSED_NORMAL;
+		_pause_mode = PauseMode::Normal;
 		SetWindowDirty(WC_MAIN_TOOLBAR, 0);
 	}
 

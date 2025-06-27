@@ -65,7 +65,7 @@ typedef std::vector<ParentSpriteToDraw> ParentSpriteToDrawVector;
 typedef std::vector<ChildScreenSpriteToDraw> ChildScreenSpriteToDrawVector;
 
 extern const DrawBuildingsTileStruct _town_draw_tile_data[(NEW_HOUSE_OFFSET) * 4 * 4];
-
+Viewport SetupScreenshotViewport(ScreenshotType t, uint32_t width = 0, uint32_t height = 0);
 
 namespace citymania {
 
@@ -197,7 +197,7 @@ void WriteHouseSpecInfo(JsonWriter &j) {
         j.kv("removal_cost", hs->removal_cost);
         j.kv("name", hs->building_name);
         j.kv("mail_generation", hs->mail_generation);
-        j.kv("flags", hs->building_flags);
+        j.kv("flags", hs->building_flags.base());
         j.kv("availability", hs->building_availability);
         j.kv("enabled", hs->enabled);
         j.end_dict();
@@ -224,7 +224,6 @@ void WriteHouseSpecInfo(JsonWriter &j) {
 void WriteCargoSpecInfo(JsonWriter &j) {
     j.begin_list_with_key("cargo_specs");
     char cargo_label[16];
-    SetDParam(0, 123);
     for (const CargoSpec *cs : CargoSpec::Iterate()) {
         j.begin_dict();
         JKV(j, cs->initial_payment);
@@ -292,7 +291,7 @@ void WriteEngineInfo(JsonWriter &j) {
     for (const Engine *e : Engine::Iterate()) {
         if (e->type != VEH_TRAIN) continue;
         j.begin_dict();
-        JKV(j, e->index);
+        JKV(j, e->index.base());
         j.kv("name", e->name);
         j.kv("cost", e->GetCost());
         j.kv("running_cost", e->GetRunningCost());
@@ -300,7 +299,7 @@ void WriteEngineInfo(JsonWriter &j) {
             j.begin_dict_with_key("info");
             JKV(j, e->info.cargo_type);
             JKV(j, e->info.cargo_age_period);
-            JKV(j, e->info.climates);
+            JKV(j, e->info.climates.base());
             JKV(j, e->info.base_intro.base());
             JKV(j, e->info.lifelength.base());
             JKV(j, e->info.base_life.base());
@@ -351,14 +350,14 @@ void ExportOpenttdData(const std::string &filename) {
     data_export::WriteEngineInfo(j);
 }
 
-extern void ViewportExportDrawBegin(const Viewport *vp, int left, int top, int right, int bottom);
+extern void ViewportExportDrawBegin(const Viewport &vp, int left, int top, int right, int bottom);
 extern void ViewportExportDrawEnd();
 
 extern TileSpriteToDrawVector &ViewportExportGetTileSprites();
 extern ParentSpriteToSortVector &ViewportExportGetSortedParentSprites();
 extern ChildScreenSpriteToDrawVector &ViewportExportGetChildSprites();
 
-void ViewportExportJson(const Viewport *vp, int left, int top, int right, int bottom) {
+void ViewportExportJson(const Viewport &vp, int left, int top, int right, int bottom) {
     ViewportExportDrawBegin(vp, left, top, right, bottom);
 
     auto fname = fmt::format("snaps/tick_{}.json", TimerGameTick::counter);
@@ -441,11 +440,10 @@ void ViewportExportJson(const Viewport *vp, int left, int top, int right, int bo
 }
 
 void ExportFrameSpritesJson() {
-    Viewport vp;
-    SetupScreenshotViewport(SC_VIEWPORT, &vp);
+    Viewport vp = SetupScreenshotViewport(SC_VIEWPORT);
     Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
     vp.zoom = w->viewport->zoom;
-    ViewportExportJson(&vp,
+    ViewportExportJson(vp,
         vp.virtual_left,
         vp.virtual_top,
         vp.virtual_left + vp.virtual_width,
@@ -483,7 +481,7 @@ void ExportSpriteAndPal(SpriteID img, SpriteID pal) {
     }
 }
 
-void ViewportExport(const Viewport *vp, int left, int top, int right, int bottom) {
+void ViewportExport(const Viewport &vp, int left, int top, int right, int bottom) {
     ViewportExportDrawBegin(vp, left, top, right, bottom);
 
     auto fname = fmt::format("snaps/tick_{}.bin", TimerGameTick::counter);
@@ -516,11 +514,10 @@ bool _is_recording = false;
 
 void ExportFrameSprites() {
     if (!_is_recording) return;
-    Viewport vp;
-    SetupScreenshotViewport(SC_VIEWPORT, &vp);
+    Viewport vp = SetupScreenshotViewport(SC_VIEWPORT);
     Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
     vp.zoom = w->viewport->zoom;
-    ViewportExport(&vp,
+    ViewportExport(vp,
         vp.virtual_left,
         vp.virtual_top,
         vp.virtual_left + vp.virtual_width,

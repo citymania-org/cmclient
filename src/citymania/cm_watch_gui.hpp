@@ -61,8 +61,8 @@ class WatchCompany : public Window
 {
 protected:
 	CompanyID watched_company;                            // Company ID beeing watched.
-	int company_activity[MAX_COMPANIES];                  // int array for activity blot.
-	int company_count_client[MAX_COMPANIES];              // company client count.
+	ReferenceThroughBaseContainer<std::array<uint32_t, MAX_COMPANIES>> company_activity;                  // int array for activity blot.
+	ReferenceThroughBaseContainer<std::array<uint32_t, MAX_COMPANIES>> company_count_client;              // company client count.
 	std::string company_name;     // company name for title display
 	std::string client_name;
 
@@ -82,7 +82,7 @@ public:
 	void OnScroll(Point delta) override;
 	void OnMouseWheel(int wheel) override;
 	void OnInvalidateData(int data, bool gui_scope) override;
-	void SetStringParameters(int widget) const override;
+    std::string GetWidgetString(WidgetID widget, StringID stringid) const override;
 	void OnRealtimeTick([[maybe_unused]] uint delta_ms) override;
 	void OnPaint() override;
 	void OnQueryTextFinished(std::optional<std::string> str) override;

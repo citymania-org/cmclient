@@ -66,6 +66,7 @@
 #include "citymania/cm_main.hpp"
 
 #include "safeguards.h"
+#include <optional>
 
 bool _cb_enabled = false;
 uint _cb_storage = 0;
@@ -243,11 +244,11 @@ void Town::UpdateLabel()
 {
 	if (!(_game_mode == GM_EDITOR) && (_local_company < MAX_COMPANIES)) {
 		int r = this->ratings[_local_company];
-		if     (r < RATING_VERYPOOR) this->town_label = 0; // Appalling and Very Poor, RED
-		else if(r < RATING_MEDIOCRE) this->town_label = 1; // Poor and Mediocre, ORANGE
-		else if(r < RATING_GOOD)     this->town_label = 2; // Good, YELLOW
-		else if(r < RATING_VERYGOOD) this->town_label = 3; // Very Good, WHITE
-		else                         this->town_label = 4; // Excellent and Outstanding, GREEN
+		if     (r < RATING_VERYPOOR) this->cm.town_label = 0; // Appalling and Very Poor, RED
+		else if(r < RATING_MEDIOCRE) this->cm.town_label = 1; // Poor and Mediocre, ORANGE
+		else if(r < RATING_GOOD)     this->cm.town_label = 2; // Good, YELLOW
+		else if(r < RATING_VERYGOOD) this->cm.town_label = 3; // Very Good, WHITE
+		else                         this->cm.town_label = 4; // Excellent and Outstanding, GREEN
 	}
 }
 
@@ -553,7 +554,7 @@ static void AdvanceSingleHouseConstruction(TileIndex tile)
 		ChangePopulation(Town::GetByTile(tile), hs->population);
 		ResetHouseAge(tile);
 
-		if (hs->building_flags & BUILDING_HAS_1_TILE)
+		if (hs->building_flags.Any(BUILDING_HAS_1_TILE))
 			citymania::Emit(citymania::event::HouseCompleted{town, tile, house_id, hs});
 	}
 	MarkTileDirtyByTile(tile);
@@ -960,8 +961,8 @@ static void ChangeTileOwner_Town(TileIndex, Owner, Owner)
 static bool GrowTown(Town *t);
 
 bool TownNeedsFunding(Town *t) {
-	bool fund_regularly = HasBit(t->fund_regularly, _local_company);
-	bool do_powerfund = HasBit(t->do_powerfund, _local_company);
+	bool fund_regularly = t->cm.fund_regularly.Test(_local_company);
+	bool do_powerfund = t->cm.do_powerfund.Test(_local_company);
 
 	if (do_powerfund && (_settings_client.gui.cm_powerfund_money > Company::Get(_local_company)->money ||
 		    _settings_client.gui.cm_powerfund_houses < t->cache.num_houses)) {
@@ -1011,53 +1012,66 @@ static void DoRegularFunding(Town *t)
 		return;
 
 	/* never fund faster than every Ticks::TOWN_GROWTH_TICKS */
-	if (TimerGameTick::counter < t->last_funding) {
-		if (UINT32_MAX - t->last_funding + TimerGameTick::counter < Ticks::TOWN_GROWTH_TICKS) return;
-	} else if (TimerGameTick::counter - t->last_funding < Ticks::TOWN_GROWTH_TICKS) return;
+	if (TimerGameTick::counter < t->cm.last_funding) {
+		if (UINT32_MAX - t->cm.last_funding + TimerGameTick::counter < Ticks::TOWN_GROWTH_TICKS) return;
+	} else if (TimerGameTick::counter - t->cm.last_funding < Ticks::TOWN_GROWTH_TICKS) return;
 
-	citymania::cmd::DoTownAction(t->xy, t->index, HK_FUND)
+	citymania::cmd::DoTownAction(t->xy, t->index, TownAction::FundBuildings)
 		.no_estimate()
 		.as_company(_local_company)
 		.post();
-	t->last_funding = TimerGameTick::counter;
+	t->cm.last_funding = TimerGameTick::counter;
 }
 
 static void DoRegularAdvertising(Town *t) {
-	if (!HasBit(t->advertise_regularly, _local_company))
+	if (t->cm.advertise_regularly.Test(_local_company))
 		return;
 
-	if (t->ad_ref_goods_entry == nullptr) {
+	if (!t->cm.ad_ref_goods_entry.has_value()) {
 		// Pick as ref station and cargo with min rating
+		uint8_t rating = 0;
 		for (Station *st : Station::Iterate()) {
 			if (st->owner == _local_company && DistanceManhattan(t->xy, st->xy) <= 20) {
-				for (CargoID i = 0; i < NUM_CARGO; i++)
-					if (st->goods[i].HasRating() && (t->ad_ref_goods_entry == nullptr ||
-					    	t->ad_ref_goods_entry->rating < st->goods[i].rating)) {
-						t->ad_ref_goods_entry = &st->goods[i];
+				for (CargoType i = 0; i < NUM_CARGO; i++)
+					if (st->goods[i].HasRating() && (t->cm.ad_ref_goods_entry == std::nullopt ||
+					    	rating < st->goods[i].rating)) {
+						t->cm.ad_ref_goods_entry = {st->index, i};
+						rating = st->goods[i].rating;
 					}
 			}
 		}
 
-		if (t->ad_ref_goods_entry == nullptr)
+		if (!t->cm.ad_ref_goods_entry.has_value())
 			return;
 	}
 
-	if (t->ad_ref_goods_entry->rating >= t->ad_rating_goal)
+	auto [station_id, cargo_type] = t->cm.ad_ref_goods_entry.value();
+	auto st = Station::GetIfValid(station_id);
+	if (st == nullptr) {
+		t->cm.ad_ref_goods_entry = std::nullopt;
+		return;
+	}
+	auto rating = st->goods[cargo_type].rating;
+	if (rating >= t->cm.ad_rating_goal)
 		return;
 
 	// don't advertise faster that once per 30 ticks
-	if (TimerGameTick::counter < t->last_advertisement) {
-		if (UINT32_MAX - t->last_advertisement + TimerGameTick::counter < 30) return;
-	} else if (TimerGameTick::counter - t->last_advertisement < 30) return;
-	t->last_advertisement = TimerGameTick::counter;
+	if (TimerGameTick::counter < t->cm.last_advertisement) {
+		if (UINT32_MAX - t->cm.last_advertisement + TimerGameTick::counter < 30) return;
+	} else if (TimerGameTick::counter - t->cm.last_advertisement < 30) return;
+	t->cm.last_advertisement = TimerGameTick::counter;
 
-	auto prev_rating = t->ad_ref_goods_entry->rating;
-	citymania::cmd::DoTownAction(t->xy, t->index, HK_LADVERT)
+	citymania::cmd::DoTownAction(t->xy, t->index, TownAction::AdvertiseLarge)
 		.no_estimate()
 		.as_company(_local_company)
 		.with_callback([=] (bool res) -> bool {
-			if (res && prev_rating == t->ad_ref_goods_entry->rating) {
-				t->ad_ref_goods_entry = nullptr;
+			if (!res) return true;
+			if (!t->cm.ad_ref_goods_entry.has_value()) return true;
+			auto [station_id, cargo_type] = t->cm.ad_ref_goods_entry.value();
+			auto st = Station::GetIfValid(station_id);
+			if (st == nullptr) return true;
+			if (rating == st->goods[cargo_type].rating) {
+				t->cm.ad_ref_goods_entry = std::nullopt;
 			}
 			return true;
 		}).post();
@@ -2205,24 +2219,24 @@ void CB_SetStorage(uint storage){
 	_cb_storage = storage;
 }
 
-void CB_SetRequirements(CargoID cargo, uint req, uint from, uint decay){
-	CBREQ[cargo] = req;
-	CBFROM[cargo] = from;
-	CBDECAY[cargo] = decay;
+void CB_SetRequirements(CargoType cargo_type, uint req, uint from, uint decay){
+	CBREQ[cargo_type] = req;
+	CBFROM[cargo_type] = from;
+	CBDECAY[cargo_type] = decay;
 }
 void CB_ResetRequirements() {
-	for(CargoID cargo = 0; cargo < NUM_CARGO; cargo++){
+	for(CargoType cargo = 0; cargo < NUM_CARGO; cargo++){
 		CB_SetRequirements(cargo, 0, 0, 0);
 	}
 }
-uint CB_GetReq(CargoID cargo){
-	return CBREQ[cargo];
+uint CB_GetReq(CargoType cargo_type) {
+	return CBREQ[cargo_type];
 }
-uint CB_GetFrom(CargoID cargo){
-	return CBFROM[cargo];
+uint CB_GetFrom(CargoType cargo_type) {
+	return CBFROM[cargo_type];
 }
-uint CB_GetDecay(CargoID cargo){
-	return CBDECAY[cargo];
+uint CB_GetDecay(CargoType cargo_type) {
+	return CBDECAY[cargo_type];
 }
 
 int CB_GetTownReq(uint population, uint req, uint from, bool from_non_important, bool prev_month)
@@ -2341,19 +2355,19 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32_t townnameparts, TownSi
 
 	t->fund_buildings_months = 0;
 	//CB
-	t->cb.growth_state = TownGrowthState::NOT_GROWING;
+	t->cm.cb.growth_state = citymania::TownGrowthState::NOT_GROWING;
 	for (uint i = 0; i < NUM_CARGO ; i++) {
-		t->cb.stored[i] = 0;
-		t->cb.delivered[i] = 0;
-		t->cb.required[i] = 0;
-		t->cb.delivered_last_month[i] = 0;
-		t->cb.required_last_month[i] = 0;
+		t->cm.cb.stored[i] = 0;
+		t->cm.cb.delivered[i] = 0;
+		t->cm.cb.required[i] = 0;
+		t->cm.cb.delivered_last_month[i] = 0;
+		t->cm.cb.required_last_month[i] = 0;
 	}
-	t->fund_regularly = 0;
-	t->do_powerfund = 0;
-	t->advertise_regularly = 0;
-	t->ad_rating_goal = 95;
-	t->ad_ref_goods_entry = NULL;
+	t->cm.fund_regularly = {};
+	t->cm.do_powerfund = {};
+	t->cm.advertise_regularly = {};
+	t->cm.ad_rating_goal = 95;
+	t->cm.ad_ref_goods_entry = std::nullopt;
 	//CB
 
 	for (uint i = 0; i != MAX_COMPANIES; i++) t->ratings[i] = RATING_INITIAL;
@@ -2370,7 +2384,7 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32_t townnameparts, TownSi
 	}
 	t->townnameparts = townnameparts;
 
-	t->town_label = 3;  // CM
+	t->cm.town_label = 3;  // CM
 
 	t->InitializeLayout(layout);
 

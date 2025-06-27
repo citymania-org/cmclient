@@ -448,7 +448,7 @@ struct NewGRFInspectWindow : Window {
 
 		uint i = 0;
 		this->DrawString(r, i++, fmt::format("Industry type: {}", (int)((const Industry *)base)->type));
-		if (nif->variables.empty() {
+		if (nif->variables.empty()) {
 			this->DrawString(r, i++, "Variables:");
 			for (const NIVariable &niv : nif->variables) {
 				bool avail = true;

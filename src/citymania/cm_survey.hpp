@@ -1,7 +1,7 @@
 #ifndef CMEXT_SURVEY_HPP
 #define CMEXT_SURVEY_HPP
 
-#include "3rdparty/nlohmann/json.hpp"
+#include "../3rdparty/nlohmann/json.hpp"
 
 namespace citymania {
 

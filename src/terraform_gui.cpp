@@ -14,6 +14,7 @@
 #include "company_base.h"
 #include "house.h"
 #include "gui.h"
+#include "tile_type.h"
 #include "window_gui.h"
 #include "window_func.h"
 #include "viewport_func.h"
@@ -128,21 +129,21 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 			// loop through every tile and send a demolish command for each tree
 			// orthogonal area
 			TileIndex tree_start_tile, tree_recent_tile, prev_tile;
-			tree_start_tile = tree_recent_tile = prev_tile = 0;
+			tree_start_tile = tree_recent_tile = prev_tile = INVALID_TILE;
 			if (!citymania::_fn_mod) {
 				OrthogonalTileArea square_area = OrthogonalTileArea(start_tile, end_tile);
 				for (auto cur_tile : square_area) {
 					// if we're on a non-consecutive tile or we've hit a black-marked tile
 					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
-					if (tree_start_tile != 0 &&
+					if (tree_start_tile != INVALID_TILE &&
 							(cur_tile != prev_tile + 1 ||
 							(!IsTileType(cur_tile, MP_TREES) && (!IsTileType(cur_tile, MP_CLEAR) || IsClearGround(cur_tile, CLEAR_FIELDS))))) {
 						Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 0);
-						tree_start_tile = tree_recent_tile = 0;
+						tree_start_tile = tree_recent_tile = INVALID_TILE;
 					}
 					// if current tile is a tree
 					if (IsTileType(cur_tile, MP_TREES)) {
-						if (tree_start_tile == 0) {
+						if (tree_start_tile == INVALID_TILE) {
 							tree_start_tile = cur_tile;
 						}
 						tree_recent_tile = cur_tile;
@@ -150,7 +151,7 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 					prev_tile = cur_tile;
 				}
 				// one last ride to flavortown
-				if (tree_start_tile != 0) {
+				if (tree_start_tile != INVALID_TILE) {
 					Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 0);
 				}
 			} else {  // diagonal area
@@ -160,15 +161,15 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 					TileIndexDiffC tile_diff = TileIndexToTileIndexDiffC(cur_tile, prev_tile);
 					// if we're on a non-consecutive tile or we've hit a black-marked tile
 					// safe tiles are: TREES or non-FIELD clear tiles (because they're expensive to demolish)
-					if (tree_start_tile != 0 &&
+					if (tree_start_tile != INVALID_TILE &&
 							(!((tile_diff.x == 1 && tile_diff.y == 1) || (tile_diff.x == -1 && tile_diff.y == -1)) ||
 							(!IsTileType(cur_tile, MP_TREES) && (!IsTileType(cur_tile, MP_CLEAR) || IsClearGround(cur_tile, CLEAR_FIELDS))))) {
 						Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 1);
-						tree_start_tile = tree_recent_tile = 0;
+						tree_start_tile = tree_recent_tile = INVALID_TILE;
 					}
 					// if current tile is a tree
 					if (IsTileType(cur_tile, MP_TREES)) {
-						if (tree_start_tile == 0) {
+						if (tree_start_tile == INVALID_TILE) {
 							tree_start_tile = cur_tile;
 						}
 						tree_recent_tile = cur_tile;
@@ -176,7 +177,7 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 					prev_tile = cur_tile;
 				}
 				// one last ride to flavortown
-				if (tree_start_tile != 0) {
+				if (tree_start_tile != INVALID_TILE) {
 					Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, tree_start_tile, tree_recent_tile, 1);
 				}
 			}
@@ -226,8 +227,8 @@ struct TerraformToolbarWindow : Window {
 
 	void DrawWidget(const Rect &r, int widget) const override
 	{
-		if (widget == WID_TT_DEMOLISH_TREES) {
-			uint offset = this->IsWidgetLowered(WID_TT_DEMOLISH_TREES) ? 1 : 0;
+		if (widget == CM_WID_TT_DEMOLISH_TREES) {
+			uint offset = this->IsWidgetLowered(CM_WID_TT_DEMOLISH_TREES) ? 1 : 0;
 			ZoomLevel temp_zoom;
 			switch (_gui_zoom) {
 				case ZOOM_LVL_NORMAL:
@@ -280,8 +281,8 @@ struct TerraformToolbarWindow : Window {
 				this->last_user_action = widget;
 				break;
 
-			case WID_TT_DEMOLISH_TREES: // Demolish aka dynamite button
-				HandlePlacePushButton(this, WID_TT_DEMOLISH_TREES, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH_TREES);
+			case CM_WID_TT_DEMOLISH_TREES: // Demolish aka dynamite button
+				HandlePlacePushButton(this, CM_WID_TT_DEMOLISH_TREES, ANIMCURSOR_DEMOLISH, HT_RECT | HT_DIAGONAL, CM_DDSP_DEMOLISH_TREES);
 				this->last_user_action = widget;
 				break;
 
@@ -326,7 +327,7 @@ struct TerraformToolbarWindow : Window {
 				PlaceProc_DemolishArea(tile);
 				break;
 
-			case WID_TT_DEMOLISH_TREES: // Demolish trees only
+			case CM_WID_TT_DEMOLISH_TREES: // Demolish trees only
 				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_DEMOLISH_TREES);
 				break;
 
@@ -407,7 +408,7 @@ struct TerraformToolbarWindow : Window {
 		Hotkey('I', "trees", WID_TT_PLANT_TREES),
 		Hotkey('O', "placesign", WID_TT_PLACE_SIGN),
 		Hotkey('P', "placeobject", WID_TT_PLACE_OBJECT),
-		Hotkey('D' | WKC_CTRL | WKC_GLOBAL_HOTKEY, "cm_treedozer", WID_TT_DEMOLISH_TREES),
+		Hotkey('D' | WKC_CTRL | WKC_GLOBAL_HOTKEY, "cm_treedozer", CM_WID_TT_DEMOLISH_TREES),
 	}, TerraformToolbarGlobalHotkeys};
 };
 

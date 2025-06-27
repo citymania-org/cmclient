@@ -122,7 +122,7 @@ inline void Blitter_32bppOptimized::Draw(const Blitter::BlitterParams *bp, ZoomL
 								*dst = citymania::Remap32RGB(src_px->r, src_px->g, src_px->b, remap);
 							} else {
 								uint r = remap[GB(m, 0, 8)];
-								if (r != 0) *dst = this->AdjustBrightness(this->LookupColourInPalette(r), GB(m, 8, 8));
+								if (r != 0) *dst = AdjustBrightness(this->LookupColourInPalette(r), GB(m, 8, 8));
 							}
 							dst++;
 							src_px++;
@@ -135,7 +135,7 @@ inline void Blitter_32bppOptimized::Draw(const Blitter::BlitterParams *bp, ZoomL
 								*dst = citymania::Remap32RGBANoCheck(src_px->r, src_px->g, src_px->b, src_px->a, *dst, remap);
 							} else {
 								uint r = remap[GB(m, 0, 8)];
-								if (r != 0) *dst = ComposeColourPANoCheck(this->AdjustBrightness(this->LookupColourInPalette(r), GB(m, 8, 8)), src_px->a, *dst);
+								if (r != 0) *dst = ComposeColourPANoCheck(AdjustBrightness(this->LookupColourInPalette(r), GB(m, 8, 8)), src_px->a, *dst);
 							}
 							dst++;
 							src_px++;

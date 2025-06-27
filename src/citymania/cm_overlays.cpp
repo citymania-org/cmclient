@@ -2,7 +2,6 @@
 
 #include "cm_overlays.hpp"
 
-#include "3rdparty/fmt/core.h"
 #include "cm_client_list_gui.hpp"
 
 #include "../blitter/factory.hpp"  // Blitter BlitterFactory
@@ -18,8 +17,8 @@
 #include "../zoom_func.h"
 
 #include "../safeguards.h"
-#include "gfx_type.h"
-#include "table/sprites.h"
+#include "../gfx_type.h"
+#include "../table/sprites.h"
 
 namespace citymania {
 

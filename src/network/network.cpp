@@ -1253,7 +1253,7 @@ void NetworkGameLoop()
 		}
 
 		NetworkExecuteLocalCommandQueue();
-		if (citymania::_pause_countdown > 0 && --citymania::_pause_countdown == 0) Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, 1);
+		if (citymania::_pause_countdown > 0 && --citymania::_pause_countdown == 0) Command<CMD_PAUSE>::Post(PauseMode::Normal, 1);
 
 		citymania::ExecuteFakeCommands(TimerGameTick::counter);
 

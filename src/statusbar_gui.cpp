@@ -102,10 +102,7 @@ struct StatusBarWindow : Window {
 					size = Dimension(0, 0);
 					return;
 				}
-				SetDParam(0, 999);
-				SetDParam(1, 999);
-				SetDParam(2, 9999);
-				d = GetStringBoundingBox(CM_STR_STATUSBAR_APM);
+				d = GetStringBoundingBox(GetString(CM_STR_STATUSBAR_APM, 999, 999, 9999));
 				break;
 
 			default:
@@ -176,10 +173,13 @@ struct StatusBarWindow : Window {
 			case CM_WID_S_APM:
 				if (_settings_client.gui.cm_show_apm) {
 					auto epm = citymania::GetEPM();
-					SetDParam(0, epm.second);
-					SetDParam(1, epm.first);
-					SetDParam(2, std::min(citymania::get_average_command_lag(), 9999));
-					DrawString(tr, CM_STR_STATUSBAR_APM, TC_FROMSTRING, SA_HOR_CENTER);
+					auto str = GetString(
+						CM_STR_STATUSBAR_APM,
+						epm.second,
+						epm.first,
+						std::min(citymania::get_average_command_lag(), 9999)
+					);
+					DrawString(tr, str, TC_FROMSTRING, SA_HOR_CENTER);
 				}
 				break;
 		}

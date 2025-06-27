@@ -100,7 +100,7 @@ static std::unique_ptr<NWidgetBase> MakeCompanyButtons2() {
 		company_panel->SetMinimalSizeAbsolute(company_sprite_size.width, company_sprite_size.height);
 		company_panel->SetResize(1, 0);
 		company_panel->SetFill(1, 1);
-		company_panel->SetDataTip(0, CM_STR_WATCH_CLICK_TO_WATCH_COMPANY);
+		company_panel->SetToolTip(CM_STR_WATCH_CLICK_TO_WATCH_COMPANY);
 		widget_container_horiz->Add(std::move(company_panel));
 	}
 
@@ -124,8 +124,8 @@ static const NWidgetPart _nested_watch_company_widgets[] = {
 	/* Title Bar with close box, title, shade and stick boxes */
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetDataTip(CM_STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, CM_STR_WATCH_LOCATION_TOOLTIP),
+		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_LOCATION), SetMinimalSize(12, 14), SetStringTip(SPR_GOTO_LOCATION, CM_STR_WATCH_LOCATION_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
@@ -162,7 +162,7 @@ static const NWidgetPart _nested_watch_company_widgets[] = {
 static WindowDesc _watch_company_desc(
 	WDP_AUTO, "cm_watch_gui", 300, 257,
 	WC_WATCH_COMPANY, WC_NONE,
-	WDF_NO_FOCUS,
+	WindowDefaultFlag::NoFocus,
 	_nested_watch_company_widgets
 );
 
@@ -171,8 +171,8 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 	/* Title Bar with close box, title, shade and stick boxes */
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetDataTip(CM_STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, CM_STR_WATCH_LOCATION_TOOLTIP),
+		NWidget(WWT_CAPTION, COLOUR_GREY, EWW_CAPTION ), SetStringTip(CM_STR_WATCH_WINDOW_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_LOCATION), SetMinimalSize(12, 14), SetStringTip(SPR_GOTO_LOCATION, CM_STR_WATCH_LOCATION_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
@@ -181,29 +181,29 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 		NWidget( NWID_VERTICAL ),
 			/* Buton Zoom Out, In, Scrollto */
 		NWidget(NWID_SELECTION, INVALID_COLOUR, EWW_ENABLE_SELECT),
-				NWidget(NWID_VERTICAL ),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_KICK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_KICK, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_BAN), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_BAN, 0 ),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_LOCK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_LOCK, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_UNLOCK), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_UNLOCK, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_JOIN), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_JOIN, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_KICKC), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_KICKC, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_RESET), SetMinimalSize(40, 20), SetFill(1, 0), SetDataTip(CM_STR_XI_RESET, 0),
+				NWidget(NWID_VERTICAL),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_KICK), SetMinimalSize(40, 20), SetFill(1, 0), SetStringTip(CM_STR_XI_KICK),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_BAN), SetMinimalSize(40, 20), SetFill(1, 0), SetStringTip(CM_STR_XI_BAN),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_LOCK), SetMinimalSize(40, 20), SetFill(1, 0), SetStringTip(CM_STR_XI_LOCK),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_UNLOCK), SetMinimalSize(40, 20), SetFill(1, 0), SetStringTip(CM_STR_XI_UNLOCK),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_JOIN), SetMinimalSize(40, 20), SetFill(1, 0), SetStringTip(CM_STR_XI_JOIN),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_KICKC), SetMinimalSize(40, 20), SetFill(1, 0), SetStringTip(CM_STR_XI_KICKC),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_RESET), SetMinimalSize(40, 20), SetFill(1, 0), SetStringTip(CM_STR_XI_RESET),
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_ZOOMOUT), SetDataTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_ZOOMIN), SetDataTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_CENTER), SetDataTip(SPR_CENTRE_VIEW_VEHICLE, STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT),
-				NWidget(WWT_PANEL, COLOUR_GREY, EWW_NEW_WINDOW), SetDataTip(0, 0), EndContainer(),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_ZOOMOUT), SetSpriteTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_ZOOMIN), SetSpriteTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_CENTER), SetSpriteTip(SPR_CENTRE_VIEW_VEHICLE, STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP),
+				NWidget(WWT_PANEL, COLOUR_GREY, EWW_NEW_WINDOW), EndContainer(),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_CLIENTS), SetMinimalSize(23, 10), SetDataTip(SPR_IMG_COMPANY_GENERAL, CM_STR_XI_PLAYERS_TOOLTIP),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_COMPANYW), SetMinimalSize(23, 10), SetDataTip(SPR_IMG_COMPANY_LIST, CM_STR_XI_COMPANYW_TOOLTIP),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_COMPANYHQ), SetMinimalSize(23, 10), SetDataTip(CM_STR_XI_COMPANYHQ, CM_STR_XI_COMPANYHQ_TOOLTIP),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_PRIVATEP_MESSAGE), SetMinimalSize(23, 10), SetDataTip(CM_STR_XI_PRIVATE_PLAYER_MESSAGE, CM_STR_XI_PRIVATE_PLAYER_MESSAGE_TOOLTIP),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_PRIVATEC_MESSAGE), SetMinimalSize(23, 10), SetDataTip(CM_STR_XI_PRIVATE_COMPANY_MESSAGE, CM_STR_XI_PRIVATE_COMPANY_MESSAGE_TOOLTIP),
-				NWidget(WWT_PANEL, COLOUR_GREY, EWW_NEW_WINDOW), SetDataTip(0, 0), EndContainer(),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_CLIENTS), SetMinimalSize(23, 10), SetStringTip(SPR_IMG_COMPANY_GENERAL, CM_STR_XI_PLAYERS_TOOLTIP),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, EWW_COMPANYW), SetMinimalSize(23, 10), SetStringTip(SPR_IMG_COMPANY_LIST, CM_STR_XI_COMPANYW_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_COMPANYHQ), SetMinimalSize(23, 10), SetStringTip(CM_STR_XI_COMPANYHQ, CM_STR_XI_COMPANYHQ_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_PRIVATEP_MESSAGE), SetMinimalSize(23, 10), SetStringTip(CM_STR_XI_PRIVATE_PLAYER_MESSAGE, CM_STR_XI_PRIVATE_PLAYER_MESSAGE_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, EWW_PRIVATEC_MESSAGE), SetMinimalSize(23, 10), SetStringTip(CM_STR_XI_PRIVATE_COMPANY_MESSAGE, CM_STR_XI_PRIVATE_COMPANY_MESSAGE_TOOLTIP),
+				NWidget(WWT_PANEL, COLOUR_GREY, EWW_NEW_WINDOW), EndContainer(),
 			EndContainer(),
 			/* Background panel for resize purpose */
 			NWidget(WWT_PANEL, COLOUR_GREY), SetResize(0, 1), EndContainer(),
@@ -226,7 +226,7 @@ static const NWidgetPart _nested_watch_company_widgetsA[] = {
 static WindowDesc _watch_company_descA(
 	WDP_AUTO, "watch_gui_client", 448, 256,
 	WC_WATCH_COMPANYA, WC_NONE,
-	WDF_CONSTRUCTION,
+	WindowDefaultFlag::Construction,
 	_nested_watch_company_widgetsA
 );
 
@@ -234,7 +234,7 @@ static void ResetCallback(Window *w, bool confirmed)
 {
 	if (confirmed) {
 		NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)w->window_number);
-		if (ci && ci->client_playas != INVALID_COMPANY) {
+		if (ci && Company::IsValidID(ci->client_playas)) {
 			NetworkClientSendChatToServer(fmt::format("!reset {}", ci->client_playas + 1));
 		}
 	}
@@ -245,14 +245,14 @@ static void ResetCallback(Window *w, bool confirmed)
  * @param window_number The window number for the class
  * @param company_to_watch Company ID for watching a particular company
  */
-WatchCompany::WatchCompany(WindowDesc &desc, int window_number, CompanyID company_to_watch = INVALID_COMPANY, int Wtype = EWT_COMPANY) : Window(desc)
+WatchCompany::WatchCompany(WindowDesc &desc, int window_number, CompanyID company_to_watch = CompanyID::Invalid(), int Wtype=EWT_COMPANY) : Window(desc)
 {
 	this->Wtype = Wtype;
 	if(this->Wtype == EWT_CLIENT){
 		this->watched_client = window_number;
 		NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)this->watched_client);
 
-		this->watched_company = (ci != NULL) ? ci->client_playas : INVALID_COMPANY;
+		this->watched_company = (ci != NULL) ? ci->client_playas : CompanyID::Invalid();
 		this->InitNested(window_number);
 		this->owner = (Owner)this->watched_company;
 	}
@@ -264,16 +264,16 @@ WatchCompany::WatchCompany(WindowDesc &desc, int window_number, CompanyID compan
 		this->owner = this->watched_company;
 
 		/* Reset activity and client count for all companies */
-		for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {
-			this->company_activity[i] = 0;
-			this->company_count_client[i] = 0;
+  		for (CompanyID c = CompanyID::Begin(); c < MAX_COMPANIES; ++c) {
+			this->company_activity[c] = 0;
+			this->company_count_client[c] = 0;
 		}
 
 		this->company_name = GetString(STR_JUST_NOTHING);
 	}
 	/* Init the viewport area */
 	NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(EWW_WATCH);
-	nvp->InitializeViewport(this, 0, ZOOM_LVL_NORMAL);
+	nvp->InitializeViewport(this, (TileIndex)0, ScaleZoomGUI(ZOOM_LVL_NORMAL));
 
 	Point pt;
 	/* the main window with the main view */
@@ -288,50 +288,26 @@ WatchCompany::WatchCompany(WindowDesc &desc, int window_number, CompanyID compan
 	this->viewport->dest_scrollpos_x = this->viewport->scrollpos_x;
 	this->viewport->dest_scrollpos_y = this->viewport->scrollpos_y;
 
-	if ( this->watched_company != INVALID_COMPANY ) {
-		Company *c = Company::Get( this->watched_company );
-		this->ScrollToTile( c->last_build_coordinate );
+	if (auto c = Company::GetIfValid(this->watched_company); c != nullptr) {
+		this->ScrollToTile(c->last_build_coordinate);
 	}
 	this->InvalidateData( );
 }
 
-void WatchCompany::SetStringParameters(int widget) const
-{
-	if(widget != EWW_CAPTION) return;
-	if(this->Wtype == EWT_COMPANY){
-		SetDParamStr(0, this->company_name);
-		return;
+std::string WatchCompany::GetWidgetString(WidgetID widget, StringID stringid) const {
+	if(widget != EWW_CAPTION) return this->Window::GetWidgetString(widget, stringid);
+
+	if(this->Wtype == EWT_COMPANY) {
+		return GetString(CM_STR_WATCH_WINDOW_TITLE, this->company_name);
 	}
 	//EWT_CLIENT
-	if (!Company::IsValidHumanID(this->watched_company)){
-		// GetString((char *)this->company_name, STR_JUST_NOTHING, lastof(this->company_name));
-	}
-	else {
-		const Company *c = Company::Get(this->watched_company);
-		SetDParam(0, c->index);
-		// GetString((char *)this->company_name, STR_COMPANY_NAME, lastof(this->company_name));
-	}
-	NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)this->watched_client);
-	if(ci){
-		// strecpy((char *)this->client_name, ci->client_name, lastof(this->client_name));
-	}
-	else{
-		// GetString((char *)this->client_name, STR_JUST_NOTHING, lastof(this->client_name));
-	}
-	SetDParamStr(0, this->client_name);
-	SetDParamStr(1, this->company_name);
-	if (Company::IsValidHumanID(this->watched_company)){
-		SetDParam(2, this->watched_company + 1);
-	}
-	else {
-		SetDParam(2, COMPANY_SPECTATOR);
-	}
+	return GetString(CM_STR_WATCH_WINDOW_TITLE_CLIENT, this->client_name, this->company_name, this->watched_company);
 }
 
 void WatchCompany::OnPaint()
 {
 	if(this->Wtype == EWT_CLIENT){
-		bool wstate = this->watched_company == INVALID_COMPANY ? true : false;
+		bool wstate = Company::IsValidID(this->watched_company);
 		for(int i = EWW_LOCK; i <= EWW_COMPANYW; i++){
 			this->SetWidgetDisabledState(i, wstate);
 		}
@@ -410,16 +386,15 @@ void WatchCompany::OnClick(Point /* pt */, int widget, int /* click_count */)
 	if (IsInsideMM(widget, EWW_COMPANY_BEGIN, EWW_COMPANY_END)) {
 		/* Is it no on disable? */
 		if (!this->IsWidgetDisabled(widget)) {
-			if (this->watched_company != INVALID_COMPANY)
+			if (Company::IsValidID(this->watched_company))
 				this->RaiseWidget(EWW_COMPANY_BEGIN + this->watched_company);
 			auto c = Company::GetIfValid((CompanyID)(widget - EWW_COMPANY_BEGIN));
 			if (c == nullptr || this->watched_company == c->index) {
-				this->watched_company = INVALID_COMPANY;
+				this->watched_company = CompanyID::Invalid();
 			} else {
 				this->watched_company = c->index;
 				this->LowerWidget(widget);
-				SetDParam(0, c->index);
-				this->company_name = GetString(STR_COMPANY_NAME);
+				this->company_name = GetString(STR_COMPANY_NAME, c->index);
 				this->ScrollToTile(c->last_build_coordinate);
 			}
 			this->owner = this->watched_company;
@@ -434,21 +409,20 @@ void WatchCompany::OnClick(Point /* pt */, int widget, int /* click_count */)
 	} else if (IsInsideMM(widget, EWW_PB_COMPANY_FIRST, EWW_PB_COMPANY_LAST + 1)) {
 		/* Click on Company Button */
 		if (!this->IsWidgetDisabled(widget)) {
-			if (this->watched_company != INVALID_COMPANY) {
+			if (Company::IsValidID(this->watched_company)) {
 				/* Raise the watched company button  */
 				this->RaiseWidget(EWW_PB_COMPANY_FIRST + this->watched_company);
 			}
 			if (this->watched_company == (CompanyID)(widget - EWW_PB_COMPANY_FIRST)) {
 				/* Stop watching watched_company */
-				this->watched_company = INVALID_COMPANY;
+				this->watched_company = CompanyID::Invalid();
 				this->company_name = GetString(STR_JUST_NOTHING);
 			} else {
 				/* Lower the new watched company button */
 				this->watched_company = (CompanyID)(widget - EWW_PB_COMPANY_FIRST);
 				this->LowerWidget( EWW_PB_COMPANY_FIRST + this->watched_company);
 				Company *c = Company::Get( this->watched_company );
-				SetDParam( 0, c->index );
-				this->company_name = GetString(STR_COMPANY_NAME);
+				this->company_name = GetString(STR_COMPANY_NAME, c->index);
 
 				this->ScrollToTile( c->last_build_coordinate );
 			}
@@ -498,10 +472,10 @@ void WatchCompany::OnClick(Point /* pt */, int widget, int /* click_count */)
 				break;
 			case EWW_BAN:
 				this->query_widget = EWQ_BAN;
-				ShowQueryString(CM_STR_XI_BAN_DAYSDEFAULT, CM_STR_XI_BAN_QUERY, 128, this, CS_ALPHANUMERAL, QSF_NONE);
+				ShowQueryString(GetString(CM_STR_XI_BAN_DAYSDEFAULT), CM_STR_XI_BAN_QUERY, 128, this, CS_ALPHANUMERAL, {});
 				break;
 			case EWW_RESET:
-				ShowQuery(CM_STR_XI_RESET_CAPTION, CM_STR_XI_REALY_RESET, this, ResetCallback);
+				ShowQuery(GetEncodedString(CM_STR_XI_RESET_CAPTION), GetEncodedString(CM_STR_XI_REALY_RESET), this, ResetCallback);
 				break;
 			case EWW_PRIVATEP_MESSAGE:{
 				const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID((ClientID)this->watched_client);
@@ -509,17 +483,17 @@ void WatchCompany::OnClick(Point /* pt */, int widget, int /* click_count */)
 				break;
 			}
 			case EWW_PRIVATEC_MESSAGE:
-				ShowNetworkChatQueryWindow(DESTTYPE_TEAM, this->watched_company);
+				ShowNetworkChatQueryWindow(DESTTYPE_TEAM, this->watched_company.base());
 				break;
 			case EWW_CLIENTS:
 				NetworkClientSendChatToServer("!clients");
 				break;
 			case EWW_COMPANYW:
-				if(this->watched_company != INVALID_COMPANY) ShowCompany(this->watched_company);
+				if (Company::IsValidID(this->watched_company)) ShowCompany(this->watched_company);
 				break;
 			case EWW_COMPANYHQ:
-				if(this->watched_company != INVALID_COMPANY){
-					TileIndex tile = Company::Get((CompanyID)this->watched_company)->location_of_HQ;
+				if (auto c = Company::GetIfValid(this->watched_company); c != nullptr) {
+					TileIndex tile = c->location_of_HQ;
 					ScrollMainWindowToTile(tile);
 				}
 				break;
@@ -548,14 +522,14 @@ void WatchCompany::OnInvalidateData(int data, bool /* gui_scope */)
 		// 	this->SetWidgetDisabledState(EWW_PB_ACTION1_FIRST + i , !Company::IsValidID(i) );
 		// }
 		// /* Check if the currently selected company is still active. */
-		// if (this->watched_company != INVALID_COMPANY) {
+		// if (this->watched_company != CompanyID::Invalid()) {
 		// 	/* Make sure the widget is lowered */
 		// 	this->LowerWidget(EWW_PB_COMPANY_FIRST + this->watched_company);
 		// 	/* Check if the watched Company is still a valid one */
 		// 	if (!Company::IsValidID(this->watched_company)) {
 		// 		/* Invalid Company Raise the associated widget. */
 		// 		this->RaiseWidget(this->watched_company + EWW_PB_COMPANY_FIRST );
-		// 		this->watched_company = INVALID_COMPANY;
+		// 		this->watched_company = CompanyID::Invalid();
 		// 		GetString( this->company_name, STR_JUST_NOTHING, lastof(this->company_name) );
 		// 	} else {
 		// 		Company *c = Company::Get( this->watched_company );
@@ -580,29 +554,21 @@ void WatchCompany::OnInvalidateData(int data, bool /* gui_scope */)
 		// }
 
 		/* Disable the companies who are not active */
-		for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {
-			this->SetWidgetDisabledState(EWW_COMPANY_BEGIN + i, !Company::IsValidID(i));
+		for (CompanyID i = CompanyID::Begin(); i < MAX_COMPANIES; ++i) {
+			this->SetWidgetDisabledState(EWW_COMPANY_BEGIN + i.base(), !Company::IsValidID(i));
 		}
 
 		/* Check if the currently selected company is still active. */
-		if (this->watched_company != INVALID_COMPANY && !Company::IsValidID(this->watched_company)) {
+		if (this->watched_company != CompanyID::Invalid() && !Company::IsValidID(this->watched_company)) {
 			/* Raise the widget for the previous selection. */
-			this->RaiseWidget(EWW_COMPANY_BEGIN + this->watched_company);
-			this->watched_company = INVALID_COMPANY;
+			this->RaiseWidget(EWW_COMPANY_BEGIN + this->watched_company.base());
+			this->watched_company = CompanyID::Invalid();
 		}
 
-		// if (this->company == INVALID_COMPANY) {
-		// 	for (const Company *c : Company::Iterate()) {
-		// 		this->company = c->index;
-		// 		break;
-		// 	}
-		// }
-
 		/* Make sure the widget is lowered */
-		if (this->watched_company != INVALID_COMPANY)
-			this->LowerWidget(EWW_COMPANY_BEGIN + this->watched_company);
-	}
-	else if(this->Wtype == EWT_CLIENT){
+		if (Company::IsValidID(this->watched_company))
+			this->LowerWidget(EWW_COMPANY_BEGIN + this->watched_company.base());
+	} else if(this->Wtype == EWT_CLIENT) {
 		if (data == 2) {
 			this->Close();
 			return;
@@ -611,11 +577,10 @@ void WatchCompany::OnInvalidateData(int data, bool /* gui_scope */)
 		if (!ci) {
 			this->Close();
 			return;
-		}
-		else {
+		} else {
 			this->watched_company = ci->client_playas;
 			this->owner = (Owner)this->watched_company;
-			bool wstate = this->watched_company == INVALID_COMPANY ? true : false;
+			bool wstate = Company::IsValidID(this->watched_company);
 			for(int i = EWW_LOCK; i <= EWW_COMPANYW; i++){
 				this->SetWidgetDisabledState(i, wstate);
 			}
@@ -660,7 +625,7 @@ void WatchCompany::OnDoCommand(CompanyID company, TileIndex tile )
 void WatchCompany::OnRealtimeTick([[maybe_unused]] uint delta_ms)
 {
 	bool set_dirty = false;
-	for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {
+	for (CompanyID i = CompanyID::Begin(); i < MAX_COMPANIES; ++i) {
 		if (this->company_activity[i] > 0) {
 			this->company_activity[i]--;
 			if (this->company_activity[i] == 0) {
@@ -674,16 +639,16 @@ void WatchCompany::OnRealtimeTick([[maybe_unused]] uint delta_ms)
 	}
 }
 
-void ShowWatchWindow(CompanyID company_to_watch = INVALID_COMPANY, int type = EWT_COMPANY)
+void ShowWatchWindow(CompanyID company_to_watch=CompanyID::Invalid(), int type=EWT_COMPANY)
 {
-	if(type == EWT_COMPANY) {
+	if (type == EWT_COMPANY) {
 		int i = 0;
 		/* find next free window number for watch viewport */
 		while (FindWindowById(WC_WATCH_COMPANY, i) != NULL) i++;
 		new WatchCompany(_watch_company_desc, i, company_to_watch, type);
-	} else if(type == EWT_CLIENT) {
+	} else if (type == EWT_CLIENT) {
 		if (BringWindowToFrontById(WC_WATCH_COMPANYA, company_to_watch)) return;
-		new WatchCompany(_watch_company_descA, company_to_watch, company_to_watch, type);
+		new WatchCompany(_watch_company_descA, company_to_watch.base(), company_to_watch, type);
 	}
 }
 

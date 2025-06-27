@@ -64,15 +64,15 @@ void DrawShipDetails(const Vehicle *v, const Rect &r)
 {
 	int y = r.top;
 
-	FIXME
-	SetDParam(0, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails));
-	SetDParam(1, v->build_year);
-	SetDParam(2, v->value);
-	if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
-	DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
+	std::string str;
+	auto engine_param = PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails);
 
-	
-	DrawString(r.left, r.right, y, GetString(STR_VEHICLE_INFO_BUILT_VALUE, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->build_year, v->value));
+	if (_settings_client.gui.developer >= 1) {
+		str = GetString(CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID, engine_param, v->build_year, v->value, v->index);
+	} else {
+		str = GetString(STR_VEHICLE_INFO_BUILT_VALUE, engine_param, v->build_year, v->value);
+	}
+	DrawString(r.left, r.right, y, str);
 	y += GetCharacterHeight(FS_NORMAL);
 
 	DrawString(r.left, r.right, y, GetString(STR_VEHICLE_INFO_CAPACITY, v->cargo_type, v->cargo_cap, GetCargoSubtypeText(v)));

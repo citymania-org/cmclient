@@ -191,7 +191,7 @@ static bool MakeSmallScreenshot(bool crashlog)
  * @param height the height of the screenshot, or 0 for current viewport height (needs to be 0 with SC_VIEWPORT, SC_CRASHLOG, and SC_WORLD).
  * @return Viewport
  */
-static Viewport SetupScreenshotViewport(ScreenshotType t, uint32_t width = 0, uint32_t height = 0)
+/* CM static */ Viewport SetupScreenshotViewport(ScreenshotType t, uint32_t width = 0, uint32_t height = 0)
 {
 	Viewport vp{};
 

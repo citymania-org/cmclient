@@ -151,7 +151,7 @@ void RailToolbar_UpdateRemoveWidgetStatus(Window *w, int widget, bool remove_act
             if (!_settings_client.gui.station_dragdrop) {
                 int x = _settings_client.gui.station_numtracks;
                 int y = _settings_client.gui.station_platlength;
-                if (_station_gui.axis == 0) Swap(x, y);
+                if (_station_gui.axis == 0) std::swap(x, y);
                 SetTileSelectSize(x, y);
             } else {
                 VpSetPlaceSizingLimit(_settings_game.station.station_spread);

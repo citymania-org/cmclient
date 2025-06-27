@@ -6313,8 +6313,8 @@ CM_STR_CONFIG_SETTING_INVERT_FN_FOR_SIGNAL_DRAG_HELPTEXT        :When enabled bu
 CM_STR_TOGGLE_CLIENTS_OVERLAY                                   :{BLACK}Toggle client list overlay.
 
 CM_STR_SMALLMAP_TOWN_LARGE                                      :{TINY_FONT}{YELLOW}{TOWN}
-CM_STR_SMALLMAP_POPULATION_LARGE                                :{TINY_FONT}{YELLOW}({NUM})
-CM_STR_SMALLMAP_POPULATION                                      :{TINY_FONT}{WHITE}({NUM})
+CM_STR_SMALLMAP_POPULATION_LARGE                                :{TINY_FONT}{YELLOW}{NUM}
+CM_STR_SMALLMAP_POPULATION                                      :{TINY_FONT}{WHITE}{NUM}
 
 # Network server list filters
 CM_STR_NETWORK_SERVER_LIST_FILTER_CITYMANIA                     :{BLACK}CityMania

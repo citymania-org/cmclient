@@ -33,6 +33,7 @@
 #include "citymania/cm_station_gui.hpp"
 
 #include "safeguards.h"
+#include <optional>
 
 /** The pool of stations. */
 StationPool _station_pool("Station");
@@ -88,11 +89,9 @@ Station::~Station()
 	citymania::OnStationRemoved(this);
 
 	for (Town *t : Town::Iterate()) {
-		// Using poiter comparison instead of cycling cargos
-		if (t->ad_ref_goods_entry >= this->goods &&
-		 	   t->ad_ref_goods_entry < this->goods + NUM_CARGO) {
-		    t->ad_ref_goods_entry = NULL;
-		}
+		if (!t->cm.ad_ref_goods_entry.has_value()) continue;
+		auto [station_id, cargo_type] = t->cm.ad_ref_goods_entry.value();
+		if (station_id == this->index) t->cm.ad_ref_goods_entry = std::nullopt;
 	}
 
 	if (CleaningPool()) {

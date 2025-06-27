@@ -35,7 +35,7 @@ struct LimitsSettings {
 
 class CBRequirement {
 public:
-    CargoID cargo_id;
+    CargoType cargo_type;
     uint32_t from;
     uint32_t amount;
     uint8_t decay;
@@ -45,9 +45,9 @@ public:
 
     static CBRequirement Parse(const char *name, const char *value, uint8_t index);
 
-    CBRequirement(CargoID cargo_id, uint32_t from, uint32_t amount, uint8_t decay,
+    CBRequirement(CargoType cargo_type, uint32_t from, uint32_t amount, uint8_t decay,
                   uint8_t index, std::string name)
-        :cargo_id{cargo_id}, from{from}, amount{amount}, decay{decay},
+        :cargo_type{cargo_type}, from{from}, amount{amount}, decay{decay},
             index{index}, name{name}, has_storage{decay < 100} {}
 };
 

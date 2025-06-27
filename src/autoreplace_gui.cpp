@@ -433,9 +433,7 @@ public:
 				return GetString(this->sel_roadtype == INVALID_ROADTYPE ? STR_REPLACE_ALL_ROADTYPE : GetRoadTypeInfo(this->sel_roadtype)->strings.replace_text);
 
 			case WID_RV_SHOW_HIDDEN_ENGINES:
-				SetDParam(0, this->cm_num_hidden_engines);
-				TODO
-				break;
+				return GetString(CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN + this->vehicle_type, this->cm_num_hidden_engines);
 
 			default:
 				return this->Window::GetWidgetString(widget, stringid);
@@ -753,7 +751,7 @@ static constexpr NWidgetPart _nested_replace_rail_vehicle_widgets[] = {
 				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_RV_SORT_DROPDOWN), SetResize(1, 0), SetFill(1, 1), SetToolTip(STR_TOOLTIP_SORT_CRITERIA),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_RV_SHOW_HIDDEN_ENGINES), SetStringTip(CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN, STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_RV_SHOW_HIDDEN_ENGINES), SetToolTip(STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP),
 				NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0), SetFill(1, 1), EndContainer(),
 			EndContainer(),
 		EndContainer(),

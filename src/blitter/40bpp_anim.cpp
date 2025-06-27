@@ -184,7 +184,7 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 
 			switch (mode) {
 				case BlitterMode::ColourRemap:
-				case BlitterMode::CMTintRemap;
+				case BlitterMode::CMTintRemap:
 				case BlitterMode::CrashRemap:
 					if (src_px->a == 255) {
 						do {

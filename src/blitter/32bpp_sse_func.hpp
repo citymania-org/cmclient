@@ -421,7 +421,7 @@ bmcr_alpha_blend_single:
 						}
 					} else {
 						uint r = remap[src_mv->m];
-						if (r != 0) *dst = ComposeColourPANoCheck(this->AdjustBrightness(this->LookupColourInPalette(r), src_mv->v), src->a, *dst);
+						if (r != 0) *dst = ComposeColourPANoCheck(AdjustBrightness(this->LookupColourInPalette(r), src_mv->v), src->a, *dst);
 					}
 					src_mv++;
 					dst++;
@@ -513,9 +513,9 @@ bm_normal:
 		case BlitterMode::BlackRemap: Draw<BlitterMode::BlackRemap, RM_NONE, BT_NONE, true>(bp, zoom); return;
 		case BlitterMode::CMTintRemap:
 			if (bp->skip_left != 0 || bp->width <= MARGIN_REMAP_THRESHOLD) {
-				Draw<CM_BM_TINT_REMAP, RM_WITH_SKIP, BT_NONE, true>(bp, zoom); return;
+				Draw<BlitterMode::CMTintRemap, RM_WITH_SKIP, BT_NONE, true>(bp, zoom); return;
 			} else {
-				Draw<CM_BM_TINT_REMAP, RM_WITH_MARGIN, BT_NONE, true>(bp, zoom); return;
+				Draw<BlitterMode::CMTintRemap, RM_WITH_MARGIN, BT_NONE, true>(bp, zoom); return;
 			}
 	}
 }

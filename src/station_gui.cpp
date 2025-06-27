@@ -87,7 +87,7 @@ int DrawStationCoverageAreaText(const Rect &r, StationCoverageType sct, int rad,
 		/* CityMania code begin */
 		if (supplies) {
 			auto s = citymania::GetStationCoverageProductionText(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad, sct);
-			return DrawStringMultiLine(left, right, top, INT32_MAX, s.c_str());
+			return DrawStringMultiLine(r, s);
 		}
 		/* CityMania code end */
 
@@ -117,16 +117,18 @@ int DrawStationAuthorityText(int left, int right, int top) {
 	Town *town = ClosestTownFromTile(tile, UINT_MAX);
 	auto dist = DistanceManhattan(town->xy, tile);
 
-	SetDParam(0, town ? town->index : INVALID_TOWN);
+	auto tid = (town ? town->index : TownID::Invalid());
+	std::string str;
 	if (dist <= 10) {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, CM_STR_STATION_BUILD_TOWN_SMALL);
+		str = GetString(CM_STR_STATION_BUILD_TOWN_SMALL, tid);
 	} else if (dist <= 15) {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, CM_STR_STATION_BUILD_TOWN_MEDIUM);
+		str = GetString(CM_STR_STATION_BUILD_TOWN_MEDIUM, tid);
 	} else if (dist <= 20) {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, CM_STR_STATION_BUILD_TOWN_LARGE);
+		str = GetString(CM_STR_STATION_BUILD_TOWN_LARGE, tid);
 	} else {
-		return DrawStringMultiLine(left, right, top, INT32_MAX, CM_STR_STATION_BUILD_TOWN);
+		str = GetString(CM_STR_STATION_BUILD_TOWN, tid);
 	}
+	return DrawStringMultiLine(left, right, top, INT32_MAX, str);
 }
 
 /**
@@ -1940,7 +1942,7 @@ struct StationViewWindow : public Window {
 		DrawString(tr, TimerGameEconomy::UsingWallclockUnits() ? STR_STATION_VIEW_SUPPLY_RATINGS_TITLE_MINUTE : STR_STATION_VIEW_SUPPLY_RATINGS_TITLE_MONTH);
 		tr.top += GetCharacterHeight(FS_NORMAL);
 
-		this->ratings_list_y = tr.top;
+		this->cm_ratings_list_y = tr.top;
 		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			const GoodsEntry *ge = &st->goods[cs->Index()];
 			if (!ge->HasRating()) continue;
@@ -2180,10 +2182,10 @@ struct StationViewWindow : public Window {
 	bool OnTooltip(Point pt, int widget, TooltipCloseCondition close_cond) override
 	{
 		if (widget != WID_SV_ACCEPT_RATING_LIST ||
-		    	this->GetWidget<NWidgetCore>(WID_SV_ACCEPTS_RATINGS)->widget_data == STR_STATION_VIEW_RATINGS_BUTTON)
+		    	this->GetWidget<NWidgetCore>(WID_SV_ACCEPTS_RATINGS)->GetString() == STR_STATION_VIEW_RATINGS_BUTTON)
 			return false;
 
-		int ofs_y = pt.y - this->ratings_list_y;
+		int ofs_y = pt.y - this->cm_ratings_list_y;
 		if (ofs_y < 0) return false;
 
 		const Station *st = Station::Get(this->window_number);
@@ -2358,11 +2360,10 @@ struct SelectStationWindow : Window {
 	Scrollbar *vscroll = nullptr;
 
 	SelectStationWindow(WindowDesc &desc, TileArea ta, StationPickerCmdProc&& proc) :
-		Window(desc, WPUT_WIDGET_RELATIVE),
+		Window(desc),
 		select_station_proc(std::move(proc)),
 		area(ta)
 	{
-		this->wpu_widget = WID_JS_PANEL;
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_JS_SCROLLBAR);
 		this->GetWidget<NWidgetCore>(WID_JS_CAPTION)->SetString(T::IsWaypoint() ? STR_JOIN_WAYPOINT_CAPTION : STR_JOIN_STATION_CAPTION);
@@ -2375,7 +2376,7 @@ struct SelectStationWindow : Window {
 	void Close([[maybe_unused]] int data = 0) override
 	{
 		if constexpr (std::is_same_v<T, Waypoint *>) SetViewportCatchmentSpecializedStation<typename T::StationType>(nullptr, true);
-		else citymania::SetSelectedStationToJoin(Station::Invalid());
+		else citymania::SetSelectedStationToJoin(StationID::Invalid());
 
 		_thd.freeze = false;
 		this->Window::Close();
@@ -2465,7 +2466,7 @@ struct SelectStationWindow : Window {
 	{
 		if (widget != WID_JS_PANEL) {
 			if constexpr (std::is_same_v<typename T::StationType, Waypoint>) SetViewportCatchmentSpecializedStation<typename T::StationType>(nullptr, true);
-			else citymania::SetSelectedStationToJoin(INVALID_STATION);
+			else citymania::SetSelectedStationToJoin(StationID::Invalid());
 			return;
 		}
 

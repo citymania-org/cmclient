@@ -11,7 +11,7 @@
 
 #include "../safeguards.h"
 
-extern TileIndex _rail_track_endtile; // rail_cmd.cpp
+extern TileIndex _cm_rail_track_endtile; // rail_cmd.cpp
 
 namespace citymania {
 
@@ -44,12 +44,12 @@ static sp<Command> DoRailroadTrack(TileIndex start_tile, TileIndex end_tile, Rai
 
 static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex /* end_tile */, Track track, sp<Command> rail_cmd, TileIndex s1, TileIndex e1, TileIndex s2, TileIndex e2, bool /* remove_mode */) {
     auto rail_callback = [rail_cmd, start_tile, track, estimate=citymania::_estimate_mod](bool res) -> bool{
-        if (rail_cmd->call(DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
-                _rail_track_endtile == INVALID_TILE) {
+        if (rail_cmd->call({DoCommandFlag::Auto, DoCommandFlag::NoWater}).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
+                _cm_rail_track_endtile == INVALID_TILE) {
             if (!rail_cmd->post()) return false;
         }
-        if (!estimate && _rail_track_endtile != INVALID_TILE)
-            StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, track, true);
+        if (!estimate && _cm_rail_track_endtile != INVALID_TILE)
+            StoreRailPlacementEndpoints(start_tile, _cm_rail_track_endtile, track, true);
         return res;
     };
 
@@ -57,8 +57,8 @@ static bool DoAutodirTerraform(bool diagonal, TileIndex start_tile, TileIndex /*
     auto h2 = TileHeight(s2);
     auto cmd1 = cmd::LevelLand(e1, s1, diagonal, h1 < h2 ? LM_RAISE : LM_LEVEL);
     auto cmd2 = cmd::LevelLand(e2, s2, diagonal, h2 < h1 ? LM_RAISE : LM_LEVEL);
-    auto c1_fail = cmd1.call(DC_AUTO | DC_NO_WATER).Failed();
-    auto c2_fail = cmd2.call(DC_AUTO | DC_NO_WATER).Failed();
+    auto c1_fail = cmd1.call({DoCommandFlag::Auto, DoCommandFlag::NoWater}).Failed();
+    auto c2_fail = cmd2.call({DoCommandFlag::Auto, DoCommandFlag::NoWater}).Failed();
     if (c1_fail && c2_fail) return rail_callback(true);
     if (c2_fail) return cmd1.with_callback(rail_callback).post();
     if (!c1_fail) cmd1.post();
@@ -163,14 +163,14 @@ void HandleAutodirPlacement(RailType railtype, bool remove_mode) {
         Track trackstat = static_cast<Track>( _thd.drawstyle & HT_DIR_MASK); // 0..5
         citymania::HandleAutodirTerraform(start_tile, end_tile, trackstat, std::move(cmd), remove_mode);
         return;
-    } else if (cmd->call(DC_AUTO | DC_NO_WATER).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
-                _rail_track_endtile == INVALID_TILE) {
+    } else if (cmd->call({DoCommandFlag::Auto, DoCommandFlag::NoWater}).GetErrorMessage() != STR_ERROR_ALREADY_BUILT ||
+                _cm_rail_track_endtile == INVALID_TILE) {
         if (!cmd->post(CcPlaySound_CONSTRUCTION_RAIL)) return;
     }
     /* Save new snap points for the polyline tool, no matter if the command
      * succeeded, the snapping will be extended over overbuilt track pieces. */
-    if (!citymania::_estimate_mod && _rail_track_endtile != INVALID_TILE) {
-        StoreRailPlacementEndpoints(start_tile, _rail_track_endtile, trackstat, true);
+    if (!citymania::_estimate_mod && _cm_rail_track_endtile != INVALID_TILE) {
+        StoreRailPlacementEndpoints(start_tile, _cm_rail_track_endtile, trackstat, true);
     }
 }
 

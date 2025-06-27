@@ -10,6 +10,7 @@
 #include "cm_station_gui.hpp"
 #include "cm_type.hpp"
 #include "cm_zoning.hpp"
+#include "generated/cm_gen_commands.hpp"
 
 #include "../core/math_func.hpp"
 #include "../table/bridge_land.h"
@@ -41,17 +42,17 @@
 #include "../table/autorail.h"
 #include "../table/industry_land.h"
 #include "../debug.h"
-#include "generated/cm_gen_commands.hpp"
-#include "station_gui.h"
-#include "station_type.h"
-#include "table/sprites.h"
-#include "table/strings.h"
-#include "tile_type.h"
+#include "../station_gui.h"
+#include "../station_type.h"
+#include "../table/sprites.h"
+#include "../table/strings.h"
+#include "../tile_type.h"
 
 #include <algorithm>
 #include <cstdint>
 #include <optional>
 #include <set>
+
 
 /** Enumeration of multi-part foundations */
 enum FoundationPart {
@@ -180,8 +181,8 @@ struct TileZoning {
     uint8 industry_fund_update;
 };
 
-static TileZoning *_mz = nullptr;
-static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
+static std::unique_ptr<TileZoning[]> _mz = nullptr;
+static IndustryType _industry_forbidden_tiles = IT_INVALID;
 
 extern StationBuildingStatus _station_building_status;
 extern const Station *_station_to_join;
@@ -543,12 +544,12 @@ void ObjectHighlight::AddStationOverlayData(int w, int h, int rad, StationCovera
     if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
     auto production = citymania::GetProductionAroundTiles(this->tile, w, h, rad);
     bool has_header = false;
-    for (CargoID i = 0; i < NUM_CARGO; i++) {
+    for (CargoType i = 0; i < NUM_CARGO; i++) {
         if (production[i] == 0) continue;
 
         switch (sct) {
-            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CC_PASSENGERS)) continue; break;
-            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CC_PASSENGERS)) continue; break;
+            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CargoClass::Passengers)) continue; break;
+            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CargoClass::Passengers)) continue; break;
             case SCT_ALL: break;
             default: NOT_REACHED();
         }
@@ -560,9 +561,7 @@ void ObjectHighlight::AddStationOverlayData(int w, int h, int rad, StationCovera
             this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES));
             has_header = true;
         }
-        SetDParam(0, i);
-        SetDParam(1, production[i] >> 8);
-        this->overlay_data.emplace_back(cs->GetCargoIcon(), GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO));
+        this->overlay_data.emplace_back(cs->GetCargoIcon(), GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO, i, production[i] >> 8));
     }
 }
 
@@ -597,7 +596,7 @@ void ObjectHighlight::UpdateTiles() {
             auto ta = OrthogonalTileArea(this->tile, this->end_tile);
             auto numtracks = ta.w;
             auto plat_len = ta.h;
-            if (this->axis == AXIS_X) Swap(numtracks, plat_len);
+            if (this->axis == AXIS_X) std::swap(numtracks, plat_len);
 
             this->cost = cmd::BuildRailStation(
                 this->tile,
@@ -638,7 +637,7 @@ void ObjectHighlight::UpdateTiles() {
                 this->tile,
                 ta.w,
                 ta.h,
-                (this->is_truck ? ROADSTOP_TRUCK : ROADSTOP_BUS),
+                (this->is_truck ? RoadStopType::Truck : RoadStopType::Bus),
                 (this->ddir >= DIAGDIR_END),  // is_drive_through
                 (DiagDirection)(this->ddir % 4),
                 this->roadtype,
@@ -768,7 +767,7 @@ void ObjectHighlight::UpdateTiles() {
             break;
         }
         case Type::INDUSTRY: {
-            this->cost = cmd::BuildIndustry{this->tile, this->ind_type, this->ind_layout, true, 0}.call(DC_NONE);
+            this->cost = cmd::BuildIndustry{this->tile, this->ind_type, this->ind_layout, true, 0}.call({});
             if (this->cost.Succeeded()) {
                 const IndustrySpec *indspec = GetIndustrySpec(this->ind_type);
                 if (indspec == nullptr) break;
@@ -815,8 +814,7 @@ void ObjectHighlight::UpdateOverlay() {
     auto err = this->cost.GetErrorMessage();
     // auto extra_err = this->cost.GetExtraErrorMessage();
     bool no_money = (err == STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY);
-    SetDParam(0, this->cost.GetCost());
-    this->overlay_data.emplace_back(PAL_NONE, GetString(no_money ? CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY : CM_STR_BUILD_INFO_OVERLAY_COST_OK));
+    this->overlay_data.emplace_back(PAL_NONE, GetString(no_money ? CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY : CM_STR_BUILD_INFO_OVERLAY_COST_OK, this->cost.GetCost()));
     // if (this->cost.Failed() && err != STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY) {
     //     if (err == INVALID_STRING_ID) {
     //         this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN));
@@ -933,7 +931,7 @@ void DrawTrainDepotSprite(SpriteID palette, const TileInfo *ti, RailType railtyp
 
 void DrawTrainStationSprite(SpriteID palette, const TileInfo *ti, RailType railtype, Axis axis, uint8_t section) {
     int32 total_offset = 0;
-    const DrawTileSprites *t = GetStationTileLayout(STATION_RAIL, section + (axis == AXIS_X ? 0 : 1));
+    const DrawTileSprites *t = GetStationTileLayout(StationType::Rail, section + (axis == AXIS_X ? 0 : 1));
     const RailTypeInfo *rti = nullptr;
 
     if (railtype != INVALID_RAILTYPE) {
@@ -1003,7 +1001,7 @@ void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagD
         }
     }
 
-    const DrawTileSprites *t = GetStationTileLayout(is_truck ? STATION_TRUCK : STATION_BUS, image);
+    const DrawTileSprites *t = GetStationTileLayout(is_truck ? StationType::Truck : StationType::Bus, image);
     AddSortableSpriteToDraw(t->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
     DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
     /* Draw road, tram catenary */
@@ -1012,13 +1010,13 @@ void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagD
 
 void DrawDockSlope(SpriteID palette, const TileInfo *ti, DiagDirection ddir) {
     uint image = (uint)ddir;
-    const DrawTileSprites *t = GetStationTileLayout(STATION_DOCK, image);
+    const DrawTileSprites *t = GetStationTileLayout(StationType::Dock, image);
     DrawRailTileSeq(ti, t, TO_INVALID, 0, 0, palette);
 }
 
 void DrawDockFlat(SpriteID palette, const TileInfo *ti, Axis axis) {
     uint image = GFX_DOCK_BASE_WATER_PART + (uint)axis;
-    const DrawTileSprites *t = GetStationTileLayout(STATION_DOCK, image);
+    const DrawTileSprites *t = GetStationTileLayout(StationType::Dock, image);
     DrawRailTileSeq(ti, t, TO_INVALID, 0, 0, palette);
 }
 
@@ -1059,7 +1057,7 @@ void DrawRoadDepot(SpriteID palette, const TileInfo *ti, RoadType roadtype, Diag
     int relocation = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_DEPOT);
     bool default_gfx = relocation == 0;
     if (default_gfx) {
-        if (HasBit(rti->flags, ROTF_CATENARY)) {
+        if (rti->flags.Test(RoadTypeFlag::Catenary)) {
             if (_loaded_newgrf_features.tram == TRAMWAY_REPLACE_DEPOT_WITH_TRACK && RoadTypeIsTram(roadtype) && !rti->UsesOverlay()) {
                 /* Sprites with track only work for default tram */
                 relocation = SPR_TRAMWAY_DEPOT_WITH_TRACK - SPR_ROAD_DEPOT;
@@ -1097,7 +1095,7 @@ void DrawAirportTile(SpriteID palette, const TileInfo *ti, StationGfx gfx) {
     gfx = GetTranslatedAirportTileID(gfx);
     if (gfx >= NEW_AIRPORTTILE_OFFSET) {
         const AirportTileSpec *ats = AirportTileSpec::Get(gfx);
-        if (ats->grf_prop.spritegroup[0] != nullptr /* && DrawNewAirportTile(ti, Station::GetByTile(ti->tile), gfx, ats) */) {
+        if (ats->grf_prop.spritegroups[0] != nullptr /* && DrawNewAirportTile(ti, Station::GetByTile(ti->tile), gfx, ats) */) {
             return;
         }
         /* No sprite group (or no valid one) found, meaning no graphics associated.
@@ -1122,7 +1120,7 @@ void DrawAirportTile(SpriteID palette, const TileInfo *ti, StationGfx gfx) {
             t = &_station_display_datas_airport_flag_grass_fence_ne_2[0];
             break;
     }
-    if (t == nullptr || t->seq == nullptr) t = GetStationTileLayout(STATION_AIRPORT, gfx);
+    if (t == nullptr || t->GetSequence().empty()) t = GetStationTileLayout(StationType::Airport, gfx);
     if (t) {
         AddSortableSpriteToDraw(t->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
         DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
@@ -1224,7 +1222,7 @@ struct IndustryTilePreviewResolverObject : public ResolverObject {
          ind_scope(*this, tile, indus, indus->type),
          gfx(gfx)
     {
-        this->root_spritegroup = GetIndustryTileSpec(gfx)->grf_prop.spritegroup[0];
+        this->root_spritegroup = GetIndustryTileSpec(gfx)->grf_prop.spritegroups[0];
     }
 
     ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, uint8_t relative = 0) override {
@@ -1244,7 +1242,7 @@ bool DrawNewIndustryTile(TileInfo *ti, Industry *i, IndustryGfx gfx, const Indus
 {
     if (ti->tileh != SLOPE_FLAT) {
         bool draw_old_one = true;
-        if (HasBit(inds->callback_mask, CBM_INDT_DRAW_FOUNDATIONS)) {
+        if (inds->callback_mask.Test(IndustryTileCallbackMask::DrawFoundations)) {
             /* Called to determine the type (if any) of foundation to draw for industry tile */
             uint32 callback_res = GetIndustryTileCallback(CBID_INDTILE_DRAW_FOUNDATIONS, 0, 0, gfx, i, ti->tile);
             if (callback_res != CALLBACK_FAILED) draw_old_one = ConvertBooleanCallback(inds->grf_prop.grffile, CBID_INDTILE_DRAW_FOUNDATIONS, callback_res);
@@ -1273,14 +1271,14 @@ void DrawIndustryTile(SpriteID palette, const TileInfo *ti, IndustryType ind_typ
         TileInfo nti = *ti;
         ind.type = ind_type;
         ind.selected_layout = ind_layout + 1;
-        ind.index = INVALID_INDUSTRY;
+        ind.index = IndustryID::Invalid();
         ind.location.tile = ti->tile - tile_diff;
 
         /* Draw the tile using the specialized method of newgrf industrytile.
          * DrawNewIndustry will return false if ever the resolver could not
          * find any sprite to display.  So in this case, we will jump on the
          * substitute gfx instead. */
-        if (indts->grf_prop.spritegroup[0] != nullptr && citymania::DrawNewIndustryTile(&nti, &ind, gfx, indts)) {
+        if (indts->grf_prop.spritegroups[0] != nullptr && citymania::DrawNewIndustryTile(&nti, &ind, gfx, indts)) {
             return;
         } else {
             /* No sprite group (or no valid one) found, meaning no graphics associated.
@@ -1406,15 +1404,13 @@ void DrawSignal(SpriteID palette, const TileInfo *ti, RailType railtype, uint po
 }
 
 // copied from tunnelbridge_cmd.cpp
-static inline const PalSpriteID *GetBridgeSpriteTable(int index, BridgePieces table)
+static inline std::span<const PalSpriteID> GetBridgeSpriteTable(int index, BridgePieces table)
 {
     const BridgeSpec *bridge = GetBridgeSpec(index);
-    assert(table < BRIDGE_PIECE_INVALID);
-    if (bridge->sprite_table == nullptr || bridge->sprite_table[table] == nullptr) {
-        return _bridge_sprite_table[index][table];
-    } else {
-        return bridge->sprite_table[table];
-    }
+    assert(table < NUM_BRIDGE_PIECES);
+    if (table < bridge->sprite_table.size() && !bridge->sprite_table[table].empty()) return bridge->sprite_table[table];
+
+    return _bridge_sprite_table[index][table];
 }
 
 void DrawBridgeHead(SpriteID palette, const TileInfo *ti, RailType railtype, DiagDirection ddir, BridgeType type) {
@@ -1917,7 +1913,7 @@ TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
     }
 
     if (_settings_client.gui.cm_show_industry_forbidden_tiles &&
-            _industry_forbidden_tiles != INVALID_INDUSTRYTYPE) {
+            _industry_forbidden_tiles != IT_INVALID) {
         auto b = CalcTileBorders(ti->tile, [](TileIndex t) { return !CanBuildIndustryOnTileCached(_industry_forbidden_tiles, t); });
         th.add_border(b.first, CM_SPR_PALETTE_ZONING_RED);
         if (!CanBuildIndustryOnTileCached(_industry_forbidden_tiles, ti->tile))
@@ -2107,8 +2103,7 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
 }
 
 void AllocateZoningMap(uint map_size) {
-    free(_mz);
-    _mz = CallocT<TileZoning>(map_size);
+    _mz = std::make_unique<TileZoning[]>(map_size);
 }
 
 uint8 GetTownZone(Town *town, TileIndex tile) {

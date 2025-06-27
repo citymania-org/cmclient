@@ -33,11 +33,11 @@ void DrawRoadVehDetails(const Vehicle *v, const Rect &r)
 
 	std::string line;
 	if (_settings_client.gui.newgrf_developer_tools) {
-		line = GetString(CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->index);
+		line = GetString(CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->index, v->build_year, v->value);
 	} else {
-		line = GetString(STR_VEHICLE_INFO_BUILT_VALUE, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails));
+		line = GetString(STR_VEHICLE_INFO_BUILT_VALUE, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails), v->build_year, v->value);
 	}
-	DrawString(r.left, r.right, y, line, v->build_year, v->value);
+	DrawString(r.left, r.right, y, line);
 	y += GetCharacterHeight(FS_NORMAL);
 
 	if (v->HasArticulatedPart()) {

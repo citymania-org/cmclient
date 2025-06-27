@@ -858,9 +858,7 @@ int DrawVehiclePurchaseInfo(int left, int right, int y, EngineID engine_number, 
 	bool articulated_cargo = false;
 
 	if (_settings_client.gui.newgrf_developer_tools) {
-		SetDParam(0, e->index);
-		SetDParam(1, e->grf_prop.local_id);
-		DrawString(left, right, y, CM_STR_PURCHASE_ENGINE_ID);
+		DrawString(left, right, y, GetString(CM_STR_PURCHASE_ENGINE_ID, e->index, e->grf_prop.local_id));
 		y += GetCharacterHeight(FS_NORMAL);
 	}
 
@@ -1209,7 +1207,7 @@ struct BuildVehicleWindow : Window {
 		widget->SetStringTip(STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON + type, STR_BUY_VEHICLE_TRAIN_RENAME_TOOLTIP + type);
 
 		widget = this->GetWidget<NWidgetCore>(WID_BV_SHOW_HIDDEN_ENGINES);
-		widget->SetStringTip(CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN + type, STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP + type);
+		widget->SetToolTip(STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP + type);
 		widget->SetLowered(this->show_hidden_engines);
 
 		this->details_height = ((this->vehicle_type == VEH_TRAIN) ? 10 : 9);
@@ -1334,7 +1332,7 @@ struct BuildVehicleWindow : Window {
 			// CM this->SelectEngine(this->eng_list[0].engine_id);
 			return this->eng_list[0].engine_id;
 		}
-		return INVALID_ENGINE;
+		return EngineID::Invalid();
 	}
 
 	/** Filter a single engine */
@@ -1556,7 +1554,7 @@ struct BuildVehicleWindow : Window {
 		this->eng_list.clear();
 
 		GUIEngineList list;
-		EngineID sel_id = INVALID_ENGINE;  // CM
+		EngineID sel_id = EngineID::Invalid();  // CM
 
 		switch (this->vehicle_type) {
 			default: NOT_REACHED();
@@ -1782,10 +1780,7 @@ struct BuildVehicleWindow : Window {
 			}
 
 			case WID_BV_SHOW_HIDDEN_ENGINES:
-				TODO
-				return GetString()
-				SetDParam(0, this->cm_num_hidden_engines);
-				break;
+				return GetString(CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN + this->vehicle_type, this->cm_num_hidden_engines);
 
 			default:
 				return this->Window::GetWidgetString(widget, stringid);

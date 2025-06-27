@@ -1,9 +1,9 @@
-/** @file cargo_table_gui.h GUI Functions related to cargos. */
+/** @file cm_cargo_table_gui.hpp CityMania cargo table GUI. */
 
-#ifndef CM_CARGO_TABLE_HPP
-#define CM_CARGO_TABLE_HPP
+#ifndef CM_CARGO_TABLE_GUI_HPP
+#define CM_CARGO_TABLE_GUI_HPP
 
-#include "company_type.h"
+#include "../company_type.h"
 
 namespace citymania {
 
@@ -12,4 +12,4 @@ void InvalidateCargosWindows(CompanyID cid);
 
 } // namespace citymania
 
-#endif /* CARGO_TABLE_H */
+#endif /* CM_CARGO_TABLE_GUI_HPP */

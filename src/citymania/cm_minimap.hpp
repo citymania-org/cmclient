@@ -12,7 +12,7 @@ extern CompanyID _local_company;
 
 namespace citymania {
 
-#define MKCOLOUR(x) TO_LE32X(x)
+#define MKCOLOUR(x) TO_LE32(x)
 #define MKCOLOURGROUP(x, y) \
     MKCOLOUR(((uint32)(x) << 24) | ((uint32)(x) << 16) | ((uint32)(x) << 8) | (uint32)(x)), \
     MKCOLOUR(((uint32)(x) << 24) | ((uint32)(y) << 16) | ((uint32)(y) << 8) | (uint32)(x)), \
@@ -186,9 +186,9 @@ protected:
      * the _local_company. Spectators get to see all companies' links.
      * @return Company mask.
      */
-    inline uint32 GetOverlayCompanyMask() const
+    inline CompanyMask GetOverlayCompanyMask() const
     {
-        return Company::IsValidID(_local_company) ? 1U << _local_company : 0xffffffff;
+        return Company::IsValidID(_local_company) ? CompanyMask{}.Set(_local_company) : CompanyMask{}.Set();
     }
 
     /** Blink the industries (if selected) on a regular interval. */
@@ -237,7 +237,6 @@ public:
     void SmallMapCenterOnCurrentPos();
     Point GetStationMiddle(const Station *st) const;
 
-    void SetStringParameters(int widget) const override;
     void OnInit() override;
     void OnPaint() override;
     void DrawWidget(const Rect &r, int widget) const override;
@@ -249,6 +248,7 @@ public:
     // void OnHundredthTick() override;
     void OnScroll(Point delta) override;
     void OnMouseOver(Point pt, int widget) override;
+    std::string GetWidgetString(WidgetID widget, StringID stringid) const override;
 };
 
 } // namespace citymania

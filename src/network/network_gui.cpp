@@ -914,7 +914,7 @@ static constexpr NWidgetPart _nested_network_game_widgets[] = {
 					EndContainer(),
 					/* end CityMania code */
 					NWidget(NWID_HORIZONTAL), SetPIP(0, 7, 0),
-						NWidget(WWT_TEXT, INVALID_COLOUR, WID_NG_FILTER_LABEL), SetDataTip(STR_LIST_FILTER_TITLE, STR_NULL),
+						NWidget(WWT_TEXT, INVALID_COLOUR, WID_NG_FILTER_LABEL), SetStringTip(STR_LIST_FILTER_TITLE),
 						NWidget(WWT_EDITBOX, COLOUR_LIGHT_BLUE, WID_NG_FILTER), SetMinimalSize(251, 0), SetFill(1, 0), SetResize(1, 0),
 											SetStringTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
 					EndContainer(),
@@ -2027,15 +2027,13 @@ public:
 			}
 
 			if (company_id == COMPANY_SPECTATOR) {
-				DrawSprite(SPR_COMPANY_ICON, PALETTE_TO_GREY, icon_left, y + offset);
+				DrawSprite(CM_SPR_COMPANY_ICON, PALETTE_TO_GREY, icon_left, y + offset);
 				DrawString(tr.left, tr.right, y + text_y_offset, STR_NETWORK_CLIENT_LIST_SPECTATORS, TC_SILVER);
 			} else if (company_id == COMPANY_NEW_COMPANY) {
-				DrawSprite(SPR_COMPANY_ICON, PALETTE_TO_GREY, icon_left, y + offset);
+				DrawSprite(CM_SPR_COMPANY_ICON, PALETTE_TO_GREY, icon_left, y + offset);
 				DrawString(tr.left, tr.right, y + text_y_offset, STR_NETWORK_CLIENT_LIST_NEW_COMPANY, TC_WHITE);
 			} else {
-				DrawCompanyIcon(company_id, icon_left, y + offset);
-				FIXME DrawSprite(CM_SPR_COMPANY_ICON_LOCKED, COMPANY_SPRITE_COLOUR(company_id), icon_left, y + offset);
-
+				DrawSprite(CM_SPR_COMPANY_ICON, COMPANY_SPRITE_COLOUR(company_id), icon_left, y + offset);
 				DrawString(tr.left, tr.right, y + text_y_offset, GetString(STR_COMPANY_NAME, company_id, company_id), TC_SILVER);
 			}
 		}

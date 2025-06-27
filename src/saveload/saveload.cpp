@@ -2946,16 +2946,14 @@ static std::optional<SavePreset> ParseSavePreset(const std::string &str)
 
             if (level != Clamp<int>(level, slf.min_compression, slf.max_compression)) {
                 /* Invalid compression level, show the error and use default level */
-                SetDParamStr(0, level_str.c_str());
-                ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL, WL_CRITICAL);
+                ShowErrorMessage(GetEncodedString(STR_CONFIG_ERROR), GetEncodedString(STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL, level_str), WL_CRITICAL);
                 return SavePreset{&slf, slf.default_compression};
             }
 
             return SavePreset{&slf, (uint8_t)level};
         }
     }
-    SetDParamStr(0, str.c_str());
-    ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM, WL_CRITICAL);
+    ShowErrorMessage(GetEncodedString(STR_CONFIG_ERROR), GetEncodedString(STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM, str), WL_CRITICAL);
     return {};
 }
 

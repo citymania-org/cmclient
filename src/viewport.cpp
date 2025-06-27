@@ -106,6 +106,7 @@
 #include "core/math_func.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_town_gui.hpp"
 #include "citymania/cm_zoning.hpp"
 /* CityMania code end */
 
@@ -248,8 +249,7 @@ static Point MapXYZToViewport(const Viewport &vp, int x, int y, int z)
 }
 
 void DeleteWindowViewport(Window *w)
-{	
-	delete w->viewport;
+{
 	w->viewport = nullptr;
 }
 
@@ -283,7 +283,7 @@ void InitializeWindowViewport(Window *w, int x, int y,
 	vp->virtual_width = ScaleByZoom(width, vp->zoom);
 	vp->virtual_height = ScaleByZoom(height, vp->zoom);
 
-	UpdateViewportSizeZoom(vp);
+	UpdateViewportSizeZoom(*vp);
 
 	Point pt;
 
@@ -394,12 +394,12 @@ static void DoSetViewportPosition(Window::IteratorToFront it, int left, int top,
 	}
 }
 
-inline void UpdateViewportDirtyBlockLeftMargin(Viewport *vp)
+inline void UpdateViewportDirtyBlockLeftMargin(Viewport &vp)
 {
 	// if (vp->zoom >= ZOOM_LVL_DRAW_MAP) {
 	// 	vp->dirty_block_left_margin = 0;
 	// } else {
-		vp->dirty_block_left_margin = UnScaleByZoomLower((-vp->virtual_left) & 127, vp->zoom);
+		vp.dirty_block_left_margin = UnScaleByZoomLower((-vp.virtual_left) & 127, vp.zoom);
 	// }
 }
 
@@ -1926,10 +1926,10 @@ void ViewportDoDraw(const Viewport &vp, int left, int top, int right, int bottom
 
 void ViewportDrawChk(const Viewport &vp, int left, int top, int right, int bottom) {
 	ViewportDoDraw(vp,
-		ScaleByZoom(left - vp->left, vp->zoom) + vp->virtual_left,
-		ScaleByZoom(top - vp->top, vp->zoom) + vp->virtual_top,
-		ScaleByZoom(right - vp->left, vp->zoom) + vp->virtual_left,
-		ScaleByZoom(bottom - vp->top, vp->zoom) + vp->virtual_top
+		ScaleByZoom(left - vp.left, vp.zoom) + vp.virtual_left,
+		ScaleByZoom(top - vp.top, vp.zoom) + vp.virtual_top,
+		ScaleByZoom(right - vp.left, vp.zoom) + vp.virtual_left,
+		ScaleByZoom(bottom - vp.top, vp.zoom) + vp.virtual_top
 	);
 }
 
@@ -1947,7 +1947,7 @@ static inline void ViewportDraw(Viewport &vp, int left, int top, int right, int 
 	if (top < vp.top) top = vp.top;
 	if (bottom > vp.top + vp.height) bottom = vp.top + vp.height;
 
-	vp->is_drawn = true;
+	vp.is_drawn = true;
 
 	ViewportDoDraw(vp,
 		ScaleByZoom(left - vp.left, vp.zoom) + vp.virtual_left,
@@ -2102,12 +2102,12 @@ void UpdateViewportPosition(Window *w, uint32_t delta_ms)
 	}
 }
 
-void UpdateViewportSizeZoom(Viewport *vp)
+void UpdateViewportSizeZoom(Viewport &vp)
 {
-	vp->dirty_blocks_per_column = CeilDiv(vp->height, vp->GetDirtyBlockHeight());
-	vp->dirty_blocks_per_row = CeilDiv(vp->width, vp->GetDirtyBlockWidth());
-	uint size = vp->dirty_blocks_per_row * vp->dirty_blocks_per_column;
-	vp->dirty_blocks.assign(size, false);
+	vp.dirty_blocks_per_column = CeilDiv(vp.height, vp.GetDirtyBlockHeight());
+	vp.dirty_blocks_per_row = CeilDiv(vp.width, vp.GetDirtyBlockWidth());
+	uint size = vp.dirty_blocks_per_row * vp.dirty_blocks_per_column;
+	vp.dirty_blocks.assign(size, false);
 	UpdateViewportDirtyBlockLeftMargin(vp);
 
 	// if (vp->zoom >= ZOOM_LVL_DRAW_MAP) {
@@ -2158,29 +2158,29 @@ static bool MarkViewportDirty(Viewport &vp, int left, int top, int right, int bo
 
 	if (top >= vp.virtual_height) return false;
 
-	int x = std::max<int>(0, UnScaleByZoomLower(left, vp->zoom) - vp->dirty_block_left_margin) >> vp->GetDirtyBlockWidthShift();
-	int y = UnScaleByZoomLower(top, vp->zoom) >> vp->GetDirtyBlockHeightShift();
-	int w = (std::max<int>(0, UnScaleByZoomLower(right, vp->zoom) - 1 - vp->dirty_block_left_margin) >> vp->GetDirtyBlockWidthShift()) + 1 - x;
-	int h = ((UnScaleByZoom(bottom, vp->zoom) - 1) >> vp->GetDirtyBlockHeightShift()) + 1 - y;
+	int x = std::max<int>(0, UnScaleByZoomLower(left, vp.zoom) - vp.dirty_block_left_margin) >> vp.GetDirtyBlockWidthShift();
+	int y = UnScaleByZoomLower(top, vp.zoom) >> vp.GetDirtyBlockHeightShift();
+	int w = (std::max<int>(0, UnScaleByZoomLower(right, vp.zoom) - 1 - vp.dirty_block_left_margin) >> vp.GetDirtyBlockWidthShift()) + 1 - x;
+	int h = ((UnScaleByZoom(bottom, vp.zoom) - 1) >> vp.GetDirtyBlockHeightShift()) + 1 - y;
 
 	// TODO somehow JGRPP avoids these checks
 	if (w < 0 || h < 0) return false;
-	if (x >= (int)vp->dirty_blocks_per_row) return false;
-	if (y >= (int)vp->dirty_blocks_per_column) return false;
-	h -= std::max((int)y + (int)h - (int)vp->dirty_blocks_per_column, 0);
-	w -= std::max((int)x + (int)w - (int)vp->dirty_blocks_per_row, 0);
+	if (x >= (int)vp.dirty_blocks_per_row) return false;
+	if (y >= (int)vp.dirty_blocks_per_column) return false;
+	h -= std::max((int)y + (int)h - (int)vp.dirty_blocks_per_column, 0);
+	w -= std::max((int)x + (int)w - (int)vp.dirty_blocks_per_row, 0);
 
-	uint column_skip = vp->dirty_blocks_per_column - h;
-	uint pos = (x * vp->dirty_blocks_per_column) + y;
+	uint column_skip = vp.dirty_blocks_per_column - h;
+	uint pos = (x * vp.dirty_blocks_per_column) + y;
 	for (int i = 0; i < w; i++) {
 		for (int j = 0; j < h; j++) {
 
-			vp->dirty_blocks[pos] = true;
+			vp.dirty_blocks[pos] = true;
 			pos++;
 		}
 		pos += column_skip;
 	}
-	vp->is_dirty = true;
+	vp.is_dirty = true;
 
 	/*if (unlikely(vp->zoom >= ZOOM_LVL_DRAW_MAP && !(flags & VMDF_NOT_LANDSCAPE))) {
 		uint l = UnScaleByZoomLower(left, vp->zoom);
@@ -2212,7 +2212,7 @@ bool MarkAllViewportsDirty(int left, int top, int right, int bottom)
 	bool dirty = false;
 
 	for (Window *w : Window::Iterate()) {
-		Viewport *vp = w->viewport;
+		auto &vp = w->viewport;
 		if (vp != nullptr) {
 			assert(vp->width != 0);
 			if (MarkViewportDirty(*vp, left, top, right, bottom)) dirty = true;
@@ -2467,7 +2467,7 @@ static bool CheckClickOnViewportSign(const Viewport &vp, int x, int y)
 		}
 		return true;
 	} else if (last_t != nullptr) {
-		if (citymania::_fn_mod) TownExecuteAction(last_t, 4); //CM build statue
+		if (citymania::_fn_mod) citymania::TownExecuteAction(last_t, TownAction::BuildStatue); // CM
 		else ShowTownViewWindow(last_t->index);
 		return true;
 	} else if (last_si != nullptr) {
@@ -2803,8 +2803,8 @@ static inline void CalcNewPolylineOutersize()
 		int outer_y1 = _thd.selstart2.y & ~TILE_UNIT_MASK;
 		int outer_x2 = _thd.selend2.x & ~TILE_UNIT_MASK;
 		int outer_y2 = _thd.selend2.y & ~TILE_UNIT_MASK;
-		if (outer_x1 > outer_x2) Swap(outer_x1, outer_x2);
-		if (outer_y1 > outer_y2) Swap(outer_y1, outer_y2);
+		if (outer_x1 > outer_x2) std::swap(outer_x1, outer_x2);
+		if (outer_y1 > outer_y2) std::swap(outer_y1, outer_y2);
 		/* include the first part */
 		outer_x1 = std::min<int>(outer_x1, _thd.new_pos.x);
 		outer_y1 = std::min<int>(outer_y1, _thd.new_pos.y);
@@ -2899,8 +2899,8 @@ void UpdateTileSelection()
 								y1 = _thd.selstart.y & ~TILE_UNIT_MASK;
 								int x2 = _thd.selend.x & ~TILE_UNIT_MASK;
 								int y2 = _thd.selend.y & ~TILE_UNIT_MASK;
-								if (x1 > x2) Swap(x1, x2);
-								if (y1 > y2) Swap(y1, y2);
+								if (x1 > x2) std::swap(x1, x2);
+								if (y1 > y2) std::swap(y1, y2);
 								_thd.new_pos.x = x1;
 								_thd.new_pos.y = y1;
 								_thd.new_size.x = x2 - x1 + TILE_SIZE;
@@ -2982,7 +2982,7 @@ void UpdateTileSelection()
  * Displays the measurement tooltips when selecting multiple tiles
  * @param text String to be displayed
  */
-static inline void ShowMeasurementTooltips(EncodedString &&text, TooltipCloseCondition close_cond = TCC_EXIT_VIEWPOR)
+static inline void ShowMeasurementTooltips(EncodedString &&text, TooltipCloseCondition close_cond = TCC_EXIT_VIEWPORT)
 {
 	if (!_settings_client.gui.measure_tooltip) return;
 	GuiShowTooltips(_thd.GetCallbackWnd(), std::move(text), close_cond);
@@ -3251,11 +3251,9 @@ static int CalcHeightdiff(HighLightStyle style, uint distance, TileIndex start_t
  */
 static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, TileIndex end_tile, TooltipCloseCondition close_cond = TCC_NONE, bool show_single_tile_length = false)
 {
-	static const StringID measure_strings_length[] = {STR_NULL, STR_MEASURE_LENGTH, STR_MEASURE_LENGTH_HEIGHTDIFF};
-
+	EncodedString str;
 	if (_settings_client.gui.measure_tooltip) {
 		uint distance = DistanceManhattan(start_tile, end_tile) + 1;
-		uint8_t index = 0;
 
 		if (show_single_tile_length || distance != 1) {
 			int heightdiff = CalcHeightdiff(style, distance, start_tile, end_tile);
@@ -3266,11 +3264,10 @@ static void ShowLengthMeasurement(HighLightStyle style, TileIndex start_tile, Ti
 				distance = CeilDiv(distance, 2);
 			}
 
-			SetDParam(index++, distance);
-			if (heightdiff != 0) SetDParam(index++, heightdiff);
+			if (heightdiff != 0) str = GetEncodedString(STR_MEASURE_LENGTH_HEIGHTDIFF, distance, heightdiff);
+			else str = GetEncodedString(STR_MEASURE_LENGTH, distance);
 		}
-
-		ShowMeasurementTooltips(measure_strings_length[index], index, close_cond);
+		if (!str.empty()) ShowMeasurementTooltips(std::move(str), close_cond);
 	}
 }
 
@@ -3713,7 +3710,7 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 
 	/* CityMania code start */
 	_thd.dir2 = HT_DIR_END;
-	ShowLengthMeasurement(b, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));	
+	ShowLengthMeasurement(b, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 	/* CityMania code end */
 }
 
@@ -3896,7 +3893,7 @@ calc_heightdiff_single_direction:;
 					}
 				}
 			}
-			#endif 
+			#endif
 			/* With current code passing a HT_LINE style to calculate the height
 			 * difference is enough. However if/when a point-tool is created
 			 * with this method, function should be called with new_style (below)
@@ -3914,12 +3911,6 @@ calc_heightdiff_single_direction:;
 
 		case VPM_X_AND_Y: // drag an X by Y area
 
-			FIXME why this if?
-			if (_settings_client.gui.measure_tooltip || _thd.select_proc == CM_DDSP_MEASURE) {
-				static const StringID measure_strings_area[] = {
-					STR_NULL, STR_NULL, STR_MEASURE_AREA, STR_MEASURE_AREA_HEIGHTDIFF,
-					CM_STR_MEASURE_DIST_HEIGHTDIFF,
-				};
 			if (_settings_client.gui.measure_tooltip) {
 
 				TileIndex t0 = TileVirtXY(sx, sy);
@@ -3972,14 +3963,6 @@ calc_heightdiff_single_direction:;
 
 					dx -= (style & HT_POINT ? 1 : 0);
 					dy -= (style & HT_POINT ? 1 : 0);
-
-FIXME
-?					if (_thd.select_proc == CM_DDSP_MEASURE) {
-?						SetDParam(index++, sqrtl(dx * dx + dy * dy));
-?					}
-?
-		?			if (heightdiff != 0 || index == 3) SetDParam(index++, heightdiff);
-		?		}
 
 					if (heightdiff == 0) {
 						ShowMeasurementTooltips(GetEncodedString(STR_MEASURE_AREA, dx, dy));
@@ -4388,7 +4371,7 @@ void StoreRailPlacementEndpoints(TileIndex start_tile, TileIndex end_tile, Track
 			/* determine proper direction (pointing outside of the track) */
 			uint distance = DistanceManhattan(start_tile, end_tile);
 			if (distance > DistanceManhattan(TileAddByDiagDir(start_tile, TrackdirToExitdir(exit_trackdir_at_start)), end_tile)) {
-				Swap(exit_trackdir_at_start, exit_trackdir_at_end);
+				std::swap(exit_trackdir_at_start, exit_trackdir_at_end);
 			}
 			/* determine proper track on the end tile - switch between upper/lower or left/right based on the length */
 			if (distance % 2 != 0) exit_trackdir_at_end = NextTrackdir(exit_trackdir_at_end);
@@ -4530,12 +4513,12 @@ namespace citymania {
 
 	DrawPixelInfo *old_dpi;
 
-	void ViewportExportDrawBegin(const Viewport *vp, int left, int top, int right, int bottom) {
+	void ViewportExportDrawBegin(const Viewport &vp, int left, int top, int right, int bottom) {
 	    old_dpi = _cur_dpi;
 	    _cur_dpi = &_vd.dpi;
 
-	    _vd.dpi.zoom = vp->zoom;
-	    int mask = ScaleByZoom(-1, vp->zoom);
+	    _vd.dpi.zoom = vp.zoom;
+	    int mask = ScaleByZoom(-1, vp.zoom);
 
 	    _vd.combine_sprites = SPRITE_COMBINE_NONE;
 

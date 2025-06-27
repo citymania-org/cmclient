@@ -28,8 +28,7 @@ enum CargoOption {
 
 static void DrawPrice(Money amount, int left, int right, int top)
 {
-	SetDParam(0, amount);
-	DrawString(left, right, top, STR_FINANCES_POSITIVE_INCOME, TC_FROMSTRING, SA_RIGHT);
+	DrawString(left, right, top, GetString(STR_FINANCES_POSITIVE_INCOME, amount), TC_FROMSTRING, SA_RIGHT);
 }
 
 void InvalidateCargosWindows(CompanyID cid)
@@ -48,10 +47,9 @@ struct CargosWindow : Window {
 		this->cargoPeriod = WID_CT_OPTION_CARGO_TOTAL;
 	}
 
-	void SetStringParameters(int widget) const override {
-		if(widget != WID_CT_CAPTION) return;
-		SetDParam(0, (CompanyID)this->window_number);
-		SetDParam(1, (CompanyID)this->window_number);
+	std::string GetWidgetString(WidgetID widget, StringID stringid) const override {
+		if(widget != WID_CT_CAPTION) return this->Window::GetWidgetString(widget, stringid);
+		return GetString(CM_STR_TOOLBAR_CARGOS_CAPTION, (CompanyID)this->window_number, (CompanyID)this->window_number);
 	}
 
 	void OnClick([[maybe_unused]] Point pt, int widget, [[maybe_unused]] int click_count) override {
@@ -133,8 +131,7 @@ struct CargosWindow : Window {
 					           r.left + max_icon_size.width - icon_size.width,
 					           y + (line_height - (int)icon_size.height) / 2);
 
-					SetDParam(0, cs->name);
-					DrawString(rect_x + icon_space, r.right, y + text_y_ofs, CM_STR_TOOLBAR_CARGOS_NAME);
+					DrawString(rect_x + icon_space, r.right, y + text_y_ofs, GetString(CM_STR_TOOLBAR_CARGOS_NAME, cs->name));
 
 					y += line_height;
 				}
@@ -151,16 +148,14 @@ struct CargosWindow : Window {
 				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					auto &economy = (this->cargoPeriod == WID_CT_OPTION_CARGO_MONTH ? c->old_economy[0] : c->cur_economy);
 					sum_cargo_amount += economy.delivered_cargo[cs->Index()];
-					SetDParam(0,  economy.delivered_cargo[cs->Index()]);
 
-					DrawString(r.left, r.right, y + text_y_ofs, CM_STR_TOOLBAR_CARGOS_UNITS, TC_FROMSTRING, SA_RIGHT); //cargo amount in pcs
+					DrawString(r.left, r.right, y + text_y_ofs, GetString(CM_STR_TOOLBAR_CARGOS_UNITS, economy.delivered_cargo[cs->Index()]), TC_FROMSTRING, SA_RIGHT); //cargo amount in pcs
 					y += line_height;
 				}
 
 				GfxFillRect(r.left, y + 1, r.right, y + 1, PC_BLACK);
 				y += CT_LINESPACE;
-				SetDParam(0, sum_cargo_amount);
-				DrawString(r.left, r.right, y, CM_STR_TOOLBAR_CARGOS_UNITS_TOTAL, TC_FROMSTRING, SA_RIGHT);
+				DrawString(r.left, r.right, y, GetString(CM_STR_TOOLBAR_CARGOS_UNITS_TOTAL, sum_cargo_amount), TC_FROMSTRING, SA_RIGHT);
 				break;
 
 			case WID_CT_INCOME:
@@ -184,15 +179,15 @@ struct CargosWindow : Window {
 static const NWidgetPart _nested_cargos_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
-		NWidget(WWT_CAPTION, COLOUR_GREY, WID_CT_CAPTION), SetDataTip(CM_STR_TOOLBAR_CARGOS_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_GREY, WID_CT_CAPTION),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 1),
 		NWidget(NWID_HORIZONTAL), SetPadding(WidgetDimensions::scaled.framerect.top, WidgetDimensions::scaled.framerect.right, WidgetDimensions::scaled.framerect.bottom, WidgetDimensions::scaled.framerect.left), SetPIP(0, 9, 0),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_CT_HEADER_CARGO), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(CM_STR_TOOLBAR_CARGOS_HEADER_CARGO, CM_STR_TOOLBAR_CARGOS_HEADER_CARGO),
-			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_AMOUNT), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_NULL, STR_NULL),
-			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_INCOME), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2), SetDataTip(STR_NULL, STR_NULL),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_CT_HEADER_CARGO), SetFill(1, 0), SetPadding(2,2,2,2), SetStringTip(CM_STR_TOOLBAR_CARGOS_HEADER_CARGO, CM_STR_TOOLBAR_CARGOS_HEADER_CARGO),
+			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_AMOUNT), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2),
+			NWidget(WWT_TEXT, COLOUR_GREY, WID_CT_HEADER_INCOME), SetMinimalSize(108, 16), SetFill(1, 0), SetPadding(2,2,2,2),
 		EndContainer(),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 1),
@@ -207,7 +202,7 @@ static const NWidgetPart _nested_cargos_widgets[] = {
 static WindowDesc _cargos_desc(
 	WDP_AUTO, "cm_cargo_table", 0, 0,
 	WC_CARGOS, WC_NONE,
-	WDF_CONSTRUCTION,
+	WindowDefaultFlag::Construction,
 	_nested_cargos_widgets
 );
 

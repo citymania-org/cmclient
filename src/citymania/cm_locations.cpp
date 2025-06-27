@@ -26,7 +26,7 @@ void SaveLocation(uint slot) {
     auto &loc = _locations[slot];
 
     Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
-    auto vp = w->viewport;
+    auto &vp = w->viewport;
 
     loc.zoom = vp->zoom;
     loc.scrollpos_x = vp->scrollpos_x;
@@ -39,10 +39,10 @@ void LoadLocation(uint slot) {
     if (!loc.scrollpos_y && !loc.scrollpos_x) return;
 
     Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
-    auto vp = w->viewport;
+    auto &vp = w->viewport;
 
     vp->zoom = loc.zoom;
-    vp->follow_vehicle = INVALID_VEHICLE;
+    vp->follow_vehicle = VehicleID::Invalid();
     vp->dest_scrollpos_x = loc.scrollpos_x;
     vp->dest_scrollpos_y = loc.scrollpos_y;
     vp->virtual_width = ScaleByZoom(vp->width, vp->zoom);

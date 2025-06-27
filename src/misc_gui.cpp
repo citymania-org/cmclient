@@ -133,7 +133,7 @@ public:
 	LandInfoWindow(Tile tile, Tile end_tile) : Window(_land_info_desc), tile(tile), end_tile(end_tile)
 	{
 		this->InitNested();
-		CLRBITS(this->flags, WF_WHITE_BORDER);
+        this->flags.Reset(WindowFlag::WhiteBorder);
 
 #if defined(_DEBUG)
 #	define LANDINFOD_LEVEL 0
@@ -291,8 +291,7 @@ public:
 
 		/* CityMania code start (House pop) */
 		if (td.cm_population != 0) {
-			SetDParam(0, td.cm_population);
-			this->landinfo_data.push_back(GetString(CM_STR_LAND_AREA_INFORMATION_POP));
+			this->landinfo_data.push_back(GetString(CM_STR_LAND_AREA_INFORMATION_POP, td.cm_population));
 		}
 		/* CityMania code end */
 

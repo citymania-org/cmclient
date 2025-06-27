@@ -942,7 +942,7 @@ void DrawOverlappedWindowForAll(int left, int top, int right, int bottom)
  */
 void Window::SetDirty()
 {
-	this->flags |= WF_DIRTY;
+	this->flags.Set(WindowFlag::CMDirty);
 }
 
 /**
@@ -2077,7 +2077,7 @@ void ResizeWindow(Window *w, int delta_x, int delta_y, bool clamp_to_screen, boo
 		AddPendingDirtyBlocks(w->left, w->top, w->left + w->width, w->top + w->height);
 	} else {
 		w->SetDirty();
-	}	
+	}
 }
 
 /**
@@ -2125,8 +2125,8 @@ static EventState HandleWindowDragging()
 				break;
 			}
 
-			if (!(w->flags & WF_DRAG_DIRTIED)) {
-				w->flags |= WF_DRAG_DIRTIED;
+			if (w->flags.Test(WindowFlag::CMDragDirtied)) {
+				w->flags.Set(WindowFlag::CMDragDirtied);
 				w->SetDirtyAsBlocks();
 			}
 
@@ -2866,7 +2866,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		switch (click) {
 			case MC_DOUBLE_LEFT:
 			case MC_LEFT:
-				if (citymania::HandleMouseClick(vp, click == MC_DOUBLE_LEFT)) return;			
+				if (citymania::HandleMouseClick(vp, click == MC_DOUBLE_LEFT)) return;
 				if (HandleViewportClicked(*vp, x, y, click == MC_DOUBLE_LEFT)) return;
 				if (!w->flags.Test(WindowFlag::DisableVpScroll) &&
 						_settings_client.gui.scroll_mode == VSM_MAP_LMB) {

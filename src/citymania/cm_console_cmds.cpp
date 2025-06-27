@@ -58,7 +58,7 @@ bool ConStep([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     auto n = (argc > 1 ? atoi(argv[1]) : 1);
 
     _pause_countdown = n;
-    cmd::Pause(PM_PAUSED_NORMAL, 0).post();
+    cmd::Pause(PauseMode::Normal, 0).post();
 
     return true;
 }
@@ -120,7 +120,7 @@ bool ConTreeMap([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
         return true;
     }
 
-    for (TileIndex tile = 0; tile < Map::Size(); tile++) {
+    for (auto tile : Map::Iterate()) {
         auto mx = x - x * TileX(tile) / Map::SizeX() - 1;
         auto my = y * TileY(tile) / Map::SizeY();
         auto t = map[mx + my * x];
@@ -163,7 +163,7 @@ void MakeReplaySave() {
 }
 
 void CheckIntervalSave() {
-    if (_pause_mode == PM_UNPAUSED) {
+    if (_pause_mode.None()) {
         _replay_ticks++;
         if (_replay_save_interval && _replay_ticks - _replay_last_save  >= _replay_save_interval) {
             MakeReplaySave();

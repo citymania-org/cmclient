@@ -11,6 +11,7 @@
 #include "core/backup_type.hpp"
 #include "company_func.h"
 #include "strings_type.h"
+#include "widget_type.h"
 #include "window_gui.h"
 #include "viewport_func.h"
 #include "zoom_func.h"
@@ -906,7 +907,7 @@ static void DrawOutline(const Window *, const NWidgetBase *wid)
 void NWidgetBase::SetDirty(Window *w)
 {
 	this->base_flags |= WBF_DIRTY;
-	w->flags |= WF_WIDGETS_DIRTY;
+	w->flags.Set(WindowFlag::CMWidgetsDirty);
 }
 
 /**
@@ -2496,7 +2497,7 @@ void NWidgetViewport::Draw(const Window *w)
 void NWidgetViewport::InitializeViewport(Window *w, std::variant<TileIndex, VehicleID> focus, ZoomLevel zoom)
 {
 	InitializeWindowViewport(w, this->pos_x, this->pos_y, this->current_x, this->current_y, focus, zoom);
-	w->viewport_widget = this;
+	w->cm_viewport_widget = this;
 }
 
 /**

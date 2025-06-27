@@ -383,8 +383,8 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 		/* Reset the ratings for the old owner */
 		t->ratings[old_owner] = RATING_INITIAL;
 		t->have_ratings.Reset(old_owner);
-		t->cm_advertise_regularly.Reset(old_owner);
-		t->cm_do_powerfund.Reset(old_owner);
+		t->cm.advertise_regularly.Reset(old_owner);
+		t->cm.do_powerfund.Reset(old_owner);
 
 		/* Transfer exclusive rights */
 		if (t->exclusive_counter > 0 && t->exclusivity == old_owner) {
@@ -1128,7 +1128,7 @@ static Money DeliverGoods(int num_pieces, CargoType cargo_type, StationID dest, 
 	/* Increase town's counter for all goods types only if delivered near town*/
 	if(CB_Enabled()){
 		if (_settings_game.citymania.cb.acceptance_range == 0 || (DistanceManhattan(st->town->xy, st->xy) <= _settings_game.citymania.cb.acceptance_range)) {
-			st->town->cb.delivered[cargo_type] += accepted_total;
+			st->town->cm.cb.delivered[cargo_type] += accepted_total;
 			InvalidateWindowData(CM_WC_CB_TOWN, st->town->index);
 		}
 	}
@@ -1152,7 +1152,7 @@ static Money DeliverGoods(int num_pieces, CargoType cargo_type, StationID dest, 
 	if (accepted_total > 0) {
 		if (accepted_ind != accepted_total)
 			citymania::Emit(citymania::event::CargoDeliveredToUnknown{cargo_type, accepted_total - accepted_ind, st});
-		citymania::Emit(citymania::event::CargoAccepted{company, cargo_type, accepted_total, st, profit, src_type, src});
+		citymania::Emit(citymania::event::CargoAccepted{company, cargo_type, accepted_total, st, profit, src});
 	}
 
 	return profit;

@@ -33,7 +33,7 @@ extern CommandCallback _current_callback;
 class Command {
 public:
     bool no_estimate_flag = false;
-    CompanyID company = INVALID_COMPANY;
+    CompanyID company = CompanyID::Invalid();
     StringID error = (StringID)0;
     CommandCallback callback = nullptr;
 
@@ -41,13 +41,13 @@ public:
     virtual ~Command() {}
 
     virtual bool _post(::CommandCallback *callback)=0;
-    virtual CommandCost _do(DoCommandFlag flags)=0;
+    virtual CommandCost _do(DoCommandFlags flags)=0;
     virtual Commands get_command()=0;
 
     template <typename Tcallback>
     bool post(Tcallback callback) {
         CompanyID company_backup = _current_company;
-        if (this->company != INVALID_COMPANY)
+        if (this->company != CompanyID::Invalid())
             _current_company = company;
         _no_estimate_command = this->no_estimate_flag;
         _current_callback = this->callback;
@@ -61,9 +61,9 @@ public:
         return this->post<::CommandCallback *>(nullptr);
     }
 
-    CommandCost call(DoCommandFlag flags) {
+    CommandCost call(DoCommandFlags flags) {
         CompanyID old = _current_company;
-        if (this->company != INVALID_COMPANY)
+        if (this->company != CompanyID::Invalid())
             _current_company = company;
         auto res = this->_do(flags);
         _current_company = old;
@@ -71,7 +71,7 @@ public:
     }
 
     CommandCost test() {
-        return this->call(DC_NONE);
+        return this->call({});
     }
 
     Command &with_error(StringID error) {

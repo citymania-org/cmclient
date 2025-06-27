@@ -5,7 +5,7 @@ from pathlib import Path
 from pprint import pprint
 
 RX_COMMAND = re.compile(r'(?P<returns>CommandCost|std::tuple<CommandCost, [^>]*>) (?P<name>Cmd\w*)\((?P<args>[^)]*)\);')
-RX_DEF_TRAIT = re.compile(r'DEF_CMD_TRAIT\((?P<constant>\w+),\s+(?P<function>\w+),\s+(?P<flags>[^,]*),\s+(?P<category>\w+)\)')
+RX_DEF_TRAIT = re.compile(r'DEF_CMD_TRAIT\((?P<constant>\w+),\s+(?P<function>\w+),\s+(?P<flags>[^,()]+(?:\([^)]+\))?),\s+(?P<category>\w+)\)')
 RX_ARG = re.compile(r'(?P<type>(:?const |)[\w:]* &?)(?P<name>\w*)')
 RX_CALLBACK = re.compile(r'void\s+(?P<name>Cc\w+)\(Commands')
 RX_CALLBACK_REF = re.compile(r'CommandCallback(?:Data|)\s+(?P<name>Cc\w+);')
@@ -128,7 +128,7 @@ def parse_commands():
                     at = '::' + at
                 args[i] = (at, an)
             do_args = args[:]
-            if 'CMD_LOCATION' in flags:
+            if 'Location' in flags:
                 args = [('TileIndex', 'location')] + args
             print(cid, constant, category, args)
             callback_args = 'CommandCost' if result_type is None else f'CommandCost, {result_type}'
@@ -139,9 +139,9 @@ def parse_commands():
                     area_code = cc
 
             default_run_as = 'INVALID_COMPANY'
-            if 'CMD_DEITY' in flags:
+            if 'Deity' in flags:
                 default_run_as = 'OWNER_DEITY'
-            if 'CMD_SERVER' in flags or 'CMD_SPECTATOR' in flags:
+            if 'Server' in flags or 'CMD_SPECTATOR' in flags:
                 default_run_as = 'COMPANY_SPECTATOR'  # same as INVALID though
 
             res.append({
@@ -184,8 +184,8 @@ struct CallbackArgsHelper<void(*const)(Commands, const CommandCost &, Targs...)>
 #endif
 
 static size_t FindCallbackIndex(::CommandCallback *callback) {
-    if (auto it = std::find(std::cbegin(_callback_table), std::cend(_callback_table), callback); it != std::cend(_callback_table)) {
-        return static_cast<size_t>(std::distance(std::cbegin(_callback_table), it));
+    if (auto it = std::ranges::find(_callback_table, callback); it != std::end(_callback_table)) {
+        return static_cast<size_t>(std::distance(std::begin(_callback_table), it));
     }
     return std::numeric_limits<size_t>::max();
 }
@@ -266,7 +266,7 @@ def run():
                 f'    ~{name}() override {{}}\n'
                 f'\n'
                 f'    bool _post(::CommandCallback * callback) override;\n'
-                f'    CommandCost _do(DoCommandFlag flags) override;\n'
+                f'    CommandCost _do(DoCommandFlags flags) override;\n'
                 f'    Commands get_command() override;\n'
                 f'}};\n\n'
             )
@@ -321,7 +321,7 @@ def run():
                 f'bool {name}::_post(::CommandCallback *callback) {{\n'
                 f'    return _{name}_dispatch[FindCallbackIndex(callback)](this->error{sep_this_args_list});\n'
                 '}\n'
-                f'CommandCost {name}::_do(DoCommandFlag flags) {{\n'
+                f'CommandCost {name}::_do(DoCommandFlags flags) {{\n'
                 f'    return {cost_getter}(::Command<{constant}>::Do(flags, {test_args_list}));\n'
                 '}\n'
             )

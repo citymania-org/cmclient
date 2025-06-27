@@ -540,34 +540,34 @@ static inline bool MayHaveBridgeAbove(Tile t)
 			IsTileType(t, MP_WATER) || IsTileType(t, MP_TUNNELBRIDGE) || IsTileType(t, MP_OBJECT);
 }
 
-extern GameStrings *_current_data;
+extern std::shared_ptr<GameStrings> _current_gamestrings_data;
 
 void AfterLoadFindBTProCBInfo() {
-	if (_current_data == NULL) return;
+	if (_current_gamestrings_data == nullptr) return;
 
-	char buf[15];
-	char *p = buf;
-	int pn;
-	p += Utf8Encode(p, SCC_ENCODED);
-	for (const auto &ls : _current_data->raw_strings) {
+	std::string encoded_prefix;
+	StringBuilder builder(encoded_prefix);
+	builder.PutUtf8(SCC_ENCODED);
+	for (const auto &ls : _current_gamestrings_data->raw_strings) {
 		int string_id = 0;
 		for (const auto &s : ls.lines) {
 			if (s.empty() || s[0] == ';' || s[0] == '#' || s[0] == ' ' || s[0] == '\0') continue;
 			if (strncmp(s.c_str(), "STR_TOWN_CLAIMED_CARGOS", strlen("STR_TOWN_CLAIMED_CARGOS")) == 0 ||
 					strncmp(s.c_str(), "STR_TOWN_CARGOS_NEEDED_CB", strlen("STR_TOWN_CARGOS_NEEDED_CB")) == 0) {
-				pn = p - buf + fmt::format("{:X}:", string_id).length();
 				bool with_decay = (strncmp(s.c_str(), "STR_TOWN_CLAIMED_CARGOS_DECAY",
 					strlen("STR_TOWN_CLAIMED_CARGOS_DECAY")) == 0);
+				auto str_prefix = encoded_prefix + fmt::format("{:X}:", string_id);
+				auto pn = str_prefix.size();
 				for (StoryPageElement *se : StoryPageElement::Iterate()) {
-					if (strncmp(se->text.c_str(), buf, pn) != 0) continue;
+					if (se->text.string.compare(0, pn, str_prefix, 0, pn) != 0) continue;
 					uint req, cargomask, from, decay=0;
 					if (with_decay) {
-						sscanf(se->text.c_str() + pn, "%X:%X:%X:%X", &req, &cargomask, &from, &decay);
+						sscanf(se->text.string.c_str() + pn, "%X:%X:%X:%X", &req, &cargomask, &from, &decay);
 				 	} else {
-						sscanf(se->text.c_str() + pn, "%X:%X:%X", &req, &cargomask, &from);
+						sscanf(se->text.string.c_str() + pn, "%X:%X:%X", &req, &cargomask, &from);
 					}
 					uint cargo_id = FindFirstBit(cargomask);
-					if (!CB_Enabled()) CB_SetCB(true);
+					CB_SetCB(true);
 					CB_SetRequirements(cargo_id, req, from, decay);
 				}
 			}
@@ -3415,7 +3415,7 @@ bool AfterLoadGame()
 	citymania::InitializeZoningMap();
 	citymania::minimap_init_industries();
 
-	if ((!_networking || _network_server ) && _settings_client.gui.cm_pause_after_load) _pause_mode = PM_PAUSED_NORMAL;
+	if ((!_networking || _network_server ) && _settings_client.gui.cm_pause_after_load) _pause_mode = PauseMode::Normal;
 
 	CheckGroundVehiclesAtCorrectZ();
 

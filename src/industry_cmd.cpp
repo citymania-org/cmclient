@@ -2055,7 +2055,7 @@ bool CanBuildIndustryOnTile(IndustryType type, TileIndex tile) {
 	const IndustrySpec *indspec = GetIndustrySpec(type);
     CommandCost ret;
 
-	if (HasBit(indspec->callback_mask, CBM_IND_LOCATION)) {
+	if (indspec->callback_mask.Test(IndustryCallbackMask::Location)) {
 		ret = CheckIfCallBackAllowsCreation(
 			tile, type, 0, 0, 0, _current_company,
 			_current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_USERCREATION);

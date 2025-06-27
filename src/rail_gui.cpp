@@ -2045,7 +2045,7 @@ static WindowDesc _build_depot_desc(
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WindowDefaultFlag::Construction,
 	_nested_build_depot_widgets,
-	BuildRailDepotWindow::hotkeys
+	&BuildRailDepotWindow::hotkeys
 );
 
 static void ShowBuildTrainDepotPicker(Window *parent)
