@@ -57,6 +57,7 @@
 #include "citymania/cm_station_gui.hpp"
 
 #include "safeguards.h"
+#include <memory>
 
 static void ShowRVStationPicker(Window *parent, RoadStopType rs);
 static void ShowRoadDepotPicker(Window *parent);
@@ -235,11 +236,7 @@ void CcRoadStop(Commands, const CommandCost &result, TileIndex tile, uint8_t wid
  */
 static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg)
 {
-	if (citymania::UseImprovedStationJoin()) {
-		citymania::PlaceRoadStop(start_tile, end_tile, stop_type, adjacent, rt, err_msg);
-		return;
-	}
-
+	NOT_REACHED(); // CityMania uses tools
 	TileArea ta(start_tile, end_tile);
 	assert(_thd.cm.type == citymania::ObjectHighlight::Type::ROAD_STOP);
 	// DiagDirection ddir = _roadstop_gui.orientation;
@@ -563,14 +560,16 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_BUS_STATION:
-				if (citymania::HandleStationPlacePushButton(this, WID_ROT_BUS_STATION, std::make_shared<citymania::RoadStationPreview>(RoadStopType::Bus))) {
+				if (citymania::HandlePlacePushButton(this, WID_ROT_BUS_STATION, std::make_unique<citymania::RoadStopBuildTool>(RoadStopType::Bus))) {
+				// if (HandlePlacePushButton(this, WID_ROT_BUS_STATION, SPR_CURSOR_BUS_STATION, HT_RECT, DDSP_BUILD_BUSSTOP)) {
 					ShowRVStationPicker(this, RoadStopType::Bus);
 					this->last_started_action = widget;
 				}
 				break;
 
 			case WID_ROT_TRUCK_STATION:
-				if (citymania::HandleStationPlacePushButton(this, WID_ROT_TRUCK_STATION, std::make_shared<citymania::RoadStationPreview>(RoadStopType::Truck))) {
+				if (citymania::HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, std::make_unique<citymania::RoadStopBuildTool>(RoadStopType::Truck))) {
+				// if (HandlePlacePushButton(this, WID_ROT_TRUCK_STATION, SPR_CURSOR_TRUCK_STATION, HT_RECT, DDSP_BUILD_TRUCKSTOP)) {
 					ShowRVStationPicker(this, RoadStopType::Truck);
 					this->last_started_action = widget;
 				}
@@ -709,8 +708,8 @@ struct BuildRoadToolbarWindow : Window {
 		CloseWindowById(WC_BUILD_WAYPOINT, TRANSPORT_ROAD);
 		CloseWindowById(WC_SELECT_STATION, 0);
 		CloseWindowByClass(WC_BUILD_BRIDGE);
-		
-		citymania::AbortStationPlacement();		
+
+		citymania::AbortStationPlacement();
 	}
 
 	void OnPlaceDrag(ViewportPlaceMethod select_method, [[maybe_unused]] ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt) override
@@ -1669,7 +1668,7 @@ static constexpr NWidgetPart _nested_road_station_picker_widgets[] = {
 							NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
 								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetStringTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
 								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetStringTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
-							EndContainer(),							
+							EndContainer(),
 						EndContainer(),
 						/* 2-orientation plane. */
 						NWidget(NWID_VERTICAL), SetPIPRatio(0, 0, 1),

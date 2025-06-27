@@ -95,6 +95,15 @@ public:
     }
 };
 
+class StationBuildCommand : public Command {
+public:
+    StationID station_to_join;
+    bool adjacent;
+
+    StationBuildCommand(StationID station_to_join, bool adjacent)
+        :station_to_join{station_to_join}, adjacent{adjacent} {}
+};
+
 }  // namaespace citymania
 
 #endif

@@ -38,10 +38,12 @@
 #include "table/sprites.h"
 #include "table/strings.h"
 
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_station_gui.hpp"
 
 #include "safeguards.h"
+#include <memory>
 
 static void ShowBuildDockStationPicker(Window *parent);
 static void ShowBuildDocksDepotPicker(Window *parent);
@@ -174,8 +176,8 @@ struct BuildDocksToolbarWindow : Window {
 				break;
 
 			case WID_DT_STATION: // Build station button
-				// if (HandlePlacePushButton(this, WID_DT_STATION, SPR_CURSOR_DOCK, HT_SPECIAL, CM_DDSP_BUILD_DOCK)) ShowBuildDockStationPicker(this);
-				if (citymania::HandleStationPlacePushButton(this, WID_DT_STATION, std::make_shared<citymania::DockPreview>())) {
+				// if (HandlePlacePushButton(this, WID_DT_STATION, SPR_CURSOR_DOCK, HT_SPECIAL, CM_DDSP_BUILD_DOCK)) {
+				if (citymania::HandlePlacePushButton(this, WID_DT_STATION, std::make_unique<citymania::DockBuildTool>())) {
 					ShowBuildDockStationPicker(this);
 				}
 
@@ -221,14 +223,13 @@ struct BuildDocksToolbarWindow : Window {
 				break;
 
 			case WID_DT_STATION: { // Build station button
+				NOT_REACHED(); // CityMania uses tools
+
 				/* Determine the watery part of the dock. */
+				/*
 				DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
 				TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(dir)) : tile);
 
-				if (citymania::UseImprovedStationJoin()) {
-					citymania::PlaceDock(tile, tile_to);
-					break;
-				}
 
 				bool adjacent = citymania::_fn_mod;
 				auto proc = [=](bool test, StationID to_join) -> bool {
@@ -240,7 +241,7 @@ struct BuildDocksToolbarWindow : Window {
 				};
 
 				ShowSelectStationIfNeeded(TileArea(tile, tile_to), proc);
-				break;
+				break; */
 			}
 
 			case WID_DT_BUOY: // Build buoy button
@@ -297,7 +298,7 @@ struct BuildDocksToolbarWindow : Window {
 		CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
 		CloseWindowById(WC_SELECT_STATION, 0);
 		CloseWindowByClass(WC_BUILD_BRIDGE);
-		
+
 		citymania::AbortStationPlacement();
 	}
 

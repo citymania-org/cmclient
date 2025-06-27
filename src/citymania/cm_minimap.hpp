@@ -192,7 +192,7 @@ protected:
     }
 
     /** Blink the industries (if selected) on a regular interval. */
-    IntervalTimer<TimerWindow> blink_interval = {std::chrono::milliseconds(450), [this](auto) {
+    IntervalTimer<TimerWindow> blink_interval = {TIMER_BLINK_INTERVAL, [this](auto) {
         Blink();
     }};
 
@@ -244,7 +244,6 @@ public:
     void OnInvalidateData(int data = 0, bool gui_scope = true) override;
     bool OnRightClick(Point pt, int widget) override;
     void OnMouseWheel(int wheel) override;
-    void OnRealtimeTick(uint delta_ms) override;
     // void OnHundredthTick() override;
     void OnScroll(Point delta) override;
     void OnMouseOver(Point pt, int widget) override;

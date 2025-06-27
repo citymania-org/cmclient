@@ -2975,7 +2975,7 @@ void UpdateTileSelection()
 		if ((new_drawstyle & HT_DRAG_MASK) != HT_NONE) SetSelectionTilesDirty();
 	}
 
-	citymania::UpdateActivePreview();
+	citymania::UpdateActiveTool();
 }
 
 /**
@@ -4056,7 +4056,7 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
  */
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num, ViewportDragDropSelectionProcess cm_process)
 {
-	citymania::ResetActivePreview();
+	citymania::ResetActiveTool();
 	if (_thd.window_class != WC_INVALID) {
 		/* Undo clicking on button and drag & drop */
 		Window *w = _thd.GetCallbackWnd();
@@ -4107,7 +4107,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 void ResetObjectToPlace()
 {
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0, CM_DDSP_NONE);
-	citymania::ResetActivePreview();
+	citymania::ResetActiveTool();
 }
 
 Point GetViewportStationMiddle(const Viewport &vp, const Station *st)

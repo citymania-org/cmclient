@@ -208,6 +208,7 @@ void CcStation(Commands, const CommandCost &result, TileIndex tile)
  */
 static void PlaceRail_Station(TileIndex tile)
 {
+	NOT_REACHED(); // CityMania uses tools
 	if (_remove_button_clicked) {
 		VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_STATION);
 		VpSetPlaceSizingLimit(-1);
@@ -215,10 +216,6 @@ static void PlaceRail_Station(TileIndex tile)
 		VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_STATION);
 		VpSetPlaceSizingLimit(_settings_game.station.station_spread);
 	} else {
-		if (citymania::UseImprovedStationJoin()) {
-			citymania::PlaceRail_Station(tile);
-			return;
-		}
 		int w = _settings_client.gui.station_numtracks;
 		int h = _settings_client.gui.station_platlength;
 		if (!_station_gui.axis) std::swap(w, h);
@@ -684,12 +681,14 @@ struct BuildRailToolbarWindow : Window {
 					if (was_open) ResetObjectToPlace();
 					if (!was_open || dragdrop != _settings_client.gui.station_dragdrop) {
 						_settings_client.gui.station_dragdrop = dragdrop;
-						if (citymania::HandleStationPlacePushButton(this, WID_RAT_BUILD_STATION, std::make_shared<citymania::RailStationPreview>()))
+						if (citymania::HandlePlacePushButton(this, WID_RAT_BUILD_STATION, std::make_unique<citymania::RailStationBuildTool>()))
+						// if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_BRIDGE, HT_RECT, DDSP_BUILD_STATION))
 							ShowStationBuilder(this);
 					}
 					this->last_user_action = WID_RAT_BUILD_STATION;
 				} else { /* button */
-					if (citymania::HandleStationPlacePushButton(this, WID_RAT_BUILD_STATION, std::make_shared<citymania::RailStationPreview>())) {
+					if (citymania::HandlePlacePushButton(this, WID_RAT_BUILD_STATION, std::make_unique<citymania::RailStationBuildTool>())) {
+					// if (HandlePlacePushButton(this, WID_RAT_BUILD_STATION, SPR_CURSOR_BRIDGE, HT_RECT, DDSP_BUILD_STATION)) {
 						ShowStationBuilder(this);
 						this->last_user_action = WID_RAT_BUILD_STATION;
 					}
@@ -1044,7 +1043,7 @@ struct BuildRailToolbarWindow : Window {
 		Hotkey((uint16)0, "cm_blueprint_save_7", HOTKEY_BLUEPRINT_SAVE + 7),
 		Hotkey((uint16)0, "cm_blueprint_save_8", HOTKEY_BLUEPRINT_SAVE + 8),
 		Hotkey((uint16)0, "cm_blueprint_save_9", HOTKEY_BLUEPRINT_SAVE + 9),
-		Hotkey(CM_WKC_MOUSE_MIDDLE, "cm_blueprint_rotate", HOTKEY_BLUEPRINT_ROTATE),		
+		Hotkey(CM_WKC_MOUSE_MIDDLE, "cm_blueprint_rotate", HOTKEY_BLUEPRINT_ROTATE),
 	}, RailToolbarGlobalHotkeys};
 };
 
@@ -1126,11 +1125,7 @@ Window *ShowBuildRailToolbar(RailType railtype)
 
 static void HandleStationPlacement(TileIndex start, TileIndex end)
 {
-	if (citymania::UseImprovedStationJoin()) {
-		citymania::HandleStationPlacement(start, end);
-		return;
-	}
-
+	NOT_REACHED(); // CityMania uses tools
 	TileArea ta(start, end);
 	uint numtracks = ta.w;
 	uint platlength = ta.h;

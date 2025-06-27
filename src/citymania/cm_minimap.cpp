@@ -1773,30 +1773,6 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 	}
 }
 
-/* virtual */ void SmallMapWindow::OnRealtimeTick(uint /* delta_ms */)
-{
-	/* Update the window every now and then */
-	if (this->map_type == SMT_LINKSTATS) {
-		CompanyMask company_mask = this->GetOverlayCompanyMask();
-		if (this->overlay->GetCompanyMask() != company_mask) {
-			this->overlay->SetCompanyMask(company_mask);
-		} else {
-			this->overlay->SetDirty();
-		}
-	}
-	_smallmap_industry_highlight_state = !_smallmap_industry_highlight_state;
-
-	this->SetDirty();
-}
-
-// /* virtual */ void SmallMapWindow::OnHundredthTick()
-// {
-// 	if (this->show_towns) {
-// 		this->UpdateTownCache(true);
-// 		this->SetDirty();
-// 	}
-// }
-
 /** Update all the links on the map. */
 void SmallMapWindow::UpdateLinks()
 {
@@ -1826,6 +1802,7 @@ void SmallMapWindow::ForceRefresh()
 {
 	if (_smallmap_industry_highlight != IT_INVALID) return;
 
+	if (this->show_towns) this->UpdateTownCache(true);
 	this->UpdateLinks();
 	this->SetDirty();
 }

@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <sstream>
 #include <type_traits>
 #include <utility>
 
@@ -71,6 +72,56 @@ enum class ControllerType: uint8_t {
     CB = 5,
     TOWN_DEFENCE = 6,
 };
+
+// Some utility funcitons for strings
+namespace string {
+
+template<typename T>
+static inline std::string join(T strings, std::string separator) {
+    // TODO add map function (can be used in ListGameModeCodes)?
+    std::ostringstream res;
+    bool first = true;
+    for (auto s: strings) {
+        if (!first)res << separator;
+        res << s;
+        first = false;
+    }
+    return res.str();
+}
+
+static inline void iltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {
+        return !std::isspace(c);
+    }));
+}
+
+static inline void irtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) {
+        return !std::isspace(c);
+    }).base(), s.end());
+}
+
+static inline void itrim(std::string &s) {
+    iltrim(s);
+    irtrim(s);
+}
+
+static inline std::string ltrim(std::string s) {
+    iltrim(s);
+    return s;
+}
+
+static inline std::string rtrim(std::string s) {
+    irtrim(s);
+    return s;
+}
+
+static inline std::string trim(std::string s) {
+    itrim(s);
+    return s;
+}
+
+}; // namespace string
 
 } // namespace citymania
 

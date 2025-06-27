@@ -6,7 +6,7 @@
 
 namespace citymania {
 
-typedef std::vector<std::pair<SpriteID, std::string>> BuildInfoOverlayData;
+typedef std::vector<std::tuple<uint, SpriteID, std::string>> BuildInfoOverlayData;
 
 void UndrawOverlays(int left, int top, int right, int bottom);
 void DrawOverlays();

@@ -15,12 +15,15 @@
 #include "../track_type.h"
 
 #include <map>
+#include <optional>
 #include <set>
+#include <ranges>
 #include <type_traits>
 #include <unordered_set>
 #include <vector>
 
 #include "cm_command_type.hpp"
+#include "cm_overlays.hpp"
 
 
 namespace citymania {
@@ -311,6 +314,26 @@ public:
     std::multimap<TileIndex, ObjectTileHighlight> GetTiles(TileIndex tile);
 };
 
+
+class HighlightMap {
+public:
+    typedef std::map<TileIndex, std::vector<ObjectTileHighlight>> MapType;
+    typedef decltype(std::views::keys(std::declval<const MapType &>())) MapTypeKeys;
+protected:
+    MapType map;
+public:
+    const MapType &GetMap() const;
+    void Add(TileIndex tile, ObjectTileHighlight oth);
+    bool Contains(TileIndex tile) const;
+    std::optional<std::reference_wrapper<const std::vector<ObjectTileHighlight>>> GetForTile(TileIndex tile) const;
+    MapTypeKeys GetAllTiles() const;
+    std::vector<TileIndex> UpdateWithMap(const HighlightMap &update);
+    void AddTileArea(const TileArea &area, SpriteID palette);
+    void AddTileAreaWithBorder(const TileArea &area, SpriteID palette);
+    void AddTilesBorder(const std::set<TileIndex> &tiles, SpriteID palette);
+};
+
+
 class ObjectHighlight {
 public:
     enum Type : uint8_t {
@@ -323,6 +346,7 @@ public:
         BLUEPRINT = 6,
         POLYRAIL = 7,
         INDUSTRY = 8,
+        DOCK = 9,
     };
 
     Type type = Type::NONE;
@@ -350,7 +374,7 @@ protected:
     bool tiles_updated = false;
     std::multimap<TileIndex, ObjectTileHighlight> tiles;
     std::vector<DetachedHighlight> sprites = {};
-    std::vector<std::pair<SpriteID, std::string>> overlay_data = {};
+    BuildInfoOverlayData overlay_data = {};
     // Point overlay_pos = {0, 0};
     void AddTile(TileIndex tile, ObjectTileHighlight &&oh);
     // void AddSprite(TileIndex tile, ObjectTileHighlight &&oh);
@@ -371,8 +395,11 @@ public:
                                          TileIndex start_tile2, TileIndex end_tile2, Trackdir trackdir2);
 
     static ObjectHighlight make_industry(TileIndex tile, IndustryType ind_type, uint32 ind_layout);
+    static ObjectHighlight make_dock(TileIndex tile, DiagDirection orientation);
 
     TileHighlight GetTileHighlight(const TileInfo *ti);
+    HighlightMap GetHighlightMap(SpriteID palette);
+    std::optional<TileArea> GetArea();
     void Draw(const TileInfo *ti);
     void DrawSelectionOverlay(DrawPixelInfo *dpi);
     void DrawOverlay(DrawPixelInfo *dpi);
@@ -382,16 +409,48 @@ public:
     void MarkDirty();
 };
 
+typedef std::tuple<HighlightMap, BuildInfoOverlayData, CommandCost> ToolGUIInfo;
+
 class Preview {
 public:
-    typedef std::map<TileIndex, std::vector<ObjectTileHighlight>> TileMap;
     virtual ~Preview() {}
     virtual void Update(Point pt, TileIndex tile) = 0;
     virtual void HandleMouseMove() {};
     virtual bool HandleMousePress() { return false; };
     virtual void HandleMouseRelease() {};
     virtual bool HandleMouseClick(Viewport* /* vp */, Point /* pt */, TileIndex /* tile */, bool /* double_click */) { return false; };
-    virtual TileMap GetTiles() = 0;
+    virtual std::pair<HighlightMap, BuildInfoOverlayData> GetGUIInfo() = 0;
+    virtual CursorID GetCursor() = 0;
+    virtual void OnStationRemoved(const Station* /* station */) {};
+};
+
+class Action {
+public:
+    virtual ~Action() = default;
+    virtual void Update(Point pt, TileIndex tile) = 0;
+    virtual std::optional<TileArea> GetArea() const { return std::nullopt; };
+    virtual void HandleMouseMove() {};
+    virtual bool HandleMousePress() { return false; };
+    virtual void HandleMouseRelease() {};
+    virtual bool HandleMouseClick(Viewport* vp, Point pt, TileIndex tile, bool double_click) {
+        (void)vp; (void)pt; (void)tile; (void)double_click;
+        return false;
+    };
+    virtual ToolGUIInfo GetGUIInfo() = 0;
+    virtual void OnStationRemoved(const Station *);
+};
+
+class Tool {
+protected:
+    up<Action> action = nullptr;
+public:
+    virtual ~Tool() = default;
+    virtual void Update(Point pt, TileIndex tile) = 0;
+    virtual void HandleMouseMove() { if(this->action) this->action->HandleMouseMove(); };
+    virtual bool HandleMousePress()  { return this->action ? this->action->HandleMousePress() : false; }
+    virtual void HandleMouseRelease() { if(this->action) this->action->HandleMouseRelease(); };
+    virtual bool HandleMouseClick(Viewport* vp, Point pt, TileIndex tile, bool double_click) { return this->action ? this->action->HandleMouseClick(vp, pt, tile, double_click) : false; };
+    virtual ToolGUIInfo GetGUIInfo() = 0;
     virtual CursorID GetCursor() = 0;
     virtual void OnStationRemoved(const Station* /* station */) {};
 };
@@ -403,12 +462,13 @@ public:
 //     DragStop,
 // };
 
-struct ActivePreview {
-    up<Preview> preview;
-    Preview::TileMap tiles;
+struct ActiveTool {
+    up<Tool> tool;
+    HighlightMap tiles;
 };
 
-extern ActivePreview _ap;
+extern ActiveTool _at;
+
 
 }  // namespace citymania
 

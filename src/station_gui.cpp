@@ -84,13 +84,6 @@ int DrawStationCoverageAreaText(const Rect &r, StationCoverageType sct, int rad,
 	TileIndex tile = TileVirtXY(_thd.pos.x, _thd.pos.y);
 	CargoTypes cargo_mask = 0;
 	if (_thd.drawstyle == HT_RECT && tile < Map::Size()) {
-		/* CityMania code begin */
-		if (supplies) {
-			auto s = citymania::GetStationCoverageProductionText(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad, sct);
-			return DrawStringMultiLine(r, s);
-		}
-		/* CityMania code end */
-
 		CargoArray cargoes;
 		if (supplies) {
 			cargoes = GetProductionAroundTiles(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad);
@@ -189,14 +182,9 @@ void FindStationsAroundSelection()
  */
 void CheckRedrawStationCoverage(Window *w)
 {
-	/* CityMania code begin */
-	if (citymania::UseImprovedStationJoin()) {
-		if (citymania::CheckRedrawStationCoverage()) w->SetDirty();
-		return;
-	}
-	/* CityMania code end */
-
 	/* Test if ctrl state changed */
+	/* CityMania uses tools and handles redraws differently
+
 	static bool _last_fn_pressed;
 	if (citymania::_fn_mod != _last_fn_pressed) {
 		_thd.dirty = 0xff;
@@ -211,6 +199,7 @@ void CheckRedrawStationCoverage(Window *w)
 			FindStationsAroundSelection<StationTypeFilter>();
 		}
 	}
+	*/
 }
 
 template <typename T>
@@ -2376,7 +2365,7 @@ struct SelectStationWindow : Window {
 	void Close([[maybe_unused]] int data = 0) override
 	{
 		if constexpr (std::is_same_v<T, Waypoint *>) SetViewportCatchmentSpecializedStation<typename T::StationType>(nullptr, true);
-		else citymania::SetSelectedStationToJoin(StationID::Invalid());
+		else citymania::ResetJoinStationHighlight();
 
 		_thd.freeze = false;
 		this->Window::Close();
@@ -2474,7 +2463,7 @@ struct SelectStationWindow : Window {
 		auto it = this->vscroll->GetScrolledItemFromWidget(_stations_nearby_list, pt.y, this, WID_JS_PANEL, WidgetDimensions::scaled.framerect.top);
 		const typename T::StationType *st = it == _stations_nearby_list.end() || *it == NEW_STATION ? nullptr : T::StationType::Get(*it);
 		if constexpr (std::is_same_v<typename T::StationType, Waypoint>) SetViewportCatchmentSpecializedStation<typename T::StationType>(st, true);
-		else citymania::SetSelectedStationToJoin(*it);
+		else citymania::SetSelectedStationToJoin(st ? st->index : StationID::Invalid());
 	}
 };
 

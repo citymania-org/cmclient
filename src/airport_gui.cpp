@@ -41,6 +41,7 @@
 #include "table/strings.h"
 
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_highlight.hpp"
 #include "citymania/cm_station_gui.hpp"
 
 #include "safeguards.h"
@@ -68,11 +69,7 @@ void CcBuildAirport(Commands, const CommandCost &result, TileIndex tile)
  */
 static void PlaceAirport(TileIndex tile)
 {
-	if (citymania::UseImprovedStationJoin()) {
-		citymania::PlaceAirport(tile);
-		return;
-	}
-
+	NOT_REACHED();  // CityMania uses tools
 	if (_selected_airport_index == -1) return;
 
 	uint8_t airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
@@ -133,7 +130,8 @@ struct BuildAirToolbarWindow : Window {
 	{
 		switch (widget) {
 			case WID_AT_AIRPORT:
-				if (HandlePlacePushButton(this, WID_AT_AIRPORT, SPR_CURSOR_AIRPORT, HT_RECT, CM_DDSP_BUILD_AIRPORT)) {
+				// if (HandlePlacePushButton(this, WID_AT_AIRPORT, SPR_CURSOR_AIRPORT, HT_RECT, CM_DDSP_BUILD_AIRPORT)) {
+				if (citymania::HandlePlacePushButton(this, WID_AT_AIRPORT, std::make_unique<citymania::AirportBuildTool>())) {
 					ShowBuildAirportPicker(this);
 					this->last_user_action = widget;
 				}

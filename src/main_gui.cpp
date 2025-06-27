@@ -81,13 +81,6 @@ bool HandlePlacePushButton(Window *w, WidgetID widget, CursorID cursor, HighLigh
 	}
 
 	SetObjectToPlace(cursor, PAL_NONE, mode, w->window_class, w->window_number, cm_process);
-	// if (cm_process == DDSP_BUILD_STATION) {
-	// 	if (citymania::UseImprovedStationJoin()) {
-	// 		citymania::SetActivePreview(std::make_unique<citymania::StationPreview>());
-	// 	} else {
-	// 		citymania::SetActivePreview(std::make_unique<citymania::VanillaStationPreview>());
-	// 	}
-	// }
 	w->LowerWidget(widget);
 	return true;
 }
