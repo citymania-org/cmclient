@@ -243,7 +243,7 @@ struct StatusBarWindow : Window {
 		this->SetWidgetDirty(WID_S_LEFT);
 	}};
 
-	TimeoutTimer<TimerWindow> cm_epm_interval = {std::chrono::seconds(1), [this]() {
+	IntervalTimer<TimerWindow> cm_epm_interval = {std::chrono::seconds(1), [this](uint) {
 		this->SetWidgetDirty(CM_WID_S_APM);
 	}};
 };
