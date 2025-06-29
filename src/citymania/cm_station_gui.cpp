@@ -1364,16 +1364,17 @@ bool AirportBuildTool::RemoveHandler::Execute(TileArea area) {
 
 // SizedPlacementHandler
 up<Command> AirportBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, StationID to_join) {
-    // STR_ERROR_CAN_T_BUILD_AIRPORT_HERE,
     byte airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
     byte layout = _selected_airport_layout;
-    return make_up<cmd::BuildAirport>(
+    auto cmd = make_up<cmd::BuildAirport>(
         tile,
         airport_type,
         layout,
         StationBuildTool::station_to_join,
         true
     );
+    cmd->with_error(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE);
+    return cmd;
 }
 
 bool AirportBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {

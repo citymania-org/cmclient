@@ -1650,7 +1650,7 @@ public:
 				if (feeder_mod == FeederOrderMod::LOAD) {
 					if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, 1, cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
-							.no_estimate()
+							.set_auto()
 							.post()) {
 						citymania::cmd::DeleteOrder(this->vehicle->tile, this->vehicle->index, 0)
 							.with_error(STR_ERROR_CAN_T_DELETE_THIS_ORDER)
@@ -1661,7 +1661,7 @@ public:
 				} else if (feeder_mod == FeederOrderMod::UNLOAD) { // still flushes the whole order table
 					if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders(), cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
-							.no_estimate()
+							.set_auto()
 							.post()) {
 						citymania::cmd::DeleteOrder(this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders() + (int)_networking - 2)
 							.with_error(STR_ERROR_CAN_T_DELETE_THIS_ORDER)

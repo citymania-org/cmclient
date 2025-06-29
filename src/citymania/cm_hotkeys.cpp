@@ -21,6 +21,7 @@
 #include "../safeguards.h"
 
 extern citymania::RailStationGUISettings _railstation; ///< Settings of the station builder GUI
+extern bool _generating_world;
 
 namespace citymania {
 
@@ -44,6 +45,7 @@ static void PurgeLastActions() {
 }
 
 void CountEffectiveAction() {
+    if (_generating_world) return;
     auto now = std::chrono::steady_clock::now();
     if (!_first_effective_tick) _first_effective_tick = now;
     _effective_actions++;
@@ -62,7 +64,7 @@ std::pair<uint32, uint32> GetEPM() {
     if (!_first_effective_tick) return std::make_pair(0, 0);
     PurgeLastActions();
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - *_first_effective_tick).count();
-    if (ms == 0) return std::make_pair(0, 0);
+    if (ms < 1000) return std::make_pair(0, _last_actions.size());
     return std::make_pair(_effective_actions * 60000 / ms,
                           _last_actions.size());
 }
