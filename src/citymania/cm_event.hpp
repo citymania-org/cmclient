@@ -8,6 +8,7 @@
 #include "../company_type.h"
 #include "../economy_type.h"
 #include "../industry_type.h"
+#include "../source_type.h"
 #include "../station_type.h"
 #include "../town_type.h"
 
