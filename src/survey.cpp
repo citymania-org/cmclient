@@ -130,6 +130,7 @@ static auto &GenericSettingTables()
 		_pathfinding_settings,
 		_script_settings,
 		_world_settings,
+		citymania::_settings,
 	};
 	return _generic_setting_tables;
 }

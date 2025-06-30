@@ -1141,7 +1141,7 @@ static Money DeliverGoods(int num_pieces, CargoType cargo_type, StationID dest, 
 	if (accepted_total > 0) {
 		if (accepted_ind != accepted_total)
 			citymania::Emit(citymania::event::CargoDeliveredToUnknown{cargo_type, accepted_total - accepted_ind, st});
-		citymania::Emit(citymania::event::CargoAccepted{company, cargo_type, accepted_total, st, profit, src_type, src});
+		citymania::Emit(citymania::event::CargoAccepted{company, cargo_type, accepted_total, st, profit, src});
 	}
 
 	return profit;

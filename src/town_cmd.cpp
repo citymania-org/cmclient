@@ -516,7 +516,7 @@ static void AdvanceSingleHouseConstruction(TileIndex tile)
 		ChangePopulation(Town::GetByTile(tile), hs->population);
 		ResetHouseAge(tile);
 
-		if (hs->building_flags & BUILDING_HAS_1_TILE)
+		if (hs->building_flags.Any(BUILDING_HAS_1_TILE))
 			citymania::Emit(citymania::event::HouseCompleted{town, tile, house_id, hs});
 	}
 	MarkTileDirtyByTile(tile);
