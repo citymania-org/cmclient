@@ -655,7 +655,7 @@ ToolGUIInfo RemoveAction<Handler>::GetGUIInfo() {
 template <ImplementsRemoveHandler Handler>
 void RemoveAction<Handler>::OnStationRemoved(const Station *) {}
 
-static HighlightMap PrepareHighilighMap(Station *st_join, ObjectHighlight &ohl, SpriteID pal, bool show_join_area, StationCoverageType sct, uint rad) {
+static HighlightMap PrepareHighilightMap(Station *st_join, ObjectHighlight &ohl, SpriteID pal, bool show_join_area, StationCoverageType sct, uint rad) {
     bool add_current = true;  // FIXME
     bool show_coverage = (rad > 0);
 
@@ -719,8 +719,8 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
 
     bool show_coverage = _settings_client.gui.station_show_coverage;
 
-    auto hlmap = PrepareHighilighMap(
-        Station::GetIfValid(StationBuildTool::station_to_join),
+    auto hlmap = PrepareHighilightMap(
+        UseImprovedStationJoin() ? Station::GetIfValid(StationBuildTool::station_to_join) : nullptr,
         ohl.value(),
         cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP,
         true,
@@ -843,7 +843,7 @@ ToolGUIInfo GetSelectedStationGUIInfo() {
     auto &ohl = StationBuildTool::active_highlight.value();
     // TODO maybe update or none at all?
     ohl.UpdateTiles();
-    auto hlmap = PrepareHighilighMap(
+    auto hlmap = PrepareHighilightMap(
         Station::GetIfValid(StationBuildTool::current_selected_station),
         ohl,
         CM_PALETTE_TINT_WHITE,
@@ -1009,7 +1009,6 @@ bool StationBuildTool::ExecuteBuildCommand(Thandler *handler, Tcallback callback
     // Vanilla joining behaviour
     auto cmd = handler->GetCommand(arg, INVALID_STATION);
     auto proc = [cmd=sp<Command>{std::move(cmd)}, callback](bool test, StationID to_join) -> bool {
-        StationBuildTool::station_to_join = to_join;
         if (!cmd) return false;
         auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
         if (station_cmd == nullptr) return false;
