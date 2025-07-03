@@ -3213,8 +3213,7 @@ struct IndustryCargoesWindow : public Window {
 				DropDownList lst;
 				Dimension d = GetLargestCargoIconSize();
 				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-					if (_settings_client.gui.developer < 1) {
-						lst.emplace_back(new DropDownListStringItem(cs->name, cs->Index(), false));
+					if (!_settings_client.gui.newgrf_developer_tools) {
 						lst.push_back(std::make_unique<DropDownListIconItem>(d, cs->GetCargoIcon(), PAL_NONE, cs->name, cs->Index(), false));
 						continue;
 					}
@@ -3236,7 +3235,7 @@ struct IndustryCargoesWindow : public Window {
 				for (IndustryType ind : _sorted_industry_types) {
 					const IndustrySpec *indsp = GetIndustrySpec(ind);
 					if (!indsp->enabled) continue;
-					if (_settings_client.gui.developer < 1) {
+					if (!_settings_client.gui.newgrf_developer_tools) {
 						lst.push_back(std::make_unique<DropDownListStringItem>(indsp->name, ind, false));
 						continue;
 					}
