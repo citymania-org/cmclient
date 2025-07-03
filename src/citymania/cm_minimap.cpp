@@ -28,6 +28,7 @@
 
 #include <bitset>
 
+#include "cm_colour.hpp"
 #include "cm_hotkeys.hpp"
 #include "cm_minimap.hpp"
 
@@ -854,10 +855,12 @@ inline uint32 SmallMapWindow::GetTileColours(const TileArea &ta) const
 					 * This has the highest priority above any value in _tiletype_importance. */
 					IndustryType type = Industry::GetByTile(ti)->type;
 					if (_legend_from_industries[_industry_to_list_pos[type]].show_on_map) {
-						if (type == _smallmap_industry_highlight) {
-							if (_smallmap_industry_highlight_state) return MKCOLOUR_XXXX(PC_WHITE);
+						auto map_colour = GetIndustrySpec(type)->map_colour;
+						if (type == _smallmap_industry_highlight && _smallmap_industry_highlight_state) {
+							Debug(misc, 0, "BLINK {}", map_colour);
+							return MKCOLOUR_XXXX(GetBlinkColour(map_colour));
 						} else {
-							return GetIndustrySpec(type)->map_colour * 0x01010101;
+							return map_colour * 0x01010101;
 						}
 					}
 					/* Otherwise make it disappear */
@@ -1431,7 +1434,8 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 						SetDParam(0, tbl->legend);
 						SetDParam(1, Industry::GetIndustryTypeCount(tbl->type));
 						if (tbl->show_on_map && tbl->type == _smallmap_industry_highlight) {
-							legend_colour = _smallmap_industry_highlight_state ? PC_WHITE : PC_BLACK;
+							auto mc = GetIndustrySpec(tbl->type)->map_colour;
+							legend_colour = _smallmap_industry_highlight_state ? GetBlinkColour(mc) : mc;
 						}
 						[[ fallthrough ]];
 
