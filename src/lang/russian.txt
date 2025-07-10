@@ -6425,19 +6425,19 @@ CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Стать зр
 
 CM_STR_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT                           :{BLACK}Чертежи рельсов (копировать-вставить)
 
-CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL                            :Ctrl+click: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_SHIFT                           :Shift+click: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL_SHIFT                      :Ctrl+Shift+lick: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT                             :Alt+Click: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_SHIFT                       :Alt+Shift+click: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_CTRL                        :Ctrl+Alt+click: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_NONE                     :ничего не делать
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FULL_LOAD_ANY            :Полная загрузка любым грузом
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_TRANSFER_CARGO           :Передать груз
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_UNLOAD_ALL               :Выгрузит весь груз
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_LOAD              :Загрузка фидера (заменяет первое задание)
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_UNLOAD            :Разгрузка фидера (заменяет последнее задание)
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_NO_LOAD                  :Ничего не загружать
+CM_STR_CONFIG_SETTING_STATION_MOD_CTRL                          :Ctrl+click по станции: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_SHIFT                         :Shift+click по станции: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_CTRL_SHIFT                    :Ctrl+Shift+click по станции: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT                           :Alt+Click по станции: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT_SHIFT                     :Alt+Shift+click по станции: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT_CTRL                      :Ctrl+Alt+click по станции: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_NONE                   :ничего не делать
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FULL_LOAD_ANY          :Полная загрузка любым грузом
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_TRANSFER_CARGO         :Передать груз
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_UNLOAD_ALL             :Выгрузит весь груз
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FEEDER_LOAD            :Загрузка фидера (заменяет первое задание)
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FEEDER_UNLOAD          :Разгрузка фидера (заменяет последнее задание)
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_NO_LOAD                :Ничего не загружать
 
 CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS                     :Оставлять инструмент строительства депо открытым после использования: {STRING}
 CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS_HELPTEXT            :Оставлять инструмент строительства депо открытым после использования (поведение инвертируется нажанием Fn).

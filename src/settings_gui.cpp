@@ -2159,12 +2159,15 @@ static SettingsContainer &GetSettingsTree()
 				orders->Add(new SettingEntry("gui.new_nonstop"));
 				orders->Add(new SettingEntry("gui.quick_goto"));
 				orders->Add(new SettingEntry("gui.stop_location"));
-				orders->Add(new SettingEntry("gui.cm_ctrl_order_mod"));
-				orders->Add(new SettingEntry("gui.cm_shift_order_mod"));
-				orders->Add(new SettingEntry("gui.cm_ctrl_shift_order_mod"));
-				orders->Add(new SettingEntry("gui.cm_alt_order_mod"));
-				orders->Add(new SettingEntry("gui.cm_alt_shift_order_mod"));
-				orders->Add(new SettingEntry("gui.cm_alt_ctrl_order_mod"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_shift_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_shift_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_shift_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_ctrl_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_depot_mod"));
+				orders->Add(new SettingEntry("gui.cm_shift_depot_mod"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_shift_depot_mod"));
 			}
 		}
 
