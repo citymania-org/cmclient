@@ -48,7 +48,13 @@ DiagDirection AutodetectRoadObjectDirection(TileIndex tile, Point pt, RoadType r
 DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area, Point pt, RoadType roadtype);
 DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt);
 void SetSelectedStationToJoin(StationID station_id);
-void ResetJoinStationHighlight();
+void ResetSelectedStationToJoin();
+
+void SetHighlightCoverageStation(Station *station, bool sel);
+bool IsHighlightCoverageStation(const Station *station);
+
+bool HasSelectedStationHighlight();
+ToolGUIInfo GetSelectedStationGUIInfo();
 
 
 struct OverlayParams {
@@ -177,8 +183,6 @@ public:
 class StationBuildTool : public Tool {
 public:
     static StationID station_to_join;
-    static StationID current_selected_station;
-    static std::optional<ObjectHighlight> active_highlight;
 
     class StationSelectHandler : public citymania::StationSelectHandler {
     public:
@@ -188,6 +192,7 @@ public:
         void SelectStationToJoin(StationID station_id) override { this->tool.SelectStationToJoin(station_id); };
     };
 
+    StationBuildTool();
     ~StationBuildTool() override = default;
     void SelectStationToJoin(StationID station_id) { StationBuildTool::station_to_join = station_id; };
     ToolGUIInfo GetGUIInfo() override {
@@ -354,8 +359,6 @@ private:
     enum class Mode { REMOVE, SELECT, SIZED };
     Mode mode;
 };
-
-ToolGUIInfo GetSelectedStationGUIInfo();
 
 } // namespace citymania
 

@@ -29,6 +29,7 @@
 #include "../town.h"
 #include "../viewport_func.h"
 #include "../viewport_kdtree.h"
+#include "../window_func.h"  // SetWindowDirty
 #include "../window_gui.h"
 #include "../zoom_type.h"
 #include "../zoom_func.h"
@@ -572,16 +573,50 @@ extern DiagDirection AddAutodetectionRotation(DiagDirection ddir);  // cm_highli
 //     if (this->station_to_join == station->index) this->station_to_join = INVALID_STATION;
 // }
 
+// Non-tool station highlight management (coverage area and picker selection)
+
+enum class StationHighlightMode {
+    None,
+    Picker,
+    Coverage
+};
+
+std::optional<ObjectHighlight> _active_highlight_object = std::nullopt;
+StationID _selected_station = INVALID_STATION;
+StationHighlightMode _station_highlight_mode = StationHighlightMode::None;
+
 void SetSelectedStationToJoin(StationID station_id) {
-    StationBuildTool::current_selected_station = station_id;
+    _selected_station = station_id;
     UpdateActiveTool();
 }
 
-void ResetJoinStationHighlight() {
-    StationBuildTool::active_highlight = std::nullopt;
-    SetSelectedStationToJoin(INVALID_STATION);
+void ResetSelectedStationToJoin() {
+    _station_highlight_mode = StationHighlightMode::None;
+    UpdateActiveTool();
 }
 
+void SetHighlightCoverageStation(Station *station, bool sel) {
+    if (_station_highlight_mode == StationHighlightMode::Picker) return;
+    SetWindowDirty(WC_STATION_VIEW, _selected_station);
+    if (station == nullptr || !sel) {
+        _station_highlight_mode = StationHighlightMode::None;
+    } else {
+        _selected_station = station->index;
+        _station_highlight_mode = StationHighlightMode::Coverage;
+    }
+    SetWindowDirty(WC_STATION_VIEW, _selected_station);
+    UpdateActiveTool();
+}
+
+static void ResetHighlightCoverageStation() {
+    SetHighlightCoverageStation(nullptr, false);
+}
+
+bool IsHighlightCoverageStation(const Station *station) {
+    if (_station_highlight_mode != StationHighlightMode::Coverage) return false;
+    if (station == nullptr) return false;
+    return station->index == _selected_station;
+}
 
 void OnStationRemoved(const Station *station) {
     // if (_last_built_station == station) _last_built_station = nullptr;
@@ -589,12 +624,24 @@ void OnStationRemoved(const Station *station) {
         StationBuildTool::station_to_join = INVALID_STATION;
         UpdateActiveTool();
     }
-    if (StationBuildTool::current_selected_station == station->index) {
-        StationBuildTool::current_selected_station = INVALID_STATION;
+    if (_selected_station == station->index) {
+        _selected_station = INVALID_STATION;
+        if (_station_highlight_mode == StationHighlightMode::Coverage) {
+            _station_highlight_mode = StationHighlightMode::None;
+            SetWindowDirty(WC_STATION_VIEW, _selected_station);
+        }
         UpdateActiveTool();
     }
     // TODO?
     // if (GetActiveTool() != nullptr) GetActiveTool()->OnStationRemoved(station);
+}
+
+static void SetActiveHighlightObject(std::optional<ObjectHighlight> &ohl) {
+    _active_highlight_object = ohl;
+    if (_active_highlight_object.has_value()) _active_highlight_object->UpdateTiles();
+    if (_station_highlight_mode == StationHighlightMode::Coverage)
+        SetWindowDirty(WC_STATION_VIEW, _selected_station);
+    _station_highlight_mode = StationHighlightMode::Picker;
 }
 
 void AbortStationPlacement() {
@@ -602,6 +649,80 @@ void AbortStationPlacement() {
     // SetHighlightStationToJoin(station=nullptr, with_area=false);
 }
 
+bool HasSelectedStationHighlight() {
+    return _station_highlight_mode != StationHighlightMode::None;
+}
+
+static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectHighlight> ohl, SpriteID pal, bool show_join_area, bool show_coverage, StationCoverageType sct, uint rad) {
+    bool add_current = true;  // FIXME
+
+    auto hlmap = ohl.has_value() ? ohl->GetHighlightMap(pal) : HighlightMap{};
+    TileArea join_area;
+    std::set<TileIndex> coverage_area;
+
+    if (show_join_area && st_join != nullptr) {
+        join_area = GetStationJoinArea(st_join->index);
+        hlmap.AddTileArea(join_area, CM_PALETTE_TINT_CYAN);
+    }
+
+    if (show_coverage && st_join != nullptr) {
+        // Add joining station coverage
+        for (auto t : st_join->catchment_tiles) {
+            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
+            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
+            coverage_area.insert(t);
+        }
+    }
+
+    auto area = ohl.has_value() ? ohl->GetArea() : std::nullopt;
+    if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
+    std::optional<TileArea> rad_area = std::nullopt;
+    if (area.has_value()) {
+        auto xarea = area.value();
+        xarea.Expand(rad);
+        xarea.ClampToMap();
+        rad_area = xarea;
+    }
+    if (show_coverage && add_current && rad_area.has_value()) {
+        // Add current station coverage
+        for (auto t : rad_area.value()) {
+            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
+            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
+            coverage_area.insert(t);
+        }
+    }
+
+    if (show_coverage) {
+        hlmap.AddTilesBorder(coverage_area, CM_PALETTE_TINT_WHITE);
+    }
+
+    if (st_join != nullptr) {
+        // Highlight joining station blue
+        TileArea ta(TileXY(st_join->rect.left, st_join->rect.top), TileXY(st_join->rect.right, st_join->rect.bottom));
+        for (TileIndex t : ta) {
+            if (!IsTileType(t, MP_STATION) || GetStationIndex(t) != st_join->index) continue;
+            hlmap.Add(t, ObjectTileHighlight::make_struct_tint(CM_PALETTE_TINT_BLUE));
+        }
+    }
+
+    return hlmap;
+}
+
+ToolGUIInfo GetSelectedStationGUIInfo() {
+    if (_station_highlight_mode == StationHighlightMode::None) return {};
+    auto st = Station::GetIfValid(_selected_station);
+
+    auto hlmap = PrepareHighilightMap(
+        st,
+        _station_highlight_mode == StationHighlightMode::Picker ? _active_highlight_object : std::nullopt,
+        CM_PALETTE_TINT_WHITE,
+        false,
+        _station_highlight_mode == StationHighlightMode::Coverage,
+        SCT_ALL,
+        0
+    );
+    return {hlmap, {}, {}};
+}
 
 // --- Action base class ---
 void Action::OnStationRemoved(const Station *) {}
@@ -651,62 +772,6 @@ ToolGUIInfo RemoveAction<Handler>::GetGUIInfo() {
 template <ImplementsRemoveHandler Handler>
 void RemoveAction<Handler>::OnStationRemoved(const Station *) {}
 
-static HighlightMap PrepareHighilightMap(Station *st_join, ObjectHighlight &ohl, SpriteID pal, bool show_join_area, StationCoverageType sct, uint rad) {
-    bool add_current = true;  // FIXME
-    bool show_coverage = (rad > 0);
-
-    auto hlmap = ohl.GetHighlightMap(pal);
-    TileArea join_area;
-    std::set<TileIndex> coverage_area;
-
-    if (show_join_area && st_join != nullptr) {
-        join_area = GetStationJoinArea(st_join->index);
-        hlmap.AddTileArea(join_area, CM_PALETTE_TINT_CYAN);
-    }
-
-    if (show_coverage && st_join != nullptr) {
-        // Add joining station coverage
-        for (auto t : st_join->catchment_tiles) {
-            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
-            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
-            coverage_area.insert(t);
-        }
-    }
-
-    auto area = ohl.GetArea();
-    if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
-    std::optional<TileArea> rad_area = std::nullopt;
-    if (area.has_value()) {
-        auto xarea = area.value();
-        xarea.Expand(rad);
-        xarea.ClampToMap();
-        rad_area = xarea;
-    }
-    if (show_coverage && add_current && rad_area.has_value()) {
-        // Add current station coverage
-        for (auto t : rad_area.value()) {
-            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
-            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
-            coverage_area.insert(t);
-        }
-    }
-
-    if (show_coverage) {
-        hlmap.AddTilesBorder(coverage_area, CM_PALETTE_TINT_WHITE);
-    }
-
-    if (st_join != nullptr) {
-        // Highlight joining station blue
-        TileArea ta(TileXY(st_join->rect.left, st_join->rect.top), TileXY(st_join->rect.right, st_join->rect.bottom));
-        for (TileIndex t : ta) {
-            if (!IsTileType(t, MP_STATION) || GetStationIndex(t) != st_join->index) continue;
-            hlmap.Add(t, ObjectTileHighlight::make_struct_tint(CM_PALETTE_TINT_BLUE));
-        }
-    }
-
-    return hlmap;
-}
-
 ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, up<Command> cmd, StationCoverageType sct, uint rad) {
     if (!cmd || !ohl.has_value()) return {};
     ohl.value().UpdateTiles();
@@ -720,8 +785,9 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
         ohl.value(),
         cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP,
         true,
+        show_coverage,
         sct,
-        show_coverage ? rad : 0
+        rad
     );
 
     // Prepare build overlay
@@ -832,22 +898,6 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
     }
 
     return {hlmap, data, cost};
-}
-
-ToolGUIInfo GetSelectedStationGUIInfo() {
-    if (!StationBuildTool::active_highlight.has_value()) return {};
-    auto &ohl = StationBuildTool::active_highlight.value();
-    // TODO maybe update or none at all?
-    ohl.UpdateTiles();
-    auto hlmap = PrepareHighilightMap(
-        Station::GetIfValid(StationBuildTool::current_selected_station),
-        ohl,
-        CM_PALETTE_TINT_WHITE,
-        false,
-        SCT_ALL,
-        0
-    );
-    return {hlmap, {}, {}};
 }
 
 // --- SizedPlacementAction ---
@@ -972,8 +1022,6 @@ void StationSelectAction<Handler>::OnStationRemoved(const Station *station) {
 // --- StationBuildTool ---
 
 StationID StationBuildTool::station_to_join = INVALID_STATION;
-StationID StationBuildTool::current_selected_station = INVALID_STATION;
-std::optional<ObjectHighlight> StationBuildTool::active_highlight = std::nullopt;
 
 TileArea GetCommandArea(const up<Command> &cmd) {
     if (auto rail_cmd = dynamic_cast<cmd::BuildRailStation *>(cmd.get())) {
@@ -994,11 +1042,15 @@ TileArea GetCommandArea(const up<Command> &cmd) {
     NOT_REACHED();
 }
 
+
+StationBuildTool::StationBuildTool() {
+    ResetHighlightCoverageStation();
+}
+
 template<typename Thandler, typename Tcallback, typename Targ>
 bool StationBuildTool::ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg) {
     if (UseImprovedStationJoin()) {
         auto cmd = handler->GetCommand(arg, StationBuildTool::station_to_join);
-        StationBuildTool::active_highlight = std::nullopt;
         return cmd ? cmd->post(callback) : false;
     }
 
@@ -1012,16 +1064,16 @@ bool StationBuildTool::ExecuteBuildCommand(Thandler *handler, Tcallback callback
         if (test) {
             return cmd->test().Succeeded();
         } else {
-            StationBuildTool::active_highlight = std::nullopt;
+            ResetSelectedStationToJoin();
             return cmd->post(callback);
         }
     };
 
     auto ohl = handler->GetObjectHighlight(arg);
     if (!ohl.has_value()) return false;
-    StationBuildTool::active_highlight = ohl;
     auto area = ohl->GetArea();
     if (!area.has_value()) return false;
+    SetActiveHighlightObject(ohl);
     ShowSelectStationIfNeeded(area.value(), proc);
     return true;
 }
@@ -1438,6 +1490,5 @@ template class DragNDropPlacementAction<RoadStopBuildTool::DragNDropPlacementHan
 
 template class RemoveAction<DockBuildTool::RemoveHandler>;
 template class SizedPlacementAction<DockBuildTool::SizedPlacementHandler>;
-
 
 } // namespace citymania

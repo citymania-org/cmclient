@@ -1452,7 +1452,7 @@ struct StationViewWindow : public Window {
 
 		extern const Station *_viewport_highlight_station;
 		this->SetWidgetDisabledState(WID_SV_CATCHMENT, st->facilities == FACIL_NONE);
-		this->SetWidgetLoweredState(WID_SV_CATCHMENT, _viewport_highlight_station == st);
+		this->SetWidgetLoweredState(WID_SV_CATCHMENT, citymania::IsHighlightCoverageStation(st));
 
 		this->DrawWidgets();
 
@@ -1946,7 +1946,8 @@ struct StationViewWindow : public Window {
 				break;
 
 			case WID_SV_CATCHMENT:
-				SetViewportCatchmentStation(Station::Get(this->window_number), !this->IsWidgetLowered(WID_SV_CATCHMENT));
+				citymania::SetHighlightCoverageStation(Station::Get(this->window_number), !this->IsWidgetLowered(WID_SV_CATCHMENT));
+				// SetViewportCatchmentStation(Station::Get(this->window_number), !this->IsWidgetLowered(WID_SV_CATCHMENT));
 				break;
 
 			case WID_SV_LOCATION:
@@ -2340,7 +2341,7 @@ struct SelectStationWindow : WindowPopup {
 	void Close([[maybe_unused]] int data = 0) override
 	{
 		if constexpr (std::is_same_v<T, Waypoint *>) SetViewportCatchmentSpecializedStation<T>(nullptr, true);
-		else citymania::ResetJoinStationHighlight();
+		else citymania::ResetSelectedStationToJoin();
 
 		_thd.freeze = false;
 		this->Window::Close();
