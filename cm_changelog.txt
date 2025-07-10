@@ -78,6 +78,8 @@ This is usable for any OpenTTD servers
 - Fixed measurement tooltips.
 - Fixed n-ice community login by Chucky and iSoSyS.
 - Show the number of hidden vehicles in buy and autoreplace windows.
+- Renamed cm_*_order_mod settings to cm_*_station_mod.
+- Added cm_ctrl_depot_mod, cm_shift_depot_mod, cm_ctrl_shift_depot_mod settings to configure modifier keys for depot orders.
 - Added a setting to disable activate-on-release behaviour of toolbar dropdown buttons.
 - Added Russian translation.
 
