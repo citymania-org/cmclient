@@ -540,33 +540,6 @@ void ObjectHighlight::AddTile(TileIndex tile, ObjectTileHighlight &&oh) {
     this->tiles.insert(std::make_pair(tile, std::move(oh)));
 }
 
-void ObjectHighlight::AddStationOverlayData(int w, int h, int rad, StationCoverageType sct) {
-    if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
-    auto production = citymania::GetProductionAroundTiles(this->tile, w, h, rad);
-    bool has_header = false;
-    for (CargoID i = 0; i < NUM_CARGO; i++) {
-        if (production[i] == 0) continue;
-
-        switch (sct) {
-            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CC_PASSENGERS)) continue; break;
-            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CC_PASSENGERS)) continue; break;
-            case SCT_ALL: break;
-            default: NOT_REACHED();
-        }
-
-        const CargoSpec *cs = CargoSpec::Get(i);
-        if (cs == nullptr) continue;
-
-        if (!has_header) {
-            this->overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES));
-            has_header = true;
-        }
-        SetDParam(0, i);
-        SetDParam(1, production[i] >> 8);
-        this->overlay_data.emplace_back(1, cs->GetCargoIcon(), GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO));
-    }
-}
-
 void ObjectHighlight::UpdateTiles() {
     this->tiles.clear();
     this->sprites.clear();
@@ -630,7 +603,6 @@ void ObjectHighlight::UpdateTiles() {
                 tile_track += tile_delta ^ TileDiffXY(1, 1); // perpendicular to tile_delta
             } while (--numtracks);
 
-            this->AddStationOverlayData(ta.w, ta.h, CA_TRAIN, SCT_ALL);
             break;
         }
         case Type::ROAD_STOP: {
@@ -652,9 +624,6 @@ void ObjectHighlight::UpdateTiles() {
             for (TileIndex tile : ta) {
                 this->AddTile(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck, this->road_stop_spec_class, this->road_stop_spec_index));
             }
-            auto sct = (this->is_truck ? SCT_NON_PASSENGERS_ONLY : SCT_PASSENGERS_ONLY);
-            auto rad = (this->is_truck ? CA_BUS : CA_TRUCK);
-            this->AddStationOverlayData(ta.w, ta.h, rad, sct);
             break;
         }
 
@@ -688,7 +657,6 @@ void ObjectHighlight::UpdateTiles() {
             for (AirportTileTableIterator iter(as->table[this->airport_layout], this->tile); iter != INVALID_TILE; ++iter) {
                 this->AddTile(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx()));
             }
-            this->AddStationOverlayData(w, h, as->catchment, SCT_ALL);
             break;
         }
         case Type::BLUEPRINT:
@@ -816,44 +784,6 @@ void ObjectHighlight::UpdateTiles() {
         default:
             NOT_REACHED();
     }
-}
-
-void ObjectHighlight::UpdateOverlay() {
-    HideBuildInfoOverlay();
-    auto w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
-    if (w == nullptr) return;
-    auto vp = IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y);
-    if (vp == nullptr) return;
-
-    if (this->tile == INVALID_TILE) {
-        HideBuildInfoOverlay();
-        return;
-    }
-
-    auto err = this->cost.GetErrorMessage();
-    // auto extra_err = this->cost.GetExtraErrorMessage();
-    bool no_money = (err == STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY);
-    SetDParam(0, this->cost.GetCost());
-    this->overlay_data.emplace_back(0, PAL_NONE, GetString(no_money ? CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY : CM_STR_BUILD_INFO_OVERLAY_COST_OK));
-    // if (this->cost.Failed() && err != STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY) {
-    //     if (err == INVALID_STRING_ID) {
-    //         this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN));
-    //     } else {
-    //         SetDParam(0, err);
-    //         this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR));
-    //     }
-    //     if (extra_err != INVALID_STRING_ID) {
-    //         SetDParam(0, extra_err);
-    //         this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR));
-    //     }
-    // }
-
-    // Point pt = RemapCoords2(TileX(this->tile) * TILE_SIZE + TILE_SIZE / 2, TileY(this->tile) * TILE_SIZE + TILE_SIZE / 2);
-    Point pt = RemapCoords2(TileX(this->tile) * TILE_SIZE, TileY(this->tile) * TILE_SIZE);
-    pt.x = UnScaleByZoom(pt.x - vp->virtual_left, vp->zoom) + vp->left;
-    pt.y = UnScaleByZoom(pt.y - vp->virtual_top, vp->zoom) + vp->top;
-    // this->overlay_pos = pt;
-    ShowBuildInfoOverlay(pt.x, pt.y, this->overlay_data);
 }
 
 void ObjectHighlight::MarkDirty() {
@@ -2249,7 +2179,6 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
         _thd.cm.MarkDirty();
         _thd.cm = _thd.cm_new;
         _thd.cm.UpdateTiles();
-        _thd.cm.UpdateOverlay();
         _thd.cm.MarkDirty();
     }
     return new_drawstyle;
@@ -2427,7 +2356,6 @@ PaletteID GetTreeShadePal(TileIndex tile) {
 }
 
 ActiveTool _at;
-
 
 static void ResetVanillaHighlight() {
     if (_thd.window_class != WC_INVALID) {

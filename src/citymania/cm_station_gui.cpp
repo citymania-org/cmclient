@@ -101,30 +101,9 @@ void MarkTileAreaDirty(const TileArea &ta) {
             p2.y + MAX_TILE_EXTENT_BOTTOM);
 }
 
-static void UpdateHiglightJoinArea(const Station *station) {
-    if (!station) {
-        MarkTileAreaDirty(_highlight_join_area);
-        _highlight_join_area.tile = INVALID_TILE;
-        return;
-    }
-    // auto &r = _station_to_join->rect;
-    // auto d = (int)_settings_game.station.station_spread - 1;
-    // TileArea ta(
-    //     TileXY(std::max<int>(r.right - d, 0),
-    //            std::max<int>(r.bottom - d, 0)),
-    //     TileXY(std::min<int>(r.left + d, Map::SizeX() - 1),
-    //            std::min<int>(r.top + d, Map::SizeY() - 1))
-    // );
-    // if (_highlight_join_area.tile == ta.tile &&
-    //     _highlight_join_area.w == ta.w &&
-    //     _highlight_join_area.h == ta.h) return;
-    // _highlight_join_area = ta;
-    MarkTileAreaDirty(_highlight_join_area);
-}
-
-static void MarkCoverageAreaDirty(const Station *station) {
-    MarkTileAreaDirty(station->catchment_tiles);
-}
+// static void MarkCoverageAreaDirty(const Station *station) {
+//     MarkTileAreaDirty(station->catchment_tiles);
+// }
 
 void MarkCoverageHighlightDirty() {
     MarkCatchmentTilesDirty();
@@ -657,7 +636,7 @@ bool HasSelectedStationHighlight() {
     return _station_highlight_mode != StationHighlightMode::None;
 }
 
-static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectHighlight> ohl, SpriteID pal, bool show_join_area, bool show_coverage, StationCoverageType sct, uint rad) {
+static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectHighlight> ohl, SpriteID pal, bool show_join_area, bool show_coverage, uint rad) {
     bool add_current = true;  // FIXME
 
     auto hlmap = ohl.has_value() ? ohl->GetHighlightMap(pal) : HighlightMap{};
@@ -722,7 +701,6 @@ ToolGUIInfo GetSelectedStationGUIInfo() {
         CM_PALETTE_TINT_WHITE,
         false,
         _station_highlight_mode == StationHighlightMode::Coverage,
-        SCT_ALL,
         0
     );
     return {hlmap, {}, {}};
@@ -790,7 +768,6 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
         cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP,
         true,
         show_coverage,
-        sct,
         rad
     );
 
@@ -1421,7 +1398,7 @@ up<Command> AirportBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, 
         tile,
         airport_type,
         layout,
-        StationBuildTool::station_to_join,
+        to_join,
         true
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE);
