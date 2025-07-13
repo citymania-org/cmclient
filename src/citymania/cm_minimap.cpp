@@ -857,7 +857,6 @@ inline uint32 SmallMapWindow::GetTileColours(const TileArea &ta) const
 					if (_legend_from_industries[_industry_to_list_pos[type]].show_on_map) {
 						auto map_colour = GetIndustrySpec(type)->map_colour;
 						if (type == _smallmap_industry_highlight && _smallmap_industry_highlight_state) {
-							Debug(misc, 0, "BLINK {}", map_colour);
 							return MKCOLOUR_XXXX(GetBlinkColour(map_colour));
 						} else {
 							return map_colour * 0x01010101;
