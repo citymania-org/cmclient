@@ -521,6 +521,7 @@ struct BuildRoadToolbarWindow : Window {
 				if (citymania::HandleStationPlacePushButton(this, WID_ROT_BUS_STATION, std::make_shared<citymania::RoadStationPreview>(ROADSTOP_BUS))) {
 					ShowRVStationPicker(this, ROADSTOP_BUS);
 					this->last_started_action = widget;
+					if (!this->IsWidgetLowered(WID_ROT_BUS_STATION))this->ToggleWidgetLoweredState(WID_ROT_BUS_STATION);
 				}
 				break;
 			}
@@ -529,6 +530,7 @@ struct BuildRoadToolbarWindow : Window {
 				if (citymania::HandleStationPlacePushButton(this, WID_ROT_TRUCK_STATION, std::make_shared<citymania::RoadStationPreview>(ROADSTOP_TRUCK))) {
 					ShowRVStationPicker(this, ROADSTOP_TRUCK);
 					this->last_started_action = widget;
+					if (!this->IsWidgetLowered(WID_ROT_TRUCK_STATION)) this->ToggleWidgetLoweredState(WID_ROT_TRUCK_STATION);
 				}
 				break;
 
