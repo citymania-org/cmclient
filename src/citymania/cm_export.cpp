@@ -155,7 +155,7 @@ void WriteHouseSpecInfo(JsonWriter &j) {
         j.kv("name", hs->building_name);
         j.kv("mail_generation", hs->mail_generation);
         j.kv("flags", hs->building_flags.base());
-        j.kv("availability", hs->building_availability);
+        j.kv("availability", hs->building_availability.base());
         j.kv("enabled", hs->enabled);
         j.end_dict();
     }
@@ -167,11 +167,11 @@ void WriteHouseSpecInfo(JsonWriter &j) {
         j.kv("ground_pal", d.ground.pal);
         j.kv("building_sprite", d.building.sprite);
         j.kv("building_pal", d.building.pal);
-        j.kv("subtile_x", d.subtile_x);
-        j.kv("subtile_y", d.subtile_y);
-        j.kv("width", d.width);
-        j.kv("height", d.height);
-        j.kv("dz", d.dz);
+        j.kv("origin_x", d.origin.x);
+        j.kv("origin_y", d.origin.y);
+        j.kv("extent_x", d.extent.x);
+        j.kv("extent_y", d.extent.y);
+        j.kv("extent_z", d.extent.z);
         j.kv("draw_proc", d.draw_proc);
         j.end_dict();
     }
@@ -190,8 +190,8 @@ void WriteCargoSpecInfo(JsonWriter &j) {
         JKV(j, cs->weight);
         JKV(j, cs->multiplier);
         JKV(j, cs->is_freight);
-        JKV(j, cs->legend_colour);
-        JKV(j, cs->rating_colour);
+        JKV(j, cs->legend_colour.p);
+        JKV(j, cs->rating_colour.p);
         JKV(j, cs->sprite);
         j.ks("name", cs->name);
         j.ks("name_single", cs->name_single);
@@ -235,7 +235,7 @@ void WritePaletteInfo(JsonWriter &j) {
         j.f << std::endl << "[";
         for (auto k = 0; k < 8; k++) {
             if (k != 0) j.f << ", ";
-            j.f << (int)GetColourGradient((Colours)i, (ColourShade)k) << " ";
+            j.f << GetColourGradient((Colours)i, (ColourShade)k).p << " ";
         }
         j.f << "]";
     }

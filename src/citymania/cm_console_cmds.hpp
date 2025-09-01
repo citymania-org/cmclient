@@ -3,7 +3,7 @@
 
 namespace citymania {
 
-bool ConExport(uint8_t argc, char *argv[]);
+bool ConExport(std::span<std::string_view> argv);
 
 } // namespace citymania
 

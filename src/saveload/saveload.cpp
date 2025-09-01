@@ -2967,13 +2967,8 @@ static std::optional<SavePreset> ParseSavePreset(const std::string &str)
             if (delimiter_pos == std::string::npos) return SavePreset{&slf, slf.default_compression};
 
             auto level_str = str.substr(delimiter_pos + 1);
-            int level;
-            try{
-                level = stoi(level_str);
-            } catch(const std::exception &e) {
-                /* Can't parse compression level, set it out ouf bounds to fail later */
-                level = (int)slf.max_compression + 1;
-            }
+			/* If can't parse compression level, set it out ouf bounds to fail later */
+            int level = ParseInteger<int>(level_str).value_or((int)slf.max_compression + 1);
 
             if (level != Clamp<int>(level, slf.min_compression, slf.max_compression)) {
                 /* Invalid compression level, show the error and use default level */
