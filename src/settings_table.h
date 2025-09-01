@@ -42,6 +42,6 @@ namespace citymania {
 
 static const uint GAME_DIFFICULTY_NUM = 18;
 extern const std::array<std::string, GAME_DIFFICULTY_NUM> _old_diff_settings;
-extern uint16_t _old_diff_custom[GAME_DIFFICULTY_NUM];
+extern std::array<uint16_t, GAME_DIFFICULTY_NUM> _old_diff_custom;
 
 #endif /* SETTINGS_TABLE_H */

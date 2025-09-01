@@ -12,6 +12,7 @@
 #ifndef NEWGRF_ROADSTATION_H
 #define NEWGRF_ROADSTATION_H
 
+#include "bridge_type.h"
 #include "newgrf_animation_type.h"
 #include "newgrf_spritegroup.h"
 #include "newgrf_badge_type.h"
@@ -20,6 +21,8 @@
 #include "newgrf_commons.h"
 #include "newgrf_town.h"
 #include "road.h"
+
+struct TileInfo;
 
 /** The maximum amount of roadstops a single GRF is allowed to add */
 static const int NUM_ROADSTOPS_PER_GRF = UINT16_MAX - 1;
@@ -34,15 +37,6 @@ enum RoadStopClassID : uint16_t {
 	ROADSTOP_CLASS_MAX = UINT16_MAX, ///< Maximum number of classes.
 };
 DECLARE_INCREMENT_DECREMENT_OPERATORS(RoadStopClassID)
-
-/* Some Triggers etc. */
-enum RoadStopRandomTrigger : uint8_t {
-	RSRT_NEW_CARGO,       ///< Trigger roadstop on arrival of new cargo.
-	RSRT_CARGO_TAKEN,     ///< Trigger roadstop when cargo is completely taken.
-	RSRT_VEH_ARRIVES,     ///< Trigger roadstop when road vehicle arrives.
-	RSRT_VEH_DEPARTS,     ///< Trigger roadstop when road vehicle leaves.
-	RSRT_VEH_LOADS,       ///< Trigger roadstop when road vehicle loads.
-};
 
 /**
  * Various different options for availability, restricting
@@ -103,13 +97,13 @@ struct RoadStopScopeResolver : public ScopeResolver {
 	}
 
 	uint32_t GetRandomBits() const override;
-	uint32_t GetTriggers() const override;
+	uint32_t GetRandomTriggers() const override;
 
 	uint32_t GetVariable(uint8_t variable, [[maybe_unused]] uint32_t parameter, bool &available) const override;
 };
 
 /** Road stop resolver. */
-struct RoadStopResolverObject : public ResolverObject {
+struct RoadStopResolverObject : public SpecializedResolverObject<StationRandomTriggers> {
 	RoadStopScopeResolver roadstop_scope; ///< The stop scope resolver.
 	std::optional<TownScopeResolver> town_scope = std::nullopt; ///< The town scope resolver (created on the first call).
 
@@ -129,19 +123,11 @@ struct RoadStopResolverObject : public ResolverObject {
 	}
 
 	TownScopeResolver *GetTown();
-
-	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
 };
 
 /** Road stop specification. */
 struct RoadStopSpec : NewGRFSpecBase<RoadStopClassID> {
-	/**
-	 * Properties related the the grf file.
-	 * NUM_CARGO real cargo plus three pseudo cargo sprite groups.
-	 * Used for obtaining the sprite offset of custom sprites, and for
-	 * evaluating callbacks.
-	 */
-	VariableGRFFileProps grf_prop;
+	CargoGRFFileProps grf_prop; ///< Link to NewGRF
 	StringID name;              ///< Name of this stop
 
 	RoadStopAvailabilityType stop_type = ROADSTOPTYPE_ALL;
@@ -151,14 +137,12 @@ struct RoadStopSpec : NewGRFSpecBase<RoadStopClassID> {
 
 	CargoTypes cargo_triggers = 0; ///< Bitmask of cargo types which cause trigger re-randomizing
 
-	AnimationInfo animation;
-
-	uint8_t bridge_height[6];             ///< Minimum height for a bridge above, 0 for none
-	uint8_t bridge_disallowed_pillars[6]; ///< Disallowed pillar flags for a bridge above
+	AnimationInfo<StationAnimationTriggers> animation;
 
 	uint8_t build_cost_multiplier = 16;  ///< Build cost multiplier per tile.
 	uint8_t clear_cost_multiplier = 16;  ///< Clear cost multiplier per tile.
 
+	std::array<BridgeableTileInfo, 6> bridgeable_info{}; ///< Per tile layout bridge information.
 	std::vector<BadgeID> badges;
 
 	/**
@@ -178,21 +162,22 @@ struct RoadStopSpec : NewGRFSpecBase<RoadStopClassID> {
 
 using RoadStopClass = NewGRFClass<RoadStopSpec, RoadStopClassID, ROADSTOP_CLASS_MAX>;
 
+std::optional<SpriteLayoutProcessor> GetRoadStopLayout(TileInfo *ti, const RoadStopSpec *spec, BaseStation *st, StationType type, int view, std::span<int32_t> regs100 = {});
 void DrawRoadStopTile(int x, int y, RoadType roadtype, const RoadStopSpec *spec, StationType type, int view);
 
-uint16_t GetRoadStopCallback(CallbackID callback, uint32_t param1, uint32_t param2, const RoadStopSpec *roadstopspec, BaseStation *st, TileIndex tile, RoadType roadtype, StationType type, uint8_t view);
+uint16_t GetRoadStopCallback(CallbackID callback, uint32_t param1, uint32_t param2, const RoadStopSpec *roadstopspec, BaseStation *st, TileIndex tile, RoadType roadtype, StationType type, uint8_t view, std::span<int32_t> regs100 = {});
 
 void AnimateRoadStopTile(TileIndex tile);
 uint8_t GetRoadStopTileAnimationSpeed(TileIndex tile);
 void TriggerRoadStopAnimation(BaseStation *st, TileIndex tile, StationAnimationTrigger trigger, CargoType cargo_type = INVALID_CARGO);
-void TriggerRoadStopRandomisation(Station *st, TileIndex tile, RoadStopRandomTrigger trigger, CargoType cargo_type = INVALID_CARGO);
+void TriggerRoadStopRandomisation(BaseStation *st, TileIndex tile, StationRandomTrigger trigger, CargoType cargo_type = INVALID_CARGO);
 
 bool GetIfNewStopsByType(RoadStopType rs, RoadType roadtype);
 bool GetIfClassHasNewStopsByType(const RoadStopClass *roadstopclass, RoadStopType rs, RoadType roadtype);
 bool GetIfStopIsForType(const RoadStopSpec *roadstopspec, RoadStopType rs, RoadType roadtype);
 
 const RoadStopSpec *GetRoadStopSpec(TileIndex t);
-int AllocateSpecToRoadStop(const RoadStopSpec *statspec, BaseStation *st, bool exec);
+std::optional<uint8_t> AllocateSpecToRoadStop(const RoadStopSpec *statspec, BaseStation *st, bool exec);
 void DeallocateSpecFromRoadStop(BaseStation *st, uint8_t specindex);
 void RoadStopUpdateCachedTriggers(BaseStation *st);
 

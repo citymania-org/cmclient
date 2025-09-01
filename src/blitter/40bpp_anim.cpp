@@ -27,7 +27,7 @@ static FBlitter_40bppAnim iFBlitter_40bppAnim;
 static const Colour _black_colour(0, 0, 0);
 
 
-void Blitter_40bppAnim::SetPixel(void *video, int x, int y, uint8_t colour)
+void Blitter_40bppAnim::SetPixel(void *video, int x, int y, PixelColour colour)
 {
 	if (_screen_disable_anim) {
 		Blitter_32bppOptimized::SetPixel(video, x, y, colour);
@@ -35,11 +35,11 @@ void Blitter_40bppAnim::SetPixel(void *video, int x, int y, uint8_t colour)
 		size_t y_offset = static_cast<size_t>(y) * _screen.pitch;
 		*((Colour *)video + x + y_offset) = _black_colour;
 
-		VideoDriver::GetInstance()->GetAnimBuffer()[((uint32_t *)video - (uint32_t *)_screen.dst_ptr) + x + y_offset] = colour;
+		VideoDriver::GetInstance()->GetAnimBuffer()[((uint32_t *)video - (uint32_t *)_screen.dst_ptr) + x + y_offset] = colour.p;
 	}
 }
 
-void Blitter_40bppAnim::DrawRect(void *video, int width, int height, uint8_t colour)
+void Blitter_40bppAnim::DrawRect(void *video, int width, int height, PixelColour colour)
 {
 	if (_screen_disable_anim) {
 		/* This means our output is not to the screen, so we can't be doing any animation stuff, so use our parent DrawRect() */
@@ -56,7 +56,7 @@ void Blitter_40bppAnim::DrawRect(void *video, int width, int height, uint8_t col
 
 		for (int i = width; i > 0; i--) {
 			*dst = _black_colour;
-			*anim = colour;
+			*anim = colour.p;
 			dst++;
 			anim++;
 		}
@@ -65,7 +65,7 @@ void Blitter_40bppAnim::DrawRect(void *video, int width, int height, uint8_t col
 	} while (--height);
 }
 
-void Blitter_40bppAnim::DrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8_t colour, int width, int dash)
+void Blitter_40bppAnim::DrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, PixelColour colour, int width, int dash)
 {
 	if (_screen_disable_anim) {
 		/* This means our output is not to the screen, so we can't be doing any animation stuff, so use our parent DrawRect() */
@@ -78,7 +78,7 @@ void Blitter_40bppAnim::DrawLine(void *video, int x, int y, int x2, int y2, int 
 
 	this->DrawLineGeneric(x, y, x2, y2, screen_width, screen_height, width, dash, [=](int x, int y) {
 		*((Colour *)video + x + y * _screen.pitch) = _black_colour;
-		*(anim + x + y * _screen.pitch) = colour;
+		*(anim + x + y * _screen.pitch) = colour.p;
 	});
 }
 
@@ -96,11 +96,11 @@ inline void Blitter_40bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 
 	/* src_px : each line begins with uint32_t n = 'number of bytes in this line',
 	 *          then n times is the Colour struct for this line */
-	const Colour *src_px = (const Colour *)(src->data + src->offset[zoom][0]);
+	const Colour *src_px = reinterpret_cast<const Colour *>(src->data + src->offset[0][zoom]);
 	/* src_n  : each line begins with uint32_t n = 'number of bytes in this line',
 	 *          then interleaved stream of 'm' and 'n' channels. 'm' is remap,
 	 *          'n' is number of bytes with the same alpha channel class */
-	const uint16_t *src_n  = (const uint16_t *)(src->data + src->offset[zoom][1]);
+	const uint16_t *src_n = reinterpret_cast<const uint16_t *>(src->data + src->offset[1][zoom]);
 
 	/* skip upper lines in src_px and src_n */
 	for (uint i = bp->skip_top; i != 0; i--) {
@@ -377,8 +377,11 @@ void Blitter_40bppAnim::DrawColourMappingRect(void *dst, int width, int height, 
 		const uint8_t *remap = GetNonSprite(pal, SpriteType::Recolour) + 1;
 		do {
 			for (int i = 0; i != width; i++) {
-				if (*anim == 0) *udst = MakeGrey(*udst);
-				*anim = remap[*anim];
+				if (*anim == 0) {
+					*udst = MakeGrey(*udst);
+				} else {
+					*anim = remap[*anim];
+				}
 				udst++;
 				anim++;
 			}
@@ -389,7 +392,7 @@ void Blitter_40bppAnim::DrawColourMappingRect(void *dst, int width, int height, 
 		const uint8_t *remap = GetNonSprite(pal, SpriteType::Recolour) + 1;
 		do {
 			for (int i = 0; i != width; i++) {
-				*anim = remap[*anim];
+				if (*anim != 0) *anim = remap[*anim];
 				anim++;
 			}
 			anim = anim - width + _screen.pitch;
@@ -397,9 +400,9 @@ void Blitter_40bppAnim::DrawColourMappingRect(void *dst, int width, int height, 
 	}
 }
 
-Sprite *Blitter_40bppAnim::Encode(const SpriteLoader::SpriteCollection &sprite, SpriteAllocator &allocator)
+Sprite *Blitter_40bppAnim::Encode(SpriteType sprite_type, const SpriteLoader::SpriteCollection &sprite, SpriteAllocator &allocator)
 {
-	return this->EncodeInternal<false>(sprite, allocator);
+	return this->EncodeInternal<false>(sprite_type, sprite, allocator);
 }
 
 
@@ -415,11 +418,11 @@ void Blitter_40bppAnim::CopyFromBuffer(void *video, const void *src, int width, 
 	uint8_t *anim_line = ((uint32_t *)video - (uint32_t *)_screen.dst_ptr) + anim_buf;
 
 	for (; height > 0; height--) {
-		memcpy(dst, usrc, width * sizeof(uint32_t));
+		std::copy_n(usrc, width, dst);
 		usrc += width;
 		dst += _screen.pitch;
 		/* Copy back the anim-buffer */
-		memcpy(anim_line, usrc, width * sizeof(uint8_t));
+		std::copy_n(reinterpret_cast<const uint8_t *>(usrc), width, anim_line);
 		usrc = (const uint32_t *)((const uint8_t *)usrc + width);
 		anim_line += _screen.pitch;
 	}
@@ -437,11 +440,11 @@ void Blitter_40bppAnim::CopyToBuffer(const void *video, void *dst, int width, in
 	const uint8_t *anim_line = ((const uint32_t *)video - (uint32_t *)_screen.dst_ptr) + anim_buf;
 
 	for (; height > 0; height--) {
-		memcpy(udst, src, width * sizeof(uint32_t));
+		std::copy_n(src, width, udst);
 		src += _screen.pitch;
 		udst += width;
 		/* Copy the anim-buffer */
-		memcpy(udst, anim_line, width * sizeof(uint8_t));
+		std::copy_n(anim_line, width, reinterpret_cast<uint8_t *>(udst));
 		udst = (uint32_t *)((uint8_t *)udst + width);
 		anim_line += _screen.pitch;
 	}
@@ -490,11 +493,7 @@ void Blitter_40bppAnim::ScrollBuffer(void *video, int &left, int &top, int &widt
 
 		uint tw = width + (scroll_x >= 0 ? -scroll_x : scroll_x);
 		uint th = height - scroll_y;
-		for (; th > 0; th--) {
-			memcpy(dst, src, tw * sizeof(uint8_t));
-			src -= _screen.pitch;
-			dst -= _screen.pitch;
-		}
+		Blitter::MovePixels(src, dst, tw, th, -_screen.pitch);
 	} else {
 		/* Calculate pointers */
 		dst = anim_buf + left + top * _screen.pitch;
@@ -507,15 +506,9 @@ void Blitter_40bppAnim::ScrollBuffer(void *video, int &left, int &top, int &widt
 			src -= scroll_x;
 		}
 
-		/* the y-displacement may be 0 therefore we have to use memmove,
-		 * because source and destination may overlap */
 		uint tw = width + (scroll_x >= 0 ? -scroll_x : scroll_x);
 		uint th = height + scroll_y;
-		for (; th > 0; th--) {
-			memmove(dst, src, tw * sizeof(uint8_t));
-			src += _screen.pitch;
-			dst += _screen.pitch;
-		}
+		Blitter::MovePixels(src, dst, tw, th, _screen.pitch);
 	}
 
 	Blitter_32bppBase::ScrollBuffer(video, left, top, width, height, scroll_x, scroll_y);

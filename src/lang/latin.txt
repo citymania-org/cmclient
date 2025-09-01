@@ -574,7 +574,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Exire
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Ludi optiones
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Electiones
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Optiones NewGRF
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Optiones perluciditatis
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Nomina oppidorum spectabilia
@@ -739,6 +738,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Censione
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Aestimationes societatis
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Mercedes Onerum
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Merces tradendi 10 oneris unitates (aut 10,000 litra) per 20 quadra
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Omnia Monstrare
@@ -747,6 +748,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Monstrar
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Monstrare nulla onera in grapho mercedum onerum
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Monstrare celareve aspectum huius oneris in grapho
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Monstrare censiones effectus descriptas
@@ -1046,11 +1048,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Ludi opt
 
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Unitates nummi
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Electio unitatum nummi
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Unitates nummi
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Electio unitatum nummi
 
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Libra Britannica
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dollarium CFA
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -1087,21 +1090,21 @@ STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari Georgiana
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Regalis Iranica
 STR_GAME_OPTIONS_CURRENCY_RUB                                   :Novus Rubelus Russicus
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Servare automatice
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Eligere crebritatem automatice ludum servandi
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Servare automatice
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Eligere crebritatem automatice ludum servandi
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Numquam
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Lingua
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Eligere linguam interfaciei
+STR_GAME_OPTIONS_LANGUAGE                                       :Lingua
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Eligere linguam interfaciei
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Cunctum scrinium
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Optione electa, OpenTTD cuncto scrinio ostenditur
+STR_GAME_OPTIONS_FULLSCREEN                                     :Cunctum scrinium
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Optione electa, OpenTTD cuncto scrinio ostenditur
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Resolutio scrinii
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Eligere resolutio scrinii adhibenda
+STR_GAME_OPTIONS_RESOLUTION                                     :Resolutio scrinii
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Eligere resolutio scrinii adhibenda
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :alia
 
 
@@ -1114,17 +1117,18 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :alia
 
 
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Fundamentum graphicum
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Eligere fundamentum graphicum adhibendum
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Indicia additicia de hoc fundamento graphico
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Fundamentum sonicum
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Eligere fundamentum sonicum adhibendum
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Indicia additicia de hoc fundamento sonico
+STR_GAME_OPTIONS_BASE_GRF                                       :Fundamentum graphicum
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Eligere fundamentum graphicum adhibendum
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Indicia additicia de hoc fundamento graphico
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Fundamentum musicum
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Eligere fundamentum musicum adhibendum
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Indicia additicia de hoc fundamento musico
+STR_GAME_OPTIONS_BASE_SFX                                       :Fundamentum sonicum
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Eligere fundamentum sonicum adhibendum
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Indicia additicia de hoc fundamento sonico
+
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Fundamentum musicum
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Eligere fundamentum musicum adhibendum
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Indicia additicia de hoc fundamento musico
 
 
 
@@ -1227,11 +1231,10 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Longe
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Nullae IA parabiles sunt...{}Potes arcessere nunullas IA in 'Inventario Interretiale'
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Electiones
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Series colans:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Omnia expandere
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Omnia collocare
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Series colans:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Omnia expandere
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Omnia collocare
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(nulla explicatio parabilis)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Valor solitus: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Electionis typus: {ORANGE}{STRING}
@@ -1241,9 +1244,9 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Electio ludi (i
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Electio societatis (inclusa in ludis servatis; modo ludos novos afficit)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Electio societatis (inclusa in ludo servato; modo societatem currentem afficit)
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Categoria:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Typus:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Definit indicem optionum ut solum electiones simplices aut mutatae monstrentur
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Categoria:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Typus:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Definit indicem optionum ut solum electiones simplices aut mutatae monstrentur
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Electiones simplices (modo monstrare electiones magni momenti)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Electiones doctae (monstrare pleras electiones)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Electiones peritae (monstrare omnes electiones, etiam insolitas)
@@ -1260,9 +1263,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Electiones soci
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Nullae -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Monstrare eventum investigationis optione separatum{}{SILVER}Categoria {BLACK}ad {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Monstrare eventum investigationis optione separatum{}{SILVER}Typus {BLACK}ad {WHITE}Omnes electionis typi
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Monstrare eventum investigationis optione separatum{}{SILVER}Categoria {BLACK}ad {WHITE}{STRING} {BLACK}et {SILVER}Typus {BLACK}ad {WHITE}Omnes electionis typi
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Monstrare eventum investigationis optione separatum{}{SILVER}Categoria {BLACK}ad {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Monstrare eventum investigationis optione separatum{}{SILVER}Typus {BLACK}ad {WHITE}Omnes electionis typi
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Monstrare eventum investigationis optione separatum{}{SILVER}Categoria {BLACK}ad {WHITE}{STRING} {BLACK}et {SILVER}Typus {BLACK}ad {WHITE}Omnes electionis typi
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :Non
@@ -1295,6 +1298,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Proportio faeno
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Pretii operandi: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Eligere magnitudinem pretiorum vehicula operandi atque infrastructuram ministrandi
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Velocitas struendi: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Definire IA velocitatem struendi
@@ -1311,6 +1315,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Eligere proport
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Pretii struendi: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Eligere magnitudinem pretiorum struendi emendique
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Recessiones: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Sinere recessiones oeconomicae aliquando accidere. In recessione oeconomica, productio omnino minuitur (sed, recessione confecta, productio redit ad magnitudinem priorem)
@@ -1609,6 +1614,7 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Tabula movetur 
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Movere conspectum leniter: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Quomodo conspectus vagatur ad quemdam locum globulo sinistro in tabula premendi aut cum iubetur vagari ad quamdam rem in tabula. Electa, conspectus leniter vagatur. Neglecta, statim salit ad locum
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Ostendere nuntium adiuvans apud varia ferramenta construendi: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Ostendere spatium atque altitudinem inter tegulas dum mus trahitur in construendo
@@ -2058,13 +2064,10 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... form
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... neglectum Fundamentum Graphicum '{STRING}': non inventum
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... neglectum Fundamentum Sonicum '{STRING}': non inventum
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... neglectum Fundamentum Musicum '{STRING}': non inventum
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Memoria deest
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Non potuit collocare {BYTES} promptuarii spiritus. Promptuarium spiritus minuitur ad {BYTES}. Haec minuit effectum OpenTTD. Conare removere graphicas 32bpp ut desideria memoriae minuatur
 
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Ludus Novus
 STR_INTRO_LOAD_GAME                                             :{BLACK}Legere Ludum
@@ -2075,8 +2078,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Plurium 
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Ludi Optiones
 STR_INTRO_HIGHSCORE                                             :{BLACK}Album Punctorum Supremorum
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Electiones
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF Optiones
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Inspicere Inventarium Interretiale
 STR_INTRO_QUIT                                                  :{BLACK}Exire
 
@@ -2094,8 +2095,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Eligere 
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Monstrare ludi optiones
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Monstrare album punctorum supremorum
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Monstrare electiones
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Monstrare optiones NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Inspicere inventarium Interretiale in quo res sicut NewGRF, scaenaria, musica, etc. sunt
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Exire OpenTTD
 
@@ -2168,12 +2167,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Transviaria Rae
 STR_FACE_CAPTION                                                :{WHITE}Electio Faciei
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Cancellare electionem novae faciei
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Confirmare electionem novae faciei
-STR_FACE_RANDOM                                                 :{BLACK}Commiscere
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Masculina
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Eligere facies masculinas
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Feminea
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Eligere facies femineas
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Facies Nova
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Creare novam faciem fortuitam
 STR_FACE_ADVANCED                                               :{BLACK}Praecipua
@@ -2191,36 +2185,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Numerus 
 STR_FACE_SAVE                                                   :{BLACK}Servare
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Servare faciem dilectam
 STR_FACE_SAVE_DONE                                              :{WHITE}Haec facies servabit ad dilectam tuam in fasciculo OpenTTD configurationis
-STR_FACE_EUROPEAN                                               :{BLACK}Europaea
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Eligere facies Europaeas
-STR_FACE_AFRICAN                                                :{BLACK}Africana
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Eligere facies Africanas
 STR_FACE_YES                                                    :Ita
 STR_FACE_NO                                                     :Non
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Apponere mystacem vel inaurem
 STR_FACE_HAIR                                                   :Capilli:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Mutare capillos
 STR_FACE_EYEBROWS                                               :Supercilia:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Mutare supercilia
 STR_FACE_EYECOLOUR                                              :Color oculorum:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Mutare colorem oculorum
 STR_FACE_GLASSES                                                :Perspicilla:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Apponere perspicilla
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Mutare perspicilla
 STR_FACE_NOSE                                                   :Nasus:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Mutare nasum
 STR_FACE_LIPS                                                   :Labra:
 STR_FACE_MOUSTACHE                                              :Mystax:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Mutare labra vel mystacem
 STR_FACE_CHIN                                                   :Mentum:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Mutare mentum
 STR_FACE_JACKET                                                 :Vestis:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Mutare vestem
 STR_FACE_COLLAR                                                 :Collare:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Mutare collare
 STR_FACE_TIE                                                    :Focale:
 STR_FACE_EARRING                                                :Inauris:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Mutare focale vel inaurem
 
 # Matches ServerGameType
 ###length 3
@@ -2535,10 +2513,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Produntu
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Iungere stationem
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Struere discretam stationem
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Struere discretam stationem
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Iungere interlocum
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Struere discretum interlocum
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Struere discretum interlocum
 
 # Generic toolbar
 
@@ -2585,6 +2563,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Longitud
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Eligere longitudinem ferriviae stationis
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Trahere Ponereque
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Struere stationem trahendo ponendoque
+
 
 
 
@@ -2771,6 +2750,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Fortuita
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Eligere magnitudinem oppidi
 STR_FOUND_TOWN_CITY                                             :{BLACK}Urbs
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Urbes crescunt oppidis celerius{}Etiam maiores sunt cum conduntur
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Dispositio viarum oppidi:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Eligere dispositionem viarum huic oppido adhibendam
@@ -3118,14 +3098,11 @@ STR_SAVE_PRESET_CAPTION                                         :{WHITE}Servare 
 STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Index rationum. Unam elige ut transcribatur nomini infero
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Inscribe nomen rationis
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Nomen electum rationis conservandum
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Cancellare
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Non mutare rationem
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Servare
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Rationem conservare huic nomini
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Mutare parametra NewGRF
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Claudere
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Redire
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Facere ut quodque parametrum solito reversum sit
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Parametrum {NUM}
@@ -4203,7 +4180,6 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Horarius
 STR_TIMETABLE_NO_TRAVEL                                         :(Non est navigandum)
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Iter (horarius curatur a secundo fixo iusso)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Iter (sine horario)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Iter cum {2:VELOCITY} velocitas maxima (sine horario)
 STR_TIMETABLE_TRAVEL_FOR                                        :Iter {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Iter {STRING} cum {VELOCITY} velocitas maxima
 STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Iter ({STRING}, sine horario)
@@ -4313,13 +4289,10 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Accipere
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Eligere scriptum
-STR_AI_LIST_CANCEL                                              :{BLACK}Cancellare
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Non scriptum mutare
 
 
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :IA
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Claudere
 STR_AI_SETTINGS_RESET                                           :{BLACK}Revertere
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -4436,7 +4409,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Non lice
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... creditum maximum est {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Non licet plurem pecuniae mutuari...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... non est creditum solvendum
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... non est creditum solvendum
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... {CURRENCY_LONG} poscitur
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Non licet creditum reddere...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Non licet pecuniam mutuam largiri...
@@ -4523,11 +4496,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Necesse 
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Appositus est pluribus quam uni interlocis
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Nimis prope alium interlocum
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Non licet interlocum ferriviarium hic struere...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Non licet interlocum ferriviarium hic struere...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Non licet signum monitorium huc ponere...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Non licet interlocum renominare...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Non licet interlocum removere...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Non licet interlocum removere...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Necesse est interlocum ferriviarium removere
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... signum monitorium obstat
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... signum monitorium ab alia societate usum

@@ -32,9 +32,9 @@
 bool ContentInfo::IsSelected() const
 {
 	switch (this->state) {
-		case ContentInfo::SELECTED:
-		case ContentInfo::AUTOSELECTED:
-		case ContentInfo::ALREADY_HERE:
+		case ContentInfo::State::Selected:
+		case ContentInfo::State::Autoselected:
+		case ContentInfo::State::AlreadyHere:
 			return true;
 
 		default:
@@ -48,7 +48,7 @@ bool ContentInfo::IsSelected() const
  */
 bool ContentInfo::IsValid() const
 {
-	return this->state < ContentInfo::INVALID && this->type >= CONTENT_TYPE_BEGIN && this->type < CONTENT_TYPE_END;
+	return this->state < ContentInfo::State::Invalid && this->type >= CONTENT_TYPE_BEGIN && this->type < CONTENT_TYPE_END;
 }
 
 /**
@@ -58,8 +58,8 @@ bool ContentInfo::IsValid() const
  */
 std::optional<std::string> ContentInfo::GetTextfile(TextfileType type) const
 {
-	if (this->state == INVALID) return std::nullopt;
-	const char *tmp;
+	if (this->state == ContentInfo::State::Invalid) return std::nullopt;
+	std::optional<std::string_view> tmp;
 	switch (this->type) {
 		default: NOT_REACHED();
 		case CONTENT_TYPE_AI:
@@ -76,7 +76,7 @@ std::optional<std::string> ContentInfo::GetTextfile(TextfileType type) const
 			break;
 		case CONTENT_TYPE_NEWGRF: {
 			const GRFConfig *gc = FindGRFConfig(std::byteswap(this->unique_id), FGCM_EXACT, &this->md5sum);
-			tmp = gc != nullptr ? gc->filename.c_str() : nullptr;
+			if (gc != nullptr) tmp = gc->filename;
 			break;
 		}
 		case CONTENT_TYPE_BASE_GRAPHICS:
@@ -93,8 +93,8 @@ std::optional<std::string> ContentInfo::GetTextfile(TextfileType type) const
 			tmp = FindScenario(*this, true);
 			break;
 	}
-	if (tmp == nullptr) return std::nullopt;
-	return ::GetTextfile(type, GetContentInfoSubDir(this->type), tmp);
+	if (!tmp.has_value()) return std::nullopt;
+	return ::GetTextfile(type, GetContentInfoSubDir(this->type), *tmp);
 }
 
 /**

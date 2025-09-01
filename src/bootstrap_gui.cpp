@@ -42,7 +42,7 @@ static constexpr NWidgetPart _background_widgets[] = {
  * Window description for the background window to prevent smearing.
  */
 static WindowDesc _background_desc(
-	WDP_MANUAL, nullptr, 0, 0,
+	WDP_MANUAL, {}, 0, 0,
 	WC_BOOTSTRAP, WC_NONE,
 	WindowDefaultFlag::NoClose,
 	_background_widgets
@@ -60,8 +60,8 @@ public:
 
 	void DrawWidget(const Rect &r, WidgetID) const override
 	{
-		GfxFillRect(r.left, r.top, r.right, r.bottom, 4, FILLRECT_OPAQUE);
-		GfxFillRect(r.left, r.top, r.right, r.bottom, 0, FILLRECT_CHECKER);
+		GfxFillRect(r.left, r.top, r.right, r.bottom, PixelColour{4}, FILLRECT_OPAQUE);
+		GfxFillRect(r.left, r.top, r.right, r.bottom, PixelColour{0}, FILLRECT_CHECKER);
 	}
 };
 
@@ -78,7 +78,7 @@ static constexpr NWidgetPart _nested_bootstrap_errmsg_widgets[] = {
 
 /** Window description for the error window. */
 static WindowDesc _bootstrap_errmsg_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_BOOTSTRAP, WC_NONE,
 	{WindowDefaultFlag::Modal, WindowDefaultFlag::NoClose},
 	_nested_bootstrap_errmsg_widgets
@@ -135,7 +135,7 @@ static constexpr NWidgetPart _nested_bootstrap_download_status_window_widgets[] 
 
 /** Window description for the download window */
 static WindowDesc _bootstrap_download_status_window_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_NETWORK_STATUS_WINDOW, WC_NONE,
 	{WindowDefaultFlag::Modal, WindowDefaultFlag::NoClose},
 	_nested_bootstrap_download_status_window_widgets
@@ -187,7 +187,7 @@ static constexpr NWidgetPart _bootstrap_query_widgets[] = {
 
 /** The window description for the query. */
 static WindowDesc _bootstrap_query_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_CONFIRM_POPUP_QUERY, WC_NONE,
 	WindowDefaultFlag::NoClose,
 	_bootstrap_query_widgets
@@ -385,10 +385,10 @@ bool HandleBootstrap()
 	/* Initialise the palette. The biggest step is 'faking' some recolour sprites.
 	 * This way the mauve and gray colours work and we can show the user interface. */
 	GfxInitPalettes();
-	static const int offsets[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80, 0, 0, 0, 0x04, 0x08 };
+	static const uint8_t offsets[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80, 0, 0, 0, 0x04, 0x08 };
 	for (Colours i = COLOUR_BEGIN; i != COLOUR_END; i++) {
 		for (ColourShade j = SHADE_BEGIN; j < SHADE_END; j++) {
-			SetColourGradient(i, j, offsets[i] + j);
+			SetColourGradient(i, j, PixelColour(offsets[i] + j));
 		}
 	}
 

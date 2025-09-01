@@ -523,7 +523,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Forlasi
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Ludaj agordoj
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Agordoj
 STR_SETTINGS_MENU_AI_SETTINGS                                   :AI agordoj
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Ludoskriptaj agordoj
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Agordoj de NewGRF
@@ -693,6 +692,8 @@ STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Diagramo
 
 STR_GRAPH_LAST_72_MINUTES_TIME_LABEL                            :{TINY_FONT}{BLACK}Pasintaj 72 minutoj
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Ŝarĝpagaj Tarifoj
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Pago por liveri 10 unuojn (aŭ 10,000 litrojn) da ŝarĝo trans 20 kvadratoj
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Aktivu ĉiujn
@@ -701,6 +702,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Montru �
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Ne montru ŝarĝojn en la ŝarĝaj pagaj procentoj grafiko
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}(Mal)ŝaltu grafikon por ŝarĝo
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Montri detalaj rendimentpritaksoj
@@ -1011,23 +1013,24 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Gluu la 
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Ludaj agordoj
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Ĝenerale
-STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Elektu ĝeneralajn agordojn
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :Elektu ĝeneralajn agordojn
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Grafiko
-STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Elektu agordojn pri grafiko
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :Elektu agordojn pri grafiko
 STR_GAME_OPTIONS_TAB_SOUND                                      :Sono
-STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Elektu agordojn pri sono kaj muziko
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :Elektu agordojn pri sono kaj muziko
 
 STR_GAME_OPTIONS_VOLUME                                         :Laŭteco
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Sonefektoj
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Muziko
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Monunuoj
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Elekto de monunuoj
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Monunuoj
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Elekto de monunuoj
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Brita Pundo
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Usona Dolaro
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Eŭro
@@ -1073,8 +1076,8 @@ STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malajzia ringit
 STR_GAME_OPTIONS_CURRENCY_LVL                                   :Latvaj Latoj
 STR_GAME_OPTIONS_CURRENCY_PTE                                   :Portugalaj Eskudoj
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Aŭtomata konservado
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Elektu intervalon inter aŭtomataj konservadoj de la ludo
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Aŭtomata konservado
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Elektu intervalon inter aŭtomataj konservadoj de la ludo
 
 # Autosave dropdown
 ###length 5
@@ -1084,67 +1087,67 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_30_MINUTES             :Ĉiujn 30 minut
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_60_MINUTES             :Ĉiujn 60 minutojn
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :Ĉiujn 120 minutojn
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Lingvo
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Elektu uzotan interfacan lingvon
+STR_GAME_OPTIONS_LANGUAGE                                       :Lingvo
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Elektu uzotan interfacan lingvon
 STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% kompleta)
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Plena ekrano
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Ŝaltu ĉi tiun kvadrateton por plenekrane ludi OpenTTD
+STR_GAME_OPTIONS_FULLSCREEN                                     :Plena ekrano
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Ŝaltu ĉi tiun kvadrateton por plenekrane ludi OpenTTD
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Ekrana montrogrando
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Elektu uzotan ekranan montrograndon
+STR_GAME_OPTIONS_RESOLUTION                                     :Ekrana montrogrando
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Elektu uzotan ekranan montrograndon
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :alia
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
-STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Aparatara plirapidigo
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Elektu tiun ĉi agordon por ke OpenTTD klopodu uzi aparataran akceladon. Se vi ŝanĝas tiun ĉi agordon, la nova agordo validos nur ekde restartigo de la ludo
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :Aparatara plirapidigo
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Elektu tiun ĉi agordon por ke OpenTTD klopodu uzi aparataran akceladon. Se vi ŝanĝas tiun ĉi agordon, la nova agordo validos nur ekde restartigo de la ludo
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Tiu ĉi agordo ekefikos nur post restartigo de la ludo
 
-STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}Vertikala sinkronigo
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :Vertikala sinkronigo
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Nuna pelilo: {STRING}
-
-STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Interfacgrandeco
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Aŭtomate rekonu grandecon
-STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Ŝaltu ĉi tiun kvadrateton por aŭtomate detekti grandecon de la interfaco
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :Nuna pelilo: {STRING}
 
 
-STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :{BLACK}Uzu tradician bildetan tiparon
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Ŝaltu ĉi tiun kvadrateton se vi preferas uzi la tradician fiksgrandecan bildetan tiparon.
-STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Glatigu tiparojn
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Ŝaltu ĉi tiun kvadrateton por glatigi aligrandigeblajn tiparojn
+STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Interfacgrandeco
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Aŭtomate rekonu grandecon
+STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Ŝaltu ĉi tiun kvadrateton por aŭtomate detekti grandecon de la interfaco
 
 
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Aŭtomata sondado
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Partopreni aŭtomatan sondadon
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}Kiam tiu ĉi agordo estas aktiva, OpenTTD sendos sondaĵon je forlaso de ludo
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}Pri sondado kaj privateco
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Tio ĉi malfermos retumilon kun pli da informoj pri la aŭtomata sondado
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Antaŭmontru sondaĵrezulton
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Montru la sondaĵrezulton de la kuranta ludo
+STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :Uzu tradician bildetan tiparon
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Ŝaltu ĉi tiun kvadrateton se vi preferas uzi la tradician fiksgrandecan bildetan tiparon.
+STR_GAME_OPTIONS_GUI_FONT_AA                                    :Glatigu tiparojn
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Ŝaltu ĉi tiun kvadrateton por glatigi aligrandigeblajn tiparojn
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafiko
 
-STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Montru aktualigoftecon
-STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Elektu ekranan aktualigoftecon
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :Aŭtomata sondado
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :Partopreni aŭtomatan sondadon
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :Kiam tiu ĉi agordo estas aktiva, OpenTTD sendos sondaĵon je forlaso de ludo
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :Pri sondado kaj privateco
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :Tio ĉi malfermos retumilon kun pli da informoj pri la aŭtomata sondado
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :Antaŭmontru sondaĵrezulton
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :Montru la sondaĵrezulton de la kuranta ludo
+
+
+STR_GAME_OPTIONS_REFRESH_RATE                                   :Montru aktualigoftecon
+STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :Elektu ekranan aktualigoftecon
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}Hz
 STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Aktualigoftecoj pli altaj ol 60Hz povas kaŭzi malrapidiĝon.
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Baza grafikaro
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Selektu la uzotan bazan grafikaron (ne eblas ŝanĝi ene de la ludo, nur de la ĉefa menuo)
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Aldonaj informoj pri la baza grafikaro
+STR_GAME_OPTIONS_BASE_GRF                                       :Baza grafikaro
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Selektu la uzotan bazan grafikaron (ne eblas ŝanĝi ene de la ludo, nur de la ĉefa menuo)
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Aldonaj informoj pri la baza grafikaro
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Baza sonaro
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Elektu la uzotan bazan sonaron (ne eblas ŝanĝi ene de la ludo, nur de la ĉefa menuo)
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Aldonaj informoj pri la baza sonaro
+STR_GAME_OPTIONS_BASE_SFX                                       :Baza sonaro
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Elektu la uzotan bazan sonaron (ne eblas ŝanĝi ene de la ludo, nur de la ĉefa menuo)
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Aldonaj informoj pri la baza sonaro
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Baza muzikaro.
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Elekti bazan muzikaron por uzi.
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Pluaj informoj pri la baza muzikaro.
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Baza muzikaro.
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Elekti bazan muzikaron por uzi.
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Pluaj informoj pri la baza muzikaro.
 
 
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :{BLACK}Stato de la kromprogramo:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :Stato de la kromprogramo:
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_DUPLICATE                  :{RED}Duplikata kromprogramo
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_INVALID_SIGNATURE          :{RED}Malvalida subskribo
@@ -1249,13 +1252,12 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Permesema (ne e
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Neniu taŭga AI estas disponebla...{}Kelkaj AI-oj estas elŝuteblaj per la sistemo 'Enreta Enhavo'.
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Agordoj
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtrilo:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Etendu ĉion
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Maletendu ĉiujn
-STR_CONFIG_SETTING_COLLAPSE_ALL.n                               :{BLACK}Collapse all
-STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Restarigu ĉiujn valorojn
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Filtrilo:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Etendu ĉion
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Maletendu ĉiujn
+STR_CONFIG_SETTING_COLLAPSE_ALL.n                               :Collapse all
+STR_CONFIG_SETTING_RESET_ALL                                    :Restarigu ĉiujn valorojn
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(neniu ekspliko disponeble)
 STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Defaŭlta valoro: {ORANGE}{STRING}
@@ -1268,9 +1270,9 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Kompania agordo
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Atentu!
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Tiu ĉi ago reagordos ĉiujn agordojn al la defaŭltaj valoroj.{}Ĉu vi certas ke vi volas daŭrigi?
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorio:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipo:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Limigas la liston per antaŭdifinitaj filtroj
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Kategorio:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Tipo:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Limigas la liston per antaŭdifinitaj filtroj
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Bazniveloj agordoj
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Altnivelaj agordoj
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Altnivelaj agordoj / ĉiu agordoj
@@ -1287,9 +1289,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Kompaniaj agord
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Neniu -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Montru ĉiujn serĉrezultojn ŝanĝante{}{SILVER}Kategorion {BLACK}al {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Montru ĉiujn serĉrezultojn ŝanĝante{}{SILVER}Tipon {BLACK}al {WHITE}Ĉiuj agordoj
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Montru ĉiujn serĉrezultojn ŝanĝante{}{SILVER}Kategorion {BLACK}al {WHITE}{STRING}{BLACK}kaj {SILVER}Tipon {BLACK}al {WHITE}Ĉiuj agordoj
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Montru ĉiujn serĉrezultojn ŝanĝante{}{SILVER}Kategorion {BLACK}al {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Montru ĉiujn serĉrezultojn ŝanĝante{}{SILVER}Tipon {BLACK}al {WHITE}Ĉiuj agordoj
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Montru ĉiujn serĉrezultojn ŝanĝante{}{SILVER}Kategorion {BLACK}al {WHITE}{STRING}{BLACK}kaj {SILVER}Tipon {BLACK}al {WHITE}Ĉiuj agordoj
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :Malaktiva
@@ -1325,6 +1327,7 @@ STR_CONFIG_SETTING_INTEREST_RATE                                :Rentumtarifoj: 
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Irkostoj: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Ŝanĝu nivelon de bontenkostoj kaj irkostoj de veturiloj kaj infrastrukturo
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Konstrurapido: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Limigu la kvanton de konstruaj agoj por AIoj
@@ -1345,6 +1348,7 @@ STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :Neniuj subvenci
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Kostoj de konstruado: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Ŝanĝu nivelon de konstruaj kaj aĉetaj kostoj
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Recesioj: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Kiam tiu ĉi agordo estas aktiva, recesioj povas okazi ĉiujn kelkajn jarojn. Dum recesio ĉia produktado estas signife malpli alta (ĝi revenos al la antaŭa nivelo kiam finiĝas la recesio)
@@ -1656,6 +1660,7 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Movu la mapon p
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Glata rulumado de vidujo: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Regu kiel la ĉefa vidujo rulumas al specifa pozicio kiam oni klakas en la mapeto aŭ petas rulumi al specifa objekto sur la mapo. Se tiu ĉi agordo estas aktiva, la vidujo rulumas glate, se malaktiva, ĝi tuj saltas al la celpunkto
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Montru mezuran konsilbalonon ĉe uzo de konstruiloj: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Montru kahel-distancojn kaj altec-diferencojn dum mustrenado por konstruado
@@ -2146,15 +2151,12 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... ludo
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... ignoras Bazan Grafikaron '{STRING}': ne trovebla
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... ignoras Bazan Sonaron '{STRING}': ne trovebla
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... ignoras Bazan Muzikaron '{STRING}': ne trovebla
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Memormanko
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Asignado de {BYTES} por bildeta kaŝmemoro malsukcesis. La bildeta kaŝmemoro estis reduktita al {BYTES}. Tio ĉi igos OpenTTD funkcii pli malrapide. Por malpliigi la memorbezonon vi povas provi malŝalti grafikon kun 32 bitoj rastrumere kaj/aŭ zom-nivelojn.
 
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}Eraro pri videaj agordoj...
 STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}... ne troveblis kongrua grafika procesoro. Malŝaltis aparataran plirapidigon
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Novan ludon
 STR_INTRO_LOAD_GAME                                             :{BLACK}Ŝarĝu ludon
@@ -2165,11 +2167,7 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Pluraj L
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Ludaj agordoj
 STR_INTRO_HIGHSCORE                                             :{BLACK}Altpoentara tabelo
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Agordoj
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Agordoj de NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Kontroli ĉeretajn aldonaĵojn
-STR_INTRO_AI_SETTINGS                                           :{BLACK}AI-agordoj
-STR_INTRO_GAMESCRIPT_SETTINGS                                   :{BLACK}Ludoskriptaj agordoj
 STR_INTRO_QUIT                                                  :{BLACK}Forlasi
 
 STR_INTRO_TOOLTIP_NEW_GAME                                      :{BLACK}Starti novan ludon. Stir-Klak por preterpasi mapan agordon.
@@ -2186,11 +2184,7 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Elektu '
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Montri ludajn agordojn
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Malfermu altpoentaran tabelon
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Montru agordojn
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Montri NewGRF-agordojn
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Serĉi pri nova kaj ĝisdatigita enhavo por elŝuti
-STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Montru AI-agordojn
-STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}Montru ludoskriptajn agordojn
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Fermu 'OpenTTD'
 
 STR_INTRO_BASESET                                               :{BLACK}En la elektita baza grafikaro mankas {NUM} bildeto{P "" j}. Bonvolu kontrolu ĉu estas ĝisdatigoj por la bazaj datumoj.
@@ -2275,12 +2269,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Frajttramo
 STR_FACE_CAPTION                                                :{WHITE}Elekto de Vizaĝo
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Nuligu elekton de nova vizaĝo
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Akceptu elekton de nova vizaĝo
-STR_FACE_RANDOM                                                 :{BLACK}Hazardigu
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Vira
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Elektu virajn vizaĝojn
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Virina
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Elektu virinajn vizaĝojn
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Nova Vizaĝo
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Kreu hazardan novan vizaĝon
 STR_FACE_ADVANCED                                               :{BLACK}Altnivela
@@ -2298,36 +2287,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Ne povas
 STR_FACE_SAVE                                                   :{BLACK}Konservi
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Konservi favoratan vizaĝon
 STR_FACE_SAVE_DONE                                              :{WHITE}Tiu ĉi vizaĝo estos konservita kiel via favorata en la agord-dosiero de OpenTTD.
-STR_FACE_EUROPEAN                                               :{BLACK}Europa
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Elekti eŭropajn vizaĝojn
-STR_FACE_AFRICAN                                                :{BLACK}Afrika
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Elekti afrikajn vizaĝojn
 STR_FACE_YES                                                    :Jes
 STR_FACE_NO                                                     :Ne
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Ŝalti lipharojn aŭ orelringon.
 STR_FACE_HAIR                                                   :Hararo:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Ŝanĝu hararon
 STR_FACE_EYEBROWS                                               :Brovoj:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Ŝanĝi brovojn.
 STR_FACE_EYECOLOUR                                              :Okula koloro:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Ŝanĝi okulan koloron
 STR_FACE_GLASSES                                                :Okulvitroj:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Ŝalti okulvitrojn.
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Ŝanĝi okulvitrojn.
 STR_FACE_NOSE                                                   :Nazo:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Ŝanĝi nazon
 STR_FACE_LIPS                                                   :Lipoj:
 STR_FACE_MOUSTACHE                                              :Liphararo:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Ŝanĝi lipojn aŭ lipharojn.
 STR_FACE_CHIN                                                   :Mentono:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Ŝanĝi mentonon.
 STR_FACE_JACKET                                                 :Jako:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Ŝanĝi jakon.
 STR_FACE_COLLAR                                                 :Kolumo:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Ŝanĝi kolumon.
 STR_FACE_TIE                                                    :Kravato:
 STR_FACE_EARRING                                                :Orelringo:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Ŝanĝi kravaton aŭ orelringon.
 
 # Matches ServerGameType
 ###length 3
@@ -2712,10 +2685,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Provizoj
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Ligi stacion
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Konstrui apartan stacion
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Konstrui apartan stacion
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Ligi vojpunkton
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Krei apartan vojpunkton
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Krei apartan vojpunkton
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Malaktiva ĉar ĉi-momente ne haveblas veturiloj por tia ĉi infrastrukturo
@@ -2763,6 +2736,7 @@ STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Tiru por
 
 
 
+
 STR_HOUSE_PICKER_CLASS_ZONE1                                    :Rando
 STR_HOUSE_PICKER_CLASS_ZONE2                                    :Periferioj
 STR_HOUSE_PICKER_CLASS_ZONE3                                    :Eksteraj Antaŭurboj
@@ -2775,7 +2749,6 @@ STR_STATION_CLASS_WAYP                                          :Vojpunktoj
 
 # Signal window
 STR_BUILD_SIGNAL_CAPTION                                        :{WHITE}Elekto de Signalo
-STR_BUILD_SIGNAL_TOGGLE_ADVANCED_SIGNAL_TOOLTIP                 :{BLACK}Ŝaltu montradon de altnivelaj tipoj de semaforoj
 STR_BUILD_SIGNAL_ELECTRIC_NORM_TOOLTIP                          :{BLACK}Bloksignalo (elektra){}Tio ĉi estas la plej baza tipo de signalo, kiu permesas al nur unu vagonaro esti en la sama bloko dum la sama tempo
 STR_BUILD_SIGNAL_ELECTRIC_ENTRY_TOOLTIP                         :{BLACK}Enirsemaforo (elektra){}Restas verda dum estas almenaŭ unu verda elirsemaforo de la sekva traksekcio. Alikaze ĝi estas ruĝa
 STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP                          :{BLACK}Elira semaforo (elektra){}Kondutas same kiel bloka semaforo, sed estas bezonata por kaŭzi la ĝustan koloron ĉe eniraj kaj kombinaj antaŭsemaforoj
@@ -2960,6 +2933,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Arbitre
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Elektu urban grandecon
 STR_FOUND_TOWN_CITY                                             :{BLACK}Urbo
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Urbegoj kreskas pli rapide ol kutimaj urboj{}Depende de agordoj, ili pli grandas je fondiĝo
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Urba strataranĝo:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Selektu strataranĝon uzendan por ĉi tiu urbo
@@ -3379,13 +3353,10 @@ STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Malkongrua
 
 # NewGRF save preset window
 STR_SAVE_PRESET_CAPTION                                         :{WHITE}Konservu antaŭagordon
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Nuligu
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Ne ŝanĝu la antaŭagordon
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Konservu
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Ŝanĝu parametroj de la NewGRF
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Fermu
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Reigu
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Kondiĉu ĉiujn parametrojn al ilia norma valoro
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Parametro {NUM}
@@ -4555,7 +4526,6 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Horaro -
 STR_TIMETABLE_NO_TRAVEL                                         :Neniu veturo
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Veturu (aŭtomata; horara ĝis sekvanta mana ordono)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Veturo (ne horarita)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Veturu (sen horaro) je maksimume {2:VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR                                        :Veturu dum {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Veturu dum {STRING} je maksimume {VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Veturu (dum {STRING}, sen horaro)
@@ -4676,8 +4646,6 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Akcepti
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Elekti emfazita skripto
-STR_AI_LIST_CANCEL                                              :{BLACK}Nuligi
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ne ŝanĝu AI-on
 
 STR_SCREENSHOT_CAPTION                                          :{WHITE}Faru ekrankapton
 STR_SCREENSHOT_SCREENSHOT                                       :{BLACK}Normala ekrankapto
@@ -4690,7 +4658,6 @@ STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Ekrankap
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
 STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :Ludoskripto
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Fermi
 STR_AI_SETTINGS_RESET                                           :{BLACK}Reŝargo
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -4815,7 +4782,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Ne povas
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... maksimuma permesata prunto estas {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Ne povas prunti pli da mono...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... ne estas repagebla prunto
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... ne estas repagebla prunto
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... {CURRENCY_LONG} necesas
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Ne povas repagi prunton...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Ne povas donaci monon pruntitan de la banko...
@@ -4904,11 +4871,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Antaŭe 
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Apudas pli ol unu ekzistanta vojpunkto.
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Tro proksime al alia vojpunkto.
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Ne povas konstrui vagonaran vojpunkton ĉi tie...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Ne povas konstrui vagonaran vojpunkton ĉi tie...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Ne povas meti buon ĉi tie...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Ne povas ŝanĝi vojpunktan nomon...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Ne povas forigi vagonaran vojpunkton ĉi tie...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Ne povas forigi vagonaran vojpunkton ĉi tie...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Antaŭe devas forigi fervojan vojpunkton
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... buo okupas la lokon
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... buo estas uzata je alia kompanio!

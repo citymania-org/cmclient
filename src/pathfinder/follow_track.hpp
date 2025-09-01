@@ -25,8 +25,7 @@
  *  types w/ or w/o 90-deg turns allowed
  */
 template <TransportType Ttr_type_, typename VehicleType, bool T90deg_turns_allowed_ = true, bool Tmask_reserved_tracks = false>
-struct CFollowTrackT
-{
+struct CFollowTrackT {
 	enum ErrorCode : uint8_t {
 		EC_NONE,
 		EC_OWNER,
@@ -93,8 +92,8 @@ struct CFollowTrackT
 	debug_inline static bool IsRailTT() { return TT() == TRANSPORT_RAIL; }
 	inline bool IsTram() { return IsRoadTT() && RoadTypeIsTram(RoadVehicle::From(this->veh)->roadtype); }
 	debug_inline static bool IsRoadTT() { return TT() == TRANSPORT_ROAD; }
-	inline static bool Allow90degTurns() { return T90deg_turns_allowed_; }
-	inline static bool DoTrackMasking() { return Tmask_reserved_tracks; }
+	static inline bool Allow90degTurns() { return T90deg_turns_allowed_; }
+	static inline bool DoTrackMasking() { return Tmask_reserved_tracks; }
 
 	/** Tests if a tile is a road tile with a single tramtrack (tram can reverse) */
 	inline DiagDirection GetSingleTramBit(TileIndex tile)
@@ -331,7 +330,7 @@ protected:
 		}
 
 		/* rail transport is possible only on compatible rail types */
-		if (IsRailTT()) {
+		if (IsRailTT() && this->railtypes.Any()) {
 			RailType rail_type = GetTileRailType(this->new_tile);
 			if (!this->railtypes.Test(rail_type)) {
 				/* incompatible rail type */

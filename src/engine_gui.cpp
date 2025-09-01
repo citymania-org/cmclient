@@ -84,7 +84,7 @@ struct EnginePreviewWindow : Window {
 
 		/* Get size of engine sprite, on loan from depot_gui.cpp */
 		EngineID engine = static_cast<EngineID>(this->window_number);
-		EngineImageType image_type = EIT_PURCHASE;
+		EngineImageType image_type = EIT_PREVIEW;
 		uint x, y;
 		int x_offs, y_offs;
 
@@ -141,7 +141,7 @@ struct EnginePreviewWindow : Window {
 };
 
 static WindowDesc _engine_preview_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_ENGINE_PREVIEW, WC_NONE,
 	WindowDefaultFlag::Construction,
 	_nested_engine_preview_widgets

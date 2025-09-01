@@ -183,6 +183,8 @@ union ColourRGBA {
 	 * @param data The colour in the correct packed format.
 	 */
 	constexpr ColourRGBA(uint data = 0) : data(data) { }
+
+	bool operator==(const ColourRGBA &other) const { return this->data == other.data; };
 };
 
 /** Packed colour union to access the alpha, red, green, and blue channels from a 32 bit number for big-endian systems. */
@@ -206,6 +208,8 @@ union ColourARGB {
 	 * @param data The colour in the correct packed format.
 	 */
 	constexpr ColourARGB(uint data = 0) : data(data) { }
+
+	bool operator==(const ColourARGB &other) const { return this->data == other.data; };
 };
 
 /** Packed colour union to access the alpha, red, green, and blue channels from a 32 bit number for little-endian systems. */
@@ -229,6 +233,8 @@ union ColourBGRA {
 	 * @param data The colour in the correct packed format.
 	 */
 	constexpr ColourBGRA(uint data = 0) : data(data) { }
+
+	bool operator==(const ColourBGRA &other) const { return this->data == other.data; };
 };
 
 #if defined(__EMSCRIPTEN__)
@@ -238,7 +244,6 @@ using Colour = std::conditional_t<std::endian::native == std::endian::little, Co
 #endif /* defined(__EMSCRIPTEN__) */
 
 static_assert(sizeof(Colour) == sizeof(uint32_t));
-
 
 /** Available font sizes */
 enum FontSize : uint8_t {
@@ -252,9 +257,16 @@ enum FontSize : uint8_t {
 };
 DECLARE_INCREMENT_DECREMENT_OPERATORS(FontSize)
 
-inline const char *FontSizeToName(FontSize fs)
+using FontSizes = EnumBitSet<FontSize, uint8_t>;
+
+/** Mask of all possible font sizes. */
+constexpr FontSizes FONTSIZES_ALL{FS_NORMAL, FS_SMALL, FS_LARGE, FS_MONO};
+/** Mask of font sizes required to be present. */
+constexpr FontSizes FONTSIZES_REQUIRED{FS_NORMAL, FS_SMALL, FS_LARGE};
+
+inline std::string_view FontSizeToName(FontSize fs)
 {
-	static const char *SIZE_TO_NAME[] = { "medium", "small", "large", "mono" };
+	static const std::string_view SIZE_TO_NAME[] = { "medium", "small", "large", "mono" };
 	assert(fs < FS_END);
 	return SIZE_TO_NAME[fs];
 }
@@ -389,5 +401,15 @@ enum StringAlignment : uint8_t {
 	SA_FORCE       = 1 << 4, ///< Force the alignment, i.e. don't swap for RTL languages.
 };
 DECLARE_ENUM_AS_BIT_SET(StringAlignment)
+
+/** Colour for pixel/line drawing. */
+struct PixelColour {
+	uint8_t p; ///< Palette index.
+
+	constexpr PixelColour() : p(0) {}
+	explicit constexpr PixelColour(uint8_t p) : p(p) {}
+
+	constexpr inline TextColour ToTextColour() const { return static_cast<TextColour>(this->p) | TC_IS_PALETTE_COLOUR; }
+};
 
 #endif /* GFX_TYPE_H */

@@ -48,10 +48,7 @@
 
 void Aircraft::UpdateDeltaXY()
 {
-	this->x_offs = -1;
-	this->y_offs = -1;
-	this->x_extent = 2;
-	this->y_extent = 2;
+	this->bounds = {{-1, -1, 0}, {2, 2, 0}, {}};
 
 	switch (this->subtype) {
 		default: NOT_REACHED();
@@ -64,21 +61,21 @@ void Aircraft::UpdateDeltaXY()
 				case LANDING:
 				case HELILANDING:
 				case FLYING:
-					this->x_extent = 24;
-					this->y_extent = 24;
+					/* Bounds are not centred on the aircraft. */
+					this->bounds.extent.x = 24;
+					this->bounds.extent.y = 24;
 					break;
 			}
-			this->z_extent = 5;
+			this->bounds.extent.z = 5;
 			break;
 
 		case AIR_SHADOW:
-			this->z_extent = 1;
-			this->x_offs = 0;
-			this->y_offs = 0;
+			this->bounds.extent.z = 1;
+			this->bounds.origin = {};
 			break;
 
 		case AIR_ROTOR:
-			this->z_extent = 1;
+			this->bounds.extent.z = 1;
 			break;
 	}
 }
@@ -175,7 +172,7 @@ void Aircraft::GetImage(Direction direction, EngineImageType image_type, Vehicle
 {
 	uint8_t spritenum = this->spritenum;
 
-	if (is_custom_sprite(spritenum)) {
+	if (IsCustomVehicleSpriteNum(spritenum)) {
 		GetCustomVehicleSprite(this, direction, image_type, result);
 		if (result->IsValid()) return;
 
@@ -191,7 +188,7 @@ void GetRotorImage(const Aircraft *v, EngineImageType image_type, VehicleSpriteS
 	assert(v->subtype == AIR_HELICOPTER);
 
 	const Aircraft *w = v->Next()->Next();
-	if (is_custom_sprite(v->spritenum)) {
+	if (IsCustomVehicleSpriteNum(v->spritenum)) {
 		GetCustomRotorSprite(v, image_type, result);
 		if (result->IsValid()) return;
 	}
@@ -205,7 +202,7 @@ static void GetAircraftIcon(EngineID engine, EngineImageType image_type, Vehicle
 	const Engine *e = Engine::Get(engine);
 	uint8_t spritenum = e->u.air.image_index;
 
-	if (is_custom_sprite(spritenum)) {
+	if (IsCustomVehicleSpriteNum(spritenum)) {
 		GetCustomVehicleIcon(engine, DIR_W, image_type, result);
 		if (result->IsValid()) return;
 
@@ -1125,6 +1122,15 @@ static bool AircraftController(Aircraft *v)
 		}
 
 		if (amd.flags.Test(AirportMovingDataFlag::Land)) {
+			if (st->airport.blocks.Test(AirportBlock::Zeppeliner)) {
+				/* Zeppeliner blocked the runway, abort landing */
+				v->state = FLYING;
+				UpdateAircraftCache(v);
+				SetAircraftPosition(v, gp.x, gp.y, GetAircraftFlightLevel(v));
+				v->pos = v->previous_pos;
+				continue;
+			}
+
 			if (st->airport.tile == INVALID_TILE) {
 				/* Airport has been removed, abort the landing procedure */
 				v->state = FLYING;
@@ -1430,7 +1436,7 @@ static void AircraftLandAirplane(Aircraft *v)
 
 	v->UpdateDeltaXY();
 
-	AirportTileAnimationTrigger(st, vt, AAT_STATION_AIRPLANE_LAND);
+	TriggerAirportTileAnimation(st, vt, AirportAnimationTrigger::AirplaneTouchdown);
 
 	if (!PlayVehicleSound(v, VSE_TOUCHDOWN)) {
 		SndPlayVehicleFx(SND_17_SKID_PLANE, v);
@@ -1668,7 +1674,7 @@ static void AircraftEventHandler_Flying(Aircraft *v, const AirportFTAClass *apc)
 			if (current->heading == landingtype) {
 				/* save speed before, since if AirportHasBlock is false, it resets them to 0
 				 * we don't want that for plane in air
-				 * hack for speed thingie */
+				 * hack for speed thingy */
 				uint16_t tcur_speed = v->cur_speed;
 				uint16_t tsubspeed = v->subspeed;
 				if (!AirportHasBlock(v, current, apc)) {
@@ -1781,6 +1787,11 @@ static void AirportClearBlock(const Aircraft *v, const AirportFTAClass *apc)
 	/* we have left the previous block, and entered the new one. Free the previous block */
 	if (apc->layout[v->previous_pos].blocks != apc->layout[v->pos].blocks) {
 		Station *st = Station::Get(v->targetairport);
+
+		if (st->airport.blocks.Test(AirportBlock::Zeppeliner) &&
+				apc->layout[v->previous_pos].blocks == AirportBlock::RunwayIn) {
+			return;
+		}
 
 		st->airport.blocks.Reset(apc->layout[v->previous_pos].blocks);
 	}

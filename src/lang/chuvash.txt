@@ -343,7 +343,10 @@ STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COM
 
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 
@@ -461,21 +464,23 @@ STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Пӗлт
 
 
 
-###length 45
+
+###length 46
 STR_GAME_OPTIONS_CURRENCY_RUR                                   :Вырӑсла тенкӗ
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Хӑй управ
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Хӑй управ
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Сӳнтер
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Чӗлхи
+STR_GAME_OPTIONS_LANGUAGE                                       :Чӗлхи
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Тулли экран
+STR_GAME_OPTIONS_FULLSCREEN                                     :Тулли экран
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Экрана сӑнарлама пултарни
+STR_GAME_OPTIONS_RESOLUTION                                     :Экрана сӑнарлама пултарни
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :расна
+
 
 
 
@@ -540,7 +545,7 @@ STR_CLIMATE_TOYLAND_LANDSCAPE                                   :Вӑйӑ пах
 ###length 4
 
 
-# Settings tree window
+# Settings tree in the Game Options window
 
 
 
@@ -569,6 +574,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :Сылтӑмр�
 ###setting-zero-is-special
 
 
+###length 3
 
 
 
@@ -577,6 +583,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :Сылтӑмр�
 
 ###setting-zero-is-special
 
+###length 3
 
 
 
@@ -693,6 +700,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Симĕс
 ###length 4
 
 ###length 4
+
 
 
 
@@ -860,15 +868,12 @@ STR_CONFIG_SETTING_AI                                           :Ӑмӑртуҫ�
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF майлаштару
 STR_INTRO_QUIT                                                  :{BLACK}Вӗҫле
 
 
 
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}NewGRF майлаштару кӑтар
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}'OpenTTD' вӗҫле
 
 
@@ -916,23 +921,17 @@ STR_LIVERY_FREIGHT_TRAM                                         :Ҫӑк трам
 # Face selection window
 STR_FACE_CAPTION                                                :{WHITE}Кап
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Арҫын
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Хӗрарӑм
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Ҫӗнӗ Ят
 STR_FACE_ADVANCED                                               :{BLACK}Хушма
 STR_FACE_SIMPLE                                                 :{BLACK}Ансат
 STR_FACE_LOAD                                                   :{BLACK}Тие
 STR_FACE_SAVE                                                   :{BLACK}Упра
-STR_FACE_EUROPEAN                                               :{BLACK}Европӑ
-STR_FACE_AFRICAN                                                :{BLACK}Африкан
 STR_FACE_YES                                                    :Ҫапла
 STR_FACE_NO                                                     :Ҫук
 STR_FACE_HAIR                                                   :Ҫӳҫ:
 STR_FACE_EYEBROWS                                               :Куҫ харши:
 STR_FACE_EYECOLOUR                                              :Куҫ тӗс:
 STR_FACE_GLASSES                                                :Куҫлӑх:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Куҫлӑх яр
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Тӳрлет куҫлӑх
 STR_FACE_NOSE                                                   :Сӑмса:
 STR_FACE_LIPS                                                   :Тута:
 STR_FACE_MOUSTACHE                                              :Мӑйӑх:
@@ -1067,6 +1066,7 @@ STR_CONTENT_DETAIL_VERSION                                      :{SILVER}Вер�
 
 
 
+
 # Signal window
 
 # Bridge selection window
@@ -1141,6 +1141,7 @@ STR_FOUND_TOWN_INITIAL_SIZE_LARGE_BUTTON                        :{BLACK}Пысӑ
 STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Ӑнсӑрт
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Хула пысӑкӑшӗ суйла
 STR_FOUND_TOWN_CITY                                             :{BLACK}Тӑп хула
+
 
 STR_FOUND_TOWN_SELECT_LAYOUT_ORIGINAL                           :{BLACK}Чӑн
 STR_FOUND_TOWN_SELECT_LAYOUT_2X2_GRID                           :{BLACK}2x2 серепе
@@ -1241,7 +1242,6 @@ STR_NEWGRF_SETTINGS_VERSION                                     :{BLACK}Верс
 # NewGRF save preset window
 
 # NewGRF parameters window
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Хуп
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Сикӗ
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Ӗнерленӳ {NUM}
 STR_NEWGRF_PARAMETERS_SETTING                                   :{STRING}: {ORANGE}{STRING}

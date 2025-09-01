@@ -25,14 +25,14 @@ static bool CheckAPIVersion(const std::string &api_version)
 	return std::ranges::find(GameInfo::ApiVersions, api_version) != std::end(GameInfo::ApiVersions);
 }
 
-template <> SQInteger PushClassName<GameInfo, ScriptType::GS>(HSQUIRRELVM vm) { sq_pushstring(vm, "GSInfo", -1); return 1; }
+template <> SQInteger PushClassName<GameInfo, ScriptType::GS>(HSQUIRRELVM vm) { sq_pushstring(vm, "GSInfo"); return 1; }
 
-/* static */ void GameInfo::RegisterAPI(Squirrel *engine)
+/* static */ void GameInfo::RegisterAPI(Squirrel &engine)
 {
 	/* Create the GSInfo class, and add the RegisterGS function */
 	DefSQClass<GameInfo, ScriptType::GS> SQGSInfo("GSInfo");
 	SQGSInfo.PreRegister(engine);
-	SQGSInfo.AddConstructor<void (GameInfo::*)(), 1>(engine, "x");
+	SQGSInfo.AddConstructor<void (GameInfo::*)()>(engine, "x");
 	SQGSInfo.DefSQAdvancedMethod(engine, &GameInfo::AddSetting, "AddSetting");
 	SQGSInfo.DefSQAdvancedMethod(engine, &GameInfo::AddLabels, "AddLabels");
 	SQGSInfo.DefSQConst(engine, ScriptConfigFlags{}.base(), "CONFIG_NONE");
@@ -42,7 +42,7 @@ template <> SQInteger PushClassName<GameInfo, ScriptType::GS>(HSQUIRRELVM vm) { 
 	SQGSInfo.DefSQConst(engine, ScriptConfigFlags{ScriptConfigFlag::Developer}.base(), "CONFIG_DEVELOPER");
 
 	SQGSInfo.PostRegister(engine);
-	engine->AddMethod("RegisterGS", &GameInfo::Constructor, 2, "tx");
+	engine.AddMethod("RegisterGS", &GameInfo::Constructor, "tx");
 }
 
 /* static */ SQInteger GameInfo::Constructor(HSQUIRRELVM vm)
@@ -52,11 +52,12 @@ template <> SQInteger PushClassName<GameInfo, ScriptType::GS>(HSQUIRRELVM vm) { 
 	if (SQ_FAILED(sq_getinstanceup(vm, 2, &instance, nullptr)) || instance == nullptr) return sq_throwerror(vm, "Pass an instance of a child class of GameInfo to RegisterGame");
 	GameInfo *info = (GameInfo *)instance;
 
-	SQInteger res = ScriptInfo::Constructor(vm, info);
+	SQInteger res = ScriptInfo::Constructor(vm, *info);
 	if (res != 0) return res;
 
 	if (info->engine->MethodExists(info->SQ_instance, "MinVersionToLoad")) {
 		if (!info->engine->CallIntegerMethod(info->SQ_instance, "MinVersionToLoad", &info->min_loadable_version, MAX_GET_OPS)) return SQ_ERROR;
+		if (info->min_loadable_version < 0) return SQ_ERROR;
 	} else {
 		info->min_loadable_version = info->GetVersion();
 	}
@@ -77,7 +78,7 @@ template <> SQInteger PushClassName<GameInfo, ScriptType::GS>(HSQUIRRELVM vm) { 
 	/* Remove the link to the real instance, else it might get deleted by RegisterGame() */
 	sq_setinstanceup(vm, 2, nullptr);
 	/* Register the Game to the base system */
-	info->GetScanner()->RegisterScript(info);
+	info->GetScanner()->RegisterScript(std::unique_ptr<GameInfo>{info});
 	return 0;
 }
 
@@ -94,33 +95,32 @@ bool GameInfo::CanLoadFromVersion(int version) const
 }
 
 
-/* static */ void GameLibrary::RegisterAPI(Squirrel *engine)
+/* static */ void GameLibrary::RegisterAPI(Squirrel &engine)
 {
 	/* Create the GameLibrary class, and add the RegisterLibrary function */
-	engine->AddClassBegin("GSLibrary");
-	engine->AddClassEnd();
-	engine->AddMethod("RegisterLibrary", &GameLibrary::Constructor, 2, "tx");
+	engine.AddClassBegin("GSLibrary");
+	engine.AddClassEnd();
+	engine.AddMethod("RegisterLibrary", &GameLibrary::Constructor, "tx");
 }
 
 /* static */ SQInteger GameLibrary::Constructor(HSQUIRRELVM vm)
 {
 	/* Create a new library */
-	GameLibrary *library = new GameLibrary();
+	auto library = std::make_unique<GameLibrary>();
 
-	SQInteger res = ScriptInfo::Constructor(vm, library);
+	SQInteger res = ScriptInfo::Constructor(vm, *library);
 	if (res != 0) {
-		delete library;
 		return res;
 	}
 
 	/* Cache the category */
 	if (!library->CheckMethod("GetCategory") || !library->engine->CallStringMethod(library->SQ_instance, "GetCategory", &library->category, MAX_GET_OPS)) {
-		delete library;
 		return SQ_ERROR;
 	}
 
 	/* Register the Library to the base system */
-	library->GetScanner()->RegisterScript(library);
+	ScriptScanner *scanner = library->GetScanner();
+	scanner->RegisterScript(std::move(library));
 
 	return 0;
 }

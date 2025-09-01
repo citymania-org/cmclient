@@ -70,7 +70,9 @@ extern Palette _cur_palette; ///< Current palette
 
 void HandleToolbarHotkey(int hotkey);
 void HandleKeypress(uint keycode, char32_t key);
-void HandleTextInput(const char *str, bool marked = false, const char *caret = nullptr, const char *insert_location = nullptr, const char *replacement_end = nullptr);
+void HandleTextInput(std::string_view str, bool marked = false,
+		std::optional<size_t> caret = std::nullopt,
+		std::optional<size_t> insert_location = std::nullopt, std::optional<size_t> replacement_end = std::nullopt);
 void HandleCtrlChanged();
 void HandleMouseEvents();
 void UpdateWindows();
@@ -86,25 +88,26 @@ void UndrawMouseCursor();
 void RedrawScreenRect(int left, int top, int right, int bottom);
 void GfxScroll(int left, int top, int width, int height, int xo, int yo);
 
-Dimension GetSpriteSize(SpriteID sprid, Point *offset = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
+Dimension GetSpriteSize(SpriteID sprid, Point *offset = nullptr, ZoomLevel zoom = _gui_zoom);
 Dimension GetScaledSpriteSize(SpriteID sprid); /* widget.cpp */
 void DrawSpriteViewport(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = nullptr);
-void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = nullptr, ZoomLevel zoom = _gui_zoom);
 void DrawSpriteIgnorePadding(SpriteID img, PaletteID pal, const Rect &r, StringAlignment align); /* widget.cpp */
-std::unique_ptr<uint32_t[]> DrawSpriteToRgbaBuffer(SpriteID spriteId, ZoomLevel zoom = ZOOM_LVL_GUI);
+std::unique_ptr<uint32_t[]> DrawSpriteToRgbaBuffer(SpriteID spriteId, ZoomLevel zoom = _gui_zoom);
 
 int DrawString(int left, int right, int top, std::string_view str, TextColour colour = TC_FROMSTRING, StringAlignment align = SA_LEFT, bool underline = false, FontSize fontsize = FS_NORMAL);
 int DrawString(int left, int right, int top, StringID str, TextColour colour = TC_FROMSTRING, StringAlignment align = SA_LEFT, bool underline = false, FontSize fontsize = FS_NORMAL);
 int DrawStringMultiLine(int left, int right, int top, int bottom, std::string_view str, TextColour colour = TC_FROMSTRING, StringAlignment align = (SA_TOP | SA_LEFT), bool underline = false, FontSize fontsize = FS_NORMAL);
 int DrawStringMultiLine(int left, int right, int top, int bottom, StringID str, TextColour colour = TC_FROMSTRING, StringAlignment align = (SA_TOP | SA_LEFT), bool underline = false, FontSize fontsize = FS_NORMAL);
+bool DrawStringMultiLineWithClipping(int left, int right, int top, int bottom, std::string_view str, TextColour colour = TC_FROMSTRING, StringAlignment align = (SA_TOP | SA_LEFT), bool underline = false, FontSize fontsize = FS_NORMAL);
 
 void DrawCharCentered(char32_t c, const Rect &r, TextColour colour);
 
-void GfxFillRect(int left, int top, int right, int bottom, int colour, FillRectMode mode = FILLRECT_OPAQUE);
-void GfxFillPolygon(std::span<const Point> shape, int colour, FillRectMode mode = FILLRECT_OPAQUE);
-void GfxDrawLine(int left, int top, int right, int bottom, int colour, int width = 1, int dash = 0);
+void GfxFillRect(int left, int top, int right, int bottom, const std::variant<PixelColour, PaletteID> &colour, FillRectMode mode = FILLRECT_OPAQUE);
+void GfxFillPolygon(std::span<const Point> shape, const std::variant<PixelColour, PaletteID> &colour, FillRectMode mode = FILLRECT_OPAQUE);
+void GfxDrawLine(int left, int top, int right, int bottom, PixelColour colour, int width = 1, int dash = 0);
 void DrawBox(int x, int y, int dx1, int dy1, int dx2, int dy2, int dx3, int dy3);
-void DrawRectOutline(const Rect &r, int colour, int width = 1, int dash = 0);
+void DrawRectOutline(const Rect &r, PixelColour colour, int width = 1, int dash = 0);
 
 /* Versions of DrawString/DrawStringMultiLine that accept a Rect instead of separate left, right, top and bottom parameters. */
 inline int DrawString(const Rect &r, std::string_view str, TextColour colour = TC_FROMSTRING, StringAlignment align = SA_LEFT, bool underline = false, FontSize fontsize = FS_NORMAL)
@@ -127,7 +130,12 @@ inline int DrawStringMultiLine(const Rect &r, StringID str, TextColour colour = 
 	return DrawStringMultiLine(r.left, r.right, r.top, r.bottom, str, colour, align, underline, fontsize);
 }
 
-inline void GfxFillRect(const Rect &r, int colour, FillRectMode mode = FILLRECT_OPAQUE)
+inline bool DrawStringMultiLineWithClipping(const Rect &r, std::string_view str, TextColour colour = TC_FROMSTRING, StringAlignment align = (SA_TOP | SA_LEFT), bool underline = false, FontSize fontsize = FS_NORMAL)
+{
+	return DrawStringMultiLineWithClipping(r.left, r.right, r.top, r.bottom, str, colour, align, underline, fontsize);
+}
+
+inline void GfxFillRect(const Rect &r, const std::variant<PixelColour, PaletteID> &colour, FillRectMode mode = FILLRECT_OPAQUE)
 {
 	GfxFillRect(r.left, r.top, r.right, r.bottom, colour, mode);
 }
@@ -141,7 +149,7 @@ int GetStringHeight(StringID str, int maxw);
 int GetStringLineCount(std::string_view str, int maxw);
 Dimension GetStringMultiLineBoundingBox(StringID str, const Dimension &suggestion);
 Dimension GetStringMultiLineBoundingBox(std::string_view str, const Dimension &suggestion, FontSize fontsize = FS_NORMAL);
-void LoadStringWidthTable(bool monospace = false);
+void LoadStringWidthTable(FontSizes fontsizes = FONTSIZES_REQUIRED);
 
 void DrawDirtyBlocks();
 void AddDirtyBlock(int left, int top, int right, int bottom);
@@ -154,18 +162,6 @@ bool FillDrawPixelInfo(DrawPixelInfo *n, int left, int top, int width, int heigh
 inline bool FillDrawPixelInfo(DrawPixelInfo *n, const Rect &r)
 {
 	return FillDrawPixelInfo(n, r.left, r.top, r.Width(), r.Height());
-}
-
-/**
- * Determine where to draw a centred object inside a widget.
- * @param min The top or left coordinate.
- * @param max The bottom or right coordinate.
- * @param size The height or width of the object to draw.
- * @return Offset of where to start drawing the object.
- */
-inline int CenterBounds(int min, int max, int size)
-{
-	return (min + max - size + 1) / 2;
 }
 
 /* window.cpp */

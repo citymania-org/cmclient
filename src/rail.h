@@ -184,7 +184,7 @@ public:
 	/**
 	 * Bridge offset
 	 */
-	SpriteID bridge_offset;
+	uint8_t bridge_offset;
 
 	/**
 	 * Original railtype number to use when drawing non-newgrf railtypes, or when drawing stations.
@@ -234,7 +234,7 @@ public:
 	/**
 	 * Colour on mini-map
 	 */
-	uint8_t map_colour;
+	PixelColour map_colour;
 
 	/**
 	 * Introduction date.

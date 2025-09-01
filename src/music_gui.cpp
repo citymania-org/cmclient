@@ -19,7 +19,6 @@
 #include "gfx_func.h"
 #include "zoom_func.h"
 #include "core/random_func.hpp"
-#include "core/mem_func.hpp"
 #include "error.h"
 #include "core/geometry_func.hpp"
 #include "string_func.h"
@@ -439,7 +438,7 @@ void MusicSystem::SaveCustomPlaylist(PlaylistChoices pl)
 	}
 
 	size_t num = 0;
-	MemSetT(settings_pl, 0, NUM_SONGS_PLAYLIST);
+	std::fill_n(settings_pl, NUM_SONGS_PLAYLIST, 0);
 
 	for (const auto &song : this->standard_playlists[pl]) {
 		/* Music set indices in the settings playlist are 1-based, 0 means unused slot */
@@ -611,7 +610,7 @@ struct MusicTrackSelectionWindow : public Window {
 		}
 	}
 
-	void OnDropdownSelect(WidgetID widget, int index) override
+	void OnDropdownSelect(WidgetID widget, int index, int) override
 	{
 		switch (widget) {
 			case WID_MTS_MUSICSET:
@@ -661,7 +660,7 @@ static constexpr NWidgetPart _nested_music_track_selection_widgets[] = {
 };
 
 static WindowDesc _music_track_selection_desc(
-	WDP_AUTO, nullptr, 0, 0,
+	WDP_AUTO, {}, 0, 0,
 	WC_MUSIC_TRACK_SELECTION, WC_NONE,
 	{},
 	_nested_music_track_selection_widgets
@@ -684,13 +683,16 @@ struct MusicWindow : public Window {
 
 	void UpdateDisabledButtons()
 	{
-		/* Disable music control widgets if there is no music
-		 * -- except Programme button! So you can still select a music set. */
+		/* Disable stop and play if there is no music. */
+		this->SetWidgetsDisabledState(BaseMusic::GetUsedSet()->num_available == 0, WID_M_STOP, WID_M_PLAY);
+		/* Disable most music control widgets if there is no music, or we are in the intro menu. */
 		this->SetWidgetsDisabledState(
-			BaseMusic::GetUsedSet()->num_available == 0,
-			WID_M_PREV, WID_M_NEXT, WID_M_STOP, WID_M_PLAY, WID_M_SHUFFLE,
+			BaseMusic::GetUsedSet()->num_available == 0 || _game_mode == GM_MENU,
+			WID_M_PREV, WID_M_NEXT, WID_M_SHUFFLE,
 			WID_M_ALL, WID_M_OLD, WID_M_NEW, WID_M_EZY, WID_M_CUSTOM1, WID_M_CUSTOM2
 			);
+		/* Also disable programme button in the intro menu (not in game; it is desirable to allow change of music set.) */
+		this->SetWidgetsDisabledState(_game_mode == GM_MENU, WID_M_PROGRAMME);
 	}
 
 	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
@@ -710,7 +712,7 @@ struct MusicWindow : public Window {
 			case WID_M_TRACK_NR: {
 				Dimension d = GetStringBoundingBox(STR_MUSIC_TRACK_NONE);
 				d.width += padding.width;
-				d.height += padding.height;
+				d.height += padding.height + WidgetDimensions::scaled.fullbevel.bottom;
 				size = maxdim(size, d);
 				break;
 			}
@@ -721,7 +723,7 @@ struct MusicWindow : public Window {
 					d = maxdim(d, GetStringBoundingBox(GetString(STR_MUSIC_TITLE_NAME, song.songname)));
 				}
 				d.width += padding.width;
-				d.height += padding.height;
+				d.height += padding.height + WidgetDimensions::scaled.fullbevel.bottom;
 				size = maxdim(size, d);
 				break;
 			}
@@ -744,9 +746,9 @@ struct MusicWindow : public Window {
 				}
 				Rect ir = r.Shrink(WidgetDimensions::scaled.framerect);
 				if (_music.IsPlaying()) {
-					DrawString(ir, GetString(STR_MUSIC_TRACK_DIGIT, _music.GetCurrentSong().tracknr, 2));
+					DrawString(ir, GetString(STR_MUSIC_TRACK_DIGIT, _music.GetCurrentSong().tracknr, 2), TC_FROMSTRING, SA_HOR_CENTER);
 				} else {
-					DrawString(ir, STR_MUSIC_TRACK_NONE);
+					DrawString(ir, STR_MUSIC_TRACK_NONE, TC_FROMSTRING, SA_HOR_CENTER);
 				}
 				break;
 			}
@@ -768,11 +770,11 @@ struct MusicWindow : public Window {
 			}
 
 			case WID_M_MUSIC_VOL:
-				DrawSliderWidget(r, 0, INT8_MAX, 0, _settings_client.music.music_vol, nullptr);
+				DrawSliderWidget(r, COLOUR_GREY, COLOUR_GREY, TC_BLACK, 0, INT8_MAX, 0, _settings_client.music.music_vol, nullptr);
 				break;
 
 			case WID_M_EFFECT_VOL:
-				DrawSliderWidget(r, 0, INT8_MAX, 0, _settings_client.music.effect_vol, nullptr);
+				DrawSliderWidget(r, COLOUR_GREY, COLOUR_GREY, TC_BLACK, 0, INT8_MAX, 0, _settings_client.music.effect_vol, nullptr);
 				break;
 		}
 	}
@@ -865,47 +867,43 @@ static constexpr NWidgetPart _nested_music_window_widgets[] = {
 
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_VERTICAL),
-			NWidget(WWT_PANEL, COLOUR_GREY, -1), SetFill(1, 1), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY), SetFill(1, 1), EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_M_PREV), SetMinimalSize(22, 22), SetSpriteTip(SPR_IMG_SKIP_TO_PREV, STR_MUSIC_TOOLTIP_SKIP_TO_PREVIOUS_TRACK),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_M_NEXT), SetMinimalSize(22, 22), SetSpriteTip(SPR_IMG_SKIP_TO_NEXT, STR_MUSIC_TOOLTIP_SKIP_TO_NEXT_TRACK_IN_SELECTION),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_M_STOP), SetMinimalSize(22, 22), SetSpriteTip(SPR_IMG_STOP_MUSIC, STR_MUSIC_TOOLTIP_STOP_PLAYING_MUSIC),
-				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_M_PLAY), SetMinimalSize(22, 22), SetSpriteTip(SPR_IMG_PLAY_MUSIC, STR_MUSIC_TOOLTIP_START_PLAYING_MUSIC),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_M_PREV), SetToolbarMinimalSize(1), SetSpriteTip(SPR_IMG_SKIP_TO_PREV, STR_MUSIC_TOOLTIP_SKIP_TO_PREVIOUS_TRACK),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_M_NEXT), SetToolbarMinimalSize(1), SetSpriteTip(SPR_IMG_SKIP_TO_NEXT, STR_MUSIC_TOOLTIP_SKIP_TO_NEXT_TRACK_IN_SELECTION),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_M_STOP), SetToolbarMinimalSize(1), SetSpriteTip(SPR_IMG_STOP_MUSIC, STR_MUSIC_TOOLTIP_STOP_PLAYING_MUSIC),
+				NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_M_PLAY), SetToolbarMinimalSize(1), SetSpriteTip(SPR_IMG_PLAY_MUSIC, STR_MUSIC_TOOLTIP_START_PLAYING_MUSIC),
 			EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, -1), SetFill(1, 1), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY), SetFill(1, 1), EndContainer(),
 		EndContainer(),
 		NWidget(WWT_PANEL, COLOUR_GREY, WID_M_SLIDERS),
-			NWidget(NWID_HORIZONTAL), SetPIP(4, 0, 4),
-				NWidget(NWID_VERTICAL),
-					NWidget(WWT_LABEL, INVALID_COLOUR, -1), SetFill(1, 0), SetStringTip(STR_MUSIC_MUSIC_VOLUME),
-					NWidget(WWT_EMPTY, INVALID_COLOUR, WID_M_MUSIC_VOL), SetMinimalSize(67, 0), SetPadding(2), SetMinimalTextLines(1, 0), SetFill(1, 0), SetToolTip(STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC),
+			NWidget(NWID_HORIZONTAL), SetPIP(WidgetDimensions::unscaled.hsep_wide, WidgetDimensions::unscaled.hsep_wide, WidgetDimensions::unscaled.hsep_wide),
+				NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_normal, WidgetDimensions::unscaled.vsep_normal), SetPIPRatio(1, 0, 1),
+					NWidget(WWT_LABEL, INVALID_COLOUR), SetFill(1, 0), SetStringTip(STR_MUSIC_MUSIC_VOLUME),
+					NWidget(WWT_EMPTY, INVALID_COLOUR, WID_M_MUSIC_VOL), SetMinimalSize(67, 0), SetMinimalTextLines(1, 0), SetFill(1, 0), SetToolTip(STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC),
 				EndContainer(),
-				NWidget(NWID_VERTICAL),
-					NWidget(WWT_LABEL, INVALID_COLOUR, -1), SetFill(1, 0), SetStringTip(STR_MUSIC_EFFECTS_VOLUME),
-					NWidget(WWT_EMPTY, INVALID_COLOUR, WID_M_EFFECT_VOL), SetMinimalSize(67, 0), SetPadding(2), SetMinimalTextLines(1, 0), SetFill(1, 0), SetToolTip(STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC),
+				NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_normal, WidgetDimensions::unscaled.vsep_normal), SetPIPRatio(1, 0, 1),
+					NWidget(WWT_LABEL, INVALID_COLOUR), SetFill(1, 0), SetStringTip(STR_MUSIC_EFFECTS_VOLUME),
+					NWidget(WWT_EMPTY, INVALID_COLOUR, WID_M_EFFECT_VOL), SetMinimalSize(67, 0), SetMinimalTextLines(1, 0), SetFill(1, 0), SetToolTip(STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC),
 				EndContainer(),
 			EndContainer(),
 		EndContainer(),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY, WID_M_BACKGROUND),
-		NWidget(NWID_HORIZONTAL), SetPIP(6, 0, 6),
-			NWidget(NWID_VERTICAL),
-				NWidget(NWID_SPACER), SetFill(0, 1),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_M_SHUFFLE), SetMinimalSize(50, 8), SetStringTip(STR_MUSIC_SHUFFLE, STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE),
-				NWidget(NWID_SPACER), SetFill(0, 1),
+		NWidget(NWID_HORIZONTAL),
+			NWidget(NWID_VERTICAL), SetPIPRatio(1, 0, 1), SetPadding(WidgetDimensions::unscaled.frametext),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_M_SHUFFLE), SetMinimalSize(50, 0), SetStringTip(STR_MUSIC_SHUFFLE, STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE),
 			EndContainer(),
-			NWidget(NWID_VERTICAL), SetPadding(0, 0, 3, 3),
+			NWidget(NWID_VERTICAL), SetPIP(WidgetDimensions::unscaled.vsep_normal, WidgetDimensions::unscaled.vsep_normal, WidgetDimensions::unscaled.vsep_normal), SetPIPRatio(1, 0, 1),
 				NWidget(WWT_LABEL, INVALID_COLOUR, WID_M_TRACK), SetFill(0, 0), SetStringTip(STR_MUSIC_TRACK),
-				NWidget(WWT_INSET, COLOUR_GREY, WID_M_TRACK_NR), EndContainer(),
+				NWidget(WWT_INSET, COLOUR_GREY, WID_M_TRACK_NR), SetFill(0, 0), EndContainer(),
 			EndContainer(),
-			NWidget(NWID_VERTICAL), SetPadding(0, 3, 3, 0),
+			NWidget(NWID_VERTICAL), SetPIP(WidgetDimensions::unscaled.vsep_normal, WidgetDimensions::unscaled.vsep_normal, WidgetDimensions::unscaled.vsep_normal), SetPIPRatio(1, 0, 1),
 				NWidget(WWT_LABEL, INVALID_COLOUR, WID_M_TRACK_TITLE), SetFill(1, 0), SetStringTip(STR_MUSIC_XTITLE),
 				NWidget(WWT_INSET, COLOUR_GREY, WID_M_TRACK_NAME), SetFill(1, 0), EndContainer(),
 			EndContainer(),
-			NWidget(NWID_VERTICAL),
-				NWidget(NWID_SPACER), SetFill(0, 1),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_M_PROGRAMME), SetMinimalSize(50, 8), SetStringTip(STR_MUSIC_PROGRAM, STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION),
-				NWidget(NWID_SPACER), SetFill(0, 1),
+			NWidget(NWID_VERTICAL), SetPIPRatio(1, 0, 1), SetPadding(WidgetDimensions::unscaled.frametext),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_M_PROGRAMME), SetMinimalSize(50, 0), SetStringTip(STR_MUSIC_PROGRAM, STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION),
 			EndContainer(),
 		EndContainer(),
 	EndContainer(),

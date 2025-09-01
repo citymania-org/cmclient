@@ -572,7 +572,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Fàg an-seo
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Roghainnean a' gheama
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Roghainnean
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Roghainnean NewGRF
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Roghainnean trìd-shoilleireachd
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Ainmean nam bailtean gan sealltainn
@@ -747,6 +746,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Rangacha
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Luachan na companaidh
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Reataichean pàighidh carago
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Pàigheadh airson lìbhrigeadh dhe 10 aonadan (no 10,000 liotair) dhe charago le astar dhe 20 ceàrnag
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Cuir a h-uile an comas
@@ -755,6 +756,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Seall a 
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Na seall carago sam bith air a' ghraf air reataichean pàighidh carago
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Toglaich graf air seòrsa dhe charago air/dheth
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Seall mion-rangachaidhean dèanadais
@@ -1055,11 +1057,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Roghainn
 
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Aonadan airgeadra
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Tagh aonadan airgeadra
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Aonadan airgeadra
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Tagh aonadan airgeadra
 
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Not Breatannach
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dolar Aimeireaganach
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Eòro
@@ -1095,21 +1098,21 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Gnàthaichte...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari Cairtbheileach
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Rial Iorànach
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Fèin-shàbhaladh
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Tagh dè cho tric ’s a thèid an geama fèin-shàbhaladh
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Fèin-shàbhaladh
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Tagh dè cho tric ’s a thèid an geama fèin-shàbhaladh
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Dheth
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Cànan
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Tagh cànan an eadar-aghaidh a chleachdas tu
+STR_GAME_OPTIONS_LANGUAGE                                       :Cànan
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Tagh cànan an eadar-aghaidh a chleachdas tu
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Làn-sgrìn
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Cuir cromag sa bhogsa seo gus OpenTTD a chluiche sa mhodh làn-sgrìn
+STR_GAME_OPTIONS_FULLSCREEN                                     :Làn-sgrìn
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Cuir cromag sa bhogsa seo gus OpenTTD a chluiche sa mhodh làn-sgrìn
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Dùmhlachd-bhreacaidh na sgrìn
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Tagh dùmhlachd-bhreacaidh na sgrìn a chleachdas tu
+STR_GAME_OPTIONS_RESOLUTION                                     :Dùmhlachd-bhreacaidh na sgrìn
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Tagh dùmhlachd-bhreacaidh na sgrìn a chleachdas tu
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :Gnàthaichte
 
 
@@ -1122,17 +1125,18 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :Gnàthaichte
 
 
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Seata grafaigeachd bunasach
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Tagh an seata grafaigeachd bunasach a chleachdas tu
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Barrachd fiosrachaidh mun t-seata ghrafaigeachd bhunasach
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Seata fhuaimean bunasach
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Tagh an seata fhuaimean bunasach a chleachdas tu
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Barrachd fiosrachaidh mun t-seata fhuaimean bhunasach
+STR_GAME_OPTIONS_BASE_GRF                                       :Seata grafaigeachd bunasach
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Tagh an seata grafaigeachd bunasach a chleachdas tu
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Barrachd fiosrachaidh mun t-seata ghrafaigeachd bhunasach
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Seata ciùil bunasach
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Tagh an seata ciùil bunasach a chleachdas tu
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Barrachd fiosrachaidh mun t-seata chiùil bhunasach
+STR_GAME_OPTIONS_BASE_SFX                                       :Seata fhuaimean bunasach
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Tagh an seata fhuaimean bunasach a chleachdas tu
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Barrachd fiosrachaidh mun t-seata fhuaimean bhunasach
+
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Seata ciùil bunasach
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Tagh an seata ciùil bunasach a chleachdas tu
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Barrachd fiosrachaidh mun t-seata chiùil bhunasach
 
 
 
@@ -1235,11 +1239,10 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Coibhneil
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Chan eil IF freagarrach ri fhaighinn...{}’S urrainn dhut roghainn dhe IFan a luchdadh a-nuas leis an t-siostam “Susbaint air loidhne"
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Roghainnean
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Sreang criathraige:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Leudaich a h-uile
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Co-theannaich a h-uile
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Sreang criathraige:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Leudaich a h-uile
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Co-theannaich a h-uile
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(chan eil mìneachadh ri làimh)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Luach bunaiteach: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Seòrsa an roghainn: {ORANGE}{STRING}
@@ -1249,9 +1252,9 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Roghainnean a' 
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Roghainnean na companaidh (thèid an sàbhaladh leis a' gheama; gun bhuaidh ach air geamannan ùra)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Roghainnean na companaidh (thèid an sàbhaladh leis a' gheama; gun bhuaidh ach air a' chompanaidh seo)
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Roinn-seòrsa:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Seòrsa:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Cuingichidh seo an liosta gu h-ìosal le criathradh ro-shocraichte
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Roinn-seòrsa:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Seòrsa:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Cuingichidh seo an liosta gu h-ìosal le criathradh ro-shocraichte
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Bunasach (na seall ach roghainnean cudromach)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Adhartach (a’ mhòrchuid dhe na roghainnean)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Eòlaiche (a h-uile roghainn, a’ gabhail a-steach an fheadhainn neònach)
@@ -1268,9 +1271,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Roghainnean na 
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Chan eil gin -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Seall na h-uile toradh luirg ’s tu a’ suidheachadh{}{SILVER}Roinn-seòrsa {BLACK}air {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Seall na h-uile toradh luirg ’s tu a’ suidheachadh{}{SILVER}Seòrsa {BLACK}air {WHITE}Gach seòrsa
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Seall na h-uile toradh luirg ’s tu a’ suidheachadh{}{SILVER}Roinn-seòrsa {BLACK}air {WHITE}{STRING} {BLACK}agus {SILVER}Seòrsa {BLACK}air {WHITE}Gach seòrsa
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Seall na h-uile toradh luirg ’s tu a’ suidheachadh{}{SILVER}Roinn-seòrsa {BLACK}air {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Seall na h-uile toradh luirg ’s tu a’ suidheachadh{}{SILVER}Seòrsa {BLACK}air {WHITE}Gach seòrsa
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Seall na h-uile toradh luirg ’s tu a’ suidheachadh{}{SILVER}Roinn-seòrsa {BLACK}air {WHITE}{STRING} {BLACK}agus {SILVER}Seòrsa {BLACK}air {WHITE}Gach seòrsa
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :Dheth
@@ -1303,6 +1306,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Luach-rèidh ia
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Cosgaisean ruith: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Suidhich ìre nan cosgaisean ruith is obrach-càraidh aig carbadan is a' bhun-structar
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Luaths na togail: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Cuingich meud nan gnìomhan togail aig na IFan
@@ -1319,6 +1323,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Suidhich na th�
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Cosgaisean togail: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Suidhich ìre nan cosgaisean togail is ceannachd
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Crìonaidhean eaconamaidh: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Ma tha seo air, faodaidh crìonadh eaconamaidh tachairt gach beagan bhliadhnaichean. Rè crìonaidh eaconamaidh, tha a h-uile toradh mòran nas ìsle (tillidh e dhan ìre roimhe nuair a bhios an crìonadh eaconamaidh seachad)
@@ -1611,6 +1616,7 @@ STR_CONFIG_SETTING_SCROLLMODE_RMB                               :Gluais am mapa 
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Sgroladh mìn nam port-seallaidh: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Tagh mar a ghluaiseas am prìomh-shealladh gu ionad sònraichte. Ma tha seo dheth, thèid leum dhan ionad a chaidh a thaghadh sa bhad
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Seall gliocasan-sgrìn tomhais le innealan togail: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Seall faide eadar leacan is diofar an àirde nuair a nì thu slaodadh fhad ’s a bhios tu a' togail rudeigin
@@ -2056,13 +2062,10 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... chan
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... a' leigeil seachad an seata grafaigeachd bunasach “{STRING}": cha deach a lorg
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... a' leigeil seachad an seata fuaime bunasach “{STRING}": cha deach a lorg
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... a' leigeil seachad an seata ciùil bunasach “{STRING}": cha deach a lorg
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Chan eil cuimhne gu leòr agad
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Dh'fhàillig le sònrachadh aig {BYTES} dhe thasgadan nam sprites. Chaidh tasgadan nam sprites a lùghdachadh gu {BYTES}. Le sin, bidh an dèanadas aig OpenTTD nas lugha. Gus nach bidh feum ann airson a leithid dhe chuimhne, feuch an cuir thu grafaigeachd 32bpp is/no leibheilean sùmaidh à comas
 
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Geama ùr
 STR_INTRO_LOAD_GAME                                             :{BLACK}Luchdaich geama
@@ -2073,8 +2076,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Ioma-chl
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Roghainnean a' gheama
 STR_INTRO_HIGHSCORE                                             :{BLACK}Clàr nan sgòran àrda
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Roghainnean
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Roghainnean NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Susbaint air loidhne
 STR_INTRO_QUIT                                                  :{BLACK}Fàg an-seo
 
@@ -2092,8 +2093,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Tagh an 
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Seall roghainnean a' gheama
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Seall clàr nan sgòran àrda
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Roghainnean an t-seallaidh
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Seall na roghainnean NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Thoir sùil airson susbainte ùire no air a h-ùrachadh ri luchdadh a-nuas
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Fàg “OpenTTD"
 
@@ -2166,12 +2165,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Trama carago
 STR_FACE_CAPTION                                                :{WHITE}Taghadh aodainn
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Sguir dhen taghadh aodainn ùir
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Gabh ris an taghadh aodainn ùir
-STR_FACE_RANDOM                                                 :{BLACK}Cuir sìol air thuaiream
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Fireannach
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Tagh aodann fireannaich
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Boireannach
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Tagh aodann boireannaich
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Aodann ùr
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Gin aodann ùr air thuaiream
 STR_FACE_ADVANCED                                               :{BLACK}Adhartach
@@ -2189,36 +2183,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Cha do g
 STR_FACE_SAVE                                                   :{BLACK}Sàbhail
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Sàbhail mar an t-aodann as fhearr leat
 STR_FACE_SAVE_DONE                                              :{WHITE}Thèid an t-aodann seo a shàbhaladh mar am fear as fhearr leat san fhaidhle rèiteachaidh aig OpenTTD
-STR_FACE_EUROPEAN                                               :{BLACK}Eòrpach
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Tagh aodann Eòrpach
-STR_FACE_AFRICAN                                                :{BLACK}Afraganach
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Tagh aodann Afraganach
 STR_FACE_YES                                                    :Air/Oirre
 STR_FACE_NO                                                     :—
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Cuir stais no fàinne-chluaise an comas
 STR_FACE_HAIR                                                   :Falt:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Atharraich am falt
 STR_FACE_EYEBROWS                                               :Malaidhean:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Atharraich na malaidhean
 STR_FACE_EYECOLOUR                                              :Dath sùla:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Atharraich dath nan sùilean
 STR_FACE_GLASSES                                                :Speuclairean:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Cuir speuclairean an comas
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Atharraich na speuclairean
 STR_FACE_NOSE                                                   :Sròn:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Atharraich an t-sròn
 STR_FACE_LIPS                                                   :Bilean:
 STR_FACE_MOUSTACHE                                              :Stais:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Atharraich na bilean no an stais
 STR_FACE_CHIN                                                   :Smigead:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Atharraich an smigead
 STR_FACE_JACKET                                                 :Seacaid:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}atharraich an t-seacaid
 STR_FACE_COLLAR                                                 :Coilear:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Atharraich an coilear
 STR_FACE_TIE                                                    :Tàidh:
 STR_FACE_EARRING                                                :Fàinne-chluaise:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Atharraich an tàidh no an fhàinne-chluaise
 
 # Matches ServerGameType
 ###length 3
@@ -2522,10 +2500,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Solairea
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Co-aonaich an stèisean
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Tog stèisean fa leth
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Tog stèisean fa leth
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Co-aonaich a' phuing-thurais
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Tog puing-thurais fa leth
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Tog puing-thurais fa leth
 
 # Generic toolbar
 
@@ -2580,6 +2558,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Faide na
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Tagh dè cho fad ’s a bhios an stèisean
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Slaod is leig às
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Tog stèisean le slaodadh is leigeil às
+
 
 
 
@@ -2775,6 +2754,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Air thua
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Tagh meud a' bhaile
 STR_FOUND_TOWN_CITY                                             :{BLACK}Mòr-bhaile
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Fàsaidh mòr-bhailtean nas luaithe na bailtean àbhaisteach{}A' crochadh air na roghainnean, tha iad nas motha nuair a thèid an stèidheachadh
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Co-dhealbhachd rathaidean a' bhaile
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Tagh co-dhealbhachd nan rathaidean aig a' bhaile
@@ -3149,14 +3129,11 @@ STR_SAVE_PRESET_CAPTION                                         :{WHITE}Sàbhail
 STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Liosta dhe na ro-shocrachaidhean ri làimh, tagh fear gus lethbhreac dheth a chur gun ainm sàbhalaidh gu h-ìosal
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Cuir a-steach ainm an ro-shocrachaidh
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}An t-ainm a chaidh a thaghadh an-dràsta gus an ro-shocrachadh a shàbhaladh ann
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Sguir dheth
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Na atharraich an ro-shocrachadh
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Sàbhail
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Sàbhail an ro-shocrachadh dhan ainm air a thaghadh an-dràsta
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Atharraich paramadairean NewGRF
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Dùin
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Ath-shuidhich
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Suidhich a h-uile paramadair air a luach tùsail
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Paramadair {NUM}
@@ -4212,7 +4189,6 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Clàr-am
 STR_TIMETABLE_NO_TRAVEL                                         :Na siubhail
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Siubhail (fèin-obrachail; clàr-ama ga chruthachadh leis an ath-òrdugh a làimh)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Siubhail (gun chlàr-ama)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Siubhal le {2:VELOCITY} as motha (gun chlàr-ama)
 STR_TIMETABLE_TRAVEL_FOR                                        :Siubhail fad {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Siubhail fad {STRING} le {VELOCITY} as motha
 STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Siubhail (fad {STRING} gun chlàr-ama)
@@ -4322,13 +4298,10 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Gabh ris
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Cleachd an sgriobt a thagh thu
-STR_AI_LIST_CANCEL                                              :{BLACK}Sguir dheth
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Na atharraich an sgriobt
 
 
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :IF
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Dùin
 STR_AI_SETTINGS_RESET                                           :{BLACK}Ath-shuidhich
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -4445,7 +4418,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Chan urr
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... is {CURRENCY_LONG} an t-iasad as motha a tha ceadaichte dhut
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Chan urrainn dhut barrachd airgid fhaighinn air iasad...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... chan eil iasad ri pàigheadh ann
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... chan eil iasad ri pàigheadh ann
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... feum air {CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Cha ghabh an t-iasad pàigheadh air ais...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Chan urrainn dhut airgead a thoirt seachad a chaidh a thoirt dhut mar iasad leis a’ bhanca...
@@ -4532,11 +4505,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Feumaidh
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Tha seo ri taobh barrachd air aon phuing-thurais a tha ann mu thràth
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Ro fhaisg air puing-thurais eile
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Cha ghabh puing-thurais trèan togail an-seo...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Cha ghabh puing-thurais trèan togail an-seo...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Cha ghabh fleodrainn togail an-seo...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Cha ghabh ainm na puinge-turais atharrachadh...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Cha ghabh puing-thurais trèan toirt air falbh an-seo...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Cha ghabh puing-thurais trèan toirt air falbh an-seo...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Feumaidh tu a' phuing-thurais trèan a thoirt air falbh an toiseach
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... tha fleodrainn san rathad
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... tha companaidh eile a' chleachdadh na fleodrainn!

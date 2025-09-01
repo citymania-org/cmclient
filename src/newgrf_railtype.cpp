@@ -33,7 +33,7 @@
 			case 0x41: return 0;
 			case 0x42: return 0;
 			case 0x43: return TimerGameCalendar::date.base();
-			case 0x44: return HZB_TOWN_EDGE;
+			case 0x44: return to_underlying(HouseZone::TownEdge);
 			case 0x45: {
 				auto rt = GetRailTypeInfoIndex(this->rti);
 				uint8_t local = GetReverseRailTypeTranslation(rt, this->ro.grffile);
@@ -57,7 +57,7 @@
 			} else if (IsLevelCrossingTile(this->tile)) {
 				t = ClosestTownFromTile(this->tile, UINT_MAX);
 			}
-			return t != nullptr ? GetTownRadiusGroup(t, this->tile) : HZB_TOWN_EDGE;
+			return to_underlying(t != nullptr ? GetTownRadiusGroup(t, this->tile) : HouseZone::TownEdge);
 		}
 		case 0x45:
 			return GetTrackTypes(this->tile, ro.grffile);
@@ -110,12 +110,12 @@ SpriteID GetCustomRailSprite(const RailTypeInfo *rti, TileIndex tile, RailTypeSp
 	if (rti->group[rtsg] == nullptr) return 0;
 
 	RailTypeResolverObject object(rti, tile, context, rtsg);
-	const SpriteGroup *group = object.Resolve();
-	if (group == nullptr || group->GetNumResults() == 0) return 0;
+	const auto *group = object.Resolve<ResultSpriteGroup>();
+	if (group == nullptr || group->num_sprites == 0) return 0;
 
-	if (num_results) *num_results = group->GetNumResults();
+	if (num_results) *num_results = group->num_sprites;
 
-	return group->GetResult();
+	return group->sprite;
 }
 
 /**
@@ -136,10 +136,10 @@ SpriteID GetCustomSignalSprite(const RailTypeInfo *rti, TileIndex tile, SignalTy
 	uint32_t param2 = (type << 16) | (var << 8) | state;
 	RailTypeResolverObject object(rti, tile, TCX_NORMAL, RTSG_SIGNALS, param1, param2);
 
-	const SpriteGroup *group = object.Resolve();
-	if (group == nullptr || group->GetNumResults() == 0) return 0;
+	const auto *group = object.Resolve<ResultSpriteGroup>();
+	if (group == nullptr || group->num_sprites == 0) return 0;
 
-	return group->GetResult();
+	return group->sprite;
 }
 
 /**

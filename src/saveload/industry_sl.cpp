@@ -19,14 +19,52 @@
 
 static OldPersistentStorage _old_ind_persistent_storage;
 
+class SlIndustryAcceptedHistory : public DefaultSaveLoadHandler<SlIndustryAcceptedHistory, Industry::AcceptedCargo> {
+public:
+	static inline const SaveLoad description[] = {
+		 SLE_VAR(Industry::AcceptedHistory, accepted, SLE_UINT16),
+		 SLE_VAR(Industry::AcceptedHistory, waiting, SLE_UINT16),
+	};
+	static inline const SaveLoadCompatTable compat_description = _industry_produced_history_sl_compat;
+
+	void Save(Industry::AcceptedCargo *a) const override
+	{
+		if (!IsValidCargoType(a->cargo) || a->history == nullptr) {
+			/* Don't save any history if cargo slot isn't used. */
+			SlSetStructListLength(0);
+			return;
+		}
+
+		SlSetStructListLength(a->history->size());
+
+		for (auto &h : *a->history) {
+			SlObject(&h, this->GetDescription());
+		}
+	}
+
+	void Load(Industry::AcceptedCargo *a) const override
+	{
+		size_t len = SlGetStructListLength(UINT32_MAX);
+		if (len == 0) return;
+
+		auto &history = a->GetOrCreateHistory();
+		for (auto &h : history) {
+			if (--len > history.size()) break; // unsigned so wraps after hitting zero.
+			SlObject(&h, this->GetLoadDescription());
+		}
+	}
+};
+
 class SlIndustryAccepted : public VectorSaveLoadHandler<SlIndustryAccepted, Industry, Industry::AcceptedCargo, INDUSTRY_NUM_INPUTS> {
 public:
-	inline static const SaveLoad description[] = {
+	static inline const SaveLoad description[] = {
 		 SLE_VAR(Industry::AcceptedCargo, cargo, SLE_UINT8),
 		 SLE_VAR(Industry::AcceptedCargo, waiting, SLE_UINT16),
 		 SLE_VAR(Industry::AcceptedCargo, last_accepted, SLE_INT32),
+		SLE_CONDVAR(Industry::AcceptedCargo, accumulated_waiting, SLE_UINT32, SLV_INDUSTRY_ACCEPTED_HISTORY, SL_MAX_VERSION),
+		SLEG_CONDSTRUCTLIST("history", SlIndustryAcceptedHistory, SLV_INDUSTRY_ACCEPTED_HISTORY, SL_MAX_VERSION),
 	};
-	inline const static SaveLoadCompatTable compat_description = _industry_accepts_sl_compat;
+	static inline const SaveLoadCompatTable compat_description = _industry_accepts_sl_compat;
 
 	std::vector<Industry::AcceptedCargo> &GetVector(Industry *i) const override { return i->accepted; }
 
@@ -45,11 +83,11 @@ public:
 
 class SlIndustryProducedHistory : public DefaultSaveLoadHandler<SlIndustryProducedHistory, Industry::ProducedCargo> {
 public:
-	inline static const SaveLoad description[] = {
+	static inline const SaveLoad description[] = {
 		 SLE_VAR(Industry::ProducedHistory, production, SLE_UINT16),
 		 SLE_VAR(Industry::ProducedHistory, transported, SLE_UINT16),
 	};
-	inline const static SaveLoadCompatTable compat_description = _industry_produced_history_sl_compat;
+	static inline const SaveLoadCompatTable compat_description = _industry_produced_history_sl_compat;
 
 	void Save(Industry::ProducedCargo *p) const override
 	{
@@ -72,20 +110,20 @@ public:
 
 		for (auto &h : p->history) {
 			if (--len > p->history.size()) break; // unsigned so wraps after hitting zero.
-			SlObject(&h, this->GetDescription());
+			SlObject(&h, this->GetLoadDescription());
 		}
 	}
 };
 
 class SlIndustryProduced : public VectorSaveLoadHandler<SlIndustryProduced, Industry, Industry::ProducedCargo, INDUSTRY_NUM_OUTPUTS> {
 public:
-	inline static const SaveLoad description[] = {
+	static inline const SaveLoad description[] = {
 		 SLE_VAR(Industry::ProducedCargo, cargo, SLE_UINT8),
 		 SLE_VAR(Industry::ProducedCargo, waiting, SLE_UINT16),
 		 SLE_VAR(Industry::ProducedCargo, rate, SLE_UINT8),
 		SLEG_STRUCTLIST("history", SlIndustryProducedHistory),
 	};
-	inline const static SaveLoadCompatTable compat_description = _industry_produced_sl_compat;
+	static inline const SaveLoadCompatTable compat_description = _industry_produced_sl_compat;
 
 	std::vector<Industry::ProducedCargo> &GetVector(Industry *i) const override { return i->produced; }
 
@@ -162,6 +200,8 @@ static const SaveLoad _industry_desc[] = {
 	SLE_CONDVAR(Industry, random,                     SLE_UINT16,                SLV_82, SL_MAX_VERSION),
 	SLE_CONDSSTR(Industry, text,     SLE_STR | SLF_ALLOW_CONTROL,     SLV_INDUSTRY_TEXT, SL_MAX_VERSION),
 
+	SLE_CONDVAR(Industry, valid_history, SLE_UINT64, SLV_INDUSTRY_NUM_VALID_HISTORY, SL_MAX_VERSION),
+
 	SLEG_CONDSTRUCTLIST("accepted", SlIndustryAccepted,                          SLV_INDUSTRY_CARGO_REORGANISE, SL_MAX_VERSION),
 	SLEG_CONDSTRUCTLIST("produced", SlIndustryProduced,                          SLV_INDUSTRY_CARGO_REORGANISE, SL_MAX_VERSION),
 };
@@ -220,7 +260,7 @@ struct INDYChunkHandler : ChunkHandler {
 			if (IsSavegameVersionBefore(SLV_161) && !IsSavegameVersionBefore(SLV_76)) {
 				/* Store the old persistent storage. The GRFID will be added later. */
 				assert(PersistentStorage::CanAllocateItem());
-				i->psa = new PersistentStorage(0, 0, TileIndex{});
+				i->psa = new PersistentStorage(0, GSF_INVALID, TileIndex{});
 				std::copy(std::begin(_old_ind_persistent_storage.storage), std::end(_old_ind_persistent_storage.storage), std::begin(i->psa->storage));
 			}
 			if (IsSavegameVersionBefore(SLV_EXTEND_INDUSTRY_CARGO_SLOTS)) {
@@ -228,7 +268,25 @@ struct INDYChunkHandler : ChunkHandler {
 			} else if (IsSavegameVersionBefore(SLV_INDUSTRY_CARGO_REORGANISE)) {
 				LoadMoveAcceptsProduced(i, INDUSTRY_NUM_INPUTS, INDUSTRY_NUM_OUTPUTS);
 			}
-			Industry::industries[i->type].push_back(i->index); // Assume savegame indices are sorted.
+
+			if (IsSavegameVersionBefore(SLV_INDUSTRY_NUM_VALID_HISTORY)) {
+				/* The last month has always been recorded. */
+				size_t oldest_valid = LAST_MONTH;
+				if (!IsSavegameVersionBefore(SLV_PRODUCTION_HISTORY)) {
+					/* History was extended but we did not keep track of valid history, so assume it from the oldest non-zero value. */
+					for (const auto &p : i->produced) {
+						if (!IsValidCargoType(p.cargo)) continue;
+						for (size_t n = LAST_MONTH; n < std::size(p.history); ++n) {
+							if (p.history[n].production == 0 && p.history[n].transported == 0) continue;
+							oldest_valid = std::max(oldest_valid, n);
+						}
+					}
+				}
+				/* Set mask bits up to and including the oldest valid record. */
+				i->valid_history = (std::numeric_limits<uint64_t>::max() >> (std::numeric_limits<uint64_t>::digits - (oldest_valid + 1 - LAST_MONTH))) << LAST_MONTH;
+			}
+
+			Industry::industries[i->type].insert(i->index);
 		}
 	}
 

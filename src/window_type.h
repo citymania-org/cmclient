@@ -583,6 +583,12 @@ enum WindowClass : uint16_t {
 	WC_INDUSTRY_PRODUCTION,
 
 	/**
+	 * Town cargo history graph; %Window numbers:
+	 *   - #TownID = #GraphWidgets
+	 */
+	WC_TOWN_CARGO_GRAPH,
+
+	/**
 	 * Company infrastructure overview; %Window numbers:
 	 *   - #CompanyID = #CompanyInfrastructureWidgets
 	 */
@@ -733,7 +739,6 @@ enum GameOptionsInvalidationData : uint8_t {
 	GOID_NEWGRF_CURRENT_LOADED,  ///< The current list of active NewGRF has been loaded.
 	GOID_NEWGRF_LIST_EDITED,     ///< List of active NewGRFs is being edited.
 	GOID_NEWGRF_CHANGES_MADE,    ///< Changes have been made to a given NewGRF either through the palette or its parameters.
-	GOID_NEWGRF_CHANGES_APPLIED, ///< The active NewGRF list changes have been applied.
 };
 
 struct Window;

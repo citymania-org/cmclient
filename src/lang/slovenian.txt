@@ -538,7 +538,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Izhod
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Možnosti igre
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Nastavitve
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF nastavitve
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Nastavitve prozornega pogleda
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Imena mest prikazana
@@ -702,6 +701,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Ocene us
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Vrednosti podjetij
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Cene tovora
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Plačilo za dostavo 10 enot (ali 10.000 litrov) tovora za razdaljo 20 kvadratkov
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Omogoči vse
@@ -710,6 +711,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Prikaži
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Ne prikaži tovora na grafu plačil
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Prikaži graf za tip tovora vključen/izključen
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Prikaz detajliranih ocen uspeha
@@ -1006,11 +1008,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Možnost
 
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Valute
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Izbira valut
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Valute
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Izbira valut
 
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Funt
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dolar
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -1047,21 +1050,21 @@ STR_GAME_OPTIONS_CURRENCY_GEL                                   :Gruzijski Lari
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iranski Rial
 STR_GAME_OPTIONS_CURRENCY_HKD                                   :Hong Kongški dolar
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Samodejno shrani
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Izberi časovni interval samodejnega shranjevanja igre
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Samodejno shrani
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Izberi časovni interval samodejnega shranjevanja igre
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Izključeno
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Jezik
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Izberi jezik vmesnika
+STR_GAME_OPTIONS_LANGUAGE                                       :Jezik
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Izberi jezik vmesnika
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Cel zaslon
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Označi to okno za igro v celozaslonskem načinu
+STR_GAME_OPTIONS_FULLSCREEN                                     :Cel zaslon
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Označi to okno za igro v celozaslonskem načinu
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Ločljivost
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Izberi ločljivost zaslona
+STR_GAME_OPTIONS_RESOLUTION                                     :Ločljivost
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Izberi ločljivost zaslona
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :drugo
 
 
@@ -1074,17 +1077,18 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :drugo
 
 
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Osnovni komplet grafik
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Izberi osnovni komplet grafik za uporabo
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Dodatne informacije o osnovnem kompletu grafik
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Osnovni komplet zvokov
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Izberi osnovni komplet zvokov za uporabo
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Dodatne informacije o osnovnem kompletu zvokov
+STR_GAME_OPTIONS_BASE_GRF                                       :Osnovni komplet grafik
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Izberi osnovni komplet grafik za uporabo
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Dodatne informacije o osnovnem kompletu grafik
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Osnovni komplet glasbe
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Izberi osnovni komplet glasbe za uporabo
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Dodatne informacije o osnovnem kompletu glasbe
+STR_GAME_OPTIONS_BASE_SFX                                       :Osnovni komplet zvokov
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Izberi osnovni komplet zvokov za uporabo
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Dodatne informacije o osnovnem kompletu zvokov
+
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Osnovni komplet glasbe
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Izberi osnovni komplet glasbe za uporabo
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Dodatne informacije o osnovnem kompletu glasbe
 
 
 
@@ -1187,11 +1191,10 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Dopustno
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Ni na voljo nobene uporabne UI.{}UI so na voljo preko 'Prenosa vsebin'.
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Nastavitve
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtriraj niz:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Razširi vse
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Skrči vse
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Filtriraj niz:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Razširi vse
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Skrči vse
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(ni razpoložljive razlage)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Privzeta vrednost: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Vrsta nastavitve: {ORANGE}{STRING}
@@ -1201,9 +1204,9 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Nastavitve igre
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Nastavitve podjetja (shranjeno v igrah, vpliva samo na nove igre)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Nastavitve podjetja (shranjeno v igrah, vpliva samo na trenutno podjetje)
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorija:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tip:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Omeji seznam na prikaz le spremenjenih nastavitev
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Kategorija:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Tip:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Omeji seznam na prikaz le spremenjenih nastavitev
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Osnovne nastavitve
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Napredne nastavitve
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Strokovne nastavitve / vse nastavitve
@@ -1220,9 +1223,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Nastavitve podj
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Brez -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Prikaži vse rezultate iskanja z nastavitvijo{}{SILVER}Kategorija {BLACK}do {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Prikaži vse rezultate iskanja z nastavitvijo{}{SILVER}Tip {BLACK}do {WHITE}Vsi tipi nastavitev
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Prikaži vse rezultate iskanja z nastavitvijo{}{SILVER}Kategorija {BLACK}do {WHITE}{STRING} {BLACK}in {SILVER}Tip {BLACK}do {WHITE}Vsi tipi nastavitev
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Prikaži vse rezultate iskanja z nastavitvijo{}{SILVER}Kategorija {BLACK}do {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Prikaži vse rezultate iskanja z nastavitvijo{}{SILVER}Tip {BLACK}do {WHITE}Vsi tipi nastavitev
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Prikaži vse rezultate iskanja z nastavitvijo{}{SILVER}Kategorija {BLACK}do {WHITE}{STRING} {BLACK}in {SILVER}Tip {BLACK}do {WHITE}Vsi tipi nastavitev
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :Izklopi
@@ -1255,6 +1258,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Obrestna mera; 
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Stroški delovanja: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Nastavitev vzdrževanja in stroškov delovanja vozil in zgradb
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Hitrost gradnje: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Nastavitev hitrosti gradnje za UI
@@ -1271,6 +1275,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Nastavitev fakt
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Cene gradnje: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Nastavitev cene gradnje in nakupa
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Recesije: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Če je omogočeno, se recesije lahko pojavijo vsakih nekaj let. Med recesijo je proizvodnja znatno nižja, povrne se v tek po recesiji.
@@ -1561,6 +1566,7 @@ STR_CONFIG_SETTING_SCROLLMODE_RMB                               :Premikaj zemlje
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Gladek premik pogleda: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Način pomika pogleda na določen objekt majhnega zemljevida (centriranje pogleda). Omogočeno - pogled drsi, onemogočeno - pogled preskoči.
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Prikaz merilnega nasveta med uporabo gradbenih orodij: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Prikaz dolžine in višinskih razlik pri gradnji z vlečenjem.
@@ -2007,13 +2013,10 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... form
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... ignoriran osnovni grafični set '{STRING}': ni najden
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... ignoriran osnovni zvočni set '{STRING}': ni najden
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... ignoriran osnovni glasbeni set '{STRING}': ni najden
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Premalo pomnilnika
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Priprava {BYTES} za predpomnilnik sličic ni uspela. Pomnilnik je bil zmanjšan na {BYTES}. To bo zmanjšalo zmogljivost OpenTTD. Za zmanjšanje potrebe po spominu onemogoči podporo za 32 bitne sličice
 
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Nova igra
 STR_INTRO_LOAD_GAME                                             :{BLACK}Naloži igro
@@ -2024,8 +2027,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Več igr
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Možnosti
 STR_INTRO_HIGHSCORE                                             :{BLACK}Tabela najboljših rezultatov
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Nastavitve
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF nastavitve
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Preveri razpoložljive vsebine
 STR_INTRO_QUIT                                                  :{BLACK}Izhod
 
@@ -2043,8 +2044,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Izberi o
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Prikaži možnosti igre
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Prikaži tabelo najboljših rezultatov
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Nastavitve zaslona
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Prikaži nastavitve NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Preveri posodobljene vsebine na strežniku,{} ki so na voljo za prenos
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Izhod iz 'OpenTTD'
 
@@ -2116,12 +2115,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Tovorni tramvaj
 STR_FACE_CAPTION                                                :{WHITE}Izbira obraza
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Prekliči izbiro novega obraza
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Sprejmi nov obraz
-STR_FACE_RANDOM                                                 :{BLACK}Naključno
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Moški
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Izberi moške slike
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Ženska
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Izberi ženske slike
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Nov obraz
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Naredi naključno novo sliko
 STR_FACE_ADVANCED                                               :{BLACK}Napredno
@@ -2139,36 +2133,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Ni mogo�
 STR_FACE_SAVE                                                   :{BLACK}Shrani
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Shrani priljubljen obraz
 STR_FACE_SAVE_DONE                                              :{WHITE}Ta obraz bo shranjen kot tvoj priljubljen v konfiguracijo OpenTTD
-STR_FACE_EUROPEAN                                               :{BLACK}Evropski
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Izbor evropskih obrazov
-STR_FACE_AFRICAN                                                :{BLACK}Afriški
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Izbor afriških obrazov
 STR_FACE_YES                                                    :Da
 STR_FACE_NO                                                     :Ne
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Vklop brk ali uhanov
 STR_FACE_HAIR                                                   :Lasje:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Spremeni lase
 STR_FACE_EYEBROWS                                               :Obrvi:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Spremeni obrvi
 STR_FACE_EYECOLOUR                                              :Barva oči:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Spremeni barvo oči
 STR_FACE_GLASSES                                                :Očala:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Vklopi očala
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Spremeni očala
 STR_FACE_NOSE                                                   :Nos:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Spremeni nos
 STR_FACE_LIPS                                                   :Ustnice:
 STR_FACE_MOUSTACHE                                              :Brke:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Spremeni ustnice ali brke
 STR_FACE_CHIN                                                   :Brada:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Spremeni brado
 STR_FACE_JACKET                                                 :Jakna:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Spremeni jakno
 STR_FACE_COLLAR                                                 :Ovratnik:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Spremeni ovratnik
 STR_FACE_TIE                                                    :Kravata:
 STR_FACE_EARRING                                                :Uhani:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Spremeni kravato ali uhane
 
 # Matches ServerGameType
 ###length 3
@@ -2478,10 +2456,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Dobavlja
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Združi postaje
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Izgradnja ločene postaje
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Izgradnja ločene postaje
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Združi točke poti
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Zgradi ločeno točko poti
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Zgradi ločeno točko poti
 
 # Generic toolbar
 
@@ -2524,6 +2502,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Dolžina
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Izberi dolžino železniške postaje
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Vleci in spusti
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Zgradi postajo s povleci in spusti
+
 
 
 
@@ -2711,6 +2690,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Naključ
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Izberi velikost mesta
 STR_FOUND_TOWN_CITY                                             :{BLACK}Mesto
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Mesta rastejo hitreje kot navadna naselja{}Odvisno od nastavitev, so večja, ko so ustanovljena
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Oblika mestnih cest:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Izberi obliko cest za to mesto
@@ -3043,14 +3023,11 @@ STR_SAVE_PRESET_CAPTION                                         :{WHITE}Shrani p
 STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Seznam prednastavitev na voljo, izberi eno, da jo skopiraš kot ime za shranjevanje spodaj
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Vpiši ime za prednastavitev
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Trenutno izbrano ime za shranjevanje prednastavitev
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Prekliči
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Ne spremeni prednastavitve
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Shrani
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Shrani prednastavitev k trenutno izbranemu imenu
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Spremeni NewGRF parametre
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Zapri
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Ponastavi
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Ponastavi vse nastavitve na privzeto
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Parameter {NUM}
@@ -4098,7 +4075,6 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Urnik - 
 STR_TIMETABLE_NO_TRAVEL                                         :Brez potovanja
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Potovanje (avtomatično; urnik z naslednjim ukazom)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Potovanje (brez urnika)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Potuj z največ {2:VELOCITY} (brez časovne tabele)
 STR_TIMETABLE_TRAVEL_FOR                                        :Potuj za {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Pozuj proti {STRING} z najvišjo hitrostjo {VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Potuj (za {STRING}, brez časovne tabele)
@@ -4208,13 +4184,10 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Potrdi
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Izberi označeno skripto
-STR_AI_LIST_CANCEL                                              :{BLACK}Prekliči
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ne spremeni skripte
 
 
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :UI
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Zapri
 STR_AI_SETTINGS_RESET                                           :{BLACK}Resetiraj
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -4331,7 +4304,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Ni mogo�
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... najvišje dovoljeno posojilo je {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Ni mogoča izposoja več denarja...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... ni posojila za odplačati
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... ni posojila za odplačati
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... potrebuješ {CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Ni mogoče odplačati posojila...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Ni mogoča oddaja denarja, ki je izposojen od banke...
@@ -4418,11 +4391,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Najprej 
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Združi z več kot eno obstoječo točko poti
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Preblizu drugi točki poti
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Tukaj ni mogoče postaviti točke poti...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Tukaj ni mogoče postaviti točke poti...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Tukaj ni mogoče postaviti boje...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Ni mogoče preimenovati točke poti...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Tukaj ni mogoče odstraniti točke poti...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Tukaj ni mogoče odstraniti točke poti...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Najprej moraš odstraniti točko poti
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... boja na poti
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... bojo uporablja drugo podjetje!

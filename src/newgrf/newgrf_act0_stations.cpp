@@ -90,12 +90,12 @@ static ChangeInfoResult StationChangeInfo(uint first, uint last, int prop, ByteR
 
 						/* no relative bounding box support */
 						DrawTileSeqStruct &dtss = tmp_layout.emplace_back();
-						dtss.delta_x = delta_x;
-						dtss.delta_y = buf.ReadByte();
-						dtss.delta_z = buf.ReadByte();
-						dtss.size_x = buf.ReadByte();
-						dtss.size_y = buf.ReadByte();
-						dtss.size_z = buf.ReadByte();
+						dtss.origin.x = delta_x;
+						dtss.origin.y = buf.ReadByte();
+						dtss.origin.z = buf.ReadByte();
+						dtss.extent.x = buf.ReadByte();
+						dtss.extent.y = buf.ReadByte();
+						dtss.extent.z = buf.ReadByte();
 
 						ReadSpriteLayoutSprite(buf, false, true, false, GSF_STATIONS, &dtss.image);
 						/* On error, bail out immediately. Temporary GRF data was already freed */
@@ -235,7 +235,7 @@ static ChangeInfoResult StationChangeInfo(uint first, uint last, int prop, ByteR
 
 			case 0x16: // Animation info
 				statspec->animation.frames = buf.ReadByte();
-				statspec->animation.status = buf.ReadByte();
+				statspec->animation.status = static_cast<AnimationStatus>(buf.ReadByte());
 				break;
 
 			case 0x17: // Animation speed
@@ -243,7 +243,7 @@ static ChangeInfoResult StationChangeInfo(uint first, uint last, int prop, ByteR
 				break;
 
 			case 0x18: // Animation triggers
-				statspec->animation.triggers = buf.ReadWord();
+				statspec->animation.triggers = static_cast<StationAnimationTriggers>(buf.ReadWord());
 				break;
 
 			/* 0x19 road routing (not implemented) */
@@ -293,6 +293,24 @@ static ChangeInfoResult StationChangeInfo(uint first, uint last, int prop, ByteR
 			case 0x1F: // Badge list
 				statspec->badges = ReadBadgeList(buf, GSF_STATIONS);
 				break;
+
+			case 0x20: { // Minimum bridge height (extended)
+				uint16_t tiles = buf.ReadExtendedByte();
+				if (statspec->bridgeable_info.size() < tiles) statspec->bridgeable_info.resize(tiles);
+				for (int j = 0; j != tiles; ++j) {
+					statspec->bridgeable_info[j].height = buf.ReadByte();
+				}
+				break;
+			}
+
+			case 0x21: { // Disallowed bridge pillars
+				uint16_t tiles = buf.ReadExtendedByte();
+				if (statspec->bridgeable_info.size() < tiles) statspec->bridgeable_info.resize(tiles);
+				for (int j = 0; j != tiles; ++j) {
+					statspec->bridgeable_info[j].disallowed_pillars = BridgePillarFlags{buf.ReadByte()};
+				}
+				break;
+			}
 
 			default:
 				ret = CIR_UNKNOWN;
