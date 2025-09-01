@@ -555,7 +555,7 @@ public:
 	inline bool HasCargoFor(StationIDStack next) const
 	{
 		while (!next.IsEmpty()) {
-			if (this->packets.find(StationID{next.Pop()}) != this->packets.end()) return true;
+			if (this->packets.find(next.Pop()) != this->packets.end()) return true;
 		}
 		/* Packets for StationID::Invalid() can go anywhere. */
 		return this->packets.find(StationID::Invalid()) != this->packets.end();
@@ -571,7 +571,7 @@ public:
 	}
 
 	/**
-	 * Returns sum of cargo still available for loading at the sation.
+	 * Returns sum of cargo still available for loading at the station.
 	 * (i.e. not counting cargo which is already reserved for loading)
 	 * @return Cargo on board the vehicle.
 	 */

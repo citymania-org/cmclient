@@ -49,7 +49,7 @@
 {
 	if (_network_dedicated || !_settings_client.gui.ai_developer_tools) return;
 
-	ScriptObject::GetActiveInstance()->Pause();
+	ScriptObject::GetActiveInstance().Pause();
 
 	ScriptLog::Log(ScriptLogTypes::LOG_SQ_ERROR, fmt::format("Break: {}", message));
 
@@ -76,17 +76,17 @@ ScriptController::ScriptController(::CompanyID company) :
 
 /* static */ uint ScriptController::GetTick()
 {
-	return ScriptObject::GetActiveInstance()->GetController()->ticks;
+	return ScriptObject::GetActiveInstance().GetController().ticks;
 }
 
 /* static */ int ScriptController::GetOpsTillSuspend()
 {
-	return ScriptObject::GetActiveInstance()->GetOpsTillSuspend();
+	return ScriptObject::GetActiveInstance().GetOpsTillSuspend();
 }
 
 /* static */ int ScriptController::GetSetting(const std::string &name)
 {
-	return ScriptObject::GetActiveInstance()->GetSetting(name);
+	return ScriptObject::GetActiveInstance().GetSetting(name);
 }
 
 /* static */ uint ScriptController::GetVersion()
@@ -96,11 +96,11 @@ ScriptController::ScriptController(::CompanyID company) :
 
 /* static */ HSQOBJECT ScriptController::Import(const std::string &library, const std::string &class_name, int version)
 {
-	ScriptController *controller = ScriptObject::GetActiveInstance()->GetController();
-	Squirrel *engine = ScriptObject::GetActiveInstance()->engine;
-	HSQUIRRELVM vm = engine->GetVM();
+	ScriptController &controller = ScriptObject::GetActiveInstance().GetController();
+	Squirrel &engine = *ScriptObject::GetActiveInstance().engine;
+	HSQUIRRELVM vm = engine.GetVM();
 
-	ScriptInfo *lib = ScriptObject::GetActiveInstance()->FindLibrary(library, version);
+	ScriptInfo *lib = ScriptObject::GetActiveInstance().FindLibrary(library, version);
 	if (lib == nullptr) {
 		throw sq_throwerror(vm, fmt::format("couldn't find library '{}' with version {}", library, version));
 	}
@@ -114,37 +114,37 @@ ScriptController::ScriptController(::CompanyID company) :
 
 	std::string fake_class;
 
-	LoadedLibraryList::iterator it = controller->loaded_library.find(library_name);
-	if (it != controller->loaded_library.end()) {
+	LoadedLibraryList::iterator it = controller.loaded_library.find(library_name);
+	if (it != controller.loaded_library.end()) {
 		fake_class = (*it).second;
 	} else {
-		int next_number = ++controller->loaded_library_count;
+		int next_number = ++controller.loaded_library_count;
 
 		/* Create a new fake internal name */
 		fake_class = fmt::format("_internalNA{}", next_number);
 
 		/* Load the library in a 'fake' namespace, so we can link it to the name the user requested */
 		sq_pushroottable(vm);
-		sq_pushstring(vm, fake_class, -1);
+		sq_pushstring(vm, fake_class);
 		sq_newclass(vm, SQFalse);
 		/* Load the library */
-		if (!engine->LoadScript(vm, lib->GetMainScript(), false)) {
+		if (!engine.LoadScript(vm, lib->GetMainScript(), false)) {
 			throw sq_throwerror(vm, fmt::format("there was a compile error when importing '{}' version {}", library, version));
 		}
 		/* Create the fake class */
 		sq_newslot(vm, -3, SQFalse);
 		sq_pop(vm, 1);
 
-		controller->loaded_library[library_name] = fake_class;
+		controller.loaded_library[library_name] = fake_class;
 	}
 
 	/* Find the real class inside the fake class (like 'sets.Vector') */
 	sq_pushroottable(vm);
-	sq_pushstring(vm, fake_class, -1);
+	sq_pushstring(vm, fake_class);
 	if (SQ_FAILED(sq_get(vm, -2))) {
 		throw sq_throwerror(vm, "internal error assigning library class");
 	}
-	sq_pushstring(vm, lib->GetInstanceName(), -1);
+	sq_pushstring(vm, lib->GetInstanceName());
 	if (SQ_FAILED(sq_get(vm, -2))) {
 		throw sq_throwerror(vm, fmt::format("unable to find class '{}' in the library '{}' version {}", lib->GetInstanceName(), library, version));
 	}
@@ -156,7 +156,7 @@ ScriptController::ScriptController(::CompanyID company) :
 
 	/* Now link the name the user wanted to our 'fake' class */
 	sq_pushobject(vm, parent);
-	sq_pushstring(vm, class_name, -1);
+	sq_pushstring(vm, class_name);
 	sq_pushobject(vm, obj);
 	sq_newclass(vm, SQTrue);
 	sq_newslot(vm, -3, SQFalse);

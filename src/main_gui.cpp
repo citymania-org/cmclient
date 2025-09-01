@@ -64,7 +64,7 @@ bool HandlePlacePushButton(Window *w, WidgetID widget, CursorID cursor, HighLigh
 {
 	if (w->IsWidgetDisabled(widget)) return false;
 
-	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+	SndClickBeep();
 	w->SetDirty();
 
 	if (w->IsWidgetLowered(widget)) {
@@ -201,7 +201,7 @@ enum GlobalHotKeys : int32_t {
 	GHK_TOGGLE_TRANSPARENCY,
 	GHK_TOGGLE_INVISIBILITY = GHK_TOGGLE_TRANSPARENCY + 9,
 	GHK_TRANSPARENCY_TOOLBAR = GHK_TOGGLE_INVISIBILITY + 8,
-	GHK_TRANSPARANCY,
+	GHK_TRANSPARENCY,
 	GHK_CHAT,
 	GHK_CHAT_ALL,
 	GHK_CHAT_COMPANY,
@@ -219,7 +219,7 @@ struct MainWindow : Window
 		ResizeWindow(this, _screen.width, _screen.height);
 
 		NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_M_VIEWPORT);
-		nvp->InitializeViewport(this, TileXY(32, 32), ScaleZoomGUI(ZOOM_LVL_VIEWPORT));
+		nvp->InitializeViewport(this, TileXY(32, 32), ScaleZoomGUI(ZoomLevel::Viewport));
 
 		this->viewport->overlay = std::make_shared<LinkGraphOverlay>(this, WID_M_VIEWPORT, 0, CompanyMask{}, 2);
 		this->refresh_timeout.Reset();
@@ -238,7 +238,7 @@ struct MainWindow : Window
 	}
 
 	/** Refresh the link-graph overlay on a regular interval. */
-	IntervalTimer<TimerWindow> refresh_interval = {std::chrono::milliseconds(7650), [this](auto) {
+	const IntervalTimer<TimerWindow> refresh_interval = {std::chrono::milliseconds(7650), [this](auto) {
 		RefreshLinkGraph();
 	}};
 
@@ -270,6 +270,9 @@ struct MainWindow : Window
 				DrawSprite(sprite, PAL_NONE, off_x, ScaleGUITrad(50));
 				off_x += GetSpriteSize(sprite).width + letter_spacing;
 			}
+
+			int text_y = this->height - GetCharacterHeight(FS_NORMAL) * 2;
+			DrawString(0, this->width - 1, text_y, STR_INTRO_VERSION, TC_WHITE, SA_CENTER);
 		}
 	}
 
@@ -379,7 +382,7 @@ struct MainWindow : Window
 				ShowTransparencyToolbar();
 				break;
 
-			case GHK_TRANSPARANCY:
+			case GHK_TRANSPARENCY:
 				ResetRestoreAllTransparency();
 				break;
 
@@ -433,8 +436,9 @@ struct MainWindow : Window
 		this->refresh_timeout.Reset();
 	}
 
-	void OnMouseWheel(int wheel) override
+	void OnMouseWheel(int wheel, WidgetID widget) override
 	{
+		if (widget != WID_M_VIEWPORT) return;
 		if (_settings_client.gui.scrollwheel_scrolling != SWS_OFF) {
 			bool in = wheel < 0;
 
@@ -511,7 +515,7 @@ struct MainWindow : Window
 		Hotkey('7' | WKC_CTRL | WKC_SHIFT, "invisibility_structures", GHK_TOGGLE_INVISIBILITY + 6),
 		Hotkey('8' | WKC_CTRL | WKC_SHIFT, "invisibility_catenary", GHK_TOGGLE_INVISIBILITY + 7),
 		Hotkey('X' | WKC_CTRL, "transparency_toolbar", GHK_TRANSPARENCY_TOOLBAR),
-		Hotkey('X', "toggle_transparency", GHK_TRANSPARANCY),
+		Hotkey('X', "toggle_transparency", GHK_TRANSPARENCY),
 		Hotkey({WKC_RETURN, 'T'}, "chat", GHK_CHAT),
 		Hotkey({WKC_SHIFT | WKC_RETURN, WKC_SHIFT | 'T'}, "chat_all", GHK_CHAT_ALL),
 		Hotkey({WKC_CTRL | WKC_RETURN, WKC_CTRL | 'T'}, "chat_company", GHK_CHAT_COMPANY),
@@ -522,7 +526,7 @@ struct MainWindow : Window
 };
 
 static WindowDesc _main_window_desc(
-	WDP_MANUAL, nullptr, 0, 0,
+	WDP_MANUAL, {}, 0, 0,
 	WC_MAIN_WINDOW, WC_NONE,
 	WindowDefaultFlag::NoClose,
 	_nested_main_window_widgets,
@@ -549,10 +553,10 @@ void ShowSelectGameWindow();
 void SetupColoursAndInitialWindow()
 {
 	for (Colours i = COLOUR_BEGIN; i != COLOUR_END; i++) {
-		const uint8_t *b = GetNonSprite(GENERAL_SPRITE_COLOUR(i), SpriteType::Recolour) + 1;
+		const uint8_t *b = GetNonSprite(GetColourPalette(i), SpriteType::Recolour) + 1;
 		assert(b != nullptr);
 		for (ColourShade j = SHADE_BEGIN; j < SHADE_END; j++) {
-			SetColourGradient(i, j, b[0xC6 + j]);
+			SetColourGradient(i, j, PixelColour{b[0xC6 + j]});
 		}
 	}
 

@@ -16,15 +16,41 @@
 #	define Point OTTD_Point
 #endif /* __APPLE__ */
 
+/**
+ * Determine where to position a centred object.
+ * @param min The top or left coordinate.
+ * @param max The bottom or right coordinate.
+ * @param size The height or width of the object to draw.
+ * @return Offset of where to position the object.
+ */
+inline int CentreBounds(int min, int max, int size)
+{
+	return (min + max - size + 1) / 2;
+}
+
+/** A coordinate with two dimensons. */
+template <typename T>
+struct Coord2D {
+	T x = 0; ///< X coordinate.
+	T y = 0; ///< Y coordinate.
+
+	constexpr Coord2D() = default;
+	constexpr Coord2D(T x, T y) : x(x), y(y) {}
+};
+
+/** A coordinate with three dimensions. */
+template <typename T>
+struct Coord3D {
+	T x = 0; ///< X coordinate.
+	T y = 0; ///< Y coordinate.
+	T z = 0; ///< Z coordinate.
+
+	constexpr Coord3D() = default;
+	constexpr Coord3D(T x, T y, T z) : x(x), y(y), z(z) {}
+};
 
 /** Coordinates of a point in 2D */
-struct Point {
-	int x;
-	int y;
-
-	constexpr Point() : x(0), y(0) {}
-	constexpr Point(int x, int y) : x(x), y(y) {}
-};
+using Point = Coord2D<int>;
 
 /** Dimensions (a width and height) of a rectangle in 2D */
 struct Dimension {
@@ -223,7 +249,20 @@ struct Rect {
 	inline bool Contains(const Point &pt) const
 	{
 		/* This is a local version of IsInsideMM, to avoid including math_func everywhere. */
-		return (uint)(pt.x - this->left) < (uint)(this->right - this->left) && (uint)(pt.y - this->top) < (uint)(this->bottom - this->top);
+		return (uint)(pt.x - this->left) <= (uint)(this->right - this->left) && (uint)(pt.y - this->top) <= (uint)(this->bottom - this->top);
+	}
+
+	/**
+	 * Centre a dimension within this Rect.
+	 * @param width The horizontal dimension.
+	 * @param height The vertical dimension.
+	 * @return the new resized Rect.
+	 */
+	[[nodiscard]] inline Rect CentreTo(int width, int height) const
+	{
+		int new_left = CentreBounds(this->left, this->right, width);
+		int new_right = CentreBounds(this->top, this->bottom, height);
+		return {new_left, new_right, new_left + width, new_right + height};
 	}
 };
 

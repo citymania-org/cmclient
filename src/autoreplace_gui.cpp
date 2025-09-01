@@ -122,7 +122,7 @@ class ReplaceVehicleWindow : public Window {
 	 */
 	void GenerateReplaceVehList(bool draw_left)
 	{
-		std::vector<EngineID> variants;
+		FlatSet<EngineID> variants;
 		EngineID selected_engine = EngineID::Invalid();
 		VehicleType type = this->window_number;
 		uint8_t side = draw_left ? 0 : 1;
@@ -161,8 +161,7 @@ class ReplaceVehicleWindow : public Window {
 
 			if (side == 1) {
 				EngineID parent = e->info.variant_id;
-				while (parent != EngineID::Invalid()) {
-					variants.push_back(parent);
+				while (parent != EngineID::Invalid() && variants.insert(parent).second) {
 					parent = Engine::Get(parent)->info.variant_id;
 				}
 			}
@@ -311,7 +310,7 @@ public:
 
 			case WID_RV_LEFT_MATRIX:
 			case WID_RV_RIGHT_MATRIX:
-				resize.height = GetEngineListHeight(this->window_number);
+				fill.height = resize.height = GetEngineListHeight(this->window_number);
 				size.height = (this->window_number <= VEH_ROAD ? 8 : 4) * resize.height;
 				break;
 
@@ -406,11 +405,11 @@ public:
 			case WID_RV_TRAIN_WAGONREMOVE_TOGGLE:
 				if (const Group *g = Group::GetIfValid(this->sel_group); g != nullptr) {
 					bool remove_wagon = g->flags.Test(GroupFlag::ReplaceWagonRemoval);
-					return GetString(STR_GROUP_NAME, sel_group, remove_wagon ? STR_CONFIG_SETTING_ON : STR_CONFIG_SETTING_OFF);
+					return GetString(STR_REPLACE_REMOVE_WAGON, STR_GROUP_NAME, sel_group, remove_wagon ? STR_CONFIG_SETTING_ON : STR_CONFIG_SETTING_OFF);
 				} else {
 					const Company *c = Company::Get(_local_company);
 					bool remove_wagon = c->settings.renew_keep_length;
-					return GetString(STR_GROUP_DEFAULT_TRAINS + this->window_number, std::monostate{}, remove_wagon ? STR_CONFIG_SETTING_ON : STR_CONFIG_SETTING_OFF);
+					return GetString(STR_REPLACE_REMOVE_WAGON, STR_GROUP_DEFAULT_TRAINS + this->window_number, std::monostate{}, remove_wagon ? STR_CONFIG_SETTING_ON : STR_CONFIG_SETTING_OFF);
 				}
 				break;
 
@@ -552,7 +551,7 @@ public:
 				if (g != nullptr) {
 					Command<CMD_SET_GROUP_FLAG>::Post(this->sel_group, GroupFlag::ReplaceWagonRemoval, !g->flags.Test(GroupFlag::ReplaceWagonRemoval), _ctrl_pressed);
 				} else {
-					// toggle renew_keep_length
+					/* toggle renew_keep_length */
 					Command<CMD_CHANGE_COMPANY_SETTING>::Post("company.renew_keep_length", Company::Get(_local_company)->settings.renew_keep_length ? 0 : 1);
 				}
 				break;
@@ -563,8 +562,8 @@ public:
 					this->HandleButtonClick(WID_RV_START_REPLACE);
 					ReplaceClick_StartReplace(false);
 				} else {
-					bool replacment_when_old = EngineHasReplacementWhenOldForCompany(Company::Get(_local_company), this->sel_engine[0], this->sel_group);
-					ShowDropDownMenu(this, _start_replace_dropdown, replacment_when_old ? 1 : 0, WID_RV_START_REPLACE, !this->replace_engines ? 1 << 1 : 0, 0);
+					bool replacement_when_old = EngineHasReplacementWhenOldForCompany(Company::Get(_local_company), this->sel_engine[0], this->sel_group);
+					ShowDropDownMenu(this, _start_replace_dropdown, replacement_when_old ? 1 : 0, WID_RV_START_REPLACE, !this->replace_engines ? 1 << 1 : 0, 0);
 				}
 				break;
 			}
@@ -623,7 +622,7 @@ public:
 		}
 	}
 
-	void OnDropdownSelect(WidgetID widget, int index) override
+	void OnDropdownSelect(WidgetID widget, int index, int) override
 	{
 		switch (widget) {
 			case WID_RV_SORT_DROPDOWN:
@@ -744,7 +743,7 @@ static constexpr NWidgetPart _nested_replace_rail_vehicle_widgets[] = {
 		NWidget(WWT_PANEL, COLOUR_GREY, WID_RV_LEFT_DETAILS), SetMinimalSize(240, 122), SetResize(1, 0), EndContainer(),
 		NWidget(NWID_VERTICAL),
 			NWidget(WWT_PANEL, COLOUR_GREY, WID_RV_RIGHT_DETAILS), SetMinimalSize(240, 122), SetResize(1, 0), EndContainer(),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_RV_TRAIN_WAGONREMOVE_TOGGLE), SetMinimalSize(138, 12), SetStringTip(STR_REPLACE_REMOVE_WAGON, STR_REPLACE_REMOVE_WAGON_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_RV_TRAIN_WAGONREMOVE_TOGGLE), SetMinimalSize(138, 12), SetToolTip(STR_REPLACE_REMOVE_WAGON_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
 		EndContainer(),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),

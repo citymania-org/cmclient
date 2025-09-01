@@ -511,6 +511,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}कं�
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}कंपनी मूल्ये
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}मालवाहू भरणा दर
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}मालवाहू 10 युनिट (किंवा 10,000 लिटर) 20 चौरस अंतरावर वितरण भरणा
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}सर्व सक्षम
@@ -519,6 +521,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}दे�
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}देयक दर आलेखावरील नाही मालवाहू प्रदर्शित
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}मालवाहू प्रकारासाठी टॉगल आलेख - वर / बंद
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}सविस्तर कामगिरी रेटिंग दाखवा
@@ -672,7 +675,8 @@ STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLAC
 
 
 
-###length 45
+
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :पौंड
 STR_GAME_OPTIONS_CURRENCY_USD                                   :डोल्लर
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :युरो
@@ -703,10 +707,11 @@ STR_GAME_OPTIONS_CURRENCY_SKK                                   :स्लोव
 # Autosave dropdown
 ###length 5
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}भाषा
+STR_GAME_OPTIONS_LANGUAGE                                       :भाषा
 
 
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :अन्य
+
 
 
 
@@ -757,7 +762,7 @@ STR_SUBSIDY_X4                                                  :x४
 ###length 4
 
 
-# Settings tree window
+# Settings tree in the Game Options window
 
 
 
@@ -779,6 +784,7 @@ STR_CONFIG_SETTING_REALISTIC                                    :खरेखु
 ###setting-zero-is-special
 
 
+###length 3
 
 
 
@@ -787,6 +793,7 @@ STR_CONFIG_SETTING_REALISTIC                                    :खरेखु
 
 ###setting-zero-is-special
 
+###length 3
 
 
 
@@ -897,6 +904,7 @@ STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            : वाहन �
 ###length 4
 
 ###length 4
+
 
 
 
@@ -1044,7 +1052,6 @@ STR_CONFIG_SETTING_STATUSBAR_POS                                :स्टेट
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}ओपेन टीटीडी {REV}
 
 
 
@@ -1071,37 +1078,20 @@ STR_LIVERY_LARGE_PLANE                                          :मोठं �
 # Face selection window
 STR_FACE_CAPTION                                                :{WHITE}चेहरा निवड
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}पुरूष
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}पुरूष चेहेरा निवडा
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}स्त्री
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}स्त्री चेहेरा निवडा
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}नवीन चेहरा
 STR_FACE_SIMPLE                                                 :{BLACK}सुटसुटीत
 STR_FACE_SIMPLE_TOOLTIP                                         :{BLACK}सुटसुटीत चेहेरा निवड
 STR_FACE_FACECODE                                               :{BLACK}खेळाडू चेहेरा क्र.
-STR_FACE_EUROPEAN                                               :{BLACK}युरोपिअन
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}युरोपिअन चेहेरा निवडा
-STR_FACE_AFRICAN                                                :{BLACK}अफ्रिकन
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}आफ्रिकन चेहेरा निवडा
 STR_FACE_YES                                                    :हो
 STR_FACE_NO                                                     :नाही
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}मिशी अथवा कर्णफुले असू द्या
 STR_FACE_HAIR                                                   :केस:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}केस बदला
 STR_FACE_EYEBROWS                                               :भुवया:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}भुवया बदला
 STR_FACE_EYECOLOUR                                              :डोळ्यांचा रंग:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}डोळ्यांचा रंग बदला
 STR_FACE_GLASSES                                                :चष्मा:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}चष्मा असू द्या
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}चष्मा बदला
 STR_FACE_NOSE                                                   :नाक:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}नाक बदला
 STR_FACE_LIPS                                                   :ओठ:
 STR_FACE_MOUSTACHE                                              :मिश्या:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}ओठ किंवा मिश्या बदला
 STR_FACE_CHIN                                                   :हनुवटी:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}हनुवटी बदला
 
 # Matches ServerGameType
 ###length 3
@@ -1207,6 +1197,7 @@ STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 
 
 
+
 # Signal window
 
 # Bridge selection window
@@ -1255,6 +1246,7 @@ STR_PLANT_TREE_CAPTION                                          :{WHITE}झा�
 
 STR_FOUND_TOWN_INITIAL_SIZE_SMALL_BUTTON                        :{BLACK}लहान
 STR_FOUND_TOWN_INITIAL_SIZE_LARGE_BUTTON                        :{BLACK}मोठं
+
 
 
 # Fund new industry window

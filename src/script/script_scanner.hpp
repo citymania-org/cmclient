@@ -13,7 +13,7 @@
 #include "../fileio_func.h"
 #include "../string_func.h"
 
-typedef std::map<std::string, class ScriptInfo *, CaseInsensitiveComparator> ScriptInfoList; ///< Type for the list of scripts.
+using ScriptInfoList = std::map<std::string, class ScriptInfo *, CaseInsensitiveComparator>; ///< Type for the list of scripts.
 
 /** Scanner to help finding scripts. */
 class ScriptScanner : public FileScanner {
@@ -26,7 +26,7 @@ public:
 	/**
 	 * Get the engine of the main squirrel handler (it indexes all available scripts).
 	 */
-	class Squirrel *GetEngine() { return this->engine; }
+	class Squirrel *GetEngine() { return this->engine.get(); }
 
 	/**
 	 * Get the current main script the ScanDir is currently tracking.
@@ -51,7 +51,7 @@ public:
 	/**
 	 * Register a ScriptInfo to the scanner.
 	 */
-	void RegisterScript(class ScriptInfo *info);
+	void RegisterScript(std::unique_ptr<class ScriptInfo> &&info);
 
 	/**
 	 * Get the list of registered scripts to print on the console.
@@ -74,7 +74,7 @@ public:
 	 * @param md5sum Whether to check the MD5 checksum.
 	 * @return A filename of a file of the content, else \c nullptr.
 	 */
-	const char *FindMainScript(const ContentInfo &ci, bool md5sum);
+	std::optional<std::string_view> FindMainScript(const ContentInfo &ci, bool md5sum);
 
 	bool AddFile(const std::string &filename, size_t basepath_length, const std::string &tar_filename) override;
 
@@ -84,28 +84,30 @@ public:
 	void RescanDir();
 
 protected:
-	class Squirrel *engine;  ///< The engine we're scanning with.
+	std::unique_ptr<class Squirrel> engine; ///< The engine we're scanning with.
 	std::string main_script; ///< The full path of the script.
 	std::string tar_file;    ///< If, which tar file the script was in.
 
-	ScriptInfoList info_list;        ///< The list of all script.
+	std::vector<std::unique_ptr<ScriptInfo>> info_vector;
+
+	ScriptInfoList info_list; ///< The list of all script.
 	ScriptInfoList info_single_list; ///< The list of all unique script. The best script (highest version) is shown.
 
 	/**
 	 * Initialize the scanner.
 	 * @param name The name of the scanner ("AIScanner", "GSScanner", ..).
 	 */
-	void Initialize(const char *name);
+	void Initialize(std::string_view name);
 
 	/**
 	 * Get the script name how to store the script in memory.
 	 */
-	virtual std::string GetScriptName(ScriptInfo *info) = 0;
+	virtual std::string GetScriptName(ScriptInfo &info) = 0;
 
 	/**
 	 * Get the filename to scan for this type of script.
 	 */
-	virtual const char *GetFileName() const = 0;
+	virtual std::string_view GetFileName() const = 0;
 
 	/**
 	 * Get the directory to scan in.
@@ -115,12 +117,12 @@ protected:
 	/**
 	 * Register the API for this ScriptInfo.
 	 */
-	virtual void RegisterAPI(class Squirrel *engine) = 0;
+	virtual void RegisterAPI(class Squirrel &engine) = 0;
 
 	/**
 	 * Get the type of the script, in plural.
 	 */
-	virtual const char *GetScannerName() const = 0;
+	virtual std::string_view GetScannerName() const = 0;
 
 	/**
 	 * Reset all allocated lists.

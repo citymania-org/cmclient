@@ -267,6 +267,7 @@ STR_UNITS_YEARS                                                 :{NUM}{NBSP}jaar
 STR_UNITS_PERIODS                                               :{NUM}{NBSP}period{P "" en}
 
 STR_LIST_SEPARATOR                                              :,{SPACE}
+STR_TRUNCATION_ELLIPSIS                                         :...
 
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Filter:
@@ -285,7 +286,7 @@ STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Venster 
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Vensternaam - sleep om venster te verplaatsen
 STR_TOOLTIP_SHADE                                               :{BLACK}Venster inklappen - alleen titelbalk weergeven
 STR_TOOLTIP_DEBUG                                               :{BLACK}Probleemgegevens voor NewGRF weergeven
-STR_TOOLTIP_DEFSIZE                                             :{BLACK}Venster op standaardgrootte weergeven. Ctrl+klik slaat huidige grootte op als standaard.
+STR_TOOLTIP_DEFSIZE                                             :Venster op standaardgrootte weergeven. Ctrl+klik slaat huidige grootte op als standaard.
 STR_TOOLTIP_STICKY                                              :{BLACK}Dit venster markeren als niet-sluitbaar met de knop 'Alle vensters sluiten'. Ctrl+klik om slaat status op als standaard.
 STR_TOOLTIP_RESIZE                                              :{BLACK}Klik en sleep om de grootte van dit venster te veranderen
 STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Schakelen tussen groot/klein venster
@@ -444,7 +445,6 @@ STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :Huizen plaatsen
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Spelopties
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Instellingen
 STR_SETTINGS_MENU_AI_SETTINGS                                   :AI-instellingen
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Spelscript-instellingen
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF-instellingen
@@ -622,6 +622,14 @@ STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Grafiek 
 
 STR_GRAPH_LAST_24_MINUTES_TIME_LABEL                            :{TINY_FONT}{BLACK}Laatste 24 minuten
 STR_GRAPH_LAST_72_MINUTES_TIME_LABEL                            :{TINY_FONT}{BLACK}Laatste 72 minuten
+STR_GRAPH_LAST_288_MINUTES_TIME_LABEL                           :{TINY_FONT}{BLACK}Laatste 288 minuten
+
+STR_GRAPH_LAST_24_MONTHS                                        :{TINY_FONT}{BLACK}2 jaar (maandelijks)
+STR_GRAPH_LAST_24_QUARTERS                                      :{TINY_FONT}{BLACK}6 jaar (per kwartaal)
+STR_GRAPH_LAST_24_YEARS                                         :{TINY_FONT}{BLACK}24 jaar (jaarlijks)
+
+STR_GRAPH_TOGGLE_RANGE                                          :Grafiek weergeven-verbergen voor dit gegevensbereik
+STR_GRAPH_SELECT_SCALE                                          :Horizontale schaal van grafiek aanpassen
 
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Vrachtprijzen
 STR_GRAPH_CARGO_PAYMENT_RATES_DAYS                              :{TINY_FONT}{BLACK}Dagen onderweg
@@ -629,14 +637,20 @@ STR_GRAPH_CARGO_PAYMENT_RATES_SECONDS                           :{TINY_FONT}{BLA
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Betaling voor het leveren van 10 eenheden (of 10.000 liter) vracht over een afstand van 20 vakjes
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Alles
 STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}Geen
-STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Alle vrachtsoorten weergeven op de grafiek van vrachtprijzen
-STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Geen vrachtsoorten weergeven op de grafiek van vrachtprijzen
+STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Alle vrachtsoorten weergeven op de grafiek
+STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Geen vrachtsoorten weergeven op de grafiek
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Grafiek voor dit vrachttype weergeven-verbergen
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
 
-STR_GRAPH_INDUSTRY_PRODUCTION_CAPTION                           :{WHITE}{INDUSTRY} - Productiegeschiedenis
+STR_GRAPH_INDUSTRY_CAPTION                                      :{WHITE}{INDUSTRY} - Vrachtgeschiedenis
 STR_GRAPH_INDUSTRY_RANGE_PRODUCED                               :Geproduceerd
 STR_GRAPH_INDUSTRY_RANGE_TRANSPORTED                            :Vervoerd
+STR_GRAPH_INDUSTRY_RANGE_DELIVERED                              :Afgeleverd
+STR_GRAPH_INDUSTRY_RANGE_WAITING                                :Wachtend
+
+STR_GRAPH_TOWN_CARGO_CAPTION                                    :{WHITE}{TOWN} - Vrachtgeschiedenis
+STR_GRAPH_TOWN_RANGE_PRODUCED                                   :Toevoer
+STR_GRAPH_TOWN_RANGE_TRANSPORTED                                :Vervoerd
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Gedetailleerde prestatiescores weergeven
 
@@ -959,26 +973,30 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Kopieer 
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Spelopties
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Algemeen
-STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Algemene instellingen kiezen
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :Algemene instellingen kiezen
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Grafische elementen
-STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Grafische instellingen kiezen
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :Grafische instellingen kiezen
 STR_GAME_OPTIONS_TAB_SOUND                                      :Geluid
-STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Geluids- en muziekinstellingen kiezen
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :Geluids- en muziekinstellingen kiezen
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :Sociaal
-STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}Instellingen voor sociale integratie kiezen
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :Instellingen voor sociale integratie kiezen
+STR_GAME_OPTIONS_TAB_ADVANCED                                   :Geavanceerd
+STR_GAME_OPTIONS_TAB_ADVANCED_TOOLTIP                           :Geavanceerde instellingen wijzigen
 
 STR_GAME_OPTIONS_VOLUME                                         :Volume
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Geluidseffecten
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Muziek
 
+STR_GAME_OPTIONS_SETTING                                        :{STRING}: {ORANGE}{STRING}
+
 STR_GAME_OPTIONS_VOLUME_MARK                                    :{NUM}%
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Valuta
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Valuta kiezen
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Valuta
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Valuta kiezen
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Britse Pond
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dollar
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -1024,9 +1042,10 @@ STR_GAME_OPTIONS_CURRENCY_MYR                                   :Maleisische Rin
 STR_GAME_OPTIONS_CURRENCY_LVL                                   :Letse lats
 STR_GAME_OPTIONS_CURRENCY_PTE                                   :Portugese Escudo
 STR_GAME_OPTIONS_CURRENCY_UAH                                   :Oekraïense hryvnia
+STR_GAME_OPTIONS_CURRENCY_VND                                   :Vietnamese Dong
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Automatisch opslaan
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Tijdsduur kiezen tussen automatisch opgeslagen spellen
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Automatisch opslaan
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Tijdsduur kiezen tussen automatisch opgeslagen spellen
 
 # Autosave dropdown
 ###length 5
@@ -1036,77 +1055,79 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_30_MINUTES             :Elke 30 minuten
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_60_MINUTES             :Elke 60 minuten
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :Elke 120 minuten
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Taal
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Taal selecteren voor gebruikersscherm
+STR_GAME_OPTIONS_LANGUAGE                                       :Taal
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Taal selecteren voor gebruikersscherm
 STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% voltooid)
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Volledig scherm
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Vink dit vakje aan om OpenTTD op volledig scherm te spelen
+STR_GAME_OPTIONS_FULLSCREEN                                     :Volledig scherm
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Vink dit vakje aan om OpenTTD op volledig scherm te spelen
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Schermresolutie
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Selecteer de schermresolutie
+STR_GAME_OPTIONS_RESOLUTION                                     :Schermresolutie
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Selecteer de schermresolutie
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :Anders
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
-STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Hardwareversnelling
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Selecteer dit vakje om OpenTTD hardwareversnelling te laten gebruiken. De gewijzigde instelling wordt pas van kracht nadat het spel opnieuw is gestart.
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :Hardwareversnelling
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Selecteer dit vakje om OpenTTD hardwareversnelling te laten gebruiken. De gewijzigde instelling wordt pas van kracht nadat het spel opnieuw is gestart.
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}De instelling wordt pas van kracht als het spel opnieuw is gestart
 
-STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}VSync
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Selecteer dit vakje om het scherm verticaal te synchroniseren. De wijziging gaat pas in nadat je het spel opnieuw hebt opgestart. Werkt alleen als hardwareversnelling is ingeschakeld
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :VSync
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :Selecteer dit vakje om het scherm verticaal te synchroniseren. De wijziging gaat pas in nadat je het spel opnieuw hebt opgestart. Werkt alleen als hardwareversnelling is ingeschakeld
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Huidige driver: {STRING}
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :Huidig stuurprogramma: {STRING}
 
-STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Grootte gebruikersscherm
-STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Sleep de schuif om de grootte van het gebruikersscherm in te stellen. Ctrl+slepen voor geleidelijke aanpassing
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Grootte automatisch detecteren
-STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Vink dit vakje aan om de grootte van het gebruikersscherm automatisch te detecteren
+STR_GAME_OPTIONS_INTERFACE                                      :Gebruikersscherm
 
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Randen schalen
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :{BLACK}Vink dit vakje aan om randen te schalen op grootte van gebruikersscherm
+STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Grootte gebruikersscherm
+STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :Sleep de schuif om de grootte van het gebruikersscherm in te stellen. Ctrl+slepen voor geleidelijke aanpassing
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Grootte automatisch detecteren
+STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Vink dit vakje aan om de grootte van het gebruikersscherm automatisch te detecteren
 
-STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :{BLACK}Traditioneel sprite-lettertype gebruiken
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Vink dit vakje aan als je het traditionele sprite-lettertype met vaste breedte wilt gebruiken
-STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Lettertypen met anti-alias
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Vink dit vakje aan voor in grootte aanpasbare lettertypen met anti-alias
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :Randen schalen
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :Vink dit vakje aan om randen te schalen op grootte van gebruikersscherm
+
+STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :Traditioneel sprite-lettertype gebruiken
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Vink dit vakje aan als je het traditionele sprite-lettertype met vaste breedte wilt gebruiken
+STR_GAME_OPTIONS_GUI_FONT_AA                                    :Lettertypen met anti-alias
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Vink dit vakje aan voor in grootte aanpasbare lettertypen met anti-alias
 
 STR_GAME_OPTIONS_GUI_SCALE_MARK                                 :{DECIMAL}x
 
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Geautomatiseerd onderzoek
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Deelnemen aan geautomatiseerd onderzoek
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}Als dit is ingeschakeld, verzendt OpenTTD een onderzoek wanneer je het spel afsluit
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}Onderzoek en privacy
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Hiermee open je een browser met meer informatie over het geautomatiseerde onderzoek.
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Voorbeeld van resultaten van onderzoek
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Geef de resultaten weer van het onderzoek van het huidige spel
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :Geautomatiseerd onderzoek
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :Deelnemen aan geautomatiseerd onderzoek
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :Als dit is ingeschakeld, verzendt OpenTTD een onderzoek wanneer je het spel afsluit
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :Onderzoek en privacy
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :Hiermee open je een browser met meer informatie over het geautomatiseerde onderzoek.
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :Voorbeeld van resultaten van onderzoek
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :Geef de resultaten weer van het onderzoek van het huidige spel
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Weergave
+STR_GAME_OPTIONS_DISPLAY                                        :Weergave
 
-STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Verversingssnelheid weergeven
-STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Selecteer de gewenste schermverversingssnelheid
+STR_GAME_OPTIONS_REFRESH_RATE                                   :Verversingssnelheid weergeven
+STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :Selecteer de gewenste schermverversingssnelheid
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}Hz
 STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Verversingssnelheden boven 60 Hz kunnen de prestaties beïnvloeden.
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Basisset voor graphics
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Selecteer de te gebruiken basisset voor grafische elementen (kan tijdens het spel niet worden gewijzigd, alleen in het hoofdmenu)
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Aanvullende informatie over de basisset voor graphics
+STR_GAME_OPTIONS_BASE_GRF                                       :Basisset voor grafische elementen
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Selecteer de te gebruiken basisset voor grafische elementen (kan tijdens het spel niet worden gewijzigd, alleen in het hoofdmenu)
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Aanvullende informatie over de basisset voor grafische elementen
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Basisset voor geluidseffecten
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Selecteer de te gebruiken basisset voor geluidseffecten (kan tijdens het spel niet worden gewijzigd, alleen in het hoofdmenu)
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Aanvullende informatie over de basisset voor geluidseffecten
+STR_GAME_OPTIONS_BASE_SFX                                       :Basisset voor geluiden
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Selecteer de te gebruiken basisset voor geluiden (kan tijdens het spel niet worden gewijzigd, alleen in het hoofdmenu)
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Aanvullende informatie over de basisset voor geluiden
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Basisset voor muziek
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Selecteer de te gebruiken basisset voor muziek
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Aanvullende informatie over the basisset voor muziek
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Basisset voor muziek
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Selecteer de te gebruiken basisset voor muziek
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Aanvullende informatie over the basisset voor muziek
 
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :Inhoud ophalen
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :Controleren op nieuwe en aangepaste inhoud om te downloaden
 
-STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :{LTBLUE}(geen invoegtoepassingen voor integratie met sociale platforms geïnstalleerd)
+STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :(geen invoegtoepassingen voor integratie met sociale platforms geïnstalleerd)
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{BLACK}{STRING} ({STRING})
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :{BLACK}Platform:
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :{BLACK}Status invoegtoepassing:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING} ({STRING})
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :Platform:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :Status invoegtoepassing:
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}Lopend
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_FAILED                     :{RED}Kon niet initialiseren
@@ -1219,12 +1240,11 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Toegeeflijk (ge
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Geen bruikbare AI's beschikbaar...{}{}Je kunt diverse AI's downloaden via het 'online-inhoud'-systeem
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Instellingen
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filter:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Alles uitvouwen
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Alles inklappen
-STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Alle waarden terugstellen
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Filter:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Alles uitvouwen
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Alles inklappen
+STR_CONFIG_SETTING_RESET_ALL                                    :Alle waarden terugstellen
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(geen uitleg beschikbaar)
 STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Standaardwaarde: {ORANGE}{STRING}
@@ -1237,9 +1257,9 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Bedrijfsinstell
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Voorzichtig!
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Met deze actie herstel je alle spelinstellingen naar hun standaardwaarden.{}Weet je zeker dat je wilt doorgaan?
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Categorie:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Type:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Beperkt de onderstaande lijst met vooraf gedefinieerde filters
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Categorie:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Type:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Beperkt de onderstaande lijst met vooraf gedefinieerde filters
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Basis (alleen belangrijke instellingen weergeven)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Geavanceerd (meeste instellingen weergeven)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Expert (alle instellingen weergeven, inclusief vreemde)
@@ -1256,9 +1276,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Bedrijfsinstell
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Geen -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Alle zoekresultaten per instelling weergeven{}{SILVER}Categorie {BLACK}naar {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Alle zoekresultaten per instelling weergeven{}{SILVER}Type {BLACK}naar {WHITE}alle instellingstypen
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Alle zoekresultaten per instelling weergeven{}{SILVER}Categorie {BLACK}naar {WHITE}{STRING} {BLACK}en {SILVER}type {BLACK}naar {WHITE}Alle instellingstypen
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Alle zoekresultaten per instelling weergeven{}{PUSH_COLOUR}{SILVER}Categorie {POP_COLOUR}naar {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Alle zoekresultaten per instelling weergeven{}{PUSH_COLOUR}{SILVER}Type {POP_COLOUR}naar {WHITE}alle instellingstypen
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Alle zoekresultaten per instelling weergeven{PUSH_COLOUR}{SILVER}Categorie {POP_COLOUR}naar {PUSH_COLOUR}{WHITE}{STRING} {POP_COLOUR}en {PUSH_COLOUR}{SILVER}type {POP_COLOUR}naar {WHITE}Alle instellingstypen
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :Uit
@@ -1296,6 +1316,10 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Percentage rent
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Onderhoudskosten: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Het niveau van onderhoud en lopende kosten van voertuigen en infrastuctuur
+###length 3
+STR_CONFIG_SETTING_RUNNING_COSTS_LOW                            :Laag
+STR_CONFIG_SETTING_RUNNING_COSTS_MEDIUM                         :Gemiddeld
+STR_CONFIG_SETTING_RUNNING_COSTS_HIGH                           :Hoog
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Bouwsnelheid: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Beperk de hoeveelheid bouwactiviteiten voor computerspeler
@@ -1317,6 +1341,10 @@ STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :Geen subsidie
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Bouwkosten: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Het niveau van bouw- en aankoopkosten instellen
+###length 3
+STR_CONFIG_SETTING_CONSTRUCTION_COSTS_LOW                       :Laag
+STR_CONFIG_SETTING_CONSTRUCTION_COSTS_MEDIUM                    :Gemiddeld
+STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HIGH                      :Hoog
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Recessies: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Wanneer dit is ingeschakeld kunnen nu en dan recessies optreden. Tijdens een recessie is alle productie aanzienlijk lager (deze keert terug naar het vorige niveau als de recessie voorbij is).
@@ -1661,6 +1689,9 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Kaart verplaats
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Kijkvenster vloeiend verplaatsen: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Bepaalt hoe het hoofdvenster naar een specifieke positie schuift wanneer je op de minikaart klikt of je opdracht geeft om naar een specifiek object op de kaart te bladeren. Als dit is ingeschakeld, dan schuift het kijkvenster soepel; als dit is uitgeschakeld, ga je rechtstreeks naar de gewenste plek.
+
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT                  :Traditioneel gedrag voor kiezen werkbalkmenu's: {STRING}
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT_HELPTEXT         :Kies het gedrag van werkbalkmenu's. Bij Uit, blijven de werkbalkmenu's open tot je een keus hebt gemaakt. Bij Aan, worden werkbalkmenu's actief als je de muisknop loslaat.
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Maten weergeven bij het gebruik van diverse bouwgereedschappen: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Geef tegelafstanden en hoogteverschillen weer bij het slepen tijdens het bouwen
@@ -2182,8 +2213,6 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... inde
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... negeert standaard graphicsset '{STRING}': niet gevonden
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... negeert standaard geluidsset '{STRING}': niet gevonden
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... negeert standaard muziekset '{STRING}': niet gevonden
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Geen geheugen meer
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Toewijzen van {BYTES} van spritecache mislukt. De spritecache werd teruggebracht tot {BYTES}. Dit verlaagt de prestaties van OpenTTD. Om het benodigde geheugen te verminderen, kun je proberen om 32bpp-beeldelementen en/of inzoomniveaus uit te schakelen
 
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}Fout met video-instellingen...
@@ -2191,7 +2220,8 @@ STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}... geen
 STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}... Spel is vastgelopen door het GPU-stuurprogramma. Hardwareversnelling wordt uitgeschakeld
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
+STR_INTRO_CAPTION                                               :{WHITE}OpenTTD
+STR_INTRO_VERSION                                               :OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Nieuw spel
 STR_INTRO_LOAD_GAME                                             :{BLACK}Spel laden
@@ -2203,11 +2233,7 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Netwerks
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Spelopties
 STR_INTRO_HIGHSCORE                                             :{BLACK}Scoretabel
 STR_INTRO_HELP                                                  :{BLACK}Help en handleiding
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Instellingen
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF-instellingen
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Online inhoud
-STR_INTRO_AI_SETTINGS                                           :{BLACK}AI-instellingen
-STR_INTRO_GAMESCRIPT_SETTINGS                                   :{BLACK}Spelscript-instellingen
 STR_INTRO_QUIT                                                  :{BLACK}Afsluiten
 
 STR_INTRO_TOOLTIP_NEW_GAME                                      :{BLACK}Start een nieuw spel. Ctrl+klik slaat de kaartconfiguratie over
@@ -2225,11 +2251,7 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Speelgoe
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Spelopties openen
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Scoretabel openen
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Toegang tot documentatie en online-hulpbronnen
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Instellingen openen
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}NewGRF-instellingen openen
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Zoeken naar nieuwe en aangepaste inhoud om te downloaden
-STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}AI-instellingen openen
-STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}Spelscript-instellingen openen
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}'OpenTTD' afsluiten
 
 STR_INTRO_BASESET                                               :{BLACK}De huidige gekozen set grafische elementen mist {NUM} sprite{P "" s}. Controleer of er updates zijn voor deze basisset.
@@ -2323,12 +2345,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Vrachttram
 STR_FACE_CAPTION                                                :{WHITE}Gezichtskeuze
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Annuleer nieuwe gezichtskeuze
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Accepteer nieuwe gezichtskeuze
-STR_FACE_RANDOM                                                 :{BLACK}Willekeurig maken
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Mannelijk
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Selecteer mannelijke gezichten
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Vrouwelijk
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Selecteer vrouwelijke gezichten
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Nieuw gezicht
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Genereer willekeurig nieuw gezicht
 STR_FACE_ADVANCED                                               :{BLACK}Geavanceerd
@@ -2338,44 +2355,31 @@ STR_FACE_SIMPLE_TOOLTIP                                         :{BLACK}Eenvoudi
 STR_FACE_LOAD                                                   :{BLACK}Laden
 STR_FACE_LOAD_TOOLTIP                                           :{BLACK}Favoriet gezicht laden
 STR_FACE_LOAD_DONE                                              :{WHITE}Je favoriete gezicht is geladen uit het OpenTTD-configuratiebestand
-STR_FACE_FACECODE                                               :{BLACK}Gezichtsnummer
-STR_FACE_FACECODE_TOOLTIP                                       :{BLACK}Gezichtsnummer van directeur bekijken en/of instellen
-STR_FACE_FACECODE_CAPTION                                       :{WHITE}Huidig gezichtsnummer bekijken en/of instellen
-STR_FACE_FACECODE_SET                                           :{WHITE}Nieuwe gezichtsnummercode is opgeslagen
-STR_FACE_FACECODE_ERR                                           :{WHITE}Kon gezichtsnummer voor directeur niet instellen - moet een getal zijn tussen 0 en 4.294.967.295!
+STR_FACE_FACECODE                                               :{BLACK}Gezichtscode
+STR_FACE_FACECODE_TOOLTIP                                       :{BLACK}Gezichtscode van directeur bekijken en/of instellen
+STR_FACE_FACECODE_CAPTION                                       :{WHITE}Huidige gezichtscode bekijken en/of instellen
+STR_FACE_FACECODE_SET                                           :{WHITE}Nieuw gezicht van directeur is ingesteld
+STR_FACE_FACECODE_ERR                                           :{WHITE}Kon gezichtscode voor directeur niet instellen - moet een geldig label en nummer zijn
 STR_FACE_SAVE                                                   :{BLACK}Opslaan
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Favoriet gezicht opslaan
 STR_FACE_SAVE_DONE                                              :{WHITE}Dit gezicht wordt in het OpenTTD-configuratiebestand opgeslagen als jouw favoriet
-STR_FACE_EUROPEAN                                               :{BLACK}Europeaans
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Selecteer Europese gezichten
-STR_FACE_AFRICAN                                                :{BLACK}Afrikaans
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Selecteer Afrikaanse gezichten
+STR_FACE_SETTING_TOGGLE                                         :{STRING} {ORANGE}{STRING}
+STR_FACE_SETTING_NUMERIC                                        :{STRING} {ORANGE}{NUM} / {NUM}
 STR_FACE_YES                                                    :Ja
 STR_FACE_NO                                                     :Nee
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Geef het gezicht een snor of oorbel
+STR_FACE_STYLE                                                  :Stijl:
 STR_FACE_HAIR                                                   :Haar:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Verander haar
 STR_FACE_EYEBROWS                                               :Wenkbrauwen:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Verander wenkbrauwen
 STR_FACE_EYECOLOUR                                              :Oogkleur:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Verander oogkleur
 STR_FACE_GLASSES                                                :Bril:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Geef het gezicht een bril
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Verander bril
 STR_FACE_NOSE                                                   :Neus:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Verander neus
 STR_FACE_LIPS                                                   :Lippen:
 STR_FACE_MOUSTACHE                                              :Snor:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Verander lippen of snor
 STR_FACE_CHIN                                                   :Kin:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Verander kin
 STR_FACE_JACKET                                                 :Jas:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Verander jas
 STR_FACE_COLLAR                                                 :Kraag:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Verander kraag
 STR_FACE_TIE                                                    :Stropdas:
 STR_FACE_EARRING                                                :Oorbel:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Verander das of oorbel
 
 # Matches ServerGameType
 ###length 3
@@ -2781,10 +2785,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}Onderhou
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Station samenvoegen
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Een losstaand station bouwen
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Een losstaand station bouwen
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Routepunt samenvoegen
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Los routepunt bouwen
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Los routepunt bouwen
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Momenteel uitgeschakeld omdat er geen voertuigen zijn voor deze infrastructuur
@@ -2836,6 +2840,11 @@ STR_PICKER_MODE_USED_TOOLTIP                                    :Weergave van al
 STR_PICKER_MODE_SAVED                                           :Opgeslagen
 STR_PICKER_MODE_SAVED_TOOLTIP                                   :Weergave van alleen opgeslagen onderdelen omschakelen
 
+STR_PICKER_PREVIEW_SHRINK                                       :-
+STR_PICKER_PREVIEW_SHRINK_TOOLTIP                               :Verklein de hoogte van voorbeelden. Ctrl+klikken verkleint tot minimaal
+STR_PICKER_PREVIEW_EXPAND                                       :+
+STR_PICKER_PREVIEW_EXPAND_TOOLTIP                               :Vergroot de hoogte van voorbeelden. Ctrl+klikken vergroot tot maximaal
+
 STR_PICKER_STATION_CLASS_TOOLTIP                                :Selecteer een klasse stations voor weergave
 STR_PICKER_STATION_TYPE_TOOLTIP                                 :Selecteer een type station om te bouwen. Ctrl+klik om toe te voegen aan of te verwijderen uit opgeslagen onderdelen
 STR_PICKER_WAYPOINT_CLASS_TOOLTIP                               :Selecteer een klasse routepunten voor weergave
@@ -2879,7 +2888,6 @@ STR_STATION_CLASS_WAYP_WAYPOINT                                 :Standaard route
 
 # Signal window
 STR_BUILD_SIGNAL_CAPTION                                        :{WHITE}Seinselectie
-STR_BUILD_SIGNAL_TOGGLE_ADVANCED_SIGNAL_TOOLTIP                 :{BLACK}Wisselen tussen geavanceerde seintypen weergeven-verbergen
 STR_BUILD_SIGNAL_SEMAPHORE_NORM_TOOLTIP                         :{BLACK}Bloksein (armsein){}Dit is het simpelste soort sein dat slechts één trein tegelijk in hetzelfde blok toelaat
 STR_BUILD_SIGNAL_SEMAPHORE_ENTRY_TOOLTIP                        :{BLACK}Ingangssein (armsein){}Groen als er een groen uitgangssein is uit het volgende blok. Anders rood.
 STR_BUILD_SIGNAL_SEMAPHORE_EXIT_TOOLTIP                         :{BLACK}Uitgangssein (armsein){}Gedraagt zich hetzelfde als een standaardsein, maar is nodig om ingangs- en combinatie-voorseinen aan te sturen
@@ -3075,6 +3083,12 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Willekeu
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Stadsgrootte kiezen
 STR_FOUND_TOWN_CITY                                             :{BLACK}Groeistad
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Groeisteden groeien sneller dan gewone steden{}Afhankelijk van de instellingen kunnen ze ook groter zijn als ze gesticht worden
+
+STR_FOUND_TOWN_EXPAND_MODE                                      :{YELLOW}Uitbreiding van stad:
+STR_FOUND_TOWN_EXPAND_BUILDINGS                                 :Gebouwen
+STR_FOUND_TOWN_EXPAND_BUILDINGS_TOOLTIP                         :Meer gebouwen in steden
+STR_FOUND_TOWN_EXPAND_ROADS                                     :Wegen
+STR_FOUND_TOWN_EXPAND_ROADS_TOOLTIP                             :Meer wegen in steden
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Wegpatroon
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Wegpatroon voor deze stad kiezen
@@ -3525,15 +3539,12 @@ STR_SAVE_PRESET_CAPTION                                         :{WHITE}Voorkeur
 STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Lijst met beschikbare voorkeursinstellingen, Selecteer om deze te kopiëren naar de opslagnaam hieronder.
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Voer een naam in voor de voorkeursinstelling
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Huidige gekozen naam voor de voorkeursinstelling om op te slaan
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Annuleren
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Voorkeursinstelling niet wijzigen
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Opslaan
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Sla de huidige voorkeursinstelling op onder de huidige gekozen naam
 
 # NewGRF parameters window
 STR_BASEGRF_PARAMETERS_CAPTION                                  :{WHITE}Grafische basisinstellingen wijzigen
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}NewGRF-parameters wijzigen
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Sluiten
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Terugstellen
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Stel alle parameters terug naar de standaardwaarde
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Parameter {NUM}
@@ -3699,9 +3710,15 @@ STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Centreer
 STR_TOWN_VIEW_LOCAL_AUTHORITY_BUTTON                            :{BLACK}Gemeente
 STR_TOWN_VIEW_LOCAL_AUTHORITY_TOOLTIP                           :{BLACK}Geef informatie over de gemeente weer
 STR_TOWN_VIEW_RENAME_TOOLTIP                                    :{BLACK}Hiermee hernoem je deze plaats
+STR_TOWN_VIEW_CARGO_GRAPH                                       :Vrachtgrafiek
+STR_TOWN_VIEW_CARGO_GRAPH_TOOLTIP                               :Geeft de grafiek weer van de geschiedenis van de vracht van de stad
 
 STR_TOWN_VIEW_EXPAND_BUTTON                                     :{BLACK}Vergroot
 STR_TOWN_VIEW_EXPAND_TOOLTIP                                    :{BLACK}Vergroot stadsgrootte
+STR_TOWN_VIEW_EXPAND_BUILDINGS_BUTTON                           :{BLACK}Gebouwen uitbreiden
+STR_TOWN_VIEW_EXPAND_BUILDINGS_TOOLTIP                          :{BLACK}Meer gebouwen in stad
+STR_TOWN_VIEW_EXPAND_ROADS_BUTTON                               :{BLACK}Wegen uitbreiden
+STR_TOWN_VIEW_EXPAND_ROADS_TOOLTIP                              :{BLACK}Meer wegen in steden
 STR_TOWN_VIEW_DELETE_BUTTON                                     :{BLACK}Verwijder
 STR_TOWN_VIEW_DELETE_TOOLTIP                                    :{BLACK}Verwijder deze hele stad
 
@@ -4027,8 +4044,8 @@ STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE                   :{BLACK}Producti
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MINUTE_TITLE                  :{BLACK}Productie vorige minuut:
 STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_LONG}{STRING}{BLACK} ({COMMA}% vervoerd)
 STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Centreer het hoofdscherm op de locatie van de industrie. Ctrl+klik opent een nieuws venster op de locatie van de industrie
-STR_INDUSTRY_VIEW_PRODUCTION_GRAPH                              :{BLACK}Productiegrafiek
-STR_INDUSTRY_VIEW_PRODUCTION_GRAPH_TOOLTIP                      :{BLACK}Geeft de grafiek weer van de productiegeschiedenis van de industrie
+STR_INDUSTRY_VIEW_CARGO_GRAPH                                   :{BLACK}Vrachtgrafiek
+STR_INDUSTRY_VIEW_CARGO_GRAPH_TOOLTIP                           :{BLACK}Geeft de grafiek weer van de geschiedenis van de vracht
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Productieniveau: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}De industrie heeft een dreigende sluiting aangekondigd!
 
@@ -4440,10 +4457,10 @@ STR_VEHICLE_VIEW_SHIP_ORDERS_TOOLTIP                            :{BLACK}Orders v
 STR_VEHICLE_VIEW_AIRCRAFT_ORDERS_TOOLTIP                        :{BLACK}Orders van vliegtuig weergeven. Ctrl+klik geeft de dienstregeling van het vliegtuig.
 
 ###length VEHICLE_TYPES
-STR_VEHICLE_VIEW_TRAIN_SHOW_DETAILS_TOOLTIP                     :{BLACK}Details van trein weergeven
-STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Details van wegvoertuig weergeven
-STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Details van schip weergeven
-STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Details van vliegtuig weergeven
+STR_VEHICLE_VIEW_TRAIN_SHOW_DETAILS_TOOLTIP                     :{BLACK}Details van trein weergeven. Ctrl+klik om de voertuiggroep weer te geven
+STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Details van voertuig weergeven. Ctrl+klik om de voertuiggroep weer te geven
+STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Details van schip weergeven. Ctrl+klik om de voertuiggroep weer te geven
+STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Details van vliegtuig weergeven. Ctrl+klik om de voertuiggroep weer te geven
 
 ###length VEHICLE_TYPES
 STR_VEHICLE_VIEW_TRAIN_STATUS_START_STOP_TOOLTIP                :{BLACK}Huidige treinactie - klik om de trein te starten of stoppen
@@ -4767,15 +4784,15 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Dienstre
 STR_TIMETABLE_NO_TRAVEL                                         :Niet rijden
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Rijden (automatisch; volgens dienstregeling bij volgende handmatige bestemming)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Reis (geen dienstregeling)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Reis met maximaal {2:VELOCITY} (geen dienstregeling)
+STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Reis met maximaal {VELOCITY} (geen dienstregeling)
 STR_TIMETABLE_TRAVEL_FOR                                        :Reis naar {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Reis {STRING} met maximaal {VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Reis (gedurende {STRING}, geen dienstregeling)
 STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :Reis (gedurende {STRING}, geen dienstregeling) maximaal {VELOCITY}
 STR_TIMETABLE_STAY_FOR_ESTIMATED                                :{SPACE}(wacht {STRING} lang, geen dienstregeling)
 STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :{SPACE}(reis gedurende {STRING}, geen dienstregeling)
-STR_TIMETABLE_STAY_FOR                                          :en blijf gedurende {STRING}
-STR_TIMETABLE_AND_TRAVEL_FOR                                    :en rijd {STRING}
+STR_TIMETABLE_STAY_FOR                                          :{SPACE}en blijf gedurende {STRING}
+STR_TIMETABLE_AND_TRAVEL_FOR                                    :{SPACE}en rijd {STRING}
 
 STR_TIMETABLE_APPROX_TIME                                       :{BLACK}Deze dienstregeling heeft ongeveer {STRING} nodig om te voltooien.
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}Deze dienstregeling duurt {STRING}
@@ -4894,8 +4911,6 @@ STR_AI_LIST_URL                                                 :{LTBLUE}Webadre
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Accepteren
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Gemarkeerd script selecteren
-STR_AI_LIST_CANCEL                                              :{BLACK}Annuleren
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Script niet wijzigen
 
 STR_SCREENSHOT_CAPTION                                          :{WHITE}Een schermafbeelding maken
 STR_SCREENSHOT_SCREENSHOT                                       :{BLACK}Normale schermafbeelding
@@ -4908,7 +4923,6 @@ STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Schermaf
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :{WHITE}AI-parameters
 STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :{WHITE}Spelscript-parameters
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Sluiten
 STR_AI_SETTINGS_RESET                                           :{BLACK}Terugstellen
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -5007,6 +5021,7 @@ STR_ERROR_FLAT_LAND_REQUIRED                                    :{WHITE}Vlak lan
 STR_ERROR_LAND_SLOPED_IN_WRONG_DIRECTION                        :{WHITE}Landhelling is in de verkeerde richting
 STR_ERROR_CAN_T_DO_THIS                                         :{WHITE}Kan dit niet uitvoeren...
 STR_ERROR_BUILDING_MUST_BE_DEMOLISHED                           :{WHITE}Gebouw moet eerst gesloopt worden
+STR_ERROR_BUILDING_IS_PROTECTED                                 :{WHITE}... gebouw is beschermd
 STR_ERROR_CAN_T_CLEAR_THIS_AREA                                 :{WHITE}Kan dit gebied niet ontruimen...
 STR_ERROR_SITE_UNSUITABLE                                       :{WHITE}... locatie ongeschikt
 STR_ERROR_ALREADY_BUILT                                         :{WHITE}... reeds gebouwd
@@ -5041,7 +5056,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Kan dire
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... maximaal toegestane lening bedraagt {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Kan geen geld meer lenen...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... geen lening om af te betalen
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... geen lening om af te betalen
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... {CURRENCY_LONG} benodigd
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Kan de lening niet afbetalen..
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Kan geen geld weggeven dat van de bank geleend is...
@@ -5135,12 +5150,12 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Verwijde
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Ligt naast meer dan één bestaand routepunt
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Te dicht bij een ander routepunt
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Kan hier geen routepunt bouwen...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Kan hier geen routepunt bouwen...
 STR_ERROR_CAN_T_BUILD_ROAD_WAYPOINT                             :{WHITE}Kan hier geen weg-routepunt bouwen...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Kan boei hier niet plaatsen...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Kan naam routepunt niet aanpassen...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Kan hier geen routepunt verwijderen...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Kan hier geen routepunt verwijderen...
 STR_ERROR_CAN_T_REMOVE_ROAD_WAYPOINT                            :{WHITE}Kan hier geen weg-routepunt verwijderen...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Routepunt moet eerst verwijderd worden
 STR_ERROR_MUST_REMOVE_ROADWAYPOINT_FIRST                        :{WHITE}Verwijder eerst het weg-routepunt
@@ -5247,6 +5262,11 @@ STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}Begin en
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}... uiteinden van brug moeten beiden op land zijn
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}... brug te lang
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}Brug zou eindigen buiten de kaart
+STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}Brug te laag voor station
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}Brug te laag voor halte
+STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}Brug te laag voor boei
+STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}Brug te laag voor spoorroutepunt
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}Brug te laag voor wegroutepunt
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}Kan hier geen tunnel bouwen...
@@ -5402,7 +5422,7 @@ STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :{WHITE}Er zijn 
 STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :{WHITE}Er zijn geen haltes die geschikt zijn voor gelede wegvoertuigen.{}Gelede wegvoertuigen kunnen alleen stoppen aan de weg, niet bij een laadplatform.
 STR_ERROR_AIRPORT_NO_PLANES                                     :{WHITE}Dit vliegtuig kan niet landen op dit heliplatform
 STR_ERROR_AIRPORT_NO_HELICOPTERS                                :{WHITE}Deze helikopter kan niet landen op dit vliegveld
-STR_ERROR_NO_RAIL_WAYPOINT                                      :{WHITE}Er is geen routepunt
+STR_ERROR_NO_RAIL_WAYPOINT                                      :{WHITE}Er is geen spoor-routepunt
 STR_ERROR_NO_ROAD_WAYPOINT                                      :{WHITE}Er is geen weg-routepunt
 STR_ERROR_NO_BUOY                                               :{WHITE}Er is geen boei
 
@@ -5863,6 +5883,8 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :Toeschouwer, {1
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{TOWN} ({COMMA})
+STR_VIEWPORT_TOWN_CITY                                          :{TOWN} {CITY_ICON}
+STR_VIEWPORT_TOWN_CITY_POP                                      :{TOWN} ({COMMA}) {CITY_ICON}
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
 
 # Simple strings to get specific types of data
@@ -5886,6 +5908,7 @@ STR_CURRENCY_SHORT_GIGA                                         :{NBSP}mjd
 STR_CURRENCY_SHORT_TERA                                         :{NBSP}bn
 
 STR_JUST_CARGO                                                  :{CARGO_LONG}
+STR_JUST_LEFT_ARROW                                             :{LEFT_ARROW}
 STR_JUST_RIGHT_ARROW                                            :{RIGHT_ARROW}
 STR_JUST_CHECKMARK                                              :{CHECKMARK}
 STR_JUST_COMMA                                                  :{COMMA}
@@ -5925,3 +5948,11 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 STR_BADGE_NAME_LIST                                             :{STRING}: {GOLD}{STRING}
+STR_BADGE_CONFIG_MENU_TOOLTIP                                   :Badgeconfiguratie openen
+STR_BADGE_CONFIG_RESET                                          :Terugstellen
+STR_BADGE_CONFIG_ICONS                                          :{WHITE}Badgepictogrammen
+STR_BADGE_CONFIG_FILTERS                                        :{WHITE}Badgefilters
+STR_BADGE_CONFIG_PREVIEW                                        :Voorbeeld
+STR_BADGE_CONFIG_NAME                                           :Naam
+STR_BADGE_FILTER_ANY_LABEL                                      :Willekeurige {STRING}
+STR_BADGE_FILTER_IS_LABEL                                       :{STRING} is {STRING}

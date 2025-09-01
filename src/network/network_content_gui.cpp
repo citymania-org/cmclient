@@ -31,8 +31,6 @@
 #include "table/strings.h"
 #include "../table/sprites.h"
 
-#include <bitset>
-
 #include "../safeguards.h"
 
 
@@ -44,7 +42,7 @@ static bool _accepted_external_search = false;
 struct ContentTextfileWindow : public TextfileWindow {
 	const ContentInfo *ci = nullptr; ///< View the textfile of this ContentInfo.
 
-	ContentTextfileWindow(TextfileType file_type, const ContentInfo *ci) : TextfileWindow(file_type), ci(ci)
+	ContentTextfileWindow(Window *parent, TextfileType file_type, const ContentInfo *ci) : TextfileWindow(parent, file_type), ci(ci)
 	{
 		this->ConstructWindow();
 
@@ -79,10 +77,10 @@ struct ContentTextfileWindow : public TextfileWindow {
 	}
 };
 
-void ShowContentTextfileWindow(TextfileType file_type, const ContentInfo *ci)
+static void ShowContentTextfileWindow(Window *parent, TextfileType file_type, const ContentInfo *ci)
 {
-	CloseWindowById(WC_TEXTFILE, file_type);
-	new ContentTextfileWindow(file_type, ci);
+	parent->CloseChildWindowById(WC_TEXTFILE, file_type);
+	new ContentTextfileWindow(parent, file_type, ci);
 }
 
 /** Nested widgets for the download window. */
@@ -99,7 +97,7 @@ static constexpr NWidgetPart _nested_network_content_download_status_window_widg
 
 /** Window description for the download window */
 static WindowDesc _network_content_download_status_window_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_NETWORK_STATUS_WINDOW, WC_NONE,
 	WindowDefaultFlag::Modal,
 	_nested_network_content_download_status_window_widgets
@@ -145,7 +143,7 @@ void BaseNetworkContentDownloadStatusWindow::DrawWidget(const Rect &r, WidgetID 
 			DrawFrameRect(r, COLOUR_GREY, {FrameFlag::BorderOnly, FrameFlag::Lowered});
 			Rect ir = r.Shrink(WidgetDimensions::scaled.bevel);
 			DrawFrameRect(ir.WithWidth((uint64_t)ir.Width() * this->downloaded_bytes / this->total_bytes, _current_text_dir == TD_RTL), COLOUR_MAUVE, {});
-			DrawString(ir.left, ir.right, CenterBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)),
+			DrawString(ir.left, ir.right, CentreBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)),
 				GetString(STR_CONTENT_DOWNLOAD_PROGRESS_SIZE, this->downloaded_bytes, this->total_bytes, this->downloaded_bytes * 100LL / this->total_bytes),
 				TC_FROMSTRING, SA_HOR_CENTER);
 			break;
@@ -187,7 +185,7 @@ void BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(const ContentInf
 /** Window for showing the download status of content */
 struct NetworkContentDownloadStatusWindow : public BaseNetworkContentDownloadStatusWindow {
 private:
-	std::vector<ContentType> receivedTypes{}; ///< Types we received so we can update their cache
+	ContentTypes received_types{}; ///< Types we received so we can update their cache
 
 public:
 	/**
@@ -202,7 +200,7 @@ public:
 	void Close([[maybe_unused]] int data = 0) override
 	{
 		TarScanner::Modes modes{};
-		for (auto ctype : this->receivedTypes) {
+		for (auto ctype : this->received_types) {
 			switch (ctype) {
 				case CONTENT_TYPE_AI:
 				case CONTENT_TYPE_AI_LIBRARY:
@@ -236,7 +234,7 @@ public:
 		TarScanner::DoScan(modes);
 
 		/* Tell all the backends about what we've downloaded */
-		for (auto ctype : this->receivedTypes) {
+		for (auto ctype : this->received_types) {
 			switch (ctype) {
 				case CONTENT_TYPE_AI:
 				case CONTENT_TYPE_AI_LIBRARY:
@@ -301,7 +299,7 @@ public:
 	void OnDownloadProgress(const ContentInfo &ci, int bytes) override
 	{
 		BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(ci, bytes);
-		include(this->receivedTypes, ci.type);
+		this->received_types.Set(ci.type);
 
 		/* When downloading is finished change cancel in ok */
 		if (this->downloaded_bytes == this->total_bytes) {
@@ -313,7 +311,7 @@ public:
 /** Filter data for NetworkContentListWindow. */
 struct ContentListFilterData {
 	StringFilter string_filter; ///< Text filter of content list
-	std::bitset<CONTENT_TYPE_END> types; ///< Content types displayed
+	ContentTypes types; ///< Content types displayed
 };
 
 /** Filter criteria for NetworkContentListWindow. */
@@ -359,26 +357,26 @@ class NetworkContentListWindow : public Window, ContentCallback {
 
 			bool first = true;
 			for (const ContentInfo *ci : this->content) {
-				if (ci->state != ContentInfo::DOES_NOT_EXIST) continue;
+				if (ci->state != ContentInfo::State::DoesNotExist) continue;
 
 				if (!first) url.push_back(',');
 				first = false;
 
-				fmt::format_to(std::back_inserter(url), "{:08X}:{}", ci->unique_id, FormatArrayAsHex(ci->md5sum));
+				format_append(url, "{:08X}:{}", ci->unique_id, FormatArrayAsHex(ci->md5sum));
 			}
 		} else {
 			url += "do=searchtext&q=";
 
 			/* Escape search term */
-			for (const char *search = this->filter_editbox.text.GetText(); *search != '\0'; search++) {
+			for (char search : this->filter_editbox.text.GetText()) {
 				/* Remove quotes */
-				if (*search == '\'' || *search == '"') continue;
+				if (search == '\'' || search == '"') continue;
 
 				/* Escape special chars, such as &%,= */
-				if (*search < 0x30) {
-					fmt::format_to(std::back_inserter(url), "%{:02X}", *search);
+				if (static_cast<unsigned char>(search) < 0x30) {
+					format_append(url, "%{:02X}", search);
 				} else {
-					url.push_back(*search);
+					url.push_back(search);
 				}
 			}
 		}
@@ -411,7 +409,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 		bool all_available = true;
 
 		for (const ContentInfo &ci : _network_content_client.Info()) {
-			if (ci.state == ContentInfo::DOES_NOT_EXIST) all_available = false;
+			if (ci.state == ContentInfo::State::DoesNotExist) all_available = false;
 			this->content.push_back(&ci);
 		}
 
@@ -428,7 +426,9 @@ class NetworkContentListWindow : public Window, ContentCallback {
 	/** Sort content by name. */
 	static bool NameSorter(const ContentInfo * const &a, const ContentInfo * const &b)
 	{
-		return StrNaturalCompare(a->name, b->name, true) < 0; // Sort by name (natural sorting).
+		int r = StrNaturalCompare(a->name, b->name, true); // Sort by name (natural sorting).
+		if (r == 0) r = StrNaturalCompare(a->version, b->version, true);
+		return r < 0;
 	}
 
 	/** Sort content by type. */
@@ -445,7 +445,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 	/** Sort content by state. */
 	static bool StateSorter(const ContentInfo * const &a, const ContentInfo * const &b)
 	{
-		int r = a->state - b->state;
+		int r = to_underlying(a->state) - to_underlying(b->state);
 		if (r == 0) return TypeSorter(a, b);
 		return r < 0;
 	}
@@ -462,7 +462,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 	/** Filter content by tags/name */
 	static bool TagNameFilter(const ContentInfo * const *a, ContentListFilterData &filter)
 	{
-		if ((*a)->state == ContentInfo::SELECTED || (*a)->state == ContentInfo::AUTOSELECTED) return true;
+		if ((*a)->state == ContentInfo::State::Selected || (*a)->state == ContentInfo::State::Autoselected) return true;
 
 		filter.string_filter.ResetState();
 		for (auto &tag : (*a)->tags) filter.string_filter.AddLine(tag);
@@ -474,9 +474,9 @@ class NetworkContentListWindow : public Window, ContentCallback {
 	/** Filter content by type, but still show content selected for download. */
 	static bool TypeOrSelectedFilter(const ContentInfo * const *a, ContentListFilterData &filter)
 	{
-		if (filter.types.none()) return true;
-		if (filter.types[(*a)->type]) return true;
-		return ((*a)->state == ContentInfo::SELECTED || (*a)->state == ContentInfo::AUTOSELECTED);
+		if (filter.types.None()) return true;
+		if (filter.types.Test((*a)->type)) return true;
+		return ((*a)->state == ContentInfo::State::Selected || (*a)->state == ContentInfo::State::Autoselected);
 	}
 
 	/** Filter the content list */
@@ -488,7 +488,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 			this->content.SetFilterType(CONTENT_FILTER_TEXT);
 			changed |= this->content.Filter(this->filter_data);
 		}
-		if (this->filter_data.types.any()) {
+		if (this->filter_data.types.Any()) {
 			this->content.SetFilterType(CONTENT_FILTER_TYPE_OR_SELECTED);
 			changed |= this->content.Filter(this->filter_data);
 		}
@@ -513,7 +513,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 	bool UpdateFilterState()
 	{
 		Filtering old_params = this->content.GetFiltering();
-		bool new_state = !this->filter_data.string_filter.IsEmpty() || this->filter_data.types.any();
+		bool new_state = !this->filter_data.string_filter.IsEmpty() || this->filter_data.types.Any();
 		if (new_state != old_params.state) {
 			this->content.SetFilterState(new_state);
 		}
@@ -539,7 +539,7 @@ public:
 	 *   other types are only shown when content that depend on them are
 	 *   selected.
 	 */
-	NetworkContentListWindow(WindowDesc &desc, bool select_all, const std::bitset<CONTENT_TYPE_END> &types) :
+	NetworkContentListWindow(WindowDesc &desc, bool select_all, ContentTypes types) :
 			Window(desc),
 			auto_select(select_all),
 			filter_editbox(EDITBOX_MAX_SIZE)
@@ -583,20 +583,27 @@ public:
 	{
 		switch (widget) {
 			case WID_NCL_CHECKBOX:
-				size.width = this->checkbox_size.width + padding.width;
+				size.width = std::max<uint>(this->checkbox_size.width, Window::SortButtonWidth()) + padding.width;
 				break;
 
 			case WID_NCL_TYPE: {
+				/* Width must be enough for header label and sort buttons.*/
+				size.width += Window::SortButtonWidth() * 2;
+				/* And also enough for the width of each type of content. */
 				Dimension d = size;
 				for (int i = CONTENT_TYPE_BEGIN; i < CONTENT_TYPE_END; i++) {
 					d = maxdim(d, GetStringBoundingBox(STR_CONTENT_TYPE_BASE_GRAPHICS + i - CONTENT_TYPE_BASE_GRAPHICS));
 				}
-				size.width = d.width + padding.width;
+				size.width = std::max(size.width, d.width + padding.width);
 				break;
 			}
 
+			case WID_NCL_NAME:
+				size.width += Window::SortButtonWidth() * 2;
+				break;
+
 			case WID_NCL_MATRIX:
-				resize.height = std::max(this->checkbox_size.height, (uint)GetCharacterHeight(FS_NORMAL)) + padding.height;
+				fill.height = resize.height = std::max(this->checkbox_size.height, (uint)GetCharacterHeight(FS_NORMAL)) + padding.height;
 				size.height = 10 * resize.height;
 				break;
 		}
@@ -639,6 +646,7 @@ public:
 	 */
 	void DrawMatrix(const Rect &r) const
 	{
+		bool rtl = _current_text_dir == TD_RTL;
 		const Rect checkbox = this->GetWidget<NWidgetBase>(WID_NCL_CHECKBOX)->GetCurrentRect();
 		const Rect name = this->GetWidget<NWidgetBase>(WID_NCL_NAME)->GetCurrentRect().Shrink(WidgetDimensions::scaled.framerect);
 		const Rect type = this->GetWidget<NWidgetBase>(WID_NCL_TYPE)->GetCurrentRect().Shrink(WidgetDimensions::scaled.framerect);
@@ -646,6 +654,7 @@ public:
 		/* Fill the matrix with the information */
 		const uint step_height = this->GetWidget<NWidgetBase>(WID_NCL_MATRIX)->resize_y;
 		const int text_y_offset = WidgetDimensions::scaled.matrix.top + (step_height - WidgetDimensions::scaled.matrix.Vertical() - GetCharacterHeight(FS_NORMAL)) / 2;
+		const int version_y_offset = WidgetDimensions::scaled.matrix.top + (step_height - WidgetDimensions::scaled.matrix.Vertical() - GetCharacterHeight(FS_SMALL)) / 2;
 
 		Rect mr = r.WithHeight(step_height);
 		auto [first, last] = this->vscroll->GetVisibleRangeIterators(this->content);
@@ -657,11 +666,11 @@ public:
 			SpriteID sprite;
 			SpriteID pal = PAL_NONE;
 			switch (ci->state) {
-				case ContentInfo::UNSELECTED:     sprite = SPR_BOX_EMPTY;   break;
-				case ContentInfo::SELECTED:       sprite = SPR_BOX_CHECKED; break;
-				case ContentInfo::AUTOSELECTED:   sprite = SPR_BOX_CHECKED; break;
-				case ContentInfo::ALREADY_HERE:   sprite = SPR_BLOT; pal = PALETTE_TO_GREEN; break;
-				case ContentInfo::DOES_NOT_EXIST: sprite = SPR_BLOT; pal = PALETTE_TO_RED;   break;
+				case ContentInfo::State::Unselected: sprite = SPR_BOX_EMPTY; break;
+				case ContentInfo::State::Selected: sprite = SPR_BOX_CHECKED; break;
+				case ContentInfo::State::Autoselected: sprite = SPR_BOX_CHECKED; break;
+				case ContentInfo::State::AlreadyHere: sprite = SPR_BLOT; pal = PALETTE_TO_GREEN; break;
+				case ContentInfo::State::DoesNotExist: sprite = SPR_BLOT; pal = PALETTE_TO_RED; break;
 				default: NOT_REACHED();
 			}
 			DrawSpriteIgnorePadding(sprite, pal, {checkbox.left, mr.top, checkbox.right, mr.bottom}, SA_CENTER);
@@ -669,7 +678,10 @@ public:
 			StringID str = STR_CONTENT_TYPE_BASE_GRAPHICS + ci->type - CONTENT_TYPE_BASE_GRAPHICS;
 			DrawString(type.left, type.right, mr.top + text_y_offset, str, TC_BLACK, SA_HOR_CENTER);
 
-			DrawString(name.left, name.right, mr.top + text_y_offset, ci->name, TC_BLACK);
+			int x = DrawString(name.left, name.right, mr.top + version_y_offset, ci->version, TC_BLACK, SA_RIGHT, false, FS_SMALL);
+			x += rtl ? WidgetDimensions::scaled.hsep_wide : -WidgetDimensions::scaled.hsep_wide;
+
+			DrawString(rtl ? x : name.left, rtl ? name.right : x, mr.top + text_y_offset, ci->name, TC_BLACK);
 			mr = mr.Translate(0, step_height);
 		}
 	}
@@ -687,8 +699,8 @@ public:
 		Rect tr = r.Shrink(WidgetDimensions::scaled.frametext);
 		tr.top += HEADER_HEIGHT;
 
-		/* Create the nice grayish rectangle at the details top */
-		GfxFillRect(r.WithHeight(HEADER_HEIGHT).Shrink(WidgetDimensions::scaled.bevel.left, WidgetDimensions::scaled.bevel.top, WidgetDimensions::scaled.bevel.right, 0), PC_DARK_BLUE);
+		/* Create the nice darker rectangle at the details top */
+		GfxFillRect(r.WithHeight(HEADER_HEIGHT).Shrink(WidgetDimensions::scaled.bevel.left, WidgetDimensions::scaled.bevel.top, WidgetDimensions::scaled.bevel.right, 0), GetColourGradient(COLOUR_LIGHT_BLUE, SHADE_NORMAL));
 		DrawString(hr.left, hr.right, hr.top, STR_CONTENT_DETAIL_TITLE, TC_FROMSTRING, SA_HOR_CENTER);
 
 		/* Draw the total download size */
@@ -697,7 +709,7 @@ public:
 		if (this->selected == nullptr) return;
 
 		/* And fill the rest of the details when there's information to place there */
-		DrawStringMultiLine(hr.left, hr.right, hr.top + GetCharacterHeight(FS_NORMAL), hr.bottom, STR_CONTENT_DETAIL_SUBTITLE_UNSELECTED + this->selected->state, TC_FROMSTRING, SA_CENTER);
+		DrawStringMultiLine(hr.left, hr.right, hr.top + GetCharacterHeight(FS_NORMAL), hr.bottom, STR_CONTENT_DETAIL_SUBTITLE_UNSELECTED + to_underlying(this->selected->state), TC_FROMSTRING, SA_CENTER);
 
 		/* Also show the total download size, so keep some space from the bottom */
 		tr.bottom -= GetCharacterHeight(FS_NORMAL) + WidgetDimensions::scaled.vsep_wide;
@@ -760,7 +772,7 @@ public:
 
 			std::string buf;
 			for (const ContentInfo *ci : tree) {
-				if (ci == this->selected || ci->state != ContentInfo::SELECTED) continue;
+				if (ci == this->selected || ci->state != ContentInfo::State::Selected) continue;
 
 				if (!buf.empty()) buf += list_separator;
 				buf += ci->name;
@@ -774,9 +786,9 @@ public:
 	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		if (widget >= WID_NCL_TEXTFILE && widget < WID_NCL_TEXTFILE + TFT_CONTENT_END) {
-			if (this->selected == nullptr || this->selected->state != ContentInfo::ALREADY_HERE) return;
+			if (this->selected == nullptr || this->selected->state != ContentInfo::State::AlreadyHere) return;
 
-			ShowContentTextfileWindow((TextfileType)(widget - WID_NCL_TEXTFILE), this->selected);
+			ShowContentTextfileWindow(this, (TextfileType)(widget - WID_NCL_TEXTFILE), this->selected);
 			return;
 		}
 
@@ -785,17 +797,17 @@ public:
 				auto it = this->vscroll->GetScrolledItemFromWidget(this->content, pt.y, this, WID_NCL_MATRIX);
 				if (it == this->content.end()) return; // click out of bounds
 
-				this->selected = *it;
-				this->list_pos = it - this->content.begin();
-
 				const NWidgetBase *checkbox = this->GetWidget<NWidgetBase>(WID_NCL_CHECKBOX);
 				if (click_count > 1 || IsInsideBS(pt.x, checkbox->pos_x, checkbox->current_x)) {
-					_network_content_client.ToggleSelectedState(*this->selected);
+					_network_content_client.ToggleSelectedState(**it);
 					this->content.ForceResort();
 					this->content.ForceRebuild();
+				} else {
+					this->selected = *it;
+					this->list_pos = it - this->content.begin();
 				}
 
-				if (this->filter_data.types.any()) {
+				if (this->filter_data.types.Any()) {
 					this->content.ForceRebuild();
 				}
 
@@ -833,10 +845,6 @@ public:
 				this->InvalidateData();
 				break;
 
-			case WID_NCL_CANCEL:
-				this->Close();
-				break;
-
 			case WID_NCL_OPEN_URL:
 				if (this->selected != nullptr) {
 					OpenBrowser(this->selected->url);
@@ -872,7 +880,7 @@ public:
 							this->content.ForceResort();
 							this->InvalidateData();
 						}
-						if (this->filter_data.types.any()) {
+						if (this->filter_data.types.Any()) {
 							this->content.ForceRebuild();
 							this->InvalidateData();
 						}
@@ -963,12 +971,12 @@ public:
 		bool show_select_upgrade = false;
 		for (const ContentInfo *ci : this->content) {
 			switch (ci->state) {
-				case ContentInfo::SELECTED:
-				case ContentInfo::AUTOSELECTED:
+				case ContentInfo::State::Selected:
+				case ContentInfo::State::Autoselected:
 					this->filesize_sum += ci->filesize;
 					break;
 
-				case ContentInfo::UNSELECTED:
+				case ContentInfo::State::Unselected:
 					show_select_all = true;
 					show_select_upgrade |= ci->upgrade;
 					break;
@@ -985,10 +993,8 @@ public:
 		this->SetWidgetDisabledState(WID_NCL_SELECT_UPDATE, !show_select_upgrade || !this->filter_data.string_filter.IsEmpty());
 		this->SetWidgetDisabledState(WID_NCL_OPEN_URL, this->selected == nullptr || this->selected->url.empty());
 		for (TextfileType tft = TFT_CONTENT_BEGIN; tft < TFT_CONTENT_END; tft++) {
-			this->SetWidgetDisabledState(WID_NCL_TEXTFILE + tft, this->selected == nullptr || this->selected->state != ContentInfo::ALREADY_HERE || !this->selected->GetTextfile(tft).has_value());
+			this->SetWidgetDisabledState(WID_NCL_TEXTFILE + tft, this->selected == nullptr || this->selected->state != ContentInfo::State::AlreadyHere || !this->selected->GetTextfile(tft).has_value());
 		}
-
-		this->GetWidget<NWidgetCore>(WID_NCL_CANCEL)->SetString(this->filesize_sum == 0 ? STR_AI_SETTINGS_CLOSE : STR_AI_LIST_CANCEL);
 	}
 };
 
@@ -1081,12 +1087,8 @@ static constexpr NWidgetPart _nested_network_content_list_widgets[] = {
 			NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_SEARCH_EXTERNAL), SetResize(1, 0), SetFill(1, 0),
 						SetStringTip(STR_CONTENT_SEARCH_EXTERNAL, STR_CONTENT_SEARCH_EXTERNAL_TOOLTIP),
-				NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_CANCEL), SetResize(1, 0), SetFill(1, 0),
-							SetStringTip(STR_BUTTON_CANCEL),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_DOWNLOAD), SetResize(1, 0), SetFill(1, 0),
-							SetStringTip(STR_CONTENT_DOWNLOAD_CAPTION, STR_CONTENT_DOWNLOAD_CAPTION_TOOLTIP),
-				EndContainer(),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_DOWNLOAD), SetResize(1, 0), SetFill(1, 0),
+						SetStringTip(STR_CONTENT_DOWNLOAD_CAPTION, STR_CONTENT_DOWNLOAD_CAPTION_TOOLTIP),
 			EndContainer(),
 		EndContainer(),
 		/* Resize button. */
@@ -1115,7 +1117,7 @@ static WindowDesc _network_content_list_desc(
 void ShowNetworkContentListWindow(ContentVector *cv, ContentType type1, ContentType type2)
 {
 #if defined(WITH_ZLIB)
-	std::bitset<CONTENT_TYPE_END> types;
+	ContentTypes types{};
 	_network_content_client.Clear();
 	if (cv == nullptr) {
 		assert(type1 != CONTENT_TYPE_END || type2 == CONTENT_TYPE_END);
@@ -1123,8 +1125,8 @@ void ShowNetworkContentListWindow(ContentVector *cv, ContentType type1, ContentT
 		_network_content_client.RequestContentList(type1);
 		if (type2 != CONTENT_TYPE_END) _network_content_client.RequestContentList(type2);
 
-		if (type1 != CONTENT_TYPE_END) types[type1] = true;
-		if (type2 != CONTENT_TYPE_END) types[type2] = true;
+		if (type1 != CONTENT_TYPE_END) types.Set(type1);
+		if (type2 != CONTENT_TYPE_END) types.Set(type2);
 	} else {
 		_network_content_client.RequestContentList(cv, true);
 	}

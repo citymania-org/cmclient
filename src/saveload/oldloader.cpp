@@ -219,11 +219,11 @@ static std::tuple<SavegameType, std::string> DetermineOldSavegameTypeAndName(Fil
 	}
 
 	if (VerifyOldNameChecksum(buffer, TTO_HEADER_SIZE) && fseek(f, pos + TTO_HEADER_SIZE, SEEK_SET) == 0) {
-		return { SGT_TTO, "(TTO)" + StrMakeValid(std::string_view{buffer, TTO_HEADER_SIZE - HEADER_CHECKSUM_SIZE}) };
+		return { SGT_TTO, "(TTO) " + StrMakeValid(std::string_view{buffer, TTO_HEADER_SIZE - HEADER_CHECKSUM_SIZE}) };
 	}
 
 	if (VerifyOldNameChecksum(buffer, TTD_HEADER_SIZE) && fseek(f, pos + TTD_HEADER_SIZE, SEEK_SET) == 0) {
-		return { SGT_TTD, "(TTD)" + StrMakeValid(std::string_view{buffer, TTD_HEADER_SIZE - HEADER_CHECKSUM_SIZE}) };
+		return { SGT_TTD, "(TTD) " + StrMakeValid(std::string_view{buffer, TTD_HEADER_SIZE - HEADER_CHECKSUM_SIZE}) };
 	}
 
 	return { SGT_INVALID, "(broken) Unknown" };
@@ -231,7 +231,7 @@ static std::tuple<SavegameType, std::string> DetermineOldSavegameTypeAndName(Fil
 
 typedef bool LoadOldMainProc(LoadgameState &ls);
 
-bool LoadOldSaveGame(const std::string &file)
+bool LoadOldSaveGame(std::string_view file)
 {
 	LoadgameState ls{};
 
@@ -282,7 +282,7 @@ bool LoadOldSaveGame(const std::string &file)
 	return true;
 }
 
-std::string GetOldSaveGameName(const std::string &file)
+std::string GetOldSaveGameName(std::string_view file)
 {
 	auto f = FioFOpenFile(file, "rb", NO_DIRECTORY);
 	if (!f.has_value()) return {};

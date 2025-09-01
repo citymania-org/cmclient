@@ -102,7 +102,7 @@ class BuildTreesWindow : public Window
 
 		if (this->tree_to_plant >= 0) {
 			/* Activate placement */
-			if (_settings_client.sound.confirm) SndPlayFx(SND_15_BEEP);
+			SndConfirmBeep();
 			SetObjectToPlace(SPR_CURSOR_TREE, PAL_NONE, HT_RECT | HT_DIAGONAL, this->window_class, this->window_number);
 			this->tree_to_plant = current_tree; // SetObjectToPlace may call ResetObjectToPlace which may reset tree_to_plant to -1
 		} else {
@@ -134,7 +134,7 @@ class BuildTreesWindow : public Window
 		}
 		const uint radius = this->mode == PM_FOREST_LG ? 12 : 5;
 		const uint count = this->mode == PM_FOREST_LG ? 12 : 5;
-		// Create tropic zones only when the tree type is selected by the user and not picked randomly.
+		/* Create tropic zones only when the tree type is selected by the user and not picked randomly. */
 		PlaceTreeGroupAroundTile(tile, treetype, radius, count, this->tree_to_plant != TREE_INVALID);
 	}
 
@@ -167,7 +167,7 @@ public:
 		if (widget >= WID_BT_TYPE_BUTTON_FIRST) {
 			const int index = widget - WID_BT_TYPE_BUTTON_FIRST;
 			/* Trees "grow" in the centre on the bottom line of the buttons */
-			DrawSprite(tree_sprites[index].sprite, tree_sprites[index].pal, CenterBounds(r.left, r.right, 0), r.bottom - ScaleGUITrad(BUTTON_BOTTOM_OFFSET));
+			DrawSprite(tree_sprites[index].sprite, tree_sprites[index].pal, CentreBounds(r.left, r.right, 0), r.bottom - ScaleGUITrad(BUTTON_BOTTOM_OFFSET));
 		}
 	}
 
@@ -180,7 +180,7 @@ public:
 				break;
 
 			case WID_BT_MANY_RANDOM: // place trees randomly over the landscape
-				if (_settings_client.sound.confirm) SndPlayFx(SND_15_BEEP);
+				SndConfirmBeep();
 				PlaceTreesRandomly();
 				MarkWholeScreenDirty();
 				break;

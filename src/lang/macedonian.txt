@@ -521,6 +521,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Перф
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}компанијата вредности
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Карго плаќање цени
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Плаќање за доставување 10 единици (или 10.000 литри) на товар на растојание од 20 квадрати
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}им овозможи на сите
@@ -529,6 +531,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Прик
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Покажи нема Товарот на товар плаќање стапки графикон
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Вклучи графикон за карго тип за вклучување / исклучување
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Прикажи детални перформанси рејтингот
@@ -763,11 +766,13 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Опци
 
 
 
-###length 45
+
+###length 46
 
 
 # Autosave dropdown
 ###length 5
+
 
 
 
@@ -820,7 +825,7 @@ STR_SEA_LEVEL_CUSTOM_PERCENTAGE                                 :Прилаго�
 ###length 4
 
 
-# Settings tree window
+# Settings tree in the Game Options window
 
 
 STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL                            :Сите подесувања
@@ -843,6 +848,7 @@ STR_CONFIG_SETTING_REALISTIC                                    :Реален
 ###setting-zero-is-special
 
 
+###length 3
 
 
 
@@ -851,6 +857,7 @@ STR_CONFIG_SETTING_REALISTIC                                    :Реален
 
 ###setting-zero-is-special
 
+###length 3
 
 
 
@@ -962,6 +969,7 @@ STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Дебелин�
 ###length 4
 
 ###length 4
+
 
 
 
@@ -1147,12 +1155,10 @@ STR_CONFIG_ERROR_INVALID_GRF_INCOMPATIBLE                       :некомпа�
 STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN                            :непознат
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL             :{WHITE}... ниво на компресија '{STRING}' не е валидна
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... спаси играта формат '{STRING}' не е достапен. се врати на '{STRING}'
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Нема доволно меморија
 
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Нова Игра
 STR_INTRO_LOAD_GAME                                             :{BLACK}Вчитај Игра
@@ -1297,6 +1303,7 @@ STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Изгр
 
 
 
+
 # Signal window
 STR_BUILD_SIGNAL_ELECTRIC_ENTRY_TOOLTIP                         :{BLACK}Влез сигнализација (електрика){}Зелено е се додека има барем еден зелен излез-сигнал во продолжението на траката, во спротивно е црвено.
 STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP                          :{BLACK}Излез Сигнализација (електрика){}Се однесува на ист начин како блок-сигналот, но потребно е да ја има точната боја на влезен и комбо пресигнал.
@@ -1367,6 +1374,7 @@ STR_FOUND_TOWN_NEW_TOWN_BUTTON                                  :{BLACK}Нов �
 STR_FOUND_TOWN_NEW_TOWN_TOOLTIP                                 :{BLACK}Конструирај нов град
 STR_FOUND_TOWN_RANDOM_TOWN_BUTTON                               :{BLACK}Случаен Град
 STR_FOUND_TOWN_RANDOM_TOWN_TOOLTIP                              :{BLACK}Игради град на случајна локација
+
 
 
 
@@ -1488,7 +1496,6 @@ STR_NEWGRF_SETTINGS_MIN_VERSION                                 :{BLACK}Мин. 
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Промена НовGRF параметри
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Затвори
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Ресетирај
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Наместете ги сите параметри на нивните стандардни вредности
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Параметар {NUM}

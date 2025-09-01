@@ -60,9 +60,7 @@ private:
 			default:
 				NOT_REACHED();
 		}
-		TileArea ta;
-		this->wp->GetTileArea(&ta, type);
-		return ta.GetCenterTile();
+		return this->wp->GetTileArea(type).GetCenterTile();
 	}
 
 public:
@@ -97,7 +95,7 @@ public:
 		this->flags.Set(WindowFlag::DisableVpScroll);
 
 		NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_W_VIEWPORT);
-		nvp->InitializeViewport(this, this->GetCenterTile(), ScaleZoomGUI(ZOOM_LVL_VIEWPORT));
+		nvp->InitializeViewport(this, this->GetCenterTile(), ScaleZoomGUI(ZoomLevel::Viewport));
 
 		this->OnInvalidateData(0);
 	}

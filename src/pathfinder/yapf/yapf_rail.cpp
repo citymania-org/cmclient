@@ -24,17 +24,16 @@ template <typename Tpf> void DumpState(Tpf &pf1, Tpf &pf2)
 	DumpTarget dmp1, dmp2;
 	pf1.DumpBase(dmp1);
 	pf2.DumpBase(dmp2);
-	auto f1 = FileHandle::Open("yapf1.txt", "wt");
-	auto f2 = FileHandle::Open("yapf2.txt", "wt");
+	auto f1 = FileHandle::Open("yapf1.txt"sv, "wt");
+	auto f2 = FileHandle::Open("yapf2.txt"sv, "wt");
 	assert(f1.has_value());
 	assert(f2.has_value());
-	fwrite(dmp1.m_out.c_str(), 1, dmp1.m_out.size(), *f1);
-	fwrite(dmp2.m_out.c_str(), 1, dmp2.m_out.size(), *f2);
+	fwrite(dmp1.m_out.data(), 1, dmp1.m_out.size(), *f1);
+	fwrite(dmp2.m_out.data(), 1, dmp2.m_out.size(), *f2);
 }
 
 template <class Types>
-class CYapfReserveTrack
-{
+class CYapfReserveTrack {
 public:
 	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class)
 	typedef typename Types::TrackFollower TrackFollower;
@@ -80,7 +79,9 @@ private:
 			tile = TileAdd(tile, diff);
 		} while (IsCompatibleTrainStationTile(tile, start) && tile != this->origin_tile);
 
-		TriggerStationRandomisation(nullptr, start, SRT_PATH_RESERVATION);
+		auto *st = Station::GetByTile(start);
+		TriggerStationRandomisation(st, start, StationRandomTrigger::PathReservation);
+		TriggerStationAnimation(st, start, StationAnimationTrigger::PathReservation);
 
 		return true;
 	}
@@ -108,6 +109,12 @@ private:
 				this->signals_set_to_red.emplace_back(tile, rev_td);
 				SetSignalStateByTrackdir(tile, rev_td, SIGNAL_STATE_RED);
 				MarkTileDirtyByTile(tile);
+			}
+
+			if (IsRailWaypointTile(tile)) {
+				auto *st = BaseStation::GetByTile(tile);
+				TriggerStationRandomisation(st, tile, StationRandomTrigger::PathReservation);
+				TriggerStationAnimation(st, tile, StationAnimationTrigger::PathReservation);
 			}
 		}
 
@@ -200,8 +207,7 @@ public:
 };
 
 template <class Types>
-class CYapfFollowAnyDepotRailT
-{
+class CYapfFollowAnyDepotRailT {
 public:
 	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class)
 	typedef typename Types::TrackFollower TrackFollower;
@@ -292,8 +298,7 @@ public:
 };
 
 template <class Types>
-class CYapfFollowAnySafeTileRailT : public CYapfReserveTrack<Types>
-{
+class CYapfFollowAnySafeTileRailT : public CYapfReserveTrack<Types> {
 public:
 	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class)
 	typedef typename Types::TrackFollower TrackFollower;
@@ -375,8 +380,7 @@ public:
 };
 
 template <class Types>
-class CYapfFollowRailT : public CYapfReserveTrack<Types>
-{
+class CYapfFollowRailT : public CYapfReserveTrack<Types> {
 public:
 	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class)
 	typedef typename Types::TrackFollower TrackFollower;
@@ -525,8 +529,7 @@ public:
 };
 
 template <class Tpf_, class Ttrack_follower, class Tnode_list, template <class Types> class TdestinationT, template <class Types> class TfollowT>
-struct CYapfRail_TypesT
-{
+struct CYapfRail_TypesT {
 	typedef CYapfRail_TypesT<Tpf_, Ttrack_follower, Tnode_list, TdestinationT, TfollowT>  Types;
 
 	typedef Tpf_                                Tpf;
@@ -541,14 +544,14 @@ struct CYapfRail_TypesT
 	typedef CYapfCostRailT<Types>               PfCost;
 };
 
-struct CYapfRail1         : CYapfT<CYapfRail_TypesT<CYapfRail1        , CFollowTrackRail    , CRailNodeListTrackDir, CYapfDestinationTileOrStationRailT, CYapfFollowRailT> > {};
-struct CYapfRail2         : CYapfT<CYapfRail_TypesT<CYapfRail2        , CFollowTrackRailNo90, CRailNodeListTrackDir, CYapfDestinationTileOrStationRailT, CYapfFollowRailT> > {};
+struct CYapfRail1         : CYapfT<CYapfRail_TypesT<CYapfRail1        , CFollowTrackRail    , CRailNodeListTrackDir, CYapfDestinationTileOrStationRailT, CYapfFollowRailT>> {};
+struct CYapfRail2         : CYapfT<CYapfRail_TypesT<CYapfRail2        , CFollowTrackRailNo90, CRailNodeListTrackDir, CYapfDestinationTileOrStationRailT, CYapfFollowRailT>> {};
 
-struct CYapfAnyDepotRail1 : CYapfT<CYapfRail_TypesT<CYapfAnyDepotRail1, CFollowTrackRail    , CRailNodeListTrackDir, CYapfDestinationAnyDepotRailT     , CYapfFollowAnyDepotRailT> > {};
-struct CYapfAnyDepotRail2 : CYapfT<CYapfRail_TypesT<CYapfAnyDepotRail2, CFollowTrackRailNo90, CRailNodeListTrackDir, CYapfDestinationAnyDepotRailT     , CYapfFollowAnyDepotRailT> > {};
+struct CYapfAnyDepotRail1 : CYapfT<CYapfRail_TypesT<CYapfAnyDepotRail1, CFollowTrackRail    , CRailNodeListTrackDir, CYapfDestinationAnyDepotRailT     , CYapfFollowAnyDepotRailT>> {};
+struct CYapfAnyDepotRail2 : CYapfT<CYapfRail_TypesT<CYapfAnyDepotRail2, CFollowTrackRailNo90, CRailNodeListTrackDir, CYapfDestinationAnyDepotRailT     , CYapfFollowAnyDepotRailT>> {};
 
-struct CYapfAnySafeTileRail1 : CYapfT<CYapfRail_TypesT<CYapfAnySafeTileRail1, CFollowTrackFreeRail    , CRailNodeListTrackDir, CYapfDestinationAnySafeTileRailT , CYapfFollowAnySafeTileRailT> > {};
-struct CYapfAnySafeTileRail2 : CYapfT<CYapfRail_TypesT<CYapfAnySafeTileRail2, CFollowTrackFreeRailNo90, CRailNodeListTrackDir, CYapfDestinationAnySafeTileRailT , CYapfFollowAnySafeTileRailT> > {};
+struct CYapfAnySafeTileRail1 : CYapfT<CYapfRail_TypesT<CYapfAnySafeTileRail1, CFollowTrackFreeRail    , CRailNodeListTrackDir, CYapfDestinationAnySafeTileRailT , CYapfFollowAnySafeTileRailT>> {};
+struct CYapfAnySafeTileRail2 : CYapfT<CYapfRail_TypesT<CYapfAnySafeTileRail2, CFollowTrackFreeRailNo90, CRailNodeListTrackDir, CYapfDestinationAnySafeTileRailT , CYapfFollowAnySafeTileRailT>> {};
 
 
 Track YapfTrainChooseTrack(const Train *v, TileIndex tile, DiagDirection enterdir, TrackBits tracks, bool &path_found, bool reserve_track, PBSTileInfo *target, TileIndex *dest)

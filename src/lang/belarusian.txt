@@ -754,7 +754,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Выхад
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Наладкі гульні
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Наладкі
 STR_SETTINGS_MENU_AI_SETTINGS                                   :Наладкі ШІ
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Наладкі гульнёвых скрыптоў
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Наладкі NewGRF
@@ -926,6 +925,8 @@ STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Ґраф
 
 STR_GRAPH_LAST_72_MINUTES_TIME_LABEL                            :{TINY_FONT}{BLACK}Апошнія 72 хвіліны
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Тарыфы на перавозку грузаў
 STR_GRAPH_CARGO_PAYMENT_RATES_DAYS                              :{TINY_FONT}{BLACK}Дзён у дарозе
 STR_GRAPH_CARGO_PAYMENT_RATES_SECONDS                           :{TINY_FONT}{BLACK}Секунд у дарозе
@@ -936,6 +937,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Пака
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Схаваць усе грузы на ґрафіку
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Уключыць/выключыць адлюстраваньне грузу на ґрафіку
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Паказаць складнікі рэйтынґу
@@ -1258,25 +1260,26 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Пера
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Наладкі гульні
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Асноўныя
-STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Асноўныя наладкі гульні
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :Асноўныя наладкі гульні
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Графіка
-STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Наладкі графікі
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :Наладкі графікі
 STR_GAME_OPTIONS_TAB_SOUND                                      :Гук
-STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Наладкі гуку і музыкі
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :Наладкі гуку і музыкі
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :Сацыяльныя
-STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}Наладкі сацыяльнай інтэграцыі
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :Наладкі сацыяльнай інтэграцыі
 
 STR_GAME_OPTIONS_VOLUME                                         :Гучнасць
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Гукавыя эфекты
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Музыка
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Валюта
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Выбар валюты
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Валюта
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Выбар валюты
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Брытанскі фунт
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Даляр ЗША
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Эўра
@@ -1321,8 +1324,8 @@ STR_GAME_OPTIONS_CURRENCY_IDR                                   :Інданэз�
 STR_GAME_OPTIONS_CURRENCY_MYR                                   :Малайзійскі рынгіт
 STR_GAME_OPTIONS_CURRENCY_LVL                                   :Латвійскі лат
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Аўтазахаваньне
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Інтэрвал паміж аўтаматычнымі захаваньнямі гульні
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Аўтазахаваньне
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Інтэрвал паміж аўтаматычнымі захаваньнямі гульні
 
 # Autosave dropdown
 ###length 5
@@ -1332,74 +1335,74 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_30_MINUTES             :кожныя 30
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_60_MINUTES             :кожныя 60 хвілін
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :кожныя 120 хвілін
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Мова
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Выбраць мову інтэрфэйсу
+STR_GAME_OPTIONS_LANGUAGE                                       :Мова
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Выбраць мову інтэрфэйсу
 STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% перакладзены)
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Поўны экран
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Уключыць/выключыць поўнаэкранны рэжым
+STR_GAME_OPTIONS_FULLSCREEN                                     :Поўны экран
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Уключыць/выключыць поўнаэкранны рэжым
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Вырашэньне экрана
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Выбар вырашэньня экрана
+STR_GAME_OPTIONS_RESOLUTION                                     :Вырашэньне экрана
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Выбар вырашэньня экрана
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :Iншае
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
-STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Апаратнае паскарэньне
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Уключыць/выключыць апаратнае паскарэньне. Пасля гэтага гульню запатрабуецца перазапусціць.
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :Апаратнае паскарэньне
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Уключыць/выключыць апаратнае паскарэньне. Пасля гэтага гульню запатрабуецца перазапусціць.
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Гэта наладка будзе ўжыта толькі пасля перазапуску гульні
 
-STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}Вертыкальная сінхранізацыя
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Уключыць/выключыць вертыкальную сінхранізацыю. Пасля гэтага гульню запатрабуецца перазапусціць. Працуе толькі пры ўключаным апаратным паскарэньні.
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :Вертыкальная сінхранізацыя
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :Уключыць/выключыць вертыкальную сінхранізацыю. Пасля гэтага гульню запатрабуецца перазапусціць. Працуе толькі пры ўключаным апаратным паскарэньні.
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Відэадрайвер: {STRING}
-
-STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Маштаб інтэрфейсу
-STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Змяняйце маштаб інтэрфейсу з дапамогай паўзунка. Утрымлівайце Ctrl для дакладнай наладкі.
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Аўтавызначэньне
-STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Пастаўце адзнаку для аўтаматычнай усталёўкі маштабу інтэрфейсу
-
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Рэльефныя элементы
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :{BLACK}Пастаўце адзнаку, каб маштабаваць рэльефныя элементы інтэрфейсу
-
-STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :{BLACK}Выкарыстоўваць растравы шрыфт
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Пастаўце адзнаку, каб выкарыстоўваць класічны растравы шрыфт фіксаванага памеру.
-STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Згладжваньне шрыфтоў
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Пастаўце адзнаку, каб уключыць згладжваньне маштабуемых шрыфтоў
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :Відэадрайвер: {STRING}
 
 
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Аўтаматычны збор дадзеных
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Дазволіць збор і адпраўку дадзеных
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}Дазволіць аўтаматычны збор дадзеных пра вашы наладкі гульні і выкарыстаныя модулі. OpenTTD адправіць гэтыя дадзеныя пры зачыненьні гульні.
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}Пра збор дадзеных і прыватнасьць
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Адкрыць спасылку з інфармацыяй пра аўтаматычны збор дадзеных
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Прагляд сабраных дадзеных
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Паказаць дадзеныя, сабраныя ў бягучым сеансе і падрыхтаваныя да адпраўкі
+STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Маштаб інтэрфейсу
+STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :Змяняйце маштаб інтэрфейсу з дапамогай паўзунка. Утрымлівайце Ctrl для дакладнай наладкі.
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Аўтавызначэньне
+STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Пастаўце адзнаку для аўтаматычнай усталёўкі маштабу інтэрфейсу
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Наладкі ґрафікі
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :Рэльефныя элементы
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :Пастаўце адзнаку, каб маштабаваць рэльефныя элементы інтэрфейсу
 
-STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Чашчыня абнаўлення экрана
-STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Выбар чашчыні абнаўленьня экрана
+STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :Выкарыстоўваць растравы шрыфт
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Пастаўце адзнаку, каб выкарыстоўваць класічны растравы шрыфт фіксаванага памеру.
+STR_GAME_OPTIONS_GUI_FONT_AA                                    :Згладжваньне шрыфтоў
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Пастаўце адзнаку, каб уключыць згладжваньне маштабуемых шрыфтоў
+
+
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :Аўтаматычны збор дадзеных
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :Дазволіць збор і адпраўку дадзеных
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :Дазволіць аўтаматычны збор дадзеных пра вашы наладкі гульні і выкарыстаныя модулі. OpenTTD адправіць гэтыя дадзеныя пры зачыненьні гульні.
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :Пра збор дадзеных і прыватнасьць
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :Адкрыць спасылку з інфармацыяй пра аўтаматычны збор дадзеных
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :Прагляд сабраных дадзеных
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :Паказаць дадзеныя, сабраныя ў бягучым сеансе і падрыхтаваныя да адпраўкі
+
+
+STR_GAME_OPTIONS_REFRESH_RATE                                   :Чашчыня абнаўлення экрана
+STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :Выбар чашчыні абнаўленьня экрана
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}{NBSP}Гц
 STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Чашчыня абнаўленьня вышэй 60{NBSP}Гц можа адмоўна адбіцца на прадукцыйнасці.
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Набор базавай ґрафікі
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Выбар асноўнага ґрафічнага пакета (яго нельга змяніць у гульні; толькі ў галоўным меню)
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Дадатковая інфармацыя аб базавым ґрафічным наборы
+STR_GAME_OPTIONS_BASE_GRF                                       :Набор базавай ґрафікі
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Выбар асноўнага ґрафічнага пакета (яго нельга змяніць у гульні; толькі ў галоўным меню)
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Дадатковая інфармацыя аб базавым ґрафічным наборы
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Базавы набор гукаў
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Выбар асноўнага пакета гукавых эфектаў (яго нельга змяніць у гульні; толькі ў галоўным меню)
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Дадатковая інфармацыя аб базавым гукавым наборы
+STR_GAME_OPTIONS_BASE_SFX                                       :Базавы набор гукаў
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Выбар асноўнага пакета гукавых эфектаў (яго нельга змяніць у гульні; толькі ў галоўным меню)
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Дадатковая інфармацыя аб базавым гукавым наборы
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Базавы набор музыкі
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Выберыце базавы музычны набор для выкарыстаньня
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Дадатковая інфармацыя аб базавым музычным наборы
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Базавы набор музыкі
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Выберыце базавы музычны набор для выкарыстаньня
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Дадатковая інфармацыя аб базавым музычным наборы
 
 
 STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :{LTBLUE}(модулі ўзаемадзеяньня з сацыяльнымі платформамі не ўсталяваны)
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{BLACK}{STRING} ({STRING})
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :{BLACK}Платформа:
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :{BLACK}Стан модуля:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING} ({STRING})
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :Платформа:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :Стан модуля:
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}Запушчаны
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_FAILED                     :{RED}Не атрымалася ініцыялізаваць
@@ -1512,12 +1515,11 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Дазваля�
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Модулі штучнага інтэлекту (ШІ/AI) адсутнічаюць.{}Іх можна спампаваць праз сістэму праверкі "анлайн-кантэнту".
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Наладкі
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Фільтар:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Разгарнуць усё
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Згарнуць усё
-STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Скінуць усе значэньні
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Фільтар:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Разгарнуць усё
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Згарнуць усё
+STR_CONFIG_SETTING_RESET_ALL                                    :Скінуць усе значэньні
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(няма тлумачэньня)
 STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Значэньне па змоўчаньні: {ORANGE}{STRING}
@@ -1530,9 +1532,9 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Наладкі 
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Увага!
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Вы ўпэўнены, што жадаеце скінуць усе наладкі гульні да значэньняў па змаўчаньні?
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Катэґорыя:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Тып:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Адлюстроўваць у спісе толькі наладкі, якія адпавядаюць абранай катэгорыі
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Катэґорыя:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Тып:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Адлюстроўваць у спісе толькі наладкі, якія адпавядаюць абранай катэгорыі
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Асноўныя наладкі (толькі самыя важныя)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Пашыраныя наладкі (практычна ўсе)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Спэцыяльныя наладкі (усе, уключаючы самыя незразумелыя)
@@ -1549,9 +1551,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Наладкі 
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Няма -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Паказаць усе вынікі пошуку па наладках{}{SILVER}Катэґорыя {BLACK}да {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Паказаць усе вынікі пошуку па наладках{}{SILVER}Тып {BLACK}да {WHITE}Усе тыпы наладак
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Паказаць усе вынікі пошуку па наладках{}{SILVER}Катэґорыя {BLACK}да {WHITE}{STRING} {BLACK}і {SILVER}Тып {BLACK}да {WHITE}Усе тыпы наладак
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Паказаць усе вынікі пошуку па наладках{}{SILVER}Катэґорыя {BLACK}да {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Паказаць усе вынікі пошуку па наладках{}{SILVER}Тып {BLACK}да {WHITE}Усе тыпы наладак
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Паказаць усе вынікі пошуку па наладках{}{SILVER}Катэґорыя {BLACK}да {WHITE}{STRING} {BLACK}і {SILVER}Тып {BLACK}да {WHITE}Усе тыпы наладак
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :не
@@ -1589,6 +1591,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Адсотка�
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Эксплуатацыйныя выдаткі: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Усталюйце ўзровень абслугоўваньня й эксплуатацыйныя выдаткі на транспарт й інфраструктуру
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Хуткасьць будаўніцтва: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Абмяжуйце колькасьць будаўнічых мэрапрыемстваў для ШІ
@@ -1610,6 +1613,7 @@ STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :субсіды�
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Выдаткі на будаўніцтва: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Усталюйце ўзровень выдаткаў на будаўніцтва й набыцьцё
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Спады: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Калі ўключана, у гульні часам адбываюцца эканамічныя крызісы. Падчас крызісу аб'ёмы вытворчасьці значна змяншаюцца (і вяртаюцца да ранейшага ўзроўня, калі крызіс сканчаецца).
@@ -1952,6 +1956,7 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Перамяш�
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Павольная пракрутка ў вакне прагляду: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Кантралюе, што адбудзецца ў галоўным вакне, калі пстрыкнуць у малым вакне прагляду па нейкай кропцы. Калі ўключана, позірк будзе павольна перамяшчацца па мапе ў галоўным вакне. Калі выключана — экран адразу прыгне ў вызначанае месца.
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Паказваць замеры пры будаўніцтве: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Паказваць адлегласьць у клетках і розьніцу ў вышынях, калі нешта будуецца "працяжкай" (з націснутай кнопкай мышы).
@@ -2464,8 +2469,6 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... фа
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... набор ґрафікі "{STRING}" ня знойдзены
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... набор гукаў "{STRING}" ня знойдзены
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... набор музыкі "{STRING}" ня знойдзены
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Недахоп апэратыўнай памяці
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Не атрымалася вылучыць {BYTES} для кэша спрайтаў. Памер кэша зніжаны да {BYTES}. Гэта адмоўна адаб'ецца на прадукцыйнасьці OpenTTD. Каб зьменшыць выдаткі памяці, адключыце 32-бітную ґрафіку й зьменшыце максімальны ўзровень набліжэньня.
 
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}Памылка ў наладках графікі...
@@ -2473,7 +2476,6 @@ STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}... не
 STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}... драйвер відэакарты выклікаў крытычную памылку. Апаратнае паскарэньне адключана.
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Новая гульня
 STR_INTRO_LOAD_GAME                                             :{BLACK}Загрузіць гульню
@@ -2485,11 +2487,7 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Сетк
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Наладкі гульні
 STR_INTRO_HIGHSCORE                                             :{BLACK}Табліца рэкордаў
 STR_INTRO_HELP                                                  :{BLACK}Дапамога і дакументацыя
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Наладкі
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Наладкi NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Праверыць анлайн-кантэнт
-STR_INTRO_AI_SETTINGS                                           :{BLACK}Наладкі ШІ
-STR_INTRO_GAMESCRIPT_SETTINGS                                   :{BLACK}Наладкі гульнёвых скрыптоў
 STR_INTRO_QUIT                                                  :{BLACK}Выхад
 
 STR_INTRO_TOOLTIP_NEW_GAME                                      :{BLACK}Пачаць новую гульню. Ctrl+клік прапускае этап наладак мапы
@@ -2507,11 +2505,7 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Выбр
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Адкрыць акно з асноўнымі наладкамі гульні
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Паказаць табліцу рэкордаў
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Спасылкі на дакументацыю і інтэрнэт-рэсурсы
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Адкрыць наладкі
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Адкрыць наладкі NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Праверыць новы й абноўлены кантэнт, каб спампаваць
-STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Адкрыць наладкі ШІ
-STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}Адкрыць наладкі гульнёвых скрыптоў
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Выйсьці з OpenTTD
 
 STR_INTRO_BASESET                                               :{BLACK}У абраным наборы базавай графікі адсутнічае {NUM} спрайт{P "" а аў}. Калі ласка, абнавіце набор графікі.
@@ -2604,12 +2598,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Грузавы 
 STR_FACE_CAPTION                                                :{WHITE}Выбар твару
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Скасаваць выбар новага твару
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Прыняць выбар новага твару
-STR_FACE_RANDOM                                                 :{BLACK}Выпадковая
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Мужчынскі
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Выбар мужчынскіх твараў
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Жаночы
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Выбар жаночых твараў
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Новы твар
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Стварэньне зьнешнасьці выпадковым чынам
 STR_FACE_ADVANCED                                               :{BLACK}Падрабязна
@@ -2627,36 +2616,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Нема
 STR_FACE_SAVE                                                   :{BLACK}Захаваць
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Захаваць улюбёны твар
 STR_FACE_SAVE_DONE                                              :{WHITE}Гэты твар быў захаваны як ваш улюбёны ў файле канфігурацыі OpenTTD
-STR_FACE_EUROPEAN                                               :{BLACK}Эўрапейскі
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Выбар твараў эўрапейскага тыпу
-STR_FACE_AFRICAN                                                :{BLACK}Афрыканскі
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Выбар твараў афрыканскага тыпу
 STR_FACE_YES                                                    :Так
 STR_FACE_NO                                                     :Не
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Уключыць вусы ці завушніцы
 STR_FACE_HAIR                                                   :Валасы:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Зьмяніць валасы
 STR_FACE_EYEBROWS                                               :Бровы:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Зьмяніць бровы
 STR_FACE_EYECOLOUR                                              :Колер вачэй:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Зьмяніць колер вачэй
 STR_FACE_GLASSES                                                :Акуляры:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Наяўнасьць акуляраў
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Зьмяніць акуляры
 STR_FACE_NOSE                                                   :Нос:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Зьмяніць нос
 STR_FACE_LIPS                                                   :Вусны:
 STR_FACE_MOUSTACHE                                              :Вусы:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Зьмяніць вусны ці вусы
 STR_FACE_CHIN                                                   :Падбародак:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Зьмяніць падбародак:
 STR_FACE_JACKET                                                 :Пінжак:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Зьмяніць пінжак
 STR_FACE_COLLAR                                                 :Каўнер:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Зьмяніць каўнер
 STR_FACE_TIE                                                    :Гальштук:
 STR_FACE_EARRING                                                :Завушніца:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Зьмяніць гальштук або завушніцу
 
 # Matches ServerGameType
 ###length 3
@@ -3073,10 +3046,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}Утры
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Аб'яднаць станцыі
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Пабудаваць асобную станцыю
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Пабудаваць асобную станцыю
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Аб'яднаць маршрутныя пункты
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Пабудаваць асобны маршрутны пункт
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Пабудаваць асобны маршрутны пункт
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Адключана, бо няма прыдатных транспартных сродкаў для гэтай інфраструктуры
@@ -3126,6 +3099,7 @@ STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Пабу
 
 
 
+
 STR_STATION_CLASS_DFLT                                          :Стандартная станцыя
 STR_STATION_CLASS_DFLT_STATION                                  :Стандартная чыг. станцыя
 STR_STATION_CLASS_DFLT_ROADSTOP                                 :Стандартны прыпынак
@@ -3134,7 +3108,6 @@ STR_STATION_CLASS_WAYP_WAYPOINT                                 :Стандар�
 
 # Signal window
 STR_BUILD_SIGNAL_CAPTION                                        :{WHITE}Выбар сыґналаў
-STR_BUILD_SIGNAL_TOGGLE_ADVANCED_SIGNAL_TOOLTIP                 :{BLACK}Пераключыць адлюстраваньне пашыранага сьпісу сыґналаў
 STR_BUILD_SIGNAL_SEMAPHORE_NORM_TOOLTIP                         :{BLACK}Звычайны сэмафор.{}Не дазваляе некалькім цягнікам адначасова знаходзіцца на адным блёк-участку.
 STR_BUILD_SIGNAL_SEMAPHORE_ENTRY_TOOLTIP                        :{BLACK}Уваходны сэмафор (прэсыґнал).{}Адкрыты, калі хаця б адзін з выхадных сыґналаў на наступнай сэкцыі каляіны адкрыты. У астатніх выпадках закрыты.
 STR_BUILD_SIGNAL_SEMAPHORE_EXIT_TOOLTIP                         :{BLACK}Выхадны сэмафор (прэсыґнал).{}Працуе як звычайны сэмафор, але яго стан улічваецца ў працы ўваходных і камбінаваных сыґналаў.
@@ -3329,6 +3302,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Выпа
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Выберыце памер горада
 STR_FOUND_TOWN_CITY                                             :{BLACK}Мэґаполіс
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Мэґаполісы растуць хутчэй за звычайныя гарады (мястэчкі).{}У залежнасьці ад наладак, яны большыя ўжо падчас заснаваньня.
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Сетка гарадзкіх дарогаў:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Выберыце альґарытм будаўніцтва дарогаў гэтым горадам
@@ -3762,15 +3736,12 @@ STR_SAVE_PRESET_CAPTION                                         :{WHITE}Заха
 STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Сьпіс даступных набораў. Выберыце адзін з іх, каб скапіяваць яго назву ў радок імя.
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Увядзіце імя набору
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Бягучае імя для захаваньня набору
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Адмена
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Не рабіць ніякіх змен
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Захаваць
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Захаваць набор пад выбраным імем
 
 # NewGRF parameters window
 STR_BASEGRF_PARAMETERS_CAPTION                                  :{WHITE}Зьмена параметраў базавага графічнага пакета
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Зьмяніць парамэтры NewGRF
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Закрыць
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Ськiд
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Ськінуць значэньнi ўсіх парамэтраў
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Парамэтр {NUM}
@@ -5011,7 +4982,6 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Раск
 STR_TIMETABLE_NO_TRAVEL                                         :Няма назначэньня
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Прабег (аўтаматычна; у расклад наступным заданьнем уручную)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Час у шляху (не зададзены)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Рухацца не хутчэй за {2:VELOCITY} (расклад ня вызначаны)
 STR_TIMETABLE_TRAVEL_FOR                                        :Час у шляху — {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Рухацца да {STRING} не хутчэй за {VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :У дарозе прыкладна {STRING} (графік не складзены)
@@ -5135,8 +5105,6 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Выбраць
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Выбраць падсьвечаны скрыпт
-STR_AI_LIST_CANCEL                                              :{BLACK}Скасаваць
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Не змяняць скрыпт
 
 STR_SCREENSHOT_CAPTION                                          :{WHITE}Здымак экрана
 STR_SCREENSHOT_SCREENSHOT                                       :{BLACK}Звычайны здымак
@@ -5149,7 +5117,6 @@ STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Здым
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :ШI
 STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :гульнёвых скрыптоў
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Закрыць
 STR_AI_SETTINGS_RESET                                           :{BLACK}Ськід
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -5278,7 +5245,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Нема
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... больш за {CURRENCY_LONG} пазыкі Вам не дадуць.
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Немагчыма заняць больш грошай...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... пазыка цалкам пагашана
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... пазыка цалкам пагашана
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... патрабуецца {CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Немагчыма пагасіць пазыку...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Немагчыма аддаць пазычаныя банкам грошы...
@@ -5369,11 +5336,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Спач
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Далучаецца да некалькіх маршрутных пунктаў
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Занадта блізка да іншага маршрутнага пункта
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Тут немагчыма пабудаваць маршрутны пункт...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Тут немагчыма пабудаваць маршрутны пункт...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Не атрымалася ўсталяваць тут буй...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Немагчыма перайменаваць маршрутны пункт...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Немагчыма выдаліць маршрутны пункт...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Немагчыма выдаліць маршрутны пункт...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Спачатку выдаліце маршрутны пункт
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... буй на шляху
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... буй выкарыстоўваецца iншай кампанiяй!

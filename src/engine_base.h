@@ -74,13 +74,7 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 	uint16_t list_position = 0;
 
 	/* NewGRF related data */
-	/**
-	 * Properties related the the grf file.
-	 * NUM_CARGO real cargo plus two pseudo cargo sprite groups.
-	 * Used for obtaining the sprite offset of custom sprites, and for
-	 * evaluating callbacks.
-	 */
-	VariableGRFFileProps grf_prop{};
+	CargoGRFFileProps grf_prop{}; ///< Link to NewGRF
 	std::vector<WagonOverride> overrides{};
 	std::vector<BadgeID> badges{};
 
@@ -218,7 +212,7 @@ struct EngineIDMappingKeyProjection {
 
 /**
  * Stores the mapping of EngineID to the internal id of newgrfs.
- * Note: This is not part of Engine, as the data in the EngineOverrideManager and the engine pool get resetted in different cases.
+ * Note: This is not part of Engine, as the data in the EngineOverrideManager and the engine pool get reset in different cases.
  */
 struct EngineOverrideManager {
 	std::array<std::vector<EngineIDMapping>, VEH_COMPANY_END> mappings;

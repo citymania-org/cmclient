@@ -527,6 +527,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Avriks m
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Virðir hjá fyritøku
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Farma gjald takstur
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Útgjald fyri útflyggjan av 10 eindum (ella 10,000 litrum) av farmi við fjarstøðu av 20 puntum
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Gilda alt
@@ -535,6 +537,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Vís all
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Vís ongan farm á farmagjalds takst grafi
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Tendra/sløkk graf fyri farma slag
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Vís avriks metingar í smálutum
@@ -822,11 +825,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Spæli m
 
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Gjaldsoyra eindir
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Úrval av gjaldsoyra eindum
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Gjaldsoyra eindir
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Úrval av gjaldsoyra eindum
 
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Bretsk Pund
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dollarar
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Evrir
@@ -862,21 +866,21 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Sjálvgjørt...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgiskur Lari
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iranskur Rial
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Sjálvgoymsla
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Vel títtleika av sjálvgoymslu
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Sjálvgoymsla
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Vel títtleika av sjálvgoymslu
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Sløkt
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Mál
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Vel mál at nýta í takførisflatu
+STR_GAME_OPTIONS_LANGUAGE                                       :Mál
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Vel mál at nýta í takførisflatu
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Fullan skerm
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Marka hendan kassan fyri at spæla OpenTTD í fullum skermi
+STR_GAME_OPTIONS_FULLSCREEN                                     :Fullan skerm
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Marka hendan kassan fyri at spæla OpenTTD í fullum skermi
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Skerm upploysn
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Vel hvørja skermupploysn tú vil brúka
+STR_GAME_OPTIONS_RESOLUTION                                     :Skerm upploysn
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Vel hvørja skermupploysn tú vil brúka
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :annað
 
 
@@ -889,17 +893,18 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :annað
 
 
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Base grafikk sett
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Vel ta base grafikk setti tú vil brúka
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Meira kunning um base grafikk setti
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Base ljóð sett
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Vel ta base ljóð setti tú vil brúka
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Meira kunning um base ljóð setti
+STR_GAME_OPTIONS_BASE_GRF                                       :Base grafikk sett
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Vel ta base grafikk setti tú vil brúka
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Meira kunning um base grafikk setti
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Base tónleika sett
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Vel ta base tónleika setti tú vil brúka
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Meira kunning um base tónleika setti
+STR_GAME_OPTIONS_BASE_SFX                                       :Base ljóð sett
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Vel ta base ljóð setti tú vil brúka
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Meira kunning um base ljóð setti
+
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Base tónleika sett
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Vel ta base tónleika setti tú vil brúka
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Meira kunning um base tónleika setti
 
 
 
@@ -1000,10 +1005,10 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Eftirgevandi
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Einki hóskandi AI til taks...{}Tú kann heinta niður fleiri ymisk AI gjøgnum 'Online tilfar' kervi
 
-# Settings tree window
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtur strongur:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Víðka alt
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Toga alt saman
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Filtur strongur:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Víðka alt
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Toga alt saman
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(eingin frágreiðing tøk)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Vanligt virði: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Slag av instilling: {ORANGE}{STRING}
@@ -1013,7 +1018,7 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Goymslu instill
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Fyritøku instilling (goymt í goymslufílum; ávirkar einans nýggj spøl)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Fyritøku instilling (goymt í goymslufílum; ávirkar einans núverðandi fyritøku)
 
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Avmarkar listan niðanfyr so hann einans vísur broyttar instillingar
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Avmarkar listan niðanfyr so hann einans vísur broyttar instillingar
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Grund innstillingar
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Víðkaðir innstillingar
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Serfrøðinga innstillingar / allir innstillingar
@@ -1061,6 +1066,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Rentustigi á l
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Rakstrar kostnaður: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Set hvussu høgur/lágur rakstrarkostnaðurin av flutningstólum og innankervi skal vera
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Byggingar fer: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Avmarka hvussu nógv AI kann byggja
@@ -1077,6 +1083,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Vel hvussu nóg
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Bygnings kostnaður: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Set hvussu høgur/lágur bygnings- og keypskostnaður skal vera
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Ringar tíðir: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Um hetta er tendra kunnu ringar tíðir koma fyri við nøkrum ára millumbili. Meðan ringar tíðir eru, er øll framleiðsla munandi lægri (fer aftur á støði ta var áðrenn tá ringu tíðinar eru av)
@@ -1347,6 +1354,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Blákollulitur
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Mjúka sýnisglugga skrulling: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Stýr hvussu høvuðs sýni skrullar til eitt ávíst stað tá tú trýstir á lítlakorti ella tú tú gevur eini boð um at skrulla til ein ávísan lut á kortinum. Um gilda, skrullar sýni mjúgdliga, um ógilda leypur sýni beint til staði
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Vís eina mátingar vegleiðing tá tú brúkar ymisku byggji amboðini: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Vís punta fjarstøðir og hæddar munir tá tú togar undir bygging
@@ -1688,13 +1696,10 @@ STR_CONFIG_ERROR_INVALID_GRF_NOT_FOUND                          :ikki funni
 STR_CONFIG_ERROR_INVALID_GRF_SYSTEM                             :system NewGRF
 STR_CONFIG_ERROR_INVALID_GRF_INCOMPATIBLE                       :ósambæriligur við hesa útgávuna av OpenTTD
 STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN                            :ókendur
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Einki minni eftir
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Leitan eftir {BYTES} av spritecache eydnaðist ikki. Spritecache var skerd til {BYTES}. Hetta vil skerja framførsluna av OpenTTD. Fyri at minka um minnis krøvini kann tú royna at sløkkja fyri 32bpp grafikki og/ella suma-in stig
 
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Nýtt spæl
 STR_INTRO_LOAD_GAME                                             :{BLACK}Heinta spæl
@@ -1705,7 +1710,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Hópspæ
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Spæli møguleikar
 STR_INTRO_HIGHSCORE                                             :{BLACK}Hástigs yvirlit
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF innstillingar
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Kanna online tilfar
 STR_INTRO_QUIT                                                  :{BLACK}Gevst
 
@@ -1723,7 +1727,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Vel 'toy
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Vís spæli møguleikar
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Vís hástigs yvirlit
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Vís NewGRF innstillingar
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Kanna um nýtt og betra tilfar er klárt at heinta niður
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Gevst at spæla 'OpenTTD'
 
@@ -1792,12 +1795,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :{G=m}Góðs spo
 STR_FACE_CAPTION                                                :{WHITE}Andlits úrval
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Angra nýtt andlits val
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Góðtak nýtt andlits val
-STR_FACE_RANDOM                                                 :{BLACK}Blanda
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Kallkyn
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Vel kallkyns andlit
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Kvennkyn
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Vel kvennkyns andlit
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Nýtt andlit
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Framleið tilvildarligt nýtt andlit
 STR_FACE_ADVANCED                                               :{BLACK}Víðka
@@ -1815,36 +1813,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Eydnaði
 STR_FACE_SAVE                                                   :{BLACK}Goym
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Goym yndis andlit
 STR_FACE_SAVE_DONE                                              :{WHITE}Hetta andliti verur goymt sum títt yndis andlit í OpenTTD uppsetanar fíluni
-STR_FACE_EUROPEAN                                               :{BLACK}Evropeiskt
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Vel Evropeisk andlit
-STR_FACE_AFRICAN                                                :{BLACK}Afrikansk
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Vel Afrikonsk andlit
 STR_FACE_YES                                                    :Ja
 STR_FACE_NO                                                     :Nei
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Tendra yvirskegg ella oyraring
 STR_FACE_HAIR                                                   :Hár:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Broyt hár
 STR_FACE_EYEBROWS                                               :Eygnabrýr:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Broyt eygnabrýr
 STR_FACE_EYECOLOUR                                              :Eygna litur:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Broyt eygna lit
 STR_FACE_GLASSES                                                :Brillur:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Tendra brillur
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Broyt brillur
 STR_FACE_NOSE                                                   :Nøs:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Broyt nøs
 STR_FACE_LIPS                                                   :Varrar:
 STR_FACE_MOUSTACHE                                              :Yvirskegg:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Broyt varrar ella yvirskegg
 STR_FACE_CHIN                                                   :Høka:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Broyt høku
 STR_FACE_JACKET                                                 :Jakki:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Broyt jakka
 STR_FACE_COLLAR                                                 :Kragi:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Broyt kraga
 STR_FACE_TIE                                                    :Slips:
 STR_FACE_EARRING                                                :Oyraringur:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Broyt slips ella oyraring
 
 # Matches ServerGameType
 ###length 3
@@ -2138,10 +2120,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Veitur: 
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Bind støð saman
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Bygg serstaka støð
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Bygg serstaka støð
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Bind waypoint saman
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Bygg eitt serstakt waypoint
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Bygg eitt serstakt waypoint
 
 # Generic toolbar
 
@@ -2174,6 +2156,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Pall lon
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Vel hvussu lang tokstøðin skal verða
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Toga & Slepp
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Bygg eina støð vi at nýta toga & slepp
+
 
 
 
@@ -2305,6 +2288,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Tilvilda
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Vel stødd á bygdini
 STR_FOUND_TOWN_CITY                                             :{BLACK}Býur
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Býir vaksa skjótari enn vanligar bygdir{}Treyta av innstillingum, eru teir størri tá teir verða stovnaðir
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Bygda vegakervi:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Vel hvat vegakervi skal nýtast í hesi bygdini
@@ -2629,7 +2613,6 @@ STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Samsvarar 
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Broyt NewGRF parametur
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Lat aftur
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Endustilla
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Áset øll parametur til teirra vanligu virði
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Parametur {NUM}
@@ -3600,13 +3583,10 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Góðtak
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Vel undirstrikaða scripti
-STR_AI_LIST_CANCEL                                              :{BLACK}Angra
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ikki broyta scripti
 
 
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Lat aftur
 STR_AI_SETTINGS_RESET                                           :{BLACK}Endurstilla
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -3720,7 +3700,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Kann ikk
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... hægst loyvda lán er {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Kann ikki lána meira pening...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... einki lán at gjalda aftur
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... einki lán at gjalda aftur
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... {CURRENCY_LONG} neyðugar
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Kann ikki gjalda lán aftur...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Kann ikki geva pening burtur ið er lándur frá bankanum...
@@ -3805,11 +3785,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Neyðugt
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Førir saman meira enn eitt verðandi waypoint
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Ov nær vi eitt annað waypoint
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Kann ikki byggja tok waypoint her...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Kann ikki byggja tok waypoint her...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Kann ikki seta boyju her...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Kann ikki broyta navn á waypoint...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Kann ikki beina burtur tok waypoint her...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Kann ikki beina burtur tok waypoint her...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Neyðugt at beina burtur jarnbreyta waypoint fyrst
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... boyja í vegin
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... boyja verður nýtt av eini aðrari fyritøku!

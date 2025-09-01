@@ -671,9 +671,9 @@
 
 // U+2026: Horizontal Ellipsis
    -1 * 18	 12 04 00 01 26 20 01 01 26 20 02 01 26 20 03 01 26 20
-   -1 sprites/chars.png 8bpp 560  370  11  12   0  -1 normal
+   -1 sprites/chars.png 8bpp 560  370   9  12   0  -1 normal
    -1 sprites/chars.png 8bpp 560  390   5   7   0   0 normal
-   -1 sprites/chars.png 8bpp 560  400  15  21   0  -2 normal
+   -1 sprites/chars.png 8bpp 560  400  14  21   0  -2 normal
    -1 sprites/mono.png 8bpp 265  270   7  13   0   0 normal
 
 // U+2039: Single Left-Pointing Angle Quotation Mark
@@ -840,3 +840,13 @@
    -1 sprites/chars.png 8bpp 630  400   6  21   0  -2 normal
    -1 sprites/mono.png 8bpp 325  270   7  13   0   0 normal
    -1 sprites/mono.png 8bpp 340  270   7  13   0   0 normal
+
+// U+E29D: Small left arrow
+   -1 * 6   12 01 01 01 9D E2
+   -1 sprites/chars.png 8bpp  10  430   5  5   0   1 normal
+
+// U+E29B: Town
+// U+E29C: City
+   -1 * 6   12 01 00 02 9B E2
+   -1 sprites/chars.png 8bpp  20  430  10 10   0   0 normal
+   -1 sprites/chars.png 8bpp  40  430  10 10   0   0 normal

@@ -10,8 +10,6 @@
 #ifndef MOCK_FONTCACHE_H
 #define MOCK_FONTCACHE_H
 
-#include "../stdafx.h"
-
 #include "../fontcache.h"
 #include "../string_func.h"
 
@@ -23,8 +21,6 @@ public:
 		this->height = FontCache::GetDefaultFontHeight(this->fs);
 	}
 
-	void SetUnicodeGlyph(char32_t, SpriteID) override {}
-	void InitializeUnicodeGlyphMap() override {}
 	void ClearFontCache() override {}
 	const Sprite *GetGlyph(GlyphID) override { return nullptr; }
 	uint GetGlyphWidth(GlyphID) override { return this->height / 2; }
@@ -36,7 +32,8 @@ public:
 	static void InitializeFontCaches()
 	{
 		for (FontSize fs = FS_BEGIN; fs != FS_END; fs++) {
-			if (FontCache::caches[fs] == nullptr) new MockFontCache(fs); /* FontCache inserts itself into to the cache. */
+			if (FontCache::Get(fs) != nullptr) continue;
+			FontCache::Register(std::make_unique<MockFontCache>(fs));
 		}
 	}
 };
