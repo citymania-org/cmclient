@@ -188,9 +188,6 @@ struct TileZoning {
 static TileZoning *_mz = nullptr;
 static IndustryType _industry_forbidden_tiles = INVALID_INDUSTRYTYPE;
 
-extern const Station *_station_to_join;
-extern const Station *_highlight_station_to_join;
-extern TileArea _highlight_join_area;
 extern bool _fn_mod;
 
 std::set<std::pair<uint32, const Town*>, std::greater<std::pair<uint32, const Town*>>> _town_cache;
@@ -1775,8 +1772,6 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
     bool draw_selection = ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0);
     const Station *highlight_station = _viewport_highlight_station;
 
-    if (_highlight_station_to_join) highlight_station = _highlight_station_to_join;
-
     if (draw_selection) {
         // const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
         // auto color = pal[(int)_station_building_status];
@@ -1818,20 +1813,6 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
         th.add_border(b.first, pal[b.second]);
         const SpriteID pal2[] = {PAL_NONE, CM_PALETTE_TINT_WHITE, CM_PALETTE_TINT_BLUE};
         th.ground_pal = th.structure_pal = pal2[b.second];
-    }
-
-    if (_highlight_join_area.tile != INVALID_TILE) {
-        auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
-            return _highlight_join_area.Contains(t) ? 1 : 0;
-        });
-        th.add_border(b.first, CM_SPR_PALETTE_ZONING_LIGHT_BLUE);
-        if (b.second) {
-            switch (th.ground_pal) {
-                case CM_PALETTE_TINT_WHITE: th.ground_pal = th.structure_pal = CM_PALETTE_TINT_CYAN_WHITE; break;
-                case CM_PALETTE_TINT_BLUE: break;
-                default: th.ground_pal = th.structure_pal = CM_PALETTE_TINT_CYAN; break;
-            }
-        }
     }
 }
 

@@ -95,7 +95,6 @@ public:
 class StationSelectHandler {
 public:
     virtual ~StationSelectHandler() = default;
-    virtual void SelectStationToJoin(StationID station_id) = 0;
 };
 template<typename Handler>
 concept ImplementsStationSelectHandler = std::derived_from<Handler, StationSelectHandler>;
@@ -105,7 +104,6 @@ class StationSelectAction : public Action {
 private:
     Handler handler;
     TileIndex cur_tile = INVALID_TILE;
-    StationID selected_station = INVALID_STATION;
 public:
     StationSelectAction(const Handler &handler) : handler{handler} {}
     ~StationSelectAction() override = default;
@@ -131,6 +129,7 @@ public:
     virtual bool Execute(TileIndex tile) = 0;
     virtual std::optional<ObjectHighlight> GetObjectHighlight(TileIndex tile) = 0;
     virtual std::pair<StationCoverageType, uint> GetCatchmentParams() = 0;
+    virtual std::optional<TileArea> GetArea(TileIndex tile) const = 0;
 };
 template<typename Handler>
 concept ImplementsSizedPlacementHandler = std::derived_from<Handler, SizedPlacementHandler>;
@@ -144,7 +143,7 @@ public:
     SizedPlacementAction(const Handler &handler) : handler{handler} {}
     ~SizedPlacementAction() override = default;
     void Update(Point pt, TileIndex tile) override;
-    std::optional<TileArea> GetArea() const override { return std::nullopt; };
+    std::optional<TileArea> GetArea() const override { return this->handler.GetArea(this->cur_tile); }
     bool HandleMousePress() override;
     void HandleMouseRelease() override;
     ToolGUIInfo GetGUIInfo() override;
@@ -182,19 +181,18 @@ public:
 
 class StationBuildTool : public Tool {
 public:
-    static StationID station_to_join;
+    // static StationID station_to_join;
+    // static bool ambigous_join;
 
     class StationSelectHandler : public citymania::StationSelectHandler {
     public:
         StationBuildTool &tool;
         StationSelectHandler(StationBuildTool &tool) : tool(tool) {}
         ~StationSelectHandler() {}
-        void SelectStationToJoin(StationID station_id) override { this->tool.SelectStationToJoin(station_id); };
     };
 
     StationBuildTool();
     ~StationBuildTool() override = default;
-    void SelectStationToJoin(StationID station_id) { StationBuildTool::station_to_join = station_id; };
     ToolGUIInfo GetGUIInfo() override {
         if (!this->action) return {};
         return this->action->GetGUIInfo();
@@ -228,6 +226,7 @@ private:
         bool Execute(TileIndex tile) override;
         std::optional<ObjectHighlight> GetObjectHighlight(TileIndex tile) override;
         std::pair<StationCoverageType, uint> GetCatchmentParams() override { return {this->tool.GetCatchmentParams()}; };
+        std::optional<TileArea> GetArea(TileIndex tile) const override;
     };
 
     class DragNDropPlacementHandler: public citymania::DragNDropPlacementHandler {
@@ -314,6 +313,7 @@ private:
         bool Execute(TileIndex tile) override;
         std::optional<ObjectHighlight> GetObjectHighlight(TileIndex tile) override;
         std::pair<StationCoverageType, uint> GetCatchmentParams() override { return {SCT_ALL, CA_DOCK}; };
+        std::optional<TileArea> GetArea(TileIndex tile) const override;
     };
 
 public:
@@ -348,6 +348,7 @@ private:
         bool Execute(TileIndex tile) override;
         std::optional<ObjectHighlight> GetObjectHighlight(TileIndex tile) override;
         std::pair<StationCoverageType, uint> GetCatchmentParams() override;
+        std::optional<TileArea> GetArea(TileIndex tile) const override;
     };
 
 public:
